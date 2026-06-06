@@ -76,13 +76,13 @@
   };
 
   const ANSWER_MODES = {
-    free: {
-      label: "手寫",
-      note: "黑板書寫 + 答案欄"
-    },
     choice: {
       label: "選擇題",
       note: "四選一，點選即作答"
+    },
+    free: {
+      label: "手寫",
+      note: "黑板書寫 + 答案欄"
     }
   };
 
@@ -132,7 +132,7 @@
   let view = "home";
   let selectedTopic = "all";
   let selectedMode = "quick";
-  let selectedAnswerMode = "free";
+  let selectedAnswerMode = "choice";
   let selectedPack = "all";
   let selectedMistakeTopic = "all";
   let selectedHistoryTopic = "all";
@@ -510,8 +510,8 @@
         </div>
 
         <div class="mobile-start-dock">
-          <button class="button home-primary" data-action="start-daily">${icon("play")}今日練習</button>
-          <button class="button secondary" data-action="start-choice">${icon("check")}選擇題</button>
+          <button class="button home-primary" data-action="start-daily">${icon("play")}每日選擇題</button>
+          <button class="button secondary" data-action="start-choice">${icon("check")}快練</button>
         </div>
       </main>
     `;
@@ -525,7 +525,7 @@
       <section class="mobile-lesson-path" aria-label="手機練習路線">
         <button class="lesson-step is-primary" data-action="start-daily">
           <span class="lesson-node">${icon("play")}</span>
-          <span><strong>今日練習</strong><small>${mission.target} 題 · ${mission.progress}%</small></span>
+          <span><strong>每日選擇題</strong><small>${mission.target} 題 · ${mission.progress}%</small></span>
         </button>
         <button class="lesson-step" data-action="start-weakness" ${mistakeCount ? "" : "disabled"}>
           <span class="lesson-node">${icon("refresh")}</span>
@@ -1438,10 +1438,12 @@
     }
     if (action === "start-choice") {
       selectedAnswerMode = "choice";
+      selectedMode = "quick";
       startQuiz();
     }
     if (action === "start-daily") {
       selectedMode = "daily";
+      selectedAnswerMode = "choice";
       startQuiz();
     }
     if (action === "choose-answer") submitChoiceAnswer(actionNode.dataset.choice || "");
@@ -1511,6 +1513,7 @@
 
   function startWeaknessPractice() {
     const records = loadRecords();
+    selectedAnswerMode = "choice";
     const mistakeIds = Object.keys(records.mistakes || {});
     if (mistakeIds.length) {
       startMistakeQuiz("all");
