@@ -459,6 +459,8 @@
           </aside>
         </section>
 
+        ${renderMobileLessonPath(records, mission, weaknesses, recent30)}
+
         <section class="learning-grid">
           ${renderWeaknessStudyCard(records, weaknesses, mistakeCount)}
           ${renderBrandFocusCard(records, weaknesses)}
@@ -506,7 +508,34 @@
 
           ${renderDataManagementCard(records)}
         </div>
+
+        <div class="mobile-start-dock">
+          <button class="button home-primary" data-action="start-daily">${icon("play")}今日練習</button>
+          <button class="button secondary" data-action="start-choice">${icon("check")}選擇題</button>
+        </div>
       </main>
+    `;
+  }
+
+  function renderMobileLessonPath(records, mission, weaknesses, recent30) {
+    const mistakeCount = Object.keys(records.mistakes || {}).length;
+    const weaknessLabel = weaknesses[0]?.label || "全混合";
+    const recentLabel = recent30.accuracy === null || recent30.accuracy === undefined ? `${records.totalAnswered || 0} 題` : `${recent30.accuracy}%`;
+    return `
+      <section class="mobile-lesson-path" aria-label="手機練習路線">
+        <button class="lesson-step is-primary" data-action="start-daily">
+          <span class="lesson-node">${icon("play")}</span>
+          <span><strong>今日練習</strong><small>${mission.target} 題 · ${mission.progress}%</small></span>
+        </button>
+        <button class="lesson-step" data-action="start-weakness" ${mistakeCount ? "" : "disabled"}>
+          <span class="lesson-node">${icon("refresh")}</span>
+          <span><strong>弱點複習</strong><small>${escapeHtml(weaknessLabel)} · ${mistakeCount} 題</small></span>
+        </button>
+        <button class="lesson-step" data-action="start-choice">
+          <span class="lesson-node">${icon("check")}</span>
+          <span><strong>選擇題快練</strong><small>四選一 · ${recentLabel}</small></span>
+        </button>
+      </section>
     `;
   }
 
@@ -1011,7 +1040,7 @@
     const answerMode = quiz.answerMode || "free";
 
     return `
-      <main class="screen">
+      <main class="screen quiz-screen">
         <section class="arena">
           <div class="arena-top">
             <div class="progress-block">
