@@ -51,8 +51,8 @@ BuzzCalculus 專注於訓練這種技巧辨識能力。
 
 ### Calculus Training
 
-* 314 題精選題庫
-* 25 個技巧訓練包
+* 426 題精選題庫
+* 30 個技巧訓練包
 * 快速訓練模式
 * 每日挑戰模式
 * 階梯測驗模式
@@ -92,10 +92,10 @@ BuzzCalculus 專注於訓練這種技巧辨識能力。
 
 | Category                             | Problems |
 | ------------------------------------ | -------: |
-| Limits                               |       47 |
-| Derivatives & Multivariable Calculus |      111 |
-| Integrals & Multiple Integrals       |      102 |
-| Series                               |       54 |
+| Limits                               |       61 |
+| Derivatives & Multivariable Calculus |      148 |
+| Integrals & Multiple Integrals       |      148 |
+| Series                               |       69 |
 
 ---
 
@@ -126,6 +126,8 @@ BuzzCalculus 以技巧為核心組織題目。
 * Jacobians
 * Hessians
 * Wronskians
+* Lagrange Multipliers
+* Nabla / Vector Calculus
 
 #### Integration
 
@@ -138,6 +140,8 @@ BuzzCalculus 以技巧為核心組織題目。
 * Triple Integrals
 * Change of Variables
 * Convolution Integrals
+* Beta / Gamma Functions
+* Wallis Integrals
 
 #### Series
 
@@ -162,6 +166,8 @@ BuzzCalculus 以技巧為核心組織題目。
 * Polar Curves
 * ODE Introduction
 * Complex Analysis Basics
+* Bessel Basics
+* Technique Sprint / Trap Drill
 
 ---
 

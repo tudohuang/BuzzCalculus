@@ -49,6 +49,7 @@ require("../src/problem_extensions_2.js");
 require("../src/problem_integrals_hard.js");
 require("../src/problem_advanced_analysis.js");
 require("../src/problem_gap_pack.js");
+require("../src/problem_mobile_advanced_pack.js");
 require("../src/app.js");
 
 const api = global.window.__BUZZ_TEST_HOOKS__.api;

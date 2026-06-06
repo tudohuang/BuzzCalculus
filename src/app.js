@@ -111,14 +111,19 @@
     series_test: { label: "級數判別", note: "比值 / 積分 / p 級數", tags: ["ratio-test", "root-test", "integral-test", "p-series", "alternating-series", "comparison"] },
     power_series: { label: "冪級數", note: "半徑與 Taylor 係數", tags: ["power-series", "radius", "taylor", "coefficient"] },
     endpoint_root: { label: "端點 / Root Test", note: "端點分析與根值判別", tags: ["endpoint-analysis", "root-test", "limit-comparison"] },
-    technique_recognition: { label: "技巧辨識", note: "先判斷該用哪個工具", tags: ["technique-recognition"] }
+    technique_recognition: { label: "技巧辨識", note: "先判斷該用哪個工具", tags: ["technique-recognition"] },
+    mobile_sprint: { label: "Mobile Sprint", note: "技巧辨識 / 陷阱 / 極限快練", tags: ["technique-sprint", "trap-drill", "limit-trap"] },
+    lagrange_multiplier: { label: "LM", note: "Lagrange multiplier 最值", tags: ["lagrange-multiplier"] },
+    convergence_tests: { label: "審斂", note: "級數判別與端點", tags: ["convergence-test", "endpoint-analysis", "root-test", "limit-comparison"] },
+    special_functions: { label: "特殊函數", note: "Beta / Gamma / Wallis / Bessel", tags: ["beta-function", "gamma-function", "wallis", "bessel"] },
+    nabla_vector: { label: "Nabla / Vector", note: "grad / div / curl / laplacian", tags: ["nabla", "vector-calculus"] }
   };
 
   const PACK_GROUPS = [
-    { label: "常用", keys: ["all", "technique_recognition", "multivariable", "substitution", "integration_by_parts", "series_test"] },
+    { label: "常用", keys: ["all", "mobile_sprint", "technique_recognition", "multivariable", "substitution", "integration_by_parts", "series_test"] },
     { label: "積分技巧", keys: ["partial_fraction", "trig_substitution", "frullani", "ode_style", "kings_property", "double_integral", "multi_integral_advanced"] },
-    { label: "微分 / 應用", keys: ["chain", "parametric_polar", "applications", "total_differential", "hessian", "wronskian", "jacobian_chain"] },
-    { label: "級數 / ODE / 其他", keys: ["taylor", "power_series", "endpoint_root", "ode_intro", "complex"] }
+    { label: "微分 / 應用", keys: ["chain", "lagrange_multiplier", "nabla_vector", "parametric_polar", "applications", "total_differential", "hessian", "wronskian", "jacobian_chain"] },
+    { label: "級數 / ODE / 其他", keys: ["taylor", "power_series", "convergence_tests", "endpoint_root", "special_functions", "ode_intro", "complex"] }
   ];
 
   const KEYS = ["x", "pi", "e", "^", "sqrt(", "sin(", "cos(", "tan(", "log(", "abs(", "DNE"];
@@ -126,7 +131,7 @@
   const ERROR_TAGS = ["粗心", "不會", "忘公式"];
   const HISTORY_LIMIT = 40;
   const APP_VERSION = "v0.9.0-beta";
-  const BUILD_DATE = "2026-06-05";
+  const BUILD_DATE = "2026-06-06";
   const GA_MEASUREMENT_ID = String(window.BUZZ_GA_MEASUREMENT_ID || "").trim();
 
   let view = "home";

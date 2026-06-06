@@ -8,21 +8,22 @@ require("../src/problem_extensions_2.js");
 require("../src/problem_integrals_hard.js");
 require("../src/problem_advanced_analysis.js");
 require("../src/problem_gap_pack.js");
+require("../src/problem_mobile_advanced_pack.js");
 
 const problems = window.BUZZ_PROBLEMS || [];
 
 const TOPICS = [
   { key: "limits", label: "極限", subtitle: "Limits" },
-  { key: "derivatives", label: "微分與偏導", subtitle: "Derivatives" },
+  { key: "derivatives", label: "微分與多變數", subtitle: "Derivatives" },
   { key: "integrals", label: "積分", subtitle: "Integrals" },
-  { key: "series", label: "級數與判別", subtitle: "Series" }
+  { key: "series", label: "級數與收斂", subtitle: "Series" }
 ];
 
 const ANSWER_KIND_LABELS = {
   numeric: "數值",
-  expression: "式子",
+  expression: "表達式",
   antiderivative: "不定積分",
-  text: "文字判定"
+  text: "文字"
 };
 
 const orderedProblems = TOPICS.flatMap((topic) => problems.filter((problem) => problem.topic === topic.key));
@@ -51,8 +52,8 @@ function topicInfo(topic) {
 }
 
 function shortTags(problem) {
-  const tags = (problem.tags || []).filter(Boolean).slice(0, 2);
-  return tags.length ? tags.map(latexText).join(" / ") : "核心題";
+  const tags = (problem.tags || []).filter(Boolean).slice(0, 3);
+  return tags.length ? tags.map(latexText).join(" / ") : "未標記";
 }
 
 function answerLines(problem) {
@@ -64,8 +65,8 @@ function answerLines(problem) {
 function formatProblem(problem, globalIndex, topicIndex) {
   const info = topicInfo(problem.topic);
   const kind = ANSWER_KIND_LABELS[problem.answerKind] || problem.answerKind;
-  const title = `${String(topicIndex + 1).padStart(2, "0")} · ${latexText(problem.id)}`;
-  const meta = `${latexText(info.label)} · 難度 ${problem.difficulty}/4 · ${latexText(kind)} · ${shortTags(problem)}`;
+  const title = `${String(topicIndex + 1).padStart(2, "0")} / ${latexText(problem.id)}`;
+  const meta = `${latexText(info.label)} / 難度 ${problem.difficulty}/4 / ${latexText(kind)} / ${shortTags(problem)}`;
   return [
     "\\begin{problemcard}",
     `\\problemmeta{${globalIndex + 1}}{${title}}{${meta}}`,
@@ -81,11 +82,8 @@ function topicSection(topic) {
   const blocks = list.map((problem, index) => formatProblem(problem, orderedProblems.indexOf(problem), index)).join("\n\n");
   return [
     `\\section{${latexText(topic.label)} \\textnormal{\\small ${latexText(topic.subtitle)}}}`,
-    `\\topicnote{本章 ${list.length} 題。建議先完整寫出步驟，再核對答案索引。}`,
-    "\\begin{multicols}{2}",
-    "\\raggedcolumns",
-    blocks,
-    "\\end{multicols}"
+    `\\topicnote{共 ${list.length} 題。題目依 BuzzCalculus 題庫順序排列，適合列印後作為練習本使用。}`,
+    blocks
   ].join("\n\n");
 }
 
@@ -100,18 +98,16 @@ function answerKeySection() {
     "\\clearpage",
     "\\section*{答案索引}",
     "\\addcontentsline{toc}{section}{答案索引}",
-    "\\begin{multicols}{3}",
-    "\\begin{description}[leftmargin=22mm,style=nextline,font=\\normalfont\\ttfamily\\scriptsize,itemsep=0.8mm]",
+    "\\begin{description}",
     rows,
-    "\\end{description}",
-    "\\end{multicols}"
+    "\\end{description}"
   ].join("\n");
 }
 
 function countByTopic() {
   return TOPICS.map((topic) => {
     const count = problems.filter((problem) => problem.topic === topic.key).length;
-    return `${latexText(topic.label)} & ${count} 題 \\\\`;
+    return `${latexText(topic.label)} & ${count} 題\\\\`;
   }).join("\n");
 }
 
@@ -122,16 +118,9 @@ function makeDocument() {
 
 \usepackage{fontspec}
 \usepackage{xeCJK}
-\usepackage{amsmath,amssymb,mathtools}
-\usepackage[margin=12mm,headheight=14pt]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage[margin=11mm]{geometry}
 \usepackage[dvipsnames]{xcolor}
-\usepackage{enumitem}
-\usepackage{multicol}
-\usepackage{adjustbox}
-\usepackage{fancyhdr}
-\usepackage{lastpage}
-\usepackage{titlesec}
-\usepackage[most]{tcolorbox}
 
 \IfFontExistsTF{TeX Gyre Pagella}{\setmainfont{TeX Gyre Pagella}}{\setmainfont{Latin Modern Roman}}
 \IfFontExistsTF{Noto Serif CJK TC}
@@ -146,99 +135,75 @@ function makeDocument() {
     {\IfFontExistsTF{FandolHei-Regular}{\setCJKsansfont{FandolHei-Regular}}{}}}
 
 \definecolor{Ink}{HTML}{20211F}
-\definecolor{Muted}{HTML}{69707A}
-\definecolor{Line}{HTML}{D7DADF}
-\definecolor{Panel}{HTML}{F6F7F8}
+\definecolor{Muted}{HTML}{68707A}
+\definecolor{Line}{HTML}{D6DADF}
+\definecolor{Panel}{HTML}{F4F6F8}
 \definecolor{Accent}{HTML}{0F766E}
-\definecolor{AccentSoft}{HTML}{E6F3F1}
 
 \color{Ink}
 \setlength{\parindent}{0pt}
 \setlength{\parskip}{3pt}
-\setlist{nosep}
-\pagestyle{fancy}
-\fancyhf{}
-\fancyhead[L]{\sffamily BuzzCalculus 作業本}
-\fancyhead[R]{\sffamily\small \leftmark}
-\fancyfoot[C]{\sffamily\small \thepage/\pageref{LastPage}}
-\renewcommand{\headrulewidth}{0.4pt}
-\renewcommand{\footrulewidth}{0pt}
+\pagestyle{plain}
 
-\titleformat{\section}
-  {\sffamily\large\bfseries\color{Ink}}
-  {\thesection}{0.6em}{}
-  [\vspace{1mm}{\color{Accent}\titlerule[0.7pt]}]
-\titlespacing*{\section}{0pt}{2.5mm}{3mm}
-
-\newtcolorbox{problemcard}{
-  enhanced,
-  colback=white,
-  colframe=Line,
-  boxrule=0.5pt,
-  arc=1mm,
-  left=2.5mm,
-  right=2.5mm,
-  top=2mm,
-  bottom=2mm,
-  before skip=2mm,
-  after skip=2mm,
-  fontupper=\small
+\newenvironment{problemcard}{%
+  \par\medskip
+  \noindent
+  \begin{minipage}{\linewidth}\small
+}{%
+  \end{minipage}
+  \par{\color{Line}\rule{\linewidth}{0.35pt}}
+  \medskip
 }
 
 \newcommand{\problemmeta}[3]{%
   {\sffamily\scriptsize
-  \colorbox{AccentSoft}{\strut\hspace{1mm}\textcolor{Accent}{\textbf{#1}}\hspace{1mm}}
-  \hspace{1mm}\textbf{#2}\par
+  \textcolor{Accent}{\textbf{#1}}\hspace{1mm}\textbf{#2}\par
   \textcolor{Muted}{#3}}%
-  \par\vspace{0.6mm}
+  \par\vspace{0.5mm}
 }
 
 \newcommand{\promptmath}[1]{%
-  \begin{center}
-  \begin{adjustbox}{max width=\linewidth}
-  $\displaystyle #1$
-  \end{adjustbox}
-  \end{center}
-  \vspace{-1mm}
+  \[
+  \displaystyle #1
+  \]
+  \vspace{-2mm}
 }
 
 \newcommand{\answerline}{%
-  \par\vspace{4.2mm}{\color{Line}\rule{\linewidth}{0.35pt}}%
+  \par\vspace{4mm}{\color{Line}\rule{\linewidth}{0.35pt}}%
 }
 
 \newcommand{\topicnote}[1]{%
-  \vspace{-1mm}
-  \begin{tcolorbox}[enhanced,breakable,colback=Panel,colframe=Panel,arc=1mm,boxrule=0pt,left=2.5mm,right=2.5mm,top=1.5mm,bottom=1.5mm]
-  {\sffamily\small\textcolor{Muted}{#1}}
-  \end{tcolorbox}
+  \par{\sffamily\small\textcolor{Muted}{#1}}\par\medskip
 }
 
 \begin{document}
 
-\begin{tcolorbox}[enhanced,colback=Panel,colframe=Panel,arc=1.5mm,boxrule=0pt,left=5mm,right=5mm,top=4mm,bottom=4mm]
+\begin{center}
   {\sffamily\Huge\bfseries BuzzCalculus 作業本\par}
   \vspace{1mm}
-  {\sffamily\large Calculus Practice Workbook\par}
-  \vspace{4mm}
+  {\sffamily\large Calculus Reflex Training Workbook\par}
+  \vspace{5mm}
+\end{center}
 
-  \sffamily
-  \begin{tabular}{@{}ll@{}}
-  總題數 & ${orderedProblems.length} 題 \\
-  題型分布 & \\
+\begin{tabular}{@{}ll@{}}
+總題數 & ${orderedProblems.length} 題\\
+題庫分類 & \\
 ${countByTopic()}
-  \end{tabular}
-  \vspace{4mm}
+\end{tabular}
 
-  \sffamily
-  姓名：\rule{46mm}{0.45pt}\hfill
-  班級：\rule{36mm}{0.45pt}\hfill
-  日期：\rule{36mm}{0.45pt}
+\vspace{6mm}
 
-  \vspace{2mm}
-  {\small 版面：XeLaTeX + XeCJK。題目來源：本機 BuzzCalculus 題庫。}
-\end{tcolorbox}
+姓名：\rule{42mm}{0.45pt}\hfill
+日期：\rule{34mm}{0.45pt}\hfill
+分數：\rule{34mm}{0.45pt}
+
+\vspace{4mm}
+
+{\small 本作業本由 BuzzCalculus 題庫自動產生。建議用 XeLaTeX + XeCJK 編譯。}
 
 \tableofcontents
+\clearpage
 ${TOPICS.map(topicSection).join("\n\n")}
 
 ${answerKeySection()}

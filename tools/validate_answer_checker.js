@@ -49,6 +49,7 @@ require("../src/problem_extensions_2.js");
 require("../src/problem_integrals_hard.js");
 require("../src/problem_advanced_analysis.js");
 require("../src/problem_gap_pack.js");
+require("../src/problem_mobile_advanced_pack.js");
 require("../src/app.js");
 
 const api = global.window.__BUZZ_TEST_HOOKS__.api;
@@ -115,14 +116,14 @@ tests.forEach(([name, problem, input, expected]) => {
   if (!passed) failures.push({ name, input, expected, result });
 });
 
-const gapProblems = (global.window.BUZZ_PROBLEMS || []).filter((problem) => /^gap-/.test(problem.id));
-gapProblems.forEach((problem) => {
+const canonicalProblems = (global.window.BUZZ_PROBLEMS || []).filter((problem) => /^(gap|mob)-/.test(problem.id));
+canonicalProblems.forEach((problem) => {
   const input = problem.answerKind === "text" ? problem.canonical || problem.answers[0] : problem.answer;
   const result = api.checkAnswer(problem, input);
   const passed = Boolean(result.correct);
   const status = passed ? "PASS" : "FAIL";
-  console.log(`${status} gap canonical ${problem.id}: input=${input} actual=${Boolean(result.correct)} message=${result.message}`);
-  if (!passed) failures.push({ name: `gap canonical ${problem.id}`, input, expected: true, result });
+  console.log(`${status} canonical ${problem.id}: input=${input} actual=${Boolean(result.correct)} message=${result.message}`);
+  if (!passed) failures.push({ name: `canonical ${problem.id}`, input, expected: true, result });
 });
 
 if (failures.length) {
@@ -130,4 +131,4 @@ if (failures.length) {
   process.exit(1);
 }
 
-console.log(`\nValidated ${tests.length + gapProblems.length} answer checker cases`);
+console.log(`\nValidated ${tests.length + canonicalProblems.length} answer checker cases`);
