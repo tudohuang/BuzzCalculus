@@ -88,6 +88,8 @@
 
   const TRAINING_PACKS = {
     all: { label: "全部技巧", note: "不限制 tags", tags: [] },
+    beginner_warmup: { label: "新手暖身", note: "R1-R2 基礎題", tags: ["beginner-friendly"] },
+    boss_challenge: { label: "Boss 挑戰", note: "R5-R6 防強人題", tags: ["boss-rank"] },
     multivariable: { label: "多變數", note: "極限 / 偏導 / 二重積分", tags: ["multivariable"] },
     taylor: { label: "Taylor", note: "展開與係數", tags: ["taylor", "coefficient"] },
     chain: { label: "鏈鎖律", note: "一元與偏導鏈鎖律", tags: ["chain-rule"] },
@@ -120,7 +122,7 @@
   };
 
   const PACK_GROUPS = [
-    { label: "常用", keys: ["all", "mobile_sprint", "technique_recognition", "multivariable", "substitution", "integration_by_parts", "series_test"] },
+    { label: "常用", keys: ["all", "beginner_warmup", "boss_challenge", "mobile_sprint", "technique_recognition", "multivariable", "substitution", "integration_by_parts", "series_test"] },
     { label: "積分技巧", keys: ["partial_fraction", "trig_substitution", "frullani", "ode_style", "kings_property", "double_integral", "multi_integral_advanced"] },
     { label: "微分 / 應用", keys: ["chain", "lagrange_multiplier", "nabla_vector", "parametric_polar", "applications", "total_differential", "hessian", "wronskian", "jacobian_chain"] },
     { label: "級數 / ODE / 其他", keys: ["taylor", "power_series", "convergence_tests", "endpoint_root", "special_functions", "ode_intro", "complex"] }
@@ -131,7 +133,7 @@
   const ERROR_TAGS = ["粗心", "不會", "忘公式"];
   const HISTORY_LIMIT = 40;
   const APP_VERSION = "v0.9.0-beta";
-  const BUILD_DATE = "2026-06-06";
+  const BUILD_DATE = "2026-06-07";
   const GA_MEASUREMENT_ID = String(window.BUZZ_GA_MEASUREMENT_ID || "").trim();
 
   let view = "home";
@@ -1689,19 +1691,46 @@
       pool = pool.filter((problem) => matchesPack(problem, selectedPack));
     }
     if (mode.hardOnly) {
-      pool = pool.filter((problem) => problem.difficulty >= 3);
+      const hardPool = pool.filter((problem) => problemRank(problem) >= 4);
+      pool = hardPool.length ? hardPool : pool;
     }
 
     if (mode.boss) {
-      const perDifficulty = [1, 2, 3, 4].flatMap((difficulty) =>
-        shuffle(pool.filter((problem) => problem.difficulty === difficulty), seedFromString(`${Date.now()}-${difficulty}`)).slice(0, 4)
-      );
-      return padPool(perDifficulty, pool, mode.count);
+      return selectBossPool(pool, mode.count);
+    }
+
+    if (mode.daily) {
+      return selectDailyPool(pool, mode.count);
     }
 
     const seed = mode.daily ? seedFromString(new Date().toISOString().slice(0, 10)) : Date.now();
     const ordered = mode.daily ? shuffle(pool, seed) : adaptiveShuffle(pool, loadRecords(), seed);
     return padPool(ordered.slice(0, mode.count), pool, mode.count);
+  }
+
+  function selectBossPool(pool, count) {
+    const bossPool = pool.filter((problem) => problemRank(problem) >= 5);
+    const sourcePool = bossPool.length ? bossPool : pool.filter((problem) => problemRank(problem) >= 4);
+    const ranked = [6, 5, 4].flatMap((rank) =>
+      shuffle(sourcePool.filter((problem) => problemRank(problem) === rank), seedFromString(`${Date.now()}-boss-${rank}`)).slice(0, rank === 6 ? 7 : 5)
+    );
+    return padPool(ranked, sourcePool.length ? sourcePool : pool, count);
+  }
+
+  function selectDailyPool(pool, count) {
+    const seed = seedFromString(new Date().toISOString().slice(0, 10));
+    const plan = [1, 2, 2, 3, 3, 3, 4, 4, 4, 3, 5, 2].slice(0, count);
+    const selected = [];
+    const buckets = [1, 2, 3, 4, 5, 6].reduce((acc, rank) => {
+      acc[rank] = shuffle(pool.filter((problem) => problemRank(problem) === rank), seedFromString(`${seed}-daily-${rank}`));
+      return acc;
+    }, {});
+    plan.forEach((targetRank) => {
+      const ranks = [targetRank, targetRank - 1, targetRank + 1, targetRank - 2, targetRank + 2, 6].filter((rank) => rank >= 1 && rank <= 6);
+      const bucket = ranks.map((rank) => buckets[rank]).find((items) => items && items.length);
+      if (bucket) selected.push(bucket.shift());
+    });
+    return padPool(selected, shuffle(pool, seed), count);
   }
 
   function padPool(selected, pool, count) {
@@ -1747,6 +1776,10 @@
     return required.some((tag) => tags.includes(tag));
   }
 
+  function problemRank(problem) {
+    return Math.max(1, Math.min(6, Number(problem.rank || problem.difficulty || 1)));
+  }
+
   function submitCurrentAnswer() {
     if (!quiz) return;
     const current = getCurrentProblem();
@@ -1779,7 +1812,7 @@
     const correct = status === "correct";
     const usedHints = quiz.hintsUsed?.[problem.id] || 0;
     const timeBonus = correct && !quiz.practice ? Math.max(0, problem.timeLimit - elapsed) : 0;
-    const difficultyBonus = problem.difficulty * 10;
+    const difficultyBonus = problemRank(problem) * 10;
     const penalty = correct && !quiz.practice ? usedHints * hintPenalty(problem) : 0;
     const earned = correct && !quiz.practice ? Math.max(0, 40 + difficultyBonus + timeBonus - penalty) : 0;
     quiz.score += earned;
@@ -1800,6 +1833,7 @@
       mode: quiz.mode,
       topic: problem.topic,
       problem_id: problem.id,
+      rank: problemRank(problem),
       answer_mode: quiz.answerMode,
       answer_kind: problem.answerKind,
       correct,
@@ -1920,7 +1954,7 @@
   }
 
   function hintPenalty(problem) {
-    return 6 + Math.max(1, problem.difficulty || 1) * 2;
+    return 6 + problemRank(problem) * 2;
   }
 
   function checkAnswer(problem, input) {
@@ -2882,9 +2916,9 @@
   }
 
   function difficultyBadge(problem) {
-    const labels = ["", "基礎", "標準", "進階", "挑戰"];
-    const level = Math.max(1, Math.min(4, problem.difficulty || 1));
-    return `${labels[level]} ${"●".repeat(level)}${"○".repeat(4 - level)}`;
+    const labels = ["", "暖身", "基礎", "標準", "進階", "Boss", "Boss+"];
+    const level = problemRank(problem);
+    return `${labels[level]} R${level}/6`;
   }
 
   function placeholderFor(problem) {
@@ -3494,6 +3528,7 @@
       evaluateExpression,
       normalizeExpression,
       normalizeText,
+      problemRank,
       trainingPacks: TRAINING_PACKS,
       packGroups: PACK_GROUPS,
       matchesPack,

@@ -6,6 +6,7 @@ require("../src/problem_integrals_hard.js");
 require("../src/problem_advanced_analysis.js");
 require("../src/problem_gap_pack.js");
 require("../src/problem_mobile_advanced_pack.js");
+require("../src/problem_difficulty_calibration.js");
 
 const problems = window.BUZZ_PROBLEMS || [];
 const topics = new Set(["limits", "derivatives", "integrals", "series"]);
@@ -26,6 +27,9 @@ problems.forEach((problem, index) => {
   if (!topics.has(problem.topic)) fail(id, `invalid topic ${problem.topic}`);
   if (!Number.isInteger(problem.difficulty) || problem.difficulty < 1 || problem.difficulty > 4) {
     fail(id, "difficulty must be integer 1..4");
+  }
+  if (!Number.isInteger(problem.rank) || problem.rank < 1 || problem.rank > 6) {
+    fail(id, "rank must be integer 1..6 after calibration");
   }
   if (!problem.prompt || typeof problem.prompt !== "string") fail(id, "missing prompt");
   if (!answerKinds.has(problem.answerKind)) fail(id, `invalid answerKind ${problem.answerKind}`);

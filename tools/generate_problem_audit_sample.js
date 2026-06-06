@@ -9,6 +9,7 @@ require("../src/problem_integrals_hard.js");
 require("../src/problem_advanced_analysis.js");
 require("../src/problem_gap_pack.js");
 require("../src/problem_mobile_advanced_pack.js");
+require("../src/problem_difficulty_calibration.js");
 
 const problems = window.BUZZ_PROBLEMS || [];
 
@@ -44,7 +45,7 @@ function sampleTopic(topicKey, count) {
   const pool = problems
     .filter((problem) => problem.topic === topicKey)
     .map((problem) => {
-      const difficulty = Number(problem.difficulty || 1);
+      const difficulty = Number(problem.rank || problem.difficulty || 1);
       const tagCount = Array.isArray(problem.tags) ? problem.tags.length : 0;
       const sourceWeight = problem.source ? 0.08 : 0;
       const priority = difficulty * 0.18 + Math.min(4, tagCount) * 0.04 + sourceWeight + hashUnit(`${SEED}:${problem.id}`);
@@ -54,8 +55,8 @@ function sampleTopic(topicKey, count) {
     .map((item) => item.problem);
 
   const selected = [];
-  [4, 3, 2, 1].forEach((difficulty) => {
-    const candidate = pool.find((problem) => problem.difficulty === difficulty && !selected.includes(problem));
+  [6, 5, 4, 3, 2, 1].forEach((difficulty) => {
+    const candidate = pool.find((problem) => (problem.rank || problem.difficulty) === difficulty && !selected.includes(problem));
     if (candidate) selected.push(candidate);
   });
   pool.forEach((problem) => {
@@ -83,10 +84,11 @@ function escapeMd(value) {
 
 function topicSummary(topicKey, sampled) {
   const byDifficulty = sampled.reduce((acc, problem) => {
-    acc[problem.difficulty] = (acc[problem.difficulty] || 0) + 1;
+    const rank = problem.rank || problem.difficulty;
+    acc[rank] = (acc[rank] || 0) + 1;
     return acc;
   }, {});
-  return [1, 2, 3, 4].map((difficulty) => `D${difficulty}: ${byDifficulty[difficulty] || 0}`).join(" · ");
+  return [1, 2, 3, 4, 5, 6].map((difficulty) => `R${difficulty}: ${byDifficulty[difficulty] || 0}`).join(" · ");
 }
 
 function renderProblemCard(problem, index, topicLabel) {
@@ -95,7 +97,7 @@ function renderProblemCard(problem, index, topicLabel) {
   return `## ${String(index).padStart(2, "0")}. ${topicLabel} · ${problem.id}
 
 - 題型：${topicLabel}
-- 難度：${problem.difficulty}/4
+- Rank：${problem.rank || problem.difficulty}/6 ${problem.rankLabel || ""}
 - 答案型態：${answerKind}
 - Tags：${escapeMd(formatTags(problem))}
 - Time limit：${problem.timeLimit}s

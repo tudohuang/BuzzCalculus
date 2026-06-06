@@ -52,7 +52,7 @@ BuzzCalculus 專注於訓練這種技巧辨識能力。
 ### Calculus Training
 
 * 426 題精選題庫
-* 30 個技巧訓練包
+* 32 個技巧訓練包
 * 快速訓練模式
 * 每日挑戰模式
 * 階梯測驗模式
@@ -177,12 +177,16 @@ BuzzCalculus 並不是競賽題庫。
 
 題目大致分布如下：
 
-| Difficulty                   | Ratio |
-| ---------------------------- | ----: |
-| Basic Warm-up                |   10% |
-| Standard University Calculus |   40% |
-| Advanced Technique Training  |   40% |
-| Boss Problems                |   10% |
+| Rank | Label    | Meaning |
+| ---: | -------- | ------- |
+| R1   | Warm-up  | Basic recall and first-step practice |
+| R2   | Basic    | Beginner-friendly standard drills |
+| R3   | Standard | Normal university calculus speed training |
+| R4   | Advanced | Multi-step technique problems |
+| R5   | Boss     | Special techniques and harder multivariable/integral problems |
+| R6   | Boss+    | Strong-student filters: complex, Bessel, hard Frullani, change of variables, triple integrals |
+
+The app keeps the original 1-4 difficulty field for compatibility, but display, scoring, daily selection, and Boss mode use calibrated rank. The `新手暖身` pack uses R1-R2 problems. The `Boss 挑戰` pack uses R5-R6 problems.
 
 ---
 

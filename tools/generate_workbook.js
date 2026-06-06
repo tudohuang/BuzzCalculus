@@ -9,6 +9,7 @@ require("../src/problem_integrals_hard.js");
 require("../src/problem_advanced_analysis.js");
 require("../src/problem_gap_pack.js");
 require("../src/problem_mobile_advanced_pack.js");
+require("../src/problem_difficulty_calibration.js");
 
 const problems = window.BUZZ_PROBLEMS || [];
 
@@ -58,7 +59,7 @@ function shortTags(problem) {
 
 function answerLines(problem) {
   const base = problem.answerKind === "antiderivative" || problem.topic === "integrals" ? 3 : 2;
-  const bonus = problem.difficulty >= 4 ? 1 : 0;
+  const bonus = (problem.rank || problem.difficulty) >= 5 ? 1 : 0;
   return Array.from({ length: base + bonus }, () => "\\answerline").join("\n");
 }
 
@@ -66,7 +67,7 @@ function formatProblem(problem, globalIndex, topicIndex) {
   const info = topicInfo(problem.topic);
   const kind = ANSWER_KIND_LABELS[problem.answerKind] || problem.answerKind;
   const title = `${String(topicIndex + 1).padStart(2, "0")} / ${latexText(problem.id)}`;
-  const meta = `${latexText(info.label)} / 難度 ${problem.difficulty}/4 / ${latexText(kind)} / ${shortTags(problem)}`;
+  const meta = `${latexText(info.label)} / Rank ${problem.rank || problem.difficulty}/6 ${latexText(problem.rankLabel || "")} / ${latexText(kind)} / ${shortTags(problem)}`;
   return [
     "\\begin{problemcard}",
     `\\problemmeta{${globalIndex + 1}}{${title}}{${meta}}`,
