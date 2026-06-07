@@ -173,7 +173,11 @@ $$
 
 技巧：Cauchy / Lagrange Multiplier
 
-### 魔王題
+### Boss Preview
+
+這幾題是拿來展示壓迫感的，不是 BuzzCalculus 最硬的 Boss+。
+
+真正更硬的 Bessel、三重積分變數變換、高階 Frullani 與複變混合題，不放在 README。
 
 **1. Frullani + Inverse Trig**
 
