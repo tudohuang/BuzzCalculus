@@ -1448,6 +1448,7 @@
     const records = loadRecords();
     const unlocked = quiz.unlockedAchievements || [];
     const gateResult = quiz.pathGate ? pathGateResult(quiz, correct, total) : null;
+    const pathResult = !gateResult && quiz.pathNodeId ? pathLessonResult(quiz, records, accuracy) : null;
 
     return `
       <main class="screen">
@@ -1464,7 +1465,8 @@
               <div class="score-card"><span>Avg Sec</span><strong>${avgTime}</strong></div>
             </div>
             ${gateResult ? renderPathGateResult(gateResult) : ""}
-            ${renderResultsActions(gateResult)}
+            ${pathResult ? renderPathLessonResult(pathResult) : ""}
+            ${renderResultsActions(gateResult, pathResult)}
           </section>
 
           <aside class="side-panel">
@@ -1535,7 +1537,36 @@
     `;
   }
 
-  function renderResultsActions(gateResult) {
+  function pathLessonResult(currentQuiz, records, accuracy) {
+    const path = learningPathState(records);
+    const node = path.nodes.find((item) => item.id === currentQuiz.pathNodeId);
+    if (!node) return null;
+    const index = path.nodes.findIndex((item) => item.id === node.id);
+    const nextNode = path.nodes[index + 1] || null;
+    const run = records.pathLessonRuns?.[node.id] || {};
+    return {
+      node,
+      nextNode,
+      accuracy,
+      mastery: node.mastery,
+      cleared: Boolean(run.cleared || accuracy >= 70),
+      bestAccuracy: run.bestAccuracy || accuracy
+    };
+  }
+
+  function renderPathLessonResult(result) {
+    return `
+      <div class="path-lesson-result ${result.cleared ? "is-cleared" : "is-review"}">
+        <div>
+          <strong>${escapeHtml(result.node.label)}</strong>
+          <span>熟練度 ${result.mastery}% · 最佳 ${result.bestAccuracy}%</span>
+        </div>
+        <span>${result.cleared ? (result.nextNode ? `下一關：${escapeHtml(result.nextNode.label)}` : "主線完成") : "建議再練一次"}</span>
+      </div>
+    `;
+  }
+
+  function renderResultsActions(gateResult, pathResult) {
     if (gateResult) {
       return `
         <div class="action-row">
@@ -1546,6 +1577,20 @@
           }
           <button class="button secondary" data-action="home">${icon("home")}回主線</button>
           <button class="button ghost" data-action="open-mistakes">${icon("book")}錯題本</button>
+        </div>
+      `;
+    }
+    if (pathResult) {
+      const primaryAction = pathResult.cleared
+        ? pathResult.nextNode
+          ? `<button class="button" data-action="start-path-node" data-node-id="${escapeAttr(pathResult.nextNode.id)}">${icon("play")}下一關</button>`
+          : `<button class="button" data-action="home">${icon("home")}看主線</button>`
+        : `<button class="button" data-action="start-path-lesson" data-node-id="${escapeAttr(pathResult.node.id)}">${icon("refresh")}重練本關</button>`;
+      return `
+        <div class="action-row">
+          ${primaryAction}
+          ${pathResult.cleared ? `<button class="button secondary" data-action="start-path-lesson" data-node-id="${escapeAttr(pathResult.node.id)}">${icon("repeat")}再練一次</button>` : ""}
+          ${pathResult.nextNode || !pathResult.cleared ? `<button class="button ghost" data-action="home">${icon("home")}回主線</button>` : ""}
         </div>
       `;
     }
@@ -2812,6 +2857,7 @@
     next.daily = next.daily && typeof next.daily === "object" ? next.daily : {};
     next.pathUnlocks = next.pathUnlocks && typeof next.pathUnlocks === "object" ? next.pathUnlocks : {};
     next.pathGateAttempts = next.pathGateAttempts && typeof next.pathGateAttempts === "object" ? next.pathGateAttempts : {};
+    next.pathLessonRuns = next.pathLessonRuns && typeof next.pathLessonRuns === "object" ? next.pathLessonRuns : {};
     next.onboardingSeen = Boolean(next.onboardingSeen);
     return next;
   }
@@ -2901,6 +2947,18 @@
           total
         };
       }
+    }
+
+    if (currentQuiz.pathNodeId) {
+      const previous = records.pathLessonRuns[currentQuiz.pathNodeId] || {};
+      records.pathLessonRuns[currentQuiz.pathNodeId] = {
+        attempts: (previous.attempts || 0) + 1,
+        bestAccuracy: Math.max(previous.bestAccuracy || 0, accuracy),
+        lastAccuracy: accuracy,
+        lastScore: currentQuiz.score,
+        lastFinishedAt: finishedAt,
+        cleared: Boolean(previous.cleared || accuracy >= 70)
+      };
     }
 
     currentQuiz.unlockedAchievements = updateAchievements(records, currentQuiz, historyItem);
