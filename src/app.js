@@ -128,6 +128,18 @@
     { label: "級數 / ODE / 其他", keys: ["taylor", "power_series", "convergence_tests", "endpoint_root", "special_functions", "ode_intro", "complex"] }
   ];
 
+  const PATH_NODES = [
+    { id: "warmup", label: "新手暖身", short: "Warm", note: "R1-R2 基礎反射", pack: "beginner_warmup", mode: "quick", icon: "play", target: 12 },
+    { id: "recognition", label: "技巧辨識", short: "Tool", note: "先判斷該用哪把刀", pack: "technique_recognition", mode: "quick", icon: "target", target: 16 },
+    { id: "limit", label: "極限陷阱", short: "Limit", note: "Taylor / path / rationalize", pack: "mobile_sprint", topic: "limits", mode: "quick", icon: "zap", target: 18 },
+    { id: "chain", label: "鏈鎖律", short: "Chain", note: "一眼抓內外層", pack: "chain", topic: "derivatives", mode: "quick", icon: "git-branch", target: 14 },
+    { id: "usub", label: "U-sub", short: "Sub", note: "積分換元暖機", pack: "substitution", topic: "integrals", mode: "quick", icon: "shuffle", target: 14 },
+    { id: "ibp", label: "IBP", short: "IBP", note: "分部積分節奏", pack: "integration_by_parts", topic: "integrals", mode: "quick", icon: "repeat", target: 12 },
+    { id: "series", label: "審斂", short: "Series", note: "ratio / root / endpoint", pack: "convergence_tests", topic: "series", mode: "quick", icon: "list-checks", target: 16 },
+    { id: "multi", label: "多變數", short: "Multi", note: "偏導 / Hessian / Jacobian", pack: "multivariable", topic: "derivatives", mode: "quick", icon: "boxes", target: 18 },
+    { id: "boss", label: "Boss 挑戰", short: "Boss", note: "R5-R6 防強人題", pack: "boss_challenge", mode: "boss", icon: "trophy", target: 20, boss: true }
+  ];
+
   const KEYS = ["x", "pi", "e", "^", "sqrt(", "sin(", "cos(", "tan(", "log(", "abs(", "DNE"];
   const STORAGE_KEY = "buzzcalculus.records.v1";
   const ERROR_TAGS = ["粗心", "不會", "忘公式"];
@@ -432,12 +444,22 @@
     const recent30 = recentAnswerStats(records, 30);
     const recent7 = recentDaysStats(records, 7);
     const rank = rankProgress(records);
+    const path = learningPathState(records);
     const showIntro = !records.onboardingSeen && !(records.totalAnswered || 0);
 
     return `
       <main class="screen home-screen">
         ${showIntro ? renderFirstRunNotice() : ""}
-        <section class="learning-hero">
+        <section class="path-layout">
+          ${renderBuzzPath(path, mission)}
+          <aside class="path-sidebar">
+            ${renderPathMissionCard(records, mission, daily, path)}
+            ${renderPerformanceCard(records, accuracy, recent30, recent7)}
+            ${renderRankProgressCard(records, rank, accuracy)}
+          </aside>
+        </section>
+
+        <section class="learning-hero legacy-home-hero" hidden>
           <div class="mission-card">
             <p class="section-label">今日任務</p>
             <h2>${mission.done ? "今日任務已完成" : "開始今日練習"}</h2>
@@ -465,8 +487,6 @@
             ${renderRankProgressCard(records, rank, accuracy)}
           </aside>
         </section>
-
-        ${renderMobileLessonPath(records, mission, weaknesses, recent30)}
 
         <section class="learning-grid">
           ${renderWeaknessStudyCard(records, weaknesses, mistakeCount)}
@@ -517,10 +537,94 @@
         </div>
 
         <div class="mobile-start-dock">
-          <button class="button home-primary" data-action="start-daily">${icon("play")}每日選擇題</button>
+          <button class="button home-primary" data-action="start-path-node" data-node-id="${escapeAttr(path.next.id)}">${icon("play")}下一格</button>
           <button class="button secondary" data-action="start-choice">${icon("check")}快練</button>
         </div>
       </main>
+    `;
+  }
+
+  function renderBuzzPath(path, mission) {
+    const next = path.next;
+    const masteredCount = path.nodes.filter((node) => node.status === "mastered" || node.status === "gold").length;
+    const totalProgress = Math.round(path.nodes.reduce((sum, node) => sum + node.mastery, 0) / Math.max(1, path.nodes.length));
+    return `
+      <section class="buzz-path-card">
+        <div class="path-hero">
+          <div>
+            <p class="section-label">Buzz Path</p>
+            <h2>今天先推進下一格</h2>
+            <p>${escapeHtml(next.label)} · ${escapeHtml(next.note)}</p>
+          </div>
+          <div class="path-hero-actions">
+            <div class="path-score-pill"><span>Path</span><strong>${totalProgress}%</strong></div>
+            <button class="button home-primary" data-action="start-path-node" data-node-id="${escapeAttr(next.id)}">${icon("play")}開始下一格</button>
+          </div>
+        </div>
+
+        <div class="path-progress-strip">
+          <div><span>已熟練</span><strong>${masteredCount}/${path.nodes.length}</strong></div>
+          <div><span>今日任務</span><strong>${mission.progress}%</strong></div>
+          <div><span>下一格</span><strong>${escapeHtml(next.short)}</strong></div>
+        </div>
+
+        <div class="buzz-path-map" aria-label="BuzzCalculus learning path">
+          ${path.nodes.map((node, index) => renderPathNode(node, index)).join("")}
+        </div>
+      </section>
+    `;
+  }
+
+  function renderPathNode(node, index) {
+    const disabled = node.locked ? "disabled" : "";
+    const statusText = {
+      locked: "未解鎖",
+      ready: "可開始",
+      active: "進行中",
+      mastered: "熟練",
+      gold: "金色"
+    }[node.status] || "可開始";
+    return `
+      <div class="path-step ${index % 2 ? "is-offset" : ""} is-${node.status}">
+        <div class="path-rail" aria-hidden="true"></div>
+        <button class="path-node-button" data-action="start-path-node" data-node-id="${escapeAttr(node.id)}" ${disabled}>
+          <span class="path-node-ring">
+            <span class="path-node-core">${node.locked ? icon("lock") : icon(node.icon)}</span>
+          </span>
+          <span class="path-node-copy">
+            <strong>${escapeHtml(node.label)}</strong>
+            <small>${escapeHtml(node.note)}</small>
+          </span>
+          <span class="path-node-meta">
+            <span>${statusText}</span>
+            <strong>${node.mastery}%</strong>
+          </span>
+        </button>
+      </div>
+    `;
+  }
+
+  function renderPathMissionCard(records, mission, daily, path) {
+    const mistakeCount = Object.keys(records.mistakes || {}).length;
+    const next = path.next;
+    const boss = path.nodes.find((node) => node.id === "boss") || path.nodes[path.nodes.length - 1];
+    return `
+      <section class="summary-card path-mission-card">
+        <p class="section-label">今日 3 件事</p>
+        <div class="path-task ${mission.done ? "is-done" : ""}">
+          <span>${mission.done ? icon("check") : icon("calendar")}</span>
+          <div><strong>完成今日題組</strong><small>${mission.completed}/${mission.target} 題${daily ? ` · ${daily.accuracy}%` : ""}</small></div>
+        </div>
+        <div class="path-task ${mistakeCount ? "" : "is-done"}">
+          <span>${mistakeCount ? icon("refresh") : icon("check")}</span>
+          <div><strong>修復錯題</strong><small>${mistakeCount ? `${mistakeCount} 題待修` : "目前乾淨"}</small></div>
+        </div>
+        <div class="path-task ${boss.mastery >= 70 ? "is-done" : ""}">
+          <span>${boss.mastery >= 70 ? icon("check") : icon("trophy")}</span>
+          <div><strong>打一題 Boss</strong><small>${boss.mastery}% 熟練度</small></div>
+        </div>
+        <button class="button secondary" data-action="start-path-node" data-node-id="${escapeAttr(next.id)}">${icon("play")}練 ${escapeHtml(next.label)}</button>
+      </section>
     `;
   }
 
@@ -1453,6 +1557,7 @@
       selectedAnswerMode = "choice";
       startQuiz();
     }
+    if (action === "start-path-node") startPathNode(actionNode.dataset.nodeId);
     if (action === "choose-answer") submitChoiceAnswer(actionNode.dataset.choice || "");
     if (action === "show-hint") showHint();
     if (action === "skip") recordAnswer({ status: "wrong", reason: "Skipped", input: quiz.draft || "" });
@@ -1526,6 +1631,15 @@
       selectedMode = previous.mode === "daily" ? "quick" : previous.mode || selectedMode;
       if (MODES[selectedMode] && MODES[selectedMode].hidden) selectedMode = "quick";
     }
+    startQuiz();
+  }
+
+  function startPathNode(nodeId) {
+    const node = PATH_NODES.find((item) => item.id === nodeId) || PATH_NODES[0];
+    selectedMode = node.mode || "quick";
+    selectedTopic = node.topic || "all";
+    selectedPack = node.pack || "all";
+    selectedAnswerMode = "choice";
     startQuiz();
   }
 
@@ -2729,6 +2843,67 @@
       remaining: Math.max(0, next.total - total),
       progress
     };
+  }
+
+  function learningPathState(records) {
+    const nodes = PATH_NODES.map((node, index) => pathNodeState(node, records, index));
+    nodes.forEach((node, index) => {
+      const previous = nodes[index - 1];
+      const masteredBefore = nodes.slice(0, index).filter((item) => item.status === "mastered" || item.status === "gold").length;
+      const shouldLock = (index > 0 && previous && previous.mastery < 35 && node.attempts === 0) || (node.boss && masteredBefore < 4);
+      if (shouldLock) {
+        node.locked = true;
+        node.status = "locked";
+      }
+    });
+    const next = nodes.find((node) => !node.locked && node.status !== "mastered" && node.status !== "gold") || nodes.find((node) => !node.locked) || nodes[0];
+    return { nodes, next };
+  }
+
+  function pathNodeState(node, records, index) {
+    const related = pathNodeProblems(node);
+    let attempts = 0;
+    let correct = 0;
+    let unique = 0;
+    let mistakes = 0;
+    related.forEach((problem) => {
+      const stat = records.problemStats?.[problem.id];
+      if (stat && stat.total) {
+        attempts += Number(stat.total || 0);
+        correct += Number(stat.correct || 0);
+        unique += 1;
+      }
+      if (records.mistakes?.[problem.id]) mistakes += 1;
+    });
+    const accuracy = attempts ? correct / attempts : 0;
+    const target = Math.max(1, node.target || 12);
+    const breadthTarget = Math.max(1, Math.min(target, related.length || target));
+    const volumeScore = Math.min(1, attempts / target) * 35;
+    const breadthScore = Math.min(1, unique / breadthTarget) * 25;
+    const accuracyScore = attempts ? accuracy * 40 : 0;
+    const mistakePenalty = Math.min(22, mistakes * 4);
+    const mastery = Math.max(0, Math.min(100, Math.round(volumeScore + breadthScore + accuracyScore - mistakePenalty)));
+    const status = mastery >= 90 ? "gold" : mastery >= 70 ? "mastered" : attempts ? "active" : index === 0 ? "ready" : "ready";
+    return {
+      ...node,
+      relatedCount: related.length,
+      attempts,
+      correct,
+      unique,
+      mistakes,
+      accuracy: attempts ? Math.round(accuracy * 100) : null,
+      mastery,
+      locked: false,
+      status
+    };
+  }
+
+  function pathNodeProblems(node) {
+    return problems.filter((problem) => {
+      if (node.topic && problem.topic !== node.topic) return false;
+      if (node.pack && node.pack !== "all" && !matchesPack(problem, node.pack)) return false;
+      return true;
+    });
   }
 
   function topWeaknesses(records) {
