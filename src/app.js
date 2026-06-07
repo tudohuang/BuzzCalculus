@@ -502,6 +502,7 @@
     return `
       <main class="screen home-screen">
         ${showIntro ? renderFirstRunNotice() : ""}
+        ${renderMobileQuestCard(mission, daily, path, mistakeCount)}
         <section class="path-layout home-path-layout">
           ${renderBuzzPath(path, mission)}
           <aside class="path-sidebar">
@@ -511,10 +512,7 @@
 
         ${renderHomeMorePanel(records, weaknesses, mistakeCount)}
 
-        <div class="mobile-start-dock">
-          <button class="button home-primary" data-action="start-path-node" data-node-id="${escapeAttr(path.next.id)}">${icon("play")}下一格</button>
-          <button class="button secondary" data-action="start-choice">${icon("check")}快練</button>
-        </div>
+        ${renderMobileStartDock(path, mission)}
       </main>
     `;
   }
@@ -555,13 +553,13 @@
         </div>
 
         <div class="buzz-path-map" aria-label="BuzzCalculus learning path">
-          ${path.nodes.map((node, index) => renderPathNode(node, index)).join("")}
+          ${path.nodes.map((node, index) => renderPathNode(node, index, node.id === next.id)).join("")}
         </div>
       </section>
     `;
   }
 
-  function renderPathNode(node, index) {
+  function renderPathNode(node, index, isNext = false) {
     const statusText = {
       jump: "可跳關",
       ready: "可開始",
@@ -569,17 +567,64 @@
       mastered: "熟練",
       gold: "金色"
     }[node.status] || "可開始";
+    const label = isNext ? "下一格" : statusText;
     return `
-      <div class="path-step is-${node.status}">
-        <button class="path-node-button" data-action="start-path-node" data-node-id="${escapeAttr(node.id)}" aria-label="${escapeAttr(`${node.label}，${statusText}`)}" title="${escapeAttr(`${node.label} · ${statusText}`)}">
+      <div class="path-step is-${node.status} ${isNext ? "is-next" : ""}">
+        <button class="path-node-button" data-action="start-path-node" data-node-id="${escapeAttr(node.id)}" aria-label="${escapeAttr(`${node.label}，${label}`)}" title="${escapeAttr(`${node.label} · ${label}`)}">
           <span class="path-node-ring">
             <span class="path-node-core">${icon(node.icon)}</span>
           </span>
           <span class="path-node-copy">
             <strong>${escapeHtml(node.short)}</strong>
-            <small>${statusText}</small>
+            <small>${label} · ${node.relatedCount} 題</small>
           </span>
-          <span class="path-node-progress">${node.mastery}%</span>
+          <span class="path-node-progress">${isNext ? `${index + 1}` : `${node.mastery}%`}</span>
+        </button>
+      </div>
+    `;
+  }
+
+  function renderMobileQuestCard(mission, daily, path, mistakeCount) {
+    const next = path.next;
+    const streak = mission.dailyStreak || 0;
+    return `
+      <section class="mobile-quest-card">
+        <div class="mobile-quest-head">
+          <div>
+            <p class="section-label">今日</p>
+            <h2>${mission.done ? "完成" : `${mission.completed}/${mission.target}`}</h2>
+          </div>
+          <span>${streak ? `${streak} 天` : "新任務"}</span>
+        </div>
+        <div class="mission-progress" aria-label="今日任務進度">
+          <div class="meter-track"><div class="meter-fill" style="width:${mission.progress}%"></div></div>
+        </div>
+        <div class="mobile-quest-next">
+          <span>下一格</span>
+          <strong>${escapeHtml(next.short)}</strong>
+          <small>${daily ? `${daily.accuracy}%` : escapeHtml(next.note)}</small>
+        </div>
+        <div class="mobile-quest-actions">
+          <button data-action="start-path-node" data-node-id="${escapeAttr(next.id)}">${icon("play")}主線</button>
+          <button data-action="start-daily">${icon("calendar")}每日</button>
+          <button data-action="start-weakness" ${mistakeCount ? "" : "disabled"}>${icon("refresh")}${mistakeCount ? "弱點" : "錯題"}</button>
+        </div>
+      </section>
+    `;
+  }
+
+  function renderMobileStartDock(path, mission) {
+    const next = path.next;
+    return `
+      <div class="mobile-start-dock">
+        <button class="button home-primary" data-action="start-path-node" data-node-id="${escapeAttr(next.id)}">
+          ${icon("play")}
+          <span>開始下一格</span>
+          <small>${escapeHtml(next.short)}</small>
+        </button>
+        <button class="button secondary" data-action="start-daily">
+          ${icon("calendar")}
+          <span>${mission.done ? "每日" : `${mission.completed}/${mission.target}`}</span>
         </button>
       </div>
     `;
