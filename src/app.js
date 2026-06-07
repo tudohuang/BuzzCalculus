@@ -436,105 +436,24 @@
     if (!TRAINING_PACKS[selectedPack]) selectedPack = "all";
     const records = loadRecords();
     const mistakeCount = Object.keys(records.mistakes || {}).length;
-    const accuracy = overallAccuracy(records);
     const today = new Date().toISOString().slice(0, 10);
     const daily = records.daily && records.daily[today];
     const mission = dailyMissionInfo(records, daily);
     const weaknesses = topWeaknesses(records);
-    const recent30 = recentAnswerStats(records, 30);
-    const recent7 = recentDaysStats(records, 7);
-    const rank = rankProgress(records);
     const path = learningPathState(records);
     const showIntro = !records.onboardingSeen && !(records.totalAnswered || 0);
 
     return `
       <main class="screen home-screen">
         ${showIntro ? renderFirstRunNotice() : ""}
-        <section class="path-layout">
+        <section class="path-layout home-path-layout">
           ${renderBuzzPath(path, mission)}
           <aside class="path-sidebar">
             ${renderPathMissionCard(records, mission, daily, path)}
-            ${renderPerformanceCard(records, accuracy, recent30, recent7)}
-            ${renderRankProgressCard(records, rank, accuracy)}
           </aside>
         </section>
 
-        <section class="learning-hero legacy-home-hero" hidden>
-          <div class="mission-card">
-            <p class="section-label">今日任務</p>
-            <h2>${mission.done ? "今日任務已完成" : "開始今日練習"}</h2>
-            <p>${mission.done ? `${mission.completed}/${mission.target} 題 · ${daily.accuracy}%` : `${mission.target} 題 · 今日題組`}</p>
-            <div class="mission-progress" aria-label="今日任務進度">
-              <div class="mission-progress-top">
-                <span>${mission.completed} / ${mission.target} 題</span>
-                <strong>${mission.progress}%</strong>
-              </div>
-              <div class="meter-track"><div class="meter-fill" style="width:${mission.progress}%"></div></div>
-            </div>
-            <div class="mission-suggestion">
-              <span>範圍</span>
-              <div>${renderWeaknessChips(weaknesses)}</div>
-            </div>
-            <div class="home-actions">
-              <button class="button home-primary" data-action="start-daily">${icon("play")}開始今日練習</button>
-              <button class="button secondary" data-action="start-weakness">${icon("refresh")}弱點複習</button>
-              <button class="button ghost" data-action="start-choice">${icon("check")}選擇題快練</button>
-            </div>
-          </div>
-
-          <aside class="learning-summary">
-            ${renderPerformanceCard(records, accuracy, recent30, recent7)}
-            ${renderRankProgressCard(records, rank, accuracy)}
-          </aside>
-        </section>
-
-        <section class="learning-grid">
-          ${renderWeaknessStudyCard(records, weaknesses, mistakeCount)}
-          ${renderBrandFocusCard(records, weaknesses)}
-        </section>
-
-        <div class="practice-workspace">
-          <section class="control-band practice-control">
-            <div class="home-control-head">
-              <div>
-                <p class="section-label">練習設定</p>
-                <h3>自訂練習</h3>
-              </div>
-              <div class="home-selected-pill">${packAvailabilityText(selectedPack)}</div>
-            </div>
-
-            <div class="home-control-grid">
-              <div class="control-section">
-                <p class="section-label">模式</p>
-                ${renderModePicker()}
-              </div>
-
-              <div class="control-section">
-                <p class="section-label">練習範圍</p>
-                ${renderTopicPicker()}
-              </div>
-
-              <div class="control-section">
-                <p class="section-label">作答形式</p>
-                ${renderAnswerModePicker()}
-              </div>
-            </div>
-
-            <div class="pack-picker home-pack compact-pack">
-              <label for="pack-select">
-                <span>題包</span>
-                <select id="pack-select" data-pack-select aria-label="題包選擇">
-                  ${renderPackOptions()}
-                </select>
-              </label>
-            </div>
-            <div class="action-row">
-              <button class="button ghost custom-start" data-action="start">${icon("play")}自訂開始</button>
-            </div>
-          </section>
-
-          ${renderDataManagementCard(records)}
-        </div>
+        ${renderHomeMorePanel(records, weaknesses, mistakeCount)}
 
         <div class="mobile-start-dock">
           <button class="button home-primary" data-action="start-path-node" data-node-id="${escapeAttr(path.next.id)}">${icon("play")}下一格</button>
@@ -548,24 +467,35 @@
     const next = path.next;
     const masteredCount = path.nodes.filter((node) => node.status === "mastered" || node.status === "gold").length;
     const totalProgress = Math.round(path.nodes.reduce((sum, node) => sum + node.mastery, 0) / Math.max(1, path.nodes.length));
+    const nextIndex = Math.max(0, path.nodes.findIndex((node) => node.id === next.id));
     return `
       <section class="buzz-path-card">
         <div class="path-hero">
-          <div>
+          <div class="path-hero-copy">
             <p class="section-label">Buzz Path</p>
-            <h2>今天先推進下一格</h2>
-            <p>${escapeHtml(next.label)} · ${escapeHtml(next.note)}</p>
-          </div>
-          <div class="path-hero-actions">
-            <div class="path-score-pill"><span>Path</span><strong>${totalProgress}%</strong></div>
-            <button class="button home-primary" data-action="start-path-node" data-node-id="${escapeAttr(next.id)}">${icon("play")}開始下一格</button>
+            <h2>下一格：${escapeHtml(next.label)}</h2>
+            <p>${escapeHtml(next.note)}</p>
           </div>
         </div>
 
-        <div class="path-progress-strip">
-          <div><span>已熟練</span><strong>${masteredCount}/${path.nodes.length}</strong></div>
-          <div><span>今日任務</span><strong>${mission.progress}%</strong></div>
-          <div><span>下一格</span><strong>${escapeHtml(next.short)}</strong></div>
+        <div class="next-lesson-card">
+          <span class="path-node-ring next-lesson-ring">
+            <span class="path-node-core">${icon(next.icon)}</span>
+          </span>
+          <div class="next-lesson-copy">
+            <span>第 ${nextIndex + 1} 格</span>
+            <strong>${escapeHtml(next.label)}</strong>
+            <small>${escapeHtml(next.note)}</small>
+          </div>
+          <button class="button home-primary" data-action="start-path-node" data-node-id="${escapeAttr(next.id)}">${icon("play")}開始</button>
+        </div>
+
+        <div class="path-progress-line">
+          <div>
+            <span>已熟練 ${masteredCount}/${path.nodes.length}</span>
+            <strong>${totalProgress}%</strong>
+          </div>
+          <div class="meter-track"><div class="meter-fill" style="width:${totalProgress}%"></div></div>
         </div>
 
         <div class="buzz-path-map" aria-label="BuzzCalculus learning path">
@@ -585,20 +515,16 @@
       gold: "金色"
     }[node.status] || "可開始";
     return `
-      <div class="path-step ${index % 2 ? "is-offset" : ""} is-${node.status}">
-        <div class="path-rail" aria-hidden="true"></div>
-        <button class="path-node-button" data-action="start-path-node" data-node-id="${escapeAttr(node.id)}" ${disabled}>
+      <div class="path-step is-${node.status}">
+        <button class="path-node-button" data-action="start-path-node" data-node-id="${escapeAttr(node.id)}" aria-label="${escapeAttr(`${node.label}，${statusText}`)}" title="${escapeAttr(`${node.label} · ${statusText}`)}" ${disabled}>
           <span class="path-node-ring">
             <span class="path-node-core">${node.locked ? icon("lock") : icon(node.icon)}</span>
           </span>
           <span class="path-node-copy">
-            <strong>${escapeHtml(node.label)}</strong>
-            <small>${escapeHtml(node.note)}</small>
+            <strong>${escapeHtml(node.short)}</strong>
+            <small>${statusText}</small>
           </span>
-          <span class="path-node-meta">
-            <span>${statusText}</span>
-            <strong>${node.mastery}%</strong>
-          </span>
+          <span class="path-node-progress">${node.locked ? "" : `${node.mastery}%`}</span>
         </button>
       </div>
     `;
@@ -608,22 +534,81 @@
     const mistakeCount = Object.keys(records.mistakes || {}).length;
     const next = path.next;
     const boss = path.nodes.find((node) => node.id === "boss") || path.nodes[path.nodes.length - 1];
+    const bossDisabled = boss.locked ? "disabled" : "";
     return `
       <section class="summary-card path-mission-card">
-        <p class="section-label">今日 3 件事</p>
-        <div class="path-task ${mission.done ? "is-done" : ""}">
-          <span>${mission.done ? icon("check") : icon("calendar")}</span>
-          <div><strong>完成今日題組</strong><small>${mission.completed}/${mission.target} 題${daily ? ` · ${daily.accuracy}%` : ""}</small></div>
+        <div class="path-mission-head">
+          <p class="section-label">今日</p>
+          <h3>${mission.done ? "已完成" : `${mission.completed}/${mission.target} 題`}</h3>
+          <span>${daily ? `${daily.accuracy}% 正確率` : "選擇題優先"}</span>
         </div>
-        <div class="path-task ${mistakeCount ? "" : "is-done"}">
-          <span>${mistakeCount ? icon("refresh") : icon("check")}</span>
-          <div><strong>修復錯題</strong><small>${mistakeCount ? `${mistakeCount} 題待修` : "目前乾淨"}</small></div>
+        <div class="mission-progress" aria-label="今日任務進度">
+          <div class="meter-track"><div class="meter-fill" style="width:${mission.progress}%"></div></div>
         </div>
-        <div class="path-task ${boss.mastery >= 70 ? "is-done" : ""}">
-          <span>${boss.mastery >= 70 ? icon("check") : icon("trophy")}</span>
-          <div><strong>打一題 Boss</strong><small>${boss.mastery}% 熟練度</small></div>
+        <div class="path-mini-actions">
+          <button class="path-mini-button" data-action="start-daily"><strong>每日</strong><span>${mission.progress}%</span></button>
+          <button class="path-mini-button" data-action="start-weakness"><strong>錯題</strong><span>${mistakeCount}</span></button>
+          <button class="path-mini-button" data-action="start-path-node" data-node-id="${escapeAttr(boss.id)}" ${bossDisabled}><strong>Boss</strong><span>${boss.locked ? "鎖定" : `${boss.mastery}%`}</span></button>
         </div>
-        <button class="button secondary" data-action="start-path-node" data-node-id="${escapeAttr(next.id)}">${icon("play")}練 ${escapeHtml(next.label)}</button>
+        <button class="button secondary" data-action="start-path-node" data-node-id="${escapeAttr(next.id)}">${icon("play")}練下一格</button>
+      </section>
+    `;
+  }
+
+  function renderHomeMorePanel(records, weaknesses, mistakeCount) {
+    return `
+      <section class="home-more">
+        <details class="home-more-panel">
+          <summary>
+            <span>
+              <strong>更多練習</strong>
+              <small>自訂題包、錯題、本機資料</small>
+            </span>
+            ${icon("chevron-down")}
+          </summary>
+          <div class="home-more-grid">
+            ${renderWeaknessStudyCard(records, weaknesses, mistakeCount)}
+            ${renderDataManagementCard(records)}
+            <section class="control-band practice-control home-compact-control">
+              <div class="home-control-head">
+                <div>
+                  <p class="section-label">自訂</p>
+                  <h3>指定題包</h3>
+                </div>
+                <div class="home-selected-pill">${packAvailabilityText(selectedPack)}</div>
+              </div>
+
+              <div class="home-control-grid">
+                <div class="control-section">
+                  <p class="section-label">模式</p>
+                  ${renderModePicker()}
+                </div>
+
+                <div class="control-section">
+                  <p class="section-label">範圍</p>
+                  ${renderTopicPicker()}
+                </div>
+
+                <div class="control-section">
+                  <p class="section-label">形式</p>
+                  ${renderAnswerModePicker()}
+                </div>
+              </div>
+
+              <div class="pack-picker home-pack compact-pack">
+                <label for="pack-select">
+                  <span>題包</span>
+                  <select id="pack-select" data-pack-select aria-label="題包選擇">
+                    ${renderPackOptions()}
+                  </select>
+                </label>
+              </div>
+              <div class="action-row">
+                <button class="button ghost custom-start" data-action="start">${icon("play")}自訂開始</button>
+              </div>
+            </section>
+          </div>
+        </details>
       </section>
     `;
   }
