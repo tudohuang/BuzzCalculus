@@ -15,8 +15,6 @@
 
 [立即開始訓練](https://tudohuang.github.io/BuzzCalculus/)
 
-[下載 PDF 作業本](workbook/buzzcalculus_workbook.pdf)
-
 ---
 
 ## 為什麼需要 BuzzCalculus
@@ -93,9 +91,127 @@ BuzzCalculus 要練的就是這件事。
 - **段位與主線進度**
 - **作答歷史**
 - **JSON 匯出 / 匯入**
-- **PDF 作業本輸出**
+- **作業本式題目整理**
 
 全部都不需要後端。
+
+---
+
+## 題目 Demo
+
+完整題庫在網站內練習。這裡只放幾題展示 BuzzCalculus 的題感。
+
+### 簡單題
+
+**1. 標準極限**
+
+求：
+
+$$
+\lim_{x \to 0} \frac{\sin x}{x}
+$$
+
+答案：$1$
+
+技巧：標準極限
+
+**2. 基礎微分**
+
+求：
+
+$$
+\frac{d}{dx}\left(x^2 e^x\right)
+$$
+
+答案：$e^x(x^2+2x)$
+
+技巧：Product Rule
+
+**3. 基礎積分**
+
+求：
+
+$$
+\int 2x\cos(x^2)\,dx
+$$
+
+答案：$\sin(x^2)+C$
+
+技巧：u-substitution
+
+### 進階題
+
+**1. Taylor 極限**
+
+求：
+
+$$
+\lim_{x \to 0} \frac{\ln(1+x)-x+\frac{x^2}{2}}{x^3}
+$$
+
+答案：$\frac{1}{3}$
+
+技巧：Taylor Expansion
+
+**2. Frullani Integral**
+
+求：
+
+$$
+\int_0^\infty \frac{e^{-2x}-e^{-5x}}{x}\,dx
+$$
+
+答案：$\ln\frac{5}{2}$
+
+技巧：Frullani Integral
+
+**3. Lagrange Multiplier**
+
+在 $x^2+y^2=1$ 下，求 $f(x,y)=3x+4y$ 的最大值。
+
+答案：$5$
+
+技巧：Cauchy / Lagrange Multiplier
+
+### 魔王題
+
+**1. 多變數路徑陷阱**
+
+判斷極限是否存在：
+
+$$
+\lim_{(x,y)\to(0,0)} \frac{x^2y}{x^4+y^2}
+$$
+
+答案：不存在
+
+技巧：Path Test
+
+**2. Beta Function**
+
+求：
+
+$$
+\int_0^1 x^{2}(1-x)^3\,dx
+$$
+
+答案：$\frac{1}{60}$
+
+技巧：Beta Function
+
+**3. Jacobian Change of Variables**
+
+令 $u=x+y,\ v=x-y$。求變換 $(x,y)\mapsto(u,v)$ 的 Jacobian determinant：
+
+$$
+\left|\frac{\partial(u,v)}{\partial(x,y)}\right|
+$$
+
+答案：$2$
+
+技巧：Jacobian
+
+完整作業本內容未公開，未來可能整理成正式版本。
 
 ---
 
@@ -251,14 +367,6 @@ node tools/validate_path_nodes.js
 node tools/validate_answer_checker.js
 node tools/smoke_app_render.js
 ```
-
-產生 PDF 作業本：
-
-```bash
-node tools/generate_workbook.js
-```
-
----
 
 ## Note
 
