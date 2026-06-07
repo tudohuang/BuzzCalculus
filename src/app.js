@@ -1491,7 +1491,7 @@
       render();
     }
     if (action === "finish-now") finishQuiz();
-    if (action === "restart") startQuiz();
+    if (action === "restart") restartQuiz();
     if (action === "home") {
       stopTicker();
       quiz = null;
@@ -1516,6 +1516,17 @@
     if (!pool.length) return;
     selectedMode = "mistakes";
     startQuiz(pool);
+  }
+
+  function restartQuiz() {
+    const previous = quiz;
+    if (previous) {
+      selectedTopic = previous.topic || selectedTopic;
+      selectedAnswerMode = previous.answerMode || selectedAnswerMode;
+      selectedMode = previous.mode === "daily" ? "quick" : previous.mode || selectedMode;
+      if (MODES[selectedMode] && MODES[selectedMode].hidden) selectedMode = "quick";
+    }
+    startQuiz();
   }
 
   function startWeaknessPractice() {
