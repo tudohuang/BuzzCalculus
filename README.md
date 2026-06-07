@@ -175,41 +175,47 @@ $$
 
 ### 魔王題
 
-**1. 多變數路徑陷阱**
-
-判斷極限是否存在：
-
-$$
-\lim_{(x,y)\to(0,0)} \frac{x^2y}{x^4+y^2}
-$$
-
-答案：不存在
-
-技巧：Path Test
-
-**2. Beta Function**
+**1. Frullani + Inverse Trig**
 
 求：
 
 $$
-\int_0^1 x^{2}(1-x)^3\,dx
+\int_0^\infty \frac{\arctan(5x)-\arctan(2x)}{x}\,dx
 $$
 
-答案：$\frac{1}{60}$
+答案：$\frac{\pi}{2}\ln\frac{5}{2}$
 
-技巧：Beta Function
+技巧：Frullani Integral / Parameter Scaling
 
-**3. Jacobian Change of Variables**
+**2. Jacobian Chain Rule**
 
-令 $u=x+y,\ v=x-y$。求變換 $(x,y)\mapsto(u,v)$ 的 Jacobian determinant：
+令
 
 $$
-\left|\frac{\partial(u,v)}{\partial(x,y)}\right|
+u=2x+y,\quad v=x+3y,\quad p=u^2-v^2,\quad q=2uv.
 $$
 
-答案：$2$
+求：
 
-技巧：Jacobian
+$$
+\frac{\partial(p,q)}{\partial(x,y)}
+$$
+
+答案：$20\left((2x+y)^2+(x+3y)^2\right)$
+
+技巧：Jacobian Chain Rule / Complex Squaring
+
+**3. Complex Residue**
+
+求：
+
+$$
+\frac{1}{2\pi i}\oint_{|z|=2}\frac{e^z}{z^3(z-1)}\,dz
+$$
+
+答案：$e-\frac{5}{2}$
+
+技巧：Residue Theorem / Laurent Expansion
 
 完整作業本內容未公開，未來可能整理成正式版本。
 
