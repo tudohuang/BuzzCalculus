@@ -141,6 +141,59 @@
     { id: "boss", label: "Boss 挑戰", short: "Boss", note: "R5-R6 防強人題，可直接挑戰", pack: "boss_challenge", mode: "boss", icon: "trophy", target: 20, boss: true }
   ];
 
+  const PATH_LESSONS = {
+    onevar_limit: {
+      focus: "先判斷能不能直接代入；不行再看化簡、標準極限或 Taylor。",
+      bullets: ["0/0 通常先因式分解、約分或有理化。", "sin x / x、(1-cos x)/x^2、log(1+x) 是高頻核心。", "高階小量相減時，Taylor 通常最快。"],
+      example: "\\lim_{x\\to 0}\\frac{\\sin x}{x}=1"
+    },
+    onevar_diff: {
+      focus: "單變微分的重點是先看外層，再處理內層。",
+      bullets: ["乘積、商數、鏈鎖律要先判型。", "log 微分適合冪次、乘除混合的式子。", "隱微分時 y 是 y(x)，微分 y 要補 y'。"],
+      example: "\\frac{d}{dx}\\sin(x^2)=2x\\cos(x^2)"
+    },
+    basic_integral: {
+      focus: "基礎積分先反向看微分表，不急著套高級技巧。",
+      bullets: ["冪次、指數、三角函數先用基本表。", "定積分要注意上下限與對稱。", "答案差一個常數仍是同一個不定積分。"],
+      example: "\\int x^n\\,dx=\\frac{x^{n+1}}{n+1}+C"
+    },
+    usub: {
+      focus: "看到內函數和它的導數同時出現，就先想 U-sub。",
+      bullets: ["先找最複雜的內層當 u。", "du 要能吃掉剩下的因子。", "定積分換元後上下限也要一起換。"],
+      example: "\\int x e^{x^2}\\,dx"
+    },
+    ibp: {
+      focus: "分部積分用在一個因子會變簡單、另一個因子容易積的情況。",
+      bullets: ["常見選擇：log、反三角、x^n 優先微分。", "e^x、sin x、cos x 通常拿去積分。", "循環分部時要把原積分移回同一邊。"],
+      example: "\\int x e^x\\,dx"
+    },
+    integral_tools: {
+      focus: "技巧積分先判形狀，再選工具，不要硬算。",
+      bullets: ["有理函數先想 partial fraction。", "根式 a^2-x^2、x^2+a^2 常對應三角代換。", "對稱定積分、Frullani、廣義積分要先看條件。"],
+      example: "\\int \\frac{1}{x^2-1}\\,dx"
+    },
+    series: {
+      focus: "級數先做快速排除，再選審斂法。",
+      bullets: ["第 n 項不趨近 0，直接發散。", "p-series、幾何級數先認出來。", "冪級數半徑用 ratio/root，端點要另外檢查。"],
+      example: "\\sum_{n=1}^{\\infty}\\frac{1}{n^p}"
+    },
+    multivariable: {
+      focus: "多變數先分清楚：極限看路徑，偏導固定其他變數，積分看區域。",
+      bullets: ["多變極限常用路徑測試或極座標。", "偏導時其他變數先當常數。", "二重積分先畫區域，再決定是否換序或換座標。"],
+      example: "\\lim_{(x,y)\\to(0,0)}\\frac{xy}{x^2+y^2}"
+    },
+    advanced_tools: {
+      focus: "進階工具不是硬算，是先辨識結構。",
+      bullets: ["Hessian 用來判斷多變數極值。", "Jacobian 負責變數變換的面積倍率。", "LM、Nabla、複變題先判定使用哪個框架。"],
+      example: "\\det\\frac{\\partial(u,v)}{\\partial(x,y)}"
+    },
+    boss: {
+      focus: "Boss 題混合多種技巧，第一步永遠是判型。",
+      bullets: ["先判斷題目屬於極限、微分、積分、級數或多變數。", "看到特殊結構先想工具，不要直接展開硬算。", "速度來自少走錯路，不只是算得快。"],
+      example: "\\text{identify the tool first}"
+    }
+  };
+
   const KEYS = ["x", "pi", "e", "^", "sqrt(", "sin(", "cos(", "tan(", "log(", "abs(", "DNE"];
   const STORAGE_KEY = "buzzcalculus.records.v1";
   const ERROR_TAGS = ["粗心", "不會", "忘公式"];
@@ -157,6 +210,7 @@
   let selectedMistakeTopic = "all";
   let selectedHistoryTopic = "all";
   let quiz = null;
+  let activePathNodeId = "";
   let tickHandle = null;
   let renderPending = false;
   let lastVisibilityStamp = 0;
@@ -247,6 +301,7 @@
   function renderScreen() {
     if (view === "quiz") return renderQuiz();
     if (view === "results") return renderResults();
+    if (view === "path-intro") return renderPathIntro();
     if (view === "mistakes") return renderMistakes();
     if (view === "history") return renderHistory();
     return renderHome();
@@ -551,6 +606,75 @@
         </div>
         <button class="button secondary" data-action="start-path-node" data-node-id="${escapeAttr(next.id)}">${icon("play")}練下一格</button>
       </section>
+    `;
+  }
+
+  function renderPathIntro() {
+    const records = loadRecords();
+    const path = learningPathState(records);
+    const node = path.nodes.find((item) => item.id === activePathNodeId) || path.next || path.nodes[0];
+    const lesson = PATH_LESSONS[node.id] || {
+      focus: node.note,
+      bullets: ["先判斷題型，再選擇最短工具。"],
+      example: ""
+    };
+    const index = Math.max(0, path.nodes.findIndex((item) => item.id === node.id));
+    const unlocked = !node.gated || pathGateUnlocked(records, node.id);
+    const gate = pathGateInfo(node);
+    return `
+      <main class="screen path-intro-screen">
+        <section class="path-intro-card">
+          <div class="path-intro-head">
+            <button class="button ghost" data-action="home">${icon("home")}回主線</button>
+            <span>第 ${index + 1} 關 · ${node.relatedCount} 題</span>
+          </div>
+          <div class="path-intro-main">
+            <span class="path-node-ring next-lesson-ring">
+              <span class="path-node-core">${icon(node.icon)}</span>
+            </span>
+            <div>
+              <p class="section-label">${node.gated && !unlocked ? "跳關前測" : "關卡簡介"}</p>
+              <h2>${escapeHtml(node.label)}</h2>
+              <p>${escapeHtml(lesson.focus)}</p>
+            </div>
+          </div>
+
+          <div class="path-lesson-grid">
+            <section class="path-lesson-panel">
+              <h3>先記這幾件事</h3>
+              <ul>
+                ${lesson.bullets.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}
+              </ul>
+            </section>
+            <section class="path-lesson-panel">
+              <h3>本關目標</h3>
+              <div class="path-intro-stats">
+                <div><span>熟練度</span><strong>${node.mastery}%</strong></div>
+                <div><span>已練</span><strong>${node.unique}/${node.relatedCount}</strong></div>
+                <div><span>題數</span><strong>${(MODES[node.mode] || MODES.quick).count}</strong></div>
+              </div>
+              ${lesson.example ? `<div class="path-example math-block" data-tex="${escapeAttr(lesson.example)}"></div>` : ""}
+            </section>
+          </div>
+
+          ${
+            unlocked
+              ? `
+                <div class="path-intro-actions">
+                  <button class="button home-primary" data-action="start-path-lesson" data-node-id="${escapeAttr(node.id)}">${icon("play")}開始本關</button>
+                  <button class="button secondary" data-action="home">${icon("home")}稍後再練</button>
+                </div>`
+              : `
+                <div class="path-gate-box">
+                  <div>
+                    <strong>這是跳關</strong>
+                    <span>先完成 ${gate.total} 題小測驗，答對 ${gate.required} 題即可進入本關。</span>
+                  </div>
+                  <button class="button home-primary" data-action="start-path-gate" data-node-id="${escapeAttr(node.id)}">${icon("play")}開始小測驗</button>
+                </div>`
+          }
+        </section>
+      </main>
     `;
   }
 
@@ -1323,6 +1447,7 @@
     const topicStats = buildTopicStats(quiz.answers);
     const records = loadRecords();
     const unlocked = quiz.unlockedAchievements || [];
+    const gateResult = quiz.pathGate ? pathGateResult(quiz, correct, total) : null;
 
     return `
       <main class="screen">
@@ -1330,7 +1455,7 @@
           <section class="score-hero">
             <div>
               <p class="section-label">結算</p>
-              <h2>${resultTitle(accuracy)}</h2>
+              <h2>${gateResult ? (gateResult.passed ? "跳關通過" : "跳關未通過") : resultTitle(accuracy)}</h2>
             </div>
             <div class="score-cards">
               <div class="score-card"><span>Score</span><strong>${quiz.score}</strong></div>
@@ -1338,11 +1463,8 @@
               <div class="score-card"><span>Accuracy</span><strong>${accuracy}%</strong></div>
               <div class="score-card"><span>Avg Sec</span><strong>${avgTime}</strong></div>
             </div>
-            <div class="action-row">
-              <button class="button" data-action="restart">${icon("refresh")}再打一局</button>
-              <button class="button secondary" data-action="home">${icon("home")}回首頁</button>
-              <button class="button secondary" data-action="open-mistakes">${icon("book")}錯題本</button>
-            </div>
+            ${gateResult ? renderPathGateResult(gateResult) : ""}
+            ${renderResultsActions(gateResult)}
           </section>
 
           <aside class="side-panel">
@@ -1391,6 +1513,48 @@
           </div>
         </section>
       </main>
+    `;
+  }
+
+  function pathGateResult(currentQuiz, correct, total) {
+    const gate = currentQuiz.pathGate || {};
+    return {
+      ...gate,
+      correct,
+      total,
+      passed: currentQuiz.answers.length >= total && correct >= gate.required
+    };
+  }
+
+  function renderPathGateResult(gate) {
+    return `
+      <div class="path-gate-result ${gate.passed ? "is-passed" : "is-failed"}">
+        <strong>${gate.targetLabel}</strong>
+        <span>${gate.correct}/${gate.total}，門檻 ${gate.required}/${gate.total}</span>
+      </div>
+    `;
+  }
+
+  function renderResultsActions(gateResult) {
+    if (gateResult) {
+      return `
+        <div class="action-row">
+          ${
+            gateResult.passed
+              ? `<button class="button" data-action="start-path-lesson" data-node-id="${escapeAttr(gateResult.targetId)}">${icon("play")}進入本關</button>`
+              : `<button class="button" data-action="start-path-gate" data-node-id="${escapeAttr(gateResult.targetId)}">${icon("refresh")}重考小測驗</button>`
+          }
+          <button class="button secondary" data-action="home">${icon("home")}回主線</button>
+          <button class="button ghost" data-action="open-mistakes">${icon("book")}錯題本</button>
+        </div>
+      `;
+    }
+    return `
+      <div class="action-row">
+        <button class="button" data-action="restart">${icon("refresh")}再打一局</button>
+        <button class="button secondary" data-action="home">${icon("home")}回首頁</button>
+        <button class="button secondary" data-action="open-mistakes">${icon("book")}錯題本</button>
+      </div>
     `;
   }
 
@@ -1541,7 +1705,9 @@
       selectedAnswerMode = "choice";
       startQuiz();
     }
-    if (action === "start-path-node") startPathNode(actionNode.dataset.nodeId);
+    if (action === "start-path-node") openPathIntro(actionNode.dataset.nodeId);
+    if (action === "start-path-lesson") startPathLesson(actionNode.dataset.nodeId || activePathNodeId);
+    if (action === "start-path-gate") startPathGate(actionNode.dataset.nodeId || activePathNodeId);
     if (action === "choose-answer") submitChoiceAnswer(actionNode.dataset.choice || "");
     if (action === "show-hint") showHint();
     if (action === "skip") recordAnswer({ status: "wrong", reason: "Skipped", input: quiz.draft || "" });
@@ -1584,6 +1750,7 @@
     if (action === "home") {
       stopTicker();
       quiz = null;
+      activePathNodeId = "";
       if (MODES[selectedMode] && MODES[selectedMode].hidden) selectedMode = "quick";
       view = "home";
       render();
@@ -1610,6 +1777,14 @@
   function restartQuiz() {
     const previous = quiz;
     if (previous) {
+      if (previous.pathGate?.targetId) {
+        startPathGate(previous.pathGate.targetId);
+        return;
+      }
+      if (previous.pathNodeId) {
+        startPathLesson(previous.pathNodeId);
+        return;
+      }
       selectedTopic = previous.topic || selectedTopic;
       selectedAnswerMode = previous.answerMode || selectedAnswerMode;
       selectedMode = previous.mode === "daily" ? "quick" : previous.mode || selectedMode;
@@ -1618,13 +1793,41 @@
     startQuiz();
   }
 
-  function startPathNode(nodeId) {
+  function openPathIntro(nodeId) {
     const node = PATH_NODES.find((item) => item.id === nodeId) || PATH_NODES[0];
+    activePathNodeId = node.id;
+    view = "path-intro";
+    render();
+  }
+
+  function startPathLesson(nodeId) {
+    const node = PATH_NODES.find((item) => item.id === nodeId) || PATH_NODES[0];
+    activePathNodeId = node.id;
     selectedMode = node.mode || "quick";
     selectedTopic = node.topic || "all";
     selectedPack = node.pack || "all";
     selectedAnswerMode = "choice";
-    startQuiz(selectPathNodePool(node));
+    startQuiz(selectPathNodePool(node), { pathNodeId: node.id });
+  }
+
+  function startPathGate(nodeId) {
+    const node = PATH_NODES.find((item) => item.id === nodeId) || PATH_NODES[0];
+    const gate = pathGateInfo(node);
+    activePathNodeId = node.id;
+    selectedMode = "practice";
+    selectedTopic = "all";
+    selectedPack = "all";
+    selectedAnswerMode = "choice";
+    startQuiz(selectPathGatePool(node, gate.total), {
+      modeKey: "path_gate",
+      practice: true,
+      pathGate: {
+        targetId: node.id,
+        targetLabel: node.label,
+        required: gate.required,
+        total: gate.total
+      }
+    });
   }
 
   function selectPathNodePool(node) {
@@ -1636,6 +1839,31 @@
     if (mode.daily) return selectDailyPool(source, mode.count);
     const ordered = adaptiveShuffle(source, loadRecords(), seedFromString(`${Date.now()}-${node.id}`));
     return padPool(ordered.slice(0, mode.count), source, mode.count);
+  }
+
+  function selectPathGatePool(node, count) {
+    const index = Math.max(0, PATH_NODES.findIndex((item) => item.id === node.id));
+    const sourceNodes = index > 0 ? PATH_NODES.slice(0, index) : [node];
+    const seen = new Set();
+    const pool = sourceNodes
+      .flatMap((item) => pathNodeProblems(item))
+      .filter((problem) => {
+        if (seen.has(problem.id)) return false;
+        seen.add(problem.id);
+        return true;
+      });
+    const fallback = pathNodeProblems(node);
+    const source = pool.length ? pool : fallback;
+    const ordered = adaptiveShuffle(source, loadRecords(), seedFromString(`${Date.now()}-gate-${node.id}`));
+    return padPool(ordered.slice(0, count), source, count);
+  }
+
+  function pathGateInfo(_node) {
+    return { total: 5, required: 4 };
+  }
+
+  function pathGateUnlocked(records, nodeId) {
+    return Boolean(records.pathUnlocks && records.pathUnlocks[nodeId]);
   }
 
   function startWeaknessPractice() {
@@ -1750,8 +1978,8 @@
     render();
   }
 
-  function startQuiz(customProblems) {
-    const mode = MODES[selectedMode];
+  function startQuiz(customProblems, options = {}) {
+    const mode = MODES[selectedMode] || MODES.quick;
     const pool = customProblems && customProblems.length ? customProblems : selectProblemPool(mode, selectedTopic);
     if (!pool.length) {
       view = "home";
@@ -1759,10 +1987,12 @@
       return;
     }
     quiz = {
-      mode: selectedMode,
+      mode: options.modeKey || selectedMode,
       topic: selectedTopic,
       answerMode: selectedAnswerMode,
-      practice: Boolean(mode.practice),
+      practice: options.practice !== undefined ? Boolean(options.practice) : Boolean(mode.practice),
+      pathNodeId: options.pathNodeId || "",
+      pathGate: options.pathGate || null,
       problems: pool,
       index: 0,
       score: 0,
@@ -2580,6 +2810,8 @@
     next.topicStats = next.topicStats && typeof next.topicStats === "object" ? next.topicStats : {};
     next.problemStats = next.problemStats && typeof next.problemStats === "object" ? next.problemStats : {};
     next.daily = next.daily && typeof next.daily === "object" ? next.daily : {};
+    next.pathUnlocks = next.pathUnlocks && typeof next.pathUnlocks === "object" ? next.pathUnlocks : {};
+    next.pathGateAttempts = next.pathGateAttempts && typeof next.pathGateAttempts === "object" ? next.pathGateAttempts : {};
     next.onboardingSeen = Boolean(next.onboardingSeen);
     return next;
   }
@@ -2645,6 +2877,28 @@
           total,
           accuracy,
           finishedAt
+        };
+      }
+    }
+
+    if (currentQuiz.pathGate) {
+      const gate = currentQuiz.pathGate;
+      const passed = currentQuiz.answers.length >= total && correct >= gate.required;
+      gate.passed = passed;
+      gate.correct = correct;
+      gate.finishedAt = finishedAt;
+      records.pathGateAttempts[gate.targetId] = {
+        attempts: (records.pathGateAttempts[gate.targetId]?.attempts || 0) + 1,
+        correct,
+        total,
+        passed,
+        finishedAt
+      };
+      if (passed) {
+        records.pathUnlocks[gate.targetId] = {
+          unlockedAt: finishedAt,
+          correct,
+          total
         };
       }
     }
@@ -2846,7 +3100,7 @@
       const previous = nodes[index - 1];
       const masteredBefore = nodes.slice(0, index).filter((item) => item.status === "mastered" || item.status === "gold").length;
       const shouldGate = (index > 0 && previous && previous.mastery < 35 && node.attempts === 0) || (node.boss && masteredBefore < 5);
-      if (shouldGate) {
+      if (shouldGate && !pathGateUnlocked(records, node.id)) {
         node.gated = true;
         node.status = "jump";
       }
@@ -2978,6 +3232,7 @@
   }
 
   function modeLabel(mode) {
+    if (mode === "path_gate") return "跳關小測驗";
     return MODES[mode] ? MODES[mode].label : "Quiz";
   }
 
