@@ -2,292 +2,270 @@
 
 > Build your calculus reflexes.
 
-BuzzCalculus 是一個全靜態的微積分反射訓練平台（Calculus Reflex Training Platform）。
+**BuzzCalculus 不是另一個微積分題庫。**
 
-與傳統微積分題庫不同，BuzzCalculus 的目標不是照章節教學，而是訓練使用者在有限時間內快速辨識技巧、建立解題直覺，並透過大量練習補強弱點。
+它是一個全靜態、免登入、打開就能練的 **微積分反射訓練台**。
 
-你不會看到：
+目標不是重新教你整本微積分，而是讓你在短時間內練出：
 
-* Chapter 3
-* Chapter 4
-* Chapter 5
+- 看到題目後快速辨識技巧
+- 選對解題工具
+- 穩定提高正確率與速度
+- 找出自己最常錯的題型
 
-這種課本式分類。
+[立即開始訓練](https://tudohuang.github.io/BuzzCalculus/)
 
-取而代之的是：
-
-* Taylor Expansion
-* Rationalization
-* Trig Limits
-* Integration by Parts
-* Frullani Integrals
-* Jacobians
-
-因為真正的解題速度來自：
-
-> 看到題目後，立刻知道該用哪個工具。
+[下載 PDF 作業本](workbook/buzzcalculus_workbook.pdf)
 
 ---
 
-## Philosophy
+## 為什麼需要 BuzzCalculus
 
-BuzzCalculus 的核心理念很簡單：
+很多人不是不會微積分，而是看到混合題時不知道第一步該拔哪把刀。
 
-> Don't memorize chapters.
-> Recognize techniques.
-
-許多學生學完微積分後仍然不會解題，不是因為不會計算，而是因為不知道：
-
-* 這題該用 Taylor 嗎？
-* 該有理化嗎？
-* 該分部積分嗎？
-* 該換變數嗎？
-
-BuzzCalculus 專注於訓練這種技巧辨識能力。
-
----
-
-## Features
-
-### Calculus Training
-
-* 426 題精選題庫
-* 32 個技巧訓練包
-* 快速訓練模式
-* 每日挑戰模式
-* 階梯測驗模式
-* 高難度進階訓練
-* 錯題重練
-
-### Learning Analytics
-
-* 弱點分析
-* 最近表現追蹤
-* 平均作答速度
-* 錯題本
-* 作答歷史
-* 每日練習紀錄
-
-### Answering System
-
-* 手寫黑板模式
-* 手機全螢幕黑板
-* 選擇題模式
-* 提示系統
-* LaTeX 題目渲染
-
-### Offline First
-
-* 無帳號
-* 無登入
-* 無後端
-* 所有資料保存在 localStorage
-* JSON 匯出／匯入
-
----
-
-## Problem Coverage
-
-目前題庫涵蓋：
-
-| Category                             | Problems |
-| ------------------------------------ | -------: |
-| Limits                               |       61 |
-| Derivatives & Multivariable Calculus |      148 |
-| Integrals & Multiple Integrals       |      148 |
-| Series                               |       69 |
-
----
-
-### Technique Packs
-
-BuzzCalculus 以技巧為核心組織題目。
-
-目前包含：
-
-#### Limits
-
-* Standard Limits
-* Taylor Expansion
-* Rationalization
-* Squeeze Theorem
-* Path Test
-* Multivariable Limits
-
-#### Differentiation
-
-* Chain Rule
-* Product Rule
-* Quotient Rule
-* Implicit Differentiation
-* Logarithmic Differentiation
-* Partial Derivatives
-* Directional Derivatives
-* Jacobians
-* Hessians
-* Wronskians
-* Lagrange Multipliers
-* Nabla / Vector Calculus
-
-#### Integration
-
-* u-Substitution
-* Integration by Parts
-* Trigonometric Substitution
-* Partial Fractions
-* Improper Integrals
-* Double Integrals
-* Triple Integrals
-* Change of Variables
-* Convolution Integrals
-* Beta / Gamma Functions
-* Wallis Integrals
-
-#### Series
-
-* Geometric Series
-* p-Series
-* Ratio Test
-* Root Test
-* Integral Test
-* Alternating Series
-* Power Series
-* Radius of Convergence
-* Endpoint Analysis
-* Taylor Coefficients
-
-#### Advanced Topics
-
-* King's Property
-* Frullani Integrals
-* Newton Method
-* Related Rates
-* Parametric Curves
-* Polar Curves
-* ODE Introduction
-* Complex Analysis Basics
-* Bessel Basics
-* Technique Sprint / Trap Drill
-
----
-
-## Difficulty Design
-
-BuzzCalculus 並不是競賽題庫。
-
-題目大致分布如下：
-
-| Rank | Label    | Meaning |
-| ---: | -------- | ------- |
-| R1   | Warm-up  | Basic recall and first-step practice |
-| R2   | Basic    | Beginner-friendly standard drills |
-| R3   | Standard | Normal university calculus speed training |
-| R4   | Advanced | Multi-step technique problems |
-| R5   | Boss     | Special techniques and harder multivariable/integral problems |
-| R6   | Boss+    | Strong-student filters: complex, Bessel, hard Frullani, change of variables, triple integrals |
-
-The app keeps the original 1-4 difficulty field for compatibility, but display, scoring, daily selection, and Boss mode use calibrated rank. The `新手暖身` pack uses R1-R2 problems. The `Boss 挑戰` pack uses R5-R6 problems.
-
----
-
-## Training Modes
-
-### Quick Training
-
-12 題混合練習。
-
-適合作為每日暖身。
-
-### Daily Challenge
-
-每天固定題組。
-
-適合建立長期練習習慣。
-
-### Technique Training
-
-只練一種技巧。
-
-例如：
-
-* Taylor
-* Rationalization
-* Frullani
-
-### Advanced Training
-
-高難度題集中訓練。
-
-### Ladder Test
-
-由簡到難逐步升級。
-
-### Mistake Review
-
-從錯題本重新抽題。
-
----
-
-## Data Storage
-
-BuzzCalculus 採用完全本機儲存。
-
-所有資料保存在：
+一般題庫常常長這樣：
 
 ```text
-localStorage
+第三章
+第四章
+第五章
 ```
 
-包含：
+BuzzCalculus 更接近這樣：
 
-* 作答紀錄
-* 錯題本
-* 草稿
-* 每日挑戰
-* 統計資料
-* 弱點分析
+```text
+Taylor
+Rationalization
+u-substitution
+Integration by Parts
+Frullani
+Jacobian
+Hessian
+Boss
+```
 
-因此：
+真正的速度來自技巧辨識。
 
-* 不需要登入
-* 不需要帳號
-* 不需要後端
-
-換裝置時可透過 JSON 匯出／匯入搬移資料。
+BuzzCalculus 要練的就是這件事。
 
 ---
 
-## Project Status
+## 主線訓練路線
 
-Current Version:
+首頁不是功能清單，而是一條可以一路打下去的學習路線：
+
+```text
+單變極限
+-> 單變微分
+-> 基礎積分
+-> U-sub
+-> IBP
+-> 技巧積分
+-> 級數
+-> 多變數
+-> 進階工具
+-> Boss
+```
+
+每一關進入前都有短講解。
+
+想跳關也可以，但要先通過小測驗。
+
+打完一局後，系統會直接告訴你：
+
+- 本關是否通過
+- 要不要重練
+- 下一關是哪裡
+- 哪些題目進錯題本
+
+---
+
+## 目前能做什麼
+
+- **426 題微積分題庫**
+- **32 個技巧題包**
+- **手機優先的選擇題練習**
+- **手寫黑板草稿**
+- **每日任務**
+- **錯題本**
+- **弱點複習**
+- **最近 30 題 / 最近 7 天表現**
+- **段位與主線進度**
+- **作答歷史**
+- **JSON 匯出 / 匯入**
+- **PDF 作業本輸出**
+
+全部都不需要後端。
+
+---
+
+## 題庫規模
+
+| 類型 | 題數 |
+| --- | ---: |
+| 極限 | 61 |
+| 微分 / 多變數微分 | 148 |
+| 積分 / 重積分 | 148 |
+| 級數 | 69 |
+| **總計** | **426** |
+
+---
+
+## 題庫特色
+
+BuzzCalculus 的題庫不是單純照章節堆題，而是以技巧為核心。
+
+**極限**
+
+- 標準極限
+- Taylor 展開
+- 有理化
+- 三角極限
+- 夾擠定理
+- 多變數路徑測試
+
+**微分**
+
+- Chain Rule
+- Implicit Differentiation
+- Logarithmic Differentiation
+- Partial Derivatives
+- Directional Derivatives
+- Jacobian
+- Hessian
+- Wronskian
+- Lagrange Multiplier
+- Nabla / Vector Calculus
+
+**積分**
+
+- u-substitution
+- Integration by Parts
+- Trig Substitution
+- Partial Fraction
+- Improper Integral
+- Double / Triple Integral
+- Change of Variables
+- King's Property
+- Frullani Integral
+- Beta / Gamma Function
+- Wallis Integral
+
+**級數與進階**
+
+- Ratio Test
+- Root Test
+- Integral Test
+- Alternating Series
+- Endpoint Analysis
+- Power Series
+- Taylor Coefficients
+- ODE-style Problems
+- Complex Basics
+- Bessel Basics
+- Trap Drill
+
+---
+
+## 適合誰
+
+BuzzCalculus 適合已經學過微積分、想把解題速度練起來的人。
+
+特別適合：
+
+- 大一微積分複習
+- 工學院考前暖身
+- 微積分混合題訓練
+- Integral Bee 風格速度練習
+- 想知道自己到底哪種技巧最不穩的人
+
+如果你完全沒學過微積分，BuzzCalculus 不會像課本一樣從零講起。
+
+它比較像訓練場，不是講義。
+
+---
+
+## 手機也能練
+
+手機版預設走選擇題，降低打字負擔。
+
+首頁會優先顯示：
+
+- 今日任務
+- 下一關
+- 主線路線
+- 底部固定開始按鈕
+
+手寫模式仍然保留，適合需要推導或草稿的題目。
+
+---
+
+## 全靜態，資料存在本機
+
+BuzzCalculus 沒有帳號系統，也不需要後端。
+
+所有紀錄都存在瀏覽器的 `localStorage`：
+
+- 作答歷史
+- 錯題本
+- 每日任務
+- 弱點分析
+- 主線進度
+- 段位資料
+- 手寫草稿回顧
+
+換裝置時可以用 JSON 匯出 / 匯入。
+
+---
+
+## 目前狀態
 
 ```text
 v0.9.0-beta
 ```
 
-BuzzCalculus 已完成：
+BuzzCalculus 目前已進入 Beta / RC 階段。
 
-* 核心題庫
-* 學習流程
-* 弱點分析
-* 錯題系統
-* 本機資料管理
-* 作業本輸出
+現在重點不是繼續堆功能，而是打磨：
+
+- 手機體驗
+- 主線訓練流程
+- 題庫品質
+- 答案判定穩定性
+- GitHub Pages 部署體驗
 
 ---
 
-## Why Buzz?
+## 本機開發
 
-BuzzCalculus 的名稱來自：
+這是一個純靜態專案。
 
-> Integral Bee
+可以直接開 `index.html`，也可以用任意 static server 跑。
 
-中的 Bee。
+常用檢查：
 
-Bee 競賽重視速度、準確率與技巧熟練度。
+```bash
+node tools/validate_problems.js
+node tools/validate_training_packs.js
+node tools/validate_path_nodes.js
+node tools/validate_answer_checker.js
+node tools/smoke_app_render.js
+```
 
-BuzzCalculus 希望把這種精神帶到微積分訓練中。
+產生 PDF 作業本：
 
-> Train speed.
-> Train accuracy.
-> Train calculus.
+```bash
+node tools/generate_workbook.js
+```
+
+---
+
+## Note
+
+BuzzCalculus 受到 Integral Bee 類型的速度訓練文化啟發，但不是 MIT 或任何官方 Integral Bee 活動的附屬專案。
+
+```text
+Train speed.
+Train accuracy.
+Train calculus.
+```
