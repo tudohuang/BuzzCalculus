@@ -1191,6 +1191,7 @@
           <span class="proof-status">${proofStatusLabel(status)}</span>
         </div>
 
+        ${proof.statement ? `<p class="proof-statement">${escapeHtml(proof.statement)}</p>` : ""}
         <div class="proof-prompt math-block" data-tex="${escapeAttr(proof.prompt)}"></div>
 
         <div class="proof-tags">
@@ -1236,10 +1237,17 @@
           <span>請先自己寫完再對照。</span>
         </div>
         <ol>
-          ${(proof.solution || []).map((line) => `<li>${escapeHtml(line)}</li>`).join("")}
+          ${(proof.solution || []).map((step) => renderProofSolutionStep(step)).join("")}
         </ol>
       </section>
     `;
+  }
+
+  function renderProofSolutionStep(step) {
+    if (typeof step === "string") return `<li>${escapeHtml(step)}</li>`;
+    const text = step.text ? `<p>${escapeHtml(step.text)}</p>` : "";
+    const tex = step.tex ? `<div class="proof-line-math math-block" data-tex="${escapeAttr(step.tex)}"></div>` : "";
+    return `<li>${text}${tex}</li>`;
   }
 
   function renderProofStatusButton(proofId, current, status, label) {
