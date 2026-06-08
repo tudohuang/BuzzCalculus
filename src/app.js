@@ -2,6 +2,7 @@
   "use strict";
 
   const problems = window.BUZZ_PROBLEMS || [];
+  const proofs = window.BUZZ_PROOFS || [];
   const app = document.getElementById("app");
   const field = document.getElementById("math-field");
 
@@ -197,6 +198,13 @@
   const KEYS = ["x", "pi", "e", "^", "sqrt(", "sin(", "cos(", "tan(", "log(", "abs(", "DNE"];
   const STORAGE_KEY = "buzzcalculus.records.v1";
   const ERROR_TAGS = ["粗心", "不會", "忘公式"];
+  const PROOF_TIERS = {
+    all: "全部",
+    basic: "基礎",
+    standard: "標準",
+    advanced: "進階",
+    boss: "東大"
+  };
   const HISTORY_LIMIT = 40;
   const APP_VERSION = "v0.9.0-beta";
   const BUILD_DATE = "2026-06-07";
@@ -209,6 +217,7 @@
   let selectedPack = "all";
   let selectedMistakeTopic = "all";
   let selectedHistoryTopic = "all";
+  let selectedProofTier = "all";
   let quiz = null;
   let activePathNodeId = "";
   let tickHandle = null;
@@ -302,6 +311,7 @@
     if (view === "quiz") return renderQuiz();
     if (view === "results") return renderResults();
     if (view === "path-intro") return renderPathIntro();
+    if (view === "proofs") return renderProofLab();
     if (view === "mistakes") return renderMistakes();
     if (view === "history") return renderHistory();
     return renderHome();
@@ -730,12 +740,13 @@
           <summary>
             <span>
               <strong>更多練習</strong>
-              <small>自訂題包、錯題、本機資料</small>
+              <small>自訂題包、證明、錯題、本機資料</small>
             </span>
             ${icon("chevron-down")}
           </summary>
           <div class="home-more-grid">
             ${renderWeaknessStudyCard(records, weaknesses, mistakeCount)}
+            ${renderProofHomeCard(records)}
             ${renderDataManagementCard(records)}
             <section class="control-band practice-control home-compact-control">
               <div class="home-control-head">
@@ -872,6 +883,30 @@
         <div class="action-row">
           <button class="button secondary" data-action="start-weakness" ${mistakeCount ? "" : "disabled"}>${icon("refresh")}重練弱點</button>
           <button class="button ghost" data-action="open-mistakes">${icon("book")}查看錯題</button>
+        </div>
+      </section>
+    `;
+  }
+
+  function renderProofHomeCard(records) {
+    const stats = proofStats(records);
+    return `
+      <section class="study-card proof-home-card">
+        <div class="panel-title-row">
+          <div>
+            <p class="section-label">Proof Lab</p>
+            <h3>證明題庫</h3>
+          </div>
+          <span class="study-count">${stats.total} 題</span>
+        </div>
+        <div class="proof-mini-stats">
+          <div><span>看懂</span><strong>${stats.understood}</strong></div>
+          <div><span>部分會</span><strong>${stats.partial}</strong></div>
+          <div><span>卡住</span><strong>${stats.stuck}</strong></div>
+        </div>
+        <p class="panel-note">不限時、不機器判分。看參考證明後自己標記掌握程度。</p>
+        <div class="action-row">
+          <button class="button secondary" data-action="open-proofs">${icon("file-pen-line")}進入 Proof Lab</button>
         </div>
       </section>
     `;
@@ -1089,6 +1124,134 @@
       })
       .join("");
     return groups + (rest ? `<optgroup label="其他">${rest}</optgroup>` : "");
+  }
+
+  function renderProofLab() {
+    const records = loadRecords();
+    const stats = proofStats(records);
+    const items = proofs.filter((proof) => selectedProofTier === "all" || proof.tier === selectedProofTier);
+    return `
+      <main class="screen">
+        <section class="panel page-panel proof-lab">
+          <div class="page-head">
+            <div>
+              <p class="section-label">Proof Lab</p>
+              <h2>證明題庫</h2>
+              <p class="proof-subtitle">不限時，不進計分，不機器改。先自己寫，再看參考證明。</p>
+            </div>
+            <div class="action-row">
+              <button class="button secondary" data-action="home">${icon("home")}回主線</button>
+            </div>
+          </div>
+
+          <div class="proof-overview">
+            <div><span>總題數</span><strong>${stats.total}</strong></div>
+            <div><span>已看解法</span><strong>${stats.viewed}</strong></div>
+            <div><span>看懂</span><strong>${stats.understood}</strong></div>
+            <div><span>部分會</span><strong>${stats.partial}</strong></div>
+            <div><span>還不會</span><strong>${stats.stuck}</strong></div>
+          </div>
+
+          <div class="segmented compact proof-tier-picker" role="tablist" aria-label="證明題難度篩選">
+            ${Object.entries(PROOF_TIERS)
+              .map(([key, label]) => {
+                const count = key === "all" ? proofs.length : proofs.filter((proof) => proof.tier === key).length;
+                return `
+                  <button class="segment ${selectedProofTier === key ? "is-active" : ""}" data-proof-tier="${escapeAttr(key)}">
+                    <strong>${escapeHtml(label)}</strong>
+                    <span>${count} 題</span>
+                  </button>
+                `;
+              })
+              .join("")}
+          </div>
+
+          <div class="proof-list">
+            ${
+              items.length
+                ? items.map((proof, index) => renderProofCard(proof, records.proofs[proof.id] || {}, index)).join("")
+                : `<div class="empty-state">目前沒有符合篩選的證明題。</div>`
+            }
+          </div>
+        </section>
+      </main>
+    `;
+  }
+
+  function renderProofCard(proof, progress, index) {
+    const status = progress.status || "";
+    const viewed = Boolean(progress.solutionViewed);
+    return `
+      <article class="proof-card is-${escapeAttr(proof.tier)} ${status ? `status-${escapeAttr(status)}` : ""}">
+        <div class="proof-card-head">
+          <div>
+            <span class="proof-index">#${index + 1} · ${escapeHtml(PROOF_TIERS[proof.tier] || proof.tier)} · R${proof.difficulty}</span>
+            <h3>${escapeHtml(proof.title)}</h3>
+          </div>
+          <span class="proof-status">${proofStatusLabel(status)}</span>
+        </div>
+
+        <div class="proof-prompt math-block" data-tex="${escapeAttr(proof.prompt)}"></div>
+
+        <div class="proof-tags">
+          ${(proof.tags || []).map((tag) => `<span>${escapeHtml(tag)}</span>`).join("")}
+        </div>
+
+        <details class="proof-hints">
+          <summary>提示</summary>
+          <ul>
+            ${(proof.hints || []).map((hint) => `<li>${escapeHtml(hint)}</li>`).join("")}
+          </ul>
+        </details>
+
+        <div class="proof-key-steps">
+          <strong>關鍵步驟</strong>
+          <div>${(proof.keySteps || []).map((step) => `<span>${escapeHtml(step)}</span>`).join("")}</div>
+        </div>
+
+        ${
+          viewed
+            ? renderProofSolution(proof)
+            : `<button class="button secondary proof-solution-button" data-action="view-proof-solution" data-proof-id="${escapeAttr(proof.id)}">${icon("book-open-check")}看參考證明</button>`
+        }
+
+        <div class="proof-self-check">
+          <span>自評</span>
+          <div class="tag-row">
+            ${renderProofStatusButton(proof.id, status, "understood", "看懂")}
+            ${renderProofStatusButton(proof.id, status, "partial", "部分會")}
+            ${renderProofStatusButton(proof.id, status, "stuck", "還不會")}
+            ${status ? `<button class="tag-button" data-action="mark-proof-status" data-proof-id="${escapeAttr(proof.id)}" data-proof-status="">清除</button>` : ""}
+          </div>
+        </div>
+      </article>
+    `;
+  }
+
+  function renderProofSolution(proof) {
+    return `
+      <section class="proof-solution">
+        <div class="proof-solution-head">
+          <strong>參考證明</strong>
+          <span>請先自己寫完再對照。</span>
+        </div>
+        <ol>
+          ${(proof.solution || []).map((line) => `<li>${escapeHtml(line)}</li>`).join("")}
+        </ol>
+      </section>
+    `;
+  }
+
+  function renderProofStatusButton(proofId, current, status, label) {
+    return `<button class="tag-button ${current === status ? "is-active" : ""}" data-action="mark-proof-status" data-proof-id="${escapeAttr(proofId)}" data-proof-status="${escapeAttr(status)}">${label}</button>`;
+  }
+
+  function proofStatusLabel(status) {
+    return {
+      understood: "看懂",
+      partial: "部分會",
+      stuck: "還不會"
+    }[status] || "未標記";
   }
 
   function renderMistakes() {
@@ -1729,6 +1892,13 @@
       });
     });
 
+    app.querySelectorAll("[data-proof-tier]").forEach((button) => {
+      button.addEventListener("click", () => {
+        selectedProofTier = button.dataset.proofTier || "all";
+        render();
+      });
+    });
+
     const importInput = app.querySelector("#import-records");
     if (importInput) {
       importInput.addEventListener("change", () => importRecords(importInput.files && importInput.files[0]));
@@ -1809,6 +1979,12 @@
       view = "history";
       render();
     }
+    if (action === "open-proofs") {
+      view = "proofs";
+      render();
+    }
+    if (action === "view-proof-solution") viewProofSolution(actionNode.dataset.proofId);
+    if (action === "mark-proof-status") markProofStatus(actionNode.dataset.proofId, actionNode.dataset.proofStatus || "");
     if (action === "start-mistakes") startMistakeQuiz(selectedMistakeTopic);
     if (action === "start-mistake-one") startMistakeQuiz("all", [actionNode.dataset.problemId]);
     if (action === "clear-mistakes") clearMistakes(selectedMistakeTopic);
@@ -2003,6 +2179,41 @@
       });
     }
     saveRecords(records);
+    render();
+  }
+
+  function viewProofSolution(proofId) {
+    if (!proofs.some((proof) => proof.id === proofId)) return;
+    const records = loadRecords();
+    const item = records.proofs[proofId] || {};
+    records.proofs[proofId] = {
+      ...item,
+      solutionViewed: true,
+      lastViewedAt: new Date().toISOString()
+    };
+    saveRecords(records);
+    trackEvent("view_proof_solution", { proof_id: proofId });
+    render();
+  }
+
+  function markProofStatus(proofId, status) {
+    if (!proofs.some((proof) => proof.id === proofId)) return;
+    const records = loadRecords();
+    if (!status) {
+      if (records.proofs[proofId]) {
+        delete records.proofs[proofId].status;
+        records.proofs[proofId].updatedAt = new Date().toISOString();
+      }
+    } else {
+      const item = records.proofs[proofId] || {};
+      records.proofs[proofId] = {
+        ...item,
+        status,
+        updatedAt: new Date().toISOString()
+      };
+    }
+    saveRecords(records);
+    trackEvent("mark_proof_status", { proof_id: proofId, status: status || "clear" });
     render();
   }
 
@@ -2903,6 +3114,7 @@
     next.pathUnlocks = next.pathUnlocks && typeof next.pathUnlocks === "object" ? next.pathUnlocks : {};
     next.pathGateAttempts = next.pathGateAttempts && typeof next.pathGateAttempts === "object" ? next.pathGateAttempts : {};
     next.pathLessonRuns = next.pathLessonRuns && typeof next.pathLessonRuns === "object" ? next.pathLessonRuns : {};
+    next.proofs = next.proofs && typeof next.proofs === "object" ? next.proofs : {};
     next.onboardingSeen = Boolean(next.onboardingSeen);
     return next;
   }
@@ -3195,6 +3407,22 @@
       remaining: Math.max(0, next.total - total),
       progress
     };
+  }
+
+  function proofStats(records) {
+    const progress = records.proofs || {};
+    return proofs.reduce(
+      (stats, proof) => {
+        const item = progress[proof.id] || {};
+        stats.total += 1;
+        if (item.solutionViewed) stats.viewed += 1;
+        if (item.status === "understood") stats.understood += 1;
+        if (item.status === "partial") stats.partial += 1;
+        if (item.status === "stuck") stats.stuck += 1;
+        return stats;
+      },
+      { total: 0, viewed: 0, understood: 0, partial: 0, stuck: 0 }
+    );
   }
 
   function learningPathState(records) {
