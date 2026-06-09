@@ -675,6 +675,7 @@
       <main class="screen home-screen">
         ${showIntro ? renderFirstRunNotice() : ""}
         ${renderMobileQuestCard(mission, daily, path, mistakeCount)}
+        ${renderHomeAnswerModeBar()}
         <section class="path-layout home-path-layout">
           ${renderBuzzPath(path, mission)}
           <aside class="path-sidebar">
@@ -686,6 +687,18 @@
 
         ${renderMobileStartDock(path, mission)}
       </main>
+    `;
+  }
+
+  function renderHomeAnswerModeBar() {
+    return `
+      <section class="answer-mode-strip" aria-label="作答形式">
+        <div>
+          <p class="section-label">作答形式</p>
+          <strong>${ANSWER_MODES[selectedAnswerMode]?.label || "選擇題"}</strong>
+        </div>
+        ${renderAnswerModePicker("strip-answer-picker")}
+      </section>
     `;
   }
 
@@ -950,10 +963,6 @@
                   ${renderTopicPicker()}
                 </div>
 
-                <div class="control-section">
-                  <p class="section-label">形式</p>
-                  ${renderAnswerModePicker()}
-                </div>
               </div>
 
               <div class="pack-picker home-pack compact-pack">
@@ -1303,9 +1312,9 @@
     `;
   }
 
-  function renderAnswerModePicker() {
+  function renderAnswerModePicker(extraClass = "") {
     return `
-      <div class="segmented answer-modes learning-picker" role="tablist" aria-label="答題方式選擇">
+      <div class="segmented answer-modes learning-picker ${escapeAttr(extraClass)}" role="tablist" aria-label="答題方式選擇">
         ${Object.entries(ANSWER_MODES)
           .map(
             ([key, item]) => `
@@ -2577,7 +2586,6 @@
       selectedPack = actionNode.dataset.pack || "all";
       selectedTopic = "all";
       selectedMode = "quick";
-      selectedAnswerMode = "choice";
       startQuiz();
     }
     if (action === "start-problem") startSingleProblem(actionNode.dataset.problemId);
@@ -2670,7 +2678,6 @@
     if (!problem) return;
     selectedMode = "practice";
     selectedTopic = problem.topic || "all";
-    selectedAnswerMode = "choice";
     startQuiz([problem], { modeKey: "practice", practice: true, noTimer: true });
   }
 
@@ -2754,7 +2761,6 @@
     selectedMode = node.mode || "quick";
     selectedTopic = node.topic || "all";
     selectedPack = node.pack || "all";
-    selectedAnswerMode = "choice";
     startQuiz(selectPathNodePool(node), { pathNodeId: node.id });
   }
 
@@ -2813,7 +2819,6 @@
 
   function startWeaknessPractice() {
     const records = loadRecords();
-    selectedAnswerMode = "choice";
     const mistakeIds = Object.keys(records.mistakes || {});
     if (mistakeIds.length) {
       startMistakeQuiz("all");
