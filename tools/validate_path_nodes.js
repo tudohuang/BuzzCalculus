@@ -50,6 +50,7 @@ require("../src/problem_integrals_hard.js");
 require("../src/problem_advanced_analysis.js");
 require("../src/problem_gap_pack.js");
 require("../src/problem_mobile_advanced_pack.js");
+require("../src/problem_release_expansion.js");
 require("../src/problem_difficulty_calibration.js");
 require("../src/app.js");
 
@@ -68,4 +69,3 @@ api.pathNodes.forEach((node) => {
 if (failed) {
   throw new Error("one or more path nodes have zero problems");
 }
-
