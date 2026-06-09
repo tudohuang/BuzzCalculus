@@ -65,6 +65,71 @@
       daily: false,
       boss: true
     },
+    boss_rush: {
+      label: "Boss Rush",
+      note: "Boss 題連戰，錯一題就結算",
+      count: 10,
+      topicLocked: false,
+      daily: false,
+      boss: true,
+      suddenDeath: true
+    },
+    integral_bee: {
+      label: "Integral Bee",
+      note: "積分速度訓練 12 題",
+      count: 12,
+      topicLocked: false,
+      daily: false,
+      boss: false,
+      integralBee: true
+    },
+    no_hint: {
+      label: "No Hint",
+      note: "無提示計分挑戰",
+      count: 12,
+      topicLocked: false,
+      daily: false,
+      boss: false,
+      noHint: true
+    },
+    accuracy: {
+      label: "Accuracy",
+      note: "不限時，錯題重罰",
+      count: 12,
+      topicLocked: false,
+      daily: false,
+      boss: false,
+      noTimer: true,
+      accuracyMode: true
+    },
+    survival: {
+      label: "Survival",
+      note: "最多錯 3 題",
+      count: 30,
+      topicLocked: false,
+      daily: false,
+      boss: false,
+      survival: true
+    },
+    warmup: {
+      label: "Warm-up",
+      note: "入場暖身 5 題",
+      count: 5,
+      topicLocked: false,
+      daily: false,
+      boss: false,
+      maxRank: 2
+    },
+    cooldown: {
+      label: "Cooldown",
+      note: "收操複習，不計分",
+      count: 5,
+      topicLocked: false,
+      daily: false,
+      boss: false,
+      practice: true,
+      cooldown: true
+    },
     mistakes: {
       label: "錯題重練",
       note: "錯題重練",
@@ -210,6 +275,72 @@
     advanced: "進階",
     boss: "東大"
   };
+  const CHALLENGE_MODES = ["warmup", "integral_bee", "no_hint", "accuracy", "survival", "boss_rush", "cooldown"];
+  const LIBRARY_PAGE_SIZE = 72;
+  const TAG_LABELS = {
+    "beginner-friendly": "新手友善",
+    "boss-rank": "Boss",
+    "technique-recognition": "技巧辨識",
+    "technique-sprint": "速判",
+    "trap-drill": "陷阱",
+    "limit-trap": "極限陷阱",
+    taylor: "Taylor",
+    coefficient: "係數",
+    rationalize: "有理化",
+    "trig-limit": "三角極限",
+    "chain-rule": "鏈鎖律",
+    substitution: "U-sub",
+    "integration-by-parts": "IBP",
+    ibp: "IBP",
+    "trig-substitution": "三角代換",
+    "partial-fraction": "Partial Fraction",
+    "ode-style": "ODE 型",
+    "kings-property": "King's",
+    frullani: "Frullani",
+    "improper-integral": "廣義積分",
+    "double-integral": "二重積分",
+    "triple-integral": "三重積分",
+    "change-of-variables": "變數變換",
+    multivariable: "多變數",
+    hessian: "Hessian",
+    wronskian: "Wronskian",
+    jacobian: "Jacobian",
+    "jacobian-chain": "Jacobian 鏈鎖",
+    "lagrange-multiplier": "LM",
+    nabla: "Nabla",
+    "vector-calculus": "向量分析",
+    "total-differential": "全微分",
+    "total-differential-min": "全微分最小",
+    complex: "複變",
+    "ode-intro": "ODE 入門",
+    "power-series": "冪級數",
+    radius: "收斂半徑",
+    "ratio-test": "Ratio",
+    "root-test": "Root",
+    "integral-test": "Integral Test",
+    "p-series": "p-series",
+    "alternating-series": "交錯級數",
+    comparison: "比較判別",
+    "limit-comparison": "極限比較",
+    "endpoint-analysis": "端點分析",
+    "convergence-test": "審斂",
+    "beta-function": "Beta",
+    "gamma-function": "Gamma",
+    wallis: "Wallis",
+    bessel: "Bessel",
+    parametric: "參數式",
+    "polar-curve": "極座標",
+    "related-rates": "相關變率",
+    "tangent-normal": "切線法線",
+    "linear-approximation": "線性近似",
+    "newton-method": "Newton",
+    curvature: "曲率"
+  };
+  const ONBOARDING_LEVELS = {
+    beginner: { label: "先暖身", pack: "beginner_warmup", mode: "warmup", topic: "all" },
+    standard: { label: "照主線", pack: "all", mode: "daily", topic: "all" },
+    advanced: { label: "直接挑戰", pack: "boss_challenge", mode: "boss_rush", topic: "all" }
+  };
   const HISTORY_LIMIT = 40;
   const APP_VERSION = "v0.9.0-beta";
   const BUILD_DATE = "2026-06-07";
@@ -223,6 +354,12 @@
   let selectedMistakeTopic = "all";
   let selectedHistoryTopic = "all";
   let selectedProofTier = "all";
+  let selectedLibraryTopic = "all";
+  let selectedLibraryPack = "all";
+  let selectedLibraryRank = "all";
+  let selectedLibraryFilter = "all";
+  let librarySearch = "";
+  let librarySearchShouldFocus = false;
   let homeMoreOpen = false;
   let advancedModeOpen = false;
   let selectedTheme = loadThemePreference();
@@ -286,7 +423,17 @@
       window.setTimeout(() => typesetMath(app), 80);
       renderIcons();
       setupReviewBoards();
+      restoreLibrarySearchFocus();
     });
+  }
+
+  function restoreLibrarySearchFocus() {
+    if (!librarySearchShouldFocus || view !== "library") return;
+    librarySearchShouldFocus = false;
+    const input = app.querySelector("[data-library-search]");
+    if (!input) return;
+    input.focus();
+    input.setSelectionRange(input.value.length, input.value.length);
   }
 
   function renderTopbar() {
@@ -308,6 +455,7 @@
               ? `<button class="button ghost" data-action="confirm-exit" title="離開本局">${icon("x")}<span>離開</span></button>`
               : `
                 <button class="nav-button ${view === "home" ? "is-active" : ""}" data-action="home">${icon("home")}<span>工作台</span></button>
+                <button class="nav-button ${view === "library" ? "is-active" : ""}" data-action="open-library">${icon("search")}<span>題庫</span></button>
                 <button class="nav-button ${view === "mistakes" ? "is-active" : ""}" data-action="open-mistakes">${icon("book")}<span>錯題</span></button>
                 <button class="nav-button ${view === "history" ? "is-active" : ""}" data-action="open-history">${icon("clock")}<span>歷史</span></button>
                 ${deferredInstallPrompt ? `<button class="icon-button" data-action="install-app" title="安裝 BuzzCalculus">${icon("download")}</button>` : ""}
@@ -325,6 +473,7 @@
     if (view === "results") return renderResults();
     if (view === "path-intro") return renderPathIntro();
     if (view === "proofs") return renderProofLab();
+    if (view === "library") return renderProblemLibrary();
     if (view === "mistakes") return renderMistakes();
     if (view === "history") return renderHistory();
     return renderHome();
@@ -591,6 +740,7 @@
       gold: "金色"
     }[node.status] || "可開始";
     const label = isNext ? "下一格" : statusText;
+    const badge = node.status === "gold" ? "Gold" : node.status === "mastered" ? "Clear" : node.gated ? "Gate" : "";
     return `
       <div class="path-step is-${node.status} ${isNext ? "is-next" : ""}">
         <button class="path-node-button" data-action="start-path-node" data-node-id="${escapeAttr(node.id)}" aria-label="${escapeAttr(`${node.label}，${label}`)}" title="${escapeAttr(`${node.label} · ${label}`)}">
@@ -601,6 +751,7 @@
             <strong>${escapeHtml(node.short)}</strong>
             <small>${label} · ${node.relatedCount} 題</small>
           </span>
+          ${badge ? `<span class="path-badge">${badge}</span>` : ""}
           <span class="path-node-progress">${isNext ? `${index + 1}` : `${node.mastery}%`}</span>
         </button>
       </div>
@@ -657,6 +808,8 @@
     const mistakeCount = Object.keys(records.mistakes || {}).length;
     const next = path.next;
     const boss = path.nodes.find((node) => node.id === "boss") || path.nodes[path.nodes.length - 1];
+    const week = weeklyMissionInfo(records);
+    const recent = recentPathResult(records, path);
     return `
       <section class="summary-card path-mission-card">
         <div class="path-mission-head">
@@ -667,12 +820,24 @@
         <div class="mission-progress" aria-label="今日任務進度">
           <div class="meter-track"><div class="meter-fill" style="width:${mission.progress}%"></div></div>
         </div>
+        ${renderDailyStreakDots(records)}
+        <div class="weekly-mission-line">
+          <span>週任務</span>
+          <strong>${week.completed}/${week.target}</strong>
+        </div>
+        <div class="meter-track"><div class="meter-fill" style="width:${week.progress}%"></div></div>
+        ${
+          recent
+            ? `<div class="recent-path-result"><span>最近關卡</span><strong>${escapeHtml(recent.label)} · ${recent.accuracy}%</strong></div>`
+            : ""
+        }
         <div class="path-mini-actions">
           <button class="path-mini-button" data-action="start-daily"><strong>每日</strong><span>${mission.progress}%</span></button>
           <button class="path-mini-button" data-action="start-weakness"><strong>錯題</strong><span>${mistakeCount}</span></button>
           <button class="path-mini-button" data-action="start-path-node" data-node-id="${escapeAttr(boss.id)}"><strong>Boss</strong><span>${boss.gated ? "可跳" : `${boss.mastery}%`}</span></button>
         </div>
         <button class="button secondary" data-action="start-path-node" data-node-id="${escapeAttr(next.id)}">${icon("play")}練下一格</button>
+        ${recent ? `<button class="button ghost" data-action="start-path-lesson" data-node-id="${escapeAttr(recent.id)}">${icon("repeat")}重練最近關卡</button>` : ""}
       </section>
     `;
   }
@@ -759,6 +924,10 @@
           </summary>
           <div class="home-more-grid">
             ${renderWeaknessStudyCard(records, weaknesses, mistakeCount)}
+            ${renderRecommendedPacksCard(records, weaknesses)}
+            ${renderChallengeModesCard()}
+            ${renderLocalGoalCard(records)}
+            ${renderProblemLibraryCard(records)}
             ${renderProofHomeCard(records)}
             ${renderDataManagementCard(records)}
             <section class="control-band practice-control home-compact-control">
@@ -794,6 +963,7 @@
                     ${renderPackOptions()}
                   </select>
                 </label>
+                <p class="panel-note">${escapeHtml((TRAINING_PACKS[selectedPack] || TRAINING_PACKS.all).note || "依技巧篩選題目。")}</p>
               </div>
               <div class="action-row">
                 <button class="button ghost custom-start" data-action="start">${icon("play")}自訂開始</button>
@@ -833,9 +1003,14 @@
         <div>
           <p class="section-label">BuzzCalculus</p>
           <h3>微積分反射訓練</h3>
-          <p>紀錄保存在本機瀏覽器。</p>
+          <p>選一個起點。紀錄只會保存在本機瀏覽器。</p>
         </div>
-        <button class="button ghost" data-action="dismiss-onboarding">${icon("check")}關閉</button>
+        <div class="onboarding-actions">
+          ${Object.entries(ONBOARDING_LEVELS)
+            .map(([key, item]) => `<button class="button ${key === "standard" ? "secondary" : "ghost"}" data-action="set-onboarding-level" data-level="${escapeAttr(key)}">${escapeHtml(item.label)}</button>`)
+            .join("")}
+          <button class="button ghost" data-action="dismiss-onboarding">${icon("check")}稍後</button>
+        </div>
       </section>
     `;
   }
@@ -896,6 +1071,104 @@
         <div class="action-row">
           <button class="button secondary" data-action="start-weakness" ${mistakeCount ? "" : "disabled"}>${icon("refresh")}重練弱點</button>
           <button class="button ghost" data-action="open-mistakes">${icon("book")}查看錯題</button>
+        </div>
+      </section>
+    `;
+  }
+
+  function renderRecommendedPacksCard(records, weaknesses) {
+    const packs = recommendedPacks(records, weaknesses);
+    return `
+      <section class="study-card recommend-card">
+        <div class="panel-title-row">
+          <div>
+            <p class="section-label">題包推薦</p>
+            <h3>下一組練這些</h3>
+          </div>
+          <span class="study-count">${packs.length}</span>
+        </div>
+        <div class="recommend-list">
+          ${packs
+            .map((item) => {
+              const pack = TRAINING_PACKS[item.key];
+              return `
+                <button class="recommend-pack" data-action="train-pack" data-pack="${escapeAttr(item.key)}">
+                  <strong>${escapeHtml(pack.label)}</strong>
+                  <span>${escapeHtml(pack.note)} · ${escapeHtml(item.reason)} · ${packTotalCountText(item.key)} 題</span>
+                </button>`;
+            })
+            .join("")}
+        </div>
+      </section>
+    `;
+  }
+
+  function renderChallengeModesCard() {
+    return `
+      <section class="study-card challenge-card">
+        <div class="panel-title-row">
+          <div>
+            <p class="section-label">速度訓練</p>
+            <h3>挑戰模式</h3>
+          </div>
+          <span class="study-count">${CHALLENGE_MODES.length}</span>
+        </div>
+        <div class="challenge-mode-grid">
+          ${CHALLENGE_MODES.map((key) => {
+            const mode = MODES[key];
+            return `
+              <button class="challenge-mode" data-action="start-mode" data-mode-key="${escapeAttr(key)}">
+                <strong>${escapeHtml(mode.label)}</strong>
+                <span>${escapeHtml(modeDescription(key))}</span>
+              </button>`;
+          }).join("")}
+        </div>
+      </section>
+    `;
+  }
+
+  function renderLocalGoalCard(records) {
+    const current = dailyGoal(records);
+    const week = weeklyMissionInfo(records);
+    return `
+      <section class="study-card goal-card">
+        <div class="panel-title-row">
+          <div>
+            <p class="section-label">本機目標</p>
+            <h3>每日 ${current} 題</h3>
+          </div>
+          <span class="study-count">${week.completed}/${week.target}</span>
+        </div>
+        <div class="goal-options" role="group" aria-label="每日目標">
+          ${[5, 10, 12, 20].map((value) => `<button class="tag-button ${current === value ? "is-active" : ""}" data-action="set-daily-goal" data-goal="${value}">${value} 題</button>`).join("")}
+        </div>
+        <div class="meter-track"><div class="meter-fill" style="width:${week.progress}%"></div></div>
+        <p class="panel-note">週任務：${week.completed}/${week.target} 題，${week.daysDone} 天有練。</p>
+      </section>
+    `;
+  }
+
+  function renderProblemLibraryCard(records) {
+    const favoriteCount = Object.keys(records.favorites || {}).length;
+    const reportCount = Object.keys(records.problemReports || {}).length;
+    const bossCount = problems.filter((problem) => problemRank(problem) >= 5).length;
+    return `
+      <section class="study-card library-card">
+        <div class="panel-title-row">
+          <div>
+            <p class="section-label">題庫</p>
+            <h3>搜尋與收藏</h3>
+          </div>
+          <span class="study-count">${problems.length} 題</span>
+        </div>
+        <div class="mini-stats">
+          <div><span>收藏</span><strong>${favoriteCount}</strong></div>
+          <div><span>Boss</span><strong>${bossCount}</strong></div>
+          <div><span>回報</span><strong>${reportCount}</strong></div>
+        </div>
+        <div class="action-row">
+          <button class="button secondary" data-action="open-library">${icon("search")}瀏覽題庫</button>
+          <button class="button ghost" data-action="open-boss-lab">${icon("trophy")}Boss 專區</button>
         </div>
       </section>
     `;
@@ -1139,6 +1412,110 @@
     return groups + (rest ? `<optgroup label="其他">${rest}</optgroup>` : "");
   }
 
+  function renderProblemLibrary() {
+    const records = loadRecords();
+    const allItems = libraryProblems(records);
+    const shown = allItems.slice(0, LIBRARY_PAGE_SIZE);
+    return `
+      <main class="screen">
+        <section class="panel page-panel problem-library">
+          <div class="page-head">
+            <div>
+              <p class="section-label">Problem Library</p>
+              <h2>題庫瀏覽</h2>
+              <p>搜尋題目、收藏常練題，或把可疑題目先標記回報。</p>
+            </div>
+            <div class="action-row">
+              <button class="button secondary" data-action="home">${icon("home")}回首頁</button>
+              <button class="button" data-action="open-boss-lab">${icon("trophy")}Boss 專區</button>
+              <button class="button ghost" data-action="start-mode" data-mode-key="boss_rush">${icon("play")}Boss Rush</button>
+            </div>
+          </div>
+
+          <div class="library-toolbar">
+            <label class="library-search">
+              <span>搜尋</span>
+              <input data-library-search type="search" value="${escapeAttr(librarySearch)}" placeholder="Taylor、IBP、Frullani、題號..." />
+            </label>
+            <label>
+              <span>題包</span>
+              <select data-library-pack-select>
+                ${renderLibraryPackOptions()}
+              </select>
+            </label>
+            <label>
+              <span>難度</span>
+              <select data-library-rank-select>
+                ${["all", "1", "2", "3", "4", "5", "6"].map((rank) => `<option value="${rank}" ${selectedLibraryRank === rank ? "selected" : ""}>${rank === "all" ? "全部" : `R${rank}`}</option>`).join("")}
+              </select>
+            </label>
+          </div>
+
+          <div class="segmented compact library-tabs" role="tablist" aria-label="題庫題型篩選">
+            ${Object.entries(TOPICS)
+              .map(([key, topic]) => `<button class="segment ${selectedLibraryTopic === key ? "is-active" : ""}" data-library-topic="${key}">${topic.label}</button>`)
+              .join("")}
+          </div>
+
+          <div class="segmented compact library-tabs" role="tablist" aria-label="題庫狀態篩選">
+            ${[
+              ["all", "全部"],
+              ["favorites", `收藏 ${Object.keys(records.favorites || {}).length}`],
+              ["boss", "Boss"],
+              ["reported", `已回報 ${Object.keys(records.problemReports || {}).length}`]
+            ].map(([key, label]) => `<button class="segment ${selectedLibraryFilter === key ? "is-active" : ""}" data-library-filter="${key}">${escapeHtml(label)}</button>`).join("")}
+          </div>
+
+          <div class="library-count">
+            <strong>${allItems.length}</strong>
+            <span>符合條件${allItems.length > shown.length ? `，先顯示 ${shown.length} 題` : ""}</span>
+          </div>
+
+          <div class="problem-library-grid">
+            ${shown.length ? shown.map((problem) => renderLibraryProblemCard(problem, records)).join("") : `<div class="empty-state">沒有符合條件的題目。</div>`}
+          </div>
+        </section>
+      </main>
+    `;
+  }
+
+  function renderLibraryPackOptions() {
+    const selected = selectedLibraryPack || "all";
+    const oldSelected = selectedPack;
+    selectedPack = selected;
+    const markup = renderPackOptions();
+    selectedPack = oldSelected;
+    return markup;
+  }
+
+  function renderLibraryProblemCard(problem, records) {
+    const favorite = Boolean(records.favorites?.[problem.id]);
+    const reported = Boolean(records.problemReports?.[problem.id]);
+    const quality = solutionQuality(problem);
+    return `
+      <article class="library-problem-card">
+        <div class="library-problem-top">
+          <div>
+            <strong>${escapeHtml(problem.id || "problem")}</strong>
+            <span>${TOPICS[problem.topic]?.label || problem.topic} · ${difficultyBadge(problem)}</span>
+          </div>
+          <div class="problem-card-actions">
+            <button class="icon-button ${favorite ? "is-active" : ""}" data-action="toggle-favorite" data-problem-id="${escapeAttr(problem.id)}" title="${favorite ? "取消收藏" : "收藏題目"}">${icon("star")}</button>
+            <button class="icon-button ${reported ? "is-active" : ""}" data-action="report-problem" data-problem-id="${escapeAttr(problem.id)}" title="${reported ? "已回報" : "回報題目"}">${icon("flag")}</button>
+          </div>
+        </div>
+        <div class="library-prompt math-block" data-tex="${escapeAttr(problem.prompt)}"></div>
+        <div class="library-tags">
+          ${problemDisplayTags(problem).slice(0, 5).map((tag) => `<span>${escapeHtml(tagLabel(tag))}</span>`).join("")}
+        </div>
+        <div class="library-problem-foot">
+          <span class="solution-quality is-${quality.level}">${escapeHtml(quality.label)}</span>
+          <button class="button ghost" data-action="start-problem" data-problem-id="${escapeAttr(problem.id)}">${icon("play")}練這題</button>
+        </div>
+      </article>
+    `;
+  }
+
   function renderProofLab() {
     const records = loadRecords();
     const stats = proofStats(records);
@@ -1322,6 +1699,7 @@
 
   function renderMistakeItem(item) {
     const problem = item.problem;
+    const records = loadRecords();
     return `
       <article class="review-item is-wrong">
         <div class="review-top">
@@ -1339,6 +1717,8 @@
         </div>
         <div class="action-row">
           <button class="button secondary" data-action="start-mistake-one" data-problem-id="${escapeAttr(problem.id)}">${icon("play")}重練這題</button>
+          <button class="button ghost" data-action="toggle-favorite" data-problem-id="${escapeAttr(problem.id)}">${icon("star")}${records.favorites?.[problem.id] ? "已收藏" : "收藏"}</button>
+          <button class="button ghost" data-action="report-problem" data-problem-id="${escapeAttr(problem.id)}">${icon("flag")}${records.problemReports?.[problem.id] ? "已回報" : "回報"}</button>
           <button class="button ghost" data-action="clear-mistake-one" data-problem-id="${escapeAttr(problem.id)}">${icon("trash")}移除</button>
         </div>
       </article>
@@ -1483,7 +1863,8 @@
     const progress = Math.round((quiz.index / quiz.problems.length) * 100);
     const totalTabs = quiz.tabSwitches[current.id] || 0;
     const isPractice = Boolean(quiz.practice);
-    const isDanger = !isPractice && remaining <= 8 ? "is-danger" : "";
+    const noTimer = Boolean(quiz.noTimer || isPractice);
+    const isDanger = !noTimer && remaining <= 8 ? "is-danger" : "";
     const feedback = quiz.feedback;
     const answerMode = quiz.answerMode || "free";
 
@@ -1502,12 +1883,12 @@
             </div>
             <div class="timer-cluster">
               <div class="timer-box ${isDanger}" data-live-box="time">
-                <span>${isPractice ? "Mode" : "Time"}</span>
-                <strong data-live="time">${isPractice ? "Free" : remaining}</strong>
+                <span>${noTimer ? "Mode" : "Time"}</span>
+                <strong data-live="time">${noTimer ? "Free" : remaining}</strong>
               </div>
-              <div class="timer-box ${!isPractice && totalTabs > current.tabLimit ? "is-danger" : ""}">
+              <div class="timer-box ${!noTimer && totalTabs > current.tabLimit ? "is-danger" : ""}">
                 <span>${isPractice ? "Tabs" : "Tabs"}</span>
-                <strong>${isPractice ? "Off" : `${totalTabs}/${current.tabLimit}`}</strong>
+                <strong>${noTimer ? "Off" : `${totalTabs}/${current.tabLimit}`}</strong>
               </div>
             </div>
           </div>
@@ -1532,7 +1913,7 @@
                     <strong>${feedback.title}</strong>
                     <p>${feedback.message}</p>
                   </div>`
-                : `<div class="feedback"><strong>作答狀態</strong><p>${isPractice ? "練習模式不倒數、不記切分頁、不加扣分。" : `倒數開始後請保持在本頁。這題允許 ${current.tabLimit} 次切分頁。`}</p></div>`
+                : `<div class="feedback"><strong>作答狀態</strong><p>${quiz.survival ? "Survival：最多錯 3 題。" : quiz.suddenDeath ? "Boss Rush：錯一題就結算。" : noTimer ? "本局不倒數、不記切分頁。" : `倒數開始後請保持在本頁。這題允許 ${current.tabLimit} 次切分頁。`}</p></div>`
             }
           </div>
 
@@ -1555,6 +1936,17 @@
   function renderHintPanel(problem) {
     const hints = hintsFor(problem);
     const shown = Math.min(quiz.hintsUsed?.[problem.id] || 0, hints.length);
+    if (quiz.noHint) {
+      return `
+        <div class="hint-panel is-locked">
+          <div>
+            <strong>No Hint</strong>
+            <span>本局關閉提示</span>
+          </div>
+          <button class="button ghost" disabled>${icon("lightbulb")}不可用</button>
+        </div>
+      `;
+    }
     return `
       <div class="hint-panel">
         <div>
@@ -1922,6 +2314,7 @@
 
   function renderReviewItem(answer, index) {
     const item = answer.problem;
+    const records = loadRecords();
     return `
       <article class="review-item ${answer.correct ? "is-correct" : "is-wrong"}">
         <div class="review-top">
@@ -1945,6 +2338,10 @@
             ? ""
             : `<div class="tag-row">${ERROR_TAGS.map((tag) => `<button class="tag-button ${answer.errorTag === tag ? "is-active" : ""}" data-action="tag-answer" data-problem-id="${escapeAttr(item.id)}" data-tag="${escapeAttr(tag)}">${tag}</button>`).join("")}</div>`
         }
+        <div class="action-row">
+          <button class="button ghost" data-action="toggle-favorite" data-problem-id="${escapeAttr(item.id)}">${icon("star")}${records.favorites?.[item.id] ? "已收藏" : "收藏"}</button>
+          <button class="button ghost" data-action="report-problem" data-problem-id="${escapeAttr(item.id)}">${icon("flag")}${records.problemReports?.[item.id] ? "已回報" : "回報"}</button>
+        </div>
       </article>
     `;
   }
@@ -2022,6 +2419,45 @@
       });
     });
 
+    app.querySelectorAll("[data-library-topic]").forEach((button) => {
+      button.addEventListener("click", () => {
+        selectedLibraryTopic = button.dataset.libraryTopic || "all";
+        render();
+      });
+    });
+
+    app.querySelectorAll("[data-library-filter]").forEach((button) => {
+      button.addEventListener("click", () => {
+        selectedLibraryFilter = button.dataset.libraryFilter || "all";
+        render();
+      });
+    });
+
+    const librarySearchInput = app.querySelector("[data-library-search]");
+    if (librarySearchInput) {
+      librarySearchInput.addEventListener("input", () => {
+        librarySearch = librarySearchInput.value || "";
+        librarySearchShouldFocus = true;
+        render();
+      });
+    }
+
+    const libraryPackSelect = app.querySelector("[data-library-pack-select]");
+    if (libraryPackSelect) {
+      libraryPackSelect.addEventListener("change", () => {
+        selectedLibraryPack = libraryPackSelect.value || "all";
+        render();
+      });
+    }
+
+    const libraryRankSelect = app.querySelector("[data-library-rank-select]");
+    if (libraryRankSelect) {
+      libraryRankSelect.addEventListener("change", () => {
+        selectedLibraryRank = libraryRankSelect.value || "all";
+        render();
+      });
+    }
+
     const importInput = app.querySelector("#import-records");
     if (importInput) {
       importInput.addEventListener("change", () => importRecords(importInput.files && importInput.files[0]));
@@ -2082,16 +2518,16 @@
       saveRecords(records);
       render();
     }
+    if (action === "set-onboarding-level") applyOnboardingLevel(actionNode.dataset.level || "standard");
     if (action === "start-choice") {
       selectedAnswerMode = "choice";
       selectedMode = "quick";
       startQuiz();
     }
     if (action === "start-daily") {
-      selectedMode = "daily";
-      selectedAnswerMode = "choice";
-      startQuiz();
+      startDailyQuiz();
     }
+    if (action === "start-mode") startMode(actionNode.dataset.modeKey || "quick");
     if (action === "start-path-node") openPathIntro(actionNode.dataset.nodeId);
     if (action === "start-path-lesson") startPathLesson(actionNode.dataset.nodeId || activePathNodeId);
     if (action === "start-path-gate") startPathGate(actionNode.dataset.nodeId || activePathNodeId);
@@ -2104,6 +2540,19 @@
     }
     if (action === "open-history") {
       view = "history";
+      render();
+    }
+    if (action === "open-library") {
+      selectedLibraryFilter = "all";
+      view = "library";
+      render();
+    }
+    if (action === "open-boss-lab") {
+      selectedLibraryFilter = "boss";
+      selectedLibraryTopic = "all";
+      selectedLibraryPack = "all";
+      selectedLibraryRank = "all";
+      view = "library";
       render();
     }
     if (action === "open-proofs") {
@@ -2124,6 +2573,17 @@
       selectedMode = "practice";
       startQuiz();
     }
+    if (action === "train-pack") {
+      selectedPack = actionNode.dataset.pack || "all";
+      selectedTopic = "all";
+      selectedMode = "quick";
+      selectedAnswerMode = "choice";
+      startQuiz();
+    }
+    if (action === "start-problem") startSingleProblem(actionNode.dataset.problemId);
+    if (action === "toggle-favorite") toggleFavorite(actionNode.dataset.problemId);
+    if (action === "report-problem") reportProblem(actionNode.dataset.problemId);
+    if (action === "set-daily-goal") setDailyGoal(actionNode.dataset.goal);
     if (action === "clear-history") clearHistory();
     if (action === "export-records") exportRecords();
     if (action === "toggle-theme") toggleTheme();
@@ -2155,6 +2615,98 @@
       localStorage.removeItem(STORAGE_KEY);
       render();
     }
+  }
+
+  function startDailyQuiz() {
+    const records = loadRecords();
+    const mode = MODES.daily;
+    selectedMode = "daily";
+    selectedPack = "all";
+    selectedTopic = "all";
+    selectedAnswerMode = "choice";
+    startQuiz(selectProblemPool({ ...mode, count: dailyGoal(records) }, "all"), { modeKey: "daily" });
+  }
+
+  function startMode(modeKey) {
+    const mode = MODES[modeKey] || MODES.quick;
+    selectedMode = modeKey;
+    selectedAnswerMode = modeKey === "cooldown" ? "free" : "choice";
+    selectedPack = "all";
+    selectedTopic = "all";
+    if (mode.integralBee) selectedTopic = "integrals";
+    if (mode.cooldown) {
+      startQuiz(selectCooldownPool(mode.count), { modeKey, practice: true, noTimer: true });
+      return;
+    }
+    startQuiz(null, {
+      modeKey,
+      noTimer: Boolean(mode.noTimer),
+      noHint: Boolean(mode.noHint),
+      survival: Boolean(mode.survival),
+      suddenDeath: Boolean(mode.suddenDeath),
+      accuracyMode: Boolean(mode.accuracyMode)
+    });
+  }
+
+  function applyOnboardingLevel(level) {
+    const config = ONBOARDING_LEVELS[level] || ONBOARDING_LEVELS.standard;
+    const records = loadRecords();
+    records.onboardingSeen = true;
+    records.onboardingLevel = level;
+    saveRecords(records);
+    selectedPack = config.pack;
+    selectedMode = config.mode;
+    selectedTopic = config.topic;
+    selectedAnswerMode = "choice";
+    if (config.mode === "daily") {
+      startDailyQuiz();
+      return;
+    }
+    startMode(config.mode);
+  }
+
+  function startSingleProblem(problemId) {
+    const problem = problemById(problemId);
+    if (!problem) return;
+    selectedMode = "practice";
+    selectedTopic = problem.topic || "all";
+    selectedAnswerMode = "choice";
+    startQuiz([problem], { modeKey: "practice", practice: true, noTimer: true });
+  }
+
+  function toggleFavorite(problemId) {
+    if (!problemById(problemId)) return;
+    const records = loadRecords();
+    if (records.favorites[problemId]) {
+      delete records.favorites[problemId];
+    } else {
+      records.favorites[problemId] = { problemId, addedAt: new Date().toISOString() };
+    }
+    saveRecords(records);
+    render();
+  }
+
+  function reportProblem(problemId) {
+    if (!problemById(problemId)) return;
+    const records = loadRecords();
+    const previous = records.problemReports[problemId] || {};
+    records.problemReports[problemId] = {
+      problemId,
+      count: (previous.count || 0) + 1,
+      reportedAt: new Date().toISOString(),
+      reason: previous.reason || "needs-review"
+    };
+    saveRecords(records);
+    render();
+  }
+
+  function setDailyGoal(value) {
+    const goal = Number(value);
+    if (![5, 10, 12, 20].includes(goal)) return;
+    const records = loadRecords();
+    records.settings.dailyTarget = goal;
+    saveRecords(records);
+    render();
   }
 
   function startMistakeQuiz(topic, problemIds) {
@@ -2239,19 +2791,16 @@
 
   function selectPathGatePool(node, count) {
     const index = Math.max(0, PATH_NODES.findIndex((item) => item.id === node.id));
-    const sourceNodes = index > 0 ? PATH_NODES.slice(0, index) : [node];
     const seen = new Set();
-    const pool = sourceNodes
-      .flatMap((item) => pathNodeProblems(item))
-      .filter((problem) => {
-        if (seen.has(problem.id)) return false;
-        seen.add(problem.id);
-        return true;
-      });
-    const fallback = pathNodeProblems(node);
-    const source = pool.length ? pool : fallback;
-    const ordered = adaptiveShuffle(source, loadRecords(), seedFromString(`${Date.now()}-gate-${node.id}`));
-    return padPool(ordered.slice(0, count), source, count);
+    const current = pathNodeProblems(node).filter((problem) => problemRank(problem) <= 4 || node.boss);
+    const previous = PATH_NODES.slice(Math.max(0, index - 2), index).flatMap((item) => pathNodeProblems(item));
+    const source = current.concat(previous).filter((problem) => {
+      if (seen.has(problem.id)) return false;
+      seen.add(problem.id);
+      return true;
+    });
+    const ordered = adaptiveShuffle(source.length ? source : current, loadRecords(), seedFromString(`${Date.now()}-gate-${node.id}`));
+    return padPool(ordered.slice(0, count), source.length ? source : current, count);
   }
 
   function pathGateInfo(_node) {
@@ -2447,7 +2996,7 @@
   }
 
   function showHint() {
-    if (!quiz || quiz.feedback) return;
+    if (!quiz || quiz.feedback || quiz.noHint) return;
     const current = getCurrentProblem();
     if (!current) return;
     const hints = hintsFor(current);
@@ -2478,6 +3027,11 @@
       topic: selectedTopic,
       answerMode: selectedAnswerMode,
       practice: options.practice !== undefined ? Boolean(options.practice) : Boolean(mode.practice),
+      noTimer: Boolean(options.noTimer || mode.noTimer),
+      noHint: Boolean(options.noHint || mode.noHint),
+      survival: Boolean(options.survival || mode.survival),
+      suddenDeath: Boolean(options.suddenDeath || mode.suddenDeath),
+      accuracyMode: Boolean(options.accuracyMode || mode.accuracyMode),
       pathNodeId: options.pathNodeId || "",
       pathGate: options.pathGate || null,
       problems: pool,
@@ -2497,11 +3051,12 @@
       hintsUsed: {},
       draft: "",
       feedback: null,
+      forceFinishAfterFeedback: false,
       modal: null
     };
     view = "quiz";
     lastVisibilityStamp = Date.now();
-    if (!quiz.practice) startTicker();
+    if (!quiz.practice && !quiz.noTimer) startTicker();
     trackEvent("start_session", {
       mode: quiz.mode,
       topic: quiz.topic,
@@ -2515,6 +3070,9 @@
 
   function selectProblemPool(mode, topic) {
     let pool = problems.slice();
+    if (mode.integralBee) {
+      pool = pool.filter((problem) => problem.topic === "integrals");
+    }
     if (mode.hidden && selectedMode === "mistakes") {
       const records = loadRecords();
       pool = Object.values(records.mistakes || {}).map((item) => problemById(item.problemId)).filter(Boolean);
@@ -2531,6 +3089,10 @@
     if (mode.hardOnly) {
       const hardPool = pool.filter((problem) => problemRank(problem) >= 4);
       pool = hardPool.length ? hardPool : pool;
+    }
+    if (mode.maxRank) {
+      const easyPool = pool.filter((problem) => problemRank(problem) <= mode.maxRank);
+      pool = easyPool.length ? easyPool : pool;
     }
 
     if (mode.boss) {
@@ -2571,6 +3133,16 @@
     return padPool(selected, shuffle(pool, seed), count);
   }
 
+  function selectCooldownPool(count) {
+    const records = loadRecords();
+    const mistakes = Object.values(records.mistakes || {})
+      .sort((a, b) => mistakeWeight(b) - mistakeWeight(a))
+      .map((item) => problemById(item.problemId))
+      .filter(Boolean);
+    const easy = problems.filter((problem) => problemRank(problem) <= 3);
+    return padPool(mistakes.slice(0, count), easy, count);
+  }
+
   function padPool(selected, pool, count) {
     const result = selected.slice();
     const shuffled = shuffle(pool, seedFromString(`${Date.now()}-pad`));
@@ -2590,7 +3162,7 @@
         const topic = records.topicStats[problem.topic] || { wrong: 0, total: 0 };
         const problemWeakness = stat.total ? stat.wrong / stat.total : 0;
         const topicWeakness = topic.total ? topic.wrong / topic.total : 0;
-        const mistakeBoost = records.mistakes[problem.id] ? 0.45 : 0;
+        const mistakeBoost = records.mistakes[problem.id] ? 0.2 + Math.min(1.2, mistakeWeight(records.mistakes[problem.id]) * 0.18) : 0;
         const randomness = hashUnit(`${seed}-${problem.id}-${index}`);
         return {
           problem,
@@ -2623,7 +3195,7 @@
     const current = getCurrentProblem();
     const input = quiz.draft.trim();
     const totalTabs = quiz.tabSwitches[current.id] || 0;
-    if (!quiz.practice && totalTabs > current.tabLimit) {
+    if (!quiz.practice && !quiz.noTimer && totalTabs > current.tabLimit) {
       recordAnswer({ status: "wrong", reason: "Tab limit", input });
       return;
     }
@@ -2652,8 +3224,10 @@
     const timeBonus = correct && !quiz.practice ? Math.max(0, problem.timeLimit - elapsed) : 0;
     const difficultyBonus = problemRank(problem) * 10;
     const penalty = correct && !quiz.practice ? usedHints * hintPenalty(problem) : 0;
-    const earned = correct && !quiz.practice ? Math.max(0, 40 + difficultyBonus + timeBonus - penalty) : 0;
+    const noHintBonus = correct && quiz.noHint ? 15 : 0;
+    const earned = correct && !quiz.practice ? Math.max(0, 40 + difficultyBonus + timeBonus + noHintBonus - penalty) : 0;
     quiz.score += earned;
+    if (!correct && quiz.accuracyMode && !quiz.practice) quiz.score = Math.max(0, quiz.score - 80);
     quiz.currentStreak = correct ? quiz.currentStreak + 1 : 0;
     quiz.bestStreak = Math.max(quiz.bestStreak, quiz.currentStreak);
     quiz.answers.push({
@@ -2682,6 +3256,9 @@
       tab_switches: quiz.tabSwitches[problem.id] || 0,
       practice: Boolean(quiz.practice)
     });
+    const wrongCount = quiz.answers.filter((answer) => !answer.correct).length;
+    if (!correct && quiz.suddenDeath) quiz.forceFinishAfterFeedback = true;
+    if (quiz.survival && wrongCount >= 3) quiz.forceFinishAfterFeedback = true;
     quiz.feedback = {
       status: correct ? "correct" : reason === "Timeout" ? "timeout" : "wrong",
       title: correct ? (quiz.practice ? "答對" : `答對，+${earned}`) : answerReasonLabel(reason),
@@ -2701,6 +3278,10 @@
       quiz.modal = null;
       quiz.boardOpen = false;
       quiz.boardFullscreen = false;
+      if (quiz.forceFinishAfterFeedback) {
+        finishQuiz();
+        return;
+      }
       startTicker();
       render();
     }, 950);
@@ -2731,7 +3312,7 @@
 
   function startTicker() {
     stopTicker();
-    if (quiz && quiz.practice) return;
+    if (quiz && (quiz.practice || quiz.noTimer)) return;
     tickHandle = window.setInterval(() => {
       if (!quiz || view !== "quiz") return;
       const current = getCurrentProblem();
@@ -3338,6 +3919,10 @@
     next.pathGateAttempts = next.pathGateAttempts && typeof next.pathGateAttempts === "object" ? next.pathGateAttempts : {};
     next.pathLessonRuns = next.pathLessonRuns && typeof next.pathLessonRuns === "object" ? next.pathLessonRuns : {};
     next.proofs = next.proofs && typeof next.proofs === "object" ? next.proofs : {};
+    next.favorites = next.favorites && typeof next.favorites === "object" ? next.favorites : {};
+    next.problemReports = next.problemReports && typeof next.problemReports === "object" ? next.problemReports : {};
+    next.settings = next.settings && typeof next.settings === "object" ? next.settings : {};
+    next.onboardingLevel = typeof next.onboardingLevel === "string" ? next.onboardingLevel : "";
     next.onboardingSeen = Boolean(next.onboardingSeen);
     return next;
   }
@@ -3464,10 +4049,15 @@
         lastWrongAt: finishedAt,
         reason: answer.reason,
         lastInput: answer.input,
-        tag: answer.errorTag || previous.tag || ""
+        tag: answer.errorTag || previous.tag || "",
+        correctStreak: 0
       };
     } else if (records.mistakes[problem.id]) {
-      records.mistakes[problem.id].lastCorrectAt = finishedAt;
+      const item = records.mistakes[problem.id];
+      item.lastCorrectAt = finishedAt;
+      item.correctStreak = (item.correctStreak || 0) + 1;
+      item.wrongCount = Math.max(0, Number(item.wrongCount || 1) - 0.5);
+      if (item.correctStreak >= 2 || item.wrongCount <= 0.5) delete records.mistakes[problem.id];
     }
   }
 
@@ -3486,6 +4076,10 @@
       ["gate_pass", "跳關成功", "通過一次跳關小測驗", () => Boolean(currentQuiz.pathGate) && historyItem.correct >= (currentQuiz.pathGate.required || 4)],
       ["boss_clear", "Boss 通關", "完成 Boss Ladder 且正確率 70% 以上", () => currentQuiz.mode === "boss" && historyItem.accuracy >= 70],
       ["boss_ace", "Boss Ace", "Boss 題組正確率 90% 以上", () => currentQuiz.mode === "boss" && historyItem.accuracy >= 90],
+      ["boss_rush_clear", "Boss Rush", "Boss Rush 正確率 70% 以上", () => currentQuiz.mode === "boss_rush" && historyItem.accuracy >= 70],
+      ["integral_bee_clear", "Integral Bee", "完成一次 Integral Bee", () => currentQuiz.mode === "integral_bee"],
+      ["survival_clear", "Survivor", "Survival 模式作答 20 題以上", () => currentQuiz.mode === "survival" && currentQuiz.answers.length >= 20],
+      ["no_hint_clear", "No Hint", "No Hint 模式正確率 70% 以上", () => currentQuiz.mode === "no_hint" && historyItem.accuracy >= 70],
       ["blackboard_user", "黑板使用者", "至少一題留下手寫草稿", () => currentQuiz.answers.some((answer) => answer.boardStrokes && answer.boardStrokes.length)],
       ["proof_reader", "Proof Reader", "已查看 5 題參考證明", () => proofProgress.viewed >= 5],
       ["proof_solver", "Proof Solver", "自評看懂 3 題證明", () => proofProgress.understood >= 3],
@@ -3531,7 +4125,7 @@
   }
 
   function dailyMissionInfo(records, daily) {
-    const target = MODES.daily.count;
+    const target = dailyGoal(records);
     const completed = daily ? Math.min(target, Number(daily.total || target)) : 0;
     return {
       target,
@@ -3753,6 +4347,126 @@
     };
   }
 
+  function recommendedPacks(records, weaknesses) {
+    const weaknessKeys = new Set((weaknesses || []).map((item) => item.key));
+    const scored = Object.entries(TRAINING_PACKS)
+      .filter(([key]) => key !== "all")
+      .map(([key, pack]) => {
+        const tags = pack.tags || [];
+        const overlap = tags.filter((tag) => weaknessKeys.has(tag)).length;
+        const done = problems.filter((problem) => matchesPack(problem, key) && records.problemStats?.[problem.id]?.total).length;
+        const total = packTotalCountText(key);
+        const completionGap = total ? 1 - done / total : 0;
+        const starterBoost = tags.includes("beginner-friendly") && !(records.totalAnswered || 0) ? 3 : 0;
+        return {
+          key,
+          score: overlap * 5 + completionGap * 1.5 + starterBoost,
+          reason: overlap ? "對應近期弱點" : starterBoost ? "適合第一輪" : "補齊覆蓋"
+        };
+      })
+      .sort((a, b) => b.score - a.score);
+    const fallback = ["beginner_warmup", "technique_recognition", "substitution"].map((key) => ({ key, reason: "高頻技巧" }));
+    return (scored.filter((item) => item.score > 0).slice(0, 3).length ? scored.filter((item) => item.score > 0).slice(0, 3) : fallback).filter((item) => TRAINING_PACKS[item.key]);
+  }
+
+  function dailyGoal(records) {
+    const value = Number(records.settings?.dailyTarget || MODES.daily.count || 12);
+    return [5, 10, 12, 20].includes(value) ? value : MODES.daily.count;
+  }
+
+  function weeklyMissionInfo(records) {
+    const start = startOfWeek(new Date());
+    let completed = 0;
+    const days = new Set();
+    (records.history || []).forEach((item) => {
+      const time = Date.parse(item.finishedAt || "");
+      if (!Number.isFinite(time) || time < start.getTime()) return;
+      completed += Number(item.total || 0);
+      days.add(dateKey(new Date(time)));
+    });
+    const target = Math.max(30, dailyGoal(records) * 5);
+    return {
+      target,
+      completed,
+      daysDone: days.size,
+      progress: Math.min(100, Math.round((completed / target) * 100))
+    };
+  }
+
+  function renderDailyStreakDots(records) {
+    const daily = records.daily || {};
+    const today = new Date();
+    const dots = [];
+    for (let offset = 6; offset >= 0; offset -= 1) {
+      const date = new Date(today);
+      date.setDate(today.getDate() - offset);
+      const key = dateKey(date);
+      dots.push(`<span class="streak-dot ${daily[key] ? "is-done" : ""}" title="${key}"></span>`);
+    }
+    return `<div class="streak-dots" aria-label="最近七日每日任務">${dots.join("")}</div>`;
+  }
+
+  function recentPathResult(records, path) {
+    const entries = Object.entries(records.pathLessonRuns || {})
+      .map(([id, run]) => {
+        const node = path.nodes.find((item) => item.id === id) || PATH_NODES.find((item) => item.id === id);
+        return node && run.lastFinishedAt ? { id, label: node.short || node.label, accuracy: run.lastAccuracy || 0, time: Date.parse(run.lastFinishedAt || "") || 0 } : null;
+      })
+      .filter(Boolean)
+      .sort((a, b) => b.time - a.time);
+    return entries[0] || null;
+  }
+
+  function startOfWeek(date) {
+    const copy = new Date(date);
+    const day = copy.getDay() || 7;
+    copy.setHours(0, 0, 0, 0);
+    copy.setDate(copy.getDate() - day + 1);
+    return copy;
+  }
+
+  function libraryProblems(records) {
+    const query = librarySearch.trim().toLowerCase();
+    return problems.filter((problem) => {
+      if (selectedLibraryTopic !== "all" && problem.topic !== selectedLibraryTopic) return false;
+      if (selectedLibraryPack !== "all" && !matchesPack(problem, selectedLibraryPack)) return false;
+      if (selectedLibraryRank !== "all" && problemRank(problem) !== Number(selectedLibraryRank)) return false;
+      if (selectedLibraryFilter === "favorites" && !records.favorites?.[problem.id]) return false;
+      if (selectedLibraryFilter === "reported" && !records.problemReports?.[problem.id]) return false;
+      if (selectedLibraryFilter === "boss" && problemRank(problem) < 5) return false;
+      if (!query) return true;
+      const haystack = [
+        problem.id,
+        problem.prompt,
+        problem.source,
+        problem.answerKind,
+        problem.answer,
+        ...(problem.tags || []).map((tag) => `${tag} ${tagLabel(tag)}`)
+      ].join(" ").toLowerCase();
+      return haystack.includes(query);
+    });
+  }
+
+  function problemDisplayTags(problem) {
+    return Array.from(new Set(problem.tags || []));
+  }
+
+  function solutionQuality(problem) {
+    const solution = String(problem.solution || "");
+    if (solution.length >= 48 || (problem.hints || []).length >= 2) return { level: "good", label: "解析完整" };
+    if (solution.length >= 16) return { level: "basic", label: "解析簡短" };
+    return { level: "todo", label: "解析待補" };
+  }
+
+  function mistakeWeight(item) {
+    const wrong = Math.max(1, Number(item.wrongCount || 1));
+    const lastWrong = Date.parse(item.lastWrongAt || "");
+    const ageDays = Number.isFinite(lastWrong) ? Math.max(0, (Date.now() - lastWrong) / 86400000) : 0;
+    const timeDecay = Math.max(0.35, Math.exp(-ageDays / 21));
+    const correctDecay = Math.max(0.25, 1 - Number(item.correctStreak || 0) * 0.35);
+    return wrong * timeDecay * correctDecay;
+  }
+
   function modeDescription(mode) {
     return {
       quick: "12 題",
@@ -3761,6 +4475,13 @@
       practice: "不限時",
       brutal: "高難度",
       boss: "階梯",
+      boss_rush: "錯一題結束",
+      integral_bee: "積分快速戰",
+      no_hint: "關閉提示",
+      accuracy: "不限時精準",
+      survival: "三命制",
+      warmup: "5 題暖身",
+      cooldown: "錯題收操",
       mistakes: "錯題"
     }[mode] || "";
   }
@@ -3819,7 +4540,7 @@
     Object.values(records.mistakes || {}).forEach((item) => {
       const problem = problemById(item.problemId);
       if (!problem) return;
-      const weight = item.wrongCount || 1;
+      const weight = mistakeWeight(item);
       topicCounts[problem.topic] = (topicCounts[problem.topic] || 0) + weight;
       (problem.tags || []).forEach((tag) => {
         tagCounts[tag] = (tagCounts[tag] || 0) + weight;
@@ -3838,10 +4559,11 @@
     return Object.entries(counts)
       .sort((a, b) => b[1] - a[1])
       .slice(0, 8)
-      .map(([key, count]) => ({ key, label: labeler(key), count, max }));
+      .map(([key, count]) => ({ key, label: labeler(key), count: Math.max(1, Math.round(count)), rawCount: count, max }));
   }
 
   function tagLabel(tag) {
+    if (TAG_LABELS[tag]) return TAG_LABELS[tag];
     const pack = TRAINING_PACKS[tag];
     if (pack) return pack.label;
     return tag
@@ -4478,7 +5200,7 @@
 
   function setupVisibilityTracking() {
     document.addEventListener("visibilitychange", () => {
-      if (!quiz || view !== "quiz" || quiz.feedback || quiz.practice) return;
+      if (!quiz || view !== "quiz" || quiz.feedback || quiz.practice || quiz.noTimer) return;
       const current = getCurrentProblem();
       if (!current) return;
       if (document.visibilityState === "hidden") {
