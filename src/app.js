@@ -82,8 +82,8 @@
       note: "四選一，點選即作答"
     },
     free: {
-      label: "手寫",
-      note: "黑板書寫 + 答案欄"
+      label: "WebWork",
+      note: "答案欄 + LaTeX 預覽 + 黑板草稿"
     }
   };
 
@@ -195,7 +195,7 @@
     }
   };
 
-  const KEYS = ["x", "pi", "e", "^", "sqrt(", "sin(", "cos(", "tan(", "log(", "abs(", "DNE"];
+  const KEYS = ["x", "pi", "e", "(", ")", "+", "-", "*", "/", "^", "sqrt(", "sin(", "cos(", "tan(", "log(", "DNE"];
   const STORAGE_KEY = "buzzcalculus.records.v1";
   const ERROR_TAGS = ["粗心", "不會", "忘公式"];
   const PROOF_TIERS = {
@@ -1423,7 +1423,7 @@
         <div class="history-main">
           <div>
             <strong>${escapeHtml(item.modeLabel || item.mode || "Quiz")}</strong>
-            <span>${formatDateTime(item.finishedAt)} · ${item.answerMode === "choice" ? "選擇題" : "手寫"} · ${item.practice ? "練習" : "計分"}</span>
+            <span>${formatDateTime(item.finishedAt)} · ${answerModeLabel(item.answerMode || "free")} · ${item.practice ? "練習" : "計分"}</span>
           </div>
           <div class="history-metrics">
             <span>${item.score} 分</span>
@@ -1562,42 +1562,89 @@
     const disabled = quiz.feedback ? "disabled" : "";
     const boardTool = quiz.boardTool || "pen";
     const fullscreen = Boolean(quiz.boardFullscreen);
+    const strokes = cloneBoardStrokes(problem.id);
+    const boardOpen = fullscreen || Boolean(quiz.boardOpen) || strokes.length > 0;
     const previewTex = answerToTex(quiz.draft, problem) || "\\text{尚未輸入}";
+    const answerWorkspace = renderWebWorkAnswerWorkspace(problem, disabled, previewTex, fullscreen);
+    const scratchboard = renderScratchboard(problem, disabled, boardTool, fullscreen, boardOpen, strokes.length);
     return `
-      <div class="handwrite-shell ${fullscreen ? "is-fullscreen" : ""}">
-      <div class="handwrite-board" data-handwrite-board>
-        <div class="board-top">
-          <strong>手寫黑板</strong>
-          <div class="board-tools" aria-label="黑板工具">
-            <button class="icon-button ${boardTool === "pen" ? "is-active" : ""}" type="button" data-board-action="tool" data-tool="pen" title="筆" ${disabled}>${icon("pen")}</button>
-            <button class="icon-button ${boardTool === "eraser" ? "is-active" : ""}" type="button" data-board-action="tool" data-tool="eraser" title="橡皮擦" ${disabled}>${icon("eraser")}</button>
-            <button class="icon-button" type="button" data-board-action="undo" title="復原" ${disabled}>${icon("undo")}</button>
-            <button class="icon-button" type="button" data-board-action="clear" title="清除黑板" ${disabled}>${icon("trash")}</button>
-            <button class="icon-button" type="button" data-board-action="fullscreen" title="${fullscreen ? "退出全螢幕" : "黑板全螢幕"}" ${disabled}>${icon(fullscreen ? "minimize" : "maximize")}</button>
-          </div>
-        </div>
-        <canvas class="blackboard" data-blackboard data-problem-id="${escapeAttr(problem.id)}" aria-label="手寫黑板"></canvas>
+      <div class="handwrite-shell webwork-shell ${fullscreen ? "is-fullscreen" : ""}">
+        ${fullscreen ? `${scratchboard}${answerWorkspace}` : `${answerWorkspace}${scratchboard}`}
       </div>
-      <form class="answer-panel" data-action="submit-answer">
+    `;
+  }
+
+  function renderWebWorkAnswerWorkspace(problem, disabled, previewTex, compact) {
+    const syntax = answerSyntaxInfo(problem, quiz.draft);
+    return `
+      <section class="webwork-answer ${compact ? "is-docked" : ""}">
+        <div class="webwork-head">
+          <div>
+            <span>Answer</span>
+            <strong>${answerKindLabel(problem.answerKind)}</strong>
+          </div>
+          <span class="syntax-pill ${syntax.className}" data-syntax-status>${syntax.label}</span>
+        </div>
+        <form class="answer-panel webwork-form" data-action="submit-answer">
         <label class="sr-only" for="answer">答案</label>
         <input id="answer" class="answer-input" autocomplete="off" inputmode="text" value="${escapeAttr(quiz.draft)}" placeholder="${placeholderFor(problem)}" ${disabled} />
         <button class="button" type="submit" ${disabled}>${icon("send")}送出</button>
-      </form>
-      <div class="answer-preview">
-        <span>預覽</span>
-        <div class="answer-preview-math math-inline ${quiz.draft.trim() ? "" : "is-empty"}" data-answer-preview data-tex="${escapeAttr(previewTex)}">${renderLiteTex(previewTex, false)}</div>
-      </div>
-      <div class="keypad" aria-label="快速輸入">
-        ${KEYS.map((key) => `<button type="button" data-insert="${escapeAttr(key)}" ${disabled}>${key}</button>`).join("")}
-      </div>
-      <div class="helper-row">
-        <span>黑板可用手指或滑鼠書寫</span>
-        <span>答案欄送出計分</span>
-        <span>不定積分可省略 +C</span>
-        <span>答案格式：${formatHelp(problem.answerKind)}</span>
-      </div>
-      </div>
+        </form>
+        <div class="answer-preview webwork-preview">
+          <span>Preview</span>
+          <div class="answer-preview-math math-inline ${quiz.draft.trim() ? "" : "is-empty"}" data-answer-preview data-tex="${escapeAttr(previewTex)}">${renderLiteTex(previewTex, false)}</div>
+        </div>
+        <div class="keypad webwork-keypad" aria-label="快速輸入">
+          ${KEYS.map((key) => `<button type="button" data-insert="${escapeAttr(key)}" ${disabled}>${key}</button>`).join("")}
+        </div>
+        <div class="helper-row webwork-helper">
+          <span>${formatHelp(problem.answerKind)}</span>
+          <span>不定積分可省略 +C</span>
+          <span>送出前先看 Preview</span>
+        </div>
+      </section>
     `;
+  }
+
+  function renderScratchboard(problem, disabled, boardTool, fullscreen, boardOpen, strokeCount) {
+    return `
+      <section class="scratchboard-shell ${boardOpen ? "is-open" : "is-collapsed"}">
+        <div class="scratchboard-summary">
+          <div>
+            <span>Scratchboard</span>
+            <strong>${strokeCount ? `${strokeCount} strokes` : "草稿黑板"}</strong>
+          </div>
+          <div class="board-tools" aria-label="黑板工具">
+            <button class="icon-button" type="button" data-board-action="toggle" title="${boardOpen ? "收合黑板" : "展開黑板"}" ${disabled}>${icon(boardOpen ? "chevron-up" : "chevron-down")}</button>
+            ${
+              boardOpen
+                ? `
+                  <button class="icon-button ${boardTool === "pen" ? "is-active" : ""}" type="button" data-board-action="tool" data-tool="pen" title="筆" ${disabled}>${icon("pen")}</button>
+                  <button class="icon-button ${boardTool === "eraser" ? "is-active" : ""}" type="button" data-board-action="tool" data-tool="eraser" title="橡皮擦" ${disabled}>${icon("eraser")}</button>
+                  <button class="icon-button" type="button" data-board-action="undo" title="復原" ${disabled}>${icon("undo")}</button>
+                  <button class="icon-button" type="button" data-board-action="clear" title="清除黑板" ${disabled}>${icon("trash")}</button>
+                  <button class="icon-button" type="button" data-board-action="fullscreen" title="${fullscreen ? "退出全螢幕" : "黑板全螢幕"}" ${disabled}>${icon(fullscreen ? "minimize" : "maximize")}</button>
+                `
+                : ""
+            }
+          </div>
+        </div>
+        ${
+          boardOpen
+            ? `<canvas class="blackboard" data-blackboard data-problem-id="${escapeAttr(problem.id)}" aria-label="手寫黑板"></canvas>`
+            : ""
+        }
+      </section>
+    `;
+  }
+
+  function answerSyntaxInfo(problem, value) {
+    const raw = String(value || "").trim();
+    if (!raw) return { label: "Empty", className: "is-empty" };
+    if (problem.answerKind === "text") return { label: "Text", className: "is-ready" };
+    if (isTexLike(raw)) return { label: "TeX", className: "is-ready" };
+    if (expressionToTex(raw)) return { label: "Ready", className: "is-ready" };
+    return { label: "Syntax", className: "is-warning" };
   }
 
   function renderChoiceControls(problem) {
@@ -2314,6 +2361,7 @@
       choiceOptions: {},
       boardStrokes: {},
       boardTool: "pen",
+      boardOpen: false,
       boardFullscreen: false,
       hintsUsed: {},
       draft: "",
@@ -2520,6 +2568,7 @@
       quiz.draft = "";
       quiz.feedback = null;
       quiz.modal = null;
+      quiz.boardOpen = false;
       quiz.boardFullscreen = false;
       startTicker();
       render();
@@ -2944,44 +2993,62 @@
     node.dataset.tex = answerToTex(value, problem) || "\\text{尚未輸入}";
     node.classList.toggle("is-empty", !hasValue);
     renderMathNode(node, false);
+    const statusNode = app.querySelector("[data-syntax-status]");
+    if (statusNode) {
+      const syntax = answerSyntaxInfo(problem, value);
+      statusNode.textContent = syntax.label;
+      statusNode.className = `syntax-pill ${syntax.className}`;
+    }
   }
 
   function setupBlackboard() {
     const canvas = app.querySelector("[data-blackboard]");
-    if (!canvas || !quiz) return;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-    const problemId = canvas.dataset.problemId;
+    if (!quiz) return;
+    const current = getCurrentProblem();
+    const problemId = canvas?.dataset.problemId || current?.id || "";
+    const ctx = canvas ? canvas.getContext("2d") : null;
     let drawing = false;
     let currentStroke = null;
-
-    resizeBlackboard(canvas);
-    drawBlackboard(canvas, ctx, problemId);
 
     app.querySelectorAll("[data-board-action]").forEach((button) => {
       button.addEventListener("click", () => {
         if (!quiz || quiz.feedback) return;
         const action = button.dataset.boardAction;
+        if (action === "toggle") {
+          quiz.boardOpen = !quiz.boardOpen;
+          if (!quiz.boardOpen) quiz.boardFullscreen = false;
+          render();
+          return;
+        }
         if (action === "tool") {
           quiz.boardTool = button.dataset.tool || "pen";
+          quiz.boardOpen = true;
           render();
           return;
         }
         if (action === "fullscreen") {
           quiz.boardFullscreen = !quiz.boardFullscreen;
+          quiz.boardOpen = true;
           render();
           return;
         }
         const strokes = getBoardStrokes(problemId);
         if (action === "undo") strokes.pop();
         if (action === "clear") strokes.length = 0;
-        drawBlackboard(canvas, ctx, problemId);
+        if (canvas && ctx) drawBlackboard(canvas, ctx, problemId);
+        render();
       });
     });
+
+    if (!canvas || !ctx) return;
+
+    resizeBlackboard(canvas);
+    drawBlackboard(canvas, ctx, problemId);
 
     canvas.addEventListener("pointerdown", (event) => {
       if (!quiz || quiz.feedback) return;
       event.preventDefault();
+      quiz.boardOpen = true;
       drawing = true;
       canvas.setPointerCapture(event.pointerId);
       currentStroke = {
@@ -3552,7 +3619,7 @@
   function answerModeDescription(mode) {
     return {
       choice: "四選一",
-      free: "黑板 + 答案欄"
+      free: "輸入 + 預覽"
     }[mode] || "";
   }
 

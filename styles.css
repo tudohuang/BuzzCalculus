@@ -1992,6 +1992,88 @@ button {
   color: var(--muted);
 }
 
+.webwork-shell {
+  display: grid;
+  gap: 12px;
+}
+
+.webwork-answer {
+  display: grid;
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid rgba(32, 33, 31, 0.12);
+  border-radius: var(--radius);
+  background: #fff;
+}
+
+.webwork-head,
+.scratchboard-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.webwork-head span,
+.scratchboard-summary span {
+  display: block;
+  color: var(--muted);
+  font-size: 0.76rem;
+  font-weight: 820;
+  text-transform: uppercase;
+  letter-spacing: 0;
+}
+
+.webwork-head strong,
+.scratchboard-summary strong {
+  display: block;
+  margin-top: 2px;
+}
+
+.syntax-pill {
+  min-height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 9px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: #fbfaf7;
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 860;
+  white-space: nowrap;
+}
+
+.syntax-pill.is-ready {
+  border-color: rgba(33, 131, 91, 0.34);
+  background: #edf8f1;
+  color: #146b49;
+}
+
+.syntax-pill.is-warning {
+  border-color: rgba(181, 102, 42, 0.38);
+  background: #fff7df;
+  color: #8b650c;
+}
+
+.webwork-preview {
+  grid-template-columns: 70px minmax(0, 1fr);
+}
+
+.scratchboard-shell {
+  display: grid;
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid rgba(32, 33, 31, 0.12);
+  border-radius: var(--radius);
+  background: #fbfaf7;
+}
+
+.scratchboard-shell.is-collapsed {
+  background: #fff;
+}
+
 .hint-panel {
   display: flex;
   align-items: center;
@@ -2031,16 +2113,26 @@ button {
   inset: 0;
   z-index: 20;
   display: grid;
-  grid-template-rows: minmax(0, 1fr) auto auto auto;
+  grid-template-rows: minmax(0, 1fr) auto;
   gap: 10px;
   padding: max(12px, env(safe-area-inset-top)) max(12px, env(safe-area-inset-right)) max(12px, env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left));
   background: #fbfaf6;
+}
+
+.handwrite-shell.is-fullscreen .scratchboard-shell {
+  min-height: 0;
+  grid-template-rows: auto minmax(0, 1fr);
 }
 
 .handwrite-shell.is-fullscreen .handwrite-board {
   display: grid;
   grid-template-rows: auto minmax(0, 1fr);
   min-height: 0;
+}
+
+.handwrite-shell.is-fullscreen .webwork-answer {
+  padding: 10px;
+  box-shadow: 0 -8px 22px rgba(32, 33, 31, 0.1);
 }
 
 .handwrite-shell.is-fullscreen .blackboard {
@@ -4507,5 +4599,113 @@ button {
 
   .path-intro-stats {
     grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 760px) {
+  .quiz-screen .webwork-shell:not(.is-fullscreen) {
+    padding-bottom: 184px;
+  }
+
+  .quiz-screen .webwork-answer:not(.is-docked) {
+    position: fixed;
+    left: 10px;
+    right: 10px;
+    bottom: max(10px, env(safe-area-inset-bottom));
+    z-index: 18;
+    gap: 8px;
+    padding: 10px;
+    border: 1px solid rgba(32, 33, 31, 0.14);
+    background: rgba(251, 250, 247, 0.97);
+    box-shadow: 0 -10px 24px rgba(32, 33, 31, 0.12);
+    backdrop-filter: blur(10px);
+  }
+
+  .quiz-screen .webwork-answer .answer-panel {
+    position: static;
+    left: auto;
+    right: auto;
+    bottom: auto;
+    z-index: auto;
+    grid-template-columns: minmax(0, 1fr) 88px;
+    gap: 8px;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+    backdrop-filter: none;
+  }
+
+  .quiz-screen .webwork-answer .answer-panel .button {
+    min-height: 52px;
+    padding-inline: 10px;
+  }
+
+  .quiz-screen .webwork-head,
+  .quiz-screen .scratchboard-summary {
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .quiz-screen .syntax-pill {
+    min-height: 26px;
+    padding: 0 8px;
+    font-size: 0.72rem;
+  }
+
+  .quiz-screen .webwork-preview {
+    grid-template-columns: 52px minmax(0, 1fr);
+    min-height: 38px;
+    padding: 6px 8px;
+  }
+
+  .quiz-screen .webwork-preview .answer-preview-math {
+    font-size: 0.96rem;
+  }
+
+  .quiz-screen .webwork-keypad {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 6px;
+    overflow-x: auto;
+    padding-bottom: 2px;
+    scrollbar-width: none;
+  }
+
+  .quiz-screen .webwork-keypad::-webkit-scrollbar {
+    display: none;
+  }
+
+  .quiz-screen .webwork-keypad button {
+    flex: 0 0 auto;
+    min-width: 42px;
+    min-height: 34px;
+    padding: 0 9px;
+  }
+
+  .quiz-screen .webwork-helper {
+    display: none;
+  }
+
+  .quiz-screen .scratchboard-shell {
+    padding: 10px;
+  }
+
+  .handwrite-shell.is-fullscreen .webwork-answer {
+    position: static;
+    left: auto;
+    right: auto;
+    bottom: auto;
+    z-index: auto;
+    border: 1px solid rgba(32, 33, 31, 0.14);
+    background: #fff;
+    box-shadow: none;
+    backdrop-filter: none;
+  }
+
+  .handwrite-shell.is-fullscreen .webwork-keypad,
+  .handwrite-shell.is-fullscreen .webwork-helper {
+    display: none;
   }
 }
