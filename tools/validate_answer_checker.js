@@ -50,6 +50,7 @@ require("../src/problem_integrals_hard.js");
 require("../src/problem_advanced_analysis.js");
 require("../src/problem_gap_pack.js");
 require("../src/problem_mobile_advanced_pack.js");
+require("../src/problem_release_expansion.js");
 require("../src/problem_difficulty_calibration.js");
 require("../src/app.js");
 
@@ -117,7 +118,7 @@ tests.forEach(([name, problem, input, expected]) => {
   if (!passed) failures.push({ name, input, expected, result });
 });
 
-const canonicalProblems = (global.window.BUZZ_PROBLEMS || []).filter((problem) => /^(gap|mob)-/.test(problem.id));
+const canonicalProblems = (global.window.BUZZ_PROBLEMS || []).filter((problem) => /^(gap|mob|rel)-/.test(problem.id));
 canonicalProblems.forEach((problem) => {
   const input = problem.answerKind === "text" ? problem.canonical || problem.answers[0] : problem.answer;
   const result = api.checkAnswer(problem, input);
