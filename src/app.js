@@ -458,9 +458,9 @@
                 <button class="nav-button ${view === "library" ? "is-active" : ""}" data-action="open-library">${icon("search")}<span>題庫</span></button>
                 <button class="nav-button ${view === "mistakes" ? "is-active" : ""}" data-action="open-mistakes">${icon("book")}<span>錯題</span></button>
                 <button class="nav-button ${view === "history" ? "is-active" : ""}" data-action="open-history">${icon("clock")}<span>歷史</span></button>
+                <button class="nav-button ${view === "settings" ? "is-active" : ""}" data-action="open-settings">${icon("settings")}<span>設定</span></button>
                 ${deferredInstallPrompt ? `<button class="icon-button" data-action="install-app" title="安裝 BuzzCalculus">${icon("download")}</button>` : ""}
                 <button class="icon-button" data-action="toggle-theme" title="切換${themeLabel}模式">${icon(themeIcon)}</button>
-                <button class="icon-button" data-action="reset-records" title="清除本機紀錄">${icon("trash")}</button>
               `
           }
         </div>
@@ -476,6 +476,7 @@
     if (view === "library") return renderProblemLibrary();
     if (view === "mistakes") return renderMistakes();
     if (view === "history") return renderHistory();
+    if (view === "settings") return renderSettings();
     return renderHome();
   }
 
@@ -707,6 +708,7 @@
     const masteredCount = path.nodes.filter((node) => node.status === "mastered" || node.status === "gold").length;
     const totalProgress = Math.round(path.nodes.reduce((sum, node) => sum + node.mastery, 0) / Math.max(1, path.nodes.length));
     const nextIndex = Math.max(0, path.nodes.findIndex((node) => node.id === next.id));
+    const recommendation = pathRecommendation(path, mission);
     return `
       <section class="buzz-path-card">
         <div class="path-hero">
@@ -715,6 +717,10 @@
             <h2>下一格：${escapeHtml(next.label)}</h2>
             <p>${escapeHtml(next.note)}</p>
           </div>
+        </div>
+        <div class="path-recommendation">
+          <span>推薦下一步</span>
+          <strong>${escapeHtml(recommendation)}</strong>
         </div>
 
         <div class="next-lesson-card">
@@ -942,7 +948,7 @@
             ${renderLocalGoalCard(records)}
             ${renderProblemLibraryCard(records)}
             ${renderProofHomeCard(records)}
-            ${renderDataManagementCard(records)}
+            ${renderSettingsHomeCard(records)}
             <section class="control-band practice-control home-compact-control">
               <div class="home-control-head">
                 <div>
@@ -1183,6 +1189,28 @@
     `;
   }
 
+  function renderSettingsHomeCard(records) {
+    return `
+      <section class="study-card settings-home-card">
+        <div class="panel-title-row">
+          <div>
+            <p class="section-label">設定</p>
+            <h3>本機資料</h3>
+          </div>
+          <span class="study-count">${(records.history || []).length}</span>
+        </div>
+        <div class="mini-stats">
+          <div><span>歷史</span><strong>${(records.history || []).length}</strong></div>
+          <div><span>錯題</span><strong>${Object.keys(records.mistakes || {}).length}</strong></div>
+          <div><span>收藏</span><strong>${Object.keys(records.favorites || {}).length}</strong></div>
+        </div>
+        <div class="action-row">
+          <button class="button secondary" data-action="open-settings">${icon("settings")}資料與設定</button>
+        </div>
+      </section>
+    `;
+  }
+
   function renderProofHomeCard(records) {
     const stats = proofStats(records);
     return `
@@ -1354,6 +1382,43 @@
     `;
   }
 
+  function renderSettings() {
+    const records = loadRecords();
+    const week = weeklyMissionInfo(records);
+    const goal = dailyGoal(records);
+    return `
+      <main class="screen">
+        <section class="panel page-panel settings-page">
+          <div class="page-head">
+            <div>
+              <p class="section-label">Settings</p>
+              <h2>資料與設定</h2>
+              <p>所有紀錄都存在本機瀏覽器。換裝置前請先匯出 JSON。</p>
+            </div>
+            <button class="button secondary" data-action="home">${icon("home")}回首頁</button>
+          </div>
+          <div class="settings-grid">
+            <section class="study-card">
+              <div class="panel-title-row">
+                <div>
+                  <p class="section-label">目標</p>
+                  <h3>每日 ${goal} 題</h3>
+                </div>
+                <span class="study-count">${week.completed}/${week.target}</span>
+              </div>
+              <div class="goal-options">
+                ${[5, 10, 12, 20].map((value) => `<button class="tag-button ${goal === value ? "is-active" : ""}" data-action="set-daily-goal" data-goal="${value}">${value} 題</button>`).join("")}
+              </div>
+              <div class="meter-track"><div class="meter-fill" style="width:${week.progress}%"></div></div>
+              <p class="panel-note">本週已完成 ${week.completed} 題，${week.daysDone} 天有練。</p>
+            </section>
+            ${renderDataManagementCard(records)}
+          </div>
+        </section>
+      </main>
+    `;
+  }
+
   function renderWeaknessChips(weaknesses) {
     const items = weaknesses.length ? weaknesses.slice(0, 3) : [{ label: "今日題組" }, { label: "全混合" }, { label: "12 題" }];
     return items.map((item) => `<span class="weakness-chip">${escapeHtml(item.label)}</span>`).join("");
@@ -1436,6 +1501,7 @@
             </div>
             <div class="action-row">
               <button class="button secondary" data-action="home">${icon("home")}回首頁</button>
+              <button class="button" data-action="start-library-filter" ${allItems.length ? "" : "disabled"}>${icon("shuffle")}練目前篩選</button>
               <button class="button" data-action="open-boss-lab">${icon("trophy")}Boss 專區</button>
               <button class="button ghost" data-action="start-mode" data-mode-key="boss_rush">${icon("play")}Boss Rush</button>
             </div>
@@ -2075,10 +2141,12 @@
           .map(
             (choice, index) => {
               const choiceTex = answerToTex(choice.label, problem) || textToTex(choice.label);
+              const selectedWrong = quiz.feedback && quiz.draft === choice.value && !checkAnswer(problem, choice.value).correct;
               return `
               <button class="choice-option" type="button" data-action="choose-answer" data-choice="${escapeAttr(choice.value)}" ${disabled}>
                 <span>${String.fromCharCode(65 + index)}</span>
                 <strong class="choice-math math-inline" data-tex="${escapeAttr(choiceTex)}">${renderLiteTex(choiceTex, false)}</strong>
+                ${selectedWrong ? `<small class="choice-reason">${escapeHtml(choiceDistractorReason(problem, choice.value))}</small>` : ""}
               </button>`;
             }
           )
@@ -2133,6 +2201,7 @@
     const pathResult = !gateResult && quiz.pathNodeId ? pathLessonResult(quiz, records, accuracy) : null;
 
     const momentum = resultMomentum(accuracy, avgTime, pathResult, gateResult);
+    const speedInsight = quiz.speedInsight || speedInsightText(avgTime, recentAnswerStats(records, 30).avgSeconds);
     return `
       <main class="screen">
         <div class="results-grid">
@@ -2148,6 +2217,10 @@
               <div class="score-card"><span>Accuracy</span><strong>${accuracy}%</strong></div>
               <div class="score-card"><span>Avg Sec</span><strong>${avgTime}</strong></div>
             </div>
+            ${quiz.mode === "daily" ? renderDailyCompletionResult(quiz, records, accuracy) : ""}
+            ${renderSpeedResultCard(speedInsight)}
+            ${renderMistakeClearResult(quiz)}
+            ${pathResult?.cleared ? renderPathClearToast(pathResult) : ""}
             ${gateResult ? renderPathGateResult(gateResult) : ""}
             ${pathResult ? renderPathLessonResult(pathResult) : ""}
             ${renderResultsActions(gateResult, pathResult)}
@@ -2221,6 +2294,54 @@
     `;
   }
 
+  function renderDailyCompletionResult(currentQuiz, records, accuracy) {
+    const streak = dailyCompletionStreak(records);
+    const goal = dailyGoal(records);
+    return `
+      <div class="daily-complete-result">
+        <div>
+          <strong>今日完成</strong>
+          <span>${currentQuiz.answers.length}/${goal} 題 · ${accuracy}%</span>
+        </div>
+        <div>
+          <strong>${streak} 天</strong>
+          <span>streak 已延續</span>
+        </div>
+      </div>
+    `;
+  }
+
+  function renderSpeedResultCard(text) {
+    if (!text) return "";
+    return `
+      <div class="speed-result-card">
+        <strong>速度定位</strong>
+        <span>${escapeHtml(text)}</span>
+      </div>
+    `;
+  }
+
+  function renderMistakeClearResult(currentQuiz) {
+    const cleared = Number(currentQuiz.mistakesCleared || 0);
+    if (!cleared) return "";
+    return `
+      <div class="mistake-clear-result">
+        <strong>錯題清理</strong>
+        <span>本輪移出錯題本 ${cleared} 題</span>
+      </div>
+    `;
+  }
+
+  function renderPathClearToast(result) {
+    const gold = result.accuracy >= 90;
+    return `
+      <div class="path-clear-toast ${gold ? "is-gold" : ""}">
+        <strong>${gold ? "GOLD CLEAR" : "CLEAR"}</strong>
+        <span>${escapeHtml(result.node.label)} ${result.correct}/${result.total}</span>
+      </div>
+    `;
+  }
+
   function pathLessonResult(currentQuiz, records, accuracy) {
     const path = learningPathState(records);
     const node = path.nodes.find((item) => item.id === currentQuiz.pathNodeId);
@@ -2243,17 +2364,18 @@
 
   function renderPathLessonResult(result) {
     const progress = Math.max(0, Math.min(100, result.mastery));
-    const title = result.cleared ? "CLEAR" : "REVIEW";
+    const gold = result.cleared && result.accuracy >= 90;
+    const title = gold ? "GOLD" : result.cleared ? "CLEAR" : "REVIEW";
     const note = result.cleared
       ? result.nextNode
         ? `下一關：${result.nextNode.label}`
         : "主線完成"
       : `差 ${result.needed || 1} 題過關，建議重練一次`;
     return `
-      <div class="path-lesson-result ${result.cleared ? "is-cleared" : "is-review"}">
+      <div class="path-lesson-result ${result.cleared ? "is-cleared" : "is-review"} ${gold ? "is-gold" : ""}">
         <div class="lesson-result-badge">
           <strong>${title}</strong>
-          <span>${result.cleared ? "過關" : "補強"}</span>
+          <span>${gold ? "金牌" : result.cleared ? "過關" : "補強"}</span>
         </div>
         <div class="lesson-result-main">
           <strong>${escapeHtml(result.node.label)}</strong>
@@ -2551,6 +2673,10 @@
       view = "history";
       render();
     }
+    if (action === "open-settings") {
+      view = "settings";
+      render();
+    }
     if (action === "open-library") {
       selectedLibraryFilter = "all";
       view = "library";
@@ -2589,6 +2715,7 @@
       startQuiz();
     }
     if (action === "start-problem") startSingleProblem(actionNode.dataset.problemId);
+    if (action === "start-library-filter") startLibraryFilterPractice();
     if (action === "toggle-favorite") toggleFavorite(actionNode.dataset.problemId);
     if (action === "report-problem") reportProblem(actionNode.dataset.problemId);
     if (action === "set-daily-goal") setDailyGoal(actionNode.dataset.goal);
@@ -2679,6 +2806,21 @@
     selectedMode = "practice";
     selectedTopic = problem.topic || "all";
     startQuiz([problem], { modeKey: "practice", practice: true, noTimer: true });
+  }
+
+  function startLibraryFilterPractice() {
+    const records = loadRecords();
+    const pool = libraryProblems(records);
+    if (!pool.length) return;
+    selectedMode = "practice";
+    selectedTopic = selectedLibraryTopic || "all";
+    selectedPack = "all";
+    const ordered = adaptiveShuffle(pool, records, seedFromString(`${Date.now()}-library-filter`));
+    startQuiz(padPool(ordered.slice(0, 12), pool, Math.min(12, pool.length)), {
+      modeKey: "practice",
+      practice: true,
+      noTimer: true
+    });
   }
 
   function toggleFavorite(problemId) {
@@ -3410,9 +3552,10 @@
       return { correct: false, message: "我讀不懂這個數值格式。可以用 pi/4、sqrt(2)、log(2) 這類寫法。" };
     }
     const tolerance = Math.max(1e-7, Math.abs(a) * 1e-6);
+    const ok = Math.abs(a - b) <= tolerance;
     return {
-      correct: Math.abs(a - b) <= tolerance,
-      message: Math.abs(a - b) <= tolerance ? "數值等價。" : `數值不對。參考答案：${expected}`
+      correct: ok,
+      message: ok ? "數值等價。" : `數值不對。${friendlyWrongHint({ answerKind: "numeric" }, input, expected)}參考答案：${expected}`
     };
   }
 
@@ -3427,7 +3570,7 @@
       valid += 1;
       const tolerance = Math.max(1e-6, Math.abs(a) * 1e-5);
       if (Math.abs(a - b) > tolerance) {
-        return { correct: false, message: `在 ${formatVars(vars)} 代入時不相同。先檢查符號、係數或鏈鎖律。參考答案：${expected}` };
+        return { correct: false, message: `在 ${formatVars(vars)} 代入時不相同。${friendlyWrongHint({ answerKind: "expression", variable: variables[0] }, input, expected)}參考答案：${expected}` };
       }
     }
     return {
@@ -3470,7 +3613,7 @@
     const ok = diffs.every((value) => Math.abs(value - base) <= Math.max(1e-5, Math.abs(base) * 1e-5));
     return {
       correct: ok,
-      message: ok ? "原函數相差常數，判定正確。" : `微分後不相同。參考答案：${expected}`
+      message: ok ? "原函數相差常數，判定正確。" : `微分後不相同。${friendlyWrongHint({ answerKind: "antiderivative", variable }, input, expected)}參考答案：${expected}`
     };
   }
 
@@ -3532,6 +3675,41 @@
       return ["0", "1", "-1", variable, `${variable}^2`, `sin(${variable})`, `cos(${variable})`, `exp(${variable})`];
     }
     return ["0", "1", "DNE"];
+  }
+
+  function choiceDistractorReason(problem, value, expectedValue = "") {
+    const correct = expectedValue || displayAnswer(problem);
+    if (problem.answerKind === "text") return "判定方向不同；先確認端點、絕對/條件或 DNE 條件。";
+    const variable = problem.variable || "x";
+    const normalized = normalizeChoice(value);
+    if (normalized === normalizeChoice(`-(${correct})`) || normalized === normalizeChoice(`-${correct}`)) return "像是符號相反。";
+    if (normalized === normalizeChoice(`2*(${correct})`)) return "像是係數多乘一倍。";
+    if (normalized === normalizeChoice(`(${correct})/2`)) return "像是係數少了一半。";
+    if (normalized === normalizeChoice(stripOuterScale(correct))) return "像是漏掉外層係數。";
+    if (normalized === normalizeChoice(stripLikelyChainFactor(correct, variable))) return "像是漏掉鏈鎖律或換元係數。";
+    if (String(value).includes(`+${variable}`) || String(value).includes(`-${variable}`)) return "像是多加了不該有的項。";
+    if (problem.answerKind === "numeric") return numericDistractorReason(correct, value);
+    if (problem.answerKind === "antiderivative") return "檢查微分回去是否得到原 integrand。";
+    return "檢查符號、係數與鏈鎖律。";
+  }
+
+  function numericDistractorReason(expected, input) {
+    const a = evaluateExpression(expected, {});
+    const b = evaluateExpression(input, {});
+    if (!Number.isFinite(a) || !Number.isFinite(b)) return "這是常見干擾值。";
+    const close = (target) => Math.abs(b - target) <= Math.max(1e-6, Math.abs(target) * 1e-5);
+    if (close(-a)) return "像是漏負號。";
+    if (close(a * 2)) return "像是多乘 2。";
+    if (close(a / 2)) return "像是少了一個 2。";
+    if (a && close(1 / a)) return "像是取倒數了。";
+    return "這是常見錯誤值，回頭檢查第一步判型。";
+  }
+
+  function friendlyWrongHint(problem, input, expected) {
+    const hint = problem.answerKind === "numeric"
+      ? numericDistractorReason(expected, input)
+      : choiceDistractorReason(problem, input, expected);
+    return hint ? `${hint} ` : "";
   }
 
   function generatedChoiceDistractors(problem, correct) {
@@ -3941,6 +4119,9 @@
     const avgTime = currentQuiz.answers.length
       ? Math.round(currentQuiz.answers.reduce((sum, answer) => sum + answer.elapsed, 0) / currentQuiz.answers.length)
       : 0;
+    const previousRecent = recentAnswerStats(records, 30);
+    const beforeMistakes = new Set(Object.keys(records.mistakes || {}));
+    currentQuiz.speedInsight = speedInsightText(avgTime, previousRecent.avgSeconds);
 
     if (currentQuiz.practice) {
       records.practiceRuns = (records.practiceRuns || 0) + 1;
@@ -3954,6 +4135,7 @@
     records.lastPlayed = finishedAt;
 
     currentQuiz.answers.forEach((answer) => updateAnswerRecords(records, answer, finishedAt));
+    currentQuiz.mistakesCleared = currentQuiz.answers.filter((answer) => beforeMistakes.has(answer.problem.id) && !records.mistakes[answer.problem.id]).length;
 
     const historyItem = {
       id: `${currentQuiz.startedAt}-${finishedAt}`,
@@ -4201,6 +4383,15 @@
     };
   }
 
+  function speedInsightText(avgTime, recentAvg) {
+    if (!avgTime) return "";
+    if (!recentAvg) return `平均 ${avgTime}s / 題。累積更多紀錄後會比較最近 30 題。`;
+    const diff = avgTime - recentAvg;
+    if (Math.abs(diff) <= 2) return `平均 ${avgTime}s / 題，和最近 30 題差不多。`;
+    if (diff < 0) return `平均 ${avgTime}s / 題，比最近 30 題快 ${Math.abs(diff)}s。`;
+    return `平均 ${avgTime}s / 題，比最近 30 題慢 ${diff}s。`;
+  }
+
   function formatPercent(value, emptyLabel = "尚無資料") {
     return value === null || value === undefined ? emptyLabel : `${value}%`;
   }
@@ -4420,6 +4611,14 @@
       .filter(Boolean)
       .sort((a, b) => b.time - a.time);
     return entries[0] || null;
+  }
+
+  function pathRecommendation(path, mission) {
+    if (!mission.done) return `先完成每日 ${mission.target} 題，維持練習節奏。`;
+    const weakNode = path.nodes.find((node) => node.attempts > 0 && node.mastery < 70);
+    if (weakNode) return `重練 ${weakNode.label}，差一點就能 CLEAR。`;
+    if (path.next) return `推進 ${path.next.label}，打開下一段技巧。`;
+    return "主線完成後可以打 Boss Rush 或 Proof Lab。";
   }
 
   function startOfWeek(date) {
@@ -5179,6 +5378,7 @@
       home: "house",
       book: "book-open",
       clock: "clock",
+      settings: "settings",
       download: "download",
       upload: "upload",
       calendar: "calendar-days",

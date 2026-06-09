@@ -2343,6 +2343,14 @@ button {
   line-height: 1.25;
 }
 
+.choice-reason {
+  grid-column: 2;
+  color: var(--red);
+  font-size: 0.78rem;
+  font-weight: 760;
+  line-height: 1.35;
+}
+
 .choice-option .katex {
   font-size: 1.02rem;
 }
@@ -2462,6 +2470,58 @@ button {
   display: block;
   margin-top: 7px;
   font-size: 1.5rem;
+}
+
+.daily-complete-result,
+.speed-result-card,
+.mistake-clear-result,
+.path-clear-toast {
+  display: grid;
+  gap: 8px;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.74);
+}
+
+.daily-complete-result {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  border-color: rgba(33, 131, 91, 0.28);
+  background: #edf7ef;
+}
+
+.path-clear-toast {
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  border-color: rgba(33, 131, 91, 0.35);
+  background: #e8f7ef;
+  animation: clear-rise 360ms ease both;
+}
+
+.path-clear-toast.is-gold {
+  border-color: rgba(220, 167, 45, 0.55);
+  background: #fff7db;
+}
+
+.daily-complete-result strong,
+.speed-result-card strong,
+.mistake-clear-result strong,
+.path-clear-toast strong {
+  display: block;
+  color: var(--ink);
+}
+
+.daily-complete-result span,
+.speed-result-card span,
+.mistake-clear-result span,
+.path-clear-toast span {
+  color: var(--muted);
+  font-size: 0.86rem;
+}
+
+.mistake-clear-result {
+  border-color: rgba(39, 103, 168, 0.28);
+  background: #edf4fb;
 }
 
 .review-list {
@@ -3265,7 +3325,7 @@ button {
   .mission-card .home-actions,
   .learning-summary,
   .brand-focus-card,
-  .data-management-card {
+  .home-screen .data-management-card {
     display: none;
   }
 
@@ -3725,6 +3785,25 @@ button {
 
 .path-hero p {
   max-width: 46rem;
+}
+
+.path-recommendation {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 0 0 12px;
+  padding: 10px 12px;
+  border: 1px solid rgba(33, 131, 91, 0.22);
+  border-radius: var(--radius);
+  background: #edf7ef;
+  color: var(--muted);
+  font-size: 0.84rem;
+}
+
+.path-recommendation strong {
+  color: var(--ink);
+  text-align: right;
 }
 
 .buzz-path-map {
@@ -4358,6 +4437,23 @@ button {
     display: none;
   }
 
+  .home-screen .buzz-path-map {
+    display: none;
+  }
+
+  .path-recommendation {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 4px;
+    margin-bottom: 8px;
+    padding: 9px 10px;
+  }
+
+  .path-recommendation strong {
+    text-align: left;
+    font-size: 0.9rem;
+  }
+
   .path-progress-line {
     margin-bottom: 10px;
     padding: 10px;
@@ -4712,6 +4808,11 @@ button {
   animation: clear-rise 360ms ease both;
 }
 
+.path-lesson-result.is-gold {
+  border-color: rgba(220, 167, 45, 0.55);
+  background: #fff7db;
+}
+
 .path-lesson-result.is-review {
   border-color: rgba(139, 101, 12, 0.35);
   background: #fff9df;
@@ -4729,6 +4830,11 @@ button {
 }
 
 @media (max-width: 680px) {
+  .daily-complete-result,
+  .path-clear-toast {
+    grid-template-columns: 1fr;
+  }
+
   .path-intro-card {
     gap: 12px;
     padding: 14px;
@@ -5234,6 +5340,22 @@ button {
   gap: 18px;
 }
 
+.settings-page {
+  display: grid;
+  gap: 18px;
+}
+
+.settings-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 0.85fr) minmax(280px, 1fr);
+  gap: 14px;
+  align-items: start;
+}
+
+.settings-grid .data-management-card {
+  display: block;
+}
+
 .library-toolbar {
   display: grid;
   grid-template-columns: minmax(220px, 1fr) 220px 120px;
@@ -5370,12 +5492,22 @@ button {
 
 :root[data-theme="dark"] .recommend-pack,
 :root[data-theme="dark"] .challenge-mode,
+:root[data-theme="dark"] .path-recommendation,
+:root[data-theme="dark"] .daily-complete-result,
+:root[data-theme="dark"] .speed-result-card,
+:root[data-theme="dark"] .mistake-clear-result,
+:root[data-theme="dark"] .path-clear-toast,
 :root[data-theme="dark"] .library-toolbar input,
 :root[data-theme="dark"] .library-toolbar select,
 :root[data-theme="dark"] .library-problem-card,
 :root[data-theme="dark"] .library-prompt {
   background: #1c1d1a;
   border-color: #3c3b35;
+}
+
+:root[data-theme="dark"] .path-lesson-result.is-gold,
+:root[data-theme="dark"] .path-clear-toast.is-gold {
+  background: rgba(88, 66, 18, 0.88);
 }
 
 :root[data-theme="dark"] .path-badge,
@@ -5386,6 +5518,10 @@ button {
 @media (max-width: 900px) {
   .library-toolbar {
     grid-template-columns: 1fr 1fr;
+  }
+
+  .settings-grid {
+    grid-template-columns: 1fr;
   }
 
   .library-search {
