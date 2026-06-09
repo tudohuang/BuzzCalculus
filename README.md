@@ -2,55 +2,75 @@
 
 > Build your calculus reflexes.
 
-**BuzzCalculus 不是另一個微積分題庫。**
+BuzzCalculus 是一個微積分反射訓練台。它不是課本，也不是解題聊天機器人，而是讓你快速練出：
 
-它是一個全靜態、免登入、打開就能練的 **微積分反射訓練台**。
+- 看題型的速度
+- 選技巧的直覺
+- 計算的穩定度
+- 錯題回收能力
 
-目標不是重新教你整本微積分，而是讓你在短時間內練出：
+線上版：
 
-- 看到題目後快速辨識技巧
-- 選對解題工具
-- 穩定提高正確率與速度
-- 找出自己最常錯的題型
-
-[立即開始訓練](https://tudohuang.github.io/BuzzCalculus/)
+https://tudohuang.github.io/BuzzCalculus/
 
 ---
 
-## 為什麼需要 BuzzCalculus
+## What It Is
 
-很多人不是不會微積分，而是看到混合題時不知道第一步該拔哪把刀。
-
-一般題庫常常長這樣：
+一般微積分題庫常用章節分類：
 
 ```text
-第三章
-第四章
-第五章
+極限 -> 微分 -> 積分 -> 級數
 ```
 
-BuzzCalculus 更接近這樣：
+BuzzCalculus 更偏向技巧分類：
 
 ```text
 Taylor
 Rationalization
 u-substitution
 Integration by Parts
+Partial Fraction
 Frullani
 Jacobian
 Hessian
 Boss
 ```
 
-真正的速度來自技巧辨識。
+目標不是慢慢教完一整本微積分，而是讓已經有基礎的人反覆練：
 
-BuzzCalculus 要練的就是這件事。
+```text
+這題該用哪個工具？
+```
 
 ---
 
-## 主線訓練路線
+## Current Features
 
-首頁不是功能清單，而是一條可以一路打下去的學習路線：
+- **560 題微積分題庫**
+- **32 個技巧題包**
+- **主線路線圖**
+- **每日任務**
+- **手機優先的選擇題練習**
+- **WebWork 式答案輸入**
+- **LaTeX 預覽**
+- **黑板草稿**
+- **錯題本**
+- **弱點分析**
+- **最近 30 題 / 最近 7 天表現**
+- **本機成就**
+- **Proof Lab 證明題庫**
+- **JSON 匯出 / 匯入**
+- **PWA 離線安裝**
+- **深色模式**
+
+所有紀錄都存在本機瀏覽器，不需要帳號，不需要後端。
+
+---
+
+## Training Path
+
+首頁主線會照這條順序往下練：
 
 ```text
 單變極限
@@ -59,319 +79,293 @@ BuzzCalculus 要練的就是這件事。
 -> U-sub
 -> IBP
 -> 技巧積分
--> 級數
+-> 級數與審斂
 -> 多變數
 -> 進階工具
 -> Boss
 ```
 
-每一關進入前都有短講解。
-
-想跳關也可以，但要先通過小測驗。
-
-打完一局後，系統會直接告訴你：
-
-- 本關是否通過
-- 要不要重練
-- 下一關是哪裡
-- 哪些題目進錯題本
+如果你已經很強，可以跳關。跳關前會先做小測驗，通過後直接進入後面的關卡。
 
 ---
 
-## 目前能做什麼
+## Demo Problems
 
-- **560 題微積分題庫**
-- **32 個技巧題包**
-- **手機優先的選擇題練習**
-- **WebWork 式輸入 + 黑板草稿**
-- **每日任務**
-- **錯題本**
-- **弱點複習**
-- **20 題 Proof Lab 證明題**
-- **最近 30 題 / 最近 7 天表現**
-- **段位與主線進度**
-- **作答歷史**
-- **JSON 匯出 / 匯入**
-- **作業本式題目整理**
+### Warm-Up
 
-全部都不需要後端。
-
----
-
-## 題目 Demo
-
-完整題庫在網站內練習。這裡只放幾題展示 BuzzCalculus 的題感。
-
-### 簡單題
-
-**1. 標準極限**
-
-求：
+**Basic Limit**
 
 $$
-\lim_{x \to 0} \frac{\sin x}{x}
+\lim_{x\to0}\frac{\sin x}{x}
 $$
 
-答案：$1$
-
-技巧：標準極限
-
-**2. 基礎微分**
-
-求：
+Answer:
 
 $$
-\frac{d}{dx}\left(x^2 e^x\right)
+1
 $$
 
-答案：$e^x(x^2+2x)$
+Technique: standard limit
 
-技巧：Product Rule
+**Basic Derivative**
 
-**3. 基礎積分**
+$$
+\frac{d}{dx}\left(x^2e^x\right)
+$$
 
-求：
+Answer:
+
+$$
+e^x(x^2+2x)
+$$
+
+Technique: product rule
+
+**Basic U-Sub**
 
 $$
 \int 2x\cos(x^2)\,dx
 $$
 
-答案：$\sin(x^2)+C$
-
-技巧：u-substitution
-
-### 進階題
-
-**1. Taylor 極限**
-
-求：
+Answer:
 
 $$
-\lim_{x \to 0} \frac{\ln(1+x)-x+\frac{x^2}{2}}{x^3}
+\sin(x^2)+C
 $$
 
-答案：$\frac{1}{3}$
+Technique: u-substitution
 
-技巧：Taylor Expansion
+---
 
-**2. Frullani Integral**
+### Advanced
 
-求：
+**Taylor Limit**
+
+$$
+\lim_{x\to0}
+\frac{\ln(1+x)-x+\frac{x^2}{2}}{x^3}
+$$
+
+Answer:
+
+$$
+\frac13
+$$
+
+Technique: Taylor expansion
+
+**Frullani Integral**
 
 $$
 \int_0^\infty \frac{e^{-2x}-e^{-5x}}{x}\,dx
 $$
 
-答案：$\ln\frac{5}{2}$
+Answer:
 
-技巧：Frullani Integral
+$$
+\ln\frac52
+$$
 
-**3. Lagrange Multiplier**
+Technique: Frullani integral
 
-在 $x^2+y^2=1$ 下，求 $f(x,y)=3x+4y$ 的最大值。
+**Lagrange Multiplier**
 
-答案：$5$
+Maximize
 
-技巧：Cauchy / Lagrange Multiplier
+$$
+f(x,y)=3x+4y
+$$
+
+subject to
+
+$$
+x^2+y^2=1.
+$$
+
+Answer:
+
+$$
+5
+$$
+
+Technique: Cauchy-Schwarz / Lagrange multiplier
+
+---
 
 ### Boss Preview
 
-這幾題是拿來展示壓迫感的，不是 BuzzCalculus 最硬的 Boss+。
+These are not the hardest problems in the bank, but they show the direction.
 
-真正更硬的 Bessel、三重積分變數變換、高階 Frullani 與複變混合題，不放在 README。
-
-**1. Frullani + Inverse Trig**
-
-求：
+**Complex Residue**
 
 $$
-\int_0^\infty \frac{\arctan(5x)-\arctan(2x)}{x}\,dx
+\frac{1}{2\pi i}
+\oint_{|z|=2}
+\frac{e^z}{z^3(z-1)}\,dz
 $$
 
-答案：$\frac{\pi}{2}\ln\frac{5}{2}$
-
-技巧：Frullani Integral / Parameter Scaling
-
-**2. Jacobian Chain Rule**
-
-令
+Answer:
 
 $$
-u=2x+y,\quad v=x+3y,\quad p=u^2-v^2,\quad q=2uv.
+e-\frac52
 $$
 
-求：
+Technique: residue theorem / Laurent expansion
+
+**Jacobian Chain Rule**
+
+Let
 
 $$
-\frac{\partial(p,q)}{\partial(x,y)}
+u=2x+y,\qquad v=x+3y,
 $$
 
-答案：$20\left((2x+y)^2+(x+3y)^2\right)$
-
-技巧：Jacobian Chain Rule / Complex Squaring
-
-**3. Complex Residue**
-
-求：
+and
 
 $$
-\frac{1}{2\pi i}\oint_{|z|=2}\frac{e^z}{z^3(z-1)}\,dz
+p=u^2-v^2,\qquad q=2uv.
 $$
 
-答案：$e-\frac{5}{2}$
+Find
 
-技巧：Residue Theorem / Laurent Expansion
+$$
+\frac{\partial(p,q)}{\partial(x,y)}.
+$$
 
-完整作業本內容未公開，未來可能整理成正式版本。
+Answer:
+
+$$
+20\left((2x+y)^2+(x+3y)^2\right)
+$$
+
+Technique: Jacobian chain rule / complex squaring structure
+
+**Boss Integral**
+
+$$
+\int_0^\infty
+\frac{\arctan(5x)-\arctan(2x)}{x}\,dx
+$$
+
+Answer:
+
+$$
+\frac{\pi}{2}\ln\frac52
+$$
+
+Technique: Frullani-type parameter integral
 
 ---
 
-## 題庫規模
+## Problem Coverage
 
-| 類型 | 題數 |
+| Type | Count |
 | --- | ---: |
-| 極限 | 82 |
-| 微分 / 多變數微分 | 172 |
-| 積分 / 重積分 | 211 |
-| 級數 | 95 |
-| **總計** | **560** |
+| Limits | 82 |
+| Derivatives / Multivariable derivatives | 172 |
+| Integrals / Multiple integrals | 211 |
+| Series | 95 |
+| **Total** | **560** |
 
-另有 **20 題 Proof Lab 證明題**，不列入計時賽與每日任務。
+Proof Lab currently includes **20 proof problems**. Proof problems are not included in timed sessions or daily missions.
 
 ---
 
-## 題庫特色
+## Supported Topics
 
-BuzzCalculus 的題庫不是單純照章節堆題，而是以技巧為核心。
+**Limits**
 
-**極限**
+- Standard limits
+- Taylor limits
+- Rationalization
+- Multivariable path tests
+- Squeeze-style limits
+- High-order asymptotics
 
-- 標準極限
-- Taylor 展開
-- 有理化
-- 三角極限
-- 夾擠定理
-- 多變數路徑測試
+**Derivatives**
 
-**微分**
-
-- Chain Rule
-- Implicit Differentiation
-- Logarithmic Differentiation
-- Partial Derivatives
-- Directional Derivatives
+- Chain rule
+- Product / quotient rule
+- Logarithmic differentiation
+- Implicit differentiation
+- Parametric differentiation
+- Partial derivatives
+- Directional derivatives
 - Jacobian
 - Hessian
 - Wronskian
-- Lagrange Multiplier
-- Nabla / Vector Calculus
+- Lagrange multiplier
+- Nabla / vector calculus
 
-**積分**
+**Integrals**
 
 - u-substitution
-- Integration by Parts
-- Trig Substitution
-- Partial Fraction
-- Improper Integral
-- Double / Triple Integral
-- Change of Variables
-- King's Property
-- Frullani Integral
-- Beta / Gamma Function
-- Wallis Integral
+- Integration by parts
+- Trig substitution
+- Partial fraction
+- Improper integrals
+- Double / triple integrals
+- Change of variables
+- King's property
+- Frullani integral
+- Beta / Gamma function
+- Wallis integral
 
-**級數與進階**
+**Series / Advanced**
 
-- Ratio Test
-- Root Test
-- Integral Test
-- Alternating Series
-- Endpoint Analysis
-- Power Series
-- Taylor Coefficients
-- ODE-style Problems
-- Complex Basics
-- Bessel Basics
-- Trap Drill
-
----
-
-## 適合誰
-
-BuzzCalculus 適合已經學過微積分、想把解題速度練起來的人。
-
-特別適合：
-
-- 大一微積分複習
-- 工學院考前暖身
-- 微積分混合題訓練
-- Integral Bee 風格速度練習
-- 想知道自己到底哪種技巧最不穩的人
-
-如果你完全沒學過微積分，BuzzCalculus 不會像課本一樣從零講起。
-
-它比較像訓練場，不是講義。
+- Geometric and p-series
+- Ratio test
+- Root test
+- Integral test
+- Alternating series
+- Endpoint analysis
+- Power series
+- Taylor coefficients
+- ODE-style problems
+- Complex residues
+- Bessel basics
 
 ---
 
-## 手機也能練
+## Proof Lab
 
-手機版預設走選擇題，降低打字負擔。
+Proof Lab is separate from timed practice.
 
-首頁會優先顯示：
+It is meant for slow work:
 
-- 今日任務
-- 下一關
-- 主線路線
-- 底部固定開始按鈕
+1. Try writing the proof yourself.
+2. Open the reference proof.
+3. Mark it as `看懂`, `部分會`, or `還不會`.
 
-WebWork 模式可打答案、即時預覽 LaTeX，黑板則保留作為草稿區。
-
----
-
-## 全靜態，資料存在本機
-
-BuzzCalculus 沒有帳號系統，也不需要後端。
-
-所有紀錄都存在瀏覽器的 `localStorage`：
-
-- 作答歷史
-- 錯題本
-- 每日任務
-- 弱點分析
-- 主線進度
-- 段位資料
-- WebWork 作答與黑板草稿回顧
-
-換裝置時可以用 JSON 匯出 / 匯入。
+It includes problems from basic MVT proofs to Jacobian chain rule, Hessian tests, Wronskian identities, and Todai-inspired multivariable arguments.
 
 ---
 
-## 目前狀態
+## Workbook
 
-```text
-v0.9.0-beta
-```
+A BuzzCalculus workbook is a future paid idea.
 
-BuzzCalculus 目前已進入 Beta / RC 階段。
+The website does not provide a downloadable workbook. The current public version is the interactive trainer.
 
-現在重點不是繼續堆功能，而是打磨：
+Preview page:
 
-- 手機體驗
-- 主線訓練流程
-- 題庫品質
-- 答案判定穩定性
-- GitHub Pages 部署體驗
+https://tudohuang.github.io/BuzzCalculus/workbook.html
+
+The workbook direction is:
+
+- curated technique drills
+- printable answer spaces
+- proof-writing sections
+- Boss problem sets
+- exam-style pacing
 
 ---
 
-## 本機開發
+## Local Development
 
-這是一個純靜態專案。
+Open `index.html` directly, or serve the folder with any static server.
 
-可以直接開 `index.html`，也可以用任意 static server 跑。
-
-常用檢查：
+Validation commands:
 
 ```bash
 node tools/validate_problems.js
@@ -381,12 +375,20 @@ node tools/validate_answer_checker.js
 node tools/smoke_app_render.js
 ```
 
-## Note
+---
 
-BuzzCalculus 受到 Integral Bee 類型的速度訓練文化啟發，但不是 MIT 或任何官方 Integral Bee 活動的附屬專案。
+## Release
+
+Current version:
 
 ```text
-Train speed.
-Train accuracy.
-Train calculus.
+v0.9.0-beta
 ```
+
+Current target:
+
+```text
+small public beta
+```
+
+BuzzCalculus is inspired by the spirit of Integral Bee training, but it is an independent project.

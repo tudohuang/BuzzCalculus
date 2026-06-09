@@ -195,8 +195,13 @@
     }
   };
 
-  const KEYS = ["x", "pi", "e", "(", ")", "+", "-", "*", "/", "^", "sqrt(", "sin(", "cos(", "tan(", "log(", "DNE"];
   const STORAGE_KEY = "buzzcalculus.records.v1";
+  const THEME_KEY = "buzzcalculus.theme";
+  const WEBWORK_KEY_GROUPS = [
+    { label: "常用", keys: ["x", "pi", "e", "(", ")", "+", "-", "*", "/", "^"] },
+    { label: "函數", keys: ["sqrt(|)", "sin(|)", "cos(|)", "tan(|)", "log(|)", "exp(|)"] },
+    { label: "判定", keys: ["DNE", "convergent", "divergent", "conditional"] }
+  ];
   const ERROR_TAGS = ["粗心", "不會", "忘公式"];
   const PROOF_TIERS = {
     all: "全部",
@@ -220,6 +225,8 @@
   let selectedProofTier = "all";
   let homeMoreOpen = false;
   let advancedModeOpen = false;
+  let selectedTheme = loadThemePreference();
+  let deferredInstallPrompt = null;
   let quiz = null;
   let activePathNodeId = "";
   let tickHandle = null;
@@ -284,6 +291,8 @@
 
   function renderTopbar() {
     const inQuiz = view === "quiz";
+    const themeIcon = selectedTheme === "dark" ? "sun" : "moon";
+    const themeLabel = selectedTheme === "dark" ? "亮色" : "深色";
     return `
       <header class="topbar">
         <button class="brand" data-action="home" title="回到工作台">
@@ -301,6 +310,8 @@
                 <button class="nav-button ${view === "home" ? "is-active" : ""}" data-action="home">${icon("home")}<span>工作台</span></button>
                 <button class="nav-button ${view === "mistakes" ? "is-active" : ""}" data-action="open-mistakes">${icon("book")}<span>錯題</span></button>
                 <button class="nav-button ${view === "history" ? "is-active" : ""}" data-action="open-history">${icon("clock")}<span>歷史</span></button>
+                ${deferredInstallPrompt ? `<button class="icon-button" data-action="install-app" title="安裝 BuzzCalculus">${icon("download")}</button>` : ""}
+                <button class="icon-button" data-action="toggle-theme" title="切換${themeLabel}模式">${icon(themeIcon)}</button>
                 <button class="icon-button" data-action="reset-records" title="清除本機紀錄">${icon("trash")}</button>
               `
           }
@@ -1578,6 +1589,7 @@
 
   function renderWebWorkAnswerWorkspace(problem, disabled, previewTex, compact) {
     const syntax = answerSyntaxInfo(problem, quiz.draft);
+    const examples = answerExamples(problem);
     return `
       <section class="webwork-answer ${compact ? "is-docked" : ""}">
         <div class="webwork-head">
@@ -1589,15 +1601,19 @@
         </div>
         <form class="answer-panel webwork-form" data-action="submit-answer">
         <label class="sr-only" for="answer">答案</label>
-        <input id="answer" class="answer-input" autocomplete="off" inputmode="text" value="${escapeAttr(quiz.draft)}" placeholder="${placeholderFor(problem)}" ${disabled} />
+        <input id="answer" class="answer-input" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="done" inputmode="text" value="${escapeAttr(quiz.draft)}" placeholder="${placeholderFor(problem)}" ${disabled} />
         <button class="button" type="submit" ${disabled}>${icon("send")}送出</button>
         </form>
+        <div class="webwork-examples" aria-label="常用答案格式">
+          ${examples.map((item) => `<button type="button" data-insert-example="${escapeAttr(item)}" ${disabled}>${escapeHtml(item)}</button>`).join("")}
+          <button type="button" data-action="clear-answer" ${disabled}>清除</button>
+        </div>
         <div class="answer-preview webwork-preview">
           <span>Preview</span>
           <div class="answer-preview-math math-inline ${quiz.draft.trim() ? "" : "is-empty"}" data-answer-preview data-tex="${escapeAttr(previewTex)}">${renderLiteTex(previewTex, false)}</div>
         </div>
         <div class="keypad webwork-keypad" aria-label="快速輸入">
-          ${KEYS.map((key) => `<button type="button" data-insert="${escapeAttr(key)}" ${disabled}>${key}</button>`).join("")}
+          ${webworkKeys(problem).map((key) => `<button type="button" data-insert="${escapeAttr(key.insert)}" ${disabled}>${escapeHtml(key.label)}</button>`).join("")}
         </div>
         <div class="helper-row webwork-helper">
           <span>${formatHelp(problem.answerKind)}</span>
@@ -1642,11 +1658,11 @@
 
   function answerSyntaxInfo(problem, value) {
     const raw = String(value || "").trim();
-    if (!raw) return { label: "Empty", className: "is-empty" };
-    if (problem.answerKind === "text") return { label: "Text", className: "is-ready" };
+    if (!raw) return { label: "空白", className: "is-empty" };
+    if (problem.answerKind === "text") return { label: "文字", className: "is-ready" };
     if (isTexLike(raw)) return { label: "TeX", className: "is-ready" };
-    if (expressionToTex(raw)) return { label: "Ready", className: "is-ready" };
-    return { label: "Syntax", className: "is-warning" };
+    if (expressionToTex(raw)) return { label: "可送出", className: "is-ready" };
+    return { label: "格式", className: "is-warning" };
   }
 
   function renderChoiceControls(problem) {
@@ -1715,13 +1731,15 @@
     const gateResult = quiz.pathGate ? pathGateResult(quiz, correct, total) : null;
     const pathResult = !gateResult && quiz.pathNodeId ? pathLessonResult(quiz, records, accuracy) : null;
 
+    const momentum = resultMomentum(accuracy, avgTime, pathResult, gateResult);
     return `
       <main class="screen">
         <div class="results-grid">
-          <section class="score-hero">
+          <section class="score-hero ${pathResult?.cleared || gateResult?.passed ? "is-clear" : ""}">
             <div>
               <p class="section-label">結算</p>
               <h2>${gateResult ? (gateResult.passed ? "跳關通過" : "跳關未通過") : resultTitle(accuracy)}</h2>
+              <p class="result-subtitle">${escapeHtml(momentum)}</p>
             </div>
             <div class="score-cards">
               <div class="score-card"><span>Score</span><strong>${quiz.score}</strong></div>
@@ -1813,6 +1831,9 @@
       node,
       nextNode,
       accuracy,
+      correct: currentQuiz.answers.filter((answer) => answer.correct).length,
+      total: currentQuiz.problems.length,
+      needed: Math.max(0, Math.ceil(currentQuiz.problems.length * 0.7) - currentQuiz.answers.filter((answer) => answer.correct).length),
       mastery: node.mastery,
       cleared: Boolean(run.cleared || accuracy >= 70),
       bestAccuracy: run.bestAccuracy || accuracy
@@ -1820,15 +1841,46 @@
   }
 
   function renderPathLessonResult(result) {
+    const progress = Math.max(0, Math.min(100, result.mastery));
+    const title = result.cleared ? "CLEAR" : "REVIEW";
+    const note = result.cleared
+      ? result.nextNode
+        ? `下一關：${result.nextNode.label}`
+        : "主線完成"
+      : `差 ${result.needed || 1} 題過關，建議重練一次`;
     return `
       <div class="path-lesson-result ${result.cleared ? "is-cleared" : "is-review"}">
-        <div>
-          <strong>${escapeHtml(result.node.label)}</strong>
-          <span>熟練度 ${result.mastery}% · 最佳 ${result.bestAccuracy}%</span>
+        <div class="lesson-result-badge">
+          <strong>${title}</strong>
+          <span>${result.cleared ? "過關" : "補強"}</span>
         </div>
-        <span>${result.cleared ? (result.nextNode ? `下一關：${escapeHtml(result.nextNode.label)}` : "主線完成") : "建議再練一次"}</span>
+        <div class="lesson-result-main">
+          <strong>${escapeHtml(result.node.label)}</strong>
+          <span>${escapeHtml(note)}</span>
+          <div class="meter-track"><div class="meter-fill" style="width:${progress}%"></div></div>
+        </div>
+        <div class="lesson-result-stats">
+          <div><span>本局</span><strong>${result.correct}/${result.total}</strong></div>
+          <div><span>熟練</span><strong>${result.mastery}%</strong></div>
+          <div><span>最佳</span><strong>${result.bestAccuracy}%</strong></div>
+        </div>
       </div>
     `;
+  }
+
+  function resultMomentum(accuracy, avgTime, pathResult, gateResult) {
+    if (gateResult) {
+      if (gateResult.passed) return "跳關門檻已達成，現在可以直接進入該關。";
+      return `小測驗需要 ${gateResult.required}/${gateResult.total}，這次是 ${gateResult.correct}/${gateResult.total}。`;
+    }
+    if (pathResult) {
+      if (pathResult.cleared && pathResult.nextNode) return `已清掉 ${pathResult.node.label}，下一格是 ${pathResult.nextNode.label}。`;
+      if (pathResult.cleared) return "主線最後一關已完成，可以改打 Boss 或 Proof Lab。";
+      return `本關門檻是 70%，這次 ${accuracy}%。先重練錯題會最快。`;
+    }
+    if (accuracy >= 90) return `穩。平均 ${avgTime}s，下一局可以提高難度。`;
+    if (accuracy >= 70) return `可以進下一輪。平均 ${avgTime}s，錯題會進本機紀錄。`;
+    return "先把錯題撿回來，系統會優先安排弱點。";
   }
 
   function renderResultsActions(gateResult, pathResult) {
@@ -2006,6 +2058,10 @@
       button.addEventListener("click", () => insertToken(button.dataset.insert));
     });
 
+    app.querySelectorAll("[data-insert-example]").forEach((button) => {
+      button.addEventListener("click", () => replaceAnswerDraft(button.dataset.insertExample || ""));
+    });
+
     setupBlackboard();
   }
 
@@ -2070,6 +2126,9 @@
     }
     if (action === "clear-history") clearHistory();
     if (action === "export-records") exportRecords();
+    if (action === "toggle-theme") toggleTheme();
+    if (action === "install-app") installApp();
+    if (action === "clear-answer") clearAnswerDraft();
     if (action === "show-rules" && quiz) {
       quiz.modal = "rules";
       render();
@@ -2309,6 +2368,62 @@
     trackEvent("export_data", {
       history_count: (records.history || []).length,
       mistake_count: Object.keys(records.mistakes || {}).length
+    });
+  }
+
+  function loadThemePreference() {
+    try {
+      const saved = localStorage.getItem(THEME_KEY);
+      if (saved === "dark" || saved === "light") return saved;
+    } catch (_error) {
+      // Ignore storage failures.
+    }
+    return "light";
+  }
+
+  function applyTheme() {
+    if (document.documentElement) {
+      document.documentElement.dataset.theme = selectedTheme;
+    }
+    const themeColor = selectedTheme === "dark" ? "#171817" : "#f5f3ed";
+    const meta = document.querySelector && document.querySelector('meta[name="theme-color"]');
+    if (meta) meta.setAttribute("content", themeColor);
+  }
+
+  function toggleTheme() {
+    selectedTheme = selectedTheme === "dark" ? "light" : "dark";
+    try {
+      localStorage.setItem(THEME_KEY, selectedTheme);
+    } catch (_error) {
+      // Ignore storage failures.
+    }
+    applyTheme();
+    render();
+  }
+
+  function setupPwa() {
+    if (window.navigator && "serviceWorker" in window.navigator) {
+      window.addEventListener("load", () => {
+        window.navigator.serviceWorker.register("./sw.js").catch(() => {});
+      });
+    }
+    window.addEventListener("beforeinstallprompt", (event) => {
+      event.preventDefault();
+      deferredInstallPrompt = event;
+      render();
+    });
+    window.addEventListener("appinstalled", () => {
+      deferredInstallPrompt = null;
+      render();
+    });
+  }
+
+  function installApp() {
+    if (!deferredInstallPrompt) return;
+    deferredInstallPrompt.prompt();
+    Promise.resolve(deferredInstallPrompt.userChoice).finally(() => {
+      deferredInstallPrompt = null;
+      render();
     });
   }
 
@@ -2569,7 +2684,7 @@
     });
     quiz.feedback = {
       status: correct ? "correct" : reason === "Timeout" ? "timeout" : "wrong",
-      title: correct ? (quiz.practice ? "答對" : `答對，+${earned}`) : `${reason}`,
+      title: correct ? (quiz.practice ? "答對" : `答對，+${earned}`) : answerReasonLabel(reason),
       message: detail || problem.solution || "這題先記下來，結算頁可以回看。"
     };
     stopTicker();
@@ -2695,23 +2810,23 @@
     if (problem.answerKind === "text") {
       return checkText(problem, input);
     }
-    return { correct: false, message: "這個題型的檢查器還沒接上。" };
+    return { correct: false, message: "這個題型目前不能自動判分。" };
   }
 
   function checkNumeric(expected, input) {
     const normalized = normalizeText(input);
     if (["dne", "doesnotexist", "不存在"].includes(normalized)) {
-      return { correct: normalizeText(expected) === "dne", message: "以 DNE 判定。" };
+      return { correct: normalizeText(expected) === "dne", message: "已用 DNE 判定。" };
     }
     const a = evaluateExpression(expected, {});
     const b = evaluateExpression(input, {});
     if (!Number.isFinite(a) || !Number.isFinite(b)) {
-      return { correct: false, message: "數值答案無法解析。" };
+      return { correct: false, message: "我讀不懂這個數值格式。可以用 pi/4、sqrt(2)、log(2) 這類寫法。" };
     }
     const tolerance = Math.max(1e-7, Math.abs(a) * 1e-6);
     return {
       correct: Math.abs(a - b) <= tolerance,
-      message: Math.abs(a - b) <= tolerance ? "數值等價。" : `參考答案是 ${expected}。`
+      message: Math.abs(a - b) <= tolerance ? "數值等價。" : `數值不對。參考答案：${expected}`
     };
   }
 
@@ -2726,12 +2841,12 @@
       valid += 1;
       const tolerance = Math.max(1e-6, Math.abs(a) * 1e-5);
       if (Math.abs(a - b) > tolerance) {
-        return { correct: false, message: `代入 ${formatVars(vars)} 時不等價。參考答案：${expected}` };
+        return { correct: false, message: `在 ${formatVars(vars)} 代入時不相同。先檢查符號、係數或鏈鎖律。參考答案：${expected}` };
       }
     }
     return {
       correct: valid >= 3,
-      message: valid >= 3 ? "多點代入等價。" : "答案在測試點無法穩定解析。"
+      message: valid >= 3 ? "多點代入等價。" : "格式讀不穩。請用 2*x、sin(x)、log(x) 這種 WebWork 寫法。"
     };
   }
 
@@ -2763,13 +2878,13 @@
       diffs.push(b - a);
     }
     if (diffs.length < 3) {
-      return { correct: false, message: "答案無法穩定解析；請用 x、sin(x)、log(x) 這類格式。" };
+      return { correct: false, message: "答案無法穩定解析。請用 x、sin(x)、log(x) 這類 WebWork 寫法。" };
     }
     const base = diffs[0];
     const ok = diffs.every((value) => Math.abs(value - base) <= Math.max(1e-5, Math.abs(base) * 1e-5));
     return {
       correct: ok,
-      message: ok ? "原函數相差常數。" : `原函數不等價。參考答案：${expected}`
+      message: ok ? "原函數相差常數，判定正確。" : `微分後不相同。參考答案：${expected}`
     };
   }
 
@@ -2778,7 +2893,7 @@
     const ok = problem.answers.some((answer) => normalizeText(answer) === normalized);
     return {
       correct: ok,
-      message: ok ? "文字判定吻合。" : `參考答案：${problem.canonical || problem.answers[0]}`
+      message: ok ? "文字判定吻合。" : `判定不對。參考答案：${problem.canonical || problem.answers[0]}`
     };
   }
 
@@ -2992,13 +3107,30 @@
     if (!input || !quiz) return;
     const start = input.selectionStart || 0;
     const end = input.selectionEnd || 0;
-    const next = input.value.slice(0, start) + token + input.value.slice(end);
+    const raw = String(token || "");
+    const marker = raw.indexOf("|");
+    const clean = raw.replace("|", "");
+    const next = input.value.slice(0, start) + clean + input.value.slice(end);
     input.value = next;
     quiz.draft = next;
-    const cursor = start + token.length;
+    const cursor = start + (marker >= 0 ? marker : clean.length);
     input.focus();
     input.setSelectionRange(cursor, cursor);
     updateAnswerPreview(next);
+  }
+
+  function replaceAnswerDraft(value) {
+    const input = app.querySelector("#answer");
+    if (!input || !quiz) return;
+    quiz.draft = String(value || "");
+    input.value = quiz.draft;
+    input.focus();
+    input.setSelectionRange(input.value.length, input.value.length);
+    updateAnswerPreview(input.value);
+  }
+
+  function clearAnswerDraft() {
+    replaceAnswerDraft("");
   }
 
   function updateAnswerPreview(value) {
@@ -3340,15 +3472,26 @@
   }
 
   function updateAchievements(records, currentQuiz, historyItem) {
+    const proofProgress = proofStats(records);
     const definitions = [
       ["first_run", "開局", "完成第一局", () => records.attempts + records.practiceRuns >= 1],
       ["streak_5", "連勝 5", "單局連勝達 5 題", () => currentQuiz.bestStreak >= 5 || records.bestStreak >= 5],
       ["streak_10", "連勝 10", "單局連勝達 10 題", () => currentQuiz.bestStreak >= 10 || records.bestStreak >= 10],
+      ["perfect_run", "零失誤", "單局全對", () => historyItem.total >= 10 && historyItem.correct === historyItem.total],
+      ["speed_runner", "速算節奏", "單局平均 20 秒內且正確率 70% 以上", () => historyItem.avgTime > 0 && historyItem.avgTime <= 20 && historyItem.accuracy >= 70],
       ["score_500", "500 分", "單局分數達 500", () => records.bestScore >= 500],
+      ["score_1000", "千分局", "單局分數達 1000", () => records.bestScore >= 1000],
       ["daily_done", "Daily 完成", "完成每日題組", () => currentQuiz.mode === "daily"],
+      ["path_clear", "主線過關", "完成任一主線關卡", () => Boolean(currentQuiz.pathNodeId) && historyItem.accuracy >= 70],
+      ["gate_pass", "跳關成功", "通過一次跳關小測驗", () => Boolean(currentQuiz.pathGate) && historyItem.correct >= (currentQuiz.pathGate.required || 4)],
       ["boss_clear", "Boss 通關", "完成 Boss Ladder 且正確率 70% 以上", () => currentQuiz.mode === "boss" && historyItem.accuracy >= 70],
+      ["boss_ace", "Boss Ace", "Boss 題組正確率 90% 以上", () => currentQuiz.mode === "boss" && historyItem.accuracy >= 90],
       ["blackboard_user", "黑板使用者", "至少一題留下手寫草稿", () => currentQuiz.answers.some((answer) => answer.boardStrokes && answer.boardStrokes.length)],
-      ["hundred_answers", "百題訓練", "本機累積作答 100 題", () => records.totalAnswered >= 100]
+      ["proof_reader", "Proof Reader", "已查看 5 題參考證明", () => proofProgress.viewed >= 5],
+      ["proof_solver", "Proof Solver", "自評看懂 3 題證明", () => proofProgress.understood >= 3],
+      ["hundred_answers", "百題訓練", "本機累積作答 100 題", () => records.totalAnswered >= 100],
+      ["five_hundred_answers", "五百題訓練", "本機累積作答 500 題", () => records.totalAnswered >= 500],
+      ["legend_rank", "Legend", "達到 Legend 段位", () => computeRank(records) === "Legend"]
     ];
     const unlocked = [];
     definitions.forEach(([id, title, detail, test]) => {
@@ -3792,10 +3935,36 @@
     return "例如：pi/4 或 3/2";
   }
 
+  function answerExamples(problem) {
+    if (problem.answerKind === "text") return ["convergent", "divergent", "conditional", "DNE"];
+    if (problem.answerKind === "numeric") return ["pi/4", "sqrt(2)", "log(2)", "0"];
+    if (problem.answerKind === "antiderivative") return ["sin(x)", "log(x)", "x^2/2", "exp(x)"];
+    return ["2*x", "sin(x)^2", "sqrt(x)", "log(x)"];
+  }
+
+  function webworkKeys(problem) {
+    const groups = problem.answerKind === "text"
+      ? [{ label: "判定", keys: ["convergent", "divergent", "conditional", "absolute", "DNE"] }]
+      : WEBWORK_KEY_GROUPS;
+    return groups.flatMap((group) => group.keys.map((token) => ({
+      label: token.replace("|", ""),
+      insert: token
+    })));
+  }
+
   function formatHelp(kind) {
-    if (kind === "text") return "收斂、發散、條件收斂";
-    if (kind === "numeric") return "分數、pi、e、sqrt";
-    return "用 * 表乘法，^ 表次方";
+    if (kind === "text") return "可輸入 convergent / divergent / conditional";
+    if (kind === "numeric") return "支援分數、pi、e、sqrt、log";
+    return "用 * 表乘法，用 ^ 表次方，例如 x^2";
+  }
+
+  function answerReasonLabel(reason) {
+    return {
+      Wrong: "答案不對",
+      Timeout: "時間到",
+      Skipped: "已跳過",
+      "Tab limit": "切頁次數超過"
+    }[reason] || reason || "未通過";
   }
 
   function displayAnswer(problem) {
@@ -4403,6 +4572,8 @@
     };
   }
 
+  applyTheme();
+  setupPwa();
   setupAnalytics();
   setupVisibilityTracking();
   setupMathField();
