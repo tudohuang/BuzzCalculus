@@ -218,6 +218,8 @@
   let selectedMistakeTopic = "all";
   let selectedHistoryTopic = "all";
   let selectedProofTier = "all";
+  let homeMoreOpen = false;
+  let advancedModeOpen = false;
   let quiz = null;
   let activePathNodeId = "";
   let tickHandle = null;
@@ -736,7 +738,7 @@
   function renderHomeMorePanel(records, weaknesses, mistakeCount) {
     return `
       <section class="home-more">
-        <details class="home-more-panel">
+        <details class="home-more-panel" data-home-more-panel ${homeMoreOpen ? "open" : ""}>
           <summary>
             <span>
               <strong>更多練習</strong>
@@ -979,7 +981,7 @@
           )
           .join("")}
       </div>
-      <details class="advanced-mode-drawer">
+      <details class="advanced-mode-drawer" data-advanced-mode-drawer ${(advancedModeOpen || advanced.includes(selectedMode)) ? "open" : ""}>
         <summary>進階模式</summary>
         <div class="segmented modes learning-picker">
           ${advanced
@@ -1896,6 +1898,20 @@
   }
 
   function bindEvents() {
+    const homeMorePanel = app.querySelector("[data-home-more-panel]");
+    if (homeMorePanel) {
+      homeMorePanel.addEventListener("toggle", () => {
+        homeMoreOpen = homeMorePanel.open;
+      });
+    }
+
+    const advancedModeDrawer = app.querySelector("[data-advanced-mode-drawer]");
+    if (advancedModeDrawer) {
+      advancedModeDrawer.addEventListener("toggle", () => {
+        advancedModeOpen = advancedModeDrawer.open;
+      });
+    }
+
     app.querySelectorAll("[data-mode]").forEach((button) => {
       button.addEventListener("click", () => {
         selectedMode = button.dataset.mode;
