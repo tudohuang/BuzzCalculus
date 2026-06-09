@@ -6,6 +6,11 @@
 
 ### Added
 
+- 2026-06-09：新增題庫搜尋、收藏、題目回報、Boss 專區
+- 2026-06-09：新增 Warm-up、Integral Bee、No Hint、Accuracy、Survival、Boss Rush、Cooldown 挑戰模式
+- 2026-06-09：新增每日目標、週任務、streak 點、最近關卡結果、關卡金牌 / CLEAR 徽章
+- 2026-06-09：新增弱點時間衰減與錯題答對降權
+
 - 新增手寫答題模式
 - 新增選擇題模式
 - 新增手機黑板與全螢幕黑板

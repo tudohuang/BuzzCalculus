@@ -51,6 +51,10 @@ Boss
 - **32 個技巧題包**
 - **主線路線圖**
 - **每日任務**
+- **每週任務與本機目標**
+- **題庫搜尋 / 收藏 / 題目回報**
+- **Boss 專區與 Boss Rush**
+- **Integral Bee、No Hint、Accuracy、Survival、Warm-up、Cooldown**
 - **手機優先的選擇題練習**
 - **WebWork 式答案輸入**
 - **LaTeX 預覽**
