@@ -92,6 +92,30 @@ const numericProblem = {
   answer: "pi/4"
 };
 
+const quotientProblem = {
+  id: "p0-derivative-quotient",
+  topic: "derivatives",
+  answerKind: "expression",
+  answer: "(x^2-2*x-1)/(x-1)^2",
+  variable: "x"
+};
+
+const productLogProblem = {
+  id: "p0-derivative-product-log",
+  topic: "derivatives",
+  answerKind: "expression",
+  answer: "exp(x)*log(x)+exp(x)/x",
+  variable: "x"
+};
+
+const parametricTechniqueProblem = {
+  id: "p0-text-parametric-technique",
+  topic: "derivatives",
+  answerKind: "text",
+  answers: ["parametric", "parametric differentiation", "參數微分", "parametric chain rule", "chain rule"],
+  canonical: "parametric differentiation"
+};
+
 const tests = [
   ["antiderivative tan(x)", antiderivativeProblem, "tan(x)", true],
   ["antiderivative tan(x)+5", antiderivativeProblem, "tan(x)+5", true],
@@ -107,7 +131,10 @@ const tests = [
   ["text wrong value", textProblem, "divergent", false],
   ["numeric symbolic pi/4", numericProblem, "pi/4", true],
   ["numeric decimal pi/4", numericProblem, "0.7853981633974483", true],
-  ["numeric wrong value", numericProblem, "1", false]
+  ["numeric wrong value", numericProblem, "1", false],
+  ["reported quotient derivative with spaces", quotientProblem, "(x^2 -2x -1)/(x-1)^2", true],
+  ["ln alias in product rule answer", productLogProblem, "exp(x)*ln(x)+exp(x)/x", true],
+  ["parametric technique broad chain-rule alias", parametricTechniqueProblem, "chain rule", true]
 ];
 
 const failures = [];
@@ -119,6 +146,11 @@ tests.forEach(([name, problem, input, expected]) => {
   console.log(`${status} ${name}: input=${input} expected=${expected} actual=${Boolean(result.correct)} message=${result.message}`);
   if (!passed) failures.push({ name, input, expected, result });
 });
+
+const timeoutResult = api.resolveAnswerSubmission(quotientProblem, "(x^2 -2x -1)/(x-1)^2", "Timeout");
+const timeoutPassed = timeoutResult.status === "correct" && timeoutResult.reason === "Correct";
+console.log(`${timeoutPassed ? "PASS" : "FAIL"} timeout keeps correct draft: status=${timeoutResult.status} reason=${timeoutResult.reason}`);
+if (!timeoutPassed) failures.push({ name: "timeout keeps correct draft", input: timeoutResult.input, expected: true, result: timeoutResult });
 
 const canonicalProblems = (global.window.BUZZ_PROBLEMS || []).filter((problem) => /^(gap|mob|rel|hc)-/.test(problem.id));
 canonicalProblems.forEach((problem) => {
@@ -135,4 +167,4 @@ if (failures.length) {
   process.exit(1);
 }
 
-console.log(`\nValidated ${tests.length + canonicalProblems.length} answer checker cases`);
+console.log(`\nValidated ${tests.length + 1 + canonicalProblems.length} answer checker cases`);

@@ -3346,19 +3346,24 @@
       recordAnswer({ status: "wrong", reason: "Tab limit", input });
       return;
     }
-    const result = checkAnswer(current, input);
-    recordAnswer({
-      status: result.correct ? "correct" : "wrong",
-      reason: result.correct ? "Correct" : "Wrong",
-      input,
-      detail: result.message
-    });
+    recordAnswer(resolveAnswerSubmission(current, input, "Wrong"));
   }
 
   function submitChoiceAnswer(input) {
     if (!quiz || quiz.feedback) return;
     quiz.draft = input;
     submitCurrentAnswer();
+  }
+
+  function resolveAnswerSubmission(problem, input, wrongReason) {
+    const normalizedInput = String(input || "").trim();
+    const result = checkAnswer(problem, normalizedInput);
+    return {
+      status: result.correct ? "correct" : "wrong",
+      reason: result.correct ? "Correct" : wrongReason,
+      input: normalizedInput,
+      detail: result.message
+    };
   }
 
   function recordAnswer({ status, reason, input, detail }) {
@@ -3465,7 +3470,7 @@
       const current = getCurrentProblem();
       const elapsed = Math.floor((Date.now() - quiz.questionStartedAt) / 1000);
       if (!quiz.feedback && elapsed >= current.timeLimit) {
-        recordAnswer({ status: "wrong", reason: "Timeout", input: quiz.draft || "" });
+        recordAnswer(resolveAnswerSubmission(current, quiz.draft || "", "Timeout"));
       } else {
         updateLiveQuizStats();
       }
@@ -5485,6 +5490,7 @@
       checkExpression,
       checkAntiderivative,
       checkText,
+      resolveAnswerSubmission,
       evaluateExpression,
       normalizeExpression,
       normalizeText,

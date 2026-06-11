@@ -728,7 +728,7 @@
       source: "Buzz technique recognition",
       prompt: "x=t^2,\\ y=t^3.\\ \\text{Which differentiation technique?}",
       answerKind: "text",
-      answers: ["parametric", "parametric differentiation", "參數微分"],
+      answers: ["parametric", "parametric differentiation", "參數微分", "parametric chain rule", "chain rule"],
       canonical: "parametric differentiation",
       timeLimit: 45,
       tabLimit: 1,
