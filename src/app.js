@@ -342,6 +342,8 @@
     advanced: { label: "直接挑戰", pack: "boss_challenge", mode: "boss_rush", topic: "all" }
   };
   const HISTORY_LIMIT = 40;
+  const RECENT_PROBLEM_COOLDOWN = 30;
+  const RECENT_STRONG_AVOID = 18;
   const APP_VERSION = "v0.9.0-beta";
   const BUILD_DATE = "2026-06-07";
   const GA_MEASUREMENT_ID = String(window.BUZZ_GA_MEASUREMENT_ID || "").trim();
@@ -2816,7 +2818,7 @@
     selectedTopic = selectedLibraryTopic || "all";
     selectedPack = "all";
     const ordered = adaptiveShuffle(pool, records, seedFromString(`${Date.now()}-library-filter`));
-    startQuiz(padPool(ordered.slice(0, 12), pool, Math.min(12, pool.length)), {
+    startQuiz(padPool(ordered.slice(0, 12), pool, Math.min(12, pool.length), { records }), {
       modeKey: "practice",
       practice: true,
       noTimer: true
@@ -2928,13 +2930,14 @@
 
   function selectPathNodePool(node) {
     const mode = MODES[node.mode || "quick"] || MODES.quick;
+    const records = loadRecords();
     const pool = pathNodeProblems(node);
     const fallback = selectProblemPool(mode, node.topic || "all");
     const source = pool.length ? pool : fallback;
-    if (mode.boss) return selectBossPool(source, mode.count);
-    if (mode.daily) return selectDailyPool(source, mode.count);
-    const ordered = adaptiveShuffle(source, loadRecords(), seedFromString(`${Date.now()}-${node.id}`));
-    return padPool(ordered.slice(0, mode.count), source, mode.count);
+    if (mode.boss) return selectBossPool(source, mode.count, records);
+    if (mode.daily) return selectDailyPool(source, mode.count, records);
+    const ordered = adaptiveShuffle(source, records, seedFromString(`${Date.now()}-${node.id}`));
+    return padPool(ordered.slice(0, mode.count), source, mode.count, { records });
   }
 
   function selectPathGatePool(node, count) {
@@ -2947,8 +2950,10 @@
       seen.add(problem.id);
       return true;
     });
-    const ordered = adaptiveShuffle(source.length ? source : current, loadRecords(), seedFromString(`${Date.now()}-gate-${node.id}`));
-    return padPool(ordered.slice(0, count), source.length ? source : current, count);
+    const records = loadRecords();
+    const pool = source.length ? source : current;
+    const ordered = adaptiveShuffle(pool, records, seedFromString(`${Date.now()}-gate-${node.id}`));
+    return padPool(ordered.slice(0, count), pool, count, { records });
   }
 
   function pathGateInfo(_node) {
@@ -3216,14 +3221,14 @@
   }
 
   function selectProblemPool(mode, topic) {
+    const records = loadRecords();
     let pool = problems.slice();
     if (mode.integralBee) {
       pool = pool.filter((problem) => problem.topic === "integrals");
     }
     if (mode.hidden && selectedMode === "mistakes") {
-      const records = loadRecords();
       pool = Object.values(records.mistakes || {}).map((item) => problemById(item.problemId)).filter(Boolean);
-      return padPool(pool, pool, Math.min(mode.count, pool.length || mode.count));
+      return padPool(pool, pool, Math.min(mode.count, pool.length || mode.count), { records, avoidRecent: false });
     }
     if (mode.topicLocked) {
       pool = pool.filter((problem) => problem.topic === (topic === "all" ? "limits" : topic));
@@ -3243,33 +3248,33 @@
     }
 
     if (mode.boss) {
-      return selectBossPool(pool, mode.count);
+      return selectBossPool(pool, mode.count, records);
     }
 
     if (mode.daily) {
-      return selectDailyPool(pool, mode.count);
+      return selectDailyPool(pool, mode.count, records);
     }
 
     const seed = mode.daily ? seedFromString(new Date().toISOString().slice(0, 10)) : Date.now();
-    const ordered = mode.daily ? shuffle(pool, seed) : adaptiveShuffle(pool, loadRecords(), seed);
-    return padPool(ordered.slice(0, mode.count), pool, mode.count);
+    const ordered = mode.daily ? preferFreshProblems(shuffle(pool, seed), records) : adaptiveShuffle(pool, records, seed);
+    return padPool(ordered.slice(0, mode.count), pool, mode.count, { records });
   }
 
-  function selectBossPool(pool, count) {
+  function selectBossPool(pool, count, records = loadRecords()) {
     const bossPool = pool.filter((problem) => problemRank(problem) >= 5);
     const sourcePool = bossPool.length ? bossPool : pool.filter((problem) => problemRank(problem) >= 4);
     const ranked = [6, 5, 4].flatMap((rank) =>
-      shuffle(sourcePool.filter((problem) => problemRank(problem) === rank), seedFromString(`${Date.now()}-boss-${rank}`)).slice(0, rank === 6 ? 7 : 5)
+      preferFreshProblems(shuffle(sourcePool.filter((problem) => problemRank(problem) === rank), seedFromString(`${Date.now()}-boss-${rank}`)), records).slice(0, rank === 6 ? 7 : 5)
     );
-    return padPool(ranked, sourcePool.length ? sourcePool : pool, count);
+    return padPool(ranked, sourcePool.length ? sourcePool : pool, count, { records });
   }
 
-  function selectDailyPool(pool, count) {
+  function selectDailyPool(pool, count, records = loadRecords()) {
     const seed = seedFromString(new Date().toISOString().slice(0, 10));
     const plan = [1, 2, 2, 3, 3, 3, 4, 4, 4, 3, 5, 2].slice(0, count);
     const selected = [];
     const buckets = [1, 2, 3, 4, 5, 6].reduce((acc, rank) => {
-      acc[rank] = shuffle(pool.filter((problem) => problemRank(problem) === rank), seedFromString(`${seed}-daily-${rank}`));
+      acc[rank] = preferFreshProblems(shuffle(pool.filter((problem) => problemRank(problem) === rank), seedFromString(`${seed}-daily-${rank}`)), records);
       return acc;
     }, {});
     plan.forEach((targetRank) => {
@@ -3277,7 +3282,7 @@
       const bucket = ranks.map((rank) => buckets[rank]).find((items) => items && items.length);
       if (bucket) selected.push(bucket.shift());
     });
-    return padPool(selected, shuffle(pool, seed), count);
+    return padPool(selected, shuffle(pool, seed), count, { records });
   }
 
   function selectCooldownPool(count) {
@@ -3287,12 +3292,35 @@
       .map((item) => problemById(item.problemId))
       .filter(Boolean);
     const easy = problems.filter((problem) => problemRank(problem) <= 3);
-    return padPool(mistakes.slice(0, count), easy, count);
+    return padPool(mistakes.slice(0, count), easy, count, { records });
   }
 
-  function padPool(selected, pool, count) {
-    const result = selected.slice();
-    const shuffled = shuffle(pool, seedFromString(`${Date.now()}-pad`));
+  function padPool(selected, pool, count, options = {}) {
+    const records = options.records || loadRecords();
+    const avoidRecent = options.avoidRecent !== false;
+    const recent = avoidRecent ? recentProblemSet(records, options.recentLimit || RECENT_STRONG_AVOID) : new Set();
+    const result = [];
+    const used = new Set();
+
+    (selected || []).forEach((problem) => {
+      if (!problem || used.has(problem.id) || result.length >= count) return;
+      used.add(problem.id);
+      result.push(problem);
+    });
+
+    const shuffled = shuffle(pool || [], seedFromString(`${Date.now()}-pad`));
+    const fillUnique = (items, skipRecent) => {
+      items.forEach((problem) => {
+        if (!problem || result.length >= count || used.has(problem.id)) return;
+        if (skipRecent && recent.has(problem.id)) return;
+        used.add(problem.id);
+        result.push(problem);
+      });
+    };
+
+    fillUnique(shuffled, true);
+    fillUnique(shuffled, false);
+
     let cursor = 0;
     while (result.length < count && shuffled.length) {
       result.push(shuffled[cursor % shuffled.length]);
@@ -3302,6 +3330,10 @@
   }
 
   function adaptiveShuffle(pool, records, seed) {
+    const recentIndex = new Map();
+    recentProblemIds(records, RECENT_PROBLEM_COOLDOWN).forEach((id, index) => {
+      if (!recentIndex.has(id)) recentIndex.set(id, index);
+    });
     return pool
       .slice()
       .map((problem, index) => {
@@ -3310,14 +3342,47 @@
         const problemWeakness = stat.total ? stat.wrong / stat.total : 0;
         const topicWeakness = topic.total ? topic.wrong / topic.total : 0;
         const mistakeBoost = records.mistakes[problem.id] ? 0.2 + Math.min(1.2, mistakeWeight(records.mistakes[problem.id]) * 0.18) : 0;
+        const recentPosition = recentIndex.has(problem.id) ? recentIndex.get(problem.id) : -1;
+        const recentWeight = recentPosition >= 0 ? 1 - recentPosition / RECENT_PROBLEM_COOLDOWN : 0;
+        const repeatPenalty = recentWeight
+          ? records.mistakes[problem.id]
+            ? 0.35 + recentWeight * 0.25
+            : 1.05 + recentWeight * 0.65
+          : 0;
         const randomness = hashUnit(`${seed}-${problem.id}-${index}`);
         return {
           problem,
-          score: randomness + problemWeakness * 0.85 + topicWeakness * 0.55 + mistakeBoost
+          score: randomness + problemWeakness * 0.85 + topicWeakness * 0.55 + mistakeBoost - repeatPenalty
         };
       })
       .sort((a, b) => b.score - a.score)
       .map((item) => item.problem);
+  }
+
+  function preferFreshProblems(items, records, limit = RECENT_STRONG_AVOID) {
+    const recent = recentProblemSet(records, limit);
+    const fresh = [];
+    const repeated = [];
+    (items || []).forEach((problem) => {
+      if (!problem) return;
+      (recent.has(problem.id) ? repeated : fresh).push(problem);
+    });
+    return fresh.concat(repeated);
+  }
+
+  function recentProblemSet(records, limit = RECENT_STRONG_AVOID) {
+    return new Set(recentProblemIds(records, limit));
+  }
+
+  function recentProblemIds(records, limit = RECENT_PROBLEM_COOLDOWN) {
+    const ids = [];
+    for (const item of records.history || []) {
+      for (const answer of item.answers || []) {
+        if (answer.problemId) ids.push(answer.problemId);
+        if (ids.length >= limit) return ids;
+      }
+    }
+    return ids;
   }
 
   function hashUnit(value) {
@@ -5501,6 +5566,10 @@
       pathNodeProblems,
       learningPathState,
       matchesPack,
+      adaptiveShuffle,
+      padPool,
+      preferFreshProblems,
+      recentProblemIds,
       packTotalCountText
     };
   }
