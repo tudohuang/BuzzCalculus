@@ -74,6 +74,21 @@
       boss: true,
       suddenDeath: true
     },
+    exam: {
+      label: "大考模式",
+      note: "20 題 / 45 分鐘，WebWork，全螢幕監考",
+      count: 20,
+      topicLocked: false,
+      daily: false,
+      boss: false,
+      exam: true,
+      examDurationSec: 45 * 60,
+      noHint: true,
+      forceAnswerMode: "free",
+      requireFullscreen: true,
+      examStyle: true,
+      minRank: 3
+    },
     integral_bee: {
       label: "Integral Bee",
       note: "積分速度訓練 12 題",
@@ -156,6 +171,7 @@
     all: { label: "全部技巧", note: "不限制 tags", tags: [] },
     beginner_warmup: { label: "新手暖身", note: "R1-R2 基礎題", tags: ["beginner-friendly"] },
     boss_challenge: { label: "Boss 挑戰", note: "R5-R6 防強人題", tags: ["boss-rank"] },
+    exam_style: { label: "大考題感", note: "轉學考 / 免修 / 段考式混合題", tags: ["exam-style"] },
     multivariable: { label: "多變數", note: "極限 / 偏導 / 二重積分", tags: ["multivariable"] },
     taylor: { label: "Taylor", note: "展開與係數", tags: ["taylor", "coefficient"] },
     chain: { label: "鏈鎖律", note: "一元與偏導鏈鎖律", tags: ["chain-rule"] },
@@ -188,7 +204,7 @@
   };
 
   const PACK_GROUPS = [
-    { label: "常用", keys: ["all", "beginner_warmup", "boss_challenge", "mobile_sprint", "technique_recognition", "multivariable", "substitution", "integration_by_parts", "series_test"] },
+    { label: "常用", keys: ["all", "beginner_warmup", "boss_challenge", "exam_style", "mobile_sprint", "technique_recognition", "multivariable", "substitution", "integration_by_parts", "series_test"] },
     { label: "積分技巧", keys: ["partial_fraction", "trig_substitution", "frullani", "ode_style", "kings_property", "double_integral", "multi_integral_advanced"] },
     { label: "微分 / 應用", keys: ["chain", "lagrange_multiplier", "nabla_vector", "parametric_polar", "applications", "total_differential", "hessian", "wronskian", "jacobian_chain"] },
     { label: "級數 / ODE / 其他", keys: ["taylor", "power_series", "convergence_tests", "endpoint_root", "special_functions", "ode_intro", "complex"] }
@@ -275,11 +291,14 @@
     advanced: "進階",
     boss: "東大"
   };
-  const CHALLENGE_MODES = ["warmup", "integral_bee", "no_hint", "accuracy", "survival", "boss_rush", "cooldown"];
+  const CHALLENGE_MODES = ["warmup", "exam", "integral_bee", "no_hint", "accuracy", "survival", "boss_rush", "cooldown"];
   const LIBRARY_PAGE_SIZE = 72;
   const TAG_LABELS = {
     "beginner-friendly": "新手友善",
     "boss-rank": "Boss",
+    "exam-style": "大考題感",
+    "transfer-exam": "轉學考",
+    "proficiency-exam": "免修考",
     "technique-recognition": "技巧辨識",
     "technique-sprint": "速判",
     "trap-drill": "陷阱",
@@ -345,7 +364,7 @@
   const RECENT_PROBLEM_COOLDOWN = 30;
   const RECENT_STRONG_AVOID = 18;
   const APP_VERSION = "v0.9.0-beta";
-  const BUILD_DATE = "2026-06-07";
+  const BUILD_DATE = "2026-06-13";
   const GA_MEASUREMENT_ID = String(window.BUZZ_GA_MEASUREMENT_ID || "").trim();
 
   let view = "home";
@@ -1936,14 +1955,21 @@
     const current = getCurrentProblem();
     if (!quiz || !current) return "";
     const elapsed = Math.max(0, Math.floor((Date.now() - quiz.questionStartedAt) / 1000));
-    const remaining = Math.max(0, current.timeLimit - elapsed);
+    const perQuestionRemaining = Math.max(0, current.timeLimit - elapsed);
+    const examRemaining = quiz.examMode ? examTimeRemaining(quiz) : null;
+    const remaining = quiz.examMode ? examRemaining : perQuestionRemaining;
     const progress = Math.round((quiz.index / quiz.problems.length) * 100);
     const totalTabs = quiz.tabSwitches[current.id] || 0;
+    const proctorEvents = totalTabSwitches(quiz);
     const isPractice = Boolean(quiz.practice);
     const noTimer = Boolean(quiz.noTimer || isPractice);
-    const isDanger = !noTimer && remaining <= 8 ? "is-danger" : "";
+    const isDanger = !noTimer && remaining <= (quiz.examMode ? 180 : 8) ? "is-danger" : "";
     const feedback = quiz.feedback;
     const answerMode = quiz.answerMode || "free";
+    const timeLabel = noTimer ? "Mode" : quiz.examMode ? "Exam" : "Time";
+    const timeValue = noTimer ? "Free" : quiz.examMode ? formatCountdown(remaining) : String(remaining);
+    const proctorLabel = quiz.examMode ? "Proctor" : "Tabs";
+    const proctorValue = noTimer ? "Off" : quiz.examMode ? String(proctorEvents) : `${totalTabs}/${current.tabLimit}`;
 
     return `
       <main class="screen quiz-screen">
@@ -1960,15 +1986,16 @@
             </div>
             <div class="timer-cluster">
               <div class="timer-box ${isDanger}" data-live-box="time">
-                <span>${noTimer ? "Mode" : "Time"}</span>
-                <strong data-live="time">${noTimer ? "Free" : remaining}</strong>
+                <span>${timeLabel}</span>
+                <strong data-live="time">${timeValue}</strong>
               </div>
-              <div class="timer-box ${!noTimer && totalTabs > current.tabLimit ? "is-danger" : ""}">
-                <span>${isPractice ? "Tabs" : "Tabs"}</span>
-                <strong>${noTimer ? "Off" : `${totalTabs}/${current.tabLimit}`}</strong>
+              <div class="timer-box ${!noTimer && (quiz.examMode ? proctorEvents > 0 : totalTabs > current.tabLimit) ? "is-danger" : ""}" data-live-box="proctor">
+                <span>${proctorLabel}</span>
+                <strong data-live="proctor">${proctorValue}</strong>
               </div>
             </div>
           </div>
+          ${renderExamLockStatus()}
 
           <div class="problem-stage">
             <article class="problem-card">
@@ -1990,7 +2017,7 @@
                     <strong>${feedback.title}</strong>
                     <p>${feedback.message}</p>
                   </div>`
-                : `<div class="feedback"><strong>作答狀態</strong><p>${quiz.survival ? "Survival：最多錯 3 題。" : quiz.suddenDeath ? "Boss Rush：錯一題就結算。" : noTimer ? "本局不倒數、不記切分頁。" : `倒數開始後請保持在本頁。這題允許 ${current.tabLimit} 次切分頁。`}</p></div>`
+                : `<div class="feedback"><strong>作答狀態</strong><p>${quiz.examMode ? "大考模式：整份倒數，WebWork 作答；切頁或退出全螢幕會被記錄。" : quiz.survival ? "Survival：最多錯 3 題。" : quiz.suddenDeath ? "Boss Rush：錯一題就結算。" : noTimer ? "本局不倒數、不記切分頁。" : `倒數開始後請保持在本頁。這題允許 ${current.tabLimit} 次切分頁。`}</p></div>`
             }
           </div>
 
@@ -2008,6 +2035,30 @@
   function renderAnswerControls(problem) {
     if (quiz.answerMode === "choice") return renderChoiceControls(problem);
     return renderFreeAnswerControls(problem);
+  }
+
+  function renderExamLockStatus() {
+    if (!quiz || !quiz.examMode) return "";
+    const active = isFullscreenActive();
+    const status = active
+      ? "全螢幕監考中"
+      : quiz.fullscreenStatus === "unsupported"
+        ? "此瀏覽器不支援全螢幕 API"
+        : quiz.fullscreenStatus === "blocked"
+          ? "瀏覽器阻擋全螢幕，請手動按下鎖定"
+          : "尚未進入或已退出全螢幕";
+    const button = active
+      ? ""
+      : `<button class="button secondary" data-action="request-fullscreen">${icon("maximize")}鎖定全螢幕</button>`;
+    return `
+      <div class="exam-lock ${active ? "is-active" : "is-warning"}">
+        <div>
+          <strong>${escapeHtml(status)}</strong>
+          <span>整份倒數 ${formatCountdown(examTimeRemaining(quiz))}；退出全螢幕、切頁或失焦會計入 Proctor。</span>
+        </div>
+        ${button}
+      </div>
+    `;
   }
 
   function renderHintPanel(problem) {
@@ -2162,11 +2213,14 @@
   }
 
   function renderRulesModal() {
+    const ruleText = quiz && quiz.examMode
+      ? `大考模式為整份 ${Math.round((quiz.examDurationSec || 0) / 60)} 分鐘倒數，全部題目使用 WebWork 輸入。時間到會直接交卷；退出全螢幕、切頁或視窗失焦會被記錄為 Proctor 事件。`
+      : "每題都有自己的倒數與切分頁限制。超時、跳過、答案不等價或超過切分頁限制，都會記為錯題。系統會在答題後顯示簡短解法。";
     return `
       <div class="modal-backdrop" data-action="close-modal">
         <div class="modal" role="dialog" aria-modal="true" aria-labelledby="rules-title" data-modal>
           <h3 id="rules-title">本局規則</h3>
-          <p>每題都有自己的倒數與切分頁限制。超時、跳過、答案不等價或超過切分頁限制，都會記為錯題。系統會在答題後顯示簡短解法。</p>
+          <p>${escapeHtml(ruleText)}</p>
           <button class="button" data-action="close-modal">${icon("check")}繼續</button>
         </div>
       </div>
@@ -2202,7 +2256,7 @@
     const gateResult = quiz.pathGate ? pathGateResult(quiz, correct, total) : null;
     const pathResult = !gateResult && quiz.pathNodeId ? pathLessonResult(quiz, records, accuracy) : null;
 
-    const momentum = resultMomentum(accuracy, avgTime, pathResult, gateResult);
+    const momentum = quiz.examMode ? examResultMomentum(quiz, accuracy, correct, total) : resultMomentum(accuracy, avgTime, pathResult, gateResult);
     const speedInsight = quiz.speedInsight || speedInsightText(avgTime, recentAnswerStats(records, 30).avgSeconds);
     return `
       <main class="screen">
@@ -2218,6 +2272,7 @@
               <div class="score-card"><span>Correct</span><strong>${correct}/${total}</strong></div>
               <div class="score-card"><span>Accuracy</span><strong>${accuracy}%</strong></div>
               <div class="score-card"><span>Avg Sec</span><strong>${avgTime}</strong></div>
+              ${quiz.examMode ? `<div class="score-card"><span>Proctor</span><strong>${totalTabSwitches(quiz)}</strong></div>` : ""}
             </div>
             ${quiz.mode === "daily" ? renderDailyCompletionResult(quiz, records, accuracy) : ""}
             ${renderSpeedResultCard(speedInsight)}
@@ -2391,6 +2446,13 @@
         </div>
       </div>
     `;
+  }
+
+  function examResultMomentum(currentQuiz, accuracy, correct, total) {
+    const prefix = currentQuiz.examTimedOut ? "時間到交卷。" : "已交卷。";
+    if (accuracy >= 85) return `${prefix}大考題組 ${correct}/${total}，可以開始挑戰更長題組。`;
+    if (accuracy >= 65) return `${prefix}大考題組 ${correct}/${total}，先回看錯題分布。`;
+    return `${prefix}大考題組 ${correct}/${total}，建議先補同類型題再重考。`;
   }
 
   function resultMomentum(accuracy, avgTime, pathResult, gateResult) {
@@ -2730,6 +2792,10 @@
       quiz.modal = "rules";
       render();
     }
+    if (action === "request-fullscreen" && quiz) {
+      requestQuizFullscreen();
+      render();
+    }
     if (action === "confirm-exit" && quiz) {
       quiz.modal = "exit";
       render();
@@ -2742,10 +2808,12 @@
     if (action === "restart") restartQuiz();
     if (action === "home") {
       stopTicker();
+      const shouldExitFullscreen = Boolean(quiz && quiz.requireFullscreen);
       quiz = null;
       activePathNodeId = "";
       if (MODES[selectedMode] && MODES[selectedMode].hidden) selectedMode = "quick";
       view = "home";
+      if (shouldExitFullscreen) exitQuizFullscreen();
       render();
     }
     if (action === "reset-records") {
@@ -2767,7 +2835,7 @@
   function startMode(modeKey) {
     const mode = MODES[modeKey] || MODES.quick;
     selectedMode = modeKey;
-    selectedAnswerMode = modeKey === "cooldown" ? "free" : "choice";
+    selectedAnswerMode = mode.forceAnswerMode || (modeKey === "cooldown" ? "free" : "choice");
     selectedPack = "all";
     selectedTopic = "all";
     if (mode.integralBee) selectedTopic = "integrals";
@@ -2781,7 +2849,11 @@
       noHint: Boolean(mode.noHint),
       survival: Boolean(mode.survival),
       suddenDeath: Boolean(mode.suddenDeath),
-      accuracyMode: Boolean(mode.accuracyMode)
+      accuracyMode: Boolean(mode.accuracyMode),
+      examMode: Boolean(mode.exam),
+      examDurationSec: mode.examDurationSec || 0,
+      requireFullscreen: Boolean(mode.requireFullscreen),
+      answerMode: mode.forceAnswerMode || selectedAnswerMode
     });
   }
 
@@ -3177,13 +3249,18 @@
     quiz = {
       mode: options.modeKey || selectedMode,
       topic: selectedTopic,
-      answerMode: selectedAnswerMode,
+      answerMode: options.answerMode || selectedAnswerMode,
       practice: options.practice !== undefined ? Boolean(options.practice) : Boolean(mode.practice),
       noTimer: Boolean(options.noTimer || mode.noTimer),
       noHint: Boolean(options.noHint || mode.noHint),
       survival: Boolean(options.survival || mode.survival),
       suddenDeath: Boolean(options.suddenDeath || mode.suddenDeath),
       accuracyMode: Boolean(options.accuracyMode || mode.accuracyMode),
+      examMode: Boolean(options.examMode || mode.exam),
+      examDurationSec: Number(options.examDurationSec || mode.examDurationSec || 0),
+      examEndAt: options.examMode || mode.exam ? Date.now() + Number(options.examDurationSec || mode.examDurationSec || 0) * 1000 : 0,
+      requireFullscreen: Boolean(options.requireFullscreen || mode.requireFullscreen),
+      fullscreenStatus: options.requireFullscreen || mode.requireFullscreen ? "pending" : "",
       pathNodeId: options.pathNodeId || "",
       pathGate: options.pathGate || null,
       problems: pool,
@@ -3217,6 +3294,7 @@
       problem_count: quiz.problems.length,
       practice: Boolean(quiz.practice)
     });
+    if (quiz.requireFullscreen) requestQuizFullscreen();
     render();
   }
 
@@ -3237,6 +3315,15 @@
     }
     if (selectedPack !== "all") {
       pool = pool.filter((problem) => matchesPack(problem, selectedPack));
+    }
+    if (mode.examStyle) {
+      const examTagged = pool.filter((problem) => isExamAnswerProblem(problem) && (problem.tags || []).includes("exam-style"));
+      const examFallback = pool.filter((problem) => isExamAnswerProblem(problem) && problemRank(problem) >= 3);
+      pool = examTagged.length >= mode.count ? examTagged : examFallback.length ? examFallback : pool.filter(isExamAnswerProblem);
+    }
+    if (mode.minRank) {
+      const rankedPool = pool.filter((problem) => problemRank(problem) >= mode.minRank);
+      pool = rankedPool.length ? rankedPool : pool;
     }
     if (mode.hardOnly) {
       const hardPool = pool.filter((problem) => problemRank(problem) >= 4);
@@ -3398,6 +3485,10 @@
     return required.some((tag) => tags.includes(tag));
   }
 
+  function isExamAnswerProblem(problem) {
+    return ["numeric", "expression", "antiderivative"].includes(problem.answerKind);
+  }
+
   function problemRank(problem) {
     return Math.max(1, Math.min(6, Number(problem.rank || problem.difficulty || 1)));
   }
@@ -3438,7 +3529,7 @@
     const elapsed = Math.max(0, Math.floor((Date.now() - quiz.questionStartedAt) / 1000));
     const correct = status === "correct";
     const usedHints = quiz.hintsUsed?.[problem.id] || 0;
-    const timeBonus = correct && !quiz.practice ? Math.max(0, problem.timeLimit - elapsed) : 0;
+    const timeBonus = correct && !quiz.practice && !quiz.examMode ? Math.max(0, problem.timeLimit - elapsed) : 0;
     const difficultyBonus = problemRank(problem) * 10;
     const penalty = correct && !quiz.practice ? usedHints * hintPenalty(problem) : 0;
     const noHintBonus = correct && quiz.noHint ? 15 : 0;
@@ -3524,6 +3615,7 @@
       saveQuizRecord(quiz);
     }
     view = "results";
+    if (quiz && quiz.requireFullscreen) exitQuizFullscreen();
     render();
   }
 
@@ -3533,8 +3625,12 @@
     tickHandle = window.setInterval(() => {
       if (!quiz || view !== "quiz") return;
       const current = getCurrentProblem();
+      if (!current) return;
       const elapsed = Math.floor((Date.now() - quiz.questionStartedAt) / 1000);
-      if (!quiz.feedback && elapsed >= current.timeLimit) {
+      if (quiz.examMode && examTimeRemaining(quiz) <= 0) {
+        quiz.examTimedOut = true;
+        finishQuiz();
+      } else if (!quiz.examMode && !quiz.feedback && elapsed >= current.timeLimit) {
         recordAnswer(resolveAnswerSubmission(current, quiz.draft || "", "Timeout"));
       } else {
         updateLiveQuizStats();
@@ -3547,11 +3643,15 @@
     const current = getCurrentProblem();
     if (!current) return;
     const elapsed = Math.max(0, Math.floor((Date.now() - quiz.questionStartedAt) / 1000));
-    const remaining = Math.max(0, current.timeLimit - elapsed);
+    const remaining = quiz.examMode ? examTimeRemaining(quiz) : Math.max(0, current.timeLimit - elapsed);
     const timeNode = app.querySelector('[data-live="time"]');
     const timeBox = app.querySelector('[data-live-box="time"]');
-    if (timeNode) timeNode.textContent = String(remaining);
-    if (timeBox) timeBox.classList.toggle("is-danger", remaining <= 8);
+    const proctorNode = app.querySelector('[data-live="proctor"]');
+    const proctorBox = app.querySelector('[data-live-box="proctor"]');
+    if (timeNode) timeNode.textContent = quiz.examMode ? formatCountdown(remaining) : String(remaining);
+    if (timeBox) timeBox.classList.toggle("is-danger", remaining <= (quiz.examMode ? 180 : 8));
+    if (proctorNode) proctorNode.textContent = quiz.examMode ? String(totalTabSwitches(quiz)) : `${quiz.tabSwitches[current.id] || 0}/${current.tabLimit}`;
+    if (proctorBox && quiz.examMode) proctorBox.classList.toggle("is-danger", totalTabSwitches(quiz) > 0);
   }
 
   function stopTicker() {
@@ -3563,6 +3663,23 @@
 
   function getCurrentProblem() {
     return quiz ? quiz.problems[quiz.index] : null;
+  }
+
+  function examTimeRemaining(currentQuiz = quiz) {
+    if (!currentQuiz || !currentQuiz.examMode || !currentQuiz.examEndAt) return 0;
+    return Math.max(0, Math.ceil((currentQuiz.examEndAt - Date.now()) / 1000));
+  }
+
+  function totalTabSwitches(currentQuiz = quiz) {
+    if (!currentQuiz) return 0;
+    return Object.values(currentQuiz.tabSwitches || {}).reduce((sum, count) => sum + Number(count || 0), 0);
+  }
+
+  function formatCountdown(totalSeconds) {
+    const seconds = Math.max(0, Math.floor(Number(totalSeconds || 0)));
+    const minutes = Math.floor(seconds / 60);
+    const rest = seconds % 60;
+    return `${minutes}:${String(rest).padStart(2, "0")}`;
   }
 
   function hintsFor(problem) {
@@ -4334,6 +4451,7 @@
       ["boss_clear", "Boss 通關", "完成 Boss Ladder 且正確率 70% 以上", () => currentQuiz.mode === "boss" && historyItem.accuracy >= 70],
       ["boss_ace", "Boss Ace", "Boss 題組正確率 90% 以上", () => currentQuiz.mode === "boss" && historyItem.accuracy >= 90],
       ["boss_rush_clear", "Boss Rush", "Boss Rush 正確率 70% 以上", () => currentQuiz.mode === "boss_rush" && historyItem.accuracy >= 70],
+      ["exam_clear", "大考通關", "大考模式正確率 70% 以上", () => currentQuiz.mode === "exam" && historyItem.accuracy >= 70],
       ["integral_bee_clear", "Integral Bee", "完成一次 Integral Bee", () => currentQuiz.mode === "integral_bee"],
       ["survival_clear", "Survivor", "Survival 模式作答 20 題以上", () => currentQuiz.mode === "survival" && currentQuiz.answers.length >= 20],
       ["no_hint_clear", "No Hint", "No Hint 模式正確率 70% 以上", () => currentQuiz.mode === "no_hint" && historyItem.accuracy >= 70],
@@ -4750,6 +4868,7 @@
       brutal: "高難度",
       boss: "階梯",
       boss_rush: "錯一題結束",
+      exam: "整份限時",
       integral_bee: "積分快速戰",
       no_hint: "關閉提示",
       accuracy: "不限時精準",
@@ -5506,6 +5625,102 @@
     });
   }
 
+  function requestQuizFullscreen() {
+    if (!quiz || !quiz.requireFullscreen) return;
+    const target = document.documentElement || document.body;
+    const request = target && (
+      target.requestFullscreen ||
+      target.webkitRequestFullscreen ||
+      target.mozRequestFullScreen ||
+      target.msRequestFullscreen
+    );
+    if (!request) {
+      quiz.fullscreenStatus = "unsupported";
+      return;
+    }
+    try {
+      quiz.fullscreenStatus = "requested";
+      const result = request.call(target);
+      if (result && typeof result.then === "function") {
+        result
+          .then(() => {
+            if (!quiz) return;
+            quiz.fullscreenStatus = isFullscreenActive() ? "active" : "blocked";
+            render();
+          })
+          .catch(() => {
+            if (!quiz) return;
+            quiz.fullscreenStatus = "blocked";
+            render();
+          });
+      } else {
+        quiz.fullscreenStatus = isFullscreenActive() ? "active" : "requested";
+      }
+    } catch (_error) {
+      quiz.fullscreenStatus = "blocked";
+    }
+  }
+
+  function exitQuizFullscreen() {
+    const exit = document.exitFullscreen || document.webkitExitFullscreen || document.mozCancelFullScreen || document.msExitFullscreen;
+    if (!isFullscreenActive() || !exit) return;
+    try {
+      const result = exit.call(document);
+      if (result && typeof result.catch === "function") result.catch(() => {});
+    } catch (_error) {
+      // Browser fullscreen exit is best-effort only.
+    }
+  }
+
+  function isFullscreenActive() {
+    return Boolean(
+      document.fullscreenElement ||
+      document.webkitFullscreenElement ||
+      document.mozFullScreenElement ||
+      document.msFullscreenElement
+    );
+  }
+
+  function setupFullscreenTracking() {
+    const handler = () => {
+      if (!quiz || !quiz.requireFullscreen || view !== "quiz") return;
+      const active = isFullscreenActive();
+      quiz.fullscreenStatus = active ? "active" : "exited";
+      if (!active && !quiz.feedback) {
+        recordFullscreenExit();
+        return;
+      }
+      render();
+    };
+    ["fullscreenchange", "webkitfullscreenchange", "mozfullscreenchange", "MSFullscreenChange"].forEach((eventName) => {
+      document.addEventListener(eventName, handler);
+    });
+  }
+
+  function recordFullscreenExit() {
+    if (!quiz || view !== "quiz" || quiz.practice) return;
+    const current = getCurrentProblem();
+    if (!current) return;
+    const now = Date.now();
+    if (now - lastVisibilityStamp < 500) {
+      render();
+      return;
+    }
+    lastVisibilityStamp = now;
+    const totalTabs = trackTabSwitch(current);
+    trackEvent("fullscreen_exit", {
+      mode: quiz.mode,
+      topic: current.topic,
+      problem_id: current.id,
+      proctor_events: totalTabSwitches(quiz)
+    });
+    if (totalTabs > current.tabLimit) {
+      recordAnswer({ status: "wrong", reason: "Tab limit", input: quiz.draft || "" });
+    } else {
+      render();
+    }
+  }
+
   function setupMathField() {
     if (!field) return;
     const ctx = field.getContext("2d");
@@ -5566,6 +5781,8 @@
       pathNodeProblems,
       learningPathState,
       matchesPack,
+      modes: MODES,
+      selectProblemPool,
       adaptiveShuffle,
       padPool,
       preferFreshProblems,
@@ -5578,6 +5795,7 @@
   setupPwa();
   setupAnalytics();
   setupVisibilityTracking();
+  setupFullscreenTracking();
   setupMathField();
   render();
 })();

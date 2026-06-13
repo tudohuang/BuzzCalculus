@@ -53,6 +53,7 @@ require("../src/problem_mobile_advanced_pack.js");
 require("../src/problem_release_expansion.js");
 require("../src/problem_hard_expansion.js");
 require("../src/problem_hardcore_50.js");
+require("../src/problem_exam_expansion.js");
 require("../src/problem_difficulty_calibration.js");
 require("../src/app.js");
 
@@ -102,6 +103,19 @@ if (recent.join(",") !== "recent-a,recent-b") {
   failures.push(`recentProblemIds returned unexpected order: ${recent.join(", ")}`);
 }
 
+const examPool = api.selectProblemPool(api.modes.exam, "all");
+if (examPool.length !== api.modes.exam.count) {
+  failures.push(`exam mode selected ${examPool.length} problems instead of ${api.modes.exam.count}`);
+}
+const invalidExam = examPool.filter((problem) => !["numeric", "expression", "antiderivative"].includes(problem.answerKind));
+if (invalidExam.length) {
+  failures.push(`exam mode selected non-WebWork problems: ${invalidExam.map((problem) => problem.id).join(", ")}`);
+}
+const nonExamTagged = examPool.filter((problem) => !(problem.tags || []).includes("exam-style"));
+if (nonExamTagged.length) {
+  failures.push(`exam mode should prefer exam-style tagged problems: ${nonExamTagged.map((problem) => problem.id).join(", ")}`);
+}
+
 if (failures.length) {
   failures.forEach((failure) => console.error(`FAIL ${failure}`));
   process.exit(1);
@@ -110,3 +124,4 @@ if (failures.length) {
 console.log(`Selection avoids recent repeats: ${ordered.join(", ")}`);
 console.log(`Selection pad result: ${padded.join(", ")}`);
 console.log(`Tiny pool fallback: ${tiny.join(", ")}`);
+console.log(`Exam mode pool: ${examPool.length} WebWork problems`);
