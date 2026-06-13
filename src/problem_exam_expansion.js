@@ -149,38 +149,38 @@
   ].forEach(([id, prompt, answer, tags, solution]) => numeric(id, "integrals", prompt, answer, tags, solution));
 
   [
-    ["exam-ser-001", "Radius of convergence of \\sum_{n=1}^{\\infty}\\frac{n x^n}{3^n}", "3", ["power-series", "radius"], "The dominant ratio is |x|/3."],
-    ["exam-ser-002", "Radius of convergence of \\sum_{n=1}^{\\infty}\\frac{n!}{n^n}x^n", "e", ["power-series", "radius", "root-test"], "Use (n!/n^n)^{1/n}->e^{-1}."],
-    ["exam-ser-003", "Radius of convergence of \\sum_{n=1}^{\\infty}\\frac{(x-2)^n}{n}", "1", ["power-series", "radius"], "The coefficient 1/n has nth root 1."],
+    ["exam-ser-001", "\\text{收斂半徑： }\\sum_{n=1}^{\\infty}\\frac{n x^n}{3^n}", "3", ["power-series", "radius"], "The dominant ratio is |x|/3."],
+    ["exam-ser-002", "\\text{收斂半徑： }\\sum_{n=1}^{\\infty}\\frac{n!}{n^n}x^n", "e", ["power-series", "radius", "root-test"], "Use (n!/n^n)^{1/n}->e^{-1}."],
+    ["exam-ser-003", "\\text{收斂半徑： }\\sum_{n=1}^{\\infty}\\frac{(x-2)^n}{n}", "1", ["power-series", "radius"], "The coefficient 1/n has nth root 1."],
     ["exam-ser-004", "\\sum_{n=1}^{\\infty}\\frac{1}{n(n+1)}", "1", ["telescoping-series"], "Use 1/(n(n+1))=1/n-1/(n+1)."],
     ["exam-ser-005", "\\sum_{n=1}^{\\infty}\\frac{n}{2^n}", "2", ["power-series", "sum-series"], "Use sum n r^n=r/(1-r)^2 with r=1/2."],
     ["exam-ser-006", "\\sum_{n=1}^{\\infty}\\frac{n^2}{2^n}", "6", ["power-series", "sum-series"], "Use sum n^2 r^n=r(1+r)/(1-r)^3."],
     ["exam-ser-007", "\\sum_{n=0}^{\\infty}\\frac{(-1)^n}{(2n)!}", "cos(1)", ["taylor", "sum-series"], "This is the Taylor series for cos 1."],
     ["exam-ser-008", "\\sum_{n=0}^{\\infty}\\frac{1}{(2n+1)!}", "(exp(1)-exp(-1))/2", ["taylor", "sum-series"], "This is sinh 1."],
-    ["exam-ser-009", "Coefficient of x^5 in e^{2x}", "4/15", ["taylor", "coefficient"], "The coefficient is 2^5/5!."],
-    ["exam-ser-010", "Coefficient of x^6 in \\sin(x^2)", "-1/6", ["taylor", "coefficient"], "Use sin z=z-z^3/6+... with z=x^2."],
-    ["exam-ser-011", "Coefficient of x^4 in \\log(1+x)", "-1/4", ["taylor", "coefficient"], "The x^n coefficient is (-1)^{n+1}/n."],
+    ["exam-ser-009", "\\text{求 }e^{2x}\\text{ 的 }x^5\\text{ 係數}", "4/15", ["taylor", "coefficient"], "The coefficient is 2^5/5!."],
+    ["exam-ser-010", "\\text{求 }\\sin(x^2)\\text{ 的 }x^6\\text{ 係數}", "-1/6", ["taylor", "coefficient"], "Use sin z=z-z^3/6+... with z=x^2."],
+    ["exam-ser-011", "\\text{求 }\\log(1+x)\\text{ 的 }x^4\\text{ 係數}", "-1/4", ["taylor", "coefficient"], "The x^n coefficient is (-1)^{n+1}/n."],
     ["exam-ser-012", "\\sum_{n=0}^{\\infty}\\left(\\frac{1}{3}\\right)^n", "3/2", ["geometric-series"], "Geometric sum 1/(1-1/3)."],
     ["exam-ser-013", "\\sum_{n=1}^{\\infty}\\frac{n(n+1)}{2^n}", "8", ["power-series", "sum-series"], "This is sum n^2/2^n plus sum n/2^n."],
-    ["exam-ser-014", "Radius of convergence of \\sum_{n=1}^{\\infty}\\frac{4^n x^n}{\\sqrt{n+1}}", "1/4", ["power-series", "radius", "root-test"], "The nth root behaves like 4."],
+    ["exam-ser-014", "\\text{收斂半徑： }\\sum_{n=1}^{\\infty}\\frac{4^n x^n}{\\sqrt{n+1}}", "1/4", ["power-series", "radius", "root-test"], "The nth root behaves like 4."],
     ["exam-ser-015", "\\sum_{n=1}^{\\infty}\\frac{(-1)^{n+1}}{n}", "log(2)", ["alternating-series", "sum-series"], "This is the Taylor value log(1+1)."],
     ["exam-ser-016", "\\sum_{n=1}^{\\infty}\\frac{1}{n^2}", "pi^2/6", ["p-series", "sum-series"], "Euler's Basel sum."],
     ["exam-ser-017", "\\sum_{n=0}^{\\infty}\\frac{2^n}{n!}", "exp(2)", ["taylor", "sum-series"], "This is e^2."],
-    ["exam-ser-018", "Coefficient of x^3 in (1+x)^7", "35", ["binomial", "coefficient"], "Choose 3 factors of x from 7."],
-    ["exam-ser-019", "Coefficient of x^4 in \\frac{1}{1-2x}", "16", ["geometric-series", "coefficient"], "The coefficient is 2^4."],
+    ["exam-ser-018", "\\text{求 }(1+x)^7\\text{ 的 }x^3\\text{ 係數}", "35", ["binomial", "coefficient"], "Choose 3 factors of x from 7."],
+    ["exam-ser-019", "\\text{求 }\\frac{1}{1-2x}\\text{ 的 }x^4\\text{ 係數}", "16", ["geometric-series", "coefficient"], "The coefficient is 2^4."],
     ["exam-ser-020", "\\sum_{n=1}^{\\infty}\\frac{n}{3^n}", "3/4", ["power-series", "sum-series"], "Use r/(1-r)^2 with r=1/3."]
   ].forEach(([id, prompt, answer, tags, solution]) => numeric(id, "series", prompt, answer, tags, solution));
 
   expression("exam-multi-001", "derivatives", "\\frac{\\partial}{\\partial x}\\left(x^2y+\\sin(xy)\\right)", "2*x*y+y*cos(x*y)", ["x", "y"], ["multivariable", "partial-derivative"], "Treat y as a constant.");
   expression("exam-multi-002", "derivatives", "\\frac{\\partial^2}{\\partial x\\partial y}\\left(x^2y^3+e^{xy}\\right)", "6*x*y^2+(1+x*y)*exp(x*y)", ["x", "y"], ["multivariable", "higher-derivative"], "Differentiate first with respect to y, then x.");
-  numeric("exam-multi-003", "derivatives", "For f(x,y)=x^2+y^2, compute |\\nabla f(1,2)|^2", "20", ["multivariable", "gradient"], "The gradient is (2,4), whose squared norm is 20.");
-  numeric("exam-multi-004", "derivatives", "Hessian determinant of f(x,y)=x^3+y^3-3xy at (1,1)", "27", ["multivariable", "hessian"], "The Hessian is [[6,-3],[-3,6]].");
-  numeric("exam-multi-005", "derivatives", "Directional derivative of f(x,y)=x^2y at (1,2) in direction (3/5,4/5)", "16/5", ["multivariable", "directional-derivative"], "Dot grad f(1,2)=(4,1) with the unit direction.");
+  numeric("exam-multi-003", "derivatives", "\\text{若 }f(x,y)=x^2+y^2,\\ \\text{求 }|\\nabla f(1,2)|^2", "20", ["multivariable", "gradient"], "The gradient is (2,4), whose squared norm is 20.");
+  numeric("exam-multi-004", "derivatives", "\\text{求 }f(x,y)=x^3+y^3-3xy\\text{ 在 }(1,1)\\text{ 的 Hessian determinant}", "27", ["multivariable", "hessian"], "The Hessian is [[6,-3],[-3,6]].");
+  numeric("exam-multi-005", "derivatives", "\\text{求 }f(x,y)=x^2y\\text{ 在 }(1,2)\\text{ 沿 }(3/5,4/5)\\text{ 的方向導數}", "16/5", ["multivariable", "directional-derivative"], "Dot grad f(1,2)=(4,1) with the unit direction.");
   numeric("exam-multi-006", "integrals", "\\int_0^1\\int_0^x (x+y)\\,dy\\,dx", "1/2", ["multivariable", "double-integral"], "The inner integral gives 3x^2/2.");
-  numeric("exam-multi-007", "integrals", "Area enclosed by r=2\\cos\\theta", "pi", ["multivariable", "polar-coordinates"], "Use one-half integral of r^2 from -pi/2 to pi/2.");
-  expression("exam-multi-008", "derivatives", "Jacobian \\frac{\\partial(u,v)}{\\partial(x,y)} for u=x^2-y^2,\\ v=2xy", "4*(x^2+y^2)", ["x", "y"], ["multivariable", "jacobian"], "Compute the 2 by 2 determinant.");
+  numeric("exam-multi-007", "integrals", "\\text{求 }r=2\\cos\\theta\\text{ 所圍面積}", "pi", ["multivariable", "polar-coordinates"], "Use one-half integral of r^2 from -pi/2 to pi/2.");
+  expression("exam-multi-008", "derivatives", "\\text{若 }u=x^2-y^2,\\ v=2xy,\\ \\text{求 }\\frac{\\partial(u,v)}{\\partial(x,y)}", "4*(x^2+y^2)", ["x", "y"], ["multivariable", "jacobian"], "Compute the 2 by 2 determinant.");
   expression("exam-multi-009", "derivatives", "\\nabla\\cdot(x^2y,\\ y^2z,\\ z^2x)", "2*x*y+2*y*z+2*z*x", ["x", "y", "z"], ["multivariable", "nabla", "vector-calculus"], "Divergence is the sum of matching partial derivatives.");
-  expression("exam-multi-010", "derivatives", "z-component of \\nabla\\times(y^2,\\ z^2,\\ x^2)", "-2*y", ["y"], ["multivariable", "nabla", "vector-calculus"], "The z-component is partial_x F_2 - partial_y F_1.");
+  expression("exam-multi-010", "derivatives", "\\text{求 }\\nabla\\times(y^2,\\ z^2,\\ x^2)\\text{ 的 }z\\text{-component}", "-2*y", ["y"], ["multivariable", "nabla", "vector-calculus"], "The z-component is partial_x F_2 - partial_y F_1.");
 
   window.BUZZ_PROBLEMS = (window.BUZZ_PROBLEMS || []).concat(examProblems);
 })();

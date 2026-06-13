@@ -17,9 +17,81 @@ const topics = new Set(["limits", "derivatives", "integrals", "series"]);
 const answerKinds = new Set(["numeric", "expression", "antiderivative", "text"]);
 const ids = new Set();
 const errors = [];
+const allowedRawWords = new Set([
+  "dx",
+  "dy",
+  "dz",
+  "dt",
+  "da",
+  "dv",
+  "xy",
+  "xyz",
+  "sin",
+  "cos",
+  "tan",
+  "sec",
+  "csc",
+  "cot",
+  "log",
+  "ln",
+  "exp",
+  "sinh",
+  "cosh",
+  "tanh",
+  "arcsin",
+  "arccos",
+  "arctan",
+  "ax",
+  "bx",
+  "iy",
+  "xj"
+]);
 
 function fail(id, message) {
   errors.push(`${id || "unknown"}: ${message}`);
+}
+
+function stripCommandGroup(source, command) {
+  let output = "";
+  let cursor = 0;
+  while (cursor < source.length) {
+    const index = source.indexOf(command, cursor);
+    if (index === -1) {
+      output += source.slice(cursor);
+      break;
+    }
+    output += source.slice(cursor, index);
+    const group = readBraceGroup(source, index + command.length);
+    cursor = group ? group.end : index + command.length;
+  }
+  return output;
+}
+
+function readBraceGroup(source, start) {
+  let cursor = start;
+  while (/\s/.test(source[cursor] || "")) cursor += 1;
+  if (source[cursor] !== "{") return null;
+  let depth = 0;
+  for (let index = cursor; index < source.length; index += 1) {
+    if (source[index] === "{") depth += 1;
+    if (source[index] === "}") depth -= 1;
+    if (depth === 0) return { end: index + 1 };
+  }
+  return null;
+}
+
+function rawEnglishWordsOutsideText(tex) {
+  let text = String(tex || "");
+  ["\\text", "\\operatorname"].forEach((command) => {
+    text = stripCommandGroup(text, command);
+  });
+  text = text.replace(/\\[A-Za-z]+/g, " ");
+  const words = text.match(/[A-Za-z]{2,}/g) || [];
+  return words.filter((word) => {
+    const normalized = word.toLowerCase();
+    if (allowedRawWords.has(normalized)) return false;
+    return !/^[defghknrstuvwxyz]+$/i.test(word);
+  });
 }
 
 problems.forEach((problem, index) => {
@@ -36,6 +108,10 @@ problems.forEach((problem, index) => {
     fail(id, "rank must be integer 1..6 after calibration");
   }
   if (!problem.prompt || typeof problem.prompt !== "string") fail(id, "missing prompt");
+  const rawWords = rawEnglishWordsOutsideText(problem.prompt || "");
+  if (rawWords.length) {
+    fail(id, `raw English words outside \\text{} in prompt: ${Array.from(new Set(rawWords)).join(", ")}`);
+  }
   if (!answerKinds.has(problem.answerKind)) fail(id, `invalid answerKind ${problem.answerKind}`);
   if (problem.answerKind === "text") {
     if (!Array.isArray(problem.answers) || !problem.answers.length) fail(id, "text problem needs answers[]");

@@ -3316,11 +3316,7 @@
     if (selectedPack !== "all") {
       pool = pool.filter((problem) => matchesPack(problem, selectedPack));
     }
-    if (mode.examStyle) {
-      const examTagged = pool.filter((problem) => isExamAnswerProblem(problem) && (problem.tags || []).includes("exam-style"));
-      const examFallback = pool.filter((problem) => isExamAnswerProblem(problem) && problemRank(problem) >= 3);
-      pool = examTagged.length >= mode.count ? examTagged : examFallback.length ? examFallback : pool.filter(isExamAnswerProblem);
-    }
+    if (mode.examStyle) return selectExamPool(pool, mode.count, records);
     if (mode.minRank) {
       const rankedPool = pool.filter((problem) => problemRank(problem) >= mode.minRank);
       pool = rankedPool.length ? rankedPool : pool;
@@ -3370,6 +3366,49 @@
       if (bucket) selected.push(bucket.shift());
     });
     return padPool(selected, shuffle(pool, seed), count, { records });
+  }
+
+  function selectExamPool(pool, count, records = loadRecords()) {
+    const rankedWebWork = pool.filter((problem) => isExamAnswerProblem(problem) && problemRank(problem) >= 3);
+    const examTagged = rankedWebWork.filter((problem) => (problem.tags || []).includes("exam-style"));
+    const source = examTagged.length >= count ? examTagged : rankedWebWork.length ? rankedWebWork : pool.filter(isExamAnswerProblem);
+    const plan = [
+      ["integrals", 6],
+      ["derivatives", 6],
+      ["limits", 4],
+      ["series", 4]
+    ];
+    const selected = [];
+    const used = new Set();
+    const add = (problem) => {
+      if (!problem || used.has(problem.id) || selected.length >= count) return;
+      used.add(problem.id);
+      selected.push(problem);
+    };
+
+    plan.forEach(([topic, target]) => {
+      const ordered = adaptiveShuffle(
+        source.filter((problem) => problem.topic === topic),
+        records,
+        seedFromString(`${Date.now()}-exam-${topic}`)
+      );
+      if (topic !== "series") {
+        ordered.slice(0, target).forEach(add);
+        return;
+      }
+      const nonRadius = ordered.filter((problem) => !(problem.tags || []).includes("radius"));
+      const radius = ordered.filter((problem) => (problem.tags || []).includes("radius"));
+      nonRadius.slice(0, Math.max(0, target - 1)).forEach(add);
+      radius.slice(0, Math.max(0, target - selected.filter((problem) => problem.topic === "series").length)).forEach(add);
+    });
+
+    const filler = adaptiveShuffle(
+      source.filter((problem) => !used.has(problem.id) && (problem.topic !== "series" || !(problem.tags || []).includes("radius"))),
+      records,
+      seedFromString(`${Date.now()}-exam-fill`)
+    );
+    filler.forEach(add);
+    return padPool(shuffle(selected, seedFromString(`${Date.now()}-exam-order`)), source, count, { records });
   }
 
   function selectCooldownPool(count) {
@@ -4000,6 +4039,9 @@
         "sqrt",
         "abs",
         "pow",
+        "sinh",
+        "cosh",
+        "tanh",
         "sec",
         "csc",
         "cot",
@@ -4011,7 +4053,7 @@
       if (identifiers.some((identifier) => !allowed.has(identifier))) return Number.NaN;
       const names = Object.keys(vars);
       const values = Object.values(vars);
-      const body = `"use strict"; const {sin,cos,tan,asin,acos,atan,log,exp,sqrt,abs,pow,PI,E}=Math; const sec=(v)=>1/cos(v); const csc=(v)=>1/sin(v); const cot=(v)=>1/tan(v); return (${expr});`;
+      const body = `"use strict"; const {sin,cos,tan,asin,acos,atan,log,exp,sqrt,abs,pow,sinh,cosh,tanh,PI,E}=Math; const sec=(v)=>1/cos(v); const csc=(v)=>1/sin(v); const cot=(v)=>1/tan(v); return (${expr});`;
       const fn = new Function(...names, body);
       return Number(fn(...values));
     } catch (_error) {
@@ -4021,13 +4063,34 @@
 
   function normalizeExpression(source) {
     let expr = String(source || "").trim();
+    expr = expr.replace(/\\left/g, "");
+    expr = expr.replace(/\\right/g, "");
+    expr = expr.replace(/\\cdot/g, "*");
     expr = expr.replace(/\\pi/g, "pi");
+    expr = expr.replace(/\\ln\s*\(/gi, "log(");
+    expr = expr.replace(/\\log\s*\(/gi, "log(");
+    expr = expr.replace(/\\exp\s*\(/gi, "exp(");
+    expr = expr.replace(/\\sin\s*\(/gi, "sin(");
+    expr = expr.replace(/\\cos\s*\(/gi, "cos(");
+    expr = expr.replace(/\\tan\s*\(/gi, "tan(");
+    expr = expr.replace(/\\arctan\s*\(/gi, "atan(");
+    expr = expr.replace(/\\arcsin\s*\(/gi, "asin(");
+    expr = expr.replace(/\\arccos\s*\(/gi, "acos(");
+    expr = expr.replace(/\\sinh\s*\(/gi, "sinh(");
+    expr = expr.replace(/\\cosh\s*\(/gi, "cosh(");
+    expr = expr.replace(/\\tanh\s*\(/gi, "tanh(");
+    expr = expr.replace(/\\sec\s*\(/gi, "sec(");
+    expr = expr.replace(/\\csc\s*\(/gi, "csc(");
+    expr = expr.replace(/\\cot\s*\(/gi, "cot(");
     expr = expr.replace(/π/g, "pi");
     expr = expr.replace(/∞/g, "Infinity");
     expr = expr.replace(/\bln\s*\(/gi, "log(");
     expr = expr.replace(/\barctan\s*\(/gi, "atan(");
     expr = expr.replace(/\barcsin\s*\(/gi, "asin(");
     expr = expr.replace(/\barccos\s*\(/gi, "acos(");
+    expr = expr.replace(/\bsinh\s*\(/gi, "sinh(");
+    expr = expr.replace(/\bcosh\s*\(/gi, "cosh(");
+    expr = expr.replace(/\btanh\s*\(/gi, "tanh(");
     expr = expr.replace(/\^/g, "**");
     expr = expr.replace(/\bpi\b/gi, "PI");
     expr = expr.replace(/\be\b/g, "E");
@@ -4039,7 +4102,7 @@
   }
 
   function applyImplicitMultiplication(expr) {
-    const functionNames = new Set(["sin", "cos", "tan", "asin", "acos", "atan", "log", "exp", "sqrt", "abs", "pow", "sec", "csc", "cot"]);
+    const functionNames = new Set(["sin", "cos", "tan", "asin", "acos", "atan", "log", "exp", "sqrt", "abs", "pow", "sinh", "cosh", "tanh", "sec", "csc", "cot"]);
     return String(expr || "")
       .replace(/(\d|\))(?=[A-Za-z_(])/g, "$1*")
       .replace(/\)(?=\d)/g, ")*")
