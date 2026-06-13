@@ -116,6 +116,37 @@ const productLogProblem = {
   variable: "x"
 };
 
+const multivariableProblem = {
+  id: "p0-multivariable-mixed-partial",
+  topic: "derivatives",
+  answerKind: "expression",
+  answer: "6*x*y^2+(1+x*y)*exp(x*y)",
+  variables: ["x", "y"]
+};
+
+const divergenceProblem = {
+  id: "p0-divergence-compact-products",
+  topic: "derivatives",
+  answerKind: "expression",
+  answer: "2*x*y+2*y*z+2*z*x",
+  variables: ["x", "y", "z"]
+};
+
+const logDefiniteProblem = {
+  id: "p0-tex-frac-log",
+  topic: "integrals",
+  answerKind: "numeric",
+  answer: "log(2)/3"
+};
+
+const logCompositionProblem = {
+  id: "p0-log-composition",
+  topic: "integrals",
+  answerKind: "antiderivative",
+  answer: "sin(log(x))",
+  variable: "x"
+};
+
 const parametricTechniqueProblem = {
   id: "p0-text-parametric-technique",
   topic: "derivatives",
@@ -143,6 +174,13 @@ const tests = [
   ["numeric hyperbolic sinh alias", sinhSeriesProblem, "sinh(1)", true],
   ["reported quotient derivative with spaces", quotientProblem, "(x^2 -2x -1)/(x-1)^2", true],
   ["ln alias in product rule answer", productLogProblem, "exp(x)*ln(x)+exp(x)/x", true],
+  ["TeX exponential and compact xy products", multivariableProblem, "6xy^2+e^{xy}+xye^{xy}", true],
+  ["compact divergence products", divergenceProblem, "2xy+2yz+2zx", true],
+  ["TeX fraction times log numeric", logDefiniteProblem, "\\frac{1}{3}\\log(2)", true],
+  ["bare log argument inside composition", logCompositionProblem, "sin(logx)", true],
+  ["wrong inverse derivative remains wrong", { ...numericProblem, answer: "1/2" }, "1", false],
+  ["wrong arctan sign remains wrong", { ...numericProblem, answer: "-8/3" }, "8/3", false],
+  ["wrong FTC lower-limit sign remains wrong", { ...derivativeProblem, answer: "2*x*log(1+x^4)-log(1+x^2)" }, "2*x*log(1+x^4)+log(1+x^2)", false],
   ["parametric technique broad chain-rule alias", parametricTechniqueProblem, "chain rule", true],
   ["TeX arctan antiderivative with +C", { ...antiderivativeProblem, answer: "atan(x^2)/2" }, "0.5*\\arctan(x^2)+C", true],
   ["TeX log antiderivative with decimal coefficient", { ...antiderivativeProblem, answer: "x^2/2-log(1+x^2)/2" }, "0.5*x^2-0.5\\log(1+x^2)+C", true]

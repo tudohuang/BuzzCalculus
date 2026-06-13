@@ -363,7 +363,7 @@
   const HISTORY_LIMIT = 40;
   const RECENT_PROBLEM_COOLDOWN = 30;
   const RECENT_STRONG_AVOID = 18;
-  const APP_VERSION = "v0.9.1-beta";
+  const APP_VERSION = "v0.9.2-beta";
   const BUILD_DATE = "2026-06-13";
   const GA_MEASUREMENT_ID = String(window.BUZZ_GA_MEASUREMENT_ID || "").trim();
 
@@ -4066,6 +4066,9 @@
     expr = expr.replace(/\\left/g, "");
     expr = expr.replace(/\\right/g, "");
     expr = expr.replace(/\\cdot/g, "*");
+    expr = replaceTexFractions(expr);
+    expr = replaceTexPowerGroups(expr);
+    expr = replaceNaturalExponential(expr);
     expr = expr.replace(/\\pi/g, "pi");
     expr = expr.replace(/\\ln\s*\(/gi, "log(");
     expr = expr.replace(/\\log\s*\(/gi, "log(");
@@ -4088,9 +4091,14 @@
     expr = expr.replace(/\barctan\s*\(/gi, "atan(");
     expr = expr.replace(/\barcsin\s*\(/gi, "asin(");
     expr = expr.replace(/\barccos\s*\(/gi, "acos(");
+    expr = expr.replace(/\bln\b/gi, "log");
+    expr = expr.replace(/\barctan\b/gi, "atan");
+    expr = expr.replace(/\barcsin\b/gi, "asin");
+    expr = expr.replace(/\barccos\b/gi, "acos");
     expr = expr.replace(/\bsinh\s*\(/gi, "sinh(");
     expr = expr.replace(/\bcosh\s*\(/gi, "cosh(");
     expr = expr.replace(/\btanh\s*\(/gi, "tanh(");
+    expr = expandBareFunctionArguments(expr);
     expr = expr.replace(/\^/g, "**");
     expr = expr.replace(/\bpi\b/gi, "PI");
     expr = expr.replace(/\be\b/g, "E");
@@ -4103,11 +4111,168 @@
 
   function applyImplicitMultiplication(expr) {
     const functionNames = new Set(["sin", "cos", "tan", "asin", "acos", "atan", "log", "exp", "sqrt", "abs", "pow", "sinh", "cosh", "tanh", "sec", "csc", "cot"]);
+    const splitIdentifier = (identifier) => {
+      if (functionNames.has(identifier) || ["PI", "E", "Infinity"].includes(identifier)) return identifier;
+      return identifier.split("").join("*");
+    };
     return String(expr || "")
       .replace(/(\d|\))(?=[A-Za-z_(])/g, "$1*")
       .replace(/\)(?=\d)/g, ")*")
       .replace(/(PI|E)(?=[A-Za-z_(])/g, "$1*")
+      .replace(/[A-Za-z_][A-Za-z0-9_]*/g, splitIdentifier)
       .replace(/([A-Za-z_][A-Za-z0-9_]*)(?=\()/g, (name) => (functionNames.has(name) ? name : `${name}*`));
+  }
+
+  function replaceTexFractions(source) {
+    let output = "";
+    let cursor = 0;
+    const command = "\\frac";
+    while (cursor < source.length) {
+      const index = source.indexOf(command, cursor);
+      if (index === -1) {
+        output += source.slice(cursor);
+        break;
+      }
+      const numerator = readGroup(source, index + command.length);
+      const denominator = numerator ? readGroup(source, numerator.end) : null;
+      if (!numerator || !denominator) {
+        output += source.slice(cursor, index + command.length);
+        cursor = index + command.length;
+        continue;
+      }
+      output += `${source.slice(cursor, index)}((${numerator.value})/(${denominator.value}))`;
+      cursor = denominator.end;
+    }
+    return output;
+  }
+
+  function replaceTexPowerGroups(source) {
+    let output = "";
+    let cursor = 0;
+    while (cursor < source.length) {
+      const index = source.indexOf("^", cursor);
+      if (index === -1) {
+        output += source.slice(cursor);
+        break;
+      }
+      const group = readGroup(source, index + 1);
+      if (!group) {
+        output += source.slice(cursor, index + 1);
+        cursor = index + 1;
+        continue;
+      }
+      output += `${source.slice(cursor, index)}^(${group.value})`;
+      cursor = group.end;
+    }
+    return output;
+  }
+
+  function replaceNaturalExponential(source) {
+    let output = "";
+    let cursor = 0;
+    while (cursor < source.length) {
+      const index = source.indexOf("e", cursor);
+      if (index === -1) {
+        output += source.slice(cursor);
+        break;
+      }
+      let powerCursor = index + 1;
+      while (/\s/.test(source[powerCursor] || "")) powerCursor += 1;
+      if (source[powerCursor] !== "^") {
+        output += source.slice(cursor, index + 1);
+        cursor = index + 1;
+        continue;
+      }
+      const argument = readExpressionAtom(source, powerCursor + 1);
+      if (!argument) {
+        output += source.slice(cursor, powerCursor + 1);
+        cursor = powerCursor + 1;
+        continue;
+      }
+      output += `${source.slice(cursor, index)}exp(${argument.value})`;
+      cursor = argument.end;
+    }
+    return output;
+  }
+
+  function expandBareFunctionArguments(source) {
+    const aliases = {
+      arcsin: "asin",
+      arccos: "acos",
+      arctan: "atan",
+      ln: "log"
+    };
+    const functionNames = ["arcsin", "arccos", "arctan", "sinh", "cosh", "tanh", "asin", "acos", "atan", "sqrt", "sin", "cos", "tan", "log", "exp", "abs", "sec", "csc", "cot", "ln"];
+    let output = "";
+    let cursor = 0;
+    while (cursor < source.length) {
+      const name = functionNames.find((candidate) => source.slice(cursor).toLowerCase().startsWith(candidate));
+      if (!name) {
+        output += source[cursor];
+        cursor += 1;
+        continue;
+      }
+      const canonical = aliases[name] || name;
+      const next = cursor + name.length;
+      if (source[next] === "(") {
+        if (/[A-Za-z0-9_)]$/.test(output)) output += "*";
+        output += canonical;
+        cursor = next;
+        continue;
+      }
+      const argument = readBareFunctionArgument(source, next);
+      if (!argument) {
+        output += canonical;
+        cursor = next;
+        continue;
+      }
+      if (/[A-Za-z0-9_)]$/.test(output)) output += "*";
+      output += `${canonical}(${argument.value})`;
+      cursor = argument.end;
+    }
+    return output;
+  }
+
+  function readBareFunctionArgument(source, start) {
+    let cursor = start;
+    while (/\s/.test(source[cursor] || "")) cursor += 1;
+    if (source[cursor] === "(") return null;
+    if (source.slice(cursor, cursor + 2).toLowerCase() === "pi") return { value: "pi", end: cursor + 2 };
+    if (source[cursor] && /[A-Za-z]/.test(source[cursor])) return { value: source[cursor], end: cursor + 1 };
+    if (source[cursor] && /[0-9.]/.test(source[cursor])) {
+      const match = source.slice(cursor).match(/^[0-9.]+/);
+      if (match) return { value: match[0], end: cursor + match[0].length };
+    }
+    return null;
+  }
+
+  function readExpressionAtom(source, start) {
+    let cursor = start;
+    while (/\s/.test(source[cursor] || "")) cursor += 1;
+    if (source[cursor] === "{") return readGroup(source, cursor);
+    if (source[cursor] === "(") return readParenGroup(source, cursor);
+    if (source[cursor] === "\\") {
+      const command = source.slice(cursor).match(/^\\[A-Za-z]+/);
+      if (command) return { value: command[0], end: cursor + command[0].length };
+    }
+    if (cursor < source.length) return { value: source[cursor], end: cursor + 1 };
+    return null;
+  }
+
+  function readParenGroup(source, start) {
+    if (source[start] !== "(") return null;
+    let depth = 0;
+    for (let index = start; index < source.length; index += 1) {
+      if (source[index] === "(") depth += 1;
+      if (source[index] === ")") depth -= 1;
+      if (depth === 0) {
+        return {
+          value: source.slice(start + 1, index),
+          end: index + 1
+        };
+      }
+    }
+    return null;
   }
 
   function stripConstant(input) {
