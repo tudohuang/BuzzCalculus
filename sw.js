@@ -1,4 +1,4 @@
-const CACHE_NAME = "buzzcalculus-v0.9.1-beta-20260613-cachefix";
+const CACHE_NAME = "buzzcalculus-v0.9.2-beta-20260613-parserfix";
 const CACHE_PREFIX = "buzzcalculus-";
 const APP_SHELL = [
   "./",
@@ -52,8 +52,11 @@ self.addEventListener("activate", (event) => {
 
 self.addEventListener("fetch", (event) => {
   if (event.request.method !== "GET") return;
+  const networkRequest = event.request.url.startsWith(self.location.origin)
+    ? new Request(event.request, { cache: "reload" })
+    : event.request;
   event.respondWith(
-    fetch(event.request)
+    fetch(networkRequest)
       .then((response) => {
         if (response && (response.ok || response.type === "opaque")) {
           const copy = response.clone();
