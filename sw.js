@@ -1,4 +1,5 @@
-const CACHE_NAME = "buzzcalculus-v0.9.0-beta-20260613";
+const CACHE_NAME = "buzzcalculus-v0.9.1-beta-20260613-cachefix";
+const CACHE_PREFIX = "buzzcalculus-";
 const APP_SHELL = [
   "./",
   "./index.html",
@@ -31,21 +32,35 @@ self.addEventListener("install", (event) => {
 self.addEventListener("activate", (event) => {
   event.waitUntil(
     caches.keys()
-      .then((keys) => Promise.all(keys.filter((key) => key !== CACHE_NAME).map((key) => caches.delete(key))))
-      .then(() => self.clients.claim())
+      .then((keys) => {
+        const staleKeys = keys.filter((key) => key.startsWith(CACHE_PREFIX) && key !== CACHE_NAME);
+        return Promise.all(staleKeys.map((key) => caches.delete(key))).then(() => staleKeys.length > 0);
+      })
+      .then((hadStaleCache) => self.clients.claim().then(() => hadStaleCache))
+      .then((hadStaleCache) => {
+        if (!hadStaleCache) return undefined;
+        return self.clients.matchAll({ type: "window", includeUncontrolled: true });
+      })
+      .then((clients = []) => {
+        clients.forEach((client) => {
+          const url = new URL(client.url);
+          if (url.origin === self.location.origin) client.navigate(client.url);
+        });
+      })
   );
 });
 
 self.addEventListener("fetch", (event) => {
   if (event.request.method !== "GET") return;
   event.respondWith(
-    caches.match(event.request).then((cached) => {
-      if (cached) return cached;
-      return fetch(event.request).then((response) => {
-        const copy = response.clone();
-        caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy));
+    fetch(event.request)
+      .then((response) => {
+        if (response && (response.ok || response.type === "opaque")) {
+          const copy = response.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy)).catch(() => {});
+        }
         return response;
-      });
-    })
+      })
+      .catch(() => caches.match(event.request))
   );
 });
