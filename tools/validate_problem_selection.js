@@ -115,6 +115,20 @@ const nonExamTagged = examPool.filter((problem) => !(problem.tags || []).include
 if (nonExamTagged.length) {
   failures.push(`exam mode should prefer exam-style tagged problems: ${nonExamTagged.map((problem) => problem.id).join(", ")}`);
 }
+const examTopicCounts = examPool.reduce((counts, problem) => {
+  counts[problem.topic] = (counts[problem.topic] || 0) + 1;
+  return counts;
+}, {});
+if ((examTopicCounts.derivatives || 0) + (examTopicCounts.integrals || 0) < 12) {
+  failures.push(`exam mode should emphasize derivatives/integrals: ${JSON.stringify(examTopicCounts)}`);
+}
+if ((examTopicCounts.series || 0) > 4) {
+  failures.push(`exam mode selected too many series problems: ${JSON.stringify(examTopicCounts)}`);
+}
+const radiusCount = examPool.filter((problem) => (problem.tags || []).includes("radius")).length;
+if (radiusCount > 1) {
+  failures.push(`exam mode selected too many radius problems: ${radiusCount}`);
+}
 
 if (failures.length) {
   failures.forEach((failure) => console.error(`FAIL ${failure}`));
@@ -124,4 +138,4 @@ if (failures.length) {
 console.log(`Selection avoids recent repeats: ${ordered.join(", ")}`);
 console.log(`Selection pad result: ${padded.join(", ")}`);
 console.log(`Tiny pool fallback: ${tiny.join(", ")}`);
-console.log(`Exam mode pool: ${examPool.length} WebWork problems`);
+console.log(`Exam mode pool: ${examPool.length} WebWork problems ${JSON.stringify(examTopicCounts)}, radius=${radiusCount}`);
