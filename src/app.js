@@ -168,6 +168,7 @@
   };
 
   const TRAINING_PACKS = {
+    todai_burst: { label: "Todai Burst", note: "R6 IBP / Wallis / high derivatives", tags: ["todai-burst"] },
     all: { label: "全部技巧", note: "不限制 tags", tags: [] },
     beginner_warmup: { label: "新手暖身", note: "R1-R2 基礎題", tags: ["beginner-friendly"] },
     boss_challenge: { label: "Boss 挑戰", note: "R5-R6 防強人題", tags: ["boss-rank"] },
@@ -205,6 +206,7 @@
   };
 
   const PACK_GROUPS = [
+    { label: "Todai", keys: ["todai_burst"] },
     { label: "常用", keys: ["all", "beginner_warmup", "boss_challenge", "exam_style", "exam_depth", "mobile_sprint", "technique_recognition", "multivariable", "substitution", "integration_by_parts", "series_test"] },
     { label: "積分技巧", keys: ["partial_fraction", "trig_substitution", "frullani", "ode_style", "kings_property", "double_integral", "multi_integral_advanced"] },
     { label: "微分 / 應用", keys: ["chain", "lagrange_multiplier", "nabla_vector", "parametric_polar", "applications", "total_differential", "hessian", "wronskian", "jacobian_chain"] },
@@ -295,6 +297,13 @@
   const CHALLENGE_MODES = ["warmup", "exam", "integral_bee", "no_hint", "accuracy", "survival", "boss_rush", "cooldown"];
   const LIBRARY_PAGE_SIZE = 72;
   const TAG_LABELS = {
+    "todai-burst": "Todai Burst",
+    "multi-ibp": "multi-IBP",
+    "trig-power": "Trig power",
+    "recurrence-formula": "Recurrence",
+    "super-high-derivative": "High derivative",
+    "special-function": "Special function",
+    "series-integral": "Series integral",
     "beginner-friendly": "新手友善",
     "boss-rank": "Boss",
     "exam-style": "大考題感",
@@ -375,7 +384,7 @@
   const HISTORY_LIMIT = 40;
   const RECENT_PROBLEM_COOLDOWN = 30;
   const RECENT_STRONG_AVOID = 18;
-  const APP_VERSION = "v0.9.4-beta";
+  const APP_VERSION = "v0.9.5-beta";
   const BUILD_DATE = "2026-06-16";
   const GA_MEASUREMENT_ID = String(window.BUZZ_GA_MEASUREMENT_ID || "").trim();
 
