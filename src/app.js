@@ -172,6 +172,7 @@
     beginner_warmup: { label: "新手暖身", note: "R1-R2 基礎題", tags: ["beginner-friendly"] },
     boss_challenge: { label: "Boss 挑戰", note: "R5-R6 防強人題", tags: ["boss-rank"] },
     exam_style: { label: "大考題感", note: "轉學考 / 免修 / 段考式混合題", tags: ["exam-style"] },
+    exam_depth: { label: "大考深水區", note: "R5-R6 多步驟混合題", tags: ["exam-depth"] },
     multivariable: { label: "多變數", note: "極限 / 偏導 / 二重積分", tags: ["multivariable"] },
     taylor: { label: "Taylor", note: "展開與係數", tags: ["taylor", "coefficient"] },
     chain: { label: "鏈鎖律", note: "一元與偏導鏈鎖律", tags: ["chain-rule"] },
@@ -204,7 +205,7 @@
   };
 
   const PACK_GROUPS = [
-    { label: "常用", keys: ["all", "beginner_warmup", "boss_challenge", "exam_style", "mobile_sprint", "technique_recognition", "multivariable", "substitution", "integration_by_parts", "series_test"] },
+    { label: "常用", keys: ["all", "beginner_warmup", "boss_challenge", "exam_style", "exam_depth", "mobile_sprint", "technique_recognition", "multivariable", "substitution", "integration_by_parts", "series_test"] },
     { label: "積分技巧", keys: ["partial_fraction", "trig_substitution", "frullani", "ode_style", "kings_property", "double_integral", "multi_integral_advanced"] },
     { label: "微分 / 應用", keys: ["chain", "lagrange_multiplier", "nabla_vector", "parametric_polar", "applications", "total_differential", "hessian", "wronskian", "jacobian_chain"] },
     { label: "級數 / ODE / 其他", keys: ["taylor", "power_series", "convergence_tests", "endpoint_root", "special_functions", "ode_intro", "complex"] }
@@ -297,6 +298,9 @@
     "beginner-friendly": "新手友善",
     "boss-rank": "Boss",
     "exam-style": "大考題感",
+    "exam-depth": "大考深水",
+    "depth-r5": "R5 深水",
+    "depth-r6": "R6 深水",
     "transfer-exam": "轉學考",
     "proficiency-exam": "免修考",
     "technique-recognition": "技巧辨識",
@@ -353,7 +357,15 @@
     "tangent-normal": "切線法線",
     "linear-approximation": "線性近似",
     "newton-method": "Newton",
-    curvature: "曲率"
+    curvature: "曲率",
+    "nested-taylor": "巢狀 Taylor",
+    "composite-taylor": "複合 Taylor",
+    "asymptotic-balance": "漸近配平",
+    "power-exponential": "變冪函數",
+    "moving-limits": "變動上下限",
+    laplacian: "Laplacian",
+    region: "積分區域",
+    "special-sum": "特殊級數"
   };
   const ONBOARDING_LEVELS = {
     beginner: { label: "先暖身", pack: "beginner_warmup", mode: "warmup", topic: "all" },
@@ -363,8 +375,8 @@
   const HISTORY_LIMIT = 40;
   const RECENT_PROBLEM_COOLDOWN = 30;
   const RECENT_STRONG_AVOID = 18;
-  const APP_VERSION = "v0.9.3-beta";
-  const BUILD_DATE = "2026-06-13";
+  const APP_VERSION = "v0.9.4-beta";
+  const BUILD_DATE = "2026-06-16";
   const GA_MEASUREMENT_ID = String(window.BUZZ_GA_MEASUREMENT_ID || "").trim();
 
   let view = "home";
@@ -1939,9 +1951,9 @@
               if (!problem) return "";
               return `
                 <div class="history-review-item ${answer.correct ? "is-correct" : "is-wrong"}">
-                  <strong>#${index + 1} · ${TOPICS[problem.topic].label} · ${answer.elapsed}s</strong>
+                  <strong>#${index + 1} · ${TOPICS[problem.topic].label} · ${answer.unanswered ? "未作答" : `${answer.elapsed}s`}</strong>
                   <div class="review-prompt math-block" data-tex="${escapeAttr(problem.prompt)}"></div>
-                  <span>你的答案：${escapeHtml(answer.input || "未作答")} · ${answer.correct ? "Correct" : answer.reason}</span>
+                  <span>你的答案：${escapeHtml(answer.input || "未作答")} · ${answer.correct ? "Correct" : answerReasonLabel(answer.reason)}</span>
                 </div>
               `;
             })
@@ -2247,10 +2259,9 @@
     const correct = quiz.answers.filter((answer) => answer.correct).length;
     const total = quiz.problems.length;
     const accuracy = total ? Math.round((correct / total) * 100) : 0;
-    const avgTime = quiz.answers.length
-      ? Math.round(quiz.answers.reduce((sum, answer) => sum + answer.elapsed, 0) / quiz.answers.length)
-      : 0;
+    const avgTime = averageAnswerTime(quiz.answers);
     const topicStats = buildTopicStats(quiz.answers);
+    const examAnalysis = quiz.examMode ? buildExamAnalysis(quiz.answers) : null;
     const records = loadRecords();
     const unlocked = quiz.unlockedAchievements || [];
     const gateResult = quiz.pathGate ? pathGateResult(quiz, correct, total) : null;
@@ -2317,6 +2328,8 @@
             </section>
           </aside>
         </div>
+
+        ${quiz.examMode ? renderExamAnalysisSection(examAnalysis) : ""}
 
         <section class="panel" style="margin-top:24px">
           <h3>答題回顧</h3>
@@ -2507,14 +2520,74 @@
     `;
   }
 
+  function renderExamAnalysisSection(analysis) {
+    if (!analysis) return "";
+    return `
+      <section class="panel exam-analysis-panel">
+        <div class="exam-analysis-head">
+          <div>
+            <p class="section-label">Exam analysis</p>
+            <h3>大考戰況分析</h3>
+            <p class="panel-note">依本份試卷統計速度、錯誤熱區與難度斷點；未作答會算錯，但不列入平均秒數。</p>
+          </div>
+        </div>
+        <div class="exam-insight-grid">
+          ${analysis.insights.map(renderExamInsightCard).join("")}
+        </div>
+        <div class="exam-analysis-grid">
+          <div>
+            <h4>主題速度 / 正確率</h4>
+            ${analysis.topicRows.map(renderExamAnalysisRow).join("") || `<p class="panel-note">尚無資料</p>`}
+          </div>
+          <div>
+            <h4>技巧錯誤熱區</h4>
+            ${analysis.tagRows.slice(0, 7).map(renderExamAnalysisRow).join("") || `<p class="panel-note">尚無資料</p>`}
+          </div>
+          <div>
+            <h4>難度層級</h4>
+            ${analysis.rankRows.map(renderExamAnalysisRow).join("") || `<p class="panel-note">尚無資料</p>`}
+          </div>
+        </div>
+      </section>
+    `;
+  }
+
+  function renderExamInsightCard(item) {
+    return `
+      <article class="exam-insight-card ${item.tone ? `is-${item.tone}` : ""}">
+        <span>${escapeHtml(item.label)}</span>
+        <strong>${escapeHtml(item.value)}</strong>
+        <small>${escapeHtml(item.note)}</small>
+      </article>
+    `;
+  }
+
+  function renderExamAnalysisRow(row) {
+    const accuracy = row.total ? Math.round((row.correct / row.total) * 100) : 0;
+    const miss = row.total ? Math.round((row.wrong / row.total) * 100) : 0;
+    return `
+      <div class="exam-analysis-row">
+        <div class="exam-analysis-title">
+          <span>${escapeHtml(row.label)}</span>
+          <small>${row.correct}/${row.total} · avg ${formatSeconds(row.avgSec)}</small>
+        </div>
+        <div class="exam-analysis-bars">
+          <div class="meter-track" aria-label="correct rate"><div class="meter-fill" style="width:${accuracy}%"></div></div>
+          <div class="meter-track miss-track" aria-label="miss rate"><div class="meter-fill" style="width:${miss}%"></div></div>
+        </div>
+        <strong>${accuracy}%</strong>
+      </div>
+    `;
+  }
+
   function renderReviewItem(answer, index) {
     const item = answer.problem;
     const records = loadRecords();
     return `
       <article class="review-item ${answer.correct ? "is-correct" : "is-wrong"}">
         <div class="review-top">
-          <span>#${index + 1} · ${TOPICS[item.topic].label} · ${answer.elapsed}s</span>
-          <strong>${answer.correct ? "Correct" : answer.reason}</strong>
+          <span>#${index + 1} · ${TOPICS[item.topic].label} · ${answer.unanswered ? "未作答" : `${answer.elapsed}s`}</span>
+          <strong>${answer.correct ? "Correct" : answerReasonLabel(answer.reason)}</strong>
         </div>
         <div class="review-prompt math-block" data-tex="${escapeAttr(item.prompt)}"></div>
         ${
@@ -3638,6 +3711,7 @@
   function finishQuiz() {
     stopTicker();
     if (quiz) {
+      finalizeExamAnswers(quiz);
       const correct = quiz.answers.filter((answer) => answer.correct).length;
       const tabSwitches = Object.values(quiz.tabSwitches || {}).reduce((sum, count) => sum + count, 0);
       trackEvent("finish_session", {
@@ -3656,6 +3730,62 @@
     view = "results";
     if (quiz && quiz.requireFullscreen) exitQuizFullscreen();
     render();
+  }
+
+  function finalizeExamAnswers(currentQuiz) {
+    if (!currentQuiz || !currentQuiz.examMode || currentQuiz.examFinalized) return;
+    currentQuiz.examFinalized = true;
+    let nextIndex = Math.min(currentQuiz.answers.length, currentQuiz.problems.length);
+
+    if (currentQuiz.examTimedOut && nextIndex === currentQuiz.index) {
+      const current = currentQuiz.problems[nextIndex];
+      const draft = String(currentQuiz.draft || "").trim();
+      if (current && draft) {
+        const elapsed = Math.max(0, Math.floor((Date.now() - currentQuiz.questionStartedAt) / 1000));
+        appendFinalExamAnswer(currentQuiz, current, resolveAnswerSubmission(current, draft, "Timeout"), elapsed, false);
+        nextIndex += 1;
+      }
+    }
+
+    for (let index = nextIndex; index < currentQuiz.problems.length; index += 1) {
+      appendFinalExamAnswer(
+        currentQuiz,
+        currentQuiz.problems[index],
+        {
+          status: "wrong",
+          reason: currentQuiz.examTimedOut ? "Timeout" : "Unanswered",
+          input: "",
+          detail: currentQuiz.examTimedOut ? "時間到，這題未送出。" : "交卷時未作答。"
+        },
+        0,
+        true
+      );
+    }
+  }
+
+  function appendFinalExamAnswer(currentQuiz, problem, submission, elapsed, unanswered) {
+    if (!problem || !submission) return;
+    const correct = submission.status === "correct";
+    const usedHints = currentQuiz.hintsUsed?.[problem.id] || 0;
+    const difficultyBonus = problemRank(problem) * 10;
+    const penalty = correct && !currentQuiz.practice ? usedHints * hintPenalty(problem) : 0;
+    const noHintBonus = correct && currentQuiz.noHint ? 15 : 0;
+    const earned = correct && !currentQuiz.practice ? Math.max(0, 40 + difficultyBonus + noHintBonus - penalty) : 0;
+    currentQuiz.score += earned;
+    currentQuiz.currentStreak = correct ? currentQuiz.currentStreak + 1 : 0;
+    currentQuiz.bestStreak = Math.max(currentQuiz.bestStreak, currentQuiz.currentStreak);
+    currentQuiz.answers.push({
+      problem,
+      input: submission.input,
+      correct,
+      reason: submission.reason,
+      elapsed,
+      earned,
+      hintsUsed: usedHints,
+      boardStrokes: unanswered ? [] : cloneBoardStrokes(problem.id),
+      errorTag: "",
+      unanswered: Boolean(unanswered)
+    });
   }
 
   function startTicker() {
@@ -4531,9 +4661,7 @@
     const correct = currentQuiz.answers.filter((answer) => answer.correct).length;
     const total = currentQuiz.problems.length;
     const accuracy = total ? Math.round((correct / total) * 100) : 0;
-    const avgTime = currentQuiz.answers.length
-      ? Math.round(currentQuiz.answers.reduce((sum, answer) => sum + answer.elapsed, 0) / currentQuiz.answers.length)
-      : 0;
+    const avgTime = averageAnswerTime(currentQuiz.answers);
     const previousRecent = recentAnswerStats(records, 30);
     const beforeMistakes = new Set(Object.keys(records.mistakes || {}));
     currentQuiz.speedInsight = speedInsightText(avgTime, previousRecent.avgSeconds);
@@ -4575,7 +4703,8 @@
         elapsed: answer.elapsed,
         earned: answer.earned,
         hintsUsed: answer.hintsUsed || 0,
-        errorTag: answer.errorTag || ""
+        errorTag: answer.errorTag || "",
+        unanswered: Boolean(answer.unanswered)
       }))
     };
     records.history = [historyItem, ...(records.history || [])].slice(0, HISTORY_LIMIT);
@@ -5134,6 +5263,116 @@
     }, {});
   }
 
+  function averageAnswerTime(answers) {
+    const timed = (answers || []).filter((answer) => !answer.unanswered && Number.isFinite(Number(answer.elapsed)) && Number(answer.elapsed) > 0);
+    return timed.length ? Math.round(timed.reduce((sum, answer) => sum + Number(answer.elapsed || 0), 0) / timed.length) : 0;
+  }
+
+  function buildExamAnalysis(answers) {
+    const topicGroups = {};
+    const tagGroups = {};
+    const rankGroups = {};
+    const ignoredTags = new Set([
+      "exam-style",
+      "exam-depth",
+      "transfer-exam",
+      "proficiency-exam",
+      "midterm-style",
+      "university-exam-style",
+      "boss-rank",
+      "depth-r5",
+      "depth-r6"
+    ]);
+
+    (answers || []).forEach((answer) => {
+      const problem = answer.problem;
+      if (!problem) return;
+      addExamStat(topicGroups, problem.topic, TOPICS[problem.topic]?.label || problem.topic, answer);
+      addExamStat(rankGroups, `r${problemRank(problem)}`, `R${problemRank(problem)}`, answer);
+      (problem.tags || [])
+        .filter((tag) => !ignoredTags.has(tag))
+        .forEach((tag) => addExamStat(tagGroups, tag, tagLabel(tag), answer));
+    });
+
+    const topicOrder = ["limits", "derivatives", "integrals", "series"];
+    const topicRows = Object.values(topicGroups)
+      .map(finalizeExamStat)
+      .sort((a, b) => topicOrder.indexOf(a.key) - topicOrder.indexOf(b.key));
+    const rankRows = Object.values(rankGroups)
+      .map(finalizeExamStat)
+      .sort((a, b) => Number(a.key.slice(1)) - Number(b.key.slice(1)));
+    const tagRows = Object.values(tagGroups)
+      .map(finalizeExamStat)
+      .filter((row) => row.total >= 2 || row.wrong > 0)
+      .sort((a, b) => b.wrongRate - a.wrongRate || b.wrong - a.wrong || b.total - a.total);
+
+    const timedTopics = topicRows.filter((row) => row.avgSec !== null);
+    const timedTags = tagRows.filter((row) => row.avgSec !== null);
+    const fastestTopic = timedTopics.slice().sort((a, b) => a.avgSec - b.avgSec)[0] || null;
+    const fastestTag = timedTags.slice().sort((a, b) => a.avgSec - b.avgSec || b.correct - a.correct)[0] || null;
+    const slowestTopic = timedTopics.slice().sort((a, b) => b.avgSec - a.avgSec)[0] || null;
+    const weakTag = tagRows[0] || null;
+    const rankWall = rankRows.slice().sort((a, b) => b.wrongRate - a.wrongRate || Number(b.key.slice(1)) - Number(a.key.slice(1)))[0] || null;
+
+    return {
+      topicRows,
+      tagRows,
+      rankRows,
+      insights: [
+        {
+          label: "最快主題",
+          value: fastestTopic ? `${fastestTopic.label} · ${formatSeconds(fastestTopic.avgSec)}` : "尚無資料",
+          note: fastestTopic ? `${fastestTopic.correct}/${fastestTopic.total} correct` : "至少作答一題後顯示",
+          tone: "speed"
+        },
+        {
+          label: "最快技巧",
+          value: fastestTag ? `${fastestTag.label} · ${formatSeconds(fastestTag.avgSec)}` : "尚無資料",
+          note: fastestTag ? `${fastestTag.correct}/${fastestTag.total} correct` : "tag 數不足時不顯示",
+          tone: "speed"
+        },
+        {
+          label: "最慢主題",
+          value: slowestTopic ? `${slowestTopic.label} · ${formatSeconds(slowestTopic.avgSec)}` : "尚無資料",
+          note: slowestTopic ? "優先檢查是否第一步判型太慢" : "未作答不列入秒數",
+          tone: "slow"
+        },
+        {
+          label: "錯誤最多技巧",
+          value: weakTag ? `${weakTag.label} · ${weakTag.wrong}/${weakTag.total}` : "尚無資料",
+          note: weakTag ? `${Math.round(weakTag.wrongRate * 100)}% miss rate` : "目前沒有明顯錯誤熱區",
+          tone: "miss"
+        },
+        {
+          label: "難度斷點",
+          value: rankWall ? `${rankWall.label} · ${rankWall.correct}/${rankWall.total}` : "尚無資料",
+          note: rankWall ? `avg ${formatSeconds(rankWall.avgSec)}，錯 ${rankWall.wrong}` : "R5/R6 分層會在這裡顯示",
+          tone: "rank"
+        }
+      ]
+    };
+  }
+
+  function addExamStat(groups, key, label, answer) {
+    if (!groups[key]) groups[key] = { key, label, total: 0, correct: 0, wrong: 0, elapsedSum: 0, timed: 0 };
+    const group = groups[key];
+    group.total += 1;
+    if (answer.correct) group.correct += 1;
+    else group.wrong += 1;
+    if (!answer.unanswered && Number.isFinite(Number(answer.elapsed)) && Number(answer.elapsed) > 0) {
+      group.elapsedSum += Number(answer.elapsed || 0);
+      group.timed += 1;
+    }
+  }
+
+  function finalizeExamStat(group) {
+    return {
+      ...group,
+      avgSec: group.timed ? Math.round(group.elapsedSum / group.timed) : null,
+      wrongRate: group.total ? group.wrong / group.total : 0
+    };
+  }
+
   function problemById(id) {
     return problems.find((problem) => problem.id === id) || null;
   }
@@ -5306,6 +5545,7 @@
       Wrong: "答案不對",
       Timeout: "時間到",
       Skipped: "已跳過",
+      Unanswered: "未作答",
       "Tab limit": "切頁次數超過"
     }[reason] || reason || "未通過";
   }
@@ -6015,7 +6255,10 @@
       padPool,
       preferFreshProblems,
       recentProblemIds,
-      packTotalCountText
+      packTotalCountText,
+      averageAnswerTime,
+      buildExamAnalysis,
+      renderExamAnalysisSection
     };
   }
 
