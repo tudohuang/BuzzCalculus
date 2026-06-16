@@ -12,6 +12,7 @@ require("../src/problem_hardcore_50.js");
 require("../src/problem_exam_expansion.js");
 require("../src/problem_university_exam_pack.js");
 require("../src/problem_exam_depth_pack.js");
+require("../src/problem_todai_burst_pack.js");
 require("../src/problem_difficulty_calibration.js");
 
 const problems = window.BUZZ_PROBLEMS || [];
