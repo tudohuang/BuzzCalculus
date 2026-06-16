@@ -55,6 +55,7 @@ require("../src/problem_hard_expansion.js");
 require("../src/problem_hardcore_50.js");
 require("../src/problem_exam_expansion.js");
 require("../src/problem_university_exam_pack.js");
+require("../src/problem_exam_depth_pack.js");
 require("../src/problem_difficulty_calibration.js");
 require("../src/app.js");
 
@@ -202,7 +203,7 @@ const timeoutPassed = timeoutResult.status === "correct" && timeoutResult.reason
 console.log(`${timeoutPassed ? "PASS" : "FAIL"} timeout keeps correct draft: status=${timeoutResult.status} reason=${timeoutResult.reason}`);
 if (!timeoutPassed) failures.push({ name: "timeout keeps correct draft", input: timeoutResult.input, expected: true, result: timeoutResult });
 
-const canonicalProblems = (global.window.BUZZ_PROBLEMS || []).filter((problem) => /^(gap|mob|rel|hc|exam|uni)-/.test(problem.id));
+const canonicalProblems = (global.window.BUZZ_PROBLEMS || []).filter((problem) => /^(gap|mob|rel|hc|exam|uni|depth)-/.test(problem.id));
 canonicalProblems.forEach((problem) => {
   const input = problem.answerKind === "text" ? problem.canonical || problem.answers[0] : problem.answer;
   const result = api.checkAnswer(problem, input);
