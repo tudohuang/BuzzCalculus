@@ -22,10 +22,15 @@ global.window = {
   innerHeight: 720
 };
 global.requestAnimationFrame = global.window.requestAnimationFrame;
+const storage = {};
 global.localStorage = {
-  getItem: () => "{}",
-  setItem: () => {},
-  removeItem: () => {}
+  getItem: (key) => storage[key] || "{}",
+  setItem: (key, value) => {
+    storage[key] = String(value);
+  },
+  removeItem: (key) => {
+    delete storage[key];
+  }
 };
 global.document = {
   getElementById: (id) => (id === "app" ? fakeApp : null),
@@ -106,9 +111,25 @@ if (recent.join(",") !== "recent-a,recent-b") {
   failures.push(`recentProblemIds returned unexpected order: ${recent.join(", ")}`);
 }
 
+storage["buzzcalculus.records.v1"] = JSON.stringify({ settings: { difficultyCap: 2 } });
+const cappedQuick = api.selectProblemPool(api.modes.quick, "all");
+const quickRanks = cappedQuick.map((problem) => api.problemRank(problem));
+if (!cappedQuick.length || quickRanks.some((rank) => rank > 2)) {
+  failures.push(`quick mode should honor R2 cap, got ranks: ${quickRanks.join(", ")}`);
+}
+const cappedCount = api.difficultyScopedCount(2, "all", "all");
+if (cappedCount <= 0 || cappedCount >= global.window.BUZZ_PROBLEMS.length) {
+  failures.push(`difficultyScopedCount produced suspicious R2 count: ${cappedCount}`);
+}
+
+storage["buzzcalculus.records.v1"] = JSON.stringify({ settings: { difficultyCap: 2 } });
 const examPool = api.selectProblemPool(api.modes.exam, "all");
 if (examPool.length !== api.modes.exam.count) {
   failures.push(`exam mode selected ${examPool.length} problems instead of ${api.modes.exam.count}`);
+}
+const examHasHard = examPool.some((problem) => api.problemRank(problem) > 2);
+if (!examHasHard) {
+  failures.push("exam mode should ignore the beginner cap and keep higher-rank exam problems available");
 }
 const invalidExam = examPool.filter((problem) => !["numeric", "expression", "antiderivative"].includes(problem.answerKind));
 if (invalidExam.length) {
