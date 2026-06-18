@@ -169,6 +169,7 @@
 
   const TRAINING_PACKS = {
     todai_burst: { label: "Todai Burst", note: "R6 IBP / Wallis / high derivatives", tags: ["todai-burst"] },
+    nightmare_boss: { label: "背脊發涼", note: "R6 true-boss：名校數分 / MIT theory / Todai-style", tags: ["true-boss"] },
     all: { label: "全部技巧", note: "不限制 tags", tags: [] },
     beginner_warmup: { label: "新手暖身", note: "R1-R2 基礎題", tags: ["beginner-friendly"] },
     boss_challenge: { label: "Boss 挑戰", note: "R5-R6 防強人題", tags: ["boss-rank"] },
@@ -206,7 +207,7 @@
   };
 
   const PACK_GROUPS = [
-    { label: "Todai", keys: ["todai_burst"] },
+    { label: "Todai", keys: ["todai_burst", "nightmare_boss"] },
     { label: "常用", keys: ["all", "beginner_warmup", "boss_challenge", "exam_style", "exam_depth", "mobile_sprint", "technique_recognition", "multivariable", "substitution", "integration_by_parts", "series_test"] },
     { label: "積分技巧", keys: ["partial_fraction", "trig_substitution", "frullani", "ode_style", "kings_property", "double_integral", "multi_integral_advanced"] },
     { label: "微分 / 應用", keys: ["chain", "lagrange_multiplier", "nabla_vector", "parametric_polar", "applications", "total_differential", "hessian", "wronskian", "jacobian_chain"] },
@@ -309,6 +310,7 @@
   const LIBRARY_PAGE_SIZE = 72;
   const TAG_LABELS = {
     "todai-burst": "Todai Burst",
+    "true-boss": "背脊發涼",
     "multi-ibp": "multi-IBP",
     "trig-power": "Trig power",
     "recurrence-formula": "Recurrence",
@@ -317,6 +319,12 @@
     "series-integral": "Series integral",
     "beginner-friendly": "新手友善",
     "boss-rank": "Boss",
+    "boss-plus": "Boss+",
+    "hard-limit": "硬極限",
+    "asymptotic-expansion": "漸近展開",
+    "generating-function": "生成函數",
+    "harmonic-number": "調和數",
+    "laplace-transform": "Laplace",
     "exam-style": "大考題感",
     "exam-depth": "大考深水",
     "depth-r5": "R5 深水",
@@ -395,7 +403,7 @@
   const HISTORY_LIMIT = 40;
   const RECENT_PROBLEM_COOLDOWN = 30;
   const RECENT_STRONG_AVOID = 18;
-  const APP_VERSION = "v0.9.7-beta";
+  const APP_VERSION = "v0.9.8-beta";
   const BUILD_DATE = "2026-06-18";
   const GA_MEASUREMENT_ID = String(window.BUZZ_GA_MEASUREMENT_ID || "").trim();
 
@@ -3082,7 +3090,7 @@
     records.onboardingSeen = true;
     saveRecords(records);
     selectedMode = "brutal";
-    selectedPack = "todai_burst";
+    selectedPack = "nightmare_boss";
     selectedTopic = "all";
     selectedAnswerMode = "free";
     startQuiz();
@@ -4472,10 +4480,53 @@
     expr = expr.replace(/\bpi\b/gi, "PI");
     expr = expr.replace(/\be\b/g, "E");
     expr = expr.replace(/\s+/g, "");
+    expr = normalizeUnaryPower(expr);
     expr = applyImplicitMultiplication(expr);
     if (/[^0-9a-zA-Z_+\-*/().,]/.test(expr)) return "";
     if (/(constructor|window|document|globalThis|Function|eval|=>|;|=)/.test(expr)) return "";
     return expr;
+  }
+
+  function normalizeUnaryPower(expr) {
+    let output = "";
+    for (let index = 0; index < expr.length; index += 1) {
+      if (expr[index] !== "-" || !isUnaryMinusPosition(expr, index)) {
+        output += expr[index];
+        continue;
+      }
+      const base = readPowerAtom(expr, index + 1);
+      if (!base || expr.slice(base.end, base.end + 2) !== "**") {
+        output += expr[index];
+        continue;
+      }
+      const exponent = readPowerAtom(expr, base.end + 2);
+      if (!exponent) {
+        output += expr[index];
+        continue;
+      }
+      output += `-(${expr.slice(index + 1, exponent.end)})`;
+      index = exponent.end - 1;
+    }
+    return output;
+  }
+
+  function isUnaryMinusPosition(expr, index) {
+    return index === 0 || "+-*/,([".includes(expr[index - 1]);
+  }
+
+  function readPowerAtom(expr, start) {
+    if (start >= expr.length) return null;
+    if (expr[start] === "(") {
+      let depth = 0;
+      for (let index = start; index < expr.length; index += 1) {
+        if (expr[index] === "(") depth += 1;
+        if (expr[index] === ")") depth -= 1;
+        if (depth === 0) return { end: index + 1 };
+      }
+      return null;
+    }
+    const match = expr.slice(start).match(/^([A-Za-z_][A-Za-z0-9_]*|\d+(?:\.\d+)?)/);
+    return match ? { end: start + match[0].length } : null;
   }
 
   function applyImplicitMultiplication(expr) {
