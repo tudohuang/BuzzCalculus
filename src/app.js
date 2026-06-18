@@ -294,7 +294,18 @@
     advanced: "進階",
     boss: "東大"
   };
-  const CHALLENGE_MODES = ["warmup", "exam", "integral_bee", "no_hint", "accuracy", "survival", "boss_rush", "cooldown"];
+  const CORE_CHALLENGE_MODES = ["warmup", "exam", "boss_rush"];
+  const EXTRA_CHALLENGE_MODES = ["integral_bee", "no_hint", "accuracy", "survival", "cooldown"];
+  const CHALLENGE_MODES = [...CORE_CHALLENGE_MODES, ...EXTRA_CHALLENGE_MODES];
+  const DEFAULT_DIFFICULTY_CAP = 2;
+  const DIFFICULTY_LEVELS = {
+    1: { label: "寶寶", note: "只抽 R1，先建立手感。", short: "R1" },
+    2: { label: "新手", note: "R1-R2，避開 Taylor 和怪題。", short: "R1-R2" },
+    3: { label: "標準", note: "R1-R3，開始進入段考基本題感。", short: "R1-R3" },
+    4: { label: "進階", note: "R1-R4，加入多步驟與常見陷阱。", short: "R1-R4" },
+    5: { label: "強者", note: "R1-R5，Boss 題會進一般抽題。", short: "R1-R5" },
+    6: { label: "神人", note: "R1-R6，Todai / Wallis / 特殊函數全開。", short: "R1-R6" }
+  };
   const LIBRARY_PAGE_SIZE = 72;
   const TAG_LABELS = {
     "todai-burst": "Todai Burst",
@@ -377,15 +388,15 @@
     "special-sum": "特殊級數"
   };
   const ONBOARDING_LEVELS = {
-    beginner: { label: "先暖身", pack: "beginner_warmup", mode: "warmup", topic: "all" },
-    standard: { label: "照主線", pack: "all", mode: "daily", topic: "all" },
-    advanced: { label: "直接挑戰", pack: "boss_challenge", mode: "boss_rush", topic: "all" }
+    beginner: { label: "先暖身", pack: "beginner_warmup", mode: "warmup", topic: "all", difficultyCap: 2 },
+    standard: { label: "照主線", pack: "all", mode: "daily", topic: "all", difficultyCap: 3 },
+    advanced: { label: "直接挑戰", pack: "boss_challenge", mode: "boss_rush", topic: "all", difficultyCap: 6 }
   };
   const HISTORY_LIMIT = 40;
   const RECENT_PROBLEM_COOLDOWN = 30;
   const RECENT_STRONG_AVOID = 18;
-  const APP_VERSION = "v0.9.5-beta";
-  const BUILD_DATE = "2026-06-16";
+  const APP_VERSION = "v0.9.6-beta";
+  const BUILD_DATE = "2026-06-18";
   const GA_MEASUREMENT_ID = String(window.BUZZ_GA_MEASUREMENT_ID || "").trim();
 
   let view = "home";
@@ -393,6 +404,7 @@
   let selectedMode = "quick";
   let selectedAnswerMode = "choice";
   let selectedPack = "all";
+  let selectedDifficultyCap = DEFAULT_DIFFICULTY_CAP;
   let selectedMistakeTopic = "all";
   let selectedHistoryTopic = "all";
   let selectedProofTier = "all";
@@ -718,6 +730,7 @@
       <main class="screen home-screen">
         ${showIntro ? renderFirstRunNotice() : ""}
         ${renderMobileQuestCard(mission, daily, path, mistakeCount)}
+        ${renderDifficultyControl(records)}
         ${renderHomeAnswerModeBar()}
         <section class="path-layout home-path-layout">
           ${renderBuzzPath(path, mission)}
@@ -741,6 +754,31 @@
           <strong>${ANSWER_MODES[selectedAnswerMode]?.label || "選擇題"}</strong>
         </div>
         ${renderAnswerModePicker("strip-answer-picker")}
+      </section>
+    `;
+  }
+
+  function renderDifficultyControl(records) {
+    const cap = activeDifficultyCap(records);
+    selectedDifficultyCap = cap;
+    const level = difficultyLevel(cap);
+    const count = difficultyScopedCount(cap, selectedTopic, selectedPack);
+    const percent = ((cap - 1) / 5) * 100;
+    return `
+      <section class="difficulty-strip" aria-label="難度上限">
+        <div class="difficulty-copy">
+          <p class="section-label">難度上限</p>
+          <strong>${escapeHtml(level.label)} · ${escapeHtml(level.short)}</strong>
+          <span>${escapeHtml(level.note)} 一般訓練目前可抽 ${count} 題。</span>
+        </div>
+        <div class="difficulty-range" style="--difficulty-progress:${percent}%">
+          <input type="range" min="1" max="6" step="1" value="${cap}" data-difficulty-cap aria-label="調整難度上限" />
+          <div class="difficulty-scale" aria-hidden="true">
+            ${Object.entries(DIFFICULTY_LEVELS)
+              .map(([rank, item]) => `<span class="${Number(rank) <= cap ? "is-active" : ""}">R${rank}<small>${escapeHtml(item.label)}</small></span>`)
+              .join("")}
+          </div>
+        </div>
       </section>
     `;
   }
@@ -1148,10 +1186,11 @@
           ${packs
             .map((item) => {
               const pack = TRAINING_PACKS[item.key];
+              const available = item.available || difficultyScopedCount(activeDifficultyCap(records), "all", item.key);
               return `
                 <button class="recommend-pack" data-action="train-pack" data-pack="${escapeAttr(item.key)}">
                   <strong>${escapeHtml(pack.label)}</strong>
-                  <span>${escapeHtml(pack.note)} · ${escapeHtml(item.reason)} · ${packTotalCountText(item.key)} 題</span>
+                  <span>${escapeHtml(pack.note)} · ${escapeHtml(item.reason)} · 目前 ${available} 題</span>
                 </button>`;
             })
             .join("")}
@@ -1165,13 +1204,13 @@
       <section class="study-card challenge-card">
         <div class="panel-title-row">
           <div>
-            <p class="section-label">速度訓練</p>
-            <h3>挑戰模式</h3>
+            <p class="section-label">挑戰</p>
+            <h3>核心模式</h3>
           </div>
-          <span class="study-count">${CHALLENGE_MODES.length}</span>
+          <span class="study-count">${CORE_CHALLENGE_MODES.length}</span>
         </div>
         <div class="challenge-mode-grid">
-          ${CHALLENGE_MODES.map((key) => {
+          ${CORE_CHALLENGE_MODES.map((key) => {
             const mode = MODES[key];
             return `
               <button class="challenge-mode" data-action="start-mode" data-mode-key="${escapeAttr(key)}">
@@ -1180,6 +1219,19 @@
               </button>`;
           }).join("")}
         </div>
+        <details class="extra-challenge-drawer">
+          <summary>其他小模式</summary>
+          <div class="challenge-mode-grid">
+            ${EXTRA_CHALLENGE_MODES.map((key) => {
+              const mode = MODES[key];
+              return `
+                <button class="challenge-mode" data-action="start-mode" data-mode-key="${escapeAttr(key)}">
+                  <strong>${escapeHtml(mode.label)}</strong>
+                  <span>${escapeHtml(modeDescription(key))}</span>
+                </button>`;
+            }).join("")}
+          </div>
+        </details>
       </section>
     `;
   }
@@ -1326,8 +1378,8 @@
   }
 
   function renderModePicker() {
-    const primary = ["quick", "daily"];
-    const advanced = ["topic", "practice", "brutal", "boss"];
+    const primary = ["quick", "practice"];
+    const advanced = ["topic", "warmup", "exam", "boss_rush", "brutal", "boss", "integral_bee", "no_hint", "accuracy", "survival", "cooldown"];
     return `
       <div class="segmented modes learning-picker" role="tablist" aria-label="模式選擇">
         ${primary
@@ -2660,6 +2712,14 @@
       });
     });
 
+    const difficultyInput = app.querySelector("[data-difficulty-cap]");
+    if (difficultyInput) {
+      difficultyInput.addEventListener("change", () => setDifficultyCap(difficultyInput.value));
+      difficultyInput.addEventListener("input", () => {
+        selectedDifficultyCap = normalizeDifficultyCap(difficultyInput.value);
+      });
+    }
+
     app.querySelectorAll("[data-pack]").forEach((button) => {
       button.addEventListener("click", () => {
         selectedPack = button.dataset.pack;
@@ -2944,7 +3004,9 @@
     const records = loadRecords();
     records.onboardingSeen = true;
     records.onboardingLevel = level;
+    records.settings.difficultyCap = normalizeDifficultyCap(config.difficultyCap || DEFAULT_DIFFICULTY_CAP);
     saveRecords(records);
+    selectedDifficultyCap = records.settings.difficultyCap;
     selectedPack = config.pack;
     selectedMode = config.mode;
     selectedTopic = config.topic;
@@ -3010,6 +3072,14 @@
     if (![5, 10, 12, 20].includes(goal)) return;
     const records = loadRecords();
     records.settings.dailyTarget = goal;
+    saveRecords(records);
+    render();
+  }
+
+  function setDifficultyCap(value) {
+    selectedDifficultyCap = normalizeDifficultyCap(value);
+    const records = loadRecords();
+    records.settings.difficultyCap = selectedDifficultyCap;
     saveRecords(records);
     render();
   }
@@ -3085,7 +3155,9 @@
   function selectPathNodePool(node) {
     const mode = MODES[node.mode || "quick"] || MODES.quick;
     const records = loadRecords();
-    const pool = pathNodeProblems(node);
+    const pool = shouldApplyDifficultyCap(mode)
+      ? filterByDifficultyCap(pathNodeProblems(node), activeDifficultyCap(records))
+      : pathNodeProblems(node);
     const fallback = selectProblemPool(mode, node.topic || "all");
     const source = pool.length ? pool : fallback;
     if (mode.boss) return selectBossPool(source, mode.count, records);
@@ -3097,14 +3169,15 @@
   function selectPathGatePool(node, count) {
     const index = Math.max(0, PATH_NODES.findIndex((item) => item.id === node.id));
     const seen = new Set();
+    const records = loadRecords();
     const current = pathNodeProblems(node).filter((problem) => problemRank(problem) <= 4 || node.boss);
     const previous = PATH_NODES.slice(Math.max(0, index - 2), index).flatMap((item) => pathNodeProblems(item));
-    const source = current.concat(previous).filter((problem) => {
+    const sourceBase = current.concat(previous).filter((problem) => {
       if (seen.has(problem.id)) return false;
       seen.add(problem.id);
       return true;
     });
-    const records = loadRecords();
+    const source = filterByDifficultyCap(sourceBase, activeDifficultyCap(records));
     const pool = source.length ? source : current;
     const ordered = adaptiveShuffle(pool, records, seedFromString(`${Date.now()}-gate-${node.id}`));
     return padPool(ordered.slice(0, count), pool, count, { records });
@@ -3321,10 +3394,13 @@
   }
 
   function startQuiz(customProblems, options = {}) {
+    const records = loadRecords();
+    const difficultyCap = activeDifficultyCap(records);
     const mode = MODES[selectedMode] || MODES.quick;
     const pool = customProblems && customProblems.length ? customProblems : selectProblemPool(mode, selectedTopic);
     if (!pool.length) {
       view = "home";
+      window.alert("目前篩選沒有符合難度的題目。請把難度上限拉高，或換一個題包 / 範圍。");
       render();
       return;
     }
@@ -3343,6 +3419,7 @@
       examEndAt: options.examMode || mode.exam ? Date.now() + Number(options.examDurationSec || mode.examDurationSec || 0) * 1000 : 0,
       requireFullscreen: Boolean(options.requireFullscreen || mode.requireFullscreen),
       fullscreenStatus: options.requireFullscreen || mode.requireFullscreen ? "pending" : "",
+      difficultyCap,
       pathNodeId: options.pathNodeId || "",
       pathGate: options.pathGate || null,
       problems: pool,
@@ -3373,6 +3450,7 @@
       topic: quiz.topic,
       pack: selectedPack,
       answer_mode: quiz.answerMode,
+      difficulty_cap: quiz.difficultyCap,
       problem_count: quiz.problems.length,
       practice: Boolean(quiz.practice)
     });
@@ -3382,6 +3460,7 @@
 
   function selectProblemPool(mode, topic) {
     const records = loadRecords();
+    const difficultyCap = activeDifficultyCap(records);
     let pool = problems.slice();
     if (mode.integralBee) {
       pool = pool.filter((problem) => problem.topic === "integrals");
@@ -3410,6 +3489,9 @@
     if (mode.maxRank) {
       const easyPool = pool.filter((problem) => problemRank(problem) <= mode.maxRank);
       pool = easyPool.length ? easyPool : pool;
+    }
+    if (shouldApplyDifficultyCap(mode)) {
+      pool = filterByDifficultyCap(pool, difficultyCap);
     }
 
     if (mode.boss) {
@@ -3495,12 +3577,14 @@
 
   function selectCooldownPool(count) {
     const records = loadRecords();
+    const cap = activeDifficultyCap(records);
     const mistakes = Object.values(records.mistakes || {})
       .sort((a, b) => mistakeWeight(b) - mistakeWeight(a))
       .map((item) => problemById(item.problemId))
       .filter(Boolean);
-    const easy = problems.filter((problem) => problemRank(problem) <= 3);
-    return padPool(mistakes.slice(0, count), easy, count, { records });
+    const easy = problems.filter((problem) => problemRank(problem) <= Math.min(3, cap));
+    const fallbackEasy = problems.filter((problem) => problemRank(problem) <= 3);
+    return padPool(mistakes.slice(0, count), easy.length ? easy : fallbackEasy, count, { records });
   }
 
   function padPool(selected, pool, count, options = {}) {
@@ -3612,6 +3696,38 @@
 
   function problemRank(problem) {
     return Math.max(1, Math.min(6, Number(problem.rank || problem.difficulty || 1)));
+  }
+
+  function normalizeDifficultyCap(value) {
+    const rank = Math.round(Number(value || DEFAULT_DIFFICULTY_CAP));
+    return Math.max(1, Math.min(6, rank || DEFAULT_DIFFICULTY_CAP));
+  }
+
+  function activeDifficultyCap(records = loadRecords()) {
+    const saved = records && records.settings ? records.settings.difficultyCap : undefined;
+    return normalizeDifficultyCap(saved || selectedDifficultyCap || DEFAULT_DIFFICULTY_CAP);
+  }
+
+  function difficultyLevel(cap) {
+    return DIFFICULTY_LEVELS[normalizeDifficultyCap(cap)] || DIFFICULTY_LEVELS[DEFAULT_DIFFICULTY_CAP];
+  }
+
+  function shouldApplyDifficultyCap(mode = {}) {
+    return !mode.boss && !mode.examStyle && !mode.hardOnly;
+  }
+
+  function filterByDifficultyCap(pool, cap) {
+    const maxRank = normalizeDifficultyCap(cap);
+    return (pool || []).filter((problem) => problemRank(problem) <= maxRank);
+  }
+
+  function difficultyScopedCount(cap, topic = "all", packKey = "all") {
+    const maxRank = normalizeDifficultyCap(cap);
+    return problems.filter((problem) => {
+      if (topic !== "all" && problem.topic !== topic) return false;
+      if (packKey !== "all" && !matchesPack(problem, packKey)) return false;
+      return problemRank(problem) <= maxRank;
+    }).length;
   }
 
   function submitCurrentAnswer() {
@@ -4659,6 +4775,7 @@
     next.favorites = next.favorites && typeof next.favorites === "object" ? next.favorites : {};
     next.problemReports = next.problemReports && typeof next.problemReports === "object" ? next.problemReports : {};
     next.settings = next.settings && typeof next.settings === "object" ? next.settings : {};
+    next.settings.difficultyCap = normalizeDifficultyCap(next.settings.difficultyCap || DEFAULT_DIFFICULTY_CAP);
     next.onboardingLevel = typeof next.onboardingLevel === "string" ? next.onboardingLevel : "";
     next.onboardingSeen = Boolean(next.onboardingSeen);
     return next;
@@ -4697,6 +4814,7 @@
       practice: Boolean(currentQuiz.practice),
       topic: currentQuiz.topic,
       topics: Array.from(new Set(currentQuiz.problems.map((problem) => problem.topic))),
+      difficultyCap: normalizeDifficultyCap(currentQuiz.difficultyCap || activeDifficultyCap(records)),
       score: currentQuiz.score,
       correct,
       total,
@@ -5098,11 +5216,13 @@
   }
 
   function recommendedPacks(records, weaknesses) {
+    const cap = activeDifficultyCap(records);
     const weaknessKeys = new Set((weaknesses || []).map((item) => item.key));
     const scored = Object.entries(TRAINING_PACKS)
       .filter(([key]) => key !== "all")
       .map(([key, pack]) => {
         const tags = pack.tags || [];
+        const available = difficultyScopedCount(cap, "all", key);
         const overlap = tags.filter((tag) => weaknessKeys.has(tag)).length;
         const done = problems.filter((problem) => matchesPack(problem, key) && records.problemStats?.[problem.id]?.total).length;
         const total = packTotalCountText(key);
@@ -5110,13 +5230,17 @@
         const starterBoost = tags.includes("beginner-friendly") && !(records.totalAnswered || 0) ? 3 : 0;
         return {
           key,
-          score: overlap * 5 + completionGap * 1.5 + starterBoost,
+          available,
+          score: available ? overlap * 5 + completionGap * 1.5 + starterBoost : -1,
           reason: overlap ? "對應近期弱點" : starterBoost ? "適合第一輪" : "補齊覆蓋"
         };
       })
       .sort((a, b) => b.score - a.score);
-    const fallback = ["beginner_warmup", "technique_recognition", "substitution"].map((key) => ({ key, reason: "高頻技巧" }));
-    return (scored.filter((item) => item.score > 0).slice(0, 3).length ? scored.filter((item) => item.score > 0).slice(0, 3) : fallback).filter((item) => TRAINING_PACKS[item.key]);
+    const fallback = ["beginner_warmup", "technique_recognition", "substitution"]
+      .map((key) => ({ key, reason: "高頻技巧", available: difficultyScopedCount(cap, "all", key) }))
+      .filter((item) => item.available && TRAINING_PACKS[item.key]);
+    const best = scored.filter((item) => item.score > 0).slice(0, 3);
+    return (best.length ? best : fallback).filter((item) => TRAINING_PACKS[item.key]);
   }
 
   function dailyGoal(records) {
@@ -5456,14 +5580,12 @@
   }
 
   function topicCountText(topic) {
-    if (topic === "all") return `${problems.length} 題`;
-    return `${problems.filter((problem) => problem.topic === topic).length} 題`;
+    const cap = activeDifficultyCap();
+    return `${difficultyScopedCount(cap, topic, "all")} 題`;
   }
 
   function packCountText(packKey) {
-    const topicPool = selectedTopic === "all" ? problems : problems.filter((problem) => problem.topic === selectedTopic);
-    if (packKey === "all") return topicPool.length;
-    return topicPool.filter((problem) => matchesPack(problem, packKey)).length;
+    return difficultyScopedCount(activeDifficultyCap(), selectedTopic, packKey);
   }
 
   function packTotalCountText(packKey) {
@@ -6252,6 +6374,10 @@
       normalizeExpression,
       normalizeText,
       problemRank,
+      normalizeDifficultyCap,
+      activeDifficultyCap,
+      filterByDifficultyCap,
+      difficultyScopedCount,
       trainingPacks: TRAINING_PACKS,
       packGroups: PACK_GROUPS,
       pathNodes: PATH_NODES,
