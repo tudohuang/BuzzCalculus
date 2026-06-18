@@ -395,7 +395,7 @@
   const HISTORY_LIMIT = 40;
   const RECENT_PROBLEM_COOLDOWN = 30;
   const RECENT_STRONG_AVOID = 18;
-  const APP_VERSION = "v0.9.6-beta";
+  const APP_VERSION = "v0.9.7-beta";
   const BUILD_DATE = "2026-06-18";
   const GA_MEASUREMENT_ID = String(window.BUZZ_GA_MEASUREMENT_ID || "").trim();
 
@@ -729,6 +729,7 @@
     return `
       <main class="screen home-screen">
         ${showIntro ? renderFirstRunNotice() : ""}
+        ${renderHomeLaunchPad(records, mission, path, weaknesses, mistakeCount)}
         ${renderMobileQuestCard(mission, daily, path, mistakeCount)}
         ${renderDifficultyControl(records)}
         ${renderHomeAnswerModeBar()}
@@ -744,6 +745,91 @@
         ${renderMobileStartDock(path, mission)}
       </main>
     `;
+  }
+
+  function renderHomeLaunchPad(records, mission, path, weaknesses, mistakeCount) {
+    const next = path.next;
+    const coach = homeCoachLine(records, mission, path, weaknesses, mistakeCount);
+    const streak = mission.dailyStreak || 0;
+    const cards = [
+      {
+        label: "第一次來",
+        title: "寶寶暖身",
+        meta: "R1-R2 · 不嚇人",
+        action: "start-friendly-run",
+        iconName: "sparkles",
+        className: "is-friendly"
+      },
+      {
+        label: streak ? `${streak} 天連續` : "今日任務",
+        title: "每日刷一輪",
+        meta: `${mission.completed}/${mission.target} 題 · ${mission.progress}%`,
+        action: "start-daily",
+        iconName: "calendar",
+        className: "is-daily"
+      },
+      {
+        label: "考試感",
+        title: "大考模式",
+        meta: "20 題 / 45 分鐘",
+        action: "start-mode",
+        modeKey: "exam",
+        iconName: "file-pen-line",
+        className: "is-exam"
+      },
+      {
+        label: "神人",
+        title: "Todai 爆破",
+        meta: "R6 · Wallis / IBP",
+        action: "start-god-run",
+        iconName: "flame",
+        className: "is-god"
+      }
+    ];
+    return `
+      <section class="home-launch-pad" aria-label="今日練習入口">
+        <div class="launch-copy">
+          <p class="section-label">Launch Pad</p>
+          <h1>今天要怎麼練？</h1>
+          <p>${escapeHtml(coach)}</p>
+          <div class="launch-next-pill">
+            <span>主線下一格</span>
+            <strong>${escapeHtml(next.short)}</strong>
+            <small>${escapeHtml(next.note)}</small>
+          </div>
+        </div>
+        <div class="launch-mascot" aria-hidden="true">
+          <span class="mascot-orbit"></span>
+          <strong>∫</strong>
+          <small>Buzz</small>
+        </div>
+        <div class="launch-card-grid">
+          ${cards
+            .map(
+              (card) => `
+                <button class="launch-card ${card.className}" data-action="${escapeAttr(card.action)}" ${card.modeKey ? `data-mode-key="${escapeAttr(card.modeKey)}"` : ""}>
+                  <span class="launch-card-icon">${icon(card.iconName)}</span>
+                  <span class="launch-card-copy">
+                    <small>${escapeHtml(card.label)}</small>
+                    <strong>${escapeHtml(card.title)}</strong>
+                    <em>${escapeHtml(card.meta)}</em>
+                  </span>
+                </button>`
+            )
+            .join("")}
+        </div>
+      </section>
+    `;
+  }
+
+  function homeCoachLine(records, mission, path, weaknesses, mistakeCount) {
+    const cap = activeDifficultyCap(records);
+    if (!(records.totalAnswered || 0)) return "先從寶寶暖身開始，R1-R2 不會突然丟 Taylor 大砲。";
+    if (mistakeCount >= 6 && weaknesses[0]) return `錯題集中在 ${weaknesses[0].label}，先重練弱點會比硬刷更有效。`;
+    if (!mission.done && mission.completed) return "今日任務已經開打，補完它可以穩定累積熟練度。";
+    if (cap <= 2) return "現在是新手難度，想挑戰段考感可以把難度拉到 R3-R4。";
+    if (cap >= 5) return "高難度已開，Todai / Boss 題會開始出現，適合神人練手感。";
+    return `主線下一格是 ${path.next.short}，照路線練會比亂抽更穩。`;
   }
 
   function renderHomeAnswerModeBar() {
@@ -2849,6 +2935,8 @@
     const action = actionNode.dataset.action;
     if (action === "start") startQuiz();
     if (action === "start-weakness") startWeaknessPractice();
+    if (action === "start-friendly-run") startFriendlyRun();
+    if (action === "start-god-run") startGodRun();
     if (action === "dismiss-onboarding") {
       const records = loadRecords();
       records.onboardingSeen = true;
@@ -2972,6 +3060,32 @@
     selectedTopic = "all";
     selectedAnswerMode = "choice";
     startQuiz(selectProblemPool({ ...mode, count: dailyGoal(records) }, "all"), { modeKey: "daily" });
+  }
+
+  function startFriendlyRun() {
+    const records = loadRecords();
+    selectedDifficultyCap = 2;
+    records.settings.difficultyCap = selectedDifficultyCap;
+    records.onboardingSeen = true;
+    saveRecords(records);
+    selectedMode = "quick";
+    selectedPack = "beginner_warmup";
+    selectedTopic = "all";
+    selectedAnswerMode = "choice";
+    startQuiz();
+  }
+
+  function startGodRun() {
+    const records = loadRecords();
+    selectedDifficultyCap = 6;
+    records.settings.difficultyCap = selectedDifficultyCap;
+    records.onboardingSeen = true;
+    saveRecords(records);
+    selectedMode = "brutal";
+    selectedPack = "todai_burst";
+    selectedTopic = "all";
+    selectedAnswerMode = "free";
+    startQuiz();
   }
 
   function startMode(modeKey) {
