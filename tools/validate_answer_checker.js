@@ -150,6 +150,21 @@ const logCompositionProblem = {
   variable: "x"
 };
 
+const negativePowerNumericProblem = {
+  id: "p0-negative-power-numeric",
+  topic: "integrals",
+  answerKind: "numeric",
+  answer: "-(pi^2)/6"
+};
+
+const negativePowerAntiderivativeProblem = {
+  id: "p0-negative-power-antiderivative",
+  topic: "integrals",
+  answerKind: "antiderivative",
+  answer: "-(x^3)*cos(2*x)/2+3*x^2*sin(2*x)/4+3*x*cos(2*x)/4-3*sin(2*x)/8",
+  variable: "x"
+};
+
 const parametricTechniqueProblem = {
   id: "p0-text-parametric-technique",
   topic: "derivatives",
@@ -186,7 +201,9 @@ const tests = [
   ["wrong FTC lower-limit sign remains wrong", { ...derivativeProblem, answer: "2*x*log(1+x^4)-log(1+x^2)" }, "2*x*log(1+x^4)+log(1+x^2)", false],
   ["parametric technique broad chain-rule alias", parametricTechniqueProblem, "chain rule", true],
   ["TeX arctan antiderivative with +C", { ...antiderivativeProblem, answer: "atan(x^2)/2" }, "0.5*\\arctan(x^2)+C", true],
-  ["TeX log antiderivative with decimal coefficient", { ...antiderivativeProblem, answer: "x^2/2-log(1+x^2)/2" }, "0.5*x^2-0.5\\log(1+x^2)+C", true]
+  ["TeX log antiderivative with decimal coefficient", { ...antiderivativeProblem, answer: "x^2/2-log(1+x^2)/2" }, "0.5*x^2-0.5\\log(1+x^2)+C", true],
+  ["numeric unary minus before power", negativePowerNumericProblem, "-pi^2/6", true],
+  ["antiderivative unary minus before power", negativePowerAntiderivativeProblem, "-x^3*cos(2*x)/2+3*x^2*sin(2*x)/4+3*x*cos(2*x)/4-3*sin(2*x)/8", true]
 ];
 
 const failures = [];
