@@ -298,6 +298,8 @@
   const CORE_CHALLENGE_MODES = ["warmup", "exam", "boss_rush"];
   const EXTRA_CHALLENGE_MODES = ["integral_bee", "no_hint", "accuracy", "survival", "cooldown"];
   const CHALLENGE_MODES = [...CORE_CHALLENGE_MODES, ...EXTRA_CHALLENGE_MODES];
+  const SIMPLE_MODE_KEYS = ["quick", "topic", "practice"];
+  const EXPERIMENTAL_MODE_KEYS = ["exam", "boss_rush", "brutal", "boss", "integral_bee", "no_hint", "accuracy", "survival", "warmup", "cooldown"];
   const DEFAULT_DIFFICULTY_CAP = 2;
   const DIFFICULTY_LEVELS = {
     1: { label: "寶寶", note: "只抽 R1，先建立手感。", short: "R1" },
@@ -403,7 +405,7 @@
   const HISTORY_LIMIT = 40;
   const RECENT_PROBLEM_COOLDOWN = 30;
   const RECENT_STRONG_AVOID = 18;
-  const APP_VERSION = "v0.9.8-beta";
+  const APP_VERSION = "v0.9.9-beta";
   const BUILD_DATE = "2026-06-18";
   const GA_MEASUREMENT_ID = String(window.BUZZ_GA_MEASUREMENT_ID || "").trim();
 
@@ -1111,7 +1113,7 @@
           <summary>
             <span>
               <strong>更多練習</strong>
-              <small>自訂題包、證明、錯題、本機資料</small>
+              <small>自訂題包、錯題、題庫、實驗模式</small>
             </span>
             ${icon("chevron-down")}
           </summary>
@@ -1294,29 +1296,43 @@
   }
 
   function renderChallengeModesCard() {
+    const featured = [
+      {
+        title: "大考模式",
+        note: modeDescription("exam"),
+        action: "start-mode",
+        modeKey: "exam"
+      },
+      {
+        title: "背脊發涼",
+        note: "R6 true-boss，WebWork 直接開打。",
+        action: "start-god-run"
+      }
+    ];
+    const experimental = EXPERIMENTAL_MODE_KEYS.filter((key) => key !== "exam");
     return `
       <section class="study-card challenge-card">
         <div class="panel-title-row">
           <div>
             <p class="section-label">挑戰</p>
-            <h3>核心模式</h3>
+            <h3>高壓挑戰</h3>
           </div>
-          <span class="study-count">${CORE_CHALLENGE_MODES.length}</span>
+          <span class="study-count">${featured.length}</span>
         </div>
+        <p class="panel-note">一般使用者不用管模式；想考試感就按大考，想炸裂就按背脊發涼。</p>
         <div class="challenge-mode-grid">
-          ${CORE_CHALLENGE_MODES.map((key) => {
-            const mode = MODES[key];
+          ${featured.map((item) => {
             return `
-              <button class="challenge-mode" data-action="start-mode" data-mode-key="${escapeAttr(key)}">
-                <strong>${escapeHtml(mode.label)}</strong>
-                <span>${escapeHtml(modeDescription(key))}</span>
+              <button class="challenge-mode" data-action="${escapeAttr(item.action)}" ${item.modeKey ? `data-mode-key="${escapeAttr(item.modeKey)}"` : ""}>
+                <strong>${escapeHtml(item.title)}</strong>
+                <span>${escapeHtml(item.note)}</span>
               </button>`;
           }).join("")}
         </div>
         <details class="extra-challenge-drawer">
-          <summary>其他小模式</summary>
+          <summary>實驗模式（${experimental.length}）</summary>
           <div class="challenge-mode-grid">
-            ${EXTRA_CHALLENGE_MODES.map((key) => {
+            ${experimental.map((key) => {
               const mode = MODES[key];
               return `
                 <button class="challenge-mode" data-action="start-mode" data-mode-key="${escapeAttr(key)}">
@@ -1472,9 +1488,10 @@
   }
 
   function renderModePicker() {
-    const primary = ["quick", "practice"];
-    const advanced = ["topic", "warmup", "exam", "boss_rush", "brutal", "boss", "integral_bee", "no_hint", "accuracy", "survival", "cooldown"];
+    const primary = SIMPLE_MODE_KEYS;
+    const advanced = EXPERIMENTAL_MODE_KEYS;
     return `
+      <p class="mode-picker-note">通常只需要選這三個；高壓玩法收在下面。</p>
       <div class="segmented modes learning-picker" role="tablist" aria-label="模式選擇">
         ${primary
           .filter((key) => MODES[key])
@@ -1491,7 +1508,7 @@
           .join("")}
       </div>
       <details class="advanced-mode-drawer" data-advanced-mode-drawer ${(advancedModeOpen || advanced.includes(selectedMode)) ? "open" : ""}>
-        <summary>進階模式</summary>
+        <summary>實驗 / 高壓模式（${advanced.length}）</summary>
         <div class="segmented modes learning-picker">
           ${advanced
             .filter((key) => MODES[key])
