@@ -294,5 +294,76 @@
     ["burst-boss2-der-008", "\\left.\\frac{d^{16}}{dx^{16}}\\frac{x^4}{(1+x)^2}\\right|_{x=0}", "271996268544000", "Read the x^12 coefficient of (1+x)^-2."]
   ].forEach(([id, prompt, answer, solution]) => numeric(id, "derivatives", prompt, answer, bossTags([]), solution, 6, 360));
 
+  [
+    ["burst-boss3-int-001", "\\int_0^\\infty\\int_0^\\infty x^3y^4e^{-2x-3y}\\,dx\\,dy", "1/27", "Separate the two Gamma-type integrals."],
+    ["burst-boss3-int-002", "\\int_0^1\\int_0^1xy^2(\\log x)^2(\\log y)^3\\,dx\\,dy", "-1/54", "Separate variables and use derivatives of 1/(a+1)."],
+    ["burst-boss3-int-003", "\\int_0^1\\left(\\log(x(1-x))\\right)^2\\,dx", "8-pi^2/3", "Expand the square and use the log-log beta derivative."],
+    ["burst-boss3-int-004", "\\int_0^1\\left(\\log\\frac{x}{1-x}\\right)^2\\,dx", "pi^2/3", "The cross term cancels the elementary log-square pieces."],
+    ["burst-boss3-int-005", "\\int_0^\\pi x\\log(\\sin x)\\,dx", "-pi^2*log(2)/2", "Pair x with pi-x and use the Wallis log-sine integral."],
+    ["burst-boss3-int-006", "\\int_0^\\pi x^3\\sin x\\,dx", "pi^3-6*pi", "Integrate by parts until only the standard sine moment remains."],
+    ["burst-boss3-int-007", "\\int_0^\\pi x^4\\sin x\\,dx", "pi^4-12*pi^2+48", "Repeated IBP reduces the polynomial power."],
+    ["burst-boss3-int-008", "\\int_0^\\infty x^3e^{-2x}\\cos(3x)\\,dx", "-714/28561", "Take the real part of 3!/(2-3i)^4."],
+    ["burst-boss3-int-009", "\\int_0^\\infty x^3e^{-2x}\\sin(3x)\\,dx", "-720/28561", "Take the imaginary part of 3!/(2-3i)^4."],
+    ["burst-boss3-int-010", "\\int_0^\\infty x^4e^{-x}\\cos(2x)\\,dx", "984/3125", "Take the real part of 4!/(1-2i)^5."],
+    ["burst-boss3-int-011", "\\int_0^\\infty x^4e^{-x}\\sin(2x)\\,dx", "-912/3125", "Take the imaginary part of 4!/(1-2i)^5."],
+    ["burst-boss3-int-012", "\\int_0^\\infty\\frac{x^5}{e^x+1}\\,dx", "31*pi^6/252", "Use the eta factor (1-2^{-5}) Gamma(6) zeta(6)."],
+    ["burst-boss3-int-013", "\\int_0^\\infty\\frac{x^3}{e^x+1}\\,dx", "7*pi^4/120", "Use the eta factor (1-2^{-3}) Gamma(4) zeta(4)."]
+  ].forEach(([id, prompt, answer, solution]) => numeric(id, "integrals", prompt, answer, bossTags([]), solution, 6, 540));
+
+  [
+    ["burst-boss3-lim-001", "\\lim_{n\\to\\infty}n\\sup_{0\\le x\\le1}x^n(1-x)", "1/exp(1)", "Maximize at x=n/(n+1)."],
+    ["burst-boss3-lim-002", "\\lim_{n\\to\\infty}n^2\\sup_{0\\le x\\le1}x^n(1-x)^2", "4/exp(2)", "Maximize at x=n/(n+2)."],
+    ["burst-boss3-lim-003", "\\lim_{n\\to\\infty}n\\int_0^1\\frac{x^n}{1+x}\\,dx", "1/2", "Only a boundary layer near x=1 contributes."],
+    ["burst-boss3-lim-004", "\\lim_{n\\to\\infty}n^2\\left(\\frac1n\\sum_{k=1}^ne^{k/n}-(e-1)-\\frac{e-1}{2n}\\right)", "(e-1)/12", "Use the second Euler-Maclaurin endpoint correction."],
+    ["burst-boss3-lim-005", "\\lim_{n\\to\\infty}n^2\\left(\\frac1n\\sum_{k=1}^n\\log\\left(1+\\frac{k}{n}\\right)-(2\\log2-1)-\\frac{\\log2}{2n}\\right)", "-1/24", "Use the second Euler-Maclaurin endpoint correction."],
+    ["burst-boss3-lim-006", "\\lim_{n\\to\\infty}n^2\\left(\\frac1n\\sum_{k=1}^n\\frac{1}{1+(k/n)^2}-\\frac\\pi4+\\frac{1}{4n}\\right)", "-1/24", "Use f'(1)-f'(0) for the Riemann-sum correction."],
+    ["burst-boss3-lim-007", "\\lim_{x\\to0}\\frac{\\int_0^x\\frac{e^{t^2}-\\cos t}{t^2}\\,dt-\\frac32x}{x^3}", "11/72", "Expand the integrand before integrating."],
+    ["burst-boss3-lim-008", "\\lim_{x\\to0}\\frac{\\frac1{x^3}\\int_0^x\\sin(t^2)\\,dt-\\frac13}{x^4}", "-1/42", "Integrate the sine series term by term."],
+    ["burst-boss3-lim-009", "\\lim_{x\\to0}\\frac{\\log(\\sin x/x)+x^2/6}{x^4}", "-1/180", "Use the logarithmic sine expansion."],
+    ["burst-boss3-lim-010", "\\lim_{x\\to0}\\frac{\\log(\\cosh x)-x^2/2}{x^4}", "-1/12", "Expand log(cosh x)."],
+    ["burst-boss3-lim-011", "\\lim_{x\\to0}\\frac{\\sqrt{1+x}-1-x/2+x^2/8}{x^3}", "1/16", "Use the binomial series."],
+    ["burst-boss3-lim-012", "\\lim_{x\\to0}\\left(\\frac{x}{\\sin x}\\right)^{1/x^2}", "exp(1/6)", "Take logs and use x/sin x=1+x^2/6+..."]
+  ].forEach(([id, prompt, answer, solution]) => numeric(id, "limits", prompt, answer, bossTags([]), solution, 6, 480));
+
+  [
+    ["burst-boss3-ser-001", "\\sum_{n=1}^{\\infty}\\frac{n^6}{2^n}", "9366", "Differentiate the geometric series six times."],
+    ["burst-boss3-ser-002", "\\sum_{n=1}^{\\infty}\\frac{n^7}{2^n}", "94586", "Differentiate the geometric series seven times."],
+    ["burst-boss3-ser-003", "\\sum_{n=1}^{\\infty}\\frac{n^5}{4^n}", "4108/243", "Use the Eulerian polynomial for sum n^5 r^n at r=1/4."],
+    ["burst-boss3-ser-004", "\\sum_{n=1}^{\\infty}\\frac{n^6}{3^n}", "1491/4", "Use the Eulerian polynomial for sum n^6 r^n at r=1/3."],
+    ["burst-boss3-ser-005", "H_n=\\sum_{k=1}^n\\frac1k.\\ \\text{Find }\\sum_{n=1}^{\\infty}\\frac{H_n}{n2^n}", "pi^2/12", "Integrate the generating function for H_n."],
+    ["burst-boss3-ser-006", "\\text{Coefficient of }x^{20}\\text{ in }(\\log(1+x))^2", "275295799/775975200", "Use [x^n](log(1+x))^2=(-1)^n2H_{n-1}/n."],
+    ["burst-boss3-ser-007", "\\text{Coefficient of }x^{18}\\text{ in }\\frac{e^{2x}}{(1-x)^3}", "111165691613818/97692469875", "Convolve e^{2x} with the binomial series."],
+    ["burst-boss3-ser-008", "\\text{Coefficient of }x^{16}\\text{ in }\\frac{e^{2x}}{(1-x)^4}", "1094053506107/212837625", "Convolve e^{2x} with the binomial series."]
+  ].forEach(([id, prompt, answer, solution]) => numeric(id, "series", prompt, answer, bossTags([]), solution, 6, 420));
+
+  [
+    ["burst-boss3-param-001", "F(a)=\\int_0^\\infty e^{-ax}\\sin(3x)\\,dx.\\ \\text{Find }F''(a)", "18*(a^2-3)/(a^2+9)^3", "a", "Differentiate 3/(a^2+9) twice."],
+    ["burst-boss3-param-002", "G(a)=\\int_0^\\infty x^2e^{-ax}\\cos x\\,dx.\\ \\text{Find }G(a)", "2*(a^3-3*a)/(a^2+1)^3", "a", "Take the real part of 2!/(a-i)^3."],
+    ["burst-boss3-param-003", "H(a)=\\int_0^\\infty x^3e^{-ax}\\sin x\\,dx.\\ \\text{Find }H(a)", "24*a*(a^2-1)/(a^2+1)^4", "a", "Take the imaginary part of 3!/(a-i)^4."],
+    ["burst-boss3-param-004", "B(a)=\\int_0^1x^a(\\log x)^4\\,dx.\\ \\text{Find }B(a)", "24/(a+1)^5", "a", "Differentiate 1/(a+1) four times."],
+    ["burst-boss3-param-005", "C(a)=\\int_0^1x^a(\\log x)^6\\,dx.\\ \\text{Find }C(a)", "720/(a+1)^7", "a", "Differentiate 1/(a+1) six times."],
+    ["burst-boss3-param-006", "Q(a)=\\frac{d^3}{da^3}\\int_0^1\\frac{x^a-1}{\\log x}\\,dx.\\ \\text{Find }Q(a)", "2/(a+1)^3", "a", "The integral is log(a+1)."]
+  ].forEach(([id, prompt, answer, variable, solution]) => expression(id, "integrals", prompt, answer, variable, bossTags([]), solution, 6, 480));
+
+  [
+    ["burst-boss3-anti-001", "\\int x^6e^{-3x}\\,dx", "-exp(-3*x)*(x^6/3+2*x^5/3+10*x^4/9+40*x^3/27+40*x^2/27+80*x/81+80/243)", "Repeated IBP produces the descending factorial polynomial."],
+    ["burst-boss3-anti-002", "\\int x^5\\sin(2x)\\,dx", "-x^5*cos(2*x)/2+5*x^4*sin(2*x)/4+5*x^3*cos(2*x)/2-15*x^2*sin(2*x)/4-15*x*cos(2*x)/4+15*sin(2*x)/8", "Repeated IBP alternates sine and cosine."],
+    ["burst-boss3-anti-003", "\\int x^5\\cos(2x)\\,dx", "x^5*sin(2*x)/2+5*x^4*cos(2*x)/4-5*x^3*sin(2*x)/2-15*x^2*cos(2*x)/4+15*x*sin(2*x)/4+15*cos(2*x)/8", "Repeated IBP alternates sine and cosine."],
+    ["burst-boss3-anti-004", "\\int x^6\\arctan x\\,dx", "x^7*atan(x)/7-x^6/42+x^4/28-x^2/14+log(1+x^2)/14", "After parts, divide x^7 by 1+x^2."],
+    ["burst-boss3-anti-005", "\\int x^6\\log(1+x)\\,dx", "x^7*log(1+x)/7-x^7/49+x^6/42-x^5/35+x^4/28-x^3/21+x^2/14-x/7+log(1+x)/7", "After parts, divide x^7 by 1+x."],
+    ["burst-boss3-anti-006", "\\int\\frac{x^7}{1+x^2}\\,dx", "x^6/6-x^4/4+x^2/2-log(1+x^2)/2", "Divide x^7 by 1+x^2 before integrating."]
+  ].forEach(([id, prompt, answer, solution]) => antiderivative(id, prompt, answer, bossTags([]), solution, 6, 540));
+
+  [
+    ["burst-boss3-der-001", "\\left.\\frac{d^{20}}{dx^{20}}(\\log(1+x))^2\\right|_{x=0}", "863130293635276800", "Use [x^n](log(1+x))^2=(-1)^n2H_{n-1}/n."],
+    ["burst-boss3-der-002", "\\left.\\frac{d^{18}}{dx^{18}}\\frac{x^4}{(1-x)^7}\\right|_{x=0}", "248156004834017280000", "Read the x^14 coefficient of (1-x)^-7."],
+    ["burst-boss3-der-003", "\\left.\\frac{d^{20}}{dx^{20}}\\frac{x^5}{(1-x)^6}\\right|_{x=0}", "37719712734770626560000", "Read the x^15 coefficient of (1-x)^-6."],
+    ["burst-boss3-der-004", "\\left.\\frac{d^{16}}{dx^{16}}\\frac{x^3}{(1-x)^8}\\right|_{x=0}", "1621934672117760000", "Read the x^13 coefficient of (1-x)^-8."],
+    ["burst-boss3-der-005", "\\left.\\frac{d^{31}}{dx^{31}}\\left(x^7e^{-x^2}\\right)\\right|_{x=0}", "17166620433372086476800000", "Read the x^24 term of e^{-x^2}."],
+    ["burst-boss3-der-006", "\\left.\\frac{d^{30}}{dx^{30}}\\left(x^6\\cosh(x^2)\\right)\\right|_{x=0}", "553761949463615692800000", "Read the x^24 term of cosh(x^2)."],
+    ["burst-boss3-der-007", "\\left.\\frac{d^{27}}{dx^{27}}\\left(x^5\\sin(x^2)\\right)\\right|_{x=0}", "-272789137666805760000", "Read the x^22 term of sin(x^2)."],
+    ["burst-boss3-der-008", "\\left.\\frac{d^{29}}{dx^{29}}\\left(x^5\\cos(x^2)\\right)\\right|_{x=0}", "18458731648787189760000", "Read the x^24 term of cos(x^2)."]
+  ].forEach(([id, prompt, answer, solution]) => numeric(id, "derivatives", prompt, answer, bossTags([]), solution, 6, 420));
+
   window.BUZZ_PROBLEMS = (window.BUZZ_PROBLEMS || []).concat(problems);
 })();
