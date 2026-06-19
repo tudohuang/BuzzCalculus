@@ -759,7 +759,6 @@
 
   function renderHomeLaunchPad(records, mission, path, weaknesses, mistakeCount) {
     const next = path.next;
-    const coach = homeCoachLine(records, mission, path, weaknesses, mistakeCount);
     const streak = mission.dailyStreak || 0;
     const cards = [
       {
@@ -801,11 +800,9 @@
         <div class="launch-copy">
           <p class="section-label launch-eyebrow">${escapeHtml(homeGreeting())}</p>
           <h1>今天要怎麼練？</h1>
-          <p>${escapeHtml(coach)}</p>
           <div class="launch-next-pill">
             <span>主線下一格</span>
             <strong>${escapeHtml(next.short)}</strong>
-            <small>${escapeHtml(next.note)}</small>
           </div>
         </div>
         <div class="launch-mascot" aria-hidden="true">
@@ -1123,20 +1120,16 @@
           <summary>
             <span>
               <strong>更多練習</strong>
-              <small>弱點複習、題包推薦、挑戰模式、自訂題包</small>
+              <small>自訂一局、每日目標、其他模式</small>
             </span>
             ${icon("chevron-down")}
           </summary>
-          <div class="home-more-grid">
-            ${renderWeaknessStudyCard(records, weaknesses, mistakeCount)}
-            ${renderRecommendedPacksCard(records, weaknesses)}
-            ${renderChallengeModesCard()}
-            ${renderLocalGoalCard(records)}
+          <div class="home-more-body">
             <section class="control-band practice-control home-compact-control">
               <div class="home-control-head">
                 <div>
-                  <p class="section-label">自訂</p>
-                  <h3>指定題包</h3>
+                  <p class="section-label">自訂一局</p>
+                  <h3>挑題目自己練</h3>
                 </div>
                 <div class="home-selected-pill">${packAvailabilityText(selectedPack)}</div>
               </div>
@@ -1146,12 +1139,10 @@
                   <p class="section-label">模式</p>
                   ${renderModePicker()}
                 </div>
-
                 <div class="control-section">
                   <p class="section-label">範圍</p>
                   ${renderTopicPicker()}
                 </div>
-
               </div>
 
               <div class="pack-picker home-pack compact-pack">
@@ -1161,19 +1152,43 @@
                     ${renderPackOptions()}
                   </select>
                 </label>
-                <p class="panel-note">${escapeHtml((TRAINING_PACKS[selectedPack] || TRAINING_PACKS.all).note || "依技巧篩選題目。")}</p>
               </div>
+
+              <div class="control-section">
+                <p class="section-label">每日目標</p>
+                <div class="goal-options" role="group" aria-label="每日目標">
+                  ${[5, 10, 12, 20].map((value) => `<button class="tag-button ${dailyGoal(records) === value ? "is-active" : ""}" data-action="set-daily-goal" data-goal="${value}">${value} 題</button>`).join("")}
+                </div>
+              </div>
+
               <div class="action-row">
-                <button class="button ghost custom-start" data-action="start">${icon("play")}自訂開始</button>
+                <button class="button custom-start" data-action="start">${icon("play")}自訂開始</button>
               </div>
             </section>
+
+            <details class="extra-challenge-drawer home-extra-modes">
+              <summary>其他模式（${EXPERIMENTAL_MODE_KEYS.filter((key) => key !== "exam").length}）</summary>
+              <div class="challenge-mode-grid">
+                ${EXPERIMENTAL_MODE_KEYS.filter((key) => key !== "exam")
+                  .map((key) => {
+                    const mode = MODES[key];
+                    return `
+                      <button class="challenge-mode" data-action="start-mode" data-mode-key="${escapeAttr(key)}">
+                        <strong>${escapeHtml(mode.label)}</strong>
+                        <span>${escapeHtml(modeDescription(key))}</span>
+                      </button>`;
+                  })
+                  .join("")}
+              </div>
+            </details>
+
+            <nav class="home-more-links" aria-label="其他頁面">
+              <button data-action="open-library">${icon("search")}題庫</button>
+              <button data-action="open-boss-lab">${icon("trophy")}Boss 專區</button>
+              <button data-action="open-proofs">${icon("file-pen-line")}證明題</button>
+              <button data-action="open-settings">${icon("settings")}資料與設定</button>
+            </nav>
           </div>
-          <nav class="home-more-links" aria-label="其他頁面">
-            <button data-action="open-library">${icon("search")}題庫</button>
-            <button data-action="open-boss-lab">${icon("trophy")}Boss 專區</button>
-            <button data-action="open-proofs">${icon("file-pen-line")}證明題</button>
-            <button data-action="open-settings">${icon("settings")}資料與設定</button>
-          </nav>
         </details>
       </section>
     `;
