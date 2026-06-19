@@ -295,9 +295,6 @@
     advanced: "進階",
     boss: "東大"
   };
-  const CORE_CHALLENGE_MODES = ["warmup", "exam", "boss_rush"];
-  const EXTRA_CHALLENGE_MODES = ["integral_bee", "no_hint", "accuracy", "survival", "cooldown"];
-  const CHALLENGE_MODES = [...CORE_CHALLENGE_MODES, ...EXTRA_CHALLENGE_MODES];
   const SIMPLE_MODE_KEYS = ["quick", "topic", "practice"];
   const EXPERIMENTAL_MODE_KEYS = ["exam", "boss_rush", "brutal", "boss", "integral_bee", "no_hint", "accuracy", "survival", "warmup", "cooldown"];
   const DEFAULT_DIFFICULTY_CAP = 2;
@@ -312,7 +309,7 @@
   const LIBRARY_PAGE_SIZE = 72;
   const TAG_LABELS = {
     "todai-burst": "Todai Burst",
-    "true-boss": "背脊發涼",
+    "true-boss": "終極挑戰",
     "multi-ibp": "multi-IBP",
     "trig-power": "Trig power",
     "recurrence-formula": "Recurrence",
@@ -545,186 +542,6 @@
   }
 
   function renderHome() {
-    return renderHomeV2();
-    if (MODES[selectedMode] && MODES[selectedMode].hidden) selectedMode = "quick";
-    if (!TRAINING_PACKS[selectedPack]) selectedPack = "all";
-    const records = loadRecords();
-    const best = records.bestScore || 0;
-    const attempts = records.attempts || 0;
-    const streak = records.bestStreak || 0;
-    const mistakeCount = Object.keys(records.mistakes || {}).length;
-    const historyCount = (records.history || []).length;
-    const rank = computeRank(records);
-    const accuracy = overallAccuracy(records);
-    const today = new Date().toISOString().slice(0, 10);
-    const daily = records.daily && records.daily[today];
-    const mode = MODES[selectedMode] || MODES.quick;
-    const topic = TOPICS[selectedTopic] || TOPICS.all;
-    const pack = TRAINING_PACKS[selectedPack] || TRAINING_PACKS.all;
-    return `
-      <main class="screen">
-        <div class="dashboard-grid">
-          <section class="dashboard-main">
-            <div class="dashboard-header">
-              <div>
-                <h2>訓練工作台</h2>
-              </div>
-              <div class="session-summary" aria-label="目前設定">
-                <span>本局</span>
-                <strong>${mode.count} 題</strong>
-                <small>${topic.label} · ${pack.label} · ${ANSWER_MODES[selectedAnswerMode].label}</small>
-              </div>
-            </div>
-
-            <div class="metric-grid" aria-label="本機訓練概況">
-              <div class="metric-card">
-                <span>段位</span>
-                <strong>${rank}</strong>
-                <small>${records.totalAnswered || 0} 題累積</small>
-              </div>
-              <div class="metric-card">
-                <span>總正確率</span>
-                <strong>${accuracy}%</strong>
-                <small>${records.totalCorrect || 0}/${records.totalAnswered || 0}</small>
-              </div>
-              <div class="metric-card">
-                <span>最高分</span>
-                <strong>${best}</strong>
-                <small>${attempts} 局計分</small>
-              </div>
-              <div class="metric-card">
-                <span>最佳連勝</span>
-                <strong>${streak}</strong>
-                <small>${mistakeCount} 題待複習</small>
-              </div>
-            </div>
-
-            <section class="control-band session-panel">
-              <div class="panel-title-row">
-                <div>
-                  <h3>設定本局</h3>
-                </div>
-                <div class="quiet-meta">${packAvailabilityText(selectedPack)} · ${mode.practice ? "練習" : "計分"}</div>
-              </div>
-
-              <div class="control-section">
-                <p class="section-label">模式</p>
-                <div class="segmented modes" role="tablist" aria-label="模式選擇">
-                  ${Object.entries(MODES)
-                    .filter(([, mode]) => !mode.hidden)
-                    .map(
-                      ([key, mode]) => `
-                        <button class="segment ${selectedMode === key ? "is-active" : ""}" data-mode="${key}">
-                          <strong>${mode.label}</strong>
-                        </button>`
-                    )
-                    .join("")}
-                </div>
-              </div>
-
-              <div class="control-section">
-                <p class="section-label">題型</p>
-                <div class="segmented" role="tablist" aria-label="題型選擇">
-                  ${Object.entries(TOPICS)
-                    .filter(([key]) => key !== "all" || selectedMode !== "topic")
-                    .map(
-                      ([key, topic]) => `
-                        <button class="segment ${selectedTopic === key ? "is-active" : ""}" data-topic="${key}">
-                          <strong>${topic.label}</strong>
-                          <span>${topicCountText(key)}</span>
-                        </button>`
-                    )
-                    .join("")}
-                </div>
-              </div>
-
-              <div class="control-section">
-                <p class="section-label">答題方式</p>
-                <div class="segmented answer-modes" role="tablist" aria-label="答題方式選擇">
-                  ${Object.entries(ANSWER_MODES)
-                    .map(
-                      ([key, mode]) => `
-                        <button class="segment ${selectedAnswerMode === key ? "is-active" : ""}" data-answer-mode="${key}">
-                          <strong>${mode.label}</strong>
-                        </button>`
-                    )
-                    .join("")}
-                </div>
-              </div>
-
-              <div class="control-section">
-                <p class="section-label">題包 / 技巧</p>
-                <div class="pack-picker">
-                  <label for="pack-select">
-                    <span>目前題包</span>
-                    <select id="pack-select" data-pack-select aria-label="題包選擇">
-                      ${renderPackOptions()}
-                    </select>
-                  </label>
-                </div>
-              </div>
-
-              <div class="action-row">
-                <button class="button" data-action="start">${icon("play")}開始挑戰</button>
-                <button class="button ghost" data-action="start-daily">${icon("calendar")}今日題組</button>
-              </div>
-            </section>
-
-          </section>
-
-          <aside class="dashboard-side">
-            <section class="panel daily-panel">
-              <div class="panel-title-row">
-                <div>
-                  <h3>每日挑戰</h3>
-                </div>
-                <span class="status-dot ${daily ? "is-done" : ""}"></span>
-              </div>
-              ${daily ? `<div class="quiet-meta">${daily.score} 分 · ${daily.correct}/${daily.total} · ${daily.accuracy}%</div>` : ""}
-              <button class="button secondary" data-action="start-daily">${icon("calendar")}開始今日題組</button>
-            </section>
-
-            <section class="panel">
-              <div class="panel-title-row">
-                <h3>弱點摘要</h3>
-                <button class="link-button" data-action="open-mistakes">查看錯題</button>
-              </div>
-              ${renderHomeWeaknessSnapshot(records)}
-            </section>
-
-            <section class="panel">
-              <h3>題庫進度</h3>
-              <div class="topic-meter">
-                ${Object.entries(TOPICS)
-                  .filter(([key]) => key !== "all")
-                  .map(([key, topic]) => renderTopicMeter(key, topic))
-                  .join("")}
-              </div>
-            </section>
-
-            <section class="panel">
-              <h3>本機訓練</h3>
-              <div class="mini-stats">
-                <div><span>錯題</span><strong>${mistakeCount}</strong></div>
-                <div><span>歷史</span><strong>${historyCount}</strong></div>
-                <div><span>練習</span><strong>${records.practiceRuns || 0}</strong></div>
-              </div>
-              <div class="stack-actions">
-                <button class="button secondary" data-action="open-mistakes">${icon("book")}錯題本</button>
-                <button class="button secondary" data-action="open-history">${icon("clock")}作答歷史</button>
-                <button class="button ghost" data-action="export-records">${icon("download")}匯出紀錄</button>
-                <label class="button ghost import-label" for="import-records">${icon("upload")}匯入紀錄</label>
-                <input class="sr-only" id="import-records" type="file" accept="application/json" />
-              </div>
-            </section>
-
-          </aside>
-        </div>
-      </main>
-    `;
-  }
-
-  function renderHomeV2() {
     if (MODES[selectedMode] && MODES[selectedMode].hidden) selectedMode = "quick";
     if (!TRAINING_PACKS[selectedPack]) selectedPack = "all";
     const records = loadRecords();
@@ -837,16 +654,6 @@
     if (hour < 18) return "下午好，繼續";
     if (hour < 23) return "晚安，練一輪";
     return "夜深了，慢慢來";
-  }
-
-  function homeCoachLine(records, mission, path, weaknesses, mistakeCount) {
-    const cap = activeDifficultyCap(records);
-    if (!(records.totalAnswered || 0)) return "先從輕鬆暖身開始，R1-R2 都是基礎題。";
-    if (mistakeCount >= 6 && weaknesses[0]) return `錯題集中在 ${weaknesses[0].label}，先重練弱點會比硬刷更有效。`;
-    if (!mission.done && mission.completed) return "今日任務已經開打，補完它可以穩定累積熟練度。";
-    if (cap <= 2) return "現在是新手難度，想挑戰段考感可以把難度拉到 R3-R4。";
-    if (cap >= 5) return "高難度已開，會開始出現 Todai / Boss 題。";
-    return `主線下一格是 ${path.next.short}，照路線練會比亂抽更穩。`;
   }
 
   function renderHomeAnswerModeBar() {
@@ -1194,28 +1001,6 @@
     `;
   }
 
-  function renderMobileLessonPath(records, mission, weaknesses, recent30) {
-    const mistakeCount = Object.keys(records.mistakes || {}).length;
-    const weaknessLabel = weaknesses[0]?.label || "全混合";
-    const recentLabel = recent30.accuracy === null || recent30.accuracy === undefined ? `${records.totalAnswered || 0} 題` : `${recent30.accuracy}%`;
-    return `
-      <section class="mobile-lesson-path" aria-label="手機練習路線">
-        <button class="lesson-step is-primary" data-action="start-daily">
-          <span class="lesson-node">${icon("play")}</span>
-          <span><strong>每日選擇題</strong><small>${mission.target} 題 · ${mission.progress}%</small></span>
-        </button>
-        <button class="lesson-step" data-action="start-weakness" ${mistakeCount ? "" : "disabled"}>
-          <span class="lesson-node">${icon("refresh")}</span>
-          <span><strong>弱點複習</strong><small>${escapeHtml(weaknessLabel)} · ${mistakeCount} 題</small></span>
-        </button>
-        <button class="lesson-step" data-action="start-choice">
-          <span class="lesson-node">${icon("check")}</span>
-          <span><strong>選擇題快練</strong><small>四選一 · ${recentLabel}</small></span>
-        </button>
-      </section>
-    `;
-  }
-
   function renderFirstRunNotice() {
     return `
       <section class="first-run-panel">
@@ -1230,287 +1015,6 @@
             .join("")}
           <button class="button ghost" data-action="dismiss-onboarding">${icon("check")}稍後</button>
         </div>
-      </section>
-    `;
-  }
-
-  function renderPerformanceCard(records, accuracy, recent30, recent7) {
-    const trend = performanceTrend(accuracy, recent30.accuracy);
-    return `
-      <section class="summary-card">
-        <p class="section-label">最近表現</p>
-        <div class="summary-stat">
-          <span>總正確率</span>
-          <strong>${accuracy}%</strong>
-          <small>${records.totalCorrect || 0}/${records.totalAnswered || 0}</small>
-        </div>
-        <div class="summary-pair">
-          <div><span>最近 30 題</span><strong>${formatPercent(recent30.accuracy, "—")}</strong></div>
-          <div><span>最近 7 天</span><strong>${formatPercent(recent7.accuracy, "—")}</strong></div>
-        </div>
-        <div class="speed-row">
-          <div><span>均速</span><strong>${formatSeconds(recent30.avgSeconds)}</strong></div>
-          <div><span>最快</span><strong>${formatSeconds(recent30.fastestSeconds)}</strong></div>
-        </div>
-        ${trend ? `<p class="performance-note">${trend}</p>` : ""}
-      </section>
-    `;
-  }
-
-  function renderRankProgressCard(records, rank, accuracy) {
-    return `
-      <section class="summary-card">
-        <p class="section-label">段位進度</p>
-        <div class="rank-head">
-          <strong>${escapeHtml(rank.current)}</strong>
-          <span>${rank.next ? `Next ${escapeHtml(rank.next.name)}` : "Max"}</span>
-        </div>
-        <div class="meter-track"><div class="meter-fill" style="width:${rank.progress}%"></div></div>
-        <div class="rank-grid">
-          <div><span>完成題數</span><strong>${records.totalAnswered || 0}</strong></div>
-          <div><span>正確率</span><strong>${accuracy}%</strong></div>
-        </div>
-        <p class="panel-note">${rank.next ? `差 ${rank.remaining} 題` : "最高段位"}</p>
-      </section>
-    `;
-  }
-
-  function renderWeaknessStudyCard(records, weaknesses, mistakeCount) {
-    return `
-      <section class="study-card weakness-study">
-        <div class="panel-title-row">
-          <div>
-            <p class="section-label">弱點複習</p>
-            <h3>弱點排序</h3>
-          </div>
-          <span class="study-count">${mistakeCount} 題</span>
-        </div>
-        ${weaknesses.length ? renderWeaknessList(weaknesses) : renderLockedWeaknessState()}
-        ${weaknesses.length ? `<p class="panel-note">下一組：${escapeHtml(weaknesses[0].label)}</p>` : ""}
-        <div class="action-row">
-          <button class="button secondary" data-action="start-weakness" ${mistakeCount ? "" : "disabled"}>${icon("refresh")}重練弱點</button>
-          <button class="button ghost" data-action="open-mistakes">${icon("book")}查看錯題</button>
-        </div>
-      </section>
-    `;
-  }
-
-  function renderRecommendedPacksCard(records, weaknesses) {
-    const packs = recommendedPacks(records, weaknesses);
-    return `
-      <section class="study-card recommend-card">
-        <div class="panel-title-row">
-          <div>
-            <p class="section-label">題包推薦</p>
-            <h3>下一組練這些</h3>
-          </div>
-          <span class="study-count">${packs.length}</span>
-        </div>
-        <div class="recommend-list">
-          ${packs
-            .map((item) => {
-              const pack = TRAINING_PACKS[item.key];
-              const available = item.available || difficultyScopedCount(activeDifficultyCap(records), "all", item.key);
-              return `
-                <button class="recommend-pack" data-action="train-pack" data-pack="${escapeAttr(item.key)}">
-                  <strong>${escapeHtml(pack.label)}</strong>
-                  <span>${escapeHtml(pack.note)} · ${escapeHtml(item.reason)} · 目前 ${available} 題</span>
-                </button>`;
-            })
-            .join("")}
-        </div>
-      </section>
-    `;
-  }
-
-  function renderChallengeModesCard() {
-    const featured = [
-      {
-        title: "大考模式",
-        note: modeDescription("exam"),
-        action: "start-mode",
-        modeKey: "exam"
-      },
-      {
-        title: "終極挑戰",
-        note: "R6 最難題，直接用 WebWork 作答。",
-        action: "start-god-run"
-      }
-    ];
-    const experimental = EXPERIMENTAL_MODE_KEYS.filter((key) => key !== "exam");
-    return `
-      <section class="study-card challenge-card">
-        <div class="panel-title-row">
-          <div>
-            <p class="section-label">挑戰</p>
-            <h3>挑戰模式</h3>
-          </div>
-          <span class="study-count">${featured.length}</span>
-        </div>
-        <p class="panel-note">想要考試感就選大考模式，想挑戰最難的就選終極挑戰。</p>
-        <div class="challenge-mode-grid">
-          ${featured.map((item) => {
-            return `
-              <button class="challenge-mode" data-action="${escapeAttr(item.action)}" ${item.modeKey ? `data-mode-key="${escapeAttr(item.modeKey)}"` : ""}>
-                <strong>${escapeHtml(item.title)}</strong>
-                <span>${escapeHtml(item.note)}</span>
-              </button>`;
-          }).join("")}
-        </div>
-        <details class="extra-challenge-drawer">
-          <summary>實驗模式（${experimental.length}）</summary>
-          <div class="challenge-mode-grid">
-            ${experimental.map((key) => {
-              const mode = MODES[key];
-              return `
-                <button class="challenge-mode" data-action="start-mode" data-mode-key="${escapeAttr(key)}">
-                  <strong>${escapeHtml(mode.label)}</strong>
-                  <span>${escapeHtml(modeDescription(key))}</span>
-                </button>`;
-            }).join("")}
-          </div>
-        </details>
-      </section>
-    `;
-  }
-
-  function renderLocalGoalCard(records) {
-    const current = dailyGoal(records);
-    const week = weeklyMissionInfo(records);
-    return `
-      <section class="study-card goal-card">
-        <div class="panel-title-row">
-          <div>
-            <p class="section-label">本機目標</p>
-            <h3>每日 ${current} 題</h3>
-          </div>
-          <span class="study-count">${week.completed}/${week.target}</span>
-        </div>
-        <div class="goal-options" role="group" aria-label="每日目標">
-          ${[5, 10, 12, 20].map((value) => `<button class="tag-button ${current === value ? "is-active" : ""}" data-action="set-daily-goal" data-goal="${value}">${value} 題</button>`).join("")}
-        </div>
-        <div class="meter-track"><div class="meter-fill" style="width:${week.progress}%"></div></div>
-        <p class="panel-note">週任務：${week.completed}/${week.target} 題，${week.daysDone} 天有練。</p>
-      </section>
-    `;
-  }
-
-  function renderProblemLibraryCard(records) {
-    const favoriteCount = Object.keys(records.favorites || {}).length;
-    const reportCount = Object.keys(records.problemReports || {}).length;
-    const bossCount = problems.filter((problem) => problemRank(problem) >= 5).length;
-    return `
-      <section class="study-card library-card">
-        <div class="panel-title-row">
-          <div>
-            <p class="section-label">題庫</p>
-            <h3>搜尋與收藏</h3>
-          </div>
-          <span class="study-count">${problems.length} 題</span>
-        </div>
-        <div class="mini-stats">
-          <div><span>收藏</span><strong>${favoriteCount}</strong></div>
-          <div><span>Boss</span><strong>${bossCount}</strong></div>
-          <div><span>回報</span><strong>${reportCount}</strong></div>
-        </div>
-        <div class="action-row">
-          <button class="button secondary" data-action="open-library">${icon("search")}瀏覽題庫</button>
-          <button class="button ghost" data-action="open-boss-lab">${icon("trophy")}Boss 專區</button>
-        </div>
-      </section>
-    `;
-  }
-
-  function renderSettingsHomeCard(records) {
-    return `
-      <section class="study-card settings-home-card">
-        <div class="panel-title-row">
-          <div>
-            <p class="section-label">設定</p>
-            <h3>本機資料</h3>
-          </div>
-          <span class="study-count">${(records.history || []).length}</span>
-        </div>
-        <div class="mini-stats">
-          <div><span>歷史</span><strong>${(records.history || []).length}</strong></div>
-          <div><span>錯題</span><strong>${Object.keys(records.mistakes || {}).length}</strong></div>
-          <div><span>收藏</span><strong>${Object.keys(records.favorites || {}).length}</strong></div>
-        </div>
-        <div class="action-row">
-          <button class="button secondary" data-action="open-settings">${icon("settings")}資料與設定</button>
-        </div>
-      </section>
-    `;
-  }
-
-  function renderProofHomeCard(records) {
-    const stats = proofStats(records);
-    return `
-      <section class="study-card proof-home-card">
-        <div class="panel-title-row">
-          <div>
-            <p class="section-label">Proof Lab</p>
-            <h3>證明題庫</h3>
-          </div>
-          <span class="study-count">${stats.total} 題</span>
-        </div>
-        <div class="proof-mini-stats">
-          <div><span>看懂</span><strong>${stats.understood}</strong></div>
-          <div><span>部分會</span><strong>${stats.partial}</strong></div>
-          <div><span>卡住</span><strong>${stats.stuck}</strong></div>
-        </div>
-        <p class="panel-note">不限時、不機器判分。看參考證明後自己標記掌握程度。</p>
-        <div class="action-row">
-          <button class="button secondary" data-action="open-proofs">${icon("file-pen-line")}進入 Proof Lab</button>
-        </div>
-      </section>
-    `;
-  }
-
-  function renderBrandFocusCard(records, weaknesses) {
-    const focus = focusTrainingInfo(records, weaknesses[0]);
-    const subtopic = weaknesses[1]?.label || "Rationalization";
-    return `
-      <section class="study-card brand-focus-card">
-        <div>
-          <p class="section-label">Buzz Focus</p>
-          <h3>本週主題：${escapeHtml(focus.label)}</h3>
-        </div>
-        <div class="focus-route">
-          <div><span>錯誤</span><strong>${focus.errorCount} 次</strong></div>
-          <div><span>進度</span><strong>${focus.completed}/${focus.total}</strong></div>
-          <div><span>目標</span><strong>10 題</strong></div>
-        </div>
-      </section>
-    `;
-  }
-
-  function renderLockedWeaknessState() {
-    return `
-      <div class="locked-state">
-        <strong>尚無弱點資料</strong>
-        <span>完成一局後顯示</span>
-      </div>
-    `;
-  }
-
-  function renderTodayStatusCard(records, mission, daily) {
-    return `
-      <section class="study-card today-study">
-        <div class="panel-title-row">
-          <div>
-            <p class="section-label">今日進度</p>
-            <h3>${mission.done ? "已完成" : "尚未完成"}</h3>
-          </div>
-          <span class="status-dot ${mission.done ? "is-done" : ""}"></span>
-        </div>
-        <div class="today-target">
-          <span>目標：完成 ${mission.target} 題</span>
-          <strong>${mission.completed} / ${mission.target}</strong>
-        </div>
-        <div class="meter-track"><div class="meter-fill" style="width:${mission.progress}%"></div></div>
-        <p class="panel-note">${mission.done ? `今日最佳分數 ${daily.score}，正確率 ${daily.accuracy}%。` : `完成後可延續每日任務紀錄，目前連續完成 ${mission.dailyStreak} 天。`}</p>
-        <div class="local-data-note">本機紀錄：${records.totalAnswered || 0} 題完成，${Object.keys(records.mistakes || {}).length} 題待複習。</div>
       </section>
     `;
   }
@@ -1649,50 +1153,6 @@
           </div>
         </section>
       </main>
-    `;
-  }
-
-  function renderWeaknessChips(weaknesses) {
-    const items = weaknesses.length ? weaknesses.slice(0, 3) : [{ label: "今日題組" }, { label: "全混合" }, { label: "12 題" }];
-    return items.map((item) => `<span class="weakness-chip">${escapeHtml(item.label)}</span>`).join("");
-  }
-
-  function renderWeaknessList(weaknesses) {
-    return `
-      <ol class="weakness-study-list">
-        ${weaknesses
-          .slice(0, 3)
-          .map((item) => `<li><strong>${escapeHtml(item.label)}</strong><span>最近錯誤 ${item.count} 次</span></li>`)
-          .join("")}
-      </ol>
-    `;
-  }
-
-  function renderHomeWeaknessSnapshot(records) {
-    const analysis = buildWeaknessAnalysis(records);
-    if (!analysis.topics.length && !analysis.tags.length) {
-      return `
-        <div class="empty-state compact-empty">尚無錯題</div>
-      `;
-    }
-    return `
-      <div class="focus-list">
-        ${analysis.topics.slice(0, 3).map((item) => renderFocusItem(item.label, item.count, item.max)).join("")}
-      </div>
-      <div class="weakness-tags compact-tags">
-        ${analysis.tags.slice(0, 4).map((item) => `<button class="tag-button" data-action="train-tag" data-tag="${escapeAttr(item.key)}">${escapeHtml(item.label)} · ${item.count}</button>`).join("")}
-      </div>
-    `;
-  }
-
-  function renderFocusItem(label, count, max) {
-    const pct = max ? Math.max(8, Math.round((count / max) * 100)) : 0;
-    return `
-      <div class="focus-item">
-        <span>${escapeHtml(label)}</span>
-        <strong>${count}</strong>
-        <div class="meter-track"><div class="meter-fill" style="width:${pct}%"></div></div>
-      </div>
     `;
   }
 
@@ -5189,10 +4649,6 @@
     return "Rookie";
   }
 
-  function overallAccuracy(records) {
-    return records.totalAnswered ? Math.round(((records.totalCorrect || 0) / records.totalAnswered) * 100) : 0;
-  }
-
   function dailyMissionInfo(records, daily) {
     const target = dailyGoal(records);
     const completed = daily ? Math.min(target, Number(daily.total || target)) : 0;
@@ -5248,23 +4704,6 @@
     };
   }
 
-  function recentDaysStats(records, days) {
-    const cutoff = Date.now() - days * 24 * 60 * 60 * 1000;
-    let total = 0;
-    let correct = 0;
-    (records.history || []).forEach((item) => {
-      const time = Date.parse(item.finishedAt || "");
-      if (!Number.isFinite(time) || time < cutoff) return;
-      total += Number(item.total || 0);
-      correct += Number(item.correct || 0);
-    });
-    return {
-      total,
-      correct,
-      accuracy: total ? Math.round((correct / total) * 100) : null
-    };
-  }
-
   function speedInsightText(avgTime, recentAvg) {
     if (!avgTime) return "";
     if (!recentAvg) return `平均 ${avgTime}s / 題。累積更多紀錄後會比較最近 30 題。`;
@@ -5274,45 +4713,8 @@
     return `平均 ${avgTime}s / 題，比最近 30 題慢 ${diff}s。`;
   }
 
-  function formatPercent(value, emptyLabel = "尚無資料") {
-    return value === null || value === undefined ? emptyLabel : `${value}%`;
-  }
-
   function formatSeconds(value) {
     return value === null || value === undefined ? "—" : `${value}s`;
-  }
-
-  function performanceTrend(overall, recent) {
-    if (recent === null || recent === undefined) return "";
-    const diff = recent - overall;
-    if (diff >= 8) return `最近 30 題 +${diff}%`;
-    if (diff <= -8) return `最近 30 題 ${diff}%`;
-    return "";
-  }
-
-  function rankProgress(records) {
-    const tiers = [
-      { name: "Rookie", total: 0 },
-      { name: "Builder", total: 35 },
-      { name: "Expert", total: 90 },
-      { name: "Master", total: 180 },
-      { name: "Grandmaster", total: 300 },
-      { name: "Legend", total: 500 }
-    ];
-    const current = computeRank(records);
-    const index = Math.max(0, tiers.findIndex((tier) => tier.name === current));
-    const currentTier = tiers[index] || tiers[0];
-    const next = tiers[index + 1] || null;
-    const total = records.totalAnswered || 0;
-    if (!next) return { current, next: null, remaining: 0, progress: 100 };
-    const span = Math.max(1, next.total - currentTier.total);
-    const progress = Math.max(0, Math.min(100, Math.round(((total - currentTier.total) / span) * 100)));
-    return {
-      current,
-      next,
-      remaining: Math.max(0, next.total - total),
-      progress
-    };
   }
 
   function proofStats(records) {
@@ -5402,55 +4804,6 @@
     const analysis = buildWeaknessAnalysis(records);
     const source = analysis.tags.length ? analysis.tags : analysis.topics;
     return source.slice(0, 3);
-  }
-
-  function focusTrainingInfo(records, weakness) {
-    const fallback = { key: "taylor", label: "Taylor Series", count: 0 };
-    const item = weakness || fallback;
-    const relatedProblems = problems.filter((problem) => {
-      if (problem.topic === item.key) return true;
-      return (problem.tags || []).includes(item.key);
-    });
-    const completed = relatedProblems.filter((problem) => records.problemStats?.[problem.id]?.total).length;
-    const total = relatedProblems.length || problems.length;
-    const reason = item.count
-      ? `因為最近錯誤集中在 ${item.label}。`
-      : "目前尚無錯題紀錄，先用高頻技巧建立反射。";
-    return {
-      label: item.label,
-      errorCount: item.count || 0,
-      completed,
-      total,
-      reason
-    };
-  }
-
-  function recommendedPacks(records, weaknesses) {
-    const cap = activeDifficultyCap(records);
-    const weaknessKeys = new Set((weaknesses || []).map((item) => item.key));
-    const scored = Object.entries(TRAINING_PACKS)
-      .filter(([key]) => key !== "all")
-      .map(([key, pack]) => {
-        const tags = pack.tags || [];
-        const available = difficultyScopedCount(cap, "all", key);
-        const overlap = tags.filter((tag) => weaknessKeys.has(tag)).length;
-        const done = problems.filter((problem) => matchesPack(problem, key) && records.problemStats?.[problem.id]?.total).length;
-        const total = packTotalCountText(key);
-        const completionGap = total ? 1 - done / total : 0;
-        const starterBoost = tags.includes("beginner-friendly") && !(records.totalAnswered || 0) ? 3 : 0;
-        return {
-          key,
-          available,
-          score: available ? overlap * 5 + completionGap * 1.5 + starterBoost : -1,
-          reason: overlap ? "對應近期弱點" : starterBoost ? "適合第一輪" : "補齊覆蓋"
-        };
-      })
-      .sort((a, b) => b.score - a.score);
-    const fallback = ["beginner_warmup", "technique_recognition", "substitution"]
-      .map((key) => ({ key, reason: "高頻技巧", available: difficultyScopedCount(cap, "all", key) }))
-      .filter((item) => item.available && TRAINING_PACKS[item.key]);
-    const best = scored.filter((item) => item.score > 0).slice(0, 3);
-    return (best.length ? best : fallback).filter((item) => TRAINING_PACKS[item.key]);
   }
 
   function dailyGoal(records) {
@@ -5809,18 +5162,6 @@
     const total = packTotalCountText(packKey);
     if (!current && total) return `0 / ${total} 題`;
     return `${current} / ${total} 題`;
-  }
-
-  function renderTopicMeter(key, topic) {
-    const count = problems.filter((problem) => problem.topic === key).length;
-    const pct = Math.round((count / Math.max(1, problems.length)) * 100);
-    return `
-      <div class="meter-row">
-        <span>${topic.label}</span>
-        <div class="meter-track"><div class="meter-fill" style="width:${pct}%;background:${topic.accent}"></div></div>
-        <strong>${count}</strong>
-      </div>
-    `;
   }
 
   function topicChip(problem) {
