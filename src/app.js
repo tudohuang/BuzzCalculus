@@ -169,7 +169,7 @@
 
   const TRAINING_PACKS = {
     todai_burst: { label: "Todai Burst", note: "R6 IBP / Wallis / high derivatives", tags: ["todai-burst"] },
-    nightmare_boss: { label: "背脊發涼", note: "R6 true-boss：名校數分 / MIT theory / Todai-style", tags: ["true-boss"] },
+    nightmare_boss: { label: "終極挑戰", note: "R6 最難題：名校數分 / MIT theory / Todai-style", tags: ["true-boss"] },
     all: { label: "全部技巧", note: "不限制 tags", tags: [] },
     beginner_warmup: { label: "新手暖身", note: "R1-R2 基礎題", tags: ["beginner-friendly"] },
     boss_challenge: { label: "Boss 挑戰", note: "R5-R6 防強人題", tags: ["boss-rank"] },
@@ -302,12 +302,12 @@
   const EXPERIMENTAL_MODE_KEYS = ["exam", "boss_rush", "brutal", "boss", "integral_bee", "no_hint", "accuracy", "survival", "warmup", "cooldown"];
   const DEFAULT_DIFFICULTY_CAP = 2;
   const DIFFICULTY_LEVELS = {
-    1: { label: "寶寶", note: "只抽 R1，先建立手感。", short: "R1" },
+    1: { label: "入門", note: "只抽 R1，先建立基礎。", short: "R1" },
     2: { label: "新手", note: "R1-R2，避開 Taylor 和怪題。", short: "R1-R2" },
-    3: { label: "標準", note: "R1-R3，開始進入段考基本題感。", short: "R1-R3" },
+    3: { label: "標準", note: "R1-R3，開始進入段考基本題型。", short: "R1-R3" },
     4: { label: "進階", note: "R1-R4，加入多步驟與常見陷阱。", short: "R1-R4" },
-    5: { label: "強者", note: "R1-R5，Boss 題會進一般抽題。", short: "R1-R5" },
-    6: { label: "神人", note: "R1-R6，Todai / Wallis / 特殊函數全開。", short: "R1-R6" }
+    5: { label: "高手", note: "R1-R5，Boss 題會進一般抽題。", short: "R1-R5" },
+    6: { label: "大師", note: "R1-R6，Todai / Wallis / 特殊函數全開。", short: "R1-R6" }
   };
   const LIBRARY_PAGE_SIZE = 72;
   const TAG_LABELS = {
@@ -764,15 +764,15 @@
     const cards = [
       {
         label: "第一次來",
-        title: "寶寶暖身",
-        meta: "R1-R2 · 不嚇人",
+        title: "輕鬆暖身",
+        meta: "R1-R2 · 基礎題",
         action: "start-friendly-run",
         iconName: "sparkles",
         className: "is-friendly"
       },
       {
         label: streak ? `${streak} 天連續` : "今日任務",
-        title: "每日刷一輪",
+        title: "每日一輪",
         meta: `${mission.completed}/${mission.target} 題 · ${mission.progress}%`,
         action: "start-daily",
         iconName: "calendar",
@@ -788,8 +788,8 @@
         className: "is-exam"
       },
       {
-        label: "神人",
-        title: "Todai 爆破",
+        label: "最高難度",
+        title: "東大難題",
         meta: "R6 · Wallis / IBP",
         action: "start-god-run",
         iconName: "flame",
@@ -799,7 +799,7 @@
     return `
       <section class="home-launch-pad" aria-label="今日練習入口">
         <div class="launch-copy">
-          <p class="section-label">Launch Pad</p>
+          <p class="section-label launch-eyebrow">${escapeHtml(homeGreeting())}</p>
           <h1>今天要怎麼練？</h1>
           <p>${escapeHtml(coach)}</p>
           <div class="launch-next-pill">
@@ -832,13 +832,23 @@
     `;
   }
 
+  function homeGreeting() {
+    const hour = new Date().getHours();
+    if (hour < 5) return "夜深了，慢慢來";
+    if (hour < 11) return "早安，開練吧";
+    if (hour < 14) return "午安，來幾題";
+    if (hour < 18) return "下午好，繼續";
+    if (hour < 23) return "晚安，練一輪";
+    return "夜深了，慢慢來";
+  }
+
   function homeCoachLine(records, mission, path, weaknesses, mistakeCount) {
     const cap = activeDifficultyCap(records);
-    if (!(records.totalAnswered || 0)) return "先從寶寶暖身開始，R1-R2 不會突然丟 Taylor 大砲。";
+    if (!(records.totalAnswered || 0)) return "先從輕鬆暖身開始，R1-R2 都是基礎題。";
     if (mistakeCount >= 6 && weaknesses[0]) return `錯題集中在 ${weaknesses[0].label}，先重練弱點會比硬刷更有效。`;
     if (!mission.done && mission.completed) return "今日任務已經開打，補完它可以穩定累積熟練度。";
     if (cap <= 2) return "現在是新手難度，想挑戰段考感可以把難度拉到 R3-R4。";
-    if (cap >= 5) return "高難度已開，Todai / Boss 題會開始出現，適合神人練手感。";
+    if (cap >= 5) return "高難度已開，會開始出現 Todai / Boss 題。";
     return `主線下一格是 ${path.next.short}，照路線練會比亂抽更穩。`;
   }
 
@@ -1113,7 +1123,7 @@
           <summary>
             <span>
               <strong>更多練習</strong>
-              <small>自訂題包、錯題、題庫、實驗模式</small>
+              <small>弱點複習、題包推薦、挑戰模式、自訂題包</small>
             </span>
             ${icon("chevron-down")}
           </summary>
@@ -1122,9 +1132,6 @@
             ${renderRecommendedPacksCard(records, weaknesses)}
             ${renderChallengeModesCard()}
             ${renderLocalGoalCard(records)}
-            ${renderProblemLibraryCard(records)}
-            ${renderProofHomeCard(records)}
-            ${renderSettingsHomeCard(records)}
             <section class="control-band practice-control home-compact-control">
               <div class="home-control-head">
                 <div>
@@ -1161,6 +1168,12 @@
               </div>
             </section>
           </div>
+          <nav class="home-more-links" aria-label="其他頁面">
+            <button data-action="open-library">${icon("search")}題庫</button>
+            <button data-action="open-boss-lab">${icon("trophy")}Boss 專區</button>
+            <button data-action="open-proofs">${icon("file-pen-line")}證明題</button>
+            <button data-action="open-settings">${icon("settings")}資料與設定</button>
+          </nav>
         </details>
       </section>
     `;
@@ -1192,7 +1205,7 @@
     return `
       <section class="first-run-panel">
         <div>
-          <p class="section-label">BuzzCalculus</p>
+          <p class="section-label launch-eyebrow">歡迎</p>
           <h3>微積分反射訓練</h3>
           <p>選一個起點。紀錄只會保存在本機瀏覽器。</p>
         </div>
@@ -1304,8 +1317,8 @@
         modeKey: "exam"
       },
       {
-        title: "背脊發涼",
-        note: "R6 true-boss，WebWork 直接開打。",
+        title: "終極挑戰",
+        note: "R6 最難題，直接用 WebWork 作答。",
         action: "start-god-run"
       }
     ];
@@ -1315,11 +1328,11 @@
         <div class="panel-title-row">
           <div>
             <p class="section-label">挑戰</p>
-            <h3>高壓挑戰</h3>
+            <h3>挑戰模式</h3>
           </div>
           <span class="study-count">${featured.length}</span>
         </div>
-        <p class="panel-note">一般使用者不用管模式；想考試感就按大考，想炸裂就按背脊發涼。</p>
+        <p class="panel-note">想要考試感就選大考模式，想挑戰最難的就選終極挑戰。</p>
         <div class="challenge-mode-grid">
           ${featured.map((item) => {
             return `
