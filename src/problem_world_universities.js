@@ -11,13 +11,16 @@
 
   function add(p) {
     const rank = p.rank || 3;
+    const rankTags = [];
+    if (rank >= 5) rankTags.push("boss-rank");
+    if (rank >= 6) rankTags.push("true-boss");
     problems.push({
       source: SOURCE,
       difficulty: Math.min(4, Math.ceil((rank * 4) / 6)),
       timeLimit: TIME[rank] || 120,
       tabLimit: 1,
       ...p,
-      tags: Array.from(new Set([...(p.tags || []), "world-universities", p.school].filter(Boolean)))
+      tags: Array.from(new Set([...(p.tags || []), "world-universities", p.school, ...rankTags].filter(Boolean)))
     });
   }
 
