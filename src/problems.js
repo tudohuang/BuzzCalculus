@@ -949,18 +949,6 @@ window.BUZZ_PROBLEMS = [
     solution: "把 log 展開到 1/n 項：log P_n=1/2+1/(3n)+O(1/n^2)。"
   },
   {
-    id: "td-lim-003",
-    topic: "limits",
-    difficulty: 4,
-    source: "東大",
-    prompt: "\\lim_{n\\to\\infty}n^2\\left(\\left(1+\\frac1n\\right)^n-e+\\frac{e}{2n}\\right)",
-    answerKind: "numeric",
-    answer: "11*e/24",
-    timeLimit: 110,
-    tabLimit: 1,
-    solution: "展開 n log(1+1/n)=1-1/(2n)+1/(3n^2)+...。"
-  },
-  {
     id: "td-lim-004",
     topic: "limits",
     difficulty: 4,
@@ -1132,16 +1120,4 @@ window.BUZZ_PROBLEMS = [
     tabLimit: 1,
     solution: "用 int_0^{pi/2} sin^{2n}x dx 表示雙階乘比，再交換求和。"
   },
-  {
-    id: "td-ser-004",
-    topic: "series",
-    difficulty: 4,
-    source: "東大",
-    prompt: "\\sum_{n=1}^{\\infty}\\frac{n^2}{3^n}",
-    answerKind: "numeric",
-    answer: "3/2",
-    timeLimit: 60,
-    tabLimit: 1,
-    solution: "公式 sum n^2 r^n = r(1+r)/(1-r)^3，取 r=1/3。"
-  }
 ];

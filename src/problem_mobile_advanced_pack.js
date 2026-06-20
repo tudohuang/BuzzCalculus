@@ -88,20 +88,15 @@
   });
 
   [
-    ["mob-limtrap-001", "\\lim_{x\\to 0}\\frac{\\sin x-x}{x^3}", "-1/6"],
-    ["mob-limtrap-002", "\\lim_{x\\to 0}\\frac{\\tan x-x}{x^3}", "1/3"],
     ["mob-limtrap-003", "\\lim_{x\\to 0}\\frac{1-\\cos x-x^2/2}{x^4}", "-1/24"],
     ["mob-limtrap-004", "\\lim_{x\\to 0}\\frac{\\log(1+x)-x+x^2/2}{x^3}", "1/3"],
     ["mob-limtrap-005", "\\lim_{x\\to 0}\\frac{e^x-1-x-x^2/2}{x^3}", "1/6"],
     ["mob-limtrap-006", "\\lim_{x\\to 0}\\frac{\\sqrt{1+x}-1-x/2}{x^2}", "-1/8"],
-    ["mob-limtrap-007", "\\lim_{(x,y)\\to(0,0)}\\frac{x^2y^2}{x^2+y^2}", "0"],
     ["mob-limtrap-008", "\\lim_{(x,y)\\to(0,0)}\\sqrt{x^2+y^2}\\sin\\frac{1}{\\sqrt{x^2+y^2}}", "0"]
   ].forEach(([id, prompt, answer]) => {
     numericProblem(id, "limits", 3, prompt, answer, ["limit-trap", "taylor"], `The limit is ${answer}.`, ["Use Taylor expansion or squeeze."], 70);
   });
 
-  textProblem("mob-limtrap-009", "limits", 3, "\\lim_{(x,y)\\to(0,0)}\\frac{xy}{x^2+y^2}", ["dne", "does not exist", "no limit"], "DNE", ["limit-trap", "path-test"], "Different paths give different values.", ["Try y=x and y=-x."]);
-  textProblem("mob-limtrap-010", "limits", 3, "\\lim_{(x,y)\\to(0,0)}\\frac{x^2-y^2}{x^2+y^2}", ["dne", "does not exist", "no limit"], "DNE", ["limit-trap", "path-test"], "The axes give 1 and -1.", ["Try y=0 and x=0."]);
 
   [
     ["mob-lm-001", "\\max xy\\ \\text{ subject to }x+y=10\\ (x,y>0)", "25"],
@@ -119,15 +114,8 @@
   });
 
   [
-    ["mob-conv-001", "\\sum_{n=1}^{\\infty}\\frac1n", ["divergent", "diverges"], "divergent"],
-    ["mob-conv-002", "\\sum_{n=1}^{\\infty}\\frac1{n^2}", ["convergent", "converges"], "convergent"],
     ["mob-conv-003", "\\sum_{n=1}^{\\infty}\\frac{(-1)^n}{n}", ["conditional", "conditionally convergent"], "conditional"],
-    ["mob-conv-004", "\\sum_{n=1}^{\\infty}\\frac{(-1)^n}{n^2}", ["absolute", "absolutely convergent"], "absolute"],
-    ["mob-conv-005", "\\sum_{n=1}^{\\infty}\\frac{n!}{n^n}", ["convergent", "converges"], "convergent"],
     ["mob-conv-006", "\\sum_{n=1}^{\\infty}\\frac{2^n}{n!}", ["convergent", "converges"], "convergent"],
-    ["mob-conv-007", "\\sum_{n=1}^{\\infty}\\frac{n}{n^2+1}", ["divergent", "diverges"], "divergent"],
-    ["mob-conv-008", "\\sum_{n=2}^{\\infty}\\frac1{n\\log n}", ["divergent", "diverges"], "divergent"],
-    ["mob-conv-009", "\\sum_{n=2}^{\\infty}\\frac1{n(\\log n)^2}", ["convergent", "converges"], "convergent"],
     ["mob-conv-010", "\\sum_{n=1}^{\\infty}\\frac{n+1}{3n+2}", ["divergent", "diverges"], "divergent"]
   ].forEach(([id, prompt, answers, canonical]) => {
     textProblem(id, "series", 3, prompt, answers, canonical, ["convergence-test", "series-test"], `${canonical}.`, ["Check p-series, ratio, comparison, or nth term test."]);
@@ -141,7 +129,6 @@
     ["mob-beta-005", "B(1/2,1/2)", "pi"],
     ["mob-beta-006", "B(1/2,1)", "2"],
     ["mob-beta-007", "B(3/2,1/2)", "pi/2"],
-    ["mob-beta-008", "\\int_0^1 \\sqrt{x(1-x)}\\,dx", "pi/8"],
     ["mob-beta-009", "B(3,3)", "1/30"],
     ["mob-beta-010", "B(4,1)", "1/4"]
   ].forEach(([id, prompt, answer]) => {
@@ -164,7 +151,6 @@
   });
 
   [
-    ["mob-wallis-001", "\\int_0^{\\pi/2}\\sin^2x\\,dx", "pi/4"],
     ["mob-wallis-002", "\\int_0^{\\pi/2}\\sin^3x\\,dx", "2/3"],
     ["mob-wallis-003", "\\int_0^{\\pi/2}\\sin^4x\\,dx", "3*pi/16"],
     ["mob-wallis-004", "\\int_0^{\\pi/2}\\sin^5x\\,dx", "8/15"],

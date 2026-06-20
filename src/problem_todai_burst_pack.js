@@ -198,7 +198,6 @@
     ["burst-boss-lim-004", "\\lim_{x\\to0}\\frac{e^{\\sin x}-1-x-x^2/2}{x^4}", "-1/8", ["taylor", "composite-taylor", "hard-limit"], "Expand sin x first, then exponentiate to fourth order.", 6],
     ["burst-boss-lim-005", "\\lim_{x\\to0}\\frac{\\cos(\\sin x)-\\cos x}{x^4}", "1/6", ["taylor", "composite-taylor", "hard-limit"], "Compare both cosine expansions through x^4.", 6],
     ["burst-boss-lim-006", "\\lim_{x\\to0}\\frac{\\arctan x-x+x^3/3-x^5/5}{x^7}", "-1/7", ["taylor", "inverse-trig", "hard-limit"], "Use the alternating arctan series.", 6],
-    ["burst-boss-lim-007", "\\lim_{x\\to0}\\frac{(1+x)^{1/x}-e}{x}", "-e/2", ["asymptotic-expansion", "exponential", "hard-limit"], "Write it as exp(log(1+x)/x) and expand.", 6],
     ["burst-boss-lim-008", "\\lim_{x\\to\\infty}x\\left(\\left(1+\\frac{1}{x}\\right)^x-e\\right)", "-e/2", ["asymptotic-expansion", "exponential", "hard-limit"], "Use x log(1+1/x)=1-1/(2x)+...", 6]
   ].forEach(([id, prompt, answer, tags, solution, rank]) => numeric(id, "limits", prompt, answer, bossTags(tags), solution, rank, rank >= 6 ? 300 : 240));
 

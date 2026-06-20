@@ -50,7 +50,6 @@
     ["rel-hard-lim-002", "\\lim_{x\\to0}\\frac{\\tan x-x-x^3/3-2x^5/15}{x^7}", "17/315", "Use the x^7 term of tan x."],
     ["rel-hard-lim-003", "\\lim_{x\\to0}\\frac{\\log(1+x)-x+x^2/2-x^3/3+x^4/4}{x^5}", "1/5", "Use the x^5 term of log(1+x)."],
     ["rel-hard-lim-004", "\\lim_{x\\to0}\\frac{e^x+e^{-x}-2-x^2-x^4/12}{x^6}", "1/360", "Use the even expansion of e^x+e^{-x}."],
-    ["rel-hard-lim-005", "\\lim_{x\\to0}\\frac{(1+x)^{1/x}-e}{x}", "-e/2", "Expand exp(log(1+x)/x)."],
     ["rel-hard-lim-007", "\\lim_{(x,y)\\to(0,0)}\\frac{1-\\cos(xy)}{x^2y^2}", "1/2", "Use 1-cos u ~ u^2/2."],
     ["rel-hard-lim-008", "\\lim_{(x,y)\\to(0,0)}\\frac{e^{x^2+y^2}-1}{x^2+y^2}", "1", "Use e^u-1 ~ u."],
     ["rel-hard-lim-009", "\\lim_{x\\to0}\\frac{\\arctan x-x+x^3/3}{x^5}", "1/5", "Use arctan x=x-x^3/3+x^5/5-..."],
@@ -64,38 +63,28 @@
   [
     ["rel-hard-ser-001", "\\text{Radius of convergence of }\\sum_{n=0}^{\\infty}\\frac{(2n)!}{(n!)^2}x^n", "1/4", ["power-series", "ratio-test"], "The central binomial coefficient grows like 4^n."],
     ["rel-hard-ser-002", "\\text{Radius of convergence of }\\sum_{n=0}^{\\infty}\\frac{(n!)^2}{(2n)!}x^n", "4", ["power-series", "ratio-test"], "This is the reciprocal central binomial scale."],
-    ["rel-hard-ser-003", "\\text{coefficient of }x^8\\text{ in }\\cos(x^2)", "1/24", ["taylor", "coefficient"], "Use cos u=1-u^2/2+u^4/24-... with u=x^2."],
     ["rel-hard-ser-004", "\\text{coefficient of }x^{10}\\text{ in }\\sin(x^2)", "1/120", ["taylor", "coefficient"], "Use sin u=u-u^3/6+u^5/120-... with u=x^2."],
     ["rel-hard-ser-005", "\\sum_{n=1}^{\\infty}\\frac{1}{n(n+1)(n+2)(n+3)}", "1/18", ["telescoping", "series-boss"], "Write it as a telescoping difference of triple products."],
-    ["rel-hard-ser-006", "\\sum_{n=1}^{\\infty}\\frac{n^2}{2^n}", "6", ["generating-function", "series-boss"], "Use the standard generating function for sum n^2 r^n."],
-    ["rel-hard-ser-007", "\\sum_{n=1}^{\\infty}\\frac{(-1)^{n+1}}{n^2}", "pi^2/12", ["alternating", "series-boss"], "Use eta(2)=(1-2^{1-2})zeta(2)."],
     ["rel-hard-ser-008", "\\sum_{n=1}^{\\infty}\\frac{1}{4n^2-1}", "1/2", ["telescoping", "partial-fraction"], "Use 1/(4n^2-1)=1/2(1/(2n-1)-1/(2n+1))."],
     ["rel-hard-ser-012", "\\text{Radius of convergence of }\\sum_{n=1}^{\\infty}\\frac{n^n}{n!}x^n", "1/e", ["power-series", "ratio-test"], "The nth root of n^n/n! tends to e."]
   ].forEach(([id, prompt, answer, tags, solution]) => {
     numeric(id, "series", prompt, answer, [...tags, "boss-rank"], solution, 5, 100);
   });
 
-  text("rel-hard-ser-009", "series", "\\sum_{n=1}^{\\infty}\\frac{n!}{n^n}", ["convergent", "converges"], "convergent", ["root-test", "series-boss"], "The nth root behaves like 1/e.", 5);
   text("rel-hard-ser-010", "series", "\\sum_{n=1}^{\\infty}\\frac{n^n}{n!}", ["divergent", "diverges"], "divergent", ["term-test", "series-boss"], "The terms do not tend to 0.", 5);
   text("rel-hard-ser-011", "series", "\\sum_{n=1}^{\\infty}\\frac{(-1)^n}{\\sqrt n}\\text{ at the endpoint}", ["conditional", "conditionally convergent", "conditional convergence"], "conditional", ["endpoint-analysis", "alternating"], "Alternating test gives convergence; p=1/2 gives no absolute convergence.", 5);
 
   [
     ["rel-hard-int-001", "\\int_0^{\\infty}x^5e^{-2x}\\,dx", "15/8", ["gamma-function", "improper-integral"], "Use Gamma(6)/2^6."],
     ["rel-hard-int-002", "\\int_0^{\\infty}x^{3/2}e^{-4x}\\,dx", "3*sqrt(pi)/128", ["gamma-function", "improper-integral"], "This is Gamma(5/2)/4^{5/2}."],
-    ["rel-hard-int-003", "\\int_0^1x^2\\log x\\,dx", "-1/9", ["parameter-integral", "improper-integral"], "Use int_0^1 x^a log x dx=-1/(a+1)^2."],
     ["rel-hard-int-004", "\\int_0^1x^3(\\log x)^2\\,dx", "1/32", ["parameter-integral", "gamma-function"], "Use int_0^1 x^a(log x)^2 dx=2/(a+1)^3."],
     ["rel-hard-int-005", "\\int_0^{\\pi/2}\\sin^8x\\,dx", "35*pi/256", ["wallis", "special-functions"], "Use Wallis reduction."],
-    ["rel-hard-int-006", "\\int_0^{\\pi/2}\\sin^7x\\,dx", "16/35", ["wallis", "special-functions"], "Use the odd Wallis product."],
     ["rel-hard-int-007", "\\int_0^{\\pi/2}\\sin^4x\\cos^2x\\,dx", "pi/32", ["beta-function", "wallis"], "Convert to one half of a beta integral."],
     ["rel-hard-int-008", "\\int_0^{\\infty}\\frac{e^{-3x}-e^{-11x}}{x}\\,dx", "log(11/3)", ["frullani", "improper-integral"], "Frullani gives log(11/3)."],
     ["rel-hard-int-009", "\\int_0^{\\infty}\\frac{\\cos(4x)-\\cos(10x)}{x}\\,dx", "log(5/2)", ["frullani", "cosine-integral"], "Use the cosine Frullani identity."],
-    ["rel-hard-int-010", "\\int_0^{\\infty}\\left(\\frac{\\sin x}{x}\\right)^2\\,dx", "pi/2", ["dirichlet-integral", "improper-integral"], "This is the classic squared sinc integral."],
     ["rel-hard-int-011", "\\int_0^{\\infty}\\frac{x}{x^4+1}\\,dx", "pi/4", ["improper-integral", "substitution"], "Let u=x^2."],
     ["rel-hard-int-012", "\\int_0^{\\infty}\\frac{dx}{x^4+1}", "pi/(2*sqrt(2))", ["improper-integral", "residue"], "The standard quartic integral equals pi/(2sqrt2)."],
-    ["rel-hard-int-013", "\\int_0^{\\infty}\\frac{\\log x}{1+x^2}\\,dx", "0", ["improper-integral", "symmetry"], "Use x -> 1/x symmetry."],
-    ["rel-hard-int-014", "\\int_0^1\\frac{\\log x}{1+x}\\,dx", "-1*pi^2/12", ["parameter-integral", "series-boss"], "Expand 1/(1+x) and integrate termwise."],
     ["rel-hard-int-015", "\\int_0^1x^{-1/2}\\log x\\,dx", "-4", ["parameter-integral", "improper-integral"], "Use int_0^1 x^{a-1} log x dx=-1/a^2."],
-    ["rel-hard-int-016", "\\int_0^1\\frac{x^2}{1+x^3}\\,dx", "log(2)/3", ["substitution", "log"], "Let u=1+x^3."],
     ["rel-hard-int-017", "\\int_0^{\\pi/2}(\\log(\\sin x)+\\log(\\cos x))\\,dx", "-pi*log(2)", ["kings-property", "improper-integral"], "Both log sine and log cosine integrals equal -pi log2 /2."],
     ["rel-hard-int-018", "\\int_0^{\\infty}\\frac{dx}{(x^2+4)^2}", "pi/32", ["improper-integral", "trig-substitution"], "Use int_0^infty dx/(x^2+a^2)^2=pi/(4a^3)."]
   ].forEach(([id, prompt, answer, tags, solution]) => {
