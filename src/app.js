@@ -170,6 +170,7 @@
   const TRAINING_PACKS = {
     todai_burst: { label: "Todai Burst", note: "R6 IBP / Wallis / high derivatives", tags: ["todai-burst"] },
     nightmare_boss: { label: "終極挑戰", note: "R6 最難題：名校數分 / MIT theory / Todai-style", tags: ["true-boss"] },
+    world_universities: { label: "世界名校", note: "MIT / Cambridge / Putnam 等，易到爆難 100 題", tags: ["world-universities"] },
     all: { label: "全部技巧", note: "不限制 tags", tags: [] },
     beginner_warmup: { label: "新手暖身", note: "R1-R2 基礎題", tags: ["beginner-friendly"] },
     boss_challenge: { label: "Boss 挑戰", note: "R5-R6 防強人題", tags: ["boss-rank"] },
@@ -207,7 +208,7 @@
   };
 
   const PACK_GROUPS = [
-    { label: "Todai", keys: ["todai_burst", "nightmare_boss"] },
+    { label: "Todai", keys: ["todai_burst", "nightmare_boss", "world_universities"] },
     { label: "常用", keys: ["all", "beginner_warmup", "boss_challenge", "exam_style", "exam_depth", "mobile_sprint", "technique_recognition", "multivariable", "substitution", "integration_by_parts", "series_test"] },
     { label: "積分技巧", keys: ["partial_fraction", "trig_substitution", "frullani", "ode_style", "kings_property", "double_integral", "multi_integral_advanced"] },
     { label: "微分 / 應用", keys: ["chain", "lagrange_multiplier", "nabla_vector", "parametric_polar", "applications", "total_differential", "hessian", "wronskian", "jacobian_chain"] },
