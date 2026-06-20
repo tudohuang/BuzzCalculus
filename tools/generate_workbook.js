@@ -17,7 +17,8 @@ const PROBLEM_MODULES = [
   "../src/problem_exam_depth_pack.js",
   "../src/problem_todai_burst_pack.js",
   "../src/problem_difficulty_calibration.js",
-  "../src/problem_world_universities.js"
+  "../src/problem_world_universities.js",
+  "../src/problem_competition_pack.js"
 ];
 
 global.window = {};
