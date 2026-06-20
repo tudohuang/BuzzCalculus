@@ -67,7 +67,6 @@
     ["exam-lim-001", "\\lim_{x\\to0}\\frac{\\sin(3x)-3x+\\frac{9}{2}x^3}{x^5}", "81/40", ["taylor", "trig-limit"], "Expand sin(3x) through the x^5 term."],
     ["exam-lim-002", "\\lim_{x\\to0}\\frac{\\log(1+2x)-2x+2x^2}{x^3}", "8/3", ["taylor", "log"], "Use log(1+u)=u-u^2/2+u^3/3+... with u=2x."],
     ["exam-lim-003", "\\lim_{x\\to0}\\frac{e^x-\\cos x-\\sin x}{x^2}", "1", ["taylor", "exponential", "trig-limit"], "The constant and linear terms cancel; the x^2 coefficient is 1."],
-    ["exam-lim-004", "\\lim_{x\\to0}\\frac{\\tan x-x}{x^3}", "1/3", ["taylor", "trig-limit"], "tan x=x+x^3/3+..."],
     ["exam-lim-005", "\\lim_{x\\to0}\\frac{1-\\cos(2x)}{x^2}", "2", ["trig-limit"], "1-cos u is asymptotic to u^2/2."],
     ["exam-lim-006", "\\lim_{x\\to0}\\frac{\\sqrt{1+4x}-1-2x}{x^2}", "-2", ["taylor", "radical"], "sqrt(1+4x)=1+2x-2x^2+..."],
     ["exam-lim-007", "\\lim_{x\\to\\infty}x^2\\left(\\sqrt{1+\\frac{3}{x}}-1-\\frac{3}{2x}\\right)", "-9/8", ["taylor", "infinity-limit"], "Apply sqrt(1+u)=1+u/2-u^2/8+... with u=3/x."],
@@ -76,25 +75,18 @@
     ["exam-lim-010", "\\lim_{x\\to0}\\frac{\\arctan(2x)-2x}{x^3}", "-8/3", ["taylor", "inverse-trig"], "arctan u=u-u^3/3+..."],
     ["exam-lim-011", "\\lim_{x\\to0^+}x^x", "1", ["log-limit"], "Write x^x=exp(x log x), and x log x -> 0."],
     ["exam-lim-012", "\\lim_{x\\to\\infty}\\left(1+\\frac{2}{x}\\right)^{3x}", "exp(6)", ["exponential-limit"], "This is exp(3x log(1+2/x)) -> exp(6)."],
-    ["exam-lim-013", "\\lim_{x\\to0}\\left(\\frac{\\sin x}{x}\\right)^{1/x^2}", "exp(-1/6)", ["taylor", "exponential-limit"], "log(sin x/x)=-x^2/6+..."],
-    ["exam-lim-014", "\\lim_{x\\to0}\\frac{\\log(\\cos x)}{x^2}", "-1/2", ["taylor", "log", "trig-limit"], "log(cos x)=-x^2/2+..."],
     ["exam-lim-015", "\\lim_{x\\to0}\\frac{e^{\\sin x}-1}{x}", "1", ["chain-rule", "exponential-limit"], "e^{sin x}-1 is asymptotic to sin x."],
-    ["exam-lim-016", "\\lim_{x\\to0}\\frac{e^{\\sin x}-1-x}{x^2}", "1/2", ["taylor", "exponential-limit"], "e^{sin x}=1+x+x^2/2+..."],
     ["exam-lim-017", "\\lim_{x\\to0}\\frac{\\cos x-e^{-x^2/2}}{x^4}", "-1/12", ["taylor"], "Compare x^4 coefficients: 1/24 and 1/8."],
-    ["exam-lim-018", "\\lim_{x\\to0}\\frac{\\tan x-\\sin x}{x^3}", "1/2", ["taylor", "trig-limit"], "tan x-sin x has x^3 coefficient 1/3+1/6."],
     ["exam-lim-019", "\\lim_{x\\to\\infty}x\\left(\\log(x+1)-\\log x\\right)", "1", ["log-limit"], "Rewrite as x log(1+1/x)."],
     ["exam-lim-020", "\\lim_{x\\to0}\\frac{\\arcsin x-x}{x^3}", "1/6", ["taylor", "inverse-trig"], "arcsin x=x+x^3/6+..."]
   ].forEach(([id, prompt, answer, tags, solution]) => numeric(id, "limits", prompt, answer, tags, solution));
 
   [
-    ["exam-der-001", "\\frac{d}{dx}\\left(x^x\\right)", "x^x*(log(x)+1)", "x", ["log-differentiation"], "Use log differentiation: log y=x log x."],
-    ["exam-der-002", "\\frac{d}{dx}\\left(x^{\\sin x}\\right)", "x^sin(x)*(cos(x)*log(x)+sin(x)/x)", "x", ["log-differentiation", "chain-rule"], "Differentiate sin x log x in the exponent."],
     ["exam-der-003", "\\frac{d}{dx}\\left(\\frac{\\log x}{x}\\right)", "(1-log(x))/x^2", "x", ["quotient-rule", "log"], "Use quotient rule or x^{-1} log x."],
     ["exam-der-004", "\\frac{d}{dx}\\arctan\\left(\\frac{1+x}{1-x}\\right)", "1/(1+x^2)", "x", ["chain-rule", "inverse-trig"], "The derivative simplifies after combining 1+u^2."],
     ["exam-der-005", "\\frac{d}{dx}\\left(x^2e^{-x}\\sin x\\right)", "exp(-x)*(2*x*sin(x)-x^2*sin(x)+x^2*cos(x))", "x", ["product-rule", "exponential", "trig"], "Apply product rule across x^2, e^{-x}, and sin x."],
     ["exam-der-006", "\\frac{d}{dx}\\log\\left(\\sqrt{1+x^2}+x\\right)", "1/sqrt(1+x^2)", "x", ["log", "radical"], "This is the derivative of asinh x."],
     ["exam-der-007", "\\frac{d^2}{dx^2}\\left(e^{x^2}\\right)", "(2+4*x^2)*exp(x^2)", "x", ["higher-derivative", "chain-rule"], "Differentiate 2x e^{x^2}."],
-    ["exam-der-008", "\\frac{d}{dx}\\left(\\frac{\\sin x}{1+\\cos x}\\right)", "1/(1+cos(x))", "x", ["quotient-rule", "trig"], "Quotient rule reduces the numerator to 1+cos x."],
     ["exam-der-009", "\\frac{d}{dx}\\left(\\frac{\\cos x}{1+\\sin x}\\right)", "-1/(1+sin(x))", "x", ["quotient-rule", "trig"], "The numerator becomes -(1+sin x)."],
     ["exam-der-010", "\\frac{d}{dx}\\left(x\\log(1+x^2)\\right)", "log(1+x^2)+2*x^2/(1+x^2)", "x", ["product-rule", "log"], "Product rule plus chain rule."],
     ["exam-der-011", "\\frac{d}{dx}\\left(\\frac{(x^2+1)^3}{x-1}\\right)", "(x^2+1)^2*(6*x*(x-1)-(x^2+1))/(x-1)^2", "x", ["quotient-rule", "chain-rule"], "Factor (x^2+1)^2 after quotient rule."],
@@ -115,13 +107,9 @@
   [
     ["exam-int-001", "\\int \\frac{x}{(1+x^2)^2}\\,dx", "-1/(2*(1+x^2))", ["substitution", "rational"], "Let u=1+x^2."],
     ["exam-int-002", "\\int \\frac{x^3}{1+x^2}\\,dx", "x^2/2-log(1+x^2)/2", ["algebra", "rational"], "Divide x^3 by 1+x^2 as x - x/(1+x^2)."],
-    ["exam-int-003", "\\int x^2e^x\\,dx", "exp(x)*(x^2-2*x+2)", ["integration-by-parts", "exponential"], "Use integration by parts twice."],
     ["exam-int-004", "\\int x\\log x\\,dx", "x^2*log(x)/2-x^2/4", ["integration-by-parts", "log"], "Let u=log x and dv=x dx."],
     ["exam-int-005", "\\int \\frac{\\log x}{x}\\,dx", "log(x)^2/2", ["substitution", "log"], "Let u=log x."],
-    ["exam-int-006", "\\int \\sin^3x\\,dx", "-cos(x)+cos(x)^3/3", ["trig-integral"], "Write sin^3 x=(1-cos^2 x) sin x."],
     ["exam-int-007", "\\int \\sec^2x\\tan x\\,dx", "tan(x)^2/2", ["trig-integral", "substitution"], "Let u=tan x."],
-    ["exam-int-008", "\\int \\frac{1}{x^2+4}\\,dx", "atan(x/2)/2", ["inverse-trig"], "Use the arctangent form with a=2."],
-    ["exam-int-009", "\\int \\frac{1}{x^2-1}\\,dx", "log(abs((x-1)/(x+1)))/2", ["partial-fraction"], "Decompose 1/(x^2-1)."],
     ["exam-int-010", "\\int \\frac{\\sqrt{x}}{1+x^{3/2}}\\,dx", "2*log(1+x^(3/2))/3", ["substitution", "radical"], "Let u=1+x^{3/2}."],
     ["exam-int-011", "\\int \\frac{x}{\\sqrt{4-x^2}}\\,dx", "-sqrt(4-x^2)", ["substitution", "radical"], "Let u=4-x^2."],
     ["exam-int-012", "\\int e^{2x}\\sin x\\,dx", "exp(2*x)*(2*sin(x)-cos(x))/5", ["integration-by-parts", "exponential", "trig"], "Use the standard exponential-trig formula."],
@@ -137,12 +125,9 @@
 
   [
     ["exam-int-021", "\\int_0^1\\frac{x}{1+x^2}\\,dx", "log(2)/2", ["definite-integral", "substitution"], "Let u=1+x^2."],
-    ["exam-int-022", "\\int_0^1\\frac{x^2}{1+x^3}\\,dx", "log(2)/3", ["definite-integral", "substitution"], "Let u=1+x^3."],
-    ["exam-int-023", "\\int_0^{\\pi/2}\\sin^2x\\,dx", "pi/4", ["definite-integral", "trig"], "Use the average value of sin^2 on [0,pi/2]."],
     ["exam-int-024", "\\int_0^{\\pi/2}\\frac{\\sin x}{1+\\cos x}\\,dx", "log(2)", ["definite-integral", "substitution", "trig"], "Let u=1+cos x."],
     ["exam-int-025", "\\int_0^1\\log x\\,dx", "-1", ["definite-integral", "improper-integral"], "Integrate x log x - x and take the limit at 0."],
     ["exam-int-026", "\\int_0^\\infty e^{-2x}\\,dx", "1/2", ["definite-integral", "improper-integral"], "The exponential tail gives 1/2."],
-    ["exam-int-027", "\\int_0^1\\frac{1}{1+x^2}\\,dx", "pi/4", ["definite-integral", "inverse-trig"], "This is arctan x from 0 to 1."],
     ["exam-int-028", "\\int_0^1 x\\log(1+x^2)\\,dx", "log(2)-1/2", ["definite-integral", "substitution", "log"], "Let u=1+x^2 and integrate log u."],
     ["exam-int-029", "\\int_0^\\pi x\\sin x\\,dx", "pi", ["definite-integral", "integration-by-parts"], "Integration by parts leaves pi."],
     ["exam-int-030", "\\int_0^1(1-x)^5\\,dx", "1/6", ["definite-integral"], "Use u=1-x or the beta integral."]
@@ -152,26 +137,18 @@
     ["exam-ser-001", "\\text{收斂半徑： }\\sum_{n=1}^{\\infty}\\frac{n x^n}{3^n}", "3", ["power-series", "radius"], "The dominant ratio is |x|/3."],
     ["exam-ser-002", "\\text{收斂半徑： }\\sum_{n=1}^{\\infty}\\frac{n!}{n^n}x^n", "e", ["power-series", "radius", "root-test"], "Use (n!/n^n)^{1/n}->e^{-1}."],
     ["exam-ser-003", "\\text{收斂半徑： }\\sum_{n=1}^{\\infty}\\frac{(x-2)^n}{n}", "1", ["power-series", "radius"], "The coefficient 1/n has nth root 1."],
-    ["exam-ser-004", "\\sum_{n=1}^{\\infty}\\frac{1}{n(n+1)}", "1", ["telescoping-series"], "Use 1/(n(n+1))=1/n-1/(n+1)."],
-    ["exam-ser-005", "\\sum_{n=1}^{\\infty}\\frac{n}{2^n}", "2", ["power-series", "sum-series"], "Use sum n r^n=r/(1-r)^2 with r=1/2."],
-    ["exam-ser-006", "\\sum_{n=1}^{\\infty}\\frac{n^2}{2^n}", "6", ["power-series", "sum-series"], "Use sum n^2 r^n=r(1+r)/(1-r)^3."],
-    ["exam-ser-007", "\\sum_{n=0}^{\\infty}\\frac{(-1)^n}{(2n)!}", "cos(1)", ["taylor", "sum-series"], "This is the Taylor series for cos 1."],
     ["exam-ser-008", "\\sum_{n=0}^{\\infty}\\frac{1}{(2n+1)!}", "(exp(1)-exp(-1))/2", ["taylor", "sum-series"], "This is sinh 1."],
     ["exam-ser-009", "\\text{求 }e^{2x}\\text{ 的 }x^5\\text{ 係數}", "4/15", ["taylor", "coefficient"], "The coefficient is 2^5/5!."],
     ["exam-ser-010", "\\text{求 }\\sin(x^2)\\text{ 的 }x^6\\text{ 係數}", "-1/6", ["taylor", "coefficient"], "Use sin z=z-z^3/6+... with z=x^2."],
     ["exam-ser-011", "\\text{求 }\\log(1+x)\\text{ 的 }x^4\\text{ 係數}", "-1/4", ["taylor", "coefficient"], "The x^n coefficient is (-1)^{n+1}/n."],
-    ["exam-ser-012", "\\sum_{n=0}^{\\infty}\\left(\\frac{1}{3}\\right)^n", "3/2", ["geometric-series"], "Geometric sum 1/(1-1/3)."],
     ["exam-ser-013", "\\sum_{n=1}^{\\infty}\\frac{n(n+1)}{2^n}", "8", ["power-series", "sum-series"], "This is sum n^2/2^n plus sum n/2^n."],
     ["exam-ser-014", "\\text{收斂半徑： }\\sum_{n=1}^{\\infty}\\frac{4^n x^n}{\\sqrt{n+1}}", "1/4", ["power-series", "radius", "root-test"], "The nth root behaves like 4."],
-    ["exam-ser-015", "\\sum_{n=1}^{\\infty}\\frac{(-1)^{n+1}}{n}", "log(2)", ["alternating-series", "sum-series"], "This is the Taylor value log(1+1)."],
-    ["exam-ser-016", "\\sum_{n=1}^{\\infty}\\frac{1}{n^2}", "pi^2/6", ["p-series", "sum-series"], "Euler's Basel sum."],
     ["exam-ser-017", "\\sum_{n=0}^{\\infty}\\frac{2^n}{n!}", "exp(2)", ["taylor", "sum-series"], "This is e^2."],
     ["exam-ser-018", "\\text{求 }(1+x)^7\\text{ 的 }x^3\\text{ 係數}", "35", ["binomial", "coefficient"], "Choose 3 factors of x from 7."],
     ["exam-ser-019", "\\text{求 }\\frac{1}{1-2x}\\text{ 的 }x^4\\text{ 係數}", "16", ["geometric-series", "coefficient"], "The coefficient is 2^4."],
     ["exam-ser-020", "\\sum_{n=1}^{\\infty}\\frac{n}{3^n}", "3/4", ["power-series", "sum-series"], "Use r/(1-r)^2 with r=1/3."]
   ].forEach(([id, prompt, answer, tags, solution]) => numeric(id, "series", prompt, answer, tags, solution));
 
-  expression("exam-multi-001", "derivatives", "\\frac{\\partial}{\\partial x}\\left(x^2y+\\sin(xy)\\right)", "2*x*y+y*cos(x*y)", ["x", "y"], ["multivariable", "partial-derivative"], "Treat y as a constant.");
   expression("exam-multi-002", "derivatives", "\\frac{\\partial^2}{\\partial x\\partial y}\\left(x^2y^3+e^{xy}\\right)", "6*x*y^2+(1+x*y)*exp(x*y)", ["x", "y"], ["multivariable", "higher-derivative"], "Differentiate first with respect to y, then x.");
   numeric("exam-multi-003", "derivatives", "\\text{若 }f(x,y)=x^2+y^2,\\ \\text{求 }|\\nabla f(1,2)|^2", "20", ["multivariable", "gradient"], "The gradient is (2,4), whose squared norm is 20.");
   numeric("exam-multi-004", "derivatives", "\\text{求 }f(x,y)=x^3+y^3-3xy\\text{ 在 }(1,1)\\text{ 的 Hessian determinant}", "27", ["multivariable", "hessian"], "The Hessian is [[6,-3],[-3,6]].");

@@ -31,20 +31,6 @@
       solution: "有理化後為 3x/(sqrt(x^2+3x)+x)，上下同除以 x 得 3/(sqrt(1+3/x)+1)，極限為 3/2。"
     },
     {
-      id: "lim-023",
-      topic: "limits",
-      difficulty: 2,
-      source: "Buzz original",
-      prompt: "\\lim_{x\\to0}\\frac{e^{2x}-1-2x}{x^2}",
-      answerKind: "numeric",
-      answer: "2",
-      timeLimit: 50,
-      tabLimit: 1,
-      tags: ["taylor", "exponential"],
-      hints: ["展開 e^{2x} 到二次項。", "e^{2x}=1+2x+2x^2+O(x^3)。", "一次項會被扣掉。"],
-      solution: "e^{2x}=1+2x+2x^2+O(x^3)，分子為 2x^2+O(x^3)，所以極限為 2。"
-    },
-    {
       id: "lim-024",
       topic: "limits",
       difficulty: 2,
@@ -428,49 +414,6 @@
       solution: "令 u=sin x，積分變成 int_0^1 u^3 du = 1/4。"
     },
     {
-      id: "ser-021",
-      topic: "series",
-      difficulty: 2,
-      source: "Buzz original",
-      prompt: "\\sum_{n=1}^{\\infty}\\frac{1}{n(n+1)}",
-      answerKind: "numeric",
-      answer: "1",
-      timeLimit: 55,
-      tabLimit: 1,
-      tags: ["telescoping"],
-      hints: ["做部分分式。", "1/(n(n+1))=1/n-1/(n+1)。", "級數會望遠鏡相消。"],
-      solution: "部分分式後相消，部分和為 1-1/(N+1)，極限為 1。"
-    },
-    {
-      id: "ser-022",
-      topic: "series",
-      difficulty: 2,
-      source: "Buzz original",
-      prompt: "\\sum_{n=1}^{\\infty}\\frac{n}{2^n}",
-      answerKind: "numeric",
-      answer: "2",
-      timeLimit: 55,
-      tabLimit: 1,
-      tags: ["power-series", "geometric-derivative"],
-      hints: ["使用公式 sum n r^n。", "公式為 r/(1-r)^2。", "代 r=1/2。"],
-      solution: "sum n r^n = r/(1-r)^2，代 r=1/2 得 2。"
-    },
-    {
-      id: "ser-023",
-      topic: "series",
-      difficulty: 2,
-      source: "Buzz original",
-      prompt: "\\sum_{n=1}^{\\infty}\\frac{(-1)^{n+1}}{n}",
-      answerKind: "text",
-      answers: ["conditionally converges", "conditional", "條件收斂"],
-      canonical: "條件收斂",
-      timeLimit: 55,
-      tabLimit: 1,
-      tags: ["alternating-series", "conditional-convergence"],
-      hints: ["這是交錯調和級數。", "交錯級數判別可得收斂。", "絕對值後是調和級數，會發散。"],
-      solution: "交錯調和級數收斂，但絕對值級數 sum 1/n 發散，因此條件收斂。"
-    },
-    {
       id: "ser-024",
       topic: "series",
       difficulty: 2,
@@ -486,35 +429,6 @@
       solution: "由積分判別，int_2^infty dx/(x log x)=infty，所以級數發散。"
     },
     {
-      id: "ser-025",
-      topic: "series",
-      difficulty: 3,
-      source: "Buzz original",
-      prompt: "\\sum_{n=1}^{\\infty}\\frac{n!}{n^n}",
-      answerKind: "text",
-      answers: ["converges", "convergent", "收斂"],
-      canonical: "收斂",
-      timeLimit: 70,
-      tabLimit: 1,
-      tags: ["ratio-test"],
-      hints: ["使用比值判別。", "計算 a_{n+1}/a_n。", "(n/(n+1))^n 會趨近 e^{-1}。"],
-      solution: "比值為 (n/(n+1))^n，極限為 e^{-1}<1，因此收斂。"
-    },
-    {
-      id: "ser-026",
-      topic: "series",
-      difficulty: 2,
-      source: "Buzz original",
-      prompt: "\\text{Radius of convergence of }\\sum_{n=1}^{\\infty}\\frac{n^2x^n}{3^n}",
-      answerKind: "numeric",
-      answer: "3",
-      timeLimit: 60,
-      tabLimit: 1,
-      tags: ["power-series", "radius"],
-      hints: ["看係數大約像 n^2/3^n。", "n^2 不影響指數級半徑。", "可用根值判別。"],
-      solution: "根值判別給 |x|/3<1，因此收斂半徑為 3。"
-    },
-    {
       id: "ser-027",
       topic: "series",
       difficulty: 2,
@@ -527,35 +441,6 @@
       tags: ["taylor", "coefficient"],
       hints: ["e^{2x}=sum (2x)^n/n!。", "x^4 項來自 n=4。", "係數是 2^4/4!。"],
       solution: "係數為 2^4/4! = 16/24 = 2/3。"
-    },
-    {
-      id: "ser-028",
-      topic: "series",
-      difficulty: 1,
-      source: "Buzz original",
-      prompt: "\\sum_{n=1}^{\\infty}\\frac{1}{n^2}",
-      answerKind: "text",
-      answers: ["converges", "convergent", "收斂"],
-      canonical: "收斂",
-      timeLimit: 45,
-      tabLimit: 1,
-      tags: ["p-series"],
-      hints: ["這是 p 級數。", "p=2。", "p>1 時收斂。"],
-      solution: "p 級數 sum 1/n^p 在 p>1 時收斂，因此此級數收斂。"
-    },
-    {
-      id: "ser-029",
-      topic: "series",
-      difficulty: 2,
-      source: "Buzz original",
-      prompt: "\\sum_{n=1}^{\\infty}\\frac{3^n}{n!}",
-      answerKind: "numeric",
-      answer: "exp(3)-1",
-      timeLimit: 55,
-      tabLimit: 1,
-      tags: ["exponential-series"],
-      hints: ["回想 e^x 的級數。", "e^3=sum_{n=0}^infty 3^n/n!。", "題目從 n=1 開始。"],
-      solution: "e^3 的級數含 n=0 項 1，所以原級數為 e^3-1。"
     },
     {
       id: "ser-030",

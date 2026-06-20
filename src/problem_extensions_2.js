@@ -101,20 +101,6 @@
       solution: "After rationalizing, the expression is 4/(sqrt(1+4x)+1), whose limit is 2."
     },
     {
-      id: "lim-038",
-      topic: "limits",
-      difficulty: 3,
-      source: "Buzz original",
-      prompt: "\\lim_{x\\to0}\\frac{\\sin x-x\\cos x}{x^3}",
-      answerKind: "numeric",
-      answer: "1/3",
-      timeLimit: 70,
-      tabLimit: 1,
-      tags: ["taylor", "trig-limit"],
-      hints: ["Expand sin x and x cos x.", "sin x=x-x^3/6+...", "x cos x=x-x^3/2+..."],
-      solution: "sin x-x cos x=(x-x^3/6)-(x-x^3/2)+O(x^5)=x^3/3+O(x^5)."
-    },
-    {
       id: "lim-039",
       topic: "limits",
       difficulty: 3,
@@ -372,20 +358,6 @@
       solution: "Integral is (1/2)int_0^1(1-y)^2dy=1/6."
     },
     {
-      id: "int-037",
-      topic: "integrals",
-      difficulty: 3,
-      source: "Buzz original",
-      prompt: "\\int x e^{x^2}\\,dx",
-      answerKind: "antiderivative",
-      answer: "exp(x^2)/2",
-      timeLimit: 50,
-      tabLimit: 1,
-      tags: ["substitution"],
-      hints: ["Let u=x^2.", "du=2x dx.", "A factor 1/2 remains."],
-      solution: "With u=x^2, the antiderivative is e^{x^2}/2."
-    },
-    {
       id: "int-038",
       topic: "integrals",
       difficulty: 3,
@@ -456,21 +428,6 @@
       tags: ["term-test"],
       hints: ["Check the nth term limit.", "(n/(n+1))^n tends to e^{-1}.", "Terms do not go to 0."],
       solution: "The terms tend to e^{-1}, not 0, so the series diverges."
-    },
-    {
-      id: "ser-033",
-      topic: "series",
-      difficulty: 3,
-      source: "Buzz original",
-      prompt: "\\sum_{n=1}^{\\infty}\\frac{(-1)^n}{\\sqrt n}",
-      answerKind: "text",
-      answers: ["conditionally converges", "conditional", "條件收斂"],
-      canonical: "條件收斂",
-      timeLimit: 65,
-      tabLimit: 1,
-      tags: ["alternating-series", "conditional-convergence"],
-      hints: ["Alternating series test applies.", "1/sqrt(n) decreases to 0.", "Absolute series is a p-series with p=1/2."],
-      solution: "The alternating series converges, but the absolute series diverges, so it is conditionally convergent."
     },
     {
       id: "ser-034",
@@ -559,20 +516,6 @@
       hints: ["This behaves like sum (2x)^n/n.", "Need |2x|<1.", "Solve for |x|."],
       solution: "The radius condition is |2x|<1, so R=1/2."
     },
-    {
-      id: "ser-040",
-      topic: "series",
-      difficulty: 3,
-      source: "Buzz original",
-      prompt: "\\sum_{n=1}^{\\infty}\\frac{n^2}{2^n}",
-      answerKind: "numeric",
-      answer: "6",
-      timeLimit: 60,
-      tabLimit: 1,
-      tags: ["power-series", "geometric-derivative"],
-      hints: ["Use sum n^2 r^n.", "Formula is r(1+r)/(1-r)^3.", "Take r=1/2."],
-      solution: "For r=1/2, r(1+r)/(1-r)^3=(1/2)(3/2)/(1/2)^3=6."
-    }
   ];
 
   window.BUZZ_PROBLEMS = (window.BUZZ_PROBLEMS || []).concat(extraProblems);

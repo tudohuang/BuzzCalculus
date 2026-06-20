@@ -65,7 +65,6 @@
     ["uni-lim-001", "\\lim_{x\\to0}\\frac{\\sin x-x+\\frac{x^3}{6}}{x^5}", "1/120", ["taylor", "trig-limit"], "Keep the x^5 term of sin x."],
     ["uni-lim-002", "\\lim_{x\\to0}\\frac{\\log(1+x)-x+\\frac{x^2}{2}-\\frac{x^3}{3}}{x^4}", "-1/4", ["taylor", "log"], "Use the fourth term of log(1+x)."],
     ["uni-lim-003", "\\lim_{x\\to0}\\frac{e^{x^2}-\\cos x}{x^2}", "3/2", ["taylor", "exponential", "trig-limit"], "Compare the x^2 coefficients."],
-    ["uni-lim-004", "\\lim_{x\\to0}\\frac{\\tan x-\\sin x}{x^3}", "1/2", ["taylor", "trig-limit"], "Use tan x and sin x expansions."],
     ["uni-lim-005", "\\lim_{x\\to0}\\frac{\\sqrt{1+x}-\\sqrt{1-x}-x}{x^3}", "1/8", ["taylor", "radical"], "Odd terms remain after subtracting the two radicals."],
     ["uni-lim-006", "\\lim_{x\\to\\infty}x\\left((x+1)\\log\\left(1+\\frac{1}{x}\\right)-1\\right)", "1/2", ["log-limit", "infinity-limit"], "Put y=1/x and expand (1/y+1)log(1+y)."],
     ["uni-lim-007", "\\lim_{x\\to0}\\frac{\\sin(2x)-2\\sin x}{x^3}", "-1", ["taylor", "trig-limit"], "The cubic term is the first nonzero term."],
@@ -74,9 +73,7 @@
     ["uni-lim-010", "\\lim_{x\\to0}\\frac{\\arctan x-\\arcsin x}{x^3}", "-1/2", ["taylor", "inverse-trig"], "Compare arctan x and arcsin x cubic terms."],
     ["uni-lim-011", "\\lim_{x\\to0}\\frac{\\log(1+\\sin x)-x}{x^2}", "-1/2", ["taylor", "log", "trig-limit"], "Only the quadratic term is needed."],
     ["uni-lim-012", "\\lim_{x\\to0}\\frac{e^x-1-x}{1-\\cos x}", "1", ["taylor", "exponential-limit", "trig-limit"], "Both numerator and denominator start at x^2/2."],
-    ["uni-lim-013", "\\lim_{x\\to0}\\left(\\frac{x}{\\sin x}\\right)^{1/x^2}", "exp(1/6)", ["taylor", "exponential-limit"], "Take log first."],
     ["uni-lim-014", "\\lim_{x\\to0}\\frac{\\frac{1}{\\sqrt{1+x^2}}-\\cos x}{x^4}", "1/3", ["taylor", "radical", "trig-limit"], "Compare fourth-order coefficients."],
-    ["uni-lim-015", "\\lim_{x\\to0}\\frac{\\log(1+x+x^2)-x}{x^2}", "1/2", ["taylor", "log"], "Let u=x+x^2 and expand log(1+u)."]
   ].forEach(([id, prompt, answer, tags, solution]) => numeric(id, "limits", prompt, answer, tags, solution));
 
   [
@@ -106,8 +103,6 @@
   });
 
   [
-    ["uni-int-001", "\\int \\frac{x^5}{1+x^2}\\,dx", "x^4/4-x^2/2+log(1+x^2)/2", ["algebra", "rational"], "Divide first: x^5/(1+x^2)=x^3-x+x/(1+x^2)."],
-    ["uni-int-002", "\\int x^3e^{x^2}\\,dx", "exp(x^2)*(x^2-1)/2", ["substitution", "exponential"], "Let u=x^2."],
     ["uni-int-003", "\\int \\frac{\\log x}{x^2}\\,dx", "-(log(x)+1)/x", ["integration-by-parts", "log"], "Integrate by parts with dv=x^{-2}dx."],
     ["uni-int-004", "\\int \\frac{\\arctan x}{x^2}\\,dx", "-atan(x)/x+log(x)-log(1+x^2)/2", ["integration-by-parts", "inverse-trig"], "After parts, decompose 1/(x(1+x^2))."],
     ["uni-int-005", "\\int x\\sqrt{1+x^2}\\,dx", "(1+x^2)^(3/2)/3", ["substitution", "radical"], "Let u=1+x^2."],
@@ -125,21 +120,14 @@
     ["uni-int-014", "\\int_0^\\infty\\frac{1}{(1+x^2)^2}\\,dx", "pi/4", ["improper-integral", "inverse-trig"], "Use x=tan theta or the standard Wallis value."],
     ["uni-int-015", "\\int_0^1 x\\log(1+x)\\,dx", "1/4", ["definite-integral", "integration-by-parts"], "Integrate by parts; the remaining rational integral cancels log terms."],
     ["uni-int-016", "\\int_0^{\\pi/2}\\sin^3x\\cos^2x\\,dx", "2/15", ["definite-integral", "beta-function", "trig-integral"], "Use the beta integral."],
-    ["uni-int-017", "\\int_0^1\\frac{x^2}{\\sqrt{1-x^2}}\\,dx", "pi/4", ["definite-integral", "trig-substitution"], "Let x=sin theta."],
     ["uni-int-018", "\\int_0^\\infty xe^{-x^2}\\,dx", "1/2", ["improper-integral", "substitution"], "Let u=x^2."],
-    ["uni-int-019", "\\int_0^1 (\\log x)^2\\,dx", "2", ["improper-integral", "gamma-function"], "This equals Gamma(3)."],
     ["uni-int-020", "\\int_0^1\\frac{1}{1+x+x^2}\\,dx", "pi/(3*sqrt(3))", ["definite-integral", "inverse-trig"], "Complete the square."],
-    ["uni-int-021", "\\int_0^1\\int_0^x xy\\,dy\\,dx", "1/8", ["double-integral"], "Integrate y first."],
-    ["uni-int-022", "\\iint_{x^2+y^2\\le 1}(x^2+y^2)\\,dA", "pi/2", ["double-integral", "polar-coordinates"], "Switch to polar coordinates."],
     ["uni-int-023", "\\text{求參數曲線 }x=2\\cos t,\\ y=3\\sin t\\text{ 所圍面積}", "6*pi", ["parametric", "area"], "This is an ellipse with semiaxes 2 and 3."],
-    ["uni-int-024", "\\iiint_{x+y+z\\le 1,\\ x,y,z\\ge0}1\\,dV", "1/6", ["triple-integral"], "The tetrahedron volume is 1/6."],
     ["uni-int-025", "\\int_0^\\infty\\frac{1}{x^2+4}\\,dx", "pi/4", ["improper-integral", "inverse-trig"], "Use the arctangent antiderivative."]
   ].forEach(([id, prompt, answer, tags, solution]) => numeric(id, "integrals", prompt, answer, tags, solution, 240));
 
   [
     ["uni-ser-001", "\\sum_{n=1}^{\\infty}\\frac{n}{4^n}", "4/9", ["sum-series", "power-series"], "Use sum n r^n=r/(1-r)^2."],
-    ["uni-ser-002", "\\sum_{n=1}^{\\infty}\\frac{n^2}{3^n}", "3/2", ["sum-series", "power-series"], "Use sum n^2 r^n=r(1+r)/(1-r)^3."],
-    ["uni-ser-003", "\\sum_{n=1}^{\\infty}\\frac{1}{n(n+2)}", "3/4", ["telescoping-series"], "Use 1/(n(n+2))=(1/2)(1/n-1/(n+2))."],
     ["uni-ser-004", "\\text{求 }x^8\\text{ 在 }\\sin(x^2)\\text{ 的係數}", "0", ["taylor", "coefficient"], "sin(x^2) only has powers x^{4k+2}."],
     ["uni-ser-005", "\\text{求 }x^6\\text{ 在 }e^x\\cos x\\text{ 的係數}", "0", ["taylor", "coefficient"], "Use Re((1+i)^6/6!)."],
     ["uni-ser-006", "\\text{求 }x^5\\text{ 在 }x^2\\log(1+x)\\text{ 的係數}", "1/3", ["taylor", "coefficient"], "This is the x^3 coefficient of log(1+x)."],
@@ -147,16 +135,13 @@
     ["uni-ser-008", "\\text{收斂半徑： }\\sum_{n=1}^{\\infty}\\frac{(n!)^2}{(2n)!}x^n", "4", ["power-series", "radius", "root-test"], "Use the central binomial coefficient growth."],
     ["uni-ser-009", "\\text{收斂半徑： }\\sum_{n=1}^{\\infty}\\frac{n^n}{n!}x^n", "1/e", ["power-series", "radius", "root-test"], "Stirling gives nth root asymptotic to e."],
     ["uni-ser-010", "\\sum_{n=0}^{\\infty}\\frac{(-1)^n}{2n+1}", "pi/4", ["taylor", "alternating-series", "sum-series"], "This is arctan(1)."],
-    ["uni-ser-011", "\\sum_{n=0}^{\\infty}\\frac{1}{(2n)!}", "(exp(1)+exp(-1))/2", ["taylor", "sum-series"], "This is cosh(1)."],
     ["uni-ser-012", "\\sum_{n=0}^{\\infty}\\frac{n(n-1)}{2^n}", "4", ["sum-series", "power-series"], "Use the second derivative of the geometric series."],
     ["uni-ser-013", "\\text{求 }x^4\\text{ 在 }\\frac{1}{(1-x)^3}\\text{ 的係數}", "15", ["coefficient", "binomial"], "The coefficient is C(6,2)."],
     ["uni-ser-014", "\\text{收斂半徑： }\\sum_{n=1}^{\\infty}\\frac{3^n}{n^2}(x-1)^n", "1/3", ["power-series", "radius"], "The nth root of 3^n/n^2 is 3."],
     ["uni-ser-015", "\\sum_{n=1}^{\\infty}(-1)^{n+1}\\frac{n}{2^n}", "2/9", ["sum-series", "alternating-series"], "Use r/(1-r)^2 with r=-1/2 and adjust the sign."],
     ["uni-ser-016", "\\text{求 }x^7\\text{ 在 }\\sin x\\cos x\\text{ 的係數}", "-4/315", ["taylor", "coefficient", "trig"], "Use sin x cos x=(1/2)sin(2x)."],
-    ["uni-ser-017", "\\sum_{n=1}^{\\infty}\\frac{n^3}{2^n}", "26", ["sum-series", "power-series"], "Use the standard cubic power-series sum at r=1/2."],
     ["uni-ser-018", "\\text{求 }x^6\\text{ 在 }(1+x)^{10}\\text{ 的係數}", "210", ["coefficient", "binomial"], "This is C(10,6)."],
     ["uni-ser-019", "\\text{收斂半徑： }\\sum_{n=1}^{\\infty}\\frac{x^n}{\\sqrt n}", "1", ["power-series", "radius"], "The nth root of 1/sqrt(n) tends to 1."],
-    ["uni-ser-020", "\\sum_{n=1}^{\\infty}\\frac{1}{n^2}", "pi^2/6", ["p-series", "sum-series"], "Euler's Basel sum."]
   ].forEach(([id, prompt, answer, tags, solution]) => numeric(id, "series", prompt, answer, tags, solution, 210));
 
   window.BUZZ_PROBLEMS = (window.BUZZ_PROBLEMS || []).concat(problems);

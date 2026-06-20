@@ -144,13 +144,6 @@
 
   [
     [
-      "hc-ibp-001",
-      "\\int x^3e^{2x}\\,dx",
-      "exp(2*x)*(4*x^3-6*x^2+6*x-3)/8",
-      ["integration-by-parts", "ibp", "exponential"],
-      "Repeated integration by parts lowers the cubic one degree at a time."
-    ],
-    [
       "hc-ibp-002",
       "\\int x^2\\cos(3x)\\,dx",
       "x^2*sin(3*x)/3+2*x*cos(3*x)/9-2*sin(3*x)/27",
@@ -163,13 +156,6 @@
       "exp(x)*((x^2-1)*sin(x)+(2*x-1-x^2)*cos(x))/2",
       ["integration-by-parts", "ibp", "exponential", "trig"],
       "Use the complex shortcut or cyclic integration by parts."
-    ],
-    [
-      "hc-ibp-004",
-      "\\int (\\log x)^3\\,dx",
-      "x*(log(x)^3-3*log(x)^2+6*log(x)-6)",
-      ["integration-by-parts", "ibp", "log"],
-      "Each integration by parts lowers the power of log x."
     ],
     [
       "hc-ibp-005",
@@ -285,13 +271,6 @@
       "Use int_0^infty dx/(1+x^a)=pi/a*csc(pi/a)."
     ],
     [
-      "hc-rad-009",
-      "\\int_0^{\\infty}\\frac{x^2}{1+x^6}\\,dx",
-      "pi/6",
-      ["improper-integral", "rational", "special-functions"],
-      "Use int_0^infty x^{m-1}/(1+x^n) dx=pi/n*csc(m*pi/n)."
-    ],
-    [
       "hc-rad-010",
       "\\int_0^1 \\frac{x}{\\sqrt{1-x^4}}\\,dx",
       "pi/4",
@@ -303,20 +282,6 @@
   });
 
   [
-    [
-      "hc-der-001",
-      "\\frac{d}{dx}\\left(x^{\\sin x}\\right)",
-      "x^sin(x)*(cos(x)*log(x)+sin(x)/x)",
-      ["log-differentiation", "chain-rule"],
-      "Use log differentiation: log y=sin x log x."
-    ],
-    [
-      "hc-der-002",
-      "\\frac{d}{dx}\\left((\\sin x)^{\\cos x}\\right)",
-      "sin(x)^cos(x)*(-sin(x)*log(sin(x))+cos(x)*cot(x))",
-      ["log-differentiation", "chain-rule", "trig"],
-      "Use log differentiation: log y=cos x log(sin x)."
-    ],
     [
       "hc-der-003",
       "\\frac{d}{dx}\\left(e^{e^{2x}+x^2}\\right)",
@@ -384,32 +349,11 @@
 
   [
     [
-      "hc-spec-001",
-      "\\int_0^{\\infty}x^4e^{-3x}\\,dx",
-      "8/81",
-      ["gamma-function", "improper-integral", "special-functions"],
-      "This is Gamma(5)/3^5."
-    ],
-    [
       "hc-spec-002",
       "\\int_0^{\\infty}\\frac{\\sqrt{x}}{(1+x)^3}\\,dx",
       "pi/8",
       ["beta-function", "improper-integral", "special-functions"],
       "This is B(3/2,3/2)."
-    ],
-    [
-      "hc-spec-003",
-      "\\int_0^1x^3(1-x)^4\\,dx",
-      "1/280",
-      ["beta-function", "special-functions"],
-      "This is B(4,5)=3!4!/8!."
-    ],
-    [
-      "hc-spec-004",
-      "\\int_0^{\\pi/2}\\sin^{10}x\\,dx",
-      "63*pi/512",
-      ["wallis", "trig", "special-functions"],
-      "Use the even Wallis product."
     ],
     [
       "hc-spec-005",
@@ -431,13 +375,6 @@
       "1/96",
       ["series", "telescoping", "partial-fraction"],
       "Write it as a telescoping difference of four-factor denominators."
-    ],
-    [
-      "hc-spec-008",
-      "\\sum_{n=1}^{\\infty}\\frac{n^3}{2^n}",
-      "26",
-      ["series", "generating-function"],
-      "Use the generating function for sum n^3 r^n at r=1/2."
     ],
     [
       "hc-spec-009",

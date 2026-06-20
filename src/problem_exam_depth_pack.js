@@ -73,7 +73,6 @@
     ["depth-lim-004", "\\lim_{x\\to0}\\frac{\\cos x-\\sqrt{1-x^2}}{x^4}", "1/6", ["asymptotic-balance", "taylor", "radical", "trig-limit"], "Compare fourth-order coefficients.", 6],
     ["depth-lim-005", "\\lim_{x\\to0}\\frac{\\tan x-x}{x(1-\\cos x)}", "2/3", ["asymptotic-balance", "taylor", "trig-limit"], "Use tan x-x ~ x^3/3 and 1-cos x ~ x^2/2.", 5],
     ["depth-lim-006", "\\lim_{x\\to\\infty}x^2\\left(\\log\\left(1+\\frac{1}{x}\\right)-\\frac{1}{x+1}\\right)", "1/2", ["infinity-limit", "log-limit", "asymptotic-balance"], "Put u=1/x and compare the u^2 term.", 6],
-    ["depth-lim-007", "\\lim_{x\\to0}\\frac{(1+x)^{1/x}-e}{x}", "-exp(1)/2", ["exponential-limit", "log-limit", "nested-taylor"], "Take log first, then expand.", 6],
     ["depth-lim-008", "\\lim_{x\\to0}\\frac{\\arcsin x-\\arctan x}{x^3}", "1/2", ["inverse-trig", "taylor"], "Compare the cubic coefficients.", 5],
     ["depth-lim-009", "\\lim_{x\\to0}\\frac{\\sinh x-\\sin x}{x^3}", "1/3", ["hyperbolic", "taylor", "trig-limit"], "The cubic terms have opposite signs.", 5],
     ["depth-lim-010", "\\lim_{x\\to0}\\frac{1-\\cos x}{x\\sin x}", "1/2", ["trig-limit", "asymptotic-balance"], "Use 1-cos x ~ x^2/2 and sin x ~ x.", 5],
@@ -84,7 +83,6 @@
   [
     ["depth-der-001", "\\frac{d}{dx}\\left(x^{x^2}\\right)", "x^(x^2)*(2*x*log(x)+x)", "x", ["log-differentiation", "power-exponential"], "Differentiate x^2 log x.", 5],
     ["depth-der-002", "\\frac{d}{dx}\\left((\\sin x)^{\\cos x}\\right)", "sin(x)^cos(x)*(-sin(x)*log(sin(x))+cos(x)*cot(x))", "x", ["log-differentiation", "trig"], "Differentiate cos x log(sin x).", 6],
-    ["depth-der-003", "\\frac{d^2}{dx^2}\\left(xe^x\\right)", "exp(x)*(x+2)", "x", ["higher-derivative", "product-rule", "exponential"], "Differentiate e^x(x+1).", 5],
     ["depth-der-004", "\\frac{d^3}{dx^3}\\left(x^2\\log x\\right)", "2/x", "x", ["higher-derivative", "log"], "After two derivatives the expression is 2 log x+3.", 5],
     ["depth-der-005", "\\frac{d}{dx}\\left(\\int_{x^2}^{x^3}\\cos(t^2)\\,dt\\right)", "3*x^2*cos(x^6)-2*x*cos(x^4)", "x", ["fundamental-theorem", "chain-rule", "moving-limits"], "Apply FTC to both moving limits.", 6],
     ["depth-der-006", "\\frac{d}{dx}\\log\\left(x+\\sqrt{x^2+4}\\right)", "1/sqrt(x^2+4)", "x", ["chain-rule", "log", "radical"], "This is an asinh-type derivative.", 5],
@@ -107,10 +105,8 @@
   });
 
   [
-    ["depth-int-001", "\\int \\frac{x^3}{1+x^4}\\,dx", "log(1+x^4)/4", ["substitution", "rational"], "Let u=1+x^4.", 5],
     ["depth-int-002", "\\int \\frac{x^5}{1+x^3}\\,dx", "x^3/3-log(1+x^3)/3", ["algebra", "rational", "substitution"], "Divide as x^2-x^2/(1+x^3).", 6],
     ["depth-int-003", "\\int \\frac{x}{(1+x^2)^{3/2}}\\,dx", "-1/sqrt(1+x^2)", ["substitution", "radical"], "Let u=1+x^2.", 5],
-    ["depth-int-004", "\\int \\frac{(\\log x)^2}{x}\\,dx", "log(x)^3/3", ["substitution", "log"], "Let u=log x.", 5],
     ["depth-int-005", "\\int xe^x\\sin x\\,dx", "exp(x)*(x*(sin(x)-cos(x))+cos(x))/2", ["integration-by-parts", "exponential", "trig"], "Use parts with the standard integral of e^x sin x.", 6],
     ["depth-int-006", "\\int e^{2x}\\cos(3x)\\,dx", "exp(2*x)*(2*cos(3*x)+3*sin(3*x))/13", ["integration-by-parts", "exponential", "trig"], "Use the exponential-trig formula.", 5],
     ["depth-int-007", "\\int \\frac{\\arctan\\sqrt{x}}{\\sqrt{x}}\\,dx", "2*sqrt(x)*atan(sqrt(x))-log(1+x)", ["substitution", "integration-by-parts", "inverse-trig"], "Let u=sqrt x, then integrate atan u.", 6],
@@ -118,7 +114,6 @@
     ["depth-int-009", "\\int \\sin(\\log x)\\,dx", "x*(sin(log(x))-cos(log(x)))/2", ["substitution", "exponential", "trig"], "Set x=e^u.", 6],
     ["depth-int-010", "\\int \\frac{1}{\\sqrt{x}(1+\\sqrt{x})}\\,dx", "2*log(1+sqrt(x))", ["substitution", "radical", "log"], "Let u=sqrt x.", 5],
     ["depth-int-011", "\\int \\frac{x^2}{(1+x^2)^2}\\,dx", "atan(x)/2-x/(2*(1+x^2))", ["rational", "inverse-trig"], "Rewrite as 1/(1+x^2)-1/(1+x^2)^2.", 6],
-    ["depth-int-012", "\\int x^2\\sqrt{1+x^3}\\,dx", "2*(1+x^3)^(3/2)/9", ["substitution", "radical"], "Let u=1+x^3.", 5],
     ["depth-int-013", "\\int \\frac{\\sec^2x}{1+\\tan x}\\,dx", "log(1+tan(x))", ["substitution", "trig-integral"], "Let u=1+tan x.", 5],
     ["depth-int-014", "\\int x\\log(1+x)\\,dx", "x^2*log(1+x)/2-x^2/4+x/2-log(1+x)/2", ["integration-by-parts", "log", "rational"], "After parts, divide x^2 by x+1.", 6]
   ].forEach(([id, prompt, answer, tags, solution, rank]) => antiderivative(id, prompt, answer, tags, solution, rank));
@@ -133,8 +128,6 @@
     ["depth-int-021", "\\int_0^\\pi\\sin^4x\\,dx", "3*pi/8", ["definite-integral", "trig-integral"], "Use power reduction or Wallis.", 5],
     ["depth-int-022", "\\int_0^1\\int_y^1 x\\,dx\\,dy", "1/3", ["double-integral", "region"], "Integrate x first, then y.", 5],
     ["depth-int-023", "\\text{area enclosed by }r=1+\\cos\\theta", "3*pi/2", ["polar-coordinates", "polar-curve", "area"], "Use one-half integral of r^2 from 0 to 2pi.", 6],
-    ["depth-int-024", "\\iint_{x^2+y^2\\le4}x^2\\,dA", "4*pi", ["double-integral", "polar-coordinates"], "Use symmetry or polar coordinates.", 6],
-    ["depth-int-025", "\\int_0^1\\int_0^{1-x}(x+y)\\,dy\\,dx", "1/3", ["double-integral", "region"], "The triangular region is symmetric in x and y.", 5],
     ["depth-int-026", "\\int_0^\\infty x^3e^{-x^2}\\,dx", "1/2", ["improper-integral", "gamma-function", "substitution"], "Let u=x^2.", 5],
     ["depth-int-027", "\\int_0^1\\frac{1}{\\sqrt{1-x^2}}\\,dx", "pi/2", ["definite-integral", "trig-substitution", "inverse-trig"], "This is arcsin x from 0 to 1.", 5],
     ["depth-int-028", "\\int_0^1x^2\\log x\\,dx", "-1/9", ["improper-integral", "integration-by-parts", "log"], "Use the parameter integral or parts.", 5]

@@ -185,20 +185,6 @@
       solution: "IBP gives -x^2 cos x + 2int x cos x dx = -x^2 cos x + 2x sin x + 2cos x."
     },
     {
-      id: "int-054",
-      topic: "integrals",
-      difficulty: 4,
-      source: "Buzz hard integrals",
-      prompt: "\\int e^x\\sin x\\,dx",
-      answerKind: "antiderivative",
-      answer: "exp(x)*(sin(x)-cos(x))/2",
-      timeLimit: 95,
-      tabLimit: 1,
-      tags: ["integration-by-parts", "ibp", "exponential", "trig"],
-      hints: ["Use IBP twice or the cyclic method.", "The same integral returns after two steps.", "Solve the resulting algebraic equation."],
-      solution: "Let I=int e^x sin x dx. Two IBP steps give 2I=e^x(sin x-cos x)."
-    },
-    {
       id: "int-055",
       topic: "integrals",
       difficulty: 4,
