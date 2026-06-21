@@ -2231,6 +2231,155 @@ button {
   background: #edf4fb;
 }
 
+/* Weakness ER: triage the worst mistakes, don't just list by date */
+.triage {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+  gap: 14px;
+  margin: 14px 0;
+}
+
+.triage-today {
+  padding: 14px 16px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+
+.triage-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.triage-head strong {
+  font-size: 1.05rem;
+}
+
+.triage-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+  counter-reset: triage;
+}
+
+.triage-list li {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 9px 12px 9px 38px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--panel);
+}
+
+.triage-list li::before {
+  counter-increment: triage;
+  content: counter(triage);
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 20px;
+  height: 20px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--ink);
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+
+.triage-list li.is-danger::before {
+  background: var(--red);
+}
+
+.triage-list li.is-win::before {
+  background: var(--green);
+}
+
+.triage-list li small {
+  color: var(--muted);
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.triage-stats {
+  display: grid;
+  gap: 10px;
+  align-content: start;
+}
+
+.triage-stat {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: 10px 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--panel);
+}
+
+.triage-stat strong {
+  font-size: 1.35rem;
+  font-weight: 800;
+}
+
+.triage-stat span {
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.triage-stat.is-danger strong {
+  color: var(--red);
+}
+
+.triage-stat.is-win strong {
+  color: var(--green);
+}
+
+@media (max-width: 760px) {
+  .triage {
+    grid-template-columns: 1fr;
+  }
+  .triage-stats {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.tier-chip {
+  display: inline-block;
+  margin-left: 4px;
+  padding: 0 7px;
+  border-radius: 999px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  font-size: 0.7rem;
+  font-weight: 800;
+}
+
+.review-item.is-danger {
+  border-left: 3px solid var(--red);
+}
+
+.review-item.is-danger .tier-chip {
+  border-color: color-mix(in srgb, var(--red) 45%, var(--line));
+  color: var(--red);
+}
+
+.review-item.is-win .tier-chip {
+  border-color: color-mix(in srgb, var(--green) 45%, var(--line));
+  color: var(--green);
+}
+
 .review-list {
   display: grid;
   gap: 8px;
