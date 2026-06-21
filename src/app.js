@@ -1572,10 +1572,17 @@
     const proctorValue = noTimer ? "關" : quiz.examMode ? String(proctorEvents) : `${totalTabs}/${current.tabLimit}`;
     const pathNodeIdx = quiz.pathNodeId ? PATH_NODES.findIndex((node) => node.id === quiz.pathNodeId) : -1;
     const pathNode = pathNodeIdx >= 0 ? PATH_NODES[pathNodeIdx] : null;
+    const totalQ = quiz.problems.length;
     const correctSoFar = quiz.answers.filter((answer) => answer.correct).length;
-    const passNeed = Math.max(0, Math.ceil(quiz.problems.length * 0.7) - correctSoFar);
-    const goldNeed = Math.max(0, Math.ceil(quiz.problems.length * 0.9) - correctSoFar);
-    const clearLine = passNeed > 0 ? `差 ${passNeed} 題過關` : goldNeed > 0 ? `差 ${goldNeed} 題金牌` : "已達金牌";
+    const maxPossible = correctSoFar + (totalQ - quiz.answers.length);
+    const passTh = Math.ceil(totalQ * 0.7);
+    const goldTh = Math.ceil(totalQ * 0.9);
+    const clearLost = correctSoFar < passTh && maxPossible < passTh;
+    const clearLine =
+      correctSoFar >= goldTh ? "已達金牌"
+      : correctSoFar >= passTh ? `差 ${goldTh - correctSoFar} 題金牌`
+      : maxPossible >= passTh ? `差 ${passTh - correctSoFar} 題過關`
+      : "本關失守，專心清錯";
 
     return `
       <main class="screen quiz-screen">
@@ -1584,9 +1591,9 @@
             <div class="progress-block">
               <div class="progress-meta">
                 ${pathNode
-                  ? `<strong>第 ${pathNodeIdx + 1} 關 · ${escapeHtml(pathNode.short || pathNode.label)}</strong>
-                     <span>本關進度 ${quiz.index + 1} / ${quiz.problems.length}</span>
-                     <span class="clear-need">${clearLine}</span>
+                  ? `<strong>第 ${pathNodeIdx + 1} 關 · <span class="lvl-full">${escapeHtml(pathNode.label)}</span><span class="lvl-short">${escapeHtml(pathNode.short || pathNode.label)}</span></strong>
+                     <span>本關進度 ${quiz.index + 1} / ${totalQ}</span>
+                     <span class="clear-need ${clearLost ? "is-lost" : ""}">${clearLine}</span>
                      <span>連勝 ${quiz.currentStreak}</span>`
                   : `<strong>${modeLabel(quiz.mode)}</strong>
                      <span>第 ${quiz.index + 1} / ${quiz.problems.length} 題</span>
@@ -1868,78 +1875,97 @@
 
     const momentum = quiz.examMode ? examResultMomentum(quiz, accuracy, correct, total) : resultMomentum(accuracy, avgTime, pathResult, gateResult);
     const speedInsight = quiz.speedInsight || speedInsightText(avgTime, recentAnswerStats(records, 30).avgSeconds);
+    const pathIdx = quiz.pathNodeId ? PATH_NODES.findIndex((node) => node.id === quiz.pathNodeId) : -1;
+    let verdict;
+    let verdictClass;
+    let nextLine = "";
+    if (gateResult) {
+      verdict = gateResult.passed ? "跳關通過" : "跳關未通過";
+      verdictClass = gateResult.passed ? "is-gold" : "is-fail";
+    } else if (pathResult) {
+      const gold = pathResult.cleared && pathResult.accuracy >= 90;
+      verdict = gold ? "金牌過關" : pathResult.cleared ? "過關" : "再加強";
+      verdictClass = gold ? "is-gold" : pathResult.cleared ? "is-pass" : "is-fail";
+      nextLine = pathResult.cleared
+        ? pathResult.nextNode
+          ? `解鎖下一關：${pathResult.nextNode.label}`
+          : "主線全數完成"
+        : `差 ${pathResult.needed || 1} 題過關，建議重練一次`;
+    } else {
+      verdict = resultTitle(accuracy);
+      verdictClass = accuracy >= 70 ? "is-pass" : "is-fail";
+    }
+    const levelTag = pathIdx >= 0 ? `結算 · 第 ${pathIdx + 1} 關 · ${PATH_NODES[pathIdx].label}` : "結算";
+
     return `
-      <main class="screen">
-        <div class="results-grid">
-          <section class="score-hero ${pathResult?.cleared || gateResult?.passed ? "is-clear" : ""}">
-            <div>
-              <p class="section-label">結算</p>
-              <h2>${gateResult ? (gateResult.passed ? "跳關通過" : "跳關未通過") : resultTitle(accuracy)}</h2>
-              <p class="result-subtitle">${escapeHtml(momentum)}</p>
-            </div>
-            <div class="score-cards">
-              <div class="score-card"><span>分數</span><strong>${quiz.score}</strong></div>
-              <div class="score-card"><span>答對</span><strong>${correct}/${total}</strong></div>
-              <div class="score-card"><span>正確率</span><strong>${accuracy}%</strong></div>
-              <div class="score-card"><span>平均秒</span><strong>${avgTime}</strong></div>
-              ${quiz.examMode ? `<div class="score-card"><span>監考</span><strong>${totalTabSwitches(quiz)}</strong></div>` : ""}
-            </div>
+      <main class="screen results-screen">
+        <section class="verdict ${verdictClass}">
+          <p class="section-label">${escapeHtml(levelTag)}</p>
+          <h1 class="verdict-title">${escapeHtml(verdict)}</h1>
+          <p class="verdict-sub">${escapeHtml(momentum)}</p>
+          ${nextLine ? `<p class="verdict-next">${escapeHtml(nextLine)}</p>` : ""}
+          <div class="verdict-stats">
+            <span><strong>${correct}/${total}</strong>答對</span>
+            <span><strong>${accuracy}%</strong>正確率</span>
+            <span><strong>${avgTime}s</strong>平均</span>
+            ${quiz.practice ? "" : `<span><strong>${quiz.score}</strong>分數</span>`}
+          </div>
+          ${renderResultsActions(gateResult, pathResult)}
+        </section>
+
+        <details class="results-detail">
+          <summary><span>詳細分析與逐題回顧</span>${icon("chevron-down")}</summary>
+          <div class="results-detail-body">
             ${quiz.mode === "daily" ? renderDailyCompletionResult(quiz, records, accuracy) : ""}
             ${renderSpeedResultCard(speedInsight)}
             ${renderMistakeClearResult(quiz)}
-            ${pathResult?.cleared ? renderPathClearToast(pathResult) : ""}
-            ${gateResult ? renderPathGateResult(gateResult) : ""}
             ${pathResult ? renderPathLessonResult(pathResult) : ""}
-            ${renderResultsActions(gateResult, pathResult)}
-          </section>
-
-          <aside class="side-panel">
+            ${quiz.examMode ? renderExamAnalysisSection(examAnalysis) : ""}
+            <div class="results-detail-grid">
+              <section class="panel">
+                <h3>題型表現</h3>
+                <div class="topic-meter">
+                  ${Object.entries(TOPICS)
+                    .filter(([key]) => key !== "all")
+                    .map(([key, topic]) => {
+                      const stat = topicStats[key] || { correct: 0, total: 0 };
+                      const pct = stat.total ? Math.round((stat.correct / stat.total) * 100) : 0;
+                      return `<div class="meter-row"><span>${topic.label}</span><div class="meter-track"><div class="meter-fill" style="width:${pct}%;background:${topic.accent}"></div></div><strong>${stat.correct}/${stat.total}</strong></div>`;
+                    })
+                    .join("")}
+                </div>
+              </section>
+              <section class="panel">
+                <h3>本機最佳</h3>
+                <div class="topic-meter">
+                  <div class="meter-row"><span>最高分</span><div class="meter-track"><div class="meter-fill" style="width:${Math.min(100, records.bestScore || 0)}%"></div></div><strong>${records.bestScore || 0}</strong></div>
+                  <div class="meter-row"><span>最佳連勝</span><div class="meter-track"><div class="meter-fill" style="width:${Math.min(100, (records.bestStreak || 0) * 10)}%"></div></div><strong>${records.bestStreak || 0}</strong></div>
+                  <div class="meter-row"><span>局數</span><div class="meter-track"><div class="meter-fill" style="width:${Math.min(100, (records.attempts || 0) * 8)}%"></div></div><strong>${records.attempts || 0}</strong></div>
+                </div>
+              </section>
+              <section class="panel">
+                <h3>本局成就</h3>
+                <div class="achievement-list">
+                  ${
+                    unlocked.length
+                      ? unlocked.map((item) => `<div class="achievement is-new"><strong>${escapeHtml(item.title)}</strong><span>${escapeHtml(item.detail)}</span></div>`).join("")
+                      : `<div class="empty-state">本局沒有新成就。</div>`
+                  }
+                </div>
+              </section>
+            </div>
             <section class="panel">
-              <h3>本機最佳</h3>
-              <div class="topic-meter">
-                <div class="meter-row"><span>最高分</span><div class="meter-track"><div class="meter-fill" style="width:${Math.min(100, records.bestScore || 0)}%"></div></div><strong>${records.bestScore || 0}</strong></div>
-                <div class="meter-row"><span>最佳連勝</span><div class="meter-track"><div class="meter-fill" style="width:${Math.min(100, (records.bestStreak || 0) * 10)}%"></div></div><strong>${records.bestStreak || 0}</strong></div>
-                <div class="meter-row"><span>局數</span><div class="meter-track"><div class="meter-fill" style="width:${Math.min(100, (records.attempts || 0) * 8)}%"></div></div><strong>${records.attempts || 0}</strong></div>
-              </div>
-            </section>
-            <section class="panel">
-              <h3>題型表現</h3>
-              <div class="topic-meter">
-                ${Object.entries(TOPICS)
-                  .filter(([key]) => key !== "all")
-                  .map(([key, topic]) => {
-                    const stat = topicStats[key] || { correct: 0, total: 0 };
-                    const pct = stat.total ? Math.round((stat.correct / stat.total) * 100) : 0;
-                    return `<div class="meter-row"><span>${topic.label}</span><div class="meter-track"><div class="meter-fill" style="width:${pct}%;background:${topic.accent}"></div></div><strong>${stat.correct}/${stat.total}</strong></div>`;
-                  })
-                  .join("")}
-              </div>
-            </section>
-            <section class="panel">
-              <h3>本局成就</h3>
-              <div class="achievement-list">
+              <h3>答題回顧</h3>
+              <div class="review-list">
                 ${
-                  unlocked.length
-                    ? unlocked.map((item) => `<div class="achievement is-new"><strong>${escapeHtml(item.title)}</strong><span>${escapeHtml(item.detail)}</span></div>`).join("")
-                    : `<div class="empty-state">本局沒有新成就。</div>`
+                  quiz.answers.length
+                    ? quiz.answers.map(renderReviewItem).join("")
+                    : `<div class="empty-state">本局尚未作答。</div>`
                 }
               </div>
             </section>
-          </aside>
-        </div>
-
-        ${quiz.examMode ? renderExamAnalysisSection(examAnalysis) : ""}
-
-        <section class="panel" style="margin-top:24px">
-          <h3>答題回顧</h3>
-          <div class="review-list">
-            ${
-              quiz.answers.length
-                ? quiz.answers.map(renderReviewItem).join("")
-                : `<div class="empty-state">本局尚未作答。</div>`
-            }
           </div>
-        </section>
+        </details>
       </main>
     `;
   }
@@ -1952,15 +1978,6 @@
       total,
       passed: currentQuiz.answers.length >= total && correct >= gate.required
     };
-  }
-
-  function renderPathGateResult(gate) {
-    return `
-      <div class="path-gate-result ${gate.passed ? "is-passed" : "is-failed"}">
-        <strong>${gate.targetLabel}</strong>
-        <span>${gate.correct}/${gate.total}，門檻 ${gate.required}/${gate.total}</span>
-      </div>
-    `;
   }
 
   function renderDailyCompletionResult(currentQuiz, records, accuracy) {
@@ -1997,16 +2014,6 @@
       <div class="mistake-clear-result">
         <strong>錯題清理</strong>
         <span>本輪移出錯題本 ${cleared} 題</span>
-      </div>
-    `;
-  }
-
-  function renderPathClearToast(result) {
-    const gold = result.accuracy >= 90;
-    return `
-      <div class="path-clear-toast ${gold ? "is-gold" : ""}">
-        <strong>${gold ? "金牌過關" : "過關"}</strong>
-        <span>${escapeHtml(result.node.label)} ${result.correct}/${result.total}</span>
       </div>
     `;
   }
