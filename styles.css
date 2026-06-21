@@ -13,6 +13,12 @@
   --green: #21835b;
   --blue: #2767a8;
   --violet: #6952a9;
+  /* Semantic state language: keep gold for identity/reward only, so it
+     stops doubling as progress/active/success. */
+  --brand: var(--gold);
+  --progress: var(--green);
+  --success: var(--green);
+  --danger: var(--red);
   --shadow: 0 16px 34px rgba(32, 33, 31, 0.08);
   --radius: 8px;
   font-family:
@@ -610,7 +616,7 @@ button {
 
 .meter-fill {
   height: 100%;
-  background: var(--gold);
+  background: var(--progress);
 }
 
 .home-screen {
@@ -768,35 +774,30 @@ button {
   line-height: 1.6;
 }
 
-.launch-next-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  width: fit-content;
-  max-width: 100%;
-  margin-top: 2px;
-  padding: 9px 15px;
-  border: 1px solid var(--line);
-  border-radius: 999px;
-  background: var(--panel);
+.launch-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 6px;
 }
 
-.launch-next-pill span,
-.launch-next-pill small {
-  color: var(--muted);
-  font-size: 0.78rem;
-  font-weight: 780;
+.launch-start {
+  min-height: 54px;
+  padding: 0 24px;
+  font-size: 1.06rem;
 }
 
-.launch-next-pill strong {
-  color: var(--green);
+.launch-start small {
+  margin-left: 9px;
+  padding-left: 9px;
+  border-left: 1px solid rgba(255, 255, 255, 0.45);
+  font-weight: 700;
+  opacity: 0.88;
 }
 
-.launch-next-pill small {
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+.launch-daily {
+  min-height: 54px;
+  padding: 0 18px;
 }
 
 .launch-mascot {
@@ -851,12 +852,12 @@ button {
 
 .launch-card {
   position: relative;
-  min-height: 118px;
+  min-height: 78px;
   display: grid;
-  grid-template-columns: 46px minmax(0, 1fr);
-  gap: 12px;
+  grid-template-columns: 38px minmax(0, 1fr);
+  gap: 11px;
   align-items: center;
-  padding: 14px;
+  padding: 11px 12px;
   border: 1px solid var(--line);
   border-radius: calc(var(--radius) + 3px);
   background: var(--panel);
@@ -877,11 +878,11 @@ button {
 }
 
 .launch-card-icon {
-  width: 46px;
-  height: 46px;
+  width: 38px;
+  height: 38px;
   display: grid;
   place-items: center;
-  border-radius: 14px;
+  border-radius: 11px;
   background: var(--ink);
   color: #fff;
 }
@@ -3135,7 +3136,7 @@ button {
 
   .quiz-screen {
     width: 100%;
-    padding: 10px 10px 138px;
+    padding: 10px 10px calc(120px + env(safe-area-inset-bottom));
   }
 
   .quiz-screen .arena {
