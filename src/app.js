@@ -1027,14 +1027,14 @@
     const advanced = EXPERIMENTAL_MODE_KEYS;
     return `
       <p class="mode-picker-note">通常只需要選這三個；高壓玩法收在下面。</p>
-      <div class="segmented modes learning-picker" role="tablist" aria-label="模式選擇">
+      <div class="segmented modes learning-picker" role="group" aria-label="模式選擇">
         ${primary
           .filter((key) => MODES[key])
           .map(
             (key) => {
               const item = MODES[key];
               return `
-              <button class="segment rich-segment ${selectedMode === key ? "is-active" : ""}" data-mode="${key}">
+              <button class="segment rich-segment ${selectedMode === key ? "is-active" : ""}" aria-pressed="${selectedMode === key ? "true" : "false"}" data-mode="${key}">
                 <strong>${item.label}</strong>
                 <span>${modeDescription(key)}</span>
               </button>`;
@@ -1051,7 +1051,7 @@
               (key) => {
                 const item = MODES[key];
                 return `
-                <button class="segment rich-segment ${selectedMode === key ? "is-active" : ""}" data-mode="${key}">
+                <button class="segment rich-segment ${selectedMode === key ? "is-active" : ""}" aria-pressed="${selectedMode === key ? "true" : "false"}" data-mode="${key}">
                   <strong>${item.label}</strong>
                   <span>${modeDescription(key)}</span>
                 </button>`;
@@ -1065,12 +1065,12 @@
 
   function renderTopicPicker() {
     return `
-      <div class="segmented home-topic-grid learning-picker" role="tablist" aria-label="題型選擇">
+      <div class="segmented home-topic-grid learning-picker" role="group" aria-label="題型選擇">
         ${Object.entries(TOPICS)
           .filter(([key]) => key !== "all" || selectedMode !== "topic")
           .map(
             ([key, item]) => `
-              <button class="segment rich-segment ${selectedTopic === key ? "is-active" : ""}" data-topic="${key}">
+              <button class="segment rich-segment ${selectedTopic === key ? "is-active" : ""}" aria-pressed="${selectedTopic === key ? "true" : "false"}" data-topic="${key}">
                 <strong>${item.label}</strong>
                 <span>${topicCountText(key)}｜${topicDescription(key)}</span>
               </button>`
@@ -1082,11 +1082,11 @@
 
   function renderAnswerModePicker(extraClass = "") {
     return `
-      <div class="segmented answer-modes learning-picker ${escapeAttr(extraClass)}" role="tablist" aria-label="答題方式選擇">
+      <div class="segmented answer-modes learning-picker ${escapeAttr(extraClass)}" role="group" aria-label="答題方式選擇">
         ${Object.entries(ANSWER_MODES)
           .map(
             ([key, item]) => `
-              <button class="segment rich-segment ${selectedAnswerMode === key ? "is-active" : ""}" data-answer-mode="${key}">
+              <button class="segment rich-segment ${selectedAnswerMode === key ? "is-active" : ""}" aria-pressed="${selectedAnswerMode === key ? "true" : "false"}" data-answer-mode="${key}">
                 <strong>${item.label}</strong>
                 <span>${answerModeDescription(key)}</span>
               </button>`
@@ -1222,19 +1222,19 @@
             </label>
           </div>
 
-          <div class="segmented compact library-tabs" role="tablist" aria-label="題庫題型篩選">
+          <div class="segmented compact library-tabs" role="group" aria-label="題庫題型篩選">
             ${Object.entries(TOPICS)
-              .map(([key, topic]) => `<button class="segment ${selectedLibraryTopic === key ? "is-active" : ""}" data-library-topic="${key}">${topic.label}</button>`)
+              .map(([key, topic]) => `<button class="segment ${selectedLibraryTopic === key ? "is-active" : ""}" aria-pressed="${selectedLibraryTopic === key ? "true" : "false"}" data-library-topic="${key}">${topic.label}</button>`)
               .join("")}
           </div>
 
-          <div class="segmented compact library-tabs" role="tablist" aria-label="題庫狀態篩選">
+          <div class="segmented compact library-tabs" role="group" aria-label="題庫狀態篩選">
             ${[
               ["all", "全部"],
               ["favorites", `收藏 ${Object.keys(records.favorites || {}).length}`],
               ["boss", "Boss"],
               ["reported", `已回報 ${Object.keys(records.problemReports || {}).length}`]
-            ].map(([key, label]) => `<button class="segment ${selectedLibraryFilter === key ? "is-active" : ""}" data-library-filter="${key}">${escapeHtml(label)}</button>`).join("")}
+            ].map(([key, label]) => `<button class="segment ${selectedLibraryFilter === key ? "is-active" : ""}" aria-pressed="${selectedLibraryFilter === key ? "true" : "false"}" data-library-filter="${key}">${escapeHtml(label)}</button>`).join("")}
           </div>
 
           <div class="library-count">
@@ -1313,12 +1313,12 @@
             <div><span>還不會</span><strong>${stats.stuck}</strong></div>
           </div>
 
-          <div class="segmented compact proof-tier-picker" role="tablist" aria-label="證明題難度篩選">
+          <div class="segmented compact proof-tier-picker" role="group" aria-label="證明題難度篩選">
             ${Object.entries(PROOF_TIERS)
               .map(([key, label]) => {
                 const count = key === "all" ? proofs.length : proofs.filter((proof) => proof.tier === key).length;
                 return `
-                  <button class="segment ${selectedProofTier === key ? "is-active" : ""}" data-proof-tier="${escapeAttr(key)}">
+                  <button class="segment ${selectedProofTier === key ? "is-active" : ""}" aria-pressed="${selectedProofTier === key ? "true" : "false"}" data-proof-tier="${escapeAttr(key)}">
                     <strong>${escapeHtml(label)}</strong>
                     <span>${count} 題</span>
                   </button>
@@ -1445,11 +1445,11 @@
             </div>
           </div>
           ${renderWeaknessPanel(records)}
-          <div class="segmented compact" role="tablist" aria-label="錯題題型篩選">
+          <div class="segmented compact" role="group" aria-label="錯題題型篩選">
             ${Object.entries(TOPICS)
               .map(
                 ([key, topic]) => `
-                  <button class="segment ${selectedMistakeTopic === key ? "is-active" : ""}" data-mistake-topic="${key}">
+                  <button class="segment ${selectedMistakeTopic === key ? "is-active" : ""}" aria-pressed="${selectedMistakeTopic === key ? "true" : "false"}" data-mistake-topic="${key}">
                     <strong>${topic.label}</strong>
                     <span>${mistakeTopicCount(records, key)} 題</span>
                   </button>`
@@ -1558,11 +1558,11 @@
               <button class="button ghost" data-action="clear-history" ${history.length ? "" : "disabled"}>${icon("trash")}清除歷史</button>
             </div>
           </div>
-          <div class="segmented compact" role="tablist" aria-label="歷史題型篩選">
+          <div class="segmented compact" role="group" aria-label="歷史題型篩選">
             ${Object.entries(TOPICS)
               .map(
                 ([key, topic]) => `
-                  <button class="segment ${selectedHistoryTopic === key ? "is-active" : ""}" data-history-topic="${key}">
+                  <button class="segment ${selectedHistoryTopic === key ? "is-active" : ""}" aria-pressed="${selectedHistoryTopic === key ? "true" : "false"}" data-history-topic="${key}">
                     <strong>${topic.label}</strong>
                     <span>${historyTopicCount(records, key)} 局</span>
                   </button>`
