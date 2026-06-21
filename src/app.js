@@ -578,11 +578,14 @@
     const streak = mission.dailyStreak || 0;
     const statusMap = { jump: "可跳關", ready: "可挑戰", active: "進行中", mastered: "已熟練", gold: "金關" };
     const statusText = statusMap[next.status] || "可挑戰";
-    const hook = mission.done
-      ? "今日達標，超前部署一波"
-      : remaining <= 1
-        ? `再 ${remaining} 題就達成今日目標！`
-        : `再 ${remaining} 題達成今日目標`;
+    const isNew = !(records.totalAnswered || 0);
+    const hook = isNew
+      ? "先清 3 題暖機，找回手感"
+      : mission.done
+        ? "今日達標，超前部署一波"
+        : remaining <= 1
+          ? `再 ${remaining} 題就達成今日目標`
+          : `再 ${remaining} 題達成今日目標`;
     const mood = homeMascotMood(records, mission, mistakeCount, streak);
     return `
       <section class="home-launch-pad quest-hero" aria-label="今日練習入口">
@@ -594,9 +597,12 @@
           </div>
           <h1>${escapeHtml(next.label)}</h1>
           <p class="launch-hook">${escapeHtml(hook)}</p>
+          <div class="mastery-row">
+            <span class="mastery-name">熟練槽</span>
+            <span class="mastery-pct">${mastery}%</span>
+          </div>
           <div class="mastery-gauge" role="img" aria-label="熟練度 ${mastery}%">
             <div class="mastery-fill" style="width:${mastery}%"></div>
-            <span class="mastery-label">熟練槽 ${mastery}%</span>
           </div>
           <div class="launch-actions">
             <button class="button home-primary launch-start" data-action="start-path-node" data-node-id="${escapeAttr(next.id)}">
@@ -618,10 +624,12 @@
 
   function homeMascotMood(records, mission, mistakeCount, streak) {
     if (!(records.totalAnswered || 0)) return { cls: "is-idle", label: "等你開打" };
+    // Warnings take priority over praise: don't celebrate a streak while
+    // a pile of mistakes is going unreviewed.
+    if ((mistakeCount || 0) >= 8) return { cls: "is-pressure", label: "錯題堆積中" };
     if (mission.done) return { cls: "is-ahead", label: "今日超前" };
     if (mission.target && mission.completed / mission.target >= 0.66) return { cls: "is-close", label: "快達標" };
     if ((streak || 0) >= 3) return { cls: "is-streak", label: `連勝 ${streak} 天` };
-    if ((mistakeCount || 0) >= 8) return { cls: "is-pressure", label: "錯題堆積中" };
     return { cls: "is-ok", label: "狀態良好" };
   }
 
@@ -1562,6 +1570,12 @@
     const timeValue = noTimer ? "自由" : quiz.examMode ? formatCountdown(remaining) : String(remaining);
     const proctorLabel = quiz.examMode ? "監考" : "切頁";
     const proctorValue = noTimer ? "關" : quiz.examMode ? String(proctorEvents) : `${totalTabs}/${current.tabLimit}`;
+    const pathNodeIdx = quiz.pathNodeId ? PATH_NODES.findIndex((node) => node.id === quiz.pathNodeId) : -1;
+    const pathNode = pathNodeIdx >= 0 ? PATH_NODES[pathNodeIdx] : null;
+    const correctSoFar = quiz.answers.filter((answer) => answer.correct).length;
+    const passNeed = Math.max(0, Math.ceil(quiz.problems.length * 0.7) - correctSoFar);
+    const goldNeed = Math.max(0, Math.ceil(quiz.problems.length * 0.9) - correctSoFar);
+    const clearLine = passNeed > 0 ? `差 ${passNeed} 題過關` : goldNeed > 0 ? `差 ${goldNeed} 題金牌` : "已達金牌";
 
     return `
       <main class="screen quiz-screen">
@@ -1569,10 +1583,15 @@
           <div class="arena-top">
             <div class="progress-block">
               <div class="progress-meta">
-                <strong>${modeLabel(quiz.mode)}</strong>
-                <span>第 ${quiz.index + 1} / ${quiz.problems.length} 題</span>
-                <span>${isPractice ? "練習模式" : `目前分數 ${quiz.score}`}</span>
-                <span>連勝 ${quiz.currentStreak}</span>
+                ${pathNode
+                  ? `<strong>第 ${pathNodeIdx + 1} 關 · ${escapeHtml(pathNode.short || pathNode.label)}</strong>
+                     <span>本關進度 ${quiz.index + 1} / ${quiz.problems.length}</span>
+                     <span class="clear-need">${clearLine}</span>
+                     <span>連勝 ${quiz.currentStreak}</span>`
+                  : `<strong>${modeLabel(quiz.mode)}</strong>
+                     <span>第 ${quiz.index + 1} / ${quiz.problems.length} 題</span>
+                     <span>${isPractice ? "練習模式" : `目前分數 ${quiz.score}`}</span>
+                     <span>連勝 ${quiz.currentStreak}</span>`}
               </div>
               <div class="progress-bar" aria-label="進度"><span style="width:${progress}%"></span></div>
             </div>
