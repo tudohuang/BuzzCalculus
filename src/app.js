@@ -1348,19 +1348,46 @@
     }[status] || "未標記";
   }
 
-  function renderMistakes() {
-    const records = loadRecords();
-    const entries = Object.values(records.mistakes || {})
+  function mistakePressure(item) {
+    const wrong = Number(item.wrongCount || 1);
+    const problem = item.problem || problemById(item.problemId);
+    const rank = problem ? problemRank(problem) : 1;
+    const days = item.lastWrongAt ? (Date.now() - new Date(item.lastWrongAt).getTime()) / 86400000 : 30;
+    const recency = Math.max(0, 3 - days / 7);
+    return wrong * 3 + rank * 0.6 + recency;
+  }
+
+  function triageMistakes(records, topic) {
+    return Object.values(records.mistakes || {})
       .map((item) => ({ ...item, problem: problemById(item.problemId) }))
       .filter((item) => item.problem)
-      .filter((item) => selectedMistakeTopic === "all" || item.problem.topic === selectedMistakeTopic)
-      .sort((a, b) => (b.lastWrongAt || "").localeCompare(a.lastWrongAt || ""));
+      .filter((item) => !topic || topic === "all" || item.problem.topic === topic)
+      .sort((a, b) => mistakePressure(b) - mistakePressure(a));
+  }
+
+  function topMistakeReason(entries) {
+    const counts = {};
+    entries.forEach((item) => {
+      const reason = item.tag || answerReasonLabel(item.reason) || "其他";
+      counts[reason] = (counts[reason] || 0) + 1;
+    });
+    return Object.entries(counts).sort((a, b) => b[1] - a[1])[0]?.[0] || "—";
+  }
+
+  function renderMistakes() {
+    const records = loadRecords();
+    const entries = triageMistakes(records, selectedMistakeTopic);
+    const top3 = entries.slice(0, 3);
+    const danger = entries.filter((item) => Number(item.wrongCount || 1) >= 3).length;
+    const quickWin = entries.filter((item) => Number(item.wrongCount || 1) <= 1).length;
+    const topReason = entries.length ? topMistakeReason(entries) : "—";
+    const top3Ids = top3.map((item) => item.problem.id);
     return `
       <main class="screen">
         <section class="panel page-panel">
           <div class="page-head">
             <div>
-              <p class="section-label">Review</p>
+              <p class="section-label">弱點急救室</p>
               <h2>錯題本</h2>
             </div>
             <div class="action-row">
@@ -1369,7 +1396,33 @@
               <button class="button ghost" data-action="clear-mistakes" ${entries.length ? "" : "disabled"}>${icon("trash")}清除目前篩選</button>
             </div>
           </div>
-          ${renderWeaknessPanel(records)}
+          ${
+            entries.length
+              ? `<div class="triage">
+                  <div class="triage-today">
+                    <div class="triage-head">
+                      <div><p class="section-label">今天先清</p><strong>${top3.length} 題優先</strong></div>
+                      <button class="button" data-action="start-mistake-triage" data-problem-ids="${escapeAttr(top3Ids.join(","))}">${icon("play")}練這 ${top3.length} 題</button>
+                    </div>
+                    <ol class="triage-list">
+                      ${top3
+                        .map((item) => {
+                          const w = Number(item.wrongCount || 1);
+                          const tier = w >= 3 ? "is-danger" : w <= 1 ? "is-win" : "";
+                          return `<li class="${tier}"><span>${TOPICS[item.problem.topic].label} · ${difficultyBadge(item.problem)}</span><small>錯 ${Math.round(w)} 次 · ${escapeHtml(item.tag || answerReasonLabel(item.reason) || "錯誤")}</small></li>`;
+                        })
+                        .join("")}
+                    </ol>
+                  </div>
+                  <div class="triage-stats">
+                    <div class="triage-stat is-danger"><strong>${danger}</strong><span>危險題 · 連錯多次</span></div>
+                    <div class="triage-stat is-win"><strong>${quickWin}</strong><span>快清掉</span></div>
+                    <div class="triage-stat"><strong>${escapeHtml(topReason)}</strong><span>最常錯因</span></div>
+                  </div>
+                </div>`
+              : ""
+          }
+          ${entries.length ? renderWeaknessPanel(records) : ""}
           <div class="segmented compact" role="group" aria-label="錯題題型篩選">
             ${Object.entries(TOPICS)
               .map(
@@ -1396,11 +1449,14 @@
   function renderMistakeItem(item) {
     const problem = item.problem;
     const records = loadRecords();
+    const w = Number(item.wrongCount || 1);
+    const tier = w >= 3 ? "is-danger" : w <= 1 ? "is-win" : "";
+    const tierLabel = w >= 3 ? "危險" : w <= 1 ? "快清掉" : "";
     return `
-      <article class="review-item is-wrong">
+      <article class="review-item is-wrong ${tier}">
         <div class="review-top">
-          <span>${TOPICS[problem.topic].label} · ${difficultyBadge(problem)} · 錯 ${item.wrongCount || 1} 次</span>
-          <strong>${escapeHtml(item.reason || "Wrong")}</strong>
+          <span>${TOPICS[problem.topic].label} · ${difficultyBadge(problem)} · 錯 ${Math.round(w)} 次${tierLabel ? ` <span class="tier-chip">${tierLabel}</span>` : ""}</span>
+          <strong>${escapeHtml(item.tag || answerReasonLabel(item.reason) || "錯誤")}</strong>
         </div>
         <div class="review-prompt math-block" data-tex="${escapeAttr(problem.prompt)}"></div>
         <div class="review-answer">
@@ -2457,6 +2513,10 @@
     if (action === "view-proof-solution") viewProofSolution(actionNode.dataset.proofId);
     if (action === "mark-proof-status") markProofStatus(actionNode.dataset.proofId, actionNode.dataset.proofStatus || "");
     if (action === "start-mistakes") startMistakeQuiz(selectedMistakeTopic);
+    if (action === "start-mistake-triage") {
+      const ids = (actionNode.dataset.problemIds || "").split(",").filter(Boolean);
+      if (ids.length) startMistakeQuiz("all", ids);
+    }
     if (action === "start-mistake-one") startMistakeQuiz("all", [actionNode.dataset.problemId]);
     if (action === "clear-mistakes") clearMistakes(selectedMistakeTopic);
     if (action === "clear-mistake-one") clearMistakes("all", [actionNode.dataset.problemId]);
