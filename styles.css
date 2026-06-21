@@ -3908,15 +3908,6 @@ button {
     line-height: 1.45;
   }
 
-  .launch-next-pill {
-    grid-template-columns: auto minmax(0, 1fr);
-    border-radius: var(--radius);
-  }
-
-  .launch-next-pill small {
-    grid-column: 1 / -1;
-  }
-
   .launch-card-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 8px;
@@ -4718,8 +4709,7 @@ button {
     linear-gradient(135deg, rgba(34, 35, 31, 0.98), rgba(28, 33, 29, 0.96) 52%, rgba(28, 34, 43, 0.96));
 }
 
-:root[data-theme="dark"] .launch-card,
-:root[data-theme="dark"] .launch-next-pill {
+:root[data-theme="dark"] .launch-card {
   background: rgba(28, 29, 26, 0.78);
   border-color: var(--line);
 }
@@ -5317,14 +5307,23 @@ button {
   }
 }
 
-/* Honour OS "reduce motion": a training tool should not distract. */
+/* Honour OS "reduce motion": stop the decorative/looping animations but
+   keep the short functional transitions (hover/active/state feedback). */
 @media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .launch-mascot,
+  .mascot-orbit,
+  .home-launch-pad {
+    animation: none !important;
+  }
+
+  /* Neutralise any looping animation without touching transitions. */
   *,
   *::before,
   *::after {
-    animation-duration: 0.001ms !important;
     animation-iteration-count: 1 !important;
-    transition-duration: 0.001ms !important;
-    scroll-behavior: auto !important;
   }
 }
