@@ -425,6 +425,7 @@
   let librarySearch = "";
   let librarySearchShouldFocus = false;
   let homeMoreOpen = false;
+  let sessionSettingsOpen = false;
   let advancedModeOpen = false;
   let selectedTheme = loadThemePreference();
   let deferredInstallPrompt = null;
@@ -560,9 +561,8 @@
       <main class="screen home-screen">
         ${showIntro ? renderFirstRunNotice() : ""}
         ${renderHomeLaunchPad(records, mission, path, weaknesses, mistakeCount)}
-        ${renderDifficultyControl(records)}
-        ${renderHomeAnswerModeBar()}
         ${renderBuzzPath(path, mission)}
+        ${renderSessionSettings(records)}
         ${renderHomeMorePanel(records, weaknesses, mistakeCount)}
       </main>
     `;
@@ -570,11 +570,15 @@
 
   function renderHomeLaunchPad(records, mission, path) {
     const next = path.next;
+    const remaining = Math.max(0, (mission.target || 0) - (mission.completed || 0));
+    const streak = mission.dailyStreak || 0;
+    const hook = mission.done ? "今日任務已完成，超前一波" : `今天清掉 ${remaining} 題就達標`;
     return `
       <section class="home-launch-pad" aria-label="今日練習入口">
         <div class="launch-copy">
-          <p class="section-label launch-eyebrow">${escapeHtml(homeGreeting())}</p>
-          <h1>今天要怎麼練？</h1>
+          <p class="section-label launch-eyebrow">${escapeHtml(homeGreeting())}${streak ? ` · 連續 ${streak} 天` : ""}</p>
+          <h1>下一格 · ${escapeHtml(next.label)}</h1>
+          <p class="launch-hook">${escapeHtml(hook)}</p>
           <div class="launch-actions">
             <button class="button home-primary launch-start" data-action="start-path-node" data-node-id="${escapeAttr(next.id)}">
               ${icon("play")}<span>開始下一格</span><small>${escapeHtml(next.short)}</small>
@@ -589,6 +593,26 @@
           <strong>∫</strong>
           <small>Buzz</small>
         </div>
+      </section>
+    `;
+  }
+
+  function renderSessionSettings(records) {
+    const cap = activeDifficultyCap(records);
+    const level = difficultyLevel(cap);
+    const ansLabel = ANSWER_MODES[selectedAnswerMode]?.label || "選擇題";
+    return `
+      <section class="session-settings-wrap">
+        <details class="session-settings" data-session-settings ${sessionSettingsOpen ? "open" : ""}>
+          <summary>
+            <span><strong>本局設定</strong><small>${escapeHtml(level.label)} ${escapeHtml(level.short)} · ${escapeHtml(ansLabel)}</small></span>
+            ${icon("chevron-down")}
+          </summary>
+          <div class="session-settings-body">
+            ${renderDifficultyControl(records)}
+            ${renderHomeAnswerModeBar()}
+          </div>
+        </details>
       </section>
     `;
   }
@@ -696,7 +720,7 @@
       gold: "金色"
     }[node.status] || "可開始";
     const label = isNext ? "下一格" : statusText;
-    const badge = node.status === "gold" ? "Gold" : node.status === "mastered" ? "Clear" : node.gated ? "Gate" : "";
+    const badge = node.status === "gold" ? "金" : node.status === "mastered" ? "通過" : node.gated ? "關卡" : "";
     return `
       <div class="path-step is-${node.status} ${isNext ? "is-next" : ""}">
         <button class="path-node-button" data-action="start-path-node" data-node-id="${escapeAttr(node.id)}" aria-label="${escapeAttr(`${node.label}，${label}`)}" title="${escapeAttr(`${node.label} · ${label}`)}">
@@ -996,7 +1020,7 @@
         <section class="panel page-panel settings-page">
           <div class="page-head">
             <div>
-              <p class="section-label">Settings</p>
+              <p class="section-label">設定</p>
               <h2>資料與設定</h2>
               <p>所有紀錄都存在本機瀏覽器。換裝置前請先匯出 JSON。</p>
             </div>
@@ -1056,7 +1080,7 @@
         <section class="panel page-panel problem-library">
           <div class="page-head">
             <div>
-              <p class="section-label">Problem Library</p>
+              <p class="section-label">題庫</p>
               <h2>題庫瀏覽</h2>
               <p>搜尋題目、收藏常練題，或把可疑題目先標記回報。</p>
             </div>
@@ -1161,7 +1185,7 @@
         <section class="panel page-panel proof-lab">
           <div class="page-head">
             <div>
-              <p class="section-label">Proof Lab</p>
+              <p class="section-label">證明題</p>
               <h2>證明題庫</h2>
               <p class="proof-subtitle">不限時，不進計分，不機器改。先自己寫，再看參考證明。</p>
             </div>
@@ -2147,6 +2171,13 @@
     if (homeMorePanel) {
       homeMorePanel.addEventListener("toggle", () => {
         homeMoreOpen = homeMorePanel.open;
+      });
+    }
+
+    const sessionSettings = app.querySelector("[data-session-settings]");
+    if (sessionSettings) {
+      sessionSettings.addEventListener("toggle", () => {
+        sessionSettingsOpen = sessionSettings.open;
       });
     }
 

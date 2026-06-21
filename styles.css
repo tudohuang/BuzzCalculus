@@ -3242,8 +3242,22 @@ button {
   }
 
   .buzz-path-map {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 8px;
+    display: flex;
+    grid-template-columns: none;
+    overflow-x: auto;
+    gap: 10px;
+    padding-bottom: 8px;
+    scroll-snap-type: x proximity;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .buzz-path-map::before {
+    display: none;
+  }
+
+  .buzz-path-map .path-step {
+    flex: 0 0 140px;
+    scroll-snap-align: start;
   }
 
   .path-node-button {
@@ -3334,6 +3348,65 @@ button {
 
 .path-progress-line strong {
   color: var(--ink);
+}
+
+.session-settings-wrap {
+  margin: 14px 0;
+}
+
+.session-settings {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.86);
+}
+
+.session-settings summary {
+  min-height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 0 16px;
+  cursor: pointer;
+  list-style: none;
+}
+
+.session-settings summary::-webkit-details-marker {
+  display: none;
+}
+
+.session-settings summary span {
+  display: grid;
+  gap: 2px;
+}
+
+.session-settings summary small {
+  color: var(--muted);
+  font-size: 0.8rem;
+  font-weight: 760;
+}
+
+.session-settings summary svg {
+  transition: transform 160ms ease;
+}
+
+.session-settings[open] summary svg {
+  transform: rotate(180deg);
+}
+
+.session-settings-body {
+  padding: 4px 14px 14px;
+}
+
+/* strips sit flush inside the disclosure */
+.session-settings-body .difficulty-strip,
+.session-settings-body .answer-mode-strip {
+  margin-bottom: 10px;
+  box-shadow: none;
+}
+
+.session-settings-body .answer-mode-strip {
+  margin-bottom: 0;
 }
 
 .home-more {
