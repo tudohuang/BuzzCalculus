@@ -620,9 +620,13 @@
         <div class="launch-copy">
           <p class="section-label launch-eyebrow">${escapeHtml(homeGreeting())}</p>
           <h1>今天要怎麼練？</h1>
-          <div class="launch-next-pill">
-            <span>主線下一格</span>
-            <strong>${escapeHtml(next.short)}</strong>
+          <div class="launch-actions">
+            <button class="button home-primary launch-start" data-action="start-path-node" data-node-id="${escapeAttr(next.id)}">
+              ${icon("play")}<span>開始下一格</span><small>${escapeHtml(next.short)}</small>
+            </button>
+            <button class="button secondary launch-daily" data-action="start-daily">
+              ${icon("calendar")}<span>每日</span>
+            </button>
           </div>
         </div>
         <div class="launch-mascot" aria-hidden="true">
@@ -1641,10 +1645,10 @@
     const isDanger = !noTimer && remaining <= (quiz.examMode ? 180 : 8) ? "is-danger" : "";
     const feedback = quiz.feedback;
     const answerMode = quiz.answerMode || "free";
-    const timeLabel = noTimer ? "Mode" : quiz.examMode ? "Exam" : "Time";
-    const timeValue = noTimer ? "Free" : quiz.examMode ? formatCountdown(remaining) : String(remaining);
-    const proctorLabel = quiz.examMode ? "Proctor" : "Tabs";
-    const proctorValue = noTimer ? "Off" : quiz.examMode ? String(proctorEvents) : `${totalTabs}/${current.tabLimit}`;
+    const timeLabel = noTimer ? "模式" : quiz.examMode ? "考試" : "時間";
+    const timeValue = noTimer ? "自由" : quiz.examMode ? formatCountdown(remaining) : String(remaining);
+    const proctorLabel = quiz.examMode ? "監考" : "切頁";
+    const proctorValue = noTimer ? "關" : quiz.examMode ? String(proctorEvents) : `${totalTabs}/${current.tabLimit}`;
 
     return `
       <main class="screen quiz-screen">
@@ -1789,7 +1793,7 @@
       <section class="webwork-answer ${compact ? "is-docked" : ""}">
         <div class="webwork-head">
           <div>
-            <span>Answer</span>
+            <span>作答</span>
             <strong>${answerKindLabel(problem.answerKind)}</strong>
           </div>
           <span class="syntax-pill ${syntax.className}" data-syntax-status>${syntax.label}</span>
@@ -1804,7 +1808,7 @@
           <button type="button" data-action="clear-answer" ${disabled}>清除</button>
         </div>
         <div class="answer-preview webwork-preview">
-          <span>Preview</span>
+          <span>預覽</span>
           <div class="answer-preview-math math-inline ${quiz.draft.trim() ? "" : "is-empty"}" data-answer-preview data-tex="${escapeAttr(previewTex)}">${renderLiteTex(previewTex, false)}</div>
         </div>
         <div class="keypad webwork-keypad" aria-label="快速輸入">
@@ -1813,7 +1817,7 @@
         <div class="helper-row webwork-helper">
           <span>${formatHelp(problem.answerKind)}</span>
           <span>不定積分可省略 +C</span>
-          <span>送出前先看 Preview</span>
+          <span>送出前先看預覽</span>
         </div>
       </section>
     `;
@@ -1942,11 +1946,11 @@
               <p class="result-subtitle">${escapeHtml(momentum)}</p>
             </div>
             <div class="score-cards">
-              <div class="score-card"><span>Score</span><strong>${quiz.score}</strong></div>
-              <div class="score-card"><span>Correct</span><strong>${correct}/${total}</strong></div>
-              <div class="score-card"><span>Accuracy</span><strong>${accuracy}%</strong></div>
-              <div class="score-card"><span>Avg Sec</span><strong>${avgTime}</strong></div>
-              ${quiz.examMode ? `<div class="score-card"><span>Proctor</span><strong>${totalTabSwitches(quiz)}</strong></div>` : ""}
+              <div class="score-card"><span>分數</span><strong>${quiz.score}</strong></div>
+              <div class="score-card"><span>答對</span><strong>${correct}/${total}</strong></div>
+              <div class="score-card"><span>正確率</span><strong>${accuracy}%</strong></div>
+              <div class="score-card"><span>平均秒</span><strong>${avgTime}</strong></div>
+              ${quiz.examMode ? `<div class="score-card"><span>監考</span><strong>${totalTabSwitches(quiz)}</strong></div>` : ""}
             </div>
             ${quiz.mode === "daily" ? renderDailyCompletionResult(quiz, records, accuracy) : ""}
             ${renderSpeedResultCard(speedInsight)}
@@ -2189,7 +2193,7 @@
       <section class="panel exam-analysis-panel">
         <div class="exam-analysis-head">
           <div>
-            <p class="section-label">Exam analysis</p>
+            <p class="section-label">考試分析</p>
             <h3>大考戰況分析</h3>
             <p class="panel-note">依本份試卷統計速度、錯誤熱區與難度斷點；未作答會算錯，但不列入平均秒數。</p>
           </div>
