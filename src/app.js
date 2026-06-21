@@ -560,61 +560,16 @@
       <main class="screen home-screen">
         ${showIntro ? renderFirstRunNotice() : ""}
         ${renderHomeLaunchPad(records, mission, path, weaknesses, mistakeCount)}
-        ${renderMobileQuestCard(mission, daily, path, mistakeCount)}
         ${renderDifficultyControl(records)}
         ${renderHomeAnswerModeBar()}
-        <section class="path-layout home-path-layout">
-          ${renderBuzzPath(path, mission)}
-          <aside class="path-sidebar">
-            ${renderPathMissionCard(records, mission, daily, path)}
-          </aside>
-        </section>
-
+        ${renderBuzzPath(path, mission)}
         ${renderHomeMorePanel(records, weaknesses, mistakeCount)}
-
-        ${renderMobileStartDock(path, mission)}
       </main>
     `;
   }
 
-  function renderHomeLaunchPad(records, mission, path, weaknesses, mistakeCount) {
+  function renderHomeLaunchPad(records, mission, path) {
     const next = path.next;
-    const streak = mission.dailyStreak || 0;
-    const cards = [
-      {
-        label: "第一次來",
-        title: "輕鬆暖身",
-        meta: "R1-R2 · 基礎題",
-        action: "start-friendly-run",
-        iconName: "sparkles",
-        className: "is-friendly"
-      },
-      {
-        label: streak ? `${streak} 天連續` : "今日任務",
-        title: "每日一輪",
-        meta: `${mission.completed}/${mission.target} 題 · ${mission.progress}%`,
-        action: "start-daily",
-        iconName: "calendar",
-        className: "is-daily"
-      },
-      {
-        label: "考試感",
-        title: "大考模式",
-        meta: "20 題 / 45 分鐘",
-        action: "start-mode",
-        modeKey: "exam",
-        iconName: "file-pen-line",
-        className: "is-exam"
-      },
-      {
-        label: "最高難度",
-        title: "競賽魔王",
-        meta: "R6 · Putnam / monster",
-        action: "start-god-run",
-        iconName: "flame",
-        className: "is-god"
-      }
-    ];
     return `
       <section class="home-launch-pad" aria-label="今日練習入口">
         <div class="launch-copy">
@@ -625,7 +580,7 @@
               ${icon("play")}<span>開始下一格</span><small>${escapeHtml(next.short)}</small>
             </button>
             <button class="button secondary launch-daily" data-action="start-daily">
-              ${icon("calendar")}<span>每日</span>
+              ${icon("calendar")}<span>每日</span><small>${mission.completed}/${mission.target}</small>
             </button>
           </div>
         </div>
@@ -633,21 +588,6 @@
           <span class="mascot-orbit"></span>
           <strong>∫</strong>
           <small>Buzz</small>
-        </div>
-        <div class="launch-card-grid">
-          ${cards
-            .map(
-              (card) => `
-                <button class="launch-card ${card.className}" data-action="${escapeAttr(card.action)}" ${card.modeKey ? `data-mode-key="${escapeAttr(card.modeKey)}"` : ""}>
-                  <span class="launch-card-icon">${icon(card.iconName)}</span>
-                  <span class="launch-card-copy">
-                    <small>${escapeHtml(card.label)}</small>
-                    <strong>${escapeHtml(card.title)}</strong>
-                    <em>${escapeHtml(card.meta)}</em>
-                  </span>
-                </button>`
-            )
-            .join("")}
         </div>
       </section>
     `;
@@ -774,90 +714,6 @@
     `;
   }
 
-  function renderMobileQuestCard(mission, daily, path, mistakeCount) {
-    const next = path.next;
-    const streak = mission.dailyStreak || 0;
-    return `
-      <section class="mobile-quest-card">
-        <div class="mobile-quest-head">
-          <div>
-            <p class="section-label">今日</p>
-            <h2>${mission.done ? "完成" : `${mission.completed}/${mission.target}`}</h2>
-          </div>
-          <span>${streak ? `${streak} 天` : "新任務"}</span>
-        </div>
-        <div class="mission-progress" aria-label="今日任務進度">
-          <div class="meter-track"><div class="meter-fill" style="width:${mission.progress}%"></div></div>
-        </div>
-        <div class="mobile-quest-next">
-          <span>下一格</span>
-          <strong>${escapeHtml(next.short)}</strong>
-          <small>${daily ? `${daily.accuracy}%` : escapeHtml(next.note)}</small>
-        </div>
-        <div class="mobile-quest-actions">
-          <button data-action="start-path-node" data-node-id="${escapeAttr(next.id)}">${icon("play")}主線</button>
-          <button data-action="start-daily">${icon("calendar")}每日</button>
-          <button data-action="start-weakness" ${mistakeCount ? "" : "disabled"}>${icon("refresh")}${mistakeCount ? "弱點" : "錯題"}</button>
-        </div>
-      </section>
-    `;
-  }
-
-  function renderMobileStartDock(path, mission) {
-    const next = path.next;
-    return `
-      <div class="mobile-start-dock">
-        <button class="button home-primary" data-action="start-path-node" data-node-id="${escapeAttr(next.id)}">
-          ${icon("play")}
-          <span>開始下一格</span>
-          <small>${escapeHtml(next.short)}</small>
-        </button>
-        <button class="button secondary" data-action="start-daily">
-          ${icon("calendar")}
-          <span>${mission.done ? "每日" : `${mission.completed}/${mission.target}`}</span>
-        </button>
-      </div>
-    `;
-  }
-
-  function renderPathMissionCard(records, mission, daily, path) {
-    const mistakeCount = Object.keys(records.mistakes || {}).length;
-    const next = path.next;
-    const boss = path.nodes.find((node) => node.id === "boss") || path.nodes[path.nodes.length - 1];
-    const week = weeklyMissionInfo(records);
-    const recent = recentPathResult(records, path);
-    return `
-      <section class="summary-card path-mission-card">
-        <div class="path-mission-head">
-          <p class="section-label">今日</p>
-          <h3>${mission.done ? "已完成" : `${mission.completed}/${mission.target} 題`}</h3>
-          <span>${daily ? `${daily.accuracy}% 正確率` : "選擇題優先"}</span>
-        </div>
-        <div class="mission-progress" aria-label="今日任務進度">
-          <div class="meter-track"><div class="meter-fill" style="width:${mission.progress}%"></div></div>
-        </div>
-        ${renderDailyStreakDots(records)}
-        <div class="weekly-mission-line">
-          <span>週任務</span>
-          <strong>${week.completed}/${week.target}</strong>
-        </div>
-        <div class="meter-track"><div class="meter-fill" style="width:${week.progress}%"></div></div>
-        ${
-          recent
-            ? `<div class="recent-path-result"><span>最近關卡</span><strong>${escapeHtml(recent.label)} · ${recent.accuracy}%</strong></div>`
-            : ""
-        }
-        <div class="path-mini-actions">
-          <button class="path-mini-button" data-action="start-daily"><strong>每日</strong><span>${mission.progress}%</span></button>
-          <button class="path-mini-button" data-action="start-weakness"><strong>錯題</strong><span>${mistakeCount}</span></button>
-          <button class="path-mini-button" data-action="start-path-node" data-node-id="${escapeAttr(boss.id)}"><strong>Boss</strong><span>${boss.gated ? "可跳" : `${boss.mastery}%`}</span></button>
-        </div>
-        <button class="button secondary" data-action="start-path-node" data-node-id="${escapeAttr(next.id)}">${icon("play")}練下一格</button>
-        ${recent ? `<button class="button ghost" data-action="start-path-lesson" data-node-id="${escapeAttr(recent.id)}">${icon("repeat")}重練最近關卡</button>` : ""}
-      </section>
-    `;
-  }
-
   function renderPathIntro() {
     const records = loadRecords();
     const path = learningPathState(records);
@@ -934,11 +790,16 @@
           <summary>
             <span>
               <strong>更多練習</strong>
-              <small>自訂一局、每日目標、其他模式</small>
+              <small>暖身、大考、競賽魔王、自訂一局</small>
             </span>
             ${icon("chevron-down")}
           </summary>
           <div class="home-more-body">
+            <nav class="quick-entries" aria-label="快速入口">
+              <button data-action="start-friendly-run">${icon("sparkles")}<span>輕鬆暖身</span><small>R1-R2</small></button>
+              <button data-action="start-mode" data-mode-key="exam">${icon("file-pen-line")}<span>大考模式</span><small>20 題 / 45 分</small></button>
+              <button data-action="start-god-run">${icon("flame")}<span>競賽魔王</span><small>R6 · Putnam</small></button>
+            </nav>
             <section class="control-band practice-control home-compact-control">
               <div class="home-control-head">
                 <div>
@@ -4837,36 +4698,12 @@
     };
   }
 
-  function renderDailyStreakDots(records) {
-    const daily = records.daily || {};
-    const today = new Date();
-    const dots = [];
-    for (let offset = 6; offset >= 0; offset -= 1) {
-      const date = new Date(today);
-      date.setDate(today.getDate() - offset);
-      const key = dateKey(date);
-      dots.push(`<span class="streak-dot ${daily[key] ? "is-done" : ""}" title="${key}"></span>`);
-    }
-    return `<div class="streak-dots" aria-label="最近七日每日任務">${dots.join("")}</div>`;
-  }
-
-  function recentPathResult(records, path) {
-    const entries = Object.entries(records.pathLessonRuns || {})
-      .map(([id, run]) => {
-        const node = path.nodes.find((item) => item.id === id) || PATH_NODES.find((item) => item.id === id);
-        return node && run.lastFinishedAt ? { id, label: node.short || node.label, accuracy: run.lastAccuracy || 0, time: Date.parse(run.lastFinishedAt || "") || 0 } : null;
-      })
-      .filter(Boolean)
-      .sort((a, b) => b.time - a.time);
-    return entries[0] || null;
-  }
-
   function pathRecommendation(path, mission) {
     if (!mission.done) return `先完成每日 ${mission.target} 題，維持練習節奏。`;
     const weakNode = path.nodes.find((node) => node.attempts > 0 && node.mastery < 70);
     if (weakNode) return `重練 ${weakNode.label}，差一點就能 CLEAR。`;
     if (path.next) return `推進 ${path.next.label}，打開下一段技巧。`;
-    return "主線完成後可以打 Boss Rush 或 Proof Lab。";
+    return "主線完成後可以打 Boss 連戰或證明題。";
   }
 
   function startOfWeek(date) {
@@ -5043,7 +4880,7 @@
         {
           label: "錯誤最多技巧",
           value: weakTag ? `${weakTag.label} · ${weakTag.wrong}/${weakTag.total}` : "尚無資料",
-          note: weakTag ? `${Math.round(weakTag.wrongRate * 100)}% miss rate` : "目前沒有明顯錯誤熱區",
+          note: weakTag ? `失誤率 ${Math.round(weakTag.wrongRate * 100)}%` : "目前沒有明顯錯誤熱區",
           tone: "miss"
         },
         {
