@@ -66,7 +66,7 @@
       boss: true
     },
     boss_rush: {
-      label: "Boss Rush",
+      label: "Boss 連戰",
       note: "Boss 題連戰，錯一題就結算",
       count: 10,
       topicLocked: false,
@@ -108,7 +108,7 @@
       noHint: true
     },
     accuracy: {
-      label: "Accuracy",
+      label: "正確率",
       note: "不限時，錯題重罰",
       count: 12,
       topicLocked: false,
@@ -118,7 +118,7 @@
       accuracyMode: true
     },
     survival: {
-      label: "Survival",
+      label: "生存",
       note: "最多錯 3 題",
       count: 30,
       topicLocked: false,
@@ -1203,7 +1203,7 @@
               <button class="button secondary" data-action="home">${icon("home")}回首頁</button>
               <button class="button" data-action="start-library-filter" ${allItems.length ? "" : "disabled"}>${icon("shuffle")}練目前篩選</button>
               <button class="button" data-action="open-boss-lab">${icon("trophy")}Boss 專區</button>
-              <button class="button ghost" data-action="start-mode" data-mode-key="boss_rush">${icon("play")}Boss Rush</button>
+              <button class="button ghost" data-action="start-mode" data-mode-key="boss_rush">${icon("play")}Boss 連戰</button>
             </div>
           </div>
 
@@ -1620,7 +1620,7 @@
                 <div class="history-review-item ${answer.correct ? "is-correct" : "is-wrong"}">
                   <strong>#${index + 1} · ${TOPICS[problem.topic].label} · ${answer.unanswered ? "未作答" : `${answer.elapsed}s`}</strong>
                   <div class="review-prompt math-block" data-tex="${escapeAttr(problem.prompt)}"></div>
-                  <span>你的答案：${escapeHtml(answer.input || "未作答")} · ${answer.correct ? "Correct" : answerReasonLabel(answer.reason)}</span>
+                  <span>你的答案：${escapeHtml(answer.input || "未作答")} · ${answer.correct ? "正確" : answerReasonLabel(answer.reason)}</span>
                 </div>
               `;
             })
@@ -1696,7 +1696,7 @@
                     <strong>${feedback.title}</strong>
                     <p>${feedback.message}</p>
                   </div>`
-                : `<div class="feedback"><strong>作答狀態</strong><p>${quiz.examMode ? "大考模式：整份倒數，WebWork 作答；切頁或退出全螢幕會被記錄。" : quiz.survival ? "Survival：最多錯 3 題。" : quiz.suddenDeath ? "Boss Rush：錯一題就結算。" : noTimer ? "本局不倒數、不記切分頁。" : `倒數開始後請保持在本頁。這題允許 ${current.tabLimit} 次切分頁。`}</p></div>`
+                : `<div class="feedback"><strong>作答狀態</strong><p>${quiz.examMode ? "大考模式：整份倒數，WebWork 作答；切頁或退出全螢幕會被記錄。" : quiz.survival ? "生存：最多錯 3 題。" : quiz.suddenDeath ? "Boss 連戰：錯一題就結算。" : noTimer ? "本局不倒數、不記切分頁。" : `倒數開始後請保持在本頁。這題允許 ${current.tabLimit} 次切分頁。`}</p></div>`
             }
           </div>
 
@@ -1733,7 +1733,7 @@
       <div class="exam-lock ${active ? "is-active" : "is-warning"}">
         <div>
           <strong>${escapeHtml(status)}</strong>
-          <span>整份倒數 ${formatCountdown(examTimeRemaining(quiz))}；退出全螢幕、切頁或失焦會計入 Proctor。</span>
+          <span>整份倒數 ${formatCountdown(examTimeRemaining(quiz))}；退出全螢幕、切頁或失焦會計入監考。</span>
         </div>
         ${button}
       </div>
@@ -1893,7 +1893,7 @@
 
   function renderRulesModal() {
     const ruleText = quiz && quiz.examMode
-      ? `大考模式為整份 ${Math.round((quiz.examDurationSec || 0) / 60)} 分鐘倒數，全部題目使用 WebWork 輸入。時間到會直接交卷；退出全螢幕、切頁或視窗失焦會被記錄為 Proctor 事件。`
+      ? `大考模式為整份 ${Math.round((quiz.examDurationSec || 0) / 60)} 分鐘倒數，全部題目使用 WebWork 輸入。時間到會直接交卷；退出全螢幕、切頁或視窗失焦會被記錄為監考事件。`
       : "每題都有自己的倒數與切分頁限制。超時、跳過、答案不等價或超過切分頁限制，都會記為錯題。系統會在答題後顯示簡短解法。";
     return `
       <div class="modal-backdrop" data-action="close-modal">
@@ -2236,11 +2236,11 @@
       <div class="exam-analysis-row">
         <div class="exam-analysis-title">
           <span>${escapeHtml(row.label)}</span>
-          <small>${row.correct}/${row.total} · avg ${formatSeconds(row.avgSec)}</small>
+          <small>${row.correct}/${row.total} · 平均 ${formatSeconds(row.avgSec)}</small>
         </div>
         <div class="exam-analysis-bars">
           <div class="meter-track" aria-label="correct rate"><div class="meter-fill" style="width:${accuracy}%"></div></div>
-          <div class="meter-track miss-track" aria-label="miss rate"><div class="meter-fill" style="width:${miss}%"></div></div>
+          <div class="meter-track miss-track" aria-label="失誤率"><div class="meter-fill" style="width:${miss}%"></div></div>
         </div>
         <strong>${accuracy}%</strong>
       </div>
@@ -2254,7 +2254,7 @@
       <article class="review-item ${answer.correct ? "is-correct" : "is-wrong"}">
         <div class="review-top">
           <span>#${index + 1} · ${TOPICS[item.topic].label} · ${answer.unanswered ? "未作答" : `${answer.elapsed}s`}</span>
-          <strong>${answer.correct ? "Correct" : answerReasonLabel(answer.reason)}</strong>
+          <strong>${answer.correct ? "正確" : answerReasonLabel(answer.reason)}</strong>
         </div>
         <div class="review-prompt math-block" data-tex="${escapeAttr(item.prompt)}"></div>
         ${
