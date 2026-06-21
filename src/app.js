@@ -568,33 +568,61 @@
     `;
   }
 
-  function renderHomeLaunchPad(records, mission, path) {
+  function renderHomeLaunchPad(records, mission, path, weaknesses, mistakeCount) {
     const next = path.next;
+    const nodes = path.nodes || [];
+    const level = Math.max(1, nodes.findIndex((node) => node.id === next.id) + 1);
+    const total = nodes.length || level;
+    const mastery = Math.round(next.mastery || 0);
     const remaining = Math.max(0, (mission.target || 0) - (mission.completed || 0));
     const streak = mission.dailyStreak || 0;
-    const hook = mission.done ? "今日任務已完成，超前一波" : `今天清掉 ${remaining} 題就達標`;
+    const statusMap = { jump: "可跳關", ready: "可挑戰", active: "進行中", mastered: "已熟練", gold: "金關" };
+    const statusText = statusMap[next.status] || "可挑戰";
+    const hook = mission.done
+      ? "今日達標，超前部署一波"
+      : remaining <= 1
+        ? `再 ${remaining} 題就達成今日目標！`
+        : `再 ${remaining} 題達成今日目標`;
+    const mood = homeMascotMood(records, mission, mistakeCount, streak);
     return `
-      <section class="home-launch-pad" aria-label="今日練習入口">
+      <section class="home-launch-pad quest-hero" aria-label="今日練習入口">
         <div class="launch-copy">
-          <p class="section-label launch-eyebrow">${escapeHtml(homeGreeting())}${streak ? ` · 連續 ${streak} 天` : ""}</p>
-          <h1>下一格 · ${escapeHtml(next.label)}</h1>
+          <p class="section-label launch-eyebrow">${escapeHtml(homeGreeting())}${streak ? ` · 連勝 ${streak} 天` : ""}</p>
+          <div class="quest-tag">
+            <span class="quest-level">第 ${level} / ${total} 關</span>
+            <span class="quest-status is-${escapeAttr(next.status || "ready")}">${escapeHtml(statusText)}</span>
+          </div>
+          <h1>${escapeHtml(next.label)}</h1>
           <p class="launch-hook">${escapeHtml(hook)}</p>
+          <div class="mastery-gauge" role="img" aria-label="熟練度 ${mastery}%">
+            <div class="mastery-fill" style="width:${mastery}%"></div>
+            <span class="mastery-label">熟練槽 ${mastery}%</span>
+          </div>
           <div class="launch-actions">
             <button class="button home-primary launch-start" data-action="start-path-node" data-node-id="${escapeAttr(next.id)}">
-              ${icon("play")}<span>開始下一格</span><small>${escapeHtml(next.short)}</small>
+              ${icon("play")}<span>開打下一格</span><small>${escapeHtml(next.short)}</small>
             </button>
             <button class="button secondary launch-daily" data-action="start-daily">
               ${icon("calendar")}<span>每日</span><small>${mission.completed}/${mission.target}</small>
             </button>
           </div>
         </div>
-        <div class="launch-mascot" aria-hidden="true">
+        <div class="launch-mascot ${mood.cls}">
           <span class="mascot-orbit"></span>
-          <strong>∫</strong>
-          <small>Buzz</small>
+          <strong aria-hidden="true">∫</strong>
+          <small class="mascot-mood">${escapeHtml(mood.label)}</small>
         </div>
       </section>
     `;
+  }
+
+  function homeMascotMood(records, mission, mistakeCount, streak) {
+    if (!(records.totalAnswered || 0)) return { cls: "is-idle", label: "等你開打" };
+    if (mission.done) return { cls: "is-ahead", label: "今日超前" };
+    if (mission.target && mission.completed / mission.target >= 0.66) return { cls: "is-close", label: "快達標" };
+    if ((streak || 0) >= 3) return { cls: "is-streak", label: `連勝 ${streak} 天` };
+    if ((mistakeCount || 0) >= 8) return { cls: "is-pressure", label: "錯題堆積中" };
+    return { cls: "is-ok", label: "狀態良好" };
   }
 
   function renderSessionSettings(records) {
@@ -1958,7 +1986,7 @@
     const gold = result.accuracy >= 90;
     return `
       <div class="path-clear-toast ${gold ? "is-gold" : ""}">
-        <strong>${gold ? "GOLD CLEAR" : "CLEAR"}</strong>
+        <strong>${gold ? "金牌過關" : "過關"}</strong>
         <span>${escapeHtml(result.node.label)} ${result.correct}/${result.total}</span>
       </div>
     `;
@@ -1987,7 +2015,7 @@
   function renderPathLessonResult(result) {
     const progress = Math.max(0, Math.min(100, result.mastery));
     const gold = result.cleared && result.accuracy >= 90;
-    const title = gold ? "GOLD" : result.cleared ? "CLEAR" : "REVIEW";
+    const title = gold ? "金牌" : result.cleared ? "過關" : "再加強";
     const note = result.cleared
       ? result.nextNode
         ? `下一關：${result.nextNode.label}`
@@ -1997,7 +2025,7 @@
       <div class="path-lesson-result ${result.cleared ? "is-cleared" : "is-review"} ${gold ? "is-gold" : ""}">
         <div class="lesson-result-badge">
           <strong>${title}</strong>
-          <span>${gold ? "金牌" : result.cleared ? "過關" : "補強"}</span>
+          <span>${result.accuracy}%</span>
         </div>
         <div class="lesson-result-main">
           <strong>${escapeHtml(result.node.label)}</strong>
