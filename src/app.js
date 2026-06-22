@@ -405,8 +405,8 @@
   const HISTORY_LIMIT = 40;
   const RECENT_PROBLEM_COOLDOWN = 30;
   const RECENT_STRONG_AVOID = 18;
-  const APP_VERSION = "v0.9.11-beta";
-  const BUILD_DATE = "2026-06-19";
+  const APP_VERSION = "v0.9.12-beta";
+  const BUILD_DATE = "2026-06-22";
   const GA_MEASUREMENT_ID = String(window.BUZZ_GA_MEASUREMENT_ID || "").trim();
 
   let view = "home";
@@ -432,6 +432,7 @@
   let deferredInstallPrompt = null;
   let quiz = null;
   let activePathNodeId = "";
+  let justUnlockedNodeId = "";
   let tickHandle = null;
   let renderPending = false;
   let lastVisibilityStamp = 0;
@@ -555,10 +556,14 @@
       A({ targets: pop, scale: [0.92, 1], opacity: [0, 1], duration: 520, easing: "spring(1, 80, 12, 0)" });
     }
 
-    // Draw the learning-path connector line (anime.js stroke animation).
+    // Draw the learning-path connector line only up to the freshly-unlocked
+    // node (anime.js stroke animation). Absent the flag the line is static.
     const drawLine = root.querySelector("[data-draw-line]");
     if (drawLine && A && !reduce) {
-      A({ targets: drawLine, strokeDashoffset: [A.setDashoffset, 0], duration: 900, delay: 160, easing: "easeInOutSine" });
+      const full = A.setDashoffset(drawLine);
+      const frac = Math.max(0, Math.min(1, Number(drawLine.getAttribute("data-draw-to")) || 1));
+      // strokeDashoffset goes full(hidden) -> full*(1-frac)(drawn up to node).
+      A({ targets: drawLine, strokeDashoffset: [full, full * (1 - frac)], duration: 900, delay: 160, easing: "easeInOutSine" });
     }
   }
 
@@ -811,12 +816,32 @@
         </div>
 
         <div class="buzz-path-map" aria-label="BuzzCalculus learning path">
-          <svg class="path-line" preserveAspectRatio="none" aria-hidden="true">
-            <line class="path-line-draw" data-draw-line x1="50%" y1="0" x2="50%" y2="100%" />
-          </svg>
+          ${renderPathLine(path)}
           ${path.nodes.map((node, index) => renderPathNode(node, index, node.id === next.id)).join("")}
         </div>
       </section>
+    `;
+  }
+
+  function renderPathLine(path) {
+    const total = Math.max(1, path.nodes.length);
+    const unlockedIdx = justUnlockedNodeId
+      ? path.nodes.findIndex((node) => node.id === justUnlockedNodeId)
+      : -1;
+    // Transient flag is consumed on this render; a normal visit shows a static line.
+    justUnlockedNodeId = "";
+    if (unlockedIdx >= 0) {
+      const frac = Math.min(1, (unlockedIdx + 0.5) / total);
+      return `
+        <svg class="path-line" preserveAspectRatio="none" aria-hidden="true">
+          <line class="path-line-draw" data-draw-line data-draw-to="${frac.toFixed(3)}" x1="50%" y1="0" x2="50%" y2="100%" />
+        </svg>
+      `;
+    }
+    return `
+      <svg class="path-line" preserveAspectRatio="none" aria-hidden="true">
+        <line class="path-line-draw" x1="50%" y1="0" x2="50%" y2="100%" />
+      </svg>
     `;
   }
 
@@ -1180,6 +1205,33 @@
     return groups + (rest ? `<optgroup label="其他">${rest}</optgroup>` : "");
   }
 
+  function renderLibraryBoard(records) {
+    const mistakeCount = Object.keys(records.mistakes || {}).length;
+    const weakLabel = topWeaknesses(records)[0]?.label || "綜合";
+    const techCount = difficultyScopedCount(6, "all", "technique_recognition");
+    const bossCount = difficultyScopedCount(6, "all", "boss_challenge");
+    return `
+      <p class="section-label">任務板</p>
+      <div class="library-board">
+        <button class="board-card" data-action="train-pack" data-pack="technique_recognition">
+          <span class="board-tag">今日推薦</span>
+          <strong>先練判型</strong>
+          <small>技巧辨識 · ${techCount} 題</small>
+        </button>
+        <button class="board-card is-weak" data-action="start-weakness" ${mistakeCount ? "" : "disabled"}>
+          <span class="board-tag">弱點包</span>
+          <strong>${mistakeCount ? "清弱點" : "尚無錯題"}</strong>
+          <small>${escapeHtml(weakLabel)} · ${mistakeCount} 題</small>
+        </button>
+        <button class="board-card is-boss" data-action="train-pack" data-pack="boss_challenge">
+          <span class="board-tag">Boss 前置</span>
+          <strong>強人題熱身</strong>
+          <small>R5–6 · ${bossCount} 題</small>
+        </button>
+      </div>
+    `;
+  }
+
   function renderProblemLibrary() {
     const records = loadRecords();
     const allItems = libraryProblems(records);
@@ -1194,13 +1246,14 @@
               <p>搜尋題目、收藏常練題，或把可疑題目先標記回報。</p>
             </div>
             <div class="action-row">
-              <button class="button secondary" data-action="home">${icon("home")}回首頁</button>
+              <button class="button ghost" data-action="home">${icon("home")}回首頁</button>
               <button class="button" data-action="start-library-filter" ${allItems.length ? "" : "disabled"}>${icon("shuffle")}練目前篩選</button>
-              <button class="button" data-action="open-boss-lab">${icon("trophy")}Boss 專區</button>
-              <button class="button ghost" data-action="start-mode" data-mode-key="boss_rush">${icon("play")}Boss 連戰</button>
             </div>
           </div>
 
+          ${renderLibraryBoard(records)}
+
+          <p class="section-label library-filter-label">自己挑</p>
           <div class="library-toolbar">
             <label class="library-search">
               <span>搜尋</span>
@@ -1357,22 +1410,32 @@
           ${(proof.tags || []).map((tag) => `<span>${escapeHtml(tag)}</span>`).join("")}
         </div>
 
-        <details class="proof-hints">
-          <summary>提示</summary>
-          <ul>
-            ${(proof.hints || []).map((hint) => `<li>${escapeHtml(hint)}</li>`).join("")}
-          </ul>
-        </details>
+        <p class="proof-ladder">先自己寫 → 卡了開提示 → 還卡開關鍵步驟 → 最後對參考證明</p>
 
-        <div class="proof-key-steps">
-          <strong>關鍵步驟</strong>
-          <div>${(proof.keySteps || []).map((step) => `<span>${escapeHtml(step)}</span>`).join("")}</div>
-        </div>
+        ${
+          (proof.hints || []).length
+            ? `<details class="proof-step proof-hints">
+                <summary><span class="proof-step-no">1</span>提示</summary>
+                <ul>
+                  ${(proof.hints || []).map((hint) => `<li>${escapeHtml(hint)}</li>`).join("")}
+                </ul>
+              </details>`
+            : ""
+        }
+
+        ${
+          (proof.keySteps || []).length
+            ? `<details class="proof-step proof-key-steps">
+                <summary><span class="proof-step-no">2</span>關鍵步驟</summary>
+                <div class="proof-key-steps-body">${(proof.keySteps || []).map((step) => `<span>${escapeHtml(step)}</span>`).join("")}</div>
+              </details>`
+            : ""
+        }
 
         ${
           viewed
             ? renderProofSolution(proof)
-            : `<button class="button secondary proof-solution-button" data-action="view-proof-solution" data-proof-id="${escapeAttr(proof.id)}">${icon("book-open-check")}看參考證明</button>`
+            : `<button class="button secondary proof-solution-button" data-action="view-proof-solution" data-proof-id="${escapeAttr(proof.id)}"><span class="proof-step-no">3</span>${icon("book-open-check")}看參考證明</button>`
         }
 
         <div class="proof-self-check">
@@ -1384,6 +1447,20 @@
             ${status ? `<button class="tag-button" data-action="mark-proof-status" data-proof-id="${escapeAttr(proof.id)}" data-proof-status="">清除</button>` : ""}
           </div>
         </div>
+
+        ${
+          status === "partial" || status === "stuck"
+            ? `<div class="proof-self-check proof-blocker">
+                <span>卡在哪</span>
+                <div class="tag-row">
+                  ${renderProofBlockerButton(proof.id, progress.blocker, "start", "起手式")}
+                  ${renderProofBlockerButton(proof.id, progress.blocker, "algebra", "代數整理")}
+                  ${renderProofBlockerButton(proof.id, progress.blocker, "theorem", "定理選擇")}
+                  ${renderProofBlockerButton(proof.id, progress.blocker, "finish", "收尾")}
+                </div>
+              </div>`
+            : ""
+        }
       </article>
     `;
   }
@@ -1411,6 +1488,10 @@
 
   function renderProofStatusButton(proofId, current, status, label) {
     return `<button class="tag-button ${current === status ? "is-active" : ""}" data-action="mark-proof-status" data-proof-id="${escapeAttr(proofId)}" data-proof-status="${escapeAttr(status)}">${label}</button>`;
+  }
+
+  function renderProofBlockerButton(proofId, current, blocker, label) {
+    return `<button class="tag-button ${current === blocker ? "is-active" : ""}" data-action="mark-proof-blocker" data-proof-id="${escapeAttr(proofId)}" data-proof-blocker="${escapeAttr(blocker)}">${label}</button>`;
   }
 
   function proofStatusLabel(status) {
@@ -1857,6 +1938,13 @@
   function renderWebWorkAnswerWorkspace(problem, disabled, previewTex, compact) {
     const syntax = answerSyntaxInfo(problem, quiz.draft);
     const examples = answerExamples(problem);
+    // Keypad/preview/examples collapse into a drawer; on a narrow screen they
+    // start closed so the prompt + input stay primary. Resolved once per quiz.
+    if (quiz.keypadOpen == null) {
+      quiz.keypadOpen = typeof window === "undefined" || !window.innerWidth || window.innerWidth >= 760;
+    }
+    const extrasOpen = quiz.keypadOpen;
+    const hasDraft = Boolean(quiz.draft.trim());
     return `
       <section class="webwork-answer ${compact ? "is-docked" : ""}">
         <div class="webwork-head">
@@ -1871,21 +1959,27 @@
         <input id="answer" class="answer-input" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="done" inputmode="text" value="${escapeAttr(quiz.draft)}" placeholder="${placeholderFor(problem)}" ${disabled} />
         <button class="button" type="submit" ${disabled}>${icon("send")}送出</button>
         </form>
-        <div class="webwork-examples" aria-label="常用答案格式">
-          ${examples.map((item) => `<button type="button" data-insert-example="${escapeAttr(item)}" ${disabled}>${escapeHtml(item)}</button>`).join("")}
-          <button type="button" data-action="clear-answer" ${disabled}>清除</button>
-        </div>
-        <div class="answer-preview webwork-preview">
-          <span>預覽</span>
-          <div class="answer-preview-math math-inline ${quiz.draft.trim() ? "" : "is-empty"}" data-answer-preview data-tex="${escapeAttr(previewTex)}">${renderLiteTex(previewTex, false)}</div>
-        </div>
-        <div class="keypad webwork-keypad" aria-label="快速輸入">
-          ${webworkKeys(problem).map((key) => `<button type="button" data-insert="${escapeAttr(key.insert)}" ${disabled}>${escapeHtml(key.label)}</button>`).join("")}
-        </div>
-        <div class="helper-row webwork-helper">
-          <span>${formatHelp(problem.answerKind)}</span>
-          <span>不定積分可省略 +C</span>
-          <span>送出前先看預覽</span>
+        <button class="webwork-extras-toggle" type="button" data-action="toggle-keypad" aria-expanded="${extrasOpen ? "true" : "false"}" ${disabled}>
+          <span>${icon(extrasOpen ? "chevron-up" : "chevron-down")}輸入工具</span>
+          <small>${extrasOpen ? "預覽 · 符號鍵 · 範例" : hasDraft ? "點開看預覽" : "預覽 · 符號鍵 · 範例"}</small>
+        </button>
+        <div class="webwork-extras ${extrasOpen ? "is-open" : "is-collapsed"}">
+          <div class="answer-preview webwork-preview">
+            <span>預覽</span>
+            <div class="answer-preview-math math-inline ${hasDraft ? "" : "is-empty"}" data-answer-preview data-tex="${escapeAttr(previewTex)}">${renderLiteTex(previewTex, false)}</div>
+          </div>
+          <div class="webwork-examples" aria-label="常用答案格式">
+            ${examples.map((item) => `<button type="button" data-insert-example="${escapeAttr(item)}" ${disabled}>${escapeHtml(item)}</button>`).join("")}
+            <button type="button" data-action="clear-answer" ${disabled}>清除</button>
+          </div>
+          <div class="keypad webwork-keypad" aria-label="快速輸入">
+            ${webworkKeys(problem).map((key) => `<button type="button" data-insert="${escapeAttr(key.insert)}" ${disabled}>${escapeHtml(key.label)}</button>`).join("")}
+          </div>
+          <div class="helper-row webwork-helper">
+            <span>${formatHelp(problem.answerKind)}</span>
+            <span>不定積分可省略 +C</span>
+            <span>送出前先看預覽</span>
+          </div>
         </div>
       </section>
     `;
@@ -2553,6 +2647,10 @@
     if (action === "start-path-gate") startPathGate(actionNode.dataset.nodeId || activePathNodeId);
     if (action === "choose-answer") submitChoiceAnswer(actionNode.dataset.choice || "");
     if (action === "show-hint") showHint();
+    if (action === "toggle-keypad" && quiz) {
+      quiz.keypadOpen = !quiz.keypadOpen;
+      render();
+    }
     if (action === "skip") recordAnswer({ status: "wrong", reason: "Skipped", input: quiz.draft || "" });
     if (action === "open-mistakes") {
       view = "mistakes";
@@ -2585,6 +2683,7 @@
     }
     if (action === "view-proof-solution") viewProofSolution(actionNode.dataset.proofId);
     if (action === "mark-proof-status") markProofStatus(actionNode.dataset.proofId, actionNode.dataset.proofStatus || "");
+    if (action === "mark-proof-blocker") markProofBlocker(actionNode.dataset.proofId, actionNode.dataset.proofBlocker || "");
     if (action === "start-mistakes") startMistakeQuiz(selectedMistakeTopic);
     if (action === "start-mistake-triage") {
       const ids = (actionNode.dataset.problemIds || "").split(",").filter(Boolean);
@@ -2985,6 +3084,29 @@
     }
     saveRecords(records);
     trackEvent("mark_proof_status", { proof_id: proofId, status: status || "clear" });
+    render();
+  }
+
+  function markProofBlocker(proofId, blocker) {
+    if (!proofs.some((proof) => proof.id === proofId)) return;
+    const records = loadRecords();
+    const item = records.proofs[proofId] || {};
+    // Toggle off if the same blocker is tapped again.
+    const next = item.blocker === blocker ? "" : blocker;
+    if (!next) {
+      if (records.proofs[proofId]) {
+        delete records.proofs[proofId].blocker;
+        records.proofs[proofId].updatedAt = new Date().toISOString();
+      }
+    } else {
+      records.proofs[proofId] = {
+        ...item,
+        blocker: next,
+        updatedAt: new Date().toISOString()
+      };
+    }
+    saveRecords(records);
+    trackEvent("mark_proof_blocker", { proof_id: proofId, blocker: next || "clear" });
     render();
   }
 
@@ -4630,14 +4752,23 @@
 
     if (currentQuiz.pathNodeId) {
       const previous = records.pathLessonRuns[currentQuiz.pathNodeId] || {};
+      const wasCleared = Boolean(previous.cleared);
+      const nowCleared = Boolean(previous.cleared || accuracy >= 70);
       records.pathLessonRuns[currentQuiz.pathNodeId] = {
         attempts: (previous.attempts || 0) + 1,
         bestAccuracy: Math.max(previous.bestAccuracy || 0, accuracy),
         lastAccuracy: accuracy,
         lastScore: currentQuiz.score,
         lastFinishedAt: finishedAt,
-        cleared: Boolean(previous.cleared || accuracy >= 70)
+        cleared: nowCleared
       };
+      // Freshly cleared this node → flag the node that just unlocked so the
+      // path line animates only up to it (consumed on the next home render).
+      if (!wasCleared && nowCleared) {
+        const idx = PATH_NODES.findIndex((node) => node.id === currentQuiz.pathNodeId);
+        const unlocked = idx >= 0 ? PATH_NODES[idx + 1] : null;
+        justUnlockedNodeId = unlocked ? unlocked.id : currentQuiz.pathNodeId;
+      }
     }
 
     currentQuiz.unlockedAchievements = updateAchievements(records, currentQuiz, historyItem);
