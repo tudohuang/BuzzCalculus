@@ -497,11 +497,14 @@
     });
   }
 
-  // Lightweight mount animations (no dependency): count-up numbers and
-  // fill bars. Honours prefers-reduced-motion by jumping to the final value.
+  // Mount animations: count-up numbers, fill bars, staggered entrance.
+  // Uses anime.js when present, falls back to vanilla, and honours
+  // prefers-reduced-motion by jumping straight to the final state.
   function animateMounts(root) {
     if (!root || typeof root.querySelectorAll !== "function") return;
     const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const A = window.anime;
+
     root.querySelectorAll("[data-countup]").forEach((el) => {
       const target = Number(el.getAttribute("data-countup"));
       const suffix = el.getAttribute("data-suffix") || "";
@@ -510,16 +513,20 @@
         el.textContent = target + suffix;
         return;
       }
-      const duration = 650;
+      if (A) {
+        const obj = { v: 0 };
+        A({ targets: obj, v: target, round: 1, duration: 750, easing: "easeOutCubic", update: () => { el.textContent = obj.v + suffix; } });
+        return;
+      }
       const start = Date.now();
       const step = () => {
-        const t = Math.min(1, (Date.now() - start) / duration);
-        const eased = 1 - Math.pow(1 - t, 3);
-        el.textContent = Math.round(target * eased) + suffix;
+        const t = Math.min(1, (Date.now() - start) / 700);
+        el.textContent = Math.round(target * (1 - Math.pow(1 - t, 3))) + suffix;
         if (t < 1) window.requestAnimationFrame(step);
       };
       window.requestAnimationFrame(step);
     });
+
     root.querySelectorAll("[data-fill]").forEach((el) => {
       const target = Number(el.getAttribute("data-fill")) || 0;
       if (reduce) {
@@ -527,10 +534,26 @@
         return;
       }
       el.style.width = "0%";
+      if (A) {
+        A({ targets: el, width: target + "%", duration: 800, easing: "easeOutQuart" });
+        return;
+      }
       window.requestAnimationFrame(() => window.requestAnimationFrame(() => {
         el.style.width = target + "%";
       }));
     });
+
+    const entrants = root.querySelectorAll("[data-enter]");
+    if (entrants.length && !reduce && A) {
+      A.set(entrants, { opacity: 0, translateY: 12 });
+      A({ targets: entrants, opacity: [0, 1], translateY: [12, 0], delay: A.stagger(55), duration: 460, easing: "easeOutCubic" });
+    }
+
+    const pop = root.querySelector("[data-pop]");
+    if (pop && !reduce && A) {
+      A.set(pop, { scale: 0.92, opacity: 0 });
+      A({ targets: pop, scale: [0.92, 1], opacity: [0, 1], duration: 520, easing: "spring(1, 80, 12, 0)" });
+    }
   }
 
   function restoreLibrarySearchFocus() {
@@ -631,21 +654,21 @@
     return `
       <section class="home-launch-pad quest-hero" aria-label="今日練習入口">
         <div class="launch-copy">
-          <p class="section-label launch-eyebrow">${escapeHtml(homeGreeting())}${streak ? ` · 連勝 ${streak} 天` : ""}</p>
-          <div class="quest-tag">
+          <p class="section-label launch-eyebrow" data-enter>${escapeHtml(homeGreeting())}${streak ? ` · 連勝 ${streak} 天` : ""}</p>
+          <div class="quest-tag" data-enter>
             <span class="quest-level">第 ${level} / ${total} 關</span>
             <span class="quest-status is-${escapeAttr(next.status || "ready")}">${escapeHtml(statusText)}</span>
           </div>
-          <h1>${escapeHtml(next.label)}</h1>
-          <p class="launch-hook">${escapeHtml(hook)}</p>
-          <div class="mastery-row">
+          <h1 data-enter>${escapeHtml(next.label)}</h1>
+          <p class="launch-hook" data-enter>${escapeHtml(hook)}</p>
+          <div class="mastery-row" data-enter>
             <span class="mastery-name">熟練槽</span>
             <span class="mastery-pct">${mastery}%</span>
           </div>
-          <div class="mastery-gauge" role="img" aria-label="熟練度 ${mastery}%">
+          <div class="mastery-gauge" data-enter role="img" aria-label="熟練度 ${mastery}%">
             <div class="mastery-fill" data-fill="${mastery}" style="width:${mastery}%"></div>
           </div>
-          <div class="launch-actions">
+          <div class="launch-actions" data-enter>
             <button class="button home-primary launch-start" data-action="start-path-node" data-node-id="${escapeAttr(next.id)}">
               ${icon("play")}<span>開打下一格</span><small>${escapeHtml(next.short)}</small>
             </button>
@@ -1997,11 +2020,11 @@
     return `
       <main class="screen results-screen">
         <section class="verdict ${verdictClass}">
-          <p class="section-label">${escapeHtml(levelTag)}</p>
-          <h1 class="verdict-title">${escapeHtml(verdict)}</h1>
-          <p class="verdict-sub">${escapeHtml(momentum)}</p>
-          ${nextLine ? `<p class="verdict-next">${escapeHtml(nextLine)}</p>` : ""}
-          <div class="verdict-stats">
+          <p class="section-label" data-enter>${escapeHtml(levelTag)}</p>
+          <h1 class="verdict-title" data-pop>${escapeHtml(verdict)}</h1>
+          <p class="verdict-sub" data-enter>${escapeHtml(momentum)}</p>
+          ${nextLine ? `<p class="verdict-next" data-enter>${escapeHtml(nextLine)}</p>` : ""}
+          <div class="verdict-stats" data-enter>
             <span><strong><span data-countup="${correct}">${correct}</span>/${total}</strong>答對</span>
             <span><strong data-countup="${accuracy}" data-suffix="%">${accuracy}%</strong>正確率</span>
             <span><strong data-countup="${avgTime}" data-suffix="s">${avgTime}s</strong>平均</span>
