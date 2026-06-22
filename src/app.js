@@ -554,6 +554,12 @@
       A.set(pop, { scale: 0.92, opacity: 0 });
       A({ targets: pop, scale: [0.92, 1], opacity: [0, 1], duration: 520, easing: "spring(1, 80, 12, 0)" });
     }
+
+    // Draw the learning-path connector line (anime.js stroke animation).
+    const drawLine = root.querySelector("[data-draw-line]");
+    if (drawLine && A && !reduce) {
+      A({ targets: drawLine, strokeDashoffset: [A.setDashoffset, 0], duration: 900, delay: 160, easing: "easeInOutSine" });
+    }
   }
 
   function restoreLibrarySearchFocus() {
@@ -805,6 +811,9 @@
         </div>
 
         <div class="buzz-path-map" aria-label="BuzzCalculus learning path">
+          <svg class="path-line" preserveAspectRatio="none" aria-hidden="true">
+            <line class="path-line-draw" data-draw-line x1="50%" y1="0" x2="50%" y2="100%" />
+          </svg>
           ${path.nodes.map((node, index) => renderPathNode(node, index, node.id === next.id)).join("")}
         </div>
       </section>
