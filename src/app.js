@@ -426,6 +426,7 @@
   let librarySearchShouldFocus = false;
   let homeMoreOpen = false;
   let sessionSettingsOpen = false;
+  let lastAnimatedView = null;
   let advancedModeOpen = false;
   let selectedTheme = loadThemePreference();
   let deferredInstallPrompt = null;
@@ -489,6 +490,46 @@
       renderIcons();
       setupReviewBoards();
       restoreLibrarySearchFocus();
+      if (view !== lastAnimatedView) {
+        lastAnimatedView = view;
+        animateMounts(app);
+      }
+    });
+  }
+
+  // Lightweight mount animations (no dependency): count-up numbers and
+  // fill bars. Honours prefers-reduced-motion by jumping to the final value.
+  function animateMounts(root) {
+    if (!root || typeof root.querySelectorAll !== "function") return;
+    const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    root.querySelectorAll("[data-countup]").forEach((el) => {
+      const target = Number(el.getAttribute("data-countup"));
+      const suffix = el.getAttribute("data-suffix") || "";
+      if (!isFinite(target)) return;
+      if (reduce || target <= 0) {
+        el.textContent = target + suffix;
+        return;
+      }
+      const duration = 650;
+      const start = Date.now();
+      const step = () => {
+        const t = Math.min(1, (Date.now() - start) / duration);
+        const eased = 1 - Math.pow(1 - t, 3);
+        el.textContent = Math.round(target * eased) + suffix;
+        if (t < 1) window.requestAnimationFrame(step);
+      };
+      window.requestAnimationFrame(step);
+    });
+    root.querySelectorAll("[data-fill]").forEach((el) => {
+      const target = Number(el.getAttribute("data-fill")) || 0;
+      if (reduce) {
+        el.style.width = target + "%";
+        return;
+      }
+      el.style.width = "0%";
+      window.requestAnimationFrame(() => window.requestAnimationFrame(() => {
+        el.style.width = target + "%";
+      }));
     });
   }
 
@@ -602,7 +643,7 @@
             <span class="mastery-pct">${mastery}%</span>
           </div>
           <div class="mastery-gauge" role="img" aria-label="熟練度 ${mastery}%">
-            <div class="mastery-fill" style="width:${mastery}%"></div>
+            <div class="mastery-fill" data-fill="${mastery}" style="width:${mastery}%"></div>
           </div>
           <div class="launch-actions">
             <button class="button home-primary launch-start" data-action="start-path-node" data-node-id="${escapeAttr(next.id)}">
@@ -1961,10 +2002,10 @@
           <p class="verdict-sub">${escapeHtml(momentum)}</p>
           ${nextLine ? `<p class="verdict-next">${escapeHtml(nextLine)}</p>` : ""}
           <div class="verdict-stats">
-            <span><strong>${correct}/${total}</strong>答對</span>
-            <span><strong>${accuracy}%</strong>正確率</span>
-            <span><strong>${avgTime}s</strong>平均</span>
-            ${quiz.practice ? "" : `<span><strong>${quiz.score}</strong>分數</span>`}
+            <span><strong><span data-countup="${correct}">${correct}</span>/${total}</strong>答對</span>
+            <span><strong data-countup="${accuracy}" data-suffix="%">${accuracy}%</strong>正確率</span>
+            <span><strong data-countup="${avgTime}" data-suffix="s">${avgTime}s</strong>平均</span>
+            ${quiz.practice ? "" : `<span><strong data-countup="${quiz.score}">${quiz.score}</strong>分數</span>`}
           </div>
           ${renderResultsActions(gateResult, pathResult)}
         </section>
