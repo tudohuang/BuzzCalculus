@@ -1694,6 +1694,48 @@ button {
   color: var(--muted);
 }
 
+.webwork-extras-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  width: 100%;
+  min-height: 40px;
+  padding: 0 10px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: #fbfaf7;
+  color: var(--ink);
+  cursor: pointer;
+  font-weight: 820;
+}
+
+.webwork-extras-toggle span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.webwork-extras-toggle small {
+  color: var(--muted);
+  font-weight: 720;
+  font-size: 0.74rem;
+}
+
+.webwork-extras-toggle svg {
+  width: 16px;
+  height: 16px;
+}
+
+.webwork-extras {
+  display: grid;
+  gap: 10px;
+}
+
+.webwork-extras.is-collapsed {
+  display: none;
+}
+
 .scratchboard-shell {
   display: grid;
   gap: 10px;
@@ -2643,15 +2685,48 @@ button {
   font-weight: 760;
 }
 
-.proof-hints {
+.proof-ladder {
+  margin: 0;
+  font-size: 0.74rem;
+  font-weight: 720;
+  color: var(--muted);
+  letter-spacing: 0.01em;
+}
+
+.proof-step {
   padding: 10px 12px;
   border: 1px dashed var(--line-strong);
   border-radius: var(--radius);
   background: #fffdf7;
 }
 
-.proof-hints summary {
+.proof-step summary {
   cursor: pointer;
+  font-weight: 820;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.proof-step summary::-webkit-details-marker {
+  display: none;
+}
+
+.proof-step[open] summary {
+  margin-bottom: 8px;
+}
+
+.proof-step-no {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 999px;
+  background: var(--ink);
+  color: #fff;
+  font-size: 0.72rem;
   font-weight: 820;
 }
 
@@ -2659,7 +2734,7 @@ button {
 .proof-solution ol {
   display: grid;
   gap: 8px;
-  margin: 10px 0 0;
+  margin: 8px 0 0;
   padding-left: 20px;
   line-height: 1.5;
 }
@@ -2676,13 +2751,15 @@ button {
   margin: 0;
 }
 
-.proof-key-steps {
-  display: grid;
-  gap: 8px;
+.proof-key-steps-body {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
 }
 
-.proof-key-steps > strong {
-  font-size: 0.9rem;
+.proof-blocker {
+  border-top: none;
+  padding-top: 0;
 }
 
 .proof-solution {
@@ -4830,7 +4907,7 @@ button {
 
 :root[data-theme="dark"] .answer-preview,
 :root[data-theme="dark"] .syntax-pill,
-:root[data-theme="dark"] .proof-hints,
+:root[data-theme="dark"] .proof-step,
 :root[data-theme="dark"] .proof-overview div,
 :root[data-theme="dark"] .path-node-button,
 :root[data-theme="dark"] .next-lesson-card,
@@ -5099,6 +5176,73 @@ button {
 
 .settings-grid .data-management-card {
   display: block;
+}
+
+.library-board {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin: 8px 0 18px;
+}
+
+.board-card {
+  display: grid;
+  gap: 3px;
+  padding: 14px 16px;
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--line-strong);
+  border-radius: var(--radius);
+  background: var(--surface);
+  text-align: left;
+  cursor: pointer;
+  transition:
+    border-color 140ms ease,
+    background 140ms ease,
+    transform 140ms ease;
+}
+
+.board-card:hover:not(:disabled) {
+  background: var(--panel);
+  transform: translateY(-2px);
+}
+
+.board-card:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+
+.board-card.is-weak {
+  border-left-color: var(--red);
+}
+
+.board-card.is-boss {
+  border-left-color: var(--gold-dark);
+}
+
+.board-tag {
+  color: var(--muted);
+  font-size: 0.74rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+}
+
+.board-card strong {
+  font-size: 1.06rem;
+}
+
+.board-card small {
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+.library-filter-label {
+  margin: 4px 0 6px;
+}
+
+@media (max-width: 680px) {
+  .library-board {
+    grid-template-columns: 1fr;
+  }
 }
 
 .library-toolbar {
