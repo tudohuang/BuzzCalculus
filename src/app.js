@@ -424,8 +424,13 @@
   let selectedLibraryFilter = "all";
   let librarySearch = "";
   let librarySearchShouldFocus = false;
+  let librarySearchTimer = null;
+  let libraryVisibleCount = LIBRARY_PAGE_SIZE;
   let homeMoreOpen = false;
   let sessionSettingsOpen = false;
+  let resultsDetailOpen = false;
+  let appNotice = "";
+  const openProofSteps = new Set();
   let lastAnimatedView = null;
   let advancedModeOpen = false;
   let selectedTheme = loadThemePreference();
@@ -484,7 +489,7 @@
     renderPending = true;
     requestAnimationFrame(() => {
       renderPending = false;
-      app.innerHTML = [renderTopbar(), renderScreen()].join("");
+      app.innerHTML = [renderTopbar(), renderScreen(), renderAppNoticeModal()].join("");
       bindEvents();
       typesetMath(app);
       window.setTimeout(() => typesetMath(app), 80);
@@ -594,11 +599,11 @@
             inQuiz
               ? `<button class="button ghost" data-action="confirm-exit" title="離開本局">${icon("x")}<span>離開</span></button>`
               : `
-                <button class="nav-button ${view === "home" ? "is-active" : ""}" data-action="home">${icon("home")}<span>工作台</span></button>
-                <button class="nav-button ${view === "library" ? "is-active" : ""}" data-action="open-library">${icon("search")}<span>題庫</span></button>
-                <button class="nav-button ${view === "mistakes" ? "is-active" : ""}" data-action="open-mistakes">${icon("book")}<span>錯題</span></button>
-                <button class="nav-button ${view === "history" ? "is-active" : ""}" data-action="open-history">${icon("clock")}<span>歷史</span></button>
-                <button class="nav-button ${view === "settings" ? "is-active" : ""}" data-action="open-settings">${icon("settings")}<span>設定</span></button>
+                <button class="nav-button ${view === "home" ? "is-active" : ""}" data-action="home" aria-label="工作台" title="工作台">${icon("home")}<span>工作台</span></button>
+                <button class="nav-button ${view === "library" ? "is-active" : ""}" data-action="open-library" aria-label="題庫" title="題庫">${icon("search")}<span>題庫</span></button>
+                <button class="nav-button ${view === "mistakes" ? "is-active" : ""}" data-action="open-mistakes" aria-label="錯題" title="錯題">${icon("book")}<span>錯題</span></button>
+                <button class="nav-button ${view === "history" ? "is-active" : ""}" data-action="open-history" aria-label="歷史" title="歷史">${icon("clock")}<span>歷史</span></button>
+                <button class="nav-button ${view === "settings" ? "is-active" : ""}" data-action="open-settings" aria-label="設定" title="設定">${icon("settings")}<span>設定</span></button>
                 ${deferredInstallPrompt ? `<button class="icon-button" data-action="install-app" title="安裝 BuzzCalculus">${icon("download")}</button>` : ""}
                 <button class="icon-button" data-action="toggle-theme" title="切換${themeLabel}模式">${icon(themeIcon)}</button>
               `
@@ -1235,7 +1240,7 @@
   function renderProblemLibrary() {
     const records = loadRecords();
     const allItems = libraryProblems(records);
-    const shown = allItems.slice(0, LIBRARY_PAGE_SIZE);
+    const shown = allItems.slice(0, libraryVisibleCount);
     return `
       <main class="screen">
         <section class="panel page-panel problem-library">
@@ -1296,9 +1301,19 @@
           <div class="problem-library-grid">
             ${shown.length ? shown.map((problem) => renderLibraryProblemCard(problem, records)).join("") : `<div class="empty-state">沒有符合條件的題目。</div>`}
           </div>
+
+          ${
+            allItems.length > shown.length
+              ? `<div class="library-more"><button class="button secondary" data-action="library-show-more">顯示更多（還有 ${allItems.length - shown.length} 題）</button></div>`
+              : ""
+          }
         </section>
       </main>
     `;
+  }
+
+  function resetLibraryPaging() {
+    libraryVisibleCount = LIBRARY_PAGE_SIZE;
   }
 
   function renderLibraryPackOptions() {
@@ -1414,7 +1429,7 @@
 
         ${
           (proof.hints || []).length
-            ? `<details class="proof-step proof-hints">
+            ? `<details class="proof-step proof-hints" data-proof-step="${escapeAttr(`${proof.id}:hints`)}" ${openProofSteps.has(`${proof.id}:hints`) ? "open" : ""}>
                 <summary><span class="proof-step-no">1</span>提示</summary>
                 <ul>
                   ${(proof.hints || []).map((hint) => `<li>${escapeHtml(hint)}</li>`).join("")}
@@ -1425,7 +1440,7 @@
 
         ${
           (proof.keySteps || []).length
-            ? `<details class="proof-step proof-key-steps">
+            ? `<details class="proof-step proof-key-steps" data-proof-step="${escapeAttr(`${proof.id}:keys`)}" ${openProofSteps.has(`${proof.id}:keys`) ? "open" : ""}>
                 <summary><span class="proof-step-no">2</span>關鍵步驟</summary>
                 <div class="proof-key-steps-body">${(proof.keySteps || []).map((step) => `<span>${escapeHtml(step)}</span>`).join("")}</div>
               </details>`
@@ -1591,7 +1606,7 @@
           <div class="review-list">
             ${
               entries.length
-                ? entries.map(renderMistakeItem).join("")
+                ? entries.map((item) => renderMistakeItem(item, records)).join("")
                 : `<div class="empty-state">目前沒有符合篩選的錯題。</div>`
             }
           </div>
@@ -1600,9 +1615,8 @@
     `;
   }
 
-  function renderMistakeItem(item) {
+  function renderMistakeItem(item, records) {
     const problem = item.problem;
-    const records = loadRecords();
     const w = Number(item.wrongCount || 1);
     const tier = w >= 3 ? "is-danger" : w <= 1 ? "is-win" : "";
     const tierLabel = w >= 3 ? "危險" : w <= 1 ? "快清掉" : "";
@@ -1740,7 +1754,7 @@
     const answers = Array.isArray(item.answers) ? item.answers : [];
     if (!answers.length) return "";
     return `
-      <details class="history-detail">
+      <details class="history-detail" data-history-detail>
         <summary>題目回顧</summary>
         <div class="history-review-list">
           ${answers
@@ -1750,7 +1764,7 @@
               return `
                 <div class="history-review-item ${answer.correct ? "is-correct" : "is-wrong"}">
                   <strong>#${index + 1} · ${TOPICS[problem.topic].label} · ${answer.unanswered ? "未作答" : `${answer.elapsed}s`}</strong>
-                  <div class="review-prompt math-block" data-tex="${escapeAttr(problem.prompt)}"></div>
+                  <div class="review-prompt math-block-lazy" data-tex="${escapeAttr(problem.prompt)}"></div>
                   <span>你的答案：${escapeHtml(answer.input || "未作答")} · ${answer.correct ? "正確" : answerReasonLabel(answer.reason)}</span>
                 </div>
               `;
@@ -1844,6 +1858,11 @@
                 ? `<div class="feedback ${feedback.status}">
                     <strong>${feedback.title}</strong>
                     <p>${feedback.message}</p>
+                    ${
+                      feedback.status !== "correct" && !quiz.examMode
+                        ? `<button class="button feedback-next" data-action="next-question">${icon("play")}${quiz.forceFinishAfterFeedback || quiz.index + 1 >= quiz.problems.length ? "看結算" : "下一題"}</button>`
+                        : ""
+                    }
                   </div>`
                 : `<div class="feedback"><strong>作答狀態</strong><p>${quiz.examMode ? "大考模式：整份倒數，WebWork 作答；切頁或退出全螢幕會被記錄。" : quiz.survival ? "生存：最多錯 3 題。" : quiz.suddenDeath ? "Boss 連戰：錯一題就結算。" : noTimer ? "本局不倒數、不記切分頁。" : `倒數開始後請保持在本頁。這題允許 ${current.tabLimit} 次切分頁。`}</p></div>`
             }
@@ -2083,6 +2102,24 @@
     `;
   }
 
+  function renderAppNoticeModal() {
+    if (!appNotice) return "";
+    return `
+      <div class="modal-backdrop" data-action="dismiss-notice">
+        <div class="modal" role="dialog" aria-modal="true" aria-labelledby="app-notice-title" data-modal>
+          <h3 id="app-notice-title">提醒</h3>
+          <p>${escapeHtml(appNotice)}</p>
+          <button class="button" data-action="dismiss-notice">${icon("check")}知道了</button>
+        </div>
+      </div>
+    `;
+  }
+
+  function showAppNotice(message) {
+    appNotice = String(message || "");
+    render();
+  }
+
   function renderResults() {
     if (!quiz) return "";
     const correct = quiz.answers.filter((answer) => answer.correct).length;
@@ -2136,7 +2173,7 @@
           ${renderResultsActions(gateResult, pathResult)}
         </section>
 
-        <details class="results-detail">
+        <details class="results-detail" data-results-detail ${resultsDetailOpen ? "open" : ""}>
           <summary><span>詳細分析與逐題回顧</span>${icon("chevron-down")}</summary>
           <div class="results-detail-body">
             ${quiz.mode === "daily" ? renderDailyCompletionResult(quiz, records, accuracy) : ""}
@@ -2182,7 +2219,7 @@
               <div class="review-list">
                 ${
                   quiz.answers.length
-                    ? quiz.answers.map(renderReviewItem).join("")
+                    ? quiz.answers.map((answer, index) => renderReviewItem(answer, index, records)).join("")
                     : `<div class="empty-state">本局尚未作答。</div>`
                 }
               </div>
@@ -2409,9 +2446,8 @@
     `;
   }
 
-  function renderReviewItem(answer, index) {
+  function renderReviewItem(answer, index, records) {
     const item = answer.problem;
-    const records = loadRecords();
     return `
       <article class="review-item ${answer.correct ? "is-correct" : "is-wrong"}">
         <div class="review-top">
@@ -2464,6 +2500,36 @@
         advancedModeOpen = advancedModeDrawer.open;
       });
     }
+
+    const resultsDetail = app.querySelector("[data-results-detail]");
+    if (resultsDetail) {
+      resultsDetail.addEventListener("toggle", () => {
+        resultsDetailOpen = resultsDetail.open;
+      });
+    }
+
+    app.querySelectorAll("[data-proof-step]").forEach((details) => {
+      details.addEventListener("toggle", () => {
+        const key = details.dataset.proofStep || "";
+        if (!key) return;
+        if (details.open) openProofSteps.add(key);
+        else openProofSteps.delete(key);
+      });
+    });
+
+    // History reviews carry lots of KaTeX; typeset each one lazily the first
+    // time its <details> is opened instead of all sessions up front.
+    app.querySelectorAll("[data-history-detail]").forEach((details) => {
+      details.addEventListener("toggle", () => {
+        if (!details.open || details.dataset.mathReady) return;
+        details.dataset.mathReady = "1";
+        details.querySelectorAll(".math-block-lazy").forEach((node) => {
+          node.classList.remove("math-block-lazy");
+          node.classList.add("math-block");
+          renderMathNode(node, true);
+        });
+      });
+    });
 
     app.querySelectorAll("[data-mode]").forEach((button) => {
       button.addEventListener("click", () => {
@@ -2534,6 +2600,7 @@
     app.querySelectorAll("[data-library-topic]").forEach((button) => {
       button.addEventListener("click", () => {
         selectedLibraryTopic = button.dataset.libraryTopic || "all";
+        resetLibraryPaging();
         render();
       });
     });
@@ -2541,16 +2608,23 @@
     app.querySelectorAll("[data-library-filter]").forEach((button) => {
       button.addEventListener("click", () => {
         selectedLibraryFilter = button.dataset.libraryFilter || "all";
+        resetLibraryPaging();
         render();
       });
     });
 
     const librarySearchInput = app.querySelector("[data-library-search]");
     if (librarySearchInput) {
+      // Debounced: a full render per keystroke makes typing laggy.
       librarySearchInput.addEventListener("input", () => {
         librarySearch = librarySearchInput.value || "";
         librarySearchShouldFocus = true;
-        render();
+        resetLibraryPaging();
+        if (librarySearchTimer && window.clearTimeout) window.clearTimeout(librarySearchTimer);
+        librarySearchTimer = window.setTimeout(() => {
+          librarySearchTimer = null;
+          render();
+        }, 200);
       });
     }
 
@@ -2558,6 +2632,7 @@
     if (libraryPackSelect) {
       libraryPackSelect.addEventListener("change", () => {
         selectedLibraryPack = libraryPackSelect.value || "all";
+        resetLibraryPaging();
         render();
       });
     }
@@ -2566,6 +2641,7 @@
     if (libraryRankSelect) {
       libraryRankSelect.addEventListener("change", () => {
         selectedLibraryRank = libraryRankSelect.value || "all";
+        resetLibraryPaging();
         render();
       });
     }
@@ -2666,6 +2742,7 @@
     }
     if (action === "open-library") {
       selectedLibraryFilter = "all";
+      resetLibraryPaging();
       view = "library";
       render();
     }
@@ -2674,7 +2751,17 @@
       selectedLibraryTopic = "all";
       selectedLibraryPack = "all";
       selectedLibraryRank = "all";
+      resetLibraryPaging();
       view = "library";
+      render();
+    }
+    if (action === "library-show-more") {
+      libraryVisibleCount += LIBRARY_PAGE_SIZE;
+      render();
+    }
+    if (action === "next-question") advanceToNextQuestion();
+    if (action === "dismiss-notice") {
+      appNotice = "";
       render();
     }
     if (action === "open-proofs") {
@@ -2903,8 +2990,20 @@
       : Object.values(records.mistakes || {})
           .filter((item) => topic === "all" || problemById(item.problemId)?.topic === topic)
           .map((item) => item.problemId);
-    const pool = ids.map(problemById).filter(Boolean);
+    let pool = ids.map(problemById).filter(Boolean);
     if (!pool.length) return;
+    const cap = (MODES.mistakes && MODES.mistakes.count) || pool.length;
+    if (pool.length > cap) {
+      // Keep the highest-pressure mistakes when the pool exceeds the session cap.
+      pool = pool
+        .slice()
+        .sort((a, b) => {
+          const itemA = records.mistakes?.[a.id] || { problemId: a.id };
+          const itemB = records.mistakes?.[b.id] || { problemId: b.id };
+          return mistakePressure({ ...itemB, problem: b }) - mistakePressure({ ...itemA, problem: a });
+        })
+        .slice(0, cap);
+    }
     selectedMode = "mistakes";
     startQuiz(pool);
   }
@@ -3203,7 +3302,7 @@
         });
         render();
       } catch (_error) {
-        window.alert("匯入失敗：檔案不是有效的 BuzzCalculus JSON。");
+        showAppNotice("匯入失敗：檔案不是有效的 BuzzCalculus JSON。");
       }
     });
     reader.readAsText(file);
@@ -3235,8 +3334,7 @@
     const pool = customProblems && customProblems.length ? customProblems : selectProblemPool(mode, selectedTopic);
     if (!pool.length) {
       view = "home";
-      window.alert("目前篩選沒有符合難度的題目。請把難度上限拉高，或換一個題包 / 範圍。");
-      render();
+      showAppNotice("目前篩選沒有符合難度的題目。請把難度上限拉高，或換一個題包 / 範圍。");
       return;
     }
     quiz = {
@@ -3645,26 +3743,37 @@
       message: detail || problem.solution || "這題先記下來，結算頁可以回看。"
     };
     stopTicker();
-    window.setTimeout(() => {
-      if (!quiz) return;
-      quiz.index += 1;
-      if (quiz.index >= quiz.problems.length) {
-        finishQuiz();
-        return;
-      }
-      quiz.questionStartedAt = Date.now();
-      quiz.draft = "";
-      quiz.feedback = null;
-      quiz.modal = null;
-      quiz.boardOpen = false;
-      quiz.boardFullscreen = false;
-      if (quiz.forceFinishAfterFeedback) {
-        finishQuiz();
-        return;
-      }
-      startTicker();
-      render();
-    }, 950);
+    // Correct answers keep the fast auto-advance; wrong answers wait for an
+    // explicit「下一題」tap so the correction can actually be read. Exam mode
+    // stays on auto-advance because its clock keeps running regardless.
+    if (correct || quiz.examMode) {
+      const pendingQuiz = quiz;
+      window.setTimeout(() => {
+        if (quiz !== pendingQuiz) return;
+        advanceToNextQuestion();
+      }, 950);
+    }
+    render();
+  }
+
+  function advanceToNextQuestion() {
+    if (!quiz || !quiz.feedback) return;
+    quiz.index += 1;
+    if (quiz.index >= quiz.problems.length) {
+      finishQuiz();
+      return;
+    }
+    quiz.questionStartedAt = Date.now();
+    quiz.draft = "";
+    quiz.feedback = null;
+    quiz.modal = null;
+    quiz.boardOpen = false;
+    quiz.boardFullscreen = false;
+    if (quiz.forceFinishAfterFeedback) {
+      finishQuiz();
+      return;
+    }
+    startTicker();
     render();
   }
 
@@ -3687,6 +3796,7 @@
       });
       saveQuizRecord(quiz);
     }
+    resultsDetailOpen = false;
     view = "results";
     if (quiz && quiz.requireFullscreen) exitQuizFullscreen();
     render();
@@ -4716,15 +4826,21 @@
 
     if (currentQuiz.mode === "daily") {
       const today = new Date().toISOString().slice(0, 10);
-      const previous = records.daily[today];
-      if (!previous || currentQuiz.score >= previous.score) {
-        records.daily[today] = {
-          score: currentQuiz.score,
-          correct,
-          total,
-          accuracy,
-          finishedAt
-        };
+      const answered = currentQuiz.answers.length;
+      // Only a fully answered daily counts as done — quitting early must not
+      // mark today's mission complete.
+      if (answered >= total) {
+        const previous = records.daily[today];
+        if (!previous || currentQuiz.score >= previous.score) {
+          records.daily[today] = {
+            score: currentQuiz.score,
+            correct,
+            total,
+            completed: answered,
+            accuracy,
+            finishedAt
+          };
+        }
       }
     }
 
@@ -4868,7 +4984,7 @@
 
   function dailyMissionInfo(records, daily) {
     const target = dailyGoal(records);
-    const completed = daily ? Math.min(target, Number(daily.total || target)) : 0;
+    const completed = daily ? Math.min(target, Number(daily.completed || daily.total || target)) : 0;
     return {
       target,
       completed,
@@ -6066,6 +6182,11 @@
 
   function setupMathField() {
     if (!field) return;
+    // The decorative canvas is hidden on small screens and pointless with
+    // reduced motion — skip the whole rAF loop in those cases.
+    const reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)")?.matches;
+    const smallViewport = window.matchMedia && window.matchMedia("(max-width: 680px)")?.matches;
+    if (reduceMotion || smallViewport) return;
     const ctx = field.getContext("2d");
     if (!ctx) return;
     const symbols = ["∫", "Σ", "lim", "dx", "π", "eˣ", "f′", "→"];
@@ -6102,6 +6223,19 @@
     }
 
     window.addEventListener("resize", resize);
+    // Pause the loop while the tab is hidden; resume when it comes back.
+    if (document.addEventListener) {
+      document.addEventListener("visibilitychange", () => {
+        if (document.visibilityState === "hidden") {
+          if (fieldAnimation && typeof cancelAnimationFrame === "function") {
+            cancelAnimationFrame(fieldAnimation);
+          }
+          fieldAnimation = null;
+        } else if (!fieldAnimation) {
+          draw();
+        }
+      });
+    }
     resize();
     draw();
   }

@@ -1,19 +1,5 @@
 global.window = {};
-require("../src/problems.js");
-require("../src/problem_extensions.js");
-require("../src/problem_extensions_2.js");
-require("../src/problem_integrals_hard.js");
-require("../src/problem_advanced_analysis.js");
-require("../src/problem_gap_pack.js");
-require("../src/problem_mobile_advanced_pack.js");
-require("../src/problem_release_expansion.js");
-require("../src/problem_hard_expansion.js");
-require("../src/problem_hardcore_50.js");
-require("../src/problem_exam_expansion.js");
-require("../src/problem_university_exam_pack.js");
-require("../src/problem_exam_depth_pack.js");
-require("../src/problem_todai_burst_pack.js");
-require("../src/problem_difficulty_calibration.js");
+require("./lib/load_problem_sources.js")();
 
 const problems = window.BUZZ_PROBLEMS || [];
 const topics = new Set(["limits", "derivatives", "integrals", "series"]);

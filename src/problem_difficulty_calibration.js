@@ -57,11 +57,52 @@
     "int-051": 4
   };
 
+  // 2026-07 audit: per-item corrections for packs that hardcoded R5/R6.
+  // These are authoritative — tag floors do not re-lift them.
+  const AUDIT_OVERRIDES = {
+    "exam-ser-018": 1,
+    "exam-der-003": 2,
+    "exam-int-001": 2,
+    "exam-ser-009": 2,
+    "uni-int-018": 2,
+    "uni-der-001": 3,
+    "uni-ser-004": 3,
+    "world-076": 2,
+    "world-050": 2,
+    "world-090": 3,
+    "world-069": 3,
+    "world-071": 3,
+    "world-079": 3,
+    "world-092": 3,
+    "world-055": 3,
+    "world-087": 4,
+    "world-063": 4,
+    "burst-int-039": 2,
+    "burst-boss2-int-012": 3,
+    "burst-boss2-int-013": 3,
+    "burst-boss2-int-014": 3,
+    "burst-boss2-anti-006": 3,
+    "burst-der-001": 3,
+    "burst-boss-int-011": 3,
+    "burst-boss2-ser-001": 4,
+    "app-005": 2,
+    "app-006": 1,
+    "app-007": 2,
+    "app-008": 2,
+    "app-011": 3,
+    "hd-001": 3,
+    "putnam-010": 3,
+    "hc-rad-002": 3
+  };
+
+  // Routine technique recognition (improper integrals, Frullani, King's
+  // property, Beta/Gamma, Wallis) floors at R4, not R5 — genuinely hard
+  // instances already carry a native R5-6 rank, and floors only lift.
   const MIN_RANK_BY_TAG = [
     [["technique-sprint", "trap-drill", "technique-recognition"], 2],
     [["limit-trap", "partial-fraction", "trig-substitution", "integration-by-parts", "ibp", "root-test", "endpoint-analysis", "limit-comparison"], 3],
-    [["multivariable", "double-integral", "hessian", "wronskian", "lagrange-multiplier", "nabla", "vector-calculus", "jacobian", "total-differential"], 4],
-    [["complex", "frullani", "ode-style", "convolution", "parameter-integral", "kings-property", "improper-integral", "triple-integral", "change-of-variables", "jacobian-chain", "total-differential-min", "cosine-integral", "beta-function", "gamma-function", "wallis", "bessel"], 5],
+    [["multivariable", "double-integral", "hessian", "wronskian", "lagrange-multiplier", "nabla", "vector-calculus", "jacobian", "total-differential", "frullani", "parameter-integral", "kings-property", "improper-integral", "cosine-integral", "beta-function", "gamma-function", "wallis"], 4],
+    [["complex", "ode-style", "convolution", "triple-integral", "change-of-variables", "jacobian-chain", "total-differential-min", "bessel"], 5],
     [["bessel", "complex", "change-of-variables", "triple-integral"], 6]
   ];
 
@@ -83,6 +124,10 @@
     const tags = problem.tags || [];
     let rank = clampRank(problem.rank || problem.difficulty || 1);
 
+    if (AUDIT_OVERRIDES[problem.id]) {
+      return clampRank(AUDIT_OVERRIDES[problem.id]);
+    }
+
     if (LEGACY_OVERRIDES[problem.id]) {
       rank = LEGACY_OVERRIDES[problem.id];
     }
@@ -102,6 +147,8 @@
     return clampRank(rank);
   }
 
+  const CALIBRATION_TAGS = /^(rank-\d|boss-rank|boss-plus|beginner-friendly)$/;
+
   function applyCalibration(problem) {
     const rank = calibratedRank(problem);
     const extraTags = [`rank-${rank}`];
@@ -112,7 +159,9 @@
     problem.rank = rank;
     problem.rankLabel = LABELS[rank];
     problem.rankReason = rank >= 5 ? "advanced technique" : rank <= 2 ? "warm-up compatible" : "standard calibration";
-    problem.tags = unique([...(problem.tags || []), ...extraTags]);
+    // Strip stale calibration-owned tags (packs may self-tag) before re-deriving.
+    const baseTags = (problem.tags || []).filter((tag) => !CALIBRATION_TAGS.test(tag));
+    problem.tags = unique([...baseTags, ...extraTags]);
     return problem;
   }
 

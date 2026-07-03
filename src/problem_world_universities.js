@@ -83,7 +83,6 @@
   N("world-046", "limits", 5, "\\lim_{x\\to\\infty}\\frac{x^2\\left(x^{1/x}-1-\\tfrac{\\log x}{x}\\right)}{(\\log x)^2}", "1/2", "Putnam", ["asymptotics"], "x^{1/x}=1+(log x)/x+(log x)^2/(2x^2)+...");
   N("world-047", "integrals", 5, "\\int_0^{\\infty}\\frac{\\sin^4 x}{x^4}\\,dx", "pi/3", "MIT", ["dirichlet", "parseval"], "Standard value π/3.");
   N("world-048", "series", 5, "\\sum_{n=0}^{\\infty}\\frac{(2n-1)!!}{(2n)!!\\,(2n+1)}", "pi/2", "Cambridge", ["binomial-series"], "This is arcsin(1)=π/2.");
-  N("world-049", "limits", 5, "\\lim_{n\\to\\infty} n^2\\left(\\left(1+\\tfrac1n\\right)^{n}-e+\\tfrac{e}{2n}\\right)", "11*exp(1)/24", "Todai", ["asymptotics"], "Next term of (1+1/n)^n.");
   N("world-050", "integrals", 5, "\\int_0^{1} x^3\\log x\\,dx", "-1/16", "Harvard", ["integration-by-parts"], "x^4/4 log x - x^4/16.");
 
   /* ===== Tier C — brutal (rank 6) ===== */

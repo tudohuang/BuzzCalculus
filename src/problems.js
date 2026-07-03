@@ -539,7 +539,7 @@ window.BUZZ_PROBLEMS = [
     difficulty: 3,
     prompt: "\\sum_{n=1}^{\\infty}\\frac{2^n+n}{3^n}",
     answerKind: "numeric",
-    answer: "9/4",
+    answer: "11/4",
     timeLimit: 70,
     tabLimit: 1,
     solution: "拆成 sum (2/3)^n 加 sum n(1/3)^n，分別是 2 和 3/4。"
