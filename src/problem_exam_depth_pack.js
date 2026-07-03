@@ -119,7 +119,7 @@
   ].forEach(([id, prompt, answer, tags, solution, rank]) => antiderivative(id, prompt, answer, tags, solution, rank));
 
   [
-    ["depth-int-015", "\\int_0^1\\frac{x}{1+x+x^2}\\,dx", "log(3)/2-pi/(3*sqrt(3))", ["definite-integral", "rational", "inverse-trig"], "Split x as half the derivative minus a constant.", 6],
+    ["depth-int-015", "\\int_0^1\\frac{x}{1+x+x^2}\\,dx", "log(3)/2-pi/(6*sqrt(3))", ["definite-integral", "rational", "inverse-trig"], "Split x as half the derivative minus a constant.", 6],
     ["depth-int-016", "\\int_0^{\\pi/2}x\\cos x\\,dx", "pi/2-1", ["definite-integral", "integration-by-parts", "trig"], "Integrate by parts.", 5],
     ["depth-int-017", "\\int_0^1\\frac{\\log(1+x)}{x}\\,dx", "pi^2/12", ["definite-integral", "taylor", "special-sum"], "Expand log(1+x) and integrate termwise.", 6],
     ["depth-int-018", "\\int_0^1\\frac{x^3}{(1+x^2)^2}\\,dx", "log(2)/2-1/4", ["definite-integral", "substitution", "rational"], "Let u=1+x^2.", 6],

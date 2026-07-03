@@ -94,7 +94,7 @@
     ["rel-adv-007", "derivatives", "\\det H_f(1,1),\\quad f=x^4+y^4-4xy", "128", ["hessian", "optimization"], "The Hessian is [[12,-4],[-4,12]]."],
     ["rel-adv-008", "derivatives", "\\min(x^2+y^2+z^2)\\quad\\text{subject to }x+2y+2z=9", "9", ["lagrange-multiplier", "optimization"], "The minimum distance squared to the plane is 9."],
     ["rel-adv-011", "integrals", "\\int_0^{\\infty}xe^{-3x}\\,dx", "1/9", ["improper-integral", "gamma-function"], "Use Gamma(2)/3^2."],
-    ["rel-adv-014", "integrals", "\\int_0^1\\int_0^1(x+y)^2\\,dy\\,dx", "5/6", ["double-integral", "iterated-integral"], "Expand and integrate term by term."],
+    ["rel-adv-014", "integrals", "\\int_0^1\\int_0^1(x+y)^2\\,dy\\,dx", "7/6", ["double-integral", "iterated-integral"], "Expand and integrate term by term."],
     ["rel-adv-017", "series", "\\text{coefficient of }x^6\\text{ in }e^{x^2}", "1/6", ["taylor", "power-series"], "Use e^{x^2}=sum x^{2k}/k!."],
     ["rel-adv-019", "series", "\\text{Radius of convergence of }\\sum_{n=1}^{\\infty}\\frac{x^n}{n^2}", "1", ["power-series", "radius-of-convergence"], "Polynomial factors do not change the radius from 1."]
   ].forEach(([id, topic, prompt, answer, tags, solution]) => {

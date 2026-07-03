@@ -635,10 +635,6 @@ button {
   min-width: 132px;
 }
 
-.home-control {
-  box-shadow: 0 1px 0 rgba(32, 33, 31, 0.03);
-}
-
 .home-control-head {
   display: flex;
   align-items: flex-start;
@@ -1024,8 +1020,12 @@ button {
 }
 
 .path-line {
+  /* Sits exactly on the map spine (see .buzz-path-map::before). */
   position: absolute;
-  inset: 18px 0;
+  top: 30px;
+  bottom: 30px;
+  left: 31px;
+  width: 3px;
   z-index: 0;
   pointer-events: none;
   overflow: visible;
@@ -1967,6 +1967,11 @@ button {
   margin: 0;
   color: var(--muted);
   line-height: 1.45;
+}
+
+.feedback .feedback-next {
+  margin-top: 4px;
+  min-height: 44px;
 }
 
 .feedback.correct {
@@ -2937,7 +2942,8 @@ button {
 .modal-backdrop {
   position: fixed;
   inset: 0;
-  z-index: 10;
+  /* Above the fixed webwork answer bar (18) and fullscreen board (20). */
+  z-index: 30;
   display: grid;
   place-items: center;
   padding: 18px;
@@ -2976,31 +2982,18 @@ button {
 }
 
 @media (max-width: 900px) {
-  
-  
   .problem-stage{
     grid-template-columns: 1fr;
   }
 
-  
-  
   .arena-top {
     grid-template-columns: 1fr;
   }
 
-  
-  
   .timer-cluster {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     min-width: 0;
   }
-
-  
-  
-
-  
-
-  
 
   .exam-insight-grid,
   .exam-analysis-grid {
@@ -3032,8 +3025,6 @@ button {
     grid-template-columns: 1fr;
   }
 
-  
-
   .proof-overview,
   .proof-tier-picker {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -3055,13 +3046,9 @@ button {
     place-items: center start;
   }
 
-  
-  
   .page-head h2 {
     font-size: 2rem;
   }
-
-  
 
   .pack-picker label {
     grid-template-columns: 1fr;
@@ -3100,8 +3087,6 @@ button {
     min-height: 104px;
     font-size: 1.35rem;
   }
-
-  
 
   .board-tools {
     width: 100%;
@@ -3149,6 +3134,37 @@ button {
   }
 }
 
+/* Very narrow phones: shrink nav buttons and drop the brand title so the
+   五個導覽鍵 + 主題切換 still fit at 320px. */
+@media (max-width: 400px) {
+  .topbar {
+    padding: 0 8px;
+    gap: 6px;
+  }
+
+  .topbar-actions {
+    gap: 4px;
+  }
+
+  .brand {
+    gap: 6px;
+  }
+
+  .brand-title {
+    display: none;
+  }
+
+  .nav-button {
+    width: 38px;
+    min-height: 40px;
+  }
+
+  .topbar .icon-button {
+    width: 38px;
+    height: 40px;
+  }
+}
+
 @media (max-width: 900px) {
   .home-launch-pad {
     grid-template-columns: minmax(0, 1fr);
@@ -3158,15 +3174,6 @@ button {
     display: none;
   }
 
-  
-
-  
-
-  
-  
-
-  
-
   .home-control-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -3175,15 +3182,6 @@ button {
     grid-column: 1 / -1;
   }
 
-  
-
-  
-
-  
-
-  
-
-  
 }
 
 @media (max-width: 680px) {
@@ -3230,21 +3228,6 @@ button {
     padding: 12px 12px 108px;
   }
 
-  
-
-  
-
-  
-
-  
-
-  
-  .home-screen .data-management-card {
-    display: none;
-  }
-
-  
-
   .buzz-path-card {
     padding: 14px;
   }
@@ -3258,16 +3241,6 @@ button {
   .path-hero h2 {
     font-size: 1.84rem;
   }
-
-  
-
-  
-
-  
-
-  
-
-  
 
   .buzz-path-map {
     gap: 10px;
@@ -3309,53 +3282,15 @@ button {
     font-size: 0.78rem;
   }
 
-  
-
-  
-
-  
-
-  
-
   .first-run-panel{
     flex-direction: column;
     align-items: stretch;
   }
 
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
   .practice-control {
     padding: 12px;
     box-shadow: none;
   }
-
-  
-
-  
-
-  
 
   .home-control-head {
     flex-direction: column;
@@ -3380,10 +3315,6 @@ button {
     grid-column: auto;
   }
 
-  
-
-  
-
   .study-card {
     padding: 14px;
   }
@@ -3394,7 +3325,13 @@ button {
 
   .quiz-screen {
     width: 100%;
-    padding: 10px 10px calc(120px + env(safe-area-inset-bottom));
+    padding: 10px;
+  }
+
+  /* Only WebWork mode has a fixed bottom answer bar to clear; choice mode
+     must not reserve blank scroll space. */
+  .quiz-screen:has(.webwork-answer) {
+    padding-bottom: calc(120px + env(safe-area-inset-bottom));
   }
 
   .quiz-screen .arena {
@@ -3418,7 +3355,7 @@ button {
     font-size: 0.78rem;
   }
 
-  .quiz-screen .progress-meta span:nth-child(n + 3) {
+  .quiz-screen .progress-meta span:nth-child(n + 3):not(.clear-need) {
     display: none;
   }
 
@@ -3503,8 +3440,6 @@ button {
     min-height: 230px;
   }
 
-  
-
   .quiz-screen .board-tools {
     display: grid;
     grid-template-columns: repeat(5, 42px);
@@ -3515,22 +3450,6 @@ button {
   .quiz-screen .board-tools .icon-button {
     width: 42px;
     height: 42px;
-  }
-
-  .quiz-screen .answer-panel {
-    position: fixed;
-    left: 10px;
-    right: 10px;
-    bottom: max(10px, env(safe-area-inset-bottom));
-    z-index: 18;
-    grid-template-columns: minmax(0, 1fr) 88px;
-    gap: 8px;
-    padding: 10px;
-    border: 1px solid rgba(32, 33, 31, 0.14);
-    border-radius: var(--radius);
-    background: rgba(251, 250, 247, 0.97);
-    box-shadow: 0 -10px 24px rgba(32, 33, 31, 0.12);
-    backdrop-filter: blur(10px);
   }
 
   .quiz-screen .answer-panel .button {
@@ -3558,6 +3477,13 @@ button {
   .quiz-screen .keypad button {
     min-height: 40px;
     min-width: 0;
+  }
+
+  /* Comfortable touch targets on small screens. */
+  .keypad button,
+  .tag-button,
+  .webwork-examples button {
+    min-height: 40px;
   }
 
   .quiz-screen .helper-row {
@@ -3631,61 +3557,6 @@ button {
   text-align: right;
 }
 
-.buzz-path-map {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 10px;
-  padding: 0;
-}
-
-.buzz-path-map::before {
-  display: none;
-}
-
-.path-step,
-.path-step.is-offset {
-  width: 100%;
-  margin-left: 0;
-}
-
-.path-node-button {
-  min-height: 108px;
-  grid-template-columns: 1fr;
-  justify-items: center;
-  gap: 8px;
-  padding: 12px 10px;
-  text-align: center;
-  box-shadow: none;
-}
-
-.path-node-ring {
-  width: 54px;
-  height: 54px;
-}
-
-.path-node-core {
-  width: 40px;
-  height: 40px;
-}
-
-.path-node-copy {
-  justify-items: center;
-}
-
-.path-node-copy strong {
-  font-size: 0.98rem;
-}
-
-.path-node-copy small {
-  font-size: 0.74rem;
-}
-
-.path-node-progress {
-  min-height: 18px;
-  color: var(--muted);
-  font-size: 0.76rem;
-  font-weight: 780;
-}
-
 @media (max-width: 680px) {
   .buzz-path-card {
     padding: 14px;
@@ -3702,54 +3573,6 @@ button {
   .path-hero p {
     font-size: 0.9rem;
   }
-
-  .buzz-path-map {
-    display: flex;
-    grid-template-columns: none;
-    overflow-x: auto;
-    gap: 10px;
-    padding-bottom: 8px;
-    scroll-snap-type: x proximity;
-    -webkit-overflow-scrolling: touch;
-  }
-
-  .buzz-path-map::before {
-    display: none;
-  }
-
-  .buzz-path-map .path-step {
-    flex: 0 0 140px;
-    scroll-snap-align: start;
-  }
-
-  .path-node-button {
-    min-height: 94px;
-    grid-template-columns: 1fr;
-    gap: 6px;
-    padding: 9px 6px;
-  }
-
-  .path-node-ring {
-    width: 46px;
-    height: 46px;
-    border-width: 2px;
-  }
-
-  .path-node-core {
-    width: 34px;
-    height: 34px;
-  }
-
-  .path-node-copy strong {
-    font-size: 0.84rem;
-  }
-
-  .path-node-copy small,
-  .path-node-progress {
-    font-size: 0.68rem;
-  }
-
-  
 }
 
 .next-lesson-card {
@@ -4032,10 +3855,6 @@ button {
     min-height: 54px;
     padding-inline: 12px;
   }
-
-  .home-more .data-management-card {
-    display: block;
-  }
 }
 
 .buzz-path-map {
@@ -4069,6 +3888,7 @@ button {
   gap: 12px;
   padding: 10px 12px;
   text-align: left;
+  box-shadow: none;
 }
 
 .path-node-ring {
@@ -4098,6 +3918,9 @@ button {
   justify-self: end;
   align-self: center;
   min-height: 0;
+  color: var(--muted);
+  font-size: 0.76rem;
+  font-weight: 780;
 }
 
 .path-step.is-jump .path-node-button {
@@ -4206,16 +4029,6 @@ button {
     line-height: 1.45;
   }
 
-  
-
-  
-
-  
-
-  
-
-  
-
   .first-run-panel {
     margin-bottom: 10px;
     padding: 12px;
@@ -4229,8 +4042,6 @@ button {
   .first-run-panel p:not(.section-label) {
     display: none;
   }
-
-  
 
   .answer-mode-strip {
     grid-template-columns: 1fr;
@@ -4263,30 +4074,6 @@ button {
     min-height: 48px;
   }
 
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
   .buzz-path-card {
     padding: 12px;
     border: 1px solid rgba(32, 33, 31, 0.1);
@@ -4313,8 +4100,58 @@ button {
     display: none;
   }
 
+  /* Compact horizontal path map: keeps earlier nodes reachable on mobile
+     without the tall vertical spine. */
   .home-screen .buzz-path-map {
+    display: flex;
+    max-width: 100%;
+    overflow-x: auto;
+    gap: 8px;
+    padding: 2px 0 8px;
+    scroll-snap-type: x proximity;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .home-screen .buzz-path-map::before,
+  .home-screen .buzz-path-map .path-line {
     display: none;
+  }
+
+  .home-screen .buzz-path-map .path-step,
+  .home-screen .buzz-path-map .path-step.is-offset {
+    flex: 0 0 148px;
+    width: auto;
+    margin-left: 0;
+    scroll-snap-align: start;
+  }
+
+  .home-screen .buzz-path-map .path-node-button {
+    min-height: 108px;
+    grid-template-columns: 1fr;
+    justify-items: center;
+    gap: 6px;
+    padding: 10px 8px;
+    text-align: center;
+  }
+
+  .home-screen .buzz-path-map .path-node-copy {
+    justify-items: center;
+  }
+
+  .home-screen .buzz-path-map .path-node-copy small {
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .home-screen .buzz-path-map .path-node-progress {
+    justify-self: center;
+  }
+
+  .home-screen .buzz-path-map .path-badge {
+    top: 6px;
+    right: 6px;
   }
 
   .path-recommendation {
@@ -4410,17 +4247,6 @@ button {
     display: none;
   }
 
-  
-
-  
-
-  
-
-  
-
-  
-
-  
 }
 
 .path-intro-screen {
@@ -4788,8 +4614,12 @@ button {
   .quiz-screen .webwork-keypad button {
     flex: 0 0 auto;
     min-width: 42px;
-    min-height: 34px;
+    min-height: 40px;
     padding: 0 9px;
+  }
+
+  .webwork-examples button {
+    min-height: 40px;
   }
 
   .quiz-screen .webwork-helper {
@@ -4839,6 +4669,15 @@ button {
 :root[data-theme="dark"] .proof-card,
 :root[data-theme="dark"] .proof-prompt,
 :root[data-theme="dark"] .proof-line-math,
+:root[data-theme="dark"] .timer-box,
+:root[data-theme="dark"] .feedback,
+:root[data-theme="dark"] .history-item,
+:root[data-theme="dark"] .achievement,
+:root[data-theme="dark"] .results-detail,
+:root[data-theme="dark"] .mini-stats div,
+:root[data-theme="dark"] .session-settings,
+:root[data-theme="dark"] .home-more-panel,
+:root[data-theme="dark"] .weakness-panel,
 :root[data-theme="dark"] .data-management-card .panel {
   background: var(--panel);
   color: var(--ink);
@@ -4911,9 +4750,74 @@ button {
 :root[data-theme="dark"] .proof-overview div,
 :root[data-theme="dark"] .path-node-button,
 :root[data-theme="dark"] .next-lesson-card,
+:root[data-theme="dark"] .history-review-item,
+:root[data-theme="dark"] .home-selected-pill,
+:root[data-theme="dark"] .study-count,
+:root[data-theme="dark"] .path-intro-main,
 :root[data-theme="dark"] .path-lesson-panel {
   background: var(--surface);
   border-color: var(--line);
+}
+
+:root[data-theme="dark"] .chip:not(.topic-limits):not(.topic-derivatives):not(.topic-integrals):not(.topic-series) {
+  background: var(--surface);
+}
+
+:root[data-theme="dark"] .first-run-panel {
+  border-color: rgba(120, 183, 238, 0.32);
+  background: rgba(31, 46, 63, 0.88);
+}
+
+:root[data-theme="dark"] .empty-state {
+  background: rgba(28, 29, 26, 0.6);
+}
+
+:root[data-theme="dark"] .achievement.is-new {
+  border-color: rgba(98, 201, 145, 0.4);
+  background: rgba(31, 68, 48, 0.86);
+}
+
+:root[data-theme="dark"] .history-metrics span {
+  background: var(--surface);
+}
+
+/* Primary buttons: invert like the light theme (dark fill on light paper →
+   light fill on dark paper), otherwise they vanish against dark panels. */
+:root[data-theme="dark"] .button {
+  border-color: var(--ink);
+  background: var(--ink);
+  color: #181818;
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.35);
+}
+
+:root[data-theme="dark"] .button.secondary {
+  border-color: var(--line);
+  background: var(--panel);
+  color: var(--ink);
+}
+
+:root[data-theme="dark"] .button.warning {
+  border-color: var(--red);
+  background: var(--red);
+  color: #181818;
+}
+
+:root[data-theme="dark"] .button.ghost {
+  border-color: var(--line);
+  background: transparent;
+  color: var(--ink);
+  box-shadow: none;
+}
+
+@media (max-width: 680px) {
+  :root[data-theme="dark"] .topbar {
+    border-bottom-color: rgba(255, 255, 255, 0.08);
+    background: color-mix(in srgb, var(--paper) 94%, transparent);
+  }
+
+  :root[data-theme="dark"] .quiz-screen .arena-top {
+    background: color-mix(in srgb, var(--paper) 94%, transparent);
+  }
 }
 
 :root[data-theme="dark"] .brand-mark,
@@ -5160,6 +5064,15 @@ button {
 .problem-library {
   display: grid;
   gap: 18px;
+}
+
+.library-more {
+  display: flex;
+  justify-content: center;
+}
+
+.library-more .button {
+  min-width: 220px;
 }
 
 .settings-page {

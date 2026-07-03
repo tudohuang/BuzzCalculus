@@ -58,7 +58,7 @@
   N("hd-012", "derivatives", 5, "\\text{Coefficient of }x^4\\text{ in }\\tan^2 x", "2/3", "MIT", ["taylor", "coefficient"], "tan^2 x = x^2 + 2x^4/3 + ...");
 
   /* ===== Tough applications ===== */
-  N("app-001", "derivatives", 4, "\\text{球形氣球以 }100\\,\\tfrac{cm^3}{s}\\text{ 充氣，}r=5\\text{ 時半徑變化率 }\\tfrac{dr}{dt}", "1/pi", "MIT", ["applications", "related-rates"], "dV/dt = 4πr^2 dr/dt.");
+  N("app-001", "derivatives", 4, "\\text{球形氣球以 }100\\,\\tfrac{\\text{cm}^3}{\\text{s}}\\text{ 充氣，}r=5\\text{ 時半徑變化率 }\\tfrac{dr}{dt}", "1/pi", "MIT", ["applications", "related-rates"], "dV/dt = 4πr^2 dr/dt.");
   N("app-002", "derivatives", 5, "\\text{橢圓 }\\tfrac{x^2}{9}+\\tfrac{y^2}{4}=1\\text{ 內接矩形的最大面積}", "12", "Princeton", ["applications", "optimization"], "Max inscribed rectangle area is 2ab.");
   N("app-003", "derivatives", 4, "\\text{曲線 }y=x^2\\text{ 在原點的曲率半徑}", "1/2", "MIT", ["applications", "curvature"], "R = (1+y'^2)^{3/2}/|y''| = 1/2.");
   N("app-004", "derivatives", 5, "\\text{曲線 }y=e^{x}\\text{ 在 }x=0\\text{ 的曲率半徑}", "2*sqrt(2)", "Caltech", ["applications", "curvature"], "R = (1+1)^{3/2}/1 = 2√2.");

@@ -47,8 +47,8 @@ Boss
 
 ## Current Features
 
-- **560 題微積分題庫**
-- **32 個技巧題包**
+- **1116 題微積分題庫**
+- **39 個技巧題包**
 - **主線路線圖**
 - **每日任務**
 - **每週任務與本機目標**
@@ -265,13 +265,13 @@ Technique: Frullani-type parameter integral
 
 | Type | Count |
 | --- | ---: |
-| Limits | 82 |
-| Derivatives / Multivariable derivatives | 172 |
-| Integrals / Multiple integrals | 211 |
-| Series | 95 |
-| **Total** | **560** |
+| Limits | 158 |
+| Derivatives / Multivariable derivatives | 307 |
+| Integrals / Multiple integrals | 487 |
+| Series | 164 |
+| **Total** | **1116** |
 
-Proof Lab currently includes **20 proof problems**. Proof problems are not included in timed sessions or daily missions.
+Proof Lab currently includes **21 proof problems**. Proof problems are not included in timed sessions or daily missions.
 
 ---
 
@@ -376,6 +376,7 @@ node tools/validate_problems.js
 node tools/validate_training_packs.js
 node tools/validate_path_nodes.js
 node tools/validate_answer_checker.js
+node tools/validate_app_shell.js
 node tools/smoke_app_render.js
 ```
 
@@ -386,7 +387,7 @@ node tools/smoke_app_render.js
 Current version:
 
 ```text
-v0.9.0-beta
+v0.9.13-beta
 ```
 
 Current target:

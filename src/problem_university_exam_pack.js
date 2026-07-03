@@ -108,7 +108,6 @@
     ["uni-int-005", "\\int x\\sqrt{1+x^2}\\,dx", "(1+x^2)^(3/2)/3", ["substitution", "radical"], "Let u=1+x^2."],
     ["uni-int-006", "\\int \\sin^5x\\cos x\\,dx", "sin(x)^6/6", ["substitution", "trig-integral"], "Let u=sin x."],
     ["uni-int-007", "\\int \\sec^4x\\,dx", "tan(x)+tan(x)^3/3", ["trig-integral"], "Write sec^4 x=(1+tan^2 x)sec^2 x."],
-    ["uni-int-008", "\\int \\frac{1}{x^2+2x+5}\\,dx", "atan((x+1)/2)/2", ["inverse-trig", "rational"], "Complete the square."],
     ["uni-int-009", "\\int \\frac{2x+1}{x^2+x+1}\\,dx", "log(x^2+x+1)", ["substitution", "rational"], "The numerator is the derivative of the denominator."],
     ["uni-int-010", "\\int e^x\\cos x\\,dx", "exp(x)*(sin(x)+cos(x))/2", ["integration-by-parts", "exponential", "trig"], "Use the standard exponential-trig integral."],
     ["uni-int-011", "\\int x^2\\log x\\,dx", "x^3*log(x)/3-x^3/9", ["integration-by-parts", "log"], "Let u=log x."],
