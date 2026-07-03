@@ -5391,6 +5391,528 @@ button {
   }
 }
 
+/* ---- Retention features: SRS 複習卡、練習熱力圖、技巧雷達 ---- */
+:root {
+  --heat-0: #e9e6dc;
+  --heat-1: #cde8d6;
+  --heat-2: #93cfa9;
+  --heat-3: #4faf7c;
+  --heat-4: #21835b;
+}
+
+:root[data-theme="dark"] {
+  --heat-0: #2a2b27;
+  --heat-1: #1e3c2c;
+  --heat-2: #245c3d;
+  --heat-3: #2f8657;
+  --heat-4: #62c991;
+}
+
+.home-retention {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 12px;
+  margin: 14px 0;
+}
+
+.retention-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 16px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--panel);
+}
+
+.retention-copy {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+
+.retention-copy strong {
+  font-size: 1.12rem;
+}
+
+.retention-copy span {
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.srs-card.is-due {
+  border-color: color-mix(in srgb, var(--gold) 55%, var(--line));
+}
+
+.srs-card.is-clear .retention-copy strong {
+  color: var(--success);
+}
+
+.shield-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  width: fit-content;
+  padding: 1px 8px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+
+.shield-chip .icon {
+  width: 12px;
+  height: 12px;
+}
+
+.shield-chip.is-ready {
+  color: var(--success);
+  border-color: color-mix(in srgb, var(--green) 45%, var(--line));
+}
+
+.shield-chip.is-used {
+  color: var(--muted);
+}
+
+.mini-heatmap {
+  display: grid;
+  grid-template-columns: repeat(7, 14px);
+  gap: 3px;
+}
+
+.heatmap-panel {
+  margin: 14px 0;
+  padding: 14px 16px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+
+.heatmap-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+
+.heatmap-head h3 {
+  margin: 2px 0 0;
+}
+
+.streak-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.streak-status strong {
+  font-size: 1.05rem;
+}
+
+.heatmap-months {
+  display: grid;
+  gap: 3px;
+  margin-bottom: 4px;
+  color: var(--muted);
+  font-size: 0.68rem;
+  font-weight: 700;
+}
+
+.heatmap-months span {
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.heatmap-grid {
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-rows: repeat(7, 1fr);
+  grid-auto-columns: 1fr;
+  gap: 3px;
+  width: 100%;
+}
+
+.heatmap-cell {
+  display: block;
+  aspect-ratio: 1;
+  border-radius: 2px;
+  background: var(--heat-0);
+}
+
+.heatmap-cell[data-level="1"] {
+  background: var(--heat-1);
+}
+
+.heatmap-cell[data-level="2"] {
+  background: var(--heat-2);
+}
+
+.heatmap-cell[data-level="3"] {
+  background: var(--heat-3);
+}
+
+.heatmap-cell[data-level="4"] {
+  background: var(--heat-4);
+}
+
+.heatmap-cell.is-future {
+  background: transparent;
+}
+
+.heatmap-cell.is-shielded {
+  box-shadow: inset 0 0 0 1.5px var(--gold);
+}
+
+.heatmap-legend {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 4px;
+  margin-top: 8px;
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.heatmap-legend .heatmap-cell {
+  width: 10px;
+  height: 10px;
+  aspect-ratio: auto;
+}
+
+.srs-chip {
+  display: inline-block;
+  margin-left: 4px;
+  padding: 0 7px;
+  border-radius: 999px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  font-size: 0.7rem;
+  font-weight: 800;
+}
+
+.srs-chip.is-due {
+  color: var(--gold-dark);
+  border-color: color-mix(in srgb, var(--gold) 55%, var(--line));
+}
+
+.srs-chip.is-scheduled {
+  color: var(--muted);
+}
+
+.radar-panel {
+  display: grid;
+  gap: 8px;
+  justify-items: center;
+  margin: 14px 0;
+  padding: 14px 16px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+
+.radar-head {
+  justify-self: stretch;
+  display: grid;
+  gap: 2px;
+}
+
+.radar-head span {
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.radar-svg {
+  display: block;
+  width: 100%;
+  max-width: 380px;
+  height: auto;
+}
+
+.radar-ring,
+.radar-spoke {
+  fill: none;
+  stroke: var(--line);
+  stroke-width: 1;
+}
+
+.radar-data {
+  fill: color-mix(in srgb, var(--gold) 28%, transparent);
+  stroke: var(--gold-dark);
+  stroke-width: 1.6;
+  stroke-linejoin: round;
+}
+
+.radar-dot {
+  fill: var(--gold-dark);
+}
+
+.radar-label text {
+  fill: var(--ink);
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.radar-label .radar-score {
+  fill: var(--muted);
+  font-size: 9px;
+  font-weight: 800;
+}
+
+.radar-label.is-empty text {
+  fill: var(--muted);
+  opacity: 0.7;
+}
+
+.radar-takeaway {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+:root[data-theme="dark"] .retention-card,
+:root[data-theme="dark"] .shield-chip,
+:root[data-theme="dark"] .srs-chip,
+:root[data-theme="dark"] .heatmap-panel,
+:root[data-theme="dark"] .radar-panel {
+  background: #1c1d1a;
+  border-color: #3c3b35;
+}
+
+:root[data-theme="dark"] .srs-card.is-due {
+  border-color: color-mix(in srgb, var(--gold) 55%, #3c3b35);
+}
+
+:root[data-theme="dark"] .shield-chip.is-ready {
+  border-color: color-mix(in srgb, var(--green) 45%, #3c3b35);
+}
+
+:root[data-theme="dark"] .srs-chip.is-due {
+  border-color: color-mix(in srgb, var(--gold) 55%, #3c3b35);
+}
+
+@media (max-width: 680px) {
+  .home-retention {
+    grid-template-columns: 1fr;
+  }
+
+  .retention-card {
+    flex-wrap: wrap;
+  }
+}
+
+/* ---- Feature 9：逐步解答（三段抽屜） ---- */
+.solution-stages {
+  display: grid;
+  gap: 8px;
+  margin-top: 8px;
+  text-align: left;
+}
+
+.solution-stage {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--panel);
+}
+
+.solution-stage summary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  cursor: pointer;
+  font-weight: 800;
+  font-size: 0.85rem;
+  color: var(--ink);
+}
+
+.solution-stage[open] {
+  border-color: var(--line-strong);
+}
+
+.solution-stage .stage-index {
+  color: var(--gold-dark);
+  font-weight: 900;
+}
+
+.solution-stage .stage-cost {
+  margin-left: auto;
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.solution-stage .stage-body {
+  display: grid;
+  gap: 8px;
+  padding: 0 12px 12px;
+  font-size: 0.88rem;
+  color: var(--ink);
+}
+
+.solution-stage .stage-body p {
+  margin: 0;
+  color: var(--ink);
+  line-height: 1.5;
+}
+
+.solution-stage .stage-body ol {
+  margin: 0;
+  padding-left: 18px;
+  display: grid;
+  gap: 4px;
+  line-height: 1.5;
+}
+
+.solution-stage .stage-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.solution-stage .stage-answer {
+  color: var(--muted);
+  font-weight: 700;
+}
+
+.assist-chip {
+  display: inline-block;
+  margin-left: 4px;
+  padding: 0 7px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--violet) 14%, var(--surface));
+  border: 1px solid color-mix(in srgb, var(--violet) 45%, var(--line));
+  color: var(--violet);
+  font-size: 0.7rem;
+  font-weight: 800;
+}
+
+/* ---- Feature 10：具名模擬卷 ---- */
+.named-exam-panel {
+  display: grid;
+  gap: 10px;
+  padding-top: 14px;
+  margin-top: 2px;
+  border-top: 1px dashed var(--line);
+}
+
+.named-exam-head {
+  display: grid;
+  gap: 2px;
+}
+
+.named-exam-head h3 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.named-exam-head span {
+  color: var(--muted);
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.named-exam-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr));
+  gap: 10px;
+}
+
+.named-exam-card {
+  display: grid;
+  gap: 3px;
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--ink);
+  text-align: left;
+  cursor: pointer;
+  transition:
+    border-color 140ms ease,
+    background 140ms ease;
+}
+
+.named-exam-card:hover {
+  border-color: var(--line-strong);
+  background: var(--panel);
+}
+
+.named-exam-card strong {
+  font-size: 0.95rem;
+}
+
+.named-exam-card span {
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.named-exam-card small {
+  color: var(--muted);
+  font-size: 0.74rem;
+}
+
+/* ---- Feature 5：定位測驗入口 ---- */
+.first-run-panel .placement-cta {
+  font-weight: 800;
+}
+
+.first-run-hint {
+  margin: 8px 0 0;
+  color: var(--muted);
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.placement-card .action-row {
+  margin-top: 10px;
+}
+
+:root[data-theme="dark"] .solution-stage,
+:root[data-theme="dark"] .named-exam-card {
+  background: #1c1d1a;
+  border-color: #3c3b35;
+}
+
+:root[data-theme="dark"] .solution-stage {
+  background: #22231f;
+}
+
+:root[data-theme="dark"] .named-exam-card:hover {
+  background: #22231f;
+  border-color: #5c584d;
+}
+
+:root[data-theme="dark"] .assist-chip {
+  background: color-mix(in srgb, var(--violet) 20%, #1c1d1a);
+  border-color: color-mix(in srgb, var(--violet) 45%, #3c3b35);
+}
+
+@media (max-width: 680px) {
+  .named-exam-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .solution-stage summary {
+    flex-wrap: wrap;
+  }
+
+  .solution-stage .stage-cost {
+    margin-left: 0;
+    flex-basis: 100%;
+    padding-left: 22px;
+  }
+}
+
 /* Honour OS "reduce motion": stop the decorative/looping animations but
    keep the short functional transitions (hover/active/state feedback). */
 @media (prefers-reduced-motion: reduce) {
@@ -5409,5 +5931,231 @@ button {
   *::before,
   *::after {
     animation-iteration-count: 1 !important;
+  }
+}
+
+/* ---- Feature 6：每週挑戰 ---- */
+.weekly-card {
+  margin: 14px 0;
+  padding: 14px 16px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--panel);
+  display: grid;
+  gap: 12px;
+}
+
+.weekly-card.is-done {
+  border-color: color-mix(in srgb, var(--gold) 45%, var(--line));
+}
+
+.weekly-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.weekly-copy {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+
+.weekly-copy strong {
+  font-size: 1.12rem;
+}
+
+.weekly-copy span {
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.weekly-code-row,
+.weekly-compare-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.weekly-code-field,
+.weekly-compare-row input {
+  flex: 1 1 160px;
+  min-width: 0;
+  padding: 9px 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--ink);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.weekly-code-field {
+  cursor: pointer;
+}
+
+.weekly-compare {
+  margin: 0;
+  padding: 8px 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+  font-size: 0.86rem;
+  font-weight: 700;
+}
+
+.weekly-compare.is-win {
+  color: var(--success);
+  border-color: color-mix(in srgb, var(--green) 45%, var(--line));
+}
+
+.weekly-compare.is-lose {
+  color: var(--danger);
+  border-color: color-mix(in srgb, var(--red) 45%, var(--line));
+}
+
+.weekly-compare.is-tie {
+  color: var(--ink);
+}
+
+.weekly-compare.is-error {
+  color: var(--muted);
+}
+
+/* 結算頁的每週成績代碼面板（在 verdict 色底上要保持面板感）。 */
+.weekly-outcome {
+  margin-top: 14px;
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--panel);
+  color: var(--ink);
+  display: grid;
+  gap: 10px;
+  text-align: left;
+}
+
+.weekly-outcome-copy {
+  display: grid;
+  gap: 3px;
+}
+
+.weekly-outcome-copy span {
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+/* ---- Feature 4：成績分享卡 ---- */
+.results-share-row {
+  margin-top: 10px;
+  justify-content: center;
+}
+
+.share-card-modal {
+  width: min(430px, 100%);
+  max-height: calc(100vh - 36px);
+  overflow-y: auto;
+}
+
+.share-card-preview {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin: 0 0 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+
+/* ---- Feature 7 / 8：同步卡與 Pro 卡 ---- */
+.sync-chip {
+  min-height: 28px;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 10px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--muted);
+  font-size: 0.75rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.sync-chip.is-on {
+  color: var(--success);
+  border-color: color-mix(in srgb, var(--green) 45%, var(--line));
+}
+
+.sync-drawer {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+  padding: 0 12px;
+}
+
+.sync-drawer summary {
+  padding: 10px 0;
+  cursor: pointer;
+  font-weight: 800;
+  font-size: 0.88rem;
+}
+
+.sync-drawer ul {
+  margin: 0 0 10px;
+  padding-left: 18px;
+  display: grid;
+  gap: 4px;
+  color: var(--muted);
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+
+.sync-drawer .panel-note {
+  margin: 0 0 12px;
+}
+
+.sync-message {
+  font-weight: 700;
+}
+
+:root[data-theme="dark"] .weekly-card,
+:root[data-theme="dark"] .sync-chip,
+:root[data-theme="dark"] .sync-drawer,
+:root[data-theme="dark"] .weekly-outcome {
+  background: #1c1d1a;
+  border-color: #3c3b35;
+}
+
+:root[data-theme="dark"] .weekly-card.is-done {
+  border-color: color-mix(in srgb, var(--gold) 45%, #3c3b35);
+}
+
+:root[data-theme="dark"] .weekly-code-field,
+:root[data-theme="dark"] .weekly-compare-row input,
+:root[data-theme="dark"] .weekly-compare {
+  background: #22231f;
+  border-color: #3c3b35;
+}
+
+@media (max-width: 480px) {
+  .weekly-head {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .weekly-head .button {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .weekly-code-row .button,
+  .weekly-compare-row .button {
+    flex: 1 1 auto;
+    justify-content: center;
   }
 }
