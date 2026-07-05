@@ -3,6 +3,7 @@
 
   const problems = window.BUZZ_PROBLEMS || [];
   const proofs = window.BUZZ_PROOFS || [];
+  const CUSTOM = window.BUZZ_CUSTOM || null;
   const app = document.getElementById("app");
   const field = document.getElementById("math-field");
 
@@ -430,6 +431,7 @@
     "beginner-friendly": "新手友善",
     "boss-rank": "Boss",
     "boss-plus": "Boss+",
+    custom: "自訂",
     "hard-limit": "硬極限",
     "asymptotic-expansion": "漸近展開",
     "generating-function": "生成函數",
@@ -563,6 +565,10 @@
   let quiz = null;
   let activePathNodeId = "";
   let justUnlockedNodeId = "";
+  let creatorDraft = null;
+  let creatorEditingId = "";
+  let creatorStatus = null;
+  let creatorImportPreview = null;
   let tickHandle = null;
   let renderPending = false;
   let lastVisibilityStamp = 0;
@@ -747,6 +753,7 @@
     if (view === "mistakes") return renderMistakes();
     if (view === "history") return renderHistory();
     if (view === "settings") return renderSettings();
+    if (view === "creator") return renderCreator();
     return renderHome();
   }
 
@@ -1217,6 +1224,7 @@
               <button data-action="open-library">${icon("search")}題庫</button>
               <button data-action="open-boss-lab">${icon("trophy")}Boss 專區</button>
               <button data-action="open-proofs">${icon("file-pen-line")}證明題</button>
+              <button data-action="open-creator">${icon("file-pen-line")}出題工作坊</button>
               <button data-action="open-settings">${icon("settings")}資料與設定</button>
             </nav>
           </div>
@@ -1502,6 +1510,7 @@
             </div>
             <div class="action-row">
               <button class="button ghost" data-action="home">${icon("home")}回首頁</button>
+              <button class="button secondary" data-action="open-creator">${icon("file-pen-line")}我要出題</button>
               <button class="button" data-action="start-library-filter" ${allItems.length ? "" : "disabled"}>${icon("shuffle")}練目前篩選</button>
             </div>
           </div>
@@ -1601,6 +1610,460 @@
         </div>
       </article>
     `;
+  }
+
+  // ── 出題工作坊 ──────────────────────────────────────────────
+  // 自訂題存本機（BUZZ_CUSTOM / localStorage）。儲存前必須通過與作答
+  // 同一套 checkAnswer 自我判分，擋掉判分器讀不懂的答案。
+  // 分享走 #pack=<base64url> 連結，純前端、無伺服器。
+
+  function defaultCreatorDraft() {
+    return {
+      topic: "limits",
+      difficulty: "2",
+      answerKind: "numeric",
+      variable: "x",
+      prompt: "",
+      answer: "",
+      solution: "",
+      timeLimit: "45"
+    };
+  }
+
+  function activeCreatorDraft() {
+    if (!creatorDraft) creatorDraft = defaultCreatorDraft();
+    return creatorDraft;
+  }
+
+  function customProblemStore() {
+    return CUSTOM ? CUSTOM.load() : [];
+  }
+
+  function persistCustomProblems(list) {
+    if (!CUSTOM) return;
+    CUSTOM.save(list);
+    syncCustomProblemPool(list);
+  }
+
+  // 把 in-memory 題庫裡的自訂題換成最新狀態（題庫/抽題都吃同一個陣列）。
+  function syncCustomProblemPool(list) {
+    for (let index = problems.length - 1; index >= 0; index -= 1) {
+      if (problems[index].custom) problems.splice(index, 1);
+    }
+    const knownIds = new Set(problems.map((problem) => problem.id));
+    list.forEach((raw) => {
+      if (raw.enabled === false) return;
+      const problem = CUSTOM.sanitize(raw);
+      if (!problem || knownIds.has(problem.id)) return;
+      if (window.BUZZ_DIFFICULTY) window.BUZZ_DIFFICULTY.applyCalibration(problem);
+      knownIds.add(problem.id);
+      problems.push(problem);
+    });
+  }
+
+  function renderCreator() {
+    const mine = customProblemStore();
+    const enabledCount = problems.filter((problem) => problem.custom).length;
+    return `
+      <main class="screen">
+        <section class="panel page-panel creator-page">
+          <div class="page-head">
+            <div>
+              <p class="section-label">出題工作坊</p>
+              <h2>自己出題，練給自己或分享給朋友</h2>
+              <p>題目存在這台裝置的瀏覽器裡；分享連結把題目編進網址本身，不經過任何伺服器。</p>
+            </div>
+            <div class="action-row">
+              <button class="button ghost" data-action="home">${icon("home")}回首頁</button>
+              <button class="button" data-action="start-custom-practice" ${enabledCount ? "" : "disabled"}>${icon("play")}練自訂題（${enabledCount}）</button>
+            </div>
+          </div>
+          ${creatorStatus ? `<div class="creator-status is-${creatorStatus.tone}">${escapeHtml(creatorStatus.text)}</div>` : ""}
+          ${creatorImportPreview ? renderCreatorImportPreview() : ""}
+          <div class="creator-grid">
+            ${renderCreatorForm()}
+            ${renderCreatorSharePanel(mine)}
+          </div>
+          ${renderCreatorList(mine)}
+        </section>
+      </main>
+    `;
+  }
+
+  function renderCreatorForm() {
+    const draft = activeCreatorDraft();
+    const needsVariable = draft.answerKind === "expression" || draft.answerKind === "antiderivative";
+    const answerHelp = {
+      numeric: "數值答案，可用 1/2、pi/4、sqrt(2)、log(2) 這類 WebWork 寫法。",
+      expression: "寫成變數的函數，例如 2*x*cos(x^2)。系統會多點代入判分。",
+      antiderivative: "原函數，可省略 +C，例如 x*log(x)-x。判分時檢查是否只差常數。",
+      text: "判定型答案，用逗號列出所有可接受的寫法，例如：收斂, converges。"
+    }[draft.answerKind];
+    const difficultyLabels = { 1: "R1 暖身", 2: "R2 基礎", 3: "R3 標準", 4: "R4 進階" };
+    return `
+      <section class="study-card creator-form">
+        <div class="panel-title-row">
+          <div>
+            <p class="section-label">${creatorEditingId ? "編輯題目" : "新題目"}</p>
+            <h3>${creatorEditingId ? escapeHtml(creatorEditingId) : "先驗證，才進題庫"}</h3>
+          </div>
+          ${creatorEditingId ? `<button class="button ghost" data-action="creator-new">${icon("x")}取消編輯</button>` : ""}
+        </div>
+        <div class="creator-fields">
+          <label>
+            <span>主題</span>
+            <select data-creator-field="topic">
+              ${Object.entries(TOPICS)
+                .filter(([key]) => key !== "all")
+                .map(([key, topic]) => `<option value="${key}" ${draft.topic === key ? "selected" : ""}>${topic.label}</option>`)
+                .join("")}
+            </select>
+          </label>
+          <label>
+            <span>難度</span>
+            <select data-creator-field="difficulty">
+              ${[1, 2, 3, 4].map((level) => `<option value="${level}" ${String(draft.difficulty) === String(level) ? "selected" : ""}>${difficultyLabels[level]}</option>`).join("")}
+            </select>
+          </label>
+          <label>
+            <span>作答型態</span>
+            <select data-creator-field="answerKind">
+              ${["numeric", "expression", "antiderivative", "text"].map((kind) => `<option value="${kind}" ${draft.answerKind === kind ? "selected" : ""}>${answerKindLabel(kind)}</option>`).join("")}
+            </select>
+          </label>
+          <label>
+            <span>時限（秒）</span>
+            <input type="number" min="10" max="600" data-creator-field="timeLimit" value="${escapeAttr(draft.timeLimit)}" />
+          </label>
+          ${
+            needsVariable
+              ? `<label><span>變數</span><input maxlength="1" data-creator-field="variable" value="${escapeAttr(draft.variable)}" placeholder="x" /></label>`
+              : ""
+          }
+          <label class="creator-wide">
+            <span>題目（LaTeX，不用寫 $）</span>
+            <textarea data-creator-field="prompt" rows="3" placeholder="\\lim_{x \\to 0}\\frac{\\sin x}{x}">${escapeHtml(draft.prompt)}</textarea>
+          </label>
+          <div class="creator-preview creator-wide">
+            <span>預覽</span>
+            <div class="math-block" data-creator-preview data-tex="${escapeAttr(draft.prompt)}"></div>
+          </div>
+          <label class="creator-wide">
+            <span>答案</span>
+            <input data-creator-field="answer" value="${escapeAttr(draft.answer)}" placeholder="${draft.answerKind === "text" ? "收斂, converges" : "例如 1/2 或 pi/4"}" />
+          </label>
+          <p class="panel-note creator-wide">${escapeHtml(answerHelp)}</p>
+          <label class="creator-wide">
+            <span>解說（答錯的人會看到，建議寫）</span>
+            <textarea data-creator-field="solution" rows="2" placeholder="為什麼答案是這個？一兩句就好。">${escapeHtml(draft.solution)}</textarea>
+          </label>
+        </div>
+        <div class="action-row">
+          <button class="button" data-action="creator-save">${icon("check")}驗證並${creatorEditingId ? "更新" : "加入"}</button>
+        </div>
+        <p class="panel-note">儲存前系統會確認：LaTeX 讀得懂，而且判分器能把你的參考答案判成「正確」。</p>
+      </section>
+    `;
+  }
+
+  function renderCreatorSharePanel(mine) {
+    const shareable = mine.filter((item) => item.enabled !== false);
+    return `
+      <section class="study-card creator-share">
+        <div class="panel-title-row">
+          <div>
+            <p class="section-label">分享 / 匯入</p>
+            <h3>用連結交換題包</h3>
+          </div>
+        </div>
+        <p class="panel-note">分享連結會帶目前啟用中的 ${shareable.length} 題。朋友打開連結就會看到匯入預覽，確認後才進他的題庫。</p>
+        <div class="action-row">
+          <button class="button secondary" data-action="creator-copy-link" ${shareable.length ? "" : "disabled"}>${icon("upload")}複製分享連結</button>
+          <button class="button ghost" data-action="creator-copy-code" ${shareable.length ? "" : "disabled"}>複製題包代碼</button>
+        </div>
+        <label class="creator-import-label">
+          <span>匯入：貼上朋友的分享連結或 BZP1. 代碼</span>
+          <textarea data-creator-import-input rows="2" placeholder="BZP1.… 或 https://…#pack=BZP1.…"></textarea>
+        </label>
+        <div class="action-row">
+          <button class="button secondary" data-action="creator-import-decode">${icon("download")}解析題包</button>
+        </div>
+      </section>
+    `;
+  }
+
+  function renderCreatorImportPreview() {
+    const preview = creatorImportPreview;
+    if (preview.error) {
+      return `
+        <section class="study-card creator-import-preview">
+          <p class="section-label">匯入題包</p>
+          <p class="panel-note">${escapeHtml(preview.error)}</p>
+          <div class="action-row"><button class="button ghost" data-action="creator-import-dismiss">${icon("x")}關閉</button></div>
+        </section>
+      `;
+    }
+    const mineIds = new Set(customProblemStore().map((item) => item.id));
+    const fresh = preview.problems.filter((problem) => !mineIds.has(problem.id));
+    return `
+      <section class="study-card creator-import-preview">
+        <div class="panel-title-row">
+          <div>
+            <p class="section-label">匯入題包</p>
+            <h3>收到 ${preview.problems.length} 題${preview.dropped ? `（另有 ${preview.dropped} 題格式不合，已略過）` : ""}</h3>
+          </div>
+        </div>
+        <div class="creator-import-list">
+          ${preview.problems
+            .slice(0, 6)
+            .map(
+              (problem) => `
+                <div class="creator-import-item ${mineIds.has(problem.id) ? "is-dupe" : ""}">
+                  <div class="math-block" data-tex="${escapeAttr(problem.prompt)}"></div>
+                  <small>${TOPICS[problem.topic]?.label || problem.topic} · ${answerKindLabel(problem.answerKind)} · R${problem.difficulty}${mineIds.has(problem.id) ? " · 已有同一題，會略過" : ""}</small>
+                </div>`
+            )
+            .join("")}
+          ${preview.problems.length > 6 ? `<p class="panel-note">…還有 ${preview.problems.length - 6} 題。</p>` : ""}
+        </div>
+        <div class="action-row">
+          <button class="button" data-action="creator-import-confirm" ${fresh.length ? "" : "disabled"}>${icon("check")}匯入 ${fresh.length} 題</button>
+          <button class="button ghost" data-action="creator-import-dismiss">${icon("x")}取消</button>
+        </div>
+      </section>
+    `;
+  }
+
+  function renderCreatorList(mine) {
+    if (!mine.length) {
+      return `<div class="empty-state">還沒有自訂題。出一題試試，或請朋友傳分享連結給你。</div>`;
+    }
+    return `
+      <p class="section-label">我的題目（${mine.length}）</p>
+      <div class="creator-list">
+        ${mine
+          .map((raw) => {
+            const enabled = raw.enabled !== false;
+            return `
+              <article class="creator-item ${enabled ? "" : "is-disabled"}">
+                <div class="creator-item-top">
+                  <div>
+                    <strong>${escapeHtml(raw.id || "")}</strong>
+                    <span>${TOPICS[raw.topic]?.label || raw.topic} · ${answerKindLabel(raw.answerKind) || raw.answerKind} · R${escapeHtml(String(raw.difficulty || ""))}${enabled ? "" : " · 已停用"}</span>
+                  </div>
+                  <div class="problem-card-actions">
+                    <button class="icon-button ${enabled ? "is-active" : ""}" data-action="creator-toggle" data-problem-id="${escapeAttr(raw.id)}" title="${enabled ? "停用（不再抽進練習）" : "重新啟用"}">${icon(enabled ? "check" : "x")}</button>
+                    <button class="icon-button" data-action="creator-edit" data-problem-id="${escapeAttr(raw.id)}" title="編輯">${icon("file-pen-line")}</button>
+                    <button class="icon-button" data-action="creator-delete" data-problem-id="${escapeAttr(raw.id)}" title="刪除">${icon("trash")}</button>
+                  </div>
+                </div>
+                <div class="math-block" data-tex="${escapeAttr(raw.prompt || "")}"></div>
+                <div class="creator-item-foot">
+                  <span>答案：${escapeHtml(raw.answerKind === "text" ? (raw.answers || []).join(" / ") : String(raw.answer || ""))}</span>
+                  ${enabled ? `<button class="button ghost" data-action="start-problem" data-problem-id="${escapeAttr(raw.id)}">${icon("play")}練這題</button>` : ""}
+                </div>
+              </article>`;
+          })
+          .join("")}
+      </div>
+    `;
+  }
+
+  function updateCreatorPreview() {
+    const node = app.querySelector("[data-creator-preview]");
+    if (!node) return;
+    node.dataset.tex = activeCreatorDraft().prompt || "";
+    renderMathNode(node, true);
+  }
+
+  function buildCreatorCandidate() {
+    const draft = activeCreatorDraft();
+    if (!CUSTOM) return null;
+    return CUSTOM.sanitize({
+      id: creatorEditingId || undefined,
+      topic: draft.topic,
+      difficulty: draft.difficulty,
+      answerKind: draft.answerKind,
+      prompt: draft.prompt,
+      answer: draft.answer,
+      variable: draft.variable,
+      solution: draft.solution,
+      timeLimit: draft.timeLimit
+    });
+  }
+
+  // 出題端的「審核」：LaTeX 要能渲染，且判分器必須把作者自己的
+  // 參考答案判成正確，否則這題進了題庫也沒人答得對。
+  function creatorProblemIssues(problem) {
+    const issues = [];
+    if (window.katex) {
+      try {
+        window.katex.renderToString(problem.prompt, { displayMode: true, throwOnError: true, strict: "ignore" });
+      } catch (error) {
+        issues.push(`LaTeX 讀不懂：${String((error && error.message) || error).slice(0, 120)}`);
+      }
+    }
+    const sample = problem.answerKind === "text" ? problem.answers[0] : problem.answer;
+    const graded = checkAnswer(problem, sample);
+    if (!graded.correct) {
+      issues.push(`判分器吃不下這個答案（${graded.message}）請改用 WebWork 寫法，例如 pi/4、2*x、x*log(x)-x。`);
+    }
+    return issues;
+  }
+
+  function saveCreatorDraft() {
+    if (!CUSTOM) return;
+    const draft = activeCreatorDraft();
+    if (!String(draft.prompt || "").trim() || !String(draft.answer || "").trim()) {
+      creatorStatus = { tone: "error", text: "題目和答案都要填。" };
+      render();
+      return;
+    }
+    const problem = buildCreatorCandidate();
+    if (!problem) {
+      creatorStatus = { tone: "error", text: "欄位格式不對，請再檢查一次。" };
+      render();
+      return;
+    }
+    const issues = creatorProblemIssues(problem);
+    if (issues.length) {
+      creatorStatus = { tone: "error", text: `還不能儲存：${issues.join(" ")}` };
+      render();
+      return;
+    }
+    const list = customProblemStore();
+    const now = new Date().toISOString();
+    const stored = { ...problem, enabled: true, updatedAt: now, createdAt: now };
+    const index = list.findIndex((item) => item.id === problem.id);
+    if (index >= 0) {
+      stored.createdAt = list[index].createdAt || now;
+      stored.enabled = list[index].enabled !== false;
+      list[index] = stored;
+    } else {
+      list.push(stored);
+    }
+    persistCustomProblems(list);
+    trackEvent("custom_problem_saved", { topic: problem.topic, answer_kind: problem.answerKind });
+    creatorStatus = { tone: "ok", text: `已通過驗證並${creatorEditingId ? "更新" : "加入"}：${problem.id}。` };
+    creatorEditingId = "";
+    creatorDraft = defaultCreatorDraft();
+    render();
+  }
+
+  function editCustomProblem(problemId) {
+    const raw = customProblemStore().find((item) => item.id === problemId);
+    if (!raw) return;
+    creatorEditingId = raw.id;
+    creatorDraft = {
+      topic: raw.topic,
+      difficulty: String(raw.difficulty || 2),
+      answerKind: raw.answerKind,
+      variable: raw.variable || "x",
+      prompt: raw.prompt || "",
+      answer: raw.answerKind === "text" ? (raw.answers || []).join(", ") : String(raw.answer || ""),
+      solution: raw.solution === "出題者沒有附解說。" ? "" : raw.solution || "",
+      timeLimit: String(raw.timeLimit || 45)
+    };
+    creatorStatus = null;
+    view = "creator";
+    render();
+  }
+
+  function deleteCustomProblem(problemId) {
+    const list = customProblemStore();
+    if (!list.some((item) => item.id === problemId)) return;
+    if (!window.confirm(`刪除 ${problemId}？只會從這台裝置移除。`)) return;
+    persistCustomProblems(list.filter((item) => item.id !== problemId));
+    if (creatorEditingId === problemId) {
+      creatorEditingId = "";
+      creatorDraft = defaultCreatorDraft();
+    }
+    creatorStatus = { tone: "ok", text: `已刪除 ${problemId}。` };
+    render();
+  }
+
+  function toggleCustomProblem(problemId) {
+    const list = customProblemStore();
+    const target = list.find((item) => item.id === problemId);
+    if (!target) return;
+    target.enabled = target.enabled === false;
+    persistCustomProblems(list);
+    render();
+  }
+
+  function customShareCode() {
+    if (!CUSTOM) return "";
+    const shareable = customProblemStore()
+      .filter((item) => item.enabled !== false)
+      .map((item) => CUSTOM.sanitize(item))
+      .filter(Boolean);
+    if (!shareable.length) return "";
+    return CUSTOM.encodePack(shareable);
+  }
+
+  function copyCreatorShare(asLink) {
+    const code = customShareCode();
+    if (!code) return;
+    const text = asLink
+      ? `${window.location.origin}${window.location.pathname}#pack=${code}`
+      : code;
+    const nav = window.navigator;
+    if (nav && nav.clipboard && typeof nav.clipboard.writeText === "function") {
+      Promise.resolve(nav.clipboard.writeText(text))
+        .then(() => showAppNotice(asLink ? "分享連結已複製，貼給朋友就能匯入。" : "題包代碼已複製。"))
+        .catch(() => showAppNotice("一鍵複製失敗，請改用「複製題包代碼」後手動複製。"));
+      return;
+    }
+    showAppNotice("這個瀏覽器不支援一鍵複製。");
+  }
+
+  function decodeCustomImport() {
+    if (!CUSTOM) return;
+    const input = app.querySelector("[data-creator-import-input]");
+    const raw = input ? input.value : "";
+    if (!String(raw).trim()) {
+      creatorStatus = { tone: "warn", text: "先貼上分享連結或題包代碼。" };
+      render();
+      return;
+    }
+    creatorImportPreview = CUSTOM.decodePack(raw);
+    creatorStatus = null;
+    render();
+  }
+
+  function confirmCustomImport() {
+    if (!CUSTOM || !creatorImportPreview || creatorImportPreview.error) return;
+    const list = customProblemStore();
+    const have = new Set(list.map((item) => item.id));
+    const now = new Date().toISOString();
+    let added = 0;
+    creatorImportPreview.problems.forEach((problem) => {
+      if (have.has(problem.id)) return;
+      have.add(problem.id);
+      list.push({ ...problem, enabled: true, createdAt: now, updatedAt: now, imported: true });
+      added += 1;
+    });
+    persistCustomProblems(list);
+    trackEvent("custom_pack_imported", { count: added });
+    creatorImportPreview = null;
+    creatorStatus = added
+      ? { tone: "ok", text: `已匯入 ${added} 題，抽題和題庫搜尋都會出現。` }
+      : { tone: "warn", text: "沒有新題目（都已經在你的清單裡）。" };
+    render();
+  }
+
+  function startCustomPractice() {
+    const pool = problems.filter((problem) => problem.custom);
+    if (!pool.length) return;
+    selectedMode = "practice";
+    selectedTopic = "all";
+    selectedPack = "all";
+    const count = Math.min(12, pool.length);
+    startQuiz(shuffle(pool, seedFromString(`custom-${Date.now()}`)).slice(0, count), {
+      modeKey: "practice",
+      practice: true,
+      noTimer: true
+    });
   }
 
   function renderProofLab() {
@@ -3083,6 +3546,22 @@
       });
     });
 
+    // 出題工作坊表單：打字只更新草稿（不重渲染，避免失焦）；
+    // 題目欄同步刷新 KaTeX 預覽；換作答型態才需要整頁重畫。
+    app.querySelectorAll("[data-creator-field]").forEach((input) => {
+      const apply = () => {
+        activeCreatorDraft()[input.dataset.creatorField] = input.value;
+      };
+      input.addEventListener("input", () => {
+        apply();
+        if (input.dataset.creatorField === "prompt") updateCreatorPreview();
+      });
+      input.addEventListener("change", () => {
+        apply();
+        if (input.dataset.creatorField === "answerKind") render();
+      });
+    });
+
     app.querySelectorAll("[data-action]").forEach((node) => {
       node.addEventListener("click", handleAction);
     });
@@ -3202,6 +3681,30 @@
       view = "proofs";
       render();
     }
+    if (action === "open-creator") {
+      view = "creator";
+      creatorStatus = null;
+      render();
+    }
+    if (action === "creator-new") {
+      creatorEditingId = "";
+      creatorDraft = defaultCreatorDraft();
+      creatorStatus = null;
+      render();
+    }
+    if (action === "creator-save") saveCreatorDraft();
+    if (action === "creator-edit") editCustomProblem(actionNode.dataset.problemId);
+    if (action === "creator-delete") deleteCustomProblem(actionNode.dataset.problemId);
+    if (action === "creator-toggle") toggleCustomProblem(actionNode.dataset.problemId);
+    if (action === "creator-copy-link") copyCreatorShare(true);
+    if (action === "creator-copy-code") copyCreatorShare(false);
+    if (action === "creator-import-decode") decodeCustomImport();
+    if (action === "creator-import-confirm") confirmCustomImport();
+    if (action === "creator-import-dismiss") {
+      creatorImportPreview = null;
+      render();
+    }
+    if (action === "start-custom-practice") startCustomPractice();
     if (action === "view-proof-solution") viewProofSolution(actionNode.dataset.proofId);
     if (action === "mark-proof-status") markProofStatus(actionNode.dataset.proofId, actionNode.dataset.proofStatus || "");
     if (action === "mark-proof-blocker") markProofBlocker(actionNode.dataset.proofId, actionNode.dataset.proofBlocker || "");
@@ -3816,8 +4319,9 @@
     const seed = seedFromString(`buzz-weekly-${weekKeyText}`);
     const pools = {};
     for (let rank = 1; rank <= 6; rank += 1) {
+      // 排除自訂題：每週卷必須全站相同，個人題庫不能改變抽卷結果。
       pools[rank] = shuffle(
-        problems.filter((problem) => isExamAnswerProblem(problem) && problemRank(problem) === rank),
+        problems.filter((problem) => !problem.custom && isExamAnswerProblem(problem) && problemRank(problem) === rank),
         seed + rank
       );
     }
@@ -7967,5 +8471,11 @@
   setupVisibilityTracking();
   setupFullscreenTracking();
   setupMathField();
+  // 帶著 #pack= 分享連結進來：直接落在出題工作坊的匯入預覽。
+  if (CUSTOM && CUSTOM.pendingImport) {
+    creatorImportPreview = CUSTOM.pendingImport;
+    CUSTOM.pendingImport = null;
+    view = "creator";
+  }
   render();
 })();
