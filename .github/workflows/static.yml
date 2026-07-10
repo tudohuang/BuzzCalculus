@@ -39,6 +39,21 @@ jobs:
           node tools/validate_answer_checker.js
           node tools/validate_app_shell.js
           node tools/smoke_app_render.js
+          node tools/verify_proof_claims.js
+      - name: Cache Lean toolchain
+        uses: actions/cache@v4
+        with:
+          path: ~/.elan
+          key: elan-${{ runner.os }}-stable-v1
+      - name: Machine-verify Lean proofs
+        # Reference solutions in src/proofs.js (lean tier) must compile,
+        # or the deploy is blocked.
+        run: |
+          if [ ! -x "$HOME/.elan/bin/lean" ]; then
+            curl -sSf https://elan.lean-lang.org/elan-init.sh | sh -s -- -y --default-toolchain stable
+          fi
+          export PATH="$HOME/.elan/bin:$PATH"
+          node tools/verify_lean_proofs.js
       - name: Assemble site
         # Deploy only the app shell — keep reports, tools, LaTeX sources,
         # and the workbook PDF (future paid product) off the public site.

@@ -593,6 +593,158 @@
         { text: "後段 [1-δ,1]:用連續性的 ε 估計。", tex: "\\left|n\\int_{1-\\delta}^1x^n(f-f(1))dx\\right|\\le\\varepsilon\\, n\\int_0^1x^ndx\\le\\varepsilon" },
         { text: "故 limsup|D_n| ≤ ε 對任意 ε 成立,即 D_n→0,結論成立。", tex: "\\lim_{n\\to\\infty}n\\int_0^1x^nf(x)dx=f(1)" }
       ]
+    },
+
+    /* ===== Lean tier:真.機器驗證 =====
+       把 statement 裡的骨架貼到 https://live.lean-lang.org,把 sorry 補完;
+       編譯零錯誤 = 證明被 Lean 核心機器認證。每題的 lean 欄位是參考解答,
+       由 tools/verify_lean_proofs.js 實際編譯驗證(WSL + elan)。
+       solution steps:text 是 tactic 指令,tex 是該步之後的目標狀態。 */
+    {
+      id: "proof-lean-001",
+      tier: "lean",
+      title: "rfl:定義上就相等",
+      difficulty: 1,
+      tags: ["lean", "rfl"],
+      statement: "第一課:2+2=4 在 Lean 裡「算一算就相等」。貼上並補完:example : 2 + 2 = 4 := by sorry",
+      prompt: "2+2=4",
+      hints: ["Lean 會把兩邊算到底,算出同一個值就叫定義相等。", "有一個 tactic 專門收掉這種目標:rfl。"],
+      keySteps: ["rfl"],
+      lean: "example : 2 + 2 = 4 := by rfl",
+      leanSkeleton: "example : 2 + 2 = 4 := by\n  sorry",
+      solution: [
+        { text: "目標是一個等式,兩邊都是封閉的算式。", tex: "\\vdash 2+2=4" },
+        { text: "rfl(reflexivity)要求 Lean 把兩邊 normalize:都變成 4。", tex: "4=4" },
+        { text: "完整解答:example : 2 + 2 = 4 := by rfl", tex: "\\blacksquare" }
+      ]
+    },
+    {
+      id: "proof-lean-002",
+      tier: "lean",
+      title: "intro / exact:蘊含就是函數",
+      difficulty: 1,
+      tags: ["lean", "intro", "exact"],
+      statement: "證 p → (q → p):拿到 p 之後,不管 q 是什麼都能還你 p。貼上並補完:example (p q : Prop) (hp : p) : q → p := by sorry",
+      prompt: "p\\Rightarrow(q\\Rightarrow p)",
+      hints: ["目標是 q → p:先用 intro 把 q 的證明拿進來。", "手上已經有 hp : p,用 exact hp 交卷。"],
+      keySteps: ["intro", "exact"],
+      lean: "example (p q : Prop) (hp : p) : q → p := by\n  intro _\n  exact hp",
+      leanSkeleton: "example (p q : Prop) (hp : p) : q → p := by\n  sorry",
+      solution: [
+        { text: "初始目標:已知 hp : p,要證 q → p。", tex: "hp:p\\ \\vdash\\ q\\to p" },
+        { text: "intro _ 把 q 的證明取進來(用不到,取名 _),目標剩 p。", tex: "hp:p\\ \\vdash\\ p" },
+        { text: "exact hp:手上就有,直接交出。這正是「蘊含 = 函數」:整個證明其實是 fun _ => hp。", tex: "\\blacksquare" }
+      ]
+    },
+    {
+      id: "proof-lean-003",
+      tier: "lean",
+      title: "And:證明是一個配對",
+      difficulty: 1,
+      tags: ["lean", "and", "constructor"],
+      statement: "p ∧ q 的證明就是⟨p 的證明, q 的證明⟩這個配對。貼上並補完:example (p q : Prop) (hp : p) (hq : q) : p ∧ q := by sorry",
+      prompt: "p,\\ q\\ \\vdash\\ p\\land q",
+      hints: ["constructor 把 ∧ 拆成兩個子目標。", "或直接一行:exact ⟨hp, hq⟩(尖括號打 \\< \\>)。"],
+      keySteps: ["constructor", "anonymous constructor ⟨,⟩"],
+      lean: "example (p q : Prop) (hp : p) (hq : q) : p ∧ q := by\n  constructor\n  · exact hp\n  · exact hq",
+      leanSkeleton: "example (p q : Prop) (hp : p) (hq : q) : p ∧ q := by\n  sorry",
+      solution: [
+        { text: "目標 p ∧ q。constructor 拆成兩個子目標。", tex: "\\vdash p\\quad\\text{and}\\quad\\vdash q" },
+        { text: "兩個子目標分別用 exact hp、exact hq 收掉(· 是子目標聚焦符號)。", tex: "\\blacksquare" },
+        { text: "行家寫法:example ... := ⟨hp, hq⟩ — 證明就是資料,∧ 的證明就是個 pair。", tex: "\\langle h_p,h_q\\rangle" }
+      ]
+    },
+    {
+      id: "proof-lean-004",
+      tier: "lean",
+      title: "Or / cases:分情況討論",
+      difficulty: 2,
+      tags: ["lean", "or", "cases"],
+      statement: "證 p ∨ q → q ∨ p:紙筆的「分兩種情況」在 Lean 是 cases。貼上並補完:example (p q : Prop) (h : p ∨ q) : q ∨ p := by sorry",
+      prompt: "p\\lor q\\Rightarrow q\\lor p",
+      hints: ["cases h with | inl hp => … | inr hq => … 分成左右兩支。", "左支手上是 p,要證 q ∨ p:選右邊,Or.inr hp。"],
+      keySteps: ["cases", "Or.inl / Or.inr"],
+      lean: "example (p q : Prop) (h : p ∨ q) : q ∨ p := by\n  cases h with\n  | inl hp => exact Or.inr hp\n  | inr hq => exact Or.inl hq",
+      leanSkeleton: "example (p q : Prop) (h : p ∨ q) : q ∨ p := by\n  sorry",
+      solution: [
+        { text: "h : p ∨ q 有兩種來源,cases 把證明分成兩支。", tex: "\\text{case }1:\\ h_p:p\\qquad\\text{case }2:\\ h_q:q" },
+        { text: "第一支:有 p,目標 q ∨ p 選右側,Or.inr hp。", tex: "\\vdash q\\lor p\\ \\Leftarrow\\ p" },
+        { text: "第二支:有 q,選左側,Or.inl hq。兩支都收掉,證明完成。", tex: "\\blacksquare" }
+      ]
+    },
+    {
+      id: "proof-lean-005",
+      tier: "lean",
+      title: "存在量詞:交出見證",
+      difficulty: 2,
+      tags: ["lean", "exists"],
+      statement: "證 ∃ n, n·n = 36:紙筆寫「取 n=6」,Lean 寫 ⟨6, 證明⟩。貼上並補完:example : ∃ n : Nat, n * n = 36 := by sorry",
+      prompt: "\\exists n\\in\\mathbb{N},\\ n\\cdot n=36",
+      hints: ["exact ⟨6, ?⟩:第一格是見證,第二格是 6*6=36 的證明。", "6*6=36 算一算就相等——rfl。"],
+      keySteps: ["witness", "rfl"],
+      lean: "example : ∃ n : Nat, n * n = 36 := by\n  exact ⟨6, rfl⟩",
+      leanSkeleton: "example : ∃ n : Nat, n * n = 36 := by\n  sorry",
+      solution: [
+        { text: "∃ 的證明 = ⟨見證, 該見證滿足性質的證明⟩。", tex: "\\langle 6,\\ ?\\,\\rangle" },
+        { text: "代入見證後剩 6·6=36,封閉算式用 rfl。", tex: "6\\cdot6=36" },
+        { text: "完整解答:exact ⟨6, rfl⟩。「取 c=…」從此不能再唬爛——Lean 要你真的交出那個 c。", tex: "\\blacksquare" }
+      ]
+    },
+    {
+      id: "proof-lean-006",
+      tier: "lean",
+      title: "rw:等式改寫",
+      difficulty: 2,
+      tags: ["lean", "rw"],
+      statement: "已知 a = b,證 a + a = b + b:用 rw 把目標裡的 a 全部換成 b。貼上並補完:example (a b : Nat) (h : a = b) : a + a = b + b := by sorry",
+      prompt: "a=b\\Rightarrow a+a=b+b",
+      hints: ["rw [h] 會把目標中的 a 改寫成 b。", "改寫完兩邊相同,rw 會自動用 rfl 收尾。"],
+      keySteps: ["rw"],
+      lean: "example (a b : Nat) (h : a = b) : a + a = b + b := by\n  rw [h]",
+      leanSkeleton: "example (a b : Nat) (h : a = b) : a + a = b + b := by\n  sorry",
+      solution: [
+        { text: "初始目標。", tex: "h:a=b\\ \\vdash\\ a+a=b+b" },
+        { text: "rw [h]:目標中每個 a 都被 h 改寫成 b。", tex: "\\vdash b+b=b+b" },
+        { text: "兩邊字面相同,rw 自動 rfl 收尾。這就是「代入」的機器版。", tex: "\\blacksquare" }
+      ]
+    },
+    {
+      id: "proof-lean-007",
+      tier: "lean",
+      title: "induction:歸納法",
+      difficulty: 3,
+      tags: ["lean", "induction"],
+      statement: "證 0 + n = n。注意:Nat 的加法是對右邊遞迴定義的,所以 n + 0 = n 是 rfl,但 0 + n = n 真的需要歸納!貼上並補完:example (n : Nat) : 0 + n = n := by sorry",
+      prompt: "\\forall n\\in\\mathbb{N},\\ 0+n=n",
+      hints: ["induction n with | zero => … | succ k ih => …", "zero 支:0+0=0 是 rfl。", "succ 支:先 rw [Nat.add_succ] 再用歸納假設 ih。"],
+      keySteps: ["induction", "Nat.add_succ", "ih"],
+      lean: "example (n : Nat) : 0 + n = n := by\n  induction n with\n  | zero => rfl\n  | succ k ih => rw [Nat.add_succ, ih]",
+      leanSkeleton: "example (n : Nat) : 0 + n = n := by\n  sorry",
+      solution: [
+        { text: "induction n 拆成基底與歸納步。", tex: "\\text{base}:\\ 0+0=0\\qquad\\text{step}:\\ 0+(k+1)=k+1" },
+        { text: "基底:兩邊都算成 0,rfl。", tex: "0=0" },
+        { text: "歸納步:Nat.add_succ 把 0+(k+1) 改寫成 (0+k)+1,再用歸納假設 ih : 0+k=k。", tex: "(0+k)+1=k+1\\ \\xrightarrow{ih}\\ k+1=k+1" },
+        { text: "數學歸納法在 Lean 就是對資料結構的遞迴——證明和程式是同一件事。", tex: "\\blacksquare" }
+      ]
+    },
+    {
+      id: "proof-lean-008",
+      tier: "lean",
+      title: "組合拳:偶數的平方是偶數",
+      difficulty: 3,
+      tags: ["lean", "exists", "rw"],
+      statement: "已知 n = 2k,證 ∃ m, n·n = 2m:見證 + 改寫 + 結合律一起上。貼上並補完:example (n k : Nat) (h : n = 2 * k) : ∃ m, n * n = 2 * m := by sorry",
+      prompt: "n=2k\\Rightarrow\\exists m,\\ n^2=2m",
+      hints: ["見證取 m = k*(2*k),因為 (2k)(2k) = 2·(k·(2k))。", "先 rw [h] 把 n 換掉,再 rw [Nat.mul_assoc] 調括號。"],
+      keySteps: ["witness m = k*(2k)", "rw [h]", "Nat.mul_assoc"],
+      lean: "example (n k : Nat) (h : n = 2 * k) : ∃ m, n * n = 2 * m := by\n  exact ⟨k * (2 * k), by rw [h, Nat.mul_assoc]⟩",
+      leanSkeleton: "example (n k : Nat) (h : n = 2 * k) : ∃ m, n * n = 2 * m := by\n  sorry",
+      solution: [
+        { text: "交出見證 m = k·(2k),剩下要證 n·n = 2·(k·(2k))。", tex: "\\vdash n\\cdot n=2\\cdot(k\\cdot(2k))" },
+        { text: "rw [h]:把 n 換成 2k。", tex: "\\vdash (2k)(2k)=2(k(2k))" },
+        { text: "rw [Nat.mul_assoc]:把左邊 (2·k)·(2k) 的括號重排成 2·(k·(2k)),兩邊相同。", tex: "2\\cdot(k\\cdot(2k))=2\\cdot(k\\cdot(2k))" },
+        { text: "之後想證真正的分析題(MVT、ε-δ)就要 import Mathlib——那裡有 ℝ、導數與我們競賽 tier 的全部定理。", tex: "\\blacksquare" }
+      ]
     }
   ];
 })();
