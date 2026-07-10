@@ -1,4 +1,4 @@
-const CACHE_NAME = "buzzcalculus-v0.11.0-beta-20260705-creator";
+const CACHE_NAME = "buzzcalculus-v0.11.2-beta-20260710-applied";
 const CACHE_PREFIX = "buzzcalculus-";
 const APP_SHELL = [
   "./",
@@ -25,6 +25,9 @@ const APP_SHELL = [
   "./src/custom_problems.js",
   "./src/problem_world_universities.js",
   "./src/problem_competition_pack.js",
+  "./src/problem_vector_calculus_pack.js",
+  "./src/problem_core_expansion_pack.js",
+  "./src/problem_applied_graph_pack.js",
   "./src/proofs.js",
   "./src/app.js"
 ];
