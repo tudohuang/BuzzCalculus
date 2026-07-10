@@ -191,6 +191,7 @@
     nightmare_boss: { label: "終極挑戰", note: "R6 最難題：名校數分 / MIT theory / Todai-style", tags: ["true-boss"] },
     world_universities: { label: "世界名校", note: "MIT / Cambridge / Putnam 等，易到爆難 100 題", tags: ["world-universities"] },
     competition: { label: "競賽精選", note: "Putnam / 硬微分 / 應用難題（R4-6）", tags: ["competition"] },
+    damo_longform: { label: "達摩院長題", note: "競賽風格長題：漸近 / 難積分 / 難級數（R4-6）", tags: ["damo"] },
     putnam: { label: "Putnam", note: "Putnam 歷年風格題", tags: ["putnam"] },
     all: { label: "全部技巧", note: "不限制 tags", tags: [] },
     beginner_warmup: { label: "新手暖身", note: "R1-R2 基礎題", tags: ["beginner-friendly"] },
@@ -235,7 +236,7 @@
   };
 
   const PACK_GROUPS = [
-    { label: "競賽 / 名校", keys: ["putnam", "competition", "world_universities", "nightmare_boss", "todai_burst"] },
+    { label: "競賽 / 名校", keys: ["putnam", "competition", "damo_longform", "world_universities", "nightmare_boss", "todai_burst"] },
     { label: "常用", keys: ["all", "beginner_warmup", "boss_challenge", "exam_style", "exam_depth", "mobile_sprint", "technique_recognition", "applied_story", "graph_reading", "multivariable", "substitution", "integration_by_parts", "series_test"] },
     { label: "積分技巧", keys: ["partial_fraction", "trig_substitution", "frullani", "ode_style", "kings_property", "double_integral", "multi_integral_advanced", "integral_applications"] },
     { label: "向量分析", keys: ["vector_theorems", "nabla_vector"] },
@@ -412,7 +413,8 @@
     basic: "基礎",
     standard: "標準",
     advanced: "進階",
-    boss: "東大"
+    boss: "東大",
+    contest: "競賽"
   };
   const SIMPLE_MODE_KEYS = ["quick", "topic", "practice"];
   const EXPERIMENTAL_MODE_KEYS = ["exam", "boss_rush", "brutal", "boss", "integral_bee", "no_hint", "accuracy", "survival", "warmup", "cooldown"];

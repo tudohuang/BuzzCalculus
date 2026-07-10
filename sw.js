@@ -1,4 +1,4 @@
-const CACHE_NAME = "buzzcalculus-v0.11.2-beta-20260710-applied";
+const CACHE_NAME = "buzzcalculus-v0.12.0-beta-20260710-damo";
 const CACHE_PREFIX = "buzzcalculus-";
 const APP_SHELL = [
   "./",
@@ -28,6 +28,7 @@ const APP_SHELL = [
   "./src/problem_vector_calculus_pack.js",
   "./src/problem_core_expansion_pack.js",
   "./src/problem_applied_graph_pack.js",
+  "./src/problem_damo_pack.js",
   "./src/proofs.js",
   "./src/app.js"
 ];
