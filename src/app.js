@@ -214,7 +214,13 @@
     wronskian: { label: "Wronskian", note: "線性獨立判定", tags: ["wronskian"] },
     jacobian_chain: { label: "Jacobian 鏈鎖", note: "合成映射行列式", tags: ["jacobian-chain", "jacobian"] },
     parametric_polar: { label: "參數 / 極座標", note: "參數微分與極座標面積", tags: ["parametric", "polar-curve"] },
-    applications: { label: "微分應用", note: "相關變率 / 線性近似 / 曲率", tags: ["related-rates", "tangent-normal", "linear-approximation", "newton-method", "curvature"] },
+    applications: { label: "微分應用", note: "相關變率 / 最佳化 / 隱微分 / 曲率", tags: ["related-rates", "tangent-normal", "linear-approximation", "newton-method", "curvature", "optimization", "implicit-differentiation"] },
+    classic_theory: { label: "經典觀念", note: "L'Hôpital / MVT / 連續性 / 曲線分析", tags: ["lhopital", "mvt", "rolle", "continuity", "ivt", "concavity", "inflection", "asymptote", "squeeze"] },
+    vector_theorems: { label: "向量三大定理", note: "線積分 / Green / Stokes / 散度定理", tags: ["line-integral", "green-theorem", "stokes-theorem", "divergence-theorem", "surface-integral", "flux", "conservative-field"] },
+    integral_applications: { label: "積分應用", note: "弧長 / 旋轉體 / 平均值 / Riemann 和", tags: ["arc-length", "solid-of-revolution", "surface-area", "average-value", "riemann-sum", "area"] },
+    sequences: { label: "數列", note: "極限 / 遞迴 / 夾擠", tags: ["sequence", "recursive"] },
+    applied_story: { label: "應用情境", note: "運動 / 冷卻 / 功 / 混合 / 邊際", tags: ["story-problem"] },
+    graph_reading: { label: "圖形判讀", note: "看圖答：面積 / 極值 / 反曲點", tags: ["graph-reading"] },
     complex: { label: "複變", note: "CR / 留數 / 調和", tags: ["complex"] },
     ode_intro: { label: "ODE 入門", note: "一階 / 二階基本方程", tags: ["ode-intro"] },
     series_test: { label: "級數判別", note: "比值 / 積分 / p 級數", tags: ["ratio-test", "root-test", "integral-test", "p-series", "alternating-series", "comparison"] },
@@ -230,10 +236,11 @@
 
   const PACK_GROUPS = [
     { label: "競賽 / 名校", keys: ["putnam", "competition", "world_universities", "nightmare_boss", "todai_burst"] },
-    { label: "常用", keys: ["all", "beginner_warmup", "boss_challenge", "exam_style", "exam_depth", "mobile_sprint", "technique_recognition", "multivariable", "substitution", "integration_by_parts", "series_test"] },
-    { label: "積分技巧", keys: ["partial_fraction", "trig_substitution", "frullani", "ode_style", "kings_property", "double_integral", "multi_integral_advanced"] },
-    { label: "微分 / 應用", keys: ["chain", "lagrange_multiplier", "nabla_vector", "parametric_polar", "applications", "total_differential", "hessian", "wronskian", "jacobian_chain"] },
-    { label: "級數 / ODE / 其他", keys: ["taylor", "power_series", "convergence_tests", "endpoint_root", "special_functions", "ode_intro", "complex"] }
+    { label: "常用", keys: ["all", "beginner_warmup", "boss_challenge", "exam_style", "exam_depth", "mobile_sprint", "technique_recognition", "applied_story", "graph_reading", "multivariable", "substitution", "integration_by_parts", "series_test"] },
+    { label: "積分技巧", keys: ["partial_fraction", "trig_substitution", "frullani", "ode_style", "kings_property", "double_integral", "multi_integral_advanced", "integral_applications"] },
+    { label: "向量分析", keys: ["vector_theorems", "nabla_vector"] },
+    { label: "微分 / 應用", keys: ["chain", "lagrange_multiplier", "parametric_polar", "applications", "classic_theory", "total_differential", "hessian", "wronskian", "jacobian_chain"] },
+    { label: "級數 / ODE / 其他", keys: ["taylor", "power_series", "convergence_tests", "endpoint_root", "sequences", "special_functions", "ode_intro", "complex"] }
   ];
 
   const PATH_NODES = [
@@ -505,7 +512,45 @@
     "moving-limits": "變動上下限",
     laplacian: "Laplacian",
     region: "積分區域",
-    "special-sum": "特殊級數"
+    "special-sum": "特殊級數",
+    "line-integral": "線積分",
+    "green-theorem": "Green 定理",
+    "stokes-theorem": "Stokes 定理",
+    "divergence-theorem": "散度定理",
+    "surface-integral": "面積分",
+    flux: "通量",
+    "conservative-field": "保守場",
+    "vector-identity": "向量恆等式",
+    "directional-derivative": "方向導數",
+    lhopital: "L'Hôpital",
+    mvt: "均值定理",
+    rolle: "Rolle",
+    continuity: "連續性",
+    ivt: "IVT 勘根",
+    concavity: "凹凸性",
+    inflection: "反曲點",
+    asymptote: "漸近線",
+    "implicit-differentiation": "隱微分",
+    optimization: "最佳化",
+    "arc-length": "弧長",
+    "solid-of-revolution": "旋轉體",
+    "surface-area": "曲面面積",
+    "average-value": "平均值",
+    "riemann-sum": "Riemann 和",
+    ftc: "FTC",
+    sequence: "數列",
+    recursive: "遞迴數列",
+    squeeze: "夾擠",
+    telescoping: "望遠鏡和",
+    "story-problem": "情境題",
+    kinematics: "運動學",
+    "work-integral": "功",
+    "newton-cooling": "冷卻定律",
+    "half-life": "半衰期",
+    mixing: "混合問題",
+    marginal: "邊際分析",
+    centroid: "形心",
+    "graph-reading": "讀圖"
   };
   const ONBOARDING_LEVELS = {
     beginner: { label: "先暖身", pack: "beginner_warmup", mode: "warmup", topic: "all", difficultyCap: 2 },
@@ -525,7 +570,7 @@
     { key: "partial_fraction", label: "部分分式", tags: ["partial-fraction"] },
     { key: "improper", label: "瑕積分", tags: ["improper-integral", "frullani", "ode-style", "kings-property", "parameter-integral", "laplace-transform", "convolution"] },
     { key: "series", label: "級數", tags: ["ratio-test", "root-test", "integral-test", "p-series", "alternating-series", "comparison", "limit-comparison", "power-series", "radius", "endpoint-analysis", "convergence-test", "special-sum"] },
-    { key: "multivariable", label: "多變數", tags: ["multivariable", "double-integral", "triple-integral", "hessian", "jacobian", "jacobian-chain", "lagrange-multiplier", "nabla", "vector-calculus", "total-differential", "total-differential-min"] },
+    { key: "multivariable", label: "多變數", tags: ["multivariable", "double-integral", "triple-integral", "hessian", "jacobian", "jacobian-chain", "lagrange-multiplier", "nabla", "vector-calculus", "total-differential", "total-differential-min", "line-integral", "surface-integral", "green-theorem", "stokes-theorem", "divergence-theorem", "flux", "conservative-field", "directional-derivative"] },
     { key: "special", label: "特殊函數", tags: ["beta-function", "gamma-function", "wallis", "bessel", "special-function"] }
   ];
   const APP_VERSION = "v0.9.12-beta";
@@ -1601,6 +1646,7 @@
           </div>
         </div>
         <div class="library-prompt math-block" data-tex="${escapeAttr(problem.prompt)}"></div>
+        ${renderProblemGraph(problem)}
         <div class="library-tags">
           ${problemDisplayTags(problem).slice(0, 5).map((tag) => `<span>${escapeHtml(tagLabel(tag))}</span>`).join("")}
         </div>
@@ -2398,6 +2444,7 @@
           <strong>${escapeHtml(item.tag || answerReasonLabel(item.reason) || "錯誤")}</strong>
         </div>
         <div class="review-prompt math-block" data-tex="${escapeAttr(problem.prompt)}"></div>
+        ${renderProblemGraph(problem)}
         <div class="review-answer">
           最近答案：${escapeHtml(item.lastInput || "未作答")}<br />
           參考答案：${escapeHtml(displayAnswer(problem))}<br />
@@ -2547,6 +2594,84 @@
     `;
   }
 
+  // ---- 圖形題：problem.graph -> inline SVG（座標軸 + 格線 + 折線/函數曲線） ----
+  function graphCurveFn(expr) {
+    const cleaned = String(expr || "");
+    if (!/^[0-9x+\-*/().,^\sa-z]*$/i.test(cleaned)) return null;
+    try {
+      const body = `"use strict"; const {sin,cos,tan,asin,acos,atan,log,exp,sqrt,abs,pow,sinh,cosh,tanh,PI,E}=Math; return (${cleaned.replace(/\^/g, "**")});`;
+      const fn = new Function("x", body);
+      const probe = fn(1);
+      if (!Number.isFinite(probe) && !Number.isNaN(probe)) return null;
+      return fn;
+    } catch (error) {
+      return null;
+    }
+  }
+
+  function renderProblemGraph(problem) {
+    const graph = problem && problem.graph;
+    if (!graph || !Array.isArray(graph.window) || graph.window.length !== 4) return "";
+    const [xmin, xmax, ymin, ymax] = graph.window.map(Number);
+    if (!(xmax > xmin) || !(ymax > ymin)) return "";
+    const width = 320;
+    const height = 220;
+    const pad = 18;
+    const sx = (x) => pad + ((x - xmin) / (xmax - xmin)) * (width - 2 * pad);
+    const sy = (y) => height - pad - ((y - ymin) / (ymax - ymin)) * (height - 2 * pad);
+    const parts = [];
+    const gridStep = (range) => (range <= 8 ? 1 : range <= 16 ? 2 : range <= 40 ? 5 : 10);
+    const gx = gridStep(xmax - xmin);
+    const gy = gridStep(ymax - ymin);
+    for (let x = Math.ceil(xmin / gx) * gx; x <= xmax + 1e-9; x += gx) {
+      parts.push(`<line x1="${sx(x)}" y1="${sy(ymin)}" x2="${sx(x)}" y2="${sy(ymax)}" stroke="var(--line)" stroke-width="1"/>`);
+      if (Math.abs(x) > 1e-9) parts.push(`<text x="${sx(x)}" y="${sy(0) + 12}" font-size="9" text-anchor="middle" fill="var(--muted)">${x}</text>`);
+    }
+    for (let y = Math.ceil(ymin / gy) * gy; y <= ymax + 1e-9; y += gy) {
+      parts.push(`<line x1="${sx(xmin)}" y1="${sy(y)}" x2="${sx(xmax)}" y2="${sy(y)}" stroke="var(--line)" stroke-width="1"/>`);
+      if (Math.abs(y) > 1e-9) parts.push(`<text x="${sx(0) - 5}" y="${sy(y) + 3}" font-size="9" text-anchor="end" fill="var(--muted)">${y}</text>`);
+    }
+    if (ymin <= 0 && ymax >= 0) parts.push(`<line x1="${sx(xmin)}" y1="${sy(0)}" x2="${sx(xmax)}" y2="${sy(0)}" stroke="var(--line-strong)" stroke-width="1.4"/>`);
+    if (xmin <= 0 && xmax >= 0) parts.push(`<line x1="${sx(0)}" y1="${sy(ymin)}" x2="${sx(0)}" y2="${sy(ymax)}" stroke="var(--line-strong)" stroke-width="1.4"/>`);
+    const strokes = ["var(--blue)", "var(--red)", "var(--green)", "var(--violet)"];
+    const toPath = (pts) => pts.map((pt, i) => `${i ? "L" : "M"}${sx(pt[0]).toFixed(1)},${sy(pt[1]).toFixed(1)}`).join(" ");
+    (graph.polylines || []).forEach((pts, index) => {
+      if (!Array.isArray(pts) || pts.length < 2) return;
+      parts.push(`<path d="${toPath(pts)}" fill="none" stroke="${strokes[index % strokes.length]}" stroke-width="2.2" stroke-linejoin="round"/>`);
+    });
+    (graph.dashed || []).forEach((pts) => {
+      if (!Array.isArray(pts) || pts.length < 2) return;
+      parts.push(`<path d="${toPath(pts)}" fill="none" stroke="var(--muted)" stroke-width="1.6" stroke-dasharray="5 4"/>`);
+    });
+    (graph.curves || []).forEach((curve, index) => {
+      const fn = graphCurveFn(curve && curve.expr);
+      if (!fn) return;
+      const [a, b] = Array.isArray(curve.domain) ? curve.domain.map(Number) : [xmin, xmax];
+      const pts = [];
+      const steps = 160;
+      for (let i = 0; i <= steps; i += 1) {
+        const x = a + ((b - a) * i) / steps;
+        const y = fn(x);
+        if (Number.isFinite(y) && y >= ymin - 1 && y <= ymax + 1) pts.push([x, Math.max(ymin, Math.min(ymax, y))]);
+      }
+      if (pts.length > 1) parts.push(`<path d="${toPath(pts)}" fill="none" stroke="${strokes[(index + (graph.polylines || []).length) % strokes.length]}" stroke-width="2.2"/>`);
+    });
+    (graph.points || []).forEach((point) => {
+      if (!point || !Number.isFinite(Number(point.x)) || !Number.isFinite(Number(point.y))) return;
+      const open = point.open === true;
+      parts.push(`<circle cx="${sx(point.x)}" cy="${sy(point.y)}" r="3.4" fill="${open ? "var(--panel)" : "var(--blue)"}" stroke="var(--blue)" stroke-width="1.6"/>`);
+    });
+    (graph.labels || []).forEach((label) => {
+      if (!label || typeof label.text !== "string") return;
+      parts.push(`<text x="${sx(label.x)}" y="${sy(label.y)}" font-size="11" fill="var(--ink)">${escapeAttr(label.text)}</text>`);
+    });
+    return `
+      <div class="problem-graph">
+        <svg viewBox="0 0 ${width} ${height}" role="img" aria-label="題目附圖">${parts.join("")}</svg>
+      </div>
+    `;
+  }
+
   function renderQuiz() {
     const current = getCurrentProblem();
     if (!quiz || !current) return "";
@@ -2621,6 +2746,7 @@
                 <span class="chip">${answerModeLabel(answerMode)}</span>
               </div>
               <div class="prompt math-block" data-tex="${escapeAttr(current.prompt)}"></div>
+              ${renderProblemGraph(current)}
               ${renderHintPanel(current)}
               ${renderAnswerControls(current)}
             </article>
@@ -8445,6 +8571,7 @@
       drawPlacementProblem,
       computePlacementResult,
       renderSolutionStages,
+      renderProblemGraph,
       localDateKey,
       activityCounts,
       activityLevel,
