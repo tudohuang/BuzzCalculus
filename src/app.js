@@ -414,7 +414,8 @@
     standard: "標準",
     advanced: "進階",
     boss: "東大",
-    contest: "競賽"
+    contest: "競賽",
+    lean: "Lean"
   };
   const SIMPLE_MODE_KEYS = ["quick", "topic", "practice"];
   const EXPERIMENTAL_MODE_KEYS = ["exam", "boss_rush", "brutal", "boss", "integral_bee", "no_hint", "accuracy", "survival", "warmup", "cooldown"];
@@ -2186,7 +2187,13 @@
           ${(proof.tags || []).map((tag) => `<span>${escapeHtml(tag)}</span>`).join("")}
         </div>
 
-        <p class="proof-ladder">先自己寫 → 卡了開提示 → 還卡開關鍵步驟 → 最後對參考證明</p>
+        ${
+          proof.leanSkeleton
+            ? `<a class="button secondary proof-lean-link" href="https://live.lean-lang.org/#code=${encodeURIComponent(proof.leanSkeleton)}" target="_blank" rel="noopener">${icon("play")}在 Lean Playground 開啟（真・機器判卷）</a>`
+            : ""
+        }
+
+        <p class="proof-ladder">${proof.tier === "lean" ? "開 Playground 補完 sorry → 編譯零錯誤＝通過 → 卡了開提示 → 最後對參考解答" : "先自己寫 → 卡了開提示 → 還卡開關鍵步驟 → 最後對參考證明"}</p>
 
         ${
           (proof.hints || []).length
