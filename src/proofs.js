@@ -374,6 +374,225 @@
         { text: "幾何級數收斂。", tex: "\\sum_{n=N}^{\\infty}r^n<\\infty" },
         { text: "比較判別法得到絕對收斂。", tex: "\\sum |a_n|<\\infty" }
       ]
+    },
+
+    /* ===== 競賽 tier(達摩院 / Putnam 風格長證明)=====
+       每題 solution 的可量化主張都由 tools/verify_proof_claims.js
+       在具體實例上數值驗證(恆等式 / 不等式 / 漸近行為)。 */
+    {
+      id: "proof-contest-001",
+      tier: "contest",
+      title: "Stolz–Cesàro 定理",
+      difficulty: 5,
+      tags: ["stolz", "sequence", "damo-style"],
+      statement: "證明 Stolz–Cesàro 定理(∞/∞ 型):它是數列版的 L'Hôpital。",
+      prompt: "b_n\\uparrow\\infty,\\ \\lim_{n\\to\\infty}\\frac{a_{n+1}-a_n}{b_{n+1}-b_n}=L\\Rightarrow \\lim_{n\\to\\infty}\\frac{a_n}{b_n}=L",
+      hints: ["把差商夾在 L±ε 之間。", "從 N 望遠鏡疊加到 n。", "除以 b_n,讓固定項被 b_n 吃掉。"],
+      keySteps: ["epsilon sandwich", "telescoping sum", "divide by b_n", "limsup = liminf"],
+      solution: [
+        { text: "給 ε>0。由差商極限,存在 N,使 n≥N 時差商夾在 L±ε 之間(b 遞增使分母為正)。", tex: "(L-\\varepsilon)(b_{n+1}-b_n)<a_{n+1}-a_n<(L+\\varepsilon)(b_{n+1}-b_n)" },
+        { text: "把不等式從 N 疊加到 n-1,中間全部望遠鏡相消。", tex: "(L-\\varepsilon)(b_n-b_N)<a_n-a_N<(L+\\varepsilon)(b_n-b_N)" },
+        { text: "除以 b_n(夠大時為正),把 a_n/b_n 分離出來。", tex: "\\frac{a_n}{b_n}=\\frac{a_N}{b_n}+\\left(1-\\frac{b_N}{b_n}\\right)\\cdot\\frac{a_n-a_N}{b_n-b_N}" },
+        { text: "因 b_n→∞,固定的 a_N/b_n 與 b_N/b_n 都趨於 0,所以上下極限都落在 L±ε。", tex: "L-\\varepsilon\\le\\liminf\\frac{a_n}{b_n}\\le\\limsup\\frac{a_n}{b_n}\\le L+\\varepsilon" },
+        { text: "ε 任意小,故極限存在且等於 L。", tex: "\\lim_{n\\to\\infty}\\frac{a_n}{b_n}=L" }
+      ]
+    },
+    {
+      id: "proof-contest-002",
+      tier: "contest",
+      title: "a(n+1)=a(n)+1/a(n) 的漸近行為",
+      difficulty: 6,
+      tags: ["recursive", "asymptotics", "damo-style"],
+      statement: "達摩院風格經典:證明遞迴數列 a_{n+1}=a_n+1/a_n(a_1=1)滿足 a_n ~ √(2n)。",
+      prompt: "a_1=1,\\ a_{n+1}=a_n+\\frac{1}{a_n}\\Rightarrow \\lim_{n\\to\\infty}\\frac{a_n}{\\sqrt{2n}}=1",
+      hints: ["平方遞迴式。", "先拿下界 a_n^2 ≥ 2n-1。", "把 1/a_k^2 用下界回代,得到上界。"],
+      keySteps: ["square the recursion", "lower bound by induction", "upper bound via harmonic sum", "squeeze"],
+      solution: [
+        { text: "平方遞迴式,得到精確的增量恆等式。", tex: "a_{n+1}^2=a_n^2+2+\\frac{1}{a_n^2}" },
+        { text: "由增量至少為 2,歸納得下界。", tex: "a_n^2\\ge a_1^2+2(n-1)=2n-1" },
+        { text: "把下界回代增量式中的 1/a_k^2,疊加得上界(和被調和級數控制)。", tex: "a_n^2=2n-1+\\sum_{k=1}^{n-1}\\frac{1}{a_k^2}\\le 2n-1+\\sum_{k=1}^{n-1}\\frac{1}{2k-1}\\le 2n+\\ln n+1" },
+        { text: "兩邊除以 2n,夾擠。", tex: "\\frac{2n-1}{2n}\\le\\frac{a_n^2}{2n}\\le\\frac{2n+\\ln n+1}{2n}\\to 1" },
+        { text: "開根號即得結論。", tex: "\\frac{a_n}{\\sqrt{2n}}\\to 1" }
+      ]
+    },
+    {
+      id: "proof-contest-003",
+      tier: "contest",
+      title: "x(n+1)=sin x(n) 的 √(3/n) 漸近",
+      difficulty: 6,
+      tags: ["recursive", "taylor", "stolz", "damo-style"],
+      statement: "分析名題:迭代 sin 的數列以 √(3/n) 的速度趨於 0。",
+      prompt: "x_1=1,\\ x_{n+1}=\\sin x_n\\Rightarrow \\lim_{n\\to\\infty}\\sqrt{n}\\,x_n=\\sqrt{3}",
+      hints: ["先證 x_n 單調遞減趨於 0。", "對 1/x^2 做 Taylor:1/sin²x - 1/x² → 1/3。", "對 1/x_n² 用 Stolz。"],
+      keySteps: ["monotone to zero", "Taylor of 1/sin^2", "Stolz on 1/x_n^2", "take square root"],
+      solution: [
+        { text: "在 (0,1] 上 0<sin x<x,故 x_n 單調遞減且有下界 0;極限 ℓ 滿足 ℓ=sin ℓ,只能是 0。", tex: "x_n\\downarrow 0" },
+        { text: "用 sin x = x - x³/6 + O(x⁵) 展開倒數平方,關鍵是常數項 1/3。", tex: "\\frac{1}{\\sin^2 x}-\\frac{1}{x^2}=\\frac13+O(x^2)\\quad(x\\to0)" },
+        { text: "代入 x = x_n(它趨於 0),得到相鄰倒數平方的差趨於 1/3。", tex: "\\frac{1}{x_{n+1}^2}-\\frac{1}{x_n^2}\\to\\frac13" },
+        { text: "對 c_n = 1/x_n² 與 b_n = n 用 Stolz–Cesàro。", tex: "\\frac{1}{n\\,x_n^2}\\to\\frac13\\iff n\\,x_n^2\\to 3" },
+        { text: "開根號得結論。", tex: "\\sqrt{n}\\,x_n\\to\\sqrt3" }
+      ]
+    },
+    {
+      id: "proof-contest-004",
+      tier: "contest",
+      title: "積分形 Cauchy–Schwarz 不等式",
+      difficulty: 5,
+      tags: ["inequality", "cauchy-schwarz"],
+      statement: "用二次式判別式證明積分形 Cauchy–Schwarz。",
+      prompt: "\\left(\\int_a^b fg\\right)^2\\le\\int_a^b f^2\\cdot\\int_a^b g^2",
+      hints: ["考慮 q(t)=∫(f+tg)²。", "q 是 t 的二次式且恆非負。", "判別式 ≤ 0。"],
+      keySteps: ["quadratic in t", "nonnegativity", "discriminant"],
+      solution: [
+        { text: "對任意實數 t,被積函數是平方,積分非負。", tex: "q(t)=\\int_a^b(f+tg)^2\\,dx\\ge0" },
+        { text: "展開成 t 的二次式。", tex: "q(t)=t^2\\int g^2+2t\\int fg+\\int f^2" },
+        { text: "若 ∫g²=0(g 恆為 0),兩邊皆 0,不等式成立;否則 q 是開口向上的二次式且恆非負。", tex: "\\int g^2>0" },
+        { text: "恆非負的二次式判別式不為正。", tex: "4\\left(\\int fg\\right)^2-4\\int f^2\\int g^2\\le0" },
+        { text: "移項即得 Cauchy–Schwarz。", tex: "\\left(\\int fg\\right)^2\\le\\int f^2\\int g^2" }
+      ]
+    },
+    {
+      id: "proof-contest-005",
+      tier: "contest",
+      title: "Young 不等式",
+      difficulty: 5,
+      tags: ["inequality", "convexity"],
+      statement: "用 ln 的凹性證明 Young 不等式(Hölder 的引擎)。",
+      prompt: "a,b>0,\\ \\frac1p+\\frac1q=1\\ (p>1)\\Rightarrow ab\\le\\frac{a^p}{p}+\\frac{b^q}{q}",
+      hints: ["把 ab 寫成 exp(ln)。", "ln 是凹函數:加權平均在裡面較大。", "權重取 1/p 與 1/q。"],
+      keySteps: ["write ab as exp", "concavity of ln", "exponentiate"],
+      solution: [
+        { text: "ln 在 (0,∞) 上是凹函數(二階導數 -1/x²<0),對權重 1/p+1/q=1 有 Jensen 不等式。", tex: "\\ln\\!\\left(\\frac{u}{p}+\\frac{v}{q}\\right)\\ge\\frac{\\ln u}{p}+\\frac{\\ln v}{q}\\quad(u,v>0)" },
+        { text: "取 u=aᵖ,v=b^q。", tex: "\\ln\\!\\left(\\frac{a^p}{p}+\\frac{b^q}{q}\\right)\\ge\\frac{p\\ln a}{p}+\\frac{q\\ln b}{q}=\\ln(ab)" },
+        { text: "ln 嚴格遞增,兩邊取 exp 保序。", tex: "\\frac{a^p}{p}+\\frac{b^q}{q}\\ge ab" },
+        { text: "等號成立當且僅當 u=v,即 aᵖ=b^q。", tex: "a^p=b^q\\iff\\text{equality}" }
+      ]
+    },
+    {
+      id: "proof-contest-006",
+      tier: "contest",
+      title: "Dirichlet 積分收斂但不絕對收斂",
+      difficulty: 6,
+      tags: ["improper-integral", "dirichlet", "damo-style"],
+      statement: "證明 ∫₀^∞ sin x/x dx 收斂,但 ∫₀^∞ |sin x|/x dx 發散。",
+      prompt: "\\int_0^{\\infty}\\frac{\\sin x}{x}dx\\text{ converges},\\qquad \\int_0^{\\infty}\\frac{\\left|\\sin x\\right|}{x}dx=\\infty",
+      hints: ["[0,1] 沒有瑕點:sin x/x 可連續延拓。", "尾巴用分部積分,把 1/x 變成 1/x²。", "發散半部:每個半週期至少貢獻 2/((k+1)π)。"],
+      keySteps: ["continuous extension near 0", "IBP tail bound 2/a", "Cauchy criterion", "harmonic lower bound"],
+      solution: [
+        { text: "x→0 時 sin x/x → 1,故 [0,1] 上是普通積分,只需處理尾巴。", tex: "\\lim_{x\\to0}\\frac{\\sin x}{x}=1" },
+        { text: "對 1≤a<b 分部積分,把振盪積掉、留下可絕對收斂的 1/x²。", tex: "\\int_a^b\\frac{\\sin x}{x}dx=\\frac{\\cos a}{a}-\\frac{\\cos b}{b}-\\int_a^b\\frac{\\cos x}{x^2}dx" },
+        { text: "三項分別以 1/a、1/b、∫dx/x² 估計,得到一致的尾巴上界。", tex: "\\left|\\int_a^b\\frac{\\sin x}{x}dx\\right|\\le\\frac1a+\\frac1b+\\left(\\frac1a-\\frac1b\\right)=\\frac2a" },
+        { text: "a→∞ 時上界趨於 0,Cauchy 準則給出收斂。", tex: "\\int_0^{\\infty}\\frac{\\sin x}{x}dx\\ \\text{converges}" },
+        { text: "絕對值版本:第 k 個半週期上 1/x ≥ 1/((k+1)π),而 ∫|sin|=2。", tex: "\\int_{k\\pi}^{(k+1)\\pi}\\frac{\\left|\\sin x\\right|}{x}dx\\ge\\frac{2}{(k+1)\\pi}" },
+        { text: "對 k 求和是調和級數,發散。", tex: "\\sum_k\\frac{2}{(k+1)\\pi}=\\infty" }
+      ]
+    },
+    {
+      id: "proof-contest-007",
+      tier: "contest",
+      title: "Riemann–Lebesgue 引理(C¹ 版)",
+      difficulty: 5,
+      tags: ["fourier", "ibp", "riemann-lebesgue"],
+      statement: "證明 C¹ 函數對高頻正弦的積分以 1/n 速度趨於 0。",
+      prompt: "f\\in C^1([a,b])\\Rightarrow \\int_a^b f(x)\\sin(nx)\\,dx\\to 0\\quad(n\\to\\infty)",
+      hints: ["分部積分,把 sin(nx) 積起來。", "邊界項與新積分都帶 1/n。", "用 |f| 與 ∫|f'| 統一估計。"],
+      keySteps: ["IBP", "1/n bound", "conclude"],
+      solution: [
+        { text: "分部積分,把振盪因子積掉。", tex: "\\int_a^b f\\sin(nx)dx=\\left[-\\frac{f(x)\\cos(nx)}{n}\\right]_a^b+\\frac1n\\int_a^b f'(x)\\cos(nx)dx" },
+        { text: "邊界項與積分項都以 1/n 為因子估計(|cos|≤1)。", tex: "\\left|\\int_a^b f\\sin(nx)dx\\right|\\le\\frac{|f(a)|+|f(b)|+\\int_a^b|f'|}{n}" },
+        { text: "分子是與 n 無關的常數,故整體是 O(1/n)。", tex: "\\int_a^b f\\sin(nx)dx=O\\!\\left(\\frac1n\\right)\\to0" }
+      ]
+    },
+    {
+      id: "proof-contest-008",
+      tier: "contest",
+      title: "Dini 定理",
+      difficulty: 6,
+      tags: ["uniform-convergence", "compactness"],
+      statement: "證明:緊區間上單調收斂到連續函數的連續函數列必一致收斂,並說明緊性不可省。",
+      prompt: "f_n\\in C(K),\\ f_n\\uparrow f\\in C(K),\\ K\\text{ compact}\\Rightarrow f_n\\rightrightarrows f",
+      hints: ["看差 g_n = f - f_n:連續、遞減、逐點趨於 0。", "E_n = {g_n < ε} 是遞增開覆蓋。", "緊性抽有限子覆蓋。"],
+      keySteps: ["reduce to g_n down to 0", "open sets E_n", "finite subcover", "counterexample x^n"],
+      solution: [
+        { text: "令 g_n = f - f_n:連續、對 n 遞減、逐點趨於 0。", tex: "g_n\\in C(K),\\quad g_n\\downarrow 0\\ \\text{pointwise}" },
+        { text: "給 ε>0,集合 E_n 是開集(g_n 連續),且因 g_n 遞減而遞增。", tex: "E_n=\\{x\\in K: g_n(x)<\\varepsilon\\},\\qquad E_1\\subseteq E_2\\subseteq\\cdots" },
+        { text: "逐點收斂使每個 x 都落在某個 E_n,故 {E_n} 覆蓋 K。", tex: "K=\\bigcup_n E_n" },
+        { text: "K 緊,抽出有限子覆蓋;遞增性讓最大指標 N 一個就夠。", tex: "K=E_N" },
+        { text: "n≥N 時 g_n ≤ g_N < ε 在整個 K 上成立,即一致收斂。", tex: "\\sup_K|f-f_n|\\le\\varepsilon\\quad(n\\ge N)" },
+        { text: "緊性不可省:x^n 在 [0,1) 上連續單調趨於 0,但 sup 恆為 1,不一致收斂。", tex: "\\sup_{[0,1)}x^n=1\\ \\forall n" }
+      ]
+    },
+    {
+      id: "proof-contest-009",
+      tier: "contest",
+      title: "e 是無理數",
+      difficulty: 5,
+      tags: ["series", "irrationality", "damo-style"],
+      statement: "用級數尾巴估計證明 e 是無理數。",
+      prompt: "e=\\sum_{k=0}^{\\infty}\\frac{1}{k!}\\notin\\mathbb{Q}",
+      hints: ["令 s_n 為部分和,估計 e - s_n。", "尾巴比幾何級數小:0 < e-s_n < 1/(n!·n)。", "假設 e=p/q,乘上 q! 得到 (0,1) 間的整數。"],
+      keySteps: ["tail estimate", "multiply by n!", "integer in (0,1) contradiction"],
+      solution: [
+        { text: "令 s_n 為前 n+1 項部分和,尾巴用幾何級數比較。", tex: "0<e-s_n=\\sum_{k=n+1}^{\\infty}\\frac{1}{k!}<\\frac{1}{(n+1)!}\\sum_{j=0}^{\\infty}\\frac{1}{(n+1)^j}=\\frac{1}{n!\\,n}" },
+        { text: "假設 e = p/q(p,q 為正整數),取 n=q 並乘上 q!。", tex: "q!\\,e=p\\,(q-1)!\\in\\mathbb{Z},\\qquad q!\\,s_q=\\sum_{k=0}^{q}\\frac{q!}{k!}\\in\\mathbb{Z}" },
+        { text: "但尾巴估計乘上 q! 後落在 (0,1) 開區間。", tex: "0<q!\\,(e-s_q)<\\frac1q\\le1" },
+        { text: "兩個整數之差是整數,卻嚴格落在 0 與 1 之間,矛盾。", tex: "q!\\,e-q!\\,s_q\\in\\mathbb{Z}\\cap(0,1)=\\varnothing" },
+        { text: "故 e 是無理數。", tex: "e\\notin\\mathbb{Q}" }
+      ]
+    },
+    {
+      id: "proof-contest-010",
+      tier: "contest",
+      title: "Darboux 定理:導數的中間值性",
+      difficulty: 6,
+      tags: ["darboux", "mvt", "damo-style"],
+      statement: "導數不必連續,卻仍有中間值性:證明 Darboux 定理。",
+      prompt: "f\\ \\text{differentiable on }[a,b],\\ f'(a)<y<f'(b)\\Rightarrow\\exists c\\in(a,b),\\ f'(c)=y",
+      hints: ["設 g(x)=f(x)-yx,把問題化成 g'(c)=0。", "g 在緊區間上取到最小值。", "端點導數符號排除端點,內點極值用 Fermat。"],
+      keySteps: ["auxiliary g(x)=f(x)-yx", "extreme value theorem", "endpoints excluded", "Fermat"],
+      solution: [
+        { text: "設輔助函數,把 y 吸收進去。", tex: "g(x)=f(x)-yx,\\qquad g'(a)=f'(a)-y<0,\\quad g'(b)=f'(b)-y>0" },
+        { text: "g 連續(可微),在緊區間 [a,b] 上取得最小值,設在 c。", tex: "g(c)=\\min_{[a,b]}g" },
+        { text: "g'(a)<0 表示 a 右側附近有比 g(a) 更小的值,最小值不在 a;同理 g'(b)>0 排除 b。", tex: "c\\in(a,b)" },
+        { text: "內點最小值且 g 可微,Fermat 定理給出導數為 0。", tex: "g'(c)=0" },
+        { text: "展開 g' 即得結論;注意 f' 可以不連續,IVT 不能直接用在 f' 上,這正是本定理的價值。", tex: "f'(c)=y" }
+      ]
+    },
+    {
+      id: "proof-contest-011",
+      tier: "contest",
+      title: "Gronwall 不等式",
+      difficulty: 6,
+      tags: ["gronwall", "ode", "inequality"],
+      statement: "證明 Gronwall 不等式:ODE 解的唯一性與穩定性的核心工具。",
+      prompt: "u\\ge0,\\ u(t)\\le\\alpha+\\int_0^t\\beta(s)u(s)ds\\ (\\alpha>0,\\ \\beta\\ge0)\\Rightarrow u(t)\\le\\alpha\\,e^{\\int_0^t\\beta(s)ds}",
+      hints: ["令 v(t) 為右邊,注意 v(0)=α 且 v'=βu。", "用假設 u≤v 得 v'≤βv。", "對 ln v 微分,積分回來。"],
+      keySteps: ["define v = RHS", "v' = beta u <= beta v", "(ln v)' <= beta", "integrate"],
+      solution: [
+        { text: "令 v 為不等式右邊;因 βu≥0,v 遞增,故 v≥α>0(這裡用到 u≥0,否則 v 可能碰到 0)。", tex: "v(t)=\\alpha+\\int_0^t\\beta(s)u(s)ds,\\qquad v'(t)=\\beta(t)u(t),\\qquad v\\ge\\alpha>0" },
+        { text: "假設給的是 u≤v,配合 β≥0,得到 v 的微分不等式。", tex: "v'(t)=\\beta(t)u(t)\\le\\beta(t)v(t)" },
+        { text: "v>0,可以除過去:ln v 的導數被 β 控制。", tex: "\\frac{d}{dt}\\ln v(t)=\\frac{v'(t)}{v(t)}\\le\\beta(t)" },
+        { text: "從 0 積到 t。", tex: "\\ln v(t)-\\ln\\alpha\\le\\int_0^t\\beta(s)ds" },
+        { text: "取 exp 並用 u≤v 收尾;α=0 的情形對 α↓0 取極限即可。", tex: "u(t)\\le v(t)\\le\\alpha\\,e^{\\int_0^t\\beta(s)ds}" }
+      ]
+    },
+    {
+      id: "proof-contest-012",
+      tier: "contest",
+      title: "邊界層極限 n∫x^n f(x)dx → f(1)",
+      difficulty: 5,
+      tags: ["boundary-layer", "epsilon-delta", "damo-style"],
+      statement: "證明質量集中現象:n∫₀¹xⁿf(x)dx → f(1)(f 連續)。",
+      prompt: "f\\in C([0,1])\\Rightarrow \\lim_{n\\to\\infty}n\\int_0^1x^nf(x)\\,dx=f(1)",
+      hints: ["先算常數的情形:n∫xⁿdx = n/(n+1) → 1。", "把 f(x) 換成 f(x)-f(1),拆 [0,1-δ] 與 [1-δ,1]。", "前段被 (1-δ)ⁿ 壓死,後段用連續性。"],
+      keySteps: ["constant case", "split at 1-delta", "geometric decay", "continuity near 1"],
+      solution: [
+        { text: "常數情形直接積分。", tex: "n\\int_0^1x^nf(1)dx=\\frac{n}{n+1}f(1)\\to f(1)" },
+        { text: "只需證差趨於 0。給 ε>0,由 f 在 1 連續,取 δ 使 |f(x)-f(1)|<ε 於 [1-δ,1]。", tex: "D_n=n\\int_0^1x^n\\left(f(x)-f(1)\\right)dx" },
+        { text: "前段 [0,1-δ]:被積函數以 M=2max|f| 與 (1-δ)ⁿ 控制,幾何衰減壓過線性的 n。", tex: "\\left|n\\int_0^{1-\\delta}x^n(f-f(1))dx\\right|\\le Mn(1-\\delta)^{n+1}\\to0" },
+        { text: "後段 [1-δ,1]:用連續性的 ε 估計。", tex: "\\left|n\\int_{1-\\delta}^1x^n(f-f(1))dx\\right|\\le\\varepsilon\\, n\\int_0^1x^ndx\\le\\varepsilon" },
+        { text: "故 limsup|D_n| ≤ ε 對任意 ε 成立,即 D_n→0,結論成立。", tex: "\\lim_{n\\to\\infty}n\\int_0^1x^nf(x)dx=f(1)" }
+      ]
     }
   ];
 })();
