@@ -1476,6 +1476,47 @@ button {
   padding: 6px 0;
 }
 
+/* Long-form problems: wrap instead of scrolling; the card grows to fit.
+   KaTeX emits top-level .base chunks at relation/text boundaries, so
+   releasing white-space lets the formula + narrative flow onto lines.
+   overflow-x stays auto as a fallback for unbreakable formula runs. */
+.math-block.is-long-tex .katex-display > .katex,
+.math-block.is-long-tex .katex {
+  white-space: normal;
+}
+
+.math-block.is-long-tex .lite-math {
+  white-space: normal;
+}
+
+.prompt.is-long-tex {
+  font-size: 1.45rem;
+  line-height: 1.6;
+  padding: 8px 0;
+}
+
+/* Long-form flow: narrative text wraps freely, each math run stays atomic. */
+.math-block.is-long-tex {
+  display: block;
+  text-align: left;
+  overflow-x: auto;
+}
+
+.math-block.is-long-tex .long-tex-text {
+  overflow-wrap: anywhere;
+}
+
+.math-block.is-long-tex .long-tex-math {
+  display: inline-block;
+  max-width: 100%;
+  vertical-align: middle;
+  padding: 2px 0;
+}
+
+.math-block.is-long-tex .long-tex-math .katex {
+  white-space: nowrap;
+}
+
 .problem-graph {
   display: flex;
   justify-content: center;

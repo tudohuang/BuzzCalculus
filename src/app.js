@@ -8077,8 +8077,84 @@
     inlines.forEach((node) => renderMathNode(node, false));
   }
 
+  // Split tex at top-level \text{...} groups so long-form prompts can flow:
+  // narrative segments become wrappable HTML text, math runs stay atomic.
+  function splitLongTex(tex) {
+    const segments = [];
+    let depth = 0;
+    let mathStart = 0;
+    let i = 0;
+    while (i < tex.length) {
+      const ch = tex[i];
+      if (ch === "\\" && depth === 0 && tex.startsWith("\\text", i) && !/[A-Za-z]/.test(tex[i + 5] || "")) {
+        let j = i + 5;
+        while (/\s/.test(tex[j] || "")) j += 1;
+        if (tex[j] === "{") {
+          let braces = 0;
+          let k = j;
+          for (; k < tex.length; k += 1) {
+            if (tex[k] === "{") braces += 1;
+            else if (tex[k] === "}") {
+              braces -= 1;
+              if (!braces) {
+                k += 1;
+                break;
+              }
+            }
+          }
+          if (i > mathStart) segments.push({ math: tex.slice(mathStart, i) });
+          segments.push({ text: tex.slice(j + 1, k - 1) });
+          i = k;
+          mathStart = k;
+          continue;
+        }
+      }
+      if (ch === "\\" && /[A-Za-z]/.test(tex[i + 1] || "")) {
+        i += 2;
+        while (/[A-Za-z]/.test(tex[i] || "")) i += 1;
+        continue;
+      }
+      if (ch === "{") depth += 1;
+      if (ch === "}") depth -= 1;
+      i += 1;
+    }
+    if (mathStart < tex.length) segments.push({ math: tex.slice(mathStart) });
+    return segments;
+  }
+
+  function renderLongTexFlow(node, tex) {
+    const segments = splitLongTex(tex).filter((seg) => (seg.text !== undefined ? seg.text.length : seg.math.trim().length));
+    if (segments.length < 2) return false;
+    node.innerHTML = "";
+    for (const seg of segments) {
+      const span = document.createElement("span");
+      if (seg.text !== undefined) {
+        span.className = "long-tex-text";
+        span.textContent = seg.text;
+      } else {
+        span.className = "long-tex-math";
+        try {
+          window.katex.render(`\\displaystyle ${seg.math}`, span, {
+            displayMode: false,
+            throwOnError: true,
+            strict: "ignore"
+          });
+        } catch (_error) {
+          return false;
+        }
+      }
+      node.appendChild(span);
+    }
+    return true;
+  }
+
   function renderMathNode(node, displayMode) {
     const tex = node.dataset.tex || "";
+    // Long-form prompts (達摩院長題 etc.) wrap onto multiple lines instead of
+    // forcing a horizontal scrollbar; the card grows with the content.
+    const longform = displayMode && tex.length > 90;
+    node.classList.toggle("is-long-tex", longform);
+    if (longform && window.katex && renderLongTexFlow(node, tex)) return;
     if (window.katex) {
       try {
         window.katex.render(tex, node, {
