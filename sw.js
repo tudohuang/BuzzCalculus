@@ -1,4 +1,4 @@
-const CACHE_NAME = "buzzcalculus-v0.12.2-beta-20260711-longform-wrap";
+const CACHE_NAME = "buzzcalculus-v0.13.0-beta-20260711-rival-dailyone";
 const CACHE_PREFIX = "buzzcalculus-";
 const APP_SHELL = [
   "./",
