@@ -75,6 +75,23 @@
       boss: true,
       suddenDeath: true
     },
+    rival: {
+      label: "宿敵對決",
+      note: "AI 宿敵「小積」同場搶分 10 題，贏了它會變強",
+      count: 10,
+      topicLocked: false,
+      daily: false,
+      boss: false,
+      rival: true
+    },
+    daily_one: {
+      label: "每日一題",
+      note: "全站同一題，一天一次",
+      count: 1,
+      topicLocked: false,
+      daily: false,
+      boss: false
+    },
     exam: {
       label: "大考模式",
       note: "20 題 / 45 分鐘，WebWork，全螢幕監考",
@@ -418,7 +435,7 @@
     lean: "Lean"
   };
   const SIMPLE_MODE_KEYS = ["quick", "topic", "practice"];
-  const EXPERIMENTAL_MODE_KEYS = ["exam", "boss_rush", "brutal", "boss", "integral_bee", "no_hint", "accuracy", "survival", "warmup", "cooldown"];
+  const EXPERIMENTAL_MODE_KEYS = ["exam", "rival", "boss_rush", "brutal", "boss", "integral_bee", "no_hint", "accuracy", "survival", "warmup", "cooldown"];
   const DEFAULT_DIFFICULTY_CAP = 2;
   const DIFFICULTY_LEVELS = {
     1: { label: "入門", note: "只抽 R1，先建立基礎。", short: "R1" },
@@ -873,6 +890,9 @@
             <button class="button secondary launch-daily" data-action="start-daily">
               ${icon("calendar")}<span>每日</span><small>${mission.completed}/${mission.target}</small>
             </button>
+            <button class="button secondary launch-daily-one" data-action="start-daily-one">
+              ${icon("puzzle")}<span>每日一題</span><small>${renderDailyOneBadge(records)}</small>
+            </button>
           </div>
         </div>
         <div class="launch-mascot ${mood.cls}">
@@ -1208,6 +1228,7 @@
             <nav class="quick-entries" aria-label="快速入口">
               <button data-action="start-friendly-run">${icon("sparkles")}<span>輕鬆暖身</span><small>R1-R2</small></button>
               <button data-action="start-mode" data-mode-key="exam">${icon("file-pen-line")}<span>大考模式</span><small>20 題 / 45 分</small></button>
+              <button data-action="start-mode" data-mode-key="rival">${icon("swords")}<span>宿敵對決</span><small>${RIVAL_NAME} Lv.${records.rival ? records.rival.level : 1}</small></button>
               <button data-action="start-god-run">${icon("flame")}<span>競賽魔王</span><small>R6 · Putnam</small></button>
             </nav>
             ${renderNamedExamPanel(records)}
@@ -2731,6 +2752,7 @@
                      <span>連勝 ${quiz.currentStreak}</span>`}
               </div>
               <div class="progress-bar" aria-label="進度"><span style="width:${progress}%"></span></div>
+              ${renderRivalLane(current, elapsed)}
             </div>
             <div class="timer-cluster">
               <div class="timer-box ${isDanger}" data-live-box="time">
@@ -3104,8 +3126,12 @@
           </div>
           ${renderResultsActions(gateResult, pathResult)}
           ${quiz.weeklyOutcome ? renderWeeklyOutcomePanel(quiz.weeklyOutcome) : ""}
+          ${quiz.rivalOutcome ? renderRivalOutcomePanel(quiz.rivalOutcome) : ""}
+          ${quiz.dailyOneOutcome ? renderDailyOneOutcomePanel(quiz.dailyOneOutcome) : ""}
           <div class="action-row results-share-row" data-enter>
             <button class="button ghost" data-action="share-result-card">${icon("share-2")}分享成績卡</button>
+            ${quiz.dailyOneOutcome ? `<button class="button ghost" data-action="share-daily-one">${icon("copy")}複製 emoji 成績</button>` : ""}
+            ${quiz.rivalOutcome ? `<button class="button ghost" data-action="start-mode" data-mode-key="rival">${icon("repeat")}再戰${RIVAL_NAME}</button>` : ""}
           </div>
         </section>
 
@@ -3765,6 +3791,8 @@
     if (action === "start-daily") {
       startDailyQuiz();
     }
+    if (action === "start-daily-one") startDailyOne();
+    if (action === "share-daily-one") shareDailyOne();
     if (action === "start-mode") startMode(actionNode.dataset.modeKey || "quick");
     if (action === "start-path-node") openPathIntro(actionNode.dataset.nodeId);
     if (action === "start-path-lesson") startPathLesson(actionNode.dataset.nodeId || activePathNodeId);
@@ -4010,6 +4038,107 @@
     selectedMode = "practice";
     selectedTopic = problem.topic || "all";
     startQuiz([problem], { modeKey: "practice", practice: true, noTimer: true });
+  }
+
+  // ---- 每日一題（Wordle 式）：全站同一題，一天一次正式機會 ----
+  const SITE_URL = "https://tudohuang.github.io/BuzzCalculus/";
+
+  function dailyOneDateKey(date = new Date()) {
+    return date.toISOString().slice(0, 10);
+  }
+
+  function pickDailyOneProblem(dateKey = dailyOneDateKey()) {
+    // 題目完全由日期種子決定，所有人同一天拿到同一題（R3-5，避開看圖題）。
+    const pool = problems.filter((problem) => {
+      const rank = problemRank(problem);
+      return rank >= 3 && rank <= 5 && !problem.graph;
+    });
+    const source = pool.length ? pool : problems.slice();
+    return shuffle(source, seedFromString(`buzz-daily-one-${dateKey}`))[0] || null;
+  }
+
+  function startDailyOne() {
+    const records = loadRecords();
+    const dateKey = dailyOneDateKey();
+    if (records.dailyOne[dateKey]) {
+      shareDailyOne();
+      return;
+    }
+    const problem = pickDailyOneProblem(dateKey);
+    if (!problem) return;
+    const prevMode = selectedMode;
+    selectedMode = "quick";
+    startQuiz([problem], { modeKey: "daily_one", practice: false, dailyOne: { dateKey } });
+    selectedMode = prevMode;
+  }
+
+  function renderDailyOneBadge(records) {
+    const entry = records && records.dailyOne ? records.dailyOne[dailyOneDateKey()] : null;
+    if (!entry) return "今日未解";
+    return entry.correct ? "✅ 已解" : "❌ 已試";
+  }
+
+  function dailyOneStreak(records) {
+    let streak = 0;
+    const dayMs = 24 * 60 * 60 * 1000;
+    let cursor = Date.now();
+    // 今天還沒解就從昨天開始算，讓早上看首頁時連勝不會歸零。
+    if (!(records.dailyOne[dailyOneDateKey(new Date(cursor))] || {}).correct) cursor -= dayMs;
+    while (true) {
+      const entry = records.dailyOne[dailyOneDateKey(new Date(cursor))];
+      if (!entry || !entry.correct) break;
+      streak += 1;
+      cursor -= dayMs;
+    }
+    return streak;
+  }
+
+  function dailyOneEmoji(entry) {
+    if (!entry) return "";
+    if (!entry.correct) return entry.reason === "Timeout" ? "⏰🟥" : "🟥";
+    const problem = problemById(entry.problemId);
+    const limit = problem ? problem.timeLimit : 0;
+    let text = "🟩";
+    if (limit && entry.elapsed <= limit / 3) text += "⚡";
+    if (entry.hintsUsed) text += `💡x${entry.hintsUsed}`;
+    return text;
+  }
+
+  function renderDailyOneOutcomePanel(outcome) {
+    const problem = problemById(outcome.problemId);
+    return `
+      <div class="daily-one-outcome ${outcome.correct ? "is-win" : "is-loss"}" data-enter>
+        <strong>每日一題 ${escapeHtml(outcome.dateKey)}：${dailyOneEmoji(outcome)} ${outcome.correct ? `${outcome.elapsed}s 解決` : "明天再來"}</strong>
+        <p>${problem ? `R${problemRank(problem)} · ` : ""}${outcome.streak > 1 ? `🔥 已連續答對 ${outcome.streak} 天` : outcome.correct ? "連勝開張，明天繼續" : "連勝中斷，明天重新累積"}</p>
+      </div>
+    `;
+  }
+
+  function shareDailyOne() {
+    const records = loadRecords();
+    const dateKey = dailyOneDateKey();
+    const entry = records.dailyOne[dateKey];
+    if (!entry) return;
+    const problem = problemById(entry.problemId);
+    const streak = dailyOneStreak(records);
+    const lines = [
+      `BuzzCalculus 每日一題 ${dateKey}`,
+      `${dailyOneEmoji(entry)}${entry.correct ? ` ${entry.elapsed}s` : ""}${problem ? ` · R${problemRank(problem)}` : ""}${entry.correct && !entry.hintsUsed ? " · 無提示" : ""}`,
+      streak > 1 ? `🔥 連續 ${streak} 天` : "",
+      SITE_URL
+    ].filter(Boolean);
+    copyPlainText(lines.join("\n"), "emoji 成績卡已複製，貼到群組炫耀吧！");
+  }
+
+  function copyPlainText(text, okMessage) {
+    const nav = window.navigator;
+    if (nav && nav.clipboard && typeof nav.clipboard.writeText === "function") {
+      Promise.resolve(nav.clipboard.writeText(text))
+        .then(() => showAppNotice(okMessage || "已複製。"))
+        .catch(() => showAppNotice("一鍵複製失敗，請截圖分享。"));
+      return;
+    }
+    showAppNotice("這個瀏覽器不支援一鍵複製。");
   }
 
   function startLibraryFilterPractice() {
@@ -5304,6 +5433,8 @@
       forceFinishAfterFeedback: false,
       modal: null
     };
+    if ((mode.rival || options.rival) && !quiz.practice) quiz.rival = buildRivalState(quiz.problems, records);
+    if (options.dailyOne) quiz.dailyOne = options.dailyOne;
     view = "quiz";
     lastVisibilityStamp = Date.now();
     if (!quiz.practice && !quiz.noTimer) startTicker();
@@ -5318,6 +5449,86 @@
     });
     if (quiz.requireFullscreen) requestQuizFullscreen();
     render();
+  }
+
+  // ---- 宿敵系統：AI 對手「小積」 ----
+  // 小積的解題速度以「你最近的答題速度 × 等級係數 × 每題抖動」模擬：
+  // 打贏它會升級（更快），輸了會降一級，讓對局長期停在五五開附近。
+  const RIVAL_NAME = "小積";
+
+  function rivalLevelFactor(level) {
+    return 1.3 - 0.06 * Math.max(1, Math.min(10, Number(level) || 1));
+  }
+
+  function userSpeedRatio(records) {
+    const ratios = [];
+    (records.history || []).slice(0, 12).forEach((item) => {
+      (item.answers || []).forEach((answer) => {
+        if (!answer.correct || answer.unanswered) return;
+        const problem = problemById(answer.problemId);
+        if (!problem) return;
+        const ratio = Number(answer.elapsed || 0) / Math.max(1, problem.timeLimit);
+        if (ratio > 0 && ratio <= 1.2) ratios.push(ratio);
+      });
+    });
+    if (!ratios.length) return 0.45;
+    ratios.sort((a, b) => a - b);
+    return Math.min(0.8, Math.max(0.15, ratios[Math.floor(ratios.length / 2)]));
+  }
+
+  function buildRivalState(list, records = loadRecords()) {
+    const level = (records.rival && records.rival.level) || 1;
+    const ratio = userSpeedRatio(records);
+    const factor = rivalLevelFactor(level);
+    const times = list.map((problem, index) => {
+      const jitter = 0.85 + ((Math.abs(seedFromString(`${problem.id}-rival-${level}-${index}`)) % 1000) / 1000) * 0.4;
+      const t = Math.round(problem.timeLimit * ratio * factor * jitter);
+      return Math.max(6, Math.min(Math.max(8, problem.timeLimit - 2), t));
+    });
+    return { name: RIVAL_NAME, level, times, myPoints: 0, rivalPoints: 0 };
+  }
+
+  function renderRivalLane(current, elapsed) {
+    if (!quiz || !quiz.rival) return "";
+    const rival = quiz.rival;
+    const rivalTime = rival.times[quiz.index] || 1;
+    const pct = Math.min(100, Math.round((elapsed / rivalTime) * 100));
+    const done = elapsed >= rivalTime;
+    return `
+      <div class="rival-lane ${done ? "is-done" : ""}" data-live-box="rival">
+        <span class="rival-avatar" aria-hidden="true">😼</span>
+        <div class="rival-info">
+          <div class="rival-meta">
+            <strong>宿敵 ${escapeHtml(rival.name)} · Lv.${rival.level}</strong>
+            <span data-live="rival-score">你 ${rival.myPoints} : ${rival.rivalPoints} ${escapeHtml(rival.name)}</span>
+          </div>
+          <div class="rival-bar" aria-hidden="true"><span data-live="rival-bar" style="width:${pct}%"></span></div>
+        </div>
+        <span class="rival-status" data-live="rival-status">${done ? "解完了！" : "解題中…"}</span>
+      </div>
+    `;
+  }
+
+  function renderRivalOutcomePanel(outcome) {
+    const title =
+      outcome.result === "win" ? "你贏了宿敵！" : outcome.result === "loss" ? `被${RIVAL_NAME}壓制…` : "平手，再戰！";
+    const levelLine =
+      outcome.result === "win"
+        ? `${RIVAL_NAME}不服，練到 Lv.${outcome.levelAfter} 等你再戰`
+        : outcome.result === "loss"
+          ? outcome.levelAfter < outcome.levelBefore
+            ? `${RIVAL_NAME}讓一手，退回 Lv.${outcome.levelAfter}`
+            : `${RIVAL_NAME}穩守 Lv.${outcome.levelAfter}`
+          : `${RIVAL_NAME}維持 Lv.${outcome.levelAfter}，勝負未分`;
+    return `
+      <div class="rival-outcome is-${escapeAttr(outcome.result)}" data-enter>
+        <span class="rival-avatar" aria-hidden="true">😼</span>
+        <div>
+          <strong>${escapeHtml(title)} 你 ${outcome.my} : ${outcome.rival} ${RIVAL_NAME}</strong>
+          <p>${escapeHtml(levelLine)} · 生涯 ${outcome.wins} 勝 ${outcome.losses} 敗</p>
+        </div>
+      </div>
+    `;
   }
 
   function selectProblemPool(mode, topic) {
@@ -5637,6 +5848,21 @@
     if (!correct && quiz.accuracyMode && !quiz.practice) quiz.score = Math.max(0, quiz.score - 80);
     quiz.currentStreak = correct ? quiz.currentStreak + 1 : 0;
     quiz.bestStreak = Math.max(quiz.bestStreak, quiz.currentStreak);
+    // 宿敵搶分：答對且比小積的模擬完成時間快才拿分，否則這分歸小積。
+    let rivalNote = "";
+    if (quiz.rival && !quiz.practice) {
+      const rivalTime = quiz.rival.times[quiz.index] || 0;
+      const beatRival = correct && elapsed < rivalTime;
+      if (beatRival) {
+        quiz.rival.myPoints += 1;
+        rivalNote = `⚡ 比${quiz.rival.name}快 ${Math.max(1, rivalTime - elapsed)}s，搶下這分！`;
+      } else {
+        quiz.rival.rivalPoints += 1;
+        rivalNote = correct
+          ? `${quiz.rival.name} ${rivalTime}s 就解完了，這分被搶走。`
+          : `${quiz.rival.name}拿下這題（${rivalTime}s 解完）。`;
+      }
+    }
     quiz.answers.push({
       problem,
       input,
@@ -5671,7 +5897,7 @@
     quiz.feedback = {
       status: correct ? "correct" : reason === "Timeout" ? "timeout" : "wrong",
       title: correct ? (quiz.practice ? "答對" : `答對，+${earned}`) : answerReasonLabel(reason),
-      message: detail || (correct ? "" : "先想想卡在哪一步，下面可以一段一段看解法。")
+      message: [detail || (correct ? "" : "先想想卡在哪一步，下面可以一段一段看解法。"), rivalNote].filter(Boolean).join(" ")
     };
     stopTicker();
     // Correct answers keep the fast auto-advance; wrong answers wait for an
@@ -5824,6 +6050,16 @@
     if (timeBox) timeBox.classList.toggle("is-danger", remaining <= (quiz.examMode ? 180 : 8));
     if (proctorNode) proctorNode.textContent = quiz.examMode ? String(totalTabSwitches(quiz)) : `${quiz.tabSwitches[current.id] || 0}/${current.tabLimit}`;
     if (proctorBox && quiz.examMode) proctorBox.classList.toggle("is-danger", totalTabSwitches(quiz) > 0);
+    if (quiz.rival) {
+      const rivalTime = quiz.rival.times[quiz.index] || 1;
+      const rivalBar = app.querySelector('[data-live="rival-bar"]');
+      const rivalStatus = app.querySelector('[data-live="rival-status"]');
+      const rivalBox = app.querySelector('[data-live-box="rival"]');
+      const done = elapsed >= rivalTime;
+      if (rivalBar) rivalBar.style.width = `${Math.min(100, Math.round((elapsed / rivalTime) * 100))}%`;
+      if (rivalStatus) rivalStatus.textContent = done ? "解完了！" : "解題中…";
+      if (rivalBox) rivalBox.classList.toggle("is-done", done);
+    }
   }
 
   function stopTicker() {
@@ -6710,6 +6946,13 @@
       : null;
     next.settings = next.settings && typeof next.settings === "object" ? next.settings : {};
     next.settings.difficultyCap = normalizeDifficultyCap(next.settings.difficultyCap || DEFAULT_DIFFICULTY_CAP);
+    // 宿敵系統：level 1-10 隨勝負升降（贏→宿敵變強，輸→退一級）。
+    next.rival = next.rival && typeof next.rival === "object" ? next.rival : {};
+    next.rival.level = Math.max(1, Math.min(10, Math.round(Number(next.rival.level) || 1)));
+    next.rival.wins = Number(next.rival.wins || 0);
+    next.rival.losses = Number(next.rival.losses || 0);
+    // 每日一題：dateKey → {problemId, correct, elapsed, hintsUsed, reason}，只記首次挑戰。
+    next.dailyOne = next.dailyOne && typeof next.dailyOne === "object" ? next.dailyOne : {};
     next.onboardingLevel = typeof next.onboardingLevel === "string" ? next.onboardingLevel : "";
     next.onboardingSeen = Boolean(next.onboardingSeen);
     // Feature 6：每週挑戰正式成績（weekKey → {score,total,timeMs,code,at}）。
@@ -6794,6 +7037,48 @@
           };
         }
       }
+    }
+
+    // 宿敵對決結算：贏→小積升級（變快），輸→小積降級。持久養成。
+    if (currentQuiz.rival && !currentQuiz.practice) {
+      const my = currentQuiz.rival.myPoints;
+      const rv = currentQuiz.rival.rivalPoints;
+      const before = records.rival.level;
+      let result = "tie";
+      if (my > rv) {
+        result = "win";
+        records.rival.wins += 1;
+        records.rival.level = Math.min(10, before + 1);
+      } else if (my < rv) {
+        result = "loss";
+        records.rival.losses += 1;
+        records.rival.level = Math.max(1, before - 1);
+      }
+      currentQuiz.rivalOutcome = {
+        my,
+        rival: rv,
+        result,
+        levelBefore: before,
+        levelAfter: records.rival.level,
+        wins: records.rival.wins,
+        losses: records.rival.losses
+      };
+    }
+
+    // 每日一題：只記首次挑戰（Wordle 精神——今天只有一次正式機會）。
+    if (currentQuiz.dailyOne && currentQuiz.answers.length) {
+      const dateKey = currentQuiz.dailyOne.dateKey;
+      if (!records.dailyOne[dateKey]) {
+        const answer = currentQuiz.answers[0];
+        records.dailyOne[dateKey] = {
+          problemId: answer.problem.id,
+          correct: Boolean(answer.correct),
+          elapsed: Number(answer.elapsed || 0),
+          hintsUsed: Number(answer.hintsUsed || 0),
+          reason: answer.reason || ""
+        };
+      }
+      currentQuiz.dailyOneOutcome = { dateKey, ...records.dailyOne[dateKey], streak: dailyOneStreak(records) };
     }
 
     if (currentQuiz.pathGate) {
