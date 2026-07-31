@@ -47,8 +47,9 @@ Boss
 
 ## Current Features
 
-- **1116 題微積分題庫**
-- **39 個技巧題包**
+- **1407 題微積分題庫**
+- **171 題物理 / 化學秒殺題（理科秒殺包，含背誦型分類題）**
+- **51 個技巧題包**
 - **主線路線圖**
 - **每日任務**
 - **每週任務與本機目標**
@@ -271,11 +272,14 @@ Technique: Frullani-type parameter integral
 
 | Type | Count |
 | --- | ---: |
-| Limits | 158 |
-| Derivatives / Multivariable derivatives | 307 |
-| Integrals / Multiple integrals | 487 |
-| Series | 164 |
-| **Total** | **1116** |
+| Limits | 204 |
+| Derivatives / Multivariable derivatives | 386 |
+| Integrals / Multiple integrals | 612 |
+| Series | 205 |
+| **Calculus total** | **1407** |
+| Physics (flash) | 90 |
+| Chemistry (flash) | 81 |
+| **Total** | **1578** |
 
 Proof Lab currently includes **21 proof problems**. Proof problems are not included in timed sessions or daily missions.
 
@@ -337,6 +341,21 @@ Proof Lab currently includes **21 proof problems**. Proof problems are not inclu
 
 ---
 
+## 理科秒殺（Science Flash）
+
+微積分之外，有一批物理 / 化學題也是「看到就該秒殺」的反射題：`v=fλ`、`F=ma`、`pH`、氧化數、莫耳數。
+
+- 題型選單多了 **物理** 與 **化學**，題包多了 **理科秒殺 / 物理速算 / 化學速算 / 轉動 · 熱力學 / 沉澱表 · 氧化還原**。
+- rank 1-4，每題 20-55 秒。常數（`g=10`、`c=3×10⁸`、`k=9×10⁹`、`R=0.082`、原子量）一律寫在題幹，答案唯一且精確。
+
+主站仍主攻微積分：**只有主動選了物理 / 化學題型或理科題包才會抽到這些題**。快速訓練、每日挑戰、每日一題、每週卷、大考模式、定位測驗、收操與主線路線圖維持純微積分，這條界線由 `tools/validate_science_gate.js` 在 CI 鎖住。
+
+**計算題**（數值答案）：物理涵蓋運動學、拋體、牛頓定律、圓周運動、動量與碰撞、功與能量、簡諧與波、光學、電路與庫侖、熱學、近代物理、流體壓力與浮力、轉動慣量與角動量、熱力學第一定律與卡諾循環；化學涵蓋莫耳與計量、平衡係數、限量試劑、濃度與稀釋、氣體定律與分壓、酸鹼滴定、原子結構與同位素、氧化數與半反應、鍵結與 VSEPR、反應速率與平衡。
+
+**背誦題**（分類答案）：沉澱表與溶解度規則、沉澱顏色、氧化劑 / 還原劑、活性順序、熱力學四種過程判別。這類題目在題目本身寫死誘答（`problem.distractors`），選擇題才不會冒出「收斂 / 發散」這種微積分選項。
+
+---
+
 ## Proof Lab
 
 Proof Lab is separate from timed practice.
@@ -382,6 +401,7 @@ node tools/validate_problems.js
 node tools/validate_training_packs.js
 node tools/validate_path_nodes.js
 node tools/validate_answer_checker.js
+node tools/validate_science_gate.js
 node tools/validate_app_shell.js
 node tools/smoke_app_render.js
 ```

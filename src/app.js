@@ -12,8 +12,28 @@
     limits: { label: "極限", short: "Lim", className: "topic-limits", accent: "#f6b739" },
     derivatives: { label: "微分", short: "Der", className: "topic-derivatives", accent: "#4ba8dd" },
     integrals: { label: "積分", short: "Int", className: "topic-integrals", accent: "#9370d8" },
-    series: { label: "級數", short: "Ser", className: "topic-series", accent: "#31ad72" }
+    series: { label: "級數", short: "Ser", className: "topic-series", accent: "#31ad72" },
+    physics: { label: "物理", short: "Phy", className: "topic-physics", accent: "#e0703f" },
+    chemistry: { label: "化學", short: "Chem", className: "topic-chemistry", accent: "#d1477f" }
   };
+
+  // 理科秒殺題（problem_science_pack.js）不是微積分，所以只在使用者主動選了
+  // 物理 / 化學題型或理科訓練包時才進池；快速訓練、每日挑戰、每週卷、大考模式、
+  // 定位測驗與主線路徑都維持純微積分。
+  const SCIENCE_TOPICS = new Set(["physics", "chemistry"]);
+  const SCIENCE_PACKS = new Set(["science_flash", "physics_flash", "chemistry_flash", "rotation_thermo", "chem_memory"]);
+
+  function isScienceProblem(problem) {
+    return Boolean(problem) && SCIENCE_TOPICS.has(problem.topic);
+  }
+
+  function calculusOnly(list) {
+    return (list || []).filter((problem) => !isScienceProblem(problem));
+  }
+
+  function scienceRequested(topic, packKey) {
+    return SCIENCE_TOPICS.has(topic) || SCIENCE_PACKS.has(packKey);
+  }
 
   const MODES = {
     quick: {
@@ -249,7 +269,12 @@
     lagrange_multiplier: { label: "LM", note: "Lagrange multiplier 最值", tags: ["lagrange-multiplier"] },
     convergence_tests: { label: "審斂", note: "級數判別與端點", tags: ["convergence-test", "endpoint-analysis", "root-test", "limit-comparison"] },
     special_functions: { label: "特殊函數", note: "Beta / Gamma / Wallis / Bessel", tags: ["beta-function", "gamma-function", "wallis", "bessel"] },
-    nabla_vector: { label: "Nabla / Vector", note: "grad / div / curl / laplacian", tags: ["nabla", "vector-calculus"] }
+    nabla_vector: { label: "Nabla / Vector", note: "grad / div / curl / laplacian", tags: ["nabla", "vector-calculus"] },
+    science_flash: { label: "理科秒殺", note: "物理 + 化學速算，看到公式就該反射", tags: ["science-flash"] },
+    physics_flash: { label: "物理速算", note: "運動 / 力 / 功能 / 電路 / 波與光", tags: ["physics-flash"] },
+    chemistry_flash: { label: "化學速算", note: "莫耳 / 濃度 / 氣體 / 酸鹼 / 氧化數", tags: ["chem-flash"] },
+    rotation_thermo: { label: "轉動 / 熱力學", note: "轉動慣量表 / 四種過程 / 卡諾 / 莫耳比熱", tags: ["rotation", "thermodynamics"] },
+    chem_memory: { label: "沉澱表 / 氧化還原", note: "溶解度規則 / 沉澱顏色 / 氧化劑還原劑 / 半反應", tags: ["solubility-rules", "redox"] }
   };
 
   const PACK_GROUPS = [
@@ -258,7 +283,8 @@
     { label: "積分技巧", keys: ["partial_fraction", "trig_substitution", "frullani", "ode_style", "kings_property", "double_integral", "multi_integral_advanced", "integral_applications"] },
     { label: "向量分析", keys: ["vector_theorems", "nabla_vector"] },
     { label: "微分 / 應用", keys: ["chain", "lagrange_multiplier", "parametric_polar", "applications", "classic_theory", "total_differential", "hessian", "wronskian", "jacobian_chain"] },
-    { label: "級數 / ODE / 其他", keys: ["taylor", "power_series", "convergence_tests", "endpoint_root", "sequences", "special_functions", "ode_intro", "complex"] }
+    { label: "級數 / ODE / 其他", keys: ["taylor", "power_series", "convergence_tests", "endpoint_root", "sequences", "special_functions", "ode_intro", "complex"] },
+    { label: "理科秒殺", keys: ["science_flash", "physics_flash", "chemistry_flash", "rotation_thermo", "chem_memory"] }
   ];
 
   const PATH_NODES = [
@@ -570,7 +596,85 @@
     mixing: "混合問題",
     marginal: "邊際分析",
     centroid: "形心",
-    "graph-reading": "讀圖"
+    "graph-reading": "讀圖",
+    "science-flash": "理科秒殺",
+    "physics-flash": "物理速算",
+    "chem-flash": "化學速算",
+    "unit-conversion": "單位換算",
+    projectile: "拋體",
+    "average-rate": "平均速率",
+    "newton-law": "牛頓定律",
+    friction: "摩擦力",
+    "inclined-plane": "斜面",
+    "hooke-law": "虎克定律",
+    "apparent-weight": "視重",
+    "circular-motion": "圓周運動",
+    momentum: "動量",
+    impulse: "衝量",
+    collision: "碰撞",
+    "kinetic-energy": "動能",
+    "potential-energy": "位能",
+    power: "功率",
+    "energy-conservation": "能量守恆",
+    work: "功",
+    efficiency: "效率",
+    oscillation: "簡諧振動",
+    wave: "波動",
+    "standing-wave": "駐波",
+    optics: "光學",
+    lens: "透鏡",
+    refraction: "折射",
+    mirror: "面鏡",
+    "ohm-law": "歐姆定律",
+    circuit: "電路",
+    "coulomb-law": "庫侖定律",
+    capacitor: "電容",
+    thermal: "熱學",
+    equilibrium: "平衡",
+    "gas-law": "氣體定律",
+    "partial-pressure": "分壓",
+    "modern-physics": "近代物理",
+    photoelectric: "光電效應",
+    "bohr-model": "波耳模型",
+    density: "密度",
+    pressure: "壓力",
+    buoyancy: "浮力",
+    "pascal-law": "帕斯卡原理",
+    mole: "莫耳",
+    stoichiometry: "化學計量",
+    balancing: "平衡係數",
+    "limiting-reagent": "限量試劑",
+    solution: "溶液濃度",
+    dilution: "稀釋",
+    "acid-base": "酸鹼",
+    titration: "滴定",
+    "atomic-structure": "原子結構",
+    "electron-configuration": "電子組態",
+    isotope: "同位素",
+    redox: "氧化還原",
+    "oxidation-number": "氧化數",
+    electrolysis: "電解",
+    bonding: "化學鍵",
+    vsepr: "價殼層",
+    kinetics: "反應速率",
+    "significant-figures": "有效數字",
+    rotation: "轉動",
+    "moment-of-inertia": "轉動慣量",
+    "parallel-axis": "平行軸定理",
+    torque: "力矩",
+    "angular-momentum": "角動量",
+    rolling: "滾動",
+    thermodynamics: "熱力學",
+    "first-law": "熱力學第一定律",
+    carnot: "卡諾循環",
+    "heat-capacity": "莫耳比熱",
+    "process-id": "過程判別",
+    "solubility-rules": "溶解度規則",
+    precipitate: "沉澱",
+    "oxidizing-reducing-agent": "氧化劑 / 還原劑",
+    electrochemistry: "電化學",
+    "half-reaction": "半反應",
+    "activity-series": "活性順序"
   };
   const ONBOARDING_LEVELS = {
     beginner: { label: "先暖身", pack: "beginner_warmup", mode: "warmup", topic: "all", difficultyCap: 2 },
@@ -4051,9 +4155,9 @@
     // 題目完全由日期種子決定，所有人同一天拿到同一題（R3-5，避開看圖題）。
     const pool = problems.filter((problem) => {
       const rank = problemRank(problem);
-      return rank >= 3 && rank <= 5 && !problem.graph;
+      return rank >= 3 && rank <= 5 && !problem.graph && !isScienceProblem(problem);
     });
-    const source = pool.length ? pool : problems.slice();
+    const source = pool.length ? pool : calculusOnly(problems);
     return shuffle(source, seedFromString(`buzz-daily-one-${dateKey}`))[0] || null;
   }
 
@@ -4330,7 +4434,7 @@
     for (let rank = 1; rank <= 6; rank += 1) {
       pools[rank] = preferFreshProblems(
         shuffle(
-          problems.filter((problem) => problemRank(problem) === rank),
+          problems.filter((problem) => problemRank(problem) === rank && !isScienceProblem(problem)),
           seedFromString(`${stamp}-placement-${rank}`)
         ),
         records
@@ -4440,6 +4544,7 @@
 
   function namedExamProblems(config) {
     return problems.filter((problem) => {
+      if (isScienceProblem(problem)) return false;
       if (!isExamAnswerProblem(problem)) return false;
       const rank = problemRank(problem);
       if (rank < config.minRank || rank > config.maxRank) return false;
@@ -4585,7 +4690,10 @@
     for (let rank = 1; rank <= 6; rank += 1) {
       // 排除自訂題：每週卷必須全站相同，個人題庫不能改變抽卷結果。
       pools[rank] = shuffle(
-        problems.filter((problem) => !problem.custom && isExamAnswerProblem(problem) && problemRank(problem) === rank),
+        problems.filter(
+          (problem) =>
+            !problem.custom && !isScienceProblem(problem) && isExamAnswerProblem(problem) && problemRank(problem) === rank
+        ),
         seed + rank
       );
     }
@@ -5542,6 +5650,9 @@
       pool = Object.values(records.mistakes || {}).map((item) => problemById(item.problemId)).filter(Boolean);
       return padPool(pool, pool, Math.min(mode.count, pool.length || mode.count), { records, avoidRecent: false });
     }
+    if (!scienceRequested(topic, selectedPack)) {
+      pool = calculusOnly(pool);
+    }
     if (mode.topicLocked) {
       pool = pool.filter((problem) => problem.topic === (topic === "all" ? "limits" : topic));
     } else if (topic !== "all") {
@@ -5655,8 +5766,8 @@
       .sort((a, b) => mistakeWeight(b) - mistakeWeight(a))
       .map((item) => problemById(item.problemId))
       .filter(Boolean);
-    const easy = problems.filter((problem) => problemRank(problem) <= Math.min(3, cap));
-    const fallbackEasy = problems.filter((problem) => problemRank(problem) <= 3);
+    const easy = calculusOnly(problems).filter((problem) => problemRank(problem) <= Math.min(3, cap));
+    const fallbackEasy = calculusOnly(problems).filter((problem) => problemRank(problem) <= 3);
     return padPool(mistakes.slice(0, count), easy.length ? easy : fallbackEasy, count, { records });
   }
 
@@ -5796,7 +5907,9 @@
 
   function difficultyScopedCount(cap, topic = "all", packKey = "all") {
     const maxRank = normalizeDifficultyCap(cap);
+    const includeScience = scienceRequested(topic, packKey);
     return problems.filter((problem) => {
+      if (!includeScience && isScienceProblem(problem)) return false;
       if (topic !== "all" && problem.topic !== topic) return false;
       if (packKey !== "all" && !matchesPack(problem, packKey)) return false;
       return problemRank(problem) <= maxRank;
@@ -6109,6 +6222,14 @@
       hints.push("先判斷是等比、p 級數、交錯級數，或需要比較判別。");
       hints.push("收斂判定題要分清楚收斂、條件收斂與絕對收斂。");
     }
+    if (problem.topic === "physics") {
+      hints.push("先寫下對應公式，再把題目給的常數（g、c、k）代進去。");
+      hints.push("單位先統一成 SI（km/h ÷ 3.6、g 換 kg、cm 換 m）再算。");
+    }
+    if (problem.topic === "chemistry") {
+      hints.push("先換成莫耳數，再用平衡式的係數比推其他量。");
+      hints.push("濃度題先確認體積單位是 L；酸鹼題先算 [H⁺] 或 [OH⁻]。");
+    }
     if (problem.answerKind === "antiderivative") hints.push("不定積分答案可省略 +C，系統會檢查是否相差常數。");
     if (problem.answerKind === "expression") hints.push("答案請寫成 x 的函數，例如用 sin(x)、log(x)、sqrt(x)。");
     if (problem.answerKind === "numeric") hints.push("數值答案可用分數、pi、e、sqrt 表示。");
@@ -6241,7 +6362,10 @@
 
     addOption(correct, true);
     buildChoiceDistractors(problem, correct).forEach((value) => addOption(value, false));
-    fallbackChoiceDistractors(problem).forEach((value) => addOption(value, false));
+    // 自訂誘答（背誦型理科題）已經寫好對應的混淆選項，不要再混入微積分答案。
+    if (!authoredDistractors(problem).length) {
+      fallbackChoiceDistractors(problem).forEach((value) => addOption(value, false));
+    }
 
     const shuffled = shuffle(
       options.slice(0, 4),
@@ -6251,7 +6375,16 @@
     return shuffled;
   }
 
+  // 題目可以自己帶 distractors: ["…"]，用在「規則背起來就秒殺」的理科題——
+  // 這種題的誘答必須是同一張表上的鄰居（可溶 / 微溶、氧化劑 / 還原劑），
+  // 從題庫其他答案抓只會給出微積分式的選項。
+  function authoredDistractors(problem) {
+    return Array.isArray(problem.distractors) ? problem.distractors.filter((value) => String(value || "").trim()) : [];
+  }
+
   function buildChoiceDistractors(problem, correct) {
+    const authored = authoredDistractors(problem);
+    if (authored.length) return shuffle(authored.slice(), seedFromString(`${problem.id}-authored-distractors`));
     const sameKind = problems.filter((item) => item.id !== problem.id && item.answerKind === problem.answerKind);
     const sameTopic = sameKind.filter((item) => item.topic === problem.topic);
     const answerPool = [...sameTopic, ...sameKind].map(displayAnswer);
@@ -6274,6 +6407,7 @@
 
   function choiceDistractorReason(problem, value, expectedValue = "") {
     const correct = expectedValue || displayAnswer(problem);
+    if (authoredDistractors(problem).length) return "這是同一張表上最容易記混的選項，回去把規則再過一次。";
     if (problem.answerKind === "text") return "判定方向不同；先確認端點、絕對/條件或 DNE 條件。";
     const variable = problem.variable || "x";
     const normalized = normalizeChoice(value);
@@ -7536,6 +7670,7 @@
   function pathNodeProblems(node) {
     return problems.filter((problem) => {
       const tags = problem.tags || [];
+      if (isScienceProblem(problem)) return false;
       if (node.topic && problem.topic !== node.topic) return false;
       if (node.pack && node.pack !== "all" && !matchesPack(problem, node.pack)) return false;
       if (node.includeTags && node.includeTags.length && !node.includeTags.some((tag) => tags.includes(tag))) return false;
@@ -7660,7 +7795,9 @@
       limits: "Limit",
       derivatives: "Derivative",
       integrals: "Integral",
-      series: "Series"
+      series: "Series",
+      physics: "秒殺物理",
+      chemistry: "秒殺化學"
     }[topic] || "";
   }
 
@@ -7712,7 +7849,7 @@
         .forEach((tag) => addExamStat(tagGroups, tag, tagLabel(tag), answer));
     });
 
-    const topicOrder = ["limits", "derivatives", "integrals", "series"];
+    const topicOrder = ["limits", "derivatives", "integrals", "series", "physics", "chemistry"];
     const topicRows = Object.values(topicGroups)
       .map(finalizeExamStat)
       .sort((a, b) => topicOrder.indexOf(a.key) - topicOrder.indexOf(b.key));
@@ -8042,7 +8179,7 @@
   }
 
   function packTotalCountText(packKey) {
-    if (packKey === "all") return problems.length;
+    if (packKey === "all") return calculusOnly(problems).length;
     return problems.filter((problem) => matchesPack(problem, packKey)).length;
   }
 
@@ -8920,6 +9057,13 @@
       learningPathState,
       matchesPack,
       modes: MODES,
+      isScienceProblem,
+      pickDailyOneProblem,
+      selectCooldownPool,
+      setSelectedPack: (packKey) => {
+        selectedPack = TRAINING_PACKS[packKey] ? packKey : "all";
+        return selectedPack;
+      },
       selectProblemPool,
       adaptiveShuffle,
       padPool,

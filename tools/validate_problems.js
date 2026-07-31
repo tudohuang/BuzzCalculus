@@ -2,7 +2,7 @@ global.window = {};
 require("./lib/load_problem_sources.js")();
 
 const problems = window.BUZZ_PROBLEMS || [];
-const topics = new Set(["limits", "derivatives", "integrals", "series"]);
+const topics = new Set(["limits", "derivatives", "integrals", "series", "physics", "chemistry"]);
 const answerKinds = new Set(["numeric", "expression", "antiderivative", "text"]);
 const ids = new Set();
 const errors = [];
@@ -101,6 +101,12 @@ problems.forEach((problem, index) => {
   if (rawWords.length) {
     fail(id, `raw English words outside \\text{} in prompt: ${Array.from(new Set(rawWords)).join(", ")}`);
   }
+  // KaTeX renders prompts with throwOnError:false, so these silently turn into red
+  // error text instead of failing loudly. Catch them here instead.
+  // 未跳脫的 % 會被 KaTeX 當成註解，吃掉整行到結尾。
+  if (/(^|[^\\])%/.test(problem.prompt || "")) fail(id, "unescaped % in prompt (KaTeX treats it as a comment)");
+  // \text{} 內的 U+00B7 會被映射到未定義的 \cdotp。
+  if ((problem.prompt || "").includes("·")) fail(id, "literal · in prompt (use \\cdot outside \\text{})");
   if (!answerKinds.has(problem.answerKind)) fail(id, `invalid answerKind ${problem.answerKind}`);
   if (problem.answerKind === "text") {
     if (!Array.isArray(problem.answers) || !problem.answers.length) fail(id, "text problem needs answers[]");
@@ -115,6 +121,9 @@ problems.forEach((problem, index) => {
   }
   if (problem.tags && (!Array.isArray(problem.tags) || problem.tags.some((tag) => typeof tag !== "string" || !tag.trim()))) {
     fail(id, "tags must be non-empty strings");
+  }
+  if (problem.distractors && (!Array.isArray(problem.distractors) || problem.distractors.some((value) => typeof value !== "string" || !value.trim()))) {
+    fail(id, "distractors must be non-empty strings");
   }
   if (problem.variables && (!Array.isArray(problem.variables) || problem.variables.some((name) => typeof name !== "string" || !name.trim()))) {
     fail(id, "variables must be non-empty strings");
