@@ -4,7 +4,9 @@ const path = require("path");
 global.window = {};
 require("./lib/load_problem_sources.js")();
 
-const problems = window.BUZZ_PROBLEMS || [];
+// 工作簿是純微積分產品：理科秒殺包（physics / chemistry）不收錄。
+const SCIENCE_TOPICS = new Set(["physics", "chemistry"]);
+const problems = (window.BUZZ_PROBLEMS || []).filter((problem) => !SCIENCE_TOPICS.has(problem.topic));
 
 const TOPICS = [
   { key: "limits", label: "極限", subtitle: "Limits" },
