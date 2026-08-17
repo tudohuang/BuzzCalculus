@@ -136,8 +136,13 @@ if (rejected.length) {
 if (checkOnly) {
   // 檢查模式還要確認磁碟上的檔案跟現在展開的結果一致，
   // 否則有人改了模板卻忘記重新產生，上線的會是舊的那份。
+  // 比對前先把行尾正規化。git 在 Windows checkout 時會把 LF 換成 CRLF，
+  // 而 render() 一律產生 LF —— 不正規化的話，只要 git 碰過這個檔案，
+  // 本機就會報「與模板不同步」，但 CI（Linux，LF）是綠的。
+  // 這種「本機紅、CI 綠」的假警報最傷：久了就會有人養成忽略它的習慣。
+  const normalize = (text) => text.replace(/\r\n/g, "\n");
   const current = fs.existsSync(OUTPUT) ? fs.readFileSync(OUTPUT, "utf8") : "";
-  if (current !== render(accepted)) {
+  if (normalize(current) !== normalize(render(accepted))) {
     console.error("\nsrc/problem_generated_pack.js 與模板不同步 —— 請跑 node tools/expand_templates.js");
     process.exit(1);
   }

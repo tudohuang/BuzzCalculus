@@ -122,7 +122,12 @@ problems.forEach((problem, index) => {
     fail(id, "interval answer must look like (a, b] or a union of them");
   }
   if (!Number.isInteger(problem.timeLimit) || problem.timeLimit <= 0) fail(id, "invalid timeLimit");
-  if (!Number.isInteger(problem.tabLimit) || problem.tabLimit < 0) fail(id, "invalid tabLimit");
+  // tabLimit 已停用（2026-08 移除切頁判錯）。舊題目上還留著這個欄位，
+  // 但**沒有任何程式碼會讀它** —— 所以這裡不再要求它存在，只在它存在時
+  // 檢查格式，免得舊資料變成一團爛值。新題目不需要寫。
+  if (problem.tabLimit !== undefined && (!Number.isInteger(problem.tabLimit) || problem.tabLimit < 0)) {
+    fail(id, "tabLimit 已停用，但如果要留著就必須是 >= 0 的整數");
+  }
   if (!problem.solution || typeof problem.solution !== "string") fail(id, "missing solution");
   if (problem.hints && (!Array.isArray(problem.hints) || problem.hints.some((hint) => typeof hint !== "string" || !hint.trim()))) {
     fail(id, "hints must be non-empty strings");

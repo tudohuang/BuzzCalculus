@@ -824,6 +824,30 @@ console.log(`Resume smoke: ${json.length} bytes for a 12-question exam, round-tr
     if (!shortcutBlock.includes(key)) throw new Error(`快捷鍵表缺少 ${key}`);
   });
 
+  // 監考機制不准回來。
+  //
+  // 全螢幕鎖定與切頁判錯在 2026-08 整組移除。它們的問題不是實作不好，
+  // 是立場錯了：假設使用者會作弊，然後誤傷接電話、被通知蓋掉、
+  // 或只是想開計算機的人。這一條擋的是「哪天有人覺得加回去比較嚴謹」。
+  // 掃之前先把註解拿掉：解釋「這東西為什麼被移除」的註解本身就會提到那些名字，
+  // 不排除的話這條規則會被自己的說明文字絆倒。
+  const appCode = appSource
+    .split("\n")
+    .filter((line) => !line.trim().startsWith("//"))
+    .join("\n");
+
+  [
+    ["requestQuizFullscreen", "全螢幕鎖定"],
+    ["trackTabSwitch", "切頁次數追蹤"],
+    ['reason: "Tab limit"', "切頁超過就判錯"],
+    ["fullscreenStatus", "全螢幕狀態機"],
+    ["quiz.tabSwitches", "切頁計數"]
+  ].forEach(([needle, label]) => {
+    if (appCode.includes(needle)) {
+      throw new Error(`${label}（${needle}）回來了 —— 監考類的規則已經整組移除，見 docs/spec/00-north-star.md P4`);
+    }
+  });
+
   // 對話框要有焦點鎖。
   // 沒有的話 Tab 會走到被遮住的按鈕上（看不到焦點在哪），
   // 而「刪除全部資料」那個對話框後面就是那顆刪除鈕。
