@@ -5262,8 +5262,101 @@
   }
 
   function renderAnswerControls(problem) {
+    // 選圖題只能用選的 —— 沒有辦法「打出一張圖」。
+    // 所以它不受本局的作答形式影響，永遠走選項。
+    if (problem.answerKind === "graph") return renderGraphChoiceControls(problem);
     if (quiz.answerMode === "choice") return renderChoiceControls(problem);
     return renderFreeAnswerControls(problem);
+  }
+
+  // ── 選圖題 ────────────────────────────────────────────────────
+  //
+  // 這是題庫裡唯一「答案是一張圖」的題型，而它練的東西別的題型練不到：
+  // 把 f′ 的符號、f″ 的凹向、定義域與極值**合起來**變成一個形狀。
+  // 拆開來每一項都有題目在練（臨界點、反曲點、遞增區間…），
+  // 但「合起來長什麼樣」是另一種能力。
+  //
+  // 每一個誘答都是一個**具名的畫圖錯誤**（符號反了、極值位置錯、
+  // 少了漸近線…），答錯時直接告訴使用者他犯的是哪一個 ——
+  // 這也是題庫裡第一批有作者撰寫誘答的題目。
+  function renderGraphChoiceControls(problem) {
+    const disabled = quiz.feedback ? "disabled" : "";
+    const choices = getGraphChoiceOptions(problem);
+    return `
+      <div class="graph-choice-grid" role="radiogroup" aria-label="選擇正確的圖形">
+        ${choices
+          .map((choice, index) => {
+            const letter = String.fromCharCode(65 + index);
+            const wrong = quiz.feedback && quiz.draft === choice.expr && !checkAnswer(problem, choice.expr).correct;
+            return `
+              <button class="graph-choice ${wrong ? "is-wrong" : ""}" type="button"
+                data-action="choose-answer" data-choice="${escapeAttr(choice.expr)}" ${disabled}
+                aria-label="選項 ${letter}">
+                <span class="graph-choice-letter">${letter}</span>
+                ${renderMiniGraph(choice.expr, problem.graphWindow, problem.graphDomain)}
+                ${wrong && choice.why ? `<small class="graph-choice-why">${escapeHtml(choice.why)}</small>` : ""}
+              </button>`;
+          })
+          .join("")}
+      </div>
+      <div class="helper-row">
+        <span>四張圖只有一張的 f′、f″ 與定義域全部對得上</span>
+      </div>
+    `;
+  }
+
+  function getGraphChoiceOptions(problem) {
+    if (!quiz.choiceOptions) quiz.choiceOptions = {};
+    if (quiz.choiceOptions[problem.id]) return quiz.choiceOptions[problem.id];
+    const list = (problem.graphChoices || []).filter((choice) => choice && choice.expr);
+    const shuffled = shuffle(list.slice(), seedFromString(`${quiz.startedAt}-${problem.id}-graph`));
+    quiz.choiceOptions[problem.id] = shuffled;
+    return shuffled;
+  }
+
+  // 迷你繪圖。跟 renderProblemGraph 共用座標與格線的邏輯，
+  // 但尺寸小、不畫刻度數字 —— 四張並排的時候刻度只會變成雜訊。
+  function renderMiniGraph(expr, windowSpec, domainSpec) {
+    const win = Array.isArray(windowSpec) && windowSpec.length === 4 ? windowSpec.map(Number) : [-4, 4, -4, 4];
+    const [xmin, xmax, ymin, ymax] = win;
+    if (!(xmax > xmin) || !(ymax > ymin)) return "";
+    const fn = graphCurveFn(expr);
+    if (!fn) return "";
+    const width = 150;
+    const height = 118;
+    const pad = 6;
+    const sx = (x) => pad + ((x - xmin) / (xmax - xmin)) * (width - 2 * pad);
+    const sy = (y) => height - pad - ((y - ymin) / (ymax - ymin)) * (height - 2 * pad);
+    const parts = [];
+    if (ymin <= 0 && ymax >= 0) {
+      parts.push(`<line x1="${sx(xmin)}" y1="${sy(0)}" x2="${sx(xmax)}" y2="${sy(0)}" stroke="var(--line-strong)" stroke-width="1"/>`);
+    }
+    if (xmin <= 0 && xmax >= 0) {
+      parts.push(`<line x1="${sx(0)}" y1="${sy(ymin)}" x2="${sx(0)}" y2="${sy(ymax)}" stroke="var(--line-strong)" stroke-width="1"/>`);
+    }
+    // 曲線可能在窗內斷開（極點、定義域邊界）。斷了就開新的一段，
+    // 不要用一條直線把兩支接起來 —— 那會把漸近線畫成穿過去，
+    // 而「有沒有穿過去」正是這類題目要看的。
+    const [a, b] = Array.isArray(domainSpec) && domainSpec.length === 2 ? domainSpec.map(Number) : [xmin, xmax];
+    const steps = 220;
+    const segments = [];
+    let current = [];
+    for (let i = 0; i <= steps; i += 1) {
+      const x = a + ((b - a) * i) / steps;
+      const y = fn(x);
+      if (Number.isFinite(y) && y >= ymin && y <= ymax) {
+        current.push([x, y]);
+      } else {
+        if (current.length > 1) segments.push(current);
+        current = [];
+      }
+    }
+    if (current.length > 1) segments.push(current);
+    segments.forEach((pts) => {
+      const path = pts.map((pt, i) => `${i ? "L" : "M"}${sx(pt[0]).toFixed(1)},${sy(pt[1]).toFixed(1)}`).join(" ");
+      parts.push(`<path d="${path}" fill="none" stroke="var(--blue)" stroke-width="2" stroke-linejoin="round"/>`);
+    });
+    return `<svg viewBox="0 0 ${width} ${height}" role="img" aria-label="候選圖形">${parts.join("")}</svg>`;
   }
 
   // renderExamLockStatus() 已移除 —— 那是全螢幕鎖定的狀態列與「鎖定全螢幕」按鈕。
@@ -9171,7 +9264,25 @@
     if (problem.answerKind === "interval") {
       return checkInterval(problem, input);
     }
+    if (problem.answerKind === "graph") {
+      return checkGraphChoice(problem, input);
+    }
     return { correct: false, message: "這個題型目前不能自動判分。" };
+  }
+
+  // 選圖題：選項本身是圖，作答的值是那條曲線的式子。
+  //
+  // 用式子當值而不是 A/B/C/D，是因為選項會被洗牌 —— 位置不能當答案。
+  // 比對是字串相等（正規化空白），不做數學等價：這裡的重點是
+  // 「你選到的是不是那一張」，而不是「兩個式子是否等價」。
+  function checkGraphChoice(problem, input) {
+    const tidy = (value) => String(value || "").replace(/\s+/g, "");
+    if (tidy(input) === tidy(problem.answer)) return { correct: true, message: "圖形判讀正確。" };
+    const chosen = (problem.graphChoices || []).find((choice) => tidy(choice.expr) === tidy(input));
+    return {
+      correct: false,
+      message: chosen && chosen.why ? chosen.why : "這張圖跟 f 的性質對不上。"
+    };
   }
 
   // 題幹尾巴寫的定義域限制（",\ x>0"、"\quad(x\ge 1)"）。

@@ -52,7 +52,9 @@
     //   composition    這題是合成函數（要用的技巧是鏈鎖律，那個有自己的節點）
     //   domain-aware   這題的答案要考慮定義域
     //   repeated-root  這題的根是重根（陷阱的位置，不是能力座標）
-    "composition", "domain-aware", "repeated-root"
+    "composition", "domain-aware", "repeated-root",
+    //   even-function  函數的對稱性，是題目的性質不是能力座標（跟 symmetry 同一類）
+    "even-function"
   ]);
 
   // ── Skill 節點 ────────────────────────────────────────────────
@@ -104,8 +106,11 @@
     { id: "diff.higher.extreme", label: "超高階導數", tier: 5, obscurity: 3, family: "diff", prereq: ["diff.higher"], radarAxis: "taylor",
       tags: ["super-high-derivative"] },
     { id: "diff.shape", label: "曲線分析與中值定理", tier: 2, obscurity: 1, family: "diff", prereq: ["diff.basic"],
+      // curve-sketching / extrema 歸在這裡而不是列成非技巧：
+      // 「把 f′、f″ 合起來看出形狀」就是曲線分析這個技巧本身，
+      // 而且這樣選圖題才會算進能力模型（列成非技巧的話它們對雷達是隱形的）。
       tags: ["concavity", "inflection", "critical-point", "critical-points", "derivative-zero",
-        "first-derivative", "monotonicity", "tangent-normal",
+        "first-derivative", "monotonicity", "tangent-normal", "curve-sketching", "extrema",
         "mvt", "rolle", "curvature"] },
     { id: "diff.optimize", label: "最佳化", tier: 3, obscurity: 1, family: "diff", prereq: ["diff.shape"],
       tags: ["optimization"] },

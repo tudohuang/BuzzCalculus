@@ -3,7 +3,10 @@ require("./lib/load_problem_sources.js")();
 
 const problems = window.BUZZ_PROBLEMS || [];
 const topics = new Set(["limits", "derivatives", "integrals", "series"]);
-const answerKinds = new Set(["numeric", "expression", "antiderivative", "text", "set", "interval"]);
+// graph = 選圖題（答案是一條曲線的式子，選項本身是圖）。
+// 它的內部一致性由 tools/validate_graph_choices.js 另外把關 ——
+// 那些檢查（誘答要看得出差別、要寫錯在哪）在這裡驗不了。
+const answerKinds = new Set(["numeric", "expression", "antiderivative", "text", "set", "interval", "graph"]);
 const ids = new Set();
 const errors = [];
 const allowedRawWords = new Set([

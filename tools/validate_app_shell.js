@@ -20,6 +20,27 @@ cached.forEach((file) => {
   if (!fs.existsSync(path.join(root, file))) failures.push(`sw.js APP_SHELL caches missing file ${file}`);
 });
 
+// sw.js 快取了、index.html 連了，但**部署的時候沒有複製上去**。
+//
+// 實際發生過：privacy / terms / about / changelog 四頁都通過了
+// validate_privacy（設定頁有連結、sw.js 有快取），但 CI 的 Assemble site
+// 那一步只 cp 了 index / workbook / styles / sw / manifest ——
+// 於是線上站台那四個連結全部 404，而所有驗證器都是綠的。
+//
+// 隱私政策 404 比沒有隱私政策更糟：連結存在代表你宣稱有那份文件。
+const deployStep = fs.readFileSync(path.join(root, ".github", "workflows", "static.yml"), "utf8");
+const deployed = new Set([...deployStep.matchAll(/^\s*cp\s+(.+?)\s+_site\/\s*$/gm)]
+  .flatMap((match) => match[1].split(/\s+/))
+  .filter((name) => name.endsWith(".html")));
+
+fs.readdirSync(root)
+  .filter((name) => name.endsWith(".html"))
+  .forEach((page) => {
+    if (!deployed.has(page)) {
+      failures.push(`${page} 在 repo 裡但 CI 的 Assemble site 沒有複製它 —— 線上會是 404`);
+    }
+  });
+
 // Markdown 粗體不能出現在 HTML 模板裡。
 // 實際踩過：刪除確認的文案寫成 `**這個動作無法復原。**`，
 // 但那是 HTML 模板不是 markdown，使用者看到的就是一排星號。
