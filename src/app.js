@@ -973,6 +973,14 @@
     });
   }
 
+  // 動作委派：整個 app 只有一個 click 監聽器，而且只綁一次。
+  //
+  // 這是局部渲染的前提：只要新插入的 DOM 帶著 [data-action]，
+  // 不需要重新綁任何東西就會動。
+  function setupActionDelegation() {
+    app.addEventListener("click", handleAction);
+  }
+
   function setupErrorReporting() {
     window.addEventListener("error", (event) => {
       const name = event && event.error && event.error.name ? event.error.name : "Error";
@@ -6208,9 +6216,11 @@
       });
     });
 
-    app.querySelectorAll("[data-action]").forEach((node) => {
-      node.addEventListener("click", handleAction);
-    });
+    // [data-action] 改用委派，監聽器在 setupActionDelegation() 綁一次就好。
+    //
+    // 原本是每次 render 之後把畫面上**每一個** [data-action] 各綁一次 ——
+    // 題庫頁一次就是好幾百個。那是每一次重繪都要付的固定成本，
+    // 而且讓「只更新一小塊 DOM」變成不可能（新節點沒有監聽器）。
 
     const form = app.querySelector('[data-action="submit-answer"]');
     if (form) {
@@ -6249,10 +6259,14 @@
   }
 
   function handleAction(event) {
-    const modal = event.target.closest("[data-modal]");
     const actionNode = event.target.closest("[data-action]");
     if (!actionNode) return;
-    if (event.currentTarget.classList && event.currentTarget.classList.contains("modal-backdrop") && modal) {
+    // 點在對話框「裡面」但冒泡到遮罩上的，不算「點遮罩關閉」。
+    //
+    // 這個判斷原本靠 event.currentTarget（因為監聽器綁在每一個節點上）。
+    // 改成委派之後 currentTarget 永遠是 #app，所以改問一個更直接的問題：
+    // 命中的動作節點是不是遮罩本身，而點擊起點是不是在對話框內。
+    if (actionNode.classList.contains("modal-backdrop") && event.target.closest("[data-modal]")) {
       return;
     }
 
@@ -9928,9 +9942,15 @@
           return;
         }
         if (action === "tool") {
+          // 換筆／橡皮擦只改兩顆按鈕的狀態，不需要重繪整個畫面 ——
+          // render() 會把 canvas 整個換掉，然後把所有筆畫重畫一次。
+          // 寫滿一頁之後那一下看得出來卡，而使用者只是想換個工具。
           quiz.boardTool = button.dataset.tool || "pen";
           quiz.boardOpen = true;
-          render();
+          app.querySelectorAll('[data-board-action="tool"]').forEach((node) => {
+            node.classList.toggle("is-active", node.dataset.tool === quiz.boardTool);
+            node.setAttribute("aria-pressed", node.dataset.tool === quiz.boardTool ? "true" : "false");
+          });
           return;
         }
         if (action === "fullscreen") {
@@ -9950,8 +9970,23 @@
           return;
         }
         if (action === "surface") {
-          setBoardSurface(boardSurface() === "paper" ? "board" : "paper");
-          render();
+          // 換紙／黑板改的是 CSS 背景與墨色。畫布不用重建，
+          // 但既有的筆畫要用新的墨色重畫一次（黑板上的深藍看不見）。
+          const next = boardSurface() === "paper" ? "board" : "paper";
+          setBoardSurface(next);
+          const canvas = app.querySelector("[data-blackboard]");
+          if (canvas) {
+            canvas.dataset.surface = next;
+            const ctx = canvas.getContext("2d", { desynchronized: true });
+            if (ctx) drawStrokesOnBlackboard(canvas, ctx, getBoardStrokes(canvas.dataset.problemId || ""));
+          }
+          app.querySelectorAll("[data-review-board], [data-previous-board]").forEach((node) => {
+            node.dataset.surface = next;
+          });
+          button.title = next === "paper" ? "換成黑板" : "換成方格紙";
+          const glyph = button.querySelector(".icon, [data-lucide]");
+          if (glyph) glyph.setAttribute("data-lucide", next === "paper" ? "moon" : "grid-3x3");
+          renderIcons();
           return;
         }
         // 復原與清除不重繪整個畫面 —— render() 會把 canvas 整個換掉，
@@ -12401,6 +12436,7 @@
   applyTheme();
   setupPwa();
   setupAnalytics();
+  setupActionDelegation();
   setupErrorReporting();
   setupVisibilityTracking();
   setupKeyboardShortcuts();
