@@ -28,7 +28,7 @@ PACKS: 51 個（todai_burst / nightmare_boss / world_universities / competition 
 | --- | --- | --- | --- |
 | `practice` | 練習 | quick, topic, practice, warmup, cooldown, no_hint, placement | 學東西的地方。**不得製造焦慮** |
 | `weakness` | 弱點 | mistakes（SRS 錯題）, 弱點練習, 危險技巧練習 | 系統挑題，使用者不選 |
-| `exam` | 模擬 | exam, 期中/期末/大考/轉學考 named exams, weekly | 高壓規則只准在這裡：全螢幕、切頁限制、無提示 |
+| `exam` | 模擬 | exam, 期中/期末/大考/轉學考 named exams, weekly | 高壓規則只准在這裡：整份倒數、無提示（監考類規則已移除） |
 | `challenge` | 挑戰 | boss, boss_rush, brutal, rival, integral_bee, survival, accuracy, daily_one, daily | 玩的地方。可以殘忍 |
 
 UI 上這四類是**四張卡**，不是 19 個按鈕。每張卡點進去才展開內含模式。

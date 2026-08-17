@@ -44,6 +44,8 @@
       prompt,
       answerKind,
       timeLimit: clampInt(raw.timeLimit, 10, 600, 60),
+      // tabLimit 已停用（切頁判錯在 2026-08 移除）。這裡照樣正規化，
+      // 是為了讓早期匯出的自訂題包還匯得進來，不是因為還有人讀它。
       tabLimit: clampInt(raw.tabLimit, 0, 9, 2),
       solution: cleanText(raw.solution, 1200) || "出題者沒有附解說。",
       tags: ["custom"],

@@ -99,7 +99,7 @@
     exam: {
       label: "大考模式",
       bucket: "exam",
-      note: "20 題 / 45 分鐘，自己輸入答案，全螢幕監考",
+      note: "20 題 / 45 分鐘，整份倒數，自己輸入答案",
       count: 20,
       topicLocked: false,
       daily: false,
@@ -108,7 +108,6 @@
       examDurationSec: 45 * 60,
       noHint: true,
       forceAnswerMode: "free",
-      requireFullscreen: true,
       examStyle: true,
       minRank: 3
     },
@@ -888,7 +887,6 @@
     analytics_opt_out: "使用者關閉或開啟分析",
     // 其他
     share_result_card: "分享成績卡",
-    fullscreen_exit: "大考模式退出全螢幕",
     install_pwa: "安裝 PWA",
     app_update_apply: "使用者接受新版本並重新載入",
     print_mistakes: "列印錯題本（只記幾題，不記內容）",
@@ -1000,19 +998,11 @@
     });
   }
 
-  function trackTabSwitch(problem) {
-    if (!quiz || !problem) return 0;
-    quiz.tabSwitches[problem.id] = (quiz.tabSwitches[problem.id] || 0) + 1;
-    const count = quiz.tabSwitches[problem.id];
-    trackEvent(count > problem.tabLimit ? "tab_violation" : "tab_switch", {
-      mode: quiz.mode,
-      topic: problem.topic,
-      problem_id: problem.id,
-      tab_switches: count,
-      tab_limit: problem.tabLimit
-    });
-    return count;
-  }
+  // trackTabSwitch() 已移除。
+  //
+  // 它上報「這個人切出去幾次」，而那個數字唯一的用途是判他答錯。
+  // 判錯拿掉之後，繼續記錄使用者的注意力去哪了就只剩監控，沒有產品用途 ——
+  // 而隱私政策上寫的是「只送哪個功能被用了幾次」。
 
   // 每次 render 都是整個畫面重寫 innerHTML，於是捲動位置歸零、焦點消失、
   // 展開的段落收起來。使用者說不出「重繪」兩個字，只會覺得這個網站怪怪的。
@@ -1687,7 +1677,6 @@
     restored.draft = "";
     // 大考的整份倒數照實走（考試誠信）；日常模式重啟單題計時，不為難使用者。
     if (!restored.examMode) restored.questionStartedAt = Date.now();
-    if (restored.requireFullscreen) restored.fullscreenStatus = "pending";
 
     quiz = restored;
     view = "quiz";
@@ -2174,7 +2163,7 @@
   const TRAIN_BUCKETS = [
     { key: "practice", label: "練習", note: "沒有倒數，可以看提示" },
     { key: "weakness", label: "弱點", note: "依你的錯題自動選題" },
-    { key: "exam", label: "模擬", note: "限時、全螢幕、無提示" },
+    { key: "exam", label: "模擬", note: "整份倒數、無提示" },
     { key: "challenge", label: "挑戰", note: "高難度、有失敗條件" }
   ];
 
@@ -2333,7 +2322,7 @@
             <h3>20 題 / 45 分鐘</h3>
           </div>
         </div>
-        <p class="panel-note">自己輸入答案、整份倒數、全螢幕監考、切頁會被記錄。這是全站唯一有這些規則的地方。</p>
+        <p class="panel-note">自己輸入答案、整份倒數、不給提示。時間到直接交卷 —— 這是全站唯一整份計時的地方。</p>
         <div class="action-row">
           <button class="button home-primary" data-action="start-mode" data-mode-key="exam">${icon("file-pen-line")}開始</button>
         </div>
@@ -5099,8 +5088,6 @@
     const examRemaining = quiz.examMode ? examTimeRemaining(quiz) : null;
     const remaining = quiz.examMode ? examRemaining : perQuestionRemaining;
     const progress = Math.round((quiz.index / quiz.problems.length) * 100);
-    const totalTabs = quiz.tabSwitches[current.id] || 0;
-    const proctorEvents = totalTabSwitches(quiz);
     const isPractice = Boolean(quiz.practice);
     const noTimer = Boolean(quiz.noTimer || isPractice);
     const isDanger = !noTimer && remaining <= (quiz.examMode ? 180 : 8) ? "is-danger" : "";
@@ -5108,8 +5095,6 @@
     const answerMode = quiz.answerMode || "free";
     const timeLabel = noTimer ? "模式" : quiz.examMode ? "考試" : "時間";
     const timeValue = noTimer ? "自由" : quiz.examMode ? formatCountdown(remaining) : String(remaining);
-    const proctorLabel = quiz.examMode ? "監考" : "切頁";
-    const proctorValue = noTimer ? "關" : quiz.examMode ? String(proctorEvents) : `${totalTabs}/${current.tabLimit}`;
     const pathNodeIdx = quiz.pathNodeId ? PATH_NODES.findIndex((node) => node.id === quiz.pathNodeId) : -1;
     const pathNode = pathNodeIdx >= 0 ? PATH_NODES[pathNodeIdx] : null;
     const totalQ = quiz.problems.length;
@@ -5147,13 +5132,18 @@
                 <span>${timeLabel}</span>
                 <strong data-live="time">${timeValue}</strong>
               </div>
-              <div class="timer-box ${!noTimer && (quiz.examMode ? proctorEvents > 0 : totalTabs > current.tabLimit) ? "is-danger" : ""}" data-live-box="proctor">
-                <span>${proctorLabel}</span>
-                <strong data-live="proctor">${proctorValue}</strong>
-              </div>
+              ${
+                // 原本這裡是「監考 / 切頁」的計數盒。整組拿掉了 ——
+                // 一個一直盯著你看的數字，本身就是壓力來源，而它防不了任何東西。
+                quiz.examMode
+                  ? `<div class="timer-box" data-live-box="answered">
+                <span>已答</span>
+                <strong data-live="answered">${quiz.answers.length}/${totalQ}</strong>
+              </div>`
+                  : ""
+              }
             </div>
           </div>
-          ${renderExamLockStatus()}
 
           <div class="problem-stage">
             <article class="problem-card" role="group" aria-label="作答區">
@@ -5185,7 +5175,7 @@
                         : ""
                     }
                   </div>`
-                : `<div class="feedback"><strong>作答狀態</strong><p>${quiz.examMode ? "大考模式：整份倒數，自己輸入答案；切頁或退出全螢幕會被記錄。" : quiz.survival ? "生存：最多錯 3 題。" : quiz.suddenDeath ? "Boss 連戰：錯一題就結算。" : noTimer ? "本局不倒數、不記切分頁。" : `倒數開始後請保持在本頁。這題允許 ${current.tabLimit} 次切分頁。`}</p></div>`
+                : `<div class="feedback"><strong>作答狀態</strong><p>${quiz.examMode ? "大考模式：整份倒數、不給提示、自己輸入答案。時間到會直接交卷。" : quiz.survival ? "生存：最多錯 3 題。" : quiz.suddenDeath ? "Boss 連戰：錯一題就結算。" : noTimer ? "本局不倒數。" : "每題有各自的倒數，時間到算未作答。"}</p></div>`
             }
           </div>
 
@@ -5205,29 +5195,8 @@
     return renderFreeAnswerControls(problem);
   }
 
-  function renderExamLockStatus() {
-    if (!quiz || !quiz.examMode) return "";
-    const active = isFullscreenActive();
-    const status = active
-      ? "全螢幕監考中"
-      : quiz.fullscreenStatus === "unsupported"
-        ? "此瀏覽器不支援全螢幕 API"
-        : quiz.fullscreenStatus === "blocked"
-          ? "瀏覽器阻擋全螢幕，請手動按下鎖定"
-          : "尚未進入或已退出全螢幕";
-    const button = active
-      ? ""
-      : `<button class="button secondary" data-action="request-fullscreen">${icon("maximize")}鎖定全螢幕</button>`;
-    return `
-      <div class="exam-lock ${active ? "is-active" : "is-warning"}">
-        <div>
-          <strong>${escapeHtml(status)}</strong>
-          <span>整份倒數 ${formatCountdown(examTimeRemaining(quiz))}；退出全螢幕、切頁或失焦會計入監考。</span>
-        </div>
-        ${button}
-      </div>
-    `;
-  }
+  // renderExamLockStatus() 已移除 —— 那是全螢幕鎖定的狀態列與「鎖定全螢幕」按鈕。
+  // 大考模式現在只剩整份倒數與無提示，剩下的倒數資訊在上面的計時盒裡就看得到。
 
   function renderHintPanel(problem) {
     const hints = hintsFor(problem);
@@ -5405,7 +5374,7 @@
 
   function renderRulesModal() {
     const ruleText = quiz && quiz.examMode
-      ? `大考模式為整份 ${Math.round((quiz.examDurationSec || 0) / 60)} 分鐘倒數，全部題目自己輸入答案。時間到會直接交卷；退出全螢幕、切頁或視窗失焦會被記錄為監考事件。`
+      ? `大考模式為整份 ${Math.round((quiz.examDurationSec || 0) / 60)} 分鐘倒數，全部題目自己輸入答案。時間到會直接交卷。中途切出去做別的事不會被記錄，也不會影響成績。`
       : "每題都有自己的倒數與切分頁限制。超時、跳過、答案不等價或超過切分頁限制，都會記為錯題。系統會在答題後顯示簡短解法。";
     return `
       <div class="modal-backdrop" data-action="close-modal">
@@ -6461,10 +6430,6 @@
       quiz.modal = "rules";
       render();
     }
-    if (action === "request-fullscreen" && quiz) {
-      requestQuizFullscreen();
-      render();
-    }
     if (action === "confirm-exit" && quiz) {
       quiz.modal = "exit";
       render();
@@ -6486,12 +6451,10 @@
           total: quiz.problems.length
         });
       }
-      const shouldExitFullscreen = Boolean(quiz && quiz.requireFullscreen);
       quiz = null;
       activePathNodeId = "";
       if (MODES[selectedMode] && MODES[selectedMode].hidden) selectedMode = "quick";
       view = "home";
-      if (shouldExitFullscreen) exitQuizFullscreen();
       render();
     }
     if (action === "reset-records") {
@@ -6612,7 +6575,6 @@
       accuracyMode: Boolean(mode.accuracyMode),
       examMode: Boolean(mode.exam),
       examDurationSec: mode.examDurationSec || 0,
-      requireFullscreen: Boolean(mode.requireFullscreen),
       answerMode: mode.forceAnswerMode || selectedAnswerMode
     });
   }
@@ -7224,7 +7186,6 @@
       modeKey: "named_exam",
       examMode: true,
       examDurationSec: config.durationSec,
-      requireFullscreen: true,
       noHint: true,
       answerMode: "free",
       namedExam: { id: setId, label: config.label }
@@ -8480,8 +8441,6 @@
       examMode: Boolean(options.examMode || mode.exam),
       examDurationSec: Number(options.examDurationSec || mode.examDurationSec || 0),
       examEndAt: options.examMode || mode.exam ? Date.now() + Number(options.examDurationSec || mode.examDurationSec || 0) * 1000 : 0,
-      requireFullscreen: Boolean(options.requireFullscreen || mode.requireFullscreen),
-      fullscreenStatus: options.requireFullscreen || mode.requireFullscreen ? "pending" : "",
       difficultyCap,
       pathNodeId: options.pathNodeId || "",
       pathGate: options.pathGate || null,
@@ -8496,7 +8455,6 @@
       bestStreak: 0,
       startedAt: Date.now(),
       questionStartedAt: Date.now(),
-      tabSwitches: {},
       choiceOptions: {},
       boardStrokes: {},
       boardTool: "pen",
@@ -8524,7 +8482,6 @@
       problem_count: quiz.problems.length,
       practice: Boolean(quiz.practice)
     });
-    if (quiz.requireFullscreen) requestQuizFullscreen();
     render();
   }
 
@@ -8804,11 +8761,6 @@
     if (!quiz) return;
     const current = getCurrentProblem();
     const input = quiz.draft.trim();
-    const totalTabs = quiz.tabSwitches[current.id] || 0;
-    if (!quiz.practice && !quiz.noTimer && totalTabs > current.tabLimit) {
-      recordAnswer({ status: "wrong", reason: "Tab limit", input });
-      return;
-    }
     recordAnswer(resolveAnswerSubmission(current, input, "Wrong"));
   }
 
@@ -8887,7 +8839,6 @@
       elapsed,
       earned,
       hints_used: usedHints,
-      tab_switches: quiz.tabSwitches[problem.id] || 0,
       practice: Boolean(quiz.practice)
     });
     const wrongCount = quiz.answers.filter((answer) => !answer.correct).length;
@@ -8956,7 +8907,6 @@
     if (quiz) {
       finalizeExamAnswers(quiz);
       const correct = quiz.answers.filter((answer) => answer.correct).length;
-      const tabSwitches = Object.values(quiz.tabSwitches || {}).reduce((sum, count) => sum + count, 0);
       trackEvent("session_complete", {
         mode: quiz.mode,
         topic: quiz.topic,
@@ -8965,7 +8915,6 @@
         answered_count: quiz.answers.length,
         correct_count: correct,
         score: quiz.score,
-        tab_switches: tabSwitches,
         practice: Boolean(quiz.practice)
       });
       saveQuizRecord(quiz);
@@ -8973,7 +8922,6 @@
     clearActiveSession();
     resultsDetailOpen = false;
     view = "results";
-    if (quiz && quiz.requireFullscreen) exitQuizFullscreen();
     render();
   }
 
@@ -9066,12 +9014,10 @@
     const remaining = quiz.examMode ? examTimeRemaining(quiz) : Math.max(0, current.timeLimit - elapsed);
     const timeNode = app.querySelector('[data-live="time"]');
     const timeBox = app.querySelector('[data-live-box="time"]');
-    const proctorNode = app.querySelector('[data-live="proctor"]');
-    const proctorBox = app.querySelector('[data-live-box="proctor"]');
+    const answeredNode = app.querySelector('[data-live="answered"]');
     if (timeNode) timeNode.textContent = quiz.examMode ? formatCountdown(remaining) : String(remaining);
     if (timeBox) timeBox.classList.toggle("is-danger", remaining <= (quiz.examMode ? 180 : 8));
-    if (proctorNode) proctorNode.textContent = quiz.examMode ? String(totalTabSwitches(quiz)) : `${quiz.tabSwitches[current.id] || 0}/${current.tabLimit}`;
-    if (proctorBox && quiz.examMode) proctorBox.classList.toggle("is-danger", totalTabSwitches(quiz) > 0);
+    if (answeredNode) answeredNode.textContent = `${quiz.answers.length}/${quiz.problems.length}`;
   }
 
   function stopTicker() {
@@ -9088,11 +9034,6 @@
   function examTimeRemaining(currentQuiz = quiz) {
     if (!currentQuiz || !currentQuiz.examMode || !currentQuiz.examEndAt) return 0;
     return Math.max(0, Math.ceil((currentQuiz.examEndAt - Date.now()) / 1000));
-  }
-
-  function totalTabSwitches(currentQuiz = quiz) {
-    if (!currentQuiz) return 0;
-    return Object.values(currentQuiz.tabSwitches || {}).reduce((sum, count) => sum + Number(count || 0), 0);
   }
 
   function formatCountdown(totalSeconds) {
@@ -11627,7 +11568,9 @@
       Timeout: "時間到",
       Skipped: "已跳過",
       Unanswered: "未作答",
-      "Tab limit": "切頁次數超過"
+      // 「切頁次數超過」這個判定已經移除，但舊紀錄裡可能還有這個 reason，
+      // 標籤留著才不會在歷史畫面上顯示成原始字串
+      "Tab limit": "切頁次數超過（舊制，已停用）"
     }[reason] || reason || "未通過";
   }
 
@@ -12239,12 +12182,7 @@
         const now = Date.now();
         if (now - lastVisibilityStamp < 400) return;
         lastVisibilityStamp = now;
-        const totalTabs = trackTabSwitch(current);
-        if (totalTabs > current.tabLimit) {
-          recordAnswer({ status: "wrong", reason: "Tab limit", input: quiz.draft || "" });
-        } else {
-          render();
-        }
+        render();
       }
     });
 
@@ -12254,110 +12192,19 @@
       const now = Date.now();
       if (!current || now - lastVisibilityStamp < 800) return;
       lastVisibilityStamp = now;
-      const totalTabs = trackTabSwitch(current);
-      if (totalTabs > current.tabLimit) {
-        recordAnswer({ status: "wrong", reason: "Tab limit", input: quiz.draft || "" });
-      } else {
-        render();
-      }
+      render();
     });
   }
 
-  function requestQuizFullscreen() {
-    if (!quiz || !quiz.requireFullscreen) return;
-    const target = document.documentElement || document.body;
-    const request = target && (
-      target.requestFullscreen ||
-      target.webkitRequestFullscreen ||
-      target.mozRequestFullScreen ||
-      target.msRequestFullscreen
-    );
-    if (!request) {
-      quiz.fullscreenStatus = "unsupported";
-      return;
-    }
-    try {
-      quiz.fullscreenStatus = "requested";
-      const result = request.call(target);
-      if (result && typeof result.then === "function") {
-        result
-          .then(() => {
-            if (!quiz) return;
-            quiz.fullscreenStatus = isFullscreenActive() ? "active" : "blocked";
-            render();
-          })
-          .catch(() => {
-            if (!quiz) return;
-            quiz.fullscreenStatus = "blocked";
-            render();
-          });
-      } else {
-        quiz.fullscreenStatus = isFullscreenActive() ? "active" : "requested";
-      }
-    } catch (_error) {
-      quiz.fullscreenStatus = "blocked";
-    }
-  }
-
-  function exitQuizFullscreen() {
-    const exit = document.exitFullscreen || document.webkitExitFullscreen || document.mozCancelFullScreen || document.msExitFullscreen;
-    if (!isFullscreenActive() || !exit) return;
-    try {
-      const result = exit.call(document);
-      if (result && typeof result.catch === "function") result.catch(() => {});
-    } catch (_error) {
-      // Browser fullscreen exit is best-effort only.
-    }
-  }
-
-  function isFullscreenActive() {
-    return Boolean(
-      document.fullscreenElement ||
-      document.webkitFullscreenElement ||
-      document.mozFullScreenElement ||
-      document.msFullscreenElement
-    );
-  }
-
-  function setupFullscreenTracking() {
-    const handler = () => {
-      if (!quiz || !quiz.requireFullscreen || view !== "quiz") return;
-      const active = isFullscreenActive();
-      quiz.fullscreenStatus = active ? "active" : "exited";
-      if (!active && !quiz.feedback) {
-        recordFullscreenExit();
-        return;
-      }
-      render();
-    };
-    ["fullscreenchange", "webkitfullscreenchange", "mozfullscreenchange", "MSFullscreenChange"].forEach((eventName) => {
-      document.addEventListener(eventName, handler);
-    });
-  }
-
-  function recordFullscreenExit() {
-    if (!quiz || view !== "quiz" || quiz.practice) return;
-    const current = getCurrentProblem();
-    if (!current) return;
-    const now = Date.now();
-    if (now - lastVisibilityStamp < 500) {
-      render();
-      return;
-    }
-    lastVisibilityStamp = now;
-    const totalTabs = trackTabSwitch(current);
-    trackEvent("fullscreen_exit", {
-      mode: quiz.mode,
-      topic: current.topic,
-      problem_id: current.id,
-      proctor_events: totalTabSwitches(quiz)
-    });
-    if (totalTabs > current.tabLimit) {
-      recordAnswer({ status: "wrong", reason: "Tab limit", input: quiz.draft || "" });
-    } else {
-      render();
-    }
-  }
+  // 全螢幕鎖定與切頁監控已經整組移除（2026-08）。
+  //
+  // 那組機制的立場是「假設使用者會作弊，所以要盯著他」，而這是一個
+  // **自己練給自己看**的工具 —— 想查答案的人本來就查得到，被判錯只會讓他
+  // 覺得被冤枉。真正的成本在誤傷：切出去接一通電話、iPad 上被通知蓋掉、
+  // 或者只是想開計算機，回來就發現這題已經算你答錯了。
+  //
+  // 大考模式保留真正有意義的部分：整份倒數、無提示、自己輸入答案。
+  // 那是「模擬考試環境」，不是「監視使用者」。
 
   function setupMathField() {
     if (!field) return;
@@ -12552,7 +12399,6 @@
   setupErrorReporting();
   setupVisibilityTracking();
   setupKeyboardShortcuts();
-  setupFullscreenTracking();
   setupMathField();
   // 帶著 #pack= 分享連結進來：直接落在出題工作坊的匯入預覽。
   if (CUSTOM && CUSTOM.pendingImport) {

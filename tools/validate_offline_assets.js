@@ -102,7 +102,10 @@ let shipped = new Set();
 const iconsPath = path.join(root, "assets/vendor/icons.js");
 if (fs.existsSync(iconsPath)) {
   const source = fs.readFileSync(iconsPath, "utf8");
-  const json = (source.match(/const ICONS = (\{[\s\S]*?\});\n/) || [])[1];
+  // 行尾要吃得下 CRLF。git 在 Windows checkout 時會把 LF 換成 CRLF，
+  // 於是這條原本寫死 \n 的正規式在本機永遠對不到 —— 而 CI 在 Linux 上是 LF，
+  // 所以它會表現成「本機紅、CI 綠」，是最難查的那一種。
+  const json = (source.match(/const ICONS = (\{[\s\S]*?\});\r?\n/) || [])[1];
   if (!json) fail("icons.js 裡找不到 ICONS 表");
   else {
     try { shipped = new Set(Object.keys(JSON.parse(json))); }
