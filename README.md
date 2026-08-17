@@ -47,7 +47,7 @@ Boss
 
 ## Current Features
 
-- **1488 題微積分題庫**
+- **1493 題微積分題庫**
 - **46 個技巧題包**
 - **主線路線圖**
 - **每日任務**
@@ -272,10 +272,10 @@ Technique: Frullani-type parameter integral
 | Type | Count |
 | --- | ---: |
 | Limits | 234 |
-| Derivatives / Multivariable derivatives | 440 |
+| Derivatives / Multivariable derivatives | 445 |
 | Integrals / Multiple integrals | 617 |
 | Series | 197 |
-| **Total** | **1488** |
+| **Total** | **1493** |
 
 Proof Lab currently includes **41 proof problems**. Proof problems are not included in timed sessions or daily missions.
 
