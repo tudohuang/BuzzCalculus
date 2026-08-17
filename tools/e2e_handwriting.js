@@ -318,7 +318,7 @@ async function run() {
     );
 
     /* ── 4. 但放下筆一段時間之後，手指還是能畫 ── */
-    await chrome.sleep(1600);
+    await chrome.sleep(900);
     const finger = await chrome.evaluate(`
       ${PEN}
       const before = window.__pen.inkPixels();
@@ -327,7 +327,7 @@ async function run() {
       return { before, after };
     `);
     check(
-      "放下筆超過一秒半，手指就能接手畫",
+      "放下筆之後手指很快就能接手畫",
       finger.after > finger.before + 100,
       `${finger.before} → ${finger.after} 個墨水像素`
     );
@@ -347,6 +347,46 @@ async function run() {
       "壓得重線就粗",
       pressure.heavy > pressure.light * 1.4,
       `輕 ${pressure.light} vs 重 ${pressure.heavy} 個像素`
+    );
+
+    /* ── 5.5 書寫中墨水要跟上筆尖，不是收筆才補 ── */
+    // 這是使用者回報「不靈敏」的真正原因，而且從像素上看得出來：
+    // 二次曲線要知道下一個取樣點才畫得出來，所以已提交的筆跡永遠停在
+    // 倒數第二個點。原本只有 pointerup 才補到真正的筆尖，於是寫的時候
+    // 墨水一直落後一截 —— 寫得越慢越明顯，而算數學的時候人本來就寫得慢。
+    const lag = await chrome.evaluate(`
+      ${PEN}
+      const canvas = window.__pen.canvas();
+      const ctx = canvas.getContext("2d");
+      // 量「筆尖附近有沒有墨水」：以最後一個取樣點為圓心取一小塊
+      const inkNear = (fx, fy) => {
+        const r = Math.round(Math.min(canvas.width, canvas.height) * 0.02);
+        const x = Math.max(0, Math.round(canvas.width * fx) - r);
+        const y = Math.max(0, Math.round(canvas.height * fy) - r);
+        const data = ctx.getImageData(x, y, r * 2, r * 2).data;
+        let n = 0;
+        for (let i = 3; i < data.length; i += 4) if (data[i] > 8) n += 1;
+        return n;
+      };
+
+      // 刻意**不送 pointerup**：模擬「筆還在紙上、正在寫」的那一刻
+      const endX = 0.8;
+      const endY = 0.62;
+      window.__pen.send("pointerdown", 0.2, 0.62, { pressure: 0.7, pointerId: 21 });
+      for (let i = 1; i <= 10; i += 1) {
+        window.__pen.send("pointermove", 0.2 + (endX - 0.2) * (i / 10), endY, { pressure: 0.7, pointerId: 21 });
+      }
+      const whileWriting = inkNear(endX, endY);
+      window.__pen.send("pointerup", endX, endY, { pressure: 0.7, pointerId: 21 });
+      const afterLift = inkNear(endX, endY);
+      return { whileWriting, afterLift };
+    `);
+    check(
+      "還在寫的時候，墨水就已經到筆尖",
+      lag.whileWriting > 0,
+      lag.whileWriting > 0
+        ? `筆尖附近 ${lag.whileWriting} 個墨水像素（收筆後 ${lag.afterLift}）`
+        : "筆尖附近沒有墨水 —— 筆跡落後筆尖，寫起來就是「不靈敏」"
     );
 
     /* ── 6. 橡皮擦是真的擦掉，不是拿背景色蓋 ── */

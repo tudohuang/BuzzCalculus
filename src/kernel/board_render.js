@@ -30,11 +30,19 @@
     return INK[surface] || INK.paper;
   }
 
-  function widthOf(point, isEraser, base) {
+  // 落筆瞬間的壓力下限。
+  //
+  // Apple Pencil 剛碰到玻璃時回報的壓力常常接近 0，要幾十毫秒才爬上來。
+  // 照原始值畫的話，每一筆的開頭都是一條 1.3px 的髮絲 —— 使用者的感覺不是
+  // 「這裡比較細」，是「筆沒反應」。所以壓力先墊到 0.35 再算寬度。
+  const MIN_PRESSURE = 0.35;
+  // 再加一個絕對下限，避免任何情況下畫出看不見的線。
+  const MIN_WIDTH_CSS = 1.6;
+
+  function widthOf(point, isEraser, base, ratio) {
     if (isEraser) return base;
-    // 壓感範圍刻意不從 0 開始 —— 輕輕帶過也要留得下痕跡，
-    // 不然使用者會以為筆沒反應。
-    return base * (0.55 + 1.05 * point.pressure);
+    const pressure = Math.max(MIN_PRESSURE, point.pressure);
+    return Math.max(MIN_WIDTH_CSS * ratio, base * (0.5 + 1.1 * pressure));
   }
 
   // 只畫「還沒畫過」的那一段，用 stroke.drawnTo 記進度。
@@ -42,8 +50,8 @@
   // 為什麼不每次重畫整塊板子：那是 O(n²)。實測寫到第三行就看得出頓，
   // 而 iPad 上的取樣率是 120–240Hz，點數累積得比想像中快。
   //
-  // finish=true 代表收筆，要把最後一小段補到真正的終點；
-  // 中途畫的時候刻意落後一個點，因為二次曲線需要知道下一個取樣點。
+  // finish=true 代表收筆，這時候最後一段會被記成「已提交」；
+  // 中途畫的時候也會補到筆尖，只是不記，下一次用曲線蓋過去（見下方註解）。
   function paintStrokeTail(canvas, ctx, stroke, options) {
     const opts = options || {};
     const finish = Boolean(opts.finish);
@@ -69,7 +77,7 @@
       if (!stroke.drawnTo) {
         const only = points[0];
         ctx.beginPath();
-        ctx.arc(only.x * canvas.width, only.y * canvas.height, widthOf(only, isEraser, base) / 2, 0, Math.PI * 2);
+        ctx.arc(only.x * canvas.width, only.y * canvas.height, widthOf(only, isEraser, base, ratio) / 2, 0, Math.PI * 2);
         ctx.fill();
         stroke.drawnTo = 1;
       }
@@ -91,23 +99,32 @@
       const from = mid(previous, control);
       const to = mid(control, next);
       ctx.beginPath();
-      ctx.lineWidth = widthOf(control, isEraser, base);
+      ctx.lineWidth = widthOf(control, isEraser, base, ratio);
       ctx.moveTo(from.x, from.y);
       ctx.quadraticCurveTo(px(control), py(control), to.x, to.y);
       ctx.stroke();
     }
     stroke.drawnTo = Math.max(1, points.length - 1);
 
-    if (finish && points.length >= 2) {
+    // 一律把最後一小段補到**真正的筆尖位置**，不是只有收筆的時候。
+    //
+    // 這是「不靈敏」的主因：二次曲線需要知道下一個取樣點才畫得出來，
+    // 所以已提交的曲線永遠停在倒數第二個點。原本只有 finish 才補這一段，
+    // 於是書寫過程中墨水一直落後筆尖 —— 寫得越慢，落後看起來越明顯，
+    // 而算數學的時候人本來就寫得慢。
+    //
+    // 代價是下一次會用曲線覆蓋掉這條直線，同一塊地方畫兩次。
+    // 墨色不透明、路徑幾乎重合，看不出來 —— 拿這個換掉筆尖的延遲是划算的。
+    if (points.length >= 2) {
       const last = points[points.length - 1];
       const beforeLast = points[points.length - 2];
       const from = mid(beforeLast, last);
       ctx.beginPath();
-      ctx.lineWidth = widthOf(last, isEraser, base);
+      ctx.lineWidth = widthOf(last, isEraser, base, ratio);
       ctx.moveTo(from.x, from.y);
       ctx.lineTo(px(last), py(last));
       ctx.stroke();
-      stroke.drawnTo = points.length;
+      if (finish) stroke.drawnTo = points.length;
     }
 
     ctx.restore();
