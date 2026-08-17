@@ -7901,14 +7901,139 @@ button,
   gap: 14px;
 }
 
-@media (min-width: 1240px) {
+/* 斷點原本設在 1240px，而那個數字幾乎不會生效：
+   Windows 預設 125% 縮放下，一個 1440px 的視窗只有 1023 CSS px。
+   也就是說大多數筆電使用者永遠看不到兩欄 —— 那等於白寫。
+   960px 才是「單欄之後右邊真的開始空掉」的實際門檻。 */
+@media (min-width: 960px) {
   .home-screen {
-    grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
     align-items: start;
   }
 
   /* 側欄比較窄，auto-fit 會排成 3+1 的斷行。四個入口就排成 2×2。 */
-  .home-aside .bucket-nav {
+  .home-aside .bucket-nav,
+  .home-aside .home-secondary {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+}
+
+/* ── 備份提醒：一條細的橫幅，不是一張跟主卡一樣大的卡 ──────────
+   原本它跟「今天的訓練」一樣高、而且排在前面，於是每天打開站台
+   第一個看到的是一則提醒，不是今天要做什麼。提醒的內容是對的，
+   但它不該跟主要行動搶版面。 */
+.backup-bar {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  padding: 10px 12px 10px 16px;
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--red, #b3261e);
+  border-radius: var(--radius);
+  background: var(--surface);
+  font-size: 0.88rem;
+}
+
+.backup-bar-text {
+  flex: 1 1 260px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.backup-bar-text strong {
+  font-size: 0.92rem;
+}
+
+.backup-bar-text span {
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+.backup-bar-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.backup-bar-actions .icon-button {
+  width: 34px;
+  height: 34px;
+}
+
+/* ── 首頁的弱點摘要 ─────────────────────────────────────────
+   首頁原本完全沒有展示這個產品的核心主張。站上說「會告訴你是不會還是
+   來不及」，而一個已經練了七十題的人打開來看不到任何關於自己的東西 ——
+   右半邊有一半是空的。這塊補的是那件事，不是版面。 */
+.home-weakness {
+  padding: 14px 16px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+
+.home-weakness-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.home-weakness-head .section-label {
+  margin: 0;
+}
+
+.home-weakness-list {
+  display: grid;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.home-weakness-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.home-weakness-row strong {
+  font-size: 0.92rem;
+  font-weight: 600;
+}
+
+.home-weakness-score {
+  font-size: 0.85rem;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+/* 條的顏色不用金色 —— 金色在這個介面裡代表進度與成就，
+   而這裡講的是「還沒練起來」。 */
+.home-weakness-bar {
+  height: 5px;
+  margin-top: 5px;
+  border-radius: 999px;
+  background: var(--line);
+  overflow: hidden;
+}
+
+.home-weakness-bar span {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  background: var(--line-strong);
+}
+
+.home-weakness-list small {
+  display: block;
+  margin-top: 5px;
+  font-size: 0.78rem;
+  line-height: 1.5;
+  color: var(--gold-dark);
 }
