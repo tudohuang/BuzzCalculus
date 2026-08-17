@@ -194,6 +194,81 @@ if (similarPairs.length) {
   if (similarPairs.length > 25) console.log(`  …另有 ${similarPairs.length - 25} 對`);
 }
 
+/* ── 人工複核的結果 ───────────────────────────────────────────
+   37 組語意重複在 2026-08-17 逐組看過。結論不是「刪掉一邊」——
+   兩邊通常分屬不同題包（一個是入門友善、一個是考古題風格），
+   刪任何一邊都會在那個題包上開一個洞。
+
+   真正的傷害是**同一局（或同一份考卷）抽到兩題一模一樣的**。
+   所以做法改成：把等價關係寫成側表，抽題時同一組只准出現一次。
+   內容一題都不刪，而且這個關係是機器每次重新算出來的。
+
+   下面這張表是**誤判**：指紋相同但題目要學的東西不一樣，不該視為等價。 */
+// 寫成陣列而不是以「a|b」當 key 的物件：手寫的那個字串順序打錯的話，
+// 排除會靜靜地失效，而且看起來一切正常。這裡一律排序後再比。
+const NOT_EQUIVALENT = [
+  {
+    ids: ["int-003", "gap-int-pf-002"],
+    why: "∫1/x 是背基本積分；∫(x+1)/(x²+x) 要先看出可以約分。答案一樣，要練的能力不一樣。"
+  },
+  {
+    ids: ["int-024", "depth-int-022"],
+    why: "兩個不同的重積分，只是值都是 1/3。內層積分的指紋恰好相同，但積分區域怎麼設才是兩題各自的重點。"
+  }
+];
+
+const notEquivalentKeys = new Set(NOT_EQUIVALENT.map((entry) => entry.ids.slice().sort().join("|")));
+
+const equivalence = {};
+let excluded = 0;
+semanticGroups.forEach((group) => {
+  const sorted = group.map((p) => p.id).sort();
+  if (notEquivalentKeys.has(sorted.join("|"))) { excluded += 1; return; }
+  group.forEach((problem) => { equivalence[problem.id] = sorted[0]; });
+});
+
+// 排除清單裡的題組如果因為改題而不再被判為重複，那條理由就過期了，
+// 留著只會誤導下一個讀的人。
+const liveKeys = new Set(semanticGroups.map((g) => g.map((p) => p.id).sort().join("|")));
+NOT_EQUIVALENT.forEach((entry) => {
+  const key = entry.ids.slice().sort().join("|");
+  if (!liveKeys.has(key)) {
+    console.log(`\n提醒：NOT_EQUIVALENT 裡的 ${entry.ids.join(" ↔ ")} 已經不再被判為重複，可以移除那條理由`);
+  }
+});
+
+if (process.argv.includes("--write-equivalence")) {
+  const ids = Object.keys(equivalence).sort();
+  const lines = [
+    "// 等價題側表 —— **由 tools/detect_duplicates.js --write-equivalence 產生，不要手改。**",
+    "//",
+    "// 「等價」的意思是：兩題只有記法差異（\\ln vs \\log、有沒有 \\left\\right、",
+    "// x^2/2 vs \\frac{x^2}{2}…），編譯出來是同一題。",
+    "//",
+    "// 為什麼不直接刪掉一邊：兩邊通常分屬不同題包，一個是入門友善、",
+    "// 一個是考古題風格。刪任何一邊都會在那個題包上開一個洞。",
+    "// 真正的傷害是同一局或同一份考卷抽到兩題一樣的 —— 所以改成抽題時去重。",
+    "//",
+    `// 產生時：${semanticGroups.length} 組語意重複，其中 ${excluded} 組經人工複核判定為誤判（見產生器內的 NOT_EQUIVALENT）。`,
+    "",
+    "(function registerEquivalence() {",
+    '  "use strict";',
+    "  var MAP = {",
+    ...ids.map((id) => `    ${JSON.stringify(id)}: ${JSON.stringify(equivalence[id])},`),
+    "  };",
+    "  window.BuzzEquivalence = {",
+    "    // 抽題去重用的鍵：等價題共用同一個鍵，其餘題目就是自己的 id",
+    "    keyOf: function (id) { return (id && MAP[id]) || id; },",
+    "    size: " + ids.length,
+    "  };",
+    "})();",
+    ""
+  ];
+  const out = path.join(__dirname, "..", "src", "kernel", "equivalence.js");
+  fs.writeFileSync(out, lines.join("\n"), "utf8");
+  console.log(`\n等價側表寫到 src/kernel/equivalence.js（${ids.length} 題，${excluded} 組判定為誤判）`);
+}
+
 const reportPath = path.join(__dirname, "..", "reports", "duplicates.json");
 fs.mkdirSync(path.dirname(reportPath), { recursive: true });
 fs.writeFileSync(reportPath, JSON.stringify({
@@ -214,6 +289,24 @@ if (ciMode && literalGroups.length) {
 // 在數學上恆等（都是 (1−x²)/2），指紋因此相同 —— 但兩題要學的東西
 // （積分區域怎麼設）根本不一樣。這種判斷要人來做。
 // 讓 CI 自動刪題，錯一次就是永久刪掉一題有價值的內容。
-if (ciMode && semanticGroups.length) {
-  console.log(`\n提醒：${semanticGroups.length} 組語意重複待人工複核（清單在 reports/duplicates.json）`);
+// 語意重複已在 2026-08-17 逐組複核完畢，結果落在 src/kernel/equivalence.js。
+// CI 要確認那份側表沒有跟現在算出來的結果脫節 —— 不然新增題目造成的新等價組
+// 會靜靜地不去重，而症狀是「同一局出現兩題一樣的」，很難被聯想到這裡。
+if (ciMode) {
+  const expected = Object.keys(equivalence).sort();
+  let actual = [];
+  try {
+    const sidecar = fs.readFileSync(path.join(__dirname, "..", "src", "kernel", "equivalence.js"), "utf8");
+    actual = [...sidecar.matchAll(/^\s{4}"([^"]+)":/gm)].map((m) => m[1]).sort();
+  } catch (_error) {
+    actual = [];
+  }
+  if (expected.join(",") !== actual.join(",")) {
+    console.error("\nsrc/kernel/equivalence.js 與現在算出來的等價組不一致。");
+    console.error(`  側表 ${actual.length} 題 / 現在 ${expected.length} 題`);
+    console.error("  跑這個更新：node tools/detect_duplicates.js --write-equivalence");
+    console.error("  新出現的組請先看過再寫入 —— 誤判要加進產生器裡的 NOT_EQUIVALENT。");
+    process.exit(1);
+  }
+  console.log(`\n語意重複 ${semanticGroups.length} 組已複核（${excluded} 組判定為誤判），等價側表 ${expected.length} 題`);
 }
