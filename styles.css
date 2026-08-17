@@ -1436,6 +1436,27 @@ button {
   font-weight: 700;
 }
 
+/* 「答案已驗算」的顏色刻意不是金色。
+   金色在這個介面裡代表「進度／成就」，而驗算是關於**正確性**，
+   兩件事不該用同一個訊號。 */
+.chip.is-verified {
+  color: #1f6a4c;
+  background: #eaf6ef;
+  border-color: #a9d7bf;
+  gap: 4px;
+}
+
+.chip.is-verified .icon {
+  width: 13px;
+  height: 13px;
+}
+
+:root[data-theme="dark"] .chip.is-verified {
+  color: #8fd3b0;
+  background: rgba(98, 201, 145, 0.14);
+  border-color: rgba(98, 201, 145, 0.4);
+}
+
 .chip.topic-limits {
   color: #7d5100;
   background: #fff5d6;
@@ -1529,72 +1550,16 @@ button {
   white-space: nowrap;
 }
 
-/* 宿敵對決：小積的解題進度車道 */
-.rival-lane {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 8px 12px;
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  background: var(--surface);
-}
 
-.rival-lane .rival-avatar {
-  font-size: 1.5rem;
-  line-height: 1;
-}
 
-.rival-info {
-  flex: 1;
-  min-width: 0;
-  display: grid;
-  gap: 4px;
-}
 
-.rival-meta {
-  display: flex;
-  justify-content: space-between;
-  gap: 8px;
-  font-size: 0.82rem;
-}
 
-.rival-meta strong {
-  white-space: nowrap;
-}
 
-.rival-bar {
-  height: 6px;
-  border-radius: 999px;
-  background: var(--line);
-  overflow: hidden;
-}
 
-.rival-bar span {
-  display: block;
-  height: 100%;
-  width: 0;
-  border-radius: inherit;
-  background: linear-gradient(90deg, #f0a35e, #d9534f);
-  transition: width 0.9s linear;
-}
 
-.rival-status {
-  font-size: 0.78rem;
-  white-space: nowrap;
-  color: var(--muted, #66706d);
-}
 
-.rival-lane.is-done {
-  border-color: #d9534f;
-}
 
-.rival-lane.is-done .rival-status {
-  color: #d9534f;
-  font-weight: 700;
-}
 
-.rival-outcome,
 .daily-one-outcome {
   display: flex;
   align-items: center;
@@ -1607,23 +1572,17 @@ button {
   text-align: left;
 }
 
-.rival-outcome .rival-avatar {
-  font-size: 1.8rem;
-}
 
-.rival-outcome p,
 .daily-one-outcome p {
   margin: 2px 0 0;
   font-size: 0.85rem;
   color: var(--muted, #66706d);
 }
 
-.rival-outcome.is-win,
 .daily-one-outcome.is-win {
   border-color: var(--green);
 }
 
-.rival-outcome.is-loss,
 .daily-one-outcome.is-loss {
   border-color: #d9534f;
 }
@@ -1632,8 +1591,6 @@ button {
   display: block;
 }
 
-:root[data-theme="dark"] .rival-lane,
-:root[data-theme="dark"] .rival-outcome,
 :root[data-theme="dark"] .daily-one-outcome {
   background: var(--panel);
   color: var(--ink);
@@ -1964,7 +1921,7 @@ button {
   inset: 0;
   z-index: 20;
   display: grid;
-  grid-template-rows: minmax(0, 1fr) auto;
+  grid-template-rows: auto minmax(0, 1fr) auto;
   gap: 10px;
   padding: max(12px, env(safe-area-inset-top)) max(12px, env(safe-area-inset-right)) max(12px, env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left));
   background: #fbfaf6;
@@ -1973,6 +1930,26 @@ button {
 .handwrite-shell.is-fullscreen .scratchboard-shell {
   min-height: 0;
   grid-template-rows: auto minmax(0, 1fr);
+}
+
+/* 全螢幕書寫時，題目釘在最上面。
+   算到一半要抬頭看一眼題目，是紙筆計算最自然的一個動作。 */
+.handwrite-prompt {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 8px 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+}
+
+.handwrite-prompt .math-inline {
+  font-size: 1.15rem;
+  white-space: nowrap;
 }
 
 .handwrite-shell.is-fullscreen .webwork-answer {
@@ -2007,16 +1984,73 @@ button {
   opacity: 0.62;
 }
 
+/* ── 手寫計算紙 ──────────────────────────────────────────────
+   iPad + Apple Pencil 是這個功能真正的使用情境。
+
+   最要命的不是筆跡品質，是**長按選取**：用筆算式的時候手掌一碰到
+   旁邊的題目，整段文字就反白起來，還跳出放大鏡跟「拷貝／查詢」選單。
+   一旦發生，你得先點空白處取消才能繼續寫。
+
+   所以整個作答畫面關掉選取與 callout，只有真的要輸入的欄位留著。 */
+.quiz-screen,
+.handwrite-shell,
+.scratchboard-shell {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* 輸入框要能選、能貼上、能叫游標 —— 這是唯一的例外。 */
+.quiz-screen input,
+.quiz-screen textarea,
+.quiz-screen select,
+.quiz-screen [contenteditable="true"] {
+  -webkit-user-select: text;
+  user-select: text;
+  -webkit-touch-callout: default;
+}
+
+/* 工具列在 iPad 上要能連點不觸發雙擊縮放。 */
+.board-tools .icon-button,
+.quiz-screen .button,
+.quiz-screen .choice-option {
+  touch-action: manipulation;
+}
+
 .blackboard {
   width: 100%;
   height: clamp(220px, 32vw, 340px);
   display: block;
-  border: 1px solid #20211f;
+  border: 1px solid var(--line-strong);
   border-radius: var(--radius);
-  background: #11130f;
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
   cursor: crosshair;
+  /* 手寫時不要讓瀏覽器搶走手勢去捲動或縮放 */
   touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+
+/* 方格紙。畫布本身保持透明，格線是 CSS 背景 ——
+   這樣橡皮擦可以用 destination-out 真的挖掉墨水，
+   而不是拿背景色蓋過去（那會連格線一起蓋掉）。 */
+.blackboard[data-surface="paper"],
+.review-board[data-surface="paper"] {
+  background-color: #fdfcf6;
+  background-image:
+    repeating-linear-gradient(to right, rgba(70, 100, 130, 0.16) 0 1px, transparent 1px 100%),
+    repeating-linear-gradient(to bottom, rgba(70, 100, 130, 0.16) 0 1px, transparent 1px 100%);
+  background-size: 26px 26px;
+  border-color: #cfc9ba;
+  box-shadow: inset 0 1px 3px rgba(32, 33, 31, 0.06);
+}
+
+.blackboard[data-surface="board"],
+.review-board[data-surface="board"] {
+  background-color: #11130f;
+  border-color: #20211f;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
 }
 
 .helper-row {
@@ -2671,9 +2705,8 @@ button {
   width: 100%;
   height: 160px;
   display: block;
-  border: 1px solid #20211f;
+  border: 1px solid var(--line-strong);
   border-radius: var(--radius);
-  background: #11130f;
 }
 
 .tag-row {
@@ -3283,7 +3316,7 @@ button {
   }
 
   .handwrite-shell.is-fullscreen {
-    grid-template-rows: minmax(0, 1fr) auto auto auto;
+    grid-template-rows: auto minmax(0, 1fr) auto;
   }
 
   .review-board {
@@ -6534,5 +6567,1309 @@ button {
   .creator-list,
   .creator-fields {
     grid-template-columns: 1fr;
+  }
+}
+
+/* ── 今天的訓練 ──────────────────────────────────────────────
+   首頁唯一的主 CTA。刻意做得比下方卡片更安靜：說服力來自 .today-why
+   那句「為什麼是這個」，不是視覺重量。 */
+.today-card {
+  display: grid;
+  gap: 10px;
+  margin-bottom: 18px;
+  padding: 22px 24px;
+  border: 1px solid var(--line);
+  border-left: 4px solid var(--gold);
+  border-radius: calc(var(--radius) + 8px);
+  background: linear-gradient(180deg, var(--panel), var(--surface));
+  box-shadow: var(--shadow);
+}
+
+.today-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.today-meta {
+  color: var(--muted);
+  font-size: 0.86rem;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.today-title {
+  margin: 0;
+  font-size: 1.32rem;
+  line-height: 1.25;
+}
+
+/* 這一句是整張卡的重點：推薦系統的信任全靠它 */
+.today-why {
+  margin: 0;
+  color: var(--ink);
+  font-size: 0.98rem;
+  line-height: 1.55;
+}
+
+.today-mix {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.84rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.today-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.today-note {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.8rem;
+  line-height: 1.5;
+}
+
+/* ── 首頁次要入口：最多兩個，而且是動態的 ────────────────────── */
+.home-secondary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.secondary-entry {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--panel);
+  color: var(--ink);
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 140ms ease, transform 140ms ease;
+}
+
+.secondary-entry:hover,
+.secondary-entry:focus-visible {
+  border-color: var(--line-strong);
+  transform: translateY(-1px);
+}
+
+.secondary-entry span {
+  display: grid;
+  gap: 1px;
+  min-width: 0;
+}
+
+.secondary-entry strong { font-size: 0.95rem; }
+.secondary-entry small { color: var(--muted); font-size: 0.78rem; }
+
+/* ── 一行成長證據 ───────────────────────────────────────────── */
+.growth-line {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  margin-bottom: 14px;
+  padding: 12px 16px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--ink);
+  text-align: left;
+  cursor: pointer;
+}
+
+.growth-line:hover,
+.growth-line:focus-visible { border-color: var(--line-strong); }
+
+.growth-line strong {
+  flex: 1;
+  font-size: 0.95rem;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── 四格 bucket 入口 ───────────────────────────────────────── */
+.bucket-nav {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 10px;
+}
+
+.bucket-nav button {
+  display: grid;
+  gap: 3px;
+  padding: 16px 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--panel);
+  color: var(--ink);
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 140ms ease, transform 140ms ease;
+}
+
+.bucket-nav button:hover,
+.bucket-nav button:focus-visible {
+  border-color: var(--gold);
+  transform: translateY(-1px);
+}
+
+.bucket-nav strong { font-size: 1.02rem; }
+.bucket-nav small { color: var(--muted); font-size: 0.78rem; line-height: 1.4; }
+
+.bucket-tabs { margin-bottom: 16px; }
+.bucket-tabs .segment { display: grid; gap: 2px; padding: 12px 10px; }
+.bucket-tabs .segment span { color: var(--muted); font-size: 0.72rem; line-height: 1.35; }
+
+.weak-pick-list {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.weak-pick-list li {
+  display: grid;
+  gap: 2px;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+
+.weak-pick-list span {
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.weak-pick-list small { color: var(--muted); font-size: 0.78rem; }
+
+/* ── 數據分頁 ───────────────────────────────────────────────── */
+.insights-screen { display: grid; gap: 14px; }
+.insights-trends { display: flex; gap: 14px; }
+.insights-trends div { display: grid; gap: 2px; justify-items: center; }
+.insights-trends span { color: var(--muted); font-size: 0.72rem; }
+
+.trend-chip {
+  display: inline-block;
+  padding: 1px 8px;
+  border-radius: 999px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.trend-chip.is-up { background: color-mix(in srgb, var(--green) 16%, transparent); color: var(--green); }
+.trend-chip.is-down { background: color-mix(in srgb, var(--red) 16%, transparent); color: var(--red); }
+.trend-chip.is-flat { background: color-mix(in srgb, var(--muted) 14%, transparent); color: var(--muted); }
+
+.insights-movers {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 10px;
+}
+
+.insights-movers .mover {
+  display: grid;
+  gap: 3px;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+
+.insights-movers span { color: var(--muted); font-size: 0.76rem; }
+
+.quadrant-svg {
+  width: 100%;
+  max-width: 420px;
+  height: auto;
+  margin: 4px auto 0;
+  display: block;
+}
+
+.quad-axis { stroke: var(--line-strong); stroke-width: 1; }
+.quad-split { stroke: var(--line); stroke-width: 1; stroke-dasharray: 3 4; }
+.quad-label { fill: var(--muted); font-size: 10px; }
+.quad-dot { stroke: var(--panel); stroke-width: 1.5; }
+.quad-dot.is-reflex { fill: var(--green); }
+.quad-dot.is-slow { fill: var(--blue); }
+.quad-dot.is-rushed { fill: var(--gold); }
+.quad-dot.is-unbuilt { fill: var(--red); }
+
+.quad-legend {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.quad-legend-item {
+  display: grid;
+  grid-template-columns: 12px 1fr;
+  align-items: center;
+  gap: 4px 8px;
+}
+
+.quad-legend-item small { grid-column: 2; color: var(--muted); font-size: 0.76rem; }
+.quad-swatch { grid-row: span 2; width: 10px; height: 10px; border-radius: 50%; }
+.quad-legend-item.is-reflex .quad-swatch { background: var(--green); }
+.quad-legend-item.is-slow .quad-swatch { background: var(--blue); }
+.quad-legend-item.is-rushed .quad-swatch { background: var(--gold); }
+.quad-legend-item.is-unbuilt .quad-swatch { background: var(--red); }
+
+.skill-rows,
+.cause-rows {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.skill-row {
+  display: grid;
+  gap: 5px;
+  padding: 11px 13px;
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--line-strong);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+
+.skill-row.is-weak { border-left-color: var(--red); }
+.skill-row.is-shaky { border-left-color: var(--gold); }
+.skill-row.is-solid { border-left-color: var(--blue); }
+.skill-row.is-reflex { border-left-color: var(--green); }
+
+.skill-row-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.skill-state {
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.skill-bar {
+  height: 5px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--line) 60%, transparent);
+  overflow: hidden;
+}
+
+.skill-fill { height: 100%; border-radius: 999px; background: var(--gold); }
+
+.skill-row-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.skill-diagnosis { margin: 2px 0 0; font-size: 0.85rem; line-height: 1.5; }
+
+.cause-row {
+  display: grid;
+  grid-template-columns: minmax(96px, auto) 1fr auto;
+  align-items: center;
+  gap: 10px;
+}
+
+.cause-name { font-size: 0.88rem; }
+
+.cause-bar {
+  height: 8px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--line) 60%, transparent);
+  overflow: hidden;
+}
+
+.cause-fill { height: 100%; border-radius: 999px; background: var(--blue); }
+.cause-row.is-algebra-slip .cause-fill { background: var(--gold); }
+.cause-row.is-timeout .cause-fill { background: var(--red); }
+
+.cause-count {
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* ── 信心自評與錯因 ─────────────────────────────────────────
+   刻意做得很輕：可跳過、不影響計分。問得太重就沒人答，資料永遠是空的。 */
+.confidence-prompt,
+.cause-prompt {
+  display: grid;
+  gap: 6px;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px dashed var(--line);
+}
+
+.confidence-ask,
+.cause-ask { color: var(--muted); font-size: 0.82rem; font-weight: 700; }
+
+.confidence-options,
+.cause-options { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+
+.confidence-skip {
+  padding: 4px 8px;
+  border: 0;
+  background: none;
+  color: var(--muted);
+  font-size: 0.78rem;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.cause-why { color: var(--muted); font-size: 0.78rem; line-height: 1.5; }
+.cause-prompt.is-auto { display: flex; align-items: baseline; gap: 8px; }
+.cause-prompt.is-auto span { font-size: 0.86rem; font-weight: 700; }
+.cause-prompt.is-auto small { color: var(--muted); font-size: 0.78rem; }
+
+.calib-group {
+  display: grid;
+  gap: 3px;
+  padding: 11px 13px;
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--line-strong);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+
+.calib-group + .calib-group { margin-top: 8px; }
+.calib-group.is-danger { border-left-color: var(--red); }
+.calib-group.is-win { border-left-color: var(--green); }
+.calib-group small { color: var(--muted); font-size: 0.78rem; }
+
+.calib-group ul {
+  display: grid;
+  gap: 4px;
+  margin: 4px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.calib-group li {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 0.88rem;
+}
+
+.calib-group li span {
+  color: var(--muted);
+  font-size: 0.8rem;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* ── 考試倒推 ───────────────────────────────────────────────── */
+.exam-plan-card { display: grid; gap: 10px; }
+
+.exam-countdown {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  font-variant-numeric: tabular-nums;
+}
+
+.exam-countdown strong { font-size: 1.6rem; }
+.exam-countdown span { color: var(--muted); font-size: 0.86rem; }
+
+.exam-warning {
+  margin: 0;
+  padding: 10px 12px;
+  border: 1px solid var(--red);
+  border-radius: var(--radius);
+  background: color-mix(in srgb, var(--red) 8%, transparent);
+  font-size: 0.88rem;
+  line-height: 1.55;
+}
+
+.exam-gap-list {
+  display: grid;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.exam-gap-list li {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 0.88rem;
+}
+
+.exam-gap-list li span {
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.exam-form {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 10px;
+  align-items: end;
+}
+
+.exam-form label { display: grid; gap: 4px; font-size: 0.82rem; color: var(--muted); }
+
+.exam-form input,
+.exam-form select {
+  padding: 8px 10px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--panel);
+  color: var(--ink);
+  font: inherit;
+}
+
+@media (max-width: 560px) {
+  .today-card { padding: 18px 16px; }
+  .today-head { flex-direction: column; gap: 2px; }
+  .today-actions .button { flex: 1 1 auto; min-width: 0; }
+  .cause-row { grid-template-columns: 1fr auto; }
+  .cause-bar { grid-column: 1 / -1; order: 3; }
+}
+
+/* ── 這題真正關鍵是什麼 ─────────────────────────────────────
+   結算後顯示，答對答錯都顯示。整個產品裡最便宜也最有效的教學元件。 */
+.key-idea {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin: 10px 0 0;
+  padding: 9px 12px;
+  border-left: 3px solid var(--gold);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  background: color-mix(in srgb, var(--gold) 8%, transparent);
+  font-size: 0.9rem;
+  line-height: 1.55;
+}
+
+.key-idea span {
+  flex: 0 0 auto;
+  color: var(--gold-dark);
+  font-size: 0.76rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+}
+
+.solution-stage.is-empty summary { color: var(--muted); }
+
+/* ── 作答中斷續傳 ───────────────────────────────────────────
+   排在首頁最上面：沒做完的一局比今天要做什麼更急。 */
+.resume-card {
+  border-left: 4px solid var(--blue);
+}
+
+.resume-age {
+  color: var(--muted);
+  font-size: 0.8rem;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* ── 匯出提醒 ───────────────────────────────────────────────
+   只在練到一定程度後提一次。太早提是雜訊，提太多次是推銷。 */
+.backup-notice {
+  border-left: 4px solid var(--red);
+}
+
+.backup-notice strong {
+  color: var(--red);
+}
+
+/* ── 開局 Onboarding ────────────────────────────────────────
+   每一步只有一個主要動作。舊的第一屏給 5 個並列選項，那不是「選一個起點」，
+   那是把決策成本丟給一個還不知道這站在幹嘛的人。 */
+.onboarding-screen {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 24px;
+}
+
+.onboarding-card {
+  display: grid;
+  gap: 16px;
+  width: min(620px, 100%);
+  padding: 32px 30px;
+  border: 1px solid var(--line);
+  border-radius: calc(var(--radius) + 10px);
+  background: var(--panel);
+  box-shadow: var(--shadow);
+}
+
+.onboarding-card h1 {
+  margin: 0;
+  font-size: 1.6rem;
+  line-height: 1.3;
+}
+
+.onboarding-lead {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.65;
+}
+
+.onboarding-points {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.onboarding-points li {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 0.94rem;
+  line-height: 1.55;
+}
+
+.onboarding-privacy {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.85rem;
+  line-height: 1.6;
+}
+
+.context-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 10px;
+}
+
+.context-option {
+  display: grid;
+  gap: 3px;
+  padding: 16px 16px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--ink);
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 140ms ease, transform 140ms ease;
+}
+
+.context-option:hover,
+.context-option:focus-visible {
+  border-color: var(--gold);
+  transform: translateY(-1px);
+}
+
+.context-option strong { font-size: 1.02rem; }
+.context-option small { color: var(--muted); font-size: 0.8rem; }
+
+.placement-next {
+  display: grid;
+  gap: 10px;
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+}
+
+.placement-next-lead {
+  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+@media (max-width: 560px) {
+  .onboarding-card { padding: 24px 18px; }
+  .onboarding-card h1 { font-size: 1.35rem; }
+}
+
+/* ── 無障礙：焦點可見 ────────────────────────────────────────
+   鍵盤使用者要看得到自己在哪裡。這一條放在最後，用一個夠高對比的外框
+   統一覆蓋所有互動元素 —— 個別元件各自定義的話一定會漏掉幾個。
+
+   用 :focus-visible 而不是 :focus：滑鼠點擊不該留下外框，
+   只有鍵盤導覽時才顯示。 */
+:where(button, a, [role="button"], input, select, textarea, summary, [tabindex]):focus-visible {
+  outline: 3px solid var(--blue);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+/* 深色模式下藍色對比不足，換成金色 */
+:root[data-theme="dark"] :where(button, a, [role="button"], input, select, textarea, summary, [tabindex]):focus-visible {
+  outline-color: var(--gold);
+}
+
+/* 鍵盤跳到主要內容用 —— 不用 tab 過整條導覽列 */
+.skip-to-content {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  z-index: 999;
+  padding: 10px 16px;
+  border-radius: 0 0 var(--radius) 0;
+  background: var(--ink);
+  color: var(--paper);
+  font-weight: 700;
+}
+
+.skip-to-content:focus {
+  left: 0;
+}
+
+/* KaTeX 的 MathML 只給輔助科技看，不能影響版面 */
+.katex .katex-mathml {
+  position: absolute;
+  clip: rect(1px, 1px, 1px, 1px);
+  padding: 0;
+  border: 0;
+  height: 1px;
+  width: 1px;
+  overflow: hidden;
+}
+
+/* 尊重「減少動態效果」的系統設定 */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ── 題庫詳情：難度三軸與永久題號 ────────────────────────────
+   rubric-chip 用等寬字，因為三個數字要能一眼對齊比較 ——
+   「步數 3 · 冷門 1 · 計算 3」跟隔壁題並排時，看的是哪一軸不同。 */
+.rubric-chip {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+}
+
+/* 人工複核過的難度給一個記號：這個難度有人負責，不是機器推的 */
+.rubric-chip.is-reviewed {
+  border-color: var(--gold);
+}
+
+.problem-uid {
+  font-variant-numeric: tabular-nums;
+  opacity: 0.7;
+}
+
+/* ── 難度校準包（選填） ──────────────────────────────────────
+   說明文字必須跟按鈕在一起。把「這份檔案裡有什麼」藏進條款或另一頁，
+   等於要求使用者在不知情的狀況下按下匯出。 */
+.calibration-optin {
+  margin-top: 14px;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface-soft, transparent);
+}
+
+.calibration-optin p {
+  margin: 6px 0;
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+.calibration-contents {
+  opacity: 0.85;
+}
+
+.calibration-preview {
+  max-height: 340px;
+  overflow: auto;
+  padding: 12px;
+  border-radius: 8px;
+  background: var(--ink);
+  color: var(--paper);
+  font-size: 0.78rem;
+  line-height: 1.5;
+  text-align: left;
+  white-space: pre;
+}
+
+.wide-modal {
+  max-width: min(720px, 92vw);
+}
+
+/* ── 上次的草稿 ──────────────────────────────────────────────
+   預設收起來。直接攤開等於把上次的做法塞到眼前，
+   那就不是重做，是照抄。 */
+.previous-board {
+  margin-top: 10px;
+  border: 1px dashed var(--line);
+  border-radius: var(--radius);
+  padding: 8px 12px;
+}
+
+.previous-board > summary {
+  cursor: pointer;
+  font-size: 0.85rem;
+  opacity: 0.85;
+}
+
+.blackboard.is-readonly {
+  margin-top: 10px;
+  pointer-events: none;
+  opacity: 0.9;
+}
+
+/* ── 完整推導的步驟列 ────────────────────────────────────────
+   一句話的推導對已經會的人是提醒，對不會的人是天書。
+   分成步驟之後，卡在第幾步是看得出來的。 */
+.solution-steps {
+  margin: 0;
+  padding-left: 1.3em;
+  line-height: 1.75;
+}
+
+.solution-steps li {
+  margin-bottom: 4px;
+}
+
+.solution-steps li::marker {
+  font-weight: 700;
+  opacity: 0.6;
+}
+
+/* 機器推導的提示要標示清楚 —— 不要讓它看起來像作者寫的 */
+.stage-derived {
+  margin-top: 8px;
+  font-size: 0.8rem;
+  opacity: 0.65;
+}
+
+/* ── 法務頁（隱私政策 / 服務條款）─────────────────────────────
+   刻意用跟 app 一樣的字體與配色：條款讀起來像另一個網站，
+   本身就是一種不信任感的來源。 */
+.legal-body {
+  background: var(--paper);
+  color: var(--ink);
+}
+
+.legal-page {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 48px 24px 80px;
+  line-height: 1.85;
+}
+
+.legal-page h1 {
+  font-size: 2rem;
+  margin-bottom: 6px;
+}
+
+.legal-page h2 {
+  margin-top: 38px;
+  margin-bottom: 10px;
+  font-size: 1.2rem;
+}
+
+.legal-page h3 {
+  margin-top: 22px;
+  margin-bottom: 6px;
+  font-size: 1rem;
+}
+
+.legal-page p,
+.legal-page li {
+  font-size: 0.95rem;
+}
+
+.legal-page ul {
+  padding-left: 1.3em;
+}
+
+.legal-page li {
+  margin-bottom: 6px;
+}
+
+.legal-updated {
+  opacity: 0.6;
+  font-size: 0.85rem;
+}
+
+.legal-lead {
+  margin-top: 18px;
+  padding: 14px 16px;
+  border-left: 3px solid var(--gold);
+  background: var(--surface-soft, transparent);
+}
+
+.legal-note {
+  color: var(--muted);
+}
+
+.legal-foot {
+  margin-top: 34px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+  font-size: 0.88rem;
+  color: var(--muted);
+}
+
+.legal-emphasis {
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+
+.legal-back {
+  font-size: 0.9rem;
+  opacity: 0.8;
+}
+
+/* ── 設定頁的隱私控制項 ─────────────────────────────────────── */
+.privacy-controls {
+  margin-top: 14px;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+
+.privacy-row {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.privacy-row p {
+  margin: 4px 0 0;
+  font-size: 0.85rem;
+  opacity: 0.85;
+}
+
+.privacy-links {
+  margin-top: 12px;
+  font-size: 0.85rem;
+  display: flex;
+  gap: 8px;
+}
+
+/* 連結要用產品自己的配色。
+   瀏覽器預設的藍色／已讀紫色，在一份「請相信我們怎麼處理你的資料」的頁面上
+   讀起來像是這一段不是我們做的 —— 而信任正是這兩頁唯一的用途。 */
+.legal-page a,
+.privacy-links a,
+.legal-back a {
+  color: var(--ink);
+  text-decoration-color: var(--gold);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
+}
+
+.legal-page a:visited,
+.privacy-links a:visited,
+.legal-back a:visited {
+  color: var(--ink);
+}
+
+.legal-page a:hover,
+.privacy-links a:hover,
+.legal-back a:hover {
+  color: var(--gold-dark);
+  text-decoration-color: var(--gold-dark);
+}
+
+/* 分析開關的狀態：按鈕只負責動作，現在的狀態放在標題旁邊 */
+.privacy-state {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 1px 8px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  vertical-align: 1px;
+}
+
+.privacy-state.is-on {
+  background: rgba(220, 167, 45, 0.24);
+  color: var(--gold-dark);
+}
+
+.privacy-state.is-off {
+  background: var(--line);
+  opacity: 0.85;
+}
+
+/* 刪除確認：紅色只用在這裡，讓它跟其他按鈕明顯不同 */
+.button.danger {
+  background: #b3261e;
+  color: #fff;
+  border-color: #b3261e;
+}
+
+.erase-warning {
+  font-weight: 700;
+}
+
+/* ── 有新版本 ───────────────────────────────────────────────
+   釘在底部而不是蓋住畫面：更新是通知，不是必須馬上處理的事。
+   作答中的時候這一條根本不會 render（見 renderUpdateBanner）。 */
+.update-banner {
+  position: fixed;
+  left: 50%;
+  bottom: max(16px, env(safe-area-inset-bottom));
+  transform: translateX(-50%);
+  z-index: 18;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  max-width: calc(100vw - 24px);
+  padding: 8px 10px 8px 16px;
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  background: var(--panel, #fff);
+  box-shadow: var(--shadow);
+  font-size: 0.88rem;
+}
+
+.update-banner .icon-button {
+  width: 32px;
+  height: 32px;
+}
+
+@media (max-width: 520px) {
+  .update-banner {
+    border-radius: var(--radius);
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+}
+
+/* ── 回報題目 ───────────────────────────────────────────────── */
+.report-modal {
+  max-width: 620px;
+}
+
+.report-lead {
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+.report-reasons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 12px 0;
+}
+
+.report-reasons .tag-button.is-active {
+  border-color: var(--gold);
+  background: rgba(220, 167, 45, 0.16);
+}
+
+/* 回報內容原樣攤開：使用者按下去之前看到的，就是實際會送出去的那份。 */
+.report-preview {
+  margin: 0 0 14px;
+  padding: 12px 14px;
+  max-height: 240px;
+  overflow: auto;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface-sunk, rgba(32, 33, 31, 0.04));
+  font-family: ui-monospace, "SFMono-Regular", "Cascadia Mono", Consolas, monospace;
+  font-size: 0.8rem;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.erase-hint {
+  font-size: 0.85rem;
+  opacity: 0.8;
+}
+
+/* ── 列印 ────────────────────────────────────────────────────
+   紙本是台灣學生真正的複習載體。不給列印，使用者就自己截圖 ——
+   而那個成品長得完全不像這個產品。
+
+   原則：印出來的是**題目**，不是介面。所有導覽、按鈕、狀態列全部拿掉，
+   顏色轉成黑白（省墨，而且影印之後還看得清楚），題目不跨頁斷開。 */
+@media print {
+  :root {
+    --paper: #fff;
+    --panel: #fff;
+    --surface: #fff;
+    --ink: #000;
+    --muted: #333;
+    --line: #bbb;
+    --line-strong: #888;
+    --shadow: none;
+  }
+
+  html,
+  body {
+    background: #fff !important;
+    color: #000;
+  }
+
+  /* 介面留在螢幕上 */
+  .topbar,
+  .bucket-nav,
+  .action-row,
+  .page-head .action-row,
+  .update-banner,
+  .modal-backdrop,
+  .skip-to-content,
+  .tag-row,
+  .board-tools,
+  .triage-head button,
+  .segmented {
+    display: none !important;
+  }
+
+  .screen,
+  .panel,
+  .page-panel {
+    box-shadow: none !important;
+    border: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    background: #fff !important;
+  }
+
+  /* 一題不要被切成兩頁 —— 印出來翻頁對照是最惱人的體驗 */
+  .mistake-item,
+  .triage-list li,
+  .review-item,
+  .library-problem-card {
+    break-inside: avoid;
+    page-break-inside: avoid;
+    border: 1px solid #ccc;
+    border-radius: 0;
+    margin-bottom: 10px;
+    padding: 10px 12px;
+  }
+
+  h2,
+  h3 {
+    break-after: avoid;
+    page-break-after: avoid;
+  }
+
+  /* 手寫草稿印出來是空白的方格，沒有意義 */
+  canvas {
+    display: none !important;
+  }
+
+  a[href]::after {
+    content: "";
+  }
+
+  /* 每一頁的頁首資訊，讓印出來的紙自己說得出是什麼 */
+  .page-head::before {
+    content: "BuzzCalculus 錯題本";
+    display: block;
+    font-size: 0.8rem;
+    letter-spacing: 0.08em;
+    color: #555;
+    margin-bottom: 4px;
+  }
+}
+
+/* 弱點處方：「你哪裡弱」是資訊，「先補哪裡」才是產品。
+   回頭補前置的那一條要看起來跟一般說明不同 —— 它是一個指令。 */
+.weak-plan {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  margin: 8px 0 0;
+  padding: 8px 10px;
+  border-radius: var(--radius);
+  background: rgba(32, 33, 31, 0.04);
+  font-size: 0.85rem;
+  line-height: 1.55;
+}
+
+.weak-plan .icon {
+  flex: none;
+  width: 15px;
+  height: 15px;
+  margin-top: 3px;
+}
+
+.weak-plan.is-backtrack {
+  background: rgba(220, 167, 45, 0.14);
+  color: var(--gold-dark);
+}
+
+:root[data-theme="dark"] .weak-plan {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+/* ── 出卷 ────────────────────────────────────────────────────
+   螢幕上是一個工具，印出來是一份考卷。所以控制項一律 .no-print，
+   而 .paper-sheet 在列印時要看起來像老師手上那張紙。 */
+.paper-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 14px 0;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+
+.paper-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.paper-field select {
+  min-height: 38px;
+  padding: 0 10px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius);
+  background: var(--panel, #fff);
+  color: var(--ink);
+  font-size: 0.9rem;
+}
+
+.paper-field.paper-check {
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  align-self: flex-end;
+  min-height: 38px;
+}
+
+.paper-sheet {
+  margin-top: 18px;
+}
+
+.paper-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  padding-bottom: 8px;
+  margin-bottom: 14px;
+  border-bottom: 2px solid var(--ink);
+  font-size: 0.9rem;
+}
+
+.paper-head span {
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+
+.paper-list {
+  margin: 0;
+  padding-left: 1.6em;
+}
+
+.paper-item {
+  margin-bottom: 18px;
+  padding-bottom: 12px;
+  border-bottom: 1px dashed var(--line);
+}
+
+.paper-item.is-locked .paper-item-head {
+  color: var(--gold-dark);
+}
+
+.paper-item-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 0.75rem;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+
+.paper-answer {
+  margin: 8px 0 0;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+/* 不附答案的時候留計算空間 —— 印出來要能直接在上面寫 */
+.paper-space {
+  height: 74px;
+  margin-top: 8px;
+  border-bottom: 1px solid var(--line-soft, #e7e3da);
+}
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
+
+  .paper-item {
+    break-inside: avoid;
+    page-break-inside: avoid;
+    border-bottom: none;
+  }
+
+  .paper-head {
+    border-bottom: 2px solid #000;
+  }
+
+  .paper-space {
+    border-bottom: 1px solid #999;
+  }
+
+  /* 出卷頁不要套用錯題本的頁首 */
+  .paper-screen .page-head::before {
+    content: "";
+  }
+}
+
+/* ── 首頁的兩欄（只在寬螢幕）────────────────────────────────
+   窄螢幕維持單欄、順序不變 —— 手機上兩欄只會把每一欄擠到讀不下去。
+   1240px 以上才分欄，因為那是「單欄之後右邊真的空掉」的寬度。 */
+.home-lead,
+.home-aside {
+  display: grid;
+  gap: 14px;
+  align-content: start;
+}
+
+.home-screen {
+  display: grid;
+  gap: 14px;
+}
+
+@media (min-width: 1240px) {
+  .home-screen {
+    grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+    align-items: start;
+  }
+
+  /* 側欄比較窄，auto-fit 會排成 3+1 的斷行。四個入口就排成 2×2。 */
+  .home-aside .bucket-nav {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }

@@ -5,7 +5,7 @@
   // genuinely hard problems calibrated against the existing boss bank.
   // Styled after MIT, Cambridge Tripos, Oxford, Princeton, Harvard, Caltech,
   // Berkeley, ETH, Todai and Putnam. Answers use WebWork notation (log = ln).
-  const SOURCE = "World university & competition pack 2026";
+  const SOURCE = "Buzz 國際難題包 2026";
   const TIME = { 1: 35, 2: 55, 3: 90, 4: 150, 5: 240, 6: 340 };
   const problems = [];
 
@@ -20,7 +20,9 @@
       timeLimit: TIME[rank] || 120,
       tabLimit: 1,
       ...p,
-      tags: Array.from(new Set([...(p.tags || []), "world-universities", p.school, ...rankTags].filter(Boolean)))
+      // 名校署名不進 tags：學校名只留在 p.school 供題庫詳情顯示，
+      // 免得練習畫面的技巧 chip 變成「MIT / Cambridge」這種出處標籤。
+      tags: Array.from(new Set([...(p.tags || []), "world-universities", ...rankTags].filter(Boolean)))
     });
   }
   function N(id, topic, rank, prompt, answer, school, tags, solution) {
@@ -47,7 +49,7 @@
   N("world-012", "limits", 4, "\\lim_{x\\to 0}\\left(\\frac{1}{x^2}-\\cot^2 x\\right)", "2/3", "Princeton", ["taylor", "trig-limit"], "cot^2 x = 1/x^2 - 2/3 - ...");
   N("world-013", "limits", 4, "\\lim_{x\\to 0}\\left(\\frac{e^x-1}{x}\\right)^{1/x}", "exp(1/2)", "Todai", ["exponential-limit", "taylor"], "(e^x-1)/x = 1 + x/2 + ...; limit e^{1/2}.");
   N("world-014", "integrals", 4, "\\int_0^{\\pi/4}\\log(1+\\tan x)\\,dx", "pi*log(2)/8", "Putnam", ["kings-property", "log-integral"], "x -> π/4 - x symmetry.");
-  N("world-015", "integrals", 4, "\\int_0^{1}\\frac{\\log(1+x)}{1+x^2}\\,dx", "pi*log(2)/8", "MIT", ["feynman"], "Substitute x=tan θ; the Putnam log integral.");
+  N("world-015", "integrals", 4, "\\int_0^{1}\\frac{\\log(1+x)}{1+x^2}\\,dx", "pi*log(2)/8", "MIT", ["feynman"], "Substitute x=tan θ; the classic log integral.");
   N("world-016", "integrals", 4, "\\int_0^{\\infty}\\frac{\\cos(2x)-\\cos(3x)}{x}\\,dx", "log(3/2)", "Cambridge", ["frullani"], "Frullani for cosines.");
   N("world-017", "integrals", 4, "\\int_0^{\\infty}\\frac{dx}{1+x^3}", "2*pi/(3*sqrt(3))", "Harvard", ["beta-function"], "(π/3)/sin(π/3).");
   N("world-018", "integrals", 4, "\\int_0^{1}\\frac{\\log x}{(1+x)^2}\\,dx", "-log(2)", "Oxford", ["integration-by-parts"], "By parts gives -log 2.");

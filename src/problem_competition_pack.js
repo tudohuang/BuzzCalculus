@@ -4,7 +4,7 @@
   // Putnam-style problems, hard derivatives, and tough applications.
   // All ranked 4-6 so they never enter the easy (R1-2) practice pools.
   // Answers use WebWork notation (log = ln).
-  const SOURCE = "Putnam / hard derivatives / applications pack 2026";
+  const SOURCE = "Buzz 競賽難題包 2026";
   const TIME = { 4: 150, 5: 240, 6: 340 };
   const problems = [];
 
@@ -19,7 +19,9 @@
       timeLimit: TIME[rank] || 200,
       tabLimit: 1,
       ...p,
-      tags: Array.from(new Set([...(p.tags || []), p.school, ...rankTags].filter(Boolean)))
+      // 名校署名不進 tags：學校名只留在 p.school 供題庫詳情顯示，
+      // 免得練習畫面的技巧 chip 變成「MIT / Putnam」這種出處標籤。
+      tags: Array.from(new Set([...(p.tags || []), ...rankTags].filter(Boolean)))
     });
   }
   function N(id, topic, rank, prompt, answer, school, tags, solution) {

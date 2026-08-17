@@ -12,32 +12,18 @@
     limits: { label: "極限", short: "Lim", className: "topic-limits", accent: "#f6b739" },
     derivatives: { label: "微分", short: "Der", className: "topic-derivatives", accent: "#4ba8dd" },
     integrals: { label: "積分", short: "Int", className: "topic-integrals", accent: "#9370d8" },
-    series: { label: "級數", short: "Ser", className: "topic-series", accent: "#31ad72" },
-    physics: { label: "物理", short: "Phy", className: "topic-physics", accent: "#e0703f" },
-    chemistry: { label: "化學", short: "Chem", className: "topic-chemistry", accent: "#d1477f" }
+    series: { label: "級數", short: "Ser", className: "topic-series", accent: "#31ad72" }
   };
 
-  // 理科秒殺題（problem_science_pack.js）不是微積分，所以只在使用者主動選了
-  // 物理 / 化學題型或理科訓練包時才進池；快速訓練、每日挑戰、每週卷、大考模式、
-  // 定位測驗與主線路徑都維持純微積分。
-  const SCIENCE_TOPICS = new Set(["physics", "chemistry"]);
-  const SCIENCE_PACKS = new Set(["science_flash", "physics_flash", "chemistry_flash", "rotation_thermo", "chem_memory"]);
-
-  function isScienceProblem(problem) {
-    return Boolean(problem) && SCIENCE_TOPICS.has(problem.topic);
-  }
-
-  function calculusOnly(list) {
-    return (list || []).filter((problem) => !isScienceProblem(problem));
-  }
-
-  function scienceRequested(topic, packKey) {
-    return SCIENCE_TOPICS.has(topic) || SCIENCE_PACKS.has(packKey);
-  }
+  // 2026-08：理科秒殺包（物理 90 + 化學 81）已從 BuzzCalculus 移除。
+  // 這個站專攻微積分，理科歸姊妹站 BuzzPhysics —— 一個站同時放兩科，
+  // 抽題、雷達、主線都要處處防污染，成本比價值高。
+  // 題庫現在是純微積分，由 tools/validate_calculus_only.js 在 CI 鎖住。
 
   const MODES = {
     quick: {
       label: "快速訓練",
+      bucket: "practice",
       note: "12 題混合",
       count: 12,
       topicLocked: false,
@@ -46,6 +32,7 @@
     },
     topic: {
       label: "單題型訓練",
+      bucket: "practice",
       note: "單主題 10 題",
       count: 10,
       topicLocked: true,
@@ -54,6 +41,7 @@
     },
     daily: {
       label: "每日挑戰",
+      bucket: "challenge",
       note: "每日固定題組",
       count: 12,
       topicLocked: false,
@@ -62,6 +50,7 @@
     },
     practice: {
       label: "練習模式",
+      bucket: "practice",
       note: "不限時不扣分 12 題",
       count: 12,
       topicLocked: false,
@@ -71,6 +60,7 @@
     },
     brutal: {
       label: "進階訓練",
+      bucket: "challenge",
       note: "只抽難題 14 題",
       count: 14,
       topicLocked: false,
@@ -80,6 +70,7 @@
     },
     boss: {
       label: "階梯測驗",
+      bucket: "challenge",
       note: "由易到難 16 題",
       count: 16,
       topicLocked: false,
@@ -88,6 +79,7 @@
     },
     boss_rush: {
       label: "Boss 連戰",
+      bucket: "challenge",
       note: "Boss 題連戰，錯一題就結算",
       count: 10,
       topicLocked: false,
@@ -95,17 +87,9 @@
       boss: true,
       suddenDeath: true
     },
-    rival: {
-      label: "宿敵對決",
-      note: "AI 宿敵「小積」同場搶分 10 題，贏了它會變強",
-      count: 10,
-      topicLocked: false,
-      daily: false,
-      boss: false,
-      rival: true
-    },
     daily_one: {
       label: "每日一題",
+      bucket: "challenge",
       note: "全站同一題，一天一次",
       count: 1,
       topicLocked: false,
@@ -114,7 +98,8 @@
     },
     exam: {
       label: "大考模式",
-      note: "20 題 / 45 分鐘，WebWork，全螢幕監考",
+      bucket: "exam",
+      note: "20 題 / 45 分鐘，自己輸入答案，全螢幕監考",
       count: 20,
       topicLocked: false,
       daily: false,
@@ -129,6 +114,7 @@
     },
     integral_bee: {
       label: "Integral Bee",
+      bucket: "challenge",
       note: "積分速度訓練 12 題",
       count: 12,
       topicLocked: false,
@@ -138,6 +124,7 @@
     },
     no_hint: {
       label: "No Hint",
+      bucket: "practice",
       note: "無提示計分挑戰",
       count: 12,
       topicLocked: false,
@@ -147,6 +134,7 @@
     },
     accuracy: {
       label: "正確率",
+      bucket: "challenge",
       note: "不限時，錯題重罰",
       count: 12,
       topicLocked: false,
@@ -157,6 +145,7 @@
     },
     survival: {
       label: "生存",
+      bucket: "challenge",
       note: "最多錯 3 題",
       count: 30,
       topicLocked: false,
@@ -166,6 +155,7 @@
     },
     warmup: {
       label: "Warm-up",
+      bucket: "practice",
       note: "入場暖身 5 題",
       count: 5,
       topicLocked: false,
@@ -175,6 +165,7 @@
     },
     cooldown: {
       label: "Cooldown",
+      bucket: "practice",
       note: "收操複習，不計分",
       count: 5,
       topicLocked: false,
@@ -185,6 +176,7 @@
     },
     mistakes: {
       label: "錯題重練",
+      bucket: "weakness",
       note: "錯題重練",
       count: 12,
       topicLocked: false,
@@ -194,6 +186,7 @@
     },
     placement: {
       label: "定位測驗",
+      bucket: "practice",
       note: "8 題調適定位，約 5 分鐘",
       count: 8,
       topicLocked: false,
@@ -203,6 +196,7 @@
     },
     weekly: {
       label: "每週挑戰",
+      bucket: "exam",
       note: "每週固定 10 題，全站同卷",
       count: 10,
       topicLocked: false,
@@ -218,18 +212,20 @@
       note: "四選一，點選即作答"
     },
     free: {
-      label: "WebWork",
-      note: "答案欄 + LaTeX 預覽 + 黑板草稿"
+      label: "自己寫",
+      note: "答案欄 + 算式預覽 + 手寫計算紙"
     }
   };
 
   const TRAINING_PACKS = {
-    todai_burst: { label: "Todai Burst", note: "R6 IBP / Wallis / high derivatives", tags: ["todai-burst"] },
-    nightmare_boss: { label: "終極挑戰", note: "R6 最難題：名校數分 / MIT theory / Todai-style", tags: ["true-boss"] },
-    world_universities: { label: "世界名校", note: "MIT / Cambridge / Putnam 等，易到爆難 100 題", tags: ["world-universities"] },
-    competition: { label: "競賽精選", note: "Putnam / 硬微分 / 應用難題（R4-6）", tags: ["competition"] },
-    damo_longform: { label: "達摩院長題", note: "競賽風格長題：漸近 / 難積分 / 難級數（R4-6）", tags: ["damo"] },
-    putnam: { label: "Putnam", note: "Putnam 歷年風格題", tags: ["putnam"] },
+    // 題包 key 一律不改（分享連結與既有紀錄靠它），只把對外顯示的名校字樣換成
+    // Buzz 自己的難度語言。出處保留在 problem.school，只在題庫詳情露出。
+    todai_burst: { label: "高速反射 R6", note: "R6 IBP / Wallis / 高階導數速決", tags: ["todai-burst"] },
+    nightmare_boss: { label: "終極挑戰", note: "R6 最難題：硬派數分 / 理論型 / 長鏈推導", tags: ["true-boss"] },
+    world_universities: { label: "國際難題", note: "R1-R6 全跨度，由易到爆難 100 題", tags: ["world-universities"] },
+    competition: { label: "競賽難題", note: "競賽級：硬微分 / 應用難題（R4-6）", tags: ["competition"] },
+    damo_longform: { label: "長題挑戰", note: "競賽風格長題：漸近 / 難積分 / 難級數（R4-6）", tags: ["damo"] },
+    putnam: { label: "競賽經典", note: "競賽風格經典題型（R4-6）", tags: ["putnam"] },
     all: { label: "全部技巧", note: "不限制 tags", tags: [] },
     beginner_warmup: { label: "新手暖身", note: "R1-R2 基礎題", tags: ["beginner-friendly"] },
     boss_challenge: { label: "Boss 挑戰", note: "R5-R6 防強人題", tags: ["boss-rank"] },
@@ -270,21 +266,15 @@
     convergence_tests: { label: "審斂", note: "級數判別與端點", tags: ["convergence-test", "endpoint-analysis", "root-test", "limit-comparison"] },
     special_functions: { label: "特殊函數", note: "Beta / Gamma / Wallis / Bessel", tags: ["beta-function", "gamma-function", "wallis", "bessel"] },
     nabla_vector: { label: "Nabla / Vector", note: "grad / div / curl / laplacian", tags: ["nabla", "vector-calculus"] },
-    science_flash: { label: "理科秒殺", note: "物理 + 化學速算，看到公式就該反射", tags: ["science-flash"] },
-    physics_flash: { label: "物理速算", note: "運動 / 力 / 功能 / 電路 / 波與光", tags: ["physics-flash"] },
-    chemistry_flash: { label: "化學速算", note: "莫耳 / 濃度 / 氣體 / 酸鹼 / 氧化數", tags: ["chem-flash"] },
-    rotation_thermo: { label: "轉動 / 熱力學", note: "轉動慣量表 / 四種過程 / 卡諾 / 莫耳比熱", tags: ["rotation", "thermodynamics"] },
-    chem_memory: { label: "沉澱表 / 氧化還原", note: "溶解度規則 / 沉澱顏色 / 氧化劑還原劑 / 半反應", tags: ["solubility-rules", "redox"] }
   };
 
   const PACK_GROUPS = [
-    { label: "競賽 / 名校", keys: ["putnam", "competition", "damo_longform", "world_universities", "nightmare_boss", "todai_burst"] },
+    { label: "競賽 / 難題", keys: ["putnam", "competition", "damo_longform", "world_universities", "nightmare_boss", "todai_burst"] },
     { label: "常用", keys: ["all", "beginner_warmup", "boss_challenge", "exam_style", "exam_depth", "mobile_sprint", "technique_recognition", "applied_story", "graph_reading", "multivariable", "substitution", "integration_by_parts", "series_test"] },
     { label: "積分技巧", keys: ["partial_fraction", "trig_substitution", "frullani", "ode_style", "kings_property", "double_integral", "multi_integral_advanced", "integral_applications"] },
     { label: "向量分析", keys: ["vector_theorems", "nabla_vector"] },
     { label: "微分 / 應用", keys: ["chain", "lagrange_multiplier", "parametric_polar", "applications", "classic_theory", "total_differential", "hessian", "wronskian", "jacobian_chain"] },
     { label: "級數 / ODE / 其他", keys: ["taylor", "power_series", "convergence_tests", "endpoint_root", "sequences", "special_functions", "ode_intro", "complex"] },
-    { label: "理科秒殺", keys: ["science_flash", "physics_flash", "chemistry_flash", "rotation_thermo", "chem_memory"] }
   ];
 
   const PATH_NODES = [
@@ -456,12 +446,12 @@
     basic: "基礎",
     standard: "標準",
     advanced: "進階",
-    boss: "東大",
+    boss: "終極",
     contest: "競賽",
     lean: "Lean"
   };
   const SIMPLE_MODE_KEYS = ["quick", "topic", "practice"];
-  const EXPERIMENTAL_MODE_KEYS = ["exam", "rival", "boss_rush", "brutal", "boss", "integral_bee", "no_hint", "accuracy", "survival", "warmup", "cooldown"];
+  const EXPERIMENTAL_MODE_KEYS = ["exam", "boss_rush", "brutal", "boss", "integral_bee", "no_hint", "accuracy", "survival", "warmup", "cooldown"];
   const DEFAULT_DIFFICULTY_CAP = 2;
   const DIFFICULTY_LEVELS = {
     1: { label: "入門", note: "只抽 R1，先建立基礎。", short: "R1" },
@@ -469,11 +459,17 @@
     3: { label: "標準", note: "R1-R3，開始進入段考基本題型。", short: "R1-R3" },
     4: { label: "進階", note: "R1-R4，加入多步驟與常見陷阱。", short: "R1-R4" },
     5: { label: "高手", note: "R1-R5，Boss 題會進一般抽題。", short: "R1-R5" },
-    6: { label: "大師", note: "R1-R6，Todai / Wallis / 特殊函數全開。", short: "R1-R6" }
+    6: { label: "大師", note: "R1-R6，高速反射 / Wallis / 特殊函數全開。", short: "R1-R6" }
   };
   const LIBRARY_PAGE_SIZE = 72;
   const TAG_LABELS = {
-    "todai-burst": "Todai Burst",
+    // 出處型 tag 的顯示名：tag key 保留（抽題與既有資料靠它），
+    // 但畫面上一律講 Buzz 自己的難度語言，不掛學校名。
+    "todai-burst": "高速反射",
+    "world-universities": "國際難題",
+    damo: "長題挑戰",
+    putnam: "競賽經典",
+    competition: "競賽難題",
     "true-boss": "終極挑戰",
     "multi-ibp": "multi-IBP",
     "trig-power": "Trig power",
@@ -597,84 +593,7 @@
     marginal: "邊際分析",
     centroid: "形心",
     "graph-reading": "讀圖",
-    "science-flash": "理科秒殺",
-    "physics-flash": "物理速算",
-    "chem-flash": "化學速算",
-    "unit-conversion": "單位換算",
-    projectile: "拋體",
-    "average-rate": "平均速率",
-    "newton-law": "牛頓定律",
-    friction: "摩擦力",
-    "inclined-plane": "斜面",
-    "hooke-law": "虎克定律",
-    "apparent-weight": "視重",
-    "circular-motion": "圓周運動",
-    momentum: "動量",
-    impulse: "衝量",
-    collision: "碰撞",
-    "kinetic-energy": "動能",
-    "potential-energy": "位能",
-    power: "功率",
-    "energy-conservation": "能量守恆",
-    work: "功",
-    efficiency: "效率",
-    oscillation: "簡諧振動",
-    wave: "波動",
-    "standing-wave": "駐波",
-    optics: "光學",
-    lens: "透鏡",
-    refraction: "折射",
-    mirror: "面鏡",
-    "ohm-law": "歐姆定律",
-    circuit: "電路",
-    "coulomb-law": "庫侖定律",
-    capacitor: "電容",
-    thermal: "熱學",
-    equilibrium: "平衡",
-    "gas-law": "氣體定律",
-    "partial-pressure": "分壓",
-    "modern-physics": "近代物理",
-    photoelectric: "光電效應",
-    "bohr-model": "波耳模型",
-    density: "密度",
-    pressure: "壓力",
-    buoyancy: "浮力",
-    "pascal-law": "帕斯卡原理",
-    mole: "莫耳",
-    stoichiometry: "化學計量",
-    balancing: "平衡係數",
-    "limiting-reagent": "限量試劑",
-    solution: "溶液濃度",
-    dilution: "稀釋",
-    "acid-base": "酸鹼",
-    titration: "滴定",
-    "atomic-structure": "原子結構",
-    "electron-configuration": "電子組態",
-    isotope: "同位素",
-    redox: "氧化還原",
-    "oxidation-number": "氧化數",
-    electrolysis: "電解",
-    bonding: "化學鍵",
-    vsepr: "價殼層",
-    kinetics: "反應速率",
-    "significant-figures": "有效數字",
-    rotation: "轉動",
-    "moment-of-inertia": "轉動慣量",
-    "parallel-axis": "平行軸定理",
-    torque: "力矩",
-    "angular-momentum": "角動量",
-    rolling: "滾動",
-    thermodynamics: "熱力學",
-    "first-law": "熱力學第一定律",
-    carnot: "卡諾循環",
-    "heat-capacity": "莫耳比熱",
-    "process-id": "過程判別",
-    "solubility-rules": "溶解度規則",
-    precipitate: "沉澱",
-    "oxidizing-reducing-agent": "氧化劑 / 還原劑",
-    electrochemistry: "電化學",
-    "half-reaction": "半反應",
-    "activity-series": "活性順序"
+    power: "功率"
   };
   const ONBOARDING_LEVELS = {
     beginner: { label: "先暖身", pack: "beginner_warmup", mode: "warmup", topic: "all", difficultyCap: 2 },
@@ -697,8 +616,8 @@
     { key: "multivariable", label: "多變數", tags: ["multivariable", "double-integral", "triple-integral", "hessian", "jacobian", "jacobian-chain", "lagrange-multiplier", "nabla", "vector-calculus", "total-differential", "total-differential-min", "line-integral", "surface-integral", "green-theorem", "stokes-theorem", "divergence-theorem", "flux", "conservative-field", "directional-derivative"] },
     { key: "special", label: "特殊函數", tags: ["beta-function", "gamma-function", "wallis", "bessel", "special-function"] }
   ];
-  const APP_VERSION = "v0.9.12-beta";
-  const BUILD_DATE = "2026-06-22";
+  const APP_VERSION = "v1.0.0";
+  const BUILD_DATE = "2026-08-17";
   const GA_MEASUREMENT_ID = String(window.BUZZ_GA_MEASUREMENT_ID || "").trim();
 
   let view = "home";
@@ -707,6 +626,9 @@
   let selectedAnswerMode = "choice";
   let selectedPack = "all";
   let selectedDifficultyCap = DEFAULT_DIFFICULTY_CAP;
+  let selectedBucket = "practice";
+  let examPlanFormOpen = false;
+  let onboardingStep = "intro";
   let selectedMistakeTopic = "all";
   let selectedHistoryTopic = "all";
   let selectedProofTier = "all";
@@ -722,6 +644,15 @@
   let sessionSettingsOpen = false;
   let resultsDetailOpen = false;
   let appNotice = "";
+  let calibrationPreview = null;
+  let eraseConfirm = false;
+  // 回報草稿：{ problemId, reason }。null 代表沒有開著的回報視窗。
+  let reportDraft = null;
+  // service worker 裝好但還在等的新版本；null 代表沒有更新。
+  let pendingUpdate = null;
+  let updateAccepted = false;
+  // 上一次在這題留下的草稿（從 IndexedDB 非同步拿回來）
+  let previousBoard = { problemId: "", entry: null, open: false };
   let shareCard = null;
   let weeklyCompare = null;
   let syncBusy = false;
@@ -743,8 +674,162 @@
   let lastVisibilityStamp = 0;
   let fieldAnimation = null;
 
+  // ── 鍵盤操作 ────────────────────────────────────────────────
+  // spec B 區 92-93：鍵盤操作必須完整，數學輸入不能只依賴滑鼠。
+  //
+  // 一個在鍵盤上打數學的人，每次要按選項都得把手移到滑鼠 —— 那會直接毀掉
+  // 「練到反射」這件事，因為反射的瓶頸變成了手的移動而不是腦。
+  //
+  // 規則：正在輸入時（input / textarea / contenteditable）一律不攔截，
+  // 否則使用者打 "h" 會變成叫出提示。
+  const SHORTCUTS = [
+    { keys: "1 – 4", what: "選擇題直接選 A–D" },
+    { keys: "Enter", what: "送出答案 / 下一題" },
+    { keys: "空白鍵", what: "下一題" },
+    { keys: "H", what: "看提示" },
+    { keys: "S", what: "跳過這題" },
+    { keys: "Esc", what: "關閉對話框 / 離開本局" },
+    { keys: "Tab", what: "對話框內循環焦點（不會跑到後面的畫面）" },
+    { keys: "?", what: "顯示這張表" }
+  ];
+
+  function isTypingTarget(node) {
+    if (!node) return false;
+    const tag = String(node.tagName || "").toLowerCase();
+    return tag === "input" || tag === "textarea" || tag === "select" || node.isContentEditable;
+  }
+
+  function clickAction(selector) {
+    const node = app.querySelector(selector);
+    if (!node || node.disabled) return false;
+    node.click();
+    return true;
+  }
+
+  // 對話框開著的時候，鍵盤不能跑到後面的畫面去。
+  //
+  // 沒有這一段的話：Tab 會走到被遮住的按鈕上（看不到焦點在哪），
+  // Esc 沒有反應，而「刪除全部資料」這種對話框後面就是那顆刪除鈕。
+  // 全鍵盤可操作是「這是給認真的人用的」最省成本的訊號，而焦點鎖是它的底線。
+  function openModalElement() {
+    return app.querySelector("[data-modal]");
+  }
+
+  function focusablesIn(node) {
+    if (!node) return [];
+    const selector = 'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
+    return Array.prototype.filter.call(node.querySelectorAll(selector), (el) => {
+      const rect = el.getBoundingClientRect();
+      return rect.width > 0 || rect.height > 0;
+    });
+  }
+
+  function handleModalKeys(event) {
+    const modal = openModalElement();
+    if (!modal) return false;
+
+    if (event.key === "Escape") {
+      event.preventDefault();
+      // 每個對話框都有自己的取消動作，找得到就按它；
+      // 找不到就至少不要讓 Esc 冒泡去做別的事。
+      const cancel = modal.querySelector('[data-action^="cancel-"], [data-action="dismiss-notice"], [data-action="close-share-card"]');
+      if (cancel) cancel.click();
+      return true;
+    }
+
+    if (event.key !== "Tab") return false;
+    const items = focusablesIn(modal);
+    if (!items.length) return false;
+    const first = items[0];
+    const last = items[items.length - 1];
+    const active = document.activeElement;
+    if (!modal.contains(active)) {
+      event.preventDefault();
+      first.focus();
+      return true;
+    }
+    if (event.shiftKey && active === first) {
+      event.preventDefault();
+      last.focus();
+      return true;
+    }
+    if (!event.shiftKey && active === last) {
+      event.preventDefault();
+      first.focus();
+      return true;
+    }
+    return false;
+  }
+
+  function handleShortcut(event) {
+    if (event.metaKey || event.ctrlKey || event.altKey) return;
+    // 對話框優先。它在的時候，底下畫面的快捷鍵一律不作用。
+    if (handleModalKeys(event)) return;
+    if (openModalElement() && event.key !== "?" ) return;
+    if (isTypingTarget(event.target)) {
+      // 輸入框裡只保留 Esc（離開）與 Enter（交給表單自己處理）
+      if (event.key !== "Escape") return;
+    }
+
+    const key = event.key;
+
+    if (key === "?" || (event.shiftKey && key === "/")) {
+      event.preventDefault();
+      showAppNotice(
+        "鍵盤快捷鍵\n" + SHORTCUTS.map((item) => `${item.keys}　${item.what}`).join("\n")
+      );
+      return;
+    }
+
+    if (view !== "quiz" || !quiz) return;
+
+    if (key === "Escape") {
+      event.preventDefault();
+      if (clickAction('[data-action="confirm-exit"]')) return;
+      clickAction('[data-action="home"]');
+      return;
+    }
+
+    // 有回饋面板時，Enter / 空白鍵都是「下一題」
+    if (quiz.feedback && (key === "Enter" || key === " ")) {
+      event.preventDefault();
+      clickAction('[data-action="next-question"]');
+      return;
+    }
+
+    if (quiz.feedback) return;
+
+    if (key >= "1" && key <= "4") {
+      const options = app.querySelectorAll('[data-action="choose-answer"]');
+      const pick = options[Number(key) - 1];
+      if (pick) {
+        event.preventDefault();
+        pick.click();
+      }
+      return;
+    }
+
+    if (key === "h" || key === "H") {
+      event.preventDefault();
+      clickAction('[data-action="show-hint"]');
+      return;
+    }
+
+    if (key === "s" || key === "S") {
+      event.preventDefault();
+      clickAction('[data-action="skip"]');
+    }
+  }
+
   function setupAnalytics() {
+    // 回訪事件在分析初始化之後打，確保 gtag 已經在了
+    window.setTimeout(() => {
+      try { trackReturnVisit(loadRecords()); } catch (_error) { /* 分析不能擋住啟動 */ }
+    }, 1200);
     if (!GA_MEASUREMENT_ID) return;
+    // 關掉的話連 gtag.js 都不要載入 —— 光是載入那支 script 就已經
+    // 對 Google 發出請求，帶著 IP 與 User-Agent。只擋事件是不夠的。
+    if (!analyticsEnabled()) return;
     window.dataLayer = window.dataLayer || [];
     window.gtag = window.gtag || function () {
       window.dataLayer.push(arguments);
@@ -761,12 +846,157 @@
     document.head.appendChild(script);
   }
 
+  // ── 正式事件表 ──────────────────────────────────────────────
+  // spec 06.5：新增任何事件必須**先寫進這張表**。
+  //
+  // 不設白名單的話，半年後這裡會變成一堆沒人記得為什麼存在、也沒人在看的事件。
+  // tools/validate_analytics.js 會掃 app.js 裡所有 trackEvent 呼叫，
+  // 表上沒有的直接擋 CI。
+  //
+  // 隱私原則（spec 06.4）：**不上報使用者輸入的答案文字**，只帶題目 id 與對錯。
+  const ANALYTICS_EVENTS = {
+    // 取得
+    onboarding_step: "開局流程的每一步（含是否跳過）",
+    placement_complete: "定位測驗完成，帶回定位等級與最弱家族",
+    // 練習
+    session_start: "開一局（模式 / 長度 / 從哪裡進來）",
+    session_complete: "完成一局",
+    session_abandon: "中途離開（答了幾題 / 共幾題）",
+    session_resume: "續傳一局中斷的訓練",
+    problem_start: "題目顯示",
+    problem_submit: "送出答案",
+    problem_timeout: "逾時未作答",
+    hint_open: "打開提示（第幾層）",
+    open_full_solution: "展開完整推導（會記為借助解答）",
+    // 弱點
+    mistake_added: "題目進錯題本",
+    mistake_cleared: "錯題被清掉",
+    // 計畫
+    plan_set: "設定考試倒推",
+    // 內容
+    report_submit: "回報題目",
+    custom_problem_saved: "儲存自訂題",
+    custom_pack_imported: "匯入自訂題包",
+    view_proof_solution: "查看參考證明",
+    mark_proof_status: "自評證明理解程度",
+    mark_proof_blocker: "標記證明卡在哪",
+    // 資料
+    export_records: "匯出紀錄",
+    import_records: "匯入紀錄（含是否真的合併進新資料）",
+    calibration_export: "匯出難度校準包（去識別化，opt-in）",
+    erase_data: "使用者刪除本機所有資料（只記刪了幾類，不記內容）",
+    analytics_opt_out: "使用者關閉或開啟分析",
+    // 其他
+    share_result_card: "分享成績卡",
+    fullscreen_exit: "大考模式退出全螢幕",
+    install_pwa: "安裝 PWA",
+    app_update_apply: "使用者接受新版本並重新載入",
+    print_mistakes: "列印錯題本（只記幾題，不記內容）",
+    paper_print: "列印自訂考卷（只記條件，不記題目）",
+    perf_render: "render 耗時取樣（1%）",
+    return_visit: "隔日回訪（帶距離上次幾天）",
+    app_error: "未捕捉的錯誤（只送錯誤型別、來源檔與行號，不送訊息內容）"
+  };
+
+  // 分析開關。
+  //
+  // 存在 records.settings 而不是另一個 localStorage key，理由是它要跟著
+  // 匯出／匯入一起走 —— 換裝置之後還要再關一次的開關等於沒有開關。
+  //
+  // 這個值被讀的地方有兩處，而且兩處都要擋：
+  //   1. trackEvent —— 不送事件
+  //   2. setupAnalytics —— **連 GA 的 script 都不要載**
+  // 只擋第一處是不夠的：光是載入 gtag.js 就已經對 Google 發出請求了。
+  function analyticsEnabled() {
+    try {
+      const settings = loadRecords().settings || {};
+      return settings.analytics !== "off";
+    } catch (_error) {
+      return true;
+    }
+  }
+
+  function setAnalyticsEnabled(enabled) {
+    const records = loadRecords();
+    records.settings = records.settings || {};
+    records.settings.analytics = enabled ? "on" : "off";
+    saveRecords(records);
+    // 關掉之前送最後一個事件，開啟時也送一個 —— 這是唯一能知道
+    // 有多少人主動關掉分析的方法，而那個數字本身就是產品訊號。
+    if (enabled) trackEvent("analytics_opt_out", { state: "on" });
+    else {
+      trackEvent("analytics_opt_out", { state: "off" });
+      // 已經載入的 gtag 之後也不要再送
+      try { window.gtag = undefined; } catch (_error) { /* 唯讀時無所謂，trackEvent 也會擋 */ }
+    }
+    render();
+  }
+
   function trackEvent(name, params = {}) {
+    if (!ANALYTICS_EVENTS[name] && typeof console !== "undefined" && console.warn) {
+      // 表上沒有的事件在開發時就要被看見，不要等半年後對著 GA 猜這是什麼
+      console.warn(`[buzz] 未登記的分析事件：${name}。請先加進 ANALYTICS_EVENTS。`);
+    }
     if (!GA_MEASUREMENT_ID || typeof window.gtag !== "function") return;
+    // opt-out 之後只有「重新開啟分析」這個事件本身可以送出去，
+    // 否則使用者永遠沒辦法把自己加回來
+    if (!analyticsEnabled() && !(name === "analytics_opt_out" && params.state === "on")) return;
     window.gtag("event", name, {
       app_version: APP_VERSION,
       build_date: BUILD_DATE,
       ...params
+    });
+  }
+
+  // ---- 錯誤回報 ────────────────────────────────────────────
+  //
+  // 在這之前，程式在使用者那邊壞掉時我們完全不會知道 —— 能發現 bug
+  // 只因為自己踩到。而遇到壞掉頁面的人通常不會回報，他們只會離開。
+  //
+  // 但錯誤訊息**不能原樣送出去**：它可能夾帶題目內容、使用者輸入的答案、
+  // 甚至 localStorage 的片段。所以這裡只送三樣東西：
+  //   1. 錯誤型別（TypeError / RangeError…）
+  //   2. 是哪一個檔案的第幾行（只留檔名，不留完整路徑）
+  //   3. 當下在哪個畫面
+  // 訊息本體與堆疊一律不送。這條規則由 tools/validate_analytics.js 把關。
+  const ERROR_SAMPLE_LIMIT = 5;
+  let errorsReported = 0;
+
+  function reportRuntimeError(kind, source, line) {
+    if (errorsReported >= ERROR_SAMPLE_LIMIT) return; // 同一個 session 不要洗版
+    errorsReported += 1;
+    // 只留檔名。完整 URL 可能帶查詢字串，而分享連結的查詢字串裡有自訂題目。
+    const file = String(source || "").split(/[\\/?#]/).filter(Boolean).pop() || "unknown";
+    trackEvent("app_error", {
+      error_kind: String(kind || "Error").slice(0, 40),
+      error_file: file.slice(0, 60),
+      error_line: Number(line) || 0,
+      screen: view
+    });
+  }
+
+  function setupErrorReporting() {
+    window.addEventListener("error", (event) => {
+      const name = event && event.error && event.error.name ? event.error.name : "Error";
+      reportRuntimeError(name, event && event.filename, event && event.lineno);
+    });
+    window.addEventListener("unhandledrejection", (event) => {
+      const reason = event && event.reason;
+      const name = reason && reason.name ? reason.name : "UnhandledRejection";
+      reportRuntimeError(name, "", 0);
+    });
+  }
+
+  // 回訪：D1 / D7 / D30 是 spec 09 的核心留存指標，而它們只能從
+  // 「上次練習到這次打開隔了幾天」算出來。
+  function trackReturnVisit(records) {
+    const last = Date.parse(records.lastPlayed || "") || 0;
+    if (!last) return;
+    const days = Math.floor((Date.now() - last) / DAY_MS);
+    if (days < 1) return;
+    trackEvent("return_visit", {
+      days_since: days,
+      bucket: days === 1 ? "d1" : days <= 7 ? "d7" : days <= 30 ? "d30" : "lapsed"
     });
   }
 
@@ -784,21 +1014,94 @@
     return count;
   }
 
+  // 每次 render 都是整個畫面重寫 innerHTML，於是捲動位置歸零、焦點消失、
+  // 展開的段落收起來。使用者說不出「重繪」兩個字，只會覺得這個網站怪怪的。
+  //
+  // 真正的解法是局部更新，那是一次大重構。在那之前，先把使用者**感覺得到**
+  // 的三件事接回去：捲到哪、游標在哪、哪些段落是開的。
+  // 這不是把問題藏起來 —— 是先止血，而且止得住。
+  function captureViewState() {
+    const active = document.activeElement;
+    const inApp = active && app.contains(active) && active !== document.body;
+    const details = {};
+    app.querySelectorAll("details[data-session-settings], details[id], details[data-keep]").forEach((node, index) => {
+      details[node.id || node.dataset.keep || `d${index}`] = node.open;
+    });
+    return {
+      scrollY: window.scrollY || window.pageYOffset || 0,
+      view,
+      // 用 action / 欄位名找回同一顆按鈕或同一個輸入框，而不是存節點參照 ——
+      // 節點在 innerHTML 之後一定是新的。
+      focusKey: inApp ? focusKeyFor(active) : "",
+      selectionStart: inApp && isTypingTarget(active) ? active.selectionStart : null,
+      selectionEnd: inApp && isTypingTarget(active) ? active.selectionEnd : null,
+      details
+    };
+  }
+
+  function focusKeyFor(node) {
+    if (!node) return "";
+    if (node.dataset && node.dataset.action) return `[data-action="${node.dataset.action}"]`;
+    if (node.dataset && node.dataset.boardAction) return `[data-board-action="${node.dataset.boardAction}"]`;
+    if (node.id) return `#${node.id}`;
+    if (node.name) return `[name="${node.name}"]`;
+    const tag = String(node.tagName || "").toLowerCase();
+    if (tag === "input" || tag === "textarea") {
+      const attr = Array.prototype.find.call(node.attributes || [], (a) => a.name.startsWith("data-"));
+      if (attr) return `[${attr.name}]`;
+    }
+    return "";
+  }
+
+  function restoreViewState(carried) {
+    if (!carried) return;
+    Object.keys(carried.details || {}).forEach((key) => {
+      const node = app.querySelector(`details#${CSS && CSS.escape ? CSS.escape(key) : key}`)
+        || app.querySelector(`details[data-keep="${key}"]`)
+        || (key === "d0" ? app.querySelector("details[data-session-settings]") : null);
+      if (node) node.open = carried.details[key];
+    });
+    // 換畫面的時候捲動本來就該回到頂端；同一個畫面內的重繪才需要接回去。
+    if (carried.view === view && carried.scrollY > 0) {
+      window.scrollTo(0, carried.scrollY);
+    }
+    if (!carried.focusKey) return;
+    const target = app.querySelector(carried.focusKey);
+    if (!target || typeof target.focus !== "function") return;
+    target.focus({ preventScroll: true });
+    if (carried.selectionStart != null && typeof target.setSelectionRange === "function") {
+      try {
+        target.setSelectionRange(carried.selectionStart, carried.selectionEnd);
+      } catch (_error) {
+        // number 型別的 input 不支援 selectionRange，忽略
+      }
+    }
+  }
+
   function render() {
     if (renderPending) return;
     renderPending = true;
     requestAnimationFrame(() => {
       renderPending = false;
-      app.innerHTML = [renderTopbar(), renderScreen(), renderAppNoticeModal(), renderShareCardModal()].join("");
+      // 1% 取樣。spec 01.6：沒有數字之前不准優化 render。
+      const sampled = Math.random() < 0.01;
+      const startedAt = sampled && window.performance ? window.performance.now() : 0;
+      const carried = captureViewState();
+      app.innerHTML = [renderTopbar(), renderScreen(), renderAppNoticeModal(), renderCalibrationPreviewModal(), renderEraseConfirmModal(), renderReportModal(), renderShareCardModal(), renderUpdateBanner()].join("");
       bindEvents();
       typesetMath(app);
       window.setTimeout(() => typesetMath(app), 80);
       renderIcons();
       setupReviewBoards();
+      setupPreviousBoard();
+      restoreViewState(carried);
       restoreLibrarySearchFocus();
       if (view !== lastAnimatedView) {
         lastAnimatedView = view;
         animateMounts(app);
+      }
+      if (sampled && startedAt) {
+        trackEvent("perf_render", { view, ms: Math.round(window.performance.now() - startedAt) });
       }
     });
   }
@@ -849,16 +1152,42 @@
       }));
     });
 
+    // 入場動畫的保險絲。
+    //
+    // 這幾行的模式是「先用 A.set 把元素設成 opacity:0，再動畫回 1」。
+    // 問題是那個 0 是**立刻寫進 inline style** 的，而動畫要靠
+    // requestAnimationFrame 才會前進 —— 分頁在背景時 Chrome 會把 rAF 停掉，
+    // 動畫就卡在第一格，整個畫面是空白的。實測：在背景分頁開結算頁，
+    // DOM 裡有兩萬字的 HTML，畫面上什麼都沒有。
+    //
+    // 分頁回到前景時 rAF 會恢復、動畫會自己跑完，所以多數情況會自癒。
+    // 但「裝飾性動畫有能力讓整頁永久空白」本身就是不該存在的設計：
+    // anime.js 掛掉、擴充套件擋住、分頁被丟棄再還原，任何一種都會變白畫面。
+    //
+    // 所以無論如何，時間到就把 inline style 清掉。動畫正常跑完的話這是 no-op。
+    const fuse = (nodes) => {
+      if (!nodes || !nodes.length) return;
+      window.setTimeout(() => {
+        Array.prototype.forEach.call(nodes, (node) => {
+          if (!node || !node.style) return;
+          if (Number(node.style.opacity) === 0 || node.style.opacity === "0") node.style.opacity = "";
+          if (node.style.transform) node.style.transform = "";
+        });
+      }, 1200);
+    };
+
     const entrants = root.querySelectorAll("[data-enter]");
     if (entrants.length && !reduce && A) {
       A.set(entrants, { opacity: 0, translateY: 12 });
       A({ targets: entrants, opacity: [0, 1], translateY: [12, 0], delay: A.stagger(55), duration: 460, easing: "easeOutCubic" });
+      fuse(entrants);
     }
 
     const pop = root.querySelector("[data-pop]");
     if (pop && !reduce && A) {
       A.set(pop, { scale: 0.92, opacity: 0 });
       A({ targets: pop, scale: [0.92, 1], opacity: [0, 1], duration: 520, easing: "spring(1, 80, 12, 0)" });
+      fuse([pop]);
     }
 
     // Draw the learning-path connector line only up to the freshly-unlocked
@@ -886,12 +1215,13 @@
     const themeIcon = selectedTheme === "dark" ? "sun" : "moon";
     const themeLabel = selectedTheme === "dark" ? "亮色" : "深色";
     return `
+      <a class="skip-to-content" href="#buzz-main">跳到主要內容</a>
       <header class="topbar">
         <button class="brand" data-action="home" title="回到工作台">
           <div class="brand-mark" aria-hidden="true">∫</div>
           <div>
             <h1 class="brand-title">BuzzCalculus</h1>
-            <p class="brand-subtitle">${APP_VERSION} · Build ${BUILD_DATE}</p>
+            <p class="brand-subtitle">${APP_VERSION} · ${BUILD_DATE}</p>
           </div>
         </button>
         <div class="topbar-actions">
@@ -899,10 +1229,10 @@
             inQuiz
               ? `<button class="button ghost" data-action="confirm-exit" title="離開本局">${icon("x")}<span>離開</span></button>`
               : `
-                <button class="nav-button ${view === "home" ? "is-active" : ""}" data-action="home" aria-label="工作台" title="工作台">${icon("home")}<span>工作台</span></button>
+                <button class="nav-button ${view === "home" ? "is-active" : ""}" data-action="home" aria-label="今天" title="今天">${icon("home")}<span>今天</span></button>
+                <button class="nav-button ${view === "train" ? "is-active" : ""}" data-action="open-train" aria-label="訓練" title="訓練">${icon("target")}<span>訓練</span></button>
+                <button class="nav-button ${view === "insights" ? "is-active" : ""}" data-action="open-insights" aria-label="數據" title="數據">${icon("activity")}<span>數據</span></button>
                 <button class="nav-button ${view === "library" ? "is-active" : ""}" data-action="open-library" aria-label="題庫" title="題庫">${icon("search")}<span>題庫</span></button>
-                <button class="nav-button ${view === "mistakes" ? "is-active" : ""}" data-action="open-mistakes" aria-label="錯題" title="錯題">${icon("book")}<span>錯題</span></button>
-                <button class="nav-button ${view === "history" ? "is-active" : ""}" data-action="open-history" aria-label="歷史" title="歷史">${icon("clock")}<span>歷史</span></button>
                 <button class="nav-button ${view === "settings" ? "is-active" : ""}" data-action="open-settings" aria-label="設定" title="設定">${icon("settings")}<span>設定</span></button>
                 ${deferredInstallPrompt ? `<button class="icon-button" data-action="install-app" title="安裝 BuzzCalculus">${icon("download")}</button>` : ""}
                 <button class="icon-button" data-action="toggle-theme" title="切換${themeLabel}模式">${icon(themeIcon)}</button>
@@ -919,10 +1249,20 @@
     if (view === "path-intro") return renderPathIntro();
     if (view === "proofs") return renderProofLab();
     if (view === "library") return renderProblemLibrary();
+    // 第一次進站強制走 onboarding：不讓新使用者面對 1407 題 × 18 模式的組合空間。
+    if (view === "home") {
+      const first = loadRecords();
+      if (!first.onboardingSeen && !(first.totalAnswered || 0)) {
+        return onboardingStep === "placement" ? renderOnboardingPlacementOffer(first) : renderOnboarding();
+      }
+    }
+    if (view === "insights") return renderInsights();
+    if (view === "train") return renderTrain();
     if (view === "mistakes") return renderMistakes();
     if (view === "history") return renderHistory();
     if (view === "settings") return renderSettings();
     if (view === "creator") return renderCreator();
+    if (view === "paper") return renderPaperBuilder();
     return renderHome();
   }
 
@@ -936,18 +1276,1537 @@
     const mission = dailyMissionInfo(records, daily);
     const weaknesses = topWeaknesses(records);
     const path = learningPathState(records);
-    const showIntro = !records.onboardingSeen && !(records.totalAnswered || 0);
+
+    // spec 04.3：首頁只有一個主 CTA。其餘全部收進「訓練」與「數據」兩個分頁 ——
+    // 收納不刪除，19 個模式一個都沒少，只是不再全部擠在同一屏。
+    //
+    // 舊首頁的內容去了哪裡：
+    //   主線路線圖 / 自訂一局 / 模式選單 -> 訓練 · 練習
+    //   錯題複習 / 弱點                  -> 訓練 · 弱點
+    //   每週挑戰 / 具名模擬卷 / 大考      -> 訓練 · 模擬
+    //   每日 / 每日一題 / Boss / 生存      -> 訓練 · 挑戰
+    //   連勝 / 熱力圖 / 雷達 / 趨勢       -> 數據
+    // 寬螢幕上分兩欄。
+    //
+    // 專業工具的視覺特徵之一是資訊密度高（想想 IDE、統計軟體），
+    // 而單欄版面在 1240px 的螢幕上有一半是空的 —— 那讀起來像「內容不多」，
+    // 但這裡其實有 1,459 題。窄螢幕維持單欄，順序不變。
+    return `
+      <main class="screen home-screen" id="buzz-main">
+        <div class="home-lead">
+          ${renderResumeCard()}
+          ${renderBackupNotice(records)}
+          ${renderExamReport(records)}
+          ${renderTodayCard(records)}
+        </div>
+        <div class="home-aside">
+          ${renderHomeSecondary(records, path, mission)}
+          ${renderGrowthLine(records)}
+          ${renderBucketNav()}
+        </div>
+      </main>
+    `;
+  }
+
+  // 次要入口最多 2 個，而且必須是動態的 —— 沒有到期錯題就不該出現錯題按鈕。
+  // 固定顯示一排永遠存在的按鈕等於沒有優先序。
+  function renderHomeSecondary(records, path, mission) {
+    const summary = srsDueSummary(records);
+    const entries = [];
+
+    if (summary.due) {
+      entries.push({
+        action: "start-srs-review",
+        icon: "refresh",
+        label: `錯題 ${summary.due} 題到期`,
+        note: "照排程清掉才會真的記住"
+      });
+    }
+    if (!mission.done && (records.totalAnswered || 0)) {
+      entries.push({
+        action: "start-daily",
+        icon: "calendar",
+        label: `每日 ${mission.completed}/${mission.target}`,
+        note: "維持連勝"
+      });
+    }
+    if (entries.length < 2 && path && path.next) {
+      entries.push({
+        action: "start-path-node",
+        data: `data-node-id="${escapeAttr(path.next.id)}"`,
+        icon: "play",
+        label: `主線：${path.next.short}`,
+        note: escapeHtml(path.next.label)
+      });
+    }
+    if (!entries.length) return "";
 
     return `
-      <main class="screen home-screen">
-        ${showIntro ? renderFirstRunNotice() : ""}
-        ${renderHomeLaunchPad(records, mission, path, weaknesses, mistakeCount)}
-        ${renderHomeRetentionRow(records)}
-        ${renderWeeklyChallengeCard(records)}
-        ${renderBuzzPath(path, mission)}
-        ${renderSessionSettings(records)}
-        ${renderHomeMorePanel(records, weaknesses, mistakeCount)}
+      <section class="home-secondary" aria-label="次要入口">
+        ${entries
+          .slice(0, 2)
+          .map(
+            (entry) => `
+              <button class="secondary-entry" data-action="${entry.action}" ${entry.data || ""}>
+                ${icon(entry.icon)}
+                <span>
+                  <strong>${entry.label}</strong>
+                  <small>${entry.note}</small>
+                </span>
+              </button>`
+          )
+          .join("")}
+      </section>
+    `;
+  }
+
+  // 一行成長證據。spec 00 的「讓學生感覺自己變強」靠的就是這一行 ——
+  // 它必須是具體的個人事實，不是「繼續加油」這種空話。
+  function renderGrowthLine(records) {
+    const profile = abilityProfile(records);
+    if (!profile || !profile.coverage.attempts) return "";
+
+    const parts = [];
+    if (profile.trend.d7 !== null && profile.trend.d7 !== 0) {
+      parts.push(`能力 ${profile.trend.d7 > 0 ? "+" : ""}${profile.trend.d7}`);
+    }
+
+    const days = activeDaysInLastWeek(records);
+    if (days) parts.push(`本週練了 ${days} 天`);
+
+    const up = profile.trend.fastestUp;
+    if (up) parts.push(`${up.label} +${up.delta}`);
+
+    if (!parts.length) {
+      parts.push(`累計 ${profile.coverage.attempts} 題 · 測得出 ${profile.coverage.skillsMeasured} 個技巧`);
+    }
+
+    return `
+      <button class="growth-line" data-action="open-insights">
+        <span class="section-label">本週</span>
+        <strong>${escapeHtml(parts.join(" · "))}</strong>
+        ${icon("chevron-right")}
+      </button>
+    `;
+  }
+
+  function activeDaysInLastWeek(records) {
+    const cutoff = Date.now() - 7 * DAY_MS;
+    const days = new Set();
+    (records.history || []).forEach((item) => {
+      const at = item && Date.parse(item.finishedAt || "");
+      if (Number.isFinite(at) && at >= cutoff) days.add(new Date(at).toISOString().slice(0, 10));
+    });
+    return days.size;
+  }
+
+  function renderBucketNav() {
+    return `
+      <nav class="bucket-nav" aria-label="訓練分類">
+        ${TRAIN_BUCKETS.map(
+          (item) => `
+            <button data-action="open-train" data-bucket="${escapeAttr(item.key)}">
+              <strong>${item.label}</strong>
+              <small>${item.note}</small>
+            </button>`
+        ).join("")}
+      </nav>
+    `;
+  }
+
+  // ── 今天的訓練 ──────────────────────────────────────────────
+  // spec 04.3：首頁永遠只有一個主 CTA，而且它必須說得出「為什麼是這個」。
+  // 由 kernel 的 planner 決定內容；planner 沒載入時整張卡不出現，
+  // 首頁退回原本的樣子。
+  function renderTodayCard(records) {
+    const plan = plannedSession(records);
+    if (!plan) return "";
+
+    const { recipe, filled, reason } = plan;
+    const minutes = Math.max(1, Math.round(filled.estSeconds / 60));
+    const focus = recipe.slots
+      .filter((slot) => slot.count > 0)
+      .map((slot) => `${escapeHtml(slot.label)} ${slot.count}`)
+      .join(" · ");
+    const dueCount = recipe.context.dueNow;
+    const adjusted = window.BuzzSession.explainFallbacks(filled.meta);
+
+    return `
+      <section class="today-card" aria-label="今天的訓練">
+        <div class="today-head">
+          <p class="section-label">今天的訓練</p>
+          <span class="today-meta">${minutes} 分鐘 · ${filled.problems.length} 題</span>
+        </div>
+        <h2 class="today-title">${escapeHtml(recipe.label)}</h2>
+        <p class="today-why">${escapeHtml(recipe.why)}</p>
+        <p class="today-mix">${focus}</p>
+        <div class="today-actions">
+          <button class="button home-primary" data-action="start-planned" data-length="${escapeAttr(recipe.length)}">
+            ${icon("play")}<span>開始</span>
+          </button>
+          ${
+            recipe.length !== "sprint5"
+              ? `<button class="button secondary" data-action="start-planned" data-length="sprint5">${icon("zap")}5 分鐘快刷</button>`
+              : ""
+          }
+          ${
+            dueCount
+              ? `<button class="button secondary" data-action="start-srs-review">${icon("repeat")}錯題 ${dueCount} 題到期</button>`
+              : ""
+          }
+        </div>
+        <p class="today-note">${escapeHtml(reason)}${adjusted ? ` · ${escapeHtml(adjusted)}` : ""}</p>
+      </section>
+    `;
+  }
+
+  // planner + session 的組裝。回傳 null 代表 kernel 沒載入或抽不到題，
+  // 呼叫端要能接受沒有這張卡。
+  function plannedSession(records, lengthKey) {
+    if (!window.BuzzPlanner || !window.BuzzSession || !window.BuzzSkillGraph) return null;
+    try {
+      const pool = plannerCandidatePool(records);
+      if (!pool.length) return null;
+      // planner 自己也會算一次 profile —— 把快取的那份傳進去，
+      // 首頁一次 render 就只算一次而不是兩次。
+      const profile = abilityProfile(records);
+      const recommendation = window.BuzzPlanner.today(records, { problems, profile });
+      const key = lengthKey || recommendation.length;
+      const recipe =
+        key === recommendation.length
+          ? recommendation.recipe
+          : window.BuzzPlanner.recipe(records, key, { problems, profile });
+      const filled = window.BuzzSession.fill(recipe, {
+        problems: pool,
+        // 抽題種子綁當天，所以同一天重整首頁看到的是同一份訓練 ——
+        // 不然使用者每次重整就換一批題，會覺得推薦是隨機的。
+        seed: `${new Date().toISOString().slice(0, 10)}-${key}`,
+        recent: recentProblemIds(records, RECENT_PROBLEM_COOLDOWN)
+      });
+      if (!filled.problems.length) return null;
+      return { recipe, filled, reason: recommendation.reason };
+    } catch (_error) {
+      return null;
+    }
+  }
+
+  // 候選集：沿用站上既有的規則 —— 純微積分（科目閘門）、難度上限之內、
+  // 排除自訂題。kernel 不重複實作這些規則，避免兩份規則漂移。
+  function plannerCandidatePool(records) {
+    const cap = activeDifficultyCap(records);
+    return problems.filter(
+      (problem) => problemRank(problem) <= cap + 1 && !problem.custom
+    );
+  }
+
+  function startPlannedSession(lengthKey) {
+    const records = loadRecords();
+    const plan = plannedSession(records, lengthKey);
+    if (!plan) {
+      showAppNotice("目前抽不到適合的題目，請把難度上限拉高一點。");
+      return;
+    }
+    selectedMode = "quick";
+    selectedTopic = "all";
+    startQuiz(plan.filled.problems, { modeKey: "quick" });
+  }
+
+  // ── 作答中斷續傳 ────────────────────────────────────────────
+  // spec 04.8：模擬考做到一半重新整理 = 整份消失。這是現在最傷使用者的 bug，
+  // 而且它傷的是最投入的那群人 —— 願意花 45 分鐘做一份完整模擬卷的人。
+  //
+  // 設計要點：
+  //   1. quiz 物件裡有題目的完整參照，不能直接 JSON.stringify。
+  //      存的時候換成 id，讀的時候再從題庫接回來。題目下架時該局作廢。
+  //   2. 時間戳存絕對值。大考模式的整份倒數 examEndAt 一定要照實扣掉離開的時間
+  //      —— 那是考試誠信；日常模式則重啟單題計時，不為難使用者。
+  //   3. 續傳要誠實：中斷過就記在 history 裡，考卷成績要看得出來。
+  const ACTIVE_KEY = "buzzcalculus.session.active";
+  const ACTIVE_SCHEMA = 1;
+  const RESUME_WINDOW_MS = 6 * 3600 * 1000;
+  const AUTOSAVE_INTERVAL_MS = 10000;
+  let lastAutosaveAt = 0;
+
+  function serializeQuiz(current) {
+    if (!current || !Array.isArray(current.problems)) return null;
+    const copy = {};
+    Object.keys(current).forEach((key) => {
+      if (key === "problems" || key === "answers") return;
+      const value = current[key];
+      if (typeof value === "function") return;
+      copy[key] = value;
+    });
+    copy.problemIds = current.problems.map((problem) => problem.id);
+    copy.answers = (current.answers || []).map((answer) => {
+      const entry = {};
+      Object.keys(answer).forEach((key) => {
+        if (key === "problem" || key === "boardStrokes") return;
+        entry[key] = answer[key];
+      });
+      entry.problemId = answer.problem ? answer.problem.id : "";
+      return entry;
+    });
+    // 草稿筆畫可能很大，續傳時不值得為它撐爆 localStorage 額度。
+    // 使用者要的是「題目和答案還在」，不是「我畫的線還在」。
+    delete copy.boardStrokes;
+    return copy;
+  }
+
+  function deserializeQuiz(saved) {
+    if (!saved || !Array.isArray(saved.problemIds)) return null;
+    const list = saved.problemIds.map((id) => problemById(id));
+    if (list.some((problem) => !problem)) return null; // 題目下架 → 這局不能續
+    const restored = { ...saved };
+    delete restored.problemIds;
+    restored.problems = list;
+    restored.boardStrokes = {};
+    restored.answers = (saved.answers || [])
+      .map((entry) => {
+        const problem = problemById(entry.problemId);
+        if (!problem) return null;
+        return { ...entry, problem, boardStrokes: [] };
+      })
+      .filter(Boolean);
+    return restored;
+  }
+
+  function autosaveSession(force) {
+    if (!quiz || view !== "quiz") return;
+    const now = Date.now();
+    if (!force && now - lastAutosaveAt < AUTOSAVE_INTERVAL_MS) return;
+    lastAutosaveAt = now;
+    try {
+      const payload = serializeQuiz(quiz);
+      if (!payload) return;
+      localStorage.setItem(ACTIVE_KEY, JSON.stringify({ schema: ACTIVE_SCHEMA, savedAt: now, quiz: payload }));
+    } catch (_error) {
+      // 存不進去（配額滿、隱私模式）不能影響作答本身
+    }
+  }
+
+  function clearActiveSession() {
+    lastAutosaveAt = 0;
+    try {
+      localStorage.removeItem(ACTIVE_KEY);
+    } catch (_error) {
+      // ignore
+    }
+  }
+
+  function readActiveSession() {
+    let raw = null;
+    try {
+      raw = localStorage.getItem(ACTIVE_KEY);
+    } catch (_error) {
+      return null;
+    }
+    if (!raw) return null;
+    let parsed = null;
+    try {
+      parsed = JSON.parse(raw);
+    } catch (_error) {
+      clearActiveSession();
+      return null;
+    }
+    if (!parsed || parsed.schema !== ACTIVE_SCHEMA || !parsed.quiz) {
+      clearActiveSession();
+      return null;
+    }
+    const savedAt = Number(parsed.savedAt) || 0;
+    if (!savedAt || Date.now() - savedAt > RESUME_WINDOW_MS) {
+      clearActiveSession();
+      return null;
+    }
+    // 已經作答完的局沒有續傳的意義
+    const answered = (parsed.quiz.answers || []).length;
+    const total = (parsed.quiz.problemIds || []).length;
+    if (!total || answered >= total) {
+      clearActiveSession();
+      return null;
+    }
+    return { savedAt, quiz: parsed.quiz, answered, total };
+  }
+
+  function renderResumeCard() {
+    const saved = readActiveSession();
+    if (!saved) return "";
+    const mode = MODES[saved.quiz.mode] || {};
+    const label = saved.quiz.namedExam ? saved.quiz.namedExam.label : mode.label || "訓練";
+    const minutesAgo = Math.max(1, Math.round((Date.now() - saved.savedAt) / 60000));
+    const examExpired =
+      saved.quiz.examMode && saved.quiz.examEndAt && Date.now() > Number(saved.quiz.examEndAt);
+
+    return `
+      <section class="study-card resume-card">
+        <div class="panel-title-row">
+          <div>
+            <p class="section-label">還沒做完</p>
+            <h3>${escapeHtml(label)} 第 ${saved.answered + 1} / ${saved.total} 題</h3>
+          </div>
+          <span class="resume-age">${minutesAgo} 分鐘前</span>
+        </div>
+        <p class="panel-note">
+          ${
+            examExpired
+              ? "這份考卷的整份倒數已經結束，只能結算不能續作。"
+              : saved.quiz.examMode
+                ? "考卷的整份倒數是照實走的，中斷的時間不會還給你。"
+                : "接著上次的地方繼續，作答紀錄都還在。"
+          }
+        </p>
+        <div class="action-row">
+          <button class="button home-primary" data-action="resume-session">${icon("play")}${examExpired ? "結算這份" : "繼續"}</button>
+          <button class="button ghost" data-action="discard-session">${icon("trash")}放棄</button>
+        </div>
+      </section>
+    `;
+  }
+
+  function resumeSession() {
+    const saved = readActiveSession();
+    if (!saved) {
+      showAppNotice("上次那局已經無法續傳了。");
+      render();
+      return;
+    }
+    const restored = deserializeQuiz(saved.quiz);
+    if (!restored) {
+      clearActiveSession();
+      showAppNotice("上次那局包含已經下架的題目，無法續傳。");
+      render();
+      return;
+    }
+
+    // 中斷次數要記下來 —— 一份中斷過的考卷，成績的意義本來就不一樣。
+    restored.interruptions = Number(restored.interruptions || 0) + 1;
+    restored.feedback = null;
+    restored.modal = null;
+    // index 只在按「下一題」時才推進，所以在回饋畫面中斷時 index 會落後 answers 一格。
+    // 不補這一步的話，續傳會讓使用者**重新作答已經答過的那題**，answers 出現重複。
+    restored.index = Math.min(restored.problems.length - 1, Math.max(restored.index || 0, restored.answers.length));
+    restored.draft = "";
+    // 大考的整份倒數照實走（考試誠信）；日常模式重啟單題計時，不為難使用者。
+    if (!restored.examMode) restored.questionStartedAt = Date.now();
+    if (restored.requireFullscreen) restored.fullscreenStatus = "pending";
+
+    quiz = restored;
+    view = "quiz";
+    lastVisibilityStamp = Date.now();
+    if (!quiz.practice && !quiz.noTimer) startTicker();
+    trackEvent("session_resume", {
+      mode: quiz.mode,
+      answered: quiz.answers.length,
+      total: quiz.problems.length,
+      gap_minutes: Math.round((Date.now() - saved.savedAt) / 60000)
+    });
+    autosaveSession(true);
+    render();
+  }
+
+  function discardSession() {
+    clearActiveSession();
+    render();
+  }
+
+  // ── 考試倒推 ────────────────────────────────────────────────
+  // spec 04.6：使用者設「30 天後期中考」，系統倒推每天該練多少。
+  //
+  // 這個功能唯一的價值在於**做不完的時候要誠實說做不完**。
+  // 假裝排得下，使用者考砸了只會怪產品；老實說「以每天 15 分鐘只顧得到 4/7 個技巧，
+  // 要嘛加時間、要嘛縮範圍」，那才是真的在幫忙。
+  const EXAM_SCOPES = [
+    { key: "all", label: "全範圍", scope: null },
+    { key: "midterm", label: "期中（極限 / 微分）", scope: ["limit.*", "diff.*"] },
+    { key: "integral", label: "積分技巧", scope: ["integral.*"] },
+    { key: "series", label: "級數與審斂", scope: ["series.*"] },
+    { key: "multivariable", label: "多變數與向量", scope: ["mvcalc.*", "vector.*"] },
+    { key: "final", label: "期末（積分 / 級數 / 多變數）", scope: ["integral.*", "series.*", "mvcalc.*"] }
+  ];
+
+  function examPlanOf(records) {
+    if (!window.BuzzPlanner) return null;
+    try {
+      const profile = abilityProfile(records);
+      return window.BuzzPlanner.examPlan(records, profile || { skills: {} }, Date.now());
+    } catch (_error) {
+      return null;
+    }
+  }
+
+  function renderExamPlanCard(records) {
+    if (!window.BuzzPlanner) return "";
+    const plan = records.plan;
+    const computed = examPlanOf(records);
+
+    if (!plan || !plan.examAt || !computed) return renderExamPlanForm(records, null);
+
+    const scopeLabel =
+      (EXAM_SCOPES.find((item) => item.key === plan.scopeKey) || {}).label || "全範圍";
+    const top = computed.gaps.slice(0, 5);
+
+    return `
+      <section class="study-card exam-plan-card">
+        <div class="panel-title-row">
+          <div>
+            <p class="section-label">考試倒推</p>
+            <h3>${escapeHtml(computed.label)}</h3>
+          </div>
+          <div class="exam-countdown">
+            <strong>${computed.daysLeft}</strong>
+            <span>天</span>
+          </div>
+        </div>
+        <p class="panel-note">範圍：${escapeHtml(scopeLabel)} · 每天 ${computed.dailyMinutes} 分鐘 · 目標每個技巧 ${computed.target} 分${computed.sprint ? " · <strong>衝刺模式已啟動</strong>" : ""}</p>
+        ${
+          computed.gaps.length === 0
+            ? `<p class="panel-note">範圍內的技巧都已達標。剩下的時間拿去拉高難度或維持手感。</p>`
+            : computed.feasible
+              ? `<p class="panel-note">以目前的每日時間，到考前排得完 ${computed.totalSkills} 個還沒達標的技巧。</p>`
+              : `<p class="exam-warning">
+                   <strong>排不完。</strong>以每天 ${computed.dailyMinutes} 分鐘，到考前只顧得到
+                   ${computed.totalSkills} 個技巧中的 ${computed.coverableSkills} 個。
+                   建議把每天加到 ${computed.neededMinutes} 分鐘，或把範圍縮小。
+                 </p>`
+        }
+        ${
+          top.length
+            ? `<ul class="exam-gap-list">
+                ${top
+                  .map((row) => `<li>${escapeHtml(row.label)}<span>差 ${Math.round(row.gap)} 分</span></li>`)
+                  .join("")}
+              </ul>`
+            : ""
+        }
+        <div class="action-row">
+          <button class="button secondary" data-action="edit-exam-plan">${icon("settings")}調整</button>
+          <button class="button ghost" data-action="clear-exam-plan">${icon("x")}取消考試</button>
+        </div>
+      </section>
+    `;
+  }
+
+  function renderExamPlanForm(records, computed) {
+    if (!examPlanFormOpen) {
+      return `
+        <section class="study-card">
+          <div class="panel-title-row">
+            <div>
+              <p class="section-label">考試倒推</p>
+              <h3>有考試要準備？</h3>
+            </div>
+          </div>
+          <p class="panel-note">設一個日期，系統會倒推每天該練多少，考前 7 天自動切換衝刺模式。排不完的時候會直接告訴你。</p>
+          <div class="action-row">
+            <button class="button home-primary" data-action="edit-exam-plan">${icon("calendar")}設定考試</button>
+          </div>
+        </section>
+      `;
+    }
+
+    const plan = records.plan || {};
+    const defaultDate = plan.examAt
+      ? String(plan.examAt).slice(0, 10)
+      : new Date(Date.now() + 30 * DAY_MS).toISOString().slice(0, 10);
+
+    return `
+      <section class="study-card">
+        <div class="panel-title-row">
+          <div>
+            <p class="section-label">考試倒推</p>
+            <h3>設定考試</h3>
+          </div>
+        </div>
+        <div class="exam-form">
+          <label>
+            名稱
+            <input type="text" data-exam-field="label" value="${escapeAttr(plan.label || "微積分期中")}" />
+          </label>
+          <label>
+            日期
+            <input type="date" data-exam-field="examAt" value="${escapeAttr(defaultDate)}" />
+          </label>
+          <label>
+            範圍
+            <select data-exam-field="scopeKey">
+              ${EXAM_SCOPES.map(
+                (item) => `<option value="${escapeAttr(item.key)}" ${plan.scopeKey === item.key ? "selected" : ""}>${escapeHtml(item.label)}</option>`
+              ).join("")}
+            </select>
+          </label>
+          <label>
+            每天分鐘
+            <select data-exam-field="dailyMinutes">
+              ${[10, 15, 25, 45, 60]
+                .map((value) => `<option value="${value}" ${Number(plan.dailyMinutes || 15) === value ? "selected" : ""}>${value} 分鐘</option>`)
+                .join("")}
+            </select>
+          </label>
+        </div>
+        <div class="action-row">
+          <button class="button home-primary" data-action="save-exam-plan">${icon("check")}儲存</button>
+          <button class="button ghost" data-action="cancel-exam-plan">取消</button>
+        </div>
+      </section>
+    `;
+  }
+
+  function saveExamPlan() {
+    const root = app.querySelector(".exam-form");
+    if (!root) return;
+    const read = (field) => {
+      const node = root.querySelector(`[data-exam-field="${field}"]`);
+      return node ? node.value : "";
+    };
+    const examAt = read("examAt");
+    if (!examAt) {
+      showAppNotice("請先選一個考試日期。");
+      return;
+    }
+    const scopeKey = read("scopeKey") || "all";
+    const entry = EXAM_SCOPES.find((item) => item.key === scopeKey) || EXAM_SCOPES[0];
+    const records = loadRecords();
+    records.plan = {
+      label: read("label") || "考試",
+      examAt,
+      scopeKey,
+      scope: entry.scope,
+      dailyMinutes: Number(read("dailyMinutes")) || 15,
+      target: 70,
+      setAt: new Date().toISOString()
+    };
+    saveRecords(records);
+    examPlanFormOpen = false;
+    trackEvent("plan_set", {
+      days_to_exam: Math.max(0, Math.ceil((Date.parse(examAt) - Date.now()) / DAY_MS)),
+      daily_minutes: records.plan.dailyMinutes,
+      scope: scopeKey
+    });
+    render();
+  }
+
+  function clearExamPlan() {
+    const records = loadRecords();
+    // 考後報告要看得到考試設定，所以不是刪掉而是封存
+    if (records.plan && records.plan.examAt) {
+      records.planHistory = Array.isArray(records.planHistory) ? records.planHistory : [];
+      records.planHistory.push({ ...records.plan, endedAt: new Date().toISOString() });
+      records.planHistory = records.planHistory.slice(-5);
+    }
+    records.plan = null;
+    saveRecords(records);
+    examPlanFormOpen = false;
+    render();
+  }
+
+  // ── 考後報告 ────────────────────────────────────────────────
+  // 考試日過了之後第一次打開，自動生成一頁。
+  // 這是「讓成長曲線本身成為產品價值」最直接的體現：
+  // 使用者花了三週準備，總得看到那三週買到了什麼。
+  function renderExamReport(records) {
+    const plan = records.plan;
+    if (!plan || !plan.examAt) return "";
+    const examAt = Date.parse(plan.examAt);
+    if (!Number.isFinite(examAt) || Date.now() < examAt) return "";
+    if (records.planReportSeen === plan.examAt) return "";
+
+    const profile = abilityProfile(records);
+    if (!profile) return "";
+
+    const setAt = Date.parse(plan.setAt || "") || examAt - 30 * DAY_MS;
+    const spanDays = Math.max(1, Math.round((examAt - setAt) / DAY_MS));
+
+    let before = null;
+    try {
+      before = window.BuzzAbility.profile(records, { radarAxes: RADAR_AXES, now: setAt });
+    } catch (_error) {
+      before = null;
+    }
+
+    const inScope = (id) => {
+      if (!plan.scope) return true;
+      return plan.scope.some((p) => (p.endsWith("*") ? id.startsWith(p.slice(0, -1)) : id === p));
+    };
+
+    const moved = Object.keys(profile.skills)
+      .filter(inScope)
+      .map((id) => {
+        const now = profile.skills[id].mastery;
+        const then = before && before.skills[id] ? before.skills[id].mastery : null;
+        if (now === null) return null;
+        return { id, label: profile.skills[id].label, now, then, delta: then === null ? null : now - then };
+      })
+      .filter(Boolean)
+      .sort((a, b) => (b.delta || 0) - (a.delta || 0));
+
+    const gained = moved.filter((row) => row.delta !== null && row.delta > 0);
+    const causeTop = topCauseLabel(records, setAt);
+
+    return `
+      <section class="study-card exam-plan-card">
+        <div class="panel-title-row">
+          <div>
+            <p class="section-label">考後報告</p>
+            <h3>${escapeHtml(plan.label || "考試")}結束了</h3>
+          </div>
+          <button class="icon-button" data-action="dismiss-exam-report" title="收起">${icon("x")}</button>
+        </div>
+        <p class="panel-note">
+          準備期 ${spanDays} 天 ·
+          總體能力 ${before && before.overall.mastery !== null ? `${before.overall.mastery} → ` : ""}${profile.overall.mastery === null ? "資料不足" : profile.overall.mastery}
+          ${gained.length ? ` · ${gained.length} 個技巧變強` : ""}
+        </p>
+        ${
+          moved.length
+            ? `<ul class="exam-gap-list">
+                ${moved
+                  .slice(0, 6)
+                  .map(
+                    (row) =>
+                      `<li>${escapeHtml(row.label)}<span>${row.then === null ? `${row.now} 分` : `${row.then} → ${row.now}`}</span></li>`
+                  )
+                  .join("")}
+              </ul>`
+            : `<p class="panel-note">這段期間範圍內的技巧還沒累積到可以評估的作答量。</p>`
+        }
+        ${causeTop ? `<p class="panel-note">這段期間你最常犯的錯：<strong>${escapeHtml(causeTop)}</strong>。</p>` : ""}
+        <div class="action-row">
+          <button class="button secondary" data-action="open-insights">${icon("activity")}看完整數據</button>
+          <button class="button ghost" data-action="dismiss-exam-report">知道了</button>
+        </div>
+      </section>
+    `;
+  }
+
+  function topCauseLabel(records, since) {
+    const labels = {
+      "粗心": "算錯，不是不會",
+      "不會": "選錯方法",
+      "忘公式": "忘公式"
+    };
+    const counts = {};
+    (records.history || []).forEach((session) => {
+      if (!session) return;
+      const at = Date.parse(session.finishedAt || "");
+      if (!Number.isFinite(at) || at < since) return;
+      (session.answers || []).forEach((answer) => {
+        if (!answer || answer.correct || !answer.errorTag) return;
+        counts[answer.errorTag] = (counts[answer.errorTag] || 0) + 1;
+      });
+    });
+    const top = Object.entries(counts).sort((a, b) => b[1] - a[1])[0];
+    return top ? labels[top[0]] || top[0] : "";
+  }
+
+  function dismissExamReport() {
+    const records = loadRecords();
+    if (records.plan && records.plan.examAt) {
+      records.planReportSeen = records.plan.examAt;
+      saveRecords(records);
+    }
+    render();
+  }
+
+  // ── 信心自評 ────────────────────────────────────────────────
+  // spec 03.6：答完之後問「你剛剛有多確定」。三個選項、可跳過、不影響計分。
+  //
+  // 這是整個能力模型裡唯一問不出來就沒有的資料 —— 其他都能從作答紀錄推導，
+  // 只有「你以為自己會不會」必須由使用者說。它換來的是「自信但常錯」清單，
+  // 那是考卷上最貴的一種錯：不會回頭檢查，直接失分。
+  //
+  // 刻意不在大考與突然死亡模式出現：那兩個模式的節奏不能被打斷。
+  const CONFIDENCE_LEVELS = [
+    { key: "guess", label: "猜的" },
+    { key: "unsure", label: "不太確定" },
+    { key: "sure", label: "確定" }
+  ];
+  const CONFIDENCE_MODES = new Set(["quick", "topic", "practice", "daily", "mistakes", "warmup", "cooldown", "no_hint"]);
+
+  function confidenceAsked(problem) {
+    if (!quiz || !problem) return false;
+    if (quiz.examMode || quiz.suddenDeath) return false;
+    return CONFIDENCE_MODES.has(quiz.mode);
+  }
+
+  function renderConfidencePrompt(problem) {
+    if (!confidenceAsked(problem)) return "";
+    const picked = (quiz.confidence || {})[problem.id] || "";
+    const skipped = (quiz.confidenceSkipped || {})[problem.id];
+    if (skipped) return "";
+
+    return `
+      <div class="confidence-prompt">
+        <span class="confidence-ask">剛剛有多確定？</span>
+        <div class="confidence-options">
+          ${CONFIDENCE_LEVELS.map(
+            (level) => `
+              <button class="tag-button ${picked === level.key ? "is-active" : ""}"
+                data-action="set-confidence"
+                data-problem-id="${escapeAttr(problem.id)}"
+                data-level="${escapeAttr(level.key)}">${level.label}</button>`
+          ).join("")}
+          ${picked ? "" : `<button class="confidence-skip" data-action="skip-confidence" data-problem-id="${escapeAttr(problem.id)}">略過</button>`}
+        </div>
+      </div>
+    `;
+  }
+
+  function setConfidence(problemId, level) {
+    if (!quiz || !CONFIDENCE_LEVELS.some((item) => item.key === level)) return;
+    const answer = quiz.answers.find((item) => item.problem.id === problemId);
+    if (!answer) return;
+
+    quiz.confidence = quiz.confidence || {};
+    quiz.confidence[problemId] = level;
+
+    // 立刻寫進 records，不等本局結算 —— 使用者可能中途離開，
+    // 那樣就白問了。
+    const records = loadRecords();
+    records.conf = records.conf && typeof records.conf === "object" ? records.conf : {};
+    records.conf[problemId] = {
+      level,
+      correct: Boolean(answer.correct),
+      at: new Date().toISOString()
+    };
+    saveRecords(records);
+    render();
+  }
+
+  function skipConfidence(problemId) {
+    if (!quiz) return;
+    quiz.confidenceSkipped = quiz.confidenceSkipped || {};
+    quiz.confidenceSkipped[problemId] = true;
+    render();
+  }
+
+  // ── 錯因標註 ────────────────────────────────────────────────
+  // spec 03.7：問題不在於「有沒有這個功能」，在於**標註成本**。
+  // 沒有人會為了統計去點三個按鈕 —— 所以這裡先猜一個最可能的預選起來，
+  // 使用者只要按一下確認，或改選。猜錯沒關係，改一下的成本遠低於從零選。
+  const CAUSE_OPTIONS = [
+    { key: "algebra-slip", tag: "粗心", label: "算錯，不是不會" },
+    { key: "wrong-technique", tag: "不會", label: "選錯方法" },
+    { key: "forgot-formula", tag: "忘公式", label: "忘公式" }
+  ];
+
+  // 推薦規則刻意用「證據」而不是機率模型：每一條都要能一句話解釋給使用者聽。
+  function suggestCause(problem, answer) {
+    if (!problem || !answer) return null;
+    const elapsed = Number(answer.elapsed || 0);
+    const limit = Number(problem.timeLimit || 0);
+
+    // 讀太快就答錯 —— 幾乎都是看錯題目
+    if (limit && elapsed > 0 && elapsed < limit * 0.25) {
+      return { key: "wrong-technique", why: "你只花了不到四分之一的時間就答錯，通常是看錯題目或選錯方法" };
+    }
+    // 看過第二層提示才會 —— 那是記憶問題不是理解問題
+    if ((answer.hintsUsed || 0) >= 2) {
+      return { key: "forgot-formula", why: "你看到第二層提示才會，多半是公式忘了而不是不懂" };
+    }
+    // 有草稿、時間也花夠，而且這個技巧其實不弱 —— 那就是算錯
+    const strokes = quiz && quiz.boardStrokes && quiz.boardStrokes[problem.id];
+    const skillOk = causeSkillIsSolid(problem);
+    if ((strokes && strokes.length) || (skillOk && limit && elapsed > limit * 0.5)) {
+      return { key: "algebra-slip", why: "你有動筆、時間也花夠了，而且這個技巧你其實會 —— 比較像算錯" };
+    }
+    return { key: "wrong-technique", why: "這個技巧的精熟度還沒起來" };
+  }
+
+  function causeSkillIsSolid(problem) {
+    if (!window.BuzzAbility || !window.BuzzSkillGraph) return false;
+    try {
+      const profile = abilityProfile(loadRecords());
+      if (!profile) return false;
+      const skills = window.BuzzSkillGraph.skillsForProblem(problem);
+      return skills.some((id) => {
+        const entry = profile.skills[id];
+        return entry && entry.measured && entry.mastery !== null && entry.mastery >= 65;
+      });
+    } catch (_error) {
+      return false;
+    }
+  }
+
+  function renderCausePrompt(problem, feedback) {
+    if (!quiz || !problem || quiz.examMode) return "";
+    if (!feedback || feedback.status === "correct") return "";
+    const answer = quiz.answers.find((item) => item.problem.id === problem.id);
+    if (!answer || answer.correct) return "";
+
+    // 逾時未作答的錯因是系統判定的，不用問使用者
+    if (answer.unanswered) {
+      return `<div class="cause-prompt is-auto"><span>錯因：來不及</span><small>逾時未作答，系統自動判定</small></div>`;
+    }
+
+    const suggestion = suggestCause(problem, answer);
+    const current = answer.errorTag || (suggestion ? causeTagOf(suggestion.key) : "");
+
+    return `
+      <div class="cause-prompt">
+        <span class="cause-ask">為什麼錯？</span>
+        <div class="cause-options">
+          ${CAUSE_OPTIONS.map(
+            (option) => `
+              <button class="tag-button ${current === option.tag ? "is-active" : ""}"
+                data-action="tag-answer"
+                data-problem-id="${escapeAttr(problem.id)}"
+                data-tag="${escapeAttr(option.tag)}">${option.label}</button>`
+          ).join("")}
+        </div>
+        ${
+          // 只有「還是系統猜的」才需要解釋為什麼這樣猜。
+          // 使用者親自選過之後（causeAuto 被清掉）就不該再囉嗦。
+          suggestion && answer.causeAuto
+            ? `<small class="cause-why">已先幫你選好：${escapeHtml(suggestion.why)}。不對就改一下。</small>`
+            : ""
+        }
+      </div>
+    `;
+  }
+
+  function causeTagOf(key) {
+    const option = CAUSE_OPTIONS.find((item) => item.key === key);
+    return option ? option.tag : "";
+  }
+
+  // ── 訓練分頁：四個 bucket ────────────────────────────────────
+  // spec 04.2：19 個模式全部保留，但收成四類。分類的依據不是「像不像」，
+  // 而是**焦慮該不該存在**：練習區不得製造焦慮，高壓規則只准出現在模擬區。
+  const TRAIN_BUCKETS = [
+    { key: "practice", label: "練習", note: "沒有倒數，可以看提示" },
+    { key: "weakness", label: "弱點", note: "依你的錯題自動選題" },
+    { key: "exam", label: "模擬", note: "限時、全螢幕、無提示" },
+    { key: "challenge", label: "挑戰", note: "高難度、有失敗條件" }
+  ];
+
+  function renderTrain() {
+    const records = loadRecords();
+    const path = learningPathState(records);
+    const today = new Date().toISOString().slice(0, 10);
+    const mission = dailyMissionInfo(records, records.daily && records.daily[today]);
+    const bucket = TRAIN_BUCKETS.some((item) => item.key === selectedBucket) ? selectedBucket : "practice";
+
+    return `
+      <main class="screen train-screen">
+        <div class="segmented bucket-tabs" role="group" aria-label="訓練分類">
+          ${TRAIN_BUCKETS.map(
+            (item) => `
+              <button class="segment ${bucket === item.key ? "is-active" : ""}"
+                aria-pressed="${bucket === item.key ? "true" : "false"}"
+                data-action="set-bucket" data-bucket="${escapeAttr(item.key)}">
+                <strong>${item.label}</strong>
+                <span>${item.note}</span>
+              </button>`
+          ).join("")}
+        </div>
+        ${
+          bucket === "practice"
+            ? `${renderBuzzPath(path, mission)}${renderSessionSettings(records)}${renderHomeMorePanel(records, topWeaknesses(records), Object.keys(records.mistakes || {}).length)}`
+            : ""
+        }
+        ${bucket === "weakness" ? renderWeaknessBucket(records) : ""}
+        ${bucket === "exam" ? `${renderExamPlanCard(records)}${renderWeeklyChallengeCard(records)}${renderNamedExamPanel(records)}${renderExamBucketExtras()}` : ""}
+        ${bucket === "challenge" ? renderChallengeBucket(records, mission) : ""}
       </main>
+    `;
+  }
+
+  // 從「哪裡弱」到「先補哪裡」
+  //
+  // 「勞必達法則正確率 62%」是資訊，不是產品 —— 使用者看兩次就不看了。
+  // 技能圖帶著前置關係（DAG），所以可以往回走：如果一個技巧的**前置**
+  // 也沒練起來，那先練它本身是浪費時間，該回頭補前置。
+  //
+  // 處方給錯比不給更傷信任，所以規則刻意保守：
+  //   - 只在前置「明顯更弱」（差 12 分以上）的時候才建議回頭
+  //   - 沒練過的前置不算數（沒有資料不等於弱）
+  //   - 找不到理由就老實說「就練這個」
+  function weaknessPrescription(profile, skillId) {
+    const graph = window.BuzzSkillGraph;
+    if (!profile || !graph || typeof graph.byId !== "function") return null;
+    const self = profile.skills[skillId];
+    if (!self) return null;
+    const node = graph.byId(skillId);
+    if (!node || !node.prereq || !node.prereq.length) return null;
+
+    // 自己的精熟度都還沒測出來的話，談不上「回頭補前置」。
+    if (self.mastery === null || !self.measured) return null;
+
+    const MIN_GAP = 12;
+    const MIN_EVIDENCE = 3;
+    let worst = null;
+    (typeof graph.ancestors === "function" ? graph.ancestors(skillId) : node.prereq).forEach((parentId) => {
+      const parent = profile.skills[parentId];
+      if (!parent) return;
+      // 沒什麼作答紀錄的前置不能拿來當理由 —— 沒資料不是弱。
+      if (!parent.measured || parent.mastery === null || (parent.n || 0) < MIN_EVIDENCE) return;
+      if (parent.mastery >= self.mastery - MIN_GAP) return;
+      if (!worst || parent.mastery < worst.mastery) worst = parent;
+    });
+
+    if (!worst) {
+      return { kind: "direct", text: "前置都穩了，直接練這個技巧就會有進步。", skillId };
+    }
+    return {
+      kind: "backtrack",
+      text: `先回去補「${worst.label}」（${worst.mastery} 分）—— 它是這個技巧的前置，卡在那裡的話這裡怎麼練都會卡。`,
+      skillId: worst.id,
+      label: worst.label
+    };
+  }
+
+  function renderWeaknessBucket(records) {
+    const summary = srsDueSummary(records);
+    const mistakeCount = Object.keys(records.mistakes || {}).length;
+    const profile = abilityProfile(records);
+    const weakest = profile
+      ? profile.weakest.map((id) => profile.skills[id]).filter(Boolean).slice(0, 3)
+      : [];
+
+    return `
+      <section class="study-card">
+        <div class="panel-title-row">
+          <div>
+            <p class="section-label">錯題複習</p>
+            <h3>${summary.due ? `今天到期 ${summary.due} 題` : mistakeCount ? "目前沒有到期的" : "錯題本是空的"}</h3>
+          </div>
+        </div>
+        <p class="panel-note">
+          ${
+            summary.due
+              ? "照排程清掉，才會真的記住。"
+              : summary.nextDueDays
+                ? `下一批 ${summary.nextDueDays} 天後到期。`
+                : "答錯的題會自動進來，並照間隔重複排程回鍋。"
+          }
+        </p>
+        <div class="action-row">
+          ${summary.due ? `<button class="button home-primary" data-action="start-srs-review">${icon("refresh")}開始複習</button>` : ""}
+          ${mistakeCount ? `<button class="button secondary" data-action="open-mistakes">${icon("book")}錯題本（${mistakeCount}）</button>` : ""}
+        </div>
+      </section>
+      ${
+        weakest.length
+          ? `
+        <section class="study-card">
+          <div class="panel-title-row">
+            <div>
+              <p class="section-label">弱點技巧</p>
+              <h3>系統挑最弱的給你</h3>
+            </div>
+          </div>
+          <ul class="weak-pick-list">
+            ${weakest
+              .map(
+                (entry) => {
+                  const plan = weaknessPrescription(profile, entry.id);
+                  return `
+                  <li>
+                    <strong>${escapeHtml(entry.label)}</strong>
+                    <span>${escapeHtml(entry.stateLabel)} ${entry.mastery}</span>
+                    ${entry.diagnosis ? `<small>${escapeHtml(entry.diagnosis.text)}</small>` : ""}
+                    ${
+                      plan
+                        ? `<p class="weak-plan ${plan.kind === "backtrack" ? "is-backtrack" : ""}">${icon(plan.kind === "backtrack" ? "undo" : "play")}${escapeHtml(plan.text)}</p>`
+                        : ""
+                    }
+                  </li>`;
+                }
+              )
+              .join("")}
+          </ul>
+          <div class="action-row">
+            <button class="button home-primary" data-action="start-weakness">${icon("target")}練弱點</button>
+            <button class="button secondary" data-action="open-insights">${icon("activity")}看完整診斷</button>
+          </div>
+        </section>`
+          : ""
+      }
+    `;
+  }
+
+  function renderExamBucketExtras() {
+    return `
+      <section class="study-card">
+        <div class="panel-title-row">
+          <div>
+            <p class="section-label">大考模式</p>
+            <h3>20 題 / 45 分鐘</h3>
+          </div>
+        </div>
+        <p class="panel-note">自己輸入答案、整份倒數、全螢幕監考、切頁會被記錄。這是全站唯一有這些規則的地方。</p>
+        <div class="action-row">
+          <button class="button home-primary" data-action="start-mode" data-mode-key="exam">${icon("file-pen-line")}開始</button>
+        </div>
+      </section>
+      <section class="study-card">
+        <div class="panel-title-row">
+          <div>
+            <p class="section-label">出卷</p>
+            <h3>抽一份紙本考卷</h3>
+          </div>
+        </div>
+        <p class="panel-note">
+          指定範圍、難度區間與題數，抽出來直接列印或存成 PDF。
+          同一組條件永遠抽到同一份，所以你可以把條件抄下來重印。
+        </p>
+        <div class="action-row">
+          <button class="button home-primary" data-action="open-paper">${icon("printer")}開始出卷</button>
+        </div>
+      </section>
+    `;
+  }
+
+  function renderChallengeBucket(records, mission) {
+    const modes = Object.keys(MODES).filter((key) => MODES[key].bucket === "challenge" && !MODES[key].hidden);
+    return `
+      <section class="study-card">
+        <div class="panel-title-row">
+          <div>
+            <p class="section-label">每日</p>
+            <h3>固定題組與每日一題</h3>
+          </div>
+        </div>
+        <div class="action-row">
+          <button class="button home-primary" data-action="start-daily">${icon("calendar")}每日挑戰 ${mission.completed}/${mission.target}</button>
+          <button class="button secondary" data-action="start-daily-one">${icon("puzzle")}每日一題 ${renderDailyOneBadge(records)}</button>
+        </div>
+      </section>
+      <section class="study-card">
+        <div class="panel-title-row">
+          <div>
+            <p class="section-label">挑戰模式</p>
+            <h3>高難度，而且會失敗</h3>
+          </div>
+        </div>
+        <div class="challenge-mode-grid">
+          ${modes
+            .filter((key) => !["daily", "daily_one"].includes(key))
+            .map(
+              (key) => `
+                <button class="challenge-mode" data-action="start-mode" data-mode-key="${escapeAttr(key)}">
+                  <strong>${escapeHtml(MODES[key].label)}</strong>
+                  <span>${escapeHtml(modeDescription(key))}</span>
+                </button>`
+            )
+            .join("")}
+          <button class="challenge-mode" data-action="start-god-run">
+            <strong>競賽魔王</strong>
+            <span>R6 · 競賽級</span>
+          </button>
+        </div>
+      </section>
+    `;
+  }
+
+  // ── 數據分頁 ────────────────────────────────────────────────
+  // ability.js 早就算好了 PA / UA / 速度象限 / 錯因 / 趨勢，但一直沒有地方顯示。
+  // 這一頁就是把那些數字變成使用者看得懂的診斷。
+  //
+  // 一條原則貫穿整頁：**沒測準的東西不給數字**。ability 的 measured / stale
+  // 已經分好「從沒測過」和「練過但太久沒碰」，UI 要照實講，不要拿 0 充數。
+  function renderInsights() {
+    const records = loadRecords();
+    const profile = abilityProfile(records);
+
+    if (!profile) {
+      return `
+        <main class="screen">
+          <section class="study-card">
+            <p class="section-label">數據</p>
+            <h3>能力模型未載入</h3>
+            <p class="panel-note">重新整理一次頁面。若持續發生，代表 kernel 檔沒有載入成功。</p>
+          </section>
+        </main>
+      `;
+    }
+
+    if (!profile.coverage.attempts) {
+      return `
+        <main class="screen">
+          <section class="study-card">
+            <p class="section-label">數據</p>
+            <h3>還沒有資料</h3>
+            <p class="panel-note">先打一局訓練，這裡就會出現你的技巧雷達、速度象限與錯因分佈。</p>
+            <div class="action-row">
+              <button class="button home-primary" data-action="home">${icon("play")}回去開一局</button>
+            </div>
+          </section>
+        </main>
+      `;
+    }
+
+    return `
+      <main class="screen insights-screen">
+        ${renderInsightsSummary(profile)}
+        ${renderMasteryRadar(records)}
+        ${renderSpeedQuadrant(profile)}
+        ${renderSkillTable(profile)}
+        ${renderCauseBreakdown(profile)}
+        ${renderConfidencePanel(profile)}
+        ${renderActivityHeatmap(records)}
+      </main>
+    `;
+  }
+
+  // 能力模型的結果在同一次 render 內是不會變的，但首頁會問兩次
+  // （今天的訓練一次、成長證據一次），數據頁更多。實測首頁 render 6.9ms，
+  // 其中大半是重複算的 profile。
+  //
+  // 用資料指紋當 key 而不是「每次 render 清掉」：這樣跨 render 也能重用，
+  // 而且紀錄一變（答完一題）指紋就變，不會拿到過期的數字。
+  let abilityCache = { key: "", value: null };
+
+  function abilityFingerprint(records) {
+    const history = records.history || [];
+    const last = history.length ? history[0].finishedAt || "" : "";
+    return [
+      history.length,
+      Number(records.totalAnswered || 0),
+      (records.attemptLog || []).length,
+      Object.keys(records.mistakes || {}).length,
+      Object.keys(records.conf || {}).length,
+      last
+    ].join(":");
+  }
+
+  function abilityProfile(records) {
+    if (!window.BuzzAbility || !window.BuzzSkillGraph) return null;
+    const key = abilityFingerprint(records);
+    if (abilityCache.key === key && abilityCache.value) return abilityCache.value;
+    try {
+      const value = window.BuzzAbility.profile(records, { radarAxes: RADAR_AXES });
+      abilityCache = { key, value };
+      return value;
+    } catch (_error) {
+      return null;
+    }
+  }
+
+  function trendChip(value, unit = "") {
+    if (value === null || value === undefined) return `<span class="trend-chip is-flat">—</span>`;
+    if (value === 0) return `<span class="trend-chip is-flat">持平</span>`;
+    const cls = value > 0 ? "is-up" : "is-down";
+    return `<span class="trend-chip ${cls}">${value > 0 ? "+" : ""}${value}${unit}</span>`;
+  }
+
+  function renderInsightsSummary(profile) {
+    const overall = profile.overall;
+    const up = profile.trend.fastestUp;
+    const down = profile.trend.fastestDown;
+    return `
+      <section class="study-card insights-summary">
+        <div class="panel-title-row">
+          <div>
+            <p class="section-label">整體能力</p>
+            <h3>${overall.mastery === null ? "資料不足" : `${overall.mastery} 分`}</h3>
+          </div>
+          <div class="insights-trends">
+            <div><span>7 天</span>${trendChip(profile.trend.d7)}</div>
+            <div><span>30 天</span>${trendChip(profile.trend.d30)}</div>
+          </div>
+        </div>
+        <p class="panel-note">
+          測得出來的技巧 ${profile.coverage.skillsMeasured} 個 / 碰過 ${profile.coverage.skillsTouched} 個 ·
+          累計 ${profile.coverage.attempts} 次作答
+        </p>
+        <div class="insights-movers">
+          <div class="mover is-up">
+            <span>本週進步最快</span>
+            <strong>${up ? `${escapeHtml(up.label)} ${trendChip(up.delta)}` : "還看不出來"}</strong>
+          </div>
+          <div class="mover is-down">
+            <span>本週退步最快</span>
+            <strong>${down ? `${escapeHtml(down.label)} ${trendChip(down.delta)}` : "沒有退步的技巧"}</strong>
+          </div>
+        </div>
+      </section>
+    `;
+  }
+
+  // Speed × Accuracy 象限圖。橫軸是「相對耗時」（elapsed / timeLimit），
+  // 縱軸是限時正確率 —— 這張圖回答的是「你是不會，還是來不及」。
+  function renderSpeedQuadrant(profile) {
+    const points = Object.values(profile.skills).filter(
+      (entry) => entry.quadrant && entry.speed !== null && entry.pressureAccuracy !== null
+    );
+
+    if (!points.length) {
+      return `
+        <section class="study-card">
+          <p class="section-label">速度 × 正確率</p>
+          <h3>還測不出來</h3>
+          <p class="panel-note">需要同一個技巧累積 8 題以上的限時作答。多打幾局限時訓練就會出現。</p>
+        </section>
+      `;
+    }
+
+    const W = 320;
+    const H = 240;
+    const pad = 34;
+    // 相對耗時超過 1.2 的都畫在最右邊：超時本來就不需要再細分
+    const x = (speed) => pad + (Math.min(1.2, speed) / 1.2) * (W - pad - 12);
+    const y = (acc) => H - pad - acc * (H - pad - 12);
+    const fastLine = x(0.6);
+    const accLine = y(0.7);
+
+    const dots = points
+      .map((entry) => {
+        const cx = x(entry.speed).toFixed(1);
+        const cy = y(entry.pressureAccuracy).toFixed(1);
+        return `<circle class="quad-dot is-${entry.quadrant.key}" cx="${cx}" cy="${cy}" r="5">
+          <title>${escapeHtml(entry.label)}：${entry.quadrant.label} · 正確率 ${Math.round(entry.pressureAccuracy * 100)}% · 相對耗時 ${entry.speed.toFixed(2)}</title>
+        </circle>`;
+      })
+      .join("");
+
+    const counts = points.reduce((acc, entry) => {
+      acc[entry.quadrant.key] = (acc[entry.quadrant.key] || 0) + 1;
+      return acc;
+    }, {});
+    const legend = [
+      { key: "reflex", label: "反射區", note: "快又準" },
+      { key: "slow", label: "會但慢", note: "方法對、不熟" },
+      { key: "rushed", label: "衝太快", note: "讀題或代數不穩" },
+      { key: "unbuilt", label: "還沒建立", note: "缺技巧" }
+    ];
+
+    return `
+      <section class="study-card quadrant-card">
+        <div class="panel-title-row">
+          <div>
+            <p class="section-label">速度 × 正確率</p>
+            <h3>你是不會，還是來不及</h3>
+          </div>
+        </div>
+        <svg class="quadrant-svg" viewBox="0 0 ${W} ${H}" role="img" aria-label="速度與正確率的四象限圖">
+          <line class="quad-axis" x1="${pad}" y1="${H - pad}" x2="${W - 8}" y2="${H - pad}"></line>
+          <line class="quad-axis" x1="${pad}" y1="8" x2="${pad}" y2="${H - pad}"></line>
+          <line class="quad-split" x1="${fastLine}" y1="8" x2="${fastLine}" y2="${H - pad}"></line>
+          <line class="quad-split" x1="${pad}" y1="${accLine}" x2="${W - 8}" y2="${accLine}"></line>
+          <text class="quad-label" x="${pad}" y="${H - 10}">快</text>
+          <text class="quad-label" x="${W - 24}" y="${H - 10}">慢</text>
+          <text class="quad-label" x="6" y="16">準</text>
+          <text class="quad-label" x="6" y="${H - pad}">錯</text>
+          ${dots}
+        </svg>
+        <div class="quad-legend">
+          ${legend
+            .map(
+              (item) => `
+                <div class="quad-legend-item is-${item.key}">
+                  <span class="quad-swatch"></span>
+                  <strong>${item.label}</strong>
+                  <small>${item.note} · ${counts[item.key] || 0} 個技巧</small>
+                </div>`
+            )
+            .join("")}
+        </div>
+      </section>
+    `;
+  }
+
+  // 技巧清單：只列測得準的，並且每一列都帶一句診斷。
+  // 只給分數不給診斷的話，使用者知道「Frullani 41 分」但不知道要做什麼。
+  function renderSkillTable(profile) {
+    const rows = profile.weakest
+      .map((id) => profile.skills[id])
+      .filter((entry) => entry && entry.mastery !== null)
+      .slice(0, 12);
+
+    const stale = Object.values(profile.skills).filter((entry) => entry.stale);
+
+    if (!rows.length) {
+      return `
+        <section class="study-card">
+          <p class="section-label">技巧</p>
+          <h3>還沒有技巧測得準</h3>
+          <p class="panel-note">同一個技巧累積約 12 次作答之後才會給分數 —— 樣本不夠時寧可留白，也不給不準的數字。</p>
+        </section>
+      `;
+    }
+
+    return `
+      <section class="study-card skill-table-card">
+        <div class="panel-title-row">
+          <div>
+            <p class="section-label">技巧精熟度</p>
+            <h3>從最弱的開始</h3>
+          </div>
+        </div>
+        <ul class="skill-rows">
+          ${rows
+            .map((entry) => {
+              const pct = entry.mastery;
+              const pa = entry.pressureAccuracy === null ? null : Math.round(entry.pressureAccuracy * 100);
+              const ua = entry.untimedAccuracy === null ? null : Math.round(entry.untimedAccuracy * 100);
+              return `
+                <li class="skill-row is-${entry.state}">
+                  <div class="skill-row-head">
+                    <strong>${escapeHtml(entry.label)}</strong>
+                    <span class="skill-state">${escapeHtml(entry.stateLabel)} ${pct}</span>
+                  </div>
+                  <div class="skill-bar"><div class="skill-fill" style="width:${pct}%"></div></div>
+                  <div class="skill-row-meta">
+                    <span>${entry.n} 題</span>
+                    ${pa !== null ? `<span>限時 ${pa}%</span>` : ""}
+                    ${ua !== null ? `<span>不限時 ${ua}%</span>` : ""}
+                    ${entry.quadrant ? `<span>${escapeHtml(entry.quadrant.label)}</span>` : ""}
+                  </div>
+                  ${
+                    entry.diagnosis
+                      ? `<p class="skill-diagnosis">${escapeHtml(entry.diagnosis.text)} —— ${escapeHtml(entry.diagnosis.advice)}</p>`
+                      : ""
+                  }
+                </li>`;
+            })
+            .join("")}
+        </ul>
+        ${
+          stale.length
+            ? `<p class="panel-note">另外有 ${stale.length} 個技巧太久沒練，資料已經不算數了 —— 重新練幾題就會回到這張表。</p>`
+            : ""
+        }
+      </section>
+    `;
+  }
+
+  // 錯因分佈。「我其實是算錯，不是不會」這句話要有數字支撐才有意義。
+  function renderCauseBreakdown(profile) {
+    const totals = {};
+    Object.values(profile.skills).forEach((entry) => {
+      Object.keys(entry.causes || {}).forEach((cause) => {
+        totals[cause] = (totals[cause] || 0) + entry.causes[cause];
+      });
+    });
+    const labels = {
+      "algebra-slip": "算錯，不是不會",
+      "wrong-technique": "選錯方法",
+      "forgot-formula": "忘公式",
+      timeout: "來不及",
+      misread: "看錯題目"
+    };
+    const rows = Object.entries(totals).sort((a, b) => b[1] - a[1]);
+    const total = rows.reduce((sum, row) => sum + row[1], 0);
+
+    if (!total) {
+      return `
+        <section class="study-card">
+          <p class="section-label">錯因</p>
+          <h3>還沒有錯因資料</h3>
+          <p class="panel-note">答錯後在結算頁標一下原因（粗心 / 不會 / 忘公式），這裡就會統計出你最常犯的錯。</p>
+        </section>
+      `;
+    }
+
+    const slip = totals["algebra-slip"] || 0;
+    const slipRate = Math.round((slip / total) * 100);
+
+    return `
+      <section class="study-card cause-card">
+        <div class="panel-title-row">
+          <div>
+            <p class="section-label">錯因分佈</p>
+            <h3>${slipRate >= 40 ? "你的問題主要是穩定度，不是技巧" : "你最常犯的錯"}</h3>
+          </div>
+        </div>
+        <ul class="cause-rows">
+          ${rows
+            .map(([cause, count]) => {
+              const pct = Math.round((count / total) * 100);
+              return `
+                <li class="cause-row is-${escapeAttr(cause)}">
+                  <span class="cause-name">${escapeHtml(labels[cause] || cause)}</span>
+                  <div class="cause-bar"><div class="cause-fill" style="width:${pct}%"></div></div>
+                  <span class="cause-count">${count} 題 · ${pct}%</span>
+                </li>`;
+            })
+            .join("")}
+        </ul>
+        ${
+          slipRate >= 40
+            ? `<p class="panel-note">算錯佔了 ${slipRate}%。這種情況該練的是低難度高計算量的題目來穩定代數，而不是往上加難度。</p>`
+            : ""
+        }
+        ${renderCauseAutoNote()}
+      </section>
+    `;
+  }
+
+  // 系統推測的錯因也算進統計，但必須講清楚有多少是推測的 ——
+  // 不講的話這張圖看起來像是使用者親自標的，那是在騙人。
+  function renderCauseAutoNote() {
+    const records = loadRecords();
+    let auto = 0;
+    let total = 0;
+    (records.history || []).forEach((session) => {
+      (session && session.answers ? session.answers : []).forEach((answer) => {
+        if (!answer || answer.correct || !answer.errorTag) return;
+        total += 1;
+        if (answer.causeAuto) auto += 1;
+      });
+    });
+    if (!total || !auto) return "";
+    return `<p class="panel-note">其中 ${auto}/${total} 筆是系統依作答時間、提示層數與草稿推測的，你可以在結算頁改。</p>`;
+  }
+
+  // 信心校準的結果。沒有資料時明白說「還沒問到夠多」，而不是顯示 0。
+  function renderConfidencePanel(profile) {
+    const dangerous = profile.dangerous.map((id) => profile.skills[id]).filter(Boolean);
+    const underrated = profile.underrated.map((id) => profile.skills[id]).filter(Boolean);
+    const rated = Object.values(profile.skills).reduce((sum, entry) => sum + (entry.confN || 0), 0);
+
+    if (!rated) {
+      return `
+        <section class="study-card">
+          <p class="section-label">信心校準</p>
+          <h3>還沒有自評資料</h3>
+          <p class="panel-note">答完題後那排「猜的 / 不太確定 / 確定」按一下，這裡就會找出你「自信但常錯」的技巧 —— 那是考卷上最貴的一種錯。</p>
+        </section>
+      `;
+    }
+
+    if (!dangerous.length && !underrated.length) {
+      return `
+        <section class="study-card">
+          <p class="section-label">信心校準</p>
+          <h3>你的自我判斷很準</h3>
+          <p class="panel-note">已自評 ${rated} 題。目前沒有「自信但常錯」或「會做但沒信心」的技巧。</p>
+        </section>
+      `;
+    }
+
+    return `
+      <section class="study-card">
+        <div class="panel-title-row">
+          <div>
+            <p class="section-label">信心校準</p>
+            <h3>你以為的，和實際的</h3>
+          </div>
+        </div>
+        ${
+          dangerous.length
+            ? `<div class="calib-group is-danger">
+                <strong>自信但常錯</strong>
+                <small>考場上不會回頭檢查，直接失分</small>
+                <ul>${dangerous
+                  .map((entry) => `<li>${escapeHtml(entry.label)}<span>自評高估 ${Math.round(entry.bias * 100)} 個百分點</span></li>`)
+                  .join("")}</ul>
+              </div>`
+            : ""
+        }
+        ${
+          underrated.length
+            ? `<div class="calib-group is-win">
+                <strong>會做但沒信心</strong>
+                <small>反覆驗算會拖垮整份考卷的節奏</small>
+                <ul>${underrated
+                  .map((entry) => `<li>${escapeHtml(entry.label)}<span>自評低估 ${Math.abs(Math.round(entry.bias * 100))} 個百分點</span></li>`)
+                  .join("")}</ul>
+              </div>`
+            : ""
+        }
+        <p class="panel-note">已自評 ${rated} 題。</p>
+      </section>
     `;
   }
 
@@ -959,7 +2818,7 @@
     const mastery = Math.round(next.mastery || 0);
     const remaining = Math.max(0, (mission.target || 0) - (mission.completed || 0));
     const streak = mission.dailyStreak || 0;
-    const statusMap = { jump: "可跳關", ready: "可挑戰", active: "進行中", mastered: "已熟練", gold: "金關" };
+    const statusMap = { jump: "可略過", ready: "可開始", active: "進行中", mastered: "已熟練", gold: "已精熟" };
     const statusText = statusMap[next.status] || "可挑戰";
     const isNew = !(records.totalAnswered || 0);
     const hook = isNew
@@ -969,19 +2828,18 @@
         : remaining <= 1
           ? `再 ${remaining} 題就達成今日目標`
           : `再 ${remaining} 題達成今日目標`;
-    const mood = homeMascotMood(records, mission, mistakeCount, streak);
     return `
       <section class="home-launch-pad quest-hero" aria-label="今日練習入口">
         <div class="launch-copy">
           <p class="section-label launch-eyebrow" data-enter>${escapeHtml(homeGreeting())}${streak ? ` · 連勝 ${streak} 天` : ""}</p>
           <div class="quest-tag" data-enter>
-            <span class="quest-level">第 ${level} / ${total} 關</span>
+            <span class="quest-level">第 ${level} / ${total} 階</span>
             <span class="quest-status is-${escapeAttr(next.status || "ready")}">${escapeHtml(statusText)}</span>
           </div>
           <h1 data-enter>${escapeHtml(next.label)}</h1>
           <p class="launch-hook" data-enter>${escapeHtml(hook)}</p>
           <div class="mastery-row" data-enter>
-            <span class="mastery-name">熟練槽</span>
+            <span class="mastery-name">精熟度</span>
             <span class="mastery-pct">${mastery}%</span>
           </div>
           <div class="mastery-gauge" data-enter role="img" aria-label="熟練度 ${mastery}%">
@@ -989,7 +2847,7 @@
           </div>
           <div class="launch-actions" data-enter>
             <button class="button home-primary launch-start" data-action="start-path-node" data-node-id="${escapeAttr(next.id)}">
-              ${icon("play")}<span>開打下一格</span><small>${escapeHtml(next.short)}</small>
+              ${icon("play")}<span>繼續主線</span><small>${escapeHtml(next.short)}</small>
             </button>
             <button class="button secondary launch-daily" data-action="start-daily">
               ${icon("calendar")}<span>每日</span><small>${mission.completed}/${mission.target}</small>
@@ -999,11 +2857,6 @@
             </button>
           </div>
         </div>
-        <div class="launch-mascot ${mood.cls}">
-          <span class="mascot-orbit"></span>
-          <strong aria-hidden="true">∫</strong>
-          <small class="mascot-mood">${escapeHtml(mood.label)}</small>
-        </div>
       </section>
     `;
   }
@@ -1011,7 +2864,7 @@
   // 首頁保留區：錯題 SRS 到期卡 + 練習連勝（含盾牌）迷你熱力圖。
   function renderHomeRetentionRow(records) {
     const srsCard = renderHomeSrsCard(records);
-    const streakCard = (records.totalAnswered || 0) ? renderHomeStreakCard(records) : "";
+    const streakCard = (records.totalAnswered || 0) && !focusModeOn() ? renderHomeStreakCard(records) : "";
     if (!srsCard && !streakCard) return "";
     return `
       <section class="home-retention" aria-label="複習與連勝">
@@ -1073,16 +2926,6 @@
     `;
   }
 
-  function homeMascotMood(records, mission, mistakeCount, streak) {
-    if (!(records.totalAnswered || 0)) return { cls: "is-idle", label: "等你開打" };
-    // Warnings take priority over praise: don't celebrate a streak while
-    // a pile of mistakes is going unreviewed.
-    if ((mistakeCount || 0) >= 8) return { cls: "is-pressure", label: "錯題堆積中" };
-    if (mission.done) return { cls: "is-ahead", label: "今日超前" };
-    if (mission.target && mission.completed / mission.target >= 0.66) return { cls: "is-close", label: "快達標" };
-    if ((streak || 0) >= 3) return { cls: "is-streak", label: `連勝 ${streak} 天` };
-    return { cls: "is-ok", label: "狀態良好" };
-  }
 
   function renderSessionSettings(records) {
     const cap = activeDifficultyCap(records);
@@ -1332,8 +3175,7 @@
             <nav class="quick-entries" aria-label="快速入口">
               <button data-action="start-friendly-run">${icon("sparkles")}<span>輕鬆暖身</span><small>R1-R2</small></button>
               <button data-action="start-mode" data-mode-key="exam">${icon("file-pen-line")}<span>大考模式</span><small>20 題 / 45 分</small></button>
-              <button data-action="start-mode" data-mode-key="rival">${icon("swords")}<span>宿敵對決</span><small>${RIVAL_NAME} Lv.${records.rival ? records.rival.level : 1}</small></button>
-              <button data-action="start-god-run">${icon("flame")}<span>競賽魔王</span><small>R6 · Putnam</small></button>
+              <button data-action="start-god-run">${icon("flame")}<span>競賽魔王</span><small>R6 · 競賽級</small></button>
             </nav>
             ${renderNamedExamPanel(records)}
             <section class="control-band practice-control home-compact-control">
@@ -1432,6 +3274,150 @@
             .join("")}
         </div>
       </section>
+    `;
+  }
+
+  // ── 開局 Onboarding ─────────────────────────────────────────
+  // spec 04.5：新使用者第一次進站要在 6 分鐘內完成一次有效訓練並看到自己的定位。
+  //
+  // 舊的第一屏給了 5 個並列選項（定位測驗 / 先暖身 / 照主線 / 直接挑戰 / 稍後），
+  // 那不是「選一個起點」，那是把決策成本丟給一個還不知道這站在幹嘛的人。
+  //
+  // 硬規則：
+  //   - 每一步只有一個主要動作
+  //   - 定位測驗可以跳過，跳過就用自陳給一個保守起點
+  //   - 最後一步的出口只有一個：開始練。不給「隨便逛逛」
+  //   - 第一次進站永遠不會看到 1407 題的題庫頁
+  const ONBOARDING_CONTEXTS = [
+    { key: "highschool", label: "高中先修", note: "先把基本工具練熟", cap: 2 },
+    { key: "freshman", label: "大一微積分", note: "跟著課程進度練", cap: 3 },
+    { key: "exam", label: "期中期末要考了", note: "考前衝刺，抓弱點", cap: 4, suggestExam: true },
+    { key: "maintain", label: "想維持手感", note: "已經學過，不想生鏽", cap: 4 }
+  ];
+
+  function renderOnboarding() {
+    const step = onboardingStep;
+    if (step === "context") return renderOnboardingContext();
+    return renderOnboardingIntro();
+  }
+
+  function renderOnboardingIntro() {
+    return `
+      <main class="screen onboarding-screen">
+        <section class="onboarding-card">
+          <p class="section-label">BuzzCalculus</p>
+          <h1>這是微積分的健身房，不是課本。</h1>
+          <p class="onboarding-lead">
+            這裡不教你微積分，這裡讓你把已經學過的東西<strong>練到反射</strong> ——
+            看到題目就知道該用哪個工具，而不是想三分鐘。
+          </p>
+          <ul class="onboarding-points">
+            <!-- 題數要從題庫算，不能寫死。寫死的那版停在 1407，
+                 而使用者第一眼看到的數字跟題庫頁顯示的 1459 對不上 ——
+                 這是最不該在第一畫面出現的那種不一致。 -->
+            <li>${icon("target")}<span>${problems.length} 題微積分，依技巧分類而不是章節</span></li>
+            <li>${icon("activity")}<span>會告訴你是「不會」還是「來不及」</span></li>
+            <li>${icon("refresh")}<span>錯題自動排程回鍋，不是丟進倉庫</span></li>
+          </ul>
+          <p class="onboarding-privacy">紀錄只存在這台裝置的瀏覽器，不需要註冊。</p>
+          <div class="action-row">
+            <button class="button home-primary" data-action="onboarding-next">${icon("play")}開始</button>
+          </div>
+        </section>
+      </main>
+    `;
+  }
+
+  function renderOnboardingContext() {
+    return `
+      <main class="screen onboarding-screen">
+        <section class="onboarding-card">
+          <p class="section-label">第 2 步 / 共 3 步</p>
+          <h1>你現在在哪個階段？</h1>
+          <p class="onboarding-lead">這只是用來決定起始難度，之後隨時可以調。</p>
+          <div class="context-grid">
+            ${ONBOARDING_CONTEXTS.map(
+              (item) => `
+                <button class="context-option" data-action="set-onboarding-context" data-context="${escapeAttr(item.key)}">
+                  <strong>${escapeHtml(item.label)}</strong>
+                  <small>${escapeHtml(item.note)}</small>
+                </button>`
+            ).join("")}
+          </div>
+        </section>
+      </main>
+    `;
+  }
+
+  function renderOnboardingPlacementOffer(records) {
+    const context = ONBOARDING_CONTEXTS.find((item) => item.key === records.onboardingContext);
+    return `
+      <main class="screen onboarding-screen">
+        <section class="onboarding-card">
+          <p class="section-label">第 3 步 / 共 3 步</p>
+          <h1>先花 5 分鐘測出你的底</h1>
+          <p class="onboarding-lead">
+            8 題自適應：答對就變難、答錯就變簡單。測完你會看到自己落在哪一級、
+            哪個技巧最弱，之後的每日訓練都會照這個排。
+          </p>
+          <p class="onboarding-privacy">不想測也可以直接開始，我們會先給你${context ? `「${escapeHtml(context.label)}」` : ""}的保守起點，再從實際作答慢慢校準。</p>
+          <div class="action-row">
+            <button class="button home-primary" data-action="start-placement">${icon("target")}開始定位測驗</button>
+            <button class="button ghost" data-action="skip-placement">直接開始練</button>
+          </div>
+        </section>
+      </main>
+    `;
+  }
+
+  function advanceOnboarding() {
+    onboardingStep = "context";
+    render();
+  }
+
+  function setOnboardingContext(key) {
+    const entry = ONBOARDING_CONTEXTS.find((item) => item.key === key) || ONBOARDING_CONTEXTS[1];
+    const records = loadRecords();
+    records.onboardingContext = entry.key;
+    records.settings = records.settings || {};
+    records.settings.difficultyCap = entry.cap;
+    saveRecords(records);
+    selectedDifficultyCap = entry.cap;
+    onboardingStep = "placement";
+    trackEvent("onboarding_step", { step: "context", context: entry.key });
+    render();
+  }
+
+  // 跳過定位測驗：用自陳給一個保守起點，並老實說它是估的。
+  function skipPlacement() {
+    const records = loadRecords();
+    records.onboardingSeen = true;
+    saveRecords(records);
+    onboardingStep = "intro";
+    trackEvent("onboarding_step", { step: "placement", skipped: true });
+    showAppNotice("已用你選的階段設定起始難度。實際練幾局之後會自動校準。");
+    view = "home";
+    render();
+  }
+
+  // 定位測驗結束後**只有一個出口**：開始練。
+  // 給「隨便逛逛」的話，一個剛測完的人會去逛題庫然後就走了 ——
+  // 而那正是 onboarding 完成率掉下來的地方。
+  function renderPlacementNextStep() {
+    const records = loadRecords();
+    const plan = plannedSession(records);
+    const minutes = plan ? Math.max(1, Math.round(plan.filled.estSeconds / 60)) : 15;
+    const count = plan ? plan.filled.problems.length : 12;
+    return `
+      <div class="placement-next" data-enter>
+        <p class="placement-next-lead">${plan ? escapeHtml(plan.recipe.why) : "已經照你的定位排好第一份訓練。"}</p>
+        <div class="action-row">
+          <button class="button home-primary" data-action="start-planned" data-length="daily15">
+            ${icon("play")}開始第一份訓練 · ${minutes} 分鐘 ${count} 題
+          </button>
+          <button class="button ghost" data-action="home">${icon("home")}先看看首頁</button>
+        </div>
+      </div>
     `;
   }
 
@@ -1537,10 +3523,13 @@
             <summary>
               <span>資料管理</span>
             </summary>
+            <!-- 這三個數字原本叫「作答歷史 / 錯題 / 練習局」，而前後兩個
+                 在使用者眼裡是同一件事，數字卻不一樣（一個是累計，一個只留最近 40 局）。
+                 看到兩個矛盾的數字之後，人會開始懷疑畫面上所有的數字。 -->
             <div class="mini-stats">
-              <div><span>作答歷史</span><strong>${(records.history || []).length}</strong></div>
-              <div><span>錯題</span><strong>${Object.keys(records.mistakes || {}).length}</strong></div>
-              <div><span>練習局</span><strong>${(records.attempts || 0) + (records.practiceRuns || 0)}</strong></div>
+              <div><span>練過幾局</span><strong>${(records.attempts || 0) + (records.practiceRuns || 0)}</strong></div>
+              <div><span>錯題本</span><strong>${Object.keys(records.mistakes || {}).length}</strong></div>
+              <div title="逐題明細只保留最近 ${HISTORY_LIMIT} 局；更早的局數仍然算在「練過幾局」裡"><span>保留明細</span><strong>${(records.history || []).length}<small> / ${HISTORY_LIMIT}</small></strong></div>
             </div>
             <div class="stack-actions home-record-actions">
               <button class="button secondary" data-action="open-history">${icon("clock")}作答歷史</button>
@@ -1549,9 +3538,300 @@
               <button class="button ghost" data-action="reset-records">${icon("trash")}清除資料</button>
               <input class="sr-only" id="import-records" type="file" accept="application/json" />
             </div>
+            ${renderCalibrationOptIn()}
+            ${renderDisplayControls()}
+            ${renderPrivacyControls()}
           </details>
         </section>
       </aside>
+    `;
+  }
+
+  // 隱私控制項。放在設定頁而不是只寫在條款裡 ——
+  // 條款是給法務看的，開關才是給使用者用的。
+  // ---- 出卷 ──────────────────────────────────────────────────
+  //
+  // 這是家教、助教與自學者真正要的東西：照條件抽一份卷、看得到、印得出來。
+  // 沒有這個功能，老師就會回去用 Word 手打 —— 然後永遠不會再來一次。
+  //
+  // 抽卷用固定種子，所以同一組條件永遠抽到同一份：
+  // 老師可以把條件抄下來，下次抽到一模一樣的卷（或改一個數字換一份）。
+  // 隨機而不可重現的抽卷，在教學現場等於不能用。
+
+  const PAPER_DEFAULTS = { topic: "all", rankMin: 1, rankMax: 4, count: 10, withSolutions: true, seed: 1 };
+  let paperSpec = { ...PAPER_DEFAULTS };
+  let paperLocked = [];
+
+  function paperPool(spec) {
+    return problems.filter((problem) => {
+      if (problem.custom) return false;
+      const rank = problemRank(problem);
+      if (rank < spec.rankMin || rank > spec.rankMax) return false;
+      if (spec.topic !== "all" && problem.topic !== spec.topic) return false;
+      return true;
+    });
+  }
+
+  function buildPaper(spec) {
+    const pool = paperPool(spec);
+    const locked = paperLocked.map((id) => problemById(id)).filter(Boolean);
+    const lockedIds = new Set(locked.map((problem) => problem.id));
+    const rest = shuffle(
+      pool.filter((problem) => !lockedIds.has(problem.id)),
+      seedFromString(`buzz-paper-${spec.topic}-${spec.rankMin}-${spec.rankMax}-${spec.count}-${spec.seed}`)
+    );
+    return locked.concat(rest).slice(0, spec.count);
+  }
+
+  // 答案排版。有些答案本來就是文字（「發散」「條件收斂」），
+  // 那些不能硬塞進數學模式，會排出一團亂碼。
+  function paperAnswerTex(problem) {
+    const raw = displayAnswer(problem);
+    return answerToTex(raw, problem) || textToTex(raw);
+  }
+
+  function renderPaperBuilder() {
+    const spec = paperSpec;
+    const pool = paperPool(spec);
+    const paper = buildPaper(spec);
+    const shortfall = paper.length < spec.count;
+    return `
+      <main class="screen paper-screen" id="buzz-main">
+        <section class="panel page-panel">
+          <div class="page-head">
+            <div>
+              <p class="section-label">出卷</p>
+              <h2>照條件抽一份卷</h2>
+            </div>
+            <div class="action-row">
+              <button class="button secondary" data-action="open-train">${icon("home")}回訓練</button>
+              <button class="button" data-action="reroll-paper">${icon("shuffle")}換一份</button>
+              <button class="button ghost" data-action="print-paper" ${paper.length ? "" : "disabled"}>${icon("printer")}列印 / 存 PDF</button>
+            </div>
+          </div>
+
+          <div class="paper-controls no-print">
+            <label class="paper-field">
+              <span>範圍</span>
+              <select data-paper-field="topic">
+                ${Object.entries(TOPICS)
+                  .map(([key, topic]) => `<option value="${escapeAttr(key)}" ${spec.topic === key ? "selected" : ""}>${escapeHtml(topic.label)}</option>`)
+                  .join("")}
+              </select>
+            </label>
+            <label class="paper-field">
+              <span>難度下限</span>
+              <select data-paper-field="rankMin">
+                ${[1, 2, 3, 4, 5, 6].map((r) => `<option value="${r}" ${spec.rankMin === r ? "selected" : ""}>R${r}</option>`).join("")}
+              </select>
+            </label>
+            <label class="paper-field">
+              <span>難度上限</span>
+              <select data-paper-field="rankMax">
+                ${[1, 2, 3, 4, 5, 6].map((r) => `<option value="${r}" ${spec.rankMax === r ? "selected" : ""}>R${r}</option>`).join("")}
+              </select>
+            </label>
+            <label class="paper-field">
+              <span>題數</span>
+              <select data-paper-field="count">
+                ${[5, 10, 15, 20, 25, 30].map((n) => `<option value="${n}" ${spec.count === n ? "selected" : ""}>${n} 題</option>`).join("")}
+              </select>
+            </label>
+            <label class="paper-field paper-check">
+              <input type="checkbox" data-paper-field="withSolutions" ${spec.withSolutions ? "checked" : ""} />
+              <span>附參考答案</span>
+            </label>
+          </div>
+
+          <p class="panel-note no-print">
+            符合條件的題目共 ${pool.length} 題，這份抽了 ${paper.length} 題。
+            ${shortfall ? "<strong>可抽的題目不夠，放寬難度區間或換範圍。</strong>" : ""}
+            鎖住的題目換卷時不會被換掉。
+          </p>
+
+          <div class="paper-sheet">
+            <div class="paper-head">
+              <strong>${escapeHtml(TOPICS[spec.topic]?.label || "全部")}　R${spec.rankMin}–R${spec.rankMax}　${paper.length} 題</strong>
+              <span>BuzzCalculus · ${BUILD_DATE}</span>
+            </div>
+            <ol class="paper-list">
+              ${paper
+                .map(
+                  (problem) => `
+                    <li class="paper-item ${paperLocked.includes(problem.id) ? "is-locked" : ""}">
+                      <div class="paper-item-head no-print">
+                        <span>${escapeHtml(problemShortCode(problem) || problem.id)} · R${problemRank(problem)}</span>
+                        <button class="icon-button ${paperLocked.includes(problem.id) ? "is-active" : ""}" data-action="toggle-paper-lock" data-problem-id="${escapeAttr(problem.id)}" title="${paperLocked.includes(problem.id) ? "解除鎖定" : "鎖住這題"}">${icon("shield")}</button>
+                      </div>
+                      <div class="math-block" data-tex="${escapeAttr(problem.prompt)}"></div>
+                      ${
+                        spec.withSolutions
+                          ? // 答案要排版。印在紙上的 "2-pi^2/6" 是內部格式，不是數學 ——
+                            // 老師發下去的那一張紙上出現這種東西，整份卷的可信度就沒了。
+                            `<p class="paper-answer">答：<span class="math-inline" data-tex="${escapeAttr(paperAnswerTex(problem))}"></span></p>`
+                          : `<div class="paper-space" aria-hidden="true"></div>`
+                      }
+                    </li>`
+                )
+                .join("")}
+            </ol>
+          </div>
+        </section>
+      </main>
+    `;
+  }
+
+  function updatePaperField(node) {
+    const field = node.dataset.paperField;
+    if (!field) return;
+    const next = { ...paperSpec };
+    if (field === "withSolutions") next.withSolutions = Boolean(node.checked);
+    else if (field === "topic") next.topic = node.value;
+    else next[field] = Number(node.value);
+    // 上下限反過來的話直接對調，不要讓使用者看到空白的卷。
+    if (next.rankMin > next.rankMax) {
+      const swap = next.rankMin;
+      next.rankMin = next.rankMax;
+      next.rankMax = swap;
+    }
+    paperSpec = next;
+    render();
+  }
+
+  function printPaper() {
+    trackEvent("paper_print", {
+      topic: paperSpec.topic,
+      rank_min: paperSpec.rankMin,
+      rank_max: paperSpec.rankMax,
+      count: paperSpec.count,
+      with_solutions: paperSpec.withSolutions
+    });
+    typesetMath(app);
+    window.setTimeout(() => {
+      try {
+        window.print();
+      } catch (_error) {
+        showAppNotice("這個瀏覽器擋住了列印。可以用瀏覽器選單裡的「列印」。");
+      }
+    }, 250);
+  }
+
+  // 列印錯題本
+  //
+  // 紙本是台灣學生真正的複習載體。不做的話使用者會自己截圖 ——
+  // 而那個成品長得完全不像這個產品。
+  //
+  // 這裡不做伺服器排版：直接用瀏覽器的列印，配合 @media print 把介面
+  // 剝到只剩題目。「存成 PDF」在每個作業系統的列印對話框裡都是內建選項，
+  // 所以零後端也能給出一份看得下去的紙。
+  function printMistakes() {
+    trackEvent("print_mistakes", { count: triageMistakes(loadRecords(), selectedMistakeTopic).length });
+    // 先讓 KaTeX 有機會把還沒排版的式子排完，再叫列印。
+    // 少了這個延遲，印出來會有一半是原始的 LaTeX 字串。
+    typesetMath(app);
+    window.setTimeout(() => {
+      try {
+        window.print();
+      } catch (_error) {
+        showAppNotice("這個瀏覽器擋住了列印。可以用瀏覽器選單裡的「列印」。");
+      }
+    }, 200);
+  }
+
+  // 專注模式
+  //
+  // 連勝、盾牌、成就對「還沒建立習慣的人」是有效的，對「考前兩週的研究所考生」
+  // 是噪音 —— 而後者才是會付錢的那群人。所以不是拿掉，是分層。
+  //
+  // 關掉只影響**顯示**：連勝照算、成就照解鎖，只是不擺在眼前。
+  // 這樣使用者隨時可以打開來看，資料也不會因為換過設定就對不起來。
+  function focusModeOn() {
+    try {
+      return (loadRecords().settings || {}).focusMode === "on";
+    } catch (_error) {
+      return false;
+    }
+  }
+
+  function setFocusMode(enabled) {
+    const records = loadRecords();
+    records.settings = records.settings || {};
+    records.settings.focusMode = enabled ? "on" : "off";
+    saveRecords(records);
+    render();
+  }
+
+  function renderDisplayControls() {
+    const on = focusModeOn();
+    return `
+      <div class="privacy-controls">
+        <p class="section-label">介面</p>
+        <div class="privacy-row">
+          <div>
+            <strong>專注模式<span class="privacy-state ${on ? "is-on" : "is-off"}">${on ? "開啟中" : "已關閉"}</span></strong>
+            <p>收起連勝、盾牌與成就這類元素，只留練習本身。連勝照算，只是不顯示。</p>
+          </div>
+          <button class="button ${on ? "secondary" : "ghost"}" data-action="toggle-focus-mode">
+            ${icon(on ? "x" : "check")}${on ? "關閉專注模式" : "開啟專注模式"}
+          </button>
+        </div>
+      </div>
+    `;
+  }
+
+  function renderPrivacyControls() {
+    const on = analyticsEnabled();
+    return `
+      <div class="privacy-controls">
+        <p class="section-label">隱私</p>
+        <div class="privacy-row">
+          <div>
+            <strong>使用分析<span class="privacy-state ${on ? "is-on" : "is-off"}">${on ? "開啟中" : "已關閉"}</span></strong>
+            <p>只送「哪個功能被用了幾次」這種計數。<strong>不會</strong>送你的作答內容、答案或題目。</p>
+          </div>
+          <!-- 狀態寫在標題旁邊，按鈕只寫「按下去會發生什麼」。
+               「已開啟 · 關閉」把狀態和動作塞進同一顆按鈕，
+               使用者得先解析一次才敢按。 -->
+          <button class="button ${on ? "secondary" : "ghost"}" data-action="toggle-analytics">
+            ${icon(on ? "x" : "activity")}${on ? "關閉分析" : "重新開啟"}
+          </button>
+        </div>
+        <p class="privacy-links">
+          <a href="about.html" target="_blank" rel="noopener">關於</a>
+          <span aria-hidden="true">·</span>
+          <a href="changelog.html" target="_blank" rel="noopener">更新紀錄</a>
+          <span aria-hidden="true">·</span>
+          <a href="privacy.html" target="_blank" rel="noopener">隱私政策</a>
+          <span aria-hidden="true">·</span>
+          <a href="terms.html" target="_blank" rel="noopener">服務條款</a>
+        </p>
+      </div>
+    `;
+  }
+
+  // 校準包的說明必須寫在按鈕旁邊，而不是藏在條款裡。
+  // 使用者要能在按下去之前就知道「這份檔案裡有什麼、沒有什麼」。
+  function renderCalibrationOptIn() {
+    const records = loadRecords();
+    const answered = Object.keys(records.problemStats || {}).length;
+    if (answered < 20) return "";
+    return `
+      <div class="calibration-optin">
+        <p class="section-label">幫忙校準難度（選填）</p>
+        <p>
+          目前的難度是作者估的，實測下來偏硬。你可以匯出一份作答統計幫忙修正。
+        </p>
+        <p class="calibration-contents">
+          檔案裡只有 <strong>題號、難度、對錯次數、中位秒數</strong>，
+          以及你的整體程度分層（高／中／低）。
+          <strong>沒有</strong>題目內容、作答內容、時間戳記，也沒有任何可以認出你的東西。
+          自訂題一律不匯出。
+        </p>
+        <div class="stack-actions">
+          <button class="button ghost" data-action="preview-calibration">${icon("eye")}先看內容</button>
+          <button class="button ghost" data-action="export-calibration">${icon("download")}匯出校準包（${answered} 題）</button>
+        </div>
+      </div>
     `;
   }
 
@@ -1780,6 +4060,10 @@
         </div>
         <div class="library-problem-foot">
           <span class="solution-quality is-${quality.level}">${escapeHtml(quality.label)}</span>
+          ${verifiedChip(problem)}
+          ${rubricChip(problem)}
+          ${sourceChip(problem)}
+          ${problemShortCode(problem) ? `<span class="chip problem-uid" title="永久題號，回報或分享時用這個">${escapeHtml(problemShortCode(problem))}</span>` : ""}
           <button class="button ghost" data-action="start-problem" data-problem-id="${escapeAttr(problem.id)}">${icon("play")}練這題</button>
         </div>
       </article>
@@ -1868,7 +4152,7 @@
     const draft = activeCreatorDraft();
     const needsVariable = draft.answerKind === "expression" || draft.answerKind === "antiderivative";
     const answerHelp = {
-      numeric: "數值答案，可用 1/2、pi/4、sqrt(2)、log(2) 這類 WebWork 寫法。",
+      numeric: "數值答案，可用 1/2、pi/4、sqrt(2)、log(2) 這類寫法。",
       expression: "寫成變數的函數，例如 2*x*cos(x^2)。系統會多點代入判分。",
       antiderivative: "原函數，可省略 +C，例如 x*log(x)-x。判分時檢查是否只差常數。",
       text: "判定型答案，用逗號列出所有可接受的寫法，例如：收斂, converges。"
@@ -2080,7 +4364,7 @@
     const sample = problem.answerKind === "text" ? problem.answers[0] : problem.answer;
     const graded = checkAnswer(problem, sample);
     if (!graded.correct) {
-      issues.push(`判分器吃不下這個答案（${graded.message}）請改用 WebWork 寫法，例如 pi/4、2*x、x*log(x)-x。`);
+      issues.push(`判分器吃不下這個答案（${graded.message}）請改用這類寫法，例如 pi/4、2*x、x*log(x)-x。`);
     }
     return issues;
   }
@@ -2511,6 +4795,7 @@
             <div class="action-row">
               <button class="button secondary" data-action="home">${icon("home")}回首頁</button>
               <button class="button" data-action="start-mistakes" ${entries.length ? "" : "disabled"}>${icon("refresh")}重練目前篩選</button>
+              <button class="button ghost" data-action="print-mistakes" ${entries.length ? "" : "disabled"}>${icon("printer")}列印 / 存 PDF</button>
               <button class="button ghost" data-action="clear-mistakes" ${entries.length ? "" : "disabled"}>${icon("trash")}清除目前篩選</button>
             </div>
           </div>
@@ -2840,7 +5125,7 @@
       : "本關失守，專心清錯";
 
     return `
-      <main class="screen quiz-screen">
+      <main class="screen quiz-screen" id="buzz-main">
         <section class="arena">
           <div class="arena-top">
             <div class="progress-block">
@@ -2856,10 +5141,9 @@
                      <span>連勝 ${quiz.currentStreak}</span>`}
               </div>
               <div class="progress-bar" aria-label="進度"><span style="width:${progress}%"></span></div>
-              ${renderRivalLane(current, elapsed)}
             </div>
             <div class="timer-cluster">
-              <div class="timer-box ${isDanger}" data-live-box="time">
+              <div class="timer-box ${isDanger}" data-live-box="time" role="timer" aria-live="off">
                 <span>${timeLabel}</span>
                 <strong data-live="time">${timeValue}</strong>
               </div>
@@ -2872,13 +5156,13 @@
           ${renderExamLockStatus()}
 
           <div class="problem-stage">
-            <article class="problem-card">
+            <article class="problem-card" role="group" aria-label="作答區">
               <div class="problem-meta">
                 ${topicChip(current)}
                 <span class="chip">${difficultyBadge(current)}</span>
-                ${sourceChip(current)}
                 <span class="chip">${answerKindLabel(current.answerKind)}</span>
                 <span class="chip">${answerModeLabel(answerMode)}</span>
+                ${verifiedChip(current)}
               </div>
               <div class="prompt math-block" data-tex="${escapeAttr(current.prompt)}"></div>
               ${renderProblemGraph(current)}
@@ -2891,6 +5175,9 @@
                 ? `<div class="feedback ${feedback.status}">
                     <strong>${feedback.title}</strong>
                     <p>${feedback.message}</p>
+                    ${renderKeyIdea(current)}
+                    ${renderConfidencePrompt(current)}
+                    ${renderCausePrompt(current, feedback)}
                     ${
                       feedback.status !== "correct" && !quiz.examMode
                         ? `${renderSolutionStages(current, { live: true })}
@@ -2898,7 +5185,7 @@
                         : ""
                     }
                   </div>`
-                : `<div class="feedback"><strong>作答狀態</strong><p>${quiz.examMode ? "大考模式：整份倒數，WebWork 作答；切頁或退出全螢幕會被記錄。" : quiz.survival ? "生存：最多錯 3 題。" : quiz.suddenDeath ? "Boss 連戰：錯一題就結算。" : noTimer ? "本局不倒數、不記切分頁。" : `倒數開始後請保持在本頁。這題允許 ${current.tabLimit} 次切分頁。`}</p></div>`
+                : `<div class="feedback"><strong>作答狀態</strong><p>${quiz.examMode ? "大考模式：整份倒數，自己輸入答案；切頁或退出全螢幕會被記錄。" : quiz.survival ? "生存：最多錯 3 題。" : quiz.suddenDeath ? "Boss 連戰：錯一題就結算。" : noTimer ? "本局不倒數、不記切分頁。" : `倒數開始後請保持在本頁。這題允許 ${current.tabLimit} 次切分頁。`}</p></div>`
             }
           </div>
 
@@ -2981,9 +5268,15 @@
     const previewTex = answerToTex(quiz.draft, problem) || "\\text{尚未輸入}";
     const answerWorkspace = renderWebWorkAnswerWorkspace(problem, disabled, previewTex, fullscreen);
     const scratchboard = renderScratchboard(problem, disabled, boardTool, fullscreen, boardOpen, strokes.length);
+    // 全螢幕書寫時題目必須留在畫面上。
+    // 一開始沒有，實測就發現：攤開計算紙之後題目被推出視窗，
+    // 使用者得先收起來看一眼題目再攤開 —— 那等於沒有全螢幕。
+    const promptBar = fullscreen
+      ? `<div class="handwrite-prompt"><div class="math-inline" data-tex="${escapeAttr(problem.prompt)}"></div></div>`
+      : "";
     return `
       <div class="handwrite-shell webwork-shell ${fullscreen ? "is-fullscreen" : ""}">
-        ${fullscreen ? `${scratchboard}${answerWorkspace}` : `${answerWorkspace}${scratchboard}`}
+        ${fullscreen ? `${promptBar}${scratchboard}${answerWorkspace}` : `${answerWorkspace}${scratchboard}`}
       </div>
     `;
   }
@@ -3039,23 +5332,26 @@
   }
 
   function renderScratchboard(problem, disabled, boardTool, fullscreen, boardOpen, strokeCount) {
+    const surface = boardSurface();
+    const surfaceNext = surface === "paper" ? "換成黑板" : "換成方格紙";
     return `
       <section class="scratchboard-shell ${boardOpen ? "is-open" : "is-collapsed"}">
         <div class="scratchboard-summary">
           <div>
-            <span>Scratchboard</span>
-            <strong>${strokeCount ? `${strokeCount} strokes` : "草稿黑板"}</strong>
+            <span>計算紙</span>
+            <strong data-board-count>${strokeCount ? `${strokeCount} 筆` : "手寫草稿"}</strong>
           </div>
-          <div class="board-tools" aria-label="黑板工具">
-            <button class="icon-button" type="button" data-board-action="toggle" title="${boardOpen ? "收合黑板" : "展開黑板"}" ${disabled}>${icon(boardOpen ? "chevron-up" : "chevron-down")}</button>
+          <div class="board-tools" aria-label="計算紙工具">
+            <button class="icon-button" type="button" data-board-action="toggle" title="${boardOpen ? "收起計算紙" : "攤開計算紙"}" ${disabled}>${icon(boardOpen ? "chevron-up" : "chevron-down")}</button>
             ${
               boardOpen
                 ? `
                   <button class="icon-button ${boardTool === "pen" ? "is-active" : ""}" type="button" data-board-action="tool" data-tool="pen" title="筆" ${disabled}>${icon("pen")}</button>
                   <button class="icon-button ${boardTool === "eraser" ? "is-active" : ""}" type="button" data-board-action="tool" data-tool="eraser" title="橡皮擦" ${disabled}>${icon("eraser")}</button>
-                  <button class="icon-button" type="button" data-board-action="undo" title="復原" ${disabled}>${icon("undo")}</button>
-                  <button class="icon-button" type="button" data-board-action="clear" title="清除黑板" ${disabled}>${icon("trash")}</button>
-                  <button class="icon-button" type="button" data-board-action="fullscreen" title="${fullscreen ? "退出全螢幕" : "黑板全螢幕"}" ${disabled}>${icon(fullscreen ? "minimize" : "maximize")}</button>
+                  <button class="icon-button" type="button" data-board-action="undo" title="復原上一筆" ${disabled}>${icon("undo")}</button>
+                  <button class="icon-button" type="button" data-board-action="clear" title="全部擦掉" ${disabled}>${icon("trash")}</button>
+                  <button class="icon-button" type="button" data-board-action="surface" title="${surfaceNext}" ${disabled}>${icon(surface === "paper" ? "moon" : "grid")}</button>
+                  <button class="icon-button" type="button" data-board-action="fullscreen" title="${fullscreen ? "退出全螢幕" : "全螢幕書寫"}" ${disabled}>${icon(fullscreen ? "minimize" : "maximize")}</button>
                 `
                 : ""
             }
@@ -3063,9 +5359,10 @@
         </div>
         ${
           boardOpen
-            ? `<canvas class="blackboard" data-blackboard data-problem-id="${escapeAttr(problem.id)}" aria-label="手寫黑板"></canvas>`
+            ? `<canvas class="blackboard" data-blackboard data-surface="${surface}" data-problem-id="${escapeAttr(problem.id)}" aria-label="手寫計算紙"></canvas>`
             : ""
         }
+        ${renderPreviousBoard(problem)}
       </section>
     `;
   }
@@ -3108,7 +5405,7 @@
 
   function renderRulesModal() {
     const ruleText = quiz && quiz.examMode
-      ? `大考模式為整份 ${Math.round((quiz.examDurationSec || 0) / 60)} 分鐘倒數，全部題目使用 WebWork 輸入。時間到會直接交卷；退出全螢幕、切頁或視窗失焦會被記錄為監考事件。`
+      ? `大考模式為整份 ${Math.round((quiz.examDurationSec || 0) / 60)} 分鐘倒數，全部題目自己輸入答案。時間到會直接交卷；退出全螢幕、切頁或視窗失焦會被記錄為監考事件。`
       : "每題都有自己的倒數與切分頁限制。超時、跳過、答案不等價或超過切分頁限制，都會記為錯題。系統會在答題後顯示簡短解法。";
     return `
       <div class="modal-backdrop" data-action="close-modal">
@@ -3151,6 +5448,36 @@
 
   function showAppNotice(message) {
     appNotice = String(message || "");
+    render();
+  }
+
+  // 校準包預覽。給人看的是**真的會被寫進檔案的那份資料**，
+  // 不是另外寫一段「我們只收集…」的描述文字 ——
+  // 描述文字會跟實作分家，實際內容不會。
+  function renderCalibrationPreviewModal() {
+    if (!calibrationPreview) return "";
+    const pack = calibrationPreview;
+    const shown = { ...pack, rows: pack.rows.slice(0, 8) };
+    const rest = pack.rows.length > 8 ? `\n… 其餘 ${pack.rows.length - 8} 筆格式完全相同` : "";
+    return `
+      <div class="modal-backdrop" data-action="dismiss-calibration-preview">
+        <div class="modal wide-modal" role="dialog" aria-modal="true" aria-labelledby="calib-title" data-modal>
+          <h3 id="calib-title">校準包內容</h3>
+          <p>按「匯出」會產生的就是下面這份檔案，共 ${pack.rows.length} 筆。</p>
+          <pre class="calibration-preview">${escapeHtml(JSON.stringify(shown, null, 2) + rest)}</pre>
+          <button class="button" data-action="dismiss-calibration-preview">${icon("check")}關閉</button>
+        </div>
+      </div>
+    `;
+  }
+
+  function showCalibrationPreview() {
+    const pack = buildCalibrationPack();
+    if (!pack.rows.length) {
+      showAppNotice("還沒有可用的作答統計，先練幾題再看。");
+      return;
+    }
+    calibrationPreview = pack;
     render();
   }
 
@@ -3228,14 +5555,12 @@
             <span><strong data-countup="${avgTime}" data-suffix="s">${avgTime}s</strong>平均</span>
             ${quiz.practice ? "" : `<span><strong data-countup="${quiz.score}">${quiz.score}</strong>分數</span>`}
           </div>
-          ${renderResultsActions(gateResult, pathResult)}
+          ${quiz.placementResult ? renderPlacementNextStep() : renderResultsActions(gateResult, pathResult)}
           ${quiz.weeklyOutcome ? renderWeeklyOutcomePanel(quiz.weeklyOutcome) : ""}
-          ${quiz.rivalOutcome ? renderRivalOutcomePanel(quiz.rivalOutcome) : ""}
           ${quiz.dailyOneOutcome ? renderDailyOneOutcomePanel(quiz.dailyOneOutcome) : ""}
           <div class="action-row results-share-row" data-enter>
             <button class="button ghost" data-action="share-result-card">${icon("share-2")}分享成績卡</button>
             ${quiz.dailyOneOutcome ? `<button class="button ghost" data-action="share-daily-one">${icon("copy")}複製 emoji 成績</button>` : ""}
-            ${quiz.rivalOutcome ? `<button class="button ghost" data-action="start-mode" data-mode-key="rival">${icon("repeat")}再戰${RIVAL_NAME}</button>` : ""}
           </div>
         </section>
 
@@ -3269,7 +5594,10 @@
                   <div class="meter-row"><span>局數</span><div class="meter-track"><div class="meter-fill" style="width:${Math.min(100, (records.attempts || 0) * 8)}%"></div></div><strong>${records.attempts || 0}</strong></div>
                 </div>
               </section>
-              <section class="panel">
+              ${
+                focusModeOn()
+                  ? ""
+                  : `<section class="panel">
                 <h3>本局成就</h3>
                 <div class="achievement-list">
                   ${
@@ -3278,7 +5606,8 @@
                       : `<div class="empty-state">本局沒有新成就。</div>`
                   }
                 </div>
-              </section>
+              </section>`
+              }
             </div>
             <section class="panel">
               <h3>答題回顧</h3>
@@ -3541,11 +5870,70 @@
 
   // Feature 9：逐步解答。三段抽屜：① 該用什麼技巧 → ② 關鍵步驟 → ③ 完整推導。
   // live=true（作答中）時，打開第 ③ 段會把這題標成「借助解答」。
+  // 「這題真正關鍵是什麼」——spec 04.8 的 keyIdea。
+  //
+  // 全庫 1407 題人工撰寫一句話不現實，所以：作者有寫就用作者的；
+  // 沒寫就從 skill graph 推導技巧名。後者不是唬爛 —— skill graph 有 100% 覆蓋率
+  // 且經過 CI 驗證，「這題考的是 Frullani 積分」是查得出來的事實，
+  // 而這個產品本來就是在教「看到題目該用哪個工具」。
+  function keyIdeaFor(problem) {
+    if (problem.keyIdea) return { text: problem.keyIdea, authored: true };
+    if (!window.BuzzSkillGraph) return null;
+    try {
+      const names = window.BuzzSkillGraph.skillsForProblem(problem)
+        .map((id) => window.BuzzSkillGraph.label(id))
+        .filter(Boolean)
+        .slice(0, 2);
+      if (!names.length) return null;
+      return { text: `這題考的是${names.join(" + ")}。`, authored: false };
+    } catch (_error) {
+      return null;
+    }
+  }
+
+  // 結算後顯示，答對答錯都顯示。這是整個產品裡最便宜也最有效的教學元件：
+  // 答對的人確認自己是「看出來」而不是「猜對」，答錯的人拿到一句可以記住的話。
+  function renderKeyIdea(problem) {
+    const idea = keyIdeaFor(problem);
+    if (!idea) return "";
+    return `
+      <p class="key-idea">
+        <span>關鍵</span>
+        ${escapeHtml(idea.text)}
+      </p>
+    `;
+  }
+
+  // 作者親自寫的提示才算「題目專屬」。hintsFor() 對沒有作者提示的題目會回傳
+  // topic 級的泛用文字 —— 那當第一層「給方向」可以，但**不能冒充第二層**。
+  // 把泛用文字當成關鍵步驟端出去，是在假裝我們知道這題怎麼解。
+  function authoredHints(problem) {
+    return Array.isArray(problem.hints) ? problem.hints.filter((hint) => String(hint || "").trim()) : [];
+  }
+
+  // 第二層「關鍵步驟」的補充。
+  //
+  // 作者寫的永遠優先 —— 這裡只在他沒寫的時候出手，而且出手的內容一定是
+  // **這一題特有的、機器判定出來的事實**（0/0 型、King's 的常數、比值判別的值…），
+  // 不是「先求反導數再代入上下限」那種對每一題都成立、也就是對每一題都沒用的句子。
+  //
+  // 每一條都經過 tools/validate_derived_hints.js 在 CI 重新驗算。
+  // 即使如此還是要在畫面上標明是機器推的 —— 不要讓它看起來像有人背書。
+  function derivedHint(problem) {
+    if (!window.BuzzDerivedHints) return "";
+    if (authoredHints(problem).length >= 2) return "";
+    return window.BuzzDerivedHints.textFor(problem.id) || "";
+  }
+
   function renderSolutionStages(problem, options = {}) {
     const live = Boolean(options.live);
     const hints = hintsFor(problem);
+    const authored = authoredHints(problem);
     const lead = hints[0] || "先判斷題型，再選最短的工具。";
-    const steps = hints.slice(1);
+    // 第二層優先吃作者寫的；作者沒寫時才用機器推導的事實補。
+    const authoredSteps = authored.slice(1);
+    const derived = authoredSteps.length ? "" : derivedHint(problem);
+    const steps = authoredSteps;
     const techniqueTags = (problem.tags || [])
       .filter((tag) => !META_ANALYSIS_TAGS.has(tag))
       .slice(0, 3)
@@ -3559,25 +5947,44 @@
             ${techniqueTags.length ? `<div class="stage-tags">${techniqueTags.map((tag) => `<span class="chip">${escapeHtml(tag)}</span>`).join("")}</div>` : ""}
           </div>
         </details>
-        <details class="solution-stage">
-          <summary><span class="stage-index">②</span>關鍵步驟</summary>
+        <details class="solution-stage ${steps.length || derived ? "" : "is-empty"}">
+          <summary><span class="stage-index">②</span>關鍵步驟${steps.length || derived ? "" : `<small class="stage-cost">這題沒有</small>`}</summary>
           <div class="stage-body">
             ${
               steps.length
                 ? `<ol>${steps.map((step) => `<li>${escapeHtml(step)}</li>`).join("")}</ol>`
-                : `<p>這題步驟很短，直接看完整推導。</p>`
+                : derived
+                  ? `<p>${escapeHtml(derived)}</p>
+                     <p class="stage-derived">這一條是系統從題目本身算出來的，不是作者寫的。</p>`
+                  : `<p>這題還沒有寫專屬的關鍵步驟。直接看完整推導，別在這裡浪費時間。</p>`
             }
           </div>
         </details>
         <details class="solution-stage is-full" ${live ? `data-live-solution="1"` : ""} data-problem-id="${escapeAttr(problem.id)}">
           <summary><span class="stage-index">③</span>完整推導${live ? `<small class="stage-cost">會記為「借助解答」</small>` : ""}</summary>
           <div class="stage-body">
-            <p>${escapeHtml(problem.solution || "這題還沒有完整推導，先照上面的步驟走。")}</p>
+            ${renderSolutionBody(problem)}
             <p class="stage-answer">參考答案：${escapeHtml(displayAnswer(problem))}</p>
           </div>
         </details>
       </div>
     `;
+  }
+
+  // 完整推導：有結構化步驟就照步驟列，沒有就照舊顯示那一段文字。
+  //
+  // 為什麼要分這兩種：一句話的推導（「用 1−cos x 約等於 x²/2」）對已經會的人
+  // 是提醒，對不會的人是天書。有步驟的話，卡在第幾步是看得出來的。
+  //
+  // 目前只有模板變體與少數題目寫了 solutionSteps —— 其餘 1300 多題
+  // 的一句話推導是還沒補的內容工作，不是程式問題。這裡不會拿
+  // 「把一句話硬切成三句」來假裝有步驟。
+  function renderSolutionBody(problem) {
+    const steps = Array.isArray(problem.solutionSteps) ? problem.solutionSteps.filter(Boolean) : [];
+    if (steps.length >= 2) {
+      return `<ol class="solution-steps">${steps.map((step) => `<li>${escapeHtml(step)}</li>`).join("")}</ol>`;
+    }
+    return `<p>${escapeHtml(problem.solution || "這題還沒有完整推導，先照上面的步驟走。")}</p>`;
   }
 
   function markSolutionAssisted(problemId) {
@@ -3603,7 +6010,7 @@
         <div class="review-prompt math-block" data-tex="${escapeAttr(item.prompt)}"></div>
         ${
           answer.boardStrokes && answer.boardStrokes.length
-            ? `<canvas class="review-board" data-review-board="${index}" aria-label="黑板草稿回顧"></canvas>`
+            ? `<canvas class="review-board" data-review-board="${index}" data-surface="${boardSurface()}" aria-label="手寫草稿回顧"></canvas>`
             : ""
         }
         <div class="review-answer">
@@ -3611,6 +6018,7 @@
           提示使用：${answer.hintsUsed || 0}<br />
           參考答案：${escapeHtml(displayAnswer(item))}
         </div>
+        ${renderKeyIdea(item)}
         ${renderSolutionStages(item)}
         ${
           answer.correct
@@ -3626,6 +6034,10 @@
   }
 
   function bindEvents() {
+    app.querySelectorAll("[data-paper-field]").forEach((node) => {
+      node.addEventListener("change", () => updatePaperField(node));
+    });
+
     const homeMorePanel = app.querySelector("[data-home-more-panel]");
     if (homeMorePanel) {
       homeMorePanel.addEventListener("toggle", () => {
@@ -3863,6 +6275,8 @@
     });
 
     setupBlackboard();
+    // 進到一題就去問 IndexedDB 有沒有上次的草稿（非同步，拿到才重繪）
+    if (view === "quiz" && quiz && quiz.problems) loadPreviousBoard(quiz.problems[quiz.index]);
   }
 
   function handleAction(event) {
@@ -3892,6 +6306,7 @@
       selectedMode = "quick";
       startQuiz();
     }
+    if (action === "start-planned") startPlannedSession(actionNode.dataset.length || "");
     if (action === "start-daily") {
       startDailyQuiz();
     }
@@ -3908,6 +6323,32 @@
       render();
     }
     if (action === "skip") recordAnswer({ status: "wrong", reason: "Skipped", input: quiz.draft || "" });
+    if (action === "onboarding-next") advanceOnboarding();
+    if (action === "set-onboarding-context") setOnboardingContext(actionNode.dataset.context || "freshman");
+    if (action === "skip-placement") skipPlacement();
+    if (action === "dismiss-backup-notice") dismissBackupNotice();
+    if (action === "resume-session") resumeSession();
+    if (action === "discard-session") discardSession();
+    if (action === "edit-exam-plan") { examPlanFormOpen = true; render(); }
+    if (action === "cancel-exam-plan") { examPlanFormOpen = false; render(); }
+    if (action === "save-exam-plan") saveExamPlan();
+    if (action === "clear-exam-plan") clearExamPlan();
+    if (action === "dismiss-exam-report") dismissExamReport();
+    if (action === "set-confidence") setConfidence(actionNode.dataset.problemId || "", actionNode.dataset.level || "");
+    if (action === "skip-confidence") skipConfidence(actionNode.dataset.problemId || "");
+    if (action === "open-insights") {
+      view = "insights";
+      render();
+    }
+    if (action === "open-train") {
+      if (actionNode.dataset.bucket) selectedBucket = actionNode.dataset.bucket;
+      view = "train";
+      render();
+    }
+    if (action === "set-bucket") {
+      selectedBucket = actionNode.dataset.bucket || "practice";
+      render();
+    }
     if (action === "open-mistakes") {
       view = "mistakes";
       render();
@@ -3940,6 +6381,11 @@
       render();
     }
     if (action === "next-question") advanceToNextQuestion();
+    if (action === "dismiss-calibration-preview") {
+      calibrationPreview = null;
+      render();
+      return;
+    }
     if (action === "dismiss-notice") {
       appNotice = "";
       render();
@@ -4005,6 +6451,9 @@
     if (action === "set-daily-goal") setDailyGoal(actionNode.dataset.goal);
     if (action === "clear-history") clearHistory();
     if (action === "export-records") exportRecords();
+    if (action === "export-calibration") exportCalibrationPack();
+    if (action === "toggle-analytics") setAnalyticsEnabled(!analyticsEnabled());
+    if (action === "preview-calibration") showCalibrationPreview();
     if (action === "toggle-theme") toggleTheme();
     if (action === "install-app") installApp();
     if (action === "clear-answer") clearAnswerDraft();
@@ -4028,6 +6477,15 @@
     if (action === "restart") restartQuiz();
     if (action === "home") {
       stopTicker();
+      // 刻意不清掉續傳：離開首頁不等於放棄這局，回來還能接著做。
+      if (quiz && view === "quiz") {
+        autosaveSession(true);
+        trackEvent("session_abandon", {
+          mode: quiz.mode,
+          answered: quiz.answers.length,
+          total: quiz.problems.length
+        });
+      }
       const shouldExitFullscreen = Boolean(quiz && quiz.requireFullscreen);
       quiz = null;
       activePathNodeId = "";
@@ -4037,8 +6495,50 @@
       render();
     }
     if (action === "reset-records") {
-      localStorage.removeItem(STORAGE_KEY);
+      // 不再直接刪。刪除是不可逆的，而這個按鈕就在「匯出」旁邊 ——
+      // 手滑一次就沒了，而且使用者連自己刪掉了什麼都不知道。
+      eraseConfirm = true;
       render();
+    }
+    if (action === "open-paper") {
+      view = "paper";
+      render();
+    }
+    if (action === "print-paper") printPaper();
+    if (action === "reroll-paper") {
+      paperSpec = { ...paperSpec, seed: paperSpec.seed + 1 };
+      render();
+    }
+    if (action === "toggle-paper-lock") {
+      const id = actionNode.dataset.problemId;
+      paperLocked = paperLocked.includes(id) ? paperLocked.filter((x) => x !== id) : paperLocked.concat(id);
+      render();
+    }
+    if (action === "print-mistakes") printMistakes();
+    if (action === "toggle-focus-mode") setFocusMode(!focusModeOn());
+    if (action === "apply-update") applyPendingUpdate();
+    if (action === "dismiss-update") {
+      pendingUpdate = null;
+      render();
+    }
+    if (action === "cancel-report") {
+      reportDraft = null;
+      render();
+    }
+    if (action === "set-report-reason" && reportDraft) {
+      reportDraft = { ...reportDraft, reason: actionNode.dataset.reason || reportDraft.reason };
+      render();
+    }
+    if (action === "submit-report-github") submitReportToGithub();
+    if (action === "copy-report") copyReportText();
+    if (action === "cancel-erase") {
+      eraseConfirm = false;
+      render();
+    }
+    if (action === "confirm-erase") {
+      eraseConfirm = false;
+      const removed = eraseEverything();
+      showAppNotice(`已刪除：${removed.join("、")}。這台裝置上不再有你的練習資料。`);
     }
     if (action === "start-weekly") startWeeklyChallenge();
     if (action === "copy-weekly-code") copyWeeklyCode(actionNode.dataset.code || "");
@@ -4155,9 +6655,9 @@
     // 題目完全由日期種子決定，所有人同一天拿到同一題（R3-5，避開看圖題）。
     const pool = problems.filter((problem) => {
       const rank = problemRank(problem);
-      return rank >= 3 && rank <= 5 && !problem.graph && !isScienceProblem(problem);
+      return rank >= 3 && rank <= 5 && !problem.graph;
     });
-    const source = pool.length ? pool : calculusOnly(problems);
+    const source = pool.length ? pool : problems;
     return shuffle(source, seedFromString(`buzz-daily-one-${dateKey}`))[0] || null;
   }
 
@@ -4272,18 +6772,121 @@
     render();
   }
 
+  // 回報題目
+  //
+  // 舊版的「回報」只把一筆紀錄寫進**使用者自己的 localStorage**，就結束了。
+  // 使用者按了、看到按鈕變成「已回報」、以為講了 —— 而作者永遠不會收到。
+  // 那比沒有回報按鈕更糟：它製造了「已經反映過」的錯覺，錯題會錯到下一屆。
+  //
+  // 沒有後端也能把它送出去：整理成一份可讀的文字，讓使用者選擇
+  // 開 GitHub issue 或複製走。送什麼、送不送，都在他自己手上 ——
+  // 這也是唯一不違反「沒有伺服器收你的資料」這句承諾的做法。
+
+  const REPORT_REASONS = [
+    { key: "wrong-answer", label: "答案好像有誤" },
+    { key: "unclear", label: "題目看不懂" },
+    { key: "typo", label: "排版或錯字" },
+    { key: "other", label: "其他" }
+  ];
+
+  const REPO_URL = "https://github.com/tudohuang/BuzzCalculus";
+
   function reportProblem(problemId) {
     if (!problemById(problemId)) return;
+    reportDraft = { problemId, reason: "wrong-answer" };
+    render();
+  }
+
+  // 回報的內容一律先攤開給使用者看。這裡組出來的字串，
+  // 就是待會兒複製或帶進 GitHub issue 的那一份，不是另外寫的說明。
+  function buildReportText(problemId, reasonKey) {
+    const problem = problemById(problemId);
+    if (!problem) return "";
+    const reason = REPORT_REASONS.find((item) => item.key === reasonKey) || REPORT_REASONS[0];
+    const lines = [
+      `題號：${problem.id}`,
+      `題目：${problem.prompt}`,
+      `參考答案：${displayAnswer(problem)}`,
+      `難度：R${problem.rank}`,
+      `問題類型：${reason.label}`,
+      "",
+      "說明（請補充你看到的狀況）：",
+      "",
+      "",
+      `— ${APP_VERSION} · ${BUILD_DATE}`
+    ];
+    return lines.join("\n");
+  }
+
+  function markReported(problemId, reasonKey) {
     const records = loadRecords();
+    records.problemReports = records.problemReports || {};
     const previous = records.problemReports[problemId] || {};
     records.problemReports[problemId] = {
       problemId,
       count: (previous.count || 0) + 1,
       reportedAt: new Date().toISOString(),
-      reason: previous.reason || "needs-review"
+      reason: reasonKey || "needs-review"
     };
     saveRecords(records);
+    trackEvent("report_submit", { problem_id: problemId, reason: reasonKey || "" });
+  }
+
+  function submitReportToGithub() {
+    if (!reportDraft) return;
+    const { problemId, reason } = reportDraft;
+    const problem = problemById(problemId);
+    if (!problem) return;
+    const title = `題目回報：${problem.id}`;
+    const url =
+      `${REPO_URL}/issues/new?title=${encodeURIComponent(title)}` +
+      `&body=${encodeURIComponent(buildReportText(problemId, reason))}`;
+    markReported(problemId, reason);
+    reportDraft = null;
     render();
+    window.open(url, "_blank", "noopener");
+  }
+
+  function copyReportText() {
+    if (!reportDraft) return;
+    const { problemId, reason } = reportDraft;
+    markReported(problemId, reason);
+    const text = buildReportText(problemId, reason);
+    reportDraft = null;
+    render();
+    copyPlainText(text, "回報內容已複製。貼到 GitHub issue 或直接寄給我們都可以。");
+  }
+
+  function renderReportModal() {
+    if (!reportDraft) return "";
+    const problem = problemById(reportDraft.problemId);
+    if (!problem) return "";
+    const text = buildReportText(reportDraft.problemId, reportDraft.reason);
+    return `
+      <div class="modal-backdrop" data-action="cancel-report">
+        <div class="modal report-modal" role="dialog" aria-modal="true" aria-labelledby="report-title" data-modal>
+          <h3 id="report-title">回報這一題</h3>
+          <p class="report-lead">
+            這個網站沒有伺服器收你的訊息，所以回報是<strong>你自己送出</strong>的 ——
+            下面就是會送出去的完整內容，你可以先看過。
+          </p>
+          <div class="report-reasons" role="group" aria-label="問題類型">
+            ${REPORT_REASONS.map(
+              (item) => `
+                <button class="tag-button ${reportDraft.reason === item.key ? "is-active" : ""}"
+                  type="button" data-action="set-report-reason" data-reason="${escapeAttr(item.key)}"
+                  aria-pressed="${reportDraft.reason === item.key ? "true" : "false"}">${escapeHtml(item.label)}</button>`
+            ).join("")}
+          </div>
+          <pre class="report-preview">${escapeHtml(text)}</pre>
+          <div class="action-row">
+            <button class="button home-primary" data-action="submit-report-github">${icon("flag")}開 GitHub issue</button>
+            <button class="button secondary" data-action="copy-report">${icon("copy")}複製內容</button>
+            <button class="button" data-action="cancel-report">${icon("x")}取消</button>
+          </div>
+        </div>
+      </div>
+    `;
   }
 
   function setDailyGoal(value) {
@@ -4434,7 +7037,7 @@
     for (let rank = 1; rank <= 6; rank += 1) {
       pools[rank] = preferFreshProblems(
         shuffle(
-          problems.filter((problem) => problemRank(problem) === rank && !isScienceProblem(problem)),
+          problems.filter((problem) => problemRank(problem) === rank),
           seedFromString(`${stamp}-placement-${rank}`)
         ),
         records
@@ -4544,7 +7147,6 @@
 
   function namedExamProblems(config) {
     return problems.filter((problem) => {
-      if (isScienceProblem(problem)) return false;
       if (!isExamAnswerProblem(problem)) return false;
       const rank = problemRank(problem);
       if (rank < config.minRank || rank > config.maxRank) return false;
@@ -4692,7 +7294,7 @@
       pools[rank] = shuffle(
         problems.filter(
           (problem) =>
-            !problem.custom && !isScienceProblem(problem) && isExamAnswerProblem(problem) && problemRank(problem) === rank
+            !problem.custom && isExamAnswerProblem(problem) && problemRank(problem) === rank
         ),
         seed + rank
       );
@@ -4808,7 +7410,7 @@
             <div class="weekly-copy">
               <p class="section-label">本週挑戰</p>
               <strong>全站同一份 10 題 · ${escapeHtml(week)}</strong>
-              <span>WebWork 作答，正式成績一週只算一次。${escapeHtml(deadline)}。</span>
+              <span>自己輸入答案，正式成績一週只算一次。${escapeHtml(deadline)}。</span>
             </div>
             <button class="button" data-action="start-weekly">${icon("play")}開打本週挑戰</button>
           </div>
@@ -5195,6 +7797,28 @@
     }
   };
 
+  // 同步是**合併**，不是「誰新誰蓋掉誰」。
+  //
+  // 舊寫法比較兩邊的 updatedAt，然後整份取代。那個規則在單一裝置上永遠看不出問題，
+  // 但只要兩台裝置都練過就會吃資料：手機練了 20 題沒同步，電腦按下同步 ——
+  // 電腦的 updatedAt 比較新，手機那 20 題就沒了。而使用者以為自己在「備份」。
+  //
+  // merge() 是逐 key 合併、可交換、冪等的，已經在「匯入 JSON」上跑了幾個月，
+  // 而且 golden 測試鎖著它的行為。同步要用的就是同一支。
+  function mergeIncomingRecords(local, remote) {
+    if (!remote) return local;
+    if (!window.BuzzRecords || typeof window.BuzzRecords.merge !== "function") {
+      // 沒有 merge 就退回舊行為，但只在遠端確實比較新的時候 ——
+      // 這條路徑不該發生（kernel 是隨站出貨的），留著是為了不要整個同步壞掉。
+      const localAt = Date.parse(local.updatedAt || "") || 0;
+      const remoteAt = Date.parse(remote.updatedAt || "") || 0;
+      return remoteAt > localAt ? remote : local;
+    }
+    const topics = {};
+    problems.forEach((problem) => { topics[problem.id] = problem.topic; });
+    return window.BuzzRecords.merge(local, normalizeRecords(remote), { problemTopics: topics });
+  }
+
   async function syncNow() {
     if (!BuzzSync.isConfigured() || syncBusy) return;
     syncBusy = true;
@@ -5203,15 +7827,14 @@
     try {
       const local = loadRecords();
       const remote = await BuzzSync.pull();
-      const localAt = Date.parse(local.updatedAt || "") || 0;
-      const remoteAt = remote ? Date.parse(remote.updatedAt || "") || 0 : 0;
-      if (remote && remoteAt > localAt) {
-        saveRecords(remote);
-      } else {
-        await BuzzSync.push(local);
-      }
+      const merged = mergeIncomingRecords(local, remote);
+      // 合併結果一定要寫回本機**再**推上去，兩邊才會收斂到同一份。
+      // 只推不存的話，下一次同步又會拉到一份跟本機不同的東西。
+      saveRecords(merged);
+      await BuzzSync.push(merged);
       BuzzSync.markSynced();
-      syncMessage = "同步完成";
+      const gained = (merged.attemptLog || []).length - (local.attemptLog || []).length;
+      syncMessage = gained > 0 ? `同步完成，合併了 ${gained} 筆作答` : "同步完成";
     } catch (_error) {
       syncMessage = "同步失敗，稍後再試";
     }
@@ -5226,20 +7849,23 @@
         <section class="study-card sync-card">
           <div class="panel-title-row">
             <div>
-              <p class="section-label">雲端同步</p>
-              <h3>即將推出</h3>
+              <p class="section-label">換裝置</p>
+              <h3>用檔案帶走，不需要帳號</h3>
             </div>
-            <span class="sync-chip">籌備中</span>
+            <span class="sync-chip">現在就能用</span>
           </div>
-          <p class="panel-note">目前所有紀錄都只存在這台裝置的瀏覽器。要換裝置，先用下面資料管理的「匯出 JSON」帶走，再到新裝置匯入即可。</p>
+          <p class="panel-note">
+            紀錄只存在這台裝置的瀏覽器裡。要換到別台，用下面的「匯出 JSON」帶走，再到新裝置匯入 ——
+            匯入是<strong>合併</strong>不是覆蓋，兩邊練過的都會留著。
+          </p>
           <details class="sync-drawer">
-            <summary>了解同步方案</summary>
-            <ul>
-              <li>Google 登入，一組帳號帶著走。</li>
-              <li>跨裝置接續：手機練到一半，電腦接著打。</li>
-              <li>自動備份：不再怕清瀏覽器資料。</li>
-            </ul>
-            <p class="panel-note">上線前的過渡期，匯出 / 匯入 JSON 就是你的手動同步。</p>
+            <summary>那雲端同步呢？</summary>
+            <p class="panel-note">
+              還沒有，而且我們不想給一個做不到的日期。開帳號同步代表要有伺服器存你的作答紀錄，
+              那跟現在「沒有帳號、沒有伺服器資料庫」的隱私承諾是衝突的 ——
+              要做就得先想清楚怎麼做才不用把你的資料收走。
+            </p>
+            <p class="panel-note">在那之前，匯出／匯入就是完整的解法，而且它現在就能用。</p>
           </details>
         </section>
       `;
@@ -5307,7 +7933,10 @@
     records.mistakes[problemId].tag = tag;
     if (quiz) {
       quiz.answers.forEach((answer) => {
-        if (answer.problem.id === problemId && !answer.correct) answer.errorTag = tag;
+        if (answer.problem.id === problemId && !answer.correct) {
+          answer.errorTag = tag;
+          answer.causeAuto = false;   // 使用者親自選了，不再算系統推測
+        }
       });
     }
     saveRecords(records);
@@ -5381,19 +8010,203 @@
 
   function exportRecords() {
     const records = loadRecords();
-    const blob = new Blob([JSON.stringify(records, null, 2)], { type: "application/json" });
+    // 信封讓匯入端分得出這是哪個科目、哪個版本的檔。
+    // 舊格式（裸 records）匯入時仍然照收。
+    const envelope = {
+      format: "buzz.records",
+      version: 2,
+      subject: "calculus",
+      app: APP_VERSION,
+      exportedAt: new Date().toISOString(),
+      records
+    };
+    const blob = new Blob([JSON.stringify(envelope, null, 2)], { type: "application/json" });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
-    link.download = `buzzcalculus-records-${new Date().toISOString().slice(0, 10)}.json`;
+    link.download = `buzz-calculus-${new Date().toISOString().slice(0, 10)}.json`;
     document.body.appendChild(link);
     link.click();
     link.remove();
     URL.revokeObjectURL(url);
-    trackEvent("export_data", {
+    trackEvent("export_records", {
       history_count: (records.history || []).length,
-      mistake_count: Object.keys(records.mistakes || {}).length
+      mistake_count: Object.keys(records.mistakes || {}).length,
+      size_kb: Math.round(JSON.stringify(envelope).length / 1024)
     });
+    // 匯出過就別再提醒了
+    if (!records.backupNoticeSeen) {
+      records.backupNoticeSeen = true;
+      saveRecords(records);
+    }
+  }
+
+  // ── 難度校準包 ─────────────────────────────────────────────
+  //
+  // 目前的難度是「作者覺得幾分」。實測分佈是 R6 佔 33%（spec 目標 5%），
+  // 也就是說作者的直覺明顯偏硬 —— 但沒有資料就只能繼續猜。
+  //
+  // 這個功能讓願意幫忙的人匯出一份**去識別化**的作答統計。
+  // 零後端：使用者按一下、下載檔案、自己決定要不要寄給作者。
+  //
+  // 隱私是這個功能的設計前提，不是附加條款：
+  //   - 只有 uid（永久題號）、rank、對錯次數、中位秒數
+  //   - 沒有題幹、沒有作答內容、沒有時間戳記、沒有任何識別碼
+  //   - 沒有裝置資訊、沒有 IP（本來也拿不到）
+  // 匯出前會把實際內容攤在畫面上給人看過再下載 ——
+  // 「相信我沒有偷傳東西」不是一個可以要求使用者接受的說法。
+  //
+  // masteryBand 是必要的：難題只有強者會去做，不分層的話正確率會虛高。
+  function buildCalibrationPack() {
+    const records = loadRecords();
+    const stats = records.problemStats || {};
+    const profile = abilityProfile(records);
+    const rows = [];
+
+    Object.keys(stats).forEach((id) => {
+      const stat = stats[id];
+      if (!stat || !stat.total) return;
+      const problem = problems.find((item) => item.id === id);
+      if (!problem) return;
+      const uid = window.BuzzUid && window.BuzzUid.uidFor(id);
+      // 配不到永久題號的題（例如使用者自訂題）一律不匯出：
+      // 自訂題只有這個人有，題號本身就是識別資訊。
+      if (!uid) return;
+      rows.push({
+        uid,
+        rank: problem.rank,
+        n: stat.total,
+        correct: stat.correct || 0,
+        sec: medianSecondsFor(records, id)
+      });
+    });
+
+    return {
+      format: "buzz.calibration",
+      version: 1,
+      subject: "calculus",
+      app: APP_VERSION,
+      // 作答者的整體程度分層。沒有它，「難題正確率高」會被誤讀成「這題其實不難」，
+      // 但真相往往是「只有強者去做那題」。
+      masteryBand: masteryBandOf(profile),
+      rows
+    };
+  }
+
+  function masteryBandOf(profile) {
+    const overall = profile && Number.isFinite(profile.overall) ? profile.overall : null;
+    if (overall === null) return "unknown";
+    if (overall >= 80) return "high";
+    if (overall >= 55) return "mid";
+    return "low";
+  }
+
+  function medianSecondsFor(records, id) {
+    const seconds = (records.attemptLog || [])
+      .filter((entry) => entry && entry.id === id && Number.isFinite(entry.sec))
+      .map((entry) => entry.sec)
+      .sort((a, b) => a - b);
+    if (!seconds.length) return null;
+    return Math.round(seconds[Math.floor(seconds.length / 2)]);
+  }
+
+  function exportCalibrationPack() {
+    const pack = buildCalibrationPack();
+    if (!pack.rows.length) {
+      showAppNotice("還沒有可用的作答統計，先練幾題再匯出。");
+      return;
+    }
+    const blob = new Blob([JSON.stringify(pack, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `buzz-calibration-${new Date().toISOString().slice(0, 10)}.json`;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+    trackEvent("calibration_export", { rows: pack.rows.length, band: pack.masteryBand });
+  }
+
+  // 「清除資料」必須真的清乾淨。
+  //
+  // 舊版只刪 records 那一個 key，於是這些東西全部留在裝置上：
+  //   - 進行中的存檔（buzzcalculus.session.active）——續傳時整份考卷會冒出來
+  //   - 自訂題（buzzcalculus.customProblems.v1）
+  //   - 手寫草稿（IndexedDB，可能有幾百題的筆跡）
+  //   - 主題與同步中繼資料
+  //
+  // 對一個叫「清除資料」的按鈕來說，那既是 UX 上的謊言，也是法遵上的問題：
+  // 把電腦借給別人之前按了清除，結果手寫的草稿還在。
+  const ERASABLE = [
+    [STORAGE_KEY, "練習紀錄"],
+    [ACTIVE_KEY, "進行中的存檔"],
+    [SYNC_META_KEY, "同步中繼資料"],
+    [THEME_KEY, "外觀設定"],
+    ["buzzcalculus.customProblems.v1", "自訂題目"]
+  ];
+
+  // 命名空間前綴。刪除以這個開頭的**全部** key，而不是刪一份固定清單。
+  //
+  // 為什麼不能用固定清單：自動備份的 key 帶時間戳
+  // （buzzcalculus.backup.1786885203659），列不完。E2E 實測抓到過 ——
+  // 按了「清除資料」之後，一份完整的紀錄備份還躺在 localStorage 裡，
+  // 而隱私政策上寫的是「會刪掉練習紀錄」。那就變成一句不實陳述。
+  //
+  // 固定清單留著只是為了**告訴使用者刪掉了哪幾類東西**，不是刪除的依據。
+  const STORAGE_NAMESPACE = "buzzcalculus.";
+
+  function eraseEverything() {
+    const removed = [];
+    ERASABLE.forEach(([key, label]) => {
+      try {
+        if (localStorage.getItem(key) !== null) removed.push(label);
+      } catch (_error) { /* 讀不到就當作沒有 */ }
+    });
+    // 真正的刪除：整個命名空間掃一遍
+    try {
+      const keys = Object.keys(localStorage).filter((key) => key.startsWith(STORAGE_NAMESPACE));
+      const hadBackup = keys.some((key) => key.startsWith(BACKUP_PREFIX));
+      keys.forEach((key) => localStorage.removeItem(key));
+      if (hadBackup) removed.push("自動備份");
+    } catch (_error) { /* storage 被鎖住時不要讓整個流程掛掉 */ }
+    // 手寫草稿在 IndexedDB，是非同步的 —— 不能 await，但一定要發出去
+    try {
+      if (window.BuzzBoardStore) {
+        window.BuzzBoardStore.clearBoards();
+        removed.push("手寫草稿");
+      }
+    } catch (_error) { /* 同上 */ }
+    trackEvent("erase_data", { buckets: removed.length });
+    return removed.length ? removed : ["（本來就沒有資料）"];
+  }
+
+  // 刪除前把「會刪掉什麼」攤開講。
+  // 「確定要清除嗎？」這種問法沒有資訊量 —— 使用者要知道的是刪掉的範圍。
+  function renderEraseConfirmModal() {
+    if (!eraseConfirm) return "";
+    const records = loadRecords();
+    const counts = [
+      // 用詞跟資料管理卡片一致。同一份資料在兩個畫面上叫兩個名字，
+      // 使用者會以為那是兩份不同的東西。
+      `${(records.attempts || 0) + (records.practiceRuns || 0)} 局練習紀錄`,
+      `${Object.keys(records.mistakes || {}).length} 題錯題本`,
+      `${(records.attemptLog || []).length} 筆逐題作答`
+    ];
+    return `
+      <div class="modal-backdrop" data-action="cancel-erase">
+        <div class="modal" role="dialog" aria-modal="true" aria-labelledby="erase-title" data-modal>
+          <h3 id="erase-title">刪除這台裝置上的所有資料？</h3>
+          <p>會刪掉：${escapeHtml(counts.join("、"))}，以及進行中的存檔、自訂題目、手寫草稿與外觀設定。</p>
+          <p class="erase-warning"><strong>這個動作無法復原。</strong>沒有帳號、沒有雲端備份 —— 刪掉就是真的沒了。</p>
+          <p class="erase-hint">想留一份的話，先按「取消」再去匯出 JSON。</p>
+          <div class="action-row">
+            <button class="button danger" data-action="confirm-erase">${icon("trash")}確定刪除</button>
+            <button class="button" data-action="cancel-erase">${icon("x")}取消</button>
+          </div>
+        </div>
+      </div>
+    `;
   }
 
   function loadThemePreference() {
@@ -5429,7 +8242,28 @@
   function setupPwa() {
     if (window.navigator && "serviceWorker" in window.navigator) {
       window.addEventListener("load", () => {
-        window.navigator.serviceWorker.register("./sw.js").catch(() => {});
+        window.navigator.serviceWorker.register("./sw.js").then((registration) => {
+          if (!registration) return;
+          // 已經有一個裝好在等的版本（上次沒按更新就關掉分頁）
+          if (registration.waiting) markUpdateReady(registration);
+          registration.addEventListener("updatefound", () => {
+            const installing = registration.installing;
+            if (!installing) return;
+            installing.addEventListener("statechange", () => {
+              // controller 存在代表這是「更新」而不是第一次安裝
+              if (installing.state === "installed" && window.navigator.serviceWorker.controller) {
+                markUpdateReady(registration);
+              }
+            });
+          });
+        }).catch(() => {});
+        // 換手之後才重新載入，這樣拿到的一定是新版
+        let reloading = false;
+        window.navigator.serviceWorker.addEventListener("controllerchange", () => {
+          if (!updateAccepted || reloading) return;
+          reloading = true;
+          window.location.reload();
+        });
       });
     }
     window.addEventListener("beforeinstallprompt", (event) => {
@@ -5443,8 +8277,35 @@
     });
   }
 
+  // 有新版本可以用了。不自己更新 —— 只是說一聲。
+  function markUpdateReady(registration) {
+    pendingUpdate = registration;
+    render();
+  }
+
+  function applyPendingUpdate() {
+    if (!pendingUpdate || !pendingUpdate.waiting) return;
+    updateAccepted = true;
+    trackEvent("app_update_apply", {});
+    pendingUpdate.waiting.postMessage({ type: "SKIP_WAITING" });
+  }
+
+  function renderUpdateBanner() {
+    if (!pendingUpdate) return "";
+    // 作答中不打擾 —— 新版可以等，這一局不能重來。
+    if (quiz && view === "quiz" && !quiz.feedback) return "";
+    return `
+      <div class="update-banner" role="status">
+        <span>有新版本可以用了。</span>
+        <button class="button secondary" data-action="apply-update">${icon("refresh")}重新載入更新</button>
+        <button class="icon-button" data-action="dismiss-update" title="稍後再說">${icon("x")}</button>
+      </div>
+    `;
+  }
+
   function installApp() {
     if (!deferredInstallPrompt) return;
+    trackEvent("install_pwa", {});
     deferredInstallPrompt.prompt();
     Promise.resolve(deferredInstallPrompt.userChoice).finally(() => {
       deferredInstallPrompt = null;
@@ -5452,23 +8313,129 @@
     });
   }
 
+  // 匯入是**合併**不是覆蓋。
+  //
+  // 舊行為是整份取代：在 A 裝置匯出、在 B 裝置匯入，B 上的紀錄就全沒了。
+  // 使用者以為自己在「同步」，實際上是在刪資料。
+  //
+  // 這也是 spec 06.3 的風險對策：merge() 先在匯入功能上跑過幾個月，
+  // 等接雲端同步時它已經被真實使用者驗證過。
   function importRecords(file) {
     if (!file) return;
     const reader = new FileReader();
     reader.addEventListener("load", () => {
+      let incoming = null;
       try {
-        const incoming = normalizeRecords(JSON.parse(String(reader.result || "{}")));
-        saveRecords(incoming);
-        trackEvent("import_data", {
-          history_count: (incoming.history || []).length,
-          mistake_count: Object.keys(incoming.mistakes || {}).length
-        });
-        render();
+        const parsed = JSON.parse(String(reader.result || "{}"));
+        // 新格式帶信封；舊格式是裸 records，照收。
+        incoming = parsed && parsed.format === "buzz.records" && parsed.records ? parsed.records : parsed;
+        if (!incoming || typeof incoming !== "object") throw new Error("bad shape");
       } catch (_error) {
         showAppNotice("匯入失敗：檔案不是有效的 BuzzCalculus JSON。");
+        return;
       }
+
+      const current = loadRecords();
+      const beforeCount = (current.attemptLog || []).length;
+      let mergedRecords = null;
+
+      if (window.BuzzRecords && typeof window.BuzzRecords.merge === "function") {
+        try {
+          const topics = {};
+          problems.forEach((problem) => { topics[problem.id] = problem.topic; });
+          mergedRecords = window.BuzzRecords.merge(current, normalizeRecords(incoming), { problemTopics: topics });
+        } catch (_error) {
+          mergedRecords = null;
+        }
+      }
+
+      if (!mergedRecords) {
+        // kernel 缺席時退回舊的覆蓋行為，但要先講清楚會發生什麼事。
+        if (beforeCount && !window.confirm("這台裝置上已經有練習紀錄。合併功能無法使用，繼續會直接覆蓋。要繼續嗎？")) return;
+        mergedRecords = normalizeRecords(incoming);
+      }
+
+      backupRecords(current, true);
+      saveRecords(mergedRecords);
+      const afterCount = (mergedRecords.attemptLog || []).length;
+      trackEvent("import_records", {
+        history_count: (mergedRecords.history || []).length,
+        mistake_count: Object.keys(mergedRecords.mistakes || {}).length,
+        merged: afterCount > beforeCount
+      });
+      showAppNotice(
+        afterCount > beforeCount
+          ? `已合併：作答紀錄從 ${beforeCount} 筆增加到 ${afterCount} 筆。`
+          : "已匯入。這份檔案沒有帶來新的作答紀錄。"
+      );
+      render();
     });
     reader.readAsText(file);
+  }
+
+  // ── 本機自動備份 ────────────────────────────────────────────
+  // 救得了「誤觸重設」「匯入覆蓋」，救不了「清除瀏覽器資料」——
+  // 後者只有匯出檔案或雲端才擋得住，所以提醒文案不能把備份講得太安全。
+  const BACKUP_PREFIX = "buzzcalculus.backup.";
+  const BACKUP_KEEP = 3;
+  const BACKUP_INTERVAL_MS = 24 * 3600 * 1000;
+
+  function backupRecords(records, force) {
+    if (!records || !(records.totalAnswered || 0)) return;
+    try {
+      const keys = Object.keys(localStorage)
+        .filter((key) => key.startsWith(BACKUP_PREFIX))
+        .sort();
+      const newest = keys.length ? Number(keys[keys.length - 1].slice(BACKUP_PREFIX.length)) : 0;
+      if (!force && Date.now() - newest < BACKUP_INTERVAL_MS) return;
+
+      localStorage.setItem(BACKUP_PREFIX + Date.now(), JSON.stringify(records));
+      const after = Object.keys(localStorage).filter((key) => key.startsWith(BACKUP_PREFIX)).sort();
+      after.slice(0, Math.max(0, after.length - BACKUP_KEEP)).forEach((key) => localStorage.removeItem(key));
+    } catch (_error) {
+      // 配額滿的時候備份失敗不能影響正常存檔
+    }
+  }
+
+  // 匯出提醒：練到一定程度才提，而且只提一次。
+  // 太早提會被當雜訊，提太多次會被當推銷。
+  function renderBackupNotice(records) {
+    if (records.backupNoticeSeen) return "";
+    const answered = Number(records.totalAnswered || 0);
+    const firstAt = (records.history || []).reduce((oldest, item) => {
+      const at = item && Date.parse(item.finishedAt || "");
+      return Number.isFinite(at) && (!oldest || at < oldest) ? at : oldest;
+    }, 0);
+    const days = firstAt ? (Date.now() - firstAt) / DAY_MS : 0;
+    if (answered < 200 && days < 7) return "";
+
+    return `
+      <section class="study-card backup-notice">
+        <div class="panel-title-row">
+          <div>
+            <p class="section-label">提醒</p>
+            <h3>你的紀錄只在這台裝置上</h3>
+          </div>
+          <button class="icon-button" data-action="dismiss-backup-notice" title="知道了">${icon("x")}</button>
+        </div>
+        <p class="panel-note">
+          已經累積 ${answered} 題的練習紀錄。它存在這個瀏覽器裡 ——
+          <strong>清除瀏覽器資料就會全部消失</strong>，而且救不回來。
+          先匯出一份帶著走，換裝置時匯入會自動合併，不會蓋掉任何一邊。
+        </p>
+        <div class="action-row">
+          <button class="button home-primary" data-action="export">${icon("download")}匯出備份</button>
+          <button class="button ghost" data-action="dismiss-backup-notice">之後再說</button>
+        </div>
+      </section>
+    `;
+  }
+
+  function dismissBackupNotice() {
+    const records = loadRecords();
+    records.backupNoticeSeen = true;
+    saveRecords(records);
+    render();
   }
 
   function showHint() {
@@ -5479,7 +8446,7 @@
     const used = quiz.hintsUsed[current.id] || 0;
     if (used >= hints.length) return;
     quiz.hintsUsed[current.id] = used + 1;
-    trackEvent("use_hint", {
+    trackEvent("hint_open", {
       mode: quiz.mode,
       topic: current.topic,
       problem_id: current.id,
@@ -5541,12 +8508,14 @@
       forceFinishAfterFeedback: false,
       modal: null
     };
-    if ((mode.rival || options.rival) && !quiz.practice) quiz.rival = buildRivalState(quiz.problems, records);
     if (options.dailyOne) quiz.dailyOne = options.dailyOne;
     view = "quiz";
     lastVisibilityStamp = Date.now();
+    trackProblemStart(quiz.problems[0]);
+    clearActiveSession();
+    autosaveSession(true);
     if (!quiz.practice && !quiz.noTimer) startTicker();
-    trackEvent("start_session", {
+    trackEvent("session_start", {
       mode: quiz.mode,
       topic: quiz.topic,
       pack: selectedPack,
@@ -5559,86 +8528,6 @@
     render();
   }
 
-  // ---- 宿敵系統：AI 對手「小積」 ----
-  // 小積的解題速度以「你最近的答題速度 × 等級係數 × 每題抖動」模擬：
-  // 打贏它會升級（更快），輸了會降一級，讓對局長期停在五五開附近。
-  const RIVAL_NAME = "小積";
-
-  function rivalLevelFactor(level) {
-    return 1.3 - 0.06 * Math.max(1, Math.min(10, Number(level) || 1));
-  }
-
-  function userSpeedRatio(records) {
-    const ratios = [];
-    (records.history || []).slice(0, 12).forEach((item) => {
-      (item.answers || []).forEach((answer) => {
-        if (!answer.correct || answer.unanswered) return;
-        const problem = problemById(answer.problemId);
-        if (!problem) return;
-        const ratio = Number(answer.elapsed || 0) / Math.max(1, problem.timeLimit);
-        if (ratio > 0 && ratio <= 1.2) ratios.push(ratio);
-      });
-    });
-    if (!ratios.length) return 0.45;
-    ratios.sort((a, b) => a - b);
-    return Math.min(0.8, Math.max(0.15, ratios[Math.floor(ratios.length / 2)]));
-  }
-
-  function buildRivalState(list, records = loadRecords()) {
-    const level = (records.rival && records.rival.level) || 1;
-    const ratio = userSpeedRatio(records);
-    const factor = rivalLevelFactor(level);
-    const times = list.map((problem, index) => {
-      const jitter = 0.85 + ((Math.abs(seedFromString(`${problem.id}-rival-${level}-${index}`)) % 1000) / 1000) * 0.4;
-      const t = Math.round(problem.timeLimit * ratio * factor * jitter);
-      return Math.max(6, Math.min(Math.max(8, problem.timeLimit - 2), t));
-    });
-    return { name: RIVAL_NAME, level, times, myPoints: 0, rivalPoints: 0 };
-  }
-
-  function renderRivalLane(current, elapsed) {
-    if (!quiz || !quiz.rival) return "";
-    const rival = quiz.rival;
-    const rivalTime = rival.times[quiz.index] || 1;
-    const pct = Math.min(100, Math.round((elapsed / rivalTime) * 100));
-    const done = elapsed >= rivalTime;
-    return `
-      <div class="rival-lane ${done ? "is-done" : ""}" data-live-box="rival">
-        <span class="rival-avatar" aria-hidden="true">😼</span>
-        <div class="rival-info">
-          <div class="rival-meta">
-            <strong>宿敵 ${escapeHtml(rival.name)} · Lv.${rival.level}</strong>
-            <span data-live="rival-score">你 ${rival.myPoints} : ${rival.rivalPoints} ${escapeHtml(rival.name)}</span>
-          </div>
-          <div class="rival-bar" aria-hidden="true"><span data-live="rival-bar" style="width:${pct}%"></span></div>
-        </div>
-        <span class="rival-status" data-live="rival-status">${done ? "解完了！" : "解題中…"}</span>
-      </div>
-    `;
-  }
-
-  function renderRivalOutcomePanel(outcome) {
-    const title =
-      outcome.result === "win" ? "你贏了宿敵！" : outcome.result === "loss" ? `被${RIVAL_NAME}壓制…` : "平手，再戰！";
-    const levelLine =
-      outcome.result === "win"
-        ? `${RIVAL_NAME}不服，練到 Lv.${outcome.levelAfter} 等你再戰`
-        : outcome.result === "loss"
-          ? outcome.levelAfter < outcome.levelBefore
-            ? `${RIVAL_NAME}讓一手，退回 Lv.${outcome.levelAfter}`
-            : `${RIVAL_NAME}穩守 Lv.${outcome.levelAfter}`
-          : `${RIVAL_NAME}維持 Lv.${outcome.levelAfter}，勝負未分`;
-    return `
-      <div class="rival-outcome is-${escapeAttr(outcome.result)}" data-enter>
-        <span class="rival-avatar" aria-hidden="true">😼</span>
-        <div>
-          <strong>${escapeHtml(title)} 你 ${outcome.my} : ${outcome.rival} ${RIVAL_NAME}</strong>
-          <p>${escapeHtml(levelLine)} · 生涯 ${outcome.wins} 勝 ${outcome.losses} 敗</p>
-        </div>
-      </div>
-    `;
-  }
-
   function selectProblemPool(mode, topic) {
     const records = loadRecords();
     const difficultyCap = activeDifficultyCap(records);
@@ -5649,9 +8538,6 @@
     if (mode.hidden && selectedMode === "mistakes") {
       pool = Object.values(records.mistakes || {}).map((item) => problemById(item.problemId)).filter(Boolean);
       return padPool(pool, pool, Math.min(mode.count, pool.length || mode.count), { records, avoidRecent: false });
-    }
-    if (!scienceRequested(topic, selectedPack)) {
-      pool = calculusOnly(pool);
     }
     if (mode.topicLocked) {
       pool = pool.filter((problem) => problem.topic === (topic === "all" ? "limits" : topic));
@@ -5766,8 +8652,8 @@
       .sort((a, b) => mistakeWeight(b) - mistakeWeight(a))
       .map((item) => problemById(item.problemId))
       .filter(Boolean);
-    const easy = calculusOnly(problems).filter((problem) => problemRank(problem) <= Math.min(3, cap));
-    const fallbackEasy = calculusOnly(problems).filter((problem) => problemRank(problem) <= 3);
+    const easy = problems.filter((problem) => problemRank(problem) <= Math.min(3, cap));
+    const fallbackEasy = problems.filter((problem) => problemRank(problem) <= 3);
     return padPool(mistakes.slice(0, count), easy.length ? easy : fallbackEasy, count, { records });
   }
 
@@ -5907,9 +8793,7 @@
 
   function difficultyScopedCount(cap, topic = "all", packKey = "all") {
     const maxRank = normalizeDifficultyCap(cap);
-    const includeScience = scienceRequested(topic, packKey);
     return problems.filter((problem) => {
-      if (!includeScience && isScienceProblem(problem)) return false;
       if (topic !== "all" && problem.topic !== topic) return false;
       if (packKey !== "all" && !matchesPack(problem, packKey)) return false;
       return problemRank(problem) <= maxRank;
@@ -5961,22 +8845,7 @@
     if (!correct && quiz.accuracyMode && !quiz.practice) quiz.score = Math.max(0, quiz.score - 80);
     quiz.currentStreak = correct ? quiz.currentStreak + 1 : 0;
     quiz.bestStreak = Math.max(quiz.bestStreak, quiz.currentStreak);
-    // 宿敵搶分：答對且比小積的模擬完成時間快才拿分，否則這分歸小積。
-    let rivalNote = "";
-    if (quiz.rival && !quiz.practice) {
-      const rivalTime = quiz.rival.times[quiz.index] || 0;
-      const beatRival = correct && elapsed < rivalTime;
-      if (beatRival) {
-        quiz.rival.myPoints += 1;
-        rivalNote = `⚡ 比${quiz.rival.name}快 ${Math.max(1, rivalTime - elapsed)}s，搶下這分！`;
-      } else {
-        quiz.rival.rivalPoints += 1;
-        rivalNote = correct
-          ? `${quiz.rival.name} ${rivalTime}s 就解完了，這分被搶走。`
-          : `${quiz.rival.name}拿下這題（${rivalTime}s 解完）。`;
-      }
-    }
-    quiz.answers.push({
+    const recorded = {
       problem,
       input,
       correct,
@@ -5985,9 +8854,28 @@
       earned,
       hintsUsed: usedHints,
       boardStrokes: cloneBoardStrokes(problem.id),
-      errorTag: ""
-    });
-    trackEvent("submit_answer", {
+      errorTag: "",
+      causeAuto: false
+    };
+    quiz.answers.push(recorded);
+    autosaveSession(true);
+    // 草稿存進 IndexedDB（不是 localStorage —— 筆畫陣列一題就能到幾十 KB）。
+    // 存的理由只有一個：重做錯題時，「我上次是哪一步算錯的」這個問題的答案
+    // 就在上次的草稿裡。答對的也存，因為對照自己上次怎麼做對的同樣有用。
+    persistBoard(problem, recorded);
+
+    // 答錯時先幫使用者猜一個錯因並直接記下來（標成 causeAuto）。
+    // 只在畫面上「預選」而不寫入的話，沒有主動點的人就完全不會產生資料，
+    // 那這個功能等於不存在。使用者改選時會清掉 causeAuto，
+    // 數據頁也會誠實標明有多少筆是系統推測的。
+    if (!correct && !quiz.examMode) {
+      const suggestion = suggestCause(problem, recorded);
+      if (suggestion) {
+        recorded.errorTag = recorded.unanswered ? "" : causeTagOf(suggestion.key);
+        recorded.causeAuto = Boolean(recorded.errorTag);
+      }
+    }
+    trackEvent("problem_submit", {
       mode: quiz.mode,
       topic: problem.topic,
       problem_id: problem.id,
@@ -6010,7 +8898,7 @@
     quiz.feedback = {
       status: correct ? "correct" : reason === "Timeout" ? "timeout" : "wrong",
       title: correct ? (quiz.practice ? "答對" : `答對，+${earned}`) : answerReasonLabel(reason),
-      message: [detail || (correct ? "" : "先想想卡在哪一步，下面可以一段一段看解法。"), rivalNote].filter(Boolean).join(" ")
+      message: detail || (correct ? "" : "先想想卡在哪一步，下面可以一段一段看解法。")
     };
     stopTicker();
     // Correct answers keep the fast auto-advance; wrong answers wait for an
@@ -6026,6 +8914,19 @@
     render();
   }
 
+  // 題目顯示。spec B 區 98 要求追蹤「開始題目」——沒有它就算不出
+  // 「有多少人看到題目就放棄」這種漏斗數字。
+  function trackProblemStart(problem) {
+    if (!quiz || !problem) return;
+    trackEvent("problem_start", {
+      mode: quiz.mode,
+      problem_id: problem.id,
+      rank: problemRank(problem),
+      index: quiz.index,
+      answer_mode: quiz.answerMode
+    });
+  }
+
   function advanceToNextQuestion() {
     if (!quiz || !quiz.feedback) return;
     quiz.index += 1;
@@ -6039,6 +8940,7 @@
     quiz.draft = "";
     quiz.feedback = null;
     quiz.modal = null;
+    trackProblemStart(quiz.problems[quiz.index]);
     quiz.boardOpen = false;
     quiz.boardFullscreen = false;
     if (quiz.forceFinishAfterFeedback) {
@@ -6055,7 +8957,7 @@
       finalizeExamAnswers(quiz);
       const correct = quiz.answers.filter((answer) => answer.correct).length;
       const tabSwitches = Object.values(quiz.tabSwitches || {}).reduce((sum, count) => sum + count, 0);
-      trackEvent("finish_session", {
+      trackEvent("session_complete", {
         mode: quiz.mode,
         topic: quiz.topic,
         answer_mode: quiz.answerMode,
@@ -6068,6 +8970,7 @@
       });
       saveQuizRecord(quiz);
     }
+    clearActiveSession();
     resultsDetailOpen = false;
     view = "results";
     if (quiz && quiz.requireFullscreen) exitQuizFullscreen();
@@ -6142,9 +9045,15 @@
         quiz.examTimedOut = true;
         finishQuiz();
       } else if (!quiz.examMode && !quiz.feedback && elapsed >= current.timeLimit) {
+        trackEvent("problem_timeout", {
+          mode: quiz.mode,
+          problem_id: current.id,
+          rank: problemRank(current)
+        });
         recordAnswer(resolveAnswerSubmission(current, quiz.draft || "", "Timeout"));
       } else {
         updateLiveQuizStats();
+        autosaveSession(false);
       }
     }, 1000);
   }
@@ -6163,16 +9072,6 @@
     if (timeBox) timeBox.classList.toggle("is-danger", remaining <= (quiz.examMode ? 180 : 8));
     if (proctorNode) proctorNode.textContent = quiz.examMode ? String(totalTabSwitches(quiz)) : `${quiz.tabSwitches[current.id] || 0}/${current.tabLimit}`;
     if (proctorBox && quiz.examMode) proctorBox.classList.toggle("is-danger", totalTabSwitches(quiz) > 0);
-    if (quiz.rival) {
-      const rivalTime = quiz.rival.times[quiz.index] || 1;
-      const rivalBar = app.querySelector('[data-live="rival-bar"]');
-      const rivalStatus = app.querySelector('[data-live="rival-status"]');
-      const rivalBox = app.querySelector('[data-live-box="rival"]');
-      const done = elapsed >= rivalTime;
-      if (rivalBar) rivalBar.style.width = `${Math.min(100, Math.round((elapsed / rivalTime) * 100))}%`;
-      if (rivalStatus) rivalStatus.textContent = done ? "解完了！" : "解題中…";
-      if (rivalBox) rivalBox.classList.toggle("is-done", done);
-    }
   }
 
   function stopTicker() {
@@ -6222,17 +9121,11 @@
       hints.push("先判斷是等比、p 級數、交錯級數，或需要比較判別。");
       hints.push("收斂判定題要分清楚收斂、條件收斂與絕對收斂。");
     }
-    if (problem.topic === "physics") {
-      hints.push("先寫下對應公式，再把題目給的常數（g、c、k）代進去。");
-      hints.push("單位先統一成 SI（km/h ÷ 3.6、g 換 kg、cm 換 m）再算。");
-    }
-    if (problem.topic === "chemistry") {
-      hints.push("先換成莫耳數，再用平衡式的係數比推其他量。");
-      hints.push("濃度題先確認體積單位是 L；酸鹼題先算 [H⁺] 或 [OH⁻]。");
-    }
     if (problem.answerKind === "antiderivative") hints.push("不定積分答案可省略 +C，系統會檢查是否相差常數。");
     if (problem.answerKind === "expression") hints.push("答案請寫成 x 的函數，例如用 sin(x)、log(x)、sqrt(x)。");
     if (problem.answerKind === "numeric") hints.push("數值答案可用分數、pi、e、sqrt 表示。");
+    if (problem.answerKind === "set") hints.push("把找到的值全部列出來，順序不影響判分 —— 但少一個就算錯。");
+    if (problem.answerKind === "interval") hints.push("端點取不取得到，決定用小括號還是中括號。多段用 U 連起來。");
     return hints.slice(0, 3);
   }
 
@@ -6246,15 +9139,53 @@
       return checkNumeric(problem.answer, input);
     }
     if (problem.answerKind === "expression") {
-      return checkExpression(problem.answer, input, problem.variables || problem.variable || "x");
+      return checkExpression(problem.answer, input, problem.variables || problem.variable || "x", problemDomain(problem));
     }
     if (problem.answerKind === "antiderivative") {
-      return checkAntiderivative(problem.answer, input, problem.variable || "x");
+      return checkAntiderivative(problem.answer, input, problem.variable || "x", problemDomain(problem));
     }
     if (problem.answerKind === "text") {
       return checkText(problem, input);
     }
+    if (problem.answerKind === "set") {
+      return checkSet(problem, input);
+    }
+    if (problem.answerKind === "interval") {
+      return checkInterval(problem, input);
+    }
     return { correct: false, message: "這個題型目前不能自動判分。" };
+  }
+
+  // 題幹尾巴寫的定義域限制（",\ x>0"、"\quad(x\ge 1)"）。
+  //
+  // 為什麼要讀它：判分是「把兩個式子在幾個點上代入比較」。取樣點若跑到
+  // 題目根本沒有定義的範圍，比出來的結果沒有意義。反過來說，題目**有**
+  // 限制卻不讀，就會拿 x<0 的點去為難一個只需要在 x>0 成立的答案。
+  //
+  // 這條規則跟 tools/lib/verify_engine.js 的 stripDomain 是同一套語法，
+  // 兩邊必須一致 —— 否則會出現「離線驗算說對、線上判分說錯」。
+  const DOMAIN_TAIL = /[,\s]*(?:\\quad|\\qquad|\\,|\\;|\\ |\s)*\(?\s*([a-zA-Z])\s*(>=|<=|\\ge|\\geq|\\le|\\leq|\\neq|>|<)\s*(-?[0-9.]+)\s*\)?\s*$/;
+
+  function problemDomain(problem) {
+    if (problem.domain) return problem.domain;
+    const match = String(problem.prompt || "").match(DOMAIN_TAIL);
+    if (!match) return null;
+    const operator = { "\\ge": ">=", "\\geq": ">=", "\\le": "<=", "\\leq": "<=", "\\neq": "!=" }[match[2]] || match[2];
+    return { variable: match[1], operator, value: Number(match[3]) };
+  }
+
+  function inDomain(domain, vars) {
+    if (!domain) return true;
+    const value = vars[domain.variable];
+    if (value === undefined) return true;
+    switch (domain.operator) {
+      case ">": return value > domain.value;
+      case ">=": return value >= domain.value;
+      case "<": return value < domain.value;
+      case "<=": return value <= domain.value;
+      case "!=": return value !== domain.value;
+      default: return true;
+    }
   }
 
   function checkNumeric(expected, input) {
@@ -6275,9 +9206,9 @@
     };
   }
 
-  function checkExpression(expected, input, variable) {
+  function checkExpression(expected, input, variable, domain) {
     const variables = Array.isArray(variable) ? variable : [variable];
-    const samples = expressionSamples(variables);
+    const samples = expressionSamples(variables).filter((vars) => inDomain(domain, vars));
     let valid = 0;
     for (const vars of samples) {
       const a = evaluateExpression(expected, vars);
@@ -6291,12 +9222,20 @@
     }
     return {
       correct: valid >= 3,
-      message: valid >= 3 ? "多點代入等價。" : "格式讀不穩。請用 2*x、sin(x)、log(x) 這種 WebWork 寫法。"
+      message: valid >= 3 ? "多點代入等價。" : "格式讀不穩。請用 2*x、sin(x)、log(x) 這種寫法。"
     };
   }
 
+  // 原本的取樣點全是正數（0.35 … 4.4）。那有一個很實際的漏洞：
+  // sqrt(x²) 和 x 在正數上完全一樣，但它們不是同一個函數。
+  // 只用正數取樣，這種答案一定判對。加入負值之後才有辦法分開。
+  //
+  // 同時把「好看的數字」換成無理數附近的值：0.5、1、2 這種點上，
+  // 不同的函數剛好撞在一起的機率高得多（sin(π/6)=1/2 這類巧合）。
+  const ANTIDERIVATIVE_SAMPLES = [0.3137, 0.7211, 1.2345, 1.9871, 3.3013, -0.6180, -1.3247, -2.1069];
+
   function expressionSamples(variables) {
-    const base = [0.35, 0.8, 1.4, 2.2, 3.1, 4.4];
+    const base = ANTIDERIVATIVE_SAMPLES;
     if (variables.length === 1) return base.map((value) => ({ [variables[0]]: value }));
     return base.map((value, index) => {
       return variables.reduce((vars, name, offset) => {
@@ -6312,8 +9251,8 @@
       .join(", ");
   }
 
-  function checkAntiderivative(expected, input, variable) {
-    const samples = [0.7, 1.1, 1.8, 2.6, 3.5];
+  function checkAntiderivative(expected, input, variable, domain) {
+    const samples = ANTIDERIVATIVE_SAMPLES.filter((x) => inDomain(domain, { [variable]: x }));
     const diffs = [];
     for (const x of samples) {
       const vars = { [variable]: x };
@@ -6323,7 +9262,7 @@
       diffs.push(b - a);
     }
     if (diffs.length < 3) {
-      return { correct: false, message: "答案無法穩定解析。請用 x、sin(x)、log(x) 這類 WebWork 寫法。" };
+      return { correct: false, message: "答案無法穩定解析。請用 x、sin(x)、log(x) 這類寫法。" };
     }
     const base = diffs[0];
     const ok = diffs.every((value) => Math.abs(value - base) <= Math.max(1e-5, Math.abs(base) * 1e-5));
@@ -6331,6 +9270,115 @@
       correct: ok,
       message: ok ? "原函數相差常數，判定正確。" : `微分後不相同。${friendlyWrongHint({ answerKind: "antiderivative", variable }, input, expected)}參考答案：${expected}`
     };
+  }
+
+  // ── 集合與區間 ─────────────────────────────────────────────
+  //
+  // 微積分裡有一整類問題，現有的四種答案型別一種都裝不下：
+  //   「求所有臨界點」        答案是一組數，順序無所謂
+  //   「f 的定義域是什麼」    答案是區間或區間的聯集，端點開閉有差
+  //   「哪些 x 使級數收斂」   同上
+  //
+  // 以前只能硬塞成 text，然後靠字串比對 —— 於是 {2, -1} 和 {-1, 2} 會被判錯，
+  // 而 (0,1] 打成 (0, 1] 也會被判錯。這種「答對卻被判錯」比判寬鬆更傷，
+  // 因為使用者會停止相信判分。
+  //
+  // 兩種型別都走數值比對：集合比元素多重集合，區間比端點與開閉。
+
+  // "{1, -2, pi/3}" / "1, -2" / "x=1, x=-2" → [數值]
+  function parseNumberSet(input) {
+    const cleaned = String(input || "")
+      .replace(/[{}]/g, "")
+      .replace(/\b[a-zA-Z]\s*=/g, "")
+      .trim();
+    if (!cleaned) return null;
+    const parts = cleaned.split(/[,;]|、/).map((part) => part.trim()).filter(Boolean);
+    if (!parts.length) return null;
+    const values = parts.map((part) => evaluateExpression(part, {}));
+    if (values.some((value) => !Number.isFinite(value))) return null;
+    return values.sort((a, b) => a - b);
+  }
+
+  function checkSet(problem, input) {
+    const expected = parseNumberSet(problem.answer);
+    const actual = parseNumberSet(input);
+    if (!expected) return { correct: false, message: "這題的參考答案格式有問題，請回報。" };
+    if (!actual) {
+      return { correct: false, message: "集合請寫成 {1, -2} 或 1, -2 這種形式，元素可以用 pi/3、sqrt(2)。" };
+    }
+    if (actual.length !== expected.length) {
+      return {
+        correct: false,
+        message: `元素個數不對：你給了 ${actual.length} 個，答案有 ${expected.length} 個。參考答案：${problem.answer}`
+      };
+    }
+    const same = expected.every((value, index) => {
+      const tolerance = Math.max(1e-7, Math.abs(value) * 1e-6);
+      return Math.abs(value - actual[index]) <= tolerance;
+    });
+    return {
+      correct: same,
+      message: same ? "集合元素完全吻合（順序不影響）。" : `集合內容不對。參考答案：${problem.answer}`
+    };
+  }
+
+  // "(-inf, 2) U [3, 5]" → [{lo, hi, loOpen, hiOpen}]
+  function parseIntervals(input) {
+    const text = String(input || "")
+      .replace(/∪/g, "U")
+      .replace(/\\cup/g, "U")
+      .replace(/\s+/g, "");
+    if (!text) return null;
+    const pieces = text.split(/U|u\b/).filter(Boolean);
+    if (!pieces.length) return null;
+    const parsed = [];
+    for (const piece of pieces) {
+      const match = piece.match(/^([[(])([^,]*),([^\])]*)([\])])$/);
+      if (!match) return null;
+      const lo = parseEndpoint(match[2]);
+      const hi = parseEndpoint(match[3]);
+      if (!Number.isFinite(lo) && lo !== -Infinity) return null;
+      if (!Number.isFinite(hi) && hi !== Infinity) return null;
+      if (lo > hi) return null;
+      parsed.push({ lo, hi, loOpen: match[1] === "(", hiOpen: match[4] === ")" });
+    }
+    return parsed.sort((a, b) => a.lo - b.lo || a.hi - b.hi);
+  }
+
+  function parseEndpoint(text) {
+    const normalized = String(text).trim().toLowerCase();
+    if (/^[-−]\s*(inf|infty|infinity|∞)$/.test(normalized)) return -Infinity;
+    if (/^\+?\s*(inf|infty|infinity|∞)$/.test(normalized)) return Infinity;
+    return evaluateExpression(text, {});
+  }
+
+  function checkInterval(problem, input) {
+    const expected = parseIntervals(problem.answer);
+    const actual = parseIntervals(input);
+    if (!expected) return { correct: false, message: "這題的參考答案格式有問題，請回報。" };
+    if (!actual) {
+      return { correct: false, message: "區間請寫成 (0, 1]、[2, inf) 這種形式，聯集用 U 連接。" };
+    }
+    if (actual.length !== expected.length) {
+      return {
+        correct: false,
+        message: `區間段數不對：你給了 ${actual.length} 段，答案是 ${expected.length} 段。參考答案：${problem.answer}`
+      };
+    }
+    for (let index = 0; index < expected.length; index += 1) {
+      const want = expected[index];
+      const got = actual[index];
+      const near = (a, b) => (a === b) || Math.abs(a - b) <= Math.max(1e-7, Math.abs(a) * 1e-6);
+      if (!near(want.lo, got.lo) || !near(want.hi, got.hi)) {
+        return { correct: false, message: `端點不對。參考答案：${problem.answer}` };
+      }
+      // 開閉是這個題型的重點。端點對了但開閉錯，代表沒搞清楚
+      // 端點到底屬不屬於定義域 —— 那正是這類題目要考的事。
+      if (want.loOpen !== got.loOpen || want.hiOpen !== got.hiOpen) {
+        return { correct: false, message: `端點的開閉不對（差在中括號還是小括號）。參考答案：${problem.answer}` };
+      }
+    }
+    return { correct: true, message: "區間與開閉都吻合。" };
   }
 
   function checkText(problem, input) {
@@ -6362,7 +9410,7 @@
 
     addOption(correct, true);
     buildChoiceDistractors(problem, correct).forEach((value) => addOption(value, false));
-    // 自訂誘答（背誦型理科題）已經寫好對應的混淆選項，不要再混入微積分答案。
+    // 題目可以自帶誘答；有自帶就不要再從題庫其他答案亂抓。
     if (!authoredDistractors(problem).length) {
       fallbackChoiceDistractors(problem).forEach((value) => addOption(value, false));
     }
@@ -6375,9 +9423,8 @@
     return shuffled;
   }
 
-  // 題目可以自己帶 distractors: ["…"]，用在「規則背起來就秒殺」的理科題——
-  // 這種題的誘答必須是同一張表上的鄰居（可溶 / 微溶、氧化劑 / 還原劑），
-  // 從題庫其他答案抓只會給出微積分式的選項。
+  // 題目可以自己帶 distractors: ["…"]。用在「誘答必須是特定幾個選項」的題型，
+  // 從題庫其他答案亂抓會抓出完全不相干的選項。
   function authoredDistractors(problem) {
     return Array.isArray(problem.distractors) ? problem.distractors.filter((value) => String(value || "").trim()) : [];
   }
@@ -6874,14 +9921,55 @@
     }
   }
 
+  // ---- 手寫計算紙 ──────────────────────────────────────────────
+  //
+  // 真正的使用情境是 iPad + Apple Pencil，而那個情境有四個瀏覽器預設行為
+  // 會直接把它毀掉：
+  //
+  //   1. 長按會選字、跳放大鏡與「拷貝／查詢」選單。用筆算式的時候
+  //      手掌或筆尖碰到旁邊的題目，整段就反白起來 —— 這是最煩的一個。
+  //   2. 手掌在 iPad 上是一個 pointerType:"touch" 的事件，跟筆同時發生。
+  //      不擋掉的話寫字會拖出一條橫貫全頁的線。
+  //   3. pointermove 每個 frame 只觸發一次，但 Pencil 取樣是 120–240Hz。
+  //      不撈 coalesced events，寫快一點筆跡就變成多邊形。
+  //   4. 每次 move 重畫整塊板子是 O(n²)。算到第三行就開始頓。
+  //
+  // 對應的處理依序是：CSS 關掉選取與 callout、看到筆之後短時間內忽略觸控、
+  // getCoalescedEvents()、以及只畫新增的那一段。
+
+  // 看到筆之後這段時間內的觸控一律視為手掌。
+  // 太短擋不住手掌，太長會讓「放下筆改用手指」卡住。
+  const PALM_WINDOW_MS = 1400;
+
+  const BOARD_INK = { paper: "#1d2b3a", board: "#fff8de" };
+
+  function boardSurface() {
+    try {
+      const settings = loadRecords().settings || {};
+      return settings.boardSurface === "board" ? "board" : "paper";
+    } catch (_error) {
+      return "paper";
+    }
+  }
+
+  function setBoardSurface(name) {
+    const records = loadRecords();
+    records.settings = records.settings || {};
+    records.settings.boardSurface = name === "board" ? "board" : "paper";
+    saveRecords(records);
+  }
+
   function setupBlackboard() {
     const canvas = app.querySelector("[data-blackboard]");
     if (!quiz) return;
     const current = getCurrentProblem();
     const problemId = canvas?.dataset.problemId || current?.id || "";
-    const ctx = canvas ? canvas.getContext("2d") : null;
-    let drawing = false;
+    // desynchronized 讓 Safari 走低延遲路徑：筆跡跟著筆尖，而不是跟著 frame。
+    // alpha 必須留著 —— 紙的方格是 CSS 背景，橡皮擦用 destination-out 挖洞。
+    const ctx = canvas ? canvas.getContext("2d", { desynchronized: true }) : null;
     let currentStroke = null;
+    let activePointerId = null;
+    let lastPenAt = 0;
 
     app.querySelectorAll("[data-board-action]").forEach((button) => {
       button.addEventListener("click", () => {
@@ -6902,14 +9990,31 @@
         if (action === "fullscreen") {
           quiz.boardFullscreen = !quiz.boardFullscreen;
           quiz.boardOpen = true;
+          // 全螢幕的重點是書寫區要夠大。輸入鍵盤攤開會吃掉將近一半的高度，
+          // 而這個模式下使用者是在紙上算，不是在敲鍵盤 —— 所以先收起來。
+          // 收起來不是鎖住，想用還是點得開。
+          if (quiz.boardFullscreen) {
+            quiz.keypadBeforeFullscreen = quiz.keypadOpen;
+            quiz.keypadOpen = false;
+          } else if (quiz.keypadBeforeFullscreen != null) {
+            quiz.keypadOpen = quiz.keypadBeforeFullscreen;
+            quiz.keypadBeforeFullscreen = null;
+          }
           render();
           return;
         }
+        if (action === "surface") {
+          setBoardSurface(boardSurface() === "paper" ? "board" : "paper");
+          render();
+          return;
+        }
+        // 復原與清除不重繪整個畫面 —— render() 會把 canvas 整個換掉，
+        // 於是一次「復原」要重畫全部筆畫，在 iPad 上看得出來卡一下。
         const strokes = getBoardStrokes(problemId);
         if (action === "undo") strokes.pop();
         if (action === "clear") strokes.length = 0;
         if (canvas && ctx) drawBlackboard(canvas, ctx, problemId);
-        render();
+        updateBoardCount(strokes.length);
       });
     });
 
@@ -6918,36 +10023,89 @@
     resizeBlackboard(canvas);
     drawBlackboard(canvas, ctx, problemId);
 
+    // 旋轉 iPad 或進出全螢幕之後 canvas 尺寸會變，內容要跟著重畫。
+    if (typeof window.ResizeObserver === "function") {
+      const observer = new window.ResizeObserver(() => {
+        if (!canvas.isConnected) {
+          observer.disconnect();
+          return;
+        }
+        if (resizeBlackboard(canvas)) drawBlackboard(canvas, ctx, problemId);
+      });
+      observer.observe(canvas);
+    }
+
+    // 長按叫出來的選單會直接中斷書寫，而且在 iPad 上很容易誤觸。
+    canvas.addEventListener("contextmenu", (event) => event.preventDefault());
+
+    // 手掌判定。看到筆就記時間；接下來一小段時間內的觸控一律忽略。
+    function acceptsPointer(event) {
+      if (currentStroke && event.pointerId !== activePointerId) return false;
+      if (event.pointerType === "pen") {
+        lastPenAt = Date.now();
+        return true;
+      }
+      if (event.pointerType === "touch" && Date.now() - lastPenAt < PALM_WINDOW_MS) return false;
+      return true;
+    }
+
     canvas.addEventListener("pointerdown", (event) => {
       if (!quiz || quiz.feedback) return;
+      if (currentStroke) return; // 已經有一支筆在寫了，第二個接觸點忽略
+      if (!acceptsPointer(event)) return;
       event.preventDefault();
-      quiz.boardOpen = true;
-      drawing = true;
-      canvas.setPointerCapture(event.pointerId);
+      activePointerId = event.pointerId;
+      try {
+        canvas.setPointerCapture(event.pointerId);
+      } catch (_error) {
+        // Safari 偶爾會在 capture 上丟例外，不影響書寫
+      }
       currentStroke = {
         tool: quiz.boardTool || "pen",
         points: [blackboardPoint(canvas, event)]
       };
-      getBoardStrokes(problemId).push(currentStroke);
-      drawBlackboard(canvas, ctx, problemId);
+      const strokes = getBoardStrokes(problemId);
+      strokes.push(currentStroke);
+      paintStrokeTail(canvas, ctx, currentStroke, true);
+      updateBoardCount(strokes.length);
     });
 
     canvas.addEventListener("pointermove", (event) => {
-      if (!drawing || !currentStroke) return;
+      if (!currentStroke || event.pointerId !== activePointerId) return;
       event.preventDefault();
-      currentStroke.points.push(blackboardPoint(canvas, event));
-      drawBlackboard(canvas, ctx, problemId);
+      // Pencil 一個 frame 可以產生四五個取樣點。只取 event 本身
+      // 會丟掉其中大部分，寫快的時候就是一條折線。
+      const batch = typeof event.getCoalescedEvents === "function"
+        ? event.getCoalescedEvents()
+        : [event];
+      const samples = batch && batch.length ? batch : [event];
+      for (let index = 0; index < samples.length; index += 1) {
+        currentStroke.points.push(blackboardPoint(canvas, samples[index]));
+      }
+      paintStrokeTail(canvas, ctx, currentStroke, false);
     });
 
     canvas.addEventListener("pointerup", endStroke);
     canvas.addEventListener("pointercancel", endStroke);
+    canvas.addEventListener("pointerleave", endStroke);
 
     function endStroke(event) {
-      if (!drawing) return;
-      drawing = false;
+      if (!currentStroke || event.pointerId !== activePointerId) return;
+      paintStrokeTail(canvas, ctx, currentStroke, true);
       currentStroke = null;
-      if (canvas.hasPointerCapture(event.pointerId)) canvas.releasePointerCapture(event.pointerId);
+      activePointerId = null;
+      try {
+        if (canvas.hasPointerCapture(event.pointerId)) canvas.releasePointerCapture(event.pointerId);
+      } catch (_error) {
+        // 同上
+      }
     }
+  }
+
+  // 筆畫數的標籤不需要整頁重繪才更新。
+  function updateBoardCount(count) {
+    const label = app.querySelector("[data-board-count]");
+    if (label) label.textContent = count ? `${count} 筆` : "手寫草稿";
   }
 
   function setupReviewBoards() {
@@ -6960,6 +10118,64 @@
       resizeBlackboard(canvas);
       drawStrokesOnBlackboard(canvas, ctx, answer.boardStrokes);
     });
+  }
+
+  // 存草稿。整段包在 try 裡，而且不 await —— 草稿保存是加分項，
+  // 任何情況下都不該影響作答流程（無痕模式、額度用完、瀏覽器不支援）。
+  function persistBoard(problem, recorded) {
+    if (!window.BuzzBoardStore || !recorded.boardStrokes || !recorded.boardStrokes.length) return;
+    try {
+      window.BuzzBoardStore.saveBoard(problem.id, recorded.boardStrokes, {
+        correct: recorded.correct,
+        answer: recorded.input
+      });
+    } catch (_error) {
+      // 靜默：使用者不需要知道草稿沒存起來
+    }
+  }
+
+  // 進到一題時，如果它是錯題重做且有上次的草稿，就把草稿拉回來。
+  // 非同步拿到之後才 render，避免每題都因為一個可能不存在的東西多繪一次。
+  function loadPreviousBoard(problem) {
+    if (!window.BuzzBoardStore || !problem) return;
+    if (previousBoard.problemId === problem.id) return;
+    previousBoard = { problemId: problem.id, entry: null, open: false };
+    try {
+      window.BuzzBoardStore.loadBoard(problem.id).then((entry) => {
+        if (!entry || !quiz || !quiz.problems || quiz.problems[quiz.index] !== problem) return;
+        previousBoard = { problemId: problem.id, entry, open: false };
+        render();
+      });
+    } catch (_error) {
+      // 同上，靜默
+    }
+  }
+
+  // 「上次的草稿」摺疊區。預設收起來 —— 直接攤開等於把上次的做法塞到眼前，
+  // 那就不是重做而是照抄了。
+  function renderPreviousBoard(problem) {
+    if (!previousBoard.entry || previousBoard.problemId !== problem.id) return "";
+    const entry = previousBoard.entry;
+    const days = Math.max(0, Math.round((Date.now() - entry.savedAt) / 86400000));
+    const when = days === 0 ? "今天" : `${days} 天前`;
+    return `
+      <details class="previous-board"${previousBoard.open ? " open" : ""}>
+        <summary>
+          <span>上次的草稿（${when}，${entry.correct ? "答對" : "答錯"}${entry.answer ? "：" + escapeHtml(entry.answer) : ""}）</span>
+        </summary>
+        <canvas class="blackboard is-readonly" data-previous-board="${escapeAttr(problem.id)}" data-surface="${boardSurface()}" aria-label="上次的手寫草稿"></canvas>
+      </details>
+    `;
+  }
+
+  function setupPreviousBoard() {
+    if (!previousBoard.entry) return;
+    const canvas = app.querySelector("[data-previous-board]");
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+    resizeBlackboard(canvas);
+    drawStrokesOnBlackboard(canvas, ctx, previousBoard.entry.strokes);
   }
 
   function getBoardStrokes(problemId) {
@@ -6976,22 +10192,28 @@
     }));
   }
 
+  // 回傳有沒有真的改變尺寸 —— 尺寸沒變就不必重畫（重畫會清掉內容）。
   function resizeBlackboard(canvas) {
     const rect = canvas.getBoundingClientRect();
     const ratio = Math.min(2, window.devicePixelRatio || 1);
     const width = Math.max(1, Math.floor(rect.width * ratio));
     const height = Math.max(1, Math.floor(rect.height * ratio));
-    if (canvas.width === width && canvas.height === height) return;
+    if (canvas.width === width && canvas.height === height) return false;
     canvas.width = width;
     canvas.height = height;
+    return true;
   }
 
   function blackboardPoint(canvas, event) {
     const rect = canvas.getBoundingClientRect();
+    // 座標存成 0–1 的比例，跟畫布尺寸無關 —— 這樣旋轉 iPad 或
+    // 進出全螢幕之後，舊筆畫還畫得回原來的相對位置。
     return {
       x: (event.clientX - rect.left) / Math.max(1, rect.width),
       y: (event.clientY - rect.top) / Math.max(1, rect.height),
-      pressure: event.pressure || 0.5
+      // 滑鼠一律回報 0.5；Pencil 才有真的壓力。0 要當成沒有壓力資訊，
+      // 不然用滑鼠或手指畫出來的線會細到看不見。
+      pressure: event.pressure > 0 ? event.pressure : 0.5
     };
   }
 
@@ -6999,37 +10221,105 @@
     drawStrokesOnBlackboard(canvas, ctx, getBoardStrokes(problemId));
   }
 
-  function drawStrokesOnBlackboard(canvas, ctx, strokes) {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = "#11130f";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    strokes.forEach((stroke) => drawStroke(canvas, ctx, stroke));
+  function boardRenderOptions(canvas, finish) {
+    return {
+      finish: Boolean(finish),
+      ratio: Math.min(2, window.devicePixelRatio || 1),
+      surface: (canvas && canvas.dataset && canvas.dataset.surface) || boardSurface()
+    };
   }
 
-  function drawStroke(canvas, ctx, stroke) {
-    if (!stroke.points.length) return;
+  function drawStrokesOnBlackboard(canvas, ctx, strokes) {
+    // 繪製核心已經搬到 src/kernel/board_render.js。
+    // 這裡照 kernel 的規矩用特徵偵測接：檔案沒載到也不能讓計算紙壞掉。
+    if (window.BuzzBoardRender && typeof window.BuzzBoardRender.paintAll === "function") {
+      window.BuzzBoardRender.paintAll(canvas, ctx, strokes, boardRenderOptions(canvas, true));
+      return;
+    }
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    strokes.forEach((stroke) => {
+      stroke.drawnTo = 0;
+      paintStrokeTail(canvas, ctx, stroke, true);
+    });
+  }
+
+  function boardInkColor(canvas) {
+    const surface = (canvas && canvas.dataset && canvas.dataset.surface) || boardSurface();
+    return BOARD_INK[surface] || BOARD_INK.paper;
+  }
+
+  // 只畫還沒畫過的那一段。stroke.drawnTo 記到哪裡了；
+  // 這是「寫滿一頁還不會頓」跟「每次 move 重畫全部」的差別。
+  //
+  // 實作已經搬到 kernel/board_render.js；這裡保留一份等價的後備，
+  // 因為 kernel 是可以被單獨拿掉的（三條鐵律的第一條）。
+  function paintStrokeTail(canvas, ctx, stroke, finish) {
+    if (window.BuzzBoardRender && typeof window.BuzzBoardRender.paintStrokeTail === "function") {
+      window.BuzzBoardRender.paintStrokeTail(canvas, ctx, stroke, boardRenderOptions(canvas, finish));
+      return;
+    }
+    const points = stroke.points;
+    if (!points.length) return;
     const isEraser = stroke.tool === "eraser";
+    const ratio = Math.min(2, window.devicePixelRatio || 1);
+
     ctx.save();
-    ctx.globalCompositeOperation = "source-over";
-    ctx.strokeStyle = isEraser ? "#11130f" : "#fff8de";
-    ctx.lineWidth = (isEraser ? 18 : 4) * Math.min(2, window.devicePixelRatio || 1);
+    ctx.globalCompositeOperation = isEraser ? "destination-out" : "source-over";
+    ctx.strokeStyle = isEraser ? "rgba(0,0,0,1)" : boardInkColor(canvas);
+    ctx.fillStyle = ctx.strokeStyle;
     ctx.lineCap = "round";
     ctx.lineJoin = "round";
-    ctx.beginPath();
-    stroke.points.forEach((point, index) => {
-      const x = point.x * canvas.width;
-      const y = point.y * canvas.height;
-      if (index === 0) {
-        ctx.moveTo(x, y);
-      } else {
-        ctx.lineTo(x, y);
+
+    const baseWidth = (isEraser ? 20 : 2.4) * ratio;
+    const widthAt = (point) => (isEraser ? baseWidth : baseWidth * (0.55 + 1.05 * point.pressure));
+
+    // 單點：點一下要留下一個點，不是什麼都沒有。
+    if (points.length === 1) {
+      if (!stroke.drawnTo) {
+        const only = points[0];
+        ctx.beginPath();
+        ctx.arc(only.x * canvas.width, only.y * canvas.height, widthAt(only) / 2, 0, Math.PI * 2);
+        ctx.fill();
+        stroke.drawnTo = 1;
       }
-    });
-    if (stroke.points.length === 1) {
-      const point = stroke.points[0];
-      ctx.lineTo(point.x * canvas.width + 0.1, point.y * canvas.height + 0.1);
+      ctx.restore();
+      return;
     }
-    ctx.stroke();
+
+    const px = (point) => point.x * canvas.width;
+    const py = (point) => point.y * canvas.height;
+    const mid = (a, b) => ({ x: (px(a) + px(b)) / 2, y: (py(a) + py(b)) / 2 });
+
+    // 以「相鄰兩點的中點」為端點、以取樣點本身為控制點畫二次曲線。
+    // 這是把折線變成手寫感最便宜的做法，而且逐段可畫。
+    let index = Math.max(1, stroke.drawnTo || 1);
+    for (; index < points.length - 1; index += 1) {
+      const previous = points[index - 1];
+      const control = points[index];
+      const next = points[index + 1];
+      const from = mid(previous, control);
+      const to = mid(control, next);
+      ctx.beginPath();
+      ctx.lineWidth = widthAt(control);
+      ctx.moveTo(from.x, from.y);
+      ctx.quadraticCurveTo(px(control), py(control), to.x, to.y);
+      ctx.stroke();
+    }
+    stroke.drawnTo = Math.max(1, points.length - 1);
+
+    // 收筆時把最後一小段補到真正的終點，否則每一筆都會短一截。
+    if (finish && points.length >= 2) {
+      const last = points[points.length - 1];
+      const beforeLast = points[points.length - 2];
+      const from = mid(beforeLast, last);
+      ctx.beginPath();
+      ctx.lineWidth = widthAt(last);
+      ctx.moveTo(from.x, from.y);
+      ctx.lineTo(px(last), py(last));
+      ctx.stroke();
+      stroke.drawnTo = points.length;
+    }
+
     ctx.restore();
   }
 
@@ -7043,6 +10333,7 @@
 
   function saveRecords(records) {
     const next = normalizeRecords(records);
+    backupRecords(next, false);
     // Feature 7：雲端同步衝突規則採「updatedAt 最新者獲勝」，
     // 所以每一次本機寫入都要蓋上新的時間戳。
     next.updatedAt = new Date().toISOString();
@@ -7080,19 +10371,32 @@
       : null;
     next.settings = next.settings && typeof next.settings === "object" ? next.settings : {};
     next.settings.difficultyCap = normalizeDifficultyCap(next.settings.difficultyCap || DEFAULT_DIFFICULTY_CAP);
-    // 宿敵系統：level 1-10 隨勝負升降（贏→宿敵變強，輸→退一級）。
-    next.rival = next.rival && typeof next.rival === "object" ? next.rival : {};
-    next.rival.level = Math.max(1, Math.min(10, Math.round(Number(next.rival.level) || 1)));
-    next.rival.wins = Number(next.rival.wins || 0);
-    next.rival.losses = Number(next.rival.losses || 0);
     // 每日一題：dateKey → {problemId, correct, elapsed, hintsUsed, reason}，只記首次挑戰。
     next.dailyOne = next.dailyOne && typeof next.dailyOne === "object" ? next.dailyOne : {};
+    // 信心自評：problemId -> {level, correct, at}。只記最近一次。
+    next.conf = next.conf && typeof next.conf === "object" ? next.conf : {};
+    // 考試倒推：plan 是當前那一場，planHistory 封存過去的（考後報告要用）。
+    next.plan = next.plan && typeof next.plan === "object" ? next.plan : null;
+    next.planHistory = Array.isArray(next.planHistory) ? next.planHistory : [];
+    next.planReportSeen = typeof next.planReportSeen === "string" ? next.planReportSeen : "";
+    next.backupNoticeSeen = Boolean(next.backupNoticeSeen);
+    next.onboardingContext = typeof next.onboardingContext === "string" ? next.onboardingContext : "";
     next.onboardingLevel = typeof next.onboardingLevel === "string" ? next.onboardingLevel : "";
     next.onboardingSeen = Boolean(next.onboardingSeen);
     // Feature 6：每週挑戰正式成績（weekKey → {score,total,timeMs,code,at}）。
     next.weeklyChallenge = next.weeklyChallenge && typeof next.weeklyChallenge === "object" ? next.weeklyChallenge : {};
     // Feature 7：雲端同步的衝突判定時間戳。
     next.updatedAt = typeof next.updatedAt === "string" ? next.updatedAt : "";
+    // Records v2：分層儲存（attemptLog / sessions）。第一次載入時從 history
+    // 惰性回填，之後每場結束再增量寫入。kernel 沒載入時整段跳過，
+    // 紀錄仍然是合法的 v1，舊行為完全不受影響。
+    if (window.BuzzRecords) {
+      try {
+        window.BuzzRecords.normalize(next);
+      } catch (_error) {
+        // 分層儲存壞掉不能連帶讓使用者存不了紀錄
+      }
+    }
     return next;
   }
 
@@ -7131,6 +10435,7 @@
       topic: currentQuiz.topic,
       topics: Array.from(new Set(currentQuiz.problems.map((problem) => problem.topic))),
       difficultyCap: normalizeDifficultyCap(currentQuiz.difficultyCap || activeDifficultyCap(records)),
+      interruptions: Number(currentQuiz.interruptions || 0),
       score: currentQuiz.score,
       correct,
       total,
@@ -7147,11 +10452,21 @@
         earned: answer.earned,
         hintsUsed: answer.hintsUsed || 0,
         errorTag: answer.errorTag || "",
+        causeAuto: Boolean(answer.causeAuto),
         assisted: Boolean(answer.assisted),
         unanswered: Boolean(answer.unanswered)
       }))
     };
     records.history = [historyItem, ...(records.history || [])].slice(0, HISTORY_LIMIT);
+    // history 只留最近 HISTORY_LIMIT 場，能力模型的趨勢會因此斷片。
+    // attemptLog 收下每一題的精簡紀錄（上限 5000 筆），讓成長曲線活得比 history 久。
+    if (window.BuzzRecords) {
+      try {
+        window.BuzzRecords.appendSession(records, historyItem);
+      } catch (_error) {
+        // 寫不進分層紀錄不影響本場成績的保存
+      }
+    }
 
     if (currentQuiz.mode === "daily") {
       const today = new Date().toISOString().slice(0, 10);
@@ -7171,32 +10486,6 @@
           };
         }
       }
-    }
-
-    // 宿敵對決結算：贏→小積升級（變快），輸→小積降級。持久養成。
-    if (currentQuiz.rival && !currentQuiz.practice) {
-      const my = currentQuiz.rival.myPoints;
-      const rv = currentQuiz.rival.rivalPoints;
-      const before = records.rival.level;
-      let result = "tie";
-      if (my > rv) {
-        result = "win";
-        records.rival.wins += 1;
-        records.rival.level = Math.min(10, before + 1);
-      } else if (my < rv) {
-        result = "loss";
-        records.rival.losses += 1;
-        records.rival.level = Math.max(1, before - 1);
-      }
-      currentQuiz.rivalOutcome = {
-        my,
-        rival: rv,
-        result,
-        levelBefore: before,
-        levelAfter: records.rival.level,
-        wins: records.rival.wins,
-        losses: records.rival.losses
-      };
     }
 
     // 每日一題：只記首次挑戰（Wordle 精神——今天只有一次正式機會）。
@@ -7275,6 +10564,7 @@
           };
         }
       });
+      trackEvent("placement_complete", { rank: placement.rank, weak_tag: placement.weakTag || "" });
       currentQuiz.placementResult = {
         ...placement,
         nodeId: targetId,
@@ -7342,6 +10632,13 @@
 
     if (!answer.correct) {
       const previous = records.mistakes[problem.id] || {};
+      if (!previous.problemId) {
+        trackEvent("mistake_added", {
+          problem_id: problem.id,
+          rank: problemRank(problem),
+          reason: answer.reason || ""
+        });
+      }
       records.mistakes[problem.id] = {
         problemId: problem.id,
         wrongCount: (previous.wrongCount || 0) + 1,
@@ -7382,6 +10679,14 @@
         delete item.assisted;
         item.srs = { interval: 1, dueAt: now + DAY_MS };
       } else if (item.correctStreak >= 2 || item.wrongCount <= 0.5) {
+        trackEvent("mistake_cleared", {
+          problem_id: problem.id,
+          rank: problemRank(problem),
+          days_in_book: Math.max(
+            0,
+            Math.round((Date.now() - (Date.parse(item.lastWrongAt || "") || Date.now())) / DAY_MS)
+          )
+        });
         delete records.mistakes[problem.id];
       } else if (context.mistakesMode) {
         // SRS: correct in a mistakes-mode session pushes the next review out.
@@ -7393,31 +10698,16 @@
   }
 
   function updateAchievements(records, currentQuiz, historyItem) {
-    const proofProgress = proofStats(records);
     const definitions = [
       ["first_run", "開局", "完成第一局", () => records.attempts + records.practiceRuns >= 1],
-      ["streak_5", "連勝 5", "單局連勝達 5 題", () => currentQuiz.bestStreak >= 5 || records.bestStreak >= 5],
-      ["streak_10", "連勝 10", "單局連勝達 10 題", () => currentQuiz.bestStreak >= 10 || records.bestStreak >= 10],
-      ["perfect_run", "零失誤", "單局全對", () => historyItem.total >= 10 && historyItem.correct === historyItem.total],
+      ["perfect_run", "零失誤", "單局 10 題以上全對", () => historyItem.total >= 10 && historyItem.correct === historyItem.total],
       ["speed_runner", "速算節奏", "單局平均 20 秒內且正確率 70% 以上", () => historyItem.avgTime > 0 && historyItem.avgTime <= 20 && historyItem.accuracy >= 70],
-      ["score_500", "500 分", "單局分數達 500", () => records.bestScore >= 500],
-      ["score_1000", "千分局", "單局分數達 1000", () => records.bestScore >= 1000],
-      ["daily_done", "Daily 完成", "完成每日題組", () => currentQuiz.mode === "daily"],
-      ["path_clear", "主線過關", "完成任一主線關卡", () => Boolean(currentQuiz.pathNodeId) && historyItem.accuracy >= 70],
-      ["gate_pass", "跳關成功", "通過一次跳關小測驗", () => Boolean(currentQuiz.pathGate) && historyItem.correct >= (currentQuiz.pathGate.required || 4)],
-      ["boss_clear", "Boss 通關", "完成 Boss Ladder 且正確率 70% 以上", () => currentQuiz.mode === "boss" && historyItem.accuracy >= 70],
+      ["streak_10", "連勝 10", "單局連勝達 10 題", () => currentQuiz.bestStreak >= 10 || records.bestStreak >= 10],
       ["boss_ace", "Boss Ace", "Boss 題組正確率 90% 以上", () => currentQuiz.mode === "boss" && historyItem.accuracy >= 90],
-      ["boss_rush_clear", "Boss Rush", "Boss Rush 正確率 70% 以上", () => currentQuiz.mode === "boss_rush" && historyItem.accuracy >= 70],
       ["exam_clear", "大考通關", "大考模式正確率 70% 以上", () => currentQuiz.mode === "exam" && historyItem.accuracy >= 70],
-      ["integral_bee_clear", "Integral Bee", "完成一次 Integral Bee", () => currentQuiz.mode === "integral_bee"],
-      ["survival_clear", "Survivor", "Survival 模式作答 20 題以上", () => currentQuiz.mode === "survival" && currentQuiz.answers.length >= 20],
-      ["no_hint_clear", "No Hint", "No Hint 模式正確率 70% 以上", () => currentQuiz.mode === "no_hint" && historyItem.accuracy >= 70],
-      ["blackboard_user", "黑板使用者", "至少一題留下手寫草稿", () => currentQuiz.answers.some((answer) => answer.boardStrokes && answer.boardStrokes.length)],
-      ["proof_reader", "Proof Reader", "已查看 5 題參考證明", () => proofProgress.viewed >= 5],
-      ["proof_solver", "Proof Solver", "自評看懂 3 題證明", () => proofProgress.understood >= 3],
-      ["hundred_answers", "百題訓練", "本機累積作答 100 題", () => records.totalAnswered >= 100],
-      ["five_hundred_answers", "五百題訓練", "本機累積作答 500 題", () => records.totalAnswered >= 500],
-      ["legend_rank", "Legend", "達到 Legend 段位", () => computeRank(records) === "Legend"]
+      ["hundred_answers", "百題訓練", "累積作答 100 題", () => records.totalAnswered >= 100],
+      ["five_hundred_answers", "五百題訓練", "累積作答 500 題", () => records.totalAnswered >= 500],
+      ["thousand_answers", "千題訓練", "累積作答 1000 題", () => records.totalAnswered >= 1000]
     ];
     const unlocked = [];
     definitions.forEach(([id, title, detail, test]) => {
@@ -7670,7 +10960,6 @@
   function pathNodeProblems(node) {
     return problems.filter((problem) => {
       const tags = problem.tags || [];
-      if (isScienceProblem(problem)) return false;
       if (node.topic && problem.topic !== node.topic) return false;
       if (node.pack && node.pack !== "all" && !matchesPack(problem, node.pack)) return false;
       if (node.includeTags && node.includeTags.length && !node.includeTags.some((tag) => tags.includes(tag))) return false;
@@ -7749,8 +11038,12 @@
     });
   }
 
+  // 顯示用 tag：濾掉校準層自己塞的難度 tag（rank-N / boss-rank / boss-plus /
+  // beginner-friendly）。難度已經有 difficultyBadge 在講，重複列只會擠掉真正的技巧。
+  const HIDDEN_DISPLAY_TAGS = /^(rank-[1-6]|boss-rank|boss-plus|beginner-friendly)$/;
+
   function problemDisplayTags(problem) {
-    return Array.from(new Set(problem.tags || []));
+    return Array.from(new Set(problem.tags || [])).filter((tag) => !HIDDEN_DISPLAY_TAGS.test(tag));
   }
 
   function solutionQuality(problem) {
@@ -7796,15 +11089,24 @@
       derivatives: "Derivative",
       integrals: "Integral",
       series: "Series",
-      physics: "秒殺物理",
-      chemistry: "秒殺化學"
     }[topic] || "";
+  }
+
+  // 「這一題的答案被機器獨立驗算過」是這個題庫最強的一句話，
+  // 而它原本只存在於 CI 的輸出裡，使用者完全看不到。
+  //
+  // 沒有標記的題目不是「沒驗過就上線」，是**驗不動** —— 證明題與定性題
+  // 本質上沒有可比對的數值。所以文案不能寫成「未驗證」那種暗示品質不同的說法。
+  function verifiedChip(problem) {
+    if (!problem || !window.BuzzVerifiedAnswers || typeof window.BuzzVerifiedAnswers.has !== "function") return "";
+    if (!window.BuzzVerifiedAnswers.has(problem.id)) return "";
+    return `<span class="chip is-verified" title="這一題的答案由一條與解法無關的數值路徑獨立算過，每次改版都會重跑">${icon("check")}答案已驗算</span>`;
   }
 
   function answerModeDescription(mode) {
     return {
       choice: "四選一",
-      free: "輸入 + 預覽"
+      free: "自己輸入答案，附手寫計算紙"
     }[mode] || "";
   }
 
@@ -7849,7 +11151,7 @@
         .forEach((tag) => addExamStat(tagGroups, tag, tagLabel(tag), answer));
     });
 
-    const topicOrder = ["limits", "derivatives", "integrals", "series", "physics", "chemistry"];
+    const topicOrder = ["limits", "derivatives", "integrals", "series"];
     const topicRows = Object.values(topicGroups)
       .map(finalizeExamStat)
       .sort((a, b) => topicOrder.indexOf(a.key) - topicOrder.indexOf(b.key));
@@ -7952,8 +11254,24 @@
     return (records.history || []).filter((item) => topic === "all" || item.topic === topic || item.topics?.includes(topic)).length;
   }
 
-  // 技巧精熟雷達：以最近作答的加權正確率計分，越久沒練分數越淡。
+  // 技巧精熟雷達。優先走 kernel 的能力模型（帶先驗、難度權重、樣本量門檻），
+  // kernel 沒載入時退回下面的舊版計法，站台不會因此白畫面。
+  //
+  // 新舊差異：舊版沒有先驗也沒有難度權重，答 1 題全對就是 100 分；
+  // 新版要累積到約 12 次加權作答才會脫離「未測」。分數普遍會比舊版保守。
   function masteryRadarData(records) {
+    if (window.BuzzAbility && window.BuzzSkillGraph) {
+      try {
+        return window.BuzzAbility.profile(records, { radarAxes: RADAR_AXES }).axes;
+      } catch (_error) {
+        // 能力模型出錯絕對不能連帶弄壞整個畫面
+      }
+    }
+    return legacyMasteryRadarData(records);
+  }
+
+  // 舊版計法：純 tag 比對 + 30 天指數半衰。保留為 fallback 與新舊對照基準。
+  function legacyMasteryRadarData(records) {
     const now = Date.now();
     const tagToAxes = new Map();
     RADAR_AXES.forEach((axis, index) => {
@@ -8179,7 +11497,7 @@
   }
 
   function packTotalCountText(packKey) {
-    if (packKey === "all") return calculusOnly(problems).length;
+    if (packKey === "all") return problems.length;
     return problems.filter((problem) => matchesPack(problem, packKey)).length;
   }
 
@@ -8196,8 +11514,48 @@
     return `<span class="chip ${topic.className}">${topic.label}</span>`;
   }
 
+  // 來源只在題庫詳情露出，不進練習畫面 —— 答題當下該看到的是技巧與難度，
+  // 不是出處。名校風格保留在 problem.school，標成「風格」而非官方題。
   function sourceChip(problem) {
-    return problem.source ? `<span class="chip">${escapeHtml(problem.source)}</span>` : "";
+    const parts = [];
+    if (problem.source) parts.push(escapeHtml(problem.source));
+    if (problem.school) parts.push(`${escapeHtml(problem.school)} 風格`);
+    // 來源聲明（原創／改編／取材）由 kernel/origin.js 提供。
+    // school 那 135 題一律是「取材自風格的原創題」，不是該校真題 ——
+    // 這件事必須讓人看得到，含糊其辭正是這個欄位要防的。
+    const originLabel = window.BuzzOrigin && window.BuzzOrigin.labelFor(problem.id);
+    if (originLabel && !problem.school) parts.push(escapeHtml(originLabel));
+    if (!parts.length) return "";
+    // 「風格」兩個字太容易被讀成「這是該校的考古題」。
+    // 一句話的說明放在 title 上，而且不是含糊的免責聲明，是直接講事實。
+    const title = problem.school
+      ? `仿照 ${problem.school} 的出題習慣所寫的原創題，不是該校真題，也與該校無關`
+      : "題目來源聲明";
+    return `<span class="chip" title="${escapeAttr(title)}">${parts.join(" · ")}</span>`;
+  }
+
+  // 永久題號。公開露出的一律用它，不用內部 id ——
+  // id 帶分類語意（"td-int-005"），改版會變；使用者存下來的連結不該因此失效。
+  function problemShortCode(problem) {
+    if (!window.BuzzUid) return "";
+    const uid = window.BuzzUid.uidFor(problem.id);
+    return uid ? window.BuzzUid.shortCode(uid) : "";
+  }
+
+  // 難度為什麼是這個 rank。以前只有 rankReason（"warm-up compatible" 這種
+  // 機器產的短語），使用者問「這題憑什麼算 R5」是答不出來的。
+  // 現在拆成三軸，每一軸都可以單獨爭論。
+  function rubricChip(problem) {
+    if (!window.BuzzRubric) return "";
+    const axes = window.BuzzRubric.axesFor(problem.id);
+    if (!axes) return "";
+    const reason = window.BuzzRubric.reasonFor(problem.id);
+    const reviewed = window.BuzzRubric.isReviewed(problem.id);
+    return `
+      <span class="chip rubric-chip${reviewed ? " is-reviewed" : ""}" title="${escapeAttr(reason)}">
+        步數 ${axes.steps} · 冷門 ${axes.obscurity} · 計算 ${axes.load}
+      </span>
+    `;
   }
 
   function answerKindLabel(kind) {
@@ -8205,7 +11563,9 @@
       numeric: "數值",
       expression: "函數式",
       antiderivative: "原函數",
-      text: "判定"
+      text: "判定",
+      set: "集合",
+      interval: "區間"
     }[kind];
   }
 
@@ -8221,6 +11581,8 @@
 
   function placeholderFor(problem) {
     if (problem.answerKind === "text") return "收斂 / 發散 / 條件收斂";
+    if (problem.answerKind === "set") return "例如：{-1, 3}（順序無所謂）";
+    if (problem.answerKind === "interval") return "例如：(-inf, 2) U [3, 5]";
     if (problem.answerKind === "antiderivative") return "例如：x^2*log(x)/2-x^2/4";
     if (problem.answerKind === "expression") return "例如：2*x*sin(x)+x^2*cos(x)";
     return "例如：pi/4 或 3/2";
@@ -8228,6 +11590,8 @@
 
   function answerExamples(problem) {
     if (problem.answerKind === "text") return ["convergent", "divergent", "conditional", "DNE"];
+    if (problem.answerKind === "set") return ["{-1, 1}", "{0}", "{pi/4, 5*pi/4}", "{-2, 0, 2}"];
+    if (problem.answerKind === "interval") return ["(1, inf)", "[-2, 2]", "(-inf, 3) U (3, inf)", "[-1, 1)"];
     if (problem.answerKind === "numeric") return ["pi/4", "sqrt(2)", "log(2)", "0"];
     if (problem.answerKind === "antiderivative") return ["sin(x)", "log(x)", "x^2/2", "exp(x)"];
     return ["2*x", "sin(x)^2", "sqrt(x)", "log(x)"];
@@ -8236,7 +11600,11 @@
   function webworkKeys(problem) {
     const groups = problem.answerKind === "text"
       ? [{ label: "判定", keys: ["convergent", "divergent", "conditional", "absolute", "DNE"] }]
-      : WEBWORK_KEY_GROUPS;
+      : problem.answerKind === "interval"
+        ? [{ label: "區間", keys: ["(", ")", "[", "]", ",", "U", "inf", "-inf"] }]
+        : problem.answerKind === "set"
+          ? [{ label: "集合", keys: ["{", "}", ",", "pi", "sqrt(|)", "-"] }]
+          : WEBWORK_KEY_GROUPS;
     return groups.flatMap((group) => group.keys.map((token) => ({
       label: token.replace("|", ""),
       insert: token
@@ -8246,6 +11614,10 @@
   function formatHelp(kind) {
     if (kind === "text") return "可輸入 convergent / divergent / conditional";
     if (kind === "numeric") return "支援分數、pi、e、sqrt、log";
+    // 集合的順序不影響判分，區間的開閉會 —— 這兩件事都要先講清楚，
+    // 不然使用者會為了猜格式而重打好幾次，那不是這題要考的東西。
+    if (kind === "set") return "元素用逗號隔開，順序不影響判分";
+    if (kind === "interval") return "端點用 ( ) 或 [ ]（開閉有差），聯集用 U，無窮寫 inf";
     return "用 * 表乘法，用 ^ 表次方，例如 x^2";
   }
 
@@ -8559,7 +11931,8 @@
           window.katex.render(`\\displaystyle ${seg.math}`, span, {
             displayMode: false,
             throwOnError: true,
-            strict: "ignore"
+            strict: "ignore",
+            output: "htmlAndMathml"
           });
         } catch (_error) {
           return false;
@@ -8582,7 +11955,10 @@
         window.katex.render(tex, node, {
           displayMode,
           throwOnError: false,
-          strict: "ignore"
+          strict: "ignore",
+          // htmlAndMathml 會同時輸出視覺 HTML 與給輔助科技用的 MathML。
+          // 只有 html 的話，螢幕閱讀器讀到的是一串沒有意義的字元。
+          output: "htmlAndMathml"
         });
         return;
       } catch (_error) {
@@ -8829,7 +12205,12 @@
       eraser: "eraser",
       undo: "undo-2",
       maximize: "maximize-2",
-      minimize: "minimize-2"
+      minimize: "minimize-2",
+      printer: "printer",
+      moon: "moon",
+      grid: "grid-3x3",
+      copy: "copy",
+      flag: "flag"
     };
     return `<i class="icon" data-lucide="${names[name] || name}" aria-hidden="true"></i>`;
   }
@@ -8843,6 +12224,10 @@
         }
       });
     }
+  }
+
+  function setupKeyboardShortcuts() {
+    document.addEventListener("keydown", handleShortcut);
   }
 
   function setupVisibilityTracking() {
@@ -9041,6 +12426,16 @@
       checkExpression,
       checkAntiderivative,
       checkText,
+      rubricChip,
+      problemShortCode,
+      sourceChip,
+      renderSolutionBody,
+      renderCalibrationOptIn,
+      formatHelp,
+      buildCalibrationPack,
+      checkSet,
+      checkInterval,
+      problemDomain,
       resolveAnswerSubmission,
       evaluateExpression,
       normalizeExpression,
@@ -9057,7 +12452,6 @@
       learningPathState,
       matchesPack,
       modes: MODES,
-      isScienceProblem,
       pickDailyOneProblem,
       selectCooldownPool,
       setSelectedPack: (packKey) => {
@@ -9078,6 +12472,52 @@
       srsDueSummary,
       updateAnswerRecords,
       normalizeRecords,
+      renderTodayCard,
+      plannedSession,
+      renderInsights,
+      renderTrain,
+      abilityProfile,
+      renderOnboarding,
+      renderOnboardingPlacementOffer,
+      renderPlacementNextStep,
+      setOnboardingStep: (next) => { onboardingStep = next; },
+      onboardingContexts: ONBOARDING_CONTEXTS,
+      renderBackupNotice,
+      dismissBackupNotice,
+      importRecordsFrom: (parsed) => {
+        const current = loadRecords();
+        const topics = {};
+        problems.forEach((problem) => { topics[problem.id] = problem.topic; });
+        return window.BuzzRecords.merge(current, normalizeRecords(parsed), { problemTopics: topics });
+      },
+      renderResumeCard,
+      resumeSession,
+      discardSession,
+      serializeQuiz,
+      deserializeQuiz,
+      autosaveSession,
+      readActiveSession,
+      clearActiveSession,
+      activeSessionKey: ACTIVE_KEY,
+      renderKeyIdea,
+      keyIdeaFor,
+      authoredHints,
+      renderSolutionStages,
+      renderExamPlanCard,
+      renderExamReport,
+      examScopes: EXAM_SCOPES,
+      renderConfidencePrompt,
+      renderCausePrompt,
+      suggestCause,
+      causeTagOf,
+      confidenceLevels: CONFIDENCE_LEVELS,
+      causeOptions: CAUSE_OPTIONS,
+      setQuiz: (next) => { quiz = next; },
+      getQuiz: () => quiz,
+      renderHome,
+      trainBuckets: TRAIN_BUCKETS,
+      setView: (next) => { view = next; },
+      setBucket: (next) => { selectedBucket = next; },
       namedExams: NAMED_EXAMS,
       namedExamProblems,
       buildNamedExamPaper,
@@ -9109,7 +12549,9 @@
   applyTheme();
   setupPwa();
   setupAnalytics();
+  setupErrorReporting();
   setupVisibilityTracking();
+  setupKeyboardShortcuts();
   setupFullscreenTracking();
   setupMathField();
   // 帶著 #pack= 分享連結進來：直接落在出題工作坊的匯入預覽。

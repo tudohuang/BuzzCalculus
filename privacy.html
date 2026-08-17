@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>隱私政策 · BuzzCalculus</title>
+    <meta name="description" content="BuzzCalculus 的隱私政策：資料存在哪裡、收集什麼、怎麼刪除。" />
+    <link rel="icon" href="data:," />
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="assets/vendor/katex/katex.min.css" />
+  </head>
+  <body class="legal-body">
+    <main class="legal-page">
+      <p class="legal-back"><a href="index.html">← 回到 BuzzCalculus</a></p>
+
+      <h1>隱私政策</h1>
+      <p class="legal-updated">最後更新：2026-08-17</p>
+
+      <p class="legal-lead">
+        這一頁描述 BuzzCalculus 實際上做了什麼，不是一份通用範本。
+        每一條都對應得到程式碼裡的一個位置。
+      </p>
+
+      <h2>一句話版本</h2>
+      <p>
+        你的練習紀錄<strong>只存在你自己的瀏覽器裡</strong>。我們沒有帳號系統，沒有伺服器資料庫，
+        也拿不到你的作答內容。唯一會離開你裝置的，是匿名的使用計數，而且你可以關掉。
+      </p>
+
+      <h2>存在哪裡</h2>
+      <p>全部在這台裝置的瀏覽器儲存空間裡：</p>
+      <ul>
+        <li><strong>localStorage</strong> —— 練習紀錄、錯題本、進行中的存檔、自訂題目、外觀設定。</li>
+        <li><strong>IndexedDB</strong> —— 黑板的手寫草稿（重做錯題時可以看上次怎麼算的）。</li>
+      </ul>
+      <p>
+        這代表兩件事：換一台裝置就是全新開始（我們無法幫你救回來），
+        以及清掉瀏覽器資料就等於刪除全部紀錄。
+      </p>
+
+      <h2>會離開裝置的東西</h2>
+
+      <h3>1. 使用分析（可關閉）</h3>
+      <p>
+        我們用 Google Analytics 4 記錄「哪個功能被用了幾次」，例如開始一局、送出答案、
+        打開提示、完成一局。事件裡帶的是模式名稱、題目難度、花費秒數這類欄位。
+      </p>
+      <p class="legal-emphasis">
+        送出去的內容<strong>不包含</strong>你輸入的答案、題目內容、草稿，或任何可以辨識你的東西。
+        這條規則由自動化測試把關（<code>tools/validate_analytics.js</code> 會掃描所有事件，
+        發現夾帶使用者輸入就讓建置失敗）。
+      </p>
+      <p>
+        在設定頁可以關閉。關閉之後<strong>連 Google 的分析程式都不會載入</strong>——
+        不只是不送事件，是連那一支 script 的請求都不會發出。
+      </p>
+
+      <h3>2. 難度校準包（預設關閉，要你主動按）</h3>
+      <p>
+        如果你願意幫忙修正題目難度，可以在設定頁匯出一份統計檔。裡面只有：
+        永久題號、難度等級、答對／答錯次數、中位作答秒數，以及你的整體程度分層（高／中／低）。
+      </p>
+      <p>
+        沒有題目內容、沒有作答內容、沒有時間戳記，自訂題一律排除。
+        按下匯出之前可以先按「先看內容」——顯示的就是實際會產生的那份檔案本身，
+        不是另外寫的說明文字。
+      </p>
+      <p>
+        這是一個<strong>檔案下載</strong>。要不要把它寄給我們，完全由你決定。
+      </p>
+
+      <h3 id="errors">3. 當機回報（跟著使用分析一起開關）</h3>
+      <p>
+        程式出錯的時候會送一筆事件，讓我們知道有東西壞掉了。裡面只有三樣：
+        <strong>錯誤型別</strong>（例如 TypeError）、<strong>哪個檔案的第幾行</strong>、
+        以及你當時在哪個畫面。
+      </p>
+      <p class="legal-emphasis">
+        <strong>錯誤訊息本身與堆疊追蹤一律不送。</strong>
+        因為 JavaScript 的錯誤訊息常常會把變數的值印進去，
+        而那可能是題目、你輸入的答案或存檔片段。這條規則同樣由
+        <code>tools/validate_privacy.js</code> 把關 —— 程式碼裡只要碰到
+        <code>.message</code> 或 <code>.stack</code>，建置就會失敗。
+      </p>
+      <p>關閉使用分析之後，當機回報也一起停止。</p>
+
+      <h3>4. 回報題目（你按下去才會發生）</h3>
+      <p>
+        按「回報」不會把任何東西送出去。它會把題號、題目、參考答案、問題類型與版本
+        整理成一段文字，<strong>攤在你眼前</strong>，然後由你決定要開 GitHub issue 還是複製走。
+      </p>
+      <p>
+        選擇開 issue 的話，內容會出現在 GitHub 上的公開頁面，並適用 GitHub 自己的隱私政策。
+        不想公開就用「複製內容」，要不要寄、寄給誰都由你決定。
+      </p>
+
+      <h3>5. 靜態資源</h3>
+      <p>
+        網站本身由 GitHub Pages 提供。數學排版、圖示與動畫的程式庫都已經打包在站內，
+        不會向第三方 CDN 發出請求。
+      </p>
+
+      <h2>我們沒有做的事</h2>
+      <ul>
+        <li>沒有帳號、沒有密碼、沒有 email 收集。</li>
+        <li>沒有廣告，沒有廣告追蹤碼。</li>
+        <li>不販售、不交換任何資料。</li>
+        <li>沒有伺服器端的使用者資料庫 —— 我們沒有東西可以外洩。</li>
+      </ul>
+
+      <h2>怎麼刪除</h2>
+      <p>設定頁 →「清除資料」。它會刪掉：</p>
+      <ul>
+        <li>練習紀錄與錯題本</li>
+        <li>進行中的存檔</li>
+        <li>自訂題目</li>
+        <li>黑板手寫草稿（IndexedDB）</li>
+        <li>外觀與同步設定</li>
+      </ul>
+      <p>
+        刪除前會列出實際會刪掉的數量，並且要再確認一次。
+        <strong>這個動作無法復原</strong>——沒有雲端備份可以還原。想留一份請先匯出 JSON。
+      </p>
+      <p>
+        已經送出的匿名分析事件無法逐筆刪除（它們本來就無法對應到任何個人）。
+        要停止繼續送出，請在設定頁關閉使用分析。
+      </p>
+
+      <h2>兒童</h2>
+      <p>
+        這個工具給正在學微積分的人使用，不特別針對兒童設計，也不會主動收集年齡。
+      </p>
+
+      <h2>變更</h2>
+      <p>
+        這一頁如果有實質變更，會更新上方的日期。因為沒有帳號，我們沒有辦法主動通知你。
+      </p>
+
+      <h2>聯絡</h2>
+      <p>
+        有問題或想回報資料處理上的疑慮，請透過專案的 GitHub issue 反映。
+      </p>
+
+      <p class="legal-back"><a href="index.html">← 回到 BuzzCalculus</a> · <a href="about.html">關於</a> · <a href="terms.html">服務條款</a></p>
+    </main>
+  </body>
+</html>

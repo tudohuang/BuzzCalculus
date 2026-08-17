@@ -1,4 +1,9 @@
 (function () {
+  // 2026-08-16：移除 34 題與既有題庫重複的題目（tools/detect_duplicates.js 抓出來的）。
+  // 重複題不只是浪費一個題目名額 —— 能力模型會把同一題算成兩次獨立證據，
+  // 使用者做了兩題一模一樣的東西，系統卻以為他在那個技巧上有兩倍的把握；
+  // 冷卻機制也會失效，剛做完的題目換個 id 立刻又出現。
+  // 被移除的那些題，原本的版本都還在（lim-011、int-002、ser-001…）。
   "use strict";
 
   // 核心擴充包（2026-07 題庫審計）：
@@ -51,7 +56,6 @@
   num("cx-lim-004", "limits", 1, "\\lim_{x\\to 0}\\frac{\\sin(3x)}{x}", "3", ["trig-limit"], "sin(3x)≈3x，答案 3。", 25);
   num("cx-lim-005", "limits", 2, "\\lim_{x\\to 0}\\frac{\\sqrt{x+9}-3}{x}", "1/6", ["rationalize"], "分子有理化得 1/(√(x+9)+3) → 1/6。", 35);
   num("cx-lim-006", "limits", 2, "\\lim_{x\\to\\infty}\\left(\\sqrt{x^2+4x}-x\\right)", "2", ["rationalize"], "乘共軛：4x/(√(x²+4x)+x) → 4/2 = 2。", 40);
-  num("cx-lim-007", "limits", 2, "\\lim_{x\\to 0}\\frac{1-\\cos(2x)}{x^2}", "2", ["trig-limit", "taylor"], "1−cos u ≈ u²/2，u=2x 得 4x²/2x² = 2。", 35);
   num("cx-lim-008", "limits", 2, "\\lim_{x\\to\\infty}\\left(1+\\frac{2}{x}\\right)^x", "exp(2)", ["power-exponential"], "標準 e 型極限：(1+a/x)^x → e^a。", 35);
   num("cx-lim-009", "limits", 2, "\\lim_{x\\to 1}\\frac{x^3-1}{x-1}", "3", ["factoring"], "x³−1=(x−1)(x²+x+1)，代入得 3。", 30);
   num("cx-lim-010", "limits", 2, "\\lim_{x\\to 0}x^2\\sin\\frac{1}{x}", "0", ["squeeze"], "夾擠：|x² sin(1/x)| ≤ x² → 0。", 35);
@@ -66,32 +70,30 @@
   num("cx-der-008", "derivatives", 2, "\\frac{d}{dx}\\arctan x\\ \\text{ 在 }x=1", "1/2", ["inverse-trig"], "導數 1/(1+x²)，代 1 得 1/2。", 30);
 
   num("cx-int-001", "integrals", 1, "\\int_0^2 3x^2\\,dx", "8", ["power-rule", "definite-integral"], "原函數 x³，代上下限得 8。", 25);
-  anti("cx-int-002", 1, "\\int \\cos x\\,dx", "sin(x)", ["trig"], "cos 的反導數是 sin。", 20);
   num("cx-int-003", "integrals", 1, "\\int_0^1 e^x\\,dx", "exp(1)-1", ["exponential", "definite-integral"], "原函數 eˣ，答案 e−1。", 25);
   anti("cx-int-004", 2, "\\int \\frac{1}{1+x^2}\\,dx", "atan(x)", ["inverse-trig"], "標準反導數：arctan x。", 25);
-  num("cx-int-005", "integrals", 2, "\\int_0^\\pi \\sin x\\,dx", "2", ["trig", "definite-integral"], "原函數 −cos x，−cos π + cos 0 = 2。", 30);
   num("cx-int-006", "integrals", 2, "\\int_1^{e}\\frac{1}{x}\\,dx", "1", ["log", "definite-integral"], "ln x 代上下限：ln e − ln 1 = 1。", 30);
-  anti("cx-int-007", 2, "\\int x e^{x^2}\\,dx", "exp(x^2)/2", ["substitution"], "u=x² 換元，得 e^{x²}/2。", 40);
   num("cx-int-008", "integrals", 2, "\\int_0^1 \\frac{x}{x^2+1}\\,dx", "log(2)/2", ["substitution", "log", "definite-integral"], "u=x²+1，(1/2)ln 2。", 40);
 
-  num("cx-ser-001", "series", 1, "\\sum_{n=0}^{\\infty}\\left(\\frac{1}{2}\\right)^n", "2", ["geometric-series"], "幾何級數 1/(1−1/2)=2。", 25);
   text("cx-ser-002", "series", 1, "\\sum_{n=1}^{\\infty}\\frac{1}{n^2}\\ \\text{ 收斂或發散？}", CONV, "convergent", ["p-series"], "p=2>1 的 p-級數收斂。", 25);
   num("cx-ser-003", "series", 2, "\\sum_{n=1}^{\\infty}\\left(\\frac{2}{3}\\right)^n", "2", ["geometric-series"], "首項 2/3、公比 2/3：(2/3)/(1/3)=2。", 35);
-  num("cx-ser-004", "series", 2, "\\sum_{n=1}^{\\infty}\\frac{1}{n(n+1)}", "1", ["telescoping"], "拆成 1/n − 1/(n+1) 望遠鏡求和。", 40);
   text("cx-ser-005", "series", 1, "\\sum_{n=1}^{\\infty}\\frac{1}{n}\\ \\text{ 收斂或發散？}", DIV, "divergent", ["p-series"], "調和級數發散。", 25);
-  num("cx-ser-006", "series", 2, "\\sum_{n=1}^{\\infty}\\frac{(-1)^{n+1}}{n}", "log(2)", ["alternating-series", "special-sum"], "交錯調和級數收斂到 ln 2。", 40);
   num("cx-ser-007", "series", 2, "\\sum_{n=0}^{\\infty} n!\\,x^n\\ \\text{ 的收斂半徑}", "0", ["radius", "ratio-test"], "比值判別：(n+1)|x| → ∞，只有 x=0 收斂。", 40);
   num("cx-ser-008", "series", 2, "\\sum_{n=0}^{\\infty}\\frac{1}{n!}", "exp(1)", ["taylor", "special-sum"], "eˣ 在 x=1 的級數：e。", 30);
 
   // ================= L'Hôpital =================
   num("cx-lh-001", "limits", 2, "\\lim_{x\\to 0}\\frac{e^x-1-x}{x^2}", "1/2", ["lhopital", "taylor"], "L'Hôpital 兩次或 Taylor：x²/2 項給 1/2。", 40);
   num("cx-lh-002", "limits", 3, "\\lim_{x\\to 0}\\frac{x-\\sin x}{x^3}", "1/6", ["lhopital", "taylor"], "sin x = x − x³/6 + …，答案 1/6。", 50);
-  num("cx-lh-003", "limits", 3, "\\lim_{x\\to 0^+}x\\ln x", "0", ["lhopital"], "改寫成 ln x/(1/x) 用 L'Hôpital：−x → 0。", 50);
   num("cx-lh-004", "limits", 3, "\\lim_{x\\to\\infty}\\frac{x^2}{e^x}", "0", ["lhopital"], "指數壓過多項式，L'Hôpital 兩次得 0。", 40);
-  num("cx-lh-005", "limits", 3, "\\lim_{x\\to 0}\\frac{\\tan x-x}{x^3}", "1/3", ["lhopital", "taylor"], "tan x = x + x³/3 + …，答案 1/3。", 55);
-  num("cx-lh-006", "limits", 4, "\\lim_{x\\to 0^+}x^x", "1", ["lhopital", "power-exponential"], "ln 後是 x ln x → 0，所以極限 e⁰=1。", 60);
   num("cx-lh-007", "limits", 2, "\\lim_{x\\to 1}\\frac{\\ln x}{x-1}", "1", ["lhopital", "log"], "L'Hôpital：1/x → 1。也可視為 ln 在 1 的導數。", 35);
-  num("cx-lh-008", "limits", 4, "\\lim_{x\\to 0}\\left(\\frac{\\sin x}{x}\\right)^{1/x^2}", "exp(-1/6)", ["lhopital", "power-exponential", "taylor"], "ln(sin x/x) ≈ −x²/6，除以 x² 得 −1/6，答案 e^{−1/6}。", 90);
+  // 2026-08-16 補的五題。去重之後這個技巧只剩 4 題 —— 原本的 8 題有一半是
+  // 跟其他包重複的同一題，也就是說「這個技巧有八題」從來都不是真的。
+  // 這五題的答案全部通過 tools/verify_answers.js 的獨立數值驗算。
+  num("cx-lh-009", "limits", 2, "\\lim_{x\\to 0}\\frac{x\\cos x-\\sin x}{x^3}", "-1/3", ["lhopital", "taylor"], "分子展開得 −x³/3 + O(x⁵)，比值 −1/3。L'Hôpital 要連用三次。", 45);
+  num("cx-lh-010", "limits", 2, "\\lim_{x\\to 0}\\frac{e^{x}-e^{-x}}{\\sin x}", "2", ["lhopital", "trig"], "分子導數 e^x+e^{−x} → 2，分母導數 cos x → 1。", 35);
+  num("cx-lh-011", "limits", 3, "\\lim_{x\\to \\pi/2}\\frac{1-\\sin x}{(\\pi/2-x)^2}", "1/2", ["lhopital", "trig"], "令 t=π/2−x：(1−cos t)/t² → 1/2。也可直接 L'Hôpital 兩次。", 45);
+  num("cx-lh-012", "limits", 3, "\\lim_{x\\to 0}\\left(\\frac{1}{x}-\\frac{1}{e^x-1}\\right)", "1/2", ["lhopital", "taylor"], "通分成 (e^x−1−x)/(x(e^x−1))，分子 x²/2、分母 x²，得 1/2。", 55);
+  num("cx-lh-013", "limits", 3, "\\lim_{x\\to\\infty}x\\left(\\frac{\\pi}{2}-\\arctan x\\right)", "1", ["lhopital", "inverse-trig"], "令 t=1/x：(π/2−arctan(1/t))/t = arctan t/t → 1。", 50);
 
   // ================= MVT / Rolle =================
   num("cx-mvt-001", "derivatives", 2, "f(x)=x^2\\text{ 在 }[0,2]\\text{ 上滿足 MVT 的 }c", "1", ["mvt"], "割線斜率 (4−0)/2=2，f'(c)=2c=2 → c=1。", 45);
@@ -161,7 +163,6 @@
   num("cx-ftc-002", "integrals", 4, "\\lim_{n\\to\\infty}\\sum_{k=1}^{n}\\frac{1}{n+k}", "log(2)", ["riemann-sum", "log"], "= (1/n)Σ1/(1+k/n) → ∫₀¹dx/(1+x) = ln 2。", 75);
   num("cx-ftc-003", "integrals", 2, "F(x)=\\int_0^x e^{t^2}dt,\\quad F'(1)", "exp(1)", ["ftc", "moving-limits"], "FTC：F'(x)=e^{x²}，代 1 得 e。", 40);
   expr("cx-ftc-004", "integrals", 3, "\\frac{d}{dx}\\int_0^{x^2}\\sin t\\,dt", "2*x*sin(x^2)", ["ftc", "moving-limits", "chain-rule"], "FTC + 鏈鎖：sin(x²)·2x。", 60);
-  num("cx-ftc-005", "integrals", 4, "\\lim_{n\\to\\infty}\\sum_{k=1}^{n}\\frac{n}{n^2+k^2}", "pi/4", ["riemann-sum", "inverse-trig"], "= (1/n)Σ1/(1+(k/n)²) → ∫₀¹dx/(1+x²) = π/4。", 90);
   num("cx-ftc-006", "integrals", 2, "f(x)=x^2+3x,\\quad \\int_0^5 f'(x)\\,dx", "40", ["ftc"], "FTC：f(5)−f(0) = 40。", 35);
 
   // ================= 數列 =================
@@ -173,16 +174,10 @@
   num("cx-seq-006", "series", 2, "a_n=\\frac{\\sin n}{n},\\quad \\lim_{n\\to\\infty}a_n", "0", ["sequence", "squeeze"], "夾擠：|sin n/n| ≤ 1/n → 0。", 35);
 
   // ================= 級數 R4 斷層 =================
-  num("cx-smid-001", "series", 4, "\\sum_{n=1}^{\\infty}\\frac{n}{2^n}", "2", ["power-series", "special-sum"], "Σn xⁿ = x/(1−x)²，代 x=1/2 得 2。", 70);
-  num("cx-smid-002", "series", 4, "\\sum_{n=1}^{\\infty}\\frac{n^2}{2^n}", "6", ["power-series", "special-sum"], "Σn²xⁿ = x(1+x)/(1−x)³，代 1/2 得 6。", 90);
-  num("cx-smid-003", "series", 4, "\\sum_{n=1}^{\\infty}\\frac{1}{n(n+2)}", "3/4", ["telescoping"], "(1/2)(1/n − 1/(n+2)) 望遠鏡：(1/2)(1+1/2)=3/4。", 70);
-  num("cx-smid-004", "series", 4, "\\sum_{n=0}^{\\infty}\\frac{(-1)^n}{2n+1}", "pi/4", ["alternating-series", "special-sum", "taylor"], "Leibniz 級數：arctan 1 = π/4。", 60);
-  num("cx-smid-005", "series", 4, "\\sum_{n=1}^{\\infty}\\frac{1}{4n^2-1}", "1/2", ["telescoping"], "(1/2)(1/(2n−1)−1/(2n+1)) 望遠鏡 = 1/2。", 70);
   num("cx-smid-006", "series", 4, "\\sum_{n=1}^{\\infty}\\frac{n!}{n^n}x^n\\text{ 的收斂半徑}", "exp(1)", ["radius", "ratio-test"], "比值 → (n/(n+1))ⁿ → 1/e，半徑 e。", 90);
   num("cx-smid-007", "series", 4, "\\sum_{n=1}^{\\infty}\\frac{x^n}{n\\,3^n}\\text{ 的收斂半徑}", "3", ["radius", "ratio-test"], "比值 |x|/3，半徑 3。", 55);
   num("cx-smid-008", "series", 4, "\\sum_{n=1}^{\\infty}n x^{n-1}\\text{ 在 }x=\\tfrac{1}{3}\\text{ 的和}", "9/4", ["power-series"], "= 1/(1−x)²，代 1/3 得 9/4。", 60);
   num("cx-smid-009", "series", 4, "\\cos(x^2)\\text{ 中 }x^4\\text{ 的 Taylor 係數}", "-1/2", ["taylor", "coefficient", "composite-taylor"], "cos u = 1 − u²/2 + …，u=x² 給 −x⁴/2。", 60);
-  num("cx-smid-010", "series", 4, "\\sum_{n=1}^{\\infty}\\frac{2^n}{n!}", "exp(2)-1", ["taylor", "special-sum"], "e² 的級數去掉 n=0 項：e²−1。", 60);
   text("cx-smid-011", "series", 4, "\\sum_{n=1}^{\\infty}\\frac{(n!)^2}{(2n)!}\\ \\text{ 收斂或發散？}", CONV, "convergent", ["ratio-test"], "比值 → (n+1)²/((2n+1)(2n+2)) → 1/4 < 1，收斂。", 70);
   text("cx-smid-012", "series", 4, "\\sum_{n=2}^{\\infty}\\frac{1}{n(\\ln n)^2}\\ \\text{ 收斂或發散？}", CONV, "convergent", ["integral-test"], "積分判別：∫dx/(x ln²x) 收斂。", 70);
   text("cx-smid-013", "series", 4, "\\sum_{n=2}^{\\infty}\\frac{1}{n\\ln n}\\ \\text{ 收斂或發散？}", DIV, "divergent", ["integral-test"], "積分判別：ln(ln x) 發散。", 70);
@@ -191,12 +186,10 @@
   num("cx-trig-001", "integrals", 3, "\\int_0^1\\sqrt{1-x^2}\\,dx", "pi/4", ["trig-substitution", "definite-integral"], "四分之一單位圓面積 π/4（或 x=sin θ 代換）。", 55);
   num("cx-trig-002", "integrals", 3, "\\int_0^1\\frac{dx}{(1+x^2)^{3/2}}", "1/sqrt(2)", ["trig-substitution", "definite-integral"], "x=tan θ：∫cos θ dθ = sin θ = x/√(1+x²) → 1/√2。", 75);
   anti("cx-trig-003", 3, "\\int\\frac{dx}{\\sqrt{4-x^2}}", "asin(x/2)", ["trig-substitution", "inverse-trig"], "標準形：arcsin(x/2)。", 50);
-  num("cx-trig-004", "integrals", 3, "\\int_0^2\\sqrt{4-x^2}\\,dx", "pi", ["trig-substitution", "definite-integral"], "四分之一個半徑 2 的圓：4π/4 = π。", 55);
   num("cx-pf-001", "integrals", 3, "\\int_0^1\\frac{dx}{(x+1)(x+2)}", "log(4/3)", ["partial-fraction", "log", "definite-integral"], "拆成 1/(x+1)−1/(x+2)，得 ln(4/3)。", 60);
   num("cx-pf-002", "integrals", 3, "\\int_2^3\\frac{dx}{x^2-1}", "log(3/2)/2", ["partial-fraction", "log", "definite-integral"], "(1/2)ln((x−1)/(x+1)) 代限：(1/2)ln(3/2)。", 75);
   num("cx-pf-003", "integrals", 3, "\\int_0^1\\frac{x\\,dx}{(x+1)(x+2)}", "log(9/8)", ["partial-fraction", "log", "definite-integral"], "x/((x+1)(x+2)) = −1/(x+1)+2/(x+2)，得 2ln3−3ln2 = ln(9/8)。", 90);
   num("cx-king-001", "integrals", 4, "\\int_0^{\\pi/2}\\frac{\\sin x}{\\sin x+\\cos x}\\,dx", "pi/4", ["kings-property", "definite-integral"], "King's：與 cos 版本相加得 π/2，故各半 π/4。", 70);
-  num("cx-king-002", "integrals", 4, "\\int_0^{\\pi}\\frac{x\\sin x}{1+\\cos^2 x}\\,dx", "pi^2/4", ["kings-property", "definite-integral", "inverse-trig"], "x→π−x 得 I = (π/2)∫sin/(1+cos²) = (π/2)·(π/2) = π²/4。", 110);
 
   // ================= ODE 入門 =================
   expr("cx-ode-001", "derivatives", 2, "y'=3y,\\ y(0)=2.\\ y=?", "2*exp(3*x)", ["ode-intro", "separable", "exponential-growth"], "指數解 y=Ce^{3x}，C=2。", 55);
@@ -209,38 +202,24 @@
   // ================= 大考題感中等題 =================
   const EXAM = ["exam-style", "transfer-exam", "proficiency-exam", "midterm-style"];
   num("cx-exam-001", "limits", 3, "\\lim_{x\\to 0}\\frac{\\sqrt{1+x}-\\sqrt{1-x}}{x}", "1", ["rationalize", ...EXAM], "有理化：2x/(x(√(1+x)+√(1−x))) → 1。", 55);
-  num("cx-exam-002", "limits", 4, "\\lim_{x\\to 0}\\frac{e^{x^2}-\\cos x}{x^2}", "3/2", ["taylor", ...EXAM], "e^{x²}≈1+x²，cos x≈1−x²/2，相減除 x² 得 3/2。", 70);
   num("cx-exam-003", "derivatives", 3, "f(x)=x^3e^{-x},\\quad f'(1)", "2*exp(-1)", ["product-rule", "exponential", ...EXAM], "f'=(3x²−x³)e^{−x}，代 1 得 2/e。", 60);
   num("cx-exam-004", "derivatives", 4, "\\frac{d}{dx}x^x\\ \\text{ 在 }x=1", "1", ["power-exponential", "log", ...EXAM], "y'=x^x(ln x+1)，代 1 得 1。", 70);
   num("cx-exam-005", "integrals", 3, "\\int_0^{\\pi/4}\\tan x\\,dx", "log(2)/2", ["trig", "log", "definite-integral", ...EXAM], "−ln|cos x|：−ln(1/√2) = (1/2)ln 2。", 60);
   num("cx-exam-006", "integrals", 4, "\\int_0^1 x^2e^x\\,dx", "exp(1)-2", ["integration-by-parts", ...EXAM], "IBP 兩次：(x²−2x+2)eˣ，代限 e−2。", 90);
-  num("cx-exam-007", "integrals", 4, "\\int_0^{\\pi/2}\\sin^3 x\\,dx", "2/3", ["trig-power", "definite-integral", ...EXAM], "拆 sin³=sin(1−cos²)，得 1−1/3 = 2/3。", 75);
   num("cx-exam-008", "series", 4, "\\sum_{n=1}^{\\infty}\\frac{1}{n\\,2^n}", "log(2)", ["power-series", "special-sum", ...EXAM], "−ln(1−x) 的級數在 x=1/2：ln 2。", 75);
 
   // ================= R5-R6 進階難題 =================
   num("cx-hi-001", "integrals", 5, "\\int_0^{\\infty}\\frac{dx}{(1+x^2)^2}", "pi/4", ["improper-integral", "trig-substitution"], "x=tan θ：∫cos²θ dθ 從 0 到 π/2 = π/4。", 110);
-  num("cx-hi-002", "integrals", 5, "\\int_0^1\\ln x\\,dx", "-1", ["improper-integral", "log", "integration-by-parts"], "x ln x − x 代限，瑕點極限 x ln x → 0，答案 −1。", 90);
-  num("cx-hi-003", "integrals", 5, "\\int_0^{\\infty}x^2e^{-x}\\,dx", "2", ["improper-integral", "gamma-function"], "Γ(3) = 2! = 2。", 80);
-  num("cx-hi-004", "integrals", 6, "\\int_0^{\\infty}e^{-x^2}\\,dx", "sqrt(pi)/2", ["improper-integral", "gamma-function"], "高斯積分的一半：√π/2。", 90);
-  num("cx-hi-005", "integrals", 6, "\\int_0^1(\\ln x)^2\\,dx", "2", ["improper-integral", "log", "integration-by-parts"], "IBP 兩次（或 Γ(3)）：答案 2。", 110);
-  num("cx-hi-006", "integrals", 6, "\\int_0^{\\pi/2}\\ln(\\sin x)\\,dx", "-(pi/2)*log(2)", ["improper-integral", "log", "kings-property"], "經典：對稱性 + 倍角化簡，I = −(π/2)ln 2。", 150);
   num("cx-hi-007", "integrals", 5, "\\int_0^{\\infty}\\frac{dx}{(x^2+4)(x^2+9)}", "pi/60", ["improper-integral", "partial-fraction"], "拆成 (1/5)[1/(x²+4)−1/(x²+9)]：(1/5)(π/4−π/6) = π/60。", 120);
   num("cx-hi-008", "integrals", 6, "\\int_0^{\\infty}\\frac{e^{-x}-e^{-2x}}{x}\\,dx", "log(2)", ["improper-integral", "frullani"], "Frullani：ln(2/1) = ln 2。", 110);
-  num("cx-hs-001", "series", 5, "\\sum_{n=1}^{\\infty}\\frac{1}{n^2}", "pi^2/6", ["special-sum"], "Basel 問題：π²/6。", 60);
-  num("cx-hs-002", "series", 5, "\\sum_{n=1}^{\\infty}\\frac{(-1)^{n+1}}{n^2}", "pi^2/12", ["alternating-series", "special-sum"], "η(2) = (1−2^{1−2})ζ(2) = π²/12。", 80);
   num("cx-hs-003", "series", 5, "\\sum_{n=1}^{\\infty}\\frac{n}{(n+1)!}", "1", ["telescoping", "special-sum"], "n/(n+1)! = 1/n! − 1/(n+1)! 望遠鏡 = 1。", 90);
-  num("cx-hs-004", "series", 6, "\\sum_{n=1}^{\\infty}\\frac{1}{n^4}", "pi^4/90", ["special-sum"], "ζ(4) = π⁴/90。", 80);
-  num("cx-hs-005", "series", 6, "\\sum_{n=0}^{\\infty}\\frac{1}{(2n)!}", "cosh(1)", ["special-sum", "taylor"], "cosh 的級數在 x=1。", 80);
   num("cx-hs-006", "series", 6, "\\sum_{n=1}^{\\infty}\\frac{H_n}{2^n},\\quad H_n=1+\\tfrac12+\\cdots+\\tfrac1n", "2*log(2)", ["harmonic-number", "generating-function", "special-sum"], "ΣHₙxⁿ = −ln(1−x)/(1−x)，代 1/2 得 2 ln 2。", 140);
   num("cx-hl-001", "limits", 5, "\\lim_{x\\to 0}\\left(\\frac{1}{\\sin^2 x}-\\frac{1}{x^2}\\right)", "1/3", ["taylor", "hard-limit"], "通分後用 sin²x ≈ x² − x⁴/3：分子/x⁴ → 1/3。", 120);
   num("cx-hl-002", "limits", 5, "\\lim_{x\\to\\infty}\\left(x-x^2\\ln\\left(1+\\frac{1}{x}\\right)\\right)", "1/2", ["taylor", "hard-limit", "log"], "ln(1+u)=u−u²/2+…，展開得 1/2 − 1/(3x) → 1/2。", 110);
-  num("cx-hl-003", "limits", 5, "\\lim_{n\\to\\infty}n\\left(\\left(1+\\frac{1}{n}\\right)^n-e\\right)", "-exp(1)/2", ["taylor", "hard-limit", "asymptotic-expansion"], "(1+1/n)ⁿ = e(1 − 1/(2n) + O(1/n²))，答案 −e/2。", 140);
   num("cx-hl-004", "limits", 5, "\\lim_{n\\to\\infty}\\frac{(n!)^{1/n}}{n}", "exp(-1)", ["hard-limit", "asymptotic-expansion"], "Stirling：(n!)^{1/n} ~ n/e，比值 → 1/e。", 120);
   num("cx-hl-005", "limits", 6, "\\lim_{n\\to\\infty}n\\sin(2\\pi e\\,n!)", "2*pi", ["hard-limit", "putnam", "taylor"], "e·n! = 整數 + 1/(n+1) + O(1/n²)，sin 剩 2π/(n+1) 項，乘 n → 2π。", 160);
   num("cx-hl-006", "limits", 5, "\\lim_{x\\to\\infty}\\frac{x\\left(x^{1/x}-1\\right)}{\\ln x}", "1", ["hard-limit", "power-exponential", "log"], "x^{1/x} = e^{ln x/x} ≈ 1 + ln x/x，比值 → 1。", 120);
-  num("cx-hm-001", "integrals", 6, "\\int_0^1\\frac{\\ln(1+x)}{1+x^2}\\,dx", "(pi/8)*log(2)", ["improper-integral", "kings-property", "putnam", "log"], "x=tan θ 後用 King's 對稱：I = (π/8)ln 2。", 160);
   num("cx-hm-002", "integrals", 6, "\\int_0^{\\pi/2}\\frac{dx}{1+\\tan^{\\sqrt{2}}x}", "pi/4", ["kings-property", "putnam"], "x→π/2−x 相加得 π/2，任何指數都一樣：π/4。", 130);
-  num("cx-hm-003", "series", 6, "\\sum_{n=1}^{\\infty}\\frac{1}{n(n+1)(n+2)}", "1/4", ["telescoping", "special-sum"], "拆成 (1/2)[1/(n(n+1)) − 1/((n+1)(n+2))] 望遠鏡 = 1/4。", 120);
   num("cx-hm-004", "derivatives", 6, "f(x)=x\\sin x,\\quad f^{(100)}(0)", "-100", ["higher-derivative", "taylor"], "x sin x 的 x^{100} 係數是 −1/99!，乘 100! 得 −100。", 140);
 
   window.BUZZ_PROBLEMS = (window.BUZZ_PROBLEMS || []).concat(problems);

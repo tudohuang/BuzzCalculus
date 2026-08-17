@@ -251,7 +251,7 @@
     ],
     [
       "hc-rad-006",
-      "\\int_0^{\\pi/2}\\frac{dx}{1+\sin x}",
+      "\\int_0^{\\pi/2}\\frac{dx}{1+\\sin x}",
       "1",
       ["trig", "rationalize", "definite-integral"],
       "Rationalize to (1-sin x)/cos^2 x, whose antiderivative is tan x-sec x."

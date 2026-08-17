@@ -2,8 +2,8 @@ global.window = {};
 require("./lib/load_problem_sources.js")();
 
 const problems = window.BUZZ_PROBLEMS || [];
-const topics = new Set(["limits", "derivatives", "integrals", "series", "physics", "chemistry"]);
-const answerKinds = new Set(["numeric", "expression", "antiderivative", "text"]);
+const topics = new Set(["limits", "derivatives", "integrals", "series"]);
+const answerKinds = new Set(["numeric", "expression", "antiderivative", "text", "set", "interval"]);
 const ids = new Set();
 const errors = [];
 const allowedRawWords = new Set([
@@ -113,11 +113,28 @@ problems.forEach((problem, index) => {
   } else if (typeof problem.answer !== "string" || !problem.answer.trim()) {
     fail(id, "non-text problem needs answer string");
   }
+  // 集合與區間的參考答案必須自己解析得動。解析不動的參考答案 =
+  // 這題永遠判錯，而且是在使用者答對的時候判錯。
+  if (problem.answerKind === "set" && !/^\s*\{?[^{}]+\}?\s*$/.test(problem.answer || "")) {
+    fail(id, "set answer must look like {a, b}");
+  }
+  if (problem.answerKind === "interval" && !/^\s*[[(].*[\])]\s*$/.test(problem.answer || "")) {
+    fail(id, "interval answer must look like (a, b] or a union of them");
+  }
   if (!Number.isInteger(problem.timeLimit) || problem.timeLimit <= 0) fail(id, "invalid timeLimit");
   if (!Number.isInteger(problem.tabLimit) || problem.tabLimit < 0) fail(id, "invalid tabLimit");
   if (!problem.solution || typeof problem.solution !== "string") fail(id, "missing solution");
   if (problem.hints && (!Array.isArray(problem.hints) || problem.hints.some((hint) => typeof hint !== "string" || !hint.trim()))) {
     fail(id, "hints must be non-empty strings");
+  }
+  // 解題步驟：有就要是「真的多步」。一句話包成一個 li 只是換個樣子顯示，
+  // 對卡住的人沒有任何幫助，而且會讓覆蓋率數字看起來比實際好。
+  if (problem.solutionSteps) {
+    if (!Array.isArray(problem.solutionSteps) || problem.solutionSteps.length < 2) {
+      fail(id, "solutionSteps must be an array of at least 2 steps");
+    } else if (problem.solutionSteps.some((step) => typeof step !== "string" || step.trim().length < 4)) {
+      fail(id, "solutionSteps entries must be non-trivial strings");
+    }
   }
   if (problem.tags && (!Array.isArray(problem.tags) || problem.tags.some((tag) => typeof tag !== "string" || !tag.trim()))) {
     fail(id, "tags must be non-empty strings");
