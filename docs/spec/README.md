@@ -21,43 +21,69 @@
 | [09-roadmap.md](09-roadmap.md) | 分期、每期 exit criteria、指標、風險 | 排期時 |
 | [10-traceability.md](10-traceability.md) | 200 條需求逐條對應到規格章節與期別 | 驗收時 |
 
-## 現況快照（2026-08，由程式碼實測）
+## 現況快照
 
 這是大修的起點，所有設計都必須相容於此。
 
+> 下面這一段由 `node tools/spec_snapshot.js --update` 產生，CI 會擋不一致。
+>
+> 原因：這段原本是手寫的，然後它做了所有手寫數字都會做的事 —— 停在過去。
+> 它一度寫著 1407 題、`app.js` 9122 行、12 支驗證器，而那三個數字當時全都錯了，
+> 錯的幅度還不小。整份 spec 的每一節都寫著「必須相容於此」，
+> 所以**一份數字錯的規格比沒有規格更糟**：讀的人會拿它當事實去做取捨，
+> 而且不會想到要去驗證。
+>
+> （這段說明本身刻意不寫任何當前數字 —— 不然它會變成下一個過期的地方。）
+
+<!-- SPEC-SNAPSHOT:BEGIN 由 tools/spec_snapshot.js 產生，不要手改 -->
+
 **規模**
 
-| 項目 | 數字 |
-| --- | ---: |
-| 題目總數 | 1407（純微積分；理科秒殺包已於 2026-08 移出，見 [04.7](04-experience-ia.md#47-科目閘門的一般化)） |
-| 有 `source` | 1327 |
-| 有 `tags` | 1407（distinct tag 284 個，其中 220 個是技巧 tag） |
-| 有 `solution`（單段文字） | 1407 |
-| 有作者撰寫 `hints` | 886 |
-| 有作者撰寫 `distractors` | 0（原本 24 題都在理科包） |
-| 有 `solutionSteps`（結構化步驟） | 0 |
-| 證明題 | 21（含 Lean 機器驗證 8） |
-| `src/app.js` | 9122 行，單一 IIFE |
-| `styles.css` | 6538 行 |
-| 題庫檔 | 21 個 `src/problem_*.js` |
-| CI 驗證器 | 12 支 `tools/validate_*` / `verify_*` |
+| 項目 | 數字 | 備註 |
+| --- | ---: | --- |
+| 題目總數 | 1459 | 純微積分；理科秒殺包已於 2026-08 移出 |
+| 答案通過獨立數值驗算 | 774（53%） | 其餘是證明題與定性題，本質上沒有可比對的數值 |
+| 有 `source` | 1379 |  |
+| 有 `tags` | 1459 | distinct tag 292 個，其中 228 個是技巧 tag |
+| 有 `solution` | 1459 | 單段文字 |
+| 有作者撰寫 `hints` | 967 |  |
+| 有 `solutionSteps` | 81 | 結構化步驟，仍是最大的內容缺口 |
+| 證明題 | 41 | 含 Lean 機器驗證 8 則 |
+| `src/app.js` | 12416 行 | 單一 IIFE，拆分進行中 |
+| `styles.css` | 7915 行 |  |
+| 題庫檔 `src/problem_*.js` | 22 |  |
+| kernel 模組 `src/kernel/*.js` | 13 | 純函式層 |
+| CI 驗證器 `tools/` | 24 支 | validate / verify / smoke / e2e |
 
-**答案型別分佈**：`numeric` 1043、`expression` 152、`antiderivative` 121、`text` 91。
+**答案型別分佈**：`numeric` 1055、`expression` 180、`antiderivative` 123、`text` 91、`set` 5、`interval` 5。
 
-**難度現況（重要）**：題目原始 `difficulty` 欄位實測只用到 1–4（分佈 87 / 232 / 324 / 935）。
-R5/R6 完全來自 `src/problem_difficulty_calibration.js` 的規則推導（`calibratedRank()`），
-在載入時 mutate `problem.rank` / `problem.rankLabel` / `rank-N` tag。
-**這代表難度校準層已經存在且是全站唯一 rank 來源** — 這是實證校準最好的插入點，見 [05](05-content-pipeline.md)。
+**難度分佈**：R1 117 / R2 300 / R3 319 / R4 401 / R5 240 / R6 82。
+rank 由 `src/kernel/rubric.js` 的三軸（步驟數 / 冷僻度 / 計算負擔）算出，
+不再由 tag 規則推導；黃金檔 `tools/golden/difficulty.json` 釘住分佈與錨點題。
+
+<!-- SPEC-SNAPSHOT:END -->
 
 **已存在但只是 scaffold 的東西**（不要重做，要接完）：
 
-- `BuzzSync`（`src/app.js:5148`）：GET/PUT + Bearer + `records.updatedAt` LWW，未接後端時靜默降級。
+- `BuzzSync`（`src/app.js`，搜 `const BuzzSync`）：GET/PUT + Bearer，未設 endpoint 時靜默降級。
+  合併規則已經改成逐 key 的 `BuzzRecords.merge()`，**不再是整包 last-write-wins** ——
+  舊的 LWW 只要兩台裝置都練過就會吃資料。缺的只剩伺服器那一端。
 - `records.placement`（8 題定位測驗）、`ONBOARDING_LEVELS`（3 條開局路線）。
-- `records.problemReports`（本機題目回報）。
 - SRS（`mistakeSrs`，惰性遷移，最長 30 天）。
 - `masteryRadarData()`（8 軸、30 天半衰、借助解答只算半分）。
-- GA4 `trackEvent()`。
+- GA4 `trackEvent()`（33 個事件，`validate_analytics.js` 擋上報使用者輸入）。
 - 純微積分不變式 `validate_calculus_only.js`（取代原本的科目閘門）。
+
+**已經接完、不再是 scaffold 的**：
+
+- 難度 rubric：三軸（步驟數 / 冷僻度 / 計算負擔）→ rank，側表在 `src/kernel/rubric.js`，
+  黃金檔釘住分佈與 91 個錨點題。原本「R5/R6 全部來自 tag 規則推導」的狀態已經結束。
+- 答案獨立驗算：`tools/verify_answers.js` + `src/kernel/verified_answers.js` 側表，
+  產品上有「答案已驗算」標記。
+- 題目回報：原本只寫進使用者自己的 localStorage（等於沒送出），現在會攤開內容
+  讓使用者送到 GitHub issue 或複製走。
+- 法遵：`privacy.html` / `terms.html` / `about.html` / `changelog.html`，
+  每一條承諾都由 `validate_privacy.js` 綁在程式碼上。
 
 ## 三個貫穿全域的設計承諾
 
