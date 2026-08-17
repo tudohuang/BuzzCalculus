@@ -2,7 +2,11 @@ const fakeApp = {
   innerHTML: "",
   querySelectorAll: () => [],
   querySelector: () => null,
-  matches: () => false
+  matches: () => false,
+  // [data-action] 改成委派之後，#app 自己也要能收監聽器
+  addEventListener: () => {},
+  removeEventListener: () => {},
+  contains: () => false
 };
 
 global.window = {

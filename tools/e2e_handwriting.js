@@ -389,6 +389,32 @@ async function run() {
         : "筆尖附近沒有墨水 —— 筆跡落後筆尖，寫起來就是「不靈敏」"
     );
 
+    /* ── 5.6 換工具不能把畫布整個換掉 ── */
+    // render() 是整頁 innerHTML，canvas 會被重建、所有筆畫重畫一次。
+    // 寫滿一頁之後那一下看得出來卡，而使用者只是想換個工具。
+    const toolSwap = await chrome.evaluate(`
+      ${PEN}
+      const before = window.__pen.canvas();
+      const inkBefore = window.__pen.inkPixels();
+      document.querySelector('[data-board-action="tool"][data-tool="eraser"]').click();
+      await new Promise((r) => setTimeout(r, 300));
+      const afterEraser = window.__pen.canvas();
+      const eraserActive = document.querySelector('[data-board-action="tool"][data-tool="eraser"]').classList.contains("is-active");
+      document.querySelector('[data-board-action="tool"][data-tool="pen"]').click();
+      await new Promise((r) => setTimeout(r, 300));
+      const afterPen = window.__pen.canvas();
+      const penActive = document.querySelector('[data-board-action="tool"][data-tool="pen"]').classList.contains("is-active");
+      return {
+        sameNode: before === afterEraser && before === afterPen,
+        eraserActive,
+        penActive,
+        inkKept: window.__pen.inkPixels() === inkBefore
+      };
+    `);
+    check("換工具不會重建畫布", toolSwap.sameNode, toolSwap.sameNode ? "canvas 還是同一個節點" : "canvas 被換掉了 —— 整頁重繪");
+    check("換工具的按鈕狀態有跟上", toolSwap.eraserActive && toolSwap.penActive, "橡皮擦與筆各自亮起來過");
+    check("換工具不會動到已經寫的東西", toolSwap.inkKept, "墨水像素數不變");
+
     /* ── 6. 橡皮擦是真的擦掉，不是拿背景色蓋 ── */
     const erased = await chrome.evaluate(`
       ${PEN}
