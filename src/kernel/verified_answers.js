@@ -6,7 +6,7 @@
 // 為什麼放側表而不是寫進題目物件：題目物件多一個欄位就會改變抽題與 golden 測試的結果。
 // 內容的中繼資料一律走側表，這是專案的既有約定。
 //
-// 產生時的統計：1493 題中 806 題通過，不符 0 題。
+// 產生時的統計：1505 題中 806 題通過，不符 0 題。
 
 (function registerVerifiedAnswers() {
   "use strict";
@@ -823,6 +823,6 @@
   window.BuzzVerifiedAnswers = {
     has: function (id) { return Boolean(id && SET[id]); },
     count: IDS.length,
-    total: 1493
+    total: 1505
   };
 })();
