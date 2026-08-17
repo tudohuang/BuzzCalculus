@@ -47,7 +47,12 @@
     "definite-integral", "basic-derivative",
     "region", "constraint", "degenerate",
     "cancellation", "repeated-factor", "complete-square", "symmetry",
-    "full-expansion", "product", "slope", "speed", "harmonic", "triangle"
+    "full-expansion", "product", "slope", "speed", "harmonic", "triangle",
+    // 描述題目的性質，不是可以被練起來的技巧：
+    //   composition    這題是合成函數（要用的技巧是鏈鎖律，那個有自己的節點）
+    //   domain-aware   這題的答案要考慮定義域
+    //   repeated-root  這題的根是重根（陷阱的位置，不是能力座標）
+    "composition", "domain-aware", "repeated-root"
   ]);
 
   // ── Skill 節點 ────────────────────────────────────────────────

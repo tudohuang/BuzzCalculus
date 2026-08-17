@@ -132,12 +132,46 @@ ${lines.join(",\n")}
       AXIS_WORDS.load[axes[2]] + "（機器推導，未經人工複核）";
   }
 
+  // 三軸 → rank。**只有這一份實作。**
+  //
+  // 以前這條公式只活在 tools/ 裡，瀏覽器端的難度是另一套 tag 規則算的，
+  // 於是畫面上寫 R5、難度說明頁按三軸算出 R3，兩邊互相打臉。
+  // 現在 problem_difficulty_calibration.js 直接用這一支。
+  //
+  // 這一段一定要留在**產生器的模板裡**。它曾經只存在於產出的檔案中，
+  // 於是任何人重跑一次 backfill_rubric.js，rankFrom / rankFor 就會消失，
+  // 而症狀是別的驗證器丟 "kernel.API.rankFrom is not a function" ——
+  // 完全看不出跟難度產生器有關。
+  const RAW_TO_RANK = { 3: 1, 4: 2, 5: 3, 6: 4, 7: 4, 8: 5, 9: 6 };
+
+  function rankFrom(axes, skillCount) {
+    const raw = axes[0] + axes[1] + axes[2];
+    let rank = RAW_TO_RANK[raw] || (raw <= 3 ? 1 : 6);
+
+    // 冷門度滿分且總分偏高 → 至少 R5。
+    // 只認冷門度這一軸：步數多是「花時間」，不是「不會做」。
+    if (axes[1] === 3 && raw >= 7) rank = Math.max(rank, 5);
+
+    // 需要串接多個獨立技巧 → +1。串接本身就是三軸都量不到的那種難度：
+    // 每一步都不難，難在想到要接起來。
+    if (skillCount >= 3) rank = Math.min(6, rank + 1);
+
+    return rank;
+  }
+
+  function rankFor(id, skillCount) {
+    const axes = RUBRIC[id];
+    return axes ? rankFrom(axes, skillCount || 0) : null;
+  }
+
   const API = {
     version: 1,
     table: RUBRIC,
     reviewed: REVIEWED,
     axesFor: (id) => (RUBRIC[id] ? { steps: RUBRIC[id][0], obscurity: RUBRIC[id][1], load: RUBRIC[id][2] } : null),
     reasonFor,
+    rankFrom,
+    rankFor,
     isReviewed: (id) => Boolean(REVIEWED[id])
   };
 

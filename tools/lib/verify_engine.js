@@ -16,6 +16,7 @@
 
 const latex = require("./latex.js");
 const numeric = require("./numeric.js");
+const setInterval = require("./set_interval_verify.js");
 
 /* ── LaTeX 結構切割 ────────────────────────────────────────── */
 
@@ -304,6 +305,12 @@ function verifyProblem(problem, options = {}) {
   };
 
   const structure = topLevelOperator(problem.prompt);
+
+  // set / interval 兩種答案不是單一數值，比對方式完全不同（集合要比「找齊了沒有」，
+  // 區間還要比端點的開閉）。交給專門的驗算器。
+  if (setInterval.supports(problem)) {
+    return setInterval.verify(problem, { normalizeAnswer: normalize });
+  }
 
   // 明確寫在題目上的 verify 欄位優先於自動推導
   if (problem.verify) return runExplicit(problem, compileAnswer);

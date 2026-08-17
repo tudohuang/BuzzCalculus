@@ -36,6 +36,7 @@
     // ── 集合：找齊了沒有 ──────────────────────────────────
     add({
       id: "si-set-001",
+      verify: { m: "critical", f: "x^3-3x", range: [-5, 5] },
       solutionSteps: [
               "臨界點的定義是 f'(x)=0（或 f' 不存在）的點。",
               "f'(x)=3x²−3。",
@@ -54,6 +55,7 @@
     }),
     add({
       id: "si-set-002",
+      verify: { m: "critical", f: "x^4-8x^2", range: [-5, 5] },
       solutionSteps: [
               "f'(x)=4x³−16x。",
               "提出公因式 4x：f'(x)=4x(x²−4)。",
@@ -72,6 +74,7 @@
     }),
     add({
       id: "si-set-003",
+      verify: { m: "zeros", f: "x^2-3x+2", range: [-6, 6] },
       solutionSteps: [
               "有理函數的不連續點只可能出現在分母為零的地方。",
               "分母 x²−3x+2=(x−1)(x−2)，零點是 x=1 和 x=2。",
@@ -90,6 +93,7 @@
     }),
     add({
       id: "si-set-004",
+      verify: { m: "inflection", f: "x^3-3x^2+2", range: [-5, 5] },
       solutionSteps: [
               "反曲點要看二階導數。",
               "f'(x)=3x²−6x，f''(x)=6x−6。",
@@ -108,6 +112,7 @@
     }),
     add({
       id: "si-set-005",
+      verify: { m: "critical", f: "\\sin x+\\cos x", range: [0, 6.283185307179586] },
       solutionSteps: [
               "f'(x)=cos x−sin x。",
               "令 f'(x)=0 得 cos x=sin x，即 tan x=1。",
@@ -128,6 +133,7 @@
     // ── 區間：端點到底算不算 ──────────────────────────────
     add({
       id: "si-int-001",
+      verify: { m: "domain", f: "\\log(x-1)", range: [-20, 60] },
       solutionSteps: [
               "對數函數 ln(u) 要求 u>0。",
               "所以需要 x−1>0。",
@@ -146,6 +152,7 @@
     }),
     add({
       id: "si-int-002",
+      verify: { m: "domain", f: "\\sqrt{4-x^2}", range: [-8, 8] },
       solutionSteps: [
               "偶次方根要求根號內非負。",
               "所以需要 4−x²≥0，即 x²≤4。",
@@ -164,6 +171,7 @@
     }),
     add({
       id: "si-int-003",
+      verify: { m: "domainExcept", f: "x-3", range: [-30, 30] },
       solutionSteps: [
               "分式要求分母不為零。",
               "x−3=0 給 x=3，這一點要排除。",
@@ -201,6 +209,7 @@
     }),
     add({
       id: "si-int-005",
+      verify: { m: "increasing", f: "x^3-3x", range: [-20, 20] },
       solutionSteps: [
               "嚴格遞增等價於 f'(x)>0。",
               "f'(x)=3x²−3=3(x−1)(x+1)。",
