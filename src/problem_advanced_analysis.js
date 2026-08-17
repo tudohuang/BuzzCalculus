@@ -658,7 +658,7 @@
       answer: "-4",
       timeLimit: 95,
       tabLimit: 1,
-      tags: ["jacobian-chain", "jacobian", "todai-inspired"],
+      tags: ["jacobian-chain", "jacobian"],
       hints: ["Use det D(g o f)=det Dg * det Df.", "det Dg=-2.", "det Df=x, so at x=2 it is 2."],
       solution: "The determinant is (-2)*2=-4."
     },

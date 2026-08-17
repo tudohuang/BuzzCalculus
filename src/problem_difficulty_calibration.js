@@ -120,9 +120,30 @@
     return Array.from(new Set(items.filter(Boolean)));
   }
 
+  // rubric 三軸是難度的正式來源（spec 05.1）。
+  //
+  // 下面那整套 MIN_RANK_BY_TAG「標籤地板」是它的前身，現在退居 fallback：
+  // 地板只會抬不會降，結果是任何帶 multivariable 的題自動 ≥R4，
+  // ∫₀¹∫₀¹(x+y)dydx 這種送分題也不例外；R6 一度佔了全庫的 32%。
+  //
+  // 保留 fallback 是架構鐵律 1：kernel 沒載進來時，程式仍然要能跑，
+  // 只是難度回到舊的算法。
+  function rubricRankFor(problem) {
+    if (typeof window === "undefined" || !window.BuzzRubric || !window.BuzzSkillGraph) return null;
+    try {
+      const skills = window.BuzzSkillGraph.skillsForProblem(problem) || [];
+      return window.BuzzRubric.rankFor(problem.id, skills.length);
+    } catch (_error) {
+      return null;
+    }
+  }
+
   function calibratedRank(problem) {
+    const fromRubric = rubricRankFor(problem);
+    if (fromRubric) return clampRank(fromRubric);
+
     const tags = problem.tags || [];
-    let rank = clampRank(problem.rank || problem.difficulty || 1);
+    let rank = clampRank(problem.authoredRank || problem.rank || problem.difficulty || 1);
 
     if (AUDIT_OVERRIDES[problem.id]) {
       return clampRank(AUDIT_OVERRIDES[problem.id]);
@@ -150,6 +171,13 @@
   const CALIBRATION_TAGS = /^(rank-\d|boss-rank|boss-plus|beginner-friendly)$/;
 
   function applyCalibration(problem) {
+    // 出題者原本填的難度，覆寫之前先留一份。
+    // 沒有這一行的話，校準跑完之後作者的判斷就永久消失了 ——
+    // 難度重推工具第二次執行時會拿自己上一輪的輸出當「作者原判」，
+    // 而那條「沒有證據就不推翻作者」的規則也就失去意義。
+    if (problem.authoredRank === undefined) {
+      problem.authoredRank = clampRank(problem.rank || problem.difficulty || 1);
+    }
     const rank = calibratedRank(problem);
     const extraTags = [`rank-${rank}`];
     if (rank <= 2) extraTags.push("beginner-friendly");
@@ -158,7 +186,10 @@
 
     problem.rank = rank;
     problem.rankLabel = LABELS[rank];
-    problem.rankReason = rank >= 5 ? "advanced technique" : rank <= 2 ? "warm-up compatible" : "standard calibration";
+    // 理由改用三軸的白話說明（「三四步、課本有教但容易忘、要草稿但直線推進」），
+    // 而不是 "standard calibration" 這種對使用者毫無資訊的字串。
+    problem.rankReason = (typeof window !== "undefined" && window.BuzzRubric && window.BuzzRubric.reasonFor(problem.id))
+      || (rank >= 5 ? "advanced technique" : rank <= 2 ? "warm-up compatible" : "standard calibration");
     // Strip stale calibration-owned tags (packs may self-tag) before re-deriving.
     const baseTags = (problem.tags || []).filter((tag) => !CALIBRATION_TAGS.test(tag));
     problem.tags = unique([...baseTags, ...extraTags]);

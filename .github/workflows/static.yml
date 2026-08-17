@@ -37,10 +37,40 @@ jobs:
           node tools/validate_training_packs.js
           node tools/validate_path_nodes.js
           node tools/validate_answer_checker.js
-          node tools/validate_science_gate.js
+          node tools/validate_calculus_only.js
+          node tools/validate_records_v2.js
+          node tools/validate_skill_graph.js
+          node tools/validate_ability_model.js
+          node tools/validate_planner.js
+          node tools/validate_analytics.js
+          node tools/validate_offline_assets.js
           node tools/validate_app_shell.js
+          node tools/validate_version.js
+          node tools/validate_content_metadata.js
+          node tools/validate_privacy.js
+          node tools/validate_derived_hints.js
+          node tools/validate_golden.js
           node tools/smoke_app_render.js
           node tools/verify_proof_claims.js
+      - name: E2E main flow
+        # 真的開一顆 Chrome、走完「開局 → 答題 → 結算 → 錯題進本」。
+        # 這一步測的是其他驗證器看不到的那一層：東西有沒有**顯示出來**、
+        # 點下去有沒有反應。實測抓到過結算頁全白（DOM 有兩萬字、畫面零字）
+        # 與第一畫面題數寫死。約 45 秒。
+        run: node tools/e2e_main_flow.js
+      - name: E2E handwriting
+        # 手寫計算紙的失敗方式全是行為層的，字串比對一條都抓不到：
+        # 手掌畫出線、長按跳選單、橡皮擦把方格一起蓋掉、復原時整頁重繪。
+        # 這一步用合成的 PointerEvent 畫，然後去數畫布的像素。
+        run: node tools/e2e_handwriting.js
+      - name: Verify answers independently
+        # 這一步是題庫的品質底線：從題幹推出一條與解題無關的數值路徑，
+        # 再跟答案比對。不符必須是零 —— spec 00 說得很直白，
+        # 「答案錯一題造成的信任損失，大於新增五十題的收益」。
+        run: |
+          node tools/expand_templates.js --check
+          node tools/detect_duplicates.js --ci
+          node tools/verify_answers.js --ci
       - name: Cache Lean toolchain
         uses: actions/cache@v4
         with:

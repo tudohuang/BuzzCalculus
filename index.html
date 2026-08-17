@@ -9,20 +9,16 @@
     <link rel="manifest" href="manifest.webmanifest" />
     <link rel="icon" href="assets/icon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="assets/icon.svg" />
-    <link rel="preconnect" href="https://cdn.jsdelivr.net" />
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.css"
-      crossorigin="anonymous"
-    />
+    <!-- 所有第三方資源都在本地（assets/vendor）。
+         CDN 掛掉時，離線 PWA 也會失去數學排版 —— 那時使用者看到的是滿頁的
+         原始 LaTeX，比整站打不開更難理解發生什麼事。
+         lucide 只收錄本站用到的 40 個圖示（9KB，官方 UMD 是 1MB）。
+         KaTeX 字型只留 woff2（現代瀏覽器全支援）。 -->
+    <link rel="stylesheet" href="assets/vendor/katex/katex.min.css" />
     <link rel="stylesheet" href="styles.css" />
-    <script
-      defer
-      src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.js"
-      crossorigin="anonymous"
-    ></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/lucide@0.468.0/dist/umd/lucide.min.js"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+    <script defer src="assets/vendor/katex/katex.min.js"></script>
+    <script defer src="assets/vendor/icons.js"></script>
+    <script defer src="assets/vendor/anime.min.js"></script>
     <script defer src="src/problems.js"></script>
     <script defer src="src/problem_extensions.js"></script>
     <script defer src="src/problem_extensions_2.js"></script>
@@ -43,10 +39,27 @@
     <script defer src="src/problem_core_expansion_pack.js"></script>
     <script defer src="src/problem_applied_graph_pack.js"></script>
     <script defer src="src/problem_damo_pack.js"></script>
-    <script defer src="src/problem_science_pack.js"></script>
+    <script defer src="src/problem_set_interval_pack.js"></script>
+    <script defer src="src/problem_generated_pack.js"></script>
+    <!-- 難度側表要在校準之前載入：校準會用 rubric 決定 rank。 -->
+    <script defer src="src/kernel/skill_tags.js"></script>
+    <script defer src="src/kernel/skill_graph.js"></script>
+    <script defer src="src/kernel/uid_map.js"></script>
+    <script defer src="src/kernel/origin.js"></script>
+    <script defer src="src/kernel/rubric_reviewed.js"></script>
+    <script defer src="src/kernel/rubric.js"></script>
+    <script defer src="src/kernel/derived_hints.js"></script>
+    <script defer src="src/kernel/verified_answers.js"></script>
+    <script defer src="src/kernel/board_render.js"></script>
     <script defer src="src/problem_difficulty_calibration.js"></script>
+    <script defer src="src/board_store.js"></script>
     <script defer src="src/custom_problems.js"></script>
     <script defer src="src/proofs.js"></script>
+    <!-- Kernel：純函數模組，app.js 用 feature-detect 消費，缺席時退回舊行為。 -->
+    <script defer src="src/kernel/records_v2.js"></script>
+    <script defer src="src/kernel/ability.js"></script>
+    <script defer src="src/kernel/planner.js"></script>
+    <script defer src="src/kernel/session.js"></script>
     <script>
       window.BUZZ_GA_MEASUREMENT_ID = "G-95ST898KT1";
     </script>

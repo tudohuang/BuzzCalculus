@@ -1,7 +1,7 @@
 (function () {
   "use strict";
 
-  const SOURCE = "Original Todai-style burst pack 2026";
+  const SOURCE = "Buzz 高速反射包 2026";
   const problems = [];
   const HINTS = [
     "Expect a recurrence, Wallis/Beta/Gamma identity, or repeated IBP before direct computation.",

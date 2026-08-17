@@ -94,7 +94,10 @@
     ["depth-der-012", "\\Delta\\log(x^2+y^2)", "0", ["x", "y"], ["multivariable", "nabla", "laplacian"], "Away from the origin the Laplacian is zero.", 6],
     ["depth-der-013", "\\nabla\\cdot(xyz,\\ x^2z,\\ xy^2)", "y*z", ["x", "y", "z"], ["multivariable", "nabla", "vector-calculus"], "Only the first component contributes yz.", 5],
     ["depth-der-014", "\\text{z-component of }\\nabla\\times(x^2y,\\ xy^2,\\ z)", "y^2-x^2", ["x", "y"], ["multivariable", "nabla", "vector-calculus"], "Compute partial_x Q - partial_y P.", 5],
-    ["depth-der-015", "\\frac{d}{dx}\\arccos\\left(\\frac{1-x^2}{1+x^2}\\right)", "2/(1+x^2)", "x", ["inverse-trig", "chain-rule"], "For x>0 this angle is 2 arctan x.", 6],
+    // 定義域必須寫在題幹上：x<0 時這個導數是 −2/(1+x²)，答案只對 x>0 成立。
+    // 原本只有解說裡提到「For x>0」，題幹沒寫 —— 學生按題幹作答時，
+    // 在 x<0 的認知下寫出負號才是對的，卻會被判錯。
+    ["depth-der-015", "\\frac{d}{dx}\\arccos\\left(\\frac{1-x^2}{1+x^2}\\right),\\ x>0", "2/(1+x^2)", "x", ["inverse-trig", "chain-rule"], "For x>0 the angle equals 2 arctan x, so the derivative is 2/(1+x^2). For x<0 it is -2/(1+x^2).", 6],
     ["depth-der-016", "\\frac{d}{dx}\\left(\\frac{(\\log x)^2}{x}\\right)", "(2*log(x)-log(x)^2)/x^2", "x", ["quotient-rule", "log"], "Differentiate log(x)^2 x^{-1}.", 5],
     ["depth-der-017", "\\left.\\frac{d^4}{dx^4}\\cos(3x)\\right|_{x=0}", "81", null, ["higher-derivative", "trig"], "The fourth derivative returns 3^4 cos(3x).", 5],
     ["depth-der-018", "\\frac{d}{dx}\\sqrt{x+\\sqrt{x}}", "(1+1/(2*sqrt(x)))/(2*sqrt(x+sqrt(x)))", "x", ["chain-rule", "radical"], "Chain rule across both radicals.", 5]

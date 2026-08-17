@@ -1,57 +1,15 @@
-const fakeApp = {
-  innerHTML: "",
-  querySelectorAll: () => [],
-  querySelector: () => null,
-  matches: () => false
-};
+// 載入方式改用 tools/lib/app_api.js（2026-08-16）。
+//
+// 這支原本自己帶一份假 DOM，只載題庫 + app.js，沒有載 kernel，
+// 所以難度校準走的是 fallback 路徑 —— 驗到的 rank 跟使用者看到的不一樣。
+// 共用載入層會照 index.html 的**文件順序**把所有 src/*.js 載進來，
+// 驗證的因此是實際上線的那份組態。
 
-global.window = {
-  __BUZZ_TEST_HOOKS__: {},
-  addEventListener: () => {},
-  setTimeout: (fn) => {
-    if (typeof fn === "function") fn();
-  },
-  setInterval: () => 0,
-  clearInterval: () => {},
-  requestAnimationFrame: (fn) => {
-    if (typeof fn === "function") fn();
-  },
-  matchMedia: () => ({ matches: false }),
-  devicePixelRatio: 1,
-  innerWidth: 1280,
-  innerHeight: 720
-};
-global.requestAnimationFrame = global.window.requestAnimationFrame;
-const storage = {};
-global.localStorage = {
-  getItem: (key) => storage[key] || "{}",
-  setItem: (key, value) => {
-    storage[key] = String(value);
-  },
-  removeItem: (key) => {
-    delete storage[key];
-  }
-};
-global.document = {
-  getElementById: (id) => (id === "app" ? fakeApp : null),
-  addEventListener: () => {},
-  visibilityState: "visible",
-  body: {
-    appendChild: () => {}
-  },
-  createElement: () => ({ click: () => {}, remove: () => {} })
-};
-global.Blob = function Blob() {};
-global.URL = {
-  createObjectURL: () => "blob:selection",
-  revokeObjectURL: () => {}
-};
-global.FileReader = function FileReader() {};
+"use strict";
 
-require("./lib/load_problem_sources.js")();
-require("../src/app.js");
-
-const api = global.window.__BUZZ_TEST_HOOKS__.api;
+const loadAppApi = require("./lib/app_api.js");
+const api = loadAppApi();
+const window = global.window;
 if (!api || typeof api.adaptiveShuffle !== "function" || typeof api.padPool !== "function") {
   throw new Error("selection test hooks are unavailable");
 }
@@ -97,7 +55,7 @@ if (recent.join(",") !== "recent-a,recent-b") {
   failures.push(`recentProblemIds returned unexpected order: ${recent.join(", ")}`);
 }
 
-storage["buzzcalculus.records.v1"] = JSON.stringify({ settings: { difficultyCap: 2 } });
+global.localStorage.setItem("buzzcalculus.records.v1", JSON.stringify({ settings: { difficultyCap: 2 } }));
 const cappedQuick = api.selectProblemPool(api.modes.quick, "all");
 const quickRanks = cappedQuick.map((problem) => api.problemRank(problem));
 if (!cappedQuick.length || quickRanks.some((rank) => rank > 2)) {
@@ -108,7 +66,7 @@ if (cappedCount <= 0 || cappedCount >= global.window.BUZZ_PROBLEMS.length) {
   failures.push(`difficultyScopedCount produced suspicious R2 count: ${cappedCount}`);
 }
 
-storage["buzzcalculus.records.v1"] = JSON.stringify({ settings: { difficultyCap: 2 } });
+global.localStorage.setItem("buzzcalculus.records.v1", JSON.stringify({ settings: { difficultyCap: 2 } }));
 const examPool = api.selectProblemPool(api.modes.exam, "all");
 if (examPool.length !== api.modes.exam.count) {
   failures.push(`exam mode selected ${examPool.length} problems instead of ${api.modes.exam.count}`);

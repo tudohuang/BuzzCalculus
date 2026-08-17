@@ -7,7 +7,7 @@
   // classic hard integrals and series. All ranked 4-6 with generous time
   // limits. Every answer numerically verified via an independent scratchpad
   // harness (iteration / quadrature / summation), see repo history.
-  const SOURCE = "達摩院風格長題 pack 2026";
+  const SOURCE = "Buzz 長題挑戰包 2026";
   const TIME = { 4: 300, 5: 420, 6: 600 };
   const problems = [];
 
@@ -94,7 +94,7 @@
   N("dm-seq-011", "limits", 6,
     "\\text{設 }S_n=e^{-n}\\sum_{k=0}^{n}\\frac{n^k}{k!}\\text{(Poisson 機率觀點)。求 }\\lim_{n\\to\\infty}S_n",
     "1/2", ["poisson", "central-limit", "series"],
-    "S_n = P(Poisson(n) ≤ n),由中央極限定理對稱地趨於 1/2。經典 Putnam 1958 / 競賽題。",
+    "S_n = P(Poisson(n) ≤ n),由中央極限定理對稱地趨於 1/2。經典競賽題型。",
     ["S_n 是 Poisson(n) 不超過其均值的機率。", "標準化後用常態近似。"]);
 
   N("dm-lim-012", "limits", 6,
