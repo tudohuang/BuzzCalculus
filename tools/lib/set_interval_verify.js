@@ -182,7 +182,11 @@ function toNumber(text) {
 }
 
 function parseSet(text) {
-  const inner = String(text).trim().replace(/^\{|\}$/g, "");
+  const raw = String(text).trim();
+  // 空集合的寫法要跟 app 的判分器一致。不一致的話會出現最糟的那種狀況：
+  // 判分器說對、驗算器說錯（或反過來），而兩邊都自稱是權威。
+  if (/^(無|沒有|不存在|none|empty|∅|\{\s*\})$/i.test(raw)) return [];
+  const inner = raw.replace(/^\{|\}$/g, "");
   if (!inner.trim()) return [];
   return inner.split(",").map((piece) => toNumber(piece.trim())).sort((a, b) => a - b);
 }
@@ -195,7 +199,10 @@ function parseBound(text) {
 }
 
 function parseIntervals(text) {
-  return String(text)
+  const raw = String(text).trim();
+  // 空區間是合法答案（x²−4x+3 沒有凹向下的區間），跟空集合同一個道理。
+  if (/^(無|沒有|不存在|none|empty|∅|\{\s*\}|\(\s*\))$/i.test(raw)) return [];
+  return raw
     .split(/\s*U\s*|\s*∪\s*/i)
     .map((piece) => piece.trim())
     .filter(Boolean)

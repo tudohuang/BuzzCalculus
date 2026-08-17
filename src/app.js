@@ -9629,7 +9629,12 @@
 
   // "(-inf, 2) U [3, 5]" → [{lo, hi, loOpen, hiOpen}]
   function parseIntervals(input) {
-    const text = String(input || "")
+    const raw = String(input || "").trim();
+    // 空區間是合法答案，不是格式錯誤。
+    // 「這個函數沒有凹向下的區間」（例如 x²−4x+3）必須表達得出來 ——
+    // 跟空集合同一個道理。收得寬一點：中英文與符號都認。
+    if (/^(無|沒有|不存在|none|empty|∅|\{\s*\}|\(\s*\))$/i.test(raw)) return [];
+    const text = raw
       .replace(/∪/g, "U")
       .replace(/\\cup/g, "U")
       .replace(/\s+/g, "");
