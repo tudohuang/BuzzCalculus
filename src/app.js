@@ -1293,13 +1293,14 @@
       <main class="screen home-screen" id="buzz-main">
         <div class="home-lead">
           ${renderResumeCard()}
-          ${renderBackupNotice(records)}
           ${renderExamReport(records)}
           ${renderTodayCard(records)}
+          ${renderBackupNotice(records)}
         </div>
         <div class="home-aside">
           ${renderHomeSecondary(records, path, mission)}
           ${renderGrowthLine(records)}
+          ${renderHomeWeakness(records)}
           ${renderBucketNav()}
         </div>
       </main>
@@ -1360,6 +1361,50 @@
 
   // 一行成長證據。spec 00 的「讓學生感覺自己變強」靠的就是這一行 ——
   // 它必須是具體的個人事實，不是「繼續加油」這種空話。
+  // 首頁的弱點摘要。
+  //
+  // 這塊補上去的理由不是「填空白」，是首頁原本完全沒有展示這個產品的核心主張。
+  // 站上說「會告訴你是不會還是來不及」，而首頁只有一顆開始按鈕跟四個入口 ——
+  // 一個已經練了七十題的人，打開來看不到任何關於自己的東西。
+  //
+  // 這裡只放三個最弱的技巧與一句處方，點下去直接練。詳細診斷留在數據分頁。
+  // 它是工具價值不是遊戲化，所以專注模式不會把它收起來。
+  function renderHomeWeakness(records) {
+    const profile = abilityProfile(records);
+    if (!profile || !profile.coverage || profile.coverage.attempts < 12) return "";
+    const weakest = profile.weakest
+      .map((id) => profile.skills[id])
+      .filter((entry) => entry && entry.measured && entry.mastery !== null)
+      .slice(0, 3);
+    if (weakest.length < 2) return "";
+
+    return `
+      <section class="home-weakness">
+        <div class="home-weakness-head">
+          <p class="section-label">最弱的三個技巧</p>
+          <button class="button ghost" data-action="start-weakness">${icon("target")}練弱點</button>
+        </div>
+        <ul class="home-weakness-list">
+          ${weakest
+            .map((entry) => {
+              const plan = weaknessPrescription(profile, entry.id);
+              const pct = Math.round(entry.mastery);
+              return `
+                <li>
+                  <div class="home-weakness-row">
+                    <strong>${escapeHtml(entry.label)}</strong>
+                    <span class="home-weakness-score">${pct}</span>
+                  </div>
+                  <div class="home-weakness-bar" aria-hidden="true"><span style="width:${Math.max(4, Math.min(100, pct))}%"></span></div>
+                  ${plan && plan.kind === "backtrack" ? `<small>${escapeHtml(plan.text)}</small>` : ""}
+                </li>`;
+            })
+            .join("")}
+        </ul>
+      </section>
+    `;
+  }
+
   function renderGrowthLine(records) {
     const profile = abilityProfile(records);
     if (!profile || !profile.coverage.attempts) return "";
@@ -8402,27 +8447,27 @@
     const days = firstAt ? (Date.now() - firstAt) / DAY_MS : 0;
     if (answered < 200 && days < 7) return "";
 
+    // 這張卡原本跟「今天的訓練」一樣大、而且排在它前面 ——
+    // 於是每天打開站台，第一個看到的是一則提醒，不是今天要做什麼。
+    // 提醒的內容是對的（資料真的會沒），但它不該跟主要行動搶版面。
+    // 改成一條細的橫幅，放在主卡下面。
     return `
-      <section class="study-card backup-notice">
-        <div class="panel-title-row">
-          <div>
-            <p class="section-label">提醒</p>
-            <h3>你的紀錄只在這台裝置上</h3>
-          </div>
-          <button class="icon-button" data-action="dismiss-backup-notice" title="知道了">${icon("x")}</button>
+      <aside class="backup-bar" role="note">
+        <div class="backup-bar-text">
+          <strong>紀錄只在這台裝置上</strong>
+          <span>已累積 ${answered} 題。清除瀏覽器資料就會全部消失，而且救不回來。</span>
         </div>
-        <p class="panel-note">
-          已經累積 ${answered} 題的練習紀錄。它存在這個瀏覽器裡 ——
-          <strong>清除瀏覽器資料就會全部消失</strong>，而且救不回來。
-          先匯出一份帶著走，換裝置時匯入會自動合併，不會蓋掉任何一邊。
-        </p>
-        <div class="action-row">
-          <button class="button home-primary" data-action="export">${icon("download")}匯出備份</button>
-          <button class="button ghost" data-action="dismiss-backup-notice">之後再說</button>
+        <div class="backup-bar-actions">
+          <button class="button secondary" data-action="export-records">${icon("download")}匯出備份</button>
+          <button class="icon-button" data-action="dismiss-backup-notice" title="之後再說">${icon("x")}</button>
         </div>
-      </section>
+      </aside>
     `;
   }
+
+  // 舊的大卡片版本已刪除。它的「匯出備份」按鈕寫的是 data-action="export"，
+  // 而那個 action 根本不存在（正確的是 export-records）—— 也就是說整張提醒卡的
+  // 主要行動按下去什麼都不會發生，而卡片本身佔掉了首頁最上面 200px。
 
   function dismissBackupNotice() {
     const records = loadRecords();
