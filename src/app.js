@@ -3569,6 +3569,15 @@
     });
   }
 
+  // 等價鍵：只有記法不同的兩題共用一個鍵。
+  // 一份印出去發給學生的卷子上出現兩題一模一樣的，比什麼都難看。
+  function equivalenceKey(id) {
+    if (window.BuzzEquivalence && typeof window.BuzzEquivalence.keyOf === "function") {
+      return window.BuzzEquivalence.keyOf(id);
+    }
+    return id;
+  }
+
   function buildPaper(spec) {
     const pool = paperPool(spec);
     const locked = paperLocked.map((id) => problemById(id)).filter(Boolean);
@@ -3577,7 +3586,16 @@
       pool.filter((problem) => !lockedIds.has(problem.id)),
       seedFromString(`buzz-paper-${spec.topic}-${spec.rankMin}-${spec.rankMax}-${spec.count}-${spec.seed}`)
     );
-    return locked.concat(rest).slice(0, spec.count);
+    const seen = new Set();
+    const out = [];
+    locked.concat(rest).forEach((problem) => {
+      if (out.length >= spec.count) return;
+      const key = equivalenceKey(problem.id);
+      if (seen.has(key)) return;
+      seen.add(key);
+      out.push(problem);
+    });
+    return out;
   }
 
   // 答案排版。有些答案本來就是文字（「發散」「條件收斂」），

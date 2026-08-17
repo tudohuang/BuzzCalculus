@@ -68,6 +68,7 @@ const APP_SHELL = [
   "./src/kernel/derived_hints.js",
   "./src/kernel/verified_answers.js",
   "./src/kernel/board_render.js",
+  "./src/kernel/equivalence.js",
   "./src/kernel/records_v2.js",
   "./src/kernel/skill_tags.js",
   "./src/kernel/skill_graph.js",

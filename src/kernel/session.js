@@ -121,6 +121,18 @@
       return skillCache.get(problem.id);
     };
 
+    // 去重的鍵不是 id，是**等價鍵**。
+    //
+    // 題庫裡有 35 組「只有記法不同」的等價題（\ln vs \log、有沒有 \left\right…），
+    // 它們分屬不同題包所以都留著。但 id 不同，只看 id 的話同一局會抽到兩題一模一樣的 ——
+    // 而使用者不會覺得那是巧合，會覺得這個題庫在灌水。
+    const equivalence =
+      options.equivalence ||
+      (typeof window !== "undefined" && window.BuzzEquivalence) ||
+      (typeof globalThis !== "undefined" && globalThis.BuzzEquivalence) ||
+      null;
+    const keyOf = (id) => (equivalence && typeof equivalence.keyOf === "function" ? equivalence.keyOf(id) : id);
+
     const used = new Set();
     const picked = [];
     const meta = { fallbacks: [], byRole: {}, shortfall: 0 };
@@ -135,7 +147,7 @@
       let taken = 0;
       // 排序優先序：沒做過的 > 最近做過的；同一層裡再挑時長接近理想值的
       const ordered = candidates
-        .filter((problem) => !used.has(problem.id) && !exclude.has(problem.id))
+        .filter((problem) => !used.has(keyOf(problem.id)) && !exclude.has(problem.id))
         .map((problem) => ({
           problem,
           recent: Number(recent.has(problem.id)),
@@ -144,7 +156,13 @@
         .sort((a, b) => a.recent - b.recent || a.drift - b.drift);
       for (const entry of ordered) {
         if (taken >= count) break;
-        used.add(entry.problem.id);
+        // 迴圈裡要**再檢查一次**。上面的 filter 是在迴圈開始前算好的快照，
+        // 迴圈中加進 used 的東西不會回頭重濾。
+        // id 是唯一的時候永遠看不出這個問題；換成等價鍵之後，
+        // 同一批候選裡的兩題等價題會雙雙通過那個快照。
+        const key = keyOf(entry.problem.id);
+        if (used.has(key)) continue;
+        used.add(key);
         picked.push({ problem: entry.problem, role });
         taken += 1;
       }

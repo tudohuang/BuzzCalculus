@@ -329,6 +329,50 @@ console.log(`  配方          ${demo.recipe.slots.map((s) => `${s.label} ${s.co
 console.log(`  實際抽到      ${demoFill.problems.length} 題，估時 ${Math.round(demoFill.estSeconds / 60)} 分鐘`);
 if (demoFill.meta.fallbacks.length) console.log(`  降級          ${session.explainFallbacks(demoFill.meta)}`);
 
+/* ── 7. 等價題不能同時出現在一局裡 ────────────────────────────
+   題庫裡有 35 組「只有記法不同」的等價題（\ln vs \log、有沒有 \left\right…）。
+   它們分屬不同題包，所以兩邊都留著 —— 但 id 不同，只看 id 去重的話
+   同一局會抽到兩題一模一樣的。使用者不會覺得那是巧合，會覺得題庫在灌水。 */
+{
+  require("./lib/app_api.js")();
+  const equivalence = global.window.BuzzEquivalence;
+  if (!equivalence || typeof equivalence.keyOf !== "function") {
+    failures.push("BuzzEquivalence 沒載到 —— 抽題會退回只看 id 去重");
+  } else {
+    // 找一組真的等價的題，湊一個小池子讓它非撞不可
+    const pairs = {};
+    problems.forEach((problem) => {
+      const key = equivalence.keyOf(problem.id);
+      if (key === problem.id && !pairs[key]) pairs[key] = [];
+      if (!pairs[key]) pairs[key] = [];
+      pairs[key].push(problem);
+    });
+    const group = Object.values(pairs).find((list) => list.length > 1);
+    if (!group) {
+      failures.push("找不到任何等價題組 —— 側表可能是空的");
+    } else {
+      // 池子必須小到「非全抽不可」，否則抽不到兩題只是因為運氣好，
+      // 測不出去重有沒有在做事。池 = 這一組 + 剛好補滿的其他題，count = 池的大小。
+      const others = problems.filter((p) => !group.includes(p) && equivalence.keyOf(p.id) === p.id).slice(0, 8);
+      const pool = group.concat(others);
+      const recipe = { count: pool.length, slots: [{ role: "new", label: "測試", count: pool.length, filter: {} }] };
+      const out = session.fill(recipe, { problems: pool, seed: "equivalence-check" });
+      const ids = out.problems.map((problem) => problem.id);
+      const hits = group.filter((problem) => ids.includes(problem.id));
+      if (hits.length > 1) {
+        failures.push(
+          `池子 ${pool.length} 題、要求 ${recipe.count} 題，結果同一局抽到 ${hits.length} 題等價的：` +
+          `${hits.map((p) => p.id).join(", ")} —— 去重必須用等價鍵，不是 id`
+        );
+      }
+      console.log(
+        `  等價去重      側表 ${equivalence.size} 題；` +
+        `${group.map((p) => p.id).join(" ↔ ")} 放進 ${pool.length} 題的池全抽，只出現 ${hits.length} 題`
+      );
+    }
+  }
+}
+
 if (failures.length) {
   console.error("");
   console.error(`planner 驗證失敗（${failures.length}）：`);
