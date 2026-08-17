@@ -1991,30 +1991,69 @@ button {
    旁邊的題目，整段文字就反白起來，還跳出放大鏡跟「拷貝／查詢」選單。
    一旦發生，你得先點空白處取消才能繼續寫。
 
-   所以整個作答畫面關掉選取與 callout，只有真的要輸入的欄位留著。 */
-.quiz-screen,
-.handwrite-shell,
-.scratchboard-shell {
+   第一版只把這組規則套在 .quiz-screen 上，結果還是會選到 —— 因為頂欄、
+   對話框、結算頁、題庫、出卷頁全都在那個範圍外面。整個 app 都是用手跟筆碰的，
+   所以預設就該是「不能選」，再把真的需要選的地方一個一個開回來。
+
+   兩個 iOS 的細節，不能只靠繼承：
+   - -webkit-touch-callout 在 a / img 上的繼承不可靠，要直接寫在元素上
+   - -webkit-user-drag 沒關的話，長按再拖會拖出一個文字／圖片的拖曳影像 */
+html,
+body {
+  -webkit-touch-callout: none;
   -webkit-user-select: none;
   user-select: none;
-  -webkit-touch-callout: none;
   -webkit-tap-highlight-color: transparent;
 }
 
-/* 輸入框要能選、能貼上、能叫游標 —— 這是唯一的例外。 */
-.quiz-screen input,
-.quiz-screen textarea,
-.quiz-screen select,
-.quiz-screen [contenteditable="true"] {
+/* 這些元素在 iOS 上會自己長出 callout 或拖曳行為，逐一釘死，不靠繼承。 */
+a,
+button,
+img,
+svg,
+canvas,
+label,
+summary,
+.katex,
+.chip,
+[data-tex],
+[data-action],
+[data-board-action] {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+/* ── 例外：真的需要選取的地方 ───────────────────────────────
+   輸入框要能選、能貼上、能叫游標；法務頁與回報預覽是給人讀、
+   給人複製的文件，關掉選取只會讓人沒辦法引用。 */
+input,
+textarea,
+select,
+[contenteditable="true"],
+.legal-page,
+.legal-page *,
+.report-preview {
   -webkit-user-select: text;
   user-select: text;
   -webkit-touch-callout: default;
 }
 
-/* 工具列在 iPad 上要能連點不觸發雙擊縮放。 */
-.board-tools .icon-button,
-.quiz-screen .button,
-.quiz-screen .choice-option {
+/* 但法務頁裡的連結還是不要跳 callout —— 那是導覽，不是要複製的內容。 */
+.legal-page a {
+  -webkit-touch-callout: none;
+}
+
+/* 可點的東西在 iPad 上要能連點，不觸發雙擊縮放與 300ms 延遲。 */
+button,
+.button,
+.icon-button,
+.choice-option,
+.segment,
+.tag-button,
+[data-action],
+[data-board-action] {
   touch-action: manipulation;
 }
 

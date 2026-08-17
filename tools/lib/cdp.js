@@ -183,21 +183,28 @@ async function launch(options = {}) {
     return result.result.value;
   }
 
-  async function navigate(url) {
+  // options.appReady = false 時只等 document 就緒。
+  // 法務頁（privacy / terms / about / changelog）沒有 #app，
+  // 用預設的就緒判斷會一直等到逾時。
+  async function navigate(url, options = {}) {
     await send("Page.navigate", { url });
-    await waitForLoad();
+    await waitForLoad(15000, options.appReady !== false);
   }
 
   // 等到 app 真的把畫面畫出來，而不只是 DOMContentLoaded。
   // app.js 的 render 是 rAF 驅動的，document 就緒不代表畫面就緒。
-  async function waitForLoad(timeoutMs = 15000) {
+  async function waitForLoad(timeoutMs = 15000, appReady = true) {
     const deadline = Date.now() + timeoutMs;
     while (Date.now() < deadline) {
       try {
-        const ready = await evaluate(`
+        const ready = await evaluate(
+          appReady
+            ? `
           const app = document.getElementById("app");
           return document.readyState === "complete" && app && app.innerHTML.length > 500;
-        `);
+        `
+            : `return document.readyState === "complete" && document.body && document.body.innerHTML.length > 200;`
+        );
         if (ready) return true;
       } catch (_error) { /* 導覽中，再等 */ }
       await sleep(120);

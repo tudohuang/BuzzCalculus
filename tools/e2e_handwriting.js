@@ -227,6 +227,39 @@ async function run() {
       selection.screenSelect === "none",
       `user-select: ${selection.screenSelect}`
     );
+
+    // 第一版只把規則套在 .quiz-screen 上，於是頂欄、對話框、結算頁、題庫、
+    // 出卷頁全都還是選得到 —— 而使用者的手指跟筆碰得到的就是整個畫面。
+    // 這一條逐一走過那些「當初漏掉」的地方。
+    const everywhere = await chrome.evaluate(`
+      const spots = [
+        [".topbar", "頂欄"],
+        [".brand", "站名"],
+        [".nav-button", "分頁按鈕"],
+        [".problem-card", "題目卡"],
+        [".prompt", "題目本文"],
+        [".katex", "數學式"],
+        [".chip", "標籤"],
+        [".scratchboard-summary", "計算紙標題列"],
+        [".board-tools", "計算紙工具列"]
+      ];
+      const bad = [];
+      const seen = [];
+      spots.forEach(([selector, label]) => {
+        const el = document.querySelector(selector);
+        if (!el) return;
+        const style = getComputedStyle(el);
+        const value = style.userSelect || style.webkitUserSelect;
+        seen.push(label);
+        if (value !== "none") bad.push(label + "=" + value);
+      });
+      return { checked: seen.length, bad };
+    `);
+    check(
+      "整個畫面都不會被長按選取，不只作答區",
+      everywhere.bad.length === 0,
+      everywhere.bad.length ? `這些地方還選得到：${everywhere.bad.join("、")}` : `${everywhere.checked} 個位置都是 none`
+    );
     // -webkit-touch-callout 只有 Safari／iOS 認得，桌面 Chrome 的 computed style
     // 一律回空字串。所以這一條改成驗「規則有沒有出貨」，而不是驗「有沒有生效」——
     // 生效與否只能在真的 iPad 上看，但規則掉了這裡會紅。
@@ -439,6 +472,28 @@ async function run() {
       "全螢幕真的把書寫區變大",
       fullscreen.canvasHeight > fullscreen.viewportHeight * 0.5,
       `書寫區 ${fullscreen.canvasHeight}px / 視窗 ${fullscreen.viewportHeight}px`
+    );
+
+    /* ── 9.5 但法務頁還是要能複製 ── */
+    // 全站關掉選取之後最容易誤傷的就是這裡：一份不能複製、不能引用的隱私政策
+    // 本身就是一個信任訊號 —— 錯的那種。
+    await chrome.navigate(server.url + "/privacy.html", { appReady: false });
+    await chrome.sleep(500);
+    const legal = await chrome.evaluate(`
+      const body = getComputedStyle(document.body);
+      const para = document.querySelector(".legal-page p");
+      const link = document.querySelector(".legal-page a");
+      const val = (el) => { const s = getComputedStyle(el); return s.userSelect || s.webkitUserSelect; };
+      return {
+        bodySelect: body.userSelect || body.webkitUserSelect,
+        paraSelect: para ? val(para) : "(找不到段落)",
+        linkSelect: link ? val(link) : "(找不到連結)"
+      };
+    `);
+    check(
+      "隱私政策的內文還是選得起來",
+      legal.paraSelect === "text",
+      `body=${legal.bodySelect} / 內文=${legal.paraSelect} / 連結=${legal.linkSelect}`
     );
 
     /* ── 10. 全程不能有錯誤 ── */
