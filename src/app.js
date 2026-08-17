@@ -5222,7 +5222,13 @@
                 ${topicChip(current)}
                 <span class="chip">${difficultyBadge(current)}</span>
                 <span class="chip">${answerKindLabel(current.answerKind)}</span>
-                <span class="chip">${answerModeLabel(answerMode)}</span>
+                ${
+                  // 作圖表與選圖題不受本局的作答形式影響，
+                  // 標一個「選擇題」在旁邊只會讓人以為選錯模式了。
+                  ["graph", "worksheet"].includes(current.answerKind)
+                    ? ""
+                    : `<span class="chip">${answerModeLabel(answerMode)}</span>`
+                }
                 ${verifiedChip(current)}
               </div>
               <div class="prompt math-block" data-tex="${escapeAttr(current.prompt)}"></div>
@@ -5262,11 +5268,163 @@
   }
 
   function renderAnswerControls(problem) {
+    // 作圖表題有自己的作答介面（一張要填的表 + 手繪），不受作答形式影響。
+    if (problem.answerKind === "worksheet") return renderWorksheetControls(problem);
     // 選圖題只能用選的 —— 沒有辦法「打出一張圖」。
     // 所以它不受本局的作答形式影響，永遠走選項。
     if (problem.answerKind === "graph") return renderGraphChoiceControls(problem);
     if (quiz.answerMode === "choice") return renderChoiceControls(problem);
     return renderFreeAnswerControls(problem);
+  }
+
+  // ── 作圖表題 ──────────────────────────────────────────────────
+  //
+  // 給一個 f，要求把遞增／遞減、極大／極小、凹向上／凹向下、反曲點
+  // 逐格填進表格，最後在計算紙上把圖畫出來。
+  //
+  // 為什麼是一張表而不是七道獨立的題：**表格本身就是方法**。
+  // 課本教作圖的時候教的不是「會算 f′」，是「照順序把這些欄位填完，
+  // 圖形就浮出來了」。拆成七題各自答對，練不到那個順序感。
+  //
+  // 最後的手繪不判分 —— 沒辦法自動判一張手畫的圖。但送出之後會把
+  // 正確的圖畫在旁邊，讓使用者自己對照。**自己看出差在哪**，
+  // 比一個分數有用。
+
+  // 表格的每一格存在 quiz.worksheet[題號][欄位]。
+  // 送出時序列化成一個字串塞進 quiz.draft，這樣既有的紀錄、
+  // 錯題本、attemptLog 全部不用改就會動。
+  function worksheetDraft(problem) {
+    if (!quiz.worksheet) quiz.worksheet = {};
+    if (!quiz.worksheet[problem.id]) quiz.worksheet[problem.id] = {};
+    return quiz.worksheet[problem.id];
+  }
+
+  function serializeWorksheet(problem) {
+    const draft = worksheetDraft(problem);
+    return (problem.fields || [])
+      .map((field) => `${field.key}=${String(draft[field.key] || "").trim()}`)
+      .join("; ");
+  }
+
+  function parseWorksheet(problem, input) {
+    const out = {};
+    String(input || "").split(";").forEach((piece) => {
+      const at = piece.indexOf("=");
+      if (at < 0) return;
+      out[piece.slice(0, at).trim()] = piece.slice(at + 1).trim();
+    });
+    void problem;
+    return out;
+  }
+
+  // 每一格用對應型別的判分器分開判。
+  //
+  // 全對才算對 —— 作圖表的重點是「整張表有沒有一致」，
+  // 一格填錯就代表圖會畫錯。但回饋會逐格標出來，
+  // 所以使用者知道錯的是哪一格，而不是只知道「錯了」。
+  function checkWorksheet(problem, input) {
+    const values = parseWorksheet(problem, input);
+    const rows = (problem.fields || []).map((field) => {
+      const given = values[field.key] || "";
+      if (!given) return { field, given, correct: false, message: "沒有填" };
+      const sub = { answerKind: field.kind, answer: field.answer, answers: field.answers };
+      const result = checkAnswer(sub, given);
+      return { field, given, correct: result.correct, message: result.message };
+    });
+    const wrong = rows.filter((row) => !row.correct);
+    return {
+      correct: wrong.length === 0,
+      rows,
+      message: wrong.length === 0
+        ? "整張表都對了。對照一下你畫的圖。"
+        : `有 ${wrong.length} 格對不上：${wrong.map((row) => row.field.label).join("、")}`
+    };
+  }
+
+  function renderWorksheetControls(problem) {
+    const disabled = quiz.feedback ? "disabled" : "";
+    const draft = worksheetDraft(problem);
+    const graded = quiz.feedback ? checkWorksheet(problem, serializeWorksheet(problem)) : null;
+    const markFor = (key) => {
+      if (!graded) return "";
+      const row = graded.rows.find((entry) => entry.field.key === key);
+      if (!row) return "";
+      return row.correct
+        ? `<span class="ws-mark is-ok">${icon("check")}</span>`
+        : `<span class="ws-mark is-bad">${icon("x")}</span>`;
+    };
+    const answerFor = (key) => {
+      if (!graded) return "";
+      const row = graded.rows.find((entry) => entry.field.key === key);
+      if (!row || row.correct) return "";
+      return `<small class="ws-answer">正解 ${escapeHtml(row.field.answer || (row.field.answers || []).join(" / "))}</small>`;
+    };
+
+    return `
+      <section class="worksheet">
+        <table class="ws-table">
+          <caption class="sr-only">作圖表</caption>
+          <tbody>
+            ${(problem.fields || [])
+              .map(
+                (field) => `
+                  <tr>
+                    <th scope="row">
+                      ${escapeHtml(field.label)}
+                      ${field.note ? `<small>${escapeHtml(field.note)}</small>` : ""}
+                    </th>
+                    <td>
+                      <input class="ws-input" data-ws-field="${escapeAttr(field.key)}"
+                        value="${escapeAttr(draft[field.key] || "")}"
+                        placeholder="${escapeAttr(field.placeholder || worksheetPlaceholder(field.kind))}"
+                        autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" ${disabled} />
+                      ${answerFor(field.key)}
+                    </td>
+                    <td class="ws-mark-cell">${markFor(field.key)}</td>
+                  </tr>`
+              )
+              .join("")}
+          </tbody>
+        </table>
+        <p class="ws-hint">
+          區間寫成 <code>(-inf, -1) U (1, inf)</code>，集合寫成 <code>{-1, 1}</code>，沒有就填 <code>{}</code> 或 <code>無</code>。
+        </p>
+        ${
+          quiz.feedback
+            ? renderWorksheetSketchCompare(problem)
+            : `<p class="ws-sketch-cue">${icon("pen")}表格填完之後，在下面的計算紙上把圖畫出來 —— 送出後會顯示正確的圖讓你對照。</p>`
+        }
+        <form class="answer-panel ws-form" data-action="submit-answer">
+          <button class="button" type="submit" ${disabled}>${icon("send")}送出整張表</button>
+        </form>
+      </section>
+      ${renderScratchboard(problem, disabled, quiz.boardTool || "pen", Boolean(quiz.boardFullscreen), true, cloneBoardStrokes(problem.id).length)}
+    `;
+  }
+
+  function worksheetPlaceholder(kind) {
+    if (kind === "interval") return "例如 (-inf, 0) U (2, inf)";
+    if (kind === "set") return "例如 {-1, 1}，沒有就填 {}";
+    if (kind === "numeric") return "一個數";
+    return "";
+  }
+
+  // 送出之後把正確的圖畫出來。手繪不判分，但**看得到差在哪**才有意義。
+  function renderWorksheetSketchCompare(problem) {
+    const sketch = problem.sketch;
+    if (!sketch || !sketch.expr) return "";
+    return `
+      <div class="ws-compare">
+        <div>
+          <p class="section-label">正確的圖形</p>
+          ${renderMiniGraph(sketch.expr, sketch.window, sketch.domain)}
+        </div>
+        <p class="ws-compare-note">
+          跟你畫的比一下：極值的位置、凹向翻轉的那一點、兩端往哪裡去 ——
+          這三件事對了，圖就對了。
+        </p>
+      </div>
+    `;
   }
 
   // ── 選圖題 ────────────────────────────────────────────────────
@@ -6377,6 +6535,17 @@
     // 原本是每次 render 之後把畫面上**每一個** [data-action] 各綁一次 ——
     // 題庫頁一次就是好幾百個。那是每一次重繪都要付的固定成本，
     // 而且讓「只更新一小塊 DOM」變成不可能（新節點沒有監聽器）。
+
+    // 作圖表的每一格：改動時寫進 quiz.worksheet，並同步 quiz.draft ——
+    // 下游的紀錄、錯題本、attemptLog 都吃 quiz.draft，同步了就不用改它們。
+    app.querySelectorAll("[data-ws-field]").forEach((node) => {
+      node.addEventListener("input", () => {
+        const current = getCurrentProblem();
+        if (!quiz || !current) return;
+        worksheetDraft(current)[node.dataset.wsField] = node.value;
+        quiz.draft = serializeWorksheet(current);
+      });
+    });
 
     const form = app.querySelector('[data-action="submit-answer"]');
     if (form) {
@@ -9267,6 +9436,9 @@
     if (problem.answerKind === "graph") {
       return checkGraphChoice(problem, input);
     }
+    if (problem.answerKind === "worksheet") {
+      return checkWorksheet(problem, input);
+    }
     return { correct: false, message: "這個題型目前不能自動判分。" };
   }
 
@@ -9416,7 +9588,11 @@
 
   // "{1, -2, pi/3}" / "1, -2" / "x=1, x=-2" → [數值]
   function parseNumberSet(input) {
-    const cleaned = String(input || "")
+    const raw = String(input || "").trim();
+    // 空集合是一個**合法的答案**，不是格式錯誤。
+    // 「這個函數沒有極大值」必須表達得出來，而且不能被判成「你填錯格式」。
+    if (/^\{\s*\}$/.test(raw) || /^(無|沒有|none|empty|∅)$/i.test(raw)) return [];
+    const cleaned = raw
       .replace(/[{}]/g, "")
       .replace(/\b[a-zA-Z]\s*=/g, "")
       .trim();
@@ -9462,8 +9638,24 @@
     if (!pieces.length) return null;
     const parsed = [];
     for (const piece of pieces) {
-      const match = piece.match(/^([[(])([^,]*),([^\])]*)([\])])$/);
-      if (!match) return null;
+      // 端點本身可以含括號（sqrt(3)/3、log(2)），所以不能用
+      // 「不含 ) 的字元類」去抓 —— 那個寫法在 sqrt(3)/3 上直接失敗，
+      // 而使用者會看到「參考答案格式有問題」，明明是判分器讀不動。
+      // 改成：頭尾各取一個括號，中間按**深度 0 的逗號**切開。
+      const open = piece[0];
+      const close = piece[piece.length - 1];
+      if (!"([".includes(open) || !")]".includes(close) || piece.length < 4) return null;
+      const inner = piece.slice(1, -1);
+      let depth = 0;
+      let comma = -1;
+      for (let i = 0; i < inner.length; i += 1) {
+        const ch = inner[i];
+        if (ch === "(" || ch === "[") depth += 1;
+        else if (ch === ")" || ch === "]") depth -= 1;
+        else if (ch === "," && depth === 0) { comma = i; break; }
+      }
+      if (comma < 0) return null;
+      const match = [piece, open, inner.slice(0, comma), inner.slice(comma + 1), close];
       const lo = parseEndpoint(match[2]);
       const hi = parseEndpoint(match[3]);
       if (!Number.isFinite(lo) && lo !== -Infinity) return null;
@@ -11720,8 +11912,12 @@
       antiderivative: "原函數",
       text: "判定",
       set: "集合",
-      interval: "區間"
-    }[kind];
+      interval: "區間",
+      graph: "選圖",
+      worksheet: "作圖表"
+      // 少一個對應就會在題目上印出一個 undefined chip。
+      // 加新 answerKind 的時候這裡是最容易忘記的地方 —— 實測就漏了。
+    }[kind] || "";
   }
 
   function answerModeLabel(mode) {
@@ -12483,6 +12679,12 @@
   if (window.__BUZZ_TEST_HOOKS__) {
     window.__BUZZ_TEST_HOOKS__.api = {
       checkAnswer,
+      // 作圖表與選圖題的作答介面：smoke 要能直接 render 它們。
+      // 這兩個題型的失敗方式是「整張表根本沒出來」，而那用字串比對抓得到。
+      answerKindLabel,
+      renderWorksheetControls,
+      renderGraphChoiceControls,
+      checkWorksheet,
       checkNumeric,
       checkExpression,
       checkAntiderivative,

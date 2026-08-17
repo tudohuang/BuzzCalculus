@@ -6,7 +6,9 @@ const topics = new Set(["limits", "derivatives", "integrals", "series"]);
 // graph = 選圖題（答案是一條曲線的式子，選項本身是圖）。
 // 它的內部一致性由 tools/validate_graph_choices.js 另外把關 ——
 // 那些檢查（誘答要看得出差別、要寫錯在哪）在這裡驗不了。
-const answerKinds = new Set(["numeric", "expression", "antiderivative", "text", "set", "interval", "graph"]);
+// worksheet = 作圖表題（一張要填的表，每一格自己判分）。
+// 每一格的獨立驗算由 tools/validate_worksheets.js 把關。
+const answerKinds = new Set(["numeric", "expression", "antiderivative", "text", "set", "interval", "graph", "worksheet"]);
 const ids = new Set();
 const errors = [];
 const allowedRawWords = new Set([

@@ -200,13 +200,29 @@ function parseIntervals(text) {
     .map((piece) => piece.trim())
     .filter(Boolean)
     .map((piece) => {
-      const match = piece.match(/^([[(])\s*([^,]+)\s*,\s*([^\])]+)\s*([\])])$/);
-      if (!match) throw new Error(`區間 "${piece}" 讀不出來`);
+      // 端點本身可以含括號（sqrt(3)/3、log(2)），所以不能用「不含 ) 的字元類」
+      // 去抓下界與上界 —— 那個寫法在 sqrt(3)/3 上直接失敗。
+      // 頭尾各取一個括號，中間按**深度 0 的逗號**切開。
+      const open = piece[0];
+      const close = piece[piece.length - 1];
+      if (!"([".includes(open) || !")]".includes(close) || piece.length < 4) {
+        throw new Error(`區間 "${piece}" 讀不出來`);
+      }
+      const inner = piece.slice(1, -1);
+      let depth = 0;
+      let comma = -1;
+      for (let i = 0; i < inner.length; i += 1) {
+        const ch = inner[i];
+        if (ch === "(" || ch === "[") depth += 1;
+        else if (ch === ")" || ch === "]") depth -= 1;
+        else if (ch === "," && depth === 0) { comma = i; break; }
+      }
+      if (comma < 0) throw new Error(`區間 "${piece}" 找不到分隔的逗號`);
       return {
-        lo: parseBound(match[2]),
-        hi: parseBound(match[3]),
-        loClosed: match[1] === "[",
-        hiClosed: match[4] === "]"
+        lo: parseBound(inner.slice(0, comma)),
+        hi: parseBound(inner.slice(comma + 1)),
+        loClosed: open === "[",
+        hiClosed: close === "]"
       };
     })
     .sort((a, b) => a.lo - b.lo);
@@ -344,6 +360,42 @@ const METHODS = {
     return { kind: "interval", value: pieces.map((piece) => refineInterval(inDomain, piece, from, to, false, pieces.step)) };
   },
 
+  // 凹向上 / 凹向下：f″ 的符號。二階導數同樣是數值算的，題目不准提供。
+  concaveUp(spec) {
+    const f = latex.compile(spec.f, ["x"]);
+    const [from, to] = spec.range;
+    const up = (x) => {
+      const d2 = numeric.derivative(f, x, { order: 2 }).value;
+      return Number.isFinite(d2) && d2 > 0;
+    };
+    const pieces = intervalsWhere(up, from, to);
+    return { kind: "interval", value: pieces.map((piece) => refineInterval(up, piece, from, to, true, pieces.step)) };
+  },
+
+  concaveDown(spec) {
+    const f = latex.compile(spec.f, ["x"]);
+    const [from, to] = spec.range;
+    const down = (x) => {
+      const d2 = numeric.derivative(f, x, { order: 2 }).value;
+      return Number.isFinite(d2) && d2 < 0;
+    };
+    const pieces = intervalsWhere(down, from, to);
+    return { kind: "interval", value: pieces.map((piece) => refineInterval(down, piece, from, to, true, pieces.step)) };
+  },
+
+  // 極大值／極小值的位置。
+  //
+  // 不是「f′ 的根」而已 —— 還要用一階變號判斷是哪一種。
+  // 這樣「臨界點」與「極大值」就是兩個不同的答案，而那個區別本身
+  // 就是作圖表要考的東西（x⁴−4x³ 在 x=0 有臨界點但沒有極值）。
+  localMax(spec) {
+    return { kind: "set", value: extremaOf(spec, "max") };
+  },
+
+  localMin(spec) {
+    return { kind: "set", value: extremaOf(spec, "min") };
+  },
+
   increasing(spec) {
     const f = latex.compile(spec.f, ["x"]);
     const [from, to] = spec.range;
@@ -403,6 +455,28 @@ function refineInterval(predicate, [a, b], from, to, openAtBoundary, step) {
     loClosed: Number.isFinite(lo) && !openAtBoundary && predicate(lo),
     hiClosed: Number.isFinite(hi) && !openAtBoundary && predicate(hi)
   };
+}
+
+// 極值的位置：先找 f′ 的根，再用**一階變號**分類。
+//
+// 用一階變號而不是 f″ 的正負，是因為 f″=0 的時候二階判別法失效
+// （x⁴ 在 0 有極小值，但 f″(0)=0）。變號法沒有那個死角。
+function extremaOf(spec, want) {
+  const f = latex.compile(spec.f, ["x"]);
+  const [from, to] = spec.range;
+  const d = (x) => numeric.derivative(f, x).value;
+  const roots = rootsOf(d, from, to);
+  const gap = Math.max((to - from) / 2000, 1e-4);
+  const out = [];
+  roots.forEach((x) => {
+    const left = d(x - gap);
+    const right = d(x + gap);
+    if (!Number.isFinite(left) || !Number.isFinite(right)) return;
+    // 正 → 負 是極大，負 → 正 是極小。不變號的就兩者都不是。
+    if (want === "max" && left > 0 && right < 0) out.push(x);
+    if (want === "min" && left < 0 && right > 0) out.push(x);
+  });
+  return out;
 }
 
 /* ── 對外 ───────────────────────────────────────────────────── */

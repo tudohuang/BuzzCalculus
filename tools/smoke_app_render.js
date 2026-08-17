@@ -997,3 +997,70 @@ console.log(`Resume smoke: ${json.length} bytes for a 12-question exam, round-tr
 
   console.log(`校準包 smoke: ${pack.rows.length} 筆，欄位與去識別化都通過，自訂題已排除`);
 }
+
+// ── 作圖表題與選圖題的作答介面 ──────────────────────────────
+//
+// 這兩個題型的失敗方式是「整張表／四張圖根本沒出來」——
+// 那用字串比對抓得到，而且抓不到的話上線就是一個空白的作答區。
+{
+  const all = global.window.BUZZ_PROBLEMS || [];
+
+  const worksheet = all.find((p) => p.answerKind === "worksheet");
+  if (worksheet) {
+    api.setQuiz({
+      problems: [worksheet], index: 0, draft: "", answers: [], feedback: null,
+      startedAt: 1, boardStrokes: {}, worksheet: {}, choiceOptions: {}, hintsUsed: {}, boardTool: "pen"
+    });
+    const html = api.renderWorksheetControls(worksheet);
+    const rows = (html.match(/data-ws-field=/g) || []).length;
+    if (rows !== worksheet.fields.length) {
+      throw new Error(`作圖表 ${worksheet.id} 只 render 出 ${rows} 格，應該有 ${worksheet.fields.length} 格`);
+    }
+    if (!/data-blackboard|scratchboard/.test(html)) {
+      throw new Error("作圖表沒有附計算紙 —— 最後那一步是手繪，沒有紙就做不到");
+    }
+
+    // 判分的來回：全對要對，改壞一格要錯，而且要指出是哪一格
+    const right = worksheet.fields.map((f) => `${f.key}=${f.answer}`).join("; ");
+    const ok = api.checkWorksheet(worksheet, right);
+    if (!ok.correct) throw new Error(`作圖表的參考答案自己判不過：${ok.message}`);
+    const broken = worksheet.fields
+      .map((f, i) => `${f.key}=${i === 0 ? "(0, 1)" : f.answer}`)
+      .join("; ");
+    const bad = api.checkWorksheet(worksheet, broken);
+    if (bad.correct) throw new Error("改壞一格之後還是判對 —— 作圖表必須全對才算對");
+    if (!bad.message.includes(worksheet.fields[0].label)) {
+      throw new Error(`錯誤訊息沒有指出是哪一格：${bad.message}`);
+    }
+    const kinds = [...new Set(all.map((p) => p.answerKind))];
+    const missing = kinds.filter((kind) => !api.answerKindLabel || !api.answerKindLabel(kind));
+    if (api.answerKindLabel && missing.length) {
+      throw new Error(`這些 answerKind 沒有中文標籤，題目上會印出 undefined：${missing.join(", ")}`);
+    }
+
+    console.log(`作圖表 smoke: ${rows} 格 + 計算紙，全對判對、改壞一格判錯並指出「${worksheet.fields[0].label}」`);
+  }
+
+  const graph = all.find((p) => p.answerKind === "graph");
+  if (graph) {
+    api.setQuiz({
+      problems: [graph], index: 0, draft: "", answers: [], feedback: null,
+      startedAt: 1, choiceOptions: {}, hintsUsed: {}
+    });
+    const html = api.renderGraphChoiceControls(graph);
+    const svgs = (html.match(/<svg/g) || []).length;
+    if (svgs !== graph.graphChoices.length) {
+      throw new Error(`選圖題 ${graph.id} 只畫出 ${svgs} 張圖，應該有 ${graph.graphChoices.length} 張`);
+    }
+    if (!api.checkAnswer(graph, graph.answer).correct) {
+      throw new Error(`選圖題 ${graph.id} 的正解自己判不過`);
+    }
+    const wrong = graph.graphChoices.find((c) => !c.correct);
+    const verdict = api.checkAnswer(graph, wrong.expr);
+    if (verdict.correct) throw new Error("選圖題的誘答被判成對的");
+    if (verdict.message !== wrong.why) {
+      throw new Error(`答錯時沒有回傳那個誘答的理由：${verdict.message}`);
+    }
+    console.log(`選圖 smoke: ${svgs} 張圖，正解判對、誘答判錯並回傳它的理由`);
+  }
+}
