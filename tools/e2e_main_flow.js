@@ -311,6 +311,46 @@ async function run() {
       check(`「${label}」分頁看得見內容`, text.length > 80, `${text.length} 字`);
     }
 
+    /* ── 7.4 選擇題也要有計算紙 ── */
+    // 四個選項擺在那裡不代表答案用看的就看得出來 —— 算完才知道選哪個。
+    // 原本只有「自己寫」有紙，選擇題的人只能心算或去拿一張真的紙，
+    // 而後者代表他離開了這個畫面。
+    const choicePaper = await chrome.evaluate(`
+      ${HELPERS}
+      // 回到剛才那一局的作答畫面（選擇題模式）
+      window.__e2e.clickSelector('[data-action="home"]');
+      await new Promise((r) => setTimeout(r, 300));
+      window.__e2e.clickText("5 分鐘快刷") || window.__e2e.clickText("開始");
+      await new Promise((r) => setTimeout(r, 900));
+      const grid = document.querySelector(".choice-grid");
+      const toggle = document.querySelector('[data-board-action="toggle"]');
+      if (toggle) toggle.click();
+      await new Promise((r) => setTimeout(r, 500));
+      const canvas = document.querySelector("[data-blackboard]");
+      return {
+        isChoiceMode: Boolean(grid),
+        hasToggle: Boolean(toggle),
+        canvasVisible: Boolean(canvas && canvas.getBoundingClientRect().height > 40)
+      };
+    `);
+    if (choicePaper.isChoiceMode) {
+      check("選擇題也有計算紙", choicePaper.hasToggle, choicePaper.hasToggle ? "" : "選擇題的作答區沒有計算紙");
+      check("選擇題的計算紙攤得開", choicePaper.canvasVisible, choicePaper.canvasVisible ? "" : "點了展開但畫布沒有出現");
+    }
+
+    // 這一段開了一局，要離開才不會卡住後面的測試 ——
+    // 作答中的頂欄只有「離開」，沒有導覽。
+    await chrome.evaluate(`
+      ${HELPERS}
+      window.__e2e.clickSelector('[data-action="confirm-exit"]');
+      await new Promise((r) => setTimeout(r, 300));
+      window.__e2e.clickSelector('[data-action="finish-now"]');
+      await new Promise((r) => setTimeout(r, 700));
+      window.__e2e.clickSelector('[data-action="home"]');
+      await new Promise((r) => setTimeout(r, 500));
+      return Boolean(document.querySelector('[data-action="open-train"]'));
+    `);
+
     /* ── 7.5 出卷：老師要的那份紙 ── */
     // 出卷是家教與助教願意付錢的功能，而它的失敗方式全在渲染層：
     // 抽不到題、數學沒排版、答案印出內部格式（"2-pi^2/6" 而不是排好的算式）。
