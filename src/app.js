@@ -5398,7 +5398,7 @@
           <button class="button" type="submit" ${disabled}>${icon("send")}送出整張表</button>
         </form>
       </section>
-      ${renderScratchboard(problem, disabled, quiz.boardTool || "pen", Boolean(quiz.boardFullscreen), true, cloneBoardStrokes(problem.id).length)}
+      ${attachedScratchboard(problem, disabled)}
     `;
   }
 
@@ -5460,6 +5460,7 @@
       <div class="helper-row">
         <span>四張圖只有一張的 f′、f″ 與定義域全部對得上</span>
       </div>
+      ${attachedScratchboard(problem, disabled)}
     `;
   }
 
@@ -5667,6 +5668,20 @@
     return { label: "格式", className: "is-warning" };
   }
 
+  // 每一種作答介面都掛得上的計算紙。
+  //
+  // 原本只有「自己寫」跟作圖表有紙 —— 但選擇題一樣要算：
+  // 四個選項擺在那裡不代表答案用看的就看得出來，算完才知道選哪個。
+  // 沒有紙的話使用者要嘛心算、要嘛真的去拿一張紙，而後者代表他離開了這個畫面。
+  //
+  // 預設收合（有筆跡或使用者展開過才打開），所以不會把選項往下推。
+  function attachedScratchboard(problem, disabled) {
+    const strokes = cloneBoardStrokes(problem.id);
+    const fullscreen = Boolean(quiz.boardFullscreen);
+    const open = fullscreen || Boolean(quiz.boardOpen) || strokes.length > 0;
+    return renderScratchboard(problem, disabled, quiz.boardTool || "pen", fullscreen, open, strokes.length);
+  }
+
   function renderChoiceControls(problem) {
     const disabled = quiz.feedback ? "disabled" : "";
     const choices = getChoiceOptions(problem);
@@ -5689,15 +5704,16 @@
       </div>
       <div class="helper-row">
         <span>點選選項後會直接送出</span>
-        <span>選擇題仍使用原本答案檢查器判定</span>
+        <span>要算的話下面有計算紙</span>
       </div>
+      ${attachedScratchboard(problem, disabled)}
     `;
   }
 
   function renderRulesModal() {
     const ruleText = quiz && quiz.examMode
       ? `大考模式為整份 ${Math.round((quiz.examDurationSec || 0) / 60)} 分鐘倒數，全部題目自己輸入答案。時間到會直接交卷。中途切出去做別的事不會被記錄，也不會影響成績。`
-      : "每題都有自己的倒數與切分頁限制。超時、跳過、答案不等價或超過切分頁限制，都會記為錯題。系統會在答題後顯示簡短解法。";
+      : "每題都有自己的倒數。超時、跳過或答案不等價都會記為錯題。答題後會顯示簡短解法，而且每一題都附一張計算紙。";
     return `
       <div class="modal-backdrop" data-action="close-modal">
         <div class="modal" role="dialog" aria-modal="true" aria-labelledby="rules-title" data-modal>
