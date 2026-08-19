@@ -7,8 +7,27 @@ const root = path.join(__dirname, "..");
 const html = fs.readFileSync(path.join(root, "index.html"), "utf8");
 const sw = fs.readFileSync(path.join(root, "sw.js"), "utf8");
 
-const shippedScripts = [...html.matchAll(/src="(src\/[^"]+\.js)"/g)].map((m) => m[1]);
-const shippedStyles = [...html.matchAll(/href="(styles\.css|manifest\.webmanifest|assets\/[^"]+)"/g)].map((m) => m[1]);
+// 掃的是**每一個會部署出去的 HTML 頁**，不是只有 index.html。
+//
+// 原本只看 index.html，於是 workbook.html 新掛的 src/kernel/pricing.js 與
+// workbook_facts.js 沒有進 APP_SHELL 也沒有人叫 —— 離線時那一頁的購買區塊
+// 會永遠停在「載入中…」。這跟下面那段註解記錄的
+// 「privacy/terms/about/changelog 四頁通過了所有驗證卻沒被部署」是同一類錯：
+// 檢查的範圍比實際出貨的範圍小。
+const deployedPages = ["index.html", "workbook.html", "privacy.html", "terms.html", "about.html", "changelog.html"]
+  .filter((name) => fs.existsSync(path.join(root, name)));
+const pageSources = deployedPages.map((name) => ({ name, text: fs.readFileSync(path.join(root, name), "utf8") }));
+
+const collect = (pattern) => {
+  const found = new Set();
+  pageSources.forEach(({ text }) => {
+    [...text.matchAll(pattern)].forEach((m) => found.add(m[1]));
+  });
+  return [...found];
+};
+
+const shippedScripts = collect(/src="(src\/[^"]+\.js)"/g);
+const shippedStyles = collect(/href="(styles\.css|manifest\.webmanifest|assets\/[^"]+)"/g);
 const cached = new Set([...sw.matchAll(/"\.\/([^"]+)"/g)].map((m) => m[1]));
 
 const failures = [];

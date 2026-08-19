@@ -775,9 +775,39 @@ const counts = TOPICS.reduce((acc, topic) => {
 
 const parsedAnswers = orderedProblems.filter((problem) => answerTex(problem).startsWith("\\fitmath")).length;
 
-console.log(`Wrote ${path.relative(process.cwd(), outputFile)}`);
-console.log(JSON.stringify({
+// 作業本要開始賣了，所以「這本書裡有什麼」變成對外的商品說明，
+// 而商品說明寫錯就是不實陳述。把它寫成側表，銷售頁的數字從這裡來，
+// 由 tools/validate_public_claims.js 比對 —— 不讓人手動抄一次。
+const factsFile = path.join(__dirname, "..", "src", "kernel", "workbook_facts.js");
+const facts = {
   total: orderedProblems.length,
   counts,
-  answersTypesetAsMath: parsedAnswers
-}, null, 2));
+  answersTypesetAsMath: parsedAnswers,
+  examSets: EXAM_SET_COUNT,
+  // 章節數＝各主題的技巧分組（含綜合）加總，也就是目錄上看得到的小節數
+  sections: TOPICS.reduce((acc, topic) => acc + techniqueGroupsFor(topic.key).length, 0),
+  rankBands: (() => {
+    const bands = { r1r2: 0, r3r4: 0, r5r6: 0 };
+    orderedProblems.forEach((problem) => {
+      const rank = problemRank(problem);
+      if (rank <= 2) bands.r1r2 += 1;
+      else if (rank <= 4) bands.r3r4 += 1;
+      else bands.r5r6 += 1;
+    });
+    return bands;
+  })()
+};
+fs.writeFileSync(
+  factsFile,
+  "// 由 tools/generate_workbook.js 產生，不要手改。\n" +
+    "// 作業本的商品說明數字唯一來源；銷售頁抄的是這裡，CI 會比對。\n" +
+    "(function () {\n  \"use strict\";\n  const facts = " +
+    JSON.stringify(facts, null, 2).split("\n").join("\n  ") +
+    ";\n  if (typeof module !== \"undefined\" && module.exports) module.exports = facts;\n" +
+    "  if (typeof window !== \"undefined\") window.BuzzWorkbookFacts = facts;\n})();\n",
+  "utf8"
+);
+
+console.log(`Wrote ${path.relative(process.cwd(), outputFile)}`);
+console.log(`Wrote ${path.relative(process.cwd(), factsFile)}`);
+console.log(JSON.stringify(facts, null, 2));
