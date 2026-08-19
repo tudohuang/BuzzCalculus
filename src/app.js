@@ -5640,8 +5640,9 @@
                 ? `
                   <button class="icon-button ${boardTool === "pen" ? "is-active" : ""}" type="button" data-board-action="tool" data-tool="pen" title="筆" ${disabled}>${icon("pen")}</button>
                   <button class="icon-button ${boardTool === "eraser" ? "is-active" : ""}" type="button" data-board-action="tool" data-tool="eraser" title="橡皮擦" ${disabled}>${icon("eraser")}</button>
-                  <button class="icon-button" type="button" data-board-action="undo" title="復原上一筆" ${disabled}>${icon("undo")}</button>
-                  <button class="icon-button" type="button" data-board-action="clear" title="全部擦掉" ${disabled}>${icon("trash")}</button>
+                  <button class="icon-button" type="button" data-board-action="undo" title="復原上一筆（兩指點一下也可以）" ${disabled}>${icon("undo")}</button>
+                  <button class="icon-button" type="button" data-board-action="redo" title="重做" ${disabled}>${icon("redo")}</button>
+                  <button class="icon-button" type="button" data-board-action="clear" title="全部擦掉（可以重做救回來）" ${disabled}>${icon("trash")}</button>
                   <button class="icon-button" type="button" data-board-action="surface" title="${surfaceNext}" ${disabled}>${icon(surface === "paper" ? "moon" : "grid")}</button>
                   <button class="icon-button" type="button" data-board-action="fullscreen" title="${fullscreen ? "退出全螢幕" : "全螢幕書寫"}" ${disabled}>${icon(fullscreen ? "minimize" : "maximize")}</button>
                 `
@@ -5651,7 +5652,7 @@
         </div>
         ${
           boardOpen
-            ? `<canvas class="blackboard" data-blackboard data-surface="${surface}" data-problem-id="${escapeAttr(problem.id)}" aria-label="手寫計算紙"></canvas>`
+            ? `<canvas class="blackboard" data-blackboard data-surface="${surface}" data-tool="${escapeAttr(boardTool)}" data-problem-id="${escapeAttr(problem.id)}" aria-label="手寫計算紙"></canvas>`
             : ""
         }
         ${renderPreviousBoard(problem)}
@@ -10317,6 +10318,10 @@
     let currentStroke = null;
     let activePointerId = null;
     let lastPenAt = 0;
+    // 整筆共用一份 rect（見 blackboardPoint 的註解）。書寫中頁面不會捲動
+    // （touch-action:none + pointer capture），所以只要在落筆與尺寸變動時更新。
+    let cachedRect = null;
+    let captured = false;
 
     app.querySelectorAll("[data-board-action]").forEach((button) => {
       button.addEventListener("click", () => {
@@ -10338,6 +10343,7 @@
             node.classList.toggle("is-active", node.dataset.tool === quiz.boardTool);
             node.setAttribute("aria-pressed", node.dataset.tool === quiz.boardTool ? "true" : "false");
           });
+          if (canvas) canvas.dataset.tool = quiz.boardTool;
           return;
         }
         if (action === "fullscreen") {
@@ -10379,8 +10385,22 @@
         // 復原與清除不重繪整個畫面 —— render() 會把 canvas 整個換掉，
         // 於是一次「復原」要重畫全部筆畫，在 iPad 上看得出來卡一下。
         const strokes = getBoardStrokes(problemId);
-        if (action === "undo") strokes.pop();
-        if (action === "clear") strokes.length = 0;
+        if (action === "undo") {
+          const undone = strokes.pop();
+          if (undone) getBoardRedo(problemId).push(undone);
+        }
+        if (action === "redo") {
+          const restored = getBoardRedo(problemId).pop();
+          if (restored) strokes.push(restored);
+        }
+        if (action === "clear") {
+          // 清空也要能救回來 —— 一次點掉整頁計算是最痛的誤觸。
+          // 倒著推進堆疊，這樣一次一次重做會照原本的順序長回來；
+          // 順序不是小事：橡皮擦筆畫要蓋在它當初擦掉的那幾筆之後才對。
+          const removed = strokes.splice(0, strokes.length);
+          const redo = getBoardRedo(problemId);
+          for (let i = removed.length - 1; i >= 0; i -= 1) redo.push(removed[i]);
+        }
         if (canvas && ctx) drawBlackboard(canvas, ctx, problemId);
         updateBoardCount(strokes.length);
       });
@@ -10423,22 +10443,51 @@
       if (!acceptsPointer(event)) return;
       event.preventDefault();
       activePointerId = event.pointerId;
+      cachedRect = canvas.getBoundingClientRect();
+      captured = false;
       try {
         canvas.setPointerCapture(event.pointerId);
+        captured = true;
       } catch (_error) {
         // Safari 偶爾會在 capture 上丟例外，不影響書寫
       }
       currentStroke = {
         tool: quiz.boardTool || "pen",
-        points: [blackboardPoint(canvas, event)]
+        points: [blackboardPoint(canvas, event, cachedRect)]
       };
       const strokes = getBoardStrokes(problemId);
       strokes.push(currentStroke);
+      // 新的一筆會作廢重做堆疊 —— 分支的歷史留著只會讓「重做」跳到別的地方去。
+      clearBoardRedo(problemId);
       paintStrokeTail(canvas, ctx, currentStroke, true);
       updateBoardCount(strokes.length);
     });
 
-    canvas.addEventListener("pointermove", (event) => {
+    // 相鄰兩個取樣點近到看不出差別時就不收。
+    //
+    // 慢慢寫的時候（算數學本來就慢）觸控筆會在原地回報一堆抖動的座標，
+    // 那些點會被二次曲線放大成一段毛邊。門檻取次像素等級，
+    // 所以丟掉它們不會讓線變短或變鈍，只會少掉抖動 —— 順便省下點數。
+    const JITTER_PX = 0.6;
+
+    function pushSamples(samples) {
+      const box = cachedRect || canvas.getBoundingClientRect();
+      let added = false;
+      for (let index = 0; index < samples.length; index += 1) {
+        const point = blackboardPoint(canvas, samples[index], box);
+        const previous = currentStroke.points[currentStroke.points.length - 1];
+        if (previous) {
+          const dx = (point.x - previous.x) * box.width;
+          const dy = (point.y - previous.y) * box.height;
+          if (dx * dx + dy * dy < JITTER_PX * JITTER_PX) continue;
+        }
+        currentStroke.points.push(point);
+        added = true;
+      }
+      if (added) paintStrokeTail(canvas, ctx, currentStroke, false);
+    }
+
+    function onMove(event) {
       if (!currentStroke || event.pointerId !== activePointerId) return;
       event.preventDefault();
       // Pencil 一個 frame 可以產生四五個取樣點。只取 event 本身
@@ -10446,28 +10495,90 @@
       const batch = typeof event.getCoalescedEvents === "function"
         ? event.getCoalescedEvents()
         : [event];
-      const samples = batch && batch.length ? batch : [event];
-      for (let index = 0; index < samples.length; index += 1) {
-        currentStroke.points.push(blackboardPoint(canvas, samples[index]));
-      }
-      paintStrokeTail(canvas, ctx, currentStroke, false);
-    });
+      pushSamples(batch && batch.length ? batch : [event]);
+    }
+
+    // pointerrawupdate 是瀏覽器能給的最早的一手座標：它不等 rAF 的節奏，
+    // 一有新取樣就送，所以墨水會更貼著筆尖。Safari 目前沒有這個事件。
+    //
+    // 兩個都掛，不是二選一：只掛 rawupdate 會漏掉沒有實作它的瀏覽器，
+    // 只掛 move 就拿不到那段延遲。重複的取樣點由上面的 JITTER_PX 濾掉 ——
+    // rawupdate 之後緊接著的 pointermove 座標一模一樣，距離是 0，直接被丟掉。
+    if ("onpointerrawupdate" in canvas) canvas.addEventListener("pointerrawupdate", onMove);
+    canvas.addEventListener("pointermove", onMove);
 
     canvas.addEventListener("pointerup", endStroke);
     canvas.addEventListener("pointercancel", endStroke);
-    canvas.addEventListener("pointerleave", endStroke);
+    // 有 pointer capture 的時候指標離開畫布不會觸發 pointerleave，
+    // 而且也不該收筆 —— 寫到邊緣再回來是正常的事。
+    // 只有在 capture 失敗（Safari 偶爾會丟例外）時才需要靠 leave 收尾，
+    // 否則會在使用者只是寫過頭一點點的時候把筆畫切斷。
+    canvas.addEventListener("pointerleave", (event) => {
+      if (captured) return;
+      endStroke(event);
+    });
+
+    // 兩指點一下 = 復原。iPad 上的標準手勢（備忘錄、Procreate 都是這樣），
+    // 而且比去點工具列的小按鈕快得多 —— 寫錯一個符號的時候手不用離開紙面。
+    // 只認「沒有移動的短促點擊」，所以不會跟手掌或捲動搞混。
+    setupTwoFingerUndo(canvas, problemId, () => {
+      if (canvas && ctx) drawBlackboard(canvas, ctx, problemId);
+    });
 
     function endStroke(event) {
       if (!currentStroke || event.pointerId !== activePointerId) return;
       paintStrokeTail(canvas, ctx, currentStroke, true);
       currentStroke = null;
       activePointerId = null;
+      cachedRect = null;
+      captured = false;
       try {
         if (canvas.hasPointerCapture(event.pointerId)) canvas.releasePointerCapture(event.pointerId);
       } catch (_error) {
         // 同上
       }
     }
+  }
+
+  // ---- 復原 / 重做 ────────────────────────────────────────────
+  //
+  // 原本只有復原，而且是 strokes.pop() —— 按錯一下那一筆就永遠回不來了。
+  // 手寫的時候按錯是常態（手掌壓到、想擦卻按到復原），沒有重做等於
+  // 每一次誤觸都要重寫一行。
+
+  function getBoardRedo(problemId) {
+    if (!quiz.boardRedo) quiz.boardRedo = {};
+    if (!quiz.boardRedo[problemId]) quiz.boardRedo[problemId] = [];
+    return quiz.boardRedo[problemId];
+  }
+
+  function clearBoardRedo(problemId) {
+    if (quiz && quiz.boardRedo) quiz.boardRedo[problemId] = [];
+  }
+
+  function setupTwoFingerUndo(canvas, problemId, repaint) {
+    let touches = 0;
+    let startedAt = 0;
+    let moved = false;
+    canvas.addEventListener("touchstart", (event) => {
+      touches = event.touches.length;
+      if (touches === 2) {
+        startedAt = Date.now();
+        moved = false;
+      }
+    }, { passive: true });
+    canvas.addEventListener("touchmove", () => { moved = true; }, { passive: true });
+    canvas.addEventListener("touchend", (event) => {
+      if (touches !== 2 || moved || event.touches.length) return;
+      touches = 0;
+      if (Date.now() - startedAt > 400) return;
+      if (!quiz || quiz.feedback) return;
+      const strokes = getBoardStrokes(problemId);
+      const undone = strokes.pop();
+      if (undone) getBoardRedo(problemId).push(undone);
+      repaint();
+      updateBoardCount(strokes.length);
+    }, { passive: true });
   }
 
   // 筆畫數的標籤不需要整頁重繪才更新。
@@ -10572,16 +10683,25 @@
     return true;
   }
 
-  function blackboardPoint(canvas, event) {
-    const rect = canvas.getBoundingClientRect();
+  // rect 由呼叫端傳進來，不在這裡量。
+  //
+  // 這個函式在一次 pointermove 裡會被呼叫五到十次（coalesced 取樣），
+  // 而 getBoundingClientRect() 每一次都會逼瀏覽器重算版面。
+  // 一秒 120 次 move × 每次 8 個取樣 = 每秒近千次強制 layout，
+  // 全部發生在「使用者正在寫字」的那條路徑上。量一次、整筆共用就好。
+  function blackboardPoint(canvas, event, rect) {
+    const box = rect || canvas.getBoundingClientRect();
     // 座標存成 0–1 的比例，跟畫布尺寸無關 —— 這樣旋轉 iPad 或
     // 進出全螢幕之後，舊筆畫還畫得回原來的相對位置。
     return {
-      x: (event.clientX - rect.left) / Math.max(1, rect.width),
-      y: (event.clientY - rect.top) / Math.max(1, rect.height),
+      x: (event.clientX - box.left) / Math.max(1, box.width),
+      y: (event.clientY - box.top) / Math.max(1, box.height),
       // 滑鼠一律回報 0.5；Pencil 才有真的壓力。0 要當成沒有壓力資訊，
       // 不然用滑鼠或手指畫出來的線會細到看不見。
-      pressure: event.pressure > 0 ? event.pressure : 0.5
+      pressure: event.pressure > 0 ? event.pressure : 0.5,
+      // 是不是真的有壓感。沒有的話繪製端改用速度決定粗細 ——
+      // 否則手指和滑鼠畫出來會是一條從頭到尾等寬的死線。
+      pen: event.pointerType === "pen"
     };
   }
 
@@ -12594,6 +12714,7 @@
       pen: "pen-line",
       eraser: "eraser",
       undo: "undo-2",
+      redo: "redo-2",
       maximize: "maximize-2",
       minimize: "minimize-2",
       printer: "printer",

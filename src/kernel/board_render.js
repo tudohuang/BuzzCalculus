@@ -39,9 +39,46 @@
   // 再加一個絕對下限，避免任何情況下畫出看不見的線。
   const MIN_WIDTH_CSS = 1.6;
 
-  function widthOf(point, isEraser, base, ratio) {
+  // 沒有壓感的裝置改用速度決定粗細。
+  //
+  // 滑鼠、手指、以及不少便宜觸控筆一律回報固定壓力，於是畫出來是一條
+  // 從頭到尾等寬的線 —— 那看起來不像手寫，像用小畫家拉的。
+  // 寫得慢就粗、寫得快就細是所有手寫程式的替代方案，因為真實的筆本來
+  // 就是慢的時候墨積得多。距離是正規化座標（0–1），所以跟畫布大小無關。
+  const SPEED_SLOW = 0.002;
+  const SPEED_FAST = 0.022;
+
+  function clamp01(value) {
+    return value < 0 ? 0 : value > 1 ? 1 : value;
+  }
+
+  // 壓力在相鄰兩個取樣點之間可以跳很多（Pencil 尤其明顯），
+  // 直接拿來算寬度，線就會一節一節的。往回平均三點就順了 ——
+  // 而且不會有延遲，因為平均的都是已經到手的點，不需要等未來的取樣。
+  function smoothPressure(points, index) {
+    let total = 0;
+    let count = 0;
+    for (let i = index > 2 ? index - 2 : 0; i <= index; i += 1) {
+      total += points[i].pressure;
+      count += 1;
+    }
+    return count ? total / count : MIN_PRESSURE;
+  }
+
+  function widthAt(points, index, isEraser, base, ratio) {
     if (isEraser) return base;
-    const pressure = Math.max(MIN_PRESSURE, point.pressure);
+    const point = points[index];
+    // point.pen 是 2026-08 才開始寫入的欄位。舊筆跡沒有它 —— 一律走壓力路徑，
+    // 也就是跟改版前畫出來一模一樣，存下來的草稿不會因為升級而變樣。
+    if (point.pen === false && index > 0) {
+      const previous = points[index - 1];
+      const speed = Math.sqrt(
+        (point.x - previous.x) * (point.x - previous.x) + (point.y - previous.y) * (point.y - previous.y)
+      );
+      const fast = clamp01((speed - SPEED_SLOW) / (SPEED_FAST - SPEED_SLOW));
+      return Math.max(MIN_WIDTH_CSS * ratio, base * (1.3 - 0.65 * fast));
+    }
+    const pressure = Math.max(MIN_PRESSURE, smoothPressure(points, index));
     return Math.max(MIN_WIDTH_CSS * ratio, base * (0.5 + 1.1 * pressure));
   }
 
@@ -77,7 +114,7 @@
       if (!stroke.drawnTo) {
         const only = points[0];
         ctx.beginPath();
-        ctx.arc(only.x * canvas.width, only.y * canvas.height, widthOf(only, isEraser, base, ratio) / 2, 0, Math.PI * 2);
+        ctx.arc(only.x * canvas.width, only.y * canvas.height, widthAt(points, 0, isEraser, base, ratio) / 2, 0, Math.PI * 2);
         ctx.fill();
         stroke.drawnTo = 1;
       }
@@ -99,7 +136,7 @@
       const from = mid(previous, control);
       const to = mid(control, next);
       ctx.beginPath();
-      ctx.lineWidth = widthOf(control, isEraser, base, ratio);
+      ctx.lineWidth = widthAt(points, index, isEraser, base, ratio);
       ctx.moveTo(from.x, from.y);
       ctx.quadraticCurveTo(px(control), py(control), to.x, to.y);
       ctx.stroke();
@@ -120,7 +157,7 @@
       const beforeLast = points[points.length - 2];
       const from = mid(beforeLast, last);
       ctx.beginPath();
-      ctx.lineWidth = widthOf(last, isEraser, base, ratio);
+      ctx.lineWidth = widthAt(points, points.length - 1, isEraser, base, ratio);
       ctx.moveTo(from.x, from.y);
       ctx.lineTo(px(last), py(last));
       ctx.stroke();

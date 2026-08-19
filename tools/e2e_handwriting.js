@@ -480,6 +480,86 @@ async function run() {
       `「${undone.labelBefore}」→「${undone.labelAfter}」`
     );
 
+    /* ── 7.5 重做：誤觸復原之後救得回來 ── */
+    // 原本只有復原，而且是 pop() —— 按錯一下那一筆就永遠沒了。
+    // 手寫時誤觸是常態（想按橡皮擦按到復原、手掌壓到），
+    // 沒有重做的話每一次誤觸都要重寫一整行。
+    const redone = await chrome.evaluate(`
+      ${PEN}
+      const before = window.__pen.inkPixels();
+      const button = document.querySelector('[data-board-action="redo"]');
+      if (!button) return { missing: true };
+      button.click();
+      await new Promise((r) => setTimeout(r, 300));
+      const afterRedo = window.__pen.inkPixels();
+      // 再清空一次，然後看重做能不能把整頁救回來
+      document.querySelector('[data-board-action="clear"]').click();
+      await new Promise((r) => setTimeout(r, 300));
+      const cleared = window.__pen.inkPixels();
+      let guard = 0;
+      while (guard < 40 && document.querySelector('[data-board-action="redo"]')) {
+        document.querySelector('[data-board-action="redo"]').click();
+        guard += 1;
+        await new Promise((r) => setTimeout(r, 40));
+      }
+      return { missing: false, before, afterRedo, cleared, restored: window.__pen.inkPixels() };
+    `);
+    if (redone.missing) {
+      check("重做救得回被復原的筆畫", false, "工具列上沒有重做按鈕");
+    } else {
+      check("重做救得回被復原的筆畫", redone.afterRedo !== redone.before,
+        `${redone.before} → ${redone.afterRedo} 個墨水像素`);
+      check("清空之後也救得回來", redone.cleared === 0 && redone.restored > 0,
+        `清空後 ${redone.cleared} → 重做後 ${redone.restored} 個墨水像素`);
+    }
+
+    /* ── 7.6 沒有壓感的裝置，線寬要隨速度變 ── */
+    // 滑鼠和手指一律回報固定壓力，所以壓感那條路徑對它們是死的 ——
+    // 畫出來會是一條從頭到尾等寬的線，看起來不像手寫。
+    // 慢＝粗、快＝細是標準的替代方案，這裡用「同一段距離、取樣點多寡不同」
+    // 來製造快慢：取樣點密＝寫得慢。
+    const speedWidth = await chrome.evaluate(`
+      ${PEN}
+      // 前一段測的是橡皮擦，工具還停在橡皮擦上 —— 不切回筆的話這裡畫的兩筆
+      // 都是在擦（畫布上又是空的），量到的會是「兩邊都 0」。
+      document.querySelector('[data-board-action="tool"][data-tool="pen"]').click();
+      document.querySelector('[data-board-action="clear"]').click();
+      // 前面全是筆的事件，防手掌的窗格還沒過 —— 這時候的觸控會被整批當成手掌丟掉。
+      await new Promise((r) => setTimeout(r, 900));
+      // 慢：同樣長度切 60 段
+      window.__pen.stroke(0.1, 0.3, 0.9, 0.3, { pointerType: "touch", steps: 60 });
+      await new Promise((r) => setTimeout(r, 200));
+      const slow = window.__pen.inkPixels();
+      document.querySelector('[data-board-action="clear"]').click();
+      await new Promise((r) => setTimeout(r, 200));
+      // 快：同樣長度只切 6 段
+      window.__pen.stroke(0.1, 0.3, 0.9, 0.3, { pointerType: "touch", steps: 6 });
+      await new Promise((r) => setTimeout(r, 200));
+      return { slow, fast: window.__pen.inkPixels() };
+    `);
+    // 門檻取 1.4：關掉這個功能時兩者的比值是 1.08（取樣點多寡本身就會讓
+    // 平滑後的路徑差一點），開著的時候是 2.1。1.05 那種門檻兩邊都會過，
+    // 等於這條斷言什麼都沒測到。
+    check("沒有壓感的裝置改用速度決定粗細", speedWidth.slow > speedWidth.fast * 1.4,
+      `慢 ${speedWidth.slow} vs 快 ${speedWidth.fast} 個墨水像素（比值 ${(speedWidth.slow / Math.max(1, speedWidth.fast)).toFixed(2)}）`);
+
+    /* ── 7.7 橡皮擦看得到範圍 ── */
+    // 橡皮擦有 20px 寬，但十字游標完全看不出它會吃到哪裡，
+    // 於是使用者只能試擦一下再看結果。
+    const eraserCursor = await chrome.evaluate(`
+      ${PEN}
+      document.querySelector('[data-board-action="tool"][data-tool="eraser"]').click();
+      await new Promise((r) => setTimeout(r, 200));
+      const canvas = window.__pen.canvas();
+      const asEraser = getComputedStyle(canvas).cursor;
+      document.querySelector('[data-board-action="tool"][data-tool="pen"]').click();
+      await new Promise((r) => setTimeout(r, 200));
+      return { asEraser, asPen: getComputedStyle(canvas).cursor, tool: canvas.dataset.tool };
+    `);
+    check("換到橡皮擦時游標看得出擦拭範圍",
+      /url\(/.test(eraserCursor.asEraser) && eraserCursor.asEraser !== eraserCursor.asPen,
+      `橡皮擦 ${String(eraserCursor.asEraser).slice(0, 28)}… / 筆 ${eraserCursor.asPen}`);
+
     /* ── 8. 換成黑板，墨水顏色要跟著換 ── */
     const surfaced = await chrome.evaluate(`
       ${PEN}

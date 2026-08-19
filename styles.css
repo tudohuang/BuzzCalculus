@@ -2064,6 +2064,9 @@ button,
   border: 1px solid var(--line-strong);
   border-radius: var(--radius);
   cursor: crosshair;
+  /* 橡皮擦是 20px 寬的，但十字游標完全看不出它會吃到哪裡 ——
+     於是使用者只能試擦一下再看結果。游標換成一個同樣大小的圈，
+     擦之前就知道範圍。用 SVG data URI 是因為 CSP 擋掉所有外部資源。 */
   /* 手寫時不要讓瀏覽器搶走手勢去捲動或縮放 */
   touch-action: none;
   -webkit-user-select: none;
@@ -2090,6 +2093,14 @@ button,
   background-color: #11130f;
   border-color: #20211f;
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+
+.blackboard[data-tool="eraser"][data-surface="paper"] {
+  cursor: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24'%3E%3Ccircle cx='12' cy='12' r='10' fill='rgba(255,255,255,0.55)' stroke='%231d2b3a' stroke-width='1.5'/%3E%3C/svg%3E") 12 12, crosshair;
+}
+
+.blackboard[data-tool="eraser"][data-surface="board"] {
+  cursor: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24'%3E%3Ccircle cx='12' cy='12' r='10' fill='rgba(0,0,0,0.45)' stroke='%23fff8de' stroke-width='1.5'/%3E%3C/svg%3E") 12 12, crosshair;
 }
 
 .helper-row {
