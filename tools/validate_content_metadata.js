@@ -131,13 +131,13 @@ problems.forEach((problem) => {
     if (match) fail(`app.js 把題數寫死成「${match[1]} 題」—— 要改成從題庫算`);
   });
 
-  const readme = fs.readFileSync(path.join(__dirname, "..", "README.md"), "utf8");
-  const totalMatch = readme.match(/\|\s*\*\*Total\*\*\s*\|\s*\*\*(\d+)\*\*\s*\|/);
-  if (!totalMatch) {
-    fail("README.md 的 Problem Coverage 表格找不到 Total");
-  } else if (Number(totalMatch[1]) !== problems.length) {
-    fail(`README.md 寫 ${totalMatch[1]} 題，實際 ${problems.length} 題`);
-  }
+  // README 的題數改由 tools/validate_public_claims.js 把關。
+  //
+  // 原本這裡用正規式去撈 Problem Coverage 表格的 Total。它只看得到總數，
+  // 而且看不到 about.html —— 那一頁寫著「1,459 題、774 題通過驗算」，
+  // 實際是 1,605 與 906，漂了整整一包題還沒有人發現。
+  // 新的那一支管所有對外頁面、每一個分項數字，用 data-claim / <!--claim:--> 標記，
+  // 不是猜排版。兩邊都留著只會讓標記語法一改就有一支莫名其妙地紅。
 }
 
 /* ── 報告 ─────────────────────────────────────────────────── */
