@@ -1,12 +1,23 @@
 const fs = require("fs");
 const path = require("path");
 
-global.window = {};
-require("./lib/load_problem_sources.js")();
+// 透過 app_api 載入，不要直接用 load_problem_sources。
+//
+// 差別是 kernel 有沒有被載進來。難度校準要用 src/kernel/rubric.js 的三軸
+// 才算得出正式的 rank；rubric 沒載到的時候它會退回舊的標籤地板演算法，
+// 而那個演算法把全庫 29% 標成 R6（461 題），正式的三軸是 5%（83 題）。
+//
+// 也就是說：這本 316 頁的書，每一頁的難度徽章、章節內的排序（rank 是排序鍵）、
+// 封面的難度分佈，全部印的是那個已經被換掉的舊演算法的結果 ——
+// 而 about.html 正在對外宣稱「難度由三個獨立的軸決定，不是憑感覺標」。
+// 這是要收錢的東西，標錯難度不是排版瑕疵。
+//
+// app_api.js:104 早就寫下了這個陷阱的說明，只是工作簿沒有照做。
+const appApi = require("./lib/app_api.js");
 
 // 工作簿是純微積分產品：理科秒殺包（physics / chemistry）不收錄。
 const SCIENCE_TOPICS = new Set(["physics", "chemistry"]);
-const problems = (window.BUZZ_PROBLEMS || []).filter((problem) => !SCIENCE_TOPICS.has(problem.topic));
+const problems = appApi.allProblems().filter((problem) => !SCIENCE_TOPICS.has(problem.topic));
 
 const TOPICS = [
   { key: "limits", label: "極限", subtitle: "Limits" },

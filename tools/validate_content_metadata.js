@@ -138,6 +138,32 @@ problems.forEach((problem) => {
   // 實際是 1,605 與 906，漂了整整一包題還沒有人發現。
   // 新的那一支管所有對外頁面、每一個分項數字，用 data-claim / <!--claim:--> 標記，
   // 不是猜排版。兩邊都留著只會讓標記語法一改就有一支莫名其妙地紅。
+
+  // 產出「給人看的東西」的工具必須經過 app_api 載題庫，不能直接用
+  // load_problem_sources。
+  //
+  // 差別在 kernel 有沒有被載進來：難度校準要 src/kernel/rubric.js 的三軸
+  // 才算得出正式 rank，rubric 沒載到就退回舊的標籤地板演算法 ——
+  // 那個演算法把 29% 的題標成 R6（461 題），三軸的答案是 5%（83 題）。
+  //
+  // 工作簿就是這樣錯了一整本：316 頁的難度徽章、章節內排序、封面的難度分佈，
+  // 印的全是已經被換掉的舊演算法。而它是要拿來賣的東西，
+  // about.html 同時在對外說「難度由三個獨立的軸決定」。
+  //
+  // 失敗方式是安靜的（fallback 本來就該安靜，它是給 kernel 壞掉時用的），
+  // 所以只能在這裡擋。
+  const USER_FACING_GENERATORS = ["generate_workbook.js"];
+  USER_FACING_GENERATORS.forEach((name) => {
+    const file = path.join(__dirname, name);
+    if (!fs.existsSync(file)) return;
+    const source = fs.readFileSync(file, "utf8");
+    const bare = source
+      .split("\n")
+      .some((line) => !line.trim().startsWith("//") && /require\(["'][^"']*load_problem_sources/.test(line));
+    if (bare) {
+      fail(`tools/${name} 直接用 load_problem_sources 載題庫 —— 這樣 kernel 不會載入，難度會退回舊演算法。改用 app_api.allProblems()`);
+    }
+  });
 }
 
 /* ── 報告 ─────────────────────────────────────────────────── */
