@@ -12317,11 +12317,27 @@
     return true;
   }
 
+  // 這一段 tex 攤開來大概佔幾個字元寬。
+  //
+  // 不能直接用 tex.length：中文題幹的每個字是 1 個字元但佔 2 欄，
+  // 而 \text{ } 這種包裝又幾乎不佔畫面。所以「長 5 公尺的梯子靠牆，
+  // 底端以每秒 1 公尺遠離牆…」量起來只有 78 字元 —— 低於門檻，
+  // 於是不換行，然後在畫面上撐出一條要橫向捲動才看得完的長條。
+  // 應用情境題幾乎全長這樣，所以要量的是「看起來多寬」，不是原始字串多長。
+  function texVisualWidth(tex) {
+    let width = 0;
+    splitLongTex(tex).forEach((seg) => {
+      const body = seg.text !== undefined ? seg.text : seg.math;
+      for (const ch of body) width += /[ᄀ-ᅟ⺀-꓏가-힣豈-﫿︰-﹏＀-｠￠-￦]/.test(ch) ? 2 : 1;
+    });
+    return width;
+  }
+
   function renderMathNode(node, displayMode) {
     const tex = node.dataset.tex || "";
-    // Long-form prompts (達摩院長題 etc.) wrap onto multiple lines instead of
-    // forcing a horizontal scrollbar; the card grows with the content.
-    const longform = displayMode && tex.length > 90;
+    // Long-form prompts (達摩院長題、應用情境題 etc.) wrap onto multiple lines
+    // instead of forcing a horizontal scrollbar; the card grows with the content.
+    const longform = displayMode && texVisualWidth(tex) > 72;
     node.classList.toggle("is-long-tex", longform);
     if (longform && window.katex && renderLongTexFlow(node, tex)) return;
     if (window.katex) {

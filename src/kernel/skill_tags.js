@@ -125,6 +125,8 @@
     "cx-int-003": ["integral.basic"],
     "cx-int-004": ["integral.trigsub"],
     "cx-int-006": ["integral.basic"],
+    "dd-inv-005": ["diff.basic"],
+    "dd-inv-007": ["diff.basic"],
     "depth-int-011": ["integral.partialfrac"],
     "depth-int-015": ["integral.partialfrac"],
     "der-001": ["diff.basic"],

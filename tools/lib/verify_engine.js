@@ -566,6 +566,7 @@ const EXPLICIT_METHODS = {
     const f = latex.compile(spec.f, names);
     const wantMax = spec.kind === "max";
     let best = wantMax ? -Infinity : Infinity;
+    let bestPoint = null;
     const starts = [0, 1, -1, 2.5, -2.5, 0.3];
     for (const seed of starts) {
       let point = names.map((_, i) => seed + i * 0.37);
@@ -581,20 +582,33 @@ const EXPLICIT_METHODS = {
         if (stepSize < 1e-14) break;
       }
       const value = f(...point);
-      if (Number.isFinite(value) && (wantMax ? value > best : value < best)) best = value;
+      if (Number.isFinite(value) && (wantMax ? value > best : value < best)) {
+        best = value;
+        bestPoint = point;
+      }
+    }
+    // spec.arg 給了就回傳「在哪裡取到」而不是「取到多少」——
+    // 最佳化題常問的是尺寸（盒高、罐半徑），不是那個極值本身。
+    if (spec.arg !== undefined) {
+      if (!bestPoint) throw new Error("找不到極值點");
+      return bestPoint[spec.arg];
     }
     return best;
   },
 
   // 方程式的根（隱函數微分、牛頓法題型）
+  //
+  // spec.n 給了就只跑 n 次迭代，不跑到收斂 —— 牛頓法題目問的是「第一步跑到哪」，
+  // 那個中間值才是答案。導數一律用數值微分算，所以作者手推的 f′ 錯了會被抓到。
   root: (spec) => {
     const f = latex.compile(spec.f, ["x"]);
     let x = spec.x0 === undefined ? 1 : spec.x0;
-    for (let i = 0; i < 200; i += 1) {
+    const limit = spec.n === undefined ? 200 : spec.n;
+    for (let i = 0; i < limit; i += 1) {
       const slope = numeric.derivative(f, x).value;
       if (!Number.isFinite(slope) || slope === 0) break;
       const next = x - f(x) / slope;
-      if (Math.abs(next - x) < 1e-14) return next;
+      if (spec.n === undefined && Math.abs(next - x) < 1e-14) return next;
       x = next;
     }
     return x;
@@ -621,6 +635,79 @@ const EXPLICIT_METHODS = {
     const point = spec.at.map((value) => latex.compile(String(value), [])());
     const index = spec.wrt === undefined ? 0 : names.indexOf(spec.wrt);
     return numeric.partial((...args) => f(...args), point, index, { order: spec.order || 1 }).value;
+  },
+
+  /* ── 以下五個是微分應用題專用的驗算路徑（2026-08 補） ────────────
+     這幾類題目原本一支都驗不了：題幹是一段文字敘述，自動辨識器讀不出
+     結構，而 value/deriv 又只能比對「作者自己寫下來的式子」——
+     那等於把答案抄兩遍，驗不到任何東西。
+     共同原則：驗算端一律走數值路徑，不重複作者的代數。          */
+
+  // 隱函數的 dy/dx：完全不用隱微分公式。
+  // 在 x 附近解 F(x, y)=0 得到 y(x)（牛頓法），再對這個「解出來的函數」
+  // 做數值微分 —— 和「兩邊微分再解 y′」共用不到任何一步。
+  implicit: (spec) => {
+    const F = latex.compile(spec.F, ["x", "y"]);
+    const x0 = latex.compile(String(spec.at[0]), [])();
+    const y0 = latex.compile(String(spec.at[1]), [])();
+    if (Math.abs(F(x0, y0)) > 1e-8) {
+      throw new Error(`(${spec.at[0]}, ${spec.at[1]}) 不在曲線上，F = ${format(F(x0, y0))}`);
+    }
+    const solveY = (x) => {
+      let y = y0;
+      for (let i = 0; i < 200; i += 1) {
+        const slope = numeric.derivative((t) => F(x, t), y).value;
+        if (!Number.isFinite(slope) || slope === 0) break;
+        const next = y - F(x, y) / slope;
+        if (!Number.isFinite(next)) break;
+        y = next;
+        if (Math.abs(F(x, y)) < 1e-13) break;
+      }
+      return y;
+    };
+    return numeric.derivative(solveY, x0).value;
+  },
+
+  // 反函數的導數：不套 (f^{-1})′(b) = 1/f′(a)，而是先解 f(x)=b 找出 a，
+  // 再數值微分。作者最常錯的是「f(a)=b 這件事本身」，這樣才抓得到。
+  inverseDeriv: (spec) => {
+    const f = latex.compile(spec.f, ["x"]);
+    const target = latex.compile(String(spec.at), [])();
+    let x = spec.x0 === undefined ? 1 : spec.x0;
+    for (let i = 0; i < 200; i += 1) {
+      const slope = numeric.derivative(f, x).value;
+      if (!Number.isFinite(slope) || slope === 0) break;
+      const next = x - (f(x) - target) / slope;
+      if (Math.abs(next - x) < 1e-14) { x = next; break; }
+      x = next;
+    }
+    if (Math.abs(f(x) - target) > 1e-8) throw new Error(`解不出 f(x)=${spec.at}`);
+    return 1 / numeric.derivative(f, x).value;
+  },
+
+  // 參數式的 dy/dx：兩支都數值微分再相除。
+  paramSlope: (spec) => {
+    const x = latex.compile(spec.x, ["t"]);
+    const y = latex.compile(spec.y, ["t"]);
+    const at = latex.compile(String(spec.at), [])();
+    return numeric.derivative(y, at).value / numeric.derivative(x, at).value;
+  },
+
+  // 線性近似的估計值 f(a) + f′(a)·dx。f′ 由數值微分給，
+  // 所以驗的是「作者的 f′(a) 對不對」，不是把估計式再抄一遍。
+  linApprox: (spec) => {
+    const f = latex.compile(spec.f, ["x"]);
+    const a = latex.compile(String(spec.a), [])();
+    const dx = latex.compile(String(spec.dx), [])();
+    return f(a) + numeric.derivative(f, a).value * dx;
+  },
+
+  // 微分（誤差傳遞）df = f′(a)·dx
+  differential: (spec) => {
+    const f = latex.compile(spec.f, ["x"]);
+    const a = latex.compile(String(spec.a), [])();
+    const dx = latex.compile(String(spec.dx), [])();
+    return numeric.derivative(f, a).value * dx;
   }
 };
 

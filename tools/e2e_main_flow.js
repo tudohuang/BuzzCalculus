@@ -351,6 +351,59 @@ async function run() {
       return Boolean(document.querySelector('[data-action="open-train"]'));
     `);
 
+    /* ── 7.4 情境題的長題幹要折行 ── */
+    // 應用題的題幹是一整段中文敘述，不是一條算式。它必須折行，
+    // 不能變成一條要橫向拖曳才看得完的長條。
+    //
+    // 這條斷言擋的是一個「量錯」的門檻：折行原本看 tex.length > 90，
+    // 但中文一個字只佔一個字元卻佔兩欄寬，梯子那題量起來只有 78 —— 於是不折行，
+    // 使用者只看得到「長 5 公尺的梯子靠牆，底端以每秒 1 公尺遠」。
+    // 字串比對抓不到這種事：DOM 裡的字是全的，壞掉的是版面。
+    // 所以這裡真的從題庫開一題出來量 scrollWidth。
+    const proseWrap = await chrome.evaluate(`
+      ${HELPERS}
+      const story = (window.BUZZ_PROBLEMS || []).find((p) => /^dd-rr-/.test(p.id));
+      if (!story) return { missing: true };
+      window.__e2e.clickSelector('[data-action="open-library"]');
+      await new Promise((r) => setTimeout(r, 500));
+      const search = document.querySelector("[data-library-search]");
+      if (!search) return { missing: true };
+      search.value = story.id;
+      search.dispatchEvent(new Event("input", { bubbles: true }));
+      await new Promise((r) => setTimeout(r, 700));
+      const started = window.__e2e.clickSelector('[data-action="start-problem"][data-problem-id="' + story.id + '"]');
+      await new Promise((r) => setTimeout(r, 1200));
+      const node = document.querySelector(".quiz-screen .prompt[data-tex]");
+      if (!started || !node) return { missing: true };
+      // 量兩件事：有沒有走折行渲染（跟視窗寬度無關），以及此刻有沒有橫向溢出。
+      // 只量溢出的話，測試機的視窗夠寬就會漏掉 —— 手機和 iPad 才是真正會爆的地方。
+      return {
+        id: story.id,
+        flowed: node.querySelectorAll(".long-tex-text").length,
+        overflow: node.scrollWidth - node.clientWidth,
+        shown: (node.textContent || "").replace(/\\s+/g, " ").trim().slice(0, 30)
+      };
+    `);
+    if (proseWrap.missing) {
+      check("情境題的長題幹會折行，不是橫向捲動", false, "開不出情境題，這條沒測到");
+    } else {
+      const wrapped = proseWrap.flowed > 0 && proseWrap.overflow <= 2;
+      check("情境題的長題幹會折行，不是橫向捲動", wrapped,
+        wrapped
+          ? `${proseWrap.id} 切成 ${proseWrap.flowed} 段文字流，溢出 ${proseWrap.overflow}px`
+          : `${proseWrap.id} 沒有走折行渲染（文字流 ${proseWrap.flowed} 段、溢出 ${proseWrap.overflow}px），窄畫面上會變成要橫拖的長條`);
+    }
+    await chrome.evaluate(`
+      ${HELPERS}
+      window.__e2e.clickSelector('[data-action="confirm-exit"]');
+      await new Promise((r) => setTimeout(r, 300));
+      window.__e2e.clickSelector('[data-action="finish-now"]');
+      await new Promise((r) => setTimeout(r, 700));
+      window.__e2e.clickSelector('[data-action="home"]');
+      await new Promise((r) => setTimeout(r, 500));
+      return true;
+    `);
+
     /* ── 7.5 出卷：老師要的那份紙 ── */
     // 出卷是家教與助教願意付錢的功能，而它的失敗方式全在渲染層：
     // 抽不到題、數學沒排版、答案印出內部格式（"2-pi^2/6" 而不是排好的算式）。
