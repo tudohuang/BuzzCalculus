@@ -43,6 +43,18 @@ function verifiedCount() {
 
 const grouped = (key) => problems.filter((p) => p.topic === key).length;
 
+// 作業本的商品說明數字。來源是 tools/generate_workbook.js 寫出來的側表，
+// 不是人抄的 —— 商品說明寫錯就是不實陳述，而題庫每擴充一次它就會漂。
+const facts = (() => {
+  const file = path.join(root, "src/kernel/workbook_facts.js");
+  return fs.existsSync(file) ? require(file) : null;
+})();
+const pricing = (() => {
+  const file = path.join(root, "src/kernel/pricing.js");
+  return fs.existsSync(file) ? require(file) : null;
+})();
+const fact = (pick) => () => (facts ? pick(facts) : null);
+
 const CLAIMS = {
   problems: () => problems.length,
   verified: verifiedCount,
@@ -52,7 +64,20 @@ const CLAIMS = {
   limits: () => grouped("limits"),
   derivatives: () => grouped("derivatives"),
   integrals: () => grouped("integrals"),
-  series: () => grouped("series")
+  series: () => grouped("series"),
+  workbookSections: fact((f) => f.sections),
+  workbookExamSets: fact((f) => f.examSets),
+  bandLow: fact((f) => f.rankBands.r1r2),
+  bandMid: fact((f) => f.rankBands.r3r4),
+  bandHigh: fact((f) => f.rankBands.r5r6),
+  // 頁數只有 XeLaTeX 跑完才知道，所以它是作者維護的數字（在 pricing.js 裡），
+  // 這裡只保證「頁面上寫的」跟「那個唯一來源」一致。
+  workbookPages: () => (pricing ? pricing.workbook.pages : null),
+  // 給「頁面上手寫了金額」的情況用（例如之後的著陸頁寫 NT$380）。
+  // workbook.html 的價格是執行時從 pricing.js 讀出來組的，本來就不會漂，
+  // 所以那裡不掛標記 —— 掛了反而會在還沒定價時假性失敗。
+  workbookPrice: () => (pricing ? pricing.workbook.price : null),
+  refundDays: () => (pricing ? pricing.refundDays : null)
 };
 
 // 數字寫成 1,605 這種千分位；比對前後都要能互轉
@@ -63,11 +88,11 @@ function format(value) {
 // HTML 用 data-claim 屬性；Markdown 沒有屬性，用 HTML 註解框起來
 // （GitHub 的渲染器會把註解吃掉，讀者只看得到數字本身）。
 const MARKERS = [
-  { test: /\.html$/, pattern: /(<([a-z]+)[^>]*\sdata-claim="([a-z]+)"[^>]*>)([^<]*)(<\/\2>)/g, keyAt: 3, bodyAt: 4, wrap: (m, body) => m[1] + body + m[5] },
-  { test: /\.md$/, pattern: /(<!--claim:([a-z]+)-->)([^<]*)(<!--\/claim-->)/g, keyAt: 2, bodyAt: 3, wrap: (m, body) => m[1] + body + m[4] }
+  { test: /\.html$/, pattern: /(<([a-z]+)[^>]*\sdata-claim="([a-zA-Z]+)"[^>]*>)([^<]*)(<\/\2>)/g, keyAt: 3, bodyAt: 4, wrap: (m, body) => m[1] + body + m[5] },
+  { test: /\.md$/, pattern: /(<!--claim:([a-zA-Z]+)-->)([^<]*)(<!--\/claim-->)/g, keyAt: 2, bodyAt: 3, wrap: (m, body) => m[1] + body + m[4] }
 ];
 
-const PAGES = ["about.html", "README.md"];
+const PAGES = ["about.html", "README.md", "workbook.html"];
 const failures = [];
 let checked = 0;
 let rewritten = 0;
@@ -122,6 +147,27 @@ console.log(`  檢查 ${checked} 個標記`);
 if (!checked) {
   console.error("\n一個 data-claim 標記都沒找到 —— 對外數字等於完全沒有把關。");
   process.exit(1);
+}
+
+/* ── 開賣前的最後一道閘 ───────────────────────────────────── */
+// published 一旦是 true，購買按鈕就會出現在真實使用者面前。
+// 這裡確認該有的東西都有，免得出現「按鈕在、金額是 null」這種頁面。
+if (pricing) {
+  const book = pricing.workbook || {};
+  if (pricing.published) {
+    if (!Number.isInteger(book.price) || book.price <= 0) {
+      failures.push("pricing.js 已 published，但 workbook.price 不是正整數");
+    }
+    if (!/^https:\/\//.test(book.checkoutUrl || "")) {
+      failures.push("pricing.js 已 published，但 checkoutUrl 不是 https 網址");
+    }
+    if (book.compareAt !== null && !(Number.isInteger(book.compareAt) && book.compareAt > book.price)) {
+      // 假的「原價」是最沒必要的一種不誠實，而且在台灣是有法律風險的
+      failures.push("compareAt 要嘛是 null，要嘛必須大於實際售價");
+    }
+  } else {
+    console.log("  pricing published=false（購買按鈕不會出現）");
+  }
 }
 
 if (update) {
