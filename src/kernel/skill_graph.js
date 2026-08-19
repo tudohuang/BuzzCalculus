@@ -95,6 +95,10 @@
       tags: ["product-rule", "quotient-rule", "power-rule"] },
     { id: "diff.chain", label: "鏈鎖律", tier: 2, obscurity: 1, family: "diff", prereq: ["diff.basic"],
       tags: ["chain-rule"] },
+    // 「認出這個極限就是導數」和「這一點到底可不可微」是同一件事的兩面：
+    // 兩者都要回到差商的定義去看，而不是套微分表。所以合成一個節點。
+    { id: "diff.definition", label: "導數定義與可微性", tier: 2, obscurity: 1, family: "diff", topics: ["derivatives"], prereq: ["diff.basic"],
+      tags: ["derivative-definition", "differentiability"] },
     { id: "diff.log", label: "對數微分", tier: 3, obscurity: 2, family: "diff", prereq: ["diff.chain"],
       tags: ["log-differentiation", "logarithmic-differentiation"] },
     { id: "diff.inverse", label: "反函數 / 反三角微分", tier: 3, obscurity: 1, family: "diff", topics: ["derivatives"], prereq: ["diff.chain"],
