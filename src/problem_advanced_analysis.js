@@ -481,7 +481,7 @@
       timeLimit: 60,
       tabLimit: 1,
       tags: ["wronskian", "polynomial"],
-      hints: ["Use W=f g'-f'g.", "g'=2x and f'=1.", "Simplify x*2x-x^2."],
+      hints: ["Use W=f g'-f'g.", "g'=2x and f'=1.", "Both terms are the same power of x, so the subtraction collapses to one term."],
       solution: "W=x(2x)-1*x^2=x^2."
     },
     {
@@ -525,7 +525,7 @@
       timeLimit: 65,
       tabLimit: 1,
       tags: ["wronskian", "log"],
-      hints: ["Use W=f g'-f'g.", "The derivative of 1 is 0.", "The derivative of log x is 1/x."],
+      hints: ["Use W=f g'-f'g.", "The derivative of 1 is 0.", "With f'=0 the first term vanishes, so only f g' survives."],
       solution: "W=1*(1/x)-0*log x=1/x."
     },
     {
@@ -540,7 +540,7 @@
       timeLimit: 65,
       tabLimit: 1,
       tags: ["wronskian", "polynomial"],
-      hints: ["Use W=f g'-f'g.", "g'=3x^2 and f'=2x.", "Simplify 3x^4-2x^4."],
+      hints: ["Use W=f g'-f'g.", "g'=3x^2 and f'=2x.", "Both products land on the same power of x; subtract the coefficients."],
       solution: "W=x^2(3x^2)-(2x)(x^3)=x^4."
     },
     {
@@ -761,7 +761,7 @@
       timeLimit: 80,
       tabLimit: 1,
       tags: ["complex", "residue"],
-      hints: ["Factor z^2+1=(z-i)(z+i).", "The residue at i is 1/(2i).", "Its modulus is 1/2."],
+      hints: ["Factor z^2+1=(z-i)(z+i).", "The residue at i is 1/(2i).", "Taking the modulus only removes the i from the denominator."],
       solution: "The residue is 1/(i+i)=1/(2i), whose modulus is 1/2."
     },
     {
@@ -789,7 +789,7 @@
       timeLimit: 75,
       tabLimit: 1,
       tags: ["complex", "laurent", "residue"],
-      hints: ["Use e^z=sum z^n/n!.", "After dividing by z^3, z^{-1} occurs when n=2.", "The coefficient is 1/2!."],
+      hints: ["Use e^z=sum z^n/n!.", "After dividing by z^3, z^{-1} occurs when n=2.", "So the coefficient is the n=2 term of the exponential series."],
       solution: "e^z/z^3=sum z^{n-3}/n!, so z^{-1} comes from n=2 and has coefficient 1/2."
     },
     {

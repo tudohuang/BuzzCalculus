@@ -326,7 +326,7 @@
       timeLimit: 60,
       tabLimit: 1,
       tags: ["multivariable", "area"],
-      hints: ["The region is a quarter unit disk.", "Area of unit disk is pi.", "Quarter area is pi/4."],
+      hints: ["The region is a quarter unit disk.", "Area of unit disk is pi.", "The bounds cut out exactly one quarter of it."],
       solution: "The region is x>=0,y>=0,x^2+y^2<=1, so the area is pi/4."
     },
     {
@@ -382,7 +382,7 @@
       timeLimit: 50,
       tabLimit: 1,
       tags: ["inverse-trig", "definite-integral"],
-      hints: ["Antiderivative is atan x.", "Evaluate from 0 to 1.", "atan(1)=pi/4."],
+      hints: ["Antiderivative is atan x.", "Evaluate from 0 to 1.", "atan(0)=0, so only the value at 1 is left — that is the angle whose tangent is 1."],
       solution: "The integral is atan(1)-atan(0)=pi/4."
     },
     {

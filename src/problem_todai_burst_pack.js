@@ -3,9 +3,10 @@
 
   const SOURCE = "Buzz 高速反射包 2026";
   const problems = [];
+  // 輸入格式說明不是提示（app 已經用 formatHelp 在講），
+  // 而且買第二條提示要扣 6+rank×2 分 —— 不能收了分數卻什麼都沒說。
   const HINTS = [
-    "Expect a recurrence, Wallis/Beta/Gamma identity, or repeated IBP before direct computation.",
-    "Use WebWork form: log(x), exp(x), sqrt(x), pi. Constants of integration may be omitted."
+    "Expect a recurrence, Wallis/Beta/Gamma identity, or repeated IBP before direct computation."
   ];
   const TRUE_BOSS_TAGS = ["true-boss", "boss-rank", "boss-plus"];
 

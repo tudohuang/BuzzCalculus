@@ -3,9 +3,10 @@
 
   const SOURCE = "Exam-style expansion 2026";
   const examProblems = [];
+  // 輸入格式說明不是提示（app 已經用 formatHelp 在講），
+  // 而且買第二條提示要扣 6+rank×2 分 —— 不能收了分數卻什麼都沒說。
   const EXAM_HINTS = [
-    "This is exam-style: identify the main tool before calculating.",
-    "Keep the final answer in WebWork syntax, e.g. log(x), exp(x), sqrt(x), pi."
+    "This is exam-style: identify the main tool before calculating."
   ];
 
   function add(problem) {

@@ -3,9 +3,14 @@
 
   const SOURCE = "Original exam depth pack 2026";
   const problems = [];
+  // 第二條原本是「Use WebWork form: log(x), exp(x)…」——那不是提示，是輸入格式說明，
+  // 而 app 本身已經用 formatHelp 在作答框旁邊講同一件事。
+  // 把它留在這裡的代價是實際的：買第二條提示要扣 6+rank×2 分，
+  // 使用者付了那個分數，換到的是「請用 log(x) 這種寫法」。
+  // 拿掉之後這一包只剩一條作者提示，第二層改由 derived_hints 的
+  // 題目專屬事實去補（有算得出來的才補，沒有就誠實地空著）。
   const HINTS = [
-    "Identify the dominant tool before computing.",
-    "Use WebWork form: log(x), exp(x), sqrt(x), pi."
+    "Identify the dominant tool before computing."
   ];
 
   function add(problem) {
