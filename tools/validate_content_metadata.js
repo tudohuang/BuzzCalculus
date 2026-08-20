@@ -181,6 +181,29 @@ const withTwoHints = problems.filter((p) => (p.hints || []).length >= 2).length;
 // 機器推導的要分開算。混在一起報會讓覆蓋率看起來比實際好，
 // 而且「作者寫的」跟「機器算的」在使用者眼裡本來就是兩種不同的東西。
 const withDerived = problems.filter((p) => (p.hints || []).length < 2 && derivedHints[p.id]).length;
+
+// 「有兩條提示」不等於「有兩條有用的提示」。
+//
+// 這個數字一度是 830，聽起來像一半的題庫都有作者寫的關鍵步驟。
+// 實際上其中 438 題的第二條是「Use WebWork form: log(x)…」——輸入格式說明，
+// 而且是要扣分才看得到的。另外還有大量整包共用的同一句話。
+// 用專案自己的判準（對每一題都成立的句子＝對每一題都沒用）機械化地量：
+// 同一句提示出現在 5 題以上就算罐頭，全部提示都是罐頭的題等於沒有專屬提示。
+// tools/validate_hints.js 擋的是前兩種，這裡負責讓數字不說謊。
+const CANNED_AT = 5;
+const hintUses = new Map();
+problems.forEach((p) => {
+  (p.hints || []).forEach((hint) => {
+    const key = String(hint || "").replace(/\s+/g, "");
+    if (!key) return;
+    hintUses.set(key, (hintUses.get(key) || 0) + 1);
+  });
+});
+const isCanned = (hint) => (hintUses.get(String(hint || "").replace(/\s+/g, "")) || 0) >= CANNED_AT;
+const specificHints = problems.filter((p) => {
+  const hints = (p.hints || []).filter((h) => String(h || "").trim());
+  return hints.length > 0 && !hints.every(isCanned);
+}).length;
 const withThreeHints = problems.filter((p) => (p.hints || []).length >= 3).length;
 const pct = (n) => ((100 * n) / problems.length).toFixed(1) + "%";
 
@@ -191,6 +214,7 @@ console.log(`  origin    ${Object.keys(ORIGIN).length} 題有來源聲明，其�
 console.log("");
 console.log("  內容深度（沒有門檻，這是人要寫的東西）：");
 console.log(`    第二層提示 · 作者寫  ${String(withTwoHints).padStart(5)}  ${pct(withTwoHints)}`);
+console.log(`      其中題目專屬       ${String(specificHints).padStart(5)}  ${pct(specificHints)} ← 真正的深度看這個`);
 console.log(`    第二層提示 · 機器推  ${String(withDerived).padStart(5)}  ${pct(withDerived)}（每條都在 CI 重新驗算）`);
 console.log(`    第二層提示 · 合計    ${String(withTwoHints + withDerived).padStart(5)}  ${pct(withTwoHints + withDerived)}`);
 console.log(`    第三層提示（≥3 條）  ${String(withThreeHints).padStart(5)}  ${pct(withThreeHints)}`);

@@ -53,7 +53,7 @@
 | `styles.css` | 8379 行 |  |
 | 題庫檔 `src/problem_*.js` | 26 |  |
 | kernel 模組 `src/kernel/*.js` | 16 | 純函式層 |
-| CI 驗證器 `tools/` | 29 支 | validate / verify / smoke / e2e |
+| CI 驗證器 `tools/` | 30 支 | validate / verify / smoke / e2e |
 
 **答案型別分佈**：`numeric` 1129、`expression` 206、`antiderivative` 123、`text` 91、`set` 17、`worksheet` 17、`interval` 16、`graph` 6。
 

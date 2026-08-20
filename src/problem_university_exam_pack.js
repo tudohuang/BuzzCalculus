@@ -3,9 +3,10 @@
 
   const SOURCE = "Original university transfer/exemption/midterm style pack 2026";
   const problems = [];
+  // 輸入格式說明不是提示（app 已經用 formatHelp 在講），
+  // 而且買第二條提示要扣 6+rank×2 分 —— 不能收了分數卻什麼都沒說。
   const HINTS = [
-    "先判型：這題刻意混合轉學考、免修考、段考常見技巧。",
-    "答案請用 WebWork 寫法，例如 log(x), exp(x), sqrt(x), pi。"
+    "先判型：這題刻意混合轉學考、免修考、段考常見技巧。"
   ];
 
   function add(problem) {

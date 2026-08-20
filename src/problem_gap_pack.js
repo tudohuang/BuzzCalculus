@@ -351,7 +351,7 @@
       timeLimit: 80,
       tabLimit: 1,
       tags: ["triple-integral", "volume", "simplex"],
-      hints: ["This is a tetrahedron.", "Intercepts are all 1.", "Volume is 1/6."],
+      hints: ["This is a tetrahedron.", "Intercepts are all 1.", "A corner tetrahedron with all legs 1 has volume (1/3)(base area)(height)."],
       solution: "The standard simplex in R^3 has volume 1/6."
     },
     {
@@ -407,7 +407,7 @@
       timeLimit: 75,
       tabLimit: 1,
       tags: ["change-of-variables", "jacobian"],
-      hints: ["Solve x=(u+v)/2 and y=(u-v)/2.", "Build the 2 by 2 Jacobian.", "Its determinant has absolute value 1/2."],
+      hints: ["Solve x=(u+v)/2 and y=(u-v)/2.", "Build the 2 by 2 Jacobian.", "Every entry of the Jacobian is a half, so the determinant is a difference of two products of halves."],
       solution: "The inverse Jacobian determinant is -1/2, so the absolute value is 1/2."
     },
     {

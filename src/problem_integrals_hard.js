@@ -139,7 +139,7 @@
       timeLimit: 95,
       tabLimit: 1,
       tags: ["trig-substitution", "inverse-trig", "definite-integral"],
-      hints: ["Use x=sec theta.", "Then sqrt(x^2-1)=tan theta.", "Bounds are theta=0 to theta=pi/3."],
+      hints: ["Use x=sec theta.", "Then sqrt(x^2-1)=tan theta.", "The integrand collapses to d(theta); x=1 gives sec theta=1 and x=2 gives sec theta=2."],
       solution: "With x=sec theta, the integrand becomes dtheta. The bounds give pi/3."
     },
     {
