@@ -60,8 +60,44 @@ function tendency(fn, target) {
       ? { kind: "zero", value: 0 }
       : { kind: "finite", value: result.value };
   }
-  // 極限引擎算不出來時，看它是不是單純地往無窮跑
   const probe = (h) => fn(Number.isFinite(target) ? target + h : (target > 0 ? 1 / h : -1 / h));
+
+  // 定義域邊界落在外推窗裡的情況。
+  //
+  // numeric.limit 會在目標點附近撒一圈由遠而近的取樣點再外推。函數的定義域
+  // 邊界剛好落在那一圈的外圍時，最遠的幾個點會算出 NaN，整個外推就跟著 NaN——
+  // 即使那一題在目標點附近完全正常。ln(1+3x) 在 x→0 就是這樣：
+  // 取樣撒到 x ≤ −1/3 就變成 ln(負數)，於是這一題最典型的 0/0 推不出來。
+  //
+  // 這裡改用貼著目標點的小窗直接探。兩側都有值、而且趨勢一致才採用；
+  // 不一致就回 null（左右極限不同的題不該被講成某一型）。
+  //
+  // 只動提示這條路徑，不碰 numeric.limit —— 那支是答案驗算在用的，
+  // 為了多幾條提示去放寬它，等於拿答案的可信度換提示的覆蓋率。
+  if (Number.isFinite(target)) {
+    const right = [1e-4, 1e-5, 1e-6].map((h) => probe(h)).filter(Number.isFinite);
+    const left = [-1e-4, -1e-5, -1e-6].map((h) => probe(h)).filter(Number.isFinite);
+    if (right.length === 3 && left.length === 3) {
+      const settled = right[2];
+      // 左右要趨近同一個值，否則這一題左右極限不同，不該被講成某一型
+      const agree = Math.abs(settled - left[2]) <= 1e-3 * Math.max(1, Math.abs(settled));
+      if (agree) {
+        // 「趨近 0」的判準是隨 h 一起等比收縮，不是絕對值夠小。
+        // ln(1+3x) 在 h=1e-6 時值是 3e-6 —— 用絕對門檻會判成「有限值 3e-6」，
+        // 但它其實正在以 h 的速度奔向 0，是標準的 0/0 分子。
+        const shrinking =
+          Math.abs(right[2]) <= Math.abs(right[1]) * 0.5 &&
+          Math.abs(right[2]) <= Math.abs(right[0]) * 0.05 &&
+          Math.abs(right[2]) < 1e-3;
+        if (shrinking) return { kind: "zero", value: 0 };
+        // 收斂到一個穩定的非零值：後兩步的變動比前一步小
+        const converging = Math.abs(right[2] - right[1]) <= Math.abs(right[1] - right[0]) + 1e-12;
+        if (converging) return { kind: "finite", value: settled };
+      }
+    }
+  }
+
+  // 極限引擎算不出來時，看它是不是單純地往無窮跑
   const far = probe(1e-6);
   const near = probe(1e-3);
   if (Number.isFinite(far) && Number.isFinite(near) && Math.abs(far) > 1e6 && Math.abs(far) > Math.abs(near) * 10) {
