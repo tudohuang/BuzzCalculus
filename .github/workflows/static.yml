@@ -68,6 +68,12 @@ jobs:
         # 手掌畫出線、長按跳選單、橡皮擦把方格一起蓋掉、復原時整頁重繪。
         # 這一步用合成的 PointerEvent 畫，然後去數畫布的像素。
         run: node tools/e2e_handwriting.js
+      - name: E2E mobile layout
+        # README 第一句賣點是「手機優先的選擇題練習」，但其他 E2E 全跑在 1280 寬。
+        # 窄畫面壞掉的方式是「看得到但測不到」：DOM 完整、文字都在、console 乾淨，
+        # 只是有東西在畫面外，或按鈕小到手指按不準。
+        # 這一步用 CDP 開一個真的 390×844 視窗，量橫向溢出與觸控目標大小。
+        run: node tools/e2e_mobile.js
       - name: Verify answers independently
         # 這一步是題庫的品質底線：從題幹推出一條與解題無關的數值路徑，
         # 再跟答案比對。不符必須是零 —— spec 00 說得很直白，

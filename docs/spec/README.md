@@ -50,10 +50,10 @@
 | 有 `solutionSteps` | 127 | 結構化步驟，仍是最大的內容缺口 |
 | 證明題 | 41 | 含 Lean 機器驗證 8 則 |
 | `src/app.js` | 12986 行 | 單一 IIFE，拆分進行中 |
-| `styles.css` | 8352 行 |  |
+| `styles.css` | 8379 行 |  |
 | 題庫檔 `src/problem_*.js` | 26 |  |
 | kernel 模組 `src/kernel/*.js` | 16 | 純函式層 |
-| CI 驗證器 `tools/` | 28 支 | validate / verify / smoke / e2e |
+| CI 驗證器 `tools/` | 29 支 | validate / verify / smoke / e2e |
 
 **答案型別分佈**：`numeric` 1129、`expression` 206、`antiderivative` 123、`text` 91、`set` 17、`worksheet` 17、`interval` 16、`graph` 6。
 

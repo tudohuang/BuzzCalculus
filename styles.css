@@ -3421,14 +3421,34 @@ button,
     display: none;
   }
 
+  /* 這一段本來是為了讓五個導覽鍵在 320px 上塞得下，代價是把它們縮成
+     38×40 —— 而那是整個 app 最常按的五顆按鈕，低於 Apple 建議的 44。
+     高度不佔水平空間，所以先無條件拉滿；寬度留到下面有空間時再給。 */
   .nav-button {
     width: 38px;
-    min-height: 40px;
+    min-height: 44px;
   }
 
   .topbar .icon-button {
     width: 38px;
-    height: 40px;
+    height: 44px;
+  }
+}
+
+/* 360–400px（絕大多數現役手機：iPhone 390、Pixel 393、Galaxy 360）
+   其實放得下完整的 44px 觸控寬度。只有真正窄的機器才需要縮到 38px。
+   必須寫在上面那段之後 —— 同特異性時後者勝，寫在前面會被蓋掉。
+   分成兩段而不是直接改門檻，是因為「320px 也要塞得下」那條約束仍然成立。 */
+@media (min-width: 360px) and (max-width: 400px) {
+  .nav-button,
+  .topbar .icon-button {
+    width: 44px;
+  }
+
+  /* 這個寬度下 .brand-title 是隱藏的，整顆按鈕只剩標誌那 32px 加內距＝39px 寬。
+     它是「回到工作台」，不是裝飾。 */
+  .brand {
+    min-width: 44px;
   }
 }
 
@@ -3476,6 +3496,10 @@ button,
 
   .brand {
     gap: 8px;
+    /* 縮成 32px 的標誌讓整顆「回到工作台」按鈕只剩 32px 高 ——
+       手指按不準（Apple HIG 建議 44pt）。標誌可以小，可按的範圍不行，
+       所以撐高的是按鈕本身，不是那個方塊。 */
+    min-height: 44px;
   }
 
   .brand-mark {
@@ -4076,6 +4100,9 @@ button,
   align-items: center;
   gap: 6px;
   padding: 8px 13px;
+  /* 藥丸造型的入口鍵原本只有 35px 高，手機上按不準。
+     這裡是「題庫 / Boss 專區 / 證明題 / 出題工作坊」的入口 —— 不是裝飾。 */
+  min-height: 44px;
   border: 1px solid var(--line);
   border-radius: 999px;
   background: var(--surface);
