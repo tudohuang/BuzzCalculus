@@ -70,14 +70,21 @@ const PEN = `
       this.canvas().dispatchEvent(event);
       return event;
     },
+    // 瀏覽器支援 pointerrawupdate 時，真實的筆走的是那條路徑，
+    // 而 app 也只會掛那一個。測試如果永遠只送 pointermove，
+    // 測到的就是一條線上不存在的路徑 —— 上線後的當機正是這樣漏掉的。
+    moveType() {
+      return "onpointerrawupdate" in this.canvas() ? "pointerrawupdate" : "pointermove";
+    },
     // 從 (x1,y1) 畫到 (x2,y2)，中間切 steps 個取樣點
     stroke(x1, y1, x2, y2, options) {
       const opts = options || {};
       const steps = opts.steps || 12;
+      const move = this.moveType();
       this.send("pointerdown", x1, y1, opts);
       for (let i = 1; i <= steps; i += 1) {
         const t = i / steps;
-        this.send("pointermove", x1 + (x2 - x1) * t, y1 + (y2 - y1) * t, opts);
+        this.send(move, x1 + (x2 - x1) * t, y1 + (y2 - y1) * t, opts);
       }
       this.send("pointerup", x2, y2, opts);
     },
@@ -374,7 +381,7 @@ async function run() {
       const endY = 0.62;
       window.__pen.send("pointerdown", 0.2, 0.62, { pressure: 0.7, pointerId: 21 });
       for (let i = 1; i <= 10; i += 1) {
-        window.__pen.send("pointermove", 0.2 + (endX - 0.2) * (i / 10), endY, { pressure: 0.7, pointerId: 21 });
+        window.__pen.send(window.__pen.moveType(), 0.2 + (endX - 0.2) * (i / 10), endY, { pressure: 0.7, pointerId: 21 });
       }
       const whileWriting = inkNear(endX, endY);
       window.__pen.send("pointerup", endX, endY, { pressure: 0.7, pointerId: 21 });
@@ -387,6 +394,62 @@ async function run() {
       lag.whileWriting > 0
         ? `筆尖附近 ${lag.whileWriting} 個墨水像素（收筆後 ${lag.afterLift}）`
         : "筆尖附近沒有墨水 —— 筆跡落後筆尖，寫起來就是「不靈敏」"
+    );
+
+    /* ── 每個取樣點只准被畫一次 ── */
+    // 上線後當機的那個 bug：pointerrawupdate 和 pointermove 兩個都掛。
+    // 瀏覽器先為每個原始取樣送一次 rawupdate，然後每個 frame 送一次 move，
+    // 而那個 move 的 getCoalescedEvents() 會把整個 frame 的取樣再交出來一次。
+    // 去抖動濾不掉（比的是「新的點 vs 上一個存下來的點」，
+    // 批次的第一個點離上一批的最後一個點很遠），結果是每個取樣存兩次、
+    // 筆跡每個 frame 往回跳、繪製量三倍。
+    //
+    // 合成事件不會自己夾帶 coalesced 批次，所以這裡手動補上 ——
+    // 不補的話這條路徑在測試裡永遠不會發生，而那正是它漏到線上的原因。
+    const doubleDraw = await chrome.evaluate(`
+      ${PEN}
+      const c = window.__pen.canvas();
+      const ctx = c.getContext("2d");
+      let segments = 0;
+      const quad = ctx.quadraticCurveTo.bind(ctx);
+      const line = ctx.lineTo.bind(ctx);
+      ctx.quadraticCurveTo = function (a, b, d, e) { segments += 1; return quad(a, b, d, e); };
+      ctx.lineTo = function (a, b) { segments += 1; return line(a, b); };
+
+      const FRAMES = 20;
+      const PER_FRAME = 8;
+      window.__pen.send("pointerdown", 0.05, 0.5, { pointerId: 31 });
+      let sent = 0;
+      for (let f = 0; f < FRAMES; f += 1) {
+        const batch = [];
+        for (let k = 0; k < PER_FRAME; k += 1) {
+          sent += 1;
+          const fx = 0.05 + 0.9 * (sent / (FRAMES * PER_FRAME));
+          const fy = 0.5 + 0.25 * Math.sin(sent / 11);
+          window.__pen.send("pointerrawupdate", fx, fy, { pointerId: 31 });
+          batch.push(new PointerEvent("pointermove", {
+            bubbles: true, pointerId: 31, pointerType: "pen", pressure: 0.5, isPrimary: true,
+            clientX: window.__pen.at(fx, fy).clientX, clientY: window.__pen.at(fx, fy).clientY
+          }));
+        }
+        const move = batch[batch.length - 1];
+        move.getCoalescedEvents = () => batch;
+        c.dispatchEvent(move);
+      }
+      window.__pen.send("pointerup", 0.95, 0.5, { pointerId: 31 });
+      ctx.quadraticCurveTo = quad;
+      ctx.lineTo = line;
+      return { sent, segments };
+    `);
+    // 每個取樣點會畫一段曲線，加上「補到筆尖」的那條直線（每次 move 一條）。
+    // 每個取樣正好 2 段是設計如此（曲線 + 補到筆尖的直線）。
+    // 門檻取 2.5：兩個監聽器都掛的時候實測是 3.1。
+    const perSample = doubleDraw.segments / Math.max(1, doubleDraw.sent);
+    check(
+      "每個取樣點只被畫一次",
+      perSample < 2.5,
+      `${doubleDraw.sent} 個取樣畫了 ${doubleDraw.segments} 段（每點 ${perSample.toFixed(2)} 段）` +
+        (perSample < 2.5 ? "" : " —— 同一批取樣被吃兩次，筆跡會往回跳，寫久了會當")
     );
 
     /* ── 5.6 換工具不能把畫布整個換掉 ── */

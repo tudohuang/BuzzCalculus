@@ -1076,6 +1076,26 @@
     }
   }
 
+  // 丟掉畫布之前先把 backing store 歸零。
+  //
+  // render() 是整段 innerHTML 換掉，所以每一次重繪都會做出一個新的 canvas，
+  // 舊的那個就變成垃圾。在 Chrome 上這沒事，GC 會回收 —— 實測 40 次收合／攤開
+  // 之後 heap 只長 0.1MB。
+  //
+  // 但 WebKit 不是這樣：iOS Safari 的 canvas 記憶體不跟著 JS 物件的 GC 走，
+  // 要等到 backing store 被釋放，而把 width/height 設成 0 是唯一可靠的觸發方式。
+  // 一張全螢幕計算紙在 DPR=2 下是 ~2000×1600×4 ≈ 12MB —— 重繪幾十次就是幾百 MB，
+  // 而 iPadOS 會直接把分頁殺掉。
+  //
+  // 這也解釋了為什麼桌機測不出來：那是 WebKit 特有的行為。
+  // 歸零對其他瀏覽器無害（那個 canvas 本來就要被丟掉了）。
+  function releaseDetachedCanvases() {
+    app.querySelectorAll("canvas").forEach((canvas) => {
+      canvas.width = 0;
+      canvas.height = 0;
+    });
+  }
+
   function render() {
     if (renderPending) return;
     renderPending = true;
@@ -1085,6 +1105,7 @@
       const sampled = Math.random() < 0.01;
       const startedAt = sampled && window.performance ? window.performance.now() : 0;
       const carried = captureViewState();
+      releaseDetachedCanvases();
       app.innerHTML = [renderTopbar(), renderScreen(), renderAppNoticeModal(), renderCalibrationPreviewModal(), renderEraseConfirmModal(), renderReportModal(), renderShareCardModal(), renderUpdateBanner()].join("");
       bindEvents();
       typesetMath(app);
@@ -1592,6 +1613,9 @@
     // 草稿筆畫可能很大，續傳時不值得為它撐爆 localStorage 額度。
     // 使用者要的是「題目和答案還在」，不是「我畫的線還在」。
     delete copy.boardStrokes;
+    // boardRedo 裝的是同一批筆畫（「全部擦掉」會把整頁推進去），
+    // 漏掉它等於前面那一行白寫 —— 每 10 秒還是把幾 MB 序列化進 localStorage。
+    delete copy.boardRedo;
     return copy;
   }
 
@@ -5677,10 +5701,13 @@
   //
   // 預設收合（有筆跡或使用者展開過才打開），所以不會把選項往下推。
   function attachedScratchboard(problem, disabled) {
-    const strokes = cloneBoardStrokes(problem.id);
+    // 只需要「有幾筆」，不要 cloneBoardStrokes ——
+    // 那會把這一題的每一個取樣點深拷貝一次，而這個函式每次 render 都會跑。
+    // 寫滿一頁之後是幾萬個物件配置，換來的只是一個 .length。
+    const count = (quiz.boardStrokes && quiz.boardStrokes[problem.id] || []).length;
     const fullscreen = Boolean(quiz.boardFullscreen);
-    const open = fullscreen || Boolean(quiz.boardOpen) || strokes.length > 0;
-    return renderScratchboard(problem, disabled, quiz.boardTool || "pen", fullscreen, open, strokes.length);
+    const open = fullscreen || Boolean(quiz.boardOpen) || count > 0;
+    return renderScratchboard(problem, disabled, quiz.boardTool || "pen", fullscreen, open, count);
   }
 
   function renderChoiceControls(problem) {
@@ -10501,11 +10528,23 @@
     // pointerrawupdate 是瀏覽器能給的最早的一手座標：它不等 rAF 的節奏，
     // 一有新取樣就送，所以墨水會更貼著筆尖。Safari 目前沒有這個事件。
     //
-    // 兩個都掛，不是二選一：只掛 rawupdate 會漏掉沒有實作它的瀏覽器，
-    // 只掛 move 就拿不到那段延遲。重複的取樣點由上面的 JITTER_PX 濾掉 ——
-    // rawupdate 之後緊接著的 pointermove 座標一模一樣，距離是 0，直接被丟掉。
-    if ("onpointerrawupdate" in canvas) canvas.addEventListener("pointerrawupdate", onMove);
-    canvas.addEventListener("pointermove", onMove);
+    // **只能掛一個。**
+    //
+    // 這裡一度兩個都掛，理由是「重複的座標會被 JITTER_PX 濾掉」。那是錯的：
+    // 瀏覽器先為每個原始取樣送一次 rawupdate，然後每個 frame 送一次 move，
+    // 而那個 move 的 getCoalescedEvents() 會把整個 frame 的取樣**再交出來一次**。
+    // 去抖動比的是「新的點 vs 上一個存下來的點」——批次的第一個點跟批次的
+    // 最後一個點距離很遠，濾不掉。結果是每個取樣存兩次、筆跡每個 frame
+    // 往回跳一次、繪製量變成三倍。實測 320 個取樣畫出 1000 段。
+    //
+    // 上線後的當機就是這樣來的。而當初改成「兩個都掛」的理由，
+    // 是為了讓只送 pointermove 的舊測試繼續通過 —— 為了測試改 production，
+    // 然後 production 壞給使用者看。測試要去配合真實行為，不是相反。
+    if ("onpointerrawupdate" in canvas) {
+      canvas.addEventListener("pointerrawupdate", onMove);
+    } else {
+      canvas.addEventListener("pointermove", onMove);
+    }
 
     canvas.addEventListener("pointerup", endStroke);
     canvas.addEventListener("pointercancel", endStroke);
