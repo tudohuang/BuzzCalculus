@@ -30,14 +30,32 @@
     return INK[surface] || INK.paper;
   }
 
-  // 落筆瞬間的壓力下限。
+  // 落筆瞬間的壓力下限，以及它只該管落筆。
   //
   // Apple Pencil 剛碰到玻璃時回報的壓力常常接近 0，要幾十毫秒才爬上來。
-  // 照原始值畫的話，每一筆的開頭都是一條 1.3px 的髮絲 —— 使用者的感覺不是
-  // 「這裡比較細」，是「筆沒反應」。所以壓力先墊到 0.35 再算寬度。
+  // 照原始值畫的話，每一筆的開頭都是一條髮絲 —— 使用者的感覺不是
+  // 「這裡比較細」，是「筆沒反應」。所以落筆處要墊高。
+  //
+  // 但第一版把這個下限套在**整條線**上，代價量得出來：
+  // 壓力 0.05 / 0.2 / 0.4 畫出來一模一樣（都是 2.5px），
+  // 也就是底下 40% 的壓力範圍完全是死的，怎麼輕壓都一樣粗。
+  // 這就是「壓感好像沒有用」的來源。
+  //
+  // 改成只墊前 LANDING_SAMPLES 個取樣：落筆不會變髮絲，
+  // 之後整條線拿回完整的壓力範圍。
   const MIN_PRESSURE = 0.35;
+  const LANDING_SAMPLES = 3;
   // 再加一個絕對下限，避免任何情況下畫出看不見的線。
-  const MIN_WIDTH_CSS = 1.6;
+  const MIN_WIDTH_CSS = 1.2;
+
+  // 壓力對線寬的映射。
+  //
+  // 舊的是 base * (0.5 + 1.1p)，配上整筆的壓力下限，實際只跑出 2.5→4.5px，
+  // 也就是最重的一筆只比最輕的粗 1.8 倍 —— 手上感覺不到差別。
+  // 改成 base * (0.55 + 1.45p)：輕 1.3px、中 3.1px、重 4.8px，約 3.6 倍。
+  // 這個比例接近實際的筆：能寫出細的下標，也能壓出粗的底線。
+  const WIDTH_BASE = 0.55;
+  const WIDTH_GAIN = 1.45;
 
   // 沒有壓感的裝置改用速度決定粗細。
   //
@@ -65,7 +83,7 @@
     return count ? total / count : MIN_PRESSURE;
   }
 
-  function widthAt(points, index, isEraser, base, ratio) {
+  function widthAt(points, index, isEraser, base, ratio, finished) {
     if (isEraser) return base;
     const point = points[index];
     // point.pen 是 2026-08 才開始寫入的欄位。舊筆跡沒有它 —— 一律走壓力路徑，
@@ -78,8 +96,18 @@
       const fast = clamp01((speed - SPEED_SLOW) / (SPEED_FAST - SPEED_SLOW));
       return Math.max(MIN_WIDTH_CSS * ratio, base * (1.3 - 0.65 * fast));
     }
-    const pressure = Math.max(MIN_PRESSURE, smoothPressure(points, index));
-    return Math.max(MIN_WIDTH_CSS * ratio, base * (0.5 + 1.1 * pressure));
+    // 落筆與收筆的那幾個取樣墊高壓力，中間照實。
+    //
+    // 只墊落筆的話，收筆那一端會直接掉到最低 —— 實測畫出來每一筆的尾巴
+    // 都收成針尖，一條分數線變成中間粗兩頭尖的透鏡形，看起來很脆。
+    // 真實的筆抬起來確實會變細，但不會消失。兩端都墊，中段才是壓感真正在說話的地方。
+    const raw = smoothPressure(points, index);
+    // 收筆那一端只有在**真的收筆之後**才算數。
+    // 畫的過程中「最後三個點」永遠是當下最新的點，用同一條判斷式的話
+    // 整條線都會被當成收筆而墊高 —— 壓感又整個失效。實測到才發現。
+    const nearEnds = index < LANDING_SAMPLES || (finished && index >= points.length - LANDING_SAMPLES);
+    const pressure = nearEnds ? Math.max(MIN_PRESSURE, raw) : raw;
+    return Math.max(MIN_WIDTH_CSS * ratio, base * (WIDTH_BASE + WIDTH_GAIN * pressure));
   }
 
   // 只畫「還沒畫過」的那一段，用 stroke.drawnTo 記進度。
@@ -114,7 +142,7 @@
       if (!stroke.drawnTo) {
         const only = points[0];
         ctx.beginPath();
-        ctx.arc(only.x * canvas.width, only.y * canvas.height, widthAt(points, 0, isEraser, base, ratio) / 2, 0, Math.PI * 2);
+        ctx.arc(only.x * canvas.width, only.y * canvas.height, widthAt(points, 0, isEraser, base, ratio, finish) / 2, 0, Math.PI * 2);
         ctx.fill();
         stroke.drawnTo = 1;
       }
@@ -133,10 +161,15 @@
       const previous = points[index - 1];
       const control = points[index];
       const next = points[index + 1];
-      const from = mid(previous, control);
+      // 第一段要從**真正的起點**出發，不是從 points[0] 與 points[1] 的中點。
+      //
+      // 曲線的端點取中點是對的（那是這套平滑的做法），但這讓每一筆的
+      // points[0] → mid(0,1) 那一小段從來沒有被畫過。畫面上看得到：
+      // 落筆的圓點跟線條之間有一小段空白，圓點像是掉在旁邊的髒點。
+      const from = index === 1 ? { x: px(previous), y: py(previous) } : mid(previous, control);
       const to = mid(control, next);
       ctx.beginPath();
-      ctx.lineWidth = widthAt(points, index, isEraser, base, ratio);
+      ctx.lineWidth = widthAt(points, index, isEraser, base, ratio, finish);
       ctx.moveTo(from.x, from.y);
       ctx.quadraticCurveTo(px(control), py(control), to.x, to.y);
       ctx.stroke();
@@ -157,7 +190,7 @@
       const beforeLast = points[points.length - 2];
       const from = mid(beforeLast, last);
       ctx.beginPath();
-      ctx.lineWidth = widthAt(points, points.length - 1, isEraser, base, ratio);
+      ctx.lineWidth = widthAt(points, points.length - 1, isEraser, base, ratio, finish);
       ctx.moveTo(from.x, from.y);
       ctx.lineTo(px(last), py(last));
       ctx.stroke();
