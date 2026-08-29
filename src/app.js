@@ -5693,6 +5693,15 @@
     return { label: "格式", className: "is-warning" };
   }
 
+  // 觸控筆／手指操作的平板（iPad 直式 834、橫式 1194，都算）。
+  //
+  // pointer: coarse 把桌機排除掉（滑鼠是 fine）——
+  // 桌機視窗再怎麼寬也不該被當成平板來改行為。
+  function isCoarsePointerTablet() {
+    if (typeof window.matchMedia !== "function") return false;
+    return window.matchMedia("(min-width: 768px) and (pointer: coarse)").matches;
+  }
+
   // 每一種作答介面都掛得上的計算紙。
   //
   // 原本只有「自己寫」跟作圖表有紙 —— 但選擇題一樣要算：
@@ -5732,7 +5741,8 @@
       </div>
       <div class="helper-row">
         <span>點選選項後會直接送出</span>
-        <span>要算的話下面有計算紙</span>
+        <!-- 全螢幕時計算紙在上面，寫「下面有計算紙」會把人往錯的方向指 -->
+        <span>${quiz.boardFullscreen ? "算完直接點答案" : "要算的話下面有計算紙"}</span>
       </div>
     `;
     return fullscreenShell(problem, grid, attachedScratchboard(problem, disabled));
@@ -5751,7 +5761,11 @@
     // 全螢幕時題目要留在畫面上 —— 不然使用者得退出來看一眼題目再進去
     return `
       <div class="handwrite-shell is-fullscreen">
-        <div class="handwrite-prompt"><div class="math-inline" data-tex="${escapeAttr(problem.prompt)}"></div></div>
+        <!-- math-block 而不是 math-inline：block 才會走 renderLongTexFlow，
+             把敘述切成可折行的文字段與不可拆的算式段。
+             inline 的 KaTeX 輸出整串是一個 nowrap 的 span，
+             在容器上設 white-space: normal 也救不了 —— iPad 上題目兩端會被切掉。 -->
+        <div class="handwrite-prompt"><div class="math-block" data-tex="${escapeAttr(problem.prompt)}"></div></div>
         ${scratchboard}
         ${controls}
       </div>
@@ -10377,6 +10391,15 @@
         if (action === "toggle") {
           quiz.boardOpen = !quiz.boardOpen;
           if (!quiz.boardOpen) quiz.boardFullscreen = false;
+          // 平板：攤開計算紙就直接進全螢幕。
+          //
+          // 量過的數字：iPad 上題目與選項佔掉畫面上緣 800px（直式）／711px（橫式），
+          // 書寫區從那裡才開始 —— 也就是**要捲動才寫得到**，而捲下去之後題目又不見了。
+          // 在平板上「攤開計算紙」和「想要一塊夠大的地方寫」本來就是同一件事，
+          // 中間那一步只是多按一次。全螢幕的版面（題目在上、書寫區佔滿、選項在下）
+          // 本來就存在而且測過，這裡只是讓它成為平板上的自然狀態。
+          // 桌機不受影響：pointer: coarse 把滑鼠排除在外。
+          if (quiz.boardOpen && isCoarsePointerTablet()) quiz.boardFullscreen = true;
           render();
           return;
         }
