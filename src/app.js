@@ -5713,7 +5713,7 @@
   function renderChoiceControls(problem) {
     const disabled = quiz.feedback ? "disabled" : "";
     const choices = getChoiceOptions(problem);
-    return `
+    const grid = `
       <div class="choice-grid" role="radiogroup" aria-label="選擇答案">
         ${choices
           .map(
@@ -5734,7 +5734,27 @@
         <span>點選選項後會直接送出</span>
         <span>要算的話下面有計算紙</span>
       </div>
-      ${attachedScratchboard(problem, disabled)}
+    `;
+    return fullscreenShell(problem, grid, attachedScratchboard(problem, disabled));
+  }
+
+  // 全螢幕書寫的版面外殼。
+  //
+  // 這個外殼原本只長在「自己寫」那條路徑上。把計算紙掛到選擇題的時候，
+  // 工具列（包含全螢幕按鈕）一起帶過去了，但版面沒有 ——
+  // 於是選擇題上那顆按鈕按下去只會換個圖示，畫面完全不動。
+  // 做 demo 截圖時才發現：「全螢幕」那張跟前一張一模一樣。
+  //
+  // 三種作答形式共用這一支，就不會再出現「有按鈕沒功能」。
+  function fullscreenShell(problem, controls, scratchboard) {
+    if (!quiz.boardFullscreen) return `${controls}${scratchboard}`;
+    // 全螢幕時題目要留在畫面上 —— 不然使用者得退出來看一眼題目再進去
+    return `
+      <div class="handwrite-shell is-fullscreen">
+        <div class="handwrite-prompt"><div class="math-inline" data-tex="${escapeAttr(problem.prompt)}"></div></div>
+        ${scratchboard}
+        ${controls}
+      </div>
     `;
   }
 
