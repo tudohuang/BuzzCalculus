@@ -52,6 +52,15 @@ const SECTIONS = [
     wide: true
   },
   {
+    claim: "為 iPad + Apple Pencil 特化，不是把桌機版縮小",
+    body:
+      "在平板上攤開計算紙就直接進全螢幕：題目留在最上面、書寫區佔畫面 72%（橫式 61%）、選項在下面，" +
+      "全程不用捲動。這一段是量出來改的 —— 改之前書寫區只佔畫面高度的 22%，橫過來甚至要捲動才寫得到，" +
+      "而捲下去題目就不見了。壓感的作用範圍也一併修好：原本壓力 0.05 到 0.4 畫出來一模一樣。",
+    shots: ["20-ipad-write", "21-ipad-landscape"],
+    wide: true
+  },
+  {
     claim: "答錯之後給的是梯子，不是答案",
     body: "三層：先講該用什麼技巧，再給這一題特有的關鍵步驟，最後才是完整推導（而且會被記為「借助解答」）。中間那一層有 295 題是機器從題幹推導出來的事實，每一條在 CI 都會重新驗算。",
     shots: ["06-feedback"]
@@ -83,7 +92,7 @@ const manifest = JSON.parse(fs.readFileSync(path.join(SHOTS, "manifest.json"), "
 const noteFor = (name) => (manifest.find((s) => s.name === name) || {}).note || "";
 
 const phone = (name) => `
-        <figure class="phone">
+        <figure class="phone ${/ipad/.test(name) ? "is-pad" : ""}">
           <img src="${dataUri(name)}" alt="${noteFor(name)}" loading="lazy" width="390" height="844" />
           <figcaption>${noteFor(name)}</figcaption>
         </figure>`;
@@ -276,6 +285,9 @@ const html = `<title>BuzzCalculus 手機版</title>
 
   /* 手機外框：邊框細、圓角大、陰影深，讓截圖看起來是裝置而不是圖片 */
   .phone { margin: 0; width: 236px; }
+  /* iPad 的截圖是平板比例，套手機外框會被壓成細長條 */
+  .phone.is-pad { width: 320px; }
+  .phone.is-pad img { border-radius: 22px; border-width: 10px; }
   .phone img {
     display: block;
     width: 100%;
