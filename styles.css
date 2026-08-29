@@ -1982,7 +1982,10 @@ button {
    （算式不該被拆行），但應用題的題幹是一整段中文 ——
    結果是開頭被切在畫面外，使用者看到的第一個字是句子的中間。
    窄畫面上改成可以折行，並讓它最多佔三行，剩下的還是可以捲。 */
-@media (max-width: 720px) {
+/* 條件是「觸控裝置」不是「窄畫面」。
+   第一版寫 max-width: 720px，於是 iPad（834 / 1194）完全沒套到 ——
+   而 iPad 正是全螢幕書寫最主要的使用場景，題目列在那裡兩端都被切掉。 */
+@media (pointer: coarse) {
   .handwrite-prompt {
     justify-content: flex-start;
     overflow-x: hidden;
@@ -1990,10 +1993,23 @@ button {
     max-height: 22vh;
   }
 
-  .handwrite-prompt .math-inline {
+  .handwrite-prompt .math-inline,
+  .handwrite-prompt .math-block {
     font-size: 1rem;
     white-space: normal;
   }
+}
+
+/* 全螢幕的題目列是一條窄帶，不要用 display math 的置中與大留白 */
+.handwrite-prompt .math-block {
+  width: 100%;
+  margin: 0;
+  text-align: left;
+}
+
+.handwrite-prompt .math-block .katex-display {
+  margin: 0;
+  text-align: left;
 }
 
 .handwrite-shell.is-fullscreen .webwork-answer {
@@ -2103,7 +2119,12 @@ button,
 
 .blackboard {
   width: 100%;
-  height: clamp(220px, 32vw, 340px);
+  /* 高度由**畫面高度**決定，不是寬度。
+     原本是 clamp(220px, 32vw, 340px)：由寬度算、而且封頂 340px。
+     在 iPad 上的後果是書寫區只佔螢幕高度的 22%，
+     一台 1194px 高的裝置只能在最下面那一條寫字 —— 而那正是它最該好用的地方。
+     32vw 在手機上剛好，所以保留成下限來源；上限改成跟著視窗高度走。 */
+  height: clamp(220px, 46vh, 340px);
   display: block;
   border: 1px solid var(--line-strong);
   border-radius: var(--radius);
@@ -3290,6 +3311,36 @@ button,
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
   border: 0;
+}
+
+/* ── 平板：iPad + Apple Pencil 是主力裝置 ──────────────────────
+   作答時右邊那個 300px 的「作答狀態」欄幾乎全空（一句「本局不倒數。」），
+   卻把題目卡壓窄、把書寫區往下推到畫面外 —— 橫式時要捲動才寫得到。
+   有回饋內容時它才值得那個欄位；沒有的時候讓題目卡吃滿寬度。 */
+@media (min-width: 768px) and (pointer: coarse) {
+  /* 斷點是 768 不是 901：iPad 直式是 834 寬。
+     第一版寫 901，結果直式完全沒有套用到 —— 而直式正是 Pencil 最常用的方向。 */
+  .problem-stage:not(:has(.feedback.correct)):not(:has(.feedback.wrong)) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  /* 直式 iPad 有 1194px 高：書寫區可以大方一點，題目仍留在上面看得到 */
+  .blackboard {
+    height: min(56vh, 620px);
+  }
+
+  /* 橫式（矮而寬）垂直空間有限，減少卡片內距把高度讓給書寫區 */
+  @media (orientation: landscape) {
+    .problem-card {
+      min-height: auto;
+      gap: 14px;
+      padding: 20px 24px;
+    }
+
+    .blackboard {
+      height: min(52vh, 460px);
+    }
+  }
 }
 
 @media (max-width: 900px) {

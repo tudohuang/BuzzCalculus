@@ -199,6 +199,67 @@ async function run() {
       check("作答畫面不會橫向溢出", false, quiz.why || "開不了一局");
     }
 
+    /* ── 3.5 iPad：書寫區要夠大，而且不用捲就寫得到 ── */
+    // 使用者的主力裝置是 iPad + Apple Pencil，但這支測的一直是 390 寬的手機。
+    // 量出來的問題很具體：書寫區的高度原本由**畫面寬度**決定並且封頂 340px，
+    // 於是 iPad 直式只有螢幕高度的 22%，橫式則要捲動才寫得到（書寫區從 711px 開始）。
+    const IPADS = [
+      { label: "iPad 直式", width: 834, height: 1194 },
+      { label: "iPad 橫式", width: 1194, height: 834 }
+    ];
+    for (const pad of IPADS) {
+      await chrome.send("Emulation.setDeviceMetricsOverride", {
+        width: pad.width, height: pad.height, deviceScaleFactor: 2, mobile: true
+      });
+      await chrome.navigate(`${server.url}/index.html`);
+      await chrome.evaluate("localStorage.clear(); return 1;");
+      await chrome.navigate(`${server.url}/index.html`);
+      await chrome.sleep(700);
+      const pad_ = await chrome.evaluate(`
+        const c = (n) => { const h=[...document.querySelectorAll("button,a,[data-action]")].find(x=>(x.innerText||"").replace(/\s+/g,"").includes(n)); if(h) h.click(); return !!h; };
+        c("開始"); await new Promise(r=>setTimeout(r,600));
+        c("大一微積分"); await new Promise(r=>setTimeout(r,600));
+        c("直接開始練"); await new Promise(r=>setTimeout(r,1000));
+        const m=[...document.querySelectorAll("button")].find(b=>/知道了/.test(b.textContent)); if(m) m.click();
+        await new Promise(r=>setTimeout(r,500));
+        document.querySelector('[data-action="open-library"]').click();
+        await new Promise(r=>setTimeout(r,800));
+        const s2=document.querySelector("[data-library-search]");
+        if (!s2) return { ok: false };
+        s2.value="dd-rr-001"; s2.dispatchEvent(new Event("input",{bubbles:true}));
+        await new Promise(r=>setTimeout(r,700));
+        const go=document.querySelector('[data-action="start-problem"]');
+        if (!go) return { ok: false };
+        go.click();
+        await new Promise(r=>setTimeout(r,1200));
+        const t=document.querySelector('[data-board-action="toggle"]');
+        if(t) t.click();
+        await new Promise(r=>setTimeout(r,800));
+        const canvas=document.querySelector("[data-blackboard]");
+        if(!canvas) return { ok: false };
+        const r=canvas.getBoundingClientRect();
+        return {
+          ok: true,
+          shareH: Math.round((r.height / window.innerHeight) * 100),
+          needsScroll: r.top + r.height > window.innerHeight + 2,
+          promptClipped: (() => {
+            const p = document.querySelector(".handwrite-prompt");
+            return p ? p.scrollWidth > p.clientWidth + 2 : false;
+          })()
+        };
+      `);
+      if (!pad_.ok) {
+        check(`${pad.label} 的書寫區夠大`, false, "開不出計算紙");
+        continue;
+      }
+      check(`${pad.label} 的書寫區佔得夠高`, pad_.shareH >= 50, `螢幕高度的 ${pad_.shareH}%（門檻 50%）`);
+      check(`${pad.label} 不用捲動就寫得到`, !pad_.needsScroll,
+        pad_.needsScroll ? "書寫區在畫面外，要捲下去才寫得到 —— 而捲下去題目就不見了" : "書寫區整塊在畫面內");
+      check(`${pad.label} 的題目沒有被切掉`, !pad_.promptClipped,
+        pad_.promptClipped ? "題目列橫向溢出，開頭與結尾看不到" : "題目完整可見");
+    }
+    await chrome.send("Emulation.setDeviceMetricsOverride", VIEWPORT);
+
     /* ── 4. console 要乾淨 ── */
     const errors = chrome.consoleMessages.filter((m) => m.level === "error");
     check("console 沒有錯誤", errors.length === 0, errors.slice(0, 2).map((e) => e.text).join(" / "));
