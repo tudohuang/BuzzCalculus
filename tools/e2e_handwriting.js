@@ -606,6 +606,78 @@ async function run() {
     check("沒有壓感的裝置改用速度決定粗細", speedWidth.slow > speedWidth.fast * 1.4,
       `慢 ${speedWidth.slow} vs 快 ${speedWidth.fast} 個墨水像素（比值 ${(speedWidth.slow / Math.max(1, speedWidth.fast)).toFixed(2)}）`);
 
+    /* ── 壓感要真的有作用範圍 ── */
+    // 量出來過的問題：壓力 0.05 / 0.2 / 0.4 畫出來一模一樣（都是 2.5px），
+    // 因為落筆用的壓力下限被套在整條線上，底下 40% 的範圍完全是死的。
+    // 使用者的感覺就是「壓感好像沒有用」。
+    const pressureRange = await chrome.evaluate(`
+      ${PEN}
+      const c = window.__pen.canvas();
+      const ctx = c.getContext("2d");
+      const ratio = c.width / c.getBoundingClientRect().width;
+      const thickness = (fx) => {
+        const col = ctx.getImageData(Math.round(c.width * fx), 0, 1, c.height).data;
+        let n = 0;
+        for (let i = 3; i < col.length; i += 4) if (col[i] > 60) n += 1;
+        return n / ratio;
+      };
+      const measure = async (p) => {
+        document.querySelector('[data-board-action="clear"]').click();
+        await new Promise((r) => setTimeout(r, 150));
+        window.__pen.stroke(0.1, 0.5, 0.9, 0.5, { pressure: p, steps: 40 });
+        await new Promise((r) => setTimeout(r, 150));
+        return thickness(0.5);
+      };
+      const light = await measure(0.1);
+      const heavy = await measure(1.0);
+      document.querySelector('[data-board-action="clear"]').click();
+      return { light: Math.round(light * 100) / 100, heavy: Math.round(heavy * 100) / 100 };
+    `);
+    const spread = pressureRange.heavy / Math.max(0.5, pressureRange.light);
+    check(
+      "壓感真的會改變線寬",
+      spread >= 2,
+      `輕壓 ${pressureRange.light}px vs 重壓 ${pressureRange.heavy}px（${spread.toFixed(1)} 倍）` +
+        (spread >= 2 ? "" : " —— 差距太小，手上感覺不到壓感")
+    );
+
+    /* ── 起筆不能斷開 ── */
+    // 二次曲線的第一段從 points[0] 與 points[1] 的**中點**起筆，
+    // 所以真正的起點到那個中點之間從來沒有被畫過 ——
+    // 畫面上是落筆的圓點跟線條之間有一小段空白，圓點像掉在旁邊的髒點。
+    const startGap = await chrome.evaluate(`
+      ${PEN}
+      document.querySelector('[data-board-action="clear"]').click();
+      await new Promise((r) => setTimeout(r, 150));
+      const c = window.__pen.canvas();
+      const ctx = c.getContext("2d");
+      window.__pen.stroke(0.2, 0.5, 0.8, 0.5, { pressure: 0.7, steps: 30 });
+      await new Promise((r) => setTimeout(r, 200));
+      // 沿著筆畫掃描，找出有墨水的最左與最右，再看中間有沒有空白欄
+      const has = (fx) => {
+        const col = ctx.getImageData(Math.round(c.width * fx), 0, 1, c.height).data;
+        for (let i = 3; i < col.length; i += 4) if (col[i] > 60) return true;
+        return false;
+      };
+      // 斷點就在起筆那一小段（points[0] 到 points[0]/points[1] 的中點），
+      // 長度只有半個取樣間距 —— 用 1% 的步進掃會整個跳過去。
+      // 這裡從起點前一點開始，用 0.2% 的細步進掃過起筆區。
+      let gaps = 0;
+      let started = false;
+      for (let k = 195; k <= 400; k += 2) {
+        const ink = has(k / 1000);
+        if (ink) started = true;
+        else if (started && has((k + 4) / 1000)) gaps += 1;
+      }
+      document.querySelector('[data-board-action="clear"]').click();
+      return { gaps };
+    `);
+    check(
+      "筆畫從頭到尾是連續的",
+      startGap.gaps === 0,
+      startGap.gaps === 0 ? "沒有斷點" : `中間有 ${startGap.gaps} 處空白 —— 起筆的圓點會像掉在旁邊的髒點`
+    );
+
     /* ── 7.7 橡皮擦看得到範圍 ── */
     // 橡皮擦有 20px 寬，但十字游標完全看不出它會吃到哪裡，
     // 於是使用者只能試擦一下再看結果。
