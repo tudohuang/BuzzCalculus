@@ -89,6 +89,67 @@ async function run() {
   const server = await staticServer.start(path.join(__dirname, ".."), 0);
   const chrome = await launch();
   try {
+    /* ── 3.6 iPad：不叫系統鍵盤也要打得完一個答案 ── */
+    // iPad 上點輸入框會跳系統鍵盤，蓋掉半個畫面 —— 蓋住的正是剛剛寫滿算式的
+    // 計算紙，而且你得先放下筆。畫面上那套數學鍵盤本來沒有數字，
+    // 所以「2*x^3」「3/4」這種答案一定得回去用系統鍵盤。
+    await chrome.send("Emulation.setDeviceMetricsOverride", {
+      width: 834, height: 1194, deviceScaleFactor: 2, mobile: true
+    });
+    // setDeviceMetricsOverride 會把觸控模擬的狀態洗掉，pointer: coarse 跟著變 false。
+    // 不重新開啟的話，測到的是一台「桌機尺寸剛好等於 iPad」的機器 ——
+    // 而 app 的平板行為全部掛在 pointer: coarse 上，等於整段沒測到。
+    await chrome.send("Emulation.setTouchEmulationEnabled", { enabled: true, maxTouchPoints: 5 });
+    await chrome.navigate(`${server.url}/index.html`);
+    await chrome.evaluate("localStorage.clear(); return 1;");
+    await chrome.navigate(`${server.url}/index.html`);
+    await chrome.sleep(700);
+    const input = await chrome.evaluate(`
+      const c = (n) => { const h=[...document.querySelectorAll("button,a,[data-action]")].find(x=>(x.innerText||"").replace(/\s+/g,"").includes(n)); if(h) h.click(); return !!h; };
+      c("開始"); await new Promise(r=>setTimeout(r,600));
+      c("大一微積分"); await new Promise(r=>setTimeout(r,600));
+      c("直接開始練"); await new Promise(r=>setTimeout(r,1000));
+      const m=[...document.querySelectorAll("button")].find(b=>/知道了/.test(b.textContent)); if(m) m.click();
+      await new Promise(r=>setTimeout(r,500));
+      // 切成「自己寫」
+      c("訓練"); await new Promise(r=>setTimeout(r,700));
+      const free=document.querySelector('[data-answer-mode="free"]');
+      if(!free) return { ok:false, why:"找不到作答形式切換" };
+      free.click(); await new Promise(r=>setTimeout(r,500));
+      const node=document.querySelector('[data-action="start-path-node"]');
+      if(node) node.click(); await new Promise(r=>setTimeout(r,700));
+      const lesson=document.querySelector('[data-action="start-path-lesson"]');
+      if(lesson) lesson.click(); await new Promise(r=>setTimeout(r,1200));
+      const m2=[...document.querySelectorAll("button")].find(b=>/知道了/.test(b.textContent)); if(m2) m2.click();
+      await new Promise(r=>setTimeout(r,500));
+      const field=document.querySelector("#answer");
+      if(!field) return { ok:false, why:"沒有輸入框" };
+      // 數學鍵盤上有沒有數字
+      const keys=[...document.querySelectorAll("[data-insert]")].map(b=>b.dataset.insert);
+      const digits="0123456789".split("").filter(d=>keys.includes(d));
+      return {
+        ok:true,
+        inputmode: field.getAttribute("inputmode"),
+        coarse: matchMedia("(pointer: coarse)").matches,
+        freeMode: !document.querySelector(".choice-grid"),
+
+        hasToggle: Boolean(document.querySelector('[data-action="toggle-system-keyboard"]')),
+        digitsOnKeypad: digits.length,
+        keyCount: keys.length
+      };
+    `);
+    if (!input.ok) {
+      check("iPad 不用系統鍵盤也打得完答案", false, input.why);
+    } else {
+      check("iPad 上輸入框不會叫出系統鍵盤", input.inputmode === "none",
+        `inputmode="${input.inputmode}" · coarse=${input.coarse} · 自己寫模式=${input.freeMode}` + (input.inputmode === "none" ? "" : " —— 會蓋掉計算紙，而且要放下筆"));
+      check("數學鍵盤上有全部十個數字", input.digitsOnKeypad === 10,
+        `${input.digitsOnKeypad}/10 個數字，全鍵盤共 ${input.keyCount} 鍵` +
+        (input.digitsOnKeypad === 10 ? "" : " —— 少了數字就一定得回去用系統鍵盤"));
+      check("留了切回系統鍵盤的出口", input.hasToggle,
+        input.hasToggle ? "" : "接實體鍵盤或想打字的人會被鎖死");
+    }
+
     await chrome.send("Emulation.setDeviceMetricsOverride", VIEWPORT);
     await chrome.send("Emulation.setTouchEmulationEnabled", { enabled: true, maxTouchPoints: 5 });
 
@@ -211,6 +272,10 @@ async function run() {
       await chrome.send("Emulation.setDeviceMetricsOverride", {
         width: pad.width, height: pad.height, deviceScaleFactor: 2, mobile: true
       });
+      // setDeviceMetricsOverride 會把觸控模擬的狀態洗掉，pointer: coarse 跟著變 false。
+      // 不重新開啟的話，測到的是一台「桌機尺寸剛好等於 iPad」的機器 ——
+      // 而 app 的平板行為全部掛在 pointer: coarse 上，等於整段沒測到。
+      await chrome.send("Emulation.setTouchEmulationEnabled", { enabled: true, maxTouchPoints: 5 });
       await chrome.navigate(`${server.url}/index.html`);
       await chrome.evaluate("localStorage.clear(); return 1;");
       await chrome.navigate(`${server.url}/index.html`);
