@@ -302,6 +302,74 @@ async function run() {
     await chrome.sleep(900);
     await shoot(chrome, "13-workbook", "作業本：290 頁 PDF，同一套題庫的紙本形式");
 
+    /* ── iPad：主力裝置，跟手機是兩種版面 ── */
+    // 這一段一開始沒有，結果 demo 頁完全看不到 iPad —— 而 iPad + Apple Pencil
+    // 才是這個產品的差異點，也是這幾天改最多的地方。
+    const PADS = [
+      { name: "20-ipad-write", w: 834, h: 1194, note: "iPad 直式：書寫區佔畫面 72%，題目在上、選項在下，不用捲動" },
+      { name: "21-ipad-landscape", w: 1194, h: 834, note: "iPad 橫式：同一套版面自動換方向，書寫區仍佔 61%" }
+    ];
+    for (const pad of PADS) {
+      await chrome.send("Emulation.setDeviceMetricsOverride", {
+        width: pad.w, height: pad.h, deviceScaleFactor: 2, mobile: true
+      });
+      await chrome.send("Emulation.setTouchEmulationEnabled", { enabled: true, maxTouchPoints: 5 });
+      await chrome.navigate(`${server.url}/index.html`);
+      await chrome.sleep(800);
+      await chrome.evaluate(`
+        document.querySelector('[data-action="open-library"]').click();
+        await new Promise((r) => setTimeout(r, 800));
+        const s = document.querySelector("[data-library-search]");
+        if (s) { s.value = "dd-rr-001"; s.dispatchEvent(new Event("input", { bubbles: true })); }
+        await new Promise((r) => setTimeout(r, 700));
+        const go = document.querySelector('[data-action="start-problem"]');
+        if (go) go.click();
+        await new Promise((r) => setTimeout(r, 1200));
+        const t = document.querySelector('[data-board-action="toggle"]');
+        if (t) t.click();
+        await new Promise((r) => setTimeout(r, 900));
+        // 寫一點東西，空白的計算紙看不出這個功能在做什麼
+        const c = document.querySelector("[data-blackboard]");
+        if (!c) return 0;
+        const r = c.getBoundingClientRect();
+        const mv = "onpointerrawupdate" in c ? "pointerrawupdate" : "pointermove";
+        const send = (t2, fx, fy, p) => c.dispatchEvent(new PointerEvent(t2, {
+          bubbles: true, cancelable: true, pointerId: 1, pointerType: "pen",
+          pressure: p, isPrimary: true,
+          clientX: r.left + r.width * fx, clientY: r.top + r.height * fy
+        }));
+        const stroke = (pts, peak) => {
+          send("pointerdown", pts[0][0], pts[0][1], 0.08);
+          const N = 22;
+          for (let i = 1; i <= N; i += 1) {
+            const t2 = i / N;
+            const seg = t2 * (pts.length - 1);
+            const k = Math.min(pts.length - 2, Math.floor(seg));
+            const f = seg - k;
+            send(mv,
+              pts[k][0] + (pts[k+1][0] - pts[k][0]) * f,
+              pts[k][1] + (pts[k+1][1] - pts[k][1]) * f,
+              Math.max(0.08, peak * Math.sin(Math.PI * Math.min(1, t2 * 1.15))));
+          }
+          send("pointerup", pts[pts.length-1][0], pts[pts.length-1][1], 0.08);
+        };
+        stroke([[0.08,0.16],[0.11,0.08],[0.14,0.16]], 0.85);
+        stroke([[0.17,0.08],[0.17,0.18]], 0.75);
+        stroke([[0.22,0.09],[0.27,0.17]], 0.35);
+        stroke([[0.27,0.09],[0.22,0.17]], 0.35);
+        stroke([[0.08,0.24],[0.40,0.24]], 0.95);
+        stroke([[0.08,0.32],[0.12,0.40]], 0.55);
+        stroke([[0.12,0.32],[0.08,0.40]], 0.55);
+        stroke([[0.18,0.32],[0.18,0.42]], 0.35);
+        stroke([[0.26,0.34],[0.34,0.34]], 0.22);
+        stroke([[0.26,0.39],[0.34,0.39]], 0.22);
+        stroke([[0.42,0.30],[0.48,0.44]], 0.90);
+        await new Promise((r2) => setTimeout(r2, 400));
+        return 1;
+      `);
+      await shoot(chrome, pad.name, pad.note);
+    }
+
     fs.writeFileSync(path.join(OUT, "manifest.json"), JSON.stringify(shots, null, 2) + "\n", "utf8");
     const total = shots.reduce((sum, s) => sum + s.bytes, 0);
     console.log(`\n共 ${shots.length} 張，合計 ${Math.round(total / 1024)} KB`);
