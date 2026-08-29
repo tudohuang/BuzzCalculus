@@ -434,11 +434,19 @@
   const STORAGE_KEY = "buzzcalculus.records.v1";
   const THEME_KEY = "buzzcalculus.theme";
   const SYNC_META_KEY = "buzzcalculus.sync.meta";
+  // 數字要在鍵盤上。
+  //
+  // 原本只有符號與函數，沒有 0–9 —— 於是「2*x^3」「3/4」「pi/4」這種答案
+  // 一定得叫出系統鍵盤。在 iPad 上那代表：放下筆、鍵盤蓋掉半個畫面、
+  // 蓋住的正是剛剛寫滿算式的計算紙。
+  // 鍵盤補上數字之後，這個作答介面才真的是一個「不用系統鍵盤也能打完」的東西。
   const WEBWORK_KEY_GROUPS = [
-    { label: "常用", keys: ["x", "pi", "e", "(", ")", "+", "-", "*", "/", "^"] },
+    { label: "數字", keys: ["7", "8", "9", "4", "5", "6", "1", "2", "3", "0", ".", "-"] },
+    { label: "常用", keys: ["x", "pi", "e", "(", ")", "+", "*", "/", "^"] },
     { label: "函數", keys: ["sqrt(|)", "sin(|)", "cos(|)", "tan(|)", "log(|)", "exp(|)"] },
     { label: "判定", keys: ["DNE", "convergent", "divergent", "conditional"] }
   ];
+  const DIGIT_KEYS = ["7", "8", "9", "4", "5", "6", "1", "2", "3", "0", ".", "-"];
   const ERROR_TAGS = ["粗心", "不會", "忘公式"];
   const PROOF_TIERS = {
     all: "全部",
@@ -5606,6 +5614,20 @@
       quiz.keypadOpen = typeof window === "undefined" || !window.innerWidth || window.innerWidth >= 760;
     }
     const extrasOpen = quiz.keypadOpen;
+
+    // 觸控裝置預設不叫系統鍵盤。
+    //
+    // iPad 上點一下輸入框，系統鍵盤就蓋掉半個畫面 —— 蓋住的正是剛剛寫滿算式的
+    // 計算紙，而且你得先放下筆。既然畫面上已經有一套數學鍵盤（現在含數字），
+    // 那才是這個裝置上正確的輸入法。
+    //
+    // inputmode="none" 是標準做法：「我自己提供輸入介面，不要跳虛擬鍵盤」。
+    // 但一定要留逃生門 —— 有人接了實體鍵盤，也有人就是想用系統鍵盤打字，
+    // 所以旁邊有一顆可以切回去，而且選擇會記在這一局裡。
+    const touchDevice = typeof window !== "undefined" && typeof window.matchMedia === "function"
+      && window.matchMedia("(pointer: coarse)").matches;
+    if (quiz.systemKeyboard == null) quiz.systemKeyboard = !touchDevice;
+    const suppressKeyboard = touchDevice && !quiz.systemKeyboard;
     const hasDraft = Boolean(quiz.draft.trim());
     return `
       <section class="webwork-answer ${compact ? "is-docked" : ""}">
@@ -5618,7 +5640,12 @@
         </div>
         <form class="answer-panel webwork-form" data-action="submit-answer">
         <label class="sr-only" for="answer">答案</label>
-        <input id="answer" class="answer-input" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="done" inputmode="text" value="${escapeAttr(quiz.draft)}" placeholder="${placeholderFor(problem)}" ${disabled} />
+        <input id="answer" class="answer-input" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="done" inputmode="${suppressKeyboard ? "none" : "text"}" value="${escapeAttr(quiz.draft)}" placeholder="${placeholderFor(problem)}" ${disabled} />
+        ${
+          touchDevice
+            ? `<button class="icon-button keyboard-toggle ${quiz.systemKeyboard ? "is-active" : ""}" type="button" data-action="toggle-system-keyboard" title="${quiz.systemKeyboard ? "改用畫面上的數學鍵盤" : "叫出系統鍵盤"}" aria-pressed="${quiz.systemKeyboard ? "true" : "false"}" ${disabled}>${icon("keyboard")}</button>`
+            : ""
+        }
         <button class="button" type="submit" ${disabled}>${icon("send")}送出</button>
         </form>
         <button class="webwork-extras-toggle" type="button" data-action="toggle-keypad" aria-expanded="${extrasOpen ? "true" : "false"}" ${disabled}>
@@ -6646,6 +6673,17 @@
           updateAnswerPreview(input.value);
         }
       });
+      // 觸控裝置上系統鍵盤被壓掉了（inputmode="none"），所以「點輸入框」
+      // 必須要能把畫面上的數學鍵盤叫出來 —— 不然全螢幕書寫時
+      // 輸入框在那裡卻沒有任何方式可以打字。
+      // 這是使用者本來就會做的動作：點你要打字的地方，鍵盤就出現。
+      input.addEventListener("focus", () => {
+        if (!quiz || quiz.keypadOpen) return;
+        if (quiz.systemKeyboard) return;
+        if (!coarsePointer) return;
+        quiz.keypadOpen = true;
+        render();
+      });
     }
 
     app.querySelectorAll("[data-insert]").forEach((button) => {
@@ -6707,6 +6745,20 @@
     if (action === "toggle-keypad" && quiz) {
       quiz.keypadOpen = !quiz.keypadOpen;
       render();
+    }
+    if (action === "toggle-system-keyboard" && quiz) {
+      quiz.systemKeyboard = !quiz.systemKeyboard;
+      // 切回畫面鍵盤時把輸入工具打開 —— 不然按完之後兩種鍵盤都沒有
+      if (!quiz.systemKeyboard) quiz.keypadOpen = true;
+      render();
+      // 切成系統鍵盤時直接把游標放回輸入框，讓鍵盤跳出來，
+      // 不要讓使用者按完還要再點一次
+      if (quiz.systemKeyboard) {
+        window.setTimeout(() => {
+          const input = app.querySelector(".answer-input");
+          if (input) input.focus();
+        }, 60);
+      }
     }
     if (action === "skip") recordAnswer({ status: "wrong", reason: "Skipped", input: quiz.draft || "" });
     if (action === "onboarding-next") advanceOnboarding();
@@ -12172,12 +12224,14 @@
   }
 
   function webworkKeys(problem) {
+    // 集合與區間的元素也是數字（{-2, 2}、(0, inf)），所以除了純文字判定題，
+    // 其他都要有數字鍵，不然還是得回去叫系統鍵盤。
     const groups = problem.answerKind === "text"
       ? [{ label: "判定", keys: ["convergent", "divergent", "conditional", "absolute", "DNE"] }]
       : problem.answerKind === "interval"
-        ? [{ label: "區間", keys: ["(", ")", "[", "]", ",", "U", "inf", "-inf"] }]
+        ? [{ label: "數字", keys: DIGIT_KEYS }, { label: "區間", keys: ["(", ")", "[", "]", ",", "U", "inf", "-inf", "pi", "/"] }]
         : problem.answerKind === "set"
-          ? [{ label: "集合", keys: ["{", "}", ",", "pi", "sqrt(|)", "-"] }]
+          ? [{ label: "數字", keys: DIGIT_KEYS }, { label: "集合", keys: ["{", "}", ",", "pi", "sqrt(|)", "/"] }]
           : WEBWORK_KEY_GROUPS;
     return groups.flatMap((group) => group.keys.map((token) => ({
       label: token.replace("|", ""),
@@ -12797,6 +12851,7 @@
       eraser: "eraser",
       undo: "undo-2",
       redo: "redo-2",
+      keyboard: "keyboard",
       maximize: "maximize-2",
       minimize: "minimize-2",
       printer: "printer",
