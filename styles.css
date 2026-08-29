@@ -1759,6 +1759,32 @@ button {
   gap: 12px;
 }
 
+/* 窄畫面上八顆工具鍵放不進同一行，於是 flex 去壓左邊的標題 ——
+   「計算紙 / 15 筆」被擠成三個字寬的直排，工具列還是照樣折成兩行。
+   擠壓沒有換到任何空間，只是把標題弄醜。改成標題自己一行、工具列自己一行。 */
+@media (max-width: 520px) {
+  .scratchboard-summary {
+    flex-wrap: wrap;
+    align-items: baseline;
+  }
+
+  .scratchboard-summary > div:first-child {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    flex: 1 0 100%;
+  }
+
+  .scratchboard-summary strong {
+    margin-top: 0;
+  }
+
+  .scratchboard-summary .board-tools {
+    flex: 1 0 100%;
+    justify-content: flex-start;
+  }
+}
+
 .webwork-head span,
 .scratchboard-summary span {
   display: block;
@@ -1950,6 +1976,24 @@ button {
 .handwrite-prompt .math-inline {
   font-size: 1.15rem;
   white-space: nowrap;
+}
+
+/* 全螢幕書寫時題目列在最上面。white-space: nowrap 對一條算式是對的
+   （算式不該被拆行），但應用題的題幹是一整段中文 ——
+   結果是開頭被切在畫面外，使用者看到的第一個字是句子的中間。
+   窄畫面上改成可以折行，並讓它最多佔三行，剩下的還是可以捲。 */
+@media (max-width: 720px) {
+  .handwrite-prompt {
+    justify-content: flex-start;
+    overflow-x: hidden;
+    overflow-y: auto;
+    max-height: 22vh;
+  }
+
+  .handwrite-prompt .math-inline {
+    font-size: 1rem;
+    white-space: normal;
+  }
 }
 
 .handwrite-shell.is-fullscreen .webwork-answer {
