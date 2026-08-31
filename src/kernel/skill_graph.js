@@ -69,16 +69,17 @@
     { id: "limit.trig", label: "三角極限", tier: 2, obscurity: 1, family: "limit", topics: ["limits"], prereq: ["limit.direct"],
       tags: ["trig-limit", "half-angle"] },
     { id: "limit.exponential", label: "指數 / 對數極限", tier: 2, obscurity: 2, family: "limit", topics: ["limits"], prereq: ["limit.direct"],
-      tags: ["exponential-limit", "power-exponential", "log-limit", "log-expansion", "hyperbolic"] },
+      tags: ["exponential-limit", "power-exponential", "log-limit", "log-expansion", "hyperbolic", "indeterminate"] },
     { id: "limit.lhopital", label: "L'Hôpital", tier: 2, obscurity: 1, family: "limit", topics: ["limits"], prereq: ["limit.direct"],
       tags: ["lhopital"] },
     { id: "limit.taylor", label: "Taylor 求極限", tier: 3, obscurity: 2, family: "limit", topics: ["limits"], prereq: ["limit.direct"], radarAxis: "taylor",
       tags: ["taylor", "nested-taylor", "composite-taylor", "series-expansion"] },
     { id: "limit.asymptotic", label: "漸近分析", tier: 4, obscurity: 2, family: "limit", topics: ["limits"], prereq: ["limit.taylor"], radarAxis: "taylor",
       tags: ["asymptotics", "asymptotic", "asymptotic-balance", "asymptotic-expansion",
-        "infinity-limit", "infinity", "stirling", "boundary-layer", "stolz"] },
+        "infinity-limit", "infinity", "stirling", "boundary-layer", "stolz",
+        "cesaro", "euler-mascheroni", "nth-root"] },
     { id: "limit.squeeze", label: "夾擠與有界", tier: 2, obscurity: 1, family: "limit", topics: ["limits"], prereq: ["limit.direct"],
-      tags: ["squeeze", "dne", "periodicity", "product-limit"] },
+      tags: ["squeeze", "dne", "periodicity", "product-limit", "oscillation"] },
     { id: "limit.riemann", label: "Riemann 和極限", tier: 3, obscurity: 2, family: "limit", prereq: ["limit.direct"],
       tags: ["riemann-sum"] },
     { id: "limit.trap", label: "極限陷阱", tier: 3, obscurity: 2, family: "limit", topics: ["limits"], prereq: ["limit.direct"],
@@ -88,7 +89,14 @@
       // 是同一件事的兩個問法，同一個技巧節點。
       tags: ["continuity", "ivt", "removable-singularity", "asymptote", "domain", "rational-function"] },
     { id: "limit.sequence", label: "數列極限", tier: 2, obscurity: 1, family: "limit", prereq: ["limit.direct"],
-      tags: ["sequence", "recursive"] },
+      // 無窮乘積放這裡而不是自成一節：∏ 的定義就是部分乘積這個**數列**的極限，
+      // 遞迴、巢狀根式、連分數同理 —— 它們共用「先確定收斂，再對遞迴式取極限」這一步。
+      tags: ["sequence", "recursive", "recurrence", "nested-radical", "continued-fraction",
+        "fixed-point", "newton", "infinite-product"] },
+    { id: "limit.discontinuous", label: "單邊極限與跳躍", tier: 3, obscurity: 2, family: "limit", topics: ["limits"], prereq: ["limit.direct"],
+      // 高斯括號與單邊極限合成一個節點：兩者練的是同一件事 ——
+      // 函數在不連續點附近的行為，只能用不等式夾，不能代進去也不能展開。
+      tags: ["floor", "one-sided"] },
 
     /* ===== 微分 ===== */
     { id: "diff.basic", label: "基本微分律", tier: 1, obscurity: 1, family: "diff", topics: ["derivatives"], prereq: [],

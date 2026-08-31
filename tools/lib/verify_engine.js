@@ -444,11 +444,334 @@ function verifyDefiniteIntegral(problem, structure, compileAnswer) {
   return report("parameter-integral", result, "答案應該等於含參數積分的值");
 }
 
+// 數列極限：在 n、2n、4n… 取值再外插。
+//
+// numeric.limit 對這一類一律回報「不同取樣深度的外插不一致」，而那不是它的
+// 錯 —— 它是為連續函數的 h→0 設計的，取樣點會落在整數之間，而 Σ_{k=1}^{n}
+// 這種東西在 n = 1370.4 上根本沒有定義。數列要用數列的取樣方式。
+//
+// 收斂階不能寫死。誤差是 C/n 的（黎曼和）、C/√n 的（Stolz 型平均，因為
+// Σ1/√k = 2√n + ζ(1/2) + …）、還是 C·log n/n 的（Stirling 那類），事前並不
+// 知道；寫死成 1/n 的 Richardson 只對第一種準（實測 Stolz 型會差到 1.6e-3）。
+//
+// 所以用 Aitken Δ²：它不需要知道階數。對 f(n) = L + C·n^{-p}，在 n、2n、4n
+// 上的相鄰差比恆為 2^{-p}，跟 p 是多少無關 —— 正好是 Aitken 的前提。
+function extrapolateSequence(f, options) {
+  const settings = options || {};
+  const start = Math.max(2, Math.round(settings.n0 || 500));
+  const levels = settings.levels || 7;
+
+  const values = [];
+  for (let k = 0; k < levels; k += 1) {
+    let value;
+    try {
+      value = f(start * Math.pow(2, k));
+    } catch (error) {
+      break;
+    }
+    // 這一層算不出來（階乘溢位、log 吃到 0）就用已經拿到的層數收工
+    if (!Number.isFinite(value)) break;
+    values.push(value);
+  }
+  if (values.length < 3) {
+    return { value: Number.NaN, reason: "數列取樣點不足三個，外插不了（多半是溢位）" };
+  }
+
+  // 取樣值的跳動必須越取越小。中途忽然放大，代表這串不是在收斂，
+  // 而是計算本身在某個 n 之後壞掉了。
+  //
+  // 最陰險的例子是 n/(n!)^{1/n}：n! 在 n≈170 溢位成 Infinity，
+  // Infinity^{1/n} 還是 Infinity，n/Infinity = **0** —— 溢位在中途變回一個
+  // 有限數，取樣值於是長成 [2.5, 2.6, 2.68, 0, 0]。相鄰項檢查過（0 跟 0 很像）、
+  // 兩個尺度也一致（都是 0），只有「跳動突然放大 30 倍」這件事會露餡。
+  const steps = [];
+  for (let i = 1; i < values.length; i += 1) {
+    steps.push(Math.abs(values[i] - values[i - 1]));
+  }
+  for (let i = 1; i < steps.length; i += 1) {
+    const before = Math.max(...steps.slice(0, i));
+    if (steps[i] > 10 * before && steps[i] > 1e-12) {
+      return {
+        value: Number.NaN,
+        breakdown: true,
+        reason: `取樣值的跳動在中途放大了（${before.toExponential(2)} → ${steps[i].toExponential(2)}），不是收斂`
+      };
+    }
+  }
+
+  // 取樣值是真的，還是浮點雜訊？
+  //
+  // n·sin(2πe·n!) 是活生生的例子：它的極限確實是 2π，但 e·n! 在 n≈20 就
+  // 超過 2^53，小數部分整個被浮點吃掉，sin 收到的是雜訊。Aitken 不知道這件事，
+  // 照樣把雜訊外插成一個看起來很穩的 53.06 —— 然後去指控一個正確的答案。
+  //
+  // 分辨的方法很便宜：收斂數列的相鄰項一定很接近（差是 O(1/n) 或更小），
+  // 雜訊的相鄰項則毫無關係。在最大的取樣點上比 f(n) 與 f(n+1) 就夠了。
+  const largest = start * Math.pow(2, values.length - 1);
+  let neighbour;
+  try {
+    neighbour = f(largest + 1);
+  } catch (error) {
+    neighbour = Number.NaN;
+  }
+  const tail = values[values.length - 1];
+  // 門檻是 1e-2 不是 1e-3：sin(n)/n 這種**震盪但收斂**的數列，相鄰項本來
+  // 就差 2/n（n=640 時是 3e-3），那是震盪不是雜訊。而真正的浮點雜訊
+  // （n·sin(2πe·n!)）相鄰項差的是好幾倍，1e-2 一樣擋得住。
+  if (!Number.isFinite(neighbour) ||
+      Math.abs(neighbour - tail) > 1e-2 * Math.max(1, Math.abs(tail))) {
+    return {
+      value: Number.NaN,
+      breakdown: true,
+      reason: `相鄰項 f(${largest}) 與 f(${largest + 1}) 差太多，取樣值不可信（多半是浮點失去精度）`
+    };
+  }
+
+  let row = values;
+  while (row.length >= 3) {
+    const next = [];
+    for (let i = 0; i + 2 < row.length; i += 1) {
+      const first = row[i + 1] - row[i];
+      const second = row[i + 2] - row[i + 1];
+      const denominator = second - first;
+      // 差已經小到是浮點雜訊，再外插只會放大它 —— 停在原值
+      if (Math.abs(denominator) < 1e-14 * Math.max(1, Math.abs(row[i + 2]))) {
+        next.push(row[i + 2]);
+      } else {
+        next.push(row[i + 2] - (second * second) / denominator);
+      }
+    }
+    const moved = Math.abs(next[next.length - 1] - row[row.length - 1]);
+    const scale = Math.max(1e-9, Math.abs(row[row.length - 1]));
+    // 外插反而跳很遠 = 這串根本不像在收斂。回報 NaN 讓上層說「驗不了」，
+    // 不要硬吐一個數字出去 —— 安靜地給錯答案比驗不了糟得多。
+    if (moved / scale > 0.5) {
+      return { value: Number.NaN, breakdown: true, reason: "數列外插不穩定，看不出收斂" };
+    }
+    row = next;
+  }
+  // 外插只該把最後一步的殘差補完，不該把答案帶到取樣值以外很遠的地方。
+  //
+  // sin(n)/n 是逼出這道檢查的例子：它確實收斂到 0，但取樣值是 ±1/n 的震盪，
+  // 相鄰差比毫無規律 —— Aitken 在這種資料上吐出的 −0.00117 純屬巧合，
+  // 而且比最後一步大了一個量級。真正在收斂的數列不會這樣：
+  // 誤差 C/n 的外插只跨過 1 倍最後一步，C/√n 的跨過約 2.4 倍。
+  const extrapolated = row[row.length - 1];
+  const lastSample = values[values.length - 1];
+  const lastStep = Math.abs(lastSample - values[values.length - 2]);
+  const allowance = 5 * lastStep + 1e-9 * Math.max(1, Math.abs(lastSample));
+  if (Math.abs(extrapolated - lastSample) > allowance) {
+    return {
+      value: Number.NaN,
+      breakdown: true,
+      reason: `外插結果 ${extrapolated} 離最後一個取樣值 ${lastSample} 太遠（超過最後一步的 5 倍），不可信`
+    };
+  }
+
+  return { value: extrapolated, reason: "" };
+}
+
+// 同一個數列，用兩個差很多的取樣尺度各外插一次，答案必須一致。
+//
+// 這道檢查是被兩個實際的假警報逼出來的，兩個都是**外插器很有自信地算錯**：
+//
+//   H_n/log n → 1，但誤差是 γ/log n。n=32000 時 log n 才 10.4，
+//   誤差還有 5%，而且 log(2^k·n) = log n + k·log2 是線性成長不是等比，
+//   Aitken 的前提不成立。它照樣吐出一個很穩的 1.0043，去指控正確答案 1。
+//
+//   n/(n!)^{1/n} → e，但 fact(500) 溢位成 Infinity，Infinity^{1/500} 還是
+//   Infinity，n/Infinity = 0 —— 溢位沒有變成 NaN，變成一個看起來很正常的 0，
+//   連相鄰項檢查都騙得過（0 跟 0 確實很像）。
+//
+// 小尺度那把梯子在這兩種情況下都會給出不一樣的答案：前者因為誤差項還很大，
+// 後者因為 640! 也溢位但 40! 不會。兩把不一致就是「驗不了」，不是「不符」。
+function sequenceLimit(f) {
+  const coarse = extrapolateSequence(f, { n0: 40, levels: 5 });
+  const fine = extrapolateSequence(f, { n0: 500, levels: 7 });
+
+  // 這兩個方向不對稱，不要寫成對稱的：
+  //
+  // 大尺度失敗、小尺度成功 —— 正當。n!/nⁿ 在 n=500 就是 Infinity/Infinity = NaN，
+  // 那是溢位造成的「資料不足」，小尺度算出來的仍然是真的。
+  //
+  // 小尺度失敗、大尺度成功 —— 不正當。小尺度失敗代表它**偵測到不對勁**
+  // （跳動放大、相鄰項對不上、外插不穩），這種時候大尺度的成功多半是假的：
+  // n/(n!)^{1/n} 從 n=171 起恆等於 0，大尺度整串都是 0，看起來穩得不得了。
+  // 所以這裡不提供反向的退路。
+  // 大尺度失敗時，只有「取樣點不足」才退回小尺度 —— 那是溢位造成的資料缺口，
+  // 小尺度算出來的仍然是真的。若大尺度是**偵測到不對勁**（breakdown），
+  // 退回去等於拿一把更粗的尺子去覆蓋一個已經舉起的紅旗。
+  if (!Number.isFinite(fine.value)) return fine.breakdown ? fine : coarse;
+  if (!Number.isFinite(coarse.value)) return coarse;
+
+  // 門檻放到 5e-3，是因為粗梯子只取到 n=640，它本身就沒有那個精度。
+  // 拿 1e-6 去要求兩把一致，等於用粗梯子的精度上限當正確性標準 ——
+  // (1+2/x)^{3x} 的細梯子準到小數第十位，卻會因為粗的差 5e-6 而被判「不可信」。
+  // 這裡要抓的是**質**的分歧（1.028 vs 1.004 那種收斂根本沒到位），不是精度差。
+  const gap = Math.abs(coarse.value - fine.value);
+  const scale = Math.max(1e-9, Math.abs(fine.value));
+  if (gap / scale > 5e-3) {
+    return {
+      value: Number.NaN,
+      breakdown: true,
+      reason: `兩個取樣尺度外插出不同的值（${coarse.value} vs ${fine.value}），不可信`
+    };
+  }
+  return fine;
+}
+
+// 夾擠取樣：不外插，只問「取樣值有沒有收在一起」。
+//
+// 這是一個刻意比外插弱的檢查，因為它要處理的函數本來就不平滑：
+// 階梯函數（x⌊1/x⌋）、震盪（x²sin(1/x)）在任何鄰域裡都沒有可以外插的結構。
+// 判準是散布必須**持續縮小**、最後縮到 1e-7 以下 —— 只是「值差不多」不算，
+// 因為收斂很慢的函數（1/log(1/x)）在任一段窗口裡看起來也差不多，
+// 那種情況要讓它驗不過，不要放行。
+function squeezeSample(f, target, side) {
+  const toInfinity = !Number.isFinite(target);
+  const directions = side === "+" ? [1] : side === "-" ? [-1] : [1, -1];
+  const spreads = [];
+  let last = null;
+
+  for (let k = 3; k <= 9; k += 1) {
+    const step = Math.pow(10, -k) * Math.max(1, Math.abs(target));
+    const values = [];
+    // 同一個尺度取三個點，才看得出震盪；只取一個點的話，
+    // sin(1/x) 這種剛好落在同一相位上會假裝很穩定
+    for (const direction of toInfinity ? [1] : directions) {
+      for (const scale of [1, 3, 7]) {
+        // x→∞ 用的是往外跑的等比階梯，判準完全一樣：散布要縮到零。
+        const at = toInfinity ? Math.pow(10, k) * scale : target + direction * step * scale;
+        const value = f(at);
+        if (!Number.isFinite(value)) return { value: Number.NaN, spread: Number.NaN };
+        values.push(value);
+      }
+    }
+    const spread = Math.max(...values) - Math.min(...values);
+    spreads.push(spread);
+    last = values.reduce((sum, value) => sum + value, 0) / values.length;
+  }
+
+  const finalSpread = spreads[spreads.length - 1];
+
+  // 判準只有兩條，而且都不需要「相對於什麼」：
+  //
+  //   一、散布必須真的在縮（至少 100 倍）。這是趨勢證據，
+  //       收斂很慢的函數（1/log(1/x) 七個尺度只縮 4 倍）過不了。
+  //   二、最後的散布必須小到足以當一個有意義的誤差棒。
+  //
+  // 不再拿散布去除以平均值：極限是 0 的時候平均值本身就沒有尺度，
+  // x·cos(1/x²) 的取樣值一路縮到 1.2e-8，卻因為「相對於 1e-9 太大」被判不收斂。
+  // 散布本來就是這個估計值的不確定度，交給 toleranceFor 去承擔才對 ——
+  // 散布大，容差就大，但估計值同樣不確定，錯的答案還是得落在那個範圍內才過得了。
+  if (finalSpread > spreads[0] / 100 || finalSpread > 1e-6) {
+    return { value: Number.NaN, spread: finalSpread };
+  }
+  return { value: last, spread: finalSpread };
+}
+
+// 「極限不存在」的正面反證：越靠近目標，取樣值的散布**沒有**在縮。
+//
+// 這是 squeezeSample 的反面。夾擠問「散布有沒有縮到零」，這裡問「有沒有一直不縮」。
+// 兩邊都要求看到一個趨勢，而不是看到一次失敗 —— 驗算器算不出來不能當成
+// 極限不存在的證據，否則所有難題都可以宣稱自己的答案是 dne。
+function divergesByOscillation(f, target, side) {
+  const toInfinity = !Number.isFinite(target);
+  const directions = side === "+" ? [1] : side === "-" ? [-1] : [1, -1];
+  const spreads = [];
+
+  for (let k = 4; k <= 10; k += 1) {
+    const values = [];
+    // 取樣點刻意用非整數倍率，避免週期函數在每個尺度上都落在同一個相位
+    for (const direction of toInfinity ? [1] : directions) {
+      for (const scale of [1, 2.3, 4.7, 7.1, 9.3]) {
+        const at = toInfinity
+          ? Math.pow(10, k) * scale
+          : target + direction * Math.pow(10, -k) * scale * Math.max(1, Math.abs(target));
+        const value = f(at);
+        if (!Number.isFinite(value)) return { diverges: false, detail: "" };
+        values.push(value);
+      }
+    }
+    spreads.push(Math.max(...values) - Math.min(...values));
+  }
+
+  // 每一個尺度上散布都還在，而且最後一個尺度沒有比第一個小多少 → 不收斂
+  const floor = Math.min(...spreads);
+  const shrinkage = spreads[0] > 0 ? spreads[spreads.length - 1] / spreads[0] : 1;
+  if (floor > 1e-6 && shrinkage > 0.5) {
+    return {
+      diverges: true,
+      detail: `取樣值的散布一路維持在 ${floor.toExponential(2)} 以上，沒有收斂`
+    };
+  }
+  return { diverges: false, detail: "" };
+}
+
 function verifyLimit(problem, structure, compileAnswer) {
   const variable = structure.variable;
   const target = evaluateBound(structure.target);
   const body = latex.compile(structure.body, [variable]);
-  const computed = numeric.limit(body, target, { side: structure.side === "both" ? "both" : structure.side });
+  let computed = numeric.limit(body, target, { side: structure.side === "both" ? "both" : structure.side });
+
+  // n→∞ 而連續外插器算不出來時，改用數列的取樣方式再試一次。
+  // 黎曼和、n^{1/n}、Stolz 型平均都卡在這裡 —— 它們不是不收斂，
+  // 是被用錯的工具量。放在 DNE 判定之前，因為多一次認真的嘗試會讓
+  // 「答案說不存在」更難被誤判成正確。
+  // n→∞ 一律兩條路都走，而且要求一致。
+  //
+  // 不能只在連續外插器失敗時才啟動梯子。n/(n!)^{1/n} 就是反例：n! 從 171 起
+  // 溢位成 Infinity，整個函數從 171 起恆等於 0，而 numeric.limit 的取樣點全部
+  // 落在那之後 —— 它會非常有自信地回報 0，一次失敗都沒有，然後去指控正確答案 e。
+  //
+  // 梯子看得到 n=40…640 那一段，會發現跳動在中途放大了 30 倍。所以：
+  // 梯子說不對勁的時候，就算連續外插器一路順利，也不採信。
+  let lastLadderBroken = false;
+  if (target === Infinity) {
+    const ladder = sequenceLimit(body);
+    lastLadderBroken = Boolean(ladder.broken);
+    const bothFinite = Number.isFinite(ladder.value) && Number.isFinite(computed.value);
+
+    if (bothFinite) {
+      // 兩條路都有答案：只擋「質」的分歧。粗梯子的精度有限，
+      // 6e-4 的差距是它算不準，不是誰算錯了。
+      const gap = Math.abs(ladder.value - computed.value);
+      const scale = Math.max(1e-9, Math.abs(ladder.value));
+      if (gap / scale > 1e-2) {
+        computed = {
+          value: Number.NaN,
+          error: Number.NaN,
+          reason: `連續取樣與數列取樣算出不同的值（${computed.value} vs ${ladder.value}）`
+        };
+      }
+    } else if (ladder.breakdown) {
+      // 梯子明確看到計算本身壞掉（跳動放大、相鄰項對不上）。
+      // 這種時候就算連續取樣一路順利也不採信 —— n/(n!)^{1/n} 的取樣點
+      // 全部落在溢位之後，它會非常有自信地回報 0。
+      computed = { value: Number.NaN, error: Number.NaN, reason: ladder.reason };
+    } else if (Number.isFinite(ladder.value)) {
+      computed = { value: ladder.value, error: 0, method: "sequence" };
+    }
+    // 梯子只是「沒結論」（取樣點不足、外插不穩）而連續取樣有答案時，
+    // 不降級 —— 沒結論不是反證。
+  }
+
+  // 還是算不出來，而且目標是有限點：試「夾擠」。
+  //
+  // x⌊1/x⌋、x²sin(1/x) 這類在任何鄰域裡都不平滑，外插器必然回報不一致 ——
+  // 但它們的取樣值其實一路收在同一個數上。所以改問一個比較弱、但誠實的問題：
+  // 越靠近目標，取樣值的散布有沒有跟著縮到零？縮到零才算數。
+  //
+  // x→∞ 也走這條，但梯子回報 broken 時例外：broken 代表取樣值本身是假的
+  // （n! 溢位之後恆為 0），那種情況下夾擠只會看到一串一致的假值而放行。
+  // 「資料很亂」可以再用弱一點的工具問；「資料是假的」不行。
+  if (!Number.isFinite(computed.value) &&
+      (Number.isFinite(target) || (target === Infinity && !lastLadderBroken))) {
+    const squeezed = squeezeSample(body, target, structure.side);
+    if (Number.isFinite(squeezed.value)) {
+      computed = { value: squeezed.value, error: squeezed.spread, method: "squeeze" };
+    }
+  }
 
   if (problem.answerKind === "text") {
     // 「不存在」型的題目：極限確實算不出來才算對
@@ -467,6 +790,20 @@ function verifyLimit(problem, structure, compileAnswer) {
   }
 
   if (!Number.isFinite(computed.value)) {
+    // 答案就是「不存在」的題（answerKind 是 numeric、答案字串寫 dne）。
+    //
+    // 不能只因為驗算器算不出來就判它對 —— 那是把自己的無能當成證據，
+    // 而且會讓「驗不了的題」全部變成 dne 的免死金牌。要的是**正面**的反證：
+    // 左右極限確實不同，或者越靠近目標、取樣值的散布越不收斂。
+    if (/^dne$/i.test(String(problem.answer || "").trim())) {
+      if (/左右極限不同|兩側/.test(computed.reason || "")) {
+        return { status: "ok", method: "limit-dne", detail: computed.reason };
+      }
+      const wander = divergesByOscillation(body, target, structure.side);
+      if (wander.diverges) {
+        return { status: "ok", method: "limit-dne", detail: wander.detail };
+      }
+    }
     return { status: "unverified", reason: computed.reason || "數值極限不收斂" };
   }
   const actual = compileAnswer([])();
@@ -480,7 +817,22 @@ function verifySeries(problem, structure, compileAnswer) {
   const body = latex.compile(structure.body, [variable]);
 
   if (structure.op === "product") {
-    if (!Number.isFinite(to)) return { status: "unsupported", reason: "無窮乘積要手寫 verify" };
+    if (!Number.isFinite(to)) {
+      // 無窮乘積 = 部分乘積這個數列的極限。跟黎曼和走同一條梯子。
+      const partial = (n) => {
+        let product = 1;
+        for (let k = from; k <= n; k += 1) {
+          product *= body(k);
+          if (!Number.isFinite(product)) return product;
+        }
+        return product;
+      };
+      const ladder = sequenceLimit(partial);
+      if (!Number.isFinite(ladder.value)) {
+        return { status: "unverified", method: "infinite-product", reason: ladder.reason };
+      }
+      return compareNumbers("infinite-product", compileAnswer([])(), ladder.value, 1e-6);
+    }
     let product = 1;
     for (let n = from; n <= to; n += 1) product *= body(n);
     return compareNumbers("product", compileAnswer([])(), product, 1e-8);
@@ -724,6 +1076,32 @@ const EXPLICIT_METHODS = {
     const a = latex.compile(String(spec.a), [])();
     const dx = latex.compile(String(spec.dx), [])();
     return f(a) + numeric.derivative(f, a).value * dx;
+  },
+
+  // 遞迴數列 a_{n+1} = g(a_n)：巢狀根式、連分數、Newton 型。
+  //
+  // 這類的題幹是 \sqrt{2+\sqrt{2+\cdots}} 或一段文字敘述，沒有可以直接
+  // 求值的記號，所以自動路徑接不到。這裡就照定義迭代 —— 而且**不解不動點方程**：
+  // 解 L=√(2+L) 是解題者的推導，重跑一次證明不了任何事；直接迭代才是獨立的路徑。
+  recurrence: (spec) => {
+    const step = latex.compile(spec.f, [spec.v || "a"]);
+    let value = latex.compile(String(spec.a0), [])();
+    const iterations = spec.iterations || 5000;
+    for (let i = 0; i < iterations; i += 1) {
+      const next = step(value);
+      if (!Number.isFinite(next)) throw new Error(`第 ${i} 次迭代跑出 ${next}`);
+      if (Math.abs(next - value) <= 1e-15 * Math.max(1, Math.abs(next))) return next;
+      value = next;
+    }
+    throw new Error(`迭代 ${iterations} 次還沒收斂`);
+  },
+
+  // 慢慢收斂的數列極限。細節見 extrapolateSequence。
+  seqLimit: (spec) => {
+    const f = latex.compile(spec.f, [spec.v || "n"]);
+    const result = spec.n0 ? extrapolateSequence(f, spec) : sequenceLimit(f);
+    if (!Number.isFinite(result.value)) throw new Error(result.reason);
+    return result.value;
   },
 
   // 微分（誤差傳遞）df = f′(a)·dx
