@@ -589,22 +589,43 @@ async function run() {
       document.querySelector('[data-board-action="clear"]').click();
       // 前面全是筆的事件，防手掌的窗格還沒過 —— 這時候的觸控會被整批當成手掌丟掉。
       await new Promise((r) => setTimeout(r, 900));
-      // 慢：同樣長度切 60 段
-      window.__pen.stroke(0.1, 0.3, 0.9, 0.3, { pointerType: "touch", steps: 60 });
-      await new Promise((r) => setTimeout(r, 200));
-      const slow = window.__pen.inkPixels();
+
+      const c = window.__pen.canvas();
+      const ctx = c.getContext("2d");
+      const ratio = c.width / c.getBoundingClientRect().width;
+      // 量的是**線寬**，不是墨水總量。
+      // 第一版比的是兩筆的墨水像素總數，但那個數字同時受路徑長度與平滑影響
+      // （取樣點密度一改就變），還跟畫布尺寸與 DPR 綁在一起。
+      // 本機邊際通過（比值 1.99 對門檻 1.4），CI 的視窗小一點就塌成 1.00，
+      // 於是整條部署卡在那裡。垂直掃一欄算厚度是環境無關的量法。
+      // 用 alpha 的加總當覆蓋寬度，不是「超過門檻的像素數」。
+      // 門檻計數只有整數解析度：2.24px 與 1.56px 兩條線都會被數成「2」，
+      // 於是看起來像功能沒作用 —— 而那正是這條斷言第一版誤判的方式。
+      const thickness = (fx) => {
+        const col = ctx.getImageData(Math.round(c.width * fx), 0, 1, c.height).data;
+        let cover = 0;
+        for (let i = 3; i < col.length; i += 4) cover += col[i] / 255;
+        return cover / ratio;
+      };
+      const measure = async (steps) => {
+        document.querySelector('[data-board-action="clear"]').click();
+        await new Promise((r) => setTimeout(r, 200));
+        window.__pen.stroke(0.1, 0.3, 0.9, 0.3, { pointerType: "touch", steps });
+        await new Promise((r) => setTimeout(r, 200));
+        return thickness(0.5);
+      };
+      const slow = await measure(60);   // 取樣點密＝寫得慢
+      const fast = await measure(6);    // 取樣點疏＝寫得快
       document.querySelector('[data-board-action="clear"]').click();
-      await new Promise((r) => setTimeout(r, 200));
-      // 快：同樣長度只切 6 段
-      window.__pen.stroke(0.1, 0.3, 0.9, 0.3, { pointerType: "touch", steps: 6 });
-      await new Promise((r) => setTimeout(r, 200));
-      return { slow, fast: window.__pen.inkPixels() };
+      return { slow: Math.round(slow * 100) / 100, fast: Math.round(fast * 100) / 100 };
     `);
-    // 門檻取 1.4：關掉這個功能時兩者的比值是 1.08（取樣點多寡本身就會讓
-    // 平滑後的路徑差一點），開著的時候是 2.1。1.05 那種門檻兩邊都會過，
-    // 等於這條斷言什麼都沒測到。
-    check("沒有壓感的裝置改用速度決定粗細", speedWidth.slow > speedWidth.fast * 1.4,
-      `慢 ${speedWidth.slow} vs 快 ${speedWidth.fast} 個墨水像素（比值 ${(speedWidth.slow / Math.max(1, speedWidth.fast)).toFixed(2)}）`);
+    const speedSpread = speedWidth.slow / Math.max(0.5, speedWidth.fast);
+    check(
+      "沒有壓感的裝置改用速度決定粗細",
+      speedSpread >= 1.3,
+      `慢 ${speedWidth.slow}px vs 快 ${speedWidth.fast}px（${speedSpread.toFixed(2)} 倍）` +
+        (speedSpread >= 1.3 ? "" : " —— 手指與滑鼠畫出來會是一條等寬的死線")
+    );
 
     /* ── 壓感要真的有作用範圍 ── */
     // 量出來過的問題：壓力 0.05 / 0.2 / 0.4 畫出來一模一樣（都是 2.5px），
@@ -615,11 +636,13 @@ async function run() {
       const c = window.__pen.canvas();
       const ctx = c.getContext("2d");
       const ratio = c.width / c.getBoundingClientRect().width;
+      // 跟速度那條用同一種量法：alpha 加總，不是門檻計數。
+      // 留兩套的話，遲早又會有一條斷言因為整數解析度而誤判。
       const thickness = (fx) => {
         const col = ctx.getImageData(Math.round(c.width * fx), 0, 1, c.height).data;
-        let n = 0;
-        for (let i = 3; i < col.length; i += 4) if (col[i] > 60) n += 1;
-        return n / ratio;
+        let cover = 0;
+        for (let i = 3; i < col.length; i += 4) cover += col[i] / 255;
+        return cover / ratio;
       };
       const measure = async (p) => {
         document.querySelector('[data-board-action="clear"]').click();

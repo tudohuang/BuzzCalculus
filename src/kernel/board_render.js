@@ -94,7 +94,12 @@
         (point.x - previous.x) * (point.x - previous.x) + (point.y - previous.y) * (point.y - previous.y)
       );
       const fast = clamp01((speed - SPEED_SLOW) / (SPEED_FAST - SPEED_SLOW));
-      return Math.max(MIN_WIDTH_CSS * ratio, base * (1.3 - 0.65 * fast));
+      // 作用範圍要跟壓感那條路徑相稱。
+      //
+      // 原本是 base*(1.3-0.65f)，實際只跑出 2.24px→1.56px —— 1.4 倍、絕對差 0.7px，
+      // 手上根本感覺不到。而有壓感的裝置現在是 3.7 倍。
+      // 速度是沒有壓感的裝置**唯一**的表現力來源，不該比壓感窄那麼多。
+      return Math.max(MIN_WIDTH_CSS * ratio, base * (1.7 - 1.05 * fast));
     }
     // 落筆與收筆的那幾個取樣墊高壓力，中間照實。
     //
