@@ -22,7 +22,7 @@
       price: null,
       // 頁數只有 XeLaTeX 跑完才知道，所以它不在自動產生的 workbook_facts.js 裡，
       // 是人維護的。改版重編之後要更新這個數字（銷售頁的頁數由它比對）。
-      pages: 290,
+      pages: 303,
       // 原價（劃掉的那個數字）。沒有就留 null —— 不要造一個假的原價。
       compareAt: null,
       // 外部結帳頁（Gumroad / 綠界 / 藍新皆可）。必須是 https。

@@ -6,7 +6,7 @@
 // 為什麼放側表而不是寫進題目物件：題目物件多一個欄位就會改變抽題與 golden 測試的結果。
 // 內容的中繼資料一律走側表，這是專案的既有約定。
 //
-// 產生時的統計：1605 題中 906 題通過，不符 0 題。
+// 產生時的統計：1663 題中 962 題通過，不符 0 題。
 
 (function registerVerifiedAnswers() {
   "use strict";
@@ -156,6 +156,62 @@
     "burst-int-040",
     "burst-int-041",
     "burst-int-042",
+    "ch-inv-001",
+    "ch-inv-002",
+    "ch-inv-003",
+    "ch-inv-004",
+    "ch-inv-005",
+    "ch-inv-006",
+    "ch-inv-007",
+    "ch-inv-008",
+    "ch-inv-009",
+    "ch-inv-010",
+    "ch-inv-011",
+    "ch-inv-012",
+    "ch-mix-001",
+    "ch-mix-002",
+    "ch-mix-003",
+    "ch-mix-004",
+    "ch-mix-005",
+    "ch-mix-006",
+    "ch-mix-007",
+    "ch-mix-008",
+    "ch-mix-009",
+    "ch-mix-010",
+    "ch-mix-011",
+    "ch-mix-012",
+    "ch-nest-001",
+    "ch-nest-002",
+    "ch-nest-003",
+    "ch-nest-004",
+    "ch-nest-005",
+    "ch-nest-006",
+    "ch-nest-007",
+    "ch-nest-008",
+    "ch-nest-009",
+    "ch-nest-010",
+    "ch-nest-011",
+    "ch-nest-012",
+    "ch-nest-013",
+    "ch-nest-014",
+    "ch-nest-015",
+    "ch-pow-001",
+    "ch-pow-002",
+    "ch-pow-003",
+    "ch-pow-004",
+    "ch-pow-005",
+    "ch-pow-006",
+    "ch-pow-007",
+    "ch-pow-008",
+    "ch-pow-009",
+    "ch-pow-010",
+    "ch-trap-001",
+    "ch-trap-002",
+    "ch-trap-003",
+    "ch-trap-004",
+    "ch-trap-005",
+    "ch-trap-007",
+    "ch-trap-009",
     "cx-der-005",
     "cx-der-006",
     "cx-exam-001",
@@ -923,6 +979,6 @@
   window.BuzzVerifiedAnswers = {
     has: function (id) { return Boolean(id && SET[id]); },
     count: IDS.length,
-    total: 1605
+    total: 1663
   };
 })();
