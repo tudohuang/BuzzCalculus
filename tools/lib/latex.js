@@ -290,7 +290,10 @@ class Parser {
       return tok.v === "(" || tok.v === "{" || tok.v === "[";
     }
     if (tok.t === "cmd") {
-      return !["cdot", "times", "div", "to", "rightarrow", "right", "over"].includes(tok.v);
+      // rfloor / rceil 是閉合符號，不是下一個乘數 —— 少了它們，
+      // \lfloor x \rfloor 會被讀成 x 乘上一個不認得的指令
+      return !["cdot", "times", "div", "to", "rightarrow", "right", "over",
+        "rfloor", "rceil"].includes(tok.v);
     }
     return false;
   }
@@ -438,6 +441,13 @@ class Parser {
           const base = this.parseGroup();
           return `logbase(${base},${this.parseFunctionArgument()})`;
         }
+        // \log^2 x 跟 \sin^2 x 一樣是 (log x)^2。少了這段，\ln^2 x 能解析
+        // 而 \log^2 x 會丟「看不懂的符號 ^」—— 同一件事兩種結果，是陷阱。
+        if (this.at("punct", "^")) {
+          this.next();
+          const power = this.parsePowerOperand();
+          return `Math.pow(log(${this.parseFunctionArgument()}),${power})`;
+        }
         return `log(${this.parseFunctionArgument()})`;
       }
       if (name === "operatorname") {
@@ -464,6 +474,17 @@ class Parser {
         }
         return `Math.pow(${call},${power})`;
       }
+      // 高斯括號。\left\lfloor…\right\rfloor 的 \left / \right 在
+      // tokenize 就被丟掉了，所以這裡只會看到 \lfloor … \rfloor。
+      if (name === "lfloor" || name === "lceil") {
+        const isFloor = name === "lfloor";
+        const closer = isFloor ? "rfloor" : "rceil";
+        const inner = this.parseExpression();
+        if (!this.at("cmd", closer)) throw new Error(`\\${name} 少了配對的 \\${closer}`);
+        this.next();
+        return `${isFloor ? "floor" : "ceil"}(${inner})`;
+      }
+
       if (CONSTANTS[name]) return CONSTANTS[name];
       if (GREEK_VARS[name]) return GREEK_VARS[name];
       if (name === "lvert" || name === "rvert" || name === "vert" || name === "lVert" || name === "rVert") {

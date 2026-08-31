@@ -55,6 +55,7 @@ const APP_SHELL = [
   "./src/problem_curve_worksheet_pack.js",
   "./src/problem_derivative_depth_pack.js",
   "./src/problem_chain_depth_pack.js",
+  "./src/problem_limit_beyond_taylor_pack.js",
   "./src/problem_generated_pack.js",
   "./src/problem_difficulty_calibration.js",
   "./src/board_store.js",
