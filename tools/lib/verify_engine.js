@@ -254,7 +254,31 @@ function compareFunctions(left, right, options = {}) {
     // 兩邊都巨大時多半是靠近奇異點，數值微分不可信，跳過
     if (Math.abs(a) > 1e8 || Math.abs(b) > 1e8) continue;
     if (Number.isFinite(uncertainty) && uncertainty > 1e-4 * Math.max(1, Math.abs(b))) continue;
+
+    // 兩邊都已經退化到接近 0 的點，比不出對錯。
+    //
+    // 上面那道關卡擋的是「誤差相對於 b 太大」，但 b 本身是 1e-9 的時候
+    // Math.max(1, |b|) 等於 1，於是它形同虛設，接著相對容差就會把
+    // 3.176966798e-9 跟 3.177110476e-9 判成不符 —— 那兩個數在任何意義下都是同一個。
+    //
+    // 實際踩到的三題：cosh²(3x)−sinh²(3x) 的導數恆為 0，但兩個大數相減的
+    // 抵消誤差讓數值微分在 x=2.53 回報 −1.97e-6（而它自己回報的誤差也是 1.97e-6，
+    // 也就是引擎知道這是噪音）；arcsin(tanh(x²)) 在 x=4.67 的真值是 6e-9，
+    // 數值微分直接下溢成 0。三題的答案在合理取樣點都對到 12 位有效數字。
+    //
+    // 誤判成本不對稱：假警報會逼作者去改**正確**的內容，比漏抓更糟。
+    // 兩邊都小到連導數都稱不上（含數值下溢成 0 的情況）——
+    // 這個點證明不了任何事，所以不算進 checked，也不判錯。
+    if (Math.max(Math.abs(a), Math.abs(b)) < 1e-7) continue;
+
     checked += 1;
+
+    // 引擎自己回報的不確定度蓋得住這個差距 → 這個點**通過**。
+    //
+    // 第一版把這條寫成 continue-before-checked，等於把「答案對得上」的點
+    // 全部丟掉、只留下對不上的 —— 58 題裡 50 題變成「取樣點不足，驗不了」。
+    // 那比原本那 3 個假警報糟得多：假警報至少會叫，驗不了是安靜地沒把關。
+    if (Number.isFinite(uncertainty) && uncertainty > 0 && Math.abs(a - b) <= 4 * uncertainty) continue;
     if (!numeric.close(a, b, tolerance)) {
       worst = { x, expected: b, actual: a };
       break;

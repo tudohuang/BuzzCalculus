@@ -3,20 +3,20 @@
 (function () {
   "use strict";
   const facts = {
-    "total": 1605,
+    "total": 1663,
     "counts": {
       "limits": 234,
-      "derivatives": 557,
+      "derivatives": 615,
       "integrals": 617,
       "series": 197
     },
-    "answersTypesetAsMath": 1462,
+    "answersTypesetAsMath": 1520,
     "examSets": 6,
     "sections": 26,
     "rankBands": {
-      "r1r2": 439,
-      "r3r4": 827,
-      "r5r6": 339
+      "r1r2": 449,
+      "r3r4": 852,
+      "r5r6": 362
     }
   };
   if (typeof module !== "undefined" && module.exports) module.exports = facts;
