@@ -11864,6 +11864,38 @@
 
   // Split tex at top-level \text{...} groups so long-form prompts can flow:
   // narrative segments become wrappable HTML text, math runs stay atomic.
+  // readScript / readGroup 在這裡保留正本 —— 它們同時被 TeX-lite 渲染器
+  // 和**答案判分器**（normalizeExpression）使用。判分器是正確性關鍵，
+  // 不准依賴一個可選的渲染 kernel；抽模組時把它們一起搬走，判分器
+  // 就當場壞了 229 個測試 —— CI 抓到的正是這個。
+  function readScript(source, start) {
+    if (source[start] === "{") return readGroup(source, start);
+    if (start >= source.length) return null;
+    if (source[start] === "\\") {
+      const match = source.slice(start).match(/^\\[A-Za-z]+/);
+      if (match) return { value: match[0], end: start + match[0].length };
+    }
+    return { value: source[start], end: start + 1 };
+  }
+
+  function readGroup(source, start) {
+    let cursor = start;
+    while (/\s/.test(source[cursor] || "")) cursor += 1;
+    if (source[cursor] !== "{") return null;
+    let depth = 0;
+    for (let index = cursor; index < source.length; index += 1) {
+      if (source[index] === "{") depth += 1;
+      if (source[index] === "}") depth -= 1;
+      if (depth === 0) {
+        return {
+          value: source.slice(cursor + 1, index),
+          end: index + 1
+        };
+      }
+    }
+    return null;
+  }
+
   // TeX-lite 渲染器已搬到 src/kernel/tex_lite.js（#20 拆模組的第一刀）。
   // 這裡只留特徵偵測的委派：kernel 沒載到時退回純文字 —— 醜但看得見。
   function splitLongTex(tex) {
