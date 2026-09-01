@@ -349,6 +349,33 @@ console.log("Removal smoke: 自動錯因存活、舊 records.conf 容忍、六�
   const next = api.nextUnansweredIndex(navQuiz, navQuiz.index);
   if (next !== 0) throw new Error("應繞回第 0 題，得到 " + next);
   console.log("Exam jump smoke: 亂序結算無重複無漏題、未答輪回正確");
+
+// ── 手寫辨識（#12）：合成筆跡的管線測試 ─────────────────────
+// 模板抖動＋縮放＋位移後必須認回自己；多字形要正確切割排序。
+// 這驗的是管線不是真實準確率 —— 真人手寫的驗證要靠上線回報。
+{
+  const ink = require(require("path").join(__dirname, "..", "src", "kernel", "ink_read.js"));
+  const byLabel = {};
+  ink._internals.TEMPLATES.forEach((t) => { byLabel[t.label] = byLabel[t.label] || t; });
+  let wrong = 0;
+  Object.values(byLabel).forEach((t) => {
+    const stroke = { tool: "pen", points: t.cloud.map((pt) => ({
+      x: pt.x * 0.11 + 0.3 + Math.sin(pt.x * 37 + pt.y * 13) * 0.004,
+      y: pt.y * 0.1 + 0.5 + Math.cos(pt.x * 17 + pt.y * 29) * 0.004
+    })) };
+    const r = ink.readAnswer([stroke]);
+    if (r.text !== t.label) { wrong += 1; console.error("  誤認 " + t.label + " → " + r.text); }
+  });
+  if (wrong) throw new Error("手寫辨識合成測試有 " + wrong + " 個誤認");
+  const seq = ["-", "1", "2"].map((ch, i) => ({
+    tool: "pen",
+    points: byLabel[ch].cloud.map((pt) => ({ x: pt.x * 0.04 + 0.2 + i * 0.12, y: pt.y * 0.06 + 0.5 }))
+  }));
+  const multi = ink.readAnswer(seq);
+  if (multi.text !== "-12") throw new Error("多字形切割失敗：" + multi.text);
+  console.log("Ink read smoke: " + Object.keys(byLabel).length + " 個字形合成認回、多字形 -12 正確");
+}
+
 }
 
 

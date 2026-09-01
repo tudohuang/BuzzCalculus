@@ -83,6 +83,7 @@ const APP_SHELL = [
   "./src/kernel/skill_tags.js",
   "./src/kernel/skill_graph.js",
   "./src/kernel/tex_lite.js",
+  "./src/kernel/ink_read.js",
   "./src/kernel/canned_hints.js",
   "./src/kernel/ability.js",
   "./src/kernel/planner.js",

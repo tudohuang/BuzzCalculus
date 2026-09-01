@@ -5161,7 +5161,7 @@
             <div class="answer-preview-math math-inline ${hasDraft ? "" : "is-empty"}" data-answer-preview data-tex="${escapeAttr(previewTex)}">${renderLiteTex(previewTex, false)}</div>
           </div>
           <div class="webwork-examples" aria-label="常用答案格式">
-            ${examples.map((item) => `<button type="button" data-insert-example="${escapeAttr(item)}" ${disabled}>${escapeHtml(item)}</button>`).join("")}
+            ${examples.map((item) => `<button type="button" data-insert-example="${escapeAttr(item)}" ${disabled}>${escapeHtml(item)}</button>`).join("")}${canReadInk(problem) ? `<button type="button" class="ink-read-button" data-action="read-ink" ${disabled}>讀取手寫 →</button>` : ""}
             <button type="button" data-action="clear-answer" ${disabled}>清除</button>
           </div>
           <div class="keypad webwork-keypad" aria-label="快速輸入">
@@ -6311,6 +6311,7 @@
     if (action === "set-pen-scale") setPenScale(actionNode.dataset.scale || "");
     if (action === "copy-problem-link") copyProblemLink(actionNode.dataset.problemId || "");
     if (action === "answer-backspace") backspaceAnswer();
+    if (action === "read-ink") readInkAnswer();
     if (action === "start-weakness") startWeaknessPractice();
     if (action === "start-friendly-run") startFriendlyRun();
     if (action === "start-god-run") startGodRun();
@@ -9607,6 +9608,25 @@
   // 數學鍵盤的退格。系統鍵盤被 inputmode=none 關掉之後，
   // 使用者打錯一個字唯一的辦法是切回系統鍵盤 —— 那等於鍵盤白做了。
   // 有選取刪選取、沒選取刪游標前一字，跟實體鍵盤同一套語意。
+  // 手寫辨識（#12 v1）：把計算紙上的數字讀進輸入框當**草稿**。
+  // 永遠只是預填、永遠不自動送出 —— 模板還沒被真人手寫驗證過，
+  // 所以它的定位是省打字，不是代替眼睛。
+  function canReadInk(problem) {
+    if (!window.BuzzInkRead || !problem || problem.answerKind !== "numeric") return false;
+    const strokes = quiz && quiz.boardStrokes && quiz.boardStrokes[problem.id];
+    return Boolean(strokes && strokes.length);
+  }
+
+  function readInkAnswer() {
+    const problem = getCurrentProblem();
+    if (!problem || !window.BuzzInkRead) return;
+    const strokes = (quiz.boardStrokes && quiz.boardStrokes[problem.id]) || [];
+    const result = window.BuzzInkRead.readAnswer(strokes);
+    if (!result.text) { showAppNotice("計算紙上讀不到可辨識的數字。"); return; }
+    replaceAnswerDraft(result.text);
+    if (!result.confident) showAppNotice("讀到「" + result.text + "」但不太確定 —— 檢查一下再送出。");
+  }
+
   function backspaceAnswer() {
     const input = app.querySelector("#answer");
     if (!input || !quiz) return;
