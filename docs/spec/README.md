@@ -46,7 +46,7 @@
 | 有 `source` | 1679 |  |
 | 有 `tags` | 1759 | distinct tag 322 個，其中 254 個是技巧 tag |
 | 有 `solution` | 1759 | 單段文字 |
-| 有作者撰寫 `hints` | 1139 |  |
+| 有作者撰寫 `hints` | 1181 |  |
 | 有 `solutionSteps` | 127 | 結構化步驟，仍是最大的內容缺口 |
 | 證明題 | 41 | 含 Lean 機器驗證 8 則 |
 | `src/app.js` | 12408 行 | 單一 IIFE，拆分進行中 |
