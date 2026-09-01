@@ -140,7 +140,11 @@
     ctx.lineCap = "round";
     ctx.lineJoin = "round";
 
-    const base = (isEraser ? ERASER_WIDTH : PEN_WIDTH) * ratio;
+    // penScale：使用者手感設定（細 0.75 / 標準 1 / 粗 1.3）。
+    // 2.4 這個基準是作者的手感，從沒被真人在 iPad 上校準過 ——
+    // 與其猜一個對的數字，不如把選擇交給拿筆的人。橡皮擦不縮放。
+    const penScale = isEraser ? 1 : (opts.penScale || 1);
+    const base = (isEraser ? ERASER_WIDTH : PEN_WIDTH * penScale) * ratio;
 
     // 單點：點一下要留下一個點，不是什麼都沒有
     if (points.length === 1) {
