@@ -5,7 +5,6 @@
   const proofs = window.BUZZ_PROOFS || [];
   const CUSTOM = window.BUZZ_CUSTOM || null;
   const app = document.getElementById("app");
-  const field = document.getElementById("math-field");
 
   const TOPICS = {
     all: { label: "全混合", short: "All", className: "", accent: "#f6b739" },
@@ -662,7 +661,6 @@
   let tickHandle = null;
   let renderPending = false;
   let lastVisibilityStamp = 0;
-  let fieldAnimation = null;
 
   // ── 鍵盤操作 ────────────────────────────────────────────────
   // spec B 區 92-93：鍵盤操作必須完整，數學輸入不能只依賴滑鼠。
@@ -1217,35 +1215,40 @@
     input.setSelectionRange(input.value.length, input.value.length);
   }
 
+  // App shell。桌面是固定側欄、手機是底部分頁列 —— 同一份 markup，
+  // 兩種排法全靠 CSS。導覽（五個主分頁）與工具（安裝、主題）分開放：
+  // 底部分頁列只該有分頁，工具擠進去會把最常按的五顆鍵擠到 40px 以下。
+  // 版本字串從 header 拿掉了 —— 成熟軟體的 chrome 不放建置資訊，
+  // 要查的人在設定頁最底下找得到。
   function renderTopbar() {
     const inQuiz = view === "quiz";
     const themeIcon = selectedTheme === "dark" ? "sun" : "moon";
     const themeLabel = selectedTheme === "dark" ? "亮色" : "深色";
+    const navItem = (v, action, label, iconName) =>
+      `<button class="nav-button ${view === v ? "is-active" : ""}" data-action="${action}" aria-label="${label}" title="${label}" ${view === v ? 'aria-current="page"' : ""}>${icon(iconName)}<span>${label}</span></button>`;
     return `
       <a class="skip-to-content" href="#buzz-main">跳到主要內容</a>
-      <header class="topbar">
+      <header class="topbar ${inQuiz ? "is-quiz" : ""}">
         <button class="brand" data-action="home" title="回到工作台">
           <div class="brand-mark" aria-hidden="true">∫</div>
-          <div>
-            <h1 class="brand-title">BuzzCalculus</h1>
-            <p class="brand-subtitle">${APP_VERSION} · ${BUILD_DATE}</p>
-          </div>
+          <h1 class="brand-title">BuzzCalculus</h1>
         </button>
-        <div class="topbar-actions">
-          ${
-            inQuiz
-              ? `<button class="button ghost" data-action="confirm-exit" title="離開本局">${icon("x")}<span>離開</span></button>`
-              : `
-                <button class="nav-button ${view === "home" ? "is-active" : ""}" data-action="home" aria-label="今天" title="今天">${icon("home")}<span>今天</span></button>
-                <button class="nav-button ${view === "train" ? "is-active" : ""}" data-action="open-train" aria-label="訓練" title="訓練">${icon("target")}<span>訓練</span></button>
-                <button class="nav-button ${view === "insights" ? "is-active" : ""}" data-action="open-insights" aria-label="數據" title="數據">${icon("activity")}<span>數據</span></button>
-                <button class="nav-button ${view === "library" ? "is-active" : ""}" data-action="open-library" aria-label="題庫" title="題庫">${icon("search")}<span>題庫</span></button>
-                <button class="nav-button ${view === "settings" ? "is-active" : ""}" data-action="open-settings" aria-label="設定" title="設定">${icon("settings")}<span>設定</span></button>
+        ${
+          inQuiz
+            ? `<div class="topbar-utils"><button class="button ghost" data-action="confirm-exit" title="離開本局">${icon("x")}<span>離開</span></button></div>`
+            : `
+              <nav class="topbar-nav" aria-label="主要導覽">
+                ${navItem("home", "home", "今天", "home")}
+                ${navItem("train", "open-train", "訓練", "target")}
+                ${navItem("insights", "open-insights", "數據", "activity")}
+                ${navItem("library", "open-library", "題庫", "search")}
+                ${navItem("settings", "open-settings", "設定", "settings")}
+              </nav>
+              <div class="topbar-utils">
                 ${deferredInstallPrompt ? `<button class="icon-button" data-action="install-app" title="安裝 BuzzCalculus">${icon("download")}</button>` : ""}
                 <button class="icon-button" data-action="toggle-theme" title="切換${themeLabel}模式">${icon(themeIcon)}</button>
-              `
-          }
-        </div>
+              </div>`
+        }
       </header>
     `;
   }
@@ -11719,65 +11722,9 @@
   // 大考模式保留真正有意義的部分：整份倒數、無提示、自己輸入答案。
   // 那是「模擬考試環境」，不是「監視使用者」。
 
-  function setupMathField() {
-    if (!field) return;
-    // The decorative canvas is hidden on small screens and pointless with
-    // reduced motion — skip the whole rAF loop in those cases.
-    const reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)")?.matches;
-    const smallViewport = window.matchMedia && window.matchMedia("(max-width: 680px)")?.matches;
-    if (reduceMotion || smallViewport) return;
-    const ctx = field.getContext("2d");
-    if (!ctx) return;
-    const symbols = ["∫", "Σ", "lim", "dx", "π", "eˣ", "f′", "→"];
-    const particles = Array.from({ length: 24 }, (_, index) => ({
-      text: symbols[index % symbols.length],
-      x: Math.random(),
-      y: Math.random(),
-      speed: 0.00012 + Math.random() * 0.00018,
-      size: 14 + Math.random() * 22
-    }));
-
-    function resize() {
-      const ratio = Math.min(2, window.devicePixelRatio || 1);
-      field.width = Math.floor(window.innerWidth * ratio);
-      field.height = Math.floor(window.innerHeight * ratio);
-      field.style.width = `${window.innerWidth}px`;
-      field.style.height = `${window.innerHeight}px`;
-      ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
-    }
-
-    function draw() {
-      ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
-      ctx.fillStyle = "rgba(23, 22, 20, 0.14)";
-      particles.forEach((particle) => {
-        particle.y += particle.speed * 16;
-        if (particle.y > 1.08) {
-          particle.y = -0.08;
-          particle.x = Math.random();
-        }
-        ctx.font = `${particle.size}px Georgia, serif`;
-        ctx.fillText(particle.text, particle.x * window.innerWidth, particle.y * window.innerHeight);
-      });
-      fieldAnimation = requestAnimationFrame(draw);
-    }
-
-    window.addEventListener("resize", resize);
-    // Pause the loop while the tab is hidden; resume when it comes back.
-    if (document.addEventListener) {
-      document.addEventListener("visibilitychange", () => {
-        if (document.visibilityState === "hidden") {
-          if (fieldAnimation && typeof cancelAnimationFrame === "function") {
-            cancelAnimationFrame(fieldAnimation);
-          }
-          fieldAnimation = null;
-        } else if (!fieldAnimation) {
-          draw();
-        }
-      });
-    }
-    resize();
-    draw();
-  }
+  // 漂浮數學符號的裝飾 canvas（setupMathField）於 2026-09 移除。
+  // 一個常駐的 rAF 迴圈換來 8% 透明度的 ∫ 和 dx 飄過背景 ——
+  // 那是 demo 的美學，不是每天要用一小時的工具的美學。順帶省一顆迴圈。
 
   if (window.__BUZZ_TEST_HOOKS__) {
     window.__BUZZ_TEST_HOOKS__.api = {
@@ -11904,7 +11851,6 @@
   setupErrorReporting();
   setupVisibilityTracking();
   setupKeyboardShortcuts();
-  setupMathField();
   // 帶著 #pack= 分享連結進來：直接落在出題工作坊的匯入預覽。
   if (CUSTOM && CUSTOM.pendingImport) {
     creatorImportPreview = CUSTOM.pendingImport;
