@@ -277,12 +277,12 @@
       source: "Buzz advanced",
       prompt: "\\min_{x,y}\\left(3x^2+2xy+2y^2-8x-6y\\right)",
       answerKind: "numeric",
-      answer: "-9",
+      answer: "-7",
       timeLimit: 100,
       tabLimit: 1,
       tags: ["total-differential-min", "optimization", "quadratic", "hessian"],
       hints: ["Set partial derivatives equal to zero.", "The equations reduce to 3x+y=4 and x+2y=3.", "Evaluate at the solution."],
-      solution: "The critical point is (1,1), and the minimum value is -9."
+      solution: "The critical point is (1,1); substituting gives 3+2+2-8-6 = -7."
     },
     {
       id: "der-049",
