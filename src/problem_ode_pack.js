@@ -44,7 +44,14 @@
       .map((part) => part.trim().replace(/^。|。$/g, ""))
       .map((part) => part.trim())
       .filter(Boolean);
-    return parts.length >= 2 ? parts : null;
+    // 短尾段（「B=0」這種）併回前一步 —— 一步要是一個完整的動作，
+    // 太短的片段是切割的殘渣不是步驟。
+    const mergedParts = [];
+    parts.forEach((part) => {
+      if (part.length < 6 && mergedParts.length) mergedParts[mergedParts.length - 1] += "，" + part;
+      else mergedParts.push(part);
+    });
+    return mergedParts.length >= 2 ? mergedParts : null;
   };
 
   const q = (id, rank, prompt, answer, tags, solution, timeLimit, verify, hints, extra) =>
