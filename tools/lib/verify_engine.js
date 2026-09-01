@@ -319,6 +319,265 @@ function isNumericClaim(text) {
 
 // normalizeAnswer 由呼叫端注入（app.js 的 normalizeExpression），
 // 這樣驗算用的是**上線判分器認得的那個答案**，而不是另一套解讀。
+/* ── 文字句型的自動驗算 ─────────────────────────────────────── */
+
+// 「Radius of convergence of Σ…」：不解析係數，直接掃收斂邊緣。
+//
+// 冪級數在 |x−c|<R 收斂、>R 發散 —— 所以對一排 x 值做「項有沒有幾何衰減」
+// 的檢定，找出上緣 u 與下緣 l，R = (u−l)/2。這條路對中心不在 0 的
+// (x−2)^n 一樣成立，而且完全不用把 aₙ 從項裡拆出來。
+function seriesTermGrowth(term, x) {
+  // 幾何比估計，三點版 (t(4N)·t(N)/t(2N)²)^(1/2N)：n^k 型因子精確相消。
+  //
+  // N 不能寫死。兩種浮點災難都實際踩過：
+  //   (x-2)^n/5^n 的分子在 4.9^480 溢位 → Infinity/Infinity = NaN，
+  //   半徑內的點被誤判成發散；
+  //   n!x^n 在 x=0.002 時 x^120 下溢成 0，term 直接回 0，
+  //   「下溢=快收斂」的捷徑把一個終究發散的級數判成收斂。
+  // 所以先用倍增掃出「還算得出非零有限值」的最大 n，再取 N = nmax/4，
+  // 讓三個取樣點全部落在可算範圍內。
+  let nmax = 15;
+  for (let n = 30; n <= 960; n *= 2) {
+    const t = Math.abs(term(n, x));
+    if (!Number.isFinite(t) || t === 0) break;
+    nmax = n;
+  }
+  const N = Math.max(8, Math.floor(nmax / 4));
+  const a = Math.abs(term(N, x));
+  const b = Math.abs(term(2 * N, x));
+  const c = Math.abs(term(4 * N, x));
+  if (!Number.isFinite(a) || !Number.isFinite(b) || !Number.isFinite(c)) return Infinity;
+  if (c === 0 && b === 0) return 0;
+  if (a === 0 || b === 0) return Infinity;
+  // 階乘型的判準：冪級數的每步比值趨於常數，階乘型的比值 ~ n·x 無上界。
+  // 後段比值明顯大於前段 → 不管現在多小，終究發散。
+  const g1 = Math.pow(b / a, 1 / N);
+  const g2 = Math.pow(c / b, 1 / (2 * N));
+  // 門檻隨視窗縮放：小視窗的 (1+c/n) 暫態本身就有幾個百分點，
+  // 固定 1.02 會把 (3n)!/(n!)³ 的暫態誤判成階乘發散（實測 N=8 時差 3.6%）。
+  // 真正的階乘型（比值 ~ n·x）在任何視窗都是倍數級的加速，抓得到。
+  const accelThreshold = 1 + Math.max(0.02, 2 / N);
+  if (Number.isFinite(g1) && Number.isFinite(g2) && g1 > 0 && g2 > g1 * accelThreshold) return Infinity;
+  const product = c * a;
+  if (product === 0) return 0;
+  return Math.pow(product / (b * b), 1 / (2 * N));
+}
+
+function scanConvergenceEdge(term, from, direction) {
+  // 由 from 往 direction 走，回傳最後一個收斂點與第一個發散點的中點。
+  // 先指數步進找到發散，再對分 40 次收斂到 1e-9 相對精度。
+  let good = from;
+  let bad = null;
+  let step = 0.25;
+  for (let i = 0; i < 80; i += 1) {
+    const probe = good + direction * step;
+    if (seriesTermGrowth(term, probe) > 1.0005) { bad = probe; break; }
+    good = probe;
+    step *= 1.6;
+    if (Math.abs(good - from) > 1e6) return direction * Infinity;
+  }
+  if (bad === null) return direction * Infinity;
+  // 對分的門檻是 1.0 不是 1.0005：三點估計量在邊緣上是無偏的，
+  // 拿 1.0005 當門檻等於把半徑硬放大 0.05%（實測 1.001、3.003 就是這樣來的）。
+  for (let i = 0; i < 60; i += 1) {
+    const mid = (good + bad) / 2;
+    if (seriesTermGrowth(term, mid) > 1) bad = mid;
+    else good = mid;
+  }
+  return (good + bad) / 2;
+}
+
+function verifyRadiusOfConvergence(problem, body, variable, compileAnswer) {
+  const term = latex.compile(body, [variable, "x"]);
+  const wrapped = (n, x) => term(n, x);
+
+  // 起點必須真的落在收斂區內 —— (x-2)^n/n 這種中心在 2 的級數，
+  // x=0 是發散點，從那裡起掃整片都發散、半徑會變 0（實測踩到）。
+  // 從 0 往外找第一個 growth ≤ 1 的點當起點；都找不到就真的是 R=0。
+  let start = null;
+  const candidates = [0];
+  for (let c = 0.5; c <= 10; c += 0.5) candidates.push(c, -c);
+  for (const candidate of candidates) {
+    if (seriesTermGrowth(wrapped, candidate) <= 1) { start = candidate; break; }
+  }
+  if (start === null) {
+    return compareNumbers("radius", compileAnswer([])(), 0, 1e-3);
+  }
+  const upper = scanConvergenceEdge(wrapped, start, +1);
+  const lower = scanConvergenceEdge(wrapped, start, -1);
+  if (!Number.isFinite(upper) || !Number.isFinite(lower)) {
+    // 兩邊都掃不到發散：半徑無限大
+    const actualInf = compileAnswer([])();
+    if (!Number.isFinite(actualInf)) return { status: "ok", method: "radius", detail: "∞ ≈ ∞" };
+    return { status: "unverified", reason: "掃不到發散邊緣（半徑可能是 ∞），答案卻是有限值 " + actualInf };
+  }
+  const radius = (upper - lower) / 2;
+  const actual = compileAnswer([])();
+  // 容差 1e-3：階乘比級數溢位得早、取樣視窗小，量測誤差就是 1e-4 這一級。
+  // 錯的半徑跟對的差的是倍數，1e-3 擋得住。
+  return compareNumbers("radius", actual, radius, 1e-3);
+}
+
+// 「Coefficient of x^k in f」：Chebyshev 插值 → 轉單項式係數。
+//
+// 有限差分在 k≥4 會被捨入誤差吃掉；Chebyshev 節點上的插值是數值穩定的，
+// 低階（k≤8）轉回單項式基底的條件數也還好。取樣半徑 0.25 —— 要求 f 在
+// 這個範圍解析（(1+x)^x、e^{2arcsin x} 都成立）。
+function taylorCoefficientOf(f, k) {
+  const r = 0.25;
+  const N = 48; // Chebyshev 點數（degree N-1 插值）
+  const values = [];
+  for (let j = 0; j < N; j += 1) {
+    const theta = (Math.PI * (j + 0.5)) / N;
+    values.push(f(r * Math.cos(theta)));
+  }
+  if (values.some((v) => !Number.isFinite(v))) return Number.NaN;
+  // Chebyshev 係數（DCT-II 形式）
+  const degree = Math.min(N - 1, k + 14);
+  const cheb = [];
+  for (let m = 0; m <= degree; m += 1) {
+    let sum = 0;
+    for (let j = 0; j < N; j += 1) {
+      sum += values[j] * Math.cos((m * Math.PI * (j + 0.5)) / N);
+    }
+    cheb.push((2 / N) * sum);
+  }
+  cheb[0] /= 2;
+  // Chebyshev → 單項式：T_{m+1} = 2t·T_m − T_{m−1}（t = x/r）
+  let prev = [1];            // T_0
+  let curr = [0, 1];         // T_1
+  const mono = new Array(degree + 1).fill(0);
+  const addPoly = (poly, coeff) => poly.forEach((value, i) => { mono[i] += coeff * value; });
+  addPoly(prev, cheb[0]);
+  if (degree >= 1) addPoly(curr, cheb[1]);
+  for (let m = 2; m <= degree; m += 1) {
+    const next = new Array(curr.length + 1).fill(0);
+    curr.forEach((value, i) => { next[i + 1] += 2 * value; });
+    prev.forEach((value, i) => { next[i] -= value; });
+    addPoly(next, cheb[m]);
+    prev = curr;
+    curr = next;
+  }
+  // t = x/r → x 的係數要除 r^k
+  return (mono[k] || 0) / Math.pow(r, k);
+}
+
+function verifyTaylorCoefficient(problem, exprTex, k, compileAnswer) {
+  if (k > 8) return { status: "unsupported", reason: "x^" + k + " 的係數超出數值萃取的穩定範圍（k ≤ 8）" };
+  const f = latex.compile(exprTex, ["x"]);
+  const coefficient = taylorCoefficientOf(f, k);
+  if (!Number.isFinite(coefficient)) return { status: "unverified", reason: "函數在取樣半徑內算不出值" };
+  return compareNumbers("taylor-coefficient", compileAnswer([])(), coefficient, 1e-5);
+}
+
+// 「Hessian determinant of f (at (a,b))」：數值二階偏導。
+function verifyHessianDet(problem, fTex, point, compileAnswer) {
+  const f = latex.compile(fTex, ["x", "y"]);
+  const h = 1e-3;
+  const detAt = (x, y) => {
+    const fxx = (f(x + h, y) - 2 * f(x, y) + f(x - h, y)) / (h * h);
+    const fyy = (f(x, y + h) - 2 * f(x, y) + f(x, y - h)) / (h * h);
+    const fxy = (f(x + h, y + h) - f(x + h, y - h) - f(x - h, y + h) + f(x - h, y - h)) / (4 * h * h);
+    return fxx * fyy - fxy * fxy;
+  };
+  if (point) {
+    let det = detAt(point[0], point[1]);
+    // 二階中央差分的截斷殘差是 O(h²)：x⁴ 在原點的 fxx 數值上是 2h²=2e-6，
+    // 真值是 0。小到殘差等級就是 0，不然「答案 0」永遠比不過。
+    if (Math.abs(det) < 1e-4) det = 0;
+    return compareNumbers("hessian", compileAnswer([])(), det, 1e-3);
+  }
+  // 沒給點：只有 Hessian 是常數時這題才良定義。取三個點驗證一致。
+  const samples = [detAt(0.3, -0.2), detAt(1.1, 0.7), detAt(-0.6, 0.9)];
+  const spread = Math.max(...samples) - Math.min(...samples);
+  if (spread > 1e-2 * Math.max(1, Math.abs(samples[0]))) {
+    return { status: "unverified", reason: "Hessian 不是常數但題目沒給點" };
+  }
+  return compareNumbers("hessian", compileAnswer([])(), samples[0], 1e-3);
+}
+
+function recognizeTextForm(rawPrompt) {
+  const prompt = String(rawPrompt || "");
+
+  // Radius of convergence / 收斂半徑
+  const radius = prompt.match(/^\\text\{(?:Radius of convergence of ?|radius of convergence of ?|收斂半徑[：: ]*)\}(.+)$/) ||
+    prompt.match(/^\\text\{收斂半徑[：: ]*\}(.+)$/);
+  if (radius) {
+    const series = topLevelOperator(radius[1].trim());
+    if (series && series.op === "series") {
+      return (problem, compileAnswer) => verifyRadiusOfConvergence(problem, series.body, series.variable, compileAnswer);
+    }
+  }
+
+  // Coefficient of x^k in f
+  const coefficient = prompt.match(/^\\text\{Coefficient of \}x\^\{?(\d+)\}?\\text\{ in \}(.+)$/);
+  if (coefficient) {
+    const k = Number(coefficient[1]);
+    const expr = coefficient[2].trim();
+    return (problem, compileAnswer) => verifyTaylorCoefficient(problem, expr, k, compileAnswer);
+  }
+
+  // Hessian determinant of f=… ( at (a,b) )
+  const hessian = prompt.match(/^\\text\{Hessian determinant of \}f=([^\\]+?)(?:\\text\{ at \}\((-?[\d.]+),(-?[\d.]+)\))?$/);
+  if (hessian) {
+    const fTex = hessian[1].trim();
+    const point = hessian[2] !== undefined ? [Number(hessian[2]), Number(hessian[3])] : null;
+    return (problem, compileAnswer) => verifyHessianDet(problem, fTex, point, compileAnswer);
+  }
+
+  return null;
+}
+
+// 多變數極限：沿多條路徑逼近，全部一致才算數；兩條路徑持續不合 → dne。
+function verifyMultivarLimit(problem, bodyTex, compileAnswer) {
+  const f = latex.compile(bodyTex, ["x", "y"]);
+  const paths = [
+    (t) => [t, 0], (t) => [0, t], (t) => [t, t], (t) => [t, -t],
+    (t) => [t, 2 * t], (t) => [2 * t, t], (t) => [t, t * t], (t) => [t * t, t]
+  ];
+  const valuesAt = (t) => paths.map(([, ] = [], index) => {
+    const [x, y] = paths[index](t);
+    return f(x, y);
+  });
+  // 每條路徑取「最深的非零有限值」。深處取到精確 0 有兩種可能：
+  // 真的趨近 0，或災難性相消（1-cos(xy) 在 xy<1e-8 時 cos 回傳恰好 1）。
+  // 相消的路徑在較淺的深度有非零值 —— 用那個值；一路全零的路徑才算 0。
+  const perPath = paths.map(() => ({ value: null, sawFinite: false }));
+  for (let k = 2; k <= 7; k += 1) {
+    const t = Math.pow(10, -k);
+    paths.forEach((path, index) => {
+      const [x, y] = path(t);
+      const value = f(x, y);
+      if (!Number.isFinite(value)) return;
+      perPath[index].sawFinite = true;
+      if (value !== 0) perPath[index].value = value;
+      else if (perPath[index].value === null) perPath[index].value = 0;
+    });
+  }
+  const settled = perPath.filter((entry) => entry.sawFinite && entry.value !== null).map((entry) => entry.value);
+  if (settled.length < 4) return { status: "unverified", reason: "有限值的路徑不足四條" };
+  const spread = Math.max(...settled) - Math.min(...settled);
+  const spreadShrinks = true;
+  const last = { values: settled, spread };
+  let mean = last.values.reduce((a, b) => a + b, 0) / last.values.length;
+  // t=1e-7 時 x²y/(x²+y²) 這類的取樣值是 O(t)：mean 小到雜訊等級就是 0。
+  if (Math.abs(mean) < 1e-6 && last.spread < 1e-6) mean = 0;
+  const answerText = String(problem.answer || "").trim();
+
+  if (/^dne$/i.test(answerText)) {
+    // 「不存在」要正面證據：路徑間的差距不縮
+    if (last.spread > 1e-4 * Math.max(1, Math.abs(mean))) {
+      return { status: "ok", method: "multivar-dne", detail: "路徑極限不一致（差 " + last.spread.toExponential(2) + "）" };
+    }
+    return { status: "unverified", reason: "答案說 dne，但取樣的路徑都收到同一個值 " + mean };
+  }
+
+  if (last.spread > 1e-3 * Math.max(1, Math.abs(mean)) || !spreadShrinks) {
+    return { status: "unverified", reason: "路徑極限不一致（差 " + last.spread.toExponential(2) + "），答案卻不是 dne" };
+  }
+  return compareNumbers("multivar-limit", compileAnswer([])(), mean, 1e-3);
+}
+
 function verifyProblem(problem, options = {}) {
   const normalize = options.normalizeAnswer || ((value) => String(value));
 
@@ -338,6 +597,28 @@ function verifyProblem(problem, options = {}) {
 
   // 明確寫在題目上的 verify 欄位優先於自動推導
   if (problem.verify) return runExplicit(problem, compileAnswer);
+
+  // 幾類「\\text 開頭」的題幹有固定句型，逐句型辨識。
+  // 每一條路徑都跟解答無關：收斂半徑用掃描收斂邊緣、係數用 Chebyshev
+  // 插值、Hessian 用數值二階偏導 —— 共同前提只有「有沒有看懂題幹」。
+  const textForm = recognizeTextForm(problem.prompt);
+  if (textForm) {
+    try {
+      return textForm(problem, compileAnswer);
+    } catch (error) {
+      return { status: "error", reason: error.message };
+    }
+  }
+
+  // 多變數極限 lim_{(x,y)→(0,0)}：沿多條路徑取樣。
+  const mv = String(problem.prompt || "").match(/^\\lim_\{\(x,y\)\\to\(0,0\)\}(.+)$/);
+  if (mv) {
+    try {
+      return verifyMultivarLimit(problem, mv[1], compileAnswer);
+    } catch (error) {
+      return { status: "error", reason: error.message };
+    }
+  }
 
   if (!structure) return { status: "unsupported", reason: "題幹不是可自動辨識的形式" };
   if (structure.op === "multiple-integral") {
@@ -897,6 +1178,10 @@ function runExplicit(problem, compileAnswer) {
     const value = EXPLICIT_METHODS[spec.m]
       ? EXPLICIT_METHODS[spec.m](spec)
       : (() => { throw new Error(`不認得的 verify.m = "${spec.m}"`); })();
+    // ODE 類：答案是 x 的函數，比對方式是「代回方程」而不是「比一個數」
+    if (value && typeof value.__odeCheck === "function") {
+      return value.__odeCheck(compileAnswer(["x"]));
+    }
     if (!Number.isFinite(value)) {
       return { status: "unverified", reason: `verify 算出 ${value}` };
     }
@@ -1076,6 +1361,97 @@ const EXPLICIT_METHODS = {
     const a = latex.compile(String(spec.a), [])();
     const dx = latex.compile(String(spec.dx), [])();
     return f(a) + numeric.derivative(f, a).value * dx;
+  },
+
+  // IVP 的數值答案：RK4 從初始條件積到指定點，跟答案比一個數。
+  // 這條完全不碰解析解 —— 它就是「不會解 ODE 的人也能算出來」的那條路。
+  // spec: { m:"odeValue", f:"y", y0:[0,1], at:2 }
+  odeValue: (spec) => {
+    const rhs = latex.compile(spec.f, ["x", "y"]);
+    let x = spec.y0[0];
+    let y = spec.y0[1];
+    const target = spec.at;
+    const steps = 4000;
+    const h = (target - x) / steps;
+    for (let i = 0; i < steps; i += 1) {
+      const k1 = rhs(x, y);
+      const k2 = rhs(x + h / 2, y + (h * k1) / 2);
+      const k3 = rhs(x + h / 2, y + (h * k2) / 2);
+      const k4 = rhs(x + h, y + h * k3);
+      y += (h / 6) * (k1 + 2 * k2 + 2 * k3 + k4);
+      x += h;
+      if (!Number.isFinite(y)) throw new Error("RK4 在 x=" + x.toFixed(3) + " 爆掉");
+    }
+    return y;
+  },
+  // 一階 ODE：檢查答案 y(x) 滿足 y' = f(x, y) 與初始條件。
+  // 驗算完全不解方程 —— 對答案函數做數值微分，代回方程看殘差。
+  // spec: { m:"ode1", f:"x*y", y0:[0,1], from:0.2, to:1.5 }
+  ode1: (spec) => {
+    const rhs = latex.compile(spec.f, ["x", "y"]);
+    return { __odeCheck: (answerFn) => {
+      const from = spec.from ?? 0.2;
+      const to = spec.to ?? 1.5;
+      let checked = 0;
+      for (let i = 0; i <= 8; i += 1) {
+        const x = from + ((to - from) * i) / 8;
+        const y = answerFn(x);
+        if (!Number.isFinite(y)) continue;
+        const dy = numeric.derivative(answerFn, x).value;
+        const want = rhs(x, y);
+        if (!Number.isFinite(dy) || !Number.isFinite(want)) continue;
+        if (Math.abs(dy - want) > 1e-4 * Math.max(1, Math.abs(want))) {
+          return { status: "mismatch", method: "ode1", detail: `x=${x.toFixed(3)} 處 y'=${dy} 但 f(x,y)=${want}` };
+        }
+        checked += 1;
+      }
+      if (checked < 4) return { status: "unverified", reason: "取樣點不足" };
+      if (spec.y0) {
+        const got = answerFn(spec.y0[0]);
+        if (Math.abs(got - spec.y0[1]) > 1e-6 * Math.max(1, Math.abs(spec.y0[1]))) {
+          return { status: "mismatch", method: "ode1", detail: `初始條件 y(${spec.y0[0]}) 應為 ${spec.y0[1]}，答案給 ${got}` };
+        }
+      }
+      return { status: "ok", method: "ode1", detail: `${checked} 個點滿足方程` };
+    } };
+  },
+
+  // 常係數二階線性 ODE：a·y'' + b·y' + c·y = g(x)（g 省略時為 0）。
+  // spec: { m:"ode2const", a:1, b:-3, c:2, g:"0", y0:[0,1], yp0:[0,0] }
+  ode2const: (spec) => {
+    const g = latex.compile(spec.g || "0", ["x"]);
+    return { __odeCheck: (answerFn) => {
+      let checked = 0;
+      for (let i = 0; i <= 8; i += 1) {
+        const x = 0.2 + (1.3 * i) / 8;
+        const y = answerFn(x);
+        const d1 = numeric.derivative(answerFn, x);
+        if (!Number.isFinite(y) || !Number.isFinite(d1.value)) continue;
+        // 二階導：對一階導再數值微分（步長取粗一點抵抗雜訊）
+        const h = 1e-3;
+        const d2 = (answerFn(x + h) - 2 * y + answerFn(x - h)) / (h * h);
+        const lhs = (spec.a ?? 1) * d2 + (spec.b ?? 0) * d1.value + (spec.c ?? 0) * y;
+        const rhsValue = g(x);
+        if (Math.abs(lhs - rhsValue) > 5e-3 * Math.max(1, Math.abs(rhsValue), Math.abs(y))) {
+          return { status: "mismatch", method: "ode2const", detail: `x=${x.toFixed(3)} 處殘差 ${(lhs - rhsValue).toExponential(2)}` };
+        }
+        checked += 1;
+      }
+      if (checked < 4) return { status: "unverified", reason: "取樣點不足" };
+      if (spec.y0) {
+        const got = answerFn(spec.y0[0]);
+        if (Math.abs(got - spec.y0[1]) > 1e-5 * Math.max(1, Math.abs(spec.y0[1]))) {
+          return { status: "mismatch", method: "ode2const", detail: `y(${spec.y0[0]}) 應為 ${spec.y0[1]}，答案給 ${got}` };
+        }
+      }
+      if (spec.yp0) {
+        const got = numeric.derivative(answerFn, spec.yp0[0]).value;
+        if (Math.abs(got - spec.yp0[1]) > 1e-3 * Math.max(1, Math.abs(spec.yp0[1]))) {
+          return { status: "mismatch", method: "ode2const", detail: `y'(${spec.yp0[0]}) 應為 ${spec.yp0[1]}，答案給 ${got}` };
+        }
+      }
+      return { status: "ok", method: "ode2const", detail: `${checked} 個點滿足方程` };
+    } };
   },
 
   // 遞迴數列 a_{n+1} = g(a_n)：巢狀根式、連分數、Newton 型。

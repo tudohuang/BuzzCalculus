@@ -159,6 +159,12 @@
     /* ===== 積分：基本技巧 ===== */
     { id: "integral.basic", label: "基本反導數", tier: 1, obscurity: 1, family: "integral", topics: ["integrals"], prereq: [],
       tags: ["basic-integral", "standard-integral"] },
+    // 微分方程（2026-09 新包）。掛在 integral family 下 —— 大一課綱把
+    // 一階 ODE 與二階常係數放在積分技巧之後，解方程的主要工作也是積分。
+    { id: "integral.ode", label: "微分方程", tier: 4, obscurity: 2, family: "integral", topics: ["integrals"], prereq: ["integral.ibp"],
+      tags: ["ode", "separable", "linear-first-order", "integrating-factor", "second-order", "constant-coefficients",
+        // repeated-root 是陷阱標記不是能力座標（NON_SKILL）；newton 屬於數列不動點那一節
+        "undetermined-coefficients", "complex-roots", "resonance", "ivp", "logistic", "blow-up", "exact-form"] },
     { id: "integral.usub", label: "u-substitution", tier: 1, obscurity: 1, family: "integral", prereq: [], radarAxis: "substitution",
       tags: ["substitution", "u-sub"] },
     { id: "integral.ibp", label: "分部積分", tier: 2, obscurity: 1, family: "integral", prereq: ["integral.usub"], radarAxis: "ibp",
