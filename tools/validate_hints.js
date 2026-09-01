@@ -81,6 +81,32 @@ console.log(`  其中題目專屬      ${specific} 題（${((specific / problems
 console.log(`  全部是罐頭        ${allCanned.length} 題 ← 等於沒有題目專屬提示`);
 console.log(`  不同的提示句子    ${counts.size}`);
 
+/* ── 4. 罐頭封鎖清單必須跟得上題庫 ──────────────────────────
+   src/kernel/canned_hints.js 是實際擋在使用者面前的那道牆：
+   清單裡的句子在 app.js 的 authoredHints() 就被濾掉，不會被當成提示賣出去。
+   這一節確保那份清單不會過期 ——
+     · 題庫長出新的罐頭句子（同一句 ≥ CANNED_AT 題）卻沒被擋 → 失敗
+     · 清單裡的句子在題庫裡已經不存在 → 失敗（改過題就該把它移掉）
+   兩個方向都要擋。只擋一邊的話，清單會慢慢變成一份沒人維護的舊資料。 */
+const blocklist = global.window && global.window.BuzzCannedHints;
+if (!blocklist) {
+  failures.push("src/kernel/canned_hints.js 沒有載入 —— 罐頭提示等於沒有被擋");
+} else {
+  const listed = new Set(blocklist.all().map((text) => norm(text)));
+
+  // 這裡刻意**不**要求「所有重複 ≥5 次的句子都必須被擋」。
+  // 重複不等於沒內容：「Convert to the beta function.」「sin 微分變 cos。」
+  // 都出現在很多題上，但它們指名了具體的技巧，是真的提示。
+  // 要不要擋是人的判斷，這支只負責讓那個判斷被看見（下面的重複排行）
+  // 並且確保清單本身不會過期。
+  const stale = [...listed].filter((text) => !counts.has(text));
+  stale.forEach((text) => {
+    failures.push(`封鎖清單裡的句子在題庫裡已經不存在，請移除：「${text.slice(0, 46)}」`);
+  });
+
+  console.log(`  已封鎖的罐頭句子  ${listed.size} 句（在 authoredHints 就濾掉，不會扣分）`);
+}
+
 const worst = [...counts.values()]
   .filter((entry) => entry.ids.length >= CANNED_AT)
   .sort((a, b) => b.ids.length - a.ids.length)

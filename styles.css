@@ -3802,15 +3802,21 @@ button,
     box-shadow: 0 4px 0 rgba(32, 33, 31, 0.08);
   }
 
+  /* 這裡原本是 flex-wrap: nowrap + overflow-x: auto，用意是省一行高度。
+     但它是個沒有任何提示的橫向捲軸：畫面上看到的是「答案已驗算」被螢幕
+     邊緣切成一半，而沒有東西告訴你右邊還有內容。省下的 30px，
+     換來的是每一張手機截圖都像版面壞掉 —— 不划算。
+     改成換行：標籤本來就短，最多佔到第二行。 */
   .quiz-screen .problem-meta {
-    flex-wrap: nowrap;
+    flex-wrap: wrap;
     margin: -2px -2px 0;
-    overflow-x: auto;
+    row-gap: 6px;
     padding-bottom: 2px;
   }
 
   .quiz-screen .chip {
-    flex: 0 0 auto;
+    flex: 0 1 auto;
+    max-width: 100%;
   }
 
   .quiz-screen .prompt {
