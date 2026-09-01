@@ -1920,6 +1920,7 @@
   function renderWeaknessBucket(records) {
     const summary = srsDueSummary(records);
     const mistakeCount = Object.keys(records.mistakes || {}).length;
+    const forecast = srsForecast(records);
     const profile = abilityProfile(records);
     const weakest = profile
       ? profile.weakest.map((id) => profile.skills[id]).filter(Boolean).slice(0, 3)
@@ -1942,6 +1943,16 @@
                 : "答錯的題會自動進來，並照間隔重複排程回鍋。"
           }
         </p>
+        ${
+          // 到期預測：讓「明天會有幾題」可以被規劃，而不是每天被突襲。
+          forecast.tomorrow || forecast.week
+            ? `<p class="srs-forecast">${[
+                forecast.today ? `今天 ${forecast.today}` : "",
+                forecast.tomorrow ? `明天 ${forecast.tomorrow}` : "",
+                forecast.week ? `一週內再 ${forecast.week}` : ""
+              ].filter(Boolean).join(" · ")} 題到期</p>`
+            : ""
+        }
         <div class="action-row">
           ${summary.due ? `<button class="button home-primary" data-action="start-srs-review">${icon("refresh")}開始複習</button>` : ""}
           ${mistakeCount ? `<button class="button secondary" data-action="open-mistakes">${icon("book")}錯題本（${mistakeCount}）</button>` : ""}
@@ -2052,6 +2063,76 @@
   //
   // 一條原則貫穿整頁：**沒測準的東西不給數字**。ability 的 measured / stale
   // 已經分好「從沒測過」和「練過但太久沒碰」，UI 要照實講，不要拿 0 充數。
+  // 本週 vs 上週的週報。全部從本機 history 算，沒有伺服器。
+  //
+  // 只报比較得出來的事實（題數、正確率、天數的增減），不下評語 ——
+  // 「比上週多練 40 題」自己會說話，「你這週表現不錯」誰都寫得出來。
+  function weeklyReportData(records) {
+    const now = Date.now();
+    const weekStart = (offsetWeeks) => {
+      const d = new Date();
+      d.setHours(0, 0, 0, 0);
+      const day = d.getDay() || 7;
+      d.setDate(d.getDate() - day + 1 - offsetWeeks * 7);
+      return d.getTime();
+    };
+    const thisStart = weekStart(0);
+    const lastStart = weekStart(1);
+    const bucketOf = (at) => (at >= thisStart ? "this" : at >= lastStart ? "last" : null);
+    const empty = () => ({ sessions: 0, answered: 0, correct: 0, days: new Set() });
+    const buckets = { this: empty(), last: empty() };
+    (records.history || []).forEach((session) => {
+      const at = Date.parse(session.finishedAt || "");
+      if (!Number.isFinite(at) || at > now) return;
+      const key = bucketOf(at);
+      if (!key) return;
+      const bucket = buckets[key];
+      bucket.sessions += 1;
+      bucket.answered += Number(session.total || 0);
+      bucket.correct += Number(session.correct || 0);
+      bucket.days.add(new Date(at).toDateString());
+    });
+    const pack = (bucket) => ({
+      sessions: bucket.sessions,
+      answered: bucket.answered,
+      accuracy: bucket.answered ? Math.round((bucket.correct / bucket.answered) * 100) : null,
+      days: bucket.days.size
+    });
+    return { current: pack(buckets.this), previous: pack(buckets.last) };
+  }
+
+  function renderWeeklyReport(records) {
+    const report = weeklyReportData(records);
+    const { current, previous } = report;
+    if (!current.answered && !previous.answered) return "";
+
+    const delta = (nowValue, thenValue, unit) => {
+      if (thenValue === null || nowValue === null) return "";
+      const diff = nowValue - thenValue;
+      if (!diff) return `<small class="report-delta">與上週持平</small>`;
+      const sign = diff > 0 ? "+" : "−";
+      return `<small class="report-delta ${diff > 0 ? "is-up" : "is-down"}">${sign}${Math.abs(diff)}${unit}</small>`;
+    };
+
+    return `
+      <section class="study-card weekly-report">
+        <div class="panel-title-row">
+          <div>
+            <p class="section-label">本週</p>
+            <h3>${current.answered ? `練了 ${current.answered} 題` : "這週還沒開始"}</h3>
+          </div>
+        </div>
+        <div class="report-grid">
+          <div><span>題數</span><strong class="num">${current.answered}</strong>${delta(current.answered, previous.answered, " 題")}</div>
+          <div><span>正確率</span><strong class="num">${current.accuracy === null ? "—" : `${current.accuracy}%`}</strong>${delta(current.accuracy, previous.accuracy, " 點")}</div>
+          <div><span>有練的天數</span><strong class="num">${current.days}</strong>${delta(current.days, previous.days, " 天")}</div>
+          <div><span>局數</span><strong class="num">${current.sessions}</strong>${delta(current.sessions, previous.sessions, " 局")}</div>
+        </div>
+        ${previous.answered ? `<p class="panel-note">上週：${previous.answered} 題 · ${previous.accuracy === null ? "—" : `${previous.accuracy}%`} · ${previous.days} 天</p>` : ""}
+      </section>
+    `;
+  }
+
   function renderInsights() {
     const records = loadRecords();
     const profile = abilityProfile(records);
@@ -2086,6 +2167,7 @@
     return `
       <main class="screen insights-screen">
         ${renderInsightsSummary(profile)}
+        ${renderWeeklyReport(records)}
         ${renderMasteryRadar(records)}
         ${renderSpeedQuadrant(profile)}
         ${renderSkillTable(profile)}
@@ -4176,6 +4258,24 @@
     };
   }
 
+  // 到期預測：今天／明天／七天內各有幾題會到期。
+  // 「明天有 6 題要到期」是可以規劃的資訊；「總共 14 題在排程裡」不是。
+  function srsForecast(records) {
+    const now = Date.now();
+    const endOfToday = new Date();
+    endOfToday.setHours(23, 59, 59, 999);
+    const todayMs = endOfToday.getTime();
+    const forecast = { today: 0, tomorrow: 0, week: 0 };
+    Object.values(records.mistakes || {}).forEach((item) => {
+      if (!problemById(item.problemId)) return;
+      const srs = mistakeSrs(item);
+      if (srs.dueAt <= todayMs) forecast.today += 1;
+      else if (srs.dueAt <= todayMs + DAY_MS) forecast.tomorrow += 1;
+      else if (srs.dueAt <= now + 7 * DAY_MS) forecast.week += 1;
+    });
+    return forecast;
+  }
+
   // 到期優先開一局錯題複習：先排到期題（依 mistakePressure），不足再補快到期的。
   function startSrsReviewQuiz() {
     const records = loadRecords();
@@ -6053,6 +6153,7 @@
 
     const action = actionNode.dataset.action;
     if (action === "start") startQuiz();
+    if (action === "practice-axis") startAxisPractice(actionNode.dataset.axis || "");
     if (action === "start-weakness") startWeaknessPractice();
     if (action === "start-friendly-run") startFriendlyRun();
     if (action === "start-god-run") startGodRun();
@@ -6738,7 +6839,24 @@
     if (mode.boss) return selectBossPool(source, mode.count, records);
     if (mode.daily) return selectDailyPool(source, mode.count, records);
     const ordered = adaptiveShuffle(source, records, seedFromString(`${Date.now()}-${node.id}`));
-    return padPool(ordered.slice(0, mode.count), source, mode.count, { records });
+
+    // 前段的主線關卡（極限／微分／積分）只按 topic 抽題，抽到的題大多
+    // 沒有帶雷達軸的技巧標籤 —— 量出來的結果是：沿主線打了一整條，
+    // 數據頁的八個軸還是灰的。這裡保證每局至少三分之一帶軸標籤
+    // （在關卡自己的 topic 與難度範圍內挑，順序沿用 adaptiveShuffle 的
+    // 適性排序），主線和雷達才會互相餵。
+    const axisTags = new Set(RADAR_AXES.flatMap((axis) => axis.tags));
+    const hitsAxis = (problem) => (problem.tags || []).some((tag) => axisTags.has(tag));
+    const wantAxis = Math.ceil(mode.count / 3);
+    const axisPicks = ordered.filter(hitsAxis).slice(0, wantAxis);
+    const rest = ordered.filter((problem) => !axisPicks.includes(problem));
+    const drawn = axisPicks.concat(rest).slice(0, mode.count);
+    return padPool(
+      shuffle(drawn, seedFromString(`${node.id}-mix-${drawn.length}`)),
+      source,
+      mode.count,
+      { records }
+    );
   }
 
   function selectPathGatePool(node, count) {
@@ -10778,23 +10896,58 @@
         return `<circle class="radar-dot" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="2.6"></circle>`;
       })
       .join("");
+    // 「未測」改成進度。對一個練了兩週的人顯示一圈灰字「未測」，
+    // 讀起來像功能沒做；「差 3 題」告訴他離亮起來多近、而且暗示怎麼讓它亮。
+    // 軸要 12 次加權作答才算測準（kernel 的 MIN_CONFIDENCE_W）；
+    // legacy fallback 沒有 confidence 欄位，那條路維持舊字。
+    const remainingFor = (axis) => {
+      if (axis.confidence === undefined) return null;
+      if (axis.stale) return null;
+      const weight = Number(axis.n || 0);
+      return Math.max(1, Math.ceil(12 - weight));
+    };
+    const emptyText = (axis) => {
+      if (axis.confidence === undefined) return "未測";
+      if (axis.stale) return "該重測";
+      const remaining = remainingFor(axis);
+      return remaining >= 12 ? "未測" : `差 ${remaining} 題`;
+    };
     const labels = axes
       .map((axis, index) => {
         const [x, y] = point(index, radius + 16);
         const anchor = Math.abs(x - cx) < 12 ? "middle" : x > cx ? "start" : "end";
-        const scoreText = axis.score === null ? "未測" : String(axis.score);
+        const scoreText = axis.score === null ? emptyText(axis) : String(axis.score);
         return `
           <g class="radar-label ${axis.score === null ? "is-empty" : ""}">
-            <title>${escapeHtml(axis.label)}：${axis.score === null ? "未測" : `${axis.score} 分`}</title>
+            <title>${escapeHtml(axis.label)}：${axis.score === null ? `${emptyText(axis)}（答滿 12 題就會亮起來）` : `${axis.score} 分`}</title>
             <text x="${x.toFixed(1)}" y="${(y - 1).toFixed(1)}" text-anchor="${anchor}">${escapeHtml(axis.label)}</text>
             <text class="radar-score" x="${x.toFixed(1)}" y="${(y + 11).toFixed(1)}" text-anchor="${anchor}">${escapeHtml(scoreText)}</text>
           </g>`;
       })
       .join("");
+
+    // 收尾行是一顆可以按的處方，不是一句評語。
+    // 優先序：最弱的已測軸 > 最接近亮起來的未測軸 > 從頭開始。
     const weakest = measured.slice().sort((a, b) => a.score - b.score)[0] || null;
-    const takeaway = weakest
-      ? `最弱：${weakest.label} ${weakest.score}，先排它回鍋。`
-      : "還沒有雷達資料，先打一輪快速訓練。";
+    const nearest = axes
+      .filter((axis) => axis.score === null && remainingFor(axis) !== null && remainingFor(axis) < 12)
+      .sort((a, b) => remainingFor(a) - remainingFor(b))[0] || null;
+    let takeaway;
+    if (weakest) {
+      takeaway = `
+        <p class="radar-takeaway">
+          最弱：${escapeHtml(weakest.label)} ${weakest.score} 分。
+          <button class="link-button" data-action="practice-axis" data-axis="${escapeAttr(weakest.key)}">練 10 題 →</button>
+        </p>`;
+    } else if (nearest) {
+      takeaway = `
+        <p class="radar-takeaway">
+          ${escapeHtml(nearest.label)}再答 ${remainingFor(nearest)} 題就會亮起來。
+          <button class="link-button" data-action="practice-axis" data-axis="${escapeAttr(nearest.key)}">現在練 →</button>
+        </p>`;
+    } else {
+      takeaway = `<p class="radar-takeaway">還沒有雷達資料，先打一輪快速訓練。</p>`;
+    }
     return `
       <div class="radar-panel">
         <div class="radar-head">
@@ -10807,9 +10960,26 @@
           ${measured.length ? `<polygon class="radar-data" points="${dataPoints}"></polygon>${dots}` : ""}
           ${labels}
         </svg>
-        <p class="radar-takeaway">${escapeHtml(takeaway)}</p>
+        ${takeaway}
       </div>
     `;
+  }
+
+  // 雷達軸的一鍵處方：抓帶著這個軸標籤的題，尊重難度上限，開一局 10 題。
+  // 用 quick（計時）而不是 practice —— 計時作答才會餵回雷達，
+  // 練完那一軸真的會動，迴圈才閉合。
+  function startAxisPractice(axisKey) {
+    const axis = RADAR_AXES.find((item) => item.key === axisKey);
+    if (!axis) return;
+    const records = loadRecords();
+    const tagSet = new Set(axis.tags);
+    let pool = problems.filter((problem) => (problem.tags || []).some((tag) => tagSet.has(tag)));
+    if (!pool.length) return;
+    const capped = filterByDifficultyCap(pool, activeDifficultyCap(records));
+    if (capped.length >= 6) pool = capped;
+    selectedMode = "quick";
+    const ordered = adaptiveShuffle(pool, records, seedFromString(`axis-${axisKey}-${Date.now()}`));
+    startQuiz(padPool(ordered.slice(0, 10), pool, Math.min(10, pool.length), { records }), { modeKey: "quick" });
   }
 
   // GitHub 式練習熱力圖：一次算完 counts / streak，再一次吐出整片格子。
