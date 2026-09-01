@@ -3291,6 +3291,19 @@
             ${icon(on ? "x" : "check")}${on ? "關閉專注模式" : "開啟專注模式"}
           </button>
         </div>
+        <div class="privacy-row">
+          <div>
+            <strong>計算紙筆寬</strong>
+            <p>用 Apple Pencil 覺得線太粗或太細，在這裡調。橡皮擦不受影響。</p>
+          </div>
+          <div class="segmented compact pen-scale-row" role="radiogroup" aria-label="筆寬">
+            ${PEN_SCALES.map(
+              (item) => `
+                <button class="tag-button ${((loadRecords().settings || {}).penScale || "standard") === item.key ? "is-active" : ""}"
+                  data-action="set-pen-scale" data-scale="${item.key}">${item.label}</button>`
+            ).join("")}
+          </div>
+        </div>
       </div>
     `;
   }
@@ -3385,6 +3398,7 @@
             </section>
             ${renderPlacementSettingsCard(records)}
             ${renderSyncSettingsCard()}
+            ${renderIosInstallCard()}
             ${renderDataManagementCard(records)}
           </div>
         </section>
@@ -6258,6 +6272,7 @@
     if (action === "jump-question") jumpToQuestion(actionNode.dataset.index);
     if (action === "toggle-flag") toggleQuestionFlag();
     if (action === "practice-similar") startSimilarPractice(actionNode.dataset.problemId || "");
+    if (action === "set-pen-scale") setPenScale(actionNode.dataset.scale || "");
     if (action === "start-weakness") startWeaknessPractice();
     if (action === "start-friendly-run") startFriendlyRun();
     if (action === "start-god-run") startGodRun();
@@ -7306,6 +7321,30 @@
     render();
   }
 
+  // iOS 裝機指引。Safari 沒有 beforeinstallprompt，「安裝」這件事
+  // 只能用文字教 —— 而 iPad 正是這個產品的主力裝置。
+  // 只在 iOS、瀏覽器分頁（非 standalone）時出現；裝好之後這張卡自己消失。
+  function renderIosInstallCard() {
+    const ua = navigator.userAgent || "";
+    const isIos = /iPad|iPhone|iPod/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1);
+    const standalone = window.matchMedia && window.matchMedia("(display-mode: standalone)").matches;
+    if (!isIos || standalone || window.navigator.standalone) return "";
+    return `
+      <section class="study-card">
+        <div class="panel-title-row">
+          <div>
+            <p class="section-label">裝到主畫面</p>
+            <h3>像 App 一樣開，離線也能練</h3>
+          </div>
+        </div>
+        <p class="panel-note">
+          Safari 分享鈕 ${icon("share-2")} → 「加入主畫面」。
+          之後從主畫面開啟：全螢幕、沒有網址列、沒訊號照樣出題。
+        </p>
+      </section>
+    `;
+  }
+
   function renderSyncSettingsCard() {
     const status = BuzzSync.status();
     if (!status.configured) {
@@ -7330,6 +7369,11 @@
               要做就得先想清楚怎麼做才不用把你的資料收走。
             </p>
             <p class="panel-note">在那之前，匯出／匯入就是完整的解法，而且它現在就能用。</p>
+            <p class="panel-note">
+              自己有伺服器的人：設 <code>window.BUZZ_SYNC_ENDPOINT</code> 就會多出
+              拉／推按鈕（GET 拉、PUT 推、updatedAt 新者勝）。這是給自架者留的縫，
+              資料仍然只去你自己指定的地方。
+            </p>
           </details>
         </section>
       `;
@@ -9087,13 +9131,28 @@
     const a = evaluateExpression(expected, {});
     const b = evaluateExpression(input, {});
     if (!Number.isFinite(a) || !Number.isFinite(b)) return "這是常見干擾值。";
-    const close = (target) => Math.abs(b - target) <= Math.max(1e-6, Math.abs(target) * 1e-5);
+    const close = (target) => Number.isFinite(target) && Math.abs(b - target) <= Math.max(1e-6, Math.abs(target) * 1e-5);
+    // 順序即優先序：先驗結構性的錯（號、倒數、平方），再驗係數滑掉。
+    // 每一條都要能一句話說出「你是怎麼走到這個值的」—— 說不出來的不加。
     if (close(-a)) return "像是漏負號。";
-    if (close(a * 2)) return "像是多乘 2。";
-    if (close(a / 2)) return "像是少了一個 2。";
     if (a && close(1 / a)) return "像是取倒數了。";
-    // 這裡以前寫「這是常見錯誤值」—— 但走到這一行正代表**看不出**它是怎麼錯的，
-    // 那句話是在斷言一件系統並不知道的事。說不知道比說錯話好。
+    if (a && close(-1 / a)) return "像是取倒數又掉了負號。";
+    if (close(a * a) && Math.abs(a) > 1e-6 && Math.abs(Math.abs(a) - 1) > 1e-6) return "像是多平方了一次。";
+    if (a >= 0 && close(Math.sqrt(a)) && Math.abs(a - 1) > 1e-6) return "像是多開了一次根號。";
+    if (close(a * 2)) return "像是多乘 2。";
+    if (close(a / 2)) return "像是少了一個 2 —— 積分或半角公式最常掉在這裡。";
+    if (close(a * 3)) return "像是係數多乘 3。";
+    if (close(a / 3)) return "像是少除 3。";
+    if (close(a * Math.PI)) return "像是多乘了一個 π。";
+    if (Math.abs(a) > 1e-9 && close(a / Math.PI)) return "像是把 π 除掉了 —— sin(πx) 積分後的 1/π 別漏。";
+    if (close(a + 1)) return "像是多加 1 —— 冪次或上下限差一。";
+    if (close(a - 1)) return "像是少 1 —— 冪次或上下限差一。";
+    if (close(a * Math.E)) return "像是多乘一個 e。";
+    if (Math.abs(a) > 1e-9 && close(a / Math.E)) return "像是少乘一個 e。";
+    if (a > 0 && close(Math.log(a)) && Math.abs(a - 1) > 0.1) return "像是多取了一次 log。";
+    if (close(Math.exp(a)) && Math.abs(a) > 0.1) return "像是把指數忘在外面了。";
+    // 走到這裡代表**看不出**它是怎麼錯的 ——
+    // 說不知道比斷言一件系統不知道的事誠實。
     return "這個值和正確答案對不上；回頭檢查第一步的判型。";
   }
 
@@ -10003,11 +10062,37 @@
     drawStrokesOnBlackboard(canvas, ctx, getBoardStrokes(problemId));
   }
 
+  const PEN_SCALES = [
+    { key: "thin", label: "細", value: 0.75 },
+    { key: "standard", label: "標準", value: 1 },
+    { key: "thick", label: "粗", value: 1.3 }
+  ];
+
+  function penScaleSetting() {
+    try {
+      const key = (loadRecords().settings || {}).penScale || "standard";
+      const entry = PEN_SCALES.find((item) => item.key === key);
+      return entry ? entry.value : 1;
+    } catch (_error) {
+      return 1;
+    }
+  }
+
+  function setPenScale(key) {
+    if (!PEN_SCALES.some((item) => item.key === key)) return;
+    const records = loadRecords();
+    records.settings = records.settings || {};
+    records.settings.penScale = key;
+    saveRecords(records);
+    render();
+  }
+
   function boardRenderOptions(canvas, finish) {
     return {
       finish: Boolean(finish),
       ratio: Math.min(2, window.devicePixelRatio || 1),
-      surface: (canvas && canvas.dataset && canvas.dataset.surface) || boardSurface()
+      surface: (canvas && canvas.dataset && canvas.dataset.surface) || boardSurface(),
+      penScale: penScaleSetting()
     };
   }
 
