@@ -3240,6 +3240,8 @@
           <a href="privacy.html" target="_blank" rel="noopener">隱私政策</a>
           <span aria-hidden="true">·</span>
           <a href="terms.html" target="_blank" rel="noopener">服務條款</a>
+          <span aria-hidden="true">·</span>
+          <span class="settings-version">${APP_VERSION} · ${BUILD_DATE}</span>
         </p>
       </div>
     `;
