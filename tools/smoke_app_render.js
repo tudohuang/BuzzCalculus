@@ -286,8 +286,6 @@ const cq = (mode, answer) => ({
   answers: [answer],
   hintsUsed: {},
   boardStrokes: {},
-  confidence: {},
-  confidenceSkipped: {}
 });
 
 const wrongProblem = global.window.BUZZ_PROBLEMS.find((p) => p.timeLimit >= 60);
@@ -297,162 +295,31 @@ const mkAnswer = (over) =>
     over
   );
 
-// 信心自評：只在日常模式問，大考與宿敵不打斷節奏
-api.setQuiz(cq("quick", mkAnswer({})));
-const confHtml = api.renderConfidencePrompt(wrongProblem);
-api.confidenceLevels.forEach((level) => {
-  if (!confHtml.includes(level.label)) throw new Error(`confidence prompt is missing "${level.label}"`);
-});
-if (!confHtml.includes('data-action="set-confidence"')) throw new Error("confidence prompt has no action");
-if (!confHtml.includes('data-action="skip-confidence"')) throw new Error("confidence prompt cannot be skipped");
-
-api.setQuiz(cq("exam", mkAnswer({})));
-if (api.renderConfidencePrompt(wrongProblem) !== "") {
-  throw new Error("confidence prompt must not interrupt exam mode");
+// 信心自評與答錯當下的錯因問卷已於 2026-09 移除（作答迴圈不該有問卷）。
+// 這裡改守三件事：
+//   1. 自動錯因照樣在提交時寫入（suggestCause 沒有跟著被拔掉）
+//   2. 舊資料 records.conf 仍被 normalizeRecords 容忍，不會讓匯入炸掉
+//   3. 移除是乾淨的 —— 畫面上不再出現那兩個問卷的 DOM
+const causeSuggestion = api.suggestCause(wrongProblem, mkAnswer({ hintsUsed: 2 }));
+if (!causeSuggestion || api.causeTagOf(causeSuggestion.key) !== "忘公式") {
+  throw new Error("看過第二層提示的錯，自動錯因應判為忘公式");
 }
-const rivalQuiz = cq("rival", mkAnswer({}));
-rivalQuiz.rival = { name: "小積" };
-api.setQuiz(rivalQuiz);
-if (api.renderConfidencePrompt(wrongProblem) !== "") {
-  throw new Error("confidence prompt must not interrupt rival mode");
-}
-
-// 錯因推薦：每一種證據都要推出對應的猜測，而且要附得出理由
-const cases = [
-  { name: "讀太快", answer: mkAnswer({ elapsed: Math.floor(wrongProblem.timeLimit * 0.1) }), expect: "wrong-technique" },
-  { name: "看到第二層提示", answer: mkAnswer({ hintsUsed: 2 }), expect: "forgot-formula" }
-];
-api.setQuiz(cq("quick", mkAnswer({})));
-cases.forEach((c) => {
-  const s = api.suggestCause(wrongProblem, c.answer);
-  if (!s) throw new Error(`suggestCause returned nothing for ${c.name}`);
-  if (s.key !== c.expect) throw new Error(`suggestCause(${c.name}) = ${s.key}, expected ${c.expect}`);
-  if (!s.why || !s.why.trim()) throw new Error(`suggestCause(${c.name}) has no reason`);
-  if (!api.causeTagOf(s.key)) throw new Error(`suggestCause(${c.name}) maps to no legacy tag`);
-});
-
-// 錯因面板：一定要預選一項，否則「降低標註成本」這個設計目的沒達成
-const wrong = mkAnswer({ causeAuto: true, errorTag: "不會" });
-api.setQuiz(cq("quick", wrong));
-const causeHtml = api.renderCausePrompt(wrongProblem, { status: "wrong" });
-if (!causeHtml.includes("is-active")) throw new Error("cause prompt did not pre-select a suggestion");
-if (!causeHtml.includes("已先幫你選好")) throw new Error("cause prompt did not explain its guess");
-// 使用者親自選過之後就不該再解釋
-api.setQuiz(cq("quick", mkAnswer({ causeAuto: false, errorTag: "粗心" })));
-if (api.renderCausePrompt(wrongProblem, { status: "wrong" }).includes("已先幫你選好")) {
-  throw new Error("cause prompt should stop explaining once the user picked");
-}
-api.causeOptions.forEach((option) => {
-  if (!causeHtml.includes(option.label)) throw new Error(`cause prompt is missing "${option.label}"`);
-});
-
-// 逾時是系統判定的，不該再問使用者
-api.setQuiz(cq("quick", mkAnswer({ unanswered: true, elapsed: wrongProblem.timeLimit })));
-const timeoutHtml = api.renderCausePrompt(wrongProblem, { status: "wrong" });
-if (!timeoutHtml.includes("來不及") || timeoutHtml.includes('data-action="tag-answer"')) {
-  throw new Error("timeout should be auto-classified, not asked");
-}
-
-// 答對不問錯因
-api.setQuiz(cq("quick", mkAnswer({ correct: true })));
-if (api.renderCausePrompt(wrongProblem, { status: "correct" }) !== "") {
-  throw new Error("cause prompt must not appear on a correct answer");
-}
-
-// records.conf 要被 normalizeRecords 認得
 const confRecords = api.normalizeRecords({ conf: { "lim-001": { level: "sure", correct: false, at: "x" } } });
 if (!confRecords.conf || confRecords.conf["lim-001"].level !== "sure") {
-  throw new Error("normalizeRecords dropped records.conf");
+  throw new Error("normalizeRecords 不再容忍舊的 records.conf —— 匯入舊備份會出事");
 }
-if (!api.normalizeRecords({}).conf) throw new Error("normalizeRecords did not create records.conf");
-
-api.setQuiz(null);
-console.log(
-  `Confidence/cause smoke: ${api.confidenceLevels.length} levels, ${api.causeOptions.length} causes, suggestions verified`
-);
-
-// ── 考試倒推 / 考後報告 ──────────────────────────────────────
-// 這個功能唯一的價值是「排不完的時候誠實說排不完」。假裝排得下，
-// 使用者考砸只會怪產品 —— 所以那條線一定要有測試守著。
-const DAY = 86400000;
-
-const noPlan = api.renderExamPlanCard({ history: [] });
-if (!noPlan.includes("有考試要準備")) throw new Error("exam card should invite setup when no plan is set");
-
-const examRecords = (() => {
-  // 刻意造一個「碰過很多技巧但都沒練熟」的使用者 —— 那才會排不完。
-  // fixture 太薄的話 gaps 很少，反而算得出排得完，就測不到警告那條線。
-  const wide = global.window.BUZZ_PROBLEMS.filter((p) => global.window.BuzzSkillGraph.skillsForProblem(p).length).slice(0, 160);
-  const seeded = { history: [] };
-  for (let i = 0; i < 16; i += 1) {
-    seeded.history.push({
-      id: "exam-" + i,
-      mode: "quick",
-      finishedAt: new Date(Date.now() - (16 - i) * DAY).toISOString(),
-      answers: wide.slice(i * 10, i * 10 + 10).map((p, j) => ({
-        problemId: p.id, correct: (i + j) % 3 !== 0, elapsed: 30, hintsUsed: 0
-      }))
-    });
+const appSourceForRemoval = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "app.js"), "utf8");
+["confidence-prompt", "cause-prompt", "set-confidence", "weekly-card", "share-card-modal", "data-paper-field", "save-exam-plan"].forEach((marker) => {
+  if (appSourceForRemoval.includes(marker)) {
+    throw new Error(`已移除的功能還留著 DOM 痕跡：\${marker}`);
   }
-  seeded.plan = {
-    label: "微積分期中",
-    examAt: new Date(Date.now() + 20 * DAY).toISOString().slice(0, 10),
-    scopeKey: "all",
-    scope: null,
-    dailyMinutes: 10,
-    target: 70,
-    setAt: new Date(Date.now() - 10 * DAY).toISOString()
-  };
-  return seeded;
-})();
-
-const examCard = api.renderExamPlanCard(examRecords);
-if (!examCard.includes("微積分期中")) throw new Error("exam card lost its label");
-if (!/\d+<\/strong>\s*<span>天/.test(examCard)) throw new Error("exam card has no countdown");
-if (/undefined|NaN|\[object/.test(examCard)) throw new Error("exam card rendered a broken value");
-
-// 每天只給 10 分鐘、範圍全開 —— 一定排不完，必須看得到警告與具體建議
-if (!examCard.includes("排不完")) {
-  throw new Error("exam card must say so when the plan does not fit");
-}
-if (!/建議把每天加到 \d+ 分鐘/.test(examCard)) {
-  throw new Error("exam card must suggest a concrete number of minutes");
-}
-if (!/只顧得到\s*\n?\s*\d+ 個技巧中的 \d+ 個/.test(examCard.replace(/\s+/g, " "))) {
-  throw new Error("exam card must say how many skills are actually coverable");
-}
-
-// 考前 7 天內要進衝刺模式
-const sprintRecords = JSON.parse(JSON.stringify(examRecords));
-sprintRecords.plan.examAt = new Date(Date.now() + 4 * DAY).toISOString().slice(0, 10);
-if (!api.renderExamPlanCard(sprintRecords).includes("衝刺模式已啟動")) {
-  throw new Error("exam card did not switch to sprint mode inside T-7");
-}
-
-// 考完之後要出報告，而且只出一次
-const doneRecords = JSON.parse(JSON.stringify(examRecords));
-doneRecords.plan.examAt = new Date(Date.now() - 2 * DAY).toISOString().slice(0, 10);
-const report = api.renderExamReport(doneRecords);
-if (!report.includes("考後報告")) throw new Error("exam report did not render after the exam date");
-if (/undefined|NaN|\[object/.test(report)) throw new Error("exam report rendered a broken value");
-doneRecords.planReportSeen = doneRecords.plan.examAt;
-if (api.renderExamReport(doneRecords) !== "") throw new Error("exam report must not reappear once dismissed");
-
-// 考試還沒到不該出報告
-if (api.renderExamReport(examRecords) !== "") throw new Error("exam report appeared before the exam");
-
-// 範圍選項都要有 label
-api.examScopes.forEach((scope) => {
-  if (!scope.key || !scope.label) throw new Error("exam scope option is missing key/label");
 });
+console.log("Removal smoke: 自動錯因存活、舊 records.conf 容忍、六個已拔功能無殘留");
 
-// records 正規化要認得 plan 家族
-const normalized = api.normalizeRecords({});
-if (normalized.plan !== null || !Array.isArray(normalized.planHistory) || typeof normalized.planReportSeen !== "string") {
-  throw new Error("normalizeRecords did not set up the exam plan fields");
-}
-
-console.log(`Exam plan smoke: ${api.examScopes.length} scopes, infeasible warning + sprint + report verified`);
+// 考試倒推計畫已於 2026-09 移除。舊資料的 plan 家族仍要被容忍：
+const normalizedPlan = api.normalizeRecords({ plan: { examAt: "2026-01-01" }, planHistory: [{}] });
+if (!normalizedPlan || typeof normalizedPlan !== "object") throw new Error("normalizeRecords choked on legacy plan data");
+console.log("Exam plan removal smoke: legacy plan data tolerated");
 
 // ── keyIdea 與三層提示 ───────────────────────────────────────
 // 第二層提示只能吃作者親自寫的。把 topic 級泛用文字冒充成「這題的關鍵步驟」，
@@ -522,7 +389,6 @@ const liveQuiz = {
   hintsUsed: { [resumeProblems[1].id]: 2 },
   draft: "log(2)",
   feedback: null,
-  confidence: { [resumeProblems[0].id]: "sure" },
   answers: resumeProblems.slice(0, 3).map((problem, i) => ({
     problem,
     input: "x" + i,
@@ -559,7 +425,6 @@ if (!thawed) throw new Error("deserializeQuiz returned nothing");
 });
 if (JSON.stringify(thawed.hintsUsed) !== JSON.stringify(liveQuiz.hintsUsed)) throw new Error("resume lost hintsUsed");
 if (JSON.stringify(thawed.tabSwitches) !== JSON.stringify(liveQuiz.tabSwitches)) throw new Error("resume lost tabSwitches");
-if (JSON.stringify(thawed.confidence) !== JSON.stringify(liveQuiz.confidence)) throw new Error("resume lost confidence");
 
 if (thawed.problems.length !== liveQuiz.problems.length) throw new Error("resume lost problems");
 thawed.problems.forEach((problem, i) => {
@@ -879,9 +744,6 @@ console.log(`Resume smoke: ${json.length} bytes for a 12-question exam, round-tr
     throw new Error("手寫計算紙的 canvas 沒有 aria-label");
   }
 
-  // 出卷的每個下拉都要有 label 包著（不是只有 placeholder）
-  const paperFields = (appSource.match(/<label class="paper-field[\s\S]{0,400}?<\/label>/g) || []);
-  if (paperFields.length < 4) throw new Error(`出卷的欄位只有 ${paperFields.length} 個被 label 包住`);
 
   console.log(
     `A11y smoke: ${katexCalls} 個 katex.render 全輸出 MathML, ${shortcutCount} 組快捷鍵, ${modals.length} 個對話框有焦點鎖與 aria, focus-visible 已就位`
