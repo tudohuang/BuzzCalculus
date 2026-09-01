@@ -350,6 +350,36 @@ console.log("Removal smoke: 自動錯因存活、舊 records.conf 容忍、六�
   if (next !== 0) throw new Error("應繞回第 0 題，得到 " + next);
   console.log("Exam jump smoke: 亂序結算無重複無漏題、未答輪回正確");
 
+// ── 反射進步卡（成效證據）─────────────────────────────────────
+// 兩個方向都要驗：真的變快要亮；資料不足或沒變快絕不能亮 ——
+// 一張灌水的進步卡比沒有卡更傷信用。
+{
+  const F_TIMED = 4;
+  const subject = global.window.BUZZ_PROBLEMS.find((p) => p.timeLimit >= 60 && api.authoredHints(p));
+  const now = Math.floor(Date.now() / 1000);
+  const mkLog = (ratios, spanDays) => ratios.map((r, i) => [
+    subject.id,
+    now - Math.round((ratios.length - i) * (spanDays * 86400) / ratios.length),
+    1, Math.round(subject.timeLimit * r), F_TIMED
+  ]);
+  // 進步組：早期 0.9 倍時限、近期 0.4 倍，跨 21 天
+  const improving = mkLog([...Array(12).fill(0.9), ...Array(12).fill(0.4)], 21);
+  const hit = api.speedProgressData({ attemptLog: [...improving, ...Array(10).fill(["no-such", now, 1, 10, F_TIMED])] });
+  if (!hit.length) throw new Error("明顯的進步沒被抓到");
+  if (!(hit[0].beforeSec > hit[0].afterSec)) throw new Error("進步方向反了");
+  // 沒進步組：全程 0.8 倍 —— 不准亮
+  const flat = mkLog(Array(24).fill(0.8), 21);
+  if (api.speedProgressData({ attemptLog: flat }).length) throw new Error("沒變快也亮了 —— 灌水");
+  // 資料太少 —— 不准亮
+  const thin = mkLog([0.9, 0.9, 0.4, 0.4], 21);
+  if (api.speedProgressData({ attemptLog: thin }).length) throw new Error("四筆資料就下結論");
+  // 時間跨度不足 7 天 —— 不准亮
+  const rushed = mkLog([...Array(12).fill(0.9), ...Array(12).fill(0.4)], 3);
+  if (api.speedProgressData({ attemptLog: rushed }).length) throw new Error("三天就宣稱進步");
+  console.log("Speed progress smoke: 進步會亮、不進步/資料少/跨度短都不亮");
+}
+
+
 // ── 手寫辨識（#12）：合成筆跡的管線測試 ─────────────────────
 // 模板抖動＋縮放＋位移後必須認回自己；多字形要正確切割排序。
 // 這驗的是管線不是真實準確率 —— 真人手寫的驗證要靠上線回報。

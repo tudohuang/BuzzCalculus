@@ -578,6 +578,254 @@ function verifyMultivarLimit(problem, bodyTex, compileAnswer) {
   return compareNumbers("multivar-limit", compileAnswer([])(), mean, 1e-3);
 }
 
+/* ── 第二輪句型：留數、疊積分、參數式、卷積、多變數 ─────────── */
+
+// 留數 Res_{z=c} f(z)：不碰複數運算。
+// 極點階數 m 的留數 = (z−c)^m·f(z) 在 c 的第 (m−1) 階泰勒係數，
+// 而題庫的 f 都是實係數函數 —— 在實軸上取樣就足夠。
+// m 用試的：找最小的 m 讓 (z−c)^m f(z) 在 c 有非零有限極限。
+function verifyResidue(problem, center, bodyTex, compileAnswer) {
+  const f = latex.compile(bodyTex, ["z"]);
+  const c = latex.compile(String(center), [])();
+  const shifted = (m) => (t) => Math.pow(t, m) * f(c + t);
+  let order = -1;
+  for (let m = 0; m <= 6; m += 1) {
+    const g = shifted(m);
+    const probes = [1e-3, 5e-4, 2.5e-4].map(g);
+    if (probes.every((v) => Number.isFinite(v))) {
+      const spread = Math.max(...probes) - Math.min(...probes);
+      const scale = Math.max(1e-9, Math.abs(probes[2]));
+      if (spread / scale < 0.05 && Math.abs(probes[2]) > 1e-9) { order = m; break; }
+      // 全部趨近 0 的話極點階數還要更小 —— 但 m=0 就趨近 0 代表函數在 c 是 0，留數 0
+      if (m === 0 && probes.every((v) => Math.abs(v) < 1e-9)) { order = 0; break; }
+    }
+  }
+  if (order < 0) return { status: "unverified", reason: "找不出極點階數" };
+  if (order === 0) {
+    // 沒有極點：留數是 0
+    return compareNumbers("residue", compileAnswer([])(), 0, 1e-5);
+  }
+  // 留數 = g(t) = t^m f(c+t) 的第 (m−1) 階泰勒係數
+  const g = shifted(order);
+  const coeff = taylorCoefficientOf(g, order - 1);
+  if (!Number.isFinite(coeff)) return { status: "unverified", reason: "係數萃取失敗" };
+  return compareNumbers("residue", compileAnswer([])(), coeff, 1e-4);
+}
+
+// 疊積分（顯式界限）：\int_a^b \int_c^d body dInner dOuter。
+// 只接界限是常數的形（∬_D 區域描述型仍走手寫 verify）。
+function verifyIteratedIntegral(problem, spec, compileAnswer) {
+  const inner = (outerValue) => {
+    const g = latex.compile(spec.body, [spec.innerVar, spec.outerVar]);
+    return numeric.integrate((t) => g(t, outerValue), spec.innerFrom, spec.innerTo).value;
+  };
+  const total = numeric.integrate(inner, spec.outerFrom, spec.outerTo).value;
+  if (!Number.isFinite(total)) return { status: "unverified", reason: "疊積分數值不收斂" };
+  return compareNumbers("iterated-integral", compileAnswer([])(), total, 1e-4);
+}
+
+// 參數式 x=f(t), y=g(t)：dy/dx = g'/f'，d²y/dx² = (dy/dx)'/f'。
+// 答案是 t 的函數（expression）或在某個 t 的值（numeric）。
+function verifyParametric(problem, xTex, yTex, order, atT, compileAnswer) {
+  const fx = latex.compile(xTex, ["t"]);
+  const fy = latex.compile(yTex, ["t"]);
+  const slope = (t) => {
+    const dx = numeric.derivative(fx, t).value;
+    const dy = numeric.derivative(fy, t).value;
+    return dy / dx;
+  };
+  const target = order === 2
+    ? (t) => numeric.derivative(slope, t).value / numeric.derivative(fx, t).value
+    : slope;
+  if (atT !== null) {
+    const tValue = latex.compile(String(atT), [])();
+    return compareNumbers("parametric", compileAnswer([])(), target(tValue), 1e-3);
+  }
+  const answerFn = compileAnswer(["t"]);
+  return compareFunctions(answerFn, (t) => ({ value: target(t), error: Math.abs(target(t)) * 1e-4 + 1e-6 }), {
+    tolerance: 1e-3,
+    points: [0.4, 0.7, 1.1, 1.6, 2.2, -0.6, -1.3]
+  });
+}
+
+// 卷積型 F(x) = ∫₀^x body(x,t) dt：答案是 x 的函數。
+// 對幾個 x 值做數值積分，跟答案函數比。
+function verifyConvolution(problem, bodyTex, compileAnswer) {
+  const g = latex.compile(bodyTex, ["x", "t"]);
+  const F = (x) => numeric.integrate((t) => g(x, t), 0, x).value;
+  const answerFn = compileAnswer(["x"]);
+  return compareFunctions(answerFn, (x) => ({ value: F(x), error: Math.abs(F(x)) * 1e-5 + 1e-8 }), {
+    tolerance: 1e-4,
+    points: [0.3, 0.7, 1.1, 1.6, 2.1]
+  });
+}
+
+// 多變數句型的數值工具
+function numericPartial(f, x, y, which, h = 1e-4) {
+  if (which === "x") return (f(x + h, y) - f(x - h, y)) / (2 * h);
+  return (f(x, y + h) - f(x, y - h)) / (2 * h);
+}
+
+function verifyMultivarSentence(problem, kind, payload, compileAnswer) {
+  const SAMPLES = [[0.4, 0.7], [1.1, -0.5], [-0.8, 1.3], [1.7, 0.9]];
+  if (kind === "laplacian") {
+    const f = latex.compile(payload.f, ["x", "y"]);
+    const h = 1e-3;
+    const lap = (x, y) => (f(x + h, y) - 2 * f(x, y) + f(x - h, y)) / (h * h)
+      + (f(x, y + h) - 2 * f(x, y) + f(x, y - h)) / (h * h);
+    if (problem.answerKind === "numeric") {
+      const values = SAMPLES.map(([x, y]) => lap(x, y));
+      const spread = Math.max(...values) - Math.min(...values);
+      if (spread > 1e-2 * Math.max(1, Math.abs(values[0]))) {
+        return { status: "unverified", reason: "Laplacian 不是常數但答案是單一數值" };
+      }
+      return compareNumbers("laplacian", compileAnswer([])(), values[0], 1e-3);
+    }
+    const answerFn = compileAnswer(["x", "y"]);
+    for (const [x, y] of SAMPLES) {
+      if (Math.abs(answerFn(x, y) - lap(x, y)) > 1e-2 * Math.max(1, Math.abs(lap(x, y)))) {
+        return { status: "mismatch", method: "laplacian", detail: "(" + x + "," + y + ") 處不合" };
+      }
+    }
+    return { status: "ok", method: "laplacian", detail: SAMPLES.length + " 點一致" };
+  }
+  if (kind === "jacobian") {
+    const u = latex.compile(payload.u, ["x", "y"]);
+    const v = latex.compile(payload.v, ["x", "y"]);
+    const det = (x, y) =>
+      numericPartial(u, x, y, "x") * numericPartial(v, x, y, "y") -
+      numericPartial(u, x, y, "y") * numericPartial(v, x, y, "x");
+    if (problem.answerKind === "numeric") {
+      return compareNumbers("jacobian", compileAnswer([])(), det(0.7, 0.4), 1e-3);
+    }
+    const answerFn = compileAnswer(["x", "y"]);
+    for (const [x, y] of SAMPLES) {
+      if (Math.abs(answerFn(x, y) - det(x, y)) > 1e-3 * Math.max(1, Math.abs(det(x, y)))) {
+        return { status: "mismatch", method: "jacobian", detail: "(" + x + "," + y + ") 處不合" };
+      }
+    }
+    return { status: "ok", method: "jacobian", detail: SAMPLES.length + " 點一致" };
+  }
+  if (kind === "directional") {
+    const f = latex.compile(payload.f, ["x", "y"]);
+    const [px, py] = payload.point;
+    const [dx, dy] = payload.direction;
+    const norm = Math.hypot(dx, dy);
+    const value = numericPartial(f, px, py, "x") * (dx / norm) + numericPartial(f, px, py, "y") * (dy / norm);
+    return compareNumbers("directional", compileAnswer([])(), value, 1e-3);
+  }
+  if (kind === "mixed-partial") {
+    const f = latex.compile(payload.f, ["x", "y"]);
+    const h = 1e-3;
+    const mixed = (x, y) => (f(x + h, y + h) - f(x + h, y - h) - f(x - h, y + h) + f(x - h, y - h)) / (4 * h * h);
+    const answerFn = compileAnswer(["x", "y"]);
+    for (const [x, y] of SAMPLES) {
+      const want = mixed(x, y);
+      if (!Number.isFinite(want)) continue;
+      if (Math.abs(answerFn(x, y) - want) > 5e-3 * Math.max(1, Math.abs(want))) {
+        return { status: "mismatch", method: "mixed-partial", detail: "(" + x + "," + y + ") 處不合" };
+      }
+    }
+    return { status: "ok", method: "mixed-partial", detail: "取樣點一致" };
+  }
+  if (kind === "min2d") {
+    const f = latex.compile(payload.f, ["x", "y"]);
+    // 粗網格找起點，再座標下降收斂 —— 題庫的二次型一定抓得到
+    let best = { v: Infinity, x: 0, y: 0 };
+    for (let x = -6; x <= 6; x += 0.5) {
+      for (let y = -6; y <= 6; y += 0.5) {
+        const v = f(x, y);
+        if (Number.isFinite(v) && v < best.v) best = { v, x, y };
+      }
+    }
+    let step = 0.25;
+    for (let iter = 0; iter < 200 && step > 1e-7; iter += 1) {
+      let moved = false;
+      for (const [ddx, ddy] of [[step, 0], [-step, 0], [0, step], [0, -step]]) {
+        const v = f(best.x + ddx, best.y + ddy);
+        if (v < best.v) { best = { v, x: best.x + ddx, y: best.y + ddy }; moved = true; }
+      }
+      if (!moved) step /= 2;
+    }
+    return compareNumbers("min2d", compileAnswer([])(), best.v, 1e-4);
+  }
+  return { status: "unsupported", reason: "未知的多變數句型" };
+}
+
+// Wronskian W(f, g) = f·g' − f'·g
+function verifyWronskian(problem, fTex, gTex, compileAnswer) {
+  const f = latex.compile(fTex, ["x"]);
+  const g = latex.compile(gTex, ["x"]);
+  const w = (x) => f(x) * numeric.derivative(g, x).value - numeric.derivative(f, x).value * g(x);
+  if (problem.answerKind === "numeric") {
+    return compareNumbers("wronskian", compileAnswer([])(), w(0.7), 1e-3);
+  }
+  const answerFn = compileAnswer(["x"]);
+  return compareFunctions(answerFn, (x) => ({ value: w(x), error: Math.abs(w(x)) * 1e-4 + 1e-7 }), { tolerance: 1e-3 });
+}
+
+function recognizeRound2(problem) {
+  const prompt = String(problem.prompt || "");
+
+  const res = prompt.match(/^\\operatorname\{Res\}_\{z=([^}]+)\}(.+)$/);
+  if (res) return (compileAnswer) => verifyResidue(problem, res[1], res[2], compileAnswer);
+
+  // 疊積分：\int_a^b\int_c^d body \,dX\,dY（界限全是常數式）
+  const iter = prompt.match(/^\\int_(\{[^{}]+\}|\S)\^(\{[^{}]+\}|\S)\s*\\int_(\{[^{}]+\}|\S)\^(\{[^{}]+\}|\S)(.+?)\\,d([a-zA-Z])(?:\\,| )*d([a-zA-Z])$/);
+  if (iter) {
+    const strip = (t) => t.replace(/^\{|\}$/g, "");
+    try {
+      const spec = {
+        outerFrom: latex.compile(strip(iter[1]), [])(),
+        outerTo: latex.compile(strip(iter[2]), [])(),
+        innerFrom: latex.compile(strip(iter[3]), [])(),
+        innerTo: latex.compile(strip(iter[4]), [])(),
+        body: iter[5],
+        innerVar: iter[6],
+        outerVar: iter[7]
+      };
+      if ([spec.outerFrom, spec.outerTo, spec.innerFrom, spec.innerTo].every(Number.isFinite)) {
+        return (compileAnswer) => verifyIteratedIntegral(problem, spec, compileAnswer);
+      }
+    } catch (_error) { /* 界限不是常數 → 不接 */ }
+  }
+
+  // 參數式：x=…, y=…（逗號分隔）＋ dy/dx 或 d²y/dx²，可帶 |_{t=…}
+  const par = prompt.match(/^x=([^,]+),\\? ?y=([^.]+)\.\\? ?(?:\\left\.)?\\frac\{d(\^2)?y\}\{dx(?:\^2)?\}(?:\\right\|_\{t=([^}]+)\})?(?:=\?)?$/);
+  if (par) {
+    return (compileAnswer) => verifyParametric(problem, par[1].trim(), par[2].trim(), par[3] ? 2 : 1, par[4] || null, compileAnswer);
+  }
+
+  // 卷積：\text{Find }F(x)=\int_0^x body \,dt
+  const conv = prompt.match(/^\\text\{Find \}F\(x\)=\\int_0\^x ?(.+?)\\,dt$/);
+  if (conv) return (compileAnswer) => verifyConvolution(problem, conv[1], compileAnswer);
+
+  // 多變數句型
+  const lap = prompt.match(/^\\text\{Laplacian of \}f=(.+)$/);
+  if (lap) return (compileAnswer) => verifyMultivarSentence(problem, "laplacian", { f: lap[1] }, compileAnswer);
+
+  const jac = prompt.match(/^\\text\{Jacobian determinant of \}u=([^,]+),\\? ?v=(.+)$/);
+  if (jac) return (compileAnswer) => verifyMultivarSentence(problem, "jacobian", { u: jac[1], v: jac[2] }, compileAnswer);
+
+  const dir = prompt.match(/^\\text\{Directional derivative of \}f=(.+?)\\text\{ at \}\((-?[\d.]+),(-?[\d.]+)\)\\text\{ in direction \}\\?(?:langle|left)?\(?(-?[\d.]+),(-?[\d.]+)/);
+  if (dir) {
+    return (compileAnswer) => verifyMultivarSentence(problem, "directional", {
+      f: dir[1], point: [Number(dir[2]), Number(dir[3])], direction: [Number(dir[4]), Number(dir[5])]
+    }, compileAnswer);
+  }
+
+  const mixed = prompt.match(/^\\frac\{\\partial\^2\}\{\\partial x\\partial y\}(.+)$/);
+  if (mixed) return (compileAnswer) => verifyMultivarSentence(problem, "mixed-partial", { f: mixed[1] }, compileAnswer);
+
+  const min2 = prompt.match(/^\\min_\{x,y\}\\left\((.+)\\right\)$/);
+  if (min2) return (compileAnswer) => verifyMultivarSentence(problem, "min2d", { f: min2[1] }, compileAnswer);
+
+  const wron = prompt.match(/^\\text\{Wronskian \}W\(([^,]+),\\? ?([^)]+)\)$/);
+  if (wron) return (compileAnswer) => verifyWronskian(problem, wron[1], wron[2], compileAnswer);
+
+  return null;
+}
+
 function verifyProblem(problem, options = {}) {
   const normalize = options.normalizeAnswer || ((value) => String(value));
 
@@ -601,6 +849,15 @@ function verifyProblem(problem, options = {}) {
   // 幾類「\\text 開頭」的題幹有固定句型，逐句型辨識。
   // 每一條路徑都跟解答無關：收斂半徑用掃描收斂邊緣、係數用 Chebyshev
   // 插值、Hessian 用數值二階偏導 —— 共同前提只有「有沒有看懂題幹」。
+  const round2 = recognizeRound2(problem);
+  if (round2) {
+    try {
+      return round2(compileAnswer);
+    } catch (error) {
+      return { status: "error", reason: error.message };
+    }
+  }
+
   const textForm = recognizeTextForm(problem.prompt);
   if (textForm) {
     try {

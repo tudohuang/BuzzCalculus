@@ -2151,6 +2151,97 @@
     `;
   }
 
+  // 反射進步卡：「三週前這型要 92 秒，現在 41 秒」。
+  //
+  // 這是整個產品命題（限時練反射 → 變快）的第一個可驗證證據，
+  // 而且是使用者**自己的**證據，不是我們的宣稱。
+  //
+  // 方法上的兩個堅持：
+  //   1. 比「耗時 ÷ 該題時限」不比原始秒數 —— 不同題時限差三倍，
+  //      混著比只會量到「最近抽到的題比較簡單」。顯示時再用該技巧的
+  //      中位時限換算回秒數，人才讀得懂。
+  //   2. 門檻寧嚴勿鬆：早期與近期各要 8 筆計時答對、中間隔至少 7 天、
+  //      而且要快 15% 以上才算「進步」。一張灌水的進步卡，
+  //      比沒有卡更傷這個站的信用。
+  function speedProgressData(records) {
+    if (!window.BuzzSkillGraph) return [];
+    const log = Array.isArray(records.attemptLog) ? records.attemptLog : [];
+    if (log.length < 30) return [];
+    const F_TIMED = 4;
+    const F_UNANSWERED = 1;
+
+    const bySkill = new Map();
+    log.forEach((row) => {
+      if (!Array.isArray(row) || row.length < 5) return;
+      const [pid, at, correct, elapsed, flags] = row;
+      if (!correct || !(flags & F_TIMED) || (flags & F_UNANSWERED)) return;
+      const problem = problemById(pid);
+      if (!problem || !problem.timeLimit || !Number.isFinite(elapsed) || elapsed <= 0) return;
+      const ratio = elapsed / problem.timeLimit;
+      if (ratio > 3) return; // 掛著沒關的分頁之類的離群值
+      window.BuzzSkillGraph.skillsForProblem(problem).forEach((skillId) => {
+        if (!bySkill.has(skillId)) bySkill.set(skillId, []);
+        bySkill.get(skillId).push({ at, ratio, limit: problem.timeLimit });
+      });
+    });
+
+    const median = (values) => {
+      const sorted = values.slice().sort((a, b) => a - b);
+      return sorted[Math.floor(sorted.length / 2)];
+    };
+
+    const results = [];
+    bySkill.forEach((attempts, skillId) => {
+      if (attempts.length < 16) return;
+      attempts.sort((a, b) => a.at - b.at);
+      const early = attempts.slice(0, Math.max(8, Math.floor(attempts.length / 3)));
+      const recent = attempts.slice(-Math.max(8, Math.floor(attempts.length / 3)));
+      const gapDays = (recent[0].at - early[early.length - 1].at) / 86400;
+      if (gapDays < 7) return;
+      const earlyRatio = median(early.map((item) => item.ratio));
+      const recentRatio = median(recent.map((item) => item.ratio));
+      if (!(earlyRatio > 0) || recentRatio >= earlyRatio * 0.85) return; // 要快 15% 才算
+      const typicalLimit = median(attempts.map((item) => item.limit));
+      results.push({
+        skillId,
+        label: window.BuzzSkillGraph.label(skillId),
+        beforeSec: Math.round(earlyRatio * typicalLimit),
+        afterSec: Math.round(recentRatio * typicalLimit),
+        speedup: earlyRatio / recentRatio,
+        daysSpan: Math.round((recent[recent.length - 1].at - early[0].at) / 86400)
+      });
+    });
+    return results.sort((a, b) => b.speedup - a.speedup).slice(0, 3);
+  }
+
+  function renderSpeedProgress(records) {
+    const rows = speedProgressData(records);
+    if (!rows.length) return "";
+    return `
+      <section class="study-card speed-progress">
+        <div class="panel-title-row">
+          <div>
+            <p class="section-label">反射進步</p>
+            <h3>同型題，你變快了</h3>
+          </div>
+        </div>
+        <p class="panel-note">同一個技巧、計時答對的題，早期 vs 近期的中位耗時。這是你自己的數據，不是我們的宣稱。</p>
+        <div class="speed-rows">
+          ${rows
+            .map(
+              (row) => `
+                <div class="speed-row">
+                  <strong>${escapeHtml(row.label)}</strong>
+                  <span class="speed-figures num">${row.beforeSec}s → <b>${row.afterSec}s</b></span>
+                  <small>${row.daysSpan} 天內快了 ${row.speedup >= 1.95 ? Math.round(row.speedup * 10) / 10 + " 倍" : Math.round((1 - 1 / row.speedup) * 100) + "%"}</small>
+                </div>`
+            )
+            .join("")}
+        </div>
+      </section>
+    `;
+  }
+
   function renderInsights() {
     const records = loadRecords();
     const profile = abilityProfile(records);
@@ -2186,6 +2277,7 @@
       <main class="screen insights-screen">
         ${renderInsightsSummary(profile)}
         ${renderWeeklyReport(records)}
+        ${renderSpeedProgress(records)}
         ${renderMasteryRadar(records)}
         ${renderSpeedQuadrant(profile)}
         ${renderSkillTable(profile)}
@@ -12141,6 +12233,7 @@
       causeTagOf,
       causeOptions: CAUSE_OPTIONS,
       setQuiz: (next) => { quiz = next; },
+      speedProgressData,
       jumpToQuestion,
       toggleQuestionFlag,
       finalizeExamAnswers,
