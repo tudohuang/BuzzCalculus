@@ -763,9 +763,7 @@
 
     if (key === "?" || (event.shiftKey && key === "/")) {
       event.preventDefault();
-      showAppNotice(
-        "鍵盤快捷鍵\n" + SHORTCUTS.map((item) => `${item.keys}　${item.what}`).join("\n")
-      );
+      showAppNotice("__shortcuts__");
       return;
     }
 
@@ -4412,6 +4410,7 @@
         </div>
         <div class="action-row">
           <button class="button secondary" data-action="start-mistake-one" data-problem-id="${escapeAttr(problem.id)}">${icon("play")}重練這題</button>
+          <button class="button secondary" data-action="practice-similar" data-problem-id="${escapeAttr(problem.id)}">${icon("shuffle")}練同型</button>
           <button class="button ghost" data-action="toggle-favorite" data-problem-id="${escapeAttr(problem.id)}">${icon("star")}${records.favorites?.[problem.id] ? "已收藏" : "收藏"}</button>
           <button class="button ghost" data-action="report-problem" data-problem-id="${escapeAttr(problem.id)}">${icon("flag")}${records.problemReports?.[problem.id] ? "已回報" : "回報"}</button>
           <button class="button ghost" data-action="clear-mistake-one" data-problem-id="${escapeAttr(problem.id)}">${icon("trash")}移除</button>
@@ -4691,10 +4690,17 @@
               </div>`
                   : ""
               }
+              <!-- 快捷鍵存在了很久，但沒有任何地方告訴使用者。
+                   這顆只在有實體鍵盤的環境出現（CSS 用 pointer: fine 篩），
+                   觸控裝置上按不到鍵盤，顯示它只是雜訊。 -->
+              <button class="kbd-hint" data-action="show-shortcuts" title="鍵盤快捷鍵">
+                <kbd>?</kbd><span>快捷鍵</span>
+              </button>
             </div>
           </div>
+          ${quiz.examMode ? renderExamQuestionMap() : ""}
 
-          <div class="problem-stage">
+          <div class="problem-stage ${feedback ? "has-feedback" : ""}">
             <article class="problem-card" role="group" aria-label="作答區">
               <div class="problem-meta">
                 ${topicChip(current)}
@@ -4728,13 +4734,16 @@
                         : ""
                     }
                   </div>`
-                : `<div class="feedback"><strong>作答狀態</strong><p>${quiz.examMode ? "大考模式：整份倒數、不給提示、自己輸入答案。時間到會直接交卷。" : quiz.survival ? "生存：最多錯 3 題。" : quiz.suddenDeath ? "Boss 連戰：錯一題就結算。" : noTimer ? "本局不倒數。" : "每題有各自的倒數，時間到算未作答。"}</p></div>`
+                : ""
             }
           </div>
 
-          <div class="action-row">
+          <div class="action-row quiz-footer-row">
             <button class="button secondary" data-action="skip">${icon("skip")}跳過</button>
             <button class="button ghost" data-action="show-rules">${icon("info")}規則</button>
+            <!-- 本局規則從 300px 的側欄降級成一行小字：它是被動資訊，
+                 不值得一個常駐欄位把題目卡壓窄。詳細規則在「規則」鈕裡。 -->
+            <span class="quiz-mode-note">${quiz.examMode ? "整份倒數 · 時間到直接交卷" : quiz.survival ? "生存：最多錯 3 題" : quiz.suddenDeath ? "Boss 連戰：錯一題就結算" : noTimer ? "本局不倒數" : "每題各自倒數，時間到算未作答"}</span>
           </div>
         </section>
       </main>
@@ -5275,6 +5284,26 @@
 
   function renderAppNoticeModal() {
     if (!appNotice) return "";
+    // 快捷鍵表有自己的排版（kbd 樣式的表格）；其他通知維持一段文字。
+    if (appNotice === "__shortcuts__") {
+      return `
+        <div class="modal-backdrop" data-action="dismiss-notice">
+          <div class="modal shortcuts-modal" role="dialog" aria-modal="true" aria-labelledby="app-notice-title" data-modal>
+            <h3 id="app-notice-title">鍵盤快捷鍵</h3>
+            <dl class="shortcuts-table">
+              ${SHORTCUTS.map(
+                (item) => `
+                  <div>
+                    <dt>${item.keys.split(/\s*[–\/]\s*| /).filter(Boolean).map((k) => `<kbd>${escapeHtml(k)}</kbd>`).join(" ")}</dt>
+                    <dd>${escapeHtml(item.what)}</dd>
+                  </div>`
+              ).join("")}
+            </dl>
+            <button class="button" data-action="dismiss-notice">${icon("check")}知道了</button>
+          </div>
+        </div>
+      `;
+    }
     return `
       <div class="modal-backdrop" data-action="dismiss-notice">
         <div class="modal" role="dialog" aria-modal="true" aria-labelledby="app-notice-title" data-modal>
@@ -5319,6 +5348,75 @@
     }
     calibrationPreview = pack;
     render();
+  }
+
+  // 「這局帶走」：把錯題折成兩三張技巧卡，每張一句關鍵想法＋一顆「練同型」。
+  //
+  // 結算頁原本的敘事停在「你考幾分」；學習的結尾應該是「所以接下來練什麼」。
+  // 卡片按技巧去重 —— 同一招錯三題是一件事，不是三件事。
+  function renderTakeawayCards(currentQuiz) {
+    const wrong = currentQuiz.answers.filter((answer) => !answer.correct);
+    if (!wrong.length) return "";
+    const seenSkills = new Set();
+    const cards = [];
+    for (const answer of wrong) {
+      const problem = answer.problem;
+      const idea = keyIdeaFor(problem);
+      if (!idea || !idea.text) continue;
+      const skills = window.BuzzSkillGraph ? window.BuzzSkillGraph.skillsForProblem(problem) : [];
+      const skillKey = skills[0] || problem.topic;
+      if (seenSkills.has(skillKey)) continue;
+      seenSkills.add(skillKey);
+      cards.push({ problem, idea, skillKey });
+      if (cards.length >= 3) break;
+    }
+    if (!cards.length) return "";
+    return `
+      <section class="takeaway" data-enter>
+        <p class="section-label">這局帶走</p>
+        <div class="takeaway-grid">
+          ${cards
+            .map(
+              (card) => `
+                <div class="takeaway-card">
+                  <p>${escapeHtml(card.idea.text)}</p>
+                  <button class="link-button" data-action="practice-similar" data-problem-id="${escapeAttr(card.problem.id)}">練同型 8 題 →</button>
+                </div>`
+            )
+            .join("")}
+        </div>
+      </section>
+    `;
+  }
+
+  // 同型再練：抓「共用同一個技巧、難度 ±1」的題開一局。
+  // 不用模板變體做這件事 —— 變體只是換數字，真正的同型是同一招。
+  function startSimilarPractice(problemId) {
+    const origin = problemById(problemId);
+    if (!origin) return;
+    const records = loadRecords();
+    const skills = window.BuzzSkillGraph ? window.BuzzSkillGraph.skillsForProblem(origin) : [];
+    const rank = problemRank(origin);
+    let pool = [];
+    if (skills.length) {
+      const skillSet = new Set(skills);
+      pool = problems.filter((problem) => {
+        if (problem.id === origin.id) return false;
+        if (Math.abs(problemRank(problem) - rank) > 1) return false;
+        const mine = window.BuzzSkillGraph.skillsForProblem(problem);
+        return mine.some((id) => skillSet.has(id));
+      });
+    }
+    // 技巧圖接不到（kernel 沒載）就退回同主題同難度 —— 較粗但誠實
+    if (pool.length < 4) {
+      pool = problems.filter(
+        (problem) => problem.id !== origin.id && problem.topic === origin.topic && Math.abs(problemRank(problem) - rank) <= 1
+      );
+    }
+    if (!pool.length) return;
+    selectedMode = "quick";
+    const ordered = adaptiveShuffle(pool, records, seedFromString(`similar-${problemId}-${Date.now()}`));
+    startQuiz(padPool(ordered.slice(0, 8), pool, Math.min(8, pool.length), { records }), { modeKey: "quick" });
   }
 
   function renderResults() {
@@ -5401,6 +5499,8 @@
             ${quiz.dailyOneOutcome ? `<button class="button ghost" data-action="share-daily-one">${icon("copy")}複製 emoji 成績</button>` : ""}
           </div>
         </section>
+
+        ${quiz.placementResult ? "" : renderTakeawayCards(quiz)}
 
         <details class="results-detail" data-results-detail ${resultsDetailOpen ? "open" : ""}>
           <summary><span>詳細分析與逐題回顧</span>${icon("chevron-down")}</summary>
@@ -6154,6 +6254,10 @@
     const action = actionNode.dataset.action;
     if (action === "start") startQuiz();
     if (action === "practice-axis") startAxisPractice(actionNode.dataset.axis || "");
+    if (action === "show-shortcuts") showAppNotice("__shortcuts__");
+    if (action === "jump-question") jumpToQuestion(actionNode.dataset.index);
+    if (action === "toggle-flag") toggleQuestionFlag();
+    if (action === "practice-similar") startSimilarPractice(actionNode.dataset.problemId || "");
     if (action === "start-weakness") startWeaknessPractice();
     if (action === "start-friendly-run") startFriendlyRun();
     if (action === "start-god-run") startGodRun();
@@ -8276,9 +8380,99 @@
     });
   }
 
+  // 大考的題號地圖：一排數字格，已答鎖住、目前題描邊、標記的有角標。
+  // 點還沒答的格子直接跳過去 —— 跟紙本考卷「先寫會的」同一個動作。
+  function renderExamQuestionMap() {
+    if (!quiz || !quiz.examMode) return "";
+    const answeredIds = new Set(quiz.answers.map((answer) => answer.problem.id));
+    const flags = quiz.flags || {};
+    const current = getCurrentProblem();
+    const cells = quiz.problems
+      .map((problem, index) => {
+        const answered = answeredIds.has(problem.id);
+        const flagged = Boolean(flags[problem.id]);
+        const isCurrent = index === quiz.index;
+        const classes = [
+          "exam-map-cell",
+          answered ? "is-answered" : "",
+          isCurrent ? "is-current" : "",
+          flagged ? "is-flagged" : ""
+        ].filter(Boolean).join(" ");
+        const label = `第 ${index + 1} 題${answered ? "（已作答）" : flagged ? "（已標記）" : ""}`;
+        return answered
+          ? `<span class="${classes}" title="${escapeAttr(label)}">${index + 1}</span>`
+          : `<button class="${classes}" data-action="jump-question" data-index="${index}" title="${escapeAttr(label)}">${index + 1}</button>`;
+      })
+      .join("");
+    const flagged = current && flags[current.id];
+    return `
+      <div class="exam-map" role="navigation" aria-label="考卷題號">
+        <div class="exam-map-cells">${cells}</div>
+        <button class="button ghost exam-flag ${flagged ? "is-on" : ""}" data-action="toggle-flag" title="標記這題，待會回來">
+          ${icon("flag")}${flagged ? "取消標記" : "標記待回頭"}
+        </button>
+      </div>
+    `;
+  }
+
+  // 大考模式的跳題與標記。
+  //
+  // 只有大考需要這個：其他模式一題一結、當場給回饋，沒有「先跳過、
+  // 回頭再算」的空間。已作答的題鎖住不能跳回去 —— 這裡的模型是
+  // 送出即定案（跟真的考卷一樣可以先寫別題，但交出去的答案不能改）。
+  function jumpToQuestion(targetIndex) {
+    if (!quiz || !quiz.examMode || quiz.feedback) return;
+    const index = Number(targetIndex);
+    if (!Number.isInteger(index) || index < 0 || index >= quiz.problems.length) return;
+    if (index === quiz.index) return;
+    const answeredIds = new Set(quiz.answers.map((answer) => answer.problem.id));
+    if (answeredIds.has(quiz.problems[index].id)) return;
+    // 這一題還沒送出的草稿要帶著走，輪回來繼續寫
+    quiz.draftMap = quiz.draftMap || {};
+    const current = getCurrentProblem();
+    if (current) quiz.draftMap[current.id] = quiz.draft || "";
+    quiz.index = index;
+    quiz.draft = quiz.draftMap[quiz.problems[index].id] || "";
+    quiz.questionStartedAt = Date.now();
+    quiz.boardOpen = false;
+    quiz.boardFullscreen = false;
+    trackProblemStart(quiz.problems[index]);
+    render();
+  }
+
+  function toggleQuestionFlag() {
+    if (!quiz || !quiz.examMode) return;
+    const current = getCurrentProblem();
+    if (!current) return;
+    quiz.flags = quiz.flags || {};
+    quiz.flags[current.id] = !quiz.flags[current.id];
+    render();
+  }
+
+  // 大考模式：找下一個還沒作答的題（從 index 之後開始、繞回來）。
+  // 有跳題之後「下一題」不能再是 index+1 —— 跳過的題要能被輪回來。
+  function nextUnansweredIndex(currentQuiz, fromIndex) {
+    const answeredIds = new Set(currentQuiz.answers.map((answer) => answer.problem.id));
+    const total = currentQuiz.problems.length;
+    for (let step = 1; step <= total; step += 1) {
+      const index = (fromIndex + step) % total;
+      if (!answeredIds.has(currentQuiz.problems[index].id)) return index;
+    }
+    return -1;
+  }
+
   function advanceToNextQuestion() {
     if (!quiz || !quiz.feedback) return;
-    quiz.index += 1;
+    if (quiz.examMode) {
+      const next = nextUnansweredIndex(quiz, quiz.index);
+      if (next === -1) {
+        finishQuiz();
+        return;
+      }
+      quiz.index = next;
+    } else {
+      quiz.index += 1;
+    }
     if (quiz.index >= quiz.problems.length) {
       finishQuiz();
       return;
@@ -8286,7 +8480,8 @@
     // 定位測驗：依上一題對錯，把下一個槽位換成 rank±1 池的題目。
     if (quiz.placement) advancePlacementLineup(quiz);
     quiz.questionStartedAt = Date.now();
-    quiz.draft = "";
+    // 大考模式有跳題：離開時存進 draftMap 的草稿，輪回來要還原
+    quiz.draft = (quiz.examMode && quiz.draftMap && quiz.draftMap[quiz.problems[quiz.index].id]) || "";
     quiz.feedback = null;
     quiz.modal = null;
     trackProblemStart(quiz.problems[quiz.index]);
@@ -8326,22 +8521,35 @@
   function finalizeExamAnswers(currentQuiz) {
     if (!currentQuiz || !currentQuiz.examMode || currentQuiz.examFinalized) return;
     currentQuiz.examFinalized = true;
-    let nextIndex = Math.min(currentQuiz.answers.length, currentQuiz.problems.length);
 
-    if (currentQuiz.examTimedOut && nextIndex === currentQuiz.index) {
-      const current = currentQuiz.problems[nextIndex];
-      const draft = String(currentQuiz.draft || "").trim();
-      if (current && draft) {
-        const elapsed = Math.max(0, Math.floor((Date.now() - currentQuiz.questionStartedAt) / 1000));
-        appendFinalExamAnswer(currentQuiz, current, resolveAnswerSubmission(current, draft, "Timeout"), elapsed, false);
-        nextIndex += 1;
-      }
+    // 結算按 id 收，不能按 index 續走 —— 有跳題之後，answers 的順序
+    // 是作答順序不是題目順序，「從 answers.length 開始補」會把已答的
+    // 題重複記成未作答。
+    const answeredIds = new Set(currentQuiz.answers.map((answer) => answer.problem.id));
+
+    // 時間到的那一刻，畫面上正在寫的草稿照樣送出（含 draftMap 裡
+    // 跳題留下的草稿）—— 寫了就該算，跟真的考卷收卷一樣。
+    if (currentQuiz.examTimedOut) {
+      const drafts = { ...(currentQuiz.draftMap || {}) };
+      const current = currentQuiz.problems[currentQuiz.index];
+      if (current) drafts[current.id] = String(currentQuiz.draft || "").trim() || drafts[current.id] || "";
+      currentQuiz.problems.forEach((problem) => {
+        if (answeredIds.has(problem.id)) return;
+        const draft = String(drafts[problem.id] || "").trim();
+        if (!draft) return;
+        const elapsed = problem === current
+          ? Math.max(0, Math.floor((Date.now() - currentQuiz.questionStartedAt) / 1000))
+          : 0;
+        appendFinalExamAnswer(currentQuiz, problem, resolveAnswerSubmission(problem, draft, "Timeout"), elapsed, false);
+        answeredIds.add(problem.id);
+      });
     }
 
-    for (let index = nextIndex; index < currentQuiz.problems.length; index += 1) {
+    currentQuiz.problems.forEach((problem) => {
+      if (answeredIds.has(problem.id)) return;
       appendFinalExamAnswer(
         currentQuiz,
-        currentQuiz.problems[index],
+        problem,
         {
           status: "wrong",
           reason: currentQuiz.examTimedOut ? "Timeout" : "Unanswered",
@@ -8351,7 +8559,7 @@
         0,
         true
       );
-    }
+    });
   }
 
   function appendFinalExamAnswer(currentQuiz, problem, submission, elapsed, unanswered) {
@@ -11991,6 +12199,10 @@
       causeTagOf,
       causeOptions: CAUSE_OPTIONS,
       setQuiz: (next) => { quiz = next; },
+      jumpToQuestion,
+      toggleQuestionFlag,
+      finalizeExamAnswers,
+      nextUnansweredIndex,
       getQuiz: () => quiz,
       renderHome,
       trainBuckets: TRAIN_BUCKETS,
