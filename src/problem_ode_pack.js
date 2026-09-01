@@ -36,8 +36,20 @@
     });
   }
 
+  // 這一包的解法寫成步驟鏈（用 ⟹ 和句號分段），直接轉成 solutionSteps ——
+  // 結算頁會渲染成有序清單，比一整段散文好跟。切出來少於兩段就維持散文。
+  const stepsOf = (solution) => {
+    const parts = String(solution || "")
+      .split(/⟹|(?<=。)/)
+      .map((part) => part.trim().replace(/^。|。$/g, ""))
+      .map((part) => part.trim())
+      .filter(Boolean);
+    return parts.length >= 2 ? parts : null;
+  };
+
   const q = (id, rank, prompt, answer, tags, solution, timeLimit, verify, hints, extra) =>
-    add({ id, rank, prompt, answer, tags, solution, timeLimit, verify, hints, ...(extra || {}) });
+    add({ id, rank, prompt, answer, tags, solution, timeLimit, verify, hints,
+      solutionSteps: stepsOf(solution), ...(extra || {}) });
 
   /* ═══════════ 一、一階分離（8）═══════════ */
 
