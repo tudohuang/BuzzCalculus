@@ -404,43 +404,21 @@ async function run() {
       return true;
     `);
 
-    /* ── 7.5 出卷：老師要的那份紙 ── */
-    // 出卷是家教與助教願意付錢的功能，而它的失敗方式全在渲染層：
-    // 抽不到題、數學沒排版、答案印出內部格式（"2-pi^2/6" 而不是排好的算式）。
-    // 最後那一項在螢幕上很容易忽略，但那是要發給學生的紙。
-    const paper = await chrome.evaluate(`
+    /* ── 7.5 出卷已於 2026-09 移除：紙本需求由 workbook.html 承擔 ──
+       這裡改守「移除是乾淨的」：模擬分頁上不准再出現出卷入口。 */
+    const paperGone = await chrome.evaluate(`
       ${HELPERS}
       window.__e2e.clickSelector('[data-action="open-train"]');
       await new Promise((r) => setTimeout(r, 400));
       window.__e2e.clickSelector('[data-action="set-bucket"][data-bucket="exam"]');
       await new Promise((r) => setTimeout(r, 400));
-      const opened = window.__e2e.clickSelector('[data-action="open-paper"]');
-      await new Promise((r) => setTimeout(r, 900));
-      const items = document.querySelectorAll(".paper-item");
-      const answers = document.querySelectorAll(".paper-answer");
       return {
-        opened,
-        items: items.length,
-        promptsTypeset: document.querySelectorAll(".paper-item .katex").length,
-        answers: answers.length,
-        answersTypeset: document.querySelectorAll(".paper-answer .katex").length,
-        // 沒排版的答案 = 那一格裡根本沒有 katex 節點。
-        // 不能用「文字裡有沒有 ^」來判斷 —— KaTeX 的 MathML 後備文字本身就含 ^。
-        rawAnswerSample: Array.from(answers)
-          .filter((n) => !n.querySelector(".katex"))
-          .map((n) => n.textContent.trim())[0] || ""
+        entry: Boolean(document.querySelector('[data-action="open-paper"]')),
+        exam: Boolean(document.querySelector('[data-action="start-mode"][data-mode-key="exam"]'))
       };
     `);
-    check("找得到出卷入口", paper.opened);
-    check("出卷抽得出題目", paper.items >= 5, `${paper.items} 題`);
-    check("卷上的題目有排版", paper.promptsTypeset >= paper.items, `${paper.promptsTypeset} 個 katex 節點`);
-    check(
-      "卷上的答案也有排版，不是內部格式",
-      paper.answers > 0 && paper.answersTypeset >= paper.answers,
-      paper.rawAnswerSample
-        ? `還有沒排版的答案：「${paper.rawAnswerSample}」—— 這會印在發給學生的紙上`
-        : `${paper.answersTypeset}/${paper.answers} 個答案已排版`
-    );
+    check("出卷入口已移除", !paperGone.entry);
+    check("大考模式仍在模擬分頁上", paperGone.exam);
 
     /* ── 7.6 答案驗算的標記真的出現在題庫上 ── */
     const verified = await chrome.evaluate(`

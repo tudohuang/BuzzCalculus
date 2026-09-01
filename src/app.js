@@ -192,16 +192,6 @@
       daily: false,
       boss: false,
       hidden: true
-    },
-    weekly: {
-      label: "每週挑戰",
-      bucket: "exam",
-      note: "每週固定 10 題，全站同卷",
-      count: 10,
-      topicLocked: false,
-      daily: false,
-      boss: false,
-      hidden: true
     }
   };
 
@@ -427,10 +417,6 @@
     }
   };
 
-  // Feature 6：每週挑戰。全站同一份卷（seed = buzz-weekly-<ISO 週>），
-  // 一週只記一次正式成績；成績代碼可離線互比。
-  const WEEKLY_RANK_CURVE = [2, 3, 3, 4, 4, 4, 5, 5, 5, 6];
-
   const STORAGE_KEY = "buzzcalculus.records.v1";
   const THEME_KEY = "buzzcalculus.theme";
   const SYNC_META_KEY = "buzzcalculus.sync.meta";
@@ -634,7 +620,6 @@
   let selectedPack = "all";
   let selectedDifficultyCap = DEFAULT_DIFFICULTY_CAP;
   let selectedBucket = "practice";
-  let examPlanFormOpen = false;
   let onboardingStep = "intro";
   let selectedMistakeTopic = "all";
   let selectedHistoryTopic = "all";
@@ -660,8 +645,6 @@
   let updateAccepted = false;
   // 上一次在這題留下的草稿（從 IndexedDB 非同步拿回來）
   let previousBoard = { problemId: "", entry: null, open: false };
-  let shareCard = null;
-  let weeklyCompare = null;
   let syncBusy = false;
   let syncMessage = "";
   const openProofSteps = new Set();
@@ -739,7 +722,7 @@
       event.preventDefault();
       // 每個對話框都有自己的取消動作，找得到就按它；
       // 找不到就至少不要讓 Esc 冒泡去做別的事。
-      const cancel = modal.querySelector('[data-action^="cancel-"], [data-action="dismiss-notice"], [data-action="close-share-card"]');
+      const cancel = modal.querySelector('[data-action^="cancel-"], [data-action="dismiss-notice"]');
       if (cancel) cancel.click();
       return true;
     }
@@ -879,7 +862,6 @@
     mistake_added: "題目進錯題本",
     mistake_cleared: "錯題被清掉",
     // 計畫
-    plan_set: "設定考試倒推",
     // 內容
     report_submit: "回報題目",
     custom_problem_saved: "儲存自訂題",
@@ -894,11 +876,9 @@
     erase_data: "使用者刪除本機所有資料（只記刪了幾類，不記內容）",
     analytics_opt_out: "使用者關閉或開啟分析",
     // 其他
-    share_result_card: "分享成績卡",
     install_pwa: "安裝 PWA",
     app_update_apply: "使用者接受新版本並重新載入",
     print_mistakes: "列印錯題本（只記幾題，不記內容）",
-    paper_print: "列印自訂考卷（只記條件，不記題目）",
     perf_render: "render 耗時取樣（1%）",
     return_visit: "隔日回訪（帶距離上次幾天）",
     app_error: "未捕捉的錯誤（只送錯誤型別、來源檔與行號，不送訊息內容）"
@@ -1114,7 +1094,7 @@
       const startedAt = sampled && window.performance ? window.performance.now() : 0;
       const carried = captureViewState();
       releaseDetachedCanvases();
-      app.innerHTML = [renderTopbar(), renderScreen(), renderAppNoticeModal(), renderCalibrationPreviewModal(), renderEraseConfirmModal(), renderReportModal(), renderShareCardModal(), renderUpdateBanner()].join("");
+      app.innerHTML = [renderTopbar(), renderScreen(), renderAppNoticeModal(), renderCalibrationPreviewModal(), renderEraseConfirmModal(), renderReportModal(), renderUpdateBanner()].join("");
       bindEvents();
       typesetMath(app);
       window.setTimeout(() => typesetMath(app), 80);
@@ -1289,7 +1269,6 @@
     if (view === "history") return renderHistory();
     if (view === "settings") return renderSettings();
     if (view === "creator") return renderCreator();
-    if (view === "paper") return renderPaperBuilder();
     return renderHome();
   }
 
@@ -1322,7 +1301,6 @@
       <main class="screen home-screen" id="buzz-main">
         <div class="home-lead">
           ${renderResumeCard()}
-          ${renderExamReport(records)}
           ${renderTodayCard(records)}
           ${renderBackupNotice(records)}
         </div>
@@ -1782,375 +1760,16 @@
     render();
   }
 
-  // ── 考試倒推 ────────────────────────────────────────────────
-  // spec 04.6：使用者設「30 天後期中考」，系統倒推每天該練多少。
-  //
-  // 這個功能唯一的價值在於**做不完的時候要誠實說做不完**。
-  // 假裝排得下，使用者考砸了只會怪產品；老實說「以每天 15 分鐘只顧得到 4/7 個技巧，
-  // 要嘛加時間、要嘛縮範圍」，那才是真的在幫忙。
-  const EXAM_SCOPES = [
-    { key: "all", label: "全範圍", scope: null },
-    { key: "midterm", label: "期中（極限 / 微分）", scope: ["limit.*", "diff.*"] },
-    { key: "integral", label: "積分技巧", scope: ["integral.*"] },
-    { key: "series", label: "級數與審斂", scope: ["series.*"] },
-    { key: "multivariable", label: "多變數與向量", scope: ["mvcalc.*", "vector.*"] },
-    { key: "final", label: "期末（積分 / 級數 / 多變數）", scope: ["integral.*", "series.*", "mvcalc.*"] }
-  ];
+  // 考試倒推計畫（設考試日→每天配額→考前報告）於 2026-09 移除。
+  // 它是一整個排程系統：表單、配額計算、做不完警告、考後報告 ——
+  // 全部只服務「有設定考試日」的少數人，卻常駐在首頁與模擬分頁上。
+  // 主線關卡＋每日任務已經回答了「今天該練什麼」；多一套排程是第二個聲音。
+  // 舊紀錄 records.plan / planHistory 保留不動。BuzzPlanner kernel 保留（純函式，沒有 UI 依賴）。
 
-  function examPlanOf(records) {
-    if (!window.BuzzPlanner) return null;
-    try {
-      const profile = abilityProfile(records);
-      return window.BuzzPlanner.examPlan(records, profile || { skills: {} }, Date.now());
-    } catch (_error) {
-      return null;
-    }
-  }
-
-  function renderExamPlanCard(records) {
-    if (!window.BuzzPlanner) return "";
-    const plan = records.plan;
-    const computed = examPlanOf(records);
-
-    if (!plan || !plan.examAt || !computed) return renderExamPlanForm(records, null);
-
-    const scopeLabel =
-      (EXAM_SCOPES.find((item) => item.key === plan.scopeKey) || {}).label || "全範圍";
-    const top = computed.gaps.slice(0, 5);
-
-    return `
-      <section class="study-card exam-plan-card">
-        <div class="panel-title-row">
-          <div>
-            <p class="section-label">考試倒推</p>
-            <h3>${escapeHtml(computed.label)}</h3>
-          </div>
-          <div class="exam-countdown">
-            <strong>${computed.daysLeft}</strong>
-            <span>天</span>
-          </div>
-        </div>
-        <p class="panel-note">範圍：${escapeHtml(scopeLabel)} · 每天 ${computed.dailyMinutes} 分鐘 · 目標每個技巧 ${computed.target} 分${computed.sprint ? " · <strong>衝刺模式已啟動</strong>" : ""}</p>
-        ${
-          computed.gaps.length === 0
-            ? `<p class="panel-note">範圍內的技巧都已達標。剩下的時間拿去拉高難度或維持手感。</p>`
-            : computed.feasible
-              ? `<p class="panel-note">以目前的每日時間，到考前排得完 ${computed.totalSkills} 個還沒達標的技巧。</p>`
-              : `<p class="exam-warning">
-                   <strong>排不完。</strong>以每天 ${computed.dailyMinutes} 分鐘，到考前只顧得到
-                   ${computed.totalSkills} 個技巧中的 ${computed.coverableSkills} 個。
-                   建議把每天加到 ${computed.neededMinutes} 分鐘，或把範圍縮小。
-                 </p>`
-        }
-        ${
-          top.length
-            ? `<ul class="exam-gap-list">
-                ${top
-                  .map((row) => `<li>${escapeHtml(row.label)}<span>差 ${Math.round(row.gap)} 分</span></li>`)
-                  .join("")}
-              </ul>`
-            : ""
-        }
-        <div class="action-row">
-          <button class="button secondary" data-action="edit-exam-plan">${icon("settings")}調整</button>
-          <button class="button ghost" data-action="clear-exam-plan">${icon("x")}取消考試</button>
-        </div>
-      </section>
-    `;
-  }
-
-  function renderExamPlanForm(records, computed) {
-    if (!examPlanFormOpen) {
-      return `
-        <section class="study-card">
-          <div class="panel-title-row">
-            <div>
-              <p class="section-label">考試倒推</p>
-              <h3>有考試要準備？</h3>
-            </div>
-          </div>
-          <p class="panel-note">設一個日期，系統會倒推每天該練多少，考前 7 天自動切換衝刺模式。排不完的時候會直接告訴你。</p>
-          <div class="action-row">
-            <button class="button home-primary" data-action="edit-exam-plan">${icon("calendar")}設定考試</button>
-          </div>
-        </section>
-      `;
-    }
-
-    const plan = records.plan || {};
-    const defaultDate = plan.examAt
-      ? String(plan.examAt).slice(0, 10)
-      : new Date(Date.now() + 30 * DAY_MS).toISOString().slice(0, 10);
-
-    return `
-      <section class="study-card">
-        <div class="panel-title-row">
-          <div>
-            <p class="section-label">考試倒推</p>
-            <h3>設定考試</h3>
-          </div>
-        </div>
-        <div class="exam-form">
-          <label>
-            名稱
-            <input type="text" data-exam-field="label" value="${escapeAttr(plan.label || "微積分期中")}" />
-          </label>
-          <label>
-            日期
-            <input type="date" data-exam-field="examAt" value="${escapeAttr(defaultDate)}" />
-          </label>
-          <label>
-            範圍
-            <select data-exam-field="scopeKey">
-              ${EXAM_SCOPES.map(
-                (item) => `<option value="${escapeAttr(item.key)}" ${plan.scopeKey === item.key ? "selected" : ""}>${escapeHtml(item.label)}</option>`
-              ).join("")}
-            </select>
-          </label>
-          <label>
-            每天分鐘
-            <select data-exam-field="dailyMinutes">
-              ${[10, 15, 25, 45, 60]
-                .map((value) => `<option value="${value}" ${Number(plan.dailyMinutes || 15) === value ? "selected" : ""}>${value} 分鐘</option>`)
-                .join("")}
-            </select>
-          </label>
-        </div>
-        <div class="action-row">
-          <button class="button home-primary" data-action="save-exam-plan">${icon("check")}儲存</button>
-          <button class="button ghost" data-action="cancel-exam-plan">取消</button>
-        </div>
-      </section>
-    `;
-  }
-
-  function saveExamPlan() {
-    const root = app.querySelector(".exam-form");
-    if (!root) return;
-    const read = (field) => {
-      const node = root.querySelector(`[data-exam-field="${field}"]`);
-      return node ? node.value : "";
-    };
-    const examAt = read("examAt");
-    if (!examAt) {
-      showAppNotice("請先選一個考試日期。");
-      return;
-    }
-    const scopeKey = read("scopeKey") || "all";
-    const entry = EXAM_SCOPES.find((item) => item.key === scopeKey) || EXAM_SCOPES[0];
-    const records = loadRecords();
-    records.plan = {
-      label: read("label") || "考試",
-      examAt,
-      scopeKey,
-      scope: entry.scope,
-      dailyMinutes: Number(read("dailyMinutes")) || 15,
-      target: 70,
-      setAt: new Date().toISOString()
-    };
-    saveRecords(records);
-    examPlanFormOpen = false;
-    trackEvent("plan_set", {
-      days_to_exam: Math.max(0, Math.ceil((Date.parse(examAt) - Date.now()) / DAY_MS)),
-      daily_minutes: records.plan.dailyMinutes,
-      scope: scopeKey
-    });
-    render();
-  }
-
-  function clearExamPlan() {
-    const records = loadRecords();
-    // 考後報告要看得到考試設定，所以不是刪掉而是封存
-    if (records.plan && records.plan.examAt) {
-      records.planHistory = Array.isArray(records.planHistory) ? records.planHistory : [];
-      records.planHistory.push({ ...records.plan, endedAt: new Date().toISOString() });
-      records.planHistory = records.planHistory.slice(-5);
-    }
-    records.plan = null;
-    saveRecords(records);
-    examPlanFormOpen = false;
-    render();
-  }
-
-  // ── 考後報告 ────────────────────────────────────────────────
-  // 考試日過了之後第一次打開，自動生成一頁。
-  // 這是「讓成長曲線本身成為產品價值」最直接的體現：
-  // 使用者花了三週準備，總得看到那三週買到了什麼。
-  function renderExamReport(records) {
-    const plan = records.plan;
-    if (!plan || !plan.examAt) return "";
-    const examAt = Date.parse(plan.examAt);
-    if (!Number.isFinite(examAt) || Date.now() < examAt) return "";
-    if (records.planReportSeen === plan.examAt) return "";
-
-    const profile = abilityProfile(records);
-    if (!profile) return "";
-
-    const setAt = Date.parse(plan.setAt || "") || examAt - 30 * DAY_MS;
-    const spanDays = Math.max(1, Math.round((examAt - setAt) / DAY_MS));
-
-    let before = null;
-    try {
-      before = window.BuzzAbility.profile(records, { radarAxes: RADAR_AXES, now: setAt });
-    } catch (_error) {
-      before = null;
-    }
-
-    const inScope = (id) => {
-      if (!plan.scope) return true;
-      return plan.scope.some((p) => (p.endsWith("*") ? id.startsWith(p.slice(0, -1)) : id === p));
-    };
-
-    const moved = Object.keys(profile.skills)
-      .filter(inScope)
-      .map((id) => {
-        const now = profile.skills[id].mastery;
-        const then = before && before.skills[id] ? before.skills[id].mastery : null;
-        if (now === null) return null;
-        return { id, label: profile.skills[id].label, now, then, delta: then === null ? null : now - then };
-      })
-      .filter(Boolean)
-      .sort((a, b) => (b.delta || 0) - (a.delta || 0));
-
-    const gained = moved.filter((row) => row.delta !== null && row.delta > 0);
-    const causeTop = topCauseLabel(records, setAt);
-
-    return `
-      <section class="study-card exam-plan-card">
-        <div class="panel-title-row">
-          <div>
-            <p class="section-label">考後報告</p>
-            <h3>${escapeHtml(plan.label || "考試")}結束了</h3>
-          </div>
-          <button class="icon-button" data-action="dismiss-exam-report" title="收起">${icon("x")}</button>
-        </div>
-        <p class="panel-note">
-          準備期 ${spanDays} 天 ·
-          總體能力 ${before && before.overall.mastery !== null ? `${before.overall.mastery} → ` : ""}${profile.overall.mastery === null ? "資料不足" : profile.overall.mastery}
-          ${gained.length ? ` · ${gained.length} 個技巧變強` : ""}
-        </p>
-        ${
-          moved.length
-            ? `<ul class="exam-gap-list">
-                ${moved
-                  .slice(0, 6)
-                  .map(
-                    (row) =>
-                      `<li>${escapeHtml(row.label)}<span>${row.then === null ? `${row.now} 分` : `${row.then} → ${row.now}`}</span></li>`
-                  )
-                  .join("")}
-              </ul>`
-            : `<p class="panel-note">這段期間範圍內的技巧還沒累積到可以評估的作答量。</p>`
-        }
-        ${causeTop ? `<p class="panel-note">這段期間你最常犯的錯：<strong>${escapeHtml(causeTop)}</strong>。</p>` : ""}
-        <div class="action-row">
-          <button class="button secondary" data-action="open-insights">${icon("activity")}看完整數據</button>
-          <button class="button ghost" data-action="dismiss-exam-report">知道了</button>
-        </div>
-      </section>
-    `;
-  }
-
-  function topCauseLabel(records, since) {
-    const labels = {
-      "粗心": "算錯，不是不會",
-      "不會": "選錯方法",
-      "忘公式": "忘公式"
-    };
-    const counts = {};
-    (records.history || []).forEach((session) => {
-      if (!session) return;
-      const at = Date.parse(session.finishedAt || "");
-      if (!Number.isFinite(at) || at < since) return;
-      (session.answers || []).forEach((answer) => {
-        if (!answer || answer.correct || !answer.errorTag) return;
-        counts[answer.errorTag] = (counts[answer.errorTag] || 0) + 1;
-      });
-    });
-    const top = Object.entries(counts).sort((a, b) => b[1] - a[1])[0];
-    return top ? labels[top[0]] || top[0] : "";
-  }
-
-  function dismissExamReport() {
-    const records = loadRecords();
-    if (records.plan && records.plan.examAt) {
-      records.planReportSeen = records.plan.examAt;
-      saveRecords(records);
-    }
-    render();
-  }
-
-  // ── 信心自評 ────────────────────────────────────────────────
-  // spec 03.6：答完之後問「你剛剛有多確定」。三個選項、可跳過、不影響計分。
-  //
-  // 這是整個能力模型裡唯一問不出來就沒有的資料 —— 其他都能從作答紀錄推導，
-  // 只有「你以為自己會不會」必須由使用者說。它換來的是「自信但常錯」清單，
-  // 那是考卷上最貴的一種錯：不會回頭檢查，直接失分。
-  //
-  // 刻意不在大考與突然死亡模式出現：那兩個模式的節奏不能被打斷。
-  const CONFIDENCE_LEVELS = [
-    { key: "guess", label: "猜的" },
-    { key: "unsure", label: "不太確定" },
-    { key: "sure", label: "確定" }
-  ];
-  const CONFIDENCE_MODES = new Set(["quick", "topic", "practice", "daily", "mistakes", "warmup", "cooldown", "no_hint"]);
-
-  function confidenceAsked(problem) {
-    if (!quiz || !problem) return false;
-    if (quiz.examMode || quiz.suddenDeath) return false;
-    return CONFIDENCE_MODES.has(quiz.mode);
-  }
-
-  function renderConfidencePrompt(problem) {
-    if (!confidenceAsked(problem)) return "";
-    const picked = (quiz.confidence || {})[problem.id] || "";
-    const skipped = (quiz.confidenceSkipped || {})[problem.id];
-    if (skipped) return "";
-
-    return `
-      <div class="confidence-prompt">
-        <span class="confidence-ask">剛剛有多確定？</span>
-        <div class="confidence-options">
-          ${CONFIDENCE_LEVELS.map(
-            (level) => `
-              <button class="tag-button ${picked === level.key ? "is-active" : ""}"
-                data-action="set-confidence"
-                data-problem-id="${escapeAttr(problem.id)}"
-                data-level="${escapeAttr(level.key)}">${level.label}</button>`
-          ).join("")}
-          ${picked ? "" : `<button class="confidence-skip" data-action="skip-confidence" data-problem-id="${escapeAttr(problem.id)}">略過</button>`}
-        </div>
-      </div>
-    `;
-  }
-
-  function setConfidence(problemId, level) {
-    if (!quiz || !CONFIDENCE_LEVELS.some((item) => item.key === level)) return;
-    const answer = quiz.answers.find((item) => item.problem.id === problemId);
-    if (!answer) return;
-
-    quiz.confidence = quiz.confidence || {};
-    quiz.confidence[problemId] = level;
-
-    // 立刻寫進 records，不等本局結算 —— 使用者可能中途離開，
-    // 那樣就白問了。
-    const records = loadRecords();
-    records.conf = records.conf && typeof records.conf === "object" ? records.conf : {};
-    records.conf[problemId] = {
-      level,
-      correct: Boolean(answer.correct),
-      at: new Date().toISOString()
-    };
-    saveRecords(records);
-    render();
-  }
-
-  function skipConfidence(problemId) {
-    if (!quiz) return;
-    quiz.confidenceSkipped = quiz.confidenceSkipped || {};
-    quiz.confidenceSkipped[problemId] = true;
-    render();
-  }
+  // 信心預測（「剛剛有多確定？」）於 2026-09 移除。
+  // 它在每一題的回饋畫面插一個三選一的問卷 —— 核心迴圈是「看題→算→下一題」，
+  // 每多一個彈出就慢一拍，而回收的資料（records.conf）從來沒有推動過任何決策。
+  // 舊紀錄裡的 records.conf 保持原樣不動，只是不再寫入、不再顯示。
 
   // ── 錯因標註 ────────────────────────────────────────────────
   // spec 03.7：問題不在於「有沒有這個功能」，在於**標註成本**。
@@ -2200,43 +1819,10 @@
     }
   }
 
-  function renderCausePrompt(problem, feedback) {
-    if (!quiz || !problem || quiz.examMode) return "";
-    if (!feedback || feedback.status === "correct") return "";
-    const answer = quiz.answers.find((item) => item.problem.id === problem.id);
-    if (!answer || answer.correct) return "";
-
-    // 逾時未作答的錯因是系統判定的，不用問使用者
-    if (answer.unanswered) {
-      return `<div class="cause-prompt is-auto"><span>錯因：來不及</span><small>逾時未作答，系統自動判定</small></div>`;
-    }
-
-    const suggestion = suggestCause(problem, answer);
-    const current = answer.errorTag || (suggestion ? causeTagOf(suggestion.key) : "");
-
-    return `
-      <div class="cause-prompt">
-        <span class="cause-ask">為什麼錯？</span>
-        <div class="cause-options">
-          ${CAUSE_OPTIONS.map(
-            (option) => `
-              <button class="tag-button ${current === option.tag ? "is-active" : ""}"
-                data-action="tag-answer"
-                data-problem-id="${escapeAttr(problem.id)}"
-                data-tag="${escapeAttr(option.tag)}">${option.label}</button>`
-          ).join("")}
-        </div>
-        ${
-          // 只有「還是系統猜的」才需要解釋為什麼這樣猜。
-          // 使用者親自選過之後（causeAuto 被清掉）就不該再囉嗦。
-          suggestion && answer.causeAuto
-            ? `<small class="cause-why">已先幫你選好：${escapeHtml(suggestion.why)}。不對就改一下。</small>`
-            : ""
-        }
-      </div>
-    `;
-  }
-
+  // 答錯當下的「為什麼錯？」問卷於 2026-09 移除 —— 它插在作答迴圈裡。
+  // 錯因照樣有：suggestCause 在提交答案時就自動記一個（標成 causeAuto），
+  // 使用者要改的話，結算頁的複盤列每一題都有標註按鈕 —— 那裡本來就是
+  // 回頭看的地方，改一下不打斷任何節奏。
   function causeTagOf(key) {
     const option = CAUSE_OPTIONS.find((item) => item.key === key);
     return option ? option.tag : "";
@@ -2278,7 +1864,7 @@
             : ""
         }
         ${bucket === "weakness" ? renderWeaknessBucket(records) : ""}
-        ${bucket === "exam" ? `${renderExamPlanCard(records)}${renderWeeklyChallengeCard(records)}${renderNamedExamPanel(records)}${renderExamBucketExtras()}` : ""}
+        ${bucket === "exam" ? `${renderNamedExamPanel(records)}${renderExamBucketExtras()}` : ""}
         ${bucket === "challenge" ? renderChallengeBucket(records, mission) : ""}
       </main>
     `;
@@ -2412,21 +1998,6 @@
           <button class="button home-primary" data-action="start-mode" data-mode-key="exam">${icon("file-pen-line")}開始</button>
         </div>
       </section>
-      <section class="study-card">
-        <div class="panel-title-row">
-          <div>
-            <p class="section-label">出卷</p>
-            <h3>抽一份紙本考卷</h3>
-          </div>
-        </div>
-        <p class="panel-note">
-          指定範圍、難度區間與題數，抽出來直接列印或存成 PDF。
-          同一組條件永遠抽到同一份，所以你可以把條件抄下來重印。
-        </p>
-        <div class="action-row">
-          <button class="button home-primary" data-action="open-paper">${icon("printer")}開始出卷</button>
-        </div>
-      </section>
     `;
   }
 
@@ -2516,7 +2087,6 @@
         ${renderSpeedQuadrant(profile)}
         ${renderSkillTable(profile)}
         ${renderCauseBreakdown(profile)}
-        ${renderConfidencePanel(profile)}
         ${renderActivityHeatmap(records)}
       </main>
     `;
@@ -2824,65 +2394,8 @@
   }
 
   // 信心校準的結果。沒有資料時明白說「還沒問到夠多」，而不是顯示 0。
-  function renderConfidencePanel(profile) {
-    const dangerous = profile.dangerous.map((id) => profile.skills[id]).filter(Boolean);
-    const underrated = profile.underrated.map((id) => profile.skills[id]).filter(Boolean);
-    const rated = Object.values(profile.skills).reduce((sum, entry) => sum + (entry.confN || 0), 0);
-
-    if (!rated) {
-      return `
-        <section class="study-card">
-          <p class="section-label">信心校準</p>
-          <h3>還沒有自評資料</h3>
-          <p class="panel-note">答完題後那排「猜的 / 不太確定 / 確定」按一下，這裡就會找出你「自信但常錯」的技巧 —— 那是考卷上最貴的一種錯。</p>
-        </section>
-      `;
-    }
-
-    if (!dangerous.length && !underrated.length) {
-      return `
-        <section class="study-card">
-          <p class="section-label">信心校準</p>
-          <h3>你的自我判斷很準</h3>
-          <p class="panel-note">已自評 ${rated} 題。目前沒有「自信但常錯」或「會做但沒信心」的技巧。</p>
-        </section>
-      `;
-    }
-
-    return `
-      <section class="study-card">
-        <div class="panel-title-row">
-          <div>
-            <p class="section-label">信心校準</p>
-            <h3>你以為的，和實際的</h3>
-          </div>
-        </div>
-        ${
-          dangerous.length
-            ? `<div class="calib-group is-danger">
-                <strong>自信但常錯</strong>
-                <small>考場上不會回頭檢查，直接失分</small>
-                <ul>${dangerous
-                  .map((entry) => `<li>${escapeHtml(entry.label)}<span>自評高估 ${Math.round(entry.bias * 100)} 個百分點</span></li>`)
-                  .join("")}</ul>
-              </div>`
-            : ""
-        }
-        ${
-          underrated.length
-            ? `<div class="calib-group is-win">
-                <strong>會做但沒信心</strong>
-                <small>反覆驗算會拖垮整份考卷的節奏</small>
-                <ul>${underrated
-                  .map((entry) => `<li>${escapeHtml(entry.label)}<span>自評低估 ${Math.abs(Math.round(entry.bias * 100))} 個百分點</span></li>`)
-                  .join("")}</ul>
-              </div>`
-            : ""
-        }
-        <p class="panel-note">已自評 ${rated} 題。</p>
-      </section>
-    `;
-  }
+  // 信心校準面板（「自信但常錯」）已隨信心自評一起移除 ——
+  // 它的資料來源就是那個問卷，問卷沒了它就永遠是空的。
 
   function renderHomeLaunchPad(records, mission, path, weaknesses, mistakeCount) {
     const next = path.next;
@@ -3632,181 +3145,9 @@
   // 老師可以把條件抄下來，下次抽到一模一樣的卷（或改一個數字換一份）。
   // 隨機而不可重現的抽卷，在教學現場等於不能用。
 
-  const PAPER_DEFAULTS = { topic: "all", rankMin: 1, rankMax: 4, count: 10, withSolutions: true, seed: 1 };
-  let paperSpec = { ...PAPER_DEFAULTS };
-  let paperLocked = [];
-
-  function paperPool(spec) {
-    return problems.filter((problem) => {
-      if (problem.custom) return false;
-      const rank = problemRank(problem);
-      if (rank < spec.rankMin || rank > spec.rankMax) return false;
-      if (spec.topic !== "all" && problem.topic !== spec.topic) return false;
-      return true;
-    });
-  }
-
-  // 等價鍵：只有記法不同的兩題共用一個鍵。
-  // 一份印出去發給學生的卷子上出現兩題一模一樣的，比什麼都難看。
-  function equivalenceKey(id) {
-    if (window.BuzzEquivalence && typeof window.BuzzEquivalence.keyOf === "function") {
-      return window.BuzzEquivalence.keyOf(id);
-    }
-    return id;
-  }
-
-  function buildPaper(spec) {
-    const pool = paperPool(spec);
-    const locked = paperLocked.map((id) => problemById(id)).filter(Boolean);
-    const lockedIds = new Set(locked.map((problem) => problem.id));
-    const rest = shuffle(
-      pool.filter((problem) => !lockedIds.has(problem.id)),
-      seedFromString(`buzz-paper-${spec.topic}-${spec.rankMin}-${spec.rankMax}-${spec.count}-${spec.seed}`)
-    );
-    const seen = new Set();
-    const out = [];
-    locked.concat(rest).forEach((problem) => {
-      if (out.length >= spec.count) return;
-      const key = equivalenceKey(problem.id);
-      if (seen.has(key)) return;
-      seen.add(key);
-      out.push(problem);
-    });
-    return out;
-  }
-
-  // 答案排版。有些答案本來就是文字（「發散」「條件收斂」），
-  // 那些不能硬塞進數學模式，會排出一團亂碼。
-  function paperAnswerTex(problem) {
-    const raw = displayAnswer(problem);
-    return answerToTex(raw, problem) || textToTex(raw);
-  }
-
-  function renderPaperBuilder() {
-    const spec = paperSpec;
-    const pool = paperPool(spec);
-    const paper = buildPaper(spec);
-    const shortfall = paper.length < spec.count;
-    return `
-      <main class="screen paper-screen" id="buzz-main">
-        <section class="panel page-panel">
-          <div class="page-head">
-            <div>
-              <p class="section-label">出卷</p>
-              <h2>照條件抽一份卷</h2>
-            </div>
-            <div class="action-row">
-              <button class="button secondary" data-action="open-train">${icon("home")}回訓練</button>
-              <button class="button" data-action="reroll-paper">${icon("shuffle")}換一份</button>
-              <button class="button ghost" data-action="print-paper" ${paper.length ? "" : "disabled"}>${icon("printer")}列印 / 存 PDF</button>
-            </div>
-          </div>
-
-          <div class="paper-controls no-print">
-            <label class="paper-field">
-              <span>範圍</span>
-              <select data-paper-field="topic">
-                ${Object.entries(TOPICS)
-                  .map(([key, topic]) => `<option value="${escapeAttr(key)}" ${spec.topic === key ? "selected" : ""}>${escapeHtml(topic.label)}</option>`)
-                  .join("")}
-              </select>
-            </label>
-            <label class="paper-field">
-              <span>難度下限</span>
-              <select data-paper-field="rankMin">
-                ${[1, 2, 3, 4, 5, 6].map((r) => `<option value="${r}" ${spec.rankMin === r ? "selected" : ""}>R${r}</option>`).join("")}
-              </select>
-            </label>
-            <label class="paper-field">
-              <span>難度上限</span>
-              <select data-paper-field="rankMax">
-                ${[1, 2, 3, 4, 5, 6].map((r) => `<option value="${r}" ${spec.rankMax === r ? "selected" : ""}>R${r}</option>`).join("")}
-              </select>
-            </label>
-            <label class="paper-field">
-              <span>題數</span>
-              <select data-paper-field="count">
-                ${[5, 10, 15, 20, 25, 30].map((n) => `<option value="${n}" ${spec.count === n ? "selected" : ""}>${n} 題</option>`).join("")}
-              </select>
-            </label>
-            <label class="paper-field paper-check">
-              <input type="checkbox" data-paper-field="withSolutions" ${spec.withSolutions ? "checked" : ""} />
-              <span>附參考答案</span>
-            </label>
-          </div>
-
-          <p class="panel-note no-print">
-            符合條件的題目共 ${pool.length} 題，這份抽了 ${paper.length} 題。
-            ${shortfall ? "<strong>可抽的題目不夠，放寬難度區間或換範圍。</strong>" : ""}
-            鎖住的題目換卷時不會被換掉。
-          </p>
-
-          <div class="paper-sheet">
-            <div class="paper-head">
-              <strong>${escapeHtml(TOPICS[spec.topic]?.label || "全部")}　R${spec.rankMin}–R${spec.rankMax}　${paper.length} 題</strong>
-              <span>BuzzCalculus · ${BUILD_DATE}</span>
-            </div>
-            <ol class="paper-list">
-              ${paper
-                .map(
-                  (problem) => `
-                    <li class="paper-item ${paperLocked.includes(problem.id) ? "is-locked" : ""}">
-                      <div class="paper-item-head no-print">
-                        <span>${escapeHtml(problemShortCode(problem) || problem.id)} · R${problemRank(problem)}</span>
-                        <button class="icon-button ${paperLocked.includes(problem.id) ? "is-active" : ""}" data-action="toggle-paper-lock" data-problem-id="${escapeAttr(problem.id)}" title="${paperLocked.includes(problem.id) ? "解除鎖定" : "鎖住這題"}">${icon("shield")}</button>
-                      </div>
-                      <div class="math-block" data-tex="${escapeAttr(problem.prompt)}"></div>
-                      ${
-                        spec.withSolutions
-                          ? // 答案要排版。印在紙上的 "2-pi^2/6" 是內部格式，不是數學 ——
-                            // 老師發下去的那一張紙上出現這種東西，整份卷的可信度就沒了。
-                            `<p class="paper-answer">答：<span class="math-inline" data-tex="${escapeAttr(paperAnswerTex(problem))}"></span></p>`
-                          : `<div class="paper-space" aria-hidden="true"></div>`
-                      }
-                    </li>`
-                )
-                .join("")}
-            </ol>
-          </div>
-        </section>
-      </main>
-    `;
-  }
-
-  function updatePaperField(node) {
-    const field = node.dataset.paperField;
-    if (!field) return;
-    const next = { ...paperSpec };
-    if (field === "withSolutions") next.withSolutions = Boolean(node.checked);
-    else if (field === "topic") next.topic = node.value;
-    else next[field] = Number(node.value);
-    // 上下限反過來的話直接對調，不要讓使用者看到空白的卷。
-    if (next.rankMin > next.rankMax) {
-      const swap = next.rankMin;
-      next.rankMin = next.rankMax;
-      next.rankMax = swap;
-    }
-    paperSpec = next;
-    render();
-  }
-
-  function printPaper() {
-    trackEvent("paper_print", {
-      topic: paperSpec.topic,
-      rank_min: paperSpec.rankMin,
-      rank_max: paperSpec.rankMax,
-      count: paperSpec.count,
-      with_solutions: paperSpec.withSolutions
-    });
-    typesetMath(app);
-    window.setTimeout(() => {
-      try {
-        window.print();
-      } catch (_error) {
-        showAppNotice("這個瀏覽器擋住了列印。可以用瀏覽器選單裡的「列印」。");
-      }
-    }, 250);
-  }
+  // 紙本考卷產生器（view = "paper"）於 2026-09 移除。
+  // 要紙本的話 workbook.html 是同一套題庫排好版的 303 頁 PDF ——
+  // 一個「自己抽 10 題來印」的頁面對它沒有增量，卻要維護整套列印樣式。
 
   // 列印錯題本
   //
@@ -5275,8 +4616,6 @@
                     <strong>${feedback.title}</strong>
                     <p>${feedback.message}</p>
                     ${renderKeyIdea(current)}
-                    ${renderConfidencePrompt(current)}
-                    ${renderCausePrompt(current, feedback)}
                     ${
                       feedback.status !== "correct" && !quiz.examMode
                         ? `${renderSolutionStages(current, { live: true })}
@@ -5952,10 +5291,8 @@
             ${quiz.practice ? "" : `<span><strong data-countup="${quiz.score}">${quiz.score}</strong>分數</span>`}
           </div>
           ${quiz.placementResult ? renderPlacementNextStep() : renderResultsActions(gateResult, pathResult)}
-          ${quiz.weeklyOutcome ? renderWeeklyOutcomePanel(quiz.weeklyOutcome) : ""}
           ${quiz.dailyOneOutcome ? renderDailyOneOutcomePanel(quiz.dailyOneOutcome) : ""}
           <div class="action-row results-share-row" data-enter>
-            <button class="button ghost" data-action="share-result-card">${icon("share-2")}分享成績卡</button>
             ${quiz.dailyOneOutcome ? `<button class="button ghost" data-action="share-daily-one">${icon("copy")}複製 emoji 成績</button>` : ""}
           </div>
         </section>
@@ -6146,15 +5483,6 @@
         <div class="action-row">
           <button class="button" data-action="home">${icon("play")}回主線開打</button>
           <button class="button secondary" data-action="start-placement">${icon("refresh")}重新定位</button>
-          <button class="button ghost" data-action="open-mistakes">${icon("book")}錯題本</button>
-        </div>
-      `;
-    }
-    if (!gateResult && !pathResult && quiz && quiz.weeklyOutcome) {
-      return `
-        <div class="action-row">
-          <button class="button" data-action="home">${icon("home")}回首頁</button>
-          <button class="button secondary" data-action="start-weekly">${icon("refresh")}純練習重打</button>
           <button class="button ghost" data-action="open-mistakes">${icon("book")}錯題本</button>
         </div>
       `;
@@ -6440,9 +5768,6 @@
   }
 
   function bindEvents() {
-    app.querySelectorAll("[data-paper-field]").forEach((node) => {
-      node.addEventListener("change", () => updatePaperField(node));
-    });
 
     const homeMorePanel = app.querySelector("[data-home-more-panel]");
     if (homeMorePanel) {
@@ -6777,13 +6102,6 @@
     if (action === "dismiss-backup-notice") dismissBackupNotice();
     if (action === "resume-session") resumeSession();
     if (action === "discard-session") discardSession();
-    if (action === "edit-exam-plan") { examPlanFormOpen = true; render(); }
-    if (action === "cancel-exam-plan") { examPlanFormOpen = false; render(); }
-    if (action === "save-exam-plan") saveExamPlan();
-    if (action === "clear-exam-plan") clearExamPlan();
-    if (action === "dismiss-exam-report") dismissExamReport();
-    if (action === "set-confidence") setConfidence(actionNode.dataset.problemId || "", actionNode.dataset.level || "");
-    if (action === "skip-confidence") skipConfidence(actionNode.dataset.problemId || "");
     if (action === "open-insights") {
       view = "insights";
       render();
@@ -6942,20 +6260,6 @@
       eraseConfirm = true;
       render();
     }
-    if (action === "open-paper") {
-      view = "paper";
-      render();
-    }
-    if (action === "print-paper") printPaper();
-    if (action === "reroll-paper") {
-      paperSpec = { ...paperSpec, seed: paperSpec.seed + 1 };
-      render();
-    }
-    if (action === "toggle-paper-lock") {
-      const id = actionNode.dataset.problemId;
-      paperLocked = paperLocked.includes(id) ? paperLocked.filter((x) => x !== id) : paperLocked.concat(id);
-      render();
-    }
     if (action === "print-mistakes") printMistakes();
     if (action === "toggle-focus-mode") setFocusMode(!focusModeOn());
     if (action === "apply-update") applyPendingUpdate();
@@ -6981,19 +6285,6 @@
       eraseConfirm = false;
       const removed = eraseEverything();
       showAppNotice(`已刪除：${removed.join("、")}。這台裝置上不再有你的練習資料。`);
-    }
-    if (action === "start-weekly") startWeeklyChallenge();
-    if (action === "copy-weekly-code") copyWeeklyCode(actionNode.dataset.code || "");
-    if (action === "compare-weekly-code") {
-      const codeInput = app.querySelector("[data-weekly-code-input]");
-      compareWeeklyCode(codeInput ? codeInput.value : "");
-    }
-    if (action === "share-result-card") shareResultCard();
-    if (action === "download-share-card") downloadShareCard();
-    if (action === "share-share-card") shareShareCardNow();
-    if (action === "dismiss-share-card") {
-      shareCard = null;
-      render();
     }
     if (action === "sync-now") syncNow();
   }
@@ -7684,504 +6975,10 @@
     return `${year}-W${String(week).padStart(2, "0")}`;
   }
 
-  function weeklyWeekValue(weekKeyText) {
-    const match = /^(\d{4})-W(\d{2})$/.exec(String(weekKeyText || ""));
-    if (!match) return -1;
-    const year = Number(match[1]);
-    const week = Number(match[2]);
-    if (year < 2000 || year > 2199 || week < 1 || week > 53) return -1;
-    return (year - 2000) * 54 + week;
-  }
-
-  // 成績代碼：{週, 分數, 題數, 低解析度用時(10 秒)} 打包成一個整數，
-  // 附一位 base36 檢查碼再轉 base36。純前端可編可解，離線互比。
-  function encodeWeeklyCode(weekKeyText, score, total, timeMs) {
-    const weekValue = weeklyWeekValue(weekKeyText);
-    if (weekValue < 0) return "";
-    const s = Math.max(0, Math.min(15, Math.round(Number(score) || 0)));
-    const t = Math.max(1, Math.min(15, Math.round(Number(total) || 10)));
-    const tenSec = Math.max(0, Math.min(4095, Math.round((Number(timeMs) || 0) / 10000)));
-    const packed = ((weekValue * 16 + s) * 16 + t) * 4096 + tenSec;
-    const check = packed % 36;
-    return `BZ-${(packed * 36 + check).toString(36).toUpperCase()}`;
-  }
-
-  function decodeWeeklyCode(raw) {
-    const clean = String(raw || "").trim().toUpperCase().replace(/^BZ-?/, "").replace(/[^0-9A-Z]/g, "");
-    if (!clean || clean.length > 12) return null;
-    const value = parseInt(clean.toLowerCase(), 36);
-    if (!Number.isFinite(value) || value <= 0) return null;
-    const check = value % 36;
-    const packed = Math.floor(value / 36);
-    if (packed % 36 !== check) return null;
-    const tenSec = packed % 4096;
-    let rest = Math.floor(packed / 4096);
-    const total = rest % 16;
-    rest = Math.floor(rest / 16);
-    const score = rest % 16;
-    const weekValue = Math.floor(rest / 16);
-    if (weekValue <= 0 || total < 1 || score > total) return null;
-    return { weekValue, score, total, timeMs: tenSec * 10000 };
-  }
-
-  // 抽卷完全由 seed = buzz-weekly-<weekKey> 決定：全站同一週拿到同一份卷。
-  // rank 曲線約 [2,3,3,4,4,4,5,5,5,6]，只收 WebWork 可判定的題目，主題儘量輪替。
-  function buildWeeklyChallengePaper(weekKeyText) {
-    const seed = seedFromString(`buzz-weekly-${weekKeyText}`);
-    const pools = {};
-    for (let rank = 1; rank <= 6; rank += 1) {
-      // 排除自訂題：每週卷必須全站相同，個人題庫不能改變抽卷結果。
-      pools[rank] = shuffle(
-        problems.filter(
-          (problem) =>
-            !problem.custom && isExamAnswerProblem(problem) && problemRank(problem) === rank
-        ),
-        seed + rank
-      );
-    }
-    const used = new Set();
-    const paper = [];
-    let prevTopic = "";
-    WEEKLY_RANK_CURVE.forEach((rank) => {
-      const order = [rank, rank - 1, rank + 1, rank - 2, rank + 2, rank - 3, rank + 3, rank - 4, rank + 4, rank - 5, rank + 5]
-        .filter((value, index, list) => value >= 1 && value <= 6 && list.indexOf(value) === index);
-      for (const target of order) {
-        const bucket = pools[target] || [];
-        const pick = bucket.find((problem) => !used.has(problem.id) && problem.topic !== prevTopic)
-          || bucket.find((problem) => !used.has(problem.id));
-        if (pick) {
-          used.add(pick.id);
-          paper.push(pick);
-          prevTopic = pick.topic;
-          break;
-        }
-      }
-    });
-    return paper;
-  }
-
-  function startWeeklyChallenge() {
-    const week = isoWeekKey();
-    const records = loadRecords();
-    const attempted = Boolean(records.weeklyChallenge[week]);
-    const paper = buildWeeklyChallengePaper(week);
-    if (paper.length < WEEKLY_RANK_CURVE.length) {
-      showAppNotice("本週挑戰的題庫還沒備齊，先練其他模式吧。");
-      return;
-    }
-    weeklyCompare = null;
-    selectedMode = "quick";
-    selectedTopic = "all";
-    selectedPack = "all";
-    selectedAnswerMode = "free";
-    startQuiz(paper, {
-      modeKey: "weekly",
-      answerMode: "free",
-      weeklyChallenge: { weekKey: week, scored: !attempted }
-    });
-  }
-
-  function copyWeeklyCode(code) {
-    if (!code) return;
-    const nav = window.navigator;
-    if (nav && nav.clipboard && typeof nav.clipboard.writeText === "function") {
-      Promise.resolve(nav.clipboard.writeText(code))
-        .then(() => showAppNotice("成績代碼已複製，貼給朋友比一場。"))
-        .catch(() => showAppNotice("一鍵複製失敗，點代碼欄全選後手動複製。"));
-      return;
-    }
-    showAppNotice("這個瀏覽器不支援一鍵複製，點代碼欄全選後手動複製。");
-  }
-
-  function compareWeeklyCode(raw) {
-    const week = isoWeekKey();
-    const records = loadRecords();
-    const mine = records.weeklyChallenge[week];
-    if (!mine) {
-      weeklyCompare = { tone: "error", text: "先完成本週挑戰，才有成績可以比。" };
-      render();
-      return;
-    }
-    const friend = decodeWeeklyCode(raw);
-    if (!friend) {
-      weeklyCompare = { tone: "error", text: "代碼看起來不完整或打錯了，確認後再貼一次。" };
-      render();
-      return;
-    }
-    if (friend.weekValue !== weeklyWeekValue(week)) {
-      weeklyCompare = { tone: "error", text: "這是別週的代碼，只能比同一週的成績。" };
-      render();
-      return;
-    }
-    const mineTen = Math.round((Number(mine.timeMs) || 0) / 10000);
-    const friendTen = Math.round((Number(friend.timeMs) || 0) / 10000);
-    const base = `你 ${mine.score}/${mine.total} · 對方 ${friend.score}/${friend.total}`;
-    if (mine.score > friend.score) {
-      weeklyCompare = { tone: "win", text: `${base} — 你贏了` };
-    } else if (mine.score < friend.score) {
-      weeklyCompare = { tone: "lose", text: `${base} — 對方贏了，去錯題本補一波再約下週` };
-    } else if (mineTen === friendTen) {
-      weeklyCompare = { tone: "tie", text: `${base} — 平手` };
-    } else if (mineTen < friendTen) {
-      weeklyCompare = { tone: "win", text: `${base} — 同分，你快 ${(friendTen - mineTen) * 10}s` };
-    } else {
-      weeklyCompare = { tone: "lose", text: `${base} — 同分，對方快 ${(mineTen - friendTen) * 10}s` };
-    }
-    render();
-  }
-
-  function formatDurationMs(timeMs) {
-    const totalSec = Math.max(0, Math.round((Number(timeMs) || 0) / 1000));
-    const minutes = Math.floor(totalSec / 60);
-    const seconds = totalSec % 60;
-    return minutes ? `${minutes} 分 ${seconds} 秒` : `${seconds} 秒`;
-  }
-
-  function renderWeeklyChallengeCard(records) {
-    const week = isoWeekKey();
-    const entry = (records.weeklyChallenge || {})[week];
-    const day = new Date().getDay() || 7;
-    const daysLeft = 7 - day;
-    const deadline = daysLeft > 0 ? `本週還剩 ${daysLeft} 天` : "今天是本週最後一天";
-    if (!entry) {
-      return `
-        <section class="weekly-card" aria-label="本週挑戰">
-          <div class="weekly-head">
-            <div class="weekly-copy">
-              <p class="section-label">本週挑戰</p>
-              <strong>全站同一份 10 題 · ${escapeHtml(week)}</strong>
-              <span>自己輸入答案，正式成績一週只算一次。${escapeHtml(deadline)}。</span>
-            </div>
-            <button class="button" data-action="start-weekly">${icon("play")}開打本週挑戰</button>
-          </div>
-        </section>
-      `;
-    }
-    return `
-      <section class="weekly-card is-done" aria-label="本週挑戰">
-        <div class="weekly-head">
-          <div class="weekly-copy">
-            <p class="section-label">本週挑戰</p>
-            <strong>${entry.score}/${entry.total} · 用時 ${escapeHtml(formatDurationMs(entry.timeMs))}</strong>
-            <span>成績已鎖定（${escapeHtml(week)}）。${escapeHtml(deadline)}，想維持手感可以純練習重打。</span>
-          </div>
-          <button class="button ghost" data-action="start-weekly">${icon("refresh")}純練習重打</button>
-        </div>
-        <div class="weekly-code-row">
-          <input class="weekly-code-field" readonly value="${escapeAttr(entry.code || "")}" data-select-on-focus aria-label="我的成績代碼" />
-          <button class="button secondary" data-action="copy-weekly-code" data-code="${escapeAttr(entry.code || "")}">${icon("copy")}複製代碼</button>
-        </div>
-        <div class="weekly-compare-row">
-          <input data-weekly-code-input placeholder="貼上朋友的成績代碼" aria-label="朋友的成績代碼" />
-          <button class="button secondary" data-action="compare-weekly-code">${icon("swords")}比成績</button>
-        </div>
-        ${weeklyCompare ? `<p class="weekly-compare is-${escapeAttr(weeklyCompare.tone)}">${escapeHtml(weeklyCompare.text)}</p>` : ""}
-      </section>
-    `;
-  }
-
-  function renderWeeklyOutcomePanel(outcome) {
-    const code = outcome.code || "";
-    return `
-      <div class="weekly-outcome" data-enter>
-        <div class="weekly-outcome-copy">
-          <strong>${outcome.scored ? "本週成績已鎖定" : "純練習，不影響本週成績"}</strong>
-          <span>${
-            outcome.scored
-              ? "把成績代碼傳給朋友，首頁的本週挑戰卡可以直接互比。"
-              : code
-                ? "本週正式成績以第一次為準，下面仍是已鎖定的代碼。"
-                : "本週還沒有正式成績，回首頁從本週挑戰卡正式開打。"
-          }</span>
-        </div>
-        ${
-          code
-            ? `
-              <div class="weekly-code-row">
-                <input class="weekly-code-field" readonly value="${escapeAttr(code)}" data-select-on-focus aria-label="成績代碼" />
-                <button class="button secondary" data-action="copy-weekly-code" data-code="${escapeAttr(code)}">${icon("copy")}複製代碼</button>
-              </div>`
-            : ""
-        }
-      </div>
-    `;
-  }
-
-  // ---- Feature 4：成績分享卡（canvas 畫圖 → PNG 下載 / 系統分享） ----
-
-  function buildShareSummary() {
-    if (!quiz) return null;
-    const correct = quiz.answers.filter((answer) => answer.correct).length;
-    const total = quiz.problems.length;
-    const accuracy = total ? Math.round((correct / total) * 100) : 0;
-    const avgTime = averageAnswerTime(quiz.answers);
-    const mode = quiz.namedExam ? quiz.namedExam.label : modeLabel(quiz.mode);
-    let highlight = "";
-    if ((quiz.bestStreak || 0) >= 3) {
-      highlight = `最長連對 ${quiz.bestStreak} 題`;
-    } else {
-      const tagCounts = {};
-      quiz.answers
-        .filter((answer) => answer.correct)
-        .forEach((answer) => {
-          (answer.problem.tags || [])
-            .filter((tag) => !META_ANALYSIS_TAGS.has(tag))
-            .forEach((tag) => {
-              tagCounts[tag] = (tagCounts[tag] || 0) + 1;
-            });
-        });
-      const top = Object.entries(tagCounts).sort((a, b) => b[1] - a[1])[0];
-      highlight = top ? `最穩技巧：${tagLabel(top[0])}` : "持續練習中";
-    }
-    return { mode, correct, total, accuracy, avgTime, highlight, date: localDateKey(new Date()) };
-  }
-
-  // 1080×1350 成績卡。固定用亮色調色盤（styles.css 亮色 tokens 的 hex），
-  // 深色模式下輸出的卡片也保持亮底，分享出去才好讀。
-  function drawShareCard(summary) {
-    if (!summary || !document.createElement) return null;
-    let canvas;
-    try {
-      canvas = document.createElement("canvas");
-    } catch (_error) {
-      return null;
-    }
-    if (!canvas || typeof canvas.getContext !== "function") return null;
-    canvas.width = 1080;
-    canvas.height = 1350;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return null;
-
-    const PAPER = "#f5f3ed";
-    const INK = "#20211f";
-    const MUTED = "#666963";
-    const GOLD = "#dca72d";
-    const GOLD_DARK = "#8b650c";
-    const GREEN = "#21835b";
-    const LINE = "#dbd7cd";
-    const PANEL = "#ffffff";
-    const FONT = '"Inter", "Segoe UI", "Noto Sans TC", system-ui, sans-serif';
-
-    const roundedRect = (x, y, width, height, radius) => {
-      ctx.beginPath();
-      ctx.moveTo(x + radius, y);
-      ctx.arcTo(x + width, y, x + width, y + height, radius);
-      ctx.arcTo(x + width, y + height, x, y + height, radius);
-      ctx.arcTo(x, y + height, x, y, radius);
-      ctx.arcTo(x, y, x + width, y, radius);
-      ctx.closePath();
-    };
-    const ellipsize = (text, maxWidth) => {
-      let value = String(text || "");
-      if (ctx.measureText(value).width <= maxWidth) return value;
-      while (value.length > 1 && ctx.measureText(`${value}…`).width > maxWidth) {
-        value = value.slice(0, -1);
-      }
-      return `${value}…`;
-    };
-
-    // 底色 + 品牌格線（同 app 背景的 44px 網格語彙）。
-    ctx.fillStyle = PAPER;
-    ctx.fillRect(0, 0, 1080, 1350);
-    ctx.strokeStyle = "rgba(32, 33, 31, 0.05)";
-    ctx.lineWidth = 1;
-    for (let x = 60; x < 1080; x += 60) {
-      ctx.beginPath();
-      ctx.moveTo(x, 0);
-      ctx.lineTo(x, 1350);
-      ctx.stroke();
-    }
-    for (let y = 60; y < 1350; y += 60) {
-      ctx.beginPath();
-      ctx.moveTo(0, y);
-      ctx.lineTo(1080, y);
-      ctx.stroke();
-    }
-    // 角落淡金積分符號，一眼認得的品牌紋理。
-    ctx.fillStyle = "rgba(220, 167, 45, 0.10)";
-    ctx.font = "460px Georgia, serif";
-    ctx.textAlign = "left";
-    ctx.textBaseline = "alphabetic";
-    ctx.fillText("∫", 830, 1330);
-    ctx.font = "220px Georgia, serif";
-    ctx.fillText("∫", -30, 500);
-
-    // 頂部 wordmark。
-    ctx.fillStyle = GOLD;
-    roundedRect(72, 72, 96, 96, 14);
-    ctx.fill();
-    ctx.strokeStyle = "rgba(32, 33, 31, 0.18)";
-    ctx.stroke();
-    ctx.fillStyle = "#211d14";
-    ctx.font = "700 62px Georgia, serif";
-    ctx.textAlign = "center";
-    ctx.fillText("∫", 120, 144);
-    ctx.textAlign = "left";
-    ctx.fillStyle = INK;
-    ctx.font = `800 62px ${FONT}`;
-    ctx.fillText("BuzzCalculus", 196, 132);
-    ctx.fillStyle = MUTED;
-    ctx.font = `700 30px ${FONT}`;
-    ctx.fillText("微積分反射訓練 · 成績卡", 196, 178);
-    ctx.strokeStyle = LINE;
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    ctx.moveTo(72, 230);
-    ctx.lineTo(1008, 230);
-    ctx.stroke();
-
-    // 模式名（過長就省略號收尾）。
-    ctx.fillStyle = MUTED;
-    ctx.font = `700 30px ${FONT}`;
-    ctx.fillText("模式", 72, 306);
-    ctx.fillStyle = INK;
-    ctx.font = `800 58px ${FONT}`;
-    ctx.fillText(ellipsize(summary.mode, 936), 72, 376);
-
-    // 大分數面板。
-    ctx.fillStyle = PANEL;
-    roundedRect(72, 430, 936, 460, 20);
-    ctx.fill();
-    ctx.strokeStyle = LINE;
-    ctx.stroke();
-    ctx.textAlign = "center";
-    ctx.fillStyle = INK;
-    ctx.font = `900 230px ${FONT}`;
-    ctx.fillText(`${summary.correct}/${summary.total}`, 540, 700);
-    ctx.fillStyle = MUTED;
-    ctx.font = `700 34px ${FONT}`;
-    ctx.fillText("答對題數", 540, 770);
-    ctx.fillStyle = GOLD_DARK;
-    ctx.font = `800 44px ${FONT}`;
-    ctx.fillText(`正確率 ${summary.accuracy}%`, 540, 846);
-
-    // 數據列。
-    const stats = [
-      { label: "平均每題", value: `${summary.avgTime}s` },
-      { label: "日期", value: summary.date },
-      { label: "正確率", value: `${summary.accuracy}%` }
-    ];
-    stats.forEach((stat, index) => {
-      const centerX = 226 + index * 314;
-      ctx.fillStyle = INK;
-      ctx.font = `800 52px ${FONT}`;
-      ctx.fillText(stat.value, centerX, 990);
-      ctx.fillStyle = MUTED;
-      ctx.font = `700 28px ${FONT}`;
-      ctx.fillText(stat.label, centerX, 1036);
-    });
-
-    // 亮點列（連對 / 最穩技巧）。
-    ctx.fillStyle = "rgba(33, 131, 91, 0.10)";
-    roundedRect(72, 1090, 936, 96, 16);
-    ctx.fill();
-    ctx.strokeStyle = GREEN;
-    ctx.lineWidth = 2;
-    ctx.stroke();
-    ctx.fillStyle = GREEN;
-    ctx.font = `800 40px ${FONT}`;
-    ctx.fillText(ellipsize(summary.highlight, 880), 540, 1152);
-
-    // 頁尾。
-    ctx.fillStyle = MUTED;
-    ctx.font = `700 30px ${FONT}`;
-    ctx.fillText("每天幾題，反射就回來 — buzzcalculus", 540, 1286);
-    ctx.textAlign = "left";
-    return canvas;
-  }
-
-  function shareResultCard() {
-    const summary = buildShareSummary();
-    if (!summary) return;
-    const canvas = drawShareCard(summary);
-    let dataUrl = "";
-    try {
-      if (canvas && typeof canvas.toDataURL === "function") dataUrl = canvas.toDataURL("image/png");
-    } catch (_error) {
-      dataUrl = "";
-    }
-    if (!dataUrl) {
-      showAppNotice("這個環境無法產生成績卡圖片，改用手機截圖分享吧。");
-      return;
-    }
-    const nav = window.navigator;
-    shareCard = {
-      dataUrl,
-      canvas,
-      fileName: `buzzcalculus-${summary.date}.png`,
-      canShare: Boolean(nav && typeof nav.share === "function" && typeof nav.canShare === "function" && typeof window.File === "function")
-    };
-    trackEvent("share_result_card", { mode: quiz ? quiz.mode : "", accuracy: summary.accuracy });
-    render();
-  }
-
-  function downloadShareCard() {
-    if (!shareCard) return;
-    try {
-      const link = document.createElement("a");
-      if (!link) return;
-      link.href = shareCard.dataUrl;
-      link.download = shareCard.fileName;
-      if (document.body && document.body.appendChild) document.body.appendChild(link);
-      if (typeof link.click === "function") link.click();
-      if (typeof link.remove === "function") link.remove();
-    } catch (_error) {
-      showAppNotice("下載失敗，長按預覽圖另存也可以。");
-    }
-  }
-
-  function shareShareCardNow() {
-    if (!shareCard) return;
-    const fallback = () => showAppNotice("這個瀏覽器不支援分享圖片，改用「下載 PNG」吧。");
-    const nav = window.navigator;
-    if (!shareCard.canShare || !nav) {
-      fallback();
-      return;
-    }
-    const send = (blob) => {
-      if (!blob) {
-        fallback();
-        return;
-      }
-      try {
-        const file = new window.File([blob], shareCard.fileName, { type: "image/png" });
-        const payload = { files: [file], title: "BuzzCalculus 成績卡" };
-        if (!nav.canShare(payload)) {
-          fallback();
-          return;
-        }
-        Promise.resolve(nav.share(payload)).catch(() => {});
-      } catch (_error) {
-        fallback();
-      }
-    };
-    try {
-      if (shareCard.canvas && typeof shareCard.canvas.toBlob === "function") {
-        shareCard.canvas.toBlob(send, "image/png");
-        return;
-      }
-    } catch (_error) {
-      // fall through to fallback
-    }
-    fallback();
-  }
-
-  function renderShareCardModal() {
-    if (!shareCard) return "";
-    return `
-      <div class="modal-backdrop" data-action="dismiss-share-card">
-        <div class="modal share-card-modal" role="dialog" aria-modal="true" aria-labelledby="share-card-title" data-modal>
-          <h3 id="share-card-title">成績卡完成</h3>
-          <img class="share-card-preview" src="${shareCard.dataUrl}" alt="BuzzCalculus 成績卡預覽" />
-          <div class="action-row">
-            <button class="button" data-action="download-share-card">${icon("download")}下載 PNG</button>
-            ${shareCard.canShare ? `<button class="button secondary" data-action="share-share-card">${icon("share-2")}分享</button>` : ""}
-            <button class="button ghost" data-action="dismiss-share-card">${icon("x")}關閉</button>
-          </div>
-        </div>
-      </div>
-    `;
-  }
+  // 每週挑戰（全站同卷＋成績代碼互比）與成績分享卡於 2026-09 移除。
+  // 三套打卡機制（每日任務＋連勝、每日一題、每週挑戰）互相搶同一份注意力，
+  // 成熟的產品只留一條 —— 留下的是每日那條，它跟 SRS 到期複習綁在一起，
+  // 是唯一有學習理由（不只是留存理由）的一套。舊紀錄 records.weeklyChallenge 保留不動。
 
   // ---- Feature 7：雲端同步 scaffold（可插拔 adapter，還沒接真後端） ----
   // 設定 window.BUZZ_SYNC_ENDPOINT（可選 window.BUZZ_SYNC_TOKEN）後整組生效：
@@ -8925,7 +7722,6 @@
       pathGate: options.pathGate || null,
       placement: options.placement || null,
       namedExam: options.namedExam || null,
-      weeklyChallenge: options.weeklyChallenge || null,
       problems: pool,
       index: 0,
       score: 0,
@@ -11248,27 +10044,6 @@
       };
     }
 
-    // Feature 6：每週挑戰 → 一週只鎖一次正式成績；之後的重打都算純練習，
-    // 不覆寫紀錄，但結算頁仍會顯示本週已鎖定的成績代碼。
-    if (currentQuiz.weeklyChallenge) {
-      const week = currentQuiz.weeklyChallenge.weekKey;
-      const existing = records.weeklyChallenge[week];
-      const timeMs = Math.max(0, Date.now() - currentQuiz.startedAt);
-      if (currentQuiz.weeklyChallenge.scored && !existing) {
-        const code = encodeWeeklyCode(week, correct, total, timeMs);
-        records.weeklyChallenge[week] = { score: correct, total, timeMs, code, at: finishedAt };
-        currentQuiz.weeklyOutcome = { weekKey: week, score: correct, total, timeMs, code, scored: true };
-      } else {
-        currentQuiz.weeklyOutcome = {
-          weekKey: week,
-          score: correct,
-          total,
-          timeMs,
-          code: existing ? existing.code : "",
-          scored: false
-        };
-      }
-    }
 
     currentQuiz.unlockedAchievements = updateAchievements(records, currentQuiz, historyItem);
     saveRecords(records);
@@ -13093,15 +11868,8 @@
       renderKeyIdea,
       keyIdeaFor,
       authoredHints,
-      renderSolutionStages,
-      renderExamPlanCard,
-      renderExamReport,
-      examScopes: EXAM_SCOPES,
-      renderConfidencePrompt,
-      renderCausePrompt,
-      suggestCause,
+      renderSolutionStages,      suggestCause,
       causeTagOf,
-      confidenceLevels: CONFIDENCE_LEVELS,
       causeOptions: CAUSE_OPTIONS,
       setQuiz: (next) => { quiz = next; },
       getQuiz: () => quiz,
@@ -13124,15 +11892,7 @@
       masteryRadarData,
       renderMasteryRadar,
       renderActivityHeatmap,
-      isoWeekKey,
-      weeklyWeekValue,
-      encodeWeeklyCode,
-      decodeWeeklyCode,
-      buildWeeklyChallengePaper,
-      drawShareCard,
-      buzzSync: BuzzSync,
-      renderWeeklyChallengeCard,
-      renderWeeklyOutcomePanel,
+      isoWeekKey,      buzzSync: BuzzSync,
       renderSyncSettingsCard
     };
   }
