@@ -316,6 +316,42 @@ const appSourceForRemoval = require("fs").readFileSync(require("path").join(__di
 });
 console.log("Removal smoke: 自動錯因存活、舊 records.conf 容忍、六個已拔功能無殘留");
 
+// ── 大考跳題：亂序作答之後結算不得重複、不得漏題 ─────────────
+// 舊結算從 answers.length 續走，前提是作答順序＝題目順序；
+// 跳題打破了這個前提，改成按 id 收。這裡直接驗最壞情況：亂序＋有草稿。
+{
+  const examProblems = global.window.BUZZ_PROBLEMS.slice(0, 6);
+  const examQuiz = {
+    examMode: true, examFinalized: false, examTimedOut: false,
+    index: 2, questionStartedAt: Date.now(),
+    problems: examProblems,
+    // 亂序作答：先答第 4 題再答第 1 題
+    answers: [
+      { problem: examProblems[3], correct: true },
+      { problem: examProblems[0], correct: false }
+    ],
+    draft: "", draftMap: {}, flags: {}, hintsUsed: {}, boardStrokes: {},
+    score: 0, currentStreak: 0, bestStreak: 0, noHint: false, practice: false
+  };
+  api.finalizeExamAnswers(examQuiz);
+  const ids = examQuiz.answers.map((a) => a.problem.id);
+  if (new Set(ids).size !== ids.length) throw new Error("大考結算出現重複題：" + ids.join(","));
+  if (ids.length !== examProblems.length) throw new Error("大考結算漏題：" + ids.length + "/" + examProblems.length);
+  const unanswered = examQuiz.answers.filter((a) => a.unanswered).length;
+  if (unanswered !== 4) throw new Error("未作答數應為 4，得到 " + unanswered);
+
+  // 下一個未作答的索引要繞回去找，而不是 index+1
+  const navQuiz = {
+    examMode: true, index: 4,
+    problems: examProblems,
+    answers: [{ problem: examProblems[4] }, { problem: examProblems[5] }]
+  };
+  const next = api.nextUnansweredIndex(navQuiz, navQuiz.index);
+  if (next !== 0) throw new Error("應繞回第 0 題，得到 " + next);
+  console.log("Exam jump smoke: 亂序結算無重複無漏題、未答輪回正確");
+}
+
+
 // 考試倒推計畫已於 2026-09 移除。舊資料的 plan 家族仍要被容忍：
 const normalizedPlan = api.normalizeRecords({ plan: { examAt: "2026-01-01" }, planHistory: [{}] });
 if (!normalizedPlan || typeof normalizedPlan !== "object") throw new Error("normalizeRecords choked on legacy plan data");

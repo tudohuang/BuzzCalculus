@@ -1490,9 +1490,23 @@ button {
 
 .problem-stage {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 300px;
+  /* 預設單欄：側欄只在有回饋內容時才出現。
+     以前沒有回饋也擺一個 300px 的「作答狀態」欄，內容只有一句
+     「本局不倒數。」—— 題目卡被壓窄、書寫區被往下推，換來一句廢話。 */
+  grid-template-columns: minmax(0, 1fr);
   gap: 18px;
   align-content: start;
+}
+
+.problem-stage.has-feedback {
+  grid-template-columns: minmax(0, 1fr) 300px;
+}
+
+.quiz-mode-note {
+  margin-left: auto;
+  color: var(--muted);
+  font-size: 0.82rem;
+  align-self: center;
 }
 
 .problem-card {
@@ -6166,6 +6180,144 @@ button,
   fill: var(--muted);
   opacity: 0.7;
 }
+
+/* 結算的帶走卡 */
+.takeaway { margin: 18px 0 0; }
+
+.takeaway-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 10px;
+}
+
+.takeaway-card {
+  display: grid;
+  gap: 8px;
+  align-content: space-between;
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--panel);
+}
+
+.takeaway-card p { margin: 0; font-size: 0.92rem; line-height: 1.55; }
+
+/* 大考題號地圖 */
+.exam-map {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin: 10px 0 0;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+
+.exam-map-cells {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+  flex: 1;
+  min-width: 0;
+}
+
+.exam-map-cell {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-width: 30px;
+  height: 30px;
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  background: var(--panel);
+  color: var(--muted);
+  font-size: 0.8rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+}
+
+span.exam-map-cell {
+  cursor: default;
+  background: color-mix(in srgb, var(--ink) 8%, var(--panel));
+  color: var(--ink);
+  border-color: transparent;
+}
+
+.exam-map-cell.is-current {
+  border-color: var(--gold-dark);
+  box-shadow: inset 0 0 0 1px var(--gold-dark);
+  color: var(--ink);
+}
+
+.exam-map-cell.is-flagged::after {
+  content: "";
+  position: absolute;
+  top: 3px;
+  right: 3px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--red);
+}
+
+.exam-flag { flex: none; }
+.exam-flag.is-on { color: var(--red); border-color: var(--red); }
+
+/* 快捷鍵提示：只在有滑鼠/觸控板（＝多半有鍵盤）的環境出現 */
+.kbd-hint {
+  display: none;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: transparent;
+  color: var(--muted);
+  font-size: 0.78rem;
+  cursor: pointer;
+}
+
+.kbd-hint:hover { color: var(--ink); background: var(--surface); }
+
+@media (pointer: fine) {
+  .kbd-hint { display: inline-flex; }
+}
+
+kbd {
+  display: inline-grid;
+  place-items: center;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 5px;
+  border: 1px solid var(--line-strong);
+  border-bottom-width: 2px;
+  border-radius: 6px;
+  background: var(--panel);
+  font-family: inherit;
+  font-size: 0.78rem;
+  font-weight: 760;
+  color: var(--ink);
+}
+
+.shortcuts-table {
+  margin: 0 0 16px;
+  display: grid;
+  gap: 10px;
+}
+
+.shortcuts-table > div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.shortcuts-table dt { display: flex; gap: 4px; }
+.shortcuts-table dd { margin: 0; color: var(--muted); font-size: 0.9rem; text-align: right; }
 
 .report-grid {
   display: grid;
