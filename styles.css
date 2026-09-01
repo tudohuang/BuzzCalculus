@@ -2,11 +2,11 @@
   color-scheme: light;
   --ink: #20211f;
   --muted: #666963;
-  --paper: #f5f3ed;
+  --paper: #f2f1ee;
   --panel: #ffffff;
-  --surface: #fbfaf7;
-  --line: #dbd7cd;
-  --line-strong: #b9b2a4;
+  --surface: #f9f8f6;
+  --line: #e4e2dd;
+  --line-strong: #c9c6bf;
   --gold: #dca72d;
   --gold-dark: #8b650c;
   --red: #c94b43;
@@ -19,8 +19,10 @@
   --progress: var(--green);
   --success: var(--green);
   --danger: var(--red);
-  --shadow: 0 16px 34px rgba(32, 33, 31, 0.08);
-  --radius: 8px;
+  /* 成熟軟體的分層靠邊線與底色，不靠到處都是的投影。
+     陰影只留給真的浮起來的東西（modal、彈出層）。 */
+  --shadow: 0 1px 2px rgba(25, 26, 24, 0.05), 0 12px 32px rgba(25, 26, 24, 0.1);
+  --radius: 10px;
   font-family:
     Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
     "Noto Sans TC", sans-serif;
@@ -30,11 +32,11 @@
   color-scheme: dark;
   --ink: #f0eee6;
   --muted: #b9b5aa;
-  --paper: #171817;
-  --panel: #22231f;
-  --surface: #1c1d1a;
-  --line: #3c3b35;
-  --line-strong: #5c584d;
+  --paper: #151614;
+  --panel: #1f201d;
+  --surface: #1a1b19;
+  --line: #33342f;
+  --line-strong: #4c4d47;
   --gold: #e4b447;
   --gold-dark: #ffd77a;
   --red: #ef786e;
@@ -53,21 +55,12 @@ body {
   min-height: 100%;
 }
 
-:root[data-theme="dark"] body {
-  background:
-    linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px),
-    linear-gradient(0deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-    var(--paper);
-}
-
 body {
   margin: 0;
   color: var(--ink);
-  background:
-    linear-gradient(90deg, rgba(32, 33, 31, 0.028) 1px, transparent 1px),
-    linear-gradient(0deg, rgba(32, 33, 31, 0.024) 1px, transparent 1px),
-    var(--paper);
-  background-size: 44px 44px;
+  /* 方格紙的格線只留在手寫計算紙上 —— 那裡它是功能；
+     鋪滿整個底就只是雜訊，而且讓每一張截圖看起來像原型。 */
+  background: var(--paper);
 }
 
 button,
@@ -80,16 +73,6 @@ button {
   border: 0;
 }
 
-#math-field {
-  position: fixed;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  opacity: 0.08;
-  z-index: 0;
-}
-
 .app-shell {
   position: relative;
   z-index: 1;
@@ -99,59 +82,85 @@ button {
 }
 
 .topbar {
-  width: min(1180px, calc(100% - 32px));
-  margin: 0 auto;
-  min-height: 72px;
+  position: fixed;
+  inset: 0 auto 0 0;
+  width: 212px;
+  z-index: 20;
   display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 18px;
+  padding: 18px 12px;
+  background: var(--surface);
+  border-right: 1px solid var(--line);
+}
+
+/* 作答中：側欄縮成頂列，只剩品牌與離開 —— 練習畫面不需要導覽 */
+.topbar.is-quiz {
+  position: sticky;
+  top: 0;
+  inset: auto;
+  width: 100%;
+  flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
-  border-bottom: 1px solid rgba(32, 33, 31, 0.1);
+  min-height: 56px;
+  padding: 0 16px;
+  border-right: 0;
+  border-bottom: 1px solid var(--line);
+  background: color-mix(in srgb, var(--paper) 92%, transparent);
+  backdrop-filter: blur(10px);
 }
 
 .brand {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   min-width: 0;
-  padding: 0;
+  padding: 6px;
+  border-radius: var(--radius);
   background: transparent;
   color: inherit;
   text-align: left;
   cursor: pointer;
 }
 
+.brand:hover {
+  background: color-mix(in srgb, var(--ink) 5%, transparent);
+}
+
 .brand-mark {
-  width: 36px;
-  height: 36px;
+  width: 32px;
+  height: 32px;
+  flex: none;
   display: grid;
   place-items: center;
   color: #211d14;
   background: #e3b23d;
-  border: 1px solid rgba(32, 33, 31, 0.18);
-  border-radius: var(--radius);
+  border-radius: 9px;
   font-weight: 900;
   line-height: 1;
 }
 
 .brand-title {
   margin: 0;
-  font-size: 1.28rem;
+  font-size: 1.05rem;
+  font-weight: 800;
   line-height: 1;
-  letter-spacing: 0;
+  letter-spacing: -0.01em;
 }
 
-.brand-subtitle {
-  margin: 4px 0 0;
-  color: var(--muted);
-  font-size: 0.85rem;
+.topbar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
 }
 
-.topbar-actions {
+.topbar-utils {
   display: flex;
   align-items: center;
-  gap: 8px;
-  min-width: 0;
+  gap: 6px;
 }
 
 .screen {
@@ -160,25 +169,109 @@ button {
   padding: 28px 0 44px;
 }
 
+/* 側欄在場（非作答）時，內容讓出左側 */
+.topbar:not(.is-quiz) ~ .screen {
+  width: auto;
+  max-width: 1040px;
+  margin: 0 auto 0 212px;
+  padding: 32px clamp(20px, 4vw, 44px) 56px;
+}
+
+@media (min-width: 1500px) {
+  .topbar:not(.is-quiz) ~ .screen {
+    margin-inline: auto;
+  }
+}
+
 .nav-button {
-  min-height: 38px;
+  min-height: 40px;
   display: inline-flex;
   align-items: center;
-  gap: 7px;
-  padding: 0 11px;
-  border: 1px solid transparent;
+  gap: 10px;
+  padding: 0 12px;
+  border: 0;
   border-radius: var(--radius);
   background: transparent;
   color: var(--muted);
   cursor: pointer;
-  font-weight: 760;
+  font-weight: 700;
+  font-size: 0.92rem;
 }
 
-.nav-button:hover,
+.nav-button:hover {
+  color: var(--ink);
+  background: color-mix(in srgb, var(--ink) 6%, transparent);
+}
+
 .nav-button.is-active {
   color: var(--ink);
-  border-color: var(--line);
-  background: rgba(255, 255, 255, 0.7);
+  background: color-mix(in srgb, var(--gold) 16%, var(--panel));
+}
+
+/* ── 手機外殼（<960px）：頂列（品牌＋工具）＋底部分頁列 ────────
+   側欄在窄螢幕上吃掉 212px 是災難；底部分頁列是拇指構得到的地方，
+   也是使用者在其他成熟 app 上早就練好的肌肉記憶。 */
+@media (max-width: 960px) {
+  .topbar {
+    position: sticky;
+    top: 0;
+    inset: auto;
+    width: 100%;
+    z-index: 20;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    min-height: 56px;
+    padding: 6px 12px;
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
+    /* 不能用 backdrop-filter：它會讓子元素的 position:fixed 改以這個
+       元素為包含塊，底部分頁列（.topbar-nav 是它的子元素）的 bottom:0
+       就會貼到頂列的底而不是螢幕的底。實測踩過，改實色。 */
+    background: var(--paper);
+  }
+
+  .topbar-nav {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 30;
+    flex: none;
+    flex-direction: row;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 0;
+    padding: 4px 8px calc(4px + env(safe-area-inset-bottom, 0px));
+    background: color-mix(in srgb, var(--panel) 96%, transparent);
+    backdrop-filter: blur(12px);
+    border-top: 1px solid var(--line);
+  }
+
+  .nav-button {
+    flex-direction: column;
+    justify-content: center;
+    gap: 3px;
+    min-height: 52px;
+    padding: 4px 0;
+    font-size: 0.68rem;
+    font-weight: 700;
+    border-radius: 8px;
+  }
+
+  .nav-button.is-active {
+    background: transparent;
+    color: var(--gold-dark);
+  }
+
+  .topbar:not(.is-quiz) ~ .screen {
+    width: min(100% - 22px, 1180px);
+    max-width: none;
+    margin: 0 auto;
+    /* 底部分頁列的高度＋一點呼吸 —— 否則最後一張卡被蓋住 */
+    padding: 18px 0 calc(84px + env(safe-area-inset-bottom, 0px));
+  }
 }
 
 .panel-title-row {
@@ -512,10 +605,9 @@ button {
 
 .panel {
   border: 1px solid var(--line);
-  background: rgba(255, 255, 255, 0.88);
+  background: var(--panel);
   border-radius: var(--radius);
   padding: 16px;
-  box-shadow: 0 1px 0 rgba(32, 33, 31, 0.03);
 }
 
 .panel h3 {
@@ -1150,8 +1242,7 @@ button {
 .data-management-card .panel {
   border: 1px solid var(--line);
   border-radius: var(--radius);
-  background: rgba(255, 255, 255, 0.9);
-  box-shadow: 0 8px 24px rgba(32, 33, 31, 0.06);
+  background: var(--panel);
 }
 
 .study-card span{
@@ -3386,18 +3477,9 @@ button,
 }
 
 @media (max-width: 680px) {
-  .topbar {
-    width: min(100% - 22px, 1180px);
-    min-height: 62px;
-  }
-
   .screen {
     width: min(100% - 22px, 1180px);
     padding-top: 18px;
-  }
-
-  .brand-subtitle {
-    display: none;
   }
 
   .segmented,
@@ -3502,71 +3584,6 @@ button,
     width: 100%;
   }
 
-  .topbar-actions .button span {
-    display: none;
-  }
-
-  .nav-button {
-    width: 44px;
-    min-height: 44px;
-    padding: 0;
-    justify-content: center;
-  }
-
-  .nav-button span {
-    display: none;
-  }
-}
-
-/* Very narrow phones: shrink nav buttons and drop the brand title so the
-   五個導覽鍵 + 主題切換 still fit at 320px. */
-@media (max-width: 400px) {
-  .topbar {
-    padding: 0 8px;
-    gap: 6px;
-  }
-
-  .topbar-actions {
-    gap: 4px;
-  }
-
-  .brand {
-    gap: 6px;
-  }
-
-  .brand-title {
-    display: none;
-  }
-
-  /* 這一段本來是為了讓五個導覽鍵在 320px 上塞得下，代價是把它們縮成
-     38×40 —— 而那是整個 app 最常按的五顆按鈕，低於 Apple 建議的 44。
-     高度不佔水平空間，所以先無條件拉滿；寬度留到下面有空間時再給。 */
-  .nav-button {
-    width: 38px;
-    min-height: 44px;
-  }
-
-  .topbar .icon-button {
-    width: 38px;
-    height: 44px;
-  }
-}
-
-/* 360–400px（絕大多數現役手機：iPhone 390、Pixel 393、Galaxy 360）
-   其實放得下完整的 44px 觸控寬度。只有真正窄的機器才需要縮到 38px。
-   必須寫在上面那段之後 —— 同特異性時後者勝，寫在前面會被蓋掉。
-   分成兩段而不是直接改門檻，是因為「320px 也要塞得下」那條約束仍然成立。 */
-@media (min-width: 360px) and (max-width: 400px) {
-  .nav-button,
-  .topbar .icon-button {
-    width: 44px;
-  }
-
-  /* 這個寬度下 .brand-title 是隱藏的，整顆按鈕只剩標誌那 32px 加內距＝39px 寬。
-     它是「回到工作台」，不是裝飾。 */
-  .brand {
-    min-width: 44px;
-  }
 }
 
 @media (max-width: 900px) {
@@ -3589,28 +3606,6 @@ button,
 }
 
 @media (max-width: 680px) {
-  body {
-    background:
-      linear-gradient(180deg, rgba(255, 255, 255, 0.6), rgba(245, 243, 237, 0.88)),
-      var(--paper);
-  }
-
-  #math-field {
-    display: none;
-  }
-
-  .topbar {
-    position: sticky;
-    top: 0;
-    z-index: 9;
-    width: 100%;
-    min-height: 58px;
-    padding: 0 12px;
-    border-bottom: 1px solid rgba(32, 33, 31, 0.1);
-    background: rgba(245, 243, 237, 0.94);
-    backdrop-filter: blur(10px);
-  }
-
   .brand {
     gap: 8px;
     /* 縮成 32px 的標誌讓整顆「回到工作台」按鈕只剩 32px 高 ——
@@ -5226,10 +5221,11 @@ button,
   box-shadow: none;
 }
 
-@media (max-width: 680px) {
-  :root[data-theme="dark"] .topbar {
-    border-bottom-color: rgba(255, 255, 255, 0.08);
-    background: color-mix(in srgb, var(--paper) 94%, transparent);
+@media (max-width: 960px) {
+  :root[data-theme="dark"] .topbar,
+  :root[data-theme="dark"] .topbar-nav {
+    border-color: rgba(255, 255, 255, 0.08);
+    background: color-mix(in srgb, var(--paper) 96%, transparent);
   }
 
   :root[data-theme="dark"] .quiz-screen .arena-top {
@@ -5240,10 +5236,6 @@ button,
 :root[data-theme="dark"] .brand-mark,
 :root[data-theme="dark"] .choice-option > span {
   color: #181818;
-}
-
-:root[data-theme="dark"] #math-field {
-  opacity: 0.05;
 }
 
 .workbook-page {
@@ -6704,10 +6696,8 @@ button,
   margin-bottom: 18px;
   padding: 22px 24px;
   border: 1px solid var(--line);
-  border-left: 4px solid var(--gold);
-  border-radius: calc(var(--radius) + 8px);
-  background: linear-gradient(180deg, var(--panel), var(--surface));
-  box-shadow: var(--shadow);
+  border-radius: calc(var(--radius) + 4px);
+  background: var(--panel);
 }
 
 .today-head {
