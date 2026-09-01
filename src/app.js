@@ -413,6 +413,26 @@
       minRank: 4,
       maxRank: 6,
       topic: "integrals"
+    },
+    // 2026-09 擴充：免修考與段考各有自己的節奏 —— 免修考偏難偏廣，
+    // 段考短而基本。用既有的 preferTags 機制，不動抽卷邏輯。
+    exemption: {
+      label: "免修考風格",
+      note: "60 分鐘 · 12 題 · R3-R6 · 免修/檢定題感",
+      count: 12,
+      durationSec: 60 * 60,
+      minRank: 3,
+      maxRank: 6,
+      preferTags: ["proficiency-exam", "university-exam-style"]
+    },
+    quiz_sprint: {
+      label: "段考衝刺",
+      note: "45 分鐘 · 10 題 · R2-R4 · 段考節奏",
+      count: 10,
+      durationSec: 45 * 60,
+      minRank: 2,
+      maxRank: 4,
+      preferTags: ["midterm-style", "exam-style"]
     }
   };
 
@@ -3569,6 +3589,21 @@
     return markup;
   }
 
+  // 單題分享連結。純前端：#p=<題號>，打開直接進練習模式。
+  // 限制講清楚：靜態站做不出「每題自己的預覽卡」（那要 1,723 張 OG 頁），
+  // 貼到聊天軟體只會有站台級的預覽 —— 但點開直接是那一題，這才是重點。
+  function copyProblemLink(problemId) {
+    const problem = problemById(problemId);
+    if (!problem) return;
+    const url = window.location.origin + window.location.pathname + "#p=" + encodeURIComponent(problemId);
+    const done = () => showAppNotice("連結已複製。傳給同學，點開直接作答這一題。");
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(url).then(done, () => showAppNotice(url));
+    } else {
+      showAppNotice(url);
+    }
+  }
+
   function renderLibraryProblemCard(problem, records) {
     const favorite = Boolean(records.favorites?.[problem.id]);
     const reported = Boolean(records.problemReports?.[problem.id]);
@@ -3583,6 +3618,7 @@
           <div class="problem-card-actions">
             <button class="icon-button ${favorite ? "is-active" : ""}" data-action="toggle-favorite" data-problem-id="${escapeAttr(problem.id)}" title="${favorite ? "取消收藏" : "收藏題目"}">${icon("star")}</button>
             <button class="icon-button ${reported ? "is-active" : ""}" data-action="report-problem" data-problem-id="${escapeAttr(problem.id)}" title="${reported ? "已回報" : "回報題目"}">${icon("flag")}</button>
+            <button class="icon-button" data-action="copy-problem-link" data-problem-id="${escapeAttr(problem.id)}" title="複製這題的連結">${icon("copy")}</button>
           </div>
         </div>
         <div class="library-prompt math-block" data-tex="${escapeAttr(problem.prompt)}"></div>
@@ -6273,6 +6309,7 @@
     if (action === "toggle-flag") toggleQuestionFlag();
     if (action === "practice-similar") startSimilarPractice(actionNode.dataset.problemId || "");
     if (action === "set-pen-scale") setPenScale(actionNode.dataset.scale || "");
+    if (action === "copy-problem-link") copyProblemLink(actionNode.dataset.problemId || "");
     if (action === "start-weakness") startWeaknessPractice();
     if (action === "start-friendly-run") startFriendlyRun();
     if (action === "start-god-run") startGodRun();
@@ -9871,6 +9908,35 @@
       endStroke(event);
     });
 
+    // Apple Pencil 懸浮預覽（M2 之後的 iPad 支援 hover）：
+    // 筆還沒落下時顯示落點，對「要從上次寫到一半的地方接下去」特別有用。
+    //
+    // 實作刻意跟墨水管線完全分離：hover 是 buttons===0 的 pointermove，
+    // 畫畫時 buttons!==0 這裡第一行就 return —— 上次的當機教訓是
+    // 別在熱路徑上疊東西，所以這裡是獨立監聽器＋一顆 position:fixed 的
+    // DOM 點，連 canvas 都不重畫。
+    const hoverDot = (() => {
+      let dot = document.getElementById("pen-hover-dot");
+      if (!dot) {
+        dot = document.createElement("div");
+        dot.id = "pen-hover-dot";
+        dot.setAttribute("aria-hidden", "true");
+        document.body.appendChild(dot);
+      }
+      return dot;
+    })();
+    const hideHover = () => { hoverDot.style.opacity = "0"; };
+    canvas.addEventListener("pointermove", (event) => {
+      if (event.pointerType !== "pen" || event.buttons !== 0) { hideHover(); return; }
+      const size = Math.max(4, 2.4 * penScaleSetting() * 2);
+      hoverDot.style.width = `${size}px`;
+      hoverDot.style.height = `${size}px`;
+      hoverDot.style.transform = `translate(${event.clientX - size / 2}px, ${event.clientY - size / 2}px)`;
+      hoverDot.style.opacity = "1";
+    });
+    canvas.addEventListener("pointerleave", hideHover);
+    canvas.addEventListener("pointerdown", hideHover);
+
     // 兩指點一下 = 復原。iPad 上的標準手勢（備忘錄、Procreate 都是這樣），
     // 而且比去點工具列的小按鈕快得多 —— 寫錯一個符號的時候手不用離開紙面。
     // 只認「沒有移動的短促點擊」，所以不會跟手掌或捲動搞混。
@@ -12325,6 +12391,17 @@
     creatorImportPreview = CUSTOM.pendingImport;
     CUSTOM.pendingImport = null;
     view = "creator";
+  }
+  // 帶著 #p=<題號> 進來：直接開那一題（練習模式、不計分）。
+  // 「傳一題給同學，點開直接算」—— 連結是純前端的，沒有伺服器參與。
+  // 引導還沒走完的新使用者不攔：這正是他們第一次見到這個站的方式。
+  const deepLink = /^#p=([A-Za-z0-9_-]+)$/.exec((window.location && window.location.hash) || "");
+  if (deepLink) {
+    const shared = problemById(deepLink[1]);
+    if (shared) {
+      selectedMode = "practice";
+      startQuiz([shared], { modeKey: "practice", practice: true });
+    }
   }
   render();
 })();
