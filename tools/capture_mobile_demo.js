@@ -146,26 +146,66 @@ async function run() {
 
         const opts = [...document.querySelectorAll(".choice-option")];
         if (opts.length) {
-          // 故意錯三分之一 —— 弱點分析與錯題本要有東西才看得出這個產品在做什麼，
-          // 但也不能錯太多，不然結算頁會是一片慘綠
-          opts[i % 3 === 0 ? Math.min(1, opts.length - 1) : 0].click();
+          // 舊碼固定點第一個選項，答對率大概只有四分之一 —— 關卡門檻是 70%，
+          // 所以主線永遠不會前進，資料也就永遠養不出來。
+          //
+          // 頁面本身不會洩漏正解（這是對的設計），但 window.BUZZ_PROBLEMS 是全域的，
+          // 所以外面這支腳本可以自己對答案。認題目的方式是比對題幹的 TeX ——
+          // 作答畫面上沒有題號可拿（data-problem-id 只出現在題庫頁的收藏鍵上，
+          // 第一版就是找那顆按鈕，結果每一題都對不到）。
+          const flat = (s) => String(s == null ? "" : s).replace(/\\s+/g, "").toLowerCase();
+          const texEl = document.querySelector("[data-tex]");
+          const tex = texEl && texEl.getAttribute("data-tex");
+          const problem = tex
+            ? (window.BUZZ_PROBLEMS || []).find((p) => flat(p.prompt) === flat(tex))
+            : null;
+          const want = problem ? flat(problem.answer) : "";
+          const right = want
+            ? opts.find((o) => flat(o.getAttribute("data-choice")) === want)
+            : null;
+
+          // 故意錯五分之一 —— 弱點分析與錯題本要有東西，不然數據頁看起來
+          // 像沒做完；但錯太多會過不了關卡門檻，主線一樣卡住。
+          const missOnPurpose = i % 5 === 4;
+          const pick = (!right || missOnPurpose)
+            ? opts.find((o) => o !== right) || opts[0]
+            : right;
+          pick.click();
           answered += 1;
           await new Promise((r) => setTimeout(r, 320));
         }
-        const next = [...document.querySelectorAll("button")].find((b) => /下一題/.test(b.textContent));
-        if (next) { next.click(); await new Promise((r) => setTimeout(r, 280)); }
-        finished = /結算|再打一局/.test(document.body.innerText || "");
+        // 最後一題的推進鍵不叫「下一題」，叫「看結算」—— 兩顆是同一顆，
+        // 只是換了字。舊碼只找「下一題」，所以永遠停在最後一題不按下去。
+        const next = [...document.querySelectorAll("button")]
+          .find((b) => /下一題|看結算/.test(b.textContent || ""));
+        if (next) { next.click(); await new Promise((r) => setTimeout(r, 300)); }
+
+        // 而結束的判定原本是 /結算|再打一局/ —— 「看結算」這顆按鈕的字面
+        // 就含「結算」，於是迴圈在最後一題的回饋畫面上就宣告結束，
+        // finishQuiz() 從來沒跑到，紀錄一筆都沒寫進 localStorage。
+        // 數據頁的雷達一直是空的，根因就在這裡，不是雷達壞了。
+        // 判定改成只認結算頁才有的字。
+        finished = /再打一局|回到主線|回主線|本關門檻/.test(document.body.innerText || "");
       }
       return { answered, finished };
     `;
 
     let totalAnswered = (await chrome.evaluate(PLAY_SESSION)).answered;
 
-    // 雷達的每一軸要 conf ≥ 0.4（約 5 題加權作答）才會顯示分數，否則是「未測」。
+    // 雷達的每一軸要累積約 12 次加權作答才會脫離「未測」。
     // 每日訓練是混合題型，攤到九個技巧上每個都不到門檻 ——
     // 所以改成走主線關卡：每一關本來就集中在同一個技巧上，正好對應雷達的軸。
-    const NODES = 9;
-    for (let n = 0; n < NODES; n += 1) {
+    //
+    // 這裡第一版是用**固定索引** nodes[n] 逐關點下去，結果只有第 1 關能開。
+    // 原因是主線只有「下一格」那一關會直接給 lesson，其餘標著「可跳關」的
+    // 點下去開的是**跳關前測**（按鈕叫「開始小測驗」，不是 start-path-lesson）。
+    // 舊碼找不到 start-path-lesson 就什麼都不做，然後回報「開了但沒有選項」——
+    // 那句話描述的是症狀，不是原因，所以看了六次都沒看出問題在選擇器。
+    //
+    // 改成模仿真實使用者：每一輪都重新找「現在該打哪一關」，打完它，
+    // 主線自己會前進。跳關測驗當備援入口。
+    const ROUNDS = 18;
+    for (let n = 0; n < ROUNDS; n += 1) {
       const started = await chrome.evaluate(`
         const home = document.querySelector('[data-action="home"]');
         if (home) home.click();
@@ -174,18 +214,35 @@ async function run() {
         if (train) train.click();
         await new Promise((r) => setTimeout(r, 800));
         const nodes = [...document.querySelectorAll('[data-action="start-path-node"]')];
-        if (nodes.length <= ${n}) return { ok: false, why: "關卡數不足（只有 " + nodes.length + " 關）" };
-        nodes[${n}].click();
-        await new Promise((r) => setTimeout(r, 800));
+        if (!nodes.length) return { ok: false, why: "主線上一關都沒有" };
+        // 「下一格」是主線推進到的那一關；沒有的話退而求其次挑第一個沒滿的
+        const current = nodes.find((el) => /下一格/.test(el.textContent || ""))
+          || nodes.find((el) => /可跳關/.test(el.textContent || ""));
+        if (!current) return { ok: false, why: "找不到當前關卡" };
+        const label = (current.textContent || "").replace(/\\s+/g, " ").trim().slice(0, 20);
+        current.click();
+        await new Promise((r) => setTimeout(r, 900));
         const lesson = document.querySelector('[data-action="start-path-lesson"]');
-        if (lesson) lesson.click();
-        await new Promise((r) => setTimeout(r, 1400));
+        const quiz = [...document.querySelectorAll("button")].find((b) => /開始小測驗/.test(b.textContent || ""));
+        const entry = lesson || quiz;
+        if (!entry) return { ok: false, why: "這一關既沒有 lesson 也沒有跳關測驗", label };
+        entry.click();
+        await new Promise((r) => setTimeout(r, 1500));
         const modal = [...document.querySelectorAll("button")].find((b) => /知道了/.test(b.textContent || ""));
         if (modal) { modal.click(); await new Promise((r) => setTimeout(r, 300)); }
-        return { ok: Boolean(document.querySelector(".choice-option")), why: "開了但沒有選項" };
+        return {
+          ok: Boolean(document.querySelector(".choice-option")),
+          why: "開了但沒有選項",
+          label,
+          via: lesson ? "lesson" : "跳關測驗"
+        };
       `);
-      if (!started.ok) { problems.push(`第 ${n + 1} 關開不起來：${started.why}`); continue; }
-      totalAnswered += (await chrome.evaluate(PLAY_SESSION)).answered;
+      if (!started.ok) { problems.push(`第 ${n + 1} 輪開不起來（${started.label || "?"}）：${started.why}`); continue; }
+      const played = await chrome.evaluate(PLAY_SESSION);
+      totalAnswered += played.answered;
+      // 印出來才看得見主線有沒有真的在前進。第一版沒印，結果一連幾輪
+      // 都在重打同一關而毫無察覺 —— 只看到最後「雷達還是空的」這個結果。
+      console.log(`    第 ${String(n + 1).padStart(2)} 輪  ${(started.label || "?").padEnd(12)} 打 ${String(played.answered).padStart(2)} 題`);
     }
 
     // 這個檢查第一版是錯的：切到數據頁之後沒等它畫完就數「未測」，

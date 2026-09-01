@@ -623,8 +623,8 @@
     { key: "multivariable", label: "多變數", tags: ["multivariable", "double-integral", "triple-integral", "hessian", "jacobian", "jacobian-chain", "lagrange-multiplier", "nabla", "vector-calculus", "total-differential", "total-differential-min", "line-integral", "surface-integral", "green-theorem", "stokes-theorem", "divergence-theorem", "flux", "conservative-field", "directional-derivative"] },
     { key: "special", label: "特殊函數", tags: ["beta-function", "gamma-function", "wallis", "bessel", "special-function"] }
   ];
-  const APP_VERSION = "v1.0.0";
-  const BUILD_DATE = "2026-08-17";
+  const APP_VERSION = "v1.1.0";
+  const BUILD_DATE = "2026-08-31";
   const GA_MEASUREMENT_ID = String(window.BUZZ_GA_MEASUREMENT_ID || "").trim();
 
   let view = "home";
@@ -6303,8 +6303,18 @@
   // 作者親自寫的提示才算「題目專屬」。hintsFor() 對沒有作者提示的題目會回傳
   // topic 級的泛用文字 —— 那當第一層「給方向」可以，但**不能冒充第二層**。
   // 把泛用文字當成關鍵步驟端出去，是在假裝我們知道這題怎麼解。
+  // 作者寫的提示。罐頭句子在這裡就被擋掉 —— 它們雖然存在於題目物件上，
+  // 但「Identify the dominant tool before computing.」這種對整包都成立的句子
+  // 不該被當成提示賣給使用者（看提示是要扣分的）。
+  // 擋掉之後那些題會退回「關鍵想法 → 機器推導的關鍵步驟 → 完整解法」，
+  // 三層都是這一題特有的。清單在 src/kernel/canned_hints.js。
   function authoredHints(problem) {
-    return Array.isArray(problem.hints) ? problem.hints.filter((hint) => String(hint || "").trim()) : [];
+    if (!Array.isArray(problem.hints)) return [];
+    const blocked = window.BuzzCannedHints;
+    return problem.hints.filter((hint) => {
+      if (!String(hint || "").trim()) return false;
+      return !(blocked && blocked.isCanned(hint));
+    });
   }
 
   // 第二層「關鍵步驟」的補充。
@@ -9890,9 +9900,30 @@
     if (authored.length) return shuffle(authored.slice(), seedFromString(`${problem.id}-authored-distractors`));
     const sameKind = problems.filter((item) => item.id !== problem.id && item.answerKind === problem.answerKind);
     const sameTopic = sameKind.filter((item) => item.topic === problem.topic);
-    const answerPool = [...sameTopic, ...sameKind].map(displayAnswer);
+    // 誘答取自其他題的答案 —— 真實答案比亂數更像誘答，因為它們長得像人算得出來的東西。
+    // 但少了量級過濾就會出事：梯子問題的答案是 3/4，選項裡卻冒出 94586
+    // （那是題庫裡另一題的答案）。那種選項不會讓人猶豫，只會讓人一眼認出
+    // 「哪個是亂放的」，等於把四選一變成三選一，還順便讓產品看起來很隨便。
+    const answerPool = [...sameTopic, ...sameKind]
+      .map(displayAnswer)
+      .filter((value) => numericallyPlausibleDistractor(correct, value));
     const generated = generatedChoiceDistractors(problem, correct);
     return shuffle([...generated, ...answerPool], seedFromString(`${problem.id}-distractors`));
+  }
+
+  // 誘答跟正解要在同一個量級上才有鑑別力。
+  // 非數值的答案（DNE、收斂/發散、含變數的式子）算不出數字，交給其他規則判，
+  // 這裡一律放行 —— 寧可少擋，也不要把合理的誘答誤殺。
+  const MAX_DISTRACTOR_RATIO = 25;
+
+  function numericallyPlausibleDistractor(correct, candidate) {
+    const target = evaluateExpression(correct, {});
+    const value = evaluateExpression(candidate, {});
+    if (!Number.isFinite(target) || !Number.isFinite(value)) return true;
+    // 跟正解等值的東西不能當誘答（同一題可能有兩種寫法）
+    if (Math.abs(target - value) <= Math.max(1e-9, Math.abs(target) * 1e-9)) return false;
+    const scale = Math.max(Math.abs(target), 1);
+    return Math.abs(value) <= scale * MAX_DISTRACTOR_RATIO;
   }
 
   function fallbackChoiceDistractors(problem) {
@@ -9934,7 +9965,9 @@
     if (close(a * 2)) return "像是多乘 2。";
     if (close(a / 2)) return "像是少了一個 2。";
     if (a && close(1 / a)) return "像是取倒數了。";
-    return "這是常見錯誤值，回頭檢查第一步判型。";
+    // 這裡以前寫「這是常見錯誤值」—— 但走到這一行正代表**看不出**它是怎麼錯的，
+    // 那句話是在斷言一件系統並不知道的事。說不知道比說錯話好。
+    return "這個值和正確答案對不上；回頭檢查第一步的判型。";
   }
 
   function friendlyWrongHint(problem, input, expected) {
