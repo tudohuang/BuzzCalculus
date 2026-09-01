@@ -5,6 +5,7 @@ const APP_SHELL = [
   "./about.html",
   "./changelog.html",
   "./terms.html",
+  "./tutor.html",
   "./",
   "./index.html",
   "./workbook.html",
