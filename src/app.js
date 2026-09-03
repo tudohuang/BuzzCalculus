@@ -8530,6 +8530,18 @@
       title: correct ? (quiz.practice ? "答對" : `答對，+${earned}`) : answerReasonLabel(reason),
       message: detail || (correct ? "" : "先想想卡在哪一步，下面可以一段一段看解法。")
     };
+    // 全螢幕書寫時答錯：回饋卡與「下一題」都在 fixed 的全螢幕外殼底下，
+    // 看不到也點不到，而 feedback 一出現連「退出全螢幕」鈕都被 disabled ——
+    // 使用者只能整局退出。所以回饋要停下來等人看的時候，先退出全螢幕。
+    // 答對與大考模式會自動前進，維持原本停在書寫畫面的體驗。
+    if (quiz.boardFullscreen && !correct && !quiz.examMode) {
+      quiz.boardFullscreen = false;
+      quiz.boardOpen = true;
+      if (quiz.keypadBeforeFullscreen != null) {
+        quiz.keypadOpen = quiz.keypadBeforeFullscreen;
+        quiz.keypadBeforeFullscreen = null;
+      }
+    }
     stopTicker();
     // Correct answers keep the fast auto-advance; wrong answers wait for an
     // explicit「下一題」tap so the correction can actually be read. Exam mode
@@ -8542,6 +8554,14 @@
       }, 950);
     }
     render();
+    // 手機單欄版面時回饋卡疊在題目卡下面 —— 答錯要停下來看的那張卡
+    // 可能整張在畫面外。block:"nearest"：已經看得到就完全不動。
+    if (!correct && !quiz.examMode) {
+      const panel = app.querySelector(".feedback");
+      if (panel && typeof panel.scrollIntoView === "function") {
+        panel.scrollIntoView({ block: "nearest", behavior: "smooth" });
+      }
+    }
   }
 
   // 題目顯示。spec B 區 98 要求追蹤「開始題目」——沒有它就算不出

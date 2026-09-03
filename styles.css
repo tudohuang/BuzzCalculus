@@ -1502,6 +1502,17 @@ button {
   grid-template-columns: minmax(0, 1fr) 300px;
 }
 
+/* 手機直式：300px 側欄會吃掉整個螢幕，題目卡被壓成細條、
+   回饋卡自己也擠到讀不了。注意特異性：這條兩個 class 的規則
+   會贏過 max-width:900 媒體查詢裡單 class 的 .problem-stage { 1fr } ——
+   所以要在這裡用同樣的選擇器明確改回單欄。
+   斷點 767 對齊平板規則的 768：iPad 直式（834px）保留側欄版面。 */
+@media (max-width: 767px) {
+  .problem-stage.has-feedback {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
 .quiz-mode-note {
   margin-left: auto;
   color: var(--muted);
@@ -5071,6 +5082,26 @@ button,
   .handwrite-shell.is-fullscreen .webwork-keypad,
   .handwrite-shell.is-fullscreen .webwork-helper {
     display: none;
+  }
+
+  /* 回饋一出現，作答浮條裡的每一顆控制都已經 disabled ——
+     它繼續浮在底部只剩一個效果：把回饋卡與「下一題」蓋住。
+     收回卡片裡（跟全螢幕的收法同一套 reset）。 */
+  .quiz-screen .problem-stage.has-feedback .webwork-answer:not(.is-docked) {
+    position: static;
+    left: auto;
+    right: auto;
+    bottom: auto;
+    z-index: auto;
+    border: 1px solid rgba(32, 33, 31, 0.14);
+    background: #fff;
+    box-shadow: none;
+    backdrop-filter: none;
+  }
+
+  /* 浮條收回去之後，原本幫它清出來的 184px 底部保留區也不用留了 */
+  .quiz-screen .problem-stage.has-feedback .webwork-shell:not(.is-fullscreen) {
+    padding-bottom: 0;
   }
 }
 

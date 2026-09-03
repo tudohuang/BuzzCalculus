@@ -260,6 +260,73 @@ async function run() {
       check("作答畫面不會橫向溢出", false, quiz.why || "開不了一局");
     }
 
+    /* ── 3.4 手機：答錯之後不能把 300px 側欄硬塞進 390px 的螢幕 ── */
+    // .problem-stage.has-feedback 是兩個 class 的選擇器，特異性贏過
+    // 媒體查詢裡單 class 的 .problem-stage { 1fr }。修掉之前，手機上一出現
+    // 回饋，題目卡被壓成細條、綠色回饋卡自己也擠到讀不了。
+    await chrome.navigate(`${server.url}/index.html`);
+    await chrome.sleep(800);
+    const wrongFb = await chrome.evaluate(`
+      const c = (n) => { const h=[...document.querySelectorAll("button,a,[data-action]")].find(x=>(x.innerText||"").includes(n)); if(h) h.click(); return !!h; };
+      // 切成「自己寫」：送一個亂寫的答案就保證判錯，
+      // 不用跟選擇題的隨機正解賭運氣。
+      c("訓練"); await new Promise(r=>setTimeout(r,700));
+      const free=document.querySelector('[data-answer-mode="free"]');
+      if(free) free.click(); await new Promise(r=>setTimeout(r,500));
+      const lib=document.querySelector('[data-action="open-library"]');
+      if(!lib) return { ok:false, why:"找不到題庫" };
+      lib.click(); await new Promise(r=>setTimeout(r,900));
+      const s=document.querySelector("[data-library-search]");
+      if(s){ s.value="dd-rr-001"; s.dispatchEvent(new Event("input",{bubbles:true})); await new Promise(r=>setTimeout(r,700)); }
+      const go=document.querySelector('[data-action="start-problem"]');
+      if(!go) return { ok:false, why:"題庫裡沒有可開始的題目" };
+      go.click(); await new Promise(r=>setTimeout(r,1200));
+      const ack=[...document.querySelectorAll("button")].find(b=>b.textContent.includes("知道了"));
+      if(ack){ ack.click(); await new Promise(r=>setTimeout(r,400)); }
+      const input=document.querySelector("#answer");
+      const form=document.querySelector('[data-action="submit-answer"]');
+      if(!input||!form) return { ok:false, why:"不是自己寫模式，做不出保證答錯" };
+      input.value="424242.424242";
+      input.dispatchEvent(new Event("input",{bubbles:true}));
+      if(form.requestSubmit) form.requestSubmit();
+      else form.dispatchEvent(new Event("submit",{bubbles:true,cancelable:true}));
+      await new Promise(r=>setTimeout(r,600));
+      const stage=document.querySelector(".problem-stage.has-feedback");
+      const panel=document.querySelector(".feedback.wrong, .feedback.timeout");
+      if(!stage||!panel) return { ok:false, why:"送出後沒有出現答錯回饋" };
+      const cols=getComputedStyle(stage).gridTemplateColumns.trim().split(" ").filter(Boolean).length;
+      const rect=panel.getBoundingClientRect();
+      const card=document.querySelector(".problem-card").getBoundingClientRect();
+      const btn=document.querySelector('[data-action="next-question"]');
+      let nextHit=false; let hitDebug="沒有下一題按鈕";
+      if(btn){
+        btn.scrollIntoView({block:"center"});
+        await new Promise(r=>setTimeout(r,250));
+        const b=btn.getBoundingClientRect();
+        const at=document.elementFromPoint(b.left+b.width/2, b.top+b.height/2);
+        nextHit=Boolean(at&&(at===btn||btn.contains(at)));
+        hitDebug="btn@"+Math.round(b.top)+","+Math.round(b.left)+" "+Math.round(b.width)+"x"+Math.round(b.height)
+          +" 命中="+(at?at.tagName.toLowerCase()+"."+String(at.className).slice(0,40):"null")
+          +" 視窗高="+window.innerHeight;
+      }
+      return {
+        ok:true, cols,
+        panelShare: Math.round((rect.width/window.innerWidth)*100),
+        cardShare: Math.round((card.width/window.innerWidth)*100),
+        overflow: document.documentElement.scrollWidth-window.innerWidth,
+        nextHit, hitDebug
+      };
+    `);
+    if (!wrongFb.ok) {
+      check("手機答錯後版面收成單欄", false, wrongFb.why);
+    } else {
+      check("手機答錯後版面收成單欄", wrongFb.cols === 1,
+        `problem-stage ${wrongFb.cols} 欄 · 題目卡佔寬 ${wrongFb.cardShare}% · 回饋卡佔寬 ${wrongFb.panelShare}%`);
+      check("手機答錯後不會橫向溢出", wrongFb.overflow <= 1, `溢出 ${wrongFb.overflow}px`);
+      check("手機答錯後「下一題」按得到", wrongFb.nextHit,
+        wrongFb.nextHit ? "" : `按鈕被蓋住或不在畫面內 —— ${wrongFb.hitDebug}`);
+    }
+
     /* ── 3.5 iPad：書寫區要夠大，而且不用捲就寫得到 ── */
     // 使用者的主力裝置是 iPad + Apple Pencil，但這支測的一直是 390 寬的手機。
     // 量出來的問題很具體：書寫區的高度原本由**畫面寬度**決定並且封頂 340px，
@@ -323,6 +390,77 @@ async function run() {
       check(`${pad.label} 的題目沒有被切掉`, !pad_.promptClipped,
         pad_.promptClipped ? "題目列橫向溢出，開頭與結尾看不到" : "題目完整可見");
     }
+    /* ── 3.7 iPad：全螢幕書寫時答錯，不能把人關在覆蓋層底下 ── */
+    // 全螢幕外殼是 position:fixed 的不透明整頁覆蓋層；答錯的回饋卡與
+    // 「下一題」都渲染在它底下，而 feedback 一出現連退出全螢幕鈕都被
+    // disabled —— 修掉之前這個狀態只能整局退出。釘住的行為：
+    // 答錯（要停下來看回饋）時自動退出全螢幕，「下一題」點得到。
+    await chrome.send("Emulation.setDeviceMetricsOverride", {
+      width: 834, height: 1194, deviceScaleFactor: 2, mobile: true
+    });
+    await chrome.send("Emulation.setTouchEmulationEnabled", { enabled: true, maxTouchPoints: 5 });
+    await chrome.navigate(`${server.url}/index.html`);
+    await chrome.sleep(700);
+    const fsWrong = await chrome.evaluate(`
+      const c = (n) => { const h=[...document.querySelectorAll("button,a,[data-action]")].find(x=>(x.innerText||"").includes(n)); if(h) h.click(); return !!h; };
+      c("訓練"); await new Promise(r=>setTimeout(r,700));
+      const free=document.querySelector('[data-answer-mode="free"]');
+      if(free) free.click(); await new Promise(r=>setTimeout(r,500));
+      const lib=document.querySelector('[data-action="open-library"]');
+      if(!lib) return { ok:false, why:"找不到題庫" };
+      lib.click(); await new Promise(r=>setTimeout(r,900));
+      const s=document.querySelector("[data-library-search]");
+      if(!s) return { ok:false, why:"題庫沒有搜尋框" };
+      s.value="dd-rr-001"; s.dispatchEvent(new Event("input",{bubbles:true}));
+      await new Promise(r=>setTimeout(r,700));
+      const go=document.querySelector('[data-action="start-problem"]');
+      if(!go) return { ok:false, why:"找不到 dd-rr-001" };
+      go.click(); await new Promise(r=>setTimeout(r,1200));
+      const ack=[...document.querySelectorAll("button")].find(b=>b.textContent.includes("知道了"));
+      if(ack){ ack.click(); await new Promise(r=>setTimeout(r,400)); }
+      const t=document.querySelector('[data-board-action="toggle"]');
+      if(!t) return { ok:false, why:"沒有計算紙開關" };
+      t.click(); await new Promise(r=>setTimeout(r,800));
+      // 平板攤開計算紙會直接進全螢幕（isCoarsePointerTablet）
+      const wasFullscreen=Boolean(document.querySelector(".handwrite-shell.is-fullscreen"));
+      const input=document.querySelector("#answer");
+      const form=document.querySelector('[data-action="submit-answer"]');
+      if(!input||!form) return { ok:false, why:"全螢幕裡沒有作答表單" };
+      input.value="424242.424242";
+      input.dispatchEvent(new Event("input",{bubbles:true}));
+      if(form.requestSubmit) form.requestSubmit();
+      else form.dispatchEvent(new Event("submit",{bubbles:true,cancelable:true}));
+      await new Promise(r=>setTimeout(r,600));
+      const stillFullscreen=Boolean(document.querySelector(".handwrite-shell.is-fullscreen"));
+      const panel=document.querySelector(".feedback.wrong, .feedback.timeout");
+      const btn=document.querySelector('[data-action="next-question"]');
+      let nextHit=false;
+      if(btn){
+        btn.scrollIntoView({block:"center"});
+        await new Promise(r=>setTimeout(r,250));
+        const b=btn.getBoundingClientRect();
+        const at=document.elementFromPoint(b.left+b.width/2, b.top+b.height/2);
+        nextHit=Boolean(at&&(at===btn||btn.contains(at)));
+      }
+      let advanced=false;
+      if(nextHit){
+        btn.click();
+        await new Promise(r=>setTimeout(r,800));
+        advanced=!document.querySelector(".feedback.wrong, .feedback.timeout");
+      }
+      return { ok:true, wasFullscreen, stillFullscreen, hasPanel:Boolean(panel), nextHit, advanced };
+    `);
+    if (!fsWrong.ok) {
+      check("全螢幕書寫答錯不會被關在覆蓋層底下", false, fsWrong.why);
+    } else {
+      check("平板攤開計算紙會進全螢幕", fsWrong.wasFullscreen,
+        fsWrong.wasFullscreen ? "" : "前提不成立：計算紙沒有進全螢幕");
+      check("答錯後自動退出全螢幕", !fsWrong.stillFullscreen && fsWrong.hasPanel,
+        fsWrong.stillFullscreen ? "回饋在 fixed 覆蓋層底下，看不到也點不到" : "回饋卡看得到");
+      check("答錯後「下一題」點得到、點了會前進", fsWrong.nextHit && fsWrong.advanced,
+        `按得到=${fsWrong.nextHit} · 有前進=${fsWrong.advanced}`);
+    }
+
     await chrome.send("Emulation.setDeviceMetricsOverride", VIEWPORT);
 
     /* ── 4. console 要乾淨 ── */
