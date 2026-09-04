@@ -2646,14 +2646,68 @@
   // 首頁保留區：錯題 SRS 到期卡 + 練習連勝（含盾牌）迷你熱力圖。
   function renderHomeRetentionRow(records) {
     const srsCard = renderHomeSrsCard(records);
+    const refreshCard = renderHomeSkillRefreshCard(records);
     const streakCard = (records.totalAnswered || 0) && !focusModeOn() ? renderHomeStreakCard(records) : "";
-    if (!srsCard && !streakCard) return "";
+    if (!srsCard && !refreshCard && !streakCard) return "";
     return `
       <section class="home-retention" aria-label="複習與連勝">
         ${srsCard}
+        ${refreshCard}
         ${streakCard}
       </section>
     `;
+  }
+
+  // 技巧回溫：練會的東西也會忘。
+  //
+  // 能力模型早就替每個技巧算好 dueAt（精熟度衰減到 65 的那一天），
+  // 但訓練層一直沒有消費它 —— 錯題有 SRS，**答對的技巧**卻沒有任何
+  // 保持機制：練會之後不再出現，等下次遇到已經忘光。
+  // 這張卡挑「曾經練起來、現在過期」的技巧，開一局 8 題把它們拉回來。
+  function skillRefreshDue(records) {
+    const profile = abilityProfile(records);
+    if (!profile) return [];
+    const now = profile.now || Date.now();
+    return Object.values(profile.skills || {})
+      .filter((entry) =>
+        entry.measured &&
+        entry.mastery !== null &&
+        entry.mastery >= 45 &&
+        entry.subject !== "science" &&
+        entry.dueAt && entry.dueAt <= now &&
+        entry.lastAt && now - entry.lastAt >= 7 * 86400000)
+      .sort((a, b) => (a.dueAt || 0) - (b.dueAt || 0));
+  }
+
+  function renderHomeSkillRefreshCard(records) {
+    const due = skillRefreshDue(records);
+    if (!due.length) return "";
+    const labels = due.slice(0, 3).map((entry) => escapeHtml(entry.label)).join("、");
+    return `
+      <div class="retention-card srs-card is-due">
+        <div class="retention-copy">
+          <p class="section-label">技巧回溫</p>
+          <strong>${due.length} 個技巧太久沒碰</strong>
+          <span>${labels}${due.length > 3 ? "…" : ""} —— 練會的東西也會忘，8 題拉回來。</span>
+        </div>
+        <button class="button" data-action="start-skill-refresh">${icon("zap")}回溫 8 題</button>
+      </div>
+    `;
+  }
+
+  function startSkillRefreshQuiz() {
+    const records = loadRecords();
+    const due = skillRefreshDue(records).slice(0, 6);
+    if (!due.length || !window.BuzzSkillGraph) return;
+    const dueIds = new Set(due.map((entry) => entry.id));
+    const pool = problems.filter((problem) =>
+      ["limits", "derivatives", "integrals", "series"].includes(problem.topic) &&
+      (window.BuzzSkillGraph.skillsForProblem(problem) || []).some((id) => dueIds.has(id)));
+    if (!pool.length) return;
+    selectedMode = "quick";
+    selectedTopic = "all";
+    const ordered = adaptiveShuffle(preferFreshProblems(pool, records), records, seedFromString(`skill-refresh-${Date.now()}`));
+    startQuiz(ordered.slice(0, 8), { modeKey: "quick" });
   }
 
   function renderHomeSrsCard(records) {
@@ -6554,6 +6608,7 @@
     if (action === "mark-proof-blocker") markProofBlocker(actionNode.dataset.proofId, actionNode.dataset.proofBlocker || "");
     if (action === "start-mistakes") startMistakeQuiz(selectedMistakeTopic);
     if (action === "start-srs-review") startSrsReviewQuiz();
+    if (action === "start-skill-refresh") startSkillRefreshQuiz();
     if (action === "start-mistake-triage") {
       const ids = (actionNode.dataset.problemIds || "").split(",").filter(Boolean);
       if (ids.length) startMistakeQuiz("all", ids);
@@ -8342,12 +8397,63 @@
     return result.slice(0, count);
   }
 
+  // 能力模型 → 抽題的三個訊號（2026-09-04）。
+  //
+  // 審計抓到的最大缺口：模型算得出「哪個技巧弱、什麼難度是挑戰點、
+  // 哪些技巧已經反射化」，抽題卻只看題目級／主題級的錯誤率 ——
+  // 產品的差異化核心（kernel/ability.js）一直是只讀不驅動的擺設。
+  //   弱技巧優先   題目所屬技巧的最低精熟度越低越先抽。粒度是 80 個技巧
+  //               節點，不是 4 個主題 —— 而且對「沒做過的題」也有訊號
+  //               （同技巧的其他題教過模型了）。
+  //   難度匹配     抽落在挑戰點附近的 rank：精熟 20 給 R2、精熟 80 給 R5。
+  //               太簡單練不到、太難只剩挫折（desirable difficulty）。
+  //   反射降權     所有技巧都已是反射級的題是舒適區，讓位給該練的。
+  function selectionSkillTerms(problem, profile) {
+    if (!profile || !window.BuzzSkillGraph) return { weakness: 0, fit: 0, overlearned: 0 };
+    const ids = window.BuzzSkillGraph.skillsForProblem(problem) || [];
+    const entries = ids
+      .map((id) => profile.skills[id])
+      .filter((entry) => entry && entry.measured && entry.mastery !== null);
+    if (!entries.length) return { weakness: 0, fit: 0, overlearned: 0 };
+    const weakest = Math.min(...entries.map((entry) => entry.mastery));
+    const targetRank = 1 + Math.round((weakest / 100) * 4);
+    return {
+      weakness: (100 - weakest) / 100,
+      fit: 1 - Math.min(1, Math.abs(problemRank(problem) - targetRank) / 3),
+      overlearned: entries.every((entry) => entry.state === "reflex") ? 1 : 0
+    };
+  }
+
+  // 交錯保證：同一個技巧不連續出現（能換就換，換不了才連著）。
+  // blocked practice 的順手感是假的 —— 上一題剛用過的工具還掛在手上，
+  // 「辨識該用哪個工具」這一步被跳過了，而那正是本產品要練的東西。
+  // 交錯讓每一題都要重新判型（interleaving effect）。
+  function interleaveBySkill(ordered) {
+    const graph = window.BuzzSkillGraph;
+    if (!graph || ordered.length < 3) return ordered;
+    const primaryOf = new Map(ordered.map((problem) => {
+      const ids = graph.skillsForProblem(problem) || [];
+      return [problem.id, ids[0] || problem.topic || ""];
+    }));
+    const rest = ordered.slice();
+    const result = [];
+    while (rest.length) {
+      const lastKey = result.length ? primaryOf.get(result[result.length - 1].id) : null;
+      let index = rest.findIndex((problem) => primaryOf.get(problem.id) !== lastKey);
+      if (index === -1) index = 0;
+      result.push(rest.splice(index, 1)[0]);
+    }
+    return result;
+  }
+
   function adaptiveShuffle(pool, records, seed) {
     const recentIndex = new Map();
     recentProblemIds(records, RECENT_PROBLEM_COOLDOWN).forEach((id, index) => {
       if (!recentIndex.has(id)) recentIndex.set(id, index);
     });
-    return pool
+    // 每次抽題算一次（有快取），synthetic records 算不出來就回 null、各項歸零
+    const profile = abilityProfile(records);
+    const ordered = pool
       .slice()
       .map((problem, index) => {
         const stat = records.problemStats[problem.id] || { correct: 0, wrong: 0, total: 0 };
@@ -8362,14 +8468,17 @@
             ? 0.35 + recentWeight * 0.25
             : 1.05 + recentWeight * 0.65
           : 0;
+        const skill = selectionSkillTerms(problem, profile);
         const randomness = hashUnit(`${seed}-${problem.id}-${index}`);
         return {
           problem,
           score: randomness + problemWeakness * 0.85 + topicWeakness * 0.55 + mistakeBoost - repeatPenalty
+            + skill.weakness * 0.6 + skill.fit * 0.3 - skill.overlearned * 0.45
         };
       })
       .sort((a, b) => b.score - a.score)
       .map((item) => item.problem);
+    return interleaveBySkill(ordered);
   }
 
   function preferFreshProblems(items, records, limit = RECENT_STRONG_AVOID) {

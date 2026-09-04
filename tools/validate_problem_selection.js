@@ -98,6 +98,68 @@ if (radiusCount > 1) {
   failures.push(`exam mode selected too many radius problems: ${radiusCount}`);
 }
 
+/* ── 技巧感知抽題（2026-09-04）────────────────────────────────
+   能力模型接進 adaptiveShuffle 之後，兩個新行為要釘住：
+   1. 弱技巧優先：在「別的題」上把某技巧練爛之後，抽題要偏向
+      該技巧的**其他**題（技巧級的泛化正是模型比題目級錯誤率強的地方）。
+   2. 交錯保證：同一個技巧不連續出現（能換就換）。 */
+
+const graph = global.window.BuzzSkillGraph;
+const bank = global.window.BUZZ_PROBLEMS;
+const byId = new Map(bank.map((problem) => [problem.id, problem]));
+
+// 1. 弱技巧優先。把 u-sub 在 exam-int-005 上答錯 14 次（讓 integral.usub
+//    的精熟度掉到谷底、可信度過門檻），然後拿兩題**沒做過**的 R2 同主題題
+//    對照：一題 u-sub、一題 IBP。多個 seed 下 u-sub 那題要明顯更常排前面。
+const weakRecords = {
+  history: [{
+    finishedAt: new Date().toISOString(),
+    mode: "quick",
+    answers: Array.from({ length: 14 }, () => ({ problemId: "exam-int-005", correct: false, elapsed: 40 }))
+  }],
+  problemStats: {},
+  topicStats: {},
+  mistakes: {}
+};
+const usubProblem = byId.get("hc-usub-006");
+const controlProblem = byId.get("hc-ibp-007");
+if (!usubProblem || !controlProblem) {
+  failures.push("skill-aware test problems missing from bank (hc-usub-006 / hc-ibp-007)");
+} else {
+  let usubFirst = 0;
+  const TRIALS = 60;
+  for (let seed = 0; seed < TRIALS; seed += 1) {
+    const first = api.adaptiveShuffle([usubProblem, controlProblem], weakRecords, seed)[0];
+    if (first.id === usubProblem.id) usubFirst += 1;
+  }
+  if (usubFirst < TRIALS * 0.65) {
+    failures.push(`weak-skill boost too weak: u-sub problem first in only ${usubFirst}/${TRIALS} seeds`);
+  }
+  console.log(`Weak-skill boost: u-sub problem first in ${usubFirst}/${TRIALS} seeds`);
+}
+
+// 2. 交錯保證。兩題 u-sub + 兩題部分分式（同主題、空紀錄 → 只剩隨機分數），
+//    無論隨機排出什麼，輸出必須交錯（2+2 一定排得出 ABAB）。
+const interleavePool = ["exam-int-005", "hc-usub-006", "gap-int-pf-001", "gap-int-pf-003"]
+  .map((id) => byId.get(id))
+  .filter(Boolean);
+if (interleavePool.length !== 4) {
+  failures.push("interleave test problems missing from bank");
+} else {
+  const emptyRecords = { history: [], problemStats: {}, topicStats: {}, mistakes: {} };
+  for (let seed = 0; seed < 20; seed += 1) {
+    const orderedSkills = api.adaptiveShuffle(interleavePool, emptyRecords, seed)
+      .map((problem) => (graph.skillsForProblem(problem) || [])[0] || problem.topic);
+    for (let i = 1; i < orderedSkills.length; i += 1) {
+      if (orderedSkills[i] === orderedSkills[i - 1]) {
+        failures.push(`interleave failed at seed ${seed}: ${orderedSkills.join(" → ")}`);
+        break;
+      }
+    }
+  }
+  console.log("Interleave guard: no adjacent same-skill pairs across 20 seeds");
+}
+
 if (failures.length) {
   failures.forEach((failure) => console.error(`FAIL ${failure}`));
   process.exit(1);
