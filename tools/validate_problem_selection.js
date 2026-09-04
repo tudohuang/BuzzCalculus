@@ -160,6 +160,40 @@ if (interleavePool.length !== 4) {
   console.log("Interleave guard: no adjacent same-skill pairs across 20 seeds");
 }
 
+/* ── 壓力訓練（2026-09-04）────────────────────────────────────
+   1. 沒有能力資料時要能退回一般池（模式照樣能玩，只是失去針對性）。
+   2. 計時遞減：第一題全額、最後一題 60%、下限 15 秒；非壓力模式不動。 */
+
+global.localStorage.setItem("buzzcalculus.records.v1", JSON.stringify({}));
+const pressurePool = api.selectProblemPool(api.modes.pressure, "all");
+if (pressurePool.length !== api.modes.pressure.count) {
+  failures.push(`pressure mode selected ${pressurePool.length} problems instead of ${api.modes.pressure.count}`);
+}
+
+const fakeQuiz = { pressureMode: true, problems: new Array(10), index: 0 };
+const fakeProblem = { timeLimit: 60 };
+if (api.questionTimeLimit(fakeQuiz, fakeProblem) !== 60) {
+  failures.push(`pressure timer should give full time on Q1, got ${api.questionTimeLimit(fakeQuiz, fakeProblem)}`);
+}
+fakeQuiz.index = 9;
+if (api.questionTimeLimit(fakeQuiz, fakeProblem) !== 36) {
+  failures.push(`pressure timer should give 60% on the last question, got ${api.questionTimeLimit(fakeQuiz, fakeProblem)}`);
+}
+if (api.questionTimeLimit(fakeQuiz, { timeLimit: 20 }) !== 15) {
+  failures.push("pressure timer should floor at 15 seconds");
+}
+if (api.questionTimeLimit({ pressureMode: false, problems: new Array(10), index: 9 }, fakeProblem) !== 60) {
+  failures.push("non-pressure sessions must keep the original time limit");
+}
+console.log("Pressure mode: fallback pool + decreasing timer (60 → 36, floor 15) pinned");
+
+// 「今天適合」徽章：零紀錄也必須給得出至少一個帶理由的推薦
+const recos = api.modeRecommendations({ history: [], problemStats: {}, topicStats: {}, mistakes: {} });
+if (!recos.size || [...recos.values()].some((reason) => !reason)) {
+  failures.push("modeRecommendations must always return at least one recommendation with a reason");
+}
+console.log(`Mode recommendations: ${[...recos.entries()].map(([key, why]) => `${key}（${why}）`).join("；")}`);
+
 if (failures.length) {
   failures.forEach((failure) => console.error(`FAIL ${failure}`));
   process.exit(1);
