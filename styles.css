@@ -32,11 +32,14 @@
   color-scheme: dark;
   --ink: #f0eee6;
   --muted: #b9b5aa;
+  /* 深色的卡片邊界原本幾乎看不見（--line #33342f 貼著 --paper #151614，
+     截圖裡首頁的四張磁貼融成一片）。線色與面色各提一階，
+     幅度刻意小 —— 要的是「看得出是卡片」，不是描邊風。 */
   --paper: #151614;
-  --panel: #1f201d;
+  --panel: #22231f;
   --surface: #1a1b19;
-  --line: #33342f;
-  --line-strong: #4c4d47;
+  --line: #3c3d37;
+  --line-strong: #565750;
   --gold: #e4b447;
   --gold-dark: #ffd77a;
   --red: #ef786e;
@@ -169,18 +172,15 @@ button {
   padding: 28px 0 44px;
 }
 
-/* 側欄在場（非作答）時，內容讓出左側 */
+/* 側欄在場（非作答）時，內容讓出左側，並在**剩餘空間置中**。
+   第一版寫 margin: 0 auto 0 212px —— auto 只吃右邊，內容整柱貼著側欄，
+   1440 寬的螢幕右邊留一片死空間（截圖審查抓到的最大問題）。
+   置中的基準是「側欄以外的空間」：側欄是家具，不參與構圖。 */
 .topbar:not(.is-quiz) ~ .screen {
   width: auto;
   max-width: 1040px;
-  margin: 0 auto 0 212px;
+  margin: 0 auto 0 calc(212px + max(0px, (100% - 212px - 1040px) / 2));
   padding: 32px clamp(20px, 4vw, 44px) 56px;
-}
-
-@media (min-width: 1500px) {
-  .topbar:not(.is-quiz) ~ .screen {
-    margin-inline: auto;
-  }
 }
 
 .nav-button {
@@ -2358,6 +2358,12 @@ button,
   gap: 10px;
 }
 
+/* 選項裡的數學是答案本體，不能比題幹小 —— KaTeX 的 inline 預設在
+   選項格裡顯得太細小（\frac 縮成蟻字，截圖審查抓到的）。 */
+.choice-option .katex {
+  font-size: 1.18em;
+}
+
 .choice-option {
   min-height: 64px;
   display: grid;
@@ -3941,6 +3947,12 @@ button,
   .quiz-screen .blackboard {
     height: min(42vh, 330px);
     min-height: 230px;
+  }
+
+  /* 練習模式的「模式：自由」盒在手機上獨占一整列 —— meta 列已經寫著
+     「不計分」，這顆盒子在小螢幕上是純雜訊，藏起來。 */
+  .quiz-screen .timer-box.is-freeform {
+    display: none;
   }
 
   .quiz-screen .board-tools {

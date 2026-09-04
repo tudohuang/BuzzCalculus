@@ -4908,13 +4908,13 @@
                      <span>連勝 ${quiz.currentStreak}</span>`
                   : `<strong>${escapeHtml(quiz.namedExam ? quiz.namedExam.label : modeLabel(quiz.mode))}</strong>
                      <span>第 ${quiz.index + 1} / ${quiz.problems.length} 題</span>
-                     <span>${isPractice ? "練習模式" : `目前分數 ${quiz.score}`}</span>
+                     <span>${isPractice ? "不計分" : `目前分數 ${quiz.score}`}</span>
                      <span>連勝 ${quiz.currentStreak}</span>`}
               </div>
               <div class="progress-bar" aria-label="進度"><span style="width:${progress}%"></span></div>
             </div>
             <div class="timer-cluster">
-              <div class="timer-box ${isDanger}" data-live-box="time" role="timer" aria-live="off">
+              <div class="timer-box ${isDanger} ${noTimer ? "is-freeform" : ""}" data-live-box="time" role="timer" aria-live="off">
                 <span>${timeLabel}</span>
                 <strong data-live="time">${timeValue}</strong>
               </div>
