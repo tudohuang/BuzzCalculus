@@ -73,5 +73,20 @@
   N("app-011", "derivatives", 5, "\\text{13 尺梯子下端以 }5\\,\\tfrac{ft}{s}\\text{ 滑離牆，距牆 }12\\text{ 尺時頂端下滑速率}", "12", "MIT", ["applications", "related-rates"], "x dx/dt + y dy/dt = 0; y=5.");
   N("app-012", "derivatives", 6, "\\text{曲線 }y=\\log x\\text{ 的最大曲率}", "2/(3*sqrt(3))", "Princeton", ["applications", "curvature"], "κ = x/(x^2+1)^{3/2}, max at x=1/√2.");
 
+  // ---- 獨立驗算規格（tools/verify_answers.js 讀）----
+  // 文字敘述題的自動辨識器讀不出結構；這裡把幾何翻譯成目標式／約束
+  // —— 那是題幹的重述，不是解法。驗算端全走數值。
+  const VERIFY = {
+    "app-001": { m: "relatedRate", f: "\\frac{4}{3}\\pi r^3", v: "r", at: 5, given: 100 },
+    "app-002": { m: "constrained", kind: "max", f: "4xy", g: "\\frac{x^2}{9}+\\frac{y^2}{4}", c: 1, positive: true },
+    "app-009": { m: "extremum1d", kind: "max", f: "\\pi\\left(1-\\frac{h^2}{4}\\right)h", v: "h", lo: 0, hi: 2 },
+    "app-010": { m: "extremum1d", kind: "max", f: "\\frac{\\pi}{3}(2h-h^2)h", v: "h", lo: 0, hi: 2 },
+    // 「下滑速率」是正的：對 −y（高度的負值）微分，得到的就是下降速度
+    "app-011": { m: "differential", f: "-\\sqrt{169-x^2}", a: 12, dx: 5 }
+  };
+  problems.forEach((problem) => {
+    if (VERIFY[problem.id]) problem.verify = VERIFY[problem.id];
+  });
+
   window.BUZZ_PROBLEMS = (window.BUZZ_PROBLEMS || []).concat(problems);
 })();

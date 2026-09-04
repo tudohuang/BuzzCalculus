@@ -222,5 +222,15 @@
   num("cx-hm-002", "integrals", 6, "\\int_0^{\\pi/2}\\frac{dx}{1+\\tan^{\\sqrt{2}}x}", "pi/4", ["kings-property", "putnam"], "x→π/2−x 相加得 π/2，任何指數都一樣：π/4。", 130);
   num("cx-hm-004", "derivatives", 6, "f(x)=x\\sin x,\\quad f^{(100)}(0)", "-100", ["higher-derivative", "taylor"], "x sin x 的 x^{100} 係數是 −1/99!，乘 100! 得 −100。", 140);
 
+  // ---- 獨立驗算規格：文字敘述的相關變率題（自動辨識器讀不出結構）----
+  const VERIFY = {
+    "cx-app-003": { m: "relatedRate", f: "\\frac{4}{3}\\pi r^3", v: "r", at: 2, given: 8 },
+    // 「下滑速率」是正的：對 −y 微分
+    "cx-app-004": { m: "differential", f: "-\\sqrt{25-x^2}", a: 3, dx: 1 }
+  };
+  problems.forEach((problem) => {
+    if (VERIFY[problem.id]) problem.verify = VERIFY[problem.id];
+  });
+
   window.BUZZ_PROBLEMS = (window.BUZZ_PROBLEMS || []).concat(problems);
 })();
