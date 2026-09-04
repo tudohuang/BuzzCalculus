@@ -317,6 +317,59 @@ async function run() {
         nextHit, hitDebug
       };
     `);
+    /* ── 3.45 答對的「+分數」toast ── */
+    // 答對 950ms 就自動前進，回饋卡在手機上根本來不及看 ——
+    // 修法是把分數帶到下一題的畫面上當 toast。這條釘住它真的有出現。
+    // 做法純 DOM：搜「正立方體」命中三題（dd-rr-013 體積變率 600、
+    // dd-rr-014 表面積變率 1/96、dd-lin-005 誤差估計 1.5），
+    // 從題幹的關鍵詞判斷抽到哪一題，送出正確答案。
+    await chrome.navigate(`${server.url}/index.html`);
+    await chrome.sleep(800);
+    const toast = await chrome.evaluate(`
+      const c = (n) => { const h=[...document.querySelectorAll("button,a,[data-action]")].find(x=>(x.innerText||"").includes(n)); if(h) h.click(); return !!h; };
+      c("訓練"); await new Promise(r=>setTimeout(r,700));
+      const free=document.querySelector('[data-answer-mode="free"]');
+      if(free) free.click(); await new Promise(r=>setTimeout(r,500));
+      const lib=document.querySelector('[data-action="open-library"]');
+      if(!lib) return { ok:false, why:"找不到題庫" };
+      lib.click(); await new Promise(r=>setTimeout(r,900));
+      const s=document.querySelector("[data-library-search]");
+      if(!s) return { ok:false, why:"沒有搜尋框" };
+      s.value="正立方體"; s.dispatchEvent(new Event("input",{bubbles:true}));
+      await new Promise(r=>setTimeout(r,700));
+      const go=document.querySelector('[data-action="start-library-filter"]');
+      if(!go || go.disabled) return { ok:false, why:"「練目前篩選」不能按" };
+      go.click(); await new Promise(r=>setTimeout(r,1200));
+      const ack=[...document.querySelectorAll("button")].find(b=>b.textContent.includes("知道了"));
+      if(ack){ ack.click(); await new Promise(r=>setTimeout(r,400)); }
+      const input=document.querySelector("#answer");
+      const form=document.querySelector('[data-action="submit-answer"]');
+      if(!input||!form) return { ok:false, why:"不是自己寫模式" };
+      const promptText=document.body.innerText;
+      input.value = promptText.includes("誤差") ? "1.5"
+        : promptText.includes("表面積") ? "1/96" : "600";
+      input.dispatchEvent(new Event("input",{bubbles:true}));
+      if(form.requestSubmit) form.requestSubmit();
+      else form.dispatchEvent(new Event("submit",{bubbles:true,cancelable:true}));
+      // 950ms 自動前進 + 重繪
+      await new Promise(r=>setTimeout(r,1400));
+      const node=document.querySelector(".correct-toast");
+      if(!node) return { ok:true, shown:false };
+      const rect=node.getBoundingClientRect();
+      return {
+        ok:true, shown:true,
+        text:(node.textContent||"").trim(),
+        inViewport: rect.top >= 0 && rect.bottom <= window.innerHeight && rect.width > 0,
+        onNextQuestion: Boolean(document.querySelector("#answer"))
+      };
+    `);
+    if (!toast.ok) {
+      check("答對後下一題畫面出現 +分數 toast", false, toast.why);
+    } else {
+      check("答對後下一題畫面出現 +分數 toast", toast.shown && /答對/.test(toast.text || ""),
+        toast.shown ? `「${toast.text}」· 在視窗內=${toast.inViewport} · 已前進=${toast.onNextQuestion}` : "toast 沒出現（答錯了？還是被結算頁吃掉？）");
+    }
+
     if (!wrongFb.ok) {
       check("手機答錯後版面收成單欄", false, wrongFb.why);
     } else {
