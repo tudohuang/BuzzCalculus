@@ -1052,3 +1052,14 @@ console.log(`Resume smoke: ${json.length} bytes for a 12-question exam, round-tr
   if (api.decodeDuelCode("hello") !== null) throw new Error("亂字串要拒收");
   console.log("好友對戰 smoke: 碼往返一致、成績段完整、壞碼拒收");
 }
+
+// ── 逐步驗證：等價鏈全綠、斷點指得出行數（2026-09-04）──
+{
+  const good = api.checkDerivationSteps(["x^2+2x+1", "(x+1)^2"], "x", null);
+  if (good.error || !good.steps.every((s) => s.ok)) throw new Error("等價的推導鏈被判斷有斷點");
+  const broken = api.checkDerivationSteps(["x^2+2x+1", "(x+1)^2", "x^2+1"], "x", null);
+  if (broken.steps[2].ok || !broken.steps[1].ok) throw new Error("斷點應該落在第 3 行");
+  const junk = api.checkDerivationSteps(["x^2"], "x", null);
+  if (!junk.error) throw new Error("單行輸入應該被拒絕");
+  console.log("逐步驗證 smoke: 等價鏈全綠、斷點指對行、單行拒收");
+}

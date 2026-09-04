@@ -5496,6 +5496,7 @@
             <span>送出前先看預覽</span>
           </div>
         </div>
+        ${compact ? "" : renderStepChecker(problem)}
       </section>
     `;
   }
@@ -6785,6 +6786,7 @@
     if (action === "duel-accept") acceptDuelCode();
     if (action === "copy-duel-code") copyDuelCode();
     if (action === "download-weekly-report") downloadWeeklyReport();
+    if (action === "check-steps") runStepCheck();
     if (action === "start-mistake-triage") {
       const ids = (actionNode.dataset.problemIds || "").split(",").filter(Boolean);
       if (ids.length) startMistakeQuiz("all", ids);
@@ -8598,6 +8600,78 @@
         .filter((entry) => entry.measured && entry.gap !== null && entry.gap >= threshold && entry.subject !== "science")
         .map((entry) => entry.id)
     );
+  }
+
+  // ── 逐步驗證：從「對答案」升級成「對過程」──────────────────────
+  //
+  // 判分器一直有兩式等價的數值比對（checkExpression 多點代入），
+  // 但只拿來對最終答案。這裡把它接到**推導的每一行**：
+  // 每行跟上一行比等價，第一個 ✗ 就是你算錯的那一步 ——
+  // 「答案錯了」與「我第 3 行就錯了」是兩種完全不同的學習回饋。
+  function checkDerivationSteps(lines, variable, problem) {
+    const steps = (lines || [])
+      .map((line) => String(line || "").replace(/^\s*=+\s*/, "").trim())
+      .filter(Boolean);
+    if (steps.length < 2) return { steps: [], error: "至少要兩行（原式一行、變形一行）才有東西可以比。" };
+    const normalized = steps.map((raw) => ({ raw, js: normalizeExpression(raw) }));
+    const results = [{ raw: normalized[0].raw, ok: normalized[0].js ? true : false, message: normalized[0].js ? "起點" : "這行讀不懂 —— 用 2*x、sin(x)、log(x) 這種寫法" }];
+    for (let index = 1; index < normalized.length; index += 1) {
+      const previous = normalized[index - 1];
+      const current = normalized[index];
+      if (!previous.js || !current.js) {
+        results.push({ raw: current.raw, ok: false, message: "這行讀不懂 —— 用 2*x、sin(x)、log(x) 這種寫法" });
+        continue;
+      }
+      const verdict = checkExpression(previous.js, current.js, variable || "x", null);
+      results.push({
+        raw: current.raw,
+        ok: verdict.correct,
+        message: verdict.correct ? "與上一行等價" : "從這裡開始跟上一行不相等 —— 斷點在這一步"
+      });
+    }
+    // 加碼：最後一行如果就是正確答案，直接說
+    let finalNote = "";
+    if (problem) {
+      try {
+        const graded = checkAnswer(problem, steps[steps.length - 1]);
+        if (graded.correct) finalNote = "而且最後一行就是正確答案。";
+      } catch (_error) { /* 判不了就不說 */ }
+    }
+    return { steps: results, error: "", finalNote };
+  }
+
+  function runStepCheck() {
+    const field = app.querySelector("#derivation-steps");
+    const current = getCurrentProblem();
+    if (!field || !quiz || !current) return;
+    const lines = String(field.value || "").split("\n");
+    const outcome = checkDerivationSteps(lines, current.variable || "x", current);
+    quiz.stepText = field.value;
+    quiz.stepCheck = { problemId: current.id, ...outcome };
+    render();
+  }
+
+  function renderStepChecker(problem) {
+    const check = quiz.stepCheck && quiz.stepCheck.problemId === problem.id ? quiz.stepCheck : null;
+    const text = quiz.stepText && check ? quiz.stepText : (quiz.stepText || "");
+    const rows = check && check.steps.length
+      ? `<ol class="step-check-list">${check.steps
+          .map((step) => `<li class="${step.ok ? "is-ok" : "is-break"}"><code>${escapeHtml(step.raw)}</code><span>${escapeHtml(step.message)}</span></li>`)
+          .join("")}</ol>${check.finalNote ? `<p class="step-check-final">${escapeHtml(check.finalNote)}</p>` : ""}`
+      : check && check.error
+        ? `<p class="panel-note">${escapeHtml(check.error)}</p>`
+        : "";
+    return `
+      <details class="step-checker" data-keep="step-checker">
+        <summary>${icon("git-branch")}逐步驗證 —— 每一步寫一行，找出你從哪裡開始算錯</summary>
+        <textarea id="derivation-steps" rows="4" placeholder="x^2+2x+1&#10;(x+1)^2" spellcheck="false">${escapeHtml(text)}</textarea>
+        <div class="action-row">
+          <button class="button secondary" data-action="check-steps" type="button">${icon("check")}檢查每一步</button>
+        </div>
+        ${rows}
+        <p class="panel-note">每行跟上一行做多點代入的等價比對 —— 只驗「有沒有變錯」，不管你用哪招變的。</p>
+      </details>
+    `;
   }
 
   // ── 本週戰報（Canvas 生成 PNG，全部本地）──────────────────────
@@ -12912,6 +12986,7 @@
       renderHomeExamCard,
       encodeDuelCode,
       decodeDuelCode,
+      checkDerivationSteps,
       weeklyShareData,
       causePrescription,
       selectCooldownPool,
