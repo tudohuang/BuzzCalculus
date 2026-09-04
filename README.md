@@ -47,7 +47,7 @@ Boss
 
 ## Current Features
 
-- **<!--claim:problems-->1759<!--/claim--> 題微積分題庫**
+- **<!--claim:problems-->1860<!--/claim--> 題微積分題庫**
 - **46 個技巧題包**
 - **主線路線圖**
 - **每日任務**
@@ -271,11 +271,11 @@ Technique: Frullani-type parameter integral
 
 | Type | Count |
 | --- | ---: |
-| Limits | <!--claim:limits-->294<!--/claim--> |
-| Derivatives / Multivariable derivatives | <!--claim:derivatives-->615<!--/claim--> |
-| Integrals / Multiple integrals | <!--claim:integrals-->653<!--/claim--> |
-| Series | <!--claim:series-->197<!--/claim--> |
-| **Total** | **<!--claim:problems-->1759<!--/claim-->** |
+| Limits | <!--claim:limits-->306<!--/claim--> |
+| Derivatives / Multivariable derivatives | <!--claim:derivatives-->638<!--/claim--> |
+| Integrals / Multiple integrals | <!--claim:integrals-->671<!--/claim--> |
+| Series | <!--claim:series-->245<!--/claim--> |
+| **Total** | **<!--claim:problems-->1860<!--/claim-->** |
 
 Proof Lab currently includes **41 proof problems**. Proof problems are not included in timed sessions or daily missions.
 
@@ -411,7 +411,7 @@ node tools/smoke_app_render.js
 Current version:
 
 ```text
-v1.2.0
+v1.2.1
 ```
 
 Current target:
