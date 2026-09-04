@@ -17,6 +17,7 @@
 const latex = require("./latex.js");
 const numeric = require("./numeric.js");
 const setInterval = require("./set_interval_verify.js");
+const taylor = require("./taylor_rational.js");
 
 /* ── LaTeX 結構切割 ────────────────────────────────────────── */
 
@@ -138,19 +139,39 @@ function stripTrailingText(source) {
   return { body, note: note.trim() };
 }
 
+// 題幹尾巴的「\text{ 在 }x=1」「\text{ at }x=-1」：在某個點求值。
+// 微分題把它當 |_{x=1}；級數題把該值代進通項（收斂判定在端點的題型）。
+const EVAL_AT_TAIL = /(?:\\quad|\\qquad|\\,|\\;|\\ |\s)*\\text\{\s*(?:在|at)\s*\}\s*([a-zA-Z])\s*=\s*(.+?)\s*$/;
+
 function topLevelOperator(rawPrompt) {
   const withoutText = stripTrailingText(String(rawPrompt || ""));
-  const stripped = stripDomain(withoutText.body);
+  let source = withoutText.body;
+  let evalAt = null;
+  const evalTail = source.match(EVAL_AT_TAIL);
+  if (evalTail) {
+    evalAt = { variable: evalTail[1], value: evalTail[2] };
+    source = source.slice(0, evalTail.index);
+  }
+  const stripped = stripDomain(source);
   const parsed = parseOperator(stripped.body);
   if (parsed) {
     parsed.domain = stripped.domain;
     parsed.note = withoutText.note;
+    if (evalAt) {
+      if ((parsed.op === "derivative" || parsed.op === "partial") && parsed.at === null && evalAt.variable === parsed.variable) {
+        parsed.at = evalAt.value;
+      } else {
+        parsed.evalAt = evalAt;
+      }
+    }
   }
   return parsed;
 }
 
 function parseOperator(prompt) {
-  const source = String(prompt || "");
+  // \left.\frac{d^{20}}{dx^{20}}(…)\right|_{x=0} 的開頭 \left. 只是配對用的
+  // 空定界符 —— 剝掉它，讓微分算子落在字串開頭
+  const source = String(prompt || "").replace(/^\\left\.\s*/, "");
 
   const limitAt = source.indexOf("\\lim");
   if (limitAt === 0) {
@@ -220,7 +241,8 @@ const NAMED_TARGETS = { "\\infty": Infinity, "-\\infty": -Infinity, "\\pi": Math
 // 把界限／目標值（可能是 0、1、\pi/2、\infty）求成一個數
 function evaluateBound(text) {
   if (text === null || text === undefined) return null;
-  const trimmed = String(text).trim();
+  // \tfrac/\dfrac 是排版差異不是數學差異，一律當 \frac
+  const trimmed = String(text).trim().replace(/\\[td]frac/g, "\\frac");
   if (NAMED_TARGETS[trimmed] !== undefined) return NAMED_TARGETS[trimmed];
   if (trimmed === "\\infty" || trimmed === "+\\infty") return Infinity;
   const compiled = latex.compile(trimmed, []);
@@ -358,6 +380,12 @@ function seriesTermGrowth(term, x) {
   // 真正的階乘型（比值 ~ n·x）在任何視窗都是倍數級的加速，抓得到。
   const accelThreshold = 1 + Math.max(0.02, 2 / N);
   if (Number.isFinite(g1) && Number.isFinite(g2) && g1 > 0 && g2 > g1 * accelThreshold) return Infinity;
+  // 對稱的另一面：比值明顯**遞減**是 xⁿ/n! 型的指紋 —— 終究收斂。
+  // 沒有這條的話，x 大到溢位把取樣視窗壓到項的峰值之前，
+  // 視窗裡只看得到「還在變大」的段落，整條實軸收斂的級數會被判成
+  // 在 x≈176 發散（Σxⁿ/n! 實測）。冪級數在半徑外的比值趨於常數，
+  // 多項式因子的暫態只有 2^(k/2N)，同一個門檻擋得住。
+  if (Number.isFinite(g1) && Number.isFinite(g2) && g2 > 0 && g2 < g1 * (2 - accelThreshold)) return 0;
   const product = c * a;
   if (product === 0) return 0;
   return Math.pow(product / (b * b), 1 / (2 * N));
@@ -390,6 +418,11 @@ function scanConvergenceEdge(term, from, direction) {
 function verifyRadiusOfConvergence(problem, body, variable, compileAnswer) {
   const term = latex.compile(body, [variable, "x"]);
   const wrapped = (n, x) => term(n, x);
+  // text 答案的半徑題只有兩種可比的主張：「無窮大」與「0」
+  const textClaim = problem.answerKind === "text"
+    ? String(problem.canonical || (problem.answers || [])[0] || "")
+    : null;
+  const claimsInfinite = textClaim !== null && /infinit|無窮|infty|∞/i.test(textClaim);
 
   // 起點必須真的落在收斂區內 —— (x-2)^n/n 這種中心在 2 的級數，
   // x=0 是發散點，從那裡起掃整片都發散、半徑會變 0（實測踩到）。
@@ -401,17 +434,30 @@ function verifyRadiusOfConvergence(problem, body, variable, compileAnswer) {
     if (seriesTermGrowth(wrapped, candidate) <= 1) { start = candidate; break; }
   }
   if (start === null) {
+    if (textClaim !== null) {
+      if (/^0|零/.test(textClaim.trim())) return { status: "ok", method: "radius", detail: "整條實軸都發散 → R=0，與答案一致" };
+      if (claimsInfinite) return { status: "mismatch", method: "radius", detail: `答案說 R=∞，但數值上處處發散（R=0）` };
+      return { status: "unsupported", reason: `text 答案「${textClaim}」不是可比對的半徑` };
+    }
     return compareNumbers("radius", compileAnswer([])(), 0, 1e-3);
   }
   const upper = scanConvergenceEdge(wrapped, start, +1);
   const lower = scanConvergenceEdge(wrapped, start, -1);
   if (!Number.isFinite(upper) || !Number.isFinite(lower)) {
     // 兩邊都掃不到發散：半徑無限大
+    if (textClaim !== null) {
+      if (claimsInfinite) return { status: "ok", method: "radius", detail: "掃不到發散邊緣 → R=∞，與答案一致" };
+      return { status: "mismatch", method: "radius", detail: `數值上半徑是 ∞，答案卻說「${textClaim}」` };
+    }
     const actualInf = compileAnswer([])();
     if (!Number.isFinite(actualInf)) return { status: "ok", method: "radius", detail: "∞ ≈ ∞" };
     return { status: "unverified", reason: "掃不到發散邊緣（半徑可能是 ∞），答案卻是有限值 " + actualInf };
   }
   const radius = (upper - lower) / 2;
+  if (textClaim !== null) {
+    if (claimsInfinite) return { status: "mismatch", method: "radius", detail: `答案說 R=∞，但數值上在 ${format(radius)} 就發散` };
+    return { status: "unsupported", reason: `text 答案「${textClaim}」不是可比對的半徑` };
+  }
   const actual = compileAnswer([])();
   // 容差 1e-3：階乘比級數溢位得早、取樣視窗小，量測誤差就是 1e-4 這一級。
   // 錯的半徑跟對的差的是倍數，1e-3 擋得住。
@@ -463,6 +509,28 @@ function taylorCoefficientOf(f, k) {
 }
 
 function verifyTaylorCoefficient(problem, exprTex, k, compileAnswer) {
+  // 先試有理級數（精確、階數不限），展不開再退回 Chebyshev 萃取（k ≤ 8）
+  let js = null;
+  try { js = latex.toJs(exprTex.replace(/\\left|\\right/g, "")); } catch (_error) { js = null; }
+  if (js && latex.freeVariables(js).every((name) => name === "x")) {
+    const coefficients = taylor.taylorCoefficients(js, k);
+    if (coefficients) {
+      const exact = taylor.parseExactAnswer(problem.answer);
+      if (exact) {
+        if (taylor.fEq(exact, coefficients[k])) {
+          return { status: "ok", method: "taylor-coefficient", detail: `${problem.answer} = a_${k}（有理級數，精確比對）` };
+        }
+        return {
+          status: "mismatch",
+          method: "taylor-coefficient",
+          detail: `答案 ${problem.answer}，有理級數精確算出 ${coefficients[k].n}${coefficients[k].d === 1n ? "" : "/" + coefficients[k].d}`,
+          actual: taylor.fToNumber(exact),
+          expected: taylor.fToNumber(coefficients[k])
+        };
+      }
+      return compareNumbers("taylor-coefficient", compileAnswer([])(), taylor.fToNumber(coefficients[k]), 1e-9);
+    }
+  }
   if (k > 8) return { status: "unsupported", reason: "x^" + k + " 的係數超出數值萃取的穩定範圍（k ≤ 8）" };
   const f = latex.compile(exprTex, ["x"]);
   const coefficient = taylorCoefficientOf(f, k);
@@ -509,11 +577,37 @@ function recognizeTextForm(rawPrompt) {
     }
   }
 
-  // Coefficient of x^k in f
-  const coefficient = prompt.match(/^\\text\{Coefficient of \}x\^\{?(\d+)\}?\\text\{ in \}(.+)$/);
+  // 「Σ… 的收斂半徑」：中文後綴形
+  const radiusSuffix = prompt.match(/^(.+?)(?:\\ |\s)*\\text\{\s*的收斂半徑\s*\}$/);
+  if (radiusSuffix) {
+    const series = topLevelOperator(radiusSuffix[1].trim());
+    if (series && series.op === "series") {
+      return (problem, compileAnswer) => verifyRadiusOfConvergence(problem, series.body, series.variable, compileAnswer);
+    }
+  }
+
+  // Coefficient of x^k in f（大寫／小寫／中文「求 x^k 在 f 的係數」三種寫法）
+  const coefficient = prompt.match(/^\\text\{[Cc]oefficient of \}x(?:\^\{?(\d+)\}?)?\\text\{ in \}(.+?)(?:=[^=]*\\cdots)?$/) ||
+    prompt.match(/^\\text\{求 \}x(?:\^\{?(\d+)\}?)?\\text\{ 在 \}(.+?)\\text\{ 的係數\}$/);
   if (coefficient) {
-    const k = Number(coefficient[1]);
+    const k = Number(coefficient[1] || 1);
     const expr = coefficient[2].trim();
+    // Bessel 函數：latex 編不動 J_n。係數用定義級數精確算 ——
+    // J_n(x)=Σ(−1)^m/(m!(m+n)!)(x/2)^{n+2m}，這是定義不是解題步驟。
+    // （Chebyshev 萃取在 k=8 時 a₈·r⁸ ≈ 1e-10，已經在積分噪音層，量不到。）
+    const besselIn = expr.match(/^J_\{?(\d)\}?\(x\)$/);
+    if (besselIn) {
+      const n = Number(besselIn[1]);
+      return (problem, compileAnswer) => {
+        if (k < n || (k - n) % 2 !== 0) {
+          return compareNumbers("taylor-coefficient", compileAnswer([])(), 0, 1e-9);
+        }
+        const m = (k - n) / 2;
+        const fact = (v) => { let r = 1n; for (let i = 2n; i <= BigInt(v); i += 1n) r *= i; return r; };
+        const exact = taylor.frac((m % 2 === 0 ? 1n : -1n), fact(m) * fact(m + n) * (2n ** BigInt(k)));
+        return compareNumbers("taylor-coefficient", compileAnswer([])(), taylor.fToNumber(exact), 1e-9);
+      };
+    }
     return (problem, compileAnswer) => verifyTaylorCoefficient(problem, expr, k, compileAnswer);
   }
 
@@ -642,10 +736,12 @@ function verifyParametric(problem, xTex, yTex, order, atT, compileAnswer) {
     return compareNumbers("parametric", compileAnswer([])(), target(tValue), 1e-3);
   }
   const answerFn = compileAnswer(["t"]);
-  return compareFunctions(answerFn, (t) => ({ value: target(t), error: Math.abs(target(t)) * 1e-4 + 1e-6 }), {
+  // 誤差回報要壓在 compareFunctions 的「不可信就跳過」門檻（1e-4·|b|）之下，
+  // 不然 |斜率|≥1 的取樣點全部被當成不可信丟掉（實測只剩 2 點）。
+  return report("parametric", compareFunctions(answerFn, (t) => ({ value: target(t), error: Math.abs(target(t)) * 2e-5 + 1e-7 }), {
     tolerance: 1e-3,
     points: [0.4, 0.7, 1.1, 1.6, 2.2, -0.6, -1.3]
-  });
+  }), "答案應該等於參數式的導數");
 }
 
 // 卷積型 F(x) = ∫₀^x body(x,t) dt：答案是 x 的函數。
@@ -654,10 +750,10 @@ function verifyConvolution(problem, bodyTex, compileAnswer) {
   const g = latex.compile(bodyTex, ["x", "t"]);
   const F = (x) => numeric.integrate((t) => g(x, t), 0, x).value;
   const answerFn = compileAnswer(["x"]);
-  return compareFunctions(answerFn, (x) => ({ value: F(x), error: Math.abs(F(x)) * 1e-5 + 1e-8 }), {
+  return report("convolution", compareFunctions(answerFn, (x) => ({ value: F(x), error: Math.abs(F(x)) * 1e-5 + 1e-8 }), {
     tolerance: 1e-4,
     points: [0.3, 0.7, 1.1, 1.6, 2.1]
-  });
+  }), "答案應該等於 ∫₀ˣ 的卷積值");
 }
 
 // 多變數句型的數值工具
@@ -761,7 +857,30 @@ function verifyWronskian(problem, fTex, gTex, compileAnswer) {
     return compareNumbers("wronskian", compileAnswer([])(), w(0.7), 1e-3);
   }
   const answerFn = compileAnswer(["x"]);
-  return compareFunctions(answerFn, (x) => ({ value: w(x), error: Math.abs(w(x)) * 1e-4 + 1e-7 }), { tolerance: 1e-3 });
+  // 2e-5：要低於 compareFunctions 的 1e-4·|b| 跳點門檻（同 parametric 的教訓）
+  return report("wronskian", compareFunctions(answerFn, (x) => ({ value: w(x), error: Math.abs(w(x)) * 2e-5 + 1e-7 }), { tolerance: 1e-3 }), "答案應該等於 Wronskian");
+}
+
+// 三函數的 Wronskian：3×3 行列式，二階導用中央差分。
+function verifyWronskian3(problem, fTexes, compileAnswer) {
+  const fns = fTexes.map((tex) => latex.compile(tex, ["x"]));
+  const rowFor = (f, x) => {
+    const h = 1e-3;
+    return [f(x), numeric.derivative(f, x).value, (f(x + h) - 2 * f(x) + f(x - h)) / (h * h)];
+  };
+  const w = (x) => {
+    const m = fns.map((f) => rowFor(f, x));
+    return (
+      m[0][0] * (m[1][1] * m[2][2] - m[1][2] * m[2][1]) -
+      m[1][0] * (m[0][1] * m[2][2] - m[0][2] * m[2][1]) +
+      m[2][0] * (m[0][1] * m[1][2] - m[0][2] * m[1][1])
+    );
+  };
+  if (problem.answerKind === "numeric") {
+    return compareNumbers("wronskian", compileAnswer([])(), w(0.7), 1e-2);
+  }
+  const answerFn = compileAnswer(["x"]);
+  return report("wronskian", compareFunctions(answerFn, (x) => ({ value: w(x), error: Math.abs(w(x)) * 2e-5 + 1e-6 }), { tolerance: 1e-2 }), "答案應該等於三函數的 Wronskian");
 }
 
 function recognizeRound2(problem) {
@@ -770,20 +889,27 @@ function recognizeRound2(problem) {
   const res = prompt.match(/^\\operatorname\{Res\}_\{z=([^}]+)\}(.+)$/);
   if (res) return (compileAnswer) => verifyResidue(problem, res[1], res[2], compileAnswer);
 
-  // 疊積分：\int_a^b\int_c^d body \,dX\,dY（界限全是常數式）
-  const iter = prompt.match(/^\\int_(\{[^{}]+\}|\S)\^(\{[^{}]+\}|\S)\s*\\int_(\{[^{}]+\}|\S)\^(\{[^{}]+\}|\S)(.+?)\\,d([a-zA-Z])(?:\\,| )*d([a-zA-Z])$/);
+  // 疊積分：\int_a^b\int_c^d body \,dX\,dY（界限全是常數式）。
+  // 變數可以是希臘字母指令（dθ）—— 先換成佔位名再編譯。
+  const iter = prompt.match(/^\\int_(\{[^{}]+\}|\S)\^(\{[^{}]+\}|\S)\s*\\int_(\{[^{}]+\}|\S)\^(\{[^{}]+\}|\S)(.+?)\\,d(\\[a-zA-Z]+|[a-zA-Z])(?:\\,| )*d(\\[a-zA-Z]+|[a-zA-Z])$/);
   if (iter) {
     const strip = (t) => t.replace(/^\{|\}$/g, "");
     try {
+      let body = iter[5];
+      const varName = (tex, fallback) => {
+        if (!tex.startsWith("\\")) return tex;
+        body = body.split(tex).join(fallback);
+        return fallback;
+      };
       const spec = {
         outerFrom: latex.compile(strip(iter[1]), [])(),
         outerTo: latex.compile(strip(iter[2]), [])(),
         innerFrom: latex.compile(strip(iter[3]), [])(),
         innerTo: latex.compile(strip(iter[4]), [])(),
-        body: iter[5],
-        innerVar: iter[6],
-        outerVar: iter[7]
+        innerVar: varName(iter[6], "u"),
+        outerVar: varName(iter[7], "v")
       };
+      spec.body = body;
       if ([spec.outerFrom, spec.outerTo, spec.innerFrom, spec.innerTo].every(Number.isFinite)) {
         return (compileAnswer) => verifyIteratedIntegral(problem, spec, compileAnswer);
       }
@@ -820,10 +946,1467 @@ function recognizeRound2(problem) {
   const min2 = prompt.match(/^\\min_\{x,y\}\\left\((.+)\\right\)$/);
   if (min2) return (compileAnswer) => verifyMultivarSentence(problem, "min2d", { f: min2[1] }, compileAnswer);
 
-  const wron = prompt.match(/^\\text\{Wronskian \}W\(([^,]+),\\? ?([^)]+)\)$/);
-  if (wron) return (compileAnswer) => verifyWronskian(problem, wron[1], wron[2], compileAnswer);
+  // 逗號後常寫 "\ "（LaTeX 的硬空白）。舊版用 \\? 去吃它，
+  // 結果把 \cos 的反斜線吃掉、剩下 cos 被拆成 c·o·s 三個變數 —— 只剝 "\ "。
+  const wron = prompt.match(/^\\text\{Wronskian \}W\((.+)\)$/);
+  if (wron) {
+    const args = wron[1].split(",").map((s) => s.replace(/^\\ /, "").trim()).filter(Boolean);
+    if (args.length === 2) return (compileAnswer) => verifyWronskian(problem, args[0], args[1], compileAnswer);
+    if (args.length === 3) return (compileAnswer) => verifyWronskian3(problem, args, compileAnswer);
+  }
+
+  // f(x)=…, f'(a)：定義式＋在某點的導數值（' 的個數 = 階數）
+  const fdef = prompt.match(/^f\(x\)=(.+?),(?:\\quad|\\qquad|\\ |\s)*f('{1,3})\((.+?)\)$/);
+  if (fdef && problem.answerKind === "numeric") {
+    return (compileAnswer) => {
+      const f = latex.compile(fdef[1], ["x"]);
+      const at = evaluateBound(fdef[3]);
+      const order = fdef[2].length;
+      const expected = numeric.derivative(f, at, { order });
+      return compareNumbers("derivative-at-point", compileAnswer([])(), expected.value, order > 1 ? 1e-4 : 1e-6);
+    };
+  }
+
+  // 區域積分：∬/∭ 帶區域下標，或 \iint_D … ,\quad D=\{…\}
+  let region = prompt.match(/^\\iint_\{(.+?)\}\s*(.*?)\\,dA$/);
+  if (region) {
+    const spec = region;
+    return (compileAnswer) => verifyRegionIntegral(problem, 2, spec[2] || "1", spec[1], compileAnswer);
+  }
+  region = prompt.match(/^\\iiint_\{(.+?)\}\s*(.*?)\\,dV$/);
+  if (region) {
+    const spec = region;
+    return (compileAnswer) => verifyRegionIntegral(problem, 3, spec[2] || "1", spec[1], compileAnswer);
+  }
+  region = prompt.match(/^\\iint_([A-Z])\s*(.*?)\\,dA\s*,?(?:\\quad|\\qquad|\\ |\s)*\1=\\\{(.+?)\\\}$/);
+  if (region) {
+    const spec = region;
+    return (compileAnswer) => verifyRegionIntegral(problem, 2, spec[2] || "1", spec[3], compileAnswer);
+  }
+
+  // 「Area of REGION」：f=1 的二維區域積分（橢圓、二次型都吃）
+  const areaOf = prompt.match(/^\\text\{Area of \}(.+)$/);
+  if (areaOf) return (compileAnswer) => verifyRegionIntegral(problem, 2, "1", areaOf[1], compileAnswer);
+
+  // 「Volume of the ball/cylinder/… }REGION」：f=1 的三維區域積分。
+  // 敘述詞（ball、cylinder）只是給人看的 —— 區域的數學描述在後面。
+  const volOf = prompt.match(/^\\text\{Volume of (?:the )?[^{}]*\}(.+)$/);
+  if (volOf) return (compileAnswer) => verifyRegionIntegral(problem, 3, "1", volOf[1], compileAnswer);
+
+  // 極座標面積：Area enclosed by r=f(θ) for/from a≤θ≤b → ½∫r²dθ
+  const polar = prompt.match(/^\\text\{Area enclosed by \}r=(.+?)\\text\{ (?:for|from) \}(.+)$/);
+  if (polar) {
+    return (compileAnswer) => {
+      const chain = polar[2].split(/(\\le(?:q)?|\\ge(?:q)?|<|>)/).map((s) => s.trim());
+      if (chain.length !== 5 || !/\\theta/.test(chain[2])) {
+        return { status: "unsupported", reason: "θ 的範圍解析不了：" + polar[2] };
+      }
+      const from = evaluateBound(chain[0]);
+      const to = evaluateBound(chain[4]);
+      // 換成 "(t)" 而不是 "t"：\sin\theta 直接接 "t" 會黏成 \sint
+      const r = latex.compile(polar[1].split("\\theta").join("(t)"), ["t"]);
+      const area = numeric.integrate((t) => 0.5 * r(t) * r(t), from, to);
+      return compareNumbers("polar-area", compileAnswer([])(), area.value, toleranceFor(area, 1e-5));
+    };
+  }
 
   return null;
+}
+
+/* ── 區域積分：從不等式描述建指示函數，數值積出面積／體積／∬f ── */
+
+// 區域描述 → 指示函數。吃得下：x\ge0、x+y\le2、x^2+y^2\le4、
+// 1\le x^2+y^2\le4、x,y>0（孤兒變數套下一個比較）、0\le z\le3。
+function compileRegion(regionTex, vars) {
+  const cleaned = String(regionTex)
+    .replace(/\\left|\\right/g, "")
+    .replace(/\\[,;!]|\\quad|\\qquad/g, " ")
+    .replace(/\\\{|\\\}/g, "")
+    .replace(/\\ /g, " ");
+  const parts = cleaned.split(",").map((s) => s.trim()).filter(Boolean);
+  const predicates = [];
+  const pendingVars = [];
+  const OP = /(\\le(?:q)?|\\ge(?:q)?|<|>)/;
+  for (const piece of parts) {
+    if (/^[a-zA-Z]$/.test(piece)) { pendingVars.push(piece); continue; }
+    const segments = piece.split(OP).map((s) => s.trim());
+    if (segments.length !== 3 && segments.length !== 5) return null;
+    const rel = (leftTex, opTex, rightTex) => {
+      const g = latex.compile(`(${leftTex})-(${rightTex})`, vars);
+      const sign = /\\ge|>/.test(opTex) ? -1 : 1;
+      predicates.push((pt) => sign * g(...pt) <= 1e-12);
+    };
+    rel(segments[0], segments[1], segments[2]);
+    if (segments.length === 5) rel(segments[2], segments[3], segments[4]);
+    if (pendingVars.length) {
+      pendingVars.splice(0).forEach((v) => rel(v, segments[1], segments[2]));
+    }
+  }
+  if (pendingVars.length || !predicates.length) return null;
+  return (pt) => predicates.every((p) => p(pt));
+}
+
+// 沿一條線掃出「在區域內」的一段段區間，端點用對分收斂到 ~1e-12。
+function regionRuns(at, lo, hi, steps) {
+  const refine = (outside, insidePoint) => {
+    let a = outside;
+    let b = insidePoint;
+    for (let i = 0; i < 40; i += 1) {
+      const mid = (a + b) / 2;
+      if (at(mid)) b = mid; else a = mid;
+    }
+    return (a + b) / 2;
+  };
+  const runs = [];
+  let prev = lo;
+  let prevInside = at(lo);
+  if (prevInside) runs.push([lo, null]);
+  for (let i = 1; i <= steps; i += 1) {
+    const t = lo + ((hi - lo) * i) / steps;
+    const now = at(t);
+    if (now && !prevInside) runs.push([refine(prev, t), null]);
+    if (!now && prevInside) runs[runs.length - 1][1] = refine(t, prev);
+    prevInside = now;
+    prev = t;
+  }
+  if (prevInside && runs.length && runs[runs.length - 1][1] === null) runs[runs.length - 1][1] = hi;
+  return runs.filter((run) => run[1] !== null && run[1] > run[0]);
+}
+
+// 粗網格掃出區域的包圍盒（[-8,8]^dim 內），找不到就回 null。
+function regionBox(inside, dim) {
+  const R = 8;
+  const N = dim === 2 ? 200 : 48;
+  const bounds = Array.from({ length: dim }, () => [Infinity, -Infinity]);
+  let found = false;
+  const probe = (pt) => {
+    if (!inside(pt)) return;
+    found = true;
+    pt.forEach((value, i) => {
+      if (value < bounds[i][0]) bounds[i][0] = value;
+      if (value > bounds[i][1]) bounds[i][1] = value;
+    });
+  };
+  const h = (2 * R) / N;
+  if (dim === 2) {
+    for (let i = 0; i <= N; i += 1) for (let j = 0; j <= N; j += 1) probe([-R + i * h, -R + j * h]);
+  } else {
+    for (let i = 0; i <= N; i += 1) for (let j = 0; j <= N; j += 1) for (let k = 0; k <= N; k += 1) probe([-R + i * h, -R + j * h, -R + k * h]);
+  }
+  if (!found) return null;
+  // 邊界格可能剛好沒踩到區域邊緣，各方向放一格當緩衝
+  return bounds.map(([lo, hi]) => [lo - 1.5 * h, hi + 1.5 * h]);
+}
+
+function verifyRegionIntegral(problem, dim, bodyTex, regionTex, compileAnswer) {
+  const vars = dim === 2 ? ["x", "y"] : ["x", "y", "z"];
+  const inside = compileRegion(regionTex, vars);
+  if (!inside) return { status: "unsupported", reason: "區域描述解析不了：" + regionTex };
+  const box = regionBox(inside, dim);
+  if (!box) return { status: "unverified", reason: "在 [-8,8] 內掃不到區域" };
+  const isOne = bodyTex.trim() === "" || bodyTex.trim() === "1";
+  const f = isOne ? null : latex.compile(bodyTex, vars);
+
+  if (dim === 2) {
+    // 外層對 x 自適應積分；每個 x 用掃描＋對分找出 y 的合法區間再積內層。
+    const column = (x) => regionRuns((y) => inside([x, y]), box[1][0], box[1][1], 240)
+      .reduce((sum, [a, b]) => sum + (f ? numeric.integrate((y) => f(x, y), a, b).value : b - a), 0);
+    const total = numeric.integrate(column, box[0][0], box[0][1]);
+    if (!Number.isFinite(total.value)) return { status: "unverified", reason: "區域積分數值不收斂" };
+    return compareNumbers("region-integral", compileAnswer([])(), total.value, toleranceFor(total, 1e-4));
+  }
+
+  // 三維：x-y 中點網格 × z 的區間量測，兩個解析度做 Richardson 外插。
+  const sheet = (N) => {
+    const hx = (box[0][1] - box[0][0]) / N;
+    const hy = (box[1][1] - box[1][0]) / N;
+    let sum = 0;
+    for (let i = 0; i < N; i += 1) {
+      const x = box[0][0] + (i + 0.5) * hx;
+      for (let j = 0; j < N; j += 1) {
+        const y = box[1][0] + (j + 0.5) * hy;
+        const runs = regionRuns((z) => inside([x, y, z]), box[2][0], box[2][1], 60);
+        for (const [a, b] of runs) {
+          sum += hx * hy * (f ? numeric.integrate((z) => f(x, y, z), a, b).value : b - a);
+        }
+      }
+    }
+    return sum;
+  };
+  const coarse = sheet(60);
+  const fine = sheet(120);
+  const value = fine + (fine - coarse) / 3;
+  const error = Math.abs(fine - coarse) / 3;
+  if (!Number.isFinite(value)) return { status: "unverified", reason: "區域積分數值不收斂" };
+  return compareNumbers("region-integral", compileAnswer([])(), value, toleranceFor({ value, error }, 1e-3));
+}
+
+/* ── 第三輪句型：特殊函數值、∇ 家族、ODE、概念判定 ─────────── */
+
+// 深度感知的頂層逗號切割（跳過 {} 與 () 內的逗號）
+function splitTopLevel(text, separator) {
+  const parts = [];
+  let depth = 0;
+  let current = "";
+  for (let i = 0; i < text.length; i += 1) {
+    const ch = text[i];
+    if (ch === "{" || ch === "(") depth += 1;
+    if (ch === "}" || ch === ")") depth -= 1;
+    if (ch === separator && depth === 0) { parts.push(current); current = ""; continue; }
+    current += ch;
+  }
+  parts.push(current);
+  return parts;
+}
+
+// ⟨P,Q,R⟩ → 各分量的 LaTeX。找不到就回 null。
+function parseAngleVector(tex) {
+  const match = String(tex).match(/\\langle(.+?)\\rangle/);
+  if (!match) return null;
+  const parts = splitTopLevel(match[1], ",").map((s) => s.replace(/^\\ /, "").trim());
+  return { parts, full: match[0] };
+}
+
+// 數值偏導工具（3 變數）
+function partial3(f, pt, index, h = 1e-4) {
+  const shift = (d) => pt.map((v, i) => (i === index ? v + d : v));
+  return (f(...shift(h)) - f(...shift(-h))) / (2 * h);
+}
+
+function compileField3(componentTexes) {
+  const fns = componentTexes.map((tex) => latex.compile(tex, ["x", "y", "z"]));
+  return {
+    at: (pt) => fns.map((f) => f(...pt)),
+    div: (pt) => fns.reduce((sum, f, i) => sum + partial3(f, pt, i), 0),
+    curl: (pt) => [
+      partial3(fns[2], pt, 1) - partial3(fns[1], pt, 2),
+      partial3(fns[0], pt, 2) - partial3(fns[2], pt, 0),
+      partial3(fns[1], pt, 0) - partial3(fns[0], pt, 1)
+    ]
+  };
+}
+
+function laplacianOf(f, pt, h = 1e-3) {
+  let sum = 0;
+  for (let i = 0; i < pt.length; i += 1) {
+    const up = pt.map((v, j) => (j === i ? v + h : v));
+    const dn = pt.map((v, j) => (j === i ? v - h : v));
+    sum += (f(...up) - 2 * f(...pt) + f(...dn)) / (h * h);
+  }
+  return sum;
+}
+
+// 「在多個取樣點都等於同一個常數」→ 回傳那個常數；否則 NaN
+function constantOver(fn, points, tolerance = 1e-3) {
+  const values = points.map(fn).filter(Number.isFinite);
+  if (values.length < 3) return Number.NaN;
+  const spread = Math.max(...values) - Math.min(...values);
+  if (spread > tolerance * Math.max(1, Math.abs(values[0]))) return Number.NaN;
+  return values[0];
+}
+
+const FIELD_SAMPLES = [[0.7, 0.4, 1.1], [1.3, -0.6, 0.5], [-0.8, 1.2, -0.4], [0.5, 0.9, 1.7]];
+
+function parsePoint(tex) {
+  return splitTopLevel(tex, ",").map((s) => evaluateBound(s));
+}
+
+function recognizeRound3(problem) {
+  const prompt = String(problem.prompt || "");
+  const numericAnswer = problem.answerKind === "numeric";
+
+  // ── 特殊函數的值：全部用積分表示驗，跟「背值」這條解題路徑無關 ──
+  const beta = prompt.match(/^B\((.+?),(.+?)\)$/);
+  if (beta && numericAnswer) {
+    return (compileAnswer) => {
+      const a = evaluateBound(beta[1]);
+      const b = evaluateBound(beta[2]);
+      const value = numeric.integrate((t) => Math.pow(t, a - 1) * Math.pow(1 - t, b - 1), 0, 1);
+      return compareNumbers("beta-integral", compileAnswer([])(), value.value, toleranceFor(value, 1e-5));
+    };
+  }
+  const gamma = prompt.match(/^\\Gamma\((.+?)\)$/);
+  if (gamma && numericAnswer) {
+    return (compileAnswer) => {
+      const s = evaluateBound(gamma[1]);
+      const value = numeric.integrate((t) => Math.pow(t, s - 1) * Math.exp(-t), 0, Infinity);
+      return compareNumbers("gamma-integral", compileAnswer([])(), value.value, toleranceFor(value, 1e-5));
+    };
+  }
+  const bessel = prompt.match(/^J_\{?(-?\d)\}?\((.+?)\)$/);
+  if (bessel && numericAnswer) {
+    return (compileAnswer) => {
+      const n = Number(bessel[1]);
+      const x = evaluateBound(bessel[2]);
+      const m = Math.abs(n);
+      const value = numeric.integrate((t) => Math.cos(m * t - x * Math.sin(t)), 0, Math.PI);
+      const jn = (value.value / Math.PI) * (n < 0 && m % 2 === 1 ? -1 : 1);
+      return compareNumbers("bessel-integral", compileAnswer([])(), jn, 1e-6);
+    };
+  }
+
+  // ── ∇ 家族 ──
+  // \nabla\cdot⟨…⟩、\nabla\cdot(向量式)，可帶 \text{ at }(…)
+  const divForm = prompt.match(/^\\nabla\\cdot\s*(?:\\left)?\(?(.+?)\)?(?:\\right\)?)?(?:\\text\{ at \}\((.+?)\))?$/);
+  if (divForm && numericAnswer && /\\langle/.test(divForm[1]) && !/\\nabla|\\times/.test(divForm[1])) {
+    const vec = parseAngleVector(divForm[1]);
+    if (vec) {
+      // ⟨A,B,C⟩ 外面可能包了係數（f·F、除以 √…）：把 ⟨…⟩ 換成各分量原地展開
+      const componentTexes = vec.parts.map((part) => divForm[1].split(vec.full).join(`(${part})`));
+      const at = divForm[2] ? parsePoint(divForm[2]) : null;
+      return (compileAnswer) => {
+        const field = compileField3(componentTexes.length === 3 ? componentTexes : [...componentTexes, "0"]);
+        const value = at ? field.div(at) : constantOver((pt) => field.div(pt), FIELD_SAMPLES);
+        if (!Number.isFinite(value)) return { status: "unverified", reason: "散度不是常數但題目沒給點" };
+        return compareNumbers("field-div", compileAnswer([])(), value, 1e-3);
+      };
+    }
+  }
+
+  // \text{z-component of }\nabla\times⟨…⟩
+  const curlZ = prompt.match(/^\\text\{z-component of \}\\nabla\\times(.+)$/);
+  if (curlZ && numericAnswer) {
+    const vec = parseAngleVector(curlZ[1]);
+    if (vec) {
+      return (compileAnswer) => {
+        const field = compileField3(vec.parts.length === 3 ? vec.parts : [...vec.parts, "0"]);
+        const value = constantOver((pt) => field.curl(pt)[2], FIELD_SAMPLES);
+        if (!Number.isFinite(value)) return { status: "unverified", reason: "旋度 z 分量不是常數" };
+        // 數值微分的噪音地板：渦旋場的 curl z 恆為 0，但取樣會回 2e-8 —— 那是 0
+        const cleaned = Math.abs(value) < 5e-3 ? 0 : value;
+        return compareNumbers("field-curl", compileAnswer([])(), cleaned, 1e-3);
+      };
+    }
+  }
+
+  // \nabla^2(…) / \Delta(…)，可帶 \text{ at }(…)
+  const lapForm = prompt.match(/^(?:\\nabla\^2|\\Delta)\s*(?:\\left)?\((.+?)\)?(?:\\right\))?(?:\\text\{ at \}\((.+?)\))?$/);
+  if (lapForm && numericAnswer) {
+    return (compileAnswer) => {
+      const bodyJs = latex.toJs(lapForm[1]);
+      const vars = ["x", "y", "z"].filter((v) => latex.freeVariables(bodyJs).includes(v));
+      const f = latex.compile(lapForm[1], vars);
+      const at = lapForm[2] ? parsePoint(lapForm[2]).slice(0, vars.length) : null;
+      const sample = (pt) => laplacianOf(f, pt.slice(0, vars.length));
+      const value = at ? sample(at) : constantOver(sample, FIELD_SAMPLES);
+      if (!Number.isFinite(value)) return { status: "unverified", reason: "Laplacian 不是常數但題目沒給點" };
+      const cleaned = Math.abs(value) < 5e-3 ? 0 : value;
+      return compareNumbers("field-laplacian", compileAnswer([])(), cleaned, 1e-2);
+    };
+  }
+
+  // 恆等式：\nabla\times(\nabla f)、\nabla\cdot(\nabla\times F)。
+  // f/F 沒給的話用固定的多項式測試場 —— 恆等式對所有場成立，這樣驗是合法的。
+  const curlGrad = prompt.match(/^(?:\\left\|)?\\nabla\\times\(\\nabla f\)(?:\\right\|)?(?:,\\quad f=(.+))?$/);
+  if (curlGrad && numericAnswer) {
+    return (compileAnswer) => {
+      const f = latex.compile(curlGrad[1] || "x^2y+y z^2+3x z", ["x", "y", "z"]);
+      const grad = ["x", "y", "z"].map((_, i) => (x, y, z) => partial3(f, [x, y, z], i));
+      const curl = (pt) => [
+        partial3((...a) => grad[2](...a), pt, 1) - partial3((...a) => grad[1](...a), pt, 2),
+        partial3((...a) => grad[0](...a), pt, 2) - partial3((...a) => grad[2](...a), pt, 0),
+        partial3((...a) => grad[1](...a), pt, 0) - partial3((...a) => grad[0](...a), pt, 1)
+      ];
+      const magnitude = Math.max(...FIELD_SAMPLES.map((pt) => Math.hypot(...curl(pt))));
+      const cleaned = magnitude < 5e-2 ? 0 : magnitude;
+      return compareNumbers("identity-curl-grad", compileAnswer([])(), cleaned, 1e-3);
+    };
+  }
+  const divCurl = prompt.match(/^\\nabla\\cdot\(\\nabla\\times\\mathbf\{?F\}?\)(?:,\\quad \\mathbf\{?F\}?=(.+))?$/);
+  if (divCurl && numericAnswer) {
+    return (compileAnswer) => {
+      const vec = divCurl[1] ? parseAngleVector(divCurl[1]) : { parts: ["x^2y", "y z^2", "x z + y^2"] };
+      const field = compileField3(vec.parts);
+      const divOfCurl = (pt) => {
+        let sum = 0;
+        for (let i = 0; i < 3; i += 1) {
+          const h = 1e-3;
+          const up = pt.map((v, j) => (j === i ? v + h : v));
+          const dn = pt.map((v, j) => (j === i ? v - h : v));
+          sum += (field.curl(up)[i] - field.curl(dn)[i]) / (2 * h);
+        }
+        return sum;
+      };
+      const magnitude = Math.max(...FIELD_SAMPLES.map((pt) => Math.abs(divOfCurl(pt))));
+      const cleaned = magnitude < 5e-2 ? 0 : magnitude;
+      return compareNumbers("identity-div-curl", compileAnswer([])(), cleaned, 1e-3);
+    };
+  }
+
+  // |\nabla\times F|，可帶 at，F=⟨…⟩ 在後面
+  const curlMag = prompt.match(/^\\left\|\\nabla\\times\\mathbf\{?F\}?\\right\|(?:\\text\{ at \}\((.+?)\))?,\\quad \\mathbf\{?F\}?=(.+)$/);
+  if (curlMag && numericAnswer) {
+    const vec = parseAngleVector(curlMag[2]);
+    if (vec) {
+      return (compileAnswer) => {
+        const field = compileField3(vec.parts);
+        const sample = (pt) => Math.hypot(...field.curl(pt));
+        const value = curlMag[1] ? sample(parsePoint(curlMag[1])) : constantOver(sample, FIELD_SAMPLES, 5e-2);
+        if (!Number.isFinite(value)) return { status: "unverified", reason: "|curl| 不是常數但題目沒給點" };
+        const cleaned = Math.abs(value) < 5e-3 ? 0 : value;
+        return compareNumbers("field-curl", compileAnswer([])(), cleaned, 1e-2);
+      };
+    }
+  }
+
+  // D_{(a,b)/\sqrt2}(f)\text{ at }(…)：方向導數（方向已含正規化）
+  const dirOp = prompt.match(/^D_\{\((.+?)\)\/\\sqrt\{?(\d+)\}?\}\((.+?)\)\\text\{ at \}\((.+?)\)$/);
+  if (dirOp && numericAnswer) {
+    return (compileAnswer) => {
+      const direction = parsePoint(dirOp[1]);
+      const norm = Math.sqrt(Number(dirOp[2]));
+      const f = latex.compile(dirOp[3], ["x", "y"]);
+      const at = parsePoint(dirOp[4]);
+      const value = (partial3((x, y) => f(x, y), at, 0) * direction[0] + partial3((x, y) => f(x, y), at, 1) * direction[1]) / norm;
+      return compareNumbers("directional", compileAnswer([])(), value, 1e-4);
+    };
+  }
+
+  // f=… 在 (…) 的最大方向導數 → |∇f|
+  const maxDir = prompt.match(/^f=(.+?)\\text\{ 在 \}\((.+?)\)\\text\{ 的最大方向導數\}$/);
+  if (maxDir && numericAnswer) {
+    return (compileAnswer) => {
+      const bodyJs = latex.toJs(maxDir[1]);
+      const vars = ["x", "y", "z"].filter((v) => latex.freeVariables(bodyJs).includes(v));
+      const f = latex.compile(maxDir[1], vars);
+      const at = parsePoint(maxDir[2]).slice(0, vars.length);
+      const grad = vars.map((_, i) => partial3((...a) => f(...a), at, i));
+      return compareNumbers("gradient-magnitude", compileAnswer([])(), Math.hypot(...grad), 1e-4);
+    };
+  }
+
+  // f=… 在 (…) 沿指向 (…) 方向的方向導數
+  const towardDir = prompt.match(/^f=(.+?)\\text\{ 在 \}\((.+?)\)\\text\{ 沿指向 \}\((.+?)\)\\text\{ 方向的方向導數\}$/);
+  if (towardDir && numericAnswer) {
+    return (compileAnswer) => {
+      const f = latex.compile(towardDir[1], ["x", "y"]);
+      const at = parsePoint(towardDir[2]);
+      const target = parsePoint(towardDir[3]);
+      const direction = [target[0] - at[0], target[1] - at[1]];
+      const norm = Math.hypot(...direction);
+      const value = (partial3((x, y) => f(x, y), at, 0) * direction[0] + partial3((x, y) => f(x, y), at, 1) * direction[1]) / norm;
+      return compareNumbers("directional", compileAnswer([])(), value, 1e-4);
+    };
+  }
+
+  // ∫_C ∇(f)·dr from (a,b) to (c,d)：沿直線段直接積 ∇f·r′
+  const gradLine = prompt.match(/^\\int_C \\nabla\((.+?)\)\\cdot d\\mathbf r\\text\{ from \}\((.+?)\)\\text\{ to \}\((.+?)\)$/);
+  if (gradLine && numericAnswer) {
+    return (compileAnswer) => {
+      const f = latex.compile(gradLine[1], ["x", "y"]);
+      const from = parsePoint(gradLine[2]);
+      const to = parsePoint(gradLine[3]);
+      const value = numeric.integrate((t) => {
+        const pt = [from[0] + t * (to[0] - from[0]), from[1] + t * (to[1] - from[1])];
+        return partial3((x, y) => f(x, y), pt, 0) * (to[0] - from[0]) + partial3((x, y) => f(x, y), pt, 1) * (to[1] - from[1]);
+      }, 0, 1);
+      return compareNumbers("gradient-line-integral", compileAnswer([])(), value.value, toleranceFor(value, 1e-4));
+    };
+  }
+
+  // ── ODE 句型：y'…=…,\ y(0)=…(,\ y'(0)=…)\.\ y=? ──
+  // 驗算跟解法無關：把答案代回方程看殘差＋核對初始條件。
+  const odeForm = prompt.match(/^(y'{1,2}.*?)((?:,\\? ?y'?\(0\)=[^,.]+)+)\.\\? ?y=\?$/);
+  if (odeForm && (problem.answerKind === "expression" || problem.answerKind === "antiderivative")) {
+    return (compileAnswer) => verifyOdePrompt(problem, odeForm[1], odeForm[2], compileAnswer);
+  }
+
+  // ── 概念判定（text 答案，但主張可以數值檢驗）──
+  // Classify the critical point (a,b) of f=…
+  const classify = prompt.match(/^\\text\{Classify the critical point \}\((.+?)\)\\text\{ of \}f=(.+)$/);
+  if (classify && problem.answerKind === "text") {
+    return (compileAnswer) => {
+      void compileAnswer;
+      const at = parsePoint(classify[1]);
+      const f = latex.compile(classify[2], ["x", "y"]);
+      const h = 1e-3;
+      const fxx = (f(at[0] + h, at[1]) - 2 * f(...at) + f(at[0] - h, at[1])) / (h * h);
+      const fyy = (f(at[0], at[1] + h) - 2 * f(...at) + f(at[0], at[1] - h)) / (h * h);
+      const fxy = (f(at[0] + h, at[1] + h) - f(at[0] + h, at[1] - h) - f(at[0] - h, at[1] + h) + f(at[0] - h, at[1] - h)) / (4 * h * h);
+      const det = fxx * fyy - fxy * fxy;
+      const truth = det < -1e-4 ? "saddle" : det > 1e-4 ? (fxx > 0 ? "min" : "max") : null;
+      if (!truth) return { status: "unverified", reason: "Hessian 退化，二階判別無法下結論" };
+      const says = String(problem.canonical || (problem.answers || [])[0] || "");
+      const claim = /saddle|鞍/i.test(says) ? "saddle" : /min|極小/i.test(says) ? "min" : /max|極大/i.test(says) ? "max" : null;
+      if (!claim) return { status: "unsupported", reason: `答案「${says}」讀不出分類` };
+      if (claim === truth) return { status: "ok", method: "critical-classify", detail: `Hessian 判別 det=${format(det)} → ${truth}` };
+      return { status: "mismatch", method: "critical-classify", detail: `答案說 ${claim}，Hessian 判別是 ${truth}（det=${format(det)}, fxx=${format(fxx)}）` };
+    };
+  }
+
+  // Is u=… harmonic? / Is u=…, v=… holomorphic …?
+  const harmonic = prompt.match(/^\\text\{Is \}u=(.+?)\\text\{ harmonic\??\}$/);
+  if (harmonic && problem.answerKind === "text") {
+    return (compileAnswer) => {
+      void compileAnswer;
+      const f = latex.compile(harmonic[1], ["x", "y"]);
+      const worst = Math.max(...FIELD_SAMPLES.map((pt) => Math.abs(laplacianOf(f, [pt[0], pt[1]]))));
+      const truth = worst < 5e-2;
+      const says = String(problem.canonical || (problem.answers || [])[0] || "");
+      const claim = /^(yes|harmonic|是|調和)/i.test(says.trim());
+      if (claim === truth) return { status: "ok", method: "harmonic-check", detail: `Δu 最大 ${format(worst)} → ${truth ? "調和" : "不調和"}` };
+      return { status: "mismatch", method: "harmonic-check", detail: `答案說${claim ? "調和" : "不調和"}，數值上 Δu 最大 ${format(worst)}` };
+    };
+  }
+  const cauchyRiemann = prompt.match(/^\\text\{Is \}u=(.+?),\\? ?v=(.+?)\\text\{ holomorphic[^}]*\}$/);
+  if (cauchyRiemann && problem.answerKind === "text") {
+    return (compileAnswer) => {
+      void compileAnswer;
+      const u = latex.compile(cauchyRiemann[1], ["x", "y"]);
+      const v = latex.compile(cauchyRiemann[2], ["x", "y"]);
+      const worst = Math.max(...FIELD_SAMPLES.map((pt) => {
+        const p2 = [pt[0], pt[1]];
+        return Math.max(
+          Math.abs(partial3((x, y) => u(x, y), p2, 0) - partial3((x, y) => v(x, y), p2, 1)),
+          Math.abs(partial3((x, y) => u(x, y), p2, 1) + partial3((x, y) => v(x, y), p2, 0))
+        );
+      }));
+      const truth = worst < 1e-4;
+      const says = String(problem.canonical || (problem.answers || [])[0] || "");
+      const claim = /^(yes|holomorphic|analytic|是|全純|解析)/i.test(says.trim());
+      if (claim === truth) return { status: "ok", method: "cauchy-riemann", detail: `CR 殘差最大 ${format(worst)}` };
+      return { status: "mismatch", method: "cauchy-riemann", detail: `答案說${claim ? "全純" : "不全純"}，CR 殘差最大 ${format(worst)}` };
+    };
+  }
+
+  // \lim_{n→∞} n^k \sup_{0≤x≤1} body：sup 用網格＋黃金分割逼，再走數列梯子
+  const supLim = prompt.match(/^\\lim_\{n\\to\\infty\}n(?:\^\{?(\d)\}?)?\\sup_\{0\\le x\\le1\}(.+)$/);
+  if (supLim && numericAnswer) {
+    return (compileAnswer) => {
+      const k = Number(supLim[1] || 1);
+      const f = latex.compile(supLim[2], ["x", "n"]);
+      const supAt = (n) => {
+        let bestX = 0;
+        let best = -Infinity;
+        for (let i = 0; i <= 400; i += 1) {
+          const x = i / 400;
+          const value = f(x, n);
+          if (value > best) { best = value; bestX = x; }
+        }
+        let lo = Math.max(0, bestX - 1 / 400);
+        let hi = Math.min(1, bestX + 1 / 400);
+        for (let i = 0; i < 60; i += 1) {
+          const m1 = lo + (hi - lo) * 0.382;
+          const m2 = lo + (hi - lo) * 0.618;
+          if (f(m1, n) < f(m2, n)) lo = m1; else hi = m2;
+        }
+        return f((lo + hi) / 2, n);
+      };
+      const g = (n) => Math.pow(n, k) * supAt(n);
+      const values = [64, 128, 256, 512, 1024].map(g);
+      // Richardson：g(n) = L + c/n → 2·g(2n) − g(n) 收斂快一階
+      const extrapolated = [];
+      for (let i = 0; i + 1 < values.length; i += 1) extrapolated.push(2 * values[i + 1] - values[i]);
+      const last = extrapolated[extrapolated.length - 1];
+      const spread = Math.abs(extrapolated[extrapolated.length - 1] - extrapolated[extrapolated.length - 2]);
+      return compareNumbers("sup-limit", compileAnswer([])(), last, Math.max(1e-4, (30 * spread) / Math.max(1, Math.abs(last))));
+    };
+  }
+
+  return null;
+}
+
+/* ── 第四輪句型：隱函數、約束極值、旋轉體、曲線形狀、參數積分 ── */
+
+// 隱函數 F(x,y)=0 在 (x0,y0) 的 dy/dx：Newton 解 y(x) 再數值微分
+// （跟 EXPLICIT_METHODS.implicit 同一條獨立路徑）
+function implicitSlopeAt(F, x0, y0) {
+  if (Math.abs(F(x0, y0)) > 1e-6) throw new Error(`(${x0}, ${y0}) 不在曲線上，F = ${format(F(x0, y0))}`);
+  const solveY = (x) => {
+    let y = y0;
+    for (let i = 0; i < 200; i += 1) {
+      const slope = numeric.derivative((t) => F(x, t), y).value;
+      if (!Number.isFinite(slope) || slope === 0) break;
+      y -= F(x, y) / slope;
+      if (Math.abs(F(x, y)) < 1e-13) break;
+    }
+    return y;
+  };
+  return numeric.derivative(solveY, x0).value;
+}
+
+// f'' 的零點（帶符號變換）：掃描＋對分。回傳 x 陣列。
+function inflectionPoints(f, lo = -8, hi = 8) {
+  const second = (x) => {
+    const h = 1e-4;
+    return (f(x + h) - 2 * f(x) + f(x - h)) / (h * h);
+  };
+  const zeros = [];
+  const push = (x) => {
+    if (!zeros.some((z) => Math.abs(z - x) < 1e-4)) zeros.push(x);
+  };
+  // 格點不能踩在整數上：x⁴−6x² 的反曲點在 ±1，如果 ±1 正好是取樣點，
+  // f″ 在那裡是精確的 0，「前後異號」永遠不成立（0 乘什麼都不是負的）。
+  // 掃描起點加一個無理偏移，零點就一定落在兩個取樣點之間。
+  const OFFSET = 0.0137;
+  const STEPS = 800;
+  let prev = null;
+  for (let i = 0; i <= STEPS; i += 1) {
+    const x = lo + OFFSET + ((hi - lo) * i) / STEPS;
+    const value = second(x);
+    if (!Number.isFinite(value)) { prev = null; continue; }
+    if (prev && prev.value * value < 0) {
+      let a = prev.x;
+      let b = x;
+      for (let j = 0; j < 60; j += 1) {
+        const mid = (a + b) / 2;
+        if (second(a) * second(mid) <= 0) b = mid; else a = mid;
+      }
+      push((a + b) / 2);
+    }
+    prev = { x, value };
+  }
+  return zeros;
+}
+
+// 約束極值：在 g(vars)=c 的流形上網格＋Newton 消去最後一個變數，取極值。
+function constrainedExtremum(objective, constraint, dim, wantMax, positiveOnly) {
+  const solveLast = (fixed, seed) => {
+    let z = seed;
+    for (let i = 0; i < 80; i += 1) {
+      const g = constraint(...fixed, z);
+      const dg = numeric.derivative((t) => constraint(...fixed, t), z).value;
+      if (!Number.isFinite(dg) || dg === 0) return null;
+      const next = z - g / dg;
+      if (!Number.isFinite(next)) return null;
+      if (Math.abs(next - z) < 1e-13) return next;
+      z = next;
+    }
+    return Math.abs(constraint(...fixed, z)) < 1e-9 ? z : null;
+  };
+  const lo = positiveOnly ? 1e-3 : -12;
+  const hi = 12;
+  let best = null;
+  const consider = (vars) => {
+    if (positiveOnly && vars.some((v) => v <= 0)) return;
+    const value = objective(...vars);
+    if (!Number.isFinite(value)) return;
+    if (!best || (wantMax ? value > best.value : value < best.value)) best = { value, vars };
+  };
+  const seeds = [1, -1, 3, -3, 0.3];
+  const N = dim === 2 ? 600 : 60;
+  if (dim === 2) {
+    for (let i = 0; i <= N; i += 1) {
+      const x = lo + ((hi - lo) * i) / N;
+      for (const seed of seeds) {
+        const y = solveLast([x], seed);
+        if (y !== null) consider([x, y]);
+      }
+    }
+  } else {
+    for (let i = 0; i <= N; i += 1) {
+      for (let j = 0; j <= N; j += 1) {
+        const x = lo + ((hi - lo) * i) / N;
+        const y = lo + ((hi - lo) * j) / N;
+        for (const seed of seeds) {
+          const z = solveLast([x, y], seed);
+          if (z !== null) consider([x, y, z]);
+        }
+      }
+    }
+  }
+  if (!best) return null;
+  // 局部收斂：對前 dim−1 個變數做縮步長的座標搜尋
+  let step = dim === 2 ? (hi - lo) / N : (hi - lo) / N;
+  for (let round = 0; round < 60 && step > 1e-9; round += 1) {
+    let moved = false;
+    for (let axis = 0; axis < dim - 1; axis += 1) {
+      for (const delta of [step, -step]) {
+        const trial = best.vars.slice(0, dim - 1);
+        trial[axis] += delta;
+        const last = solveLast(trial, best.vars[dim - 1]);
+        if (last === null) continue;
+        const vars = [...trial, last];
+        if (positiveOnly && vars.some((v) => v <= 0)) continue;
+        const value = objective(...vars);
+        if (Number.isFinite(value) && (wantMax ? value > best.value : value < best.value)) {
+          best = { value, vars };
+          moved = true;
+        }
+      }
+    }
+    if (!moved) step /= 2;
+  }
+  return best.value;
+}
+
+// 曲率 κ = |y''| / (1+y'²)^{3/2}（數值導數）
+function curvatureAt(f, x) {
+  const d1 = numeric.derivative(f, x).value;
+  const h = 1e-4;
+  const d2 = (f(x + h) - 2 * f(x) + f(x - h)) / (h * h);
+  return Math.abs(d2) / Math.pow(1 + d1 * d1, 1.5);
+}
+
+function recognizeRound4(problem) {
+  const prompt = String(problem.prompt || "");
+  const numericAnswer = problem.answerKind === "numeric";
+
+  // 隱函數在點的 dy/dx：EQ,\quad \frac{dy}{dx}\text{ 在 }(a,b)
+  //                或 EQ,\ \left.\frac{dy}{dx}\right|_{(a,b)}
+  const implicitAt = prompt.match(/^(.+?)=(.+?),\\?\s*(?:\\quad)?\s*\\frac\{dy\}\{dx\}\\text\{ 在 \}\((.+?)\)$/) ||
+    prompt.match(/^(.+?)=(.+?),\\?\s*\\left\.\\frac\{dy\}\{dx\}\\right\|_\{\((.+?)\)\}$/);
+  if (implicitAt && numericAnswer && /y/.test(implicitAt[1] + implicitAt[2])) {
+    return (compileAnswer) => {
+      const F = latex.compile(`(${implicitAt[1]})-(${implicitAt[2]})`, ["x", "y"]);
+      const point = parsePoint(implicitAt[3]);
+      return compareNumbers("implicit-at-point", compileAnswer([])(), implicitSlopeAt(F, point[0], point[1]), 1e-4);
+    };
+  }
+
+  // Find y' from EQ：答案是 x,y 的式子 —— 在曲線上取樣比對
+  const implicitExpr = prompt.match(/^\\text\{Find \}y'\\text\{ from \}(.+?)=(.+)$/);
+  if (implicitExpr && problem.answerKind === "expression") {
+    return (compileAnswer) => {
+      const F = latex.compile(`(${implicitExpr[1]})-(${implicitExpr[2]})`, ["x", "y"]);
+      const answerFn = compileAnswer(["x", "y"]);
+      let checked = 0;
+      for (const x0 of [0.6, 1.1, 1.7, -0.8, 2.3]) {
+        for (const seed of [1, -1, 2, -2]) {
+          let y = seed;
+          for (let i = 0; i < 120; i += 1) {
+            const dFy = numeric.derivative((t) => F(x0, t), y).value;
+            if (!Number.isFinite(dFy) || dFy === 0) { y = Number.NaN; break; }
+            y -= F(x0, y) / dFy;
+            if (Math.abs(F(x0, y)) < 1e-12) break;
+          }
+          if (!Number.isFinite(y) || Math.abs(F(x0, y)) > 1e-9) continue;
+          const slope = implicitSlopeAt(F, x0, y);
+          const claimed = answerFn(x0, y);
+          if (!Number.isFinite(slope) || !Number.isFinite(claimed)) continue;
+          if (Math.abs(slope) > 1e6) continue;
+          checked += 1;
+          if (!numeric.close(claimed, slope, 1e-4)) {
+            return { status: "mismatch", method: "implicit-expression", detail: `在曲線上的點 (${x0}, ${format(y)})：答案給 ${format(claimed)}，數值斜率 ${format(slope)}` };
+          }
+          break;
+        }
+        if (checked >= 4) break;
+      }
+      if (checked < 3) return { status: "unverified", reason: `曲線上可用的取樣點只有 ${checked} 個` };
+      return { status: "ok", method: "implicit-expression", detail: `${checked} 個曲線上的點斜率一致` };
+    };
+  }
+
+  // W(f,g)\text{ at }x=a
+  const wronAt = prompt.match(/^W\((.+)\)\\text\{ at \}x=(.+)$/);
+  if (wronAt && numericAnswer) {
+    const args = wronAt[1].split(",").map((s) => s.replace(/^\\ /, "").trim());
+    if (args.length === 2) {
+      return (compileAnswer) => {
+        const f = latex.compile(args[0], ["x"]);
+        const g = latex.compile(args[1], ["x"]);
+        const at = evaluateBound(wronAt[2]);
+        const value = f(at) * numeric.derivative(g, at).value - numeric.derivative(f, at).value * g(at);
+        return compareNumbers("wronskian", compileAnswer([])(), value, 1e-4);
+      };
+    }
+  }
+
+  // Hessian 行列式的三種寫法
+  const hessianForm = prompt.match(/^\\det H_f\((.+?)\),\\quad f=(.+)$/) ||
+    prompt.match(/^\\text\{Hessian determinant of \}f\(x,y\)=(.+?)\\text\{ at \}\((.+?)\)$/) ||
+    prompt.match(/^\\text\{求 \}f\(x,y\)=(.+?)\\text\{ 在 \}\((.+?)\)\\text\{ 的 Hessian determinant\}$/);
+  if (hessianForm && numericAnswer) {
+    // \det H_f 的參數順序是 (點, f)，其他兩種是 (f, 點)
+    const isDetForm = prompt.startsWith("\\det");
+    const fTex = isDetForm ? hessianForm[2] : hessianForm[1];
+    const point = parsePoint(isDetForm ? hessianForm[1] : hessianForm[2]);
+    return (compileAnswer) => verifyHessianDet(problem, fTex, point, compileAnswer);
+  }
+
+  // |∇f(a,b)|²：\text{若 }f(x,y)=…,\ \text{求 }|\nabla f(a,b)|^2
+  const gradSq = prompt.match(/^\\text\{若 \}f\(x,y\)=(.+?),\\?\s*\\text\{求 \}\|\\nabla f\((.+?)\)\|\^2$/);
+  if (gradSq && numericAnswer) {
+    return (compileAnswer) => {
+      const f = latex.compile(gradSq[1], ["x", "y"]);
+      const at = parsePoint(gradSq[2]);
+      const gx = partial3((x, y) => f(x, y), at, 0);
+      const gy = partial3((x, y) => f(x, y), at, 1);
+      return compareNumbers("gradient-magnitude", compileAnswer([])(), gx * gx + gy * gy, 1e-4);
+    };
+  }
+
+  // \text{求 }f(x,y)=…\text{ 在 }(a,b)\text{ 沿 }(u,v)\text{ 的方向導數}
+  const dirZh = prompt.match(/^\\text\{求 \}f\(x,y\)=(.+?)\\text\{ 在 \}\((.+?)\)\\text\{ 沿 \}\((.+?)\)\\text\{ 的方向導數\}$/);
+  if (dirZh && numericAnswer) {
+    return (compileAnswer) => {
+      const f = latex.compile(dirZh[1], ["x", "y"]);
+      const at = parsePoint(dirZh[2]);
+      const direction = parsePoint(dirZh[3]);
+      const norm = Math.hypot(...direction);
+      const value = (partial3((x, y) => f(x, y), at, 0) * direction[0] + partial3((x, y) => f(x, y), at, 1) * direction[1]) / norm;
+      return compareNumbers("directional", compileAnswer([])(), value, 1e-4);
+    };
+  }
+
+  // 約束極值：\max/\min OBJ \text{ subject to }G=C（可帶 (x,y>0)）
+  const lagrange = prompt.match(/^\\(max|min)(?:_\{[^}]*\})? ?\\?\(?(.+?)\\?\)?\\? ?\\text\{ subject to \}(.+?)=([^\\(]+?)(?:\\ \(.*\))?$/);
+  if (lagrange && numericAnswer) {
+    return (compileAnswer) => {
+      const wantMax = lagrange[1] === "max";
+      const positiveOnly = /\(.*>0\)/.test(prompt);
+      const objJs = latex.toJs(lagrange[2]);
+      const vars = ["x", "y", "z"].filter((v) => latex.freeVariables(objJs).includes(v) || latex.freeVariables(latex.toJs(lagrange[3])).includes(v));
+      if (vars.length < 2 || vars.length > 3) return { status: "unsupported", reason: "約束極值只支援 2–3 變數" };
+      const objective = latex.compile(lagrange[2], vars);
+      const constraintValue = latex.compile(lagrange[4].trim(), [])();
+      const g = latex.compile(lagrange[3], vars);
+      const constraint = (...args) => g(...args) - constraintValue;
+      const value = constrainedExtremum(objective, constraint, vars.length, wantMax, positiveOnly);
+      if (value === null) return { status: "unverified", reason: "約束流形上掃不到可行點" };
+      return compareNumbers("constrained-extremum", compileAnswer([])(), value, 1e-3);
+    };
+  }
+
+  // 一維極值：\min_{x>0}(…) / \max_{x>0}(…)
+  const oneDim = prompt.match(/^\\(max|min)_\{x(>0)?\}\\left\((.+)\\right\)$/);
+  if (oneDim && numericAnswer) {
+    return (compileAnswer) => {
+      const f = latex.compile(oneDim[3], ["x"]);
+      const wantMax = oneDim[1] === "max";
+      const lo = oneDim[2] ? 1e-4 : -12;
+      let best = wantMax ? -Infinity : Infinity;
+      for (let i = 0; i <= 4000; i += 1) {
+        const x = lo + ((12 - lo) * i) / 4000;
+        const value = f(x);
+        if (Number.isFinite(value) && (wantMax ? value > best : value < best)) best = value;
+      }
+      return compareNumbers("extremum-1d", compileAnswer([])(), best, 1e-3);
+    };
+  }
+
+  // 旋轉體：y=f(x), a≤x≤b 繞 x 軸 → π∫f²
+  const revolveX = prompt.match(/^y=(.+?),\\ (.+?)\\le x\\le (.+?)\\text\{ 繞 \}x\\text\{ 軸的體積.*\}$/);
+  if (revolveX && numericAnswer) {
+    return (compileAnswer) => {
+      const f = latex.compile(revolveX[1], ["x"]);
+      const from = evaluateBound(revolveX[2]);
+      const to = evaluateBound(revolveX[3]);
+      const volume = numeric.integrate((x) => Math.PI * f(x) * f(x), from, to);
+      return compareNumbers("solid-of-revolution", compileAnswer([])(), volume.value, toleranceFor(volume, 1e-5));
+    };
+  }
+  // y=f(x) 繞 x 軸（沒給範圍：取 f 有定義且非負的一段 —— 半圓那種）
+  const revolveXFull = prompt.match(/^y=(.+?)\\text\{ 繞 \}x\\text\{ 軸的體積.*\}$/);
+  if (revolveXFull && numericAnswer) {
+    return (compileAnswer) => {
+      const f = latex.compile(revolveXFull[1], ["x"]);
+      // 掃出 f 有限的區間
+      let lo = null;
+      let hi = null;
+      for (let x = -12; x <= 12; x += 0.01) {
+        if (Number.isFinite(f(x))) {
+          if (lo === null) lo = x;
+          hi = x;
+        }
+      }
+      if (lo === null) return { status: "unverified", reason: "函數在掃描範圍內沒有定義" };
+      const volume = numeric.integrate((x) => Math.PI * f(x) * f(x), lo, hi);
+      return compareNumbers("solid-of-revolution", compileAnswer([])(), volume.value, toleranceFor(volume, 1e-4));
+    };
+  }
+  // y=f 與 y=g 所圍區域繞 x 軸 → π∫|f²−g²|（交點自己找）
+  const revolveBetween = prompt.match(/^y=(.+?)\\text\{ 與 \}y=(.+?)\\text\{ 所圍區域繞 \}x\\text\{ 軸的體積\}$/);
+  if (revolveBetween && numericAnswer) {
+    return (compileAnswer) => {
+      const f = latex.compile(revolveBetween[1], ["x"]);
+      const g = latex.compile(revolveBetween[2], ["x"]);
+      const difference = (x) => f(x) - g(x);
+      const crossings = [];
+      let prev = null;
+      for (let i = 0; i <= 2400; i += 1) {
+        // 交點常在整數（0、1）—— 加無理偏移讓它落在取樣點之間
+        const x = -12 + 0.00137 + (24 * i) / 2400;
+        const value = difference(x);
+        if (!Number.isFinite(value)) { prev = null; continue; }
+        if (prev && prev.value * value < 0) {
+          let a = prev.x;
+          let b = x;
+          for (let j = 0; j < 60; j += 1) {
+            const mid = (a + b) / 2;
+            if (difference(a) * difference(mid) <= 0) b = mid; else a = mid;
+          }
+          crossings.push((a + b) / 2);
+        }
+        prev = { x, value };
+      }
+      if (crossings.length < 2) return { status: "unverified", reason: "找不到兩條曲線的交點" };
+      const volume = numeric.integrate((x) => Math.PI * Math.abs(f(x) * f(x) - g(x) * g(x)), crossings[0], crossings[crossings.length - 1]);
+      return compareNumbers("solid-of-revolution", compileAnswer([])(), volume.value, toleranceFor(volume, 1e-4));
+    };
+  }
+  // y=f 與 x 軸所圍區域繞 y 軸 → 殼層法 2π∫x·|f|
+  const revolveShell = prompt.match(/^y=(.+?)\\text\{ 與 \}x\\text\{ 軸所圍區域繞 \}y\\text\{ 軸的體積\}$/);
+  if (revolveShell && numericAnswer) {
+    return (compileAnswer) => {
+      const f = latex.compile(revolveShell[1], ["x"]);
+      const crossings = [];
+      let prev = null;
+      for (let i = 0; i <= 2400; i += 1) {
+        const x = -12 + 0.00137 + (24 * i) / 2400;
+        const value = f(x);
+        if (!Number.isFinite(value)) { prev = null; continue; }
+        if (prev && prev.value * value < 0) crossings.push(x);
+        else if (value === 0) crossings.push(x);
+        prev = { x, value };
+      }
+      if (crossings.length < 2) return { status: "unverified", reason: "曲線與 x 軸的交點不足" };
+      const volume = numeric.integrate((x) => 2 * Math.PI * Math.abs(x * f(x)), crossings[0], crossings[crossings.length - 1]);
+      return compareNumbers("solid-of-revolution", compileAnswer([])(), volume.value, toleranceFor(volume, 1e-4));
+    };
+  }
+
+  // 反曲點：f(x)=… 的反曲點 x 座標 / 反曲點個數
+  const inflection = prompt.match(/^(?:f\(x\)|y)=(.+?)\\text\{ 的反曲點 \}x\\text\{ 座標\}$/);
+  if (inflection && numericAnswer) {
+    return (compileAnswer) => {
+      const zeros = inflectionPoints(latex.compile(inflection[1], ["x"]));
+      if (zeros.length !== 1) return { status: "unverified", reason: `找到 ${zeros.length} 個反曲點，題目卻只要一個座標` };
+      return compareNumbers("inflection", compileAnswer([])(), zeros[0], 1e-3);
+    };
+  }
+  const inflectionCount = prompt.match(/^(?:f\(x\)|y)=(.+?)\\text\{ 的反曲點個數\}$/);
+  if (inflectionCount && numericAnswer) {
+    return (compileAnswer) => {
+      const zeros = inflectionPoints(latex.compile(inflectionCount[1], ["x"]));
+      return compareNumbers("inflection", compileAnswer([])(), zeros.length, 1e-9);
+    };
+  }
+  // 水平漸近線 y 值：x→±∞ 的極限（兩側一致才算）
+  const horizontal = prompt.match(/^y=(.+?)\\text\{ 的水平漸近線 \}y\\text\{ 值\}$/);
+  if (horizontal && numericAnswer) {
+    return (compileAnswer) => {
+      const f = latex.compile(horizontal[1], ["x"]);
+      const right = f(1e7);
+      const left = f(-1e7);
+      if (!Number.isFinite(right) || Math.abs(right - f(1e8)) > 1e-4 * Math.max(1, Math.abs(right))) {
+        return { status: "unverified", reason: "x→∞ 的取樣不收斂" };
+      }
+      if (Number.isFinite(left) && Math.abs(left - right) > 1e-3 * Math.max(1, Math.abs(right))) {
+        return { status: "unverified", reason: "兩側的水平漸近線不同，題目卻只要一個值" };
+      }
+      return compareNumbers("asymptote", compileAnswer([])(), right, 1e-4);
+    };
+  }
+  // 斜漸近線 y=x+k 的 k：k = lim (f(x)−x)
+  const oblique = prompt.match(/^y=(.+?)\\text\{ 的斜漸近線 \}y=x\+k\\text\{ 的 \}k$/);
+  if (oblique && numericAnswer) {
+    return (compileAnswer) => {
+      const f = latex.compile(oblique[1], ["x"]);
+      const k = f(1e7) - 1e7;
+      if (Math.abs(k - (f(1e8) - 1e8)) > 1e-3 * Math.max(1, Math.abs(k))) {
+        return { status: "unverified", reason: "f(x)−x 在大 x 不收斂" };
+      }
+      return compareNumbers("asymptote", compileAnswer([])(), k, 1e-3);
+    };
+  }
+  // 垂直漸近線條數：分母趨近時 |f|→∞ 的點數
+  const vertical = prompt.match(/^y=(.+?)\\text\{ 的垂直漸近線條數\}$/);
+  if (vertical && numericAnswer) {
+    return (compileAnswer) => {
+      const f = latex.compile(vertical[1], ["x"]);
+      // 兩個坑：固定高閾值會漏掉殘差小的極點（1/((x+1)(x²−4)) 在格點上
+      // 最多只衝到 ~2e4）；NaN 會把可去奇點（(x−1)/(x−1)…）算成漸近線。
+      // 做法：門檻取「中位數的 200 倍」抓候選區，再對每個候選收斂進去 ——
+      // 真極點會一路衝破 1e9，可去奇點在細看之下是平的。
+      const STEPS = 24000;
+      const step = 24 / STEPS;
+      const values = [];
+      for (let i = 0; i <= STEPS; i += 1) {
+        const x = -12 + 0.0000137 + i * step;
+        values.push({ x, v: Math.abs(f(x)) });
+      }
+      const finite = values.map((e) => e.v).filter((v) => Number.isFinite(v)).sort((a, b) => a - b);
+      const median = finite[Math.floor(finite.length / 2)] || 1;
+      const threshold = Math.max(50, 200 * median);
+      const regions = [];
+      let current = null;
+      values.forEach((entry) => {
+        const seed = !Number.isFinite(entry.v) || entry.v > threshold;
+        if (seed) {
+          if (current && entry.x - current.end < 3 * step) {
+            current.end = entry.x;
+            if (Number.isFinite(entry.v) && entry.v > current.peak) { current.peak = entry.v; current.at = entry.x; }
+          } else {
+            if (current) regions.push(current);
+            current = { start: entry.x, end: entry.x, peak: Number.isFinite(entry.v) ? entry.v : 0, at: entry.x };
+          }
+        }
+      });
+      if (current) regions.push(current);
+      let count = 0;
+      for (const region of regions) {
+        let lo = region.at - 2 * step;
+        let hi = region.at + 2 * step;
+        let diverges = false;
+        for (let round = 0; round < 14; round += 1) {
+          let peak = 0;
+          let argPeak = (lo + hi) / 2;
+          for (let i = 0; i <= 40; i += 1) {
+            const x = lo + ((hi - lo) * i) / 40;
+            const v = Math.abs(f(x));
+            if (Number.isFinite(v) && v > peak) { peak = v; argPeak = x; }
+          }
+          if (peak > 1e9) { diverges = true; break; }
+          const width = (hi - lo) / 20;
+          lo = argPeak - width;
+          hi = argPeak + width;
+        }
+        if (diverges) count += 1;
+      }
+      return compareNumbers("asymptote", compileAnswer([])(), count, 1e-9);
+    };
+  }
+
+  // 曲率與曲率半徑
+  const kappaAt = prompt.match(/^\\kappa\\text\{ for \}y=(.+?)\\text\{ at \}x=(.+)$/);
+  if (kappaAt && numericAnswer) {
+    return (compileAnswer) => compareNumbers("curvature", compileAnswer([])(),
+      curvatureAt(latex.compile(kappaAt[1], ["x"]), evaluateBound(kappaAt[2])), 1e-4);
+  }
+  const radiusAt = prompt.match(/^\\text\{曲線 \}y=(.+?)\\text\{ (?:在原點|在 \}x=(.+?)\\text\{ )的曲率半徑\}$/);
+  if (radiusAt && numericAnswer) {
+    return (compileAnswer) => {
+      const at = radiusAt[2] === undefined ? 0 : evaluateBound(radiusAt[2]);
+      const kappa = curvatureAt(latex.compile(radiusAt[1], ["x"]), at);
+      return compareNumbers("curvature", compileAnswer([])(), 1 / kappa, 1e-4);
+    };
+  }
+  const maxKappa = prompt.match(/^\\text\{曲線 \}y=(.+?)\\text\{ 的最大曲率\}$/);
+  if (maxKappa && numericAnswer) {
+    return (compileAnswer) => {
+      const f = latex.compile(maxKappa[1], ["x"]);
+      let best = 0;
+      for (let i = 0; i <= 8000; i += 1) {
+        const x = 0.001 + (12 * i) / 8000;
+        for (const sign of [1, -1]) {
+          const kappa = curvatureAt(f, sign * x);
+          if (Number.isFinite(kappa) && kappa > best) best = kappa;
+        }
+      }
+      return compareNumbers("curvature", compileAnswer([])(), best, 1e-3);
+    };
+  }
+
+  // 極座標所圍面積（沒給範圍）：½∫r² 只積 r≥0 的 θ
+  const polarArea = prompt.match(/^\\text\{求 \}r=(.+?)\\text\{ 所圍面積\}$/);
+  if (polarArea && numericAnswer) {
+    return (compileAnswer) => {
+      const r = latex.compile(polarArea[1].split("\\theta").join("(t)"), ["t"]);
+      const area = numeric.integrate((t) => {
+        const value = r(t);
+        return value > 0 ? 0.5 * value * value : 0;
+      }, 0, 2 * Math.PI);
+      return compareNumbers("polar-area", compileAnswer([])(), area.value, toleranceFor(area, 1e-4));
+    };
+  }
+
+  // 鏈鎖律 dz/dt：\text{If }z=…, x=…, y=…, find dz/dt（答案是 t 的式子）
+  const chainRule = prompt.match(/^\\text\{If \}z=([^,]+),\\? ?x=([^,]+),\\? ?y=([^,]+),\\?\s*\\text\{ find \}dz\/dt$/);
+  if (chainRule && problem.answerKind === "expression") {
+    return (compileAnswer) => {
+      const z = latex.compile(chainRule[1], ["x", "y"]);
+      const xt = latex.compile(chainRule[2], ["t"]);
+      const yt = latex.compile(chainRule[3], ["t"]);
+      const h = (t) => z(xt(t), yt(t));
+      const answerFn = compileAnswer(["t"]);
+      return report("chain-rule", compareFunctions(answerFn, (t) => numeric.derivative(h, t), {
+        tolerance: 1e-4,
+        points: [0.4, 0.8, 1.2, 1.7, -0.5, -1.1]
+      }), "答案應該等於 dz/dt");
+    };
+  }
+
+  // 全微分估計 Δf：…f=EXPR\text{ at }(a,b),\ dx=…,\ dy=…
+  const totalDiff = prompt.match(/^\\text\{(?:Use total differential (?:to estimate \}\\Delta f\\text\{ )?for |Estimate \}\\Delta z\\text\{ for )\}?[fz]?=?(.*?)\\text\{ at \}\((.+?)\),\\ dx=([^,]+),\\ dy=(.+)$/) ||
+    prompt.match(/^\\text\{[^}]*\}(?:f|z)=(.+?)\\text\{ at \}\((.+?)\),\\ dx=([^,]+),\\ dy=(.+)$/);
+  if (totalDiff && numericAnswer) {
+    return (compileAnswer) => {
+      const f = latex.compile(totalDiff[1], ["x", "y"]);
+      const at = parsePoint(totalDiff[2]);
+      const dx = evaluateBound(totalDiff[3]);
+      const dy = evaluateBound(totalDiff[4]);
+      const value = partial3((x, y) => f(x, y), at, 0) * dx + partial3((x, y) => f(x, y), at, 1) * dy;
+      const cleaned = Math.abs(value) < 1e-9 ? 0 : value;
+      return compareNumbers("total-differential", compileAnswer([])(), cleaned, 1e-4);
+    };
+  }
+
+  // Linear part df of f=…：答案是 x,y,dx,dy 的式子
+  const linearPart = prompt.match(/^\\text\{Linear part \}df\\text\{ of \}f=(.+)$/);
+  if (linearPart && problem.answerKind === "expression") {
+    return (compileAnswer) => {
+      void compileAnswer;
+      const f = latex.compile(linearPart[1], ["x", "y"]);
+      // 答案裡的 dx/dy 會被斷詞器拆成 d·x —— 先換成單一字母再編；
+      // ^ 在 JS 是 XOR，不轉成 ** 會安靜地算出垃圾（實測 0.3 vs 0.2927）
+      const answerJs = String(problem.answer).replace(/\bdx\b/g, "u").replace(/\bdy\b/g, "v").replace(/\^/g, "**");
+      const answerFn = (x, y, dx, dy) => latex.compileJs(answerJs, ["x", "y", "u", "v"])(x, y, dx, dy);
+      let checked = 0;
+      for (const [x, y] of [[0.7, 0.4], [1.3, -0.6], [-0.8, 1.2], [1.9, 0.9]]) {
+        const fx = partial3((a, b) => f(a, b), [x, y], 0);
+        const fy = partial3((a, b) => f(a, b), [x, y], 1);
+        for (const [dx, dy] of [[1, 0], [0, 1], [0.5, -0.7]]) {
+          const want = fx * dx + fy * dy;
+          const got = answerFn(x, y, dx, dy);
+          if (!Number.isFinite(want) || !Number.isFinite(got)) continue;
+          checked += 1;
+          if (!numeric.close(got, want, 1e-4)) {
+            return { status: "mismatch", method: "total-differential", detail: `(${x},${y})、(dx,dy)=(${dx},${dy})：答案給 ${format(got)}，數值上是 ${format(want)}` };
+          }
+        }
+      }
+      if (checked < 6) return { status: "unverified", reason: "取樣點不足" };
+      return { status: "ok", method: "total-differential", detail: `${checked} 組取樣一致` };
+    };
+  }
+
+  // Linear estimate of EXPR at (p) using base (b)：f(b)+∇f·(p−b)
+  const linearEstimate = prompt.match(/^\\text\{Linear estimate of \}(.+?)\\text\{ at \}\((.+?)\)\\text\{ using base \}\((.+?)\)$/);
+  if (linearEstimate && numericAnswer) {
+    return (compileAnswer) => {
+      const f = latex.compile(linearEstimate[1], ["x", "y"]);
+      const point = parsePoint(linearEstimate[2]);
+      const base = parsePoint(linearEstimate[3]);
+      const value = f(...base)
+        + partial3((x, y) => f(x, y), base, 0) * (point[0] - base[0])
+        + partial3((x, y) => f(x, y), base, 1) * (point[1] - base[1]);
+      return compareNumbers("linear-estimate", compileAnswer([])(), value, 1e-6);
+    };
+  }
+
+  // x-coordinate of the minimum of f(x,y)
+  const minCoord = prompt.match(/^\\text\{x-coordinate of the minimum of \}(.+)$/);
+  if (minCoord && numericAnswer) {
+    return (compileAnswer) => {
+      const f = latex.compile(minCoord[1], ["x", "y"]);
+      let best = { value: Infinity, x: 0 };
+      for (let i = 0; i <= 400; i += 1) {
+        for (let j = 0; j <= 400; j += 1) {
+          const x = -10 + (20 * i) / 400;
+          const y = -10 + (20 * j) / 400;
+          const value = f(x, y);
+          if (Number.isFinite(value) && value < best.value) best = { value, x, y };
+        }
+      }
+      let step = 0.05;
+      for (let round = 0; round < 200 && step > 1e-9; round += 1) {
+        let moved = false;
+        for (const [dx, dy] of [[step, 0], [-step, 0], [0, step], [0, -step]]) {
+          const value = f(best.x + dx, (best.y ?? 0) + dy);
+          if (value < best.value) { best = { value, x: best.x + dx, y: (best.y ?? 0) + dy }; moved = true; }
+        }
+        if (!moved) step /= 2;
+      }
+      return compareNumbers("extremum-coordinate", compileAnswer([])(), best.x, 1e-3);
+    };
+  }
+
+  // 參數積分族：NAME(params)=∫…dx.\ \text{Find }NAME…
+  const paramIntegral = recognizeParamIntegral(problem);
+  if (paramIntegral) return paramIntegral;
+
+  return null;
+}
+
+// I_n=\int_a^b body\,dx.\ \text{Find }I_n（或 I_n/I_{n-2}、F(a,b)、F''(a)）。
+// 驗算：對幾組參數值做數值積分，跟答案式子逐點比。
+function recognizeParamIntegral(problem) {
+  const prompt = String(problem.prompt || "");
+  if (problem.answerKind !== "expression") return null;
+  const match = prompt.match(/^([A-Z])(?:_n|\(([a-z](?:,\s*[a-z])*)\))=(.+?)\.\\? ?\\text\{Find \}(.+)$/);
+  if (!match) return null;
+  const name = match[1];
+  const params = match[2] ? match[2].split(",").map((s) => s.trim()) : ["n"];
+  let definition = match[3];
+  const target = match[4].trim();
+
+  // 定義域尾註 "\ \text{for }-1<n<1"
+  let sampleSets = null;
+  const domainNote = definition.match(/\\ ?\\text\{for \}(.+)$/);
+  if (domainNote) {
+    definition = definition.slice(0, domainNote.index);
+    if (/-1<n<1/.test(domainNote[1])) sampleSets = [[-0.5], [-0.2], [0.3], [0.6]];
+  }
+
+  // 定義自帶的微分（Q(a)=\frac{d^3}{da^3}\int…）
+  let definitionDerivative = 0;
+  const derivativePrefix = definition.match(/^\\frac\{d\^?(\d*)\}\{d([a-z])\^?\d*\}/);
+  if (derivativePrefix) {
+    definitionDerivative = Number(derivativePrefix[1] || 1);
+    definition = definition.slice(derivativePrefix[0].length);
+  }
+
+  if (!definition.startsWith("\\int")) return null;
+  const bounds = readBounds(definition, 4);
+  const rest = definition.slice(bounds.end);
+  const split = stripDifferential(rest);
+  if (!split || bounds.lower === null || bounds.upper === null) return null;
+
+  // Find 的形狀：NAME_n、NAME_n/NAME_{n-1 或 n-2}、NAME(…)、NAME''(…)
+  const primes = (target.match(new RegExp(`^${name}('{1,3})`)) || [, ""])[1].length;
+  const ratioMatch = target.match(new RegExp(`^${name}_n\\s*/\\s*${name}_\\{n-([12])\\}$`));
+  const ratioOffset = ratioMatch ? Number(ratioMatch[1]) : 0;
+  const isRatio = ratioOffset > 0;
+  const totalDerivative = definitionDerivative + primes;
+
+  return (compileAnswer) => {
+    const integrand = latex.compile(split.integrand, [split.variable, ...params]);
+    const from = evaluateBound(bounds.lower);
+    const to = evaluateBound(bounds.upper);
+    const valueAt = (...values) => numeric.integrate((x) => integrand(x, ...values), from, to).value;
+    const withDerivative = (fn) => {
+      if (totalDerivative === 0) return fn;
+      let current = fn;
+      for (let i = 0; i < totalDerivative; i += 1) {
+        const inner = current;
+        current = (a) => (inner(a + 5e-3) - inner(a - 5e-3)) / 1e-2;
+      }
+      return current;
+    };
+    const answerFn = compileAnswer(params);
+    const samples = sampleSets || (params.length === 2
+      ? [[0.8, 1.3], [1.4, 0.7], [2.1, 1.8]]
+      : isRatio ? [[3], [4], [5], [6]] : params[0] === "n" && /_n/.test(prompt) ? [[1], [2], [3], [4]] : [[0.7], [1.3], [2.1], [3.2]]);
+    let checked = 0;
+    for (const values of samples) {
+      let want;
+      if (isRatio) {
+        want = valueAt(values[0]) / valueAt(values[0] - ratioOffset);
+      } else if (params.length === 1) {
+        want = withDerivative((a) => valueAt(a))(values[0]);
+      } else {
+        want = valueAt(...values);
+      }
+      const got = answerFn(...values);
+      if (!Number.isFinite(want) || !Number.isFinite(got)) continue;
+      checked += 1;
+      const tolerance = totalDerivative > 0 ? 1e-2 : 1e-4;
+      if (!numeric.close(got, want, tolerance)) {
+        return { status: "mismatch", method: "parameter-integral", detail: `${params.join(",")}=${values.join(",")}：答案給 ${format(got)}，數值積分是 ${format(want)}` };
+      }
+    }
+    if (checked < 3) return { status: "unverified", reason: `可用的參數取樣只有 ${checked} 組` };
+    return { status: "ok", method: "parameter-integral", detail: `${checked} 組參數值一致${totalDerivative ? `（含 ${totalDerivative} 階參數微分）` : ""}` };
+  };
+}
+
+/* ── 第五輪句型：MVT、數列極限、相關變率、牛頓法、線性近似 ── */
+
+function recognizeRound5(problem) {
+  const prompt = String(problem.prompt || "");
+  const numericAnswer = problem.answerKind === "numeric";
+  if (!numericAnswer) return null;
+
+  // f(x)=… 在 [a,b] 上滿足 MVT / Rolle 的 c：解 f'(c)=割線斜率（Rolle 是 0）
+  const mvt = prompt.match(/^f\(x\)=(.+?)\\text\{ 在 \}\[(.+?),(.+?)\]\\text\{ 上滿足 (MVT|Rolle 定理) ?的 \}c$/);
+  if (mvt) {
+    return (compileAnswer) => {
+      const f = latex.compile(mvt[1], ["x"]);
+      const a = evaluateBound(mvt[2]);
+      const b = evaluateBound(mvt[3]);
+      const slope = mvt[4] === "MVT" ? (f(b) - f(a)) / (b - a) : 0;
+      const g = (c) => numeric.derivative(f, c).value - slope;
+      const roots = [];
+      let prev = null;
+      for (let i = 1; i < 800; i += 1) {
+        const x = a + ((b - a) * i) / 800;
+        const value = g(x);
+        if (!Number.isFinite(value)) { prev = null; continue; }
+        if (prev && prev.value * value < 0) {
+          let lo = prev.x;
+          let hi = x;
+          for (let j = 0; j < 60; j += 1) {
+            const mid = (lo + hi) / 2;
+            if (g(lo) * g(mid) <= 0) hi = mid; else lo = mid;
+          }
+          roots.push((lo + hi) / 2);
+        }
+        prev = { x, value };
+      }
+      if (!roots.length) return { status: "unverified", reason: "區間內找不到滿足的 c" };
+      const actual = compileAnswer([])();
+      if (roots.some((root) => numeric.close(actual, root, 1e-4))) {
+        return { status: "ok", method: "mean-value", detail: `${format(actual)} 是 f′(c)=${format(slope)} 的解` };
+      }
+      return { status: "mismatch", method: "mean-value", detail: `答案 ${format(actual)}，數值解是 ${roots.map(format).join(", ")}` };
+    };
+  }
+
+  // 數列極限：a_n=EXPR,\quad \lim a_n（顯式通項 → 數列梯子）
+  const seqExplicit = prompt.match(/^a_n=(.+?),\\quad ?\\lim_\{n\\to\\infty\}a_n$/);
+  if (seqExplicit) {
+    return (compileAnswer) => {
+      const term = latex.compile(seqExplicit[1], ["n"]);
+      const values = [512, 1024, 2048, 4096, 8192].map(term);
+      if (!values.every(Number.isFinite)) return { status: "unverified", reason: "通項在大 n 算不出值" };
+      const extrapolated = [];
+      for (let i = 0; i + 1 < values.length; i += 1) extrapolated.push(2 * values[i + 1] - values[i]);
+      const last = extrapolated[extrapolated.length - 1];
+      const spread = Math.abs(last - extrapolated[extrapolated.length - 2]);
+      // sin(n)/n 這類震盪但收斂的：外插不穩就直接看幅度是否壓到 0
+      if (spread > 1e-4 * Math.max(1, Math.abs(last))) {
+        const bound = Math.max(...values.slice(-2).map(Math.abs));
+        const actual0 = compileAnswer([])();
+        if (actual0 === 0 && bound < 1e-2) {
+          return { status: "ok", method: "sequence-limit", detail: `|a_n| 壓到 ${format(bound)} → 0` };
+        }
+        return { status: "unverified", reason: "數列外插不穩定" };
+      }
+      // sin(n)/n 型：幅度已壓到噪音層卻沒被外插攔到 —— 小到 1e-3 以下就是 0
+      const cleaned = Math.abs(last) < 1e-3 ? 0 : last;
+      return compareNumbers("sequence-limit", compileAnswer([])(), cleaned, Math.max(1e-5, (30 * spread) / Math.max(1, Math.abs(cleaned))));
+    };
+  }
+
+  // 遞迴數列：a_1=INIT,\ a_{n+1}=EXPR(a_n),\quad \lim a_n → 迭代到不動點
+  const seqRecursive = prompt.match(/^a_1=(.+?),\\ a_\{n\+1\}=(.+?),\\quad ?\\lim_\{n\\to\\infty\}a_n$/);
+  if (seqRecursive) {
+    return (compileAnswer) => {
+      const step = latex.compile(seqRecursive[2].split("a_n").join("(w)"), ["w"]);
+      let value = evaluateBound(seqRecursive[1]);
+      let previous = Infinity;
+      for (let i = 0; i < 4000; i += 1) {
+        previous = value;
+        value = step(value);
+        if (!Number.isFinite(value)) return { status: "unverified", reason: "迭代發散" };
+        if (Math.abs(value - previous) < 1e-14) break;
+      }
+      if (Math.abs(value - previous) > 1e-8 * Math.max(1, Math.abs(value))) {
+        return { status: "unverified", reason: "迭代沒有收斂" };
+      }
+      return compareNumbers("sequence-limit", compileAnswer([])(), value, 1e-6);
+    };
+  }
+
+  // 相關變率四式（gap-der-app）：形狀公式是題幹的一部分，導數走數值
+  const sphereRate = prompt.match(/^\\text\{A sphere has \}r=(.+?),\\ dr\/dt=(.+?)\.\\? ?\\frac\{dV\}\{dt\}=\?$/);
+  if (sphereRate) {
+    return (compileAnswer) => {
+      const r = evaluateBound(sphereRate[1]);
+      const rate = evaluateBound(sphereRate[2]);
+      const volume = (t) => (4 / 3) * Math.PI * t * t * t;
+      return compareNumbers("related-rates", compileAnswer([])(), numeric.derivative(volume, r).value * rate, 1e-6);
+    };
+  }
+  const circleRate = prompt.match(/^\\text\{A circle has \}r=(.+?),\\ dr\/dt=(.+?)\.\\? ?\\frac\{dA\}\{dt\}=\?$/);
+  if (circleRate) {
+    return (compileAnswer) => {
+      const r = evaluateBound(circleRate[1]);
+      const rate = evaluateBound(circleRate[2]);
+      const area = (t) => Math.PI * t * t;
+      return compareNumbers("related-rates", compileAnswer([])(), numeric.derivative(area, r).value * rate, 1e-6);
+    };
+  }
+  const ladderRate = prompt.match(/^\\text\{Ladder length \}(.+?),\\ x=(.+?),\\ dx\/dt=(.+?)\.\\? ?dy\/dt=\?$/);
+  if (ladderRate) {
+    return (compileAnswer) => {
+      const length = evaluateBound(ladderRate[1]);
+      const x = evaluateBound(ladderRate[2]);
+      const rate = evaluateBound(ladderRate[3]);
+      const height = (t) => Math.sqrt(length * length - t * t);
+      return compareNumbers("related-rates", compileAnswer([])(), numeric.derivative(height, x).value * rate, 1e-6);
+    };
+  }
+  const normalSlope = prompt.match(/^\\text\{Normal slope to \}y=(.+?)\\text\{ at \}x=(.+)$/);
+  if (normalSlope) {
+    return (compileAnswer) => {
+      const f = latex.compile(normalSlope[1], ["x"]);
+      const at = evaluateBound(normalSlope[2]);
+      return compareNumbers("related-rates", compileAnswer([])(), -1 / numeric.derivative(f, at).value, 1e-6);
+    };
+  }
+
+  // 牛頓法一步：One Newton step for f(x)=… from x_0=A ／ 對 √N 用牛頓法
+  const newtonEn = prompt.match(/^\\text\{One Newton step for \}f\(x\)=(.+?)\\text\{ from \}x_0=(.+)$/);
+  const newtonZh = prompt.match(/^\\text\{對 \}\\sqrt\{?(\d+)\}?\\text\{ 用牛頓法，\}x_0=(.+?)\\text\{ 的一次迭代 \}x_1$/);
+  if (newtonEn || newtonZh) {
+    return (compileAnswer) => {
+      const f = newtonEn
+        ? latex.compile(newtonEn[1], ["x"])
+        : ((n) => (x) => x * x - n)(Number(newtonZh[1]));
+      const x0 = evaluateBound(newtonEn ? newtonEn[2] : newtonZh[2]);
+      const x1 = x0 - f(x0) / numeric.derivative(f, x0).value;
+      return compareNumbers("newton-step", compileAnswer([])(), x1, 1e-8);
+    };
+  }
+
+  // 線性近似 √V：基準點取最近的完全平方
+  const linearSqrt = prompt.match(/^\\text\{(?:Linear approximation of |用線性近似估 )\}\\sqrt\{?([\d.]+)\}?$/);
+  if (linearSqrt) {
+    return (compileAnswer) => {
+      const target = Number(linearSqrt[1]);
+      const base = Math.round(Math.sqrt(target)) ** 2;
+      const f = Math.sqrt;
+      const value = f(base) + numeric.derivative(f, base).value * (target - base);
+      return compareNumbers("linear-estimate", compileAnswer([])(), value, 1e-8);
+    };
+  }
+
+  // 原點到直線 ax+by=c 的最短距離：在直線上做約束最小化
+  const pointLine = prompt.match(/^\\text\{原點到直線 \}(.+?)=(.+?)\\text\{ 的最短距離\}$/);
+  if (pointLine) {
+    return (compileAnswer) => {
+      const g = latex.compile(pointLine[1], ["x", "y"]);
+      const c = latex.compile(pointLine[2], [])();
+      const value = constrainedExtremum(
+        (x, y) => Math.hypot(x, y),
+        (x, y) => g(x, y) - c,
+        2, false, false
+      );
+      if (value === null) return { status: "unverified", reason: "直線上掃不到點" };
+      return compareNumbers("constrained-extremum", compileAnswer([])(), value, 1e-4);
+    };
+  }
+
+  // Curvature of y=… at x=A（英文版曲率）
+  const curvatureEn = prompt.match(/^\\text\{Curvature of \}y=(.+?)\\text\{ at \}x=(.+)$/);
+  if (curvatureEn) {
+    return (compileAnswer) => compareNumbers("curvature", compileAnswer([])(),
+      curvatureAt(latex.compile(curvatureEn[1], ["x"]), evaluateBound(curvatureEn[2])), 1e-4);
+  }
+
+  return null;
+}
+
+// ODE 題幹：把 y''/y'/y 換成佔位變數編殘差，答案代回去驗。
+function verifyOdePrompt(problem, equationTex, conditionsTex, compileAnswer) {
+  const equation = equationTex.replace(/\\ /g, " ").trim().replace(/,$/, "");
+  const sides = splitTopLevel(equation, "=");
+  if (sides.length !== 2) return { status: "unsupported", reason: "ODE 等式切不開：" + equation };
+  const placeholder = (tex) => tex
+    .split("y''").join("Q")
+    .split("y'").join("P")
+    .split("y").join("(W)");
+  const residualTex = `(${placeholder(sides[0])})-(${placeholder(sides[1])})`;
+  const residual = latex.compile(residualTex.split("Q").join("(Q)").split("P").join("(P)"), ["x", "W", "P", "Q"]);
+  const conditions = [...conditionsTex.matchAll(/y('?)\(0\)=([^,.]+)/g)]
+    .map((m) => ({ order: m[1] ? 1 : 0, value: evaluateBound(m[2]) }));
+  const answerFn = compileAnswer(["x"]);
+  let checked = 0;
+  for (let i = 0; i <= 8; i += 1) {
+    const x = 0.15 + (1.2 * i) / 8;
+    const y = answerFn(x);
+    const d1 = numeric.derivative(answerFn, x).value;
+    const h = 1e-3;
+    const d2 = (answerFn(x + h) - 2 * y + answerFn(x - h)) / (h * h);
+    if (![y, d1, d2].every(Number.isFinite)) continue;
+    const r = residual(x, y, d1, d2);
+    if (!Number.isFinite(r)) continue;
+    if (Math.abs(r) > 5e-3 * Math.max(1, Math.abs(y), Math.abs(d1))) {
+      return { status: "mismatch", method: "ode-residual", detail: `x=${x.toFixed(3)} 處殘差 ${r.toExponential(2)}` };
+    }
+    checked += 1;
+  }
+  if (checked < 4) return { status: "unverified", reason: "取樣點不足" };
+  for (const condition of conditions) {
+    const got = condition.order === 0 ? answerFn(0) : numeric.derivative(answerFn, 0).value;
+    if (Math.abs(got - condition.value) > 1e-5 * Math.max(1, Math.abs(condition.value))) {
+      return { status: "mismatch", method: "ode-residual", detail: `初始條件 y${condition.order ? "'" : ""}(0) 應為 ${condition.value}，答案給 ${format(got)}` };
+    }
+  }
+  return { status: "ok", method: "ode-residual", detail: `${checked} 個點滿足方程＋${conditions.length} 個初始條件` };
 }
 
 function verifyProblem(problem, options = {}) {
@@ -867,8 +2450,71 @@ function verifyProblem(problem, options = {}) {
     }
   }
 
-  // 多變數極限 lim_{(x,y)→(0,0)}：沿多條路徑取樣。
-  const mv = String(problem.prompt || "").match(/^\\lim_\{\(x,y\)\\to\(0,0\)\}(.+)$/);
+  const round3 = recognizeRound3(problem);
+  if (round3) {
+    try {
+      return round3(compileAnswer);
+    } catch (error) {
+      return { status: "error", reason: error.message };
+    }
+  }
+
+  const round4 = recognizeRound4(problem);
+  if (round4) {
+    try {
+      return round4(compileAnswer);
+    } catch (error) {
+      return { status: "error", reason: error.message };
+    }
+  }
+
+  const round5 = recognizeRound5(problem);
+  if (round5) {
+    try {
+      return round5(compileAnswer);
+    } catch (error) {
+      return { status: "error", reason: error.message };
+    }
+  }
+
+  // 說明文字裡「求 }∫…」的尾巴（達摩院包）：前面是解法提示，
+  // 最後那條積分才是題目。整句解析不了時，抽出尾巴的積分再試一次。
+  if (!structure) {
+    const seek = String(problem.prompt || "").match(/求 \}(.+)$/);
+    if (seek) {
+      const candidate = seek[1].replace(/\\!/g, "").trim();
+      const sub = topLevelOperator(candidate);
+      if (sub && sub.op === "definite-integral") {
+        try {
+          return verifyDefiniteIntegral(problem, sub, compileAnswer);
+        } catch (error) {
+          return { status: "error", reason: error.message };
+        }
+      }
+      const iterated = recognizeRound2({ ...problem, prompt: candidate });
+      if (iterated) {
+        try {
+          return iterated(compileAnswer);
+        } catch (error) {
+          return { status: "error", reason: error.message };
+        }
+      }
+    }
+  }
+
+  // 「Use which technique?」「Main trap?」類：答案是解題手法，數值上無從驗起。
+  // 早退成誠實的 unsupported —— 不然會在 compileAnswer 炸成 error，
+  // 看報告的人分不清是「驗不了」還是「引擎壞了」。
+  // 收斂/發散類的 text 主張不走這條 —— series/limit 的驗算器自己會比對。
+  if (problem.answerKind === "text") {
+    const says = String(problem.canonical || (problem.answers || [])[0] || "");
+    if (!isNumericClaim(says)) {
+      return { status: "unsupported", reason: `答案「${says}」是解題手法而非數值主張` };
+    }
+  }
+
+  // 多變數極限 lim_{(x,y)→(0,0)}：沿多條路徑取樣（尾巴的 \text 註解先剝掉）。
+  const mv = stripTrailingText(String(problem.prompt || "")).body.match(/^\\lim_\{\(x,y\)\\to\(0,0\)\}(.+)$/);
   if (mv) {
     try {
       return verifyMultivarLimit(problem, mv[1], compileAnswer);
@@ -924,6 +2570,43 @@ function verifyDerivative(problem, structure, compileAnswer) {
   if (structure.at !== null) {
     // 在某一點求值 → 答案是一個數
     const at = evaluateBound(structure.at);
+
+    // x=0 的高階導數：走有理泰勒級數，精確算 n!·aₙ。
+    // 數值微分在 n≥5 就淹死在捨入誤差裡，d^20/dx^20 這種只有這條路。
+    if (at === 0 && structure.op === "derivative") {
+      let js = null;
+      try { js = latex.toJs(structure.body.replace(/\\left|\\right/g, "")); } catch (_error) { js = null; }
+      if (js && latex.freeVariables(js).every((name) => name === variable)) {
+        const rational = taylor.derivativeAtZero(
+          variable === "x" ? js : js.replace(new RegExp(`\\b${variable}\\b`, "g"), "x"),
+          structure.order
+        );
+        if (rational) {
+          const exact = taylor.parseExactAnswer(problem.answer);
+          if (exact) {
+            if (taylor.fEq(exact, rational.exact)) {
+              return { status: "ok", method: "taylor-derivative", detail: `${problem.answer} = ${structure.order}!·a_${structure.order}（有理級數，精確比對）` };
+            }
+            return {
+              status: "mismatch",
+              method: "taylor-derivative",
+              detail: `答案 ${problem.answer}，有理級數精確算出 ${rational.exact.n}${rational.exact.d === 1n ? "" : "/" + rational.exact.d}`,
+              actual: taylor.fToNumber(exact),
+              expected: rational.value,
+              ratio: rational.value === 0 ? null : taylor.fToNumber(exact) / rational.value
+            };
+          }
+          return compareNumbers("taylor-derivative", compileAnswer([])(), rational.value, 1e-9);
+        }
+      }
+      if (structure.order > 4) {
+        return { status: "unverified", reason: `${structure.order} 階導數：級數展開不了、數值微分也到不了這個階` };
+      }
+    }
+    if (structure.order > 4) {
+      return { status: "unverified", reason: `${structure.order} 階導數在 x≠0：目前只有 x=0 的有理級數路徑` };
+    }
+
     const expected = numeric.derivative(
       (x) => target(...substitute(target.vars, variable, x)),
       at,
@@ -1352,7 +3035,36 @@ function verifySeries(problem, structure, compileAnswer) {
   const variable = structure.variable;
   const from = evaluateBound(structure.from);
   const to = evaluateBound(structure.to);
-  const body = latex.compile(structure.body, [variable]);
+  // 通項裡的調和數 H_n：換成佔位變數，值用前綴和精確算（帶快取）。
+  // 題幹有時附定義（",\quad H_n=1+\tfrac12+…"）—— 那是給人看的，先剝掉。
+  let bodyTex = structure.body.replace(/,\s*(?:\\quad|\\qquad)?\s*H_n\s*=.*$/, "");
+  let harmonicWrap = null;
+  if (bodyTex.includes("H_n")) {
+    bodyTex = bodyTex.split("H_n").join("h");
+    const cache = [0];
+    harmonicWrap = (n) => {
+      const k = Math.round(n);
+      if (k < 1 || k > 5e6) return Number.NaN;
+      for (let i = cache.length; i <= k; i += 1) cache.push(cache[i - 1] + 1 / i);
+      return cache[k];
+    };
+  }
+  // 「\text{ at }x=-1」型：通項還有一個自由變數，把指定值代進去
+  const extraVars = [];
+  if (harmonicWrap) extraVars.push("h");
+  if (structure.evalAt) extraVars.push(structure.evalAt.variable);
+  const body = extraVars.length
+    ? (() => {
+        const term = latex.compile(bodyTex, [variable, ...extraVars]);
+        const bound = structure.evalAt ? evaluateBound(structure.evalAt.value) : null;
+        return (n) => {
+          const args = [n];
+          if (harmonicWrap) args.push(harmonicWrap(n));
+          if (structure.evalAt) args.push(bound);
+          return term(...args);
+        };
+      })()
+    : latex.compile(bodyTex, [variable]);
 
   if (structure.op === "product") {
     if (!Number.isFinite(to)) {
@@ -1449,7 +3161,111 @@ function runExplicit(problem, compileAnswer) {
   }
 }
 
+// 曲線參數化 {x,y,z?,from,to} → 位置與數值切向量
+function compilePath(spec) {
+  const comps = [spec.x, spec.y, spec.z].filter((c) => c !== undefined)
+    .map((tex) => latex.compile(String(tex), ["t"]));
+  return {
+    dim: comps.length,
+    at: (t) => comps.map((f) => f(t)),
+    tangent: (t) => comps.map((f) => numeric.derivative(f, t).value),
+    from: latex.compile(String(spec.from ?? 0), [])(),
+    to: latex.compile(String(spec.to ?? 1), [])()
+  };
+}
+
+// 曲面參數化 {x,y,z,u:[a,b],v:[c,d]} → 位置與法向量 r_u × r_v（數值偏導）
+function compileSurface(spec) {
+  const comps = [spec.x, spec.y, spec.z].map((tex) => latex.compile(String(tex), ["u", "v"]));
+  const at = (u, v) => comps.map((f) => f(u, v));
+  const normal = (u, v) => {
+    const h = 1e-5;
+    const ru = comps.map((f) => (f(u + h, v) - f(u - h, v)) / (2 * h));
+    const rv = comps.map((f) => (f(u, v + h) - f(u, v - h)) / (2 * h));
+    return [
+      ru[1] * rv[2] - ru[2] * rv[1],
+      ru[2] * rv[0] - ru[0] * rv[2],
+      ru[0] * rv[1] - ru[1] * rv[0]
+    ];
+  };
+  const bound = (value) => latex.compile(String(value), [])();
+  return { at, normal, u: spec.u.map(bound), v: spec.v.map(bound) };
+}
+
+// ∬ 過參數域：內外都用自適應積分
+function integrateOverSurface(surface, integrand) {
+  return numeric.integrate(
+    (u) => numeric.integrate((v) => integrand(u, v), surface.v[0], surface.v[1]).value,
+    surface.u[0], surface.u[1]
+  ).value;
+}
+
 const EXPLICIT_METHODS = {
+  // 線積分：kind "ds"（純量 × |r′|）或 "work"（F·r′）。
+  // 曲線寫成參數式（可以是 paths 陣列 —— 三角形這種折線一段一段給）。
+  // 參數化是題幹的重述不是解法：驗算端只做數值微分與數值積分。
+  lineIntegral: (spec) => {
+    const pieces = (spec.paths || [spec.path]).map(compilePath);
+    let total = 0;
+    for (const path of pieces) {
+      if (spec.kind === "ds") {
+        const f = latex.compile(spec.f, path.dim === 3 ? ["x", "y", "z"] : ["x", "y"]);
+        total += numeric.integrate((t) => {
+          const tangent = path.tangent(t);
+          return f(...path.at(t)) * Math.hypot(...tangent);
+        }, path.from, path.to).value;
+      } else {
+        const F = spec.F.map((tex) => latex.compile(String(tex), path.dim === 3 ? ["x", "y", "z"] : ["x", "y"]));
+        total += numeric.integrate((t) => {
+          const pt = path.at(t);
+          const tangent = path.tangent(t);
+          return F.reduce((sum, comp, i) => sum + comp(...pt) * tangent[i], 0);
+        }, path.from, path.to).value;
+      }
+    }
+    return total;
+  },
+
+  // 純量面積分 ∬ f dS：|r_u × r_v| 是面積元素
+  surfaceScalar: (spec) => {
+    const surfaces = (spec.surfaces || [spec.surface]).map(compileSurface);
+    const f = latex.compile(spec.f || "1", ["x", "y", "z"]);
+    return surfaces.reduce((sum, surface) => sum + integrateOverSurface(surface, (u, v) => {
+      return f(...surface.at(u, v)) * Math.hypot(...surface.normal(u, v));
+    }), 0);
+  },
+
+  // 通量 ∬ F·dS：法向量方向由參數順序決定（作者要讓 r_u×r_v 指向外側）
+  surfaceFlux: (spec) => {
+    const surfaces = (spec.surfaces || [spec.surface]).map(compileSurface);
+    const F = spec.F.map((tex) => latex.compile(String(tex), ["x", "y", "z"]));
+    return surfaces.reduce((sum, surface) => sum + integrateOverSurface(surface, (u, v) => {
+      const pt = surface.at(u, v);
+      const normal = surface.normal(u, v);
+      return F.reduce((acc, comp, i) => acc + comp(...pt) * normal[i], 0);
+    }), 0);
+  },
+
+  // ∬ (∇×F)·dS：旋度用數值偏導取，再走通量 —— 不用 Stokes 也不解旋度
+  curlFlux: (spec) => {
+    const surfaces = (spec.surfaces || [spec.surface]).map(compileSurface);
+    const field = compileField3(spec.F.map(String));
+    return surfaces.reduce((sum, surface) => sum + integrateOverSurface(surface, (u, v) => {
+      const pt = surface.at(u, v);
+      const curl = field.curl(pt);
+      const normal = surface.normal(u, v);
+      return curl[0] * normal[0] + curl[1] * normal[1] + curl[2] * normal[2];
+    }), 0);
+  },
+
+  // 全微分估計：Δf ≈ f_x·dx + f_y·dy（偏導數值取）
+  totalDiff: (spec) => {
+    const f = latex.compile(spec.f, spec.vars || ["x", "y"]);
+    const at = spec.at.map((value) => latex.compile(String(value), [])());
+    const deltas = spec.d.map((value) => latex.compile(String(value), [])());
+    return at.reduce((sum, _, i) => sum + partial3((...a) => f(...a), at, i) * deltas[i], 0);
+  },
+
   // 直接給一個和題幹寫法不同的等價式子（例如題幹是文字敘述）
   value: (spec) => latex.compile(spec.f, [])(),
 
