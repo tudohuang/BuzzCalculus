@@ -2473,6 +2473,120 @@ function polylineCrossings(points) {
   return crossings;
 }
 
+// 互動圖形題的曲線式子是 JS 方言（x**3-3*x、sin(x)、exp(-x)…），
+// 跟 app 端 graphCurveFn 同一套 —— 這裡獨立編譯，不借判分器的路。
+function compileCurveExpr(expr) {
+  const body = String(expr || "").trim();
+  if (!body || !/^[0-9x+\-*/().,\s a-z]*$/i.test(body)) return null;
+  try {
+    // eslint-disable-next-line no-new-func
+    const fn = new Function("x", `"use strict"; const {sin,cos,tan,exp,log,sqrt,abs,atan,asin,acos,sinh,cosh,tanh,PI,E} = Math; const pi = PI, e = E; return (${body});`);
+    if (!Number.isFinite(fn(1.137)) && !Number.isFinite(fn(0.29))) return null;
+    return fn;
+  } catch (_error) {
+    return null;
+  }
+}
+
+// 掃描 + 二分找 g 的變號零點。極值找 f′ 的零點、反曲點找 f″ 的零點，
+// 都是同一支。邊緣留 2% 的 margin —— 窗邊的數值導數不可靠。
+function scanSignRoots(g, a, b) {
+  const roots = [];
+  const margin = (b - a) * 0.02;
+  const lo0 = a + margin;
+  const hi0 = b - margin;
+  const steps = 2400;
+  const step = (hi0 - lo0) / steps;
+  let prevX = lo0;
+  let prev = g(prevX);
+  for (let i = 1; i <= steps; i += 1) {
+    const x = lo0 + ((hi0 - lo0) * i) / steps;
+    const value = g(x);
+    // 零點正好落在格點上（對稱函數在 x=0 的數值導數恰為 0）時，
+    // 「相鄰兩點異號」的規則會整個跳過它 —— x^4-2x^2 的 x=0 就是這樣
+    // 漏掉的。格點值為 0 時改看它左右兩側是不是真的變號。
+    if (value === 0) {
+      const left = g(x - step);
+      const right = g(x + step);
+      if (Number.isFinite(left) && Number.isFinite(right) && left !== 0 && right !== 0 && (left < 0) !== (right < 0)) {
+        roots.push(x);
+      }
+      prevX = x;
+      prev = value;
+      continue;
+    }
+    if (Number.isFinite(prev) && Number.isFinite(value) && prev !== 0 && (prev < 0) !== (value < 0)) {
+      let lo = prevX;
+      let hi = x;
+      let flo = prev;
+      for (let k = 0; k < 64; k += 1) {
+        const mid = (lo + hi) / 2;
+        const fm = g(mid);
+        if ((flo < 0) === (fm < 0)) { lo = mid; flo = fm; } else { hi = mid; }
+      }
+      roots.push((lo + hi) / 2);
+    }
+    prevX = x;
+    prev = value;
+  }
+  return roots;
+}
+
+function verifyInteractiveGraph(problem) {
+  if (problem.answerKind !== "graphtap" && problem.answerKind !== "graphslope") return null;
+  const graph = problem.graph || {};
+  const curve = (graph.curves || [])[0];
+  const f = curve ? compileCurveExpr(curve.expr) : null;
+  if (!f) return { status: "unverified", reason: "互動圖形題沒有可重算的曲線式子" };
+  const h = 1e-5;
+  const d1 = (x) => (f(x + h) - f(x - h)) / (2 * h);
+  const d2 = (x) => (f(x + h) - 2 * f(x) + f(x - h)) / (h * h);
+
+  if (problem.answerKind === "graphslope") {
+    const x0 = Number(problem.pivot && problem.pivot.x);
+    if (!Number.isFinite(x0)) return { status: "error", reason: "graphslope 沒有 pivot.x" };
+    const expected = d1(x0);
+    const claimed = Number(problem.answer);
+    if (!Number.isFinite(claimed)) return { status: "error", reason: `graphslope 答案不是數：${problem.answer}` };
+    if (Math.abs(expected - claimed) <= Math.max(1e-3, Math.abs(expected) * 2e-3)) {
+      return { status: "ok", method: "graph-slope", detail: `f'(${x0}) 數值重算 ${expected.toFixed(6)} ≈ ${claimed}` };
+    }
+    return { status: "mismatch", method: "graph-slope", detail: `答案 ${claimed}，f'(${x0}) 獨立算出來是 ${expected.toFixed(6)}` };
+  }
+
+  // graphtap：tapKind 指定重算的是哪一種點。
+  //   extremum / critical → f′ 的變號零點；inflection → f″ 的變號零點。
+  const g = problem.tapKind === "inflection" ? d2 : d1;
+  const domain = Array.isArray(curve.domain) && curve.domain.length === 2
+    ? curve.domain.map(Number)
+    : (graph.window || []).slice(0, 2).map(Number);
+  if (domain.length !== 2 || !(domain[1] > domain[0])) {
+    return { status: "error", reason: "graphtap 沒有可用的掃描區間" };
+  }
+  const found = scanSignRoots(g, domain[0], domain[1]).sort((a, b) => a - b);
+  const claimed = String(problem.answer || "").split(",").map(Number).sort((a, b) => a - b);
+  if (claimed.some((value) => !Number.isFinite(value))) {
+    return { status: "error", reason: `graphtap 答案解讀不了：${problem.answer}` };
+  }
+  if (found.length !== claimed.length) {
+    return {
+      status: "mismatch",
+      method: "graph-tap",
+      detail: `題目宣稱 ${claimed.length} 個位置，獨立重算找到 ${found.length} 個：[${found.map((r) => r.toFixed(4)).join(", ")}]`
+    };
+  }
+  for (let i = 0; i < found.length; i += 1) {
+    if (Math.abs(found[i] - claimed[i]) > 5e-3) {
+      return {
+        status: "mismatch",
+        method: "graph-tap",
+        detail: `第 ${i + 1} 個位置：答案 ${claimed[i]}，獨立算出來是 ${found[i].toFixed(4)}`
+      };
+    }
+  }
+  return { status: "ok", method: "graph-tap", detail: `${claimed.length} 個位置全部與 ${problem.tapKind === "inflection" ? "f″" : "f′"} 的零點重合` };
+}
+
 function recognizeGraphReading(problem) {
   const graph = problem.graph;
   if (!graph || problem.answerKind !== "numeric") return null;
@@ -2645,6 +2759,12 @@ function verifyProblem(problem, options = {}) {
   if (setInterval.supports(problem)) {
     return setInterval.verify(problem, { normalizeAnswer: normalize });
   }
+
+  // 互動圖形題（graphtap / graphslope）：答案是座標或斜率，
+  // 但曲線式子就在題目資料裡 —— 極值、反曲點、切線斜率全部可以
+  // 從式子獨立重算。互動不是不驗算的藉口。
+  const interactive = verifyInteractiveGraph(problem);
+  if (interactive) return interactive;
 
   // 明確寫在題目上的 verify 欄位優先於自動推導
   if (problem.verify) return runExplicit(problem, compileAnswer);

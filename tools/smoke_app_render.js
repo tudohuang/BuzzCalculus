@@ -1100,3 +1100,34 @@ console.log(`Resume smoke: ${json.length} bytes for a 12-question exam, round-tr
   }
   console.log("填空證明 smoke: " + withCloze.length + " 條、每格恰一正解、錯誤選項都具名、算式空格判分正確");
 }
+
+// ── 互動圖形題：容差判分的兩端都要對（2026-09-04）──
+{
+  const byId = (id) => global.window.BUZZ_PROBLEMS.find((p) => p.id === id);
+  const tap = byId("gi-001");           // 極值在 x=-1,1，容差 0.35
+  if (!tap || tap.answerKind !== "graphtap") throw new Error("gi-001 不是 graphtap 題");
+  if (!api.checkAnswer(tap, "-1.02,0.97").correct) throw new Error("容差內的點位應該判對");
+  if (!api.checkAnswer(tap, "0.97,-1.02").correct) throw new Error("點的順序不該影響判分");
+  if (api.checkAnswer(tap, "-1,0.5").correct) throw new Error("差 0.5 的點位不該判對");
+  const short = api.checkAnswer(tap, "-1");
+  if (short.correct || !/2 個位置/.test(short.message)) throw new Error("少標一個點要說「要標幾個」");
+
+  const slope = byId("gi-104");         // f=1/x 在 x=1 的切線，斜率 -1
+  if (!slope || slope.answerKind !== "graphslope") throw new Error("gi-104 不是 graphslope 題");
+  if (!api.checkAnswer(slope, "-1.18").correct) throw new Error("斜率容差內應該判對");
+  if (api.checkAnswer(slope, "-0.4").correct) throw new Error("差太多的斜率不該判對");
+  if (api.checkAnswer(slope, "abc").correct) throw new Error("非數值輸入不該判對");
+
+  // 這兩個題型不進對戰池（作答動作是拖與點，沒辦法用一個答案字串比賽）
+  const dueled = global.window.BUZZ_PROBLEMS.filter((p) => ["graphtap", "graphslope"].includes(p.answerKind));
+  const appSrc = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "app.js"), "utf8");
+  if (!/\["worksheet", "graph", "graphtap", "graphslope"\]\.includes\(problem\.answerKind\)/.test(appSrc)) {
+    throw new Error("對戰題池沒有排除互動圖形題");
+  }
+  // 每一題的判分規格都要能被驗算器獨立重算 —— 側表裡有紀錄才算數
+  require("../src/kernel/verified_answers.js");
+  const verified = global.window.BuzzVerifiedAnswers;
+  const missing = dueled.filter((p) => !verified || !verified.has(p.id));
+  if (missing.length) throw new Error("互動圖形題沒有進驗算側表：" + missing.map((p) => p.id).join(","));
+  console.log("互動圖形 smoke: " + dueled.length + " 題、點位與斜率容差兩端都判對、對戰池排除、全部經過獨立驗算");
+}

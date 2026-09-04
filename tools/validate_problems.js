@@ -8,7 +8,7 @@ const topics = new Set(["limits", "derivatives", "integrals", "series"]);
 // 那些檢查（誘答要看得出差別、要寫錯在哪）在這裡驗不了。
 // worksheet = 作圖表題（一張要填的表，每一格自己判分）。
 // 每一格的獨立驗算由 tools/validate_worksheets.js 把關。
-const answerKinds = new Set(["numeric", "expression", "antiderivative", "text", "set", "interval", "graph", "worksheet"]);
+const answerKinds = new Set(["numeric", "expression", "antiderivative", "text", "set", "interval", "graph", "graphtap", "graphslope", "worksheet"]);
 const ids = new Set();
 const errors = [];
 const allowedRawWords = new Set([
@@ -125,6 +125,34 @@ problems.forEach((problem, index) => {
   }
   if (problem.answerKind === "interval" && !/^\s*[[(].*[\])]\s*$/.test(problem.answer || "")) {
     fail(id, "interval answer must look like (a, b] or a union of them");
+  }
+  // 互動圖形題：判分規格全在題目資料裡，缺一塊就是一題永遠不能玩的題。
+  if (problem.answerKind === "graphtap" || problem.answerKind === "graphslope") {
+    const curve = problem.graph && Array.isArray(problem.graph.curves) && problem.graph.curves[0];
+    if (!curve || !curve.expr) fail(id, `${problem.answerKind} needs graph.curves[0].expr (判分與驗算都要重算曲線)`);
+    if (!problem.graph || !Array.isArray(problem.graph.window) || problem.graph.window.length !== 4) {
+      fail(id, `${problem.answerKind} needs graph.window [xmin,xmax,ymin,ymax]`);
+    }
+  }
+  if (problem.answerKind === "graphtap") {
+    const xs = String(problem.answer || "").split(",").map(Number);
+    if (!xs.length || xs.some((x) => !Number.isFinite(x))) fail(id, "graphtap answer must be comma-separated numbers");
+    if (!["extremum", "critical", "inflection"].includes(problem.tapKind)) {
+      fail(id, "graphtap needs tapKind extremum|critical|inflection (驗算器靠它決定重算 f' 還是 f'')");
+    }
+    // 兩個目標點距離小於 2 倍容差，使用者不可能分得開 —— 那是不公平的題。
+    const tol = Number(problem.tapTolerance) || 0.35;
+    const sorted = xs.slice().sort((a, b) => a - b);
+    for (let i = 1; i < sorted.length; i += 1) {
+      if (sorted[i] - sorted[i - 1] < tol * 2) fail(id, `graphtap targets ${sorted[i - 1]} and ${sorted[i]} closer than 2×tolerance ${tol}`);
+    }
+  }
+  if (problem.answerKind === "graphslope") {
+    if (!problem.pivot || !Number.isFinite(Number(problem.pivot.x))) fail(id, "graphslope needs pivot.x");
+    if (!Number.isFinite(Number(problem.answer))) fail(id, "graphslope answer must be a number (the slope)");
+    if (problem.slopeStart != null && Math.abs(Number(problem.slopeStart) - Number(problem.answer)) < 0.3) {
+      fail(id, "graphslope slopeStart is basically the answer — start the line somewhere wrong");
+    }
   }
   if (!Number.isInteger(problem.timeLimit) || problem.timeLimit <= 0) fail(id, "invalid timeLimit");
   // tabLimit 已停用（2026-08 移除切頁判錯）。舊題目上還留著這個欄位，
