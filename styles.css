@@ -2448,6 +2448,53 @@ button,
   background: #fff2ef;
 }
 
+/* 答對的「+分數」toast：答對 950ms 就自動前進，回饋卡在手機上根本
+   來不及看 —— 把重點帶到下一題的畫面上，1.8 秒自己淡出。
+   pointer-events:none：它只是資訊，永遠不能擋到作答。 */
+.correct-toast {
+  position: fixed;
+  top: calc(env(safe-area-inset-top, 0px) + 14px);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 16px;
+  border: 1px solid rgba(24, 139, 88, 0.5);
+  border-radius: 999px;
+  background: #eaf7ef;
+  color: #14663f;
+  font-weight: 700;
+  box-shadow: 0 6px 18px rgba(20, 102, 63, 0.18);
+  pointer-events: none;
+  animation: correct-toast-pop 1.8s ease forwards;
+}
+
+.correct-toast svg {
+  width: 16px;
+  height: 16px;
+}
+
+@keyframes correct-toast-pop {
+  0% { opacity: 0; transform: translateX(-50%) translateY(-8px); }
+  12% { opacity: 1; transform: translateX(-50%) translateY(0); }
+  75% { opacity: 1; }
+  100% { opacity: 0; transform: translateX(-50%) translateY(-4px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .correct-toast {
+    animation: correct-toast-fade 1.8s linear forwards;
+  }
+
+  @keyframes correct-toast-fade {
+    0% { opacity: 1; }
+    85% { opacity: 1; }
+    100% { opacity: 0; }
+  }
+}
+
 .results-screen {
   padding-top: 24px;
 }
@@ -5173,6 +5220,13 @@ button,
 :root[data-theme="dark"] .path-lesson-result.is-cleared,
 :root[data-theme="dark"] .feedback.correct {
   background: rgba(31, 68, 48, 0.86);
+}
+
+:root[data-theme="dark"] .correct-toast {
+  border-color: rgba(88, 200, 141, 0.5);
+  background: rgba(31, 68, 48, 0.95);
+  color: #8fe0b4;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4);
 }
 
 :root[data-theme="dark"] .path-lesson-result.is-review,
