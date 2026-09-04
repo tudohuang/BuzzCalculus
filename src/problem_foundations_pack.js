@@ -433,5 +433,76 @@
     "拆成 Σn²/n!+Σn/n!+Σ1/n! = 2e+e+(e−1) = 4e−1。", 240,
     ["逐項拆開。", "Σn²/n!=2e、Σn/n!=e。", "Σ1/n!（n≥1）=e−1。"]);
 
+  /* ── 高階縱深（2026-09-04 二波）：limits R5/R6 與 series R5/R6 ──
+     第一波之後的殘留失衡：limits R6 只有 11 題、series R6 只有 10 題。
+     高段使用者在這兩條線上最快見底 —— 而難題正是最不能「安靜算錯」的
+     地方，所以每一題仍然只出驗算器吃得下的形式。 */
+
+  N("fd-limx-601", "limits", 6, "\\lim_{x\\to 0}\\frac{\\sin(\\tan x)-\\tan(\\sin x)}{x^7}", "-1/30",
+    ["taylor-limit"],
+    "兩個複合函數的展開到 x⁷ 才分出勝負：sin(tan x)−tan(sin x) = −x⁷/30 + O(x⁹)。", 420,
+    ["前六階完全相消。", "兩邊都展開到第七階。", "係數差是 −1/30。"]);
+  N("fd-limx-602", "limits", 6, "\\lim_{x\\to 0}\\frac{\\sin x\\arctan x-x^2}{x^4}", "-1/2",
+    ["taylor-limit", "inverse-trig"],
+    "sin x·arctan x = (x−x³/6+…)(x−x³/3+…) = x²−x⁴/2+…，分子的 x⁴ 係數是 −1/2。", 390,
+    ["兩個因子各展到三階。", "交叉相乘收集 x⁴。", "−1/6−1/3。"]);
+  N("fd-limx-603", "limits", 6, "\\lim_{x\\to 0}\\left(\\frac{\\tan x}{x}\\right)^{1/x^2}", "exp(1/3)",
+    ["taylor-limit", "exponential"],
+    "取對數：ln(tan x/x)/x² → 1/3（tan x/x = 1+x²/3+…），極限是 e^{1/3}。", 300,
+    ["1^∞ 型先取對數。", "tan x/x = 1+x²/3+O(x⁴)。", "ln(1+u)≈u。"]);
+  N("fd-limx-604", "limits", 6, "\\lim_{n\\to\\infty}\\left(\\frac{(1+\\frac{1}{n})^n}{e}\\right)^n", "exp(-1/2)",
+    ["exponential", "sequences"],
+    "(1+1/n)^n = e·exp(−1/(2n)+O(1/n²))，括號內是 exp(−1/(2n)+…)，n 次方後趨向 e^{-1/2}。", 330,
+    ["先看括號裡差 e 多少。", "(1+1/n)^n/e = exp(−1/2n+…)。", "再乘上 n 次方。"]);
+  N("fd-limx-605", "limits", 5, "\\lim_{x\\to\\infty}x\\left(\\frac{\\pi}{4}-\\arctan\\frac{x}{x+1}\\right)", "1/2",
+    ["inverse-trig", "taylor-limit"],
+    "arctan 差角：π/4−arctan(x/(x+1)) = arctan(1/(2x+1))，乘 x 後趨向 1/2。", 240,
+    ["用 arctan 的差角公式。", "arctan 1 − arctan(x/(x+1))。", "arctan u ≈ u。"]);
+  N("fd-limx-606", "limits", 5, "\\lim_{x\\to 0}\\frac{e^{\\tan x}-e^{x}}{\\tan x-x}", "1",
+    ["exponential", "taylor-limit"],
+    "提出 e^x：(e^{tan x−x}−1)/(tan x−x) → 1（(e^u−1)/u→1）。", 210,
+    ["提出 e^x。", "分子變成 e^{tan x−x}−1。", "標準極限 (e^u−1)/u。"]);
+  N("fd-limx-607", "limits", 5, "\\lim_{x\\to 0}\\left(\\frac{1}{x^2}-\\frac{1}{\\sin^2 x}\\right)", "-1/3",
+    ["taylor-limit", "trig"],
+    "通分後 (sin²x−x²)/(x²sin²x)：分子 = −x⁴/3+…、分母 = x⁴+…，極限 −1/3。", 240,
+    ["先通分。", "sin²x = x²−x⁴/3+…。", "分母當 x⁴ 用。"]);
+  N("fd-limx-608", "limits", 5, "\\lim_{x\\to 0}\\frac{\\log(\\cos 2x)}{\\log(\\cos 3x)}", "4/9",
+    ["log", "taylor-limit"],
+    "log(cos kx) ≈ −k²x²/2，比值是 4/9。", 180,
+    ["cos kx ≈ 1−k²x²/2。", "log(1+u)≈u。", "答案是兩個平方的比。"]);
+
+  N("fd-serb-601", "series", 5, "\\sum_{n=0}^{\\infty}\\frac{(-1)^n}{3n+1}", "(log(2)+pi/sqrt(3))/3",
+    ["alternating", "power-series"],
+    "Σ(−1)ⁿx^{3n} 逐項積分 = ∫₀¹dx/(1+x³) = (ln 2 + π/√3)/3。", 300,
+    ["寫成 ∫₀¹ x^{3n} 的和。", "幾何級數求和成 1/(1+x³)。", "部分分式積分。"]);
+  N("fd-serb-602", "series", 5, "\\sum_{n=1}^{\\infty}\\frac{(-1)^{n+1}}{n(n+2)}", "1/4",
+    ["alternating", "telescoping"],
+    "部分分式 ½(1/n−1/(n+2))：兩條交錯級數只差前兩項，log 全部相消，剩 1/4。", 270,
+    ["先部分分式。", "位移兩格的交錯級數幾乎相同。", "log 會完全相消。"]);
+  N("fd-serb-603", "series", 6, "\\sum_{n=1}^{\\infty}\\frac{n}{(2n+1)!}", "1/(2*exp(1))",
+    ["taylor"],
+    "n/(2n+1)! = ½(1/(2n)!−1/(2n+1)!)，兩條分別是 cosh 1−1 與 sinh 1−1：差的一半是 e⁻¹/2。", 300,
+    ["把 n 寫成 ((2n+1)−1)/2。", "拆成 1/(2n)! 與 1/(2n+1)!。", "cosh 1 − sinh 1 = e⁻¹。"]);
+  N("fd-serb-604", "series", 5, "\\sum_{n=1}^{\\infty}\\frac{(-1)^{n+1}n^2}{n!}", "0",
+    ["taylor", "alternating"],
+    "Σn²xⁿ/n! = (x²+x)eˣ，在 x=−1 恰好是 0。", 270,
+    ["n² 拆成 n(n−1)+n。", "Σn²xⁿ/n! = (x²+x)eˣ。", "代 x=−1。"]);
+  N("fd-serb-605", "series", 5, "\\sum_{n=0}^{\\infty}\\frac{1}{(2n+1)4^n}", "log(3)",
+    ["power-series", "log"],
+    "Σx^{2n+1}/(2n+1) = artanh x，取 x=1/2 再乘 2：2·artanh(1/2) = ln 3。", 270,
+    ["對照 artanh 的級數。", "x=1/2。", "artanh x = ½ln((1+x)/(1−x))。"]);
+  N("fd-serb-606", "series", 6, "\\sum_{n=1}^{\\infty}\\frac{n}{4n^4+1}", "1/4",
+    ["telescoping"],
+    "4n⁴+1 = (2n²−2n+1)(2n²+2n+1)（Sophie Germain），通項 = ¼(1/(2n²−2n+1)−1/(2n²+2n+1)) 望遠鏡到 1/4。", 330,
+    ["Sophie Germain 恆等式。", "相鄰項的因子會接龍。", "望遠鏡只留最前面那一項。"]);
+  N("fd-serb-607", "series", 5, "\\text{Radius of convergence of }\\sum_{n=1}^{\\infty}\\frac{(2n)!}{n!\\,n^n}x^n", "exp(1)/4",
+    ["power-series", "ratio-test"],
+    "係數比 = (2n+2)(2n+1)/(n+1)² · (n/(n+1))ⁿ → 4/e，半徑是倒數 e/4。", 300,
+    ["比值判別。", "(2n)! 的部分給 4、n^n 的部分給 1/e。", "半徑取倒數。"]);
+  N("fd-serb-608", "series", 6, "\\sum_{n=1}^{\\infty}\\frac{(-1)^{n+1}}{n\\,3^n}", "log(4/3)",
+    ["power-series", "alternating", "log"],
+    "−log(1−x) 的級數在 x=−1/3 變號：Σ(−1)^{n+1}xⁿ/n = log(1+x)，代 x=1/3 得 log(4/3)。", 240,
+    ["對照 log(1+x) 的級數。", "x=1/3。", "1+x 是 4/3。"]);
+
   window.BUZZ_PROBLEMS = (window.BUZZ_PROBLEMS || []).concat(problems);
 })();

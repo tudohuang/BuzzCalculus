@@ -73,7 +73,7 @@
     { id: "limit.lhopital", label: "L'Hôpital", tier: 2, obscurity: 1, family: "limit", topics: ["limits"], prereq: ["limit.direct"],
       tags: ["lhopital"] },
     { id: "limit.taylor", label: "Taylor 求極限", tier: 3, obscurity: 2, family: "limit", topics: ["limits"], prereq: ["limit.direct"], radarAxis: "taylor",
-      tags: ["taylor", "nested-taylor", "composite-taylor", "series-expansion"] },
+      tags: ["taylor", "taylor-limit", "nested-taylor", "composite-taylor", "series-expansion"] },
     { id: "limit.asymptotic", label: "漸近分析", tier: 4, obscurity: 2, family: "limit", topics: ["limits"], prereq: ["limit.taylor"], radarAxis: "taylor",
       tags: ["asymptotics", "asymptotic", "asymptotic-balance", "asymptotic-expansion",
         "infinity-limit", "infinity", "stirling", "boundary-layer", "stolz",
@@ -91,7 +91,7 @@
     { id: "limit.sequence", label: "數列極限", tier: 2, obscurity: 1, family: "limit", prereq: ["limit.direct"],
       // 無窮乘積放這裡而不是自成一節：∏ 的定義就是部分乘積這個**數列**的極限，
       // 遞迴、巢狀根式、連分數同理 —— 它們共用「先確定收斂，再對遞迴式取極限」這一步。
-      tags: ["sequence", "recursive", "recurrence", "nested-radical", "continued-fraction",
+      tags: ["sequence", "sequences", "recursive", "recurrence", "nested-radical", "continued-fraction",
         "fixed-point", "newton", "infinite-product"] },
     { id: "limit.discontinuous", label: "單邊極限與跳躍", tier: 3, obscurity: 2, family: "limit", topics: ["limits"], prereq: ["limit.direct"],
       // 高斯括號與單邊極限合成一個節點：兩者練的是同一件事 ——
