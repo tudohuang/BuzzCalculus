@@ -274,6 +274,15 @@
     "td-ser-001": ["series.taylor.coeff"],
     "td-ser-002": ["series.taylor.coeff"],
     "td-ser-003": ["series.euler"],
+    "tmpl-int-exp-def-001": ["integral.basic"],
+    "tmpl-int-exp-def-002": ["integral.basic"],
+    "tmpl-int-exp-def-003": ["integral.basic"],
+    "tmpl-int-exp-def-004": ["integral.basic"],
+    "tmpl-int-exp-def-005": ["integral.basic"],
+    "tmpl-int-sin-def-001": ["integral.basic"],
+    "tmpl-int-sin-def-002": ["integral.basic"],
+    "tmpl-int-sin-def-003": ["integral.basic"],
+    "tmpl-int-sin-def-004": ["integral.basic"],
     "uni-int-013": ["integral.usub"],
     "uni-int-020": ["integral.partialfrac"]
   };
