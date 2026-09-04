@@ -356,5 +356,280 @@ module.exports = [
       { a: 2, b: 3 }, { a: 4, b: 2 }, { a: 6, b: 5 },
       { a: 3, b: 4 }, { a: 8, b: 3 }, { a: 5, b: 6 }
     ]
+  },
+
+  /* ── 2026-09-04 擴充（二十跳之三：題庫從有限走向參數化）────────
+     選模板的標準不變：練的是動作不是洞察。參數刻意避開題庫既有的
+     具體數值組合（sin4x/sin2x、1/(x+1) 的商律…），detect_duplicates
+     會抓漏網之魚。 */
+
+  {
+    id: "tmpl-lim-sin-ratio",
+    topic: "limits",
+    rank: 2,
+    answerKind: "numeric",
+    timeLimit: 35,
+    tags: ["trig-limit", "standard-limit"],
+    prompt: "\\lim_{x\\to 0}\\frac{\\sin({a}x)}{\\sin({b}x)}",
+    answer: "{a}/{b}",
+    solution: "上下各自除以引數湊 sin(u)/u，留下係數比 {a}/{b}。",
+    steps: [
+      "分子乘除 {a}x、分母乘除 {b}x。",
+      "sin({a}x)/({a}x) 與 sin({b}x)/({b}x) 都趨近 1。",
+      "剩下 {a}x/{b}x = {a}/{b}。"
+    ],
+    hints: ["上下都湊 sin(u)/u。", "兩個標準極限都是 1。", "剩下引數的係數比。"],
+    params: [
+      { a: 3, b: 5 }, { a: 5, b: 2 }, { a: 7, b: 3 },
+      { a: 2, b: 9 }, { a: 6, b: 5 }
+    ]
+  },
+  {
+    id: "tmpl-lim-cos-square",
+    topic: "limits",
+    rank: 2,
+    answerKind: "numeric",
+    timeLimit: 35,
+    tags: ["trig-limit", "standard-limit"],
+    prompt: "\\lim_{x\\to 0}\\frac{1-\\cos({a}x)}{x^2}",
+    answer: "{a}^2/2",
+    solution: "1−cos u ≈ u²/2，u={a}x 代入得 {a}²x²/2x² = {a}²/2。",
+    steps: [
+      "標準極限：(1−cos u)/u² → 1/2。",
+      "u = {a}x，所以分子 ≈ {a}²x²/2。",
+      "除以 x² 得 {a}²/2。"
+    ],
+    hints: ["(1−cos u)/u² 的極限是 1/2。", "u={a}x。", "別忘了係數要平方。"],
+    params: [
+      { a: 3 }, { a: 4 }, { a: 5 }, { a: 6 }
+    ]
+  },
+  {
+    id: "tmpl-lim-log-ratio",
+    topic: "limits",
+    rank: 2,
+    answerKind: "numeric",
+    timeLimit: 35,
+    tags: ["standard-limit", "log"],
+    prompt: "\\lim_{x\\to 0}\\frac{\\log(1+{a}x)}{\\log(1+{b}x)}",
+    answer: "{a}/{b}",
+    solution: "log(1+u) ≈ u，上下分別是 {a}x 與 {b}x，比值 {a}/{b}。",
+    steps: [
+      "log(1+u)/u → 1。",
+      "分子 ≈ {a}x、分母 ≈ {b}x。",
+      "比值 {a}/{b}。"
+    ],
+    hints: ["log(1+u) ≈ u。", "上下各自線性化。", "剩下係數比。"],
+    params: [
+      { a: 2, b: 5 }, { a: 7, b: 2 }, { a: 3, b: 8 }, { a: 9, b: 4 }
+    ]
+  },
+  {
+    id: "tmpl-der-prod-xexp",
+    topic: "derivatives",
+    rank: 2,
+    answerKind: "expression",
+    variable: "x",
+    timeLimit: 50,
+    tags: ["product-rule", "exponential"],
+    prompt: "\\frac{d}{dx}\\left(x^{{n}}e^{{a}x}\\right)",
+    answer: "({n}*x^({n}-1)+{a}*x^{n})*exp({a}*x)",
+    solution: "乘積律：{n}x^({n}−1)·e^({a}x) + x^{n}·{a}e^({a}x)，提出 e^({a}x)。",
+    steps: [
+      "乘積律：(uv)' = u'v + uv'。",
+      "u = x^{n} 的導數是 {n}x^({n}−1)。",
+      "v = e^({a}x) 的導數是 {a}e^({a}x)。",
+      "提出 e^({a}x) 合併。"
+    ],
+    hints: ["乘積律。", "指數微分帶出 {a}。", "提出 e^({a}x)。"],
+    params: [
+      { n: 2, a: 3 }, { n: 3, a: 2 }, { n: 4, a: 5 },
+      { n: 2, a: 7 }, { n: 5, a: 3 }
+    ]
+  },
+  {
+    id: "tmpl-der-quotient-shift",
+    topic: "derivatives",
+    rank: 2,
+    answerKind: "expression",
+    variable: "x",
+    timeLimit: 45,
+    tags: ["quotient-rule"],
+    prompt: "\\frac{d}{dx}\\left(\\frac{x}{x+{a}}\\right)",
+    answer: "{a}/(x+{a})^2",
+    solution: "商律：((x+{a})−x)/(x+{a})² = {a}/(x+{a})²。",
+    steps: [
+      "商律：(u/v)' = (u'v − uv')/v²。",
+      "分子：(x+{a}) − x = {a}。",
+      "答案 {a}/(x+{a})²。"
+    ],
+    hints: ["商律。", "分子會大量相消。", "剩下常數 {a}。"],
+    params: [
+      { a: 2 }, { a: 3 }, { a: 5 }, { a: 7 }, { a: 4 }
+    ]
+  },
+  {
+    id: "tmpl-der-chain-logpoly",
+    topic: "derivatives",
+    rank: 2,
+    answerKind: "expression",
+    variable: "x",
+    timeLimit: 40,
+    tags: ["chain-rule", "log"],
+    prompt: "\\frac{d}{dx}\\log\\left(x^2+{a}\\right)",
+    answer: "2*x/(x^2+{a})",
+    solution: "鏈鎖律：log(u) 的導數是 u'/u，u = x²+{a}。",
+    steps: [
+      "log(u) 的導數是 u'/u。",
+      "u = x²+{a}，u' = 2x。",
+      "答案 2x/(x²+{a})。"
+    ],
+    hints: ["log 的導數是 1/u 乘內層導數。", "內層是 x²+{a}。", "u'=2x。"],
+    params: [
+      { a: 4 }, { a: 9 }, { a: 3 }, { a: 7 }, { a: 5 }
+    ]
+  },
+  {
+    id: "tmpl-int-linear-power",
+    topic: "integrals",
+    rank: 2,
+    answerKind: "antiderivative",
+    variable: "x",
+    timeLimit: 45,
+    tags: ["substitution", "basic-integral"],
+    prompt: "\\int \\left({a}x+{b}\\right)^{{n}}\\,dx",
+    answer: "({a}*x+{b})^({n}+1)/({a}*({n}+1))",
+    solution: "u = {a}x+{b}，du = {a}dx：∫u^{n}du/{a} = u^({n}+1)/({a}({n}+1))。",
+    steps: [
+      "令 u = {a}x+{b}。",
+      "du = {a} dx，補上 1/{a}。",
+      "次方積分後代回。"
+    ],
+    hints: ["線性內層直接換元。", "別忘了除以內層係數 {a}。", "次方加一再除。"],
+    params: [
+      { a: 2, b: 3, n: 4 }, { a: 3, b: 1, n: 5 }, { a: 5, b: 2, n: 3 },
+      { a: 4, b: 7, n: 6 }, { a: 2, b: 5, n: 7 }
+    ]
+  },
+  {
+    id: "tmpl-int-exp-def",
+    topic: "integrals",
+    rank: 2,
+    answerKind: "numeric",
+    timeLimit: 45,
+    tags: ["exponential", "definite-integral"],
+    prompt: "\\int_0^{{b}} e^{{a}x}\\,dx",
+    answer: "(exp({a}*{b})-1)/{a}",
+    solution: "反導數 e^({a}x)/{a}，代上下限得 (e^({a}{b})−1)/{a}。",
+    steps: [
+      "e^({a}x) 的反導數是 e^({a}x)/{a}。",
+      "代上限 {b}、下限 0。",
+      "(e^({a}{b})−1)/{a}。"
+    ],
+    hints: ["指數積分除以內層係數。", "下限 0 給 1。", "別忘了除以 {a}。"],
+    params: [
+      { a: 3, b: 1 }, { a: 2, b: 2 }, { a: 4, b: 1 }, { a: 5, b: 1 }, { a: 2, b: 3 }
+    ]
+  },
+  {
+    id: "tmpl-int-usub-poly",
+    topic: "integrals",
+    rank: 2,
+    answerKind: "antiderivative",
+    variable: "x",
+    timeLimit: 50,
+    tags: ["substitution", "u-sub"],
+    prompt: "\\int x\\left(x^2+{a}\\right)^{{n}}\\,dx",
+    answer: "(x^2+{a})^({n}+1)/(2*({n}+1))",
+    solution: "u = x²+{a}，du = 2x dx：∫u^{n}du/2 = u^({n}+1)/(2({n}+1))。",
+    steps: [
+      "內層 x²+{a} 的導數 2x 就在外面。",
+      "u 換元，補 1/2。",
+      "次方積分後代回。"
+    ],
+    hints: ["找內層。", "du = 2x dx。", "補上 1/2。"],
+    params: [
+      { a: 1, n: 3 }, { a: 4, n: 4 }, { a: 2, n: 5 }, { a: 5, n: 2 }, { a: 3, n: 6 }
+    ]
+  },
+  {
+    id: "tmpl-int-sin-def",
+    topic: "integrals",
+    rank: 2,
+    answerKind: "numeric",
+    timeLimit: 45,
+    tags: ["trig", "definite-integral"],
+    prompt: "\\int_0^{\\pi} \\sin({n}x)\\,dx",
+    answer: "2/{n}",
+    solution: "反導數 −cos({n}x)/{n}；{n} 為奇數時 cos({n}π) = −1，差值是 2/{n}。",
+    steps: [
+      "反導數是 −cos({n}x)/{n}。",
+      "cos({n}π) = −1（{n} 是奇數）。",
+      "(−(−1)+1)/{n} = 2/{n}。"
+    ],
+    hints: ["sin 積成 −cos，除以內層係數。", "想 cos({n}π) 是多少。", "奇數的 {n} 給 −1。"],
+    params: [
+      { n: 3 }, { n: 5 }, { n: 7 }, { n: 9 }
+    ]
+  },
+  {
+    id: "tmpl-ser-geo-tail",
+    topic: "series",
+    rank: 2,
+    answerKind: "numeric",
+    timeLimit: 45,
+    tags: ["geometric-series"],
+    prompt: "\\sum_{n=2}^{\\infty}\\left(\\frac{1}{{r}}\\right)^n",
+    answer: "1/({r}*({r}-1))",
+    solution: "首項 1/{r}²、公比 1/{r}：(1/{r}²)/(1−1/{r}) = 1/({r}({r}−1))。",
+    steps: [
+      "從 n=2 起，首項是 1/{r}²。",
+      "幾何和 = 首項/(1−公比)。",
+      "化簡得 1/({r}({r}−1))。"
+    ],
+    hints: ["注意起點是 n=2。", "首項/(1−公比)。", "把複合分數化簡。"],
+    params: [
+      { r: 2 }, { r: 4 }, { r: 5 }, { r: 6 }
+    ]
+  },
+  {
+    id: "tmpl-ser-radius-geo",
+    topic: "series",
+    rank: 2,
+    answerKind: "numeric",
+    timeLimit: 40,
+    tags: ["power-series", "ratio-test"],
+    prompt: "\\text{Radius of convergence of }\\sum_{n=1}^{\\infty}\\frac{x^n}{{r}^n}",
+    answer: "{r}",
+    solution: "比值判別：|x|/{r} < 1，半徑 {r}。",
+    steps: [
+      "相鄰項比值是 |x|/{r}。",
+      "要小於 1。",
+      "半徑 R = {r}。"
+    ],
+    hints: ["比值判別。", "幾何部分決定半徑。", "R = {r}。"],
+    params: [
+      { r: 3 }, { r: 5 }, { r: 6 }, { r: 7 }
+    ]
+  },
+  {
+    id: "tmpl-ser-arith-geo",
+    topic: "series",
+    rank: 3,
+    answerKind: "numeric",
+    timeLimit: 70,
+    tags: ["power-series"],
+    prompt: "\\sum_{n=1}^{\\infty}\\frac{n}{{r}^n}",
+    answer: "{r}/(({r}-1)^2)",
+    solution: "Σn xⁿ = x/(1−x)²，代 x=1/{r} 化簡得 {r}/({r}−1)²。",
+    steps: [
+      "Σn xⁿ 的閉式是 x/(1−x)²。",
+      "代 x = 1/{r}。",
+      "上下同乘 {r}² 化簡。"
+    ],
+    hints: ["對幾何級數微分。", "x/(1−x)²。", "代 x=1/{r} 再化簡。"],
+    params: [
+      { r: 6 }, { r: 7 }, { r: 8 }, { r: 9 }, { r: 10 }
+    ]
   }
 ];

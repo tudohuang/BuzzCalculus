@@ -2161,6 +2161,1757 @@
         "下限 0 代進去是 0。",
         "答案是 5·6²/2。"
       ]
+    },
+    {
+      "id": "tmpl-lim-sin-ratio-001",
+      "topic": "limits",
+      "rank": 2,
+      "difficulty": 2,
+      "source": "Buzz 模板變體",
+      "prompt": "\\lim_{x\\to 0}\\frac{\\sin(3x)}{\\sin(5x)}",
+      "answerKind": "numeric",
+      "answer": "3/5",
+      "timeLimit": 35,
+      "tabLimit": 1,
+      "solution": "上下各自除以引數湊 sin(u)/u，留下係數比 3/5。",
+      "hints": [
+        "上下都湊 sin(u)/u。",
+        "兩個標準極限都是 1。",
+        "剩下引數的係數比。"
+      ],
+      "tags": [
+        "trig-limit",
+        "standard-limit",
+        "rank-2",
+        "beginner-friendly"
+      ],
+      "variantOf": "tmpl-lim-sin-ratio",
+      "solutionSteps": [
+        "分子乘除 3x、分母乘除 5x。",
+        "sin(3x)/(3x) 與 sin(5x)/(5x) 都趨近 1。",
+        "剩下 3x/5x = 3/5。"
+      ]
+    },
+    {
+      "id": "tmpl-lim-sin-ratio-003",
+      "topic": "limits",
+      "rank": 2,
+      "difficulty": 2,
+      "source": "Buzz 模板變體",
+      "prompt": "\\lim_{x\\to 0}\\frac{\\sin(7x)}{\\sin(3x)}",
+      "answerKind": "numeric",
+      "answer": "7/3",
+      "timeLimit": 35,
+      "tabLimit": 1,
+      "solution": "上下各自除以引數湊 sin(u)/u，留下係數比 7/3。",
+      "hints": [
+        "上下都湊 sin(u)/u。",
+        "兩個標準極限都是 1。",
+        "剩下引數的係數比。"
+      ],
+      "tags": [
+        "trig-limit",
+        "standard-limit",
+        "rank-2",
+        "beginner-friendly"
+      ],
+      "variantOf": "tmpl-lim-sin-ratio",
+      "solutionSteps": [
+        "分子乘除 7x、分母乘除 3x。",
+        "sin(7x)/(7x) 與 sin(3x)/(3x) 都趨近 1。",
+        "剩下 7x/3x = 7/3。"
+      ]
+    },
+    {
+      "id": "tmpl-lim-sin-ratio-004",
+      "topic": "limits",
+      "rank": 2,
+      "difficulty": 2,
+      "source": "Buzz 模板變體",
+      "prompt": "\\lim_{x\\to 0}\\frac{\\sin(2x)}{\\sin(9x)}",
+      "answerKind": "numeric",
+      "answer": "2/9",
+      "timeLimit": 35,
+      "tabLimit": 1,
+      "solution": "上下各自除以引數湊 sin(u)/u，留下係數比 2/9。",
+      "hints": [
+        "上下都湊 sin(u)/u。",
+        "兩個標準極限都是 1。",
+        "剩下引數的係數比。"
+      ],
+      "tags": [
+        "trig-limit",
+        "standard-limit",
+        "rank-2",
+        "beginner-friendly"
+      ],
+      "variantOf": "tmpl-lim-sin-ratio",
+      "solutionSteps": [
+        "分子乘除 2x、分母乘除 9x。",
+        "sin(2x)/(2x) 與 sin(9x)/(9x) 都趨近 1。",
+        "剩下 2x/9x = 2/9。"
+      ]
+    },
+    {
+      "id": "tmpl-lim-sin-ratio-005",
+      "topic": "limits",
+      "rank": 2,
+      "difficulty": 2,
+      "source": "Buzz 模板變體",
+      "prompt": "\\lim_{x\\to 0}\\frac{\\sin(6x)}{\\sin(5x)}",
+      "answerKind": "numeric",
+      "answer": "6/5",
+      "timeLimit": 35,
+      "tabLimit": 1,
+      "solution": "上下各自除以引數湊 sin(u)/u，留下係數比 6/5。",
+      "hints": [
+        "上下都湊 sin(u)/u。",
+        "兩個標準極限都是 1。",
+        "剩下引數的係數比。"
+      ],
+      "tags": [
+        "trig-limit",
+        "standard-limit",
+        "rank-2",
+        "beginner-friendly"
+      ],
+      "variantOf": "tmpl-lim-sin-ratio",
+      "solutionSteps": [
+        "分子乘除 6x、分母乘除 5x。",
+        "sin(6x)/(6x) 與 sin(5x)/(5x) 都趨近 1。",
+        "剩下 6x/5x = 6/5。"
+      ]
+    },
+    {
+      "id": "tmpl-lim-cos-square-002",
+      "topic": "limits",
+      "rank": 2,
+      "difficulty": 2,
+      "source": "Buzz 模板變體",
+      "prompt": "\\lim_{x\\to 0}\\frac{1-\\cos(4x)}{x^2}",
+      "answerKind": "numeric",
+      "answer": "4^2/2",
+      "timeLimit": 35,
+      "tabLimit": 1,
+      "solution": "1−cos u ≈ u²/2，u=4x 代入得 4²x²/2x² = 4²/2。",
+      "hints": [
+        "(1−cos u)/u² 的極限是 1/2。",
+        "u=4x。",
+        "別忘了係數要平方。"
+      ],
+      "tags": [
+        "trig-limit",
+        "standard-limit",
+        "rank-2",
+        "beginner-friendly"
+      ],
+      "variantOf": "tmpl-lim-cos-square",
+      "solutionSteps": [
+        "標準極限：(1−cos u)/u² → 1/2。",
+        "u = 4x，所以分子 ≈ 4²x²/2。",
+        "除以 x² 得 4²/2。"
+      ]
+    },
+    {
+      "id": "tmpl-lim-cos-square-003",
+      "topic": "limits",
+      "rank": 2,
+      "difficulty": 2,
+      "source": "Buzz 模板變體",
+      "prompt": "\\lim_{x\\to 0}\\frac{1-\\cos(5x)}{x^2}",
+      "answerKind": "numeric",
+      "answer": "5^2/2",
+      "timeLimit": 35,
+      "tabLimit": 1,
+      "solution": "1−cos u ≈ u²/2，u=5x 代入得 5²x²/2x² = 5²/2。",
+      "hints": [
+        "(1−cos u)/u² 的極限是 1/2。",
+        "u=5x。",
+        "別忘了係數要平方。"
+      ],
+      "tags": [
+        "trig-limit",
+        "standard-limit",
+        "rank-2",
+        "beginner-friendly"
+      ],
+      "variantOf": "tmpl-lim-cos-square",
+      "solutionSteps": [
+        "標準極限：(1−cos u)/u² → 1/2。",
+        "u = 5x，所以分子 ≈ 5²x²/2。",
+        "除以 x² 得 5²/2。"
+      ]
+    },
+    {
+      "id": "tmpl-lim-cos-square-004",
+      "topic": "limits",
+      "rank": 2,
+      "difficulty": 2,
+      "source": "Buzz 模板變體",
+      "prompt": "\\lim_{x\\to 0}\\frac{1-\\cos(6x)}{x^2}",
+      "answerKind": "numeric",
+      "answer": "6^2/2",
+      "timeLimit": 35,
+      "tabLimit": 1,
+      "solution": "1−cos u ≈ u²/2，u=6x 代入得 6²x²/2x² = 6²/2。",
+      "hints": [
+        "(1−cos u)/u² 的極限是 1/2。",
+        "u=6x。",
+        "別忘了係數要平方。"
+      ],
+      "tags": [
+        "trig-limit",
+        "standard-limit",
+        "rank-2",
+        "beginner-friendly"
+      ],
+      "variantOf": "tmpl-lim-cos-square",
+      "solutionSteps": [
+        "標準極限：(1−cos u)/u² → 1/2。",
+        "u = 6x，所以分子 ≈ 6²x²/2。",
+        "除以 x² 得 6²/2。"
+      ]
+    },
+    {
+      "id": "tmpl-lim-log-ratio-001",
+      "topic": "limits",
+      "rank": 2,
+      "difficulty": 2,
+      "source": "Buzz 模板變體",
+      "prompt": "\\lim_{x\\to 0}\\frac{\\log(1+2x)}{\\log(1+5x)}",
+      "answerKind": "numeric",
+      "answer": "2/5",
+      "timeLimit": 35,
+      "tabLimit": 1,
+      "solution": "log(1+u) ≈ u，上下分別是 2x 與 5x，比值 2/5。",
+      "hints": [
+        "log(1+u) ≈ u。",
+        "上下各自線性化。",
+        "剩下係數比。"
+      ],
+      "tags": [
+        "standard-limit",
+        "log",
+        "rank-2",
+        "beginner-friendly"
+      ],
+      "variantOf": "tmpl-lim-log-ratio",
+      "solutionSteps": [
+        "log(1+u)/u → 1。",
+        "分子 ≈ 2x、分母 ≈ 5x。",
+        "比值 2/5。"
+      ]
+    },
+    {
+      "id": "tmpl-lim-log-ratio-002",
+      "topic": "limits",
+      "rank": 2,
+      "difficulty": 2,
+      "source": "Buzz 模板變體",
+      "prompt": "\\lim_{x\\to 0}\\frac{\\log(1+7x)}{\\log(1+2x)}",
+      "answerKind": "numeric",
+      "answer": "7/2",
+      "timeLimit": 35,
+      "tabLimit": 1,
+      "solution": "log(1+u) ≈ u，上下分別是 7x 與 2x，比值 7/2。",
+      "hints": [
+        "log(1+u) ≈ u。",
+        "上下各自線性化。",
+        "剩下係數比。"
+      ],
+      "tags": [
+        "standard-limit",
+        "log",
+        "rank-2",
+        "beginner-friendly"
+      ],
+      "variantOf": "tmpl-lim-log-ratio",
+      "solutionSteps": [
+        "log(1+u)/u → 1。",
+        "分子 ≈ 7x、分母 ≈ 2x。",
+        "比值 7/2。"
+      ]
+    },
+    {
+      "id": "tmpl-lim-log-ratio-003",
+      "topic": "limits",
+      "rank": 2,
+      "difficulty": 2,
+      "source": "Buzz 模板變體",
+      "prompt": "\\lim_{x\\to 0}\\frac{\\log(1+3x)}{\\log(1+8x)}",
+      "answerKind": "numeric",
+      "answer": "3/8",
+      "timeLimit": 35,
+      "tabLimit": 1,
+      "solution": "log(1+u) ≈ u，上下分別是 3x 與 8x，比值 3/8。",
+      "hints": [
+        "log(1+u) ≈ u。",
+        "上下各自線性化。",
+        "剩下係數比。"
+      ],
+      "tags": [
+        "standard-limit",
+        "log",
+        "rank-2",
+        "beginner-friendly"
+      ],
+      "variantOf": "tmpl-lim-log-ratio",
+      "solutionSteps": [
+        "log(1+u)/u → 1。",
+        "分子 ≈ 3x、分母 ≈ 8x。",
+        "比值 3/8。"
+      ]
+    },
+    {
+      "id": "tmpl-lim-log-ratio-004",
+      "topic": "limits",
+      "rank": 2,
+      "difficulty": 2,
+      "source": "Buzz 模板變體",
+      "prompt": "\\lim_{x\\to 0}\\frac{\\log(1+9x)}{\\log(1+4x)}",
+      "answerKind": "numeric",
+      "answer": "9/4",
+      "timeLimit": 35,
+      "tabLimit": 1,
+      "solution": "log(1+u) ≈ u，上下分別是 9x 與 4x，比值 9/4。",
+      "hints": [
+        "log(1+u) ≈ u。",
+        "上下各自線性化。",
+        "剩下係數比。"
+      ],
+      "tags": [
+        "standard-limit",
+        "log",
+        "rank-2",
+        "beginner-friendly"
+      ],
+      "variantOf": "tmpl-lim-log-ratio",
+      "solutionSteps": [
+        "log(1+u)/u → 1。",
+        "分子 ≈ 9x、分母 ≈ 4x。",
+        "比值 9/4。"
+      ]
+    },
+    {
+      "id": "tmpl-der-prod-xexp-001",
+      "topic": "derivatives",
+      "rank": 2,
+      "difficulty": 2,
+      "source": "Buzz 模板變體",
+      "prompt": "\\frac{d}{dx}\\left(x^{2}e^{3x}\\right)",
+      "answerKind": "expression",
+      "answer": "(2*x^(2-1)+3*x^2)*exp(3*x)",
+      "timeLimit": 50,
+      "tabLimit": 1,
+      "solution": "乘積律：2x^(2−1)·e^(3x) + x^2·3e^(3x)，提出 e^(3x)。",
+      "hints": [
+        "乘積律。",
+        "指數微分帶出 3。",
+        "提出 e^(3x)。"
+      ],
+      "tags": [
+        "product-rule",
+        "exponential",
+        "rank-2",
+        "beginner-friendly"
+      ],
+      "variantOf": "tmpl-der-prod-xexp",
+      "solutionSteps": [
+        "乘積律：(uv)' = u'v + uv'。",
+        "u = x^2 的導數是 2x^(2−1)。",
+        "v = e^(3x) 的導數是 3e^(3x)。",
+        "提出 e^(3x) 合併。"
+      ],
+      "variable": "x"
+    },
+    {
+      "id": "tmpl-der-prod-xexp-002",
+      "topic": "derivatives",
+      "rank": 2,
+      "difficulty": 2,
+      "source": "Buzz 模板變體",
+      "prompt": "\\frac{d}{dx}\\left(x^{3}e^{2x}\\right)",
+      "answerKind": "expression",
+      "answer": "(3*x^(3-1)+2*x^3)*exp(2*x)",
+      "timeLimit": 50,
+      "tabLimit": 1,
+      "solution": "乘積律：3x^(3−1)·e^(2x) + x^3·2e^(2x)，提出 e^(2x)。",
+      "hints": [
+        "乘積律。",
+        "指數微分帶出 2。",
+        "提出 e^(2x)。"
+      ],
+      "tags": [
+        "product-rule",
+        "exponential",
+        "rank-2",
+        "beginner-friendly"
+      ],
+      "variantOf": "tmpl-der-prod-xexp",
+      "solutionSteps": [
+        "乘積律：(uv)' = u'v + uv'。",
+        "u = x^3 的導數是 3x^(3−1)。",
+        "v = e^(2x) 的導數是 2e^(2x)。",
+        "提出 e^(2x) 合併。"
+      ],
+      "variable": "x"
+    },
+    {
+      "id": "tmpl-der-prod-xexp-003",
+      "topic": "derivatives",
+      "rank": 2,
+      "difficulty": 2,
+      "source": "Buzz 模板變體",
+      "prompt": "\\frac{d}{dx}\\left(x^{4}e^{5x}\\right)",
+      "answerKind": "expression",
+      "answer": "(4*x^(4-1)+5*x^4)*exp(5*x)",
+      "timeLimit": 50,
+      "tabLimit": 1,
+      "solution": "乘積律：4x^(4−1)·e^(5x) + x^4·5e^(5x)，提出 e^(5x)。",
+      "hints": [
+        "乘積律。",
+        "指數微分帶出 5。",
+        "提出 e^(5x)。"
+      ],
+      "tags": [
+        "product-rule",
+        "exponential",
+        "rank-2",
+        "beginner-friendly"
+      ],
+      "variantOf": "tmpl-der-prod-xexp",
+      "solutionSteps": [
+        "乘積律：(uv)' = u'v + uv'。",
+        "u = x^4 的導數是 4x^(4−1)。",
+        "v = e^(5x) 的導數是 5e^(5x)。",
+        "提出 e^(5x) 合併。"
+      ],
+      "variable": "x"
+    },
+    {
+      "id": "tmpl-der-prod-xexp-004",
+      "topic": "derivatives",
+      "rank": 2,
+      "difficulty": 2,
+      "source": "Buzz 模板變體",
+      "prompt": "\\frac{d}{dx}\\left(x^{2}e^{7x}\\right)",
+      "answerKind": "expression",
+      "answer": "(2*x^(2-1)+7*x^2)*exp(7*x)",
+      "timeLimit": 50,
+      "tabLimit": 1,
+      "solution": "乘積律：2x^(2−1)·e^(7x) + x^2·7e^(7x)，提出 e^(7x)。",
+      "hints": [
+        "乘積律。",
+        "指數微分帶出 7。",
+        "提出 e^(7x)。"
+      ],
+      "tags": [
+        "product-rule",
+        "exponential",
+        "rank-2",
+        "beginner-friendly"
+      ],
+      "variantOf": "tmpl-der-prod-xexp",
+      "solutionSteps": [
+        "乘積律：(uv)' = u'v + uv'。",
+        "u = x^2 的導數是 2x^(2−1)。",
+        "v = e^(7x) 的導數是 7e^(7x)。",
+        "提出 e^(7x) 合併。"
+      ],
+      "variable": "x"
+    },
+    {
+      "id": "tmpl-der-prod-xexp-005",
+      "topic": "derivatives",
+      "rank": 2,
+      "difficulty": 2,
+      "source": "Buzz 模板變體",
+      "prompt": "\\frac{d}{dx}\\left(x^{5}e^{3x}\\right)",
+      "answerKind": "expression",
+      "answer": "(5*x^(5-1)+3*x^5)*exp(3*x)",
+      "timeLimit": 50,
+      "tabLimit": 1,
+      "solution": "乘積律：5x^(5−1)·e^(3x) + x^5·3e^(3x)，提出 e^(3x)。",
+      "hints": [
+        "乘積律。",
+        "指數微分帶出 3。",
+        "提出 e^(3x)。"
+      ],
+      "tags": [
+        "product-rule",
+        "exponential",
+        "rank-2",
+        "beginner-friendly"
+      ],
+      "variantOf": "tmpl-der-prod-xexp",
+      "solutionSteps": [
+        "乘積律：(uv)' = u'v + uv'。",
+        "u = x^5 的導數是 5x^(5−1)。",
+        "v = e^(3x) 的導數是 3e^(3x)。",
+        "提出 e^(3x) 合併。"
+      ],
+      "variable": "x"
+    },
+    {
+      "id": "tmpl-der-quotient-shift-001",
+      "topic": "derivatives",
+      "rank": 2,
+      "difficulty": 2,
+      "source": "Buzz 模板變體",
+      "prompt": "\\frac{d}{dx}\\left(\\frac{x}{x+2}\\right)",
+      "answerKind": "expression",
+      "answer": "2/(x+2)^2",
+      "timeLimit": 45,
+      "tabLimit": 1,
+      "solution": "商律：((x+2)−x)/(x+2)² = 2/(x+2)²。",
+      "hints": [
+        "商律。",
+        "分子會大量相消。",
+        "剩下常數 2。"
+      ],
+      "tags": [
+        "quotient-rule",
+        "rank-2",
+        "beginner-friendly"
+      ],
+      "variantOf": "tmpl-der-quotient-shift",
+      "solutionSteps": [
+        "商律：(u/v)' = (u'v − uv')/v²。",
+        "分子：(x+2) − x = 2。",
+        "答案 2/(x+2)²。"
+      ],
+      "variable": "x"
+    },
+    {
+      "id": "tmpl-der-quotient-shift-002",
+      "topic": "derivatives",
+      "rank": 2,
+      "difficulty": 2,
+      "source": "Buzz 模板變體",
+      "prompt": "\\frac{d}{dx}\\left(\\frac{x}{x+3}\\right)",
+      "answerKind": "expression",
+      "answer": "3/(x+3)^2",
+      "timeLimit": 45,
+      "tabLimit": 1,
+      "solution": "商律：((x+3)−x)/(x+3)² = 3/(x+3)²。",
+      "hints": [
+        "商律。",
+        "分子會大量相消。",
+        "剩下常數 3。"
+      ],
+      "tags": [
+        "quotient-rule",
+        "rank-2",
+        "beginner-friendly"
+      ],
+      "variantOf": "tmpl-der-quotient-shift",
+      "solutionSteps": [
+        "商律：(u/v)' = (u'v − uv')/v²。",
+        "分子：(x+3) − x = 3。",
+        "答案 3/(x+3)²。"
+      ],
+      "variable": "x"
+    },
+    {
+      "id": "tmpl-der-quotient-shift-003",
+      "topic": "derivatives",
+      "rank": 2,
+      "difficulty": 2,
+      "source": "Buzz 模板變體",
+      "prompt": "\\frac{d}{dx}\\left(\\frac{x}{x+5}\\right)",
+      "answerKind": "expression",
+      "answer": "5/(x+5)^2",
+      "timeLimit": 45,
+      "tabLimit": 1,
+      "solution": "商律：((x+5)−x)/(x+5)² = 5/(x+5)²。",
+      "hints": [
+        "商律。",
+        "分子會大量相消。",
+        "剩下常數 5。"
+      ],
+      "tags": [
+        "quotient-rule",
+        "rank-2",
+        "beginner-friendly"
+      ],
+      "variantOf": "tmpl-der-quotient-shift",
+      "solutionSteps": [
+        "商律：(u/v)' = (u'v − uv')/v²。",
+        "分子：(x+5) − x = 5。",
+        "答案 5/(x+5)²。"
+      ],
+      "variable": "x"
+    },
+    {
+      "id": "tmpl-der-quotient-shift-004",
+      "topic": "derivatives",
+      "rank": 2,
+      "difficulty": 2,
+      "source": "Buzz 模板變體",
+      "prompt": "\\frac{d}{dx}\\left(\\frac{x}{x+7}\\right)",
+      "answerKind": "expression",
+      "answer": "7/(x+7)^2",
+      "timeLimit": 45,
+      "tabLimit": 1,
+      "solution": "商律：((x+7)−x)/(x+7)² = 7/(x+7)²。",
+      "hints": [
+        "商律。",
+        "分子會大量相消。",
+        "剩下常數 7。"
+      ],
+      "tags": [
+        "quotient-rule",
+        "rank-2",
+        "beginner-friendly"
+      ],
+      "variantOf": "tmpl-der-quotient-shift",
+      "solutionSteps": [
+        "商律：(u/v)' = (u'v − uv')/v²。",
+        "分子：(x+7) − x = 7。",
+        "答案 7/(x+7)²。"
+      ],
+      "variable": "x"
+    },
+    {
+      "id": "tmpl-der-quotient-shift-005",
+      "topic": "derivatives",
+      "rank": 2,
+      "difficulty": 2,
+      "source": "Buzz 模板變體",
+      "prompt": "\\frac{d}{dx}\\left(\\frac{x}{x+4}\\right)",
+      "answerKind": "expression",
+      "answer": "4/(x+4)^2",
+      "timeLimit": 45,
+      "tabLimit": 1,
+      "solution": "商律：((x+4)−x)/(x+4)² = 4/(x+4)²。",
+      "hints": [
+        "商律。",
+        "分子會大量相消。",
+        "剩下常數 4。"
+      ],
+      "tags": [
+        "quotient-rule",
+        "rank-2",
+        "beginner-friendly"
+      ],
+      "variantOf": "tmpl-der-quotient-shift",
+      "solutionSteps": [
+        "商律：(u/v)' = (u'v − uv')/v²。",
+        "分子：(x+4) − x = 4。",
+        "答案 4/(x+4)²。"
+      ],
+      "variable": "x"
+    },
+    {
+      "id": "tmpl-der-chain-logpoly-001",
+      "topic": "derivatives",
+      "rank": 2,
+      "difficulty": 2,
+      "source": "Buzz 模板變體",
+      "prompt": "\\frac{d}{dx}\\log\\left(x^2+4\\right)",
+      "answerKind": "expression",
+      "answer": "2*x/(x^2+4)",
+      "timeLimit": 40,
+      "tabLimit": 1,
+      "solution": "鏈鎖律：log(u) 的導數是 u'/u，u = x²+4。",
+      "hints": [
+        "log 的導數是 1/u 乘內層導數。",
+        "內層是 x²+4。",
+        "u'=2x。"
+      ],
+      "tags": [
+        "chain-rule",
+        "log",
+        "rank-2",
+        "beginner-friendly"
+      ],
+      "variantOf": "tmpl-der-chain-logpoly",
+      "solutionSteps": [
+        "log(u) 的導數是 u'/u。",
+        "u = x²+4，u' = 2x。",
+        "答案 2x/(x²+4)。"
+      ],
+      "variable": "x"
+    },
+    {
+      "id": "tmpl-der-chain-logpoly-002",
+      "topic": "derivatives",
+      "rank": 2,
+      "difficulty": 2,
+      "source": "Buzz 模板變體",
+      "prompt": "\\frac{d}{dx}\\log\\left(x^2+9\\right)",
+      "answerKind": "expression",
+      "answer": "2*x/(x^2+9)",
+      "timeLimit": 40,
+      "tabLimit": 1,
+      "solution": "鏈鎖律：log(u) 的導數是 u'/u，u = x²+9。",
+      "hints": [
+        "log 的導數是 1/u 乘內層導數。",
+        "內層是 x²+9。",
+        "u'=2x。"
+      ],
+      "tags": [
+        "chain-rule",
+        "log",
+        "rank-2",
+        "beginner-friendly"
+      ],
+      "variantOf": "tmpl-der-chain-logpoly",
+      "solutionSteps": [
+        "log(u) 的導數是 u'/u。",
+        "u = x²+9，u' = 2x。",
+        "答案 2x/(x²+9)。"
+      ],
+      "variable": "x"
+    },
+    {
+      "id": "tmpl-der-chain-logpoly-003",
+      "topic": "derivatives",
+      "rank": 2,
+      "difficulty": 2,
+      "source": "Buzz 模板變體",
+      "prompt": "\\frac{d}{dx}\\log\\left(x^2+3\\right)",
+      "answerKind": "expression",
+      "answer": "2*x/(x^2+3)",
+      "timeLimit": 40,
+      "tabLimit": 1,
+      "solution": "鏈鎖律：log(u) 的導數是 u'/u，u = x²+3。",
+      "hints": [
+        "log 的導數是 1/u 乘內層導數。",
+        "內層是 x²+3。",
+        "u'=2x。"
+      ],
+      "tags": [
+        "chain-rule",
+        "log",
+        "rank-2",
+        "beginner-friendly"
+      ],
+      "variantOf": "tmpl-der-chain-logpoly",
+      "solutionSteps": [
+        "log(u) 的導數是 u'/u。",
+        "u = x²+3，u' = 2x。",
+        "答案 2x/(x²+3)。"
+      ],
+      "variable": "x"
+    },
+    {
+      "id": "tmpl-der-chain-logpoly-004",
+      "topic": "derivatives",
+      "rank": 2,
+      "difficulty": 2,
+      "source": "Buzz 模板變體",
+      "prompt": "\\frac{d}{dx}\\log\\left(x^2+7\\right)",
+      "answerKind": "expression",
+      "answer": "2*x/(x^2+7)",
+      "timeLimit": 40,
+      "tabLimit": 1,
+      "solution": "鏈鎖律：log(u) 的導數是 u'/u，u = x²+7。",
+      "hints": [
+        "log 的導數是 1/u 乘內層導數。",
+        "內層是 x²+7。",
+        "u'=2x。"
+      ],
+      "tags": [
+        "chain-rule",
+        "log",
+        "rank-2",
+        "beginner-friendly"
+      ],
+      "variantOf": "tmpl-der-chain-logpoly",
+      "solutionSteps": [
+        "log(u) 的導數是 u'/u。",
+        "u = x²+7，u' = 2x。",
+        "答案 2x/(x²+7)。"
+      ],
+      "variable": "x"
+    },
+    {
+      "id": "tmpl-der-chain-logpoly-005",
+      "topic": "derivatives",
+      "rank": 2,
+      "difficulty": 2,
+      "source": "Buzz 模板變體",
+      "prompt": "\\frac{d}{dx}\\log\\left(x^2+5\\right)",
+      "answerKind": "expression",
+      "answer": "2*x/(x^2+5)",
+      "timeLimit": 40,
+      "tabLimit": 1,
+      "solution": "鏈鎖律：log(u) 的導數是 u'/u，u = x²+5。",
+      "hints": [
+        "log 的導數是 1/u 乘內層導數。",
+        "內層是 x²+5。",
+        "u'=2x。"
+      ],
+      "tags": [
+        "chain-rule",
+        "log",
+        "rank-2",
+        "beginner-friendly"
+      ],
+      "variantOf": "tmpl-der-chain-logpoly",
+      "solutionSteps": [
+        "log(u) 的導數是 u'/u。",
+        "u = x²+5，u' = 2x。",
+        "答案 2x/(x²+5)。"
+      ],
+      "variable": "x"
+    },
+    {
+      "id": "tmpl-int-linear-power-001",
+      "topic": "integrals",
+      "rank": 2,
+      "difficulty": 2,
+      "source": "Buzz 模板變體",
+      "prompt": "\\int \\left(2x+3\\right)^{4}\\,dx",
+      "answerKind": "antiderivative",
+      "answer": "(2*x+3)^(4+1)/(2*(4+1))",
+      "timeLimit": 45,
+      "tabLimit": 1,
+      "solution": "u = 2x+3，du = 2dx：∫u^4du/2 = u^(4+1)/(2(4+1))。",
+      "hints": [
+        "線性內層直接換元。",
+        "別忘了除以內層係數 2。",
+        "次方加一再除。"
+      ],
+      "tags": [
+        "substitution",
+        "basic-integral",
+        "rank-2",
+        "beginner-friendly"
+      ],
+      "variantOf": "tmpl-int-linear-power",
+      "solutionSteps": [
+        "令 u = 2x+3。",
+        "du = 2 dx，補上 1/2。",
+        "次方積分後代回。"
+      ],
+      "variable": "x"
+    },
+    {
+      "id": "tmpl-int-linear-power-002",
+      "topic": "integrals",
+      "rank": 2,
+      "difficulty": 2,
+      "source": "Buzz 模板變體",
+      "prompt": "\\int \\left(3x+1\\right)^{5}\\,dx",
+      "answerKind": "antiderivative",
+      "answer": "(3*x+1)^(5+1)/(3*(5+1))",
+      "timeLimit": 45,
+      "tabLimit": 1,
+      "solution": "u = 3x+1，du = 3dx：∫u^5du/3 = u^(5+1)/(3(5+1))。",
+      "hints": [
+        "線性內層直接換元。",
+        "別忘了除以內層係數 3。",
+        "次方加一再除。"
+      ],
+      "tags": [
+        "substitution",
+        "basic-integral",
+        "rank-2",
+        "beginner-friendly"
+      ],
+      "variantOf": "tmpl-int-linear-power",
+      "solutionSteps": [
+        "令 u = 3x+1。",
+        "du = 3 dx，補上 1/3。",
+        "次方積分後代回。"
+      ],
+      "variable": "x"
+    },
+    {
+      "id": "tmpl-int-linear-power-003",
+      "topic": "integrals",
+      "rank": 2,
+      "difficulty": 2,
+      "source": "Buzz 模板變體",
+      "prompt": "\\int \\left(5x+2\\right)^{3}\\,dx",
+      "answerKind": "antiderivative",
+      "answer": "(5*x+2)^(3+1)/(5*(3+1))",
+      "timeLimit": 45,
+      "tabLimit": 1,
+      "solution": "u = 5x+2，du = 5dx：∫u^3du/5 = u^(3+1)/(5(3+1))。",
+      "hints": [
+        "線性內層直接換元。",
+        "別忘了除以內層係數 5。",
+        "次方加一再除。"
+      ],
+      "tags": [
+        "substitution",
+        "basic-integral",
+        "rank-2",
+        "beginner-friendly"
+      ],
+      "variantOf": "tmpl-int-linear-power",
+      "solutionSteps": [
+        "令 u = 5x+2。",
+        "du = 5 dx，補上 1/5。",
+        "次方積分後代回。"
+      ],
+      "variable": "x"
+    },
+    {
+      "id": "tmpl-int-linear-power-004",
+      "topic": "integrals",
+      "rank": 2,
+      "difficulty": 2,
+      "source": "Buzz 模板變體",
+      "prompt": "\\int \\left(4x+7\\right)^{6}\\,dx",
+      "answerKind": "antiderivative",
+      "answer": "(4*x+7)^(6+1)/(4*(6+1))",
+      "timeLimit": 45,
+      "tabLimit": 1,
+      "solution": "u = 4x+7，du = 4dx：∫u^6du/4 = u^(6+1)/(4(6+1))。",
+      "hints": [
+        "線性內層直接換元。",
+        "別忘了除以內層係數 4。",
+        "次方加一再除。"
+      ],
+      "tags": [
+        "substitution",
+        "basic-integral",
+        "rank-2",
+        "beginner-friendly"
+      ],
+      "variantOf": "tmpl-int-linear-power",
+      "solutionSteps": [
+        "令 u = 4x+7。",
+        "du = 4 dx，補上 1/4。",
+        "次方積分後代回。"
+      ],
+      "variable": "x"
+    },
+    {
+      "id": "tmpl-int-linear-power-005",
+      "topic": "integrals",
+      "rank": 2,
+      "difficulty": 2,
+      "source": "Buzz 模板變體",
+      "prompt": "\\int \\left(2x+5\\right)^{7}\\,dx",
+      "answerKind": "antiderivative",
+      "answer": "(2*x+5)^(7+1)/(2*(7+1))",
+      "timeLimit": 45,
+      "tabLimit": 1,
+      "solution": "u = 2x+5，du = 2dx：∫u^7du/2 = u^(7+1)/(2(7+1))。",
+      "hints": [
+        "線性內層直接換元。",
+        "別忘了除以內層係數 2。",
+        "次方加一再除。"
+      ],
+      "tags": [
+        "substitution",
+        "basic-integral",
+        "rank-2",
+        "beginner-friendly"
+      ],
+      "variantOf": "tmpl-int-linear-power",
+      "solutionSteps": [
+        "令 u = 2x+5。",
+        "du = 2 dx，補上 1/2。",
+        "次方積分後代回。"
+      ],
+      "variable": "x"
+    },
+    {
+      "id": "tmpl-int-exp-def-001",
+      "topic": "integrals",
+      "rank": 2,
+      "difficulty": 2,
+      "source": "Buzz 模板變體",
+      "prompt": "\\int_0^{1} e^{3x}\\,dx",
+      "answerKind": "numeric",
+      "answer": "(exp(3*1)-1)/3",
+      "timeLimit": 45,
+      "tabLimit": 1,
+      "solution": "反導數 e^(3x)/3，代上下限得 (e^(31)−1)/3。",
+      "hints": [
+        "指數積分除以內層係數。",
+        "下限 0 給 1。",
+        "別忘了除以 3。"
+      ],
+      "tags": [
+        "exponential",
+        "definite-integral",
+        "rank-2",
+        "beginner-friendly"
+      ],
+      "variantOf": "tmpl-int-exp-def",
+      "solutionSteps": [
+        "e^(3x) 的反導數是 e^(3x)/3。",
+        "代上限 1、下限 0。",
+        "(e^(31)−1)/3。"
+      ]
+    },
+    {
+      "id": "tmpl-int-exp-def-002",
+      "topic": "integrals",
+      "rank": 2,
+      "difficulty": 2,
+      "source": "Buzz 模板變體",
+      "prompt": "\\int_0^{2} e^{2x}\\,dx",
+      "answerKind": "numeric",
+      "answer": "(exp(2*2)-1)/2",
+      "timeLimit": 45,
+      "tabLimit": 1,
+      "solution": "反導數 e^(2x)/2，代上下限得 (e^(22)−1)/2。",
+      "hints": [
+        "指數積分除以內層係數。",
+        "下限 0 給 1。",
+        "別忘了除以 2。"
+      ],
+      "tags": [
+        "exponential",
+        "definite-integral",
+        "rank-2",
+        "beginner-friendly"
+      ],
+      "variantOf": "tmpl-int-exp-def",
+      "solutionSteps": [
+        "e^(2x) 的反導數是 e^(2x)/2。",
+        "代上限 2、下限 0。",
+        "(e^(22)−1)/2。"
+      ]
+    },
+    {
+      "id": "tmpl-int-exp-def-003",
+      "topic": "integrals",
+      "rank": 2,
+      "difficulty": 2,
+      "source": "Buzz 模板變體",
+      "prompt": "\\int_0^{1} e^{4x}\\,dx",
+      "answerKind": "numeric",
+      "answer": "(exp(4*1)-1)/4",
+      "timeLimit": 45,
+      "tabLimit": 1,
+      "solution": "反導數 e^(4x)/4，代上下限得 (e^(41)−1)/4。",
+      "hints": [
+        "指數積分除以內層係數。",
+        "下限 0 給 1。",
+        "別忘了除以 4。"
+      ],
+      "tags": [
+        "exponential",
+        "definite-integral",
+        "rank-2",
+        "beginner-friendly"
+      ],
+      "variantOf": "tmpl-int-exp-def",
+      "solutionSteps": [
+        "e^(4x) 的反導數是 e^(4x)/4。",
+        "代上限 1、下限 0。",
+        "(e^(41)−1)/4。"
+      ]
+    },
+    {
+      "id": "tmpl-int-exp-def-004",
+      "topic": "integrals",
+      "rank": 2,
+      "difficulty": 2,
+      "source": "Buzz 模板變體",
+      "prompt": "\\int_0^{1} e^{5x}\\,dx",
+      "answerKind": "numeric",
+      "answer": "(exp(5*1)-1)/5",
+      "timeLimit": 45,
+      "tabLimit": 1,
+      "solution": "反導數 e^(5x)/5，代上下限得 (e^(51)−1)/5。",
+      "hints": [
+        "指數積分除以內層係數。",
+        "下限 0 給 1。",
+        "別忘了除以 5。"
+      ],
+      "tags": [
+        "exponential",
+        "definite-integral",
+        "rank-2",
+        "beginner-friendly"
+      ],
+      "variantOf": "tmpl-int-exp-def",
+      "solutionSteps": [
+        "e^(5x) 的反導數是 e^(5x)/5。",
+        "代上限 1、下限 0。",
+        "(e^(51)−1)/5。"
+      ]
+    },
+    {
+      "id": "tmpl-int-exp-def-005",
+      "topic": "integrals",
+      "rank": 2,
+      "difficulty": 2,
+      "source": "Buzz 模板變體",
+      "prompt": "\\int_0^{3} e^{2x}\\,dx",
+      "answerKind": "numeric",
+      "answer": "(exp(2*3)-1)/2",
+      "timeLimit": 45,
+      "tabLimit": 1,
+      "solution": "反導數 e^(2x)/2，代上下限得 (e^(23)−1)/2。",
+      "hints": [
+        "指數積分除以內層係數。",
+        "下限 0 給 1。",
+        "別忘了除以 2。"
+      ],
+      "tags": [
+        "exponential",
+        "definite-integral",
+        "rank-2",
+        "beginner-friendly"
+      ],
+      "variantOf": "tmpl-int-exp-def",
+      "solutionSteps": [
+        "e^(2x) 的反導數是 e^(2x)/2。",
+        "代上限 3、下限 0。",
+        "(e^(23)−1)/2。"
+      ]
+    },
+    {
+      "id": "tmpl-int-usub-poly-001",
+      "topic": "integrals",
+      "rank": 2,
+      "difficulty": 2,
+      "source": "Buzz 模板變體",
+      "prompt": "\\int x\\left(x^2+1\\right)^{3}\\,dx",
+      "answerKind": "antiderivative",
+      "answer": "(x^2+1)^(3+1)/(2*(3+1))",
+      "timeLimit": 50,
+      "tabLimit": 1,
+      "solution": "u = x²+1，du = 2x dx：∫u^3du/2 = u^(3+1)/(2(3+1))。",
+      "hints": [
+        "找內層。",
+        "du = 2x dx。",
+        "補上 1/2。"
+      ],
+      "tags": [
+        "substitution",
+        "u-sub",
+        "rank-2",
+        "beginner-friendly"
+      ],
+      "variantOf": "tmpl-int-usub-poly",
+      "solutionSteps": [
+        "內層 x²+1 的導數 2x 就在外面。",
+        "u 換元，補 1/2。",
+        "次方積分後代回。"
+      ],
+      "variable": "x"
+    },
+    {
+      "id": "tmpl-int-usub-poly-002",
+      "topic": "integrals",
+      "rank": 2,
+      "difficulty": 2,
+      "source": "Buzz 模板變體",
+      "prompt": "\\int x\\left(x^2+4\\right)^{4}\\,dx",
+      "answerKind": "antiderivative",
+      "answer": "(x^2+4)^(4+1)/(2*(4+1))",
+      "timeLimit": 50,
+      "tabLimit": 1,
+      "solution": "u = x²+4，du = 2x dx：∫u^4du/2 = u^(4+1)/(2(4+1))。",
+      "hints": [
+        "找內層。",
+        "du = 2x dx。",
+        "補上 1/2。"
+      ],
+      "tags": [
+        "substitution",
+        "u-sub",
+        "rank-2",
+        "beginner-friendly"
+      ],
+      "variantOf": "tmpl-int-usub-poly",
+      "solutionSteps": [
+        "內層 x²+4 的導數 2x 就在外面。",
+        "u 換元，補 1/2。",
+        "次方積分後代回。"
+      ],
+      "variable": "x"
+    },
+    {
+      "id": "tmpl-int-usub-poly-003",
+      "topic": "integrals",
+      "rank": 2,
+      "difficulty": 2,
+      "source": "Buzz 模板變體",
+      "prompt": "\\int x\\left(x^2+2\\right)^{5}\\,dx",
+      "answerKind": "antiderivative",
+      "answer": "(x^2+2)^(5+1)/(2*(5+1))",
+      "timeLimit": 50,
+      "tabLimit": 1,
+      "solution": "u = x²+2，du = 2x dx：∫u^5du/2 = u^(5+1)/(2(5+1))。",
+      "hints": [
+        "找內層。",
+        "du = 2x dx。",
+        "補上 1/2。"
+      ],
+      "tags": [
+        "substitution",
+        "u-sub",
+        "rank-2",
+        "beginner-friendly"
+      ],
+      "variantOf": "tmpl-int-usub-poly",
+      "solutionSteps": [
+        "內層 x²+2 的導數 2x 就在外面。",
+        "u 換元，補 1/2。",
+        "次方積分後代回。"
+      ],
+      "variable": "x"
+    },
+    {
+      "id": "tmpl-int-usub-poly-004",
+      "topic": "integrals",
+      "rank": 2,
+      "difficulty": 2,
+      "source": "Buzz 模板變體",
+      "prompt": "\\int x\\left(x^2+5\\right)^{2}\\,dx",
+      "answerKind": "antiderivative",
+      "answer": "(x^2+5)^(2+1)/(2*(2+1))",
+      "timeLimit": 50,
+      "tabLimit": 1,
+      "solution": "u = x²+5，du = 2x dx：∫u^2du/2 = u^(2+1)/(2(2+1))。",
+      "hints": [
+        "找內層。",
+        "du = 2x dx。",
+        "補上 1/2。"
+      ],
+      "tags": [
+        "substitution",
+        "u-sub",
+        "rank-2",
+        "beginner-friendly"
+      ],
+      "variantOf": "tmpl-int-usub-poly",
+      "solutionSteps": [
+        "內層 x²+5 的導數 2x 就在外面。",
+        "u 換元，補 1/2。",
+        "次方積分後代回。"
+      ],
+      "variable": "x"
+    },
+    {
+      "id": "tmpl-int-usub-poly-005",
+      "topic": "integrals",
+      "rank": 2,
+      "difficulty": 2,
+      "source": "Buzz 模板變體",
+      "prompt": "\\int x\\left(x^2+3\\right)^{6}\\,dx",
+      "answerKind": "antiderivative",
+      "answer": "(x^2+3)^(6+1)/(2*(6+1))",
+      "timeLimit": 50,
+      "tabLimit": 1,
+      "solution": "u = x²+3，du = 2x dx：∫u^6du/2 = u^(6+1)/(2(6+1))。",
+      "hints": [
+        "找內層。",
+        "du = 2x dx。",
+        "補上 1/2。"
+      ],
+      "tags": [
+        "substitution",
+        "u-sub",
+        "rank-2",
+        "beginner-friendly"
+      ],
+      "variantOf": "tmpl-int-usub-poly",
+      "solutionSteps": [
+        "內層 x²+3 的導數 2x 就在外面。",
+        "u 換元，補 1/2。",
+        "次方積分後代回。"
+      ],
+      "variable": "x"
+    },
+    {
+      "id": "tmpl-int-sin-def-001",
+      "topic": "integrals",
+      "rank": 2,
+      "difficulty": 2,
+      "source": "Buzz 模板變體",
+      "prompt": "\\int_0^{\\pi} \\sin(3x)\\,dx",
+      "answerKind": "numeric",
+      "answer": "2/3",
+      "timeLimit": 45,
+      "tabLimit": 1,
+      "solution": "反導數 −cos(3x)/3；3 為奇數時 cos(3π) = −1，差值是 2/3。",
+      "hints": [
+        "sin 積成 −cos，除以內層係數。",
+        "想 cos(3π) 是多少。",
+        "奇數的 3 給 −1。"
+      ],
+      "tags": [
+        "trig",
+        "definite-integral",
+        "rank-2",
+        "beginner-friendly"
+      ],
+      "variantOf": "tmpl-int-sin-def",
+      "solutionSteps": [
+        "反導數是 −cos(3x)/3。",
+        "cos(3π) = −1（3 是奇數）。",
+        "(−(−1)+1)/3 = 2/3。"
+      ]
+    },
+    {
+      "id": "tmpl-int-sin-def-002",
+      "topic": "integrals",
+      "rank": 2,
+      "difficulty": 2,
+      "source": "Buzz 模板變體",
+      "prompt": "\\int_0^{\\pi} \\sin(5x)\\,dx",
+      "answerKind": "numeric",
+      "answer": "2/5",
+      "timeLimit": 45,
+      "tabLimit": 1,
+      "solution": "反導數 −cos(5x)/5；5 為奇數時 cos(5π) = −1，差值是 2/5。",
+      "hints": [
+        "sin 積成 −cos，除以內層係數。",
+        "想 cos(5π) 是多少。",
+        "奇數的 5 給 −1。"
+      ],
+      "tags": [
+        "trig",
+        "definite-integral",
+        "rank-2",
+        "beginner-friendly"
+      ],
+      "variantOf": "tmpl-int-sin-def",
+      "solutionSteps": [
+        "反導數是 −cos(5x)/5。",
+        "cos(5π) = −1（5 是奇數）。",
+        "(−(−1)+1)/5 = 2/5。"
+      ]
+    },
+    {
+      "id": "tmpl-int-sin-def-003",
+      "topic": "integrals",
+      "rank": 2,
+      "difficulty": 2,
+      "source": "Buzz 模板變體",
+      "prompt": "\\int_0^{\\pi} \\sin(7x)\\,dx",
+      "answerKind": "numeric",
+      "answer": "2/7",
+      "timeLimit": 45,
+      "tabLimit": 1,
+      "solution": "反導數 −cos(7x)/7；7 為奇數時 cos(7π) = −1，差值是 2/7。",
+      "hints": [
+        "sin 積成 −cos，除以內層係數。",
+        "想 cos(7π) 是多少。",
+        "奇數的 7 給 −1。"
+      ],
+      "tags": [
+        "trig",
+        "definite-integral",
+        "rank-2",
+        "beginner-friendly"
+      ],
+      "variantOf": "tmpl-int-sin-def",
+      "solutionSteps": [
+        "反導數是 −cos(7x)/7。",
+        "cos(7π) = −1（7 是奇數）。",
+        "(−(−1)+1)/7 = 2/7。"
+      ]
+    },
+    {
+      "id": "tmpl-int-sin-def-004",
+      "topic": "integrals",
+      "rank": 2,
+      "difficulty": 2,
+      "source": "Buzz 模板變體",
+      "prompt": "\\int_0^{\\pi} \\sin(9x)\\,dx",
+      "answerKind": "numeric",
+      "answer": "2/9",
+      "timeLimit": 45,
+      "tabLimit": 1,
+      "solution": "反導數 −cos(9x)/9；9 為奇數時 cos(9π) = −1，差值是 2/9。",
+      "hints": [
+        "sin 積成 −cos，除以內層係數。",
+        "想 cos(9π) 是多少。",
+        "奇數的 9 給 −1。"
+      ],
+      "tags": [
+        "trig",
+        "definite-integral",
+        "rank-2",
+        "beginner-friendly"
+      ],
+      "variantOf": "tmpl-int-sin-def",
+      "solutionSteps": [
+        "反導數是 −cos(9x)/9。",
+        "cos(9π) = −1（9 是奇數）。",
+        "(−(−1)+1)/9 = 2/9。"
+      ]
+    },
+    {
+      "id": "tmpl-ser-geo-tail-001",
+      "topic": "series",
+      "rank": 2,
+      "difficulty": 2,
+      "source": "Buzz 模板變體",
+      "prompt": "\\sum_{n=2}^{\\infty}\\left(\\frac{1}{2}\\right)^n",
+      "answerKind": "numeric",
+      "answer": "1/(2*(2-1))",
+      "timeLimit": 45,
+      "tabLimit": 1,
+      "solution": "首項 1/2²、公比 1/2：(1/2²)/(1−1/2) = 1/(2(2−1))。",
+      "hints": [
+        "注意起點是 n=2。",
+        "首項/(1−公比)。",
+        "把複合分數化簡。"
+      ],
+      "tags": [
+        "geometric-series",
+        "rank-2",
+        "beginner-friendly"
+      ],
+      "variantOf": "tmpl-ser-geo-tail",
+      "solutionSteps": [
+        "從 n=2 起，首項是 1/2²。",
+        "幾何和 = 首項/(1−公比)。",
+        "化簡得 1/(2(2−1))。"
+      ]
+    },
+    {
+      "id": "tmpl-ser-geo-tail-002",
+      "topic": "series",
+      "rank": 2,
+      "difficulty": 2,
+      "source": "Buzz 模板變體",
+      "prompt": "\\sum_{n=2}^{\\infty}\\left(\\frac{1}{4}\\right)^n",
+      "answerKind": "numeric",
+      "answer": "1/(4*(4-1))",
+      "timeLimit": 45,
+      "tabLimit": 1,
+      "solution": "首項 1/4²、公比 1/4：(1/4²)/(1−1/4) = 1/(4(4−1))。",
+      "hints": [
+        "注意起點是 n=2。",
+        "首項/(1−公比)。",
+        "把複合分數化簡。"
+      ],
+      "tags": [
+        "geometric-series",
+        "rank-2",
+        "beginner-friendly"
+      ],
+      "variantOf": "tmpl-ser-geo-tail",
+      "solutionSteps": [
+        "從 n=2 起，首項是 1/4²。",
+        "幾何和 = 首項/(1−公比)。",
+        "化簡得 1/(4(4−1))。"
+      ]
+    },
+    {
+      "id": "tmpl-ser-geo-tail-003",
+      "topic": "series",
+      "rank": 2,
+      "difficulty": 2,
+      "source": "Buzz 模板變體",
+      "prompt": "\\sum_{n=2}^{\\infty}\\left(\\frac{1}{5}\\right)^n",
+      "answerKind": "numeric",
+      "answer": "1/(5*(5-1))",
+      "timeLimit": 45,
+      "tabLimit": 1,
+      "solution": "首項 1/5²、公比 1/5：(1/5²)/(1−1/5) = 1/(5(5−1))。",
+      "hints": [
+        "注意起點是 n=2。",
+        "首項/(1−公比)。",
+        "把複合分數化簡。"
+      ],
+      "tags": [
+        "geometric-series",
+        "rank-2",
+        "beginner-friendly"
+      ],
+      "variantOf": "tmpl-ser-geo-tail",
+      "solutionSteps": [
+        "從 n=2 起，首項是 1/5²。",
+        "幾何和 = 首項/(1−公比)。",
+        "化簡得 1/(5(5−1))。"
+      ]
+    },
+    {
+      "id": "tmpl-ser-geo-tail-004",
+      "topic": "series",
+      "rank": 2,
+      "difficulty": 2,
+      "source": "Buzz 模板變體",
+      "prompt": "\\sum_{n=2}^{\\infty}\\left(\\frac{1}{6}\\right)^n",
+      "answerKind": "numeric",
+      "answer": "1/(6*(6-1))",
+      "timeLimit": 45,
+      "tabLimit": 1,
+      "solution": "首項 1/6²、公比 1/6：(1/6²)/(1−1/6) = 1/(6(6−1))。",
+      "hints": [
+        "注意起點是 n=2。",
+        "首項/(1−公比)。",
+        "把複合分數化簡。"
+      ],
+      "tags": [
+        "geometric-series",
+        "rank-2",
+        "beginner-friendly"
+      ],
+      "variantOf": "tmpl-ser-geo-tail",
+      "solutionSteps": [
+        "從 n=2 起，首項是 1/6²。",
+        "幾何和 = 首項/(1−公比)。",
+        "化簡得 1/(6(6−1))。"
+      ]
+    },
+    {
+      "id": "tmpl-ser-radius-geo-001",
+      "topic": "series",
+      "rank": 2,
+      "difficulty": 2,
+      "source": "Buzz 模板變體",
+      "prompt": "\\text{Radius of convergence of }\\sum_{n=1}^{\\infty}\\frac{x^n}{3^n}",
+      "answerKind": "numeric",
+      "answer": "3",
+      "timeLimit": 40,
+      "tabLimit": 1,
+      "solution": "比值判別：|x|/3 < 1，半徑 3。",
+      "hints": [
+        "比值判別。",
+        "幾何部分決定半徑。",
+        "R = 3。"
+      ],
+      "tags": [
+        "power-series",
+        "ratio-test",
+        "rank-2",
+        "beginner-friendly"
+      ],
+      "variantOf": "tmpl-ser-radius-geo",
+      "solutionSteps": [
+        "相鄰項比值是 |x|/3。",
+        "要小於 1。",
+        "半徑 R = 3。"
+      ]
+    },
+    {
+      "id": "tmpl-ser-radius-geo-002",
+      "topic": "series",
+      "rank": 2,
+      "difficulty": 2,
+      "source": "Buzz 模板變體",
+      "prompt": "\\text{Radius of convergence of }\\sum_{n=1}^{\\infty}\\frac{x^n}{5^n}",
+      "answerKind": "numeric",
+      "answer": "5",
+      "timeLimit": 40,
+      "tabLimit": 1,
+      "solution": "比值判別：|x|/5 < 1，半徑 5。",
+      "hints": [
+        "比值判別。",
+        "幾何部分決定半徑。",
+        "R = 5。"
+      ],
+      "tags": [
+        "power-series",
+        "ratio-test",
+        "rank-2",
+        "beginner-friendly"
+      ],
+      "variantOf": "tmpl-ser-radius-geo",
+      "solutionSteps": [
+        "相鄰項比值是 |x|/5。",
+        "要小於 1。",
+        "半徑 R = 5。"
+      ]
+    },
+    {
+      "id": "tmpl-ser-radius-geo-003",
+      "topic": "series",
+      "rank": 2,
+      "difficulty": 2,
+      "source": "Buzz 模板變體",
+      "prompt": "\\text{Radius of convergence of }\\sum_{n=1}^{\\infty}\\frac{x^n}{6^n}",
+      "answerKind": "numeric",
+      "answer": "6",
+      "timeLimit": 40,
+      "tabLimit": 1,
+      "solution": "比值判別：|x|/6 < 1，半徑 6。",
+      "hints": [
+        "比值判別。",
+        "幾何部分決定半徑。",
+        "R = 6。"
+      ],
+      "tags": [
+        "power-series",
+        "ratio-test",
+        "rank-2",
+        "beginner-friendly"
+      ],
+      "variantOf": "tmpl-ser-radius-geo",
+      "solutionSteps": [
+        "相鄰項比值是 |x|/6。",
+        "要小於 1。",
+        "半徑 R = 6。"
+      ]
+    },
+    {
+      "id": "tmpl-ser-radius-geo-004",
+      "topic": "series",
+      "rank": 2,
+      "difficulty": 2,
+      "source": "Buzz 模板變體",
+      "prompt": "\\text{Radius of convergence of }\\sum_{n=1}^{\\infty}\\frac{x^n}{7^n}",
+      "answerKind": "numeric",
+      "answer": "7",
+      "timeLimit": 40,
+      "tabLimit": 1,
+      "solution": "比值判別：|x|/7 < 1，半徑 7。",
+      "hints": [
+        "比值判別。",
+        "幾何部分決定半徑。",
+        "R = 7。"
+      ],
+      "tags": [
+        "power-series",
+        "ratio-test",
+        "rank-2",
+        "beginner-friendly"
+      ],
+      "variantOf": "tmpl-ser-radius-geo",
+      "solutionSteps": [
+        "相鄰項比值是 |x|/7。",
+        "要小於 1。",
+        "半徑 R = 7。"
+      ]
+    },
+    {
+      "id": "tmpl-ser-arith-geo-001",
+      "topic": "series",
+      "rank": 3,
+      "difficulty": 3,
+      "source": "Buzz 模板變體",
+      "prompt": "\\sum_{n=1}^{\\infty}\\frac{n}{6^n}",
+      "answerKind": "numeric",
+      "answer": "6/((6-1)^2)",
+      "timeLimit": 70,
+      "tabLimit": 1,
+      "solution": "Σn xⁿ = x/(1−x)²，代 x=1/6 化簡得 6/(6−1)²。",
+      "hints": [
+        "對幾何級數微分。",
+        "x/(1−x)²。",
+        "代 x=1/6 再化簡。"
+      ],
+      "tags": [
+        "power-series",
+        "rank-3"
+      ],
+      "variantOf": "tmpl-ser-arith-geo",
+      "solutionSteps": [
+        "Σn xⁿ 的閉式是 x/(1−x)²。",
+        "代 x = 1/6。",
+        "上下同乘 6² 化簡。"
+      ]
+    },
+    {
+      "id": "tmpl-ser-arith-geo-002",
+      "topic": "series",
+      "rank": 3,
+      "difficulty": 3,
+      "source": "Buzz 模板變體",
+      "prompt": "\\sum_{n=1}^{\\infty}\\frac{n}{7^n}",
+      "answerKind": "numeric",
+      "answer": "7/((7-1)^2)",
+      "timeLimit": 70,
+      "tabLimit": 1,
+      "solution": "Σn xⁿ = x/(1−x)²，代 x=1/7 化簡得 7/(7−1)²。",
+      "hints": [
+        "對幾何級數微分。",
+        "x/(1−x)²。",
+        "代 x=1/7 再化簡。"
+      ],
+      "tags": [
+        "power-series",
+        "rank-3"
+      ],
+      "variantOf": "tmpl-ser-arith-geo",
+      "solutionSteps": [
+        "Σn xⁿ 的閉式是 x/(1−x)²。",
+        "代 x = 1/7。",
+        "上下同乘 7² 化簡。"
+      ]
+    },
+    {
+      "id": "tmpl-ser-arith-geo-003",
+      "topic": "series",
+      "rank": 3,
+      "difficulty": 3,
+      "source": "Buzz 模板變體",
+      "prompt": "\\sum_{n=1}^{\\infty}\\frac{n}{8^n}",
+      "answerKind": "numeric",
+      "answer": "8/((8-1)^2)",
+      "timeLimit": 70,
+      "tabLimit": 1,
+      "solution": "Σn xⁿ = x/(1−x)²，代 x=1/8 化簡得 8/(8−1)²。",
+      "hints": [
+        "對幾何級數微分。",
+        "x/(1−x)²。",
+        "代 x=1/8 再化簡。"
+      ],
+      "tags": [
+        "power-series",
+        "rank-3"
+      ],
+      "variantOf": "tmpl-ser-arith-geo",
+      "solutionSteps": [
+        "Σn xⁿ 的閉式是 x/(1−x)²。",
+        "代 x = 1/8。",
+        "上下同乘 8² 化簡。"
+      ]
+    },
+    {
+      "id": "tmpl-ser-arith-geo-004",
+      "topic": "series",
+      "rank": 3,
+      "difficulty": 3,
+      "source": "Buzz 模板變體",
+      "prompt": "\\sum_{n=1}^{\\infty}\\frac{n}{9^n}",
+      "answerKind": "numeric",
+      "answer": "9/((9-1)^2)",
+      "timeLimit": 70,
+      "tabLimit": 1,
+      "solution": "Σn xⁿ = x/(1−x)²，代 x=1/9 化簡得 9/(9−1)²。",
+      "hints": [
+        "對幾何級數微分。",
+        "x/(1−x)²。",
+        "代 x=1/9 再化簡。"
+      ],
+      "tags": [
+        "power-series",
+        "rank-3"
+      ],
+      "variantOf": "tmpl-ser-arith-geo",
+      "solutionSteps": [
+        "Σn xⁿ 的閉式是 x/(1−x)²。",
+        "代 x = 1/9。",
+        "上下同乘 9² 化簡。"
+      ]
+    },
+    {
+      "id": "tmpl-ser-arith-geo-005",
+      "topic": "series",
+      "rank": 3,
+      "difficulty": 3,
+      "source": "Buzz 模板變體",
+      "prompt": "\\sum_{n=1}^{\\infty}\\frac{n}{10^n}",
+      "answerKind": "numeric",
+      "answer": "10/((10-1)^2)",
+      "timeLimit": 70,
+      "tabLimit": 1,
+      "solution": "Σn xⁿ = x/(1−x)²，代 x=1/10 化簡得 10/(10−1)²。",
+      "hints": [
+        "對幾何級數微分。",
+        "x/(1−x)²。",
+        "代 x=1/10 再化簡。"
+      ],
+      "tags": [
+        "power-series",
+        "rank-3"
+      ],
+      "variantOf": "tmpl-ser-arith-geo",
+      "solutionSteps": [
+        "Σn xⁿ 的閉式是 x/(1−x)²。",
+        "代 x = 1/10。",
+        "上下同乘 10² 化簡。"
+      ]
     }
   ];
 
