@@ -2065,6 +2065,22 @@
           <button class="button secondary" data-action="start-daily-one">${icon("puzzle")}每日一題 ${renderDailyOneBadge(records)}</button>
         </div>
       </section>
+      <section class="study-card duel-card">
+        <div class="panel-title-row">
+          <div>
+            <p class="section-label">好友對戰</p>
+            <h3>同一份題，比對題數、再比時間</h3>
+          </div>
+        </div>
+        <p class="panel-note">出一份 10 題戰帖打完，把戰帖碼傳給朋友；對方貼碼應戰，結算頁直接分勝負。純文字碼，不用帳號不用網路。</p>
+        <div class="action-row">
+          <button class="button" data-action="duel-create">${icon("zap")}出戰帖（10 題）</button>
+        </div>
+        <div class="duel-code-row">
+          <input id="duel-code-input" placeholder="貼上朋友的戰帖碼（BZD1:…）" autocomplete="off" spellcheck="false">
+          <button class="button secondary" data-action="duel-accept">${icon("play")}應戰</button>
+        </div>
+      </section>
       <section class="study-card">
         <div class="panel-title-row">
           <div>
@@ -2164,6 +2180,11 @@
           <div><span>局數</span><strong class="num">${current.sessions}</strong>${delta(current.sessions, previous.sessions, " 局")}</div>
         </div>
         ${previous.answered ? `<p class="panel-note">上週：${previous.answered} 題 · ${previous.accuracy === null ? "—" : `${previous.accuracy}%`} · ${previous.days} 天</p>` : ""}
+        ${
+          current.answered
+            ? `<div class="action-row"><button class="button secondary" data-action="download-weekly-report">${icon("download")}下載本週戰報（PNG）</button></div>`
+            : ""
+        }
       </section>
     `;
   }
@@ -5854,6 +5875,7 @@
 
         ${quiz.placementResult ? "" : renderTakeawayCards(quiz)}
 
+        ${renderDuelResultSection()}
         <details class="results-detail" data-results-detail ${resultsDetailOpen ? "open" : ""}>
           <summary><span>詳細分析與逐題回顧</span>${icon("chevron-down")}</summary>
           <div class="results-detail-body">
@@ -6759,6 +6781,10 @@
     if (action === "start-path-retest") startPathRetestQuiz();
     if (action === "exam-countdown-set") saveExamCountdown();
     if (action === "exam-countdown-clear") clearExamCountdown();
+    if (action === "duel-create") startDuelCreate();
+    if (action === "duel-accept") acceptDuelCode();
+    if (action === "copy-duel-code") copyDuelCode();
+    if (action === "download-weekly-report") downloadWeeklyReport();
     if (action === "start-mistake-triage") {
       const ids = (actionNode.dataset.problemIds || "").split(",").filter(Boolean);
       if (ids.length) startMistakeQuiz("all", ids);
@@ -8346,6 +8372,7 @@
       difficultyCap,
       pathNodeId: options.pathNodeId || "",
       pathRetestFor: options.pathRetestFor || "",
+      duel: options.duel || null,
       pathGate: options.pathGate || null,
       placement: options.placement || null,
       namedExam: options.namedExam || null,
@@ -8571,6 +8598,222 @@
         .filter((entry) => entry.measured && entry.gap !== null && entry.gap >= threshold && entry.subject !== "science")
         .map((entry) => entry.id)
     );
+  }
+
+  // ── 本週戰報（Canvas 生成 PNG，全部本地）──────────────────────
+  //
+  // 成長要「可見、可分享」才會變成留存與獲客 —— 但資料一律不出裝置：
+  // 圖在本機 canvas 畫、本機下載，分不分享由使用者自己決定。
+  function weeklyShareData(records) {
+    const cutoff = Date.now() - 7 * 86400000;
+    let answered = 0;
+    let correctCount = 0;
+    let seconds = 0;
+    (records.history || []).forEach((session) => {
+      const at = Date.parse(session.finishedAt || "");
+      if (!Number.isFinite(at) || at < cutoff) return;
+      (session.answers || []).forEach((answer) => {
+        answered += 1;
+        if (answer.correct) correctCount += 1;
+        seconds += Number(answer.elapsed || 0);
+      });
+    });
+    const profile = abilityProfile(records);
+    const counts = activityCounts(records);
+    const streak = practiceStreakInfo(records, counts);
+    return {
+      answered,
+      accuracy: answered ? Math.round((correctCount / answered) * 100) : 0,
+      minutes: Math.round(seconds / 60),
+      days: activeDaysInLastWeek(records),
+      streak: streak.streak || 0,
+      trend: profile && profile.trend ? profile.trend.d7 : null,
+      up: profile && profile.trend ? profile.trend.fastestUp : null,
+      counts
+    };
+  }
+
+  function downloadWeeklyReport() {
+    const records = loadRecords();
+    const data = weeklyShareData(records);
+    if (!data.answered) {
+      showAppNotice("這七天還沒有作答紀錄 —— 先練一場再來領戰報。");
+      return;
+    }
+    const canvas = document.createElement("canvas");
+    canvas.width = 1080;
+    canvas.height = 1350;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+    const ui = "'Segoe UI', 'Noto Sans TC', system-ui, sans-serif";
+
+    // 底：米紙色 + 頂部金帶（跟 app 同一套視覺語言）
+    ctx.fillStyle = "#f5f3ed";
+    ctx.fillRect(0, 0, 1080, 1350);
+    ctx.fillStyle = "#e4b447";
+    ctx.fillRect(0, 0, 1080, 14);
+
+    ctx.fillStyle = "#20211f";
+    ctx.font = `800 54px ${ui}`;
+    ctx.fillText("BuzzCalculus 週報", 72, 128);
+    ctx.fillStyle = "#6d6a60";
+    ctx.font = `600 30px ${ui}`;
+    const end = new Date();
+    const start = new Date(end.getTime() - 6 * 86400000);
+    const dateOf = (d) => `${d.getMonth() + 1}/${d.getDate()}`;
+    ctx.fillText(`${dateOf(start)} – ${dateOf(end)}`, 72, 180);
+
+    const stat = (x, y, value, label) => {
+      ctx.fillStyle = "#20211f";
+      ctx.font = `800 96px ${ui}`;
+      ctx.fillText(String(value), x, y);
+      ctx.fillStyle = "#6d6a60";
+      ctx.font = `700 32px ${ui}`;
+      ctx.fillText(label, x, y + 48);
+    };
+    stat(72, 340, data.answered, "題");
+    stat(400, 340, `${data.accuracy}%`, "正確率");
+    stat(732, 340, data.minutes, "分鐘");
+    stat(72, 540, data.days, "天有練");
+    stat(400, 540, data.streak, "連勝天數");
+    if (data.trend !== null) stat(732, 540, `${data.trend > 0 ? "+" : ""}${data.trend}`, "能力變化（7 天）");
+
+    if (data.up) {
+      ctx.fillStyle = "#14663f";
+      ctx.font = `800 40px ${ui}`;
+      ctx.fillText(`本週進步最快：${data.up.label} +${data.up.delta}`, 72, 700);
+    }
+
+    // 七天熱力條
+    const todayKeyLocal = new Date();
+    todayKeyLocal.setHours(12, 0, 0, 0);
+    for (let index = 6; index >= 0; index -= 1) {
+      const day = new Date(todayKeyLocal.getTime() - index * 86400000);
+      const count = data.counts[localDateKey(day)] || 0;
+      const level = activityLevel(count);
+      const x = 72 + (6 - index) * 140;
+      ctx.fillStyle = ["#e8e4d8", "#f2d9a0", "#eec564", "#e4b447", "#b28d21"][level] || "#e8e4d8";
+      ctx.beginPath();
+      ctx.roundRect(x, 780, 120, 120, 18);
+      ctx.fill();
+      ctx.fillStyle = "#6d6a60";
+      ctx.font = `700 26px ${ui}`;
+      ctx.fillText(dateOf(day), x + 18, 940);
+    }
+
+    ctx.fillStyle = "#20211f";
+    ctx.font = `700 34px ${ui}`;
+    ctx.fillText("每一題的答案都經過獨立數值驗算。", 72, 1180);
+    ctx.fillStyle = "#6d6a60";
+    ctx.font = `600 30px ${ui}`;
+    ctx.fillText("tudohuang.github.io/BuzzCalculus", 72, 1240);
+
+    canvas.toBlob((blob) => {
+      if (!blob) return;
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `buzzcalculus-week-${new Date().toISOString().slice(0, 10)}.png`;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.setTimeout(() => URL.revokeObjectURL(url), 4000);
+    }, "image/png");
+  }
+
+  // ── 好友對戰碼（純前端、零後端、不碰隱私承諾）─────────────────
+  //
+  // 碼裡裝**題目的永久號碼**（uid），不是隨機種子 —— 種子會隨題庫成長
+  // 重排，而 uid 永不回收（uid_map 的不變式），兩台裝置解出來永遠是
+  // 同一份題。格式：BZD1:417.882.…~8.225（~ 後面是發戰帖者的 對題數.總秒數）
+  function encodeDuelCode(problemIds, result) {
+    if (!window.BuzzUid) return "";
+    const numbers = (problemIds || [])
+      .map((id) => window.BuzzUid.uidFor(id))
+      .filter(Boolean)
+      .map((uid) => String(Number(String(uid).replace(/^bz-c-/, ""))));
+    if (!numbers.length || numbers.length !== problemIds.length) return "";
+    const base = `BZD1:${numbers.join(".")}`;
+    return result ? `${base}~${result.correct}.${Math.max(1, Math.round(result.timeSec))}` : base;
+  }
+
+  function decodeDuelCode(code) {
+    const match = String(code || "").trim().match(/^BZD1:(\d+(?:\.\d+)*)(?:~(\d+)\.(\d+))?$/);
+    if (!match || !window.BuzzUid) return null;
+    const ids = match[1].split(".").map((number) =>
+      window.BuzzUid.idFor(`bz-c-${String(number).padStart(6, "0")}`));
+    if (ids.some((id) => !id || !problemById(id))) return null; // 碼壞了或題目下架
+    return {
+      ids,
+      rival: match[2] !== undefined ? { correct: Number(match[2]), timeSec: Number(match[3]) } : null
+    };
+  }
+
+  function startDuelCreate() {
+    const records = loadRecords();
+    const pool = problems.filter((problem) =>
+      ["limits", "derivatives", "integrals", "series"].includes(problem.topic) &&
+      !problem.custom &&
+      !["worksheet", "graph"].includes(problem.answerKind) &&
+      problemRank(problem) >= 2 && problemRank(problem) <= 5);
+    const picked = shuffle(pool, seedFromString(`duel-${Date.now()}`)).slice(0, 10);
+    if (picked.length < 10) return;
+    selectedMode = "quick";
+    selectedTopic = "all";
+    startQuiz(picked, { modeKey: "quick", duel: { ids: picked.map((problem) => problem.id), rival: null } });
+  }
+
+  function acceptDuelCode() {
+    const field = app.querySelector("#duel-code-input");
+    const decoded = decodeDuelCode(field ? field.value : "");
+    if (!decoded) {
+      showAppNotice("戰帖碼讀不出來 —— 檢查有沒有貼完整（BZD1: 開頭）。");
+      return;
+    }
+    selectedMode = "quick";
+    selectedTopic = "all";
+    startQuiz(decoded.ids.map(problemById), { modeKey: "quick", duel: decoded });
+  }
+
+  function copyDuelCode() {
+    const field = app.querySelector("#duel-code-output");
+    if (!field) return;
+    field.select();
+    const copy = () => {
+      try { document.execCommand("copy"); } catch (_error) { /* 使用者可手動複製 */ }
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(field.value).catch(copy);
+    } else copy();
+    showAppNotice("戰帖碼已複製 —— 傳給朋友，同一份題比時間。");
+  }
+
+  function renderDuelResultSection() {
+    if (!quiz || !quiz.duel || !quiz.duel.ids) return "";
+    const correct = quiz.answers.filter((answer) => answer.correct).length;
+    const timeSec = quiz.answers.reduce((sum, answer) => sum + Number(answer.elapsed || 0), 0);
+    const myCode = encodeDuelCode(quiz.duel.ids, { correct, timeSec });
+    const rival = quiz.duel.rival;
+    let versus = "";
+    if (rival) {
+      const won = correct > rival.correct || (correct === rival.correct && timeSec < rival.timeSec);
+      const tie = correct === rival.correct && Math.abs(timeSec - rival.timeSec) <= 1;
+      versus = `
+        <p class="duel-versus ${tie ? "" : won ? "is-win" : "is-loss"}">
+          ${tie ? "平手！" : won ? "你贏了 🏆" : "這局輸了"} —— 你 ${correct}/${quiz.duel.ids.length} · ${formatCountdown(timeSec)}，對手 ${rival.correct}/${quiz.duel.ids.length} · ${formatCountdown(rival.timeSec)}
+        </p>`;
+    }
+    return `
+      <section class="panel duel-result">
+        <p class="section-label">好友對戰</p>
+        ${versus}
+        <p class="panel-note">${rival ? "把你的成績回敬給對方：" : "把戰帖傳給朋友 —— 同一份題，比對題數、再比時間："}</p>
+        <div class="duel-code-row">
+          <input id="duel-code-output" readonly value="${escapeAttr(myCode)}">
+          <button class="button secondary" data-action="copy-duel-code">${icon("copy")}複製</button>
+        </div>
+      </section>
+    `;
   }
 
   // 錯因處方（診斷 → 開藥的閉環）。
@@ -12667,6 +12910,10 @@
       pickDailyOneProblem,
       examScoreForecast,
       renderHomeExamCard,
+      encodeDuelCode,
+      decodeDuelCode,
+      weeklyShareData,
+      causePrescription,
       selectCooldownPool,
       setSelectedPack: (packKey) => {
         selectedPack = TRAINING_PACKS[packKey] ? packKey : "all";
