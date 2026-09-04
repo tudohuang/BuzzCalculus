@@ -679,6 +679,8 @@
   const openProofSteps = new Set();
   // 證明步驟重排練習的進行中狀態（一次只開一題）
   let proofOrderDrill = null;
+  // 填空證明的進行中狀態（一次只開一題）
+  let proofClozeDrill = null;
   let lastAnimatedView = null;
   let advancedModeOpen = false;
   let selectedTheme = loadThemePreference();
@@ -4511,6 +4513,7 @@
         }
 
         ${renderProofOrderDrill(proof, progress)}
+        ${renderProofClozeDrill(proof, progress)}
         ${
           viewed
             ? renderProofSolution(proof)
@@ -4605,6 +4608,126 @@
         <p class="panel-note">只認參考證明的順序 —— 可交換的相鄰步驟這一版會被算錯，別跟它吵。</p>
       </div>
     `;
+  }
+
+  // ── 填空證明：關鍵決策點挖空，錯誤選項具名 ─────────────────────
+  //
+  // 抽象證明判不了數值等價，但「這一步你會選哪條路」判得了：
+  // 每個空格的錯誤選項都是一種**具名的證明錯誤**（循環論證、端點誤用、
+  // 定理張冠李戴），選錯當下直接看到自己犯的是哪一種。
+  // 具體算式的空格（輔助函數 g(x)=e^x−1−x 這類）用輸入框＋數值等價判。
+  function renderProofClozeDrill(proof, progress) {
+    const blanks = proof.cloze || [];
+    if (!blanks.length) return "";
+    const drill = proofClozeDrill && proofClozeDrill.proofId === proof.id ? proofClozeDrill : null;
+    const badge = progress.clozePassed ? `<span class="proof-order-badge">填空 ✓</span>` : "";
+    if (!drill) {
+      return `
+        <div class="proof-order-launch">
+          <button class="button secondary" data-action="proof-cloze-start" data-proof-id="${escapeAttr(proof.id)}">
+            ${icon("pen")}填空證明（${blanks.length} 個決策點）
+          </button>
+          ${badge}
+        </div>
+      `;
+    }
+    const graded = drill.graded;
+    return `
+      <div class="proof-order-drill proof-cloze-drill">
+        <p class="section-label">證明的決策點 —— 每一格選（或填）出正確的那一步</p>
+        ${blanks.map((blank, index) => {
+          const verdict = graded ? graded[index] : null;
+          if (blank.kind === "expression") {
+            return `
+              <div class="proof-cloze-blank ${verdict ? (verdict.ok ? "is-ok" : "is-break") : ""}">
+                <p class="proof-cloze-ask">${escapeHtml(blank.ask)}</p>
+                <input class="proof-cloze-input" data-cloze-index="${index}" placeholder="${escapeAttr(blank.placeholder || "")}" value="${escapeAttr(drill.inputs[index] || "")}" autocomplete="off" spellcheck="false">
+                ${verdict && !verdict.ok ? `<p class="proof-cloze-why">跟正解不等價 —— 這格要的是一個具體的式子，判分是多點代入。</p>` : ""}
+              </div>`;
+          }
+          return `
+            <div class="proof-cloze-blank ${verdict ? (verdict.ok ? "is-ok" : "is-break") : ""}">
+              <p class="proof-cloze-ask">${escapeHtml(blank.ask)}</p>
+              <div class="proof-cloze-options">
+                ${blank.options.map((option, optionIndex) => `
+                  <button class="proof-order-step ${drill.picks[index] === optionIndex ? "is-selected" : ""}"
+                    data-action="proof-cloze-pick" data-proof-id="${escapeAttr(proof.id)}"
+                    data-blank-index="${index}" data-option-index="${optionIndex}">
+                    ${option.tex ? `<span class="math-inline" data-tex="${escapeAttr(option.tex)}"></span>` : escapeHtml(option.label)}
+                  </button>`).join("")}
+              </div>
+              ${verdict && !verdict.ok && verdict.why ? `<p class="proof-cloze-why">${escapeHtml(verdict.why)}</p>` : ""}
+            </div>`;
+        }).join("")}
+        ${
+          graded
+            ? graded.every((verdict) => verdict.ok)
+              ? `<p class="proof-order-result is-pass">決策點全對 —— 這條證明的關鍵抉擇你都會做了。</p>`
+              : `<p class="proof-order-result is-fail">還有 ${graded.filter((verdict) => !verdict.ok).length} 個決策點沒過 —— 錯誤選項下面寫著為什麼。</p>`
+            : ""
+        }
+        <div class="action-row">
+          <button class="button secondary" data-action="proof-cloze-check" data-proof-id="${escapeAttr(proof.id)}">${icon("check")}檢查</button>
+          <button class="button ghost" data-action="proof-cloze-close">收起</button>
+        </div>
+      </div>
+    `;
+  }
+
+  function startProofClozeDrill(proofId) {
+    const proof = proofs.find((item) => item.id === proofId);
+    if (!proof || !(proof.cloze || []).length) return;
+    proofClozeDrill = { proofId, picks: {}, inputs: {}, graded: null };
+    render();
+  }
+
+  function pickProofClozeOption(proofId, blankIndex, optionIndex) {
+    if (!proofClozeDrill || proofClozeDrill.proofId !== proofId) return;
+    proofClozeDrill.picks[Number(blankIndex)] = Number(optionIndex);
+    proofClozeDrill.graded = null;
+    captureClozeInputs();
+    render();
+  }
+
+  function captureClozeInputs() {
+    if (!proofClozeDrill) return;
+    app.querySelectorAll(".proof-cloze-input").forEach((input) => {
+      proofClozeDrill.inputs[Number(input.dataset.clozeIndex)] = input.value;
+    });
+  }
+
+  function gradeProofCloze(proofId) {
+    if (!proofClozeDrill || proofClozeDrill.proofId !== proofId) return;
+    const proof = proofs.find((item) => item.id === proofId);
+    if (!proof) return;
+    captureClozeInputs();
+    const graded = (proof.cloze || []).map((blank, index) => {
+      if (blank.kind === "expression") {
+        const raw = String(proofClozeDrill.inputs[index] || "").trim();
+        const js = raw ? normalizeExpression(raw) : "";
+        if (!js) return { ok: false, why: "" };
+        try {
+          return { ok: checkExpression(blank.answer, js, "x", null).correct, why: "" };
+        } catch (_error) {
+          return { ok: false, why: "" };
+        }
+      }
+      const pick = proofClozeDrill.picks[index];
+      if (pick === undefined) return { ok: false, why: "還沒選。" };
+      const option = blank.options[pick];
+      return { ok: Boolean(option.correct), why: option.why || "" };
+    });
+    proofClozeDrill.graded = graded;
+    if (graded.every((verdict) => verdict.ok)) {
+      const records = loadRecords();
+      records.proofs[proofId] = {
+        ...(records.proofs[proofId] || {}),
+        clozePassed: true,
+        clozePassedAt: new Date().toISOString()
+      };
+      saveRecords(records);
+    }
+    render();
   }
 
   function startProofOrderDrill(proofId) {
@@ -6887,6 +7010,10 @@
     if (action === "proof-order-pick") pickProofOrderStep(actionNode.dataset.proofId, actionNode.dataset.stepIndex);
     if (action === "proof-order-reset") { if (proofOrderDrill) { proofOrderDrill.picked = []; proofOrderDrill.graded = null; render(); } }
     if (action === "proof-order-close") { proofOrderDrill = null; render(); }
+    if (action === "proof-cloze-start") startProofClozeDrill(actionNode.dataset.proofId);
+    if (action === "proof-cloze-pick") pickProofClozeOption(actionNode.dataset.proofId, actionNode.dataset.blankIndex, actionNode.dataset.optionIndex);
+    if (action === "proof-cloze-check") gradeProofCloze(actionNode.dataset.proofId);
+    if (action === "proof-cloze-close") { proofClozeDrill = null; render(); }
     if (action === "start-mistake-triage") {
       const ids = (actionNode.dataset.problemIds || "").split(",").filter(Boolean);
       if (ids.length) startMistakeQuiz("all", ids);
