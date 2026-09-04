@@ -2706,6 +2706,22 @@ function verifyProblem(problem, options = {}) {
     }
   }
 
+  // 「H_n=….\ \text{Find }Σ…」型：前面是記號定義，後面才是題目。
+  // 抽出 Find 後面的級數重新解析（H_n 的代入 verifySeries 自己會處理）。
+  if (!structure) {
+    const find = String(problem.prompt || "").match(/\\text\{Find \}(\\sum.+)$/);
+    if (find) {
+      const sub = topLevelOperator(find[1]);
+      if (sub && (sub.op === "series" || sub.op === "product")) {
+        try {
+          return verifySeries(problem, sub, compileAnswer);
+        } catch (error) {
+          return { status: "error", reason: error.message };
+        }
+      }
+    }
+  }
+
   // 說明文字裡「求 }∫…」的尾巴（達摩院包）：前面是解法提示，
   // 最後那條積分才是題目。整句解析不了時，抽出尾巴的積分再試一次。
   if (!structure) {
@@ -3485,6 +3501,49 @@ const EXPLICIT_METHODS = {
       const normal = surface.normal(u, v);
       return curl[0] * normal[0] + curl[1] * normal[1] + curl[2] * normal[2];
     }), 0);
+  },
+
+  // 一維有界極值：內接圓柱／圓錐這類「翻譯幾何 → 單變數目標式」的題。
+  // 目標式是題幹的重述（圓柱在球裡：r²+h²/4=1 就是那個幾何），
+  // 驗算端只做網格掃描 —— 極值處二階平坦，4000 格的誤差在 1e-7 級。
+  extremum1d: (spec) => {
+    const f = latex.compile(spec.f, [spec.v || "h"]);
+    const lo = latex.compile(String(spec.lo), [])();
+    const hi = latex.compile(String(spec.hi), [])();
+    const wantMax = spec.kind !== "min";
+    let best = wantMax ? -Infinity : Infinity;
+    for (let i = 0; i <= 4000; i += 1) {
+      const x = lo + ((hi - lo) * i) / 4000;
+      const value = f(x);
+      if (Number.isFinite(value) && (wantMax ? value > best : value < best)) best = value;
+    }
+    return best;
+  },
+
+  // 約束極值：目標式＋約束曲面（g=c），數值上在流形上掃描＋收斂。
+  // 跟 Lagrange 乘數這條解題路徑共用不到任何一步。
+  constrained: (spec) => {
+    const vars = spec.vars || ["x", "y"];
+    const objective = latex.compile(spec.f, vars);
+    const g = latex.compile(spec.g, vars);
+    const c = latex.compile(String(spec.c), [])();
+    const value = constrainedExtremum(
+      objective,
+      (...args) => g(...args) - c,
+      vars.length,
+      spec.kind !== "min",
+      Boolean(spec.positive)
+    );
+    if (value === null) throw new Error("約束流形上掃不到可行點");
+    return value;
+  },
+
+  // 相關變率的反向求解：dr/dt = (dV/dt) / V′(r)，V′ 用數值微分。
+  relatedRate: (spec) => {
+    const f = latex.compile(spec.f, [spec.v || "r"]);
+    const at = latex.compile(String(spec.at), [])();
+    const given = latex.compile(String(spec.given), [])();
+    return given / numeric.derivative(f, at).value;
   },
 
   // 全微分估計：Δf ≈ f_x·dx + f_y·dy（偏導數值取）

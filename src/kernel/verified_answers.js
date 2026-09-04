@@ -6,17 +6,22 @@
 // 為什麼放側表而不是寫進題目物件：題目物件多一個欄位就會改變抽題與 golden 測試的結果。
 // 內容的中繼資料一律走側表，這是專案的既有約定。
 //
-// 產生時的統計：1876 題中 1622 題通過，不符 0 題。
+// 產生時的統計：1882 題中 1641 題通過，不符 0 題。
 
 (function registerVerifiedAnswers() {
   "use strict";
   var IDS = [
+    "app-001",
+    "app-002",
     "app-003",
     "app-004",
     "app-005",
     "app-006",
     "app-007",
     "app-008",
+    "app-009",
+    "app-010",
+    "app-011",
     "app-012",
     "burst-boss-anti-001",
     "burst-boss-anti-002",
@@ -73,6 +78,7 @@
     "burst-boss-param-006",
     "burst-boss-ser-001",
     "burst-boss-ser-002",
+    "burst-boss-ser-003",
     "burst-boss-ser-004",
     "burst-boss-ser-005",
     "burst-boss-ser-006",
@@ -126,6 +132,8 @@
     "burst-boss2-ser-004",
     "burst-boss2-ser-005",
     "burst-boss2-ser-006",
+    "burst-boss2-ser-007",
+    "burst-boss2-ser-008",
     "burst-boss3-anti-001",
     "burst-boss3-anti-002",
     "burst-boss3-anti-003",
@@ -173,6 +181,7 @@
     "burst-boss3-ser-002",
     "burst-boss3-ser-003",
     "burst-boss3-ser-004",
+    "burst-boss3-ser-005",
     "burst-boss3-ser-006",
     "burst-boss3-ser-007",
     "burst-boss3-ser-008",
@@ -295,6 +304,8 @@
     "ch-trap-009",
     "cx-app-001",
     "cx-app-002",
+    "cx-app-003",
+    "cx-app-004",
     "cx-curve-001",
     "cx-curve-002",
     "cx-curve-003",
@@ -631,7 +642,9 @@
     "dm-int-003",
     "dm-int-004",
     "dm-int-005",
+    "dm-int-006",
     "dm-int-008",
+    "dm-int-009",
     "dm-int-010",
     "dm-int-011",
     "dm-seq-001",
@@ -760,6 +773,8 @@
     "fd-limx-606",
     "fd-limx-607",
     "fd-limx-608",
+    "fd-limx-609",
+    "fd-limx-610",
     "fd-ser-001",
     "fd-ser-002",
     "fd-ser-003",
@@ -786,6 +801,10 @@
     "fd-serb-606",
     "fd-serb-607",
     "fd-serb-608",
+    "fd-serc-601",
+    "fd-serc-602",
+    "fd-serc-603",
+    "fd-serc-604",
     "fd-serx-201",
     "fd-serx-202",
     "fd-serx-203",
@@ -1639,6 +1658,6 @@
   window.BuzzVerifiedAnswers = {
     has: function (id) { return Boolean(id && SET[id]); },
     count: IDS.length,
-    total: 1876
+    total: 1882
   };
 })();
