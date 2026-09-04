@@ -1332,6 +1332,7 @@
       <main class="screen home-screen" id="buzz-main">
         <div class="home-lead">
           ${renderResumeCard()}
+          ${renderHomeExamCard(records)}
           ${renderTodayCard(records)}
           ${renderBackupNotice(records)}
         </div>
@@ -2670,6 +2671,65 @@
     `;
   }
 
+  // 考前衝刺卡（BuzzPlanner.examPlan 一直都在，v1.2.0 只拔了舊 UI）。
+  // 三件事各一行：倒數、誠不誠實排得完、預測分數。
+  // 「排不完」必須直說 —— 那是這個功能唯一的價值（kernel 的原話）。
+  function renderHomeExamCard(records) {
+    if (!records.plan || !records.plan.examAt || !window.BuzzPlanner) return "";
+    const info = window.BuzzPlanner.examPlan(records, abilityProfile(records) || { skills: {} }, Date.now());
+    if (!info) return "";
+    const forecast = examScoreForecast(records);
+    const forecastLine = forecast && forecast.coverage >= 0.35
+      ? `目前模擬考預測 <strong>${Math.round(forecast.expected)}/${forecast.total}</strong>（九成把握落在 ${Math.round(forecast.low)}–${Math.round(forecast.high)}）`
+      : "預測還不準 —— 模型要多看你幾場才量得出你";
+    const gapLine = info.gaps.length
+      ? `缺口最大：${info.gaps.slice(0, 3).map((gap) => escapeHtml(gap.label)).join("、")}${info.gaps.length > 3 ? ` 等 ${info.gaps.length} 個` : ""}`
+      : "範圍內的技巧都到標了，剩下的是保持";
+    const paceLine = info.feasible
+      ? `每天 ${info.dailyMinutes} 分鐘排得完（涵蓋 ${info.coverableSkills}/${info.totalSkills} 個缺口）`
+      : `誠實說：每天 ${info.dailyMinutes} 分鐘排不完，約需 ${info.neededMinutes} 分鐘 —— 加時間，或到設定縮小目標`;
+    return `
+      <section class="today-card exam-countdown-card" aria-label="考前衝刺">
+        <div class="today-head">
+          <p class="section-label">考前衝刺</p>
+          <span class="today-meta">D-${info.daysLeft}${info.sprint ? " · 衝刺週" : ""}</span>
+        </div>
+        <h2 class="today-title">${escapeHtml(info.label)}</h2>
+        <p class="today-why">${forecastLine}</p>
+        <p class="today-mix">${gapLine}</p>
+        <p class="today-note ${info.feasible ? "" : "is-warning"}">${paceLine}</p>
+      </section>
+    `;
+  }
+
+  function saveExamCountdown() {
+    const label = String((app.querySelector("#exam-plan-label") || {}).value || "").trim() || "期中考";
+    const date = String((app.querySelector("#exam-plan-date") || {}).value || "");
+    const minutes = Number((app.querySelector("#exam-plan-minutes") || {}).value || 15);
+    const target = Number((app.querySelector("#exam-plan-target") || {}).value || 70);
+    if (!date || !Number.isFinite(Date.parse(date))) {
+      showAppNotice("先選一個考試日期。");
+      return;
+    }
+    const records = loadRecords();
+    records.plan = { label, examAt: new Date(`${date}T09:00:00`).toISOString(), dailyMinutes: minutes, target };
+    saveRecords(records);
+    showAppNotice(`${label}倒數開始 —— 首頁與每日訓練會跟著調整。`);
+    render();
+  }
+
+  function clearExamCountdown() {
+    const records = loadRecords();
+    if (records.plan) {
+      // 封存而不是丟掉：考後報告要用（planHistory 的既有語義）
+      records.planHistory = Array.isArray(records.planHistory) ? records.planHistory : [];
+      records.planHistory.push({ ...records.plan, clearedAt: new Date().toISOString() });
+      records.plan = null;
+      saveRecords(records);
+    }
+    render();
+  }
+
   // 延遲回測：昨天在主線練的節點，今天回來考 5 題。
   // 練完當下的正確率量的是短期記憶；隔一夜還答得出來才算學會
   // （testing effect —— 分散測驗是最便宜也最有效的保持機制）。
@@ -3605,12 +3665,47 @@
               <p class="panel-note">本週已完成 ${week.completed} 題，${week.daysDone} 天有練。</p>
             </section>
             ${renderPlacementSettingsCard(records)}
+            ${renderExamCountdownSettingsCard(records)}
             ${renderSyncSettingsCard()}
             ${renderIosInstallCard()}
             ${renderDataManagementCard(records)}
           </div>
         </section>
       </main>
+    `;
+  }
+
+  function renderExamCountdownSettingsCard(records) {
+    const plan = records.plan;
+    const dateValue = plan && plan.examAt ? String(plan.examAt).slice(0, 10) : "";
+    return `
+      <section class="study-card exam-countdown-settings">
+        <div class="panel-title-row">
+          <div>
+            <p class="section-label">考前衝刺</p>
+            <h3>${plan && plan.examAt ? `${escapeHtml(plan.label || "考試")} · ${dateValue}` : "設一個考試日期"}</h3>
+          </div>
+        </div>
+        <p class="panel-note">設了之後：首頁出倒數卡（含分數預測），每日訓練自動偏向考試範圍的缺口，最後一週切衝刺配方。</p>
+        <div class="exam-plan-form">
+          <label>名稱 <input id="exam-plan-label" type="text" maxlength="12" value="${escapeAttr(plan ? plan.label || "" : "")}" placeholder="期中考"></label>
+          <label>日期 <input id="exam-plan-date" type="date" value="${escapeAttr(dateValue)}"></label>
+          <label>每天
+            <select id="exam-plan-minutes">
+              ${[15, 30, 45].map((value) => `<option value="${value}" ${plan && Number(plan.dailyMinutes) === value ? "selected" : ""}>${value} 分鐘</option>`).join("")}
+            </select>
+          </label>
+          <label>目標精熟
+            <select id="exam-plan-target">
+              ${[60, 70, 85].map((value) => `<option value="${value}" ${plan && Number(plan.target) === value ? "selected" : ""}>${value}</option>`).join("")}
+            </select>
+          </label>
+        </div>
+        <div class="action-row">
+          <button class="button" data-action="exam-countdown-set">${icon("flag")}${plan && plan.examAt ? "更新倒數" : "開始倒數"}</button>
+          ${plan && plan.examAt ? `<button class="button ghost" data-action="exam-countdown-clear">清除（封存到歷史）</button>` : ""}
+        </div>
+      </section>
     `;
   }
 
@@ -6650,6 +6745,8 @@
     if (action === "start-srs-review") startSrsReviewQuiz();
     if (action === "start-skill-refresh") startSkillRefreshQuiz();
     if (action === "start-path-retest") startPathRetestQuiz();
+    if (action === "exam-countdown-set") saveExamCountdown();
+    if (action === "exam-countdown-clear") clearExamCountdown();
     if (action === "start-mistake-triage") {
       const ids = (actionNode.dataset.problemIds || "").split(",").filter(Boolean);
       if (ids.length) startMistakeQuiz("all", ids);
@@ -8462,6 +8559,59 @@
         .filter((entry) => entry.measured && entry.gap !== null && entry.gap >= threshold && entry.subject !== "science")
         .map((entry) => entry.id)
     );
+  }
+
+  // 模擬考分數預測。
+  //
+  // 「你現在去考大概幾分」是每個學生真正想知道、而正確率統計答不了的
+  // 問題。原料全在：能力模型有每技巧的**限時**正確率（考試就是限時），
+  // 大考模式有真實的選題器。做法：抽三份真的大考卷，逐題估 P(答對) ——
+  //   有壓力數據用壓力數據；沒有退回精熟度；沒測過的技巧用先驗 0.45。
+  //   多技巧取最弱（跟抽題同一個世界觀：短板決定成敗）。
+  // 期望 = Σp、變異 = Σp(1−p)，常態近似給 90% 區間。
+  // 覆蓋率太低時要誠實說「還測不準」，不給假數字。
+  function examScoreForecast(records) {
+    if (!window.BuzzSkillGraph || !window.BuzzAbility) return null;
+    const profile = abilityProfile(records);
+    if (!profile) return null;
+    const prior = (window.BuzzAbility.constants && window.BuzzAbility.constants.PRIOR_ACCURACY) || 0.45;
+    const probabilityOf = (problem) => {
+      const ids = window.BuzzSkillGraph.skillsForProblem(problem) || [];
+      const estimates = ids
+        .map((id) => {
+          const entry = profile.skills[id];
+          if (!entry || !entry.measured) return null;
+          if (entry.pressureAccuracy !== null && entry.pressureAccuracy !== undefined) return entry.pressureAccuracy;
+          return entry.mastery === null ? null : entry.mastery / 100;
+        })
+        .filter((value) => value !== null);
+      if (!estimates.length) return { p: prior, measured: false };
+      return { p: Math.max(0.03, Math.min(0.97, Math.min(...estimates))), measured: true };
+    };
+    const ROUNDS = 3;
+    let expected = 0;
+    let variance = 0;
+    let measuredCount = 0;
+    let total = 0;
+    for (let round = 0; round < ROUNDS; round += 1) {
+      selectProblemPool(MODES.exam, "all").forEach((problem) => {
+        const { p, measured } = probabilityOf(problem);
+        expected += p;
+        variance += p * (1 - p);
+        if (measured) measuredCount += 1;
+        total += 1;
+      });
+    }
+    if (!total) return null;
+    const mean = expected / ROUNDS;
+    const sd = Math.sqrt(variance / ROUNDS);
+    return {
+      total: MODES.exam.count,
+      expected: mean,
+      low: Math.max(0, mean - 1.64 * sd),
+      high: Math.min(MODES.exam.count, mean + 1.64 * sd),
+      coverage: total ? measuredCount / total : 0
+    };
   }
 
   // 「今天適合」徽章：16 個模式對新使用者是選擇癱瘓 —— 不砍模式，
@@ -12448,6 +12598,8 @@
       matchesPack,
       modes: MODES,
       pickDailyOneProblem,
+      examScoreForecast,
+      renderHomeExamCard,
       selectCooldownPool,
       setSelectedPack: (packKey) => {
         selectedPack = TRAINING_PACKS[packKey] ? packKey : "all";
