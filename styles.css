@@ -1532,8 +1532,11 @@ button {
    回饋卡自己也擠到讀不了。注意特異性：這條兩個 class 的規則
    會贏過 max-width:900 媒體查詢裡單 class 的 .problem-stage { 1fr } ——
    所以要在這裡用同樣的選擇器明確改回單欄。
-   斷點 767 對齊平板規則的 768：iPad 直式（834px）保留側欄版面。 */
-@media (max-width: 767px) {
+   斷點原本是 767（讓 iPad 直式保留側欄版面），實測改掉了：
+   834pt 扣掉 300px 回饋欄只剩 ~470px 給題目，長一點的題幹
+   （lim [log(1+2x)−2x+2x²]/x³）直接被切掉右半邊。
+   題目被切一半比「回饋要往下捲」嚴重得多 —— 而回饋現在會自動捲進畫面。 */
+@media (max-width: 1023px) {
   .problem-stage.has-feedback {
     grid-template-columns: minmax(0, 1fr);
   }
@@ -2391,6 +2394,13 @@ button,
   font-size: 0.86rem;
 }
 
+/* 兩句提示原本只用空白隔開，讀起來黏成一句
+   （「點選選項後會直接送出 要算的話下面有計算紙」）。補一個間隔點。 */
+.choice-grid + .helper-row > span + span::before {
+  content: "·";
+  margin-right: 8px;
+}
+
 .keypad {
   display: flex;
   flex-wrap: wrap;
@@ -2417,6 +2427,20 @@ button,
    選項格裡顯得太細小（\frac 縮成蟻字，截圖審查抓到的）。 */
 .choice-option .katex {
   font-size: 1.18em;
+}
+
+/* iPad 橫向（1194pt）上一格選項有 900px 寬，而裡面常常只有「−2」——
+   一個字浮在一整條白色裡。選項區不需要跟題幹一樣寬：收到 880px，
+   同時把數學再放大一級，讓答案本身是視線落點。 */
+@media (min-width: 1000px) {
+  .choice-grid {
+    max-width: 880px;
+    margin-inline: auto;
+  }
+
+  .choice-option .katex {
+    font-size: 1.32em;
+  }
 }
 
 .choice-option {
@@ -2557,6 +2581,26 @@ button,
 .correct-toast svg {
   width: 16px;
   height: 16px;
+}
+
+/* 手機的頂列只有 56px 高，而 toast 貼在 top:14px 置中 ——
+   它會直接壓在品牌字上（實測 iPhone 上「BuzzCalculus」被切成 BuzzCal），
+   往下挪又會壓到進度列與題目標籤。fixed 的東西在窄螢幕上一定會蓋住什麼，
+   所以挪到最下面：那裡只有「跳過 / 規則」，而它出現的那 1.8 秒
+   使用者的視線正在畫面上方讀新的一題。 */
+@media (max-width: 680px) {
+  .correct-toast {
+    top: auto;
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 16px);
+    animation-name: correct-toast-pop-bottom;
+  }
+}
+
+@keyframes correct-toast-pop-bottom {
+  0% { opacity: 0; transform: translateX(-50%) translateY(8px); }
+  12% { opacity: 1; transform: translateX(-50%) translateY(0); }
+  75% { opacity: 1; }
+  100% { opacity: 0; transform: translateX(-50%) translateY(4px); }
 }
 
 @keyframes correct-toast-pop {
