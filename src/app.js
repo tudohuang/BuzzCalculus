@@ -5301,7 +5301,9 @@
           ${
             // 只在剛前進的 1.9 秒內渲染：之後的重繪（開提示、切工具）
             // 不該讓動畫重播。CSS 動畫自己淡出，不需要計時器清 DOM。
-            quiz.correctToast && Date.now() - quiz.correctToast.at < 1900
+            // 有回饋卡在畫面上時不放 toast：手機上它固定在底部，
+            // 正好蓋在「下一題」上（雖然點得到，但看起來是壞的）。
+            quiz.correctToast && !feedback && Date.now() - quiz.correctToast.at < 1900
               ? `<div class="correct-toast" role="status">${icon("check")}${escapeHtml(quiz.correctToast.text)}</div>`
               : ""
           }
@@ -9806,13 +9808,27 @@
     }
     render();
     // 手機單欄版面時回饋卡疊在題目卡下面 —— 答錯要停下來看的那張卡
-    // 可能整張在畫面外。block:"nearest"：已經看得到就完全不動。
-    if (!correct && !quiz.examMode) {
+    // 可能整張在畫面外（實測 iPhone：回饋卡上緣 836px，視窗高 844px，
+    // 等於只露出 8px）。block:"nearest"：已經看得到就完全不動。
+    //
+    // 這段本來就在，但它是**在 render() 之後立刻**執行的 —— 而 render 是
+    // rAF 驅動的，那一刻畫面上的 .feedback 還沒被插進去，捲的是舊的（或沒有）
+    // 節點，等於沒捲。要等 DOM 換完、KaTeX 排完版（會改變高度）再捲。
+    if (!correct && !quiz.examMode) scrollFeedbackIntoView();
+  }
+
+  function scrollFeedbackIntoView() {
+    const run = () => {
       const panel = app.querySelector(".feedback");
       if (panel && typeof panel.scrollIntoView === "function") {
         panel.scrollIntoView({ block: "nearest", behavior: "smooth" });
       }
-    }
+    };
+    window.requestAnimationFrame(() => {
+      run();
+      // 數學排版完成後高度會再變一次（render 自己也排了兩次）。
+      window.setTimeout(run, 140);
+    });
   }
 
   // 題目顯示。spec B 區 98 要求追蹤「開始題目」——沒有它就算不出
@@ -9947,6 +9963,19 @@
     }
     startTicker();
     render();
+    // 上一題的回饋卡把畫面捲了下去（手機上一定會捲，回饋卡本來在畫面外）。
+    // 不捲回頂端的話，新的一題會從「題目標籤被固定進度列切掉一半」開始 ——
+    // 實測 iPhone 截圖裡就是這樣。新的一題就該從頭開始看。
+    scrollQuizToTop();
+  }
+
+  function scrollQuizToTop() {
+    if (!window.scrollY) return;
+    try {
+      window.scrollTo({ top: 0, behavior: "auto" });
+    } catch (_error) {
+      window.scrollTo(0, 0);
+    }
   }
 
   function finishQuiz() {
