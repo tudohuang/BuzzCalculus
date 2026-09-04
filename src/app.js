@@ -1902,8 +1902,12 @@
           ).join("")}
         </div>
         ${
+          // 作答形式（選擇題 / 自己寫）原本收在頁尾那個摺疊的「本局設定」裡 ——
+          // 手機上要捲過十關的路徑清單才看得到，實測回報就是「找不到」。
+          // 它決定的是接下來每一題長什麼樣，屬於開局前的第一個決定，
+          // 所以放在分類頁籤下面，不捲就看得到。
           bucket === "practice"
-            ? `${renderBuzzPath(path, mission)}${renderSessionSettings(records)}${renderHomeMorePanel(records, topWeaknesses(records), Object.keys(records.mistakes || {}).length)}`
+            ? `${renderHomeAnswerModeBar()}${renderBuzzPath(path, mission)}${renderSessionSettings(records)}${renderHomeMorePanel(records, topWeaknesses(records), Object.keys(records.mistakes || {}).length)}`
             : ""
         }
         ${bucket === "weakness" ? renderWeaknessBucket(records) : ""}
@@ -2916,17 +2920,15 @@
   function renderSessionSettings(records) {
     const cap = activeDifficultyCap(records);
     const level = difficultyLevel(cap);
-    const ansLabel = ANSWER_MODES[selectedAnswerMode]?.label || "選擇題";
     return `
       <section class="session-settings-wrap">
         <details class="session-settings" data-session-settings ${sessionSettingsOpen ? "open" : ""}>
           <summary>
-            <span><strong>本局設定</strong><small>${escapeHtml(level.label)} ${escapeHtml(level.short)} · ${escapeHtml(ansLabel)}</small></span>
+            <span><strong>本局難度</strong><small>${escapeHtml(level.label)} ${escapeHtml(level.short)}</small></span>
             ${icon("chevron-down")}
           </summary>
           <div class="session-settings-body">
             ${renderDifficultyControl(records)}
-            ${renderHomeAnswerModeBar()}
           </div>
         </details>
       </section>
@@ -5313,9 +5315,15 @@
                 ${
                   // 作圖表與選圖題不受本局的作答形式影響，
                   // 標一個「選擇題」在旁邊只會讓人以為選錯模式了。
+                  // 這顆 chip 本來只是標籤。但「作答形式在哪裡切」是實測回報
+                  // 的第一名問題 —— 而使用者想切的那一刻，人就在這裡。
+                  // 所以它同時是切換鈕：作答中隨時可以換，換完這一題立刻重畫。
+                  // 模擬考不給換（換作答形式等於換考試條件）。
                   ["graph", "worksheet", "graphtap", "graphslope"].includes(current.answerKind)
                     ? ""
-                    : `<span class="chip">${answerModeLabel(answerMode)}</span>`
+                    : quiz.examMode || feedback
+                      ? `<span class="chip">${answerModeLabel(answerMode)}</span>`
+                      : `<button class="chip chip-button" data-action="toggle-answer-mode" title="切換作答形式" aria-label="切換作答形式，目前是${answerModeLabel(answerMode)}">${answerModeLabel(answerMode)}${icon("shuffle")}</button>`
                 }
                 ${verifiedChip(current)}
               </div>
@@ -5772,6 +5780,16 @@
       svg.addEventListener("pointerup", up);
       svg.addEventListener("pointercancel", up);
     });
+  }
+
+  // 作答中換作答形式。已經打到一半的答案不搬過去 ——
+  // 選項的值跟自己寫的字串是兩種東西，硬搬只會送出一個看起來像答案的垃圾。
+  function toggleQuizAnswerMode() {
+    if (!quiz || quiz.feedback || quiz.examMode) return;
+    quiz.answerMode = quiz.answerMode === "choice" ? "free" : "choice";
+    selectedAnswerMode = quiz.answerMode; // 下一局沿用這次的選擇
+    quiz.draft = "";
+    render();
   }
 
   function submitGraphTap() {
@@ -7122,6 +7140,7 @@
     if (action === "start-path-lesson") startPathLesson(actionNode.dataset.nodeId || activePathNodeId);
     if (action === "start-path-gate") startPathGate(actionNode.dataset.nodeId || activePathNodeId);
     if (action === "choose-answer") submitChoiceAnswer(actionNode.dataset.choice || "");
+    if (action === "toggle-answer-mode") toggleQuizAnswerMode();
     if (action === "submit-graphtap") submitGraphTap();
     if (action === "submit-graphslope") submitGraphSlope();
     if (action === "clear-graphtap") {

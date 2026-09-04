@@ -1448,18 +1448,22 @@ button {
   transition: width 180ms ease;
 }
 
+/* 兩欄的網格配一個小孩 = 那個小孩佔滿半條橫列。
+   模擬考有兩個盒子時看不出來，但平常只有「時間」一個 ——
+   iPad 上就變成一個 300px 寬的空白大盒子裝三位數。改成內容寬度。 */
 .timer-cluster {
-  min-width: 210px;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+  display: flex;
+  justify-content: flex-end;
   gap: 8px;
 }
 
 .timer-box {
+  flex: 0 0 auto;
+  min-width: 92px;
   border: 1px solid var(--line);
   border-radius: var(--radius);
   background: rgba(255, 255, 255, 0.86);
-  padding: 10px;
+  padding: 8px 14px;
   text-align: center;
 }
 
@@ -1573,6 +1577,27 @@ button {
   font-size: 0.78rem;
   font-weight: 700;
 }
+
+/* 可以按的 chip（作答形式切換）。看起來仍是 chip —— 它就在題目
+   標籤那一排，做成按鈕會太搶戲；但它是觸控目標，所以放大到 34px。 */
+.chip-button {
+  min-height: 34px;
+  gap: 5px;
+  color: var(--ink);
+  border-color: var(--line-strong);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.chip-button .icon {
+  width: 13px;
+  height: 13px;
+  color: var(--muted);
+}
+
+.chip-button:hover { border-color: var(--gold); }
 
 /* 「答案已驗算」的顏色刻意不是金色。
    金色在這個介面裡代表「進度／成就」，而驗算是關於**正確性**，
@@ -1851,6 +1876,12 @@ button {
   grid-template-columns: minmax(0, 1fr) auto;
   gap: 10px;
   align-items: stretch;
+}
+
+/* 送出鍵原本掉在兩欄網格的第一欄，右邊留一塊跟鍵盤鈕一樣寬的空格 ——
+   看起來像沒對齊。它是這一頁的主要動作，橫跨整列。 */
+.answer-panel button[type="submit"] {
+  grid-column: 1 / -1;
 }
 
 .answer-input {
@@ -3585,13 +3616,30 @@ button,
     grid-template-columns: 1fr;
   }
 
+  /* 手機上不要讓計時器獨佔一整條橫列 —— 那是 100px 的高度換三個數字，
+     而它擠掉的是題目。維持兩欄：左邊進度、右邊計時。 */
   .arena-top {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 10px;
   }
 
   .timer-cluster {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
     min-width: 0;
+  }
+
+  .timer-box {
+    min-width: 64px;
+    padding: 6px 10px;
+  }
+
+  .timer-box span {
+    font-size: 0.66rem;
+    letter-spacing: 0.04em;
+  }
+
+  .timer-box strong {
+    margin-top: 2px;
+    font-size: 1.2rem;
   }
 
   .exam-insight-grid,
@@ -3600,10 +3648,67 @@ button,
   }
 }
 
+/* 平板（側欄已收起、但畫面還很寬）：內容再拉一條上限。
+   834pt 的 iPad 上不設限的話，一行卡片裡左右兩端的字會被拉到
+   相距 700px —— 「推薦下一步 …… 先完成每日 12 題」讀起來像兩件事。
+   作答畫面不設限：那裡的寬度是給手寫計算紙用的。 */
+@media (min-width: 681px) and (max-width: 960px) {
+  .topbar:not(.is-quiz) ~ .screen {
+    width: min(100% - 32px, 720px);
+    margin-inline: auto;
+  }
+}
+
 @media (max-width: 680px) {
   .screen {
     width: min(100% - 22px, 1180px);
     padding-top: 18px;
+  }
+
+  /* 題庫頁的主要動作是搜尋，但它排在大標題與三張任務卡後面 ——
+     手機上要捲到第二屏才看得到搜尋框，而那正是使用者進這一頁要做的事。
+     用 order 把「自己挑 + 搜尋」提到任務板前面。 */
+  .problem-library {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .problem-library > * { order: 6; }
+  .problem-library > .page-head { order: 1; }
+  .problem-library > .section-label { order: 4; }
+  .problem-library > .library-board { order: 5; }
+  /* 這條要排在 .section-label 後面：自己挑那行兩個 class 都有，後寫的贏 */
+  .problem-library > .library-filter-label { order: 2; }
+  .problem-library > .library-toolbar { order: 3; }
+
+  /* 三顆按鈕在 390px 上折成「兩顆＋一顆」，第二行那顆孤零零地靠左。
+     排成兩欄，主要動作橫跨整列。 */
+  .problem-library .page-head .action-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .problem-library .page-head .action-row > .button:last-child {
+    grid-column: 1 / -1;
+  }
+
+  /* 題目上方那排標籤在 390px 上會擠成兩行，把題目推到第二屏。
+     縮一號、收窄間距，讓它待在一行。 */
+  .problem-meta {
+    gap: 6px;
+  }
+
+  .problem-meta .chip {
+    min-height: 24px;
+    padding: 0 7px;
+    font-size: 0.72rem;
+  }
+
+  /* 它是觸控目標，不能跟著旁邊的標籤一起縮 —— 專案的硬門檻是 40px。 */
+  .problem-meta .chip-button {
+    min-height: 40px;
+    padding: 0 10px;
   }
 
   .segmented,
