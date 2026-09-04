@@ -747,4 +747,106 @@
       ]
     }
   ];
+
+  // ── 填空證明（2026-09-04）─────────────────────────────────────
+  //
+  // 抽象證明的空格（輔助函數、定理選擇）沒辦法數值判分 —— 所以走
+  // 選圖題的老路：**具名誘答**。每個錯誤選項都要說得出為什麼錯，
+  // 答錯的當下直接看到自己犯的是哪一種錯（循環論證、端點誤用、
+  // 定理張冠李戴…）。具體算式的空格才用輸入框＋數值等價判分。
+  const CLOZE = {
+    "proof-mvt-001": [
+      {
+        kind: "choice",
+        ask: "情況一：最大值 m 等於最小值 M。結論怎麼來？",
+        options: [
+          { label: "f 是常數，任取內點導數都是 0", correct: true },
+          { label: "f 在端點取極值，套 Fermat 定理", why: "Fermat 只適用於**內點**極值 —— 端點極值的導數未必為 0，這正是這個證明要繞開的坑。" },
+          { label: "由介值定理存在 c 使 f(c)=0", why: "介值定理給的是函數值，結論要的是導數值 f′(c)=0 —— 兩回事。" }
+        ]
+      },
+      {
+        kind: "choice",
+        ask: "情況二：m<M。為什麼極值一定發生在內點？",
+        options: [
+          { label: "因為 f(a)=f(b)：兩端點值相同，比它大（或小）的極值只能在內部", correct: true },
+          { label: "因為連續函數的極值都在內點", why: "錯 —— 單調函數的極值就在端點。這一步靠的是 f(a)=f(b) 這個條件，不是連續性。" },
+          { label: "因為 f 可微", why: "可微是讓 Fermat 能用的條件，不是極值落在內點的理由。" }
+        ]
+      }
+    ],
+    "proof-mvt-002": [
+      {
+        kind: "choice",
+        ask: "輔助函數 g 要怎麼設計？",
+        options: [
+          { tex: "g(x)=f(x)-f(a)-s(x-a)", correct: true },
+          { tex: "g(x)=f(x)-f(a)-s(x-b)", why: "代 x=a 得 −s(a−b)≠0、代 x=b 得 f(b)−f(a)≠0 —— 兩端不相等，Rolle 用不了。設計輔助函數的唯一目標是讓兩端相等，設完要代進去檢查。" },
+          { tex: "g(x)=f(x)-\\frac{f(b)}{b}\\,x", why: "只有 f(a)、a 湊巧配合時兩端才會相等 —— 這不是從條件推出來的設計，是賭。" }
+        ]
+      },
+      {
+        kind: "choice",
+        ask: "為什麼 g 滿足 Rolle 的條件？",
+        options: [
+          { label: "g 連續、可微，而且 g(a)=g(b)=0", correct: true },
+          { label: "因為 g′(x)=f′(x)−s 存在", why: "可微只是條件之一 —— Rolle 的關鍵前提是**兩端點值相等**，漏了它整個證明站不住。" },
+          { label: "因為 g 在 (a,b) 內有極值", why: "那是 Rolle 證明過程的中間結果，不是套用 Rolle 需要的前提 —— 前提與結論不能對調。" }
+        ]
+      }
+    ],
+    "proof-mvt-003": [
+      {
+        kind: "choice",
+        ask: "在 [x,y] 上套 MVT 之後，f(y)−f(x) 等於？",
+        options: [
+          { tex: "f'(c)(y-x)\\ \\text{（某個 }c\\in(x,y)\\text{）}", correct: true },
+          { tex: "f'(x)(y-x)", why: "MVT 的 c 是區間**內**某一點，不是端點 —— 拿端點導數是 MVT 最常見的誤用。" },
+          { tex: "0", why: "f(y)−f(x)=0 是**結論**：要先寫成 f′(c)(y−x)，再把 f′(c)=0 代進去才推得到。跳步就是循環。" }
+        ]
+      }
+    ],
+    "proof-mvt-004": [
+      {
+        kind: "choice",
+        ask: "「嚴格遞增」的最後一擊，是哪兩個因子相乘為正？",
+        options: [
+          { label: "f′(c)>0 且 y−x>0", correct: true },
+          { label: "f′(c)>0 且 f(y)>f(x)", why: "f(y)>f(x) 是要證的結論 —— 拿結論當理由是循環論證。" },
+          { label: "f′(c)≥0 且 y−x>0", why: "≥ 只推得出「不減」（可以平的）—— 嚴格遞增需要嚴格不等號。" }
+        ]
+      }
+    ],
+    "proof-ineq-001": [
+      {
+        kind: "expression",
+        ask: "要證 e^x > 1+x（x>0），設的輔助函數 g(x) =",
+        answer: "exp(x)-1-x",
+        placeholder: "exp(x)-…"
+      },
+      {
+        kind: "choice",
+        ask: "x>0 時 g′(x)>0 的理由是？",
+        options: [
+          { label: "g′(x)=e^x−1，而 x>0 時 e^x>1", correct: true },
+          { label: "e^x>0 恆成立", why: "恆正只給出 g′>−1 —— 要的是 e^x−1>0，也就是 e^x>1，這需要 x>0。" },
+          { label: "g(0)=0", why: "基準點的值與導數的符號是兩件事：g(0)=0 是起跑線，g′>0 才是往上跑。" }
+        ]
+      }
+    ],
+    "proof-integral-001": [
+      {
+        kind: "choice",
+        ask: "從「m ≤ 平均值 ≤ M」到「存在 c 使 f(c) = 平均值」，用的是哪個定理？",
+        options: [
+          { label: "介值定理（IVT）", correct: true },
+          { label: "極值定理", why: "極值定理是第一步拿到 m、M 用的；這一步要的是「連續函數取到中間每個值」—— 那是介值定理。" },
+          { label: "平均值定理（MVT）", why: "名字像，但這裡完全不需要導數 —— 是連續函數的介值性質。" }
+        ]
+      }
+    ]
+  };
+  window.BUZZ_PROOFS.forEach((proof) => {
+    if (CLOZE[proof.id]) proof.cloze = CLOZE[proof.id];
+  });
 })();

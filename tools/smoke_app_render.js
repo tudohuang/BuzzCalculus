@@ -1063,3 +1063,40 @@ console.log(`Resume smoke: ${json.length} bytes for a 12-question exam, round-tr
   if (!junk.error) throw new Error("單行輸入應該被拒絕");
   console.log("逐步驗證 smoke: 等價鏈全綠、斷點指對行、單行拒收");
 }
+
+// ── 填空證明：內容紀律 + 算式空格可判分（2026-09-04）──
+{
+  require("../src/proofs.js");
+  const proofs = global.window.BUZZ_PROOFS;
+  const withCloze = proofs.filter((p) => (p.cloze || []).length);
+  if (withCloze.length < 6) throw new Error("填空證明至少要有 6 條，現在只有 " + withCloze.length);
+  for (const proof of withCloze) {
+    for (const blank of proof.cloze) {
+      if (blank.kind === "expression") {
+        if (!blank.answer) throw new Error(proof.id + " 的算式空格沒有 answer");
+        const self = api.checkExpression(blank.answer, blank.answer, "x", null);
+        if (!self.correct) throw new Error(proof.id + " 的算式空格 answer 自己判自己不過：" + blank.answer);
+        continue;
+      }
+      const correctCount = blank.options.filter((o) => o.correct).length;
+      if (correctCount !== 1) throw new Error(proof.id + " 的選項空格要恰好一個正解，現在 " + correctCount);
+      for (const option of blank.options) {
+        if (!option.correct && !(option.why || "").trim()) {
+          throw new Error(proof.id + " 有錯誤選項沒寫「為什麼錯」—— 具名誘答是這個功能的存在理由");
+        }
+      }
+    }
+  }
+  // 具體算式空格：對的等價寫法要過、錯的要擋
+  const ineq = proofs.find((p) => p.id === "proof-ineq-001");
+  const exprBlank = ineq.cloze.find((b) => b.kind === "expression");
+  const okInput = api.normalizeExpression("e^x - x - 1");
+  if (!api.checkExpression(exprBlank.answer, okInput, "x", null).correct) {
+    throw new Error("等價寫法 e^x-x-1 應該要過");
+  }
+  const badInput = api.normalizeExpression("e^x - 1 + x");
+  if (api.checkExpression(exprBlank.answer, badInput, "x", null).correct) {
+    throw new Error("錯的輔助函數 e^x-1+x 不該過");
+  }
+  console.log("填空證明 smoke: " + withCloze.length + " 條、每格恰一正解、錯誤選項都具名、算式空格判分正確");
+}
