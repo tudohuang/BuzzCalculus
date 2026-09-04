@@ -163,6 +163,45 @@ if (!onlyId) {
   console.log(`側表寫到 src/kernel/verified_answers.js（${verifiedIds.length} 題，方法分布 ${JSON.stringify(methods)}）`);
 }
 
+/* ── 不可驗證白名單 ────────────────────────────────────────── */
+//
+// 覆蓋率門檻只擋「整體退步」，擋不住「新包塞進 50 題驗不了的題」——
+// 只要包夠大，比例還是過得了關。這份白名單把「哪些題驗不了」變成
+// 顯式的、要進 code review 的狀態：現存的不可驗題全部列名（概念題、
+// 看圖題、敘述型長題…），**新題不在名單上就必須可驗證** ——
+// 寫成驗算器認得的句型，或自帶 verify 欄位。
+// 真的驗不了的新題要跑 --update-allowlist 把它加進來，讓 diff 說話。
+
+const ALLOWLIST_PATH = path.join(__dirname, "golden", "unverified_allowlist.json");
+const updateAllowlist = args.includes("--update-allowlist");
+
+if (!onlyId) {
+  const unverifiedIds = ["unverified", "unsupported", "error"]
+    .flatMap((kind) => buckets[kind].map(({ problem }) => problem.id))
+    .sort();
+  if (updateAllowlist) {
+    fs.writeFileSync(ALLOWLIST_PATH, JSON.stringify({
+      note: "驗算器搆不到的題。新題出現在這裡必須是有意識的決定，不是預設。",
+      ids: unverifiedIds
+    }, null, 2) + "\n", "utf8");
+    console.log(`白名單更新：${unverifiedIds.length} 題寫到 tools/golden/unverified_allowlist.json`);
+  } else if (fs.existsSync(ALLOWLIST_PATH)) {
+    const allowed = new Set(JSON.parse(fs.readFileSync(ALLOWLIST_PATH, "utf8")).ids || []);
+    const rogue = unverifiedIds.filter((id) => !allowed.has(id));
+    const healed = [...allowed].filter((id) => !unverifiedIds.includes(id));
+    if (healed.length) {
+      console.log(`\n白名單裡有 ${healed.length} 題現在驗得了（跑 --update-allowlist 收編）：${healed.slice(0, 8).join(", ")}${healed.length > 8 ? "…" : ""}`);
+    }
+    if (rogue.length) {
+      console.error(`\n${rogue.length} 題不可驗證而且不在白名單上：`);
+      rogue.slice(0, 20).forEach((id) => console.error(`  ${id}`));
+      console.error("新題必須寫成驗算器認得的形式，或自帶 verify 欄位。");
+      console.error("真的驗不了：node tools/verify_answers.js --update-allowlist（diff 要進 review）。");
+      if (ciMode) process.exit(1);
+    }
+  }
+}
+
 /* ── CI 門檻 ──────────────────────────────────────────────── */
 
 if (ciMode) {

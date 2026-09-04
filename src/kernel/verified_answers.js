@@ -6,7 +6,7 @@
 // 為什麼放側表而不是寫進題目物件：題目物件多一個欄位就會改變抽題與 golden 測試的結果。
 // 內容的中繼資料一律走側表，這是專案的既有約定。
 //
-// 產生時的統計：1860 題中 1579 題通過，不符 0 題。
+// 產生時的統計：1876 題中 1622 題通過，不符 0 題。
 
 (function registerVerifiedAnswers() {
   "use strict";
@@ -634,6 +634,16 @@
     "dm-int-008",
     "dm-int-010",
     "dm-int-011",
+    "dm-seq-001",
+    "dm-seq-002",
+    "dm-seq-003",
+    "dm-seq-004",
+    "dm-seq-005",
+    "dm-seq-006",
+    "dm-seq-007",
+    "dm-seq-008",
+    "dm-seq-009",
+    "dm-seq-010",
     "exam-der-003",
     "exam-der-004",
     "exam-der-005",
@@ -742,6 +752,14 @@
     "fd-lim-010",
     "fd-lim-011",
     "fd-lim-012",
+    "fd-limx-601",
+    "fd-limx-602",
+    "fd-limx-603",
+    "fd-limx-604",
+    "fd-limx-605",
+    "fd-limx-606",
+    "fd-limx-607",
+    "fd-limx-608",
     "fd-ser-001",
     "fd-ser-002",
     "fd-ser-003",
@@ -760,6 +778,14 @@
     "fd-ser-016",
     "fd-ser-017",
     "fd-ser-018",
+    "fd-serb-601",
+    "fd-serb-602",
+    "fd-serb-603",
+    "fd-serb-604",
+    "fd-serb-605",
+    "fd-serb-606",
+    "fd-serb-607",
+    "fd-serb-608",
     "fd-serx-201",
     "fd-serx-202",
     "fd-serx-203",
@@ -829,6 +855,20 @@
     "gap-ser-lc-002",
     "gap-ser-root-001",
     "gap-ser-root-002",
+    "gp-001",
+    "gp-002",
+    "gp-003",
+    "gp-004",
+    "gp-005",
+    "gp-006",
+    "gp-007",
+    "gp-008",
+    "gp-009",
+    "gp-010",
+    "gp-011",
+    "gp-012",
+    "gp-013",
+    "gp-014",
     "hc-der-003",
     "hc-der-004",
     "hc-der-005",
@@ -981,6 +1021,7 @@
     "lim-025",
     "lim-026",
     "lim-027",
+    "lim-028",
     "lim-029",
     "lim-030",
     "lim-031",
@@ -1224,6 +1265,8 @@
     "rel-hard-lim-002",
     "rel-hard-lim-003",
     "rel-hard-lim-004",
+    "rel-hard-lim-006",
+    "rel-hard-lim-007",
     "rel-hard-lim-008",
     "rel-hard-lim-009",
     "rel-hard-lim-010",
@@ -1596,6 +1639,6 @@
   window.BuzzVerifiedAnswers = {
     has: function (id) { return Boolean(id && SET[id]); },
     count: IDS.length,
-    total: 1860
+    total: 1876
   };
 })();
