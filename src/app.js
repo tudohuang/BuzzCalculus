@@ -151,6 +151,16 @@
       boss: false,
       survival: true
     },
+    pressure: {
+      label: "壓力訓練",
+      bucket: "challenge",
+      note: "計時逐題縮短，練「會但來不及」",
+      count: 10,
+      topicLocked: false,
+      daily: false,
+      boss: false,
+      pressureMode: true
+    },
     warmup: {
       label: "Warm-up",
       bucket: "practice",
@@ -463,7 +473,7 @@
     lean: "Lean"
   };
   const SIMPLE_MODE_KEYS = ["quick", "topic", "practice"];
-  const EXPERIMENTAL_MODE_KEYS = ["exam", "boss_rush", "brutal", "boss", "integral_bee", "no_hint", "accuracy", "survival", "warmup", "cooldown"];
+  const EXPERIMENTAL_MODE_KEYS = ["exam", "pressure", "boss_rush", "brutal", "boss", "integral_bee", "no_hint", "accuracy", "survival", "warmup", "cooldown"];
   const DEFAULT_DIFFICULTY_CAP = 2;
   const DIFFICULTY_LEVELS = {
     1: { label: "入門", note: "只抽 R1，先建立基礎。", short: "R1" },
@@ -2646,16 +2656,58 @@
   // 首頁保留區：錯題 SRS 到期卡 + 練習連勝（含盾牌）迷你熱力圖。
   function renderHomeRetentionRow(records) {
     const srsCard = renderHomeSrsCard(records);
+    const retestCard = renderHomePathRetestCard(records);
     const refreshCard = renderHomeSkillRefreshCard(records);
     const streakCard = (records.totalAnswered || 0) && !focusModeOn() ? renderHomeStreakCard(records) : "";
-    if (!srsCard && !refreshCard && !streakCard) return "";
+    if (!srsCard && !retestCard && !refreshCard && !streakCard) return "";
     return `
       <section class="home-retention" aria-label="複習與連勝">
         ${srsCard}
+        ${retestCard}
         ${refreshCard}
         ${streakCard}
       </section>
     `;
+  }
+
+  // 延遲回測：昨天在主線練的節點，今天回來考 5 題。
+  // 練完當下的正確率量的是短期記憶；隔一夜還答得出來才算學會
+  // （testing effect —— 分散測驗是最便宜也最有效的保持機制）。
+  // 窗口 20 小時起（同一天不出現，避免「剛練完馬上再考」的假象）、7 天止。
+  function pathRetestPending(records) {
+    const entry = records.pathRetest;
+    if (!entry || entry.doneAt || !entry.nodeId) return null;
+    const age = Date.now() - Number(entry.at || 0);
+    if (age < 20 * 3600 * 1000 || age > 7 * 86400000) return null;
+    const node = PATH_NODES.find((item) => item.id === entry.nodeId);
+    return node ? { node, at: entry.at } : null;
+  }
+
+  function renderHomePathRetestCard(records) {
+    const pending = pathRetestPending(records);
+    if (!pending) return "";
+    return `
+      <div class="retention-card srs-card is-due">
+        <div class="retention-copy">
+          <p class="section-label">昨日所學回測</p>
+          <strong>「${escapeHtml(pending.node.label)}」還記得多少？</strong>
+          <span>練完當下會 ≠ 隔天還會 —— 5 題驗收，過了才算真的學進去。</span>
+        </div>
+        <button class="button" data-action="start-path-retest">${icon("repeat")}回測 5 題</button>
+      </div>
+    `;
+  }
+
+  function startPathRetestQuiz() {
+    const records = loadRecords();
+    const pending = pathRetestPending(records);
+    if (!pending) return;
+    const pool = pathNodeProblems(pending.node);
+    if (!pool.length) return;
+    selectedMode = pending.node.mode || "quick";
+    selectedTopic = pending.node.topic || "all";
+    const ordered = adaptiveShuffle(preferFreshProblems(pool, records), records, seedFromString(`path-retest-${Date.now()}`));
+    startQuiz(ordered.slice(0, 5), { modeKey: pending.node.mode || "quick", pathRetestFor: pending.node.id });
   }
 
   // 技巧回溫：練會的東西也會忘。
@@ -3280,39 +3332,27 @@
   function renderModePicker() {
     const primary = SIMPLE_MODE_KEYS;
     const advanced = EXPERIMENTAL_MODE_KEYS;
+    const recos = modeRecommendations(loadRecords());
+    const modeButton = (key) => {
+      const item = MODES[key];
+      const reco = recos.get(key);
+      return `
+        <button class="segment rich-segment ${selectedMode === key ? "is-active" : ""}" aria-pressed="${selectedMode === key ? "true" : "false"}" data-mode="${key}" ${reco ? `title="${escapeAttr(reco)}"` : ""}>
+          <strong>${item.label}${reco ? `<em class="mode-reco">今天適合</em>` : ""}</strong>
+          <span>${reco ? escapeHtml(reco) : modeDescription(key)}</span>
+        </button>`;
+    };
+    // 推薦落在抽屜裡的模式時抽屜要自己打開 —— 收起來的推薦等於沒有推薦
+    const advancedRecommended = advanced.some((key) => recos.has(key));
     return `
       <p class="mode-picker-note">通常只需要選這三個；高壓玩法收在下面。</p>
       <div class="segmented modes learning-picker" role="group" aria-label="模式選擇">
-        ${primary
-          .filter((key) => MODES[key])
-          .map(
-            (key) => {
-              const item = MODES[key];
-              return `
-              <button class="segment rich-segment ${selectedMode === key ? "is-active" : ""}" aria-pressed="${selectedMode === key ? "true" : "false"}" data-mode="${key}">
-                <strong>${item.label}</strong>
-                <span>${modeDescription(key)}</span>
-              </button>`;
-            }
-          )
-          .join("")}
+        ${primary.filter((key) => MODES[key]).map(modeButton).join("")}
       </div>
-      <details class="advanced-mode-drawer" data-advanced-mode-drawer ${(advancedModeOpen || advanced.includes(selectedMode)) ? "open" : ""}>
+      <details class="advanced-mode-drawer" data-advanced-mode-drawer ${(advancedModeOpen || advancedRecommended || advanced.includes(selectedMode)) ? "open" : ""}>
         <summary>實驗 / 高壓模式（${advanced.length}）</summary>
         <div class="segmented modes learning-picker">
-          ${advanced
-            .filter((key) => MODES[key])
-            .map(
-              (key) => {
-                const item = MODES[key];
-                return `
-                <button class="segment rich-segment ${selectedMode === key ? "is-active" : ""}" aria-pressed="${selectedMode === key ? "true" : "false"}" data-mode="${key}">
-                  <strong>${item.label}</strong>
-                  <span>${modeDescription(key)}</span>
-                </button>`;
-              }
-            )
-            .join("")}
+          ${advanced.filter((key) => MODES[key]).map(modeButton).join("")}
         </div>
       </details>
     `;
@@ -4830,7 +4870,7 @@
     const current = getCurrentProblem();
     if (!quiz || !current) return "";
     const elapsed = Math.max(0, Math.floor((Date.now() - quiz.questionStartedAt) / 1000));
-    const perQuestionRemaining = Math.max(0, current.timeLimit - elapsed);
+    const perQuestionRemaining = Math.max(0, questionTimeLimit(quiz, current) - elapsed);
     const examRemaining = quiz.examMode ? examTimeRemaining(quiz) : null;
     const remaining = quiz.examMode ? examRemaining : perQuestionRemaining;
     const progress = Math.round((quiz.index / quiz.problems.length) * 100);
@@ -6609,6 +6649,7 @@
     if (action === "start-mistakes") startMistakeQuiz(selectedMistakeTopic);
     if (action === "start-srs-review") startSrsReviewQuiz();
     if (action === "start-skill-refresh") startSkillRefreshQuiz();
+    if (action === "start-path-retest") startPathRetestQuiz();
     if (action === "start-mistake-triage") {
       const ids = (actionNode.dataset.problemIds || "").split(",").filter(Boolean);
       if (ids.length) startMistakeQuiz("all", ids);
@@ -6763,6 +6804,7 @@
       survival: Boolean(mode.survival),
       suddenDeath: Boolean(mode.suddenDeath),
       accuracyMode: Boolean(mode.accuracyMode),
+      pressureMode: Boolean(mode.pressureMode),
       examMode: Boolean(mode.exam),
       examDurationSec: mode.examDurationSec || 0,
       answerMode: mode.forceAnswerMode || selectedAnswerMode
@@ -8188,11 +8230,13 @@
       survival: Boolean(options.survival || mode.survival),
       suddenDeath: Boolean(options.suddenDeath || mode.suddenDeath),
       accuracyMode: Boolean(options.accuracyMode || mode.accuracyMode),
+      pressureMode: Boolean(options.pressureMode || mode.pressureMode),
       examMode: Boolean(options.examMode || mode.exam),
       examDurationSec: Number(options.examDurationSec || mode.examDurationSec || 0),
       examEndAt: options.examMode || mode.exam ? Date.now() + Number(options.examDurationSec || mode.examDurationSec || 0) * 1000 : 0,
       difficultyCap,
       pathNodeId: options.pathNodeId || "",
+      pathRetestFor: options.pathRetestFor || "",
       pathGate: options.pathGate || null,
       placement: options.placement || null,
       namedExam: options.namedExam || null,
@@ -8240,6 +8284,16 @@
     let pool = problems.slice();
     if (mode.integralBee) {
       pool = pool.filter((problem) => problem.topic === "integrals");
+    }
+    // 壓力訓練：優先抽「會但一計時就垮」的技巧（UA−PA 差距超過門檻）。
+    // 資料不足或命中太少就退回一般池 —— 模式照樣能玩，只是失去針對性。
+    if (mode.pressureMode) {
+      const targets = pressuredSkillIds(records);
+      if (targets.size && window.BuzzSkillGraph) {
+        const focused = pool.filter((problem) =>
+          (window.BuzzSkillGraph.skillsForProblem(problem) || []).some((id) => targets.has(id)));
+        if (focused.length >= mode.count) pool = focused;
+      }
     }
     if (mode.hidden && selectedMode === "mistakes") {
       pool = Object.values(records.mistakes || {}).map((item) => problemById(item.problemId)).filter(Boolean);
@@ -8395,6 +8449,55 @@
       cursor += 1;
     }
     return result.slice(0, count);
+  }
+
+  // 「會但一計時就垮」的技巧：不限時正確率減掉限時正確率超過
+  // GAP_PRESSURE（kernel/ability.js 的門檻）。這是壓力訓練的靶。
+  function pressuredSkillIds(records) {
+    const profile = abilityProfile(records);
+    if (!profile) return new Set();
+    const threshold = (window.BuzzAbility && window.BuzzAbility.constants.GAP_PRESSURE) || 0.15;
+    return new Set(
+      Object.values(profile.skills || {})
+        .filter((entry) => entry.measured && entry.gap !== null && entry.gap >= threshold && entry.subject !== "science")
+        .map((entry) => entry.id)
+    );
+  }
+
+  // 「今天適合」徽章：16 個模式對新使用者是選擇癱瘓 —— 不砍模式，
+  // 改讓能力模型指路。最多兩個，而且要說得出為什麼（跟 planner 的
+  // why 同一條紀律：沒有理由的推薦和隨機沒有差別）。
+  function modeRecommendations(records) {
+    const recos = new Map();
+    const profile = abilityProfile(records);
+    if (profile) {
+      const skills = Object.values(profile.skills || {}).filter((entry) => entry.measured && entry.subject !== "science");
+      const pressured = pressuredSkillIds(records).size;
+      const weak = skills.filter((entry) => entry.state === "weak" || entry.state === "shaky").length;
+      const reflex = skills.filter((entry) => entry.state === "reflex").length;
+      if (pressured >= 2) {
+        recos.set("pressure", `${pressured} 個技巧「會但一計時就垮」—— 練縮短的時間窗`);
+      }
+      if (weak >= 5) {
+        recos.set("topic", `${weak} 個技巧還不穩 —— 單範圍集中補洞`);
+      } else if (reflex >= 8 && recos.size < 2) {
+        recos.set("boss_rush", `${reflex} 個技巧已反射級 —— 往上打`);
+      }
+    }
+    if (!recos.size) recos.set("quick", "混合訓練維持手感，模型會自動偏向你的弱技巧");
+    return new Map([...recos.entries()].slice(0, 2));
+  }
+
+  // 壓力訓練的計時遞減：第一題給全額，最後一題只給 60%。
+  // 練的不是「更快算」而是「在縮短的窗裡維持判型與計算的穩定」——
+  // 這正對 ability 模型抓出來的 PA/UA 差距。下限 15 秒：再短就只是反應遊戲。
+  function questionTimeLimit(currentQuiz, problem) {
+    const base = problem.timeLimit;
+    if (!currentQuiz || !currentQuiz.pressureMode) return base;
+    const total = currentQuiz.problems.length;
+    if (total <= 1) return base;
+    const position = Math.min(currentQuiz.index, total - 1) / (total - 1);
+    return Math.max(15, Math.round(base * (1 - 0.4 * position)));
   }
 
   // 能力模型 → 抽題的三個訊號（2026-09-04）。
@@ -8925,7 +9028,7 @@
       if (quiz.examMode && examTimeRemaining(quiz) <= 0) {
         quiz.examTimedOut = true;
         finishQuiz();
-      } else if (!quiz.examMode && !quiz.feedback && elapsed >= current.timeLimit) {
+      } else if (!quiz.examMode && !quiz.feedback && elapsed >= questionTimeLimit(quiz, current)) {
         trackEvent("problem_timeout", {
           mode: quiz.mode,
           problem_id: current.id,
@@ -8944,7 +9047,7 @@
     const current = getCurrentProblem();
     if (!current) return;
     const elapsed = Math.max(0, Math.floor((Date.now() - quiz.questionStartedAt) / 1000));
-    const remaining = quiz.examMode ? examTimeRemaining(quiz) : Math.max(0, current.timeLimit - elapsed);
+    const remaining = quiz.examMode ? examTimeRemaining(quiz) : Math.max(0, questionTimeLimit(quiz, current) - elapsed);
     const timeNode = app.querySelector('[data-live="time"]');
     const timeBox = app.querySelector('[data-live-box="time"]');
     const answeredNode = app.querySelector('[data-live="answered"]');
@@ -10589,6 +10692,8 @@
     next.settings.difficultyCap = normalizeDifficultyCap(next.settings.difficultyCap || DEFAULT_DIFFICULTY_CAP);
     // 每日一題：dateKey → {problemId, correct, elapsed, hintsUsed, reason}，只記首次挑戰。
     next.dailyOne = next.dailyOne && typeof next.dailyOne === "object" ? next.dailyOne : {};
+    // 延遲回測：最近一次主線課程 {nodeId, at, doneAt}。隔天回測 5 題（testing effect）。
+    next.pathRetest = next.pathRetest && typeof next.pathRetest === "object" ? next.pathRetest : null;
     // 信心自評：problemId -> {level, correct, at}。只記最近一次。
     next.conf = next.conf && typeof next.conf === "object" ? next.conf : {};
     // 考試倒推：plan 是當前那一場，planHistory 封存過去的（考後報告要用）。
@@ -10761,6 +10866,16 @@
         const unlocked = idx >= 0 ? PATH_NODES[idx + 1] : null;
         justUnlockedNodeId = unlocked ? unlocked.id : currentQuiz.pathNodeId;
       }
+      // 延遲回測（testing effect）：今天練的，隔天要回來考一次。
+      // 只記最近一個節點 —— 排一整排待辦會變壓力，一張卡剛好。
+      if (currentQuiz.answers.length >= 4) {
+        records.pathRetest = { nodeId: currentQuiz.pathNodeId, at: Date.now(), doneAt: 0 };
+      }
+    }
+
+    // 回測做完就註銷，成績照一般 quick 場計，不另立名目
+    if (currentQuiz.pathRetestFor && records.pathRetest && records.pathRetest.nodeId === currentQuiz.pathRetestFor) {
+      records.pathRetest.doneAt = Date.now();
     }
 
     // Feature 5：定位測驗 → 覆寫 records.placement，並沿用跳關的
@@ -11267,6 +11382,7 @@
       boss: "階梯",
       boss_rush: "錯一題結束",
       exam: "整份限時",
+      pressure: "計時遞減",
       integral_bee: "積分快速戰",
       no_hint: "關閉提示",
       accuracy: "不限時精準",
@@ -12340,6 +12456,11 @@
       selectProblemPool,
       adaptiveShuffle,
       padPool,
+      questionTimeLimit,
+      modeRecommendations,
+      pressuredSkillIds,
+      pathRetestPending,
+      skillRefreshDue,
       preferFreshProblems,
       recentProblemIds,
       packTotalCountText,
