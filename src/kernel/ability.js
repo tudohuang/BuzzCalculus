@@ -238,12 +238,14 @@
      帶 Beta 先驗，所以「答 3 題全對」不會拿到 100 分。
      衰退用半衰期，且精熟度越高衰退越慢 —— 真的練到反射的技巧不會一週就忘光。 */
 
-  function masteryFrom(sumWeight, sumScore, lastAt, now) {
+  function masteryFrom(sumWeight, sumScore, lastAt, now, decayScale) {
     if (!sumWeight) return { mastery: null, accuracy: null, confidence: 0, halfLife: null };
 
     const accuracy = (sumScore + PRIOR_STRENGTH * PRIOR_ACCURACY) / (sumWeight + PRIOR_STRENGTH);
     const idleDays = Math.max(0, (now - lastAt) / DAY_MS);
-    const halfLife = 10 + 0.25 * (100 * accuracy);
+    // 半衰期 = 基準公式 × 個人遺忘係數（decayScaleFrom 從回訪實績校準，
+    // 樣本不足時是 1 —— 舊行為一個位元都不變）
+    const halfLife = (10 + 0.25 * (100 * accuracy)) * (decayScale || 1);
     const decay = Math.pow(0.5, idleDays / halfLife);
     const mastery = Math.round(clamp(100 * accuracy * decay, 0, 100));
 
@@ -253,6 +255,42 @@
       confidence: Math.min(1, sumWeight / MIN_CONFIDENCE_W),
       halfLife
     };
+  }
+
+  /* ── 個人遺忘係數 ─────────────────────────────────────────────
+     半衰期公式對每個人都一樣，但遺忘速度不是。校準的證據是「回訪」：
+     隔了 ≥5 天回來練同一個技巧時，用**當時**的模型狀態預測 P(答對)，
+     跟實際結果比。整體上實際 > 預測 → 這個人忘得比模型慢 → 半衰期拉長；
+     反之縮短。樣本 <12 次回訪就回 1 —— 校準要有證據，不憑兩三次起舞。
+     範圍鎖在 [0.6, 1.8]：係數是微調不是重寫，避免少量極端樣本把曲線拽飛。 */
+  function decayScaleFrom(attempts) {
+    const perSkill = new Map();
+    let predictedSum = 0;
+    let actualSum = 0;
+    let samples = 0;
+    const ordered = attempts.slice().sort((a, b) => a.at - b.at);
+    ordered.forEach((attempt) => {
+      const outcome = attempt.correct && !attempt.unanswered ? 1 : 0;
+      (attempt.skills || []).forEach((id) => {
+        const state = perSkill.get(id) || { weight: 0, score: 0, lastAt: 0 };
+        const gapDays = state.lastAt ? (attempt.at - state.lastAt) / DAY_MS : 0;
+        if (state.weight >= 6 && gapDays >= 5) {
+          const core = masteryFrom(state.weight, state.score, state.lastAt, attempt.at, 1);
+          if (core.mastery !== null) {
+            predictedSum += clamp(core.mastery / 100, 0.05, 0.95);
+            actualSum += outcome;
+            samples += 1;
+          }
+        }
+        state.weight += 1;
+        state.score += outcome;
+        state.lastAt = attempt.at;
+        perSkill.set(id, state);
+      });
+    });
+    if (samples < 12) return { scale: 1, samples };
+    const bias = actualSum / samples - predictedSum / samples;
+    return { scale: clamp(1 + 2.5 * bias, 0.6, 1.8), samples };
   }
 
   // 加權正確率，給 PA / UA 用。這裡刻意不套先驗 —— PA 與 UA 是拿來
@@ -362,9 +400,9 @@
 
   /* ── 7. 組裝一個技巧的完整資料 ──────────────────────────────── */
 
-  function buildSkillEntry(stat, now, graph) {
+  function buildSkillEntry(stat, now, graph, decayScale) {
     const node = graph ? graph.byId(stat.id) : null;
-    const core = masteryFrom(stat.all.weight, stat.all.score, stat.lastAt, now);
+    const core = masteryFrom(stat.all.weight, stat.all.score, stat.lastAt, now, decayScale);
 
     const pa = stat.timed.n >= MIN_SPLIT_N ? rawAccuracy(stat.timed) : null;
     const ua = stat.untimed.n >= MIN_SPLIT_N ? rawAccuracy(stat.untimed) : null;
@@ -521,9 +559,12 @@
     const stats = computeSkills(attempts, now, graph);
     applyConfidence(stats, safeRecords, problems, graph);
 
+    // 個人遺忘係數：從回訪實績校準半衰期（樣本不足時 = 1，不動）
+    const personalDecay = decayScaleFrom(attempts);
+
     const skills = {};
     stats.forEach((stat, id) => {
-      skills[id] = buildSkillEntry(stat, now, graph);
+      skills[id] = buildSkillEntry(stat, now, graph, personalDecay.scale);
     });
 
     const measured = Object.values(skills).filter((entry) => entry.measured && entry.subject !== "science");
@@ -537,7 +578,7 @@
       const at = now - days * DAY_MS;
       const masteries = new Map();
       computeSkills(attempts, at, graph).forEach((stat, id) => {
-        masteries.set(id, masteryFrom(stat.all.weight, stat.all.score, stat.lastAt, at).mastery);
+        masteries.set(id, masteryFrom(stat.all.weight, stat.all.score, stat.lastAt, at, personalDecay.scale).mastery);
       });
       return { overall: overallFrom(attempts, at), masteries };
     };
@@ -589,7 +630,12 @@
         skillsTouched: Object.keys(skills).length,
         skillsMeasured: measured.length,
         attempts: attempts.length
-      }
+      },
+
+      // 個人遺忘係數：>1 忘得比模型慢（間隔自動拉長）、<1 忘得快。
+      // samples 是校準用的回訪次數 —— UI 引用時要能講出這個數字。
+      decayScale: personalDecay.scale,
+      decaySamples: personalDecay.samples
     };
   }
 

@@ -1440,6 +1440,12 @@
             })
             .join("")}
         </ul>
+        ${(() => {
+          const prescription = causePrescription(records);
+          return prescription
+            ? `<p class="weakness-prescription">${icon("lightbulb")}${escapeHtml(prescription.advice)}</p>`
+            : "";
+        })()}
       </section>
     `;
   }
@@ -2359,6 +2365,12 @@
           測得出來的技巧 ${profile.coverage.skillsMeasured} 個 / 碰過 ${profile.coverage.skillsTouched} 個 ·
           累計 ${profile.coverage.attempts} 次作答
         </p>
+        ${
+          // 個人遺忘係數：有足夠回訪樣本才顯示（kernel 樣本 <12 時恆為 1）
+          profile.decaySamples >= 12 && Math.abs(profile.decayScale - 1) >= 0.08
+            ? `<p class="panel-note">依你 ${profile.decaySamples} 次隔多天回訪的實績，你忘得比模型預設${profile.decayScale > 1 ? "慢" : "快"} ${Math.round(Math.abs(profile.decayScale - 1) * 100)}% —— 複習到期日已自動${profile.decayScale > 1 ? "拉長" : "提前"}。</p>`
+            : ""
+        }
         <div class="insights-movers">
           <div class="mover is-up">
             <span>本週進步最快</span>
@@ -8561,6 +8573,58 @@
     );
   }
 
+  // 錯因處方（診斷 → 開藥的閉環）。
+  //
+  // suggestCause 每一題答錯都在自動標錯因，數據頁也畫了分佈 ——
+  // 但「所以呢」一直是空的。這裡把 30 天內的錯因分佈變成一張處方：
+  // 某個錯因佔了四成以上才開藥（沒有主旋律就不硬開），樣本至少 8 錯。
+  const CAUSE_PRESCRIPTIONS = {
+    "algebra-slip": {
+      mode: "accuracy",
+      advice: (count) => `30 天內 ${count} 題錯在「算錯，不是不會」—— 對症是不限時、錯題重罰的正確率模式：把手放慢，讓代價教會手。`
+    },
+    "misread": {
+      mode: "accuracy",
+      advice: (count) => `30 天內 ${count} 題錯在看錯題目 —— 正確率模式不限時：先把「讀完再動筆」練成習慣。`
+    },
+    "wrong-technique": {
+      mode: "topic",
+      advice: (count) => `30 天內 ${count} 題錯在選錯方法 —— 單範圍集中練最快把「看題判型」建起來。`
+    },
+    "forgot-formula": {
+      mode: "practice",
+      advice: (count) => `30 天內 ${count} 題錯在忘公式 —— 用可看提示的練習模式把公式重新掛回手上，並清一輪錯題複習。`
+    },
+    "timeout": {
+      mode: "pressure",
+      advice: (count) => `30 天內 ${count} 題是時間到 —— 壓力訓練的遞減計時就是為這個造的。`
+    }
+  };
+
+  function causePrescription(records) {
+    if (!window.BuzzRecords) return null;
+    let attempts;
+    try {
+      attempts = window.BuzzRecords.attempts(records);
+    } catch (_error) {
+      return null;
+    }
+    const cutoff = Date.now() - 30 * 86400000;
+    const tally = {};
+    let wrongs = 0;
+    (attempts || []).forEach((attempt) => {
+      if (!attempt || attempt.correct || !attempt.at || attempt.at < cutoff) return;
+      wrongs += 1;
+      if (attempt.cause) tally[attempt.cause] = (tally[attempt.cause] || 0) + 1;
+    });
+    if (wrongs < 8) return null;
+    const top = Object.entries(tally).sort((a, b) => b[1] - a[1])[0];
+    if (!top || top[1] < wrongs * 0.4) return null;
+    const prescription = CAUSE_PRESCRIPTIONS[top[0]];
+    if (!prescription) return null;
+    return { cause: top[0], count: top[1], wrongs, mode: prescription.mode, advice: prescription.advice(top[1]) };
+  }
+
   // 模擬考分數預測。
   //
   // 「你現在去考大概幾分」是每個學生真正想知道、而正確率統計答不了的
@@ -8619,6 +8683,9 @@
   // why 同一條紀律：沒有理由的推薦和隨機沒有差別）。
   function modeRecommendations(records) {
     const recos = new Map();
+    // 錯因處方優先：它是最個人、最可解釋的一種推薦
+    const prescription = causePrescription(records);
+    if (prescription) recos.set(prescription.mode, prescription.advice);
     const profile = abilityProfile(records);
     if (profile) {
       const skills = Object.values(profile.skills || {}).filter((entry) => entry.measured && entry.subject !== "science");
