@@ -101,7 +101,38 @@
     "mob-bessel-007": { axes: [1, 3, 1], why: "Bessel 方程在 0 的奇點分類：名詞辨識。" },
     "mob-bessel-010": { axes: [1, 3, 1], why: "Bessel 函數的出身（二階 ODE）：常識問答。" },
     "burst-boss-int-005": { axes: [1, 1, 2], why: "∫₀^∞x²/(1+x⁶)dx：u=x³ 一眼變 arctan，π/6·(1/3)。掛 boss 名字的 R2 題。" },
-    "burst-boss-int-007": { axes: [1, 1, 2], why: "∫₀^∞x/(1+x⁴)dx：u=x² 一眼變 arctan。" }
+    "burst-boss-int-007": { axes: [1, 1, 2], why: "∫₀^∞x/(1+x⁴)dx：u=x² 一眼變 arctan。" },
+
+    // ── 2026-09-04 rank-review.json 複核（recalibrate --dry 的 183 筆）────
+    // 大多數項目 live 已等於特徵推導值（歷史上已校準過），真正待裁決的
+    // 只剩下面這批 —— 包括幾題 recalibrate 看走眼的短題幹背誦難題（守住），
+    // 和幾題我們自己灌太高的新題（降回誠實的等級，寧缺 R6 不造假 R6）。
+
+    "fd-serx-601": { axes: [2, 3, 2], why: "ζ(8)=π⁸/9450：偶數 zeta 值的背誦題，跟 η(4)/η(6) 同族（那兩題複核為 R5）。recalibrate 只看題幹長度想給 R1 —— 短不等於簡單。" },
+    "lm-nr-004": { axes: [1, 3, 2], why: "n/(n!)^{1/n} → e：認識 Stirling（或 Cesàro 平均）就一步。冷門度高、步數低，R4 不是 R6。" },
+    "fd-limx-604": { axes: [2, 3, 2], why: "((1+1/n)ⁿ/e)ⁿ → e^{-1/2}：要把 log(1+1/n) 展到二階並追蹤 e 的偏差 —— 二階漸近是課綱邊緣，R5。" },
+    "si-int-014": { axes: [2, 1, 1], why: "ln(ln x) 的定義域：兩層「裡面要 >0/>1」的推理，R2。掛在 R4 是集合題地板的誤傷。" },
+    "dd-inv-002": { axes: [2, 2, 2], why: "d/dx arctan(x/(1+√(1+x²)))：硬算是重鏈鎖，看出半角恆等式才會化成 1/(2(1+x²))。辨識那一步值 R4，不值 R5。" },
+    "dd-inv-007": { axes: [2, 1, 1], why: "d/dx sinh(log x)：鏈鎖＋sinh 定義展開，R2。" },
+    "dd-opt-006": { axes: [3, 1, 3], why: "半徑 3 球內接圓柱最大體積：翻譯幾何→單變數→求極值→驗證，跟 app-010（複核 R4）同族。" },
+    "ch-nest-009": { axes: [3, 1, 3], why: "√(sin(√(cos x²)))：四層鏈鎖，長且要細心，但每一步都是同一招 —— 計算量大不等於 R6。" },
+    "ch-nest-013": { axes: [3, 1, 3], why: "tan(sin(cos(log x)))：同上，機械的深鏈鎖。" },
+    "ch-inv-012": { axes: [2, 1, 2], why: "arsinh(sin x²)：鏈鎖＋arsinh′=1/√(1+u²)，兩步。" },
+    "lm-sq-006": { axes: [1, 2, 1], why: "lim sin(1/x)：認出震盪不收斂 → dne。概念一步，R2。" },
+    "lm-sq-008": { axes: [1, 2, 1], why: "cos x/log x → 0：夾擠的直接應用，R2。" },
+    "lm-rc-004": { axes: [2, 2, 2], why: "a_{n+1}=√(1+a_n) → 黃金比：單調有界＋解不動點方程，標準兩步，R4。" },
+    "lm-rc-007": { axes: [2, 2, 2], why: "a_{n+1}=cos a_n → Dottie 數：同樣的不動點論證（答案是數值），R4。" },
+    "lm-pr-005": { axes: [2, 3, 2], why: "Π cos(π/2^{n+1}) = 2/π（Viète）：要看出乘上 sin 之後的倍角望遠鏡 —— 冷門且巧，R5 守住（從 R6 降半格）。" },
+    "lm-nr-003": { axes: [1, 2, 2], why: "n(7^{1/n}−1) → ln 7：標準 (e^u−1)/u 變形，R3。" },
+    "lm-nr-005": { axes: [1, 2, 2], why: "n!/n^n → 0：比值判別或逐項壓縮，R3。" },
+    "fd-serx-502": { axes: [3, 1, 2], why: "Σn³/4ⁿ：微分三次的機械流程，跟 burst-boss-ser-001（複核 R4）同族 —— 自己出的題也要一致。" },
+    "fd-serx-604": { axes: [2, 2, 2], why: "Σ(n+1)/n! = 2e−1：拆成兩條已知級數。出題時掛 R6 是為了填 R6 的洞 —— 那是配額思維，不是難度，降回 R4。" },
+    "fd-serx-605": { axes: [3, 2, 2], why: "Σ(n²+n+1)/n!：要會 n²/n!=2e 的拆法，比 604 多一層，R4。" },
+    "fd-limx-603": { axes: [3, 2, 2], why: "(tan x/x)^{1/x²}：1^∞ 取對數＋tan 展開，課本進階節的標準流程，R4 不是 R6。" },
+    "fd-serb-603": { axes: [2, 3, 2], why: "Σn/(2n+1)! = 1/(2e)：把 n 湊成 ((2n+1)−1)/2 再拆 cosh/sinh —— 這步不站在課綱大路上，R5。" },
+    "fd-serb-605": { axes: [2, 2, 2], why: "Σ1/((2n+1)4ⁿ)：認出 artanh 級數代 x=1/2，標準冪級數辨識，R4。" },
+    "fd-serb-606": { axes: [2, 3, 2], why: "Σn/(4n⁴+1)：Sophie Germain 分解＋接龍望遠鏡，冷門恆等式，R5。" },
+    "fd-serb-608": { axes: [2, 2, 2], why: "Σ(−1)^{n+1}/(n3ⁿ) = log(4/3)：log(1+x) 級數的直接代入，R4。出題時的 R6 同樣是配額思維。" }
   };
 
   if (typeof module !== "undefined" && module.exports) module.exports = REVIEWED;

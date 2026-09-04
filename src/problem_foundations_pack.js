@@ -504,5 +504,34 @@
     "−log(1−x) 的級數在 x=−1/3 變號：Σ(−1)^{n+1}xⁿ/n = log(1+x)，代 x=1/3 得 log(4/3)。", 240,
     ["對照 log(1+x) 的級數。", "x=1/3。", "1+x 是 4/3。"]);
 
+  /* ── 真 R6（2026-09-04 三波）：rank 複核把幾題「配額 R6」降回誠實等級
+     之後，R6 的洞用真正 R6 難度的題補 —— Euler 和、母函數操作、
+     複數幾何級數、Stirling 常數。每一題仍然可獨立驗算。 */
+
+  N("fd-serc-601", "series", 6, "\\sum_{n=1}^{\\infty}\\frac{(-1)^{n+1}H_n}{n}", "pi^2/12-log(2)^2/2",
+    ["alternating", "power-series"],
+    "交錯 Euler 和：Σ H_n xⁿ = −log(1−x)/(1−x) 積分後代 x=−1，得 π²/12 − (log 2)²/2。", 420,
+    ["H_n 的母函數是 −log(1−x)/(1−x)。", "除以 n 等於積分。", "代 x=−1 要用 dilog 的特殊值。"]);
+  N("fd-serc-602", "series", 6, "H_n=\\sum_{k=1}^n\\frac1k.\\ \\text{Find }\\sum_{n=1}^{\\infty}\\frac{H_n}{(n+1)2^n}", "log(2)^2",
+    ["power-series"],
+    "Σ H_n x^{n+1}/(n+1) = log²(1−x)/2（母函數積分），代 x=1/2 再乘 2 得 log²2。", 420,
+    ["對 H_n 的母函數積分。", "得 log²(1−x)/2。", "x=1/2，注意位移一格。"]);
+  N("fd-serc-603", "series", 6, "\\sum_{n=1}^{\\infty}\\frac{\\sin n}{n}", "(pi-1)/2",
+    ["convergence-test"],
+    "鋸齒波的 Fourier 級數：Σ sin(nθ)/n = (π−θ)/2 在 0<θ<2π，代 θ=1 得 (π−1)/2。", 420,
+    ["這是某個週期函數的 Fourier 級數。", "Σ sin(nθ)/n = (π−θ)/2。", "θ=1。"]);
+  N("fd-serc-604", "series", 6, "\\sum_{n=1}^{\\infty}\\frac{\\cos n}{2^n}", "(2*cos(1)-1)/(5-4*cos(1))",
+    ["geometric-series"],
+    "看成 Re Σ(e^i/2)ⁿ 的複數幾何級數：Re(z/(1−z))，z=e^i/2，化簡得 (2cos1−1)/(5−4cos1)。", 390,
+    ["cos n 是 e^{in} 的實部。", "複數幾何級數 z/(1−z)。", "分母乘共軛化實。"]);
+  N("fd-limx-609", "limits", 6, "\\lim_{n\\to\\infty}\\frac{n!\\,e^n}{n^{n+1/2}}", "sqrt(2*pi)",
+    ["sequences", "taylor-limit"],
+    "Stirling 公式的常數：n! ~ √(2πn)(n/e)ⁿ，比值收斂到 √(2π)。", 420,
+    ["這就是 Stirling 公式的常數項。", "取對數比對 log n! 的展開。", "√(2π)。"]);
+  N("fd-limx-610", "limits", 6, "\\lim_{x\\to 0}\\frac{\\tan(\\sin x)-\\sin(\\tan x)}{\\arctan(\\arcsin x)-\\arcsin(\\arctan x)}", "1",
+    ["taylor-limit", "inverse-trig"],
+    "兩個差都是 x⁷/30 級而且**同號**（反三角那對正是正三角那對的反函數，第七階係數同向），比值是 1。第一版憑感覺寫 −1，被獨立驗算抓下來 —— 這題的陷阱就是符號。", 480,
+    ["上下都要展到第七階。", "tan∘sin − sin∘tan = x⁷/30 + …。", "反函數對的第七階係數同號 —— 別憑直覺給負號。"]);
+
   window.BUZZ_PROBLEMS = (window.BUZZ_PROBLEMS || []).concat(problems);
 })();
