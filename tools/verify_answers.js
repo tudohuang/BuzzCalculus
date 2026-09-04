@@ -168,7 +168,10 @@ if (!onlyId) {
 if (ciMode) {
   // 門檻的意義：不符必須是零（一題錯答案就夠毀掉信任），
   // 覆蓋率則設在目前水準之下一點，只擋「退步」不擋「還沒補完」。
-  const MIN_COVERAGE = Number(process.env.BUZZ_MIN_VERIFY_COVERAGE || 48);
+  // 2026-09 驗算器大擴充（有理泰勒級數、區域積分、參數積分、向量分析
+  // verify 規格…）之後，覆蓋率從 66% 拉到 84%+。門檻鎖在 80：
+  // 擋「退步」，也逼新增的題包帶著可驗算的題幹形式或 verify 欄位進來。
+  const MIN_COVERAGE = Number(process.env.BUZZ_MIN_VERIFY_COVERAGE || 80);
   const failures = [];
   if (buckets.mismatch.length) failures.push(`${buckets.mismatch.length} 題答案與獨立算出來的值不符`);
   const coverage = (100 * verified) / total;

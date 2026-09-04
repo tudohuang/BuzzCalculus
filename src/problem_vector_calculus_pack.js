@@ -336,5 +336,87 @@
     if (HINTS[problem.id]) problem.hints = HINTS[problem.id];
   });
 
+  // ---- 獨立驗算規格（tools/verify_answers.js 讀）----
+  //
+  // 每條都把題幹的曲線／曲面寫成參數式，驗算端只做數值微分＋數值積分 ——
+  // 完全不用 Green / Stokes / 散度定理，跟解題的推導共用不到任何一步。
+  // 參數化是題幹的重述（那條線／那塊面本來就是那個東西），不是解法。
+  // 封閉曲面的法向要指向外側（r_u × r_v 的方向由參數順序決定）。
+  const SPHERE = (r) => ({ x: `${r}\\sin u\\cos v`, y: `${r}\\sin u\\sin v`, z: `${r}\\cos u`, u: [0, "\\pi"], v: [0, "2\\pi"] });
+  const CUBE_FACES = [
+    { x: "1", y: "u", z: "v", u: [0, 1], v: [0, 1] },
+    { x: "0", y: "v", z: "u", u: [0, 1], v: [0, 1] },
+    { x: "v", y: "1", z: "u", u: [0, 1], v: [0, 1] },
+    { x: "u", y: "0", z: "v", u: [0, 1], v: [0, 1] },
+    { x: "u", y: "v", z: "1", u: [0, 1], v: [0, 1] },
+    { x: "v", y: "u", z: "0", u: [0, 1], v: [0, 1] }
+  ];
+  const UNIT_CIRCLE = { x: "\\cos t", y: "\\sin t", from: 0, to: "2\\pi" };
+  const VERIFY = {
+    "vc-line-001": { m: "lineIntegral", kind: "ds", f: "x", path: { x: "3t", y: "4t", from: 0, to: 1 } },
+    "vc-line-002": { m: "lineIntegral", kind: "ds", f: "x^2+y^2", path: { x: "2\\cos t", y: "2\\sin t", from: 0, to: "2\\pi" } },
+    "vc-line-003": { m: "lineIntegral", kind: "ds", f: "x", path: { x: "t", y: "t^2", from: 0, to: 1 } },
+    "vc-line-004": { m: "lineIntegral", kind: "ds", f: "z", path: { x: "\\cos t", y: "\\sin t", z: "t", from: 0, to: "2\\pi" } },
+    "vc-work-001": { m: "lineIntegral", kind: "work", F: ["y", "x"], path: { x: "2t", y: "3t", from: 0, to: 1 } },
+    "vc-work-002": { m: "lineIntegral", kind: "work", F: ["y", "-x"], path: UNIT_CIRCLE },
+    "vc-work-003": { m: "lineIntegral", kind: "work", F: ["x^2", "xy"], path: { x: "t", y: "t", from: 0, to: 1 } },
+    "vc-work-004": { m: "lineIntegral", kind: "work", F: ["y^2", "x^2"], path: { x: "t", y: "t^2", from: 0, to: 1 } },
+    "vc-cons-001": { m: "lineIntegral", kind: "work", F: ["2xy+1", "x^2"], path: { x: "t", y: "2t", from: 0, to: 1 } },
+    "vc-cons-002": { m: "lineIntegral", kind: "work", F: ["e^x\\sin y", "e^x\\cos y"], path: { x: "0", y: "\\pi t/2", from: 0, to: 1 } },
+    "vc-cons-004": { m: "lineIntegral", kind: "work", F: ["y^2", "2xy+3y^2"], path: { x: "1+t", y: "1+t", from: 0, to: 1 } },
+    "vc-green-001": { m: "lineIntegral", kind: "work", F: ["-y", "x"], paths: [
+      { x: "2t", y: "0", from: 0, to: 1 },
+      { x: "2-2t", y: "3t", from: 0, to: 1 },
+      { x: "0", y: "3-3t", from: 0, to: 1 }
+    ] },
+    "vc-green-002": { m: "lineIntegral", kind: "work", F: ["x-y", "x+y"], path: UNIT_CIRCLE },
+    "vc-green-003": { m: "lineIntegral", kind: "work", F: ["y^2", "x^2"], paths: [
+      { x: "t", y: "0", from: 0, to: 1 },
+      { x: "1", y: "t", from: 0, to: 1 },
+      { x: "1-t", y: "1", from: 0, to: 1 },
+      { x: "0", y: "1-t", from: 0, to: 1 }
+    ] },
+    "vc-green-004": { m: "lineIntegral", kind: "work", F: ["xy", "x^2"], paths: [
+      { x: "t", y: "0", from: 0, to: 1 },
+      { x: "1", y: "t", from: 0, to: 1 },
+      { x: "1-t", y: "1", from: 0, to: 1 },
+      { x: "0", y: "1-t", from: 0, to: 1 }
+    ] },
+    "vc-green-005": { m: "lineIntegral", kind: "work", F: ["-y^3", "x^3"], path: UNIT_CIRCLE },
+    "vc-green-006": { m: "lineIntegral", kind: "work", F: ["-y/2", "x/2"], path: { x: "3\\cos t", y: "2\\sin t", from: 0, to: "2\\pi" } },
+    "vc-green-007": { m: "lineIntegral", kind: "work", F: ["e^{x^2}-y", "x+\\ln(1+y^2)"], path: UNIT_CIRCLE },
+    "vc-green-008": { m: "lineIntegral", kind: "work", F: ["xy^2", "x^2y+x"], path: { x: "3\\cos t", y: "3\\sin t", from: 0, to: "2\\pi" } },
+    // 通量 ∮F·n ds = ∮P dy − Q dx，等於向量場 (−Q, P) 的環流 —— 這是恆等式不是解法
+    "vc-flux-001": { m: "lineIntegral", kind: "work", F: ["-y", "x"], path: UNIT_CIRCLE },
+    "vc-flux-002": { m: "lineIntegral", kind: "work", F: ["-y^3", "x^3"], path: UNIT_CIRCLE },
+    "vc-surf-001": { m: "surfaceScalar", f: "z", surface: { x: "\\sin u\\cos v", y: "\\sin u\\sin v", z: "\\cos u", u: [0, "\\pi/2"], v: [0, "2\\pi"] } },
+    "vc-surf-002": { m: "surfaceScalar", f: "x^2+y^2", surface: { x: "2\\cos u", y: "2\\sin u", z: "v", u: [0, "2\\pi"], v: [0, 3] } },
+    "vc-surf-003": { m: "surfaceScalar", f: "1", surface: { x: "u\\cos v", y: "u\\sin v", z: "u^2", u: [0, 1], v: [0, "2\\pi"] } },
+    "vc-div-001": { m: "surfaceFlux", F: ["x", "y", "z"], surface: SPHERE(1) },
+    "vc-div-002": { m: "surfaceFlux", F: ["x^3", "y^3", "z^3"], surface: SPHERE(1) },
+    "vc-div-003": { m: "surfaceFlux", F: ["xy", "yz", "zx"], surfaces: CUBE_FACES },
+    "vc-div-004": { m: "surfaceFlux", F: ["x^2", "y^2", "z^2"], surfaces: CUBE_FACES },
+    "vc-div-005": { m: "surfaceFlux", F: ["x+\\sin z", "y+e^{z}", "z+\\cos x"], surface: SPHERE(2) },
+    "vc-div-006": { m: "surfaceFlux", F: ["\\frac{x}{(x^2+y^2+z^2)^{3/2}}", "\\frac{y}{(x^2+y^2+z^2)^{3/2}}", "\\frac{z}{(x^2+y^2+z^2)^{3/2}}"], surface: SPHERE(5) },
+    "vc-div-007": { m: "surfaceFlux", F: ["0", "0", "z^2"], surfaces: [
+      { x: "\\cos u", y: "\\sin u", z: "v", u: [0, "2\\pi"], v: [0, 2] },
+      { x: "u\\cos v", y: "u\\sin v", z: "2", u: [0, 1], v: [0, "2\\pi"] },
+      { x: "u\\sin v", y: "u\\cos v", z: "0", u: [0, 1], v: [0, "2\\pi"] }
+    ] },
+    "vc-stokes-001": { m: "lineIntegral", kind: "work", F: ["-y", "x", "z"], path: { x: "\\cos t", y: "\\sin t", z: "0", from: 0, to: "2\\pi" } },
+    "vc-stokes-002": { m: "lineIntegral", kind: "work", F: ["z", "x", "y"], path: { x: "\\cos t", y: "\\sin t", z: "1", from: 0, to: "2\\pi" } },
+    "vc-stokes-003": { m: "lineIntegral", kind: "work", F: ["y", "z", "x"], path: { x: "2\\cos t", y: "2\\sin t", z: "0", from: 0, to: "2\\pi" } },
+    "vc-stokes-004": { m: "lineIntegral", kind: "work", F: ["y^2", "z^2", "x^2"], paths: [
+      { x: "1-t", y: "t", z: "0", from: 0, to: 1 },
+      { x: "0", y: "1-t", z: "t", from: 0, to: 1 },
+      { x: "t", y: "0", z: "1-t", from: 0, to: 1 }
+    ] },
+    "vc-stokes-005": { m: "curlFlux", F: ["-y", "x", "0"], surface: { x: "\\sin u\\cos v", y: "\\sin u\\sin v", z: "\\cos u", u: [0, "\\pi/2"], v: [0, "2\\pi"] } },
+    "vc-stokes-006": { m: "lineIntegral", kind: "work", F: ["y", "-x", "z^2"], path: { x: "2\\cos t", y: "2\\sin t", z: "3", from: 0, to: "2\\pi" } }
+  };
+  problems.forEach((problem) => {
+    if (VERIFY[problem.id]) problem.verify = VERIFY[problem.id];
+  });
+
   window.BUZZ_PROBLEMS = (window.BUZZ_PROBLEMS || []).concat(problems);
 })();
