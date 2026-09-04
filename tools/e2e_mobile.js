@@ -515,6 +515,45 @@ async function run() {
     }
 
     await chrome.send("Emulation.setDeviceMetricsOverride", VIEWPORT);
+    await chrome.send("Emulation.setTouchEmulationEnabled", { enabled: true, maxTouchPoints: 5 });
+
+    /* ── 3.8 作答形式（選擇題 / 自己寫）不捲就要看得到 ── */
+    // 它本來收在訓練頁最底部那個摺疊的「本局設定」裡：手機上要捲過
+    // 十關的路徑清單才會出現，實測回報就是「找不到」。
+    // 這條釘的不是「DOM 裡有沒有」，是**第一屏看不看得到**。
+    await chrome.navigate(`${server.url}/index.html`);
+    await chrome.sleep(700);
+    const modeReach = await chrome.evaluate(`
+      const c = (n) => { const h=[...document.querySelectorAll("button,a,[data-action]")].find(x=>(x.innerText||"").includes(n)); if(h) h.click(); return !!h; };
+      c("訓練"); await new Promise(r=>setTimeout(r,900));
+      const nodes=[...document.querySelectorAll("[data-answer-mode]")];
+      if(!nodes.length) return { ok:false, why:"訓練頁上沒有作答形式切換" };
+      const rects=nodes.map(n=>n.getBoundingClientRect());
+      const visible=rects.filter(r=>r.width>0&&r.height>0&&r.top>=0&&r.bottom<=window.innerHeight);
+      // 作答中也要能換：題目上的形式 chip 是按鈕
+      const chip=document.querySelector('[data-action="toggle-answer-mode"]');
+      return {
+        ok:true, count:nodes.length, visible:visible.length,
+        firstTop:Math.round(rects[0].top), winH:window.innerHeight,
+        docH:document.documentElement.scrollHeight,
+        maxBottom:Math.round(Math.max(...rects.map(r=>r.bottom))),
+        chipExists:Boolean(chip)
+      };
+    `);
+    if (!modeReach.ok) {
+      check("作答形式切換在訓練頁第一屏就看得到", false, modeReach.why);
+    } else {
+      check(
+        "作答形式切換在訓練頁第一屏就看得到",
+        modeReach.visible === modeReach.count,
+        `${modeReach.visible}/${modeReach.count} 個在視窗內，最上面那個 top=${modeReach.firstTop}（視窗高 ${modeReach.winH}）`
+      );
+      check(
+        "作答形式切換在文件的可捲範圍內",
+        modeReach.maxBottom <= modeReach.docH,
+        `最下緣 ${modeReach.maxBottom} vs 文件高 ${modeReach.docH}`
+      );
+    }
 
     /* ── 4. console 要乾淨 ── */
     const errors = chrome.consoleMessages.filter((m) => m.level === "error");
