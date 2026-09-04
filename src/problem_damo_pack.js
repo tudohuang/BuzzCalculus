@@ -235,5 +235,28 @@
     "逐段 [kπ,(k+1)π] 積分成幾何級數:首項 (1+e^{-π})/2,公比 e^{-π},和 = (1+e^{-π})/(2(1-e^{-π}))。",
     ["每個半週期的積分只差 e^{-π} 倍。", "∫₀^π e^{-t}sin t dt = (1+e^{-π})/2。"]);
 
+  // ---- 獨立驗算規格（tools/verify_answers.js 讀）----
+  //
+  // 敘述型數列題的題幹是解法提示 + 中文說明，自動辨識器讀不出結構。
+  // 這裡把「數列本身」用 DSL 重述：recSeq 照定義迭代遞迴、seqLimit 直接
+  // 對通項（含 ∑/∏/∫ 子式）做數列外插 —— 都不重複解題的推導。
+  // dm-seq-011（Poisson 部分和）的通項在 n 大時會溢位，DSL 表達不了，
+  // 留在 unverified 白名單。
+  const VERIFY = {
+    "dm-seq-001": { m: "recSeq", f: "a+\\frac{1}{a}", a0: 1, g: "\\frac{a}{\\sqrt{n}}", tol: 1e-3 },
+    "dm-seq-002": { m: "recSeq", f: "\\sin a", a0: 1, g: "a\\sqrt{n}", tol: 1e-3 },
+    "dm-seq-003": { m: "seqLimit", f: "n\\int_0^1 \\frac{x^n}{1+x^2}\\,dx", tol: 1e-3 },
+    "dm-seq-004": { m: "seqLimit", f: "\\sqrt{n}\\prod_{k=1}^{n}\\frac{2k-1}{2k}", tol: 1e-3 },
+    "dm-seq-005": { m: "seqLimit", f: "\\sin^2\\left(\\pi\\sqrt{n^2+n}\\right)", tol: 1e-3 },
+    "dm-seq-006": { m: "seqLimit", f: "\\frac{\\sum_{k=1}^{n}\\sqrt{k}}{n^{3/2}}", tol: 1e-3 },
+    "dm-seq-007": { m: "seqLimit", f: "\\frac{1}{n^2}\\sum_{k=1}^{n}k\\sin\\frac{k}{n}", tol: 1e-3 },
+    "dm-seq-008": { m: "seqLimit", f: "\\prod_{k=1}^{n}\\left(1+\\frac{k^2}{n^2}\\right)^{1/n}", tol: 1e-3 },
+    "dm-seq-009": { m: "seqLimit", f: "n\\int_0^{\\pi/4}(\\tan x)^n\\,dx", tol: 1e-3 },
+    "dm-seq-010": { m: "seqLimit", f: "\\frac{n}{\\log n}\\left(n^{1/n}-1\\right)", tol: 1e-3 }
+  };
+  problems.forEach((problem) => {
+    if (VERIFY[problem.id]) problem.verify = VERIFY[problem.id];
+  });
+
   window.BUZZ_PROBLEMS = (window.BUZZ_PROBLEMS || []).concat(problems);
 })();

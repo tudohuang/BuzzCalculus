@@ -633,22 +633,66 @@ function verifyMultivarLimit(problem, bodyTex, compileAnswer) {
     const [x, y] = paths[index](t);
     return f(x, y);
   });
-  // 每條路徑取「最深的非零有限值」。深處取到精確 0 有兩種可能：
-  // 真的趨近 0，或災難性相消（1-cos(xy) 在 xy<1e-8 時 cos 回傳恰好 1）。
-  // 相消的路徑在較淺的深度有非零值 —— 用那個值；一路全零的路徑才算 0。
-  const perPath = paths.map(() => ({ value: null, sawFinite: false }));
-  for (let k = 2; k <= 7; k += 1) {
-    const t = Math.pow(10, -k);
-    paths.forEach((path, index) => {
-      const [x, y] = path(t);
-      const value = f(x, y);
-      if (!Number.isFinite(value)) return;
-      perPath[index].sawFinite = true;
-      if (value !== 0) perPath[index].value = value;
-      else if (perPath[index].value === null) perPath[index].value = 0;
+  // 每條路徑沿深度 t=1e-2…1e-7 取樣，然後找「連續深度彼此一致」的平台。
+  // 只拿最深的值會踩兩種浮點災難：
+  //   √(1+r²)−1 在 r²~1e-14 時整個被捨入吃掉（值變成雜訊），
+  //   1−cos(xy) 在 xy<1e-8 時 cos 回傳恰好 1（值變成精確的 0）。
+  // 兩種的指紋都一樣：淺處先穩定在一個非零平台，深處才崩掉。
+  // 所以：取最深的平台；但「深處的 0 平台前面有非零平台」= 相消，取非零那個。
+  const settleAlongPath = (values) => {
+    const plateaus = [];
+    let current = null;
+    values.forEach((value) => {
+      if (!Number.isFinite(value)) {
+        if (current) { plateaus.push(current); current = null; }
+        return;
+      }
+      const anchor = current ? current.members[current.members.length - 1] : null;
+      // 容差是相對的＋一個極小的絕對 epsilon。絕對地板一旦放大（試過 1e-3），
+      // 平滑趨零的路徑（5e-5 → 5e-6 → 5e-7…）會整段黏成假平台，
+      // 中位數把 1e-6 級的殘值端出來指控「答案 0」是錯的。
+      if (current && Math.abs(value - anchor) <= 5e-2 * Math.max(Math.abs(anchor), Math.abs(value)) + 1e-9) {
+        current.members.push(value);
+      } else {
+        if (current) plateaus.push(current);
+        current = { members: [value] };
+      }
     });
-  }
-  const settled = perPath.filter((entry) => entry.sawFinite && entry.value !== null).map((entry) => entry.value);
+    if (current) plateaus.push(current);
+    // 平台的代表值取中位數：平台尾端往往已經開始被捨入啃
+    //（√(1+1e-14)−1 的相對表示誤差有 2%），取最深成員會把髒值帶出來。
+    const representative = (plateau) => {
+      const sorted = [...plateau.members].sort((a, b) => a - b);
+      return sorted[Math.floor(sorted.length / 2)];
+    };
+    const stable = plateaus.filter((plateau) => plateau.members.length >= 2);
+    const deepUsable = stable.length ? representative(stable[stable.length - 1]) : null;
+    // 災難性相消的指紋：前一層還是 O(1)，下一層直接掉到精確的 0
+    //（1−cos(xy) 沿 (t,t²) 走，只有最淺的一層來得及給出 0.5，其餘全是 0）。
+    // 平滑趨零的路徑（5e-3 → 5e-4 → …）不會有這種斷崖，不能誤傷。
+    // 崩壞成立時優先用最深的**穩定非零平台**（斷崖正前方那一層可能已經
+    // 半壞 —— cos 捨到 1−1ulp 會給出 0.55 這種歪值），沒有平台才用斷崖前值。
+    for (let i = 1; i < values.length; i += 1) {
+      const previous = values[i - 1];
+      if (Number.isFinite(previous) && Number.isFinite(values[i]) &&
+          Math.abs(values[i]) < 1e-12 && Math.abs(previous) > 1e-4) {
+        const nonzeroStable = [...stable].reverse().find((plateau) => Math.abs(representative(plateau)) > 1e-4);
+        return nonzeroStable ? representative(nonzeroStable) : previous;
+      }
+    }
+    if (deepUsable !== null) return deepUsable;
+    // 沒有任何平台（值一路縮小之類）：最深的非零有限值；一路全零算 0
+    for (let i = values.length - 1; i >= 0; i -= 1) {
+      if (Number.isFinite(values[i]) && values[i] !== 0) return values[i];
+    }
+    return values.some(Number.isFinite) ? 0 : null;
+  };
+  const settled = paths
+    .map((path) => settleAlongPath([2, 3, 4, 5, 6, 7].map((k) => {
+      const [x, y] = path(Math.pow(10, -k));
+      return f(x, y);
+    })))
+    .filter((value) => value !== null);
   if (settled.length < 4) return { status: "unverified", reason: "有限值的路徑不足四條" };
   const spread = Math.max(...settled) - Math.min(...settled);
   const spreadShrinks = true;
@@ -656,9 +700,13 @@ function verifyMultivarLimit(problem, bodyTex, compileAnswer) {
   let mean = last.values.reduce((a, b) => a + b, 0) / last.values.length;
   // t=1e-7 時 x²y/(x²+y²) 這類的取樣值是 O(t)：mean 小到雜訊等級就是 0。
   if (Math.abs(mean) < 1e-6 && last.spread < 1e-6) mean = 0;
-  const answerText = String(problem.answer || "").trim();
+  // text 題的主張在 answers[]/canonical 裡，problem.answer 是 undefined ——
+  // 讀錯欄位會讓「does not exist」永遠對不上 dne 檢查（rel-hard-lim-006 實測）
+  const answerText = problem.answerKind === "text"
+    ? String(problem.canonical || (problem.answers || [])[0] || "").trim()
+    : String(problem.answer || "").trim();
 
-  if (/^dne$/i.test(answerText)) {
+  if (/^dne$/i.test(answerText) || /不存在|does not exist|no limit/i.test(answerText)) {
     // 「不存在」要正面證據：路徑間的差距不縮
     if (last.spread > 1e-4 * Math.max(1, Math.abs(mean))) {
       return { status: "ok", method: "multivar-dne", detail: "路徑極限不一致（差 " + last.spread.toExponential(2) + "）" };
@@ -2370,6 +2418,178 @@ function recognizeRound5(problem) {
   return null;
 }
 
+/* ── 看圖題：從題目物件裡的折線座標重算答案 ─────────────────── */
+//
+// gp- 包的圖形資料（graph.polylines / dashed / curves）就存在題目物件裡 ——
+// 學生看到的圖和這份座標是同一份。從座標重算面積、斜率、變號點，
+// 跟「看圖讀出答案」是兩條獨立的路徑。折線的積分用精確梯形和，
+// |f| 先在零交叉處切段，沒有任何數值誤差。
+
+function polylineAt(points, x) {
+  for (let i = 0; i + 1 < points.length; i += 1) {
+    const [x0, y0] = points[i];
+    const [x1, y1] = points[i + 1];
+    if (x >= x0 - 1e-12 && x <= x1 + 1e-12) {
+      return y0 + ((y1 - y0) * (x - x0)) / (x1 - x0);
+    }
+  }
+  return Number.NaN;
+}
+
+function polylineIntegral(points, from, to, absolute) {
+  let total = 0;
+  for (let i = 0; i + 1 < points.length; i += 1) {
+    const [x0, y0] = points[i];
+    const [x1, y1] = points[i + 1];
+    if (x1 <= from || x0 >= to) continue;
+    const slope = (y1 - y0) / (x1 - x0);
+    const a = Math.max(x0, from);
+    const b = Math.min(x1, to);
+    const ya = y0 + slope * (a - x0);
+    const yb = y0 + slope * (b - x0);
+    if (!absolute || ya * yb >= 0) {
+      const piece = ((ya + yb) / 2) * (b - a);
+      total += absolute ? Math.abs(piece) : piece;
+    } else {
+      // 跨零的線段切成兩個三角形，各取絕對值
+      const root = a - ya / slope;
+      total += Math.abs((ya / 2) * (root - a)) + Math.abs((yb / 2) * (b - root));
+    }
+  }
+  return total;
+}
+
+// 折線的零交叉（帶方向）與頂點斜率變化
+function polylineCrossings(points) {
+  const crossings = [];
+  for (let i = 0; i + 1 < points.length; i += 1) {
+    const [x0, y0] = points[i];
+    const [x1, y1] = points[i + 1];
+    if (y0 === 0 && y1 !== 0) crossings.push({ x: x0, direction: Math.sign(y1) });
+    else if (y0 * y1 < 0) {
+      crossings.push({ x: x0 - y0 * ((x1 - x0) / (y1 - y0)), direction: Math.sign(y1) });
+    }
+  }
+  return crossings;
+}
+
+function recognizeGraphReading(problem) {
+  const graph = problem.graph;
+  if (!graph || problem.answerKind !== "numeric") return null;
+  const prompt = String(problem.prompt || "");
+  const pts = graph.polylines && graph.polylines[0];
+
+  // 切線斜率：虛線過兩點，f'(a) = 兩點斜率
+  if (/切線/.test(prompt) && /f'\(/.test(prompt) && graph.dashed && graph.dashed[0] && graph.dashed[0].length >= 2) {
+    const line = graph.dashed[0];
+    const [x0, y0] = line[0];
+    const [x1, y1] = line[line.length - 1];
+    return (compileAnswer) => compareNumbers("graph-reading", compileAnswer([])(), (y1 - y0) / (x1 - x0), 1e-9);
+  }
+
+  // 梯形法（n=k）估 ∫₀¹ expr dx
+  const trapezoid = prompt.match(/梯形法（\}n=(\d+)\\text\{）估計 \}\\int_0\^1 ?(.+?)\\,dx$/);
+  if (trapezoid) {
+    return (compileAnswer) => {
+      const n = Number(trapezoid[1]);
+      const f = latex.compile(trapezoid[2], ["x"]);
+      const h = 1 / n;
+      let sum = (f(0) + f(1)) / 2;
+      for (let i = 1; i < n; i += 1) sum += f(i * h);
+      return compareNumbers("graph-reading", compileAnswer([])(), sum * h, 1e-9);
+    };
+  }
+
+  // 圖為 f′：f 的極小值位置 = f′ 由負轉正的零點；極大值 = 由正轉負
+  if (/圖為 \}f'/.test(prompt) && pts) {
+    const wantMin = /極小值位置/.test(prompt);
+    const wantMax = /極大值位置/.test(prompt);
+    if (wantMin || wantMax) {
+      return (compileAnswer) => {
+        const hits = polylineCrossings(pts).filter((c) => c.direction === (wantMin ? 1 : -1));
+        if (hits.length !== 1) return { status: "unverified", reason: `f′ 的變號零點有 ${hits.length} 個` };
+        return compareNumbers("graph-reading", compileAnswer([])(), hits[0].x, 1e-9);
+      };
+    }
+  }
+
+  // g(x)=∫₀ˣ f 系列
+  if (/g\(x\)=\\int_0\^x f/.test(prompt) && pts) {
+    const gAt = prompt.match(/g\((\d+(?:\.\d+)?)\)=\?/);
+    if (gAt) {
+      return (compileAnswer) => compareNumbers("graph-reading", compileAnswer([])(),
+        polylineIntegral(pts, 0, Number(gAt[1]), false), 1e-9);
+    }
+    const gPrime = prompt.match(/g'\((\d+(?:\.\d+)?)\)=\?/);
+    if (gPrime) {
+      return (compileAnswer) => compareNumbers("graph-reading", compileAnswer([])(),
+        polylineAt(pts, Number(gPrime[1])), 1e-9);
+    }
+    if (/反曲點/.test(prompt)) {
+      // g″=f′ 在折線頂點跳變；反曲點 = f 的斜率變號的頂點
+      return (compileAnswer) => {
+        const hits = [];
+        for (let i = 1; i + 1 < pts.length; i += 1) {
+          const before = (pts[i][1] - pts[i - 1][1]) / (pts[i][0] - pts[i - 1][0]);
+          const after = (pts[i + 1][1] - pts[i][1]) / (pts[i + 1][0] - pts[i][0]);
+          if (before * after < 0) hits.push(pts[i][0]);
+        }
+        if (hits.length !== 1) return { status: "unverified", reason: `斜率變號的頂點有 ${hits.length} 個` };
+        return compareNumbers("graph-reading", compileAnswer([])(), hits[0], 1e-9);
+      };
+    }
+    if (/最大值/.test(prompt)) {
+      // g 是分段二次：極值只會出現在 f 的零交叉與端點
+      return (compileAnswer) => {
+        const candidates = [pts[0][0], pts[pts.length - 1][0], ...polylineCrossings(pts).map((c) => c.x)];
+        const best = Math.max(...candidates.map((x) => polylineIntegral(pts, pts[0][0], x, false)));
+        return compareNumbers("graph-reading", compileAnswer([])(), best, 1e-9);
+      };
+    }
+  }
+
+  // 速度圖：位移 = ∫v、總路程 = ∫|v|
+  if (/速度圖/.test(prompt) && pts) {
+    const range = prompt.match(/(\d+)\\le t\\le (\d+)/);
+    const from = range ? Number(range[1]) : pts[0][0];
+    const to = range ? Number(range[2]) : pts[pts.length - 1][0];
+    const absolute = /總路程/.test(prompt);
+    if (absolute || /位移/.test(prompt)) {
+      return (compileAnswer) => compareNumbers("graph-reading", compileAnswer([])(),
+        polylineIntegral(pts, from, to, absolute), 1e-9);
+    }
+  }
+
+  // ∫₀^B f(x)dx / ∫₀^B |f(x)|dx
+  const areaForm = prompt.match(/\\int_0\^(\d+) ?(\|)?f\(x\)\|?\\,dx=\?/);
+  if (areaForm && pts) {
+    return (compileAnswer) => compareNumbers("graph-reading", compileAnswer([])(),
+      polylineIntegral(pts, 0, Number(areaForm[1]), Boolean(areaForm[2])), 1e-9);
+  }
+
+  // 不可微分的點有幾個：內部頂點的左右斜率不同
+  if (/不可微分的點有幾個/.test(prompt) && pts) {
+    return (compileAnswer) => {
+      let count = 0;
+      for (let i = 1; i + 1 < pts.length; i += 1) {
+        const before = (pts[i][1] - pts[i - 1][1]) / (pts[i][0] - pts[i - 1][0]);
+        const after = (pts[i + 1][1] - pts[i][1]) / (pts[i + 1][0] - pts[i][0]);
+        if (Math.abs(before - after) > 1e-12) count += 1;
+      }
+      return compareNumbers("graph-reading", compileAnswer([])(), count, 1e-9);
+    };
+  }
+
+  // 左極限 lim_{x→A⁻} f：第一條折線段在 A 的值
+  const leftLimit = prompt.match(/\\lim_\{x\\to (\d+(?:\.\d+)?)\^-\}f/);
+  if (leftLimit && pts) {
+    return (compileAnswer) => compareNumbers("graph-reading", compileAnswer([])(),
+      polylineAt(pts, Number(leftLimit[1])), 1e-9);
+  }
+
+  return null;
+}
+
 // ODE 題幹：把 y''/y'/y 換成佔位變數編殘差，答案代回去驗。
 function verifyOdePrompt(problem, equationTex, conditionsTex, compileAnswer) {
   const equation = equationTex.replace(/\\ /g, " ").trim().replace(/,$/, "");
@@ -2472,6 +2692,15 @@ function verifyProblem(problem, options = {}) {
   if (round5) {
     try {
       return round5(compileAnswer);
+    } catch (error) {
+      return { status: "error", reason: error.message };
+    }
+  }
+
+  const graphReading = recognizeGraphReading(problem);
+  if (graphReading) {
+    try {
+      return graphReading(compileAnswer);
     } catch (error) {
       return { status: "error", reason: error.message };
     }
@@ -3543,6 +3772,27 @@ const EXPLICIT_METHODS = {
       value = next;
     }
     throw new Error(`迭代 ${iterations} 次還沒收斂`);
+  },
+
+  // 遞迴數列的變換極限：迭代 a_{n+1}=step(a_n) 恰好 n 步，取 g(n, aₙ) 的極限。
+  // a_n/√n（a_{n+1}=a_n+1/a_n）、√n·x_n（x_{n+1}=sin x_n）這類 ——
+  // 通項沒有閉式、只能照定義迭代。誤差 ~ C·log n/n，
+  // 用 2·v(2n)−v(n) 的 Richardson 消掉主項。
+  recSeq: (spec) => {
+    const step = latex.compile(spec.f, [spec.v || "a"]);
+    const transform = latex.compile(spec.g, ["n", spec.v || "a"]);
+    const samples = [20000, 40000, 80000, 160000];
+    const targets = new Set(samples);
+    const values = [];
+    let state = latex.compile(String(spec.a0), [])();
+    for (let n = 1; n <= samples[samples.length - 1]; n += 1) {
+      if (n > 1) state = step(state);
+      if (!Number.isFinite(state)) throw new Error(`第 ${n} 步迭代跑出 ${state}`);
+      if (targets.has(n)) values.push(transform(n, state));
+    }
+    const extrapolated = [];
+    for (let i = 0; i + 1 < values.length; i += 1) extrapolated.push(2 * values[i + 1] - values[i]);
+    return extrapolated[extrapolated.length - 1];
   },
 
   // 慢慢收斂的數列極限。細節見 extrapolateSequence。
