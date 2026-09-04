@@ -677,6 +677,8 @@
   let syncBusy = false;
   let syncMessage = "";
   const openProofSteps = new Set();
+  // 證明步驟重排練習的進行中狀態（一次只開一題）
+  let proofOrderDrill = null;
   let lastAnimatedView = null;
   let advancedModeOpen = false;
   let selectedTheme = loadThemePreference();
@@ -4508,6 +4510,7 @@
             : ""
         }
 
+        ${renderProofOrderDrill(proof, progress)}
         ${
           viewed
             ? renderProofSolution(proof)
@@ -4539,6 +4542,99 @@
         }
       </article>
     `;
+  }
+
+  // ── 步驟重排：證明從「自評」跨出第一步可判分 ────────────────────
+  //
+  // Proof Lab 一直是自己給自己打分。整個證明自動判卷很遠，但「骨架
+  // 的順序」現在就可以判：把參考證明的步驟打亂，讓使用者按邏輯順序
+  // 點回去 —— 排得回來，代表證明的結構在腦子裡；排不回來，第一個
+  // 錯位就是你還沒接起來的那一步。41 條證明零新內容全部適用。
+  // （v1 只認作者順序 —— 可交換的步驟會被判錯，說明文字有講。）
+  function renderProofOrderDrill(proof, progress) {
+    const steps = proof.solution || [];
+    if (steps.length < 3) return "";
+    const drill = proofOrderDrill && proofOrderDrill.proofId === proof.id ? proofOrderDrill : null;
+    const badge = progress.orderPassed ? `<span class="proof-order-badge">骨架 ✓</span>` : "";
+    if (!drill) {
+      return `
+        <div class="proof-order-launch">
+          <button class="button secondary" data-action="proof-order-start" data-proof-id="${escapeAttr(proof.id)}">
+            ${icon("shuffle")}排步驟練習（${steps.length} 步）
+          </button>
+          ${badge}
+        </div>
+      `;
+    }
+    const remaining = drill.order.filter((index) => !drill.picked.includes(index));
+    const graded = drill.graded;
+    return `
+      <div class="proof-order-drill">
+        <p class="section-label">把步驟按邏輯順序點回去</p>
+        ${
+          drill.picked.length
+            ? `<ol class="proof-order-picked">
+                ${drill.picked.map((stepIndex, position) => `
+                  <li class="${graded ? (stepIndex === position ? "is-ok" : "is-break") : ""}">
+                    ${escapeHtml(steps[stepIndex].text)}
+                  </li>`).join("")}
+              </ol>`
+            : ""
+        }
+        ${
+          remaining.length
+            ? `<div class="proof-order-pool">
+                ${remaining.map((stepIndex) => `
+                  <button class="proof-order-step" data-action="proof-order-pick" data-proof-id="${escapeAttr(proof.id)}" data-step-index="${stepIndex}">
+                    ${escapeHtml(steps[stepIndex].text)}
+                  </button>`).join("")}
+              </div>`
+            : ""
+        }
+        ${
+          graded
+            ? graded.every(Boolean)
+              ? `<p class="proof-order-result is-pass">順序全對 —— 這條證明的骨架你有了。</p>`
+              : `<p class="proof-order-result is-fail">第 ${graded.findIndex((ok) => !ok) + 1} 步開始錯位 —— 那裡就是還沒接起來的邏輯。</p>`
+            : ""
+        }
+        <div class="action-row">
+          ${drill.picked.length ? `<button class="button ghost" data-action="proof-order-reset" data-proof-id="${escapeAttr(proof.id)}">重來</button>` : ""}
+          <button class="button ghost" data-action="proof-order-close">收起</button>
+        </div>
+        <p class="panel-note">只認參考證明的順序 —— 可交換的相鄰步驟這一版會被算錯，別跟它吵。</p>
+      </div>
+    `;
+  }
+
+  function startProofOrderDrill(proofId) {
+    const proof = proofs.find((item) => item.id === proofId);
+    if (!proof || (proof.solution || []).length < 3) return;
+    const indices = proof.solution.map((_, index) => index);
+    let order = shuffle(indices, seedFromString(`proof-order-${proofId}-${Date.now()}`));
+    if (order.every((value, index) => value === index)) order = order.slice().reverse();
+    proofOrderDrill = { proofId, order, picked: [], graded: null };
+    render();
+  }
+
+  function pickProofOrderStep(proofId, stepIndex) {
+    if (!proofOrderDrill || proofOrderDrill.proofId !== proofId) return;
+    const index = Number(stepIndex);
+    if (proofOrderDrill.picked.includes(index)) return;
+    proofOrderDrill.picked.push(index);
+    if (proofOrderDrill.picked.length === proofOrderDrill.order.length) {
+      proofOrderDrill.graded = proofOrderDrill.picked.map((value, position) => value === position);
+      if (proofOrderDrill.graded.every(Boolean)) {
+        const records = loadRecords();
+        records.proofs[proofId] = {
+          ...(records.proofs[proofId] || {}),
+          orderPassed: true,
+          orderPassedAt: new Date().toISOString()
+        };
+        saveRecords(records);
+      }
+    }
+    render();
   }
 
   function renderProofSolution(proof) {
@@ -6787,6 +6883,10 @@
     if (action === "copy-duel-code") copyDuelCode();
     if (action === "download-weekly-report") downloadWeeklyReport();
     if (action === "check-steps") runStepCheck();
+    if (action === "proof-order-start") startProofOrderDrill(actionNode.dataset.proofId);
+    if (action === "proof-order-pick") pickProofOrderStep(actionNode.dataset.proofId, actionNode.dataset.stepIndex);
+    if (action === "proof-order-reset") { if (proofOrderDrill) { proofOrderDrill.picked = []; proofOrderDrill.graded = null; render(); } }
+    if (action === "proof-order-close") { proofOrderDrill = null; render(); }
     if (action === "start-mistake-triage") {
       const ids = (actionNode.dataset.problemIds || "").split(",").filter(Boolean);
       if (ids.length) startMistakeQuiz("all", ids);
