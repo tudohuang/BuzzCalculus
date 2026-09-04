@@ -570,6 +570,158 @@
         "x→0⁺ 時 f→−∞（垂直漸近線 x=0）；x→+∞ 時 f→0⁺。峰在 x=e 之後緩慢下降。"
       ],
       solution: "定義域 x>0。f′=(1−ln x)/x² 給唯一極大 x=e（f=1/e）；f″=(2ln x−3)/x³ 給反曲點 x=e^{3/2}；兩端分別趨向 −∞ 與 0⁺。"
+    }),
+
+    // ---- 2026-09 擴充：作圖表原本只有 17 題，補一批不同形狀的 ----
+
+    add({
+      id: "cw-018",
+      rank: 3,
+      prompt: "\\text{完成 }f(x)=x^3+3x^2\\text{ 的作圖表}",
+      fields: fields("x^3+3x^2", [-20, 20], {
+        increasing: "(-inf, -2) U (0, inf)",
+        decreasing: "(-2, 0)",
+        localMax: "{-2}",
+        localMin: "{0}",
+        concaveUp: "(-1, inf)",
+        concaveDown: "(-inf, -1)",
+        inflection: "{-1}"
+      }),
+      answer: "increasing=(-inf, -2) U (0, inf); decreasing=(-2, 0); localMax={-2}; localMin={0}; concaveUp=(-1, inf); concaveDown=(-inf, -1); inflection={-1}",
+      sketch: { expr: "x**3+3*x**2", window: [-4, 2, -2, 6] },
+      tags: ["first-derivative", "concavity", "inflection"],
+      hints: [
+        "f′=3x²+6x=3x(x+2)，兩個臨界點。",
+        "判號：外正中負 —— 極大在左、極小在右。",
+        "f″=6x+6，只在 x=−1 變號。"
+      ],
+      solutionSteps: [
+        "f′(x)=3x(x+2)，臨界點 x=−2, 0。",
+        "f′ 在 (−∞,−2) 正、(−2,0) 負、(0,∞) 正 ⟹ 極大在 −2（f=4）、極小在 0（f=0）。",
+        "f″(x)=6x+6，在 x=−1 變號 ⟹ 反曲點 x=−1。",
+        "先升到 (−2,4)、降到原點、再上升；左段凹下、右段凹上。"
+      ],
+      solution: "f′=3x(x+2) 給極值 x=−2, 0；f″=6(x+1) 給反曲點 x=−1。峰 (−2,4)、谷 (0,0)。"
+    }),
+
+    add({
+      id: "cw-019",
+      rank: 3,
+      prompt: "\\text{完成 }f(x)=2x^3-9x^2+12x\\text{ 的作圖表}",
+      fields: fields("2x^3-9x^2+12x", [-20, 20], {
+        increasing: "(-inf, 1) U (2, inf)",
+        decreasing: "(1, 2)",
+        localMax: "{1}",
+        localMin: "{2}",
+        concaveUp: "(3/2, inf)",
+        concaveDown: "(-inf, 3/2)",
+        inflection: "{3/2}"
+      }),
+      answer: "increasing=(-inf, 1) U (2, inf); decreasing=(1, 2); localMax={1}; localMin={2}; concaveUp=(3/2, inf); concaveDown=(-inf, 3/2); inflection={3/2}",
+      sketch: { expr: "2*x**3-9*x**2+12*x", window: [-0.5, 3.5, -1, 8] },
+      tags: ["first-derivative", "concavity", "inflection"],
+      hints: [
+        "f′=6x²−18x+12，先除以 6 再因式分解。",
+        "f′=6(x−1)(x−2)。",
+        "反曲點在兩個臨界點的正中間。"
+      ],
+      solutionSteps: [
+        "f′(x)=6(x−1)(x−2)，臨界點 x=1, 2。",
+        "判號：外正中負 ⟹ 極大在 1（f=5）、極小在 2（f=4）。",
+        "f″(x)=12x−18，在 x=3/2 變號 ⟹ 反曲點 x=3/2。",
+        "峰 (1,5) 與谷 (2,4) 靠得很近 —— 一小段起伏之後繼續上升。"
+      ],
+      solution: "f′=6(x−1)(x−2) 給極值 x=1, 2；f″=12x−18 給反曲點 x=3/2。峰 (1,5)、谷 (2,4)。"
+    }),
+
+    add({
+      id: "cw-020",
+      rank: 4,
+      prompt: "\\text{完成 }f(x)=x^4-4x^2+3\\text{ 的作圖表}",
+      fields: fields("x^4-4x^2+3", [-20, 20], {
+        increasing: "(-sqrt(2), 0) U (sqrt(2), inf)",
+        decreasing: "(-inf, -sqrt(2)) U (0, sqrt(2))",
+        localMax: "{0}",
+        localMin: "{-sqrt(2), sqrt(2)}",
+        concaveUp: "(-inf, -sqrt(6)/3) U (sqrt(6)/3, inf)",
+        concaveDown: "(-sqrt(6)/3, sqrt(6)/3)",
+        inflection: "{-sqrt(6)/3, sqrt(6)/3}"
+      }),
+      answer: "increasing=(-sqrt(2), 0) U (sqrt(2), inf); decreasing=(-inf, -sqrt(2)) U (0, sqrt(2)); localMax={0}; localMin={-sqrt(2), sqrt(2)}; concaveUp=(-inf, -sqrt(6)/3) U (sqrt(6)/3, inf); concaveDown=(-sqrt(6)/3, sqrt(6)/3); inflection={-sqrt(6)/3, sqrt(6)/3}",
+      sketch: { expr: "x**4-4*x**2+3", window: [-2.5, 2.5, -2, 4] },
+      tags: ["first-derivative", "concavity", "inflection", "even-function"],
+      hints: [
+        "f′=4x³−8x=4x(x²−2)。",
+        "偶函數 —— 表格左右對稱。",
+        "f″=12x²−8，零點是 ±√(2/3)=±√6/3。"
+      ],
+      solutionSteps: [
+        "f′(x)=4x(x²−2)，臨界點 x=−√2, 0, √2。",
+        "判號得 W 形：x=±√2 是極小（f=−1），x=0 是局部極大（f=3）。",
+        "f″(x)=12x²−8，零點 x=±√6/3≈±0.816，兩點都變號 ⟹ 兩個反曲點。",
+        "偶函數、兩端趨向 +∞，跟 x⁴−2x² 同型但整體上移、極小更深。"
+      ],
+      solution: "f′=4x(x²−2) 給 W 形（極小 ±√2、局部極大 0）；f″=12x²−8 給反曲點 ±√6/3。"
+    }),
+
+    add({
+      id: "cw-021",
+      rank: 4,
+      prompt: "\\text{完成 }f(x)=xe^{x}\\text{ 的作圖表}",
+      fields: fields("xe^{x}", [-25, 15], {
+        increasing: "(-1, inf)",
+        decreasing: "(-inf, -1)",
+        localMax: "{}",
+        localMin: "{-1}",
+        concaveUp: "(-2, inf)",
+        concaveDown: "(-inf, -2)",
+        inflection: "{-2}"
+      }),
+      answer: "increasing=(-1, inf); decreasing=(-inf, -1); localMax={}; localMin={-1}; concaveUp=(-2, inf); concaveDown=(-inf, -2); inflection={-2}",
+      sketch: { expr: "x*exp(x)", window: [-5, 2, -1.5, 6] },
+      tags: ["first-derivative", "concavity", "inflection", "exponential"],
+      hints: [
+        "f′=(1+x)e^x，e^x 恆正。",
+        "唯一的臨界點在 x=−1，而且是由負轉正。",
+        "f″=(2+x)e^x，只在 x=−2 變號。"
+      ],
+      solutionSteps: [
+        "f′(x)=(1+x)e^x：e^x>0，符號由 1+x 決定 ⟹ 極小在 x=−1（f=−1/e）。",
+        "沒有極大值 —— f′ 只變號一次。",
+        "f″(x)=(2+x)e^x，在 x=−2 變號 ⟹ 反曲點 x=−2。",
+        "x→−∞ 時 f→0⁻（指數壓過多項式）；右端快速上升。這跟 xe^{−x} 是鏡像關係。"
+      ],
+      solution: "f′=(1+x)e^x 給唯一極小 x=−1；f″=(2+x)e^x 給反曲點 x=−2；左端從下方貼近 y=0。"
+    }),
+
+    add({
+      id: "cw-022",
+      rank: 4,
+      prompt: "\\text{完成 }f(x)=\\frac{1}{1+x^2}\\text{ 的作圖表}",
+      fields: fields("\\frac{1}{1+x^2}", [-20, 20], {
+        increasing: "(-inf, 0)",
+        decreasing: "(0, inf)",
+        localMax: "{0}",
+        localMin: "{}",
+        concaveUp: "(-inf, -sqrt(3)/3) U (sqrt(3)/3, inf)",
+        concaveDown: "(-sqrt(3)/3, sqrt(3)/3)",
+        inflection: "{-sqrt(3)/3, sqrt(3)/3}"
+      }),
+      answer: "increasing=(-inf, 0); decreasing=(0, inf); localMax={0}; localMin={}; concaveUp=(-inf, -sqrt(3)/3) U (sqrt(3)/3, inf); concaveDown=(-sqrt(3)/3, sqrt(3)/3); inflection={-sqrt(3)/3, sqrt(3)/3}",
+      sketch: { expr: "1/(1+x*x)", window: [-4, 4, -0.4, 1.4] },
+      tags: ["first-derivative", "concavity", "inflection", "even-function", "asymptote"],
+      hints: [
+        "f′=−2x/(1+x²)²，分母恆正。",
+        "偶函數的鐘形：峰在 x=0。",
+        "f″=(6x²−2)/(1+x²)³，零點 ±1/√3。"
+      ],
+      solutionSteps: [
+        "f′(x)=−2x/(1+x²)²：符號由 −2x 決定 ⟹ 唯一極大在 x=0（f=1）。",
+        "沒有極小值；兩端 f→0⁺，水平漸近線 y=0。",
+        "f″(x)=(6x²−2)/(1+x²)³，零點 x=±1/√3=±√3/3，兩點都變號。",
+        "鐘形：中段凹向下（在兩個反曲點之間），兩翼凹向上貼近 x 軸。"
+      ],
+      solution: "偶函數鐘形：極大 (0,1)、反曲點 ±√3/3、水平漸近線 y=0。f′ 的符號整個由 −2x 決定。"
     })
   ];
 

@@ -205,6 +205,173 @@
         "偶函數，且最高次項係數為正，兩端都往 +∞。"
       ],
       solution: "三個臨界點 −1, 0, 1；x=0 局部極大 0、x=±1 極小 −1；偶函數，兩端趨向 +∞。"
+    }),
+
+    // ---- 2026-09 擴充：題庫審計發現選圖題只有 6 題，題型幾乎等於不存在 ----
+
+    add({
+      id: "gr-007",
+      rank: 2,
+      prompt: "\\text{哪一張圖是 }f(x)=e^{-x}\\text{ ?}",
+      graphWindow: [-2, 4, -1, 6],
+      answer: "exp(-x)",
+      graphChoices: [
+        { expr: "exp(-x)", correct: true },
+        { expr: "exp(x)", why: "增減方向反了。e^{-x} 的指數是負的：x 越大函數越小。" },
+        { expr: "-exp(-x)", why: "整體符號反了。指數函數恆正，圖形必須整條在 x 軸上方。" },
+        { expr: "exp(-2*x)", why: "衰減速率錯。f(−1)=e≈2.7，這條在 x=−1 已經衝到 e²≈7.4。" }
+      ],
+      timeLimit: 40,
+      tags: ["curve-sketching", "exponential"],
+      hints: [
+        "先看單調性：指數是 −x，遞增還是遞減？",
+        "指數函數的值恆正。",
+        "代 x=−1 看高度，可以分出衰減速率。"
+      ],
+      solutionSteps: [
+        "指數是 −x：x 變大函數變小 —— 整條遞減。",
+        "e^{-x}>0 恆成立，圖形在軸上方，且 x→∞ 時貼近 y=0。",
+        "f(0)=1、f(−1)=e≈2.72 —— 用這兩點可以排除衰減速率錯的那張。"
+      ],
+      solution: "遞減、恆正、過 (0,1)、右端貼近 y=0；用 f(−1)=e 的高度排除 e^{-2x}。"
+    }),
+
+    add({
+      id: "gr-008",
+      rank: 3,
+      prompt: "\\text{哪一張圖是 }f(x)=\\frac{x}{x-2}\\text{ ?}",
+      graphWindow: [-4, 8, -6, 6],
+      answer: "x/(x-2)",
+      graphChoices: [
+        { expr: "x/(x-2)", correct: true },
+        { expr: "x/(x+2)", why: "垂直漸近線的位置錯了：分母在 x=2 才是 0，不是 x=−2。" },
+        { expr: "2/(x-2)", why: "水平漸近線錯了。原式 x→∞ 時趨向 1（分子分母同次），這條趨向 0。" },
+        { expr: "-x/(x-2)", why: "整體符號反了。f(3)=3>0，圖形在 x=3 應該在軸上方。" }
+      ],
+      timeLimit: 55,
+      tags: ["curve-sketching", "asymptote"],
+      hints: [
+        "分母何時為 0？那裡就是垂直漸近線。",
+        "分子分母同次：水平漸近線是首項係數比。",
+        "代 x=3 看正負。"
+      ],
+      solutionSteps: [
+        "分母 x−2=0 給垂直漸近線 x=2。",
+        "x→±∞ 時 f→1（同次多項式的首項係數比），水平漸近線 y=1。",
+        "f(0)=0 過原點；f(3)=3 在右支的上方。",
+        "兩支雙曲線：左支在 y=1 下方、右支在上方。"
+      ],
+      solution: "垂直漸近線 x=2、水平漸近線 y=1、過原點；用 f(3)=3 的正負排除符號反的。"
+    }),
+
+    add({
+      id: "gr-009",
+      rank: 3,
+      prompt: "\\text{哪一張圖是 }f(x)=\\sin(2x)\\text{ ?}",
+      graphWindow: [-6.5, 6.5, -2.5, 2.5],
+      answer: "sin(2*x)",
+      graphChoices: [
+        { expr: "sin(2*x)", correct: true },
+        { expr: "sin(x)", why: "週期錯了。sin(2x) 的週期是 π，這條的週期是 2π —— 在同一個窗裡波峰數量差一倍。" },
+        { expr: "2*sin(x)", why: "把係數放到振幅上了。原式振幅還是 1，但週期減半。" },
+        { expr: "cos(2*x)", why: "相位錯了。原式過原點且在原點往上爬，cos(2x) 在 x=0 是最高點。" }
+      ],
+      timeLimit: 50,
+      tags: ["curve-sketching", "trig"],
+      hints: [
+        "內層的 2 影響的是週期還是振幅？",
+        "週期是 2π/2=π。",
+        "看 x=0：函數值是 0 還是 1？"
+      ],
+      solutionSteps: [
+        "sin(2x) 的週期是 2π/2=π —— 窗內波峰比 sin x 多一倍。",
+        "振幅仍是 1（係數在括號裡面，不在外面）。",
+        "f(0)=0 且 f′(0)=2>0：過原點往上爬 —— 排除 cos(2x)。"
+      ],
+      solution: "週期 π、振幅 1、過原點往上爬。內層係數改週期、外層係數才改振幅。"
+    }),
+
+    add({
+      id: "gr-010",
+      rank: 4,
+      prompt: "\\text{哪一張圖是 }f(x)=x+\\frac{1}{x}\\text{ ?}",
+      graphWindow: [-5, 5, -6, 6],
+      answer: "x+1/x",
+      graphChoices: [
+        { expr: "x+1/x", correct: true },
+        { expr: "x-1/x", why: "這條沒有極值：f′=1+1/x²>0 兩支都遞增。原式在 x=±1 有極值。" },
+        { expr: "1/x", why: "少了斜漸近線。原式在 |x| 大的時候貼近直線 y=x，不是貼近 x 軸。" },
+        { expr: "-(x+1/x)", why: "整體符號反了。f(1)=2>0，右支的谷底應該在軸上方。" }
+      ],
+      timeLimit: 70,
+      tags: ["curve-sketching", "asymptote", "extrema"],
+      hints: [
+        "f′=1−1/x²，零點在哪？",
+        "x 很大時 1/x 消失，貼近哪條直線？",
+        "右支的谷底 f(1)=2。"
+      ],
+      solutionSteps: [
+        "f′(x)=1−1/x²，零點 x=±1：右支谷底 (1,2)、左支峰頂 (−1,−2)。",
+        "|x|→∞ 時 f≈x：斜漸近線 y=x。",
+        "x→0⁺ 時 f→+∞、x→0⁻ 時 f→−∞：垂直漸近線 x=0。",
+        "兩支各自凸向漸近線 —— 排除單調遞增的 x−1/x。"
+      ],
+      solution: "垂直漸近線 x=0、斜漸近線 y=x、極值 (±1,±2)。f′=1−1/x² 是分辨的關鍵。"
+    }),
+
+    add({
+      id: "gr-011",
+      rank: 4,
+      prompt: "\\text{哪一張圖是 }f(x)=xe^{x}\\text{ ?}",
+      graphWindow: [-5, 2, -1.5, 6],
+      answer: "x*exp(x)",
+      graphChoices: [
+        { expr: "x*exp(x)", correct: true },
+        { expr: "x*exp(-x)", why: "衰減方向反了。原式在 x→−∞ 時貼近 y=0、在右邊爆炸；這條剛好相反。" },
+        { expr: "exp(x)", why: "少了負的部分。原式過原點，且在 x<0 整段是負的；e^x 恆正。" },
+        { expr: "-x*exp(x)", why: "整體符號反了。f(1)=e>0，x=1 的值應該在軸上方。" }
+      ],
+      timeLimit: 70,
+      tags: ["curve-sketching", "exponential", "extrema"],
+      hints: [
+        "f′=(1+x)e^x，零點在哪？",
+        "x→−∞ 時指數壓過多項式，貼近 y=0。",
+        "f(0)=0、f(1)=e。"
+      ],
+      solutionSteps: [
+        "f′(x)=(1+x)e^x，唯一零點 x=−1：極小值 f(−1)=−1/e。",
+        "x→−∞ 時 e^x 衰減壓過 x：從下方貼近 y=0。",
+        "過原點、x<0 時為負、右邊快速上升 —— 排除恆正的 e^x。"
+      ],
+      solution: "極小 (−1,−1/e)、左端從下方貼近 y=0、過原點、右端指數上升。"
+    }),
+
+    add({
+      id: "gr-012",
+      rank: 4,
+      prompt: "\\text{哪一張圖是 }f(x)=\\frac{4x}{x^2+4}\\text{ ?}",
+      graphWindow: [-8, 8, -2.5, 2.5],
+      answer: "4*x/(x*x+4)",
+      graphChoices: [
+        { expr: "4*x/(x*x+4)", correct: true },
+        { expr: "4*x/(x*x+1)", why: "極值的位置與高度錯了。原式的峰在 x=2（高度 1），這條的峰在 x=1（高度 2）。" },
+        { expr: "-4*x/(x*x+4)", why: "整體符號反了。奇函數沒錯，但 f(2)=1>0，右邊的峰應該在上方。" },
+        { expr: "4*x*x/(x*x+4)", why: "奇偶性錯了。原式是奇函數（過原點、左右反對稱），這條是偶函數且恆非負。" }
+      ],
+      timeLimit: 75,
+      tags: ["curve-sketching", "extrema", "asymptote"],
+      hints: [
+        "先判斷奇偶性。",
+        "f′ 的零點：x²=4。",
+        "x→±∞ 時分母壓過分子，貼近 y=0。"
+      ],
+      solutionSteps: [
+        "f(−x)=−f(x)：奇函數，圖形對原點對稱。",
+        "f′(x)=4(4−x²)/(x²+4)²，零點 x=±2：峰 (2,1)、谷 (−2,−1)。",
+        "x→±∞ 時 f→0：水平漸近線 y=0。",
+        "峰的位置（x=2 不是 x=1）是排除另一條奇函數的關鍵。"
+      ],
+      solution: "奇函數、峰谷在 (±2,±1)、兩端貼近 y=0。峰的位置與高度用 f′ 算出來。"
     })
   ];
 

@@ -155,6 +155,7 @@
     "exam-int-014": ["integral.partialfrac"],
     "exam-int-030": ["integral.basic"],
     "exam-lim-008": ["limit.direct"],
+    "fd-der-008": ["diff.basic"],
     "hc-rad-002": ["integral.trigsub"],
     "hc-rad-006": ["integral.trigsub"],
     "int-001": ["integral.basic"],
