@@ -4843,6 +4843,13 @@
             </div>
           </div>
           ${quiz.examMode ? renderExamQuestionMap() : ""}
+          ${
+            // 只在剛前進的 1.9 秒內渲染：之後的重繪（開提示、切工具）
+            // 不該讓動畫重播。CSS 動畫自己淡出，不需要計時器清 DOM。
+            quiz.correctToast && Date.now() - quiz.correctToast.at < 1900
+              ? `<div class="correct-toast" role="status">${icon("check")}${escapeHtml(quiz.correctToast.text)}</div>`
+              : ""
+          }
 
           <div class="problem-stage ${feedback ? "has-feedback" : ""}">
             <article class="problem-card" role="group" aria-label="作答區">
@@ -6742,6 +6749,14 @@
   }
 
   function pickDailyOneProblem(dateKey = dailyOneDateKey()) {
+    // 已釘選的歷史日期直接查表（tools/pin_daily_one.js 產生）。
+    // 種子洗牌是對「整個題池」洗 —— 題庫一成長，過去所有日期全部重排。
+    // 表裡的日期永不改寫，「昨天那題」才有穩定的答案。
+    const pinned = ((typeof window !== "undefined" && window.BUZZ_DAILY_ONE_HISTORY) || {})[dateKey];
+    if (pinned) {
+      const fixed = problemById(pinned);
+      if (fixed) return fixed;
+    }
     // 題目完全由日期種子決定，所有人同一天拿到同一題（R3-5，避開看圖題）。
     const pool = problems.filter((problem) => {
       const rank = problemRank(problem);
@@ -8669,6 +8684,12 @@
       quiz.index = next;
     } else {
       quiz.index += 1;
+    }
+    // 答對的回饋只停 950ms 就自動前進 —— 手機上「+40」根本來不及看
+    //（使用者原話：「看不清綠頻上的東西」）。把它變成一個跟著下一題
+    // 出現的小 toast，動畫淡出，不佔版面也不用點掉。
+    if (quiz.feedback && quiz.feedback.status === "correct") {
+      quiz.correctToast = { text: quiz.feedback.title, at: Date.now() };
     }
     if (quiz.index >= quiz.problems.length) {
       finishQuiz();
