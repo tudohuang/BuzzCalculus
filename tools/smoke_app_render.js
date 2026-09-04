@@ -1038,3 +1038,17 @@ console.log(`Resume smoke: ${json.length} bytes for a 12-question exam, round-tr
   }
   console.log("考前衝刺 smoke: 無日期不出卡、有日期出倒數、零資料預測誠實說測不準");
 }
+
+// ── 好友對戰碼：uid 往返 + 壞碼拒收（2026-09-04）──
+{
+  const ids = global.window.BUZZ_PROBLEMS.slice(0, 10).map((p) => p.id);
+  const bare = api.encodeDuelCode(ids, null);
+  if (!/^BZD1:\d+(\.\d+)*$/.test(bare)) throw new Error("戰帖碼格式不對：" + bare.slice(0, 40));
+  const withScore = api.encodeDuelCode(ids, { correct: 8, timeSec: 222 });
+  const decoded = api.decodeDuelCode(withScore);
+  if (!decoded || decoded.ids.join(",") !== ids.join(",")) throw new Error("戰帖碼往返後題目不一致");
+  if (!decoded.rival || decoded.rival.correct !== 8 || decoded.rival.timeSec !== 222) throw new Error("戰帖碼的成績段解不回來");
+  if (api.decodeDuelCode("BZD1:999999.1") !== null) throw new Error("指到不存在題目的碼要拒收");
+  if (api.decodeDuelCode("hello") !== null) throw new Error("亂字串要拒收");
+  console.log("好友對戰 smoke: 碼往返一致、成績段完整、壞碼拒收");
+}
