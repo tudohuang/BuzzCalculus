@@ -628,7 +628,7 @@
     { key: "multivariable", label: "多變數", tags: ["multivariable", "double-integral", "triple-integral", "hessian", "jacobian", "jacobian-chain", "lagrange-multiplier", "nabla", "vector-calculus", "total-differential", "total-differential-min", "line-integral", "surface-integral", "green-theorem", "stokes-theorem", "divergence-theorem", "flux", "conservative-field", "directional-derivative"] },
     { key: "special", label: "特殊函數", tags: ["beta-function", "gamma-function", "wallis", "bessel", "special-function"] }
   ];
-  const APP_VERSION = "v1.2.0";
+  const APP_VERSION = "v1.2.1";
   const BUILD_DATE = "2026-09-01";
   const GA_MEASUREMENT_ID = String(window.BUZZ_GA_MEASUREMENT_ID || "").trim();
 
