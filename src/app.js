@@ -1131,6 +1131,7 @@
       renderIcons();
       setupReviewBoards();
       setupPreviousBoard();
+      setupInteractiveGraphs();
       restoreViewState(carried);
       restoreLibrarySearchFocus();
       if (view !== lastAnimatedView) {
@@ -5150,7 +5151,8 @@
     }
   }
 
-  function renderProblemGraph(problem) {
+  function renderProblemGraph(problem, opts) {
+    opts = opts || {};
     const graph = problem && problem.graph;
     if (!graph || !Array.isArray(graph.window) || graph.window.length !== 4) return "";
     const [xmin, xmax, ymin, ymax] = graph.window.map(Number);
@@ -5206,9 +5208,19 @@
       if (!label || typeof label.text !== "string") return;
       parts.push(`<text x="${sx(label.x)}" y="${sy(label.y)}" font-size="11" fill="var(--ink)">${escapeAttr(label.text)}</text>`);
     });
+    if (typeof opts.overlay === "function") {
+      parts.push(opts.overlay({ sx, sy, xmin, xmax, ymin, ymax }) || "");
+    } else if (opts.overlay) {
+      parts.push(opts.overlay);
+    }
+    // 互動圖把座標窗與內距寫在 svg 上，讓 pointer 事件能把
+    // 螢幕座標換算回數學座標 —— 這是唯一一份轉換參數，不能散落兩處。
+    const interactiveAttrs = opts.interactive
+      ? ` data-graph-interactive="${opts.interactive}" data-graph-window="${[xmin, xmax, ymin, ymax].join(",")}" data-graph-pad="${pad}" data-graph-size="${width},${height}"`
+      : "";
     return `
-      <div class="problem-graph">
-        <svg viewBox="0 0 ${width} ${height}" role="img" aria-label="題目附圖">${parts.join("")}</svg>
+      <div class="problem-graph ${opts.interactive ? "is-interactive" : ""}">
+        <svg viewBox="0 0 ${width} ${height}" role="img" aria-label="題目附圖"${interactiveAttrs}>${parts.join("")}</svg>
       </div>
     `;
   }
@@ -5301,14 +5313,14 @@
                 ${
                   // 作圖表與選圖題不受本局的作答形式影響，
                   // 標一個「選擇題」在旁邊只會讓人以為選錯模式了。
-                  ["graph", "worksheet"].includes(current.answerKind)
+                  ["graph", "worksheet", "graphtap", "graphslope"].includes(current.answerKind)
                     ? ""
                     : `<span class="chip">${answerModeLabel(answerMode)}</span>`
                 }
                 ${verifiedChip(current)}
               </div>
               <div class="prompt math-block" data-tex="${escapeAttr(current.prompt)}"></div>
-              ${renderProblemGraph(current)}
+              ${["graphtap", "graphslope"].includes(current.answerKind) ? "" : renderProblemGraph(current)}
               ${renderHintPanel(current)}
               ${renderAnswerControls(current)}
             </article>
@@ -5350,6 +5362,9 @@
     // 選圖題只能用選的 —— 沒有辦法「打出一張圖」。
     // 所以它不受本局的作答形式影響，永遠走選項。
     if (problem.answerKind === "graph") return renderGraphChoiceControls(problem);
+    // 互動圖形題：作答的動作就發生在圖上，同樣不受作答形式影響。
+    if (problem.answerKind === "graphtap") return renderGraphTapControls(problem);
+    if (problem.answerKind === "graphslope") return renderGraphSlopeControls(problem);
     if (quiz.answerMode === "choice") return renderChoiceControls(problem);
     return renderFreeAnswerControls(problem);
   }
@@ -5548,6 +5563,229 @@
     const shuffled = shuffle(list.slice(), seedFromString(`${quiz.startedAt}-${problem.id}-graph`));
     quiz.choiceOptions[problem.id] = shuffled;
     return shuffled;
+  }
+
+  // ── 互動圖形題 ────────────────────────────────────────────────
+  //
+  // graphtap：在圖上點出極值／反曲點的位置，判分看 x 座標容差。
+  // graphslope：把一條過定點的直線拖成切線，判分看斜率容差。
+  //
+  // 為什麼值得一個新題型：選圖題練的是「認出對的圖」，這裡練的是
+  // 「把性質放到圖上的正確位置」—— 資格考畫圖題真正在考的動作。
+  // 判分規格（容差、答案）都在題目資料裡，驗算器照樣能從曲線式子
+  // 獨立重算極值／反曲點／導數 —— 互動不是不驗算的藉口。
+
+  function graphTapMarks(problem) {
+    if (!quiz.graphTap) quiz.graphTap = {};
+    if (!quiz.graphTap[problem.id]) quiz.graphTap[problem.id] = [];
+    return quiz.graphTap[problem.id];
+  }
+
+  function graphTapTargets(problem) {
+    return String(problem.answer || "").split(",").map(Number).filter(Number.isFinite);
+  }
+
+  function graphProblemFn(problem) {
+    const curve = problem.graph && (problem.graph.curves || [])[0];
+    return curve ? graphCurveFn(curve.expr) : null;
+  }
+
+  function renderGraphTapControls(problem) {
+    const done = Boolean(quiz.feedback);
+    const marks = graphTapMarks(problem);
+    const targets = graphTapTargets(problem);
+    const fn = graphProblemFn(problem);
+    const overlay = (ctx) => {
+      const parts = [];
+      const dotY = (x) => {
+        const y = fn ? fn(x) : 0;
+        return Number.isFinite(y) ? Math.max(ctx.ymin, Math.min(ctx.ymax, y)) : 0;
+      };
+      if (done) {
+        targets.forEach((x) => {
+          parts.push(`<line x1="${ctx.sx(x)}" y1="${ctx.sy(ctx.ymin)}" x2="${ctx.sx(x)}" y2="${ctx.sy(ctx.ymax)}" stroke="var(--green)" stroke-width="1.4" stroke-dasharray="4 3"/>`);
+          parts.push(`<circle cx="${ctx.sx(x)}" cy="${ctx.sy(dotY(x))}" r="5" fill="none" stroke="var(--green)" stroke-width="2"/>`);
+        });
+      }
+      marks.forEach((x) => {
+        parts.push(`<line x1="${ctx.sx(x)}" y1="${ctx.sy(ctx.ymin)}" x2="${ctx.sx(x)}" y2="${ctx.sy(ctx.ymax)}" stroke="var(--gold)" stroke-width="1.2" stroke-dasharray="3 3"/>`);
+        parts.push(`<circle cx="${ctx.sx(x)}" cy="${ctx.sy(dotY(x))}" r="4.4" fill="var(--gold)" stroke="var(--ink)" stroke-width="1.2"/>`);
+      });
+      return parts.join("");
+    };
+    return `
+      <div class="graph-interactive">
+        ${renderProblemGraph(problem, { interactive: done ? null : "tap", overlay })}
+        <div class="helper-row">
+          <span>${done ? "綠圈是正確位置，對照一下你標的點。" : `直接點在圖上（點到的位置會吸附到曲線）· 已標 ${marks.length} / ${targets.length}，點錯再點一次取消`}</span>
+        </div>
+        <div class="action-row">
+          <button class="button" data-action="submit-graphtap" ${!done && marks.length === targets.length ? "" : "disabled"}>${icon("check")}送出</button>
+          <button class="button ghost" data-action="clear-graphtap" ${done || !marks.length ? "disabled" : ""}>清除重點</button>
+        </div>
+        ${attachedScratchboard(problem, done ? "disabled" : "")}
+      </div>
+    `;
+  }
+
+  function graphSlopePivot(problem) {
+    const pivot = problem.pivot || {};
+    const x = Number(pivot.x) || 0;
+    const fn = graphProblemFn(problem);
+    const y = pivot.y != null ? Number(pivot.y) : fn ? fn(x) : 0;
+    return { x, y };
+  }
+
+  function graphSlopeValue(problem) {
+    if (!quiz.graphSlope) quiz.graphSlope = {};
+    if (!(problem.id in quiz.graphSlope)) {
+      quiz.graphSlope[problem.id] = Number(problem.slopeStart != null ? problem.slopeStart : 0);
+    }
+    return quiz.graphSlope[problem.id];
+  }
+
+  function renderGraphSlopeControls(problem) {
+    const done = Boolean(quiz.feedback);
+    const pivot = graphSlopePivot(problem);
+    const slope = graphSlopeValue(problem);
+    const lineFor = (ctx, m, attrs) => {
+      const y1 = pivot.y + m * (ctx.xmin - pivot.x);
+      const y2 = pivot.y + m * (ctx.xmax - pivot.x);
+      return `<line x1="${ctx.sx(ctx.xmin)}" y1="${ctx.sy(y1)}" x2="${ctx.sx(ctx.xmax)}" y2="${ctx.sy(y2)}" ${attrs}/>`;
+    };
+    const overlay = (ctx) => {
+      const parts = [];
+      if (done) parts.push(lineFor(ctx, Number(problem.answer), `stroke="var(--green)" stroke-width="2" stroke-dasharray="6 4"`));
+      parts.push(lineFor(ctx, slope, `stroke="var(--gold)" stroke-width="2.4" data-slope-line="1"`));
+      parts.push(`<circle cx="${ctx.sx(pivot.x)}" cy="${ctx.sy(pivot.y)}" r="4.6" fill="var(--gold)" stroke="var(--ink)" stroke-width="1.4"/>`);
+      return parts.join("");
+    };
+    return `
+      <div class="graph-interactive">
+        ${renderProblemGraph(problem, { interactive: done ? null : "slope", overlay })}
+        <div class="helper-row">
+          <span>${done ? "虛線是正確的切線，實線是你拖的。" : "按住圖面拖動，讓金色直線貼上曲線在定點的方向"}</span>
+          <span class="slope-readout">斜率 <strong data-slope-readout>${slope.toFixed(2)}</strong></span>
+        </div>
+        <div class="action-row">
+          <button class="button" data-action="submit-graphslope" ${done ? "disabled" : ""}>${icon("check")}送出</button>
+        </div>
+        ${attachedScratchboard(problem, done ? "disabled" : "")}
+      </div>
+    `;
+  }
+
+  // 螢幕座標 → 數學座標。轉換參數（窗、內距、畫布大小）由
+  // renderProblemGraph 寫在 svg 的 data-* 上，這裡只做反運算。
+  function svgGraphContext(svg) {
+    const win = String(svg.dataset.graphWindow || "").split(",").map(Number);
+    const size = String(svg.dataset.graphSize || "").split(",").map(Number);
+    const pad = Number(svg.dataset.graphPad);
+    if (win.length !== 4 || size.length !== 2 || !Number.isFinite(pad)) return null;
+    const [xmin, xmax, ymin, ymax] = win;
+    const [width, height] = size;
+    return {
+      xmin, xmax, ymin, ymax,
+      toMath(event) {
+        const rect = svg.getBoundingClientRect();
+        const u = ((event.clientX - rect.left) / rect.width) * width;
+        const v = ((event.clientY - rect.top) / rect.height) * height;
+        return {
+          x: xmin + ((u - pad) / (width - 2 * pad)) * (xmax - xmin),
+          y: ymin + ((height - pad - v) / (height - 2 * pad)) * (ymax - ymin)
+        };
+      },
+      sx: (x) => pad + ((x - xmin) / (xmax - xmin)) * (width - 2 * pad),
+      sy: (y) => height - pad - ((y - ymin) / (ymax - ymin)) * (height - 2 * pad)
+    };
+  }
+
+  function setupInteractiveGraphs() {
+    const tapSvg = app.querySelector('svg[data-graph-interactive="tap"]');
+    if (tapSvg) {
+      tapSvg.addEventListener("click", (event) => {
+        const problem = quiz && !quiz.feedback ? getCurrentProblem() : null;
+        if (!problem || problem.answerKind !== "graphtap") return;
+        const ctx = svgGraphContext(tapSvg);
+        if (!ctx) return;
+        const point = ctx.toMath(event);
+        if (point.x < ctx.xmin || point.x > ctx.xmax) return;
+        const marks = graphTapMarks(problem);
+        const tol = (Number(problem.tapTolerance) || 0.35) * 0.9;
+        const hit = marks.findIndex((mark) => Math.abs(mark - point.x) <= tol);
+        if (hit >= 0) {
+          marks.splice(hit, 1);
+        } else if (marks.length < graphTapTargets(problem).length) {
+          marks.push(point.x);
+        } else {
+          // 已標滿：把最近的一個搬過來，不逼使用者先清除再點。
+          let nearest = 0;
+          let best = Infinity;
+          marks.forEach((mark, index) => {
+            const d = Math.abs(mark - point.x);
+            if (d < best) { best = d; nearest = index; }
+          });
+          marks[nearest] = point.x;
+        }
+        render();
+      });
+    }
+    const slopeSvg = app.querySelector('svg[data-graph-interactive="slope"]');
+    if (slopeSvg) {
+      const problem = quiz && !quiz.feedback ? getCurrentProblem() : null;
+      if (problem && problem.answerKind === "graphslope") bindSlopeDrag(slopeSvg, problem);
+    }
+  }
+
+  function bindSlopeDrag(svg, problem) {
+    const ctx = svgGraphContext(svg);
+    if (!ctx) return;
+    const pivot = graphSlopePivot(problem);
+    // 拖動中不走整頁 render——那會把 pointer capture 換掉。
+    // 直接改 line 的座標與讀數，放手才 render 一次讓送出鈕更新。
+    const apply = (event) => {
+      const point = ctx.toMath(event);
+      if (Math.abs(point.x - pivot.x) < (ctx.xmax - ctx.xmin) * 0.02) return;
+      const slope = (point.y - pivot.y) / (point.x - pivot.x);
+      quiz.graphSlope[problem.id] = slope;
+      const line = svg.querySelector("[data-slope-line]");
+      if (line) {
+        line.setAttribute("y1", ctx.sy(pivot.y + slope * (ctx.xmin - pivot.x)));
+        line.setAttribute("y2", ctx.sy(pivot.y + slope * (ctx.xmax - pivot.x)));
+      }
+      const readout = app.querySelector("[data-slope-readout]");
+      if (readout) readout.textContent = slope.toFixed(2);
+    };
+    svg.addEventListener("pointerdown", (event) => {
+      event.preventDefault();
+      graphSlopeValue(problem);
+      try { svg.setPointerCapture(event.pointerId); } catch (_error) { /* 舊瀏覽器沒有 capture，拖出去就斷，可接受 */ }
+      apply(event);
+      const move = (ev) => apply(ev);
+      const up = () => {
+        svg.removeEventListener("pointermove", move);
+        svg.removeEventListener("pointerup", up);
+        svg.removeEventListener("pointercancel", up);
+        render();
+      };
+      svg.addEventListener("pointermove", move);
+      svg.addEventListener("pointerup", up);
+      svg.addEventListener("pointercancel", up);
+    });
+  }
+
+  function submitGraphTap() {
+    const problem = getCurrentProblem();
+    if (!quiz || !problem || quiz.feedback) return;
+    const marks = graphTapMarks(problem);
+    if (marks.length !== graphTapTargets(problem).length) return;
+    submitChoiceAnswer(marks.map((x) => x.toFixed(3)).join(","));
+  }
+
+  function submitGraphSlope() {
+    const problem = getCurrentProblem();
+    if (!quiz || !problem || quiz.feedback) return;
+    submitChoiceAnswer(graphSlopeValue(problem).toFixed(3));
   }
 
   // 迷你繪圖。跟 renderProblemGraph 共用座標與格線的邏輯，
@@ -6884,6 +7122,12 @@
     if (action === "start-path-lesson") startPathLesson(actionNode.dataset.nodeId || activePathNodeId);
     if (action === "start-path-gate") startPathGate(actionNode.dataset.nodeId || activePathNodeId);
     if (action === "choose-answer") submitChoiceAnswer(actionNode.dataset.choice || "");
+    if (action === "submit-graphtap") submitGraphTap();
+    if (action === "submit-graphslope") submitGraphSlope();
+    if (action === "clear-graphtap") {
+      const current = quiz && !quiz.feedback ? getCurrentProblem() : null;
+      if (current) { quiz.graphTap[current.id] = []; render(); }
+    }
     if (action === "show-hint") showHint();
     if (action === "toggle-keypad" && quiz) {
       quiz.keypadOpen = !quiz.keypadOpen;
@@ -9055,7 +9299,7 @@
     const pool = problems.filter((problem) =>
       ["limits", "derivatives", "integrals", "series"].includes(problem.topic) &&
       !problem.custom &&
-      !["worksheet", "graph"].includes(problem.answerKind) &&
+      !["worksheet", "graph", "graphtap", "graphslope"].includes(problem.answerKind) &&
       problemRank(problem) >= 2 && problemRank(problem) <= 5);
     const picked = shuffle(pool, seedFromString(`duel-${Date.now()}`)).slice(0, 10);
     if (picked.length < 10) return;
@@ -9894,6 +10138,12 @@
     if (problem.answerKind === "graph") {
       return checkGraphChoice(problem, input);
     }
+    if (problem.answerKind === "graphtap") {
+      return checkGraphTap(problem, input);
+    }
+    if (problem.answerKind === "graphslope") {
+      return checkGraphSlope(problem, input);
+    }
     if (problem.answerKind === "worksheet") {
       return checkWorksheet(problem, input);
     }
@@ -9913,6 +10163,46 @@
       correct: false,
       message: chosen && chosen.why ? chosen.why : "這張圖跟 f 的性質對不上。"
     };
+  }
+
+  // 點位題：答案是一串 x 座標，判分是「每個目標位置附近都有恰好
+  // 一個標記」—— 配對是貪婪最近鄰，抓不到就算漏。容差寫在題目資料
+  // （tapTolerance，x 軸單位），預設 0.35。
+  function checkGraphTap(problem, input) {
+    const targets = graphTapTargets(problem);
+    const marks = String(input || "").split(",").map(Number).filter(Number.isFinite);
+    const tol = Number(problem.tapTolerance) || 0.35;
+    if (marks.length !== targets.length) {
+      return { correct: false, message: `要標 ${targets.length} 個位置，收到 ${marks.length} 個。` };
+    }
+    const used = new Set();
+    let missed = 0;
+    targets.forEach((target) => {
+      let best = -1;
+      let bestDist = Infinity;
+      marks.forEach((mark, index) => {
+        if (used.has(index)) return;
+        const dist = Math.abs(mark - target);
+        if (dist < bestDist) { bestDist = dist; best = index; }
+      });
+      if (best >= 0 && bestDist <= tol) used.add(best);
+      else missed += 1;
+    });
+    if (!missed) return { correct: true, message: "位置全對。" };
+    return { correct: false, message: `有 ${missed} 個位置沒點準（容差 ±${tol}，看綠圈對照）。` };
+  }
+
+  // 切線題：答案是斜率。容差預設 max(0.25, 15%)——拖出來的東西
+  // 本來就有手感誤差，這題考的是「看得出切線的方向」不是「拖得準到小數點」。
+  function checkGraphSlope(problem, input) {
+    const target = Number(problem.answer);
+    const got = Number(input);
+    if (!Number.isFinite(got)) return { correct: false, message: "先把直線拖到位再送出。" };
+    const tol = Number(problem.slopeTolerance) || Math.max(0.25, Math.abs(target) * 0.15);
+    if (Math.abs(got - target) <= tol) {
+      return { correct: true, message: `斜率 ${got.toFixed(2)}，在正解 ${target} 的容差內。` };
+    }
+    return { correct: false, message: `你拖出的斜率是 ${got.toFixed(2)}，正解是 ${target}（容差 ±${tol.toFixed(2)}）。` };
   }
 
   // 題幹尾巴寫的定義域限制（",\ x>0"、"\quad(x\ge 1)"）。
@@ -12691,6 +12981,8 @@
       set: "集合",
       interval: "區間",
       graph: "選圖",
+      graphtap: "點位",
+      graphslope: "切線",
       worksheet: "作圖表"
       // 少一個對應就會在題目上印出一個 undefined chip。
       // 加新 answerKind 的時候這裡是最容易忘記的地方 —— 實測就漏了。

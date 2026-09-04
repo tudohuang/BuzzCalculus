@@ -81,6 +81,11 @@ jobs:
       - name: E2E layout
         # 外殼的幾何不變量：分頁列貼底、側欄靠左、內容不被蓋、無橫向溢出。
         run: node tools/e2e_layout.js
+      - name: E2E interactive graphs
+        # 點位題與切線題的作答動作發生在 SVG 上，字串比對測不到：
+        # 事件沒綁、座標換算 y 軸沒翻、touch-action 沒設（手機上一拖變捲頁）
+        # 三種壞法在 DOM 裡看起來都完全正常。這一步派真的 pointer 事件進去。
+        run: node tools/e2e_graph_interactive.js
       - name: Verify answers independently
         # 這一步是題庫的品質底線：從題幹推出一條與解題無關的數值路徑，
         # 再跟答案比對。不符必須是零 —— spec 00 說得很直白，
