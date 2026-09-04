@@ -1019,3 +1019,22 @@ console.log(`Resume smoke: ${json.length} bytes for a 12-question exam, round-tr
     console.log(`選圖 smoke: ${svgs} 張圖，正解判對、誘答判錯並回傳它的理由`);
   }
 }
+
+// ── 考前衝刺 + 分數預測（2026-09-04 復活，用 planner kernel 的 examPlan）──
+// 三件事：沒設日期不出卡；設了日期首頁出倒數卡；零資料時預測要誠實說測不準。
+{
+  const noPlan = api.renderHomeExamCard(api.normalizeRecords({}));
+  if (noPlan !== "") throw new Error("沒設考試日期不該出考前衝刺卡");
+  const planned = api.normalizeRecords({
+    plan: { label: "期中考", examAt: new Date(Date.now() + 14 * 86400000).toISOString(), dailyMinutes: 15, target: 70 }
+  });
+  const card = api.renderHomeExamCard(planned);
+  if (!card.includes("考前衝刺") || !card.includes("D-")) {
+    throw new Error("考前衝刺卡缺倒數或標題");
+  }
+  const forecast = api.examScoreForecast(api.normalizeRecords({}));
+  if (forecast && forecast.coverage >= 0.35) {
+    throw new Error("零資料的預測不該宣稱可信（coverage=" + forecast.coverage + "）");
+  }
+  console.log("考前衝刺 smoke: 無日期不出卡、有日期出倒數、零資料預測誠實說測不準");
+}
