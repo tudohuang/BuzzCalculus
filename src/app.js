@@ -121,7 +121,7 @@
       integralBee: true
     },
     no_hint: {
-      label: "No Hint",
+      label: "無提示",
       bucket: "practice",
       note: "無提示計分挑戰",
       count: 12,
@@ -5893,8 +5893,8 @@
       return `
         <div class="hint-panel is-locked">
           <div>
-            <strong>No Hint</strong>
-            <span>本局關閉提示</span>
+            <strong>提示關閉</strong>
+            <span>本局不提供提示，答錯不扣提示分</span>
           </div>
           <button class="button ghost" disabled>${icon("lightbulb")}不可用</button>
         </div>
@@ -6149,14 +6149,17 @@
   }
 
   function renderExitModal() {
+    // 大考模式的「離開」其實是**提早交卷** —— 但按鈕寫「結算離開」，
+    // 讀起來像放棄。同一個動作，在考試裡要用考試的話講。
+    const exam = Boolean(quiz && quiz.examMode);
     return `
       <div class="modal-backdrop" data-action="close-modal">
         <div class="modal" role="dialog" aria-modal="true" aria-labelledby="exit-title" data-modal>
-          <h3 id="exit-title">離開本局？</h3>
-          <p>目前進度會直接結算，未完成的題目不會加分。</p>
+          <h3 id="exit-title">${exam ? "提早交卷？" : "離開本局？"}</h3>
+          <p>${exam ? "還沒作答的題目會算未作答，交卷後直接看分析。" : "目前進度會直接結算，未完成的題目不會加分。"}</p>
           <div class="action-row">
-            <button class="button warning" data-action="finish-now">${icon("x")}結算離開</button>
-            <button class="button secondary" data-action="close-modal">${icon("check")}繼續挑戰</button>
+            <button class="button warning" data-action="finish-now">${icon("x")}${exam ? "交卷" : "結算離開"}</button>
+            <button class="button secondary" data-action="close-modal">${icon("check")}${exam ? "繼續作答" : "繼續挑戰"}</button>
           </div>
         </div>
       </div>
