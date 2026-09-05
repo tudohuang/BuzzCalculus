@@ -104,11 +104,32 @@
     return width;
   }
 
+  // 這段 tex 的寬度有多少比例來自 \text{}（文字）段。
+  //
+  // 為什麼要另外量：門檻 72 是給「真的數學式」設的 —— 式子不能亂斷行。
+  // 但文字為主的題幹（\text{Bessel functions most often appear...}、
+  // 「在圖上點出 ... 的三個臨界點位置」）完全可以換行，而它們在 390px
+  // 的手機上 40 個字就爆版 —— 實測整句被 clip，後半題直接讀不到。
+  // 文字段佔比高的題幹，用低得多的門檻提早進換行模式。
+  function texTextShare(tex) {
+    let text = 0;
+    let math = 0;
+    splitLongTex(tex).forEach((seg) => {
+      const body = seg.text !== undefined ? seg.text : seg.math;
+      let w = 0;
+      for (const ch of body) w += /[ᄀ-ᅟ⺀-꓏가-힣豈-﫿︰-﹏＀-｠￠-￦]/.test(ch) ? 2 : 1;
+      if (seg.text !== undefined) text += w; else math += w;
+    });
+    const total = text + math;
+    return total ? text / total : 0;
+  }
+
   function renderMathNode(node, displayMode) {
     const tex = node.dataset.tex || "";
     // Long-form prompts (達摩院長題、應用情境題 etc.) wrap onto multiple lines
     // instead of forcing a horizontal scrollbar; the card grows with the content.
-    const longform = displayMode && texVisualWidth(tex) > 72;
+    const width = texVisualWidth(tex);
+    const longform = displayMode && (width > 72 || (width > 34 && texTextShare(tex) > 0.55));
     node.classList.toggle("is-long-tex", longform);
     if (longform && window.katex && renderLongTexFlow(node, tex)) return;
     if (window.katex) {

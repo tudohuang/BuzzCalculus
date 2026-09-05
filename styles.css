@@ -1170,9 +1170,9 @@ button {
   height: 58px;
   display: grid;
   place-items: center;
-  border: 3px solid #d7d0c3;
+  border: 3px solid var(--line-strong);
   border-radius: 50%;
-  background: #fbfaf6;
+  background: var(--surface);
 }
 
 .path-node-core {
@@ -1674,6 +1674,12 @@ button {
   font-size: 2rem;
   line-height: 1.35;
   overflow-wrap: anywhere;
+  /* 防線：換不了行的長式子至少要能橫向捲。沒有這條，過寬的 KaTeX
+     會把 .prompt 撐到卡片外，被圓角卡片的 overflow 直接切掉 ——
+     手機上後半題就消失了，而 scrollWidth<=innerWidth 的 e2e 量不到
+     這種「容器內 clip」。 */
+  max-width: 100%;
+  overflow-x: auto;
 }
 
 .prompt .katex-display {
@@ -1920,7 +1926,7 @@ button {
   padding: 8px 10px;
   border: 1px solid var(--line);
   border-radius: var(--radius);
-  background: #fbfaf7;
+  background: var(--surface);
 }
 
 .answer-preview > span {
@@ -2013,7 +2019,7 @@ button {
   padding: 0 9px;
   border: 1px solid var(--line);
   border-radius: var(--radius);
-  background: #fbfaf7;
+  background: var(--surface);
   color: var(--muted);
   font-size: 0.78rem;
   font-weight: 860;
@@ -2048,7 +2054,7 @@ button {
   padding: 0 11px;
   border: 1px solid var(--line);
   border-radius: var(--radius);
-  background: #fbfaf7;
+  background: var(--surface);
   color: var(--ink);
   cursor: pointer;
   font-weight: 760;
@@ -2068,7 +2074,7 @@ button {
   padding: 0 10px;
   border: 1px solid var(--line);
   border-radius: var(--radius);
-  background: #fbfaf7;
+  background: var(--surface);
   color: var(--ink);
   cursor: pointer;
   font-weight: 820;
@@ -2106,7 +2112,7 @@ button {
   padding: 12px;
   border: 1px solid rgba(32, 33, 31, 0.12);
   border-radius: var(--radius);
-  background: #fbfaf7;
+  background: var(--surface);
 }
 
 .scratchboard-shell.is-collapsed {
@@ -2155,7 +2161,7 @@ button {
   grid-template-rows: auto minmax(0, 1fr) auto;
   gap: 10px;
   padding: max(12px, env(safe-area-inset-top)) max(12px, env(safe-area-inset-right)) max(12px, env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left));
-  background: #fbfaf6;
+  background: var(--surface);
 }
 
 .handwrite-shell.is-fullscreen .scratchboard-shell {
@@ -2402,6 +2408,37 @@ button,
   color: var(--muted);
   font-size: 0.86rem;
 }
+
+/* 回饋卡上的參考答案：一行、數學排版、和訊息拉開一點 */
+.feedback-reference {
+  margin: 8px 0 0;
+  font-weight: 700;
+}
+
+.feedback-reference .math-inline .katex { font-size: 1.12em; }
+
+/* 作圖表的符號 chips：插入 (-inf、U 這類手機鍵盤上的酷刑字元 */
+.ws-symbols {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 8px 0 4px;
+}
+
+.ws-symbol {
+  min-height: 40px;
+  min-width: 44px;
+  padding: 0 10px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--ink);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.ws-symbol:hover { border-color: var(--gold); }
 
 /* 兩句提示原本只用空白隔開，讀起來黏成一句
    （「點選選項後會直接送出 要算的話下面有計算紙」）。補一個間隔點。 */
@@ -3310,7 +3347,7 @@ button,
   padding: 0 9px;
   border: 1px solid var(--line);
   border-radius: var(--radius);
-  background: #fbfaf7;
+  background: var(--surface);
   white-space: nowrap;
 }
 
@@ -3322,7 +3359,7 @@ button,
   padding: 12px;
   border: 1px solid rgba(32, 33, 31, 0.1);
   border-radius: var(--radius);
-  background: #fbfaf7;
+  background: var(--surface);
 }
 
 .proof-line-math {
@@ -3584,7 +3621,7 @@ button,
   padding: 8px;
   border: 1px solid var(--line);
   border-radius: var(--radius);
-  background: #fbfaf6;
+  background: var(--surface);
 }
 
 .history-review-item.is-correct {
@@ -4886,7 +4923,7 @@ button,
     padding: 10px;
     border: 1px solid var(--line);
     border-radius: var(--radius);
-    background: #fbfaf7;
+    background: var(--surface);
   }
 
   .buzz-path-map {
@@ -5057,7 +5094,7 @@ button,
   padding: 10px;
   border: 1px solid var(--line);
   border-radius: var(--radius);
-  background: #fbfaf7;
+  background: var(--surface);
 }
 
 .path-intro-stats span{
@@ -5312,11 +5349,13 @@ button,
     font-size: 0.96rem;
   }
 
+  /* 30 顆鍵排成一條要橫刷的長列 = 手機上的災難（789/456/123 攤平之後
+     順序也毫無意義）。換行成格狀，一眼全部看得到。 */
   .quiz-screen .webwork-keypad {
     display: flex;
-    flex-wrap: nowrap;
+    flex-wrap: wrap;
     gap: 6px;
-    overflow-x: auto;
+    overflow-x: visible;
     padding-bottom: 2px;
     scrollbar-width: none;
   }
@@ -5662,7 +5701,7 @@ button,
   padding: 14px;
   border: 1px solid var(--line);
   border-radius: var(--radius);
-  background: #fbfaf7;
+  background: var(--surface);
 }
 
 .workbook-grid p {
@@ -5731,7 +5770,7 @@ button,
   padding: 16px 18px;
   border: 1px solid var(--line-strong);
   border-radius: var(--radius);
-  background: #fbfaf7;
+  background: var(--surface);
 }
 
 .workbook-price {
@@ -8277,16 +8316,25 @@ kbd {
 }
 
 .update-banner .icon-button {
-  width: 32px;
-  height: 32px;
+  width: 40px;
+  height: 40px;
+  flex: 0 0 auto;
 }
 
-@media (max-width: 520px) {
+/* 手機：底部是常用操作區（任務板、送出、分頁列），橫幅改掛在
+   sticky 頂列下方；✕ 不許被 wrap 擠走。 */
+@media (max-width: 680px) {
   .update-banner {
+    top: calc(env(safe-area-inset-top, 0px) + 64px);
+    bottom: auto;
+    width: calc(100vw - 24px);
     border-radius: var(--radius);
-    flex-wrap: wrap;
-    justify-content: center;
+    flex-wrap: nowrap;
+    justify-content: space-between;
   }
+
+  .update-banner span { flex: 1 1 auto; min-width: 0; }
+  .update-banner .button { padding-inline: 10px; white-space: nowrap; }
 }
 
 /* ── 回報題目 ───────────────────────────────────────────────── */
@@ -8988,6 +9036,28 @@ kbd {
 }
 
 .proof-order-step:hover { border-color: var(--gold); }
+
+/* 已點走的步驟留在原位打勾編號 —— 清單不重排，下一下才不會點錯 */
+.proof-order-step.is-taken {
+  opacity: 0.55;
+  cursor: default;
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.proof-order-taken-no {
+  flex: 0 0 auto;
+  min-width: 22px;
+  height: 22px;
+  display: inline-grid;
+  place-items: center;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--green) 16%, var(--panel));
+  color: var(--green);
+  font-size: 0.78rem;
+  font-weight: 800;
+}
 
 .proof-order-picked {
   margin: 8px 0;
