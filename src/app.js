@@ -754,7 +754,9 @@
       event.preventDefault();
       // 每個對話框都有自己的取消動作，找得到就按它；
       // 找不到就至少不要讓 Esc 冒泡去做別的事。
-      const cancel = modal.querySelector('[data-action^="cancel-"], [data-action="dismiss-notice"]');
+      // close-modal 是作答中「規則」「離開」視窗的關閉動作 ——
+      // 漏了它，Esc 對這兩個視窗就只是把事件吃掉而不關（UAT C1 抓到）。
+      const cancel = modal.querySelector('[data-action^="cancel-"], [data-action="dismiss-notice"], [data-action="close-modal"]');
       if (cancel) cancel.click();
       return true;
     }
