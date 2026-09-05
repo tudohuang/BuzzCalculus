@@ -1131,3 +1131,51 @@ console.log(`Resume smoke: ${json.length} bytes for a 12-question exam, round-tr
   if (missing.length) throw new Error("互動圖形題沒有進驗算側表：" + missing.map((p) => p.id).join(","));
   console.log("互動圖形 smoke: " + dueled.length + " 題、點位與斜率容差兩端都判對、對戰池排除、全部經過獨立驗算");
 }
+
+// ── 真機 UAT 回報修正的釘子（2026-09-06）──
+{
+  // 選項顯示的常數摺疊：模板原樣 = 洩題
+  const cases = [
+    ["5*3/(3-1)", "15/2"],
+    ["4^2/2", "8"],
+    ["2*(2)", "4"],
+    ["1/2", "1/2"],
+    ["pi/4", "pi/4"]
+  ];
+  for (const [input, want] of cases) {
+    const got = api.simplifyChoiceLabel(input);
+    if (got !== want) throw new Error(`simplifyChoiceLabel(${input}) = ${got}，應為 ${want}`);
+  }
+  const folded = api.simplifyChoiceLabel("(3*x+1)^(5+1)/(3*(5+1))");
+  if (/\(5\+1\)/.test(folded)) throw new Error("含變數的選項沒有折掉純數字括號：" + folded);
+
+  // 誘答量級要雙向擋：正解 13 位數時，4 不能當誘答
+  if (api.numericallyPlausibleDistractor("1307674368000", "4")) throw new Error("大答案配小誘答應該被擋");
+  if (!api.numericallyPlausibleDistractor("3/4", "2")) throw new Error("同量級誘答不該被擋");
+
+  // 同模板家族一局內不重複：三題同家族要被推遲到尾端
+  const fam = (id) => ({ id, topic: "limits", tags: [] });
+  const spread = api.spreadFamilies([
+    fam("tmpl-lim-log-ratio-001"), fam("tmpl-lim-log-ratio-002"),
+    fam("lim-001"), fam("tmpl-lim-log-ratio-003"), fam("tmpl-der-power-001")
+  ]).map((p) => p.id);
+  if (spread[1] === "tmpl-lim-log-ratio-002") throw new Error("同家族第二題沒有被推遲：" + spread.join(","));
+  if (spread.slice(0, 3).filter((id) => id.startsWith("tmpl-lim-log-ratio")).length > 1) {
+    throw new Error("前段出現同家族兩題：" + spread.join(","));
+  }
+
+  // 每日任務：今天任何模式的作答都要計入
+  const today = new Date().toISOString();
+  const mission = api.dailyMissionInfo({
+    history: [{ finishedAt: today, answers: [{}, {}, {}, {}, {}] }],
+    settings: {}, daily: {}
+  }, null);
+  if (mission.completed !== 5) throw new Error(`今天答了 5 題，任務卻只算 ${mission.completed}`);
+
+  // text 題的 placeholder 不能對非收斂題寫「收斂/發散」
+  const conv = api.placeholderFor({ answerKind: "text", answers: ["收斂"] });
+  const tech = api.placeholderFor({ answerKind: "text", answers: ["second order"], tags: [] });
+  if (!/收斂/.test(conv)) throw new Error("收斂題 placeholder 錯了：" + conv);
+  if (/收斂/.test(tech)) throw new Error("非收斂 text 題還在提示收斂/發散：" + tech);
+  console.log("UAT 修正 smoke: 選項摺疊、誘答雙向量級、模板冷卻、每日計數、placeholder 分流");
+}
