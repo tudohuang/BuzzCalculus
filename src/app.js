@@ -1346,8 +1346,23 @@
           ${renderGrowthLine(records)}
           ${renderHomeWeakness(records)}
           ${renderBucketNav()}
+          ${renderHomeQuickLinks()}
         </div>
       </main>
+    `;
+  }
+
+  // 藏得最深的幾個入口，在首頁給一排小門。
+  // 每日一題與證明訓練原本要挖到「訓練 · 挑戰」（證明還要再開摺疊區）
+  // 才找得到 —— 功能寫好了但沒有門，等於沒有。
+  function renderHomeQuickLinks() {
+    return `
+      <nav class="home-quick-links" aria-label="更多入口">
+        <button data-action="start-daily-one">${icon("puzzle")}<span>每日一題</span></button>
+        <button data-action="open-proofs">${icon("file-pen-line")}<span>證明訓練</span></button>
+        <button data-action="open-train" data-bucket="challenge">${icon("zap")}<span>好友對戰</span></button>
+        <button data-action="open-creator">${icon("pen")}<span>我要出題</span></button>
+      </nav>
     `;
   }
 
@@ -2072,6 +2087,21 @@
         <div class="action-row">
           <button class="button home-primary" data-action="start-daily">${icon("calendar")}每日挑戰 ${mission.completed}/${mission.target}</button>
           <button class="button secondary" data-action="start-daily-one">${icon("puzzle")}每日一題 ${renderDailyOneBadge(records)}</button>
+        </div>
+      </section>
+      <section class="study-card">
+        <div class="panel-title-row">
+          <div>
+            <p class="section-label">證明</p>
+            <h3>會算之外，還要會證</h3>
+          </div>
+        </div>
+        <!-- 證明訓練原本只藏在「更多練習」摺疊區的頁尾連結裡 ——
+             跟作答形式一樣的病：功能寫好了，但要挖三層才找得到。
+             它是訓練內容，就放在挑戰分頁上當一張看得到的卡。 -->
+        <p class="panel-note">${proofs.length} 條經典證明：步驟重排、填空決策點、讀完參考證明再自評 —— 資格考的證明題從這裡練。</p>
+        <div class="action-row">
+          <button class="button secondary" data-action="open-proofs">${icon("file-pen-line")}進證明訓練</button>
         </div>
       </section>
       <section class="study-card duel-card">

@@ -177,9 +177,12 @@ button {
    1440 寬的螢幕右邊留一片死空間（截圖審查抓到的最大問題）。
    置中的基準是「側欄以外的空間」：側欄是家具，不參與構圖。 */
 .topbar:not(.is-quiz) ~ .screen {
-  width: auto;
+  /* .app-shell 是 flex column，而 margin-right:auto 在交叉軸上會把
+     flex 項目縮成 fit-content —— 內容窄的頁（結算）整柱塌到 500px、
+     貼著側欄，右邊一片死空間。寬度必須寫明確，不能讓 auto margin 決定。 */
+  width: min(1040px, calc(100% - 212px));
   max-width: 1040px;
-  margin: 0 auto 0 calc(212px + max(0px, (100% - 212px - 1040px) / 2));
+  margin: 0 0 0 calc(212px + max(0px, (100% - 212px - 1040px) / 2));
   padding: 32px clamp(20px, 4vw, 44px) 56px;
 }
 
@@ -494,9 +497,11 @@ button {
 }
 
 .segment.is-active {
-  background: #fff7df;
-  border-color: rgba(139, 101, 12, 0.5);
-  box-shadow: inset 0 0 0 1px rgba(220, 167, 45, 0.24);
+  /* 不能寫死 #fff7df：深色模式的字是淺色的，配上淺色底
+     等於把「你現在在哪個分頁」變成看不見（UAT 深色截圖抓到）。 */
+  background: color-mix(in srgb, var(--gold) 16%, var(--panel));
+  border-color: color-mix(in srgb, var(--gold) 50%, var(--line-strong));
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--gold) 24%, transparent);
 }
 
 .segment strong,
@@ -1361,6 +1366,8 @@ button {
 .data-management-card summary {
   display: grid;
   gap: 4px;
+  min-height: 44px;
+  align-content: center;
   cursor: pointer;
   list-style: none;
 }
@@ -1584,7 +1591,7 @@ button {
 /* 可以按的 chip（作答形式切換）。看起來仍是 chip —— 它就在題目
    標籤那一排，做成按鈕會太搶戲；但它是觸控目標，所以放大到 34px。 */
 .chip-button {
-  min-height: 34px;
+  min-height: 40px;
   gap: 5px;
   color: var(--ink);
   border-color: var(--line-strong);
@@ -2035,8 +2042,9 @@ button {
 }
 
 .webwork-examples button {
-  min-height: 32px;
-  padding: 0 9px;
+  min-height: 40px;
+  min-width: 44px;
+  padding: 0 11px;
   border: 1px solid var(--line);
   border-radius: var(--radius);
   background: #fbfaf7;
@@ -2248,8 +2256,8 @@ button {
 }
 
 .board-tools .icon-button {
-  width: 38px;
-  height: 38px;
+  width: 40px;
+  height: 40px;
 }
 
 .board-tools .icon-button.is-active {
@@ -2409,7 +2417,7 @@ button,
 
 .keypad button {
   min-width: 44px;
-  min-height: 34px;
+  min-height: 40px;
   border: 1px solid var(--line);
   border-radius: var(--radius);
   background: #fff;
@@ -2433,8 +2441,11 @@ button,
    一個字浮在一整條白色裡。選項區不需要跟題幹一樣寬：收到 880px，
    同時把數學再放大一級，讓答案本身是視線落點。 */
 @media (min-width: 1000px) {
+  /* 注意：這裡一定要給明確的 width。grid/flex 項目上的 auto margin
+     會把元素縮成 fit-content —— 只寫 max-width + margin auto 的第一版
+     讓桌機的四個選項塌成 110px 的小卡，還各自長出迷你捲軸。 */
   .choice-grid {
-    max-width: 880px;
+    width: min(100%, 880px);
     margin-inline: auto;
   }
 
@@ -2705,6 +2716,15 @@ button,
   color: var(--ink);
   font-size: 1.5rem;
   font-weight: 800;
+}
+
+/* countup 動畫的內層 span 會被上面的 .verdict-stats span 掃到，
+   「0/12」的 0 縮成 0.82rem 疊在大字旁邊，看起來像破版。 */
+.verdict-stats strong span {
+  display: inline;
+  font-size: inherit;
+  color: inherit;
+  font-weight: inherit;
 }
 
 .verdict .action-row {
@@ -3143,8 +3163,8 @@ button,
 }
 
 .tag-button {
-  min-height: 32px;
-  padding: 0 10px;
+  min-height: 40px;
+  padding: 0 12px;
   border: 1px solid var(--line);
   border-radius: var(--radius);
   background: #fff;
@@ -3355,6 +3375,8 @@ button,
   display: flex;
   align-items: center;
   gap: 8px;
+  /* 41 條證明 × 兩個抽屜 = 全站最大宗的 20px 觸控目標（UAT 抓到 82 個） */
+  min-height: 44px;
 }
 
 .proof-step summary::-webkit-details-marker {
@@ -6696,7 +6718,11 @@ kbd {
 .link-button {
   border: 0;
   background: transparent;
-  padding: 0;
+  /* 視覺上是一條連結，但點擊區要夠大 —— 20px 高的字在手機上按不準 */
+  min-height: 40px;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 6px;
   color: var(--gold-dark);
   font: inherit;
   font-weight: 760;
@@ -6763,7 +6789,9 @@ kbd {
   display: flex;
   align-items: center;
   gap: 8px;
+  min-height: 44px;
   padding: 10px 12px;
+  box-sizing: border-box;
   cursor: pointer;
   font-weight: 800;
   font-size: 0.85rem;
@@ -7004,7 +7032,10 @@ kbd {
 }
 
 .sync-drawer summary {
-  padding: 10px 0;
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0;
   cursor: pointer;
   font-weight: 800;
   font-size: 0.88rem;
@@ -7392,6 +7423,43 @@ kbd {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
   gap: 10px;
+}
+
+/* 首頁的小門：一排藏得深的入口（每日一題／證明／對戰／出題）。
+   比 bucket-nav 矮一階 —— 它們是門，不是主打。 */
+.home-quick-links {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.home-quick-links button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: 44px;
+  padding: 0 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--panel);
+  color: var(--ink);
+  font-weight: 700;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: border-color 140ms ease;
+}
+
+.home-quick-links button:hover,
+.home-quick-links button:focus-visible {
+  border-color: var(--gold);
+}
+
+.home-quick-links svg {
+  width: 15px;
+  height: 15px;
+  color: var(--muted);
 }
 
 .bucket-nav button {
@@ -8816,6 +8884,7 @@ kbd {
   display: flex;
   align-items: center;
   gap: 8px;
+  min-height: 44px;
   cursor: pointer;
   font-weight: 700;
   font-size: 0.88rem;
