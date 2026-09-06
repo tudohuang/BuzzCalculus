@@ -255,7 +255,8 @@
     }
 
     if (parts.length < 2 && groups.fresh.length) {
-      parts.push(`前置已經穩了，可以開始練${groups.fresh[0].label}`);
+      // 中文緊貼拉丁字母（「開始練u-substitution」）讀起來像 tag 串進句子
+      parts.push(`前置已經穩了，可以開始練${/^[\x20-\x7e]/.test(groups.fresh[0].label) ? " " : ""}${groups.fresh[0].label}`);
     }
 
     // 保底：新使用者什麼資料都沒有時也必須給得出一句話
