@@ -63,7 +63,12 @@
 
   function renderLongTexFlow(node, tex) {
     const segments = splitLongTex(tex).filter((seg) => (seg.text !== undefined ? seg.text.length : seg.math.trim().length));
-    if (segments.length < 2) return false;
+    if (!segments.length) return false;
+    // 單一純數學段沒有可斷行的點，走回 KaTeX 原路（display 置中 + 橫向捲）。
+    // 但單一 \text{} 段**要留下來**：它就是一句可以正常換行的文字 ——
+    // 第一版寫 length < 2 直接退回，Bessel 那種整句 \text 的題幹
+    // 在 390px 上被切掉後半句，而且不能捲（二輪實測抓到）。
+    if (segments.length === 1 && segments[0].text === undefined) return false;
     node.innerHTML = "";
     for (const seg of segments) {
       const span = document.createElement("span");

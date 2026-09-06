@@ -668,6 +668,7 @@
   let sessionSettingsOpen = false;
   let resultsDetailOpen = false;
   let appNotice = "";
+  let appNoticeAt = 0;
   let calibrationPreview = null;
   let eraseConfirm = false;
   // 回報草稿：{ problemId, reason }。null 代表沒有開著的回報視窗。
@@ -1605,10 +1606,19 @@
 
   // 候選集：沿用站上既有的規則 —— 純微積分（科目閘門）、難度上限之內、
   // 排除自訂題。kernel 不重複實作這些規則，避免兩份規則漂移。
+  // 冷門支線不進「每日訓練 / 快刷」這種混合池。
+  // 二輪實測：複變題掛著「微分 · 暖身」出現在 5 分鐘快刷 —— 對一個
+  // 在練主線的人，(1+i)^4 不是暖身，是天外飛來。這些內容有自己的家
+  //（進階工具關卡、專屬題包、單主題訓練），混合池只放核心四主題的正課。
+  const NICHE_MIX_TAGS = ["complex", "special-functions", "bessel", "nabla", "vector-calculus"];
+
   function plannerCandidatePool(records) {
     const cap = activeDifficultyCap(records);
     return problems.filter(
-      (problem) => problemRank(problem) <= cap + 1 && !problem.custom
+      (problem) =>
+        problemRank(problem) <= cap + 1 &&
+        !problem.custom &&
+        !(problem.tags || []).some((tag) => NICHE_MIX_TAGS.includes(tag))
     );
   }
 
@@ -5990,7 +6000,11 @@
   }
 
   function renderWebWorkAnswerWorkspace(problem, disabled, previewTex, compact) {
-    const syntax = answerSyntaxInfo(problem, quiz.draft);
+    // 已判定（答對/答錯/逾時）之後，「可送出」是謊話 —— 送出鈕已 disable，
+    // 但綠色的狀態 pill 還在慫恿人按（二輪實測：逾時後照樣寫著可送出）。
+    const syntax = quiz.feedback
+      ? { label: "已判定", className: "is-empty" }
+      : answerSyntaxInfo(problem, quiz.draft);
     const examples = answerExamples(problem);
     // Keypad/preview/examples collapse into a drawer; on a narrow screen they
     // start closed so the prompt + input stay primary. Resolved once per quiz.
@@ -6228,6 +6242,14 @@
 
   function renderAppNoticeModal() {
     if (!appNotice) return "";
+    // 過期的通知不准在作答中冒出來。二輪實測：「倒數開始」的提醒
+    // 在錯題重練第 2 題的作答中彈出 —— 根因抓不到穩定重現，但守則
+    // 很清楚（跟更新橫幅同一條）：**作答中不打擾**。設好倒數這種
+    // 資訊型通知，八秒沒被看到就直接作廢，不排隊。
+    if (view === "quiz" && quiz && !quiz.feedback && appNoticeAt && Date.now() - appNoticeAt > 8000) {
+      appNotice = "";
+      return "";
+    }
     // 快捷鍵表有自己的排版（kbd 樣式的表格）；其他通知維持一段文字。
     if (appNotice === "__shortcuts__") {
       return `
@@ -6261,6 +6283,7 @@
 
   function showAppNotice(message) {
     appNotice = String(message || "");
+    appNoticeAt = Date.now();
     render();
   }
 
@@ -6431,11 +6454,14 @@
           <h1 class="verdict-title" data-pop>${escapeHtml(verdict)}</h1>
           <p class="verdict-sub" data-enter>${escapeHtml(momentum)}</p>
           ${nextLine ? `<p class="verdict-next" data-enter>${escapeHtml(nextLine)}</p>` : ""}
+          <!-- 這四個數字不做 count-up 動畫：手機上 rAF 被節流時動畫會
+               停在半路，畫面就停格在「61% 正確率」—— 三次實測重現的
+               「結算數字自我修正」就是這個。成績是事實，不是表演。 -->
           <div class="verdict-stats" data-enter>
-            <span><strong><span data-countup="${correct}">${correct}</span>/${total}</strong>答對</span>
-            <span><strong data-countup="${accuracy}" data-suffix="%">${accuracy}%</strong>正確率</span>
-            <span><strong data-countup="${avgTime}" data-suffix="s">${avgTime}s</strong>平均</span>
-            ${quiz.practice ? "" : `<span><strong data-countup="${quiz.score}">${quiz.score}</strong>分數</span>`}
+            <span><strong>${correct}/${total}</strong>答對</span>
+            <span><strong>${accuracy}%</strong>正確率</span>
+            <span><strong>${avgTime}s</strong>平均</span>
+            ${quiz.practice ? "" : `<span><strong>${quiz.score}</strong>分數</span>`}
           </div>
           ${quiz.placementResult ? renderPlacementNextStep() : renderResultsActions(gateResult, pathResult)}
           ${quiz.dailyOneOutcome ? renderDailyOneOutcomePanel(quiz.dailyOneOutcome) : ""}
@@ -9072,6 +9098,10 @@
     }
     if (selectedPack !== "all") {
       pool = pool.filter((problem) => matchesPack(problem, selectedPack));
+    } else if (topic === "all" && !mode.boss && !mode.hardOnly && !mode.minRank) {
+      // 「全混合」的一般訓練跟 planner 池同一條規矩：冷門支線不混進來。
+      // Boss / 進階 / 生存這類高難模式不在此列 —— 那裡本來就什麼都可能出。
+      pool = pool.filter((problem) => !(problem.tags || []).some((tag) => NICHE_MIX_TAGS.includes(tag)));
     }
     if (mode.examStyle) return selectExamPool(pool, mode.count, records);
     if (mode.minRank) {
@@ -10506,7 +10536,7 @@
     const ok = Math.abs(a - b) <= tolerance;
     return {
       correct: ok,
-      message: ok ? "數值等價。" : `數值不對。${friendlyWrongHint({ answerKind: "numeric" }, input, expected)}參考答案：${expected}`
+      message: ok ? "數值等價。" : `數值不對。${friendlyWrongHint({ answerKind: "numeric" }, input, expected)}`
     };
   }
 
@@ -10521,7 +10551,7 @@
       valid += 1;
       const tolerance = Math.max(1e-6, Math.abs(a) * 1e-5);
       if (Math.abs(a - b) > tolerance) {
-        return { correct: false, message: `在 ${formatVars(vars)} 代入時不相同。${friendlyWrongHint({ answerKind: "expression", variable: variables[0] }, input, expected)}參考答案：${expected}` };
+        return { correct: false, message: `在 ${formatVars(vars)} 代入時不相同。${friendlyWrongHint({ answerKind: "expression", variable: variables[0] }, input, expected)}` };
       }
     }
     return {
@@ -10572,7 +10602,7 @@
     const ok = diffs.every((value) => Math.abs(value - base) <= Math.max(1e-5, Math.abs(base) * 1e-5));
     return {
       correct: ok,
-      message: ok ? "原函數相差常數，判定正確。" : `微分後不相同。${friendlyWrongHint({ answerKind: "antiderivative", variable }, input, expected)}參考答案：${expected}`
+      message: ok ? "原函數相差常數，判定正確。" : `微分後不相同。${friendlyWrongHint({ answerKind: "antiderivative", variable }, input, expected)}`
     };
   }
 
@@ -10930,6 +10960,7 @@
     if (problem.answerKind === "antiderivative") {
       const variable = problem.variable || "x";
       return [
+        ...mutatedDistractorLabels(correct),
         `-(${correct})`,
         `2*(${correct})`,
         `(${correct})/2`,
@@ -10946,6 +10977,7 @@
     if (problem.answerKind === "expression") {
       const variable = problem.variable || "x";
       return [
+        ...mutatedDistractorLabels(correct),
         `-(${correct})`,
         `(${correct})+1`,
         `(${correct})-${variable}`,
@@ -10960,6 +10992,26 @@
       ];
     }
     return ["0", "1", "DNE"];
+  }
+
+  // 表達式誘答的新主力：把**摺疊後的正解**做數字微擾（指數 ±1、係數 ×2、
+  // 常數換一個）。二輪實測抓到反向洩題：2*(log(1+e^{x²})/2)、(答案)+x 這種
+  // 模板包裹折不掉，四個選項裡「唯一乾淨的那個」就是正解 —— 比不折還好認。
+  // 微擾產生的誘答跟正解同一件衣服，而且每一個都是真實的犯錯方式
+  // （鏈鎖忘乘、冪次差一、常數記錯）。包裹式的舊誘答降為墊底備援。
+  function mutatedDistractorLabels(correct) {
+    const base = simplifyChoiceLabel(correct);
+    const out = [];
+    const numbers = [...String(base).matchAll(/\d+/g)];
+    numbers.slice(0, 3).forEach((match) => {
+      const n = Number(match[0]);
+      [n + 1, n - 1, n * 2].forEach((next) => {
+        if (next <= 0 || next === n) return;
+        out.push(base.slice(0, match.index) + String(next) + base.slice(match.index + match[0].length));
+      });
+    });
+    if (!/^-/.test(base)) out.push(`-(${base})`);
+    return out;
   }
 
   function numericChoiceDistractors(correct) {
@@ -13994,5 +14046,18 @@
       startQuiz([shared], { modeKey: "practice", practice: true });
     }
   }
+  // app 已經開著的時候貼第二條 #p= 連結：hash 變了但頁面不重載，
+  // 原本什麼都不會發生（二輪實測）。掛 hashchange 讓深連結隨時生效；
+  // 作答到一半則不搶 —— 換題等於把人手上的那局丟掉。
+  window.addEventListener("hashchange", () => {
+    const link = /^#p=([A-Za-z0-9_-]+)$/.exec(window.location.hash || "");
+    if (!link) return;
+    const shared = problemById(link[1]);
+    if (!shared) return;
+    if (quiz && !quiz.practice && quiz.answers.length) return; // 進行中的正式局不搶
+    selectedMode = "practice";
+    startQuiz([shared], { modeKey: "practice", practice: true });
+    render();
+  });
   render();
 })();
