@@ -669,6 +669,8 @@
   let resultsDetailOpen = false;
   let appNotice = "";
   let appNoticeAt = 0;
+  let appNoticeView = null;
+  let lastRenderedView = null;
   let calibrationPreview = null;
   let eraseConfirm = false;
   // 回報草稿：{ problemId, reason }。null 代表沒有開著的回報視窗。
@@ -1129,6 +1131,18 @@
       const sampled = Math.random() < 0.01;
       const startedAt = sampled && window.performance ? window.performance.now() : 0;
       const carried = captureViewState();
+      // 跨頁清場（四輪實測的兩個黏著）：
+      //   通知 modal 跟著人跨頁（「不計分」提醒疊在題庫上）——
+      //   通知只活在它出現的那一頁，換頁自動收。
+      //   搜尋字串離開題庫就清 —— 搜過「qzxv」去練一局回來，
+      //   0 題的原因是 1500px 外那個看不到的搜尋框。
+      if (appNotice && appNoticeView === null) appNoticeView = view;
+      if (appNotice && appNoticeView !== null && view !== appNoticeView) {
+        appNotice = "";
+        appNoticeView = null;
+      }
+      if (lastRenderedView === "library" && view !== "library") librarySearch = "";
+      lastRenderedView = view;
       releaseDetachedCanvases();
       app.innerHTML = [renderTopbar(), renderScreen(), renderAppNoticeModal(), renderCalibrationPreviewModal(), renderEraseConfirmModal(), renderReportModal(), renderUpdateBanner()].join("");
       bindEvents();
@@ -1606,6 +1620,34 @@
 
   // 候選集：沿用站上既有的規則 —— 純微積分（科目閘門）、難度上限之內、
   // 排除自訂題。kernel 不重複實作這些規則，避免兩份規則漂移。
+  // 題庫搜尋的中文別名：tag 的 label 很多是英文（Taylor、IBP、Frullani），
+  // 台灣學生打「泰勒」會撲空（四輪實測：泰勒 0 題、Taylor 199 題）。
+  // 只收最常被中文搜的那批 —— 這是別名表，不是翻譯工程。
+  const TAG_ZH_ALIASES = {
+    taylor: "泰勒",
+    "taylor-limit": "泰勒 極限",
+    lhopital: "洛必達 羅必達",
+    "integration-by-parts": "分部 分部積分",
+    ibp: "分部",
+    substitution: "換元 代換 變數變換",
+    "u-sub": "換元",
+    "partial-fraction": "部分分式",
+    "trig-substitution": "三角代換",
+    "ratio-test": "比值 審斂",
+    "root-test": "根值 審斂",
+    "power-series": "冪級數 幂級數",
+    radius: "收斂半徑",
+    "improper-integral": "瑕積分",
+    "chain-rule": "鏈鎖 連鎖",
+    implicit: "隱微分 隱函數",
+    "critical-points": "臨界點 極值",
+    inflection: "反曲點 拐點",
+    concavity: "凹向",
+    multivariable: "多變數",
+    frullani: "弗魯拉尼",
+    "kings-property": "國王 對稱代換"
+  };
+
   // 冷門支線不進「每日訓練 / 快刷」這種混合池。
   // 二輪實測：複變題掛著「微分 · 暖身」出現在 5 分鐘快刷 —— 對一個
   // 在練主線的人，(1+i)^4 不是暖身，是天外飛來。這些內容有自己的家
@@ -3921,7 +3963,7 @@
           <div class="library-toolbar">
             <label class="library-search">
               <span>搜尋</span>
-              <input data-library-search type="search" value="${escapeAttr(librarySearch)}" placeholder="Taylor、IBP、Frullani、題號..." />
+              <input data-library-search type="search" value="${escapeAttr(librarySearch)}" placeholder="泰勒、分部、Taylor、題號…" />
             </label>
             <label>
               <span>題包</span>
@@ -3954,8 +3996,26 @@
 
           <div class="library-count">
             <strong>${allItems.length}</strong>
-            <span>符合條件${allItems.length > shown.length ? `，先顯示 ${shown.length} 題` : ""}</span>
+            <span>符合條件${allItems.length > shown.length ? `，先顯示 ${shown.length} 題` : ""}${allItems.length ? " · 練目前篩選會從中抽 12 題" : ""}</span>
           </div>
+          ${
+            // 0 題的時候要說得出「是哪個條件害的」。四個篩選會跨頁黏著，
+            // 搜尋框又在畫面外 1500px —— 只印「0 符合條件」等於讓人猜謎。
+            allItems.length === 0
+              ? `<div class="library-empty">
+                  <p>目前生效的條件：</p>
+                  <div class="tag-row">
+                    ${librarySearch.trim() ? `<span class="chip">搜尋「${escapeHtml(librarySearch.trim())}」</span>` : ""}
+                    ${selectedPack !== "all" ? `<span class="chip">題包：${escapeHtml(TRAINING_PACKS[selectedPack]?.label || selectedPack)}</span>` : ""}
+                    ${selectedLibraryRank !== "all" ? `<span class="chip">難度 R${escapeHtml(selectedLibraryRank)}</span>` : ""}
+                    ${selectedLibraryTopic !== "all" ? `<span class="chip">主題：${escapeHtml(TOPICS[selectedLibraryTopic]?.label || selectedLibraryTopic)}</span>` : ""}
+                    ${selectedLibraryFilter !== "all" ? `<span class="chip">狀態篩選</span>` : ""}
+                  </div>
+                  <p class="panel-note">搜不到中文的話，多數技巧收錄了別名（泰勒、分部、換元…），也可以試英文技巧名（Taylor、IBP）或題號（lim-001）。</p>
+                  <button class="button secondary" data-action="library-clear-filters">${icon("x")}清除全部篩選</button>
+                </div>`
+              : ""
+          }
 
           <div class="problem-library-grid">
             ${shown.length ? shown.map((problem) => renderLibraryProblemCard(problem, records)).join("") : `<div class="empty-state">沒有符合條件的題目。</div>`}
@@ -4022,11 +4082,10 @@
           ${problemDisplayTags(problem).slice(0, 5).map((tag) => `<span>${escapeHtml(tagLabel(tag))}</span>`).join("")}
         </div>
         <div class="library-problem-foot">
-          <span class="solution-quality is-${quality.level}">${escapeHtml(quality.label)}</span>
+          <span class="solution-quality is-${quality.level}" title="這題參考解說的完整度：完整＝有推導與提示；簡短＝一兩句；待補＝還沒寫">${escapeHtml(quality.label)}</span>
           ${verifiedChip(problem)}
           ${rubricChip(problem)}
           ${sourceChip(problem)}
-          ${problemShortCode(problem) ? `<span class="chip problem-uid" title="永久題號，回報或分享時用這個">${escapeHtml(problemShortCode(problem))}</span>` : ""}
           <button class="button ghost" data-action="start-problem" data-problem-id="${escapeAttr(problem.id)}">${icon("play")}練這題</button>
         </div>
       </article>
@@ -6328,6 +6387,7 @@
   function showAppNotice(message) {
     appNotice = String(message || "");
     appNoticeAt = Date.now();
+    appNoticeView = null; // 下一次 render 記住它出現在哪一頁
     render();
   }
 
@@ -7334,6 +7394,15 @@
     if (action === "start-path-gate") startPathGate(actionNode.dataset.nodeId || activePathNodeId);
     if (action === "choose-answer") submitChoiceAnswer(actionNode.dataset.choice || "");
     if (action === "toggle-answer-mode") toggleQuizAnswerMode();
+    if (action === "library-clear-filters") {
+      librarySearch = "";
+      selectedPack = "all";
+      selectedLibraryRank = "all";
+      selectedLibraryTopic = "all";
+      selectedLibraryFilter = "all";
+      libraryVisibleCount = LIBRARY_PAGE_SIZE;
+      render();
+    }
     if (action === "submit-graphtap") submitGraphTap();
     if (action === "submit-graphslope") submitGraphSlope();
     if (action === "clear-graphtap") {
@@ -7827,7 +7896,7 @@
     if (!problem) return "";
     const reason = REPORT_REASONS.find((item) => item.key === reasonKey) || REPORT_REASONS[0];
     const lines = [
-      `題號：${problem.id}`,
+      `題號：${problem.id}${problemShortCode(problem) ? `（永久編號 ${problemShortCode(problem)}）` : ""}`,
       `題目：${problem.prompt}`,
       `參考答案：${displayAnswer(problem)}`,
       `難度：R${problem.rank}`,
@@ -12832,13 +12901,17 @@
       if (selectedLibraryFilter === "reported" && !records.problemReports?.[problem.id]) return false;
       if (selectedLibraryFilter === "boss" && problemRank(problem) < 5) return false;
       if (!query) return true;
+      // haystack 的紀律（四輪實測抓到兩個洞）：
+      //   1. 不放 answer —— 搜「pi/4」撈出所有答案是 pi/4 的題，
+      //      搜尋框變成反查答案的外掛。
+      //   2. 題幹去掉 TeX 指令 —— 搜「\frac」命中 1123 題是雜訊不是功能。
+      //   3. tag 附中文別名 —— 台灣學生打「泰勒」不該撲空。
+      const plainPrompt = String(problem.prompt || "").replace(/\\[a-zA-Z]+/g, " ").replace(/[{}^_]/g, " ");
       const haystack = [
         problem.id,
-        problem.prompt,
+        plainPrompt,
         problem.source,
-        problem.answerKind,
-        problem.answer,
-        ...(problem.tags || []).map((tag) => `${tag} ${tagLabel(tag)}`)
+        ...(problem.tags || []).map((tag) => `${tag} ${tagLabel(tag)} ${TAG_ZH_ALIASES[tag] || ""}`)
       ].join(" ").toLowerCase();
       return haystack.includes(query);
     });
@@ -13414,7 +13487,7 @@
     const reason = window.BuzzRubric.reasonFor(problem.id);
     const reviewed = window.BuzzRubric.isReviewed(problem.id);
     return `
-      <span class="chip rubric-chip${reviewed ? " is-reviewed" : ""}" title="${escapeAttr(reason)}">
+      <span class="chip rubric-chip${reviewed ? " is-reviewed" : ""}" title="${escapeAttr(`難度三軸（各 1–3）：解題步數 ${axes.steps} / 手法冷門度 ${axes.obscurity} / 計算量 ${axes.load}。${reason || ""}`)}">
         步數 ${axes.steps} · 冷門 ${axes.obscurity} · 計算 ${axes.load}
       </span>
     `;

@@ -2463,6 +2463,20 @@ button,
 
 .feedback-reference .math-inline .katex { font-size: 1.12em; }
 
+/* 題庫 0 題時的說明面板：列出生效條件 + 一鍵清除 */
+.library-empty {
+  display: grid;
+  gap: 10px;
+  padding: 16px;
+  border: 1px dashed var(--line-strong);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+
+.library-empty p { margin: 0; font-weight: 700; }
+.library-empty .panel-note { font-weight: 400; }
+.library-empty .button { justify-self: start; }
+
 /* 作圖表的符號 chips：插入 (-inf、U 這類手機鍵盤上的酷刑字元 */
 .ws-symbols {
   display: flex;
@@ -6269,12 +6283,38 @@ button,
     align-items: flex-start;
   }
 
+  /* 四輪實測：column 讓五顆 chip 一行一顆疊五層，一張題目卡撐到
+     409–457px，72 張首屏 = 32,000px。chip 本來就該換行橫排 ——
+     跟同一張卡上面的技巧 tag 列同一個樣子。 */
   .library-problem-foot {
-    flex-direction: column;
+    flex-wrap: wrap;
   }
 
   .library-problem-foot .button {
     width: 100%;
+  }
+
+  /* 主題 5 顆 + 狀態 4 顆的 segment 疊成九張整寬卡片（~1000px）——
+     它們是 chip 不是卡片，一到兩行橫排放得下。 */
+  .segmented.library-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .segmented.library-tabs .segment {
+    flex: 0 0 auto;
+    min-height: 40px;
+    padding: 0 14px;
+  }
+
+  /* 改完搜尋條件不用從 64,000px 的清單一路捲回去 */
+  .library-search {
+    position: sticky;
+    top: calc(env(safe-area-inset-top, 0px) + 60px);
+    z-index: 6;
+    background: var(--panel);
+    padding-block: 6px;
   }
 }
 
