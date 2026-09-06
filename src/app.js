@@ -1672,6 +1672,25 @@
     // 草稿筆畫可能很大，續傳時不值得為它撐爆 localStorage 額度。
     // 使用者要的是「題目和答案還在」，不是「我畫的線還在」。
     delete copy.boardStrokes;
+    // 折衷（三輪實測的手機情境）：**只帶目前這一題**的筆跡。
+    // 切去回訊息、誤觸重整，回來時正在算的那頁還在 —— 已答完的題
+    // 照舊不帶（答錯的那張本來就會歸檔到草稿回顧）。座標取 4 位小數、
+    // 超過 ~150KB 就放棄，額度優先。
+    const activeProblem = current.problems[current.index];
+    const activeStrokes = activeProblem && current.boardStrokes && current.boardStrokes[activeProblem.id];
+    if (activeStrokes && activeStrokes.length) {
+      const compact = activeStrokes.map((stroke) => ({
+        tool: stroke.tool,
+        points: stroke.points.map((point) => {
+          const slim = { x: Math.round(point.x * 10000) / 10000, y: Math.round(point.y * 10000) / 10000 };
+          if (point.p !== undefined) slim.p = Math.round(point.p * 100) / 100;
+          return slim;
+        })
+      }));
+      try {
+        if (JSON.stringify(compact).length <= 150000) copy.currentBoardStrokes = compact;
+      } catch (_error) { /* 序列化不了就不帶 */ }
+    }
     // boardRedo 裝的是同一批筆畫（「全部擦掉」會把整頁推進去），
     // 漏掉它等於前面那一行白寫 —— 每 10 秒還是把幾 MB 序列化進 localStorage。
     delete copy.boardRedo;
@@ -1686,6 +1705,12 @@
     delete restored.problemIds;
     restored.problems = list;
     restored.boardStrokes = {};
+    // 續局把目前這一題的筆跡放回去（serializeQuiz 的折衷另一半）
+    const activeProblem = list[Number(saved.index) || 0];
+    if (activeProblem && Array.isArray(saved.currentBoardStrokes) && saved.currentBoardStrokes.length) {
+      restored.boardStrokes[activeProblem.id] = saved.currentBoardStrokes;
+    }
+    delete restored.currentBoardStrokes;
     restored.answers = (saved.answers || [])
       .map((entry) => {
         const problem = problemById(entry.problemId);
@@ -6171,7 +6196,26 @@
         <span>${quiz.boardFullscreen ? "算完直接點答案" : "要算的話下面有計算紙"}</span>
       </div>
     `;
-    return fullscreenShell(problem, grid, attachedScratchboard(problem, disabled));
+    // 全螢幕書寫時選項收成一條精簡列。
+    // 三輪實測量出來的荒謬：四張 A/B/C/D 卡在全螢幕殼的 auto 列裡
+    // 佔掉 312px，把中間 1fr 的書寫板擠成 227px —— 按「全螢幕」
+    // 反而比不按少 100px 的寫字空間，跟按鈕的承諾整個相反。
+    // 精簡列：一橫排、字母＋小號數學、可橫向捲，板拿回大多數高度。
+    const compactStrip = `
+      <div class="choice-strip" role="radiogroup" aria-label="選擇答案">
+        ${choices
+          .map((choice, index) => {
+            const choiceTex = answerToTex(choice.label, problem) || textToTex(choice.label);
+            return `
+              <button class="choice-chip" type="button" data-action="choose-answer" data-choice="${escapeAttr(choice.value)}" ${disabled}>
+                <span>${String.fromCharCode(65 + index)}</span>
+                <strong class="math-inline" data-tex="${escapeAttr(choiceTex)}">${renderLiteTex(choiceTex, false)}</strong>
+              </button>`;
+          })
+          .join("")}
+      </div>
+    `;
+    return fullscreenShell(problem, quiz.boardFullscreen ? compactStrip : grid, attachedScratchboard(problem, disabled));
   }
 
   // 全螢幕書寫的版面外殼。
@@ -11585,15 +11629,17 @@
         }
         if (action === "redo") {
           const restored = getBoardRedo(problemId).pop();
-          if (restored) strokes.push(restored);
+          // 批次（清除放進來的）一次整批還原 —— 清除是一個動作，
+          // 救回來也該是一個動作（三輪實測：畫 2 筆清除，要按 2 次 redo）。
+          if (Array.isArray(restored)) restored.forEach((stroke) => strokes.push(stroke));
+          else if (restored) strokes.push(restored);
         }
         if (action === "clear") {
           // 清空也要能救回來 —— 一次點掉整頁計算是最痛的誤觸。
-          // 倒著推進堆疊，這樣一次一次重做會照原本的順序長回來；
-          // 順序不是小事：橡皮擦筆畫要蓋在它當初擦掉的那幾筆之後才對。
+          // 整批進 redo 疊：保持原本順序（橡皮擦筆畫要蓋在
+          // 它當初擦掉的那幾筆之後才對）。
           const removed = strokes.splice(0, strokes.length);
-          const redo = getBoardRedo(problemId);
-          for (let i = removed.length - 1; i >= 0; i -= 1) redo.push(removed[i]);
+          if (removed.length) getBoardRedo(problemId).push(removed);
         }
         if (canvas && ctx) drawBlackboard(canvas, ctx, problemId);
         updateBoardCount(strokes.length);
