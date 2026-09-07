@@ -3739,6 +3739,16 @@
             ).join("")}
           </div>
         </div>
+        <div class="settings-row">
+          <div>
+            <strong>答題音效</strong>
+            <p>答對上行兩聲、答錯低一聲，跳過不出聲。圖書館練習就關掉。</p>
+          </div>
+          <div class="segmented compact" role="radiogroup" aria-label="答題音效">
+            <button class="tag-button ${soundEnabled() ? "is-active" : ""}" aria-pressed="${soundEnabled()}" data-action="set-sound" data-on="1">開</button>
+            <button class="tag-button ${soundEnabled() ? "" : "is-active"}" aria-pressed="${!soundEnabled()}" data-action="set-sound" data-on="">關</button>
+          </div>
+        </div>
       </div>
     `;
   }
@@ -6189,6 +6199,8 @@
                 ? `
                   <button class="icon-button ${boardTool === "pen" ? "is-active" : ""}" type="button" data-board-action="tool" data-tool="pen" title="筆" ${disabled}>${icon("pen")}</button>
                   <button class="icon-button ${boardTool === "eraser" ? "is-active" : ""}" type="button" data-board-action="tool" data-tool="eraser" title="橡皮擦" ${disabled}>${icon("eraser")}</button>
+                  <!-- 筆寬本來埋在設定頁 —— 拿著筆的人要當場換，不是去逛設定 -->
+                  <button class="icon-button pen-scale-cycle" type="button" data-board-action="pen-scale" title="筆寬（點擊切換）" ${disabled}><span data-pen-scale-glyph>${escapeHtml((PEN_SCALES.find((item) => item.key === ((loadRecords().settings || {}).penScale || "standard")) || PEN_SCALES[1]).label)}</span></button>
                   <button class="icon-button" type="button" data-board-action="undo" title="復原上一筆（兩指點一下也可以）" ${disabled}>${icon("undo")}</button>
                   <button class="icon-button" type="button" data-board-action="redo" title="重做" ${disabled}>${icon("redo")}</button>
                   <button class="icon-button" type="button" data-board-action="clear" title="全部擦掉（可以重做救回來）" ${disabled}>${icon("trash")}</button>
@@ -7467,6 +7479,7 @@
     if (action === "start-path-gate") startPathGate(actionNode.dataset.nodeId || activePathNodeId);
     if (action === "choose-answer") submitChoiceAnswer(actionNode.dataset.choice || "");
     if (action === "toggle-answer-mode") toggleQuizAnswerMode();
+    if (action === "set-sound") setSoundEnabled(Boolean(actionNode.dataset.on));
     if (action === "library-clear-filters") {
       librarySearch = "";
       selectedPack = "all";
@@ -10253,6 +10266,8 @@
       }
     }
     stopTicker();
+    // 跳過不出聲：那是使用者自己的決定，不需要被評價。
+    if (reason !== "Skipped") playAnswerSound(correct);
     // Correct answers keep the fast auto-advance; wrong answers wait for an
     // explicit「下一題」tap so the correction can actually be read. Exam mode
     // stays on auto-advance because its clock keeps running regardless.
@@ -11839,6 +11854,21 @@
           renderIcons();
           return;
         }
+        if (action === "pen-scale") {
+          // 循環 細→標準→粗。跟換紙一樣不走整頁 render：
+          // 直接改設定、用新筆寬把整板重畫一次。
+          const currentKey = (loadRecords().settings || {}).penScale || "standard";
+          const index = PEN_SCALES.findIndex((item) => item.key === currentKey);
+          const next = PEN_SCALES[(index + 1) % PEN_SCALES.length];
+          const records = loadRecords();
+          records.settings = { ...(records.settings || {}), penScale: next.key };
+          saveRecords(records);
+          const glyph = button.querySelector("[data-pen-scale-glyph]");
+          if (glyph) glyph.textContent = next.label;
+          button.title = `筆寬：${next.label}（點擊切換）`;
+          if (canvas && ctx) drawBlackboard(canvas, ctx, problemId);
+          return;
+        }
         // 復原與清除不重繪整個畫面 —— render() 會把 canvas 整個換掉，
         // 於是一次「復原」要重畫全部筆畫，在 iPad 上看得出來卡一下。
         const strokes = getBoardStrokes(problemId);
@@ -12214,6 +12244,65 @@
     { key: "standard", label: "標準", value: 1 },
     { key: "thick", label: "粗", value: 1.3 }
   ];
+
+  // ── 答題音效 ────────────────────────────────────────────────
+  //
+  // WebAudio 現場合成，零音檔：離線 PWA 不用多快取任何東西，
+  // 也不會有「音效檔沒載到」這種失敗模式。
+  // 答對是上行的兩個純音（660→880，大三度上行，短促不黏），
+  // 答錯/逾時是低而軟的三角波 —— 提醒，不是懲罰。跳過不出聲（那是使用者自己的選擇）。
+  // iOS 的 AudioContext 要在使用者手勢裡解鎖 —— 作答本身就是手勢，剛好。
+  let answerAudioContext = null;
+
+  function soundEnabled() {
+    try {
+      return (loadRecords().settings || {}).sound !== false;
+    } catch (_error) {
+      return true;
+    }
+  }
+
+  function setSoundEnabled(on) {
+    const records = loadRecords();
+    records.settings = records.settings || {};
+    records.settings.sound = Boolean(on);
+    saveRecords(records);
+    if (on) playAnswerSound(true); // 立刻讓人聽到自己剛打開了什麼
+    render();
+  }
+
+  function playAnswerSound(correct) {
+    if (!soundEnabled()) return;
+    try {
+      const Ctor = window.AudioContext || window.webkitAudioContext;
+      if (!Ctor) return;
+      answerAudioContext = answerAudioContext || new Ctor();
+      if (answerAudioContext.state === "suspended") answerAudioContext.resume();
+      const now = answerAudioContext.currentTime;
+      const note = (freq, start, duration, type, peak) => {
+        const osc = answerAudioContext.createOscillator();
+        const gain = answerAudioContext.createGain();
+        osc.type = type;
+        osc.frequency.value = freq;
+        osc.connect(gain);
+        gain.connect(answerAudioContext.destination);
+        gain.gain.setValueAtTime(0.0001, now + start);
+        gain.gain.exponentialRampToValueAtTime(peak, now + start + 0.012);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + start + duration);
+        osc.start(now + start);
+        osc.stop(now + start + duration + 0.03);
+      };
+      if (correct) {
+        note(660, 0, 0.09, "sine", 0.11);
+        note(880, 0.07, 0.13, "sine", 0.09);
+      } else {
+        note(196, 0, 0.15, "triangle", 0.09);
+        note(147, 0.03, 0.17, "triangle", 0.05);
+      }
+    } catch (_error) {
+      // 音效失敗不能影響作答
+    }
+  }
 
   function penScaleSetting() {
     try {
