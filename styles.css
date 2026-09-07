@@ -211,10 +211,14 @@ button {
   background: color-mix(in srgb, var(--gold) 16%, var(--panel));
 }
 
-/* ── 手機外殼（<960px）：頂列（品牌＋工具）＋底部分頁列 ────────
+/* ── 手機外殼：頂列（品牌＋工具）＋底部分頁列 ────────────────
    側欄在窄螢幕上吃掉 212px 是災難；底部分頁列是拇指構得到的地方，
-   也是使用者在其他成熟 app 上早就練好的肌肉記憶。 */
-@media (max-width: 960px) {
+   也是使用者在其他成熟 app 上早就練好的肌肉記憶。
+   誰算手機：**窄（<768）或矮（橫持手機）**。
+   iPad 直式（834×1194）不是放大的手機，是一台電腦 ——
+   它走預設的桌面殼（側欄＋一般網頁密度）。實測回報的原話：
+   「平板不是手機自適應格式，而是電腦格式」。 */
+@media (max-width: 767px), (max-width: 960px) and (max-height: 599px) {
   .topbar {
     position: sticky;
     top: 0;
@@ -3857,7 +3861,9 @@ button,
    834pt 的 iPad 上不設限的話，一行卡片裡左右兩端的字會被拉到
    相距 700px —— 「推薦下一步 …… 先完成每日 12 題」讀起來像兩件事。
    作答畫面不設限：那裡的寬度是給手寫計算紙用的。 */
-@media (min-width: 681px) and (max-width: 960px) {
+/* 只剩橫持手機還在這個寬度帶用手機殼；iPad 直式已改走桌面殼，
+   桌面的側欄置中公式會接手，這條不能再蓋它。 */
+@media (min-width: 681px) and (max-width: 960px) and (max-height: 599px) {
   .topbar:not(.is-quiz) ~ .screen {
     width: min(100% - 32px, 720px);
     margin-inline: auto;
@@ -5690,7 +5696,7 @@ button,
   box-shadow: none;
 }
 
-@media (max-width: 960px) {
+@media (max-width: 767px), (max-width: 960px) and (max-height: 599px) {
   :root[data-theme="dark"] .topbar,
   :root[data-theme="dark"] .topbar-nav {
     border-color: rgba(255, 255, 255, 0.08);

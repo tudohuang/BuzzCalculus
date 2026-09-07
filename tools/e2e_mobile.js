@@ -420,13 +420,22 @@ async function run() {
         const t=document.querySelector('[data-board-action="toggle"]');
         if(t) t.click();
         await new Promise(r=>setTimeout(r,800));
+        // 2026-09 新契約：平板走桌面格式 —— 攤開是**內嵌大板**（跟電腦一樣，
+        // 可以捲），要整塊佔滿畫面就自己按全螢幕。舊契約「攤開不用捲」是
+        // 手機殼時代的補償，實測回饋是被強制全螢幕「比電腦更爛」。
+        const inline = !document.querySelector(".handwrite-shell.is-fullscreen");
+        const fsBtn=document.querySelector('[data-board-action="fullscreen"]');
+        if(fsBtn){ fsBtn.click(); await new Promise(r=>setTimeout(r,700)); }
+        const fullscreenWorks = Boolean(document.querySelector(".handwrite-shell.is-fullscreen"));
         const canvas=document.querySelector("[data-blackboard]");
         if(!canvas) return { ok: false };
         const r=canvas.getBoundingClientRect();
         return {
           ok: true,
+          inline,
+          fullscreenWorks,
           shareH: Math.round((r.height / window.innerHeight) * 100),
-          needsScroll: r.top + r.height > window.innerHeight + 2,
+          fits: r.top >= -2 && r.top + r.height <= window.innerHeight + 2,
           promptClipped: (() => {
             const p = document.querySelector(".handwrite-prompt");
             return p ? p.scrollWidth > p.clientWidth + 2 : false;
@@ -437,9 +446,11 @@ async function run() {
         check(`${pad.label} 的書寫區夠大`, false, "開不出計算紙");
         continue;
       }
-      check(`${pad.label} 的書寫區佔得夠高`, pad_.shareH >= 50, `螢幕高度的 ${pad_.shareH}%（門檻 50%）`);
-      check(`${pad.label} 不用捲動就寫得到`, !pad_.needsScroll,
-        pad_.needsScroll ? "書寫區在畫面外，要捲下去才寫得到 —— 而捲下去題目就不見了" : "書寫區整塊在畫面內");
+      check(`${pad.label} 攤開是內嵌板（不強制全螢幕）`, pad_.inline,
+        pad_.inline ? "" : "攤開直接被拽進全螢幕 —— 桌面格式不該這樣");
+      check(`${pad.label} 全螢幕自己按得進去`, pad_.fullscreenWorks, "");
+      check(`${pad.label} 全螢幕書寫區佔得夠高且整塊在畫面內`, pad_.shareH >= 50 && pad_.fits,
+        `螢幕高度的 ${pad_.shareH}%（門檻 50%）· 在畫面內=${pad_.fits}`);
       check(`${pad.label} 的題目沒有被切掉`, !pad_.promptClipped,
         pad_.promptClipped ? "題目列橫向溢出，開頭與結尾看不到" : "題目完整可見");
     }
@@ -474,8 +485,12 @@ async function run() {
       const t=document.querySelector('[data-board-action="toggle"]');
       if(!t) return { ok:false, why:"沒有計算紙開關" };
       t.click(); await new Promise(r=>setTimeout(r,800));
-      // 平板攤開計算紙會直接進全螢幕（isCoarsePointerTablet）
-      const wasFullscreen=Boolean(document.querySelector(".handwrite-shell.is-fullscreen"));
+      // 2026-09 改版：平板走桌面殼，攤開是**內嵌大板**（60vh），
+      // 不再被拽進全螢幕（實測原話：比電腦更爛）。全螢幕是自己按的。
+      const inlineFirst=!document.querySelector(".handwrite-shell.is-fullscreen");
+      const fsBtn=document.querySelector('[data-board-action="fullscreen"]');
+      if(fsBtn){ fsBtn.click(); await new Promise(r=>setTimeout(r,700)); }
+      const wasFullscreen=inlineFirst && Boolean(document.querySelector(".handwrite-shell.is-fullscreen"));
       const input=document.querySelector("#answer");
       const form=document.querySelector('[data-action="submit-answer"]');
       if(!input||!form) return { ok:false, why:"全螢幕裡沒有作答表單" };
@@ -506,8 +521,8 @@ async function run() {
     if (!fsWrong.ok) {
       check("全螢幕書寫答錯不會被關在覆蓋層底下", false, fsWrong.why);
     } else {
-      check("平板攤開計算紙會進全螢幕", fsWrong.wasFullscreen,
-        fsWrong.wasFullscreen ? "" : "前提不成立：計算紙沒有進全螢幕");
+      check("平板攤開是內嵌板、全螢幕要自己按才進", fsWrong.wasFullscreen,
+        fsWrong.wasFullscreen ? "" : "攤開直接跳全螢幕（不該）或按了全螢幕沒反應");
       check("答錯後自動退出全螢幕", !fsWrong.stillFullscreen && fsWrong.hasPanel,
         fsWrong.stillFullscreen ? "回饋在 fixed 覆蓋層底下，看不到也點不到" : "回饋卡看得到");
       check("答錯後「下一題」點得到、點了會前進", fsWrong.nextHit && fsWrong.advanced,
