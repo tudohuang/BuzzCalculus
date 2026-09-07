@@ -7752,6 +7752,7 @@
       render();
     }
     if (action === "submit-report-github") submitReportToGithub();
+    if (action === "submit-report-email") submitReportByEmail();
     if (action === "copy-report") copyReportText();
     if (action === "cancel-erase") {
       eraseConfirm = false;
@@ -8064,6 +8065,23 @@
     window.open(url, "_blank", "noopener");
   }
 
+  // 沒有 GitHub 帳號的人（大多數學生）走 mailto —— 內容同一份，
+  // 開他自己的郵件 app，寄不寄仍在他手上。
+  const REPORT_EMAIL = "tengyihuang.tw@gmail.com";
+
+  function submitReportByEmail() {
+    if (!reportDraft) return;
+    const { problemId, reason } = reportDraft;
+    const problem = problemById(problemId);
+    if (!problem) return;
+    const subject = `BuzzCalculus 題目回報：${problem.id}`;
+    const href = `mailto:${REPORT_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(buildReportText(problemId, reason))}`;
+    markReported(problemId, reason);
+    reportDraft = null;
+    render();
+    window.location.href = href;
+  }
+
   function copyReportText() {
     if (!reportDraft) return;
     const { problemId, reason } = reportDraft;
@@ -8098,9 +8116,11 @@
           <pre class="report-preview">${escapeHtml(text)}</pre>
           <div class="action-row">
             <button class="button home-primary" data-action="submit-report-github">${icon("flag")}開 GitHub issue</button>
+            <button class="button secondary" data-action="submit-report-email">${icon("send")}用 Email 回報</button>
             <button class="button secondary" data-action="copy-report">${icon("copy")}複製內容</button>
             <button class="button" data-action="cancel-report">${icon("x")}取消</button>
           </div>
+          <p class="panel-note">沒有 GitHub 帳號就走 Email —— 會開你的郵件 app、內容已經填好。</p>
         </div>
       </div>
     `;
