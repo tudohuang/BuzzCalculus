@@ -74,7 +74,8 @@
       count: 16,
       topicLocked: false,
       daily: false,
-      boss: true
+      boss: true,
+      ladder: true // 「階梯」要真的由易到難 —— 沒有這個旗標之前第一題就是 R6
     },
     boss_rush: {
       label: "Boss 連戰",
@@ -671,6 +672,11 @@
   let appNoticeAt = 0;
   let appNoticeView = null;
   let lastRenderedView = null;
+  // 通用確認框：破壞性動作（清錯題本、覆蓋定位）在按下去之前要問一聲。
+  // onConfirm 是 in-memory callback —— 這個 modal 不跨重載存活，也不需要。
+  let confirmDialog = null; // { title, body, confirmLabel, onConfirm }
+  // 復原 toast：單筆刪除先做掉、給 6 秒反悔。undo 是把備份放回去的 callback。
+  let undoToast = null; // { message, undo, timer }
   let calibrationPreview = null;
   let eraseConfirm = false;
   // 回報草稿：{ problemId, reason }。null 代表沒有開著的回報視窗。
@@ -762,7 +768,7 @@
       // 找不到就至少不要讓 Esc 冒泡去做別的事。
       // close-modal 是作答中「規則」「離開」視窗的關閉動作 ——
       // 漏了它，Esc 對這兩個視窗就只是把事件吃掉而不關（UAT C1 抓到）。
-      const cancel = modal.querySelector('[data-action^="cancel-"], [data-action="dismiss-notice"], [data-action="close-modal"]');
+      const cancel = modal.querySelector('[data-action^="cancel-"], [data-action="dismiss-notice"], [data-action="close-modal"], [data-action="confirm-dialog-no"]');
       if (cancel) cancel.click();
       return true;
     }
@@ -1144,7 +1150,7 @@
       if (lastRenderedView === "library" && view !== "library") librarySearch = "";
       lastRenderedView = view;
       releaseDetachedCanvases();
-      app.innerHTML = [renderTopbar(), renderScreen(), renderAppNoticeModal(), renderCalibrationPreviewModal(), renderEraseConfirmModal(), renderReportModal(), renderUpdateBanner()].join("");
+      app.innerHTML = [renderTopbar(), renderScreen(), renderAppNoticeModal(), renderCalibrationPreviewModal(), renderEraseConfirmModal(), renderReportModal(), renderConfirmDialog(), renderUndoToast(), renderUpdateBanner()].join("");
       bindEvents();
       typesetMath(app);
       window.setTimeout(() => typesetMath(app), 80);
@@ -1924,6 +1930,9 @@
   // 推薦規則刻意用「證據」而不是機率模型：每一條都要能一句話解釋給使用者聽。
   function suggestCause(problem, answer) {
     if (!problem || !answer) return null;
+    // 跳過與逾時不是「答錯」，不推測錯因 —— 五輪實測：快刷全跳過 6 題，
+    // 數據頁寫「選錯方法 100%，6/6 系統推測」。沒作答的東西推什麼都是編。
+    if (answer.reason === "Skipped" || answer.reason === "Timeout") return null;
     const elapsed = Number(answer.elapsed || 0);
     const limit = Number(problem.timeLimit || 0);
 
@@ -2096,6 +2105,7 @@
         }
         <div class="action-row">
           ${summary.due ? `<button class="button home-primary" data-action="start-srs-review">${icon("refresh")}開始複習</button>` : ""}
+          <button class="button ghost" data-action="open-mistakes">${icon("book-open-check")}看錯題本</button>
           ${mistakeCount ? `<button class="button secondary" data-action="open-mistakes">${icon("book")}錯題本（${mistakeCount}）</button>` : ""}
         </div>
       </section>
@@ -2498,7 +2508,7 @@
             <p class="section-label">整體能力</p>
             <h3>${overall.mastery === null ? "資料不足" : `${overall.mastery} 分`}</h3>
           </div>
-          <div class="insights-trends">
+          <div class="insights-trends" title="能力分數相對 7 / 30 天前的變化 —— 樣本不足時顯示「—」，練起來就會有數字">
             <div><span>7 天</span>${trendChip(profile.trend.d7)}</div>
             <div><span>30 天</span>${trendChip(profile.trend.d30)}</div>
           </div>
@@ -2732,6 +2742,11 @@
             : ""
         }
         ${renderCauseAutoNote()}
+        <div class="action-row">
+          <!-- 錯題本原本只有結算頁與 訓練→弱點 兩個入口 —— 想「看」錯題
+               （不是練）的人在數據頁最有可能，這裡給一扇門。 -->
+          <button class="button ghost" data-action="open-mistakes">${icon("book-open-check")}開錯題本</button>
+        </div>
       </section>
     `;
   }
@@ -5165,7 +5180,7 @@
           <div>
             <h3>技巧 tags</h3>
             <div class="weakness-tags">
-              ${analysis.tags.map((item) => `<button class="tag-button" data-action="train-tag" data-tag="${escapeAttr(item.key)}">${escapeHtml(item.label)} · ${item.count}</button>`).join("") || `<p class="panel-note">尚無資料</p>`}
+              ${analysis.tags.map((item) => `<button class="tag-button tag-train" data-action="train-tag" data-tag="${escapeAttr(item.key)}" title="開一局專練「${escapeAttr(item.label)}」">${icon("play")}${escapeHtml(item.label)} · ${item.count}</button>`).join("") || `<p class="panel-note">尚無資料</p>`}
             </div>
           </div>
           <div>
@@ -5510,7 +5525,7 @@
             <button class="button ghost" data-action="show-rules">${icon("info")}規則</button>
             <!-- 本局規則從 300px 的側欄降級成一行小字：它是被動資訊，
                  不值得一個常駐欄位把題目卡壓窄。詳細規則在「規則」鈕裡。 -->
-            <span class="quiz-mode-note">${quiz.examMode ? "整份倒數 · 時間到直接交卷" : quiz.survival ? "生存：最多錯 3 題" : quiz.suddenDeath ? "Boss 連戰：錯一題就結算" : noTimer ? "本局不倒數" : "每題各自倒數，時間到算未作答"}</span>
+            <span class="quiz-mode-note">${quiz.examMode ? "整份倒數 · 時間到直接交卷" : quiz.survival ? "生存：最多錯 3 題" : quiz.suddenDeath ? "Boss 連戰：錯一題就結算" : quiz.pressureMode ? "壓力訓練：時限逐題遞減（練到 60%），時間到算未作答" : noTimer ? "本局不倒數" : "每題各自倒數，時間到算未作答"}</span>
           </div>
         </section>
       </main>
@@ -6380,6 +6395,52 @@
           <p>${escapeHtml(appNotice)}</p>
           <button class="button" data-action="dismiss-notice">${icon("check")}知道了</button>
         </div>
+      </div>
+    `;
+  }
+
+  function askConfirm(options) {
+    confirmDialog = {
+      title: options.title || "確定嗎？",
+      body: options.body || "",
+      confirmLabel: options.confirmLabel || "確定",
+      onConfirm: options.onConfirm
+    };
+    render();
+  }
+
+  function renderConfirmDialog() {
+    if (!confirmDialog) return "";
+    return `
+      <div class="modal-backdrop" data-action="confirm-dialog-no">
+        <div class="modal" role="dialog" aria-modal="true" aria-labelledby="confirm-title" data-modal>
+          <h3 id="confirm-title">${escapeHtml(confirmDialog.title)}</h3>
+          <p>${escapeHtml(confirmDialog.body)}</p>
+          <div class="action-row">
+            <button class="button warning" data-action="confirm-dialog-yes">${icon("check")}${escapeHtml(confirmDialog.confirmLabel)}</button>
+            <button class="button secondary" data-action="confirm-dialog-no">${icon("x")}取消</button>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  function showUndoToast(message, undo) {
+    if (undoToast && undoToast.timer) window.clearTimeout(undoToast.timer);
+    const timer = window.setTimeout(() => {
+      undoToast = null;
+      render();
+    }, 6000);
+    undoToast = { message, undo, timer };
+    render();
+  }
+
+  function renderUndoToast() {
+    if (!undoToast) return "";
+    return `
+      <div class="undo-toast" role="status">
+        <span>${escapeHtml(undoToast.message)}</span>
+        <button class="button secondary" data-action="undo-toast">${icon("refresh")}復原</button>
       </div>
     `;
   }
@@ -7375,7 +7436,19 @@
       render();
     }
     if (action === "set-onboarding-level") applyOnboardingLevel(actionNode.dataset.level || "standard");
-    if (action === "start-placement") startPlacementQuiz();
+    if (action === "start-placement") {
+      const existing = loadRecords().placement;
+      if (existing && existing.rank) {
+        askConfirm({
+          title: "重新定位？",
+          body: `目前的定位是 R${existing.rank}。重測會用新結果覆蓋它（已解鎖的主線關卡不會收回）。`,
+          confirmLabel: "重新定位",
+          onConfirm: () => startPlacementQuiz()
+        });
+      } else {
+        startPlacementQuiz();
+      }
+    }
     if (action === "start-named-exam") startNamedExam(actionNode.dataset.examId || "");
     if (action === "start-choice") {
       selectedAnswerMode = "choice";
@@ -7544,10 +7617,62 @@
       if (ids.length) startMistakeQuiz("all", ids);
     }
     if (action === "start-mistake-one") startMistakeQuiz("all", [actionNode.dataset.problemId]);
-    if (action === "clear-mistakes") clearMistakes(selectedMistakeTopic);
-    if (action === "clear-mistake-one") clearMistakes("all", [actionNode.dataset.problemId]);
+    if (action === "confirm-dialog-yes") {
+      const run = confirmDialog && confirmDialog.onConfirm;
+      confirmDialog = null;
+      if (typeof run === "function") run();
+      render();
+    }
+    if (action === "confirm-dialog-no") { confirmDialog = null; render(); }
+    if (action === "undo-toast") {
+      const undo = undoToast && undoToast.undo;
+      if (undoToast && undoToast.timer) window.clearTimeout(undoToast.timer);
+      undoToast = null;
+      if (typeof undo === "function") undo();
+      render();
+    }
+    // 清錯題本是破壞性動作，跟「清除資料」同等級 —— 五輪實測它裸奔：
+    // 一按 6 題歸零，沒確認沒復原，而且就排在「重練」旁邊等著被誤觸。
+    if (action === "clear-mistakes") {
+      const records = loadRecords();
+      const count = Object.keys(records.mistakes || {}).filter(
+        (id) => selectedMistakeTopic === "all" || problemById(id)?.topic === selectedMistakeTopic
+      ).length;
+      askConfirm({
+        title: "清空錯題本？",
+        body: `會刪掉目前篩選下的 ${count} 筆錯題與它們的複習排程，無法復原。錯題是複習的原料 —— 確定不留？`,
+        confirmLabel: `刪除 ${count} 筆`,
+        onConfirm: () => clearMistakes(selectedMistakeTopic)
+      });
+    }
+    if (action === "clear-mistake-one") {
+      // 單筆移除：先做掉、給 6 秒反悔 —— 比彈框輕，也擋得住誤觸。
+      const id = actionNode.dataset.problemId;
+      const records = loadRecords();
+      const backup = records.mistakes && records.mistakes[id] ? { ...records.mistakes[id] } : null;
+      clearMistakes("all", [id]);
+      if (backup) {
+        showUndoToast("已移除 1 筆錯題", () => {
+          const current = loadRecords();
+          current.mistakes[id] = backup;
+          saveRecords(current);
+        });
+      }
+    }
     if (action === "tag-mistake") tagMistake(actionNode.dataset.problemId, actionNode.dataset.tag);
-    if (action === "tag-answer") tagMistake(actionNode.dataset.problemId, actionNode.dataset.tag);
+    if (action === "tag-answer") {
+      tagMistake(actionNode.dataset.problemId, actionNode.dataset.tag);
+      // 同步改在手上的這局：按了「粗心」按鈕本身要亮起來（is-active 讀的
+      // 是 answer.errorTag —— 只寫 records 的話畫面上永遠沒有選取態）。
+      if (quiz && quiz.answers) {
+        const hit = quiz.answers.find((entry) => entry.problem && entry.problem.id === actionNode.dataset.problemId);
+        if (hit) {
+          hit.errorTag = actionNode.dataset.tag;
+          hit.causeAuto = false;
+        }
+      }
+      render();
+    }
     if (action === "train-tag") {
       selectedPack = actionNode.dataset.tag || "all";
       selectedTopic = "all";
@@ -8090,7 +8215,7 @@
       : pathNodeProblems(node);
     const fallback = selectProblemPool(mode, node.topic || "all");
     const source = pool.length ? pool : fallback;
-    if (mode.boss) return selectBossPool(source, mode.count, records);
+    if (mode.boss) return selectBossPool(source, mode.count, records, Boolean(mode.ladder));
     if (mode.daily) return selectDailyPool(source, mode.count, records);
     const ordered = adaptiveShuffle(source, records, seedFromString(`${Date.now()}-${node.id}`));
 
@@ -9234,7 +9359,7 @@
     }
 
     if (mode.boss) {
-      return selectBossPool(pool, mode.count, records);
+      return selectBossPool(pool, mode.count, records, Boolean(mode.ladder));
     }
 
     if (mode.daily) {
@@ -9246,13 +9371,18 @@
     return padPool(ordered.slice(0, mode.count), pool, mode.count, { records });
   }
 
-  function selectBossPool(pool, count, records = loadRecords()) {
+  function selectBossPool(pool, count, records = loadRecords(), ladder = false) {
     const bossPool = pool.filter((problem) => problemRank(problem) >= 5);
     const sourcePool = bossPool.length ? bossPool : pool.filter((problem) => problemRank(problem) >= 4);
     const ranked = [6, 5, 4].flatMap((rank) =>
       preferFreshProblems(shuffle(sourcePool.filter((problem) => problemRank(problem) === rank), seedFromString(`${Date.now()}-boss-${rank}`)), records).slice(0, rank === 6 ? 7 : 5)
     );
-    return padPool(ranked, sourcePool.length ? sourcePool : pool, count, { records });
+    const drawn = padPool(ranked, sourcePool.length ? sourcePool : pool, count, { records });
+    // 「階梯測驗」的卡片寫「由易到難」，但抽出來是 [6,5,4] —— 開局就頂樓
+    // （五輪實測：第 1 題 Boss+ R6 419 秒）。階梯模式最後按 rank 升冪排一次；
+    // Boss 連戰不動 —— 它的本分就是第一題就打王。
+    if (ladder) drawn.sort((a, b) => problemRank(a) - problemRank(b));
+    return drawn;
   }
 
   function selectDailyPool(pool, count, records = loadRecords()) {
