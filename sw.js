@@ -1,4 +1,4 @@
-const CACHE_NAME = "buzzcalculus-v1.2.1-2026-09-08a";
+const CACHE_NAME = "buzzcalculus-v1.2.1-2026-09-08b";
 const CACHE_PREFIX = "buzzcalculus-";
 const APP_SHELL = [
   "./privacy.html",
@@ -6,6 +6,7 @@ const APP_SHELL = [
   "./changelog.html",
   "./terms.html",
   "./tutor.html",
+  "./guide.html",
   "./",
   "./index.html",
   "./workbook.html",

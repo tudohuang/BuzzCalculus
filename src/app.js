@@ -3622,33 +3622,30 @@
 
   function renderDataManagementCard(records) {
     return `
-      <aside class="data-management-card">
-        <section class="panel">
-          <details open>
-            <summary>
-              <span>資料管理</span>
-            </summary>
-            <!-- 這三個數字原本叫「作答歷史 / 錯題 / 練習局」，而前後兩個
-                 在使用者眼裡是同一件事，數字卻不一樣（一個是累計，一個只留最近 40 局）。
-                 看到兩個矛盾的數字之後，人會開始懷疑畫面上所有的數字。 -->
-            <div class="mini-stats">
-              <div><span>練過幾局</span><strong>${(records.attempts || 0) + (records.practiceRuns || 0)}</strong></div>
-              <div><span>錯題本</span><strong>${Object.keys(records.mistakes || {}).length}</strong></div>
-              <div title="逐題明細只保留最近 ${HISTORY_LIMIT} 局；更早的局數仍然算在「練過幾局」裡"><span>保留明細</span><strong>${(records.history || []).length}<small> / ${HISTORY_LIMIT}</small></strong></div>
-            </div>
-            <div class="stack-actions home-record-actions">
-              <button class="button secondary" data-action="open-history">${icon("clock")}作答歷史</button>
-              <button class="button ghost" data-action="export-records">${icon("download")}匯出 JSON</button>
-              <label class="button ghost import-label" for="import-records">${icon("upload")}匯入 JSON</label>
-              <button class="button ghost" data-action="reset-records">${icon("trash")}清除資料</button>
-              <input class="sr-only" id="import-records" type="file" accept="application/json" />
-            </div>
-            ${renderCalibrationOptIn()}
-            ${renderDisplayControls()}
-            ${renderPrivacyControls()}
-          </details>
-        </section>
-      </aside>
+      <section class="study-card data-card">
+        <div class="panel-title-row">
+          <div>
+            <p class="section-label">本機紀錄</p>
+            <h3>備份、搬家、清除</h3>
+          </div>
+        </div>
+        <!-- 這三個數字原本叫「作答歷史 / 錯題 / 練習局」，而前後兩個
+             在使用者眼裡是同一件事，數字卻不一樣（一個是累計，一個只留最近 40 局）。
+             看到兩個矛盾的數字之後，人會開始懷疑畫面上所有的數字。 -->
+        <div class="mini-stats">
+          <div><span>練過幾局</span><strong>${(records.attempts || 0) + (records.practiceRuns || 0)}</strong></div>
+          <div><span>錯題本</span><strong>${Object.keys(records.mistakes || {}).length}</strong></div>
+          <div title="逐題明細只保留最近 ${HISTORY_LIMIT} 局；更早的局數仍然算在「練過幾局」裡"><span>保留明細</span><strong>${(records.history || []).length}<small> / ${HISTORY_LIMIT}</small></strong></div>
+        </div>
+        <p class="panel-note">匯入是<strong>合併</strong>不是覆蓋 —— 兩台裝置各自練過的都會留下來。</p>
+        <div class="stack-actions home-record-actions">
+          <button class="button secondary" data-action="open-history">${icon("clock")}作答歷史</button>
+          <button class="button ghost" data-action="export-records">${icon("download")}匯出 JSON</button>
+          <label class="button ghost import-label" for="import-records">${icon("upload")}匯入 JSON</label>
+          <button class="button ghost" data-action="reset-records">${icon("trash")}清除資料</button>
+          <input class="sr-only" id="import-records" type="file" accept="application/json" />
+        </div>
+      </section>
     `;
   }
 
@@ -3712,64 +3709,121 @@
     render();
   }
 
-  function renderDisplayControls() {
-    const on = focusModeOn();
+  // 設定頁的骨架：分節（練習／介面／資料／隱私／說明），每節下面排卡片。
+  // 之前是「左欄一條 2000px、右欄兩張卡就斷掉」的兩欄格線，
+  // 介面與隱私開關全埋在一張叫「資料管理」的巨卡裡 —— 沒有人會去那裡找音效開關。
+  function settingsSection(title, cards) {
+    if (!cards || !String(cards).trim()) return "";
     return `
-      <div class="privacy-controls">
-        <p class="section-label">介面</p>
-        <div class="privacy-row">
-          <div>
-            <strong>專注模式<span class="privacy-state ${on ? "is-on" : "is-off"}">${on ? "開啟中" : "已關閉"}</span></strong>
-            <p>收起連勝、盾牌與成就這類元素，只留練習本身。連勝照算，只是不顯示。</p>
-          </div>
-          <button class="button ${on ? "secondary" : "ghost"}" data-action="toggle-focus-mode">
-            ${icon(on ? "x" : "check")}${on ? "關閉專注模式" : "開啟專注模式"}
-          </button>
+      <section class="settings-section">
+        <h3 class="settings-section-title">${escapeHtml(title)}</h3>
+        <div class="settings-cards">${cards}</div>
+      </section>
+    `;
+  }
+
+  // 統一的設定列：左邊「這是什麼」，右邊「怎麼改」。
+  // 開關一律用 開／關 兩段式 —— 按鈕寫狀態還是寫動作的老問題直接消失，
+  // 亮的那顆就是現況，按另一顆就是改變。
+  function renderSettingRow(title, desc, controlHtml) {
+    return `
+      <div class="setting-row">
+        <div class="setting-copy">
+          <strong>${title}</strong>
+          <p>${desc}</p>
         </div>
-        <div class="privacy-row">
-          <div>
-            <strong>計算紙筆寬</strong>
-            <p>用 Apple Pencil 覺得線太粗或太細，在這裡調。橡皮擦不受影響。</p>
-          </div>
-          <div class="segmented compact pen-scale-row" role="radiogroup" aria-label="筆寬">
-            ${PEN_SCALES.map(
-              (item) => `
-                <button class="tag-button ${((loadRecords().settings || {}).penScale || "standard") === item.key ? "is-active" : ""}"
-                  data-action="set-pen-scale" data-scale="${item.key}">${item.label}</button>`
-            ).join("")}
-          </div>
-        </div>
-        <div class="settings-row">
-          <div>
-            <strong>答題音效</strong>
-            <p>答對上行兩聲、答錯低一聲，跳過不出聲。圖書館練習就關掉。</p>
-          </div>
-          <div class="segmented compact" role="radiogroup" aria-label="答題音效">
-            <button class="tag-button ${soundEnabled() ? "is-active" : ""}" aria-pressed="${soundEnabled()}" data-action="set-sound" data-on="1">開</button>
-            <button class="tag-button ${soundEnabled() ? "" : "is-active"}" aria-pressed="${!soundEnabled()}" data-action="set-sound" data-on="">關</button>
-          </div>
-        </div>
+        <div class="setting-control">${controlHtml}</div>
       </div>
     `;
   }
 
-  function renderPrivacyControls() {
-    const on = analyticsEnabled();
+  function onOffControl(action, on, ariaLabel) {
     return `
-      <div class="privacy-controls">
-        <p class="section-label">隱私</p>
-        <div class="privacy-row">
+      <div class="segmented compact" role="radiogroup" aria-label="${escapeAttr(ariaLabel)}">
+        <button class="tag-button ${on ? "is-active" : ""}" aria-pressed="${on ? "true" : "false"}" data-action="${escapeAttr(action)}" data-on="1">開</button>
+        <button class="tag-button ${on ? "" : "is-active"}" aria-pressed="${on ? "false" : "true"}" data-action="${escapeAttr(action)}" data-on="">關</button>
+      </div>
+    `;
+  }
+
+  function renderInterfaceSettingsCard(records) {
+    const settings = records.settings || {};
+    const penScale = settings.penScale || "standard";
+    const surface = boardSurface();
+    return `
+      <section class="study-card interface-card">
+        ${renderSettingRow(
+          "專注模式",
+          "收起連勝、盾牌與成就，只留練習本身。連勝照算，只是不顯示。",
+          onOffControl("set-focus-mode", focusModeOn(), "專注模式")
+        )}
+        ${renderSettingRow(
+          "答題音效",
+          "答對上行兩聲、答錯低一聲，跳過不出聲。圖書館練習就關掉。",
+          onOffControl("set-sound", soundEnabled(), "答題音效")
+        )}
+        ${renderSettingRow(
+          "計算紙筆寬",
+          "用 Apple Pencil 覺得線太粗或太細，在這裡調。橡皮擦不受影響。",
+          `<div class="segmented compact pen-scale-row" role="radiogroup" aria-label="筆寬">
+            ${PEN_SCALES.map(
+              (item) => `<button class="tag-button ${penScale === item.key ? "is-active" : ""}" aria-pressed="${penScale === item.key ? "true" : "false"}" data-action="set-pen-scale" data-scale="${item.key}">${item.label}</button>`
+            ).join("")}
+          </div>`
+        )}
+        ${renderSettingRow(
+          "計算紙紙面",
+          "白紙配深色筆跡，黑板反過來。計算紙的工具列上也能隨手切。",
+          `<div class="segmented compact" role="radiogroup" aria-label="紙面">
+            <button class="tag-button ${surface === "paper" ? "is-active" : ""}" aria-pressed="${surface === "paper" ? "true" : "false"}" data-action="set-board-surface" data-surface="paper">白紙</button>
+            <button class="tag-button ${surface === "board" ? "is-active" : ""}" aria-pressed="${surface === "board" ? "true" : "false"}" data-action="set-board-surface" data-surface="board">黑板</button>
+          </div>`
+        )}
+      </section>
+    `;
+  }
+
+  function renderPrivacyCard() {
+    return `
+      <section class="study-card privacy-card">
+        ${renderSettingRow(
+          "使用分析",
+          "只送「哪個功能被用了幾次」這種計數。<strong>不會</strong>送你的作答內容、答案或題目。",
+          onOffControl("set-analytics", analyticsEnabled(), "使用分析")
+        )}
+        <p class="panel-note">詳細寫在<a href="privacy.html" target="_blank" rel="noopener">隱私政策</a>裡 —— 而且政策裡的每一條承諾都有自動化測試在看著。</p>
+      </section>
+    `;
+  }
+
+  function renderGuideCard() {
+    return `
+      <section class="study-card guide-card">
+        <div class="panel-title-row">
           <div>
-            <strong>使用分析<span class="privacy-state ${on ? "is-on" : "is-off"}">${on ? "開啟中" : "已關閉"}</span></strong>
-            <p>只送「哪個功能被用了幾次」這種計數。<strong>不會</strong>送你的作答內容、答案或題目。</p>
+            <p class="section-label">使用手冊</p>
+            <h3>十分鐘搞懂全部功能</h3>
           </div>
-          <!-- 狀態寫在標題旁邊，按鈕只寫「按下去會發生什麼」。
-               「已開啟 · 關閉」把狀態和動作塞進同一顆按鈕，
-               使用者得先解析一次才敢按。 -->
-          <button class="button ${on ? "secondary" : "ghost"}" data-action="toggle-analytics">
-            ${icon(on ? "x" : "activity")}${on ? "關閉分析" : "重新開啟"}
-          </button>
         </div>
+        <p class="panel-note">模式怎麼挑、答案欄怎麼打數學、錯題本與考前衝刺怎麼用 —— 一頁講完，可以印。</p>
+        <div class="action-row">
+          <a class="button secondary" href="guide.html" target="_blank" rel="noopener">${icon("book")}打開使用手冊</a>
+        </div>
+      </section>
+    `;
+  }
+
+  function renderAboutLinksCard() {
+    return `
+      <section class="study-card about-links-card">
+        <div class="panel-title-row">
+          <div>
+            <p class="section-label">關於</p>
+            <h3>BuzzCalculus</h3>
+          </div>
+          <span class="settings-version">${APP_VERSION} · ${BUILD_DATE}</span>
+        </div>
+        <p class="panel-note">整站零後端、沒有帳號系統，原始碼公開。誰做的、答案為什麼可信，寫在「關於」裡。</p>
         <p class="privacy-links">
           <a href="about.html" target="_blank" rel="noopener">關於</a>
           <span aria-hidden="true">·</span>
@@ -3780,75 +3834,78 @@
           <a href="terms.html" target="_blank" rel="noopener">服務條款</a>
           <span aria-hidden="true">·</span>
           <a href="tutor.html" target="_blank" rel="noopener">給家教與助教</a>
-          <span aria-hidden="true">·</span>
-          <span class="settings-version">${APP_VERSION} · ${BUILD_DATE}</span>
         </p>
-      </div>
+      </section>
     `;
   }
 
   // 校準包的說明必須寫在按鈕旁邊，而不是藏在條款裡。
   // 使用者要能在按下去之前就知道「這份檔案裡有什麼、沒有什麼」。
-  function renderCalibrationOptIn() {
-    const records = loadRecords();
+  function renderCalibrationCard(records) {
     const answered = Object.keys(records.problemStats || {}).length;
     if (answered < 20) return "";
     return `
-      <div class="calibration-optin">
-        <p class="section-label">幫忙校準難度（選填）</p>
-        <p>
-          目前的難度是作者估的，實測下來偏硬。你可以匯出一份作答統計幫忙修正。
-        </p>
-        <p class="calibration-contents">
+      <section class="study-card calibration-card">
+        <div class="panel-title-row">
+          <div>
+            <p class="section-label">幫忙校準難度（選填）</p>
+            <h3>匯出一份作答統計</h3>
+          </div>
+        </div>
+        <p class="panel-note">目前的難度是作者估的，實測下來偏硬。你的統計可以幫忙修正。</p>
+        <p class="panel-note calibration-contents">
           檔案裡只有 <strong>題號、難度、對錯次數、中位秒數</strong>，
           以及你的整體程度分層（高／中／低）。
           <strong>沒有</strong>題目內容、作答內容、時間戳記，也沒有任何可以認出你的東西。
           自訂題一律不匯出。
         </p>
-        <div class="stack-actions">
+        <div class="action-row">
           <button class="button ghost" data-action="preview-calibration">${icon("eye")}先看內容</button>
           <button class="button ghost" data-action="export-calibration">${icon("download")}匯出校準包（${answered} 題）</button>
         </div>
-      </div>
+      </section>
+    `;
+  }
+
+  function renderGoalCard(records) {
+    const week = weeklyMissionInfo(records);
+    const goal = dailyGoal(records);
+    return `
+      <section class="study-card">
+        <div class="panel-title-row">
+          <div>
+            <p class="section-label">目標</p>
+            <h3>每日 ${goal} 題</h3>
+          </div>
+          <span class="study-count">${week.completed}/${week.target}</span>
+        </div>
+        <div class="goal-options">
+          ${[5, 10, 12, 20].map((value) => `<button class="tag-button ${goal === value ? "is-active" : ""}" data-action="set-daily-goal" data-goal="${value}">${value} 題</button>`).join("")}
+        </div>
+        <div class="meter-track"><div class="meter-fill" style="width:${week.progress}%"></div></div>
+        <p class="panel-note">本週已完成 ${week.completed} 題，${week.daysDone} 天有練。</p>
+      </section>
     `;
   }
 
   function renderSettings() {
     const records = loadRecords();
-    const week = weeklyMissionInfo(records);
-    const goal = dailyGoal(records);
     return `
       <main class="screen">
         <section class="panel page-panel settings-page">
           <div class="page-head">
             <div>
               <p class="section-label">設定</p>
-              <h2>資料與設定</h2>
-              <p>所有紀錄都存在本機瀏覽器。換裝置前請先匯出 JSON。</p>
+              <h2>設定</h2>
+              <p>所有紀錄都存在本機瀏覽器，這裡的開關也是 —— 換裝置前先到「資料」匯出。</p>
             </div>
             <button class="button secondary" data-action="home">${icon("home")}回首頁</button>
           </div>
-          <div class="settings-grid">
-            <section class="study-card">
-              <div class="panel-title-row">
-                <div>
-                  <p class="section-label">目標</p>
-                  <h3>每日 ${goal} 題</h3>
-                </div>
-                <span class="study-count">${week.completed}/${week.target}</span>
-              </div>
-              <div class="goal-options">
-                ${[5, 10, 12, 20].map((value) => `<button class="tag-button ${goal === value ? "is-active" : ""}" data-action="set-daily-goal" data-goal="${value}">${value} 題</button>`).join("")}
-              </div>
-              <div class="meter-track"><div class="meter-fill" style="width:${week.progress}%"></div></div>
-              <p class="panel-note">本週已完成 ${week.completed} 題，${week.daysDone} 天有練。</p>
-            </section>
-            ${renderPlacementSettingsCard(records)}
-            ${renderExamCountdownSettingsCard(records)}
-            ${renderSyncSettingsCard()}
-            ${renderIosInstallCard()}
-            ${renderDataManagementCard(records)}
-          </div>
+          ${settingsSection("練習", renderGoalCard(records) + renderPlacementSettingsCard(records) + renderExamCountdownSettingsCard(records))}
+          ${settingsSection("介面", renderInterfaceSettingsCard(records))}
+          ${settingsSection("資料", renderDataManagementCard(records) + renderSyncSettingsCard() + renderCalibrationCard(records))}
+          ${settingsSection("隱私", renderPrivacyCard())}
+          ${settingsSection("說明", renderGuideCard() + renderIosInstallCard() + renderAboutLinksCard())}
         </section>
       </main>
     `;
@@ -7707,6 +7764,9 @@
     if (action === "export-records") exportRecords();
     if (action === "export-calibration") exportCalibrationPack();
     if (action === "toggle-analytics") setAnalyticsEnabled(!analyticsEnabled());
+    if (action === "set-analytics") { setAnalyticsEnabled(Boolean(actionNode.dataset.on)); render(); }
+    if (action === "set-focus-mode") setFocusMode(Boolean(actionNode.dataset.on));
+    if (action === "set-board-surface") { setBoardSurface(actionNode.dataset.surface || "paper"); render(); }
     if (action === "preview-calibration") showCalibrationPreview();
     if (action === "toggle-theme") toggleTheme();
     if (action === "install-app") installApp();
@@ -14255,7 +14315,7 @@
       problemShortCode,
       sourceChip,
       renderSolutionBody,
-      renderCalibrationOptIn,
+      renderCalibrationCard,
       formatHelp,
       buildCalibrationPack,
       checkSet,

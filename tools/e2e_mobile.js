@@ -162,6 +162,7 @@ async function run() {
       ["關於", "about.html", false],
       ["服務條款", "terms.html", false],
       ["隱私政策", "privacy.html", false],
+      ["使用手冊", "guide.html", false],
       ["更新紀錄", "changelog.html", false]
     ];
 
