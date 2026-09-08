@@ -2394,7 +2394,7 @@
             <h3>同型題，你變快了</h3>
           </div>
         </div>
-        <p class="panel-note">同一個技巧、計時答對的題，早期 vs 近期的中位耗時。這是你自己的數據，不是我們的宣稱。</p>
+        <p class="panel-note">同一個技巧、計時答對的題，早期 vs 近期的中位耗時。</p>
         <div class="speed-rows">
           ${rows
             .map(
@@ -3553,7 +3553,6 @@
             .join("")}
           <button class="button ghost" data-action="dismiss-onboarding">${icon("check")}稍後</button>
         </div>
-        <p class="first-run-hint">不知道從哪開始？做定位測驗，8 題就能校準你的起點。</p>
       </section>
     `;
   }
@@ -3574,12 +3573,11 @@
     // 推薦落在抽屜裡的模式時抽屜要自己打開 —— 收起來的推薦等於沒有推薦
     const advancedRecommended = advanced.some((key) => recos.has(key));
     return `
-      <p class="mode-picker-note">通常只需要選這三個；高壓玩法收在下面。</p>
       <div class="segmented modes learning-picker" role="group" aria-label="模式選擇">
         ${primary.filter((key) => MODES[key]).map(modeButton).join("")}
       </div>
       <details class="advanced-mode-drawer" data-advanced-mode-drawer ${(advancedModeOpen || advancedRecommended || advanced.includes(selectedMode)) ? "open" : ""}>
-        <summary>實驗 / 高壓模式（${advanced.length}）</summary>
+        <summary>高壓 / 進階玩法（${advanced.length}）</summary>
         <div class="segmented modes learning-picker">
           ${advanced.filter((key) => MODES[key]).map(modeButton).join("")}
         </div>
@@ -3922,7 +3920,7 @@
             <h3>${plan && plan.examAt ? `${escapeHtml(plan.label || "考試")} · ${dateValue}` : "設一個考試日期"}</h3>
           </div>
         </div>
-        <p class="panel-note">設了之後：首頁出倒數卡（含分數預測），每日訓練自動偏向考試範圍的缺口，最後一週切衝刺配方。</p>
+        <p class="panel-note">設定後首頁出現倒數卡，每日訓練自動偏向考試範圍的缺口。</p>
         <div class="exam-plan-form">
           <label>名稱 <input id="exam-plan-label" type="text" maxlength="12" value="${escapeAttr(plan ? plan.label || "" : "")}" placeholder="期中考"></label>
           <label>日期 <input id="exam-plan-date" type="date" value="${escapeAttr(dateValue)}"></label>
@@ -7104,7 +7102,7 @@
                 : derived
                   ? `<p>${escapeHtml(derived)}</p>
                      <p class="stage-derived">這一條是系統從題目本身算出來的，不是作者寫的。</p>`
-                  : `<p>這題還沒有寫專屬的關鍵步驟。直接看完整推導，別在這裡浪費時間。</p>`
+                  : `<p>這題直接看完整推導就好。</p>`
             }
           </div>
         </details>
@@ -7132,7 +7130,7 @@
     if (steps.length >= 2) {
       return `<ol class="solution-steps">${steps.map((step) => `<li>${escapeHtml(step)}</li>`).join("")}</ol>`;
     }
-    return `<p>${escapeHtml(problem.solution || "這題還沒有完整推導，先照上面的步驟走。")}</p>`;
+    return `<p>${escapeHtml(problem.solution || "推導就是上面的關鍵步驟，照著走即可。")}</p>`;
   }
 
   function markSolutionAssisted(problemId) {
@@ -7519,11 +7517,6 @@
       }
     }
     if (action === "start-named-exam") startNamedExam(actionNode.dataset.examId || "");
-    if (action === "start-choice") {
-      selectedAnswerMode = "choice";
-      selectedMode = "quick";
-      startQuiz();
-    }
     if (action === "start-planned") startPlannedSession(actionNode.dataset.length || "");
     if (action === "start-daily") {
       startDailyQuiz();
@@ -8700,37 +8693,10 @@
 
   function renderSyncSettingsCard() {
     const status = BuzzSync.status();
-    if (!status.configured) {
-      return `
-        <section class="study-card sync-card">
-          <div class="panel-title-row">
-            <div>
-              <p class="section-label">換裝置</p>
-              <h3>用檔案帶走，不需要帳號</h3>
-            </div>
-            <span class="sync-chip">現在就能用</span>
-          </div>
-          <p class="panel-note">
-            紀錄只存在這台裝置的瀏覽器裡。要換到別台，用下面的「匯出 JSON」帶走，再到新裝置匯入 ——
-            匯入是<strong>合併</strong>不是覆蓋，兩邊練過的都會留著。
-          </p>
-          <details class="sync-drawer">
-            <summary>那雲端同步呢？</summary>
-            <p class="panel-note">
-              還沒有，而且我們不想給一個做不到的日期。開帳號同步代表要有伺服器存你的作答紀錄，
-              那跟現在「沒有帳號、沒有伺服器資料庫」的隱私承諾是衝突的 ——
-              要做就得先想清楚怎麼做才不用把你的資料收走。
-            </p>
-            <p class="panel-note">在那之前，匯出／匯入就是完整的解法，而且它現在就能用。</p>
-            <p class="panel-note">
-              自己有伺服器的人：設 <code>window.BUZZ_SYNC_ENDPOINT</code> 就會多出
-              拉／推按鈕（GET 拉、PUT 推、updatedAt 新者勝）。這是給自架者留的縫，
-              資料仍然只去你自己指定的地方。
-            </p>
-          </details>
-        </section>
-      `;
-    }
+    // 沒設同步端點就不出卡：換裝置的流程（匯出→匯入合併）已經寫在
+    // 「本機紀錄」卡上，再放一張「雲端同步還沒有」的卡只是把沒做的
+    // 功能掛在牆上。自架者設了 BUZZ_SYNC_ENDPOINT 才會看到下面那張。
+    if (!status.configured) return "";
     const lastLine = status.lastSyncAt
       ? `上次同步：${String(status.lastSyncAt).slice(0, 16).replace("T", " ")}`
       : "尚未同步過";
@@ -9456,12 +9422,23 @@
     }
 
     if (mode.daily) {
-      return selectDailyPool(pool, mode.count, records);
+      return gentleRamp(selectDailyPool(pool, mode.count, records));
     }
 
     const seed = mode.daily ? seedFromString(new Date().toISOString().slice(0, 10)) : Date.now();
     const ordered = mode.daily ? preferFreshProblems(shuffle(pool, seed), records) : adaptiveShuffle(pool, records, seed);
-    return padPool(ordered.slice(0, mode.count), pool, mode.count, { records });
+    return gentleRamp(padPool(ordered.slice(0, mode.count), pool, mode.count, { records }));
+  }
+
+  // 局內難度爬坡：抽完的那一份照 rank 穩定排序，第一題永遠是這局最軟的。
+  // 抽題邏輯（弱點加權、家族打散、技巧交錯）都在前面做完了 —— 這裡只動
+  // 「呈現順序」：同 rank 之間保留原本的交錯，所以不會又變回同技巧連發。
+  // 大考／Boss／階梯不走這裡：模擬考就該像考卷一樣亂，階梯自己有排序。
+  function gentleRamp(problems) {
+    return (problems || [])
+      .map((problem, index) => ({ problem, index }))
+      .sort((a, b) => (problemRank(a.problem) - problemRank(b.problem)) || (a.index - b.index))
+      .map((item) => item.problem);
   }
 
   function selectBossPool(pool, count, records = loadRecords(), ladder = false) {
