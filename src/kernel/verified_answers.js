@@ -6,7 +6,7 @@
 // 為什麼放側表而不是寫進題目物件：題目物件多一個欄位就會改變抽題與 golden 測試的結果。
 // 內容的中繼資料一律走側表，這是專案的既有約定。
 //
-// 產生時的統計：1952 題中 1711 題通過，不符 0 題。
+// 產生時的統計：1994 題中 1753 題通過，不符 0 題。
 
 (function registerVerifiedAnswers() {
   "use strict";
@@ -1378,6 +1378,48 @@
     "si-set-020",
     "si-set-021",
     "si-set-022",
+    "tb-arc-001",
+    "tb-arc-002",
+    "tb-arc-003",
+    "tb-area-001",
+    "tb-area-002",
+    "tb-area-003",
+    "tb-area-004",
+    "tb-area-005",
+    "tb-avg-001",
+    "tb-avg-002",
+    "tb-avg-003",
+    "tb-curv-001",
+    "tb-curv-002",
+    "tb-curv-003",
+    "tb-imp-001",
+    "tb-imp-002",
+    "tb-imp-003",
+    "tb-imp-004",
+    "tb-lh-001",
+    "tb-lh-002",
+    "tb-lh-003",
+    "tb-lh-004",
+    "tb-lin-001",
+    "tb-lin-002",
+    "tb-lin-003",
+    "tb-lin-004",
+    "tb-mvt-001",
+    "tb-mvt-002",
+    "tb-mvt-003",
+    "tb-newt-001",
+    "tb-newt-002",
+    "tb-opt-001",
+    "tb-opt-002",
+    "tb-rev-001",
+    "tb-rev-002",
+    "tb-rev-003",
+    "tb-tan-001",
+    "tb-tan-002",
+    "tb-tan-003",
+    "tb-tan-004",
+    "tb-tan-005",
+    "tb-tan-006",
     "td-der-001",
     "td-der-002",
     "td-der-003",
@@ -1728,6 +1770,6 @@
   window.BuzzVerifiedAnswers = {
     has: function (id) { return Boolean(id && SET[id]); },
     count: IDS.length,
-    total: 1952
+    total: 1994
   };
 })();
