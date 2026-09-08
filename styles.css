@@ -6048,18 +6048,74 @@ button,
 
 .settings-page {
   display: grid;
-  gap: 18px;
+  gap: 22px;
 }
 
-.settings-grid {
+/* 設定分節：小節標題 + 卡片流。
+   auto-fit 讓卡片自己補位 —— 不會再有「右欄兩張卡之後整條空白」。 */
+.settings-section {
   display: grid;
-  grid-template-columns: minmax(0, 0.85fr) minmax(280px, 1fr);
+  gap: 10px;
+}
+
+.settings-section-title {
+  margin: 0;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  opacity: 0.62;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--line);
+}
+
+.settings-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 14px;
   align-items: start;
 }
 
-.settings-grid .data-management-card {
-  display: block;
+/* 統一設定列：左說明右控制，窄的時候換行 */
+.setting-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  flex-wrap: wrap;
+  padding: 12px 0;
+  border-top: 1px solid var(--line);
+}
+
+.setting-row:first-child {
+  border-top: 0;
+  padding-top: 0;
+}
+
+.setting-row:last-child {
+  padding-bottom: 0;
+}
+
+.setting-copy {
+  flex: 1 1 220px;
+  min-width: 0;
+}
+
+.setting-copy p {
+  margin: 4px 0 0;
+  font-size: 0.85rem;
+  line-height: 1.55;
+  opacity: 0.85;
+}
+
+.setting-control {
+  flex: 0 0 auto;
+}
+
+.settings-version {
+  font-size: 0.8rem;
+  opacity: 0.7;
+  white-space: nowrap;
 }
 
 .library-board {
@@ -6290,8 +6346,24 @@ button,
     grid-template-columns: 1fr 1fr;
   }
 
-  .settings-grid {
+  .settings-cards {
     grid-template-columns: 1fr;
+  }
+
+  /* 窄畫面：說明佔滿一行，控制項落到下一行橫著排 ——
+     不然 開/關 會被文案擠成直的一疊。 */
+  .setting-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .setting-control {
+    width: 100%;
+  }
+
+  .setting-control .segmented {
+    display: flex;
+    flex-wrap: wrap;
   }
 
   .library-search {
