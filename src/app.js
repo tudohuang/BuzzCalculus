@@ -2854,13 +2854,15 @@
     const retestCard = renderHomePathRetestCard(records);
     const refreshCard = renderHomeSkillRefreshCard(records);
     const streakCard = (records.totalAnswered || 0) && !focusModeOn() ? renderHomeStreakCard(records) : "";
-    if (!srsCard && !retestCard && !refreshCard && !streakCard) return "";
+    const questsCard = (records.totalAnswered || 0) ? renderHomeQuestsCard(records) : "";
+    if (!srsCard && !retestCard && !refreshCard && !streakCard && !questsCard) return "";
     return `
       <section class="home-retention" aria-label="複習與連勝">
         ${srsCard}
         ${retestCard}
         ${refreshCard}
         ${streakCard}
+        ${questsCard}
       </section>
     `;
   }
@@ -3042,6 +3044,53 @@
     `;
   }
 
+  // ── 每日任務（多鄰國 quests）──────────────────────────────
+  // 三條任務全部從**當天的 history 推導**，不另外追蹤狀態 ——
+  // 追蹤器會跟事實漂移，history 不會。全清的 +50 XP 是唯一要記的事
+  // （questBonusDates，防重複發）。
+  function todayQuestState(records) {
+    const today = localDateKey(new Date());
+    const sessions = (records.history || []).filter((item) => String(item.finishedAt || "").slice(0, 10) === today);
+    const correctToday = sessions.reduce((sum, item) => sum + (Number(item.correct) || 0), 0);
+    const xpToday = sessions.reduce(
+      (sum, item) => sum + (Number(item.correct) || 0) * 10 + (item.total >= 5 && item.correct === item.total ? 20 : 0),
+      0
+    );
+    const perfectRun = sessions.some((item) => Number(item.total) >= 5 && item.correct === item.total);
+    const goal = dailyGoal(records);
+    const quests = [
+      { icon: "check", label: `答對 ${goal} 題`, progress: Math.min(correctToday, goal), target: goal },
+      { icon: "zap", label: "賺 60 XP", progress: Math.min(xpToday, 60), target: 60 },
+      { icon: "star", label: "一局全對（5 題以上）", progress: perfectRun ? 1 : 0, target: 1 }
+    ].map((quest) => ({ ...quest, done: quest.progress >= quest.target }));
+    return { quests, allDone: quests.every((quest) => quest.done), today };
+  }
+
+  const QUEST_BONUS_XP = 50;
+
+  function renderHomeQuestsCard(records) {
+    if (focusModeOn()) return "";
+    const state = todayQuestState(records);
+    const claimed = Boolean((records.questBonusDates || {})[state.today]);
+    return `
+      <div class="retention-card quests-card">
+        <div class="retention-copy quests-copy">
+          <p class="section-label">今日任務</p>
+          ${state.quests.map((quest) => `
+            <div class="quest-row ${quest.done ? "is-done" : ""}">
+              <span class="quest-icon">${icon(quest.done ? "check" : quest.icon)}</span>
+              <div class="quest-body">
+                <span class="quest-label">${escapeHtml(quest.label)}</span>
+                <div class="meter-track"><div class="meter-fill" style="width:${Math.round((quest.progress / quest.target) * 100)}%"></div></div>
+              </div>
+              <strong class="quest-count">${quest.progress}/${quest.target}</strong>
+            </div>`).join("")}
+          ${claimed ? `<p class="quest-bonus-line">${icon("sparkles")}全部完成，+${QUEST_BONUS_XP} XP 已入帳</p>` : ""}
+        </div>
+      </div>
+    `;
+  }
+
   function renderHomeStreakCard(records) {
     const counts = activityCounts(records);
     const streakInfo = practiceStreakInfo(records, counts);
@@ -3060,7 +3109,7 @@
       <div class="retention-card streak-card">
         <div class="retention-copy">
           <p class="section-label">練習連勝</p>
-          <strong>${streakInfo.streak} 天</strong>
+          <strong class="streak-number ${streakInfo.streak > 0 ? "is-lit" : ""}">${icon("flame")}${streakInfo.streak} 天</strong>
           <span class="shield-chip ${streakInfo.shieldAvailable ? "is-ready" : "is-used"}">${icon("shield")}盾牌${streakInfo.shieldAvailable ? "可用" : "本週已用"}</span>
           ${(() => {
             const info = xpLevelInfo(loadRecords().xp);
@@ -6802,6 +6851,7 @@
             <span><strong>${avgTime}s</strong>平均</span>
             ${quiz.practice ? "" : `<span><strong>${quiz.score}</strong>分數</span>`}
             ${quiz.xpGained ? `<span class="xp-chip"><strong>+${quiz.xpGained}</strong>XP</span>` : ""}
+            ${quiz.questBonus ? `<span class="xp-chip quest-bonus-chip"><strong>+${quiz.questBonus}</strong>任務全清</span>` : ""}
           </div>
           ${quiz.placementResult ? renderPlacementNextStep() : renderResultsActions(gateResult, pathResult)}
           ${quiz.dailyOneOutcome ? renderDailyOneOutcomePanel(quiz.dailyOneOutcome) : ""}
@@ -12750,6 +12800,9 @@
     records.lastPlayed = finishedAt;
     currentQuiz.xpGained = xpGainFor(currentQuiz, correct, total);
     records.xp = (records.xp || 0) + currentQuiz.xpGained;
+    // 每日任務全清的一次性加成：這局的 history 寫進去之後再判，
+    // 所以「這一局補完最後一條任務」也算得到。
+    currentQuiz.questBonus = 0;
 
     const answerContext = { mistakesMode: currentQuiz.mode === "mistakes" };
     currentQuiz.answers.forEach((answer) => updateAnswerRecords(records, answer, finishedAt, answerContext));
@@ -12787,6 +12840,16 @@
       }))
     };
     records.history = [historyItem, ...(records.history || [])].slice(0, HISTORY_LIMIT);
+    // 每日任務全清判定（要在 history 寫入之後，這一局才算得進去）
+    {
+      const questState = todayQuestState(records);
+      records.questBonusDates = records.questBonusDates || {};
+      if (questState.allDone && !records.questBonusDates[questState.today]) {
+        records.questBonusDates[questState.today] = true;
+        records.xp += QUEST_BONUS_XP;
+        currentQuiz.questBonus = QUEST_BONUS_XP;
+      }
+    }
     // history 只留最近 HISTORY_LIMIT 場，能力模型的趨勢會因此斷片。
     // attemptLog 收下每一題的精簡紀錄（上限 5000 筆），讓成長曲線活得比 history 久。
     if (window.BuzzRecords) {
