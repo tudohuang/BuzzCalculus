@@ -1101,68 +1101,36 @@ button {
   line-height: 1.5;
 }
 
+/* ── 主線地圖：多鄰國式關卡 ─────────────────────────────
+   大圓鈕沿中軸蛇行（--sway 由 renderPathNode 給，-0.9~0.9），
+   完成＝綠底畫勾、金色＝金底、下一格＝進度環＋「開始」氣泡＋脈動光暈、
+   還沒到的＝灰。3D 按壓感靠下緣實心陰影，按下去位移吃掉陰影。 */
 .buzz-path-map {
   position: relative;
-  display: grid;
-  gap: 12px;
-  padding: 4px 0;
-}
-
-.buzz-path-map::before {
-  content: "";
-  position: absolute;
-  top: 18px;
-  bottom: 18px;
-  left: 50%;
-  width: 3px;
-  border-radius: 999px;
-  background: #e5dccd;
-  transform: translateX(-50%);
-}
-
-.path-line {
-  /* Sits exactly on the map spine (see .buzz-path-map::before). */
-  position: absolute;
-  top: 30px;
-  bottom: 30px;
-  left: 31px;
-  width: 3px;
-  z-index: 0;
-  pointer-events: none;
-  overflow: visible;
-}
-
-.path-line-draw {
-  stroke: var(--green);
-  stroke-width: 3;
-  stroke-linecap: round;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 26px;
+  padding: 18px 0 26px;
+  --sway-unit: 96px;
 }
 
 .path-step {
   position: relative;
-  width: min(78%, 520px);
   z-index: 1;
-}
-
-.path-step.is-offset {
-  margin-left: auto;
+  transform: translateX(calc(var(--sway, 0) * var(--sway-unit)));
 }
 
 .path-node-button {
-  width: 100%;
-  min-height: 86px;
   display: grid;
-  grid-template-columns: 64px minmax(0, 1fr) auto;
-  gap: 12px;
-  align-items: center;
-  padding: 12px;
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  background: #fff;
+  justify-items: center;
+  gap: 8px;
+  padding: 6px;
+  border: 0;
+  background: none;
   color: var(--ink);
-  text-align: left;
   cursor: pointer;
-  box-shadow: 0 5px 0 rgba(32, 33, 31, 0.12);
+  -webkit-tap-highlight-color: transparent;
 }
 
 .path-node-button:disabled {
@@ -1170,59 +1138,88 @@ button {
 }
 
 .path-node-ring {
-  width: 58px;
-  height: 58px;
+  position: relative;
+  width: 76px;
+  height: 76px;
   display: grid;
   place-items: center;
-  border: 3px solid var(--line-strong);
   border-radius: 50%;
-  background: var(--surface);
+  background: var(--line);
+}
+
+/* 下一格：conic 進度環（--mastery 0-100） */
+.path-step.is-next .path-node-ring {
+  background:
+    conic-gradient(var(--gold) calc(var(--mastery, 6) * 1%), var(--line) 0);
 }
 
 .path-node-core {
-  width: 42px;
-  height: 42px;
+  width: 62px;
+  height: 62px;
   display: grid;
   place-items: center;
   border-radius: 50%;
-  background: #20211f;
+  background: #9aa096;
   color: #fff;
+  box-shadow: 0 5px 0 rgba(32, 33, 31, 0.28), inset 0 -4px 0 rgba(0, 0, 0, 0.14);
+  transition: transform 0.06s ease, box-shadow 0.06s ease;
+}
+
+.path-node-button:active .path-node-core {
+  transform: translateY(4px);
+  box-shadow: 0 1px 0 rgba(32, 33, 31, 0.28), inset 0 -2px 0 rgba(0, 0, 0, 0.14);
+}
+
+.path-node-core svg {
+  width: 26px;
+  height: 26px;
+}
+
+/* 有前測的關卡：右下角小旗徽章，不搶掉主題圖示 */
+.path-gate-chip {
+  position: absolute;
+  right: -2px;
+  bottom: -2px;
+  width: 24px;
+  height: 24px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--panel);
+  border: 2px solid var(--line-strong);
+  color: var(--muted);
+}
+
+.path-gate-chip svg {
+  width: 12px;
+  height: 12px;
 }
 
 .path-node-copy {
-  min-width: 0;
   display: grid;
-  gap: 4px;
-}
-
-.path-node-copy strong,
-.path-node-copy small {
-  display: block;
+  justify-items: center;
+  gap: 2px;
+  max-width: 130px;
+  text-align: center;
 }
 
 .path-node-copy strong {
-  font-size: 1.05rem;
+  font-size: 0.95rem;
   line-height: 1.15;
 }
 
 .path-node-copy small {
   color: var(--muted);
   font-weight: 760;
-  line-height: 1.35;
+  font-size: 0.74rem;
+  line-height: 1.3;
 }
 
-.path-step.is-active .path-node-ring,
-.path-step.is-ready .path-node-ring {
-  border-color: var(--gold);
-}
-
+/* 狀態上色 */
 .path-step.is-active .path-node-core,
-.path-step.is-ready .path-node-core {
+.path-step.is-ready .path-node-core,
+.path-step.is-next .path-node-core {
   background: var(--gold-dark);
-}
-
-.path-step.is-mastered .path-node-ring {
-  border-color: var(--green);
 }
 
 .path-step.is-mastered .path-node-core {
@@ -1230,21 +1227,75 @@ button {
 }
 
 .path-step.is-gold .path-node-ring {
-  border-color: #f1b92f;
-  background: #fff6d9;
+  background: #f6d987;
 }
 
 .path-step.is-gold .path-node-core {
-  background: #b7791f;
+  background: #d9a521;
 }
 
-.path-step.is-locked .path-node-button {
-  opacity: 0.58;
-  box-shadow: none;
+.path-step.is-jump .path-node-core {
+  background: #9aa096;
 }
 
-.path-step.is-locked .path-node-core {
-  background: #7b8178;
+/* 下一格：脈動光暈＋跳動的「開始」氣泡 */
+.path-step.is-next .path-node-ring::after {
+  content: "";
+  position: absolute;
+  inset: -9px;
+  border-radius: 50%;
+  border: 3px solid color-mix(in srgb, var(--gold) 55%, transparent);
+  animation: path-pulse 1.6s ease-out infinite;
+  pointer-events: none;
+}
+
+@keyframes path-pulse {
+  0% { transform: scale(0.94); opacity: 0.9; }
+  70% { transform: scale(1.12); opacity: 0; }
+  100% { transform: scale(1.12); opacity: 0; }
+}
+
+.path-start-bubble {
+  position: absolute;
+  top: -34px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2;
+  padding: 5px 14px;
+  border-radius: 12px;
+  border: 2px solid var(--gold-dark);
+  background: var(--panel);
+  color: var(--gold-dark);
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+  animation: start-bob 1.3s ease-in-out infinite;
+}
+
+.path-start-bubble::after {
+  content: "";
+  position: absolute;
+  bottom: -7px;
+  left: 50%;
+  width: 10px;
+  height: 10px;
+  transform: translateX(-50%) rotate(45deg);
+  background: var(--panel);
+  border-right: 2px solid var(--gold-dark);
+  border-bottom: 2px solid var(--gold-dark);
+}
+
+@keyframes start-bob {
+  0%, 100% { transform: translateX(-50%) translateY(0); }
+  50% { transform: translateX(-50%) translateY(-5px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .path-step.is-next .path-node-ring::after,
+  .path-start-bubble {
+    animation: none;
+  }
 }
 
 .study-card,
@@ -4085,46 +4136,6 @@ button,
     font-size: 1.84rem;
   }
 
-  .buzz-path-map {
-    gap: 10px;
-  }
-
-  .buzz-path-map::before {
-    left: 30px;
-  }
-
-  .path-step,
-  .path-step.is-offset {
-    width: 100%;
-    margin-left: 0;
-  }
-
-  .path-node-button {
-    min-height: 78px;
-    grid-template-columns: 52px minmax(0, 1fr) 52px;
-    gap: 10px;
-    padding: 10px;
-  }
-
-  .path-node-ring {
-    width: 50px;
-    height: 50px;
-    border-width: 2px;
-  }
-
-  .path-node-core {
-    width: 38px;
-    height: 38px;
-  }
-
-  .path-node-copy strong {
-    font-size: 0.98rem;
-  }
-
-  .path-node-copy small {
-    font-size: 0.78rem;
-  }
-
   .first-run-panel{
     flex-direction: column;
     align-items: stretch;
@@ -4466,8 +4477,8 @@ button,
   line-height: 1.35;
 }
 
-.next-lesson-ring {
-  border-color: var(--gold);
+.next-lesson-ring .path-node-core {
+  background: var(--gold-dark);
 }
 
 .path-progress-line {
@@ -4715,143 +4726,35 @@ button,
   }
 }
 
+/* 多鄰國式地圖的殼寬與窄幅調整：蛇形振幅在窄畫面收斂，
+   圓鈕縮一號但仍是「大圓＋下方標籤」的語彙，不退回列表。 */
 .buzz-path-map {
   max-width: 680px;
-  grid-template-columns: 1fr;
-  gap: 10px;
   margin: 0 auto;
-  padding: 2px 0;
-}
-
-.buzz-path-map::before {
-  display: block;
-  top: 30px;
-  bottom: 30px;
-  left: 31px;
-  width: 3px;
-  transform: none;
-  background: #ded6c8;
-}
-
-.path-step,
-.path-step.is-offset {
-  width: 100%;
-  margin-left: 0;
-}
-
-.path-node-button {
-  min-height: 74px;
-  grid-template-columns: 54px minmax(0, 1fr) 52px;
-  justify-items: stretch;
-  gap: 12px;
-  padding: 10px 12px;
-  text-align: left;
-  box-shadow: none;
-}
-
-.path-node-ring {
-  width: 50px;
-  height: 50px;
-  border-width: 2px;
-}
-
-.path-node-core {
-  width: 38px;
-  height: 38px;
-}
-
-.path-node-copy {
-  justify-items: start;
-}
-
-.path-node-copy strong {
-  font-size: 1rem;
-}
-
-.path-node-copy small {
-  font-size: 0.76rem;
-}
-
-.path-node-progress {
-  justify-self: end;
-  align-self: center;
-  min-height: 0;
-  color: var(--muted);
-  font-size: 0.76rem;
-  font-weight: 780;
-}
-
-.path-step.is-jump .path-node-button {
-  border-style: dashed;
-  background: rgba(255, 255, 255, 0.74);
-}
-
-.path-step.is-jump .path-node-ring {
-  border-color: #b8b0a1;
-}
-
-.path-step.is-jump .path-node-core {
-  background: #66706d;
-}
-
-.path-step.is-next .path-node-button {
-  border-color: rgba(33, 131, 91, 0.45);
-  background: #eef8f0;
-  box-shadow: 0 5px 0 rgba(33, 131, 91, 0.18);
-}
-
-.path-step.is-next .path-node-ring {
-  border-color: var(--green);
-}
-
-.path-step.is-next .path-node-core {
-  background: var(--green);
-}
-
-.path-step.is-next .path-node-progress {
-  min-width: 30px;
-  min-height: 30px;
-  display: grid;
-  place-items: center;
-  border: 1px solid rgba(33, 131, 91, 0.24);
-  border-radius: 50%;
-  background: #fff;
-  color: var(--green);
 }
 
 @media (max-width: 680px) {
   .buzz-path-map {
-    gap: 8px;
-  }
-
-  .buzz-path-map::before {
-    left: 27px;
-  }
-
-  .path-node-button {
-    min-height: 68px;
-    grid-template-columns: 48px minmax(0, 1fr) 44px;
-    gap: 9px;
-    padding: 9px 10px;
+    --sway-unit: 54px;
+    gap: 20px;
   }
 
   .path-node-ring {
-    width: 44px;
-    height: 44px;
+    width: 66px;
+    height: 66px;
   }
 
   .path-node-core {
-    width: 34px;
-    height: 34px;
+    width: 54px;
+    height: 54px;
+  }
+
+  .path-node-copy {
+    max-width: 108px;
   }
 
   .path-node-copy strong {
-    font-size: 0.92rem;
-  }
-
-  .path-node-copy small,
-  .path-node-progress {
-    font-size: 0.68rem;
+    font-size: 0.88rem;
   }
 }
 
@@ -4958,58 +4861,24 @@ button,
     display: none;
   }
 
-  /* Compact horizontal path map: keeps earlier nodes reachable on mobile
-     without the tall vertical spine. */
+  /* 首頁的迷你地圖：手機上改成橫向捲的圓鈕列（省高度），
+     蛇形偏移歸零，其他語彙（大圓、狀態色、開始氣泡）照舊。 */
   .home-screen .buzz-path-map {
-    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
     max-width: 100%;
     overflow-x: auto;
-    gap: 8px;
-    padding: 2px 0 8px;
+    overflow-y: visible;
+    gap: 14px;
+    padding: 40px 6px 10px;
+    --sway-unit: 0px;
     scroll-snap-type: x proximity;
     -webkit-overflow-scrolling: touch;
   }
 
-  .home-screen .buzz-path-map::before,
-  .home-screen .buzz-path-map .path-line {
-    display: none;
-  }
-
-  .home-screen .buzz-path-map .path-step,
-  .home-screen .buzz-path-map .path-step.is-offset {
-    flex: 0 0 148px;
-    width: auto;
-    margin-left: 0;
+  .home-screen .buzz-path-map .path-step {
+    flex: 0 0 auto;
     scroll-snap-align: start;
-  }
-
-  .home-screen .buzz-path-map .path-node-button {
-    min-height: 108px;
-    grid-template-columns: 1fr;
-    justify-items: center;
-    gap: 6px;
-    padding: 10px 8px;
-    text-align: center;
-  }
-
-  .home-screen .buzz-path-map .path-node-copy {
-    justify-items: center;
-  }
-
-  .home-screen .buzz-path-map .path-node-copy small {
-    max-width: 100%;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  .home-screen .buzz-path-map .path-node-progress {
-    justify-self: center;
-  }
-
-  .home-screen .buzz-path-map .path-badge {
-    top: 6px;
-    right: 6px;
   }
 
   .path-recommendation {
@@ -5035,62 +4904,31 @@ button,
 
   .buzz-path-map {
     max-width: 100%;
-    gap: 9px;
-    padding-bottom: 4px;
-  }
-
-  .buzz-path-map::before {
-    top: 24px;
-    bottom: 24px;
-    left: 26px;
-    width: 4px;
-    background: #d9d1c4;
-  }
-
-  .path-node-button {
-    min-height: 70px;
-    grid-template-columns: 46px minmax(0, 1fr) 38px;
-    gap: 8px;
-    padding: 9px;
-    border-color: rgba(32, 33, 31, 0.11);
-    box-shadow: 0 4px 0 rgba(32, 33, 31, 0.1);
+    --sway-unit: 44px;
+    gap: 18px;
+    padding-top: 40px;
   }
 
   .path-node-ring {
-    width: 42px;
-    height: 42px;
+    width: 60px;
+    height: 60px;
   }
 
   .path-node-core {
-    width: 32px;
-    height: 32px;
+    width: 48px;
+    height: 48px;
+  }
+
+  .path-node-copy {
+    max-width: 100px;
   }
 
   .path-node-copy strong {
-    font-size: 0.94rem;
+    font-size: 0.84rem;
   }
 
   .path-node-copy small {
-    max-width: 100%;
-    overflow: hidden;
-    font-size: 0.7rem;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  .path-node-progress {
-    justify-self: end;
-    font-size: 0.7rem;
-  }
-
-  .path-step.is-next .path-node-button {
-    min-height: 76px;
-    border-width: 2px;
-  }
-
-  .path-step.is-next .path-node-progress {
-    min-width: 28px;
-    min-height: 28px;
+    font-size: 0.68rem;
   }
 
   .home-more {
@@ -5635,7 +5473,6 @@ button,
 :root[data-theme="dark"] .syntax-pill,
 :root[data-theme="dark"] .proof-step,
 :root[data-theme="dark"] .proof-overview div,
-:root[data-theme="dark"] .path-node-button,
 :root[data-theme="dark"] .next-lesson-card,
 :root[data-theme="dark"] .history-review-item,
 :root[data-theme="dark"] .home-selected-pill,

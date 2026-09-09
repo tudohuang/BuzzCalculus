@@ -1254,14 +1254,12 @@
       fuse([pop]);
     }
 
-    // Draw the learning-path connector line only up to the freshly-unlocked
-    // node (anime.js stroke animation). Absent the flag the line is static.
-    const drawLine = root.querySelector("[data-draw-line]");
-    if (drawLine && A && !reduce) {
-      const full = A.setDashoffset(drawLine);
-      const frac = Math.max(0, Math.min(1, Number(drawLine.getAttribute("data-draw-to")) || 1));
-      // strokeDashoffset goes full(hidden) -> full*(1-frac)(drawn up to node).
-      A({ targets: drawLine, strokeDashoffset: [full, full * (1 - frac)], duration: 900, delay: 160, easing: "easeInOutSine" });
+    // 剛解鎖的關卡：彈跳進場（連接線動畫已隨蛇形地圖移除，
+    // 「解鎖了什麼」現在由那顆圓鈕自己說）。
+    const unlockedStep = root.querySelector(".path-step.is-just-unlocked .path-node-ring");
+    if (unlockedStep && A && !reduce) {
+      A.set(unlockedStep, { scale: 0.4, opacity: 0.2 });
+      A({ targets: unlockedStep, scale: [0.4, 1], opacity: [0.2, 1], duration: 700, easing: "spring(1, 70, 10, 0)" });
     }
   }
 
@@ -3168,34 +3166,15 @@
         </div>
 
         <div class="buzz-path-map" aria-label="BuzzCalculus learning path">
-          ${renderPathLine(path)}
           ${path.nodes.map((node, index) => renderPathNode(node, index, node.id === next.id)).join("")}
         </div>
       </section>
     `;
   }
 
-  function renderPathLine(path) {
-    const total = Math.max(1, path.nodes.length);
-    const unlockedIdx = justUnlockedNodeId
-      ? path.nodes.findIndex((node) => node.id === justUnlockedNodeId)
-      : -1;
-    // Transient flag is consumed on this render; a normal visit shows a static line.
-    justUnlockedNodeId = "";
-    if (unlockedIdx >= 0) {
-      const frac = Math.min(1, (unlockedIdx + 0.5) / total);
-      return `
-        <svg class="path-line" preserveAspectRatio="none" aria-hidden="true">
-          <line class="path-line-draw" data-draw-line data-draw-to="${frac.toFixed(3)}" x1="50%" y1="0" x2="50%" y2="100%" />
-        </svg>
-      `;
-    }
-    return `
-      <svg class="path-line" preserveAspectRatio="none" aria-hidden="true">
-        <line class="path-line-draw" x1="50%" y1="0" x2="50%" y2="100%" />
-      </svg>
-    `;
-  }
+  // 多鄰國式的蛇形偏移：關卡圓鈕沿著中軸左右擺，八格一個週期。
+  // 只是視覺 —— DOM 順序、動作與可及性都跟直排一樣。
+  const PATH_SERPENTINE = [0, 0.55, 0.9, 0.55, 0, -0.55, -0.9, -0.55];
 
   function renderPathNode(node, index, isNext = false) {
     const statusText = {
@@ -3206,19 +3185,24 @@
       gold: "金色"
     }[node.status] || "可開始";
     const label = isNext ? "下一格" : statusText;
-    const badge = node.status === "gold" ? "金" : node.status === "mastered" ? "通過" : node.gated ? "關卡" : "";
+    const done = node.status === "mastered" || node.status === "gold";
+    const justUnlocked = node.id === justUnlockedNodeId;
+    if (justUnlocked) justUnlockedNodeId = "";
+    const sway = PATH_SERPENTINE[index % PATH_SERPENTINE.length];
+    // 目前這格用 conic 進度環顯示熟練度；完成格直接畫勾，不再顯示百分比。
+    const ringStyle = isNext ? ` style="--mastery:${Math.max(6, node.mastery)}"` : "";
     return `
-      <div class="path-step is-${node.status} ${isNext ? "is-next" : ""}">
-        <button class="path-node-button" data-action="start-path-node" data-node-id="${escapeAttr(node.id)}" aria-label="${escapeAttr(`${node.label}，${label}`)}" title="${escapeAttr(`${node.label} · ${label}`)}">
-          <span class="path-node-ring">
-            <span class="path-node-core">${icon(node.icon)}</span>
+      <div class="path-step is-${node.status} ${isNext ? "is-next" : ""} ${node.gated ? "is-gated" : ""} ${justUnlocked ? "is-just-unlocked" : ""}" style="--sway:${sway}">
+        <button class="path-node-button" data-action="start-path-node" data-node-id="${escapeAttr(node.id)}" aria-label="${escapeAttr(`${node.label}，${label}`)}" title="${escapeAttr(`${node.label} · ${label} · ${node.relatedCount} 題`)}">
+          ${isNext ? `<span class="path-start-bubble" aria-hidden="true">開始</span>` : ""}
+          <span class="path-node-ring"${ringStyle}>
+            <span class="path-node-core">${icon(done ? "check" : node.icon)}</span>
+            ${node.gated && !done ? `<span class="path-gate-chip" aria-hidden="true">${icon("flag")}</span>` : ""}
           </span>
           <span class="path-node-copy">
             <strong>${escapeHtml(node.short)}</strong>
-            <small>${label} · ${node.relatedCount} 題</small>
+            <small>${done ? (node.status === "gold" ? "金色" : "已通過") : `${label} · ${node.relatedCount} 題`}</small>
           </span>
-          ${badge ? `<span class="path-badge">${badge}</span>` : ""}
-          <span class="path-node-progress">${isNext ? `${index + 1}` : `${node.mastery}%`}</span>
         </button>
       </div>
     `;
@@ -10587,6 +10571,10 @@
         practice: Boolean(quiz.practice)
       });
       saveQuizRecord(quiz);
+      // 過關號角：正確率過半吹上行琶音，沒過半給短的收尾音。
+      // 跟答題音效同一個開關、同一套合成器 —— 結算的儀式感是多鄰國
+      // 最值得抄的一件事，而它只要三顆音。
+      playFinishFanfare(quiz.answers.length ? correct / quiz.answers.length : 0);
     }
     clearActiveSession();
     resultsDetailOpen = false;
@@ -12354,6 +12342,43 @@
     saveRecords(records);
     if (on) playAnswerSound(true); // 立刻讓人聽到自己剛打開了什麼
     render();
+  }
+
+  // 結算號角：正確率 ≥50% 吹 C-E-G-C 上行琶音，否則給一個柔和的收尾雙音。
+  // 跟 playAnswerSound 共用 AudioContext 與音效開關。
+  function playFinishFanfare(accuracy) {
+    if (!soundEnabled()) return;
+    try {
+      const Ctor = window.AudioContext || window.webkitAudioContext;
+      if (!Ctor) return;
+      answerAudioContext = answerAudioContext || new Ctor();
+      if (answerAudioContext.state === "suspended") answerAudioContext.resume();
+      const now = answerAudioContext.currentTime;
+      const note = (freq, start, duration, peak) => {
+        const osc = answerAudioContext.createOscillator();
+        const gain = answerAudioContext.createGain();
+        osc.type = "triangle";
+        osc.frequency.value = freq;
+        osc.connect(gain);
+        gain.connect(answerAudioContext.destination);
+        gain.gain.setValueAtTime(0.0001, now + start);
+        gain.gain.exponentialRampToValueAtTime(peak, now + start + 0.015);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + start + duration);
+        osc.start(now + start);
+        osc.stop(now + start + duration + 0.03);
+      };
+      if (accuracy >= 0.5) {
+        note(523.25, 0, 0.14, 0.09);
+        note(659.25, 0.11, 0.14, 0.09);
+        note(783.99, 0.22, 0.14, 0.09);
+        note(1046.5, 0.33, 0.26, 0.11);
+      } else {
+        note(392, 0, 0.18, 0.07);
+        note(523.25, 0.14, 0.28, 0.08);
+      }
+    } catch (_error) {
+      // 音效失敗不能影響結算
+    }
   }
 
   function playAnswerSound(correct) {
