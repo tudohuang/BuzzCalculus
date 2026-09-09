@@ -6371,7 +6371,7 @@
         </div>
         <form class="answer-panel webwork-form" data-action="submit-answer">
         <label class="sr-only" for="answer">答案</label>
-        <input id="answer" class="answer-input" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="done" inputmode="${suppressKeyboard ? "none" : "text"}" value="${escapeAttr(quiz.draft)}" placeholder="${placeholderFor(problem)}" ${disabled} />
+        <input id="answer" class="answer-input ${quiz.feedback ? (quiz.feedback.status === "correct" ? "is-correct" : "is-wrong") : ""}" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="done" inputmode="${suppressKeyboard ? "none" : "text"}" value="${escapeAttr(quiz.draft)}" placeholder="${placeholderFor(problem)}" ${disabled} />
         ${
           touchDevice
             ? `<button class="icon-button keyboard-toggle ${quiz.systemKeyboard ? "is-active" : ""}" type="button" data-action="toggle-system-keyboard" title="${quiz.systemKeyboard ? "改用畫面上的數學鍵盤" : "叫出系統鍵盤"}" aria-pressed="${quiz.systemKeyboard ? "true" : "false"}" ${disabled}>${icon("keyboard")}</button>`
