@@ -69,6 +69,14 @@ async function run() {
   try {
     await chrome.navigate(`${server.url}/index.html`);
     await chrome.sleep(900);
+    // 題庫瀏覽有等級鎖（R3+ 對新使用者不可見）。這套件測的是圖形互動，
+    // 不是鎖 —— 用一個等級夠的使用者跑，鎖本身由 e2e 別處與 CDP 探針守。
+    await chrome.evaluate(`
+      localStorage.setItem("buzzcalculus.records.v1", JSON.stringify({ onboardingSeen: true, settings: { difficultyCap: 6 } }));
+      location.reload();
+      return 1;
+    `);
+    await chrome.sleep(900);
 
     /* ── 1. 點位題：點在正確位置上，標記出現、判分正確 ── */
     const tap = await chrome.evaluate(`

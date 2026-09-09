@@ -438,6 +438,30 @@ async function run() {
       `${verified.chips} 個標記 —— 這是競品沒有的一句話，藏在 CI 裡等於沒有`
     );
 
+    /* ── 7.7 題庫等級鎖：還沒練到的難度搜不到，且有解鎖出口 ── */
+    const gated = await chrome.evaluate(`
+      ${HELPERS}
+      const search = document.querySelector("[data-library-search]");
+      if (!search) return { missing: true };
+      search.value = "dm-seq-004"; // R6 長題：cap-3 的使用者不該翻得到
+      search.dispatchEvent(new Event("input", { bubbles: true }));
+      await new Promise((r) => setTimeout(r, 700));
+      const cards = document.querySelectorAll(".library-problem-card").length;
+      search.value = "";
+      search.dispatchEvent(new Event("input", { bubbles: true }));
+      await new Promise((r) => setTimeout(r, 500));
+      const note = document.querySelector(".library-lock-note");
+      const unlock = document.querySelector('[data-action="unlock-library"]');
+      return { cards, hasNote: Boolean(note), hasUnlock: Boolean(unlock) };
+    `);
+    if (gated.missing) {
+      check("題庫等級鎖擋住未達等級的題", false, "搜尋框不在，這條沒測到");
+    } else {
+      check("題庫等級鎖擋住未達等級的題", gated.cards === 0,
+        gated.cards === 0 ? "R6 題對 cap-3 使用者不可見" : `搜得到 ${gated.cards} 張卡 —— 鎖漏了`);
+      check("等級鎖有講清楚並給跳關出口", gated.hasNote && gated.hasUnlock);
+    }
+
     /* ── 8. 鍵盤快捷鍵（P1 加的，只有真的按鍵才測得到）── */
     await chrome.evaluate(`${HELPERS} return window.__e2e.clickSelector('[data-action="home"]');`);
     await chrome.sleep(300);
