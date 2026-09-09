@@ -1147,10 +1147,10 @@ button {
   background: var(--line);
 }
 
-/* 下一格：conic 進度環（--mastery 0-100） */
+/* 下一格：conic 進度環（--mastery 0-100），顏色跟單元主色 */
 .path-step.is-next .path-node-ring {
   background:
-    conic-gradient(var(--gold) calc(var(--mastery, 6) * 1%), var(--line) 0);
+    conic-gradient(var(--unit-accent, var(--gold)) calc(var(--mastery, 6) * 1%), var(--line) 0);
 }
 
 .path-node-core {
@@ -1215,11 +1215,36 @@ button {
   line-height: 1.3;
 }
 
-/* 狀態上色 */
+/* 單元色帶橫幅：滿版、吃單元主色 */
+.path-unit-banner {
+  align-self: stretch;
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin: 10px 0 2px;
+  padding: 12px 16px;
+  border-radius: 14px;
+  background: var(--unit-accent, var(--gold-dark));
+  color: #fff;
+  box-shadow: 0 4px 0 rgba(32, 33, 31, 0.18);
+}
+
+.path-unit-banner strong {
+  font-size: 1rem;
+  letter-spacing: 0.04em;
+}
+
+.path-unit-banner span {
+  font-size: 0.82rem;
+  opacity: 0.88;
+  font-weight: 700;
+}
+
+/* 狀態上色（目前／可開始的關卡跟著單元主色走） */
 .path-step.is-active .path-node-core,
 .path-step.is-ready .path-node-core,
 .path-step.is-next .path-node-core {
-  background: var(--gold-dark);
+  background: var(--unit-accent, var(--gold-dark));
 }
 
 .path-step.is-mastered .path-node-core {
@@ -1244,7 +1269,7 @@ button {
   position: absolute;
   inset: -9px;
   border-radius: 50%;
-  border: 3px solid color-mix(in srgb, var(--gold) 55%, transparent);
+  border: 3px solid color-mix(in srgb, var(--unit-accent, var(--gold)) 55%, transparent);
   animation: path-pulse 1.6s ease-out infinite;
   pointer-events: none;
 }
@@ -1263,9 +1288,9 @@ button {
   z-index: 2;
   padding: 5px 14px;
   border-radius: 12px;
-  border: 2px solid var(--gold-dark);
+  border: 2px solid var(--unit-accent, var(--gold-dark));
   background: var(--panel);
-  color: var(--gold-dark);
+  color: var(--unit-accent, var(--gold-dark));
   font-size: 0.82rem;
   font-weight: 800;
   letter-spacing: 0.08em;
@@ -1282,8 +1307,59 @@ button {
   height: 10px;
   transform: translateX(-50%) rotate(45deg);
   background: var(--panel);
-  border-right: 2px solid var(--gold-dark);
-  border-bottom: 2px solid var(--gold-dark);
+  border-right: 2px solid var(--unit-accent, var(--gold-dark));
+  border-bottom: 2px solid var(--unit-accent, var(--gold-dark));
+}
+
+/* 結算彩紙：過關才爆一次的十顆小紙片，各自往外拋後淡出。
+   純 transform/opacity，一秒內結束，reduced-motion 直接不顯示。 */
+.verdict {
+  position: relative;
+  overflow: hidden;
+}
+
+.verdict-burst {
+  position: absolute;
+  top: 46px;
+  left: 50%;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+
+.verdict-burst i {
+  position: absolute;
+  width: 9px;
+  height: 14px;
+  border-radius: 2px;
+  opacity: 0;
+  background: var(--gold);
+  animation: burst-fly 0.9s ease-out 0.15s 1 forwards;
+}
+
+.verdict-burst i:nth-child(2n) { background: #4ba8dd; }
+.verdict-burst i:nth-child(3n) { background: #31ad72; }
+.verdict-burst i:nth-child(4n) { background: #9370d8; }
+.verdict-burst i:nth-child(1)  { --fx: -140px; --fy: -60px; --rot: 220deg; }
+.verdict-burst i:nth-child(2)  { --fx: -95px;  --fy: -110px; --rot: -160deg; }
+.verdict-burst i:nth-child(3)  { --fx: -50px;  --fy: -70px; --rot: 300deg; }
+.verdict-burst i:nth-child(4)  { --fx: -18px;  --fy: -125px; --rot: -240deg; }
+.verdict-burst i:nth-child(5)  { --fx: 18px;   --fy: -80px; --rot: 190deg; }
+.verdict-burst i:nth-child(6)  { --fx: 55px;   --fy: -120px; --rot: -300deg; }
+.verdict-burst i:nth-child(7)  { --fx: 95px;   --fy: -65px; --rot: 250deg; }
+.verdict-burst i:nth-child(8)  { --fx: 140px;  --fy: -105px; --rot: -200deg; }
+.verdict-burst i:nth-child(9)  { --fx: -120px; --fy: -20px; --rot: 160deg; }
+.verdict-burst i:nth-child(10) { --fx: 120px;  --fy: -25px; --rot: -180deg; }
+
+@keyframes burst-fly {
+  0% { transform: translate(0, 0) rotate(0); opacity: 1; }
+  100% { transform: translate(var(--fx), var(--fy)) rotate(var(--rot)); opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .verdict-burst {
+    display: none;
+  }
 }
 
 @keyframes start-bob {
@@ -4879,6 +4955,11 @@ button,
   .home-screen .buzz-path-map .path-step {
     flex: 0 0 auto;
     scroll-snap-align: start;
+  }
+
+  /* 橫捲列裡不放單元橫幅 —— 直立地圖才有分段敘事的空間 */
+  .home-screen .buzz-path-map .path-unit-banner {
+    display: none;
   }
 
   .path-recommendation {

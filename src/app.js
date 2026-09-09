@@ -1254,6 +1254,14 @@
       fuse([pop]);
     }
 
+    // 結算統計籌片：一顆一顆蹦出來（只動位移與透明度 ——
+    // 數字在 DOM 裡一開始就是最終值，rAF 被節流也不會出現半路數字）。
+    const statChips = root.querySelectorAll(".verdict-stats span");
+    if (statChips.length && !reduce && A) {
+      A.set(statChips, { translateY: 14, opacity: 0 });
+      A({ targets: statChips, translateY: [14, 0], opacity: [0, 1], duration: 420, delay: A.stagger(110, { start: 240 }), easing: "easeOutBack" });
+    }
+
     // 剛解鎖的關卡：彈跳進場（連接線動畫已隨蛇形地圖移除，
     // 「解鎖了什麼」現在由那顆圓鈕自己說）。
     const unlockedStep = root.querySelector(".path-step.is-just-unlocked .path-node-ring");
@@ -3166,7 +3174,26 @@
         </div>
 
         <div class="buzz-path-map" aria-label="BuzzCalculus learning path">
-          ${path.nodes.map((node, index) => renderPathNode(node, index, node.id === next.id)).join("")}
+          ${(() => {
+            let unitIdx = -1;
+            let swayIdx = 0;
+            return path.nodes.map((node) => {
+              const startsUnit = PATH_UNITS.findIndex((unit) => unit.startId === node.id);
+              let banner = "";
+              if (startsUnit >= 0) {
+                unitIdx = startsUnit;
+                swayIdx = 0;
+                const unit = PATH_UNITS[unitIdx];
+                banner = `
+                  <div class="path-unit-banner" style="--unit-accent:${unit.accent}">
+                    <strong>${escapeHtml(unit.title)}</strong>
+                    <span>${escapeHtml(unit.subtitle)}</span>
+                  </div>`;
+              }
+              const accent = unitIdx >= 0 ? PATH_UNITS[unitIdx].accent : "";
+              return banner + renderPathNode(node, swayIdx++, node.id === next.id, accent);
+            }).join("");
+          })()}
         </div>
       </section>
     `;
@@ -3176,7 +3203,16 @@
   // 只是視覺 —— DOM 順序、動作與可及性都跟直排一樣。
   const PATH_SERPENTINE = [0, 0.55, 0.9, 0.55, 0, -0.55, -0.9, -0.55];
 
-  function renderPathNode(node, index, isNext = false) {
+  // 主線單元：每個單元一條色帶橫幅、一個主色（目前關卡的圓與進度環
+  // 跟著單元色走），蛇形在單元開頭歸零重新起擺。
+  const PATH_UNITS = [
+    { title: "第 1 單元", subtitle: "單變數基礎", accent: "#c9911d", startId: "onevar_limit" },
+    { title: "第 2 單元", subtitle: "積分技巧", accent: "#3f95c6", startId: "usub" },
+    { title: "第 3 單元", subtitle: "級數與多變數", accent: "#8a63cf", startId: "series" },
+    { title: "第 4 單元", subtitle: "高階挑戰", accent: "#2c9a67", startId: "advanced_tools" }
+  ];
+
+  function renderPathNode(node, index, isNext = false, accent = "") {
     const statusText = {
       jump: "可跳關",
       ready: "可開始",
@@ -3192,7 +3228,7 @@
     // 目前這格用 conic 進度環顯示熟練度；完成格直接畫勾，不再顯示百分比。
     const ringStyle = isNext ? ` style="--mastery:${Math.max(6, node.mastery)}"` : "";
     return `
-      <div class="path-step is-${node.status} ${isNext ? "is-next" : ""} ${node.gated ? "is-gated" : ""} ${justUnlocked ? "is-just-unlocked" : ""}" style="--sway:${sway}">
+      <div class="path-step is-${node.status} ${isNext ? "is-next" : ""} ${node.gated ? "is-gated" : ""} ${justUnlocked ? "is-just-unlocked" : ""}" style="--sway:${sway}${accent ? `;--unit-accent:${accent}` : ""}">
         <button class="path-node-button" data-action="start-path-node" data-node-id="${escapeAttr(node.id)}" aria-label="${escapeAttr(`${node.label}，${label}`)}" title="${escapeAttr(`${node.label} · ${label} · ${node.relatedCount} 題`)}">
           ${isNext ? `<span class="path-start-bubble" aria-hidden="true">開始</span>` : ""}
           <span class="path-node-ring"${ringStyle}>
@@ -6698,6 +6734,7 @@
     return `
       <main class="screen results-screen">
         <section class="verdict ${verdictClass}">
+          ${verdictClass === "is-gold" || verdictClass === "is-pass" ? `<div class="verdict-burst" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>` : ""}
           <p class="section-label" data-enter>${escapeHtml(levelTag)}</p>
           <h1 class="verdict-title" data-pop>${escapeHtml(verdict)}</h1>
           <p class="verdict-sub" data-enter>${escapeHtml(momentum)}</p>
