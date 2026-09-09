@@ -54,20 +54,24 @@
     ["mob-tech-006", "integrals", "\\int \\frac{dx}{\\sqrt{a^2-x^2}}", ["trig substitution", "trigonometric substitution"], "trig substitution"],
     ["mob-tech-007", "series", "\\sum_{n=1}^{\\infty}\\frac{n!}{3^n}", ["ratio test", "ratio"], "ratio test"],
     ["mob-tech-008", "series", "\\sum_{n=1}^{\\infty}\\left(\\frac{n}{2n+1}\\right)^n", ["root test", "root"], "root test"],
-    ["mob-tech-009", "limits", "\\lim_{(x,y)\\to(0,0)}\\frac{xy}{x^2+y^2}", ["path test", "two path test"], "path test"],
-    ["mob-tech-010", "integrals", "\\int_0^1 f(x)\\,dx\\ \\text{ with }f(x)+f(1-x)", ["king", "king's property", "kings property"], "King's property"],
-    ["mob-tech-011", "integrals", "\\int_0^\\infty \\frac{e^{-ax}-e^{-bx}}{x}\\,dx", ["frullani", "frullani integral"], "Frullani integral"],
-    ["mob-tech-012", "derivatives", "\\text{Optimize }f(x,y)\\text{ subject to }g(x,y)=0", ["lagrange multiplier", "lagrange multipliers", "lm"], "Lagrange multiplier"],
-    ["mob-tech-013", "integrals", "\\int_C \\nabla\\phi\\cdot d\\mathbf r", ["fundamental theorem", "gradient theorem"], "gradient theorem"],
-    ["mob-tech-014", "derivatives", "\\nabla\\cdot\\mathbf F\\ \\text{ and }\\nabla\\times\\mathbf F", ["nabla", "vector calculus"], "nabla"],
-    ["mob-tech-015", "integrals", "\\int_0^1 x^{a-1}(1-x)^{b-1}\\,dx", ["beta", "beta function"], "Beta function"],
-    ["mob-tech-016", "integrals", "\\int_0^\\infty x^{s-1}e^{-x}\\,dx", ["gamma", "gamma function"], "Gamma function"],
-    ["mob-tech-017", "integrals", "\\int_0^{\\pi/2}\\sin^n x\\,dx", ["wallis", "wallis reduction"], "Wallis reduction"],
-    ["mob-tech-018", "derivatives", "x^2y''+xy'+(x^2-\\nu^2)y=0", ["bessel", "bessel equation"], "Bessel equation"],
+    ["mob-tech-009", "limits", "\\lim_{(x,y)\\to(0,0)}\\frac{xy}{x^2+y^2}", ["path test", "two path test"], "path test", ["multivariable-limit", "multivariable"]],
+    ["mob-tech-010", "integrals", "\\int_0^1 f(x)\\,dx\\ \\text{ with }f(x)+f(1-x)", ["king", "king's property", "kings property"], "King's property", ["kings-property"]],
+    ["mob-tech-011", "integrals", "\\int_0^\\infty \\frac{e^{-ax}-e^{-bx}}{x}\\,dx", ["frullani", "frullani integral"], "Frullani integral", ["frullani"]],
+    ["mob-tech-012", "derivatives", "\\text{Optimize }f(x,y)\\text{ subject to }g(x,y)=0", ["lagrange multiplier", "lagrange multipliers", "lm"], "Lagrange multiplier", ["lagrange-multiplier", "multivariable"]],
+    ["mob-tech-013", "integrals", "\\int_C \\nabla\\phi\\cdot d\\mathbf r", ["fundamental theorem", "gradient theorem"], "gradient theorem", ["vector-calculus"]],
+    ["mob-tech-014", "derivatives", "\\nabla\\cdot\\mathbf F\\ \\text{ and }\\nabla\\times\\mathbf F", ["nabla", "vector calculus"], "nabla", ["nabla", "vector-calculus"]],
+    ["mob-tech-015", "integrals", "\\int_0^1 x^{a-1}(1-x)^{b-1}\\,dx", ["beta", "beta function"], "Beta function", ["beta-function"]],
+    ["mob-tech-016", "integrals", "\\int_0^\\infty x^{s-1}e^{-x}\\,dx", ["gamma", "gamma function"], "Gamma function", ["gamma-function"]],
+    ["mob-tech-017", "integrals", "\\int_0^{\\pi/2}\\sin^n x\\,dx", ["wallis", "wallis reduction"], "Wallis reduction", ["wallis"]],
+    ["mob-tech-018", "derivatives", "x^2y''+xy'+(x^2-\\nu^2)y=0", ["bessel", "bessel equation"], "Bessel equation", ["bessel"]],
     ["mob-tech-019", "series", "\\text{Find interval of convergence after radius is known}", ["endpoint analysis", "endpoints"], "endpoint analysis"],
     ["mob-tech-020", "derivatives", "y=x^x", ["logarithmic differentiation", "log differentiation"], "logarithmic differentiation"]
-  ].forEach(([id, topic, prompt, answers, canonical]) => {
-    textProblem(id, topic, 2, `${prompt}\\quad\\text{Use which technique?}`, answers, canonical, ["technique-sprint", "technique-recognition"], `Use ${canonical}.`);
+  ].forEach(([id, topic, prompt, answers, canonical, extraTags]) => {
+    // 判型題的內容 tag（nabla / bessel / kings-property …）一定要掛：
+    // 「判 Bessel 方程」本身很簡單所以 rank 是 2，但對還在單變數主線的
+    // 人它就是天書。內容 tag 讓超綱閘門與冷門過濾抓得到它們 ——
+    // 缺這個 tag 就是「新手第一局撞到 nabla」那個回報的成因。
+    textProblem(id, topic, 2, `${prompt}\\quad\\text{Use which technique?}`, answers, canonical, ["technique-sprint", "technique-recognition", ...(extraTags || [])], `Use ${canonical}.`);
   });
 
   [
@@ -77,14 +81,14 @@
     ["mob-trap-004", "series", "\\sum (-1)^n/n\\ \\text{ is not absolutely convergent}", ["conditional", "conditional convergence"], "conditional"],
     ["mob-trap-005", "series", "\\sum x^n/n\\ \\text{ after finding }R=1", ["check endpoints", "endpoint analysis"], "check endpoints"],
     ["mob-trap-006", "integrals", "\\int_0^\\infty e^{-ax}\\,dx", ["requires a positive", "a positive"], "requires a positive"],
-    ["mob-trap-007", "derivatives", "\\frac{\\partial}{\\partial x}y^2", ["treat y constant", "partial derivative"], "treat y constant"],
-    ["mob-trap-008", "integrals", "\\iint_R f(x,y)\\,dA\\text{ under change of variables}", ["multiply by jacobian", "jacobian"], "multiply by Jacobian"],
+    ["mob-trap-007", "derivatives", "\\frac{\\partial}{\\partial x}y^2", ["treat y constant", "partial derivative"], "treat y constant", ["multivariable"]],
+    ["mob-trap-008", "integrals", "\\iint_R f(x,y)\\,dA\\text{ under change of variables}", ["multiply by jacobian", "jacobian"], "multiply by Jacobian", ["jacobian", "multivariable"]],
     ["mob-trap-009", "limits", "\\frac{0}{0}\\text{ limit form}", ["not automatically zero", "indeterminate"], "indeterminate"],
     ["mob-trap-010", "integrals", "\\int \\sec x\\tan x\\,dx", ["sec x", "sec"], "sec x"],
-    ["mob-trap-011", "derivatives", "\\nabla\\times(\\nabla f)", ["zero", "0"], "zero"],
-    ["mob-trap-012", "integrals", "B(a,b)=\\frac{\\Gamma(a)\\Gamma(b)}{\\Gamma(a+b)}", ["denominator gamma a plus b", "gamma a+b", "denominator Gamma(a+b)"], "denominator Gamma(a+b)"]
-  ].forEach(([id, topic, prompt, answers, canonical]) => {
-    textProblem(id, topic, 2, `${prompt}\\quad\\text{Main trap?}`, answers, canonical, ["trap-drill"], canonical);
+    ["mob-trap-011", "derivatives", "\\nabla\\times(\\nabla f)", ["zero", "0"], "zero", ["nabla", "vector-calculus"]],
+    ["mob-trap-012", "integrals", "B(a,b)=\\frac{\\Gamma(a)\\Gamma(b)}{\\Gamma(a+b)}", ["denominator gamma a plus b", "gamma a+b", "denominator Gamma(a+b)"], "denominator Gamma(a+b)", ["beta-function", "gamma-function"]]
+  ].forEach(([id, topic, prompt, answers, canonical, extraTags]) => {
+    textProblem(id, topic, 2, `${prompt}\\quad\\text{Main trap?}`, answers, canonical, ["trap-drill", ...(extraTags || [])], canonical);
   });
 
   [
@@ -92,9 +96,9 @@
     ["mob-limtrap-004", "\\lim_{x\\to 0}\\frac{\\log(1+x)-x+x^2/2}{x^3}", "1/3"],
     ["mob-limtrap-005", "\\lim_{x\\to 0}\\frac{e^x-1-x-x^2/2}{x^3}", "1/6"],
     ["mob-limtrap-006", "\\lim_{x\\to 0}\\frac{\\sqrt{1+x}-1-x/2}{x^2}", "-1/8"],
-    ["mob-limtrap-008", "\\lim_{(x,y)\\to(0,0)}\\sqrt{x^2+y^2}\\sin\\frac{1}{\\sqrt{x^2+y^2}}", "0"]
-  ].forEach(([id, prompt, answer]) => {
-    numericProblem(id, "limits", 3, prompt, answer, ["limit-trap", "taylor"], `The limit is ${answer}.`, ["Use Taylor expansion or squeeze."], 70);
+    ["mob-limtrap-008", "\\lim_{(x,y)\\to(0,0)}\\sqrt{x^2+y^2}\\sin\\frac{1}{\\sqrt{x^2+y^2}}", "0", ["multivariable-limit", "multivariable"]]
+  ].forEach(([id, prompt, answer, extraTags]) => {
+    numericProblem(id, "limits", 3, prompt, answer, ["limit-trap", "taylor", ...(extraTags || [])], `The limit is ${answer}.`, ["Use Taylor expansion or squeeze."], 70);
   });
 
 

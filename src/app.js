@@ -1660,13 +1660,29 @@
   //（進階工具關卡、專屬題包、單主題訓練），混合池只放核心四主題的正課。
   const NICHE_MIX_TAGS = ["complex", "special-functions", "bessel", "nabla", "vector-calculus"];
 
+  // 超綱閘門：等級 ≤3 代表還在單變數主線上（自報新手/標準、或還沒證明更高）。
+  // 這個名單上的內容對他們是「還沒上到」而不是「比較難」—— 判 Bessel 方程
+  // 的題 rank 只有 2，但對剛學極限的人它就是天書。一般訓練一律過濾，
+  // 使用者自己點開該類技巧包（多變數、特殊函數、Nabla…）才放行。
+  const BEYOND_BASICS_TAGS = NICHE_MIX_TAGS.concat([
+    "beta-function", "gamma-function", "wallis", "frullani", "kings-property",
+    "lagrange-multiplier", "jacobian", "jacobian-chain", "hessian", "wronskian",
+    "total-differential", "total-differential-min", "multivariable", "multivariable-limit",
+    "double-integral", "triple-integral", "change-of-variables", "path-test"
+  ]);
+
+  function beyondBasicsFilter(pool) {
+    return pool.filter((problem) => !(problem.tags || []).some((tag) => BEYOND_BASICS_TAGS.includes(tag)));
+  }
+
   function plannerCandidatePool(records) {
     const cap = activeDifficultyCap(records);
+    const foreign = cap <= 3 ? BEYOND_BASICS_TAGS : NICHE_MIX_TAGS;
     return problems.filter(
       (problem) =>
         problemRank(problem) <= cap + 1 &&
         !problem.custom &&
-        !(problem.tags || []).some((tag) => NICHE_MIX_TAGS.includes(tag))
+        !(problem.tags || []).some((tag) => foreign.includes(tag))
     );
   }
 
@@ -9425,6 +9441,15 @@
       // Boss / 進階 / 生存這類高難模式不在此列 —— 那裡本來就什麼都可能出。
       pool = pool.filter((problem) => !(problem.tags || []).some((tag) => NICHE_MIX_TAGS.includes(tag)));
     }
+    // 超綱閘門（見 BEYOND_BASICS_TAGS）：等級 ≤3 的一般訓練不出多變數／
+    // 向量／特殊函數 —— 包含選了「先練判型」這種混合技巧包的情況。
+    // 使用者自己挑的包若本身就是那類內容（tags 有交集），視為明確要練，放行。
+    const packTags = selectedPack !== "all" ? (TRAINING_PACKS[selectedPack]?.tags || []) : [];
+    const packWantsBeyond = packTags.some((tag) => BEYOND_BASICS_TAGS.includes(tag));
+    if (shouldApplyDifficultyCap(mode) && difficultyCap <= 3 && !packWantsBeyond) {
+      const basicsPool = beyondBasicsFilter(pool);
+      if (basicsPool.length) pool = basicsPool;
+    }
     if (mode.examStyle) return selectExamPool(pool, mode.count, records);
     if (mode.minRank) {
       const rankedPool = pool.filter((problem) => problemRank(problem) >= mode.minRank);
@@ -14341,6 +14366,9 @@
   if (window.__BUZZ_TEST_HOOKS__) {
     window.__BUZZ_TEST_HOOKS__.api = {
       checkAnswer,
+      // 測試要能看見「這一局實際抽到什麼」：超綱閘門這類選題規則
+      // 只有從抽出來的題目清單才驗得到，DOM 一次只露一題。
+      quizProblemIds: () => (quiz ? quiz.problems.map((problem) => problem.id) : []),
       // 作圖表與選圖題的作答介面：smoke 要能直接 render 它們。
       // 這兩個題型的失敗方式是「整張表根本沒出來」，而那用字串比對抓得到。
       answerKindLabel,

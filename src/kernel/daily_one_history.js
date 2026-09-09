@@ -109,6 +109,7 @@
     "2026-09-06": "gap-der-param-001",
     "2026-09-07": "mob-lm-010",
     "2026-09-08": "depth-ser-020",
+    "2026-09-09": "gap-der-app-006",
   };
   if (typeof module !== "undefined" && module.exports) module.exports = { HISTORY };
   if (typeof window !== "undefined") window.BUZZ_DAILY_ONE_HISTORY = HISTORY;
