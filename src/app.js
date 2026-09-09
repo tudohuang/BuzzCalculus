@@ -4021,6 +4021,9 @@
     const records = loadRecords();
     const allItems = libraryProblems(records);
     const shown = allItems.slice(0, libraryVisibleCount);
+    const fullAccess = libraryFullAccess(records);
+    const lockedCount = fullAccess ? 0 : libraryProblems(records, { ignoreGate: true }).length - allItems.length;
+    const browseCap = libraryBrowseCap(records);
     return `
       <main class="screen">
         <section class="panel page-panel problem-library">
@@ -4078,6 +4081,19 @@
             <strong>${allItems.length}</strong>
             <span>符合條件${allItems.length > shown.length ? `，先顯示 ${shown.length} 題` : ""}${allItems.length ? " · 練目前篩選會從中抽 12 題" : ""}</span>
           </div>
+          ${
+            lockedCount > 0
+              ? `<div class="library-lock-note">
+                  ${icon("info")}<span>另有 <strong>${lockedCount}</strong> 題在 R${Math.min(6, browseCap + 1)} 以上 —— 練上去就會自己打開。</span>
+                  <button class="button ghost" data-action="unlock-library">直接解鎖瀏覽</button>
+                </div>`
+              : fullAccess
+                ? `<div class="library-lock-note is-open">
+                    ${icon("check")}<span>完整題庫已解鎖瀏覽。</span>
+                    <button class="button ghost" data-action="lock-library">恢復依等級鎖定</button>
+                  </div>`
+                : ""
+          }
           ${
             // 0 題的時候要說得出「是哪個條件害的」。四個篩選會跨頁黏著，
             // 搜尋框又在畫面外 1500px —— 只印「0 符合條件」等於讓人猜謎。
@@ -7757,6 +7773,15 @@
     if (action === "export-records") exportRecords();
     if (action === "export-calibration") exportCalibrationPack();
     if (action === "toggle-analytics") setAnalyticsEnabled(!analyticsEnabled());
+    if (action === "unlock-library") {
+      askConfirm({
+        title: "直接解鎖整個題庫？",
+        body: "練到的難度本來就會自己開。跳關解鎖也完全可以 —— 只是先翻過的題，之後練起來會少掉第一眼的手感。",
+        confirmLabel: "解鎖瀏覽",
+        onConfirm: () => setLibraryFullAccess(true)
+      });
+    }
+    if (action === "lock-library") setLibraryFullAccess(false);
     if (action === "set-analytics") { setAnalyticsEnabled(Boolean(actionNode.dataset.on)); render(); }
     if (action === "set-focus-mode") setFocusMode(Boolean(actionNode.dataset.on));
     if (action === "set-board-surface") { setBoardSurface(actionNode.dataset.surface || "paper"); render(); }
@@ -13165,9 +13190,47 @@
     return copy;
   }
 
-  function libraryProblems(records) {
+  // ── 題庫瀏覽等級鎖 ─────────────────────────────────────────
+  // 題庫是靜態網頁的一部分，想看原始碼誰都攔不住 —— 這個鎖擋的是
+  // 動線不是資料：還沒練到的難度不該預設攤開當免費題本翻。
+  // 等級的來源取最大值：自報程度（difficultyCap）、定位結果、
+  // 實際答對過的最高難度。想跳關的人有一個明確的「解鎖」動作。
+  function libraryBrowseCap(records) {
+    let cap = Math.max(
+      2,
+      normalizeDifficultyCap(records.settings?.difficultyCap || 2),
+      Number(records.placement?.rank) || 0
+    );
+    const stats = records.problemStats || {};
+    for (const id of Object.keys(stats)) {
+      if ((Number(stats[id]?.correct) || 0) > 0) {
+        const problem = problemById(id);
+        if (problem) cap = Math.max(cap, problemRank(problem));
+      }
+    }
+    return Math.min(6, cap);
+  }
+
+  function libraryFullAccess(records) {
+    return records.settings?.libraryFullAccess === "on";
+  }
+
+  function setLibraryFullAccess(on) {
+    const records = loadRecords();
+    records.settings = records.settings || {};
+    records.settings.libraryFullAccess = on ? "on" : "off";
+    saveRecords(records);
+    trackEvent("library_full_access", { state: on ? "on" : "off" });
+    resetLibraryPaging();
+    render();
+  }
+
+  function libraryProblems(records, options = {}) {
     const query = librarySearch.trim().toLowerCase();
+    const gate = !options.ignoreGate && !libraryFullAccess(records);
+    const browseCap = gate ? libraryBrowseCap(records) : 6;
     return problems.filter((problem) => {
+      if (gate && problemRank(problem) > browseCap) return false;
       if (selectedLibraryTopic !== "all" && problem.topic !== selectedLibraryTopic) return false;
       if (selectedLibraryPack !== "all" && !matchesPack(problem, selectedLibraryPack)) return false;
       if (selectedLibraryRank !== "all" && problemRank(problem) !== Number(selectedLibraryRank)) return false;
