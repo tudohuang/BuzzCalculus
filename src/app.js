@@ -5598,6 +5598,20 @@
     `;
   }
 
+  // 答對讚語：多鄰國式的「每次都不太一樣」。連對 3 題起改報 combo 數。
+  const PRAISE_WORDS = ["漂亮！", "乾淨俐落！", "就是這樣！", "穩！", "好球！", "反射成形了", "手感正熱"];
+
+  function praiseLine(streak) {
+    if (streak >= 3) return `連對 ${streak} 題！`;
+    return PRAISE_WORDS[Math.floor(Math.random() * PRAISE_WORDS.length)];
+  }
+
+  // 連勝 combo 籌片：0 淡灰、2+ 點火、5+ 燒起來（配一個小彈跳）。
+  function renderComboChip(streak) {
+    const heat = streak >= 5 ? "is-hot" : streak >= 2 ? "is-warm" : "";
+    return `<span class="combo-chip ${heat}">${icon("flame")}連勝 ${streak}</span>`;
+  }
+
   function renderQuiz() {
     const current = getCurrentProblem();
     if (!quiz || !current) return "";
@@ -5640,11 +5654,11 @@
                   ? `<strong>第 ${pathNodeIdx + 1} 關 · <span class="lvl-full">${escapeHtml(pathNode.label)}</span><span class="lvl-short">${escapeHtml(pathNode.short || pathNode.label)}</span></strong>
                      <span>本關進度 ${quiz.index + 1} / ${totalQ}</span>
                      <span class="clear-need ${clearLost ? "is-lost" : ""}">${clearLine}</span>
-                     <span>連勝 ${quiz.currentStreak}</span>`
+                     ${renderComboChip(quiz.currentStreak)}`
                   : `<strong>${escapeHtml(quiz.namedExam ? quiz.namedExam.label : modeLabel(quiz.mode))}</strong>
                      <span>第 ${quiz.index + 1} / ${quiz.problems.length} 題</span>
                      <span>${isPractice ? "不計分" : `目前分數 ${quiz.score}`}</span>
-                     <span>連勝 ${quiz.currentStreak}</span>`}
+                     ${renderComboChip(quiz.currentStreak)}`}
               </div>
               <div class="progress-bar" aria-label="進度"><span style="width:${progress}%"></span></div>
             </div>
@@ -6475,9 +6489,15 @@
           .map(
             (choice, index) => {
               const choiceTex = answerToTex(choice.label, problem) || textToTex(choice.label);
-              const selectedWrong = quiz.feedback && quiz.draft === choice.value && !checkAnswer(problem, choice.value).correct;
+              // 答完之後選項自己說話：正解亮綠、你選錯的那顆標紅並抖一下，
+              // 其他人退場 —— 不用先讀回饋卡就知道發生什麼事。
+              const answered = Boolean(quiz.feedback);
+              const isRight = answered && checkAnswer(problem, choice.value).correct;
+              const chosen = answered && quiz.draft === choice.value;
+              const selectedWrong = chosen && !isRight;
+              const stateClass = isRight ? "is-correct" : selectedWrong ? "is-wrong" : answered ? "is-muted" : "";
               return `
-              <button class="choice-option" type="button" data-action="choose-answer" data-choice="${escapeAttr(choice.value)}" ${disabled}>
+              <button class="choice-option ${stateClass}" type="button" data-action="choose-answer" data-choice="${escapeAttr(choice.value)}" ${disabled}>
                 <span>${String.fromCharCode(65 + index)}</span>
                 <strong class="choice-math math-inline" data-tex="${escapeAttr(choiceTex)}">${renderLiteTex(choiceTex, false)}</strong>
                 ${selectedWrong ? `<small class="choice-reason">${escapeHtml(choiceDistractorReason(problem, choice.value))}</small>` : ""}
@@ -6502,8 +6522,12 @@
         ${choices
           .map((choice, index) => {
             const choiceTex = answerToTex(choice.label, problem) || textToTex(choice.label);
+            const answered = Boolean(quiz.feedback);
+            const isRight = answered && checkAnswer(problem, choice.value).correct;
+            const chosen = answered && quiz.draft === choice.value;
+            const stateClass = isRight ? "is-correct" : chosen ? "is-wrong" : answered ? "is-muted" : "";
             return `
-              <button class="choice-chip" type="button" data-action="choose-answer" data-choice="${escapeAttr(choice.value)}" ${disabled}>
+              <button class="choice-chip ${stateClass}" type="button" data-action="choose-answer" data-choice="${escapeAttr(choice.value)}" ${disabled}>
                 <span>${String.fromCharCode(65 + index)}</span>
                 <strong class="math-inline" data-tex="${escapeAttr(choiceTex)}">${renderLiteTex(choiceTex, false)}</strong>
               </button>`;
@@ -10464,7 +10488,11 @@
     // 逐步解答 drawers below the message handle disclosure instead.
     quiz.feedback = {
       status: correct ? "correct" : reason === "Timeout" ? "timeout" : "wrong",
-      title: correct ? (quiz.practice ? "答對" : `答對，+${earned}`) : answerReasonLabel(reason),
+      // 「答對」二字固定在最前面（toast 的 e2e 靠它），後面接讚語：
+      // 連對 3 題起改報 combo，讓連勝變成看得見的手感。
+      title: correct
+        ? `${quiz.practice ? "答對" : `答對，+${earned}`} · ${praiseLine(quiz.currentStreak)}`
+        : answerReasonLabel(reason),
       message: detail || (correct ? "" : "先想想卡在哪一步，下面可以一段一段看解法。")
     };
     // 全螢幕書寫時答錯：回饋卡與「下一題」都在 fixed 的全螢幕外殼底下，
