@@ -1175,6 +1175,64 @@ button {
   height: 26px;
 }
 
+/* 單元寶箱：鎖定＝灰、可開＝單元色＋上下浮動、已開＝淡定的綠 */
+.path-chest .path-node-core {
+  background: #9aa096;
+}
+
+.path-chest.is-ready .path-node-core {
+  background: var(--unit-accent, var(--gold-dark));
+  animation: chest-bob 1.2s ease-in-out infinite;
+}
+
+.path-chest.is-ready .path-node-ring {
+  background: color-mix(in srgb, var(--unit-accent, var(--gold)) 32%, var(--line));
+}
+
+.path-chest.is-open .path-node-core {
+  background: var(--green);
+}
+
+.path-chest .path-node-button:disabled .path-node-core {
+  box-shadow: 0 3px 0 rgba(32, 33, 31, 0.16);
+}
+
+@keyframes chest-bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .path-chest.is-ready .path-node-core {
+    animation: none;
+  }
+}
+
+/* XP 等級籌片（連勝卡）與結算的 +XP */
+.level-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 2px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: color-mix(in srgb, var(--gold) 16%, var(--panel));
+  color: var(--ink);
+  font-size: 0.76rem;
+  font-weight: 760;
+  white-space: nowrap;
+}
+
+.level-chip svg {
+  width: 13px;
+  height: 13px;
+  color: var(--gold-dark);
+}
+
+.verdict-stats .xp-chip strong {
+  color: var(--gold-dark);
+}
+
 /* 有前測的關卡：右下角小旗徽章，不搶掉主題圖示 */
 .path-gate-chip {
   position: absolute;
