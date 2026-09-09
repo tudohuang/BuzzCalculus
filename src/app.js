@@ -1371,6 +1371,7 @@
           ${renderResumeCard()}
           ${renderHomeExamCard(records)}
           ${renderTodayCard(records)}
+          ${renderHomeRetentionRow(records)}
           ${renderBackupNotice(records)}
         </div>
         <div class="home-aside">
@@ -3061,6 +3062,10 @@
           <p class="section-label">練習連勝</p>
           <strong>${streakInfo.streak} 天</strong>
           <span class="shield-chip ${streakInfo.shieldAvailable ? "is-ready" : "is-used"}">${icon("shield")}盾牌${streakInfo.shieldAvailable ? "可用" : "本週已用"}</span>
+          ${(() => {
+            const info = xpLevelInfo(loadRecords().xp);
+            return `<span class="level-chip" title="再 ${info.span - info.into} XP 升級">${icon("sparkles")}Lv.${info.level} · ${info.into}/${info.span} XP</span>`;
+          })()}
         </div>
         <div class="mini-heatmap" aria-label="最近 7 天練習量">${cells.join("")}</div>
       </div>
@@ -3175,24 +3180,31 @@
 
         <div class="buzz-path-map" aria-label="BuzzCalculus learning path">
           ${(() => {
+            const records = loadRecords();
             let unitIdx = -1;
             let swayIdx = 0;
-            return path.nodes.map((node) => {
+            let unitNodes = [];
+            const chest = () => (unitIdx >= 0 ? renderUnitChest(unitIdx, unitNodes, swayIdx++, records) : "");
+            const out = path.nodes.map((node) => {
               const startsUnit = PATH_UNITS.findIndex((unit) => unit.startId === node.id);
-              let banner = "";
+              let prefix = "";
               if (startsUnit >= 0) {
+                prefix = chest(); // 上一個單元收尾的寶箱
                 unitIdx = startsUnit;
                 swayIdx = 0;
+                unitNodes = [];
                 const unit = PATH_UNITS[unitIdx];
-                banner = `
+                prefix += `
                   <div class="path-unit-banner" style="--unit-accent:${unit.accent}">
                     <strong>${escapeHtml(unit.title)}</strong>
                     <span>${escapeHtml(unit.subtitle)}</span>
                   </div>`;
               }
+              unitNodes.push(node);
               const accent = unitIdx >= 0 ? PATH_UNITS[unitIdx].accent : "";
-              return banner + renderPathNode(node, swayIdx++, node.id === next.id, accent);
+              return prefix + renderPathNode(node, swayIdx++, node.id === next.id, accent);
             }).join("");
+            return out + chest();
           })()}
         </div>
       </section>
@@ -3211,6 +3223,48 @@
     { title: "第 3 單元", subtitle: "級數與多變數", accent: "#8a63cf", startId: "series" },
     { title: "第 4 單元", subtitle: "高階挑戰", accent: "#2c9a67", startId: "advanced_tools" }
   ];
+
+  // 單元寶箱：整個單元的關卡都通過才能開，開了給一次性的 +80 XP。
+  // 獎勵刻意選 XP 而不是盾牌 —— 盾牌是「每週一面」的節奏機制，
+  // 多發會改變連勝語意；XP 是紀念品，發多少都不會弄壞任何系統。
+  const UNIT_CHEST_XP = 80;
+
+  function renderUnitChest(unitIdx, unitNodes, swayIdx, records) {
+    const unit = PATH_UNITS[unitIdx];
+    const opened = Boolean((records.unitChests || {})[unitIdx]);
+    const cleared = unitNodes.length > 0 && unitNodes.every((node) => node.status === "mastered" || node.status === "gold");
+    const state = opened ? "is-open" : cleared ? "is-ready" : "is-locked";
+    const label = opened ? `已開啟 · +${UNIT_CHEST_XP} XP` : cleared ? "點開領獎" : "全單元通過後解鎖";
+    const sway = PATH_SERPENTINE[swayIdx % PATH_SERPENTINE.length];
+    return `
+      <div class="path-step path-chest ${state}" style="--sway:${sway};--unit-accent:${unit.accent}">
+        <button class="path-node-button" data-action="open-unit-chest" data-unit="${unitIdx}" ${state === "is-ready" ? "" : "disabled"} aria-label="${escapeAttr(`${unit.subtitle} 寶箱，${label}`)}">
+          <span class="path-node-ring">
+            <span class="path-node-core">${icon(opened ? "sparkles" : "gift")}</span>
+          </span>
+          <span class="path-node-copy">
+            <strong>寶箱</strong>
+            <small>${label}</small>
+          </span>
+        </button>
+      </div>
+    `;
+  }
+
+  function openUnitChest(unitIdx) {
+    const unit = PATH_UNITS[Number(unitIdx)];
+    if (!unit) return;
+    const records = loadRecords();
+    records.unitChests = records.unitChests || {};
+    if (records.unitChests[unitIdx]) return;
+    records.unitChests[unitIdx] = new Date().toISOString();
+    records.xp = (records.xp || 0) + UNIT_CHEST_XP;
+    saveRecords(records);
+    trackEvent("unit_chest_open", { unit: Number(unitIdx) });
+    playFinishFanfare(1);
+    showAppNotice(`寶箱打開：${unit.subtitle} 全通過，+${UNIT_CHEST_XP} XP！`);
+    render();
+  }
 
   function renderPathNode(node, index, isNext = false, accent = "") {
     const statusText = {
@@ -6747,6 +6801,7 @@
             <span><strong>${accuracy}%</strong>正確率</span>
             <span><strong>${avgTime}s</strong>平均</span>
             ${quiz.practice ? "" : `<span><strong>${quiz.score}</strong>分數</span>`}
+            ${quiz.xpGained ? `<span class="xp-chip"><strong>+${quiz.xpGained}</strong>XP</span>` : ""}
           </div>
           ${quiz.placementResult ? renderPlacementNextStep() : renderResultsActions(gateResult, pathResult)}
           ${quiz.dailyOneOutcome ? renderDailyOneOutcomePanel(quiz.dailyOneOutcome) : ""}
@@ -7819,6 +7874,7 @@
       });
     }
     if (action === "lock-library") setLibraryFullAccess(false);
+    if (action === "open-unit-chest") openUnitChest(actionNode.dataset.unit);
     if (action === "set-analytics") { setAnalyticsEnabled(Boolean(actionNode.dataset.on)); render(); }
     if (action === "set-focus-mode") setFocusMode(Boolean(actionNode.dataset.on));
     if (action === "set-board-surface") { setBoardSurface(actionNode.dataset.surface || "paper"); render(); }
@@ -12652,6 +12708,25 @@
     return next;
   }
 
+  // XP：答對一題 +10、五題以上全對再 +20。練習模式也給 —— 多鄰國的
+  // XP 哲學就是「有練就有」，分數才管表現。等級曲線遞增（升下一級
+  // 要 100 + 50×等級），純本機、無 sink：它是進度的紀念品，不是貨幣。
+  function xpGainFor(currentQuiz, correct, total) {
+    return correct * 10 + (total >= 5 && correct === total ? 20 : 0);
+  }
+
+  function xpLevelInfo(xp) {
+    let level = 0;
+    let remaining = Math.max(0, Math.floor(Number(xp) || 0));
+    let span = 100;
+    while (remaining >= span) {
+      remaining -= span;
+      level += 1;
+      span = 100 + 50 * level;
+    }
+    return { level: level + 1, into: remaining, span };
+  }
+
   function saveQuizRecord(currentQuiz) {
     const records = loadRecords();
     const finishedAt = new Date().toISOString();
@@ -12673,6 +12748,8 @@
     records.totalAnswered = (records.totalAnswered || 0) + currentQuiz.answers.length;
     records.totalCorrect = (records.totalCorrect || 0) + correct;
     records.lastPlayed = finishedAt;
+    currentQuiz.xpGained = xpGainFor(currentQuiz, correct, total);
+    records.xp = (records.xp || 0) + currentQuiz.xpGained;
 
     const answerContext = { mistakesMode: currentQuiz.mode === "mistakes" };
     currentQuiz.answers.forEach((answer) => updateAnswerRecords(records, answer, finishedAt, answerContext));
@@ -14368,7 +14445,8 @@
       moon: "moon",
       grid: "grid-3x3",
       copy: "copy",
-      flag: "flag"
+      flag: "flag",
+      gift: "gift"
     };
     return `<i class="icon" data-lucide="${names[name] || name}" aria-hidden="true"></i>`;
   }
