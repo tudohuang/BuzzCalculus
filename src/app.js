@@ -5636,6 +5636,15 @@
     return Math.max(0, Math.min(1, (limit - elapsed) / limit));
   }
 
+  // 連續卡關時遞出的建議。刻意都是**可以立刻做的動作**，
+  // 不是「別灰心」這種話 —— 卡住的人需要的是下一步，不是情緒安慰。
+  function stuckNudge(missStreak) {
+    if (missStreak === 2) return "連兩題卡住了。這種時候放慢比加速有用：先把第一步寫在計算紙上，再決定用哪個工具。";
+    if (missStreak === 3) return "第三題了 —— 提示的第一層只講方向不破梗，這時候用它很划算。";
+    if (missStreak >= 4) return "這一段明顯還沒熟。練完這局到錯題本重練一次，比硬撐下去有效。";
+    return "";
+  }
+
   // 答對讚語：每次都不太一樣。連對 3 題起改報 combo 數。
   const PRAISE_WORDS = ["漂亮！", "乾淨俐落！", "就是這樣！", "穩！", "好球！", "反射成形了", "手感正熱"];
 
@@ -5772,12 +5781,18 @@
                       <strong>${feedback.title}</strong>
                     </div>
                     <p>${feedback.message}</p>
+                    ${feedback.nudge ? `<p class="feedback-nudge">${icon("lightbulb")}<span>${escapeHtml(feedback.nudge)}</span></p>` : ""}
                     ${
                       // 答錯、逾時、跳過都直接給參考答案 —— 不用點開「完整推導」、
                       // 不記「借助解答」。實測逾時卡只有一句「沒有輸入答案」，
                       // 想知道答案還要付一次標記，這只會讓人不敢逾時而不是變快。
                       // 「借助解答」保留給看完整推導 —— 看答案跟看解法是兩件事。
-                      feedback.status !== "correct" && current.answerKind !== "worksheet"
+                      // 集合／區間／判定題的判分訊息裡本來就帶了參考答案
+                      // （「端點不對。參考答案：…」），再補一行就會連著印兩次 ——
+                      // 截圖實測看到「參考答案：convergent」上下相鄰重複。
+                      feedback.status !== "correct"
+                      && current.answerKind !== "worksheet"
+                      && !String(feedback.message || "").includes("參考答案")
                         ? `<p class="feedback-reference">參考答案：${referenceAnswerHTML(current)}</p>`
                         : ""
                     }
@@ -6338,13 +6353,19 @@
         </div>
       `;
     }
+    // 文案框架：原本是「0/3 · 每次扣 8 分」—— 同樣一件事，但讀起來像罰單，
+    // 而提示的用途是讓卡住的人繼續往前，不是懲罰他求助。
+    // 代價照樣講清楚（誠實），只是換成標籤而不是警告。
+    const exhausted = shown >= hints.length;
+    const lead = exhausted ? "提示都看完了" : shown ? `還有 ${hints.length - shown} 層提示` : "卡住了？可以看提示";
+    const cost = quiz.practice ? "練習模式不扣分" : `一層 −${hintPenalty(problem)} 分`;
     return `
       <div class="hint-panel">
         <div>
-          <strong>提示</strong>
-          <span>${shown}/${hints.length}${quiz.practice ? "" : ` · 每次扣 ${hintPenalty(problem)} 分`}</span>
+          <strong>${escapeHtml(lead)}</strong>
+          <span>${escapeHtml(cost)}${hints.length ? ` · 已看 ${shown}/${hints.length}` : ""}</span>
         </div>
-        <button class="button ghost" data-action="show-hint" ${quiz.feedback || shown >= hints.length ? "disabled" : ""}>${icon("lightbulb")}看提示</button>
+        <button class="button ghost" data-action="show-hint" ${quiz.feedback || exhausted ? "disabled" : ""}>${icon("lightbulb")}${shown ? "再給一層" : "看提示"}</button>
       </div>
       ${
         shown
@@ -10480,6 +10501,8 @@
     quiz.score += earned;
     if (!correct && quiz.accuracyMode && !quiz.practice) quiz.score = Math.max(0, quiz.score - 80);
     quiz.currentStreak = correct ? quiz.currentStreak + 1 : 0;
+    // 連續卡關的計數：用來決定要不要遞一句「怎麼辦」的建議
+    quiz.missStreak = correct ? 0 : (quiz.missStreak || 0) + 1;
     quiz.bestStreak = Math.max(quiz.bestStreak, quiz.currentStreak);
     const recorded = {
       problem,
@@ -10537,7 +10560,10 @@
       title: correct
         ? `${quiz.practice ? "答對" : `答對，+${earned}`} · ${praiseLine(quiz.currentStreak)}`
         : answerReasonLabel(reason),
-      message: detail || (correct ? "" : "先想想卡在哪一步，下面可以一段一段看解法。")
+      message: detail || (correct ? "" : "先想想卡在哪一步，下面可以一段一段看解法。"),
+      // 連錯兩題以上遞一句建議 —— 給的是**下一步怎麼做**，不是加油。
+      // 大考模式不給：那裡的節奏是考試，插話只是干擾。
+      nudge: !correct && !quiz.examMode ? stuckNudge(quiz.missStreak) : ""
     };
     // 全螢幕書寫時答錯：回饋卡與「下一題」都在 fixed 的全螢幕外殼底下，
     // 看不到也點不到，而 feedback 一出現連「退出全螢幕」鈕都被 disabled ——
