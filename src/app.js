@@ -5598,7 +5598,45 @@
     `;
   }
 
-  // 答對讚語：多鄰國式的「每次都不太一樣」。連對 3 題起改報 combo 數。
+  // ── 作答舞台的三個儀表 ─────────────────────────────────────
+  //
+  // 關於「像不像某個綠色貓頭鷹 App」：可以學的是**機制**（一題一格的
+  // 進度、即時對錯、節奏獎勵），不能碰的是人家的商業外觀 ——
+  // 吉祥物、那個特定的綠、他們的音效與文案。所以這裡一律用
+  // BuzzCalculus 自己的金／墨識別，綠只當「對」的通用語意色。
+
+  // 進度分段：一題一格，答對填實、答錯標紅、目前這格點亮。
+  // 比單一長條多給的資訊是「是哪幾題掉了」—— 那正是作答中最想知道的事。
+  // 用 flex 均分，所以 8 題和 20 題都剛好填滿同一條寬度。
+  function renderProgressPips(currentQuiz) {
+    const answered = new Map(currentQuiz.answers.map((answer) => [answer.problem.id, answer]));
+    const pips = currentQuiz.problems
+      .map((problem, index) => {
+        const answer = answered.get(problem.id);
+        const state = answer
+          ? answer.correct ? "is-hit" : "is-miss"
+          : index === currentQuiz.index ? "is-now" : "";
+        return `<i class="pip ${state}"></i>`;
+      })
+      .join("");
+    return `<div class="progress-pips" role="img" aria-label="第 ${currentQuiz.index + 1} / ${currentQuiz.problems.length} 題">${pips}</div>`;
+  }
+
+  // 計時環的掃描比例（1 = 滿、0 = 沒了）。CSS 用它畫 conic 圓環，
+  // 每秒由 updateLiveQuizStats 更新同一個變數 —— 只有一份真相。
+  function timerSweep(currentQuiz, problem) {
+    if (!currentQuiz || currentQuiz.noTimer || currentQuiz.practice) return 1;
+    if (currentQuiz.examMode) {
+      const total = Number(currentQuiz.examDurationSec) || 1;
+      return Math.max(0, Math.min(1, examTimeRemaining(currentQuiz) / total));
+    }
+    const limit = questionTimeLimit(currentQuiz, problem) || 1;
+    const frozenNow = currentQuiz.boardPausedAt || Date.now();
+    const elapsed = Math.max(0, Math.floor((frozenNow - currentQuiz.questionStartedAt) / 1000));
+    return Math.max(0, Math.min(1, (limit - elapsed) / limit));
+  }
+
+  // 答對讚語：每次都不太一樣。連對 3 題起改報 combo 數。
   const PRAISE_WORDS = ["漂亮！", "乾淨俐落！", "就是這樣！", "穩！", "好球！", "反射成形了", "手感正熱"];
 
   function praiseLine(streak) {
@@ -5622,7 +5660,6 @@
     const examRemaining = quiz.examMode ? examTimeRemaining(quiz) : null;
     const remaining = quiz.examMode ? examRemaining : perQuestionRemaining;
     const timerPaused = Boolean(!quiz.examMode && quiz.boardPausedAt);
-    const progress = Math.round((quiz.index / quiz.problems.length) * 100);
     const isPractice = Boolean(quiz.practice);
     const noTimer = Boolean(quiz.noTimer || isPractice);
     const isDanger = !noTimer && remaining <= (quiz.examMode ? 180 : 8) ? "is-danger" : "";
@@ -5660,12 +5697,16 @@
                      <span>${isPractice ? "不計分" : `目前分數 ${quiz.score}`}</span>
                      ${renderComboChip(quiz.currentStreak)}`}
               </div>
-              <div class="progress-bar" aria-label="進度"><span style="width:${progress}%"></span></div>
+              ${renderProgressPips(quiz)}
             </div>
             <div class="timer-cluster">
-              <div class="timer-box ${isDanger} ${noTimer ? "is-freeform" : ""}" data-live-box="time" role="timer" aria-live="off">
-                <span>${timeLabel}</span>
-                <strong data-live="time">${timeValue}</strong>
+              <!-- 計時環：數字仍然是 data-live="time"（每秒更新的單一真相），
+                   外圈的 conic 掃描只是把同一個數字畫成看得懂的形狀。 -->
+              <div class="timer-ring ${isDanger} ${noTimer ? "is-freeform" : ""}" data-live-box="time" role="timer" aria-live="off" style="--sweep:${timerSweep(quiz, current).toFixed(3)}">
+                <span class="timer-ring-face">
+                  <strong data-live="time">${timeValue}</strong>
+                  <small>${timeLabel}</small>
+                </span>
               </div>
               ${
                 // 原本這裡是「監考 / 切頁」的計數盒。整組拿掉了 ——
@@ -5726,7 +5767,10 @@
             ${
               feedback
                 ? `<div class="feedback ${feedback.status}">
-                    <strong>${feedback.title}</strong>
+                    <div class="feedback-head">
+                      <span class="feedback-badge">${icon(feedback.status === "correct" ? "check" : feedback.status === "timeout" ? "clock" : "x")}</span>
+                      <strong>${feedback.title}</strong>
+                    </div>
                     <p>${feedback.message}</p>
                     ${
                       // 答錯、逾時、跳過都直接給參考答案 —— 不用點開「完整推導」、
@@ -10866,7 +10910,11 @@
     const timeBox = app.querySelector('[data-live-box="time"]');
     const answeredNode = app.querySelector('[data-live="answered"]');
     if (timeNode) timeNode.textContent = quiz.examMode ? formatCountdown(remaining) : String(remaining);
-    if (timeBox) timeBox.classList.toggle("is-danger", remaining <= (quiz.examMode ? 180 : 8));
+    if (timeBox) {
+      timeBox.classList.toggle("is-danger", remaining <= (quiz.examMode ? 180 : 8));
+      // 環的掃描跟著同一個 remaining 走，不另外算一份時間
+      timeBox.style.setProperty("--sweep", timerSweep(quiz, current).toFixed(3));
+    }
     if (answeredNode) answeredNode.textContent = `${quiz.answers.length}/${quiz.problems.length}`;
   }
 
