@@ -1722,7 +1722,7 @@ button {
 
 .progress-bar {
   height: 12px;
-  background: #e7e2d8;
+  background: var(--line);
   border-radius: 999px;
   overflow: hidden;
 }
@@ -1734,8 +1734,40 @@ button {
   border-radius: 999px;
   background: var(--green);
   transition: width 320ms cubic-bezier(0.22, 1, 0.36, 1);
-  /* 上緣一道高光，讓長條有一點厚度（多鄰國那種果凍感） */
+  /* 上緣一道高光，讓長條有一點厚度 */
   box-shadow: inset 0 2px 0 rgba(255, 255, 255, 0.35);
+}
+
+/* 進度分段：一題一格，均分整條寬度（8 題和 20 題都填滿）。
+   答對填綠、答錯填紅、目前這格是金色並帶一圈光暈。 */
+.progress-pips {
+  display: flex;
+  gap: 4px;
+  height: 12px;
+}
+
+.progress-pips .pip {
+  flex: 1 1 0;
+  min-width: 0;
+  border-radius: 999px;
+  /* 用 token 不用寫死色：深色主題下寫死的米白會變成一排白條 */
+  background: var(--line);
+  transition: background-color 220ms ease, transform 220ms ease;
+}
+
+.progress-pips .pip.is-hit {
+  background: var(--green);
+  box-shadow: inset 0 2px 0 rgba(255, 255, 255, 0.3);
+}
+
+.progress-pips .pip.is-miss {
+  background: color-mix(in srgb, var(--red) 72%, var(--line));
+}
+
+.progress-pips .pip.is-now {
+  background: var(--gold);
+  transform: scaleY(1.5);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--gold) 28%, transparent);
 }
 
 /* 兩欄的網格配一個小孩 = 那個小孩佔滿半條橫列。
@@ -1773,6 +1805,70 @@ button {
 }
 
 .timer-box.is-danger strong {
+  color: var(--red);
+}
+
+/* 計時環：外圈用 conic 掃描把剩餘時間畫成看得懂的形狀，
+   中間仍然是那個每秒更新的數字。--sweep 由 JS 給（1 → 0）。 */
+.timer-ring {
+  --sweep: 1;
+  position: relative;
+  flex: 0 0 auto;
+  width: 78px;
+  height: 78px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background:
+    conic-gradient(var(--gold) calc(var(--sweep) * 360deg), var(--line) 0);
+  transition: background 400ms linear;
+}
+
+.timer-ring-face {
+  width: 62px;
+  height: 62px;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 0;
+  border-radius: 50%;
+  background: var(--panel);
+  text-align: center;
+}
+
+.timer-ring-face strong {
+  display: block;
+  margin-bottom: 1px;
+  font-size: 1.3rem;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.timer-ring-face small {
+  display: block;
+  color: var(--muted);
+  font-size: 0.58rem;
+  line-height: 1;
+  letter-spacing: 0.08em;
+}
+
+/* 不倒數的模式：環不掃描，維持一圈淡淡的邊 */
+.timer-ring.is-freeform {
+  background: var(--line);
+}
+
+.timer-ring.is-freeform .timer-ring-face strong {
+  font-size: 1.05rem;
+}
+
+/* 時間快到：環轉紅並輕輕搏動，提醒但不尖叫 */
+.timer-ring.is-danger {
+  background:
+    conic-gradient(var(--red) calc(var(--sweep) * 360deg), var(--line) 0);
+  animation: timer-pulse 1s ease-in-out infinite;
+}
+
+.timer-ring.is-danger .timer-ring-face strong {
   color: var(--red);
 }
 
@@ -1831,6 +1927,7 @@ button {
 
 @media (prefers-reduced-motion: reduce) {
   .timer-box.is-danger,
+  .timer-ring.is-danger,
   .combo-chip.is-hot {
     animation: none;
   }
@@ -3094,15 +3191,42 @@ button,
   min-height: 68px;
   display: grid;
   gap: 6px;
-  padding: 12px 14px;
+  padding: 14px 16px;
+  /* 左緣一道粗色帶：一眼就知道這張卡在說「對」還是「錯」，
+     不用先讀字。顏色由下面的狀態規則換。 */
   border: 1px solid var(--line);
+  border-left: 5px solid var(--line-strong);
   border-radius: var(--radius);
   background: rgba(255, 255, 255, 0.9);
   align-content: start;
 }
 
+/* 回饋抬頭：圓形徽章 + 標題，比純文字好認得多 */
+.feedback-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.feedback-badge {
+  flex: 0 0 auto;
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--line);
+  color: var(--ink);
+}
+
+.feedback-badge svg {
+  width: 17px;
+  height: 17px;
+}
+
 .feedback strong {
   display: block;
+  font-size: 1.06rem;
 }
 
 .feedback p {
@@ -3118,13 +3242,26 @@ button,
 
 .feedback.correct {
   border-color: rgba(24, 139, 88, 0.45);
+  border-left-color: var(--green);
   background: #edf8f1;
+}
+
+.feedback.correct .feedback-badge {
+  background: var(--green);
+  color: #fff;
 }
 
 .feedback.wrong,
 .feedback.timeout {
   border-color: rgba(216, 76, 63, 0.48);
+  border-left-color: var(--red);
   background: #fff2ef;
+}
+
+.feedback.wrong .feedback-badge,
+.feedback.timeout .feedback-badge {
+  background: var(--red);
+  color: #fff;
 }
 
 /* 答對的「+分數」toast：答對 950ms 就自動前進，回饋卡在手機上根本
@@ -4264,6 +4401,24 @@ button,
     letter-spacing: 0.04em;
   }
 
+  .timer-ring {
+    width: 62px;
+    height: 62px;
+  }
+
+  .timer-ring-face {
+    width: 50px;
+    height: 50px;
+  }
+
+  .timer-ring-face strong {
+    font-size: 1.12rem;
+  }
+
+  .timer-ring-face small {
+    font-size: 0.56rem;
+  }
+
   .timer-box strong {
     margin-top: 2px;
     font-size: 1.2rem;
@@ -4576,7 +4731,9 @@ button,
     font-size: 0.78rem;
   }
 
-  .quiz-screen .progress-meta span:nth-child(n + 3):not(.clear-need) {
+  /* 窄畫面收掉次要的中繼資訊，但保留過關線與連勝火焰 ——
+     那兩個是作答當下真的會看的東西。 */
+  .quiz-screen .progress-meta span:nth-child(n + 3):not(.clear-need):not(.combo-chip) {
     display: none;
   }
 
