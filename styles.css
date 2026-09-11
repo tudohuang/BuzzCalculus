@@ -2993,6 +2993,41 @@ button,
   gap: 6px;
 }
 
+/* 數字鍵獨立成 3 欄的計算機配置（789 / 456 / 123 / 0 . −），
+   符號鍵在旁邊自己換行 —— 數字的位置從此固定，不隨寬度飄。 */
+.webwork-keypad {
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.keypad-digits {
+  flex: 0 0 auto;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(44px, 1fr));
+  gap: 6px;
+}
+
+/* 但 3 欄配置只在**觸控裝置**成立：那裡這個面板就是輸入法，
+   數字的位置固定才按得快。桌機有實體鍵盤，面板只是快捷 palette ——
+   硬排成 4 列會把作答頁推出視窗（版面 E2E 釘住不准出現捲軸），
+   所以桌機讓數字鍵直接流回原本的緊湊排列。 */
+@media (pointer: fine) {
+  .keypad-digits {
+    display: contents;
+  }
+}
+
+.keypad-rest {
+  /* 基準壓低，讓符號鍵在手機上也能坐在數字區旁邊，
+     而不是整塊掉到下一行、把右邊那片空白留著。 */
+  flex: 1 1 150px;
+  min-width: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-content: flex-start;
+}
+
 .keypad button {
   min-width: 44px;
   min-height: 40px;
@@ -3060,6 +3095,36 @@ button,
 .choice-option:active:not(:disabled) {
   transform: translateY(1px);
   box-shadow: none;
+}
+
+/* 選項的快捷鍵提示：只在有實體鍵盤時出現。
+   按鈕上寫 A/B/C/D，能按的鍵也就是 A/B/C/D —— 看到什麼就按什麼。 */
+.choice-key {
+  display: none;
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  min-width: 20px;
+  height: 20px;
+  font-size: 0.7rem;
+  opacity: 0.55;
+}
+
+@media (pointer: fine) {
+  .choice-option {
+    position: relative;
+  }
+
+  .choice-option .choice-key {
+    display: inline-grid;
+  }
+
+  /* 答完之後鍵盤提示就沒有用了，讓位給狀態 */
+  .choice-option.is-correct .choice-key,
+  .choice-option.is-wrong .choice-key,
+  .choice-option.is-muted .choice-key {
+    display: none;
+  }
 }
 
 /* 答完之後：正解亮綠、選錯的標紅抖一下、其他選項退場。
@@ -5850,7 +5915,8 @@ button,
   .quiz-screen .webwork-keypad {
     display: flex;
     flex-wrap: wrap;
-    gap: 6px;
+    align-items: flex-start;
+    gap: 8px;
     overflow-x: visible;
     padding-bottom: 2px;
     scrollbar-width: none;
