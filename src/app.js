@@ -3243,27 +3243,28 @@
           ${(() => {
             const records = loadRecords();
             let unitIdx = -1;
-            let swayIdx = 0;
             let unitNodes = [];
-            const chest = () => (unitIdx >= 0 ? renderUnitChest(unitIdx, unitNodes, swayIdx++, records) : "");
-            const out = path.nodes.map((node) => {
+            const chest = () => (unitIdx >= 0 ? renderUnitChest(unitIdx, unitNodes, records) : "");
+            const out = path.nodes.map((node, index) => {
               const startsUnit = PATH_UNITS.findIndex((unit) => unit.startId === node.id);
               let prefix = "";
               if (startsUnit >= 0) {
-                prefix = chest(); // 上一個單元收尾的寶箱
+                prefix = chest(); // 上一個單元收尾的獎勵格
                 unitIdx = startsUnit;
-                swayIdx = 0;
                 unitNodes = [];
                 const unit = PATH_UNITS[unitIdx];
+                // 章節標題：一條細色條 + 單元名，像課本的章名，
+                // 不是滿版色塊（那個是別人的外觀）。
                 prefix += `
-                  <div class="path-unit-banner" style="--unit-accent:${unit.accent}">
+                  <div class="path-unit-head" style="--unit-accent:${unit.accent}">
+                    <span class="path-unit-rule" aria-hidden="true"></span>
                     <strong>${escapeHtml(unit.title)}</strong>
-                    <span>${escapeHtml(unit.subtitle)}</span>
+                    <span class="path-unit-sub">${escapeHtml(unit.subtitle)}</span>
                   </div>`;
               }
               unitNodes.push(node);
               const accent = unitIdx >= 0 ? PATH_UNITS[unitIdx].accent : "";
-              return prefix + renderPathNode(node, swayIdx++, node.id === next.id, accent);
+              return prefix + renderPathNode(node, index, node.id === next.id, accent);
             }).join("");
             return out + chest();
           })()}
@@ -3274,10 +3275,13 @@
 
   // 多鄰國式的蛇形偏移：關卡圓鈕沿著中軸左右擺，八格一個週期。
   // 只是視覺 —— DOM 順序、動作與可及性都跟直排一樣。
-  const PATH_SERPENTINE = [0, 0.55, 0.9, 0.55, 0, -0.55, -0.9, -0.55];
-
-  // 主線單元：每個單元一條色帶橫幅、一個主色（目前關卡的圓與進度環
-  // 跟著單元色走），蛇形在單元開頭歸零重新起擺。
+  // 主線單元：每個單元一個主色（章節標題的色條與目前關卡的進度環吃它）。
+  //
+  // 2026-09-11：蛇形擺動、圓鈕上方會跳的「開始」對話泡泡、滿版純色單元條
+  // 這三樣一起看就是別人的商業外觀，拿掉。留下的是**機制**——
+  // 單元分段、逐關進度、獎勵格 —— 那本來就不受著作權保護。
+  // 現在的視覺語言改成 BuzzCalculus 自己的「路線圖」：一條直線串起方形站點，
+  // 章節標題用細色條而不是整條色塊。
   const PATH_UNITS = [
     { title: "第 1 單元", subtitle: "單變數基礎", accent: "#c9911d", startId: "onevar_limit" },
     { title: "第 2 單元", subtitle: "積分技巧", accent: "#3f95c6", startId: "usub" },
@@ -3290,15 +3294,14 @@
   // 多發會改變連勝語意；XP 是紀念品，發多少都不會弄壞任何系統。
   const UNIT_CHEST_XP = 80;
 
-  function renderUnitChest(unitIdx, unitNodes, swayIdx, records) {
+  function renderUnitChest(unitIdx, unitNodes, records) {
     const unit = PATH_UNITS[unitIdx];
     const opened = Boolean((records.unitChests || {})[unitIdx]);
     const cleared = unitNodes.length > 0 && unitNodes.every((node) => node.status === "mastered" || node.status === "gold");
     const state = opened ? "is-open" : cleared ? "is-ready" : "is-locked";
     const label = opened ? `已開啟 · +${UNIT_CHEST_XP} XP` : cleared ? "點開領獎" : "全單元通過後解鎖";
-    const sway = PATH_SERPENTINE[swayIdx % PATH_SERPENTINE.length];
     return `
-      <div class="path-step path-chest ${state}" style="--sway:${sway};--unit-accent:${unit.accent}">
+      <div class="path-step path-chest ${state}" style="--unit-accent:${unit.accent}">
         <button class="path-node-button" data-action="open-unit-chest" data-unit="${unitIdx}" ${state === "is-ready" ? "" : "disabled"} aria-label="${escapeAttr(`${unit.subtitle} 寶箱，${label}`)}">
           <span class="path-node-ring">
             <span class="path-node-core">${icon(opened ? "sparkles" : "gift")}</span>
@@ -3339,13 +3342,11 @@
     const done = node.status === "mastered" || node.status === "gold";
     const justUnlocked = node.id === justUnlockedNodeId;
     if (justUnlocked) justUnlockedNodeId = "";
-    const sway = PATH_SERPENTINE[index % PATH_SERPENTINE.length];
     // 目前這格用 conic 進度環顯示熟練度；完成格直接畫勾，不再顯示百分比。
     const ringStyle = isNext ? ` style="--mastery:${Math.max(6, node.mastery)}"` : "";
     return `
-      <div class="path-step is-${node.status} ${isNext ? "is-next" : ""} ${node.gated ? "is-gated" : ""} ${justUnlocked ? "is-just-unlocked" : ""}" style="--sway:${sway}${accent ? `;--unit-accent:${accent}` : ""}">
+      <div class="path-step is-${node.status} ${isNext ? "is-next" : ""} ${node.gated ? "is-gated" : ""} ${justUnlocked ? "is-just-unlocked" : ""}"${accent ? ` style="--unit-accent:${accent}"` : ""}>
         <button class="path-node-button" data-action="start-path-node" data-node-id="${escapeAttr(node.id)}" aria-label="${escapeAttr(`${node.label}，${label}`)}" title="${escapeAttr(`${node.label} · ${label} · ${node.relatedCount} 題`)}">
-          ${isNext ? `<span class="path-start-bubble" aria-hidden="true">開始</span>` : ""}
           <span class="path-node-ring"${ringStyle}>
             <span class="path-node-core">${icon(done ? "check" : node.icon)}</span>
             ${node.gated && !done ? `<span class="path-gate-chip" aria-hidden="true">${icon("flag")}</span>` : ""}
@@ -3354,6 +3355,7 @@
             <strong>${escapeHtml(node.short)}</strong>
             <small>${done ? (node.status === "gold" ? "金色" : "已通過") : `${label} · ${node.relatedCount} 題`}</small>
           </span>
+          ${isNext ? `<span class="path-now-chip">${icon("play")}下一關</span>` : ""}
         </button>
       </div>
     `;
