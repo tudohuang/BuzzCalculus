@@ -495,7 +495,11 @@ async function run() {
     if (!phoneBoard.ok) {
       check("手機：攤開計算紙真的寫得到", false, phoneBoard.why);
     } else {
-      const bigEnough = phoneBoard.canvasH >= phoneBoard.vh * 0.35;
+      // 手機上「寫字模式」就該把螢幕給畫布。第一版只要求 35%，
+      // 但實測 45% 的螢幕被工具列（兩排）與作答區（231px）吃掉時
+      // 使用者的評語是「還是不好」—— 壓縮那些之後畫布有 73%，
+      // 門檻拉到 60% 才擋得住那種「數字通過但實際難用」的版本。
+      const bigEnough = phoneBoard.canvasH >= phoneBoard.vh * 0.6;
       check("手機：攤開計算紙真的寫得到", phoneBoard.hitsCanvas && phoneBoard.fullyVisible && bigEnough,
         `畫布 ${phoneBoard.canvasH}px（視窗 ${phoneBoard.vh}）· 完整露出 ${phoneBoard.fullyVisible}` +
         (phoneBoard.hitsCanvas ? "" : ` —— 畫布中心被「${String(phoneBoard.coveredBy).slice(0, 40)}」蓋住`));
