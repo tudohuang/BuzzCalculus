@@ -455,6 +455,52 @@ async function run() {
       check(`${pad.label} 的題目沒有被切掉`, !pad_.promptClipped,
         pad_.promptClipped ? "題目列橫向溢出，開頭與結尾看不到" : "題目完整可見");
     }
+    /* ── 3.65 手機：攤開計算紙必須真的能寫 ── */
+    // 回報：「手寫在手機上一開那版面直接爛掉」。量出來的原因是 390×844 放不下
+    // 「題目＋內嵌板＋fixed 底部作答浮條」三層 —— 工具列被浮條切一半、
+    // 畫布整個壓在浮條底下，只露出一絲格線。修法是手機開板直接進全螢幕。
+    // 釘住的是結果而不是手法：畫布要夠大、要完整露出來、不准被浮條蓋住。
+    await chrome.send("Emulation.setDeviceMetricsOverride", VIEWPORT);
+    await chrome.send("Emulation.setTouchEmulationEnabled", { enabled: true, maxTouchPoints: 5 });
+    await chrome.navigate(`${server.url}/index.html`);
+    await chrome.sleep(700);
+    const phoneBoard = await chrome.evaluate(`
+      const wait=(ms)=>new Promise(r=>setTimeout(r,ms));
+      const c = (n) => { const h=[...document.querySelectorAll("button,a,[data-action]")].find(x=>(x.innerText||"").includes(n)); if(h) h.click(); return !!h; };
+      c("訓練"); await wait(700);
+      const free=document.querySelector('[data-answer-mode="free"]');
+      if(free) free.click(); await wait(500);
+      const start=document.querySelector('[data-action="start"]');
+      if(!start) return { ok:false, why:"訓練頁沒有開始鈕" };
+      start.click(); await wait(1300);
+      const ack=[...document.querySelectorAll("button")].find(b=>/知道了/.test(b.textContent||""));
+      if(ack){ ack.click(); await wait(400); }
+      const toggle=document.querySelector('[data-board-action="toggle"]');
+      if(!toggle) return { ok:false, why:"沒有計算紙開關" };
+      toggle.click(); await wait(900);
+      const canvas=document.querySelector("[data-blackboard]");
+      if(!canvas) return { ok:false, why:"沒有畫布" };
+      const cb=canvas.getBoundingClientRect();
+      // 畫布中心點上真正命中的是誰？被浮動作答列蓋住的話會回傳別的東西。
+      const mid=document.elementFromPoint(cb.left+cb.width/2, cb.top+cb.height/2);
+      return {
+        ok:true,
+        canvasTop: Math.round(cb.top), canvasH: Math.round(cb.height),
+        vh: innerHeight,
+        fullyVisible: cb.top >= 0 && cb.bottom <= innerHeight + 1,
+        hitsCanvas: Boolean(mid && (mid===canvas || canvas.contains(mid))),
+        coveredBy: mid ? (mid.className||mid.tagName||"") : ""
+      };
+    `);
+    if (!phoneBoard.ok) {
+      check("手機：攤開計算紙真的寫得到", false, phoneBoard.why);
+    } else {
+      const bigEnough = phoneBoard.canvasH >= phoneBoard.vh * 0.35;
+      check("手機：攤開計算紙真的寫得到", phoneBoard.hitsCanvas && phoneBoard.fullyVisible && bigEnough,
+        `畫布 ${phoneBoard.canvasH}px（視窗 ${phoneBoard.vh}）· 完整露出 ${phoneBoard.fullyVisible}` +
+        (phoneBoard.hitsCanvas ? "" : ` —— 畫布中心被「${String(phoneBoard.coveredBy).slice(0, 40)}」蓋住`));
+    }
+
     /* ── 3.7 iPad：全螢幕書寫時答錯，不能把人關在覆蓋層底下 ── */
     // 全螢幕外殼是 position:fixed 的不透明整頁覆蓋層；答錯的回饋卡與
     // 「下一題」都渲染在它底下，而 feedback 一出現連退出全螢幕鈕都被

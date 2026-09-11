@@ -5671,6 +5671,14 @@
     return `<span class="combo-chip ${heat}">${icon("flame")}連勝 ${streak}</span>`;
   }
 
+  // 「手機尺寸」= 作答區已經變成 fixed 底部浮條的那個寬度。
+  // 門檻直接對齊 styles.css 的 @media (max-width: 760px) —— 兩邊必須同步，
+  // 不然會出現「CSS 認為是手機、JS 不認為」的半套版面。
+  function isPhoneViewport() {
+    if (typeof window === "undefined" || !window.innerWidth) return false;
+    return window.innerWidth <= 760;
+  }
+
   function renderQuiz() {
     const current = getCurrentProblem();
     if (!quiz || !current) return "";
@@ -6434,15 +6442,13 @@
 
     // 鍵盤／範例收在「輸入工具」抽屜裡；窄畫面預設收起來，讓題目與答案欄先站穩。
     //
-    // 但有一個絕對不能收的情況：畫面上的數學鍵盤**就是**這台裝置的輸入法
-    // （觸控裝置 + inputmode="none"，系統鍵盤被抑制）。
-    // 實測 390px 手機：點答案欄不跳鍵盤、鍵盤又收在抽屜裡 ——
-    // 整個「自己寫」模式沒有任何辦法輸入。所以鍵盤是輸入法時一律先開。
+    // 這裡**不能**因為「鍵盤是唯一輸入法」就預設展開：手機版的
+    // .webwork-answer 是 position:fixed 的底部浮條，把鍵盤攤在裡面會讓
+    // 浮條撐到 641px，直接蓋掉題目與計算紙（實測 390×844 整個版面爛掉）。
+    // 正確做法是互動而不是預設值 —— 點答案欄就叫鍵盤出來，
+    // 跟真的鍵盤一樣（見 openKeypadForInput）。
     if (quiz.keypadOpen == null) {
-      quiz.keypadOpen = suppressKeyboard
-        || typeof window === "undefined"
-        || !window.innerWidth
-        || window.innerWidth >= 760;
+      quiz.keypadOpen = typeof window === "undefined" || !window.innerWidth || window.innerWidth >= 760;
     }
     const extrasOpen = quiz.keypadOpen;
     const previewBlock = `
@@ -6469,12 +6475,13 @@
         }
         <button class="button" type="submit" ${disabled}>${icon("send")}送出</button>
         </form>
-        <!-- 預覽平常放在抽屜外面。它回答的是「我打的東西被讀成什麼」——
-             送出前唯一能自我檢查的地方，收進抽屜等於沒有。
-             （helper 那句「送出前先看預覽」在窄畫面上原本根本做不到。）
-             例外是全螢幕書寫：那個版面把每一像素都給書寫板，
-             多一條常駐橫列會把板子壓小 —— 手寫 E2E 就是這樣抓到的。 -->
-        ${compact ? "" : previewBlock}
+        <!-- 預覽：打了東西才出現在抽屜外面。它回答的是「我打的被讀成什麼」，
+             那是送出前唯一能自我檢查的地方，收進抽屜等於沒有；但空的時候
+             只會寫「尚未輸入」，白佔一條 —— 而手機版這整塊是 fixed 的底部
+             浮條，每多一條就少一條螢幕。
+             全螢幕書寫例外：那個版面把每像素給書寫板，預覽留在抽屜裡
+             （手寫 E2E 量到板子被壓成 353px 就是這樣抓到的）。 -->
+        ${!compact && hasDraft ? previewBlock : ""}
         <button class="webwork-extras-toggle" type="button" data-action="toggle-keypad" aria-expanded="${extrasOpen ? "true" : "false"}" ${disabled}>
           <span>${icon(extrasOpen ? "chevron-up" : "chevron-down")}${suppressKeyboard ? "數學鍵盤" : "輸入工具"}</span>
           <small>${extrasOpen ? "符號鍵 · 範例" : suppressKeyboard ? "點開才能打字" : "符號鍵 · 範例"}</small>
@@ -12149,13 +12156,23 @@
           // 「給你計算紙」和「每題倒數」兩個功能在互相打架。
           // 寫算是這個產品鼓勵的事，不該被秒數懲罰；大考照實走。
           if (quiz.boardOpen) pauseQuestionTimer(); else resumeQuestionTimer();
-          // 平板不再自動進全螢幕（2026-09 撤銷）。
-          //
-          // 當初的理由是「手機殼版面下題目佔掉 800px，內嵌板要捲才寫得到」——
-          // 但那是把 iPad 當放大手機的後果。現在 iPad 走桌面殼，
+          // 平板不再自動進全螢幕（2026-09 撤銷）：iPad 走桌面殼，
           // 內嵌板有 60vh 高、題目和選項同屏，跟桌機一樣好寫。
           // 實測原話：「平板的計算紙打開來比電腦更爛」—— 爛就爛在
-          // 被強制拽進全螢幕。全螢幕還在，變回一顆自己按的按鈕。
+          // 被強制拽進全螢幕。
+          //
+          // 但**手機**是另一回事，不能一起撤銷（2026-09-11 回報「手寫在
+          // 手機上一開那版面直接爛掉」，量出來確實如此）：
+          // 390×844 上作答區是 fixed 在底部的浮條（311px 高），內嵌板攤開
+          // 之後工具列被浮條切掉一半、畫布整個壓在浮條底下，只露出一絲格線。
+          // 那個尺寸根本放不下「題目＋內嵌板＋浮動作答列」三層。
+          // 全螢幕殼在同一支手機上量到的是：題目在上、工具列完整、
+          // 畫布 378px —— 所以手機開計算紙就直接給全螢幕。
+          if (quiz.boardOpen && isPhoneViewport()) {
+            quiz.boardFullscreen = true;
+            quiz.keypadBeforeFullscreen = quiz.keypadOpen;
+            quiz.keypadOpen = false;
+          }
           render();
           return;
         }
@@ -12174,6 +12191,19 @@
           return;
         }
         if (action === "fullscreen") {
+          // 手機沒有「內嵌板」這個狀態（放不下，見上面 toggle 的註解），
+          // 所以退出全螢幕＝收起計算紙，不是退回一個爛版面。
+          if (quiz.boardFullscreen && isPhoneViewport()) {
+            quiz.boardFullscreen = false;
+            quiz.boardOpen = false;
+            if (quiz.keypadBeforeFullscreen != null) {
+              quiz.keypadOpen = quiz.keypadBeforeFullscreen;
+              quiz.keypadBeforeFullscreen = null;
+            }
+            resumeQuestionTimer();
+            render();
+            return;
+          }
           quiz.boardFullscreen = !quiz.boardFullscreen;
           quiz.boardOpen = true;
           pauseQuestionTimer();
