@@ -34,8 +34,15 @@ function check(name, ok, detail = "") {
 
 // 每個畫面都要回答的幾何問題。全部在頁內算好再回傳，少走 round-trip。
 const GEOMETRY = `
-  const vw = window.innerWidth;
-  const vh = window.innerHeight;
+  // 版面視窗寬度要用 clientWidth，不能用 innerWidth。
+  //
+  // innerWidth 含垂直捲軸的 15px 溝槽：頁面一旦長到出現捲軸，每個「滿版」
+  // 元素量起來就都比 innerWidth 少 15px，於是 w >= vw - 2 這種斷言會在
+  // 版面完全正確的情況下爆掉（實際發生過：換了日期、每日題組換成比較高的
+  // 題目，桌面作答那條就從綠變紅，但外殼根本沒變）。
+  // 橫向溢出用 scrollWidth - clientWidth 也才是標準寫法。
+  const vw = document.documentElement.clientWidth;
+  const vh = document.documentElement.clientHeight;
   const rect = (sel) => {
     const el = document.querySelector(sel);
     if (!el) return null;

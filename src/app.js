@@ -463,7 +463,12 @@
     { label: "數字", keys: ["7", "8", "9", "4", "5", "6", "1", "2", "3", "0", ".", "-"] },
     { label: "常用", keys: ["x", "pi", "e", "(", ")", "+", "*", "/", "^"] },
     { label: "函數", keys: ["sqrt(|)", "sin(|)", "cos(|)", "tan(|)", "log(|)", "exp(|)"] },
-    { label: "判定", keys: ["DNE", "convergent", "divergent", "conditional"] }
+    // 收斂性判定詞（convergent / divergent / conditional）只有 answerKind
+    // 是 text 的題目收得到 —— 全庫掃過：沒有任何 numeric / expression /
+    // antiderivative 題的答案是那三個字。擺在數值題的鍵盤上是三顆長按鈕的
+    // 純噪音，還把真正會用到的符號擠到下面去。
+    // DNE 留著：有 7 題 numeric 的答案就是 dne（極限不存在）。
+    { label: "判定", keys: ["DNE"] }
   ];
   const DIGIT_KEYS = ["7", "8", "9", "4", "5", "6", "1", "2", "3", "0", ".", "-"];
   const ERROR_TAGS = ["粗心", "不會", "忘公式"];
@@ -833,14 +838,21 @@
 
     if (quiz.feedback) return;
 
-    if (key >= "1" && key <= "4") {
+    // 選項快捷鍵：數字 1-4 一直都有，但按鈕上寫的是 A/B/C/D ——
+    // 使用者看到的字母不能按，等於這個快捷鍵不存在。兩種都收。
+    const letterIndex = /^[a-dA-D]$/.test(key) ? key.toLowerCase().charCodeAt(0) - 97 : -1;
+    const digitIndex = key >= "1" && key <= "4" ? Number(key) - 1 : -1;
+    const choiceIndex = digitIndex >= 0 ? digitIndex : letterIndex;
+    if (choiceIndex >= 0) {
       const options = app.querySelectorAll('[data-action="choose-answer"]');
-      const pick = options[Number(key) - 1];
+      const pick = options[choiceIndex];
       if (pick) {
         event.preventDefault();
         pick.click();
+        return;
       }
-      return;
+      // 沒有選項可按時，字母鍵不該被吃掉（h/s 還有自己的用途）
+      if (digitIndex >= 0) return;
     }
 
     if (key === "h" || key === "H") {
@@ -6404,12 +6416,6 @@
       ? { label: "已判定", className: "is-empty" }
       : answerSyntaxInfo(problem, quiz.draft);
     const examples = answerExamples(problem);
-    // Keypad/preview/examples collapse into a drawer; on a narrow screen they
-    // start closed so the prompt + input stay primary. Resolved once per quiz.
-    if (quiz.keypadOpen == null) {
-      quiz.keypadOpen = typeof window === "undefined" || !window.innerWidth || window.innerWidth >= 760;
-    }
-    const extrasOpen = quiz.keypadOpen;
 
     // 觸控裝置預設不叫系統鍵盤。
     //
@@ -6425,6 +6431,25 @@
     if (quiz.systemKeyboard == null) quiz.systemKeyboard = !touchDevice;
     const suppressKeyboard = touchDevice && !quiz.systemKeyboard;
     const hasDraft = Boolean(quiz.draft.trim());
+
+    // 鍵盤／範例收在「輸入工具」抽屜裡；窄畫面預設收起來，讓題目與答案欄先站穩。
+    //
+    // 但有一個絕對不能收的情況：畫面上的數學鍵盤**就是**這台裝置的輸入法
+    // （觸控裝置 + inputmode="none"，系統鍵盤被抑制）。
+    // 實測 390px 手機：點答案欄不跳鍵盤、鍵盤又收在抽屜裡 ——
+    // 整個「自己寫」模式沒有任何辦法輸入。所以鍵盤是輸入法時一律先開。
+    if (quiz.keypadOpen == null) {
+      quiz.keypadOpen = suppressKeyboard
+        || typeof window === "undefined"
+        || !window.innerWidth
+        || window.innerWidth >= 760;
+    }
+    const extrasOpen = quiz.keypadOpen;
+    const previewBlock = `
+        <div class="answer-preview webwork-preview">
+          <span>預覽</span>
+          <div class="answer-preview-math math-inline ${hasDraft ? "" : "is-empty"}" data-answer-preview data-tex="${escapeAttr(previewTex)}">${renderLiteTex(previewTex, false)}</div>
+        </div>`;
     return `
       <section class="webwork-answer ${compact ? "is-docked" : ""}">
         <div class="webwork-head">
@@ -6444,22 +6469,33 @@
         }
         <button class="button" type="submit" ${disabled}>${icon("send")}送出</button>
         </form>
+        <!-- 預覽平常放在抽屜外面。它回答的是「我打的東西被讀成什麼」——
+             送出前唯一能自我檢查的地方，收進抽屜等於沒有。
+             （helper 那句「送出前先看預覽」在窄畫面上原本根本做不到。）
+             例外是全螢幕書寫：那個版面把每一像素都給書寫板，
+             多一條常駐橫列會把板子壓小 —— 手寫 E2E 就是這樣抓到的。 -->
+        ${compact ? "" : previewBlock}
         <button class="webwork-extras-toggle" type="button" data-action="toggle-keypad" aria-expanded="${extrasOpen ? "true" : "false"}" ${disabled}>
-          <span>${icon(extrasOpen ? "chevron-up" : "chevron-down")}輸入工具</span>
-          <small>${extrasOpen ? "預覽 · 符號鍵 · 範例" : hasDraft ? "點開看預覽" : "預覽 · 符號鍵 · 範例"}</small>
+          <span>${icon(extrasOpen ? "chevron-up" : "chevron-down")}${suppressKeyboard ? "數學鍵盤" : "輸入工具"}</span>
+          <small>${extrasOpen ? "符號鍵 · 範例" : suppressKeyboard ? "點開才能打字" : "符號鍵 · 範例"}</small>
         </button>
         <div class="webwork-extras ${extrasOpen ? "is-open" : "is-collapsed"}">
-          <div class="answer-preview webwork-preview">
-            <span>預覽</span>
-            <div class="answer-preview-math math-inline ${hasDraft ? "" : "is-empty"}" data-answer-preview data-tex="${escapeAttr(previewTex)}">${renderLiteTex(previewTex, false)}</div>
-          </div>
+          ${compact ? previewBlock : ""}
           <div class="webwork-examples" aria-label="常用答案格式">
             ${examples.map((item) => `<button type="button" data-insert-example="${escapeAttr(item)}" ${disabled}>${escapeHtml(item)}</button>`).join("")}${canReadInk(problem) ? `<button type="button" class="ink-read-button" data-action="read-ink" ${disabled}>讀取手寫 →</button>` : ""}
             <button type="button" data-action="clear-answer" ${disabled}>清除</button>
           </div>
+          ${(() => {
+            const keys = webworkKeys(problem);
+            const button = (key) => `<button type="button" data-insert="${escapeAttr(key.insert)}" ${disabled}>${escapeHtml(key.label)}</button>`;
+            return `
           <div class="keypad webwork-keypad" aria-label="快速輸入">
-            ${webworkKeys(problem).map((key) => `<button type="button" data-insert="${escapeAttr(key.insert)}" ${disabled}>${escapeHtml(key.label)}</button>`).join("")}<button type="button" class="keypad-backspace" data-action="answer-backspace" title="退格" ${disabled}>⌫</button>
-          </div>
+            ${keys.digits.length ? `<div class="keypad-digits">${keys.digits.map(button).join("")}</div>` : ""}
+            <div class="keypad-rest">
+              ${keys.rest.map(button).join("")}<button type="button" class="keypad-backspace" data-action="answer-backspace" title="退格" ${disabled}>⌫</button>
+            </div>
+          </div>`;
+          })()}
           <div class="helper-row webwork-helper">
             <span>${formatHelp(problem.answerKind)}</span>
             <span>不定積分可省略 +C</span>
@@ -6566,6 +6602,8 @@
                 <span>${String.fromCharCode(65 + index)}</span>
                 <strong class="choice-math math-inline" data-tex="${escapeAttr(choiceTex)}">${renderLiteTex(choiceTex, false)}</strong>
                 ${selectedWrong ? `<small class="choice-reason">${escapeHtml(choiceDistractorReason(problem, choice.value))}</small>` : ""}
+                <!-- 有實體鍵盤才顯示（CSS pointer: fine）：按得到的鍵要看得見 -->
+                <kbd class="choice-key" aria-hidden="true">${String.fromCharCode(65 + index)}</kbd>
               </button>`;
             }
           )
@@ -14228,10 +14266,17 @@
         : problem.answerKind === "set"
           ? [{ label: "數字", keys: DIGIT_KEYS }, { label: "集合", keys: ["{", "}", ",", "pi", "sqrt(|)", "/"] }]
           : WEBWORK_KEY_GROUPS;
-    return groups.flatMap((group) => group.keys.map((token) => ({
-      label: token.replace("|", ""),
-      insert: token
-    })));
+    // 數字鍵拆出來自己排成 3 欄的計算機配置。
+    //
+    // 原本 30 幾顆鍵是一條會換行的 flex 長列，789/456/123 被換行切在
+    // 任意位置（實測手機上排成「7 8 9 4 5 6 1 / 2 3 0 . - x pi」）——
+    // 數字鍵盤唯一的價值就是「不用找」，順序一亂就等於沒有。
+    const toKey = (token) => ({ label: token.replace("|", ""), insert: token });
+    const digits = groups.some((group) => group.label === "數字") ? DIGIT_KEYS.map(toKey) : [];
+    const rest = groups
+      .filter((group) => group.label !== "數字")
+      .flatMap((group) => group.keys.map(toKey));
+    return { digits, rest };
   }
 
   function formatHelp(kind) {
