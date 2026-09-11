@@ -4995,6 +4995,7 @@ button,
   .handwrite-shell.is-fullscreen .helper-row {
     display: none;
   }
+
 }
 
 .buzz-path-card {
@@ -5980,6 +5981,65 @@ button,
   /* 浮條收回去之後，原本幫它清出來的 184px 底部保留區也不用留了 */
   .quiz-screen .problem-stage.has-feedback .webwork-shell:not(.is-fullscreen) {
     padding-bottom: 0;
+  }
+}
+
+@media (max-width: 760px) {
+  /* ── 手機全螢幕＝寫字模式：不是「寫」的東西一律壓到最小 ──────────
+     量到的問題：844px 的螢幕上，工具列擠成兩排吃掉 152px、底下作答區
+     又佔 231px（標籤 37 + 輸入列 112 + 抽屜鈕 40），畫布只剩 378px ——
+     45% 的螢幕是裝飾，而使用者正在寫字。
+     這裡把那 383px 砍到約 160px，畫布拿回 600px 左右。 */
+  /* 注意：手機的 .quiz-screen .board-tools 是 grid（repeat(5, 42px)），
+     所以光寫 flex-wrap 沒有用 —— display 要一起換回 flex 才排得成一列。 */
+  .quiz-screen .handwrite-shell.is-fullscreen .board-tools {
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    gap: 4px;
+  }
+
+  .quiz-screen .handwrite-shell.is-fullscreen .board-tools .icon-button {
+    width: 38px;
+    height: 38px;
+  }
+
+  /* 全螢幕裡「收起計算紙」和「退出全螢幕」是同一件事，留一顆就好 */
+  .quiz-screen .handwrite-shell.is-fullscreen .board-tools [data-board-action="toggle"] {
+    display: none;
+  }
+
+  /* 「計算紙／手寫草稿」標籤：畫面上就是一張紙，不用再說一次 */
+  .quiz-screen .handwrite-shell.is-fullscreen .scratchboard-summary > div:first-child {
+    display: none;
+  }
+
+  .quiz-screen .handwrite-shell.is-fullscreen .scratchboard-summary {
+    justify-content: flex-end;
+  }
+
+  /* 作答區在寫字時只需要「打哪裡」和「送出」兩件事 */
+  .quiz-screen .handwrite-shell.is-fullscreen .webwork-head,
+  .quiz-screen .handwrite-shell.is-fullscreen .webwork-extras-toggle {
+    display: none;
+  }
+
+  /* 輸入框 + 鍵盤切換 + 送出排成一列（原本送出會被擠到第二排） */
+  .quiz-screen .handwrite-shell.is-fullscreen .answer-panel {
+    grid-template-columns: minmax(0, 1fr) auto auto;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .quiz-screen .handwrite-shell.is-fullscreen .answer-panel .button {
+    min-height: 46px;
+    padding-inline: 14px;
+  }
+
+  /* 送出鈕基底是 grid-column: 1 / -1（自己獨佔一排）—— 在寫字模式裡
+     那一排要省下來給畫布，所以讓它回到同一列的最後一格。 */
+  .quiz-screen .handwrite-shell.is-fullscreen .answer-panel button[type="submit"] {
+    grid-column: auto;
   }
 }
 
