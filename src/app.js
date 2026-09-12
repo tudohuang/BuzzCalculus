@@ -5782,34 +5782,29 @@
       : correctSoFar >= passTh ? `差 ${goldTh - correctSoFar} 題金牌`
       : maxPossible >= passTh ? `差 ${passTh - correctSoFar} 題過關`
       : "本關失守，專心清錯";
+    // 本局規則的一句話版：從 300px 側欄、再從頁尾一行小字，一路縮到 HUD 的註腳。
+    // 它是被動資訊 —— 想看細節的人按「規則」。
+    const modeNote = quiz.examMode ? "整份倒數 · 時間到直接交卷" : quiz.survival ? "生存：最多錯 3 題" : quiz.suddenDeath ? "Boss 連戰：錯一題就結算" : quiz.pressureMode ? "壓力訓練：時限逐題遞減（練到 60%），時間到算未作答" : noTimer ? "本局不倒數" : "每題各自倒數，時間到算未作答";
 
     return `
       <main class="screen quiz-screen" id="buzz-main">
         <section class="arena">
-          <div class="arena-top">
-            <div class="progress-block">
-              <div class="progress-meta">
-                ${pathNode
-                  ? `<strong>第 ${pathNodeIdx + 1} 關 · <span class="lvl-full">${escapeHtml(pathNode.label)}</span><span class="lvl-short">${escapeHtml(pathNode.short || pathNode.label)}</span></strong>
-                     <span>本關進度 ${quiz.index + 1} / ${totalQ}</span>
-                     <span class="clear-need ${clearLost ? "is-lost" : ""}">${clearLine}</span>
-                     ${renderComboChip(quiz.currentStreak)}`
-                  : `<strong>${escapeHtml(quiz.namedExam ? quiz.namedExam.label : modeLabel(quiz.mode))}</strong>
-                     <span>第 ${quiz.index + 1} / ${quiz.problems.length} 題</span>
-                     <span>${isPractice ? "不計分" : `目前分數 ${quiz.score}`}</span>
-                     ${renderComboChip(quiz.currentStreak)}`}
-              </div>
-              ${renderProgressPips(quiz)}
+          <!-- 作答 HUD：一條線放完「在哪一關、第幾題、還剩多少時間」。
+               舊版是兩層抬頭（品牌列 + 進度區）疊起來 160px，題目被推到畫面三分之一以下。
+               這裡把上下文、計時環、進度格收成一個 header，題目才是主角。 -->
+          <header class="arena-hud">
+            <div class="hud-context">
+              ${pathNode
+                ? `<strong class="hud-title">第 ${pathNodeIdx + 1} 關 · <span class="lvl-full">${escapeHtml(pathNode.label)}</span><span class="lvl-short">${escapeHtml(pathNode.short || pathNode.label)}</span></strong>
+                   <span class="hud-sub">第 ${quiz.index + 1} / ${totalQ} 題</span>
+                   <span class="clear-need ${clearLost ? "is-lost" : ""}">${clearLine}</span>
+                   ${renderComboChip(quiz.currentStreak)}`
+                : `<strong class="hud-title">${escapeHtml(quiz.namedExam ? quiz.namedExam.label : modeLabel(quiz.mode))}</strong>
+                   <span class="hud-sub">第 ${quiz.index + 1} / ${quiz.problems.length} 題</span>
+                   <span class="hud-sub">${isPractice ? "不計分" : `目前分數 ${quiz.score}`}</span>
+                   ${renderComboChip(quiz.currentStreak)}`}
             </div>
-            <div class="timer-cluster">
-              <!-- 計時環：數字仍然是 data-live="time"（每秒更新的單一真相），
-                   外圈的 conic 掃描只是把同一個數字畫成看得懂的形狀。 -->
-              <div class="timer-ring ${isDanger} ${noTimer ? "is-freeform" : ""}" data-live-box="time" role="timer" aria-live="off" style="--sweep:${timerSweep(quiz, current).toFixed(3)}">
-                <span class="timer-ring-face">
-                  <strong data-live="time">${timeValue}</strong>
-                  <small>${timeLabel}</small>
-                </span>
-              </div>
+            <div class="hud-status">
               ${
                 // 原本這裡是「監考 / 切頁」的計數盒。整組拿掉了 ——
                 // 一個一直盯著你看的數字，本身就是壓力來源，而它防不了任何東西。
@@ -5826,8 +5821,20 @@
               <button class="kbd-hint" data-action="show-shortcuts" title="鍵盤快捷鍵">
                 <kbd>?</kbd><span>快捷鍵</span>
               </button>
+              <!-- 計時環：數字仍然是 data-live="time"（每秒更新的單一真相），
+                   外圈的 conic 掃描只是把同一個數字畫成看得懂的形狀。 -->
+              <div class="timer-ring ${isDanger} ${noTimer ? "is-freeform" : ""}" data-live-box="time" role="timer" aria-live="off" style="--sweep:${timerSweep(quiz, current).toFixed(3)}" title="${escapeAttr(modeNote)}">
+                <span class="timer-ring-face">
+                  <strong data-live="time">${timeValue}</strong>
+                  <small>${timeLabel}</small>
+                </span>
+              </div>
             </div>
-          </div>
+            <div class="hud-progress">
+              ${renderProgressPips(quiz)}
+              <span class="hud-note">${escapeHtml(modeNote)}</span>
+            </div>
+          </header>
           ${quiz.examMode ? renderExamQuestionMap() : ""}
           ${
             // 只在剛前進的 1.9 秒內渲染：之後的重繪（開提示、切工具）
@@ -5862,8 +5869,22 @@
               </div>
               <div class="prompt math-block" data-tex="${escapeAttr(current.prompt)}"></div>
               ${["graphtap", "graphslope"].includes(current.answerKind) ? "" : renderProblemGraph(current)}
-              ${renderHintPanel(current)}
+              <!-- 題目下面一條工具列：提示、跳過、規則。
+                   提示本來是一張佔滿寬度的黃色橫幅，永遠亮著，跟題目搶視線；
+                   跳過與規則則流放在頁尾，離作答區半個螢幕。三顆都是「作答時偶爾會按」
+                   的東西，放在同一條、同一種份量，題目與答案之間只隔這一線。 -->
+              <div class="problem-tools">
+                ${renderHintPanel(current)}
+                <span class="problem-tools-spacer"></span>
+                ${
+                  // 已經有回饋（答完/逾時）就沒有「跳過」這回事 —— 留著只是語意不明
+                  feedback ? "" : `<button class="tool-button" type="button" data-action="skip">${icon("skip")}<span>跳過</span></button>`
+                }
+                <button class="tool-button" type="button" data-action="show-rules">${icon("info")}<span>規則</span></button>
+              </div>
+              ${renderHintList(current)}
               ${renderAnswerControls(current)}
+            </article>
             </article>
 
             ${
@@ -5890,28 +5911,17 @@
                         : ""
                     }
                     ${renderKeyIdea(current)}
+                    ${feedback.status !== "correct" && !quiz.examMode ? renderSolutionStages(current, { live: true }) : ""}
                     ${
-                      feedback.status !== "correct" && !quiz.examMode
-                        ? `${renderSolutionStages(current, { live: true })}
-                           <button class="button feedback-next" data-action="next-question">${icon("play")}${quiz.forceFinishAfterFeedback || quiz.index + 1 >= quiz.problems.length ? "看結算" : "下一題"}</button>`
-                        : feedback.status === "correct" && current.answerKind === "worksheet" && !quiz.examMode
-                          ? `<button class="button feedback-next" data-action="next-question">${icon("play")}${quiz.index + 1 >= quiz.problems.length ? "看結算" : "下一題"}</button>`
-                          : ""
+                      // 「下一題」放在回饋卡最底、而且是 sticky 的：推導攤開之後卡片會變很長，
+                      // 按鈕跟著貼在視窗底緣，不用捲到最下面才找得到。
+                      (feedback.status !== "correct" && !quiz.examMode) || (feedback.status === "correct" && current.answerKind === "worksheet" && !quiz.examMode)
+                        ? `<div class="feedback-actions"><button class="button feedback-next" data-action="next-question">${icon("play")}${quiz.forceFinishAfterFeedback || quiz.index + 1 >= quiz.problems.length ? "看結算" : "下一題"}</button></div>`
+                        : ""
                     }
                   </div>`
                 : ""
             }
-          </div>
-
-          <div class="action-row quiz-footer-row">
-            ${
-              // 已經有回饋（答完/逾時）就沒有「跳過」這回事 —— 留著只是語意不明
-              feedback ? "" : `<button class="button secondary" data-action="skip">${icon("skip")}跳過</button>`
-            }
-            <button class="button ghost" data-action="show-rules">${icon("info")}規則</button>
-            <!-- 本局規則從 300px 的側欄降級成一行小字：它是被動資訊，
-                 不值得一個常駐欄位把題目卡壓窄。詳細規則在「規則」鈕裡。 -->
-            <span class="quiz-mode-note">${quiz.examMode ? "整份倒數 · 時間到直接交卷" : quiz.survival ? "生存：最多錯 3 題" : quiz.suddenDeath ? "Boss 連戰：錯一題就結算" : quiz.pressureMode ? "壓力訓練：時限逐題遞減（練到 60%），時間到算未作答" : noTimer ? "本局不倒數" : "每題各自倒數，時間到算未作答"}</span>
           </div>
         </section>
       </main>
@@ -6432,40 +6442,33 @@
   // renderExamLockStatus() 已移除 —— 那是全螢幕鎖定的狀態列與「鎖定全螢幕」按鈕。
   // 大考模式現在只剩整份倒數與無提示，剩下的倒數資訊在上面的計時盒裡就看得到。
 
+  // 提示入口：一顆跟「跳過／規則」同份量的工具鈕，代價寫在鈕上。
+  // 文案框架：原本是「0/3 · 每次扣 8 分」—— 同樣一件事，但讀起來像罰單，
+  // 而提示的用途是讓卡住的人繼續往前，不是懲罰他求助。
+  // 代價照樣講清楚（誠實），只是換成標籤而不是警告。
   function renderHintPanel(problem) {
+    if (quiz.noHint) {
+      return `<span class="tool-button is-static" title="本局不提供提示，答錯不扣提示分">${icon("lightbulb")}<span>本局無提示</span></span>`;
+    }
     const hints = hintsFor(problem);
     const shown = Math.min(quiz.hintsUsed?.[problem.id] || 0, hints.length);
-    if (quiz.noHint) {
-      return `
-        <div class="hint-panel is-locked">
-          <div>
-            <strong>提示關閉</strong>
-            <span>本局不提供提示，答錯不扣提示分</span>
-          </div>
-          <button class="button ghost" disabled>${icon("lightbulb")}不可用</button>
-        </div>
-      `;
-    }
-    // 文案框架：原本是「0/3 · 每次扣 8 分」—— 同樣一件事，但讀起來像罰單，
-    // 而提示的用途是讓卡住的人繼續往前，不是懲罰他求助。
-    // 代價照樣講清楚（誠實），只是換成標籤而不是警告。
     const exhausted = shown >= hints.length;
-    const lead = exhausted ? "提示都看完了" : shown ? `還有 ${hints.length - shown} 層提示` : "卡住了？可以看提示";
-    const cost = quiz.practice ? "練習模式不扣分" : `一層 −${hintPenalty(problem)} 分`;
+    const cost = quiz.practice ? "不扣分" : `一層 −${hintPenalty(problem)} 分`;
+    const label = exhausted ? "提示看完了" : shown ? "再給一層" : "看提示";
+    const meta = hints.length ? `${shown}/${hints.length}` : "";
     return `
-      <div class="hint-panel">
-        <div>
-          <strong>${escapeHtml(lead)}</strong>
-          <span>${escapeHtml(cost)}${hints.length ? ` · 已看 ${shown}/${hints.length}` : ""}</span>
-        </div>
-        <button class="button ghost" data-action="show-hint" ${quiz.feedback || exhausted ? "disabled" : ""}>${icon("lightbulb")}${shown ? "再給一層" : "看提示"}</button>
-      </div>
-      ${
-        shown
-          ? `<ol class="hint-list">${hints.slice(0, shown).map((hint) => `<li>${escapeHtml(hint)}</li>`).join("")}</ol>`
-          : ""
-      }
+      <button class="tool-button tool-hint ${shown ? "is-open" : ""}" type="button" data-action="show-hint" ${quiz.feedback || exhausted ? "disabled" : ""} title="${escapeAttr(cost)}">
+        ${icon("lightbulb")}<span>${escapeHtml(label)}</span>${meta ? `<small>${meta}</small>` : ""}<em>${escapeHtml(cost)}</em>
+      </button>
     `;
+  }
+
+  function renderHintList(problem) {
+    if (quiz.noHint) return "";
+    const hints = hintsFor(problem);
+    const shown = Math.min(quiz.hintsUsed?.[problem.id] || 0, hints.length);
+    if (!shown) return "";
+    return `<ol class="hint-list">${hints.slice(0, shown).map((hint, index) => `<li><span class="hint-index">提示 ${index + 1}</span><span>${escapeHtml(hint)}</span></li>`).join("")}</ol>`;
   }
 
   function renderFreeAnswerControls(problem) {
