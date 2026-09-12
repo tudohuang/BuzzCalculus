@@ -10499,7 +10499,10 @@ kbd {
 
   .quiz-screen .prompt {
     min-height: 0;
-    justify-items: center;
+    /* 不要 justify-items:center：式子比容器寬時，置中的子元素會往左溢出，
+       而 overflow-x:auto 只能捲右邊 —— 手機上 lim 的左半就這樣被吃掉。
+       置中交給 KaTeX display 自己的 text-align。 */
+    justify-items: stretch;
     padding: 20px 0 10px;
     font-size: 2.05rem;
     text-align: center;
@@ -11293,5 +11296,316 @@ kbd {
 
   .quiz-screen .exam-map {
     border-radius: 16px;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   計算紙與數學鍵盤（作答舞台的第二輪）
+   - 工具列分組：畫／改／紙／放大，四組四個小圓角底。
+   - 筆寬鈕是一顆跟筆寬同比例的點，不是「標準」兩個字。
+   - 空白畫布上一行淡字，告訴第一次看到的人這塊是拿來寫的。
+   - 觸控裝置的鍵盤排成計算機：數字 3 欄一塊，符號在旁邊自己排格，
+     不再是一條隨寬度亂折的 flex 長列。
+   - 寬螢幕的全螢幕書寫改成兩欄：畫布佔左邊整面，作答與鍵盤在右欄，
+     鍵盤攤開不再從畫布身上切高度。
+   ══════════════════════════════════════════════════════════════════ */
+@media screen {
+  .quiz-screen .board-tools {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 6px;
+    width: auto;
+  }
+
+  .quiz-screen .board-tool-group {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    padding: 2px;
+    border-radius: 12px;
+    background: var(--surface);
+  }
+
+  .quiz-screen .board-tools .icon-button {
+    border-radius: 9px;
+  }
+
+  .quiz-screen .board-tool-group .icon-button:hover:not(:disabled) {
+    background: var(--panel);
+  }
+
+  /* 筆寬：一顆點。CSS 看 data-pen-scale 決定大小，文字留給讀屏器。 */
+  .quiz-screen .pen-scale-cycle {
+    --pen-dot: 8px;
+  }
+
+  .quiz-screen .pen-scale-cycle::before {
+    content: "";
+    width: var(--pen-dot);
+    height: var(--pen-dot);
+    border-radius: 50%;
+    background: currentColor;
+  }
+
+  .quiz-screen .pen-scale-cycle[data-pen-scale="thin"] { --pen-dot: 5px; }
+  .quiz-screen .pen-scale-cycle[data-pen-scale="thick"] { --pen-dot: 12px; }
+
+  .quiz-screen .board-surface {
+    position: relative;
+    display: grid;
+    min-height: 0;
+  }
+
+  .quiz-screen .board-empty-hint {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin: 0;
+    color: var(--muted);
+    font-size: 0.9rem;
+    font-weight: 600;
+    opacity: 0.7;
+    pointer-events: none;
+  }
+
+  .quiz-screen .board-empty-hint .icon {
+    width: 18px;
+    height: 18px;
+  }
+
+  .quiz-screen .board-empty-hint[hidden] {
+    display: none;
+  }
+
+  .quiz-screen .blackboard[data-surface="board"] + .board-empty-hint {
+    color: rgba(255, 255, 255, 0.55);
+  }
+
+  /* 全螢幕的題目列 */
+  .quiz-screen .handwrite-prompt {
+    padding: 10px 16px;
+    border-radius: 14px;
+  }
+
+  .quiz-screen .handwrite-prompt .math-inline {
+    font-size: 1.3rem;
+  }
+
+  .quiz-screen .handwrite-prompt .math-block {
+    font-size: 1.15rem;
+  }
+
+  /* 鍵盤的鍵：同一種圓角、同一種份量 */
+  .quiz-screen .keypad button,
+  .quiz-screen .webwork-examples button {
+    border-radius: 10px;
+    font-weight: 600;
+  }
+
+  .quiz-screen .keypad-backspace {
+    color: var(--muted);
+  }
+}
+
+/* 觸控裝置：鍵盤就是輸入法，排成計算機 */
+@media screen and (pointer: coarse) {
+  .quiz-screen .webwork-keypad {
+    display: grid;
+    grid-template-columns: max-content minmax(0, 1fr);
+    gap: 8px;
+    align-items: start;
+  }
+
+  .quiz-screen .webwork-keypad:not(:has(.keypad-digits)) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .quiz-screen .keypad-digits {
+    display: grid;
+    grid-template-columns: repeat(3, 52px);
+    grid-auto-rows: 44px;
+    gap: 6px;
+  }
+
+  .quiz-screen .keypad-rest {
+    flex: none;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(52px, 1fr));
+    grid-auto-rows: 44px;
+    gap: 6px;
+  }
+
+  .quiz-screen .keypad button {
+    min-width: 0;
+    min-height: 0;
+    height: 100%;
+    padding: 0 6px;
+    font-size: 0.98rem;
+  }
+
+  .quiz-screen .keypad-digits button {
+    font-size: 1.12rem;
+    font-weight: 650;
+  }
+
+  .quiz-screen .handwrite-prompt .math-inline,
+  .quiz-screen .handwrite-prompt .math-block {
+    font-size: 1.1rem;
+  }
+}
+
+/* 寬螢幕的全螢幕書寫：畫布 | 作答欄 */
+@media screen and (min-width: 1000px) {
+  .quiz-screen .handwrite-shell.is-fullscreen {
+    grid-template-columns: minmax(0, 1fr) 380px;
+    grid-template-rows: auto minmax(0, 1fr);
+    grid-template-areas: "prompt prompt" "board answer";
+    column-gap: 12px;
+    row-gap: 10px;
+  }
+
+  .quiz-screen .handwrite-shell.is-fullscreen > .handwrite-prompt {
+    grid-area: prompt;
+  }
+
+  .quiz-screen .handwrite-shell.is-fullscreen > .scratchboard-shell {
+    grid-area: board;
+  }
+
+  .quiz-screen .handwrite-shell.is-fullscreen > :not(.handwrite-prompt):not(.scratchboard-shell) {
+    grid-area: answer;
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  .quiz-screen .handwrite-shell.is-fullscreen .webwork-answer {
+    align-content: start;
+    padding: 14px;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    background: var(--panel);
+    box-shadow: none;
+  }
+
+  .quiz-screen .handwrite-shell.is-fullscreen .webwork-answer .answer-panel .button[type="submit"] {
+    min-width: 0;
+    padding-inline: 16px;
+  }
+
+  /* 選擇題在右欄：選項直排，每顆一整列 */
+  .quiz-screen .handwrite-shell.is-fullscreen .choice-strip {
+    flex-direction: column;
+    overflow: visible;
+    padding: 0;
+  }
+
+  .quiz-screen .handwrite-shell.is-fullscreen .choice-chip {
+    width: 100%;
+  }
+}
+
+/* 手機 */
+@media screen and (max-width: 760px) {
+  .quiz-screen .board-tools {
+    display: flex;
+    gap: 4px;
+  }
+
+  .quiz-screen .board-tool-group {
+    gap: 0;
+    padding: 1px;
+  }
+
+  .quiz-screen .keypad-digits {
+    grid-template-columns: repeat(3, 46px);
+    grid-auto-rows: 42px;
+  }
+
+  .quiz-screen .keypad-rest {
+    grid-template-columns: repeat(auto-fill, minmax(44px, 1fr));
+    grid-auto-rows: 42px;
+  }
+
+  .quiz-screen .handwrite-prompt {
+    padding: 8px 12px;
+  }
+}
+
+@media screen and (pointer: coarse) {
+  .quiz-screen .keypad-rest {
+    grid-template-columns: repeat(auto-fill, minmax(56px, 1fr));
+  }
+
+  .quiz-screen .keypad-rest button {
+    font-size: 0.92rem;
+    letter-spacing: -0.01em;
+  }
+}
+
+@media screen and (max-width: 760px) {
+  .quiz-screen .keypad-rest {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+@media screen and (min-width: 1000px) and (pointer: coarse) {
+  /* 右欄 380px：數字 3 欄 + 符號 3 欄，17 顆符號剛好 6 列，不用捲 */
+  .quiz-screen .handwrite-shell.is-fullscreen .keypad-digits {
+    grid-template-columns: repeat(3, 46px);
+  }
+
+  .quiz-screen .handwrite-shell.is-fullscreen .keypad-rest {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media screen {
+  /* 全螢幕書寫時空白的預覽（「尚未輸入」）只是佔高度，打了字才出現 */
+  .quiz-screen .handwrite-shell.is-fullscreen .webwork-preview:has(.answer-preview-math.is-empty) {
+    display: none;
+  }
+}
+
+@media screen and (max-width: 760px) {
+  /* 手機的浮條就是鍵盤本體：鍵矮一點、字緊一點，範例一列橫刷，鍵盤攤開時逐步驗證先讓位 */
+  .quiz-screen .keypad-digits {
+    grid-template-columns: repeat(3, 42px);
+    grid-auto-rows: 40px;
+  }
+
+  .quiz-screen .keypad-rest {
+    grid-auto-rows: 40px;
+    gap: 5px;
+  }
+
+  .quiz-screen .keypad-rest button {
+    padding: 0 2px;
+    font-size: 0.86rem;
+    letter-spacing: -0.02em;
+  }
+
+  .quiz-screen .webwork-examples {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+    padding-bottom: 2px;
+  }
+
+  .quiz-screen .webwork-examples::-webkit-scrollbar {
+    display: none;
+  }
+
+  .quiz-screen .webwork-examples button {
+    flex: 0 0 auto;
+  }
+
+  .quiz-screen .webwork-answer:not(.is-docked) .webwork-extras.is-open ~ .step-checker {
+    display: none;
   }
 }

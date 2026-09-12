@@ -6593,6 +6593,7 @@
   function renderScratchboard(problem, disabled, boardTool, fullscreen, boardOpen, strokeCount) {
     const surface = boardSurface();
     const surfaceNext = surface === "paper" ? "換成黑板" : "換成方格紙";
+    const penScale = PEN_SCALES.find((item) => item.key === ((loadRecords().settings || {}).penScale || "standard")) || PEN_SCALES[1];
     return `
       <section class="scratchboard-shell ${boardOpen ? "is-open" : "is-collapsed"}">
         <div class="scratchboard-summary">
@@ -6600,28 +6601,40 @@
             <span>計算紙</span>
             <strong data-board-count>${strokeCount ? `${strokeCount} 筆` : "手寫草稿"}</strong>
           </div>
+          <!-- 工具分四組：畫（筆／橡皮擦／筆寬）、改（復原／重做）、紙（清空／換紙）、放大。
+               原本九顆同色同大小排成一列，眼睛要一顆顆讀；分組之後手指直接落在對的區。 -->
           <div class="board-tools" aria-label="計算紙工具">
-            <button class="icon-button" type="button" data-board-action="toggle" title="${boardOpen ? "收起計算紙" : "攤開計算紙"}" ${disabled}>${icon(boardOpen ? "chevron-up" : "chevron-down")}</button>
             ${
               boardOpen
                 ? `
-                  <button class="icon-button ${boardTool === "pen" ? "is-active" : ""}" type="button" data-board-action="tool" data-tool="pen" title="筆" ${disabled}>${icon("pen")}</button>
-                  <button class="icon-button ${boardTool === "eraser" ? "is-active" : ""}" type="button" data-board-action="tool" data-tool="eraser" title="橡皮擦" ${disabled}>${icon("eraser")}</button>
-                  <!-- 筆寬本來埋在設定頁 —— 拿著筆的人要當場換，不是去逛設定 -->
-                  <button class="icon-button pen-scale-cycle" type="button" data-board-action="pen-scale" title="筆寬（點擊切換）" ${disabled}><span data-pen-scale-glyph>${escapeHtml((PEN_SCALES.find((item) => item.key === ((loadRecords().settings || {}).penScale || "standard")) || PEN_SCALES[1]).label)}</span></button>
-                  <button class="icon-button" type="button" data-board-action="undo" title="復原上一筆（兩指點一下也可以）" ${disabled}>${icon("undo")}</button>
-                  <button class="icon-button" type="button" data-board-action="redo" title="重做" ${disabled}>${icon("redo")}</button>
-                  <button class="icon-button" type="button" data-board-action="clear" title="全部擦掉（可以重做救回來）" ${disabled}>${icon("trash")}</button>
-                  <button class="icon-button" type="button" data-board-action="surface" title="${surfaceNext}" ${disabled}>${icon(surface === "paper" ? "moon" : "grid")}</button>
+                  <span class="board-tool-group" role="group" aria-label="畫">
+                    <button class="icon-button ${boardTool === "pen" ? "is-active" : ""}" type="button" data-board-action="tool" data-tool="pen" title="筆" ${disabled}>${icon("pen")}</button>
+                    <button class="icon-button ${boardTool === "eraser" ? "is-active" : ""}" type="button" data-board-action="tool" data-tool="eraser" title="橡皮擦" ${disabled}>${icon("eraser")}</button>
+                    <!-- 筆寬本來埋在設定頁 —— 拿著筆的人要當場換，不是去逛設定。
+                         圖示是一顆跟筆寬同比例的點（CSS 看 data-pen-scale 畫），文字留給讀屏器。 -->
+                    <button class="icon-button pen-scale-cycle" type="button" data-board-action="pen-scale" data-pen-scale="${escapeAttr(penScale.key)}" title="筆寬：${escapeAttr(penScale.label)}（點擊切換）" ${disabled}><span class="sr-only" data-pen-scale-glyph>${escapeHtml(penScale.label)}</span></button>
+                  </span>
+                  <span class="board-tool-group" role="group" aria-label="改">
+                    <button class="icon-button" type="button" data-board-action="undo" title="復原上一筆（兩指點一下也可以）" ${disabled}>${icon("undo")}</button>
+                    <button class="icon-button" type="button" data-board-action="redo" title="重做" ${disabled}>${icon("redo")}</button>
+                  </span>
+                  <span class="board-tool-group" role="group" aria-label="紙">
+                    <button class="icon-button" type="button" data-board-action="clear" title="全部擦掉（可以重做救回來）" ${disabled}>${icon("trash")}</button>
+                    <button class="icon-button" type="button" data-board-action="surface" title="${surfaceNext}" ${disabled}>${icon(surface === "paper" ? "moon" : "grid")}</button>
+                  </span>
                   <button class="icon-button" type="button" data-board-action="fullscreen" title="${fullscreen ? "退出全螢幕" : "全螢幕書寫"}" ${disabled}>${icon(fullscreen ? "minimize" : "maximize")}</button>
                 `
                 : ""
             }
+            <button class="icon-button board-toggle" type="button" data-board-action="toggle" title="${boardOpen ? "收起計算紙" : "攤開計算紙"}" ${disabled}>${icon(boardOpen ? "chevron-up" : "chevron-down")}</button>
           </div>
         </div>
         ${
           boardOpen
-            ? `<canvas class="blackboard" data-blackboard data-surface="${surface}" data-tool="${escapeAttr(boardTool)}" data-problem-id="${escapeAttr(problem.id)}" aria-label="手寫計算紙"></canvas>`
+            ? `<div class="board-surface">
+                <canvas class="blackboard" data-blackboard data-surface="${surface}" data-tool="${escapeAttr(boardTool)}" data-problem-id="${escapeAttr(problem.id)}" aria-label="手寫計算紙"></canvas>
+                <p class="board-empty-hint" data-board-empty-hint ${strokeCount ? "hidden" : ""} aria-hidden="true">${icon("pen")}<span>在這裡算，算完再填答案</span></p>
+              </div>`
             : ""
         }
         ${renderPreviousBoard(problem)}
@@ -12327,6 +12340,7 @@
           saveRecords(records);
           const glyph = button.querySelector("[data-pen-scale-glyph]");
           if (glyph) glyph.textContent = next.label;
+          button.dataset.penScale = next.key;
           button.title = `筆寬：${next.label}（點擊切換）`;
           if (canvas && ctx) drawBlackboard(canvas, ctx, problemId);
           return;
@@ -12577,6 +12591,8 @@
   function updateBoardCount(count) {
     const label = app.querySelector("[data-board-count]");
     if (label) label.textContent = count ? `${count} 筆` : "手寫草稿";
+    const hint = app.querySelector("[data-board-empty-hint]");
+    if (hint) hint.hidden = count > 0;
   }
 
   function setupReviewBoards() {
@@ -14377,7 +14393,9 @@
     // 原本 30 幾顆鍵是一條會換行的 flex 長列，789/456/123 被換行切在
     // 任意位置（實測手機上排成「7 8 9 4 5 6 1 / 2 3 0 . - x pi」）——
     // 數字鍵盤唯一的價值就是「不用找」，順序一亂就等於沒有。
-    const toKey = (token) => ({ label: token.replace("|", ""), insert: token });
+    // 函數鍵只顯示名字（sin、log…），按下去照樣插入 sin(|) 並把游標放進括號 ——
+    // 計算機都是這樣，而「sqrt()」六個字在 44px 的鍵上會折成兩行。
+    const toKey = (token) => ({ label: token.replace("(|)", "").replace("|", ""), insert: token });
     const digits = groups.some((group) => group.label === "數字") ? DIGIT_KEYS.map(toKey) : [];
     const rest = groups
       .filter((group) => group.label !== "數字")
