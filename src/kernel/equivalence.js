@@ -7,7 +7,7 @@
 // 一個是考古題風格。刪任何一邊都會在那個題包上開一個洞。
 // 真正的傷害是同一局或同一份考卷抽到兩題一樣的 —— 所以改成抽題時去重。
 //
-// 產生時：41 組語意重複，其中 3 組經人工複核判定為誤判（見產生器內的 NOT_EQUIVALENT）。
+// 產生時：42 組語意重複，其中 3 組經人工複核判定為誤判（見產生器內的 NOT_EQUIVALENT）。
 
 (function registerEquivalence() {
   "use strict";
@@ -21,6 +21,7 @@
     "burst-int-012": "burst-int-012",
     "burst-int-027": "burst-int-027",
     "ch-trap-004": "ch-trap-004",
+    "cx-der-002": "cx-der-002",
     "cx-der-005": "cx-der-005",
     "cx-hi-001": "cx-hi-001",
     "cx-hm-002": "cx-hm-002",
@@ -64,6 +65,7 @@
     "mob-limtrap-005": "mob-limtrap-005",
     "putnam-005": "cx-hm-002",
     "putnam-010": "putnam-010",
+    "rel-basic-008": "cx-der-002",
     "rel-basic-019": "rel-basic-019",
     "rel-boss-019": "exam-lim-019",
     "rel-hard-int-011": "burst-boss-int-007",
@@ -94,6 +96,6 @@
   window.BuzzEquivalence = {
     // 抽題去重用的鍵：等價題共用同一個鍵，其餘題目就是自己的 id
     keyOf: function (id) { return (id && MAP[id]) || id; },
-    size: 78
+    size: 80
   };
 })();

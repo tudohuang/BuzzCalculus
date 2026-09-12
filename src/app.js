@@ -917,11 +917,14 @@
     // 弱點
     mistake_added: "題目進錯題本",
     mistake_cleared: "錯題被清掉",
+    // 主線
+    unit_chest_open: "開啟單元寶箱（只記第幾單元）",
     // 計畫
     // 內容
     report_submit: "回報題目",
     custom_problem_saved: "儲存自訂題",
     custom_pack_imported: "匯入自訂題包",
+    library_full_access: "切換題庫完整瀏覽（只記開／關）",
     view_proof_solution: "查看參考證明",
     mark_proof_status: "自評證明理解程度",
     mark_proof_blocker: "標記證明卡在哪",
@@ -1162,7 +1165,12 @@
       if (lastRenderedView === "library" && view !== "library") librarySearch = "";
       lastRenderedView = view;
       releaseDetachedCanvases();
-      app.innerHTML = [renderTopbar(), renderScreen(), renderAppNoticeModal(), renderCalibrationPreviewModal(), renderEraseConfirmModal(), renderReportModal(), renderConfirmDialog(), renderUndoToast(), renderUpdateBanner()].join("");
+      app.innerHTML = [renderTopbar(), renderWorkspaceBar(), renderScreen(), renderAppNoticeModal(), renderCalibrationPreviewModal(), renderEraseConfirmModal(), renderReportModal(), renderConfirmDialog(), renderUndoToast(), renderUpdateBanner()].join("");
+      const main = app.querySelector("main");
+      if (main) {
+        main.id = "buzz-main";
+        main.tabIndex = -1;
+      }
       bindEvents();
       typesetMath(app);
       window.setTimeout(() => typesetMath(app), 80);
@@ -1301,19 +1309,21 @@
     const inQuiz = view === "quiz";
     const themeIcon = selectedTheme === "dark" ? "sun" : "moon";
     const themeLabel = selectedTheme === "dark" ? "亮色" : "深色";
+    const parentView = { "path-intro": "train", mistakes: "train", history: "insights", results: "insights", proofs: "library", creator: "library" }[view] || view;
     const navItem = (v, action, label, iconName) =>
-      `<button class="nav-button ${view === v ? "is-active" : ""}" data-action="${action}" aria-label="${label}" title="${label}" ${view === v ? 'aria-current="page"' : ""}>${icon(iconName)}<span>${label}</span></button>`;
+      `<button class="nav-button ${parentView === v ? "is-active" : ""}" data-action="${action}" aria-label="${label}" title="${label}" ${parentView === v ? 'aria-current="page"' : ""}>${icon(iconName)}<span>${label}</span></button>`;
     return `
       <a class="skip-to-content" href="#buzz-main">跳到主要內容</a>
       <header class="topbar ${inQuiz ? "is-quiz" : ""}">
-        <button class="brand" data-action="home" title="回到工作台">
+        <button class="brand" data-action="home" title="回到工作台" aria-label="BuzzCalculus 首頁">
           <div class="brand-mark" aria-hidden="true">∫</div>
-          <h1 class="brand-title">BuzzCalculus</h1>
+          <span class="brand-copy"><span class="brand-title">BuzzCalculus</span><span class="brand-caption">微積分學習工作台</span></span>
         </button>
         ${
           inQuiz
             ? `<div class="topbar-utils"><button class="button ghost" data-action="confirm-exit" title="離開本局">${icon("x")}<span>離開</span></button></div>`
             : `
+              <span class="nav-section-label">學習空間</span>
               <nav class="topbar-nav" aria-label="主要導覽">
                 ${navItem("home", "home", "今天", "home")}
                 ${navItem("train", "open-train", "訓練", "target")}
@@ -1321,13 +1331,34 @@
                 ${navItem("library", "open-library", "題庫", "search")}
                 ${navItem("settings", "open-settings", "設定", "settings")}
               </nav>
+              <div class="sidebar-resources">
+                <span class="nav-section-label">學習工具</span>
+                <button class="sidebar-link ${view === "mistakes" ? "is-active" : ""}" data-action="open-mistakes" title="錯題本">${icon("refresh")}<span>錯題本</span></button>
+                <button class="sidebar-link ${view === "history" ? "is-active" : ""}" data-action="open-history" title="練習紀錄">${icon("history")}<span>練習紀錄</span></button>
+                <button class="sidebar-link ${view === "proofs" ? "is-active" : ""}" data-action="open-proofs" title="證明訓練">${icon("file-pen-line")}<span>證明訓練</span></button>
+              </div>
+              <a class="sidebar-guide" href="guide.html">${icon("book-open")}<span><strong>把每次練習，變成進步</strong><small>閱讀使用手冊 ${icon("chevron-right")}</small></span></a>
               <div class="topbar-utils">
                 ${deferredInstallPrompt ? `<button class="icon-button" data-action="install-app" title="安裝 BuzzCalculus">${icon("download")}</button>` : ""}
-                <button class="icon-button" data-action="toggle-theme" title="切換${themeLabel}模式">${icon(themeIcon)}</button>
+                <button class="icon-button theme-toggle" data-action="toggle-theme" title="切換${themeLabel}模式" aria-label="切換${themeLabel}模式">${icon(themeIcon)}<span>${themeLabel}模式</span></button>
               </div>`
         }
       </header>
     `;
+  }
+
+  function renderWorkspaceBar() {
+    if (view === "quiz") return "";
+    const labels = { home: "今日概覽", train: "訓練中心", insights: "學習數據", library: "探索題庫", settings: "偏好與設定", mistakes: "錯題本", history: "練習紀錄", proofs: "證明訓練", creator: "出題工作坊", results: "訓練回顧", "path-intro": "學習路線" };
+    return `
+      <div class="workspace-bar">
+        <div class="workspace-breadcrumb"><span>我的學習空間</span>${icon("chevron-right")}<strong>${labels[view] || "今日概覽"}</strong></div>
+        <div class="workspace-tools"><span class="local-status">${icon("shield")}紀錄保存在此瀏覽器</span><a href="guide.html" class="workspace-help">${icon("book-open")}使用手冊</a></div>
+      </div>`;
+  }
+
+  function renderPageHeading(eyebrow, title, description, actions = "") {
+    return `<header class="workspace-heading"><div><p class="section-label">${escapeHtml(eyebrow)}</p><h1>${escapeHtml(title)}</h1><p class="workspace-description">${escapeHtml(description)}</p></div>${actions ? `<div class="heading-actions">${actions}</div>` : ""}</header>`;
   }
 
   function renderScreen() {
@@ -1379,22 +1410,54 @@
     // 但這裡其實有 1,459 題。窄螢幕維持單欄，順序不變。
     return `
       <main class="screen home-screen" id="buzz-main">
+        ${renderPageHeading("TODAY / 今日概覽", `${homeGreeting().split("，")[0]}，把進步留給今天。`, "從一份適合你的練習開始，一次練熟一個技巧。", `<span class="workspace-date">${icon("calendar")}${escapeHtml(new Date().toLocaleDateString("zh-TW", { month: "long", day: "numeric", weekday: "short" }))}</span>`)}
+        ${renderHomeOverview(records, mission)}
         <div class="home-lead">
           ${renderResumeCard()}
           ${renderHomeExamCard(records)}
           ${renderTodayCard(records)}
+          <section class="workspace-section"><div class="workspace-section-head"><h2>照你的節奏練習</h2><span>四種訓練方向</span></div>${renderBucketNav()}</section>
           ${renderHomeRetentionRow(records)}
           ${renderBackupNotice(records)}
         </div>
         <div class="home-aside">
+          ${renderHomeWeek(records, mission)}
+          <div class="workspace-section-head"><h2>接下來練什麼</h2></div>
           ${renderHomeSecondary(records, path, mission)}
           ${renderGrowthLine(records)}
           ${renderHomeWeakness(records)}
-          ${renderBucketNav()}
-          ${renderHomeQuickLinks()}
+          <section class="workspace-section"><div class="workspace-section-head"><h2>探索更多</h2></div>${renderHomeQuickLinks()}</section>
         </div>
       </main>
     `;
+  }
+
+  function renderHomeOverview(records, mission) {
+    const total = Number(records.totalAnswered || 0);
+    const profile = abilityProfile(records);
+    const measured = profile ? profile.coverage.skillsMeasured : 0;
+    const due = srsDueSummary(records).due;
+    const stats = [
+      ["今日目標", `${mission.completed}<small> / ${mission.target} 題</small>`, mission.completed >= mission.target ? "今天的練習已完成" : `再練 ${mission.target - mission.completed} 題，達成今天的目標`, "target", "home"],
+      ["累計作答", `${total.toLocaleString()}<small> 題</small>`, total ? "每一次練習都算數" : "從第一題開始累積", "activity", "open-history"],
+      ["已測量技巧", `${measured}<small> 個</small>`, measured ? "查看技巧熟練度與速度" : "練習後建立你的能力輪廓", "layers", "open-insights"],
+      ["待複習錯題", `${due}<small> 題</small>`, due ? "現在複習，讓記憶更牢固" : "目前沒有到期的錯題", "refresh", "open-mistakes"]
+    ];
+    return `<section class="overview-grid" aria-label="學習概覽">${stats.map(([label, value, note, name, action]) => `<button class="overview-stat" data-action="${action}"><span class="overview-label">${label}${icon(name)}</span><strong class="overview-value">${value}</strong><span class="overview-note">${note}</span></button>`).join("")}</section>`;
+  }
+
+  function renderHomeWeek(records, mission) {
+    const counts = activityCounts(records);
+    const cursor = new Date();
+    cursor.setHours(12, 0, 0, 0);
+    cursor.setDate(cursor.getDate() - 6);
+    const days = [];
+    for (let i = 0; i < 7; i += 1) {
+      const count = counts[localDateKey(cursor)] || 0;
+      days.push(`<div class="week-day ${count ? "is-complete" : ""} ${i === 6 ? "is-today" : ""}" title="${escapeAttr(`${localDateKey(cursor)} · ${count} 題`)}"><span>${["日", "一", "二", "三", "四", "五", "六"][cursor.getDay()]}</span><span class="week-day-mark">${count ? icon("check") : i === 6 ? "今" : "·"}</span></div>`);
+      cursor.setDate(cursor.getDate() + 1);
+    }
+    return `<section class="week-card" aria-label="最近七天的練習"><div class="workspace-section-head"><h2>一點一滴，練成習慣</h2>${icon("calendar")}</div><div class="week-days">${days.join("")}</div><div class="week-goal"><span>今日目標</span><strong>${mission.completed} / ${mission.target} 題</strong></div><div class="week-progress" role="progressbar" aria-label="今日目標" aria-valuemin="0" aria-valuemax="${mission.target}" aria-valuenow="${mission.completed}"><span style="width:${Math.min(100, mission.progress)}%"></span></div><p>每天留一點時間，讓解題更有把握。</p></section>`;
   }
 
   // 藏得最深的幾個入口，在首頁給一排小門。
@@ -1559,8 +1622,9 @@
         ${TRAIN_BUCKETS.map(
           (item) => `
             <button data-action="open-train" data-bucket="${escapeAttr(item.key)}">
-              <strong>${item.label}</strong>
-              <small>${item.note}</small>
+              <span class="bucket-icon bucket-${item.key}">${icon({ practice: "target", weakness: "refresh", exam: "file-pen-line", challenge: "zap" }[item.key])}</span>
+              <span class="bucket-copy"><strong>${item.label}</strong><small>${item.note}</small></span>
+              ${icon("chevron-right")}
             </button>`
         ).join("")}
       </nav>
@@ -1577,25 +1641,21 @@
 
     const { recipe, filled, reason } = plan;
     const minutes = Math.max(1, Math.round(filled.estSeconds / 60));
-    const focus = recipe.slots
-      .filter((slot) => slot.count > 0)
-      .map((slot) => `${escapeHtml(slot.label)} ${slot.count}`)
-      .join(" · ");
     const dueCount = recipe.context.dueNow;
     const adjusted = window.BuzzSession.explainFallbacks(filled.meta);
 
     return `
-      <section class="today-card" aria-label="今天的訓練">
+      <section class="today-card training-feature" aria-label="今天的訓練">
         <div class="today-head">
-          <p class="section-label">今天的訓練</p>
+          <p class="section-label">${icon("sparkles")}為你安排 · 今天的訓練</p>
           <span class="today-meta">${minutes} 分鐘 · ${filled.problems.length} 題</span>
         </div>
         <h2 class="today-title">${escapeHtml(recipe.label.replace(/^\d+\s*分鐘\s*/, `${minutes} 分鐘`))}</h2>
         <p class="today-why">${escapeHtml(recipe.why)}</p>
-        <p class="today-mix">${focus}</p>
+        <div class="training-recipe">${recipe.slots.filter((slot) => slot.count > 0).map((slot) => `<span><strong>${slot.count}</strong>${escapeHtml(slot.label)}</span>`).join("")}</div>
         <div class="today-actions">
           <button class="button home-primary" data-action="start-planned" data-length="${escapeAttr(recipe.length)}">
-            ${icon("play")}<span>開始</span>
+            ${icon("play")}<span>開始訓練</span>${icon("chevron-right")}
           </button>
           ${
             recipe.length !== "sprint5"
@@ -2031,6 +2091,7 @@
 
     return `
       <main class="screen train-screen">
+        ${renderPageHeading("TRAINING / 訓練中心", "每個技巧，都能練得更熟。", "跟著主線打穩基礎，或選擇符合當下目標的訓練。")}
         <div class="segmented bucket-tabs" role="group" aria-label="訓練分類">
           ${TRAIN_BUCKETS.map(
             (item) => `
@@ -2452,7 +2513,8 @@
 
     if (!profile) {
       return `
-        <main class="screen">
+        <main class="screen insights-screen">
+          ${renderPageHeading("INSIGHTS / 學習數據", "看見你的每一點進步。", "從正確率、速度與技巧掌握度，找到下一步的練習方向。")}
           <section class="study-card">
             <p class="section-label">數據</p>
             <h3>能力模型未載入</h3>
@@ -2464,13 +2526,15 @@
 
     if (!profile.coverage.attempts) {
       return `
-        <main class="screen">
-          <section class="study-card">
+        <main class="screen insights-screen">
+          ${renderPageHeading("INSIGHTS / 學習數據", "看見你的每一點進步。", "從正確率、速度與技巧掌握度，找到下一步的練習方向。")}
+          <section class="study-card workspace-empty">
+            <span class="empty-symbol">${icon("activity")}</span>
             <p class="section-label">數據</p>
-            <h3>還沒有資料</h3>
-            <p class="panel-note">先打一局訓練，這裡就會出現你的技巧雷達、速度象限與錯因分佈。</p>
+            <h3>你的進步，從第一份練習開始</h3>
+            <p class="panel-note">目前還沒有資料。完成訓練後，這裡會整理你的技巧掌握度、解題速度與常見錯因，幫你找到下一步。</p>
             <div class="action-row">
-              <button class="button home-primary" data-action="home">${icon("play")}回去開一局</button>
+              <button class="button home-primary" data-action="home">${icon("play")}開始第一份訓練</button>
             </div>
           </section>
         </main>
@@ -2479,6 +2543,7 @@
 
     return `
       <main class="screen insights-screen">
+        ${renderPageHeading("INSIGHTS / 學習數據", "看見你的每一點進步。", "從正確率、速度與技巧掌握度，找到下一步的練習方向。", `<button class="button secondary" data-action="open-history">${icon("history")}練習紀錄</button>`)}
         ${renderInsightsSummary(profile)}
         ${renderWeeklyReport(records)}
         ${renderSpeedProgress(records)}
@@ -3574,12 +3639,13 @@
   function renderOnboardingIntro() {
     return `
       <main class="screen onboarding-screen">
-        <section class="onboarding-card">
-          <p class="section-label">BuzzCalculus</p>
-          <h1>這是微積分的健身房，不是課本。</h1>
+        <section class="onboarding-card onboarding-intro">
+          <div class="onboarding-visual" aria-hidden="true"><span class="visual-kicker">BUILD YOUR CALCULUS REFLEXES</span><span class="visual-integral">∫</span><span class="visual-equation">practice × consistency = progress</span><div class="visual-topics"><span>極限</span><span>微分</span><span>積分</span><span>級數</span></div></div>
+          <div class="onboarding-content">
+          <p class="section-label">歡迎來到 BUZZCALCULUS · 1 / 3</p>
+          <h1>把學過的微積分，<br>練成你的直覺。</h1>
           <p class="onboarding-lead">
-            這裡不教你微積分，這裡讓你把已經學過的東西<strong>練到反射</strong> ——
-            看到題目就知道該用哪個工具，而不是想三分鐘。
+            這是你的微積分健身房。每天一點練習，讓你看到題目就知道該用哪個工具。從適合你的難度開始，一步步建立解題的把握。
           </p>
           <ul class="onboarding-points">
             <!-- 題數要從題庫算，不能寫死。寫死的那版停在 1407，
@@ -3591,7 +3657,8 @@
           </ul>
           <p class="onboarding-privacy">紀錄只存在這台裝置的瀏覽器，不需要註冊。<small>（匿名使用統計除外，設定頁可關）</small></p>
           <div class="action-row">
-            <button class="button home-primary" data-action="onboarding-next">${icon("play")}開始</button>
+            <button class="button home-primary" data-action="onboarding-next">開始建立我的訓練${icon("chevron-right")}</button>
+          </div>
           </div>
         </section>
       </main>
@@ -3866,7 +3933,7 @@
   function settingsSection(title, cards) {
     if (!cards || !String(cards).trim()) return "";
     return `
-      <section class="settings-section">
+      <section class="settings-section" id="settings-${{ "練習": "practice", "介面": "interface", "資料": "data", "隱私": "privacy", "說明": "help" }[title] || "other"}" tabindex="-1">
         <h3 class="settings-section-title">${escapeHtml(title)}</h3>
         <div class="settings-cards">${cards}</div>
       </section>
@@ -4046,12 +4113,13 @@
         <section class="panel page-panel settings-page">
           <div class="page-head">
             <div>
-              <p class="section-label">設定</p>
-              <h2>設定</h2>
-              <p>所有紀錄都存在本機瀏覽器，這裡的開關也是 —— 換裝置前先到「資料」匯出。</p>
+              <p class="section-label">PREFERENCES / 偏好與設定</p>
+              <h2>打造適合你的練習環境。</h2>
+              <p>調整練習目標、介面與資料偏好。換裝置前，記得先匯出紀錄。</p>
             </div>
             <button class="button secondary" data-action="home">${icon("home")}回首頁</button>
           </div>
+          <nav class="settings-jump" aria-label="設定分類"><a href="#settings-practice">練習</a><a href="#settings-interface">介面</a><a href="#settings-data">資料</a><a href="#settings-privacy">隱私</a><a href="#settings-help">說明</a></nav>
           ${settingsSection("練習", renderGoalCard(records) + renderPlacementSettingsCard(records) + renderExamCountdownSettingsCard(records))}
           ${settingsSection("介面", renderInterfaceSettingsCard(records))}
           ${settingsSection("資料", renderDataManagementCard(records) + renderSyncSettingsCard() + renderCalibrationCard(records))}
@@ -4149,7 +4217,8 @@
     const techCount = difficultyScopedCount(6, "all", "technique_recognition");
     const bossCount = difficultyScopedCount(6, "all", "boss_challenge");
     return `
-      <p class="section-label">任務板</p>
+      <details class="library-discovery" data-keep="library-discovery">
+      <summary>${icon("lightbulb")}<span>還沒決定練什麼？<small>探索技巧辨識、弱點與進階題包</small></span>${icon("chevron-down")}</summary>
       <div class="library-board">
         <button class="board-card" data-action="train-pack" data-pack="technique_recognition">
           <span class="board-tag">今日推薦</span>
@@ -4167,6 +4236,7 @@
           <small>R5–6 · ${bossCount} 題</small>
         </button>
       </div>
+      </details>
     `;
   }
 
@@ -4182,18 +4252,15 @@
         <section class="panel page-panel problem-library">
           <div class="page-head">
             <div>
-              <p class="section-label">題庫</p>
-              <h2>題庫瀏覽</h2>
-              <p>搜尋題目、收藏常練題，或把可疑題目先標記回報。</p>
+              <p class="section-label">LIBRARY / 探索題庫</p>
+              <h2>找到值得練習的下一題。</h2>
+              <p>${problems.length.toLocaleString()} 題微積分，從基礎觀念到進階挑戰。搜尋、收藏，建立你的練習清單。</p>
             </div>
             <div class="action-row">
-              <button class="button ghost" data-action="home">${icon("home")}回首頁</button>
               <button class="button secondary" data-action="open-creator">${icon("file-pen-line")}我要出題</button>
               <button class="button" data-action="start-library-filter" ${allItems.length ? "" : "disabled"}>${icon("shuffle")}練目前篩選</button>
             </div>
           </div>
-
-          ${renderLibraryBoard(records)}
 
           <p class="section-label library-filter-label">自己挑</p>
           <div class="library-toolbar">
@@ -4229,6 +4296,8 @@
               ["reported", `已回報 ${Object.keys(records.problemReports || {}).length}`]
             ].map(([key, label]) => `<button class="segment ${selectedLibraryFilter === key ? "is-active" : ""}" aria-pressed="${selectedLibraryFilter === key ? "true" : "false"}" data-library-filter="${key}">${escapeHtml(label)}</button>`).join("")}
           </div>
+
+          ${renderLibraryBoard(records)}
 
           <div class="library-count">
             <strong>${allItems.length}</strong>
@@ -4331,10 +4400,12 @@
           ${problemDisplayTags(problem).slice(0, 5).map((tag) => `<span>${escapeHtml(tagLabel(tag))}</span>`).join("")}
         </div>
         <div class="library-problem-foot">
+          <div class="library-quality">
           <span class="solution-quality is-${quality.level}" title="這題參考解說的完整度：完整＝有推導與提示；簡短＝一兩句；待補＝還沒寫">${escapeHtml(quality.label)}</span>
           ${verifiedChip(problem)}
           ${rubricChip(problem)}
           ${sourceChip(problem)}
+          </div>
           <button class="button ghost" data-action="start-problem" data-problem-id="${escapeAttr(problem.id)}">${icon("play")}練這題</button>
         </div>
       </article>
@@ -9354,7 +9425,7 @@
     if (document.documentElement) {
       document.documentElement.dataset.theme = selectedTheme;
     }
-    const themeColor = selectedTheme === "dark" ? "#171817" : "#f5f3ed";
+    const themeColor = selectedTheme === "dark" ? "#151614" : "#f6f7f4";
     const meta = document.querySelector && document.querySelector('meta[name="theme-color"]');
     if (meta) meta.setAttribute("content", themeColor);
   }
@@ -14671,6 +14742,8 @@
       home: "house",
       book: "book-open",
       clock: "clock",
+      history: "clock",
+      layers: "git-branch",
       settings: "settings",
       download: "download",
       upload: "upload",
