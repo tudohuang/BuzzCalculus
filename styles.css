@@ -10297,3 +10297,1001 @@ kbd {
   .screen :where(.segment, .tag-button, .proof-step-option) { min-height: 44px; }
   .screen :where(input:not([type="checkbox"]):not([type="radio"]):not([type="range"]), textarea, select) { font-size: max(16px, 1em); }
 }
+
+/* ══════════════════════════════════════════════════════════════════
+   作答舞台（2026-09 重作）
+   ──────────────────────────────────────────────────────────────────
+   設計原則：題目是主角，其他東西全部退到第二層。
+   - 一條 HUD：關卡／題號／過關線 · 計時環 · 進度格，取代原本疊兩層的抬頭。
+   - 一張卡：題目 → 工具列（提示／跳過／規則）→ 作答區，之間只隔一條虛線。
+   - 一張回饋：全寬接在作答區下方，「下一題」sticky 貼在視窗底緣。
+   - 單欄，最寬 960px；不再有 300px 的回饋側欄把題目壓窄。
+   所有規則都掛在 .quiz-screen 底下，蓋過前面幾層歷史；手機的
+   固定作答浮條與全螢幕書寫外殼（position:fixed 那兩套）原封不動。
+   ══════════════════════════════════════════════════════════════════ */
+@media screen {
+  .quiz-screen {
+    width: 100%;
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 18px 24px 56px;
+    box-sizing: border-box;
+  }
+
+  .quiz-screen .arena {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    min-height: auto;
+  }
+
+  /* ── HUD ─────────────────────────────────────────────────────── */
+  .quiz-screen .arena-hud {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas: "context status" "progress progress";
+    column-gap: 16px;
+    row-gap: 10px;
+    align-items: center;
+    padding: 2px 4px 0;
+  }
+
+  .quiz-screen .hud-context {
+    grid-area: context;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px 12px;
+    min-width: 0;
+    color: var(--muted);
+    font-size: 0.84rem;
+  }
+
+  .quiz-screen .hud-title {
+    color: var(--ink);
+    font-size: 0.96rem;
+    font-weight: 750;
+    letter-spacing: -0.01em;
+  }
+
+  .quiz-screen .hud-sub {
+    font-variant-numeric: tabular-nums;
+  }
+
+  .quiz-screen .hud-context .clear-need {
+    min-height: 24px;
+    display: inline-flex;
+    align-items: center;
+    padding: 0 9px;
+    font-size: 0.74rem;
+  }
+
+  .quiz-screen .combo-chip {
+    font-size: 0.8rem;
+  }
+
+  .quiz-screen .hud-status {
+    grid-area: status;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .quiz-screen .kbd-hint {
+    min-height: 34px;
+    padding: 0 10px;
+    border-radius: 999px;
+    border-color: var(--line);
+    font-size: 0.74rem;
+  }
+
+  .quiz-screen .kbd-hint kbd {
+    font-size: 0.72rem;
+  }
+
+  .quiz-screen .timer-box {
+    min-height: 0;
+    padding: 6px 12px;
+    border-radius: 999px;
+    text-align: center;
+  }
+
+  .quiz-screen .timer-box span {
+    font-size: 0.62rem;
+  }
+
+  .quiz-screen .timer-box strong {
+    font-size: 0.98rem;
+  }
+
+  .quiz-screen .timer-ring {
+    width: 58px;
+    height: 58px;
+    /* 環是唯一會動的東西，讓它有一點厚度但不要投影 */
+    box-shadow: 0 0 0 1px var(--line) inset;
+  }
+
+  .quiz-screen .timer-ring-face {
+    width: 46px;
+    height: 46px;
+  }
+
+  .quiz-screen .timer-ring-face strong {
+    font-size: 1.02rem;
+    font-weight: 750;
+  }
+
+  .quiz-screen .timer-ring-face small {
+    font-size: 0.5rem;
+  }
+
+  .quiz-screen .timer-ring.is-freeform .timer-ring-face strong {
+    font-size: 0.86rem;
+  }
+
+  .quiz-screen .hud-progress {
+    grid-area: progress;
+    display: grid;
+    gap: 6px;
+  }
+
+  .quiz-screen .progress-pips {
+    height: 6px;
+    gap: 3px;
+  }
+
+  .quiz-screen .progress-pips .pip {
+    border-radius: 3px;
+  }
+
+  .quiz-screen .hud-note {
+    color: var(--muted);
+    font-size: 0.72rem;
+    line-height: 1.4;
+  }
+
+  .quiz-screen .exam-map {
+    margin-top: -4px;
+  }
+
+  /* ── 舞台與題目卡 ────────────────────────────────────────────── */
+  .quiz-screen .problem-stage,
+  .quiz-screen .problem-stage.has-feedback {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 14px;
+  }
+
+  .quiz-screen .problem-card {
+    min-height: 0;
+    gap: 18px;
+    padding: 24px 28px 22px;
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    background: var(--panel);
+    box-shadow: none;
+  }
+
+  .quiz-screen .problem-meta {
+    gap: 6px;
+  }
+
+  .quiz-screen .problem-meta .chip {
+    min-height: 24px;
+    padding: 0 9px;
+    border-color: var(--line);
+    background: transparent;
+    font-size: 0.72rem;
+    font-weight: 650;
+    letter-spacing: 0.01em;
+  }
+
+  .quiz-screen .problem-meta .chip-button {
+    min-height: 40px;
+    padding: 0 10px 0 11px;
+    border-color: var(--line-strong);
+    background: var(--surface);
+    color: var(--ink);
+  }
+
+  .quiz-screen .problem-meta .chip-button:hover {
+    border-color: var(--gold);
+  }
+
+  .quiz-screen .prompt {
+    min-height: 0;
+    justify-items: center;
+    padding: 20px 0 10px;
+    font-size: 2.05rem;
+    text-align: center;
+  }
+
+  .quiz-screen .prompt.is-long-tex {
+    justify-items: stretch;
+    padding: 8px 0 4px;
+    font-size: 1.4rem;
+    text-align: left;
+  }
+
+  .quiz-screen .problem-graph {
+    justify-self: center;
+  }
+
+  /* 工具列：提示是這一排唯一「有顏色」的東西 —— 它是三顆裡真正會救人的那顆 */
+  .quiz-screen .problem-tools {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+    padding-top: 12px;
+    border-top: 1px dashed var(--line);
+  }
+
+  .quiz-screen .problem-tools-spacer {
+    flex: 1 1 auto;
+  }
+
+  .quiz-screen .tool-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 38px;
+    padding: 0 12px;
+    border: 1px solid transparent;
+    border-radius: 999px;
+    background: transparent;
+    color: var(--muted);
+    font: inherit;
+    font-size: 0.82rem;
+    font-weight: 650;
+    line-height: 1;
+    cursor: pointer;
+    transition: background 120ms ease, color 120ms ease, border-color 120ms ease;
+  }
+
+  .quiz-screen .tool-button .icon {
+    width: 16px;
+    height: 16px;
+  }
+
+  .quiz-screen .tool-button:hover:not(:disabled):not(.is-static) {
+    background: var(--surface);
+    color: var(--ink);
+  }
+
+  .quiz-screen .tool-button small {
+    padding: 2px 7px;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--ink) 8%, transparent);
+    font-size: 0.7rem;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .quiz-screen .tool-button em {
+    font-style: normal;
+    font-weight: 500;
+    opacity: 0.75;
+  }
+
+  .quiz-screen .tool-button.tool-hint {
+    border-color: color-mix(in srgb, var(--gold) 38%, var(--line));
+    background: var(--brand-soft);
+    color: var(--gold-dark);
+  }
+
+  .quiz-screen .tool-button.tool-hint:hover:not(:disabled) {
+    background: color-mix(in srgb, var(--gold) 22%, var(--brand-soft));
+    color: var(--gold-dark);
+  }
+
+  .quiz-screen .tool-button.tool-hint small {
+    background: color-mix(in srgb, var(--gold) 22%, transparent);
+  }
+
+  .quiz-screen .tool-button:disabled,
+  .quiz-screen .tool-button.is-static {
+    cursor: default;
+    opacity: 0.6;
+  }
+
+  .quiz-screen .hint-list {
+    list-style: none;
+    display: grid;
+    gap: 8px;
+    margin: -6px 0 0;
+    padding: 0;
+    color: var(--ink);
+  }
+
+  .quiz-screen .hint-list li {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 12px;
+    padding: 11px 14px;
+    border-radius: 12px;
+    background: var(--brand-soft);
+    font-size: 0.92rem;
+    line-height: 1.65;
+  }
+
+  .quiz-screen .hint-index {
+    padding-top: 4px;
+    color: var(--gold-dark);
+    font-size: 0.68rem;
+    font-weight: 750;
+    letter-spacing: 0.1em;
+    white-space: nowrap;
+  }
+
+  /* ── 選擇題 ─────────────────────────────────────────────────── */
+  .quiz-screen .choice-grid {
+    gap: 10px;
+  }
+
+  .quiz-screen .choice-option {
+    min-height: 70px;
+    grid-template-columns: 36px minmax(0, 1fr) auto;
+    gap: 12px;
+    padding: 12px 14px;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    background: var(--panel);
+    box-shadow: none;
+  }
+
+  .quiz-screen .choice-option:hover:not(:disabled) {
+    border-color: var(--gold);
+    background: color-mix(in srgb, var(--brand-soft) 55%, var(--panel));
+    transform: none;
+    box-shadow: none;
+  }
+
+  .quiz-screen .choice-option:active:not(:disabled) {
+    transform: scale(0.99);
+  }
+
+  .quiz-screen .choice-option > span {
+    width: 36px;
+    height: 36px;
+    border-color: var(--line-strong);
+    background: var(--surface);
+    color: var(--ink);
+    font-size: 0.9rem;
+    font-weight: 750;
+  }
+
+  .quiz-screen .choice-option:hover:not(:disabled) > span {
+    background: var(--gold);
+    border-color: var(--gold);
+    color: #1c1a12;
+  }
+
+  .quiz-screen .choice-option.is-correct {
+    border-color: var(--green);
+    background: color-mix(in srgb, var(--green) 10%, var(--panel));
+  }
+
+  .quiz-screen .choice-option.is-correct > span {
+    background: var(--green);
+    border-color: var(--green);
+    color: #fff;
+  }
+
+  .quiz-screen .choice-option.is-wrong {
+    border-color: var(--red);
+    background: color-mix(in srgb, var(--red) 9%, var(--panel));
+  }
+
+  .quiz-screen .choice-option.is-wrong > span {
+    background: var(--red);
+    border-color: var(--red);
+    color: #fff;
+  }
+
+  .quiz-screen .choice-option.is-muted {
+    opacity: 0.55;
+  }
+
+  .quiz-screen .choice-option .choice-key {
+    border-radius: 6px;
+    font-size: 0.66rem;
+  }
+
+  .quiz-screen .choice-grid + .helper-row {
+    justify-content: center;
+    gap: 6px;
+    font-size: 0.76rem;
+  }
+
+  /* ── 自己寫 ─────────────────────────────────────────────────── */
+  .quiz-screen .webwork-answer {
+    gap: 10px;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+  }
+
+  .quiz-screen .webwork-head {
+    align-items: center;
+    gap: 8px;
+    padding: 0 2px;
+  }
+
+  .quiz-screen .webwork-head > div {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+  }
+
+  .quiz-screen .webwork-head span {
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .quiz-screen .webwork-head strong {
+    margin: 0;
+    font-size: 0.86rem;
+    font-weight: 650;
+  }
+
+  .quiz-screen .syntax-pill {
+    min-height: 24px;
+    padding: 0 9px;
+    font-size: 0.7rem;
+  }
+
+  /* 輸入框 + （鍵盤切換）+ 送出 排成一列：送出鈕不再獨佔一排 */
+  .quiz-screen .answer-panel {
+    display: flex;
+    align-items: stretch;
+    gap: 8px;
+  }
+
+  .quiz-screen .answer-panel .answer-input {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  .quiz-screen .answer-panel .button[type="submit"],
+  .quiz-screen .answer-panel .keyboard-toggle {
+    flex: 0 0 auto;
+  }
+
+  .quiz-screen .answer-input {
+    min-height: 58px;
+    padding: 0 18px;
+    border: 1.5px solid var(--line-strong);
+    border-radius: 14px;
+    background: var(--panel);
+    font-size: 1.16rem;
+    transition: border-color 120ms ease, box-shadow 120ms ease;
+  }
+
+  .quiz-screen .answer-input:focus {
+    border-color: var(--gold);
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--gold) 20%, transparent);
+  }
+
+  .quiz-screen .answer-input.is-correct {
+    border-color: var(--green);
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--green) 16%, transparent);
+  }
+
+  .quiz-screen .answer-input.is-wrong {
+    border-color: var(--red);
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--red) 14%, transparent);
+  }
+
+  .quiz-screen .answer-panel .button[type="submit"] {
+    min-height: 58px;
+    padding-inline: 22px;
+    border-radius: 14px;
+  }
+
+  .quiz-screen .answer-panel .keyboard-toggle {
+    width: 58px;
+    height: 58px;
+    border-radius: 14px;
+  }
+
+  .quiz-screen .webwork-preview {
+    border-radius: 12px;
+  }
+
+  .quiz-screen .webwork-extras-toggle {
+    min-height: 36px;
+    padding: 0 6px;
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
+    color: var(--muted);
+    font-size: 0.82rem;
+    font-weight: 650;
+  }
+
+  .quiz-screen .webwork-extras-toggle:hover {
+    color: var(--ink);
+    background: var(--surface);
+  }
+
+  .quiz-screen .webwork-extras-toggle small {
+    font-weight: 500;
+  }
+
+  .quiz-screen .webwork-extras.is-open {
+    display: grid;
+    gap: 10px;
+    padding: 12px;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    background: var(--surface);
+  }
+
+  .quiz-screen .keypad button,
+  .quiz-screen .webwork-examples button {
+    border-radius: 10px;
+    background: var(--panel);
+  }
+
+  /* ── 計算紙 ─────────────────────────────────────────────────── */
+  .quiz-screen .scratchboard-shell {
+    gap: 0;
+    padding: 0;
+    overflow: hidden;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    background: var(--panel);
+  }
+
+  .quiz-screen .scratchboard-summary {
+    padding: 8px 10px 8px 16px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .quiz-screen .scratchboard-shell.is-collapsed .scratchboard-summary {
+    border-bottom: 0;
+  }
+
+  .quiz-screen .scratchboard-summary > div:first-child {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+  }
+
+  .quiz-screen .scratchboard-summary span {
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .quiz-screen .scratchboard-summary strong {
+    margin: 0;
+    font-size: 0.86rem;
+    font-weight: 650;
+  }
+
+  .quiz-screen .board-tools {
+    gap: 4px;
+  }
+
+  .quiz-screen .board-tools .icon-button {
+    width: 40px;
+    height: 40px;
+    border-color: transparent;
+    background: transparent;
+    box-shadow: none;
+  }
+
+  .quiz-screen .board-tools .icon-button:hover:not(:disabled) {
+    background: var(--surface);
+  }
+
+  .quiz-screen .board-tools .icon-button.is-active {
+    border-color: var(--gold);
+    background: var(--brand-soft);
+    color: var(--gold-dark);
+  }
+
+  .quiz-screen .scratchboard-shell .blackboard {
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  .quiz-screen .scratchboard-shell .previous-board,
+  .quiz-screen .scratchboard-shell .review-board {
+    margin: 10px;
+  }
+
+  /* ── 回饋 ───────────────────────────────────────────────────── */
+  .quiz-screen .feedback {
+    position: relative;
+    gap: 12px;
+    padding: 22px 26px 0;
+    border: 1px solid var(--line);
+    border-left: 1px solid var(--line);
+    border-radius: 18px;
+    background: var(--panel);
+    /* 頂緣一道色帶取代原本的左緣粗線：整張卡現在是全寬的，
+       色帶橫著放才跟卡片的比例合。用 inset 陰影畫，圓角才不會被粗框拉歪；
+       不能用 ::before + overflow:hidden —— 那會把裡面 sticky 的「下一題」關掉。 */
+    box-shadow: inset 0 4px 0 0 var(--line-strong);
+  }
+
+  .quiz-screen .feedback.correct {
+    border-color: color-mix(in srgb, var(--green) 35%, var(--line));
+    background: color-mix(in srgb, var(--green) 7%, var(--panel));
+    box-shadow: inset 0 4px 0 0 var(--green);
+  }
+
+  .quiz-screen .feedback.wrong,
+  .quiz-screen .feedback.timeout {
+    border-color: color-mix(in srgb, var(--red) 35%, var(--line));
+    background: color-mix(in srgb, var(--red) 6%, var(--panel));
+    box-shadow: inset 0 4px 0 0 var(--red);
+  }
+
+  /* 沒有「下一題」的回饋（答對自動前進、考試模式）自己補底部內距 */
+  .quiz-screen .feedback:not(:has(.feedback-actions)) {
+    padding-bottom: 22px;
+  }
+
+  .quiz-screen .feedback-head {
+    gap: 12px;
+  }
+
+  .quiz-screen .feedback-badge {
+    width: 34px;
+    height: 34px;
+  }
+
+  .quiz-screen .feedback strong {
+    font-size: 1.14rem;
+    letter-spacing: -0.01em;
+  }
+
+  .quiz-screen .feedback > p {
+    color: var(--ink);
+    font-size: 0.96rem;
+    line-height: 1.6;
+  }
+
+  .quiz-screen .feedback-reference {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 14px;
+    border-radius: 12px;
+    background: color-mix(in srgb, var(--panel) 70%, var(--surface));
+    border: 1px solid var(--line);
+    font-weight: 650;
+  }
+
+  .quiz-screen .feedback-nudge {
+    color: var(--muted);
+  }
+
+  .quiz-screen .feedback .key-idea {
+    border-radius: 12px;
+  }
+
+  .quiz-screen .feedback .solution-stages {
+    margin-top: 2px;
+  }
+
+  .quiz-screen .feedback-actions {
+    position: sticky;
+    bottom: 0;
+    z-index: 2;
+    display: flex;
+    justify-content: flex-end;
+    margin: 6px -26px 0;
+    padding: 12px 26px calc(14px + env(safe-area-inset-bottom));
+    border-radius: 0 0 18px 18px;
+    background: linear-gradient(to top, var(--panel) 72%, transparent);
+  }
+
+  .quiz-screen .feedback.correct .feedback-actions {
+    background: linear-gradient(to top, color-mix(in srgb, var(--green) 7%, var(--panel)) 72%, transparent);
+  }
+
+  .quiz-screen .feedback.wrong .feedback-actions,
+  .quiz-screen .feedback.timeout .feedback-actions {
+    background: linear-gradient(to top, color-mix(in srgb, var(--red) 6%, var(--panel)) 72%, transparent);
+  }
+
+  .quiz-screen .feedback-next,
+  .quiz-screen .feedback .feedback-next {
+    min-width: 200px;
+    min-height: 50px;
+    margin: 0;
+    border-radius: 14px;
+    font-size: 0.95rem;
+  }
+
+  .quiz-screen .correct-toast {
+    border-radius: 999px;
+  }
+
+  /* ── 深色：舊的 :root[data-theme="dark"] 規則特異性較高，這裡逐條接回 token ── */
+  :root[data-theme="dark"] .quiz-screen .choice-option > span {
+    color: var(--ink);
+  }
+
+  :root[data-theme="dark"] .quiz-screen .choice-option:hover:not(:disabled) > span {
+    color: #1c1a12;
+  }
+
+  :root[data-theme="dark"] .quiz-screen .choice-option.is-correct > span,
+  :root[data-theme="dark"] .quiz-screen .choice-option.is-wrong > span {
+    color: #fff;
+  }
+
+  :root[data-theme="dark"] .quiz-screen .feedback.correct {
+    background: color-mix(in srgb, var(--green) 12%, var(--panel));
+  }
+
+  :root[data-theme="dark"] .quiz-screen .feedback.wrong,
+  :root[data-theme="dark"] .quiz-screen .feedback.timeout {
+    background: color-mix(in srgb, var(--red) 12%, var(--panel));
+  }
+
+  :root[data-theme="dark"] .quiz-screen .webwork-answer {
+    background: transparent;
+  }
+}
+
+/* 平板：卡片內距稍收，書寫區照舊拿 60vh（那條規則在前面，不動它） */
+@media screen and (min-width: 768px) and (max-width: 1023px) {
+  .quiz-screen {
+    padding: 16px 20px 48px;
+  }
+
+  .quiz-screen .problem-card {
+    padding: 22px 22px 20px;
+  }
+}
+
+/* 手機：單欄、緊湊。作答浮條與全螢幕書寫的 fixed 版面在前面的
+   @media (max-width: 760px) 區塊，這裡只碰視覺。 */
+@media screen and (max-width: 760px) {
+  .quiz-screen {
+    padding: 12px 12px 36px;
+  }
+
+  .quiz-screen .arena {
+    gap: 12px;
+  }
+
+  .quiz-screen .arena-hud {
+    column-gap: 10px;
+    row-gap: 8px;
+    padding: 0 2px;
+  }
+
+  .quiz-screen .hud-context {
+    gap: 4px 8px;
+    font-size: 0.78rem;
+  }
+
+  .quiz-screen .hud-title {
+    font-size: 0.88rem;
+  }
+
+  .quiz-screen .hud-note {
+    display: none;
+  }
+
+  .quiz-screen .timer-ring {
+    width: 52px;
+    height: 52px;
+  }
+
+  .quiz-screen .timer-ring-face {
+    width: 42px;
+    height: 42px;
+  }
+
+  .quiz-screen .timer-ring-face strong {
+    font-size: 0.94rem;
+  }
+
+  .quiz-screen .problem-card {
+    gap: 14px;
+    padding: 16px 16px 14px;
+    border-radius: 16px;
+  }
+
+  .quiz-screen .prompt {
+    padding: 12px 0 6px;
+    font-size: 1.6rem;
+  }
+
+  .quiz-screen .prompt.is-long-tex {
+    font-size: 1.18rem;
+  }
+
+  .quiz-screen .problem-tools {
+    padding-top: 10px;
+  }
+
+  .quiz-screen .tool-button {
+    min-height: 40px;
+    padding: 0 10px;
+    font-size: 0.78rem;
+  }
+
+  .quiz-screen .tool-button em {
+    display: none;
+  }
+
+  .quiz-screen .choice-option {
+    min-height: 62px;
+    padding: 10px 12px;
+    border-radius: 12px;
+  }
+
+  .quiz-screen .feedback {
+    padding: 18px 18px 0;
+    border-radius: 16px;
+  }
+
+  .quiz-screen .feedback:not(:has(.feedback-actions)) {
+    padding-bottom: 18px;
+  }
+
+  .quiz-screen .feedback-actions {
+    margin: 4px -18px 0;
+    padding: 10px 18px calc(12px + env(safe-area-inset-bottom));
+    border-radius: 0 0 16px 16px;
+  }
+
+  .quiz-screen .feedback-next,
+  .quiz-screen .feedback .feedback-next {
+    width: 100%;
+    min-width: 0;
+  }
+
+  /* 全螢幕書寫的作答列：整條靠在底部，圓角小一點 */
+  .quiz-screen .handwrite-shell.is-fullscreen .webwork-answer {
+    border-radius: 12px;
+  }
+}
+
+/* 作答舞台 · 補丁 */
+@media screen {
+  /* 關卡名：寬螢幕用全名、窄螢幕用短名（舊規則掛在 .progress-meta 上，換了容器要重掛） */
+  .quiz-screen .hud-context .lvl-short { display: none; }
+
+  .quiz-screen .hud-context .clear-need {
+    border-radius: 999px;
+    border: 1px solid color-mix(in srgb, var(--progress) 40%, var(--line));
+    background: color-mix(in srgb, var(--progress) 12%, var(--surface));
+    color: color-mix(in srgb, var(--green) 76%, var(--ink));
+    font-weight: 750;
+  }
+
+  .quiz-screen .hud-context .clear-need.is-lost {
+    border-color: color-mix(in srgb, var(--red) 40%, var(--line));
+    background: color-mix(in srgb, var(--red) 12%, var(--surface));
+    color: color-mix(in srgb, var(--red) 85%, var(--ink));
+  }
+
+  /* 選項裡的數學是答案本體，不能比題幹小 */
+  .quiz-screen .choice-option strong {
+    font-size: 1.08rem;
+  }
+
+  .quiz-screen .choice-option .katex {
+    font-size: 1.3em;
+  }
+
+  .quiz-screen .choice-chip .katex {
+    font-size: 1.15em;
+  }
+
+  /* 逐步驗證：從一個虛線框降成一行安靜的展開鈕 */
+  .quiz-screen .step-checker {
+    margin-top: 0;
+    padding: 0 6px;
+    border: 0;
+    background: transparent;
+  }
+
+  .quiz-screen .step-checker summary {
+    min-height: 36px;
+    font-size: 0.82rem;
+    font-weight: 650;
+  }
+
+  .quiz-screen .step-checker[open] {
+    padding: 0 12px 12px;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    background: var(--surface);
+  }
+
+  .quiz-screen .step-checker textarea {
+    border-radius: 12px;
+    background: var(--panel);
+  }
+}
+
+@media screen and (pointer: fine) {
+  /* 桌機的符號鍵自己一列，不要擠在數字列尾巴再往下折成一根柱子 */
+  .quiz-screen .keypad-rest {
+    flex: 1 1 100%;
+  }
+}
+
+@media screen and (max-width: 760px) {
+  .quiz-screen .hud-context .lvl-full { display: none; }
+  .quiz-screen .hud-context .lvl-short { display: inline; }
+}
+
+@media screen and (max-width: 520px) {
+  /* 收起時只有一顆展開鈕，標題不用獨佔一列 */
+  .quiz-screen .scratchboard-shell.is-collapsed .scratchboard-summary {
+    flex-wrap: nowrap;
+    align-items: center;
+  }
+
+  .quiz-screen .scratchboard-shell.is-collapsed .scratchboard-summary > div:first-child {
+    flex: 1 1 auto;
+  }
+}
+
+@media screen and (max-width: 760px) {
+  /* 收起時工具列只剩一顆展開鈕：手機的 5 格 grid 會硬撐 226px，把「計算紙」擠成直排 */
+  .quiz-screen .scratchboard-shell.is-collapsed .board-tools {
+    display: flex;
+    flex: 0 0 auto;
+    width: auto;
+    justify-content: flex-end;
+  }
+}
+
+@media screen and (max-width: 900px) {
+  /* 舊的手機規則把送出鈕撐成 width:100%（那是它獨佔一排的年代）；
+     現在跟輸入框同一列，寬度由內容決定 */
+  .quiz-screen .answer-panel .button[type="submit"],
+  .quiz-screen .webwork-answer .answer-panel .button[type="submit"] {
+    width: auto;
+    min-width: 96px;
+  }
+}
+
+/* 平板（Pencil 是主角）：攤開的計算紙排在作答列前面 —— 先寫、再填答案，
+   跟全螢幕的順序一致；不然數學鍵盤預設攤開會把板子推到畫面外。 */
+@media screen and (min-width: 768px) and (pointer: coarse) {
+  .quiz-screen .handwrite-shell:not(.is-fullscreen) .scratchboard-shell.is-open {
+    order: -1;
+  }
+}
+
+@media screen {
+  /* 圖形題：圖就是題目（或作答區），給它跟題幹相稱的大小 */
+  .quiz-screen .problem-graph svg {
+    width: min(420px, 100%);
+    border-radius: 14px;
+  }
+
+  .quiz-screen .problem-graph.is-interactive svg {
+    width: min(520px, 100%);
+  }
+
+  .quiz-screen .graph-interactive .helper-row {
+    justify-content: center;
+    font-size: 0.8rem;
+  }
+
+  .quiz-screen .exam-map {
+    border-radius: 16px;
+  }
+}

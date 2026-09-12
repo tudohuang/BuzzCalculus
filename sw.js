@@ -1,4 +1,4 @@
-const CACHE_NAME = "buzzcalculus-v1.2.1-2026-09-12-workspace";
+const CACHE_NAME = "buzzcalculus-v1.2.1-2026-09-12-arena";
 const CACHE_PREFIX = "buzzcalculus-";
 const APP_SHELL = [
   "./privacy.html",
