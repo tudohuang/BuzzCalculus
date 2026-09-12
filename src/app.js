@@ -1824,6 +1824,8 @@
     if (activeStrokes && activeStrokes.length) {
       const compact = activeStrokes.map((stroke) => ({
         tool: stroke.tool,
+        ...(stroke.color ? { color: stroke.color } : {}),
+        ...(stroke.nib ? { nib: stroke.nib } : {}),
         points: stroke.points.map((point) => {
           const slim = { x: Math.round(point.x * 10000) / 10000, y: Math.round(point.y * 10000) / 10000 };
           if (point.p !== undefined) slim.p = Math.round(point.p * 100) / 100;
@@ -6593,7 +6595,10 @@
   function renderScratchboard(problem, disabled, boardTool, fullscreen, boardOpen, strokeCount) {
     const surface = boardSurface();
     const surfaceNext = surface === "paper" ? "換成黑板" : "換成方格紙";
-    const penScale = PEN_SCALES.find((item) => item.key === ((loadRecords().settings || {}).penScale || "standard")) || PEN_SCALES[1];
+    const penScale = PEN_SCALES.find((item) => item.key === penScaleKey()) || PEN_SCALES[1];
+    const penColor = penColorSetting();
+    const penNib = penNibSetting();
+    const highlightColor = highlightColorSetting();
     return `
       <section class="scratchboard-shell ${boardOpen ? "is-open" : "is-collapsed"}">
         <div class="scratchboard-summary">
@@ -6601,18 +6606,17 @@
             <span>計算紙</span>
             <strong data-board-count>${strokeCount ? `${strokeCount} 筆` : "手寫草稿"}</strong>
           </div>
-          <!-- 工具分四組：畫（筆／橡皮擦／筆寬）、改（復原／重做）、紙（清空／換紙）、放大。
-               原本九顆同色同大小排成一列，眼睛要一顆顆讀；分組之後手指直接落在對的區。 -->
+          <!-- 工具列的邏輯跟 GoodNotes 一樣：一顆工具 = 一個主要動作，
+               再點一次已經選中的工具才打開它的細節（顏色、粗細、筆型／紙型）。
+               這樣每一顆都保持一個字的寬度，細節不常駐在工具列上。 -->
           <div class="board-tools" aria-label="計算紙工具">
             ${
               boardOpen
                 ? `
                   <span class="board-tool-group" role="group" aria-label="畫">
-                    <button class="icon-button ${boardTool === "pen" ? "is-active" : ""}" type="button" data-board-action="tool" data-tool="pen" title="筆" ${disabled}>${icon("pen")}</button>
-                    <button class="icon-button ${boardTool === "eraser" ? "is-active" : ""}" type="button" data-board-action="tool" data-tool="eraser" title="橡皮擦" ${disabled}>${icon("eraser")}</button>
-                    <!-- 筆寬本來埋在設定頁 —— 拿著筆的人要當場換，不是去逛設定。
-                         圖示是一顆跟筆寬同比例的點（CSS 看 data-pen-scale 畫），文字留給讀屏器。 -->
-                    <button class="icon-button pen-scale-cycle" type="button" data-board-action="pen-scale" data-pen-scale="${escapeAttr(penScale.key)}" title="筆寬：${escapeAttr(penScale.label)}（點擊切換）" ${disabled}><span class="sr-only" data-pen-scale-glyph>${escapeHtml(penScale.label)}</span></button>
+                    <button class="icon-button tool-pen ${boardTool === "pen" ? "is-active" : ""}" type="button" data-board-action="tool" data-tool="pen" data-color="${escapeAttr(penColor)}" title="筆（再點一次選顏色與粗細）" aria-pressed="${boardTool === "pen" ? "true" : "false"}" ${disabled}>${icon("pen")}<i class="tool-swatch" aria-hidden="true"></i></button>
+                    <button class="icon-button tool-highlighter ${boardTool === "highlighter" ? "is-active" : ""}" type="button" data-board-action="tool" data-tool="highlighter" data-color="${escapeAttr(highlightColor)}" title="螢光筆（再點一次選顏色）" aria-pressed="${boardTool === "highlighter" ? "true" : "false"}" ${disabled}>${icon("highlighter")}<i class="tool-swatch" aria-hidden="true"></i></button>
+                    <button class="icon-button ${boardTool === "eraser" ? "is-active" : ""}" type="button" data-board-action="tool" data-tool="eraser" title="橡皮擦" aria-pressed="${boardTool === "eraser" ? "true" : "false"}" ${disabled}>${icon("eraser")}</button>
                   </span>
                   <span class="board-tool-group" role="group" aria-label="改">
                     <button class="icon-button" type="button" data-board-action="undo" title="復原上一筆（兩指點一下也可以）" ${disabled}>${icon("undo")}</button>
@@ -6620,7 +6624,7 @@
                   </span>
                   <span class="board-tool-group" role="group" aria-label="紙">
                     <button class="icon-button" type="button" data-board-action="clear" title="全部擦掉（可以重做救回來）" ${disabled}>${icon("trash")}</button>
-                    <button class="icon-button" type="button" data-board-action="surface" title="${surfaceNext}" ${disabled}>${icon(surface === "paper" ? "moon" : "grid")}</button>
+                    <button class="icon-button" type="button" data-board-action="surface" title="換紙" aria-haspopup="true" ${disabled}>${icon("grid")}</button>
                   </span>
                   <button class="icon-button" type="button" data-board-action="fullscreen" title="${fullscreen ? "退出全螢幕" : "全螢幕書寫"}" ${disabled}>${icon(fullscreen ? "minimize" : "maximize")}</button>
                 `
@@ -6633,7 +6637,32 @@
           boardOpen
             ? `<div class="board-surface">
                 <canvas class="blackboard" data-blackboard data-surface="${surface}" data-tool="${escapeAttr(boardTool)}" data-problem-id="${escapeAttr(problem.id)}" aria-label="手寫計算紙"></canvas>
+                <!-- 螢光筆書寫中的即時預覽層：半透明的筆畫不能逐段疊在主畫布上（接點會變深），
+                     所以寫的時候畫在這一層，收筆再整筆落到主畫布。 -->
+                <canvas class="board-live" data-board-live aria-hidden="true"></canvas>
                 <p class="board-empty-hint" data-board-empty-hint ${strokeCount ? "hidden" : ""} aria-hidden="true">${icon("pen")}<span>在這裡算，算完再填答案</span></p>
+                <div class="board-popover" data-board-popover="pen" hidden>
+                  <div class="popover-row" role="group" aria-label="顏色">
+                    ${PEN_COLORS.map((item) => `<button type="button" class="swatch ${item.key === penColor ? "is-active" : ""}" data-board-action="set-color" data-color="${item.key}" title="${escapeAttr(item.label)}" aria-label="${escapeAttr(item.label)}" style="--swatch:${item.swatch}"></button>`).join("")}
+                  </div>
+                  <div class="popover-row" role="group" aria-label="粗細">
+                    ${PEN_SCALES.map((item) => `<button type="button" class="scale-pick ${item.key === penScale.key ? "is-active" : ""}" data-board-action="set-pen-scale" data-scale="${item.key}" title="${escapeAttr(item.label)}" aria-label="筆寬 ${escapeAttr(item.label)}"><i style="--pen-dot:${item.dot}px"></i></button>`).join("")}
+                  </div>
+                  <div class="popover-row popover-segment" role="group" aria-label="筆型">
+                    <button type="button" class="${penNib === "fountain" ? "is-active" : ""}" data-board-action="set-nib" data-nib="fountain" aria-pressed="${penNib === "fountain" ? "true" : "false"}">鋼筆<small>有粗細</small></button>
+                    <button type="button" class="${penNib === "ball" ? "is-active" : ""}" data-board-action="set-nib" data-nib="ball" aria-pressed="${penNib === "ball" ? "true" : "false"}">原子筆<small>等寬</small></button>
+                  </div>
+                </div>
+                <div class="board-popover" data-board-popover="highlighter" hidden>
+                  <div class="popover-row" role="group" aria-label="螢光筆顏色">
+                    ${HIGHLIGHT_COLORS.map((item) => `<button type="button" class="swatch is-highlight ${item.key === highlightColor ? "is-active" : ""}" data-board-action="set-color" data-color="${item.key}" title="${escapeAttr(item.label)}" aria-label="${escapeAttr(item.label)}" style="--swatch:${item.swatch}"></button>`).join("")}
+                  </div>
+                </div>
+                <div class="board-popover" data-board-popover="surface" hidden>
+                  <div class="popover-row popover-papers" role="group" aria-label="紙型">
+                    ${BOARD_SURFACES.map((item) => `<button type="button" class="paper-pick ${item.key === surface ? "is-active" : ""}" data-board-action="set-surface" data-surface="${item.key}" aria-pressed="${item.key === surface ? "true" : "false"}"><i data-surface="${item.key}"></i><span>${escapeHtml(item.label)}</span></button>`).join("")}
+                  </div>
+                </div>
               </div>`
             : ""
         }
@@ -12201,20 +12230,68 @@
 
   const BOARD_INK = { paper: "#1d2b3a", board: "#fff8de" };
 
-  function boardSurface() {
+  // 紙型。paper 是方格（預設，跟改版前一樣），其餘是 2026-09 加的：
+  // 點陣、橫線、空白，還有原本就有的黑板。畫布本身永遠透明 ——
+  // 紙型只是 CSS 背景，橡皮擦才挖得動。
+  const BOARD_SURFACES = [
+    { key: "paper", label: "方格" },
+    { key: "dots", label: "點陣" },
+    { key: "lines", label: "橫線" },
+    { key: "blank", label: "空白" },
+    { key: "board", label: "黑板" }
+  ];
+  // 筆的顏色與螢光筆的顏色。色碼本身在 kernel/board_render.js（紙／黑板各一版），
+  // 這裡只有名字與工具列上色塊要用的代表色。
+  const PEN_COLORS = [
+    { key: "ink", label: "墨色", swatch: "#1d2b3a" },
+    { key: "blue", label: "藍", swatch: "#2456b8" },
+    { key: "red", label: "紅", swatch: "#c8383a" },
+    { key: "green", label: "綠", swatch: "#1e7f52" }
+  ];
+  const HIGHLIGHT_COLORS = [
+    { key: "yellow", label: "黃", swatch: "#ffd83d" },
+    { key: "green", label: "綠", swatch: "#8fe39a" },
+    { key: "pink", label: "粉", swatch: "#ff9cc2" },
+    { key: "blue", label: "藍", swatch: "#8fcbff" }
+  ];
+
+  function boardSetting(key, fallback, allowed) {
     try {
-      const settings = loadRecords().settings || {};
-      return settings.boardSurface === "board" ? "board" : "paper";
+      const value = (loadRecords().settings || {})[key];
+      return allowed.includes(value) ? value : fallback;
     } catch (_error) {
-      return "paper";
+      return fallback;
     }
   }
 
-  function setBoardSurface(name) {
+  function saveBoardSetting(key, value) {
     const records = loadRecords();
-    records.settings = records.settings || {};
-    records.settings.boardSurface = name === "board" ? "board" : "paper";
+    records.settings = { ...(records.settings || {}), [key]: value };
     saveRecords(records);
+  }
+
+  function boardSurface() {
+    return boardSetting("boardSurface", "paper", BOARD_SURFACES.map((item) => item.key));
+  }
+
+  function setBoardSurface(name) {
+    saveBoardSetting("boardSurface", BOARD_SURFACES.some((item) => item.key === name) ? name : "paper");
+  }
+
+  function penScaleKey() {
+    return boardSetting("penScale", "standard", PEN_SCALES.map((item) => item.key));
+  }
+
+  function penColorSetting() {
+    return boardSetting("penColor", "ink", PEN_COLORS.map((item) => item.key));
+  }
+
+  function penNibSetting() {
+    return boardSetting("penNib", "fountain", ["fountain", "ball"]);
+  }
+
+  function highlightColorSetting() {
+    return boardSetting("highlightColor", "yellow", HIGHLIGHT_COLORS.map((item) => item.key));
   }
 
   function setupBlackboard() {
@@ -12269,7 +12346,12 @@
           // 換筆／橡皮擦只改兩顆按鈕的狀態，不需要重繪整個畫面 ——
           // render() 會把 canvas 整個換掉，然後把所有筆畫重畫一次。
           // 寫滿一頁之後那一下看得出來卡，而使用者只是想換個工具。
-          quiz.boardTool = button.dataset.tool || "pen";
+          //
+          // 再點一次**已經選中**的工具 = 打開它的細節面板（顏色／粗細／筆型），
+          // 跟 GoodNotes 同一套：第一下選工具，第二下調工具。
+          const nextTool = button.dataset.tool || "pen";
+          const reselect = quiz.boardTool === nextTool && quiz.boardOpen;
+          quiz.boardTool = nextTool;
           quiz.boardOpen = true;
           pauseQuestionTimer();
           app.querySelectorAll('[data-board-action="tool"]').forEach((node) => {
@@ -12277,6 +12359,50 @@
             node.setAttribute("aria-pressed", node.dataset.tool === quiz.boardTool ? "true" : "false");
           });
           if (canvas) canvas.dataset.tool = quiz.boardTool;
+          if (reselect && nextTool !== "eraser") toggleBoardPopover(nextTool);
+          else closeBoardPopovers();
+          return;
+        }
+        if (action === "set-color") {
+          // 顏色是工具的屬性：筆有筆的顏色、螢光筆有螢光筆的顏色，各記各的。
+          const color = button.dataset.color || "";
+          const isHighlight = button.classList.contains("is-highlight");
+          saveBoardSetting(isHighlight ? "highlightColor" : "penColor", color);
+          const toolButton = app.querySelector(`[data-board-action="tool"][data-tool="${isHighlight ? "highlighter" : "pen"}"]`);
+          if (toolButton) toolButton.dataset.color = color;
+          button.parentElement.querySelectorAll(".swatch").forEach((node) => node.classList.toggle("is-active", node === button));
+          return;
+        }
+        if (action === "set-nib") {
+          saveBoardSetting("penNib", button.dataset.nib === "ball" ? "ball" : "fountain");
+          button.parentElement.querySelectorAll("button").forEach((node) => {
+            node.classList.toggle("is-active", node === button);
+            node.setAttribute("aria-pressed", node === button ? "true" : "false");
+          });
+          return;
+        }
+        if (action === "set-pen-scale") {
+          // 筆寬改了，既有的筆畫也跟著變（筆寬是全域手感，不是每一筆各自記）。
+          const key = PEN_SCALES.some((item) => item.key === button.dataset.scale) ? button.dataset.scale : "standard";
+          saveBoardSetting("penScale", key);
+          button.parentElement.querySelectorAll(".scale-pick").forEach((node) => node.classList.toggle("is-active", node === button));
+          if (canvas && ctx) drawBlackboard(canvas, ctx, problemId);
+          return;
+        }
+        if (action === "set-surface") {
+          // 換紙改的是 CSS 背景與墨色。畫布不用重建，
+          // 但既有的筆畫要用新的墨色重畫一次（黑板上的深藍看不見）。
+          const next = button.dataset.surface || "paper";
+          setBoardSurface(next);
+          app.querySelectorAll("[data-blackboard], [data-board-live], [data-review-board], [data-previous-board]").forEach((node) => {
+            node.dataset.surface = next;
+          });
+          button.parentElement.querySelectorAll(".paper-pick").forEach((node) => {
+            node.classList.toggle("is-active", node === button);
+            node.setAttribute("aria-pressed", node === button ? "true" : "false");
+          });
+          if (canvas && ctx) drawBlackboard(canvas, ctx, problemId);
+          closeBoardPopovers();
           return;
         }
         if (action === "fullscreen") {
@@ -12310,39 +12436,7 @@
           return;
         }
         if (action === "surface") {
-          // 換紙／黑板改的是 CSS 背景與墨色。畫布不用重建，
-          // 但既有的筆畫要用新的墨色重畫一次（黑板上的深藍看不見）。
-          const next = boardSurface() === "paper" ? "board" : "paper";
-          setBoardSurface(next);
-          const canvas = app.querySelector("[data-blackboard]");
-          if (canvas) {
-            canvas.dataset.surface = next;
-            const ctx = canvas.getContext("2d", { desynchronized: true });
-            if (ctx) drawStrokesOnBlackboard(canvas, ctx, getBoardStrokes(canvas.dataset.problemId || ""));
-          }
-          app.querySelectorAll("[data-review-board], [data-previous-board]").forEach((node) => {
-            node.dataset.surface = next;
-          });
-          button.title = next === "paper" ? "換成黑板" : "換成方格紙";
-          const glyph = button.querySelector(".icon, [data-lucide]");
-          if (glyph) glyph.setAttribute("data-lucide", next === "paper" ? "moon" : "grid-3x3");
-          renderIcons();
-          return;
-        }
-        if (action === "pen-scale") {
-          // 循環 細→標準→粗。跟換紙一樣不走整頁 render：
-          // 直接改設定、用新筆寬把整板重畫一次。
-          const currentKey = (loadRecords().settings || {}).penScale || "standard";
-          const index = PEN_SCALES.findIndex((item) => item.key === currentKey);
-          const next = PEN_SCALES[(index + 1) % PEN_SCALES.length];
-          const records = loadRecords();
-          records.settings = { ...(records.settings || {}), penScale: next.key };
-          saveRecords(records);
-          const glyph = button.querySelector("[data-pen-scale-glyph]");
-          if (glyph) glyph.textContent = next.label;
-          button.dataset.penScale = next.key;
-          button.title = `筆寬：${next.label}（點擊切換）`;
-          if (canvas && ctx) drawBlackboard(canvas, ctx, problemId);
+          toggleBoardPopover("surface");
           return;
         }
         // 復原與清除不重繪整個畫面 —— render() 會把 canvas 整個換掉，
@@ -12371,9 +12465,49 @@
       });
     });
 
+    // 細節面板：一次只開一個；點畫布、點別的工具、或點面板外面都關。
+    function closeBoardPopovers() {
+      app.querySelectorAll("[data-board-popover]").forEach((node) => { node.hidden = true; });
+    }
+    function toggleBoardPopover(name) {
+      const target = app.querySelector(`[data-board-popover="${name}"]`);
+      if (!target) return;
+      const open = target.hidden;
+      closeBoardPopovers();
+      target.hidden = !open;
+    }
+    document.addEventListener("pointerdown", (event) => {
+      if (!app.querySelector("[data-board-popover]:not([hidden])")) return;
+      if (event.target.closest && event.target.closest("[data-board-popover], [data-board-action]")) return;
+      closeBoardPopovers();
+    }, { passive: true });
+
     if (!canvas || !ctx) return;
 
+    // 螢光筆的即時預覽層（見 renderScratchboard 的註解）。
+    const liveCanvas = app.querySelector("[data-board-live]");
+    const liveCtx = liveCanvas ? liveCanvas.getContext("2d", { desynchronized: true }) : null;
+    const syncLiveSize = () => {
+      if (!liveCanvas) return;
+      if (liveCanvas.width !== canvas.width || liveCanvas.height !== canvas.height) {
+        liveCanvas.width = canvas.width;
+        liveCanvas.height = canvas.height;
+      }
+    };
+    const paintLive = (stroke) => {
+      if (!liveCanvas || !liveCtx) return;
+      syncLiveSize();
+      liveCtx.clearRect(0, 0, liveCanvas.width, liveCanvas.height);
+      stroke.drawnTo = 0;
+      paintStrokeTail(liveCanvas, liveCtx, stroke, true);
+      stroke.drawnTo = 0;
+    };
+    const clearLive = () => {
+      if (liveCanvas && liveCtx) liveCtx.clearRect(0, 0, liveCanvas.width, liveCanvas.height);
+    };
+
     resizeBlackboard(canvas);
+    syncLiveSize();
     drawBlackboard(canvas, ctx, problemId);
 
     // 旋轉 iPad 或進出全螢幕之後 canvas 尺寸會變，內容要跟著重畫。
@@ -12383,7 +12517,10 @@
           observer.disconnect();
           return;
         }
-        if (resizeBlackboard(canvas)) drawBlackboard(canvas, ctx, problemId);
+        if (resizeBlackboard(canvas)) {
+          syncLiveSize();
+          drawBlackboard(canvas, ctx, problemId);
+        }
       });
       observer.observe(canvas);
     }
@@ -12416,15 +12553,25 @@
       } catch (_error) {
         // Safari 偶爾會在 capture 上丟例外，不影響書寫
       }
+      closeBoardPopovers();
+      const tool = quiz.boardTool || "pen";
       currentStroke = {
-        tool: quiz.boardTool || "pen",
+        tool,
         points: [blackboardPoint(canvas, event, cachedRect)]
       };
+      // 顏色與筆型跟著筆畫走：之後換顏色，之前寫的不會跟著變。
+      if (tool === "pen") {
+        currentStroke.color = penColorSetting();
+        if (penNibSetting() === "ball") currentStroke.nib = "ball";
+      } else if (tool === "highlighter") {
+        currentStroke.color = highlightColorSetting();
+      }
       const strokes = getBoardStrokes(problemId);
       strokes.push(currentStroke);
       // 新的一筆會作廢重做堆疊 —— 分支的歷史留著只會讓「重做」跳到別的地方去。
       clearBoardRedo(problemId);
-      paintStrokeTail(canvas, ctx, currentStroke, true);
+      if (tool === "highlighter") paintLive(currentStroke);
+      else paintStrokeTail(canvas, ctx, currentStroke, true);
       updateBoardCount(strokes.length);
     });
 
@@ -12449,7 +12596,9 @@
         currentStroke.points.push(point);
         added = true;
       }
-      if (added) paintStrokeTail(canvas, ctx, currentStroke, false);
+      if (!added) return;
+      if (currentStroke.tool === "highlighter") paintLive(currentStroke);
+      else paintStrokeTail(canvas, ctx, currentStroke, false);
     }
 
     function onMove(event) {
@@ -12515,7 +12664,7 @@
     const hideHover = () => { hoverDot.style.opacity = "0"; };
     canvas.addEventListener("pointermove", (event) => {
       if (event.pointerType !== "pen" || event.buttons !== 0) { hideHover(); return; }
-      const size = Math.max(4, 2.4 * penScaleSetting() * 2);
+      const size = quiz && quiz.boardTool === "highlighter" ? 16 : Math.max(4, 2.4 * penScaleSetting() * 2);
       hoverDot.style.width = `${size}px`;
       hoverDot.style.height = `${size}px`;
       hoverDot.style.transform = `translate(${event.clientX - size / 2}px, ${event.clientY - size / 2}px)`;
@@ -12533,6 +12682,7 @@
 
     function endStroke(event) {
       if (!currentStroke || event.pointerId !== activePointerId) return;
+      if (currentStroke.tool === "highlighter") clearLive();
       paintStrokeTail(canvas, ctx, currentStroke, true);
       currentStroke = null;
       activePointerId = null;
@@ -12673,10 +12823,12 @@
 
   function cloneBoardStrokes(problemId) {
     if (!quiz || !quiz.boardStrokes || !quiz.boardStrokes[problemId]) return [];
-    return quiz.boardStrokes[problemId].map((stroke) => ({
-      tool: stroke.tool,
-      points: stroke.points.map((point) => ({ ...point }))
-    }));
+    return quiz.boardStrokes[problemId].map((stroke) => {
+      const copy = { tool: stroke.tool, points: stroke.points.map((point) => ({ ...point })) };
+      if (stroke.color) copy.color = stroke.color;
+      if (stroke.nib) copy.nib = stroke.nib;
+      return copy;
+    });
   }
 
   // 回傳有沒有真的改變尺寸 —— 尺寸沒變就不必重畫（重畫會清掉內容）。
@@ -12718,9 +12870,9 @@
   }
 
   const PEN_SCALES = [
-    { key: "thin", label: "細", value: 0.75 },
-    { key: "standard", label: "標準", value: 1 },
-    { key: "thick", label: "粗", value: 1.3 }
+    { key: "thin", label: "細", value: 0.75, dot: 5 },
+    { key: "standard", label: "標準", value: 1, dot: 8 },
+    { key: "thick", label: "粗", value: 1.3, dot: 12 }
   ];
 
   // ── 答題音效 ────────────────────────────────────────────────

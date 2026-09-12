@@ -11609,3 +11609,286 @@ kbd {
     display: none;
   }
 }
+
+/* ══════════════════════════════════════════════════════════════════
+   計算紙：GoodNotes 那種感覺
+   - 五種紙：方格／點陣／橫線／空白／黑板（畫布透明，紙是 CSS）
+   - 筆的顏色與螢光筆：工具鈕上一顆色點，細節在 popover
+   - 全螢幕時是一張放在桌面上的紙：淡灰桌面、紙有一圈軟陰影
+   ══════════════════════════════════════════════════════════════════ */
+
+/* 紙型：跟原本的 paper / board 一樣同時套在主畫布、回顧板、上次草稿與紙型選單的縮圖 */
+.blackboard[data-surface="dots"],
+.review-board[data-surface="dots"],
+.paper-pick i[data-surface="dots"] {
+  background-color: #fdfcf6;
+  background-image: radial-gradient(circle, rgba(70, 100, 130, 0.42) 1px, transparent 1.4px);
+  background-size: 26px 26px;
+  background-position: 13px 13px;
+  border-color: #cfc9ba;
+}
+
+.blackboard[data-surface="lines"],
+.review-board[data-surface="lines"],
+.paper-pick i[data-surface="lines"] {
+  background-color: #fdfcf6;
+  background-image: repeating-linear-gradient(to bottom, transparent 0 31px, rgba(70, 100, 130, 0.22) 31px 32px);
+  border-color: #cfc9ba;
+}
+
+.blackboard[data-surface="blank"],
+.review-board[data-surface="blank"],
+.paper-pick i[data-surface="blank"] {
+  background-color: #fdfcf6;
+  border-color: #cfc9ba;
+}
+
+.paper-pick i[data-surface="paper"] {
+  background-color: #fdfcf6;
+  background-image:
+    repeating-linear-gradient(to right, rgba(70, 100, 130, 0.2) 0 1px, transparent 1px 100%),
+    repeating-linear-gradient(to bottom, rgba(70, 100, 130, 0.2) 0 1px, transparent 1px 100%);
+  background-size: 10px 10px;
+}
+
+.paper-pick i[data-surface="dots"] { background-size: 10px 10px; background-position: 5px 5px; }
+.paper-pick i[data-surface="lines"] { background-image: repeating-linear-gradient(to bottom, transparent 0 9px, rgba(70, 100, 130, 0.3) 9px 10px); }
+.paper-pick i[data-surface="board"] { background-color: #11130f; }
+
+/* 橡皮擦游標在所有淺色紙上都是同一顆 */
+.blackboard[data-tool="eraser"][data-surface="dots"],
+.blackboard[data-tool="eraser"][data-surface="lines"],
+.blackboard[data-tool="eraser"][data-surface="blank"] {
+  cursor: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24'%3E%3Ccircle cx='12' cy='12' r='10' fill='rgba(255,255,255,0.55)' stroke='%231d2b3a' stroke-width='1.5'/%3E%3C/svg%3E") 12 12, crosshair;
+}
+
+/* 筆與螢光筆的游標：一顆小點，不是十字 —— 十字是「選取」的語言，不是「寫」 */
+.blackboard[data-tool="pen"] {
+  cursor: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12'%3E%3Ccircle cx='6' cy='6' r='3' fill='%231d2b3a'/%3E%3C/svg%3E") 6 6, crosshair;
+}
+
+.blackboard[data-tool="pen"][data-surface="board"] {
+  cursor: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12'%3E%3Ccircle cx='6' cy='6' r='3' fill='%23fff8de'/%3E%3C/svg%3E") 6 6, crosshair;
+}
+
+.blackboard[data-tool="highlighter"] {
+  cursor: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20'%3E%3Ccircle cx='10' cy='10' r='8' fill='rgba(255,216,61,0.55)' stroke='%23b08a00' stroke-width='1'/%3E%3C/svg%3E") 10 10, crosshair;
+}
+
+@media screen {
+  /* 即時預覽層貼在主畫布上，不吃事件 */
+  .quiz-screen .board-live {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+  }
+
+  /* 工具鈕上的色點：筆與螢光筆各顯示自己目前的顏色 */
+  .quiz-screen .tool-swatch {
+    position: absolute;
+    right: 6px;
+    bottom: 6px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--swatch-color, #1d2b3a);
+    box-shadow: 0 0 0 1.5px var(--panel);
+  }
+
+  .quiz-screen .board-tools .icon-button {
+    position: relative;
+  }
+
+  .quiz-screen [data-tool="pen"][data-color="ink"] { --swatch-color: #1d2b3a; }
+  .quiz-screen [data-tool="pen"][data-color="blue"] { --swatch-color: #2456b8; }
+  .quiz-screen [data-tool="pen"][data-color="red"] { --swatch-color: #c8383a; }
+  .quiz-screen [data-tool="pen"][data-color="green"] { --swatch-color: #1e7f52; }
+  .quiz-screen [data-tool="highlighter"][data-color="yellow"] { --swatch-color: #ffd83d; }
+  .quiz-screen [data-tool="highlighter"][data-color="green"] { --swatch-color: #8fe39a; }
+  .quiz-screen [data-tool="highlighter"][data-color="pink"] { --swatch-color: #ff9cc2; }
+  .quiz-screen [data-tool="highlighter"][data-color="blue"] { --swatch-color: #8fcbff; }
+
+  :root[data-theme="dark"] .quiz-screen [data-tool="pen"][data-color="ink"] { --swatch-color: #fff8de; }
+
+  /* popover：從工具列右側垂下來，蓋在紙上 */
+  .quiz-screen .board-popover {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    z-index: 3;
+    display: grid;
+    gap: 10px;
+    min-width: 200px;
+    padding: 12px;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    background: var(--panel);
+    box-shadow: 0 10px 30px rgba(20, 22, 18, 0.16);
+  }
+
+  .quiz-screen .board-popover[hidden] {
+    display: none;
+  }
+
+  .quiz-screen .popover-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .quiz-screen .swatch {
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    border: 2px solid transparent;
+    border-radius: 50%;
+    background: var(--swatch);
+    cursor: pointer;
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.08);
+    transition: transform 100ms ease;
+  }
+
+  .quiz-screen .swatch:hover {
+    transform: scale(1.08);
+  }
+
+  .quiz-screen .swatch.is-active {
+    border-color: var(--ink);
+    box-shadow: 0 0 0 2px var(--panel), inset 0 0 0 1px rgba(0, 0, 0, 0.08);
+  }
+
+  .quiz-screen .scale-pick {
+    width: 40px;
+    height: 34px;
+    display: grid;
+    place-items: center;
+    padding: 0;
+    border: 1px solid var(--line);
+    border-radius: 9px;
+    background: var(--surface);
+    cursor: pointer;
+  }
+
+  .quiz-screen .scale-pick i {
+    width: var(--pen-dot, 8px);
+    height: var(--pen-dot, 8px);
+    border-radius: 50%;
+    background: var(--ink);
+  }
+
+  .quiz-screen .scale-pick.is-active {
+    border-color: var(--gold);
+    background: var(--brand-soft);
+  }
+
+  .quiz-screen .popover-segment {
+    gap: 4px;
+    padding: 3px;
+    border-radius: 10px;
+    background: var(--surface);
+  }
+
+  .quiz-screen .popover-segment button {
+    flex: 1 1 0;
+    display: grid;
+    gap: 1px;
+    min-height: 40px;
+    padding: 4px 8px;
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
+    color: var(--muted);
+    font: inherit;
+    font-size: 0.82rem;
+    font-weight: 650;
+    line-height: 1.2;
+    text-align: center;
+    cursor: pointer;
+  }
+
+  .quiz-screen .popover-segment button small {
+    font-size: 0.66rem;
+    font-weight: 500;
+  }
+
+  .quiz-screen .popover-segment button.is-active {
+    background: var(--panel);
+    color: var(--ink);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+  }
+
+  .quiz-screen .popover-papers {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 8px;
+  }
+
+  .quiz-screen .paper-pick {
+    display: grid;
+    gap: 5px;
+    justify-items: center;
+    padding: 4px;
+    border: 0;
+    border-radius: 10px;
+    background: transparent;
+    color: var(--muted);
+    font: inherit;
+    font-size: 0.7rem;
+    font-weight: 650;
+    cursor: pointer;
+  }
+
+  .quiz-screen .paper-pick i {
+    width: 44px;
+    height: 34px;
+    border: 1px solid var(--line-strong);
+    border-radius: 6px;
+  }
+
+  .quiz-screen .paper-pick.is-active {
+    color: var(--ink);
+  }
+
+  .quiz-screen .paper-pick.is-active i {
+    border-color: var(--gold);
+    box-shadow: 0 0 0 2px var(--gold);
+  }
+
+  /* 全螢幕：桌面 + 一張紙。畫布本身沒有邊框，紙的邊緣靠陰影說話。 */
+  .quiz-screen .handwrite-shell.is-fullscreen {
+    background: color-mix(in srgb, var(--surface) 70%, #d8dad4);
+  }
+
+  :root[data-theme="dark"] .quiz-screen .handwrite-shell.is-fullscreen {
+    background: #0f100e;
+  }
+
+  .quiz-screen .handwrite-shell.is-fullscreen .scratchboard-shell {
+    box-shadow: 0 10px 34px rgba(20, 22, 18, 0.14), 0 1px 2px rgba(20, 22, 18, 0.08);
+  }
+
+  .quiz-screen .handwrite-shell.is-fullscreen .handwrite-prompt,
+  .quiz-screen .handwrite-shell.is-fullscreen .webwork-answer,
+  .quiz-screen .handwrite-shell.is-fullscreen .choice-strip {
+    background: var(--panel);
+  }
+}
+
+@media screen and (max-width: 760px) {
+  .quiz-screen .board-popover {
+    left: 8px;
+    right: 8px;
+    min-width: 0;
+  }
+
+  .quiz-screen .popover-papers {
+    gap: 4px;
+  }
+
+  .quiz-screen .paper-pick i {
+    width: 100%;
+    max-width: 44px;
+  }
+}

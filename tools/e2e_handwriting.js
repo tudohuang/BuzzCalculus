@@ -721,7 +721,10 @@ async function run() {
     /* ── 8. 換成黑板，墨水顏色要跟著換 ── */
     const surfaced = await chrome.evaluate(`
       ${PEN}
+      // 換紙鈕現在打開紙型選單（方格／點陣／橫線／空白／黑板），再點黑板
       document.querySelector('[data-board-action="surface"]').click();
+      await new Promise((r) => setTimeout(r, 200));
+      document.querySelector('[data-board-action="set-surface"][data-surface="board"]').click();
       await new Promise((r) => setTimeout(r, 400));
       const canvas = document.querySelector("[data-blackboard]");
       if (!canvas) return { surface: null };
@@ -741,6 +744,97 @@ async function run() {
       Boolean(surfaced.ink) && surfaced.ink.r > 200 && surfaced.ink.g > 200,
       surfaced.ink ? `ink rgb(${surfaced.ink.r}, ${surfaced.ink.g}, ${surfaced.ink.b})` : "沒取到墨水"
     );
+
+    /* ── 8.5 筆色、螢光筆、紙型（GoodNotes 那一套） ── */
+    // 先換回方格紙：上面那一節把紙換成了黑板，下面要在淺色紙上量顏色。
+    // 紙型選單：再點一次「換紙」→ 選方格。
+    await chrome.evaluate(`
+      document.querySelector('[data-board-action="surface"]').click();
+      await new Promise((r) => setTimeout(r, 150));
+      document.querySelector('[data-board-action="set-surface"][data-surface="paper"]').click();
+      document.querySelector('[data-board-action="clear"]').click();
+      await new Promise((r) => setTimeout(r, 200));
+      return 1;
+    `);
+    const penPopover = await chrome.evaluate(`
+      const pen = document.querySelector('[data-board-action="tool"][data-tool="pen"]');
+      document.querySelector('[data-board-action="tool"][data-tool="eraser"]').click();   // 先離開筆
+      await new Promise((r) => setTimeout(r, 120));
+      pen.click();                                   // 第一下：選筆
+      await new Promise((r) => setTimeout(r, 120));
+      const closedAfterSelect = document.querySelector('[data-board-popover="pen"]').hidden;
+      pen.click();                                   // 第二下：打開細節
+      await new Promise((r) => setTimeout(r, 120));
+      const openAfterReselect = !document.querySelector('[data-board-popover="pen"]').hidden;
+      return { closedAfterSelect, openAfterReselect };
+    `);
+    check("再點一次已選的筆才打開顏色面板", penPopover.closedAfterSelect && penPopover.openAfterReselect,
+      `選筆後面板 ${penPopover.closedAfterSelect ? "收著" : "已開"} · 再點後 ${penPopover.openAfterReselect ? "打開" : "沒開"}`);
+
+    const blueInk = await chrome.evaluate(`
+      ${PEN}
+      document.querySelector('[data-board-action="set-color"][data-color="blue"]').click();
+      await new Promise((r) => setTimeout(r, 120));
+      window.__pen.stroke(0.1, 0.5, 0.4, 0.5, { pressure: 0.8, steps: 20 });
+      await new Promise((r) => setTimeout(r, 200));
+      const canvas = window.__pen.canvas();
+      const data = canvas.getContext("2d").getImageData(0, 0, canvas.width, canvas.height).data;
+      let ink = null;
+      for (let i = 0; i < data.length; i += 4) {
+        if (data[i + 3] > 200) { ink = { r: data[i], g: data[i + 1], b: data[i + 2] }; break; }
+      }
+      const swatch = document.querySelector('[data-board-action="tool"][data-tool="pen"]').dataset.color;
+      return { ink, swatch, popoverClosed: document.querySelector('[data-board-popover="pen"]').hidden };
+    `);
+    check("換成藍筆之後畫出來是藍的", Boolean(blueInk.ink) && blueInk.ink.b > blueInk.ink.r + 60,
+      blueInk.ink ? `ink rgb(${blueInk.ink.r}, ${blueInk.ink.g}, ${blueInk.ink.b}) · 工具鈕色點=${blueInk.swatch}` : "沒取到墨水");
+    check("落筆時顏色面板自動收起", blueInk.popoverClosed);
+
+    // 螢光筆：半透明、疊在墨水上時墨水還看得到（multiply）。
+    const highlight = await chrome.evaluate(`
+      ${PEN}
+      document.querySelector('[data-board-action="tool"][data-tool="highlighter"]').click();
+      await new Promise((r) => setTimeout(r, 120));
+      window.__pen.stroke(0.05, 0.5, 0.5, 0.5, { pressure: 0.5, steps: 30 });
+      await new Promise((r) => setTimeout(r, 250));
+      const canvas = window.__pen.canvas();
+      const ctx = canvas.getContext("2d");
+      // 沒有墨水的地方：半透明黃
+      const bare = ctx.getImageData(Math.round(canvas.width * 0.08), Math.round(canvas.height * 0.5), 1, 1).data;
+      // 藍線經過的地方：仍然偏藍（沒有被黃色蓋掉）
+      const over = ctx.getImageData(Math.round(canvas.width * 0.25), Math.round(canvas.height * 0.5), 1, 1).data;
+      const live = document.querySelector("[data-board-live]");
+      const liveData = live.getContext("2d").getImageData(0, 0, live.width, live.height).data;
+      let liveInk = 0;
+      for (let i = 3; i < liveData.length; i += 4) if (liveData[i] > 8) liveInk += 1;
+      return { bare: [...bare], over: [...over], liveInk, strokes: window.__pen.strokeCount() };
+    `);
+    check("螢光筆是半透明的", highlight.bare[3] > 40 && highlight.bare[3] < 200 && highlight.bare[0] > 200,
+      `空白處 rgba(${highlight.bare.join(", ")})`);
+    check("螢光筆蓋過墨水時墨水還看得到", highlight.over[2] > highlight.over[0],
+      `藍線上 rgba(${highlight.over.join(", ")})`);
+    check("收筆後預覽層是乾淨的（筆畫已落到主畫布）", highlight.liveInk === 0, `預覽層剩 ${highlight.liveInk} 個像素`);
+
+    const paper = await chrome.evaluate(`
+      document.querySelector('[data-board-action="surface"]').click();
+      await new Promise((r) => setTimeout(r, 120));
+      const open = !document.querySelector('[data-board-popover="surface"]').hidden;
+      document.querySelector('[data-board-action="set-surface"][data-surface="dots"]').click();
+      await new Promise((r) => setTimeout(r, 200));
+      const canvas = document.querySelector("[data-blackboard]");
+      return { open, surface: canvas.dataset.surface, bg: getComputedStyle(canvas).backgroundImage.slice(0, 16), popoverClosed: document.querySelector('[data-board-popover="surface"]').hidden };
+    `);
+    check("換紙鈕打開紙型選單，選點陣後紙真的換了", paper.open && paper.surface === "dots" && /radial/.test(paper.bg) && paper.popoverClosed,
+      `data-surface=${paper.surface} · 背景 ${paper.bg}… · 選單${paper.popoverClosed ? "已收" : "還開著"}`);
+    // 換回方格與筆，下一節在同樣的狀態下量全螢幕
+    await chrome.evaluate(`
+      document.querySelector('[data-board-action="surface"]').click();
+      await new Promise((r) => setTimeout(r, 120));
+      document.querySelector('[data-board-action="set-surface"][data-surface="paper"]').click();
+      document.querySelector('[data-board-action="tool"][data-tool="pen"]').click();
+      await new Promise((r) => setTimeout(r, 150));
+      return 1;
+    `);
 
     /* ── 9. 全螢幕書寫時題目要留在畫面上 ── */
     // 一開始沒做這件事，實測就發現攤開計算紙之後題目被推出視窗，
