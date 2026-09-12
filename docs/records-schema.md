@@ -49,6 +49,10 @@
 | `dailyTarget` | 5/10/12/20 | 每日題數目標 |
 | `focusMode` | "on"/"off" | 收起連勝與成就等元素 |
 | `penScale` | "thin"/"standard"/"thick" | 計算紙筆寬（0.75×/1×/1.3×） |
+| `penColor` | "ink"/"blue"/"red"/"green" | 計算紙筆色（ink 在紙上是墨藍、黑板上是米白） |
+| `penNib` | "fountain"/"ball" | 筆型：鋼筆有粗細、原子筆等寬 |
+| `highlightColor` | "yellow"/"green"/"pink"/"blue" | 螢光筆顏色 |
+| `boardSurface` | "paper"/"dots"/"lines"/"blank"/"board" | 紙型（方格／點陣／橫線／空白／黑板） |
 | `analytics` | "off" 等 | 使用分析開關（關掉時連 script 都不載） |
 
 ## 已封存欄位（2026-09 拔功能後保留、不再寫入、不再顯示）

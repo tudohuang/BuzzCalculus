@@ -19,15 +19,43 @@
 (function () {
   "use strict";
 
-  const INK = { paper: "#1d2b3a", board: "#fff8de" };
+  // 墨色。stroke.color 是筆的顏色名（ink / blue / red / green），
+  // 沒有這個欄位的舊筆跡一律是 ink —— 跟改版前畫出來一模一樣。
+  // 「ink」不是一個固定的色碼：紙上是深藍黑、黑板上是米白，
+  // 同一筆跡換紙之後要還看得見。其他顏色也各有紙／黑板兩版。
+  const INK = {
+    paper: { ink: "#1d2b3a", blue: "#2456b8", red: "#c8383a", green: "#1e7f52" },
+    board: { ink: "#fff8de", blue: "#8ec1ff", red: "#ff8f86", green: "#7fdca6" }
+  };
+  // 螢光筆：紙上用 multiply 疊在墨水底下（墨字透出來，跟真的螢光筆一樣）；
+  // 黑板上 multiply 會變全黑，改用一般疊加。
+  const HIGHLIGHT = { yellow: "#ffd83d", green: "#8fe39a", pink: "#ff9cc2", blue: "#8fcbff" };
+  const HIGHLIGHT_ALPHA = 0.38;
 
   // 筆的基準寬度（CSS px，之後乘上 devicePixelRatio）。
   // 橡皮擦固定寬度：擦東西的時候手感一致比壓感重要。
+  // 螢光筆一律等寬 —— 它是拿來標一段的，不是拿來寫字的。
   const PEN_WIDTH = 2.4;
   const ERASER_WIDTH = 20;
+  const HIGHLIGHT_WIDTH = 16;
 
-  function inkFor(surface) {
-    return INK[surface] || INK.paper;
+  function surfaceKind(surface) {
+    return surface === "board" ? "board" : "paper";
+  }
+
+  function inkFor(surface, color) {
+    const palette = INK[surfaceKind(surface)];
+    return palette[color] || palette.ink;
+  }
+
+  function highlightFor(color) {
+    return HIGHLIGHT[color] || HIGHLIGHT.yellow;
+  }
+
+  // 原子筆（nib: "ball"）：等寬，不吃壓感也不吃速度。
+  // 有人就是不喜歡線條粗細會變 —— 那是筆型的偏好，不是壓感的失敗。
+  function isBallpoint(stroke) {
+    return stroke.nib === "ball";
   }
 
   // 落筆瞬間的壓力下限，以及它只該管落筆。
@@ -131,11 +159,46 @@
     if (!points || !points.length) return;
 
     const isEraser = stroke.tool === "eraser";
+    const isHighlighter = stroke.tool === "highlighter";
+
+    // 螢光筆是半透明的，逐段畫會在每個接點疊出深一格的斑點，
+    // 筆尖補的那一小段直線也會被下一段曲線蓋出雙倍色。
+    // 所以它不走增量：一整筆一次畫成一條路徑（單次 stroke() 只合成一次）。
+    // 書寫中的即時預覽由 app 端在另一層 overlay 畫布上做，收筆才落到這裡。
+    if (isHighlighter) {
+      if (!finish || stroke.drawnTo >= points.length) return;
+      ctx.save();
+      ctx.globalCompositeOperation = surfaceKind(surface) === "board" ? "screen" : "multiply";
+      ctx.globalAlpha = HIGHLIGHT_ALPHA;
+      ctx.strokeStyle = highlightFor(stroke.color);
+      ctx.fillStyle = ctx.strokeStyle;
+      ctx.lineCap = "round";
+      ctx.lineJoin = "round";
+      ctx.lineWidth = HIGHLIGHT_WIDTH * ratio;
+      const hx = (point) => point.x * canvas.width;
+      const hy = (point) => point.y * canvas.height;
+      ctx.beginPath();
+      if (points.length === 1) {
+        ctx.arc(hx(points[0]), hy(points[0]), (HIGHLIGHT_WIDTH * ratio) / 2, 0, Math.PI * 2);
+        ctx.fill();
+      } else {
+        ctx.moveTo(hx(points[0]), hy(points[0]));
+        for (let i = 1; i < points.length - 1; i += 1) {
+          ctx.quadraticCurveTo(hx(points[i]), hy(points[i]), (hx(points[i]) + hx(points[i + 1])) / 2, (hy(points[i]) + hy(points[i + 1])) / 2);
+        }
+        ctx.lineTo(hx(points[points.length - 1]), hy(points[points.length - 1]));
+        ctx.stroke();
+      }
+      stroke.drawnTo = points.length;
+      ctx.restore();
+      return;
+    }
+
     ctx.save();
     // 橡皮擦用 destination-out 真的挖掉墨水，而不是拿背景色蓋過去 ——
     // 後者在方格紙上會把格線一起蓋掉。
     ctx.globalCompositeOperation = isEraser ? "destination-out" : "source-over";
-    ctx.strokeStyle = isEraser ? "rgba(0,0,0,1)" : inkFor(surface);
+    ctx.strokeStyle = isEraser ? "rgba(0,0,0,1)" : inkFor(surface, stroke.color);
     ctx.fillStyle = ctx.strokeStyle;
     ctx.lineCap = "round";
     ctx.lineJoin = "round";
@@ -145,13 +208,16 @@
     // 與其猜一個對的數字，不如把選擇交給拿筆的人。橡皮擦不縮放。
     const penScale = isEraser ? 1 : (opts.penScale || 1);
     const base = (isEraser ? ERASER_WIDTH : PEN_WIDTH * penScale) * ratio;
+    // 原子筆：整筆等寬。用 base 本身（相當於中等壓力），不吃 widthAt。
+    const uniform = !isEraser && isBallpoint(stroke);
+    const lineWidthAt = (index) => (uniform ? Math.max(MIN_WIDTH_CSS * ratio, base) : widthAt(points, index, isEraser, base, ratio, finish));
 
     // 單點：點一下要留下一個點，不是什麼都沒有
     if (points.length === 1) {
       if (!stroke.drawnTo) {
         const only = points[0];
         ctx.beginPath();
-        ctx.arc(only.x * canvas.width, only.y * canvas.height, widthAt(points, 0, isEraser, base, ratio, finish) / 2, 0, Math.PI * 2);
+        ctx.arc(only.x * canvas.width, only.y * canvas.height, lineWidthAt(0) / 2, 0, Math.PI * 2);
         ctx.fill();
         stroke.drawnTo = 1;
       }
@@ -178,7 +244,7 @@
       const from = index === 1 ? { x: px(previous), y: py(previous) } : mid(previous, control);
       const to = mid(control, next);
       ctx.beginPath();
-      ctx.lineWidth = widthAt(points, index, isEraser, base, ratio, finish);
+      ctx.lineWidth = lineWidthAt(index);
       ctx.moveTo(from.x, from.y);
       ctx.quadraticCurveTo(px(control), py(control), to.x, to.y);
       ctx.stroke();
@@ -199,7 +265,7 @@
       const beforeLast = points[points.length - 2];
       const from = mid(beforeLast, last);
       ctx.beginPath();
-      ctx.lineWidth = widthAt(points, points.length - 1, isEraser, base, ratio, finish);
+      ctx.lineWidth = lineWidthAt(points.length - 1);
       ctx.moveTo(from.x, from.y);
       ctx.lineTo(px(last), py(last));
       ctx.stroke();
@@ -220,10 +286,14 @@
   }
 
   const api = {
-    version: 1,
+    version: 2,
     ink: inkFor,
+    highlight: highlightFor,
+    inkColors: Object.keys(INK.paper),
+    highlightColors: Object.keys(HIGHLIGHT),
     penWidth: PEN_WIDTH,
     eraserWidth: ERASER_WIDTH,
+    highlightWidth: HIGHLIGHT_WIDTH,
     paintStrokeTail,
     paintAll
   };
