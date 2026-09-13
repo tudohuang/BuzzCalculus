@@ -250,8 +250,11 @@
     }
 
     if (parts.length < 2 && groups.weak.length) {
-      const names = groups.weak.slice(0, 2).map((entry) => entry.label).join("、");
-      parts.push(`${names}還沒穩`);
+      // 前一句（考試缺口）已經點過名的技巧不要再唸一次 ——
+      // 「冪級數收斂範圍還沒到目標；冪級數收斂範圍還沒穩」是同一件事講兩遍。
+      const mentioned = parts.join("");
+      const names = groups.weak.filter((entry) => !mentioned.includes(entry.label)).slice(0, 2).map((entry) => entry.label).join("、");
+      if (names) parts.push(`${names}還沒穩`);
     }
 
     if (parts.length < 2 && due.filter((row) => row.due).length >= 3) {

@@ -192,6 +192,31 @@ async function run() {
     check("主線第一關第一題是 R1", lesson.rank === 1, `R${lesson.rank}`);
     check("主線第一關在新手保護期不倒數", lesson.freeform, lesson.hud);
 
+    /* ── 5. 換一個人：期中考剩五天 ── */
+    // 自陳「期中期末要考了」的人，之前跟一般使用者看到的首頁一模一樣：
+    // 考試日期埋在設定頁、倒數卡沒有任何按鈕、一個技巧都沒量卻說「範圍內的技巧都到標了」。
+    await chrome.navigate(server.url + "/index.html");
+    await chrome.evaluate("localStorage.clear(); return 1;");
+    await chrome.navigate(server.url + "/index.html");
+    await clickText("開始");
+    await evaluate(`return window.__b.clickText("期中期末要考了");`);
+    await chrome.sleep(500);
+    await clickText("直接開始練", 800);
+    await click('button[data-action="dismiss-notice"]');
+    const examHome = await evaluate(`return { setup: window.__b.text(".exam-setup-card"), hasDate: Boolean(document.querySelector(".exam-setup-card #exam-plan-date")), mock: Boolean(document.querySelector('.exam-setup-card [data-action="start-named-exam"]')), recipe: window.__b.text(".training-recipe"), gentle: /新手保護|第一份訓練/.test(window.__b.text(".today-card")) };`);
+    check("要考了的人首頁第一張卡就問考試日期", /考試是哪一天/.test(examHome.setup) && examHome.hasDate, examHome.setup.slice(0, 40));
+    check("同一張卡可以直接開一份模擬卷", examHome.mock);
+    check("考前的人沒有新手保護期", !examHome.gentle);
+    check("新帳號的配方不把補位題掛在「到期複習」名下", !/到期複習/.test(examHome.recipe), examHome.recipe);
+    const inFive = new Date(Date.now() + 5 * 86400000).toISOString().slice(0, 10);
+    await evaluate(`document.querySelector(".exam-setup-card #exam-plan-date").value = ${JSON.stringify(inFive)}; return 1;`);
+    await click('.exam-setup-card [data-action="exam-countdown-set"]', 900);
+    await click('button[data-action="dismiss-notice"]');
+    const countdown = await evaluate(`return { card: window.__b.text(".exam-countdown-card"), buttons: [...document.querySelectorAll(".exam-countdown-card button")].map((b) => b.textContent.trim()), setupGone: !document.querySelector(".exam-setup-card") };`);
+    check("設好日期後倒數卡出現、設定卡收起", /D-5/.test(countdown.card) && countdown.setupGone, countdown.card.slice(0, 30));
+    check("一個技巧都沒量時倒數卡不說「都到標了」，改叫人先寫模擬卷", /先寫一份/.test(countdown.card) && !/都到標了|0\/0/.test(countdown.card), countdown.card.slice(0, 120));
+    check("倒數卡有按鈕，不是講完「排不完」就把人留在原地", countdown.buttons.length >= 2, countdown.buttons.join(" | "));
+
     const errors = await chrome.evaluate(`return (window.__buzzErrors || []).length;`);
     check("沒有未捕捉的例外", !errors, errors ? `${errors} 個` : "");
   } finally {
