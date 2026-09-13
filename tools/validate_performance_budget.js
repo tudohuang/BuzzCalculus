@@ -31,7 +31,8 @@ const BUDGETS = {
   // 下一次撞頂不該再調數字 —— 該搬的是整頁的 render（首頁、結算、設定）。
   "app.js 主程式": { pattern: /^src\/app\.js$/, budget: 720 * 1024 },
   "kernel 產生側表": { pattern: GENERATED_TABLES, budget: 500 * 1024 },
-  "kernel 邏輯模組": { pattern: /^src\/kernel\//, budget: 200 * 1024 },
+  // 2026-09-13 200 → 260：kernel/proof_lang.js（句型、代數、規則三個引擎）59KB 一次進來。
+  "kernel 邏輯模組": { pattern: /^src\/kernel\//, budget: 260 * 1024 },
   "題庫資料合計": { pattern: /^src\/problem|^src\/problems\.js$|^src\/proofs\.js$/, budget: 2400 * 1024 },
   "樣式 styles.css": { pattern: /^styles\.css$/, budget: 300 * 1024, fromCss: true },
   "其他 src 腳本": { pattern: /^src\//, budget: 300 * 1024, catchAll: true }
@@ -77,7 +78,8 @@ rows.forEach((r) => {
 });
 
 // script 數量：每支都是一次 request 與一次解析。上限一樣是「擋回肥」。
-const SCRIPT_COUNT_BUDGET = 60;
+// 2026-09-13 60 → 64：白話證明的 kernel 與內容各一支。下一次該做的是把題庫檔合併，不是再加數字。
+const SCRIPT_COUNT_BUDGET = 64;
 console.log(`  script 標籤        ${String(scripts.length).padStart(5)} 支 / ${SCRIPT_COUNT_BUDGET} 支上限`);
 if (scripts.length > SCRIPT_COUNT_BUDGET) {
   failures.push(`index.html 的 script 數量 ${scripts.length} 超過 ${SCRIPT_COUNT_BUDGET}`);
