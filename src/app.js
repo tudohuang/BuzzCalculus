@@ -1313,6 +1313,7 @@
         ${renderHomeOverview(records, mission)}
         <div class="home-lead">
           ${renderResumeCard()}
+          ${renderExamSetupCard(records)}
           ${renderHomeExamCard(records)}
           ${renderTodayCard(records)}
           <section class="workspace-section"><div class="workspace-section-head"><h2>照你的節奏練習</h2><span>四種訓練方向</span></div>${renderBucketNav()}</section>
@@ -1580,6 +1581,17 @@
     const minutes = Math.max(1, Math.round(filled.estSeconds / 60));
     const dueCount = recipe.context.dueNow;
     const adjusted = window.BuzzSession.explainFallbacks(filled.meta);
+    // 配方上的「7 到期複習 · 8 弱點」是配方**想要**的數字；補位規則填進去的
+    // 一般練習題不能掛在那些名目下 —— 新帳號沒有到期、沒有弱點，卡片就不該這樣寫。
+    const fallbackByRole = {};
+    ((filled.meta && filled.meta.fallbacks) || []).forEach((entry) => {
+      fallbackByRole[entry.role] = (fallbackByRole[entry.role] || 0) + Number(entry.count || 0);
+    });
+    const honestSlots = recipe.slots
+      .map((slot) => ({ label: slot.label, count: Math.max(0, slot.count - (fallbackByRole[slot.role] || 0)) }))
+      .filter((slot) => slot.count > 0);
+    const fillerCount = Object.values(fallbackByRole).reduce((sum, count) => sum + count, 0);
+    if (fillerCount > 0) honestSlots.push({ label: "一般練習", count: Math.min(fillerCount, filled.problems.length) });
 
     return `
       <section class="today-card training-feature" aria-label="今天的訓練">
@@ -1589,7 +1601,7 @@
         </div>
         <h2 class="today-title">${escapeHtml(recipe.label.replace(/^\d+\s*分鐘\s*/, `${minutes} 分鐘`))}</h2>
         <p class="today-why">${escapeHtml(recipe.why)}</p>
-        <div class="training-recipe">${recipe.slots.filter((slot) => slot.count > 0).map((slot) => `<span><strong>${slot.count}</strong>${escapeHtml(slot.label)}</span>`).join("")}</div>
+        <div class="training-recipe">${honestSlots.map((slot) => `<span><strong>${slot.count}</strong>${escapeHtml(slot.label)}</span>`).join("")}</div>
         <div class="today-actions">
           <button class="button home-primary" data-action="start-planned" data-length="${escapeAttr(recipe.length)}">
             ${icon("play")}<span>開始訓練</span>${icon("chevron-right")}
@@ -2888,18 +2900,32 @@
   // 「排不完」必須直說 —— 那是這個功能唯一的價值（kernel 的原話）。
   function renderHomeExamCard(records) {
     if (!records.plan || !records.plan.examAt || !window.BuzzPlanner) return "";
-    const info = window.BuzzPlanner.examPlan(records, abilityProfile(records) || { skills: {} }, Date.now());
+    const profile = abilityProfile(records);
+    const info = window.BuzzPlanner.examPlan(records, profile || { skills: {} }, Date.now());
     if (!info) return "";
     const forecast = examScoreForecast(records);
+    // 一個技巧都還沒量到的時候，「範圍內的技巧都到標了」「涵蓋 0/0 個缺口」
+    // 全是空集合講出來的漂亮話。這時候唯一誠實的建議是：先寫一份模擬卷。
+    const measured = profile && profile.coverage ? profile.coverage.skillsMeasured : 0;
+    const unmeasured = !measured;
     const forecastLine = forecast && forecast.coverage >= 0.35
       ? `目前模擬考預測 <strong>${Math.round(forecast.expected)}/${forecast.total}</strong>（九成把握落在 ${Math.round(forecast.low)}–${Math.round(forecast.high)}）`
-      : "預測還不準 —— 模型要多看你幾場才量得出你";
-    const gapLine = info.gaps.length
-      ? `缺口最大：${info.gaps.slice(0, 3).map((gap) => escapeHtml(gap.label)).join("、")}${info.gaps.length > 3 ? ` 等 ${info.gaps.length} 個` : ""}`
-      : "範圍內的技巧都到標了，剩下的是保持";
-    const paceLine = info.feasible
-      ? `每天 ${info.dailyMinutes} 分鐘排得完（涵蓋 ${info.coverableSkills}/${info.totalSkills} 個缺口）`
-      : `誠實說：每天 ${info.dailyMinutes} 分鐘排不完，約需 ${info.neededMinutes} 分鐘 —— 加時間，或到設定縮小目標`;
+      : unmeasured
+        ? "還沒量到你任何一個技巧 —— 先寫一份模擬卷，缺口與預測才會出現"
+        : "預測還不準 —— 模型要多看你幾場才量得出你";
+    const gapLine = unmeasured
+      ? ""
+      : info.gaps.length
+        ? `缺口最大：${info.gaps.slice(0, 3).map((gap) => escapeHtml(gap.label)).join("、")}${info.gaps.length > 3 ? ` 等 ${info.gaps.length} 個` : ""}`
+        : "範圍內的技巧都到標了，剩下的是保持";
+    const paceLine = unmeasured
+      ? `每天 ${info.dailyMinutes} 分鐘，剩 ${info.daysLeft} 天 —— 量到缺口之後這裡會告訴你排不排得完`
+      : info.feasible
+        ? `每天 ${info.dailyMinutes} 分鐘排得完（涵蓋 ${info.coverableSkills}/${info.totalSkills} 個缺口）`
+        : `誠實說：每天 ${info.dailyMinutes} 分鐘排不完，約需 ${info.neededMinutes} 分鐘 —— 加時間，或縮小目標`;
+    // 這張卡以前沒有任何按鈕：講完「排不完」就把人留在原地。
+    const mockId = info.daysLeft <= 7 ? "quiz_sprint" : "midterm";
+    const mock = NAMED_EXAMS[mockId] || NAMED_EXAMS.midterm;
     return `
       <section class="today-card exam-countdown-card" aria-label="考前衝刺">
         <div class="today-head">
@@ -2908,8 +2934,56 @@
         </div>
         <h2 class="today-title">${escapeHtml(info.label)}</h2>
         <p class="today-why">${forecastLine}</p>
-        <p class="today-mix">${gapLine}</p>
-        <p class="today-note ${info.feasible ? "" : "is-warning"}">${paceLine}</p>
+        ${gapLine ? `<p class="today-mix">${gapLine}</p>` : ""}
+        <p class="today-note ${!unmeasured && !info.feasible ? "is-warning" : ""}">${paceLine}</p>
+        <div class="today-actions">
+          ${
+            unmeasured
+              ? `<button class="button home-primary" data-action="start-named-exam" data-exam-id="${escapeAttr(mockId)}">${icon("file-pen-line")}先寫一份${escapeHtml(mock.label)} · ${Math.round(mock.durationSec / 60)} 分鐘</button>`
+              : `<button class="button home-primary" data-action="start-planned">${icon("play")}練今天的缺口</button>
+                 <button class="button secondary" data-action="start-named-exam" data-exam-id="${escapeAttr(mockId)}">${icon("file-pen-line")}再寫一份${escapeHtml(mock.label)}</button>`
+          }
+          <button class="button ghost" data-action="open-settings">${icon("settings")}調整日期與時間</button>
+        </div>
+      </section>
+    `;
+  }
+
+  // 自陳「期中期末要考了」卻還沒設考試日期：首頁第一張卡就問日期。
+  // 沒有日期，考前衝刺的所有機制（倒數、缺口、預測、每日訓練偏向）都不會啟動 ——
+  // 而那正是這個人來的理由。之前這件事埋在設定頁第一區的第三張卡。
+  function renderExamSetupCard(records) {
+    if ((records.onboardingContext || "") !== "exam") return "";
+    if (records.plan && records.plan.examAt) return "";
+    if (records.examSetupDismissed) return "";
+    const soon = new Date(Date.now() + 7 * 86400000).toISOString().slice(0, 10);
+    return `
+      <section class="today-card exam-setup-card" aria-label="設定考試日期">
+        <div class="today-head">
+          <p class="section-label">${icon("flag")}你說快考了</p>
+          <span class="today-meta">30 秒設定</span>
+        </div>
+        <h2 class="today-title">考試是哪一天？</h2>
+        <p class="today-why">設好日期，首頁會倒數、每日訓練會自動偏向考試範圍的缺口，模擬考會估你大概能拿幾分。</p>
+        <div class="exam-plan-form">
+          <label>名稱 <input id="exam-plan-label" type="text" maxlength="12" value="" placeholder="期中考"></label>
+          <label>日期 <input id="exam-plan-date" type="date" value="${soon}"></label>
+          <label>每天
+            <select id="exam-plan-minutes">
+              ${[15, 30, 45].map((value) => `<option value="${value}" ${value === 30 ? "selected" : ""}>${value} 分鐘</option>`).join("")}
+            </select>
+          </label>
+          <label>目標精熟
+            <select id="exam-plan-target">
+              ${[60, 70, 85].map((value) => `<option value="${value}" ${value === 70 ? "selected" : ""}>${value}</option>`).join("")}
+            </select>
+          </label>
+        </div>
+        <div class="today-actions">
+          <button class="button home-primary" data-action="exam-countdown-set">${icon("flag")}開始倒數</button>
+          <button class="button secondary" data-action="start-named-exam" data-exam-id="midterm">${icon("file-pen-line")}先寫一份期中模擬 · 60 分鐘</button>
+          <button class="button ghost" data-action="exam-setup-dismiss">先不用</button>
+        </div>
       </section>
     `;
   }
@@ -8057,6 +8131,12 @@
     if (action === "start-skill-refresh") startSkillRefreshQuiz();
     if (action === "start-path-retest") startPathRetestQuiz();
     if (action === "exam-countdown-set") saveExamCountdown();
+    if (action === "exam-setup-dismiss") {
+      const records = loadRecords();
+      records.examSetupDismissed = true;
+      saveRecords(records);
+      render();
+    }
     if (action === "exam-countdown-clear") clearExamCountdown();
     if (action === "duel-create") startDuelCreate();
     if (action === "duel-accept") acceptDuelCode();
@@ -8764,7 +8844,12 @@
     const topics = PLACEMENT_TOPICS_BY_CONTEXT[records.onboardingContext || ""] || null;
     // 超綱閘門跟一般訓練同一套：定位不出多變數／特殊函數，
     // 那些題對任何自陳等級 ≤ 大一的人都測不出「反射」，只測得出「沒學過」。
-    const source = beyondBasicsFilter(problems).filter((problem) => !topics || topics.includes(problem.topic));
+    // 定位是四選一：作圖表、點位、切線這些沒有選項的作答形式不進來 ——
+    // 走查時第 6 題抽到「在圖上點出極值點」，整個定位卡在那裡。
+    const NO_CHOICE_KINDS = ["worksheet", "graphtap", "graphslope"];
+    const source = beyondBasicsFilter(problems)
+      .filter((problem) => !NO_CHOICE_KINDS.includes(problem.answerKind))
+      .filter((problem) => !topics || topics.includes(problem.topic));
     for (let rank = 1; rank <= 6; rank += 1) {
       pools[rank] = preferFreshProblems(
         shuffle(
@@ -13240,6 +13325,7 @@
     next.planHistory = Array.isArray(next.planHistory) ? next.planHistory : [];
     next.planReportSeen = typeof next.planReportSeen === "string" ? next.planReportSeen : "";
     next.backupNoticeSeen = Boolean(next.backupNoticeSeen);
+    next.examSetupDismissed = Boolean(next.examSetupDismissed);
     next.onboardingContext = typeof next.onboardingContext === "string" ? next.onboardingContext : "";
     next.onboardingLevel = typeof next.onboardingLevel === "string" ? next.onboardingLevel : "";
     next.onboardingSeen = Boolean(next.onboardingSeen);
@@ -13522,6 +13608,9 @@
 
   function updateAnswerRecords(records, answer, finishedAt, context = {}) {
     const problem = answer.problem;
+    // 交卷時「未作答」的題：沒看過的題不是錯題，也不該拉低能力分數。
+    // 做 3 題就交卷的模擬卷，剩下 9 題灌進錯題本排今天到期 —— 那是懲罰交卷，不是複習。
+    if (answer.unanswered) return;
     if (!records.topicStats[problem.topic]) records.topicStats[problem.topic] = { correct: 0, wrong: 0, total: 0 };
     records.topicStats[problem.topic].total += 1;
     records.topicStats[problem.topic][answer.correct ? "correct" : "wrong"] += 1;

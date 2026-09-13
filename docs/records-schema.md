@@ -40,6 +40,7 @@
 | `sessions` | number | 局數（records_v2 smoke 用） |
 | `onboardingSeen` / `onboardingLevel` / `onboardingContext` | mixed | 引導狀態 |
 | `backupNoticeSeen` | mixed | 備份提醒已讀 |
+| `examSetupDismissed` | boolean | 自陳「要考了」的人按掉首頁「考試是哪一天」卡 |
 | `settings` | object | 見下 |
 
 ### settings 子欄位
@@ -61,7 +62,7 @@
 |---|---|---|
 | `conf` | 信心自評（「剛剛有多確定？」） | 匯入舊備份不能炸；資料屬於使用者 |
 | `weeklyChallenge` | 每週挑戰＋成績代碼 | 同上 |
-| `plan` / `planHistory` / `planReportSeen` | 考試倒推計畫 | 同上 |
+| `planHistory` / `planReportSeen` | 考試倒推計畫的舊 UI | 同上；`plan`（label、examAt、dailyMinutes、target）自 2026-09 由首頁考前衝刺卡與設定頁重新寫入 |
 
 封存欄位的規矩：normalizeRecords 保留原樣、匯出照樣帶著、匯入照樣合併。
 smoke_app_render 有測試釘著「舊 records.conf 容忍」這一條。

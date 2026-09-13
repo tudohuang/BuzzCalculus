@@ -26,7 +26,10 @@ const ROOT = path.join(__dirname, "..");
 const GENERATED_TABLES = /^src\/kernel\/(uid_map|origin|rubric|rubric_reviewed|derived_hints|verified_answers|equivalence|skill_tags|workbook_facts)\.js$/;
 
 const BUDGETS = {
-  "app.js 主程式": { pattern: /^src\/app\.js$/, budget: 700 * 1024 },
+  // 2026-09-13 從 700 調到 720：初學者走查補進新手保護期、診斷式定位、
+  // 考前衝刺卡（+14KB），同時把 TAG_LABELS 搬成 kernel/tag_labels.js（−7KB）。
+  // 下一次撞頂不該再調數字 —— 該搬的是整頁的 render（首頁、結算、設定）。
+  "app.js 主程式": { pattern: /^src\/app\.js$/, budget: 720 * 1024 },
   "kernel 產生側表": { pattern: GENERATED_TABLES, budget: 500 * 1024 },
   "kernel 邏輯模組": { pattern: /^src\/kernel\//, budget: 200 * 1024 },
   "題庫資料合計": { pattern: /^src\/problem|^src\/problems\.js$|^src\/proofs\.js$/, budget: 2400 * 1024 },
