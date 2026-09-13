@@ -65,7 +65,10 @@
       topicLocked: false,
       daily: false,
       boss: false,
-      hardOnly: true
+      hardOnly: true,
+      // 難題用選的等於沒考：∫x⁵e^{-x²} 的選項 1、2、−1、0 用眼睛就能刪到剩一個。
+      // 挑戰模式一律自己寫答案；作答中還是可以按 chip 切回選擇題。
+      forceAnswerMode: "free"
     },
     boss: {
       label: "階梯測驗",
@@ -75,7 +78,8 @@
       topicLocked: false,
       daily: false,
       boss: true,
-      ladder: true // 「階梯」要真的由易到難 —— 沒有這個旗標之前第一題就是 R6
+      ladder: true, // 「階梯」要真的由易到難 —— 沒有這個旗標之前第一題就是 R6
+      forceAnswerMode: "free"
     },
     boss_rush: {
       label: "Boss 連戰",
@@ -85,7 +89,8 @@
       topicLocked: false,
       daily: false,
       boss: true,
-      suddenDeath: true
+      suddenDeath: true,
+      forceAnswerMode: "free"
     },
     daily_one: {
       label: "每日一題",
@@ -2213,9 +2218,51 @@
     `;
   }
 
+  // 挑戰模式的說明卡：規則、題數、難度、你的最佳。
+  // 之前每一個模式只有三個字的註（「階梯」「三命制」），想挑戰難題的人
+  // 得一個個點進去才知道規則 —— 而規則正是他挑模式的依據。
+  const CHALLENGE_MODE_META = {
+    brutal: { rule: "只抽 R4 以上 · 14 題 · 每題倒數", tagline: "不客氣的一局" },
+    boss: { rule: "16 題 R5 起由易到難爬到 R6 · 每題倒數", tagline: "看你能爬到哪一階" },
+    boss_rush: { rule: "R5–R6 連戰 · 錯一題就結算 · 10 題", tagline: "沒有第二次機會" },
+    integral_bee: { rule: "積分限定 · 12 題 · 比速度", tagline: "Integral Bee 的節奏" },
+    accuracy: { rule: "12 題 · 不倒數 · 答錯扣 80 分", tagline: "慢慢算，但不准錯" },
+    survival: { rule: "30 題由易到難，難度不設上限 · 三條命", tagline: "掉三條命就結束" },
+    pressure: { rule: "10 題 · 時限逐題縮短到 60% · 練「會但來不及」", tagline: "會不會，限時才知道" }
+  };
+
+  function challengeBest(records, key) {
+    const runs = (records.history || []).filter((item) => item.mode === key);
+    if (!runs.length) return "";
+    const best = runs.reduce((top, item) => (Number(item.score || 0) > Number(top.score || 0) ? item : top), runs[0]);
+    return `最佳 ${Number(best.score || 0)} 分 · ${best.correct}/${best.total} · 打過 ${runs.length} 局`;
+  }
+
   function renderChallengeBucket(records, mission) {
-    const modes = Object.keys(MODES).filter((key) => MODES[key].bucket === "challenge" && !MODES[key].hidden);
+    const modes = Object.keys(MODES).filter((key) => MODES[key].bucket === "challenge" && !MODES[key].hidden && !["daily", "daily_one"].includes(key));
+    const modeCard = (key, label, rule, tagline, action, best) => `
+      <button class="challenge-mode" ${action}>
+        <span class="challenge-mode-head"><strong>${escapeHtml(label)}</strong><em>${escapeHtml(tagline)}</em></span>
+        <span class="challenge-mode-rule">${escapeHtml(rule)}</span>
+        <span class="challenge-mode-best">${best ? escapeHtml(best) : "還沒打過"}</span>
+      </button>`;
     return `
+      <section class="study-card challenge-panel">
+        <div class="panel-title-row">
+          <div>
+            <p class="section-label">挑戰模式</p>
+            <h3>高難度，而且會失敗</h3>
+          </div>
+        </div>
+        <p class="panel-note">每一種都有失敗條件。進階、階梯、Boss 連戰、生存、魔王不受設定頁的難度上限限制；正確率、壓力、Integral Bee 照你的設定抽。</p>
+        <div class="challenge-mode-grid">
+          ${modes.map((key) => {
+            const meta = CHALLENGE_MODE_META[key] || { rule: modeDescription(key), tagline: "" };
+            return modeCard(key, MODES[key].label, meta.rule, meta.tagline, `data-action="start-mode" data-mode-key="${escapeAttr(key)}"`, challengeBest(records, key));
+          }).join("")}
+          ${modeCard("god", "競賽魔王", "R6 · 競賽級 · 自己寫答案 · 每題倒數", "全站最硬的一份", 'data-action="start-god-run"', "")}
+        </div>
+      </section>
       <section class="study-card">
         <div class="panel-title-row">
           <div>
@@ -2257,30 +2304,6 @@
         <div class="duel-code-row">
           <input id="duel-code-input" placeholder="貼上朋友的戰帖碼（BZD1:…）" autocomplete="off" spellcheck="false">
           <button class="button secondary" data-action="duel-accept">${icon("play")}應戰</button>
-        </div>
-      </section>
-      <section class="study-card">
-        <div class="panel-title-row">
-          <div>
-            <p class="section-label">挑戰模式</p>
-            <h3>高難度，而且會失敗</h3>
-          </div>
-        </div>
-        <div class="challenge-mode-grid">
-          ${modes
-            .filter((key) => !["daily", "daily_one"].includes(key))
-            .map(
-              (key) => `
-                <button class="challenge-mode" data-action="start-mode" data-mode-key="${escapeAttr(key)}">
-                  <strong>${escapeHtml(MODES[key].label)}</strong>
-                  <span>${escapeHtml(modeDescription(key))}</span>
-                </button>`
-            )
-            .join("")}
-          <button class="challenge-mode" data-action="start-god-run">
-            <strong>競賽魔王</strong>
-            <span>R6 · 競賽級</span>
-          </button>
         </div>
       </section>
     `;
@@ -5752,6 +5775,14 @@
     return PRAISE_WORDS[Math.floor(Math.random() * PRAISE_WORDS.length)];
   }
 
+  // 生存的三條命：規則寫在註腳裡沒人會看，命要畫在 HUD 上才算數。
+  function renderLivesChip(currentQuiz) {
+    const lost = currentQuiz.answers.filter((answer) => !answer.correct).length;
+    const left = Math.max(0, 3 - lost);
+    const hearts = [0, 1, 2].map((i) => `<i class="${i < left ? "is-alive" : "is-lost"}" aria-hidden="true">${i < left ? "♥" : "♡"}</i>`).join("");
+    return `<span class="hud-lives ${left <= 1 ? "is-danger" : ""}" role="status" aria-label="剩 ${left} 條命">${hearts}<small>剩 ${left} 條命</small></span>`;
+  }
+
   // 連勝 combo 籌片：0 淡灰、2+ 點火、5+ 燒起來（配一個小彈跳）。
   function renderComboChip(streak) {
     const heat = streak >= 5 ? "is-hot" : streak >= 2 ? "is-warm" : "";
@@ -5820,6 +5851,7 @@
                   : `<strong class="hud-title">${escapeHtml(quiz.namedExam ? quiz.namedExam.label : modeLabel(quiz.mode))}</strong>
                    <span class="hud-sub">第 ${quiz.index + 1} / ${quiz.problems.length} 題</span>
                    <span class="hud-sub">${isPractice ? (quiz.gentle ? "新手保護 · 不計時不計分" : "不計分") : `目前分數 ${quiz.score}`}</span>
+                   ${quiz.survival ? renderLivesChip(quiz) : ""}
                    ${renderComboChip(quiz.currentStreak)}`}
             </div>
             <div class="hud-status">
@@ -7063,9 +7095,11 @@
       ? (quiz.placementResult.correct ? "8 題調適完成，起點已經校準好。之後想重測，設定頁隨時可以重新定位。" : "定位只是找起點，不算成績、不進錯題本。之後想重測，設定頁隨時可以。")
       : quiz.examMode
         ? examResultMomentum(quiz, accuracy, correct, total)
-        : quiz.gentle && !pathResult && !gateResult
-          ? "新手保護期不計分：這局的重點是把題型看熟。"
-          : resultMomentum(accuracy, avgTime, pathResult, gateResult);
+        : quiz.answers.length < 4 && quiz.answers.length < quiz.problems.length && !pathResult && !gateResult
+          ? "提早離開的局只記已答的題，不下評語。"
+          : quiz.gentle && !pathResult && !gateResult
+            ? "新手保護期不計分：這局的重點是把題型看熟。"
+            : resultMomentum(accuracy, avgTime, pathResult, gateResult);
     const speedInsight = quiz.speedInsight || speedInsightText(avgTime, recentAnswerStats(records, 30).avgSeconds);
     const pathIdx = quiz.pathNodeId ? PATH_NODES.findIndex((node) => node.id === quiz.pathNodeId) : -1;
     let verdict;
@@ -8442,7 +8476,8 @@
     if (!problem) return;
     const prevMode = selectedMode;
     selectedMode = "quick";
-    startQuiz([problem], { modeKey: "daily_one", practice: false, dailyOne: { dateKey } });
+    // 每日一題是全站同一題的挑戰：用選的會被選項洩題，一律自己寫
+    startQuiz([problem], { modeKey: "daily_one", practice: false, dailyOne: { dateKey }, answerMode: "free" });
     selectedMode = prevMode;
   }
 
@@ -10706,7 +10741,9 @@
   }
 
   function shouldApplyDifficultyCap(mode = {}) {
-    return !mode.boss && !mode.examStyle && !mode.hardOnly;
+    // 生存是挑戰模式：30 題由易到難、三條命 —— 難度上限 4 會讓它永遠爬不到 R5，
+    // 對想挑戰難題的人來說那只是一場很長的快速訓練。
+    return !mode.boss && !mode.examStyle && !mode.hardOnly && !mode.survival;
   }
 
   function filterByDifficultyCap(pool, cap) {
@@ -11790,7 +11827,9 @@
       .filter((value) => !exactStyle || !/\.\d{4,}/.test(String(value)))
       .filter(sameShape);
     // 微擾出來的誘答（真實的犯錯方式）永遠排在前面；別題的答案只補不足的位置。
-    const generated = shuffle(generatedChoiceDistractors(problem, correct), seedFromString(`${problem.id}-distractors`));
+    // generated 的順序本身就是優先序（微擾在前、包裹式墊底），不能洗牌 ——
+    // 洗過一次之後 Boss 題的四個選項變成 2·(X)、(X)+1、X、−5.33，X 就是答案。
+    const generated = generatedChoiceDistractors(problem, correct);
     return [...generated, ...shuffle(answerPool, seedFromString(`${problem.id}-pool`))];
   }
 
@@ -11884,7 +11923,10 @@
       return ["收斂", "發散", "條件收斂", "絕對收斂"];
     }
     if (problem.answerKind === "numeric") {
-      return numericChoiceDistractors(correct);
+      // 精確形（π(5√5−1)/6、sqrt(2)/2）先做數字微擾：6√5、5√5−2、/7 —— 每一個都像
+      // 算錯一步的結果；小數與「2·(答案)」這種包裹式墊底。
+      const exact = /pi|sqrt|e\b|log|\//.test(String(correct)) && /[+*/^-]/.test(String(correct).slice(1));
+      return exact ? [...mutatedDistractorLabels(correct), ...numericChoiceDistractors(correct)] : numericChoiceDistractors(correct);
     }
     if (problem.answerKind === "antiderivative") {
       const variable = problem.variable || "x";
@@ -11947,15 +11989,17 @@
     const value = evaluateExpression(correct, {});
     const generated = [`-(${correct})`, `1/(${correct})`, `(${correct})+1`, `(${correct})-1`, `2*(${correct})`, `(${correct})/2`, "0", "1"];
     if (!Number.isFinite(value)) return generated;
-    return [
+    // 正解是精確形時，−5.3304 這種小數一眼就是湊數的；只留整數／分數形的數字誘答
+    const exact = /pi|sqrt|e\b|log/.test(String(correct));
+    const numeric = [
       formatChoiceNumber(-value),
       formatChoiceNumber(value ? 1 / value : Number.NaN),
       formatChoiceNumber(value + 1),
       formatChoiceNumber(value - 1),
       formatChoiceNumber(value * 2),
-      formatChoiceNumber(value / 2),
-      ...generated
-    ];
+      formatChoiceNumber(value / 2)
+    ].filter((text) => text && !(exact && text.includes(".")));
+    return [...numeric, ...generated];
   }
 
   // 誘答的數字要長得像人算出來的：1/3 就寫 1/3，不要 0.333333 ——
@@ -14055,7 +14099,10 @@
 
   function libraryProblems(records, options = {}) {
     const query = librarySearch.trim().toLowerCase();
-    const gate = !options.ignoreGate && !libraryFullAccess(records);
+    // 使用者自己點了「Boss」或把難度選到上限以上，就是明確要看那些題 ——
+    // 這時候再拿瀏覽上限擋他，得到的是「Boss · 0 符合條件」這種死路。
+    const explicitHard = selectedLibraryFilter === "boss" || (selectedLibraryRank !== "all" && Number(selectedLibraryRank) > libraryBrowseCap(records));
+    const gate = !options.ignoreGate && !libraryFullAccess(records) && !explicitHard;
     const browseCap = gate ? libraryBrowseCap(records) : 6;
     return problems.filter((problem) => {
       if (gate && problemRank(problem) > browseCap) return false;
