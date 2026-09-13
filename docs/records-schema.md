@@ -41,6 +41,8 @@
 | `onboardingSeen` / `onboardingLevel` / `onboardingContext` | mixed | 引導狀態 |
 | `backupNoticeSeen` | mixed | 備份提醒已讀 |
 | `examSetupDismissed` | boolean | 自陳「要考了」的人按掉首頁「考試是哪一天」卡 |
+| `proofLang` | object | 白話證明的草稿：題號 → {text, verdict, updatedAt} |
+| `proofLangLessons` | object | 白話證明教學：課程 id → 完成時間 |
 | `settings` | object | 見下 |
 
 ### settings 子欄位

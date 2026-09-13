@@ -1213,7 +1213,7 @@
     const inQuiz = view === "quiz";
     const themeIcon = selectedTheme === "dark" ? "sun" : "moon";
     const themeLabel = selectedTheme === "dark" ? "亮色" : "深色";
-    const parentView = { "path-intro": "train", mistakes: "train", history: "insights", results: "insights", proofs: "library", creator: "library" }[view] || view;
+    const parentView = { "path-intro": "train", mistakes: "train", history: "insights", results: "insights", proofs: "library", creator: "library", "proof-write": "library", "proof-tutorial": "library" }[view] || view;
     const navItem = (v, action, label, iconName) =>
       `<button class="nav-button ${parentView === v ? "is-active" : ""}" data-action="${action}" aria-label="${label}" title="${label}" ${parentView === v ? 'aria-current="page"' : ""}>${icon(iconName)}<span>${label}</span></button>`;
     return `
@@ -1253,7 +1253,7 @@
 
   function renderWorkspaceBar() {
     if (view === "quiz") return "";
-    const labels = { home: "今日概覽", train: "訓練中心", insights: "學習數據", library: "探索題庫", settings: "偏好與設定", mistakes: "錯題本", history: "練習紀錄", proofs: "證明訓練", creator: "出題工作坊", results: "訓練回顧", "path-intro": "學習路線" };
+    const labels = { home: "今日概覽", train: "訓練中心", insights: "學習數據", library: "探索題庫", settings: "偏好與設定", mistakes: "錯題本", history: "練習紀錄", proofs: "證明訓練", "proof-write": "白話證明", "proof-tutorial": "白話證明教學", creator: "出題工作坊", results: "訓練回顧", "path-intro": "學習路線" };
     return `
       <div class="workspace-bar">
         <div class="workspace-breadcrumb"><span>我的學習空間</span>${icon("chevron-right")}<strong>${labels[view] || "今日概覽"}</strong></div>
@@ -1270,6 +1270,8 @@
     if (view === "results") return renderResults();
     if (view === "path-intro") return renderPathIntro();
     if (view === "proofs") return renderProofLab();
+    if (view === "proof-write") return renderProofWrite();
+    if (view === "proof-tutorial") return renderProofTutorial();
     if (view === "library") return renderProblemLibrary();
     // 第一次進站強制走 onboarding：不讓新使用者面對 1407 題 × 18 模式的組合空間。
     if (view === "home") {
@@ -4903,6 +4905,277 @@
     });
   }
 
+  // ── 白話證明：編輯器 + 五課教學 ────────────────────────────
+  //
+  // 檢查器在 kernel/proof_lang.js（純函式）。這裡只做三件事：
+  // 畫編輯器與三色 gutter、輸入時 debounce 重跑檢查（不整頁 render，游標才不會跳）、
+  // 把草稿與最新結果存進 records.proofLang。
+  let proofWrite = { id: "", lessonId: "", text: "", report: null, showReference: false };
+  let proofLangTimer = null;
+
+  function proofLangProblems() {
+    return Array.isArray(window.BUZZ_PROOF_LANG_PROBLEMS) ? window.BUZZ_PROOF_LANG_PROBLEMS : [];
+  }
+
+  function proofLangLessons() {
+    return Array.isArray(window.BUZZ_PROOF_LANG_LESSONS) ? window.BUZZ_PROOF_LANG_LESSONS : [];
+  }
+
+  function proofLangSpec(id) {
+    return proofLangProblems().find((item) => item.id === id) || null;
+  }
+
+  function proofLangDraft(records, id) {
+    const store = records.proofLang || {};
+    return store[id] || null;
+  }
+
+  function saveProofLangDraft(id, text, report) {
+    const records = loadRecords();
+    records.proofLang = records.proofLang || {};
+    records.proofLang[id] = { text: String(text || "").slice(0, 6000), verdict: report ? report.verdict : "empty", updatedAt: new Date().toISOString() };
+    saveRecords(records);
+  }
+
+  function runProofLangCheck(spec, text) {
+    if (!window.BuzzProofLang || !spec) return null;
+    try {
+      return window.BuzzProofLang.check(spec, text);
+    } catch (error) {
+      return { lines: [], counts: { ok: 0, unsure: 0, error: 0 }, missing: [], verdict: "empty", verdictText: `檢查器出錯：${error.message}`, goalDone: false };
+    }
+  }
+
+  function openProofWrite(id, options = {}) {
+    const spec = proofLangSpec(id);
+    if (!spec) return;
+    const records = loadRecords();
+    const draft = proofLangDraft(records, id);
+    const starter = options.starter ? options.starter.join("\n") : "";
+    const text = draft && draft.text ? draft.text : starter;
+    proofWrite = { id, lessonId: options.lessonId || "", text, report: runProofLangCheck(spec, text), showReference: false };
+    view = options.lessonId ? "proof-tutorial" : "proof-write";
+    render();
+  }
+
+  // 句型範本：按一下插到游標處。跟鍵盤一樣的邏輯 —— 使用者不用背關鍵字。
+  const PROOF_LANG_TEMPLATES = [
+    ["任取", "任取 ε > 0。"],
+    ["取", "取 δ = ε/3。"],
+    ["假設", "假設 0 < |x − a| < δ。"],
+    ["則", "則 A = B < C。"],
+    ["由定理", "由平均值定理，…。"],
+    ["因為所以", "因為 …，所以 …。"],
+    ["分情況", "分兩種情況。"],
+    ["情況", "情況一：x ≥ 0。"],
+    ["歸納", "用歸納法。"],
+    ["基底", "當 n = 1 時，左式 = …，右式 = …，成立。"],
+    ["歸納假設", "假設 n = k 時成立，即 …。"],
+    ["反設", "反設 …。"],
+    ["矛盾", "這與 … 矛盾。"],
+    ["故", "故 …。"]
+  ];
+
+  function renderProofLangVerdict(report) {
+    if (!report) return "";
+    const tone = { verified: "is-ok", partial: "is-unsure", incomplete: "is-unsure", broken: "is-error", empty: "" }[report.verdict] || "";
+    const label = { verified: "✔ 每一步都通過檢查", partial: "△ 讀得懂，有幾句驗不了", incomplete: "△ 結構還沒到齊", broken: "✘ 有一行過不了", empty: "還沒寫" }[report.verdict] || "";
+    return `
+      <div class="pl-verdict ${tone}" data-pl-verdict aria-live="polite">
+        <strong>${escapeHtml(label)}</strong>
+        <span>${escapeHtml(report.verdictText || "")}</span>
+        ${report.missing && report.missing.length ? `<ul>${report.missing.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>` : ""}
+      </div>`;
+  }
+
+  function renderProofLangLines(report) {
+    if (!report || !report.lines.length) return `<p class="panel-note">寫一行就會立刻檢查。每一行要用一種句型開頭 —— 不確定就按上面的範本。</p>`;
+    return `
+      <ol class="pl-lines">
+        ${report.lines.map((line) => `
+          <li class="is-${line.status}">
+            <span class="pl-line-mark" aria-hidden="true">${line.status === "ok" ? "✔" : line.status === "unsure" ? "△" : "✘"}</span>
+            <div>
+              <div class="pl-line-text"><small>第 ${line.n} 行 · ${escapeHtml(line.label || "？")}</small>${escapeHtml(line.raw)}</div>
+              <p class="pl-line-note">${escapeHtml(line.note || "")}</p>
+            </div>
+          </li>`).join("")}
+      </ol>`;
+  }
+
+  function renderProofLangEditor(spec, text, report, options = {}) {
+    const rows = Math.max(6, Math.min(16, String(text || "").split("\n").length + 2));
+    return `
+      <div class="pl-editor" data-pl-editor>
+        <div class="pl-templates" role="toolbar" aria-label="句型範本">
+          ${PROOF_LANG_TEMPLATES.map(([label, tpl]) => `<button type="button" class="pl-template" data-action="pl-insert" data-text="${escapeAttr(tpl)}">${escapeHtml(label)}</button>`).join("")}
+        </div>
+        <label class="sr-only" for="pl-text">證明內容</label>
+        <textarea id="pl-text" data-proof-lang-text rows="${rows}" spellcheck="false" placeholder="一行一句。例如：任取 ε > 0。">${escapeHtml(text || "")}</textarea>
+        <div data-pl-report>
+          ${renderProofLangVerdict(report)}
+          ${renderProofLangLines(report)}
+        </div>
+        <div class="action-row pl-actions">
+          <button class="button secondary" data-action="pl-toggle-reference">${icon("eye")}${proofWrite.showReference ? "收起參考證明" : "看參考證明"}</button>
+          <button class="button ghost" data-action="pl-clear">${icon("trash")}清空重寫</button>
+          ${options.extra || ""}
+        </div>
+        ${proofWrite.showReference ? `<div class="pl-reference"><p class="section-label">參考證明</p><pre>${escapeHtml(spec.reference.join("\n"))}</pre></div>` : ""}
+      </div>`;
+  }
+
+  function renderProofWrite() {
+    const spec = proofLangSpec(proofWrite.id);
+    if (!spec) return renderProofLab();
+    return `
+      <main class="screen">
+        <section class="panel page-panel pl-screen">
+          <div class="page-head">
+            <div>
+              <p class="section-label">白話證明 · ${escapeHtml(spec.family === "epsilon-delta" ? "ε-δ" : spec.family === "induction" ? "歸納法" : spec.family === "cases" ? "分情況" : spec.family === "contradiction" ? "反證" : "直接證明")}</p>
+              <h2>${escapeHtml(spec.title)}</h2>
+              <p>${escapeHtml(spec.statement)}</p>
+            </div>
+            <div class="action-row">
+              <button class="button secondary" data-action="open-proofs">${icon("chevron-right")}回證明訓練</button>
+            </div>
+          </div>
+          <div class="pl-goal math-block" data-tex="${escapeAttr(spec.prompt)}"></div>
+          <p class="pl-coach">${icon("lightbulb")}${escapeHtml(spec.coach || "")}</p>
+          ${renderProofLangEditor(spec, proofWrite.text, proofWrite.report)}
+        </section>
+      </main>`;
+  }
+
+  function renderProofTutorial() {
+    const lessons = proofLangLessons();
+    const lesson = lessons.find((item) => item.id === proofWrite.lessonId) || lessons[0];
+    if (!lesson) return renderProofLab();
+    const example = proofLangSpec(lesson.exampleId);
+    const exampleReport = example ? runProofLangCheck(example, example.reference.join("\n")) : null;
+    const exercise = proofLangSpec(lesson.exercise.id);
+    const index = lessons.indexOf(lesson);
+    const records = loadRecords();
+    const done = records.proofLangLessons || {};
+    return `
+      <main class="screen">
+        <section class="panel page-panel pl-screen pl-tutorial">
+          <div class="page-head">
+            <div>
+              <p class="section-label">白話證明教學 · 第 ${index + 1} / ${lessons.length} 課</p>
+              <h2>${escapeHtml(lesson.title.replace(/^第 \d 課 · /, ""))}</h2>
+              <p>約 ${lesson.minutes} 分鐘 · 先看一份寫好的證明，再自己寫幾行。</p>
+            </div>
+            <div class="action-row">
+              <button class="button secondary" data-action="open-proofs">${icon("chevron-right")}回證明訓練</button>
+            </div>
+          </div>
+          <nav class="pl-lesson-nav" aria-label="課程">
+            ${lessons.map((item, i) => `<button type="button" class="${item.id === lesson.id ? "is-active" : ""} ${done[item.id] ? "is-done" : ""}" data-action="pl-open-lesson" data-lesson-id="${escapeAttr(item.id)}">${i + 1}${done[item.id] ? " ✔" : ""}</button>`).join("")}
+          </nav>
+          <div class="pl-intro">${lesson.intro.map((paragraph) => `<p>${escapeHtml(paragraph)}</p>`).join("")}</div>
+          ${example ? `
+            <section class="pl-example">
+              <div class="pl-example-head"><p class="section-label">範例 · ${escapeHtml(example.title)}</p><span>每一行旁邊是檢查器真的跑出來的註解</span></div>
+              <div class="pl-goal math-block" data-tex="${escapeAttr(example.prompt)}"></div>
+              ${renderProofLangLines(exampleReport)}
+            </section>` : ""}
+          ${exercise ? `
+            <section class="pl-exercise">
+              <div class="pl-example-head"><p class="section-label">練習 · ${escapeHtml(exercise.title)}</p><span>${escapeHtml(lesson.exercise.task)}</span></div>
+              <div class="pl-goal math-block" data-tex="${escapeAttr(exercise.prompt)}"></div>
+              ${renderProofLangEditor(exercise, proofWrite.text, proofWrite.report, {
+                extra: index + 1 < lessons.length
+                  ? `<button class="button home-primary" data-action="pl-open-lesson" data-lesson-id="${escapeAttr(lessons[index + 1].id)}">${icon("play")}下一課</button>`
+                  : `<button class="button home-primary" data-action="open-proofs">${icon("check")}上完了，去題庫寫</button>`
+              })}
+            </section>` : ""}
+        </section>
+      </main>`;
+  }
+
+  // 證明訓練頁上的入口：五課 + 題目清單（帶你上次的結果）
+  function renderProofLangEntry(records) {
+    const problems = proofLangProblems();
+    if (!problems.length || !window.BuzzProofLang) return "";
+    const store = records.proofLang || {};
+    const verdictChip = (id) => {
+      const draft = store[id];
+      if (!draft) return "";
+      const label = { verified: "✔ 全綠", partial: "△ 部分", incomplete: "△ 未完", broken: "✘ 有錯", empty: "草稿" }[draft.verdict] || "草稿";
+      return `<span class="pl-chip is-${draft.verdict}">${escapeHtml(label)}</span>`;
+    };
+    const lessonsDone = Object.keys(records.proofLangLessons || {}).length;
+    return `
+      <section class="study-card pl-entry">
+        <div class="panel-title-row">
+          <div>
+            <p class="section-label">白話證明 · 可以被檢查的證明</p>
+            <h3>一行一句，寫完每一行立刻告訴你過不過</h3>
+          </div>
+        </div>
+        <p class="panel-note">不用 Lean、不用後端：代數鏈在假設下取樣驗、規則對形狀、骨架看有沒有到齊。它驗不了的會標黃，不會假裝。</p>
+        <div class="action-row">
+          <button class="button home-primary" data-action="pl-open-lesson" data-lesson-id="${escapeAttr((proofLangLessons()[0] || {}).id || "")}">${icon("book-open")}先上 5 課${lessonsDone ? ` · 已完成 ${lessonsDone}` : ""}</button>
+        </div>
+        <div class="pl-problem-grid">
+          ${problems.map((spec) => `
+            <button type="button" class="pl-problem" data-action="pl-open-problem" data-proof-lang-id="${escapeAttr(spec.id)}">
+              <span class="pl-problem-family">${escapeHtml({ "epsilon-delta": "ε-δ", induction: "歸納", cases: "分情況", contradiction: "反證", direct: "直接" }[spec.family] || spec.family)} · R${spec.difficulty}</span>
+              <strong>${escapeHtml(spec.title)}</strong>
+              ${verdictChip(spec.id)}
+            </button>`).join("")}
+        </div>
+      </section>`;
+  }
+
+  function bindProofLangEvents() {
+    const textarea = app.querySelector("[data-proof-lang-text]");
+    if (!textarea) return;
+    const spec = proofLangSpec(proofWrite.id);
+    if (!spec) return;
+    const refresh = () => {
+      proofWrite.text = textarea.value;
+      proofWrite.report = runProofLangCheck(spec, proofWrite.text);
+      const box = app.querySelector("[data-pl-report]");
+      if (box) box.innerHTML = renderProofLangVerdict(proofWrite.report) + renderProofLangLines(proofWrite.report);
+      saveProofLangDraft(proofWrite.id, proofWrite.text, proofWrite.report);
+      if (proofWrite.lessonId && proofWrite.report && (proofWrite.report.verdict === "verified" || (spec.allowUnsure && proofWrite.report.verdict === "partial"))) {
+        const records = loadRecords();
+        records.proofLangLessons = records.proofLangLessons || {};
+        if (!records.proofLangLessons[proofWrite.lessonId]) {
+          records.proofLangLessons[proofWrite.lessonId] = new Date().toISOString();
+          saveRecords(records);
+        }
+      }
+    };
+    textarea.addEventListener("input", () => {
+      if (proofLangTimer && window.clearTimeout) window.clearTimeout(proofLangTimer);
+      proofLangTimer = window.setTimeout(() => {
+        proofLangTimer = null;
+        refresh();
+      }, 260);
+    });
+  }
+
+  function insertProofLangTemplate(text) {
+    const textarea = app.querySelector("[data-proof-lang-text]");
+    if (!textarea) return;
+    const value = textarea.value;
+    const start = typeof textarea.selectionStart === "number" ? textarea.selectionStart : value.length;
+    // 範本永遠自成一行：游標前面沒有換行就先補一個
+    const before = value.slice(0, start);
+    const after = value.slice(start);
+    const prefix = before && !before.endsWith("\n") ? "\n" : "";
+    const suffix = after && !after.startsWith("\n") ? "\n" : "";
+    textarea.value = `${before}${prefix}${text}${suffix}${after}`;
+    const caret = (before + prefix + text).length;
+    textarea.focus();
+    try { textarea.setSelectionRange(caret, caret); } catch (_error) { /* 舊瀏覽器 */ }
+    textarea.dispatchEvent(new Event("input", { bubbles: true }));
+  }
+
   function renderProofLab() {
     const records = loadRecords();
     const stats = proofStats(records);
@@ -4920,6 +5193,8 @@
               <button class="button secondary" data-action="home">${icon("home")}回主線</button>
             </div>
           </div>
+
+          ${renderProofLangEntry(records)}
 
           <div class="proof-overview">
             <div><span>總題數</span><strong>${stats.total}</strong></div>
@@ -7822,6 +8097,8 @@
       });
     });
 
+    bindProofLangEvents();
+
     const librarySearchInput = app.querySelector("[data-library-search]");
     if (librarySearchInput) {
       // Debounced: a full render per keystroke makes typing laggy.
@@ -8131,6 +8408,24 @@
     }
     if (action === "open-proofs") {
       view = "proofs";
+      render();
+    }
+    if (action === "pl-open-problem") openProofWrite(actionNode.dataset.proofLangId || "");
+    if (action === "pl-open-lesson") {
+      const lesson = proofLangLessons().find((item) => item.id === actionNode.dataset.lessonId) || proofLangLessons()[0];
+      if (lesson) openProofWrite(lesson.exercise.id, { lessonId: lesson.id, starter: lesson.exercise.starter });
+    }
+    if (action === "pl-insert") insertProofLangTemplate(actionNode.dataset.text || "");
+    if (action === "pl-toggle-reference") {
+      proofWrite.showReference = !proofWrite.showReference;
+      const textarea = app.querySelector("[data-proof-lang-text]");
+      if (textarea) proofWrite.text = textarea.value;
+      render();
+    }
+    if (action === "pl-clear") {
+      proofWrite.text = "";
+      proofWrite.report = runProofLangCheck(proofLangSpec(proofWrite.id), "");
+      saveProofLangDraft(proofWrite.id, "", proofWrite.report);
       render();
     }
     if (action === "open-creator") {
@@ -13370,6 +13665,8 @@
     next.planReportSeen = typeof next.planReportSeen === "string" ? next.planReportSeen : "";
     next.backupNoticeSeen = Boolean(next.backupNoticeSeen);
     next.examSetupDismissed = Boolean(next.examSetupDismissed);
+    next.proofLang = next.proofLang && typeof next.proofLang === "object" ? next.proofLang : {};
+    next.proofLangLessons = next.proofLangLessons && typeof next.proofLangLessons === "object" ? next.proofLangLessons : {};
     next.onboardingContext = typeof next.onboardingContext === "string" ? next.onboardingContext : "";
     next.onboardingLevel = typeof next.onboardingLevel === "string" ? next.onboardingLevel : "";
     next.onboardingSeen = Boolean(next.onboardingSeen);
