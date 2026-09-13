@@ -205,11 +205,15 @@
       graph.skills.forEach((node) => {
         if (node.subject === "science") return;
         if (skills[node.id]) return;
-        const ready = (node.prereq || []).every((parent) => {
+        // 「前置已經穩了」要有量到的前置才算數：新使用者什麼都沒量，
+        // 空集合的 every() 是 true，會對一個 0/8 的人說「前置已經穩了」。
+        // 沒有前置的根節點另外記成 root —— 那是「從基礎開始」，不是「前置穩了」。
+        const prereq = node.prereq || [];
+        const ready = prereq.every((parent) => {
           const entry = skills[parent];
-          return !entry || (entry.mastery !== null && entry.mastery >= SOLID);
+          return Boolean(entry) && entry.mastery !== null && entry.mastery >= SOLID;
         });
-        if (ready) fresh.push(node);
+        if (ready) fresh.push(Object.assign({ root: prereq.length === 0 }, node));
       });
       fresh.sort((a, b) => a.tier - b.tier);
     }
@@ -256,7 +260,9 @@
 
     if (parts.length < 2 && groups.fresh.length) {
       // 中文緊貼拉丁字母（「開始練u-substitution」）讀起來像 tag 串進句子
-      parts.push(`前置已經穩了，可以開始練${/^[\x20-\x7e]/.test(groups.fresh[0].label) ? " " : ""}${groups.fresh[0].label}`);
+      const first = groups.fresh[0];
+      const gap = /^[\x20-\x7e]/.test(first.label) ? " " : "";
+      parts.push(first.root ? `從最基礎的${gap}${first.label}${gap}開始` : `前置已經穩了，可以開始練${gap}${first.label}`);
     }
 
     // 保底：新使用者什麼資料都沒有時也必須給得出一句話
