@@ -1,4 +1,4 @@
-const CACHE_NAME = "buzzcalculus-v1.2.1-2026-09-12-goodnotes";
+const CACHE_NAME = "buzzcalculus-v1.2.1-2026-09-13-beginner";
 const CACHE_PREFIX = "buzzcalculus-";
 const APP_SHELL = [
   "./privacy.html",
@@ -93,6 +93,7 @@ const APP_SHELL = [
   "./src/kernel/tex_lite.js",
   "./src/kernel/ink_read.js",
   "./src/kernel/canned_hints.js",
+  "./src/kernel/tag_labels.js",
   "./src/kernel/ability.js",
   "./src/kernel/planner.js",
   "./src/kernel/session.js",

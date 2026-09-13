@@ -348,7 +348,32 @@
   // Feature 5：5 分鐘定位測驗。8 題調適（對→升一階、錯→降一階），
   // 結果映射到主線節點，沿用跳關的 pathUnlocks 機制解鎖。
   const PLACEMENT_COUNT = 8;
+  // 定位起手 rank 跟著自陳的階段走：高中先修從 R1 起，不要第一題就是無窮級數。
+  const PLACEMENT_START_RANK_BY_CONTEXT = { highschool: 1, freshman: 2, exam: 3, maintain: 3 };
   const PLACEMENT_START_RANK = 2;
+  // 高中先修的定位只在極限與微分裡出題 —— 那是他們學過的範圍；
+  // 級數與積分對他們不是「不會」，是「還沒學」，測不出東西。
+  const PLACEMENT_TOPICS_BY_CONTEXT = { highschool: ["limits", "derivatives"] };
+
+  // 新手保護期：頭幾局不倒數、不計分、提示不扣分。
+  //
+  // 走查初學者流程的結果：第一次進來的人，第一題就要在 38 秒內答完
+  // d/dx(e^x ln x)，倒數對他只有壓力沒有意義。「來不及」這個訊號在
+  // 已經會做的人身上才有價值；還在認識題型的人要的是把題目看完。
+  // 高中先修給 3 局，其他人給 1 局；大考、生存、Boss、對戰這種
+  // 本身就是計時規則的模式不在保護範圍。
+  // 高中先修 3 局、大一（或沒填）1 局；「要考了」「維持手感」的人自己說已經學過，
+  // 對他們說「看懂比答對重要」是在講幼稚園的話 —— 不保護，直接計時。
+  const GENTLE_QUOTA_BY_CONTEXT = { highschool: 3, freshman: 1, exam: 0, maintain: 0 };
+  function gentleStartQuota(records) {
+    const context = records.onboardingContext || "";
+    return context in GENTLE_QUOTA_BY_CONTEXT ? GENTLE_QUOTA_BY_CONTEXT[context] : 1;
+  }
+
+  function gentleStartActive(records) {
+    const played = (records.history || []).filter((item) => item.mode !== "placement").length;
+    return played < gentleStartQuota(records);
+  }
   const PLACEMENT_NODE_BY_RANK = {
     1: "onevar_limit",
     2: "basic_integral",
@@ -368,6 +393,11 @@
     "boss-rank",
     "boss-plus",
     "beginner-friendly",
+    "beginner-foundation",
+    "rank-1", "rank-2", "rank-3", "rank-4", "rank-5", "rank-6",
+    // 出處／難度型：它們有中文名，但「這題考的是國際難題」不是一句話
+    "todai-burst", "world-universities", "damo", "putnam", "competition", "true-boss",
+    "hardcore", "long-form", "applications", "application", "estimate",
     "depth-r5",
     "depth-r6"
   ]);
@@ -493,139 +523,8 @@
     6: { label: "大師", note: "R1-R6，高速反射 / Wallis / 特殊函數全開。", short: "R1-R6" }
   };
   const LIBRARY_PAGE_SIZE = 72;
-  const TAG_LABELS = {
-    // 出處型 tag 的顯示名：tag key 保留（抽題與既有資料靠它），
-    // 但畫面上一律講 Buzz 自己的難度語言，不掛學校名。
-    "todai-burst": "高速反射",
-    "world-universities": "國際難題",
-    damo: "長題挑戰",
-    putnam: "競賽經典",
-    competition: "競賽難題",
-    "true-boss": "終極挑戰",
-    "multi-ibp": "multi-IBP",
-    "trig-power": "Trig power",
-    "recurrence-formula": "Recurrence",
-    "super-high-derivative": "High derivative",
-    "special-function": "Special function",
-    "series-integral": "Series integral",
-    "beginner-friendly": "新手友善",
-    "boss-rank": "Boss",
-    "boss-plus": "Boss+",
-    custom: "自訂",
-    "hard-limit": "硬極限",
-    "asymptotic-expansion": "漸近展開",
-    "generating-function": "生成函數",
-    "harmonic-number": "調和數",
-    "laplace-transform": "Laplace",
-    "exam-style": "大考題感",
-    "exam-depth": "大考深水",
-    "depth-r5": "R5 深水",
-    "depth-r6": "R6 深水",
-    "transfer-exam": "轉學考",
-    "proficiency-exam": "免修考",
-    "technique-recognition": "技巧辨識",
-    "technique-sprint": "速判",
-    "trap-drill": "陷阱",
-    "limit-trap": "極限陷阱",
-    taylor: "Taylor",
-    coefficient: "係數",
-    rationalize: "有理化",
-    "trig-limit": "三角極限",
-    "chain-rule": "鏈鎖律",
-    substitution: "U-sub",
-    "integration-by-parts": "IBP",
-    ibp: "IBP",
-    "trig-substitution": "三角代換",
-    "partial-fraction": "Partial Fraction",
-    "ode-style": "ODE 型",
-    "kings-property": "King's",
-    frullani: "Frullani",
-    "improper-integral": "廣義積分",
-    "double-integral": "二重積分",
-    "triple-integral": "三重積分",
-    "change-of-variables": "變數變換",
-    multivariable: "多變數",
-    hessian: "Hessian",
-    wronskian: "Wronskian",
-    jacobian: "Jacobian",
-    "jacobian-chain": "Jacobian 鏈鎖",
-    "lagrange-multiplier": "LM",
-    nabla: "Nabla",
-    "vector-calculus": "向量分析",
-    "total-differential": "全微分",
-    "total-differential-min": "全微分最小",
-    complex: "複變",
-    "ode-intro": "ODE 入門",
-    "power-series": "冪級數",
-    radius: "收斂半徑",
-    "ratio-test": "Ratio",
-    "root-test": "Root",
-    "integral-test": "Integral Test",
-    "p-series": "p-series",
-    "alternating-series": "交錯級數",
-    comparison: "比較判別",
-    "limit-comparison": "極限比較",
-    "endpoint-analysis": "端點分析",
-    "convergence-test": "審斂",
-    "beta-function": "Beta",
-    "gamma-function": "Gamma",
-    wallis: "Wallis",
-    bessel: "Bessel",
-    parametric: "參數式",
-    "polar-curve": "極座標",
-    "related-rates": "相關變率",
-    "tangent-normal": "切線法線",
-    "linear-approximation": "線性近似",
-    "newton-method": "Newton",
-    curvature: "曲率",
-    "nested-taylor": "巢狀 Taylor",
-    "composite-taylor": "複合 Taylor",
-    "asymptotic-balance": "漸近配平",
-    "power-exponential": "變冪函數",
-    "moving-limits": "變動上下限",
-    laplacian: "Laplacian",
-    region: "積分區域",
-    "special-sum": "特殊級數",
-    "line-integral": "線積分",
-    "green-theorem": "Green 定理",
-    "stokes-theorem": "Stokes 定理",
-    "divergence-theorem": "散度定理",
-    "surface-integral": "面積分",
-    flux: "通量",
-    "conservative-field": "保守場",
-    "vector-identity": "向量恆等式",
-    "directional-derivative": "方向導數",
-    lhopital: "L'Hôpital",
-    mvt: "均值定理",
-    rolle: "Rolle",
-    continuity: "連續性",
-    ivt: "IVT 勘根",
-    concavity: "凹凸性",
-    inflection: "反曲點",
-    asymptote: "漸近線",
-    "implicit-differentiation": "隱微分",
-    optimization: "最佳化",
-    "arc-length": "弧長",
-    "solid-of-revolution": "旋轉體",
-    "surface-area": "曲面面積",
-    "average-value": "平均值",
-    "riemann-sum": "Riemann 和",
-    ftc: "FTC",
-    sequence: "數列",
-    recursive: "遞迴數列",
-    squeeze: "夾擠",
-    telescoping: "望遠鏡和",
-    "story-problem": "情境題",
-    kinematics: "運動學",
-    "work-integral": "功",
-    "newton-cooling": "冷卻定律",
-    "half-life": "半衰期",
-    mixing: "混合問題",
-    marginal: "邊際分析",
-    centroid: "形心",
-    "graph-reading": "讀圖",
-    power: "功率"
-  };
+  // 顯示名側表搬到 kernel/tag_labels.js（app.js 效能預算 700KB 到頂）；缺席時退回 Title Case
+  const TAG_LABELS = (typeof window !== "undefined" && window.BuzzTagLabels) || {};
   const ONBOARDING_LEVELS = {
     beginner: { label: "先暖身", pack: "beginner_warmup", mode: "warmup", topic: "all", difficultyCap: 2 },
     standard: { label: "照主線", pack: "all", mode: "daily", topic: "all", difficultyCap: 3 },
@@ -1635,11 +1534,49 @@
   // spec 04.3：首頁永遠只有一個主 CTA，而且它必須說得出「為什麼是這個」。
   // 由 kernel 的 planner 決定內容；planner 沒載入時整張卡不出現，
   // 首頁退回原本的樣子。
+  // 新手保護期的第一份訓練：不管配方排了幾題，取 8 題、由淺入深。
+  // 19 題對第一次來的人太長；而且配方上「7 到期複習 · 8 弱點」對一個
+  // 什麼都還沒做過的人是假的（那是補位規則填出來的數字）。
+  const GENTLE_FIRST_COUNT = 8;
+  function gentleTrim(list, records = loadRecords()) {
+    // 高中先修的第一份訓練只在極限與微分裡：級數對他們是「還沒學」，不是練習。
+    const topics = PLACEMENT_TOPICS_BY_CONTEXT[records.onboardingContext || ""] || null;
+    const scoped = topics ? list.filter((problem) => topics.includes(problem.topic)) : list;
+    return (scoped.length >= Math.min(GENTLE_FIRST_COUNT, 4) ? scoped : list)
+      .map((problem, index) => ({ problem, index }))
+      .sort((a, b) => (problemRank(a.problem) - problemRank(b.problem)) || (a.index - b.index))
+      .map((entry) => entry.problem)
+      .slice(0, GENTLE_FIRST_COUNT);
+  }
+
   function renderTodayCard(records) {
     const plan = plannedSession(records);
     if (!plan) return "";
 
     const { recipe, filled, reason } = plan;
+    if (gentleStartActive(records)) {
+      const first = gentleTrim(filled.problems, records);
+      const played = (records.history || []).filter((item) => item.mode !== "placement").length;
+      const topics = Array.from(new Set(first.map((problem) => TOPICS[problem.topic]?.label).filter(Boolean))).join("、");
+      return `
+        <section class="today-card training-feature" aria-label="今天的訓練">
+          <div class="today-head">
+            <p class="section-label">${icon("sparkles")}為你安排 · ${played ? "新手保護期" : "第一份訓練"}</p>
+            <span class="today-meta">約 ${Math.max(3, Math.round(first.length * 0.75))} 分鐘 · ${first.length} 題</span>
+          </div>
+          <h2 class="today-title">${played ? "再認識 " : "先認識 "}${first.length} 題${topics ? `${topics}` : "基礎題"}</h2>
+          <p class="today-why">不倒數、不計分，提示不扣分 —— 看懂題目在問什麼，比答對重要。</p>
+          <div class="training-recipe"><span><strong>${first.length}</strong>由淺入深</span><span><strong>0</strong>秒倒數</span></div>
+          <div class="today-actions">
+            <button class="button home-primary" data-action="start-planned" data-length="${escapeAttr(recipe.length)}">
+              ${icon("play")}<span>開始</span>${icon("chevron-right")}
+            </button>
+            <button class="button secondary" data-action="open-train">${icon("target")}走主線第 1 關</button>
+          </div>
+          <p class="today-note">新手保護期還有 ${gentleStartQuota(records) - played} 局；之後每題會開始倒數，那時候「來不及」才是有用的訊號。</p>
+        </section>
+      `;
+    }
     const minutes = Math.max(1, Math.round(filled.estSeconds / 60));
     const dueCount = recipe.context.dueNow;
     const adjusted = window.BuzzSession.explainFallbacks(filled.meta);
@@ -1774,7 +1711,7 @@
     }
     selectedMode = "quick";
     selectedTopic = "all";
-    startQuiz(plan.filled.problems, { modeKey: "quick" });
+    startQuiz(gentleStartActive(records) ? gentleTrim(plan.filled.problems, records) : plan.filled.problems, { modeKey: "quick" });
   }
 
   // ── 作答中斷續傳 ────────────────────────────────────────────
@@ -3745,11 +3682,12 @@
   function renderPlacementNextStep() {
     const records = loadRecords();
     const plan = plannedSession(records);
-    const minutes = plan ? Math.max(1, Math.round(plan.filled.estSeconds / 60)) : 15;
-    const count = plan ? plan.filled.problems.length : 12;
+    const gentle = gentleStartActive(records);
+    const count = plan ? (gentle ? gentleTrim(plan.filled.problems, records).length : plan.filled.problems.length) : 12;
+    const minutes = plan ? (gentle ? Math.max(3, Math.round(count * 0.75)) : Math.max(1, Math.round(plan.filled.estSeconds / 60))) : 15;
     return `
       <div class="placement-next" data-enter>
-        <p class="placement-next-lead">${plan ? escapeHtml(plan.recipe.why) : "已經照你的定位排好第一份訓練。"}</p>
+        <p class="placement-next-lead">${gentle ? "第一份訓練不倒數、不計分：先把題目看懂。" : plan ? escapeHtml(plan.recipe.why) : "已經照你的定位排好第一份訓練。"}</p>
         <div class="action-row">
           <button class="button home-primary" data-action="start-planned" data-length="daily15">
             ${icon("play")}開始第一份訓練 · ${minutes} 分鐘 ${count} 題
@@ -5786,7 +5724,7 @@
       : "本關失守，專心清錯";
     // 本局規則的一句話版：從 300px 側欄、再從頁尾一行小字，一路縮到 HUD 的註腳。
     // 它是被動資訊 —— 想看細節的人按「規則」。
-    const modeNote = quiz.examMode ? "整份倒數 · 時間到直接交卷" : quiz.survival ? "生存：最多錯 3 題" : quiz.suddenDeath ? "Boss 連戰：錯一題就結算" : quiz.pressureMode ? "壓力訓練：時限逐題遞減（練到 60%），時間到算未作答" : noTimer ? "本局不倒數" : "每題各自倒數，時間到算未作答";
+    const modeNote = quiz.placement ? "定位：答對變難、答錯變簡單；沒學過就按「還沒學過」" : quiz.gentle ? "新手保護期：不倒數、不計分，提示不扣分 —— 先把題目看懂" : quiz.examMode ? "整份倒數 · 時間到直接交卷" : quiz.survival ? "生存：最多錯 3 題" : quiz.suddenDeath ? "Boss 連戰：錯一題就結算" : quiz.pressureMode ? "壓力訓練：時限逐題遞減（練到 60%），時間到算未作答" : noTimer ? "本局不倒數" : "每題各自倒數，時間到算未作答";
 
     return `
       <main class="screen quiz-screen" id="buzz-main">
@@ -5801,9 +5739,13 @@
                    <span class="hud-sub">第 ${quiz.index + 1} / ${totalQ} 題</span>
                    <span class="clear-need ${clearLost ? "is-lost" : ""}">${clearLine}</span>
                    ${renderComboChip(quiz.currentStreak)}`
-                : `<strong class="hud-title">${escapeHtml(quiz.namedExam ? quiz.namedExam.label : modeLabel(quiz.mode))}</strong>
+                : quiz.placement
+                  ? `<strong class="hud-title">定位測驗</strong>
+                     <span class="hud-sub">第 ${quiz.index + 1} / ${quiz.problems.length} 題</span>
+                     <span class="hud-sub">不計分</span>`
+                  : `<strong class="hud-title">${escapeHtml(quiz.namedExam ? quiz.namedExam.label : modeLabel(quiz.mode))}</strong>
                    <span class="hud-sub">第 ${quiz.index + 1} / ${quiz.problems.length} 題</span>
-                   <span class="hud-sub">${isPractice ? "不計分" : `目前分數 ${quiz.score}`}</span>
+                   <span class="hud-sub">${isPractice ? (quiz.gentle ? "新手保護 · 不計時不計分" : "不計分") : `目前分數 ${quiz.score}`}</span>
                    ${renderComboChip(quiz.currentStreak)}`}
             </div>
             <div class="hud-status">
@@ -5879,8 +5821,12 @@
                 ${renderHintPanel(current)}
                 <span class="problem-tools-spacer"></span>
                 ${
-                  // 已經有回饋（答完/逾時）就沒有「跳過」這回事 —— 留著只是語意不明
-                  feedback ? "" : `<button class="tool-button" type="button" data-action="skip">${icon("skip")}<span>跳過</span></button>`
+                  // 已經有回饋（答完/逾時）就沒有「跳過」這回事 —— 留著只是語意不明。
+                  // 定位測驗把「跳過」換成「還沒學過」：那是誠實的答案，不是放棄，
+                  // 而且不會進錯題本（定位是診斷）。
+                  feedback ? "" : quiz.placement
+                    ? `<button class="tool-button tool-unlearned" type="button" data-action="placement-unlearned">${icon("skip")}<span>我還沒學過這個</span></button>`
+                    : `<button class="tool-button" type="button" data-action="skip">${icon("skip")}<span>跳過</span></button>`
                 }
                 <button class="tool-button" type="button" data-action="show-rules">${icon("info")}<span>規則</span></button>
               </div>
@@ -5940,7 +5886,8 @@
     if (["worksheet", "graph", "graphtap", "graphslope"].includes(problem.answerKind)) {
       return escapeHtml(raw);
     }
-    const tex = answerToTex(raw, problem);
+    // 參考答案跟選項一樣做常數摺疊：4·3·x^(3−1) 這種模板原形在初學者眼裡是壞掉的。
+    const tex = answerToTex(simplifyChoiceLabel(raw), problem) || answerToTex(raw, problem);
     if (!tex) return escapeHtml(raw);
     return `<span class="math-inline" data-tex="${escapeAttr(tex)}">${renderLiteTex(tex, false)}</span>`;
   }
@@ -7028,7 +6975,7 @@
   function renderResults() {
     if (!quiz) return "";
     const correct = quiz.answers.filter((answer) => answer.correct).length;
-    const total = quiz.problems.length;
+    const total = settledTotal(quiz);
     const accuracy = total ? Math.round((correct / total) * 100) : 0;
     const avgTime = averageAnswerTime(quiz.answers);
     const topicStats = buildTopicStats(quiz.answers);
@@ -7039,10 +6986,12 @@
     const pathResult = !gateResult && quiz.pathNodeId ? pathLessonResult(quiz, records, accuracy) : null;
 
     const momentum = quiz.placementResult
-      ? "8 題調適完成，起點已經校準好。之後想重測，設定頁隨時可以重新定位。"
+      ? (quiz.placementResult.correct ? "8 題調適完成，起點已經校準好。之後想重測，設定頁隨時可以重新定位。" : "定位只是找起點，不算成績、不進錯題本。之後想重測，設定頁隨時可以。")
       : quiz.examMode
         ? examResultMomentum(quiz, accuracy, correct, total)
-        : resultMomentum(accuracy, avgTime, pathResult, gateResult);
+        : quiz.gentle && !pathResult && !gateResult
+          ? "新手保護期不計分：這局的重點是把題型看熟。"
+          : resultMomentum(accuracy, avgTime, pathResult, gateResult);
     const speedInsight = quiz.speedInsight || speedInsightText(avgTime, recentAnswerStats(records, 30).avgSeconds);
     const pathIdx = quiz.pathNodeId ? PATH_NODES.findIndex((node) => node.id === quiz.pathNodeId) : -1;
     let verdict;
@@ -7053,11 +7002,20 @@
       verdictClass = gateResult.passed ? "is-gold" : "is-fail";
     } else if (quiz.placementResult) {
       const placement = quiz.placementResult;
-      verdict = `定位完成：R${placement.rank}`;
-      verdictClass = "is-pass";
-      nextLine = placement.weakTag
-        ? `你的反射大約在 R${placement.rank}。最不穩：${tagLabel(placement.weakTag)} — 已把路線解鎖到 ${placement.nodeLabel}`
-        : `你的反射大約在 R${placement.rank}。這 8 題沒有明顯弱點 — 已把路線解鎖到 ${placement.nodeLabel}`;
+      // 一題都沒答對的定位不是「完成」，是「從頭開始」——不撒彩帶、不說反射。
+      if (!placement.correct) {
+        verdict = "從基礎開始";
+        verdictClass = "is-neutral";
+        nextLine = placement.unlearned >= Math.ceil(placement.total / 2)
+          ? "這幾題大多還沒學到 —— 沒關係，主線會從最基礎的極限一格一格帶。"
+          : "這 8 題都還沒把握 —— 沒關係，主線會從最基礎的極限一格一格帶，先不計時。";
+      } else {
+        verdict = `定位完成：R${placement.rank}`;
+        verdictClass = "is-pass";
+        nextLine = placement.weakTag
+          ? `你的反射大約在 R${placement.rank}。最不穩：${tagLabel(placement.weakTag)} — 已把路線解鎖到 ${placement.nodeLabel}`
+          : `你的反射大約在 R${placement.rank}。這 8 題沒有明顯弱點 — 已把路線解鎖到 ${placement.nodeLabel}`;
+      }
     } else if (quiz.namedExamOutcome) {
       const outcome = quiz.namedExamOutcome;
       verdict = outcome.passed ? (accuracy >= 85 ? "高分及格" : "及格") : "未及格";
@@ -7074,6 +7032,16 @@
           ? `解鎖下一關：${pathResult.nextNode.label}`
           : "主線全數完成"
         : `差 ${pathResult.needed || 1} 題過關，建議重練一次`;
+    } else if (quiz.answers.length < 4 && quiz.answers.length < quiz.problems.length) {
+      // 做 1、2 題就離開：樣本太小，不下判斷，也不說「先重建基礎」
+      verdict = "提早離開";
+      verdictClass = "is-neutral";
+      nextLine = `只答了 ${quiz.answers.length} 題，還看不出什麼 —— 下次多做幾題再結算。`;
+    } else if (quiz.gentle) {
+      // 新手保護期：重點是看懂題型，不是分數
+      verdict = accuracy >= 70 ? "有感覺了" : "先看懂，再求對";
+      verdictClass = accuracy >= 70 ? "is-pass" : "is-neutral";
+      nextLine = accuracy >= 70 ? "這一輪的題型你已經認得了，下一局可以多做幾題。" : "答錯的題下面都有解法，看完再打一局同型的。";
     } else {
       verdict = resultTitle(accuracy);
       verdictClass = accuracy >= 70 ? "is-pass" : "is-fail";
@@ -7098,10 +7066,15 @@
                停在半路，畫面就停格在「61% 正確率」—— 三次實測重現的
                「結算數字自我修正」就是這個。成績是事實，不是表演。 -->
           <div class="verdict-stats" data-enter>
-            <span><strong>${correct}/${total}</strong>答對</span>
-            <span><strong>${accuracy}%</strong>正確率</span>
+            ${
+              // 定位是診斷：「還沒學過」是答案不是失分，正確率對它沒有意義
+              quiz.placementResult
+                ? `<span><strong>${correct}/${total}</strong>答對</span>${quiz.placementResult.unlearned ? `<span><strong>${quiz.placementResult.unlearned}</strong>還沒學過</span>` : ""}`
+                : `<span><strong>${correct}/${total}</strong>答對</span>
+            <span><strong>${accuracy}%</strong>正確率</span>`
+            }
             <span><strong>${avgTime}s</strong>平均</span>
-            ${quiz.practice ? "" : `<span><strong>${quiz.score}</strong>分數</span>`}
+            ${quiz.practice || quiz.placement ? "" : `<span><strong>${quiz.score}</strong>分數</span>`}
             ${quiz.xpGained ? `<span class="xp-chip"><strong>+${quiz.xpGained}</strong>XP</span>` : ""}
             ${quiz.questBonus ? `<span class="xp-chip quest-bonus-chip"><strong>+${quiz.questBonus}</strong>任務全清</span>` : ""}
           </div>
@@ -7422,10 +7395,20 @@
     if (problem.keyIdea) return { text: problem.keyIdea, authored: true };
     if (!window.BuzzSkillGraph) return null;
     try {
-      const names = window.BuzzSkillGraph.skillsForProblem(problem)
-        .map((id) => window.BuzzSkillGraph.label(id))
-        .filter(Boolean)
+      // 題目自己的技巧 tag 比技能節點的名字準：切線斜率那題掛在
+      // 「曲線分析與中值定理」節點下，但它考的是切線＋鏈鎖律，跟中值定理無關。
+      // 有中文名的技巧 tag 先用；沒有才退回技能節點。
+      const ownTags = (problem.tags || [])
+        .filter((tag) => !META_ANALYSIS_TAGS.has(tag) && TAG_LABELS[tag] && /[一-鿿]/.test(TAG_LABELS[tag]))
+        .map((tag) => TAG_LABELS[tag])
+        .filter((label, index, list) => list.indexOf(label) === index)
         .slice(0, 2);
+      const names = ownTags.length
+        ? ownTags
+        : window.BuzzSkillGraph.skillsForProblem(problem)
+          .map((id) => window.BuzzSkillGraph.label(id))
+          .filter(Boolean)
+          .slice(0, 2);
       if (!names.length) return null;
       // 中英之間補一個空格 ——「這題考的是L'Hôpital。」讀起來像 tag 直接
       // 串進句子。CJK 後面接拉丁字母時加空格是中文排版的基本禮貌。
@@ -7956,6 +7939,9 @@
       if (current) { quiz.graphTap[current.id] = []; render(); }
     }
     if (action === "show-hint") showHint();
+    if (action === "placement-unlearned" && quiz && quiz.placement && !quiz.feedback) {
+      recordAnswer({ status: "wrong", reason: "Unlearned", input: "", detail: "還沒學過就先跳過，定位會往基礎那邊調；這題不會進錯題本。" });
+    }
     if (action === "toggle-keypad" && quiz) {
       quiz.keypadOpen = !quiz.keypadOpen;
       render();
@@ -8736,12 +8722,13 @@
     const axisPicks = ordered.filter(hitsAxis).slice(0, wantAxis);
     const rest = ordered.filter((problem) => !axisPicks.includes(problem));
     const drawn = axisPicks.concat(rest).slice(0, mode.count);
-    return padPool(
-      shuffle(drawn, seedFromString(`${node.id}-mix-${drawn.length}`)),
-      source,
-      mode.count,
-      { records }
-    );
+    // 新手保護期的主線：由淺入深，不洗牌。第一關第一題本來抽到
+    // lim (sin x − x)/x³ —— 要 Taylor 或三次 L'Hôpital —— 而關卡簡介才說
+    // 「sin x / x 是核心」。適性排序對還沒有資料的人等於隨機；這時候 rank 就是最好的順序。
+    const mixed = gentleStartActive(records)
+      ? drawn.map((problem, index) => ({ problem, index })).sort((a, b) => (problemRank(a.problem) - problemRank(b.problem)) || (a.index - b.index)).map((entry) => entry.problem)
+      : shuffle(drawn, seedFromString(`${node.id}-mix-${drawn.length}`));
+    return padPool(mixed, source, mode.count, { records });
   }
 
   function selectPathGatePool(node, count) {
@@ -8774,16 +8761,24 @@
   function placementRankPools(records = loadRecords()) {
     const stamp = Date.now();
     const pools = {};
+    const topics = PLACEMENT_TOPICS_BY_CONTEXT[records.onboardingContext || ""] || null;
+    // 超綱閘門跟一般訓練同一套：定位不出多變數／特殊函數，
+    // 那些題對任何自陳等級 ≤ 大一的人都測不出「反射」，只測得出「沒學過」。
+    const source = beyondBasicsFilter(problems).filter((problem) => !topics || topics.includes(problem.topic));
     for (let rank = 1; rank <= 6; rank += 1) {
       pools[rank] = preferFreshProblems(
         shuffle(
-          problems.filter((problem) => problemRank(problem) === rank),
+          source.filter((problem) => problemRank(problem) === rank),
           seedFromString(`${stamp}-placement-${rank}`)
         ),
         records
       );
     }
     return pools;
+  }
+
+  function placementStartRank(records) {
+    return PLACEMENT_START_RANK_BY_CONTEXT[records.onboardingContext || ""] || PLACEMENT_START_RANK;
   }
 
   // 從指定 rank 附近抽一題：先抽同 rank，抽不到再往上下鄰近 rank 找；
@@ -8806,11 +8801,12 @@
     records.onboardingSeen = true;
     saveRecords(records);
     const pools = placementRankPools(records);
+    const startRank = placementStartRank(records);
     const used = new Set();
     const lineup = [];
     // 只有第一題是真的起手題；後面的槽位是佔位，作答後由調適邏輯換掉。
     while (lineup.length < PLACEMENT_COUNT) {
-      const pick = drawPlacementProblem(pools, PLACEMENT_START_RANK, used, lineup.length ? lineup[lineup.length - 1].topic : "");
+      const pick = drawPlacementProblem(pools, startRank, used, lineup.length ? lineup[lineup.length - 1].topic : "");
       if (!pick) break;
       used.add(pick.id);
       lineup.push(pick);
@@ -8826,7 +8822,7 @@
     startQuiz(lineup, {
       modeKey: "placement",
       answerMode: "choice",
-      placement: { rank: PLACEMENT_START_RANK, pools }
+      placement: { rank: startRank, pools }
     });
   }
 
@@ -8880,7 +8876,8 @@
           });
       });
     const weakTag = Object.entries(tagCounts).sort((a, b) => b[1] - a[1])[0]?.[0] || "";
-    return { rank, correct, weakTag };
+    const unlearned = (answers || []).filter((answer) => answer.reason === "Unlearned").length;
+    return { rank, correct, weakTag, unlearned, total: (answers || []).length };
   }
 
   // ---- Feature 10：具名模擬卷（沿用大考模式的整份倒數 / WebWork 機制） ----
@@ -9769,6 +9766,22 @@
       modal: null
     };
     if (options.dailyOne) quiz.dailyOne = options.dailyOne;
+    // 新手保護期（見 gentleStartActive）：一般訓練與主線在頭幾局改走 practice。
+    if (
+      gentleStartActive(records)
+      && !quiz.examMode && !quiz.placement && !quiz.pathGate && !quiz.duel && !quiz.namedExam
+      && !quiz.survival && !quiz.suddenDeath && !quiz.pressureMode && !options.dailyOne
+    ) {
+      quiz.practice = true;
+      quiz.gentle = true;
+    }
+    // 定位測驗是診斷，不是比賽：不計分、不給提示（提示會讓定位失真）、
+    // 答錯不停下來說教，直接下一題。
+    if (quiz.placement) {
+      quiz.noHint = true;
+      // 新手保護期的定位連倒數都不要：先量「會不會」就好。
+      if (gentleStartActive(records)) quiz.noTimer = true;
+    }
     view = "quiz";
     lastVisibilityStamp = Date.now();
     trackProblemStart(quiz.problems[0]);
@@ -10427,6 +10440,9 @@
   // 這正對 ability 模型抓出來的 PA/UA 差距。下限 15 秒：再短就只是反應遊戲。
   function questionTimeLimit(currentQuiz, problem) {
     const base = problem.timeLimit;
+    // 定位測驗給寬鬆的時間：它在量「會不會」，不是「快不快」——
+    // 一個還在讀題的人被 24 秒催掉，測到的是緊張不是程度。
+    if (currentQuiz && currentQuiz.placement) return Math.max(60, base * 2);
     if (!currentQuiz || !currentQuiz.pressureMode) return base;
     const total = currentQuiz.problems.length;
     if (total <= 1) return base;
@@ -10632,7 +10648,18 @@
   function submitChoiceAnswer(input) {
     if (!quiz || quiz.feedback) return;
     quiz.draft = input;
-    submitCurrentAnswer();
+    const current = getCurrentProblem();
+    const submission = resolveAnswerSubmission(current, String(input || "").trim(), "Wrong");
+    // 選擇題答錯時，「在 x=0.31 代入時不相同」是判分器的話，不是給人看的。
+    // 改成：你選的是哪一個、它像是怎麼錯的（誘答理由），正解在下面。
+    if (submission.status !== "correct" && current) {
+      const options = getChoiceOptions(current);
+      const index = options.findIndex((option) => option.value === input);
+      const letter = index >= 0 ? String.fromCharCode(65 + index) : "";
+      const reason = choiceDistractorReason(current, input);
+      submission.detail = `${letter ? `選了 ${letter}。` : ""}${reason}`;
+    }
+    recordAnswer(submission);
   }
 
   function resolveAnswerSubmission(problem, input, wrongReason) {
@@ -10751,7 +10778,7 @@
     // 而 950ms 的自動前進讓那張圖根本來不及出現（實測：答對直接跳結算，
     // 從頭到尾沒有對照圖）。作圖表答完一律停下來，看完自己按下一題。
     const pauseForComparison = getCurrentProblem()?.answerKind === "worksheet";
-    if ((correct && !pauseForComparison) || quiz.examMode) {
+    if ((correct && !pauseForComparison) || quiz.examMode || quiz.placement) {
       const pendingQuiz = quiz;
       window.setTimeout(() => {
         if (quiz !== pendingQuiz) return;
@@ -10766,7 +10793,7 @@
     // 這段本來就在，但它是**在 render() 之後立刻**執行的 —— 而 render 是
     // rAF 驅動的，那一刻畫面上的 .feedback 還沒被插進去，捲的是舊的（或沒有）
     // 節點，等於沒捲。要等 DOM 換完、KaTeX 排完版（會改變高度）再捲。
-    if ((!correct || pauseForComparison) && !quiz.examMode) scrollFeedbackIntoView();
+    if ((!correct || pauseForComparison) && !quiz.examMode && !quiz.placement) scrollFeedbackIntoView();
   }
 
   // 計算紙暫停：非考試的計時題，攤開計算紙就停表，收起來把暫停的
@@ -11131,15 +11158,24 @@
   }
 
   function hintsFor(problem) {
-    if (Array.isArray(problem.hints) && problem.hints.length) return problem.hints;
-    const hints = [];
+    // 作者寫的提示優先，但罐頭句（「Identify the dominant tool before computing.」）
+    // 不算 —— 那是對整包都成立、也就是對這一題沒用的句子，卻要扣分。
+    // 沒有作者提示時，先用系統從題目算出來的事實（「最外層是兩個函數相乘」），
+    // 最後才是主題的泛用提示。
+    const hints = authoredHints(problem).slice(0, 3);
+    if (hints.length >= 2) return hints;
+    const derived = window.BuzzDerivedHints ? window.BuzzDerivedHints.textFor(problem.id) || "" : "";
+    if (derived && !hints.includes(derived)) hints.push(derived);
+    const prompt = String(problem.prompt || "");
+    // 巢狀括號（f(g(x))）才提鏈鎖律；對 e^x·ln x 說「別忘了乘上內層導數」是誤導。
+    const nested = /\\(sin|cos|tan|ln|log|sqrt|exp)\s*\\?\(?[^)]*\\(sin|cos|tan|ln|log|sqrt|exp|frac)|\^\{[^}]*\\(sin|cos|tan|ln|log|frac)/.test(prompt) || /\\sqrt\{[^}]*\\(sin|cos|tan|ln|log)/.test(prompt);
     if (problem.topic === "limits") {
       hints.push("先找可否代入；若出現 0/0，再考慮展開、約分或標準極限。");
       hints.push("含三角函數時，優先想 sin x ~ x、1 - cos x ~ x^2/2。");
     }
     if (problem.topic === "derivatives") {
-      hints.push("先判斷要用乘法、商法還是鏈鎖律。");
-      hints.push("複合函數微分後，別忘了乘上內層導數。");
+      hints.push("先看最外層的結構：兩個函數相乘用乘法規則、相除用商法、套在一起才用鏈鎖律。");
+      if (nested) hints.push("複合函數微分後，別忘了乘上內層導數。");
     }
     if (problem.topic === "integrals") {
       hints.push("先觀察是否能換元，找出函數與其導數是否同時出現。");
@@ -11149,6 +11185,8 @@
       hints.push("先判斷是等比、p 級數、交錯級數，或需要比較判別。");
       hints.push("收斂判定題要分清楚收斂、條件收斂與絕對收斂。");
     }
+    // 格式提示只對「自己寫」有意義；選擇題不用打字，這幾句在那裡是噪音（還要扣分）。
+    if (quiz && quiz.answerMode === "choice") return hints.slice(0, 3);
     if (problem.answerKind === "antiderivative") hints.push("不定積分答案可省略 +C，系統會檢查是否相差常數。");
     if (problem.answerKind === "expression") hints.push("答案請寫成 x 的函數，例如用 sin(x)、log(x)、sqrt(x)。");
     if (problem.answerKind === "numeric") hints.push("數值答案可用分數、pi、e、sqrt 表示。");
@@ -11521,6 +11559,7 @@
       const normalized = normalizeChoice(value);
       if (!normalized || seen.has(normalized)) return;
       if (!isCorrect && checkAnswer(problem, value).correct) return;
+      if (!isCorrect && !wellFormedDistractor(problem, value)) return;
       seen.add(normalized);
       options.push({
         value,
@@ -11545,6 +11584,26 @@
     return shuffled;
   }
 
+  // 誘答至少要是一個算得出來的式子。字串手術（拔鏈鎖係數、除以變數）
+  // 偶爾會做出 *y+y*cos(y)、(…)/x,y,z 這種東西 —— 初學者看到會以為網站壞了。
+  function wellFormedDistractor(problem, value) {
+    const text = String(value || "").trim();
+    if (!text) return false;
+    if (["text", "set", "interval", "worksheet", "graph", "graphtap", "graphslope"].includes(problem.answerKind)) return true;
+    if (/^[*/^+]/.test(text) || /[*/^+(-]$/.test(text) || /[*/^]{2}/.test(text) || /\(\)/.test(text)) return false;
+    if (text.includes(",")) return false;
+    let depth = 0;
+    for (const ch of text) {
+      if (ch === "(") depth += 1;
+      if (ch === ")") depth -= 1;
+      if (depth < 0) return false;
+    }
+    if (depth !== 0) return false;
+    if (/^(dne|inf|-inf)$/i.test(text)) return true;
+    const probe = evaluateExpression(text, { x: 0.7, y: 0.6, z: 0.8, t: 0.5, n: 3, u: 0.9, a: 0.4, b: 0.3, k: 2 });
+    return Number.isFinite(probe);
+  }
+
   // 選項顯示前的常數摺疊。
   //
   // 為什麼在顯示層做而不改題庫：答案字串是判分與驗算的鍵，動它要重跑
@@ -11555,6 +11614,15 @@
   //   pi/(2*sqrt(2))   -> 原樣（無理數不硬轉小數）
   function foldNumericParens(text) {
     let out = String(text);
+    // 4*3*x^(3-1) 這種模板形狀：先把純整數的乘積摺成一個數（4*3 → 12），
+    // 但 2*3^2 不能摺成 6^2 —— 第二個數後面接 ^ 就放過。
+    for (let round = 0; round < 6; round += 1) {
+      const next = out.replace(/(^|[^\w.^])(\d+)\*(\d+)(?![\d.]|\^)/g, (whole, lead, a, b) => `${lead}${Number(a) * Number(b)}`);
+      if (next === out) break;
+      out = next;
+    }
+    // 係數 1 不用寫：1*x*y → x*y（微擾誘答把 2 改成 1 時會留下這種形狀）
+    out = out.replace(/(^|[^\w.^])1\*(?=[a-z(])/g, "$1");
     for (let round = 0; round < 6; round += 1) {
       const next = out.replace(/\((-?\d+(?:\.\d+)?(?:[+\-*/^]-?\d+(?:\.\d+)?)+)\)/g, (whole, expr) => {
         const value = evaluateExpression(expr, {});
@@ -11618,12 +11686,27 @@
     // 格式也要同族：正解是精確形（15/2、pi/4）時，0.5772156649 這種
     // 長小數一看就是別題漂來的（那還真的是 Euler γ）。
     const exactStyle = !/\.\d{4,}/.test(String(correct));
+    // 別題的答案只能當**同形**的誘答：同主題、同一組變數、長度相近。
+    // 走查初學者流程抓到的：d/dx(4x³) 的選項是 (log x)^(log x)·…、2xy + y cos(xy)、
+    // cos(sin(sin x))·… —— 從不相干的題漂來的外星人，靠排除法零秒答對，
+    // 還讓產品看起來是壞的。
+    const variableSet = (value) => String(value).replace(/pi|exp|log|sin|cos|tan|sqrt|sinh|cosh|tanh|asin|acos|atan|abs|DNE|inf/gi, "").replace(/[^a-z]/gi, "").split("").sort().join("");
+    const ownVars = variableSet(correct);
+    const ownLength = String(simplifyChoiceLabel(correct)).length;
+    const sameShape = (value) => {
+      const text = String(value);
+      if (variableSet(text) !== ownVars) return false;
+      const length = String(simplifyChoiceLabel(text)).length;
+      return length <= Math.max(6, ownLength * 1.8) && length >= Math.min(ownLength * 0.4, ownLength);
+    };
     const answerPool = [...sameTopic, ...sameKind]
       .map(displayAnswer)
       .filter((value) => numericallyPlausibleDistractor(correct, value))
-      .filter((value) => !exactStyle || !/\.\d{4,}/.test(String(value)));
-    const generated = generatedChoiceDistractors(problem, correct);
-    return shuffle([...generated, ...answerPool], seedFromString(`${problem.id}-distractors`));
+      .filter((value) => !exactStyle || !/\.\d{4,}/.test(String(value)))
+      .filter(sameShape);
+    // 微擾出來的誘答（真實的犯錯方式）永遠排在前面；別題的答案只補不足的位置。
+    const generated = shuffle(generatedChoiceDistractors(problem, correct), seedFromString(`${problem.id}-distractors`));
+    return [...generated, ...shuffle(answerPool, seedFromString(`${problem.id}-pool`))];
   }
 
   // 誘答跟正解要在同一個量級上才有鑑別力。
@@ -11688,13 +11771,13 @@
     if (close(a * a) && Math.abs(a) > 1e-6 && Math.abs(Math.abs(a) - 1) > 1e-6) return "像是多平方了一次。";
     if (a >= 0 && close(Math.sqrt(a)) && Math.abs(a - 1) > 1e-6) return "像是多開了一次根號。";
     if (close(a * 2)) return "像是多乘 2。";
-    if (close(a / 2)) return "像是少了一個 2 —— 積分或半角公式最常掉在這裡。";
+    if (close(a / 2)) return "像是少了一個 2。";
     if (close(a * 3)) return "像是係數多乘 3。";
     if (close(a / 3)) return "像是少除 3。";
     if (close(a * Math.PI)) return "像是多乘了一個 π。";
     if (Math.abs(a) > 1e-9 && close(a / Math.PI)) return "像是把 π 除掉了 —— sin(πx) 積分後的 1/π 別漏。";
-    if (close(a + 1)) return "像是多加 1 —— 冪次或上下限差一。";
-    if (close(a - 1)) return "像是少 1 —— 冪次或上下限差一。";
+    if (close(a + 1)) return "像是多了 1 —— 常數、冪次或上下限差一。";
+    if (close(a - 1)) return "像是少了 1 —— 常數、冪次或上下限差一。";
     if (close(a * Math.E)) return "像是多乘一個 e。";
     if (Math.abs(a) > 1e-9 && close(a / Math.E)) return "像是少乘一個 e。";
     if (a > 0 && close(Math.log(a)) && Math.abs(a - 1) > 0.1) return "像是多取了一次 log。";
@@ -11790,10 +11873,15 @@
     ];
   }
 
+  // 誘答的數字要長得像人算出來的：1/3 就寫 1/3，不要 0.333333 ——
+  // 一串小數在四個精確形的選項裡一眼就是「湊數的那個」。
   function formatChoiceNumber(value) {
     if (!Number.isFinite(value)) return "";
     const rounded = Math.round(value * 1000000) / 1000000;
-    return Number.isInteger(rounded) ? String(rounded) : String(rounded);
+    if (Number.isInteger(rounded)) return String(rounded);
+    const frac = approximateFraction(Math.abs(value), 1000);
+    if (frac && frac.ok && frac.q > 1) return `${value < 0 ? "-" : ""}${frac.p}/${frac.q}`;
+    return String(Math.round(value * 10000) / 10000);
   }
 
   function stripOuterScale(value) {
@@ -13191,11 +13279,20 @@
     return { level: level + 1, into: remaining, span };
   }
 
+  // 結算的分母。中途離開的一局只結算已經答的題 —— 做 2 題就退出被記成
+  // 0/13、0%、「先重建基礎」，那是把「沒做」算成「做錯」。
+  // 大考（收卷時未答的題會補成未作答）與主線關卡（過關線是整關的題數）照舊。
+  function settledTotal(currentQuiz) {
+    if (!currentQuiz) return 0;
+    if (currentQuiz.examMode || currentQuiz.pathNodeId || currentQuiz.pathGate) return currentQuiz.problems.length;
+    return Math.max(currentQuiz.answers.length, 0) || currentQuiz.problems.length;
+  }
+
   function saveQuizRecord(currentQuiz) {
     const records = loadRecords();
     const finishedAt = new Date().toISOString();
     const correct = currentQuiz.answers.filter((answer) => answer.correct).length;
-    const total = currentQuiz.problems.length;
+    const total = settledTotal(currentQuiz);
     const accuracy = total ? Math.round((correct / total) * 100) : 0;
     const avgTime = averageAnswerTime(currentQuiz.answers);
     const previousRecent = recentAnswerStats(records, 30);
@@ -13218,7 +13315,8 @@
     // 所以「這一局補完最後一條任務」也算得到。
     currentQuiz.questBonus = 0;
 
-    const answerContext = { mistakesMode: currentQuiz.mode === "mistakes" };
+    // 定位是診斷：答錯／沒學過都不進錯題本，不然第一份「複習」是一堆沒學過的東西。
+    const answerContext = { mistakesMode: currentQuiz.mode === "mistakes", diagnostic: Boolean(currentQuiz.placement) };
     currentQuiz.answers.forEach((answer) => updateAnswerRecords(records, answer, finishedAt, answerContext));
     currentQuiz.mistakesCleared = currentQuiz.answers.filter((answer) => beforeMistakes.has(answer.problem.id) && !records.mistakes[answer.problem.id]).length;
 
@@ -13433,7 +13531,7 @@
     records.problemStats[problem.id][answer.correct ? "correct" : "wrong"] += 1;
     records.problemStats[problem.id].lastAnsweredAt = finishedAt;
 
-    if (!answer.correct) {
+    if (!answer.correct && !context.diagnostic && answer.reason !== "Unlearned") {
       const previous = records.mistakes[problem.id] || {};
       if (!previous.problemId) {
         trackEvent("mistake_added", {
@@ -14356,7 +14454,9 @@
       if (!problem) return;
       const weight = mistakeWeight(item);
       topicCounts[problem.topic] = (topicCounts[problem.topic] || 0) + weight;
+      // meta tag（rank-1、beginner-friendly、出處）不是技巧，「新手友善 · 6」對弱點分析沒有意義
       (problem.tags || []).forEach((tag) => {
+        if (META_ANALYSIS_TAGS.has(tag)) return;
         tagCounts[tag] = (tagCounts[tag] || 0) + weight;
       });
       if (item.tag) errorTagCounts[item.tag] = (errorTagCounts[item.tag] || 0) + weight;
@@ -14571,6 +14671,7 @@
       Timeout: "時間到",
       Skipped: "已跳過",
       Unanswered: "未作答",
+      Unlearned: "還沒學過",
       // 「切頁次數超過」這個判定已經移除，但舊紀錄裡可能還有這個 reason，
       // 標籤留著才不會在歷史畫面上顯示成原始字串
       "Tab limit": "切頁次數超過（舊制，已停用）"
@@ -15055,6 +15156,11 @@
       pathRetestPending,
       skillRefreshDue,
       simplifyChoiceLabel,
+      buildChoiceDistractors,
+      wellFormedDistractor,
+      getChoiceOptions,
+      hintsFor,
+      gentleStartActive,
       numericallyPlausibleDistractor,
       spreadFamilies,
       dailyMissionInfo,
