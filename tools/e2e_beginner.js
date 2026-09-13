@@ -217,6 +217,44 @@ async function run() {
     check("一個技巧都沒量時倒數卡不說「都到標了」，改叫人先寫模擬卷", /先寫一份/.test(countdown.card) && !/都到標了|0\/0/.test(countdown.card), countdown.card.slice(0, 120));
     check("倒數卡有按鈕，不是講完「排不完」就把人留在原地", countdown.buttons.length >= 2, countdown.buttons.join(" | "));
 
+    /* ── 6. 再換一個人：想挑戰難題 ── */
+    // 挑戰分頁的模式只有三個字的註、Boss 題用選的（選項洩題）、
+    // 題庫按 Boss 是「0 符合條件」、生存卡在難度上限 4 而且看不到命。
+    await chrome.navigate(server.url + "/index.html");
+    await chrome.evaluate("localStorage.clear(); return 1;");
+    await chrome.navigate(server.url + "/index.html");
+    await clickText("開始");
+    await evaluate(`return window.__b.clickText("想維持手感");`);
+    await chrome.sleep(500);
+    await clickText("直接開始練", 800);
+    await click('button[data-action="dismiss-notice"]');
+    await click('[data-action="open-train"]', 700);
+    await click('[data-action="set-bucket"][data-bucket="challenge"]', 700);
+    const challenge = await evaluate(`return { firstPanel: window.__b.text(".train-screen .study-card"), cards: [...document.querySelectorAll(".challenge-mode")].map((n) => n.innerText.replace(/\\s+/g, " ")) };`);
+    check("挑戰分頁第一張就是挑戰模式", /挑戰模式/.test(challenge.firstPanel), challenge.firstPanel.slice(0, 30));
+    check("每個挑戰模式都寫了規則與題數", challenge.cards.length >= 7 && challenge.cards.every((c) => c.split(" ").length >= 6), challenge.cards[0]);
+    await click('[data-action="start-mode"][data-mode-key="boss"]', 900);
+    await click('button[data-action="dismiss-notice"]');
+    const boss = await evaluate(`return { free: Boolean(document.querySelector(".answer-input")), choices: document.querySelectorAll('[data-action="choose-answer"]').length, rank: window.__b.rank() };`);
+    check("階梯測驗預設自己寫答案（選項會洩題）", boss.free && boss.choices === 0);
+    check("階梯第一題不是 R6（真的由易到難）", boss.rank > 0 && boss.rank <= 5, `R${boss.rank}`);
+    await click('[data-action="confirm-exit"]');
+    await evaluate(`const b = [...document.querySelectorAll(".modal button")].find((x) => /離開/.test(x.textContent)); if (b) b.click(); return 1;`);
+    await chrome.sleep(700);
+    await click('[data-action="open-train"]', 700);
+    await click('[data-action="set-bucket"][data-bucket="challenge"]', 700);
+    await click('[data-action="start-mode"][data-mode-key="survival"]', 900);
+    await click('button[data-action="dismiss-notice"]');
+    const survival = await evaluate(`return { lives: window.__b.text(".hud-lives") };`);
+    check("生存的三條命畫在 HUD 上", /剩 3 條命/.test(survival.lives), survival.lives);
+    await click('[data-action="confirm-exit"]');
+    await evaluate(`const b = [...document.querySelectorAll(".modal button")].find((x) => /離開/.test(x.textContent)); if (b) b.click(); return 1;`);
+    await chrome.sleep(700);
+    await click('[data-action="open-library"]', 800);
+    await click('[data-library-filter="boss"]', 700);
+    const libraryBoss = await evaluate(`return Number((window.__b.text(".library-count") || "").match(/\\d+/)?.[0] || 0);`);
+    check("題庫按 Boss 不會是 0 符合條件（明確要看難題就不擋）", libraryBoss > 100, String(libraryBoss));
+
     const errors = await chrome.evaluate(`return (window.__buzzErrors || []).length;`);
     check("沒有未捕捉的例外", !errors, errors ? `${errors} 個` : "");
   } finally {
