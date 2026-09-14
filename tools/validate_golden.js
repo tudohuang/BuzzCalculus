@@ -30,6 +30,9 @@ const rubric = global.window.BuzzRubric;
 const reviewed = require(path.join(__dirname, "..", "src", "kernel", "rubric_reviewed.js"));
 
 const GOLDEN = path.join(__dirname, "golden", "difficulty.json");
+// 2026-09-14: baseline catches up with the 1994-item bank and 8a13351's reviewed
+// partial-fraction / substitution ranks. Replaying bd3930c's ranks reproduces
+// mastery 53; the six reviewed IBP R2 -> R3 changes alone yield 54. Anchors retained.
 
 /* ── 目前狀態 ─────────────────────────────────────────────── */
 

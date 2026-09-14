@@ -112,6 +112,9 @@
     "2026-09-09": "gap-der-app-006",
     "2026-09-10": "ap-work-001",
     "2026-09-11": "td-ser-001",
+    "2026-09-12": "tb-mvt-003",
+    "2026-09-13": "burst-int-010",
+    "2026-09-14": "cx-hl-001",
   };
   if (typeof module !== "undefined" && module.exports) module.exports = { HISTORY };
   if (typeof window !== "undefined") window.BUZZ_DAILY_ONE_HISTORY = HISTORY;

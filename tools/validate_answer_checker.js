@@ -170,19 +170,54 @@ const timeoutPassed = timeoutResult.status === "correct" && timeoutResult.reason
 console.log(`${timeoutPassed ? "PASS" : "FAIL"} timeout keeps correct draft: status=${timeoutResult.status} reason=${timeoutResult.reason}`);
 if (!timeoutPassed) failures.push({ name: "timeout keeps correct draft", input: timeoutResult.input, expected: true, result: timeoutResult });
 
-const canonicalProblems = (global.window.BUZZ_PROBLEMS || []).filter((problem) => /^(gap|mob|rel|hc|exam|uni|depth|burst|vc|cx|ap|gp|dm|ph|ch|dd|fd|tb|ch-nest|ch-mix|ch-pow|ch-trap|ch-inv)-/.test(problem.id));
+const canonicalProblems = global.window.BUZZ_PROBLEMS || [];
 canonicalProblems.forEach((problem) => {
   const input = problem.answerKind === "text" ? problem.canonical || problem.answers[0] : problem.answer;
   const result = api.checkAnswer(problem, input);
   const passed = Boolean(result.correct);
   const status = passed ? "PASS" : "FAIL";
-  console.log(`${status} canonical ${problem.id}: input=${input} actual=${Boolean(result.correct)} message=${result.message}`);
+  if (!passed) console.log(`${status} canonical ${problem.id}: input=${input} actual=${Boolean(result.correct)} message=${result.message}`);
   if (!passed) failures.push({ name: `canonical ${problem.id}`, input, expected: true, result });
 });
 
+const byId = (id) => canonicalProblems.find((problem) => problem.id === id);
+const regressions = [
+  ["differential dx/dy", byId("der-044"), "x*exp(x*y)*dy+y*exp(x*y)*dx", true],
+  ["compact differential products", byId("der-045"), "(xdy-ydx)/(x^2+y^2)", true],
+  ["missing differential term", byId("der-044"), "y*exp(x*y)*dx", false],
+  ["independent multivariable samples", byId("der-021"), `(${byId("der-021").answer})+(y-x-0.27)`, false],
+  ["narrower expression domain", { ...derivativeProblem, answer: "x" }, "sqrt(x)^2", false],
+  ["narrower primitive domain", { ...antiderivativeProblem, answer: "x" }, "sqrt(x)^2", false],
+  ["correct large integration constant", byId("int-001"), "2*x^3+100000000", true],
+  ["large constant cannot hide wrong primitive", byId("int-001"), "2*x^3+x+100000000", false],
+  ["unreliable constant asks for +C", byId("int-001"), "2*x^3+10000000000000000", false],
+  ["symbolic integration constant", byId("int-001"), "2*x^3+C", true]
+];
+regressions.forEach(([name, problem, input, expected]) => {
+  const result = api.checkAnswer(problem, input);
+  if (Boolean(result.correct) !== expected) failures.push({ name, input, expected, result });
+});
+// Check actual displayed choices, including mathematically equal distractors (2/2 and 1/1).
+api.setQuiz({ startedAt: "2026-09-14", index: 0, choiceOptions: {} });
+const numericProblems = canonicalProblems.filter((problem) => problem.answerKind === "numeric");
+numericProblems.forEach((problem) => {
+  const options = api.getChoiceOptions(problem);
+  if (options.length !== 4) failures.push({ name: `four choices ${problem.id}`, options });
+  if (options.filter((option) => api.checkAnswer(problem, option.value).correct).length !== 1) {
+    failures.push({ name: `unique correct choice ${problem.id}`, options });
+  }
+  options.forEach((option, i) => options.slice(i + 1).forEach((other) => {
+    if (option.label === other.label || api.checkAnswer({ ...problem, answer: option.value }, other.value).correct) {
+      failures.push({ name: `distinct choices ${problem.id}`, option, other });
+    }
+  }));
+});
+console.log(`Canonical answers: ${canonicalProblems.length}; regressions: ${regressions.length}; numeric choice sets: ${numericProblems.length}`);
+
 if (failures.length) {
+  failures.forEach((failure) => console.error(JSON.stringify(failure)));
   console.error(`\n${failures.length} answer checker tests failed.`);
   process.exit(1);
 }
 
-console.log(`\nValidated ${tests.length + 1 + canonicalProblems.length} answer checker cases`);
+console.log(`\nValidated ${tests.length + 1 + canonicalProblems.length + regressions.length} answer checker cases and ${numericProblems.length} numeric choice sets`);

@@ -86,8 +86,60 @@ if (gibberish.lines[0].status !== "error") fail("讀不懂的句子應該標紅"
 // 句型表與規則表要能列出來（教學頁用）
 if (!lang.patterns.length || !lang.rules.length) fail("patterns / rules 表是空的");
 
+const minimum = problems.find((spec) => spec.id === "pl-min-positive");
+for (const [name, edits] of [
+  ["negative witness", (line) => line.replace("t = m/2", "t = -1").replace("0 < t < m", "t < m")],
+  ["zero witness", (line) => line.replace("t = m/2", "t = 0").replace("0 < t < m", "t < m")],
+  ["missing membership", (line) => line.replace("0 < t < m", "t < m")],
+  ["wrong set", (line) => line.replaceAll("正實數", "正整數")]
+]) {
+  const text = minimum.reference.map(edits).join("\n");
+  const spec = name === "wrong set" ? { ...minimum, goal: { text: ["不存在最小的正整數"] } } : minimum;
+  const result = lang.check(spec, text);
+  checks += 1;
+  if (result.verdict === "verified" || result.lines[3].status === "ok") fail(`反證不能接受 ${name}`);
+}
+// A satisfiable but unsampled domain is not a contradiction.
+const rare = { ...minimum, vars: { m: { min: 1000000000, max: 1000000001 } } };
+const rareResult = lang.check(rare, ["反設 m > 2000000000。", "這與假設矛盾。", minimum.reference[4]].join("\n"));
+checks += 1;
+if (rareResult.lines[1].status === "ok" || rareResult.verdict === "verified") fail("取樣失敗不能推出反證成立");
+
+// 5. 課程：範例要全綠（課文旁邊的註解是真的跑出來的）、練習的起手式不能有紅、
+//    也不能起手就寫完（要留東西給人寫）、每一課引用的題目都要存在、id 不能重複
+const lessons = global.window.BUZZ_PROOF_LANG_LESSONS || [];
+if (!lessons.length) fail("沒有課程");
+const seen = new Set();
+lessons.forEach((lesson, index) => {
+  const label = `第 ${index + 1} 課（${lesson.id}）`;
+  if (seen.has(lesson.id)) fail(`${label}：id 重複`);
+  seen.add(lesson.id);
+  if (!Array.isArray(lesson.intro) || !lesson.intro.length) fail(`${label}：沒有課文`);
+  const example = problems.find((spec) => spec.id === lesson.exampleId);
+  if (!example) { fail(`${label}：範例 ${lesson.exampleId} 不存在`); return; }
+  checks += 1;
+  if (lang.check(example, example.reference.join("\n")).verdict !== "verified") fail(`${label}：範例 ${example.id} 不是全綠`);
+  const exercise = lesson.exercise && problems.find((spec) => spec.id === lesson.exercise.id);
+  if (!exercise) { fail(`${label}：練習 ${lesson.exercise && lesson.exercise.id} 不存在`); return; }
+  if (exercise.id === example.id) fail(`${label}：練習跟範例是同一題，答案就在旁邊`);
+  if (!lesson.exercise.task) fail(`${label}：練習沒有說明`);
+  const starter = lesson.exercise.starter || [];
+  const starterReport = lang.check(exercise, starter.join("\n"));
+  checks += 1;
+  if (starterReport.lines.some((line) => line.status === "error")) fail(`${label}：練習的起手式就有紅的\n    ${starterReport.lines.filter((l) => l.status === "error").map((l) => `${l.raw} —— ${l.note}`).join("\n    ")}`);
+  if (starterReport.verdict === "verified") fail(`${label}：起手式已經全綠，沒東西留給人寫`);
+  // 起手式要真的是參考證明的開頭（逐行對得上），使用者接著寫參考證明的其餘行就會全綠
+  const normalizeLine = (text) => lang.parse(text)[0] ? lang.parse(text)[0].kind + ":" + String(text).replace(/\s+/g, "") : String(text);
+  starter.forEach((line, i) => {
+    if (normalizeLine(line) !== normalizeLine(exercise.reference[i] || "")) fail(`${label}：起手式第 ${i + 1} 行「${line}」跟參考證明第 ${i + 1} 行「${exercise.reference[i] || ""}」對不上`);
+  });
+  const completed = lang.check(exercise, starter.concat(exercise.reference.slice(starter.length)).join("\n"));
+  checks += 1;
+  if (completed.verdict !== "verified") fail(`${label}：起手式接上參考證明的其餘行之後不是全綠（${completed.verdict}）`);
+});
+
 console.log("白話證明");
-console.log(`  題目      ${problems.length} 題`);
+console.log(`  題目      ${problems.length} 題 · 課程 ${lessons.length} 課`);
 console.log(`  檢查      ${checks} 次（參考證明、刪行、翻符號）`);
 console.log(`  句型      ${lang.patterns.length} 種 · 規則 ${lang.rules.length} 條`);
 if (failures.length) {

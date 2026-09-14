@@ -21,14 +21,15 @@
     "，": ",", "。": "", "：": ":", "；": ";", "（": "(", "）": ")", "「": "", "」": "", "『": "", "』": "",
     "≤": "<=", "≦": "<=", "≥": ">=", "≧": ">=", "≠": "!=", "−": "-", "–": "-", "—": "-", "×": "*", "·": "*", "⋅": "*", "÷": "/",
     "∈": " in ", "∞": "inf", "√": "sqrt", "π": "pi", "ε": "eps", "δ": "delta", "→": "->", "⇒": "=>", "∀": "forall ", "∃": "exists ",
-    "…": "...", "²": "^2", "³": "^3", "＝": "=", "＜": "<", "＞": ">", "＋": "+", "－": "-", "／": "/", "　": " ", "′": "'", "’": "'"
+    "…": "...", "²": "^2", "³": "^3", "⁴": "^4", "⁵": "^5", "⁶": "^6", "ⁿ": "^n", "＝": "=", "＜": "<", "＞": ">", "＋": "+", "－": "-", "／": "/", "　": " ", "′": "'", "’": "'",
+    "ξ": "xi", "η": "eta", "θ": "theta", "λ": "lambda", "μ": "mu", "α": "alpha", "β": "beta", "γ": "gamma"
   };
 
   function normalize(text) {
     let out = String(text || "");
     out = out.replace(/[０-９]/g, (ch) => String.fromCharCode(ch.charCodeAt(0) - 0xff10 + 48));
     out = out.replace(/[Ａ-Ｚａ-ｚ]/g, (ch) => String.fromCharCode(ch.charCodeAt(0) - 0xff21 + 65 + (ch.charCodeAt(0) >= 0xff41 ? 32 : 0)));
-    out = out.replace(/[，。：；（）「」『』≤≦≥≧≠−–—×·⋅÷∈∞√πεδ→⇒∀∃…²³＝＜＞＋－／　′’]/g, (ch) => CHAR_MAP[ch]);
+    out = out.replace(/[，。：；（）「」『』≤≦≥≧≠−–—×·⋅÷∈∞√πεδ→⇒∀∃…²³⁴⁵⁶ⁿ＝＜＞＋－／　′’ξηθλμαβγ]/g, (ch) => CHAR_MAP[ch]);
     out = out.replace(/\\(epsilon|varepsilon)/g, "eps").replace(/\\delta/g, "delta").replace(/\\(le|leq)\b/g, "<=").replace(/\\(ge|geq)\b/g, ">=");
     out = out.replace(/\\(cdot|times)\b/g, "*").replace(/\\(sqrt|pi|sin|cos|tan|log|ln|exp|lim|to|infty)\b/g, "$1");
     out = out.replace(/\bepsilon\b/g, "eps").replace(/\binfty\b/g, "inf");
@@ -258,8 +259,48 @@
   }
 
   function makeScope(spec, ctx) {
-    const vars = new Set([...Object.keys(spec.vars || {}), ...ctx.vars.keys(), ...Object.keys(ctx.defs)]);
-    return { vars, functions: spec.functions || {} };
+    const vars = new Set([...Object.keys(spec.vars || {}), ...ctx.vars.keys(), ...Object.keys(ctx.defs), ...(ctx.atoms ? ctx.atoms.keys() : [])]);
+    const functions = Object.assign({}, spec.functions || {});
+    // 使用者自己「令 g(x) = x^5 + x − 1」的函數：本體只認參數與常數
+    Object.keys(ctx.userFunctions || {}).forEach((name) => {
+      const entry = ctx.userFunctions[name];
+      functions[name] = (value) => entry.fn({ [entry.param]: value });
+    });
+    return { vars, functions };
+  }
+
+  // 抽象函數：f(y)、f'(c) 這種驗不了的東西，變成「不透明的取樣變數」（atom）。
+  // 同一個寫法永遠是同一個變數，所以「f(y) − f(x) = f'(c)(y − x)」登記成條件之後，
+  // 後面的「f(y) − f(x) = 0」就能在同一批取樣點上驗。spec.abstract 說哪些名字是抽象的、值域多大
+  // （f′ 恆為 0 的題就把 f′ 的值域設成 [0, 0]）。
+  const ATOM_PREFIX = "at_";
+  function atomize(spec, expr, ctx) {
+    const abstract = spec.abstract || {};
+    if (!ctx || !Object.keys(abstract).length) return expr;
+    let out = expr;
+    for (let round = 0; round < 6; round += 1) {
+      const next = out.replace(/([A-Za-z]\w*'*)\(([^()]*)\)/g, (whole, name, arg) => {
+        if (!abstract[name]) return whole;
+        const key = ATOM_PREFIX + name.replace(/'/g, "p") + "_" + compact(arg)
+          .replace(/\+/g, "plus").replace(/-/g, "minus").replace(/\*/g, "times").replace(/\//g, "over").replace(/\^/g, "pow").replace(/[^A-Za-z0-9]/g, "_");
+        ctx.atoms = ctx.atoms || new Map();
+        if (!ctx.atoms.has(key)) ctx.atoms.set(key, { display: `${name}(${arg.trim()})`, domain: abstract[name] || {} });
+        return key;
+      });
+      if (next === out) break;
+      out = next;
+    }
+    return out;
+  }
+
+  // 把 atom 的內部名字換回使用者寫的樣子（註解用）
+  function pretty(ctx, text) {
+    if (!ctx || !ctx.atoms || !ctx.atoms.size) return text;
+    let out = String(text);
+    [...ctx.atoms.keys()].sort((a, b) => b.length - a.length).forEach((key) => {
+      out = out.split(key).join(ctx.atoms.get(key).display);
+    });
+    return out;
   }
 
   function drawSamples(spec, ctx, count) {
@@ -267,7 +308,8 @@
     const random = seeded(spec.seed || 20260913);
     const domains = {};
     [...scope.vars].forEach((name) => {
-      const declared = (spec.vars && spec.vars[name]) || ctx.vars.get(name) || {};
+      const atom = ctx.atoms && ctx.atoms.get(name);
+      const declared = (atom && atom.domain) || (spec.vars && spec.vars[name]) || ctx.vars.get(name) || {};
       domains[name] = {
         min: declared.min !== undefined ? declared.min : (name === "eps" || name === "delta" ? 0.05 : -3),
         max: declared.max !== undefined ? declared.max : (name === "eps" || name === "delta" ? 2 : 3),
@@ -276,7 +318,10 @@
     });
     const defs = Object.keys(ctx.defs).map((name) => ({ name, fn: compile(ctx.defs[name], scope) }));
     const constraints = ctx.constraints.filter((item) => item.caseId === null || item.caseId === ctx.currentCase);
-    const compiled = constraints.map((item) => ({ ...item, lhs: compile(item.lhs, scope), rhs: compile(item.rhs, scope) }));
+    // 編不出來的條件（含抽象符號）不擋取樣 —— 它們在登記時就已經標黃了
+    const compiled = constraints.map((item) => {
+      try { return { ...item, lhs: compile(item.lhs, scope), rhs: compile(item.rhs, scope) }; } catch (_error) { return null; }
+    }).filter(Boolean);
     const accepted = [];
     let tries = 0;
     const maxTries = Math.max(4000, count * 40);
@@ -291,9 +336,17 @@
         if (domain.int) value = Math.round(value);
         env[name] = value;
       });
-      for (const def of defs) {
-        try { env[def.name] = def.fn(env); } catch (_error) { ok = false; }
-        if (!Number.isFinite(env[def.name])) ok = false;
+      // 定義可能互相引用、而且登記順序不一定是依賴順序（f(y) 先解出來、f'(c) 後來才 = 0）：
+      // 多跑幾輪，直到每個定義都算得出有限值
+      for (let pass = 0; pass < defs.length && ok; pass += 1) {
+        let pending = false;
+        for (const def of defs) {
+          if (Number.isFinite(env[def.name])) continue;
+          try { env[def.name] = def.fn(env); } catch (_error) { env[def.name] = NaN; }
+          if (!Number.isFinite(env[def.name])) pending = true;
+        }
+        if (!pending) break;
+        if (pass === defs.length - 1) ok = false;
       }
       if (!ok) continue;
       for (const item of compiled) {
@@ -311,13 +364,14 @@
   // 形狀對上就綠；對不上但句子本身能數值驗，就走代數引擎；都不行標黃。
   const RULES = [
     { id: "triangle", names: ["三角不等式", "triangle inequality", "triangle"], shapes: [/abs\((.+)\+(.+)\)<=abs\(.+\)\+abs\(.+\)/] },
-    { id: "mvt", names: ["平均值定理", "均值定理", "mvt", "mean value theorem", "lagrange"], shapes: [/f\((\w+)\)-f\((\w+)\)=f'\((\w+)\)\*?\((\w+)-(\w+)\)/, /f'\((\w+)\)=\(?f\((\w+)\)-f\((\w+)\)\)?\/\((\w+)-(\w+)\)/] },
-    { id: "rolle", names: ["rolle", "rolle定理", "洛爾定理", "rolle theorem"], shapes: [/f'\((\w+)\)=0/] },
-    { id: "evt", names: ["極值定理", "extreme value theorem", "evt", "最大最小值定理"], shapes: [/(最大值|最小值|maximum|minimum|max|min)/] },
-    { id: "fermat", names: ["fermat", "費馬定理", "fermat theorem", "內點極值"], shapes: [/f'\((\w+)\)=0/] },
+    { id: "mvt", names: ["平均值定理", "均值定理", "mvt", "mean value theorem", "lagrange"], shapes: [/(\w+)\((\w+)\)-\1\((\w+)\)=\1'\((\w+)\)\*?\((\w+)-(\w+)\)/, /(\w+)'\((\w+)\)=\(?\1\((\w+)\)-\1\((\w+)\)\)?\/\((\w+)-(\w+)\)/], requires: "differentiable" },
+    { id: "rolle", names: ["rolle", "rolle定理", "洛爾定理", "rolle theorem"], shapes: [/(\w+)'\((\w+)\)=0/], requires: "differentiable" },
+    { id: "evt", names: ["極值定理", "extreme value theorem", "evt", "最大最小值定理"], shapes: [/(最大值|最小值|maximum|minimum|max|min)/], requires: "continuous" },
+    { id: "fermat", names: ["fermat", "費馬定理", "fermat theorem", "內點極值"], shapes: [/(\w+)'\((\w+)\)=0/] },
     { id: "squeeze", names: ["夾擠定理", "夾擠", "squeeze", "sandwich", "squeeze theorem"], shapes: [/lim/], requires: "sandwich" },
     { id: "amgm", names: ["算幾不等式", "am-gm", "amgm", "算術幾何平均"], shapes: [/\(?(.+)\+(.+)\)?\/2>=sqrt\(/, />=2\*?sqrt\(/] },
-    { id: "ivt", names: ["中間值定理", "介值定理", "ivt", "intermediate value theorem"], shapes: [/f\((\w+)\)=/] },
+    // 中間值定理要兩件事都在前面出現過：函數連續（文字事實）、兩端異號（驗過的 g(a) < 0、g(b) > 0）
+    { id: "ivt", names: ["中間值定理", "介值定理", "ivt", "intermediate value theorem", "bolzano"], shapes: [/(\w+)\((\w+)\)=/], requires: "ivt" },
     { id: "derivative-def", names: ["導數定義", "定義", "definition of derivative", "by definition", "定義"], shapes: [/lim/] },
     { id: "hypothesis", names: ["假設", "歸納假設", "題意", "已知", "hypothesis", "inductive hypothesis", "assumption", "induction hypothesis"], shapes: [] },
     { id: "algebra", names: ["代數", "展開", "因式分解", "通分", "整理", "algebra", "expanding", "factoring", "simplifying", "計算"], shapes: [] },
@@ -336,6 +390,35 @@
     })) || null;
   }
 
+  // 規則的形狀比對用的鍵：正規化、去空白、|…| 換成 abs()
+  const shapeKey = (text) => replaceBars(compact(text));
+
+  /* ── 文字事實：g 是多項式、f 連續、f 可微 ─────────────────────── */
+  // 這三種是證明裡最常引用、又算不出來的性質。它們用「鍵」登記（continuous:f），
+  // 定理的前提（MVT 要可微、IVT 要連續）就查這些鍵。
+  const TEXT_FACTS = [
+    { key: "polynomial", re: /^([A-Za-z]\w*)\s*(?:是|為|is\s+a|is)?\s*(?:一個)?\s*(多項式|polynomial)(?:函數| function)?$/i },
+    { key: "continuous", re: /^([A-Za-z]\w*)\s*(?:在.*?上|on\s+.+?)?\s*(?:是|為|is)?\s*(連續|continuous)(?:的|函數| function)?$/i },
+    { key: "differentiable", re: /^([A-Za-z]\w*)\s*(?:在.*?上|on\s+.+?)?\s*(?:是|為|is)?\s*(可微|可導|可微分|differentiable)(?:的|函數| function)?$/i }
+  ];
+  function textFactKey(part) {
+    for (const fact of TEXT_FACTS) {
+      const match = part.match(fact.re);
+      if (match) return { key: `${fact.key}:${match[1]}`, kind: fact.key, name: match[1] };
+    }
+    return null;
+  }
+
+  /* ── 目標的文字比對：lim 的各種寫法收斂成同一個鍵 ─────────────── */
+  // lim_{x→2} 3x = 6、lim x→2 (3x) = 6、lim_(x->2) 3x=6 都是同一句。
+  function canonicalText(text) {
+    let out = normalize(text);
+    out = out.replace(/lim\s*_?\s*[{(]?\s*([A-Za-z]\w*)\s*->\s*([^\s})]+)\s*[})]?\s*/g, "lim[$1->$2] ");
+    out = compact(out).replace(/\*/g, "");
+    out = out.replace(/^((?:.*?)lim\[[^\]]+\])\((.+)\)=/, "$1$2=");
+    return out;
+  }
+
   /* ── 句型 ───────────────────────────────────────────────────── */
   const PATTERNS = [
     { kind: "qed", label: "得證", re: /^(得證|證畢|證明完畢|qed|q\.e\.d\.?|■|∎)$/i },
@@ -346,10 +429,11 @@
     { kind: "contradiction", label: "矛盾", re: /^(.*?)(這)?(與|跟|和)?(.*?)矛盾[.!]?$|^(.*)(a )?contradiction[.!]?$/i },
     { kind: "base", label: "當 n = 1 時", re: /^(當|when|for)\s*(\w+)\s*=\s*([^\s,:時]+)\s*(時)?\s*[:,]?\s*(.*)$/i },
     { kind: "hypothesis", label: "假設 n = k 時成立", re: /^(假設|設|suppose|assume)\s*(當)?\s*(\w+)\s*=\s*(\w+)\s*(時)?\s*(成立|holds|is true|時命題成立)?\s*(?:[,:]\s*(即|that is|i\.e\.)?\s*(.+))?$/i },
-    { kind: "let", label: "任取／設／取", re: /^(任取|任意取|任給|給定|固定|設|令|取|let|fix|take|choose|pick|given)\s+(.+)$/i },
-    { kind: "assume", label: "假設／若…則…", re: /^(假設|若|如果|suppose|assume|if)\s+(.+?)(?:\s*[,;]\s*(則|那麼|then)\s+(.+))?$/i },
+    { kind: "let", label: "任取／設／取", re: /^(任取|任意取|任給|給定|固定|設|令|取|let|fix|take|choose|pick|given)(?:(?<=[取給定設令])\s*|\s+)(.+)$/i },
+    { kind: "assume", label: "假設／若…則…", re: /^(假設|若|如果|suppose|assume|if)(?:(?<=[設若果])\s*|\s+)(.+?)(?:\s*[,;]\s*(則|那麼|then)(?:(?<=[則麼])\s*|\s+)(.+))?$/i },
     { kind: "by", label: "由 <規則>，…", re: /^(由|根據|依|依據|利用|by|using|from|applying)\s*(.+?)\s*[,:]\s*(.+)$/i },
-    { kind: "because", label: "因為…，所以…", re: /^(因為|because|since|as)\s+(.+?)\s*[,;]\s*(所以|故|因此|so|hence|therefore|thus)\s+(.+)$/i },
+    // 中文關鍵字後面可以不空格（因為x>0，所以x²>0）；英文的要空格，不然 as/so 會咬到 assume、some
+    { kind: "because", label: "因為…，所以…", re: /^(因為|because|since|as)(?:(?<=為)\s*|\s+)(.+?)\s*[,;]\s*(所以|故|因此|so|hence|therefore|thus)(?:(?<=[以故此])\s*|\s+)(.+)$/i },
     { kind: "claim", label: "則／所以 <推導>", re: /^(則|那麼|得|得到|所以|故|因此|於是|即|然後|接著|同理|(?:展開|整理|化簡|移項|通分|配方|代入|平方|開根號|兩邊[^,]{0,12}?)(?:後|可得|得到|得)?|then|so|hence|thus|therefore|we (get|have|obtain)|it follows that|this gives|expanding|simplifying|rearranging)\s*[,:]?\s*(.+)$/i }
   ];
 
@@ -379,8 +463,8 @@
     let depth = 0;
     let current = "";
     for (const ch of text) {
-      if (ch === "(") depth += 1;
-      if (ch === ")") depth -= 1;
+      if (ch === "(" || ch === "[") depth += 1;
+      if (ch === ")" || ch === "]") depth -= 1;
       if ((ch === "," || ch === ";") && depth === 0) { out.push(current); current = ""; continue; }
       current += ch;
     }
@@ -400,6 +484,7 @@
 
   // 一條鏈 A = B <= C < D 整體說的是 A < D（有 < 就是 <，只有 <= 與 = 就是 <=，全是 = 才是 =）
   function chainOverallOp(ops) {
+    if (ops.length === 1 && ops[0] === "!=") return "!=";
     if (ops.every((op) => op === "=")) return "=";
     if (ops.every((op) => op === "=" || op === "<" || op === "<=")) return ops.includes("<") ? "<" : "<=";
     if (ops.every((op) => op === "=" || op === ">" || op === ">=")) return ops.includes(">") ? ">" : ">=";
@@ -416,8 +501,8 @@
 
   function goalMatches(spec, statement, ctx, evaluate) {
     const goal = spec.goal || {};
-    const key = compact(statement);
-    if ((goal.text || []).some((alias) => compact(alias) === key)) return true;
+    const key = canonicalText(statement);
+    if ((goal.text || []).some((alias) => canonicalText(alias) === key)) return true;
     if (goal.relation) {
       const chain = splitChain(normalize(goal.relation));
       const mine = splitChain(normalize(statement));
@@ -450,9 +535,24 @@
       contradiction: false,
       goalDone: false,
       goalDoneInCases: new Set(),
+      atoms: new Map(),
+      userFunctions: {},
+      textFacts: new Set(),
+      asserted: [],
       skeleton: { let: false, define: false, assume: false, bound: false, base: false, hypothesis: false, step: false, contradictionClosed: false }
     };
     (spec.given || []).forEach((given) => applyDeclaration(spec, ctx, normalize(given), null));
+    // 題目給的文字事實（f 可微、g 連續）：定理的前提查這裡
+    // 帶佔位符的事實（f'(_) = 0：對所有點成立）：使用者寫「因為 f'(c) = 0」才會被拿來用
+    ctx.universal = [];
+    (spec.facts || []).forEach((fact) => {
+      const text = normalize(fact);
+      const key = textFactKey(text);
+      if (key) ctx.textFacts.add(key.key);
+      const chain = text.includes("_") ? splitChain(text) : null;
+      if (chain && chain.ops.length === 1) ctx.universal.push({ lhs: chain.exprs[0], op: chain.ops[0], rhs: chain.exprs[1], text });
+      ctx.facts.push(text);
+    });
     const report = [];
 
     // 代數引擎：在目前的假設下驗一個關係
@@ -460,8 +560,8 @@
       const scope = makeScope(spec, context);
       let left; let right;
       try {
-        left = compile(applyMacros(spec, lhs), scope);
-        right = compile(applyMacros(spec, rhs), scope);
+        left = compile(applyMacros(spec, lhs, context), scope);
+        right = compile(applyMacros(spec, rhs, context), scope);
       } catch (error) {
         return { ok: false, unsure: true, reason: error.unknownSymbol ? `含未知符號「${error.unknownSymbol}」，我驗不了這一段` : error.message };
       }
@@ -474,7 +574,7 @@
         if (!Number.isFinite(a) || !Number.isFinite(b)) continue;
         checked += 1;
         if (!RELATION_TEST[op](a, b)) {
-          const shown = Object.keys(env).filter((name) => context.vars.has(name) || (spec.vars && spec.vars[name])).slice(0, 4).map((name) => `${name}=${round(env[name])}`).join(", ");
+          const shown = Object.keys(env).filter((name) => context.vars.has(name) || (spec.vars && spec.vars[name]) || context.atoms.has(name)).slice(0, 5).map((name) => `${name}=${round(env[name])}`).join(", ");
           return { ok: false, unsure: false, reason: `在 ${shown} 時左邊 ${round(a)}、右邊 ${round(b)}，「${op}」不成立` };
         }
       }
@@ -495,7 +595,7 @@
     };
 
     const push = (line, status, note, extra) => {
-      report.push(Object.assign({ n: line.n, raw: line.raw, kind: line.kind, label: line.label, status, note }, extra || {}));
+      report.push(Object.assign({ n: line.n, raw: line.raw, kind: line.kind, label: line.label, status, note: pretty(ctx, note) }, extra || {}));
     };
 
     for (const line of lines) {
@@ -562,7 +662,10 @@
       }
       if (line.kind === "because") {
         const reason = handleClaim(spec, ctx, line.match[2], line, verifyChain, evaluate, null, true);
-        const claim = handleClaim(spec, ctx, line.match[4], line, verifyChain, evaluate, null);
+        // 「因為 g 連續，所以由中間值定理，存在 c 使 …」：結論自己帶了定理
+        const nested = line.match[4].match(PATTERNS.find((item) => item.kind === "by").re);
+        const rule = nested ? (findRule(nested[2]) || { id: "unknown", names: [nested[2]] }) : null;
+        const claim = handleClaim(spec, ctx, nested ? nested[3] : line.match[4], line, verifyChain, evaluate, rule);
         push(line, worst(reason.status, claim.status), `前提：${reason.note} 結論：${claim.note}`, { results: [...(reason.results || []), ...(claim.results || [])] });
         continue;
       }
@@ -600,12 +703,44 @@
     return rank[a] >= rank[b] ? a : b;
   }
 
-  function applyMacros(spec, expr) {
+  function applyMacros(spec, expr, ctx) {
     let out = expr;
     (spec.macros || []).forEach((macro) => {
       out = out.replace(new RegExp(macro.pattern, "g"), macro.replace);
     });
-    return out;
+    return atomize(spec, out, ctx);
+  }
+
+  // 登記一條條件。等式如果一邊是還沒定義的變數（或抽象 atom）、或「那個東西 ± 別的」，
+  // 就直接解出來當定義 —— 連續變數用拒絕取樣永遠碰不到等號。分情況裡的條件不解（它只在那一段有效）。
+  function registerRelation(spec, ctx, lhs, rhs, op, caseId) {
+    if (op === "=" && caseId === null) {
+      const solved = solveForUnknown(ctx, lhs, rhs) || solveForUnknown(ctx, rhs, lhs);
+      if (solved) {
+        ctx.defs[solved.name] = solved.expr;
+        ctx.vars.delete(solved.name);
+        return solved;
+      }
+    }
+    ctx.constraints.push({ lhs, rhs, op, caseId });
+    return null;
+  }
+
+  function solveForUnknown(ctx, side, other) {
+    const free = (name) => /^[A-Za-z_]\w*$/.test(name) && ctx.defs[name] === undefined && CONSTANTS[name] === undefined
+      && (name.startsWith(ATOM_PREFIX) || ctx.vars.has(name));
+    const text = side.trim();
+    if (free(text)) return { name: text, expr: `(${other})` };
+    const mentions = (name, expr) => new RegExp(`\\b${name}\\b`).test(expr);
+    let match = text.match(/^([A-Za-z_]\w*)\s*([+-])\s*(.+)$/);
+    if (match && free(match[1]) && !mentions(match[1], match[3]) && !mentions(match[1], other)) {
+      return { name: match[1], expr: `(${other})${match[2] === "+" ? "-" : "+"}(${match[3]})` };
+    }
+    match = text.match(/^(.+?)\s*\+\s*([A-Za-z_]\w*)$/);
+    if (match && free(match[2]) && !mentions(match[2], match[1]) && !mentions(match[2], other)) {
+      return { name: match[2], expr: `(${other})-(${match[1]})` };
+    }
+    return null;
   }
 
   /* 任取 ε > 0 ／ 設 x, y 為實數 ／ 取 δ = ε/3 ／ 令 g(x) = … */
@@ -618,10 +753,27 @@
       .filter(Boolean);
     for (const part of parts) {
       const chain = splitChain(part);
+      const fnDef = chain && chain.ops.length === 1 && chain.ops[0] === "=" && chain.exprs[0].match(/^([A-Za-z_]\w*)\(([A-Za-z_]\w*)\)$/);
+      if (fnDef && !(spec.abstract && spec.abstract[fnDef[1]])) {
+        // 令 g(x) = x^5 + x − 1：使用者自己定義的函數，本體只能用參數、常數、內建函數
+        const name = fnDef[1];
+        const param = fnDef[2];
+        const body = applyMacros(spec, chain.exprs[1], ctx);
+        try {
+          const fn = compile(body, { vars: new Set([param]), functions: Object.assign({}, spec.functions || {}) });
+          ctx.userFunctions[name] = { param, body, fn };
+          ctx.vars.delete(name);
+          notes.push(`定義函數 ${name}(${param}) = ${chain.exprs[1]}，後面的 ${name}(…) 都會照這個算。`);
+        } catch (error) {
+          status = worst(status, "error");
+          notes.push(`「${part}」：${error.unknownSymbol ? `函數本體只能用參數 ${param}（「${error.unknownSymbol}」不是）` : error.message}`);
+        }
+        continue;
+      }
       if (chain && chain.ops.length === 1 && chain.ops[0] === "=" && /^[A-Za-z_]\w*$/.test(chain.exprs[0])) {
         // 定義：取 δ = ε/3
         const name = chain.exprs[0];
-        ctx.defs[name] = applyMacros(spec, chain.exprs[1]);
+        ctx.defs[name] = applyMacros(spec, chain.exprs[1], ctx);
         ctx.vars.delete(name);
         ctx.skeleton.define = true;
         try { compile(ctx.defs[name], makeScope(spec, ctx)); } catch (error) {
@@ -637,7 +789,7 @@
         const declared = chain.exprs.filter((expr) => /^[A-Za-z_]\w*$/.test(expr));
         declared.forEach((name) => { if (!ctx.defs[name]) ctx.vars.set(name, ctx.vars.get(name) || {}); });
         for (let i = 0; i < chain.ops.length; i += 1) {
-          ctx.constraints.push({ lhs: applyMacros(spec, chain.exprs[i]), rhs: applyMacros(spec, chain.exprs[i + 1]), op: chain.ops[i], caseId: ctx.currentCase });
+          registerRelation(spec, ctx, applyMacros(spec, chain.exprs[i], ctx), applyMacros(spec, chain.exprs[i + 1], ctx), chain.ops[i], ctx.currentCase);
         }
         if (/\beps\b/.test(part) && chain.ops.some((op) => op === ">" || op === ">=")) ctx.skeleton.let = true;
         notes.push(`引入 ${declared.join("、") || "變數"}，條件「${part}」會限制取樣。`);
@@ -677,9 +829,9 @@
       }
       chain.exprs.filter((expr) => /^[A-Za-z_]\w*$/.test(expr)).forEach((name) => { if (!ctx.defs[name]) ctx.vars.set(name, ctx.vars.get(name) || {}); });
       for (let i = 0; i < chain.ops.length; i += 1) {
-        ctx.constraints.push({ lhs: applyMacros(spec, chain.exprs[i]), rhs: applyMacros(spec, chain.exprs[i + 1]), op: chain.ops[i], caseId: ctx.currentCase });
+        registerRelation(spec, ctx, applyMacros(spec, chain.exprs[i], ctx), applyMacros(spec, chain.exprs[i + 1], ctx), chain.ops[i], ctx.currentCase);
       }
-      if (/\bdelta\b/.test(part)) ctx.skeleton.assume = true;
+      if (new RegExp(`\\b${thresholdName(spec)}\\b`).test(part)) ctx.skeleton.assume = true;
       notes.push(`假設「${part}」，之後的取樣都在這個條件下。`);
     }
     // 假設之後要能抽得到點，不然後面每一句都驗不了
@@ -706,8 +858,69 @@
         continue;
       }
       const goalHit = goalMatches(spec, part, ctx, evaluate);
-      const textual = /\blim\b|->|=>|forall|exists|存在|對所有|極限/.test(part);
-      const verified = textual ? null : verifyChain(applyMacros(spec, part), ctx);
+      let handled = false;
+      // 存在句：由 <定理>，存在 c ∈ (a, b) 使 …
+      const existential = part.match(EXISTENTIAL);
+      if (existential) {
+        const outcome = handleExistential(spec, ctx, existential, rule, evaluate);
+        status = worst(status, outcome.status);
+        notes.push(outcome.note);
+        handled = true;
+      }
+      // 文字事實：g 是多項式、g 連續、f 可微
+      const fact = handled ? null : textFactKey(part);
+      if (fact) {
+        const entry = ctx.userFunctions[fact.name];
+        // 本體裡出現的內建函數名（sqrtx 這種不加括號的寫法也要抓到）
+        // 長名字先比（cosh 不能被當成 cos + h）；cosx 這種不加括號的寫法也要抓到
+        const builtinNames = Object.keys(MATH_FUNCTIONS).sort((a, b) => b.length - a.length).join("|");
+        const builtins = (item) => (compact(item.body).match(new RegExp(`(${builtinNames})`, "g")) || []);
+        const tameBody = (item) => Boolean(item) && !/\^\s*\(?-|\/\s*[A-Za-z(]/.test(item.body) && !/\^\s*\(?\d*\.\d/.test(item.body);
+        const polynomialBody = (item) => tameBody(item) && builtins(item).length === 0;
+        // 令 g(x) = cos(x) − x 這種：由處處連續（可微）的初等函數加減乘出來的，也連續（可微）
+        const ELEMENTARY = { continuous: ["sin", "cos", "exp", "abs", "sinh", "cosh", "tanh", "atan"], differentiable: ["sin", "cos", "exp", "sinh", "cosh", "tanh", "atan"] };
+        const elementaryBody = (item, kind) => tameBody(item) && builtins(item).every((name) => ELEMENTARY[kind].includes(name));
+        let ok = false;
+        let why = "";
+        if (ctx.textFacts.has(fact.key)) { ok = true; why = "前面（或題目）已經給了"; }
+        else if (fact.kind === "polynomial") {
+          ok = polynomialBody(entry);
+          why = ok ? `${fact.name} 的定義裡只有加減乘與整數次方` : (entry ? `${fact.name} 的定義裡有不是多項式的東西` : `我不知道 ${fact.name} 是什麼（先寫「令 ${fact.name}(x) = …」）`);
+        } else if (fact.kind === "continuous") {
+          ok = ctx.textFacts.has(`polynomial:${fact.name}`) || ctx.textFacts.has(`differentiable:${fact.name}`) || polynomialBody(entry) || Boolean(rule && rule.id === "continuity");
+          why = ok ? "多項式／可微的函數都連續" : "";
+          if (!ok && elementaryBody(entry, "continuous")) { ok = true; why = `${fact.name} 由 sin、cos、exp、絕對值與多項式加減乘組成，處處連續`; }
+          if (!ok) why = `要先說 ${fact.name} 是多項式或可微（或題目給了連續）`;
+        } else {
+          ok = polynomialBody(entry);
+          why = ok ? "多項式處處可微" : "";
+          if (!ok && elementaryBody(entry, "differentiable")) { ok = true; why = `${fact.name} 由 sin、cos、exp 與多項式加減乘組成，處處可微`; }
+          if (!ok) why = `${fact.name} 可微要由題目給`;
+        }
+        ctx.textFacts.add(fact.key);
+        if (ok) notes.push(`「${part}」：${why}。`);
+        else { status = worst(status, "unsure"); notes.push(`「${part}」：${why}，我驗不了，先當你是對的。`); }
+        handled = true;
+      }
+      // 前面存在句給的關係：字面或數值等價地引用它
+      const plain = handled ? null : splitChain(part);
+      // 題目給的「對所有點成立」的條件（f'(_) = 0）：寫出來才登記，之後的取樣就吃它
+      const universal = plain && plain.ops.length === 1 ? matchUniversal(ctx, plain) : null;
+      if (universal) {
+        registerRelation(spec, ctx, applyMacros(spec, plain.exprs[0], ctx), applyMacros(spec, plain.exprs[1], ctx), plain.ops[0], ctx.currentCase);
+        rememberChain(ctx, plain);
+        ctx.verifiedLinks = ctx.verifiedLinks || [];
+        ctx.verifiedLinks.push({ lhs: plain.exprs[0], op: plain.ops[0], rhs: plain.exprs[1] });
+        notes.push(`「${part}」是題目給的條件（${universal.text} 對所有點成立），登記進取樣。`);
+        handled = true;
+      }
+      if (plain && !handled && matchesAsserted(spec, ctx, plain, evaluate)) {
+        notes.push(`「${part}」是前面存在句給的關係。`);
+        rememberChain(ctx, plain);
+        handled = true;
+      }
+      const textual = handled || /\blim\b|->|=>|forall|exists|存在|對所有|極限/.test(part);
+      const verified = textual ? null : verifyChain(applyMacros(spec, part, ctx), ctx);
       if (verified) {
         anyChain = true;
         results.push(...verified.results);
@@ -721,7 +934,7 @@
           status = worst(status, "error");
           notes.push(`「${bad.lhs} ${bad.op} ${bad.rhs}」不成立：${bad.reason}`);
         } else if (unsure.length) {
-          const shapeHit = rule && rule.shapes && rule.shapes.some((shape) => shape.test(compact(part))) && ruleRequirementsMet(rule, ctx);
+          const shapeHit = rule && rule.shapes && rule.shapes.some((shape) => shape.test(shapeKey(part))) && ruleRequirementsMet(rule, ctx, part);
           if (shapeHit) {
             notes.push(`「${part}」跟${rule.names[0]}的形狀對上了。`);
           } else if (rule && rule.id === "hypothesis" && ctx.induction && ctx.induction.hypothesisText && compact(part).includes(compact(ctx.induction.hypothesisText).split("=")[0])) {
@@ -769,12 +982,15 @@
             }
           }
         }
-      } else {
+      } else if (!handled) {
         // 不是關係鏈：文字主張
-        const shapeHit = rule && rule.shapes && rule.shapes.some((shape) => shape.test(compact(part))) && ruleRequirementsMet(rule, ctx);
-        if (rule && rule.requires && !ruleRequirementsMet(rule, ctx)) {
+        const missing = rule ? ruleRequirementMissing(rule, ctx, part) : "";
+        const shapeHit = rule && rule.shapes && rule.shapes.some((shape) => shape.test(shapeKey(part))) && !missing;
+        if (rule && missing) {
           status = worst(status, "unsure");
-          notes.push(`「${part}」引用${rule.names[0]}，但前面還沒有把它夾住的鏈（A ≤ B ≤ C 那一行）。`);
+          notes.push(`「${part}」引用${rule.names[0]}，但${missing}。`);
+        } else if (goalHit && ctx.goalDone) {
+          notes.push(`「${part}」重述目標。`);
         } else if (goalHit && (shapeHit || skeletonReady(spec, ctx) || (rule && rule.id !== "unknown"))) {
           notes.push(`「${part}」對上題目的目標。`);
         } else if (goalHit) {
@@ -838,13 +1054,13 @@
         if (result.ok) notes.push(`${isLeft ? "左式" : "右式"}在 ${variable} = ${value} 時確實是 ${target}。`);
         else { status = worst(status, result.unsure ? "unsure" : "error"); notes.push(`${isLeft ? "左式" : "右式"}：${result.reason}`); }
         if (chain) {
-          const verified = verifyChain(applyMacros(spec, sided[4]), local);
+          const verified = verifyChain(applyMacros(spec, sided[4], local), local);
           const bad = verified && verified.results.find((item) => !item.ok && !item.unsure);
           if (bad) { status = worst(status, "error"); notes.push(`「${bad.lhs} = ${bad.rhs}」不成立：${bad.reason}`); }
         }
         continue;
       }
-      const verified = verifyChain(applyMacros(spec, part), local);
+      const verified = verifyChain(applyMacros(spec, part, local), local);
       if (verified) {
         sawCheck = true;
         const bad = verified.results.find((item) => !item.ok && !item.unsure);
@@ -923,6 +1139,11 @@
           chain.exprs.filter((expr) => /^[A-Za-z_]\w*$/.test(expr)).forEach((name) => { if (!ctx.defs[name]) ctx.vars.set(name, ctx.vars.get(name) || {}); });
           for (let i = 0; i < chain.ops.length; i += 1) ctx.constraints.push({ lhs: chain.exprs[i], rhs: chain.exprs[i + 1], op: chain.ops[i], caseId: null });
           notes.push(`反設「${part}」。`);
+        } else if (/^(\w+)\s*(是|為)?\s*(最大|最小|largest|smallest|maximal|minimal|the (largest|smallest|maximum|minimum))/i.test(part)) {
+          // 「m 是最大的」這種極值反設：之後配一條驗過的 t > m 就是矛盾
+          anyRelation = true;
+          ctx.facts.push(part);
+          notes.push(`反設「${part}」—— 之後造一個比它更${/最大|largest|maximal|maximum/i.test(part) ? "大" : "小"}的就矛盾。`);
         } else {
           ctx.facts.push(part);
           notes.push(`「${part}」記成文字假設。`);
@@ -944,16 +1165,14 @@
       push(line, "error", "還沒有反設就說矛盾。反證法要先寫「反設 …」。");
       return;
     }
-    // 兩種算數的矛盾：(1) 反設下抽不到任何點 (2) 上一句在反設下對所有樣本都不成立
+    // 沒抽到樣本不代表假設不可能成立；不能把取樣失敗當成反證。
     const probe = drawSamples(spec, ctx, 30);
     if (!probe.samples.length) {
-      ctx.skeleton.contradictionClosed = true;
-      push(line, "ok", "在反設之下抽不到任何一個點 —— 假設集合本身矛盾，反證成立。");
+      push(line, "unsure", "在反設之下沒有抽到可用的點，但取樣不足不能證明矛盾；請補上明確的推導。");
       return;
     }
     if (ctx.contradictionCandidate) {
-      ctx.skeleton.contradictionClosed = true;
-      push(line, "ok", `「${ctx.contradictionCandidate}」在反設之下對所有取樣點都不成立 —— 這就是矛盾。`);
+      push(line, "unsure", `「${ctx.contradictionCandidate}」沒有通過驗算；錯誤的算式本身不能當作已推出的矛盾。`);
       return;
     }
     // 第三種：「m 是最大的」這種文字假設，配上一條驗過的 t > m（或 最小 配 t < m）
@@ -961,14 +1180,26 @@
     if (extremal) {
       const name = extremal[1] && /^\w+$/.test(extremal[1]) && !/largest|smallest|maximum|minimum/i.test(extremal[1]) ? extremal[1] : extremal[2];
       const isMax = /最大|largest|maximal|maximum/i.test(extremal[0]);
-      const beaten = (ctx.verifiedLinks || []).some((link) =>
-        (isMax && ((link.op === ">" && link.rhs === name) || (link.op === "<" && link.lhs === name)))
-        || (!isMax && ((link.op === "<" && link.rhs === name) || (link.op === ">" && link.lhs === name))));
+      const fact = extremal.input;
+      const positiveReals = /正實數|positive real/i.test(fact);
+      const realDomain = positiveReals || /實數|real (number|value)/i.test(fact);
+      const links = ctx.verifiedLinks || [];
+      const beaten = links.some((link) => {
+        const witness = ((link.op === (isMax ? ">" : "<")) && link.rhs === name) ? link.lhs
+          : ((link.op === (isMax ? "<" : ">")) && link.lhs === name) ? link.rhs : null;
+        if (!witness || !realDomain) return false;
+        // 比最小正實數小還不夠：證人也必須是正實數，不能拿 -1 冒充。
+        return !positiveReals || links.some((bound) =>
+          (bound.lhs === "0" && bound.op === "<" && bound.rhs === witness)
+          || (bound.lhs === witness && bound.op === ">" && bound.rhs === "0"));
+      });
       if (beaten) {
         ctx.skeleton.contradictionClosed = true;
-        push(line, "ok", `前面已經驗出一個比 ${name} 更${isMax ? "大" : "小"}的值，跟「${name} 是${isMax ? "最大" : "最小"}的」矛盾。`);
+        push(line, "ok", `前面已經驗出同一範圍內一個比 ${name} 更${isMax ? "大" : "小"}的值，跟「${name} 是${isMax ? "最大" : "最小"}的」矛盾。`);
         return;
       }
+      push(line, "unsure", "還需要證明更大或更小的值也屬於原來的範圍；正實數要明寫 0 < t，其他範圍目前無法自動確認。");
+      return;
     }
     push(line, "unsure", "我抽得到同時滿足所有假設的點，看不出數值上的矛盾；如果矛盾來自數論或存在性，這裡只能靠你自己確認。");
   }
@@ -1015,12 +1246,12 @@
     const mine = oriented(chain.exprs[0], chain.ops[0], chain.exprs[1]);
     const scope = makeScope(spec, ctx);
     let mineFn;
-    try { mineFn = compile(applyMacros(spec, mine), scope); } catch (_error) { return false; }
+    try { mineFn = compile(applyMacros(spec, mine, ctx), scope); } catch (_error) { return false; }
     const { samples } = drawSamples(spec, ctx, 120);
     if (!samples.length) return false;
     return links.some((link) => {
       let otherFn;
-      try { otherFn = compile(applyMacros(spec, oriented(link.lhs, link.op, link.rhs)), scope); } catch (_error) { return false; }
+      try { otherFn = compile(applyMacros(spec, oriented(link.lhs, link.op, link.rhs), ctx), scope); } catch (_error) { return false; }
       return samples.every((env) => {
         let a; let b;
         try { a = mineFn(env); b = otherFn(env); } catch (_error) { return false; }
@@ -1062,10 +1293,138 @@
     if (chain.ops.length >= 2 && chain.ops.every((op) => op === "<=" || op === "<")) ctx.hasSandwich = true;
   }
 
-  function ruleRequirementsMet(rule, ctx) {
+  // 定理的前提有沒有在前面出現過。relation 是引用定理的那一句（用來抓函數名字）。
+  function ruleRequirementsMet(rule, ctx, relation) {
     if (!rule || !rule.requires) return true;
-    if (rule.requires === "sandwich") return Boolean(ctx.hasSandwich);
-    return true;
+    return !ruleRequirementMissing(rule, ctx, relation);
+  }
+
+  function ruleRequirementMissing(rule, ctx, relation) {
+    if (!rule || !rule.requires) return "";
+    const fnName = (() => {
+      const match = String(relation || "").match(/([A-Za-z]\w*)'*\(/);
+      return match ? match[1] : "f";
+    })();
+    const has = (kind) => ctx.textFacts && (ctx.textFacts.has(`${kind}:${fnName}`) || (kind === "continuous" && (ctx.textFacts.has(`polynomial:${fnName}`) || ctx.textFacts.has(`differentiable:${fnName}`))));
+    const signChange = () => {
+      const signs = new Set((ctx.verifiedLinks || []).map((link) => {
+        if ((link.rhs === "0" && link.op === "<") || (link.lhs === "0" && link.op === ">")) return -1;
+        if ((link.rhs === "0" && link.op === ">") || (link.lhs === "0" && link.op === "<")) return 1;
+        return 0;
+      }));
+      return signs.has(1) && signs.has(-1);
+    };
+    if (rule.requires === "sandwich") return ctx.hasSandwich ? "" : "前面還沒有把它夾住的鏈（A ≤ B ≤ C 那一行）";
+    if (rule.requires === "differentiable") return has("differentiable") ? "" : `前面沒說 ${fnName} 可微（題目給了就寫「因為 ${fnName} 可微」，或它是多項式）`;
+    if (rule.requires === "continuous") return has("continuous") ? "" : `前面沒說 ${fnName} 連續`;
+    if (rule.requires === "ivt") {
+      if (!has("continuous")) return `前面沒說 ${fnName} 連續（多項式可以寫「因為 ${fnName} 是多項式，所以 ${fnName} 連續」）`;
+      if (!signChange()) return `前面還沒驗出兩端異號（${fnName}(a) < 0 與 ${fnName}(b) > 0 各一行）`;
+      return "";
+    }
+    return "";
+  }
+
+  // 存在句：由 <定理>，存在 c ∈ (a, b) 使 <關係式>。
+  // c 變成一個在 (a, b) 裡取樣的變數，關係式登記成條件（抽象 atom 的等式會解成定義）；
+  // 解不了、抽不到點的等式（g(c) = 0 這種）就只記成「主張過的關係」，之後字面或等價地引用它才算。
+  const EXISTENTIAL = /^(存在|有|there\s+(?:exists|is)(?:\s+an?|\s+some)?|exists?|for\s+some)\s+([A-Za-z_]\w*)\s*(?:in\s*([\(\[])\s*([^,]+?)\s*,\s*([^\)\]]+?)\s*([\)\]]))?\s*,?\s*(使得|使|滿足|such\s+that|with|so\s+that|s\.t\.|where)\s*(.+)$/i;
+
+  function handleExistential(spec, ctx, match, rule, evaluate) {
+    const name = match[2];
+    const relation = match[8];
+    const notes = [];
+    if (!ctx.defs[name]) ctx.vars.set(name, ctx.vars.get(name) || {});
+    if (match[4] !== undefined) {
+      const lo = applyMacros(spec, match[4], ctx);
+      const hi = applyMacros(spec, match[5], ctx);
+      registerRelation(spec, ctx, lo, name, match[3] === "[" ? "<=" : "<", ctx.currentCase);
+      registerRelation(spec, ctx, name, hi, match[6] === "]" ? "<=" : "<", ctx.currentCase);
+      notes.push(`${name} 在 ${match[3]}${match[4]}, ${match[5]}${match[6]} 裡取樣。`);
+    }
+    const chain = splitChain(relation);
+    if (!chain) {
+      return { status: "unsure", note: `存在 ${name}，但「${relation}」不是關係式，我只能當文字。`, results: [] };
+    }
+    let status = "ok";
+    const shapeHit = rule && rule.shapes && rule.shapes.some((shape) => shape.test(shapeKey(relation)));
+    const missing = rule ? ruleRequirementMissing(rule, ctx, relation) : "";
+    if (!rule) {
+      status = "unsure";
+      notes.push(`存在句要靠定理：寫成「由 <定理>，存在 ${name} 使 …」我才知道它從哪來。先當你是對的。`);
+    } else if (rule.id === "unknown") {
+      status = "unsure";
+      notes.push(`「${rule.names[0]}」不在我的規則字典裡，存在 ${name} 這件事先當你是對的。`);
+    } else if (missing) {
+      status = "unsure";
+      notes.push(`引用${rule.names[0]}，但${missing}。`);
+    } else if (!shapeHit) {
+      status = "unsure";
+      notes.push(`引用${rule.names[0]}，但「${relation}」跟它的形狀對不上，先當你是對的。`);
+    } else {
+      notes.push(`由${rule.names[0]}得到 ${name}，「${relation}」登記成條件。`);
+    }
+    // 登記關係式；解不了又抽不到點的等式退回「主張過的關係」
+    const before = ctx.constraints.length;
+    const added = [];
+    for (let i = 0; i < chain.ops.length; i += 1) {
+      const lhs = applyMacros(spec, chain.exprs[i], ctx);
+      const rhs = applyMacros(spec, chain.exprs[i + 1], ctx);
+      ctx.asserted.push({ lhs, op: chain.ops[i], rhs });
+      let compiles = true;
+      try { compile(lhs, makeScope(spec, ctx)); compile(rhs, makeScope(spec, ctx)); } catch (_error) { compiles = false; }
+      if (!compiles) {
+        if (status === "ok") { status = "unsure"; notes.push(`「${chain.exprs[i]} ${chain.ops[i]} ${chain.exprs[i + 1]}」含我算不了的符號，之後只認字面引用。`); }
+        continue;
+      }
+      const solved = registerRelation(spec, ctx, lhs, rhs, chain.ops[i], ctx.currentCase);
+      if (solved) added.push(solved.name);
+    }
+    const probe = drawSamples(spec, ctx, 20);
+    if (!probe.samples.length) {
+      ctx.constraints.length = before;
+      added.forEach((defName) => { delete ctx.defs[defName]; ctx.vars.set(defName, {}); });
+      notes.push(`（這條關係式抽不到點，之後只認字面或等價的引用。）`);
+    }
+    rememberChain(ctx, chain);
+    return { status, note: notes.join(" "), results: [] };
+  }
+
+  // 「f'(c) = 0」對得上題目的「f'(_) = 0」嗎：佔位符可以是任何一段式子，同一個佔位符要一樣
+  function matchUniversal(ctx, chain) {
+    const escape = (text) => text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    const mine = `${compact(chain.exprs[0])}${chain.ops[0]}${compact(chain.exprs[1])}`;
+    return (ctx.universal || []).find((item) => {
+      if (item.op !== chain.ops[0]) return false;
+      const pieces = `${compact(item.lhs)}${item.op}${compact(item.rhs)}`.split("_");
+      let pattern = "^" + escape(pieces[0]);
+      for (let i = 1; i < pieces.length; i += 1) pattern += (i === 1 ? "([a-z0-9+\\-*/^().]+?)" : "\\1") + escape(pieces[i]);
+      return new RegExp(pattern + "$").test(mine);
+    }) || null;
+  }
+
+  // 這條鏈是不是前面某個存在句給的關係（字面或數值等價）
+  function matchesAsserted(spec, ctx, chain, evaluate) {
+    if (chain.ops.length !== 1 || !ctx.asserted.length) return false;
+    const lhs = applyMacros(spec, chain.exprs[0], ctx);
+    const rhs = applyMacros(spec, chain.exprs[1], ctx);
+    const op = chain.ops[0];
+    const flipped = { "<": ">", ">": "<", "<=": ">=", ">=": "<=", "=": "=", "!=": "!=" };
+    const same = (a, b) => compact(a) === compact(b) || evaluate(a, b, "=", ctx).ok;
+    // 移項過的寫法也算同一條：g(c) = 0 登記過，之後寫 cos c = c（即 cos c − c = 0）也認得
+    const diff = (a, b) => `(${a})-(${b})`;
+    const rearranged = (item) =>
+      (item.op === op && evaluate(diff(lhs, rhs), diff(item.lhs, item.rhs), "=", ctx).ok)
+      || (item.op === flipped[op] && evaluate(diff(lhs, rhs), `-(${diff(item.lhs, item.rhs)})`, "=", ctx).ok);
+    return ctx.asserted.some((item) =>
+      (item.op === op && same(item.lhs, lhs) && same(item.rhs, rhs))
+      || (item.op === flipped[op] && same(item.lhs, rhs) && same(item.rhs, lhs))
+      || rearranged(item));
+  }
+
+  // ε-δ 的門檻變數：函數極限是 δ，數列極限是 N（spec.bound.threshold）
+  function thresholdName(spec) {
+    return (spec.bound && spec.bound.threshold) ? normalize(spec.bound.threshold) : "delta";
   }
 
   function cloneCtx(ctx) {
@@ -1084,10 +1443,11 @@
     const missing = [];
     const skeleton = spec.skeleton || "direct";
     if (skeleton === "epsilon-delta") {
+      const sequence = thresholdName(spec) !== "delta";
       if (!ctx.skeleton.let) missing.push("任取 ε > 0");
-      if (!ctx.skeleton.define) missing.push("取 δ = …（用 ε 表示）");
-      if (!ctx.skeleton.assume) missing.push("假設 0 < |x − a| < δ");
-      if (!ctx.skeleton.bound) missing.push("推出 |f(x) − L| < ε 的鏈");
+      if (!ctx.skeleton.define) missing.push(sequence ? "取 N = …（用 ε 表示）" : "取 δ = …（用 ε 表示）");
+      if (!ctx.skeleton.assume) missing.push(sequence ? "假設 n > N" : "假設 0 < |x − a| < δ");
+      if (!ctx.skeleton.bound) missing.push(sequence ? "推出 |a_n − L| < ε 的鏈" : "推出 |f(x) − L| < ε 的鏈");
     }
     if (skeleton === "induction") {
       if (!ctx.skeleton.base) missing.push("基底：當 n = 1 時 … 成立");

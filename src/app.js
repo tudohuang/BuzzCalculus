@@ -5,6 +5,9 @@
   const proofs = window.BUZZ_PROOFS || [];
   const CUSTOM = window.BUZZ_CUSTOM || null;
   const app = document.getElementById("app");
+  // 寫入失敗時仍保留這個分頁的最新紀錄，讓結算、重試與匯出繼續可用。
+  let unsavedRecordsJson = null;
+  const answerSampling = window.BuzzAnswerSampling.create({ evaluateExpression, stripConstant, friendlyWrongHint });
 
   const TOPICS = {
     all: { label: "全混合", short: "All", className: "", accent: "#f6b739" },
@@ -1074,6 +1077,7 @@
       if (main) {
         main.id = "buzz-main";
         main.tabIndex = -1;
+        if (unsavedRecordsJson !== null) main.insertAdjacentHTML("afterbegin", renderStorageWarning());
       }
       bindEvents();
       typesetMath(app);
@@ -1287,6 +1291,24 @@
     if (view === "settings") return renderSettings();
     if (view === "creator") return renderCreator();
     return renderHome();
+  }
+
+  function renderStorageWarning() {
+    if (unsavedRecordsJson === null) return "";
+    return `<aside class="backup-bar storage-warning" role="status">
+      <div class="backup-bar-text"><strong>練習紀錄尚未存到裝置</strong>
+        <span>儲存空間不足或無法寫入。目前暫存在這個分頁；請先匯出備份，關閉或重新整理可能遺失。</span></div>
+      <div class="backup-bar-actions">
+        <button class="button secondary" data-action="export-records">匯出備份</button>
+        <button class="button secondary" data-action="retry-records-save">重試儲存</button>
+      </div></aside>`;
+  }
+
+  function syncStorageWarning() {
+    const main = app.querySelector("main");
+    const warning = app.querySelector(".storage-warning");
+    if (unsavedRecordsJson === null) { if (warning) warning.remove(); }
+    else if (main && !warning) main.insertAdjacentHTML("afterbegin", renderStorageWarning());
   }
 
   function renderHome() {
@@ -4905,30 +4927,21 @@
     });
   }
 
-  // ── 白話證明：編輯器 + 五課教學 ────────────────────────────
+  // ── 白話證明：狀態、草稿、事件（畫面在 proof_lang_ui.js） ────────────────────────────
   //
-  // 檢查器在 kernel/proof_lang.js（純函式）。這裡只做三件事：
-  // 畫編輯器與三色 gutter、輸入時 debounce 重跑檢查（不整頁 render，游標才不會跳）、
-  // 把草稿與最新結果存進 records.proofLang。
+  // 檢查器在 kernel/proof_lang.js（純函式）、畫面在 proof_lang_ui.js（純函式）。
+  // 這裡只剩狀態：正在寫哪一題、輸入時 debounce 重跑檢查（只重畫 [data-pl-report]，
+  // 不整頁 render，游標才不會跳）、把草稿與最新結果存進 records.proofLang。
   let proofWrite = { id: "", lessonId: "", text: "", report: null, showReference: false };
   let proofLangTimer = null;
 
-  function proofLangProblems() {
-    return Array.isArray(window.BUZZ_PROOF_LANG_PROBLEMS) ? window.BUZZ_PROOF_LANG_PROBLEMS : [];
-  }
-
-  function proofLangLessons() {
-    return Array.isArray(window.BUZZ_PROOF_LANG_LESSONS) ? window.BUZZ_PROOF_LANG_LESSONS : [];
-  }
-
-  function proofLangSpec(id) {
-    return proofLangProblems().find((item) => item.id === id) || null;
-  }
-
-  function proofLangDraft(records, id) {
-    const store = records.proofLang || {};
-    return store[id] || null;
-  }
+  const plUI = window.BuzzProofLangUI.create({ escapeHtml, escapeAttr, icon });
+  const proofLangSpec = (id) => plUI.spec(id);
+  const proofLangLessons = () => plUI.lessons();
+  const runProofLangCheck = (spec, text) => plUI.check(spec, text);
+  const renderProofWrite = () => plUI.renderWrite(proofWrite) || renderProofLab();
+  const renderProofTutorial = () => plUI.renderTutorial(proofWrite, loadRecords()) || renderProofLab();
+  const renderProofLangEntry = (records) => plUI.renderEntry(records);
 
   function saveProofLangDraft(id, text, report) {
     const records = loadRecords();
@@ -4937,197 +4950,16 @@
     saveRecords(records);
   }
 
-  function runProofLangCheck(spec, text) {
-    if (!window.BuzzProofLang || !spec) return null;
-    try {
-      return window.BuzzProofLang.check(spec, text);
-    } catch (error) {
-      return { lines: [], counts: { ok: 0, unsure: 0, error: 0 }, missing: [], verdict: "empty", verdictText: `檢查器出錯：${error.message}`, goalDone: false };
-    }
-  }
-
   function openProofWrite(id, options = {}) {
     const spec = proofLangSpec(id);
     if (!spec) return;
     const records = loadRecords();
-    const draft = proofLangDraft(records, id);
+    const draft = plUI.draft(records, id);
     const starter = options.starter ? options.starter.join("\n") : "";
     const text = draft && draft.text ? draft.text : starter;
     proofWrite = { id, lessonId: options.lessonId || "", text, report: runProofLangCheck(spec, text), showReference: false };
     view = options.lessonId ? "proof-tutorial" : "proof-write";
     render();
-  }
-
-  // 句型範本：按一下插到游標處。跟鍵盤一樣的邏輯 —— 使用者不用背關鍵字。
-  const PROOF_LANG_TEMPLATES = [
-    ["任取", "任取 ε > 0。"],
-    ["取", "取 δ = ε/3。"],
-    ["假設", "假設 0 < |x − a| < δ。"],
-    ["則", "則 A = B < C。"],
-    ["由定理", "由平均值定理，…。"],
-    ["因為所以", "因為 …，所以 …。"],
-    ["分情況", "分兩種情況。"],
-    ["情況", "情況一：x ≥ 0。"],
-    ["歸納", "用歸納法。"],
-    ["基底", "當 n = 1 時，左式 = …，右式 = …，成立。"],
-    ["歸納假設", "假設 n = k 時成立，即 …。"],
-    ["反設", "反設 …。"],
-    ["矛盾", "這與 … 矛盾。"],
-    ["故", "故 …。"]
-  ];
-
-  function renderProofLangVerdict(report) {
-    if (!report) return "";
-    const tone = { verified: "is-ok", partial: "is-unsure", incomplete: "is-unsure", broken: "is-error", empty: "" }[report.verdict] || "";
-    const label = { verified: "✔ 每一步都通過檢查", partial: "△ 讀得懂，有幾句驗不了", incomplete: "△ 結構還沒到齊", broken: "✘ 有一行過不了", empty: "還沒寫" }[report.verdict] || "";
-    return `
-      <div class="pl-verdict ${tone}" data-pl-verdict aria-live="polite">
-        <strong>${escapeHtml(label)}</strong>
-        <span>${escapeHtml(report.verdictText || "")}</span>
-        ${report.missing && report.missing.length ? `<ul>${report.missing.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>` : ""}
-      </div>`;
-  }
-
-  function renderProofLangLines(report) {
-    if (!report || !report.lines.length) return `<p class="panel-note">寫一行就會立刻檢查。每一行要用一種句型開頭 —— 不確定就按上面的範本。</p>`;
-    return `
-      <ol class="pl-lines">
-        ${report.lines.map((line) => `
-          <li class="is-${line.status}">
-            <span class="pl-line-mark" aria-hidden="true">${line.status === "ok" ? "✔" : line.status === "unsure" ? "△" : "✘"}</span>
-            <div>
-              <div class="pl-line-text"><small>第 ${line.n} 行 · ${escapeHtml(line.label || "？")}</small>${escapeHtml(line.raw)}</div>
-              <p class="pl-line-note">${escapeHtml(line.note || "")}</p>
-            </div>
-          </li>`).join("")}
-      </ol>`;
-  }
-
-  function renderProofLangEditor(spec, text, report, options = {}) {
-    const rows = Math.max(6, Math.min(16, String(text || "").split("\n").length + 2));
-    return `
-      <div class="pl-editor" data-pl-editor>
-        <div class="pl-templates" role="toolbar" aria-label="句型範本">
-          ${PROOF_LANG_TEMPLATES.map(([label, tpl]) => `<button type="button" class="pl-template" data-action="pl-insert" data-text="${escapeAttr(tpl)}">${escapeHtml(label)}</button>`).join("")}
-        </div>
-        <label class="sr-only" for="pl-text">證明內容</label>
-        <textarea id="pl-text" data-proof-lang-text rows="${rows}" spellcheck="false" placeholder="一行一句。例如：任取 ε > 0。">${escapeHtml(text || "")}</textarea>
-        <div data-pl-report>
-          ${renderProofLangVerdict(report)}
-          ${renderProofLangLines(report)}
-        </div>
-        <div class="action-row pl-actions">
-          <button class="button secondary" data-action="pl-toggle-reference">${icon("eye")}${proofWrite.showReference ? "收起參考證明" : "看參考證明"}</button>
-          <button class="button ghost" data-action="pl-clear">${icon("trash")}清空重寫</button>
-          ${options.extra || ""}
-        </div>
-        ${proofWrite.showReference ? `<div class="pl-reference"><p class="section-label">參考證明</p><pre>${escapeHtml(spec.reference.join("\n"))}</pre></div>` : ""}
-      </div>`;
-  }
-
-  function renderProofWrite() {
-    const spec = proofLangSpec(proofWrite.id);
-    if (!spec) return renderProofLab();
-    return `
-      <main class="screen">
-        <section class="panel page-panel pl-screen">
-          <div class="page-head">
-            <div>
-              <p class="section-label">白話證明 · ${escapeHtml(spec.family === "epsilon-delta" ? "ε-δ" : spec.family === "induction" ? "歸納法" : spec.family === "cases" ? "分情況" : spec.family === "contradiction" ? "反證" : "直接證明")}</p>
-              <h2>${escapeHtml(spec.title)}</h2>
-              <p>${escapeHtml(spec.statement)}</p>
-            </div>
-            <div class="action-row">
-              <button class="button secondary" data-action="open-proofs">${icon("chevron-right")}回證明訓練</button>
-            </div>
-          </div>
-          <div class="pl-goal math-block" data-tex="${escapeAttr(spec.prompt)}"></div>
-          <p class="pl-coach">${icon("lightbulb")}${escapeHtml(spec.coach || "")}</p>
-          ${renderProofLangEditor(spec, proofWrite.text, proofWrite.report)}
-        </section>
-      </main>`;
-  }
-
-  function renderProofTutorial() {
-    const lessons = proofLangLessons();
-    const lesson = lessons.find((item) => item.id === proofWrite.lessonId) || lessons[0];
-    if (!lesson) return renderProofLab();
-    const example = proofLangSpec(lesson.exampleId);
-    const exampleReport = example ? runProofLangCheck(example, example.reference.join("\n")) : null;
-    const exercise = proofLangSpec(lesson.exercise.id);
-    const index = lessons.indexOf(lesson);
-    const records = loadRecords();
-    const done = records.proofLangLessons || {};
-    return `
-      <main class="screen">
-        <section class="panel page-panel pl-screen pl-tutorial">
-          <div class="page-head">
-            <div>
-              <p class="section-label">白話證明教學 · 第 ${index + 1} / ${lessons.length} 課</p>
-              <h2>${escapeHtml(lesson.title.replace(/^第 \d 課 · /, ""))}</h2>
-              <p>約 ${lesson.minutes} 分鐘 · 先看一份寫好的證明，再自己寫幾行。</p>
-            </div>
-            <div class="action-row">
-              <button class="button secondary" data-action="open-proofs">${icon("chevron-right")}回證明訓練</button>
-            </div>
-          </div>
-          <nav class="pl-lesson-nav" aria-label="課程">
-            ${lessons.map((item, i) => `<button type="button" class="${item.id === lesson.id ? "is-active" : ""} ${done[item.id] ? "is-done" : ""}" data-action="pl-open-lesson" data-lesson-id="${escapeAttr(item.id)}">${i + 1}${done[item.id] ? " ✔" : ""}</button>`).join("")}
-          </nav>
-          <div class="pl-intro">${lesson.intro.map((paragraph) => `<p>${escapeHtml(paragraph)}</p>`).join("")}</div>
-          ${example ? `
-            <section class="pl-example">
-              <div class="pl-example-head"><p class="section-label">範例 · ${escapeHtml(example.title)}</p><span>每一行旁邊是檢查器真的跑出來的註解</span></div>
-              <div class="pl-goal math-block" data-tex="${escapeAttr(example.prompt)}"></div>
-              ${renderProofLangLines(exampleReport)}
-            </section>` : ""}
-          ${exercise ? `
-            <section class="pl-exercise">
-              <div class="pl-example-head"><p class="section-label">練習 · ${escapeHtml(exercise.title)}</p><span>${escapeHtml(lesson.exercise.task)}</span></div>
-              <div class="pl-goal math-block" data-tex="${escapeAttr(exercise.prompt)}"></div>
-              ${renderProofLangEditor(exercise, proofWrite.text, proofWrite.report, {
-                extra: index + 1 < lessons.length
-                  ? `<button class="button home-primary" data-action="pl-open-lesson" data-lesson-id="${escapeAttr(lessons[index + 1].id)}">${icon("play")}下一課</button>`
-                  : `<button class="button home-primary" data-action="open-proofs">${icon("check")}上完了，去題庫寫</button>`
-              })}
-            </section>` : ""}
-        </section>
-      </main>`;
-  }
-
-  // 證明訓練頁上的入口：五課 + 題目清單（帶你上次的結果）
-  function renderProofLangEntry(records) {
-    const problems = proofLangProblems();
-    if (!problems.length || !window.BuzzProofLang) return "";
-    const store = records.proofLang || {};
-    const verdictChip = (id) => {
-      const draft = store[id];
-      if (!draft) return "";
-      const label = { verified: "✔ 全綠", partial: "△ 部分", incomplete: "△ 未完", broken: "✘ 有錯", empty: "草稿" }[draft.verdict] || "草稿";
-      return `<span class="pl-chip is-${draft.verdict}">${escapeHtml(label)}</span>`;
-    };
-    const lessonsDone = Object.keys(records.proofLangLessons || {}).length;
-    return `
-      <section class="study-card pl-entry">
-        <div class="panel-title-row">
-          <div>
-            <p class="section-label">白話證明 · 可以被檢查的證明</p>
-            <h3>一行一句，寫完每一行立刻告訴你過不過</h3>
-          </div>
-        </div>
-        <p class="panel-note">不用 Lean、不用後端：代數鏈在假設下取樣驗、規則對形狀、骨架看有沒有到齊。它驗不了的會標黃，不會假裝。</p>
-        <div class="action-row">
-          <button class="button home-primary" data-action="pl-open-lesson" data-lesson-id="${escapeAttr((proofLangLessons()[0] || {}).id || "")}">${icon("book-open")}先上 5 課${lessonsDone ? ` · 已完成 ${lessonsDone}` : ""}</button>
-        </div>
-        <div class="pl-problem-grid">
-          ${problems.map((spec) => `
-            <button type="button" class="pl-problem" data-action="pl-open-problem" data-proof-lang-id="${escapeAttr(spec.id)}">
-              <span class="pl-problem-family">${escapeHtml({ "epsilon-delta": "ε-δ", induction: "歸納", cases: "分情況", contradiction: "反證", direct: "直接" }[spec.family] || spec.family)} · R${spec.difficulty}</span>
-              <strong>${escapeHtml(spec.title)}</strong>
-              ${verdictChip(spec.id)}
-            </button>`).join("")}
-        </div>
-      </section>`;
   }
 
   function bindProofLangEvents() {
@@ -5139,7 +4971,7 @@
       proofWrite.text = textarea.value;
       proofWrite.report = runProofLangCheck(spec, proofWrite.text);
       const box = app.querySelector("[data-pl-report]");
-      if (box) box.innerHTML = renderProofLangVerdict(proofWrite.report) + renderProofLangLines(proofWrite.report);
+      if (box) box.innerHTML = plUI.renderVerdict(proofWrite.report) + plUI.renderLines(proofWrite.report);
       saveProofLangDraft(proofWrite.id, proofWrite.text, proofWrite.report);
       if (proofWrite.lessonId && proofWrite.report && (proofWrite.report.verdict === "verified" || (spec.allowUnsure && proofWrite.report.verdict === "partial"))) {
         const records = loadRecords();
@@ -8560,6 +8392,7 @@
     if (action === "set-daily-goal") setDailyGoal(actionNode.dataset.goal);
     if (action === "clear-history") clearHistory();
     if (action === "export-records") exportRecords();
+    if (action === "retry-records-save") { saveRecords(loadRecords()); render(); }
     if (action === "export-calibration") exportCalibrationPack();
     if (action === "toggle-analytics") setAnalyticsEnabled(!analyticsEnabled());
     if (action === "unlock-library") {
@@ -9816,6 +9649,7 @@
   const STORAGE_NAMESPACE = "buzzcalculus.";
 
   function eraseEverything() {
+    unsavedRecordsJson = null;
     const removed = [];
     ERASABLE.forEach(([key, label]) => {
       try {
@@ -11724,20 +11558,6 @@
     return { variable: match[1], operator, value: Number(match[3]) };
   }
 
-  function inDomain(domain, vars) {
-    if (!domain) return true;
-    const value = vars[domain.variable];
-    if (value === undefined) return true;
-    switch (domain.operator) {
-      case ">": return value > domain.value;
-      case ">=": return value >= domain.value;
-      case "<": return value < domain.value;
-      case "<=": return value <= domain.value;
-      case "!=": return value !== domain.value;
-      default: return true;
-    }
-  }
-
   function checkNumeric(expected, input) {
     const normalized = normalizeText(input);
     if (["dne", "doesnotexist", "不存在"].includes(normalized)) {
@@ -11757,69 +11577,11 @@
   }
 
   function checkExpression(expected, input, variable, domain) {
-    const variables = Array.isArray(variable) ? variable : [variable];
-    const samples = expressionSamples(variables).filter((vars) => inDomain(domain, vars));
-    let valid = 0;
-    for (const vars of samples) {
-      const a = evaluateExpression(expected, vars);
-      const b = evaluateExpression(input, vars);
-      if (!Number.isFinite(a) || !Number.isFinite(b)) continue;
-      valid += 1;
-      const tolerance = Math.max(1e-6, Math.abs(a) * 1e-5);
-      if (Math.abs(a - b) > tolerance) {
-        return { correct: false, message: `在 ${formatVars(vars)} 代入時不相同。${friendlyWrongHint({ answerKind: "expression", variable: variables[0] }, input, expected)}` };
-      }
-    }
-    return {
-      correct: valid >= 3,
-      message: valid >= 3 ? "多點代入等價。" : "格式讀不穩。請用 2*x、sin(x)、log(x) 這種寫法。"
-    };
-  }
-
-  // 原本的取樣點全是正數（0.35 … 4.4）。那有一個很實際的漏洞：
-  // sqrt(x²) 和 x 在正數上完全一樣，但它們不是同一個函數。
-  // 只用正數取樣，這種答案一定判對。加入負值之後才有辦法分開。
-  //
-  // 同時把「好看的數字」換成無理數附近的值：0.5、1、2 這種點上，
-  // 不同的函數剛好撞在一起的機率高得多（sin(π/6)=1/2 這類巧合）。
-  const ANTIDERIVATIVE_SAMPLES = [0.3137, 0.7211, 1.2345, 1.9871, 3.3013, -0.6180, -1.3247, -2.1069];
-
-  function expressionSamples(variables) {
-    const base = ANTIDERIVATIVE_SAMPLES;
-    if (variables.length === 1) return base.map((value) => ({ [variables[0]]: value }));
-    return base.map((value, index) => {
-      return variables.reduce((vars, name, offset) => {
-        vars[name] = value + (offset + 1) * 0.27 + index * 0.11;
-        return vars;
-      }, {});
-    });
-  }
-
-  function formatVars(vars) {
-    return Object.entries(vars)
-      .map(([name, value]) => `${name}=${Math.round(value * 100) / 100}`)
-      .join(", ");
+    return answerSampling.checkExpression(expected, input, variable, domain);
   }
 
   function checkAntiderivative(expected, input, variable, domain) {
-    const samples = ANTIDERIVATIVE_SAMPLES.filter((x) => inDomain(domain, { [variable]: x }));
-    const diffs = [];
-    for (const x of samples) {
-      const vars = { [variable]: x };
-      const a = evaluateExpression(expected, vars);
-      const b = evaluateExpression(stripConstant(input), vars);
-      if (!Number.isFinite(a) || !Number.isFinite(b)) continue;
-      diffs.push(b - a);
-    }
-    if (diffs.length < 3) {
-      return { correct: false, message: "答案無法穩定解析。請用 x、sin(x)、log(x) 這類寫法。" };
-    }
-    const base = diffs[0];
-    const ok = diffs.every((value) => Math.abs(value - base) <= Math.max(1e-5, Math.abs(base) * 1e-5));
-    return {
-      correct: ok,
-      message: ok ? "原函數相差常數，判定正確。" : `微分後不相同。${friendlyWrongHint({ answerKind: "antiderivative", variable }, input, expected)}`
-    };
+    return answerSampling.checkAntiderivative(expected, input, variable, domain);
   }
 
   // ── 集合與區間 ─────────────────────────────────────────────
@@ -11973,23 +11735,29 @@
     const options = [];
     const seen = new Set();
     const addOption = (value, isCorrect) => {
+      if (options.length >= 4) return;
       const normalized = normalizeChoice(value);
-      if (!normalized || seen.has(normalized)) return;
+      const label = simplifyChoiceLabel(value);
+      if (!normalized || seen.has(normalized) || options.some((option) => normalizeChoice(option.label) === normalizeChoice(label))) return;
       if (!isCorrect && checkAnswer(problem, value).correct) return;
       if (!isCorrect && !wellFormedDistractor(problem, value)) return;
+      if (!isCorrect && options.some((option) => checkAnswer({ ...problem, answer: option.value }, value).correct)) return;
       seen.add(normalized);
       options.push({
         value,
         // 顯示用的 label 做常數摺疊：正解照模板原樣印出 5*3/(3-1)、4^2/2
         // 這種「一看就是公式套出來的」形狀，等於直接洩題。
-        label: simplifyChoiceLabel(value)
+        label
       });
     };
 
     addOption(correct, true);
-    buildChoiceDistractors(problem, correct).forEach((value) => addOption(value, false));
+    for (const value of buildChoiceDistractors(problem, correct)) {
+      addOption(value, false);
+      if (options.length >= 4) break;
+    }
     // 題目可以自帶誘答；有自帶就不要再從題庫其他答案亂抓。
-    if (!authoredDistractors(problem).length) {
+    if (options.length < 4 && !authoredDistractors(problem).length) {
       fallbackChoiceDistractors(problem).forEach((value) => addOption(value, false));
     }
 
@@ -12091,9 +11859,14 @@
     return Array.isArray(problem.distractors) ? problem.distractors.filter((value) => String(value || "").trim()) : [];
   }
 
-  function buildChoiceDistractors(problem, correct) {
+  function* buildChoiceDistractors(problem, correct) {
     const authored = authoredDistractors(problem);
-    if (authored.length) return shuffle(authored.slice(), seedFromString(`${problem.id}-authored-distractors`));
+    if (authored.length) {
+      yield* shuffle(authored.slice(), seedFromString(`${problem.id}-authored-distractors`));
+      return;
+    }
+    // 通常微擾就湊得滿四個選項，不必每題都先驗算整份題庫。
+    yield* generatedChoiceDistractors(problem, correct);
     const sameKind = problems.filter((item) => item.id !== problem.id && item.answerKind === problem.answerKind);
     const sameTopic = sameKind.filter((item) => item.topic === problem.topic);
     // 誘答取自其他題的答案 —— 真實答案比亂數更像誘答，因為它們長得像人算得出來的東西。
@@ -12124,8 +11897,7 @@
     // 微擾出來的誘答（真實的犯錯方式）永遠排在前面；別題的答案只補不足的位置。
     // generated 的順序本身就是優先序（微擾在前、包裹式墊底），不能洗牌 ——
     // 洗過一次之後 Boss 題的四個選項變成 2·(X)、(X)+1、X、−5.33，X 就是答案。
-    const generated = generatedChoiceDistractors(problem, correct);
-    return [...generated, ...shuffle(answerPool, seedFromString(`${problem.id}-pool`))];
+    yield* shuffle(answerPool, seedFromString(`${problem.id}-pool`));
   }
 
   // 誘答跟正解要在同一個量級上才有鑑別力。
@@ -12331,7 +12103,7 @@
 
   function evaluateExpression(source, vars) {
     try {
-      const expr = normalizeExpression(source);
+      const expr = normalizeExpression(source, Object.keys(vars));
       if (!expr) return Number.NaN;
       const allowed = new Set([
         ...Object.keys(vars),
@@ -12368,7 +12140,7 @@
     }
   }
 
-  function normalizeExpression(source) {
+  function normalizeExpression(source, variables = []) {
     let expr = String(source || "").trim();
     expr = expr.replace(/\\left/g, "");
     expr = expr.replace(/\\right/g, "");
@@ -12411,7 +12183,7 @@
     expr = expr.replace(/\be\b/g, "E");
     expr = expr.replace(/\s+/g, "");
     expr = normalizeUnaryPower(expr);
-    expr = applyImplicitMultiplication(expr);
+    expr = applyImplicitMultiplication(expr, variables);
     if (/[^0-9a-zA-Z_+\-*/().,]/.test(expr)) return "";
     if (/(constructor|window|document|globalThis|Function|eval|=>|;|=)/.test(expr)) return "";
     return expr;
@@ -12459,11 +12231,18 @@
     return match ? { end: start + match[0].length } : null;
   }
 
-  function applyImplicitMultiplication(expr) {
+  function applyImplicitMultiplication(expr, variables = []) {
     const functionNames = new Set(["sin", "cos", "tan", "asin", "acos", "atan", "log", "exp", "sqrt", "abs", "pow", "sinh", "cosh", "tanh", "sec", "csc", "cot"]);
+    const names = variables.filter((name) => /^[A-Za-z_][A-Za-z0-9_]*$/.test(name)).sort((a, b) => b.length - a.length);
     const splitIdentifier = (identifier) => {
       if (functionNames.has(identifier) || ["PI", "E", "Infinity"].includes(identifier)) return identifier;
-      return identifier.split("").join("*");
+      const parts = [];
+      for (let i = 0; i < identifier.length;) {
+        const name = names.find((candidate) => identifier.startsWith(candidate, i)) || identifier[i];
+        parts.push(name);
+        i += name.length;
+      }
+      return parts.join("*");
     };
     return String(expr || "")
       .replace(/(\d|\))(?=[A-Za-z_(])/g, "$1*")
@@ -13607,7 +13386,7 @@
 
   function loadRecords() {
     try {
-      return normalizeRecords(JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}"));
+      return normalizeRecords(JSON.parse(unsavedRecordsJson !== null ? unsavedRecordsJson : localStorage.getItem(STORAGE_KEY) || "{}"));
     } catch (_error) {
       return normalizeRecords({});
     }
@@ -13615,11 +13394,22 @@
 
   function saveRecords(records) {
     const next = normalizeRecords(records);
-    backupRecords(next, false);
     // Feature 7：雲端同步衝突規則採「updatedAt 最新者獲勝」，
     // 所以每一次本機寫入都要蓋上新的時間戳。
     next.updatedAt = new Date().toISOString();
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+    const serialized = JSON.stringify(next);
+    try {
+      localStorage.setItem(STORAGE_KEY, serialized);
+      unsavedRecordsJson = null;
+    } catch (_error) {
+      unsavedRecordsJson = serialized;
+      syncStorageWarning();
+      return false;
+    }
+    syncStorageWarning();
+    // 先存主要紀錄，再做備份，避免備份吃掉本場結算所需的空間。
+    backupRecords(next, false);
+    return true;
   }
 
   function normalizeRecords(records) {
@@ -15680,6 +15470,11 @@
   setupErrorReporting();
   setupVisibilityTracking();
   setupKeyboardShortcuts();
+  window.addEventListener("beforeunload", (event) => {
+    if (unsavedRecordsJson === null) return;
+    event.preventDefault();
+    event.returnValue = "";
+  });
   // 帶著 #pack= 分享連結進來：直接落在出題工作坊的匯入預覽。
   if (CUSTOM && CUSTOM.pendingImport) {
     creatorImportPreview = CUSTOM.pendingImport;
