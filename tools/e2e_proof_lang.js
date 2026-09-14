@@ -49,11 +49,32 @@ async function run() {
     await click('button[data-action="dismiss-notice"]');
 
     await click('[data-action="open-proofs"]', 800);
-    check("證明訓練頁有白話證明的入口", await chrome.evaluate(`return Boolean(document.querySelector('.pl-entry'))`));
-    const entry = await chrome.evaluate(`return { problems: document.querySelectorAll('.pl-problem').length, families: [...document.querySelectorAll('.pl-family-label')].map((el) => el.innerText.trim()), button: document.querySelector('[data-action="pl-open-lesson"]')?.innerText || "", lessons: (window.BUZZ_PROOF_LANG_LESSONS || []).length };`);
-    check("入口列出題目", entry.problems >= 40, `${entry.problems} 題`);
-    check("題目照證法分成五組，每組有題數", entry.families.length === 5 && entry.families.every((label) => /\d+ 題/.test(label)), entry.families.join(" / "));
+    /* ── 題庫表（像 LeetCode）── */
+    check("證明訓練頁是一張題目表", await chrome.evaluate(`return Boolean(document.querySelector('.lc-index table.lc-table'))`));
+    const entry = await chrome.evaluate(`return { rows: document.querySelectorAll('tr[data-proof-key]').length, auto: document.querySelectorAll('tr[data-proof-key^="pl:"]').length, self: document.querySelectorAll('tr[data-proof-key^="pf:"]').length, progress: document.querySelector('.lc-progress-main')?.innerText || "", button: document.querySelector('[data-action="pl-open-lesson"]')?.innerText || "", lessons: (window.BUZZ_PROOF_LANG_LESSONS || []).length, banks: (window.BUZZ_PROOF_LANG_PROBLEMS || []).length + (window.BUZZ_PROOFS || []).length };`);
+    check("兩個題庫都在表裡", entry.rows === entry.banks && entry.auto >= 40 && entry.self >= 40, `${entry.auto} 自動判 + ${entry.self} 自評 = ${entry.rows}`);
+    check("進度卡寫著 0 / 總題數", new RegExp(`0\\s*/ ${entry.banks}`).test(entry.progress), entry.progress.replace(/\s+/g, " "));
     check("課程按鈕的課數跟內容一致", new RegExp(`先上 ${entry.lessons} 課`).test(entry.button), entry.button);
+    await click('[data-action="proof-filter"][data-filter-key="level"][data-filter-value="hard"]', 500);
+    const hard = await chrome.evaluate(`return { rows: document.querySelectorAll('tr[data-proof-key]').length, levels: [...new Set([...document.querySelectorAll('tr[data-proof-key] .lc-level')].map((el) => el.innerText.trim()))] };`);
+    check("按「困難」只剩困難題", hard.rows > 0 && hard.rows < entry.rows && hard.levels.join("") === "困難", `${hard.rows} 題 · ${hard.levels.join("/")}`);
+    await click('[data-action="proof-filter"][data-filter-key="level"][data-filter-value="all"]', 500);
+    await chrome.evaluate(`const box = document.querySelector('[data-proof-search]'); box.focus(); box.value = "ε-N"; box.dispatchEvent(new Event("input", { bubbles: true }));`);
+    await chrome.sleep(600);
+    const searched = await chrome.evaluate(`return { rows: [...document.querySelectorAll('tr[data-proof-key] .lc-title')].map((el) => el.innerText), focused: document.activeElement === document.querySelector('[data-proof-search]') };`);
+    check("搜尋 ε-N 只剩數列題，游標還在搜尋框", searched.rows.length === 3 && searched.rows.every((title) => title.includes("ε-N")) && searched.focused, searched.rows.join(" / "));
+    await chrome.evaluate(`const box = document.querySelector('[data-proof-search]'); box.value = ""; box.dispatchEvent(new Event("input", { bubbles: true }));`);
+    await chrome.sleep(500);
+
+    /* ── proofs.js 的題（骨架／填空／自評）也走同一個殼 ── */
+    await click('tr[data-proof-key="pf:proof-mvt-001"]', 900);
+    const selfPage = await chrome.evaluate(`return { title: document.querySelector('.lc-topbar-title')?.innerText || "", tex: Boolean(document.querySelector('.lc-desc .pl-goal .katex')), drills: document.querySelectorAll('.lc-work .proof-order-launch').length, selfCheck: Boolean(document.querySelector('.lc-work [data-action="mark-proof-status"][data-proof-status="understood"]')), sidebar: Boolean(document.querySelector('.sidebar-link.is-active[data-action="open-proofs"]')) };`);
+    check("自評題也是左題右練：題幹、排步驟／填空、自評", /#42/.test(selfPage.title) && selfPage.tex && selfPage.drills >= 2 && selfPage.selfCheck && selfPage.sidebar, selfPage.title.replace(/\s+/g, " "));
+    await click('[data-action="mark-proof-status"][data-proof-status="understood"]', 600);
+    check("按「看懂」：標題列打勾", await chrome.evaluate(`return Boolean(document.querySelector('.lc-topbar-title .lc-status.is-solved'))`));
+    await click('[data-action="open-proofs"]', 800);
+    const selfRow = await chrome.evaluate(`const row = document.querySelector('tr[data-proof-key="pf:proof-mvt-001"]'); return { cls: row?.className || "", record: row?.querySelector('.lc-col-record')?.innerText || "" };`);
+    check("表上那一列變已解", /is-solved/.test(selfRow.cls) && /已解/.test(selfRow.record), selfRow.record);
 
     /* ── 教學第 1 課 ── */
     await click('[data-action="pl-open-lesson"]', 900);
@@ -96,8 +117,11 @@ async function run() {
 
     /* ── 題目編輯器 ── */
     await click('[data-action="open-proofs"]', 800);
-    await click('[data-action="pl-open-problem"][data-proof-lang-id="pl-limit-linear"]', 900);
-    check("題目頁有題幹與教練提示", await chrome.evaluate(`return Boolean(document.querySelector('.pl-goal .katex')) && /ε-δ/.test(document.querySelector('.pl-coach')?.innerText || "")`));
+    await click('tr[data-proof-key="pl:pl-limit-linear"]', 900);
+    check("點表的一列打開題目頁：左題右寫", await chrome.evaluate(`return Boolean(document.querySelector('.lc-split .lc-desc .pl-goal .katex')) && Boolean(document.querySelector('.lc-split .lc-work [data-proof-lang-text]')) && /#1/.test(document.querySelector('.lc-topbar-title')?.innerText || "")`));
+    await click('[data-action="pl-tab"][data-tab="hint"]', 400);
+    check("提示分頁有教練提示", await chrome.evaluate(`return /ε-δ/.test(document.querySelector('.lc-tab-body .pl-coach')?.innerText || "")`));
+    await click('[data-action="pl-tab"][data-tab="problem"]', 400);
     const before = await chrome.evaluate(`return document.querySelector('[data-proof-lang-text]').value`);
     await click('[data-action="pl-insert"]', 400);
     const after = await chrome.evaluate(`return document.querySelector('[data-proof-lang-text]').value`);
@@ -108,17 +132,29 @@ async function run() {
     check("錯的 δ 紅在第 4 行", st[3] === "error" && st[0] === "ok" && st[1] === "ok", st.join(","));
     check("結論因為沒有支撐而標黃", st[4] === "unsure", st[4]);
 
+    await click('[data-action="pl-submit"]', 700);
+    const wrong = await chrome.evaluate(`return { result: document.querySelector('[data-pl-submit-result]')?.className || "", text: document.querySelector('[data-pl-submit-result]')?.innerText || "", count: document.querySelector('[data-action="pl-tab"][data-tab="submissions"] small')?.innerText || "" };`);
+    check("提交錯的：Wrong Answer，提交紀錄 +1", /is-broken/.test(wrong.result) && /Wrong Answer/.test(wrong.text) && wrong.count === "1", wrong.text.split("\n")[0]);
+
     await type("任取 ε > 0。\n取 δ = ε/3。\n假設 0 < |x − 2| < δ。\n則 |3x − 6| = 3|x − 2| < 3δ = ε。\n所以 lim_{x→2} 3x = 6。");
     v = await verdict();
     check("修好 δ 之後全綠", v && /is-ok/.test(v.cls), v ? v.text.slice(0, 40) : "");
+    await click('[data-action="pl-submit"]', 700);
+    const accepted = await chrome.evaluate(`return { result: document.querySelector('[data-pl-submit-result]')?.className || "", text: document.querySelector('[data-pl-submit-result]')?.innerText || "", solved: Boolean(document.querySelector('.lc-topbar-title .lc-status.is-solved')), count: document.querySelector('[data-action="pl-tab"][data-tab="submissions"] small')?.innerText || "" };`);
+    check("提交對的：Accepted，標題列打勾，提交紀錄 2 筆", /is-verified/.test(accepted.result) && /Accepted/.test(accepted.text) && accepted.solved && accepted.count === "2", accepted.text.split("\n")[0]);
+    await click('[data-action="pl-tab"][data-tab="submissions"]', 400);
+    const history = await chrome.evaluate(`return [...document.querySelectorAll('.lc-submissions li .lc-sub-verdict')].map((el) => el.innerText)`);
+    check("提交紀錄最新在上：Accepted、Wrong Answer", history.length === 2 && /Accepted/.test(history[0]) && /Wrong/.test(history[1]), history.join(" | "));
+    await click('.lc-topbar-nav [data-action="open-proof-problem"]:not([disabled])', 800);
+    check("下一題按鈕跳到 #2", await chrome.evaluate(`return /#2/.test(document.querySelector('.lc-topbar-title')?.innerText || "")`));
 
     // 草稿存活：重整之後再打開同一題，字還在
     await chrome.navigate(server.url + "/index.html");
     await click('button[data-action="dismiss-notice"]');
     await click('[data-action="open-proofs"]', 800);
-    const chip = await chrome.evaluate(`return document.querySelector('[data-proof-lang-id="pl-limit-linear"] .pl-chip')?.innerText || ""`);
-    check("入口上看得到上次的結果", /全綠/.test(chip), chip);
-    await click('[data-action="pl-open-problem"][data-proof-lang-id="pl-limit-linear"]', 900);
+    const rowState = await chrome.evaluate(`const row = document.querySelector('tr[data-proof-key="pl:pl-limit-linear"]'); return { cls: row?.className || "", record: row?.querySelector('.lc-col-record')?.innerText || "", progress: document.querySelector('.lc-progress-main')?.innerText || "" };`);
+    check("表上看得到已解與提交次數，進度卡變 2（連同剛才看懂的那題）", /is-solved/.test(rowState.cls) && /已解 · 2 次提交/.test(rowState.record) && /^2\s*\//.test(rowState.progress.trim()), `${rowState.record} · ${rowState.progress.replace(/\s+/g, " ")}`);
+    await click('tr[data-proof-key="pl:pl-limit-linear"]', 900);
     const draft = await chrome.evaluate(`return document.querySelector('[data-proof-lang-text]').value`);
     check("草稿重整後還在", draft.includes("ε/3"), draft.split("\n")[1] || "");
 

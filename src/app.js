@@ -568,7 +568,6 @@
   let onboardingStep = "intro";
   let selectedMistakeTopic = "all";
   let selectedHistoryTopic = "all";
-  let selectedProofTier = "all";
   let selectedLibraryTopic = "all";
   let selectedLibraryPack = "all";
   let selectedLibraryRank = "all";
@@ -1217,7 +1216,7 @@
     const inQuiz = view === "quiz";
     const themeIcon = selectedTheme === "dark" ? "sun" : "moon";
     const themeLabel = selectedTheme === "dark" ? "亮色" : "深色";
-    const parentView = { "path-intro": "train", mistakes: "train", history: "insights", results: "insights", proofs: "library", creator: "library", "proof-write": "library", "proof-tutorial": "library" }[view] || view;
+    const parentView = { "path-intro": "train", mistakes: "train", history: "insights", results: "insights", proofs: "library", creator: "library", "proof-write": "library", "proof-tutorial": "library", "proof-view": "library" }[view] || view;
     const navItem = (v, action, label, iconName) =>
       `<button class="nav-button ${parentView === v ? "is-active" : ""}" data-action="${action}" aria-label="${label}" title="${label}" ${parentView === v ? 'aria-current="page"' : ""}>${icon(iconName)}<span>${label}</span></button>`;
     return `
@@ -1243,7 +1242,7 @@
                 <span class="nav-section-label">學習工具</span>
                 <button class="sidebar-link ${view === "mistakes" ? "is-active" : ""}" data-action="open-mistakes" title="錯題本">${icon("refresh")}<span>錯題本</span></button>
                 <button class="sidebar-link ${view === "history" ? "is-active" : ""}" data-action="open-history" title="練習紀錄">${icon("history")}<span>練習紀錄</span></button>
-                <button class="sidebar-link ${view === "proofs" ? "is-active" : ""}" data-action="open-proofs" title="證明訓練">${icon("file-pen-line")}<span>證明訓練</span></button>
+                <button class="sidebar-link ${/^proof/.test(view) ? "is-active" : ""}" data-action="open-proofs" title="證明訓練">${icon("file-pen-line")}<span>證明訓練</span></button>
               </div>
               <a class="sidebar-guide" href="guide.html">${icon("book-open")}<span><strong>把每次練習，變成進步</strong><small>閱讀使用手冊 ${icon("chevron-right")}</small></span></a>
               <div class="topbar-utils">
@@ -1257,7 +1256,7 @@
 
   function renderWorkspaceBar() {
     if (view === "quiz") return "";
-    const labels = { home: "今日概覽", train: "訓練中心", insights: "學習數據", library: "探索題庫", settings: "偏好與設定", mistakes: "錯題本", history: "練習紀錄", proofs: "證明訓練", "proof-write": "白話證明", "proof-tutorial": "白話證明教學", creator: "出題工作坊", results: "訓練回顧", "path-intro": "學習路線" };
+    const labels = { home: "今日概覽", train: "訓練中心", insights: "學習數據", library: "探索題庫", settings: "偏好與設定", mistakes: "錯題本", history: "練習紀錄", proofs: "證明訓練", "proof-write": "證明題", "proof-tutorial": "白話證明教學", "proof-view": "證明題", creator: "出題工作坊", results: "訓練回顧", "path-intro": "學習路線" };
     return `
       <div class="workspace-bar">
         <div class="workspace-breadcrumb"><span>我的學習空間</span>${icon("chevron-right")}<strong>${labels[view] || "今日概覽"}</strong></div>
@@ -1275,6 +1274,7 @@
     if (view === "path-intro") return renderPathIntro();
     if (view === "proofs") return renderProofLab();
     if (view === "proof-write") return renderProofWrite();
+    if (view === "proof-view") return renderProofView();
     if (view === "proof-tutorial") return renderProofTutorial();
     if (view === "library") return renderProblemLibrary();
     // 第一次進站強制走 onboarding：不讓新使用者面對 1407 題 × 18 模式的組合空間。
@@ -4927,26 +4927,101 @@
     });
   }
 
-  // ── 白話證明：狀態、草稿、事件（畫面在 proof_lang_ui.js） ────────────────────────────
+  // ── 白話證明：狀態、草稿、事件（畫面在 proof_lab_ui.js） ────────────────────────────
   //
-  // 檢查器在 kernel/proof_lang.js（純函式）、畫面在 proof_lang_ui.js（純函式）。
+  // 檢查器在 kernel/proof_lang.js（純函式）、畫面在 proof_lab_ui.js（純函式）。
   // 這裡只剩狀態：正在寫哪一題、輸入時 debounce 重跑檢查（只重畫 [data-pl-report]，
   // 不整頁 render，游標才不會跳）、把草稿與最新結果存進 records.proofLang。
-  let proofWrite = { id: "", lessonId: "", text: "", report: null, showReference: false };
+  let proofWrite = { id: "", lessonId: "", text: "", report: null, showReference: false, tab: "problem", lastSubmit: null };
   let proofLangTimer = null;
+  // 題庫表的篩選（像 LeetCode：難度、狀態、判卷方式、標籤、搜尋、排序）與正在看的 proofs.js 題
+  let proofLabFilter = { q: "", level: "all", status: "all", kind: "all", group: "all", sort: "n" };
+  let proofViewId = "";
+  let proofSearchTimer = null;
 
-  const plUI = window.BuzzProofLangUI.create({ escapeHtml, escapeAttr, icon });
+  const plUI = window.BuzzProofLabUI.create({ escapeHtml, escapeAttr, icon, proofs });
   const proofLangSpec = (id) => plUI.spec(id);
   const proofLangLessons = () => plUI.lessons();
   const runProofLangCheck = (spec, text) => plUI.check(spec, text);
-  const renderProofWrite = () => plUI.renderWrite(proofWrite) || renderProofLab();
   const renderProofTutorial = () => plUI.renderTutorial(proofWrite, loadRecords()) || renderProofLab();
-  const renderProofLangEntry = (records) => plUI.renderEntry(records);
+
+  // 上一題／下一題照目前的篩選走；這題不在篩選裡（例如從課程進來）就照整張表
+  function proofLabNav(key) {
+    const records = loadRecords();
+    const all = plUI.rows(records);
+    let list = plUI.filterRows(all, proofLabFilter);
+    if (!list.some((row) => row.key === key)) list = all;
+    const index = list.findIndex((row) => row.key === key);
+    return { row: all.find((row) => row.key === key) || null, prev: index > 0 ? list[index - 1] : null, next: index >= 0 && index + 1 < list.length ? list[index + 1] : null, index: Math.max(0, index), total: list.length };
+  }
+
+  function openProofProblem(key) {
+    const [kind, id] = String(key || "").split(":");
+    if (kind === "pl") openProofWrite(id);
+    if (kind === "pf" && proofs.some((proof) => proof.id === id)) {
+      proofViewId = id;
+      proofOrderDrill = null;
+      view = "proof-view";
+      render();
+      window.scrollTo(0, 0);
+    }
+  }
+
+  function openRandomProof() {
+    const list = plUI.filterRows(plUI.rows(loadRecords()), proofLabFilter);
+    const pool = list.filter((row) => row.status !== "solved");
+    const source = pool.length ? pool : list;
+    const pick = source[Math.floor(Math.random() * source.length)];
+    if (pick) openProofProblem(pick.key);
+  }
+
+  function renderProofWrite() {
+    const spec = proofLangSpec(proofWrite.id);
+    if (!spec) return renderProofLab();
+    const nav = proofLabNav(`pl:${spec.id}`);
+    return plUI.renderProblem(nav.row, spec, proofWrite, loadRecords(), nav);
+  }
+
+  // 提交：記一筆（時間、結論、紅黃行數、有沒有看過題解），全綠就標已解。跟即時檢查用同一份報告。
+  function submitProofLang() {
+    const spec = proofLangSpec(proofWrite.id);
+    if (!spec) return;
+    const textarea = app.querySelector("[data-proof-lang-text]");
+    if (textarea) proofWrite.text = textarea.value;
+    proofWrite.report = runProofLangCheck(spec, proofWrite.text);
+    const report = proofWrite.report || { verdict: "empty", lines: [], counts: { unsure: 0, error: 0 }, verdictText: "" };
+    const records = loadRecords();
+    records.proofLang = records.proofLang || {};
+    const entry = records.proofLang[spec.id] || {};
+    const now = new Date().toISOString();
+    const item = { at: now, verdict: report.verdict, lines: report.lines.length, unsure: report.counts ? report.counts.unsure : 0, error: report.counts ? report.counts.error : 0, viewedSolution: Boolean(entry.solutionViewed) };
+    entry.submissions = (entry.submissions || []).concat([item]).slice(-30);
+    entry.text = String(proofWrite.text || "").slice(0, 6000);
+    entry.verdict = report.verdict;
+    entry.updatedAt = now;
+    if (report.verdict === "verified" && !entry.solvedAt) entry.solvedAt = now;
+    records.proofLang[spec.id] = entry;
+    saveRecords(records);
+    proofWrite.lastSubmit = { verdict: report.verdict, source: proofWrite.text, text: report.verdict === "verified" ? "全綠、骨架齊。這題算解了 —— 下一題。" : (report.verdictText || "") };
+    if (proofWrite.lessonId && report.verdict === "verified") markProofLessonDone(records);
+    render();
+    const result = app.querySelector("[data-pl-submit-result]");
+    if (result && result.scrollIntoView) result.scrollIntoView({ block: "nearest", behavior: "smooth" });
+  }
+
+  function markProofLessonDone(records) {
+    records.proofLangLessons = records.proofLangLessons || {};
+    if (!records.proofLangLessons[proofWrite.lessonId]) {
+      records.proofLangLessons[proofWrite.lessonId] = new Date().toISOString();
+      saveRecords(records);
+    }
+  }
 
   function saveProofLangDraft(id, text, report) {
     const records = loadRecords();
     records.proofLang = records.proofLang || {};
-    records.proofLang[id] = { text: String(text || "").slice(0, 6000), verdict: report ? report.verdict : "empty", updatedAt: new Date().toISOString() };
+    // 合併，不覆蓋：提交紀錄、已解時間、看過題解都在同一個物件上
+    records.proofLang[id] = { ...(records.proofLang[id] || {}), text: String(text || "").slice(0, 6000), verdict: report ? report.verdict : "empty", updatedAt: new Date().toISOString() };
     saveRecords(records);
   }
 
@@ -4957,7 +5032,7 @@
     const draft = plUI.draft(records, id);
     const starter = options.starter ? options.starter.join("\n") : "";
     const text = draft && draft.text ? draft.text : starter;
-    proofWrite = { id, lessonId: options.lessonId || "", text, report: runProofLangCheck(spec, text), showReference: false };
+    proofWrite = { id, lessonId: options.lessonId || "", text, report: runProofLangCheck(spec, text), showReference: false, tab: "problem", lastSubmit: null };
     view = options.lessonId ? "proof-tutorial" : "proof-write";
     render();
   }
@@ -4971,16 +5046,13 @@
       proofWrite.text = textarea.value;
       proofWrite.report = runProofLangCheck(spec, proofWrite.text);
       const box = app.querySelector("[data-pl-report]");
-      if (box) box.innerHTML = plUI.renderVerdict(proofWrite.report) + plUI.renderLines(proofWrite.report);
+      // 提交過之後又改了內容：提交結果變舊的（淡掉、提醒再提交），即時結論才回來
+      const stale = Boolean(proofWrite.lastSubmit) && proofWrite.lastSubmit.source !== proofWrite.text;
+      const result = app.querySelector("[data-pl-submit-result]");
+      if (result) result.classList.toggle("is-stale", stale);
+      if (box) box.innerHTML = (proofWrite.lastSubmit && !stale ? "" : plUI.renderVerdict(proofWrite.report)) + plUI.renderLines(proofWrite.report);
       saveProofLangDraft(proofWrite.id, proofWrite.text, proofWrite.report);
-      if (proofWrite.lessonId && proofWrite.report && (proofWrite.report.verdict === "verified" || (spec.allowUnsure && proofWrite.report.verdict === "partial"))) {
-        const records = loadRecords();
-        records.proofLangLessons = records.proofLangLessons || {};
-        if (!records.proofLangLessons[proofWrite.lessonId]) {
-          records.proofLangLessons[proofWrite.lessonId] = new Date().toISOString();
-          saveRecords(records);
-        }
-      }
+      if (proofWrite.lessonId && proofWrite.report && (proofWrite.report.verdict === "verified" || (spec.allowUnsure && proofWrite.report.verdict === "partial"))) markProofLessonDone(loadRecords());
     };
     textarea.addEventListener("input", () => {
       if (proofLangTimer && window.clearTimeout) window.clearTimeout(proofLangTimer);
@@ -5009,115 +5081,49 @@
   }
 
   function renderProofLab() {
-    const records = loadRecords();
-    const stats = proofStats(records);
-    const items = proofs.filter((proof) => selectedProofTier === "all" || proof.tier === selectedProofTier);
-    return `
-      <main class="screen">
-        <section class="panel page-panel proof-lab">
-          <div class="page-head">
-            <div>
-              <p class="section-label">證明題</p>
-              <h2>證明題庫</h2>
-              <p class="proof-subtitle">不限時，不進計分，不機器改。先自己寫，再看參考證明。</p>
-            </div>
-            <div class="action-row">
-              <button class="button secondary" data-action="home">${icon("home")}回主線</button>
-            </div>
-          </div>
-
-          ${renderProofLangEntry(records)}
-
-          <div class="proof-overview">
-            <div><span>總題數</span><strong>${stats.total}</strong></div>
-            <div><span>已看解法</span><strong>${stats.viewed}</strong></div>
-            <div><span>看懂</span><strong>${stats.understood}</strong></div>
-            <div><span>部分會</span><strong>${stats.partial}</strong></div>
-            <div><span>還不會</span><strong>${stats.stuck}</strong></div>
-          </div>
-
-          <div class="segmented compact proof-tier-picker" role="group" aria-label="證明題難度篩選">
-            ${Object.entries(PROOF_TIERS)
-              .map(([key, label]) => {
-                const count = key === "all" ? proofs.length : proofs.filter((proof) => proof.tier === key).length;
-                return `
-                  <button class="segment ${selectedProofTier === key ? "is-active" : ""}" aria-pressed="${selectedProofTier === key ? "true" : "false"}" data-proof-tier="${escapeAttr(key)}">
-                    <strong>${escapeHtml(label)}</strong>
-                    <span>${count} 題</span>
-                  </button>
-                `;
-              })
-              .join("")}
-          </div>
-
-          <div class="proof-list">
-            ${
-              items.length
-                ? items.map((proof, index) => renderProofCard(proof, records.proofs[proof.id] || {}, index)).join("")
-                : `<div class="empty-state">目前沒有符合篩選的證明題。</div>`
-            }
-          </div>
-        </section>
-      </main>
-    `;
+    return plUI.renderIndex(loadRecords(), proofLabFilter);
   }
 
-  function renderProofCard(proof, progress, index) {
+  // proofs.js 的題目頁：左邊題目、提示、關鍵步驟；右邊骨架重排、填空、參考證明、自評。
+  function renderProofView() {
+    const proof = proofs.find((item) => item.id === proofViewId);
+    if (!proof) return renderProofLab();
+    const records = loadRecords();
+    const progress = records.proofs[proof.id] || {};
+    const nav = proofLabNav(`pf:${proof.id}`);
     const status = progress.status || "";
     const viewed = Boolean(progress.solutionViewed);
-    return `
-      <article class="proof-card is-${escapeAttr(proof.tier)} ${status ? `status-${escapeAttr(status)}` : ""}">
-        <div class="proof-card-head">
-          <div>
-            <span class="proof-index">#${index + 1} · ${escapeHtml(PROOF_TIERS[proof.tier] || proof.tier)} · R${proof.difficulty}</span>
-            <h3>${escapeHtml(proof.title)}</h3>
-          </div>
-          <span class="proof-status">${proofStatusLabel(status)}</span>
-        </div>
-
-        ${proof.statement ? `<p class="proof-statement">${escapeHtml(proof.statement)}</p>` : ""}
-        <div class="proof-prompt math-block" data-tex="${escapeAttr(proof.prompt)}"></div>
-
-        <div class="proof-tags">
-          ${(proof.tags || []).map((tag) => `<span>${escapeHtml(tag)}</span>`).join("")}
-        </div>
-
-        ${
-          proof.leanSkeleton
-            ? `<a class="button secondary proof-lean-link" href="https://live.lean-lang.org/#code=${encodeURIComponent(proof.leanSkeleton)}" target="_blank" rel="noopener">${icon("play")}在 Lean Playground 開啟（真・機器判卷）</a>`
-            : ""
-        }
-
-        <p class="proof-ladder">${proof.tier === "lean" ? "開 Playground 補完 sorry → 編譯零錯誤＝通過 → 卡了開提示 → 最後對參考解答" : "先自己寫 → 卡了開提示 → 還卡開關鍵步驟 → 最後對參考證明"}</p>
-
-        ${
-          (proof.hints || []).length
-            ? `<details class="proof-step proof-hints" data-proof-step="${escapeAttr(`${proof.id}:hints`)}" ${openProofSteps.has(`${proof.id}:hints`) ? "open" : ""}>
-                <summary><span class="proof-step-no">1</span>提示</summary>
-                <ul>
-                  ${(proof.hints || []).map((hint) => `<li>${escapeHtml(hint)}</li>`).join("")}
-                </ul>
-              </details>`
-            : ""
-        }
-
-        ${
-          (proof.keySteps || []).length
-            ? `<details class="proof-step proof-key-steps" data-proof-step="${escapeAttr(`${proof.id}:keys`)}" ${openProofSteps.has(`${proof.id}:keys`) ? "open" : ""}>
-                <summary><span class="proof-step-no">2</span>關鍵步驟</summary>
-                <div class="proof-key-steps-body">${(proof.keySteps || []).map((step) => `<span>${escapeHtml(step)}</span>`).join("")}</div>
-              </details>`
-            : ""
-        }
-
+    const left = `
+      <div class="lc-statement">
+        ${proof.statement ? `<p>${escapeHtml(proof.statement)}</p>` : ""}
+        <div class="pl-goal math-block" data-tex="${escapeAttr(proof.prompt)}"></div>
+      </div>
+      <div class="lc-meta">
+        <span class="lc-tag">${escapeHtml(PROOF_TIERS[proof.tier] || proof.tier)}</span>
+        <span class="lc-tag">R${proof.difficulty}</span>
+        ${(proof.tags || []).map((tag) => `<span class="lc-tag">${escapeHtml(tag)}</span>`).join("")}
+      </div>
+      <p class="proof-ladder">${proof.tier === "lean" ? "開 Playground 補完 sorry → 編譯零錯誤＝通過 → 卡了開提示 → 最後對參考解答" : "先自己寫 → 卡了開提示 → 還卡開關鍵步驟 → 骨架重排／填空機器判 → 最後對參考證明"}</p>
+      ${(proof.hints || []).length ? `
+        <details class="proof-step proof-hints" data-proof-step="${escapeAttr(`${proof.id}:hints`)}" ${openProofSteps.has(`${proof.id}:hints`) ? "open" : ""}>
+          <summary><span class="proof-step-no">1</span>提示</summary>
+          <ul>${(proof.hints || []).map((hint) => `<li>${escapeHtml(hint)}</li>`).join("")}</ul>
+        </details>` : ""}
+      ${(proof.keySteps || []).length ? `
+        <details class="proof-step proof-key-steps" data-proof-step="${escapeAttr(`${proof.id}:keys`)}" ${openProofSteps.has(`${proof.id}:keys`) ? "open" : ""}>
+          <summary><span class="proof-step-no">2</span>關鍵步驟</summary>
+          <div class="proof-key-steps-body">${(proof.keySteps || []).map((step) => `<span>${escapeHtml(step)}</span>`).join("")}</div>
+        </details>` : ""}
+      ${proof.leanSkeleton ? `<a class="button secondary proof-lean-link" href="https://live.lean-lang.org/#code=${encodeURIComponent(proof.leanSkeleton)}" target="_blank" rel="noopener">${icon("play")}在 Lean Playground 開啟（真・機器判卷）</a>` : ""}`;
+    const right = `
+      <div class="lc-work-head">
+        <span class="section-label">${proof.tier === "lean" ? "Lean · 編譯判" : "骨架重排 · 填空 · 自評"}</span>
+        <span class="lc-live">${status ? escapeHtml(proofStatusLabel(status)) : "還沒自評"}</span>
+      </div>
+      <article class="proof-card is-${escapeAttr(proof.tier)} ${status ? `status-${escapeAttr(status)}` : ""} lc-proof-card">
         ${renderProofOrderDrill(proof, progress)}
         ${renderProofClozeDrill(proof, progress)}
-        ${
-          viewed
-            ? renderProofSolution(proof)
-            : `<button class="button secondary proof-solution-button" data-action="view-proof-solution" data-proof-id="${escapeAttr(proof.id)}"><span class="proof-step-no">3</span>${icon("book-open-check")}看參考證明</button>`
-        }
-
+        ${viewed ? renderProofSolution(proof) : `<button class="button secondary proof-solution-button" data-action="view-proof-solution" data-proof-id="${escapeAttr(proof.id)}"><span class="proof-step-no">3</span>${icon("book-open-check")}看參考證明</button>`}
         <div class="proof-self-check">
           <span>自評</span>
           <div class="tag-row">
@@ -5127,22 +5133,18 @@
             ${status ? `<button class="tag-button" data-action="mark-proof-status" data-proof-id="${escapeAttr(proof.id)}" data-proof-status="">清除</button>` : ""}
           </div>
         </div>
-
-        ${
-          status === "partial" || status === "stuck"
-            ? `<div class="proof-self-check proof-blocker">
-                <span>卡在哪</span>
-                <div class="tag-row">
-                  ${renderProofBlockerButton(proof.id, progress.blocker, "start", "起手式")}
-                  ${renderProofBlockerButton(proof.id, progress.blocker, "algebra", "代數整理")}
-                  ${renderProofBlockerButton(proof.id, progress.blocker, "theorem", "定理選擇")}
-                  ${renderProofBlockerButton(proof.id, progress.blocker, "finish", "收尾")}
-                </div>
-              </div>`
-            : ""
-        }
-      </article>
-    `;
+        ${status === "partial" || status === "stuck" ? `
+          <div class="proof-self-check proof-blocker">
+            <span>卡在哪</span>
+            <div class="tag-row">
+              ${renderProofBlockerButton(proof.id, progress.blocker, "start", "起手式")}
+              ${renderProofBlockerButton(proof.id, progress.blocker, "algebra", "代數整理")}
+              ${renderProofBlockerButton(proof.id, progress.blocker, "theorem", "定理選擇")}
+              ${renderProofBlockerButton(proof.id, progress.blocker, "finish", "收尾")}
+            </div>
+          </div>` : ""}
+      </article>`;
+    return plUI.renderProblemShell(nav.row, nav, left, right, { className: "lc-self" });
   }
 
   // ── 步驟重排：證明從「自評」跨出第一步可判分 ────────────────────
@@ -7906,12 +7908,27 @@
       });
     });
 
-    app.querySelectorAll("[data-proof-tier]").forEach((button) => {
-      button.addEventListener("click", () => {
-        selectedProofTier = button.dataset.proofTier || "all";
-        render();
+    // 題庫表：整列可點（滑鼠、Enter、空白鍵）；搜尋框打字 debounce 後重畫並把游標放回去
+    app.querySelectorAll("tr[data-proof-key]").forEach((row) => {
+      row.addEventListener("click", () => openProofProblem(row.dataset.proofKey));
+      row.addEventListener("keydown", (event) => {
+        if (event.key === "Enter" || event.key === " ") { event.preventDefault(); openProofProblem(row.dataset.proofKey); }
       });
     });
+    const proofSearch = app.querySelector("[data-proof-search]");
+    if (proofSearch) {
+      proofSearch.addEventListener("input", () => {
+        if (proofSearchTimer) window.clearTimeout(proofSearchTimer);
+        const value = proofSearch.value;
+        proofSearchTimer = window.setTimeout(() => {
+          proofSearchTimer = null;
+          proofLabFilter = { ...proofLabFilter, q: value };
+          render();
+          const again = app.querySelector("[data-proof-search]");
+          if (again) { again.focus(); try { again.setSelectionRange(value.length, value.length); } catch (_error) { /* type=search 在舊瀏覽器不給設 */ } }
+        }, 220);
+      });
+    }
 
     app.querySelectorAll("[data-library-topic]").forEach((button) => {
       button.addEventListener("click", () => {
@@ -8243,6 +8260,30 @@
       render();
     }
     if (action === "pl-open-problem") openProofWrite(actionNode.dataset.proofLangId || "");
+    if (action === "open-proof-problem") openProofProblem(actionNode.dataset.proofKey || "");
+    if (action === "proof-random") openRandomProof();
+    if (action === "proof-filter") {
+      proofLabFilter = { ...proofLabFilter, [actionNode.dataset.filterKey]: actionNode.dataset.filterValue || "all" };
+      render();
+    }
+    if (action === "proof-sort") {
+      proofLabFilter = { ...proofLabFilter, sort: actionNode.dataset.sort || "n" };
+      render();
+    }
+    if (action === "pl-tab") {
+      const textarea = app.querySelector("[data-proof-lang-text]");
+      if (textarea) proofWrite.text = textarea.value;
+      proofWrite.tab = actionNode.dataset.tab || "problem";
+      // 題解分頁：記下來，之後的提交會註明看過
+      if (proofWrite.tab === "solution" && proofWrite.id) {
+        const records = loadRecords();
+        records.proofLang = records.proofLang || {};
+        records.proofLang[proofWrite.id] = { ...(records.proofLang[proofWrite.id] || {}), solutionViewed: true };
+        saveRecords(records);
+      }
+      render();
+    }
+    if (action === "pl-submit") submitProofLang();
     if (action === "pl-open-lesson") {
       const lesson = proofLangLessons().find((item) => item.id === actionNode.dataset.lessonId) || proofLangLessons()[0];
       if (lesson) openProofWrite(lesson.exercise.id, { lessonId: lesson.id, starter: lesson.exercise.starter });
