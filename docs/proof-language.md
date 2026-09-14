@@ -46,7 +46,8 @@
 ## 檔案
 
 - `src/kernel/proof_lang.js` — 純函式：`parse(text)`、`check(spec, text)`。
-- `src/proof_lang_ui.js` — 畫面的純函式（入口清單、教學頁、編輯器、三色 gutter）：`window.BuzzProofLangUI.create({ escapeHtml, escapeAttr, icon })`。狀態與事件留在 app.js。
+- `src/proof_lab_ui.js` — 證明訓練的畫面，像 LeetCode：`rows(records)` 把白話證明（自動判）與 proofs.js（骨架／填空判、自評）合成一張表（編號、標籤、簡單／中等／困難、未做／嘗試中／已解、你的紀錄）；`renderIndex` 是有搜尋、篩選、排序、進度卡的題目表；`renderProblem` 是左題（題目／提示／題解／提交紀錄四個分頁）右寫（即時檢查＋提交）的題目頁；`renderProblemShell` 給 proofs.js 的題共用同一個殼。`window.BuzzProofLabUI.create({ escapeHtml, escapeAttr, icon, proofs })`；狀態（篩選、正在寫哪題、提交）與事件留在 app.js。
+- 提交紀錄存 `records.proofLang[id].submissions`（最多 30 筆：時間、結論、紅黃行數、有沒有看過題解）；`solvedAt` 是第一次提交全綠的時間；「已解」＝提交過且全綠（沒提交過的舊全綠草稿也算）。proofs.js 的題「已解」＝自評看懂，或骨架重排＋填空都過。
 - `src/proof_lang_content.js` — 題目 spec（`BUZZ_PROOF_LANG_PROBLEMS`，41 題、五族、R1–R3）與八課教學（`BUZZ_PROOF_LANG_LESSONS`）。
 - `tools/validate_proof_lang.js` — 每題參考證明必須全綠；刪掉任一非 optional 行不能還全綠；翻符號要紅；一行寫目標不能全綠。課程：範例全綠、練習的起手式是參考證明的逐行開頭、起手式不能有紅也不能已經全綠。
 - `tools/e2e_proof_lang.js` — 畫面：即時三色、範本插入、錯 δ 紅在第 4 行、草稿存活。
