@@ -48,6 +48,10 @@ global.URL = {
 global.FileReader = function FileReader() {};
 
 require("./lib/load_problem_sources.js")();
+// Sampling is part of the answer checker, loaded before app.js in index.html.
+require("../src/kernel/answer_sampling.js");
+// 白話證明的畫面是 app.js 啟動時就 create 的模組，跟 index.html 一樣要先載
+require("../src/proof_lang_ui.js");
 require("../src/app.js");
 
 if (!fakeApp.innerHTML.includes("BuzzCalculus")) {

@@ -1,4 +1,4 @@
-const CACHE_NAME = "buzzcalculus-v1.2.1-2026-09-13-prooflang";
+const CACHE_NAME = "buzzcalculus-v1.2.1-2026-09-14-prooflang-batch2";
 const CACHE_PREFIX = "buzzcalculus-";
 const APP_SHELL = [
   "./privacy.html",
@@ -87,6 +87,7 @@ const APP_SHELL = [
   "./src/kernel/workbook_facts.js",
   "./src/kernel/pricing.js",
   "./src/kernel/equivalence.js",
+  "./src/kernel/answer_sampling.js",
   "./src/kernel/records_v2.js",
   "./src/kernel/skill_tags.js",
   "./src/kernel/skill_graph.js",
@@ -96,6 +97,7 @@ const APP_SHELL = [
   "./src/kernel/tag_labels.js",
   "./src/kernel/proof_lang.js",
   "./src/proof_lang_content.js",
+  "./src/proof_lang_ui.js",
   "./src/kernel/ability.js",
   "./src/kernel/planner.js",
   "./src/kernel/session.js",
