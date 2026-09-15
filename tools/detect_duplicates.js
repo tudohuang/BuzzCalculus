@@ -275,7 +275,7 @@ if (process.argv.includes("--write-equivalence")) {
   console.log(`\n等價側表寫到 src/kernel/equivalence.js（${ids.length} 題，${excluded} 組判定為誤判）`);
 }
 
-const reportPath = path.join(__dirname, "..", "reports", "duplicates.json");
+const reportPath = path.join(__dirname, "..", "tmp", "duplicates.json");
 fs.mkdirSync(path.dirname(reportPath), { recursive: true });
 fs.writeFileSync(reportPath, JSON.stringify({
   literal: literalGroups.map((g) => g.map((p) => p.id)),

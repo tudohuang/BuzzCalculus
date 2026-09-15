@@ -372,7 +372,7 @@ BuzzPhysics 已建立更好的做法：每題帶 `verify` 表達式，CI 獨立�
 
 **指紋 3 — 編輯距離**：對同 skill 的題目，正規化後 prompt 的 Levenshtein 相似度 > 0.88 = 疑似重複。
 
-輸出 `reports/duplicates_<date>.md` 分群清單。**不自動刪除**，人工決定
+輸出 `tmp/duplicates.json` 分群清單。**不自動刪除**，人工決定
 （同一技巧的變體是好事，完全一樣的題目才是問題）。
 CI 只在「指紋 1 完全相同」時擋 PR。
 
