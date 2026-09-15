@@ -225,13 +225,12 @@
   };
 
   const TRAINING_PACKS = {
-    // 題包 key 一律不改（分享連結與既有紀錄靠它），只把對外顯示的名校字樣換成
-    // Buzz 自己的難度語言。出處保留在 problem.school，只在題庫詳情露出。
-    todai_burst: { label: "高速反射 R6", note: "R6 IBP / Wallis / 高階導數速決", tags: ["todai-burst"] },
+    // 題包 key 不進 records（只在程式裡），2026-09-15 連 key 一起去掉名校字樣。
+    burst: { label: "高速反射 R6", note: "R6 IBP / Wallis / 高階導數速決", tags: ["burst"] },
     nightmare_boss: { label: "終極挑戰", note: "R6 最難題：硬派數分 / 理論型 / 長鏈推導", tags: ["true-boss"] },
     world_universities: { label: "國際難題", note: "R1-R6 全跨度，由易到爆難 100 題", tags: ["world-universities"] },
     competition: { label: "競賽難題", note: "競賽級：硬微分 / 應用難題（R4-6）", tags: ["competition"] },
-    damo_longform: { label: "長題挑戰", note: "競賽風格長題：漸近 / 難積分 / 難級數（R4-6）", tags: ["damo"] },
+    longform: { label: "長題挑戰", note: "競賽風格長題：漸近 / 難積分 / 難級數（R4-6）", tags: ["longform"] },
     putnam: { label: "競賽經典", note: "競賽風格經典題型（R4-6）", tags: ["putnam"] },
     all: { label: "全部技巧", note: "不限制 tags", tags: [] },
     beginner_warmup: { label: "新手暖身", note: "R1-R2 基礎題", tags: ["beginner-friendly"] },
@@ -276,7 +275,7 @@
   };
 
   const PACK_GROUPS = [
-    { label: "競賽 / 難題", keys: ["putnam", "competition", "damo_longform", "world_universities", "nightmare_boss", "todai_burst"] },
+    { label: "競賽 / 難題", keys: ["putnam", "competition", "longform", "world_universities", "nightmare_boss", "burst"] },
     { label: "常用", keys: ["all", "beginner_warmup", "boss_challenge", "exam_style", "exam_depth", "mobile_sprint", "technique_recognition", "applied_story", "graph_reading", "multivariable", "substitution", "integration_by_parts", "series_test"] },
     { label: "積分技巧", keys: ["partial_fraction", "trig_substitution", "frullani", "ode_style", "kings_property", "double_integral", "multi_integral_advanced", "integral_applications"] },
     { label: "向量分析", keys: ["vector_theorems", "nabla_vector"] },
@@ -404,7 +403,7 @@
     "beginner-foundation",
     "rank-1", "rank-2", "rank-3", "rank-4", "rank-5", "rank-6",
     // 出處／難度型：它們有中文名，但「這題考的是國際難題」不是一句話
-    "todai-burst", "world-universities", "damo", "putnam", "competition", "true-boss",
+    "burst", "world-universities", "longform", "putnam", "competition", "true-boss",
     "hardcore", "long-form", "applications", "application", "estimate",
     "depth-r5",
     "depth-r6"
@@ -517,7 +516,7 @@
     advanced: "進階",
     boss: "終極",
     contest: "競賽",
-    todai: "東大",
+    classic: "經典解析",
     lean: "Lean"
   };
   const SIMPLE_MODE_KEYS = ["quick", "topic", "practice"];

@@ -30,7 +30,7 @@
     "rank-1", "rank-2", "rank-3", "rank-4", "rank-5", "rank-6",
     "boss-rank", "boss-plus", "beginner-friendly",
     // 題包 / 來源
-    "todai-burst", "world-universities", "competition", "damo", "putnam",
+    "burst", "world-universities", "competition", "longform", "putnam",
     "true-boss", "hardcore", "long-form", "depth-r5", "depth-r6",
     "series-boss",
     // 考試類型（是情境不是技巧）

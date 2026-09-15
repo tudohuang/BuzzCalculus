@@ -131,7 +131,7 @@
 
   function renderMathNode(node, displayMode) {
     const tex = node.dataset.tex || "";
-    // Long-form prompts (達摩院長題、應用情境題 etc.) wrap onto multiple lines
+    // Long-form prompts (長題、應用情境題 etc.) wrap onto multiple lines
     // instead of forcing a horizontal scrollbar; the card grows with the content.
     const width = texVisualWidth(tex);
     const longform = displayMode && (width > 72 || (width > 34 && texTextShare(tex) > 0.55));

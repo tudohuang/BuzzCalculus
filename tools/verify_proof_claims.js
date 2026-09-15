@@ -38,7 +38,7 @@ function simpson(f, a, b, n) {
 /* ===== structural sanity for the whole proof bank ===== */
 {
   const ids = new Set();
-  const tiers = new Set(["basic", "standard", "advanced", "boss", "contest", "todai", "lean"]);
+  const tiers = new Set(["basic", "standard", "advanced", "boss", "contest", "classic", "lean"]);
   let ok = true;
   proofs.forEach((p) => {
     if (!p.id || ids.has(p.id)) ok = false;
@@ -347,7 +347,7 @@ function simpson(f, a, b, n) {
 }
 
 
-/* ===== 東大杉浦《解析演習》：每一題可算的主張 ===== */
+/* ===== 經典解析章末問題：每一題可算的主張 ===== */
 {
   const near = (a, b, tol) => Math.abs(a - b) <= tol * (1 + Math.abs(b));
   const deriv = (f, x, h = 1e-4) => (f(x + h) - f(x - h)) / (2 * h);
@@ -355,7 +355,7 @@ function simpson(f, a, b, n) {
 
   /* II-1：f(x) = (x²+1)/3，0 ≤ f ≤ 1、f′ = 2x/3 ≠ 1，唯一不動點 (3−√5)/2 */
   {
-    const id = "proof-todai-201";
+    const id = "proof-classic-201";
     const f = (x) => (x * x + 1) / 3;
     const g = (x) => f(x) - x;
     let crossings = 0;
@@ -369,7 +369,7 @@ function simpson(f, a, b, n) {
 
   /* II-2：min_h (2A/h + Bh/2) = 2√(AB)，達到於 h = 2√(A/B)；f = sin 的實例 */
   {
-    const id = "proof-todai-202";
+    const id = "proof-classic-202";
     const A = 3, B = 5;
     let best = Infinity, bestH = 0;
     for (let h = 0.01; h <= 20; h += 0.001) { const v = 2 * A / h + B * h / 2; if (v < best) { best = v; bestH = h; } }
@@ -386,7 +386,7 @@ function simpson(f, a, b, n) {
 
   /* II-4：Hermite 遞迴與實根 */
   {
-    const id = "proof-todai-204";
+    const id = "proof-classic-204";
     const H = [(x) => 1, (x) => x, (x) => x * x - 1, (x) => x * x * x - 3 * x, (x) => x ** 4 - 6 * x * x + 3];
     const rodrigues = (n, x) => {
       // (−1)^n e^{x²/2} dⁿ/dxⁿ e^{−x²/2}，用高階中央差分（n ≤ 3 夠準）
@@ -410,7 +410,7 @@ function simpson(f, a, b, n) {
 
   /* II-5：f^{(1)} = 2x⁻³e^{−1/x²}，與 tᵏe^{−t²} → 0 */
   {
-    const id = "proof-todai-205";
+    const id = "proof-classic-205";
     const f = (x) => (x > 0 ? Math.exp(-1 / (x * x)) : 0);
     const P1 = (x) => 2 * Math.pow(x, -3) * Math.exp(-1 / (x * x));
     assert(id, "f′(x) = P_1(1/x)e^{−1/x²} with P_1(t) = 2t³ (x = 0.7)", near(deriv(f, 0.7, 1e-5), P1(0.7), 1e-5), `${deriv(f, 0.7, 1e-5)} vs ${P1(0.7)}`);
@@ -420,7 +420,7 @@ function simpson(f, a, b, n) {
 
   /* II-6：Jensen，f = eˣ */
   {
-    const id = "proof-todai-206";
+    const id = "proof-classic-206";
     const xs = [0, 1, 2.5], ps = [0.2, 0.5, 0.3];
     const m = xs.reduce((s, x, i) => s + ps[i] * x, 0);
     const lhs = xs.reduce((s, x, i) => s + ps[i] * Math.exp(x), 0);
@@ -430,7 +430,7 @@ function simpson(f, a, b, n) {
 
   /* II-7：Wronskian */
   {
-    const id = "proof-todai-207";
+    const id = "proof-classic-207";
     const det3 = (m) => m[0][0] * (m[1][1] * m[2][2] - m[1][2] * m[2][1]) - m[0][1] * (m[1][0] * m[2][2] - m[1][2] * m[2][0]) + m[0][2] * (m[1][0] * m[2][1] - m[1][1] * m[2][0]);
     const W3 = (x) => det3([[1, x, 1 + 2 * x], [0, 1, 2], [0, 0, 0]]);
     assert(id, "dependent 1, x, 1+2x ⇒ W ≡ 0", [0.2, 1.5, -3].every((x) => Math.abs(W3(x)) < 1e-12));
@@ -440,7 +440,7 @@ function simpson(f, a, b, n) {
 
   /* II-8：對稱差商 */
   {
-    const id = "proof-todai-208";
+    const id = "proof-classic-208";
     const q = (x) => (Math.cos(x) + Math.cos(-x) - 2) / (x * x);
     assert(id, "(f(x)+f(−x)−2f(0))/x² → f″(0) = −1 for cos", near(q(1e-3), -1, 1e-5), `${q(1e-3)}`);
     const F = (x, y) => Math.exp(x * y);
@@ -450,7 +450,7 @@ function simpson(f, a, b, n) {
 
   /* II-11：旋轉 θ 下 |∇f| 與 Δf 不變 */
   {
-    const id = "proof-todai-211";
+    const id = "proof-classic-211";
     const f = (x1, x2) => x1 * x1 + 3 * x2 * x2 + x1 * x2 + Math.sin(x1);
     const th = 0.7, c = Math.cos(th), s = Math.sin(th);
     const g = (y1, y2) => f(c * y1 - s * y2, s * y1 + c * y2);
@@ -466,7 +466,7 @@ function simpson(f, a, b, n) {
 
   /* II-12：乘積極限 √e */
   {
-    const id = "proof-todai-212";
+    const id = "proof-classic-212";
     const n = 4000;
     let prod = 1, L = 0;
     for (let k = 1; k <= n; k += 1) { prod *= 1 + k / (n * n); L += Math.log(1 + k / (n * n)); }
@@ -480,7 +480,7 @@ function simpson(f, a, b, n) {
 
   /* II-15：y = arctan(1/x) 的二階導數 */
   {
-    const id = "proof-todai-215";
+    const id = "proof-classic-215";
     const y = (x) => Math.atan(1 / x);
     const x0 = 2;
     const sy = Math.sin(y(x0));
@@ -494,7 +494,7 @@ function simpson(f, a, b, n) {
 
   /* II-17：y = ½log((1+x)/(1−x)) 滿足 (1−x²)y″ − 2xy′ = 0 */
   {
-    const id = "proof-todai-217";
+    const id = "proof-classic-217";
     const y = (x) => 0.5 * Math.log((1 + x) / (1 - x));
     const x0 = 0.3;
     const residual = (1 - x0 * x0) * deriv2(y, x0) - 2 * x0 * deriv(y, x0);
@@ -507,7 +507,7 @@ function simpson(f, a, b, n) {
 
   /* II-20：y = e^{a·arcsin x} */
   {
-    const id = "proof-todai-220";
+    const id = "proof-classic-220";
     const a = 2;
     const y = (x) => Math.exp(a * Math.asin(x));
     const x0 = 0.3;
@@ -522,7 +522,7 @@ function simpson(f, a, b, n) {
 
   /* II-21：橢圓內接三角形 */
   {
-    const id = "proof-todai-221";
+    const id = "proof-classic-221";
     const a = 3, b = 1.5;
     const area = (t1, t2, t3) => {
       const p = [t1, t2, t3].map((t) => [a * Math.cos(t), b * Math.sin(t)]);
@@ -537,7 +537,7 @@ function simpson(f, a, b, n) {
 
   /* II-28：exp(tX) 的導數 */
   {
-    const id = "proof-todai-228";
+    const id = "proof-classic-228";
     const E = (t) => [[Math.cos(t), Math.sin(t)], [-Math.sin(t), Math.cos(t)]];   // exp(tX), X = [[0,1],[-1,0]]
     const X = [[0, 1], [-1, 0]];
     const t0 = 0.5, h = 1e-5;
@@ -557,7 +557,7 @@ function simpson(f, a, b, n) {
 
   /* III-3：∫₀^∞ cos(tx)/(1+x²) = (π/2)e^{−|t|} */
   {
-    const id = "proof-todai-303";
+    const id = "proof-classic-303";
     const t = 1;
     const I = simpson((x) => Math.cos(t * x) / (1 + x * x), 0, 400, 800000);
     assert(id, "∫₀^∞ cos x/(1+x²) ≈ (π/2)/e (tail < 1/400)", near(I, Math.PI / 2 * Math.exp(-1), 5e-3), `${I}`);
@@ -570,31 +570,31 @@ function simpson(f, a, b, n) {
   /* III-5、III-6、III-8 */
   {
     const I5 = simpson((x) => (x <= 0 ? 0 : (x * x - 1) / Math.log(x)), 1e-12, 1 - 1e-9, 400000);
-    assert("proof-todai-305", "∫₀¹ (x² − 1)/log x = log 3", near(I5, Math.log(3), 1e-4), `${I5}`);
+    assert("proof-classic-305", "∫₀¹ (x² − 1)/log x = log 3", near(I5, Math.log(3), 1e-4), `${I5}`);
     const I6 = simpson((x) => (x <= 0 ? 0 : (1 - x) / ((1 + x) * Math.log(x))), 1e-12, 1 - 1e-9, 400000);
-    assert("proof-todai-306", "∫₀¹ (1−x)/((1+x)log x) = log(2/π)", near(I6, Math.log(2 / Math.PI), 1e-4), `${I6}`);
+    assert("proof-classic-306", "∫₀¹ (1−x)/((1+x)log x) = log(2/π)", near(I6, Math.log(2 / Math.PI), 1e-4), `${I6}`);
     let wallis = 1;
     for (let m = 1; m <= 200000; m += 1) wallis *= (2 * m - 1) * (2 * m + 1) / (4 * m * m);
-    assert("proof-todai-306", "Wallis product → 2/π", near(wallis, 2 / Math.PI, 1e-5), `${wallis}`);
+    assert("proof-classic-306", "Wallis product → 2/π", near(wallis, 2 / Math.PI, 1e-5), `${wallis}`);
     const a = 2, b = 1;
     const I8 = simpson((x) => Math.log(a + b * Math.cos(x)), 0, Math.PI, 20000);
-    assert("proof-todai-308", "∫₀^π log(2 + cos x) = π log((2+√3)/2)", near(I8, Math.PI * Math.log((a + Math.sqrt(a * a - b * b)) / 2), 1e-8), `${I8}`);
+    assert("proof-classic-308", "∫₀^π log(2 + cos x) = π log((2+√3)/2)", near(I8, Math.PI * Math.log((a + Math.sqrt(a * a - b * b)) / 2), 1e-8), `${I8}`);
     const J = simpson((x) => 1 / (a + b * Math.cos(x)), 0, Math.PI, 20000);
-    assert("proof-todai-308", "∫₀^π dx/(a + b cos x) = π/√(a²−b²)", near(J, Math.PI / Math.sqrt(a * a - b * b), 1e-8));
+    assert("proof-classic-308", "∫₀^π dx/(a + b cos x) = π/√(a²−b²)", near(J, Math.PI / Math.sqrt(a * a - b * b), 1e-8));
   }
 
   /* III-10、III-11：Frullani，f = e^{−x}，∫(e^{−2x} − e^{−x})/x = log(1/2) */
   {
     const I = simpson((x) => (Math.exp(-2 * x) - Math.exp(-x)) / x, 1e-9, 60, 400000);
-    assert("proof-todai-310", "Frullani with f = e^{−x}: log(a/b) = log(1/2)", near(I, Math.log(0.5), 1e-4), `${I}`);
-    assert("proof-todai-311", "(2) ∫(e^{−bx} − e^{−ax})/x = log(a/b)", near(I, Math.log(1 / 2), 1e-4));
+    assert("proof-classic-310", "Frullani with f = e^{−x}: log(a/b) = log(1/2)", near(I, Math.log(0.5), 1e-4), `${I}`);
+    assert("proof-classic-311", "(2) ∫(e^{−bx} − e^{−ax})/x = log(a/b)", near(I, Math.log(1 / 2), 1e-4));
     const damped = (a, b) => simpson((x) => (Math.cos(b * x) - Math.cos(a * x)) / x * Math.exp(-0.002 * x), 1e-9, 4000, 4000000);
-    assert("proof-todai-311", "(1) ∫(cos bx − cos ax)/x = log(a/b) (Abel-damped, a=3, b=2)", near(damped(3, 2), Math.log(3 / 2), 5e-3), `${damped(3, 2)}`);
+    assert("proof-classic-311", "(1) ∫(cos bx − cos ax)/x = log(a/b) (Abel-damped, a=3, b=2)", near(damped(3, 2), Math.log(3 / 2), 5e-3), `${damped(3, 2)}`);
   }
 
   /* III-12：等周：橢圓嚴格、圓相等 */
   {
-    const id = "proof-todai-312";
+    const id = "proof-classic-312";
     const a = 2, b = 1;
     const L = simpson((t) => Math.sqrt(a * a * Math.sin(t) ** 2 + b * b * Math.cos(t) ** 2), 0, 2 * Math.PI, 20000);
     const F = Math.PI * a * b;
@@ -605,7 +605,7 @@ function simpson(f, a, b, n) {
 
   /* III-13：Legendre */
   {
-    const id = "proof-todai-313";
+    const id = "proof-classic-313";
     const P2 = (x) => (3 * x * x - 1) / 2, P3 = (x) => (5 * x * x * x - 3 * x) / 2;
     assert(id, "∫P_2P_3 = 0", Math.abs(simpson((x) => P2(x) * P3(x), -1, 1, 2000)) < 1e-12);
     assert(id, "∫P_2² = 2/5, ∫P_3² = 2/7", near(simpson((x) => P2(x) ** 2, -1, 1, 2000), 2 / 5, 1e-10) && near(simpson((x) => P3(x) ** 2, -1, 1, 2000), 2 / 7, 1e-10));
@@ -615,7 +615,7 @@ function simpson(f, a, b, n) {
 
   /* III-21：Σ (2n−1)!!/(2n)!! /n = 2 log 2 */
   {
-    const id = "proof-todai-321";
+    const id = "proof-classic-321";
     let ratio = 1, sum = 0;
     const N = 3000000;
     for (let n = 1; n <= N; n += 1) { ratio *= (2 * n - 1) / (2 * n); sum += ratio / n; }
@@ -627,7 +627,7 @@ function simpson(f, a, b, n) {
 
   /* III-22：Legendre 關係式 */
   {
-    const id = "proof-todai-322";
+    const id = "proof-classic-322";
     const K = (k) => simpson((t) => 1 / Math.sqrt(1 - k * k * Math.sin(t) ** 2), 0, Math.PI / 2, 20000);
     const E = (k) => simpson((t) => Math.sqrt(1 - k * k * Math.sin(t) ** 2), 0, Math.PI / 2, 20000);
     const k = 0.6, kp = Math.sqrt(1 - k * k);
@@ -639,7 +639,7 @@ function simpson(f, a, b, n) {
 
   /* IV-10：一維波動方程能量守恆 */
   {
-    const id = "proof-todai-410";
+    const id = "proof-classic-410";
     const c = 1.5;
     const bump = (s) => (Math.abs(s) < 1 ? Math.exp(-1 / (1 - s * s)) : 0);
     const u = (t, x) => bump(x - c * t) + 0.5 * bump(x + c * t);
@@ -649,7 +649,7 @@ function simpson(f, a, b, n) {
 
   /* IV-16：Apéry 路線上算得出的幾步 */
   {
-    const id = "proof-todai-416";
+    const id = "proof-classic-416";
     let zeta3 = 0;
     for (let n = 1; n <= 200000; n += 1) zeta3 += 1 / (n * n * n);
     zeta3 += 1 / (2 * 200000 * 200000);
@@ -684,7 +684,7 @@ function simpson(f, a, b, n) {
 
   /* IV-17：對稱差體積比 → 0 */
   {
-    const id = "proof-todai-417";
+    const id = "proof-classic-417";
     const ratio = (R, d) => (6 * R * R * d + 2 * d * d * d) / (R * R * R);
     assert(id, "(6R²d + 2d³)/R³ → 0 (R = 1000, d = 1)", ratio(1000, 1) < 0.01 && ratio(1e6, 1) < 1e-5);
     // 球平均值性質的實例：u = x² − y²（調和），球心 (0.3, 0.2, 0) 半徑 1 的平均 = u(ξ)
@@ -699,8 +699,8 @@ function simpson(f, a, b, n) {
 }
 
 /* ===== summary ===== */
-const contest = proofs.filter((p) => p.tier === "contest" || p.tier === "todai");
-console.log(`\nChecked ${checks} claims across ${contest.length} contest + 東大 proofs (+bank structure).`);
+const contest = proofs.filter((p) => p.tier === "contest" || p.tier === "classic");
+console.log(`\nChecked ${checks} claims across ${contest.length} contest + classic proofs (+bank structure).`);
 if (failures) {
   console.error(`${failures} claim checks FAILED.`);
   process.exit(1);

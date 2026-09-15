@@ -1,9 +1,9 @@
 (function () {
   "use strict";
 
-  // 達摩院 / 競賽長題 pack (2026-07)。
+  // 競賽長題 pack (2026-07)。
   // Long-form analysis problems in the spirit of the Alibaba Global Math
-  // Competition (達摩院) qualifiers: multi-step setups, slow-burn asymptotics,
+  // Competition-style qualifiers: multi-step setups, slow-burn asymptotics,
   // classic hard integrals and series. All ranked 4-6 with generous time
   // limits. Every answer numerically verified via an independent scratchpad
   // harness (iteration / quadrature / summation), see repo history.
@@ -13,7 +13,7 @@
 
   function add(p) {
     const rank = p.rank || 5;
-    const rankTags = ["damo", "long-form", "competition"];
+    const rankTags = ["longform", "long-form", "competition"];
     if (rank >= 5) rankTags.push("boss-rank");
     if (rank >= 6) rankTags.push("true-boss");
     problems.push({

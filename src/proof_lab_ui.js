@@ -119,7 +119,7 @@
     // 難度：白話證明 R1→簡單 R2→中等 R3→困難；proofs.js 的 R1–2／3–4／5–6。
     const LEVELS = [["easy", "簡單"], ["medium", "中等"], ["hard", "困難"]];
     const LEVEL_LABEL = Object.fromEntries(LEVELS);
-    const TIER_LABEL = { basic: "基礎", standard: "標準", advanced: "進階", boss: "終極", contest: "競賽", todai: "東大", lean: "Lean" };
+    const TIER_LABEL = { basic: "基礎", standard: "標準", advanced: "進階", boss: "終極", contest: "競賽", classic: "經典解析", lean: "Lean" };
     const FAMILY_LABEL = Object.fromEntries(PROOF_LANG_FAMILIES);
     const STATUS_LABEL = { none: "未做", attempted: "嘗試中", solved: "已解" };
 

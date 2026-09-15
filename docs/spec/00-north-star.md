@@ -45,11 +45,11 @@ R1–R6 必須成為使用者自己會講的話（「這題大概 Buzz R5」）�
 因此：
 
 - 每一題的 rank 必須有 rubric 可解釋，不能只靠作者直覺。
-- 名校名稱（MIT / Putnam / 東大）在**公開核心 UI 逐步淡出**，只保留在題庫詳情的「來源」欄位。
+- 名校名稱在**公開核心 UI 逐步淡出**；2026-09-15 起程式碼裡也不再有特定學校／機構的字樣（key、tag、檔名一併改掉）。
 - 權威來自「你在 R4 的正確率是 68%」，不是來自「這題出自某校」。
 
 現況：`source` 欄位已有 1327 題，但值多半是內部 pack 名稱（`Buzz core expansion pack`）而非學校名，
-真正的名校字樣集中在 `東大`(16)、`World university & competition pack`(99)、`Putnam ...`(36)。
+曾經的名校字樣集中在高速反射包(16)、`World university & competition pack`(99)、`Putnam ...`(36)。
 淡出成本低，見 [05-content-pipeline.md](05-content-pipeline.md#54-來源與原創聲明)。
 
 ### P2. 診斷比分數重要

@@ -376,7 +376,7 @@
       ]
     },
 
-    /* ===== 競賽 tier(達摩院 / Putnam 風格長證明)=====
+    /* ===== 競賽 tier(競賽長題 / Putnam 風格長證明)=====
        每題 solution 的可量化主張都由 tools/verify_proof_claims.js
        在具體實例上數值驗證(恆等式 / 不等式 / 漸近行為)。 */
     {
@@ -384,7 +384,7 @@
       tier: "contest",
       title: "Stolz–Cesàro 定理",
       difficulty: 5,
-      tags: ["stolz", "sequence", "damo-style"],
+      tags: ["stolz", "sequence", "long-form"],
       statement: "證明 Stolz–Cesàro 定理(∞/∞ 型):它是數列版的 L'Hôpital。",
       prompt: "b_n\\uparrow\\infty,\\ \\lim_{n\\to\\infty}\\frac{a_{n+1}-a_n}{b_{n+1}-b_n}=L\\Rightarrow \\lim_{n\\to\\infty}\\frac{a_n}{b_n}=L",
       hints: ["把差商夾在 L±ε 之間。", "從 N 望遠鏡疊加到 n。", "除以 b_n,讓固定項被 b_n 吃掉。"],
@@ -402,8 +402,8 @@
       tier: "contest",
       title: "a(n+1)=a(n)+1/a(n) 的漸近行為",
       difficulty: 6,
-      tags: ["recursive", "asymptotics", "damo-style"],
-      statement: "達摩院風格經典:證明遞迴數列 a_{n+1}=a_n+1/a_n(a_1=1)滿足 a_n ~ √(2n)。",
+      tags: ["recursive", "asymptotics", "long-form"],
+      statement: "競賽風格經典：證明遞迴數列 a_{n+1}=a_n+1/a_n(a_1=1)滿足 a_n ~ √(2n)。",
       prompt: "a_1=1,\\ a_{n+1}=a_n+\\frac{1}{a_n}\\Rightarrow \\lim_{n\\to\\infty}\\frac{a_n}{\\sqrt{2n}}=1",
       hints: ["平方遞迴式。", "先拿下界 a_n^2 ≥ 2n-1。", "把 1/a_k^2 用下界回代,得到上界。"],
       keySteps: ["square the recursion", "lower bound by induction", "upper bound via harmonic sum", "squeeze"],
@@ -420,7 +420,7 @@
       tier: "contest",
       title: "x(n+1)=sin x(n) 的 √(3/n) 漸近",
       difficulty: 6,
-      tags: ["recursive", "taylor", "stolz", "damo-style"],
+      tags: ["recursive", "taylor", "stolz", "long-form"],
       statement: "分析名題:迭代 sin 的數列以 √(3/n) 的速度趨於 0。",
       prompt: "x_1=1,\\ x_{n+1}=\\sin x_n\\Rightarrow \\lim_{n\\to\\infty}\\sqrt{n}\\,x_n=\\sqrt{3}",
       hints: ["先證 x_n 單調遞減趨於 0。", "對 1/x^2 做 Taylor:1/sin²x - 1/x² → 1/3。", "對 1/x_n² 用 Stolz。"],
@@ -473,7 +473,7 @@
       tier: "contest",
       title: "Dirichlet 積分收斂但不絕對收斂",
       difficulty: 6,
-      tags: ["improper-integral", "dirichlet", "damo-style"],
+      tags: ["improper-integral", "dirichlet", "long-form"],
       statement: "證明 ∫₀^∞ sin x/x dx 收斂,但 ∫₀^∞ |sin x|/x dx 發散。",
       prompt: "\\int_0^{\\infty}\\frac{\\sin x}{x}dx\\text{ converges},\\qquad \\int_0^{\\infty}\\frac{\\left|\\sin x\\right|}{x}dx=\\infty",
       hints: ["[0,1] 沒有瑕點:sin x/x 可連續延拓。", "尾巴用分部積分,把 1/x 變成 1/x²。", "發散半部:每個半週期至少貢獻 2/((k+1)π)。"],
@@ -527,7 +527,7 @@
       tier: "contest",
       title: "e 是無理數",
       difficulty: 5,
-      tags: ["series", "irrationality", "damo-style"],
+      tags: ["series", "irrationality", "long-form"],
       statement: "用級數尾巴估計證明 e 是無理數。",
       prompt: "e=\\sum_{k=0}^{\\infty}\\frac{1}{k!}\\notin\\mathbb{Q}",
       hints: ["令 s_n 為部分和,估計 e - s_n。", "尾巴比幾何級數小:0 < e-s_n < 1/(n!·n)。", "假設 e=p/q,乘上 q! 得到 (0,1) 間的整數。"],
@@ -545,7 +545,7 @@
       tier: "contest",
       title: "Darboux 定理:導數的中間值性",
       difficulty: 6,
-      tags: ["darboux", "mvt", "damo-style"],
+      tags: ["darboux", "mvt", "long-form"],
       statement: "導數不必連續,卻仍有中間值性:證明 Darboux 定理。",
       prompt: "f\\ \\text{differentiable on }[a,b],\\ f'(a)<y<f'(b)\\Rightarrow\\exists c\\in(a,b),\\ f'(c)=y",
       hints: ["設 g(x)=f(x)-yx,把問題化成 g'(c)=0。", "g 在緊區間上取到最小值。", "端點導數符號排除端點,內點極值用 Fermat。"],
@@ -581,7 +581,7 @@
       tier: "contest",
       title: "邊界層極限 n∫x^n f(x)dx → f(1)",
       difficulty: 5,
-      tags: ["boundary-layer", "epsilon-delta", "damo-style"],
+      tags: ["boundary-layer", "epsilon-delta", "long-form"],
       statement: "證明質量集中現象:n∫₀¹xⁿf(x)dx → f(1)(f 連續)。",
       prompt: "f\\in C([0,1])\\Rightarrow \\lim_{n\\to\\infty}n\\int_0^1x^nf(x)\\,dx=f(1)",
       hints: ["先算常數的情形:n∫xⁿdx = n/(n+1) → 1。", "把 f(x) 換成 f(x)-f(1),拆 [0,1-δ] 與 [1-δ,1]。", "前段被 (1-δ)ⁿ 壓死,後段用連續性。"],
@@ -746,15 +746,15 @@
         { text: "之後想證真正的分析題(MVT、ε-δ)就要 import Mathlib——那裡有 ℝ、導數與我們競賽 tier 的全部定理。", tex: "\\blacksquare" }
       ]
     },
-    /* ── 東大杉浦《解析演習》章末問題（第 II、III、IV 章）───────────────────────
-       原題日文，中譯自 PDF。這一族的證明大多是 3–6 步的經典論證；
+    /* ── 經典解析章末問題（II 微分、III 積分、IV 多變數）─────────────────────
+       這一族的證明大多是 3–6 步的經典論證；
        每一題可算的主張都在 tools/verify_proof_claims.js 用具體例子驗過。 */
     {
-      id: "proof-todai-201",
-      tier: "todai",
-      title: "東大 II-1：唯一的不動點",
+      id: "proof-classic-201",
+      tier: "classic",
+      title: "經典解析 II-1：唯一的不動點",
       difficulty: 4,
-      tags: ["ivt", "mvt", "fixed-point", "todai"],
+      tags: ["ivt", "mvt", "fixed-point", "classic"],
       statement: "設 f 在 [0,1] 上連續、在 (0,1) 上可微，0 ≤ f(x) ≤ 1，且 f′(x) ≠ 1（∀x ∈ (0,1)）。證明恰有一個 x ∈ [0,1] 使 f(x) = x。",
       prompt: "0\\le f\\le 1,\\ f'\\ne 1\\ \\Rightarrow\\ \\exists!\\,x\\in[0,1]:\\ f(x)=x",
       hints: ["存在性：看 g(x) = f(x) − x 在兩端的正負。", "唯一性：兩個不動點 a < b 之間用平均值定理。", "f(b) − f(a) = b − a 會逼出 f′(ξ) = 1。"],
@@ -767,11 +767,11 @@
       ]
     },
     {
-      id: "proof-todai-202",
-      tier: "todai",
-      title: "東大 II-2：|f| ≤ A、|f″| ≤ B ⇒ |f′| ≤ 2√(AB)",
+      id: "proof-classic-202",
+      tier: "classic",
+      title: "經典解析 II-2：|f| ≤ A、|f″| ≤ B ⇒ |f′| ≤ 2√(AB)",
       difficulty: 4,
-      tags: ["taylor", "inequality", "landau", "todai"],
+      tags: ["taylor", "inequality", "landau", "classic"],
       statement: "設 f 在 (0,∞) 上二次可微，|f(x)| ≤ A、|f″(x)| ≤ B（∀x > 0）。證明 |f′(x)| ≤ 2√(AB)。",
       prompt: "|f|\\le A,\\ |f''|\\le B\\ \\Rightarrow\\ |f'|\\le 2\\sqrt{AB}",
       hints: ["對任意 h > 0 寫泰勒展開到二階（Lagrange 餘項）。", "把 f′(x) 解出來，用三角不等式，得到一個含 h 的上界。", "上界 2A/h + Bh/2 對 h 取最小值。"],
@@ -784,11 +784,11 @@
       ]
     },
     {
-      id: "proof-todai-204",
-      tier: "todai",
-      title: "東大 II-4：Hermite 多項式有 n 個實根",
+      id: "proof-classic-204",
+      tier: "classic",
+      title: "經典解析 II-4：Hermite 多項式有 n 個實根",
       difficulty: 5,
-      tags: ["hermite", "rolle", "induction", "todai"],
+      tags: ["hermite", "rolle", "induction", "classic"],
       statement: "定義 H_n(x) = (−1)^n e^{x²/2} (d/dx)^n e^{−x²/2}。證明 H_n 是 n 次多項式，且恰有 n 個相異實根。",
       prompt: "H_n(x)=(-1)^n e^{x^2/2}\\frac{d^n}{dx^n}e^{-x^2/2}\\ \\text{is a degree-}n\\text{ polynomial with }n\\text{ real roots}",
       hints: ["先推遞迴式 H_{n+1} = xH_n − H_n′。", "次數與首項係數用歸納。", "根：對 φ_n = e^{−x²/2}H_n 用 Rolle，兩端 φ_n → 0 各多給一個根。"],
@@ -801,11 +801,11 @@
       ]
     },
     {
-      id: "proof-todai-205",
-      tier: "todai",
-      title: "東大 II-5：exp(−1/x²) 是無限次可微的",
+      id: "proof-classic-205",
+      tier: "classic",
+      title: "經典解析 II-5：exp(−1/x²) 是無限次可微的",
       difficulty: 5,
-      tags: ["smooth", "induction", "limit", "todai"],
+      tags: ["smooth", "induction", "limit", "classic"],
       statement: "設 f(x) = e^{−1/x²}（x > 0）、f(x) = 0（x ≤ 0）。證明 f 在 ℝ 上無限次可微。",
       prompt: "f(x)=\\begin{cases}e^{-1/x^2}&x>0\\\\0&x\\le 0\\end{cases}\\ \\in C^\\infty(\\mathbb{R})",
       hints: ["x > 0 時 f^{(n)}(x) = P_n(1/x) e^{−1/x²}，P_n 是多項式（歸納）。", "難的只有 x = 0 這一點：用定義算 f^{(n)}(0)。", "關鍵極限：t^k e^{−t²} → 0（t → ∞），指數贏過任何多項式。"],
@@ -818,11 +818,11 @@
       ]
     },
     {
-      id: "proof-todai-206",
-      tier: "todai",
-      title: "東大 II-6：加權 Jensen 不等式",
+      id: "proof-classic-206",
+      tier: "classic",
+      title: "經典解析 II-6：加權 Jensen 不等式",
       difficulty: 4,
-      tags: ["jensen", "convexity", "inequality", "todai"],
+      tags: ["jensen", "convexity", "inequality", "classic"],
       statement: "設 f 在開區間 I 上 f″ ≥ 0。證明對任意 x_1,…,x_n ∈ I 與 p_i ≥ 0、Σp_i = 1，有 Σ p_i f(x_i) ≥ f(Σ p_i x_i)。",
       prompt: "f''\\ge 0\\ \\Rightarrow\\ \\sum_{i=1}^n p_i f(x_i)\\ge f\\Big(\\sum_{i=1}^n p_i x_i\\Big)",
       hints: ["f″ ≥ 0 給的是切線不等式：f(y) ≥ f(m) + f′(m)(y − m)。", "把切線畫在 m = Σ p_i x_i 那一點。", "乘 p_i 相加，一次項自動消掉。"],
@@ -834,11 +834,11 @@
       ]
     },
     {
-      id: "proof-todai-207",
-      tier: "todai",
-      title: "東大 II-7：Wronskian 與線性相關",
+      id: "proof-classic-207",
+      tier: "classic",
+      title: "經典解析 II-7：Wronskian 與線性相關",
       difficulty: 6,
-      tags: ["wronskian", "linear-dependence", "cramer", "todai"],
+      tags: ["wronskian", "linear-dependence", "cramer", "classic"],
       statement: "設 f_1,…,f_n 在開區間 I 上 C^{n−1}，W = W(f_1,…,f_n) 為 Wronskian。證明：(1) 線性相關 ⇒ W ≡ 0；(2) 若 W ≡ 0 而 W(f_1,…,f_{n−1})(x_0) ≠ 0，則在 x_0 附近 f_n 是 f_1,…,f_{n−1} 的線性組合。",
       prompt: "\\text{dependent}\\Rightarrow W\\equiv 0;\\quad W\\equiv 0,\\ W(f_1,\\dots,f_{n-1})(x_0)\\ne 0\\Rightarrow f_n=\\sum_{i<n}c_if_i\\ \\text{near }x_0",
       hints: ["(1)：Σc_i f_i ≡ 0 微分 n−1 次，c 是每一點 Wronskian 矩陣的核向量。", "(2)：用 Cramer 在 x_0 附近解出 c_i(x)，先讓前 n−1 個方程成立。", "再證 c_i′(x) = 0：微分方程組、跟下一列相減。"],
@@ -851,11 +851,11 @@
       ]
     },
     {
-      id: "proof-todai-208",
-      tier: "todai",
-      title: "東大 II-8：對稱差商給二階導數",
+      id: "proof-classic-208",
+      tier: "classic",
+      title: "經典解析 II-8：對稱差商給二階導數",
       difficulty: 3,
-      tags: ["taylor", "second-derivative", "limit", "todai"],
+      tags: ["taylor", "second-derivative", "limit", "classic"],
       statement: "證明：(1) f 在原點附近 C²，則 f″(0) = lim_{x→0} (f(x) + f(−x) − 2f(0))/x²；(2) f(x,y) 在原點附近 C²，則 f_xy(0,0) = lim_{t→0} (f(t,t) − f(t,0) − f(0,t) + f(0,0))/t²。",
       prompt: "f''(0)=\\lim_{x\\to 0}\\frac{f(x)+f(-x)-2f(0)}{x^2},\\qquad f_{xy}(0,0)=\\lim_{t\\to 0}\\frac{f(t,t)-f(t,0)-f(0,t)+f(0,0)}{t^2}",
       hints: ["Peano 餘項的泰勒展開到二階。", "f(x) 與 f(−x) 相加，一階項抵消。", "(2) 用二元的二階泰勒展開，只有 xy 那一項留下來。"],
@@ -868,11 +868,11 @@
       ]
     },
     {
-      id: "proof-todai-211",
-      tier: "todai",
-      title: "東大 II-11：正交座標變換下的 Laplacian",
+      id: "proof-classic-211",
+      tier: "classic",
+      title: "經典解析 II-11：正交座標變換下的 Laplacian",
       difficulty: 4,
-      tags: ["chain-rule", "laplacian", "orthogonal", "multivariable", "todai"],
+      tags: ["chain-rule", "laplacian", "orthogonal", "multivariable", "classic"],
       statement: "在 ℝⁿ 中考慮正交座標變換 x = Py（P 正交矩陣）。若 f(x) = g(y)，證明 Σ ∂²f/∂x_i² = Σ ∂²g/∂y_i² 且 Σ (∂f/∂x_i)² = Σ (∂g/∂y_i)²。",
       prompt: "x=Py,\\ P^{\\mathsf T}P=I,\\ f(x)=g(y)\\ \\Rightarrow\\ \\Delta_x f=\\Delta_y g,\\ |\\nabla_x f|=|\\nabla_y g|",
       hints: ["連鎖律：∇_y g = Pᵀ ∇_x f。", "Hessian 也一樣：H_y g = Pᵀ (H_x f) P。", "正交矩陣保長度、相似變換保 trace。"],
@@ -885,11 +885,11 @@
       ]
     },
     {
-      id: "proof-todai-212",
-      tier: "todai",
-      title: "東大 II-12：lim Π(1 + k/n²) = √e",
+      id: "proof-classic-212",
+      tier: "classic",
+      title: "經典解析 II-12：lim Π(1 + k/n²) = √e",
       difficulty: 3,
-      tags: ["limit", "product", "squeeze", "log", "todai"],
+      tags: ["limit", "product", "squeeze", "log", "classic"],
       statement: "求 lim_{n→∞} (1 + 1/n²)(1 + 2/n²)⋯(1 + n/n²)，並證明。",
       prompt: "\\lim_{n\\to\\infty}\\prod_{k=1}^{n}\\Big(1+\\frac{k}{n^2}\\Big)=\\sqrt{e}",
       hints: ["取對數，乘積變成和。", "t − t²/2 ≤ log(1+t) ≤ t（t ≥ 0）。", "Σk/n² = (n+1)/(2n)，Σk²/n⁴ ≤ 1/n。"],
@@ -902,11 +902,11 @@
       ]
     },
     {
-      id: "proof-todai-215",
-      tier: "todai",
-      title: "東大 II-15：arctan(1/x) 的 n 階導數",
+      id: "proof-classic-215",
+      tier: "classic",
+      title: "經典解析 II-15：arctan(1/x) 的 n 階導數",
       difficulty: 5,
-      tags: ["induction", "derivative", "arctan", "todai"],
+      tags: ["induction", "derivative", "arctan", "classic"],
       statement: "設 y = arctan(1/x)（x > 0）。證明 y^{(n)} = (−1)^n (n−1)! (sin y)^n sin(ny)，並證明 lim_{x→±∞} y^{(n)} = 0。",
       prompt: "y=\\arctan\\frac1x\\ \\Rightarrow\\ y^{(n)}=(-1)^n(n-1)!\\,(\\sin y)^n\\sin(ny),\\quad\\lim_{x\\to\\pm\\infty}y^{(n)}=0",
       hints: ["先算 y′ = −1/(1+x²)，再用 sin y = 1/√(1+x²) 把它寫成 −sin²y。", "歸納：對公式微分，用 y′ = −sin²y 與和角公式。", "x → ∞ 時 y → 0，sin y → 0。"],
@@ -919,11 +919,11 @@
       ]
     },
     {
-      id: "proof-todai-217",
-      tier: "todai",
-      title: "東大 II-17：(1 − x²)y″ − 2xy′ = 0 的解",
+      id: "proof-classic-217",
+      tier: "classic",
+      title: "經典解析 II-17：(1 − x²)y″ − 2xy′ = 0 的解",
       difficulty: 4,
-      tags: ["ode", "power-series", "log", "todai"],
+      tags: ["ode", "power-series", "log", "classic"],
       statement: "證明微分方程 (1 − x²)y″ − 2xy′ = 0 在原點附近可展開為冪級數的解，都可寫成 c₁ + c₂·(1/2)log((1+x)/(1−x))。",
       prompt: "(1-x^2)y''-2xy'=0\\ \\Rightarrow\\ y=c_1+c_2\\cdot\\frac12\\log\\frac{1+x}{1-x}",
       hints: ["左邊是一個全微分：((1 − x²)y′)′。", "所以 (1 − x²)y′ 是常數。", "1/(1 − x²) 的積分是 (1/2)log((1+x)/(1−x))。"],
@@ -935,11 +935,11 @@
       ]
     },
     {
-      id: "proof-todai-220",
-      tier: "todai",
-      title: "東大 II-20：exp(a·arcsin x) 的微分方程與泰勒級數",
+      id: "proof-classic-220",
+      tier: "classic",
+      title: "經典解析 II-20：exp(a·arcsin x) 的微分方程與泰勒級數",
       difficulty: 4,
-      tags: ["ode", "taylor", "recurrence", "todai"],
+      tags: ["ode", "taylor", "recurrence", "classic"],
       statement: "證明 y = e^{a arcsin x} 滿足 (1 − x²)y″ − xy′ − a²y = 0，並利用它求 y 在原點的泰勒級數。",
       prompt: "y=e^{a\\arcsin x}\\ \\Rightarrow\\ (1-x^2)y''-xy'-a^2y=0,\\quad c_{n+2}=\\frac{n^2+a^2}{(n+1)(n+2)}c_n",
       hints: ["先算 y′，平方後乘 (1 − x²) 把根號去掉。", "再微分一次、除以 2y′。", "把 y = Σ c_n xⁿ 代入方程，比較係數。"],
@@ -952,11 +952,11 @@
       ]
     },
     {
-      id: "proof-todai-221",
-      tier: "todai",
-      title: "東大 II-21：橢圓內接三角形的最大面積",
+      id: "proof-classic-221",
+      tier: "classic",
+      title: "經典解析 II-21：橢圓內接三角形的最大面積",
       difficulty: 4,
-      tags: ["optimization", "affine", "jensen", "todai"],
+      tags: ["optimization", "affine", "jensen", "classic"],
       statement: "求內接於橢圓 x²/a² + y²/b² = 1 的三角形之最大面積，並證明。",
       prompt: "\\max\\operatorname{Area}=\\frac{3\\sqrt3}{4}ab",
       hints: ["仿射變換 (x,y) ↦ (x/a, y/b) 把橢圓變成單位圓，面積乘 1/(ab)。", "單位圓內接三角形面積 = (1/2)(sin α + sin β + sin γ)，α+β+γ = 2π 是圓心角。", "sin 在 [0, π] 上凹：Jensen ⇒ 正三角形最大。"],
@@ -969,11 +969,11 @@
       ]
     },
     {
-      id: "proof-todai-228",
-      tier: "todai",
-      title: "東大 II-28：d/dt exp(tX) = X exp(tX)",
+      id: "proof-classic-228",
+      tier: "classic",
+      title: "經典解析 II-28：d/dt exp(tX) = X exp(tX)",
       difficulty: 4,
-      tags: ["matrix-exponential", "power-series", "uniform-convergence", "todai"],
+      tags: ["matrix-exponential", "power-series", "uniform-convergence", "classic"],
       statement: "對 n×n 實矩陣 X 定義 exp X = Σ_{k≥0} X^k/k!。證明 d/dt exp(tX) = X exp(tX)。",
       prompt: "\\frac{d}{dt}\\exp(tX)=X\\exp(tX)",
       hints: ["用任何一個矩陣範數：‖X^k‖ ≤ ‖X‖^k，級數絕對收斂。", "exp(tX) 是 t 的冪級數（矩陣係數），收斂半徑 ∞。", "冪級數可逐項微分。"],
@@ -986,11 +986,11 @@
       ]
     },
     {
-      id: "proof-todai-303",
-      tier: "todai",
-      title: "東大 III-3：cos(tx)/(1+x²) 從 0 到 ∞ 的積分",
+      id: "proof-classic-303",
+      tier: "classic",
+      title: "經典解析 III-3：cos(tx)/(1+x²) 從 0 到 ∞ 的積分",
       difficulty: 6,
-      tags: ["improper-integral", "ode", "uniform-convergence", "feynman", "todai"],
+      tags: ["improper-integral", "ode", "uniform-convergence", "feynman", "classic"],
       statement: "令 f(t) = ∫₀^∞ cos(tx)/(1+x²) dx。依序證明：(1) 積分對 t 一致收斂，f 連續；(2) F(t) = ∫₀^t f = ∫₀^∞ sin(tx)/(x(1+x²)) dx；(3) F″ = F − π/2（t > 0）；(4) F(t) = (π/2)(1 − e^{−t})；(5) f(t) = (π/2)e^{−|t|}。",
       prompt: "\\int_0^\\infty\\frac{\\cos tx}{1+x^2}\\,dx=\\frac{\\pi}{2}e^{-|t|}",
       hints: ["|cos tx/(1+x²)| ≤ 1/(1+x²)：Weierstrass M-test。", "1/(x(1+x²)) − 1/x = −x/(1+x²)，而 ∫₀^∞ sin(tx)/x dx = π/2（t > 0）。", "F″ = F − π/2 的解裡 e^t 那一項要靠 F′ = f 有界才能殺掉。"],
@@ -1004,11 +1004,11 @@
       ]
     },
     {
-      id: "proof-todai-305",
-      tier: "todai",
-      title: "東大 III-5：(x^p − x^q)/log x 從 0 到 1 的積分",
+      id: "proof-classic-305",
+      tier: "classic",
+      title: "經典解析 III-5：(x^p − x^q)/log x 從 0 到 1 的積分",
       difficulty: 5,
-      tags: ["feynman", "parameter-integral", "log", "todai"],
+      tags: ["feynman", "parameter-integral", "log", "classic"],
       statement: "證明對 p, q > −1，∫₀¹ (x^p − x^q)/log x dx = log((p+1)/(q+1))。",
       prompt: "\\int_0^1\\frac{x^p-x^q}{\\log x}\\,dx=\\log\\frac{p+1}{q+1}\\quad(p,q>-1)",
       hints: ["把 p 當參數：I(p) = ∫₀¹ (x^p − x^q)/log x dx。", "∂/∂p 把 log x 消掉：∂/∂p x^p = x^p log x。", "I(q) = 0 定出積分常數。"],
@@ -1021,11 +1021,11 @@
       ]
     },
     {
-      id: "proof-todai-306",
-      tier: "todai",
-      title: "東大 III-6：(1−x)/((1+x) log x) 從 0 到 1 的積分",
+      id: "proof-classic-306",
+      tier: "classic",
+      title: "經典解析 III-6：(1−x)/((1+x) log x) 從 0 到 1 的積分",
       difficulty: 6,
-      tags: ["series", "wallis", "feynman", "todai"],
+      tags: ["series", "wallis", "feynman", "classic"],
       statement: "利用前題證明 ∫₀¹ (1 − x)/((1 + x) log x) dx = log(2/π)。",
       prompt: "\\int_0^1\\frac{1-x}{1+x}\\cdot\\frac{dx}{\\log x}=\\log\\frac{2}{\\pi}",
       hints: ["(1−x)/(1+x) = (1−x)Σ(−x)^k = Σ(−1)^k(x^k − x^{k+1})。", "每一項用 III-5：∫(x^k − x^{k+1})/log x = log((k+1)/(k+2))。", "交錯乘積 (1/2)(3/2)(3/4)(5/4)⋯ 是 Wallis 乘積。"],
@@ -1038,11 +1038,11 @@
       ]
     },
     {
-      id: "proof-todai-308",
-      tier: "todai",
-      title: "東大 III-8：log(a + b cos x) 從 0 到 π 的積分",
+      id: "proof-classic-308",
+      tier: "classic",
+      title: "經典解析 III-8：log(a + b cos x) 從 0 到 π 的積分",
       difficulty: 5,
-      tags: ["feynman", "parameter-integral", "trig-integral", "todai"],
+      tags: ["feynman", "parameter-integral", "trig-integral", "classic"],
       statement: "對 a ≥ b > 0 求 ∫₀^π log(a + b cos x) dx，並證明。",
       prompt: "\\int_0^\\pi\\log(a+b\\cos x)\\,dx=\\pi\\log\\frac{a+\\sqrt{a^2-b^2}}{2}",
       hints: ["把 b 當參數微分：I′(b) = ∫ cos x/(a + b cos x) dx。", "cos x/(a + b cos x) = (1/b)(1 − a/(a + b cos x))。", "∫₀^π dx/(a + b cos x) = π/√(a² − b²)（Weierstrass 代換）。"],
@@ -1055,11 +1055,11 @@
       ]
     },
     {
-      id: "proof-todai-310",
-      tier: "todai",
-      title: "東大 III-10：Frullani 公式",
+      id: "proof-classic-310",
+      tier: "classic",
+      title: "經典解析 III-10：Frullani 公式",
       difficulty: 5,
-      tags: ["frullani", "improper-integral", "substitution", "todai"],
+      tags: ["frullani", "improper-integral", "substitution", "classic"],
       statement: "設 f 在 x ≥ 0 上 C¹，且對 0 < a, b 極限 C = lim_{t→∞} ∫_a^b f(tx)/x dx 存在。證明 ∫₀^∞ (f(bx) − f(ax))/x dx = f(0) log(a/b) + C。",
       prompt: "\\int_0^\\infty\\frac{f(bx)-f(ax)}{x}\\,dx=f(0)\\log\\frac ab+C",
       hints: ["先在 [ε, R] 上算，兩項各自換元 u = bx、u = ax。", "相減後只剩兩個短區間：[aR, bR] 與 [aε, bε]。", "[aε, bε] 上 f ≈ f(0)，長度給 log(b/a)。"],
@@ -1073,11 +1073,11 @@
       ]
     },
     {
-      id: "proof-todai-311",
-      tier: "todai",
-      title: "東大 III-11：Frullani 的三個應用",
+      id: "proof-classic-311",
+      tier: "classic",
+      title: "經典解析 III-11：Frullani 的三個應用",
       difficulty: 4,
-      tags: ["frullani", "improper-integral", "todai"],
+      tags: ["frullani", "improper-integral", "classic"],
       statement: "利用 Frullani 公式求（a, b > 0）：(1) ∫₀^∞ (cos bx − cos ax)/x dx；(2) ∫₀^∞ (e^{−bx} − e^{−ax})/x dx；(3) ∫₀^∞ sin(ax) sin(bx)/x dx（a ≠ b）。",
       prompt: "\\int_0^\\infty\\frac{\\cos bx-\\cos ax}{x}dx=\\log\\frac ab,\\quad\\int_0^\\infty\\frac{e^{-bx}-e^{-ax}}{x}dx=\\log\\frac ab,\\quad\\int_0^\\infty\\frac{\\sin ax\\sin bx}{x}dx=\\frac12\\log\\Big|\\frac{a+b}{a-b}\\Big|",
       hints: ["每一題先認出 f，再算 f(0) 與 C。", "f = cos 時 C = lim ∫_a^b cos(tx)/x dx = 0（Riemann–Lebesgue）。", "(3) 用積化和差：sin ax sin bx = (cos(a−b)x − cos(a+b)x)/2。"],
@@ -1089,11 +1089,11 @@
       ]
     },
     {
-      id: "proof-todai-312",
-      tier: "todai",
-      title: "東大 III-12：等周不等式 L² ≥ 4πF（Hurwitz）",
+      id: "proof-classic-312",
+      tier: "classic",
+      title: "經典解析 III-12：等周不等式 L² ≥ 4πF（Hurwitz）",
       difficulty: 6,
-      tags: ["fourier", "parseval", "isoperimetric", "todai"],
+      tags: ["fourier", "parseval", "isoperimetric", "classic"],
       statement: "設 C 為分段 C¹ 的 Jordan 閉曲線，長 L、圍面積 F。用 Fourier 級數與 Parseval 等式證明 L² ≥ 4πF，且等號只在圓周成立。",
       prompt: "L^2\\ge 4\\pi F,\\quad\\text{equality iff }C\\text{ is a circle}",
       hints: ["把弧長參數縮放成週期 2π：x′² + y′² = (L/2π)²。", "x, y 各展成 Fourier 級數，Parseval 算 ∫(x′² + y′²) 與 F = ∫ x y′。", "逐項比較：n|a_n||b_n| ≤ n²(|a_n|² + |b_n|²)/2，等號只在 n = ±1。"],
@@ -1107,11 +1107,11 @@
       ]
     },
     {
-      id: "proof-todai-313",
-      tier: "todai",
-      title: "東大 III-13：Legendre 多項式的正交性",
+      id: "proof-classic-313",
+      tier: "classic",
+      title: "經典解析 III-13：Legendre 多項式的正交性",
       difficulty: 5,
-      tags: ["legendre", "orthogonality", "integration-by-parts", "todai"],
+      tags: ["legendre", "orthogonality", "integration-by-parts", "classic"],
       statement: "令 P_n(x) = (1/(n! 2ⁿ)) dⁿ/dxⁿ (x² − 1)ⁿ。證明 ∫_{−1}^{1} P_n P_m dx = 2/(2n+1) δ_{nm}，且 P_n(1) = 1。",
       prompt: "\\int_{-1}^1P_nP_m\\,dx=\\frac{2}{2n+1}\\delta_{nm},\\qquad P_n(1)=1",
       hints: ["u = (x² − 1)ⁿ 在 ±1 有 n 重零點，分部積分時邊界項全是 0。", "m < n 時分部 n 次，把 n 階導數全部丟到 P_m 上，P_m 被微分 n 次變成 0。", "P_n(1)：Leibniz 展開 (x−1)ⁿ(x+1)ⁿ，在 x = 1 只有一項活著。"],
@@ -1124,11 +1124,11 @@
       ]
     },
     {
-      id: "proof-todai-321",
-      tier: "todai",
-      title: "東大 III-21：Σ (2n−1)!!/(2n)!! · 1/n = 2 log 2",
+      id: "proof-classic-321",
+      tier: "classic",
+      title: "經典解析 III-21：Σ (2n−1)!!/(2n)!! · 1/n = 2 log 2",
       difficulty: 6,
-      tags: ["series", "wallis-integral", "log", "todai"],
+      tags: ["series", "wallis-integral", "log", "classic"],
       statement: "求 s = Σ_{n≥1} (2n−1)!!/(2n)!! · 1/n，可使用 ∫₀^{π/2} sin^{2n}x dx = (2n−1)!!/(2n)!! · π/2。",
       prompt: "\\sum_{n=1}^\\infty\\frac{(2n-1)!!}{(2n)!!}\\cdot\\frac1n=2\\log 2",
       hints: ["把每一項寫成積分：(2n−1)!!/(2n)!! = (2/π)∫ sin^{2n}x dx。", "Σ sin^{2n}x/n = −log(1 − sin²x) = −2 log cos x。", "∫₀^{π/2} log cos x dx = −(π/2) log 2。"],
@@ -1140,11 +1140,11 @@
       ]
     },
     {
-      id: "proof-todai-322",
-      tier: "todai",
-      title: "東大 III-22：Legendre 關係式 EK′ + E′K − KK′ = π/2",
+      id: "proof-classic-322",
+      tier: "classic",
+      title: "經典解析 III-22：Legendre 關係式 EK′ + E′K − KK′ = π/2",
       difficulty: 6,
-      tags: ["elliptic-integral", "ode", "limit", "todai"],
+      tags: ["elliptic-integral", "ode", "limit", "classic"],
       statement: "K(k) = ∫₀^{π/2} dt/√(1 − k² sin²t)，E(k) = ∫₀^{π/2} √(1 − k² sin²t) dt，k′ = √(1 − k²)，K′ = K(k′)，E′ = E(k′)。證明 EK′ + E′K − KK′ = π/2。",
       prompt: "EK'+E'K-KK'=\\frac{\\pi}{2}",
       hints: ["先算 dE/dk = (E − K)/k 與 dK/dk = (E − k′²K)/(k k′²)。", "把左邊對 k 微分，全部用這兩條，會發現導數是 0。", "k → 0 時 K, E → π/2、E′ → 1、K′ ~ log(4/k)，但 (E − K)K′ → 0。"],
@@ -1157,11 +1157,11 @@
       ]
     },
     {
-      id: "proof-todai-410",
-      tier: "todai",
-      title: "東大 IV-10：波動方程的能量守恆",
+      id: "proof-classic-410",
+      tier: "classic",
+      title: "經典解析 IV-10：波動方程的能量守恆",
       difficulty: 4,
-      tags: ["pde", "wave-equation", "energy", "divergence", "todai"],
+      tags: ["pde", "wave-equation", "energy", "divergence", "classic"],
       statement: "u(t,x,y,z) ∈ C²(ℝ⁴) 滿足 u_tt/c² = u_xx + u_yy + u_zz，且對每個固定 t 在 (x,y,z) 上有緊支撐。證明 E(t) = (1/2)∭ (u_x² + u_y² + u_z² + u_t²/c²) dxdydz 與 t 無關。",
       prompt: "E(t)=\\frac12\\iiint\\Big(|\\nabla u|^2+\\frac{1}{c^2}u_t^2\\Big)dx\\,dy\\,dz\\ \\text{is constant}",
       hints: ["對 t 微分，微分可以進積分（緊支撐、C²）。", "∇u·∇u_t + u_t Δu = div(u_t ∇u)。", "散度定理：緊支撐的向量場積分為 0。"],
@@ -1174,11 +1174,11 @@
       ]
     },
     {
-      id: "proof-todai-416",
-      tier: "todai",
-      title: "東大 IV-16：ζ(3) 是無理數（Apéry，Beukers 路線）",
+      id: "proof-classic-416",
+      tier: "classic",
+      title: "經典解析 IV-16：ζ(3) 是無理數（Apéry，Beukers 路線）",
       difficulty: 6,
-      tags: ["apery", "zeta", "irrationality", "legendre", "todai"],
+      tags: ["apery", "zeta", "irrationality", "legendre", "classic"],
       statement: "假設素數定理，依 14 步證明 ζ(3) = Σ 1/n³ 是無理數（Beukers 的積分證明）。這裡把每一步的主張列出來；能算的都在驗證器裡算過。",
       prompt: "\\zeta(3)=\\sum_{n=1}^\\infty\\frac{1}{n^3}\\notin\\mathbb{Q}",
       hints: ["核心是三重積分 I_n，它同時「很小」又是「(A_n + B_nζ(3))/d_n³」型的數。", "小：被積函數在 [0,1]³ 上 ≤ (√2−1)⁴，所以 |I_n| ≤ 2(√2−1)^{4n}ζ(3)。", "大：若 ζ(3) = p/q，則 q d_n³ I_n 是非零整數，但 d_n ≤ 3ⁿ 使它趨於 0。"],
@@ -1194,11 +1194,11 @@
       ]
     },
     {
-      id: "proof-todai-417",
-      tier: "todai",
-      title: "東大 IV-17：全空間有界調和函數必為常數",
+      id: "proof-classic-417",
+      tier: "classic",
+      title: "經典解析 IV-17：全空間有界調和函數必為常數",
       difficulty: 5,
-      tags: ["harmonic", "liouville", "mean-value", "todai"],
+      tags: ["harmonic", "liouville", "mean-value", "classic"],
       statement: "證明定義在整個 ℝ³ 上、上下有界的調和函數必為常數（Liouville）。",
       prompt: "\\Delta u=0\\ \\text{on }\\mathbb{R}^3,\\ |u|\\le M\\ \\Rightarrow\\ u\\equiv\\text{const}",
       hints: ["調和函數的球平均值性質：u(ξ) = (1/|B_R|)∫_{B_R(ξ)} u。", "u(ξ) − u(0) 是兩個球上的平均之差，只剩對稱差上的積分。", "對稱差的體積 / 球體積 → 0（R → ∞）。"],

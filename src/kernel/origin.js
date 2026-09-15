@@ -1923,7 +1923,7 @@
     "world-010": ["inspired","MIT 風格的原創題，非該校官方試題"],
     "world-011": ["inspired","Putnam 風格的原創題，非該校官方試題"],
     "world-012": ["inspired","Princeton 風格的原創題，非該校官方試題"],
-    "world-013": ["inspired","Todai 風格的原創題，非該校官方試題"],
+    "world-013": ["inspired","亞洲名校 風格的原創題，非該校官方試題"],
     "world-014": ["inspired","Putnam 風格的原創題，非該校官方試題"],
     "world-015": ["inspired","MIT 風格的原創題，非該校官方試題"],
     "world-016": ["inspired","Cambridge 風格的原創題，非該校官方試題"],
@@ -1950,7 +1950,7 @@
     "world-037": ["inspired","Princeton 風格的原創題，非該校官方試題"],
     "world-038": ["inspired","MIT 風格的原創題，非該校官方試題"],
     "world-039": ["inspired","ETH 風格的原創題，非該校官方試題"],
-    "world-040": ["inspired","Todai 風格的原創題，非該校官方試題"],
+    "world-040": ["inspired","亞洲名校 風格的原創題，非該校官方試題"],
     "world-041": ["inspired","Putnam 風格的原創題，非該校官方試題"],
     "world-042": ["inspired","ETH 風格的原創題，非該校官方試題"],
     "world-043": ["inspired","Harvard 風格的原創題，非該校官方試題"],
@@ -1963,7 +1963,7 @@
     "world-051": ["inspired","Putnam 風格的原創題，非該校官方試題"],
     "world-052": ["inspired","Cambridge 風格的原創題，非該校官方試題"],
     "world-053": ["inspired","Harvard 風格的原創題，非該校官方試題"],
-    "world-054": ["inspired","Todai 風格的原創題，非該校官方試題"],
+    "world-054": ["inspired","亞洲名校 風格的原創題，非該校官方試題"],
     "world-055": ["inspired","Cambridge 風格的原創題，非該校官方試題"],
     "world-056": ["inspired","Princeton 風格的原創題，非該校官方試題"],
     "world-057": ["inspired","Putnam 風格的原創題，非該校官方試題"],
@@ -1975,7 +1975,7 @@
     "world-063": ["inspired","Caltech 風格的原創題，非該校官方試題"],
     "world-064": ["inspired","Putnam 風格的原創題，非該校官方試題"],
     "world-065": ["inspired","Cambridge 風格的原創題，非該校官方試題"],
-    "world-066": ["inspired","Todai 風格的原創題，非該校官方試題"],
+    "world-066": ["inspired","亞洲名校 風格的原創題，非該校官方試題"],
     "world-067": ["inspired","Putnam 風格的原創題，非該校官方試題"],
     "world-068": ["inspired","Caltech 風格的原創題，非該校官方試題"],
     "world-069": ["inspired","MIT 風格的原創題，非該校官方試題"],
@@ -2000,7 +2000,7 @@
     "world-088": ["inspired","Cambridge 風格的原創題，非該校官方試題"],
     "world-089": ["inspired","MIT 風格的原創題，非該校官方試題"],
     "world-090": ["inspired","MIT 風格的原創題，非該校官方試題"],
-    "world-091": ["inspired","Todai 風格的原創題，非該校官方試題"],
+    "world-091": ["inspired","亞洲名校 風格的原創題，非該校官方試題"],
     "world-092": ["inspired","Cambridge 風格的原創題，非該校官方試題"],
     "world-093": ["inspired","Caltech 風格的原創題，非該校官方試題"],
     "world-094": ["inspired","Harvard 風格的原創題，非該校官方試題"],
@@ -2009,7 +2009,7 @@
     "world-097": ["inspired","MIT 風格的原創題，非該校官方試題"],
     "world-098": ["inspired","ETH 風格的原創題，非該校官方試題"],
     "world-099": ["inspired","Putnam 風格的原創題，非該校官方試題"],
-    "world-100": ["inspired","Todai 風格的原創題，非該校官方試題"]
+    "world-100": ["inspired","亞洲名校 風格的原創題，非該校官方試題"]
   };
 
   const KINDS = {
