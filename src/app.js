@@ -1361,8 +1361,35 @@
     `;
   }
 
+  // 第一分鐘：還沒答過任何一題的人，四張全是 0 的統計卡什麼都沒告訴他。
+  // 換成三步——照 onboarding 選的程度分兩種說法（先暖身／照主線 vs 直接挑戰）。
+  function renderFirstSteps(records) {
+    const advanced = records.onboardingLevel === "advanced";
+    const steps = advanced
+      ? [
+        ["直接挑戰一局", "R5–R6 的難題，倒數計時；先知道自己在哪", "open-train"],
+        ["看哪裡掉分", "不是「不會」就是「來不及」——數據頁分得出來", "open-insights"],
+        ["證明訓練與國際難題", "白話證明的高手路線、Putnam 風格、經典解析", "open-proofs"]
+      ]
+      : [
+        ["先練一份 8 題", "不倒數、不計分，看懂題目在問什麼", "open-train"],
+        ["看你的能力輪廓", "練完就有：哪些技巧穩、哪些卡", "open-insights"],
+        ["走主線關卡", "從極限開始，一格一格解鎖", "open-train"]
+      ];
+    return `
+      <section class="first-steps" aria-label="開始的三步">
+        ${steps.map(([title, note, action], index) => `
+          <button type="button" class="first-step ${index === 0 ? "is-current" : ""}" data-action="${action}">
+            <span class="first-step-no">${index + 1}</span>
+            <strong>${escapeHtml(title)}</strong>
+            <small>${escapeHtml(note)}</small>
+          </button>`).join("")}
+      </section>`;
+  }
+
   function renderHomeOverview(records, mission) {
     const total = Number(records.totalAnswered || 0);
+    if (!total) return renderFirstSteps(records);
     const profile = abilityProfile(records);
     const measured = profile ? profile.coverage.skillsMeasured : 0;
     const due = srsDueSummary(records).due;
@@ -2122,6 +2149,7 @@
 
     const MIN_GAP = 12;
     const MIN_EVIDENCE = 3;
+    /** @type {{ id: string, label: string, mastery: number } | null} */
     let worst = null;
     (typeof graph.ancestors === "function" ? graph.ancestors(skillId) : node.prereq).forEach((parentId) => {
       const parent = profile.skills[parentId];
@@ -5442,7 +5470,7 @@
     return {
       due,
       total,
-      nextDueDays: nextDueAt === null ? null : Math.max(1, Math.ceil((nextDueAt - now) / DAY_MS))
+      nextDueDays: nextDueAt === null ? null : Math.max(1, Math.ceil((Number(nextDueAt) - now) / DAY_MS))
     };
   }
 
@@ -6687,9 +6715,10 @@
     // 浮條撐到 641px，直接蓋掉題目與計算紙（實測 390×844 整個版面爛掉）。
     // 正確做法是互動而不是預設值 —— 點答案欄就叫鍵盤出來，
     // 跟真的鍵盤一樣（見 openKeypadForInput）。
-    if (quiz.keypadOpen == null) {
-      quiz.keypadOpen = typeof window === "undefined" || !window.innerWidth || window.innerWidth >= 760;
-    }
+    // 2026-09-15：桌機也預設收起。有實體鍵盤的人直接打字比點鍵快，
+    // 而攤開的鍵盤把題目、計算紙、逐步驗證全推到第二屏；符號鍵與範例
+    // 一鍵就開（觸控裝置點答案欄也會自動開，見 openKeypadForInput）。
+    if (quiz.keypadOpen == null) quiz.keypadOpen = false;
     const extrasOpen = quiz.keypadOpen;
     const previewBlock = `
         <div class="answer-preview webwork-preview">
@@ -8194,7 +8223,7 @@
         }, 60);
       }
     }
-    if (action === "skip") recordAnswer({ status: "wrong", reason: "Skipped", input: quiz.draft || "" });
+    if (action === "skip") recordAnswer({ status: "wrong", reason: "Skipped", input: quiz.draft || "", detail: "" });
     if (action === "onboarding-next") advanceOnboarding();
     if (action === "set-onboarding-context") setOnboardingContext(actionNode.dataset.context || "freshman");
     if (action === "skip-placement") skipPlacement();
@@ -8262,6 +8291,12 @@
     if (action === "pl-open-problem") openProofWrite(actionNode.dataset.proofLangId || "");
     if (action === "open-proof-problem") openProofProblem(actionNode.dataset.proofKey || "");
     if (action === "proof-random") openRandomProof();
+    if (action === "proof-route") {
+      // 路線卡：初學＝簡單題；高手＝中等以上（表沒有「中等以上」這個值，先用困難，再讓人切）
+      const route = actionNode.dataset.route === "advanced" ? "hard" : "easy";
+      proofLabFilter = { ...proofLabFilter, level: proofLabFilter.level === route ? "all" : route, status: "all" };
+      render();
+    }
     if (action === "proof-filter") {
       proofLabFilter = { ...proofLabFilter, [actionNode.dataset.filterKey]: actionNode.dataset.filterValue || "all" };
       render();
@@ -9265,7 +9300,7 @@
     probe.setDate(probe.getDate() + 4 - day); // 移到本週四 → 決定 ISO 年
     const year = probe.getFullYear();
     const yearStart = new Date(year, 0, 1);
-    const week = Math.ceil(((probe - yearStart) / DAY_MS + 1) / 7);
+    const week = Math.ceil(((probe.getTime() - yearStart.getTime()) / DAY_MS + 1) / 7);
     return `${year}-W${String(week).padStart(2, "0")}`;
   }
 
@@ -10053,7 +10088,9 @@
       draft: "",
       feedback: null,
       forceFinishAfterFeedback: false,
-      modal: null
+      modal: null,
+      dailyOne: null,
+      gentle: false
     };
     if (options.dailyOne) quiz.dailyOne = options.dailyOne;
     // 新手保護期（見 gentleStartActive）：一般訓練與主線在頭幾局改走 practice。
@@ -10221,7 +10258,7 @@
       selected.push(problem);
     };
 
-    plan.forEach(([topic, target]) => {
+    plan.forEach((/** @type {[string, number]} */ [topic, target]) => {
       const ordered = adaptiveShuffle(
         source.filter((problem) => problem.topic === topic),
         records,
@@ -12887,10 +12924,10 @@
       }
       closeBoardPopovers();
       const tool = quiz.boardTool || "pen";
-      currentStroke = {
+      currentStroke = /** @type {{ tool: string, points: any[], color?: string, nib?: string }} */ ({
         tool,
         points: [blackboardPoint(canvas, event, cachedRect)]
-      };
+      });
       // 顏色與筆型跟著筆畫走：之後換顏色，之前寫的不會跟著變。
       if (tool === "pen") {
         currentStroke.color = penColorSetting();
@@ -13860,6 +13897,7 @@
   }
 
   function updateAchievements(records, currentQuiz, historyItem) {
+    /** @type {[string, string, string, () => boolean][]} */
     const definitions = [
       ["first_run", "開局", "完成第一局", () => records.attempts + records.practiceRuns >= 1],
       ["perfect_run", "零失誤", "單局 10 題以上全對", () => historyItem.total >= 10 && historyItem.correct === historyItem.total],
@@ -15470,7 +15508,7 @@
       renderKeyIdea,
       keyIdeaFor,
       authoredHints,
-      renderSolutionStages,      suggestCause,
+      suggestCause,
       causeTagOf,
       causeOptions: CAUSE_OPTIONS,
       setQuiz: (next) => { quiz = next; },

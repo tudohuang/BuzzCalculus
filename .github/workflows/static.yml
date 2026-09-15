@@ -31,6 +31,10 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      - name: Type check (JSDoc + tsc --noEmit, zero build)
+        # 程式碼是 .js、沒有編譯；型別在 types/buzz.d.ts 與各檔的 JSDoc，
+        # 這一步只檢查不產出。TypeScript 只在 CI 與開發機用，不進 runtime。
+        run: npm run typecheck
       - name: Validate problem bank
         run: |
           node tools/regen_all.js --check

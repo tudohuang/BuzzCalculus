@@ -20,6 +20,8 @@ index.html
 **這個架構的優點必須守住**：零 build、零 npm runtime 依賴、離線可用、GitHub Pages 純靜態部署、
 CI 用 node 直接跑 `tools/*.js` 驗證題庫。**大修不得犧牲其中任何一項。**
 
+> **型別（2026-09-15）**：TypeScript 只當檢查器，不當編譯器。程式碼維持 .js，型別放在 `types/buzz.d.ts`（records、problem、白話證明 spec／report、`window.Buzz*` 模組）與各檔的 JSDoc；CI 第一步 `npm run typecheck`（`tsc --noEmit`，含 app.js 與全部 kernel）。這樣零 build、零 runtime 依賴的原則不變，但欄位打錯、記錄結構改了沒跟上會在 CI 紅。故意寬鬆的兩處寫在 .d.ts 檔頭。
+
 **這個架構的痛點**：`src/app.js` 9122 行單檔、模組層 `let` 全域狀態、全量 innerHTML 重繪、
 新增任何檔案要同時改 `index.html` + `sw.js`。
 
