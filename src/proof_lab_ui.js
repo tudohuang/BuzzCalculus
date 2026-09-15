@@ -199,6 +199,18 @@
       const stat = summary(all);
       const lessons = proofLangLessons();
       const lessonsDone = Object.keys(records.proofLangLessons || {}).length;
+      // 兩條路線：初學（課 1–5、簡單題）、高手（課 6–9、中等與困難）。卡片上寫著各自的進度，
+      // 點下去就把表篩成那條路線的題；「上課」跳到那條路線第一堂還沒上完的課。
+      const done = records.proofLangLessons || {};
+      const routes = [
+        { key: "beginner", label: "初學路線", note: "五種證法的骨架，一堂一種；題目全是簡單題", lessons: lessons.slice(0, 5), levels: ["easy"] },
+        { key: "advanced", label: "高手路線", note: "定理當工具、ε-N、黃色怎麼修、抽象函數與泰勒；中等與困難題", lessons: lessons.slice(5), levels: ["medium", "hard"] }
+      ].map((route) => {
+        const pool = all.filter((row) => route.levels.includes(row.level));
+        const solved = pool.filter((row) => row.status === "solved").length;
+        const lessonsLeft = route.lessons.filter((lesson) => !done[lesson.id]);
+        return Object.assign(route, { pool: pool.length, solved, lessonsDoneCount: route.lessons.length - lessonsLeft.length, next: lessonsLeft[0] || null, active: route.levels.length === 1 ? f.level === route.levels[0] : f.level === "medium" || f.level === "hard" });
+      });
       const chip = (key, value, label, count) => `<button type="button" class="lc-chip ${f[key] === value ? "is-active" : ""}" data-action="proof-filter" data-filter-key="${key}" data-filter-value="${escapeAttr(value)}" aria-pressed="${f[key] === value ? "true" : "false"}">${escapeHtml(label)}${count !== undefined ? `<small>${count}</small>` : ""}</button>`;
       const countBy = (key, value) => all.filter((row) => value === "all" || row[key] === value || (key === "group" && (row.family === value || row.tier === value))).length;
       const sortNext = f.sort === "level" ? "-level" : f.sort === "-level" ? "n" : "level";
@@ -217,6 +229,20 @@
                 <button class="button secondary" data-action="proof-random">${icon("shuffle")}隨機一題</button>
                 <button class="button secondary" data-action="home">${icon("home")}回主線</button>
               </div>
+            </div>
+
+            <div class="lc-routes">
+              ${routes.map((route) => `
+                <div class="lc-route ${route.active ? "is-active" : ""}">
+                  <button type="button" class="lc-route-main" data-action="proof-route" data-route="${route.key}">
+                    <strong>${escapeHtml(route.label)}</strong>
+                    <span>${escapeHtml(route.note)}</span>
+                    <small>課程 ${route.lessonsDoneCount} / ${route.lessons.length} · 題目已解 ${route.solved} / ${route.pool}</small>
+                  </button>
+                  ${route.next
+                    ? `<button type="button" class="button secondary lc-route-lesson" data-action="pl-open-lesson" data-lesson-id="${escapeAttr(route.next.id)}">${icon("book-open")}${escapeHtml(route.next.title.replace(/^第 \d+ 課 · /, "").slice(0, 14))}${route.lessonsDoneCount ? "" : " · 從這裡開始"}</button>`
+                    : `<span class="lc-route-done">${icon("check")}課程上完了</span>`}
+                </div>`).join("")}
             </div>
 
             <div class="lc-progress">
@@ -440,7 +466,7 @@
             <div class="page-head">
               <div>
                 <p class="section-label">白話證明教學 · 第 ${index + 1} / ${lessons.length} 課</p>
-                <h2>${escapeHtml(lesson.title.replace(/^第 \d 課 · /, ""))}</h2>
+                <h2>${escapeHtml(lesson.title.replace(/^第 \d+ 課 · /, ""))}</h2>
                 <p>約 ${lesson.minutes} 分鐘 · 先看一份寫好的證明，再自己寫幾行。</p>
               </div>
               <div class="action-row">

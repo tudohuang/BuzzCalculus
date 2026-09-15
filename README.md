@@ -378,6 +378,7 @@ Open `index.html` directly, or serve the folder with any static server.
 Validation commands:
 
 ```bash
+npm run typecheck                 # JSDoc + tsc --noEmit：型別在 types/buzz.d.ts，程式仍是零 build 的 .js
 node tools/validate_problems.js
 node tools/validate_training_packs.js
 node tools/validate_path_nodes.js
