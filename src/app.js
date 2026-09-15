@@ -1216,7 +1216,7 @@
     const inQuiz = view === "quiz";
     const themeIcon = selectedTheme === "dark" ? "sun" : "moon";
     const themeLabel = selectedTheme === "dark" ? "亮色" : "深色";
-    const parentView = { "path-intro": "train", mistakes: "train", history: "insights", results: "insights", proofs: "library", creator: "library", "proof-write": "library", "proof-tutorial": "library", "proof-view": "library" }[view] || view;
+    const parentView = { "path-intro": "train", mistakes: "train", history: "insights", results: "insights", proofs: "library", creator: "library", "proof-write": "library", "proof-tutorial": "library", "proof-view": "library", course: "home", "course-lesson": "home" }[view] || view;
     const navItem = (v, action, label, iconName) =>
       `<button class="nav-button ${parentView === v ? "is-active" : ""}" data-action="${action}" aria-label="${label}" title="${label}" ${parentView === v ? 'aria-current="page"' : ""}>${icon(iconName)}<span>${label}</span></button>`;
     return `
@@ -1240,6 +1240,7 @@
               </nav>
               <div class="sidebar-resources">
                 <span class="nav-section-label">學習工具</span>
+                <button class="sidebar-link ${/^course/.test(view) ? "is-active" : ""}" data-action="open-course" title="入門九課">${icon("book-open")}<span>入門九課</span></button>
                 <button class="sidebar-link ${view === "mistakes" ? "is-active" : ""}" data-action="open-mistakes" title="錯題本">${icon("refresh")}<span>錯題本</span></button>
                 <button class="sidebar-link ${view === "history" ? "is-active" : ""}" data-action="open-history" title="練習紀錄">${icon("history")}<span>練習紀錄</span></button>
                 <button class="sidebar-link ${/^proof/.test(view) ? "is-active" : ""}" data-action="open-proofs" title="證明訓練">${icon("file-pen-line")}<span>證明訓練</span></button>
@@ -1256,7 +1257,7 @@
 
   function renderWorkspaceBar() {
     if (view === "quiz") return "";
-    const labels = { home: "今日概覽", train: "訓練中心", insights: "學習數據", library: "探索題庫", settings: "偏好與設定", mistakes: "錯題本", history: "練習紀錄", proofs: "證明訓練", "proof-write": "證明題", "proof-tutorial": "白話證明教學", "proof-view": "證明題", creator: "出題工作坊", results: "訓練回顧", "path-intro": "學習路線" };
+    const labels = { home: "今日概覽", train: "訓練中心", insights: "學習數據", library: "探索題庫", settings: "偏好與設定", mistakes: "錯題本", history: "練習紀錄", proofs: "證明訓練", "proof-write": "證明題", "proof-tutorial": "白話證明教學", "proof-view": "證明題", course: "入門九課", "course-lesson": "入門九課", creator: "出題工作坊", results: "訓練回顧", "path-intro": "學習路線" };
     return `
       <div class="workspace-bar">
         <div class="workspace-breadcrumb"><span>我的學習空間</span>${icon("chevron-right")}<strong>${labels[view] || "今日概覽"}</strong></div>
@@ -1275,6 +1276,8 @@
     if (view === "proofs") return renderProofLab();
     if (view === "proof-write") return renderProofWrite();
     if (view === "proof-view") return renderProofView();
+    if (view === "course") return renderCourse();
+    if (view === "course-lesson") return renderCourseLesson();
     if (view === "proof-tutorial") return renderProofTutorial();
     if (view === "library") return renderProblemLibrary();
     // 第一次進站強制走 onboarding：不讓新使用者面對 1407 題 × 18 模式的組合空間。
@@ -1344,7 +1347,7 @@
           ${renderResumeCard()}
           ${renderExamSetupCard(records)}
           ${renderHomeExamCard(records)}
-          ${renderTodayCard(records)}
+          ${records.onboardingContext === "newbie" && courseUI.progress(records).next ? courseUI.renderHomeCard(records) : renderTodayCard(records)}
           <section class="workspace-section"><div class="workspace-section-head"><h2>照你的節奏練習</h2><span>四種訓練方向</span></div>${renderBucketNav()}</section>
           ${renderHomeRetentionRow(records)}
           ${renderBackupNotice(records)}
@@ -1361,35 +1364,12 @@
     `;
   }
 
-  // 第一分鐘：還沒答過任何一題的人，四張全是 0 的統計卡什麼都沒告訴他。
-  // 換成三步——照 onboarding 選的程度分兩種說法（先暖身／照主線 vs 直接挑戰）。
-  function renderFirstSteps(records) {
-    const advanced = records.onboardingLevel === "advanced";
-    const steps = advanced
-      ? [
-        ["直接挑戰一局", "R5–R6 的難題，倒數計時；先知道自己在哪", "open-train"],
-        ["看哪裡掉分", "不是「不會」就是「來不及」——數據頁分得出來", "open-insights"],
-        ["證明訓練與國際難題", "白話證明的高手路線、Putnam 風格、經典解析", "open-proofs"]
-      ]
-      : [
-        ["先練一份 8 題", "不倒數、不計分，看懂題目在問什麼", "open-train"],
-        ["看你的能力輪廓", "練完就有：哪些技巧穩、哪些卡", "open-insights"],
-        ["走主線關卡", "從極限開始，一格一格解鎖", "open-train"]
-      ];
-    return `
-      <section class="first-steps" aria-label="開始的三步">
-        ${steps.map(([title, note, action], index) => `
-          <button type="button" class="first-step ${index === 0 ? "is-current" : ""}" data-action="${action}">
-            <span class="first-step-no">${index + 1}</span>
-            <strong>${escapeHtml(title)}</strong>
-            <small>${escapeHtml(note)}</small>
-          </button>`).join("")}
-      </section>`;
-  }
+  // 首頁的「第一分鐘三步」畫面在 course.js（BuzzCourseUI.renderFirstSteps），這裡只轉呼叫
+  const renderFirstSteps = (records) => courseUI.renderFirstSteps(records);
 
   function renderHomeOverview(records, mission) {
     const total = Number(records.totalAnswered || 0);
-    if (!total) return renderFirstSteps(records);
+    if (!total || (records.onboardingContext === "newbie" && courseUI.progress(records).next)) return renderFirstSteps(records);
     const profile = abilityProfile(records);
     const measured = profile ? profile.coverage.skillsMeasured : 0;
     const due = srsDueSummary(records).due;
@@ -3712,6 +3692,7 @@
   //   - 最後一步的出口只有一個：開始練。不給「隨便逛逛」
   //   - 第一次進站永遠不會看到 1407 題的題庫頁
   const ONBOARDING_CONTEXTS = [
+    { key: "newbie", label: "我還沒學過", note: "從「極限是什麼」開始，九課上完再練題", cap: 1, course: true },
     { key: "highschool", label: "高中先修", note: "先把基本工具練熟", cap: 2 },
     { key: "freshman", label: "大一微積分", note: "跟著課程進度練", cap: 3 },
     { key: "exam", label: "期中期末要考了", note: "考前衝刺，抓弱點", cap: 4, suggestExam: true },
@@ -3746,6 +3727,7 @@
           <p class="onboarding-privacy">紀錄只存在這台裝置的瀏覽器，不需要註冊。<small>（匿名使用統計除外，設定頁可關）</small></p>
           <div class="action-row">
             <button class="button home-primary" data-action="onboarding-next">開始建立我的訓練${icon("chevron-right")}</button>
+            <button class="button ghost" data-action="set-onboarding-context" data-context="newbie">我還沒學過微積分，先上入門課</button>
           </div>
           </div>
         </section>
@@ -3808,8 +3790,19 @@
     records.settings.difficultyCap = entry.cap;
     saveRecords(records);
     selectedDifficultyCap = entry.cap;
-    onboardingStep = "placement";
     trackEvent("onboarding_step", { step: "context", context: entry.key });
+    if (entry.course) {
+      // 還沒學過的人：定位測驗測不出東西，直接上第一課
+      records.onboardingSeen = true;
+      records.onboardingLevel = "beginner";
+      saveRecords(records);
+      onboardingStep = "intro";
+      view = "course";
+      render();
+      window.scrollTo(0, 0);
+      return;
+    }
+    onboardingStep = "placement";
     render();
   }
 
@@ -4968,6 +4961,72 @@
   let proofSearchTimer = null;
 
   const plUI = window.BuzzProofLabUI.create({ escapeHtml, escapeAttr, icon, proofs });
+
+  // ── 從零開始：給還沒學過微積分的人的九課（內容 course_content.js、畫面 course_ui.js）──
+  // 這裡只有狀態：現在哪一課、逐步示範揭到第幾步、小測選了什麼。
+  const courseUI = window.BuzzCourseUI.create({ escapeHtml, escapeAttr, icon, referenceAnswerHTML });
+  let courseState = { lessonId: "", revealed: 0, picks: {} };
+
+  function renderCourse() {
+    return courseUI.renderIndex(loadRecords());
+  }
+
+  function renderCourseLesson() {
+    const item = courseUI.lesson(courseState.lessonId);
+    return (item && courseUI.renderLesson(item, loadRecords(), courseState)) || renderCourse();
+  }
+
+  function openCourseLesson(id) {
+    const item = courseUI.lesson(id);
+    if (!item) { view = "course"; render(); return; }
+    const records = loadRecords();
+    records.course[id] = { ...(records.course[id] || {}), openedAt: records.course[id] && records.course[id].openedAt ? records.course[id].openedAt : new Date().toISOString() };
+    saveRecords(records);
+    courseState = { lessonId: id, revealed: 0, picks: {} };
+    view = "course-lesson";
+    render();
+    window.scrollTo(0, 0);
+  }
+
+  // 小測：選了就記；三題都對才算過。選錯不扣什麼，畫面會說為什麼錯，可以再選。
+  function pickCourseOption(checkIndex, optionIndex) {
+    const item = courseUI.lesson(courseState.lessonId);
+    if (!item) return;
+    courseState.picks = { ...courseState.picks, [checkIndex]: optionIndex };
+    const allRight = item.checks.every((check, i) => {
+      const pick = courseState.picks[i];
+      return pick !== undefined && check.options[pick] && check.options[pick].correct;
+    });
+    if (allRight) {
+      const records = loadRecords();
+      records.course[item.id] = { ...(records.course[item.id] || {}), checksPassed: true };
+      markCourseLessonDone(records, item.id);
+      saveRecords(records);
+    }
+    render();
+  }
+
+  function markCourseLessonDone(records, id) {
+    const entry = records.course[id] || {};
+    if (entry.checksPassed && entry.practiceDone && !entry.doneAt) records.course[id] = { ...entry, doneAt: new Date().toISOString() };
+  }
+
+  // 導引練習：那三題、不倒數、可看提示、進錯題本（練習本來就會）。結束時 finishQuiz 會記回課程。
+  function startCoursePractice(id) {
+    const item = courseUI.lesson(id);
+    if (!item) return;
+    const pool = item.practice.map((problemId) => problems.find((problem) => problem.id === problemId)).filter(Boolean);
+    if (!pool.length) return;
+    startQuiz(pool, { modeKey: "practice", practice: true, noTimer: true, answerMode: "choice", courseLessonId: id });
+  }
+
+  function recordCoursePractice(id, correct, total) {
+    const records = loadRecords();
+    records.course[id] = { ...(records.course[id] || {}), practiceDone: true, practiceCorrect: correct, practiceTotal: total, practicedAt: new Date().toISOString() };
+    markCourseLessonDone(records, id);
+    saveRecords(records);
+  }
+
   const proofLangSpec = (id) => plUI.spec(id);
   const proofLangLessons = () => plUI.lessons();
   const runProofLangCheck = (spec, text) => plUI.check(spec, text);
@@ -6087,6 +6146,7 @@
                     </div>
                     <p>${feedback.message}</p>
                     ${feedback.nudge ? `<p class="feedback-nudge">${icon("lightbulb")}<span>${escapeHtml(feedback.nudge)}</span></p>` : ""}
+                    ${feedback.status !== "correct" ? courseUI.renderFeedbackLink(current.id) : ""}
                     ${
                       // 答錯、逾時、跳過都直接給參考答案 —— 不用點開「完整推導」、
                       // 不記「借助解答」。實測逾時卡只有一句「沒有輸入答案」，
@@ -7515,6 +7575,7 @@
   }
 
   function renderResultsActions(gateResult, pathResult) {
+    if (!gateResult && !pathResult && quiz && quiz.courseLessonId) return courseUI.renderResultsActions(quiz.courseLessonId);
     if (!gateResult && !pathResult && quiz && quiz.placementResult) {
       return `
         <div class="action-row">
@@ -8288,6 +8349,18 @@
       view = "proofs";
       render();
     }
+    if (action === "open-course") {
+      view = "course";
+      render();
+      window.scrollTo(0, 0);
+    }
+    if (action === "open-course-lesson") openCourseLesson(actionNode.dataset.lessonId || "");
+    if (action === "course-step") {
+      courseState.revealed = (courseState.revealed || 0) + 1;
+      render();
+    }
+    if (action === "course-pick") pickCourseOption(Number(actionNode.dataset.check), Number(actionNode.dataset.option));
+    if (action === "course-practice") startCoursePractice(actionNode.dataset.lessonId || courseState.lessonId);
     if (action === "pl-open-problem") openProofWrite(actionNode.dataset.proofLangId || "");
     if (action === "open-proof-problem") openProofProblem(actionNode.dataset.proofKey || "");
     if (action === "proof-random") openRandomProof();
@@ -10090,7 +10163,8 @@
       forceFinishAfterFeedback: false,
       modal: null,
       dailyOne: null,
-      gentle: false
+      gentle: false,
+      courseLessonId: options.courseLessonId || ""
     };
     if (options.dailyOne) quiz.dailyOne = options.dailyOne;
     // 新手保護期（見 gentleStartActive）：一般訓練與主線在頭幾局改走 practice。
@@ -11320,6 +11394,7 @@
     if (quiz) {
       finalizeExamAnswers(quiz);
       const correct = quiz.answers.filter((answer) => answer.correct).length;
+      if (quiz.courseLessonId) recordCoursePractice(quiz.courseLessonId, correct, quiz.problems.length);
       trackEvent("session_complete", {
         mode: quiz.mode,
         topic: quiz.topic,
@@ -13534,6 +13609,7 @@
     next.backupNoticeSeen = Boolean(next.backupNoticeSeen);
     next.examSetupDismissed = Boolean(next.examSetupDismissed);
     next.proofLang = next.proofLang && typeof next.proofLang === "object" ? next.proofLang : {};
+    next.course = next.course && typeof next.course === "object" ? next.course : {};
     next.proofLangLessons = next.proofLangLessons && typeof next.proofLangLessons === "object" ? next.proofLangLessons : {};
     next.onboardingContext = typeof next.onboardingContext === "string" ? next.onboardingContext : "";
     next.onboardingLevel = typeof next.onboardingLevel === "string" ? next.onboardingLevel : "";

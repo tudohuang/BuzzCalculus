@@ -75,6 +75,7 @@ interface BuzzRecords {
   proofLang: Record<string, BuzzProofLangEntry>;
   proofLangLessons: Record<string, string>;
   proofs: Record<string, BuzzProofProgress>;
+  course: Record<string, BuzzCourseProgress>;
   settings: BuzzSettings;
   streakShields: number;
   topicStats: Record<string, unknown>;
@@ -188,6 +189,30 @@ interface BuzzProofLangApi {
   [key: string]: any;
 }
 
+/* ── 從零開始的課程 ───────────────────────────────────────────── */
+
+interface BuzzCourseLesson {
+  id: string;
+  unit: "limits" | "derivatives" | "integrals";
+  title: string;
+  minutes: number;
+  goal: string;
+  concept: { text: string; tex?: string }[];
+  worked: { problemId: string; steps: { text: string; tex?: string }[] };
+  checks: { ask: string; options: { label: string; correct?: boolean; why?: string }[] }[];
+  practice: string[];
+}
+
+interface BuzzCourseProgress {
+  openedAt?: string;
+  checksPassed?: boolean;
+  practiceDone?: boolean;
+  practiceCorrect?: number;
+  practiceTotal?: number;
+  practicedAt?: string;
+  doneAt?: string;
+}
+
 /* proofs.js（自評／骨架判）的題 */
 interface BuzzProof {
   id: string;
@@ -258,6 +283,8 @@ interface Navigator {
 interface Window {
   BUZZ_PROBLEMS: BuzzProblem[];
   BUZZ_PROOFS: BuzzProof[];
+  BUZZ_COURSE: BuzzCourseLesson[];
+  BuzzCourseUI: { create(deps: { escapeHtml: (s: unknown) => string; escapeAttr: (s: unknown) => string; icon: (name: string) => string; referenceAnswerHTML: (problem: BuzzProblem) => string }): any };
   BUZZ_PROOF_LANG_PROBLEMS: BuzzProofLangSpec[];
   BUZZ_PROOF_LANG_LESSONS: BuzzProofLangLesson[];
   BUZZ_SKILL_TAGS: Record<string, string[]>;

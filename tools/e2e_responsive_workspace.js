@@ -52,7 +52,7 @@ let checked = 0;
     await chrome.navigate(server.url);
     await snapshot("desktop-onboarding");
     await click('[data-action="onboarding-next"]');
-    await click('[data-action="set-onboarding-context"]');
+    await click('[data-action="set-onboarding-context"][data-context="freshman"]');
     await click('[data-action="skip-placement"]');
     await click('button[data-action="dismiss-notice"]');
 
