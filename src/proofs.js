@@ -745,6 +745,470 @@
         { text: "rw [Nat.mul_assoc]:把左邊 (2·k)·(2k) 的括號重排成 2·(k·(2k)),兩邊相同。", tex: "2\\cdot(k\\cdot(2k))=2\\cdot(k\\cdot(2k))" },
         { text: "之後想證真正的分析題(MVT、ε-δ)就要 import Mathlib——那裡有 ℝ、導數與我們競賽 tier 的全部定理。", tex: "\\blacksquare" }
       ]
+    },
+    /* ── 東大杉浦《解析演習》章末問題（第 II、III、IV 章）───────────────────────
+       原題日文，中譯自 PDF。這一族的證明大多是 3–6 步的經典論證；
+       每一題可算的主張都在 tools/verify_proof_claims.js 用具體例子驗過。 */
+    {
+      id: "proof-todai-201",
+      tier: "todai",
+      title: "東大 II-1：唯一的不動點",
+      difficulty: 4,
+      tags: ["ivt", "mvt", "fixed-point", "todai"],
+      statement: "設 f 在 [0,1] 上連續、在 (0,1) 上可微，0 ≤ f(x) ≤ 1，且 f′(x) ≠ 1（∀x ∈ (0,1)）。證明恰有一個 x ∈ [0,1] 使 f(x) = x。",
+      prompt: "0\\le f\\le 1,\\ f'\\ne 1\\ \\Rightarrow\\ \\exists!\\,x\\in[0,1]:\\ f(x)=x",
+      hints: ["存在性：看 g(x) = f(x) − x 在兩端的正負。", "唯一性：兩個不動點 a < b 之間用平均值定理。", "f(b) − f(a) = b − a 會逼出 f′(ξ) = 1。"],
+      keySteps: ["auxiliary g = f − x", "IVT for existence", "MVT between two fixed points", "f′(ξ) = 1 contradiction"],
+      solution: [
+        { text: "令 g(x) = f(x) − x。g 連續，且兩端異號（或已經是零）。", tex: "g(0)=f(0)\\ge 0,\\qquad g(1)=f(1)-1\\le 0" },
+        { text: "若 g(0) = 0 或 g(1) = 0 就找到了；否則 g(0) > 0 > g(1)，由中間值定理存在 c ∈ (0,1) 使 g(c) = 0。", tex: "\\exists c\\in[0,1]:\\ f(c)=c" },
+        { text: "唯一性：反設 a < b 都是不動點。對 f 在 [a,b] 用平均值定理。", tex: "f(b)-f(a)=f'(\\xi)(b-a),\\quad \\xi\\in(a,b)" },
+        { text: "但 f(b) − f(a) = b − a，所以 f′(ξ) = 1，與 f′ ≠ 1 矛盾。故不動點唯一。", tex: "b-a=f'(\\xi)(b-a)\\ \\Rightarrow\\ f'(\\xi)=1" }
+      ]
+    },
+    {
+      id: "proof-todai-202",
+      tier: "todai",
+      title: "東大 II-2：|f| ≤ A、|f″| ≤ B ⇒ |f′| ≤ 2√(AB)",
+      difficulty: 4,
+      tags: ["taylor", "inequality", "landau", "todai"],
+      statement: "設 f 在 (0,∞) 上二次可微，|f(x)| ≤ A、|f″(x)| ≤ B（∀x > 0）。證明 |f′(x)| ≤ 2√(AB)。",
+      prompt: "|f|\\le A,\\ |f''|\\le B\\ \\Rightarrow\\ |f'|\\le 2\\sqrt{AB}",
+      hints: ["對任意 h > 0 寫泰勒展開到二階（Lagrange 餘項）。", "把 f′(x) 解出來，用三角不等式，得到一個含 h 的上界。", "上界 2A/h + Bh/2 對 h 取最小值。"],
+      keySteps: ["Taylor with Lagrange remainder", "solve for f′(x)", "bound 2A/h + Bh/2", "optimize h = 2√(A/B)"],
+      solution: [
+        { text: "任取 x > 0、h > 0。由泰勒定理存在 ξ ∈ (x, x+h)。", tex: "f(x+h)=f(x)+hf'(x)+\\frac{h^2}{2}f''(\\xi)" },
+        { text: "解出 f′(x)，三角不等式，再用題目的界。", tex: "|f'(x)|\\le\\frac{|f(x+h)|+|f(x)|}{h}+\\frac{h}{2}|f''(\\xi)|\\le\\frac{2A}{h}+\\frac{Bh}{2}" },
+        { text: "右邊對 h > 0 取最小：算幾不等式（或微分）給出最小值在 h = 2√(A/B)。", tex: "\\frac{2A}{h}+\\frac{Bh}{2}\\ge 2\\sqrt{\\frac{2A}{h}\\cdot\\frac{Bh}{2}}=2\\sqrt{AB}" },
+        { text: "h 可以任取，取 h = 2√(A/B) 就得到等號的那個界；x 任意，故處處成立。", tex: "|f'(x)|\\le 2\\sqrt{AB}\\quad(\\forall x>0)" }
+      ]
+    },
+    {
+      id: "proof-todai-204",
+      tier: "todai",
+      title: "東大 II-4：Hermite 多項式有 n 個實根",
+      difficulty: 5,
+      tags: ["hermite", "rolle", "induction", "todai"],
+      statement: "定義 H_n(x) = (−1)^n e^{x²/2} (d/dx)^n e^{−x²/2}。證明 H_n 是 n 次多項式，且恰有 n 個相異實根。",
+      prompt: "H_n(x)=(-1)^n e^{x^2/2}\\frac{d^n}{dx^n}e^{-x^2/2}\\ \\text{is a degree-}n\\text{ polynomial with }n\\text{ real roots}",
+      hints: ["先推遞迴式 H_{n+1} = xH_n − H_n′。", "次數與首項係數用歸納。", "根：對 φ_n = e^{−x²/2}H_n 用 Rolle，兩端 φ_n → 0 各多給一個根。"],
+      keySteps: ["recurrence H_{n+1} = xH_n − H_n′", "degree by induction", "Rolle on e^{−x²/2}H_n", "extra roots from decay at ±∞"],
+      solution: [
+        { text: "把定義寫成 (d/dx)^n e^{−x²/2} = (−1)^n e^{−x²/2} H_n，再微分一次，得遞迴式。", tex: "H_{n+1}(x)=xH_n(x)-H_n'(x)" },
+        { text: "H_0 = 1。若 H_n 是首項係數 1 的 n 次多項式，xH_n 是 n+1 次、H_n′ 只有 n−1 次，故 H_{n+1} 是首項係數 1 的 n+1 次多項式。", tex: "H_1=x,\\ H_2=x^2-1,\\ H_3=x^3-3x,\\ H_4=x^4-6x^2+3" },
+        { text: "歸納假設 H_n 有 n 個相異實根 x_1 < ⋯ < x_n。令 φ_n(x) = e^{−x²/2}H_n(x)，它在這 n 點為零，且 φ_n(x) → 0（x → ±∞）。", tex: "\\varphi_n'(x)=-e^{-x^2/2}H_{n+1}(x)" },
+        { text: "Rolle：每兩個相鄰零點之間 φ_n′ 有一個零點（n−1 個）；又 φ_n 在 (−∞, x_1) 與 (x_n, ∞) 上從 0 出發又回到 0，各再給一個零點。共 n+1 個相異實根，全是 H_{n+1} 的根。", tex: "\\#\\{H_{n+1}=0\\}\\ge (n-1)+2=n+1=\\deg H_{n+1}" }
+      ]
+    },
+    {
+      id: "proof-todai-205",
+      tier: "todai",
+      title: "東大 II-5：exp(−1/x²) 是無限次可微的",
+      difficulty: 5,
+      tags: ["smooth", "induction", "limit", "todai"],
+      statement: "設 f(x) = e^{−1/x²}（x > 0）、f(x) = 0（x ≤ 0）。證明 f 在 ℝ 上無限次可微。",
+      prompt: "f(x)=\\begin{cases}e^{-1/x^2}&x>0\\\\0&x\\le 0\\end{cases}\\ \\in C^\\infty(\\mathbb{R})",
+      hints: ["x > 0 時 f^{(n)}(x) = P_n(1/x) e^{−1/x²}，P_n 是多項式（歸納）。", "難的只有 x = 0 這一點：用定義算 f^{(n)}(0)。", "關鍵極限：t^k e^{−t²} → 0（t → ∞），指數贏過任何多項式。"],
+      keySteps: ["form P_n(1/x)e^{−1/x²} by induction", "derivative at 0 by definition", "t^k e^{−t²} → 0", "all derivatives continuous"],
+      solution: [
+        { text: "x > 0 時歸納：若 f^{(n)}(x) = P_n(1/x)e^{−1/x²}，微分一次仍是同樣的形。", tex: "P_{n+1}(t)=2t^3P_n(t)-t^2P_n'(t),\\qquad P_0=1,\\ P_1(t)=2t^3" },
+        { text: "x < 0 時 f ≡ 0，所有導數為 0。剩下 x = 0。", tex: "f^{(n)}(x)=0\\quad(x<0)" },
+        { text: "歸納證 f^{(n)}(0) = 0：右導數的差商是 (1/h)P_n(1/h)e^{−1/h²}，令 t = 1/h → ∞，它是 tP_n(t)e^{−t²} → 0；左導數顯然是 0。", tex: "\\lim_{t\\to\\infty}t^k e^{-t^2}=0\\ (\\forall k)\\ \\Rightarrow\\ f^{(n+1)}(0)=0" },
+        { text: "同一個極限也給出 f^{(n)}(x) → 0（x → 0+），所以每一階導數都連續：f ∈ C^∞。", tex: "\\lim_{x\\to 0^+}P_n(1/x)e^{-1/x^2}=0=f^{(n)}(0)" }
+      ]
+    },
+    {
+      id: "proof-todai-206",
+      tier: "todai",
+      title: "東大 II-6：加權 Jensen 不等式",
+      difficulty: 4,
+      tags: ["jensen", "convexity", "inequality", "todai"],
+      statement: "設 f 在開區間 I 上 f″ ≥ 0。證明對任意 x_1,…,x_n ∈ I 與 p_i ≥ 0、Σp_i = 1，有 Σ p_i f(x_i) ≥ f(Σ p_i x_i)。",
+      prompt: "f''\\ge 0\\ \\Rightarrow\\ \\sum_{i=1}^n p_i f(x_i)\\ge f\\Big(\\sum_{i=1}^n p_i x_i\\Big)",
+      hints: ["f″ ≥ 0 給的是切線不等式：f(y) ≥ f(m) + f′(m)(y − m)。", "把切線畫在 m = Σ p_i x_i 那一點。", "乘 p_i 相加，一次項自動消掉。"],
+      keySteps: ["tangent-line inequality from f″ ≥ 0", "tangent at the weighted mean", "sum with weights", "linear term vanishes"],
+      solution: [
+        { text: "f″ ≥ 0 ⇒ f′ 遞增 ⇒ 切線不等式：對任意 m, y ∈ I，由平均值定理 f(y) − f(m) = f′(η)(y − m) 且 f′(η) 與 f′(m) 的大小關係跟 y − m 同向。", tex: "f(y)\\ge f(m)+f'(m)(y-m)\\quad(\\forall y,m\\in I)" },
+        { text: "令 m = Σ p_i x_i（凸組合，仍在 I 裡）。對每個 x_i 用切線不等式。", tex: "f(x_i)\\ge f(m)+f'(m)(x_i-m)" },
+        { text: "乘 p_i 相加：Σ p_i = 1，而 Σ p_i (x_i − m) = m − m = 0。", tex: "\\sum p_i f(x_i)\\ge f(m)+f'(m)\\sum p_i(x_i-m)=f(m)" }
+      ]
+    },
+    {
+      id: "proof-todai-207",
+      tier: "todai",
+      title: "東大 II-7：Wronskian 與線性相關",
+      difficulty: 6,
+      tags: ["wronskian", "linear-dependence", "cramer", "todai"],
+      statement: "設 f_1,…,f_n 在開區間 I 上 C^{n−1}，W = W(f_1,…,f_n) 為 Wronskian。證明：(1) 線性相關 ⇒ W ≡ 0；(2) 若 W ≡ 0 而 W(f_1,…,f_{n−1})(x_0) ≠ 0，則在 x_0 附近 f_n 是 f_1,…,f_{n−1} 的線性組合。",
+      prompt: "\\text{dependent}\\Rightarrow W\\equiv 0;\\quad W\\equiv 0,\\ W(f_1,\\dots,f_{n-1})(x_0)\\ne 0\\Rightarrow f_n=\\sum_{i<n}c_if_i\\ \\text{near }x_0",
+      hints: ["(1)：Σc_i f_i ≡ 0 微分 n−1 次，c 是每一點 Wronskian 矩陣的核向量。", "(2)：用 Cramer 在 x_0 附近解出 c_i(x)，先讓前 n−1 個方程成立。", "再證 c_i′(x) = 0：微分方程組、跟下一列相減。"],
+      keySteps: ["differentiate the dependence n−1 times", "nonzero kernel vector ⇒ det = 0", "Cramer near x_0 gives smooth c_i(x)", "show c_i′ = 0 using W_n ≡ 0"],
+      solution: [
+        { text: "(1) 若 Σ c_i f_i ≡ 0 且 c ≠ 0，逐次微分得 Σ c_i f_i^{(k)} ≡ 0（k = 0,…,n−1）：c 是 Wronskian 矩陣在每一點的非零核向量。", tex: "\\begin{pmatrix}f_1&\\cdots&f_n\\\\ \\vdots&&\\vdots\\\\ f_1^{(n-1)}&\\cdots&f_n^{(n-1)}\\end{pmatrix}c=0\\ \\Rightarrow\\ W\\equiv 0" },
+        { text: "(2) W_{n−1}(x_0) ≠ 0，連續性給一個鄰域 J 上 W_{n−1} ≠ 0。在 J 上用 Cramer 解前 n−1 個方程，得 C^1 的係數 c_i(x)。", tex: "\\sum_{i<n}c_i(x)f_i^{(k)}(x)=f_n^{(k)}(x),\\quad k=0,\\dots,n-2" },
+        { text: "把第 k 個方程微分、減去第 k+1 個方程，得 Σ c_i′ f_i^{(k)} = 0（k = 0,…,n−3）；k = n−2 那一個微分後多出 Σ c_i f_i^{(n−1)} 這一項。", tex: "\\sum_{i<n}c_i'f_i^{(k)}=0\\ (k\\le n-3),\\qquad\\sum_{i<n}c_i'f_i^{(n-2)}+\\sum_{i<n}c_if_i^{(n-1)}=f_n^{(n-1)}" },
+        { text: "W_n ≡ 0 且 W_{n−1} ≠ 0：Wronskian 矩陣的第 n 欄是前 n−1 欄的組合，係數由前 n−1 列唯一決定，正是 c_i(x)；所以第 n−1 列也成立 f_n^{(n−1)} = Σ c_i f_i^{(n−1)}。代回上式得 Σ c_i′ f_i^{(n−2)} = 0，於是 c′ 在 W_{n−1} 矩陣的核裡，c′ ≡ 0：c_i 是常數，f_n = Σ c_i f_i。", tex: "W_{n-1}\\,c'=0,\\ W_{n-1}\\ne 0\\ \\Rightarrow\\ c'\\equiv 0\\ \\Rightarrow\\ f_n=\\sum_{i<n}c_if_i\\ \\text{on }J" }
+      ]
+    },
+    {
+      id: "proof-todai-208",
+      tier: "todai",
+      title: "東大 II-8：對稱差商給二階導數",
+      difficulty: 3,
+      tags: ["taylor", "second-derivative", "limit", "todai"],
+      statement: "證明：(1) f 在原點附近 C²，則 f″(0) = lim_{x→0} (f(x) + f(−x) − 2f(0))/x²；(2) f(x,y) 在原點附近 C²，則 f_xy(0,0) = lim_{t→0} (f(t,t) − f(t,0) − f(0,t) + f(0,0))/t²。",
+      prompt: "f''(0)=\\lim_{x\\to 0}\\frac{f(x)+f(-x)-2f(0)}{x^2},\\qquad f_{xy}(0,0)=\\lim_{t\\to 0}\\frac{f(t,t)-f(t,0)-f(0,t)+f(0,0)}{t^2}",
+      hints: ["Peano 餘項的泰勒展開到二階。", "f(x) 與 f(−x) 相加，一階項抵消。", "(2) 用二元的二階泰勒展開，只有 xy 那一項留下來。"],
+      keySteps: ["Taylor with Peano remainder", "odd terms cancel in f(x)+f(−x)", "two-variable Taylor", "only the mixed term survives"],
+      solution: [
+        { text: "(1) 二階泰勒（Peano 餘項）：f(±x) = f(0) ± f′(0)x + f″(0)x²/2 + o(x²)。", tex: "f(x)+f(-x)-2f(0)=f''(0)x^2+o(x^2)" },
+        { text: "除以 x² 取極限即得 (1)。", tex: "\\lim_{x\\to 0}\\frac{f(x)+f(-x)-2f(0)}{x^2}=f''(0)" },
+        { text: "(2) 二元二階泰勒：f(h,k) = f + f_x h + f_y k + (f_xx h² + 2 f_xy hk + f_yy k²)/2 + o(h²+k²)（各偏導在原點取值）。", tex: "f(t,t)-f(t,0)-f(0,t)+f(0,0)=f_{xy}(0,0)t^2+o(t^2)" },
+        { text: "代 (t,t)、(t,0)、(0,t)、(0,0) 四點：一階項與 f_xx、f_yy 項兩兩抵消，只剩 f_xy t²。除以 t² 取極限。", tex: "\\lim_{t\\to 0}\\frac{f(t,t)-f(t,0)-f(0,t)+f(0,0)}{t^2}=f_{xy}(0,0)" }
+      ]
+    },
+    {
+      id: "proof-todai-211",
+      tier: "todai",
+      title: "東大 II-11：正交座標變換下的 Laplacian",
+      difficulty: 4,
+      tags: ["chain-rule", "laplacian", "orthogonal", "multivariable", "todai"],
+      statement: "在 ℝⁿ 中考慮正交座標變換 x = Py（P 正交矩陣）。若 f(x) = g(y)，證明 Σ ∂²f/∂x_i² = Σ ∂²g/∂y_i² 且 Σ (∂f/∂x_i)² = Σ (∂g/∂y_i)²。",
+      prompt: "x=Py,\\ P^{\\mathsf T}P=I,\\ f(x)=g(y)\\ \\Rightarrow\\ \\Delta_x f=\\Delta_y g,\\ |\\nabla_x f|=|\\nabla_y g|",
+      hints: ["連鎖律：∇_y g = Pᵀ ∇_x f。", "Hessian 也一樣：H_y g = Pᵀ (H_x f) P。", "正交矩陣保長度、相似變換保 trace。"],
+      keySteps: ["chain rule ∇g = Pᵀ∇f", "|Pᵀv| = |v|", "Hessian transforms by congruence", "trace is similarity invariant"],
+      solution: [
+        { text: "連鎖律：∂g/∂y_i = Σ_j (∂f/∂x_j)(∂x_j/∂y_i) = Σ_j P_{ji} ∂f/∂x_j，即梯度以 Pᵀ 變換。", tex: "\\nabla_y g=P^{\\mathsf T}\\nabla_x f" },
+        { text: "正交矩陣保長度：|Pᵀv|² = vᵀPPᵀv = |v|²。", tex: "\\sum_i\\Big(\\frac{\\partial g}{\\partial y_i}\\Big)^2=|P^{\\mathsf T}\\nabla_x f|^2=|\\nabla_x f|^2" },
+        { text: "再微分一次（P 是常數矩陣）：Hessian 以合同變換。", tex: "H_y g=P^{\\mathsf T}(H_x f)P" },
+        { text: "Laplacian 是 Hessian 的 trace，而 Pᵀ = P⁻¹，所以 Pᵀ H P 與 H 相似、trace 相等。", tex: "\\Delta_y g=\\operatorname{tr}(P^{-1}H_xfP)=\\operatorname{tr}H_xf=\\Delta_x f" }
+      ]
+    },
+    {
+      id: "proof-todai-212",
+      tier: "todai",
+      title: "東大 II-12：lim Π(1 + k/n²) = √e",
+      difficulty: 3,
+      tags: ["limit", "product", "squeeze", "log", "todai"],
+      statement: "求 lim_{n→∞} (1 + 1/n²)(1 + 2/n²)⋯(1 + n/n²)，並證明。",
+      prompt: "\\lim_{n\\to\\infty}\\prod_{k=1}^{n}\\Big(1+\\frac{k}{n^2}\\Big)=\\sqrt{e}",
+      hints: ["取對數，乘積變成和。", "t − t²/2 ≤ log(1+t) ≤ t（t ≥ 0）。", "Σk/n² = (n+1)/(2n)，Σk²/n⁴ ≤ 1/n。"],
+      keySteps: ["take logarithms", "two-sided bound for log(1+t)", "sum formulas", "squeeze then exponentiate"],
+      solution: [
+        { text: "令 L_n = Σ_{k=1}^n log(1 + k/n²)。要的是 lim e^{L_n}。", tex: "\\prod_{k=1}^n\\Big(1+\\frac{k}{n^2}\\Big)=e^{L_n}" },
+        { text: "對 t ≥ 0 有 t − t²/2 ≤ log(1+t) ≤ t，代 t = k/n² 相加。", tex: "\\sum_{k=1}^n\\frac{k}{n^2}-\\frac12\\sum_{k=1}^n\\frac{k^2}{n^4}\\le L_n\\le\\sum_{k=1}^n\\frac{k}{n^2}" },
+        { text: "兩個和都算得出來：Σk/n² = (n+1)/(2n) → 1/2，Σk²/n⁴ ≤ n·n²/n⁴ = 1/n → 0。", tex: "\\frac{n+1}{2n}-\\frac{1}{2n}\\le L_n\\le\\frac{n+1}{2n}" },
+        { text: "夾擠得 L_n → 1/2，指數函數連續，故極限是 e^{1/2}。", tex: "\\lim_{n\\to\\infty}\\prod_{k=1}^n\\Big(1+\\frac{k}{n^2}\\Big)=e^{1/2}=\\sqrt e" }
+      ]
+    },
+    {
+      id: "proof-todai-215",
+      tier: "todai",
+      title: "東大 II-15：arctan(1/x) 的 n 階導數",
+      difficulty: 5,
+      tags: ["induction", "derivative", "arctan", "todai"],
+      statement: "設 y = arctan(1/x)（x > 0）。證明 y^{(n)} = (−1)^n (n−1)! (sin y)^n sin(ny)，並證明 lim_{x→±∞} y^{(n)} = 0。",
+      prompt: "y=\\arctan\\frac1x\\ \\Rightarrow\\ y^{(n)}=(-1)^n(n-1)!\\,(\\sin y)^n\\sin(ny),\\quad\\lim_{x\\to\\pm\\infty}y^{(n)}=0",
+      hints: ["先算 y′ = −1/(1+x²)，再用 sin y = 1/√(1+x²) 把它寫成 −sin²y。", "歸納：對公式微分，用 y′ = −sin²y 與和角公式。", "x → ∞ 時 y → 0，sin y → 0。"],
+      keySteps: ["y′ = −sin² y", "differentiate the formula", "sin(a+b) identity", "sin y → 0 kills every derivative"],
+      solution: [
+        { text: "x > 0 時 y ∈ (0, π/2)，tan y = 1/x，所以 sin y = 1/√(1+x²)，而 y′ = −1/(1+x²) = −sin²y。這就是 n = 1 的公式。", tex: "y'=-\\sin^2 y=(-1)^1\\,0!\\,(\\sin y)^1\\sin(1\\cdot y)" },
+        { text: "歸納：對 y^{(n)} = (−1)^n(n−1)! sin^n y sin(ny) 微分（連鎖律乘 y′）。", tex: "y^{(n+1)}=(-1)^n(n-1)!\\,n\\sin^{n-1}y\\,[\\cos y\\sin(ny)+\\sin y\\cos(ny)]\\,y'" },
+        { text: "中括號是 sin((n+1)y)，y′ = −sin²y 補上一個負號與兩個 sin y。", tex: "y^{(n+1)}=(-1)^{n+1}n!\\,(\\sin y)^{n+1}\\sin((n+1)y)" },
+        { text: "x → ±∞ 時 y → 0（x → −∞ 時 y → 0⁻ 同理成立），sin y → 0，故每一階導數都趨於 0。", tex: "\\lim_{x\\to\\pm\\infty}y^{(n)}=0\\quad(n=1,2,\\dots)" }
+      ]
+    },
+    {
+      id: "proof-todai-217",
+      tier: "todai",
+      title: "東大 II-17：(1 − x²)y″ − 2xy′ = 0 的解",
+      difficulty: 4,
+      tags: ["ode", "power-series", "log", "todai"],
+      statement: "證明微分方程 (1 − x²)y″ − 2xy′ = 0 在原點附近可展開為冪級數的解，都可寫成 c₁ + c₂·(1/2)log((1+x)/(1−x))。",
+      prompt: "(1-x^2)y''-2xy'=0\\ \\Rightarrow\\ y=c_1+c_2\\cdot\\frac12\\log\\frac{1+x}{1-x}",
+      hints: ["左邊是一個全微分：((1 − x²)y′)′。", "所以 (1 − x²)y′ 是常數。", "1/(1 − x²) 的積分是 (1/2)log((1+x)/(1−x))。"],
+      keySteps: ["recognize ((1−x²)y′)′", "first integral (1−x²)y′ = c", "partial fractions", "artanh series has radius 1"],
+      solution: [
+        { text: "觀察 ((1 − x²)y′)′ = (1 − x²)y″ − 2xy′：方程就是說這個導數為零。", tex: "\\frac{d}{dx}\\big[(1-x^2)y'\\big]=0" },
+        { text: "所以 (1 − x²)y′ = c₂（常數），在 |x| < 1 上 y′ = c₂/(1 − x²)。", tex: "y'=\\frac{c_2}{1-x^2}=\\frac{c_2}{2}\\Big(\\frac{1}{1+x}+\\frac{1}{1-x}\\Big)" },
+        { text: "積分得解的一般形；它在 |x| < 1 上是收斂的冪級數（artanh 的展開）。", tex: "y=c_1+c_2\\cdot\\frac12\\log\\frac{1+x}{1-x}=c_1+c_2\\sum_{k\\ge 0}\\frac{x^{2k+1}}{2k+1}" }
+      ]
+    },
+    {
+      id: "proof-todai-220",
+      tier: "todai",
+      title: "東大 II-20：exp(a·arcsin x) 的微分方程與泰勒級數",
+      difficulty: 4,
+      tags: ["ode", "taylor", "recurrence", "todai"],
+      statement: "證明 y = e^{a arcsin x} 滿足 (1 − x²)y″ − xy′ − a²y = 0，並利用它求 y 在原點的泰勒級數。",
+      prompt: "y=e^{a\\arcsin x}\\ \\Rightarrow\\ (1-x^2)y''-xy'-a^2y=0,\\quad c_{n+2}=\\frac{n^2+a^2}{(n+1)(n+2)}c_n",
+      hints: ["先算 y′，平方後乘 (1 − x²) 把根號去掉。", "再微分一次、除以 2y′。", "把 y = Σ c_n xⁿ 代入方程，比較係數。"],
+      keySteps: ["(1−x²)y′² = a²y²", "differentiate and divide by 2y′", "substitute power series", "two-step recurrence"],
+      solution: [
+        { text: "y′ = a y/√(1 − x²)，所以 (1 − x²)y′² = a²y²。", tex: "(1-x^2)y'^2=a^2y^2" },
+        { text: "微分：(1 − x²)·2y′y″ − 2xy′² = 2a²yy′，除以 2y′（y′ ≠ 0）。", tex: "(1-x^2)y''-xy'-a^2y=0" },
+        { text: "代 y = Σ c_n xⁿ：(1 − x²)Σ n(n−1)c_n x^{n−2} − Σ n c_n xⁿ − a² Σ c_n xⁿ = 0，比較 xⁿ 的係數。", tex: "(n+2)(n+1)c_{n+2}=\\big(n(n-1)+n+a^2\\big)c_n=(n^2+a^2)c_n" },
+        { text: "初始值 c₀ = y(0) = 1、c₁ = y′(0) = a，遞迴式決定全部係數。", tex: "y=1+ax+\\frac{a^2}{2}x^2+\\frac{a(1+a^2)}{6}x^3+\\frac{a^2(4+a^2)}{24}x^4+\\cdots" }
+      ]
+    },
+    {
+      id: "proof-todai-221",
+      tier: "todai",
+      title: "東大 II-21：橢圓內接三角形的最大面積",
+      difficulty: 4,
+      tags: ["optimization", "affine", "jensen", "todai"],
+      statement: "求內接於橢圓 x²/a² + y²/b² = 1 的三角形之最大面積，並證明。",
+      prompt: "\\max\\operatorname{Area}=\\frac{3\\sqrt3}{4}ab",
+      hints: ["仿射變換 (x,y) ↦ (x/a, y/b) 把橢圓變成單位圓，面積乘 1/(ab)。", "單位圓內接三角形面積 = (1/2)(sin α + sin β + sin γ)，α+β+γ = 2π 是圓心角。", "sin 在 [0, π] 上凹：Jensen ⇒ 正三角形最大。"],
+      keySteps: ["affine map to the unit circle", "area via central angles", "concavity of sin on [0,π]", "equilateral is optimal"],
+      solution: [
+        { text: "線性映射 T(x,y) = (x/a, y/b) 把橢圓映成單位圓，且把所有面積乘以 1/(ab)。所以只要找單位圓的最大內接三角形。", tex: "\\operatorname{Area}(\\triangle)=ab\\cdot\\operatorname{Area}(T\\triangle)" },
+        { text: "單位圓上三點把圓周分成圓心角 α, β, γ（和為 2π），三角形是三個等腰三角形拼起來（圓心在內部時；否則面積更小）。", tex: "\\operatorname{Area}=\\tfrac12(\\sin\\alpha+\\sin\\beta+\\sin\\gamma),\\quad \\alpha+\\beta+\\gamma=2\\pi" },
+        { text: "sin 在 [0, π] 上凹，Jensen：(sin α + sin β + sin γ)/3 ≤ sin((α+β+γ)/3) = sin(2π/3)，等號在 α = β = γ。", tex: "\\operatorname{Area}\\le\\tfrac32\\sin\\frac{2\\pi}{3}=\\frac{3\\sqrt3}{4}" },
+        { text: "拉回橢圓：最大面積 (3√3/4)ab，由正三角形的像達到。", tex: "\\max\\operatorname{Area}=\\frac{3\\sqrt3}{4}\\,ab" }
+      ]
+    },
+    {
+      id: "proof-todai-228",
+      tier: "todai",
+      title: "東大 II-28：d/dt exp(tX) = X exp(tX)",
+      difficulty: 4,
+      tags: ["matrix-exponential", "power-series", "uniform-convergence", "todai"],
+      statement: "對 n×n 實矩陣 X 定義 exp X = Σ_{k≥0} X^k/k!。證明 d/dt exp(tX) = X exp(tX)。",
+      prompt: "\\frac{d}{dt}\\exp(tX)=X\\exp(tX)",
+      hints: ["用任何一個矩陣範數：‖X^k‖ ≤ ‖X‖^k，級數絕對收斂。", "exp(tX) 是 t 的冪級數（矩陣係數），收斂半徑 ∞。", "冪級數可逐項微分。"],
+      keySteps: ["norm bound ‖X^k‖ ≤ ‖X‖^k", "absolute convergence for every t", "termwise differentiation", "reindex to X·exp(tX)"],
+      solution: [
+        { text: "取一個次乘性的矩陣範數。每一項的範數被數列 (|t|‖X‖)^k/k! 控制，它的和是 e^{|t|‖X‖}。", tex: "\\Big\\|\\frac{t^kX^k}{k!}\\Big\\|\\le\\frac{(|t|\\,\\|X\\|)^k}{k!}" },
+        { text: "所以 exp(tX) = Σ t^k X^k/k! 是 t 的冪級數（係數是矩陣），對所有 t 絕對收斂、在任何有界區間上一致收斂。", tex: "\\exp(tX)=\\sum_{k=0}^\\infty\\frac{t^k}{k!}X^k,\\quad R=\\infty" },
+        { text: "冪級數可逐項微分（逐項微分後的級數同樣被 e^{|t|‖X‖} 型的級數控制、一致收斂）。", tex: "\\frac{d}{dt}\\exp(tX)=\\sum_{k=1}^\\infty\\frac{kt^{k-1}}{k!}X^k=\\sum_{k=1}^\\infty\\frac{t^{k-1}}{(k-1)!}X^k" },
+        { text: "提出一個 X，重新編號。", tex: "=X\\sum_{j=0}^\\infty\\frac{t^j}{j!}X^j=X\\exp(tX)" }
+      ]
+    },
+    {
+      id: "proof-todai-303",
+      tier: "todai",
+      title: "東大 III-3：cos(tx)/(1+x²) 從 0 到 ∞ 的積分",
+      difficulty: 6,
+      tags: ["improper-integral", "ode", "uniform-convergence", "feynman", "todai"],
+      statement: "令 f(t) = ∫₀^∞ cos(tx)/(1+x²) dx。依序證明：(1) 積分對 t 一致收斂，f 連續；(2) F(t) = ∫₀^t f = ∫₀^∞ sin(tx)/(x(1+x²)) dx；(3) F″ = F − π/2（t > 0）；(4) F(t) = (π/2)(1 − e^{−t})；(5) f(t) = (π/2)e^{−|t|}。",
+      prompt: "\\int_0^\\infty\\frac{\\cos tx}{1+x^2}\\,dx=\\frac{\\pi}{2}e^{-|t|}",
+      hints: ["|cos tx/(1+x²)| ≤ 1/(1+x²)：Weierstrass M-test。", "1/(x(1+x²)) − 1/x = −x/(1+x²)，而 ∫₀^∞ sin(tx)/x dx = π/2（t > 0）。", "F″ = F − π/2 的解裡 e^t 那一項要靠 F′ = f 有界才能殺掉。"],
+      keySteps: ["M-test ⇒ uniform convergence", "integrate under the integral sign", "Dirichlet integral π/2", "solve F″ = F − π/2 with boundedness", "evenness gives |t|"],
+      solution: [
+        { text: "(1) |cos(tx)/(1+x²)| ≤ 1/(1+x²) 可積，M-test 給一致收斂，故 f 連續且 |f| ≤ π/2。", tex: "|f(t)|\\le\\int_0^\\infty\\frac{dx}{1+x^2}=\\frac{\\pi}{2}" },
+        { text: "(2) 一致收斂可以對 t 積分交換次序：∫₀^t cos(sx) ds = sin(tx)/x。", tex: "F(t)=\\int_0^t f(s)\\,ds=\\int_0^\\infty\\frac{\\sin tx}{x(1+x^2)}\\,dx" },
+        { text: "(3) 1/(x(1+x²)) = 1/x − x/(1+x²)，而 Dirichlet 積分 ∫₀^∞ sin(tx)/x dx = π/2（t > 0）。剩下的 −∫ x sin(tx)/(1+x²) dx 正是 f′(t)（對 t 微分，一致收斂性由 Dirichlet 型判別法保證）。", tex: "F(t)-\\frac{\\pi}{2}=-\\int_0^\\infty\\frac{x\\sin tx}{1+x^2}\\,dx=f'(t)=F''(t)" },
+        { text: "(4) 解 F″ = F − π/2：F = π/2 + c₁e^t + c₂e^{−t}。F′ = f 有界迫使 c₁ = 0，F(0) = 0 給 c₂ = −π/2。", tex: "F(t)=\\frac{\\pi}{2}(1-e^{-t})\\quad(t>0)" },
+        { text: "(5) f = F′ = (π/2)e^{−t}（t > 0）；f 是偶函數，且 f(0) = π/2，故對所有 t 成立。", tex: "f(t)=\\frac{\\pi}{2}e^{-|t|}\\quad(\\forall t\\in\\mathbb{R})" }
+      ]
+    },
+    {
+      id: "proof-todai-305",
+      tier: "todai",
+      title: "東大 III-5：(x^p − x^q)/log x 從 0 到 1 的積分",
+      difficulty: 5,
+      tags: ["feynman", "parameter-integral", "log", "todai"],
+      statement: "證明對 p, q > −1，∫₀¹ (x^p − x^q)/log x dx = log((p+1)/(q+1))。",
+      prompt: "\\int_0^1\\frac{x^p-x^q}{\\log x}\\,dx=\\log\\frac{p+1}{q+1}\\quad(p,q>-1)",
+      hints: ["把 p 當參數：I(p) = ∫₀¹ (x^p − x^q)/log x dx。", "∂/∂p 把 log x 消掉：∂/∂p x^p = x^p log x。", "I(q) = 0 定出積分常數。"],
+      keySteps: ["differentiate in the parameter p", "log x cancels", "integrate 1/(p+1)", "normalize with I(q) = 0"],
+      solution: [
+        { text: "被積函數在 x → 0⁺ 趨於 0、在 x → 1⁻ 趨於 p − q（L'Hôpital），所以積分收斂，且對 p 在 [q, p] 上可在積分號下微分（一致可積的控制函數）。", tex: "I(p)=\\int_0^1\\frac{x^p-x^q}{\\log x}\\,dx" },
+        { text: "對 p 微分：∂/∂p 的 x^p = x^p log x，log x 剛好約掉。", tex: "I'(p)=\\int_0^1 x^p\\,dx=\\frac{1}{p+1}" },
+        { text: "積分回去，並用 I(q) = 0 定常數。", tex: "I(p)=\\log(p+1)+C,\\quad 0=I(q)=\\log(q+1)+C" },
+        { text: "所以 I(p) = log(p+1) − log(q+1)。", tex: "\\int_0^1\\frac{x^p-x^q}{\\log x}\\,dx=\\log\\frac{p+1}{q+1}" }
+      ]
+    },
+    {
+      id: "proof-todai-306",
+      tier: "todai",
+      title: "東大 III-6：(1−x)/((1+x) log x) 從 0 到 1 的積分",
+      difficulty: 6,
+      tags: ["series", "wallis", "feynman", "todai"],
+      statement: "利用前題證明 ∫₀¹ (1 − x)/((1 + x) log x) dx = log(2/π)。",
+      prompt: "\\int_0^1\\frac{1-x}{1+x}\\cdot\\frac{dx}{\\log x}=\\log\\frac{2}{\\pi}",
+      hints: ["(1−x)/(1+x) = (1−x)Σ(−x)^k = Σ(−1)^k(x^k − x^{k+1})。", "每一項用 III-5：∫(x^k − x^{k+1})/log x = log((k+1)/(k+2))。", "交錯乘積 (1/2)(3/2)(3/4)(5/4)⋯ 是 Wallis 乘積。"],
+      keySteps: ["geometric series expansion", "termwise III-5", "alternating sum of logs = log of a product", "Wallis product = 2/π"],
+      solution: [
+        { text: "展開：(1 − x)/(1 + x) = (1 − x)Σ_{k≥0}(−x)^k = Σ(−1)^k(x^k − x^{k+1})，在 [0,1) 上逐項可積（交錯、單調控制）。", tex: "\\int_0^1\\frac{1-x}{(1+x)\\log x}\\,dx=\\sum_{k=0}^\\infty(-1)^k\\int_0^1\\frac{x^k-x^{k+1}}{\\log x}\\,dx" },
+        { text: "每一項用 III-5（p = k、q = k+1）。", tex: "\\int_0^1\\frac{x^k-x^{k+1}}{\\log x}\\,dx=\\log\\frac{k+1}{k+2}" },
+        { text: "交錯和的部分和是一個乘積的對數。", tex: "\\sum_{k=0}^{2m-1}(-1)^k\\log\\frac{k+1}{k+2}=\\log\\Big(\\frac12\\cdot\\frac32\\cdot\\frac34\\cdot\\frac54\\cdots\\frac{2m-1}{2m}\\Big)" },
+        { text: "括號裡是 Wallis 乘積 Π (2m−1)(2m+1)/(2m)² 的部分乘積（差一個 → 1 的因子），極限是 2/π。", tex: "\\prod_{m=1}^\\infty\\frac{(2m-1)(2m+1)}{(2m)^2}=\\frac{2}{\\pi}\\ \\Rightarrow\\ \\int_0^1\\frac{1-x}{(1+x)\\log x}\\,dx=\\log\\frac2\\pi" }
+      ]
+    },
+    {
+      id: "proof-todai-308",
+      tier: "todai",
+      title: "東大 III-8：log(a + b cos x) 從 0 到 π 的積分",
+      difficulty: 5,
+      tags: ["feynman", "parameter-integral", "trig-integral", "todai"],
+      statement: "對 a ≥ b > 0 求 ∫₀^π log(a + b cos x) dx，並證明。",
+      prompt: "\\int_0^\\pi\\log(a+b\\cos x)\\,dx=\\pi\\log\\frac{a+\\sqrt{a^2-b^2}}{2}",
+      hints: ["把 b 當參數微分：I′(b) = ∫ cos x/(a + b cos x) dx。", "cos x/(a + b cos x) = (1/b)(1 − a/(a + b cos x))。", "∫₀^π dx/(a + b cos x) = π/√(a² − b²)（Weierstrass 代換）。"],
+      keySteps: ["differentiate in b", "split off the constant", "∫dx/(a+b cos x) = π/√(a²−b²)", "integrate back with I(0) = π log a"],
+      solution: [
+        { text: "令 I(b) = ∫₀^π log(a + b cos x) dx（0 ≤ b < a）。對 b 微分。", tex: "I'(b)=\\int_0^\\pi\\frac{\\cos x}{a+b\\cos x}\\,dx=\\frac1b\\int_0^\\pi\\Big(1-\\frac{a}{a+b\\cos x}\\Big)dx" },
+        { text: "標準積分（t = tan(x/2)）：∫₀^π dx/(a + b cos x) = π/√(a² − b²)。", tex: "I'(b)=\\frac{\\pi}{b}-\\frac{a\\pi}{b\\sqrt{a^2-b^2}}" },
+        { text: "積分：右邊是 d/db [π log(a + √(a² − b²))]（直接微分驗證）。", tex: "\\frac{d}{db}\\,\\pi\\log\\big(a+\\sqrt{a^2-b^2}\\big)=\\frac{-\\pi b}{\\sqrt{a^2-b^2}\\,(a+\\sqrt{a^2-b^2})}=\\frac{\\pi}{b}-\\frac{a\\pi}{b\\sqrt{a^2-b^2}}" },
+        { text: "I(0) = π log a 定常數：π log((a + a)/2) = π log a ✓。b = a 的情形由連續性得到。", tex: "\\int_0^\\pi\\log(a+b\\cos x)\\,dx=\\pi\\log\\frac{a+\\sqrt{a^2-b^2}}{2}" }
+      ]
+    },
+    {
+      id: "proof-todai-310",
+      tier: "todai",
+      title: "東大 III-10：Frullani 公式",
+      difficulty: 5,
+      tags: ["frullani", "improper-integral", "substitution", "todai"],
+      statement: "設 f 在 x ≥ 0 上 C¹，且對 0 < a, b 極限 C = lim_{t→∞} ∫_a^b f(tx)/x dx 存在。證明 ∫₀^∞ (f(bx) − f(ax))/x dx = f(0) log(a/b) + C。",
+      prompt: "\\int_0^\\infty\\frac{f(bx)-f(ax)}{x}\\,dx=f(0)\\log\\frac ab+C",
+      hints: ["先在 [ε, R] 上算，兩項各自換元 u = bx、u = ax。", "相減後只剩兩個短區間：[aR, bR] 與 [aε, bε]。", "[aε, bε] 上 f ≈ f(0)，長度給 log(b/a)。"],
+      keySteps: ["truncate to [ε, R]", "substitute in each term", "difference of two short intervals", "f(0)·log from the ε end, C from the R end"],
+      solution: [
+        { text: "在 [ε, R] 上把兩項分開換元 u = bx、u = ax。", tex: "\\int_\\varepsilon^R\\frac{f(bx)-f(ax)}{x}\\,dx=\\int_{b\\varepsilon}^{bR}\\frac{f(u)}{u}\\,du-\\int_{a\\varepsilon}^{aR}\\frac{f(u)}{u}\\,du" },
+        { text: "共同的部分相消，只剩兩頭。", tex: "=\\int_{aR}^{bR}\\frac{f(u)}{u}\\,du-\\int_{a\\varepsilon}^{b\\varepsilon}\\frac{f(u)}{u}\\,du" },
+        { text: "R 端：換回 u = Rx，就是題目假設的極限 C。", tex: "\\int_{aR}^{bR}\\frac{f(u)}{u}\\,du=\\int_a^b\\frac{f(Rx)}{x}\\,dx\\ \\xrightarrow{R\\to\\infty}\\ C" },
+        { text: "ε 端：f 連續，在 [aε, bε] 上 f(u) = f(0) + o(1)，而 ∫ du/u = log(b/a)。", tex: "\\int_{a\\varepsilon}^{b\\varepsilon}\\frac{f(u)}{u}\\,du\\ \\xrightarrow{\\varepsilon\\to 0}\\ f(0)\\log\\frac ba" },
+        { text: "合起來（注意 −log(b/a) = log(a/b)）。", tex: "\\int_0^\\infty\\frac{f(bx)-f(ax)}{x}\\,dx=C+f(0)\\log\\frac ab" }
+      ]
+    },
+    {
+      id: "proof-todai-311",
+      tier: "todai",
+      title: "東大 III-11：Frullani 的三個應用",
+      difficulty: 4,
+      tags: ["frullani", "improper-integral", "todai"],
+      statement: "利用 Frullani 公式求（a, b > 0）：(1) ∫₀^∞ (cos bx − cos ax)/x dx；(2) ∫₀^∞ (e^{−bx} − e^{−ax})/x dx；(3) ∫₀^∞ sin(ax) sin(bx)/x dx（a ≠ b）。",
+      prompt: "\\int_0^\\infty\\frac{\\cos bx-\\cos ax}{x}dx=\\log\\frac ab,\\quad\\int_0^\\infty\\frac{e^{-bx}-e^{-ax}}{x}dx=\\log\\frac ab,\\quad\\int_0^\\infty\\frac{\\sin ax\\sin bx}{x}dx=\\frac12\\log\\Big|\\frac{a+b}{a-b}\\Big|",
+      hints: ["每一題先認出 f，再算 f(0) 與 C。", "f = cos 時 C = lim ∫_a^b cos(tx)/x dx = 0（Riemann–Lebesgue）。", "(3) 用積化和差：sin ax sin bx = (cos(a−b)x − cos(a+b)x)/2。"],
+      keySteps: ["identify f, f(0), C", "C = 0 for cos and e^{−x}", "product-to-sum for (3)", "log of the ratio"],
+      solution: [
+        { text: "(1) f(x) = cos x：f(0) = 1，而 ∫_a^b cos(tx)/x dx → 0（t → ∞，Riemann–Lebesgue），C = 0。", tex: "\\int_0^\\infty\\frac{\\cos bx-\\cos ax}{x}\\,dx=\\log\\frac ab" },
+        { text: "(2) f(x) = e^{−x}：f(0) = 1，∫_a^b e^{−tx}/x dx ≤ e^{−ta}log(b/a) → 0，C = 0。", tex: "\\int_0^\\infty\\frac{e^{-bx}-e^{-ax}}{x}\\,dx=\\log\\frac ab" },
+        { text: "(3) 積化和差，變成 (1) 的形式：分子是 cos((a−b)x) − cos((a+b)x)，除以 2。", tex: "\\int_0^\\infty\\frac{\\sin ax\\sin bx}{x}\\,dx=\\frac12\\int_0^\\infty\\frac{\\cos|a-b|x-\\cos(a+b)x}{x}\\,dx=\\frac12\\log\\frac{a+b}{|a-b|}" }
+      ]
+    },
+    {
+      id: "proof-todai-312",
+      tier: "todai",
+      title: "東大 III-12：等周不等式 L² ≥ 4πF（Hurwitz）",
+      difficulty: 6,
+      tags: ["fourier", "parseval", "isoperimetric", "todai"],
+      statement: "設 C 為分段 C¹ 的 Jordan 閉曲線，長 L、圍面積 F。用 Fourier 級數與 Parseval 等式證明 L² ≥ 4πF，且等號只在圓周成立。",
+      prompt: "L^2\\ge 4\\pi F,\\quad\\text{equality iff }C\\text{ is a circle}",
+      hints: ["把弧長參數縮放成週期 2π：x′² + y′² = (L/2π)²。", "x, y 各展成 Fourier 級數，Parseval 算 ∫(x′² + y′²) 與 F = ∫ x y′。", "逐項比較：n|a_n||b_n| ≤ n²(|a_n|² + |b_n|²)/2，等號只在 n = ±1。"],
+      keySteps: ["arclength parametrization scaled to 2π", "Parseval for L²", "Green's theorem for F", "termwise n ≤ n² and AM-GM", "equality ⇒ only n = ±1 ⇒ circle"],
+      solution: [
+        { text: "以弧長參數化再縮放，得週期 2π 的 x(t), y(t)，且 x′² + y′² ≡ (L/2π)²。展成 Fourier 級數 x = Σ a_n e^{int}、y = Σ b_n e^{int}。", tex: "\\int_0^{2\\pi}(x'^2+y'^2)\\,dt=2\\pi\\Big(\\frac{L}{2\\pi}\\Big)^2=\\frac{L^2}{2\\pi}" },
+        { text: "Parseval：∫₀^{2π}|x′|² = 2π Σ n²|a_n|²，y 同理。", tex: "\\frac{L^2}{2\\pi}=2\\pi\\sum_{n}n^2\\big(|a_n|^2+|b_n|^2\\big)" },
+        { text: "Green 定理：F = ∫₀^{2π} x y′ dt，再用 Parseval（y′ 的係數是 i n b_n）。", tex: "F=\\int_0^{2\\pi}x\\,y'\\,dt=2\\pi\\sum_n n\\,\\operatorname{Im}\\big(a_n\\overline{b_n}\\big)" },
+        { text: "逐項：n Im(a_n b̄_n) ≤ |n||a_n||b_n| ≤ n²(|a_n|² + |b_n|²)/2。相加得 F ≤ L²/(4π)。", tex: "F\\le 2\\pi\\sum_n\\frac{n^2(|a_n|^2+|b_n|^2)}{2}=\\frac{L^2}{4\\pi}" },
+        { text: "等號要每一項都取等：|n| = n² 只在 n = ±1 非零、且 |a_1| = |b_1| 並相位差 π/2，即 x = a cos t + b sin t 型的圓。", tex: "L^2=4\\pi F\\iff x(t)=x_0+r\\cos(t+\\theta),\\ y(t)=y_0+r\\sin(t+\\theta)" }
+      ]
+    },
+    {
+      id: "proof-todai-313",
+      tier: "todai",
+      title: "東大 III-13：Legendre 多項式的正交性",
+      difficulty: 5,
+      tags: ["legendre", "orthogonality", "integration-by-parts", "todai"],
+      statement: "令 P_n(x) = (1/(n! 2ⁿ)) dⁿ/dxⁿ (x² − 1)ⁿ。證明 ∫_{−1}^{1} P_n P_m dx = 2/(2n+1) δ_{nm}，且 P_n(1) = 1。",
+      prompt: "\\int_{-1}^1P_nP_m\\,dx=\\frac{2}{2n+1}\\delta_{nm},\\qquad P_n(1)=1",
+      hints: ["u = (x² − 1)ⁿ 在 ±1 有 n 重零點，分部積分時邊界項全是 0。", "m < n 時分部 n 次，把 n 階導數全部丟到 P_m 上，P_m 被微分 n 次變成 0。", "P_n(1)：Leibniz 展開 (x−1)ⁿ(x+1)ⁿ，在 x = 1 只有一項活著。"],
+      keySteps: ["Rodrigues formula", "boundary terms vanish", "n integrations by parts", "∫(1−x²)ⁿ = 2·(2n)!!/(2n+1)!!", "P_n(1) by Leibniz"],
+      solution: [
+        { text: "令 u_n = (x² − 1)ⁿ，它在 ±1 各有 n 重零點，所以 u_n^{(k)}(±1) = 0（k < n）：分部積分沒有邊界項。", tex: "\\int_{-1}^1u_n^{(n)}\\,g\\,dx=(-1)^n\\int_{-1}^1u_n\\,g^{(n)}\\,dx\\quad(g\\text{ polynomial})" },
+        { text: "m < n 時取 g = P_m（次數 m < n），g^{(n)} = 0，積分為 0。對稱地 m > n 亦然。", tex: "\\int_{-1}^1P_nP_m\\,dx=0\\quad(m\\ne n)" },
+        { text: "m = n：P_n^{(n)} = (2n)!/(n! 2ⁿ)（首項係數乘 n!），再算 ∫(1 − x²)ⁿ dx（β 函數或遞迴）。", tex: "\\int_{-1}^1P_n^2\\,dx=\\frac{(2n)!}{(n!2^n)^2}\\int_{-1}^1(1-x^2)^n\\,dx=\\frac{(2n)!}{(n!2^n)^2}\\cdot\\frac{2^{2n+1}(n!)^2}{(2n+1)!}=\\frac{2}{2n+1}" },
+        { text: "P_n(1)：Leibniz 展開 dⁿ/dxⁿ[(x−1)ⁿ(x+1)ⁿ]，在 x = 1 只有 (x−1)ⁿ 被微分 n 次那一項不為 0。", tex: "P_n(1)=\\frac{1}{n!2^n}\\cdot n!\\cdot(1+1)^n=1" }
+      ]
+    },
+    {
+      id: "proof-todai-321",
+      tier: "todai",
+      title: "東大 III-21：Σ (2n−1)!!/(2n)!! · 1/n = 2 log 2",
+      difficulty: 6,
+      tags: ["series", "wallis-integral", "log", "todai"],
+      statement: "求 s = Σ_{n≥1} (2n−1)!!/(2n)!! · 1/n，可使用 ∫₀^{π/2} sin^{2n}x dx = (2n−1)!!/(2n)!! · π/2。",
+      prompt: "\\sum_{n=1}^\\infty\\frac{(2n-1)!!}{(2n)!!}\\cdot\\frac1n=2\\log 2",
+      hints: ["把每一項寫成積分：(2n−1)!!/(2n)!! = (2/π)∫ sin^{2n}x dx。", "Σ sin^{2n}x/n = −log(1 − sin²x) = −2 log cos x。", "∫₀^{π/2} log cos x dx = −(π/2) log 2。"],
+      keySteps: ["term as Wallis integral", "interchange sum and integral (positive terms)", "Σ tⁿ/n = −log(1−t)", "∫ log cos = −(π/2)log 2"],
+      solution: [
+        { text: "每一項換成積分，正項級數可以跟積分交換（單調收斂）。", tex: "s=\\frac2\\pi\\int_0^{\\pi/2}\\sum_{n=1}^\\infty\\frac{\\sin^{2n}x}{n}\\,dx" },
+        { text: "Σ tⁿ/n = −log(1 − t)（0 ≤ t < 1），代 t = sin²x。", tex: "\\sum_{n=1}^\\infty\\frac{\\sin^{2n}x}{n}=-\\log(1-\\sin^2x)=-2\\log\\cos x" },
+        { text: "經典積分 ∫₀^{π/2} log cos x dx = −(π/2) log 2（用 log sin x 對稱與倍角公式）。", tex: "s=-\\frac4\\pi\\int_0^{\\pi/2}\\log\\cos x\\,dx=-\\frac4\\pi\\cdot\\Big(-\\frac\\pi2\\log 2\\Big)=2\\log 2" }
+      ]
+    },
+    {
+      id: "proof-todai-322",
+      tier: "todai",
+      title: "東大 III-22：Legendre 關係式 EK′ + E′K − KK′ = π/2",
+      difficulty: 6,
+      tags: ["elliptic-integral", "ode", "limit", "todai"],
+      statement: "K(k) = ∫₀^{π/2} dt/√(1 − k² sin²t)，E(k) = ∫₀^{π/2} √(1 − k² sin²t) dt，k′ = √(1 − k²)，K′ = K(k′)，E′ = E(k′)。證明 EK′ + E′K − KK′ = π/2。",
+      prompt: "EK'+E'K-KK'=\\frac{\\pi}{2}",
+      hints: ["先算 dE/dk = (E − K)/k 與 dK/dk = (E − k′²K)/(k k′²)。", "把左邊對 k 微分，全部用這兩條，會發現導數是 0。", "k → 0 時 K, E → π/2、E′ → 1、K′ ~ log(4/k)，但 (E − K)K′ → 0。"],
+      keySteps: ["derivatives of K and E", "chain rule through k′", "derivative of the combination vanishes", "evaluate the limit k → 0⁺"],
+      solution: [
+        { text: "積分號下微分（k < 1 時被積函數光滑），整理得標準公式。", tex: "\\frac{dE}{dk}=\\frac{E-K}{k},\\qquad\\frac{dK}{dk}=\\frac{E-k'^2K}{kk'^2}" },
+        { text: "K′、E′ 是同樣的函數在 k′ 的值，而 dk′/dk = −k/k′。令 G(k) = EK′ + E′K − KK′，用連鎖律微分。", tex: "\\frac{dK'}{dk}=-\\frac{k}{k'}\\cdot\\frac{E'-k^2K'}{k'k^2},\\qquad\\frac{dE'}{dk}=-\\frac{k}{k'}\\cdot\\frac{E'-K'}{k'}" },
+        { text: "把四個導數代進 G′，逐項相消（每一項都是 E、K、E′、K′ 的雙線性式），得 G′ ≡ 0，故 G 是常數。", tex: "G'(k)=0\\quad(0<k<1)" },
+        { text: "k → 0⁺：K, E → π/2，E′ → 1，K′ → ∞ 但只有對數階，而 E − K = O(k²)，所以 (E − K)K′ → 0；G → π/2·1 = π/2。", tex: "G=\\lim_{k\\to 0^+}\\big[(E-K)K'+E'K\\big]=0+1\\cdot\\frac\\pi2=\\frac\\pi2" }
+      ]
+    },
+    {
+      id: "proof-todai-410",
+      tier: "todai",
+      title: "東大 IV-10：波動方程的能量守恆",
+      difficulty: 4,
+      tags: ["pde", "wave-equation", "energy", "divergence", "todai"],
+      statement: "u(t,x,y,z) ∈ C²(ℝ⁴) 滿足 u_tt/c² = u_xx + u_yy + u_zz，且對每個固定 t 在 (x,y,z) 上有緊支撐。證明 E(t) = (1/2)∭ (u_x² + u_y² + u_z² + u_t²/c²) dxdydz 與 t 無關。",
+      prompt: "E(t)=\\frac12\\iiint\\Big(|\\nabla u|^2+\\frac{1}{c^2}u_t^2\\Big)dx\\,dy\\,dz\\ \\text{is constant}",
+      hints: ["對 t 微分，微分可以進積分（緊支撐、C²）。", "∇u·∇u_t + u_t Δu = div(u_t ∇u)。", "散度定理：緊支撐的向量場積分為 0。"],
+      keySteps: ["differentiate under the integral", "use the wave equation for u_tt", "product rule ⇒ divergence", "divergence theorem with compact support"],
+      solution: [
+        { text: "對 t 微分，微分進積分：E′ = ∭(∇u·∇u_t + u_t u_tt/c²)。", tex: "E'(t)=\\iiint\\Big(\\nabla u\\cdot\\nabla u_t+\\frac{1}{c^2}u_tu_{tt}\\Big)" },
+        { text: "用波動方程把 u_tt/c² 換成 Δu。", tex: "E'(t)=\\iiint\\big(\\nabla u\\cdot\\nabla u_t+u_t\\,\\Delta u\\big)" },
+        { text: "乘積法則：這正是 div(u_t ∇u)。", tex: "\\nabla u\\cdot\\nabla u_t+u_t\\Delta u=\\operatorname{div}(u_t\\nabla u)" },
+        { text: "u 緊支撐，散度定理給 0：E′(t) = 0，E 是守恆量。", tex: "E'(t)=\\iiint\\operatorname{div}(u_t\\nabla u)=\\oint_{\\text{far away}}u_t\\nabla u\\cdot n\\,dS=0" }
+      ]
+    },
+    {
+      id: "proof-todai-416",
+      tier: "todai",
+      title: "東大 IV-16：ζ(3) 是無理數（Apéry，Beukers 路線）",
+      difficulty: 6,
+      tags: ["apery", "zeta", "irrationality", "legendre", "todai"],
+      statement: "假設素數定理，依 14 步證明 ζ(3) = Σ 1/n³ 是無理數（Beukers 的積分證明）。這裡把每一步的主張列出來；能算的都在驗證器裡算過。",
+      prompt: "\\zeta(3)=\\sum_{n=1}^\\infty\\frac{1}{n^3}\\notin\\mathbb{Q}",
+      hints: ["核心是三重積分 I_n，它同時「很小」又是「(A_n + B_nζ(3))/d_n³」型的數。", "小：被積函數在 [0,1]³ 上 ≤ (√2−1)⁴，所以 |I_n| ≤ 2(√2−1)^{4n}ζ(3)。", "大：若 ζ(3) = p/q，則 q d_n³ I_n 是非零整數，但 d_n ≤ 3ⁿ 使它趨於 0。"],
+      keySteps: ["∫∫ x^{n+t}y^{m+t}/(1−xy) as a series", "differentiate in t ⇒ log(xy) kernel", "denominators divide d_n³", "Legendre-type P_n(x) = (1/n!) dⁿ/dxⁿ xⁿ(1−x)ⁿ", "I_n = (A_n + B_nζ(3))/d_n³", "change of variables to a positive kernel ≤ (√2−1)⁴", "d_n ≤ 3ⁿ from the prime number theorem", "integer sandwich ⇒ contradiction"],
+      solution: [
+        { text: "(1)(2) 幾何級數逐項積分：∫∫ x^{n+t}y^{m+t}/(1−xy) = Σ_k 1/((n+t+k+1)(m+t+k+1))。對 t 微分產生 log(xy)，得到有理數值（n > m ≥ 0）。", tex: "-\\int_0^1\\!\\!\\int_0^1\\frac{\\log(xy)}{1-xy}x^ny^m\\,dx\\,dy=\\sum_{k=0}^{n-m-1}\\frac{1}{(m+k+1)^2(n-m)}" },
+        { text: "(3)(4) 這些有理數的分母整除 d_n³（d_n = lcm(1,…,n)）；n = m 時級數變成 2(ζ(3) − Σ_{k≤n} 1/k³)。", tex: "-\\int_0^1\\!\\!\\int_0^1\\frac{\\log(xy)}{1-xy}x^ny^n\\,dx\\,dy=2\\Big(\\zeta(3)-\\sum_{k=1}^n\\frac{1}{k^3}\\Big)" },
+        { text: "(5) 令 P_n(x) = (1/n!) dⁿ/dxⁿ[xⁿ(1−x)ⁿ]（整係數），I_n = −∫∫ log(xy)/(1−xy) P_n(x)P_n(y)。展開 P_n 用 (1)–(4)：存在整數 A_n, B_n 使 I_n = (A_n + B_nζ(3))/d_n³。", tex: "I_n=\\frac{A_n+B_n\\zeta(3)}{d_n^3},\\qquad A_n,B_n\\in\\mathbb{Z}" },
+        { text: "(6)–(9) 把 −log(xy)/(1−xy) 寫成 ∫₀¹ dz/(1−(1−xy)z)，分部積分 n 次、換元 z = (1−w)/(1−(1−xy)w)，再分部 n 次，得到正的被積函數。", tex: "I_n=\\int_0^1\\!\\!\\int_0^1\\!\\!\\int_0^1\\frac{x^n(1-x)^ny^n(1-y)^nw^n(1-w)^n}{\\{1-(1-xy)w\\}^{n+1}}\\,dx\\,dy\\,dw" },
+        { text: "(10)(11) 在 [0,1]³ 上 x(1−x)y(1−y)w(1−w)/(1−(1−xy)w) ≤ (√2−1)⁴，而剩下的 ∫∫∫ dxdydw/(1−(1−xy)w) = 2ζ(3)。", tex: "0<|I_n|\\le 2(\\sqrt2-1)^{4n}\\zeta(3)" },
+        { text: "(12)(13) 素數定理給 d_n ≤ 3ⁿ（n 大時）。若 ζ(3) = p/q，則 q·d_n³·I_n = q(A_n + B_nζ(3)) 是非零整數，但它 ≤ 2qζ(3)·(27(√2−1)⁴)ⁿ < 2qζ(3)(4/5)ⁿ → 0，矛盾。", tex: "0<|A_n+B_n\\zeta(3)|<2\\zeta(3)\\Big(\\frac45\\Big)^n\\ \\Rightarrow\\ \\zeta(3)\\notin\\mathbb{Q}" },
+        { text: "(14) d_n = Π_{p≤n} p^{⌊log n/log p⌋} ≤ Π_{p≤n} n = n^{π(n)}，而 π(n) ~ n/log n 給 n^{π(n)} = e^{(1+o(1))n} ≤ 3ⁿ（n 大時）。", tex: "\\log d_n=\\sum_{p\\le n}\\Big\\lfloor\\frac{\\log n}{\\log p}\\Big\\rfloor\\log p\\le\\pi(n)\\log n\\sim n" }
+      ]
+    },
+    {
+      id: "proof-todai-417",
+      tier: "todai",
+      title: "東大 IV-17：全空間有界調和函數必為常數",
+      difficulty: 5,
+      tags: ["harmonic", "liouville", "mean-value", "todai"],
+      statement: "證明定義在整個 ℝ³ 上、上下有界的調和函數必為常數（Liouville）。",
+      prompt: "\\Delta u=0\\ \\text{on }\\mathbb{R}^3,\\ |u|\\le M\\ \\Rightarrow\\ u\\equiv\\text{const}",
+      hints: ["調和函數的球平均值性質：u(ξ) = (1/|B_R|)∫_{B_R(ξ)} u。", "u(ξ) − u(0) 是兩個球上的平均之差，只剩對稱差上的積分。", "對稱差的體積 / 球體積 → 0（R → ∞）。"],
+      keySteps: ["mean value property over balls", "difference of two averages", "symmetric difference volume O(R²)", "let R → ∞"],
+      solution: [
+        { text: "調和函數在每個球上等於球平均（由 Green 函數／Poisson 公式或散度定理推出）。", tex: "u(\\xi)=\\frac{1}{|B_R|}\\int_{B_R(\\xi)}u\\,dx,\\qquad|B_R|=\\tfrac43\\pi R^3" },
+        { text: "固定 ξ，令 d = |ξ|。u(ξ) − u(0) 是兩個半徑 R 的球平均之差，共同部分相消。", tex: "|u(\\xi)-u(0)|\\le\\frac{1}{|B_R|}\\int_{B_R(\\xi)\\,\\triangle\\,B_R(0)}|u|\\,dx\\le\\frac{M\\,|B_R(\\xi)\\triangle B_R(0)|}{|B_R|}" },
+        { text: "對稱差包含在球殼 B_{R+d} ∖ B_{R−d} 裡，體積是 O(R²d)。", tex: "|B_R(\\xi)\\triangle B_R(0)|\\le\\tfrac43\\pi\\big((R+d)^3-(R-d)^3\\big)=\\tfrac43\\pi(6R^2d+2d^3)" },
+        { text: "除以 (4/3)πR³ 後是 O(d/R) → 0（R → ∞），故 u(ξ) = u(0)：u 是常數。", tex: "|u(\\xi)-u(0)|\\le M\\cdot\\frac{6R^2d+2d^3}{R^3}\\ \\xrightarrow{R\\to\\infty}\\ 0" }
+      ]
     }
   ];
 

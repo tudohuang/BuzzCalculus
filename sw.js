@@ -1,4 +1,4 @@
-const CACHE_NAME = "buzzcalculus-v1.2.1-2026-09-14-proof-lab-leetcode";
+const CACHE_NAME = "buzzcalculus-v1.2.1-2026-09-15-strict-todai";
 const CACHE_PREFIX = "buzzcalculus-";
 const APP_SHELL = [
   "./privacy.html",

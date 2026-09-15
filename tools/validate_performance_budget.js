@@ -32,7 +32,10 @@ const BUDGETS = {
   "app.js 主程式": { pattern: /^src\/app\.js$/, budget: 720 * 1024 },
   "kernel 產生側表": { pattern: GENERATED_TABLES, budget: 500 * 1024 },
   // 2026-09-13 200 → 260：kernel/proof_lang.js（句型、代數、規則三個引擎）59KB 一次進來。
-  "kernel 邏輯模組": { pattern: /^src\/kernel\//, budget: 260 * 1024 },
+  // 2026-09-14 260 → 280：proof_lang.js 101KB —— 收緊語法（接地、前提、符號正負引擎 parseTree/signOf、
+  // 線性解 solveLinear、泰勒規則）。這是檢查器的骨幹，不是可以搬去別處的 render；再撞頂該做的是
+  // 把 signOf 那類純函式拆成 kernel/proof_sign.js 之類、順便量一次是不是真的都在用。
+  "kernel 邏輯模組": { pattern: /^src\/kernel\//, budget: 280 * 1024 },
   "題庫資料合計": { pattern: /^src\/problem|^src\/problems\.js$|^src\/proofs\.js$/, budget: 2400 * 1024 },
   "樣式 styles.css": { pattern: /^styles\.css$/, budget: 300 * 1024, fromCss: true },
   "其他 src 腳本": { pattern: /^src\//, budget: 300 * 1024, catchAll: true }
