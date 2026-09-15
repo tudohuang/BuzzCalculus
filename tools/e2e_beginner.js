@@ -255,6 +255,48 @@ async function run() {
     const libraryBoss = await evaluate(`return Number((window.__b.text(".library-count") || "").match(/\\d+/)?.[0] || 0);`);
     check("題庫按 Boss 不會是 0 符合條件（明確要看難題就不擋）", libraryBoss > 100, String(libraryBoss));
 
+    /* ── 2. 完全沒學過的人：onboarding 有「我還沒學過」，進的是課程不是題目 ── */
+    // 2026-09-15 使用者：「沒有很適合完全初學者」。以前 onboarding 第一句是「把學過的微積分
+    // 練成直覺」、三個情境沒有一個是沒學過、站上沒有一段教「極限是什麼」。這一段釘住：
+    // 一鍵進課程、課程表九課、單課有概念／逐步示範／小測／練習、練完回得來、首頁主卡變成上課。
+    await chrome.navigate(server.url + "/index.html");
+    await chrome.evaluate("localStorage.clear(); return 1;");
+    await chrome.navigate(server.url + "/index.html");
+    check("第一頁就有「我還沒學過微積分」", await click('[data-action="set-onboarding-context"][data-context="newbie"]', 900));
+    const course = await evaluate(`return { h2: window.__b.text(".course-index h2"), cards: document.querySelectorAll(".course-card").length, placement: Boolean(document.querySelector('[data-action="start-placement"]')) };`);
+    check("選了直接進課程表（不做定位測驗），九課都在", course.cards === 9 && !course.placement, `${course.cards} 課 · ${course.h2}`);
+    await click('[data-action="open-course-lesson"][data-lesson-id="c1-limit-meaning"]', 900);
+    const lessonPage = await evaluate(`return { concept: document.querySelectorAll(".course-lesson .pl-intro p").length, tex: Boolean(document.querySelector("[data-course-worked] .pl-goal .katex")), steps: document.querySelectorAll(".course-step").length, stepButton: Boolean(document.querySelector('[data-action="course-step"]')), options: document.querySelectorAll(".course-option").length, practice: document.querySelectorAll(".course-practice-item").length };`);
+    check("單課：概念有字、示範題有 TeX、步驟先藏著、小測有選項、練習列出 3 題", lessonPage.concept >= 3 && lessonPage.tex && lessonPage.steps === 0 && lessonPage.stepButton && lessonPage.options >= 3 && lessonPage.practice === 3, JSON.stringify(lessonPage));
+    await click('[data-action="course-step"]', 300);
+    await click('[data-action="course-step"]', 300);
+    const revealed = await evaluate(`return document.querySelectorAll(".course-step").length;`);
+    check("逐步示範一步一步揭", revealed === 2, `${revealed} 步`);
+    await click('[data-action="course-pick"][data-check="0"][data-option="1"]', 400);
+    const wrongPick = await evaluate(`return { why: window.__b.text(".course-check-why"), wrong: Boolean(document.querySelector(".course-check.is-wrong")) };`);
+    check("小測選錯：標紅並說為什麼錯", wrongPick.wrong && wrongPick.why.length > 8, wrongPick.why.slice(0, 40));
+    await click('[data-action="course-pick"][data-check="0"][data-option="0"]', 400);
+    check("小測選對：綠", await evaluate(`return Boolean(document.querySelector(".course-check.is-right"));`));
+    check("練習按鈕在", await click('[data-action="course-practice"]', 1000));
+    const practice = await evaluate(`return { rank: window.__b.rank(), topic: window.__b.topic(), hud: window.__b.text(".hud-context"), choices: window.__b.choices().length };`);
+    check("課後練習是 R1 極限選擇題、不計分", practice.rank === 1 && practice.topic === "極限" && practice.choices >= 2, `R${practice.rank} ${practice.topic} · ${practice.hud}`);
+    // 隨便答完三題，看回饋裡有沒有「回去看第 1 課」、結算有沒有「回到第 1 課」
+    let sawLessonLink = false;
+    for (let i = 0; i < 3; i += 1) {
+      await click('[data-action="choose-answer"]', 800);
+      if (await evaluate(`return Boolean(document.querySelector('.feedback-course [data-action="open-course-lesson"]'));`)) sawLessonLink = true;
+      await click('[data-action="next-question"]', 700);
+    }
+    const results = await evaluate(`return { back: window.__b.text('[data-action="open-course-lesson"]'), next: Boolean([...document.querySelectorAll('[data-action="open-course-lesson"]')][1]) };`);
+    check("結算頁有「回到第 1 課」與「下一課」", /第 1 課/.test(results.back) && results.next, results.back);
+    check("答錯的回饋會說這題是第幾課教的", sawLessonLink);
+    await click('[data-action="open-course-lesson"]', 900);
+    const after = await evaluate(`return { done: window.__b.text(".course-done-pill"), next: window.__b.text('[data-course-practice] [data-action="open-course-lesson"]') };`);
+    check("回到課程：練習標成練過、出現「下一課」", /練過了/.test(after.done) && /下一課/.test(after.next), `${after.done} · ${after.next}`);
+    await click('[data-action="home"]', 800);
+    const newbieHome = await evaluate(`return { card: window.__b.text(".course-home-card h2"), steps: window.__b.text(".first-steps .first-step.is-current strong") };`);
+    check("首頁主卡變成「接著上第 2 課」，三步的第一步是上課", /第 2 課/.test(newbieHome.card) && /第 2 課/.test(newbieHome.steps), `${newbieHome.card} · ${newbieHome.steps}`);
+
     const errors = await chrome.evaluate(`return (window.__buzzErrors || []).length;`);
     check("沒有未捕捉的例外", !errors, errors ? `${errors} 個` : "");
   } finally {

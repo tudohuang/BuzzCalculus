@@ -37,7 +37,10 @@ const BUDGETS = {
   // 把 signOf 那類純函式拆成 kernel/proof_sign.js 之類、順便量一次是不是真的都在用。
   "kernel 邏輯模組": { pattern: /^src\/kernel\//, budget: 280 * 1024 },
   "題庫資料合計": { pattern: /^src\/problem|^src\/problems\.js$|^src\/proofs\.js$/, budget: 2400 * 1024 },
-  "樣式 styles.css": { pattern: /^styles\.css$/, budget: 300 * 1024, fromCss: true },
+  // 2026-09-15 300 → 310：「從零開始」課程表與單課頁（course.js）約 4KB 的樣式；
+  // 已盡量沿用 pl-tutorial / pl-intro / pl-goal / first-steps。再撞頂該做的是
+  // 把 styles.css 的三層歷史覆蓋（見 duolingo-path-design 那次的教訓）清一輪。
+  "樣式 styles.css": { pattern: /^styles\.css$/, budget: 310 * 1024, fromCss: true },
   "其他 src 腳本": { pattern: /^src\//, budget: 300 * 1024, catchAll: true }
 };
 

@@ -1,4 +1,4 @@
-const CACHE_NAME = "buzzcalculus-v1.2.1-2026-09-15-launch-check";
+const CACHE_NAME = "buzzcalculus-v1.2.1-2026-09-15-course";
 const CACHE_PREFIX = "buzzcalculus-";
 const APP_SHELL = [
   "./privacy.html",
@@ -98,6 +98,7 @@ const APP_SHELL = [
   "./src/kernel/proof_lang.js",
   "./src/proof_lang_content.js",
   "./src/proof_lab_ui.js",
+  "./src/course.js",
   "./src/kernel/ability.js",
   "./src/kernel/planner.js",
   "./src/kernel/session.js",

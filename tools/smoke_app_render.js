@@ -52,6 +52,7 @@ require("./lib/load_problem_sources.js")();
 require("../src/kernel/answer_sampling.js");
 // 白話證明的畫面是 app.js 啟動時就 create 的模組，跟 index.html 一樣要先載
 require("../src/proof_lab_ui.js");
+require("../src/course.js");
 require("../src/app.js");
 
 if (!fakeApp.innerHTML.includes("BuzzCalculus")) {
