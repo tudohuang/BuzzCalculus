@@ -2842,7 +2842,7 @@ function verifyProblem(problem, options = {}) {
     }
   }
 
-  // 說明文字裡「求 }∫…」的尾巴（達摩院包）：前面是解法提示，
+  // 說明文字裡「求 }∫…」的尾巴（長題包）：前面是解法提示，
   // 最後那條積分才是題目。整句解析不了時，抽出尾巴的積分再試一次。
   if (!structure) {
     const seek = String(problem.prompt || "").match(/求 \}(.+)$/);

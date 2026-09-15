@@ -7,8 +7,8 @@
 ```text
 MODES: quick topic daily practice brutal boss boss_rush rival daily_one exam
        integral_bee no_hint accuracy survival warmup cooldown mistakes placement weekly
-PACKS: 51 個（todai_burst / nightmare_boss / world_universities / competition /
-       damo_longform / putnam / beginner_warmup / … / chem_memory）
+PACKS: 51 個（burst / nightmare_boss / world_universities / competition /
+       longform / putnam / beginner_warmup / … / chem_memory）
 ```
 
 這些**全部都是好東西**，問題不在內容，在**入口**。新使用者第一次進站要面對 1407 題 × 19 模式 × 46 題包

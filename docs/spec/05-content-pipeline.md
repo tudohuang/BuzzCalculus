@@ -306,8 +306,8 @@ BuzzPhysics 已建立更好的做法：每題帶 `verify` 表達式，CI 獨立�
 ### 現況
 
 1498 題有 `source`，但值多半是內部 pack 名（`Buzz core expansion pack`）。
-真正外部來源集中在：`東大`(16)、`World university & competition pack 2026`(99)、
-`Putnam / hard derivatives / applications pack 2026`(36)、`達摩院風格長題 pack 2026`(33)。
+真正外部來源集中在：高速反射包(16)、`World university & competition pack 2026`(99)、
+`Putnam / hard derivatives / applications pack 2026`(36)、長題挑戰包(33)。
 
 ### 規則
 
@@ -322,7 +322,7 @@ BuzzPhysics 已建立更好的做法：每題帶 `verify` 表達式，CI 獨立�
 | `user-submitted` | 社群投稿 | 作者名 | 依投稿聲明 |
 
 **硬規則**：`inspired` 的題目在任何地方都不得出現「Putnam 第 N 題」「MIT 期中考」這種
-會被誤認為官方原題的字樣。文案模板固定為「Putnam 風格」「東大風格」。
+會被誤認為官方原題的字樣。文案模板固定為「Putnam 風格」「名校風格」。
 
 `tools/validate_origin.js`（CI）：
 
@@ -336,9 +336,9 @@ BuzzPhysics 已建立更好的做法：每題帶 `verify` 表達式，CI 獨立�
 
 - 練習畫面：只顯示 `R4` 徽章與技巧 chip。**不顯示來源。**
 - 結算頁：不顯示來源。
-- 題庫詳情頁：顯示「來源：東大風格（改編）」。這是唯一出現學校名的地方。
+- 題庫詳情頁：顯示「來源：… 風格（改編）」。這是唯一出現來源的地方。
 - 題包名稱：`世界名校` → 改名 `國際難題`；`Putnam` pack → `競賽級`；
-  `東大 Burst` → `高速反射 R6`。**pack key 不改**（避免破壞分享連結），只改 label。
+  `Burst` → `高速反射 R6`。pack key 不進 records，2026-09-15 連 key 一起改成中性的 `burst`／`longform`。
 
 ## 5.5 重複偵測
 

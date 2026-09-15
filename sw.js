@@ -1,4 +1,4 @@
-const CACHE_NAME = "buzzcalculus-v1.2.1-2026-09-15-strict-todai";
+const CACHE_NAME = "buzzcalculus-v1.2.1-2026-09-15-scrub-names";
 const CACHE_PREFIX = "buzzcalculus-";
 const APP_SHELL = [
   "./privacy.html",
@@ -50,7 +50,7 @@ const APP_SHELL = [
   "./src/problem_exam_expansion.js",
   "./src/problem_university_exam_pack.js",
   "./src/problem_exam_depth_pack.js",
-  "./src/problem_todai_burst_pack.js",
+  "./src/problem_burst_pack.js",
   "./src/problem_set_interval_pack.js",
   "./src/problem_set_interval_expansion.js",
   "./src/problem_graph_choice_pack.js",
@@ -74,7 +74,7 @@ const APP_SHELL = [
   "./src/problem_vector_calculus_pack.js",
   "./src/problem_core_expansion_pack.js",
   "./src/problem_applied_graph_pack.js",
-  "./src/problem_damo_pack.js",
+  "./src/problem_longform_pack.js",
   "./src/proofs.js",
   "./src/kernel/uid_map.js",
   "./src/kernel/origin.js",

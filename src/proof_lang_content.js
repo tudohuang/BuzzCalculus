@@ -873,13 +873,13 @@
       coach: "最短的反證：反設、造一個更大的（m + 1）、指出矛盾、結論。四行。"
     },
 
-    /* ── 東大杉浦《解析演習》章末問題：抽象 f 靠泰勒定理與 atom 撐起來的兩題 ─────── */
+    /* ── 經典解析章末問題：抽象 f 靠泰勒定理與 atom 撐起來的兩題 ─────── */
     {
-      id: "pl-todai-derivative-bound",
+      id: "pl-classic-derivative-bound",
       optional: [0],
       family: "direct",
-      title: "東大：|f| ≤ 1、|f″| ≤ 1 則 |f′| ≤ 2",
-      source: "東大杉浦《解析演習》第 II 章 問題 2（A = B = 1 的情形）",
+      title: "|f| ≤ 1、|f″| ≤ 1 則 |f′| ≤ 2",
+      source: "經典解析習題（A = B = 1 的情形）",
       difficulty: 3,
       statement: "設 f 在 I = (0, ∞) 上二次可微，且對所有 x 有 |f(x)| ≤ 1、|f″(x)| ≤ 1。證明對所有 x ∈ I，|f′(x)| ≤ 2。（原題：|f| ≤ A、|f″| ≤ B ⇒ |f′| ≤ 2√(AB)；取 h = 2√(A/B) 就是這裡的 h = 2。）",
       prompt: "|f|\\le 1,\\ |f''|\\le 1\\ \\Rightarrow\\ |f'(x)|\\le 2",
@@ -899,11 +899,11 @@
       coach: "泰勒把 f′(x) 用「兩個函數值 + 一個二階導數」寫出來：f(x+h) = f(x) + h f′(x) + (h²/2) f″(ξ)。解出 f′(x)，三角不等式，再把題目給的界一個一個寫進去（|f| ≤ 1 要拆成 f ≤ 1 且 f ≥ −1）。h = 2 是讓 2A/h + hB/2 最小的那個 h。"
     },
     {
-      id: "pl-todai-second-derivative",
+      id: "pl-classic-second-derivative",
       optional: [2, 3],
       family: "cases",
-      title: "東大：f(0)=0, f(1)=1, f′(0)=f′(1)=0 則某處 |f″| ≥ 4",
-      source: "東大杉浦《解析演習》第 II 章 問題 3",
+      title: "f(0)=0, f(1)=1, f′(0)=f′(1)=0 則某處 |f″| ≥ 4",
+      source: "經典解析習題",
       difficulty: 3,
       statement: "設 f 在包含 [0, 1] 的區間上二次可微，且 f(0) = 0、f(1) = 1、f′(0) = f′(1) = 0。證明存在 x ∈ [0, 1] 使 |f″(x)| ≥ 4。",
       prompt: "f(0)=0,\\ f(1)=1,\\ f'(0)=f'(1)=0\\ \\Rightarrow\\ \\exists x\\in[0,1]:\\ |f''(x)|\\ge 4",

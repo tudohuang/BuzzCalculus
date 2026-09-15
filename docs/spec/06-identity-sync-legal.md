@@ -224,7 +224,7 @@ Buzz Pro 訂閱狀態掛在 account 上，各科目共用。
 現況估算：22 個題庫檔 + 9122 行 app.js，未壓縮約 2.5MB。GitHub Pages 有 gzip，實際約 500–600KB。
 **主要優化不是拆檔，是延後載入**：
 
-- 首屏只需要 `problems.js` + 常用 pack。冷門 pack（`damo_longform`、`world_universities`、
+- 首屏只需要 `problems.js` + 常用 pack。冷門 pack（`longform`、`world_universities`、
   `science_pack`）改成**按需載入**：使用者選到該 pack 時才 `import()`。
 - `sw.js` 仍全部預快取（離線要完整），但那是背景進行，不擋首屏。
 - KaTeX 只在有數學要 render 時才初始化（現在是 defer 全載）。

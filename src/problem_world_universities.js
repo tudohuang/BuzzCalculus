@@ -4,7 +4,7 @@
   // World top-university / competition pack: a short honest warm-up, then
   // genuinely hard problems calibrated against the existing boss bank.
   // Styled after MIT, Cambridge Tripos, Oxford, Princeton, Harvard, Caltech,
-  // Berkeley, ETH, Todai and Putnam. Answers use WebWork notation (log = ln).
+  // Berkeley, ETH, Asian universities and Putnam. Answers use WebWork notation (log = ln).
   const SOURCE = "Buzz 國際難題包 2026";
   const TIME = { 1: 35, 2: 55, 3: 90, 4: 150, 5: 240, 6: 340 };
   const problems = [];
@@ -47,7 +47,7 @@
   /* ===== Tier A — advanced (rank 3-4) ===== */
   N("world-011", "limits", 3, "\\lim_{x\\to 0}\\left(\\frac{2^x+8^x}{2}\\right)^{1/x}", "4", "Putnam", ["exponential-limit"], "Geometric-mean limit: √(2·8)=4.");
   N("world-012", "limits", 4, "\\lim_{x\\to 0}\\left(\\frac{1}{x^2}-\\cot^2 x\\right)", "2/3", "Princeton", ["taylor", "trig-limit"], "cot^2 x = 1/x^2 - 2/3 - ...");
-  N("world-013", "limits", 4, "\\lim_{x\\to 0}\\left(\\frac{e^x-1}{x}\\right)^{1/x}", "exp(1/2)", "Todai", ["exponential-limit", "taylor"], "(e^x-1)/x = 1 + x/2 + ...; limit e^{1/2}.");
+  N("world-013", "limits", 4, "\\lim_{x\\to 0}\\left(\\frac{e^x-1}{x}\\right)^{1/x}", "exp(1/2)", "亞洲名校", ["exponential-limit", "taylor"], "(e^x-1)/x = 1 + x/2 + ...; limit e^{1/2}.");
   N("world-014", "integrals", 4, "\\int_0^{\\pi/4}\\log(1+\\tan x)\\,dx", "pi*log(2)/8", "Putnam", ["kings-property", "log-integral"], "x -> π/4 - x symmetry.");
   N("world-015", "integrals", 4, "\\int_0^{1}\\frac{\\log(1+x)}{1+x^2}\\,dx", "pi*log(2)/8", "MIT", ["feynman"], "Substitute x=tan θ; the classic log integral.");
   N("world-016", "integrals", 4, "\\int_0^{\\infty}\\frac{\\cos(2x)-\\cos(3x)}{x}\\,dx", "log(3/2)", "Cambridge", ["frullani"], "Frullani for cosines.");
@@ -76,7 +76,7 @@
   N("world-037", "integrals", 5, "\\int_0^{\\infty} e^{-x^2}\\cos(2x)\\,dx", "sqrt(pi)*exp(-1)/2", "Princeton", ["gaussian", "feynman"], "Gaussian shift gives (√π/2)e^{-1}.");
   N("world-038", "integrals", 5, "\\int_0^{\\infty}\\frac{\\sin^3 x}{x^3}\\,dx", "3*pi/8", "MIT", ["dirichlet"], "Use sin^3 = (3 sin x - sin 3x)/4.");
   N("world-039", "series", 5, "\\sum_{n=1}^{\\infty}\\frac{1}{n^2\\binom{2n}{n}}", "pi^2/18", "ETH", ["central-binomial"], "Classic central-binomial sum.");
-  N("world-040", "limits", 5, "\\lim_{x\\to 0}\\frac{(1+x)^{1/x}-e+\\tfrac{ex}{2}}{x^2}", "11*exp(1)/24", "Todai", ["exponential-limit", "taylor"], "(1+x)^{1/x}=e(1-x/2+11x^2/24-...).");
+  N("world-040", "limits", 5, "\\lim_{x\\to 0}\\frac{(1+x)^{1/x}-e+\\tfrac{ex}{2}}{x^2}", "11*exp(1)/24", "亞洲名校", ["exponential-limit", "taylor"], "(1+x)^{1/x}=e(1-x/2+11x^2/24-...).");
   N("world-041", "integrals", 5, "\\int_0^{1}\\frac{x-1}{\\log x}\\,dx", "log(2)", "Putnam", ["frullani"], "log(a+1) with a=1.");
   N("world-042", "series", 5, "\\text{收斂半徑：}\\sum_{n=1}^{\\infty}\\frac{(3n)!}{(n!)^3}x^n", "1/27", "ETH", ["power-series", "radius"], "Ratio -> 27, so R = 1/27.");
   N("world-043", "integrals", 5, "\\int_0^{\\infty}\\frac{\\log x}{1+x^6}\\,dx", "-pi^2/(6*sqrt(3))", "Harvard", ["contour", "log-integral"], "Keyhole contour gives -π^2/(6√3).");
@@ -91,7 +91,7 @@
   N("world-051", "integrals", 6, "\\int_0^{1}\\frac{\\arctan\\!\\left(\\sqrt{x^2+2}\\right)}{(x^2+1)\\sqrt{x^2+2}}\\,dx", "5*pi^2/96", "Putnam", ["ahmed-integral"], "Ahmed's integral.");
   N("world-052", "integrals", 6, "\\int_0^{\\pi/2}\\log^2(\\sin x)\\,dx", "pi*log(2)^2/2+pi^3/24", "Cambridge", ["fourier", "log-integral"], "(π/2)log^2 2 + π^3/24.");
   N("world-053", "series", 5, "\\sum_{n=2}^{\\infty}\\frac{(-1)^n}{n^2-1}", "1/4", "Harvard", ["telescoping", "alternating"], "Telescoping with alternating signs.");
-  N("world-054", "integrals", 6, "\\int_0^{\\pi/2}\\log^2(\\cos x)\\,dx", "pi*log(2)^2/2+pi^3/24", "Todai", ["fourier", "log-integral"], "(π/2)log^2 2 + π^3/24.");
+  N("world-054", "integrals", 6, "\\int_0^{\\pi/2}\\log^2(\\cos x)\\,dx", "pi*log(2)^2/2+pi^3/24", "亞洲名校", ["fourier", "log-integral"], "(π/2)log^2 2 + π^3/24.");
   N("world-055", "integrals", 5, "\\int_0^{\\pi/2}\\cos x\\,\\log(\\sin x)\\,dx", "-1", "Cambridge", ["substitution"], "u=sin x gives ∫_0^1 log u du = -1.");
   N("world-056", "integrals", 6, "\\int_0^{1}\\log x\\,\\log(1+x)\\,dx", "2-2*log(2)-pi^2/12", "Princeton", ["dilogarithm"], "Equals 2 - 2log2 - π^2/12.");
   N("world-057", "integrals", 6, "\\int_0^{\\infty}\\frac{\\log(1+x^2)}{1+x^2}\\,dx", "pi*log(2)", "Putnam", ["feynman"], "Feynman differentiation.");
@@ -103,7 +103,7 @@
   N("world-063", "integrals", 6, "\\int_0^{\\infty}\\frac{x^2}{(1+x^2)^3}\\,dx", "pi/16", "Caltech", ["beta-function"], "Beta value π/16.");
   N("world-064", "integrals", 6, "\\int_0^{1}\\frac{x^3-1}{\\log x}\\,dx", "log(4)", "Putnam", ["frullani"], "log(a+1), a=3.");
   N("world-065", "integrals", 6, "\\int_0^{\\pi/2}\\sqrt{\\tan x}\\,dx", "pi/sqrt(2)", "Cambridge", ["beta-function"], "Beta gives π/√2.");
-  N("world-066", "limits", 6, "\\lim_{n\\to\\infty}\\prod_{k=1}^{n}\\left(1+\\frac{k^2}{n^3}\\right)", "exp(1/3)", "Todai", ["product-limit"], "log of product -> 1/3.");
+  N("world-066", "limits", 6, "\\lim_{n\\to\\infty}\\prod_{k=1}^{n}\\left(1+\\frac{k^2}{n^3}\\right)", "exp(1/3)", "亞洲名校", ["product-limit"], "log of product -> 1/3.");
   N("world-067", "limits", 6, "\\lim_{n\\to\\infty}\\left(\\frac{(3n)!}{n!\\,(2n)!}\\right)^{1/n}", "27/4", "Putnam", ["stirling"], "Central trinomial growth (27/4)^n.");
   N("world-068", "derivatives", 6, "\\text{Coefficient of }x^4\\text{ in }(1+x)^{x}", "5/6", "Caltech", ["taylor", "coefficient"], "Expand x log(1+x) in the exponent.");
   N("world-069", "integrals", 6, "\\int_0^{\\infty}\\frac{dx}{(1+x^2)(4+x^2)}", "pi/12", "MIT", ["partial-fractions"], "π/(2ab(a+b)).");
@@ -130,7 +130,7 @@
   N("world-088", "integrals", 6, "\\int_0^{\\infty}\\frac{\\sin x}{x}\\,dx", "pi/2", "Cambridge", ["dirichlet"], "Dirichlet integral.");
   N("world-089", "integrals", 6, "\\int_0^{\\infty}\\frac{x-\\sin x}{x^3}\\,dx", "pi/4", "MIT", ["dirichlet"], "Standard value π/4.");
   N("world-090", "integrals", 6, "\\int_0^{\\infty} e^{-x^2}\\,dx", "sqrt(pi)/2", "MIT", ["gaussian"], "Gaussian integral.");
-  N("world-091", "limits", 6, "\\lim_{n\\to\\infty} n\\left(\\left(1+\\tfrac1n\\right)^{n}-e\\right)", "-exp(1)/2", "Todai", ["asymptotics"], "(1+1/n)^n = e(1 - 1/(2n)+...).");
+  N("world-091", "limits", 6, "\\lim_{n\\to\\infty} n\\left(\\left(1+\\tfrac1n\\right)^{n}-e\\right)", "-exp(1)/2", "亞洲名校", ["asymptotics"], "(1+1/n)^n = e(1 - 1/(2n)+...).");
   N("world-092", "integrals", 5, "\\int_0^{1} x\\,\\log(1-x)\\,dx", "-3/4", "Cambridge", ["integration-by-parts"], "By parts gives -3/4.");
   N("world-093", "derivatives", 6, "\\text{Coefficient of }x^4\\text{ in }e^{\\sin x}", "-1/8", "Caltech", ["taylor", "coefficient"], "e^{sin x}=1+x+x^2/2-x^4/8-...");
   N("world-094", "integrals", 6, "\\int_0^{\\infty}\\frac{dx}{1+x^4}", "pi/(2*sqrt(2))", "Harvard", ["beta-function"], "π/(2√2).");
@@ -139,7 +139,7 @@
   N("world-097", "series", 6, "\\sum_{n=1}^{\\infty}\\frac{H_n}{2^n}", "2*log(2)", "MIT", ["euler-sum", "generating-function"], "Σ H_n x^n=-log(1-x)/(1-x), x=1/2.");
   N("world-098", "integrals", 6, "\\int_0^{\\infty}\\frac{x^2}{(1+x^4)}\\,dx", "pi/(2*sqrt(2))", "ETH", ["beta-function"], "Same Beta family.");
   N("world-099", "limits", 6, "\\lim_{x\\to 0}\\frac{\\tan(\\sin x)-\\sin(\\tan x)}{x^7}", "1/30", "Putnam", ["taylor"], "Famous degree-7 expansion: 1/30.");
-  N("world-100", "integrals", 6, "\\int_0^{\\pi/2}\\frac{x^2}{\\sin^2 x}\\,dx", "pi*log(2)", "Todai", ["fourier"], "∫_0^{π/2} x^2 csc^2 x dx = π log 2.");
+  N("world-100", "integrals", 6, "\\int_0^{\\pi/2}\\frac{x^2}{\\sin^2 x}\\,dx", "pi*log(2)", "亞洲名校", ["fourier"], "∫_0^{π/2} x^2 csc^2 x dx = π log 2.");
 
   window.BUZZ_PROBLEMS = (window.BUZZ_PROBLEMS || []).concat(problems);
 })();

@@ -11,9 +11,9 @@
   const TAG_LABELS = {
     // 出處型 tag 的顯示名：tag key 保留（抽題與既有資料靠它），
     // 但畫面上一律講 Buzz 自己的難度語言，不掛學校名。
-    "todai-burst": "高速反射",
+    burst: "高速反射",
     "world-universities": "國際難題",
-    damo: "長題挑戰",
+    longform: "長題挑戰",
     putnam: "競賽經典",
     competition: "競賽難題",
     "true-boss": "終極挑戰",
