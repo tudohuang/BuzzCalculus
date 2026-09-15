@@ -38,7 +38,7 @@ function simpson(f, a, b, n) {
 /* ===== structural sanity for the whole proof bank ===== */
 {
   const ids = new Set();
-  const tiers = new Set(["basic", "standard", "advanced", "boss", "contest", "lean"]);
+  const tiers = new Set(["basic", "standard", "advanced", "boss", "contest", "todai", "lean"]);
   let ok = true;
   proofs.forEach((p) => {
     if (!p.id || ids.has(p.id)) ok = false;
@@ -346,9 +346,361 @@ function simpson(f, a, b, n) {
   assert(id, "front piece dies: n(1-δ)^{n+1} -> 0 (δ=0.1)", dieOff(50, 0.1) > dieOff(200, 0.1) && dieOff(200, 0.1) < 1e-6, `${dieOff(200, 0.1)}`);
 }
 
+
+/* ===== 東大杉浦《解析演習》：每一題可算的主張 ===== */
+{
+  const near = (a, b, tol) => Math.abs(a - b) <= tol * (1 + Math.abs(b));
+  const deriv = (f, x, h = 1e-4) => (f(x + h) - f(x - h)) / (2 * h);
+  const deriv2 = (f, x, h = 1e-3) => (f(x + h) - 2 * f(x) + f(x - h)) / (h * h);
+
+  /* II-1：f(x) = (x²+1)/3，0 ≤ f ≤ 1、f′ = 2x/3 ≠ 1，唯一不動點 (3−√5)/2 */
+  {
+    const id = "proof-todai-201";
+    const f = (x) => (x * x + 1) / 3;
+    const g = (x) => f(x) - x;
+    let crossings = 0;
+    for (let i = 0; i < 10000; i += 1) { const a = i / 10000, b = (i + 1) / 10000; if (g(a) * g(b) < 0) crossings += 1; }
+    assert(id, "g = f − x changes sign exactly once on [0,1]", g(0) > 0 && g(1) < 0 && crossings === 1, `${crossings}`);
+    assert(id, "fixed point is (3−√5)/2", near(f((3 - Math.sqrt(5)) / 2), (3 - Math.sqrt(5)) / 2, 1e-12));
+    let maxDeriv = 0;
+    for (let x = 0; x <= 1; x += 0.001) maxDeriv = Math.max(maxDeriv, Math.abs(deriv(f, x)));
+    assert(id, "f′ stays away from 1 on the instance", maxDeriv < 0.7, `${maxDeriv}`);
+  }
+
+  /* II-2：min_h (2A/h + Bh/2) = 2√(AB)，達到於 h = 2√(A/B)；f = sin 的實例 */
+  {
+    const id = "proof-todai-202";
+    const A = 3, B = 5;
+    let best = Infinity, bestH = 0;
+    for (let h = 0.01; h <= 20; h += 0.001) { const v = 2 * A / h + B * h / 2; if (v < best) { best = v; bestH = h; } }
+    assert(id, "min over h of 2A/h + Bh/2 = 2√(AB)", near(best, 2 * Math.sqrt(A * B), 1e-5) && near(bestH, 2 * Math.sqrt(A / B), 1e-2), `${best} at h=${bestH}`);
+    let sup = 0;
+    for (let x = 0; x <= 20; x += 0.01) sup = Math.max(sup, Math.abs(Math.cos(x)));
+    assert(id, "instance f = sin: |f′| ≤ 2√(1·1)", sup <= 2);
+    // 泰勒餘項的等式在具體點上：f(x+h) − f(x) − h f′(x) = (h²/2) f″(ξ) 有解 ξ ∈ (x, x+h)
+    const x0 = 0.3, h = 0.5, lhs = Math.sin(x0 + h) - Math.sin(x0) - h * Math.cos(x0);
+    let found = false;
+    for (let xi = x0; xi <= x0 + h; xi += 1e-4) if (Math.abs((h * h / 2) * (-Math.sin(xi)) - lhs) < 1e-4) found = true;
+    assert(id, "Taylor remainder has a ξ in (x, x+h)", found);
+  }
+
+  /* II-4：Hermite 遞迴與實根 */
+  {
+    const id = "proof-todai-204";
+    const H = [(x) => 1, (x) => x, (x) => x * x - 1, (x) => x * x * x - 3 * x, (x) => x ** 4 - 6 * x * x + 3];
+    const rodrigues = (n, x) => {
+      // (−1)^n e^{x²/2} dⁿ/dxⁿ e^{−x²/2}，用高階中央差分（n ≤ 3 夠準）
+      const g = (t) => Math.exp(-t * t / 2);
+      const h = 1e-2;
+      const d = [g(x)];
+      if (n >= 1) d.push((g(x + h) - g(x - h)) / (2 * h));
+      if (n >= 2) d.push((g(x + h) - 2 * g(x) + g(x - h)) / (h * h));
+      if (n >= 3) d.push((g(x + 2 * h) - 2 * g(x + h) + 2 * g(x - h) - g(x - 2 * h)) / (2 * h * h * h));
+      return Math.pow(-1, n) * Math.exp(x * x / 2) * d[n];
+    };
+    let ok = true;
+    for (let n = 0; n <= 3; n += 1) for (const x of [-1.3, 0.4, 2.1]) if (!near(rodrigues(n, x), H[n](x), 2e-3)) ok = false;
+    assert(id, "Rodrigues form matches H_0..H_3 = 1, x, x²−1, x³−3x", ok);
+    ok = true;
+    for (let n = 0; n <= 3; n += 1) for (const x of [-1.3, 0.4, 2.1]) if (!near(x * H[n](x) - deriv(H[n], x), H[n + 1](x), 1e-6)) ok = false;
+    assert(id, "recurrence H_{n+1} = xH_n − H_n′", ok);
+    const roots = (f, lo, hi) => { let c = 0; for (let x = lo; x < hi; x += 1e-3) if (f(x) * f(x + 1e-3) < 0) c += 1; return c; };
+    assert(id, "H_3 has 3 real roots, H_4 has 4", roots(H[3], -4, 4) === 3 && roots(H[4], -4, 4) === 4);
+  }
+
+  /* II-5：f^{(1)} = 2x⁻³e^{−1/x²}，與 tᵏe^{−t²} → 0 */
+  {
+    const id = "proof-todai-205";
+    const f = (x) => (x > 0 ? Math.exp(-1 / (x * x)) : 0);
+    const P1 = (x) => 2 * Math.pow(x, -3) * Math.exp(-1 / (x * x));
+    assert(id, "f′(x) = P_1(1/x)e^{−1/x²} with P_1(t) = 2t³ (x = 0.7)", near(deriv(f, 0.7, 1e-5), P1(0.7), 1e-5), `${deriv(f, 0.7, 1e-5)} vs ${P1(0.7)}`);
+    assert(id, "t⁵e^{−t²} → 0 (t = 8)", Math.pow(8, 5) * Math.exp(-64) < 1e-20);
+    assert(id, "f′(0) = 0 from the right (h = 0.05)", Math.abs(f(0.05) / 0.05) < 1e-100);
+  }
+
+  /* II-6：Jensen，f = eˣ */
+  {
+    const id = "proof-todai-206";
+    const xs = [0, 1, 2.5], ps = [0.2, 0.5, 0.3];
+    const m = xs.reduce((s, x, i) => s + ps[i] * x, 0);
+    const lhs = xs.reduce((s, x, i) => s + ps[i] * Math.exp(x), 0);
+    assert(id, "Σ p_i e^{x_i} ≥ e^{Σ p_i x_i}", lhs >= Math.exp(m), `${lhs} vs ${Math.exp(m)}`);
+    assert(id, "tangent-line inequality e^y ≥ e^m + e^m(y − m)", [-1, 0.3, 2].every((y) => Math.exp(y) >= Math.exp(m) + Math.exp(m) * (y - m) - 1e-12));
+  }
+
+  /* II-7：Wronskian */
+  {
+    const id = "proof-todai-207";
+    const det3 = (m) => m[0][0] * (m[1][1] * m[2][2] - m[1][2] * m[2][1]) - m[0][1] * (m[1][0] * m[2][2] - m[1][2] * m[2][0]) + m[0][2] * (m[1][0] * m[2][1] - m[1][1] * m[2][0]);
+    const W3 = (x) => det3([[1, x, 1 + 2 * x], [0, 1, 2], [0, 0, 0]]);
+    assert(id, "dependent 1, x, 1+2x ⇒ W ≡ 0", [0.2, 1.5, -3].every((x) => Math.abs(W3(x)) < 1e-12));
+    const W2 = (x) => Math.exp(x) * 2 * Math.exp(2 * x) - Math.exp(2 * x) * Math.exp(x);
+    assert(id, "W(eˣ, e²ˣ) = e³ˣ ≠ 0", [0.2, 1.5].every((x) => near(W2(x), Math.exp(3 * x), 1e-12)));
+  }
+
+  /* II-8：對稱差商 */
+  {
+    const id = "proof-todai-208";
+    const q = (x) => (Math.cos(x) + Math.cos(-x) - 2) / (x * x);
+    assert(id, "(f(x)+f(−x)−2f(0))/x² → f″(0) = −1 for cos", near(q(1e-3), -1, 1e-5), `${q(1e-3)}`);
+    const F = (x, y) => Math.exp(x * y);
+    const q2 = (t) => (F(t, t) - F(t, 0) - F(0, t) + F(0, 0)) / (t * t);
+    assert(id, "(f(t,t)−f(t,0)−f(0,t)+f(0,0))/t² → f_xy(0,0) = 1 for e^{xy}", near(q2(1e-3), 1, 1e-5), `${q2(1e-3)}`);
+  }
+
+  /* II-11：旋轉 θ 下 |∇f| 與 Δf 不變 */
+  {
+    const id = "proof-todai-211";
+    const f = (x1, x2) => x1 * x1 + 3 * x2 * x2 + x1 * x2 + Math.sin(x1);
+    const th = 0.7, c = Math.cos(th), s = Math.sin(th);
+    const g = (y1, y2) => f(c * y1 - s * y2, s * y1 + c * y2);
+    const pt = [0.4, -0.9];
+    const x = [c * pt[0] - s * pt[1], s * pt[0] + c * pt[1]];
+    const gradF = [deriv((t) => f(t, x[1]), x[0]), deriv((t) => f(x[0], t), x[1])];
+    const gradG = [deriv((t) => g(t, pt[1]), pt[0]), deriv((t) => g(pt[0], t), pt[1])];
+    assert(id, "|∇_x f|² = |∇_y g|²", near(gradF[0] ** 2 + gradF[1] ** 2, gradG[0] ** 2 + gradG[1] ** 2, 1e-6));
+    const lapF = deriv2((t) => f(t, x[1]), x[0]) + deriv2((t) => f(x[0], t), x[1]);
+    const lapG = deriv2((t) => g(t, pt[1]), pt[0]) + deriv2((t) => g(pt[0], t), pt[1]);
+    assert(id, "Δ_x f = Δ_y g", near(lapF, lapG, 1e-4), `${lapF} vs ${lapG}`);
+  }
+
+  /* II-12：乘積極限 √e */
+  {
+    const id = "proof-todai-212";
+    const n = 4000;
+    let prod = 1, L = 0;
+    for (let k = 1; k <= n; k += 1) { prod *= 1 + k / (n * n); L += Math.log(1 + k / (n * n)); }
+    assert(id, "Π(1 + k/n²) → √e (n = 4000)", near(prod, Math.sqrt(Math.E), 1e-3), `${prod}`);
+    const A = (n + 1) / (2 * n);
+    let B = 0;
+    for (let k = 1; k <= n; k += 1) B += (k / (n * n)) ** 2;
+    assert(id, "A − B/2 ≤ L ≤ A with the closed forms", A - B / 2 <= L && L <= A && B <= 1 / n);
+    assert(id, "t − t²/2 ≤ log(1+t) ≤ t on [0,1]", [0.01, 0.3, 0.9].every((t) => t - t * t / 2 <= Math.log(1 + t) && Math.log(1 + t) <= t));
+  }
+
+  /* II-15：y = arctan(1/x) 的二階導數 */
+  {
+    const id = "proof-todai-215";
+    const y = (x) => Math.atan(1 / x);
+    const x0 = 2;
+    const sy = Math.sin(y(x0));
+    const formula2 = Math.pow(-1, 2) * 1 * sy * sy * Math.sin(2 * y(x0));
+    assert(id, "y″(2) = (−1)²·1!·sin²y·sin 2y = 4/25", near(deriv2(y, x0, 1e-3), formula2, 1e-4) && near(formula2, 4 / 25, 1e-12), `${deriv2(y, x0, 1e-3)} vs ${formula2}`);
+    assert(id, "y′ = −sin²y", near(deriv(y, x0), -sy * sy, 1e-6));
+    const formula3 = -2 * Math.pow(sy, 3) * Math.sin(3 * y(x0));
+    const d3 = (deriv2(y, x0 + 1e-3, 1e-3) - deriv2(y, x0 - 1e-3, 1e-3)) / (2e-3);
+    assert(id, "y‴(2) matches the formula", near(d3, formula3, 1e-2), `${d3} vs ${formula3}`);
+  }
+
+  /* II-17：y = ½log((1+x)/(1−x)) 滿足 (1−x²)y″ − 2xy′ = 0 */
+  {
+    const id = "proof-todai-217";
+    const y = (x) => 0.5 * Math.log((1 + x) / (1 - x));
+    const x0 = 0.3;
+    const residual = (1 - x0 * x0) * deriv2(y, x0) - 2 * x0 * deriv(y, x0);
+    assert(id, "ODE residual ≈ 0 at x = 0.3", Math.abs(residual) < 1e-5, `${residual}`);
+    assert(id, "(1 − x²)y′ = 1", near((1 - x0 * x0) * deriv(y, x0), 1, 1e-6));
+    let series = 0;
+    for (let k = 0; k <= 60; k += 1) series += Math.pow(x0, 2 * k + 1) / (2 * k + 1);
+    assert(id, "artanh series", near(series, y(x0), 1e-10));
+  }
+
+  /* II-20：y = e^{a·arcsin x} */
+  {
+    const id = "proof-todai-220";
+    const a = 2;
+    const y = (x) => Math.exp(a * Math.asin(x));
+    const x0 = 0.3;
+    const residual = (1 - x0 * x0) * deriv2(y, x0) - x0 * deriv(y, x0) - a * a * y(x0);
+    assert(id, "ODE residual ≈ 0 at x = 0.3, a = 2", Math.abs(residual) < 1e-4 * y(x0), `${residual}`);
+    const c = [1, a];
+    for (let n = 0; n <= 4; n += 1) c[n + 2] = (n * n + a * a) / ((n + 1) * (n + 2)) * c[n];
+    const series = c.reduce((s, cn, n) => s + cn * Math.pow(0.1, n), 0);
+    assert(id, "recurrence series matches y(0.1) to O(x⁷)", near(series, y(0.1), 1e-6), `${series} vs ${y(0.1)}`);
+    assert(id, "c_2 = a²/2, c_3 = a(1+a²)/6", near(c[2], a * a / 2, 1e-12) && near(c[3], a * (1 + a * a) / 6, 1e-12));
+  }
+
+  /* II-21：橢圓內接三角形 */
+  {
+    const id = "proof-todai-221";
+    const a = 3, b = 1.5;
+    const area = (t1, t2, t3) => {
+      const p = [t1, t2, t3].map((t) => [a * Math.cos(t), b * Math.sin(t)]);
+      return Math.abs((p[1][0] - p[0][0]) * (p[2][1] - p[0][1]) - (p[2][0] - p[0][0]) * (p[1][1] - p[0][1])) / 2;
+    };
+    const best = 3 * Math.sqrt(3) / 4 * a * b;
+    assert(id, "equilateral image reaches (3√3/4)ab", near(area(0, 2 * Math.PI / 3, 4 * Math.PI / 3), best, 1e-12));
+    let sup = 0;
+    for (let i = 0; i < 20000; i += 1) sup = Math.max(sup, area(Math.random() * 6.3, Math.random() * 6.3, Math.random() * 6.3));
+    assert(id, "random inscribed triangles never exceed it", sup <= best + 1e-9, `${sup} vs ${best}`);
+  }
+
+  /* II-28：exp(tX) 的導數 */
+  {
+    const id = "proof-todai-228";
+    const E = (t) => [[Math.cos(t), Math.sin(t)], [-Math.sin(t), Math.cos(t)]];   // exp(tX), X = [[0,1],[-1,0]]
+    const X = [[0, 1], [-1, 0]];
+    const t0 = 0.5, h = 1e-5;
+    const dE = E(t0 + h).map((row, i) => row.map((v, j) => (v - E(t0 - h)[i][j]) / (2 * h)));
+    const XE = [[0, 0], [0, 0]];
+    for (let i = 0; i < 2; i += 1) for (let j = 0; j < 2; j += 1) for (let k = 0; k < 2; k += 1) XE[i][j] += X[i][k] * E(t0)[k][j];
+    assert(id, "d/dt exp(tX) = X exp(tX) for the rotation generator", [0, 1].every((i) => [0, 1].every((j) => near(dE[i][j], XE[i][j], 1e-6))));
+    let series = [[0, 0], [0, 0]], power = [[1, 0], [0, 1]], fact = 1;
+    for (let k = 0; k < 30; k += 1) {
+      series = series.map((row, i) => row.map((v, j) => v + Math.pow(t0, k) / fact * power[i][j]));
+      const next = [[0, 0], [0, 0]];
+      for (let i = 0; i < 2; i += 1) for (let j = 0; j < 2; j += 1) for (let m = 0; m < 2; m += 1) next[i][j] += power[i][m] * X[m][j];
+      power = next; fact *= k + 1;
+    }
+    assert(id, "series Σ tᵏXᵏ/k! equals the rotation matrix", [0, 1].every((i) => [0, 1].every((j) => near(series[i][j], E(t0)[i][j], 1e-10))));
+  }
+
+  /* III-3：∫₀^∞ cos(tx)/(1+x²) = (π/2)e^{−|t|} */
+  {
+    const id = "proof-todai-303";
+    const t = 1;
+    const I = simpson((x) => Math.cos(t * x) / (1 + x * x), 0, 400, 800000);
+    assert(id, "∫₀^∞ cos x/(1+x²) ≈ (π/2)/e (tail < 1/400)", near(I, Math.PI / 2 * Math.exp(-1), 5e-3), `${I}`);
+    const Fnum = simpson((x) => Math.sin(t * x) / (x * (1 + x * x)), 1e-9, 400, 800000);
+    assert(id, "F(1) = ∫ sin x/(x(1+x²)) ≈ (π/2)(1 − 1/e)", near(Fnum, Math.PI / 2 * (1 - Math.exp(-1)), 5e-3), `${Fnum}`);
+    const F = (s) => Math.PI / 2 * (1 - Math.exp(-s));
+    assert(id, "F″ = F − π/2 for F = (π/2)(1 − e^{−t})", near(deriv2(F, 1.3), F(1.3) - Math.PI / 2, 1e-5));
+  }
+
+  /* III-5、III-6、III-8 */
+  {
+    const I5 = simpson((x) => (x <= 0 ? 0 : (x * x - 1) / Math.log(x)), 1e-12, 1 - 1e-9, 400000);
+    assert("proof-todai-305", "∫₀¹ (x² − 1)/log x = log 3", near(I5, Math.log(3), 1e-4), `${I5}`);
+    const I6 = simpson((x) => (x <= 0 ? 0 : (1 - x) / ((1 + x) * Math.log(x))), 1e-12, 1 - 1e-9, 400000);
+    assert("proof-todai-306", "∫₀¹ (1−x)/((1+x)log x) = log(2/π)", near(I6, Math.log(2 / Math.PI), 1e-4), `${I6}`);
+    let wallis = 1;
+    for (let m = 1; m <= 200000; m += 1) wallis *= (2 * m - 1) * (2 * m + 1) / (4 * m * m);
+    assert("proof-todai-306", "Wallis product → 2/π", near(wallis, 2 / Math.PI, 1e-5), `${wallis}`);
+    const a = 2, b = 1;
+    const I8 = simpson((x) => Math.log(a + b * Math.cos(x)), 0, Math.PI, 20000);
+    assert("proof-todai-308", "∫₀^π log(2 + cos x) = π log((2+√3)/2)", near(I8, Math.PI * Math.log((a + Math.sqrt(a * a - b * b)) / 2), 1e-8), `${I8}`);
+    const J = simpson((x) => 1 / (a + b * Math.cos(x)), 0, Math.PI, 20000);
+    assert("proof-todai-308", "∫₀^π dx/(a + b cos x) = π/√(a²−b²)", near(J, Math.PI / Math.sqrt(a * a - b * b), 1e-8));
+  }
+
+  /* III-10、III-11：Frullani，f = e^{−x}，∫(e^{−2x} − e^{−x})/x = log(1/2) */
+  {
+    const I = simpson((x) => (Math.exp(-2 * x) - Math.exp(-x)) / x, 1e-9, 60, 400000);
+    assert("proof-todai-310", "Frullani with f = e^{−x}: log(a/b) = log(1/2)", near(I, Math.log(0.5), 1e-4), `${I}`);
+    assert("proof-todai-311", "(2) ∫(e^{−bx} − e^{−ax})/x = log(a/b)", near(I, Math.log(1 / 2), 1e-4));
+    const damped = (a, b) => simpson((x) => (Math.cos(b * x) - Math.cos(a * x)) / x * Math.exp(-0.002 * x), 1e-9, 4000, 4000000);
+    assert("proof-todai-311", "(1) ∫(cos bx − cos ax)/x = log(a/b) (Abel-damped, a=3, b=2)", near(damped(3, 2), Math.log(3 / 2), 5e-3), `${damped(3, 2)}`);
+  }
+
+  /* III-12：等周：橢圓嚴格、圓相等 */
+  {
+    const id = "proof-todai-312";
+    const a = 2, b = 1;
+    const L = simpson((t) => Math.sqrt(a * a * Math.sin(t) ** 2 + b * b * Math.cos(t) ** 2), 0, 2 * Math.PI, 20000);
+    const F = Math.PI * a * b;
+    assert(id, "ellipse 2×1: L² > 4πF", L * L > 4 * Math.PI * F, `${L * L} vs ${4 * Math.PI * F}`);
+    assert(id, "circle: L² = 4πF", near((2 * Math.PI * 3) ** 2, 4 * Math.PI * (Math.PI * 9), 1e-12));
+    assert(id, "termwise n|a||b| ≤ n²(|a|²+|b|²)/2", [[2, 0.3, 0.7], [3, 1, 1]].every(([n, x, y]) => n * x * y <= n * n * (x * x + y * y) / 2));
+  }
+
+  /* III-13：Legendre */
+  {
+    const id = "proof-todai-313";
+    const P2 = (x) => (3 * x * x - 1) / 2, P3 = (x) => (5 * x * x * x - 3 * x) / 2;
+    assert(id, "∫P_2P_3 = 0", Math.abs(simpson((x) => P2(x) * P3(x), -1, 1, 2000)) < 1e-12);
+    assert(id, "∫P_2² = 2/5, ∫P_3² = 2/7", near(simpson((x) => P2(x) ** 2, -1, 1, 2000), 2 / 5, 1e-10) && near(simpson((x) => P3(x) ** 2, -1, 1, 2000), 2 / 7, 1e-10));
+    assert(id, "P_n(1) = 1", P2(1) === 1 && P3(1) === 1);
+    assert(id, "∫(1−x²)³ = 2⁷(3!)²/7!", near(simpson((x) => (1 - x * x) ** 3, -1, 1, 2000), 128 * 36 / 5040, 1e-10));
+  }
+
+  /* III-21：Σ (2n−1)!!/(2n)!! /n = 2 log 2 */
+  {
+    const id = "proof-todai-321";
+    let ratio = 1, sum = 0;
+    const N = 3000000;
+    for (let n = 1; n <= N; n += 1) { ratio *= (2 * n - 1) / (2 * n); sum += ratio / n; }
+    const tail = 2 / Math.sqrt(Math.PI * N);   // 尾巴 ~ Σ 1/(√(πn)·n)
+    assert(id, "partial sum + tail estimate ≈ 2 log 2", near(sum + tail, 2 * Math.log(2), 2e-3), `${sum + tail}`);
+    assert(id, "∫₀^{π/2} log cos = −(π/2) log 2", near(simpson((x) => Math.log(Math.cos(x)), 0, Math.PI / 2 - 1e-9, 400000), -Math.PI / 2 * Math.log(2), 1e-4));
+    assert(id, "(2n−1)!!/(2n)!! = (2/π)∫ sin^{2n} (n = 3)", near(2 / Math.PI * simpson((x) => Math.sin(x) ** 6, 0, Math.PI / 2, 2000), 15 / 48, 1e-10));
+  }
+
+  /* III-22：Legendre 關係式 */
+  {
+    const id = "proof-todai-322";
+    const K = (k) => simpson((t) => 1 / Math.sqrt(1 - k * k * Math.sin(t) ** 2), 0, Math.PI / 2, 20000);
+    const E = (k) => simpson((t) => Math.sqrt(1 - k * k * Math.sin(t) ** 2), 0, Math.PI / 2, 20000);
+    const k = 0.6, kp = Math.sqrt(1 - k * k);
+    const G = E(k) * K(kp) + E(kp) * K(k) - K(k) * K(kp);
+    assert(id, "EK′ + E′K − KK′ = π/2 (k = 0.6)", near(G, Math.PI / 2, 1e-8), `${G}`);
+    assert(id, "dE/dk = (E − K)/k", near(deriv(E, k), (E(k) - K(k)) / k, 1e-5));
+    assert(id, "dK/dk = (E − k′²K)/(k k′²)", near(deriv(K, k), (E(k) - kp * kp * K(k)) / (k * kp * kp), 1e-5));
+  }
+
+  /* IV-10：一維波動方程能量守恆 */
+  {
+    const id = "proof-todai-410";
+    const c = 1.5;
+    const bump = (s) => (Math.abs(s) < 1 ? Math.exp(-1 / (1 - s * s)) : 0);
+    const u = (t, x) => bump(x - c * t) + 0.5 * bump(x + c * t);
+    const energy = (t) => simpson((x) => deriv((s) => u(t, s), x) ** 2 + deriv((s) => u(s, x), t) ** 2 / (c * c), -6, 6, 6000) / 2;
+    assert(id, "E(0) = E(0.8) for a d'Alembert solution", near(energy(0), energy(0.8), 1e-4), `${energy(0)} vs ${energy(0.8)}`);
+  }
+
+  /* IV-16：Apéry 路線上算得出的幾步 */
+  {
+    const id = "proof-todai-416";
+    let zeta3 = 0;
+    for (let n = 1; n <= 200000; n += 1) zeta3 += 1 / (n * n * n);
+    zeta3 += 1 / (2 * 200000 * 200000);
+    assert(id, "ζ(3) ≈ 1.2020569", near(zeta3, 1.2020569031595942, 1e-9), `${zeta3}`);
+    // (4)：−∫∫ log(xy)/(1−xy) dxdy = 2ζ(3)（中點法則，被積函數在邊上可積但奇異）
+    const m = 1200;
+    let I0 = 0;
+    for (let i = 0; i < m; i += 1) for (let j = 0; j < m; j += 1) {
+      const x = (i + 0.5) / m, y = (j + 0.5) / m;
+      I0 += -Math.log(x * y) / (1 - x * y);
+    }
+    I0 /= m * m;
+    assert(id, "−∫∫ log(xy)/(1−xy) = 2ζ(3) (midpoint rule, 1%)", near(I0, 2 * zeta3, 1e-2), `${I0}`);
+    // (10)：核 ≤ (√2−1)⁴
+    const bound = Math.pow(Math.SQRT2 - 1, 4);
+    let sup = 0;
+    for (let i = 1; i < 200; i += 1) for (let j = 1; j < 200; j += 1) for (let k = 1; k < 200; k += 1) {
+      const x = i / 200, y = j / 200, w = k / 200;
+      sup = Math.max(sup, x * (1 - x) * y * (1 - y) * w * (1 - w) / (1 - (1 - x * y) * w));
+    }
+    assert(id, "kernel ≤ (√2−1)⁴ on [0,1]³ (grid sup)", sup <= bound + 1e-12, `${sup} vs ${bound}`);
+    assert(id, "27(√2−1)⁴ < 4/5", 27 * bound < 0.8, `${27 * bound}`);
+    // (3)：n=2,m=0 的有理值 Σ_{k=0}^{1} 1/((k+1)²·2) = 1/2 + 1/8 = 5/8，分母 8 | d_2³ = 8
+    let I20 = 0;
+    for (let i = 0; i < m; i += 1) for (let j = 0; j < m; j += 1) {
+      const x = (i + 0.5) / m, y = (j + 0.5) / m;
+      I20 += -Math.log(x * y) / (1 - x * y) * x * x;
+    }
+    I20 /= m * m;
+    assert(id, "n=2, m=0 integral = 5/8 with denominator dividing d_2³", near(I20, 5 / 8, 1e-2), `${I20}`);
+  }
+
+  /* IV-17：對稱差體積比 → 0 */
+  {
+    const id = "proof-todai-417";
+    const ratio = (R, d) => (6 * R * R * d + 2 * d * d * d) / (R * R * R);
+    assert(id, "(6R²d + 2d³)/R³ → 0 (R = 1000, d = 1)", ratio(1000, 1) < 0.01 && ratio(1e6, 1) < 1e-5);
+    // 球平均值性質的實例：u = x² − y²（調和），球心 (0.3, 0.2, 0) 半徑 1 的平均 = u(ξ)
+    let avg = 0, count = 0;
+    const N = 60;
+    for (let i = 0; i < N; i += 1) for (let j = 0; j < N; j += 1) for (let k = 0; k < N; k += 1) {
+      const x = -1 + (i + 0.5) * 2 / N, y = -1 + (j + 0.5) * 2 / N, z = -1 + (k + 0.5) * 2 / N;
+      if (x * x + y * y + z * z <= 1) { avg += (x + 0.3) ** 2 - (y + 0.2) ** 2; count += 1; }
+    }
+    assert(id, "mean value property for u = x² − y²", near(avg / count, 0.3 * 0.3 - 0.2 * 0.2, 2e-2), `${avg / count}`);
+  }
+}
+
 /* ===== summary ===== */
-const contest = proofs.filter((p) => p.tier === "contest");
-console.log(`\nChecked ${checks} claims across ${contest.length} contest proofs (+bank structure).`);
+const contest = proofs.filter((p) => p.tier === "contest" || p.tier === "todai");
+console.log(`\nChecked ${checks} claims across ${contest.length} contest + 東大 proofs (+bank structure).`);
 if (failures) {
   console.error(`${failures} claim checks FAILED.`);
   process.exit(1);

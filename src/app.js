@@ -517,6 +517,7 @@
     advanced: "進階",
     boss: "終極",
     contest: "競賽",
+    todai: "東大",
     lean: "Lean"
   };
   const SIMPLE_MODE_KEYS = ["quick", "topic", "practice"];

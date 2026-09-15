@@ -83,6 +83,26 @@ const gibberish = lang.check(bare, "我覺得這題很簡單。" + String.fromCh
 checks += 1;
 if (gibberish.lines[0].status !== "error") fail("讀不懂的句子應該標紅");
 
+// 5. 嚴格語法：這些以前會被放行的寫法，現在要紅或黃（2026-09-14 收緊）
+const strictCases = [
+  ["A = A 湊兩段鏈", "設 x 為實數。\n則 x² + 1 = x² + 1 ≥ 2x。", (r) => r.verdict === "broken" && r.lines[1].status === "error"],
+  ["因為目標所以目標", "設 x 為實數。\n因為 x² + 1 ≥ 2x，所以 x² + 1 ≥ 2x。", (r) => r.verdict !== "verified" && r.lines[1].status !== "ok"],
+  ["沒有句型的裸關係式", "設 x 為實數。\n(x − 1)² ≥ 0。\n所以 x² + 1 ≥ 2x。", (r) => r.lines[1].status === "error"],
+  ["沒宣告的變數", "設 x 為實數。\n則 (x − 1)² ≥ 0 且 y ≥ 0。\n所以 x² + 1 ≥ 2x。", (r) => r.lines[1].status === "error"],
+  ["方向不一致的鏈", "設 x 為實數。\n則 x² ≥ 0 ≤ x² + 1 − 2x。\n所以 x² + 1 ≥ 2x。", (r) => r.lines[1].status === "error"],
+  ["一行兩句", "設 x 為實數。則 (x − 1)² ≥ 0。", (r) => r.lines[0].status === "error" && /一行只能一句/.test(r.lines[0].note)],
+  ["第一段就是目標的鏈", "設 x 為實數。\n則 2x ≤ x² + 1 = (x − 1)² + 2x。", (r) => r.verdict !== "verified"],
+  ["從目標左式出發、走到顯然的東西", "設 x 為實數。\n則 x² + 1 = (x − 1)² + 2x ≥ 2x。", (r) => r.verdict === "verified"],
+  ["顯然：a + b ≥ 0 當 a, b ≥ 0", "設 a, b ≥ 0。\n因為 a + b ≥ 0 且 (a − b)² ≥ 0，所以 (a + b)(a − b)² ≥ 0。", (r) => r.lines[1].status === "ok"],
+  ["不顯然：x² + 1 ≥ 2x 不能當前提", "設 x 為實數。\n因為 x² + 1 ≥ 2x，所以 (x − 1)² ≥ 0。", (r) => r.lines[1].status !== "ok"]
+];
+strictCases.forEach(([name, text, expect]) => {
+  const spec = /a, b/.test(text) ? problems.find((item) => item.id === "pl-cube-sum") : bare;
+  const result = lang.check(spec, text);
+  checks += 1;
+  if (!expect(result)) fail(`嚴格語法「${name}」沒守住：${result.verdict} / ${result.lines.map((l) => l.status).join(",")}\n    ${result.lines.map((l) => `${l.raw} —— ${l.note}`).join("\n    ")}`);
+});
+
 // 句型表與規則表要能列出來（教學頁用）
 if (!lang.patterns.length || !lang.rules.length) fail("patterns / rules 表是空的");
 

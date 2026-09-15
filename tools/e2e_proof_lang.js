@@ -69,7 +69,7 @@ async function run() {
     /* ── proofs.js 的題（骨架／填空／自評）也走同一個殼 ── */
     await click('tr[data-proof-key="pf:proof-mvt-001"]', 900);
     const selfPage = await chrome.evaluate(`return { title: document.querySelector('.lc-topbar-title')?.innerText || "", tex: Boolean(document.querySelector('.lc-desc .pl-goal .katex')), drills: document.querySelectorAll('.lc-work .proof-order-launch').length, selfCheck: Boolean(document.querySelector('.lc-work [data-action="mark-proof-status"][data-proof-status="understood"]')), sidebar: Boolean(document.querySelector('.sidebar-link.is-active[data-action="open-proofs"]')) };`);
-    check("自評題也是左題右練：題幹、排步驟／填空、自評", /#42/.test(selfPage.title) && selfPage.tex && selfPage.drills >= 2 && selfPage.selfCheck && selfPage.sidebar, selfPage.title.replace(/\s+/g, " "));
+    check("自評題也是左題右練：題幹、排步驟／填空、自評", selfPage.title.replace(/\s+/g, " ").startsWith(`#${entry.auto + 1} `) && selfPage.tex && selfPage.drills >= 2 && selfPage.selfCheck && selfPage.sidebar, selfPage.title.replace(/\s+/g, " "));
     await click('[data-action="mark-proof-status"][data-proof-status="understood"]', 600);
     check("按「看懂」：標題列打勾", await chrome.evaluate(`return Boolean(document.querySelector('.lc-topbar-title .lc-status.is-solved'))`));
     await click('[data-action="open-proofs"]', 800);
