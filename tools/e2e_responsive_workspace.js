@@ -108,8 +108,12 @@ let checked = 0;
     await size(390, 844, true);
     await click('[data-action="open-library"]');
     await chrome.evaluate(`const input=document.querySelector('[data-library-search]'); input.value='no-match-zzzz'; input.dispatchEvent(new Event('input',{bubbles:true})); return true;`);
-    await chrome.sleep(500);
-    assert(await chrome.evaluate(`return !!document.querySelector('.library-empty');`), "Search empty state missing");
+    // 搜尋是 debounce 後 render 的；等空狀態真的出現，不要賭 500ms 在 CI 上夠
+    let emptyState = false;
+    for (const deadline = Date.now() + 5000; !emptyState && Date.now() < deadline; await chrome.sleep(120)) {
+      emptyState = await chrome.evaluate(`return !!document.querySelector('.library-empty');`);
+    }
+    assert(emptyState, "Search empty state missing");
     await snapshot("phone-library-empty");
     await click('[data-action="home"]');
     await click('[data-action="toggle-theme"]');
