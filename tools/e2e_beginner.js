@@ -264,7 +264,22 @@ async function run() {
     await chrome.navigate(server.url + "/index.html");
     check("第一頁就有「我還沒學過微積分」", await click('[data-action="set-onboarding-context"][data-context="newbie"]', 900));
     const course = await evaluate(`return { h2: window.__b.text(".course-index h2"), cards: document.querySelectorAll(".course-card").length, placement: Boolean(document.querySelector('[data-action="start-placement"]')) };`);
-    check("選了直接進課程表（不做定位測驗），九課都在", course.cards === 9 && !course.placement, `${course.cards} 課 · ${course.h2}`);
+    const lessonTotal = await evaluate(`return (window.BUZZ_COURSE || []).length;`);
+    check("選了直接進課程表（不做定位測驗），所有課都在", lessonTotal >= 16 && course.cards === lessonTotal && !course.placement, `${course.cards} / ${lessonTotal} 課 · ${course.h2}`);
+
+    // ── 理論課（第 1 課「函數是什麼」）：沒有練習題、小測全對就算完成、下一課按鈕出現 ──
+    await click('[data-action="open-course-lesson"][data-lesson-id="fn-what-is-a-function"]', 900);
+    const theoryPage = await evaluate(`return { label: window.__b.text("[data-course-practice] .section-label"), practiceButton: Boolean(document.querySelector('[data-action="course-practice"]')), tex: Boolean(document.querySelector("[data-course-worked] .pl-goal .katex")), checks: document.querySelectorAll(".course-check").length };`);
+    check("理論課：沒有練習按鈕、推導題有 TeX、小測至少三題", /沒有練習題/.test(theoryPage.label) && !theoryPage.practiceButton && theoryPage.tex && theoryPage.checks >= 3, JSON.stringify(theoryPage));
+    // 正解不一定在第一個：從課程內容讀每題正解的位置，一題一題點
+    const theoryPicks = await evaluate(`return window.BUZZ_COURSE.find((l) => l.id === "fn-what-is-a-function").checks.map((c) => c.options.findIndex((o) => o.correct));`);
+    for (let ci = 0; ci < theoryPicks.length; ci += 1) await click(`[data-action="course-pick"][data-check="${ci}"][data-option="${theoryPicks[ci]}"]`, 350);
+    const theoryDone = await evaluate(`return { pill: window.__b.text("[data-course-practice] .course-done-pill"), next: window.__b.text('[data-course-practice] [data-action="open-course-lesson"]') };`);
+    check("理論課小測全對：標成完成、出現「下一課」", /小測全對/.test(theoryDone.pill) && /下一課/.test(theoryDone.next), `${theoryDone.pill} · ${theoryDone.next}`);
+    await click('[data-action="open-course"]', 800);
+    check("課程表上第 1 課打勾", await evaluate(`return Boolean(document.querySelector('.course-card.is-done[data-lesson-id="fn-what-is-a-function"]'));`));
+
+    // ── 計算課（第 3 課「極限是什麼」）──
     await click('[data-action="open-course-lesson"][data-lesson-id="c1-limit-meaning"]', 900);
     const lessonPage = await evaluate(`return { concept: document.querySelectorAll(".course-lesson .pl-intro p").length, tex: Boolean(document.querySelector("[data-course-worked] .pl-goal .katex")), steps: document.querySelectorAll(".course-step").length, stepButton: Boolean(document.querySelector('[data-action="course-step"]')), options: document.querySelectorAll(".course-option").length, practice: document.querySelectorAll(".course-practice-item").length };`);
     check("單課：概念有字、示範題有 TeX、步驟先藏著、小測有選項、練習列出 3 題", lessonPage.concept >= 3 && lessonPage.tex && lessonPage.steps === 0 && lessonPage.stepButton && lessonPage.options >= 3 && lessonPage.practice === 3, JSON.stringify(lessonPage));
@@ -288,14 +303,62 @@ async function run() {
       await click('[data-action="next-question"]', 700);
     }
     const results = await evaluate(`return { back: window.__b.text('[data-action="open-course-lesson"]'), next: Boolean([...document.querySelectorAll('[data-action="open-course-lesson"]')][1]) };`);
-    check("結算頁有「回到第 1 課」與「下一課」", /第 1 課/.test(results.back) && results.next, results.back);
+    check("結算頁有「回到第 3 課」與「下一課」", /第 3 課/.test(results.back) && results.next, results.back);
     check("答錯的回饋會說這題是第幾課教的", sawLessonLink);
     await click('[data-action="open-course-lesson"]', 900);
     const after = await evaluate(`return { done: window.__b.text(".course-done-pill"), next: window.__b.text('[data-course-practice] [data-action="open-course-lesson"]') };`);
     check("回到課程：練習標成練過、出現「下一課」", /練過了/.test(after.done) && /下一課/.test(after.next), `${after.done} · ${after.next}`);
     await click('[data-action="home"]', 800);
     const newbieHome = await evaluate(`return { card: window.__b.text(".course-home-card h2"), steps: window.__b.text(".first-steps .first-step.is-current strong") };`);
+    // 第 1 課（理論）與第 3 課做完了，下一個沒完成的是第 2 課
     check("首頁主卡變成「接著上第 2 課」，三步的第一步是上課", /第 2 課/.test(newbieHome.card) && /第 2 課/.test(newbieHome.steps), `${newbieHome.card} · ${newbieHome.steps}`);
+
+    // ── 橋：所有課都完成之後不能直接掉進主線 ──
+    // 把全部課標成完成（不重走），看首頁主卡變畢業關；考完看判詞；再進主線第 1 關看抽到的題是不是都在橋池
+    const OUTSIDE_BRIDGE = `
+      const records = JSON.parse(localStorage.getItem("buzzcalculus.records.v1"));
+      const bad = ["rationalize", "inverse-trig", "world-universities"];
+      const byId = new Map(window.BUZZ_PROBLEMS.map((p) => [p.id, p]));
+      const ids = ((records.history[0] || {}).answers || []).map((a) => a.problemId);
+      return { n: ids.length, outside: ids.filter((id) => { const p = byId.get(id); return !p || p.difficulty !== 1 || (p.tags || []).some((t) => bad.includes(t)); }) };`;
+    await evaluate(`
+      const key = "buzzcalculus.records.v1";
+      const records = JSON.parse(localStorage.getItem(key) || "{}");
+      const now = new Date().toISOString();
+      records.course = Object.fromEntries((window.BUZZ_COURSE || []).map((l) => [l.id, { openedAt: now, checksPassed: true, practiceDone: true, practiceCorrect: 3, practiceTotal: 3, doneAt: now }]));
+      localStorage.setItem(key, JSON.stringify(records));
+      return 1;`);
+    await chrome.navigate(server.url + "/index.html");
+    await chrome.sleep(900);
+    const gradHome = await evaluate(`return { card: window.__b.text(".course-home-card h2"), step: window.__b.text(".first-steps .first-step.is-current strong"), button: Boolean(document.querySelector('.course-home-card [data-action="course-graduation"]')) };`);
+    check("所有課都完成：首頁主卡是畢業關，不是每日訓練", /畢業關/.test(gradHome.card) && /畢業關/.test(gradHome.step) && gradHome.button, `${gradHome.card} · ${gradHome.step}`);
+    await click('[data-action="open-course"]', 800);
+    const gradCard = await evaluate(`return { text: window.__b.text(".course-graduation strong"), locked: Boolean(document.querySelector(".course-graduation.is-locked")) };`);
+    check("課程表底下的畢業關已解鎖", !gradCard.locked && /10 題/.test(gradCard.text), gradCard.text);
+    check("按下開始畢業關", await click('[data-action="course-graduation"]', 1000));
+    const gradQuiz = await evaluate(`return { hud: window.__b.text(".hud-context"), choices: window.__b.choices().length, rank: window.__b.rank() };`);
+    check("畢業關是 R1 選擇題", gradQuiz.choices >= 2 && gradQuiz.rank === 1, JSON.stringify(gradQuiz));
+    // 答對會在 950ms 後自動前進、答錯要按「下一題」：等過 950ms 再看有沒有按鈕
+    for (let i = 0; i < 10; i += 1) {
+      await click('[data-action="choose-answer"]', 1150);
+      await click('[data-action="next-question"]', 400);
+    }
+    const gradResults = await evaluate(`return { verdict: window.__b.text(".verdict"), retry: Boolean(document.querySelector('[data-action="course-graduation"]')), train: Boolean(document.querySelector('[data-action="open-train"]')), course: Boolean(document.querySelector('[data-action="open-course"]')), record: JSON.parse(localStorage.getItem("buzzcalculus.records.v1")).courseGraduation };`);
+    check("畢業關結算：判詞是「畢業了」或「再回去看一眼」，出口指向主線或課程", /畢業了|再回去看一眼/.test(gradResults.verdict) && (gradResults.train || gradResults.course), gradResults.verdict);
+    check("畢業關結果有存（total 10 / attempts 1）", gradResults.record && gradResults.record.total === 10 && gradResults.record.attempts === 1, JSON.stringify(gradResults.record));
+    const gradAnswers = await evaluate(OUTSIDE_BRIDGE);
+    check("畢業關 10 題全在橋池（R1、沒有課裡沒教的技巧）", gradAnswers.n === 10 && !gradAnswers.outside.length, gradAnswers.outside.join(","));
+    // 主線第 1 關：不管畢業與否，頭幾局都只抽橋池
+    await click('[data-action="open-train"]', 700);
+    await click('[data-action="start-path-node"]', 600);
+    check("主線第 1 關開得了", await click('[data-action="start-path-lesson"]', 900));
+    const mainHud = await evaluate(`return window.__b.text(".hud-context");`);
+    for (let i = 0; i < 12; i += 1) {
+      if (!(await click('[data-action="choose-answer"]', 1150))) break;
+      await click('[data-action="next-question"]', 400);
+    }
+    const mainAnswers = await evaluate(OUTSIDE_BRIDGE);
+    check("主線第 1 關（保護期）抽到的題全在橋池", mainAnswers.n > 0 && !mainAnswers.outside.length, `${mainAnswers.n} 題 · 外面的：${mainAnswers.outside.join(",")} · ${mainHud}`);
 
     const errors = await chrome.evaluate(`return (window.__buzzErrors || []).length;`);
     check("沒有未捕捉的例外", !errors, errors ? `${errors} 個` : "");

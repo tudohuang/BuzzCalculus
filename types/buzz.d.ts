@@ -76,6 +76,7 @@ interface BuzzRecords {
   proofLangLessons: Record<string, string>;
   proofs: Record<string, BuzzProofProgress>;
   course: Record<string, BuzzCourseProgress>;
+  courseGraduation: BuzzCourseGraduation | null;
   settings: BuzzSettings;
   streakShields: number;
   topicStats: Record<string, unknown>;
@@ -191,16 +192,29 @@ interface BuzzProofLangApi {
 
 /* ── 從零開始的課程 ───────────────────────────────────────────── */
 
+/**
+ * 計算課：worked.problemId 指向題庫的 R1 題，practice 剛好 3 題。
+ * 理論課：practice 是空陣列，worked 沒有 problemId、用 tex 當推導題目，小測至少 3 題。
+ */
 interface BuzzCourseLesson {
   id: string;
-  unit: "limits" | "derivatives" | "integrals";
+  unit: "functions" | "limits" | "derivatives" | "integrals";
   title: string;
   minutes: number;
   goal: string;
   concept: { text: string; tex?: string }[];
-  worked: { problemId: string; steps: { text: string; tex?: string }[] };
+  worked: { problemId?: string; tex?: string; steps: { text: string; tex?: string }[] };
   checks: { ask: string; options: { label: string; correct?: boolean; why?: string }[] }[];
   practice: string[];
+}
+
+/** 畢業關：passed 一旦 true 就不會退回；at 每考一次更新（保護期從最近一次算） */
+interface BuzzCourseGraduation {
+  at: string;
+  correct: number;
+  total: number;
+  passed: boolean;
+  attempts: number;
 }
 
 interface BuzzCourseProgress {
