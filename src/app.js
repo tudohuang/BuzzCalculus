@@ -4114,7 +4114,6 @@
           "只送「哪個功能被用了幾次」這種計數。<strong>不會</strong>送你的作答內容、答案或題目。",
           onOffControl("set-analytics", analyticsEnabled(), "使用分析")
         )}
-        <p class="panel-note">詳細寫在<a href="privacy.html" target="_blank" rel="noopener">隱私政策</a>裡 —— 而且政策裡的每一條承諾都有自動化測試在看著。</p>
       </section>
     `;
   }
@@ -4145,16 +4144,13 @@
           </div>
           <span class="settings-version">${APP_VERSION} · ${BUILD_DATE}</span>
         </div>
+        ${
+          // 2026-09-16 使用者：更新紀錄／隱私政策／服務條款／給家教助教的文件先關掉。
+          // 隱私與條款的檔案留著（放 GA 得有政策頁可指），只是產品裡不再連；更新紀錄與家教文件連部署都拿掉。
+          ""
+        }
         <p class="privacy-links">
           <a href="about.html" target="_blank" rel="noopener">關於</a>
-          <span aria-hidden="true">·</span>
-          <a href="changelog.html" target="_blank" rel="noopener">更新紀錄</a>
-          <span aria-hidden="true">·</span>
-          <a href="privacy.html" target="_blank" rel="noopener">隱私政策</a>
-          <span aria-hidden="true">·</span>
-          <a href="terms.html" target="_blank" rel="noopener">服務條款</a>
-          <span aria-hidden="true">·</span>
-          <a href="tutor.html" target="_blank" rel="noopener">給家教與助教</a>
         </p>
       </section>
     `;

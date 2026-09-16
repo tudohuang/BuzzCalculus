@@ -14,7 +14,7 @@ const sw = fs.readFileSync(path.join(root, "sw.js"), "utf8");
 // 會永遠停在「載入中…」。這跟下面那段註解記錄的
 // 「privacy/terms/about/changelog 四頁通過了所有驗證卻沒被部署」是同一類錯：
 // 檢查的範圍比實際出貨的範圍小。
-const deployedPages = ["index.html", "workbook.html", "privacy.html", "terms.html", "about.html", "changelog.html"]
+const deployedPages = ["index.html", "workbook.html", "privacy.html", "terms.html", "about.html"]
   .filter((name) => fs.existsSync(path.join(root, name)));
 const pageSources = deployedPages.map((name) => ({ name, text: fs.readFileSync(path.join(root, name), "utf8") }));
 
@@ -64,7 +64,7 @@ fs.readdirSync(root)
 // 實際踩過：刪除確認的文案寫成 `**這個動作無法復原。**`，
 // 但那是 HTML 模板不是 markdown，使用者看到的就是一排星號。
 // 這種錯誤不會讓任何東西壞掉，只會讓產品看起來很業餘 —— 所以只能靠 lint 抓。
-const uiSources = ["src/app.js", "index.html", "privacy.html", "terms.html", "about.html", "changelog.html"];
+const uiSources = ["src/app.js", "index.html", "privacy.html", "terms.html", "about.html"];
 uiSources.forEach((file) => {
   const source = fs.readFileSync(path.join(root, file), "utf8");
   source.split("\n").forEach((line, index) => {

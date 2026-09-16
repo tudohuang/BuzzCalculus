@@ -164,7 +164,6 @@ async function run() {
       ["服務條款", "terms.html", false],
       ["隱私政策", "privacy.html", false],
       ["使用手冊", "guide.html", false],
-      ["更新紀錄", "changelog.html", false]
     ];
 
     for (const [label, file, appReady] of staticPages) {

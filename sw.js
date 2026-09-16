@@ -3,9 +3,7 @@ const CACHE_PREFIX = "buzzcalculus-";
 const APP_SHELL = [
   "./privacy.html",
   "./about.html",
-  "./changelog.html",
   "./terms.html",
-  "./tutor.html",
   "./guide.html",
   "./",
   "./index.html",

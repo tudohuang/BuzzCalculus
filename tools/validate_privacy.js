@@ -31,8 +31,7 @@ const PAGES = [
   ["privacy.html", "隱私政策", ["localStorage", "IndexedDB", "清除資料", "Google Analytics", "回報"]],
   ["terms.html", "服務條款", ["原創", "不保證", "匯出"]],
   // 匿名的工具沒有人推薦，也沒有人敢付錢。關於頁不是裝飾，是「有人負責」的證據。
-  ["about.html", "關於", ["tudohuang", "驗算", "原創"]],
-  ["changelog.html", "更新紀錄", ["v1.0.0"]]
+  ["about.html", "關於", ["tudohuang", "驗算", "原創"]]
 ];
 
 PAGES.forEach(([file, label, mustMention]) => {
@@ -58,13 +57,17 @@ if (!terms.includes("privacy.html")) fail("服務條款沒有連到隱私政策"
 
 /* ── 2. 產品裡連得到 ─────────────────────────────────────── */
 
+// 2026-09-16：更新紀錄／隱私政策／服務條款／家教文件的入口先關掉（使用者決定）。
+// privacy / terms 的檔案與快取留著（放 GA 得有政策頁可指），產品裡只連「關於」；
+// changelog / tutor 連部署都拿掉，app 裡不該再連到。
 const app = read("src/app.js");
-["privacy.html", "terms.html", "about.html", "changelog.html"].forEach((page) => {
-  if (!app.includes(`href="${page}"`)) fail(`設定頁沒有連到 ${page}`);
+if (!app.includes('href="about.html"')) fail("設定頁沒有連到 about.html");
+["changelog.html", "tutor.html"].forEach((page) => {
+  if (app.includes(`href="${page}"`)) fail(`${page} 已經關掉了，app 裡不該再連到它`);
 });
 
 const sw = read("sw.js");
-["./privacy.html", "./terms.html", "./about.html", "./changelog.html"].forEach((entry) => {
+["./privacy.html", "./terms.html", "./about.html"].forEach((entry) => {
   if (!sw.includes(entry)) fail(`sw.js 沒有快取 ${entry} —— 離線時會開不起來`);
 });
 
