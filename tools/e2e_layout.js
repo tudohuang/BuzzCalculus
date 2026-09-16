@@ -97,7 +97,7 @@ async function onboard(chrome, serverUrl) {
     for (let i = 0; i < 4; i += 1) {
       const b = [...document.querySelectorAll("button")].find((x) => /知道了|關閉/.test(x.textContent || ""));
       if (!b) break;
-      b.click(); await new Promise((r) => setTimeout(r, 200));
+      b.click(); await new Promise((r) => setTimeout(r, 200 * (window.__slow || 1)));
     }
     return 1;
   `);
@@ -132,7 +132,7 @@ async function run() {
     await chrome.evaluate(`
       const go = [...document.querySelectorAll("button")].find((b) => /^\\s*開始/.test((b.textContent || "").trim()));
       if (go) go.click();
-      await new Promise((r) => setTimeout(r, 1400));
+      await new Promise((r) => setTimeout(r, 1400 * (window.__slow || 1)));
       const m = [...document.querySelectorAll("button")].find((x) => /知道了/.test(x.textContent || ""));
       if (m) m.click();
       return 1;

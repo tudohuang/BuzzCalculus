@@ -322,7 +322,7 @@ BuzzPhysics 已建立更好的做法：每題帶 `verify` 表達式，CI 獨立�
 | `user-submitted` | 社群投稿 | 作者名 | 依投稿聲明 |
 
 **硬規則**：`inspired` 的題目在任何地方都不得出現「Putnam 第 N 題」「MIT 期中考」這種
-會被誤認為官方原題的字樣。文案模板固定為「Putnam 風格」「名校風格」。
+會被誤認為官方原題的字樣。文案模板固定為「競賽風格」「名校風格」（2026-09-16 起產品內不出現 Putnam 字樣）。
 
 `tools/validate_origin.js`（CI）：
 

@@ -872,7 +872,7 @@
         ? [
           ["直接挑戰一局", "R5–R6 的難題，倒數計時；先知道自己在哪", "open-train"],
           ["看哪裡掉分", "不是「不會」就是「來不及」——數據頁分得出來", "open-insights"],
-          ["證明訓練與國際難題", "白話證明的高手路線、Putnam 風格、經典解析", "open-proofs"]
+          ["證明訓練與國際難題", "白話證明的高手路線、競賽風格、經典解析", "open-proofs"]
         ]
         : [
           ["先練一份 8 題", "不倒數、不計分，看懂題目在問什麼", "open-train"],
@@ -957,7 +957,9 @@
     const GRADUATION_PASS = 8;
     const PROTECTED_SESSIONS_AFTER = 3;
 
-    const inBridge = (p) => Boolean(p) && p.difficulty === 1 && BRIDGE_TOPICS.includes(p.topic) && p.answerKind !== "text"
+    // 用校準後的 rank（沒有才退回 difficulty）：模板題 difficulty 寫 1、瀏覽器端校準完 rank 是 2，
+    // 只看 difficulty 會把 R2 漏進畢業關（E2E 抓到 tmpl-int-linear-004 的 chip 是「基礎 R2/6」）
+    const inBridge = (p) => Boolean(p) && Number(p.rank || p.difficulty) === 1 && BRIDGE_TOPICS.includes(p.topic) && p.answerKind !== "text"
       && !(p.tags || []).some((tag) => UNCOVERED_TAGS.includes(tag));
     const bridgePool = (all) => (all || problems()).filter(inBridge);
 

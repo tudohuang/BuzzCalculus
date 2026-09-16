@@ -27,19 +27,19 @@ function check(name, ok, detail) {
 // 用題庫搜尋開一局只含目標題的練習。
 const OPEN = (keyword) => `
   const c = (n) => { const h=[...document.querySelectorAll("button,a,[data-action]")].find(x=>(x.innerText||"").includes(n)); if(h) h.click(); return !!h; };
-  c("訓練"); await new Promise(r=>setTimeout(r,700));
+  c("訓練"); await new Promise(r=>setTimeout(r, 700 * (window.__slow || 1)));
   const lib=document.querySelector('[data-action="open-library"]');
   if(!lib) return { ok:false, why:"找不到題庫" };
-  lib.click(); await new Promise(r=>setTimeout(r,900));
+  lib.click(); await new Promise(r=>setTimeout(r, 900 * (window.__slow || 1)));
   const s=document.querySelector("[data-library-search]");
   if(!s) return { ok:false, why:"沒有搜尋框" };
   s.value=${JSON.stringify(keyword)}; s.dispatchEvent(new Event("input",{bubbles:true}));
-  await new Promise(r=>setTimeout(r,700));
+  await new Promise(r=>setTimeout(r, 700 * (window.__slow || 1)));
   const go=document.querySelector('[data-action="start-library-filter"]');
   if(!go || go.disabled) return { ok:false, why:"「練目前篩選」不能按" };
-  go.click(); await new Promise(r=>setTimeout(r,1200));
+  go.click(); await new Promise(r=>setTimeout(r, 1200 * (window.__slow || 1)));
   const ack=[...document.querySelectorAll("button")].find(b=>b.textContent.includes("知道了"));
-  if(ack){ ack.click(); await new Promise(r=>setTimeout(r,400)); }
+  if(ack){ ack.click(); await new Promise(r=>setTimeout(r, 400 * (window.__slow || 1))); }
 `;
 
 // 在 svg 的數學座標 (x,y) 上派一個真的 pointer 事件。
@@ -89,14 +89,18 @@ async function run() {
       const targets = String(problem.answer).split(",").map(Number);
       const before = svg.querySelectorAll("circle").length;
       targets.forEach((x) => fire(svg, "click", x, 0));
-      await new Promise(r=>setTimeout(r,500));
+      await new Promise(r=>setTimeout(r, 500 * (window.__slow || 1)));
       const svg2 = document.querySelector('svg[data-graph-interactive="tap"]');
       const marks = svg2 ? svg2.querySelectorAll("circle").length : 0;
       const submit = document.querySelector('[data-action="submit-graphtap"]');
       const enabled = Boolean(submit) && !submit.disabled;
       if (submit) submit.click();
-      await new Promise(r=>setTimeout(r,600));
-      const text = document.body.innerText;
+      // 答對的回饋只停 950ms 就自動前進：不能睡固定時間再讀，要一出現就抓
+      let text = "";
+      for (const end = Date.now() + 4000; Date.now() < end; await new Promise(r=>setTimeout(r, 60))) {
+        text = document.body.innerText;
+        if (/位置全對|沒點準/.test(text)) break;
+      }
       return { ok:true, before, marks, enabled, targets: targets.length,
                correct: /位置全對/.test(text), feedback: (text.match(/位置全對。|沒點準[^\\n]*/)||[""])[0] };
     `);
@@ -127,7 +131,7 @@ async function run() {
       fire(svg, "pointerdown", px + dx, py + answer * dx);
       fire(svg, "pointermove", px + dx, py + answer * dx);
       fire(svg, "pointerup", px + dx, py + answer * dx);
-      await new Promise(r=>setTimeout(r,500));
+      await new Promise(r=>setTimeout(r, 500 * (window.__slow || 1)));
       const readoutAfter = (document.querySelector("[data-slope-readout]")||{}).textContent;
       // 放手之後會整頁重繪，原本那個 svg 已經脫離文件 ——
       // detached 元素的 computed style 是空字串，要重新查一次。
@@ -135,8 +139,13 @@ async function run() {
       const touchAction = getComputedStyle(liveSvg).getPropertyValue("touch-action");
       const submit = document.querySelector('[data-action="submit-graphslope"]');
       if (submit) submit.click();
-      await new Promise(r=>setTimeout(r,600));
-      const text = document.body.innerText;
+      // 同上：答對 950ms 後自動前進，回饋要一出現就抓
+      let text = "";
+      for (const end = Date.now() + 4000; Date.now() < end; await new Promise(r=>setTimeout(r, 60))) {
+        text = document.body.innerText;
+        // 「斜率 -1.00」是拖動時的讀數，不是回饋；等回饋卡本身出現
+        if (document.querySelector(".feedback") || /的容差內/.test(text)) break;
+      }
       return { ok:true, readoutBefore, readoutAfter, touchAction, id: problem.id, answer,
                correct: /的容差內/.test(text), feedback: (text.match(/斜率 [^\\n]*/)||[""])[0] };
     `);

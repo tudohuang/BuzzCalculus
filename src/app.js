@@ -122,6 +122,8 @@
     integral_bee: {
       label: "Integral Bee",
       bucket: "challenge",
+      hidden: true, // 2026-09-16 挑戰分頁收斂成四種（進階／階梯／Boss 連戰／生存）；定義留著給舊紀錄
+
       note: "積分速度訓練 12 題",
       count: 12,
       topicLocked: false,
@@ -142,6 +144,7 @@
     accuracy: {
       label: "正確率",
       bucket: "challenge",
+      hidden: true,
       note: "不限時，錯題重罰",
       count: 12,
       topicLocked: false,
@@ -163,6 +166,7 @@
     pressure: {
       label: "壓力訓練",
       bucket: "challenge",
+      hidden: true,
       note: "計時逐題縮短，練「會但來不及」",
       count: 10,
       topicLocked: false,
@@ -835,6 +839,7 @@
     mark_proof_status: "自評證明理解程度",
     mark_proof_blocker: "標記證明卡在哪",
     // 資料
+    share_card: "分享成就卡（只記從哪裡按、等級與連勝天數）",
     export_records: "匯出紀錄",
     import_records: "匯入紀錄（含是否真的合併進新資料）",
     calibration_export: "匯出難度校準包（去識別化，opt-in）",
@@ -1156,7 +1161,8 @@
     // anime.js 掛掉、擴充套件擋住、分頁被丟棄再還原，任何一種都會變白畫面。
     //
     // 所以無論如何，時間到就把 inline style 清掉。動畫正常跑完的話這是 no-op。
-    const fuse = (nodes) => {
+    // ms 要蓋過該組動畫的 stagger 總長，不然保險絲會把還在排隊的元素硬拉出來。
+    const fuse = (nodes, ms = 1200) => {
       if (!nodes || !nodes.length) return;
       window.setTimeout(() => {
         Array.prototype.forEach.call(nodes, (node) => {
@@ -1164,8 +1170,19 @@
           if (Number(node.style.opacity) === 0 || node.style.opacity === "0") node.style.opacity = "";
           if (node.style.transform) node.style.transform = "";
         });
-      }, 1200);
+      }, ms);
     };
+
+    // 結算的彩帶：十顆 <i> 用 CSS 動畫飛出去、停在 opacity:0（forwards）。飛完就把整個
+    // 容器拿掉——留著是十個看不見但佔位的節點，慢機器上 E2E 抓到它們當「內容被藏住」，
+    // 讀屏軟體與 DOM 也乾淨一點。animationend 是準的；保險用 3 秒的 timeout。
+    const burst = root.querySelector(".verdict-burst");
+    if (burst) {
+      const remove = () => { if (burst.parentNode) burst.parentNode.removeChild(burst); };
+      const last = burst.lastElementChild;
+      if (last) last.addEventListener("animationend", remove, { once: true });
+      window.setTimeout(remove, 3000);
+    }
 
     const entrants = root.querySelectorAll("[data-enter]");
     if (entrants.length && !reduce && A) {
@@ -1187,6 +1204,9 @@
     if (statChips.length && !reduce && A) {
       A.set(statChips, { translateY: 14, opacity: 0 });
       A({ targets: statChips, translateY: [14, 0], opacity: [0, 1], duration: 420, delay: A.stagger(110, { start: 240 }), easing: "easeOutBack" });
+      // 這組原本沒有保險絲：慢機器（CI 的 runner、低階手機）上 rAF 被主執行緒的
+      // KaTeX 排版塞住，結算的統計籌片就整排停在 opacity:0，十秒都不會出現。
+      fuse(statChips, 240 + 110 * statChips.length + 420 + 300);
     }
 
     // 剛解鎖的關卡：彈跳進場（連接線動畫已隨蛇形地圖移除，
@@ -1195,6 +1215,7 @@
     if (unlockedStep && A && !reduce) {
       A.set(unlockedStep, { scale: 0.4, opacity: 0.2 });
       A({ targets: unlockedStep, scale: [0.4, 1], opacity: [0.2, 1], duration: 700, easing: "spring(1, 70, 10, 0)" });
+      fuse([unlockedStep], 1500);
     }
   }
 
@@ -1266,7 +1287,8 @@
   }
 
   function renderPageHeading(eyebrow, title, description, actions = "") {
-    return `<header class="workspace-heading"><div><p class="section-label">${escapeHtml(eyebrow)}</p><h1>${escapeHtml(title)}</h1><p class="workspace-description">${escapeHtml(description)}</p></div>${actions ? `<div class="heading-actions">${actions}</div>` : ""}</header>`;
+    // 副標只在真的有話要說時才印（2026-09-16 把「從一份適合你的練習開始…」這類口號全拿掉了）
+    return `<header class="workspace-heading"><div><p class="section-label">${escapeHtml(eyebrow)}</p><h1>${escapeHtml(title)}</h1>${description ? `<p class="workspace-description">${escapeHtml(description)}</p>` : ""}</div>${actions ? `<div class="heading-actions">${actions}</div>` : ""}</header>`;
   }
 
   function renderScreen() {
@@ -1341,7 +1363,7 @@
     // 但這裡其實有 1,459 題。窄螢幕維持單欄，順序不變。
     return `
       <main class="screen home-screen" id="buzz-main">
-        ${renderPageHeading("TODAY / 今日概覽", `${homeGreeting().split("，")[0]}，把進步留給今天。`, "從一份適合你的練習開始，一次練熟一個技巧。", `<span class="workspace-date">${icon("calendar")}${escapeHtml(new Date().toLocaleDateString("zh-TW", { month: "long", day: "numeric", weekday: "short" }))}</span>`)}
+        ${renderPageHeading("TODAY / 今日概覽", `${homeGreeting().split("，")[0]}，把進步留給今天。`, "", `<span class="workspace-date">${icon("calendar")}${escapeHtml(new Date().toLocaleDateString("zh-TW", { month: "long", day: "numeric", weekday: "short" }))}</span>`)}
         ${renderHomeOverview(records, mission)}
         <div class="home-lead">
           ${renderResumeCard()}
@@ -1374,12 +1396,12 @@
     const measured = profile ? profile.coverage.skillsMeasured : 0;
     const due = srsDueSummary(records).due;
     const stats = [
-      ["今日目標", `${mission.completed}<small> / ${mission.target} 題</small>`, mission.completed >= mission.target ? "今天的練習已完成" : `再練 ${mission.target - mission.completed} 題，達成今天的目標`, "target", "home"],
-      ["累計作答", `${total.toLocaleString()}<small> 題</small>`, total ? "每一次練習都算數" : "從第一題開始累積", "activity", "open-history"],
-      ["已測量技巧", `${measured}<small> 個</small>`, measured ? "查看技巧熟練度與速度" : "練習後建立你的能力輪廓", "layers", "open-insights"],
-      ["待複習錯題", `${due}<small> 題</small>`, due ? "現在複習，讓記憶更牢固" : "目前沒有到期的錯題", "refresh", "open-mistakes"]
+      ["今日目標", `${mission.completed}<small> / ${mission.target} 題</small>`, "", "target", "home"],
+      ["累計作答", `${total.toLocaleString()}<small> 題</small>`, "", "activity", "open-history"],
+      ["已測量技巧", `${measured}<small> 個</small>`, "", "layers", "open-insights"],
+      ["待複習錯題", `${due}<small> 題</small>`, "", "refresh", "open-mistakes"]
     ];
-    return `<section class="overview-grid" aria-label="學習概覽">${stats.map(([label, value, note, name, action]) => `<button class="overview-stat" data-action="${action}"><span class="overview-label">${label}${icon(name)}</span><strong class="overview-value">${value}</strong><span class="overview-note">${note}</span></button>`).join("")}</section>`;
+    return `<section class="overview-grid" aria-label="學習概覽">${stats.map(([label, value, note, name, action]) => `<button class="overview-stat" data-action="${action}"><span class="overview-label">${label}${icon(name)}</span><strong class="overview-value">${value}</strong>${note ? `<span class="overview-note">${note}</span>` : ""}</button>`).join("")}</section>`;
   }
 
   function renderHomeWeek(records, mission) {
@@ -2068,7 +2090,7 @@
 
     return `
       <main class="screen train-screen">
-        ${renderPageHeading("TRAINING / 訓練中心", "每個技巧，都能練得更熟。", "跟著主線打穩基礎，或選擇符合當下目標的訓練。")}
+        ${renderPageHeading("TRAINING / 訓練中心", "每個技巧，都能練得更熟。", "")}
         <div class="segmented bucket-tabs" role="group" aria-label="訓練分類">
           ${TRAIN_BUCKETS.map(
             (item) => `
@@ -2232,7 +2254,6 @@
             <h3>20 題 / 45 分鐘</h3>
           </div>
         </div>
-        <p class="panel-note">自己輸入答案、整份倒數、不給提示。時間到直接交卷 —— 這是全站唯一整份計時的地方。</p>
         <div class="action-row">
           <button class="button home-primary" data-action="start-mode" data-mode-key="exam">${icon("file-pen-line")}開始</button>
         </div>
@@ -2276,7 +2297,6 @@
             <h3>高難度，而且會失敗</h3>
           </div>
         </div>
-        <p class="panel-note">每一種都有失敗條件。進階、階梯、Boss 連戰、生存、魔王不受設定頁的難度上限限制；正確率、壓力、Integral Bee 照你的設定抽。</p>
         <div class="challenge-mode-grid">
           ${modes.map((key) => {
             const meta = CHALLENGE_MODE_META[key] || { rule: modeDescription(key), tagline: "" };
@@ -2307,7 +2327,6 @@
         <!-- 證明訓練原本只藏在「更多練習」摺疊區的頁尾連結裡 ——
              跟作答形式一樣的病：功能寫好了，但要挖三層才找得到。
              它是訓練內容，就放在挑戰分頁上當一張看得到的卡。 -->
-        <p class="panel-note">${proofs.length} 條經典證明：步驟重排、填空決策點、讀完參考證明再自評 —— 資格考的證明題從這裡練。</p>
         <div class="action-row">
           <button class="button secondary" data-action="open-proofs">${icon("file-pen-line")}進證明訓練</button>
         </div>
@@ -2319,7 +2338,6 @@
             <h3>同一份題，比對題數、再比時間</h3>
           </div>
         </div>
-        <p class="panel-note">出一份 10 題戰帖打完，把戰帖碼傳給朋友；對方貼碼應戰，結算頁直接分勝負。純文字碼，不用帳號不用網路。</p>
         <div class="action-row">
           <button class="button" data-action="duel-create">${icon("zap")}出戰帖（10 題）</button>
         </div>
@@ -2486,7 +2504,6 @@
             <h3>同型題，你變快了</h3>
           </div>
         </div>
-        <p class="panel-note">同一個技巧、計時答對的題，早期 vs 近期的中位耗時。</p>
         <div class="speed-rows">
           ${rows
             .map(
@@ -2510,7 +2527,7 @@
     if (!profile) {
       return `
         <main class="screen insights-screen">
-          ${renderPageHeading("INSIGHTS / 學習數據", "看見你的每一點進步。", "從正確率、速度與技巧掌握度，找到下一步的練習方向。")}
+          ${renderPageHeading("INSIGHTS / 學習數據", "看見你的每一點進步。", "")}
           <section class="study-card">
             <p class="section-label">數據</p>
             <h3>能力模型未載入</h3>
@@ -2523,7 +2540,7 @@
     if (!profile.coverage.attempts) {
       return `
         <main class="screen insights-screen">
-          ${renderPageHeading("INSIGHTS / 學習數據", "看見你的每一點進步。", "從正確率、速度與技巧掌握度，找到下一步的練習方向。")}
+          ${renderPageHeading("INSIGHTS / 學習數據", "看見你的每一點進步。", "")}
           <section class="study-card workspace-empty">
             <span class="empty-symbol">${icon("activity")}</span>
             <p class="section-label">數據</p>
@@ -2539,7 +2556,7 @@
 
     return `
       <main class="screen insights-screen">
-        ${renderPageHeading("INSIGHTS / 學習數據", "看見你的每一點進步。", "從正確率、速度與技巧掌握度，找到下一步的練習方向。", `<button class="button secondary" data-action="open-history">${icon("history")}練習紀錄</button>`)}
+        ${renderPageHeading("INSIGHTS / 學習數據", "看見你的每一點進步。", "", `<button class="button secondary" data-action="open-history">${icon("history")}練習紀錄</button>`)}
         ${renderInsightsSummary(profile)}
         ${renderWeeklyReport(records)}
         ${renderSpeedProgress(records)}
@@ -2730,7 +2747,6 @@
         <section class="study-card">
           <p class="section-label">技巧</p>
           <h3>還沒有技巧測得準</h3>
-          <p class="panel-note">同一個技巧累積約 12 次作答之後才會給分數 —— 樣本不夠時寧可留白，也不給不準的數字。</p>
         </section>
       `;
     }
@@ -2837,7 +2853,6 @@
             ? `<p class="panel-note">算錯佔了 ${slipRate}%。這種情況該練的是低難度高計算量的題目來穩定代數，而不是往上加難度。</p>`
             : ""
         }
-        ${renderCauseAutoNote()}
         <div class="action-row">
           <!-- 錯題本原本只有結算頁與 訓練→弱點 兩個入口 —— 想「看」錯題
                （不是練）的人在數據頁最有可能，這裡給一扇門。 -->
@@ -2847,24 +2862,6 @@
     `;
   }
 
-  // 系統推測的錯因也算進統計，但必須講清楚有多少是推測的 ——
-  // 不講的話這張圖看起來像是使用者親自標的，那是在騙人。
-  function renderCauseAutoNote() {
-    const records = loadRecords();
-    let auto = 0;
-    let total = 0;
-    (records.history || []).forEach((session) => {
-      (session && session.answers ? session.answers : []).forEach((answer) => {
-        if (!answer || answer.correct || !answer.errorTag) return;
-        total += 1;
-        if (answer.causeAuto) auto += 1;
-      });
-    });
-    if (!total || !auto) return "";
-    // 上面的長條按「題 × 技巧」計次（一題練到兩個技巧就算兩次），
-    // 這行按「題」計 —— 兩個數字本來就不該相等，講清楚才不像自相矛盾。
-    return `<p class="panel-note">錯因次數按技巧計（一題可含多個技巧）；其中 ${auto}/${total} 題的錯因是系統依作答時間、提示層數與草稿推測的，你可以在結算頁改。</p>`;
-  }
 
   // 信心校準的結果。沒有資料時明白說「還沒問到夠多」，而不是顯示 0。
   // 信心校準面板（「自信但常錯」）已隨信心自評一起移除 ——
@@ -3250,6 +3247,7 @@
             const info = xpLevelInfo(loadRecords().xp);
             return `<span class="level-chip" title="再 ${info.span - info.into} XP 升級">${icon("sparkles")}Lv.${info.level} · ${info.into}/${info.span} XP</span>`;
           })()}
+          <button class="button ghost share-card-button" type="button" data-action="share-achievement-card" data-from="home">${icon("share-2")}分享成就卡</button>
         </div>
         <div class="mini-heatmap" aria-label="最近 7 天練習量">${cells.join("")}</div>
       </div>
@@ -3560,7 +3558,6 @@
           <summary>
             <span>
               <strong>更多練習</strong>
-              <small>暖身、大考、模擬考、競賽魔王、自訂一局</small>
             </span>
             ${icon("chevron-down")}
           </summary>
@@ -4095,7 +4092,6 @@
             <h3>十分鐘搞懂全部功能</h3>
           </div>
         </div>
-        <p class="panel-note">模式怎麼挑、答案欄怎麼打數學、錯題本與考前衝刺怎麼用 —— 一頁講完，可以印。</p>
         <div class="action-row">
           <a class="button secondary" href="guide.html" target="_blank" rel="noopener">${icon("book")}打開使用手冊</a>
         </div>
@@ -4113,7 +4109,6 @@
           </div>
           <span class="settings-version">${APP_VERSION} · ${BUILD_DATE}</span>
         </div>
-        <p class="panel-note">整站零後端、沒有帳號系統，原始碼公開。誰做的、答案為什麼可信，寫在「關於」裡。</p>
         <p class="privacy-links">
           <a href="about.html" target="_blank" rel="noopener">關於</a>
           <span aria-hidden="true">·</span>
@@ -4142,7 +4137,6 @@
             <h3>匯出一份作答統計</h3>
           </div>
         </div>
-        <p class="panel-note">目前的難度是作者估的，實測下來偏硬。你的統計可以幫忙修正。</p>
         <p class="panel-note calibration-contents">
           檔案裡只有 <strong>題號、難度、對錯次數、中位秒數</strong>，
           以及你的整體程度分層（高／中／低）。
@@ -4187,7 +4181,6 @@
             <div>
               <p class="section-label">PREFERENCES / 偏好與設定</p>
               <h2>打造適合你的練習環境。</h2>
-              <p>調整練習目標、介面與資料偏好。換裝置前，記得先匯出紀錄。</p>
             </div>
             <button class="button secondary" data-action="home">${icon("home")}回首頁</button>
           </div>
@@ -4213,7 +4206,6 @@
             <h3>${plan && plan.examAt ? `${escapeHtml(plan.label || "考試")} · ${dateValue}` : "設一個考試日期"}</h3>
           </div>
         </div>
-        <p class="panel-note">設定後首頁出現倒數卡，每日訓練自動偏向考試範圍的缺口。</p>
         <div class="exam-plan-form">
           <label>名稱 <input id="exam-plan-label" type="text" maxlength="12" value="${escapeAttr(plan ? plan.label || "" : "")}" placeholder="期中考"></label>
           <label>日期 <input id="exam-plan-date" type="date" value="${escapeAttr(dateValue)}"></label>
@@ -4290,7 +4282,7 @@
     const bossCount = difficultyScopedCount(6, "all", "boss_challenge");
     return `
       <details class="library-discovery" data-keep="library-discovery">
-      <summary>${icon("lightbulb")}<span>還沒決定練什麼？<small>探索技巧辨識、弱點與進階題包</small></span>${icon("chevron-down")}</summary>
+      <summary>${icon("lightbulb")}<span>還沒決定練什麼？</span>${icon("chevron-down")}</summary>
       <div class="library-board">
         <button class="board-card" data-action="train-pack" data-pack="technique_recognition">
           <span class="board-tag">今日推薦</span>
@@ -4401,7 +4393,6 @@
                     ${selectedLibraryTopic !== "all" ? `<span class="chip">主題：${escapeHtml(TOPICS[selectedLibraryTopic]?.label || selectedLibraryTopic)}</span>` : ""}
                     ${selectedLibraryFilter !== "all" ? `<span class="chip">狀態篩選</span>` : ""}
                   </div>
-                  <p class="panel-note">搜不到中文的話，多數技巧收錄了別名（泰勒、分部、換元…），也可以試英文技巧名（Taylor、IBP）或題號（lim-001）。</p>
                   <button class="button secondary" data-action="library-clear-filters">${icon("x")}清除全部篩選</button>
                 </div>`
               : ""
@@ -4633,7 +4624,6 @@
         <div class="action-row">
           <button class="button" data-action="creator-save">${icon("check")}驗證並${creatorEditingId ? "更新" : "加入"}</button>
         </div>
-        <p class="panel-note">儲存前系統會確認：LaTeX 讀得懂，而且判分器能把你的參考答案判成「正確」。</p>
       </section>
     `;
   }
@@ -4648,7 +4638,6 @@
             <h3>用連結交換題包</h3>
           </div>
         </div>
-        <p class="panel-note">分享連結會帶目前啟用中的 ${shareable.length} 題。朋友打開連結就會看到匯入預覽，確認後才進他的題庫。</p>
         <div class="action-row">
           <button class="button secondary" data-action="creator-copy-link" ${shareable.length ? "" : "disabled"}>${icon("upload")}複製分享連結</button>
           <button class="button ghost" data-action="creator-copy-code" ${shareable.length ? "" : "disabled"}>複製題包代碼</button>
@@ -6694,7 +6683,9 @@
     const boardTool = quiz.boardTool || "pen";
     const fullscreen = Boolean(quiz.boardFullscreen);
     const strokes = cloneBoardStrokes(problem.id);
-    const boardOpen = fullscreen || Boolean(quiz.boardOpen) || strokes.length > 0;
+    // 有筆畫就自動攤開（重做錯題時上次的草稿要看得到），但使用者親手收起來的那一題
+    // 不要再彈回來 —— 原本是「有筆畫永遠攤開」，寫了兩筆之後就關不起來了（實測）。
+    const boardOpen = fullscreen || Boolean(quiz.boardOpen) || (strokes.length > 0 && quiz.boardDismissedFor !== problem.id);
     const previewTex = answerToTex(quiz.draft, problem) || "\\text{尚未輸入}";
     const answerWorkspace = renderWebWorkAnswerWorkspace(problem, disabled, previewTex, fullscreen);
     const scratchboard = renderScratchboard(problem, disabled, boardTool, fullscreen, boardOpen, strokes.length);
@@ -7587,6 +7578,7 @@
           ${primaryAction}
           ${pathResult.cleared ? `<button class="button secondary" data-action="start-path-lesson" data-node-id="${escapeAttr(pathResult.node.id)}">${icon("repeat")}再練一次</button>` : ""}
           ${pathResult.nextNode || !pathResult.cleared ? `<button class="button ghost" data-action="home">${icon("home")}回主線</button>` : ""}
+          ${pathResult.cleared ? `<button class="button ghost" data-action="share-achievement-card" data-from="path">${icon("share-2")}分享成就卡</button>` : ""}
         </div>
       `;
     }
@@ -7595,6 +7587,7 @@
         <button class="button" data-action="restart">${icon("refresh")}再打一局</button>
         <button class="button secondary" data-action="home">${icon("home")}回首頁</button>
         <button class="button secondary" data-action="open-mistakes">${icon("book")}錯題本</button>
+        <button class="button ghost" data-action="share-achievement-card" data-from="results">${icon("share-2")}分享成就卡</button>
       </div>
     `;
   }
@@ -7607,7 +7600,6 @@
           <div>
             <p class="section-label">考試分析</p>
             <h3>大考戰況分析</h3>
-            <p class="panel-note">依本份試卷統計速度、錯誤熱區與難度斷點；未作答會算錯，但不列入平均秒數。</p>
           </div>
         </div>
         <div class="exam-insight-grid">
@@ -8422,6 +8414,7 @@
     if (action === "duel-accept") acceptDuelCode();
     if (action === "copy-duel-code") copyDuelCode();
     if (action === "download-weekly-report") downloadWeeklyReport();
+    if (action === "share-achievement-card") shareAchievementCard(actionNode.dataset.from || "");
     if (action === "check-steps") runStepCheck();
     if (action === "proof-order-start") startProofOrderDrill(actionNode.dataset.proofId);
     if (action === "proof-order-pick") pickProofOrderStep(actionNode.dataset.proofId, actionNode.dataset.stepIndex);
@@ -10585,6 +10578,115 @@
     }, "image/png");
   }
 
+  // ── 成就分享卡（Canvas 生成 PNG，全部本地）───────────────────
+  //
+  // 連勝與 XP 只在自己的首頁上看得到的話，它們什麼都不是 —— 它們的意義是「拿去給人看」。
+  // 圖在本機畫；手機能走系統分享（navigator.share 帶檔案，直接進 IG／LINE），
+  // 不行就下載 PNG。資料一律不出裝置，跟週報同一套原則。
+  function achievementShareData(records) {
+    const counts = activityCounts(records);
+    const streak = practiceStreakInfo(records, counts);
+    const level = xpLevelInfo(records.xp);
+    const answered = Number(records.totalAnswered || 0);
+    const correct = Number(records.totalCorrect || 0);
+    return {
+      streak: streak.streak || 0,
+      level: level.level,
+      xp: Math.max(0, Math.floor(Number(records.xp) || 0)),
+      answered,
+      accuracy: answered ? Math.round((correct / answered) * 100) : 0,
+      week: weeklyShareData(records)
+    };
+  }
+
+  function drawAchievementCard(data) {
+    const canvas = document.createElement("canvas");
+    canvas.width = 1080;
+    canvas.height = 1350;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return null;
+    const ui = "'Segoe UI', 'Noto Sans TC', system-ui, sans-serif";
+    // 深底金字：社群動態牆上米紙色會糊掉，深色卡才跳得出來
+    ctx.fillStyle = "#20211f";
+    ctx.fillRect(0, 0, 1080, 1350);
+    ctx.fillStyle = "#e4b447";
+    ctx.fillRect(0, 0, 1080, 14);
+
+    ctx.fillStyle = "#f5f3ed";
+    ctx.font = `800 54px ${ui}`;
+    ctx.fillText("BuzzCalculus", 72, 128);
+    ctx.fillStyle = "#b8b3a4";
+    ctx.font = `600 30px ${ui}`;
+    const today = new Date();
+    ctx.fillText(`${today.getFullYear()}/${today.getMonth() + 1}/${today.getDate()} · 微積分反射訓練`, 72, 180);
+
+    ctx.fillStyle = "#e4b447";
+    ctx.font = `800 210px ${ui}`;
+    ctx.fillText(`Lv.${data.level}`, 64, 470);
+    ctx.fillStyle = "#f5f3ed";
+    ctx.font = `700 40px ${ui}`;
+    ctx.fillText(`${data.xp} XP`, 72, 540);
+
+    const stat = (x, y, value, label) => {
+      ctx.fillStyle = "#f5f3ed";
+      ctx.font = `800 96px ${ui}`;
+      ctx.fillText(String(value), x, y);
+      ctx.fillStyle = "#b8b3a4";
+      ctx.font = `700 32px ${ui}`;
+      ctx.fillText(label, x, y + 48);
+    };
+    stat(72, 760, data.streak, "天連勝");
+    stat(400, 760, data.answered, "題累計");
+    stat(732, 760, `${data.accuracy}%`, "正確率");
+    stat(72, 960, data.week.answered, "本週題數");
+    stat(400, 960, data.week.days, "本週有練的天數");
+    stat(732, 960, data.week.minutes, "本週分鐘");
+
+    ctx.fillStyle = "#f5f3ed";
+    ctx.font = `700 34px ${ui}`;
+    ctx.fillText("每一題的答案都經過獨立數值驗算。", 72, 1180);
+    ctx.fillStyle = "#b8b3a4";
+    ctx.font = `600 30px ${ui}`;
+    ctx.fillText("tudohuang.github.io/BuzzCalculus", 72, 1240);
+    return canvas;
+  }
+
+  function downloadBlob(blob, fileName) {
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = fileName;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    window.setTimeout(() => URL.revokeObjectURL(url), 4000);
+  }
+
+  function shareAchievementCard(from) {
+    const records = loadRecords();
+    const data = achievementShareData(records);
+    if (!data.answered) {
+      showAppNotice("還沒有作答紀錄 —— 先練一場，卡片才有東西可以秀。");
+      return;
+    }
+    const canvas = drawAchievementCard(data);
+    if (!canvas) return;
+    trackEvent("share_card", { from: from || "", level: data.level, streak: data.streak });
+    const fileName = `buzzcalculus-lv${data.level}-${new Date().toISOString().slice(0, 10)}.png`;
+    canvas.toBlob((blob) => {
+      if (!blob) return;
+      const nav = window.navigator;
+      const file = typeof File === "function" ? new File([blob], fileName, { type: "image/png" }) : null;
+      if (file && nav && typeof nav.share === "function" && typeof nav.canShare === "function" && nav.canShare({ files: [file] })) {
+        nav.share({ files: [file], title: "BuzzCalculus", text: `Lv.${data.level} · 連勝 ${data.streak} 天 · ${SITE_URL}` })
+          .catch(() => { /* 使用者取消分享：不下載、不吵 */ });
+        return;
+      }
+      downloadBlob(blob, fileName);
+      showAppNotice("成就卡已存成 PNG，貼到 IG 或群組吧。");
+    }, "image/png");
+  }
+
   // ── 好友對戰碼（純前端、零後端、不碰隱私承諾）─────────────────
   //
   // 碼裡裝**題目的永久號碼**（uid），不是隨機種子 —— 種子會隨題庫成長
@@ -12736,8 +12838,14 @@
         if (!quiz || quiz.feedback) return;
         const action = button.dataset.boardAction;
         if (action === "toggle") {
-          quiz.boardOpen = !quiz.boardOpen;
-          if (!quiz.boardOpen) quiz.boardFullscreen = false;
+          // 畫面上是攤開的（含「有筆畫所以自動攤開」）就收，否則攤
+          const currentProblem = getCurrentProblem();
+          const shownOpen = Boolean(quiz.boardOpen) || (currentProblem && cloneBoardStrokes(currentProblem.id).length > 0 && quiz.boardDismissedFor !== currentProblem.id);
+          quiz.boardOpen = !shownOpen;
+          if (!quiz.boardOpen) {
+            quiz.boardFullscreen = false;
+            quiz.boardDismissedFor = currentProblem ? currentProblem.id : "";
+          }
           // 開計算紙 = 暫停這一題的倒數（考試除外）。
           // 實測：基礎題 34 秒，攤開手寫工具列＋捲到畫布就花掉 16 秒 ——
           // 「給你計算紙」和「每題倒數」兩個功能在互相打架。

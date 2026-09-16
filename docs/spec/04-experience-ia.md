@@ -495,6 +495,10 @@ localStorage["buzzcalculus.session.active"] = {
 
 ## 4.9 分享卡與題包分享
 
+- **成就分享卡（2026-09-16 落地）**：連勝與 XP 只在自己首頁看得到就沒有意義，它們的意義是拿去給人看。`shareAchievementCard(from)`：1080×1350 深底金字 canvas（Lv.、XP、連勝天數、累計題數、正確率、本週題數／天數／分鐘），`navigator.canShare({files})` 成立就走系統分享（IG／LINE），否則下載 PNG。入口：首頁連勝卡 `share-achievement-card`、結算頁預設列與主線過關列。事件 `share_card` 只記來源／等級／連勝。
+- **挑戰分頁收斂（2026-09-16）**：只剩進階訓練、階梯測驗、Boss 連戰、生存四種；Integral Bee／正確率／壓力訓練用 `MODES[key].hidden = true` 從分頁收起，定義留著讓舊紀錄的標籤與 e2e_handwriting 的壓力模式測試照常。
+- **小字清倉（2026-09-16）**：使用者「裡面太多小文字都刪掉」。拔掉的是純解釋、不帶資料的句子：每頁大標下的口號副標（`renderPageHeading` 的 description 現在空字串就不印）、首頁四張統計卡的說明行、連勝卡口號、挑戰／大考／證明／戰帖卡的說明、數據頁三段「怎麼算的」、設定頁手冊／關於／校準／倒數的說明、題庫搜尋提示、自訂題兩段、大考分析說明。留下的是帶數字或帶指令的（「匯入是合併不是覆蓋」「上週：…」「本週已完成 N 題」、空狀態說明、iOS 安裝步驟）。原則：一段小字要嘛有數字、要嘛告訴人下一步做什麼，否則不印。
+- **計算紙收得起來（2026-09-16 修）**：原本 `boardOpen = … || strokes.length > 0`，畫了兩筆就永遠攤開。改成「有筆畫自動攤開，但使用者對這一題按過收起（`quiz.boardDismissedFor`）就不再彈回」。e2e_handwriting 8.7 釘住。
 - 完成 session 產生分享卡（現有 PNG 匯出）→ 加上「本次涵蓋技巧」與能力變化。
 - 自訂題包（`custom_problems.js` + `#pack=` 分享連結，已存在）→ 加 QR code
   （用 canvas 自己畫，不引 CDN 依賴）、限時設定、是否允許提示、難度標示。

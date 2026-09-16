@@ -1,7 +1,7 @@
 (function () {
   "use strict";
 
-  // Putnam-style problems, hard derivatives, and tough applications.
+  // Competition-style problems, hard derivatives, and tough applications.
   // All ranked 4-6 so they never enter the easy (R1-2) practice pools.
   // Answers use WebWork notation (log = ln).
   const SOURCE = "Buzz 競賽難題包 2026";
@@ -20,7 +20,7 @@
       tabLimit: 1,
       ...p,
       // 名校署名不進 tags：學校名只留在 p.school 供題庫詳情顯示，
-      // 免得練習畫面的技巧 chip 變成「MIT / Putnam」這種出處標籤。
+      // 免得練習畫面的技巧 chip 變成「名校 / 競賽」這種出處標籤。
       tags: Array.from(new Set([...(p.tags || []), ...rankTags].filter(Boolean)))
     });
   }
@@ -31,7 +31,7 @@
     add({ id, topic, rank, prompt, answerKind: "expression", answer, variable, variables: Array.isArray(variable) ? variable : undefined, school, tags, solution });
   }
 
-  /* ===== Putnam-style ===== */
+  /* ===== Competition-style ===== */
   N("putnam-001", "series", 5, "\\sum_{n=1}^{\\infty}\\arctan\\!\\frac{1}{n^2+n+1}", "pi/4", "Putnam", ["putnam", "telescoping", "inverse-trig"], "Telescopes to π/2 - arctan(1) = π/4.");
   N("putnam-002", "series", 5, "\\prod_{n=2}^{\\infty}\\frac{n^3-1}{n^3+1}", "2/3", "Putnam", ["putnam", "product"], "Telescoping product equals 2/3.");
   N("putnam-003", "limits", 5, "\\lim_{n\\to\\infty}\\prod_{k=1}^{n}\\left(1+\\frac{k}{n}\\right)^{1/n}", "4/exp(1)", "Putnam", ["putnam", "product-limit", "riemann-sum"], "log -> ∫_0^1 log(1+x)dx = 2log2-1.");
