@@ -83,10 +83,19 @@ async function run() {
     `));
     await chrome.evaluate(`await navigator.serviceWorker.ready;`);
     await chrome.send("Network.emulateNetworkConditions", { offline: true, latency: 0, downloadThroughput: 0, uploadThroughput: 0 });
+    // 真的重載：從 index.html 換到 index.html#p=… 只是改 hash，頁面不會重新載入，
+    // 測到的是 hashchange（而且跟它賽跑，CI 上十次有六次輸）而不是 service worker。
+    // 先離開這一頁再回來，才是「離線重載」。
+    await chrome.send("Page.navigate", { url: "about:blank" });
+    await chrome.sleep(300);
     await chrome.navigate(server.url + "/index.html#p=der-044");
-    check("offline reload includes the answer checker", await chrome.evaluate(`
-      return !!window.BuzzAnswerSampling && window.BUZZ_PROBLEMS.some(problem => problem.id === 'der-044') && !!document.querySelector('[data-choice]');
-    `));
+    let offlineReady = false;
+    for (const deadline = Date.now() + 8000; !offlineReady && Date.now() < deadline; await chrome.sleep(150)) {
+      offlineReady = await chrome.evaluate(`
+        return !!window.BuzzAnswerSampling && window.BUZZ_PROBLEMS.some(problem => problem.id === 'der-044') && !!document.querySelector('[data-choice]');
+      `);
+    }
+    check("offline reload includes the answer checker", offlineReady);
     check("offline reload preserves recovered records", await chrome.evaluate(`
       return JSON.parse(localStorage.getItem('buzzcalculus.records.v1')).history.length === 1;
     `));
