@@ -106,22 +106,22 @@ async function run() {
     await chrome.sleep(700);
     const input = await chrome.evaluate(`
       const c = (n) => { const h=[...document.querySelectorAll("button,a,[data-action]")].find(x=>(x.innerText||"").replace(/\s+/g,"").includes(n)); if(h) h.click(); return !!h; };
-      c("開始"); await new Promise(r=>setTimeout(r,600));
-      c("大一微積分"); await new Promise(r=>setTimeout(r,600));
-      c("直接開始練"); await new Promise(r=>setTimeout(r,1000));
+      c("開始"); await new Promise(r => setTimeout(r, 600 * (window.__slow || 1)));
+      c("大一微積分"); await new Promise(r => setTimeout(r, 600 * (window.__slow || 1)));
+      c("直接開始練"); await new Promise(r => setTimeout(r, 1000 * (window.__slow || 1)));
       const m=[...document.querySelectorAll("button")].find(b=>/知道了/.test(b.textContent)); if(m) m.click();
-      await new Promise(r=>setTimeout(r,500));
+      await new Promise(r => setTimeout(r, 500 * (window.__slow || 1)));
       // 切成「自己寫」
-      c("訓練"); await new Promise(r=>setTimeout(r,700));
+      c("訓練"); await new Promise(r => setTimeout(r, 700 * (window.__slow || 1)));
       const free=document.querySelector('[data-answer-mode="free"]');
       if(!free) return { ok:false, why:"找不到作答形式切換" };
-      free.click(); await new Promise(r=>setTimeout(r,500));
+      free.click(); await new Promise(r => setTimeout(r, 500 * (window.__slow || 1)));
       const node=document.querySelector('[data-action="start-path-node"]');
-      if(node) node.click(); await new Promise(r=>setTimeout(r,700));
+      if(node) node.click(); await new Promise(r => setTimeout(r, 700 * (window.__slow || 1)));
       const lesson=document.querySelector('[data-action="start-path-lesson"]');
-      if(lesson) lesson.click(); await new Promise(r=>setTimeout(r,1200));
+      if(lesson) lesson.click(); await new Promise(r => setTimeout(r, 1200 * (window.__slow || 1)));
       const m2=[...document.querySelectorAll("button")].find(b=>/知道了/.test(b.textContent)); if(m2) m2.click();
-      await new Promise(r=>setTimeout(r,500));
+      await new Promise(r => setTimeout(r, 500 * (window.__slow || 1)));
       const field=document.querySelector("#answer");
       if(!field) return { ok:false, why:"沒有輸入框" };
       // 數學鍵盤上有沒有數字
@@ -183,10 +183,10 @@ async function run() {
     await chrome.evaluate(`
       const start = [...document.querySelectorAll("button")].find((b) => /開始/.test(b.textContent));
       if (start) start.click();
-      await new Promise((r) => setTimeout(r, 900));
+      await new Promise((r) => setTimeout(r, 900 * (window.__slow || 1)));
       const skip = [...document.querySelectorAll("button")].find((b) => /直接開始練/.test(b.textContent));
       if (skip) skip.click();
-      await new Promise((r) => setTimeout(r, 900));
+      await new Promise((r) => setTimeout(r, 900 * (window.__slow || 1)));
       return true;
     `);
 
@@ -203,7 +203,7 @@ async function run() {
         const node = document.querySelector(${JSON.stringify(selector)});
         if (!node) return false;
         node.click();
-        await new Promise((r) => setTimeout(r, 700));
+        await new Promise((r) => setTimeout(r, 700 * (window.__slow || 1)));
         return true;
       `);
       if (!opened) {
@@ -231,13 +231,13 @@ async function run() {
       // 從題庫挑一題開練：比從首頁按「開始」穩定，因為首頁的按鈕文字
       // 會隨當天的任務狀態變動（開始 / 繼續 / 5 分鐘快刷）。
       document.querySelector('[data-action="open-library"]').click();
-      await new Promise((r) => setTimeout(r, 900));
+      await new Promise((r) => setTimeout(r, 900 * (window.__slow || 1)));
       const start = document.querySelector('[data-action="start-problem"]');
       if (!start) return { started: false, why: "題庫裡沒有可開始的題目" };
       start.click();
-      await new Promise((r) => setTimeout(r, 1400));
+      await new Promise((r) => setTimeout(r, 1400 * (window.__slow || 1)));
       const ack = [...document.querySelectorAll("button")].find((b) => /知道了/.test(b.textContent));
-      if (ack) { ack.click(); await new Promise((r) => setTimeout(r, 500)); }
+      if (ack) { ack.click(); await new Promise((r) => setTimeout(r, 500 * (window.__slow || 1))); }
       const prompt = document.querySelector("[data-tex]");
       return { started: Boolean(prompt), why: prompt ? "" : "作答畫面沒有題目" };
     `);
@@ -271,19 +271,19 @@ async function run() {
       const c = (n) => { const h=[...document.querySelectorAll("button,a,[data-action]")].find(x=>(x.innerText||"").includes(n)); if(h) h.click(); return !!h; };
       // 切成「自己寫」：送一個亂寫的答案就保證判錯，
       // 不用跟選擇題的隨機正解賭運氣。
-      c("訓練"); await new Promise(r=>setTimeout(r,700));
+      c("訓練"); await new Promise(r => setTimeout(r, 700 * (window.__slow || 1)));
       const free=document.querySelector('[data-answer-mode="free"]');
-      if(free) free.click(); await new Promise(r=>setTimeout(r,500));
+      if(free) free.click(); await new Promise(r => setTimeout(r, 500 * (window.__slow || 1)));
       const lib=document.querySelector('[data-action="open-library"]');
       if(!lib) return { ok:false, why:"找不到題庫" };
-      lib.click(); await new Promise(r=>setTimeout(r,900));
+      lib.click(); await new Promise(r => setTimeout(r, 900 * (window.__slow || 1)));
       const s=document.querySelector("[data-library-search]");
-      if(s){ s.value="dd-rr-001"; s.dispatchEvent(new Event("input",{bubbles:true})); await new Promise(r=>setTimeout(r,700)); }
+      if(s){ s.value="dd-rr-001"; s.dispatchEvent(new Event("input",{bubbles:true})); await new Promise(r => setTimeout(r, 700 * (window.__slow || 1))); }
       const go=document.querySelector('[data-action="start-problem"]');
       if(!go) return { ok:false, why:"題庫裡沒有可開始的題目" };
-      go.click(); await new Promise(r=>setTimeout(r,1200));
+      go.click(); await new Promise(r => setTimeout(r, 1200 * (window.__slow || 1)));
       const ack=[...document.querySelectorAll("button")].find(b=>b.textContent.includes("知道了"));
-      if(ack){ ack.click(); await new Promise(r=>setTimeout(r,400)); }
+      if(ack){ ack.click(); await new Promise(r => setTimeout(r, 400 * (window.__slow || 1))); }
       const input=document.querySelector("#answer");
       const form=document.querySelector('[data-action="submit-answer"]');
       if(!input||!form) return { ok:false, why:"不是自己寫模式，做不出保證答錯" };
@@ -291,7 +291,7 @@ async function run() {
       input.dispatchEvent(new Event("input",{bubbles:true}));
       if(form.requestSubmit) form.requestSubmit();
       else form.dispatchEvent(new Event("submit",{bubbles:true,cancelable:true}));
-      await new Promise(r=>setTimeout(r,600));
+      await new Promise(r => setTimeout(r, 600 * (window.__slow || 1)));
       const stage=document.querySelector(".problem-stage.has-feedback");
       const panel=document.querySelector(".feedback.wrong, .feedback.timeout");
       if(!stage||!panel) return { ok:false, why:"送出後沒有出現答錯回饋" };
@@ -302,7 +302,7 @@ async function run() {
       let nextHit=false; let hitDebug="沒有下一題按鈕";
       if(btn){
         btn.scrollIntoView({block:"center"});
-        await new Promise(r=>setTimeout(r,250));
+        await new Promise(r => setTimeout(r, 250 * (window.__slow || 1)));
         const b=btn.getBoundingClientRect();
         const at=document.elementFromPoint(b.left+b.width/2, b.top+b.height/2);
         nextHit=Boolean(at&&(at===btn||btn.contains(at)));
@@ -328,21 +328,21 @@ async function run() {
     await chrome.sleep(800);
     const toast = await chrome.evaluate(`
       const c = (n) => { const h=[...document.querySelectorAll("button,a,[data-action]")].find(x=>(x.innerText||"").includes(n)); if(h) h.click(); return !!h; };
-      c("訓練"); await new Promise(r=>setTimeout(r,700));
+      c("訓練"); await new Promise(r => setTimeout(r, 700 * (window.__slow || 1)));
       const free=document.querySelector('[data-answer-mode="free"]');
-      if(free) free.click(); await new Promise(r=>setTimeout(r,500));
+      if(free) free.click(); await new Promise(r => setTimeout(r, 500 * (window.__slow || 1)));
       const lib=document.querySelector('[data-action="open-library"]');
       if(!lib) return { ok:false, why:"找不到題庫" };
-      lib.click(); await new Promise(r=>setTimeout(r,900));
+      lib.click(); await new Promise(r => setTimeout(r, 900 * (window.__slow || 1)));
       const s=document.querySelector("[data-library-search]");
       if(!s) return { ok:false, why:"沒有搜尋框" };
       s.value="正立方體"; s.dispatchEvent(new Event("input",{bubbles:true}));
-      await new Promise(r=>setTimeout(r,700));
+      await new Promise(r => setTimeout(r, 700 * (window.__slow || 1)));
       const go=document.querySelector('[data-action="start-library-filter"]');
       if(!go || go.disabled) return { ok:false, why:"「練目前篩選」不能按" };
-      go.click(); await new Promise(r=>setTimeout(r,1200));
+      go.click(); await new Promise(r => setTimeout(r, 1200 * (window.__slow || 1)));
       const ack=[...document.querySelectorAll("button")].find(b=>b.textContent.includes("知道了"));
-      if(ack){ ack.click(); await new Promise(r=>setTimeout(r,400)); }
+      if(ack){ ack.click(); await new Promise(r => setTimeout(r, 400 * (window.__slow || 1))); }
       const input=document.querySelector("#answer");
       const form=document.querySelector('[data-action="submit-answer"]');
       if(!input||!form) return { ok:false, why:"不是自己寫模式" };
@@ -353,7 +353,7 @@ async function run() {
       if(form.requestSubmit) form.requestSubmit();
       else form.dispatchEvent(new Event("submit",{bubbles:true,cancelable:true}));
       // 950ms 自動前進 + 重繪
-      await new Promise(r=>setTimeout(r,1400));
+      await new Promise(r => setTimeout(r, 1400 * (window.__slow || 1)));
       const node=document.querySelector(".correct-toast");
       if(!node) return { ok:true, shown:false };
       const rect=node.getBoundingClientRect();
@@ -403,30 +403,30 @@ async function run() {
       await chrome.sleep(700);
       const pad_ = await chrome.evaluate(`
         const c = (n) => { const h=[...document.querySelectorAll("button,a,[data-action]")].find(x=>(x.innerText||"").replace(/\s+/g,"").includes(n)); if(h) h.click(); return !!h; };
-        c("開始"); await new Promise(r=>setTimeout(r,600));
-        c("大一微積分"); await new Promise(r=>setTimeout(r,600));
-        c("直接開始練"); await new Promise(r=>setTimeout(r,1000));
+        c("開始"); await new Promise(r => setTimeout(r, 600 * (window.__slow || 1)));
+        c("大一微積分"); await new Promise(r => setTimeout(r, 600 * (window.__slow || 1)));
+        c("直接開始練"); await new Promise(r => setTimeout(r, 1000 * (window.__slow || 1)));
         const m=[...document.querySelectorAll("button")].find(b=>/知道了/.test(b.textContent)); if(m) m.click();
-        await new Promise(r=>setTimeout(r,500));
+        await new Promise(r => setTimeout(r, 500 * (window.__slow || 1)));
         document.querySelector('[data-action="open-library"]').click();
-        await new Promise(r=>setTimeout(r,800));
+        await new Promise(r => setTimeout(r, 800 * (window.__slow || 1)));
         const s2=document.querySelector("[data-library-search]");
         if (!s2) return { ok: false };
         s2.value="dd-rr-001"; s2.dispatchEvent(new Event("input",{bubbles:true}));
-        await new Promise(r=>setTimeout(r,700));
+        await new Promise(r => setTimeout(r, 700 * (window.__slow || 1)));
         const go=document.querySelector('[data-action="start-problem"]');
         if (!go) return { ok: false };
         go.click();
-        await new Promise(r=>setTimeout(r,1200));
+        await new Promise(r => setTimeout(r, 1200 * (window.__slow || 1)));
         const t=document.querySelector('[data-board-action="toggle"]');
         if(t) t.click();
-        await new Promise(r=>setTimeout(r,800));
+        await new Promise(r => setTimeout(r, 800 * (window.__slow || 1)));
         // 2026-09 新契約：平板走桌面格式 —— 攤開是**內嵌大板**（跟電腦一樣，
         // 可以捲），要整塊佔滿畫面就自己按全螢幕。舊契約「攤開不用捲」是
         // 手機殼時代的補償，實測回饋是被強制全螢幕「比電腦更爛」。
         const inline = !document.querySelector(".handwrite-shell.is-fullscreen");
         const fsBtn=document.querySelector('[data-board-action="fullscreen"]');
-        if(fsBtn){ fsBtn.click(); await new Promise(r=>setTimeout(r,700)); }
+        if(fsBtn){ fsBtn.click(); await new Promise(r => setTimeout(r, 700 * (window.__slow || 1))); }
         const fullscreenWorks = Boolean(document.querySelector(".handwrite-shell.is-fullscreen"));
         const canvas=document.querySelector("[data-blackboard]");
         if(!canvas) return { ok: false };
@@ -518,29 +518,29 @@ async function run() {
     await chrome.sleep(700);
     const fsWrong = await chrome.evaluate(`
       const c = (n) => { const h=[...document.querySelectorAll("button,a,[data-action]")].find(x=>(x.innerText||"").includes(n)); if(h) h.click(); return !!h; };
-      c("訓練"); await new Promise(r=>setTimeout(r,700));
+      c("訓練"); await new Promise(r => setTimeout(r, 700 * (window.__slow || 1)));
       const free=document.querySelector('[data-answer-mode="free"]');
-      if(free) free.click(); await new Promise(r=>setTimeout(r,500));
+      if(free) free.click(); await new Promise(r => setTimeout(r, 500 * (window.__slow || 1)));
       const lib=document.querySelector('[data-action="open-library"]');
       if(!lib) return { ok:false, why:"找不到題庫" };
-      lib.click(); await new Promise(r=>setTimeout(r,900));
+      lib.click(); await new Promise(r => setTimeout(r, 900 * (window.__slow || 1)));
       const s=document.querySelector("[data-library-search]");
       if(!s) return { ok:false, why:"題庫沒有搜尋框" };
       s.value="dd-rr-001"; s.dispatchEvent(new Event("input",{bubbles:true}));
-      await new Promise(r=>setTimeout(r,700));
+      await new Promise(r => setTimeout(r, 700 * (window.__slow || 1)));
       const go=document.querySelector('[data-action="start-problem"]');
       if(!go) return { ok:false, why:"找不到 dd-rr-001" };
-      go.click(); await new Promise(r=>setTimeout(r,1200));
+      go.click(); await new Promise(r => setTimeout(r, 1200 * (window.__slow || 1)));
       const ack=[...document.querySelectorAll("button")].find(b=>b.textContent.includes("知道了"));
-      if(ack){ ack.click(); await new Promise(r=>setTimeout(r,400)); }
+      if(ack){ ack.click(); await new Promise(r => setTimeout(r, 400 * (window.__slow || 1))); }
       const t=document.querySelector('[data-board-action="toggle"]');
       if(!t) return { ok:false, why:"沒有計算紙開關" };
-      t.click(); await new Promise(r=>setTimeout(r,800));
+      t.click(); await new Promise(r => setTimeout(r, 800 * (window.__slow || 1)));
       // 2026-09 改版：平板走桌面殼，攤開是**內嵌大板**（60vh），
       // 不再被拽進全螢幕（實測原話：比電腦更爛）。全螢幕是自己按的。
       const inlineFirst=!document.querySelector(".handwrite-shell.is-fullscreen");
       const fsBtn=document.querySelector('[data-board-action="fullscreen"]');
-      if(fsBtn){ fsBtn.click(); await new Promise(r=>setTimeout(r,700)); }
+      if(fsBtn){ fsBtn.click(); await new Promise(r => setTimeout(r, 700 * (window.__slow || 1))); }
       const wasFullscreen=inlineFirst && Boolean(document.querySelector(".handwrite-shell.is-fullscreen"));
       const input=document.querySelector("#answer");
       const form=document.querySelector('[data-action="submit-answer"]');
@@ -549,14 +549,14 @@ async function run() {
       input.dispatchEvent(new Event("input",{bubbles:true}));
       if(form.requestSubmit) form.requestSubmit();
       else form.dispatchEvent(new Event("submit",{bubbles:true,cancelable:true}));
-      await new Promise(r=>setTimeout(r,600));
+      await new Promise(r => setTimeout(r, 600 * (window.__slow || 1)));
       const stillFullscreen=Boolean(document.querySelector(".handwrite-shell.is-fullscreen"));
       const panel=document.querySelector(".feedback.wrong, .feedback.timeout");
       const btn=document.querySelector('[data-action="next-question"]');
       let nextHit=false;
       if(btn){
         btn.scrollIntoView({block:"center"});
-        await new Promise(r=>setTimeout(r,250));
+        await new Promise(r => setTimeout(r, 250 * (window.__slow || 1)));
         const b=btn.getBoundingClientRect();
         const at=document.elementFromPoint(b.left+b.width/2, b.top+b.height/2);
         nextHit=Boolean(at&&(at===btn||btn.contains(at)));
@@ -564,7 +564,7 @@ async function run() {
       let advanced=false;
       if(nextHit){
         btn.click();
-        await new Promise(r=>setTimeout(r,800));
+        await new Promise(r => setTimeout(r, 800 * (window.__slow || 1)));
         advanced=!document.querySelector(".feedback.wrong, .feedback.timeout");
       }
       return { ok:true, wasFullscreen, stillFullscreen, hasPanel:Boolean(panel), nextHit, advanced };
@@ -591,7 +591,7 @@ async function run() {
     await chrome.sleep(700);
     const modeReach = await chrome.evaluate(`
       const c = (n) => { const h=[...document.querySelectorAll("button,a,[data-action]")].find(x=>(x.innerText||"").includes(n)); if(h) h.click(); return !!h; };
-      c("訓練"); await new Promise(r=>setTimeout(r,900));
+      c("訓練"); await new Promise(r => setTimeout(r, 900 * (window.__slow || 1)));
       const nodes=[...document.querySelectorAll("[data-answer-mode]")];
       if(!nodes.length) return { ok:false, why:"訓練頁上沒有作答形式切換" };
       const rects=nodes.map(n=>n.getBoundingClientRect());

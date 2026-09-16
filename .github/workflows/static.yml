@@ -28,6 +28,10 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
+    env:
+      # E2E 的固定等待乘 3：runner 比開發機慢好幾倍，sleep(600) 在這裡等不到 render。
+      # 見 tools/lib/cdp.js；本機用 BUZZ_E2E_CPU_THROTTLE=6 可以重現 runner 的節奏。
+      BUZZ_E2E_SLOW: "3"
     steps:
       - name: Checkout
         uses: actions/checkout@v4
