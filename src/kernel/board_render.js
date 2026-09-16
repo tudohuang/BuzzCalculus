@@ -260,7 +260,10 @@
     //
     // 代價是下一次會用曲線覆蓋掉這條直線，同一塊地方畫兩次。
     // 墨色不透明、路徑幾乎重合，看不出來 —— 拿這個換掉筆尖的延遲是划算的。
-    if (points.length >= 2) {
+    //
+    // opts.tip === false：app 把筆尖那一段畫在另一層 overlay（每 frame 清掉重畫），
+    // 主畫布就不必先畫直線再被曲線蓋過去 —— 筆尖不會每 frame 抖一下。收筆時照畫。
+    if (points.length >= 2 && (finish || opts.tip !== false)) {
       const last = points[points.length - 1];
       const beforeLast = points[points.length - 2];
       const from = mid(beforeLast, last);
@@ -272,6 +275,40 @@
       if (finish) stroke.drawnTo = points.length;
     }
 
+    ctx.restore();
+  }
+
+  // 筆尖那一段（畫在 overlay 上）：從最後一段曲線的終點接到真正的筆尖，
+  // 再接上瀏覽器給的預測座標（getPredictedEvents，Chrome／Android 有，Safari 沒有），
+  // 讓墨水看起來比筆尖早半步到。預測點不進 stroke.points，下一 frame 就被真的取樣取代。
+  function paintTip(canvas, ctx, stroke, options, predicted) {
+    const opts = options || {};
+    const points = stroke.points;
+    if (!points || points.length < 2 || stroke.tool === "highlighter") return;
+    const ratio = opts.ratio || 1;
+    const surface = opts.surface || "paper";
+    const isEraser = stroke.tool === "eraser";
+    const penScale = isEraser ? 1 : (opts.penScale || 1);
+    const base = (isEraser ? ERASER_WIDTH : PEN_WIDTH * penScale) * ratio;
+    const width = isEraser
+      ? base
+      : (isBallpoint(stroke) ? Math.max(MIN_WIDTH_CSS * ratio, base) : widthAt(points, points.length - 1, false, base, ratio, false));
+    const px = (point) => point.x * canvas.width;
+    const py = (point) => point.y * canvas.height;
+    const last = points[points.length - 1];
+    const beforeLast = points[points.length - 2];
+    ctx.save();
+    // 橡皮擦的筆尖用半透明灰示意就好：overlay 上挖不到主畫布的墨水
+    ctx.globalCompositeOperation = "source-over";
+    ctx.strokeStyle = isEraser ? "rgba(120,120,120,0.35)" : inkFor(surface, stroke.color);
+    ctx.lineCap = "round";
+    ctx.lineJoin = "round";
+    ctx.lineWidth = width;
+    ctx.beginPath();
+    ctx.moveTo((px(beforeLast) + px(last)) / 2, (py(beforeLast) + py(last)) / 2);
+    ctx.lineTo(px(last), py(last));
+    (predicted || []).forEach((point) => ctx.lineTo(point.x * canvas.width, point.y * canvas.height));
+    ctx.stroke();
     ctx.restore();
   }
 
@@ -295,6 +332,7 @@
     eraserWidth: ERASER_WIDTH,
     highlightWidth: HIGHLIGHT_WIDTH,
     paintStrokeTail,
+    paintTip,
     paintAll
   };
 

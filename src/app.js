@@ -12882,7 +12882,34 @@
       }
       if (!added) return;
       if (currentStroke.tool === "highlighter") paintLive(currentStroke);
-      else paintStrokeTail(canvas, ctx, currentStroke, false);
+      else scheduleInk(currentStroke);
+    }
+
+    // ── 一 frame 畫一次，筆尖畫在 overlay ──
+    //
+    // 原本每個取樣事件都立刻畫：pointerrawupdate 一秒 240 次，每次都「補一段直線到筆尖，
+    // 下一次再用曲線蓋掉」——主畫布上的筆尖每個取樣抖一下、繪製量是需要的三倍。
+    // 現在：主畫布只收已提交的曲線（tip:false），筆尖那一段畫在 overlay，每 frame 清掉重畫；
+    // 而且接上瀏覽器的預測座標（getPredictedEvents），墨水比筆尖早半步到。
+    // pointermove 本來就是一 frame 一次（Safari 只有它），直接畫、不多等一 frame。
+    let inkFrame = 0;
+    let predictedPoints = [];
+    function paintInk(stroke) {
+      inkFrame = 0;
+      if (!currentStroke || stroke !== currentStroke) return;
+      paintStrokeTail(canvas, ctx, stroke, false, { tip: false });
+      if (liveCanvas && liveCtx && window.BuzzBoardRender && typeof window.BuzzBoardRender.paintTip === "function") {
+        syncLiveSize();
+        liveCtx.clearRect(0, 0, liveCanvas.width, liveCanvas.height);
+        window.BuzzBoardRender.paintTip(liveCanvas, liveCtx, stroke, boardRenderOptions(liveCanvas, false), predictedPoints);
+      } else {
+        paintStrokeTail(canvas, ctx, stroke, false);
+      }
+    }
+    function scheduleInk(stroke, immediate) {
+      if (immediate) { if (inkFrame) window.cancelAnimationFrame(inkFrame); paintInk(stroke); return; }
+      if (inkFrame) return;
+      inkFrame = window.requestAnimationFrame(() => paintInk(stroke));
     }
 
     function onMove(event) {
@@ -12893,7 +12920,16 @@
       const batch = typeof event.getCoalescedEvents === "function"
         ? event.getCoalescedEvents()
         : [event];
+      // 預測座標：只給筆與滑鼠用，手指的預測抖得厲害。不進 stroke，只畫在 overlay。
+      predictedPoints = [];
+      if (event.pointerType !== "touch" && typeof event.getPredictedEvents === "function") {
+        const box = cachedRect || canvas.getBoundingClientRect();
+        try {
+          predictedPoints = (event.getPredictedEvents() || []).slice(0, 3).map((sample) => blackboardPoint(canvas, sample, box));
+        } catch (_error) { predictedPoints = []; }
+      }
       pushSamples(batch && batch.length ? batch : [event]);
+      if (event.type === "pointermove" && currentStroke && currentStroke.tool !== "highlighter") scheduleInk(currentStroke, true);
     }
 
     // pointerrawupdate 是瀏覽器能給的最早的一手座標：它不等 rAF 的節奏，
@@ -12966,7 +13002,9 @@
 
     function endStroke(event) {
       if (!currentStroke || event.pointerId !== activePointerId) return;
-      if (currentStroke.tool === "highlighter") clearLive();
+      if (inkFrame) { window.cancelAnimationFrame(inkFrame); inkFrame = 0; }
+      predictedPoints = [];
+      clearLive();
       paintStrokeTail(canvas, ctx, currentStroke, true);
       currentStroke = null;
       activePointerId = null;
@@ -13310,9 +13348,10 @@
   //
   // 實作已經搬到 kernel/board_render.js；這裡保留一份等價的後備，
   // 因為 kernel 是可以被單獨拿掉的（三條鐵律的第一條）。
-  function paintStrokeTail(canvas, ctx, stroke, finish) {
+  // extra：給 kernel 的額外選項（例如 { tip: false }：筆尖那段交給 overlay 畫）
+  function paintStrokeTail(canvas, ctx, stroke, finish, extra) {
     if (window.BuzzBoardRender && typeof window.BuzzBoardRender.paintStrokeTail === "function") {
-      window.BuzzBoardRender.paintStrokeTail(canvas, ctx, stroke, boardRenderOptions(canvas, finish));
+      window.BuzzBoardRender.paintStrokeTail(canvas, ctx, stroke, Object.assign(boardRenderOptions(canvas, finish), extra || {}));
       return;
     }
     const points = stroke.points;

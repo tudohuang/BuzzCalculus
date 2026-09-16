@@ -366,14 +366,19 @@ async function run() {
       ${PEN}
       const canvas = window.__pen.canvas();
       const ctx = canvas.getContext("2d");
+      // 筆尖那一段畫在 overlay（[data-board-live]）上，主畫布只收已提交的曲線：兩層一起算
+      const live = document.querySelector("[data-board-live]");
+      const liveCtx = live ? live.getContext("2d") : null;
       // 量「筆尖附近有沒有墨水」：以最後一個取樣點為圓心取一小塊
       const inkNear = (fx, fy) => {
         const r = Math.round(Math.min(canvas.width, canvas.height) * 0.02);
         const x = Math.max(0, Math.round(canvas.width * fx) - r);
         const y = Math.max(0, Math.round(canvas.height * fy) - r);
-        const data = ctx.getImageData(x, y, r * 2, r * 2).data;
         let n = 0;
-        for (let i = 3; i < data.length; i += 4) if (data[i] > 8) n += 1;
+        [ctx, liveCtx].filter(Boolean).forEach((c) => {
+          const data = c.getImageData(x, y, r * 2, r * 2).data;
+          for (let i = 3; i < data.length; i += 4) if (data[i] > 8) n += 1;
+        });
         return n;
       };
 
@@ -384,6 +389,8 @@ async function run() {
       for (let i = 1; i <= 10; i += 1) {
         window.__pen.send(window.__pen.moveType(), 0.2 + (endX - 0.2) * (i / 10), endY, { pressure: 0.7, pointerId: 21 });
       }
+      // rawupdate 的取樣一 frame 畫一次：等一個 frame 再量（人眼也是以 frame 為單位）
+      await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
       const whileWriting = inkNear(endX, endY);
       window.__pen.send("pointerup", endX, endY, { pressure: 0.7, pointerId: 21 });
       const afterLift = inkNear(endX, endY);
