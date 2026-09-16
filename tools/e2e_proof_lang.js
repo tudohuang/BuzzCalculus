@@ -8,7 +8,7 @@
 "use strict";
 
 const path = require("path");
-const { launch } = require("./lib/cdp.js");
+const { launch, ciFail } = require("./lib/cdp.js");
 const staticServer = require("./lib/static_server.js");
 
 const ROOT = path.join(__dirname, "..");
@@ -205,5 +205,6 @@ async function run() {
 
 run().catch((error) => {
   console.error("白話證明 E2E 掛掉：" + error.message);
+  ciFail("白話證明 E2E 掛掉", error.message);
   process.exit(1);
 });

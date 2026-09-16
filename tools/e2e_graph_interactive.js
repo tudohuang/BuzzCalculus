@@ -11,7 +11,7 @@
 "use strict";
 
 const path = require("path");
-const { launch, findChrome } = require("./lib/cdp.js");
+const { launch, findChrome, ciFail } = require("./lib/cdp.js");
 const staticServer = require("./lib/static_server.js");
 
 const ROOT = path.join(__dirname, "..");
@@ -21,7 +21,7 @@ let failures = 0;
 function check(name, ok, detail) {
   steps.push({ ok: Boolean(ok), name, detail });
   console.log(`  ${ok ? "ok  " : "XX  "} ${name}${detail ? "  —— " + detail : ""}`);
-  if (!ok) failures += 1;
+  if (!ok) { failures += 1; ciFail(name, detail); }
 }
 
 // 用題庫搜尋開一局只含目標題的練習。
@@ -168,5 +168,6 @@ run().then(() => {
   console.log("e2e graph interactive OK");
 }).catch((error) => {
   console.error(error);
+  ciFail("E2E 掛掉", error.message);
   process.exit(1);
 });

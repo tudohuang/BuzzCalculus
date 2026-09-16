@@ -244,4 +244,13 @@ async function launch(options = {}) {
   };
 }
 
-module.exports = { launch, findChrome, sleep };
+// 在 GitHub Actions 上把失敗寫成 annotation（::error::）。
+// job 的 log 要認證才抓得到，annotations 走公開 API 就讀得到 ——
+// 「CI 紅、本機綠」的時候，這是唯一能看到 runner 上哪條斷言倒了的路。
+function ciFail(title, detail = "") {
+  if (!process.env.GITHUB_ACTIONS) return;
+  const clean = (text) => String(text || "").replace(/\r?\n/g, " ").replace(/%/g, "%25").slice(0, 900);
+  console.log(`::error title=${clean(title).replace(/,/g, "%2C").replace(/:/g, "%3A")}::${clean(detail) || clean(title)}`);
+}
+
+module.exports = { launch, findChrome, sleep, ciFail };

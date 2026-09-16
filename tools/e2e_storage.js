@@ -3,7 +3,7 @@
 // Exercise quota failure in a disposable browser profile, never in a user's storage.
 const assert = require("node:assert/strict");
 const path = require("node:path");
-const { launch } = require("./lib/cdp.js");
+const { launch, ciFail } = require("./lib/cdp.js");
 const staticServer = require("./lib/static_server.js");
 
 async function run() {
@@ -107,4 +107,4 @@ async function run() {
   }
 }
 
-run().catch((error) => { console.error(error); process.exitCode = 1; });
+run().catch((error) => { console.error(error); ciFail("E2E storage 掛掉", error.message); process.exitCode = 1; });

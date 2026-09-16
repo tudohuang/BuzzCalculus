@@ -4,7 +4,7 @@
 const assert = require("assert/strict");
 const fs = require("fs");
 const path = require("path");
-const { launch } = require("./lib/cdp");
+const { launch, ciFail } = require("./lib/cdp");
 const { start } = require("./lib/static_server");
 
 const root = path.join(__dirname, "..");
@@ -174,9 +174,10 @@ let checked = 0;
     fs.writeFileSync(path.join(output, "report.json"), JSON.stringify({checked, failures}, null, 2));
     console.log(`${checked} responsive page states, search, theme and lesson launch checked.`);
     if (captureScreenshots) console.log(`Screenshots: ${output}`);
+    failures.forEach((item) => ciFail("responsive", item));
     assert.equal(failures.length, 0, failures.join("\n"));
   } finally {
     await chrome.close();
     await server.stop();
   }
-})().catch(error => { console.error(error); process.exitCode = 1; });
+})().catch(error => { console.error(error); ciFail("E2E responsive 掛掉", error.message); process.exitCode = 1; });

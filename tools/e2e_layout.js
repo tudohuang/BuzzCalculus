@@ -15,7 +15,7 @@
 "use strict";
 
 const path = require("path");
-const { launch } = require("./lib/cdp.js");
+const { launch, ciFail } = require("./lib/cdp.js");
 const staticServer = require("./lib/static_server.js");
 
 const ROOT = path.join(__dirname, "..");
@@ -28,6 +28,7 @@ function check(name, ok, detail = "") {
     console.log(`  ok   ${name}${detail ? `  —— ${detail}` : ""}`);
   } else {
     failures.push(`${name}${detail ? `（${detail}）` : ""}`);
+    ciFail(name, detail);
     console.log(`  FAIL ${name}${detail ? `  —— ${detail}` : ""}`);
   }
 }
@@ -191,5 +192,6 @@ async function run() {
 
 run().catch((error) => {
   console.error("layout E2E 掛掉：" + error.message);
+  ciFail("layout E2E 掛掉", error.message);
   process.exit(1);
 });
