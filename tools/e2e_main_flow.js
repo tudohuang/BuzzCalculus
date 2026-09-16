@@ -83,6 +83,17 @@ const HELPERS = `
       if (!el) return false;
       el.click();
       return true;
+    },
+    // 等某個元素真的出現，而不是 sleep 一個在開發機上剛好夠的毫秒數：
+    // CI 的 runner 慢好幾倍，固定 sleep 在那裡會輸給 render，本機卻永遠過。
+    async waitFor(selector, ms) {
+      const deadline = Date.now() + (ms || 5000);
+      while (Date.now() < deadline) {
+        const el = document.querySelector(selector);
+        if (el) return el;
+        await new Promise((r) => setTimeout(r, 100));
+      }
+      return null;
     }
   };
 `;
@@ -363,18 +374,20 @@ async function run() {
     const proseWrap = await chrome.evaluate(`
       ${HELPERS}
       const story = (window.BUZZ_PROBLEMS || []).find((p) => /^dd-rr-/.test(p.id));
-      if (!story) return { missing: true };
+      if (!story) return { missing: true, why: "題庫裡沒有 dd-rr- 開頭的題" };
       window.__e2e.clickSelector('[data-action="open-library"]');
-      await new Promise((r) => setTimeout(r, 500));
-      const search = document.querySelector("[data-library-search]");
-      if (!search) return { missing: true };
+      // 三步都用等的：題庫頁 render、搜尋結果 render、題目畫面 render，
+      // 在 CPU 慢四倍的機器上各要一秒多（BUZZ_E2E_CPU_THROTTLE=6 可在本機重現）。
+      const search = await window.__e2e.waitFor("[data-library-search]", 6000);
+      if (!search) return { missing: true, why: "題庫頁的搜尋框沒出現" };
       search.value = story.id;
       search.dispatchEvent(new Event("input", { bubbles: true }));
-      await new Promise((r) => setTimeout(r, 700));
-      const started = window.__e2e.clickSelector('[data-action="start-problem"][data-problem-id="' + story.id + '"]');
-      await new Promise((r) => setTimeout(r, 1200));
-      const node = document.querySelector(".quiz-screen .prompt[data-tex]");
-      if (!started || !node) return { missing: true };
+      const startButton = await window.__e2e.waitFor('[data-action="start-problem"][data-problem-id="' + story.id + '"]', 6000);
+      if (!startButton) return { missing: true, why: "搜尋結果裡沒有 " + story.id };
+      startButton.click();
+      const node = await window.__e2e.waitFor(".quiz-screen .prompt[data-tex]", 8000);
+      if (!node) return { missing: true, why: "題目畫面沒出現" };
+      await new Promise((r) => setTimeout(r, 300));
       // 量兩件事：有沒有走折行渲染（跟視窗寬度無關），以及此刻有沒有橫向溢出。
       // 只量溢出的話，測試機的視窗夠寬就會漏掉 —— 手機和 iPad 才是真正會爆的地方。
       return {
@@ -385,7 +398,7 @@ async function run() {
       };
     `);
     if (proseWrap.missing) {
-      check("情境題的長題幹會折行，不是橫向捲動", false, "開不出情境題，這條沒測到");
+      check("情境題的長題幹會折行，不是橫向捲動", false, `開不出情境題，這條沒測到（${proseWrap.why}）`);
     } else {
       const wrapped = proseWrap.flowed > 0 && proseWrap.overflow <= 2;
       check("情境題的長題幹會折行，不是橫向捲動", wrapped,

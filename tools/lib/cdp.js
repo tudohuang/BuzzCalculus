@@ -165,6 +165,10 @@ async function launch(options = {}) {
   await send("Page.enable");
   await send("Runtime.enable");
   await send("Network.enable");
+  // CI 的 runner 比開發機慢好幾倍，靠固定 sleep 的斷言在那裡會輸給競速、在本機卻永遠過。
+  // BUZZ_E2E_CPU_THROTTLE=4 把本機的 Chrome 拖慢四倍，複製 runner 的節奏來抓這種 bug。
+  const throttle = Number(process.env.BUZZ_E2E_CPU_THROTTLE || 0);
+  if (throttle > 1) await send("Emulation.setCPUThrottlingRate", { rate: throttle });
 
   // 在頁面裡跑一段 JS，回傳它的值（支援 await）
   async function evaluate(expression) {

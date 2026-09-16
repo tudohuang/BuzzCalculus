@@ -103,16 +103,25 @@ async function run() {
     let stalled = 0;
     for (let i = 0; i < 8; i += 1) {
       const before = await evaluate(`return window.__b.text(".hud-sub");`);
-      if (!(await click('[data-action="placement-unlearned"]', 1400))) break;
-      const nextButton = await evaluate(`return Boolean(document.querySelector('[data-action="next-question"]'));`);
-      if (nextButton) {
+      if (!(await click('[data-action="placement-unlearned"]', 200))) break;
+      // 「不停下來說教」的定義：不用按任何東西，題號自己會換（定位模式 950ms 自動前進）。
+      // 所以等的是題號變了，最多 5 秒——固定 sleep 在 CI 的慢 runner 上會把「還在 render」
+      // 誤判成「卡住」，而回饋卡上有沒有「下一題」按鈕不是重點。
+      let after = before;
+      for (const deadline = Date.now() + 5000; Date.now() < deadline; await chrome.sleep(120)) {
+        after = await evaluate(`return window.__b.text(".hud-sub");`);
+        if (after !== before || (i === 7 && !(await evaluate(`return Boolean(document.querySelector('[data-action="placement-unlearned"]'));`)))) break;
+      }
+      if (i < 7 && before === after) {
         stalled += 1;
         await click('[data-action="next-question"]', 600);
       }
-      const after = await evaluate(`return window.__b.text(".hud-sub");`);
-      if (i < 7 && before === after) stalled += 1;
     }
     check("定位答錯／沒學過直接下一題，不停下來說教", stalled === 0, stalled ? `${stalled} 次卡在回饋卡` : "");
+    // 第 8 題答完到結算頁之間也是 950ms 自動前進：等結算真的畫出來
+    for (const deadline = Date.now() + 6000; Date.now() < deadline; await chrome.sleep(120)) {
+      if (await evaluate(`return Boolean(document.querySelector(".verdict-title"));`)) break;
+    }
 
     const placement = await evaluate(`return { verdict: window.__b.text(".verdict-title"), sub: window.__b.text(".verdict-sub"), next: window.__b.text(".verdict-next"), stats: window.__b.text(".verdict-stats"), burst: Boolean(document.querySelector(".verdict-burst")) };`);
     check("0 題答對的定位結算是「從基礎開始」，不撒彩帶", placement.verdict === "從基礎開始" && !placement.burst, placement.verdict);
@@ -335,8 +344,14 @@ async function run() {
     await click('[data-action="open-course"]', 800);
     const gradCard = await evaluate(`return { text: window.__b.text(".course-graduation strong"), locked: Boolean(document.querySelector(".course-graduation.is-locked")) };`);
     check("課程表底下的畢業關已解鎖", !gradCard.locked && /10 題/.test(gradCard.text), gradCard.text);
-    check("按下開始畢業關", await click('[data-action="course-graduation"]', 1000));
-    const gradQuiz = await evaluate(`return { hud: window.__b.text(".hud-context"), choices: window.__b.choices().length, rank: window.__b.rank() };`);
+    check("按下開始畢業關", await click('[data-action="course-graduation"]', 300));
+    for (const deadline = Date.now() + 5000; Date.now() < deadline; await chrome.sleep(120)) {
+      if (await evaluate(`return window.__b.choices().length > 0 && window.__b.rank() > 0;`)) break;
+    }
+    const gradQuiz = await evaluate(`
+      const tex = window.__b.prompt();
+      const p = window.BUZZ_PROBLEMS.find((x) => x.prompt === tex);
+      return { hud: window.__b.text(".hud-context"), choices: window.__b.choices().length, rank: window.__b.rank(), id: p ? p.id : "?", chips: [...document.querySelectorAll(".problem-meta .chip")].map((n) => n.textContent.trim()) };`);
     check("畢業關是 R1 選擇題", gradQuiz.choices >= 2 && gradQuiz.rank === 1, JSON.stringify(gradQuiz));
     // 答對會在 950ms 後自動前進、答錯要按「下一題」：等過 950ms 再看有沒有按鈕
     for (let i = 0; i < 10; i += 1) {

@@ -33,9 +33,16 @@ async function run() {
     await chrome.sleep(wait);
     return hit;
   };
+  // 打字之後不是 sleep 固定的毫秒數，而是等報告真的換成新內容：
+  // 判定是 debounce 後跑的，CI 的 runner 慢好幾倍時 700ms 等不到，本機卻永遠夠。
+  const reportSnapshot = () => chrome.evaluate(`const r=document.querySelector('[data-pl-report]'); const v=document.querySelector('[data-pl-verdict]'); return (r ? r.innerText : "") + "|" + (v ? v.className : "");`);
   const type = async (text) => {
+    const before = await reportSnapshot();
     await chrome.evaluate(`const t=document.querySelector('[data-proof-lang-text]'); t.value=${JSON.stringify(text)}; t.dispatchEvent(new Event('input',{bubbles:true})); return 1;`);
-    await chrome.sleep(700);
+    for (const deadline = Date.now() + 6000; Date.now() < deadline; await chrome.sleep(120)) {
+      if ((await reportSnapshot()) !== before) break;
+    }
+    await chrome.sleep(250);
   };
   const statuses = () => chrome.evaluate(`return [...document.querySelectorAll('[data-pl-report] .pl-lines li')].map(li => li.className.replace('is-','').trim());`);
   const verdict = () => chrome.evaluate(`const v=document.querySelector('[data-pl-verdict]'); return v ? { cls: v.className, text: v.innerText.replace(/\\s+/g,' ') } : null;`);
@@ -60,7 +67,10 @@ async function run() {
     check("按「困難」只剩困難題", hard.rows > 0 && hard.rows < entry.rows && hard.levels.join("") === "困難", `${hard.rows} 題 · ${hard.levels.join("/")}`);
     await click('[data-action="proof-filter"][data-filter-key="level"][data-filter-value="all"]', 500);
     await chrome.evaluate(`const box = document.querySelector('[data-proof-search]'); box.focus(); box.value = "ε-N"; box.dispatchEvent(new Event("input", { bubbles: true }));`);
-    await chrome.sleep(600);
+    // 搜尋是 debounce 後 render 的：等列數真的變少，不賭 600ms
+    for (const deadline = Date.now() + 5000; Date.now() < deadline; await chrome.sleep(120)) {
+      if (await chrome.evaluate(`return document.querySelectorAll('tr[data-proof-key]').length < ${entry.rows};`)) break;
+    }
     const searched = await chrome.evaluate(`return { rows: [...document.querySelectorAll('tr[data-proof-key] .lc-title')].map((el) => el.innerText), focused: document.activeElement === document.querySelector('[data-proof-search]') };`);
     check("搜尋 ε-N 只剩數列題，游標還在搜尋框", searched.rows.length === 3 && searched.rows.every((title) => title.includes("ε-N")) && searched.focused, searched.rows.join(" / "));
     await chrome.evaluate(`const box = document.querySelector('[data-proof-search]'); box.value = ""; box.dispatchEvent(new Event("input", { bubbles: true }));`);
