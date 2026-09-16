@@ -116,6 +116,7 @@
     "2026-09-13": "burst-int-010",
     "2026-09-14": "cx-hl-001",
     "2026-09-15": "dd-pw-002",
+    "2026-09-16": "burst-boss3-lim-005",
   };
   if (typeof module !== "undefined" && module.exports) module.exports = { HISTORY };
   if (typeof window !== "undefined") window.BUZZ_DAILY_ONE_HISTORY = HISTORY;

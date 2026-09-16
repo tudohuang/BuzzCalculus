@@ -36,7 +36,7 @@ problems.forEach((problem) => {
 
   if (problem.school) {
     kind = "inspired";
-    note = `${problem.school} 風格的原創題，非該校官方試題`;
+    note = problem.school === "競賽" ? "競賽風格的原創題，非官方試題" : `${problem.school} 風格的原創題，非該校官方試題`;
   } else if (/public\s*domain|公有領域/i.test(problem.source || "")) {
     kind = "public-domain";
     note = String(problem.source);

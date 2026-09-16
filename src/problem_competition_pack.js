@@ -32,18 +32,18 @@
   }
 
   /* ===== Competition-style ===== */
-  N("putnam-001", "series", 5, "\\sum_{n=1}^{\\infty}\\arctan\\!\\frac{1}{n^2+n+1}", "pi/4", "Putnam", ["putnam", "telescoping", "inverse-trig"], "Telescopes to π/2 - arctan(1) = π/4.");
-  N("putnam-002", "series", 5, "\\prod_{n=2}^{\\infty}\\frac{n^3-1}{n^3+1}", "2/3", "Putnam", ["putnam", "product"], "Telescoping product equals 2/3.");
-  N("putnam-003", "limits", 5, "\\lim_{n\\to\\infty}\\prod_{k=1}^{n}\\left(1+\\frac{k}{n}\\right)^{1/n}", "4/exp(1)", "Putnam", ["putnam", "product-limit", "riemann-sum"], "log -> ∫_0^1 log(1+x)dx = 2log2-1.");
-  N("putnam-004", "integrals", 5, "\\int_{-1}^{1}\\frac{dx}{(1+e^{x})(1+x^2)}", "pi/4", "Putnam", ["putnam", "symmetry"], "Add the x->-x reflection.");
-  N("putnam-005", "integrals", 6, "\\int_0^{\\pi/2}\\frac{dx}{1+(\\tan x)^{\\sqrt2}}", "pi/4", "Putnam", ["putnam", "kings-property"], "King's property, independent of the exponent.");
-  N("putnam-006", "series", 6, "\\prod_{n=1}^{\\infty}\\left(1-\\frac{1}{(2n)^2}\\right)", "2/pi", "Putnam", ["putnam", "wallis", "product"], "Wallis product gives 2/π.");
-  N("putnam-007", "series", 5, "\\sum_{n=1}^{\\infty}\\frac{n}{n^4+n^2+1}", "1/2", "Putnam", ["putnam", "telescoping"], "n^4+n^2+1=(n^2+n+1)(n^2-n+1).");
-  N("putnam-008", "limits", 5, "\\lim_{x\\to 0}\\frac{1}{x}\\int_0^{x}(1+\\sin 2t)^{1/t}\\,dt", "exp(2)", "Putnam", ["putnam", "limit", "ftc"], "Integrand -> e^2; average -> e^2.");
-  N("putnam-009", "integrals", 6, "\\int_0^{\\infty}\\frac{dx}{(1+x^2)(1+x^3)}", "pi/4", "Putnam", ["putnam", "symmetry"], "x->1/x symmetry gives π/4.");
-  N("putnam-010", "limits", 6, "\\lim_{n\\to\\infty}\\frac{1}{n}\\sum_{k=1}^{n}\\frac{1}{1+(k/n)^2}", "pi/4", "Putnam", ["putnam", "riemann-sum"], "Riemann sum of 1/(1+x^2).");
-  N("putnam-011", "series", 5, "\\sum_{n=1}^{\\infty}\\frac{(-1)^{n+1}}{n(n+1)}", "2*log(2)-1", "Putnam", ["putnam", "alternating", "telescoping"], "(-1)^{n+1}(1/n - 1/(n+1)).");
-  N("putnam-012", "integrals", 6, "\\int_0^{\\infty}\\frac{\\arctan(2x)-\\arctan x}{x}\\,dx", "pi*log(2)/2", "Putnam", ["putnam", "frullani"], "Frullani for arctan: (π/2)ln(2/1).");
+  N("putnam-001", "series", 5, "\\sum_{n=1}^{\\infty}\\arctan\\!\\frac{1}{n^2+n+1}", "pi/4", "競賽", ["putnam", "telescoping", "inverse-trig"], "Telescopes to π/2 - arctan(1) = π/4.");
+  N("putnam-002", "series", 5, "\\prod_{n=2}^{\\infty}\\frac{n^3-1}{n^3+1}", "2/3", "競賽", ["putnam", "product"], "Telescoping product equals 2/3.");
+  N("putnam-003", "limits", 5, "\\lim_{n\\to\\infty}\\prod_{k=1}^{n}\\left(1+\\frac{k}{n}\\right)^{1/n}", "4/exp(1)", "競賽", ["putnam", "product-limit", "riemann-sum"], "log -> ∫_0^1 log(1+x)dx = 2log2-1.");
+  N("putnam-004", "integrals", 5, "\\int_{-1}^{1}\\frac{dx}{(1+e^{x})(1+x^2)}", "pi/4", "競賽", ["putnam", "symmetry"], "Add the x->-x reflection.");
+  N("putnam-005", "integrals", 6, "\\int_0^{\\pi/2}\\frac{dx}{1+(\\tan x)^{\\sqrt2}}", "pi/4", "競賽", ["putnam", "kings-property"], "King's property, independent of the exponent.");
+  N("putnam-006", "series", 6, "\\prod_{n=1}^{\\infty}\\left(1-\\frac{1}{(2n)^2}\\right)", "2/pi", "競賽", ["putnam", "wallis", "product"], "Wallis product gives 2/π.");
+  N("putnam-007", "series", 5, "\\sum_{n=1}^{\\infty}\\frac{n}{n^4+n^2+1}", "1/2", "競賽", ["putnam", "telescoping"], "n^4+n^2+1=(n^2+n+1)(n^2-n+1).");
+  N("putnam-008", "limits", 5, "\\lim_{x\\to 0}\\frac{1}{x}\\int_0^{x}(1+\\sin 2t)^{1/t}\\,dt", "exp(2)", "競賽", ["putnam", "limit", "ftc"], "Integrand -> e^2; average -> e^2.");
+  N("putnam-009", "integrals", 6, "\\int_0^{\\infty}\\frac{dx}{(1+x^2)(1+x^3)}", "pi/4", "競賽", ["putnam", "symmetry"], "x->1/x symmetry gives π/4.");
+  N("putnam-010", "limits", 6, "\\lim_{n\\to\\infty}\\frac{1}{n}\\sum_{k=1}^{n}\\frac{1}{1+(k/n)^2}", "pi/4", "競賽", ["putnam", "riemann-sum"], "Riemann sum of 1/(1+x^2).");
+  N("putnam-011", "series", 5, "\\sum_{n=1}^{\\infty}\\frac{(-1)^{n+1}}{n(n+1)}", "2*log(2)-1", "競賽", ["putnam", "alternating", "telescoping"], "(-1)^{n+1}(1/n - 1/(n+1)).");
+  N("putnam-012", "integrals", 6, "\\int_0^{\\infty}\\frac{\\arctan(2x)-\\arctan x}{x}\\,dx", "pi*log(2)/2", "競賽", ["putnam", "frullani"], "Frullani for arctan: (π/2)ln(2/1).");
 
   /* ===== Hard derivatives ===== */
   N("hd-001", "derivatives", 5, "\\left.\\frac{d^{7}}{dx^{7}}\\frac{1}{1-x}\\right|_{x=0}", "5040", "Cambridge", ["higher-derivative"], "1/(1-x)=Σ x^n, so f^{(7)}(0)=7!.");
