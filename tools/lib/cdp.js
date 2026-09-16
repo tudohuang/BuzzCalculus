@@ -51,8 +51,12 @@ function findChrome() {
   return null;
 }
 
+// BUZZ_E2E_SLOW=3：所有固定等待乘 3（node 端的 sleep 與頁面內 window.__slow）。
+// CI 的 runner 比開發機慢好幾倍，「開發機剛好夠」的 sleep(600) 在那裡會輸給 render；
+// 正確的修法是改成等元素出現，還沒改到的地方先用倍率頂著。workflow 設 3。
+const SLOW = Math.max(1, Number(process.env.BUZZ_E2E_SLOW || 1) || 1);
 function sleep(ms) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
+  return new Promise((resolve) => setTimeout(resolve, ms * SLOW));
 }
 
 async function waitForEndpoint(port, timeoutMs) {
@@ -158,7 +162,10 @@ async function launch(options = {}) {
           pending.delete(id);
           reject(new Error(`CDP ${method} 逾時`));
         }
-      }, options.commandTimeout || 30000);
+      // 預設 3 分鐘：E2E 會把「答完整局」這種幾十步的迴圈整段丟進頁面跑，
+      // 在 CI 的慢 runner（或 BUZZ_E2E_CPU_THROTTLE=8）上一段就能超過 30 秒。
+      // 這個逾時只該擋「Chrome 死了」，不該擋「Chrome 很慢」。
+      }, options.commandTimeout || 180000);
     });
   }
 
@@ -173,7 +180,7 @@ async function launch(options = {}) {
   // 在頁面裡跑一段 JS，回傳它的值（支援 await）
   async function evaluate(expression) {
     const result = await send("Runtime.evaluate", {
-      expression: `(async () => { ${expression} })()`,
+      expression: `(async () => { window.__slow = ${SLOW}; ${expression} })()`,
       awaitPromise: true,
       returnByValue: true
     });
