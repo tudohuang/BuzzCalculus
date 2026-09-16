@@ -3471,6 +3471,56 @@ button,
   color: var(--ink);
 }
 
+/* 同一關的進步一行：跟上一次比 */
+.verdict-progress {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin: 10px 0 0;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--green) 10%, var(--panel));
+  color: var(--success);
+  font-weight: 700;
+  font-size: 0.92rem;
+}
+.verdict-progress svg { width: 16px; height: 16px; }
+
+/* 結算頁：一顆主按鈕，其餘降成文字連結 */
+.results-secondary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 18px;
+  margin-top: 10px;
+}
+.results-secondary .link-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  padding: 0 4px;
+  font-weight: 700;
+}
+.results-secondary .link-button svg { width: 16px; height: 16px; }
+
+/* 連勝倒數：今天還沒練 */
+.streak-countdown {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--warning, #b25f1a);
+  font-weight: 700;
+  font-size: 0.82rem;
+}
+.streak-countdown svg { width: 14px; height: 14px; }
+
+/* 首頁的四種練法收進摺疊 */
+.home-bucket-more { margin-top: 4px; }
+
+/* 數學式排好版才顯示：renderMathNode 排完會加 is-rendered。
+   用 visibility 不用 opacity —— E2E 的「沒有元素卡在 opacity:0」探針會把 opacity:0 當成被藏住的內容 */
+.math-block[data-tex]:not(.is-rendered) { visibility: hidden; }
+
 .verdict-stats {
   display: flex;
   flex-wrap: wrap;
@@ -8751,12 +8801,40 @@ kbd {
 .legal-page {
   max-width: 720px;
   margin: 0 auto;
-  padding: 48px 24px 80px;
+  padding: 24px 24px 80px;
   line-height: 1.85;
+}
+
+/* 對外頁（關於／手冊／條款／隱私／更新紀錄）跟 app 同一套視覺：
+   第一列做成跟 app 頂欄一樣的品牌列（金色 ∫ 字標 + 站名），不再像換了個站 */
+.legal-page > .legal-back:first-child {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 32px;
+  padding: 10px 0 14px;
+  border-bottom: 1px solid var(--line);
+  font-weight: 700;
+}
+.legal-page > .legal-back:first-child::before {
+  content: "∫";
+  display: inline-grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  background: var(--gold);
+  color: #20211f;
+  font: 800 20px/1 Georgia, "Times New Roman", serif;
+}
+.legal-page > .legal-back:first-child a {
+  color: var(--ink);
+  text-decoration: none;
 }
 
 .legal-page h1 {
   font-size: 2rem;
+  letter-spacing: -0.01em;
   margin-bottom: 6px;
 }
 

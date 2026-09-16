@@ -40,37 +40,18 @@ jobs:
         # 這一步只檢查不產出。TypeScript 只在 CI 與開發機用，不進 runtime。
         run: npm run typecheck
       - name: Validate problem bank
-        run: |
-          node tools/regen_all.js --check
-          node tools/validate_problems.js
-          node tools/validate_daily_one.js
-          node tools/validate_training_packs.js
-          node tools/validate_path_nodes.js
-          node tools/validate_answer_checker.js
-          node tools/validate_calculus_only.js
-          node tools/validate_records_v2.js
-          node tools/validate_skill_graph.js
-          node tools/validate_ability_model.js
-          node tools/validate_planner.js
-          node tools/validate_analytics.js
-          node tools/validate_offline_assets.js
-          node tools/validate_app_shell.js
-          node tools/validate_version.js
-          node tools/spec_snapshot.js
-          node tools/validate_content_metadata.js
-          node tools/validate_privacy.js
-          node tools/validate_derived_hints.js
-          node tools/validate_graph_choices.js
-          node tools/validate_worksheets.js
-          node tools/validate_katex.js
-          node tools/validate_public_claims.js
-          node tools/validate_hints.js
-          node tools/validate_performance_budget.js
-          node tools/validate_proof_lang.js
-          node tools/validate_course.js
-          node tools/validate_golden.js
-          node tools/smoke_app_render.js
-          node tools/verify_proof_claims.js
+        # tools/ci_checks.js 逐支跑，紅的那支會變成 annotation（job log 要認證才看得到）。
+        # 本機一樣可以：node tools/ci_checks.js validate_course.js validate_katex.js
+        run: >
+          node tools/ci_checks.js
+          "regen_all.js --check"
+          validate_problems.js validate_daily_one.js validate_training_packs.js validate_path_nodes.js
+          validate_answer_checker.js validate_calculus_only.js validate_records_v2.js validate_skill_graph.js
+          validate_ability_model.js validate_planner.js validate_analytics.js validate_offline_assets.js
+          validate_app_shell.js validate_version.js spec_snapshot.js validate_content_metadata.js
+          validate_privacy.js validate_derived_hints.js validate_graph_choices.js validate_worksheets.js
+          validate_katex.js validate_public_claims.js validate_hints.js validate_performance_budget.js
+          validate_proof_lang.js validate_course.js validate_golden.js smoke_app_render.js verify_proof_claims.js
       - name: E2E main flow
         # 真的開一顆 Chrome、走完「開局 → 答題 → 結算 → 錯題進本」。
         # 這一步測的是其他驗證器看不到的那一層：東西有沒有**顯示出來**、

@@ -740,7 +740,31 @@
         </main>`;
     }
 
-    // state = { revealed: 示範揭到第幾步, picks: { [checkIndex]: optionIndex } }
+    // 揭下一步之前先猜：兩個選項，一個是真的下一步、一個是同一題別的步驟。
+    // 猜過再看，記憶比被動看深得多（測試效應）；猜錯也照樣揭，只是多一句「其實是這個」。
+    // 「直接看」的按鈕留著（course-step）：不想猜的人、還有 E2E 都靠它。
+    function renderStepGuess(item, revealed, state) {
+      const steps = item.worked.steps;
+      const next = steps[revealed];
+      const decoyIndex = revealed + 1 < steps.length ? revealed + 1 : revealed - 1;
+      const decoy = decoyIndex >= 0 ? steps[decoyIndex] : null;
+      const brief = (step) => { const text = step.text.replace(/\s+/g, " "); return text.length > 46 ? `${text.slice(0, 46)}…` : text; };
+      const plain = `<button class="button secondary" data-action="course-step">${icon("chevron-down")}${revealed ? "直接看下一步" : "直接看第一步"}<small>${revealed} / ${steps.length}</small></button>`;
+      if (!decoy) return plain;
+      const verdict = state.lastGuess === true ? `<p class="course-check-why is-right">${icon("check")}猜對了，就是這一步。</p>` : state.lastGuess === false ? `<p class="course-check-why">其實是另一個 —— 上面新揭的那一步才是。</p>` : "";
+      const swap = (revealed + item.id.length) % 2 === 1;
+      const option = (step, ok) => `<button type="button" class="course-option" data-action="course-guess" data-ok="${ok ? 1 : 0}">${escapeHtml(brief(step))}</button>`;
+      const options = swap ? option(decoy, false) + option(next, true) : option(next, true) + option(decoy, false);
+      return `
+        ${verdict}
+        <div class="course-check course-guess">
+          <p class="course-check-ask">先猜：${revealed ? "下一步" : "第一步"}該做什麼？</p>
+          <div class="course-check-options">${options}</div>
+          <div class="action-row">${plain}</div>
+        </div>`;
+    }
+
+    // state = { revealed: 示範揭到第幾步, picks: { [checkIndex]: optionIndex }, lastGuess: 上一次猜對沒 }
     function renderLesson(item, records, state) {
       if (!item) return null;
       const all = lessons();
@@ -798,7 +822,7 @@
                 <div class="pl-goal math-block" data-tex="${escapeAttr(workedTex)}"></div>
                 <ol class="course-steps">${item.worked.steps.slice(0, revealed).map(stepHtml).join("")}</ol>
                 ${revealed < item.worked.steps.length
-                  ? `<button class="button secondary" data-action="course-step">${icon("chevron-down")}${revealed ? "下一步" : "先想一下，再看第一步"}<small>${revealed} / ${item.worked.steps.length}</small></button>`
+                  ? renderStepGuess(item, revealed, state)
                   : (worked ? `<p class="course-answer">${icon("check")}答案：${referenceAnswerHTML(worked)}</p>` : `<p class="course-answer">${icon("check")}推導完了。</p>`)}` : `<p class="panel-note">示範題找不到（${escapeHtml(item.worked.problemId || "")}）。</p>`}
             </section>
 
@@ -839,7 +863,7 @@
                      <button class="button secondary" data-action="course-practice" data-lesson-id="${escapeAttr(item.id)}">${icon("refresh")}再練一次</button>`
                   : `<button class="button home-primary" data-action="course-practice" data-lesson-id="${escapeAttr(item.id)}">${icon("play")}開始練這 ${practiceProblems.length} 題</button>`}
                 ${checksPassed && practiceDone
-                  ? nextButton
+                  ? `${nextButton}${extensionPool(item.id).length ? `<button class="button ghost" data-action="course-extension" data-lesson-id="${escapeAttr(item.id)}">${icon("zap")}延伸挑戰：一題 R2</button>` : ""}`
                   : `<span class="panel-note">${checksPassed ? "練完這三題就算完成這一課。" : "小測答對、練習做完，這一課就算完成。"}</span>`}
               </div>
             </section>`}
@@ -1087,8 +1111,19 @@
       const item = lesson(id);
       return item ? item.practice.map((problemId) => problems().find((problem) => problem.id === problemId)).filter(Boolean) : [];
     };
+    // 每課結尾的延伸挑戰：同單元一題 R2（不倒數、可跳過）。課上完不該只是「看完」。
+    // 同一課永遠是同一題（用課的序號挑），練過的人回來才不會覺得被換題。
+    const EXTENSION_TOPIC = { functions: "limits", limits: "limits", derivatives: "derivatives", integrals: "integrals" };
+    const extensionPool = (id) => {
+      const item = lesson(id);
+      if (!item) return [];
+      const topic = EXTENSION_TOPIC[item.unit] || item.unit;
+      const pool = problems().filter((p) => Number(p.rank || p.difficulty) === 2 && p.topic === topic && p.answerKind !== "text" && !(p.tags || []).some((tag) => UNCOVERED_TAGS.includes(tag)));
+      if (!pool.length) return [];
+      return [pool[(number(item) * 7) % pool.length]];
+    };
 
-    return { lessons, lesson, isTheory, problemLesson, progress, renderIndex, renderLesson, renderFirstSteps, renderResultsActions, renderFeedbackLink, renderHomeCard, inBridge, bridgePool, uncoveredTags: UNCOVERED_TAGS, protectPool, graduationSet, graduationVerdict, graduation, graduated, renderGraduationActions, renderGraduationCard, markOpened, markChecksPassed, recordPractice, recordGraduation, allChecksRight, practicePool, gentleTrim };
+    return { lessons, lesson, isTheory, problemLesson, progress, renderIndex, renderLesson, renderFirstSteps, renderResultsActions, renderFeedbackLink, renderHomeCard, inBridge, bridgePool, uncoveredTags: UNCOVERED_TAGS, protectPool, graduationSet, graduationVerdict, graduation, graduated, renderGraduationActions, renderGraduationCard, markOpened, markChecksPassed, recordPractice, recordGraduation, allChecksRight, practicePool, extensionPool, gentleTrim };
   }
 
   window.BuzzCourseUI = { create };

@@ -1370,7 +1370,15 @@
           ${renderExamSetupCard(records)}
           ${renderHomeExamCard(records)}
           ${records.onboardingContext === "newbie" && !courseUI.graduated(records) ? courseUI.renderHomeCard(records) : renderTodayCard(records)}
-          <section class="workspace-section"><div class="workspace-section-head"><h2>照你的節奏練習</h2><span>四種訓練方向</span></div>${renderBucketNav()}</section>
+          ${renderHomeWeeklyDigest(records)}
+          ${
+            // 首頁只留一顆主按鈕（上面那張卡）。四種訓練方向收進摺疊：要換練法的人再打開。
+            ""
+          }
+          <details class="home-more home-bucket-more">
+            <summary><span><strong>換一種練法</strong></span>${icon("chevron-down")}</summary>
+            <div class="home-more-body">${renderBucketNav()}</div>
+          </details>
           ${renderHomeRetentionRow(records)}
           ${renderBackupNotice(records)}
         </div>
@@ -1415,7 +1423,7 @@
       days.push(`<div class="week-day ${count ? "is-complete" : ""} ${i === 6 ? "is-today" : ""}" title="${escapeAttr(`${localDateKey(cursor)} · ${count} 題`)}"><span>${["日", "一", "二", "三", "四", "五", "六"][cursor.getDay()]}</span><span class="week-day-mark">${count ? icon("check") : i === 6 ? "今" : "·"}</span></div>`);
       cursor.setDate(cursor.getDate() + 1);
     }
-    return `<section class="week-card" aria-label="最近七天的練習"><div class="workspace-section-head"><h2>一點一滴，練成習慣</h2>${icon("calendar")}</div><div class="week-days">${days.join("")}</div><div class="week-goal"><span>今日目標</span><strong>${mission.completed} / ${mission.target} 題</strong></div><div class="week-progress" role="progressbar" aria-label="今日目標" aria-valuemin="0" aria-valuemax="${mission.target}" aria-valuenow="${mission.completed}"><span style="width:${Math.min(100, mission.progress)}%"></span></div><p>每天留一點時間，讓解題更有把握。</p></section>`;
+    return `<section class="week-card" aria-label="最近七天的練習"><div class="workspace-section-head"><h2>一點一滴，練成習慣</h2>${icon("calendar")}</div><div class="week-days">${days.join("")}</div><div class="week-goal"><span>今日目標</span><strong>${mission.completed} / ${mission.target} 題</strong></div><div class="week-progress" role="progressbar" aria-label="今日目標" aria-valuemin="0" aria-valuemax="${mission.target}" aria-valuenow="${mission.completed}"><span style="width:${Math.min(100, mission.progress)}%"></span></div></section>`;
   }
 
   // 藏得最深的幾個入口，在首頁給一排小門。
@@ -2393,6 +2401,25 @@
     return { current: pack(buckets.this), previous: pack(buckets.last) };
   }
 
+  // 週一的首頁多一張「上週戰報」：週報藏在數據頁沒人會去找，一週一次自己跳出來就夠。
+  // 不記「看過了」（那要在 render 裡寫 records），整個週一都顯示，週二就收。
+  function renderHomeWeeklyDigest(records) {
+    if (new Date().getDay() !== 1) return "";
+    const data = weeklyShareData(records);
+    if (!data.answered) return "";
+    return `
+      <section class="study-card weekly-digest">
+        <div class="panel-title-row">
+          <div>
+            <p class="section-label">上週戰報</p>
+            <h3>${data.answered} 題 · ${data.accuracy}% · ${data.days} 天有練${data.streak > 1 ? ` · 連勝 ${data.streak} 天` : ""}</h3>
+          </div>
+          <button class="button secondary" data-action="download-weekly-report">${icon("download")}下載戰報</button>
+        </div>
+        ${data.up ? `<p class="panel-note">進步最快：${escapeHtml(data.up.label)} +${data.up.delta}</p>` : ""}
+      </section>`;
+  }
+
   function renderWeeklyReport(records) {
     const report = weeklyReportData(records);
     const { current, previous } = report;
@@ -3246,6 +3273,15 @@
           ${(() => {
             const info = xpLevelInfo(loadRecords().xp);
             return `<span class="level-chip" title="再 ${info.span - info.into} XP 升級">${icon("sparkles")}Lv.${info.level} · ${info.into}/${info.span} XP</span>`;
+          })()}
+          ${(() => {
+            // 連勝倒數：今天還沒練，就說清楚還剩幾小時。盾牌是保底，不是理由。
+            const todayCount = counts[localDateKey(new Date())] || 0;
+            if (!streakInfo.streak || todayCount) return "";
+            const end = new Date();
+            end.setHours(24, 0, 0, 0);
+            const hoursLeft = Math.max(1, Math.ceil((end.getTime() - Date.now()) / 3600000));
+            return `<span class="streak-countdown">${icon("clock")}今天還沒練 · ${hoursLeft} 小時內練一題，連勝才延續${streakInfo.shieldAvailable ? "（漏掉有盾牌墊一次）" : ""}</span>`;
           })()}
           <button class="button ghost share-card-button" type="button" data-action="share-achievement-card" data-from="home">${icon("share-2")}分享成就卡</button>
         </div>
@@ -4977,6 +5013,12 @@
     if (pool.length) startQuiz(pool, { modeKey: "practice", practice: true, noTimer: true, answerMode: "choice", courseLessonId: id });
   }
 
+  // 每課結尾的延伸挑戰：一題 R2，練習模式、不倒數；不記回課程（那是練習題的事）
+  function startCourseExtension(id) {
+    const pool = courseUI.extensionPool(id);
+    if (pool.length) startQuiz(pool, { modeKey: "practice", practice: true, noTimer: true, answerMode: "choice", courseExtension: true });
+  }
+
   function startCourseGraduation() {
     const pool = courseUI.graduationSet(Date.now());
     if (pool.length >= 4) startQuiz(pool, { modeKey: "practice", practice: true, noTimer: true, answerMode: "choice", courseGraduation: true });
@@ -6100,6 +6142,7 @@
                       <strong>${feedback.title}</strong>
                     </div>
                     <p>${feedback.message}</p>
+                    ${feedback.pace ? `<p class="feedback-nudge feedback-pace">${icon("zap")}<span>${escapeHtml(feedback.pace)}</span></p>` : ""}
                     ${feedback.nudge ? `<p class="feedback-nudge">${icon("lightbulb")}<span>${escapeHtml(feedback.nudge)}</span></p>` : ""}
                     ${feedback.status !== "correct" ? courseUI.renderFeedbackLink(current.id) : ""}
                     ${
@@ -7327,6 +7370,20 @@
           <h1 class="verdict-title" data-pop>${escapeHtml(verdict)}</h1>
           <p class="verdict-sub" data-enter>${escapeHtml(momentum)}</p>
           ${nextLine ? `<p class="verdict-next" data-enter>${escapeHtml(nextLine)}</p>` : ""}
+          ${(() => {
+            // 同一關的進步：跟上一次打這關比。沒有上次就不印 —— 「第一次」不需要被評價。
+            if (!quiz.pathNodeId) return "";
+            const history = loadRecords().history || [];
+            const previous = history.find((item, index) => index > 0 && item && item.pathNodeId === quiz.pathNodeId);
+            if (!previous || !previous.total) return "";
+            const nowCorrect = quiz.answers.filter((answer) => answer.correct).length;
+            const nowTotal = settledTotal(quiz);
+            const timed = quiz.answers.filter((answer) => Number.isFinite(answer.elapsed));
+            const nowAvg = timed.length ? Math.round(timed.reduce((sum, answer) => sum + answer.elapsed, 0) / timed.length) : null;
+            const faster = nowAvg !== null && previous.avgTime ? previous.avgTime - nowAvg : 0;
+            const pace = faster >= 2 ? `、快了 ${faster} 秒` : faster <= -2 ? `、慢了 ${-faster} 秒` : "";
+            return `<p class="verdict-progress" data-enter>${icon("sparkles")}上次這關 ${previous.correct}/${previous.total} → 這次 ${nowCorrect}/${nowTotal}${pace}</p>`;
+          })()}
           <!-- 這四個數字不做 count-up 動畫：手機上 rAF 被節流時動畫會
                停在半路，畫面就停格在「61% 正確率」—— 三次實測重現的
                「結算數字自我修正」就是這個。成績是事實，不是表演。 -->
@@ -7346,7 +7403,7 @@
           ${quiz.placementResult ? renderPlacementNextStep() : renderResultsActions(gateResult, pathResult)}
           ${quiz.dailyOneOutcome ? renderDailyOneOutcomePanel(quiz.dailyOneOutcome) : ""}
           <div class="action-row results-share-row" data-enter>
-            ${quiz.dailyOneOutcome ? `<button class="button ghost" data-action="share-daily-one">${icon("copy")}複製 emoji 成績</button>` : ""}
+            ${quiz.dailyOneOutcome ? `<button class="button ghost" data-action="share-daily-one">${icon("share-2")}分享成績卡</button>` : ""}
           </div>
         </section>
 
@@ -7576,18 +7633,23 @@
       return `
         <div class="action-row">
           ${primaryAction}
-          ${pathResult.cleared ? `<button class="button secondary" data-action="start-path-lesson" data-node-id="${escapeAttr(pathResult.node.id)}">${icon("repeat")}再練一次</button>` : ""}
-          ${pathResult.nextNode || !pathResult.cleared ? `<button class="button ghost" data-action="home">${icon("home")}回主線</button>` : ""}
-          ${pathResult.cleared ? `<button class="button ghost" data-action="share-achievement-card" data-from="path">${icon("share-2")}分享成就卡</button>` : ""}
+        </div>
+        <div class="results-secondary">
+          ${pathResult.cleared ? `<button type="button" class="link-button" data-action="start-path-lesson" data-node-id="${escapeAttr(pathResult.node.id)}">${icon("repeat")}再練一次</button>` : ""}
+          ${pathResult.nextNode || !pathResult.cleared ? `<button type="button" class="link-button" data-action="home">${icon("home")}回主線</button>` : ""}
+          ${pathResult.cleared ? `<button type="button" class="link-button" data-action="share-achievement-card" data-from="path">${icon("share-2")}分享成就卡</button>` : ""}
         </div>
       `;
     }
+    // 一顆主按鈕，其餘降成文字連結：結算頁不該再是一個要選的畫面
     return `
       <div class="action-row">
         <button class="button" data-action="restart">${icon("refresh")}再打一局</button>
-        <button class="button secondary" data-action="home">${icon("home")}回首頁</button>
-        <button class="button secondary" data-action="open-mistakes">${icon("book")}錯題本</button>
-        <button class="button ghost" data-action="share-achievement-card" data-from="results">${icon("share-2")}分享成就卡</button>
+      </div>
+      <div class="results-secondary">
+        <button type="button" class="link-button" data-action="home">${icon("home")}回首頁</button>
+        <button type="button" class="link-button" data-action="open-mistakes">${icon("book")}錯題本</button>
+        <button type="button" class="link-button" data-action="share-achievement-card" data-from="results">${icon("share-2")}分享成就卡</button>
       </div>
     `;
   }
@@ -8318,8 +8380,16 @@
     if (action === "open-course-lesson") openCourseLesson(actionNode.dataset.lessonId || "");
     if (action === "course-step") {
       courseState.revealed = (courseState.revealed || 0) + 1;
+      courseState.lastGuess = undefined;
       render();
     }
+    if (action === "course-guess") {
+      // 猜過就揭：對錯都往下走，只是留一句話
+      courseState.lastGuess = actionNode.dataset.ok === "1";
+      courseState.revealed = (courseState.revealed || 0) + 1;
+      render();
+    }
+    if (action === "course-extension") startCourseExtension(actionNode.dataset.lessonId || courseState.lessonId);
     if (action === "course-pick") pickCourseOption(Number(actionNode.dataset.check), Number(actionNode.dataset.option));
     if (action === "course-practice") startCoursePractice(actionNode.dataset.lessonId || courseState.lessonId);
     if (action === "course-graduation") startCourseGraduation();
@@ -8776,7 +8846,12 @@
       streak > 1 ? `🔥 連續 ${streak} 天` : "",
       SITE_URL
     ].filter(Boolean);
-    copyPlainText(lines.join("\n"), "emoji 成績卡已複製，貼到群組炫耀吧！");
+    const text = lines.join("\n");
+    // 先出圖（手機直接進系統分享）；桌機下載 PNG，同時把文字版複製起來
+    shareCards.shareDailyOneCard(
+      { dateKey, emoji: dailyOneEmoji(entry), rank: problem ? problemRank(problem) : 0, elapsed: entry.elapsed, correct: Boolean(entry.correct), streak, text },
+      () => copyPlainText(text, "成績卡已存成 PNG，文字版也複製好了。")
+    );
   }
 
   function copyPlainText(text, okMessage) {
@@ -10082,7 +10157,7 @@
     const mode = MODES[selectedMode] || MODES.quick;
     let pool = customProblems && customProblems.length ? customProblems : selectProblemPool(mode, selectedTopic);
     // 入門九課的保護期：畢業前與畢業後頭三局只出課裡教過的題（course.js 橋池），不然第一題就塌
-    if (!options.courseLessonId && !options.courseGraduation && !options.placement) {
+    if (!options.courseLessonId && !options.courseGraduation && !options.courseExtension && !options.placement) {
       const bridged = courseUI.protectPool(pool, records);
       if (bridged) pool = bridged;
     }
@@ -10457,235 +10532,17 @@
     `;
   }
 
-  // ── 本週戰報（Canvas 生成 PNG，全部本地）──────────────────────
-  //
-  // 成長要「可見、可分享」才會變成留存與獲客 —— 但資料一律不出裝置：
-  // 圖在本機 canvas 畫、本機下載，分不分享由使用者自己決定。
-  function weeklyShareData(records) {
-    const cutoff = Date.now() - 7 * 86400000;
-    let answered = 0;
-    let correctCount = 0;
-    let seconds = 0;
-    (records.history || []).forEach((session) => {
-      const at = Date.parse(session.finishedAt || "");
-      if (!Number.isFinite(at) || at < cutoff) return;
-      (session.answers || []).forEach((answer) => {
-        answered += 1;
-        if (answer.correct) correctCount += 1;
-        seconds += Number(answer.elapsed || 0);
-      });
-    });
-    const profile = abilityProfile(records);
-    const counts = activityCounts(records);
-    const streak = practiceStreakInfo(records, counts);
-    return {
-      answered,
-      accuracy: answered ? Math.round((correctCount / answered) * 100) : 0,
-      minutes: Math.round(seconds / 60),
-      days: activeDaysInLastWeek(records),
-      streak: streak.streak || 0,
-      trend: profile && profile.trend ? profile.trend.d7 : null,
-      up: profile && profile.trend ? profile.trend.fastestUp : null,
-      counts
-    };
-  }
-
-  function downloadWeeklyReport() {
-    const records = loadRecords();
-    const data = weeklyShareData(records);
-    if (!data.answered) {
-      showAppNotice("這七天還沒有作答紀錄 —— 先練一場再來領戰報。");
-      return;
-    }
-    const canvas = document.createElement("canvas");
-    canvas.width = 1080;
-    canvas.height = 1350;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-    const ui = "'Segoe UI', 'Noto Sans TC', system-ui, sans-serif";
-
-    // 底：米紙色 + 頂部金帶（跟 app 同一套視覺語言）
-    ctx.fillStyle = "#f5f3ed";
-    ctx.fillRect(0, 0, 1080, 1350);
-    ctx.fillStyle = "#e4b447";
-    ctx.fillRect(0, 0, 1080, 14);
-
-    ctx.fillStyle = "#20211f";
-    ctx.font = `800 54px ${ui}`;
-    ctx.fillText("BuzzCalculus 週報", 72, 128);
-    ctx.fillStyle = "#6d6a60";
-    ctx.font = `600 30px ${ui}`;
-    const end = new Date();
-    const start = new Date(end.getTime() - 6 * 86400000);
-    const dateOf = (d) => `${d.getMonth() + 1}/${d.getDate()}`;
-    ctx.fillText(`${dateOf(start)} – ${dateOf(end)}`, 72, 180);
-
-    const stat = (x, y, value, label) => {
-      ctx.fillStyle = "#20211f";
-      ctx.font = `800 96px ${ui}`;
-      ctx.fillText(String(value), x, y);
-      ctx.fillStyle = "#6d6a60";
-      ctx.font = `700 32px ${ui}`;
-      ctx.fillText(label, x, y + 48);
-    };
-    stat(72, 340, data.answered, "題");
-    stat(400, 340, `${data.accuracy}%`, "正確率");
-    stat(732, 340, data.minutes, "分鐘");
-    stat(72, 540, data.days, "天有練");
-    stat(400, 540, data.streak, "連勝天數");
-    if (data.trend !== null) stat(732, 540, `${data.trend > 0 ? "+" : ""}${data.trend}`, "能力變化（7 天）");
-
-    if (data.up) {
-      ctx.fillStyle = "#14663f";
-      ctx.font = `800 40px ${ui}`;
-      ctx.fillText(`本週進步最快：${data.up.label} +${data.up.delta}`, 72, 700);
-    }
-
-    // 七天熱力條
-    const todayKeyLocal = new Date();
-    todayKeyLocal.setHours(12, 0, 0, 0);
-    for (let index = 6; index >= 0; index -= 1) {
-      const day = new Date(todayKeyLocal.getTime() - index * 86400000);
-      const count = data.counts[localDateKey(day)] || 0;
-      const level = activityLevel(count);
-      const x = 72 + (6 - index) * 140;
-      ctx.fillStyle = ["#e8e4d8", "#f2d9a0", "#eec564", "#e4b447", "#b28d21"][level] || "#e8e4d8";
-      ctx.beginPath();
-      ctx.roundRect(x, 780, 120, 120, 18);
-      ctx.fill();
-      ctx.fillStyle = "#6d6a60";
-      ctx.font = `700 26px ${ui}`;
-      ctx.fillText(dateOf(day), x + 18, 940);
-    }
-
-    ctx.fillStyle = "#20211f";
-    ctx.font = `700 34px ${ui}`;
-    ctx.fillText("每一題的答案都經過獨立數值驗算。", 72, 1180);
-    ctx.fillStyle = "#6d6a60";
-    ctx.font = `600 30px ${ui}`;
-    ctx.fillText("tudohuang.github.io/BuzzCalculus", 72, 1240);
-
-    canvas.toBlob((blob) => {
-      if (!blob) return;
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = `buzzcalculus-week-${new Date().toISOString().slice(0, 10)}.png`;
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-      window.setTimeout(() => URL.revokeObjectURL(url), 4000);
-    }, "image/png");
-  }
-
-  // ── 成就分享卡（Canvas 生成 PNG，全部本地）───────────────────
-  //
-  // 連勝與 XP 只在自己的首頁上看得到的話，它們什麼都不是 —— 它們的意義是「拿去給人看」。
-  // 圖在本機畫；手機能走系統分享（navigator.share 帶檔案，直接進 IG／LINE），
-  // 不行就下載 PNG。資料一律不出裝置，跟週報同一套原則。
-  function achievementShareData(records) {
-    const counts = activityCounts(records);
-    const streak = practiceStreakInfo(records, counts);
-    const level = xpLevelInfo(records.xp);
-    const answered = Number(records.totalAnswered || 0);
-    const correct = Number(records.totalCorrect || 0);
-    return {
-      streak: streak.streak || 0,
-      level: level.level,
-      xp: Math.max(0, Math.floor(Number(records.xp) || 0)),
-      answered,
-      accuracy: answered ? Math.round((correct / answered) * 100) : 0,
-      week: weeklyShareData(records)
-    };
-  }
-
-  function drawAchievementCard(data) {
-    const canvas = document.createElement("canvas");
-    canvas.width = 1080;
-    canvas.height = 1350;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return null;
-    const ui = "'Segoe UI', 'Noto Sans TC', system-ui, sans-serif";
-    // 深底金字：社群動態牆上米紙色會糊掉，深色卡才跳得出來
-    ctx.fillStyle = "#20211f";
-    ctx.fillRect(0, 0, 1080, 1350);
-    ctx.fillStyle = "#e4b447";
-    ctx.fillRect(0, 0, 1080, 14);
-
-    ctx.fillStyle = "#f5f3ed";
-    ctx.font = `800 54px ${ui}`;
-    ctx.fillText("BuzzCalculus", 72, 128);
-    ctx.fillStyle = "#b8b3a4";
-    ctx.font = `600 30px ${ui}`;
-    const today = new Date();
-    ctx.fillText(`${today.getFullYear()}/${today.getMonth() + 1}/${today.getDate()} · 微積分反射訓練`, 72, 180);
-
-    ctx.fillStyle = "#e4b447";
-    ctx.font = `800 210px ${ui}`;
-    ctx.fillText(`Lv.${data.level}`, 64, 470);
-    ctx.fillStyle = "#f5f3ed";
-    ctx.font = `700 40px ${ui}`;
-    ctx.fillText(`${data.xp} XP`, 72, 540);
-
-    const stat = (x, y, value, label) => {
-      ctx.fillStyle = "#f5f3ed";
-      ctx.font = `800 96px ${ui}`;
-      ctx.fillText(String(value), x, y);
-      ctx.fillStyle = "#b8b3a4";
-      ctx.font = `700 32px ${ui}`;
-      ctx.fillText(label, x, y + 48);
-    };
-    stat(72, 760, data.streak, "天連勝");
-    stat(400, 760, data.answered, "題累計");
-    stat(732, 760, `${data.accuracy}%`, "正確率");
-    stat(72, 960, data.week.answered, "本週題數");
-    stat(400, 960, data.week.days, "本週有練的天數");
-    stat(732, 960, data.week.minutes, "本週分鐘");
-
-    ctx.fillStyle = "#f5f3ed";
-    ctx.font = `700 34px ${ui}`;
-    ctx.fillText("每一題的答案都經過獨立數值驗算。", 72, 1180);
-    ctx.fillStyle = "#b8b3a4";
-    ctx.font = `600 30px ${ui}`;
-    ctx.fillText("tudohuang.github.io/BuzzCalculus", 72, 1240);
-    return canvas;
-  }
-
-  function downloadBlob(blob, fileName) {
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = fileName;
-    document.body.appendChild(link);
-    link.click();
-    link.remove();
-    window.setTimeout(() => URL.revokeObjectURL(url), 4000);
-  }
-
-  function shareAchievementCard(from) {
-    const records = loadRecords();
-    const data = achievementShareData(records);
-    if (!data.answered) {
-      showAppNotice("還沒有作答紀錄 —— 先練一場，卡片才有東西可以秀。");
-      return;
-    }
-    const canvas = drawAchievementCard(data);
-    if (!canvas) return;
-    trackEvent("share_card", { from: from || "", level: data.level, streak: data.streak });
-    const fileName = `buzzcalculus-lv${data.level}-${new Date().toISOString().slice(0, 10)}.png`;
-    canvas.toBlob((blob) => {
-      if (!blob) return;
-      const nav = window.navigator;
-      const file = typeof File === "function" ? new File([blob], fileName, { type: "image/png" }) : null;
-      if (file && nav && typeof nav.share === "function" && typeof nav.canShare === "function" && nav.canShare({ files: [file] })) {
-        nav.share({ files: [file], title: "BuzzCalculus", text: `Lv.${data.level} · 連勝 ${data.streak} 天 · ${SITE_URL}` })
-          .catch(() => { /* 使用者取消分享：不下載、不吵 */ });
-        return;
-      }
-      downloadBlob(blob, fileName);
-      showAppNotice("成就卡已存成 PNG，貼到 IG 或群組吧。");
-    }, "image/png");
-  }
+  // ── 本週戰報與成就分享卡：搬到 src/share_cards.js ──────────────────
+  // app.js 預算到頂（validate_performance_budget），canvas 畫圖不該住在主程式。
+  // 這裡只留轉呼叫；siteUrl 用 getter 是因為 SITE_URL 的 const 宣告在這一行之後（TDZ）。
+  const shareCards = window.BuzzShareCards.create({
+    loadRecords, showAppNotice, trackEvent, abilityProfile, activityCounts, practiceStreakInfo,
+    activeDaysInLastWeek, localDateKey, activityLevel, xpLevelInfo, siteUrl: () => SITE_URL,
+    problemById, problemRank, topicLabel: (topic) => (TOPICS[topic] ? TOPICS[topic].label : topic)
+  });
+  const downloadWeeklyReport = () => shareCards.downloadWeeklyReport();
+  const shareAchievementCard = (from) => { trackEvent("share_card", { from: from || "" }); shareCards.shareAchievementCard(from); };
+  const weeklyShareData = (records) => shareCards.weeklyShareData(records);
 
   // ── 好友對戰碼（純前端、零後端、不碰隱私承諾）─────────────────
   //
@@ -10787,136 +10644,13 @@
   // suggestCause 每一題答錯都在自動標錯因，數據頁也畫了分佈 ——
   // 但「所以呢」一直是空的。這裡把 30 天內的錯因分佈變成一張處方：
   // 某個錯因佔了四成以上才開藥（沒有主旋律就不硬開），樣本至少 8 錯。
-  const CAUSE_PRESCRIPTIONS = {
-    "algebra-slip": {
-      mode: "accuracy",
-      advice: (count) => `30 天內 ${count} 題錯在「算錯，不是不會」—— 對症是不限時、錯題重罰的正確率模式：把手放慢，讓代價教會手。`
-    },
-    "misread": {
-      mode: "accuracy",
-      advice: (count) => `30 天內 ${count} 題錯在看錯題目 —— 正確率模式不限時：先把「讀完再動筆」練成習慣。`
-    },
-    "wrong-technique": {
-      mode: "topic",
-      advice: (count) => `30 天內 ${count} 題錯在選錯方法 —— 單範圍集中練最快把「看題判型」建起來。`
-    },
-    "forgot-formula": {
-      mode: "practice",
-      advice: (count) => `30 天內 ${count} 題錯在忘公式 —— 用可看提示的練習模式把公式重新掛回手上，並清一輪錯題複習。`
-    },
-    "timeout": {
-      mode: "pressure",
-      advice: (count) => `30 天內 ${count} 題是時間到 —— 壓力訓練的遞減計時就是為這個造的。`
-    }
-  };
+  // ── 錯因處方／段考預測／模式推薦：搬到 src/kernel/planner.js（app.js 預算到頂）──
+  // 那三支是純函式，app 端的東西用 deps 注入；planner 沒載入時跟原本一樣回 null / []。
+  const plannerDeps = () => ({ abilityProfile, MODES, selectProblemPool, pressuredSkillIds });
+  const causePrescription = (records) => (window.BuzzPlanner && window.BuzzPlanner.causePrescription ? window.BuzzPlanner.causePrescription(records, plannerDeps()) : null);
+  const examScoreForecast = (records) => (window.BuzzPlanner && window.BuzzPlanner.examScoreForecast ? window.BuzzPlanner.examScoreForecast(records, plannerDeps()) : null);
+  const modeRecommendations = (records) => (window.BuzzPlanner && window.BuzzPlanner.modeRecommendations ? window.BuzzPlanner.modeRecommendations(records, plannerDeps()) : []);
 
-  function causePrescription(records) {
-    if (!window.BuzzRecords) return null;
-    let attempts;
-    try {
-      attempts = window.BuzzRecords.attempts(records);
-    } catch (_error) {
-      return null;
-    }
-    const cutoff = Date.now() - 30 * 86400000;
-    const tally = {};
-    let wrongs = 0;
-    (attempts || []).forEach((attempt) => {
-      if (!attempt || attempt.correct || !attempt.at || attempt.at < cutoff) return;
-      wrongs += 1;
-      if (attempt.cause) tally[attempt.cause] = (tally[attempt.cause] || 0) + 1;
-    });
-    if (wrongs < 8) return null;
-    const top = Object.entries(tally).sort((a, b) => b[1] - a[1])[0];
-    if (!top || top[1] < wrongs * 0.4) return null;
-    const prescription = CAUSE_PRESCRIPTIONS[top[0]];
-    if (!prescription) return null;
-    return { cause: top[0], count: top[1], wrongs, mode: prescription.mode, advice: prescription.advice(top[1]) };
-  }
-
-  // 模擬考分數預測。
-  //
-  // 「你現在去考大概幾分」是每個學生真正想知道、而正確率統計答不了的
-  // 問題。原料全在：能力模型有每技巧的**限時**正確率（考試就是限時），
-  // 大考模式有真實的選題器。做法：抽三份真的大考卷，逐題估 P(答對) ——
-  //   有壓力數據用壓力數據；沒有退回精熟度；沒測過的技巧用先驗 0.45。
-  //   多技巧取最弱（跟抽題同一個世界觀：短板決定成敗）。
-  // 期望 = Σp、變異 = Σp(1−p)，常態近似給 90% 區間。
-  // 覆蓋率太低時要誠實說「還測不準」，不給假數字。
-  function examScoreForecast(records) {
-    if (!window.BuzzSkillGraph || !window.BuzzAbility) return null;
-    const profile = abilityProfile(records);
-    if (!profile) return null;
-    const prior = (window.BuzzAbility.constants && window.BuzzAbility.constants.PRIOR_ACCURACY) || 0.45;
-    const probabilityOf = (problem) => {
-      const ids = window.BuzzSkillGraph.skillsForProblem(problem) || [];
-      const estimates = ids
-        .map((id) => {
-          const entry = profile.skills[id];
-          if (!entry || !entry.measured) return null;
-          if (entry.pressureAccuracy !== null && entry.pressureAccuracy !== undefined) return entry.pressureAccuracy;
-          return entry.mastery === null ? null : entry.mastery / 100;
-        })
-        .filter((value) => value !== null);
-      if (!estimates.length) return { p: prior, measured: false };
-      return { p: Math.max(0.03, Math.min(0.97, Math.min(...estimates))), measured: true };
-    };
-    const ROUNDS = 3;
-    let expected = 0;
-    let variance = 0;
-    let measuredCount = 0;
-    let total = 0;
-    for (let round = 0; round < ROUNDS; round += 1) {
-      selectProblemPool(MODES.exam, "all").forEach((problem) => {
-        const { p, measured } = probabilityOf(problem);
-        expected += p;
-        variance += p * (1 - p);
-        if (measured) measuredCount += 1;
-        total += 1;
-      });
-    }
-    if (!total) return null;
-    const mean = expected / ROUNDS;
-    const sd = Math.sqrt(variance / ROUNDS);
-    return {
-      total: MODES.exam.count,
-      expected: mean,
-      low: Math.max(0, mean - 1.64 * sd),
-      high: Math.min(MODES.exam.count, mean + 1.64 * sd),
-      coverage: total ? measuredCount / total : 0
-    };
-  }
-
-  // 「今天適合」徽章：16 個模式對新使用者是選擇癱瘓 —— 不砍模式，
-  // 改讓能力模型指路。最多兩個，而且要說得出為什麼（跟 planner 的
-  // why 同一條紀律：沒有理由的推薦和隨機沒有差別）。
-  function modeRecommendations(records) {
-    const recos = new Map();
-    // 錯因處方優先：它是最個人、最可解釋的一種推薦
-    const prescription = causePrescription(records);
-    if (prescription) recos.set(prescription.mode, prescription.advice);
-    const profile = abilityProfile(records);
-    if (profile) {
-      const skills = Object.values(profile.skills || {}).filter((entry) => entry.measured && entry.subject !== "science");
-      const pressured = pressuredSkillIds(records).size;
-      const weak = skills.filter((entry) => entry.state === "weak" || entry.state === "shaky").length;
-      const reflex = skills.filter((entry) => entry.state === "reflex").length;
-      if (pressured >= 2) {
-        recos.set("pressure", `${pressured} 個技巧「會但一計時就垮」—— 練縮短的時間窗`);
-      }
-      if (weak >= 5) {
-        recos.set("topic", `${weak} 個技巧還不穩 —— 單範圍集中補洞`);
-      } else if (reflex >= 8 && recos.size < 2) {
-        recos.set("boss_rush", `${reflex} 個技巧已反射級 —— 往上打`);
-      }
-    }
-    if (!recos.size) recos.set("quick", "混合訓練維持手感，模型會自動偏向你的弱技巧");
-    return new Map([...recos.entries()].slice(0, 2));
-  }
-
-  // 壓力訓練的計時遞減：第一題給全額，最後一題只給 60%。
-  // 練的不是「更快算」而是「在縮短的窗裡維持判型與計算的穩定」——
-  // 這正對 ability 模型抓出來的 PA/UA 差距。下限 15 秒：再短就只是反應遊戲。
   function questionTimeLimit(currentQuiz, problem) {
     const base = problem.timeLimit;
     // 定位測驗給寬鬆的時間：它在量「會不會」，不是「快不快」——
@@ -11234,7 +10968,9 @@
       message: detail || (correct ? "" : "先想想卡在哪一步，下面可以一段一段看解法。"),
       // 連錯兩題以上遞一句建議 —— 給的是**下一步怎麼做**，不是加油。
       // 大考模式不給：那裡的節奏是考試，插話只是干擾。
-      nudge: !correct && !quiz.examMode ? stuckNudge(quiz.missStreak) : ""
+      nudge: !correct && !quiz.examMode ? stuckNudge(quiz.missStreak) : "",
+      // 答對時跟自己的平常比：絕對秒數沒感覺，「比平常快 4 秒」才有
+      pace: correct && !quiz.practice && !quiz.examMode ? paceLine(elapsed) : ""
     };
     // 全螢幕書寫時答錯：回饋卡與「下一題」都在 fixed 的全螢幕外殼底下，
     // 看不到也點不到，而 feedback 一出現連「退出全螢幕」鈕都被 disabled ——
@@ -11676,6 +11412,29 @@
     if (problem.answerKind === "set") hints.push("把找到的值全部列出來，順序不影響判分 —— 但少一個就算錯。");
     if (problem.answerKind === "interval") hints.push("端點取不取得到，決定用小括號還是中括號。多段用 U 連起來。");
     return hints.slice(0, 3);
+  }
+
+  // 你平常答對一題要幾秒：最近 200 筆計時答對的中位數。樣本不到 8 筆就不比。
+  function personalMedianElapsed(records) {
+    const samples = [];
+    (records.history || []).some((session) => {
+      (session && session.answers ? session.answers : []).forEach((answer) => {
+        if (answer && answer.correct && Number.isFinite(answer.elapsed) && answer.elapsed > 0) samples.push(answer.elapsed);
+      });
+      return samples.length >= 200;
+    });
+    if (samples.length < 8) return null;
+    samples.sort((a, b) => a - b);
+    return samples[Math.floor(samples.length / 2)];
+  }
+
+  function paceLine(elapsed) {
+    const median = personalMedianElapsed(loadRecords());
+    if (median === null || !Number.isFinite(elapsed)) return "";
+    const diff = median - elapsed;
+    if (diff >= 2) return `比你平常快 ${diff} 秒`;
+    if (diff <= -2) return `比你平常慢 ${-diff} 秒`;
+    return "跟你平常的速度差不多";
   }
 
   function hintPenalty(problem) {
@@ -13309,7 +13068,8 @@
     try {
       window.BuzzBoardStore.loadBoard(problem.id).then((entry) => {
         if (!entry || !quiz || !quiz.problems || quiz.problems[quiz.index] !== problem) return;
-        previousBoard = { problemId: problem.id, entry, open: false };
+        // 上次答錯的才預設攤開：要對照的是「上次哪一步算錯」；上次答對的攤開就變照抄
+        previousBoard = { problemId: problem.id, entry, open: !entry.correct };
         render();
       });
     } catch (_error) {
@@ -13469,6 +13229,8 @@
 
   function playAnswerSound(correct) {
     if (!soundEnabled()) return;
+    // 手機的觸覺回饋跟音效走同一個開關：答對一下、答錯兩下短的。桌機沒有 vibrate 就略過。
+    try { if (navigator.vibrate) navigator.vibrate(correct ? 12 : [18, 40, 18]); } catch (_error) { /* 有些瀏覽器會丟 */ }
     try {
       const Ctor = window.AudioContext || window.webkitAudioContext;
       if (!Ctor) return;
@@ -13787,6 +13549,8 @@
       topics: Array.from(new Set(currentQuiz.problems.map((problem) => problem.topic))),
       difficultyCap: normalizeDifficultyCap(currentQuiz.difficultyCap || activeDifficultyCap(records)),
       interruptions: Number(currentQuiz.interruptions || 0),
+      // 主線關卡的 id：結算頁拿它找上一次同一關的成績，把「進步了什麼」寫成一行
+      pathNodeId: currentQuiz.pathNodeId || "",
       score: currentQuiz.score,
       correct,
       total,
@@ -15116,8 +14880,21 @@
     const rest = groups
       .filter((group) => group.label !== "數字")
       .flatMap((group) => group.keys.map(toKey));
+    // 依題型把最常用的鍵排到第一排：積分題先看到 ^ / ( ) sqrt，極限題先看到 inf pi e。
+    // 只調順序不換內容 —— 鍵在哪一排是習慣，鍵有沒有是功能。
+    const priority = KEYPAD_PRIORITY_BY_TOPIC[problem.topic] || [];
+    if (priority.length && problem.answerKind !== "text") {
+      const rankOf = (key) => { const index = priority.indexOf(key.insert); return index < 0 ? priority.length : index; };
+      rest.sort((a, b) => rankOf(a) - rankOf(b));
+    }
     return { digits, rest };
   }
+  const KEYPAD_PRIORITY_BY_TOPIC = {
+    integrals: ["^", "/", "(", ")", "sqrt(|)", "pi", "log(|)", "e", "x", "*", "+", "-"],
+    derivatives: ["x", "^", "*", "(", ")", "sin(|)", "cos(|)", "e", "log(|)", "/", "+", "-"],
+    limits: ["pi", "e", "/", "sqrt(|)", "DNE", "^", "(", ")", "x", "*", "+", "-"],
+    series: ["/", "pi", "e", "^", "(", ")", "log(|)", "x", "*", "+", "-"]
+  };
 
   function formatHelp(kind) {
     if (kind === "text") return "可輸入 convergent / divergent / conditional";
@@ -15439,8 +15216,14 @@
   }
 
   function renderMathNode(node, displayMode) {
-    if (window.BuzzTexLite) return window.BuzzTexLite.renderMathNode(node, displayMode);
-    node.textContent = node.dataset.tex || "";
+    // 排好版才顯示（CSS 對沒有 is-rendered 的 .math-block 用 visibility:hidden）：
+    // 慢手機上 KaTeX 排版前會先閃一下原始 TeX 字串，題目切換時整塊跳動。
+    try {
+      if (window.BuzzTexLite) return window.BuzzTexLite.renderMathNode(node, displayMode);
+      node.textContent = node.dataset.tex || "";
+    } finally {
+      if (node && node.classList) node.classList.add("is-rendered");
+    }
   }
 
   function renderLiteTex(tex, displayMode = true) {

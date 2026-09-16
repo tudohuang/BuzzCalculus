@@ -500,3 +500,146 @@
   if (typeof module !== "undefined" && module.exports) module.exports = api;
   if (typeof window !== "undefined") window.BuzzPlanner = api;
 })();
+
+
+// ── 錯因處方、段考預測、模式推薦 ────────────────────────────────
+// 2026-09-16 從 app.js 搬過來（app.js 撞預算）。純函式：app 端的 abilityProfile、MODES、
+// selectProblemPool 用 deps 注入，這裡不碰 DOM。掛在同一個 BuzzPlanner 上。
+(function () {
+  "use strict";
+  const g = typeof window !== "undefined" ? window : globalThis;
+
+  const CAUSE_PRESCRIPTIONS = {
+    "algebra-slip": {
+      mode: "accuracy",
+      advice: (count) => `30 天內 ${count} 題錯在「算錯，不是不會」—— 對症是不限時、錯題重罰的正確率模式：把手放慢，讓代價教會手。`
+    },
+    "misread": {
+      mode: "accuracy",
+      advice: (count) => `30 天內 ${count} 題錯在看錯題目 —— 正確率模式不限時：先把「讀完再動筆」練成習慣。`
+    },
+    "wrong-technique": {
+      mode: "topic",
+      advice: (count) => `30 天內 ${count} 題錯在選錯方法 —— 單範圍集中練最快把「看題判型」建起來。`
+    },
+    "forgot-formula": {
+      mode: "practice",
+      advice: (count) => `30 天內 ${count} 題錯在忘公式 —— 用可看提示的練習模式把公式重新掛回手上，並清一輪錯題複習。`
+    },
+    "timeout": {
+      mode: "pressure",
+      advice: (count) => `30 天內 ${count} 題是時間到 —— 壓力訓練的遞減計時就是為這個造的。`
+    }
+  };
+
+  function causePrescription(records, deps) {
+    if (!g.BuzzRecords) return null;
+    let attempts;
+    try {
+      attempts = g.BuzzRecords.attempts(records);
+    } catch (_error) {
+      return null;
+    }
+    const cutoff = Date.now() - 30 * 86400000;
+    const tally = {};
+    let wrongs = 0;
+    (attempts || []).forEach((attempt) => {
+      if (!attempt || attempt.correct || !attempt.at || attempt.at < cutoff) return;
+      wrongs += 1;
+      if (attempt.cause) tally[attempt.cause] = (tally[attempt.cause] || 0) + 1;
+    });
+    if (wrongs < 8) return null;
+    const top = Object.entries(tally).sort((a, b) => b[1] - a[1])[0];
+    if (!top || top[1] < wrongs * 0.4) return null;
+    const prescription = CAUSE_PRESCRIPTIONS[top[0]];
+    if (!prescription) return null;
+    return { cause: top[0], count: top[1], wrongs, mode: prescription.mode, advice: prescription.advice(top[1]) };
+  }
+
+  // 模擬考分數預測。
+  //
+  // 「你現在去考大概幾分」是每個學生真正想知道、而正確率統計答不了的
+  // 問題。原料全在：能力模型有每技巧的**限時**正確率（考試就是限時），
+  // 大考模式有真實的選題器。做法：抽三份真的大考卷，逐題估 P(答對) ——
+  //   有壓力數據用壓力數據；沒有退回精熟度；沒測過的技巧用先驗 0.45。
+  //   多技巧取最弱（跟抽題同一個世界觀：短板決定成敗）。
+  // 期望 = Σp、變異 = Σp(1−p)，常態近似給 90% 區間。
+  // 覆蓋率太低時要誠實說「還測不準」，不給假數字。
+  function examScoreForecast(records, deps) {
+    if (!g.BuzzSkillGraph || !g.BuzzAbility) return null;
+    const profile = deps.abilityProfile(records);
+    if (!profile) return null;
+    const prior = (g.BuzzAbility.constants && g.BuzzAbility.constants.PRIOR_ACCURACY) || 0.45;
+    const probabilityOf = (problem) => {
+      const ids = g.BuzzSkillGraph.skillsForProblem(problem) || [];
+      const estimates = ids
+        .map((id) => {
+          const entry = profile.skills[id];
+          if (!entry || !entry.measured) return null;
+          if (entry.pressureAccuracy !== null && entry.pressureAccuracy !== undefined) return entry.pressureAccuracy;
+          return entry.mastery === null ? null : entry.mastery / 100;
+        })
+        .filter((value) => value !== null);
+      if (!estimates.length) return { p: prior, measured: false };
+      return { p: Math.max(0.03, Math.min(0.97, Math.min(...estimates))), measured: true };
+    };
+    const ROUNDS = 3;
+    let expected = 0;
+    let variance = 0;
+    let measuredCount = 0;
+    let total = 0;
+    for (let round = 0; round < ROUNDS; round += 1) {
+      deps.selectProblemPool(deps.MODES.exam, "all").forEach((problem) => {
+        const { p, measured } = probabilityOf(problem);
+        expected += p;
+        variance += p * (1 - p);
+        if (measured) measuredCount += 1;
+        total += 1;
+      });
+    }
+    if (!total) return null;
+    const mean = expected / ROUNDS;
+    const sd = Math.sqrt(variance / ROUNDS);
+    return {
+      total: deps.MODES.exam.count,
+      expected: mean,
+      low: Math.max(0, mean - 1.64 * sd),
+      high: Math.min(deps.MODES.exam.count, mean + 1.64 * sd),
+      coverage: total ? measuredCount / total : 0
+    };
+  }
+
+  // 「今天適合」徽章：16 個模式對新使用者是選擇癱瘓 —— 不砍模式，
+  // 改讓能力模型指路。最多兩個，而且要說得出為什麼（跟 planner 的
+  // why 同一條紀律：沒有理由的推薦和隨機沒有差別）。
+  function modeRecommendations(records, deps) {
+    const recos = new Map();
+    // 錯因處方優先：它是最個人、最可解釋的一種推薦
+    const prescription = causePrescription(records, deps);
+    if (prescription) recos.set(prescription.mode, prescription.advice);
+    const profile = deps.abilityProfile(records);
+    if (profile) {
+      const skills = Object.values(profile.skills || {}).filter((entry) => entry.measured && entry.subject !== "science");
+      const pressured = deps.pressuredSkillIds(records).size;
+      const weak = skills.filter((entry) => entry.state === "weak" || entry.state === "shaky").length;
+      const reflex = skills.filter((entry) => entry.state === "reflex").length;
+      if (pressured >= 2) {
+        recos.set("pressure", `${pressured} 個技巧「會但一計時就垮」—— 練縮短的時間窗`);
+      }
+      if (weak >= 5) {
+        recos.set("topic", `${weak} 個技巧還不穩 —— 單範圍集中補洞`);
+      } else if (reflex >= 8 && recos.size < 2) {
+        recos.set("boss_rush", `${reflex} 個技巧已反射級 —— 往上打`);
+      }
+    }
+    if (!recos.size) recos.set("quick", "混合訓練維持手感，模型會自動偏向你的弱技巧");
+    return new Map([...recos.entries()].slice(0, 2));
+  }
+
+  // 壓力訓練的計時遞減：第一題給全額，最後一題只給 60%。
+  // 練的不是「更快算」而是「在縮短的窗裡維持判型與計算的穩定」——
+  // 這正對 ability 模型抓出來的 PA/UA 差距。下限 15 秒：再短就只是反應遊戲。
+  const extra = { CAUSE_PRESCRIPTIONS, causePrescription, examScoreForecast, modeRecommendations };
+  if (typeof module !== "undefined" && module.exports) Object.assign(module.exports, extra);
+  if (typeof window !== "undefined" && window.BuzzPlanner) Object.assign(window.BuzzPlanner, extra);
+})();
