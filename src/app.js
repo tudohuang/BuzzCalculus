@@ -371,7 +371,7 @@
   // 本身就是計時規則的模式不在保護範圍。
   // 高中先修 3 局、大一（或沒填）1 局；「要考了」「維持手感」的人自己說已經學過，
   // 對他們說「看懂比答對重要」是在講幼稚園的話 —— 不保護，直接計時。
-  const GENTLE_QUOTA_BY_CONTEXT = { highschool: 3, freshman: 1, exam: 0, maintain: 0 };
+  const GENTLE_QUOTA_BY_CONTEXT = { newbie: 4, highschool: 3, freshman: 1, exam: 0, maintain: 0 };
   function gentleStartQuota(records) {
     const context = records.onboardingContext || "";
     return context in GENTLE_QUOTA_BY_CONTEXT ? GENTLE_QUOTA_BY_CONTEXT[context] : 1;
@@ -1240,7 +1240,7 @@
               </nav>
               <div class="sidebar-resources">
                 <span class="nav-section-label">學習工具</span>
-                <button class="sidebar-link ${/^course/.test(view) ? "is-active" : ""}" data-action="open-course" title="入門九課">${icon("book-open")}<span>入門九課</span></button>
+                <button class="sidebar-link ${/^course/.test(view) ? "is-active" : ""}" data-action="open-course" title="入門課程">${icon("book-open")}<span>入門課程</span></button>
                 <button class="sidebar-link ${view === "mistakes" ? "is-active" : ""}" data-action="open-mistakes" title="錯題本">${icon("refresh")}<span>錯題本</span></button>
                 <button class="sidebar-link ${view === "history" ? "is-active" : ""}" data-action="open-history" title="練習紀錄">${icon("history")}<span>練習紀錄</span></button>
                 <button class="sidebar-link ${/^proof/.test(view) ? "is-active" : ""}" data-action="open-proofs" title="證明訓練">${icon("file-pen-line")}<span>證明訓練</span></button>
@@ -1347,7 +1347,7 @@
           ${renderResumeCard()}
           ${renderExamSetupCard(records)}
           ${renderHomeExamCard(records)}
-          ${records.onboardingContext === "newbie" && courseUI.progress(records).next ? courseUI.renderHomeCard(records) : renderTodayCard(records)}
+          ${records.onboardingContext === "newbie" && !courseUI.graduated(records) ? courseUI.renderHomeCard(records) : renderTodayCard(records)}
           <section class="workspace-section"><div class="workspace-section-head"><h2>照你的節奏練習</h2><span>四種訓練方向</span></div>${renderBucketNav()}</section>
           ${renderHomeRetentionRow(records)}
           ${renderBackupNotice(records)}
@@ -1369,7 +1369,7 @@
 
   function renderHomeOverview(records, mission) {
     const total = Number(records.totalAnswered || 0);
-    if (!total || (records.onboardingContext === "newbie" && courseUI.progress(records).next)) return renderFirstSteps(records);
+    if (!total || (records.onboardingContext === "newbie" && !courseUI.graduated(records))) return renderFirstSteps(records);
     const profile = abilityProfile(records);
     const measured = profile ? profile.coverage.skillsMeasured : 0;
     const due = srsDueSummary(records).due;
@@ -1571,20 +1571,10 @@
   // spec 04.3：首頁永遠只有一個主 CTA，而且它必須說得出「為什麼是這個」。
   // 由 kernel 的 planner 決定內容；planner 沒載入時整張卡不出現，
   // 首頁退回原本的樣子。
-  // 新手保護期的第一份訓練：不管配方排了幾題，取 8 題、由淺入深。
-  // 19 題對第一次來的人太長；而且配方上「7 到期複習 · 8 弱點」對一個
-  // 什麼都還沒做過的人是假的（那是補位規則填出來的數字）。
-  const GENTLE_FIRST_COUNT = 8;
-  function gentleTrim(list, records = loadRecords()) {
-    // 高中先修的第一份訓練只在極限與微分裡：級數對他們是「還沒學」，不是練習。
-    const topics = PLACEMENT_TOPICS_BY_CONTEXT[records.onboardingContext || ""] || null;
-    const scoped = topics ? list.filter((problem) => topics.includes(problem.topic)) : list;
-    return (scoped.length >= Math.min(GENTLE_FIRST_COUNT, 4) ? scoped : list)
-      .map((problem, index) => ({ problem, index }))
-      .sort((a, b) => (problemRank(a.problem) - problemRank(b.problem)) || (a.index - b.index))
-      .map((entry) => entry.problem)
-      .slice(0, GENTLE_FIRST_COUNT);
-  }
+  // 新手保護期的第一份訓練：不管配方排了幾題，取 8 題、由淺入深（19 題對第一次來的人太長，
+  // 而且配方上「7 到期複習 · 8 弱點」對什麼都沒做過的人是補位填出來的假數字）。
+  // 實作在 course.js（新手相關的東西都在那）；高中先修只在極限與微分裡，不滿 8 題就從題庫 R1 補
+  const gentleTrim = (list, records = loadRecords()) => courseUI.gentleTrim(list, PLACEMENT_TOPICS_BY_CONTEXT[records.onboardingContext || ""] || null, problemRank);
 
   function renderTodayCard(records) {
     const plan = plannedSession(records);
@@ -3692,7 +3682,7 @@
   //   - 最後一步的出口只有一個：開始練。不給「隨便逛逛」
   //   - 第一次進站永遠不會看到 1407 題的題庫頁
   const ONBOARDING_CONTEXTS = [
-    { key: "newbie", label: "我還沒學過", note: "從「極限是什麼」開始，九課上完再練題", cap: 1, course: true },
+    { key: "newbie", label: "我還沒學過", note: "從「函數是什麼」開始，十六課加畢業關，過了再進主線", cap: 1, course: true },
     { key: "highschool", label: "高中先修", note: "先把基本工具練熟", cap: 2 },
     { key: "freshman", label: "大一微積分", note: "跟著課程進度練", cap: 3 },
     { key: "exam", label: "期中期末要考了", note: "考前衝刺，抓弱點", cap: 4, suggestExam: true },
@@ -4962,26 +4952,21 @@
 
   const plUI = window.BuzzProofLabUI.create({ escapeHtml, escapeAttr, icon, proofs });
 
-  // ── 從零開始：給還沒學過微積分的人的九課（內容 course_content.js、畫面 course_ui.js）──
+  // ── 從零開始：給還沒學過微積分的人的入門課（內容與畫面都在 course.js）──
   // 這裡只有狀態：現在哪一課、逐步示範揭到第幾步、小測選了什麼。
   const courseUI = window.BuzzCourseUI.create({ escapeHtml, escapeAttr, icon, referenceAnswerHTML });
   let courseState = { lessonId: "", revealed: 0, picks: {} };
 
-  function renderCourse() {
-    return courseUI.renderIndex(loadRecords());
-  }
-
-  function renderCourseLesson() {
+  const renderCourse = () => courseUI.renderIndex(loadRecords());
+  const renderCourseLesson = () => {
     const item = courseUI.lesson(courseState.lessonId);
     return (item && courseUI.renderLesson(item, loadRecords(), courseState)) || renderCourse();
-  }
+  };
 
   function openCourseLesson(id) {
     const item = courseUI.lesson(id);
     if (!item) { view = "course"; render(); return; }
-    const records = loadRecords();
-    records.course[id] = { ...(records.course[id] || {}), openedAt: records.course[id] && records.course[id].openedAt ? records.course[id].openedAt : new Date().toISOString() };
-    saveRecords(records);
+    saveRecords(courseUI.markOpened(loadRecords(), id));
     courseState = { lessonId: id, revealed: 0, picks: {} };
     view = "course-lesson";
     render();
@@ -4993,38 +4978,19 @@
     const item = courseUI.lesson(courseState.lessonId);
     if (!item) return;
     courseState.picks = { ...courseState.picks, [checkIndex]: optionIndex };
-    const allRight = item.checks.every((check, i) => {
-      const pick = courseState.picks[i];
-      return pick !== undefined && check.options[pick] && check.options[pick].correct;
-    });
-    if (allRight) {
-      const records = loadRecords();
-      records.course[item.id] = { ...(records.course[item.id] || {}), checksPassed: true };
-      markCourseLessonDone(records, item.id);
-      saveRecords(records);
-    }
+    if (courseUI.allChecksRight(item, courseState.picks)) saveRecords(courseUI.markChecksPassed(loadRecords(), item.id));
     render();
-  }
-
-  function markCourseLessonDone(records, id) {
-    const entry = records.course[id] || {};
-    if (entry.checksPassed && entry.practiceDone && !entry.doneAt) records.course[id] = { ...entry, doneAt: new Date().toISOString() };
   }
 
   // 導引練習：那三題、不倒數、可看提示、進錯題本（練習本來就會）。結束時 finishQuiz 會記回課程。
   function startCoursePractice(id) {
-    const item = courseUI.lesson(id);
-    if (!item) return;
-    const pool = item.practice.map((problemId) => problems.find((problem) => problem.id === problemId)).filter(Boolean);
-    if (!pool.length) return;
-    startQuiz(pool, { modeKey: "practice", practice: true, noTimer: true, answerMode: "choice", courseLessonId: id });
+    const pool = courseUI.practicePool(id);
+    if (pool.length) startQuiz(pool, { modeKey: "practice", practice: true, noTimer: true, answerMode: "choice", courseLessonId: id });
   }
 
-  function recordCoursePractice(id, correct, total) {
-    const records = loadRecords();
-    records.course[id] = { ...(records.course[id] || {}), practiceDone: true, practiceCorrect: correct, practiceTotal: total, practicedAt: new Date().toISOString() };
-    markCourseLessonDone(records, id);
-    saveRecords(records);
+  function startCourseGraduation() {
+    const pool = courseUI.graduationSet(Date.now());
+    if (pool.length >= 4) startQuiz(pool, { modeKey: "practice", practice: true, noTimer: true, answerMode: "choice", courseGraduation: true });
   }
 
   const proofLangSpec = (id) => plUI.spec(id);
@@ -7322,6 +7288,8 @@
           ? `你的反射大約在 R${placement.rank}。最不穩：${tagLabel(placement.weakTag)} — 已把路線解鎖到 ${placement.nodeLabel}`
           : `你的反射大約在 R${placement.rank}。這 8 題沒有明顯弱點 — 已把路線解鎖到 ${placement.nodeLabel}`;
       }
+    } else if (quiz.courseGraduation) {
+      ({ verdict, verdictClass, nextLine } = courseUI.graduationVerdict(correct, total));
     } else if (quiz.namedExamOutcome) {
       const outcome = quiz.namedExamOutcome;
       verdict = outcome.passed ? (accuracy >= 85 ? "高分及格" : "及格") : "未及格";
@@ -7576,6 +7544,7 @@
 
   function renderResultsActions(gateResult, pathResult) {
     if (!gateResult && !pathResult && quiz && quiz.courseLessonId) return courseUI.renderResultsActions(quiz.courseLessonId);
+    if (!gateResult && !pathResult && quiz && quiz.courseGraduation) return courseUI.renderGraduationActions(loadRecords());
     if (!gateResult && !pathResult && quiz && quiz.placementResult) {
       return `
         <div class="action-row">
@@ -8361,6 +8330,7 @@
     }
     if (action === "course-pick") pickCourseOption(Number(actionNode.dataset.check), Number(actionNode.dataset.option));
     if (action === "course-practice") startCoursePractice(actionNode.dataset.lessonId || courseState.lessonId);
+    if (action === "course-graduation") startCourseGraduation();
     if (action === "pl-open-problem") openProofWrite(actionNode.dataset.proofLangId || "");
     if (action === "open-proof-problem") openProofProblem(actionNode.dataset.proofKey || "");
     if (action === "proof-random") openRandomProof();
@@ -10117,7 +10087,12 @@
     const records = loadRecords();
     const difficultyCap = activeDifficultyCap(records);
     const mode = MODES[selectedMode] || MODES.quick;
-    const pool = customProblems && customProblems.length ? customProblems : selectProblemPool(mode, selectedTopic);
+    let pool = customProblems && customProblems.length ? customProblems : selectProblemPool(mode, selectedTopic);
+    // 入門九課的保護期：畢業前與畢業後頭三局只出課裡教過的題（course.js 橋池），不然第一題就塌
+    if (!options.courseLessonId && !options.courseGraduation && !options.placement) {
+      const bridged = courseUI.protectPool(pool, records);
+      if (bridged) pool = bridged;
+    }
     if (!pool.length) {
       view = "home";
       showAppNotice("目前篩選沒有符合難度的題目。請把難度上限拉高，或換一個題包 / 範圍。");
@@ -10164,7 +10139,8 @@
       modal: null,
       dailyOne: null,
       gentle: false,
-      courseLessonId: options.courseLessonId || ""
+      courseLessonId: options.courseLessonId || "",
+      courseGraduation: Boolean(options.courseGraduation)
     };
     if (options.dailyOne) quiz.dailyOne = options.dailyOne;
     // 新手保護期（見 gentleStartActive）：一般訓練與主線在頭幾局改走 practice。
@@ -11394,7 +11370,8 @@
     if (quiz) {
       finalizeExamAnswers(quiz);
       const correct = quiz.answers.filter((answer) => answer.correct).length;
-      if (quiz.courseLessonId) recordCoursePractice(quiz.courseLessonId, correct, quiz.problems.length);
+      if (quiz.courseLessonId) saveRecords(courseUI.recordPractice(loadRecords(), quiz.courseLessonId, correct, quiz.problems.length));
+      if (quiz.courseGraduation) saveRecords(courseUI.recordGraduation(loadRecords(), correct, quiz.problems.length));
       trackEvent("session_complete", {
         mode: quiz.mode,
         topic: quiz.topic,
@@ -13610,6 +13587,7 @@
     next.examSetupDismissed = Boolean(next.examSetupDismissed);
     next.proofLang = next.proofLang && typeof next.proofLang === "object" ? next.proofLang : {};
     next.course = next.course && typeof next.course === "object" ? next.course : {};
+    next.courseGraduation = next.courseGraduation && typeof next.courseGraduation === "object" ? next.courseGraduation : null;
     next.proofLangLessons = next.proofLangLessons && typeof next.proofLangLessons === "object" ? next.proofLangLessons : {};
     next.onboardingContext = typeof next.onboardingContext === "string" ? next.onboardingContext : "";
     next.onboardingLevel = typeof next.onboardingLevel === "string" ? next.onboardingLevel : "";

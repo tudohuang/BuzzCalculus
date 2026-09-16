@@ -1,24 +1,129 @@
-// 從零開始：給還沒學過微積分的人的九課。
+// 從零開始：給還沒學過微積分的人的入門課（十六課）。
 //
 // 這個站原本是「把學過的微積分練成直覺」——只有題目，沒有一段教「極限是什麼」的內容。
-// 完全初學者打開就被 1994 題淹死。這九課補的是那一層：每課 = 白話概念（幾段，
-// 帶一兩個公式）→ 一題逐步示範（用題庫裡驗算過的 R1 題，一步一步揭）→ 概念小測
-// （選錯會說為什麼錯）→ 三題導引練習（題庫的 R1 題，不倒數、可看提示）。
+// 完全初學者打開就被 1994 題淹死。這些課補的是那一層。兩種課：
+//   - 計算課：白話概念（幾段，帶一兩個公式）→ 一題逐步示範（用題庫裡驗算過的 R1 題，
+//     一步一步揭）→ 概念小測（選錯會說為什麼錯）→ 三題導引練習（題庫的 R1 題，不倒數）。
+//   - 理論課（practice 是空的）：函數是什麼、連續與中間值定理、極值、均值定理、黎曼和與
+//     基本定理。題庫裡沒有這種題（也不該有——它們不是反射題），所以示範是一段推導
+//     （worked.tex 當題目、沒有 problemId），小測至少三題，小測全對就算完成。
+//
+// 順序照一般課本（Stewart / Thomas）的章節走：函數 → 極限與連續 → 導數與微分法則 →
+// 導數的應用（極值、均值定理）→ 反導函數 → 定積分 → 基本定理。
 //
 // 內容原則：
-//   - 示範與練習一律指向題庫既有的題（problemId），答案沿用題庫已經驗算過的；
+//   - 計算課的示範與練習一律指向題庫既有的題（problemId），答案沿用題庫已經驗算過的；
 //     tools/validate_course.js 會擋不存在的 id、非 R1 的題、沒有 why 的錯誤選項。
-//   - 只講一件事。每課一個新概念，公式最多兩條；技巧（換元、分部）不在這裡。
+//   - 只講一件事。每課一個新概念，公式最多兩三條；技巧（換元、分部）不在這裡。
 //   - 用白話，不用「有理式」「同階」這種詞；真的要用就先解釋。
+//   - 小測的正解不要永遠放第一個。
+//   - 課文裡寫「第 n 課」的地方，n 要跟順序一致（validate_course 會檢查 n 不超過總數）。
 
 (function () {
   "use strict";
 
   window.BUZZ_COURSE = [
     {
+      id: "fn-what-is-a-function",
+      unit: "functions",
+      title: "第 1 課 · 函數是什麼",
+      minutes: 6,
+      goal: "f(x) 是一台機器：放 x 進去，出來恰好一個數；定義域是「哪些 x 放得進去」。",
+      concept: [
+        { text: "函數是一條規則：每個輸入恰好對到一個輸出。f(x) = x² + 1 這台機器，放 2 進去出來 5，放 −3 出來 10。f(2) 讀作「f 在 2 的值」。裡面的 x 只是佔位符號，寫成 f(t) = t² + 1 是同一個函數。", tex: "f(x)=x^2+1,\\qquad f(2)=2^2+1=5,\\qquad f(-3)=10" },
+        { text: "定義域：放得進去的 x。兩個最常見的禁區——分母不能是 0（1/(x − 3) 不能放 3），根號裡不能是負的（√x 只收 x ≥ 0）。多項式什麼都能放。" },
+        { text: "圖形：把每一個點 (x, f(x)) 畫出來。因為一個 x 只有一個輸出，任何一條鉛直線最多碰到圖形一次（鉛直線測試）。一個圓不是函數的圖形——同一個 x 上下各有一點。" },
+        { text: "為什麼微積分要從這裡講起：極限、導數、積分全都是「對一個函數做的事」。接下來每一課的主角都是某個 f(x)，先把它當成機器看熟。" }
+      ],
+      worked: {
+        tex: "f(x)=\\frac{\\sqrt{x}}{x-4}\\ \\text{ 的定義域是什麼？}",
+        steps: [
+          { text: "兩個禁區各檢查一次。先看根號：裡面是 x，要 x ≥ 0。" },
+          { text: "再看分母：x − 4 不能是 0，所以 x ≠ 4。" },
+          { text: "兩個條件同時要成立：x ≥ 0 而且 x ≠ 4。用區間寫就是下面這樣。", tex: "[0,4)\\cup(4,\\infty)" }
+        ]
+      },
+      checks: [
+        {
+          ask: "f(x) = 3x − 1，f(2) 是多少？",
+          options: [
+            { label: "6", why: "3 × 2 = 6 之後還要減 1。" },
+            { label: "5", correct: true },
+            { label: "3x − 1", why: "f(2) 是把 2 代進去之後得到的一個數，不再是含 x 的式子。" }
+          ]
+        },
+        {
+          ask: "g(x) = 1/(x + 2) 的定義域？",
+          options: [
+            { label: "所有實數", why: "x = −2 時分母是 0，1/0 沒有意義。" },
+            { label: "x > −2", why: "負的 x 也放得進去，例如 g(−5) = 1/(−3) 好好的。只有讓分母變 0 的 −2 不行。" },
+            { label: "除了 −2 以外的所有實數", correct: true }
+          ]
+        },
+        {
+          ask: "下面哪一個對應是函數？",
+          options: [
+            { label: "每個人 → 他的身高", correct: true },
+            { label: "每個人 → 他的兄弟姊妹", why: "一個人可能有兩個以上的兄弟姊妹，也可能沒有——不是「恰好一個輸出」。" },
+            { label: "每個正數 → 它的平方根（正負都算）", why: "4 會同時對到 2 和 −2，一個輸入兩個輸出。√4 之所以定義成只取 2，就是為了讓它變成函數。" }
+          ]
+        }
+      ],
+      practice: []
+    },
+    {
+      id: "fn-families-composition",
+      unit: "functions",
+      title: "第 2 課 · 常見的函數家族，與「函數套函數」",
+      minutes: 7,
+      goal: "認得多項式、eˣ、ln x、sin／cos 的長相，還有 f(g(x)) 怎麼讀。",
+      concept: [
+        { text: "多項式 x² − 3x + 1、有理函數（多項式除以多項式）、根號 √x——上一課都看過了。接下來三個家族微積分裡天天用，先認臉。" },
+        { text: "指數函數 eˣ：e ≈ 2.718，是微積分裡最順手的底數。eˣ 永遠是正的，e⁰ = 1，越往右長得越快。對數 ln x 是它的反操作：ln 問的是「e 的幾次方會變成 x」，所以 ln 1 = 0、ln e = 1，而且只收正的 x。", tex: "\\ln(e^x)=x,\\qquad e^{\\ln x}=x\\ (x>0)" },
+        { text: "三角函數 sin x、cos x：x 是弧度（π 對應 180°），微積分裡一律用弧度，用角度後面的公式全會錯。兩個都永遠在 −1 到 1 之間，每 2π 重複一次。記三個值：sin 0 = 0、cos 0 = 1、sin(π/2) = 1。" },
+        { text: "合成：把一個函數的輸出塞進另一個函數。f(x) = x²、g(x) = x + 1，f(g(x)) 是「先算 g，再把結果放進 f」，得 (x + 1)²。sin(2x)、e^{3x}、√(x² + 1) 全是這種「外面套裡面」的東西——第 11 課的連鎖律專門處理它。", tex: "f(g(x))=(x+1)^2,\\qquad g(f(x))=x^2+1" },
+        { text: "順序很重要：f(g(x)) 和 g(f(x)) 通常不一樣。看到一個複雜的式子，先在心裡拆成「外面是誰、裡面是誰」，這個習慣之後會一直用到。" }
+      ],
+      worked: {
+        tex: "f(x)=\\sqrt{x},\\quad g(x)=x^2+1.\\ \\text{寫出 } f(g(x))\\ \\text{與 } g(f(x))",
+        steps: [
+          { text: "f(g(x))：先算裡面的 g，得到 x² + 1；再把它整個放進 f 開根號。", tex: "f(g(x))=\\sqrt{x^2+1}" },
+          { text: "g(f(x))：先算 f 得到 √x；再放進 g，平方之後加 1。", tex: "g(f(x))=(\\sqrt{x})^2+1=x+1\\quad(x\\ge 0)" },
+          { text: "兩個不一樣。之後看到 √(x² + 1)，要能立刻說出：外面是開根號，裡面是 x² + 1。" }
+        ]
+      },
+      checks: [
+        {
+          ask: "e⁰ 是多少？",
+          options: [
+            { label: "0", why: "任何數的 0 次方都是 1；而且 eˣ 永遠是正的，不會是 0。" },
+            { label: "1", correct: true },
+            { label: "e", why: "e¹ 才是 e。" }
+          ]
+        },
+        {
+          ask: "ln(e³) 是多少？",
+          options: [
+            { label: "e³", why: "ln 跟 e 的次方互相抵消，剩下指數 3。" },
+            { label: "3e", why: "ln 不是「乘」，是問「e 的幾次方」。e³ 是 e 的 3 次方，答案就是 3。" },
+            { label: "3", correct: true }
+          ]
+        },
+        {
+          ask: "f(x) = x³、g(x) = 2x，f(g(x)) 是？",
+          options: [
+            { label: "(2x)³ = 8x³", correct: true },
+            { label: "2x³", why: "那是 g(f(x))：先立方再乘 2。f(g(x)) 是先乘 2，再把整個 2x 立方。" },
+            { label: "x³ + 2x", why: "合成是「套進去」，不是「加起來」。" }
+          ]
+        }
+      ],
+      practice: []
+    },
+    {
       id: "c1-limit-meaning",
       unit: "limits",
-      title: "第 1 課 · 極限是什麼",
+      title: "第 3 課 · 極限是什麼",
       minutes: 6,
       goal: "看到 lim 就知道它在問什麼：x 靠近某個數的時候，f(x) 靠近什麼。",
       concept: [
@@ -50,7 +155,7 @@
     {
       id: "c2-limit-zero-over-zero",
       unit: "limits",
-      title: "第 2 課 · 代進去變 0/0 怎麼辦",
+      title: "第 4 課 · 代進去變 0/0 怎麼辦",
       minutes: 7,
       goal: "代入得到 0/0 不是答案，是「先化簡」的訊號。",
       concept: [
@@ -83,7 +188,7 @@
     {
       id: "c3-limit-infinity",
       unit: "limits",
-      title: "第 3 課 · x 跑到無窮遠",
+      title: "第 5 課 · x 跑到無窮遠",
       minutes: 6,
       goal: "x → ∞ 時分數的極限只看分子分母各自的「最高次」。",
       concept: [
@@ -115,14 +220,14 @@
     {
       id: "c4-standard-limits",
       unit: "limits",
-      title: "第 4 課 · 兩個要背的極限",
+      title: "第 6 課 · 三個要背的極限",
       minutes: 7,
-      goal: "sin x / x → 1 與 (e^x − 1)/x → 1，還有怎麼「配」出它們。",
+      goal: "sin x / x → 1、(e^x − 1)/x → 1、ln(1 + x)/x → 1，還有怎麼「配」出它們。",
       concept: [
-        { text: "有兩個極限沒辦法用前面的方法算，是靠幾何或級數證出來的，微積分裡到處用，直接記起來：", tex: "\\lim_{x\\to 0}\\frac{\\sin x}{x}=1,\\qquad \\lim_{x\\to 0}\\frac{e^x-1}{x}=1" },
-        { text: "直覺：x 很小的時候 sin x 幾乎等於 x（0.1 的 sin 是 0.0998），e^x 幾乎等於 1 + x。所以兩個分數都靠近 1。" },
+        { text: "有三個極限沒辦法用前面的方法算，是靠幾何或級數證出來的，微積分裡到處用，直接記起來：", tex: "\\lim_{x\\to 0}\\frac{\\sin x}{x}=1,\\qquad \\lim_{x\\to 0}\\frac{e^x-1}{x}=1,\\qquad \\lim_{x\\to 0}\\frac{\\ln(1+x)}{x}=1" },
+        { text: "直覺：x 很小的時候 sin x 幾乎等於 x（0.1 的 sin 是 0.0998），e^x 幾乎等於 1 + x，ln(1 + x) 也幾乎等於 x（ln 1.1 ≈ 0.0953）。所以三個分數都靠近 1。第二個和第三個其實是同一件事：e 的次方和 ln 互為反操作。" },
         { text: "真正會考的是「配」：sin(5x)/x 分子裡是 5x，分母卻是 x，對不上。乘一個 5 再除一個 5，把分母也變成 5x。", tex: "\\frac{\\sin(5x)}{x}=5\\cdot\\frac{\\sin(5x)}{5x}\\ \\xrightarrow{x\\to 0}\\ 5\\cdot 1=5" },
-        { text: "口訣：sin(ax)/(bx) 的極限是 a/b；(e^{ax} − 1)/(bx) 也是 a/b。裡面是什麼，就配成什麼。" }
+        { text: "口訣：sin(ax)/(bx) 的極限是 a/b；(e^{ax} − 1)/(bx) 和 ln(1 + ax)/(bx) 也都是 a/b。裡面是什麼，就配成什麼。" }
       ],
       worked: {
         problemId: "rel-basic-001",
@@ -145,9 +250,58 @@
       practice: ["cx-lim-004", "tmpl-lim-trig-001", "fd-lim-009"]
     },
     {
+      id: "lim-continuity-ivt",
+      unit: "limits",
+      title: "第 7 課 · 連續，與中間值定理",
+      minutes: 8,
+      goal: "連續＝畫圖不用抬筆；連續的函數從負走到正，中間一定經過 0（中間值定理）。",
+      concept: [
+        { text: "f 在 x = a 連續，要三件事同時成立：f(a) 有定義、x → a 的極限存在、而且兩個相等。白話就是：畫到 x = a 那裡不用抬筆。", tex: "\\lim_{x\\to a}f(x)=f(a)" },
+        { text: "不連續的三種長相：洞——(x² − 4)/(x − 2) 在 x = 2，極限是 4 但 f(2) 沒定義；跳——階梯函數，左右靠近的值不同；飛走——1/x 在 x = 0。多項式、sin、cos、eˣ 處處連續；分數只在分母不為 0 的地方連續。" },
+        { text: "連續為什麼重要：第 3 課的「直接代入」能用，就是因為函數在那一點連續——極限等於函數值。不連續的點才需要第 4 課那些化簡。" },
+        { text: "中間值定理：f 在 [a, b] 連續，f(a) < 0 而 f(b) > 0，那 a 和 b 之間一定有某個 c 讓 f(c) = 0。理由就是「不抬筆」——從 x 軸下面畫到上面，一定會穿過 x 軸。更一般的說法：介於 f(a) 與 f(b) 之間的每一個值，中間都會被取到。", tex: "f(a)<0<f(b)\\ \\Rightarrow\\ \\exists\\,c\\in(a,b),\\ f(c)=0" },
+        { text: "用途：證明一個方程式有解，而不用真的解出來。x³ − x − 1 = 0 沒有漂亮的根，但 f(1) = −1、f(2) = 5，所以 1 和 2 之間一定有根。這是微積分裡第一次遇到「知道它存在，但不知道它是多少」——之後的均值定理也是這種定理。" }
+      ],
+      worked: {
+        tex: "\\text{證明 } x^3-x-1=0\\ \\text{在 } 1<x<2\\ \\text{之間有解}",
+        steps: [
+          { text: "令 f(x) = x³ − x − 1。它是多項式，處處連續，所以在 [1, 2] 上當然連續——定理的前提成立。" },
+          { text: "代兩個端點：f(1) = 1 − 1 − 1 = −1，是負的；f(2) = 8 − 2 − 1 = 5，是正的。", tex: "f(1)=-1<0,\\qquad f(2)=5>0" },
+          { text: "從負到正、中間不抬筆，一定穿過 0。中間值定理保證 (1, 2) 裡存在 c 使 f(c) = 0。定理沒說 c 是多少（其實 c ≈ 1.3247），但「有解」已經證完了。" }
+        ]
+      },
+      checks: [
+        {
+          ask: "f(x) = (x² − 4)/(x − 2) 在 x = 2 連續嗎？",
+          options: [
+            { label: "連續，因為極限是 4", why: "極限存在只是三個條件之一。f(2) 本身沒有定義（0/0），畫到那裡得抬一下筆——那是一個洞。" },
+            { label: "不連續，因為 f(2) 沒定義（圖形有個洞）", correct: true },
+            { label: "不連續，因為極限不存在", why: "極限存在而且是 4（第 4 課算過）。缺的是 f(2)，不是極限。" }
+          ]
+        },
+        {
+          ask: "f 處處連續，f(0) = −3、f(1) = 2。可以確定什麼？",
+          options: [
+            { label: "0 和 1 之間恰好有一個 x 使 f(x) = 0", why: "定理只保證「至少一個」。圖形可以上下穿過 x 軸好幾次。" },
+            { label: "f(0.5) = 0", why: "定理只說「存在」，沒說在哪裡。根可能在 0.1，也可能在 0.9。" },
+            { label: "0 和 1 之間至少有一個 x 使 f(x) = 0", correct: true }
+          ]
+        },
+        {
+          ask: "f(x) = 1/x，f(−1) = −1、f(1) = 1。所以 −1 和 1 之間有根？",
+          options: [
+            { label: "有，中間一定經過 0", why: "1/x 在 x = 0 飛走了，圖形抬了筆。定理要的「連續」沒滿足，結論就不保證——事實上 1/x 永遠不是 0。" },
+            { label: "不行：1/x 在 x = 0 不連續，定理的前提不成立；1/x 根本沒有根", correct: true },
+            { label: "有，根就是 x = 0", why: "1/0 沒有意義，x = 0 根本不在定義域裡。" }
+          ]
+        }
+      ],
+      practice: []
+    },
+    {
       id: "c5-derivative-slope",
       unit: "derivatives",
-      title: "第 5 課 · 導數就是斜率",
+      title: "第 8 課 · 導數就是斜率",
       minutes: 8,
       goal: "f′(a) 是曲線在 x = a 那一點的切線斜率；它是一個極限。",
       concept: [
@@ -180,14 +334,14 @@
     {
       id: "c6-derivative-rules",
       unit: "derivatives",
-      title: "第 6 課 · 微分公式：不用每次算極限",
+      title: "第 9 課 · 微分公式：不用每次算極限",
       minutes: 7,
       goal: "冪次法則 (xⁿ)′ = n·xⁿ⁻¹，加減與常數倍可以拆開，常數的導數是 0。",
       concept: [
         { text: "上一課的極限對每個函數都算一次太累。數學家算好了幾條公式，最重要的一條：", tex: "\\frac{d}{dx}x^n=n\\,x^{n-1}" },
         { text: "指數搬到前面當係數，指數減 1。x³ → 3x²，x⁵ → 5x⁴，x → 1，常數 7 → 0（常數是平的，斜率當然 0）。" },
         { text: "再加兩條規則就能微分所有多項式：加減可以一項一項做；常數倍留著不動。(x⁵ − 3x² + 7)′ = 5x⁴ − 3·2x + 0 = 5x⁴ − 6x。" },
-        { text: "另外三個要記的：(sin x)′ = cos x、(cos x)′ = −sin x、(eˣ)′ = eˣ。這三個加上冪次法則，就是這一課全部的東西。" }
+        { text: "另外四個要記的：(sin x)′ = cos x、(cos x)′ = −sin x、(eˣ)′ = eˣ（它的斜率等於它自己的高度，這就是 e 最順手的原因）、(ln x)′ = 1/x。這四個加上冪次法則，就是這一課全部的東西。", tex: "(\\sin x)'=\\cos x,\\quad(\\cos x)'=-\\sin x,\\quad(e^x)'=e^x,\\quad(\\ln x)'=\\frac1x" }
       ],
       worked: {
         problemId: "der-001",
@@ -211,9 +365,50 @@
       practice: ["fd-der-001", "fd-der-002", "tmpl-der-power-001"]
     },
     {
+      id: "der-product-quotient",
+      unit: "derivatives",
+      title: "第 10 課 · 相乘與相除：乘法律、除法律",
+      minutes: 7,
+      goal: "兩個函數相乘的導數不是導數相乘：(uv)′ = u′v + uv′；相除也有一條。",
+      concept: [
+        { text: "先看一個錯誤的直覺：(x · x)′ 是不是 1 · 1 = 1？可是 x · x = x²，導數是 2x。所以「各自微分再相乘」是錯的——相乘的東西要用自己的規則。" },
+        { text: "乘法律：前微後不微，加上前不微後微。用 x · x 驗一次：1 · x + x · 1 = 2x，對了。", tex: "(uv)'=u'v+uv'" },
+        { text: "例子：(x eˣ)′ = 1 · eˣ + x · eˣ = (x + 1)eˣ。(x ln x)′ = 1 · ln x + x · (1/x) = ln x + 1。兩個都含 x 的東西相乘就用它；常數乘函數不用（3x² 直接是 6x）。" },
+        { text: "除法律：上微下不微、減、上不微下微，整個除以分母平方。用 1/x 驗：u = 1、v = x，得 (0 · x − 1 · 1)/x² = −1/x²，跟冪次法則 x⁻¹ → −x⁻² 一樣。", tex: "\\left(\\frac{u}{v}\\right)'=\\frac{u'v-uv'}{v^2}" },
+        { text: "記法：乘法律是「加」，兩項對稱、不用管順序；除法律是「減」，分子先微的那一項在前面，順序錯了正負號就反了。" }
+      ],
+      worked: {
+        problemId: "fd-der-009",
+        steps: [
+          { text: "x 和 eˣ 都含 x，相乘——要用乘法律。令 u = x、v = eˣ。" },
+          { text: "各自微分：u′ = 1、v′ = eˣ（第 9 課）。套公式。", tex: "u'v+uv'=1\\cdot e^x+x\\cdot e^x" },
+          { text: "把共同的 eˣ 提出來。", tex: "\\frac{d}{dx}\\left(xe^x\\right)=(x+1)e^x" }
+        ]
+      },
+      checks: [
+        {
+          ask: "(x · sin x)′ 是？",
+          options: [
+            { label: "cos x", why: "各自微分再相乘是錯的（x · x 那個例子）。要「前微後不微 + 前不微後微」。" },
+            { label: "sin x + x cos x", correct: true },
+            { label: "x cos x", why: "只做了「後微」那一半，還要加上前微後不微：1 · sin x。" }
+          ]
+        },
+        {
+          ask: "(x² · eˣ)′ 用乘法律，u = x²、v = eˣ，答案是？",
+          options: [
+            { label: "2x eˣ", why: "這只是 u′v，還要加上 uv′ = x² eˣ。" },
+            { label: "x² eˣ", why: "這只是 uv′，前面那項 u′v = 2x eˣ 漏了。" },
+            { label: "2x eˣ + x² eˣ", correct: true }
+          ]
+        }
+      ],
+      practice: ["der-003", "fd-der-005", "rel-basic-012"]
+    },
+    {
       id: "c7-chain-rule",
       unit: "derivatives",
-      title: "第 7 課 · 裡面還有東西：連鎖律",
+      title: "第 11 課 · 裡面還有東西：連鎖律",
       minutes: 7,
       goal: "sin(2x)、e^{3x} 這種「外面套裡面」的函數，微分要外面微完再乘裡面的導數。",
       concept: [
@@ -243,15 +438,115 @@
       practice: ["fd-der-003", "tmpl-der-sin-001", "fd-der-011"]
     },
     {
+      id: "der-shape-extrema",
+      unit: "derivatives",
+      title: "第 12 課 · f′ 的正負：上坡、下坡、山頂與谷底",
+      minutes: 8,
+      goal: "f′ > 0 的地方圖形往上、f′ < 0 往下；山頂和谷底的地方 f′ = 0，但 f′ = 0 不保證是山頂或谷底。",
+      concept: [
+        { text: "導數是斜率，斜率正就是往上走。所以 f′(x) > 0 的區間 f 遞增（上坡），f′(x) < 0 的區間 f 遞減（下坡）。光看導數的正負，不用畫圖就知道圖形往哪裡走。" },
+        { text: "山頂（極大值）與谷底（極小值）：在那一點切線是水平的，所以 f′ = 0。這叫費馬定理：光滑函數的極值只會出現在 f′ = 0 的地方（或區間端點、尖點）。要找最大最小，先找 f′ = 0 的點。", tex: "f\\ \\text{在 } c\\ \\text{有極值}\\ \\Rightarrow\\ f'(c)=0" },
+        { text: "反過來不成立：f′ = 0 不保證是極值。f(x) = x³ 在 x = 0 的導數是 0，圖形只是「平一下」就繼續往上。怎麼分辨？看 f′ 在左右兩邊的正負：左負右正是谷底、左正右負是山頂、同號就只是平一下。" },
+        { text: "例子：f(x) = x² − 4x，f′ = 2x − 4，在 x = 2 是 0。x < 2 時 f′ < 0 下坡，x > 2 時 f′ > 0 上坡——先下再上，x = 2 是谷底，最小值 f(2) = −4。" },
+        { text: "這就是「最佳化」問題的全部原理：算導數、找 f′ = 0 的候選點、看左右正負。之後遇到的「求最大利潤」「最短距離」全都是這三步。" }
+      ],
+      worked: {
+        tex: "f(x)=x^3-3x.\\ \\text{哪裡是山頂、哪裡是谷底？}",
+        steps: [
+          { text: "先微分：f′(x) = 3x² − 3 = 3(x − 1)(x + 1)。", tex: "f'(x)=3(x-1)(x+1)" },
+          { text: "f′ = 0 在 x = −1 和 x = 1，這兩個是候選。" },
+          { text: "看正負：x < −1 代 −2，f′ = 9 > 0；−1 < x < 1 代 0，f′ = −3 < 0；x > 1 代 2，f′ = 9 > 0。", tex: "f'>0\\ \\rightarrow\\ f'<0\\ \\rightarrow\\ f'>0" },
+          { text: "x = −1 左正右負，先上再下，是山頂，f(−1) = −1 + 3 = 2；x = 1 左負右正，是谷底，f(1) = 1 − 3 = −2。", tex: "\\text{極大 } f(-1)=2,\\qquad \\text{極小 } f(1)=-2" }
+        ]
+      },
+      checks: [
+        {
+          ask: "f′(x) = 2x。f 在 x < 0 的區間？",
+          options: [
+            { label: "遞增（往上走）", why: "x < 0 時 2x 是負的，斜率負就是下坡。f(x) = x² 的左半邊確實是往下的。" },
+            { label: "遞減（往下走）", correct: true },
+            { label: "不變", why: "只有 f′ = 0 的地方才是平的，這裡只有 x = 0 一個點。" }
+          ]
+        },
+        {
+          ask: "f′(3) = 0，所以 x = 3 一定是山頂或谷底？",
+          options: [
+            { label: "一定是", why: "f′ = 0 只是「候選」。f(x) = x³ 在 x = 0 導數是 0，圖形只是平一下就繼續往上。" },
+            { label: "一定是谷底", why: "左負右正才是谷底、左正右負是山頂、同號什麼都不是。光看 f′(3) = 0 分不出來。" },
+            { label: "不一定，x³ 在 0 就是反例；要看 f′ 在左右的正負", correct: true }
+          ]
+        },
+        {
+          ask: "f′ 在 x = 5 的左邊是正的、右邊是負的。x = 5 是？",
+          options: [
+            { label: "山頂（極大值）", correct: true },
+            { label: "谷底（極小值）", why: "先上坡再下坡，那是山頂。谷底是先下再上。" },
+            { label: "不是極值", why: "左右變號就是極值；只有同號才是「平一下」。" }
+          ]
+        }
+      ],
+      practice: []
+    },
+    {
+      id: "der-mean-value",
+      unit: "derivatives",
+      title: "第 13 課 · 均值定理：某一瞬間，剛好等於平均",
+      minutes: 8,
+      goal: "兩點之間的平均斜率，中間某一刻的瞬間斜率恰好等於它；推論是「導數處處為 0 的函數是常數」——那就是積分要加 C 的理由。",
+      concept: [
+        { text: "開車 2 小時走了 200 公里，平均時速 100。中途你一定至少有一瞬間時速表正好指著 100——不可能全程都比 100 慢（那走不到 200 公里），也不可能全程都比 100 快。這就是均值定理。" },
+        { text: "數學版：f 在 [a, b] 連續、中間可微，那存在一點 c，它的切線斜率等於兩端點連線（割線）的斜率。左邊是某一瞬間的變化率，右邊是整段的平均變化率。", tex: "f'(c)=\\frac{f(b)-f(a)}{b-a}" },
+        { text: "例子：f(x) = x² 在 [0, 2]。平均斜率 (4 − 0)/2 = 2；f′(x) = 2x，等於 2 的地方是 x = 1。切線在 x = 1 剛好平行割線。跟第 7 課的中間值定理一樣，定理只說 c 存在，不負責告訴你在哪。" },
+        { text: "最重要的用途不是找 c，是這個推論：如果 f′ 處處是 0，f 就是常數（斜率永遠 0，走不動）。再推一步：兩個函數導數相同，它們只差一個常數。這就是第 14 課 ∫ 要加 + C 的真正理由——反導函數全部長成 F(x) + C，沒有別的。", tex: "F'=G'\\ \\Rightarrow\\ F(x)=G(x)+C" },
+        { text: "另一個推論就是上一課用的「f′ > 0 則遞增」：任兩點的割線斜率等於某個 f′(c) > 0，所以右邊的點一定比左邊高。上一課是直覺，這一課是證明。" }
+      ],
+      worked: {
+        tex: "f(x)=x^3\\ \\text{在 }[0,3]\\text{。找均值定理說的那個 } c",
+        steps: [
+          { text: "割線斜率：(f(3) − f(0))/(3 − 0) = 27/3 = 9。", tex: "\\frac{f(3)-f(0)}{3-0}=9" },
+          { text: "切線斜率 f′(x) = 3x²。要 3c² = 9，c² = 3。", tex: "3c^2=9\\ \\Rightarrow\\ c=\\sqrt{3}" },
+          { text: "c = √3 ≈ 1.73，確實在 0 和 3 之間（−√3 也滿足 c² = 3，但不在區間裡，不算）。在那一點切線恰好平行整段的割線。" }
+        ]
+      },
+      checks: [
+        {
+          ask: "均值定理說的那個 c 是什麼？",
+          options: [
+            { label: "區間的中點", why: "c 在哪裡要算。x² 在 [0, 2] 剛好是中點 1，但 x³ 在 [0, 3] 是 √3，不是 1.5。" },
+            { label: "某一點，它的切線斜率等於兩端點割線的斜率", correct: true },
+            { label: "f 最大值出現的地方", why: "那是上一課的極值。均值定理講的是「斜率剛好等於平均」的點。" }
+          ]
+        },
+        {
+          ask: "f′(x) = 0 對所有 x 成立。f 是？",
+          options: [
+            { label: "常數函數", correct: true },
+            { label: "f(x) = 0", why: "斜率是 0 表示走不動，但可以停在任何高度：f(x) = 7 也符合。" },
+            { label: "遞增函數", why: "遞增要 f′ > 0；f′ = 0 是平的。" }
+          ]
+        },
+        {
+          ask: "F′(x) = G′(x) = 2x。F 和 G 的關係？",
+          options: [
+            { label: "F = G", why: "x² 和 x² + 5 的導數都是 2x，但兩個不相等。只能說差一個常數。" },
+            { label: "沒有關係", why: "導數相同的函數只差一個常數——這是均值定理的推論，也是 +C 的來源。" },
+            { label: "F(x) = G(x) + 某個常數", correct: true }
+          ]
+        }
+      ],
+      practice: []
+    },
+    {
       id: "c8-antiderivative",
       unit: "integrals",
-      title: "第 8 課 · 積分是微分的反操作",
+      title: "第 14 課 · 積分是微分的反操作",
       minutes: 7,
       goal: "∫ f(x) dx 問的是「誰微分之後會變成 f」；冪次法則倒著用，記得 +C。",
       concept: [
         { text: "微分是「給函數，求斜率」。積分先當成它的反操作：「給斜率，找回函數」。誰微分之後是 2x？x²。所以 ∫ 2x dx = x²。這種「找回來的函數」叫反導函數。" },
         { text: "但 x² + 5 微分也是 2x，x² − 100 也是。常數微分掉了，找回來的時候不知道原本是多少——所以答案要加一個 + C。", tex: "\\int 2x\\,dx=x^2+C" },
-        { text: "冪次法則倒著用：指數加 1，再除以新的指數。", tex: "\\int x^n\\,dx=\\frac{x^{n+1}}{n+1}+C\\quad(n\\ne -1)" },
+        { text: "冪次法則倒著用：指數加 1，再除以新的指數。例外是 n = −1（除以 0 不行）：誰微分之後是 1/x？第 9 課記過 (ln x)′ = 1/x，所以 ∫ 1/x dx = ln|x| + C——加絕對值是因為 x 負的時候 ln x 不存在，而 ln|x| 的導數也還是 1/x。", tex: "\\int x^n\\,dx=\\frac{x^{n+1}}{n+1}+C\\quad(n\\ne -1),\\qquad \\int\\frac1x\\,dx=\\ln|x|+C" },
+        { text: "連鎖律倒過來：微分 sin(3x) 時多乘了一個 3，所以積分 cos(3x) 時要除回去——∫ cos(3x) dx = sin(3x)/3 + C；同理 ∫ e^{2x} dx = e^{2x}/2 + C。裡面有 ax，就除以 a。裡面只是平移（x + 1 這種，導數是 1）就直接照抄：∫ 1/(1 + x) dx = ln|1 + x| + C。", tex: "\\int e^{ax}\\,dx=\\frac{e^{ax}}{a}+C,\\qquad\\int\\cos(ax)\\,dx=\\frac{\\sin(ax)}{a}+C" },
         { text: "檢查方法永遠是：把答案微分回去，看是不是原本的東西。∫ 6x² dx = 2x³ + C，(2x³)′ = 6x² ✓。這一課的練習寫答案時可以省略 + C。" }
       ],
       worked: {
@@ -277,7 +572,7 @@
     {
       id: "c9-definite-integral",
       unit: "integrals",
-      title: "第 9 課 · 定積分是面積",
+      title: "第 15 課 · 定積分是面積",
       minutes: 8,
       goal: "∫ₐᵇ f(x) dx 是曲線下從 a 到 b 的面積；算法是反導函數在 b 減在 a。",
       concept: [
@@ -305,6 +600,56 @@
         }
       ],
       practice: ["rel-basic-018", "cx-int-001", "fd-int-006"]
+    },
+    {
+      id: "int-riemann-ftc",
+      unit: "integrals",
+      title: "第 16 課 · 為什麼面積可以用反導函數算：黎曼和與基本定理",
+      minutes: 9,
+      goal: "定積分本來的定義是「切成無限多條細長條加起來」；微積分基本定理說這個和等於 F(b) − F(a)。這一課講兩件事為什麼會一樣。",
+      concept: [
+        { text: "上一課直接用了 F(b) − F(a)。但「面積」一開始跟反導函數毫無關係：把 [a, b] 切成 n 條，每條寬 Δx，高是那條的 f(xᵢ)，長條面積加起來，再讓 n 越切越多。這個和叫黎曼和，它的極限才是定積分真正的定義。", tex: "\\int_a^b f(x)\\,dx=\\lim_{n\\to\\infty}\\sum_{i=1}^{n} f(x_i)\\,\\Delta x" },
+        { text: "試算一次：y = x 從 0 到 1，切 4 條、每條取右端點的高：高是 1/4、2/4、3/4、1，寬 1/4，和 = (1 + 2 + 3 + 4)/16 = 10/16 = 0.625。真正的面積是三角形的 1/2；切越細越接近，下面的示範會切 n 條看它真的變成 1/2。" },
+        { text: "為什麼會等於 F(b) − F(a)？令 A(x) = 從 a 到 x 的面積。x 再往右走一小步 h，面積多了一條寬 h、高差不多是 f(x) 的長條：A(x + h) − A(x) ≈ f(x) · h。除以 h、讓 h → 0，就是第 8 課的導數定義——得到 A′(x) = f(x)。面積函數的導數就是被積函數。這是基本定理的第一部分。", tex: "A(x)=\\int_a^x f(t)\\,dt\\ \\Rightarrow\\ A'(x)=f(x)" },
+        { text: "既然 A′ = f，A 就是 f 的一個反導函數，跟任何一個反導函數 F 只差常數（第 13 課的推論）。A(a) = 0（從 a 到 a 沒有面積），所以那個常數是 −F(a)，A(x) = F(x) − F(a)。代 x = b：面積 = F(b) − F(a)。第二部分就這樣證完了。", tex: "\\int_a^b f(x)\\,dx=A(b)=F(b)-F(a)" },
+        { text: "這是整個微積分的核心：微分（斜率）和積分（面積）互為反操作。牛頓與萊布尼茲最大的貢獻不是發明它們——面積和切線古希臘就在算——而是發現它們是同一件事的兩面。" }
+      ],
+      worked: {
+        tex: "\\text{用黎曼和算 } \\int_0^1 x\\,dx\\text{，再跟基本定理對一次}",
+        steps: [
+          { text: "切 n 條，每條寬 1/n。第 i 條取右端點 xᵢ = i/n，高 f(xᵢ) = i/n。" },
+          { text: "把 n 條的面積加起來：1 + 2 + … + n = n(n + 1)/2。", tex: "\\sum_{i=1}^{n}\\frac{i}{n}\\cdot\\frac1n=\\frac{1}{n^2}\\cdot\\frac{n(n+1)}{2}=\\frac12+\\frac{1}{2n}" },
+          { text: "n → ∞ 時 1/(2n) → 0，和 → 1/2。切 4 條是 0.625，切 100 條是 0.505，越切越靠近 1/2。" },
+          { text: "基本定理：F(x) = x²/2，F(1) − F(0) = 1/2。兩條路答案一樣——這就是定理說的事。", tex: "\\int_0^1 x\\,dx=\\frac12" }
+        ]
+      },
+      checks: [
+        {
+          ask: "黎曼和裡的一項 f(xᵢ) · Δx 是什麼？",
+          options: [
+            { label: "曲線在那一點的斜率", why: "斜率是微分的事。這裡是高 f(xᵢ) 乘寬 Δx——一條細長條的面積。" },
+            { label: "一條細長條的面積（高乘寬）", correct: true },
+            { label: "整塊面積", why: "那是全部加起來、再讓 n → ∞ 之後的東西。一項只是其中一條。" }
+          ]
+        },
+        {
+          ask: "A(x) = ∫₀ˣ t² dt。A′(x) 是？",
+          options: [
+            { label: "x³/3", why: "那是 A(x) 本身（反導函數代 x 減代 0）。它的導數要再微一次，回到 x²。" },
+            { label: "2x", why: "面積函數的導數是被積函數本身（t² 代 x），不是被積函數再微分一次。" },
+            { label: "x²", correct: true }
+          ]
+        },
+        {
+          ask: "基本定理說的「微分與積分互為反操作」是指？",
+          options: [
+            { label: "先積分再微分（A′ = f）會回到原本的函數", correct: true },
+            { label: "面積永遠等於 f(b) − f(a)", why: "是 F(b) − F(a)，F 是反導函數，不是 f 本身。∫₀¹ x² dx = 1/3，不是 1 − 0。" },
+            { label: "微分和積分互相抵消，所以只要學一個", why: "會抵消正是它們有用的原因：算面積可以繞道去找反導函數，而不用真的切無限多條。" }
+          ]
+        }
+      ],
+      practice: []
     }
   ];
 })();
@@ -319,7 +664,7 @@
 (function () {
   "use strict";
 
-  const UNITS = [["limits", "極限"], ["derivatives", "微分"], ["integrals", "積分"]];
+  const UNITS = [["functions", "函數"], ["limits", "極限與連續"], ["derivatives", "微分"], ["integrals", "積分"]];
   const UNIT_LABEL = Object.fromEntries(UNITS);
 
   function create(deps) {
@@ -332,6 +677,8 @@
     /** 這題是哪一課教的（回饋裡用來給「回去看第 n 課」的連結） */
     const problemLesson = (problemId) => lessons().find((item) => item.practice.includes(problemId) || (item.worked && item.worked.problemId === problemId)) || null;
 
+    /** 理論課：沒有題庫練習（函數是什麼、定理），小測全對就算完成 */
+    const isTheory = (item) => Boolean(item) && !(item.practice || []).length;
     const entryOf = (records, id) => ((records.course || {})[id]) || {};
     const isDone = (records, id) => Boolean(entryOf(records, id).doneAt);
     const number = (item) => lessons().indexOf(item) + 1;
@@ -359,15 +706,16 @@
             <div class="page-head">
               <div>
                 <p class="section-label">從零開始</p>
-                <h2>微積分的九課</h2>
-                <p>還沒學過也沒關係。每課 6–8 分鐘：白話講一個概念 → 一題逐步示範 → 小測 → 三題不倒數的練習。九課上完，再去走主線關卡。</p>
+                <h2>微積分的 ${all.length} 課</h2>
+                <p>還沒學過也沒關係。每課 6–9 分鐘，照課本的順序走：函數 → 極限與連續 → 微分 → 積分。計算課是白話概念 → 一題逐步示範 → 小測 → 三題不倒數的練習；理論課（函數是什麼、中間值定理、極值、均值定理、基本定理）沒有練習題，示範是一段推導，小測全對就算完成。上完考畢業關，再去走主線關卡。</p>
               </div>
               <div class="action-row">
-                ${summary.next ? `<button class="button home-primary" data-action="open-course-lesson" data-lesson-id="${escapeAttr(summary.next.id)}">${icon("play")}${summary.done ? "繼續" : "從第 1 課開始"}：${escapeHtml(summary.next.title.replace(/^第 \d+ 課 · /, ""))}</button>` : `<button class="button home-primary" data-action="open-train">${icon("target")}九課上完了，去走主線</button>`}
+                ${summary.next ? `<button class="button home-primary" data-action="open-course-lesson" data-lesson-id="${escapeAttr(summary.next.id)}">${icon("play")}${summary.done ? "繼續" : "從第 1 課開始"}：${escapeHtml(summary.next.title.replace(/^第 \d+ 課 · /, ""))}</button>` : (graduated(records) ? `<button class="button home-primary" data-action="open-train">${icon("target")}畢業了，去走主線</button>` : `<button class="button home-primary" data-action="course-graduation">${icon("play")}${all.length} 課上完了，考畢業關</button>`)}
                 <button class="button secondary" data-action="home">${icon("home")}回主線</button>
               </div>
             </div>
             <div class="course-progress"><strong>${summary.done}<small> / ${summary.total} 課</small></strong><i style="--pct:${summary.total ? Math.round(summary.done / summary.total * 100) : 0}%"></i></div>
+            ${renderGraduationCard(records)}
             ${UNITS.map(([unit, label]) => {
               const group = all.filter((item) => item.unit === unit);
               if (!group.length) return "";
@@ -382,7 +730,7 @@
                           <span class="course-card-no">${state === "done" ? "✔" : number(item)}</span>
                           <strong>${escapeHtml(item.title.replace(/^第 \d+ 課 · /, ""))}</strong>
                           <small>${escapeHtml(item.goal)}</small>
-                          <em>${item.minutes} 分鐘${state === "started" ? " · 進行中" : state === "done" ? " · 完成" : ""}</em>
+                          <em>${item.minutes} 分鐘${isTheory(item) ? " · 理論課" : ""}${state === "started" ? " · 進行中" : state === "done" ? " · 完成" : ""}</em>
                         </button>`;
                     }).join("")}
                   </div>
@@ -398,7 +746,10 @@
       const all = lessons();
       const index = all.indexOf(item);
       const entry = entryOf(records, item.id);
-      const worked = item.worked && problem(item.worked.problemId);
+      const theory = isTheory(item);
+      // 計算課的示範是題庫的題（有 problemId、答案沿用題庫）；理論課的示範是一段推導（worked.tex 當題目）
+      const worked = item.worked && item.worked.problemId ? problem(item.worked.problemId) : null;
+      const workedTex = worked ? worked.prompt : (item.worked && item.worked.tex) || "";
       const revealed = Math.max(0, Math.min(item.worked.steps.length, state.revealed || 0));
       const picks = state.picks || {};
       const allChecksRight = item.checks.every((check, i) => picks[i] !== undefined && check.options[picks[i]] && check.options[picks[i]].correct);
@@ -406,6 +757,9 @@
       const practiceDone = Boolean(entry.practiceDone);
       const practiceProblems = item.practice.map(problem).filter(Boolean);
       const next = all[index + 1] || null;
+      const nextButton = next
+        ? `<button class="button home-primary" data-action="open-course-lesson" data-lesson-id="${escapeAttr(next.id)}">${icon("chevron-right")}下一課：${escapeHtml(next.title.replace(/^第 \d+ 課 · /, ""))}</button>`
+        : `<button class="button home-primary" data-action="course-graduation">${icon("play")}${all.length} 課上完了，考畢業關</button>`;
       const stepHtml = (step, i) => `
         <li class="course-step">
           <span class="course-step-no">${i + 1}</span>
@@ -439,13 +793,13 @@
             </section>
 
             <section class="course-block" data-course-worked>
-              <p class="section-label">② 逐步示範 · 一步一步揭</p>
-              ${worked ? `
-                <div class="pl-goal math-block" data-tex="${escapeAttr(worked.prompt)}"></div>
+              <p class="section-label">② ${theory ? "逐步推導" : "逐步示範"} · 一步一步揭</p>
+              ${workedTex ? `
+                <div class="pl-goal math-block" data-tex="${escapeAttr(workedTex)}"></div>
                 <ol class="course-steps">${item.worked.steps.slice(0, revealed).map(stepHtml).join("")}</ol>
                 ${revealed < item.worked.steps.length
                   ? `<button class="button secondary" data-action="course-step">${icon("chevron-down")}${revealed ? "下一步" : "先想一下，再看第一步"}<small>${revealed} / ${item.worked.steps.length}</small></button>`
-                  : `<p class="course-answer">${icon("check")}答案：${referenceAnswerHTML(worked)}</p>`}` : `<p class="panel-note">示範題找不到（${escapeHtml(item.worked.problemId)}）。</p>`}
+                  : (worked ? `<p class="course-answer">${icon("check")}答案：${referenceAnswerHTML(worked)}</p>` : `<p class="course-answer">${icon("check")}推導完了。</p>`)}` : `<p class="panel-note">示範題找不到（${escapeHtml(item.worked.problemId || "")}）。</p>`}
             </section>
 
             <section class="course-block" data-course-checks>
@@ -466,6 +820,14 @@
               }).join("")}
             </section>
 
+            ${theory ? `
+            <section class="course-block" data-course-practice>
+              <p class="section-label">④ 這一課是理論課，沒有練習題</p>
+              <p class="panel-note">題庫裡沒有「函數是什麼」「定理說了什麼」這種題——它們不是反射題。這一課的概念會在後面的課一直用到；小測全對就算完成。</p>
+              <div class="action-row">
+                ${checksPassed ? `<span class="course-done-pill">${icon("check")}小測全對</span>${nextButton}` : `<span class="panel-note">小測全對，這一課就算完成。</span>`}
+              </div>
+            </section>` : `
             <section class="course-block" data-course-practice>
               <p class="section-label">④ 導引練習 · ${practiceProblems.length} 題，不倒數、可看提示</p>
               <div class="course-practice-list">
@@ -477,10 +839,10 @@
                      <button class="button secondary" data-action="course-practice" data-lesson-id="${escapeAttr(item.id)}">${icon("refresh")}再練一次</button>`
                   : `<button class="button home-primary" data-action="course-practice" data-lesson-id="${escapeAttr(item.id)}">${icon("play")}開始練這 ${practiceProblems.length} 題</button>`}
                 ${checksPassed && practiceDone
-                  ? (next ? `<button class="button home-primary" data-action="open-course-lesson" data-lesson-id="${escapeAttr(next.id)}">${icon("chevron-right")}下一課：${escapeHtml(next.title.replace(/^第 \d+ 課 · /, ""))}</button>` : `<button class="button home-primary" data-action="open-train">${icon("target")}九課上完了，去走主線</button>`)
+                  ? nextButton
                   : `<span class="panel-note">${checksPassed ? "練完這三題就算完成這一課。" : "小測答對、練習做完，這一課就算完成。"}</span>`}
               </div>
-            </section>
+            </section>`}
           </section>
         </main>`;
     }
@@ -492,14 +854,14 @@
       if (records.onboardingContext === "newbie") {
         const course = progress(records);
         const steps = [
-          [course.next ? `上${course.next.title.split(" · ")[0]}：${course.next.title.split(" · ")[1] || ""}` : "九課都上完了", "白話概念 → 逐步示範 → 小測 → 3 題練習", "open-course"],
+          [course.next ? `上${course.next.title.split(" · ")[0]}：${course.next.title.split(" · ")[1] || ""}` : `${course.total} 課都上完了`, "白話概念 → 逐步示範 → 小測 → 3 題練習", "open-course"],
           ["練完就有能力輪廓", "哪些概念穩、哪些還卡，數據頁看得到", "open-insights"],
-          ["九課上完再走主線", "從極限關開始，一格一格解鎖", "open-train"]
+          ["畢業關 10 題，過了再走主線", "只出學過的題；主線頭三局也是，不倒數", "open-course"]
         ];
         return `
           <section class="first-steps" aria-label="開始的三步">
             ${steps.map(([title, note, action], index) => `
-              <button type="button" class="first-step ${index === 0 ? "is-current" : ""}" data-action="${action}">
+              <button type="button" class="first-step ${index === (course.next ? 0 : 2) ? "is-current" : ""}" data-action="${action}">
                 <span class="first-step-no">${index === 0 && course.done ? `${course.done}/${course.total}` : index + 1}</span>
                 <strong>${escapeHtml(title)}</strong>
                 <small>${escapeHtml(note)}</small>
@@ -549,10 +911,20 @@
       return taught ? `<p class="feedback-course"><button type="button" class="link-button" data-action="open-course-lesson" data-lesson-id="${escapeAttr(taught.id)}">${icon("book-open")}這題是「${escapeHtml(taught.title)}」教的 —— 回去看一眼</button></p>` : "";
     }
 
-    // 首頁主卡：還沒學過的人在九課上完之前，主 CTA 是「接著上課」，不是 15 題每日訓練
+    // 首頁主卡：還沒學過的人在課上完之前，主 CTA 是「接著上課」，不是 15 題每日訓練
     function renderHomeCard(records) {
       const summary = progress(records);
-      if (!summary.next) return "";
+      if (!summary.next) {
+        const grad = graduation(records);
+        if (grad && grad.passed) return "";
+        return `
+          <section class="today-card course-home-card">
+            <div class="today-card-head"><p class="section-label">${icon("book-open")}從零開始 · ${summary.total} 課都完成了</p><span>約 10 分鐘</span></div>
+            <h2>${grad ? `畢業關再考一次（上次 ${grad.correct} / ${grad.total}）` : "畢業關：10 題，8 題過關"}</h2>
+            <p>只出課裡教過的東西，不倒數。過了就去主線第 1 關——頭三局也只出你學過的題。</p>
+            <div class="action-row"><button class="button home-primary" data-action="course-graduation">${icon("play")}${grad ? "再考一次" : "開始畢業關"}</button><button class="button secondary" data-action="open-course">${icon("list")}課程表</button></div>
+          </section>`;
+      }
       const item = summary.next;
       const entry = entryOf(records, item.id);
       const started = Boolean(entry.openedAt);
@@ -568,11 +940,153 @@
             <button class="button home-primary" data-action="open-course-lesson" data-lesson-id="${escapeAttr(item.id)}">${icon("play")}${started ? "繼續這一課" : "開始"}</button>
             <button class="button secondary" data-action="open-course">${icon("list")}課程表</button>
           </div>
-          <p class="panel-note">白話概念 → 一題逐步示範 → 小測 → 3 題不倒數的練習。九課上完再走主線關卡。</p>
+          <p class="panel-note">${isTheory(item) ? "理論課：白話概念 → 一段逐步推導 → 小測。" : "白話概念 → 一題逐步示範 → 小測 → 3 題不倒數的練習。"}${summary.total} 課上完考畢業關，再走主線。</p>
         </section>`;
     }
 
-    return { lessons, lesson, problemLesson, progress, renderIndex, renderLesson, renderFirstSteps, renderResultsActions, renderFeedbackLink, renderHomeCard };
+    /* ── 橋：課程 → 主線之間不能是懸崖 ──────────────────────────────────
+       課裡教的是題庫 R1 的一個子集。上完課直接丟進主線第 1 關，第一題就可能是
+       有理化或反三角——沒教過，信心當場塌掉。所以：
+       (1) 「橋池」= R1、三個題目單元、不是技巧辨識文字題、而且沒有課裡沒教的標籤；
+       (2) 畢業關：10 題橋池的題，8 題過關；
+       (3) 保護期：沒學過的人在畢業前、以及畢業後頭三局，所有訓練都只從橋池抽。
+       log 與 product-rule 從 2026-09-16 起有教（第 6、9、10、14 課），不再排除。 */
+    const BRIDGE_TOPICS = ["limits", "derivatives", "integrals"];
+    const UNCOVERED_TAGS = ["rationalize", "inverse-trig", "world-universities"];
+    const GRADUATION_TOTAL = 10;
+    const GRADUATION_PASS = 8;
+    const PROTECTED_SESSIONS_AFTER = 3;
+
+    const inBridge = (p) => Boolean(p) && p.difficulty === 1 && BRIDGE_TOPICS.includes(p.topic) && p.answerKind !== "text"
+      && !(p.tags || []).some((tag) => UNCOVERED_TAGS.includes(tag));
+    const bridgePool = (all) => (all || problems()).filter(inBridge);
+
+    const graduation = (records) => records.courseGraduation || null;
+    const graduated = (records) => Boolean(graduation(records) && graduation(records).passed);
+
+    // 畢業前、畢業後頭三局：只從橋池抽。回傳 null 表示不用管
+    function protectPool(pool, records) {
+      if ((records.onboardingContext || "") !== "newbie") return null;
+      const grad = graduation(records);
+      if (grad && grad.passed) {
+        // 畢業關那一局本身也會寫進 history（在 _graduation.at 之後），所以扣掉 1
+        const after = (records.history || []).filter((item) => item.finishedAt && item.finishedAt > grad.at).length - 1;
+        if (after >= PROTECTED_SESSIONS_AFTER) return null;
+      }
+      const kept = (pool || []).filter(inBridge);
+      return kept.length >= 4 ? kept : null;
+    }
+
+    // 畢業關的 10 題：4 極限、3 微分、3 積分，先用課裡沒出過的題，種子決定順序
+    function graduationSet(seed) {
+      const used = new Set(lessons().flatMap((item) => item.practice.concat(item.worked && item.worked.problemId ? [item.worked.problemId] : [])));
+      const hash = (text) => { let h = 2166136261; for (const ch of `${seed}:${text}`) { h ^= ch.charCodeAt(0); h = Math.imul(h, 16777619) >>> 0; } return h; };
+      const quota = { limits: 4, derivatives: 3, integrals: 3 };
+      const pool = bridgePool();
+      const picked = [];
+      BRIDGE_TOPICS.forEach((topic) => {
+        const candidates = pool.filter((p) => p.topic === topic).sort((a, b) => (used.has(a.id) - used.has(b.id)) || (hash(a.id) - hash(b.id)));
+        picked.push(...candidates.slice(0, quota[topic]));
+      });
+      return picked.sort((a, b) => hash(a.id) - hash(b.id));
+    }
+
+    function graduationVerdict(correct, total) {
+      const passed = correct >= GRADUATION_PASS;
+      return {
+        passed,
+        verdict: passed ? "畢業了" : "再回去看一眼",
+        verdictClass: passed ? "is-gold" : "is-neutral",
+        nextLine: passed
+          ? `${correct} / ${total}。課裡教的東西你會用了。接下來走主線第 1 關：頭三局還是只出你學過的題、不倒數。`
+          : `${correct} / ${total}，過關要 ${GRADUATION_PASS} 題。答錯的題下面都寫著是哪一課教的——回去看那幾課，再考一次。`
+      };
+    }
+
+    function renderGraduationActions(records) {
+      const grad = graduation(records);
+      const passed = Boolean(grad && grad.passed);
+      return `
+        <div class="action-row">
+          ${passed
+            ? `<button class="button" data-action="open-train">${icon("target")}去走主線第 1 關</button>
+               <button class="button secondary" data-action="open-course">${icon("list")}課程表</button>`
+            : `<button class="button" data-action="open-course">${icon("book-open")}回課程表看那幾課</button>
+               <button class="button secondary" data-action="course-graduation">${icon("refresh")}再考一次</button>`}
+          <button class="button ghost" data-action="open-mistakes">${icon("book")}錯題本</button>
+        </div>`;
+    }
+
+    // 課程表最底下：所有課都完成才出現的畢業關
+    function renderGraduationCard(records) {
+      const summary = progress(records);
+      const grad = graduation(records);
+      if (summary.done < summary.total) {
+        return `<section class="course-graduation is-locked"><p class="section-label">畢業關</p><strong>${summary.total} 課都完成後解鎖</strong><small>${GRADUATION_TOTAL} 題只出課裡教過的東西，${GRADUATION_PASS} 題過關；過了再走主線，主線頭三局也只出你學過的題。</small></section>`;
+      }
+      if (grad && grad.passed) {
+        return `<section class="course-graduation is-passed"><p class="section-label">畢業關</p><strong>${icon("check")}畢業了 · ${grad.correct} / ${grad.total}</strong><small>主線第 1 關等你；頭三局只出學過的題、不倒數。</small><div class="action-row"><button class="button home-primary" data-action="open-train">${icon("target")}去走主線第 1 關</button><button class="button ghost" data-action="course-graduation">${icon("refresh")}再考一次</button></div></section>`;
+      }
+      return `<section class="course-graduation"><p class="section-label">畢業關</p><strong>${grad ? `上次 ${grad.correct} / ${grad.total}，再來一次` : `${GRADUATION_TOTAL} 題，${GRADUATION_PASS} 題過關`}</strong><small>只出課裡教過的東西，不倒數、可看提示。答錯的題會告訴你是哪一課教的。</small><div class="action-row"><button class="button home-primary" data-action="course-graduation">${icon("play")}${grad ? "再考一次" : "開始畢業關"}</button></div></section>`;
+    }
+
+    /* ── 新手保護期的第一份訓練：不管配方排了幾題，取 8 題、由淺入深 ──
+       19 題對第一次來的人太長，而且配方上「7 到期複習 · 8 弱點」對什麼都沒做過的人是補位填出來的假數字。
+       topics（高中先修＝極限＋微分）給了就只在那裡面抽：級數對他們是「還沒學」，不是練習；
+       配方裡這兩科不滿 8 題的日子（planner 照日期抽）從題庫 R1 補到 8，不然首頁卡上會寫 7 題。 */
+    const GENTLE_FIRST_COUNT = 8;
+    function gentleTrim(list, topics, rank) {
+      const scoped = topics ? list.filter((problem) => topics.includes(problem.topic)) : list;
+      let base = scoped.length >= Math.min(GENTLE_FIRST_COUNT, 4) ? scoped : list;
+      if (topics && base.length < GENTLE_FIRST_COUNT) {
+        const have = new Set(base.map((problem) => problem.id));
+        base = base.concat(problems().filter((problem) => topics.includes(problem.topic) && problem.difficulty === 1 && problem.answerKind !== "text" && !have.has(problem.id)).slice(0, GENTLE_FIRST_COUNT - base.length));
+      }
+      return base
+        .map((problem, index) => ({ problem, index }))
+        .sort((a, b) => (rank(a.problem) - rank(b.problem)) || (a.index - b.index))
+        .map((entry) => entry.problem)
+        .slice(0, GENTLE_FIRST_COUNT);
+    }
+
+    /* ── 紀錄的變更：純函式，改完回傳同一個 records，app.js 負責 load / save ── */
+    const now = () => new Date().toISOString();
+    const markOpened = (records, id) => {
+      const entry = records.course[id] || {};
+      records.course[id] = { ...entry, openedAt: entry.openedAt || now() };
+      return records;
+    };
+    // 計算課：小測過 + 練習做完；理論課：小測過就算完成
+    const markDone = (records, id) => {
+      const entry = records.course[id] || {};
+      const practiced = entry.practiceDone || isTheory(lesson(id));
+      if (entry.checksPassed && practiced && !entry.doneAt) records.course[id] = { ...entry, doneAt: now() };
+      return records;
+    };
+    const markChecksPassed = (records, id) => {
+      records.course[id] = { ...(records.course[id] || {}), checksPassed: true };
+      return markDone(records, id);
+    };
+    const recordPractice = (records, id, correct, total) => {
+      records.course[id] = { ...(records.course[id] || {}), practiceDone: true, practiceCorrect: correct, practiceTotal: total, practicedAt: now() };
+      return markDone(records, id);
+    };
+    // passed 一旦 true 就不退回；at 每考一次更新，保護期從最近一次算
+    const recordGraduation = (records, correct, total) => {
+      const previous = records.courseGraduation || { passed: false, attempts: 0 };
+      records.courseGraduation = { at: now(), correct, total, passed: Boolean(previous.passed) || correct >= GRADUATION_PASS, attempts: (previous.attempts || 0) + 1 };
+      return records;
+    };
+    const allChecksRight = (item, picks) => item.checks.every((check, i) => {
+      const pick = picks[i];
+      return pick !== undefined && check.options[pick] && check.options[pick].correct;
+    });
+    const practicePool = (id) => {
+      const item = lesson(id);
+      return item ? item.practice.map((problemId) => problems().find((problem) => problem.id === problemId)).filter(Boolean) : [];
+    };
+
+    return { lessons, lesson, isTheory, problemLesson, progress, renderIndex, renderLesson, renderFirstSteps, renderResultsActions, renderFeedbackLink, renderHomeCard, inBridge, bridgePool, uncoveredTags: UNCOVERED_TAGS, protectPool, graduationSet, graduationVerdict, graduation, graduated, renderGraduationActions, renderGraduationCard, markOpened, markChecksPassed, recordPractice, recordGraduation, allChecksRight, practicePool, gentleTrim };
   }
 
   window.BuzzCourseUI = { create };
