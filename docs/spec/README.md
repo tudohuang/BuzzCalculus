@@ -49,7 +49,7 @@
 | 有作者撰寫 `hints` | 1620 |  |
 | 有 `solutionSteps` | 226 | 結構化步驟，仍是最大的內容缺口 |
 | 證明題 | 68 | 含 Lean 機器驗證 8 則 |
-| `src/app.js` | 15534 行 | 單一 IIFE，拆分進行中 |
+| `src/app.js` | 15530 行 | 單一 IIFE，拆分進行中 |
 | `styles.css` | 12608 行 |  |
 | 題庫檔 `src/problem_*.js` | 35 |  |
 | kernel 模組 `src/kernel/*.js` | 23 | 純函式層 |
@@ -82,7 +82,7 @@ rank 由 `src/kernel/rubric.js` 的三軸（步驟數 / 冷僻度 / 計算負擔
   產品上有「答案已驗算」標記。
 - 題目回報：原本只寫進使用者自己的 localStorage（等於沒送出），現在會攤開內容
   讓使用者送到 GitHub issue 或複製走。
-- 法遵：`privacy.html` / `terms.html` / `about.html` / `changelog.html`，
+- 法遵：`privacy.html` / `terms.html` / `about.html`（2026-09-16 起產品內只連「關於」；changelog 與 tutor 頁封存在 docs/retired），
   每一條承諾都由 `validate_privacy.js` 綁在程式碼上。
 
 ## 三個貫穿全域的設計承諾
