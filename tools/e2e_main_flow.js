@@ -92,7 +92,7 @@ const HELPERS = `
       while (Date.now() < deadline) {
         const el = document.querySelector(selector);
         if (el) return el;
-        await new Promise((r) => setTimeout(r, 100));
+        await new Promise((r) => setTimeout(r, 100 * (window.__slow || 1)));
       }
       return null;
     }
@@ -209,7 +209,7 @@ async function run() {
         // 有 modal 擋著就先關掉 —— 背板會吃掉所有點擊，
         // 而「點了沒反應」在自動化裡看起來就像功能壞掉。
         const notice = document.querySelector('[data-action="dismiss-notice"]');
-        if (notice) { notice.click(); await new Promise((r) => setTimeout(r, 150)); continue; }
+        if (notice) { notice.click(); await new Promise((r) => setTimeout(r, 150 * (window.__slow || 1))); continue; }
 
         // 到結算頁就停
         if (document.querySelector('.results-screen, [data-action="restart"]')) break;
@@ -222,7 +222,7 @@ async function run() {
           next.click();
           advanced += 1;
           stuck = 0;
-          await new Promise((r) => setTimeout(r, 220));
+          await new Promise((r) => setTimeout(r, 220 * (window.__slow || 1)));
           continue;
         }
 
@@ -242,7 +242,7 @@ async function run() {
           target.click();
           answered += 1;
           stuck = 0;
-          await new Promise((r) => setTimeout(r, 220));
+          await new Promise((r) => setTimeout(r, 220 * (window.__slow || 1)));
           continue;
         }
 
@@ -254,13 +254,13 @@ async function run() {
           const submit = document.querySelector('[data-action="submit-answer"]');
           if (submit) submit.click(); else window.__e2e.clickText("送出");
           answered += 1;
-          await new Promise((r) => setTimeout(r, 220));
+          await new Promise((r) => setTimeout(r, 220 * (window.__slow || 1)));
           continue;
         }
 
         if (window.__e2e.clickText("看結算") || window.__e2e.clickText("結算")) {
           advanced += 1;
-          await new Promise((r) => setTimeout(r, 220));
+          await new Promise((r) => setTimeout(r, 220 * (window.__slow || 1)));
           continue;
         }
 
@@ -269,7 +269,7 @@ async function run() {
         // 第一版只等 250ms×4 就放棄，把自動前進誤判成死路。
         stuck += 1;
         if (stuck > 10) break;
-        await new Promise((r) => setTimeout(r, 400));
+        await new Promise((r) => setTimeout(r, 400 * (window.__slow || 1)));
       }
       return { answered, wrongOnPurpose, advanced, stuck, atResults: Boolean(document.querySelector(".results-screen")) };
     `);
@@ -278,17 +278,27 @@ async function run() {
     check("能一路作答到結算", play.atResults, `答了 ${play.answered} 題、前進 ${play.advanced} 次（其中 ${play.wrongOnPurpose} 題故意答錯）`);
     check("有故意答錯的題目", play.wrongOnPurpose > 0, "才測得到錯題本那條路徑");
 
-    // 結算頁：這是實際壞掉過的地方 —— DOM 有內容但畫面全白
-    const results = await chrome.evaluate(`
+    // 結算頁：這是實際壞掉過的地方 —— DOM 有內容但畫面全白。
+    // 入場動畫是逐項 stagger 的，慢 runner 上跑完要好幾秒；等它真的跑完（最多 10 秒）
+    // 再量。「等得到」跟「永遠卡在 opacity:0」是兩回事，後者才是這條要抓的 bug。
+    const RESULTS_PROBE = `
       ${HELPERS}
       const text = window.__e2e.visibleText();
       const app = document.getElementById("app");
-      const hiddenNodes = [...app.querySelectorAll("*")].filter((n) => {
+      // aria-hidden 的子樹是裝飾（結算的彩帶粒子飛完就停在 opacity:0），不是被藏住的內容
+      const hiddenList = [...app.querySelectorAll("*")].filter((n) => {
+        if (n.closest('[aria-hidden="true"]')) return false;
         const s = getComputedStyle(n);
         return Number(s.opacity) === 0 && n.getBoundingClientRect().height > 0;
-      }).length;
-      return { visibleChars: text.length, htmlChars: app.innerHTML.length, hiddenNodes, text: text.slice(0, 120) };
-    `);
+      });
+      // 失敗時要說得出是哪些元素、opacity 來自 inline style 還是 CSS 動畫——不然只能猜
+      const hidden = hiddenList.slice(0, 6).map((n) => n.tagName.toLowerCase() + "." + String(n.className).split(" ")[0] + "[inline=" + (n.style.opacity || "-") + " anim=" + getComputedStyle(n).animationName + " anime=" + (typeof window.anime) + "]");
+      return { visibleChars: text.length, htmlChars: app.innerHTML.length, hiddenNodes: hiddenList.length, hidden, text: text.slice(0, 120) };
+    `;
+    let results = await chrome.evaluate(RESULTS_PROBE);
+    for (const deadline = Date.now() + 10000; results.hiddenNodes > 0 && Date.now() < deadline; await chrome.sleep(200)) {
+      results = await chrome.evaluate(RESULTS_PROBE);
+    }
     check(
       "結算頁的內容看得見（不是只存在於 DOM）",
       results.visibleChars > 60,
@@ -297,7 +307,7 @@ async function run() {
     check(
       "沒有元素卡在 opacity:0",
       results.hiddenNodes === 0,
-      results.hiddenNodes ? `${results.hiddenNodes} 個元素被動畫藏住` : "入場動畫跑完或保險絲生效"
+      results.hiddenNodes ? `${results.hiddenNodes} 個元素被動畫藏住：${results.hidden.join(" ")}` : "入場動畫跑完或保險絲生效"
     );
 
     /* ── 6. 錯題有沒有進錯題本 ── */
@@ -331,13 +341,13 @@ async function run() {
       ${HELPERS}
       // 回到剛才那一局的作答畫面（選擇題模式）
       window.__e2e.clickSelector('[data-action="home"]');
-      await new Promise((r) => setTimeout(r, 300));
+      await new Promise((r) => setTimeout(r, 300 * (window.__slow || 1)));
       window.__e2e.clickText("5 分鐘快刷") || window.__e2e.clickText("開始");
-      await new Promise((r) => setTimeout(r, 900));
+      await new Promise((r) => setTimeout(r, 900 * (window.__slow || 1)));
       const grid = document.querySelector(".choice-grid");
       const toggle = document.querySelector('[data-board-action="toggle"]');
       if (toggle) toggle.click();
-      await new Promise((r) => setTimeout(r, 500));
+      await new Promise((r) => setTimeout(r, 500 * (window.__slow || 1)));
       const canvas = document.querySelector("[data-blackboard]");
       return {
         isChoiceMode: Boolean(grid),
@@ -355,11 +365,11 @@ async function run() {
     await chrome.evaluate(`
       ${HELPERS}
       window.__e2e.clickSelector('[data-action="confirm-exit"]');
-      await new Promise((r) => setTimeout(r, 300));
+      await new Promise((r) => setTimeout(r, 300 * (window.__slow || 1)));
       window.__e2e.clickSelector('[data-action="finish-now"]');
-      await new Promise((r) => setTimeout(r, 700));
+      await new Promise((r) => setTimeout(r, 700 * (window.__slow || 1)));
       window.__e2e.clickSelector('[data-action="home"]');
-      await new Promise((r) => setTimeout(r, 500));
+      await new Promise((r) => setTimeout(r, 500 * (window.__slow || 1)));
       return Boolean(document.querySelector('[data-action="open-train"]'));
     `);
 
@@ -388,7 +398,7 @@ async function run() {
       startButton.click();
       const node = await window.__e2e.waitFor(".quiz-screen .prompt[data-tex]", 8000);
       if (!node) return { missing: true, why: "題目畫面沒出現" };
-      await new Promise((r) => setTimeout(r, 300));
+      await new Promise((r) => setTimeout(r, 300 * (window.__slow || 1)));
       // 量兩件事：有沒有走折行渲染（跟視窗寬度無關），以及此刻有沒有橫向溢出。
       // 只量溢出的話，測試機的視窗夠寬就會漏掉 —— 手機和 iPad 才是真正會爆的地方。
       return {
@@ -410,11 +420,11 @@ async function run() {
     await chrome.evaluate(`
       ${HELPERS}
       window.__e2e.clickSelector('[data-action="confirm-exit"]');
-      await new Promise((r) => setTimeout(r, 300));
+      await new Promise((r) => setTimeout(r, 300 * (window.__slow || 1)));
       window.__e2e.clickSelector('[data-action="finish-now"]');
-      await new Promise((r) => setTimeout(r, 700));
+      await new Promise((r) => setTimeout(r, 700 * (window.__slow || 1)));
       window.__e2e.clickSelector('[data-action="home"]');
-      await new Promise((r) => setTimeout(r, 500));
+      await new Promise((r) => setTimeout(r, 500 * (window.__slow || 1)));
       return true;
     `);
 
@@ -423,9 +433,9 @@ async function run() {
     const paperGone = await chrome.evaluate(`
       ${HELPERS}
       window.__e2e.clickSelector('[data-action="open-train"]');
-      await new Promise((r) => setTimeout(r, 400));
+      await new Promise((r) => setTimeout(r, 400 * (window.__slow || 1)));
       window.__e2e.clickSelector('[data-action="set-bucket"][data-bucket="exam"]');
-      await new Promise((r) => setTimeout(r, 400));
+      await new Promise((r) => setTimeout(r, 400 * (window.__slow || 1)));
       return {
         entry: Boolean(document.querySelector('[data-action="open-paper"]')),
         exam: Boolean(document.querySelector('[data-action="start-mode"][data-mode-key="exam"]'))
@@ -438,7 +448,7 @@ async function run() {
     const verified = await chrome.evaluate(`
       ${HELPERS}
       window.__e2e.clickSelector('[data-action="open-library"]');
-      await new Promise((r) => setTimeout(r, 700));
+      await new Promise((r) => setTimeout(r, 700 * (window.__slow || 1)));
       return {
         sideTable: Boolean(window.BuzzVerifiedAnswers),
         count: window.BuzzVerifiedAnswers ? window.BuzzVerifiedAnswers.count : 0,
@@ -459,11 +469,11 @@ async function run() {
       if (!search) return { missing: true };
       search.value = "dm-seq-004"; // R6 長題：cap-3 的使用者不該翻得到
       search.dispatchEvent(new Event("input", { bubbles: true }));
-      await new Promise((r) => setTimeout(r, 700));
+      await new Promise((r) => setTimeout(r, 700 * (window.__slow || 1)));
       const cards = document.querySelectorAll(".library-problem-card").length;
       search.value = "";
       search.dispatchEvent(new Event("input", { bubbles: true }));
-      await new Promise((r) => setTimeout(r, 500));
+      await new Promise((r) => setTimeout(r, 500 * (window.__slow || 1)));
       const note = document.querySelector(".library-lock-note");
       const unlock = document.querySelector('[data-action="unlock-library"]');
       return { cards, hasNote: Boolean(note), hasUnlock: Boolean(unlock) };
@@ -481,8 +491,12 @@ async function run() {
     await chrome.sleep(300);
     await chrome.send("Input.dispatchKeyEvent", { type: "keyDown", key: "?", text: "?" });
     await chrome.send("Input.dispatchKeyEvent", { type: "keyUp", key: "?" });
-    await chrome.sleep(400);
-    const shortcutText = await chrome.evaluate(HELPERS + "return window.__e2e.visibleText();");
+    // 說明 modal 要 render：等它真的出現（慢 runner 上 400ms 不夠）
+    let shortcutText = "";
+    for (const deadline = Date.now() + 5000; Date.now() < deadline; await chrome.sleep(150)) {
+      shortcutText = await chrome.evaluate(HELPERS + "return window.__e2e.visibleText();");
+      if (/快捷|Enter|空白/.test(shortcutText)) break;
+    }
     check("按 ? 會叫出快捷鍵說明", /快捷|Enter|空白/.test(shortcutText),
       shortcutText.split("\n").find((line) => /快捷/.test(line)) || "");
 
@@ -511,9 +525,9 @@ async function run() {
       const before = keysNow();
 
       window.__e2e.clickSelector('[data-action="settings"]') || window.__e2e.clickText("設定");
-      await new Promise((r) => setTimeout(r, 450));
+      await new Promise((r) => setTimeout(r, 450 * (window.__slow || 1)));
       const openedSettings = Boolean(window.__e2e.clickText("清除資料"));
-      await new Promise((r) => setTimeout(r, 350));
+      await new Promise((r) => setTimeout(r, 350 * (window.__slow || 1)));
 
       // 確認步驟一定要出現：不可逆的動作不能一鍵完成
       // 要抓的是**刪除確認**那個 modal，不是畫面上剛好開著的其他 modal。
@@ -525,7 +539,7 @@ async function run() {
         : "";
 
       window.__e2e.clickSelector('[data-action="confirm-erase"]');
-      await new Promise((r) => setTimeout(r, 700));
+      await new Promise((r) => setTimeout(r, 700 * (window.__slow || 1)));
       return { before, after: keysNow(), confirmShown, openedSettings, confirmText: confirmText.slice(0, 120) };
     `);
     check("設定頁有「清除資料」", erased.openedSettings);

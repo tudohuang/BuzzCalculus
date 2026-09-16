@@ -242,7 +242,8 @@ async function run() {
     await click('[data-action="set-bucket"][data-bucket="challenge"]', 700);
     const challenge = await evaluate(`return { firstPanel: window.__b.text(".train-screen .study-card"), cards: [...document.querySelectorAll(".challenge-mode")].map((n) => n.innerText.replace(/\\s+/g, " ")) };`);
     check("挑戰分頁第一張就是挑戰模式", /挑戰模式/.test(challenge.firstPanel), challenge.firstPanel.slice(0, 30));
-    check("每個挑戰模式都寫了規則與題數", challenge.cards.length >= 7 && challenge.cards.every((c) => c.split(" ").length >= 6), challenge.cards[0]);
+    // 2026-09-16 挑戰分頁收斂：四種模式（進階／階梯／Boss 連戰／生存）＋一張競賽魔王，多了會分散注意
+    check("挑戰模式四種加競賽魔王，每一張都寫了規則與題數", challenge.cards.length === 5 && challenge.cards.every((c) => c.split(" ").length >= 6), `${challenge.cards.length} 張 · ${challenge.cards[0]}`);
     await click('[data-action="start-mode"][data-mode-key="boss"]', 900);
     await click('button[data-action="dismiss-notice"]');
     const boss = await evaluate(`return { free: Boolean(document.querySelector(".answer-input")), choices: document.querySelectorAll('[data-action="choose-answer"]').length, rank: window.__b.rank() };`);
@@ -330,7 +331,8 @@ async function run() {
       const bad = ["rationalize", "inverse-trig", "world-universities"];
       const byId = new Map(window.BUZZ_PROBLEMS.map((p) => [p.id, p]));
       const ids = ((records.history[0] || {}).answers || []).map((a) => a.problemId);
-      return { n: ids.length, outside: ids.filter((id) => { const p = byId.get(id); return !p || p.difficulty !== 1 || (p.tags || []).some((t) => bad.includes(t)); }) };`;
+      // 跟 app 一樣看校準後的 rank（畫面上的 chip 也是它），不看 difficulty
+      return { n: ids.length, outside: ids.filter((id) => { const p = byId.get(id); return !p || Number(p.rank || p.difficulty) !== 1 || (p.tags || []).some((t) => bad.includes(t)); }) };`;
     await evaluate(`
       const key = "buzzcalculus.records.v1";
       const records = JSON.parse(localStorage.getItem(key) || "{}");

@@ -461,11 +461,11 @@ async function run() {
       const before = window.__pen.canvas();
       const inkBefore = window.__pen.inkPixels();
       document.querySelector('[data-board-action="tool"][data-tool="eraser"]').click();
-      await new Promise((r) => setTimeout(r, 300));
+      await new Promise((r) => setTimeout(r, 300 * (window.__slow || 1)));
       const afterEraser = window.__pen.canvas();
       const eraserActive = document.querySelector('[data-board-action="tool"][data-tool="eraser"]').classList.contains("is-active");
       document.querySelector('[data-board-action="tool"][data-tool="pen"]').click();
-      await new Promise((r) => setTimeout(r, 300));
+      await new Promise((r) => setTimeout(r, 300 * (window.__slow || 1)));
       const afterPen = window.__pen.canvas();
       const penActive = document.querySelector('[data-board-action="tool"][data-tool="pen"]').classList.contains("is-active");
       return {
@@ -496,7 +496,7 @@ async function run() {
       const beforeInk = window.__pen.inkPixels();
       const eraser = document.querySelector('[data-board-action="tool"][data-tool="eraser"]');
       eraser.click();
-      await new Promise((r) => setTimeout(r, 350));
+      await new Promise((r) => setTimeout(r, 350 * (window.__slow || 1)));
       window.__pen.stroke(0.15, 0.3, 0.85, 0.3, { pressure: 0.8 });
       const afterPixel = sample();
       const afterInk = window.__pen.inkPixels();
@@ -521,7 +521,7 @@ async function run() {
       const label = document.querySelector("[data-board-count]");
       const labelBefore = label ? label.textContent.trim() : "";
       document.querySelector('[data-board-action="undo"]').click();
-      await new Promise((r) => setTimeout(r, 300));
+      await new Promise((r) => setTimeout(r, 300 * (window.__slow || 1)));
       const canvasAfter = window.__pen.canvas();
       return {
         sameNode: canvasBefore === canvasAfter,
@@ -554,17 +554,17 @@ async function run() {
       const button = document.querySelector('[data-board-action="redo"]');
       if (!button) return { missing: true };
       button.click();
-      await new Promise((r) => setTimeout(r, 300));
+      await new Promise((r) => setTimeout(r, 300 * (window.__slow || 1)));
       const afterRedo = window.__pen.inkPixels();
       // 再清空一次，然後看重做能不能把整頁救回來
       document.querySelector('[data-board-action="clear"]').click();
-      await new Promise((r) => setTimeout(r, 300));
+      await new Promise((r) => setTimeout(r, 300 * (window.__slow || 1)));
       const cleared = window.__pen.inkPixels();
       let guard = 0;
       while (guard < 40 && document.querySelector('[data-board-action="redo"]')) {
         document.querySelector('[data-board-action="redo"]').click();
         guard += 1;
-        await new Promise((r) => setTimeout(r, 40));
+        await new Promise((r) => setTimeout(r, 40 * (window.__slow || 1)));
       }
       return { missing: false, before, afterRedo, cleared, restored: window.__pen.inkPixels() };
     `);
@@ -589,7 +589,7 @@ async function run() {
       document.querySelector('[data-board-action="tool"][data-tool="pen"]').click();
       document.querySelector('[data-board-action="clear"]').click();
       // 前面全是筆的事件，防手掌的窗格還沒過 —— 這時候的觸控會被整批當成手掌丟掉。
-      await new Promise((r) => setTimeout(r, 900));
+      await new Promise((r) => setTimeout(r, 900 * (window.__slow || 1)));
 
       const c = window.__pen.canvas();
       const ctx = c.getContext("2d");
@@ -610,9 +610,9 @@ async function run() {
       };
       const measure = async (steps) => {
         document.querySelector('[data-board-action="clear"]').click();
-        await new Promise((r) => setTimeout(r, 200));
+        await new Promise((r) => setTimeout(r, 200 * (window.__slow || 1)));
         window.__pen.stroke(0.1, 0.3, 0.9, 0.3, { pointerType: "touch", steps });
-        await new Promise((r) => setTimeout(r, 200));
+        await new Promise((r) => setTimeout(r, 200 * (window.__slow || 1)));
         return thickness(0.5);
       };
       const slow = await measure(60);   // 取樣點密＝寫得慢
@@ -647,9 +647,9 @@ async function run() {
       };
       const measure = async (p) => {
         document.querySelector('[data-board-action="clear"]').click();
-        await new Promise((r) => setTimeout(r, 150));
+        await new Promise((r) => setTimeout(r, 150 * (window.__slow || 1)));
         window.__pen.stroke(0.1, 0.5, 0.9, 0.5, { pressure: p, steps: 40 });
-        await new Promise((r) => setTimeout(r, 150));
+        await new Promise((r) => setTimeout(r, 150 * (window.__slow || 1)));
         return thickness(0.5);
       };
       const light = await measure(0.1);
@@ -672,11 +672,11 @@ async function run() {
     const startGap = await chrome.evaluate(`
       ${PEN}
       document.querySelector('[data-board-action="clear"]').click();
-      await new Promise((r) => setTimeout(r, 150));
+      await new Promise((r) => setTimeout(r, 150 * (window.__slow || 1)));
       const c = window.__pen.canvas();
       const ctx = c.getContext("2d");
       window.__pen.stroke(0.2, 0.5, 0.8, 0.5, { pressure: 0.7, steps: 30 });
-      await new Promise((r) => setTimeout(r, 200));
+      await new Promise((r) => setTimeout(r, 200 * (window.__slow || 1)));
       // 沿著筆畫掃描，找出有墨水的最左與最右，再看中間有沒有空白欄
       const has = (fx) => {
         const col = ctx.getImageData(Math.round(c.width * fx), 0, 1, c.height).data;
@@ -708,11 +708,11 @@ async function run() {
     const eraserCursor = await chrome.evaluate(`
       ${PEN}
       document.querySelector('[data-board-action="tool"][data-tool="eraser"]').click();
-      await new Promise((r) => setTimeout(r, 200));
+      await new Promise((r) => setTimeout(r, 200 * (window.__slow || 1)));
       const canvas = window.__pen.canvas();
       const asEraser = getComputedStyle(canvas).cursor;
       document.querySelector('[data-board-action="tool"][data-tool="pen"]').click();
-      await new Promise((r) => setTimeout(r, 200));
+      await new Promise((r) => setTimeout(r, 200 * (window.__slow || 1)));
       return { asEraser, asPen: getComputedStyle(canvas).cursor, tool: canvas.dataset.tool };
     `);
     check("換到橡皮擦時游標看得出擦拭範圍",
@@ -724,9 +724,9 @@ async function run() {
       ${PEN}
       // 換紙鈕現在打開紙型選單（方格／點陣／橫線／空白／黑板），再點黑板
       document.querySelector('[data-board-action="surface"]').click();
-      await new Promise((r) => setTimeout(r, 200));
+      await new Promise((r) => setTimeout(r, 200 * (window.__slow || 1)));
       document.querySelector('[data-board-action="set-surface"][data-surface="board"]').click();
-      await new Promise((r) => setTimeout(r, 400));
+      await new Promise((r) => setTimeout(r, 400 * (window.__slow || 1)));
       const canvas = document.querySelector("[data-blackboard]");
       if (!canvas) return { surface: null };
       const ctx = canvas.getContext("2d");
@@ -751,21 +751,21 @@ async function run() {
     // 紙型選單：再點一次「換紙」→ 選方格。
     await chrome.evaluate(`
       document.querySelector('[data-board-action="surface"]').click();
-      await new Promise((r) => setTimeout(r, 150));
+      await new Promise((r) => setTimeout(r, 150 * (window.__slow || 1)));
       document.querySelector('[data-board-action="set-surface"][data-surface="paper"]').click();
       document.querySelector('[data-board-action="clear"]').click();
-      await new Promise((r) => setTimeout(r, 200));
+      await new Promise((r) => setTimeout(r, 200 * (window.__slow || 1)));
       return 1;
     `);
     const penPopover = await chrome.evaluate(`
       const pen = document.querySelector('[data-board-action="tool"][data-tool="pen"]');
       document.querySelector('[data-board-action="tool"][data-tool="eraser"]').click();   // 先離開筆
-      await new Promise((r) => setTimeout(r, 120));
+      await new Promise((r) => setTimeout(r, 120 * (window.__slow || 1)));
       pen.click();                                   // 第一下：選筆
-      await new Promise((r) => setTimeout(r, 120));
+      await new Promise((r) => setTimeout(r, 120 * (window.__slow || 1)));
       const closedAfterSelect = document.querySelector('[data-board-popover="pen"]').hidden;
       pen.click();                                   // 第二下：打開細節
-      await new Promise((r) => setTimeout(r, 120));
+      await new Promise((r) => setTimeout(r, 120 * (window.__slow || 1)));
       const openAfterReselect = !document.querySelector('[data-board-popover="pen"]').hidden;
       return { closedAfterSelect, openAfterReselect };
     `);
@@ -775,9 +775,9 @@ async function run() {
     const blueInk = await chrome.evaluate(`
       ${PEN}
       document.querySelector('[data-board-action="set-color"][data-color="blue"]').click();
-      await new Promise((r) => setTimeout(r, 120));
+      await new Promise((r) => setTimeout(r, 120 * (window.__slow || 1)));
       window.__pen.stroke(0.1, 0.5, 0.4, 0.5, { pressure: 0.8, steps: 20 });
-      await new Promise((r) => setTimeout(r, 200));
+      await new Promise((r) => setTimeout(r, 200 * (window.__slow || 1)));
       const canvas = window.__pen.canvas();
       const data = canvas.getContext("2d").getImageData(0, 0, canvas.width, canvas.height).data;
       let ink = null;
@@ -795,9 +795,9 @@ async function run() {
     const highlight = await chrome.evaluate(`
       ${PEN}
       document.querySelector('[data-board-action="tool"][data-tool="highlighter"]').click();
-      await new Promise((r) => setTimeout(r, 120));
+      await new Promise((r) => setTimeout(r, 120 * (window.__slow || 1)));
       window.__pen.stroke(0.05, 0.5, 0.5, 0.5, { pressure: 0.5, steps: 30 });
-      await new Promise((r) => setTimeout(r, 250));
+      await new Promise((r) => setTimeout(r, 250 * (window.__slow || 1)));
       const canvas = window.__pen.canvas();
       const ctx = canvas.getContext("2d");
       // 沒有墨水的地方：半透明黃
@@ -818,10 +818,10 @@ async function run() {
 
     const paper = await chrome.evaluate(`
       document.querySelector('[data-board-action="surface"]').click();
-      await new Promise((r) => setTimeout(r, 120));
+      await new Promise((r) => setTimeout(r, 120 * (window.__slow || 1)));
       const open = !document.querySelector('[data-board-popover="surface"]').hidden;
       document.querySelector('[data-board-action="set-surface"][data-surface="dots"]').click();
-      await new Promise((r) => setTimeout(r, 200));
+      await new Promise((r) => setTimeout(r, 200 * (window.__slow || 1)));
       const canvas = document.querySelector("[data-blackboard]");
       return { open, surface: canvas.dataset.surface, bg: getComputedStyle(canvas).backgroundImage.slice(0, 16), popoverClosed: document.querySelector('[data-board-popover="surface"]').hidden };
     `);
@@ -830,19 +830,36 @@ async function run() {
     // 換回方格與筆，下一節在同樣的狀態下量全螢幕
     await chrome.evaluate(`
       document.querySelector('[data-board-action="surface"]').click();
-      await new Promise((r) => setTimeout(r, 120));
+      await new Promise((r) => setTimeout(r, 120 * (window.__slow || 1)));
       document.querySelector('[data-board-action="set-surface"][data-surface="paper"]').click();
       document.querySelector('[data-board-action="tool"][data-tool="pen"]').click();
-      await new Promise((r) => setTimeout(r, 150));
+      await new Promise((r) => setTimeout(r, 150 * (window.__slow || 1)));
       return 1;
     `);
+
+    /* ── 8.7 寫了東西之後，計算紙還收得起來 ── */
+    // 實測（2026-09-16）：畫兩筆之後按「收起」沒反應 —— render 用「有筆畫就攤開」
+    // 蓋掉了使用者的意圖。這裡在前面幾節已經畫滿筆畫的狀態下收、再攤開，兩邊都要動。
+    const collapse = await chrome.evaluate(`
+      const toggle = () => { const b = document.querySelector('[data-board-action="toggle"]'); if (b) b.click(); return Boolean(b); };
+      const hadInk = Boolean(document.querySelector("[data-blackboard]"));
+      const clicked = toggle();
+      await new Promise((r) => setTimeout(r, 400 * (window.__slow || 1)));
+      const closed = !document.querySelector("[data-blackboard]");
+      toggle();
+      await new Promise((r) => setTimeout(r, 400 * (window.__slow || 1)));
+      const reopened = Boolean(document.querySelector("[data-blackboard]"));
+      return { hadInk, clicked, closed, reopened };
+    `);
+    check("畫過之後按「收起」真的收得起來", collapse.hadInk && collapse.clicked && collapse.closed, collapse.closed ? "" : "按了收起，畫布還在");
+    check("再按一次攤得回來", collapse.reopened);
 
     /* ── 9. 全螢幕書寫時題目要留在畫面上 ── */
     // 一開始沒做這件事，實測就發現攤開計算紙之後題目被推出視窗，
     // 使用者得先收起計算紙看一眼題目再攤開 —— 那等於沒有全螢幕。
     const fullscreen = await chrome.evaluate(`
       document.querySelector('[data-board-action="fullscreen"]').click();
-      await new Promise((r) => setTimeout(r, 600));
+      await new Promise((r) => setTimeout(r, 600 * (window.__slow || 1)));
       const shell = document.querySelector(".handwrite-shell.is-fullscreen");
       const prompt = document.querySelector(".handwrite-prompt");
       const canvas = document.querySelector("[data-blackboard]");
