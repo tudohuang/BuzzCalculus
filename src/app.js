@@ -593,6 +593,8 @@
   // 復原 toast：單筆刪除先做掉、給 6 秒反悔。undo 是把備份放回去的 callback。
   let undoToast = null; // { message, undo, timer }
   let calibrationPreview = null;
+  // 計算紙設定（筆寬、紙型、顏色）的快取，見 boardSetting()；saveRecords 會清掉
+  let boardSettingsCache = null;
   let eraseConfirm = false;
   // 回報草稿：{ problemId, reason }。null 代表沒有開著的回報視窗。
   let reportDraft = null;
@@ -12533,9 +12535,14 @@
     { key: "blue", label: "藍", swatch: "#8fcbff" }
   ];
 
+  // 設定的快取。計算紙每一 frame 都會問筆寬／紙型／顏色，原本每問一次就 loadRecords()
+  // —— localStorage 讀出整包 records 再 JSON.parse。紀錄一大（幾百 KB 的 history）
+  // 每一筆都在做這件事，就是「有時候卡一下」（profile_board.js 抓到：畫 40 筆
+  // loadRecords 吃掉 150ms，比繪製本身還多）。saveRecords 會清掉快取。
   function boardSetting(key, fallback, allowed) {
     try {
-      const value = (loadRecords().settings || {})[key];
+      if (!boardSettingsCache) boardSettingsCache = loadRecords().settings || {};
+      const value = boardSettingsCache[key];
       return allowed.includes(value) ? value : fallback;
     } catch (_error) {
       return fallback;
@@ -13298,7 +13305,7 @@
 
   function penScaleSetting() {
     try {
-      const key = (loadRecords().settings || {}).penScale || "standard";
+      const key = penScaleKey();
       const entry = PEN_SCALES.find((item) => item.key === key);
       return entry ? entry.value : 1;
     } catch (_error) {
@@ -13428,6 +13435,7 @@
   }
 
   function saveRecords(records) {
+    boardSettingsCache = null;
     const next = normalizeRecords(records);
     // Feature 7：雲端同步衝突規則採「updatedAt 最新者獲勝」，
     // 所以每一次本機寫入都要蓋上新的時間戳。

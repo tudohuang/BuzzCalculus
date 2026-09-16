@@ -199,12 +199,12 @@ async function launch(options = {}) {
   // 用預設的就緒判斷會一直等到逾時。
   async function navigate(url, options = {}) {
     await send("Page.navigate", { url });
-    await waitForLoad(15000, options.appReady !== false);
+    await waitForLoad(40000, options.appReady !== false);
   }
 
   // 等到 app 真的把畫面畫出來，而不只是 DOMContentLoaded。
   // app.js 的 render 是 rAF 驅動的，document 就緒不代表畫面就緒。
-  async function waitForLoad(timeoutMs = 15000, appReady = true) {
+  async function waitForLoad(timeoutMs = 40000, appReady = true) {
     const deadline = Date.now() + timeoutMs;
     while (Date.now() < deadline) {
       try {
