@@ -29,11 +29,14 @@
 \setmainfont{TeX Gyre Pagella}
 \setsansfont{TeX Gyre Heros}
 \setmonofont{DejaVu Sans Mono}[Scale=0.86]
-\setCJKmainfont{Noto Serif CJK TC}[BoldFont={Noto Serif CJK TC Bold}]
-\setCJKsansfont{Noto Sans CJK TC}
-\setCJKmonofont{Noto Sans CJK TC}
+% 標楷體只有一個字重：粗體用 FakeBold，標題再加一點
+\setCJKmainfont{kaiu.ttf}[Path=/mnt/c/Windows/Fonts/,BoldFont=kaiu.ttf,BoldFeatures={FakeBold=1.6}]
+\setCJKsansfont{kaiu.ttf}[Path=/mnt/c/Windows/Fonts/,BoldFont=kaiu.ttf,BoldFeatures={FakeBold=2.2}]
+\setCJKmonofont{kaiu.ttf}[Path=/mnt/c/Windows/Fonts/]
 \xeCJKsetup{CJKmath=true,PunctStyle=kaiming}
-\linespread{1.32}
+\linespread{1.38}
+\graphicspath{{figures/}}
+\newcommand{\screen}[2]{\begin{center}\fbox{\includegraphics[width=#1]{#2}}\end{center}}
 
 % ── 色彩：紙、墨、金、苔綠、鐵鏽 ──
 \definecolor{ink}{HTML}{1F1D18}
@@ -164,6 +167,13 @@ BuzzCalculus 把「練微積分」這件事拆成三個可以被驗證的問題�
   \item 證明題沒有選項可選、沒有數字可比。瀏覽器裡跑不了 Lean，但「這一步有沒有跳」這件事，真的做不到嗎？
 \end{enumerate}
 
+\begin{figure}[h]
+\centering
+\fbox{\includegraphics[width=0.48\textwidth]{onboarding}}\hfill
+\fbox{\includegraphics[width=0.48\textwidth]{home}}
+\caption{第一次進站只問一件事（左）；練過之後的首頁只有一顆主按鈕，四種練法收進「換一種練法」（右）。}
+\end{figure}
+
 \section{三條設計原則}
 \begin{principle}[純函式 kernel]
 \file{src/kernel/} 底下 23 個模組、14,489 行，每一個都只吃 \code{(records, problems, now)} 這類輸入、吐資料。不碰 DOM、不碰 localStorage、不呼叫 \code{Date.now()}——時間是參數。這帶來兩個直接的好處：能力曲線可以「回放」到任何一天，所以不需要每天寫快照；同一份程式碼可以被 Node 的驗證器 require 進來逐題釘住。
@@ -290,6 +300,19 @@ function rankFrom(axes, skillCount) {
 判斷兩個式子等價的正統做法是符號化簡：把兩邊都化成標準形再比。瀏覽器裡沒有電腦代數系統，自己寫一個又會在三角恆等式、對數律、絕對值上無窮無盡地補洞。BuzzCalculus 選了另一條路：在一組固定的取樣點上求值，逐點比較。這是有限取樣，不是形式證明——程式碼第一行就寫著這句話——但它的失敗方式是可預測的，而且可以用取樣點的選擇把誤判壓到實務上看不到。
 
 \section{取樣點的選擇}
+\begin{figure}[h]
+\centering
+\begin{tikzpicture}[x=1.55cm]
+  \draw[line width=0.8pt,color=muted,-{Latex[length=2mm]}] (-2.6,0) -- (3.9,0);
+  \foreach \x in {-2,-1,0,1,2,3} { \draw[color=muted] (\x,0.08) -- (\x,-0.08); \node[below=2pt,font=\scriptsize\color{muted}] at (\x,0) {\x}; }
+  \foreach \x in {0.3137,0.7211,1.2345,1.9871,3.3013,-0.6180,-1.3247,-2.1069} { \fill[gold] (\x,0) circle (2.4pt); }
+  \foreach \x in {0.5,1,2} { \draw[rust,line width=0.9pt] (\x,-0.22) -- (\x,0.22); }
+  \node[above=5pt,font=\scriptsize\color{rust}] at (1,0.2) {避開的「漂亮數」};
+  \node[above=5pt,font=\scriptsize\color{gold}] at (-1.3,0.2) {負數：分開 $\sqrt{x^2}$ 與 $x$};
+\end{tikzpicture}
+\caption{單變數的八個取樣點（金點）。紅線是刻意避開的 0.5、1、2：不同函數在那裡撞在一起的機率最高。}
+\end{figure}
+
 \begin{lstlisting}
 // Positive-only samples had a real hole: sqrt(x^2) and x agree on every
 // positive point but are not the same function. Negatives separate them.
@@ -327,6 +350,13 @@ $\lim_{x\to 0}\frac{\sin x}{x}$ & \code{1}、\code{1.0}、\code{2/2} & \textcolo
 \end{tabularx}
 \caption{判分引擎的實際行為。訊息一律是給人看的話，不是判分器的內部話。}
 \end{table}
+
+\begin{figure}[h]
+\centering
+\fbox{\includegraphics[width=0.30\textwidth]{phone-quiz}}\hfill
+\fbox{\includegraphics[width=0.66\textwidth]{results}}
+\caption{手機上的作答畫面（左）與結算頁（右）。結算只有一顆主按鈕，其餘降成文字連結；四個數字不做動畫——成績是事實，不是表演。}
+\end{figure}
 
 \section{其他答案型別}
 \begin{itemize}
@@ -392,6 +422,26 @@ Taylor 導數 & 57 & 區域積分 & 18 \\
 \end{enumerate}
 剩下的三分之一——存在句、抽象函數 $f$、數論——標黃：看得懂但驗不了，不假裝。
 
+\begin{figure}[h]
+\centering
+\begin{tikzpicture}[
+  node distance=4mm and 6mm,
+  box/.style={draw=line,fill=paper,rounded corners=2pt,minimum height=11mm,text width=34mm,align=center,font=\sffamily\small},
+  hot/.style={box,draw=gold,line width=1pt},
+  arr/.style={-{Latex[length=2mm]},draw=muted,line width=0.8pt}
+]
+\node[box] (t) {一行一句的證明\\{\scriptsize\color{muted}全形、希臘字母、LaTeX 先正規化}};
+\node[hot,right=of t] (a) {句型引擎\\{\scriptsize\color{muted}13 種句型}};
+\node[hot,right=of a] (b) {代數引擎\\{\scriptsize\color{muted}假設下隨機取點}};
+\node[hot,right=of b] (c) {推論引擎\\{\scriptsize\color{muted}規則字典}};
+\node[box,below=of b] (r) {逐行三色 + 骨架 + 反例\\{\scriptsize\color{muted}\textcolor{moss}{綠} 驗過成立 · \textcolor{rust}{紅} 驗過不成立 · \textcolor{gold}{黃} 驗不了}};
+\draw[arr] (t) -- (a); \draw[arr] (a) -- (b); \draw[arr] (b) -- (c);
+\draw[arr] (a.south) |- (r.west); \draw[arr] (b) -- (r); \draw[arr] (c.south) |- (r.east);
+\end{tikzpicture}
+\caption{白話證明的三個引擎與它們共同產出的報告。}
+\end{figure}
+
+
 \section{正規化}
 使用者會混用全形標點、希臘字母、LaTeX 指令與 Unicode 符號。第一步把它們收斂成一種寫法：全形數字與字母轉半形；「，。：；（）」轉半形；$\le$、$\ge$、$\ne$、$-$、$\times$、$\cdot$ 轉成 ASCII；$\varepsilon$ 與 \code{\textbackslash epsilon} 都變 \code{eps}；$\sqrt{\ }$、$\pi$、$\infty$ 各有對應；\code{|x-2|} 這種不巢狀的絕對值翻成 \code{abs(x-2)}。
 
@@ -436,6 +486,12 @@ unknown & — & 一行有兩句、或只有式子沒有句型 \\
 \end{tabularx}
 \caption{一份 $\delta$ 取錯的 $\varepsilon$–$\delta$ 證明。紅在第 4 行，不是第 2 行——第 2 行的設定本身不是錯，錯的是它撐不起第 4 行。}
 \end{table}
+
+\begin{figure}[h]
+\centering
+\fbox{\includegraphics[width=\textwidth]{proof-editor}}
+\caption{題目編輯器：左題右寫，打字即時逐行判定。這份 $\delta = \varepsilon$ 的證明紅在第 4 行，結論標黃。}
+\end{figure}
 
 \section{推論引擎與骨架}
 規則字典裡每一條定理有「需要的前提形狀」與「會吐出的結論形狀」。寫「由平均值定理，存在 $c \in (x, y)$ 使 $f(y) - f(x) = f'(c)(y - x)$」會被認出來；接著若跳過「因為 $f'(c) = 0$」直接寫「故 $f(x) = f(y)$」，結論不放行。每一題另有骨架檢查：一份 $\varepsilon$–$N$ 證明至少要有任取、取 $N$、假設 $n > N$、推導、結論五個角色，缺角色的證明就算每一行都綠也不算完成。
@@ -486,6 +542,23 @@ unknown & — & 一行有兩句、或只有式子沒有句型 \\
 
 \section{四個象限}
 用「快不快」與「準不準」把每個技巧放進四格，每一格對應不同處方：
+
+\begin{figure}[h]
+\centering
+\begin{tikzpicture}[x=1cm,y=1cm]
+  \fill[mosssoft] (0,2.2) rectangle (4.4,4.4); \fill[goldsoft] (0,0) rectangle (4.4,2.2);
+  \fill[rustsoft] (4.4,2.2) rectangle (8.8,4.4); \fill[paper] (4.4,0) rectangle (8.8,2.2);
+  \draw[line] (0,0) rectangle (8.8,4.4); \draw[line] (4.4,0) -- (4.4,4.4); \draw[line] (0,2.2) -- (8.8,2.2);
+  \node[font=\sffamily\bfseries] at (2.2,3.6) {反射區}; \node[font=\scriptsize\color{muted},text width=38mm,align=center] at (2.2,2.9) {快而準：拉高難度或進 Boss};
+  \node[font=\sffamily\bfseries] at (6.6,3.6) {衝太快}; \node[font=\scriptsize\color{muted},text width=38mm,align=center] at (6.6,2.9) {快但不準：練習模式＋標註錯因};
+  \node[font=\sffamily\bfseries] at (2.2,1.4) {會但慢}; \node[font=\scriptsize\color{muted},text width=38mm,align=center] at (2.2,0.7) {準但慢：同技巧限時，時限逐次縮短};
+  \node[font=\sffamily\bfseries] at (6.6,1.4) {還沒建立}; \node[font=\scriptsize\color{muted},text width=38mm,align=center] at (6.6,0.7) {關鍵一句＋三層提示＋慢練};
+  \node[font=\scriptsize\color{muted},rotate=90] at (-0.4,2.2) {快 $\leftarrow$ elapsed / timeLimit $\rightarrow$ 慢};
+  \node[font=\scriptsize\color{muted}] at (4.4,-0.4) {準（正確率 $> 0.7$）$\leftarrow$ \quad $\rightarrow$ 不準};
+\end{tikzpicture}
+\caption{速度象限。同樣 60\% 的正確率，落在不同格子的處方完全不同。}
+\end{figure}
+
 \begin{table}[h]
 \centering\small\sffamily
 \begin{tabular}{@{}llll@{}}
@@ -500,6 +573,12 @@ unknown & — & 一行有兩句、或只有式子沒有句型 \\
 \end{tabular}
 \caption{速度象限。「你會做，是壓力下垮掉」這句診斷來自限時與不限時正確率的差。}
 \end{table}
+
+\begin{figure}[h]
+\centering
+\fbox{\includegraphics[width=\textwidth]{insights}}
+\caption{數據頁：技巧掌握度、速度象限與錯因統計。樣本不夠的技巧留白，不給不準的數字。}
+\end{figure}
 
 \section{個人化的遺忘曲線}
 30 天是預設的時間常數，但每個人忘得不一樣快。當一個人有 12 筆以上「隔多天回訪同一技巧」的實績，模型用回訪時的表現與預測的偏差校正半衰期倍率，範圍 0.6 到 1.8。首頁會說「依你 $n$ 次隔多天回訪的實績，你忘得比模型預設慢」。
@@ -559,6 +638,13 @@ unknown & — & 一行有兩句、或只有式子沒有句型 \\
 \caption{十六課。標「理」的六課是理論課。}
 \end{table}
 
+\begin{figure}[h]
+\centering
+\fbox{\includegraphics[width=0.48\textwidth]{course-index}}\hfill
+\fbox{\includegraphics[width=0.48\textwidth]{course-lesson}}
+\caption{課程表（左）與單課頁（右）：概念、逐步示範（揭到第二步）、小測、練習。}
+\end{figure}
+
 兩種課：計算課是白話概念、一題來自題庫的逐步示範、小測（選錯會說為什麼）、三題不倒數的練習；理論課沒有題庫練習（題庫裡沒有、也不該有「定理說了什麼」這種反射題），示範是一段推導，小測至少三題，全對就算完成。逐步示範揭下一步之前會先讓人猜：真的下一步與同一題別的步驟二選一，猜錯照揭，只多一句「其實是這個」。每課完成後有一題同單元的 R2 延伸挑戰。
 
 \file{validate\_course.js} 守：示範與練習必須是題庫裡的 R1 題、小測恰好一個正解且錯的選項都寫理由、課文裡「第 $n$ 課」的 $n$ 不超過總數、正解不能六成以上都放第一個、課文的每一條 TeX 都用本地 KaTeX 嚴格模式排一次。
@@ -569,6 +655,12 @@ unknown & — & 一行有兩句、或只有式子沒有句型 \\
 真正的使用情境是 iPad 加 Apple Pencil，那個情境有四個瀏覽器預設行為會直接毀掉它：長按選取（手掌碰到題目就整段反白、跳出拷貝選單）；手掌本身是 \code{touch} 事件，跟筆同時發生；Pencil 取樣 120–240 Hz 而 \code{pointermove} 一個 frame 只觸發一次，不撈 \code{getCoalescedEvents()} 就是多邊形；每次 move 重畫整塊板子是 $O(n^2)$，寫到第三行就看得出頓。
 
 \section{繪製管線}
+\begin{figure}[h]
+\centering
+\fbox{\includegraphics[width=\textwidth]{quiz-board}}
+\caption{自己寫模式的作答畫面，計算紙攤開並用合成的筆事件寫了幾筆：壓感讓線條粗細變化，落筆與收筆不會收成針尖。}
+\end{figure}
+
 \begin{figure}[h]
 \centering
 \begin{tikzpicture}[
@@ -607,6 +699,19 @@ unknown & — & 一行有兩句、或只有式子沒有句型 \\
 % ════════════════════════ 第 11 章 ════════════════════════
 \chapter{資料層與隱私}
 \section{三層紀錄}
+\begin{figure}[h]
+\centering
+\begin{tikzpicture}[x=1cm,y=1cm]
+  \draw[line width=0.8pt,color=muted,-{Latex[length=2mm]}] (0,0) -- (12.4,0);
+  \node[font=\scriptsize\color{muted}] at (12.2,-0.35) {時間 $\rightarrow$};
+  \fill[goldsoft] (9.4,0.3) rectangle (12,0.9); \node[font=\sffamily\small] at (10.7,0.6) {history · 40 場};
+  \fill[mosssoft] (4.8,1.2) rectangle (12,1.8); \node[font=\sffamily\small] at (8.4,1.5) {attemptLog · 5,000 筆 tuple · 約半年};
+  \fill[rustsoft] (0.4,2.1) rectangle (12,2.7); \node[font=\sffamily\small] at (6.2,2.4) {sessions · 400 場摘要 · 一年以上};
+  \node[font=\scriptsize\color{muted},anchor=west] at (0.4,3.2) {同一把 localStorage key；舊使用者第一次載入從 history 回填，不需要遷移腳本};
+\end{tikzpicture}
+\caption{三層紀錄各自負責的時間尺度。能力模型讀中間那層。}
+\end{figure}
+
 能力模型需要長時間的作答歷史，但完整的局明細上限只有 40 場——一個認真練的使用者兩週就洗掉了，等於每兩週失憶一次。解法是分三層，各自負責不同的時間尺度：
 
 \begin{table}[h]
@@ -624,6 +729,13 @@ sessions & 400 場 & 局級摘要：熱力圖、成長曲線 & 涵蓋一年以�
 \end{table}
 
 舊使用者第一次載入時從 history 回填 attemptLog，不需要遷移腳本，也不會看到空白的趨勢圖。\file{validate\_records\_v2.js} 驗：history 截斷後能力模型仍保住 480 筆（只讀 history 只剩 96 筆）；兩台裝置的紀錄合併滿足交換律與冪等（80 + 60 → 140 筆，衝突以 \code{updatedAt} 新者為準）。
+
+\begin{figure}[h]
+\centering
+\fbox{\includegraphics[width=0.34\textwidth]{phone-home}}\hfill
+\fbox{\includegraphics[width=0.62\textwidth]{proof-index}}
+\caption{手機首頁（左）與證明訓練的題目表（右）：兩個題庫在同一張表，進度、難度、狀態一眼看完。}
+\end{figure}
 
 \section{手寫草稿與 IndexedDB}
 筆畫陣列一題就能到幾十 KB，存 localStorage 會擠掉紀錄，所以草稿進 IndexedDB。存的理由只有一個：重做錯題時，「我上次是哪一步算錯的」這個問題的答案就在上次的草稿裡——上次答錯的草稿預設攤開對照，答對的收起（攤開就變照抄）。
@@ -705,6 +817,28 @@ graph\_interactive & 10 & SVG 上的點位與拖曳 \\
 \end{table}
 
 \section{CI 上看不見的失敗}
+\begin{figure}[h]
+\centering
+\begin{tikzpicture}[
+  node distance=3mm and 5mm,
+  box/.style={draw=line,fill=paper,rounded corners=2pt,minimum height=9mm,text width=24mm,align=center,font=\sffamily\footnotesize},
+  bad/.style={box,draw=rust},
+  arr/.style={-{Latex[length=2mm]},draw=muted,line width=0.8pt}
+]
+\node[box] (a) {typecheck};
+\node[box,right=of a] (b) {41 支驗證器\\{\scriptsize ci\_checks.js}};
+\node[box,right=of b] (c) {9 支 E2E\\{\scriptsize 真的 Chrome}};
+\node[box,right=of c] (d) {獨立驗算\\{\scriptsize 1,753 題}};
+\node[box,right=of d] (e) {Lean\\{\scriptsize 8 題}};
+\node[box,right=of e] (f) {部署};
+\draw[arr] (a)--(b); \draw[arr] (b)--(c); \draw[arr] (c)--(d); \draw[arr] (d)--(e); \draw[arr] (e)--(f);
+\node[bad,below=of c] (x) {任何一條紅\\{\scriptsize ::error annotation}};
+\draw[arr,draw=rust] (b.south) |- (x.west); \draw[arr,draw=rust] (d.south) |- (x.east);
+\node[font=\scriptsize\color{muted},below=1mm of x] {站台不更新；annotation 走公開 API 就讀得到};
+\end{tikzpicture}
+\caption{部署與測試在同一個 job：任何一條斷言紅，站台就不更新。}
+\end{figure}
+
 GitHub Actions 的 job log 要認證才抓得到，而 check-run 的 annotations 走公開 API 就讀得到。所以每一條失敗的斷言都印成 \code{::error title=…::…}，30 支驗證器由一支執行器逐支跑、紅的那支變成 annotation。「CI 紅、本機綠」時，這是唯一能看到 runner 上哪條倒了的方法。
 
 \begin{pitfall}[CI 從 9 月 1 日紅到 9 月 16 日]
