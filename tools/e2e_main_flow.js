@@ -22,7 +22,7 @@
 "use strict";
 
 const path = require("path");
-const { launch, findChrome } = require("./lib/cdp.js");
+const { launch, findChrome, ciFail } = require("./lib/cdp.js");
 const staticServer = require("./lib/static_server.js");
 
 const ROOT = path.join(__dirname, "..");
@@ -37,6 +37,7 @@ function pass(name, detail) {
 function fail(name, detail) {
   failures += 1;
   steps.push({ ok: false, name, detail });
+  ciFail(name, detail);
   console.log(`  XX   ${name}${detail ? "  —— " + detail : ""}`);
 }
 
