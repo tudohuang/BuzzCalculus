@@ -223,7 +223,9 @@ async function run() {
     await click('.exam-setup-card [data-action="exam-countdown-set"]', 900);
     await click('button[data-action="dismiss-notice"]');
     const countdown = await evaluate(`return { card: window.__b.text(".exam-countdown-card"), buttons: [...document.querySelectorAll(".exam-countdown-card button")].map((b) => b.textContent.trim()), setupGone: !document.querySelector(".exam-setup-card") };`);
-    check("設好日期後倒數卡出現、設定卡收起", /D-5/.test(countdown.card) && countdown.setupGone, countdown.card.slice(0, 30));
+    // 日期用 toISOString 是 UTC 的「今天」，app 算天數用本地午夜：CI（UTC）與台灣（UTC+8）
+    // 在某些時段會差一天，D-5 或 D-6 都對；要抓的是「倒數卡出現、設定卡收起」，不是那個數字
+    check("設好日期後倒數卡出現、設定卡收起", /D-[56]\b/.test(countdown.card) && countdown.setupGone, countdown.card.slice(0, 30));
     check("一個技巧都沒量時倒數卡不說「都到標了」，改叫人先寫模擬卷", /先寫一份/.test(countdown.card) && !/都到標了|0\/0/.test(countdown.card), countdown.card.slice(0, 120));
     check("倒數卡有按鈕，不是講完「排不完」就把人留在原地", countdown.buttons.length >= 2, countdown.buttons.join(" | "));
 
