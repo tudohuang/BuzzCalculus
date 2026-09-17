@@ -35,6 +35,9 @@
 \setCJKmonofont{kaiu.ttf}[Path=/mnt/c/Windows/Fonts/]
 \xeCJKsetup{CJKmath=true,PunctStyle=kaiming}
 \linespread{1.38}
+\emergencystretch=2.5em
+\let\origunderscore\_
+\renewcommand{\_}{\ifmmode\origunderscore\else\textunderscore\allowbreak\fi}
 \graphicspath{{figures/}}
 \newcommand{\screen}[2]{\begin{center}\fbox{\includegraphics[width=#1]{#2}}\end{center}}
 
@@ -77,13 +80,13 @@
 \fancypagestyle{plain}{\fancyhf{}\fancyfoot[C]{\small\sffamily\color{muted}\thepage}\renewcommand{\headrulewidth}{0pt}}
 
 % ── 呼叫框：設計決定、坑、數字 ──
-\newtcolorbox{decision}[1][設計決定]{enhanced,breakable,colback=goldsoft,colframe=gold,boxrule=0.6pt,arc=2pt,
+\newtcolorbox{decision}[1][設計決定]{enhanced,colback=goldsoft,colframe=gold,boxrule=0.6pt,arc=2pt,
   title=#1,fonttitle=\sffamily\bfseries\small,coltitle=ink,attach boxed title to top left={yshift=-2mm,xshift=4mm},
   boxed title style={colback=goldsoft,colframe=gold,boxrule=0.6pt,arc=1pt},top=6pt,left=8pt,right=8pt,bottom=6pt}
-\newtcolorbox{pitfall}[1][實際踩過的坑]{enhanced,breakable,colback=rustsoft,colframe=rust,boxrule=0.6pt,arc=2pt,
+\newtcolorbox{pitfall}[1][實際踩過的坑]{enhanced,colback=rustsoft,colframe=rust,boxrule=0.6pt,arc=2pt,
   title=#1,fonttitle=\sffamily\bfseries\small,coltitle=ink,attach boxed title to top left={yshift=-2mm,xshift=4mm},
   boxed title style={colback=rustsoft,colframe=rust,boxrule=0.6pt,arc=1pt},top=6pt,left=8pt,right=8pt,bottom=6pt}
-\newtcolorbox{principle}[1][原則]{enhanced,breakable,colback=mosssoft,colframe=moss,boxrule=0.6pt,arc=2pt,
+\newtcolorbox{principle}[1][原則]{enhanced,colback=mosssoft,colframe=moss,boxrule=0.6pt,arc=2pt,
   title=#1,fonttitle=\sffamily\bfseries\small,coltitle=ink,attach boxed title to top left={yshift=-2mm,xshift=4mm},
   boxed title style={colback=mosssoft,colframe=moss,boxrule=0.6pt,arc=1pt},top=6pt,left=8pt,right=8pt,bottom=6pt}
 
@@ -212,6 +215,7 @@ BuzzCalculus 把「練微積分」這件事拆成三個可以被驗證的問題�
 \section{一次作答的資料流}
 \begin{figure}[h]
 \centering
+\resizebox{\textwidth}{!}{%
 \begin{tikzpicture}[
   node distance=6mm and 5mm,
   box/.style={draw=line,fill=paper,rounded corners=2pt,minimum height=11mm,text width=27mm,align=center,font=\sffamily\small},
@@ -227,6 +231,7 @@ BuzzCalculus 把「練微積分」這件事拆成三個可以被驗證的問題�
 \draw[arr] (s.south) -- ++(0,-6mm) -| (u.south);
 \node[below=9mm of a,font=\scriptsize\color{muted},text width=120mm,align=center]{迴圈只經過 localStorage 與 IndexedDB；能力曲線由紀錄回放推導，不存快照};
 \end{tikzpicture}
+}
 \caption{每一局訓練的迴圈。三個金框是本報告的主角。}
 \end{figure}
 
@@ -424,6 +429,7 @@ Taylor 導數 & 57 & 區域積分 & 18 \\
 
 \begin{figure}[h]
 \centering
+\resizebox{\textwidth}{!}{%
 \begin{tikzpicture}[
   node distance=4mm and 6mm,
   box/.style={draw=line,fill=paper,rounded corners=2pt,minimum height=11mm,text width=34mm,align=center,font=\sffamily\small},
@@ -438,6 +444,7 @@ Taylor 導數 & 57 & 區域積分 & 18 \\
 \draw[arr] (t) -- (a); \draw[arr] (a) -- (b); \draw[arr] (b) -- (c);
 \draw[arr] (a.south) |- (r.west); \draw[arr] (b) -- (r); \draw[arr] (c.south) |- (r.east);
 \end{tikzpicture}
+}
 \caption{白話證明的三個引擎與它們共同產出的報告。}
 \end{figure}
 
@@ -489,7 +496,7 @@ unknown & — & 一行有兩句、或只有式子沒有句型 \\
 
 \begin{figure}[h]
 \centering
-\fbox{\includegraphics[width=\textwidth]{proof-editor}}
+\fbox{\includegraphics[width=\dimexpr\textwidth-2\fboxsep-2\fboxrule\relax]{proof-editor}}
 \caption{題目編輯器：左題右寫，打字即時逐行判定。這份 $\delta = \varepsilon$ 的證明紅在第 4 行，結論標黃。}
 \end{figure}
 
@@ -576,7 +583,7 @@ unknown & — & 一行有兩句、或只有式子沒有句型 \\
 
 \begin{figure}[h]
 \centering
-\fbox{\includegraphics[width=\textwidth]{insights}}
+\fbox{\includegraphics[width=\dimexpr\textwidth-2\fboxsep-2\fboxrule\relax]{insights}}
 \caption{數據頁：技巧掌握度、速度象限與錯因統計。樣本不夠的技巧留白，不給不準的數字。}
 \end{figure}
 
@@ -657,7 +664,7 @@ unknown & — & 一行有兩句、或只有式子沒有句型 \\
 \section{繪製管線}
 \begin{figure}[h]
 \centering
-\fbox{\includegraphics[width=\textwidth]{quiz-board}}
+\fbox{\includegraphics[width=\dimexpr\textwidth-2\fboxsep-2\fboxrule\relax]{quiz-board}}
 \caption{自己寫模式的作答畫面，計算紙攤開並用合成的筆事件寫了幾筆：壓感讓線條粗細變化，落筆與收筆不會收成針尖。}
 \end{figure}
 
@@ -819,6 +826,7 @@ graph\_interactive & 10 & SVG 上的點位與拖曳 \\
 \section{CI 上看不見的失敗}
 \begin{figure}[h]
 \centering
+\resizebox{\textwidth}{!}{%
 \begin{tikzpicture}[
   node distance=3mm and 5mm,
   box/.style={draw=line,fill=paper,rounded corners=2pt,minimum height=9mm,text width=24mm,align=center,font=\sffamily\footnotesize},
@@ -836,6 +844,7 @@ graph\_interactive & 10 & SVG 上的點位與拖曳 \\
 \draw[arr,draw=rust] (b.south) |- (x.west); \draw[arr,draw=rust] (d.south) |- (x.east);
 \node[font=\scriptsize\color{muted},below=1mm of x] {站台不更新；annotation 走公開 API 就讀得到};
 \end{tikzpicture}
+}
 \caption{部署與測試在同一個 job：任何一條斷言紅，站台就不更新。}
 \end{figure}
 
