@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="zh-Hant">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>BuzzCalculus DM</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Inter:wght@400;600;700;800&display=swap">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+<style>
+  :root { --paper: #F6F2E8; --card: #FFFDF8; --ink: #1F1D18; --muted: #625D52; --line: #DCD4C2; --gold: #B98A22; --gold-soft: #F3E7C7; --moss: #2F6B4A; --moss-soft: #E1EDE4; --rust: #A8432C; --rust-soft: #F4E0D8; }
+  * { box-sizing: border-box; }
+  html { color-scheme: light; }
+  body { margin: 0; background: #DAD5CA; color: var(--ink); font-family: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", sans-serif; -webkit-print-color-adjust: exact; print-color-adjust: exact; padding-inline: 16px; padding-block: 24px; }
+  .sheet { width: 210mm; height: 297mm; margin: 0 auto 24px; background: var(--paper); position: relative; overflow: hidden; box-shadow: 0 30px 80px rgba(0,0,0,.25); page-break-after: always; }
+  .sheet:last-child { margin-bottom: 0; }
+  @page { size: A4; margin: 0; }
+  @media print { body { background: none; padding: 0; } .sheet { box-shadow: none; margin: 0; } }
+  @media (max-width: 820px) { body { padding-inline: 8px; } .sheet { transform-origin: top left; } .fit { width: 100%; overflow: auto; } }
+  .pad { position: absolute; inset: 14mm 14mm 12mm; display: flex; flex-direction: column; }
+  .eyebrow { font-size: 10.5pt; font-weight: 700; letter-spacing: .18em; color: var(--gold); text-transform: uppercase; }
+  .mark { display: inline-flex; align-items: center; gap: 8px; font-family: Inter, sans-serif; font-weight: 700; font-size: 17pt; letter-spacing: -.02em; }
+  .glyph { width: 26px; height: 26px; border-radius: 7px; background: var(--gold); color: var(--ink); display: inline-grid; place-items: center; font-family: "Times New Roman", serif; font-style: italic; font-size: 17px; }
+  h1 { font-size: 46pt; font-weight: 900; line-height: 1.12; margin: 0; letter-spacing: .01em; text-wrap: balance; }
+  h1 em { font-style: normal; color: var(--gold); }
+  .lead { font-size: 14pt; color: var(--muted); margin: 6mm 0 0; font-weight: 500; letter-spacing: .04em; }
+  .stats { display: flex; gap: 6mm; margin-top: 8mm; }
+  .stat { flex: 1; border-top: 2px solid var(--gold); padding-top: 3mm; }
+  .stat b { display: block; font-family: Inter, sans-serif; font-size: 30pt; font-weight: 800; letter-spacing: -.03em; line-height: 1; }
+  .stat span { display: block; font-size: 10.5pt; color: var(--muted); margin-top: 2mm; font-weight: 500; }
+  .hero { position: relative; margin-top: 8mm; height: 92mm; }
+  .shot { position: absolute; border-radius: 10px; overflow: hidden; background: #fff; box-shadow: 0 18px 50px rgba(31,29,24,.22), 0 0 0 1px rgba(31,29,24,.06); }
+  .shot img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: top left; }
+  .feats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6mm; margin-top: 9mm; }
+  .feat h3 { font-size: 13.5pt; margin: 0 0 2mm; font-weight: 900; }
+  .feat h3 i { font-style: normal; color: var(--gold); font-family: Inter, sans-serif; font-weight: 800; margin-right: 2mm; }
+  .feat p { margin: 0; font-size: 10pt; line-height: 1.6; color: var(--muted); }
+  .foot { margin-top: auto; display: flex; align-items: flex-end; justify-content: space-between; gap: 8mm; border-top: 1px solid var(--line); padding-top: 5mm; }
+  .foot .url { font-family: Inter, sans-serif; font-weight: 700; font-size: 17pt; letter-spacing: -.01em; }
+  .foot .note { font-size: 9.5pt; color: var(--muted); margin-top: 1.5mm; letter-spacing: .06em; }
+  .qr { width: 24mm; height: 24mm; background: #fff; padding: 1.5mm; border-radius: 4px; border: 1px solid var(--line); }
+  .qr svg { width: 100%; height: 100%; display: block; }
+  /* 背面 */
+  h2 { font-size: 24pt; font-weight: 900; margin: 0; line-height: 1.2; }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5mm; margin-top: 6mm; }
+  .cell { background: var(--card); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+  .cell .img { height: 40mm; overflow: hidden; border-bottom: 1px solid var(--line); background: #fff; }
+  .cell .img img { width: 100%; height: 100%; object-fit: cover; object-position: top left; display: block; }
+  .cell .txt { padding: 3.2mm 4mm 3.6mm; }
+  .cell h4 { margin: 0 0 1.2mm; font-size: 11.5pt; font-weight: 900; }
+  .cell p { margin: 0; font-size: 9.2pt; line-height: 1.55; color: var(--muted); }
+  .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5mm; margin-top: 5mm; }
+  .step { border-left: 3px solid var(--gold); padding-left: 3.5mm; }
+  .step b { display: block; font-size: 11.5pt; font-weight: 900; margin-bottom: 1mm; }
+  .step p { margin: 0; font-size: 9.2pt; color: var(--muted); line-height: 1.55; }
+  .who { margin-top: 6mm; background: var(--gold-soft); border-radius: 10px; padding: 4mm 5mm; display: grid; grid-template-columns: auto 1fr; gap: 6mm; align-items: center; }
+  .who b { font-size: 11.5pt; font-weight: 900; white-space: nowrap; }
+  .who p { margin: 0; font-size: 9.6pt; line-height: 1.6; }
+  .tags { display: flex; flex-wrap: wrap; gap: 2mm; margin-top: 5mm; }
+  .tag { font-size: 9pt; padding: 1.2mm 3mm; border-radius: 99px; border: 1px solid var(--line); background: var(--card); color: var(--ink); font-weight: 500; }
+  .tag.moss { background: var(--moss-soft); border-color: transparent; color: var(--moss); }
+</style>
+
+<!-- ── 正面 ── -->
+<div class="sheet">
+  <div class="pad">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <span class="mark"><span class="glyph">∫</span>BuzzCalculus</span>
+      <span class="eyebrow">免費 · 免安裝 · 離線可用</span>
+    </div>
+    <div style="margin-top:12mm">
+      <h1>微積分，<em>練得起來</em>。</h1>
+      <p class="lead">每一天，比昨天多會一點。一個在瀏覽器裡就能跑的微積分訓練場。</p>
+    </div>
+    <div class="stats">
+      <div class="stat"><b>1,994</b><span>題，四大主題、六個難度階</span></div>
+      <div class="stat"><b>80</b><span>個技巧節點，知道你卡在哪</span></div>
+      <div class="stat"><b>10</b><span>種題型，不只選擇題</span></div>
+    </div>
+    <div class="hero">
+      <div class="shot" style="left:0;top:2mm;width:112mm;height:78mm"><img src="{{proof}}" alt="白話證明編輯器，逐行判定"></div>
+      <div class="shot" style="left:98mm;top:14mm;width:84mm;height:42mm"><img src="{{board}}" alt="手寫計算紙"></div>
+      <div class="shot" style="left:104mm;top:60mm;width:78mm;height:30mm"><img src="{{wrong}}" alt="答錯時說明像是哪一步漏了"></div>
+    </div>
+    <div class="feats">
+      <div class="feat"><h3><i>01</i>說得出你哪裡錯</h3><p>判錯不只給紅。它會告訴你像是漏了鏈鎖律的係數、開閉區間寫反、還是符號相反。</p></div>
+      <div class="feat"><h3><i>02</i>證明，也能練</h3><p>用中文一行一句寫 ε–δ、歸納、反證。每一行即時判：跳步就紅，驗不了就黃，不假裝。</p></div>
+      <div class="feat"><h3><i>03</i>知道你該練什麼</h3><p>主線地圖、錯題回收、遺忘曲線回溫、每週戰報。全部從你的紀錄算出來，資料不出裝置。</p></div>
+    </div>
+    <div class="foot">
+      <div>
+        <div class="url">buzz-calculus.vercel.app</div>
+        <div class="note">手機、平板、電腦都能用 · 加到主畫面就是 App · 開源</div>
+      </div>
+      <div class="qr" data-qr="https://buzz-calculus.vercel.app/"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ── 背面 ── -->
+<div class="sheet">
+  <div class="pad">
+    <div style="display:flex;justify-content:space-between;align-items:baseline">
+      <h2>它怎麼帶你走。</h2>
+      <span class="eyebrow">BuzzCalculus</span>
+    </div>
+    <div class="grid">
+      <div class="cell"><div class="img"><img src="{{hard}}" alt="第六階的積分題"></div><div class="txt"><h4>從第一階，到第六階</h4><p>同一個「積分」，從 ∫6x² dx 到帶 cos 的瑕積分。難度由三軸判定，考前衝刺、轉學考、學分抵免都有對應的題包。</p></div></div>
+      <div class="cell"><div class="img"><img src="{{tap}}" alt="在圖上點出臨界點"></div><div class="txt"><h4>不只選擇題</h4><p>在圖上點臨界點、拖切線、填區間、填集合、寫不定積分。每一種題型各有各的判法，差一個常數也算對。</p></div></div>
+      <div class="cell"><div class="img"><img src="{{results}}" alt="金牌過關的結算"></div><div class="txt"><h4>每一關，一個下一步</h4><p>結算只給一件事：下一步練什麼。比你自己的中位數快就說快，連勝快斷就提醒，不用猜。</p></div></div>
+      <div class="cell"><div class="img"><img src="{{insights}}" alt="技巧掌握度雷達" style="object-position:center"></div><div class="txt"><h4>看見每一點進步</h4><p>技巧掌握度、速度象限、錯因統計。樣本不夠的技巧留白，不給不準的數字。</p></div></div>
+    </div>
+    <div style="margin-top:7mm"><h2 style="font-size:16pt">三步開始。</h2></div>
+    <div class="steps">
+      <div class="step"><b>1 · 打開網址</b><p>不用註冊、不用安裝。Safari 或 Chrome 打開就能練；「加入主畫面」之後就是全螢幕的 App。</p></div>
+      <div class="step"><b>2 · 定位五題</b><p>前幾題是診斷，不進錯題本。系統從這裡決定你從第幾階開始、先補哪個技巧。</p></div>
+      <div class="step"><b>3 · 跟著地圖走</b><p>每天十五分鐘。主線一關一關過，卡住開提示，答錯進錯題本，隔天自動回溫。</p></div>
+    </div>
+    <div class="who">
+      <b>給誰用</b>
+      <p>大一微積分的你、準備轉學考或學分抵免的你、想把證明寫得像樣的你。也給家教與助教：學生練完，你看得到他錯在哪。</p>
+    </div>
+    <div class="tags">
+      <span class="tag moss">資料只存在你的裝置</span><span class="tag moss">離線可用</span><span class="tag">入門課程 16 課</span><span class="tag">經典證明 68 條</span><span class="tag">白話證明 43 題</span><span class="tag">手寫計算紙</span><span class="tag">每日一題</span><span class="tag">每週戰報</span><span class="tag">練習本 PDF</span>
+    </div>
+    <div class="foot">
+      <div>
+        <div class="url">buzz-calculus.vercel.app</div>
+        <div class="note">原始碼 github.com/tudohuang/BuzzCalculus</div>
+      </div>
+      <div class="qr" data-qr="https://buzz-calculus.vercel.app/"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+  (function () {
+    document.querySelectorAll("[data-qr]").forEach((el) => {
+      try {
+        const qr = qrcode(0, "M");
+        qr.addData(el.dataset.qr);
+        qr.make();
+        el.innerHTML = qr.createSvgTag({ cellSize: 4, margin: 0, scalable: true });
+      } catch (e) {
+        el.textContent = el.dataset.qr;
+      }
+    });
+    window.__qrReady = true;
+  })();
+</script>
+</html>
