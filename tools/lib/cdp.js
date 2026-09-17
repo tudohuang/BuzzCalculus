@@ -121,6 +121,17 @@ async function launch(options = {}) {
   const consoleMessages = [];
   const pageErrors = [];
   const failedRequests = [];
+  // 事件訂閱：錄影工具要收 Page.screencastFrame 這種持續來的事件。
+  const listeners = new Map();
+  function on(method, handler) {
+    if (!listeners.has(method)) listeners.set(method, []);
+    listeners.get(method).push(handler);
+    return () => {
+      const list = listeners.get(method) || [];
+      const at = list.indexOf(handler);
+      if (at >= 0) list.splice(at, 1);
+    };
+  }
 
   socket.addEventListener("message", (event) => {
     let message;
@@ -128,6 +139,11 @@ async function launch(options = {}) {
       message = JSON.parse(event.data);
     } catch (_error) {
       return;
+    }
+    if (message.method && listeners.has(message.method)) {
+      for (const handler of listeners.get(message.method)) {
+        try { handler(message.params); } catch (_error) { /* 監聽者自己的錯不影響 CDP */ }
+      }
     }
     if (message.id && pending.has(message.id)) {
       const { resolve, reject } = pending.get(message.id);
@@ -232,6 +248,7 @@ async function launch(options = {}) {
 
   return {
     send,
+    on,
     evaluate,
     navigate,
     waitForLoad,
