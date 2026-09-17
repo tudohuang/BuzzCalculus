@@ -1,57 +1,62 @@
 <!doctype html>
 <meta charset="utf-8">
 <title>BuzzCalculus trailer composition</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Inter:wght@400;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Inter:wght@400;600;700;800&display=swap">
 <style>
   html, body { margin: 0; background: #000; }
   #stage { position: relative; width: 1920px; height: 1080px; overflow: hidden; background: #000;
     font-family: "Noto Sans TC", "Microsoft JhengHei", "PingFang TC", sans-serif; color: #fff; }
   .layer { position: absolute; inset: 0; }
+  em { font-style: normal; color: #E2B34A; }
   /* 裝置：黑邊框、圓角、微反光 */
   #device { position: absolute; left: 260px; top: 36px; width: 1436px; height: 1008px; transform-origin: 50% 50%; will-change: transform; }
   #bezel { position: absolute; inset: 0; border-radius: 40px; background: #0b0b0c;
-    box-shadow: 0 60px 140px rgba(0,0,0,.65), 0 0 0 1px rgba(255,255,255,.06) inset, 0 30px 90px rgba(255,255,255,.04); }
+    box-shadow: 0 60px 140px rgba(0,0,0,.65), 0 0 0 1px rgba(255,255,255,.07) inset; }
   #screen { position: absolute; left: 18px; top: 18px; width: 1400px; height: 972px; border-radius: 26px; overflow: hidden; background: #f6f2e8; }
   #screen img { position: absolute; left: 0; top: 0; width: 1400px; height: 972px; display: block; }
   #glare { position: absolute; inset: 0; border-radius: 26px; pointer-events: none;
-    background: linear-gradient(115deg, rgba(255,255,255,.10) 0%, rgba(255,255,255,.02) 28%, rgba(255,255,255,0) 50%); }
-  /* 文字 */
+    background: linear-gradient(115deg, rgba(255,255,255,.09) 0%, rgba(255,255,255,.02) 26%, rgba(255,255,255,0) 48%); }
+  /* 標題：逐字進場 */
   .title { position: absolute; left: 0; right: 0; top: 50%; transform: translateY(-50%); text-align: center; }
-  .title .line { font-weight: 700; font-size: 128px; line-height: 1.18; letter-spacing: .01em; opacity: 0; will-change: transform, opacity; }
-  .title .line.small { font-size: 54px; font-weight: 400; color: rgba(255,255,255,.62); letter-spacing: .04em; margin-top: 18px; }
-  .caption { position: absolute; left: 150px; top: 50%; transform: translateY(-50%); max-width: 820px; white-space: nowrap; }
-  .caption .big { font-weight: 700; font-size: 118px; line-height: 1.1; letter-spacing: .01em; opacity: 0; }
-  .caption .sub { font-weight: 400; font-size: 44px; color: rgba(255,255,255,.62); margin-top: 22px; letter-spacing: .04em; opacity: 0; }
+  .title .line { font-weight: 900; font-size: 150px; line-height: 1.16; letter-spacing: .01em; white-space: nowrap; }
+  .title .line.small { font-size: 60px; font-weight: 500; color: rgba(255,255,255,.72); letter-spacing: .05em; margin-top: 22px; }
+  .title .ch { display: inline-block; opacity: 0; will-change: transform, opacity; }
+  /* 統計卡 */
+  .stat { position: absolute; left: 0; right: 0; top: 50%; transform: translateY(-50%); text-align: center; white-space: nowrap; }
+  .stat .num { font-family: Inter, "Noto Sans TC", sans-serif; font-weight: 800; font-size: 300px; letter-spacing: -.04em; line-height: 1; color: #E2B34A; font-variant-numeric: tabular-nums; }
+  .stat .lab { font-weight: 700; font-size: 84px; margin-left: 28px; vertical-align: 0.42em; }
+  /* 裝置旁的說明 */
+  .caption { position: absolute; left: 140px; top: 50%; transform: translateY(-50%); white-space: nowrap; }
+  .caption .big { font-weight: 900; font-size: 124px; line-height: 1.12; letter-spacing: .01em; opacity: 0; }
+  .caption .sub { font-weight: 500; font-size: 48px; color: rgba(255,255,255,.72); margin-top: 20px; letter-spacing: .05em; opacity: 0; }
+  /* 商標與收尾 */
   .wordmark { position: absolute; left: 0; right: 0; top: 50%; transform: translateY(-50%); text-align: center; }
-  .wordmark .mark { display: inline-flex; align-items: center; gap: 22px; font-family: Inter, "Noto Sans TC", sans-serif; font-weight: 700; font-size: 84px; letter-spacing: -.02em; }
-  .wordmark .glyph { width: 96px; height: 96px; border-radius: 26px; background: #B98A22; color: #1F1D18; display: inline-grid; place-items: center; font-family: "Times New Roman", serif; font-style: italic; font-size: 64px; font-weight: 400; }
-  .wordmark .url { font-family: Inter, sans-serif; font-weight: 600; font-size: 46px; letter-spacing: -.01em; margin-top: 34px; opacity: 0; }
-  .wordmark .tag { font-size: 30px; font-weight: 400; letter-spacing: .12em; margin-top: 22px; opacity: 0; }
-  #vignette { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(ellipse at center, rgba(0,0,0,0) 55%, rgba(0,0,0,.45) 100%); }
-  #black { position: absolute; inset: 0; background: #000; opacity: 0; pointer-events: none; }
+  .wordmark .mark { display: inline-flex; align-items: center; gap: 24px; font-family: Inter, "Noto Sans TC", sans-serif; font-weight: 700; font-size: 92px; letter-spacing: -.02em; }
+  .wordmark .glyph { width: 104px; height: 104px; border-radius: 28px; background: #B98A22; color: #1F1D18; display: inline-grid; place-items: center; font-family: "Times New Roman", serif; font-style: italic; font-size: 70px; font-weight: 400; }
+  .wordmark .url { font-family: Inter, sans-serif; font-weight: 600; font-size: 50px; letter-spacing: -.01em; margin-top: 36px; opacity: 0; }
+  .wordmark .tag { font-size: 32px; font-weight: 500; letter-spacing: .14em; margin-top: 22px; opacity: 0; }
+  .endline { position: absolute; left: 0; right: 0; top: 50%; transform: translateY(-50%); text-align: center; font-weight: 900; font-size: 128px; color: #1F1D18; white-space: nowrap; }
+  .endline .ch { display: inline-block; opacity: 0; }
 </style>
 <div id="stage">
   <div class="layer" id="bg"></div>
   <div id="device"><div id="bezel"></div><div id="screen"><img id="frame" alt=""><div id="glare"></div></div></div>
-  <div id="vignette"></div>
   <div class="layer" id="text"></div>
-  <div id="black"></div>
 </div>
 <script>
 (async () => {
   const manifest = await (await fetch("/docs/trailer/raw/manifest.json")).json();
   const $ = (id) => document.getElementById(id);
-  const stage = $("stage"), device = $("device"), frameImg = $("frame"), text = $("text"), bg = $("bg"), black = $("black"), vignette = $("vignette");
+  const device = $("device"), frameImg = $("frame"), text = $("text"), bg = $("bg");
 
   const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
   const lerp = (a, b, t) => a + (b - a) * t;
   const E = {
     out: (t) => 1 - Math.pow(1 - t, 3),
+    outQuart: (t) => 1 - Math.pow(1 - t, 4),
     inout: (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2),
-    lin: (t) => t,
-    soft: (t) => 1 - Math.pow(1 - t, 2)
+    lin: (t) => t
   };
-  // 關鍵影格：[[t, v], ...]，在兩點之間用 easing 內插
   const kf = (t, keys, ease = E.inout) => {
     if (t <= keys[0][0]) return keys[0][1];
     for (let i = 1; i < keys.length; i += 1) {
@@ -73,143 +78,139 @@
   };
   const dur = (dir) => manifest[dir].seconds;
 
-  /* ── 場景 ──────────────────────────────────────────────
-     title: 黑底大字。device: 裝置 + 某一鏡的某一段 + 鏡頭。end: 白底收尾。 */
-  const title = (lines, opts = {}) => ({ kind: "title", lines, ...opts });
-  const shot = (dir, from, to, opts = {}) => ({ kind: "device", dir, from, to, ...opts });
+  /* ── 場景表 ──────────────────────────────────────────── */
+  const title = (lines, len) => ({ kind: "title", lines, len });
+  const stats = (items, each) => ({ kind: "stats", items, len: items.length * each, each });
+  const shot = (dir, from, to, opts = {}) => ({ kind: "device", dir, from, to, len: to - from, ...opts });
   const pathDur = dur("12-path");
   const SCENES = [
-    // 開場
-    { kind: "wordmark", len: 2.6 },
-    title(["微積分。", "一個人，也練得起來。"], { len: 3.2 }),
-    // 一、題庫
-    shot("01-difficulty", 0.2, 6.2, { len: 6.0, layout: "split", caption: ["1,994 題。", "第一階，到第六階。"], cam: [[0, 1.0], [6.0, 1.06]], focus: [50, 40] }),
-    // 二、題型
-    title(["不只選擇題。"], { len: 1.6 }),
-    shot("02-graphtap", 0.3, 3.4, { len: 3.1, cam: [[0, 1.35], [3.1, 1.5]], focus: [50, 52] }),
-    shot("03-graphslope", 0.3, 3.4, { len: 3.1, cam: [[0, 1.4], [3.1, 1.55]], focus: [50, 50] }),
-    shot("04-interval", 0.3, 4.6, { len: 4.3, cam: [[0, 1.3], [2.0, 1.3], [3.0, 1.7]], focus: [[0, 50, 42], [2.0, 50, 42], [3.0, 50, 78]] }),
-    shot("05-antiderivative", 0.3, 2.7, { len: 2.4, cam: [[0, 1.35], [1.4, 1.35], [2.2, 1.6]], focus: [[0, 50, 40], [1.4, 50, 40], [2.2, 50, 74]] }),
-    // 三、判分
-    title(["用筆寫。"], { len: 1.5 }),
-    shot("06-board", 0.3, 6.9, { len: 6.6, cam: [[0, 1.25], [6.6, 1.4]], focus: [[0, 30, 42], [6.6, 36, 46]] }),
-    title(["說得出你哪裡錯。"], { len: 1.7 }),
-    shot("08-grading-wrong", 0.3, 5.2, { len: 4.9, cam: [[0, 1.35], [2.2, 1.35], [3.2, 1.75]], focus: [[0, 50, 38], [2.2, 50, 38], [3.2, 50, 80]] }),
-    // 四、證明
-    title(["證明，一行一句。"], { len: 1.7 }),
-    shot("09-proof", 0.0, 9.6, { len: 9.6, cam: [[0, 1.55], [6.0, 1.55], [7.0, 1.12], [8.2, 1.12], [9.2, 1.7]], focus: [[0, 70, 38], [6.0, 70, 40], [7.0, 62, 55], [8.2, 62, 55], [9.2, 70, 80]] }),
-    // 五、教
-    title(["一步一步教。"], { len: 1.5 }),
-    shot("10-course", 0.6, 3.8, { len: 3.2, cam: [[0, 1.15], [3.2, 1.25]], focus: [[0, 50, 55], [3.2, 50, 66]] }),
-    shot("11-hints", 0.5, 3.0, { len: 2.5, cam: [[0, 1.3], [2.5, 1.55]], focus: [[0, 50, 50], [2.5, 50, 58]] }),
-    // 六、帶你走
-    title(["知道你該練什麼。"], { len: 1.6 }),
-    shot("12-path", 0.3, 3.6, { len: 3.3, cam: [[0, 1.05], [3.3, 1.12]], focus: [50, 50] }),
-    shot("12-path", pathDur - 4.4, pathDur - 1.2, { len: 3.2, cam: [[0, 1.2], [3.2, 1.45]], focus: [[0, 50, 45], [3.2, 45, 36]] }),
-    shot("13-insights", 0.6, 4.2, { len: 3.6, cam: [[0, 1.12], [3.6, 1.22]], focus: [[0, 58, 44], [3.6, 58, 50]] }),
-    shot("14-share", 0.3, 3.1, { len: 2.8, cam: [[0, 1.15], [2.8, 1.3]], focus: [50, 50] }),
-    // 收尾
-    { kind: "end", len: 4.6 }
+    { kind: "wordmark", len: 2.0 },
+    title(["微積分，<em>練得起來</em>。", "每一天，比昨天多會一點。"], 2.9),
+    stats([["1,994", "題"], ["80", "個技巧"], ["6", "個難度階"]], 0.95),
+    shot("01-difficulty", 0.2, 5.6, { layout: "split", caption: ["第一階，", "到第六階。"], cam: [[0, 1.0], [5.4, 1.05]], focus: [50, 40] }),
+    title(["不只<em>選擇題</em>。"], 1.4),
+    shot("02-graphtap", 0.3, 3.1, { cam: [[0, 1.4], [2.8, 1.52]], focus: [50, 52] }),
+    shot("03-graphslope", 0.3, 3.1, { cam: [[0, 1.45], [2.8, 1.58]], focus: [50, 50] }),
+    shot("04-interval", 0.3, 4.6, { cam: [[0, 1.3], [2.0, 1.3], [2.9, 1.7]], focus: [[0, 50, 42], [2.0, 50, 42], [2.9, 50, 78]] }),
+    shot("05-antiderivative", 0.2, 2.7, { cam: [[0, 1.35], [1.3, 1.35], [2.1, 1.6]], focus: [[0, 50, 40], [1.3, 50, 40], [2.1, 50, 74]] }),
+    title(["寫下來，", "它<em>看得懂</em>。"], 1.6),
+    shot("06-board", 0.4, 6.8, { cam: [[0, 1.25], [6.4, 1.42]], focus: [[0, 30, 40], [6.4, 38, 46]] }),
+    title(["錯在哪，", "<em>說給你聽</em>。"], 1.6),
+    shot("08-grading-wrong", 0.3, 5.2, { cam: [[0, 1.35], [2.2, 1.35], [3.2, 1.78]], focus: [[0, 50, 38], [2.2, 50, 38], [3.2, 50, 80]] }),
+    title(["證明，<em>也能練</em>。"], 1.5),
+    shot("09-proof", 0.2, 10.4, { cam: [[0, 1.55], [5.6, 1.55], [6.8, 1.12], [8.6, 1.12], [9.6, 1.72]], focus: [[0, 70, 38], [5.6, 70, 42], [6.8, 62, 55], [8.6, 62, 55], [9.6, 70, 82]] }),
+    title(["卡住了，", "一步一步<em>帶</em>。"], 1.6),
+    shot("10-course", 0.6, 3.6, { cam: [[0, 1.15], [3.0, 1.27]], focus: [[0, 50, 55], [3.0, 50, 66]] }),
+    shot("11-hints", 0.5, 2.9, { cam: [[0, 1.3], [2.4, 1.58]], focus: [[0, 50, 50], [2.4, 50, 58]] }),
+    title(["每一天，", "都<em>看得見進步</em>。"], 1.6),
+    shot("12-path", 0.3, 3.4, { cam: [[0, 1.05], [3.1, 1.14]], focus: [50, 50] }),
+    shot("12-path", pathDur - 5.2, pathDur - 1.0, { cam: [[0, 1.15], [4.2, 1.5]], focus: [[0, 50, 45], [4.2, 46, 36]] }),
+    shot("13-insights", 0.6, 3.8, { cam: [[0, 1.12], [3.2, 1.24]], focus: [[0, 58, 44], [3.2, 58, 50]] }),
+    shot("14-share", 0.3, 2.9, { cam: [[0, 1.15], [2.6, 1.32]], focus: [50, 50] }),
+    { kind: "endline", text: "今天，比昨天多會一點。", len: 2.6 },
+    { kind: "end", len: 4.2 }
   ];
   let cursor = 0;
   for (const s of SCENES) { s.start = cursor; cursor += s.len; s.end = cursor; }
   window.__total = cursor;
-  const GAP = 0.0; // 硬切
 
-  const focusAt = (focus, t) => {
-    if (typeof focus[0] === "number") return focus;
-    // [[t, x, y], ...]
-    return [kf(t, focus.map((k) => [k[0], k[1]])), kf(t, focus.map((k) => [k[0], k[2]]))];
+  const focusAt = (focus, t) => (typeof focus[0] === "number" ? focus : [kf(t, focus.map((k) => [k[0], k[1]])), kf(t, focus.map((k) => [k[0], k[2]]))]);
+  const chars = (html) => html.replace(/(<em>|<\/em>)|([^<])/g, (m, tag, ch) => (tag ? tag : `<span class="ch">${ch}</span>`));
+  const revealChars = (root, t, at, stagger = 0.045, d = 0.55, out = 1) => {
+    [...root.querySelectorAll(".ch")].forEach((el, i) => {
+      const p = fadeIn(t, at + i * stagger, d);
+      el.style.opacity = p * out;
+      el.style.transform = `translateY(${lerp(34, 0, E.outQuart(p))}px) scale(${lerp(0.96, 1, E.outQuart(p))})`;
+    });
   };
 
   function renderTitle(s, t) {
-    bg.style.background = "#000";
-    device.style.display = "none";
-    vignette.style.opacity = "0";
-    text.innerHTML = `<div class="title">${s.lines.map((l, i) => `<div class="line ${i > 0 ? "small" : ""}">${l}</div>`).join("")}</div>`;
-    const out = fadeOut(t, s.len - 0.35);
-    [...text.querySelectorAll(".line")].forEach((el, i) => {
-      const a = fadeIn(t, 0.05 + i * 0.32, 0.7) * out;
-      el.style.opacity = a;
-      const y = lerp(26, 0, E.out(fadeIn(t, 0.05 + i * 0.32, 0.9)));
-      el.style.transform = `translateY(${y}px)`;
-      el.style.letterSpacing = `${lerp(0.06, 0.01, E.out(fadeIn(t, 0.05 + i * 0.32, 1.1)))}em`;
-    });
+    bg.style.background = "#000"; device.style.display = "none";
+    text.innerHTML = `<div class="title">${s.lines.map((l, i) => `<div class="line ${i > 0 ? "small" : ""}">${chars(l)}</div>`).join("")}</div>`;
+    const out = fadeOut(t, s.len - 0.3, 0.3);
+    [...text.querySelectorAll(".line")].forEach((line, i) => revealChars(line, t, 0.04 + i * 0.28, i === 0 ? 0.05 : 0.03, 0.5, out));
   }
-
+  function renderStats(s, t) {
+    bg.style.background = "#000"; device.style.display = "none";
+    const i = Math.min(s.items.length - 1, Math.floor(t / s.each));
+    const local = t - i * s.each;
+    const [numText, label] = s.items[i];
+    const target = Number(numText.replace(/,/g, ""));
+    const p = E.outQuart(fadeIn(local, 0.0, 0.62));
+    const value = Math.round(target * p).toLocaleString("en-US");
+    text.innerHTML = `<div class="stat"><span class="num">${value}</span><span class="lab">${label}</span></div>`;
+    const el = text.querySelector(".stat");
+    const a = fadeIn(local, 0, 0.18) * fadeOut(local, s.each - 0.16, 0.16);
+    el.style.opacity = a;
+    el.style.transform = `translateY(-50%) scale(${lerp(0.92, 1, E.outQuart(fadeIn(local, 0, 0.5)))})`;
+  }
   function renderWordmark(s, t) {
-    bg.style.background = "#000";
-    device.style.display = "none";
-    vignette.style.opacity = "0";
+    bg.style.background = "#000"; device.style.display = "none";
     text.innerHTML = `<div class="wordmark"><div class="mark"><span class="glyph">∫</span><span>BuzzCalculus</span></div></div>`;
     const el = text.querySelector(".mark");
-    const a = fadeIn(t, 0.2, 0.9) * fadeOut(t, s.len - 0.45, 0.45);
-    el.style.opacity = a;
-    el.style.transform = `scale(${lerp(0.96, 1.0, E.out(fadeIn(t, 0.2, 1.6)))})`;
+    el.style.opacity = fadeIn(t, 0.15, 0.7) * fadeOut(t, s.len - 0.4, 0.4);
+    el.style.transform = `scale(${lerp(0.94, 1.0, E.out(fadeIn(t, 0.15, 1.4)))})`;
   }
-
+  function renderEndline(s, t) {
+    bg.style.background = "#F6F2E8"; device.style.display = "none";
+    text.innerHTML = `<div class="endline">${chars(s.text)}</div>`;
+    revealChars(text.querySelector(".endline"), t, 0.05, 0.05, 0.5, fadeOut(t, s.len - 0.3, 0.3));
+  }
   function renderEnd(s, t) {
-    bg.style.background = "#F6F2E8";
-    device.style.display = "none";
-    vignette.style.opacity = "0";
+    bg.style.background = "#F6F2E8"; device.style.display = "none";
     text.innerHTML = `<div class="wordmark" style="color:#1F1D18"><div class="mark"><span class="glyph">∫</span><span>BuzzCalculus</span></div><div class="url">buzz-calculus.vercel.app</div><div class="tag" style="color:#625D52">免安裝 · 離線可用 · 資料不出裝置</div></div>`;
     const mark = text.querySelector(".mark"), url = text.querySelector(".url"), tag = text.querySelector(".tag");
-    mark.style.opacity = fadeIn(t, 0.1, 0.7);
-    mark.style.transform = `translateY(${lerp(18, 0, E.out(fadeIn(t, 0.1, 0.9)))}px)`;
-    url.style.opacity = fadeIn(t, 0.9, 0.7);
-    url.style.transform = `translateY(${lerp(14, 0, E.out(fadeIn(t, 0.9, 0.9)))}px)`;
-    tag.style.opacity = fadeIn(t, 1.5, 0.7);
+    mark.style.opacity = fadeIn(t, 0.05, 0.6);
+    mark.style.transform = `translateY(${lerp(18, 0, E.out(fadeIn(t, 0.05, 0.8)))}px)`;
+    url.style.opacity = fadeIn(t, 0.7, 0.6);
+    url.style.transform = `translateY(${lerp(14, 0, E.out(fadeIn(t, 0.7, 0.8)))}px)`;
+    tag.style.opacity = fadeIn(t, 1.2, 0.6);
   }
-
   async function renderDevice(s, t) {
-    bg.style.background = "#000";
-    device.style.display = "block";
-    vignette.style.opacity = "0";
+    bg.style.background = "#000"; device.style.display = "block";
     const tau = clamp(s.from + t, 0, dur(s.dir) - 0.01);
     const src = shotFrame(s.dir, Math.min(tau, s.to));
     if (frameImg.getAttribute("src") !== src) {
       frameImg.src = src;
       try { await frameImg.decode(); } catch (_e) { /* 下一格再補 */ }
     }
-    const scale = kf(t, s.cam || [[0, 1], [1, 1]], E.inout);
+    // 切點推近：每一鏡開頭從 1.07 收到 1.0，硬切才有力道
+    const punch = lerp(1.07, 1.0, E.outQuart(fadeIn(t, 0, 0.42)));
+    const scale = kf(t, s.cam || [[0, 1], [1, 1]], E.inout) * punch;
     const [fx, fy] = focusAt(s.focus || [50, 50], t);
-    // 鏡頭：以焦點為原點縮放，再把焦點拉到畫面中央一點
     device.style.transformOrigin = `${fx}% ${fy}%`;
     let tx = 0, ty = 0, base = 1;
     if (s.layout === "split") { tx = 330; base = 0.86; }
     else {
-      // 焦點偏離中心時，把裝置朝反方向推，讓焦點落在畫面中央附近
       tx = (50 - fx) / 100 * 1436 * (scale - 1) * 0.55;
       ty = (50 - fy) / 100 * 1008 * (scale - 1) * 0.55;
     }
     device.style.transform = `translate(${tx}px, ${ty}px) scale(${scale * base})`;
-    // 淡入（硬切用很短的淡入，避免閃）
-    const a = fadeIn(t, 0, 0.12) * fadeOut(t, s.len - 0.12, 0.12);
-    device.style.opacity = a;
+    device.style.opacity = fadeIn(t, 0, 0.08) * fadeOut(t, s.len - 0.08, 0.08);
     text.innerHTML = "";
     if (s.caption) {
-      text.innerHTML = `<div class="caption"><div class="big">${s.caption[0]}</div><div class="sub">${s.caption[1] || ""}</div></div>`;
+      text.innerHTML = `<div class="caption"><div class="big">${chars(s.caption[0])}</div><div class="sub">${s.caption[1] || ""}</div></div>`;
       const big = text.querySelector(".big"), sub = text.querySelector(".sub");
       const out = fadeOut(t, s.len - 0.3, 0.3);
-      big.style.opacity = fadeIn(t, 0.4, 0.7) * out;
-      big.style.transform = `translateY(${lerp(22, 0, E.out(fadeIn(t, 0.4, 0.9)))}px)`;
-      sub.style.opacity = fadeIn(t, 1.1, 0.7) * out;
-      sub.style.transform = `translateY(${lerp(16, 0, E.out(fadeIn(t, 1.1, 0.9)))}px)`;
+      big.style.opacity = 1;
+      revealChars(big, t, 0.35, 0.06, 0.5, out);
+      sub.style.opacity = fadeIn(t, 1.0, 0.6) * out;
+      sub.style.transform = `translateY(${lerp(16, 0, E.out(fadeIn(t, 1.0, 0.8)))}px)`;
     }
   }
 
   window.seek = async (T) => {
     const s = SCENES.find((x) => T >= x.start && T < x.end) || SCENES[SCENES.length - 1];
     const t = T - s.start;
-    black.style.opacity = "0";
     if (s.kind === "title") renderTitle(s, t);
+    else if (s.kind === "stats") renderStats(s, t);
     else if (s.kind === "wordmark") renderWordmark(s, t);
+    else if (s.kind === "endline") renderEndline(s, t);
     else if (s.kind === "end") renderEnd(s, t);
     else await renderDevice(s, t);
-    // 段落之間（標題卡前）壓一點黑，讓硬切有呼吸
     return true;
   };
-  window.__scenes = SCENES.map((s) => ({ kind: s.kind, dir: s.dir || null, start: s.start, end: s.end, lines: s.lines || s.caption || null }));
+  window.__scenes = SCENES.map((s) => ({ kind: s.kind, dir: s.dir || null, start: s.start, end: s.end, each: s.each || 0, count: s.items ? s.items.length : 0 }));
   await document.fonts.ready;
   window.__fontsReady = true;
 })();
