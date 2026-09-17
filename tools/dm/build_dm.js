@@ -15,7 +15,7 @@ const IMG = process.argv[2];
 if (!IMG) { console.error("用法：node tools/dm/build_dm.js <裁圖資料夾>"); process.exit(1); }
 
 let html = fs.readFileSync(path.join(__dirname, "template.html"), "utf8");
-html = html.replace(/\{\{(\w+)\}\}/g, (_m, name) => {
+html = html.replace(/\{\{([\w-]+)\}\}/g, (_m, name) => {
   const file = path.join(IMG, `${name}.jpg`);
   return "data:image/jpeg;base64," + fs.readFileSync(file).toString("base64");
 });
