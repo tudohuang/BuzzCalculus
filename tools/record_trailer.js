@@ -18,7 +18,9 @@ fs.rmSync(RAW, { recursive: true, force: true });
 fs.mkdirSync(RAW, { recursive: true });
 
 // screencast 給的是 CSS 像素大小，不放大；直接用成片裝置框的尺寸錄，畫面才不會軟。
-const VIEW = { width: 1400, height: 972 };
+// 1400×972 的版面用 CSS zoom 1.5 畫成 2100×1458：鏡頭推近時字還是清楚的。
+const ZOOM = 1.5;
+const VIEW = { width: 1400 * ZOOM, height: 972 * ZOOM };
 const SITE = "buzz-calculus.vercel.app";
 
 // 成片的順序：card = 標題卡（秒），shot = 錄下來的一鏡
@@ -234,7 +236,7 @@ async function run() {
     fs.mkdirSync(dir, { recursive: true });
     rec = { dir, frames: [] };
     frameNo = 0;
-    await chrome.send("Page.startScreencast", { format: "jpeg", quality: 88, maxWidth: 1600, maxHeight: 1112, everyNthFrame: 1 });
+    await chrome.send("Page.startScreencast", { format: "jpeg", quality: 90, maxWidth: VIEW.width, maxHeight: VIEW.height, everyNthFrame: 1 });
     await sleep(350);
     try {
       await body();
@@ -261,7 +263,7 @@ async function run() {
 
   try {
     await chrome.send("Emulation.setDeviceMetricsOverride", { width: VIEW.width, height: VIEW.height, deviceScaleFactor: 1, mobile: true });
-    await chrome.send("Page.addScriptToEvaluateOnNewDocument", { source: "window.__BUZZ_TEST_HOOKS__ = {};" });
+    await chrome.send("Page.addScriptToEvaluateOnNewDocument", { source: `window.__BUZZ_TEST_HOOKS__ = {}; document.addEventListener("DOMContentLoaded", () => { document.documentElement.style.zoom = "${ZOOM}"; });` });
     await chrome.navigate(server.url + "/index.html");
     await ev("localStorage.clear(); return 1;");
     await chrome.navigate(server.url + "/index.html");
