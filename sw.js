@@ -1,4 +1,4 @@
-const CACHE_NAME = "buzzcalculus-v1.2.1-2026-09-16-share";
+const CACHE_NAME = "buzzcalculus-v1.2.1-2026-09-18-clean";
 const CACHE_PREFIX = "buzzcalculus-";
 const APP_SHELL = [
   "./privacy.html",
@@ -7,7 +7,6 @@ const APP_SHELL = [
   "./guide.html",
   "./",
   "./index.html",
-  "./workbook.html",
   "./styles.css",
   "./manifest.webmanifest",
   "./assets/icon.svg",
@@ -82,8 +81,6 @@ const APP_SHELL = [
   "./src/kernel/verified_answers.js",
   "./src/kernel/daily_one_history.js",
   "./src/kernel/board_render.js",
-  "./src/kernel/workbook_facts.js",
-  "./src/kernel/pricing.js",
   "./src/kernel/equivalence.js",
   "./src/kernel/answer_sampling.js",
   "./src/kernel/records_v2.js",

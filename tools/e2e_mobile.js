@@ -159,7 +159,6 @@ async function run() {
     /* ── 1. 對外靜態頁 ── */
     const staticPages = [
       ["首頁 / 訓練台", "index.html", true],
-      ["商品頁", "workbook.html", false],
       ["關於", "about.html", false],
       ["服務條款", "terms.html", false],
       ["隱私政策", "privacy.html", false],

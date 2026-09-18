@@ -21,7 +21,7 @@ function fail(message) {
 
 /* ── 1. HTML 不得引用外部資源 ─────────────────────────────── */
 
-const pages = ["index.html", "workbook.html"];
+const pages = ["index.html"];
 pages.forEach((page) => {
   const html = fs.readFileSync(path.join(root, page), "utf8");
   // 只看會擋住渲染的：<script src> 與 <link rel=stylesheet href>。

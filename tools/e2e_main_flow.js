@@ -428,7 +428,7 @@ async function run() {
       return true;
     `);
 
-    /* ── 7.5 出卷已於 2026-09 移除：紙本需求由 workbook.html 承擔 ──
+    /* ── 7.5 出卷已於 2026-09 移除 ──
        這裡改守「移除是乾淨的」：模擬分頁上不准再出現出卷入口。 */
     const paperGone = await chrome.evaluate(`
       ${HELPERS}

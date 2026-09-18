@@ -17,7 +17,7 @@
 | [05-content-pipeline.md](05-content-pipeline.md) | 難度 rubric、答案驗證、重複偵測、來源聲明、變體生成 | 出新題包之前 |
 | [06-identity-sync-legal.md](06-identity-sync-legal.md) | 帳號、跨裝置合併同步、備份、分析事件、法遵 | 接後端之前 |
 | [07-community-classroom.md](07-community-classroom.md) | 投稿、curator、班級、Duel、Season | P5 之前 |
-| [08-platform.md](08-platform.md) | 多科目、跨科 skill graph、symbolic backend、Buzz Pro、i18n | P6 之前 |
+| [08-platform.md](08-platform.md) | 多科目、跨科 skill graph、symbolic backend、i18n | P6 之前 |
 | [09-roadmap.md](09-roadmap.md) | 分期、每期 exit criteria、指標、風險 | 排期時 |
 | [10-traceability.md](10-traceability.md) | 200 條需求逐條對應到規格章節與期別 | 驗收時 |
 
@@ -49,10 +49,10 @@
 | 有作者撰寫 `hints` | 1620 |  |
 | 有 `solutionSteps` | 226 | 結構化步驟，仍是最大的內容缺口 |
 | 證明題 | 68 | 含 Lean 機器驗證 8 則 |
-| `src/app.js` | 15558 行 | 單一 IIFE，拆分進行中 |
+| `src/app.js` | 15557 行 | 單一 IIFE，拆分進行中 |
 | `styles.css` | 12608 行 |  |
 | 題庫檔 `src/problem_*.js` | 35 |  |
-| kernel 模組 `src/kernel/*.js` | 23 | 純函式層 |
+| kernel 模組 `src/kernel/*.js` | 21 | 純函式層 |
 | CI 驗證器 `tools/` | 41 支 | validate / verify / smoke / e2e |
 
 **答案型別分佈**：`numeric` 1356、`expression` 317、`antiderivative` 142、`text` 100、`worksheet` 22、`set` 17、`interval` 16、`graph` 12、`graphtap` 8、`graphslope` 4。

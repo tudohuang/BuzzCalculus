@@ -42,7 +42,6 @@
 | 3 | BuzzCalculus 成為成熟旗艦 | P1–P4 | [09 分期](09-roadmap.md#分期總覽) |
 | 4 | BuzzPhysics 成為第二旗艦 | P6 | [08.1](08-platform.md#81-從-app-到-engine) |
 | 5 | 一個帳號管所有科目 | P4→P6 | [06.2 階段 C](06-identity-sync-legal.md#階段-c跨科目帳號p6) |
-| 6 | 一個 Pro 解鎖所有科目 | P6 | [08.6](08-platform.md#86-商業模式) |
 | 7 | 每天打開就知道練什麼 | P1–P2 | [04.3 首頁](04-experience-ia.md#43-首頁重構) |
 | 8 | 15 分鐘也能有效訓練 | P2 | [04.4 daily15](04-experience-ia.md#三種長度) |
 | 9 | 1 小時高強度訓練 | P2 | [04.4 deep45](04-experience-ia.md#三種長度) |
@@ -222,7 +221,6 @@
 | 162 | 作者題目平均評價 | P5 | [07.1 社群評價](07-community-classroom.md#社群評價)（改為輕量「好題率」） |
 | 163 | 題目可被社群推薦 | P5 | 同上 |
 | 164 | 題目可被教師認證 | P5 | [07.1 curator 表](07-community-classroom.md#curator-制度) |
-| 165 | Verified Buzz Problem 標章 | P5 | 同上 |
 | 166 | 老師建立班級 | P5 | [07.2](07-community-classroom.md#72-班級與教師) |
 | 167 | 老師派作業 | P5 | 同上 |
 | 168 | 全班 skill heatmap | P5 | [07.2 教師視角](07-community-classroom.md#教師視角) |
@@ -252,9 +250,6 @@
 | 192 | 跨科 skill graph | P6 | [08.2](08-platform.md#82-跨科-skill-graph) |
 | 193 | Physics 知道你 Calculus 的弱點 | P6 | 同上（`crossPrereq`） |
 | 194 | 微積分弱影響物理推薦 | P6 | 同上 |
-| 195 | Buzz Pro 跨科訂閱 | P6 | [08.6](08-platform.md#86-商業模式) |
-| 196 | 考前 14 天 Exam Pass | P6 | 同上 |
-| 197 | 學生優惠／經濟困難免費名額 | P6 | 同上（名額數公開） |
 | 198 | 英文版 | P6 | [08.7](08-platform.md#87-國際化) |
 | 199 | Buzz = 能力訓練 OS | P6 | [08.1](08-platform.md#81-從-app-到-engine) |
 | 200 | 像健身一樣固定回來 | ∞ | [00 成功長什麼樣](00-north-star.md#成功長什麼樣) |

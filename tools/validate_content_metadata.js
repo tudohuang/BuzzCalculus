@@ -152,7 +152,7 @@ problems.forEach((problem) => {
   //
   // 失敗方式是安靜的（fallback 本來就該安靜，它是給 kernel 壞掉時用的），
   // 所以只能在這裡擋。
-  const USER_FACING_GENERATORS = ["generate_workbook.js"];
+  const USER_FACING_GENERATORS = [];
   USER_FACING_GENERATORS.forEach((name) => {
     const file = path.join(__dirname, name);
     if (!fs.existsSync(file)) return;
