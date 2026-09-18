@@ -32,6 +32,13 @@ problems.forEach((spec) => {
   const report = lang.check(spec, text);
   checks += 1;
   const okVerdict = spec.allowUnsure ? ["verified", "partial"] : ["verified"];
+  // 1b. 使用者不打空格：把運算子、括號、標點旁邊的空格全刪掉（cos c 這種靠空格分開的識別字不動），判定必須一樣。
+  //     實際踩過：接地判斷去空白的正規式寫成 /s+/，|x-3| 對不上假設裡的 |x − 3|，
+  //     跟題解一模一樣的證明被標黃。
+  const squeezed = lang.check(spec, spec.reference.map((line) => line.replace(/ *([=<>+\-*\/|(),，。：；≤≥≠−]) */g, "$1")).join("\n"));
+  if (squeezed.verdict !== report.verdict) {
+    fail(`${spec.id}：參考證明去掉空格之後判定從 ${report.verdict} 變成 ${squeezed.verdict}\n    ${squeezed.lines.filter((l) => l.status !== "ok").map((l) => `第 ${l.n} 行 ${l.status}：${l.note}`).join("\n    ")}`);
+  }
   if (!okVerdict.includes(report.verdict)) {
     fail(`${spec.id}：參考證明應該${spec.allowUnsure ? "至少結構完整" : "全綠"}，卻是 ${report.verdict}（${report.verdictText}）\n    ${report.lines.filter((l) => l.status !== "ok").map((l) => `第 ${l.n} 行 ${l.status}：${l.raw} —— ${l.note}`).join("\n    ")}`);
   }
