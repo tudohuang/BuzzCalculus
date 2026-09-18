@@ -11,7 +11,7 @@ BuzzCalculus 是一個微積分反射訓練台。它不是課本，也不是解�
 
 線上版：
 
-https://tudohuang.github.io/BuzzCalculus/
+https://buzz-calculus.vercel.app/
 
 ---
 
@@ -351,26 +351,6 @@ It is meant for slow work:
 3. Mark it as `看懂`, `部分會`, or `還不會`.
 
 It includes problems from basic MVT proofs to Jacobian chain rule, Hessian tests, Wronskian identities, and high-difficulty multivariable arguments.
-
----
-
-## Workbook
-
-A BuzzCalculus workbook is a future paid idea.
-
-The website does not provide a downloadable workbook. The current public version is the interactive trainer.
-
-Preview page:
-
-https://tudohuang.github.io/BuzzCalculus/workbook.html
-
-The workbook direction is:
-
-- curated technique drills
-- printable answer spaces
-- proof-writing sections
-- Boss problem sets
-- exam-style pacing
 
 ---
 
