@@ -221,6 +221,7 @@
 | 162 | 作者題目平均評價 | P5 | [07.1 社群評價](07-community-classroom.md#社群評價)（改為輕量「好題率」） |
 | 163 | 題目可被社群推薦 | P5 | 同上 |
 | 164 | 題目可被教師認證 | P5 | [07.1 curator 表](07-community-classroom.md#curator-制度) |
+| 165 | Verified Buzz Problem 標章 | P5 | 同上 |
 | 166 | 老師建立班級 | P5 | [07.2](07-community-classroom.md#72-班級與教師) |
 | 167 | 老師派作業 | P5 | 同上 |
 | 168 | 全班 skill heatmap | P5 | [07.2 教師視角](07-community-classroom.md#教師視角) |
