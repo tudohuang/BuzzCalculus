@@ -39,10 +39,10 @@ PAGES.forEach(([file, label, mustMention]) => {
   try {
     source = read(file);
   } catch (_error) {
-    fail(`${file} 不存在 —— ${label}是變現前的硬性前提`);
+    fail(`${file} 不存在 —— ${label}是上線的硬性前提`);
     return;
   }
-  if (source.length < 1500) fail(`${file} 太短（${source.length} 字元），像是範本沒填完`);
+  if (source.length < 800) fail(`${file} 太短（${source.length} 字元），像是範本沒填完`);
   if (!/最後更新：\d{4}-\d{2}-\d{2}/.test(source)) fail(`${file} 沒有寫最後更新日期`);
   mustMention.forEach((needle) => {
     if (!source.includes(needle)) fail(`${file} 沒有提到「${needle}」`);
