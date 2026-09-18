@@ -360,8 +360,8 @@
   // 結果映射到主線節點，沿用跳關的 pathUnlocks 機制解鎖。
   const PLACEMENT_COUNT = 8;
   // 定位起手 rank 跟著自陳的階段走：高中先修從 R1 起，不要第一題就是無窮級數。
-  const PLACEMENT_START_RANK_BY_CONTEXT = { highschool: 1, freshman: 2, exam: 3, maintain: 3 };
-  const PLACEMENT_START_RANK = 2;
+  const PLACEMENT_START_RANK_BY_CONTEXT = { highschool: 1, freshman: 1, exam: 2, maintain: 2 };
+  const PLACEMENT_START_RANK = 1;
   // 高中先修的定位只在極限與微分裡出題 —— 那是他們學過的範圍；
   // 級數與積分對他們不是「不會」，是「還沒學」，測不出東西。
   const PLACEMENT_TOPICS_BY_CONTEXT = { highschool: ["limits", "derivatives"] };
@@ -375,7 +375,7 @@
   // 本身就是計時規則的模式不在保護範圍。
   // 高中先修 3 局、大一（或沒填）1 局；「要考了」「維持手感」的人自己說已經學過，
   // 對他們說「看懂比答對重要」是在講幼稚園的話 —— 不保護，直接計時。
-  const GENTLE_QUOTA_BY_CONTEXT = { newbie: 4, highschool: 3, freshman: 1, exam: 0, maintain: 0 };
+  const GENTLE_QUOTA_BY_CONTEXT = { newbie: 4, highschool: 3, freshman: 2, exam: 0, maintain: 0 };
   function gentleStartQuota(records) {
     const context = records.onboardingContext || "";
     return context in GENTLE_QUOTA_BY_CONTEXT ? GENTLE_QUOTA_BY_CONTEXT[context] : 1;
@@ -503,7 +503,7 @@
   const WEBWORK_KEY_GROUPS = [
     { label: "數字", keys: ["7", "8", "9", "4", "5", "6", "1", "2", "3", "0", ".", "-"] },
     { label: "常用", keys: ["x", "pi", "e", "(", ")", "+", "*", "/", "^"] },
-    { label: "函數", keys: ["sqrt(|)", "sin(|)", "cos(|)", "tan(|)", "log(|)", "exp(|)"] },
+    { label: "函數", keys: ["sqrt(|)", "sin(|)", "cos(|)", "tan(|)", "ln(|)", "exp(|)"] },
     // 收斂性判定詞（convergent / divergent / conditional）只有 answerKind
     // 是 text 的題目收得到 —— 全庫掃過：沒有任何 numeric / expression /
     // antiderivative 題的答案是那三個字。擺在數值題的鍵盤上是三顆長按鈕的
@@ -3719,9 +3719,9 @@
   const ONBOARDING_CONTEXTS = [
     { key: "newbie", label: "我還沒學過", note: "從「函數是什麼」開始，十六課加畢業關，過了再進主線", cap: 1, course: true },
     { key: "highschool", label: "高中先修", note: "先把基本工具練熟", cap: 2 },
-    { key: "freshman", label: "大一微積分", note: "跟著課程進度練", cap: 3 },
-    { key: "exam", label: "期中期末要考了", note: "考前衝刺，抓弱點", cap: 4, suggestExam: true },
-    { key: "maintain", label: "想維持手感", note: "已經學過，不想生鏽", cap: 4 }
+    { key: "freshman", label: "大一微積分", note: "跟著課程進度練", cap: 2 },
+    { key: "exam", label: "期中期末要考了", note: "考前衝刺，抓弱點", cap: 3, suggestExam: true },
+    { key: "maintain", label: "想維持手感", note: "已經學過，不想生鏽", cap: 3 }
   ];
 
   function renderOnboarding() {
@@ -4590,9 +4590,9 @@
     const draft = activeCreatorDraft();
     const needsVariable = draft.answerKind === "expression" || draft.answerKind === "antiderivative";
     const answerHelp = {
-      numeric: "數值答案，可用 1/2、pi/4、sqrt(2)、log(2) 這類寫法。",
+      numeric: "數值答案，可用 1/2、pi/4、sqrt(2)、ln(2) 這類寫法。",
       expression: "寫成變數的函數，例如 2*x*cos(x^2)。系統會多點代入判分。",
-      antiderivative: "原函數，可省略 +C，例如 x*log(x)-x。判分時檢查是否只差常數。",
+      antiderivative: "原函數，可省略 +C，例如 x*ln(x)-x。判分時檢查是否只差常數。",
       text: "判定型答案，用逗號列出所有可接受的寫法，例如：收斂, converges。"
     }[draft.answerKind];
     const difficultyLabels = { 1: "R1 暖身", 2: "R2 基礎", 3: "R3 標準", 4: "R4 進階" };
@@ -4800,7 +4800,7 @@
     const sample = problem.answerKind === "text" ? problem.answers[0] : problem.answer;
     const graded = checkAnswer(problem, sample);
     if (!graded.correct) {
-      issues.push(`判分器吃不下這個答案（${graded.message}）請改用這類寫法，例如 pi/4、2*x、x*log(x)-x。`);
+      issues.push(`判分器吃不下這個答案（${graded.message}）請改用這類寫法，例如 pi/4、2*x、x*ln(x)-x。`);
     }
     return issues;
   }
@@ -10450,12 +10450,12 @@
       .filter(Boolean);
     if (steps.length < 2) return { steps: [], error: "至少要兩行（原式一行、變形一行）才有東西可以比。" };
     const normalized = steps.map((raw) => ({ raw, js: normalizeExpression(raw) }));
-    const results = [{ raw: normalized[0].raw, ok: normalized[0].js ? true : false, message: normalized[0].js ? "起點" : "這行讀不懂 —— 用 2*x、sin(x)、log(x) 這種寫法" }];
+    const results = [{ raw: normalized[0].raw, ok: normalized[0].js ? true : false, message: normalized[0].js ? "起點" : "這行讀不懂 —— 用 2*x、sin(x)、ln(x) 這種寫法" }];
     for (let index = 1; index < normalized.length; index += 1) {
       const previous = normalized[index - 1];
       const current = normalized[index];
       if (!previous.js || !current.js) {
-        results.push({ raw: current.raw, ok: false, message: "這行讀不懂 —— 用 2*x、sin(x)、log(x) 這種寫法" });
+        results.push({ raw: current.raw, ok: false, message: "這行讀不懂 —— 用 2*x、sin(x)、ln(x) 這種寫法" });
         continue;
       }
       const verdict = checkExpression(previous.js, current.js, variable || "x", null);
@@ -11385,7 +11385,7 @@
     // 格式提示只對「自己寫」有意義；選擇題不用打字，這幾句在那裡是噪音（還要扣分）。
     if (quiz && quiz.answerMode === "choice") return hints.slice(0, 3);
     if (problem.answerKind === "antiderivative") hints.push("不定積分答案可省略 +C，系統會檢查是否相差常數。");
-    if (problem.answerKind === "expression") hints.push("答案請寫成 x 的函數，例如用 sin(x)、log(x)、sqrt(x)。");
+    if (problem.answerKind === "expression") hints.push("答案請寫成 x 的函數，例如用 sin(x)、ln(x)、sqrt(x)。");
     if (problem.answerKind === "numeric") hints.push("數值答案可用分數、pi、e、sqrt 表示。");
     if (problem.answerKind === "set") hints.push("把找到的值全部列出來，順序不影響判分 —— 但少一個就算錯。");
     if (problem.answerKind === "interval") hints.push("端點取不取得到，決定用小括號還是中括號。多段用 U 連起來。");
@@ -11535,7 +11535,7 @@
     const a = evaluateExpression(expected, {});
     const b = evaluateExpression(input, {});
     if (!Number.isFinite(a) || !Number.isFinite(b)) {
-      return { correct: false, message: "我讀不懂這個數值格式。可以用 pi/4、sqrt(2)、log(2) 這類寫法。" };
+      return { correct: false, message: "我讀不懂這個數值格式。可以用 pi/4、sqrt(2)、ln(2) 這類寫法。" };
     }
     const tolerance = Math.max(1e-7, Math.abs(a) * 1e-6);
     const ok = Math.abs(a - b) <= tolerance;
@@ -11893,7 +11893,7 @@
     if (problem.answerKind === "text") return ["收斂", "發散", "條件收斂", "絕對收斂", "converges", "diverges"];
     if (problem.answerKind === "numeric") return ["-2", "-1", "0", "1", "2", "pi", "e", "DNE"];
     if (problem.answerKind === "antiderivative") {
-      return ["0", variable, `${variable}^2`, `${variable}^3`, `log(${variable})`, `sin(${variable})`, `cos(${variable})`, `exp(${variable})`];
+      return ["0", variable, `${variable}^2`, `${variable}^3`, `ln(${variable})`, `sin(${variable})`, `cos(${variable})`, `exp(${variable})`];
     }
     if (problem.answerKind === "expression") {
       return ["0", "1", "-1", variable, `${variable}^2`, `sin(${variable})`, `cos(${variable})`, `exp(${variable})`];
@@ -11976,7 +11976,7 @@
         "0",
         variable,
         `${variable}^2`,
-        `log(${variable})`,
+        `ln(${variable})`,
         `sin(${variable})`,
         `exp(${variable})`
       ];
@@ -14865,7 +14865,7 @@
     }
     if (problem.answerKind === "set") return "例如：{-1, 3}（順序無所謂）";
     if (problem.answerKind === "interval") return "例如：(-inf, 2) U [3, 5]";
-    if (problem.answerKind === "antiderivative") return "例如：x^2*log(x)/2-x^2/4";
+    if (problem.answerKind === "antiderivative") return "例如：x^2*ln(x)/2-x^2/4";
     if (problem.answerKind === "expression") return "例如：2*x*sin(x)+x^2*cos(x)";
     return "例如：pi/4 或 3/2";
   }
@@ -14877,8 +14877,8 @@
     if (problem.answerKind === "set") return ["{-1, 1}", "{0}", "{pi/4, 5*pi/4}", "{-2, 0, 2}"];
     if (problem.answerKind === "interval") return ["(1, inf)", "[-2, 2]", "(-inf, 3) U (3, inf)", "[-1, 1)"];
     if (problem.answerKind === "numeric") return ["pi/4", "sqrt(2)", "log(2)", "0"];
-    if (problem.answerKind === "antiderivative") return ["sin(x)", "log(x)", "x^2/2", "exp(x)"];
-    return ["2*x", "sin(x)^2", "sqrt(x)", "log(x)"];
+    if (problem.answerKind === "antiderivative") return ["sin(x)", "ln(x)", "x^2/2", "exp(x)"];
+    return ["2*x", "sin(x)^2", "sqrt(x)", "ln(x)"];
   }
 
   function webworkKeys(problem) {
@@ -14913,10 +14913,10 @@
     return { digits, rest };
   }
   const KEYPAD_PRIORITY_BY_TOPIC = {
-    integrals: ["^", "/", "(", ")", "sqrt(|)", "pi", "log(|)", "e", "x", "*", "+", "-"],
-    derivatives: ["x", "^", "*", "(", ")", "sin(|)", "cos(|)", "e", "log(|)", "/", "+", "-"],
+    integrals: ["^", "/", "(", ")", "sqrt(|)", "pi", "ln(|)", "e", "x", "*", "+", "-"],
+    derivatives: ["x", "^", "*", "(", ")", "sin(|)", "cos(|)", "e", "ln(|)", "/", "+", "-"],
     limits: ["pi", "e", "/", "sqrt(|)", "DNE", "^", "(", ")", "x", "*", "+", "-"],
-    series: ["/", "pi", "e", "^", "(", ")", "log(|)", "x", "*", "+", "-"]
+    series: ["/", "pi", "e", "^", "(", ")", "ln(|)", "x", "*", "+", "-"]
   };
 
   function formatHelp(kind) {
@@ -15061,7 +15061,7 @@
         asin: `\\arcsin\\left(${body}\\right)`,
         acos: `\\arccos\\left(${body}\\right)`,
         atan: `\\arctan\\left(${body}\\right)`,
-        log: `\\log\\left(${body}\\right)`,
+        log: `\\ln\\left(${body}\\right)`,
         exp: `e^{${body}}`,
         abs: `\\left|${body}\\right|`,
         sec: `\\sec\\left(${body}\\right)`,

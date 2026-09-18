@@ -114,7 +114,7 @@
     "→ ∫₀¹dx/√(1+x²) = arsinh 1 = log(1+√2)。", 130);
 
   q("lm-rs-007", 4,
-    "\\lim_{n\\to\\infty}\\frac{1}{n}\\sum_{k=1}^{n}\\log\\left(1+\\frac{k}{n}\\right)",
+    "\\lim_{n\\to\\infty}\\frac{1}{n}\\sum_{k=1}^{n}\\ln\\left(1+\\frac{k}{n}\\right)",
     "2*log(2)-1",
     ["riemann-sum", "log"],
     "→ ∫₀¹log(1+x)dx = [(1+x)log(1+x)−x]₀¹ = 2log2−1。", 130);
@@ -208,7 +208,7 @@
     "第一個因子 → 1，第二個震盪不收斂，乘積因此不收斂。陷阱在於「前面那塊有極限」會讓人以為整體有極限。", 120);
 
   q("lm-sq-008", 4,
-    "\\lim_{x\\to \\infty}\\frac{\\cos x}{\\log x}",
+    "\\lim_{x\\to \\infty}\\frac{\\cos x}{\\ln x}",
     "0",
     ["squeeze", "oscillation"],
     "|cos x/log x| ≤ 1/log x → 0。分母長得再慢也還是 → ∞。", 100);
@@ -381,7 +381,7 @@
     "右邊恆為 1、左邊恆為 −1。", 70);
 
   q("lm-os-006", 5,
-    "\\lim_{x\\to 0^+}x^{1/\\log x}",
+    "\\lim_{x\\to 0^+}x^{1/\\ln x}",
     "E",
     ["one-sided", "log", "trap-drill"],
     "取對數：(1/log x)·log x = 1，所以這個函數**恆等於 e**，根本不是不定型。看穿它比算它重要。", 150);
@@ -409,13 +409,13 @@
     "Stolz：增量比 = (1/√n)/(√n−√(n−1)) = (1/√n)·(√n+√(n−1)) → 2。", 170);
 
   q("lm-st-002", 5,
-    "\\lim_{n\\to\\infty}\\left(\\sum_{k=1}^{n}\\frac{1}{k}-\\log n\\right)",
+    "\\lim_{n\\to\\infty}\\left(\\sum_{k=1}^{n}\\frac{1}{k}-\\ln n\\right)",
     "0.5772156649",
     ["stolz", "euler-mascheroni"],
     "這個極限就是 Euler–Mascheroni 常數 γ。它沒有已知的初等封閉式，也不知道是不是無理數。", 190);
 
   q("lm-st-003", 4,
-    "\\lim_{n\\to\\infty}\\frac{1}{\\log n}\\sum_{k=1}^{n}\\frac{1}{k}",
+    "\\lim_{n\\to\\infty}\\frac{1}{\\ln n}\\sum_{k=1}^{n}\\frac{1}{k}",
     "1",
     ["stolz", "harmonic"],
     "調和數 ≈ log n + γ，除以 log n → 1。γ 那一項被除掉了。", 140);
@@ -427,7 +427,7 @@
     "cos(1/k) → 1，而 Cesàro 平均保持極限，故也是 1。注意這**不是**黎曼和：項只跟 k 有關、跟 n 無關，湊不出 k/n。", 140);
 
   q("lm-st-005", 5,
-    "\\lim_{n\\to\\infty}\\frac{1}{n\\log n}\\sum_{k=1}^{n}\\log k",
+    "\\lim_{n\\to\\infty}\\frac{1}{n\\ln n}\\sum_{k=1}^{n}\\ln k",
     "1",
     ["stolz", "stirling"],
     "Σlog k = log(n!) ≈ n log n − n，除以 n log n → 1。", 170);
@@ -470,7 +470,7 @@
     "E",
     ["nth-root", "stirling"],
     "由 Stirling，(n!)^{1/n} ≈ n/e，故比值 → e。也可以用 aₙ₊₁/aₙ 的根值定理做。", 200,
-    { m: "seqLimit", f: "\\frac{n}{\\exp\\left(\\frac{1}{n}\\sum_{k=1}^{n}\\log k\\right)}" });
+    { m: "seqLimit", f: "\\frac{n}{\\exp\\left(\\frac{1}{n}\\sum_{k=1}^{n}\\ln k\\right)}" });
 
   q("lm-nr-005", 5,
     "\\lim_{n\\to\\infty}\\frac{n!}{n^n}",

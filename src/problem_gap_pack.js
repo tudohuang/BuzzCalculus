@@ -681,7 +681,7 @@
       topic: "integrals",
       difficulty: 1,
       source: "Buzz technique recognition",
-      prompt: "\\text{Technique for }\\int x\\log x\\,dx",
+      prompt: "\\text{Technique for }\\int x\\ln x\\,dx",
       answerKind: "text",
       answers: ["integration by parts", "ibp", "分部積分"],
       canonical: "integration by parts",

@@ -83,7 +83,7 @@
     ["standard-limit"],
     "(e^u−1)/u→1，補係數得 5。", 30,
     ["標準極限 (e^u−1)/u→1。", "u=5x。", "極限是 5。"]);
-  N("fd-lim-010", "limits", 1, "\\lim_{x\\to 0}\\frac{\\log(1+4x)}{x}", "4",
+  N("fd-lim-010", "limits", 1, "\\lim_{x\\to 0}\\frac{\\ln(1+4x)}{x}", "4",
     ["standard-limit", "log"],
     "log(1+u)/u→1，補係數得 4。", 30,
     ["標準極限 log(1+u)/u→1。", "u=4x。", "極限是 4。"]);
@@ -114,7 +114,7 @@
     ["chain-rule", "exponential"],
     "e^u 微分還是 e^u，乘上內層導數 −1。", 25,
     ["e^u 的導數是 e^u·u'。", "內層是 −x。", "u'=−1。"]);
-  E("fd-der-005", "derivatives", 1, "\\frac{d}{dx}\\left(x\\log x\\right)", "log(x)+1",
+  E("fd-der-005", "derivatives", 1, "\\frac{d}{dx}\\left(x\\ln x\\right)", "log(x)+1",
     ["product-rule", "log"],
     "乘積法則：1·log x + x·(1/x) = log x + 1。", 35,
     ["乘積法則。", "log x 的導數是 1/x。", "x·(1/x)=1。"]);
@@ -466,7 +466,7 @@
     ["taylor-limit", "trig"],
     "通分後 (sin²x−x²)/(x²sin²x)：分子 = −x⁴/3+…、分母 = x⁴+…，極限 −1/3。", 240,
     ["先通分。", "sin²x = x²−x⁴/3+…。", "分母當 x⁴ 用。"]);
-  N("fd-limx-608", "limits", 5, "\\lim_{x\\to 0}\\frac{\\log(\\cos 2x)}{\\log(\\cos 3x)}", "4/9",
+  N("fd-limx-608", "limits", 5, "\\lim_{x\\to 0}\\frac{\\ln(\\cos 2x)}{\\ln(\\cos 3x)}", "4/9",
     ["log", "taylor-limit"],
     "log(cos kx) ≈ −k²x²/2，比值是 4/9。", 180,
     ["cos kx ≈ 1−k²x²/2。", "log(1+u)≈u。", "答案是兩個平方的比。"]);

@@ -48,7 +48,7 @@
   [
     ["rel-hard-lim-001", "\\lim_{x\\to0}\\frac{\\sin x-x+x^3/6-x^5/120}{x^7}", "-1/5040", "Use the x^7 term of sin x."],
     ["rel-hard-lim-002", "\\lim_{x\\to0}\\frac{\\tan x-x-x^3/3-2x^5/15}{x^7}", "17/315", "Use the x^7 term of tan x."],
-    ["rel-hard-lim-003", "\\lim_{x\\to0}\\frac{\\log(1+x)-x+x^2/2-x^3/3+x^4/4}{x^5}", "1/5", "Use the x^5 term of log(1+x)."],
+    ["rel-hard-lim-003", "\\lim_{x\\to0}\\frac{\\ln(1+x)-x+x^2/2-x^3/3+x^4/4}{x^5}", "1/5", "Use the x^5 term of log(1+x)."],
     ["rel-hard-lim-004", "\\lim_{x\\to0}\\frac{e^x+e^{-x}-2-x^2-x^4/12}{x^6}", "1/360", "Use the even expansion of e^x+e^{-x}."],
     ["rel-hard-lim-007", "\\lim_{(x,y)\\to(0,0)}\\frac{1-\\cos(xy)}{x^2y^2}", "1/2", "Use 1-cos u ~ u^2/2."],
     ["rel-hard-lim-008", "\\lim_{(x,y)\\to(0,0)}\\frac{e^{x^2+y^2}-1}{x^2+y^2}", "1", "Use e^u-1 ~ u."],
@@ -77,15 +77,15 @@
   [
     ["rel-hard-int-001", "\\int_0^{\\infty}x^5e^{-2x}\\,dx", "15/8", ["gamma-function", "improper-integral"], "Use Gamma(6)/2^6."],
     ["rel-hard-int-002", "\\int_0^{\\infty}x^{3/2}e^{-4x}\\,dx", "3*sqrt(pi)/128", ["gamma-function", "improper-integral"], "This is Gamma(5/2)/4^{5/2}."],
-    ["rel-hard-int-004", "\\int_0^1x^3(\\log x)^2\\,dx", "1/32", ["parameter-integral", "gamma-function"], "Use int_0^1 x^a(log x)^2 dx=2/(a+1)^3."],
+    ["rel-hard-int-004", "\\int_0^1x^3(\\ln x)^2\\,dx", "1/32", ["parameter-integral", "gamma-function"], "Use int_0^1 x^a(log x)^2 dx=2/(a+1)^3."],
     ["rel-hard-int-005", "\\int_0^{\\pi/2}\\sin^8x\\,dx", "35*pi/256", ["wallis", "special-functions"], "Use Wallis reduction."],
     ["rel-hard-int-007", "\\int_0^{\\pi/2}\\sin^4x\\cos^2x\\,dx", "pi/32", ["beta-function", "wallis"], "Convert to one half of a beta integral."],
     ["rel-hard-int-008", "\\int_0^{\\infty}\\frac{e^{-3x}-e^{-11x}}{x}\\,dx", "log(11/3)", ["frullani", "improper-integral"], "Frullani gives log(11/3)."],
     ["rel-hard-int-009", "\\int_0^{\\infty}\\frac{\\cos(4x)-\\cos(10x)}{x}\\,dx", "log(5/2)", ["frullani", "cosine-integral"], "Use the cosine Frullani identity."],
     ["rel-hard-int-011", "\\int_0^{\\infty}\\frac{x}{x^4+1}\\,dx", "pi/4", ["improper-integral", "substitution"], "Let u=x^2."],
     ["rel-hard-int-012", "\\int_0^{\\infty}\\frac{dx}{x^4+1}", "pi/(2*sqrt(2))", ["improper-integral", "residue"], "The standard quartic integral equals pi/(2sqrt2)."],
-    ["rel-hard-int-015", "\\int_0^1x^{-1/2}\\log x\\,dx", "-4", ["parameter-integral", "improper-integral"], "Use int_0^1 x^{a-1} log x dx=-1/a^2."],
-    ["rel-hard-int-017", "\\int_0^{\\pi/2}(\\log(\\sin x)+\\log(\\cos x))\\,dx", "-pi*log(2)", ["kings-property", "improper-integral"], "Both log sine and log cosine integrals equal -pi log2 /2."],
+    ["rel-hard-int-015", "\\int_0^1x^{-1/2}\\ln x\\,dx", "-4", ["parameter-integral", "improper-integral"], "Use int_0^1 x^{a-1} log x dx=-1/a^2."],
+    ["rel-hard-int-017", "\\int_0^{\\pi/2}(\\ln(\\sin x)+\\ln(\\cos x))\\,dx", "-pi*log(2)", ["kings-property", "improper-integral"], "Both log sine and log cosine integrals equal -pi log2 /2."],
     ["rel-hard-int-018", "\\int_0^{\\infty}\\frac{dx}{(x^2+4)^2}", "pi/32", ["improper-integral", "trig-substitution"], "Use int_0^infty dx/(x^2+a^2)^2=pi/(4a^3)."]
   ].forEach(([id, prompt, answer, tags, solution]) => {
     numeric(id, "integrals", prompt, answer, [...tags, "boss-rank"], solution, 5, 125);
@@ -95,7 +95,7 @@
     ["rel-hard-cpx-001", "\\operatorname{Res}_{z=0}\\frac{\\sin z}{z^4}", "-1/6", "Use the z^3 coefficient of sin z."],
     ["rel-hard-cpx-002", "\\operatorname{Res}_{z=0}\\frac{\\cos z}{z^3}", "-1/2", "Use the z^2 coefficient of cos z."],
     ["rel-hard-cpx-003", "\\operatorname{Res}_{z=0}\\frac{e^z-1-z}{z^4}", "1/6", "Use the z^3 coefficient of e^z-1-z."],
-    ["rel-hard-cpx-004", "\\operatorname{Res}_{z=0}\\frac{\\log(1+z)}{z^3}", "-1/2", "Use the z^2 coefficient of log(1+z)."],
+    ["rel-hard-cpx-004", "\\operatorname{Res}_{z=0}\\frac{\\ln(1+z)}{z^3}", "-1/2", "Use the z^2 coefficient of log(1+z)."],
     ["rel-hard-cpx-005", "\\operatorname{Res}_{z=0}\\frac{1}{z^2(1-z)}", "1", "Expand 1/(1-z)."],
     ["rel-hard-cpx-006", "\\operatorname{Res}_{z=1}\\frac{e^z}{(z-1)^2}", "e", "For a second-order pole, take the derivative of e^z."],
     ["rel-hard-cpx-007", "\\operatorname{Res}_{z=0}\\frac{z}{\\sin^2z}", "1", "Use csc^2 z=1/z^2+..."],
@@ -124,8 +124,8 @@
   [
     ["rel-hard-der-001", "W(e^x,xe^x)\\text{ at }x=0", "1", ["wronskian"], "The Wronskian is e^{2x}."],
     ["rel-hard-der-002", "W(\\sin x,\\cos x)\\text{ at }x=0", "-1", ["wronskian"], "Compute f g'-f'g."],
-    ["rel-hard-der-003", "\\det H_f(1,0),\\quad f=\\log(x^2+y^2)", "-4", ["hessian"], "At (1,0), the Hessian is diag(-2,2)."],
-    ["rel-hard-der-004", "\\kappa\\text{ for }y=\\log x\\text{ at }x=1", "1/(2*sqrt(2))", ["curvature"], "Use |y''|/(1+(y')^2)^{3/2}."],
+    ["rel-hard-der-003", "\\det H_f(1,0),\\quad f=\\ln(x^2+y^2)", "-4", ["hessian"], "At (1,0), the Hessian is diag(-2,2)."],
+    ["rel-hard-der-004", "\\kappa\\text{ for }y=\\ln x\\text{ at }x=1", "1/(2*sqrt(2))", ["curvature"], "Use |y''|/(1+(y')^2)^{3/2}."],
     ["rel-hard-der-005", "\\frac{dy}{dx}\\text{ at }t=2,\\quad x=t+\\frac1t,\\ y=t-\\frac1t", "5/3", ["parametric-differentiation"], "Use (dy/dt)/(dx/dt)."],
     ["rel-hard-der-006", "\\frac{d^2y}{dx^2}\\text{ at }t=2,\\quad x=t^2,\\ y=t^3", "3/8", ["parametric-differentiation"], "Differentiate dy/dx with respect to t, then divide by dx/dt."],
     ["rel-hard-der-007", "D_{(1,2,2)/3}(xyz)\\text{ at }(1,1,1)", "5/3", ["directional-derivative", "nabla"], "The gradient is (1,1,1)."],

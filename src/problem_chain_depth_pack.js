@@ -54,13 +54,13 @@
     "四層：sin′ → cos′（負號） → tan′（sec²） → (x²)′。少乘任何一層都錯。", 110);
 
   d("ch-nest-002", 4,
-    "\\frac{d}{dx}\\,e^{\\sin(\\log(x^2+1))}",
+    "\\frac{d}{dx}\\,e^{\\sin(\\ln(x^2+1))}",
     "2*x*exp(sin(log(x^2+1)))*cos(log(x^2+1))/(x^2+1)",
     ["exponential", "log"],
     "e^u 不變、sin′=cos、log′=1/u、最內層 2x。", 100);
 
   d("ch-nest-003", 4,
-    "\\frac{d}{dx}\\log(\\sin(\\sqrt{x^2+1}))",
+    "\\frac{d}{dx}\\ln(\\sin(\\sqrt{x^2+1}))",
     "x*cos(sqrt(x^2+1))/(sqrt(x^2+1)*sin(sqrt(x^2+1)))",
     ["log", "trig", "radical"],
     "1/sin(·) × cos(·) × x/√(x²+1)。中間那個 cos 最常被寫成 sin。", 110);
@@ -72,7 +72,7 @@
     "arctan′ 的分母是 1+(內層)²，而內層是 e^{sin(x²)}，所以是 1+e^{2sin(x²)}。", 120);
 
   d("ch-nest-005", 4,
-    "\\frac{d}{dx}\\cos\\left(\\log\\left(\\sqrt{1+e^x}\\right)\\right)",
+    "\\frac{d}{dx}\\cos\\left(\\ln\\left(\\sqrt{1+e^x}\\right)\\right)",
     "-exp(x)*sin(log(sqrt(1+exp(x))))/(2*(1+exp(x)))",
     ["trig", "log", "radical"],
     "log√u = (1/2)log u，先化簡可以少剝一層根號。", 120);
@@ -90,7 +90,7 @@
     "外層 3(·)²、中層 cos(cos²x)、內層 (cos²x)′ = −2 cos x sin x。", 130);
 
   d("ch-nest-008", 4,
-    "\\frac{d}{dx}\\log\\left(\\log\\left(\\sin^2 x+2\\right)\\right)",
+    "\\frac{d}{dx}\\ln\\left(\\ln\\left(\\sin^2 x+2\\right)\\right)",
     "2*sin(x)*cos(x)/((sin(x)^2+2)*log(sin(x)^2+2))",
     ["log", "trig"],
     "兩層 log 各給一個「1/內層」，最內層是 (sin²x+2)′ = 2 sin x cos x。", 110);
@@ -108,19 +108,19 @@
     "四個 cos 連乘，括號一層比一層少。寫的時候由外往內抄最不會亂。", 110);
 
   d("ch-nest-011", 5,
-    "\\frac{d}{dx}\\,e^{\\sqrt{\\log(1+x^2)}}",
+    "\\frac{d}{dx}\\,e^{\\sqrt{\\ln(1+x^2)}}",
     "x*exp(sqrt(log(1+x^2)))/((1+x^2)*sqrt(log(1+x^2)))",
     ["exponential", "radical", "log"],
     "e^u × 1/(2√u) × 2x/(1+x²)，那個 2 剛好約掉。", 140);
 
   d("ch-nest-012", 5,
-    "\\frac{d}{dx}\\log\\left(1+\\sqrt{1+\\sqrt{1+x}}\\right)",
+    "\\frac{d}{dx}\\ln\\left(1+\\sqrt{1+\\sqrt{1+x}}\\right)",
     "1/(4*sqrt(1+x)*sqrt(1+sqrt(1+x))*(1+sqrt(1+sqrt(1+x))))",
     ["log", "radical"],
     "兩層根號各給 1/(2√·)，所以分母出現 4。三個因式由內而外排好就不會漏。", 150);
 
   d("ch-nest-013", 6,
-    "\\frac{d}{dx}\\tan(\\sin(\\cos(\\log x)))",
+    "\\frac{d}{dx}\\tan(\\sin(\\cos(\\ln x)))",
     "-cos(cos(log(x)))*sin(log(x))/(x*cos(sin(cos(log(x))))^2)",
     ["trig", "log"],
     "五層，而且中間 cos 帶一個負號、最外層 tan 給 sec²。負號漏掉是最常見的錯。", 170);
@@ -132,7 +132,7 @@
     "先寫成 (1+sin²(e^x))^{−1/2}，外層就變成 −(1/2)(·)^{−3/2}。", 150);
 
   d("ch-nest-015", 6,
-    "\\frac{d}{dx}\\cos\\left(\\left(\\log x\\right)^{x}\\right)",
+    "\\frac{d}{dx}\\cos\\left(\\left(\\ln x\\right)^{x}\\right)",
     "-sin((log(x))^x)*(log(x))^x*(log(log(x))+1/log(x))",
     ["log-differentiation", "trig", "log"],
     "外層 cos(·)，內層是指數塔 (log x)^x —— 要先取對數：log u = x·log(log x)。", 190);
@@ -159,7 +159,7 @@
     "商數律的分子是「上微下 − 上下微」，而分母微分帶負號，兩個負號變加號。", 120);
 
   d("ch-mix-004", 4,
-    "\\frac{d}{dx}\\,\\frac{e^{\\sqrt{x}}}{1+\\log x}",
+    "\\frac{d}{dx}\\,\\frac{e^{\\sqrt{x}}}{1+\\ln x}",
     "(exp(sqrt(x))/(2*sqrt(x))*(1+log(x))-exp(sqrt(x))/x)/(1+log(x))^2",
     ["quotient-rule", "exponential", "log"],
     "分子分母各自都是複合的：上面 e^{√x}、下面 1+log x。", 130);
@@ -171,7 +171,7 @@
     "第二項：√x · 2x/(1+x⁴) = 2x^{3/2}/(1+x⁴)。", 110);
 
   d("ch-mix-006", 3,
-    "\\frac{d}{dx}\\left(\\log(x)\\sin(\\log x)\\right)",
+    "\\frac{d}{dx}\\left(\\ln(x)\\sin(\\ln x)\\right)",
     "(sin(log(x))+log(x)*cos(log(x)))/x",
     ["product-rule", "log"],
     "兩項都會生出 1/x，提出來之後式子短很多。", 100);
@@ -183,7 +183,7 @@
     "分子的 x·sec²(√x)/(2√x) 化簡成 √x/2 · sec²(√x)。", 130);
 
   d("ch-mix-008", 4,
-    "\\frac{d}{dx}\\left(e^{x^2}\\log(\\sin x)\\right)",
+    "\\frac{d}{dx}\\left(e^{x^2}\\ln(\\sin x)\\right)",
     "2*x*exp(x^2)*log(sin(x))+exp(x^2)*cos(x)/sin(x)",
     ["product-rule", "exponential", "log"],
     "第二項是 e^{x²}·(sin x)′/sin x = e^{x²} cot x。", 110);
@@ -207,7 +207,7 @@
     "內層商的導數化簡成 2e^x/(1−e^x)²，乘上外層的 3(·)² 得到 6。", 150);
 
   d("ch-mix-012", 4,
-    "\\frac{d}{dx}\\cos^2\\left(\\log(1+x^2)\\right)",
+    "\\frac{d}{dx}\\cos^2\\left(\\ln(1+x^2)\\right)",
     "-4*x*cos(log(1+x^2))*sin(log(1+x^2))/(1+x^2)",
     ["trig", "log"],
     "三層：平方 → cos → log。2×(−1)×2x = −4x。", 120);
@@ -228,7 +228,7 @@
     "log y = sin x·log(x²+1)，右邊用乘法律。", 130);
 
   d("ch-pow-003", 5,
-    "\\frac{d}{dx}\\left(\\log x\\right)^{\\tan x}",
+    "\\frac{d}{dx}\\left(\\ln x\\right)^{\\tan x}",
     "(log(x))^(tan(x))*(log(log(x))/cos(x)^2+tan(x)/(x*log(x)))",
     ["log-differentiation", "log", "trig"],
     "log y = tan x·log(log x)，兩項都要用鏈鎖。", 160);
@@ -252,7 +252,7 @@
     "log y = e^x·log x，微分得 e^x log x + e^x/x。", 140);
 
   d("ch-pow-007", 5,
-    "\\frac{d}{dx}\\left(\\cos x\\right)^{\\log x}",
+    "\\frac{d}{dx}\\left(\\cos x\\right)^{\\ln x}",
     "(cos(x))^(log(x))*(log(cos(x))/x-log(x)*tan(x))",
     ["log-differentiation", "trig"],
     "log y = log x·log cos x。第二項的 −tan x 來自 (log cos x)′。", 150);
@@ -286,7 +286,7 @@
     "1+tan²u = sec²u，所以整串是 sec(sin x)。微分只剩兩層。", 130);
 
   d("ch-trap-002", 3,
-    "\\frac{d}{dx}\\log\\left(e^{x^2+3x}\\right)",
+    "\\frac{d}{dx}\\ln\\left(e^{x^2+3x}\\right)",
     "2*x+3",
     ["trap-drill", "log"],
     "log 和 e 互相抵消，整串就是 x²+3x。", 60);
@@ -298,7 +298,7 @@
     "sin 和 arcsin 抵消（在定義域內），剩 x³。", 60);
 
   d("ch-trap-004", 3,
-    "\\frac{d}{dx}\\,e^{\\log(\\sin^2 x)}",
+    "\\frac{d}{dx}\\,e^{\\ln(\\sin^2 x)}",
     "2*sin(x)*cos(x)",
     ["trap-drill", "exponential"],
     "e^{log u} = u，所以是 sin²x。", 70);
@@ -316,7 +316,7 @@
     "cosh²−sinh² 恆等於 1，跟裡面是 3x 還是什麼都無關。", 70);
 
   d("ch-trap-007", 4,
-    "\\frac{d}{dx}\\log\\left(\\sqrt{\\frac{1+x}{1-x}}\\right)",
+    "\\frac{d}{dx}\\ln\\left(\\sqrt{\\frac{1+x}{1-x}}\\right)",
     "1/(1-x^2)",
     ["trap-drill", "log"],
     "先拆成 (1/2)[log(1+x) − log(1−x)]，微分後兩項通分正好是 1/(1−x²)。", 110);
@@ -328,7 +328,7 @@
     "兩者相加在 x>0 恆等於 π/2。硬微分也會得到 0，但要多寫五行。", 100);
 
   d("ch-trap-009", 4,
-    "\\frac{d}{dx}\\,\\frac{e^{2\\log x}}{x}",
+    "\\frac{d}{dx}\\,\\frac{e^{2\\ln x}}{x}",
     "1",
     ["trap-drill", "log", "exponential"],
     "e^{2log x} = x²，整串就是 x。", 80);
@@ -349,7 +349,7 @@
     "1+sinh²u = cosh²u，跟內層的 cosh u 約掉一個。", 150);
 
   d("ch-inv-003", 3,
-    "\\frac{d}{dx}\\log(\\cosh(\\sin x))",
+    "\\frac{d}{dx}\\ln(\\cosh(\\sin x))",
     "cos(x)*tanh(sin(x))",
     ["log", "hyperbolic", "trig"],
     "(log cosh u)′ = tanh u，再乘內層 cos x。", 100);
@@ -367,7 +367,7 @@
     "sinh′ = cosh，內層 arctan(x²) 的導數是 2x/(1+x⁴)。", 120);
 
   d("ch-inv-006", 4,
-    "\\frac{d}{dx}\\tanh\\left(\\log(1+x^2)\\right)",
+    "\\frac{d}{dx}\\tanh\\left(\\ln(1+x^2)\\right)",
     "2*x/((1+x^2)*cosh(log(1+x^2))^2)",
     ["hyperbolic", "log"],
     "tanh′ = sech²，內層 2x/(1+x²)。也可以先化簡成 (u²−1)/(u²+1)。", 130);
@@ -379,13 +379,13 @@
     "arccos′ 帶負號，內層 (e^{−x²})′ 也帶負號，兩個負號變正。", 150);
 
   d("ch-inv-008", 5,
-    "\\frac{d}{dx}\\log\\left(\\arctan\\left(e^x\\right)\\right)",
+    "\\frac{d}{dx}\\ln\\left(\\arctan\\left(e^x\\right)\\right)",
     "exp(x)/((1+exp(2*x))*atan(exp(x)))",
     ["log", "inverse-trig", "exponential"],
     "三層：log → arctan → e^x。arctan 的分母是 1+e^{2x}。", 140);
 
   d("ch-inv-009", 5,
-    "\\frac{d}{dx}\\arctan\\left(\\log(\\cosh x)\\right)",
+    "\\frac{d}{dx}\\arctan\\left(\\ln(\\cosh x)\\right)",
     "tanh(x)/(1+log(cosh(x))^2)",
     ["inverse-trig", "log", "hyperbolic"],
     "內層 (log cosh x)′ = tanh x，外層分母是 1+(log cosh x)²。", 140);
@@ -397,7 +397,7 @@
     "sec²(arcsin u) = 1/(1−u²)，乘上 arcsin 的 1/√(1−u²) 與內層 2x。", 140);
 
   d("ch-inv-011", 5,
-    "\\frac{d}{dx}\\,e^{\\arctan(\\log x)}",
+    "\\frac{d}{dx}\\,e^{\\arctan(\\ln x)}",
     "exp(atan(log(x)))/(x*(1+log(x)^2))",
     ["exponential", "inverse-trig", "log"],
     "三層：e^u → arctan → log。", 130);

@@ -65,7 +65,7 @@
     "取對數：log y = 2x log x，兩邊微分 y'/y = 2 log x + 2。", 55);
 
   expr("dd-log-002", 5,
-    "\\frac{d}{dx}\\left((\\log x)^{\\sin x}\\right)",
+    "\\frac{d}{dx}\\left((\\ln x)^{\\sin x}\\right)",
     "(log(x))^(sin(x))*(cos(x)*log(log(x))+sin(x)/(x*log(x)))", [LOGD, "trig", "log"],
     "log y = sin x · log(log x)，右邊用乘積律：cos x log(log x) + sin x/(x log x)。", 95);
 
@@ -90,7 +90,7 @@
     "log y = √x log x，y'/y = log x/(2√x) + 1/√x = (log x + 2)/(2√x)。", 75);
 
   expr("dd-log-007", 5,
-    "\\frac{d}{dx}\\left((\\log x)^x\\right)",
+    "\\frac{d}{dx}\\left((\\ln x)^x\\right)",
     "(log(x))^x*(log(log(x))+1/log(x))", [LOGD, "log"],
     "log y = x log(log x)，y'/y = log(log x) + x·1/(x log x)。", 85);
 
@@ -101,7 +101,7 @@
     "整串乘除取 log 後變加減：y'/y = 2/(x+1) + 1/(2(x−1)) − 4/(x+3)。直接用商數律會爆炸。", 95);
 
   expr("dd-log-009", 5,
-    "\\frac{d}{dx}\\left((\\log x)^{\\log x}\\right)",
+    "\\frac{d}{dx}\\left((\\ln x)^{\\ln x}\\right)",
     "(log(x))^(log(x))*(1+log(log(x)))/x", [LOGD, "log"],
     "log y = log x · log(log x)，微分得 (1/x)log(log x) + log x·1/(x log x) = (1 + log log x)/x。", 95);
 
@@ -129,7 +129,7 @@
     "每一層根號都貢獻一個 1/(2√·)，三層乘起來就是 1/8 配上三個根號。", 100);
 
   expr("dd-nest-004", 4,
-    "\\frac{d}{dx}\\log\\left(\\log\\left(x^2+4\\right)\\right)",
+    "\\frac{d}{dx}\\ln\\left(\\ln\\left(x^2+4\\right)\\right)",
     "2*x/((x^2+4)*log(x^2+4))", [CHAIN, "log"],
     "每層 log 貢獻一個「1/內層」，最內層 x²+4 再貢獻 2x。", 60);
 
@@ -177,17 +177,17 @@
     "外層 1/(1+(x²−1)) = 1/x²，內層 x/√(x²−1)。", 85);
 
   expr("dd-inv-005", 4,
-    "\\frac{d}{dx}\\tanh(\\log x)",
+    "\\frac{d}{dx}\\tanh(\\ln x)",
     "4*x/(x^2+1)^2", ["hyperbolic", "trap-drill"],
     "先化簡：tanh(log x) = (x²−1)/(x²+1)，再用商數律。硬套 sech² 也對，但會多繞一圈。", 80);
 
   expr("dd-inv-006", 3,
-    "\\frac{d}{dx}\\log(\\cosh x)",
+    "\\frac{d}{dx}\\ln(\\cosh x)",
     "tanh(x)", ["hyperbolic", CHAIN],
     "(cosh x)'/cosh x = sinh x / cosh x = tanh x。", 50);
 
   expr("dd-inv-007", 4,
-    "\\frac{d}{dx}\\sinh(\\log x)",
+    "\\frac{d}{dx}\\sinh(\\ln x)",
     "(1+1/x^2)/2", ["hyperbolic"],
     "sinh(log x) = (x − 1/x)/2，導數 (1 + 1/x²)/2。", 65);
 
@@ -237,10 +237,10 @@
     { m: "implicit", F: "y^3+xy-10", at: [1, 2] });
 
   num("dd-imp-007", 4,
-    "\\log(xy)+y=1\\ \\text{在點}\\ (1,1)\\ \\text{的}\\ \\frac{dy}{dx}",
+    "\\ln(xy)+y=1\\ \\text{在點}\\ (1,1)\\ \\text{的}\\ \\frac{dy}{dx}",
     "-1/2", [IMP, "log"],
     "log(xy) = log x + log y，所以 1/x + y'/y + y' = 0，代 (1,1) 得 1 + 2y' = 0。", 75,
-    { m: "implicit", F: "\\log(xy)+y-1", at: [1, 1] });
+    { m: "implicit", F: "\\ln(xy)+y-1", at: [1, 1] });
 
   num("dd-imp-008", 4,
     "x^3+y^3=9xy\\ \\text{在點}\\ (2,4)\\ \\text{的切線斜率}",
@@ -306,7 +306,7 @@
     "f(x)=tan x 在 π/4 的導數：sec²(π/4)=2。", 55);
 
   num("dd-def-005", 2,
-    "\\lim_{h\\to 0}\\frac{\\log(3+h)-\\log 3}{h}",
+    "\\lim_{h\\to 0}\\frac{\\ln(3+h)-\\ln 3}{h}",
     "1/3", ["derivative-definition", "log"],
     "f(x)=log x 在 x=3 的導數：1/3。", 45);
 
@@ -591,10 +591,10 @@
     { m: "linApprox", f: "\\sqrt{x}", a: 100, dx: 1 });
 
   num("dd-lin-003", 2,
-    "\\text{用線性近似估計 }\\log(1.05)",
+    "\\text{用線性近似估計 }\\ln(1.05)",
     "0.05", ["linear-approximation", "log", "estimate"],
     "f(x)=log x 在 1：f'(1)=1，L = 0 + 0.05。", 60,
-    { m: "linApprox", f: "\\log(x)", a: 1, dx: 0.05 });
+    { m: "linApprox", f: "\\ln(x)", a: 1, dx: 0.05 });
 
   num("dd-lin-004", 3,
     "\\text{球半徑量得 }10\\text{ 公分、誤差 }0.05\\text{ 公分。用微分估計體積的誤差（立方公分）}",
@@ -667,7 +667,7 @@
     "\\text{指數成長的族群 }P(0)=500,\\ P(2)=800\\text{。}t=4\\ \\text{時的成長率}",
     "640*log(1.6)", ["exponential-growth", STORY],
     "e^{2k} = 1.6 → k = (log 1.6)/2。P(4) = 500·1.6² = 1280，P'(4) = 1280k = 640 log 1.6 ≈ 300.8。", 120,
-    { m: "deriv", f: "500e^{\\frac{\\log(1.6)}{2}x}", at: [4] });
+    { m: "deriv", f: "500e^{\\frac{\\ln(1.6)}{2}x}", at: [4] });
 
   num("dd-grw-003", 4,
     "\\text{半衰期 }8\\text{ 天的同位素，初始 }40\\text{ 公克。}t=8\\ \\text{天時的衰變速率（公克／天）}",

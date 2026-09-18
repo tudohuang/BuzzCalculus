@@ -384,7 +384,8 @@ async function run() {
     // 所以這裡真的從題庫開一題出來量 scrollWidth。
     const proseWrap = await chrome.evaluate(`
       ${HELPERS}
-      const story = (window.BUZZ_PROBLEMS || []).find((p) => /^dd-rr-/.test(p.id));
+      // 新使用者的難度上限是 R2：情境題要挑鎖之內的那一題，不然題庫搜不到（實測 dd-rr-001 是 R3）
+      const story = (window.BUZZ_PROBLEMS || []).find((p) => /^dd-rr-/.test(p.id) && Number(p.rank || p.difficulty) <= 2);
       if (!story) return { missing: true, why: "題庫裡沒有 dd-rr- 開頭的題" };
       window.__e2e.clickSelector('[data-action="open-library"]');
       // 三步都用等的：題庫頁 render、搜尋結果 render、題目畫面 render，
