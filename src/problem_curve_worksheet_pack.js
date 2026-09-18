@@ -426,7 +426,7 @@
       id: "cw-013",
       rank: 4,
       prompt: "\\text{完成 }f(x)=\\ln(x^2+1)\\text{ 的作圖表}",
-      fields: fields("\\log(x^2+1)", [-25, 25], {
+      fields: fields("\\ln(x^2+1)", [-25, 25], {
         increasing: "(0, inf)",
         decreasing: "(-inf, 0)",
         localMax: "{}",
@@ -546,7 +546,7 @@
       id: "cw-017",
       rank: 5,
       prompt: "\\text{完成 }f(x)=\\frac{\\ln x}{x}\\text{ 的作圖表}",
-      fields: fields("\\frac{\\log x}{x}", [-5, 60], {
+      fields: fields("\\frac{\\ln x}{x}", [-5, 60], {
         increasing: "(0, e)",
         decreasing: "(e, inf)",
         localMax: "{e}",

@@ -252,7 +252,7 @@
     "dm-seq-007": { m: "seqLimit", f: "\\frac{1}{n^2}\\sum_{k=1}^{n}k\\sin\\frac{k}{n}", tol: 1e-3 },
     "dm-seq-008": { m: "seqLimit", f: "\\prod_{k=1}^{n}\\left(1+\\frac{k^2}{n^2}\\right)^{1/n}", tol: 1e-3 },
     "dm-seq-009": { m: "seqLimit", f: "n\\int_0^{\\pi/4}(\\tan x)^n\\,dx", tol: 1e-3 },
-    "dm-seq-010": { m: "seqLimit", f: "\\frac{n}{\\log n}\\left(n^{1/n}-1\\right)", tol: 1e-3 },
+    "dm-seq-010": { m: "seqLimit", f: "\\frac{n}{\\ln n}\\left(n^{1/n}-1\\right)", tol: 1e-3 },
     // I(t) 定義式在 t=1 的值：直接對定義的積分數值積。
     // e^{-x²} 在 x=20 已是 1e-174，截到 20 沒有損失。
     "dm-int-006": { m: "integral", f: "e^{-x^2}\\cos(2x)", v: "x", a: 0, b: 20 },

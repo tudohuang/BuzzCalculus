@@ -79,7 +79,7 @@
     ],
     [
       "hc-usub-003",
-      "\\int x\\left(\\log(1+x^2)\\right)^2\\,dx",
+      "\\int x\\left(\\ln(1+x^2)\\right)^2\\,dx",
       "(1+x^2)*(log(1+x^2)^2-2*log(1+x^2)+2)/2",
       ["substitution", "u-sub", "log", "integration-by-parts"],
       "Let u=1+x^2, then use the antiderivative of (log u)^2."
@@ -173,7 +173,7 @@
     ],
     [
       "hc-ibp-007",
-      "\\int x^3\\log x\\,dx",
+      "\\int x^3\\ln x\\,dx",
       "x^4*log(x)/4-x^4/16",
       ["integration-by-parts", "ibp", "log"],
       "Use u=log x and dv=x^3 dx."
@@ -185,7 +185,7 @@
   [
     [
       "hc-ibp-008",
-      "\\int_0^1 x^4\\log(1+x)\\,dx",
+      "\\int_0^1 x^4\\ln(1+x)\\,dx",
       "2*log(2)/5-47/300",
       ["integration-by-parts", "ibp", "log", "definite-integral"],
       "IBP leaves int_0^1 x^5/(1+x) dx; divide the polynomial before integrating."

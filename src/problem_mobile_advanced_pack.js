@@ -49,7 +49,7 @@
     ["mob-tech-001", "limits", "\\lim_{x\\to\\infty}(\\sqrt{x^2+3x}-x)", ["rationalize", "rationalization"], "rationalize"],
     ["mob-tech-002", "limits", "\\lim_{x\\to 0}\\frac{e^{2x}-1-2x}{x^2}", ["taylor", "taylor expansion"], "Taylor"],
     ["mob-tech-003", "integrals", "\\int x e^{x^2}\\,dx", ["substitution", "u-sub", "u substitution", "u-substitution"], "u-substitution"],
-    ["mob-tech-004", "integrals", "\\int x\\log x\\,dx", ["integration by parts", "ibp"], "integration by parts"],
+    ["mob-tech-004", "integrals", "\\int x\\ln x\\,dx", ["integration by parts", "ibp"], "integration by parts"],
     ["mob-tech-005", "integrals", "\\int \\frac{dx}{x^2-1}", ["partial fraction", "partial fractions"], "partial fraction"],
     ["mob-tech-006", "integrals", "\\int \\frac{dx}{\\sqrt{a^2-x^2}}", ["trig substitution", "trigonometric substitution"], "trig substitution"],
     ["mob-tech-007", "series", "\\sum_{n=1}^{\\infty}\\frac{n!}{3^n}", ["ratio test", "ratio"], "ratio test"],
@@ -93,7 +93,7 @@
 
   [
     ["mob-limtrap-003", "\\lim_{x\\to 0}\\frac{1-\\cos x-x^2/2}{x^4}", "-1/24"],
-    ["mob-limtrap-004", "\\lim_{x\\to 0}\\frac{\\log(1+x)-x+x^2/2}{x^3}", "1/3"],
+    ["mob-limtrap-004", "\\lim_{x\\to 0}\\frac{\\ln(1+x)-x+x^2/2}{x^3}", "1/3"],
     ["mob-limtrap-005", "\\lim_{x\\to 0}\\frac{e^x-1-x-x^2/2}{x^3}", "1/6"],
     ["mob-limtrap-006", "\\lim_{x\\to 0}\\frac{\\sqrt{1+x}-1-x/2}{x^2}", "-1/8"],
     ["mob-limtrap-008", "\\lim_{(x,y)\\to(0,0)}\\sqrt{x^2+y^2}\\sin\\frac{1}{\\sqrt{x^2+y^2}}", "0", ["multivariable-limit", "multivariable"]]

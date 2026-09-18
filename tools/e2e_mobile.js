@@ -277,7 +277,7 @@ async function run() {
       if(!lib) return { ok:false, why:"找不到題庫" };
       lib.click(); await new Promise(r => setTimeout(r, 900 * (window.__slow || 1)));
       const s=document.querySelector("[data-library-search]");
-      if(s){ s.value="dd-rr-001"; s.dispatchEvent(new Event("input",{bubbles:true})); await new Promise(r => setTimeout(r, 700 * (window.__slow || 1))); }
+      if(s){ s.value="dd-rr-012"; s.dispatchEvent(new Event("input",{bubbles:true})); await new Promise(r => setTimeout(r, 700 * (window.__slow || 1))); }
       const go=document.querySelector('[data-action="start-problem"]');
       if(!go) return { ok:false, why:"題庫裡沒有可開始的題目" };
       go.click(); await new Promise(r => setTimeout(r, 1200 * (window.__slow || 1)));
@@ -335,7 +335,9 @@ async function run() {
       lib.click(); await new Promise(r => setTimeout(r, 900 * (window.__slow || 1)));
       const s=document.querySelector("[data-library-search]");
       if(!s) return { ok:false, why:"沒有搜尋框" };
-      s.value="正立方體"; s.dispatchEvent(new Event("input",{bubbles:true}));
+      // 新使用者的難度鎖是 R2：「變化率」在鎖之內有三題（漣漪、甲車乙車、正立方體），
+      // 答完第一題才有「下一題」讓 toast 出現；只搜一題的關鍵字會直接進結算頁。
+      s.value="變化率"; s.dispatchEvent(new Event("input",{bubbles:true}));
       await new Promise(r => setTimeout(r, 700 * (window.__slow || 1)));
       const go=document.querySelector('[data-action="start-library-filter"]');
       if(!go || go.disabled) return { ok:false, why:"「練目前篩選」不能按" };
@@ -346,8 +348,8 @@ async function run() {
       const form=document.querySelector('[data-action="submit-answer"]');
       if(!input||!form) return { ok:false, why:"不是自己寫模式" };
       const promptText=document.body.innerText;
-      input.value = promptText.includes("誤差") ? "1.5"
-        : promptText.includes("表面積") ? "1/96" : "600";
+      input.value = promptText.includes("漣漪") ? "40*pi"
+        : promptText.includes("甲車") ? "100" : "600";
       input.dispatchEvent(new Event("input",{bubbles:true}));
       if(form.requestSubmit) form.requestSubmit();
       else form.dispatchEvent(new Event("submit",{bubbles:true,cancelable:true}));
@@ -411,7 +413,7 @@ async function run() {
         await new Promise(r => setTimeout(r, 800 * (window.__slow || 1)));
         const s2=document.querySelector("[data-library-search]");
         if (!s2) return { ok: false };
-        s2.value="dd-rr-001"; s2.dispatchEvent(new Event("input",{bubbles:true}));
+        s2.value="dd-rr-012"; s2.dispatchEvent(new Event("input",{bubbles:true}));
         await new Promise(r => setTimeout(r, 700 * (window.__slow || 1)));
         const go=document.querySelector('[data-action="start-problem"]');
         if (!go) return { ok: false };
@@ -525,10 +527,10 @@ async function run() {
       lib.click(); await new Promise(r => setTimeout(r, 900 * (window.__slow || 1)));
       const s=document.querySelector("[data-library-search]");
       if(!s) return { ok:false, why:"題庫沒有搜尋框" };
-      s.value="dd-rr-001"; s.dispatchEvent(new Event("input",{bubbles:true}));
+      s.value="dd-rr-012"; s.dispatchEvent(new Event("input",{bubbles:true}));
       await new Promise(r => setTimeout(r, 700 * (window.__slow || 1)));
       const go=document.querySelector('[data-action="start-problem"]');
-      if(!go) return { ok:false, why:"找不到 dd-rr-001" };
+      if(!go) return { ok:false, why:"找不到 dd-rr-012" };
       go.click(); await new Promise(r => setTimeout(r, 1200 * (window.__slow || 1)));
       const ack=[...document.querySelectorAll("button")].find(b=>b.textContent.includes("知道了"));
       if(ack){ ack.click(); await new Promise(r => setTimeout(r, 400 * (window.__slow || 1))); }

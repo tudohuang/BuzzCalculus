@@ -133,7 +133,7 @@
     // ── 區間：端點到底算不算 ──────────────────────────────
     add({
       id: "si-int-001",
-      verify: { m: "domain", f: "\\log(x-1)", range: [-20, 60] },
+      verify: { m: "domain", f: "\\ln(x-1)", range: [-20, 60] },
       solutionSteps: [
               "對數函數 ln(u) 要求 u>0。",
               "所以需要 x−1>0。",

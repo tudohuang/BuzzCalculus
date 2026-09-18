@@ -56,7 +56,7 @@
   N("hd-008", "derivatives", 5, "\\text{Coefficient of }x^7\\text{ in }\\tan x", "17/315", "MIT", ["taylor", "coefficient"], "tan x = x + x^3/3 + 2x^5/15 + 17x^7/315 + ...");
   X("hd-009", "derivatives", 5, "\\frac{d}{dx}\\left(\\arcsin x\\right)^2", "2*arcsin(x)/sqrt(1-x^2)", "x", "Harvard", ["inverse-trig", "chain-rule"], "Chain rule on (arcsin x)^2.");
   X("hd-010", "derivatives", 6, "\\frac{d}{dx}\\,x^{x^2}", "x^(x^2)*(2*x*log(x)+x)", "x", "Caltech", ["log-differentiation"], "Differentiate x^2 log x in the exponent.");
-  X("hd-011", "derivatives", 5, "\\frac{d}{dx}\\,\\log\\tan\\frac{x}{2}", "1/sin(x)", "x", "Oxford", ["trig", "chain-rule"], "Derivative of log tan(x/2) is csc x.");
+  X("hd-011", "derivatives", 5, "\\frac{d}{dx}\\,\\ln\\tan\\frac{x}{2}", "1/sin(x)", "x", "Oxford", ["trig", "chain-rule"], "Derivative of log tan(x/2) is csc x.");
   N("hd-012", "derivatives", 5, "\\text{Coefficient of }x^4\\text{ in }\\tan^2 x", "2/3", "MIT", ["taylor", "coefficient"], "tan^2 x = x^2 + 2x^4/3 + ...");
 
   /* ===== Tough applications ===== */
@@ -71,7 +71,7 @@
   N("app-009", "derivatives", 5, "\\text{半徑 }1\\text{ 球內接圓柱的最大體積}", "4*pi/(3*sqrt(3))", "Harvard", ["applications", "optimization"], "Max cylinder volume in a unit sphere.");
   N("app-010", "derivatives", 6, "\\text{半徑 }1\\text{ 球內接圓錐的最大體積}", "32*pi/81", "Caltech", ["applications", "optimization"], "Max cone volume = 32πR^3/81.");
   N("app-011", "derivatives", 5, "\\text{13 尺梯子下端以 }5\\,\\tfrac{ft}{s}\\text{ 滑離牆，距牆 }12\\text{ 尺時頂端下滑速率}", "12", "MIT", ["applications", "related-rates"], "x dx/dt + y dy/dt = 0; y=5.");
-  N("app-012", "derivatives", 6, "\\text{曲線 }y=\\log x\\text{ 的最大曲率}", "2/(3*sqrt(3))", "Princeton", ["applications", "curvature"], "κ = x/(x^2+1)^{3/2}, max at x=1/√2.");
+  N("app-012", "derivatives", 6, "\\text{曲線 }y=\\ln x\\text{ 的最大曲率}", "2/(3*sqrt(3))", "Princeton", ["applications", "curvature"], "κ = x/(x^2+1)^{3/2}, max at x=1/√2.");
 
   // ---- 獨立驗算規格（tools/verify_answers.js 讀）----
   // 文字敘述題的自動辨識器讀不出結構；這裡把幾何翻譯成目標式／約束

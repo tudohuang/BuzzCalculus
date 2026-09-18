@@ -66,14 +66,14 @@
   [
     ["rel-basic-001", "limits", "\\lim_{x\\to0}\\frac{\\sin(5x)}{x}", "5", ["standard-limit", "beginner-foundation"], "sin(5x)/(5x) tends to 1."],
     ["rel-basic-003", "limits", "\\lim_{x\\to0}\\frac{e^{4x}-1}{x}", "4", ["standard-limit", "beginner-foundation"], "Use e^u-1 ~ u."],
-    ["rel-basic-004", "limits", "\\lim_{x\\to0}\\frac{\\log(1+2x)}{x}", "2", ["standard-limit", "beginner-foundation"], "Use log(1+u) ~ u."],
+    ["rel-basic-004", "limits", "\\lim_{x\\to0}\\frac{\\ln(1+2x)}{x}", "2", ["standard-limit", "beginner-foundation"], "Use log(1+u) ~ u."],
     ["rel-basic-005", "limits", "\\lim_{x\\to0}\\frac{\\sqrt{1+x}-1}{x}", "1/2", ["rationalize", "beginner-foundation"], "Rationalize the numerator."],
     ["rel-basic-007", "derivatives", "\\left.\\frac{d}{dx}x^3\\right|_{x=2}", "12", ["basic-derivative", "beginner-foundation"], "The derivative is 3x^2."],
     ["rel-basic-008", "derivatives", "\\left.\\frac{d}{dx}\\sin x\\right|_{x=0}", "1", ["basic-derivative", "beginner-foundation"], "The derivative is cos x."],
     ["rel-basic-009", "derivatives", "\\left.\\frac{d}{dx}e^{2x}\\right|_{x=0}", "2", ["chain-rule", "beginner-foundation"], "The derivative is 2e^{2x}."],
     ["rel-basic-010", "derivatives", "\\left.\\frac{d}{dx}\\sqrt{x}\\right|_{x=4}", "1/4", ["basic-derivative", "beginner-foundation"], "The derivative is 1/(2sqrt x)."],
-    ["rel-basic-011", "derivatives", "\\left.\\frac{d}{dx}\\log x\\right|_{x=e}", "1/e", ["basic-derivative", "beginner-foundation"], "The derivative is 1/x."],
-    ["rel-basic-012", "derivatives", "\\left.\\frac{d}{dx}(x\\log x)\\right|_{x=1}", "1", ["product-rule", "beginner-foundation"], "The derivative is log x+1."],
+    ["rel-basic-011", "derivatives", "\\left.\\frac{d}{dx}\\ln x\\right|_{x=e}", "1/e", ["basic-derivative", "beginner-foundation"], "The derivative is 1/x."],
+    ["rel-basic-012", "derivatives", "\\left.\\frac{d}{dx}(x\\ln x)\\right|_{x=1}", "1", ["product-rule", "beginner-foundation"], "The derivative is log x+1."],
     ["rel-basic-013", "integrals", "\\int_0^1 x^2\\,dx", "1/3", ["basic-integral", "beginner-foundation"], "Use the power rule."],
     ["rel-basic-014", "integrals", "\\int_0^{\\pi}\\sin x\\,dx", "2", ["basic-integral", "beginner-foundation"], "The antiderivative is -cos x."],
     ["rel-basic-015", "integrals", "\\int_0^1 e^{2x}\\,dx", "(e^2-1)/2", ["basic-integral", "beginner-foundation"], "Divide by the inner coefficient 2."],
@@ -102,7 +102,7 @@
   });
 
   antiderivative("rel-adv-009", 3, "\\int x^3e^{x^2}\\,dx", "exp(x^2)*(x^2-1)/2", ["substitution", "u-sub"], "Let u=x^2. Then x^3 dx=(u/2)du.", ["After substitution integrate u e^u."], 80);
-  antiderivative("rel-adv-010", 3, "\\int x\\log(1+x^2)\\,dx", "(1+x^2)*log(1+x^2)/2-(1+x^2)/2", ["substitution", "log"], "Let u=1+x^2 and integrate log u.", ["Use u=1+x^2."], 80);
+  antiderivative("rel-adv-010", 3, "\\int x\\ln(1+x^2)\\,dx", "(1+x^2)*log(1+x^2)/2-(1+x^2)/2", ["substitution", "log"], "Let u=1+x^2 and integrate log u.", ["Use u=1+x^2."], 80);
   text("rel-adv-015", "series", 3, "\\sum_{n=1}^{\\infty}\\left(\\frac{n}{3n+1}\\right)^n", ["convergent", "converges"], "convergent", ["root-test", "series-test"], "The root limit is 1/3<1.", ["Use the root test."], 55);
   text("rel-adv-018", "series", 3, "\\sum_{n=1}^{\\infty}\\frac{3n^2+1}{n^3+n}", ["divergent", "diverges"], "divergent", ["limit-comparison", "series-test"], "The terms behave like 3/n.", ["Use limit comparison with 1/n."], 55);
   text("rel-adv-020", "series", 3, "\\sum_{n=1}^{\\infty}\\frac{x^n}{n}\\text{ at }x=-1", ["conditional", "conditionally convergent", "conditional convergence"], "conditional", ["endpoint-analysis", "power-series"], "At x=-1 this is the alternating harmonic series.", ["Endpoint analysis is required."], 55);
@@ -119,8 +119,8 @@
     ["rel-boss-010", "integrals", "\\iint_T\\frac{xy}{x+y}\\,dA,\\quad T=\\{x,y>0,\\ x+y<1\\}", "1/18", ["change-of-variables", "jacobian"], "Use u=x+y and v=x/(x+y).", 6],
     ["rel-boss-011", "integrals", "\\iiint_{x,y,z\\ge0,\\ x+y+z\\le1}xyz\\,dV", "1/720", ["triple-integral", "simplex"], "Use the simplex beta integral.", 6],
     ["rel-boss-012", "integrals", "\\iiint_{x^2+y^2+z^2\\le4}(x^2+y^2+z^2)\\,dV", "128*pi/5", ["triple-integral", "spherical"], "Use spherical coordinates: integrate 4pi r^4.", 6],
-    ["rel-boss-017", "integrals", "\\int_0^1(\\log x)^2\\,dx", "2", ["improper-integral", "gamma-function"], "Differentiate the beta/gamma integral or use Gamma(3).", 5],
-    ["rel-boss-019", "limits", "\\lim_{n\\to\\infty}n\\left(\\log(n+1)-\\log n\\right)", "1", ["asymptotic", "limit-trap"], "Rewrite as n log(1+1/n).", 5],
+    ["rel-boss-017", "integrals", "\\int_0^1(\\ln x)^2\\,dx", "2", ["improper-integral", "gamma-function"], "Differentiate the beta/gamma integral or use Gamma(3).", 5],
+    ["rel-boss-019", "limits", "\\lim_{n\\to\\infty}n\\left(\\ln(n+1)-\\ln n\\right)", "1", ["asymptotic", "limit-trap"], "Rewrite as n log(1+1/n).", 5],
     ["rel-boss-020", "integrals", "\\operatorname{Res}_{z=0}\\frac{1-\\cos z}{z^3}", "1/2", ["complex", "residue"], "The z^2/2 term in 1-cos z creates the residue.", 6]
   ].forEach(([id, topic, prompt, answer, tags, solution, rank]) => {
     numeric(id, topic, 4, prompt, answer, tags, solution, ["This is intended as a Boss/Boss+ item."], 110, rank);

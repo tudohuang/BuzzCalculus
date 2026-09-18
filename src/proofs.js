@@ -925,13 +925,13 @@
       difficulty: 4,
       tags: ["ode", "power-series", "log", "classic"],
       statement: "證明微分方程 (1 − x²)y″ − 2xy′ = 0 在原點附近可展開為冪級數的解，都可寫成 c₁ + c₂·(1/2)log((1+x)/(1−x))。",
-      prompt: "(1-x^2)y''-2xy'=0\\ \\Rightarrow\\ y=c_1+c_2\\cdot\\frac12\\log\\frac{1+x}{1-x}",
+      prompt: "(1-x^2)y''-2xy'=0\\ \\Rightarrow\\ y=c_1+c_2\\cdot\\frac12\\ln\\frac{1+x}{1-x}",
       hints: ["左邊是一個全微分：((1 − x²)y′)′。", "所以 (1 − x²)y′ 是常數。", "1/(1 − x²) 的積分是 (1/2)log((1+x)/(1−x))。"],
       keySteps: ["recognize ((1−x²)y′)′", "first integral (1−x²)y′ = c", "partial fractions", "artanh series has radius 1"],
       solution: [
         { text: "觀察 ((1 − x²)y′)′ = (1 − x²)y″ − 2xy′：方程就是說這個導數為零。", tex: "\\frac{d}{dx}\\big[(1-x^2)y'\\big]=0" },
         { text: "所以 (1 − x²)y′ = c₂（常數），在 |x| < 1 上 y′ = c₂/(1 − x²)。", tex: "y'=\\frac{c_2}{1-x^2}=\\frac{c_2}{2}\\Big(\\frac{1}{1+x}+\\frac{1}{1-x}\\Big)" },
-        { text: "積分得解的一般形；它在 |x| < 1 上是收斂的冪級數（artanh 的展開）。", tex: "y=c_1+c_2\\cdot\\frac12\\log\\frac{1+x}{1-x}=c_1+c_2\\sum_{k\\ge 0}\\frac{x^{2k+1}}{2k+1}" }
+        { text: "積分得解的一般形；它在 |x| < 1 上是收斂的冪級數（artanh 的展開）。", tex: "y=c_1+c_2\\cdot\\frac12\\ln\\frac{1+x}{1-x}=c_1+c_2\\sum_{k\\ge 0}\\frac{x^{2k+1}}{2k+1}" }
       ]
     },
     {
@@ -1010,14 +1010,14 @@
       difficulty: 5,
       tags: ["feynman", "parameter-integral", "log", "classic"],
       statement: "證明對 p, q > −1，∫₀¹ (x^p − x^q)/log x dx = log((p+1)/(q+1))。",
-      prompt: "\\int_0^1\\frac{x^p-x^q}{\\log x}\\,dx=\\log\\frac{p+1}{q+1}\\quad(p,q>-1)",
+      prompt: "\\int_0^1\\frac{x^p-x^q}{\\ln x}\\,dx=\\ln\\frac{p+1}{q+1}\\quad(p,q>-1)",
       hints: ["把 p 當參數：I(p) = ∫₀¹ (x^p − x^q)/log x dx。", "∂/∂p 把 log x 消掉：∂/∂p x^p = x^p log x。", "I(q) = 0 定出積分常數。"],
       keySteps: ["differentiate in the parameter p", "log x cancels", "integrate 1/(p+1)", "normalize with I(q) = 0"],
       solution: [
-        { text: "被積函數在 x → 0⁺ 趨於 0、在 x → 1⁻ 趨於 p − q（L'Hôpital），所以積分收斂，且對 p 在 [q, p] 上可在積分號下微分（一致可積的控制函數）。", tex: "I(p)=\\int_0^1\\frac{x^p-x^q}{\\log x}\\,dx" },
+        { text: "被積函數在 x → 0⁺ 趨於 0、在 x → 1⁻ 趨於 p − q（L'Hôpital），所以積分收斂，且對 p 在 [q, p] 上可在積分號下微分（一致可積的控制函數）。", tex: "I(p)=\\int_0^1\\frac{x^p-x^q}{\\ln x}\\,dx" },
         { text: "對 p 微分：∂/∂p 的 x^p = x^p log x，log x 剛好約掉。", tex: "I'(p)=\\int_0^1 x^p\\,dx=\\frac{1}{p+1}" },
-        { text: "積分回去，並用 I(q) = 0 定常數。", tex: "I(p)=\\log(p+1)+C,\\quad 0=I(q)=\\log(q+1)+C" },
-        { text: "所以 I(p) = log(p+1) − log(q+1)。", tex: "\\int_0^1\\frac{x^p-x^q}{\\log x}\\,dx=\\log\\frac{p+1}{q+1}" }
+        { text: "積分回去，並用 I(q) = 0 定常數。", tex: "I(p)=\\ln(p+1)+C,\\quad 0=I(q)=\\ln(q+1)+C" },
+        { text: "所以 I(p) = log(p+1) − log(q+1)。", tex: "\\int_0^1\\frac{x^p-x^q}{\\ln x}\\,dx=\\ln\\frac{p+1}{q+1}" }
       ]
     },
     {
@@ -1027,14 +1027,14 @@
       difficulty: 6,
       tags: ["series", "wallis", "feynman", "classic"],
       statement: "利用前題證明 ∫₀¹ (1 − x)/((1 + x) log x) dx = log(2/π)。",
-      prompt: "\\int_0^1\\frac{1-x}{1+x}\\cdot\\frac{dx}{\\log x}=\\log\\frac{2}{\\pi}",
+      prompt: "\\int_0^1\\frac{1-x}{1+x}\\cdot\\frac{dx}{\\ln x}=\\ln\\frac{2}{\\pi}",
       hints: ["(1−x)/(1+x) = (1−x)Σ(−x)^k = Σ(−1)^k(x^k − x^{k+1})。", "每一項用 III-5：∫(x^k − x^{k+1})/log x = log((k+1)/(k+2))。", "交錯乘積 (1/2)(3/2)(3/4)(5/4)⋯ 是 Wallis 乘積。"],
       keySteps: ["geometric series expansion", "termwise III-5", "alternating sum of logs = log of a product", "Wallis product = 2/π"],
       solution: [
-        { text: "展開：(1 − x)/(1 + x) = (1 − x)Σ_{k≥0}(−x)^k = Σ(−1)^k(x^k − x^{k+1})，在 [0,1) 上逐項可積（交錯、單調控制）。", tex: "\\int_0^1\\frac{1-x}{(1+x)\\log x}\\,dx=\\sum_{k=0}^\\infty(-1)^k\\int_0^1\\frac{x^k-x^{k+1}}{\\log x}\\,dx" },
-        { text: "每一項用 III-5（p = k、q = k+1）。", tex: "\\int_0^1\\frac{x^k-x^{k+1}}{\\log x}\\,dx=\\log\\frac{k+1}{k+2}" },
-        { text: "交錯和的部分和是一個乘積的對數。", tex: "\\sum_{k=0}^{2m-1}(-1)^k\\log\\frac{k+1}{k+2}=\\log\\Big(\\frac12\\cdot\\frac32\\cdot\\frac34\\cdot\\frac54\\cdots\\frac{2m-1}{2m}\\Big)" },
-        { text: "括號裡是 Wallis 乘積 Π (2m−1)(2m+1)/(2m)² 的部分乘積（差一個 → 1 的因子），極限是 2/π。", tex: "\\prod_{m=1}^\\infty\\frac{(2m-1)(2m+1)}{(2m)^2}=\\frac{2}{\\pi}\\ \\Rightarrow\\ \\int_0^1\\frac{1-x}{(1+x)\\log x}\\,dx=\\log\\frac2\\pi" }
+        { text: "展開：(1 − x)/(1 + x) = (1 − x)Σ_{k≥0}(−x)^k = Σ(−1)^k(x^k − x^{k+1})，在 [0,1) 上逐項可積（交錯、單調控制）。", tex: "\\int_0^1\\frac{1-x}{(1+x)\\ln x}\\,dx=\\sum_{k=0}^\\infty(-1)^k\\int_0^1\\frac{x^k-x^{k+1}}{\\ln x}\\,dx" },
+        { text: "每一項用 III-5（p = k、q = k+1）。", tex: "\\int_0^1\\frac{x^k-x^{k+1}}{\\ln x}\\,dx=\\ln\\frac{k+1}{k+2}" },
+        { text: "交錯和的部分和是一個乘積的對數。", tex: "\\sum_{k=0}^{2m-1}(-1)^k\\ln\\frac{k+1}{k+2}=\\ln\\Big(\\frac12\\cdot\\frac32\\cdot\\frac34\\cdot\\frac54\\cdots\\frac{2m-1}{2m}\\Big)" },
+        { text: "括號裡是 Wallis 乘積 Π (2m−1)(2m+1)/(2m)² 的部分乘積（差一個 → 1 的因子），極限是 2/π。", tex: "\\prod_{m=1}^\\infty\\frac{(2m-1)(2m+1)}{(2m)^2}=\\frac{2}{\\pi}\\ \\Rightarrow\\ \\int_0^1\\frac{1-x}{(1+x)\\ln x}\\,dx=\\ln\\frac2\\pi" }
       ]
     },
     {
@@ -1044,14 +1044,14 @@
       difficulty: 5,
       tags: ["feynman", "parameter-integral", "trig-integral", "classic"],
       statement: "對 a ≥ b > 0 求 ∫₀^π log(a + b cos x) dx，並證明。",
-      prompt: "\\int_0^\\pi\\log(a+b\\cos x)\\,dx=\\pi\\log\\frac{a+\\sqrt{a^2-b^2}}{2}",
+      prompt: "\\int_0^\\pi\\ln(a+b\\cos x)\\,dx=\\pi\\ln\\frac{a+\\sqrt{a^2-b^2}}{2}",
       hints: ["把 b 當參數微分：I′(b) = ∫ cos x/(a + b cos x) dx。", "cos x/(a + b cos x) = (1/b)(1 − a/(a + b cos x))。", "∫₀^π dx/(a + b cos x) = π/√(a² − b²)（Weierstrass 代換）。"],
       keySteps: ["differentiate in b", "split off the constant", "∫dx/(a+b cos x) = π/√(a²−b²)", "integrate back with I(0) = π log a"],
       solution: [
         { text: "令 I(b) = ∫₀^π log(a + b cos x) dx（0 ≤ b < a）。對 b 微分。", tex: "I'(b)=\\int_0^\\pi\\frac{\\cos x}{a+b\\cos x}\\,dx=\\frac1b\\int_0^\\pi\\Big(1-\\frac{a}{a+b\\cos x}\\Big)dx" },
         { text: "標準積分（t = tan(x/2)）：∫₀^π dx/(a + b cos x) = π/√(a² − b²)。", tex: "I'(b)=\\frac{\\pi}{b}-\\frac{a\\pi}{b\\sqrt{a^2-b^2}}" },
-        { text: "積分：右邊是 d/db [π log(a + √(a² − b²))]（直接微分驗證）。", tex: "\\frac{d}{db}\\,\\pi\\log\\big(a+\\sqrt{a^2-b^2}\\big)=\\frac{-\\pi b}{\\sqrt{a^2-b^2}\\,(a+\\sqrt{a^2-b^2})}=\\frac{\\pi}{b}-\\frac{a\\pi}{b\\sqrt{a^2-b^2}}" },
-        { text: "I(0) = π log a 定常數：π log((a + a)/2) = π log a ✓。b = a 的情形由連續性得到。", tex: "\\int_0^\\pi\\log(a+b\\cos x)\\,dx=\\pi\\log\\frac{a+\\sqrt{a^2-b^2}}{2}" }
+        { text: "積分：右邊是 d/db [π log(a + √(a² − b²))]（直接微分驗證）。", tex: "\\frac{d}{db}\\,\\pi\\ln\\big(a+\\sqrt{a^2-b^2}\\big)=\\frac{-\\pi b}{\\sqrt{a^2-b^2}\\,(a+\\sqrt{a^2-b^2})}=\\frac{\\pi}{b}-\\frac{a\\pi}{b\\sqrt{a^2-b^2}}" },
+        { text: "I(0) = π log a 定常數：π log((a + a)/2) = π log a ✓。b = a 的情形由連續性得到。", tex: "\\int_0^\\pi\\ln(a+b\\cos x)\\,dx=\\pi\\ln\\frac{a+\\sqrt{a^2-b^2}}{2}" }
       ]
     },
     {
@@ -1061,15 +1061,15 @@
       difficulty: 5,
       tags: ["frullani", "improper-integral", "substitution", "classic"],
       statement: "設 f 在 x ≥ 0 上 C¹，且對 0 < a, b 極限 C = lim_{t→∞} ∫_a^b f(tx)/x dx 存在。證明 ∫₀^∞ (f(bx) − f(ax))/x dx = f(0) log(a/b) + C。",
-      prompt: "\\int_0^\\infty\\frac{f(bx)-f(ax)}{x}\\,dx=f(0)\\log\\frac ab+C",
+      prompt: "\\int_0^\\infty\\frac{f(bx)-f(ax)}{x}\\,dx=f(0)\\ln\\frac ab+C",
       hints: ["先在 [ε, R] 上算，兩項各自換元 u = bx、u = ax。", "相減後只剩兩個短區間：[aR, bR] 與 [aε, bε]。", "[aε, bε] 上 f ≈ f(0)，長度給 log(b/a)。"],
       keySteps: ["truncate to [ε, R]", "substitute in each term", "difference of two short intervals", "f(0)·log from the ε end, C from the R end"],
       solution: [
         { text: "在 [ε, R] 上把兩項分開換元 u = bx、u = ax。", tex: "\\int_\\varepsilon^R\\frac{f(bx)-f(ax)}{x}\\,dx=\\int_{b\\varepsilon}^{bR}\\frac{f(u)}{u}\\,du-\\int_{a\\varepsilon}^{aR}\\frac{f(u)}{u}\\,du" },
         { text: "共同的部分相消，只剩兩頭。", tex: "=\\int_{aR}^{bR}\\frac{f(u)}{u}\\,du-\\int_{a\\varepsilon}^{b\\varepsilon}\\frac{f(u)}{u}\\,du" },
         { text: "R 端：換回 u = Rx，就是題目假設的極限 C。", tex: "\\int_{aR}^{bR}\\frac{f(u)}{u}\\,du=\\int_a^b\\frac{f(Rx)}{x}\\,dx\\ \\xrightarrow{R\\to\\infty}\\ C" },
-        { text: "ε 端：f 連續，在 [aε, bε] 上 f(u) = f(0) + o(1)，而 ∫ du/u = log(b/a)。", tex: "\\int_{a\\varepsilon}^{b\\varepsilon}\\frac{f(u)}{u}\\,du\\ \\xrightarrow{\\varepsilon\\to 0}\\ f(0)\\log\\frac ba" },
-        { text: "合起來（注意 −log(b/a) = log(a/b)）。", tex: "\\int_0^\\infty\\frac{f(bx)-f(ax)}{x}\\,dx=C+f(0)\\log\\frac ab" }
+        { text: "ε 端：f 連續，在 [aε, bε] 上 f(u) = f(0) + o(1)，而 ∫ du/u = log(b/a)。", tex: "\\int_{a\\varepsilon}^{b\\varepsilon}\\frac{f(u)}{u}\\,du\\ \\xrightarrow{\\varepsilon\\to 0}\\ f(0)\\ln\\frac ba" },
+        { text: "合起來（注意 −log(b/a) = log(a/b)）。", tex: "\\int_0^\\infty\\frac{f(bx)-f(ax)}{x}\\,dx=C+f(0)\\ln\\frac ab" }
       ]
     },
     {
@@ -1079,13 +1079,13 @@
       difficulty: 4,
       tags: ["frullani", "improper-integral", "classic"],
       statement: "利用 Frullani 公式求（a, b > 0）：(1) ∫₀^∞ (cos bx − cos ax)/x dx；(2) ∫₀^∞ (e^{−bx} − e^{−ax})/x dx；(3) ∫₀^∞ sin(ax) sin(bx)/x dx（a ≠ b）。",
-      prompt: "\\int_0^\\infty\\frac{\\cos bx-\\cos ax}{x}dx=\\log\\frac ab,\\quad\\int_0^\\infty\\frac{e^{-bx}-e^{-ax}}{x}dx=\\log\\frac ab,\\quad\\int_0^\\infty\\frac{\\sin ax\\sin bx}{x}dx=\\frac12\\log\\Big|\\frac{a+b}{a-b}\\Big|",
+      prompt: "\\int_0^\\infty\\frac{\\cos bx-\\cos ax}{x}dx=\\ln\\frac ab,\\quad\\int_0^\\infty\\frac{e^{-bx}-e^{-ax}}{x}dx=\\ln\\frac ab,\\quad\\int_0^\\infty\\frac{\\sin ax\\sin bx}{x}dx=\\frac12\\ln\\Big|\\frac{a+b}{a-b}\\Big|",
       hints: ["每一題先認出 f，再算 f(0) 與 C。", "f = cos 時 C = lim ∫_a^b cos(tx)/x dx = 0（Riemann–Lebesgue）。", "(3) 用積化和差：sin ax sin bx = (cos(a−b)x − cos(a+b)x)/2。"],
       keySteps: ["identify f, f(0), C", "C = 0 for cos and e^{−x}", "product-to-sum for (3)", "log of the ratio"],
       solution: [
-        { text: "(1) f(x) = cos x：f(0) = 1，而 ∫_a^b cos(tx)/x dx → 0（t → ∞，Riemann–Lebesgue），C = 0。", tex: "\\int_0^\\infty\\frac{\\cos bx-\\cos ax}{x}\\,dx=\\log\\frac ab" },
-        { text: "(2) f(x) = e^{−x}：f(0) = 1，∫_a^b e^{−tx}/x dx ≤ e^{−ta}log(b/a) → 0，C = 0。", tex: "\\int_0^\\infty\\frac{e^{-bx}-e^{-ax}}{x}\\,dx=\\log\\frac ab" },
-        { text: "(3) 積化和差，變成 (1) 的形式：分子是 cos((a−b)x) − cos((a+b)x)，除以 2。", tex: "\\int_0^\\infty\\frac{\\sin ax\\sin bx}{x}\\,dx=\\frac12\\int_0^\\infty\\frac{\\cos|a-b|x-\\cos(a+b)x}{x}\\,dx=\\frac12\\log\\frac{a+b}{|a-b|}" }
+        { text: "(1) f(x) = cos x：f(0) = 1，而 ∫_a^b cos(tx)/x dx → 0（t → ∞，Riemann–Lebesgue），C = 0。", tex: "\\int_0^\\infty\\frac{\\cos bx-\\cos ax}{x}\\,dx=\\ln\\frac ab" },
+        { text: "(2) f(x) = e^{−x}：f(0) = 1，∫_a^b e^{−tx}/x dx ≤ e^{−ta}log(b/a) → 0，C = 0。", tex: "\\int_0^\\infty\\frac{e^{-bx}-e^{-ax}}{x}\\,dx=\\ln\\frac ab" },
+        { text: "(3) 積化和差，變成 (1) 的形式：分子是 cos((a−b)x) − cos((a+b)x)，除以 2。", tex: "\\int_0^\\infty\\frac{\\sin ax\\sin bx}{x}\\,dx=\\frac12\\int_0^\\infty\\frac{\\cos|a-b|x-\\cos(a+b)x}{x}\\,dx=\\frac12\\ln\\frac{a+b}{|a-b|}" }
       ]
     },
     {
@@ -1130,13 +1130,13 @@
       difficulty: 6,
       tags: ["series", "wallis-integral", "log", "classic"],
       statement: "求 s = Σ_{n≥1} (2n−1)!!/(2n)!! · 1/n，可使用 ∫₀^{π/2} sin^{2n}x dx = (2n−1)!!/(2n)!! · π/2。",
-      prompt: "\\sum_{n=1}^\\infty\\frac{(2n-1)!!}{(2n)!!}\\cdot\\frac1n=2\\log 2",
+      prompt: "\\sum_{n=1}^\\infty\\frac{(2n-1)!!}{(2n)!!}\\cdot\\frac1n=2\\ln 2",
       hints: ["把每一項寫成積分：(2n−1)!!/(2n)!! = (2/π)∫ sin^{2n}x dx。", "Σ sin^{2n}x/n = −log(1 − sin²x) = −2 log cos x。", "∫₀^{π/2} log cos x dx = −(π/2) log 2。"],
       keySteps: ["term as Wallis integral", "interchange sum and integral (positive terms)", "Σ tⁿ/n = −log(1−t)", "∫ log cos = −(π/2)log 2"],
       solution: [
         { text: "每一項換成積分，正項級數可以跟積分交換（單調收斂）。", tex: "s=\\frac2\\pi\\int_0^{\\pi/2}\\sum_{n=1}^\\infty\\frac{\\sin^{2n}x}{n}\\,dx" },
-        { text: "Σ tⁿ/n = −log(1 − t)（0 ≤ t < 1），代 t = sin²x。", tex: "\\sum_{n=1}^\\infty\\frac{\\sin^{2n}x}{n}=-\\log(1-\\sin^2x)=-2\\log\\cos x" },
-        { text: "經典積分 ∫₀^{π/2} log cos x dx = −(π/2) log 2（用 log sin x 對稱與倍角公式）。", tex: "s=-\\frac4\\pi\\int_0^{\\pi/2}\\log\\cos x\\,dx=-\\frac4\\pi\\cdot\\Big(-\\frac\\pi2\\log 2\\Big)=2\\log 2" }
+        { text: "Σ tⁿ/n = −log(1 − t)（0 ≤ t < 1），代 t = sin²x。", tex: "\\sum_{n=1}^\\infty\\frac{\\sin^{2n}x}{n}=-\\ln(1-\\sin^2x)=-2\\ln\\cos x" },
+        { text: "經典積分 ∫₀^{π/2} log cos x dx = −(π/2) log 2（用 log sin x 對稱與倍角公式）。", tex: "s=-\\frac4\\pi\\int_0^{\\pi/2}\\ln\\cos x\\,dx=-\\frac4\\pi\\cdot\\Big(-\\frac\\pi2\\ln 2\\Big)=2\\ln 2" }
       ]
     },
     {
@@ -1184,13 +1184,13 @@
       hints: ["核心是三重積分 I_n，它同時「很小」又是「(A_n + B_nζ(3))/d_n³」型的數。", "小：被積函數在 [0,1]³ 上 ≤ (√2−1)⁴，所以 |I_n| ≤ 2(√2−1)^{4n}ζ(3)。", "大：若 ζ(3) = p/q，則 q d_n³ I_n 是非零整數，但 d_n ≤ 3ⁿ 使它趨於 0。"],
       keySteps: ["∫∫ x^{n+t}y^{m+t}/(1−xy) as a series", "differentiate in t ⇒ log(xy) kernel", "denominators divide d_n³", "Legendre-type P_n(x) = (1/n!) dⁿ/dxⁿ xⁿ(1−x)ⁿ", "I_n = (A_n + B_nζ(3))/d_n³", "change of variables to a positive kernel ≤ (√2−1)⁴", "d_n ≤ 3ⁿ from the prime number theorem", "integer sandwich ⇒ contradiction"],
       solution: [
-        { text: "(1)(2) 幾何級數逐項積分：∫∫ x^{n+t}y^{m+t}/(1−xy) = Σ_k 1/((n+t+k+1)(m+t+k+1))。對 t 微分產生 log(xy)，得到有理數值（n > m ≥ 0）。", tex: "-\\int_0^1\\!\\!\\int_0^1\\frac{\\log(xy)}{1-xy}x^ny^m\\,dx\\,dy=\\sum_{k=0}^{n-m-1}\\frac{1}{(m+k+1)^2(n-m)}" },
-        { text: "(3)(4) 這些有理數的分母整除 d_n³（d_n = lcm(1,…,n)）；n = m 時級數變成 2(ζ(3) − Σ_{k≤n} 1/k³)。", tex: "-\\int_0^1\\!\\!\\int_0^1\\frac{\\log(xy)}{1-xy}x^ny^n\\,dx\\,dy=2\\Big(\\zeta(3)-\\sum_{k=1}^n\\frac{1}{k^3}\\Big)" },
+        { text: "(1)(2) 幾何級數逐項積分：∫∫ x^{n+t}y^{m+t}/(1−xy) = Σ_k 1/((n+t+k+1)(m+t+k+1))。對 t 微分產生 log(xy)，得到有理數值（n > m ≥ 0）。", tex: "-\\int_0^1\\!\\!\\int_0^1\\frac{\\ln(xy)}{1-xy}x^ny^m\\,dx\\,dy=\\sum_{k=0}^{n-m-1}\\frac{1}{(m+k+1)^2(n-m)}" },
+        { text: "(3)(4) 這些有理數的分母整除 d_n³（d_n = lcm(1,…,n)）；n = m 時級數變成 2(ζ(3) − Σ_{k≤n} 1/k³)。", tex: "-\\int_0^1\\!\\!\\int_0^1\\frac{\\ln(xy)}{1-xy}x^ny^n\\,dx\\,dy=2\\Big(\\zeta(3)-\\sum_{k=1}^n\\frac{1}{k^3}\\Big)" },
         { text: "(5) 令 P_n(x) = (1/n!) dⁿ/dxⁿ[xⁿ(1−x)ⁿ]（整係數），I_n = −∫∫ log(xy)/(1−xy) P_n(x)P_n(y)。展開 P_n 用 (1)–(4)：存在整數 A_n, B_n 使 I_n = (A_n + B_nζ(3))/d_n³。", tex: "I_n=\\frac{A_n+B_n\\zeta(3)}{d_n^3},\\qquad A_n,B_n\\in\\mathbb{Z}" },
         { text: "(6)–(9) 把 −log(xy)/(1−xy) 寫成 ∫₀¹ dz/(1−(1−xy)z)，分部積分 n 次、換元 z = (1−w)/(1−(1−xy)w)，再分部 n 次，得到正的被積函數。", tex: "I_n=\\int_0^1\\!\\!\\int_0^1\\!\\!\\int_0^1\\frac{x^n(1-x)^ny^n(1-y)^nw^n(1-w)^n}{\\{1-(1-xy)w\\}^{n+1}}\\,dx\\,dy\\,dw" },
         { text: "(10)(11) 在 [0,1]³ 上 x(1−x)y(1−y)w(1−w)/(1−(1−xy)w) ≤ (√2−1)⁴，而剩下的 ∫∫∫ dxdydw/(1−(1−xy)w) = 2ζ(3)。", tex: "0<|I_n|\\le 2(\\sqrt2-1)^{4n}\\zeta(3)" },
         { text: "(12)(13) 素數定理給 d_n ≤ 3ⁿ（n 大時）。若 ζ(3) = p/q，則 q·d_n³·I_n = q(A_n + B_nζ(3)) 是非零整數，但它 ≤ 2qζ(3)·(27(√2−1)⁴)ⁿ < 2qζ(3)(4/5)ⁿ → 0，矛盾。", tex: "0<|A_n+B_n\\zeta(3)|<2\\zeta(3)\\Big(\\frac45\\Big)^n\\ \\Rightarrow\\ \\zeta(3)\\notin\\mathbb{Q}" },
-        { text: "(14) d_n = Π_{p≤n} p^{⌊log n/log p⌋} ≤ Π_{p≤n} n = n^{π(n)}，而 π(n) ~ n/log n 給 n^{π(n)} = e^{(1+o(1))n} ≤ 3ⁿ（n 大時）。", tex: "\\log d_n=\\sum_{p\\le n}\\Big\\lfloor\\frac{\\log n}{\\log p}\\Big\\rfloor\\log p\\le\\pi(n)\\log n\\sim n" }
+        { text: "(14) d_n = Π_{p≤n} p^{⌊log n/log p⌋} ≤ Π_{p≤n} n = n^{π(n)}，而 π(n) ~ n/log n 給 n^{π(n)} = e^{(1+o(1))n} ≤ 3ⁿ（n 大時）。", tex: "\\ln d_n=\\sum_{p\\le n}\\Big\\lfloor\\frac{\\ln n}{\\ln p}\\Big\\rfloor\\ln p\\le\\pi(n)\\ln n\\sim n" }
       ]
     },
     {
