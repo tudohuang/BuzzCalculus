@@ -1,4 +1,4 @@
-// 從零開始：給還沒學過微積分的人的入門課（十六課）。
+// 從零開始：給還沒學過微積分的人的入門課（十六課），加九課進階技巧（題庫 R5–R6 的招式）。
 //
 // 這個站原本是「把學過的微積分練成直覺」——只有題目，沒有一段教「極限是什麼」的內容。
 // 完全初學者打開就被 1994 題淹死。這些課補的是那一層。兩種課：
@@ -650,6 +650,447 @@
         }
       ],
       practice: []
+    },
+    {
+      id: "adv-taylor-limits",
+      unit: "advanced",
+      title: "第 17 課 · 極限的萬能鑰匙：Taylor 展開",
+      minutes: 9,
+      goal: "0/0 型的極限不用一直微分：把每個函數展開到需要的階，剩下的是多項式相除。",
+      concept: [
+        { text: "L'Hôpital 遇到 (sin x − x)/x³ 要微三次，每次都可能算錯。Taylor 展開一次搞定：把分子分母都寫成 x 的多項式加高階小量，約掉 x 的次方就看得到答案。" },
+        { text: "五個要背的展開，全部在 x → 0 附近：", tex: "e^x=1+x+\\tfrac{x^2}{2}+\\tfrac{x^3}{6}+\\cdots,\\quad \\sin x=x-\\tfrac{x^3}{6}+\\cdots,\\quad \\cos x=1-\\tfrac{x^2}{2}+\\tfrac{x^4}{24}-\\cdots" },
+        { text: "另外兩個：", tex: "\\ln(1+x)=x-\\tfrac{x^2}{2}+\\tfrac{x^3}{3}-\\cdots,\\qquad (1+x)^a=1+ax+\\tfrac{a(a-1)}{2}x^2+\\cdots" },
+        { text: "展到哪一階：看分母。分母是 x³ 就把分子展到 x³ 那一項；展少了會得到 0/0，展多了只是白算。相減的題要特別小心——低階項會互相消掉，消掉之後剩下的那一階才是主角。" },
+        { text: "記號 o(x³) 讀作「比 x³ 小得多的東西」，除以 x³ 之後趨近 0。寫出來的目的是提醒自己：後面還有項，但它們不影響答案。" }
+      ],
+      worked: {
+        tex: "\\lim_{x\\to 0}\\frac{e^x-1-x}{x^2}",
+        steps: [
+          { text: "分母是 x²，分子展到 x² 就夠。eˣ = 1 + x + x²/2 + o(x²)。" },
+          { text: "分子：(1 + x + x²/2 + o(x²)) − 1 − x = x²/2 + o(x²)。前兩項被減掉了，這就是為什麼要展到 x²。", tex: "e^x-1-x=\\tfrac{x^2}{2}+o(x^2)" },
+          { text: "除以 x²：1/2 + o(1) → 1/2。用 L'Hôpital 要微兩次才到同一個地方。", tex: "\\lim_{x\\to 0}\\frac{e^x-1-x}{x^2}=\\frac12" }
+        ]
+      },
+      checks: [
+        {
+          ask: "求 lim_{x→0} (sin x − x)/x³，分子要展到幾階？",
+          options: [
+            { label: "x 一階就好", why: "sin x = x + …，減掉 x 之後只剩高階項——一階什麼都看不到。" },
+            { label: "x³", correct: true },
+            { label: "x⁵", why: "展到 x⁵ 不算錯，但多算的那一項除以 x³ 之後趨近 0，白做。分母是 x³，展到 x³ 剛好。" }
+          ]
+        },
+        {
+          ask: "lim_{x→0} (sin x − x)/x³ 等於？",
+          options: [
+            { label: "0", why: "sin x − x = −x³/6 + …，除以 x³ 是 −1/6，不是 0。" },
+            { label: "1/6", why: "符號反了：sin x 的 x³ 項是 −x³/6。" },
+            { label: "−1/6", correct: true }
+          ]
+        },
+        {
+          ask: "lim_{x→0} (cos x − 1)/x² 等於？",
+          options: [
+            { label: "−1/2", correct: true },
+            { label: "0", why: "cos x − 1 = −x²/2 + …，跟 x² 同階，比值是 −1/2。" },
+            { label: "1/2", why: "cos x 比 1 小（在 0 附近），cos x − 1 是負的。" }
+          ]
+        }
+      ],
+      practice: []
+    },
+    {
+      id: "adv-wallis-reduction",
+      unit: "advanced",
+      title: "第 18 課 · 分部積分的進階：遞迴式與 Wallis 公式",
+      minutes: 9,
+      goal: "sinⁿ、xⁿe⁻ˣ 這類積分不要硬算，用分部積分建一條遞迴式，一路降到 n = 0 或 1。",
+      concept: [
+        { text: "分部積分 ∫u dv = uv − ∫v du，只用一次是技巧；重複用、把結果寫成「n 與 n − 2 的關係」，就變成公式。" },
+        { text: "Wallis：令 Iₙ = ∫₀^{π/2} sinⁿx dx。把 sinⁿx 拆成 sinⁿ⁻¹x · sin x，分部一次得到", tex: "I_n=\\frac{n-1}{n}\\,I_{n-2},\\qquad I_0=\\frac{\\pi}{2},\\ I_1=1" },
+        { text: "所以 n 是偶數時最後乘 π/2，奇數時最後是 1。cosⁿ 在同一個區間上的積分完全一樣（把 x 換成 π/2 − x）。", tex: "I_4=\\frac34\\cdot\\frac12\\cdot\\frac{\\pi}{2}=\\frac{3\\pi}{16},\\qquad I_5=\\frac45\\cdot\\frac23\\cdot 1=\\frac{8}{15}" },
+        { text: "另一條常見的遞迴：Jₙ = ∫₀^∞ xⁿe⁻ˣ dx，分部一次得 Jₙ = n·Jₙ₋₁，J₀ = 1，所以 Jₙ = n!。這條下一課會變成 Gamma 函數。" },
+        { text: "看到 ∫₀^{π/2} sin⁶x cos²x dx 這種題：先把 cos² 換成 1 − sin²，變成兩個 Wallis 相減。看到 ∫₀^∞ x⁴e⁻³ˣ dx：換元 u = 3x，變成 J₄/3⁵。" }
+      ],
+      worked: {
+        tex: "\\int_0^{\\pi/2}\\sin^4 x\\,dx",
+        steps: [
+          { text: "套遞迴：I₄ = (3/4)·I₂，I₂ = (1/2)·I₀，I₀ = π/2。", tex: "I_4=\\frac34\\cdot\\frac12\\cdot\\frac{\\pi}{2}" },
+          { text: "乘起來：3π/16。硬算的話要用兩次倍角公式，這裡三個分數就結束。", tex: "\\int_0^{\\pi/2}\\sin^4 x\\,dx=\\frac{3\\pi}{16}" }
+        ]
+      },
+      checks: [
+        {
+          ask: "∫₀^{π/2} sin⁶x dx 等於？",
+          options: [
+            { label: "5π/32", correct: true },
+            { label: "5/16", why: "n 是偶數，最後要乘 I₀ = π/2：(5/6)(3/4)(1/2)(π/2) = 5π/32。" },
+            { label: "15π/48", why: "約分之後是 5π/16，多了一倍——少乘了一個 1/2。" }
+          ]
+        },
+        {
+          ask: "∫₀^∞ x³e⁻ˣ dx 等於？",
+          options: [
+            { label: "3", why: "Jₙ = n!，J₃ = 3! = 6。" },
+            { label: "6", correct: true },
+            { label: "1/6", why: "那是 1/3!，方向反了：分部積分每降一階乘一個 n，不是除。" }
+          ]
+        },
+        {
+          ask: "∫₀^{π/2} cos⁵x dx 等於？",
+          options: [
+            { label: "8/15", correct: true },
+            { label: "8π/15", why: "n 是奇數，遞迴最後停在 I₁ = 1，沒有 π。" },
+            { label: "跟 sin⁵ 的積分不一樣，要重算", why: "x ↦ π/2 − x 把 cos 換成 sin、區間不變，兩個積分相等。" }
+          ]
+        }
+      ],
+      practice: []
+    },
+    {
+      id: "adv-gamma-beta",
+      unit: "advanced",
+      title: "第 19 課 · Gamma 與 Beta 函數",
+      minutes: 10,
+      goal: "Γ 是階乘的延伸，B 是 Γ 的組合；一堆看起來很兇的定積分，其實是查表。",
+      concept: [
+        { text: "定義：", tex: "\\Gamma(s)=\\int_0^{\\infty}x^{s-1}e^{-x}\\,dx\\quad(s>0),\\qquad \\Gamma(s+1)=s\\,\\Gamma(s),\\quad \\Gamma(n+1)=n!" },
+        { text: "最常用的一個值：Γ(1/2) = √π。由它推出 Γ(3/2) = √π/2、Γ(5/2) = 3√π/4——每次乘上前一個數。這個值跟 ∫e^{−x²} dx = √π 是同一件事（換元 x = t²）。" },
+        { text: "Beta 函數：", tex: "\\mathrm{B}(p,q)=\\int_0^{1}x^{p-1}(1-x)^{q-1}\\,dx=\\frac{\\Gamma(p)\\,\\Gamma(q)}{\\Gamma(p+q)}" },
+        { text: "三角形式：x = sin²θ 之後，", tex: "\\int_0^{\\pi/2}\\sin^{2p-1}\\theta\\cos^{2q-1}\\theta\\,d\\theta=\\tfrac12\\,\\mathrm{B}(p,q)" },
+        { text: "所以第 18 課的 Wallis 是 Beta 的特例；反過來，∫₀^{π/2} sin⁴θ cos²θ dθ 這種奇怪的冪次也直接是 ½B(5/2, 3/2)。看到 [0, 1] 上 xᵃ(1 − x)ᵇ、[0, ∞) 上 xᵃe⁻ˣ、[0, π/2] 上 sin·cos 的冪次，先想 Γ 和 B。" }
+      ],
+      worked: {
+        tex: "\\int_0^{\\infty}x^{4}e^{-3x}\\,dx",
+        steps: [
+          { text: "換元 u = 3x，x = u/3，dx = du/3。指數變成 e⁻ᵘ，x⁴ 變成 u⁴/3⁴。", tex: "\\int_0^{\\infty}\\frac{u^4}{3^4}e^{-u}\\,\\frac{du}{3}=\\frac{1}{3^5}\\int_0^{\\infty}u^4e^{-u}\\,du" },
+          { text: "剩下的積分是 Γ(5) = 4! = 24。", tex: "\\int_0^{\\infty}x^{4}e^{-3x}\\,dx=\\frac{24}{243}=\\frac{8}{81}" }
+        ]
+      },
+      checks: [
+        {
+          ask: "Γ(3/2) 等於？",
+          options: [
+            { label: "√π/2", correct: true },
+            { label: "√π", why: "那是 Γ(1/2)。Γ(3/2) = (1/2)·Γ(1/2) = √π/2。" },
+            { label: "1/2", why: "Γ(3/2) 不是整數的階乘，它帶著 √π。" }
+          ]
+        },
+        {
+          ask: "∫₀¹ x²(1 − x)³ dx 用 Beta 函數寫是？",
+          options: [
+            { label: "B(2, 3)", why: "B(p, q) 的指數是 p − 1 和 q − 1：x² 對應 p = 3，(1 − x)³ 對應 q = 4。" },
+            { label: "B(3, 4) = 2!·3!/6! = 1/60", correct: true },
+            { label: "Γ(3)Γ(4)", why: "少除了 Γ(p + q) = Γ(7)。B 是三個 Γ 的組合，不是兩個相乘。" }
+          ]
+        },
+        {
+          ask: "∫₀^∞ e^{−x²} dx 等於？",
+          options: [
+            { label: "√π", why: "從 −∞ 到 ∞ 才是 √π；從 0 開始只有一半。" },
+            { label: "π/2", why: "答案帶根號：√π/2。這個積分是 ½Γ(1/2)。" },
+            { label: "√π/2", correct: true }
+          ]
+        }
+      ],
+      practice: []
+    },
+    {
+      id: "adv-feynman-frullani",
+      unit: "advanced",
+      title: "第 20 課 · 對參數微分：Feynman 積分法與 Frullani 積分",
+      minutes: 10,
+      goal: "積分裡塞一個參數 a，對 a 微分把難的被積函數變簡單，算完再積回去。",
+      concept: [
+        { text: "想法：I(a) = ∫ f(x, a) dx 是 a 的函數。對 a 微分可以移進積分號（條件夠好時），", tex: "I'(a)=\\int\\frac{\\partial f}{\\partial a}\\,dx" },
+        { text: "選對參數，∂f/∂a 常常比 f 好積得多。算出 I'(a) 之後對 a 積分，再用一個算得出來的特殊值（例如 I(0) = 0）定常數。" },
+        { text: "經典例：", tex: "I(a)=\\int_0^{1}\\frac{x^a-1}{\\ln x}\\,dx\\ \\Rightarrow\\ I'(a)=\\int_0^1 x^a\\,dx=\\frac{1}{a+1}\\ \\Rightarrow\\ I(a)=\\ln(a+1)" },
+        { text: "Frullani 積分：只要 f 在 0 和 ∞ 都有極限，", tex: "\\int_0^{\\infty}\\frac{f(ax)-f(bx)}{x}\\,dx=\\bigl(f(0)-f(\\infty)\\bigr)\\ln\\frac{b}{a}" },
+        { text: "看到「兩個同型函數相減再除以 x、從 0 積到 ∞」，就是它：(e⁻ᵃˣ − e⁻ᵇˣ)/x、(cos ax − cos bx)/x、(arctan ax − arctan bx)/x 都直接套，只要把 f(0) 和 f(∞) 代進去。" }
+      ],
+      worked: {
+        tex: "\\int_0^{\\infty}\\frac{e^{-ax}-e^{-bx}}{x}\\,dx\\quad(a,b>0)",
+        steps: [
+          { text: "認出形狀：f(t) = e⁻ᵗ，分子是 f(ax) − f(bx)，分母是 x，區間 (0, ∞)。Frullani 的前提：f(0) = 1，f(∞) = 0，都存在。" },
+          { text: "套公式：(f(0) − f(∞))·ln(b/a) = (1 − 0)·ln(b/a)。", tex: "\\int_0^{\\infty}\\frac{e^{-ax}-e^{-bx}}{x}\\,dx=\\ln\\frac{b}{a}" },
+          { text: "不信的話用 Feynman 法驗：對 b 微分得 ∫₀^∞ e⁻ᵇˣ dx = 1/b，積回去是 ln b + C，b = a 時積分是 0，所以 C = −ln a。一樣。" }
+        ]
+      },
+      checks: [
+        {
+          ask: "∫₀^∞ (cos 2x − cos 5x)/x dx 等於？",
+          options: [
+            { label: "ln(5/2)", correct: true },
+            { label: "ln(2/5)", why: "公式是 (f(0) − f(∞))·ln(b/a)，這裡 a = 2、b = 5，是 ln(5/2)。cos 在 ∞ 沒有極限，但 Frullani 對 cos 這種平均為 0 的振盪也成立，f(∞) 取 0。" },
+            { label: "0", why: "兩個 cos 不會互相抵消：低頻和高頻在 x 小的地方差很多，積出來是 ln(5/2) ≈ 0.92。" }
+          ]
+        },
+        {
+          ask: "I(a) = ∫₀¹ (xᵃ − 1)/ln x dx，對 a 微分的第一步是什麼？",
+          options: [
+            { label: "先算 ∫ 1/ln x dx", why: "1/ln x 沒有初等原函數，這條路走不通——所以才要對參數微分。" },
+            { label: "∂/∂a 作用在 xᵃ 上得到 xᵃ ln x，ln x 跟分母約掉，剩 ∫₀¹ xᵃ dx", correct: true },
+            { label: "對 x 微分", why: "參數是 a，不是 x。對 x 微分只會把積分變回被積函數。" }
+          ]
+        },
+        {
+          ask: "Frullani 公式要 f 滿足什麼？",
+          options: [
+            { label: "f 是多項式", why: "多項式在 ∞ 沒有極限，反而不能用。" },
+            { label: "f 在 0 和 ∞ 都有極限（或在 ∞ 平均為 0）", correct: true },
+            { label: "f(0) = 0", why: "f(0) 可以是任何數，公式裡它就是一個係數。" }
+          ]
+        }
+      ],
+      practice: []
+    },
+    {
+      id: "adv-improper-classics",
+      unit: "advanced",
+      title: "第 21 課 · 瑕積分：怎麼判斷收斂，以及五個要背的值",
+      minutes: 10,
+      goal: "區間到無窮或被積函數飛走時，先判斷收不收斂；收斂的經典值直接背，不要每次重推。",
+      concept: [
+        { text: "兩種瑕：區間無限（∫₁^∞）或函數在端點飛走（∫₀¹ 1/√x）。定義都是「先積到 t，再讓 t 趨近」。" },
+        { text: "p 判別：", tex: "\\int_1^{\\infty}\\frac{dx}{x^p}\\ \\text{收斂}\\iff p>1,\\qquad \\int_0^{1}\\frac{dx}{x^p}\\ \\text{收斂}\\iff p<1" },
+        { text: "比較判別：0 ≤ f ≤ g 而 ∫g 收斂，則 ∫f 收斂；反過來 f ≥ g ≥ 0 而 ∫g 發散，則 ∫f 發散。實際上都是跟 1/xᵖ 或 e⁻ˣ 比。" },
+        { text: "五個經典值：", tex: "\\int_{-\\infty}^{\\infty}e^{-x^2}dx=\\sqrt{\\pi},\\quad \\int_0^{\\infty}\\frac{\\sin x}{x}dx=\\frac{\\pi}{2},\\quad \\int_0^{\\infty}e^{-ax}\\cos bx\\,dx=\\frac{a}{a^2+b^2}" },
+        { text: "還有兩個：", tex: "\\int_0^{\\infty}\\frac{dx}{1+x^2}=\\frac{\\pi}{2},\\qquad \\int_0^{\\pi/2}\\ln(\\sin x)\\,dx=-\\frac{\\pi}{2}\\ln 2" },
+        { text: "Gaussian 用極座標（下面示範），Dirichlet 的 sin x/x 用第 20 課的參數法（塞一個 e⁻ᵃˣ 進去，最後讓 a → 0），ln(sin x) 用對稱性把它拆成自己的一半。這三個推導各值得看一次，然後把值背起來。" }
+      ],
+      worked: {
+        tex: "I=\\int_{-\\infty}^{\\infty}e^{-x^2}\\,dx",
+        steps: [
+          { text: "一維算不動，就算它的平方：I² 是兩個一樣的積分相乘，寫成平面上的二重積分。", tex: "I^2=\\int_{-\\infty}^{\\infty}\\int_{-\\infty}^{\\infty}e^{-(x^2+y^2)}\\,dx\\,dy" },
+          { text: "換極座標：x² + y² = r²，dx dy = r dr dθ（第 23 課會講這個 r 從哪來）。多出來的 r 正好讓 e^{−r²} 積得出來。", tex: "I^2=\\int_0^{2\\pi}\\int_0^{\\infty}e^{-r^2}\\,r\\,dr\\,d\\theta=2\\pi\\cdot\\frac12=\\pi" },
+          { text: "開根號：I = √π。從 0 積到 ∞ 是一半，√π/2。", tex: "\\int_{-\\infty}^{\\infty}e^{-x^2}\\,dx=\\sqrt{\\pi}" }
+        ]
+      },
+      checks: [
+        {
+          ask: "∫₁^∞ dx/√x 收斂嗎？",
+          options: [
+            { label: "收斂，因為 1/√x → 0", why: "趨近 0 不夠，要趨近得夠快。p = 1/2 < 1，在 [1, ∞) 上發散——原函數 2√x 在 ∞ 飛走。" },
+            { label: "發散：p = 1/2 ≤ 1", correct: true },
+            { label: "收斂，值是 2", why: "2 是 ∫₀¹ dx/√x 的值（那一邊 p < 1 才收斂）。區間搞反了。" }
+          ]
+        },
+        {
+          ask: "∫₀^∞ e^{−2x} cos 3x dx 等於？",
+          options: [
+            { label: "2/13", correct: true },
+            { label: "3/13", why: "分子是 a（指數的係數），不是 b：a/(a² + b²) = 2/13。3/13 是 ∫e^{−2x} sin 3x 的值。" },
+            { label: "1/2", why: "那是沒有 cos 時 ∫e^{−2x} dx 的值。cos 3x 讓它變小成 2/13。" }
+          ]
+        },
+        {
+          ask: "∫₀^∞ sin x/x dx 為什麼不能直接找原函數？",
+          options: [
+            { label: "因為它發散", why: "它收斂，值是 π/2。只是不絕對收斂——|sin x|/x 的積分才發散。" },
+            { label: "因為 sin x/x 沒有初等原函數，要用參數法或複變", correct: true },
+            { label: "因為 x = 0 是瑕點", why: "sin x/x 在 0 的極限是 1，那裡沒有問題；瑕在 ∞ 那一端。" }
+          ]
+        }
+      ],
+      practice: []
+    },
+    {
+      id: "adv-series-tricks",
+      unit: "advanced",
+      title: "第 22 課 · 級數的高階招式：Stolz、Basel 與 Abel",
+      minutes: 9,
+      goal: "數列型的 ∞/∞ 用 Stolz；Σ1/n² 這種經典值背起來；交錯級數的和用冪級數代 x = 1。",
+      concept: [
+        { text: "Stolz–Cesàro：數列版的 L'Hôpital。bₙ 嚴格遞增到 ∞ 時，", tex: "\\lim\\frac{a_n}{b_n}=\\lim\\frac{a_{n+1}-a_n}{b_{n+1}-b_n}\\quad\\text{（右邊存在的話）}" },
+        { text: "看到分子是一個和 Σ、分母是 n 或 ln n 或 n²，先想 Stolz——相減之後 Σ 只剩最後一項。" },
+        { text: "Basel 與 ζ：", tex: "\\sum_{n=1}^{\\infty}\\frac{1}{n^2}=\\frac{\\pi^2}{6},\\qquad \\sum_{n=1}^{\\infty}\\frac{1}{n^4}=\\frac{\\pi^4}{90},\\qquad \\sum_{n=1}^{\\infty}\\frac{1}{(2n-1)^2}=\\frac{\\pi^2}{8}" },
+        { text: "奇數項那個是把 π²/6 減掉偶數項 (1/4)·π²/6 得來的。題目常把 1/n² 藏在部分分式或參數積分後面，認得出來就是一行。" },
+        { text: "Abel：冪級數在收斂區間端點若收斂，和就是極限值。所以 ln(1 + x) = x − x²/2 + x³/3 − … 代 x = 1 得", tex: "1-\\frac12+\\frac13-\\frac14+\\cdots=\\ln 2,\\qquad 1-\\frac13+\\frac15-\\cdots=\\frac{\\pi}{4}" },
+        { text: "第二個是 arctan x 的展開代 x = 1。看到交錯級數的和，先問：它是哪個函數的冪級數在哪一點的值？" }
+      ],
+      worked: {
+        tex: "\\lim_{n\\to\\infty}\\frac{1+\\frac12+\\cdots+\\frac1n}{\\ln n}",
+        steps: [
+          { text: "分子是調和數 Hₙ，分母 ln n 嚴格遞增到 ∞，Stolz 的前提成立。" },
+          { text: "分子相減只剩 1/(n+1)；分母相減是 ln(n+1) − ln n = ln(1 + 1/n)。", tex: "\\frac{H_{n+1}-H_n}{\\ln(n+1)-\\ln n}=\\frac{1/(n+1)}{\\ln(1+1/n)}" },
+          { text: "ln(1 + 1/n) ≈ 1/n（第 17 課的展開），比值趨近 n/(n+1) → 1。所以 Hₙ 跟 ln n 同階，極限是 1。", tex: "\\lim_{n\\to\\infty}\\frac{H_n}{\\ln n}=1" }
+        ]
+      },
+      checks: [
+        {
+          ask: "lim (1² + 2² + … + n²)/n³ 用 Stolz 算，相減之後的分子是？",
+          options: [
+            { label: "(n+1)²", correct: true },
+            { label: "n²", why: "aₙ₊₁ − aₙ 是多出來的那一項，是 (n+1)²。最後除以 (n+1)³ − n³ = 3n² + 3n + 1，極限 1/3。" },
+            { label: "2n + 1", why: "那是 (n+1)² − n²，分子是「和」不是「平方」，相減只剩最後一項 (n+1)²。" }
+          ]
+        },
+        {
+          ask: "Σ 1/(2n)²（n 從 1 到 ∞）等於？",
+          options: [
+            { label: "π²/6", why: "那是全部的 1/n²。只取偶數項要乘 1/4：π²/24。" },
+            { label: "π²/24", correct: true },
+            { label: "π²/8", why: "π²/8 是奇數項的和；偶數項是 π²/6 − π²/8 = π²/24。" }
+          ]
+        },
+        {
+          ask: "1 − 1/3 + 1/5 − 1/7 + … 是哪個函數在哪裡的值？",
+          options: [
+            { label: "ln(1 + x) 在 x = 1", why: "ln(1 + x) 的展開分母是 1, 2, 3, 4…，這裡是奇數 1, 3, 5, 7。" },
+            { label: "arctan x 在 x = 1，值是 π/4", correct: true },
+            { label: "eˣ 在 x = −1", why: "eˣ 的展開有階乘，這裡沒有。" }
+          ]
+        }
+      ],
+      practice: []
+    },
+    {
+      id: "adv-jacobian-hessian",
+      unit: "advanced",
+      title: "第 23 課 · 多變數：Jacobian 是伸縮率，Hessian 判極值",
+      minutes: 10,
+      goal: "換變數時 dx dy 要乘 |Jacobian|；找到臨界點之後，用 Hessian 的行列式分辨極大、極小、鞍點。",
+      concept: [
+        { text: "偏導 ∂f/∂x：把其他變數當常數，只對 x 微分。多變數的臨界點是兩個偏導同時為 0 的地方。" },
+        { text: "Jacobian：變數變換 (u, v) → (x, y) 時，一小塊面積被放大幾倍。", tex: "J=\\frac{\\partial(x,y)}{\\partial(u,v)}=\\det\\begin{pmatrix}x_u & x_v\\\\ y_u & y_v\\end{pmatrix},\\qquad dx\\,dy=|J|\\,du\\,dv" },
+        { text: "極座標 x = r cos θ、y = r sin θ 算出來 J = r，這就是第 21 課裡憑空出現的那個 r。看到 x² + y²、圓形區域，換極座標；看到 x = u² − v²、y = 2uv 這種題，題目就是在考你算 Jacobian。" },
+        { text: "Hessian：二階偏導排成的矩陣。在臨界點算 D = f_xx·f_yy − (f_xy)²。", tex: "D>0,\\ f_{xx}>0\\Rightarrow\\text{極小};\\quad D>0,\\ f_{xx}<0\\Rightarrow\\text{極大};\\quad D<0\\Rightarrow\\text{鞍點}" },
+        { text: "D = 0 時測不出來，要另想辦法。D 就是 Hessian 的行列式；題目說「Hessian determinant」就是要你算這個數。" }
+      ],
+      worked: {
+        tex: "f(x,y)=x^2-y^2\\ \\text{在原點是什麼？}",
+        steps: [
+          { text: "偏導：f_x = 2x、f_y = −2y，在 (0, 0) 都是 0，是臨界點。" },
+          { text: "二階：f_xx = 2、f_yy = −2、f_xy = 0。", tex: "D=f_{xx}f_{yy}-f_{xy}^2=2\\cdot(-2)-0=-4<0" },
+          { text: "D < 0，鞍點：沿 x 軸往上彎、沿 y 軸往下彎，像馬鞍。" }
+        ]
+      },
+      checks: [
+        {
+          ask: "x = r cos θ、y = r sin θ 的 Jacobian 是？",
+          options: [
+            { label: "1", why: "算行列式：cos θ·(r cos θ) − (−r sin θ)·sin θ = r。面積在遠處被放大 r 倍。" },
+            { label: "r", correct: true },
+            { label: "r²", why: "行列式是 r cos²θ + r sin²θ = r，一次方。r² 是球座標裡才會出現的。" }
+          ]
+        },
+        {
+          ask: "臨界點處 f_xx = 4、f_yy = 1、f_xy = 3，這一點是？",
+          options: [
+            { label: "極小", why: "D = 4·1 − 9 = −5 < 0，是鞍點。f_xx > 0 只有在 D > 0 時才代表極小。" },
+            { label: "鞍點", correct: true },
+            { label: "極大", why: "D = −5 < 0，鞍點；而且 f_xx > 0 也不會是極大。" }
+          ]
+        },
+        {
+          ask: "x = u² − v²、y = 2uv，Jacobian ∂(x, y)/∂(u, v) 等於？",
+          options: [
+            { label: "4(u² + v²)", correct: true },
+            { label: "2u − 2v", why: "要算整個 2×2 行列式：(2u)(2u) − (−2v)(2v) = 4u² + 4v²。" },
+            { label: "0", why: "行列式為 0 代表變換把面積壓扁，這個變換（複數平方）沒有這回事，除了原點。" }
+          ]
+        }
+      ],
+      practice: []
+    },
+    {
+      id: "adv-complex-residue",
+      unit: "advanced",
+      title: "第 24 課 · 複數與留數：實積分的另一條路",
+      minutes: 10,
+      goal: "e^{iθ} = cos θ + i sin θ 把三角函數變成指數；留數定理把一整條實數線上的積分變成幾個點的計算。",
+      concept: [
+        { text: "Euler 公式：", tex: "e^{i\\theta}=\\cos\\theta+i\\sin\\theta,\\qquad \\cos\\theta=\\frac{e^{i\\theta}+e^{-i\\theta}}{2},\\quad \\sin\\theta=\\frac{e^{i\\theta}-e^{-i\\theta}}{2i}" },
+        { text: "第一個用法不需要複變：∫e^{ax}cos bx dx 是 ∫e^{(a+ib)x} dx 的實部，指數積分一行就好，最後取實部。分部積分兩次的那套可以忘了。" },
+        { text: "留數：f 在 z₀ 附近長得像 c/(z − z₀)（一階極點），那個 c 就是留數，", tex: "\\operatorname{Res}_{z=z_0}f=\\lim_{z\\to z_0}(z-z_0)f(z)" },
+        { text: "留數定理：沿一條封閉曲線逆時針積分，等於 2πi 乘上曲線裡面所有留數的和。實積分 ∫_{−∞}^{∞} 的做法：把實數線接上上半平面的大半圓，半圓那段在 R → ∞ 時趨近 0（分母次數比分子高 2 以上），剩下的就是實數線。" },
+        { text: "什麼時候該想到它：有理函數從 −∞ 積到 ∞、被積函數有 cos/sin 乘上有理函數、或 [0, 2π] 上的三角有理函數（令 z = e^{iθ}）。題庫 R6 的「residue」「complex」標籤都是這一課。" }
+      ],
+      worked: {
+        tex: "\\int_{-\\infty}^{\\infty}\\frac{dx}{1+x^2}",
+        steps: [
+          { text: "1/(1 + z²) 的極點在 z = ±i。上半平面只有 z = i。" },
+          { text: "留數：(z − i)/((z − i)(z + i)) 在 z = i 的值是 1/(2i)。", tex: "\\operatorname{Res}_{z=i}\\frac{1}{1+z^2}=\\frac{1}{2i}" },
+          { text: "分母次數比分子高 2，大半圓那段趨近 0。所以整條實數線的積分 = 2πi · 1/(2i) = π。跟 arctan 算出來的一樣，但這個方法對 1/(1 + x⁴)、1/(1 + x²)² 照樣一行。", tex: "\\int_{-\\infty}^{\\infty}\\frac{dx}{1+x^2}=2\\pi i\\cdot\\frac{1}{2i}=\\pi" }
+        ]
+      },
+      checks: [
+        {
+          ask: "∫e^{2x} cos 3x dx 用複數怎麼開頭？",
+          options: [
+            { label: "分部積分兩次", why: "可以，但那是複數要取代的方法。複數做法：積 e^{(2+3i)x}，最後取實部。" },
+            { label: "算 ∫e^{(2+3i)x} dx = e^{(2+3i)x}/(2+3i)，再取實部", correct: true },
+            { label: "把 cos 換成 sin", why: "換了不會比較好積。關鍵是把 cos 變成指數。" }
+          ]
+        },
+        {
+          ask: "1/(z² + 4) 在上半平面的極點與留數？",
+          options: [
+            { label: "z = 2i，留數 1/(4i)", correct: true },
+            { label: "z = 2，留數 1/4", why: "z² + 4 = 0 的根是 ±2i，不是 ±2。" },
+            { label: "z = 2i，留數 1/2", why: "(z − 2i)·1/((z − 2i)(z + 2i)) 在 z = 2i 是 1/(4i)。" }
+          ]
+        },
+        {
+          ask: "∫_{−∞}^{∞} dx/(x² + 4) 等於？",
+          options: [
+            { label: "π/4", why: "2πi · 1/(4i) = π/2。" },
+            { label: "π/2", correct: true },
+            { label: "π", why: "π 是 1/(1 + x²) 的答案；分母換成 x² + 4 會縮成一半。" }
+          ]
+        }
+      ],
+      practice: []
+    },
+    {
+      id: "adv-ode-basics",
+      unit: "advanced",
+      title: "第 25 課 · 微分方程的兩把基本刀：分離變數與一階線性",
+      minutes: 9,
+      goal: "y' 出現在方程式裡就是微分方程。能分開的就分開兩邊各自積；分不開的一階線性用積分因子。",
+      concept: [
+        { text: "最簡單的一個：y' = ky。解是 y = Ce^{kx}——「變化率跟自己成正比」的東西一律是指數。C 由初始條件決定。" },
+        { text: "分離變數：能寫成 g(y) dy = h(x) dx 的，兩邊各自積分。", tex: "\\frac{dy}{dx}=xy\\ \\Rightarrow\\ \\int\\frac{dy}{y}=\\int x\\,dx\\ \\Rightarrow\\ \\ln|y|=\\frac{x^2}{2}+C\\ \\Rightarrow\\ y=Ae^{x^2/2}" },
+        { text: "一階線性 y' + P(x)y = Q(x)：分不開，乘上積分因子 μ = e^{∫P dx}，左邊就會變成 (μy)' 的形狀，然後兩邊積分。", tex: "(\\mu y)'=\\mu Q\\ \\Rightarrow\\ y=\\frac{1}{\\mu}\\int\\mu Q\\,dx" },
+        { text: "為什麼會這樣：μ' = Pμ，所以 (μy)' = μy' + μ'y = μ(y' + Py)。積分因子就是刻意選來讓乘法律倒過來用的。" },
+        { text: "題目給初始條件 y(0) = 某數時，最後一步一定要把常數定出來——很多題只差這一步。" }
+      ],
+      worked: {
+        tex: "y'+2y=e^{-x},\\qquad y(0)=2",
+        steps: [
+          { text: "P = 2，積分因子 μ = e^{2x}。兩邊乘上去：e^{2x}y' + 2e^{2x}y = eˣ，左邊正是 (e^{2x}y)'。", tex: "(e^{2x}y)'=e^{x}" },
+          { text: "兩邊積分：e^{2x}y = eˣ + C，所以 y = e^{−x} + Ce^{−2x}。" },
+          { text: "代 y(0) = 2：1 + C = 2，C = 1。", tex: "y=e^{-x}+e^{-2x}" }
+        ]
+      },
+      checks: [
+        {
+          ask: "y' = 3y、y(0) = 5 的解是？",
+          options: [
+            { label: "y = 5e^{3x}", correct: true },
+            { label: "y = 3e^{5x}", why: "指數的係數是方程式裡的 3，前面的常數由 y(0) = 5 決定。" },
+            { label: "y = 5 + 3x", why: "「變化率跟自己成正比」給的是指數，不是直線。直線的 y' 是常數。" }
+          ]
+        },
+        {
+          ask: "y' + y/x = x 的積分因子是？",
+          options: [
+            { label: "e^{1/x}", why: "μ = e^{∫P dx}，P = 1/x，∫1/x dx = ln x，所以 μ = x。" },
+            { label: "x", correct: true },
+            { label: "eˣ", why: "P 是 1/x 不是 1。" }
+          ]
+        },
+        {
+          ask: "dy/dx = y²，哪一步是對的？",
+          options: [
+            { label: "∫dy = ∫y² dx", why: "右邊還有 y，不能對 x 積分。要先把 y 全搬到左邊：dy/y² = dx。" },
+            { label: "dy/y² = dx，積分得 −1/y = x + C", correct: true },
+            { label: "y = e^{y²x}", why: "這不是 y' = ky 的形狀（右邊是 y² 不是 ky），指數解不成立。" }
+          ]
+        }
+      ],
+      practice: []
     }
   ];
 })();
@@ -664,7 +1105,10 @@
 (function () {
   "use strict";
 
-  const UNITS = [["functions", "函數"], ["limits", "極限與連續"], ["derivatives", "微分"], ["integrals", "積分"]];
+  const UNITS = [["functions", "函數"], ["limits", "極限與連續"], ["derivatives", "微分"], ["integrals", "積分"], ["advanced", "進階技巧"]];
+  // 進階技巧九課對應題庫 R5–R6 會出現的招式；它們不在畢業關的門檻裡（畢業關只看前十六課）。
+  const CORE_UNITS = ["functions", "limits", "derivatives", "integrals"];
+  const isCore = (item) => CORE_UNITS.includes(item.unit);
   const UNIT_LABEL = Object.fromEntries(UNITS);
 
   function create(deps) {
@@ -684,7 +1128,7 @@
     const number = (item) => lessons().indexOf(item) + 1;
 
     function progress(records) {
-      const all = lessons();
+      const all = lessons().filter(isCore);
       const done = all.filter((item) => isDone(records, item.id)).length;
       const next = all.find((item) => !isDone(records, item.id)) || null;
       return { total: all.length, done, next };
@@ -1113,7 +1557,7 @@
     };
     // 每課結尾的延伸挑戰：同單元一題 R2（不倒數、可跳過）。課上完不該只是「看完」。
     // 同一課永遠是同一題（用課的序號挑），練過的人回來才不會覺得被換題。
-    const EXTENSION_TOPIC = { functions: "limits", limits: "limits", derivatives: "derivatives", integrals: "integrals" };
+    const EXTENSION_TOPIC = { functions: "limits", limits: "limits", derivatives: "derivatives", integrals: "integrals", advanced: "integrals" };
     const extensionPool = (id) => {
       const item = lesson(id);
       if (!item) return [];

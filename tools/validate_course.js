@@ -28,7 +28,7 @@ const problems = new Map((global.window.BUZZ_PROBLEMS || []).map((p) => [p.id, p
 const lessons = global.window.BUZZ_COURSE || [];
 const failures = [];
 const fail = (message) => failures.push(message);
-const UNITS = new Set(["functions", "limits", "derivatives", "integrals"]);
+const UNITS = new Set(["functions", "limits", "derivatives", "integrals", "advanced"]);
 const ids = new Set();
 let checks = 0;
 let theoryCount = 0;
@@ -46,7 +46,7 @@ lessons.forEach((lesson, index) => {
   checks += 1;
   if (!lesson.id || ids.has(lesson.id)) fail(`${label}：id 缺或重複`);
   ids.add(lesson.id);
-  if (!UNITS.has(lesson.unit)) fail(`${label}：unit「${lesson.unit}」不在 functions/limits/derivatives/integrals`);
+  if (!UNITS.has(lesson.unit)) fail(`${label}：unit「${lesson.unit}」不在 functions/limits/derivatives/integrals/advanced`);
   if (!lesson.title || !lesson.goal || !Number.isFinite(lesson.minutes)) fail(`${label}：title / goal / minutes 缺`);
   if (!new RegExp(`^第 ${index + 1} 課 · `).test(lesson.title)) fail(`${label}：標題的課號跟順序不合：${lesson.title}`);
   if (!Array.isArray(lesson.concept) || lesson.concept.length < 3) fail(`${label}：概念至少三段`);
@@ -118,7 +118,7 @@ if (checkCount && firstOptionCorrect / checkCount > 0.6) fail(`小測有 ${first
 const unitCount = (unit) => lessons.filter((l) => l.unit === unit).length;
 console.log("從零開始課程");
 console.log(`  橋池      ${bridge.length} 題（極限 ${perTopic.limits} / 微分 ${perTopic.derivatives} / 積分 ${perTopic.integrals}）· 畢業關 ${grad.length} 題 · 排除標籤 ${ui.uncoveredTags.join(", ")}`);
-console.log(`  課程      ${lessons.length} 課（${unitCount("functions")} 函數 / ${unitCount("limits")} 極限 / ${unitCount("derivatives")} 微分 / ${unitCount("integrals")} 積分）· 理論課 ${theoryCount}`);
+console.log(`  課程      ${lessons.length} 課（${unitCount("functions")} 函數 / ${unitCount("limits")} 極限 / ${unitCount("derivatives")} 微分 / ${unitCount("integrals")} 積分 / ${unitCount("advanced")} 進階）· 理論課 ${theoryCount}`);
 console.log(`  題目      示範 ${lessons.length - theoryCount} 題 · 練習 ${lessons.reduce((n, l) => n + (l.practice || []).length, 0)} 題，全部 R1 · 小測 ${checkCount} 題（正解在第一個的 ${firstOptionCorrect}）`);
 if (failures.length) {
   console.error(`\n課程驗證失敗（${failures.length}）：`);
