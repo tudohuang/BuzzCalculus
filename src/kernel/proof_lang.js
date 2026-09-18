@@ -1442,8 +1442,10 @@
   // 題目的目標兩邊、ε-δ 收尾的起點、歸納步驟 k+1 的左式、自訂函數代常數（g(0)）
   function anchored(spec, ctx, chain, evaluate) {
     if (overlapsKnown(spec, ctx, chain, evaluate)) return true;
-    // 大小寫要分（S(k+1) 的 S、數列的 N）：這裡不用 compact
-    const squeeze = (text) => normalize(text).replace(/s+/g, "");
+    // 大小寫要分（S(k+1) 的 S、數列的 N）：這裡不用 compact，只去空白。
+    // 實際踩過：這裡曾寫成 /s+/（少了反斜線），刪的是字母 s 不是空白 ——
+    // 使用者不打空格的 |x-3| 就對不上假設裡的 |x − 3|，跟參考證明一模一樣卻標黃。
+    const squeeze = (text) => normalize(text).replace(/\s+/g, "");
     const all = chain.exprs.map((expr) => squeeze(applyMacros(spec, expr, ctx)));
     const ends = [all[0], all[all.length - 1]];
     const names = new Set([...Object.keys(spec.vars || {}), ...ctx.vars.keys(), ...Object.keys(ctx.defs), ...(ctx.atoms ? ctx.atoms.keys() : [])]);
