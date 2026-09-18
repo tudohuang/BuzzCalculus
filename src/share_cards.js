@@ -137,7 +137,7 @@
       ctx.fillText("每一題的答案都經過獨立數值驗算。", 72, 1180);
       ctx.fillStyle = "#6d6a60";
       ctx.font = `600 30px ${ui}`;
-      ctx.fillText("tudohuang.github.io/BuzzCalculus", 72, 1240);
+      ctx.fillText("buzz-calculus.vercel.app", 72, 1240);
 
       canvas.toBlob((blob) => {
         if (!blob) return;
@@ -228,7 +228,7 @@
       ctx.fillText("每一題的答案都經過獨立數值驗算。", 72, 1180);
       ctx.fillStyle = "#b8b3a4";
       ctx.font = `600 30px ${ui}`;
-      ctx.fillText("tudohuang.github.io/BuzzCalculus", 72, 1240);
+      ctx.fillText("buzz-calculus.vercel.app", 72, 1240);
       return canvas;
     }
 
@@ -317,7 +317,7 @@
       ctx.fillText("全站同一題，一天一次。你來試試？", 72, 900);
       ctx.fillStyle = "#b8b3a4";
       ctx.font = `600 30px ${ui}`;
-      ctx.fillText("tudohuang.github.io/BuzzCalculus", 72, 960);
+      ctx.fillText("buzz-calculus.vercel.app", 72, 960);
       shareCanvas(canvas, `buzzcalculus-daily-${data.dateKey}.png`, data.text, onFallback);
     }
 
