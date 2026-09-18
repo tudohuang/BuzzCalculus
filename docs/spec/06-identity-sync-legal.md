@@ -52,7 +52,6 @@ GitHub Pages 保持不變，API 走另一個網域，CORS 白名單。
 ### 階段 C：跨科目帳號（P6）
 
 一個 accountId → 多個 subject 的 records。API 加 `?subject=calculus`。
-Buzz Pro 訂閱狀態掛在 account 上，各科目共用。
 
 ## 6.3 同步衝突：LWW 不夠，要 per-key merge
 

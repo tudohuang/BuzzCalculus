@@ -47,8 +47,7 @@ if (checkMode) {
     "src/kernel/verified_answers.js",
     "reports/answer-verification.json",
     "README.md",
-    "about.html",
-    "workbook.html"
+    "about.html"
   ];
   const dirty = execSync(`git status --porcelain -- ${GENERATED.join(" ")}`, { cwd: root })
     .toString().trim();

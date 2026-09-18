@@ -23,7 +23,7 @@ const ROOT = path.join(__dirname, "..");
 // kernel 分兩類：手寫的邏輯模組，跟工具產生的側表（uid/origin/rubric/
 // derived_hints/verified_answers/equivalence/skill_tags）。側表是資料 ——
 // 它們隨題庫成長是正常的，跟著題庫預算走；邏輯肥大才是要擋的事。
-const GENERATED_TABLES = /^src\/kernel\/(uid_map|origin|rubric|rubric_reviewed|derived_hints|verified_answers|equivalence|skill_tags|workbook_facts)\.js$/;
+const GENERATED_TABLES = /^src\/kernel\/(uid_map|origin|rubric|rubric_reviewed|derived_hints|verified_answers|equivalence|skill_tags)\.js$/;
 
 const BUDGETS = {
   // 2026-09-13 從 700 調到 720：初學者走查補進新手保護期、診斷式定位、

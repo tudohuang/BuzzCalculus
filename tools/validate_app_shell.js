@@ -9,12 +9,11 @@ const sw = fs.readFileSync(path.join(root, "sw.js"), "utf8");
 
 // 掃的是**每一個會部署出去的 HTML 頁**，不是只有 index.html。
 //
-// 原本只看 index.html，於是 workbook.html 新掛的 src/kernel/pricing.js 與
-// workbook_facts.js 沒有進 APP_SHELL 也沒有人叫 —— 離線時那一頁的購買區塊
-// 會永遠停在「載入中…」。這跟下面那段註解記錄的
+// 原本只看 index.html，於是別頁新掛的 script 沒進 APP_SHELL 也沒有人叫 ——
+// 離線時那一頁會停在「載入中…」。這跟下面那段註解記錄的
 // 「privacy/terms/about/changelog 四頁通過了所有驗證卻沒被部署」是同一類錯：
 // 檢查的範圍比實際出貨的範圍小。
-const deployedPages = ["index.html", "workbook.html", "privacy.html", "terms.html", "about.html"]
+const deployedPages = ["index.html", "privacy.html", "terms.html", "about.html"]
   .filter((name) => fs.existsSync(path.join(root, name)));
 const pageSources = deployedPages.map((name) => ({ name, text: fs.readFileSync(path.join(root, name), "utf8") }));
 
@@ -43,7 +42,7 @@ cached.forEach((file) => {
 //
 // 實際發生過：privacy / terms / about / changelog 四頁都通過了
 // validate_privacy（設定頁有連結、sw.js 有快取），但 CI 的 Assemble site
-// 那一步只 cp 了 index / workbook / styles / sw / manifest ——
+// 那一步只 cp 了 index / styles / sw / manifest ——
 // 於是線上站台那四個連結全部 404，而所有驗證器都是綠的。
 //
 // 隱私政策 404 比沒有隱私政策更糟：連結存在代表你宣稱有那份文件。
