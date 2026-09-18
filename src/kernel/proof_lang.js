@@ -367,9 +367,9 @@
     { id: "mvt", names: ["平均值定理", "均值定理", "mvt", "mean value theorem", "lagrange"], shapes: [/(\w+)\((\w+)\)-\1\((\w+)\)=\1'\((\w+)\)\*?\((\w+)-(\w+)\)/, /(\w+)'\((\w+)\)=\(?\1\((\w+)\)-\1\((\w+)\)\)?\/\((\w+)-(\w+)\)/], requires: "differentiable" },
     // 泰勒（Lagrange 餘項）：f(a+h) = f(a) + h f'(a) + (h²/2) f''(ξ)。形狀只認「f(某點) = 含 f''(ξ) 的展開式」
     { id: "taylor", names: ["泰勒定理", "泰勒展開", "泰勒", "taylor", "taylor's theorem", "taylor expansion", "lagrange remainder"], shapes: [/(\w+)\((.+?)\)=.*\1''\((\w+)\)/], requires: "twice-differentiable" },
-    { id: "rolle", names: ["rolle", "rolle定理", "洛爾定理", "rolle theorem"], shapes: [/(\w+)'\((\w+)\)=0/], requires: "differentiable" },
+    { id: "rolle", names: ["Rolle 定理", "rolle", "rolle定理", "洛爾定理", "rolle theorem"], shapes: [/(\w+)'\((\w+)\)=0/], requires: "differentiable" },
     { id: "evt", names: ["極值定理", "extreme value theorem", "evt", "最大最小值定理"], shapes: [/(最大值|最小值|maximum|minimum|max|min)/], requires: "continuous" },
-    { id: "fermat", names: ["fermat", "費馬定理", "fermat theorem", "內點極值"], shapes: [/(\w+)'\((\w+)\)=0/] },
+    { id: "fermat", names: ["費馬定理", "fermat", "fermat theorem", "內點極值"], shapes: [/(\w+)'\((\w+)\)=0/] },
     { id: "squeeze", names: ["夾擠定理", "夾擠", "squeeze", "sandwich", "squeeze theorem"], shapes: [/lim/], requires: "sandwich" },
     { id: "amgm", names: ["算幾不等式", "am-gm", "amgm", "算術幾何平均"], shapes: [/\(?(.+)\+(.+)\)?\/2>=sqrt\(/, />=2\*?sqrt\(/] },
     // 中間值定理要兩件事都在前面出現過：函數連續（文字事實）、兩端異號（驗過的 g(a) < 0、g(b) > 0）
@@ -379,7 +379,7 @@
     { id: "algebra", names: ["代數", "展開", "因式分解", "通分", "整理", "algebra", "expanding", "factoring", "simplifying", "計算"], shapes: [] },
     { id: "monotone", names: ["單調性", "monotonicity", "遞增", "遞減"], shapes: [] },
     { id: "continuity", names: ["連續性", "連續", "continuity", "continuous"], shapes: [] },
-    { id: "bernoulli", names: ["bernoulli", "白努利不等式", "伯努利不等式"], shapes: [/\(1\+(.+)\)\^(\w+)>=1\+/] },
+    { id: "bernoulli", names: ["白努利不等式", "bernoulli", "伯努利不等式"], shapes: [/\(1\+(.+)\)\^(\w+)>=1\+/] },
     { id: "cauchy", names: ["柯西不等式", "cauchy", "cauchy-schwarz"], shapes: [] },
     { id: "binomial", names: ["二項式定理", "binomial theorem", "二項展開"], shapes: [] }
   ];
@@ -1767,6 +1767,70 @@
     return { lines: report, counts, missing, verdict, verdictText, goalDone: ctx.goalDone };
   }
 
+  /* ── 速查表：給題庫頁與編輯器印的「我支援什麼」 ───────────────────
+     句型的關鍵字與例句、定理的寫法與前提、文字事實、符號寫法。
+     定理清單由 RULES 帶出來（別名不會漂），只有「寫法／前提」是手寫的；
+     validate_proof_lang 會擋：每一個句型 kind、每一條規則 id 都要在這裡有一列。 */
+  const CHEAT_SYNTAX = [
+    { kind: "let", label: "引入變數", keywords: "任取、任意取、給定、固定、設、令、取、let、fix、choose", example: "任取 ε > 0。／取 δ = ε/3。／設 g(x) = cos x − x。" },
+    { kind: "assume", label: "假設條件", keywords: "假設、若、如果、suppose、assume；可接「則 …」", example: "假設 0 < |x − 2| < δ。" },
+    { kind: "claim", label: "推導一條鏈", keywords: "則、那麼、得、所以、故、因此、於是、即、然後、同理、展開得、整理得、化簡得", example: "則 |3x − 6| = 3|x − 2| < 3δ = ε。" },
+    { kind: "by", label: "引用定理", keywords: "由、根據、依據、利用、by、using；定理名後接逗號再接結論", example: "由均值定理，存在 c ∈ (a, b) 使 f(b) − f(a) = f'(c)(b − a)。" },
+    { kind: "because", label: "因為…所以…", keywords: "因為 …，所以／故／因此 …；前提要是前面立住的東西", example: "因為 δ ≤ 1，所以 |x + 3| ≤ |x − 3| + 6 < 7。" },
+    { kind: "induction", label: "宣告歸納法", keywords: "用數學歸納法、對 n 做歸納、by induction on n", example: "用數學歸納法。" },
+    { kind: "base", label: "歸納基底", keywords: "當 n = 1 時 …", example: "當 n = 1 時，左式 = 1 = 右式，成立。" },
+    { kind: "hypothesis", label: "歸納假設", keywords: "假設 n = k 時成立", example: "假設 n = k 時成立。" },
+    { kind: "cases", label: "宣告分情況", keywords: "分兩種情況、考慮三種情況", example: "分兩種情況。" },
+    { kind: "case", label: "情況 N", keywords: "情況一：條件；情況二：否則（＝前面情況的補集）", example: "情況一：x ≥ 0。" },
+    { kind: "contradiction-start", label: "反設", keywords: "反設、假設不然、假設結論不成立、suppose not", example: "反設 m 是最大的正整數。" },
+    { kind: "contradiction", label: "得出矛盾", keywords: "… 矛盾、a contradiction", example: "這與 m 是最大的矛盾。" },
+    { kind: "qed", label: "收尾", keywords: "得證、證畢、證明完畢、Q.E.D.、■", example: "得證。" }
+  ];
+  const CHEAT_RULE_NOTES = {
+    triangle: { form: "|a + b| ≤ |a| + |b|" },
+    mvt: { form: "f(b) − f(a) = f'(c)(b − a)，c 在 a、b 之間", requires: "f 可微（先寫「f 可微」或「f 是多項式」）" },
+    taylor: { form: "f(a + h) = f(a) + h f'(a) + (h²/2) f''(ξ)", requires: "f 二次可微" },
+    rolle: { form: "f'(c) = 0", requires: "f 可微" },
+    evt: { form: "f 在 [a, b] 上有最大值／最小值", requires: "f 連續" },
+    fermat: { form: "內點極值處 f'(c) = 0" },
+    squeeze: { form: "lim … 由 A ≤ B ≤ C 夾出", requires: "前面先寫出 A ≤ B ≤ C 的鏈" },
+    amgm: { form: "(a + b)/2 ≥ √(ab)，或 a + b ≥ 2√(ab)" },
+    ivt: { form: "存在 c 使 f(c) = …", requires: "f 連續，且前面驗過兩端異號（f(a) < 0、f(b) > 0）" },
+    "derivative-def": { form: "f'(a) = lim_{h→0} (f(a + h) − f(a))/h" },
+    hypothesis: { form: "拿題目給的條件或前面的假設來用" },
+    algebra: { form: "展開、因式分解、通分、整理：接著的式子交給代數引擎驗" },
+    monotone: { form: "文字引用，式子本身照樣驗" },
+    continuity: { form: "文字引用，式子本身照樣驗" },
+    bernoulli: { form: "(1 + x)^n ≥ 1 + nx" },
+    cauchy: { form: "文字引用；式子驗不了的會標黃" },
+    binomial: { form: "文字引用；式子驗不了的會標黃" }
+  };
+  const CHEAT_FACTS = [
+    "f 是多項式（蘊含連續、可微）",
+    "f 連續／f 在 [a, b] 上連續",
+    "f 可微／可導",
+    "f 二次可微（泰勒定理的前提）",
+    "自己令的 g(x) = …：只由 sin、cos、exp、絕對值與多項式組成就自動算連續；沒有絕對值就自動算可微"
+  ];
+  const CHEAT_NOTATION = [
+    ["ε、δ", "eps、delta，或直接打希臘字母；ξ、η、θ、λ、μ、α、β、γ 也認得"],
+    ["絕對值", "|x − 3| 或 abs(x − 3)"],
+    ["不等式", "<=、>=、!=，或 ≤、≥、≠；一條鏈只能朝一個方向"],
+    ["次方、根號", "x^2、x²、x^{n+1}；sqrt(x)、√x"],
+    ["極限", "lim_{x→2} 3x = 6、lim x->2 (3x) = 6 都可以"],
+    ["存在", "存在 c ∈ (a, b) 使 …（要接在「由 <定理>，」後面）"],
+    ["對所有", "對所有正整數 n、對任意 x：是裝飾，不是主張"],
+    ["空格", "可打可不打：|x-3| 跟 |x − 3| 一樣"],
+    ["一行一句", "句號只能在最後；「且」與逗號可以分開兩個主張"],
+    ["顏色", "綠＝驗過成立；黃＝讀得懂但驗不了（抽象函數、字典外的定理、接不上前文）；紅＝不成立、沒宣告的變數、還沒對上目標就得證"]
+  ];
+  const cheatsheet = {
+    syntax: CHEAT_SYNTAX,
+    rules: RULES.map((rule) => ({ id: rule.id, name: rule.names[0], aliases: rule.names.slice(1), form: (CHEAT_RULE_NOTES[rule.id] || {}).form || "", requires: (CHEAT_RULE_NOTES[rule.id] || {}).requires || "" })),
+    facts: CHEAT_FACTS,
+    notation: CHEAT_NOTATION
+  };
+
   const api = {
     version: 1,
     normalize,
@@ -1774,6 +1838,7 @@
     check,
     patterns: PATTERNS.map((pattern) => ({ kind: pattern.kind, label: pattern.label })),
     rules: RULES.map((rule) => ({ id: rule.id, name: rule.names[0], aliases: rule.names.slice(1) })),
+    cheatsheet,
     compile: (text, scope) => compile(text, scope)
   };
 
