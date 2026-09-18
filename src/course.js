@@ -659,8 +659,8 @@
       goal: "0/0 型的極限不用一直微分：把每個函數展開到需要的階，剩下的是多項式相除。",
       concept: [
         { text: "L'Hôpital 遇到 (sin x − x)/x³ 要微三次，每次都可能算錯。Taylor 展開一次搞定：把分子分母都寫成 x 的多項式加高階小量，約掉 x 的次方就看得到答案。" },
-        { text: "五個要背的展開，全部在 x → 0 附近：", tex: "e^x=1+x+\\tfrac{x^2}{2}+\\tfrac{x^3}{6}+\\cdots,\\quad \\sin x=x-\\tfrac{x^3}{6}+\\cdots,\\quad \\cos x=1-\\tfrac{x^2}{2}+\\tfrac{x^4}{24}-\\cdots" },
-        { text: "另外兩個：", tex: "\\ln(1+x)=x-\\tfrac{x^2}{2}+\\tfrac{x^3}{3}-\\cdots,\\qquad (1+x)^a=1+ax+\\tfrac{a(a-1)}{2}x^2+\\cdots" },
+        { text: "五個要背的展開，全部在 x → 0 附近：", tex: "\\begin{aligned}e^x&=1+x+\\tfrac{x^2}{2}+\\tfrac{x^3}{6}+\\cdots\\\\ \\sin x&=x-\\tfrac{x^3}{6}+\\cdots\\\\ \\cos x&=1-\\tfrac{x^2}{2}+\\tfrac{x^4}{24}-\\cdots\\end{aligned}" },
+        { text: "另外兩個：", tex: "\\begin{aligned}\\ln(1+x)&=x-\\tfrac{x^2}{2}+\\tfrac{x^3}{3}-\\cdots\\\\ (1+x)^a&=1+ax+\\tfrac{a(a-1)}{2}x^2+\\cdots\\end{aligned}" },
         { text: "展到哪一階：看分母。分母是 x³ 就把分子展到 x³ 那一項；展少了會得到 0/0，展多了只是白算。相減的題要特別小心——低階項會互相消掉，消掉之後剩下的那一階才是主角。" },
         { text: "記號 o(x³) 讀作「比 x³ 小得多的東西」，除以 x³ 之後趨近 0。寫出來的目的是提醒自己：後面還有項，但它們不影響答案。" }
       ],
@@ -755,7 +755,7 @@
       minutes: 10,
       goal: "Γ 是階乘的延伸，B 是 Γ 的組合；一堆看起來很兇的定積分，其實是查表。",
       concept: [
-        { text: "定義：", tex: "\\Gamma(s)=\\int_0^{\\infty}x^{s-1}e^{-x}\\,dx\\quad(s>0),\\qquad \\Gamma(s+1)=s\\,\\Gamma(s),\\quad \\Gamma(n+1)=n!" },
+        { text: "定義：", tex: "\\begin{aligned}\\Gamma(s)&=\\int_0^{\\infty}x^{s-1}e^{-x}\\,dx\\quad(s>0)\\\\ \\Gamma(s+1)&=s\\,\\Gamma(s),\\qquad \\Gamma(n+1)=n!\\end{aligned}" },
         { text: "最常用的一個值：Γ(1/2) = √π。由它推出 Γ(3/2) = √π/2、Γ(5/2) = 3√π/4——每次乘上前一個數。這個值跟 ∫e^{−x²} dx = √π 是同一件事（換元 x = t²）。" },
         { text: "Beta 函數：", tex: "\\mathrm{B}(p,q)=\\int_0^{1}x^{p-1}(1-x)^{q-1}\\,dx=\\frac{\\Gamma(p)\\,\\Gamma(q)}{\\Gamma(p+q)}" },
         { text: "三角形式：x = sin²θ 之後，", tex: "\\int_0^{\\pi/2}\\sin^{2p-1}\\theta\\cos^{2q-1}\\theta\\,d\\theta=\\tfrac12\\,\\mathrm{B}(p,q)" },
@@ -855,7 +855,7 @@
         { text: "兩種瑕：區間無限（∫₁^∞）或函數在端點飛走（∫₀¹ 1/√x）。定義都是「先積到 t，再讓 t 趨近」。" },
         { text: "p 判別：", tex: "\\int_1^{\\infty}\\frac{dx}{x^p}\\ \\text{收斂}\\iff p>1,\\qquad \\int_0^{1}\\frac{dx}{x^p}\\ \\text{收斂}\\iff p<1" },
         { text: "比較判別：0 ≤ f ≤ g 而 ∫g 收斂，則 ∫f 收斂；反過來 f ≥ g ≥ 0 而 ∫g 發散，則 ∫f 發散。實際上都是跟 1/xᵖ 或 e⁻ˣ 比。" },
-        { text: "五個經典值：", tex: "\\int_{-\\infty}^{\\infty}e^{-x^2}dx=\\sqrt{\\pi},\\quad \\int_0^{\\infty}\\frac{\\sin x}{x}dx=\\frac{\\pi}{2},\\quad \\int_0^{\\infty}e^{-ax}\\cos bx\\,dx=\\frac{a}{a^2+b^2}" },
+        { text: "五個經典值：", tex: "\\begin{aligned}\\int_{-\\infty}^{\\infty}e^{-x^2}dx&=\\sqrt{\\pi},\\qquad \\int_0^{\\infty}\\frac{\\sin x}{x}dx=\\frac{\\pi}{2}\\\\ \\int_0^{\\infty}e^{-ax}\\cos bx\\,dx&=\\frac{a}{a^2+b^2}\\end{aligned}" },
         { text: "還有兩個：", tex: "\\int_0^{\\infty}\\frac{dx}{1+x^2}=\\frac{\\pi}{2},\\qquad \\int_0^{\\pi/2}\\ln(\\sin x)\\,dx=-\\frac{\\pi}{2}\\ln 2" },
         { text: "Gaussian 用極座標（下面示範），Dirichlet 的 sin x/x 用第 20 課的參數法（塞一個 e⁻ᵃˣ 進去，最後讓 a → 0），ln(sin x) 用對稱性把它拆成自己的一半。這三個推導各值得看一次，然後把值背起來。" }
       ],
@@ -904,9 +904,9 @@
       concept: [
         { text: "Stolz–Cesàro：數列版的 L'Hôpital。bₙ 嚴格遞增到 ∞ 時，", tex: "\\lim\\frac{a_n}{b_n}=\\lim\\frac{a_{n+1}-a_n}{b_{n+1}-b_n}\\quad\\text{（右邊存在的話）}" },
         { text: "看到分子是一個和 Σ、分母是 n 或 ln n 或 n²，先想 Stolz——相減之後 Σ 只剩最後一項。" },
-        { text: "Basel 與 ζ：", tex: "\\sum_{n=1}^{\\infty}\\frac{1}{n^2}=\\frac{\\pi^2}{6},\\qquad \\sum_{n=1}^{\\infty}\\frac{1}{n^4}=\\frac{\\pi^4}{90},\\qquad \\sum_{n=1}^{\\infty}\\frac{1}{(2n-1)^2}=\\frac{\\pi^2}{8}" },
+        { text: "Basel 與 ζ：", tex: "\\begin{aligned}\\sum_{n=1}^{\\infty}\\frac{1}{n^2}&=\\frac{\\pi^2}{6},\\qquad \\sum_{n=1}^{\\infty}\\frac{1}{n^4}=\\frac{\\pi^4}{90}\\\\ \\sum_{n=1}^{\\infty}\\frac{1}{(2n-1)^2}&=\\frac{\\pi^2}{8}\\end{aligned}" },
         { text: "奇數項那個是把 π²/6 減掉偶數項 (1/4)·π²/6 得來的。題目常把 1/n² 藏在部分分式或參數積分後面，認得出來就是一行。" },
-        { text: "Abel：冪級數在收斂區間端點若收斂，和就是極限值。所以 ln(1 + x) = x − x²/2 + x³/3 − … 代 x = 1 得", tex: "1-\\frac12+\\frac13-\\frac14+\\cdots=\\ln 2,\\qquad 1-\\frac13+\\frac15-\\cdots=\\frac{\\pi}{4}" },
+        { text: "Abel：冪級數在收斂區間端點若收斂，和就是極限值。所以 ln(1 + x) = x − x²/2 + x³/3 − … 代 x = 1 得", tex: "\\begin{aligned}1-\\tfrac12+\\tfrac13-\\tfrac14+\\cdots&=\\ln 2\\\\ 1-\\tfrac13+\\tfrac15-\\cdots&=\\frac{\\pi}{4}\\end{aligned}" },
         { text: "第二個是 arctan x 的展開代 x = 1。看到交錯級數的和，先問：它是哪個函數的冪級數在哪一點的值？" }
       ],
       worked: {
@@ -955,7 +955,7 @@
         { text: "偏導 ∂f/∂x：把其他變數當常數，只對 x 微分。多變數的臨界點是兩個偏導同時為 0 的地方。" },
         { text: "Jacobian：變數變換 (u, v) → (x, y) 時，一小塊面積被放大幾倍。", tex: "J=\\frac{\\partial(x,y)}{\\partial(u,v)}=\\det\\begin{pmatrix}x_u & x_v\\\\ y_u & y_v\\end{pmatrix},\\qquad dx\\,dy=|J|\\,du\\,dv" },
         { text: "極座標 x = r cos θ、y = r sin θ 算出來 J = r，這就是第 21 課裡憑空出現的那個 r。看到 x² + y²、圓形區域，換極座標；看到 x = u² − v²、y = 2uv 這種題，題目就是在考你算 Jacobian。" },
-        { text: "Hessian：二階偏導排成的矩陣。在臨界點算 D = f_xx·f_yy − (f_xy)²。", tex: "D>0,\\ f_{xx}>0\\Rightarrow\\text{極小};\\quad D>0,\\ f_{xx}<0\\Rightarrow\\text{極大};\\quad D<0\\Rightarrow\\text{鞍點}" },
+        { text: "Hessian：二階偏導排成的矩陣。在臨界點算 D = f_xx·f_yy − (f_xy)²。", tex: "\\begin{aligned}D>0,\\ f_{xx}>0&\\Rightarrow\\text{極小}\\\\ D>0,\\ f_{xx}<0&\\Rightarrow\\text{極大}\\\\ D<0&\\Rightarrow\\text{鞍點}\\end{aligned}" },
         { text: "D = 0 時測不出來，要另想辦法。D 就是 Hessian 的行列式；題目說「Hessian determinant」就是要你算這個數。" }
       ],
       worked: {
