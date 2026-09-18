@@ -112,6 +112,19 @@ strictCases.forEach(([name, text, expect]) => {
 
 // 句型表與規則表要能列出來（教學頁用）
 if (!lang.patterns.length || !lang.rules.length) fail("patterns / rules 表是空的");
+// 速查表不能漂：每一個句型、每一條規則都要有一列，規則要寫出「會認的寫法」
+const sheet = lang.cheatsheet || {};
+lang.patterns.filter((p) => p.kind !== "unknown").forEach((p) => {
+  if (!(sheet.syntax || []).some((row) => row.kind === p.kind)) fail(`速查表少了句型「${p.label}」（${p.kind}）`);
+});
+lang.rules.forEach((rule) => {
+  const row = (sheet.rules || []).find((item) => item.id === rule.id);
+  if (!row) fail(`速查表少了定理「${rule.name}」`);
+  else if (!row.form) fail(`速查表的定理「${rule.name}」沒寫「會認的寫法」`);
+});
+(sheet.syntax || []).forEach((row) => {
+  if (!lang.patterns.some((p) => p.kind === row.kind)) fail(`速查表多了一個不存在的句型 ${row.kind}`);
+});
 
 const minimum = problems.find((spec) => spec.id === "pl-min-positive");
 for (const [name, edits] of [

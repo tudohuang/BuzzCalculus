@@ -88,6 +88,41 @@
 
     // 編輯器：範本列、textarea、即時報告、底下的按鈕列。
     // 題目頁不放「看參考證明」（題解在左邊的分頁）；教學頁還是用切換的。
+    // 速查表：支援的句型、定理、文字事實、符號寫法。內容從引擎的 cheatsheet 拿，不另外抄一份。
+    function renderCheatSheet(open) {
+      const lang = window.BuzzProofLang;
+      const sheet = lang && lang.cheatsheet;
+      if (!sheet) return "";
+      const rulesRows = sheet.rules.map((rule) => `
+        <tr>
+          <th scope="row">${escapeHtml(rule.name)}${rule.aliases.length ? `<small>${escapeHtml(rule.aliases.join("、"))}</small>` : ""}</th>
+          <td>${escapeHtml(rule.form || "")}</td>
+          <td>${escapeHtml(rule.requires || "—")}</td>
+        </tr>`).join("");
+      const syntaxRows = sheet.syntax.map((row) => `
+        <tr>
+          <th scope="row">${escapeHtml(row.label)}</th>
+          <td>${escapeHtml(row.keywords)}</td>
+          <td>${escapeHtml(row.example)}</td>
+        </tr>`).join("");
+      const notationRows = sheet.notation.map(([name, how]) => `<tr><th scope="row">${escapeHtml(name)}</th><td colspan="2">${escapeHtml(how)}</td></tr>`).join("");
+      return `
+        <details class="lc-cheat" ${open ? "open" : ""}>
+          <summary>${icon("book-open")}速查表：支援的句型、定理與寫法</summary>
+          <div class="lc-cheat-body">
+            <p class="section-label">句型（每一行用一種開頭）</p>
+            <div class="lc-cheat-scroll"><table><thead><tr><th>句型</th><th>關鍵字</th><th>例句</th></tr></thead><tbody>${syntaxRows}</tbody></table></div>
+            <p class="section-label">定理（寫「由 <定理>，…」）</p>
+            <div class="lc-cheat-scroll"><table><thead><tr><th>定理</th><th>會認的寫法</th><th>前提</th></tr></thead><tbody>${rulesRows}</tbody></table></div>
+            <p class="section-label">文字事實（算不出來但可以引用）</p>
+            <ul class="lc-cheat-list">${sheet.facts.map((fact) => `<li>${escapeHtml(fact)}</li>`).join("")}</ul>
+            <p class="section-label">符號與規矩</p>
+            <div class="lc-cheat-scroll"><table><tbody>${notationRows}</tbody></table></div>
+            <p class="lc-cheat-note">字典外的定理可以照寫：式子驗得過就綠，只是備註會說它不在字典裡。</p>
+          </div>
+        </details>`;
+    }
+
     function renderProofLangEditor(spec, text, report, showReference, options = {}) {
       const rows = Math.max(8, Math.min(18, String(text || "").split("\n").length + 2));
       const referenceButton = options.noReference ? "" : `<button class="button secondary" data-action="pl-toggle-reference">${icon("eye")}${showReference ? "收起參考證明" : "看參考證明"}</button>`;
@@ -103,6 +138,7 @@
             <button class="button ghost" data-action="pl-clear">${icon("trash")}清空重寫</button>
             ${options.extra || ""}
           </div>
+          ${renderCheatSheet(false)}
           ${options.after || ""}
           ${showReference && !options.noReference ? `<div class="pl-reference"><p class="section-label">參考證明</p><pre>${escapeHtml(spec.reference.join("\n"))}</pre></div>` : ""}
           <div data-pl-report>
@@ -230,6 +266,7 @@
                 <button class="button secondary" data-action="home">${icon("home")}回主線</button>
               </div>
             </div>
+            ${renderCheatSheet(false)}
 
             <div class="lc-routes">
               ${routes.map((route) => `
