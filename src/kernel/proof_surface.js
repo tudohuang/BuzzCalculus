@@ -331,7 +331,8 @@
       return [{ type: "define", canonical: `${isFunctionDef(body) ? "設" : "取"} ${body}。` }];
     }
     if ((m = s.match(EN.intro))) {
-      const body = strip(m[1]).replace(/\s+be\s+(?:given|arbitrary|fixed)$/i, "");
+      // Let x, y ∈ I with x < y：with／such that 後面的是條件，用「且」接上（引擎會分開登記）
+      const body = strip(m[1]).replace(/\s+be\s+(?:given|arbitrary|fixed)$/i, "").replace(/\s+(?:with|such that|satisfying|where)\s+/i, " 且 ");
       // Choose δ = ε/3 > 0：定義之後多寫的 > 0 是一個可以驗的主張，拆成「則 δ > 0」
       const defWithBound = body.match(DEF_WITH_BOUND);
       if (defWithBound) return [{ type: "define", canonical: `取 ${defWithBound[1]} = ${defWithBound[2]}。` }, { type: "derive", canonical: `則 ${defWithBound[1]} ${defWithBound[3]} ${defWithBound[4]}。` }];

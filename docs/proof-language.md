@@ -127,3 +127,16 @@
 每一條登記的關係（假設、前提、驗過的鏈）記進 `ctx.factLog`：`{ id, expr, line, provenance: { kind, rule, from } }`；報告帶 `facts` 與每行的 `grounding`，畫面之後可以做「這一步從哪裡來」。
 
 驗收證明（lim x² = 9 的九段英文＋LaTeX）與變異（1<x<5 綠但註明由條件推出、3<x<4 紅、目標寫成 8 紅、憑空真話黃）由 `tools/validate_proof_surface.js` 第 5 節釘住。
+
+## Proof Engine v2.3：Universal Instantiation for Derived Witnesses（2026-09-19）
+
+核心一句話：**題目已經說「對所有點成立」的事，不該到了定理產生的 c 身上又重新抽籤決定一次。**
+
+- 題目的全稱條件用機器讀得懂的形式給在 `facts`（`abs(f'(_)) <= 2`），不能只寫在 statement。
+- `_` 是「式子的洞」：c、x+y、(x+y)/2 都可以；同一個 `_` 要配同一個式子；方向要一樣（允許左右對調）；`|…|` 與 `abs(…)` 同一寫法（比對用 shapeKey）。
+- 登記時展開（`expandUniversals`）：`abs(X) <= r` 同時代表 `X <= r` 與 `X >= -r`；反過來兩條單邊合起來也代表 abs 形式。所以題目寫哪一種、使用者寫哪一種都對得上；`-2 <= f'(c) <= 2` 這種兩段的也認。
+- `matchUniversal` 在數值驗證**之前**：對上就 (1) 登記成取樣條件（`f'(c)` 的 atom 不再自由抽，後面 `|f'(c)||y−x| ≤ 2|y−x|` 才驗得過）、(2) 進 verifiedLinks、(3) 進 factLog，provenance `{ kind: "universal", source: "problem", sourceExpr, substitution: { _: "c" } }`。
+- 備註寫「題目給的「abs(f'(_)) <= 2」對所有點成立，套用到 c」，不寫「在 160 個取樣點上成立」。
+- 負向：`|f'(c)| <= 1`（更強）不綠；`|f'(c)| >= 2`（方向反）、`|g'(c)| <= 2`（函數名錯）不對上；`f(_) − g(_)` 對 `f(c) − g(d)` 不對上。
+- 翻譯層：`Let x, y ∈ I with x < y` 的 with／such that 翻成「且」，條件才會登記。
+- 釘在 validate_proof_lang 第 7 節與 validate_proof_surface 第 6 節（MVT Lipschitz 的英文寫法整份全綠）。
