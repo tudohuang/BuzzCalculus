@@ -107,7 +107,8 @@ async function run() {
 
     await type("設 a, b ≥ 0。\n我覺得這很明顯。\n所以 (a + b)/2 ≥ √(ab)。");
     st = await statuses();
-    check("讀不懂的句子標紅，並且不放行", st[1] === "error", st.join(","));
+    // Proof Input v2：自由書寫模式下讀不出是哪種動作的句子標黃（不猜、不放行）；紅只留給驗證失敗
+    check("讀不懂的句子標黃，並且不放行", st[1] === "unsure" && !(await verdict() || {}).cls?.includes("is-ok"), st.join(","));
 
     await type("所以 (a + b)/2 ≥ √(ab)。");
     v = await verdict();

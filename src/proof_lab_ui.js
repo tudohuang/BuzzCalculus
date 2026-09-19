@@ -32,9 +32,12 @@
       return store[id] || null;
     }
 
-    function runProofLangCheck(spec, text) {
+    // mode：free（預設）走自由書寫層（proof_surface）：中文、英文、LaTeX 混寫都翻成句型語言再驗；
+    // guided 直接餵引擎（一行一句、指定句型）。兩者的三色語意一樣。
+    function runProofLangCheck(spec, text, mode) {
       if (!window.BuzzProofLang || !spec) return null;
       try {
+        if (mode !== "guided" && window.BuzzProofSurface) return window.BuzzProofSurface.check(window.BuzzProofLang, spec, text);
         return window.BuzzProofLang.check(spec, text);
       } catch (error) {
         return { lines: [], counts: { ok: 0, unsure: 0, error: 0 }, missing: [], verdict: "empty", verdictText: `檢查器出錯：${error.message}`, goalDone: false };
@@ -79,7 +82,8 @@
             <li class="is-${line.status}">
               <span class="pl-line-mark" aria-hidden="true">${line.status === "ok" ? "✔" : line.status === "unsure" ? "△" : "✘"}</span>
               <div>
-                <div class="pl-line-text"><small>第 ${line.n} 行 · ${escapeHtml(line.label || "？")}</small>${escapeHtml(line.raw)}</div>
+                <div class="pl-line-text"><small>第 ${line.n} ${line.sourceRange ? "句" : "行"} · ${escapeHtml(line.label || "？")}</small>${escapeHtml(line.raw)}</div>
+                ${line.canonical && line.canonical.replace(/[。.]$/, "") !== String(line.raw).replace(/[。.]$/, "") ? `<p class="pl-line-canonical">讀成：${escapeHtml(line.canonical)}</p>` : ""}
                 <p class="pl-line-note">${escapeHtml(line.note || "")}</p>
               </div>
             </li>`).join("")}
@@ -123,16 +127,24 @@
         </details>`;
     }
 
+    const FREE_PLACEHOLDER = "可以直接用中文、英文或 LaTeX 寫證明。\n\n例如：\nLet ε > 0 be given.\nChoose δ = ε/3.\n\n或：\n任取 ε > 0。\n取 δ = ε/3。";
     function renderProofLangEditor(spec, text, report, showReference, options = {}) {
       const rows = Math.max(8, Math.min(18, String(text || "").split("\n").length + 2));
       const referenceButton = options.noReference ? "" : `<button class="button secondary" data-action="pl-toggle-reference">${icon("eye")}${showReference ? "收起參考證明" : "看參考證明"}</button>`;
+      const mode = options.mode === "guided" ? "guided" : "free";
+      const modeButton = (key, label) => `<button type="button" class="${mode === key ? "is-active" : ""}" data-action="pl-mode" data-mode="${key}" aria-pressed="${mode === key ? "true" : "false"}">${label}</button>`;
       return `
         <div class="pl-editor" data-pl-editor>
+          <div class="pl-mode" role="group" aria-label="書寫模式">
+            <span class="section-label">書寫模式</span>
+            ${modeButton("free", "自由書寫")}${modeButton("guided", "引導句型")}
+            <small>${mode === "free" ? "中文、英文、LaTeX 都可以，一句可以有好幾個動作。" : "一行一句，每句用一種句型開頭。"}</small>
+          </div>
           <div class="pl-templates" role="toolbar" aria-label="句型範本">
             ${PROOF_LANG_TEMPLATES.map(([label, tpl]) => `<button type="button" class="pl-template" data-action="pl-insert" data-text="${escapeAttr(tpl)}">${escapeHtml(label)}</button>`).join("")}
           </div>
           <label class="sr-only" for="pl-text">證明內容</label>
-          <textarea id="pl-text" data-proof-lang-text rows="${rows}" spellcheck="false" placeholder="一行一句。例如：任取 ε > 0。">${escapeHtml(text || "")}</textarea>
+          <textarea id="pl-text" data-proof-lang-text rows="${rows}" spellcheck="false" placeholder="${escapeAttr(mode === "free" ? FREE_PLACEHOLDER : "一行一句。例如：任取 ε > 0。")}">${escapeHtml(text || "")}</textarea>
           <div class="action-row pl-actions">
             ${referenceButton}
             <button class="button ghost" data-action="pl-clear">${icon("trash")}清空重寫</button>
@@ -463,6 +475,7 @@
           <span class="lc-live">${icon("zap")}每一行都即時檢查</span>
         </div>
         ${renderProofLangEditor(spec, proofWrite.text, proofWrite.report, false, {
+          mode: (records.settings || {}).proofInputMode,
           noReference: true,
           // 剛提交、內容沒改：提交結果就是結論，不再重複畫一次即時結論
           hideVerdict: Boolean(last && last.source === proofWrite.text),
@@ -525,6 +538,7 @@
                 <div class="pl-example-head"><p class="section-label">練習 · ${escapeHtml(exercise.title)}</p><span>${escapeHtml(lesson.exercise.task)}</span></div>
                 <div class="pl-goal math-block" data-tex="${escapeAttr(exercise.prompt)}"></div>
                 ${renderProofLangEditor(exercise, proofWrite.text, proofWrite.report, proofWrite.showReference, {
+                  mode: (records.settings || {}).proofInputMode,
                   extra: index + 1 < lessons.length
                     ? `<button class="button home-primary" data-action="pl-open-lesson" data-lesson-id="${escapeAttr(lessons[index + 1].id)}">${icon("play")}下一課</button>`
                     : `<button class="button home-primary" data-action="open-proofs">${icon("check")}上完了，去題庫寫</button>`

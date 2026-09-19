@@ -1,4 +1,4 @@
-const CACHE_NAME = "buzzcalculus-v1.2.1-2026-09-18-clean";
+const CACHE_NAME = "buzzcalculus-v1.2.1-2026-09-19-proof-surface";
 const CACHE_PREFIX = "buzzcalculus-";
 const APP_SHELL = [
   "./privacy.html",
@@ -91,6 +91,7 @@ const APP_SHELL = [
   "./src/kernel/canned_hints.js",
   "./src/kernel/tag_labels.js",
   "./src/kernel/proof_lang.js",
+  "./src/kernel/proof_surface.js",
   "./src/proof_lang_content.js",
   "./src/proof_lab_ui.js",
   "./src/course.js",

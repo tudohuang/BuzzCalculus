@@ -303,6 +303,8 @@ interface Window {
   BuzzShareCards: { create(deps: Record<string, unknown>): { weeklyShareData(records: BuzzRecords): any; downloadWeeklyReport(): void; shareAchievementCard(from: string): void; shareDailyOneCard(data: Record<string, unknown>, onFallback?: () => void): void } };
   BUZZ_PROOF_LANG_PROBLEMS: BuzzProofLangSpec[];
   BUZZ_PROOF_LANG_LESSONS: BuzzProofLangLesson[];
+  /** src/kernel/proof_surface.js：Proof Input v2 自由書寫層，把中英文／LaTeX 翻成句型語言再交給 BuzzProofLang */
+  BuzzProofSurface: { version: number; translate(text: string, lang: any): { nodes: any[]; canonicalText: string; problems: any[] }; check(lang: any, spec: any, text: string): any; latexToPlain(source: string): { text: string; unknown: string[] }; segment(text: string): string[] };
   BUZZ_SKILL_TAGS: Record<string, string[]>;
   BUZZ_DIFFICULTY: any;
   BUZZ_CUSTOM: any;
