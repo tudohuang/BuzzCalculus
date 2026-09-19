@@ -176,6 +176,7 @@
     },
     {
       id: "pl-mvt-constant",
+      classic: "proof-mvt-003",
       optional: [0],
       family: "direct",
       title: "導數恆為零則函數為常數",
@@ -198,6 +199,7 @@
     },
     {
       id: "pl-mvt-increasing",
+      classic: "proof-mvt-004",
       optional: [0, 3],
       family: "direct",
       title: "導數為正則函數嚴格遞增",
@@ -897,6 +899,33 @@
         "故 |f'(x)| ≤ 2。"
       ],
       coach: "泰勒把 f′(x) 用「兩個函數值 + 一個二階導數」寫出來：f(x+h) = f(x) + h f′(x) + (h²/2) f″(ξ)。解出 f′(x)，三角不等式，再把題目給的界一個一個寫進去（|f| ≤ 1 要拆成 f ≤ 1 且 f ≥ −1）。h = 2 是讓 2A/h + hB/2 最小的那個 h。"
+    },
+    {
+      // 經典解析 II-2 的原題（A、B 一般）：proofs.js 的 proof-classic-202 可以「自己寫，機器判」。
+      // 第 4 行（三角不等式）數值上是多餘的——結論靠泰勒關係就驗得過——所以標成可刪，但它是這個證明的想法，參考證明照寫。
+      id: "pl-classic-202",
+      classic: "proof-classic-202",
+      optional: [0, 3],
+      family: "direct",
+      title: "|f| ≤ A、|f″| ≤ B 則 |f′| ≤ 2√(AB)",
+      source: "經典解析習題 II-2",
+      difficulty: 4,
+      statement: "設 f 在 I = (0, ∞) 上二次可微，A、B > 0，且對所有 x 有 |f(x)| ≤ A、|f″(x)| ≤ B。證明對所有 x ∈ I，|f′(x)| ≤ 2√(AB)。",
+      prompt: "|f|\\le A,\\ |f''|\\le B\\ \\Rightarrow\\ |f'(x)|\\le 2\\sqrt{AB}",
+      vars: { x: { min: 0.1, max: 3 }, A: { min: 0.5, max: 3 }, B: { min: 0.5, max: 3 } },
+      abstract: { f: { min: -3, max: 3 }, "f'": { min: -6, max: 6 }, "f''": { min: -3, max: 3 } },
+      facts: ["f 在 I 上二次可微", "f(_) <= A", "f(_) >= -A", "f''(_) <= B", "f''(_) >= -B"],
+      goal: { relation: "abs(f'(x)) <= 2*sqrt(A*B)" },
+      skeleton: "direct",
+      reference: [
+        "任取 x ∈ I。",
+        "取 h = 2√(A/B)。",
+        "由泰勒定理，存在 ξ ∈ (x, x + h) 使 f(x + h) = f(x) + h f'(x) + (h^2/2) f''(ξ)。",
+        "由三角不等式，|f'(x)| = |(f(x + h) − f(x))/h − (h/2) f''(ξ)| ≤ (|f(x + h)| + |f(x)|)/h + (h/2)|f''(ξ)|。",
+        "因為 f(x + h) ≤ A 且 f(x + h) ≥ −A 且 f(x) ≤ A 且 f(x) ≥ −A 且 f''(ξ) ≤ B 且 f''(ξ) ≥ −B，所以 (|f(x + h)| + |f(x)|)/h + (h/2)|f''(ξ)| ≤ 2A/h + Bh/2 = 2√(AB)。",
+        "故 |f'(x)| ≤ 2√(AB)。"
+      ],
+      coach: "泰勒把 f′(x) 用「兩個函數值 + 一個二階導數」寫出來，步長 h 先留著。三角不等式加題目的界之後右邊是 2A/h + Bh/2；它對 h 的最小值在 h = 2√(A/B)，那就是 2√(AB)。所以一開始就取這個 h。"
     },
     {
       id: "pl-classic-second-derivative",

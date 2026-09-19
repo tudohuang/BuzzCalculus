@@ -178,6 +178,18 @@ lessons.forEach((lesson, index) => {
   if (completed.verdict !== "verified") fail(`${label}：起手式接上參考證明的其餘行之後不是全綠（${completed.verdict}）`);
 });
 
+// classic：機器判版本要指到 proofs.js 真的存在的題（題目頁上的「自己寫，機器判」按鈕靠這個）；一題經典證明只能有一個機器判版本
+require(path.join(__dirname, "..", "src", "proofs.js"));
+const classicIds = new Set((global.window.BUZZ_PROOFS || []).map((item) => item.id));
+const seenClassic = new Map();
+problems.forEach((spec) => {
+  if (!spec.classic) return;
+  checks += 1;
+  if (!classicIds.has(spec.classic)) fail(`${spec.id}：classic 指到不存在的經典題 ${spec.classic}`);
+  if (seenClassic.has(spec.classic)) fail(`${spec.id} 與 ${seenClassic.get(spec.classic)} 都說自己是 ${spec.classic} 的機器判版本`);
+  seenClassic.set(spec.classic, spec.id);
+});
+
 console.log("白話證明");
 console.log(`  題目      ${problems.length} 題 · 課程 ${lessons.length} 課`);
 console.log(`  檢查      ${checks} 次（參考證明、刪行、翻符號）`);

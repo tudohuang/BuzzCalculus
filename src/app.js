@@ -5096,6 +5096,11 @@
     entry.updatedAt = now;
     if (report.verdict === "verified" && !entry.solvedAt) entry.solvedAt = now;
     records.proofLang[spec.id] = entry;
+    // 經典題的機器判版本全綠：原題也算解了（不動自評，另記一個時間）
+    if (report.verdict === "verified" && spec.classic) {
+      records.proofs = records.proofs || {};
+      records.proofs[spec.classic] = { ...(records.proofs[spec.classic] || {}), machinePassedAt: records.proofs[spec.classic] && records.proofs[spec.classic].machinePassedAt || now, updatedAt: now };
+    }
     saveRecords(records);
     proofWrite.lastSubmit = { verdict: report.verdict, source: proofWrite.text, text: report.verdict === "verified" ? "全綠、骨架齊。這題算解了 —— 下一題。" : (report.verdictText || "") };
     if (proofWrite.lessonId && report.verdict === "verified") markProofLessonDone(records);
@@ -5210,11 +5215,13 @@
           <div class="proof-key-steps-body">${(proof.keySteps || []).map((step) => `<span>${escapeHtml(step)}</span>`).join("")}</div>
         </details>` : ""}
       ${proof.leanSkeleton ? `<a class="button secondary proof-lean-link" href="https://live.lean-lang.org/#code=${encodeURIComponent(proof.leanSkeleton)}" target="_blank" rel="noopener">${icon("play")}在 Lean Playground 開啟（真・機器判卷）</a>` : ""}`;
+    const machineSpec = plUI.specForClassic(proof.id);
     const right = `
       <div class="lc-work-head">
-        <span class="section-label">${proof.tier === "lean" ? "Lean · 編譯判" : "骨架重排 · 填空 · 自評"}</span>
-        <span class="lc-live">${status ? escapeHtml(proofStatusLabel(status)) : "還沒自評"}</span>
+        <span class="section-label">${proof.tier === "lean" ? "Lean · 編譯判" : machineSpec ? "自己寫機器判 · 骨架重排 · 填空" : "骨架重排 · 填空 · 自評"}</span>
+        <span class="lc-live">${progress.machinePassedAt ? "機器判通過" : status ? escapeHtml(proofStatusLabel(status)) : "還沒自評"}</span>
       </div>
+      ${plUI.renderMachineCard(machineSpec, progress)}
       <article class="proof-card is-${escapeAttr(proof.tier)} ${status ? `status-${escapeAttr(status)}` : ""} lc-proof-card">
         ${renderProofOrderDrill(proof, progress)}
         ${renderProofClozeDrill(proof, progress)}
