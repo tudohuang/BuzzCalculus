@@ -139,8 +139,15 @@
         if (endAt < 0) {
           // 沒配對的分隔符：整段到句尾當一個壞掉的數學區塊（黃，不是紅）
           const stop = (() => { const m = text.slice(from).search(/[。\n]/); return m < 0 ? text.length : from + m; })();
-          problems.push({ start: i, end: stop, note: `這一段的數學式少了對應的 ${open === "$" ? "$" : close}：${text.slice(i, Math.min(stop, i + 40))}` });
+          const snippet = text.slice(from, stop);
+          problems.push({ start: i, end: stop, note: !braceBalanced(snippet)
+            ? `這段 LaTeX 的括號似乎沒有完整關閉：${snippet.trim().slice(0, 40)}。請檢查 { } 是否成對。`
+            : `這一段的數學式少了對應的 ${open === "$" ? "$" : close}：${text.slice(i, Math.min(stop, i + 40))}` });
           blocks.push({ id: blocks.length, content: text.slice(from, stop), start: i, end: stop, broken: true });
+        } else if (!braceBalanced(text.slice(from, endAt))) {
+          // $\frac{\varepsilon}{3$ 這種：分隔符對上了，但括號沒關 —— 黃，講括號，不猜
+          problems.push({ start: i, end: endAt + close.length, note: `這段 LaTeX 的括號似乎沒有完整關閉：${text.slice(from, endAt).trim().slice(0, 40)}。請檢查 { } 是否成對。` });
+          blocks.push({ id: blocks.length, content: text.slice(from, endAt), start: i, end: endAt + close.length, broken: true });
         } else {
           blocks.push({ id: blocks.length, content: text.slice(from, endAt), start: i, end: endAt + close.length });
         }
@@ -208,7 +215,8 @@
       if (ch === "\n") {
         const lineText = work.slice(start, i).trim();
         const nextStartsMath = /^\s*⁣/.test(work.slice(i + 1, i + 8));
-        const danglingConnective = /^(then|thus|hence|therefore|so|we have|we get|it follows that|choose|let|suppose|assume|則|故|所以|因此|於是|取|令|設|假設|可得|得)\s*[,:]?$/i.test(lineText) || /[,，:：]$/.test(lineText);
+        // 行尾是連接詞（…and suppose／Then／We want to show that）也算沒寫完
+        const danglingConnective = /(?:^|\s)(then|thus|hence|therefore|so|we have|we get|it follows that|choose|let|suppose|assume|that|則|故|所以|因此|於是|取|令|設|假設|可得|得)\s*[,:]?$/i.test(lineText) || /[,，:：]$/.test(lineText);
         if (!danglingConnective && !nextStartsMath && lineText) { flush(i); continue; }
       }
     }
@@ -219,12 +227,13 @@
   /* ── 3. 一句 → 一個或多個動作（句型語言） ──────────────────────── */
 
   const EN = {
-    conclude: /^(?:(?:therefore|hence|thus|so|then)[,\s]+)?(?:by (?:the )?(?:eps|epsilon|ε)[\s-]*(?:delta|δ)?[\s-]*definition(?: of (?:the )?limit)?|by (?:the )?definition of (?:the )?limit|this (?:proves|shows) that|we conclude that|we have shown that|it follows that|we obtain)\s*[,:]?\s*(.+)$/i,
+    goal: /^(?:we (?:want|need|wish|aim|have) to (?:show|prove)|we (?:will|shall|now) (?:show|prove)|we (?:prove|show|claim)|it suffices to (?:show|prove)|our goal is to (?:show|prove)|we must (?:show|prove)|claim)\s*(?:that)?\s*[:,]?\s*(.*)$/i,
+    conclude: /^(?:(?:therefore|hence|thus|so|then)[,\s]+)?(?:by (?:the )?(?:eps|epsilon|ε)[\s-]*(?:delta|δ)?[\s-]*definition(?: of (?:the )?limit)?|(?:by|from) (?:the )?definition of (?:the )?limit|this (?:proves|shows) that|we conclude that|we have shown that|it follows that|we obtain)\s*[,:]?\s*(?:we (?:have|get|obtain|see)(?: that)?|it follows that|that)?\s*[,:]?\s*(.+)$/i,
     done: /^(?:(?:hence|therefore|thus|so)[,\s]+)?(?:the (?:result|claim|statement) follows|this completes the proof|which completes the proof|we are done|the proof is complete|qed|q\.e\.d\.?)\.?$/i,
     theorem: /^(?:by|using|from|applying|according to|apply)\s+(?:the\s+)?(.+?)(?:\s*[,:]\s*|\s+(?=there (?:exists?|is)\b)|\s+we (?:have|get|obtain|know)\s+(?:that\s+)?)(.+)$/i,
     forAll: /^for (?:any|every|all|each|arbitrary)\s+(.+)$/i,
-    intro: /^(?:let|given|fix|take|choose|pick|consider)\s+(?:an?\s+|any\s+|some\s+)?(?:arbitrary\s+)?(.+?)(?:\s+be\s+(?:given|arbitrary|fixed|any)|\s+arbitrary|\s+be\s+arbitrary)?\s*$/i,
-    define: /^(?:set|define|put|let|choose|take|pick)\s+(.+)$/i,
+    intro: /^(?:we\s+(?:now\s+)?)?(?:let|given|fix|take|choose|pick|consider|select)\s+(?:an?\s+|any\s+|some\s+)?(?:arbitrary\s+)?(.+?)(?:\s+be\s+(?:given|arbitrary|fixed|any)|\s+arbitrary|\s+be\s+arbitrary)?\s*$/i,
+    define: /^(?:we\s+(?:now\s+)?)?(?:set|define|put|let|choose|take|pick|select)\s+(.+)$/i,
     assume: /^(?:now\s+)?(?:let us\s+)?(?:suppose|assume|if|whenever)\s+(?:that\s+)?(.+?)(?:\s*[,;]\s*then\s+(.+))?$/i,
     because: /^(?:since|because|as)\s+(.+?)\s*[,;]\s*(?:we (?:have|get|obtain|see)(?: that)?|it follows that|then|so|hence|therefore|thus|this gives)?\s*(.+)$/i,
     derive: /^(?:then|thus|hence|therefore|so|it follows that|we (?:have|get|obtain|see|find)(?: that)?|this (?:gives|yields|shows)|consequently|in particular|that is|i\.e\.|which means|note that|observe that)\s*[,:]?\s*(?:that\s+)?(.+)$/i,
@@ -275,6 +284,9 @@
       if (parts.every(Boolean)) return parts.flat();
     }
 
+    if ((m = s.match(EN.goal)) || (m = s.match(/^(?:我們要證明|我們要證|欲證|要證明|要證|目標是證明|目標是|求證|證明)\s*[:：,，]?\s*(.+)$/))) {
+      return [{ type: "goal", canonical: "", proposition: strip(m[1]) }];
+    }
     if ((m = s.match(EN.done))) return [{ type: "conclude", canonical: "得證。" }];
     if ((m = s.match(EN.conclude))) return [{ type: "conclude", canonical: `故 ${strip(m[1])}。` }];
     if ((m = s.match(EN.contra))) return [{ type: "contradiction", canonical: `反設 ${strip(m[1])}。` }];
@@ -310,7 +322,12 @@
       return out;
     }
     if ((m = s.match(EN.forAll))) return [{ type: "introduce", canonical: `任取 ${strip(m[1])}。` }];
-    if (/^(?:set|define|put)\b/i.test(s) && (m = s.match(EN.define))) return [{ type: "define", canonical: `${isFunctionDef(m[1]) ? "設" : "取"} ${strip(m[1])}。` }];
+    if (/^(?:we\s+(?:now\s+)?)?(?:set|define|put)\b/i.test(s) && (m = s.match(EN.define))) {
+      const body = strip(m[1]);
+      const withBound = body.match(DEF_WITH_BOUND);
+      if (withBound) return [{ type: "define", canonical: `取 ${withBound[1]} = ${withBound[2]}。` }, { type: "derive", canonical: `則 ${withBound[1]} ${withBound[3]} ${withBound[4]}。` }];
+      return [{ type: "define", canonical: `${isFunctionDef(body) ? "設" : "取"} ${body}。` }];
+    }
     if ((m = s.match(EN.intro))) {
       const body = strip(m[1]).replace(/\s+be\s+(?:given|arbitrary|fixed)$/i, "");
       // Choose δ = ε/3 > 0：定義之後多寫的 > 0 是一個可以驗的主張，拆成「則 δ > 0」
@@ -326,7 +343,15 @@
 
     // 中文同義詞 → 句型語言
     if ((m = s.match(/^(?:取任意|任給|給定任意|給定|任取|任意取|固定)\s*(.+)$/))) return [{ type: "introduce", canonical: `任取 ${strip(m[1])}。` }];
-    if ((m = s.match(/^(?:定義|選|選取|我們取|我們選|我們令|令|取)\s*(.+)$/))) return [{ type: "define", canonical: `${isFunctionDef(m[1]) ? "設" : "取"} ${strip(m[1])}。` }];
+    if ((m = s.match(/^(?:定義|選|選取|我們取|我們選|我們令|令|取)\s*(.+)$/))) {
+      const body = strip(m[1]);
+      const withBound = body.match(DEF_WITH_BOUND);
+      if (withBound) return [{ type: "define", canonical: `取 ${withBound[1]} = ${withBound[2]}。` }, { type: "derive", canonical: `則 ${withBound[1]} ${withBound[3]} ${withBound[4]}。` }];
+      return [{ type: "define", canonical: `${isFunctionDef(body) ? "設" : "取"} ${body}。` }];
+    }
+    if ((m = s.match(/^(?:由|根據|依|依據)\s*(?:極限(?:的)?定義|ε\s*-?\s*δ\s*(?:的)?定義|eps\s*-?\s*delta\s*(?:的)?定義)\s*[，,:：]?\s*(?:我們有|可得|得|有)?\s*(.+)$/))) {
+      return [{ type: "conclude", canonical: `故 ${strip(m[1])}。` }];
+    }
     if ((m = s.match(/^設\s*(.+)$/))) {
       const body = strip(m[1]);
       return [{ type: looksLikeDefinition(body) ? "define" : "introduce", canonical: `設 ${body}。` }];
@@ -348,12 +373,69 @@
     return null;
   }
 
+  /* ── 3b. 目標宣告：跟題目要證的東西對不對得上 ─────────────────── */
+
+  // 「lim_{x->2} 3x = 6」「lim x→2 (3x) = 6」收成同一把鍵；跟引擎 canonicalText 同一個思路，這裡自己算一份
+  function limitKey(lang, text) {
+    let out = lang.normalize(text);
+    out = out.replace(/lim\s*_?\s*[{(]?\s*([A-Za-z]\w*)\s*->\s*([^\s})]+)\s*[})]?\s*/g, "lim[$1->$2] ");
+    out = out.replace(/\s+/g, "").toLowerCase().replace(/\*/g, "");
+    out = out.replace(/^((?:.*?)lim\[[^\]]+\])\((.+)\)=/, "$1$2=");
+    return out;
+  }
+  const barsToAbs = (text) => { let out = text; for (let i = 0; i < 8; i += 1) { const next = out.replace(/\|([^|]+)\|/, (w, inner) => `abs(${inner})`); if (next === out) break; out = next; } return out; };
+  const exprKey = (lang, text) => barsToAbs(lang.normalize(text)).replace(/\s+/g, "").replace(/\*/g, "").toLowerCase();
+
+  // (∀ε>0)(∃δ>0)(0<|x−a|<δ ⇒ |f(x)−L|<ε) → { point, bound }
+  function parseEpsilonDeltaGoal(lang, proposition) {
+    const t = lang.normalize(proposition).replace(/\s+/g, " ");
+    const m = t.match(/forall\s*\(?\s*eps\s*>\s*0.*?exists\s*\(?\s*delta\s*>\s*0.*?0\s*<\s*(\|[^|]+\||abs\([^)]*\))\s*<\s*delta\s*\)?\s*=>\s*\(?\s*(.+?)\s*<\s*eps/i);
+    if (!m) return null;
+    const near = m[1].match(/^(?:\||abs\()\s*([A-Za-z]\w*)\s*-\s*(.+?)\s*(?:\||\))$/);
+    return { variable: near ? near[1] : "x", point: near ? near[2].trim() : "", bound: m[2].trim() };
+  }
+
+  // 回傳 { ok, note }
+  function goalAgrees(lang, spec, proposition) {
+    if (!spec || !spec.goal) return { ok: true, note: "目標已登記。" };
+    const texts = spec.goal.text || [];
+    const key = limitKey(lang, proposition);
+    if (texts.some((g) => limitKey(lang, g) === key)) return { ok: true, note: "目標對上題目要證的。" };
+    if (spec.goal.relation && exprKey(lang, proposition) === exprKey(lang, spec.goal.relation)) return { ok: true, note: "目標對上題目要證的。" };
+    const eg = parseEpsilonDeltaGoal(lang, proposition);
+    if (eg && spec.bound && spec.bound.lhs) {
+      const boundOk = exprKey(lang, eg.bound) === exprKey(lang, spec.bound.lhs);
+      const goalPoint = (texts[0] || "").match(/lim\s*_?\s*[{(]?\s*[A-Za-z]\w*\s*(?:->|→)\s*([^\s})]+)/);
+      const pointOk = !goalPoint || !eg.point || lang.normalize(goalPoint[1]) === lang.normalize(eg.point);
+      if (boundOk && pointOk) return { ok: true, note: "目標（ε–δ 形式）對上題目要證的極限。" };
+      return { ok: false, note: `目標的 ε–δ 形式跟題目不一樣：題目要的是 |${spec.bound.lhs.replace(/^abs\((.*)\)$/, "$1")}| < ε${goalPoint ? `、x → ${goalPoint[1]}` : ""}。` };
+    }
+    return { ok: false, note: `你宣告的目標「${proposition}」跟題目要證的（${texts[0] || spec.goal.relation || "？"}）對不上。` };
+  }
+
   /* ── 4. 全文翻譯：原文 → 節點（每個節點一行句型語言） ─────────── */
 
-  function translate(text, lang) {
+  // 連接詞收尾 + 下一段只有數學區塊 → 併成一句（We want to show that\n\n$$P$$、Then\n\n$$A=B$$）
+  function mergeDangling(sentences) {
+    const out = [];
+    const DANGLING = /(?:\bthat|\bthen|\bwe have|\bwe get|\bwe obtain|\bit follows that|\bhave|\bget|[:,，：]|=|要證明|欲證|要證|求證|目標是|則|可得|得|於是|所以|因此|故)\s*$/i;
+    for (const sentence of sentences) {
+      const prev = out[out.length - 1];
+      const onlyMath = /^\s*(?:⁣\d+⁣\s*[.,;。]?\s*)+$/.test(sentence.text);
+      if (prev && onlyMath && DANGLING.test(prev.text.replace(/⁣\d+⁣/g, "M"))) {
+        prev.text = `${prev.text} ${sentence.text}`;
+        prev.end = sentence.end;
+        continue;
+      }
+      out.push(Object.assign({}, sentence));
+    }
+    return out;
+  }
+
+  function translate(text, lang, spec) {
     const raw = String(text || "");
     const { work, map, blocks, problems } = protectMath(raw);
-    const sentences = segment(work, map);
+    const sentences = mergeDangling(segment(work, map));
     const nodes = [];
     sentences.forEach((sentence) => {
       const restored = restoreMath(sentence.text, blocks);
@@ -390,10 +472,16 @@
         return;
       }
       actions.forEach((action, index) => {
-        nodes.push(Object.assign({}, base, action, {
+        const node = Object.assign({}, base, action, {
           part: actions.length > 1 ? { index, total: actions.length } : null,
           unknownCommands: restored.unknownCmds
-        }));
+        });
+        if (node.type === "goal") {
+          const agree = goalAgrees(lang, spec, node.proposition);
+          node.status = agree.ok ? "ok" : "unsure";
+          node.note = agree.note;
+        }
+        nodes.push(node);
       });
     });
     return { nodes, canonicalText: nodes.map((node) => node.canonical).filter(Boolean).join("\n"), problems };
@@ -401,16 +489,26 @@
 
   /* ── 5. 檢查：翻譯 → 引擎 → 報告映回原文 ──────────────────────── */
 
+  // 一個節點沒翻成功時，它原文裡像變數名的東西：後面「δ 沒有宣告」就是連鎖，不是獨立的數學錯
+  const symbolsIn = (text) => new Set((String(text || "").match(/[A-Za-z_δεξηθλμαβγ][A-Za-z_0-9δεξηθλμαβγ]*/g) || []).map((s) => ({ δ: "delta", ε: "eps", ξ: "xi", η: "eta", θ: "theta", λ: "lambda", μ: "mu", α: "alpha", β: "beta", γ: "gamma" }[s] || s).toLowerCase()));
+
   function check(lang, spec, text) {
-    const translated = translate(text, lang);
+    const translated = translate(text, lang, spec);
     const nodes = translated.nodes;
     const lines = [];
     const withCanonical = nodes.filter((node) => node.canonical);
     const report = lang.check(spec, withCanonical.map((node) => node.canonical).join("\n"));
     const byLine = new Map(report.lines.map((line) => [line.n, line]));
     let cursor = 0;
+    const failedDeclared = new Set();
     nodes.forEach((node, index) => {
       const entry = { n: index + 1, raw: node.sourceText, canonical: node.canonical, kind: node.type, label: "", status: "unsure", note: node.note || "", sourceRange: node.sourceRange, part: node.part || null };
+      if (node.type === "goal") {
+        entry.status = node.status || "ok";
+        entry.label = "目標";
+        lines.push(entry);
+        return;
+      }
       if (node.canonical) {
         cursor += 1;
         const line = byLine.get(cursor);
@@ -424,7 +522,21 @@
             entry.status = "unsure";
             entry.note = `讀不出這一句在做什麼（引入變數、假設、推導、引用定理…），沒有驗。${line.note ? " " + line.note : ""}`;
           }
+          // 連鎖抑制：前面某一句的定義／引入沒翻成功，這一句因為「X 沒有宣告」而紅 → 黃並指回去
+          if (entry.status === "error" && failedDeclared.size) {
+            const undeclared = (line.note || "").match(/「([A-Za-z_]\w*)」沒有宣告/);
+            const used = [...symbolsIn(node.canonical)].filter((name) => failedDeclared.has(name));
+            const culprit = undeclared && failedDeclared.has(undeclared[1].toLowerCase()) ? undeclared[1] : used[0];
+            if (culprit) {
+              entry.status = "unsure";
+              entry.note = `無法驗證這一句，因為前面「${culprit}」的定義那一句還沒成功解析；先修好那一句。`;
+            }
+          }
         }
+      }
+      // 這一句沒翻成功（或翻了但引擎讀不懂）：把它原文裡的變數名記起來，給後面的連鎖判斷用
+      if (entry.status !== "ok" && (node.type === "unknown" || /^(?:define|introduce|assume)$/.test(node.type))) {
+        symbolsIn(node.sourceText).forEach((name) => failedDeclared.add(name));
       }
       if (node.unknownCommands && node.unknownCommands.length && entry.status === "ok") {
         entry.note = `${entry.note} 略過了不認得的 LaTeX 指令：${node.unknownCommands.join(" ")}`.trim();
