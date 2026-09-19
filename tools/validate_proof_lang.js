@@ -178,6 +178,50 @@ lessons.forEach((lesson, index) => {
   if (completed.verdict !== "verified") fail(`${label}：起手式接上參考證明的其餘行之後不是全綠（${completed.verdict}）`);
 });
 
+
+// 7. v2.3 全稱條件的實例化：題目說「對所有點 |f'(_)| ≤ 2」，定理產生的 c 寫出 |f'(c)| ≤ 2 就是題目條件的實例，
+//    不能到了 c 身上又重新抽籤；對上之後 atom 不再自由抽（後面的鏈才驗得過）。反向：更強、方向反、函數名錯都不能誤綠。
+{
+  const lipschitz = problems.find((spec) => spec.id === "pl-lipschitz");
+  const head = "任取 x, y ∈ I 且 x < y。\n由平均值定理，存在 c ∈ (x, y) 使 f(y) − f(x) = f'(c)(y − x)。\n";
+  const run = (tail) => lang.check(lipschitz, head + tail);
+  const positive = run("因為 |f'(c)| ≤ 2，所以 |f(y) − f(x)| = |f'(c)||y − x| ≤ 2|y − x|。");
+  checks += 1;
+  const premise = positive.lines[2];
+  if (positive.verdict !== "verified") fail(`v2.3：|f'(c)| ≤ 2 套用題目的全稱條件之後整份應該全綠，卻是 ${positive.verdict}：${positive.lines.map((l) => l.status).join(",")}\n    ${premise && premise.note}`);
+  if (!premise || !/題目給的「abs\(f'\(_\)\) <= 2」對所有點成立，套用到 c/.test(premise.note)) fail(`v2.3：前提的備註要說是題目的全稱條件套用到 c：${premise && premise.note}`);
+  if (premise && /前提：「\|f'\(c\)\| <= 2」在 \d+ 個取樣點/.test(premise.note)) fail("v2.3：全稱條件的實例不該說「在 N 個取樣點上成立」——證據是實例化，不是取樣");
+  if (!premise || !premise.grounding || premise.grounding.kind !== "universal" || premise.grounding.substitution._ !== "c") fail(`v2.3：grounding 要是 universal、_ := c：${premise && JSON.stringify(premise.grounding)}`);
+  if (!positive.facts.some((f) => f.provenance.kind === "universal" && f.provenance.sourceExpr === "abs(f'(_)) <= 2" && f.provenance.substitution._ === "c")) fail("v2.3：factLog 要有 kind=universal、sourceExpr、substitution 的事實");
+  // 兩段寫法：−2 ≤ f'(c) ≤ 2 也是同一條全稱條件（登記時展開成兩條單邊）
+  const twoSided = run("因為 −2 ≤ f'(c) ≤ 2，所以 |f(y) − f(x)| = |f'(c)||y − x| ≤ 2|y − x|。");
+  checks += 1;
+  if (twoSided.verdict !== "verified") fail(`v2.3：−2 ≤ f'(c) ≤ 2 也該套得上題目的全稱條件：${twoSided.verdict} ${twoSided.lines[2] && twoSided.lines[2].note}`);
+  // 洞可以是式子：|f'((x+y)/2)| ≤ 2
+  const midpoint = run("因為 |f'((x + y)/2)| ≤ 2，所以 |f'((x + y)/2)| ≤ 2。");
+  checks += 1;
+  if (!midpoint.lines[2] || midpoint.lines[2].status !== "ok" || !/套用到 \(x\+y\)\/2/.test(midpoint.lines[2].note)) fail(`v2.3：佔位符要能配 (x+y)/2：${midpoint.lines[2] && midpoint.lines[2].note}`);
+  // 負向 A：更強的主張 |f'(c)| ≤ 1 不得綠
+  const stronger = run("因為 |f'(c)| ≤ 1，所以 |f(y) − f(x)| ≤ |y − x|。");
+  checks += 1;
+  if (!stronger.lines[2] || stronger.lines[2].status === "ok" || stronger.verdict === "verified") fail(`v2.3 負向 A：|f'(c)| ≤ 1 不是題目給的，不得綠：${stronger.lines[2] && `${stronger.lines[2].status} ${stronger.lines[2].note}`}`);
+  // 負向 B：方向反 |f'(c)| ≥ 2 不得對上
+  const reversed = run("因為 |f'(c)| ≥ 2，所以 |f(y) − f(x)| ≥ 2|y − x|。");
+  checks += 1;
+  if (!reversed.lines[2] || reversed.lines[2].status === "ok" || /套用到/.test(reversed.lines[2].note)) fail(`v2.3 負向 B：方向反的不得對上全稱條件：${reversed.lines[2] && `${reversed.lines[2].status} ${reversed.lines[2].note}`}`);
+  // 負向 C：函數名錯 |g'(c)| ≤ 2 不得對上
+  const wrongName = run("因為 |g'(c)| ≤ 2，所以 |f(y) − f(x)| ≤ 2|y − x|。");
+  checks += 1;
+  if (!wrongName.lines[2] || wrongName.lines[2].status === "ok" || /套用到/.test(wrongName.lines[2].note)) fail(`v2.3 負向 C：g' 不是 f'，不得對上：${wrongName.lines[2] && `${wrongName.lines[2].status} ${wrongName.lines[2].note}`}`);
+  // 同一個佔位符要配同一個式子：f(_) − g(_) ≤ 0 對 f(c) − g(d) 不算
+  const twoHoles = Object.assign({}, lipschitz, { id: "pl-two-holes-test", abstract: { f: { min: -3, max: 3 }, g: { min: -3, max: 3 } }, facts: ["f(_) - g(_) <= 0"], goal: { relation: "f(c) - g(c) <= 0" } });
+  const sameHole = lang.check(twoHoles, "任取 c ∈ I。\n任取 d ∈ I。\n因為 f(c) − g(c) ≤ 0，所以 f(c) − g(c) ≤ 0。");
+  const diffHole = lang.check(twoHoles, "任取 c ∈ I。\n任取 d ∈ I。\n因為 f(c) − g(d) ≤ 0，所以 f(c) − g(d) ≤ 0。");
+  checks += 2;
+  if (!sameHole.lines[2] || !/套用到 c/.test(sameHole.lines[2].note)) fail(`v2.3：f(c) − g(c) 應該對上 f(_) − g(_)：${sameHole.lines[2] && sameHole.lines[2].note}`);
+  if (diffHole.lines[2] && /套用到/.test(diffHole.lines[2].note)) fail(`v2.3：f(c) − g(d) 不該對上 f(_) − g(_)（同一個 _ 要配同一個式子）：${diffHole.lines[2].note}`);
+}
+
 // classic：機器判版本要指到 proofs.js 真的存在的題（題目頁上的「自己寫，機器判」按鈕靠這個）；一題經典證明只能有一個機器判版本
 require(path.join(__dirname, "..", "src", "proofs.js"));
 const classicIds = new Set((global.window.BUZZ_PROOFS || []).map((item) => item.id));

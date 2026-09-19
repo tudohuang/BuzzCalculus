@@ -344,6 +344,50 @@ const V22_CANONICAL = [
   if (!listed || listed !== engine) fail(`速查表的改寫規則（${listed}）跟引擎（${engine}）不一致`);
 }
 
+
+/* ── 6. v2.3：全稱條件套到定理給的點（MVT Lipschitz 的英文寫法整份全綠） ── */
+{
+  const lipschitz = byId("pl-lipschitz");
+  const text = [
+    "Let $x,y\\in I$ with $x<y$.",
+    "",
+    "By the Mean Value Theorem, there exists",
+    "$c\\in(x,y)$ such that",
+    "",
+    "$",
+    "f(y)-f(x)=f'(c)(y-x).",
+    "$",
+    "",
+    "Since $|f'(c)|\\le2$, we have",
+    "",
+    "$",
+    "|f(y)-f(x)|",
+    "=",
+    "|f'(c)||y-x|",
+    "\\le",
+    "2|y-x|.",
+    "$",
+    "",
+    "Therefore,",
+    "",
+    "$",
+    "|f(y)-f(x)|\\le2|y-x|.",
+    "$"
+  ].join("\n");
+  const report = surfaceCheck(lipschitz, text);
+  checks += 1;
+  if (report.verdict !== "verified") fail(`v2.3 Lipschitz 英文證明應該全綠，卻是 ${report.verdict}：${statuses(report)}\n    ${report.lines.filter((l) => l.status !== "ok").map((l) => `${l.raw.slice(0, 40)} → ${l.note}`).join("\n    ")}`);
+  const intro = report.lines[0];
+  if (!intro || !/x<y/.test(intro.canonical) || !/條件「x<y」/.test(intro.note)) fail(`v2.3：Let x, y ∈ I with x < y 的條件要登記：${intro && `${intro.canonical} | ${intro.note}`}`);
+  const since = report.lines.find((l) => /因為 \|f'\(c\)\|/.test(l.canonical));
+  if (!since || since.status !== "ok" || !/套用到 c/.test(since.note)) fail(`v2.3：Since |f'(c)| ≤ 2 要被認成題目全稱條件的實例：${since && `${since.status} ${since.note}`}`);
+  if (!since || !since.grounding || since.grounding.kind !== "universal") fail(`v2.3：翻譯層要把 universal grounding 帶出來：${since && JSON.stringify(since.grounding)}`);
+  // 更強的主張經翻譯層仍不得綠
+  const stronger = surfaceCheck(lipschitz, text.replace("|f'(c)|\\le2", "|f'(c)|\\le1"));
+  checks += 1;
+  if (stronger.verdict === "verified") fail("v2.3：|f'(c)| ≤ 1 經翻譯層不得全綠");
+}
+
 console.log("Proof Input v2（自由書寫層）");
 console.log(`  相容      ${problems.length} 題參考證明經翻譯層判定不變`);
 console.log(`  寫法      ${Object.keys(VARIANTS).length + 1} 種同一證明的寫法全綠`);

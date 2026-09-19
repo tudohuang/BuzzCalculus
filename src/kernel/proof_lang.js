@@ -561,6 +561,7 @@
       if (chain && chain.ops.length === 1) ctx.universal.push({ lhs: chain.exprs[0], op: chain.ops[0], rhs: chain.exprs[1], text });
       ctx.facts.push(text);
     });
+    ctx.universal = expandUniversals(ctx.universal);
     const report = [];
 
     // 代數引擎：在目前的假設下驗一個關係
@@ -686,7 +687,7 @@
         const nested = line.match[4].match(PATTERNS.find((item) => item.kind === "by").re);
         const rule = nested ? (findRule(nested[2]) || { id: "unknown", names: [nested[2]] }) : null;
         const claim = handleClaim(spec, ctx, nested ? nested[3] : line.match[4], line, verifyChain, evaluate, rule);
-        push(line, worst(reason.status, claim.status), `前提：${reason.note} 結論：${claim.note}`, { results: [...(reason.results || []), ...(claim.results || [])], grounding: claim.grounding || null });
+        push(line, worst(reason.status, claim.status), `前提：${reason.note} 結論：${claim.note}`, { results: [...(reason.results || []), ...(claim.results || [])], grounding: claim.grounding || reason.grounding || null });
         continue;
       }
       if (line.kind === "claim") {
@@ -953,13 +954,23 @@
       // 前面存在句給的關係：字面或數值等價地引用它
       const plain = handled ? null : splitChain(part);
       // 題目給的「對所有點成立」的條件（f'(_) = 0）：寫出來才登記，之後的取樣就吃它
-      const universal = plain && plain.ops.length === 1 ? matchUniversal(ctx, plain) : null;
+      // 一段（|f'(c)| ≤ 2）或兩段（−2 ≤ f'(c) ≤ 2）都可以：每一段各自對上一條全稱條件才算
+      const universalLinks = plain && !handled && plain.ops.length <= 2
+        ? plain.ops.map((op, i) => ({ link: { lhs: plain.exprs[i], op, rhs: plain.exprs[i + 1] }, hit: matchUniversal(ctx, { exprs: [plain.exprs[i], plain.exprs[i + 1]], ops: [op] }) }))
+        : null;
+      const universal = universalLinks && universalLinks.every((entry) => entry.hit) ? universalLinks : null;
       if (universal) {
-        registerRelation(spec, ctx, applyMacros(spec, plain.exprs[0], ctx), applyMacros(spec, plain.exprs[1], ctx), plain.ops[0], ctx.currentCase);
+        // 實例化做兩件事：邏輯上登記成事實（帶來源），取樣上登記成條件（f'(c) 的 atom 不再自由抽）
+        universal.forEach(({ link, hit }) => {
+          registerRelation(spec, ctx, applyMacros(spec, link.lhs, ctx), applyMacros(spec, link.rhs, ctx), link.op, ctx.currentCase);
+          ctx.verifiedLinks = ctx.verifiedLinks || [];
+          ctx.verifiedLinks.push(link);
+          recordFact(ctx, link, line, { kind: "universal", source: "problem", sourceExpr: hit.sourceExpr, substitution: hit.substitution });
+        });
         rememberChain(ctx, plain);
-        ctx.verifiedLinks = ctx.verifiedLinks || [];
-        ctx.verifiedLinks.push({ lhs: plain.exprs[0], op: plain.ops[0], rhs: plain.exprs[1] });
-        notes.push(`「${part}」是題目給的條件（${universal.text} 對所有點成立），登記進取樣。`);
+        const first = universal[0].hit;
+        grounding = { kind: "universal", rule: null, from: universal.map((entry) => entry.hit.sourceExpr), substitution: first.substitution, exact: true };
+        notes.push(`「${part}」：題目給的「${Array.from(new Set(universal.map((entry) => entry.hit.sourceExpr))).join("」「")}」對所有點成立，套用到 ${first.substitution._}。`);
         handled = true;
       }
       if (plain && !handled && matchesAsserted(spec, ctx, plain, evaluate)) {
@@ -1279,6 +1290,9 @@
   // 前提立住了嗎：字面或等價於某條條件（題目給的、假設、情況、宣告的範圍）、前面驗過的關係、
   // 顯然的起點、或只由定義與常數組成（δ ≤ 1，而 δ = min(1, ε/7)）
   function premiseEstablished(spec, ctx, chain, evaluate, rawChain) {
+    // −2 ≤ f'(c) ≤ 2：兩段各自對上題目的全稱條件，整條就是題目給的
+    const links = (c) => c.ops.map((op, i) => ({ exprs: [c.exprs[i], c.exprs[i + 1]], ops: [op] }));
+    if (rawChain && rawChain.ops.length === 2 && links(rawChain).every((link) => matchUniversal(ctx, link))) return true;
     if (chain.ops.length !== 1) return anchored(spec, ctx, chain, evaluate);
     if (isObviousStart(chain, spec, ctx)) return true;
     // 題目給的「對所有點成立」的條件（f'(_) = 0），寫出 f'(c) = 0 就是拿題目的條件來用（比對用沒 atom 化的原文）
@@ -1864,17 +1878,68 @@
     return { status, note: notes.join(" "), results: [] };
   }
 
-  // 「f'(c) = 0」對得上題目的「f'(_) = 0」嗎：佔位符可以是任何一段式子，同一個佔位符要一樣
+  /* ── v2.3 全稱條件的實例化 ─────────────────────────────────────
+     題目說「對所有點 |f'(_)| ≤ 2」；定理產生的 c 也是一個點，使用者寫「|f'(c)| ≤ 2」
+     就是拿題目的條件來用——不該到了 c 身上又重新抽籤決定一次。
+       - 佔位符 _ 是一個「式子的洞」：c、x+y、(x+y)/2 都可以；同一個 _ 要配同一個式子
+       - 方向要一樣（允許左右對調寫）；|…| 與 abs(…) 視為同一寫法；比對用 shapeKey
+       - abs(X) ≤ r 與「X ≤ r 且 X ≥ −r」是同一件事：登記時兩種形式都展開，
+         題目寫哪一種、使用者寫哪一種都對得上
+       - 對上之後：登記成取樣條件（atom 不再自由抽）、驗過的關係、帶 universal 來源的事實 */
+  const absInner = (text) => {
+    const key = shapeKey(text);
+    const m = key.match(/^abs\((.+)\)$/);
+    if (!m) return null;
+    let depth = 0;
+    for (const ch of m[1]) { if (ch === "(") depth += 1; else if (ch === ")") { depth -= 1; if (depth < 0) return null; } }
+    return depth === 0 ? m[1] : null;
+  };
+  function expandUniversals(items) {
+    const out = items.map((item) => Object.assign({ sourceExpr: item.text }, item));
+    // −r 寫成使用者會寫的樣子：2 → -2、a → -a、a+b → -(a+b)、-2 → 2（鍵要對得上，不能多一層括號）
+    const negOf = (text) => { const k = shapeKey(text); if (/^-/.test(k)) return k.slice(1); return /^[a-z0-9.']+$/.test(k) ? `-${k}` : `-(${k})`; };
+    items.forEach((item) => {
+      // abs(X) <= r（或 r >= abs(X)）→ X <= r、X >= -r
+      const oriented = (item.op === ">=" || item.op === ">") ? { lhs: item.rhs, op: FLIP[item.op], rhs: item.lhs } : item;
+      if (oriented.op !== "<=" && oriented.op !== "<") return;
+      const inner = absInner(oriented.lhs);
+      if (!inner) return;
+      out.push({ lhs: inner, op: oriented.op, rhs: oriented.rhs, text: item.text, sourceExpr: item.text, derived: true });
+      out.push({ lhs: inner, op: FLIP[oriented.op], rhs: negOf(oriented.rhs), text: item.text, sourceExpr: item.text, derived: true });
+    });
+    // X <= r 且 X >= -r → abs(X) <= r
+    items.forEach((upper) => {
+      const u = (upper.op === ">=" || upper.op === ">") ? { lhs: upper.rhs, op: FLIP[upper.op], rhs: upper.lhs } : upper;
+      if (u.op !== "<=" && u.op !== "<") return;
+      const lower = items.find((other) => {
+        const l = (other.op === "<=" || other.op === "<") ? { lhs: other.rhs, op: FLIP[other.op], rhs: other.lhs } : other;
+        return other !== upper && l.op === FLIP[u.op] && shapeKey(l.lhs) === shapeKey(u.lhs) && shapeKey(l.rhs) === shapeKey(negOf(u.rhs));
+      });
+      if (lower) out.push({ lhs: `abs(${u.lhs})`, op: u.op, rhs: u.rhs, text: `${upper.text}、${lower.text}`, sourceExpr: `${upper.text}、${lower.text}`, derived: true });
+    });
+    return out;
+  }
+  // 回傳 { item, substitution: { _: 式子 }, text } 或 null
   function matchUniversal(ctx, chain) {
+    if (chain.ops.length !== 1) return null;
     const escape = (text) => text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-    const mine = `${compact(chain.exprs[0])}${chain.ops[0]}${compact(chain.exprs[1])}`;
-    return (ctx.universal || []).find((item) => {
-      if (item.op !== chain.ops[0]) return false;
-      const pieces = `${compact(item.lhs)}${item.op}${compact(item.rhs)}`.split("_");
+    const key = (lhs, op, rhs) => `${shapeKey(lhs)}${op}${shapeKey(rhs)}`;
+    const candidates = [
+      key(chain.exprs[0], chain.ops[0], chain.exprs[1]),
+      key(chain.exprs[1], FLIP[chain.ops[0]], chain.exprs[0])
+    ];
+    for (const item of ctx.universal || []) {
+      const pieces = key(item.lhs, item.op, item.rhs).split("_");
+      if (pieces.length < 2) continue;
       let pattern = "^" + escape(pieces[0]);
-      for (let i = 1; i < pieces.length; i += 1) pattern += (i === 1 ? "([a-z0-9+\\-*/^().]+?)" : "\\1") + escape(pieces[i]);
-      return new RegExp(pattern + "$").test(mine);
-    }) || null;
+      for (let i = 1; i < pieces.length; i += 1) pattern += (i === 1 ? "([a-z0-9+\\-*/^().']+?)" : "\\1") + escape(pieces[i]);
+      const re = new RegExp(pattern + "$");
+      for (const mine of candidates) {
+        const hit = mine.match(re);
+        if (hit) return { item, substitution: { _: hit[1] }, text: item.text, sourceExpr: item.sourceExpr || item.text };
+      }
+    }
+    return null;
   }
 
   // 這條鏈是不是前面某個存在句給的關係（字面或數值等價）
@@ -2000,6 +2065,7 @@
     "f 連續／f 在 [a, b] 上連續",
     "f 可微／可導",
     "f 二次可微（泰勒定理的前提）",
+    "題目給的「對所有點 |f′(x)| ≤ 2」：寫出 |f′(c)| ≤ 2（c 可以是定理給的點或任何式子）就會被認成題目條件的實例，之後的取樣也吃它",
     "自己令的 g(x) = …：只由 sin、cos、exp、絕對值與多項式組成就自動算連續；沒有絕對值就自動算可微"
   ];
   const CHEAT_NOTATION = [
