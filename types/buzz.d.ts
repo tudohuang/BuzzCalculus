@@ -146,6 +146,8 @@ interface BuzzProofLangSpec {
   optional?: number[];
   allowUnsure?: boolean;
   coach?: string;
+  /** proofs.js 裡對應的經典題 id：這題是那題的「自己寫，機器判」版本 */
+  classic?: string;
   seed?: number;
 }
 

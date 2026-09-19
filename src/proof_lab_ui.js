@@ -206,6 +206,11 @@
       ? (difficulty <= 1 ? "easy" : difficulty === 2 ? "medium" : "hard")
       : (difficulty <= 2 ? "easy" : difficulty <= 4 ? "medium" : "hard"));
 
+    // 經典證明題 ↔ 白話證明規格：規格的 classic 欄位指到 proofs.js 的題號。有規格的經典題可以「自己寫，機器判」。
+    function specForClassic(proofId) {
+      return proofLangProblems().find((spec) => spec.classic === proofId) || null;
+    }
+
     function rows(records) {
       const store = records.proofLang || {};
       const progress = records.proofs || {};
@@ -225,12 +230,15 @@
       const self = (deps.proofs || []).map((proof, i) => {
         const entry = progress[proof.id] || {};
         const drillsDone = Boolean(entry.orderPassed) && (!(proof.cloze || []).length || Boolean(entry.clozePassed));
-        const solved = entry.status === "understood" || drillsDone;
+        // 機器判：這題若有對應的白話證明規格，自己寫的證明全綠提交過就算解了
+        const machine = specForClassic(proof.id);
+        const solved = entry.status === "understood" || drillsDone || Boolean(entry.machinePassedAt);
         const touched = Object.keys(entry).length > 0;
         return {
           key: `pf:${proof.id}`, kind: proof.tier === "lean" ? "lean" : "self", id: proof.id, n: auto.length + i + 1, title: proof.title,
           level: levelOf("self", proof.difficulty), difficulty: proof.difficulty,
-          family: "", tier: proof.tier, tags: [TIER_LABEL[proof.tier] || proof.tier].concat((proof.tags || []).slice(0, 3)),
+          family: "", tier: proof.tier, tags: [TIER_LABEL[proof.tier] || proof.tier].concat(machine ? ["可機器判"] : []).concat((proof.tags || []).slice(0, 3)),
+          machine: machine ? machine.id : "",
           status: solved ? "solved" : touched ? "attempted" : "none",
           attempts: (entry.orderPassed ? 1 : 0) + (entry.clozePassed ? 1 : 0), solvedAt: "", lastAt: entry.updatedAt || entry.lastViewedAt || "", lastVerdict: entry.status || ""
         };
@@ -382,7 +390,7 @@
                     <tr class="lc-row is-${row.status}" data-proof-key="${escapeAttr(row.key)}" tabindex="0" role="link" aria-label="${escapeAttr(`#${row.n} ${row.title}`)}">
                       <td class="lc-col-status">${statusMark(row.status)}</td>
                       <td class="lc-col-n">${row.n}</td>
-                      <td class="lc-col-title"><span class="lc-title">${escapeHtml(row.title)}</span><span class="lc-kind">${row.kind === "auto" ? "自動判" : row.kind === "lean" ? "Lean" : "骨架／填空判 · 自評"}</span></td>
+                      <td class="lc-col-title"><span class="lc-title">${escapeHtml(row.title)}</span><span class="lc-kind">${row.kind === "auto" ? "自動判" : row.kind === "lean" ? "Lean" : row.machine ? "自己寫機器判 · 骨架／填空" : "骨架／填空判 · 自評"}</span></td>
                       <td class="lc-col-tags">${row.tags.map((tag) => `<span class="lc-tag">${escapeHtml(tag)}</span>`).join("")}</td>
                       <td class="lc-col-level">${levelPill(row.level)}</td>
                       <td class="lc-col-record">${recordCell(row)}</td>
@@ -447,6 +455,7 @@
             <p>${escapeHtml(spec.statement)}</p>
             <div class="pl-goal math-block" data-tex="${escapeAttr(spec.prompt)}"></div>
           </div>
+          ${spec.classic ? `<p class="panel-note lc-classic-link">這是經典證明題的機器判版本：寫完全綠提交，那一題就算解了。<button type="button" class="link-button" data-action="open-proof-problem" data-proof-key="pf:${escapeAttr(spec.classic)}">看原題（骨架重排、填空、參考證明）</button></p>` : ""}
           <div class="lc-meta">
             <span class="lc-tag">${escapeHtml(FAMILY_LABEL[spec.family] || spec.family)}</span>
             <span class="lc-tag">R${spec.difficulty}</span>
@@ -579,10 +588,26 @@
         </main>`;
     }
 
+    // 經典證明題頁上的入口卡：這題有機器判版本（spec.classic）時，帶去白話證明編輯器；通過後卡片變綠
+    function renderMachineCard(machineSpec, progress) {
+      if (!machineSpec) return "";
+      const passed = Boolean(progress && progress.machinePassedAt);
+      return `
+        <div class="proof-machine ${passed ? "is-passed" : ""}">
+          <div>
+            <strong>${passed ? `${icon("check")}你寫的證明機器判通過了` : "自己寫，機器判"}</strong>
+            <small>${passed ? "可以再寫一次，或回題庫。" : "用白話證明寫這題：一句一句即時檢查，全綠提交就算解了。排步驟與填空仍在下面。"}</small>
+          </div>
+          <button class="button home-primary" data-action="open-proof-problem" data-proof-key="pl:${escapeAttr(machineSpec.id)}">${icon("pen")}${passed ? "再寫一次" : "開始寫"}</button>
+        </div>`;
+    }
+
     return {
       problems: proofLangProblems,
       lessons: proofLangLessons,
       spec: proofLangSpec,
+      specForClassic,
+      renderMachineCard,
       draft: proofLangDraft,
       check: runProofLangCheck,
       rows,
