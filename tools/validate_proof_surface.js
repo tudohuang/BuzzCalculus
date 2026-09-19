@@ -132,6 +132,88 @@ mapped.lines.forEach((line) => {
 });
 if (!mapped.lines.some((line) => line.part)) fail("一句多動作（Choose … and suppose …）沒有標出是第幾段");
 
+/* ── 4. v2.1：目標宣告、一句多動作、結論接地、連鎖抑制 ───────── */
+const CANONICAL_ACCEPTANCE = [
+  "We want to show that",
+  "",
+  "$$",
+  "(\\forall \\varepsilon>0)(\\exists \\delta>0)",
+  "(0<|x-2|<\\delta \\Rightarrow |3x-6|<\\varepsilon).",
+  "$$",
+  "",
+  "Let $\\varepsilon>0$ be given.",
+  "",
+  "We choose $\\delta=\\frac{\\varepsilon}{3}>0$ and suppose",
+  "$0<|x-2|<\\delta$.",
+  "",
+  "Then",
+  "",
+  "$$",
+  "|3x-6|",
+  "=3|x-2|",
+  "<3\\delta",
+  "=3\\cdot\\frac{\\varepsilon}{3}",
+  "=\\varepsilon.",
+  "$$",
+  "",
+  "By the $\\varepsilon$-$\\delta$ definition of limit, we have",
+  "",
+  "$$",
+  "\\lim_{x\\to2}3x=6.",
+  "$$"
+].join("\n");
+{
+  const report = surfaceCheck(linear, CANONICAL_ACCEPTANCE);
+  checks += 1;
+  const kinds = report.lines.map((l) => l.kind).join(",");
+  if (report.verdict !== "verified") fail(`v2.1 驗收證明應該全綠，卻是 ${report.verdict}：${statuses(report)}\n    ${report.lines.filter((l) => l.status !== "ok").map((l) => `${l.raw.slice(0, 50)} → ${l.note}`).join("\n    ")}`);
+  if (!/^goal,let,let,claim,assume,claim,claim$/.test(kinds)) fail(`v2.1 驗收證明的動作序列不對：${kinds}（要 goal → 引入 → 取 → δ > 0 → 假設 → 推導 → 結論）`);
+  if (!report.lines[0] || report.lines[0].status !== "ok") fail(`目標宣告（∀ε∃δ 形式）沒有對上題目的極限：${report.lines[0] && report.lines[0].note}`);
+}
+// 目標寫成 lim 形式、寫成中文，也要對上；寫錯目標要黃
+[["We want to show that lim_{x->2} 3x = 6.", "ok"], ["我們要證明 lim_{x→2} 3x = 6。", "ok"], ["要證：$\\lim_{x\\to 2}3x=6$", "ok"], ["We want to show that lim_{x->2} 3x = 7.", "unsure"]].forEach(([text, expected]) => {
+  const report = surfaceCheck(linear, `${text}\n${linear.reference.join("\n")}`);
+  checks += 1;
+  if (!report.lines[0] || report.lines[0].kind !== "goal" || report.lines[0].status !== expected) fail(`目標宣告「${text}」應該是 goal/${expected}，卻是 ${report.lines[0] && `${report.lines[0].kind}/${report.lines[0].status}`}`);
+  if (expected === "ok" && report.verdict !== "verified") fail(`加了目標宣告「${text}」之後整份應該仍全綠，卻是 ${report.verdict}`);
+});
+// 負向：δ = ε 本身不紅、假設能登記、紅在真正不成立的推導
+{
+  const negative = "We want to show that lim_{x->2} 3x = 6.\n\nLet eps > 0 be given.\n\nChoose delta = eps and suppose\n0 < |x-2| < delta.\n\nThen\n|3x-6| < eps.";
+  const report = surfaceCheck(linear, negative);
+  checks += 1;
+  const st = report.lines.map((l) => `${l.kind}:${l.status}`).join(",");
+  const defineLine = report.lines.find((l) => l.kind === "let" && /delta/.test(l.canonical));
+  const assumeLine = report.lines.find((l) => l.kind === "assume");
+  const deriveLine = report.lines[report.lines.length - 1];
+  if (!defineLine || defineLine.status !== "ok") fail(`負向測試：δ = ε 的定義本身不該紅（${st}）`);
+  if (!assumeLine || assumeLine.status !== "ok") fail(`負向測試：假設應該登記成功（${st}）`);
+  if (!deriveLine || deriveLine.status !== "error" || !/不成立/.test(deriveLine.note)) fail(`負向測試：紅要在最後那句推導（${st}）`);
+  if (report.verdict !== "broken") fail(`負向測試：整份應該 broken，卻是 ${report.verdict}`);
+}
+// 一句多動作與條件連接詞：Suppose x > 0 and y > 0 是一個假設、Choose … and suppose … 是兩個動作
+{
+  const one = surface.translate("Suppose x > 0 and y > 0.", lang, linear).nodes;
+  checks += 1;
+  if (one.length !== 1 || one[0].type !== "assume") fail(`「Suppose x > 0 and y > 0」應該是一個假設，卻拆成 ${one.map((n) => n.type).join(",")}`);
+  const two = surface.translate("We choose δ = ε/3 > 0 and suppose 0 < |x-2| < δ.", lang, linear).nodes;
+  checks += 1;
+  if (two.map((n) => n.type).join(",") !== "define,derive,assume") fail(`「We choose δ = ε/3 > 0 and suppose …」應該拆成 define,derive,assume，卻是 ${two.map((n) => n.type).join(",")}`);
+}
+// 括號沒關：黃、訊息講括號；連鎖抑制：後面因為 δ 沒宣告而倒的那句也是黃，並指回定義那句
+{
+  const broken = "Let eps > 0 be given.\nChoose $\\delta=\\frac{\\varepsilon}{3$\nSuppose 0 < |x-2| < delta.\nThen |3x-6| = 3|x-2| < 3 delta = eps.";
+  const report = surfaceCheck(linear, broken);
+  checks += 1;
+  const st = statuses(report);
+  if (report.lines[1].status !== "unsure" || !/括號/.test(report.lines[1].note)) fail(`括號沒關的那句應該黃並講括號：${report.lines[1].status}「${report.lines[1].note}」`);
+  if (/unexpected token|syntaxerror|parse failed/i.test(report.lines.map((l) => l.note).join(" "))) fail("括號沒關的訊息不能是 parser 術語");
+  if (report.lines.some((l) => l.status === "error")) fail(`括號沒關之後，後面因為 δ 沒宣告而倒的句子應該黃（連鎖），卻有紅：${st}`);
+  const dependent = report.lines.slice(2).find((l) => /前面「/.test(l.note));
+  if (!dependent) fail(`連鎖的句子沒有指回定義那一句：${report.lines.slice(2).map((l) => l.note).join(" | ")}`);
+  if (report.verdict === "verified") fail("括號沒關不能放行");
+}
+
 /* ── 結果 ──────────────────────────────────────────────────── */
 console.log("Proof Input v2（自由書寫層）");
 console.log(`  相容      ${problems.length} 題參考證明經翻譯層判定不變`);

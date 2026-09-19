@@ -74,19 +74,50 @@
         </div>`;
     }
 
+    const MARK = { ok: "✔", unsure: "△", error: "✘" };
+    // 一句多動作（Choose δ = ε/3 > 0 and suppose …）在畫面上是一張卡，裡面列每個動作的結果
+    function groupLines(lines) {
+      const groups = [];
+      lines.forEach((line) => {
+        const prev = groups[groups.length - 1];
+        const same = prev && line.part && prev.lines[0].part && prev.lines[0].sourceRange && line.sourceRange
+          && prev.lines[0].sourceRange.start === line.sourceRange.start && prev.lines[0].sourceRange.end === line.sourceRange.end;
+        if (same) prev.lines.push(line);
+        else groups.push({ lines: [line] });
+      });
+      return groups;
+    }
     function renderProofLangLines(report) {
-      if (!report || !report.lines.length) return `<p class="panel-note">寫一行就會立刻檢查。每一行要用一種句型開頭 —— 不確定就按上面的範本。</p>`;
+      if (!report || !report.lines.length) return `<p class="panel-note">寫一句就會立刻檢查。可以直接用中文、英文或 LaTeX 寫 —— 不確定就按上面的範本。</p>`;
+      const worst = (lines) => (lines.some((l) => l.status === "error") ? "error" : lines.some((l) => l.status === "unsure") ? "unsure" : "ok");
       return `
         <ol class="pl-lines">
-          ${report.lines.map((line) => `
+          ${groupLines(report.lines).map((group) => {
+            const first = group.lines[0];
+            const status = worst(group.lines);
+            if (group.lines.length === 1) {
+              const line = first;
+              return `
             <li class="is-${line.status}">
-              <span class="pl-line-mark" aria-hidden="true">${line.status === "ok" ? "✔" : line.status === "unsure" ? "△" : "✘"}</span>
+              <span class="pl-line-mark" aria-hidden="true">${MARK[line.status] || "?"}</span>
               <div>
                 <div class="pl-line-text"><small>第 ${line.n} ${line.sourceRange ? "句" : "行"} · ${escapeHtml(line.label || "？")}</small>${escapeHtml(line.raw)}</div>
                 ${line.canonical && line.canonical.replace(/[。.]$/, "") !== String(line.raw).replace(/[。.]$/, "") ? `<p class="pl-line-canonical">讀成：${escapeHtml(line.canonical)}</p>` : ""}
                 <p class="pl-line-note">${escapeHtml(line.note || "")}</p>
               </div>
-            </li>`).join("")}
+            </li>`;
+            }
+            return `
+            <li class="is-${status}">
+              <span class="pl-line-mark" aria-hidden="true">${MARK[status] || "?"}</span>
+              <div>
+                <div class="pl-line-text"><small>第 ${first.n}–${group.lines[group.lines.length - 1].n} 句 · 一句 ${group.lines.length} 個動作</small>${escapeHtml(first.raw)}</div>
+                <ul class="pl-line-parts">
+                  ${group.lines.map((line) => `<li class="is-${line.status}"><span aria-hidden="true">${MARK[line.status] || "?"}</span><span>${escapeHtml(line.canonical || line.raw)}</span><small>${escapeHtml(line.note || "")}</small></li>`).join("")}
+                </ul>
+              </div>
+            </li>`;
+          }).join("")}
         </ol>`;
     }
 

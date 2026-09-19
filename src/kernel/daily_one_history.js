@@ -119,6 +119,7 @@
     "2026-09-16": "burst-boss3-lim-005",
     "2026-09-17": "burst-boss2-param-003",
     "2026-09-18": "burst-int-009",
+    "2026-09-19": "mob-tech-015",
   };
   if (typeof module !== "undefined" && module.exports) module.exports = { HISTORY };
   if (typeof window !== "undefined") window.BUZZ_DAILY_ONE_HISTORY = HISTORY;

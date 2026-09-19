@@ -35,9 +35,9 @@ const BUDGETS = {
   // 2026-09-14 260 → 280：proof_lang.js 101KB —— 收緊語法（接地、前提、符號正負引擎 parseTree/signOf、
   // 線性解 solveLinear、泰勒規則）。這是檢查器的骨幹，不是可以搬去別處的 render；再撞頂該做的是
   // 把 signOf 那類純函式拆成 kernel/proof_sign.js 之類、順便量一次是不是真的都在用。
-  // 2026-09-19 280 → 310：proof_surface.js 28KB —— Proof Input v2 自由書寫層（LaTeX 表層、切句、
-  // 一句多動作、中英同義句、原文映射）。它是獨立模組，proof_lang.js 不用學自然語言。
-  "kernel 邏輯模組": { pattern: /^src\/kernel\//, budget: 310 * 1024 },
+  // 2026-09-19 280 → 330：proof_surface.js 36KB —— Proof Input v2／v2.1 自由書寫層（LaTeX 表層、切句、
+  // 一句多動作、目標宣告、結論接地、連鎖抑制、原文映射）。它是獨立模組，proof_lang.js 不用學自然語言。
+  "kernel 邏輯模組": { pattern: /^src\/kernel\//, budget: 330 * 1024 },
   "題庫資料合計": { pattern: /^src\/problem|^src\/problems\.js$|^src\/proofs\.js$/, budget: 2400 * 1024 },
   // 2026-09-15 300 → 310：「從零開始」課程表與單課頁（course.js）約 4KB 的樣式；
   // 已盡量沿用 pl-tutorial / pl-intro / pl-goal / first-steps。再撞頂該做的是
