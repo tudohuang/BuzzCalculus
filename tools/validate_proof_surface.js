@@ -170,8 +170,8 @@ const CANONICAL_ACCEPTANCE = [
   if (!/^goal,let,let,claim,assume,claim,claim$/.test(kinds)) fail(`v2.1 驗收證明的動作序列不對：${kinds}（要 goal → 引入 → 取 → δ > 0 → 假設 → 推導 → 結論）`);
   if (!report.lines[0] || report.lines[0].status !== "ok") fail(`目標宣告（∀ε∃δ 形式）沒有對上題目的極限：${report.lines[0] && report.lines[0].note}`);
 }
-// 目標寫成 lim 形式、寫成中文，也要對上；寫錯目標要黃
-[["We want to show that lim_{x->2} 3x = 6.", "ok"], ["我們要證明 lim_{x→2} 3x = 6。", "ok"], ["要證：$\\lim_{x\\to 2}3x=6$", "ok"], ["We want to show that lim_{x->2} 3x = 7.", "unsure"]].forEach(([text, expected]) => {
+// 目標寫成 lim 形式、寫成中文，也要對上；寫錯目標要紅（v2.2：目標是明確的命題，寫錯不是「驗不了」）
+[["We want to show that lim_{x->2} 3x = 6.", "ok"], ["我們要證明 lim_{x→2} 3x = 6。", "ok"], ["要證：$\\lim_{x\\to 2}3x=6$", "ok"], ["We want to show that lim_{x->2} 3x = 7.", "error"]].forEach(([text, expected]) => {
   const report = surfaceCheck(linear, `${text}\n${linear.reference.join("\n")}`);
   checks += 1;
   if (!report.lines[0] || report.lines[0].kind !== "goal" || report.lines[0].status !== expected) fail(`目標宣告「${text}」應該是 goal/${expected}，卻是 ${report.lines[0] && `${report.lines[0].kind}/${report.lines[0].status}`}`);
@@ -215,6 +215,135 @@ const CANONICAL_ACCEPTANCE = [
 }
 
 /* ── 結果 ──────────────────────────────────────────────────── */
+
+/* ── 5. v2.2：Goal Semantics + Transformation Grounding ────────────
+   「是真的」和「是由前面推出來的」是兩件事。這一節釘住：
+   目標宣告（∀ε∃δ 形式）與題目的 lim 形式是同一個語意目標；寫錯目標是紅；
+   |x−a|<r ⇒ a−r<x<a+r 這種改寫有來源（provenance），更寬的區間算「由條件推出」；
+   數值成立但沒來源仍然黃；結論句對上語意目標＋骨架齊。 */
+const V22_CANONICAL = [
+  "We want to show that",
+  "",
+  "$",
+  "(\\forall \\varepsilon>0)(\\exists \\delta>0)",
+  "(0<|x-3|<\\delta \\Rightarrow |x^2-9|<\\varepsilon).",
+  "$",
+  "",
+  "Let $\\varepsilon>0$ be given.",
+  "",
+  "Choose",
+  "",
+  "$",
+  "\\delta=\\min\\left(1,\\frac{\\varepsilon}{7}\\right).",
+  "$",
+  "",
+  "Suppose $0<|x-3|<\\delta$.",
+  "",
+  "Since $\\delta\\le1$, we have",
+  "",
+  "$",
+  "|x-3|<1.",
+  "$",
+  "",
+  "so",
+  "",
+  "$",
+  "2<x<4.",
+  "$",
+  "",
+  "Hence",
+  "",
+  "$",
+  "|x+3|<7.",
+  "$",
+  "",
+  "Therefore,",
+  "",
+  "$",
+  "|x^2-9|",
+  "=",
+  "|x-3||x+3|",
+  "<",
+  "7|x-3|",
+  "<",
+  "7\\delta",
+  "\\le\\varepsilon.",
+  "$",
+  "",
+  "Thus, by the $\\varepsilon$-$\\delta$ definition of limit,",
+  "",
+  "$",
+  "\\lim_{x\\to3}x^2=9.",
+  "$"
+].join("\n");
+{
+  const report = surfaceCheck(square, V22_CANONICAL);
+  checks += 1;
+  if (report.verdict !== "verified") fail(`v2.2 驗收證明應該全綠，卻是 ${report.verdict}：${statuses(report)}\n    ${report.lines.filter((l) => l.status !== "ok").map((l) => `${l.raw.slice(0, 40)} → ${l.note}`).join("\n    ")}`);
+  const types = surface.translate(V22_CANONICAL, lang, square).nodes.map((n) => n.type).join(",");
+  if (types !== "goal,introduce,define,assume,derive,derive,derive,derive,conclude") fail(`v2.2 驗收證明的 IR 不對：${types}`);
+  const goal = report.lines[0];
+  if (!goal || goal.kind !== "goal" || goal.status !== "ok" || !/已辨識證明目標/.test(goal.note) || !/ε–δ 極限目標/.test(goal.note)) fail(`v2.2 目標宣告應該辨識成 ε–δ 極限目標：${goal && goal.note}`);
+  const interval = report.lines.find((l) => /2<x<4/.test(l.canonical));
+  if (!interval || !interval.grounding || interval.grounding.rule !== "abs_interval" || !/可得 2 < x < 4/.test(interval.note)) fail(`2<x<4 應該由 |x−3|<1 經 abs_interval 接地：${interval && JSON.stringify([interval.grounding, interval.note])}`);
+  const transitive = report.lines.find((l) => /因為 delta<=1/.test(l.canonical));
+  if (!transitive || !transitive.grounding || transitive.grounding.rule !== "transitive") fail(`|x−3|<1 應該由 |x−3|<δ 與 δ≤1 傳遞而來：${transitive && JSON.stringify([transitive.grounding, transitive.note])}`);
+  const conclusion = report.lines[report.lines.length - 1];
+  if (!conclusion || conclusion.kind !== "claim" || !/結論與原證明目標一致/.test(conclusion.note) || !/骨架完整/.test(conclusion.note) || conclusion.rule !== "epsilon_delta_definition") fail(`結論句應該說「結論與原證明目標一致」且規則是 ε–δ 定義：${conclusion && JSON.stringify([conclusion.rule, conclusion.note])}`);
+  if (!Array.isArray(report.facts) || !report.facts.some((f) => f.provenance && f.provenance.rule === "abs_interval")) fail("報告要帶 facts（含 provenance），而且 2<x<4 的兩段要記成 abs_interval 推出");
+  if (!report.semanticGoal || report.semanticGoal.kind !== "limit" || report.semanticGoal.point !== "3") fail(`報告要帶題目的語意目標：${JSON.stringify(report.semanticGoal)}`);
+}
+// 語意目標：lim 形式與 ∀ε∃δ 形式等價；點或值不同就不等價
+{
+  const a = surface.parseSemanticGoal(lang, "lim_{x->3} x^2 = 9");
+  const b = surface.parseSemanticGoal(lang, "forall eps > 0 exists delta > 0 (0 < |x-3| < delta => |x^2-9| < eps)");
+  const c = surface.parseSemanticGoal(lang, "lim_{x->3} x^2 = 8");
+  const d = surface.parseSemanticGoal(lang, "lim_{x->2} x^2 = 9");
+  checks += 4;
+  if (!a || a.kind !== "limit" || a.functionExpr !== "x^2" || a.value !== "9" || a.proofForm.kind !== "epsilon_delta") fail(`parseSemanticGoal(lim) 不對：${JSON.stringify(a)}`);
+  if (!b || !b.quantified || !surface.goalEquivalent(lang, a, b)) fail(`lim 形式與 ∀ε∃δ 形式應該等價：${JSON.stringify(b)}`);
+  if (surface.goalEquivalent(lang, a, c)) fail("lim x^2 = 9 與 lim x^2 = 8 不該等價");
+  if (surface.goalEquivalent(lang, a, d)) fail("x→3 與 x→2 不該等價");
+  if (!surface.goalEquivalent(lang, surface.specSemanticGoal(lang, square), b)) fail("題目的語意目標應該跟使用者寫的 ∀ε∃δ 形式等價");
+}
+// 目標寫錯：紅，訊息列出題目與你寫的；整份 broken
+{
+  const wrong = surfaceCheck(square, `We want to show that lim_{x->3} x^2 = 8.\n\n${squareText}`);
+  checks += 1;
+  const goal = wrong.lines[0];
+  if (!goal || goal.status !== "error" || !/你宣告的證明目標與題目不同/.test(goal.note) || !/題目：lim_\(x→3\) x\^2 = 9/.test(goal.note) || !/你寫：lim_\(x→3\) x\^2 = 8/.test(goal.note)) fail(`目標寫錯應該紅並列出兩者：${goal && `${goal.status} ${goal.note}`}`);
+  if (wrong.verdict !== "broken") fail(`目標寫錯整份應該 broken，卻是 ${wrong.verdict}`);
+  // 沒寫目標句照樣能完成
+  const noGoal = surfaceCheck(square, V22_CANONICAL.split("\n").slice(7).join("\n"));
+  checks += 1;
+  if (noGoal.verdict !== "verified") fail(`沒有目標宣告也該全綠，卻是 ${noGoal.verdict}：${statuses(noGoal)}`);
+}
+// 改寫規則的變異：更寬的區間綠但註明「由目前條件推出」；錯的區間紅；憑空的數值真話仍黃
+{
+  const swap = (from, to) => V22_CANONICAL.replace(from, to);
+  const wider = surfaceCheck(square, swap("2<x<4.", "1<x<5."));
+  checks += 1;
+  const widerLine = wider.lines.find((l) => /1<x<5/.test(l.canonical));
+  if (!widerLine || widerLine.status !== "ok" || !/由目前條件推出，不是等價改寫/.test(widerLine.note)) fail(`1<x<5 應該綠但註明由條件推出：${widerLine && `${widerLine.status} ${widerLine.note}`}`);
+  const falseInterval = surfaceCheck(square, swap("2<x<4.", "3<x<4."));
+  checks += 1;
+  const falseLine = falseInterval.lines.find((l) => /3<x<4/.test(l.canonical));
+  if (!falseLine || falseLine.status !== "error" || !/不成立/.test(falseLine.note)) fail(`3<x<4 應該紅並給反例：${falseLine && `${falseLine.status} ${falseLine.note}`}`);
+  if (falseInterval.verdict !== "broken") fail(`3<x<4 整份應該 broken，卻是 ${falseInterval.verdict}`);
+  // 憑空一句數值上對的話（跟前文沒關係）：黃，訊息說找不到來源
+  const orphan = surfaceCheck(square, `Let eps > 0 be given.\nChoose delta = min(1, eps/7).\nSuppose 0 < |x-3| < delta.\nThen x^2 + 1 > 2x.`);
+  checks += 1;
+  const orphanLine = orphan.lines[orphan.lines.length - 1];
+  if (!orphanLine || orphanLine.status !== "unsure" || !/找不到它是由哪一步推出的/.test(orphanLine.note)) fail(`憑空的數值真話應該黃並說找不到來源：${orphanLine && `${orphanLine.status} ${orphanLine.note}`}`);
+}
+// 引擎的改寫規則表要跟速查表一致
+{
+  checks += 1;
+  const listed = (lang.cheatsheet.transformations || []).map((t) => t.id).sort().join(",");
+  const engine = (lang.transformations || []).map((t) => t.id).sort().join(",");
+  if (!listed || listed !== engine) fail(`速查表的改寫規則（${listed}）跟引擎（${engine}）不一致`);
+}
+
 console.log("Proof Input v2（自由書寫層）");
 console.log(`  相容      ${problems.length} 題參考證明經翻譯層判定不變`);
 console.log(`  寫法      ${Object.keys(VARIANTS).length + 1} 種同一證明的寫法全綠`);

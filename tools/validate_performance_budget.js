@@ -37,7 +37,9 @@ const BUDGETS = {
   // 把 signOf 那類純函式拆成 kernel/proof_sign.js 之類、順便量一次是不是真的都在用。
   // 2026-09-19 280 → 330：proof_surface.js 36KB —— Proof Input v2／v2.1 自由書寫層（LaTeX 表層、切句、
   // 一句多動作、目標宣告、結論接地、連鎖抑制、原文映射）。它是獨立模組，proof_lang.js 不用學自然語言。
-  "kernel 邏輯模組": { pattern: /^src\/kernel\//, budget: 330 * 1024 },
+  // 2026-09-19 330 → 345：Proof Input v2.2 —— proof_lang.js +11KB（改寫規則四條、接地優先序、provenance 事實表），
+  // proof_surface.js +6KB（語意目標：lim 形式與 ∀ε∃δ 形式等價、目標寫錯紅、結論接地）。都是驗證邏輯，不是資料。
+  "kernel 邏輯模組": { pattern: /^src\/kernel\//, budget: 345 * 1024 },
   "題庫資料合計": { pattern: /^src\/problem|^src\/problems\.js$|^src\/proofs\.js$/, budget: 2400 * 1024 },
   // 2026-09-15 300 → 310：「從零開始」課程表與單課頁（course.js）約 4KB 的樣式；
   // 已盡量沿用 pl-tutorial / pl-intro / pl-goal / first-steps。再撞頂該做的是

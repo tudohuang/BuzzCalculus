@@ -75,16 +75,18 @@
   }
 
   // 指令後面接的可能是數字或底線（\to2、\lim_{…}），所以用「後面不是字母」而不是 \b
-  /** @type {Array<[RegExp, string]>} */
-  const LATEX_WORDS = [
-    [/\\(varepsilon|epsilon)(?![A-Za-z])/g, "eps"], [/\\delta(?![A-Za-z])/g, "delta"], [/\\(xi|eta|theta|lambda|mu|alpha|beta|gamma|pi)(?![A-Za-z])/g, "$1"],
-    [/\\(le|leq|leqslant)(?![A-Za-z])/g, "<="], [/\\(ge|geq|geqslant)(?![A-Za-z])/g, ">="], [/\\(ne|neq)(?![A-Za-z])/g, "!="],
-    [/\\(to|rightarrow|longrightarrow)(?![A-Za-z])/g, "->"], [/\\(Rightarrow|implies|Longrightarrow)(?![A-Za-z])/g, "=>"], [/\\(iff|Leftrightarrow)(?![A-Za-z])/g, "<=>"],
-    [/\\infty(?![A-Za-z])/g, "inf"], [/\\in(?![A-Za-z])/g, " in "], [/\\notin(?![A-Za-z])/g, " notin "], [/\\forall(?![A-Za-z])/g, "forall "], [/\\exists(?![A-Za-z])/g, "exists "],
-    [/\\(cdot|times)(?![A-Za-z])/g, "*"], [/\\div(?![A-Za-z])/g, "/"], [/\\pm(?![A-Za-z])/g, "+-"],
-    [/\\(sin|cos|tan|sec|csc|cot|sinh|cosh|tanh|exp|ln|log|lim|min|max|sup|inf|abs)(?![A-Za-z])/g, "$1"],
-    [/\\(cdots|ldots|dots)(?![A-Za-z])/g, "..."], [/\\(langle|rangle)(?![A-Za-z])/g, ""]
-  ];
+  // 一次掃過所有 \指令（一個 token 換一次）。以前是逐條正規式：\varepsilon 先換成 eps，
+  // 「\le\varepsilon」就變成 \leeps，\le 再也對不上——ε–δ 收尾鏈的「≤ ε」整段不見。
+  /** @type {Record<string, string>} */
+  const LATEX_MAP = {
+    varepsilon: "eps", epsilon: "eps", delta: "delta", xi: "xi", eta: "eta", theta: "theta", lambda: "lambda", mu: "mu", alpha: "alpha", beta: "beta", gamma: "gamma", pi: "pi",
+    le: "<=", leq: "<=", leqslant: "<=", ge: ">=", geq: ">=", geqslant: ">=", ne: "!=", neq: "!=",
+    to: "->", rightarrow: "->", longrightarrow: "->", Rightarrow: "=>", implies: "=>", Longrightarrow: "=>", iff: "<=>", Leftrightarrow: "<=>",
+    infty: "inf", in: " in ", notin: " notin ", forall: "forall ", exists: "exists ",
+    cdot: "*", times: "*", div: "/", pm: "+-",
+    sin: "sin", cos: "cos", tan: "tan", sec: "sec", csc: "csc", cot: "cot", sinh: "sinh", cosh: "cosh", tanh: "tanh", exp: "exp", ln: "ln", log: "log", lim: "lim", min: "min", max: "max", sup: "sup", inf: "inf", abs: "abs",
+    cdots: "...", ldots: "...", dots: "...", langle: "", rangle: ""
+  };
   const braceBalanced = (text) => { let depth = 0; for (const ch of text) { if (ch === "{") depth += 1; else if (ch === "}") { depth -= 1; if (depth < 0) return false; } } return depth === 0; };
 
   // 數學區塊的內容：LaTeX 指令換成引擎認得的寫法。回傳 { text, unknown: [不認得的指令] }
@@ -92,7 +94,7 @@
     let out = String(source || "");
     out = out.replace(/\\\\/g, " ").replace(/&/g, " ");
     out = rewriteGroups(out);
-    LATEX_WORDS.forEach(([re, to]) => { out = out.replace(re, to); });
+    out = out.replace(/\\([A-Za-z]+)/g, (whole, name) => (Object.prototype.hasOwnProperty.call(LATEX_MAP, name) ? LATEX_MAP[name] : whole));
     const unknown = Array.from(new Set((out.match(/\\[A-Za-z]+/g) || [])));
     out = out.replace(/\\([{}])/g, "$1").replace(/\\[A-Za-z]+/g, " ");
     return { text: out.replace(/\s+/g, " ").trim(), unknown };
@@ -288,7 +290,7 @@
       return [{ type: "goal", canonical: "", proposition: strip(m[1]) }];
     }
     if ((m = s.match(EN.done))) return [{ type: "conclude", canonical: "得證。" }];
-    if ((m = s.match(EN.conclude))) return [{ type: "conclude", canonical: `故 ${strip(m[1])}。` }];
+    if ((m = s.match(EN.conclude))) return [{ type: "conclude", canonical: `故 ${strip(m[1])}。`, rule: /definition|定義/i.test(s) ? "epsilon_delta_definition" : "conclude" }];
     if ((m = s.match(EN.contra))) return [{ type: "contradiction", canonical: `反設 ${strip(m[1])}。` }];
     if ((m = s.match(EN.contraEnd))) return [{ type: "contradiction", canonical: m[1] ? `這與 ${strip(m[1])} 矛盾。` : "矛盾。" }];
     if ((m = s.match(EN.induction))) return [{ type: "induction", canonical: "用歸納法。" }];
@@ -350,7 +352,7 @@
       return [{ type: "define", canonical: `${isFunctionDef(body) ? "設" : "取"} ${body}。` }];
     }
     if ((m = s.match(/^(?:由|根據|依|依據)\s*(?:極限(?:的)?定義|ε\s*-?\s*δ\s*(?:的)?定義|eps\s*-?\s*delta\s*(?:的)?定義)\s*[，,:：]?\s*(?:我們有|可得|得|有)?\s*(.+)$/))) {
-      return [{ type: "conclude", canonical: `故 ${strip(m[1])}。` }];
+      return [{ type: "conclude", canonical: `故 ${strip(m[1])}。`, rule: "epsilon_delta_definition" }];
     }
     if ((m = s.match(/^設\s*(.+)$/))) {
       const body = strip(m[1]);
@@ -395,22 +397,100 @@
     return { variable: near ? near[1] : "x", point: near ? near[2].trim() : "", bound: m[2].trim() };
   }
 
-  // 回傳 { ok, note }
-  function goalAgrees(lang, spec, proposition) {
-    if (!spec || !spec.goal) return { ok: true, note: "目標已登記。" };
-    const texts = spec.goal.text || [];
-    const key = limitKey(lang, proposition);
-    if (texts.some((g) => limitKey(lang, g) === key)) return { ok: true, note: "目標對上題目要證的。" };
-    if (spec.goal.relation && exprKey(lang, proposition) === exprKey(lang, spec.goal.relation)) return { ok: true, note: "目標對上題目要證的。" };
-    const eg = parseEpsilonDeltaGoal(lang, proposition);
-    if (eg && spec.bound && spec.bound.lhs) {
-      const boundOk = exprKey(lang, eg.bound) === exprKey(lang, spec.bound.lhs);
-      const goalPoint = (texts[0] || "").match(/lim\s*_?\s*[{(]?\s*[A-Za-z]\w*\s*(?:->|→)\s*([^\s})]+)/);
-      const pointOk = !goalPoint || !eg.point || lang.normalize(goalPoint[1]) === lang.normalize(eg.point);
-      if (boundOk && pointOk) return { ok: true, note: "目標（ε–δ 形式）對上題目要證的極限。" };
-      return { ok: false, note: `目標的 ε–δ 形式跟題目不一樣：題目要的是 |${spec.bound.lhs.replace(/^abs\((.*)\)$/, "$1")}| < ε${goalPoint ? `、x → ${goalPoint[1]}` : ""}。` };
+  /* ── 3c. v2.2 語意目標：lim 形式與 ∀ε∃δ 形式是同一個目標 ─────────────
+     題目本身帶一個 semanticGoal（由 spec.goal / spec.bound 算出來）；使用者的
+     「We want to show …」只是再宣告一次，對得上綠、對不上紅（不是黃：目標寫錯是明確的錯）。
+     結尾的 lim … = L 不拿去取樣（lim 不是可取樣的關係式），而是轉成語意目標再比。 */
+
+  // "lim_{x->3} x^2 = 9" → { kind:"limit", variable, point, functionExpr, value, proofForm }
+  function parseLimitGoal(lang, text) {
+    const t = lang.normalize(text).replace(/\s+/g, " ").trim();
+    const m = t.match(/^lim\s*_?\s*[{(]?\s*([A-Za-z]\w*)\s*->\s*([^\s})]+)\s*[})]?\s*(.+?)\s*=\s*([^=]+)$/i);
+    if (!m) return null;
+    const fn = m[3].trim().replace(/^\((.*)\)$/, "$1");
+    const value = m[4].trim();
+    return {
+      kind: "limit", variable: m[1], point: m[2].trim(), functionExpr: fn, value,
+      proofForm: { kind: "epsilon_delta", epsilon: "eps", delta: "delta", neighborhood: `0 < abs(${m[1]} - ${m[2].trim()}) < delta`, target: `abs((${fn}) - (${value})) < eps` }
+    };
+  }
+
+  // 使用者寫的任何目標句 → 語意目標。lim 形式、∀ε∃δ 形式、或一般關係式
+  function parseSemanticGoal(lang, text) {
+    const limit = parseLimitGoal(lang, text);
+    if (limit) return limit;
+    const eg = parseEpsilonDeltaGoal(lang, text);
+    if (eg) {
+      // 從 |f(x) − L| 反推 f 與 L 不一定做得到（|x^2-9| 是 x^2 與 9，也可能是別的拆法）：留 bound 就夠比對
+      return { kind: "limit", variable: eg.variable, point: eg.point, functionExpr: null, value: null, proofForm: { kind: "epsilon_delta", epsilon: "eps", delta: "delta", neighborhood: `0 < abs(${eg.variable} - ${eg.point}) < delta`, target: `${eg.bound} < eps` }, quantified: true };
     }
-    return { ok: false, note: `你宣告的目標「${proposition}」跟題目要證的（${texts[0] || spec.goal.relation || "？"}）對不上。` };
+    if (/(<=|>=|!=|<|>|=)/.test(text) && !/\blim\b|->|→/.test(text)) return { kind: "relation", relation: lang.normalize(text).trim() };
+    return null;
+  }
+
+  // 題目自己的語意目標：題庫給 lim 形式（goal.text[0]）與 bound（|f(x) − L| < ε）
+  function specSemanticGoal(lang, spec) {
+    if (!spec || !spec.goal) return null;
+    const texts = spec.goal.text || [];
+    for (const text of texts) {
+      const limit = parseLimitGoal(lang, text);
+      if (limit) {
+        if (spec.bound && spec.bound.lhs) limit.proofForm.target = `${spec.bound.lhs} < ${spec.bound.rhs || "eps"}`;
+        return limit;
+      }
+    }
+    if (spec.goal.relation) return { kind: "relation", relation: lang.normalize(spec.goal.relation).trim() };
+    if (texts.length) return { kind: "text", texts };
+    return null;
+  }
+
+  const boundKey = (lang, target) => exprKey(lang, String(target || "").replace(/\s*<\s*eps\s*$/i, "")).replace(/^abs\(\((.*)\)-\((.*)\)\)$/, "abs($1-$2)").replace(/[()]/g, "");
+  // 兩個語意目標是不是同一件事（不是字串比對：lim 形式 vs ε–δ 形式、x^2 vs (x^2)、9 vs 9.0）
+  function goalEquivalent(lang, a, b) {
+    if (!a || !b) return false;
+    if (a.kind === "limit" && b.kind === "limit") {
+      if (a.point && b.point && lang.normalize(a.point) !== lang.normalize(b.point)) return false;
+      if (a.variable && b.variable && a.variable !== b.variable) return false;
+      if (a.functionExpr && b.functionExpr) return exprKey(lang, a.functionExpr) === exprKey(lang, b.functionExpr) && exprKey(lang, a.value) === exprKey(lang, b.value);
+      return boundKey(lang, a.proofForm.target) === boundKey(lang, b.proofForm.target);
+    }
+    if (a.kind === "relation" && b.kind === "relation") return exprKey(lang, a.relation) === exprKey(lang, b.relation);
+    if (a.kind === "text" || b.kind === "text") {
+      const texts = (a.kind === "text" ? a : b).texts;
+      const other = a.kind === "text" ? b : a;
+      return other.kind === "relation" && texts.some((text) => exprKey(lang, text) === exprKey(lang, other.relation));
+    }
+    return false;
+  }
+
+  const showGoal = (goal) => (goal.kind === "limit"
+    ? (goal.functionExpr ? `lim_(${goal.variable}→${goal.point}) ${goal.functionExpr} = ${goal.value}` : `(∀ε>0)(∃δ>0)(${goal.proofForm.neighborhood} ⇒ ${goal.proofForm.target})`)
+    : goal.kind === "relation" ? goal.relation : (goal.texts || [])[0] || "？");
+
+  // 使用者的目標宣告對不對得上題目。回傳 { ok, status, note, goal }
+  function goalAgrees(lang, spec, proposition) {
+    const mine = parseSemanticGoal(lang, proposition);
+    const theirs = specSemanticGoal(lang, spec);
+    if (!theirs) return { ok: true, status: "ok", note: "目標已登記。", goal: mine };
+    if (!mine) {
+      // 讀不出是哪種命題：舊的字面比對再試一次（題目的 goal.text 別名）
+      const key = limitKey(lang, proposition);
+      if ((spec.goal.text || []).some((g) => limitKey(lang, g) === key)) return { ok: true, status: "ok", note: `已辨識證明目標：${showGoal(theirs)}。`, goal: theirs };
+      return { ok: false, status: "unsure", note: `目標已登記，但我讀不出「${proposition}」是哪種命題（極限、∀ε∃δ、或關係式），沒有跟題目比。`, goal: null };
+    }
+    if (goalEquivalent(lang, mine, theirs)) {
+      const note = `已辨識證明目標：${showGoal(theirs)}。${mine.quantified ? "已辨識為 ε–δ 極限目標。" : ""}`;
+      return { ok: true, status: "ok", note, goal: mine };
+    }
+    return { ok: false, status: "error", note: `你宣告的證明目標與題目不同。題目：${showGoal(theirs)}；你寫：${showGoal(mine)}。`, goal: mine };
+  }
+
+  // 結尾句（故 lim … = L）：跟題目的語意目標比，而不是拿去取樣
+  function matchConclusionToGoal(lang, spec, proposition) {
+    const theirs = specSemanticGoal(lang, spec);
+    const mine = parseSemanticGoal(lang, proposition);
+    if (!theirs || !mine) return null;
+    return goalEquivalent(lang, mine, theirs);
   }
 
   /* ── 4. 全文翻譯：原文 → 節點（每個節點一行句型語言） ─────────── */
@@ -418,7 +498,8 @@
   // 連接詞收尾 + 下一段只有數學區塊 → 併成一句（We want to show that\n\n$$P$$、Then\n\n$$A=B$$）
   function mergeDangling(sentences) {
     const out = [];
-    const DANGLING = /(?:\bthat|\bthen|\bwe have|\bwe get|\bwe obtain|\bit follows that|\bhave|\bget|[:,，：]|=|要證明|欲證|要證|求證|目標是|則|可得|得|於是|所以|因此|故)\s*$/i;
+    // 一個連接詞（或動詞）自己一行、下一段只有數學：Choose\n\n$$δ=…$$、so\n\n$$2<x<4$$、Hence\n\n$$…$$
+    const DANGLING = /(?:\bthat|\bthen|\bthus|\bhence|\btherefore|\bso|\bsince|\bbecause|\bchoose|\blet|\btake|\bset|\bdefine|\bput|\bpick|\bsuppose|\bassume|\band|\bwe have|\bwe get|\bwe obtain|\bwe see|\bit follows that|\bhave|\bget|\bobtain|\bimplies|[:,，：]|=|要證明|欲證|要證|求證|目標是|則|可得|得|於是|所以|因此|故|取|令|設|假設|因為|由於)\s*$/i;
     for (const sentence of sentences) {
       const prev = out[out.length - 1];
       const onlyMath = /^\s*(?:⁣\d+⁣\s*[.,;。]?\s*)+$/.test(sentence.text);
@@ -478,8 +559,9 @@
         });
         if (node.type === "goal") {
           const agree = goalAgrees(lang, spec, node.proposition);
-          node.status = agree.ok ? "ok" : "unsure";
+          node.status = agree.status || (agree.ok ? "ok" : "unsure");
           node.note = agree.note;
+          node.semanticGoal = agree.goal || null;
         }
         nodes.push(node);
       });
@@ -517,6 +599,7 @@
           entry.kind = line.kind || node.type;
           entry.status = line.status;
           entry.note = line.note || "";
+          entry.grounding = line.grounding || null;
           // Rule B：讀不出是哪種動作 → 黃，不是紅。紅只留給「理解了而且驗證失敗」。
           if (line.status === "error" && (line.kind === "unknown" || node.type === "unknown")) {
             entry.status = "unsure";
@@ -541,6 +624,12 @@
       if (node.unknownCommands && node.unknownCommands.length && entry.status === "ok") {
         entry.note = `${entry.note} 略過了不認得的 LaTeX 指令：${node.unknownCommands.join(" ")}`.trim();
       }
+      // v2.2 結論接地：故 lim … = L 對上題目的語意目標、骨架也齊 → 說清楚是這兩件事都成立
+      if (node.type === "conclude" && entry.status === "ok" && /對上題目的目標/.test(entry.note)) {
+        const skeletonName = { "epsilon-delta": "ε–δ ", induction: "歸納", cases: "分情況", contradiction: "反證", direct: "" }[spec && spec.skeleton ? spec.skeleton : "direct"] || "";
+        entry.note = `結論與原證明目標一致。${skeletonName}證明骨架完整。`;
+        entry.rule = node.rule || "conclude";
+      }
       if (node.part) entry.label = `${entry.label || node.type}（第 ${node.part.index + 1} / ${node.part.total} 段）`;
       lines.push(entry);
     });
@@ -557,10 +646,10 @@
       else verdict = report.goalDone ? "verified" : "incomplete";
       verdictText = { broken: "有一句不成立或讀不懂。", incomplete: "結構還沒到齊。", partial: `每一句都讀得懂，但有 ${counts.unsure} 句我驗不了（標黃的那幾句請自己確認）。`, verified: "全綠、骨架齊。", empty: "還沒寫。" }[verdict];
     }
-    return { lines, counts, missing: report.missing || [], verdict, verdictText, goalDone: report.goalDone, canonicalText: translated.canonicalText, surface: true };
+    return { lines, counts, missing: report.missing || [], verdict, verdictText, goalDone: report.goalDone, canonicalText: translated.canonicalText, surface: true, facts: report.facts || [], semanticGoal: specSemanticGoal(lang, spec) };
   }
 
-  const api = { version: 1, translate, check, latexToPlain, segment: (text) => { const p = protectMath(text); return segment(p.work, p.map).map((s) => restoreMath(s.text, p.blocks).text); } };
+  const api = { version: 2, translate, check, latexToPlain, parseSemanticGoal, specSemanticGoal, goalEquivalent, matchConclusionToGoal, segment: (text) => { const p = protectMath(text); return segment(p.work, p.map).map((s) => restoreMath(s.text, p.blocks).text); } };
   if (typeof module !== "undefined" && module.exports) module.exports = api;
   if (typeof window !== "undefined") window.BuzzProofSurface = api;
 })();

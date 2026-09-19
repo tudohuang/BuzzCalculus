@@ -153,6 +153,8 @@
             <ul class="lc-cheat-list">${sheet.facts.map((fact) => `<li>${escapeHtml(fact)}</li>`).join("")}</ul>
             <p class="section-label">符號與規矩</p>
             <div class="lc-cheat-scroll"><table><tbody>${notationRows}</tbody></table></div>
+            <p class="section-label">不用點名也會認的改寫（接上前文的來源）</p>
+            <ul class="lc-cheat-list">${(sheet.transformations || []).map((item) => `<li><strong>${escapeHtml(item.title)}</strong> — ${escapeHtml(item.explain)}</li>`).join("")}</ul>
             <p class="lc-cheat-note">字典外的定理可以照寫：式子驗得過就綠，只是備註會說它不在字典裡。</p>
           </div>
         </details>`;
