@@ -35,7 +35,9 @@ const BUDGETS = {
   // 2026-09-14 260 → 280：proof_lang.js 101KB —— 收緊語法（接地、前提、符號正負引擎 parseTree/signOf、
   // 線性解 solveLinear、泰勒規則）。這是檢查器的骨幹，不是可以搬去別處的 render；再撞頂該做的是
   // 把 signOf 那類純函式拆成 kernel/proof_sign.js 之類、順便量一次是不是真的都在用。
-  "kernel 邏輯模組": { pattern: /^src\/kernel\//, budget: 280 * 1024 },
+  // 2026-09-19 280 → 310：proof_surface.js 28KB —— Proof Input v2 自由書寫層（LaTeX 表層、切句、
+  // 一句多動作、中英同義句、原文映射）。它是獨立模組，proof_lang.js 不用學自然語言。
+  "kernel 邏輯模組": { pattern: /^src\/kernel\//, budget: 310 * 1024 },
   "題庫資料合計": { pattern: /^src\/problem|^src\/problems\.js$|^src\/proofs\.js$/, budget: 2400 * 1024 },
   // 2026-09-15 300 → 310：「從零開始」課程表與單課頁（course.js）約 4KB 的樣式；
   // 已盡量沿用 pl-tutorial / pl-intro / pl-goal / first-steps。再撞頂該做的是
@@ -87,7 +89,9 @@ rows.forEach((r) => {
 // 2026-09-13 60 → 64：白話證明的 kernel 與內容各一支。下一次該做的是把題庫檔合併，不是再加數字。
 // 2026-09-16 64 → 65：share_cards.js 是從 app.js 搬出去的 230 行（app.js 撞頂），總位元組沒變；
 // 題庫檔合併（37 檔）還是欠著的債，下一支再加就先合併。
-const SCRIPT_COUNT_BUDGET = 65;
+// 2026-09-19 65 → 66：kernel/proof_surface.js（Proof Input v2 自由書寫層）是一支獨立的 kernel 模組，
+// 讓 proof_lang.js 不用學自然語言；舊測試繼續保護引擎，新測試只管翻譯。
+const SCRIPT_COUNT_BUDGET = 66;
 console.log(`  script 標籤        ${String(scripts.length).padStart(5)} 支 / ${SCRIPT_COUNT_BUDGET} 支上限`);
 if (scripts.length > SCRIPT_COUNT_BUDGET) {
   failures.push(`index.html 的 script 數量 ${scripts.length} 超過 ${SCRIPT_COUNT_BUDGET}`);

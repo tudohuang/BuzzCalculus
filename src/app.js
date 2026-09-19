@@ -816,6 +816,7 @@
     // 取得
     onboarding_step: "開局流程的每一步（含是否跳過）",
     placement_complete: "定位測驗完成，帶回定位等級與最弱家族",
+    proof_input_mode: "白話證明切換書寫模式（free 自由書寫 / guided 引導句型）",
     // 練習
     session_start: "開一局（模式 / 長度 / 從哪裡進來）",
     session_complete: "完成一局",
@@ -5023,7 +5024,20 @@
 
   const proofLangSpec = (id) => plUI.spec(id);
   const proofLangLessons = () => plUI.lessons();
-  const runProofLangCheck = (spec, text) => plUI.check(spec, text);
+  // 書寫模式存在設定裡：free（預設，自由書寫層）／guided（一行一句）
+  const proofInputMode = () => ((loadRecords().settings || {}).proofInputMode === "guided" ? "guided" : "free");
+  const runProofLangCheck = (spec, text) => plUI.check(spec, text, proofInputMode());
+  function setProofInputMode(mode) {
+    const records = loadRecords();
+    records.settings = records.settings || {};
+    records.settings.proofInputMode = mode === "guided" ? "guided" : "free";
+    saveRecords(records);
+    const textarea = app.querySelector("[data-proof-lang-text]");
+    if (textarea) proofWrite.text = textarea.value;
+    proofWrite.report = runProofLangCheck(proofLangSpec(proofWrite.id), proofWrite.text);
+    trackEvent("proof_input_mode", { mode: records.settings.proofInputMode });
+    render();
+  }
   const renderProofTutorial = () => plUI.renderTutorial(proofWrite, loadRecords()) || renderProofLab();
 
   // 上一題／下一題照目前的篩選走；這題不在篩選裡（例如從課程進來）就照整張表
@@ -8426,6 +8440,7 @@
       if (lesson) openProofWrite(lesson.exercise.id, { lessonId: lesson.id, starter: lesson.exercise.starter });
     }
     if (action === "pl-insert") insertProofLangTemplate(actionNode.dataset.text || "");
+    if (action === "pl-mode") setProofInputMode(actionNode.dataset.mode || "free");
     if (action === "pl-toggle-reference") {
       proofWrite.showReference = !proofWrite.showReference;
       const textarea = app.querySelector("[data-proof-lang-text]");
