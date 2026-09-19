@@ -667,7 +667,7 @@
       if (line.kind === "by") {
         const rule = findRule(line.match[2]);
         const claim = handleClaim(spec, ctx, line.match[3], line, verifyChain, evaluate, rule || { id: "unknown", names: [line.match[2]] });
-        push(line, claim.status, claim.note, { results: claim.results, rule: rule ? rule.id : null });
+        push(line, claim.status, claim.note, { results: claim.results, rule: rule ? rule.id : null, grounding: claim.grounding || null });
         continue;
       }
       if (line.kind === "because") {
@@ -686,7 +686,7 @@
         const nested = line.match[4].match(PATTERNS.find((item) => item.kind === "by").re);
         const rule = nested ? (findRule(nested[2]) || { id: "unknown", names: [nested[2]] }) : null;
         const claim = handleClaim(spec, ctx, nested ? nested[3] : line.match[4], line, verifyChain, evaluate, rule);
-        push(line, worst(reason.status, claim.status), `前提：${reason.note} 結論：${claim.note}`, { results: [...(reason.results || []), ...(claim.results || [])] });
+        push(line, worst(reason.status, claim.status), `前提：${reason.note} 結論：${claim.note}`, { results: [...(reason.results || []), ...(claim.results || [])], grounding: claim.grounding || null });
         continue;
       }
       if (line.kind === "claim") {
@@ -705,12 +705,14 @@
           continue;
         }
         const claim = handleClaim(spec, ctx, body, line, verifyChain, evaluate, null);
-        push(line, claim.status, claim.note, { results: claim.results });
+        push(line, claim.status, claim.note, { results: claim.results, grounding: claim.grounding || null });
         continue;
       }
     }
 
-    return summarize(spec, ctx, report, lines);
+    const summary = summarize(spec, ctx, report, lines);
+    summary.facts = (ctx.factLog || []).map((fact) => ({ id: fact.id, expr: fact.expr, line: fact.line, provenance: fact.provenance }));
+    return summary;
   }
 
   function round(value) {
@@ -874,6 +876,7 @@
       chain.exprs.filter((expr) => /^[A-Za-z_]\w*$/.test(expr)).forEach((name) => { if (!ctx.defs[name]) ctx.vars.set(name, ctx.vars.get(name) || {}); });
       for (let i = 0; i < chain.ops.length; i += 1) {
         registerRelation(spec, ctx, applyMacros(spec, chain.exprs[i], ctx), applyMacros(spec, chain.exprs[i + 1], ctx), chain.ops[i], ctx.currentCase);
+        recordFact(ctx, { lhs: chain.exprs[i], op: chain.ops[i], rhs: chain.exprs[i + 1] }, line, { kind: "assume", from: [] });
       }
       if (new RegExp(`\\b${thresholdName(spec)}\\b`).test(part)) ctx.skeleton.assume = true;
       notes.push(`假設「${part}」，之後的取樣都在這個條件下。`);
@@ -895,6 +898,7 @@
     const results = [];
     let status = "ok";
     let anyChain = false;
+    let grounding = null;
     for (const part of parts) {
       if (/^(成立|holds|is true|得證|矛盾)$/i.test(part)) continue;
       if (/^(結論|the claim|the statement|命題|原式)\s*(成立|holds)?$/i.test(part)) {
@@ -1003,16 +1007,24 @@
             status = worst(status, "error");
             notes.push(`「${part}」的方向不一致（有 ≥ 也有 ≤）：一條鏈只能朝一個方向，兩件事請分兩句。`);
           }
-          // 接地：鏈的某一端要是已知的東西（前面出現過、宣告過的變數、定義、題目的目標或 ε-δ 的起點），
-          // 或第一段是顯然的起點，或整條跟前面驗過的關係等價。多段但憑空出現的鏈不算。
+          // 接地（v2.2）：先問「由哪裡來」——直接引用、代數等價、改寫規則（絕對值⇔區間、傳遞、區間裡的界、三角不等式）；
+          // 都不是，再看鏈的某一端是不是已知的東西（前面出現過、宣告過的變數、定義、題目的目標或 ε-δ 的起點）、
+          // 第一段是不是顯然的起點。多段但憑空出現的鏈不算。只有數值成立而找不到來源：黃。
+          const structural = (!trivial && !mixed && !isPremise && !(rule && rule.id !== "unknown")) ? groundStatement(spec, ctx, verified.chain, evaluate) : null;
           const grounded = !trivial && !mixed && (isPremise || (rule && rule.id !== "unknown")
+            || Boolean(structural)
             || (goalHit && skeletonReady(spec, ctx))
             || isObviousStart(headOf(verified.chain), spec, ctx) || anchored(spec, ctx, verified.chain, evaluate) || equivalentToKnown(spec, ctx, verified.chain, evaluate));
           ctx.verifiedLinks = ctx.verifiedLinks || [];
-          verified.results.forEach((item) => ctx.verifiedLinks.push({ lhs: item.lhs, op: item.op, rhs: item.rhs }));
+          const provenance = structural ? { kind: structural.kind, rule: structural.rule, from: structural.from }
+            : isPremise ? { kind: "premise", from: [] } : (rule && rule.id !== "unknown") ? { kind: "theorem", rule: rule.id, from: [] } : { kind: grounded ? "anchored" : "numeric", from: [] };
+          verified.results.forEach((item) => { ctx.verifiedLinks.push({ lhs: item.lhs, op: item.op, rhs: item.rhs }); recordFact(ctx, item, line, provenance); });
+          if (structural) grounding = { kind: structural.kind, rule: structural.rule, from: structural.from, exact: structural.exact };
           if (!grounded) {
             status = worst(status, "unsure");
-            notes.push(`「${part}」數值上成立，但跟前面沒有接上（兩邊都沒在前面出現過，也不是顯然的起點）—— 從前一步寫一條鏈過來。`);
+            notes.push(`「${part}」在目前條件下成立，但找不到它是由哪一步推出的（兩邊都沒在前面出現過，也不是顯然的起點）—— 從前一步寫一條鏈過來。`);
+          } else if (structural) {
+            notes.push(structural.note);
           } else {
             notes.push(`「${part}」${verified.results.length > 1 ? `的 ${verified.results.length} 段` : ""}在 ${verified.results[0].checked || 0} 個取樣點上都成立。`);
           }
@@ -1074,9 +1086,9 @@
         notes.push(`（「${rule.names[0]}」不在我的規則字典裡，但式子本身驗過了。）`);
       }
     }
-    if (!parts.length) return { status: "unsure", note: "這一句沒有可以檢查的內容。", results };
+    if (!parts.length) return { status: "unsure", note: "這一句沒有可以檢查的內容。", results, grounding: null };
     void anyChain;
-    return { status, note: notes.join(" "), results };
+    return { status, note: notes.join(" "), results, grounding };
   }
 
   /* 當 n = 1 時，左式 = 1，右式 = 1·2/2 = 1，成立 */
@@ -1509,17 +1521,22 @@
 
   // 跟前面某條驗過的關係式等價：兩邊之差的正負在每個取樣點上一致
   function equivalentToKnown(spec, ctx, chain, evaluate) {
-    if (chain.ops.length !== 1) return false;
+    return Boolean(equivalentLink(spec, ctx, chain, evaluate));
+  }
+  // 同上，但回傳對上的那條關係（給接地說明用）
+  function equivalentLink(spec, ctx, chain, evaluate) {
+    void evaluate;
+    if (chain.ops.length !== 1) return null;
     const links = (ctx.verifiedLinks || []).filter((link) => link.op !== "=" && link.op !== "!=");
-    if (!links.length || chain.ops[0] === "=" || chain.ops[0] === "!=") return false;
+    if (!links.length || chain.ops[0] === "=" || chain.ops[0] === "!=") return null;
     const oriented = (lhs, op, rhs) => (op === ">" || op === ">=") ? `(${lhs})-(${rhs})` : `(${rhs})-(${lhs})`;
     const mine = oriented(chain.exprs[0], chain.ops[0], chain.exprs[1]);
     const scope = makeScope(spec, ctx);
     let mineFn;
-    try { mineFn = compile(applyMacros(spec, mine, ctx), scope); } catch (_error) { return false; }
+    try { mineFn = compile(applyMacros(spec, mine, ctx), scope); } catch (_error) { return null; }
     const { samples } = drawSamples(spec, ctx, 120);
-    if (!samples.length) return false;
-    return links.some((link) => {
+    if (!samples.length) return null;
+    return links.find((link) => {
       let otherFn;
       try { otherFn = compile(applyMacros(spec, oriented(link.lhs, link.op, link.rhs), ctx), scope); } catch (_error) { return false; }
       // 差要成正比：a = k·b，k > 0 固定。移項、乘正數都是這樣；兩條剛好都成立的不等式不是
@@ -1534,7 +1551,180 @@
         if (ratio === null) { if (current <= 0) return false; ratio = current; return true; }
         return Math.abs(current - ratio) <= 1e-6 * (1 + Math.abs(ratio));
       });
-    });
+    }) || null;
+  }
+
+  /* ── v2.2 接地：「是真的」和「是由前面推出來的」是兩件事 ─────────────
+     數值引擎回答第一個問題；這一段回答第二個。每一句推導依序試：
+       1. 直接引用：前面已經有一模一樣的關係
+       2. 代數等價：跟前面某條關係移項／同乘正數之後一樣（equivalentToKnown）
+       3. 改寫規則：|x−a|<r ⇔ a−r<x<a+r、A<B 且 B≤C ⇒ A<C、區間裡的界、三角不等式
+       4. 定理字典（由 <定理>，…）—— 在 handleClaim 裡
+       5. 只有數值成立、找不到來源 → 黃（不能綠）
+     每一條登記過的關係都帶 provenance（哪一行、哪條規則、由哪幾條推出），
+     報告會把它帶出去，畫面之後可以做「這一步從哪裡來」。 */
+
+  function recordFact(ctx, link, line, provenance) {
+    ctx.factLog = ctx.factLog || [];
+    const id = `fact-${ctx.factLog.length + 1}`;
+    ctx.factLog.push({ id, expr: `${link.lhs} ${link.op} ${link.rhs}`, lhs: link.lhs, op: link.op, rhs: link.rhs, line: line ? line.n : null, provenance: provenance || { kind: "verified", from: [] } });
+    return id;
+  }
+
+  // 目前可以拿來當前提的關係：假設／題目條件（constraints，限這個情況）＋ 前面驗過的鏈
+  function knownLinks(ctx) {
+    const facts = [];
+    ctx.constraints.forEach((item) => { if (item.caseId === null || item.caseId === ctx.currentCase) facts.push({ lhs: item.lhs, op: item.op, rhs: item.rhs }); });
+    (ctx.verifiedLinks || []).forEach((link) => facts.push({ lhs: link.lhs, op: link.op, rhs: link.rhs }));
+    return facts.filter((fact) => fact.op !== "=" && fact.op !== "!=");
+  }
+
+  const FLIP = { "<": ">", ">": "<", "<=": ">=", ">=": "<=", "=": "=", "!=": "!=" };
+  const showLink = (link) => `${link.lhs} ${link.op} ${link.rhs}`;
+  // 一律轉成「小 < 大」的方向，比對時不用管使用者寫 x > 2 還是 2 < x
+  const orientLess = (link) => ((link.op === ">" || link.op === ">=") ? { lhs: link.rhs, op: FLIP[link.op], rhs: link.lhs } : link);
+
+  // |v − a| < r（或 |v + a|、|v|、abs(…)）→ { variable, center, radius, op }
+  function absOfLinear(link) {
+    const oriented = orientLess(link);
+    if (oriented.op !== "<" && oriented.op !== "<=") return null;
+    const inner = compact(oriented.lhs).match(/^(?:\|(.+)\||abs\((.+)\))$/);
+    if (!inner) return null;
+    const body = inner[1] || inner[2];
+    const m = body.match(/^([a-z_]\w*)(?:([+-])(.+))?$/);
+    if (!m || MATH_FUNCTIONS[m[1]] || CONSTANTS[m[1]] !== undefined) return null;
+    const center = !m[2] ? "0" : (m[2] === "-" ? m[3] : `-(${m[3]})`);
+    return { variable: m[1], center, radius: oriented.rhs, op: oriented.op };
+  }
+
+  const TRANSFORMATIONS = [
+    { id: "abs_interval", title: "|x−a| < r ⇔ a−r < x < a+r", explain: "|x−a|<r ⇔ a−r<x<a+r（≤ 也一樣）" },
+    { id: "transitive", title: "A < B 且 B ≤ C ⇒ A < C", explain: "把前面兩條關係串起來" },
+    { id: "interval_bound", title: "a < x < b 時 E(x) 的界", explain: "x 只在這個區間裡動，E(x) 的範圍就算得出來" },
+    { id: "triangle", title: "|a+b| ≤ |a|+|b|", explain: "三角不等式（不用特別寫「由三角不等式」）" }
+  ];
+
+  // 這一條鏈是不是由前面的關係經一條改寫規則得到。回傳 { rule, from: [關係], note, exact } 或 null
+  function groundTransformation(spec, ctx, chain, evaluate) {
+    const facts = knownLinks(ctx);
+    if (!facts.length) return null;
+    const same = (a, b) => compact(a) === compact(b) || evaluate(a, b, "=", ctx).ok;
+    const links = chain.ops.map((op, i) => ({ lhs: chain.exprs[i], op, rhs: chain.exprs[i + 1] })).map(orientLess);
+    if (links.some((link) => link.op === "=" || link.op === "!=")) return null;
+    const numeric = (expr) => { try { const fn = compile(applyMacros(spec, expr, ctx), makeScope(spec, ctx)); const value = fn({}); return Number.isFinite(value) ? value : null; } catch (_error) { return null; } };
+
+    // 3a. 絕對值 ⇔ 區間。目標可以是「a−r < x < a+r」整條，也可以只寫一半（x < a+r）
+    //     常數更寬（|x−3|<1 之後寫 1 < x < 5）算「由目前條件推出」，不算等價改寫
+    for (const fact of facts) {
+      const abs = absOfLinear(fact);
+      if (!abs) continue;
+      if (!evaluate(abs.radius, "0", ">", ctx).ok) continue;
+      const lo = `(${abs.center})-(${abs.radius})`;
+      const hi = `(${abs.center})+(${abs.radius})`;
+      let exact = true;
+      const covered = links.every((link) => {
+        const lower = compact(link.rhs) === abs.variable && !same(link.lhs, abs.variable);
+        const upper = compact(link.lhs) === abs.variable && !same(link.rhs, abs.variable);
+        if (!lower && !upper) return false;
+        const bound = lower ? link.lhs : link.rhs;
+        const derived = lower ? lo : hi;
+        if (implies(abs.op, link.op) && same(bound, derived)) return true;
+        // 更寬的常數界：數字對數字比
+        const target = numeric(bound); const mine = numeric(derived);
+        if (target === null || mine === null) return false;
+        if (lower ? target < mine : target > mine) { exact = false; return true; }
+        return false;
+      });
+      if (covered) {
+        const interval = `${lo} < ${abs.variable} < ${hi}`.replace(/\(([^()]+)\)/g, "$1");
+        return {
+          rule: "abs_interval", from: [showLink(fact)], exact,
+          note: exact ? `由 ${showLink(fact)} 可得 ${chain.exprs.join(` ${chain.ops[0]} `)}（|x−a|<r ⇔ a−r<x<a+r）。`
+            : `由 ${showLink(fact)} 可得 ${interval}，所以 ${chain.exprs.join(` ${chain.ops[0]} `)} 也成立（由目前條件推出，不是等價改寫）。`
+        };
+      }
+    }
+    if (links.length !== 1) return null;
+    const [target] = links;
+
+    // 3b. 傳遞：A < B、B ≤ C ⇒ A < C（中間的 B 要一模一樣或數值相等）
+    for (const first of facts.map(orientLess)) {
+      if (!same(first.lhs, target.lhs)) continue;
+      for (const second of facts.map(orientLess)) {
+        if (second === first || !same(second.rhs, target.rhs) || !same(first.rhs, second.lhs)) continue;
+        const composed = (first.op === "<" || second.op === "<") ? "<" : "<=";
+        if (implies(composed, target.op)) {
+          return { rule: "transitive", from: [showLink(first), showLink(second)], exact: true, note: `由 ${showLink(first)} 與 ${showLink(second)} 可得 ${showLink(target)}。` };
+        }
+      }
+    }
+
+    // 3c. 三角不等式：|A + B| ≤ |A| + |B|、|A| ≤ |A − B| + |B|（形狀對、數值也對）
+    const bars = (text) => compact(text).match(/^(?:\|(.+)\||abs\((.+)\))$/);
+    const lhsAbs = bars(target.lhs);
+    const rhsParts = compact(target.rhs).match(/^(\|[^|]+\||abs\([^()]+\))\+(\|[^|]+\||abs\([^()]+\))$/);
+    if (lhsAbs && rhsParts && target.op === "<=") {
+      const p = bars(rhsParts[1]); const q = bars(rhsParts[2]);
+      const inside = (m) => m[1] || m[2];
+      if (p && q && (same(inside(lhsAbs), `(${inside(p)})+(${inside(q)})`) || same(inside(lhsAbs), `(${inside(p)})-(${inside(q)})`) || same(inside(lhsAbs), `(${inside(q)})+(${inside(p)})`))) {
+        return { rule: "triangle", from: [], exact: true, note: `使用三角不等式 |a+b| ≤ |a|+|b|。` };
+      }
+    }
+
+    // 3d. 區間裡的界：x 已經被夾在 a < x < b（前面寫的，或由 |x−a|<r 來），目標 E(x) < c、E(x) > c、|E(x)| < c
+    //     只有一個變數在動；把它在區間上掃一遍，界都對就算「由目前條件推出」
+    const names = new Set([...ctx.vars.keys(), ...Object.keys(spec.vars || {})]);
+    const identifiers = Array.from(new Set((compact(replaceBars(`${target.lhs}+${target.rhs}`)).match(/[a-z_]\w*'*/g) || []).filter((name) => !MATH_FUNCTIONS[name] && CONSTANTS[name] === undefined && names.has(name) && ctx.defs[name] === undefined)));
+    if (identifiers.length === 1) {
+      const v = identifiers[0];
+      const intervals = [];
+      facts.forEach((fact) => {
+        const abs = absOfLinear(fact);
+        if (abs && abs.variable === v && evaluate(abs.radius, "0", ">", ctx).ok) intervals.push({ lo: `(${abs.center})-(${abs.radius})`, hi: `(${abs.center})+(${abs.radius})`, from: [showLink(fact)] });
+      });
+      const lows = facts.map(orientLess).filter((fact) => compact(fact.rhs) === v && !/[a-z_]/i.test(compact(fact.lhs).replace(/^(pi|e)$/, "")));
+      const highs = facts.map(orientLess).filter((fact) => compact(fact.lhs) === v && !/[a-z_]/i.test(compact(fact.rhs).replace(/^(pi|e)$/, "")));
+      lows.forEach((low) => highs.forEach((high) => intervals.push({ lo: low.lhs, hi: high.rhs, from: [showLink(low), showLink(high)] })));
+      for (const interval of intervals) {
+        const lo = numeric(interval.lo); const hi = numeric(interval.hi);
+        if (lo === null || hi === null || !(lo < hi)) continue;
+        let left; let right;
+        try { const scope = makeScope(spec, ctx); left = compile(applyMacros(spec, target.lhs, ctx), scope); right = compile(applyMacros(spec, target.rhs, ctx), scope); } catch (_error) { continue; }
+        const { samples } = drawSamples(spec, ctx, 24);
+        const base = samples.length ? samples : [{}];
+        let holds = true; let checked = 0;
+        for (const env of base) {
+          for (let k = 0; k <= 32 && holds; k += 1) {
+            const point = Object.assign({}, env, { [v]: lo + (hi - lo) * (k / 32) });
+            let a; let b;
+            try { a = left(point); b = right(point); } catch (_error) { holds = false; break; }
+            if (!Number.isFinite(a) || !Number.isFinite(b)) continue;
+            checked += 1;
+            if (!RELATION_TEST[target.op](a, b)) holds = false;
+          }
+          if (!holds) break;
+        }
+        if (holds && checked) {
+          return { rule: "interval_bound", from: interval.from, exact: false, note: `由 ${interval.from.join(" 與 ")} 可推出 ${showLink(target)}（${v} 在 ${round(lo)} 到 ${round(hi)} 之間掃過都成立）。` };
+        }
+      }
+    }
+    return null;
+  }
+
+  // 依優先序找這一句的來源：直接引用 → 代數等價 → 改寫規則。回傳 { kind, rule, from, note, exact } 或 null
+  function groundStatement(spec, ctx, chain, evaluate) {
+    const same = (a, b) => compact(a) === compact(b) || evaluate(a, b, "=", ctx).ok;
+    if (chain.ops.length === 1) {
+      const mine = orientLess({ lhs: chain.exprs[0], op: chain.ops[0], rhs: chain.exprs[1] });
+      const direct = knownLinks(ctx).map(orientLess).find((fact) => implies(fact.op, mine.op) && same(fact.lhs, mine.lhs) && same(fact.rhs, mine.rhs));
+      if (direct) return { kind: "direct", rule: null, from: [showLink(direct)], exact: true, note: `「${showLink(direct)}」前面已經有了。` };
+      const equivalent = equivalentLink(spec, ctx, chain, evaluate);
+      if (equivalent) return { kind: "equivalence", rule: "algebra", from: [showLink(equivalent)], exact: true, note: `跟前面的「${showLink(equivalent)}」等價（移項或同乘正數）。` };
+    }
+    const transformed = groundTransformation(spec, ctx, chain, evaluate);
+    if (transformed) return Object.assign({ kind: "rule" }, transformed);
+    return null;
   }
 
   // 跨行的鏈：上一行結尾 = 這一行開頭 → 接起來
@@ -1828,7 +2018,9 @@
     syntax: CHEAT_SYNTAX,
     rules: RULES.map((rule) => ({ id: rule.id, name: rule.names[0], aliases: rule.names.slice(1), form: (CHEAT_RULE_NOTES[rule.id] || {}).form || "", requires: (CHEAT_RULE_NOTES[rule.id] || {}).requires || "" })),
     facts: CHEAT_FACTS,
-    notation: CHEAT_NOTATION
+    notation: CHEAT_NOTATION,
+    // 不用寫「由 <定理>」就會自動認的改寫：接得上前文的四種來源
+    transformations: TRANSFORMATIONS.map((item) => ({ id: item.id, title: item.title, explain: item.explain }))
   };
 
   const api = {
@@ -1838,6 +2030,7 @@
     check,
     patterns: PATTERNS.map((pattern) => ({ kind: pattern.kind, label: pattern.label })),
     rules: RULES.map((rule) => ({ id: rule.id, name: rule.names[0], aliases: rule.names.slice(1) })),
+    transformations: TRANSFORMATIONS.map((item) => ({ id: item.id, title: item.title })),
     cheatsheet,
     compile: (text, scope) => compile(text, scope)
   };

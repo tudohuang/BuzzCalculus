@@ -161,6 +161,8 @@ interface BuzzProofLangLine {
   note: string;
   rule?: string | null;
   results?: unknown[];
+  /** v2.2 接地來源：direct／equivalence／rule（abs_interval、transitive、interval_bound、triangle） */
+  grounding?: { kind: string; rule?: string | null; from?: string[]; exact?: boolean } | null;
 }
 
 interface BuzzProofLangReport {
@@ -171,6 +173,8 @@ interface BuzzProofLangReport {
   verdict: string;
   verdictText: string;
   goalDone: boolean;
+  /** v2.2：登記過的關係與它們的來源（哪一行、哪條規則、由哪幾條推出） */
+  facts?: Array<{ id: string; expr: string; line: number | null; provenance: { kind: string; rule?: string | null; from?: string[] } }>;
 }
 
 interface BuzzProofLangLesson {
@@ -306,7 +310,7 @@ interface Window {
   BUZZ_PROOF_LANG_PROBLEMS: BuzzProofLangSpec[];
   BUZZ_PROOF_LANG_LESSONS: BuzzProofLangLesson[];
   /** src/kernel/proof_surface.js：Proof Input v2 自由書寫層，把中英文／LaTeX 翻成句型語言再交給 BuzzProofLang */
-  BuzzProofSurface: { version: number; translate(text: string, lang: any): { nodes: any[]; canonicalText: string; problems: any[] }; check(lang: any, spec: any, text: string): any; latexToPlain(source: string): { text: string; unknown: string[] }; segment(text: string): string[] };
+  BuzzProofSurface: { version: number; translate(text: string, lang: any): { nodes: any[]; canonicalText: string; problems: any[] }; check(lang: any, spec: any, text: string): any; latexToPlain(source: string): { text: string; unknown: string[] }; segment(text: string): string[]; parseSemanticGoal(lang: any, text: string): any; specSemanticGoal(lang: any, spec: any): any; goalEquivalent(lang: any, a: any, b: any): boolean; matchConclusionToGoal(lang: any, spec: any, proposition: string): boolean | null };
   BUZZ_SKILL_TAGS: Record<string, string[]>;
   BUZZ_DIFFICULTY: any;
   BUZZ_CUSTOM: any;

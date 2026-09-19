@@ -105,3 +105,25 @@
 舊格式（一行一句、中文句型開頭）翻譯後一字不改，`tools/validate_proof_surface.js` 釘住：43 題參考證明經翻譯層判定與逐句顏色不變、同一證明的六種寫法全綠、五種等價寫法不變、五種壞寫法標黃、翻符號仍紅在同一句。
 
 編輯器上方可以切「自由書寫／引導句型」；引導句型直接餵引擎（原本的行為）。
+
+## Proof Input v2.2：Goal Semantics + Transformation Grounding（2026-09-19）
+
+核心一句話：**「是真的」和「是由前面推出來的」是兩件不同的事。** 數值引擎回答第一個；這一版開始回答第二個。
+
+### 語意目標
+- 題目自己帶一個語意目標（`specSemanticGoal`）：由 `goal.text` 的 lim 形式與 `bound` 算出 `{ kind: "limit", variable, point, functionExpr, value, proofForm: { kind: "epsilon_delta", neighborhood, target } }`。
+- 使用者的「We want to show that …／我們要證明 …」翻成 goal 節點，`parseSemanticGoal` 讀成同一種物件：lim 形式、∀ε∃δ 形式（`quantified: true`）、或一般關係式。
+- `goalEquivalent` 不是字串比對：lim 形式 vs ∀ε∃δ 形式比的是點與 `|f(x) − L|`。對得上綠（「已辨識證明目標：…」「已辨識為 ε–δ 極限目標」）；**對不上紅**（「你宣告的證明目標與題目不同。題目：…；你寫：…」），整份 broken；讀不出是哪種命題才黃。
+- 沒寫目標句照樣能完成；結尾的 `lim … = L` 不拿去取樣，對上目標且骨架齊時說「結論與原證明目標一致。ε–δ 證明骨架完整」，規則記成 `epsilon_delta_definition`。
+
+### 接地的優先序（每一句推導）
+1. 直接引用：前面已經有一模一樣的關係。
+2. 代數等價：移項、同乘正數（`equivalentLink`，回報對上的那一條）。
+3. 改寫規則（`TRANSFORMATIONS`）：`|x−a|<r ⇔ a−r<x<a+r`（更寬的常數區間算「由目前條件推出，不是等價改寫」）、傳遞 `A<B、B≤C ⇒ A<C`、區間裡的界（x 被夾在 a<x<b 時把 E(x) 掃一遍）、三角不等式。
+4. 定理字典（由 <定理>，…）。
+5. 只有數值成立而找不到來源：**黃**，訊息「在目前條件下成立，但找不到它是由哪一步推出的」。
+
+### Provenance
+每一條登記的關係（假設、前提、驗過的鏈）記進 `ctx.factLog`：`{ id, expr, line, provenance: { kind, rule, from } }`；報告帶 `facts` 與每行的 `grounding`，畫面之後可以做「這一步從哪裡來」。
+
+驗收證明（lim x² = 9 的九段英文＋LaTeX）與變異（1<x<5 綠但註明由條件推出、3<x<4 紅、目標寫成 8 紅、憑空真話黃）由 `tools/validate_proof_surface.js` 第 5 節釘住。
