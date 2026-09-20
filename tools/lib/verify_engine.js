@@ -3988,6 +3988,156 @@ const EXPLICIT_METHODS = {
     const a = latex.compile(String(spec.a), [])();
     const dx = latex.compile(String(spec.dx), [])();
     return numeric.derivative(f, a).value * dx;
+  },
+
+  /* ── 2026-09 微分平衡包補的六條路徑 ─────────────────────────────
+     隱函數二階、參數式二階、臨界點／反曲點的位置、MVT 的 c、變上限積分的導數、
+     f^{(n)}(0)。原則不變：驗算端只做數值微分、數值積分、掃描與求根，不重複作者的代數。 */
+
+  // 隱函數的 d²y/dx²（或帶 rate 的相關變率 dy/dt = y′(x)·dx/dt）：
+  // 一樣先用牛頓法解出 y(x)，再對它做數值（高階）微分
+  implicitDeriv: (spec) => {
+    const F = latex.compile(spec.F, ["x", "y"]);
+    const x0 = latex.compile(String(spec.at[0]), [])();
+    const y0 = latex.compile(String(spec.at[1]), [])();
+    if (Math.abs(F(x0, y0)) > 1e-8) {
+      throw new Error(`(${spec.at[0]}, ${spec.at[1]}) 不在曲線上，F = ${format(F(x0, y0))}`);
+    }
+    const solveY = (x) => {
+      let y = y0;
+      for (let i = 0; i < 200; i += 1) {
+        const slope = numeric.derivative((t) => F(x, t), y).value;
+        if (!Number.isFinite(slope) || slope === 0) break;
+        const next = y - F(x, y) / slope;
+        if (!Number.isFinite(next)) break;
+        y = next;
+        if (Math.abs(F(x, y)) < 1e-13) break;
+      }
+      return y;
+    };
+    const order = spec.order || 1;
+    const value = numeric.derivative(solveY, x0, { order, h: order > 1 ? 1e-3 : undefined }).value;
+    const rate = spec.rate === undefined ? 1 : latex.compile(String(spec.rate), [])();
+    return value * rate;
+  },
+
+  // 參數式的 d²y/dx² = (d/dt (dy/dx)) / (dx/dt)：兩層都數值微分
+  paramSecond: (spec) => {
+    const x = latex.compile(spec.x, ["t"]);
+    const y = latex.compile(spec.y, ["t"]);
+    const at = latex.compile(String(spec.at), [])();
+    const slope = (t) => numeric.derivative(y, t).value / numeric.derivative(x, t).value;
+    return numeric.derivative(slope, at, { h: 1e-3 }).value / numeric.derivative(x, at).value;
+  },
+
+  // 臨界點（order 1）／反曲點（order 2）的位置：從 x0 出發用牛頓法解 f^{(order)}(x) = 0，導數一律數值取。
+  // 名字不能叫 critical：set_interval_verify 已經用那個名字（答案是集合的版本）
+  criticalPoint: (spec) => {
+    const f = latex.compile(spec.f, ["x"]);
+    const order = spec.order || 1;
+    const g = (x) => numeric.derivative(f, x, { order, h: order > 1 ? 1e-3 : undefined }).value;
+    let x = spec.x0 === undefined ? 1 : latex.compile(String(spec.x0), [])();
+    for (let i = 0; i < 100; i += 1) {
+      const slope = numeric.derivative(g, x, { h: 1e-3 }).value;
+      if (!Number.isFinite(slope) || slope === 0) break;
+      const next = x - g(x) / slope;
+      if (!Number.isFinite(next)) break;
+      if (Math.abs(next - x) < 1e-12) { x = next; break; }
+      x = next;
+    }
+    if (Math.abs(g(x)) > 1e-6) throw new Error(`從 ${spec.x0} 出發找不到 f^(${order}) 的零點（停在 ${format(x)}，值 ${format(g(x))}）`);
+    return x;
+  },
+
+  // 平均值定理的 c：在 (a, b) 上掃描 f′(c) − (f(b) − f(a))/(b − a) 的變號再二分；有多個時取 x0 附近的那一個
+  mvtPoint: (spec) => {
+    const f = latex.compile(spec.f, ["x"]);
+    const a = latex.compile(String(spec.a), [])();
+    const b = latex.compile(String(spec.b), [])();
+    const target = (f(b) - f(a)) / (b - a);
+    const g = (x) => numeric.derivative(f, x).value - target;
+    const roots = [];
+    const steps = 400;
+    let previous = g(a + (b - a) / steps / 2);
+    for (let k = 1; k <= steps; k += 1) {
+      const x = a + ((b - a) * (k + 0.5)) / steps;
+      if (x >= b) break;
+      const value = g(x);
+      if (Number.isFinite(previous) && Number.isFinite(value) && previous * value <= 0) {
+        let lo = a + ((b - a) * (k - 0.5)) / steps; let hi = x; let glo = previous;
+        for (let i = 0; i < 60; i += 1) { const m = (lo + hi) / 2; const gm = g(m); if (glo * gm <= 0) hi = m; else { lo = m; glo = gm; } }
+        roots.push((lo + hi) / 2);
+      }
+      previous = value;
+    }
+    if (!roots.length) throw new Error("在 (a, b) 上找不到 f′(c) = 平均斜率 的 c");
+    if (spec.x0 === undefined) return roots[0];
+    const hint = latex.compile(String(spec.x0), [])();
+    return roots.reduce((best, r) => (Math.abs(r - hint) < Math.abs(best - hint) ? r : best), roots[0]);
+  },
+
+  // 變上限積分 G(x) = ∫_{lo(x)}^{hi(x)} g(t) dt 在 x = at 的導數：先數值積分再數值微分，不用 FTC 公式
+  ftcDeriv: (spec) => {
+    // 被積函數也可以含 x（∫_0^x (x − t) e^t dt 這種 Leibniz 型）：G(x) 先算再微分，公式一條都不用
+    const g = latex.compile(spec.g, [spec.v || "t", "x"]);
+    const lo = latex.compile(String(spec.lo), ["x"]);
+    const hi = latex.compile(String(spec.hi), ["x"]);
+    const at = latex.compile(String(spec.at), [])();
+    const G = (x) => numeric.integrate((t) => g(t, x), lo(x), hi(x)).value;
+    return numeric.derivative(G, at, { h: 1e-3, order: spec.order || 1 }).value;
+  },
+
+  // 切線與法線的量：斜率、截距，全部由 f(a) 與數值的 f′(a) 算
+  tangentNormal: (spec) => {
+    const f = latex.compile(spec.f, ["x"]);
+    const a = latex.compile(String(spec.a), [])();
+    const fa = f(a);
+    const slope = numeric.derivative(f, a).value;
+    switch (spec.kind) {
+      case "slope": return slope;
+      case "yIntercept": return fa - a * slope;
+      case "xIntercept": return a - fa / slope;
+      case "normalSlope": return -1 / slope;
+      case "normalYIntercept": return fa + a / slope;
+      case "normalXIntercept": return a + fa * slope;
+      default: throw new Error(`tangentNormal 不認得 kind = "${spec.kind}"`);
+    }
+  },
+
+  // f^{(n)}(0)：在 [−r, r] 上做 Chebyshev 插值（DCT 取係數），把 Chebyshev 級數換成單項式係數，
+  // 取 x^n 的係數乘 n!。解析函數在小圓盤上的 Chebyshev 展開指數收斂，n 到 10 都穩；
+  // 反覆數值微分到 5 階以上就會被捨入誤差吃掉，所以不走那條
+  derivAt0: (spec) => {
+    const f = latex.compile(spec.f, ["x"]);
+    const n = spec.n;
+    const r = spec.r || 0.5;
+    // N 不能大：Chebyshev → 單項式的換算係數長到 2^N，N = 96 時捨入誤差把 n = 7 的係數吃掉 0.3%；
+    // 解析函數在 [−r, r] 上 24 項就到 1e-14，夠了
+    const N = Math.max(24, 2 * n + 8);
+    const coefficients = [];
+    for (let k = 0; k < N; k += 1) {
+      let sum = 0;
+      for (let j = 0; j < N; j += 1) {
+        const theta = (Math.PI * (j + 0.5)) / N;
+        sum += f(r * Math.cos(theta)) * Math.cos(k * theta);
+      }
+      coefficients.push((2 * sum) / N);
+    }
+    coefficients[0] /= 2;
+    // Chebyshev → 單項式：T_0 = 1、T_1 = u、T_{k+1} = 2u T_k − T_{k−1}，u = x/r
+    let prev = [1]; let cur = [0, 1];
+    const mono = new Array(N).fill(0);
+    mono[0] += coefficients[0];
+    for (let k = 1; k < N; k += 1) {
+      cur.forEach((c, i) => { mono[i] += coefficients[k] * c; });
+      const next = new Array(cur.length + 1).fill(0);
+      cur.forEach((c, i) => { next[i + 1] += 2 * c; });
+      prev.forEach((c, i) => { next[i] -= c; });
+      prev = cur; cur = next;
+    }
+    let factorial = 1;
+    for (let i = 2; i <= n; i += 1) factorial *= i;
+    return (mono[n] / Math.pow(r, n)) * factorial;
   }
 };
 
