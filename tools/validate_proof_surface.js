@@ -417,6 +417,26 @@ const V22_CANONICAL = [
   if (!still.length || still[0].type === "derive") fail(`v2.4：For any ε > 0, choose … 仍是引入，不是全稱主張：${JSON.stringify(still.map((n) => [n.type, n.canonical]))}`);
 }
 
+
+/* ── 8. v2.5：Feynman 積分的英文＋LaTeX 寫法 ── */
+{
+  const feynman = byId("pl-classic-305");
+  const text = [
+    "Let $I(p)=\\int_0^1 \\frac{x^p-x^q}{\\ln x}\\,dx$.",
+    "",
+    "Differentiating under the integral sign, $I'(p)=\\int_0^1 x^p\\,dx=\\frac{1}{p+1}$.",
+    "",
+    "Since $I(q)=0$, by the fundamental theorem of calculus, $I(p)=I(q)+\\int_q^p \\frac{1}{t+1}\\,dt=\\ln(p+1)-\\ln(q+1)$.",
+    "",
+    "Therefore $\\int_0^1 \\frac{x^p-x^q}{\\ln x}\\,dx=\\ln\\frac{p+1}{q+1}$."
+  ].join("\n");
+  const report = surfaceCheck(feynman, text);
+  checks += 1;
+  if (report.verdict !== "verified") fail(`v2.5 Feynman 的英文＋LaTeX 證明應該全綠，卻是 ${report.verdict}：${statuses(report)}\n    ${report.lines.filter((l) => l.status !== "ok").map((l) => `${l.raw.slice(0, 50)} → ${l.canonical} | ${l.note}`).join("\n    ")}`);
+  const diff = report.lines[1];
+  if (!diff || !/由積分號下微分/.test(diff.canonical)) fail(`v2.5：Differentiating under the integral sign 要翻成「由積分號下微分，…」：${diff && diff.canonical}`);
+}
+
 console.log("Proof Input v2（自由書寫層）");
 console.log(`  相容      ${problems.length} 題參考證明經翻譯層判定不變`);
 console.log(`  寫法      ${Object.keys(VARIANTS).length + 1} 種同一證明的寫法全綠`);

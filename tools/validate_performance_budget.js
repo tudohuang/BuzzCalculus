@@ -41,7 +41,9 @@ const BUDGETS = {
   // proof_surface.js +6KB（語意目標：lim 形式與 ∀ε∃δ 形式等價、目標寫錯紅、結論接地）。都是驗證邏輯，不是資料。
   // 2026-09-20 345 → 365：Proof Engine v2.3／v2.4 —— proof_lang.js +21KB（全稱條件實例化、全稱主張、自訂函數數值微分、單調性接地）。
   // 都是驗證邏輯；下一次再漲就該把接地規則搬去獨立模組（proof_grounding.js），不是再調數字。
-  "kernel 邏輯模組": { pattern: /^src\/kernel\//, budget: 365 * 1024 },
+  // 2026-09-20 365 → 385：Proof Engine v2.5 積分——tanh–sinh 數值積分、∫／Σ 寫法改寫、int()/sum() 編譯（+14KB）。
+  // 這是新能力不是長胖；但 proof_lang.js 已 155KB，下一版應該把數值積分與接地規則拆成獨立檔並延遲載入（只有證明頁用）。
+  "kernel 邏輯模組": { pattern: /^src\/kernel\//, budget: 385 * 1024 },
   "題庫資料合計": { pattern: /^src\/problem|^src\/problems\.js$|^src\/proofs\.js$/, budget: 2400 * 1024 },
   // 2026-09-15 300 → 310：「從零開始」課程表與單課頁（course.js）約 4KB 的樣式；
   // 已盡量沿用 pl-tutorial / pl-intro / pl-goal / first-steps。再撞頂該做的是

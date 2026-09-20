@@ -153,3 +153,17 @@
 - 翻譯層：`For all x > 0, g'(x) > 0`／`Whenever …` → 「則對所有 …，…」（後半是動作如 choose 仍算引入）；`… for all x > 0` 句尾形式引擎自己認。
 - 新題：pl-exp-inequality（e^x > 1 + x，classic proof-ineq-001）、pl-log-inequality（ln(1+x) < x，classic proof-ineq-002）。三種變異都釘得住。
 - 測試：validate_proof_lang 第 8 節（導數接地、全稱事實登記、單調性、錯導數紅、沒單調黃、domain 內外、條件不外漏、遞減方向），validate_proof_surface 第 7 節（英文寫法全綠、For all／Whenever 是主張、For any ε > 0, choose 仍是引入）。
+
+## Proof Engine v2.5：Integrals and Finite Sums（2026-09-20）
+
+目標：把「Feynman／對參數微分」這一族積分證明接進機器判——經典題庫最大的一塊。引擎沒有符號積分，也不需要：驗的是你寫的每一步算不算得對。
+
+- **寫法**：`∫₀¹ x^p dx`、`∫_0^{inf} e^(-x) dx`、`int_0^1 x,dx`、`Σ_{k=1}^{n} k(k+1)`、`sum_{k=1}^n k^2`。normalize 把上下標數字（₀¹）換成 _0 ^1、`int`→∫、`sum`→Σ，再由 `rewriteIntegrals` 改成 `int(x, 0, 1, x^p)`／`sum(k, 1, n, k(k+1))`：積分本體到 d<變數> 為止，從最右邊的 ∫ 開始（雙重積分裡面的先）；和的本體到深度 0 的 + − 或關係符號為止。沒上下限 → `intindef` → 編譯時說「不定積分算不了」。
+- **求值**：`compile` 先把 int()/sum() 切出來各自編譯（本體多一個積分變數），主式子裡用 zzq0… 代替，求值時先算。積分用 tanh–sinh（雙指數）：端點奇異（ln x、x^(−1/2)）收斂到 1e-10；無窮區間換元 t/(1−t)。有限和直接加（上限 1e5 項）。式子含積分時取樣 48 點而不是 160。
+- **含參數的自訂函數**：`令 I(p) = ∫₀¹ (x^p − x^q)/ln x dx` 的本體可以用題目變數 q；makeScope 的自訂函數帶 `needsEnv`，呼叫時把 env 傳進去。所以 `I'(p)` 是「數值積分的數值微分」，v2.4 的導數機制直接用。
+- **規則**：`leibniz`（積分號下微分／對參數微分／Feynman／differentiating under the integral sign；形狀 `I'(p) = int(…)`，兩邊各自算、對上就綠，交換的正當性先當你是對的）；`ftc`（微積分基本定理；**requires derivative**：前面要先算出 I′ 那一行，沒有就黃「前面還沒算出 I′」——這條讓 Feynman 那一步變成承重的）；`frullani`、`integral-mvt`（對形狀）。引用定理的數值鏈現在會查前提（以前只有存在句查）。
+- **由定義的等式**：「因為 I(q) = 0」——等式裡有自己定義的東西、其餘是題目變數 → 算「由定義」立住；不等式不算。識別字改從有空白的 normalize 文字抓（compact 會把 pi ln a 黏成 pilna）。
+- **翻譯層**：`int`、`sum`、`,`（換成空白，不然 dx 黏住）、`rac` 整個多包一層括號（`lnrac{a}{b}` 是 ln 整個分數）、"Differentiating under the integral sign, …" → 由積分號下微分。
+- **新題**：pl-classic-305（(x^p − x^q)/ln x，classic 305）、pl-classic-308（ln(a + b cos x)，classic 308）、pl-frullani-exp、pl-sum-odd（Σ 接歸納法）。最後一行重述題目是 optional（前一行已對上目標）。經典題可機器判 5 → 7。
+- **還不行**：抽象函數的積分（積分平均值定理只能對形狀）、無窮級數、振盪的無窮積分（Dirichlet ∫ sin x / x）、二重積分換序這種對區域的操作。
+- 測試：validate_proof_lang 第 9 節（寫法改寫、積分精度、錯的 I′ 紅、沒有 I′ 時基本定理黃、不定積分訊息、Σ 對錯），validate_proof_surface 第 8 節（英文＋LaTeX 的 Feynman 證明全綠）。

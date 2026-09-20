@@ -711,6 +711,93 @@
       coach: "跟 e^x > 1 + x 同一套：令 g = x − ln(1 + x)，g′ = x/(1 + x) 在 x > 0 時為正，g 遞增，g(0) = 0，所以 g > 0。"
     },
     {
+      // v2.5 積分：Feynman（對參數微分）三步——令 I(p) 是含參數的積分、I′ 用積分號下微分算、用基本定理積回去。
+      // I 的本體含積分（數值積分算）、I′ 是數值微分；「因為 I(q) = 0」是由定義算出來的等式。
+      // 最後一行把結論翻回題目的寫法，前一行已經對上目標，所以它是 optional。
+      id: "pl-classic-305",
+      classic: "proof-classic-305",
+      optional: [3],
+      family: "direct",
+      title: "∫₀¹ (x^p − x^q)/ln x dx = ln((p+1)/(q+1))",
+      source: "經典解析習題 III-5",
+      difficulty: 4,
+      statement: "對 p, q > −1，證明 ∫₀¹ (x^p − x^q)/ln x dx = ln((p + 1)/(q + 1))。",
+      prompt: "\\int_0^1 \\frac{x^p - x^q}{\\ln x}\\,dx = \\ln\\frac{p+1}{q+1}",
+      vars: { p: { min: -0.5, max: 2 }, q: { min: -0.5, max: 2 } },
+      goal: { relation: "∫_0^1 (x^p - x^q)/ln x dx = ln((p + 1)/(q + 1))" },
+      skeleton: "direct",
+      reference: [
+        "令 I(p) = ∫₀¹ (x^p − x^q)/ln x dx。",
+        "由積分號下微分，I'(p) = ∫₀¹ x^p dx = 1/(p + 1)。",
+        "因為 I(q) = 0，所以由微積分基本定理，I(p) = I(q) + ∫_q^p 1/(t + 1) dt = ln(p + 1) − ln(q + 1)。",
+        "故 ∫₀¹ (x^p − x^q)/ln x dx = ln((p + 1)/(q + 1))。"
+      ],
+      coach: "Feynman 三步：把 q 當常數，令 I(p) 是那個積分；對 p 微分把 ln x 約掉（寫「由積分號下微分，I'(p) = ∫₀¹ x^p dx = 1/(p+1)」，檢查器會用數值微分與數值積分兩邊對）；I(q) = 0 定常數，用基本定理積回去。"
+    },
+    {
+      id: "pl-classic-308",
+      classic: "proof-classic-308",
+      optional: [3],
+      family: "direct",
+      title: "∫₀^π ln(a + b cos x) dx = π ln((a + √(a² − b²))/2)",
+      source: "經典解析習題 III-8",
+      difficulty: 4,
+      statement: "對 a > b > 0，證明 ∫₀^π ln(a + b cos x) dx = π ln((a + √(a² − b²))/2)。",
+      prompt: "\\int_0^{\\pi} \\ln(a + b\\cos x)\\,dx = \\pi\\ln\\frac{a+\\sqrt{a^2-b^2}}{2}",
+      vars: { a: { min: 1, max: 3 }, b: { min: 0.1, max: 0.9 } },
+      goal: { relation: "∫_0^π ln(a + b cos x) dx = π ln((a + √(a^2 − b^2))/2)" },
+      skeleton: "direct",
+      reference: [
+        "令 I(b) = ∫₀^π ln(a + b cos x) dx。",
+        "由積分號下微分，I'(b) = ∫₀^π cos x/(a + b cos x) dx = (π/b)(1 − a/√(a² − b²))。",
+        "因為 I(0) = π ln a，所以由微積分基本定理，I(b) = I(0) + ∫₀^b (π/t)(1 − a/√(a² − t²)) dt = π ln((a + √(a² − b²))/2)。",
+        "故 ∫₀^π ln(a + b cos x) dx = π ln((a + √(a² − b²))/2)。"
+      ],
+      coach: "對 b 微分：I'(b) = ∫₀^π cos x/(a + b cos x) dx，這是 t = tan(x/2) 的標準積分，值是 (π/b)(1 − a/√(a² − b²))。I(0) = π ln a 定常數，積回去。"
+    },
+    {
+      id: "pl-frullani-exp",
+      optional: [3],
+      family: "direct",
+      title: "∫₀^∞ (e^(−ax) − e^(−bx))/x dx = ln(b/a)",
+      source: "Frullani 積分的標準例",
+      difficulty: 3,
+      statement: "對 a, b > 0，證明 ∫₀^∞ (e^(−ax) − e^(−bx))/x dx = ln(b/a)。",
+      prompt: "\\int_0^{\\infty} \\frac{e^{-ax} - e^{-bx}}{x}\\,dx = \\ln\\frac{b}{a}",
+      vars: { a: { min: 0.5, max: 3 }, b: { min: 0.5, max: 3 } },
+      goal: { relation: "∫_0^inf (e^(-a x) - e^(-b x))/x dx = ln(b/a)" },
+      skeleton: "direct",
+      reference: [
+        "令 I(a) = ∫₀^∞ (e^(−a x) − e^(−b x))/x dx。",
+        "由積分號下微分，I'(a) = −∫₀^∞ e^(−a x) dx = −1/a。",
+        "因為 I(b) = 0，所以由微積分基本定理，I(a) = I(b) + ∫_b^a (−1/t) dt = ln(b/a)。",
+        "故 ∫₀^∞ (e^(−a x) − e^(−b x))/x dx = ln(b/a)。"
+      ],
+      coach: "把 b 當常數、對 a 微分：x 約掉，剩 −∫₀^∞ e^(−ax) dx = −1/a。I(b) = 0 定常數，從 b 積到 a 得 ln(b/a)。"
+    },
+    {
+      // v2.5 有限和：Σ 寫法接歸納法。和的變數用 j，避免跟歸納的 k 撞名
+      id: "pl-sum-odd",
+      optional: [0],
+      family: "induction",
+      title: "1 + 3 + … + (2n − 1) = n²",
+      difficulty: 1,
+      statement: "證明對所有正整數 n，Σ_{j=1}^{n} (2j − 1) = n²。",
+      prompt: "\\sum_{j=1}^{n} (2j-1) = n^2",
+      vars: { n: { min: 1, max: 12, int: true } },
+      goal: { relation: "Σ_{j=1}^{n} (2j − 1) = n^2" },
+      induction: { variable: "n", base: 1 },
+      skeleton: "induction",
+      reference: [
+        "用歸納法。",
+        "當 n = 1 時，左式 = 1，右式 = 1，成立。",
+        "假設 n = k 時成立，即 Σ_{j=1}^{k} (2j − 1) = k²。",
+        "則 Σ_{j=1}^{k+1} (2j − 1) = Σ_{j=1}^{k} (2j − 1) + (2(k + 1) − 1) = k² + 2k + 1 = (k + 1)²。",
+        "故對所有正整數 n，Σ_{j=1}^{n} (2j − 1) = n²。"
+      ],
+      coach: "把 Σ 到 k+1 拆成「Σ 到 k」加最後一項，Σ 到 k 用歸納假設換成 k²。"
+    },
+    {
       id: "pl-ivt-cubic",
       family: "direct",
       title: "中間值定理：x³ − 3x + 1 = 0 有實根",
