@@ -2536,11 +2536,41 @@ function verifyInteractiveGraph(problem) {
   if (problem.answerKind !== "graphtap" && problem.answerKind !== "graphslope") return null;
   const graph = problem.graph || {};
   const curve = (graph.curves || [])[0];
-  const f = curve ? compileCurveExpr(curve.expr) : null;
+  const polyline = (graph.polylines || [])[0];
+  // 2026-09：折線也可以當曲線（f = 折線；角點、零點、極值都從頂點算）
+  const f = curve ? compileCurveExpr(curve.expr) : (Array.isArray(polyline) && polyline.length >= 2 ? (x) => polylineAt(polyline, x) : null);
   if (!f) return { status: "unverified", reason: "互動圖形題沒有可重算的曲線式子" };
   const h = 1e-5;
   const d1 = (x) => (f(x + h) - f(x - h)) / (2 * h);
   const d2 = (x) => (f(x + h) - 2 * f(x) + f(x - h)) / (h * h);
+  // 折線題：目標點由頂點與線段直接算，不用數值微分（折線在頂點不可微）
+  if (!curve && problem.answerKind === "graphtap") {
+    const claimed = String(problem.answer || "").split(",").map(Number).sort((a, b) => a - b);
+    let found = [];
+    const slopes = [];
+    for (let i = 0; i + 1 < polyline.length; i += 1) slopes.push((polyline[i + 1][1] - polyline[i][1]) / (polyline[i + 1][0] - polyline[i][0]));
+    if (problem.tapKind === "corner") {
+      for (let i = 1; i + 1 < polyline.length; i += 1) if (Math.abs(slopes[i] - slopes[i - 1]) > 1e-9) found.push(polyline[i][0]);
+    } else if (problem.tapKind === "zero") {
+      found = polylineCrossings(polyline).map((c) => c.x);
+      polyline.forEach((pt, i) => { if (pt[1] === 0 && (i === 0 || polyline[i - 1][1] !== 0) && !found.some((x) => Math.abs(x - pt[0]) < 1e-9)) found.push(pt[0]); });
+    } else if (problem.tapKind === "extremum" || problem.tapKind === "critical") {
+      for (let i = 1; i + 1 < polyline.length; i += 1) if (slopes[i] * slopes[i - 1] < 0) found.push(polyline[i][0]);
+    } else if (problem.tapKind === "fmax" || problem.tapKind === "fmin") {
+      // 圖是 f′：f 的極大在 f′ 由正轉負的零點，極小在由負轉正
+      found = polylineCrossings(polyline).filter((c) => c.direction === (problem.tapKind === "fmin" ? 1 : -1)).map((c) => c.x);
+    } else if (problem.tapKind === "finflection") {
+      // 圖是 f′：f 的反曲點在 f′ 的極值（折線的斜率變號頂點）
+      for (let i = 1; i + 1 < polyline.length; i += 1) if (slopes[i] * slopes[i - 1] < 0) found.push(polyline[i][0]);
+    } else {
+      return { status: "unverified", reason: "折線的 graphtap 只支援 corner / zero / extremum / fmax / fmin / finflection" };
+    }
+    found.sort((a, b) => a - b);
+    if (found.length !== claimed.length || found.some((x, i) => Math.abs(x - claimed[i]) > 5e-3)) {
+      return { status: "mismatch", method: "graph-tap", detail: "題目宣稱 [" + claimed.join(", ") + "]，折線獨立算出 [" + found.map((x) => x.toFixed(3)).join(", ") + "]" };
+    }
+    return { status: "ok", method: "graph-tap", detail: claimed.length + " 個位置全部與折線的 " + problem.tapKind + " 重合" };
+  }
 
   if (problem.answerKind === "graphslope") {
     const x0 = Number(problem.pivot && problem.pivot.x);
@@ -2555,15 +2585,23 @@ function verifyInteractiveGraph(problem) {
   }
 
   // graphtap：tapKind 指定重算的是哪一種點。
-  //   extremum / critical → f′ 的變號零點；inflection → f″ 的變號零點。
-  const g = problem.tapKind === "inflection" ? d2 : d1;
+  //   extremum / critical → f′ 的變號零點；inflection → f″ 的變號零點；
+  //   zero → f 本身的變號零點；fmax / fmin → 圖是 f′，f 的極大／極小是 f′ 由正轉負／由負轉正的零點；
+  //   finflection → 圖是 f′，f 的反曲點是 f′ 的極值（f′ 的導數變號）
+  const kind = problem.tapKind;
+  const g = kind === "inflection" ? d2 : (kind === "zero" || kind === "fmax" || kind === "fmin") ? f : d1;
   const domain = Array.isArray(curve.domain) && curve.domain.length === 2
     ? curve.domain.map(Number)
     : (graph.window || []).slice(0, 2).map(Number);
   if (domain.length !== 2 || !(domain[1] > domain[0])) {
     return { status: "error", reason: "graphtap 沒有可用的掃描區間" };
   }
-  const found = scanSignRoots(g, domain[0], domain[1]).sort((a, b) => a - b);
+  let found = scanSignRoots(g, domain[0], domain[1]).sort((a, b) => a - b);
+  if (kind === "fmax" || kind === "fmin") {
+    // 方向：由正轉負（極大）或由負轉正（極小）
+    const want = kind === "fmin" ? 1 : -1;
+    found = found.filter((x) => Math.sign(f(x + 1e-3) - f(x - 1e-3)) === want);
+  }
   const claimed = String(problem.answer || "").split(",").map(Number).sort((a, b) => a - b);
   if (claimed.some((value) => !Number.isFinite(value))) {
     return { status: "error", reason: `graphtap 答案解讀不了：${problem.answer}` };
@@ -2584,7 +2622,33 @@ function verifyInteractiveGraph(problem) {
       };
     }
   }
-  return { status: "ok", method: "graph-tap", detail: `${claimed.length} 個位置全部與 ${problem.tapKind === "inflection" ? "f″" : "f′"} 的零點重合` };
+  return { status: "ok", method: "graph-tap", detail: claimed.length + " 個位置全部與獨立重算的 " + kind + " 重合" };
+}
+
+// 選圖題的關係：圖上畫的是 f，選項是 f′（derivative）或 F（antiderivative）的候選——正解要跟數值微分對得上
+function verifyGraphRelation(problem) {
+  if (problem.answerKind !== "graph" || !problem.graphRelation) return null;
+  const shown = problem.graph && (problem.graph.curves || [])[0];
+  const f = shown ? compileCurveExpr(shown.expr) : null;
+  const answer = compileCurveExpr(problem.answer);
+  if (!f || !answer) return { status: "unverified", reason: "graphRelation 需要 graph.curves[0].expr 與可編譯的 answer" };
+  const [xmin, xmax] = (problem.graphWindow || problem.graph.window || [-3, 3]).map(Number);
+  const h = 1e-5;
+  let checked = 0;
+  for (let i = 1; i < 40; i += 1) {
+    const x = xmin + ((xmax - xmin) * i) / 40;
+    let expected; let actual;
+    if (problem.graphRelation === "derivative") { expected = (f(x + h) - f(x - h)) / (2 * h); actual = answer(x); }
+    else if (problem.graphRelation === "antiderivative") { expected = f(x); actual = (answer(x + h) - answer(x - h)) / (2 * h); }
+    else return { status: "error", reason: "graphRelation 只認 derivative / antiderivative" };
+    if (!Number.isFinite(expected) || !Number.isFinite(actual)) continue;
+    checked += 1;
+    if (Math.abs(expected - actual) > 1e-4 * (1 + Math.abs(expected))) {
+      return { status: "mismatch", method: "graph-relation", detail: "x = " + x.toFixed(3) + "：圖的 " + problem.graphRelation + " 應該是 " + expected.toFixed(5) + "，正解選項給 " + actual.toFixed(5) };
+    }
+  }
+  if (checked < 10) return { status: "unverified", reason: "可比對的取樣點太少" };
+  return { status: "ok", method: "graph-relation", detail: "正解選項與圖上曲線的 " + problem.graphRelation + " 在 " + checked + " 個取樣點上一致" };
 }
 
 function recognizeGraphReading(problem) {
@@ -2765,6 +2829,8 @@ function verifyProblem(problem, options = {}) {
   // 從式子獨立重算。互動不是不驗算的藉口。
   const interactive = verifyInteractiveGraph(problem);
   if (interactive) return interactive;
+  const relation = verifyGraphRelation(problem);
+  if (relation) return relation;
 
   // 明確寫在題目上的 verify 欄位優先於自動推導
   if (problem.verify) return runExplicit(problem, compileAnswer);
@@ -4085,6 +4151,40 @@ const EXPLICIT_METHODS = {
     const at = latex.compile(String(spec.at), [])();
     const G = (x) => numeric.integrate((t) => g(t, x), lo(x), hi(x)).value;
     return numeric.derivative(G, at, { h: 1e-3, order: spec.order || 1 }).value;
+  },
+
+  /* ── 讀圖的路徑（2026-09 圖形互動包）：折線頂點寫在題目資料裡，讀圖的答案由折線直接算 ── */
+  // ∫_{from}^{to} 折線 dx（abs 取絕對值＝總路程）；base 是 f(from) 的起始值，給「由 f′ 圖求 f(b)」
+  graphArea: (spec) => polylineIntegral(spec.pts, Number(spec.from), Number(spec.to), Boolean(spec.abs)) + (Number(spec.base) || 0),
+  // 折線在 at 的值（也是 g′(at) = f(at) 這種 FTC 讀圖）
+  graphValue: (spec) => polylineAt(spec.pts, Number(spec.at)),
+  // 折線在 at 的斜率（線段內；at 落在頂點就丟錯——那一點不可微）
+  graphSlope: (spec) => {
+    const pts = spec.pts; const at = Number(spec.at);
+    for (let i = 0; i + 1 < pts.length; i += 1) {
+      if (at > pts[i][0] + 1e-9 && at < pts[i + 1][0] - 1e-9) return (pts[i + 1][1] - pts[i][1]) / (pts[i + 1][0] - pts[i][0]);
+    }
+    throw new Error("x = " + at + " 落在折線的頂點或範圍外，斜率沒有定義");
+  },
+  // 單側極限：沿著指定的那一段折線逼近 at（跳躍不連續的題各段是不同的 polyline）
+  graphLimit: (spec) => {
+    const pts = spec.pts; const at = Number(spec.at);
+    const eps = 1e-9 * Math.max(1, Math.abs(at));
+    const x = spec.side === "left" ? at - eps : at + eps;
+    const value = polylineAt(pts, x);
+    if (!Number.isFinite(value)) throw new Error("折線在 x = " + at + " 的" + (spec.side === "left" ? "左" : "右") + "側沒有定義");
+    return value;
+  },
+  // 折線的極值位置：斜率變號的頂點；kind max 取由升轉降、min 取由降轉升；index 選第幾個
+  graphExtremumX: (spec) => {
+    const pts = spec.pts; const hits = [];
+    for (let i = 1; i + 1 < pts.length; i += 1) {
+      const before = (pts[i][1] - pts[i - 1][1]) / (pts[i][0] - pts[i - 1][0]);
+      const after = (pts[i + 1][1] - pts[i][1]) / (pts[i + 1][0] - pts[i][0]);
+      if (spec.kind === "max" ? (before > 0 && after < 0) : spec.kind === "min" ? (before < 0 && after > 0) : before * after < 0) hits.push(pts[i][0]);
+    }
+    if (!hits.length) throw new Error("折線沒有這種極值");
+    return hits[spec.index || 0];
   },
 
   // 切線與法線的量：斜率、截距，全部由 f(a) 與數值的 f′(a) 算
