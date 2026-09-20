@@ -87,7 +87,7 @@
     { id: "limit.continuity", label: "連續性與 IVT", tier: 2, obscurity: 1, family: "limit", prereq: ["limit.direct"],
       // domain / rational-function：判定「哪些 x 可以代進去」跟判定連續性
       // 是同一件事的兩個問法，同一個技巧節點。
-      tags: ["continuity", "ivt", "removable-singularity", "asymptote", "domain", "rational-function"] },
+      tags: ["continuity", "ivt", "removable-singularity", "asymptote", "domain", "rational-function", "one-sided-limit", "removable", "zeros"] },
     { id: "limit.sequence", label: "數列極限", tier: 2, obscurity: 1, family: "limit", prereq: ["limit.direct"],
       // 無窮乘積放這裡而不是自成一節：∏ 的定義就是部分乘積這個**數列**的極限，
       // 遞迴、巢狀根式、連分數同理 —— 它們共用「先確定收斂，再對遞迴式取極限」這一步。
@@ -123,7 +123,7 @@
       // 而且這樣選圖題才會算進能力模型（列成非技巧的話它們對雷達是隱形的）。
       tags: ["concavity", "inflection", "critical-point", "critical-points", "derivative-zero",
         "first-derivative", "monotonicity", "tangent-normal", "curve-sketching", "extrema",
-        "mvt", "rolle", "curvature"] },
+        "mvt", "rolle", "curvature", "derivative-graph"] },
     { id: "diff.optimize", label: "最佳化", tier: 3, obscurity: 1, family: "diff", prereq: ["diff.shape"],
       tags: ["optimization"] },
     { id: "diff.related", label: "隱微分與相關變率", tier: 3, obscurity: 1, family: "diff", prereq: ["diff.chain"],
@@ -213,7 +213,7 @@
       tags: ["change-of-variables", "polar-coordinates", "cylindrical-coordinates",
         "spherical-coordinates", "spherical"] },
     { id: "integral.area", label: "面積與極座標", tier: 3, obscurity: 1, family: "integral", prereq: ["integral.ftc"],
-      tags: ["area", "polar-area", "polar", "polar-curve"] },
+      tags: ["area", "polar-area", "polar", "polar-curve", "between-curves"] },
     { id: "integral.volume", label: "體積與旋轉體", tier: 3, obscurity: 1, family: "integral", prereq: ["integral.ftc"],
       tags: ["solid-of-revolution", "volume", "surface-area", "centroid"] },
     { id: "integral.arclength", label: "弧長與均值", tier: 3, obscurity: 1, family: "integral", prereq: ["integral.ftc"],

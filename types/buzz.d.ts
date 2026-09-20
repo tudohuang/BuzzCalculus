@@ -307,6 +307,8 @@ interface Window {
   BUZZ_PROOFS: BuzzProof[];
   BUZZ_COURSE: BuzzCourseLesson[];
   BuzzCourseUI: { create(deps: { escapeHtml: (s: unknown) => string; escapeAttr: (s: unknown) => string; icon: (name: string) => string; referenceAnswerHTML: (problem: BuzzProblem) => string }): any };
+  /** src/share_cards.js：題目圖形的 SVG 渲染器（從 app.js 搬出去） */
+  BuzzGraphRender: { graphCurveFn(expr: string): ((x: number) => number) | null; renderProblemGraph(problem: any, opts: any, escapeAttr: (s: unknown) => string): string };
   /** src/share_cards.js：本週戰報與成就分享卡（canvas → PNG，本機） */
   BuzzShareCards: { create(deps: Record<string, unknown>): { weeklyShareData(records: BuzzRecords): any; downloadWeeklyReport(): void; shareAchievementCard(from: string): void; shareDailyOneCard(data: Record<string, unknown>, onFallback?: () => void): void } };
   BUZZ_PROOF_LANG_PROBLEMS: BuzzProofLangSpec[];

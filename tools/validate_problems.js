@@ -129,7 +129,9 @@ problems.forEach((problem, index) => {
   // 互動圖形題：判分規格全在題目資料裡，缺一塊就是一題永遠不能玩的題。
   if (problem.answerKind === "graphtap" || problem.answerKind === "graphslope") {
     const curve = problem.graph && Array.isArray(problem.graph.curves) && problem.graph.curves[0];
-    if (!curve || !curve.expr) fail(id, `${problem.answerKind} needs graph.curves[0].expr (判分與驗算都要重算曲線)`);
+    const polyline = problem.graph && Array.isArray(problem.graph.polylines) && problem.graph.polylines[0];
+    // 2026-09：graphtap 也可以畫折線（角點、零點、由 f′ 圖找 f 的極值）；graphslope 仍要曲線
+    if ((!curve || !curve.expr) && !(problem.answerKind === "graphtap" && Array.isArray(polyline) && polyline.length >= 2)) fail(id, `${problem.answerKind} needs graph.curves[0].expr (判分與驗算都要重算曲線)`);
     if (!problem.graph || !Array.isArray(problem.graph.window) || problem.graph.window.length !== 4) {
       fail(id, `${problem.answerKind} needs graph.window [xmin,xmax,ymin,ymax]`);
     }
@@ -137,8 +139,8 @@ problems.forEach((problem, index) => {
   if (problem.answerKind === "graphtap") {
     const xs = String(problem.answer || "").split(",").map(Number);
     if (!xs.length || xs.some((x) => !Number.isFinite(x))) fail(id, "graphtap answer must be comma-separated numbers");
-    if (!["extremum", "critical", "inflection"].includes(problem.tapKind)) {
-      fail(id, "graphtap needs tapKind extremum|critical|inflection (驗算器靠它決定重算 f' 還是 f'')");
+    if (!["extremum", "critical", "inflection", "zero", "fmax", "fmin", "finflection", "corner"].includes(problem.tapKind)) {
+      fail(id, "graphtap needs tapKind extremum|critical|inflection|zero|fmax|fmin|finflection|corner (驗算器靠它決定重算什麼)");
     }
     // 兩個目標點距離小於 2 倍容差，使用者不可能分得開 —— 那是不公平的題。
     const tol = Number(problem.tapTolerance) || 0.35;

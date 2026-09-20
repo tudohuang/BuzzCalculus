@@ -306,6 +306,10 @@ const METHODS = {
     return { kind: "set", value: rootsOf((x) => numeric.derivative(f, x, { order: 2 }).value, from, to) };
   },
 
+  // 凹向上／凹向下的區間：f″ 的正負區間（f″ 由二階數值微分算，題目不准給 f″）
+  concaveUp(spec) { return signIntervalsOf(latex.compile(spec.f, ["x"]), spec.range, 2, 1); },
+  concaveDown(spec) { return signIntervalsOf(latex.compile(spec.f, ["x"]), spec.range, 2, -1); },
+
   // 給定式子的實根。用在「有理函數的不連續點 = 分母的根」這種
   // **定義上的化約**：化約本身不是這題的工作，找根才是，而找根是獨立算的。
   zeros(spec) {
@@ -425,6 +429,17 @@ const METHODS = {
     return { kind: "interval", value: pieces.map((piece) => refineInterval(falling, piece, from, to, true, pieces.step)) };
   }
 };
+
+// 凹向：f 的 order 階數值導數（2）的正負區間；跟 increasing 同一套掃描＋二分
+function signIntervalsOf(f, range, order, sign) {
+  const [from, to] = range;
+  const holds = (x) => {
+    const d = numeric.derivative(f, x, { order, h: 1e-3 }).value;
+    return Number.isFinite(d) && d * sign > 0;
+  };
+  const pieces = intervalsWhere(holds, from, to);
+  return { kind: "interval", value: pieces.map((piece) => refineInterval(holds, piece, from, to, true, pieces.step)) };
+}
 
 // 取樣只能給出粗略端點，再用二分法收斂到真正的邊界，
 // 並決定端點本身屬不屬於。

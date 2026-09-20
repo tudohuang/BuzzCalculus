@@ -5837,94 +5837,9 @@
     `;
   }
 
-  // ---- 圖形題：problem.graph -> inline SVG（座標軸 + 格線 + 折線/函數曲線） ----
-  function graphCurveFn(expr) {
-    const cleaned = String(expr || "");
-    if (!/^[0-9x+\-*/().,^\sa-z]*$/i.test(cleaned)) return null;
-    try {
-      const body = `"use strict"; const {sin,cos,tan,asin,acos,atan,log,exp,sqrt,abs,pow,sinh,cosh,tanh,PI,E}=Math; return (${cleaned.replace(/\^/g, "**")});`;
-      const fn = new Function("x", body);
-      const probe = fn(1);
-      if (!Number.isFinite(probe) && !Number.isNaN(probe)) return null;
-      return fn;
-    } catch (error) {
-      return null;
-    }
-  }
-
-  function renderProblemGraph(problem, opts) {
-    opts = opts || {};
-    const graph = problem && problem.graph;
-    if (!graph || !Array.isArray(graph.window) || graph.window.length !== 4) return "";
-    const [xmin, xmax, ymin, ymax] = graph.window.map(Number);
-    if (!(xmax > xmin) || !(ymax > ymin)) return "";
-    const width = 320;
-    const height = 220;
-    const pad = 18;
-    const sx = (x) => pad + ((x - xmin) / (xmax - xmin)) * (width - 2 * pad);
-    const sy = (y) => height - pad - ((y - ymin) / (ymax - ymin)) * (height - 2 * pad);
-    const parts = [];
-    const gridStep = (range) => (range <= 8 ? 1 : range <= 16 ? 2 : range <= 40 ? 5 : 10);
-    const gx = gridStep(xmax - xmin);
-    const gy = gridStep(ymax - ymin);
-    for (let x = Math.ceil(xmin / gx) * gx; x <= xmax + 1e-9; x += gx) {
-      parts.push(`<line x1="${sx(x)}" y1="${sy(ymin)}" x2="${sx(x)}" y2="${sy(ymax)}" stroke="var(--line)" stroke-width="1"/>`);
-      if (Math.abs(x) > 1e-9) parts.push(`<text x="${sx(x)}" y="${sy(0) + 12}" font-size="9" text-anchor="middle" fill="var(--muted)">${x}</text>`);
-    }
-    for (let y = Math.ceil(ymin / gy) * gy; y <= ymax + 1e-9; y += gy) {
-      parts.push(`<line x1="${sx(xmin)}" y1="${sy(y)}" x2="${sx(xmax)}" y2="${sy(y)}" stroke="var(--line)" stroke-width="1"/>`);
-      if (Math.abs(y) > 1e-9) parts.push(`<text x="${sx(0) - 5}" y="${sy(y) + 3}" font-size="9" text-anchor="end" fill="var(--muted)">${y}</text>`);
-    }
-    if (ymin <= 0 && ymax >= 0) parts.push(`<line x1="${sx(xmin)}" y1="${sy(0)}" x2="${sx(xmax)}" y2="${sy(0)}" stroke="var(--line-strong)" stroke-width="1.4"/>`);
-    if (xmin <= 0 && xmax >= 0) parts.push(`<line x1="${sx(0)}" y1="${sy(ymin)}" x2="${sx(0)}" y2="${sy(ymax)}" stroke="var(--line-strong)" stroke-width="1.4"/>`);
-    const strokes = ["var(--blue)", "var(--red)", "var(--green)", "var(--violet)"];
-    const toPath = (pts) => pts.map((pt, i) => `${i ? "L" : "M"}${sx(pt[0]).toFixed(1)},${sy(pt[1]).toFixed(1)}`).join(" ");
-    (graph.polylines || []).forEach((pts, index) => {
-      if (!Array.isArray(pts) || pts.length < 2) return;
-      parts.push(`<path d="${toPath(pts)}" fill="none" stroke="${strokes[index % strokes.length]}" stroke-width="2.2" stroke-linejoin="round"/>`);
-    });
-    (graph.dashed || []).forEach((pts) => {
-      if (!Array.isArray(pts) || pts.length < 2) return;
-      parts.push(`<path d="${toPath(pts)}" fill="none" stroke="var(--muted)" stroke-width="1.6" stroke-dasharray="5 4"/>`);
-    });
-    (graph.curves || []).forEach((curve, index) => {
-      const fn = graphCurveFn(curve && curve.expr);
-      if (!fn) return;
-      const [a, b] = Array.isArray(curve.domain) ? curve.domain.map(Number) : [xmin, xmax];
-      const pts = [];
-      const steps = 160;
-      for (let i = 0; i <= steps; i += 1) {
-        const x = a + ((b - a) * i) / steps;
-        const y = fn(x);
-        if (Number.isFinite(y) && y >= ymin - 1 && y <= ymax + 1) pts.push([x, Math.max(ymin, Math.min(ymax, y))]);
-      }
-      if (pts.length > 1) parts.push(`<path d="${toPath(pts)}" fill="none" stroke="${strokes[(index + (graph.polylines || []).length) % strokes.length]}" stroke-width="2.2"/>`);
-    });
-    (graph.points || []).forEach((point) => {
-      if (!point || !Number.isFinite(Number(point.x)) || !Number.isFinite(Number(point.y))) return;
-      const open = point.open === true;
-      parts.push(`<circle cx="${sx(point.x)}" cy="${sy(point.y)}" r="3.4" fill="${open ? "var(--panel)" : "var(--blue)"}" stroke="var(--blue)" stroke-width="1.6"/>`);
-    });
-    (graph.labels || []).forEach((label) => {
-      if (!label || typeof label.text !== "string") return;
-      parts.push(`<text x="${sx(label.x)}" y="${sy(label.y)}" font-size="11" fill="var(--ink)">${escapeAttr(label.text)}</text>`);
-    });
-    if (typeof opts.overlay === "function") {
-      parts.push(opts.overlay({ sx, sy, xmin, xmax, ymin, ymax }) || "");
-    } else if (opts.overlay) {
-      parts.push(opts.overlay);
-    }
-    // 互動圖把座標窗與內距寫在 svg 上，讓 pointer 事件能把
-    // 螢幕座標換算回數學座標 —— 這是唯一一份轉換參數，不能散落兩處。
-    const interactiveAttrs = opts.interactive
-      ? ` data-graph-interactive="${opts.interactive}" data-graph-window="${[xmin, xmax, ymin, ymax].join(",")}" data-graph-pad="${pad}" data-graph-size="${width},${height}"`
-      : "";
-    return `
-      <div class="problem-graph ${opts.interactive ? "is-interactive" : ""}">
-        <svg viewBox="0 0 ${width} ${height}" role="img" aria-label="題目附圖"${interactiveAttrs}>${parts.join("")}</svg>
-      </div>
-    `;
-  }
+  // ---- 圖形題：problem.graph -> inline SVG。渲染器住在 src/share_cards.js（從 app.js 搬出去的獨立畫面片段） ----
+  const graphCurveFn = window.BuzzGraphRender.graphCurveFn;
+  const renderProblemGraph = (problem, opts) => window.BuzzGraphRender.renderProblemGraph(problem, opts, escapeAttr);
 
   // ── 作答舞台的三個儀表 ─────────────────────────────────────
   //
@@ -6446,7 +6361,17 @@
 
   function graphProblemFn(problem) {
     const curve = problem.graph && (problem.graph.curves || [])[0];
-    return curve ? graphCurveFn(curve.expr) : null;
+    if (curve) return graphCurveFn(curve.expr);
+    // 折線題（角點、由 f′ 圖找 f 的極值）：點到的位置吸附到折線上
+    const pts = problem.graph && (problem.graph.polylines || [])[0];
+    if (!Array.isArray(pts) || pts.length < 2) return null;
+    return (x) => {
+      for (let i = 0; i + 1 < pts.length; i += 1) {
+        const [x0, y0] = pts[i]; const [x1, y1] = pts[i + 1];
+        if (x >= x0 - 1e-9 && x <= x1 + 1e-9) return y0 + ((y1 - y0) * (x - x0)) / (x1 - x0);
+      }
+      return NaN;
+    };
   }
 
   function renderGraphTapControls(problem) {
