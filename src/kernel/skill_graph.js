@@ -127,7 +127,7 @@
     { id: "diff.optimize", label: "最佳化", tier: 3, obscurity: 1, family: "diff", prereq: ["diff.shape"],
       tags: ["optimization"] },
     { id: "diff.related", label: "隱微分與相關變率", tier: 3, obscurity: 1, family: "diff", prereq: ["diff.chain"],
-      tags: ["implicit-differentiation", "related-rates"] },
+      tags: ["implicit-differentiation", "related-rates", "motion"] },
     { id: "diff.approx", label: "線性近似 / 牛頓法", tier: 2, obscurity: 1, family: "diff", prereq: ["diff.basic"],
       tags: ["linear-approximation", "linearization", "newton-method"] },
     { id: "diff.applied", label: "應用情境題", tier: 3, obscurity: 1, family: "diff", prereq: ["diff.basic"],

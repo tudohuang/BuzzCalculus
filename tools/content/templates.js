@@ -411,7 +411,7 @@ module.exports = [
     answerKind: "numeric",
     timeLimit: 35,
     tags: ["standard-limit", "log"],
-    prompt: "\\lim_{x\\to 0}\\frac{\\log(1+{a}x)}{\\log(1+{b}x)}",
+    prompt: "\\lim_{x\\to 0}\\frac{\\ln(1+{a}x)}{\\ln(1+{b}x)}",
     answer: "{a}/{b}",
     solution: "log(1+u) ≈ u，上下分別是 {a}x 與 {b}x，比值 {a}/{b}。",
     steps: [
@@ -476,7 +476,7 @@ module.exports = [
     variable: "x",
     timeLimit: 40,
     tags: ["chain-rule", "log"],
-    prompt: "\\frac{d}{dx}\\log\\left(x^2+{a}\\right)",
+    prompt: "\\frac{d}{dx}\\ln\\left(x^2+{a}\\right)",
     answer: "2*x/(x^2+{a})",
     solution: "鏈鎖律：log(u) 的導數是 u'/u，u = x²+{a}。",
     steps: [
