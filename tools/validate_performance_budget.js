@@ -39,7 +39,9 @@ const BUDGETS = {
   // 一句多動作、目標宣告、結論接地、連鎖抑制、原文映射）。它是獨立模組，proof_lang.js 不用學自然語言。
   // 2026-09-19 330 → 345：Proof Input v2.2 —— proof_lang.js +11KB（改寫規則四條、接地優先序、provenance 事實表），
   // proof_surface.js +6KB（語意目標：lim 形式與 ∀ε∃δ 形式等價、目標寫錯紅、結論接地）。都是驗證邏輯，不是資料。
-  "kernel 邏輯模組": { pattern: /^src\/kernel\//, budget: 345 * 1024 },
+  // 2026-09-20 345 → 365：Proof Engine v2.3／v2.4 —— proof_lang.js +21KB（全稱條件實例化、全稱主張、自訂函數數值微分、單調性接地）。
+  // 都是驗證邏輯；下一次再漲就該把接地規則搬去獨立模組（proof_grounding.js），不是再調數字。
+  "kernel 邏輯模組": { pattern: /^src\/kernel\//, budget: 365 * 1024 },
   "題庫資料合計": { pattern: /^src\/problem|^src\/problems\.js$|^src\/proofs\.js$/, budget: 2400 * 1024 },
   // 2026-09-15 300 → 310：「從零開始」課程表與單課頁（course.js）約 4KB 的樣式；
   // 已盡量沿用 pl-tutorial / pl-intro / pl-goal / first-steps。再撞頂該做的是

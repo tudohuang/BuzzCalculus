@@ -4482,7 +4482,7 @@
       <article class="library-problem-card">
         <div class="library-problem-top">
           <div>
-            <strong>${escapeHtml(problem.id || "problem")}</strong>
+            <strong>${escapeHtml(problemShortCode(problem) || "自訂題")}</strong>
             <span>${TOPICS[problem.topic]?.label || problem.topic} · ${difficultyBadge(problem)}</span>
           </div>
           <div class="problem-card-actions">
@@ -4493,15 +4493,11 @@
         </div>
         <div class="library-prompt math-block" data-tex="${escapeAttr(problem.prompt)}"></div>
         ${renderProblemGraph(problem)}
-        <div class="library-tags">
-          ${problemDisplayTags(problem).slice(0, 5).map((tag) => `<span>${escapeHtml(tagLabel(tag))}</span>`).join("")}
-        </div>
         <div class="library-problem-foot">
           <div class="library-quality">
           <span class="solution-quality is-${quality.level}" title="這題參考解說的完整度：完整＝有推導與提示；簡短＝一兩句；待補＝還沒寫">${escapeHtml(quality.label)}</span>
           ${verifiedChip(problem)}
           ${rubricChip(problem)}
-          ${sourceChip(problem)}
           </div>
           <button class="button ghost" data-action="start-problem" data-problem-id="${escapeAttr(problem.id)}">${icon("play")}練這題</button>
         </div>
@@ -5201,7 +5197,6 @@
       <div class="lc-meta">
         <span class="lc-tag">${escapeHtml(PROOF_TIERS[proof.tier] || proof.tier)}</span>
         <span class="lc-tag">R${proof.difficulty}</span>
-        ${(proof.tags || []).map((tag) => `<span class="lc-tag">${escapeHtml(tag)}</span>`).join("")}
       </div>
       <p class="proof-ladder">${proof.tier === "lean" ? "開 Playground 補完 sorry → 編譯零錯誤＝通過 → 卡了開提示 → 最後對參考解答" : "先自己寫 → 卡了開提示 → 還卡開關鍵步驟 → 骨架重排／填空機器判 → 最後對參考證明"}</p>
       ${(proof.hints || []).length ? `
@@ -7821,8 +7816,9 @@
     const authoredSteps = authored.slice(1);
     const derived = authoredSteps.length ? "" : derivedHint(problem);
     const steps = authoredSteps;
+    // 只印有中文名的技巧；沒有人話名字的內部 tag（Title Case 的英文）不露出
     const techniqueTags = (problem.tags || [])
-      .filter((tag) => !META_ANALYSIS_TAGS.has(tag))
+      .filter((tag) => !META_ANALYSIS_TAGS.has(tag) && (TAG_LABELS[tag] || TRAINING_PACKS[tag]))
       .slice(0, 3)
       .map(tagLabel);
     return `
@@ -8942,7 +8938,7 @@
     if (!problem) return "";
     const reason = REPORT_REASONS.find((item) => item.key === reasonKey) || REPORT_REASONS[0];
     const lines = [
-      `題號：${problem.id}${problemShortCode(problem) ? `（永久編號 ${problemShortCode(problem)}）` : ""}`,
+      `題號：${problemShortCode(problem) || "自訂題"}`,
       `題目：${problem.prompt}`,
       `參考答案：${displayAnswer(problem)}`,
       `難度：R${problem.rank}`,

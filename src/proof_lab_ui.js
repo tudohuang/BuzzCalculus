@@ -239,7 +239,7 @@
         return {
           key: `pf:${proof.id}`, kind: proof.tier === "lean" ? "lean" : "self", id: proof.id, n: auto.length + i + 1, title: proof.title,
           level: levelOf("self", proof.difficulty), difficulty: proof.difficulty,
-          family: "", tier: proof.tier, tags: [TIER_LABEL[proof.tier] || proof.tier].concat(machine ? ["可機器判"] : []).concat((proof.tags || []).slice(0, 3)),
+          family: "", tier: proof.tier, tags: [TIER_LABEL[proof.tier] || proof.tier].concat(machine ? ["可機器判"] : []),
           machine: machine ? machine.id : "",
           status: solved ? "solved" : touched ? "attempted" : "none",
           attempts: (entry.orderPassed ? 1 : 0) + (entry.clozePassed ? 1 : 0), solvedAt: "", lastAt: entry.updatedAt || entry.lastViewedAt || "", lastVerdict: entry.status || ""
@@ -462,7 +462,6 @@
             <span class="lc-tag">${escapeHtml(FAMILY_LABEL[spec.family] || spec.family)}</span>
             <span class="lc-tag">R${spec.difficulty}</span>
             <span class="lc-tag">白話證明 · 自動判</span>
-            ${spec.source ? `<span class="lc-tag lc-tag-source">${escapeHtml(spec.source)}</span>` : ""}
           </div>
           <details class="lc-howto">
             <summary>怎麼寫、怎麼判</summary>

@@ -140,3 +140,16 @@
 - 負向：`|f'(c)| <= 1`（更強）不綠；`|f'(c)| >= 2`（方向反）、`|g'(c)| <= 2`（函數名錯）不對上；`f(_) − g(_)` 對 `f(c) − g(d)` 不對上。
 - 翻譯層：`Let x, y ∈ I with x < y` 的 with／such that 翻成「且」，條件才會登記。
 - 釘在 validate_proof_lang 第 7 節與 validate_proof_surface 第 6 節（MVT Lipschitz 的英文寫法整份全綠）。
+
+## Proof Engine v2.4：Derivatives, Quantified Claims, Monotonicity（2026-09-20）
+
+目標：把「輔助函數法」整族證明接進機器判（令 g、算 g′ 的符號、g 單調、跟 g(0) 比）。這是中級證明最常見的一族；之前引擎不會微分、也沒有「對所有 x 成立」的主張，一題都接不上。
+
+- **自訂函數的導數**：`令 g(x) = …` 之後，`g'(x)`、`g''(x)` 由 makeScope 用中央差分＋Richardson 外推算出（誤差 O(h⁴)），所以「則 g'(x) = e^x − 1」可以數值驗；接地來源 `derivative`（備註「g′(x) 由 g 的定義數值微分驗過」）。錯的導數式（g'(x) = e^x）紅。
+- **全稱主張**（新句型 `forall`）：「對所有 x > 0，…」「當 x > 0 時，…」「for all x > 0, …」「… for all x > 0」「whenever x > 0, …」。條件只在這一句有效：複製上下文、把條件當假設、在裡面驗主張；驗過的關係複製回主上下文，每一條含量化變數的關係（含多段鏈的頭尾）把變數換成 `_` 登記成全稱事實，帶 `domain`。之後「g'(2) > 0」是它的實例（2 > 0 用取樣驗），「g'(−1) > 0」不在 domain 裡就走數值 → 紅。條件不外漏：下一句「則 g'(x) > 1」在整個範圍上驗。
+- **單調性**（TEXT_FACTS 新增 increasing／decreasing）：「g 在 (0, ∞) 上遞增」「g is increasing on (0, inf)」要靠全稱事實 `g'(_) > 0`（或 ≥ 0；遞減看 < 0）；立住就記 `ctx.monotone[g]`，否則黃「要先寫出對所有 x∈…，g'(x) > 0」。
+- **比大小要理由**：`g(x) > g(0)` 這種同一個自訂函數在兩點的比較，數值上對不算——錨定規則對它不放行；只有單調性（`groundMonotone`：g 遞增且 x > 0 在條件下成立）或前面已推出這一段才綠，否則黃並說要單調性。刪掉「g 遞增」那一行，證明就不再全綠。
+- 因為…的前提「g(0) = 0」：只由自訂函數與常數組成，算「由定義」立住。
+- 翻譯層：`For all x > 0, g'(x) > 0`／`Whenever …` → 「則對所有 …，…」（後半是動作如 choose 仍算引入）；`… for all x > 0` 句尾形式引擎自己認。
+- 新題：pl-exp-inequality（e^x > 1 + x，classic proof-ineq-001）、pl-log-inequality（ln(1+x) < x，classic proof-ineq-002）。三種變異都釘得住。
+- 測試：validate_proof_lang 第 8 節（導數接地、全稱事實登記、單調性、錯導數紅、沒單調黃、domain 內外、條件不外漏、遞減方向），validate_proof_surface 第 7 節（英文寫法全綠、For all／Whenever 是主張、For any ε > 0, choose 仍是引入）。

@@ -236,7 +236,9 @@
     forAll: /^for (?:any|every|all|each|arbitrary)\s+(.+)$/i,
     intro: /^(?:we\s+(?:now\s+)?)?(?:let|given|fix|take|choose|pick|consider|select)\s+(?:an?\s+|any\s+|some\s+)?(?:arbitrary\s+)?(.+?)(?:\s+be\s+(?:given|arbitrary|fixed|any)|\s+arbitrary|\s+be\s+arbitrary)?\s*$/i,
     define: /^(?:we\s+(?:now\s+)?)?(?:set|define|put|let|choose|take|pick|select)\s+(.+)$/i,
-    assume: /^(?:now\s+)?(?:let us\s+)?(?:suppose|assume|if|whenever)\s+(?:that\s+)?(.+?)(?:\s*[,;]\s*then\s+(.+))?$/i,
+    assume: /^(?:now\s+)?(?:let us\s+)?(?:suppose|assume|if)\s+(?:that\s+)?(.+?)(?:\s*[,;]\s*then\s+(.+))?$/i,
+    // v2.4 全稱主張：For all x > 0, g'(x) > 0／Whenever x > 0, g(x) > 0 → 則對所有 …，…（條件只在這一句有效）
+    forAllClaim: /^(?:for (?:all|every|any|each)|whenever|when)\s+(.+?)\s*[,:]\s*(?:we have\s+|then\s+)?(.+)$/i,
     because: /^(?:since|because|as)\s+(.+?)\s*[,;]\s*(?:we (?:have|get|obtain|see)(?: that)?|it follows that|then|so|hence|therefore|thus|this gives)?\s*(.+)$/i,
     derive: /^(?:then|thus|hence|therefore|so|it follows that|we (?:have|get|obtain|see|find)(?: that)?|this (?:gives|yields|shows)|consequently|in particular|that is|i\.e\.|which means|note that|observe that)\s*[,:]?\s*(?:that\s+)?(.+)$/i,
     caseN: /^case\s+(\d+|one|two|three|four|i|ii|iii|iv)\s*[:.]?\s*(.*)$/i,
@@ -323,6 +325,8 @@
       if (m[2]) out.push({ type: "derive", canonical: `則 ${strip(m[2])}。` });
       return out;
     }
+    // 後半是主張（有關係符號、不是 choose／let／suppose 這種動作）才算全稱主張；「For any ε > 0, choose δ = …」仍是引入
+    if ((m = s.match(EN.forAllClaim)) && /(<=|>=|!=|<|>|=)/.test(m[2]) && /(<=|>=|!=|<|>|=| in |∈)/.test(m[1]) && !/^(?:we\s+)?(?:choose|let|take|set|define|put|pick|suppose|assume|fix|select)\b/i.test(strip(m[2]))) return [{ type: "derive", canonical: `則對所有 ${strip(m[1])}，${strip(m[2])}。` }];
     if ((m = s.match(EN.forAll))) return [{ type: "introduce", canonical: `任取 ${strip(m[1])}。` }];
     if (/^(?:we\s+(?:now\s+)?)?(?:set|define|put)\b/i.test(s) && (m = s.match(EN.define))) {
       const body = strip(m[1]);
