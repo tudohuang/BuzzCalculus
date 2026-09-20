@@ -274,6 +274,12 @@
   }
 
   // 把一句英文／自然中文翻成句型語言。回傳 [{ type, canonical }]；認不出來回傳 null
+  // 「f and g are differentiable」→「f is differentiable 且 g is differentiable」：文字事實一個名字一句
+  function distributePredicate(text) {
+    const m = String(text || "").match(/^([A-Za-z]\w*)\s+and\s+([A-Za-z]\w*)\s+are\s+(.+)$/i);
+    return m ? `${m[1]} is ${m[3]} 且 ${m[2]} is ${m[3]}` : text;
+  }
+
   function translateSentence(sentence) {
     const s = strip(sentence.replace(/\s+/g, " "));
     if (!s) return [];
@@ -327,7 +333,7 @@
       const ex = englishExistential(rest);
       return [{ type: "theorem", canonical: `由${name}，${ex || rest}。` }];
     }
-    if ((m = s.match(EN.because))) return [{ type: "derive", canonical: `因為 ${strip(m[1]).replace(/\s+and\s+/gi, " 且 ")}，所以 ${strip(m[2])}。` }];
+    if ((m = s.match(EN.because))) return [{ type: "derive", canonical: `因為 ${distributePredicate(strip(m[1])).replace(/\s+and\s+/gi, " 且 ")}，所以 ${distributePredicate(strip(m[2]))}。` }];
     if ((m = s.match(EN.assume))) {
       const out = [{ type: "assume", canonical: `假設 ${strip(m[1]).replace(/\s+and\s+/gi, " 且 ")}。` }];
       if (m[2]) out.push({ type: "derive", canonical: `則 ${strip(m[2])}。` });
