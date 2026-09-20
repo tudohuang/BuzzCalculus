@@ -167,3 +167,19 @@
 - **新題**：pl-classic-305（(x^p − x^q)/ln x，classic 305）、pl-classic-308（ln(a + b cos x)，classic 308）、pl-frullani-exp、pl-sum-odd（Σ 接歸納法）。最後一行重述題目是 optional（前一行已對上目標）。經典題可機器判 5 → 7。
 - **還不行**：抽象函數的積分（積分平均值定理只能對形狀）、無窮級數、振盪的無窮積分（Dirichlet ∫ sin x / x）、二重積分換序這種對區域的操作。
 - 測試：validate_proof_lang 第 9 節（寫法改寫、積分精度、錯的 I′ 紅、沒有 I′ 時基本定理黃、不定積分訊息、Σ 對錯），validate_proof_surface 第 8 節（英文＋LaTeX 的 Feynman 證明全綠）。
+
+## Proof Engine v2.6：Sampled Functions and Witnesses（2026-09-20）
+
+目標：接上「抽象函數 + Rolle／IVT 給的點」這一族——MVT 由 Rolle 證、Cauchy MVT、不動點存在。以前抽象 f 是 atom（f(y)、f'(c) 各自是取樣變數），「令 h(x) = f(x) − …」根本定義不了，Rolle 給的 c 也只能是個受約束的自由變數。
+
+- **sampled**：`spec.sampled = { f: { degree: 3, coeff: [-2, 2], squash: [0, 1] } }`。每個取樣點抽一組多項式係數（env 的 zzc_f_i），f 就是一個真的函數：f(a)、f′(c)（attachDerivatives 數值微分）、∫ f 都算得出來，自訂函數的本體可以呼叫它（compile 的 functions 用 makeScope 給的）。squash 把值域壓進 (lo, hi)（中點 + 0.9·半寬·tanh）。「對所有 f」的主張在 48 個不同的 f 上驗。跟 abstract（atom）並存，題目作者選。
+- **證人（witness）**：存在句「存在 c ∈ (a, b) 使 E(c) = 0」，E 全部算得出來（沒有 atom）→ c 不是條件，是 E 的根：`ctx.witnesses[c] = { expr, lo, hi }`，drawSamples 用 findRoot（掃 32 段找變號＋二分）跟定義一起在多輪迴圈裡算；找不到根就退回、黃「找不到讓 … 成立的 c」。之後 f′(c) = (f(b) − f(a))/(b − a) 是真的驗。
+- **Rolle 的兩個前提**：`requires: "rolle"` = h 可微 + verifiedLinks 有 h(p) = h(q)。多段鏈的頭尾現在也進 verifiedLinks（h(a) = 0 = h(b) 給 h(a) = h(b)）。
+- **可微／連續的傳遞**：自訂函數的本體呼叫了前面說過可微的具名函數（sampled 的 f、g）也算初等；除法只有分母含參數才不算（(f(b) − f(a))/(b − a) 沒事）。
+- **由定義接地**（TRANSFORMATIONS `definition`）：全是等號、每個名字都是定義／自訂函數／證人／sampled／題目變數、至少一個定義 → 「把定義代進去就算得出來」。h(a) = f(a)g(b) − g(a)f(b) = h(b) 靠這個。
+- **取樣快取**：drawSamples 以上下文狀態為鍵快取最大的那一份，小的 count 用切片（同種子的拒絕取樣前 k 個一樣）；有證人時跟含積分一樣取 48 點。MVT 證明從 9 秒降到 0.25 秒。
+- **顯然的起點**加一條：0 ≤ ∫_a^b (本體顯然非負) dx。
+- 翻譯層：「f and g are differentiable」→ f is differentiable 且 g is differentiable。
+- 新題：pl-mvt-from-rolle（classic proof-mvt-002）、pl-cauchy-mvt（classic proof-mvt-005）、pl-fixed-point。經典題可機器判 7 → 9。
+- 測試：validate_proof_lang 第 10 節（f 真的在變、定義接地、證人真的驗、少除以 b − a 紅、Rolle 兩個前提各缺一個黃、找不到根黃、squash 值域），validate_proof_surface 第 9 節（Cauchy MVT 英文全綠）。
+- 還不行：積分形 Cauchy–Schwarz（要「乘正數的等價」與 ∫ 平方非負的展開）、極值定理（EVT 給的 max/min 點不是根）、需要 ≠ 的唯一性論證。

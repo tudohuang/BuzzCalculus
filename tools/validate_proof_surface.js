@@ -437,6 +437,26 @@ const V22_CANONICAL = [
   if (!diff || !/由積分號下微分/.test(diff.canonical)) fail(`v2.5：Differentiating under the integral sign 要翻成「由積分號下微分，…」：${diff && diff.canonical}`);
 }
 
+
+/* ── 9. v2.6：Cauchy 平均值定理的英文寫法（sampled f, g；Rolle 給的 c 是根） ── */
+{
+  const cauchy = byId("pl-cauchy-mvt");
+  const text = [
+    "Let $h(x)=f(x)(g(b)-g(a))-g(x)(f(b)-f(a))$.",
+    "",
+    "Then $h(a)=f(a)g(b)-g(a)f(b)=h(b)$.",
+    "",
+    "Since $f$ and $g$ are differentiable, $h$ is differentiable.",
+    "",
+    "By Rolle's theorem, there exists $c\\in(a,b)$ such that $h'(c)=0$.",
+    "",
+    "Hence $f'(c)(g(b)-g(a))=g'(c)(f(b)-f(a))$."
+  ].join("\n");
+  const report = surfaceCheck(cauchy, text);
+  checks += 1;
+  if (report.verdict !== "verified") fail(`v2.6 Cauchy MVT 的英文證明應該全綠，卻是 ${report.verdict}：${statuses(report)}\n    ${report.lines.filter((l) => l.status !== "ok").map((l) => `${l.raw.slice(0, 50)} → ${l.canonical} | ${l.note}`).join("\n    ")}`);
+}
+
 console.log("Proof Input v2（自由書寫層）");
 console.log(`  相容      ${problems.length} 題參考證明經翻譯層判定不變`);
 console.log(`  寫法      ${Object.keys(VARIANTS).length + 1} 種同一證明的寫法全綠`);

@@ -798,6 +798,73 @@
       coach: "把 Σ 到 k+1 拆成「Σ 到 k」加最後一項，Σ 到 k 用歸納假設換成 k²。"
     },
     {
+      // v2.6 隨機抽的具體函數（sampled）：f 每個取樣點是一個不同的三次多項式，所以「令 h(x) = f(x) − …」算得出來，
+      // Rolle 給的 c 是 h′ 的根（證人由數值求根）。這是教科書證 MVT 的標準寫法；經典題 proof-mvt-002 的機器判版本。
+      id: "pl-mvt-from-rolle",
+      classic: "proof-mvt-002",
+      family: "direct",
+      title: "由 Rolle 定理證明平均值定理",
+      difficulty: 3,
+      statement: "設 f 在 [a, b] 上可微，a < b。證明存在 c ∈ (a, b) 使 f′(c) = (f(b) − f(a))/(b − a)。",
+      prompt: "\\exists\\,c\\in(a,b):\\ f'(c)=\\frac{f(b)-f(a)}{b-a}",
+      vars: { a: { min: 0, max: 1 }, b: { min: 1.5, max: 2.5 } },
+      sampled: { f: { degree: 3, coeff: [-2, 2] } },
+      facts: ["f 在 [a, b] 上可微"],
+      goal: { relation: "f'(c) = (f(b) - f(a))/(b - a)" },
+      skeleton: "direct",
+      reference: [
+        "令 h(x) = f(x) − f(a) − (f(b) − f(a))/(b − a) (x − a)。",
+        "則 h(a) = 0 = h(b)。",
+        "因為 f 可微，所以 h 可微。",
+        "由 Rolle 定理，存在 c ∈ (a, b) 使 h'(c) = 0。",
+        "故 f'(c) = (f(b) − f(a))/(b − a)。"
+      ],
+      coach: "把 f 減掉連接 (a, f(a)) 與 (b, f(b)) 的那條直線，得到的 h 兩端都是 0，Rolle 就有 h′(c) = 0，展開就是要的式子。Rolle 的兩個前提（h 可微、h(a) = h(b)）都要寫出來。"
+    },
+    {
+      id: "pl-cauchy-mvt",
+      classic: "proof-mvt-005",
+      family: "direct",
+      title: "Cauchy 平均值定理",
+      difficulty: 3,
+      statement: "設 f、g 在 [a, b] 上可微，a < b。證明存在 c ∈ (a, b) 使 f′(c)(g(b) − g(a)) = g′(c)(f(b) − f(a))。",
+      prompt: "\\exists\\,c\\in(a,b):\\ f'(c)\\,(g(b)-g(a)) = g'(c)\\,(f(b)-f(a))",
+      vars: { a: { min: 0, max: 1 }, b: { min: 1.5, max: 2.5 } },
+      sampled: { f: { degree: 3, coeff: [-2, 2] }, g: { degree: 3, coeff: [-2, 2] } },
+      facts: ["f 在 [a, b] 上可微", "g 在 [a, b] 上可微"],
+      goal: { relation: "f'(c)(g(b) - g(a)) = g'(c)(f(b) - f(a))" },
+      skeleton: "direct",
+      reference: [
+        "令 h(x) = f(x)(g(b) − g(a)) − g(x)(f(b) − f(a))。",
+        "則 h(a) = f(a)g(b) − g(a)f(b) = h(b)。",
+        "因為 f 可微且 g 可微，所以 h 可微。",
+        "由 Rolle 定理，存在 c ∈ (a, b) 使 h'(c) = 0。",
+        "故 f'(c)(g(b) − g(a)) = g'(c)(f(b) − f(a))。"
+      ],
+      coach: "MVT 的推廣：輔助函數 h 把 f、g 各乘上對方的增量再相減，h(a) = h(b) 算一次就看到。剩下就是 Rolle。"
+    },
+    {
+      id: "pl-fixed-point",
+      family: "direct",
+      title: "連續映到 (0, 1) 的函數有不動點",
+      difficulty: 2,
+      statement: "設 f 在 [0, 1] 上連續且 0 < f(x) < 1 對所有 x。證明存在 c ∈ [0, 1] 使 f(c) = c。",
+      prompt: "\\exists\\,c\\in[0,1]:\\ f(c)=c",
+      vars: {},
+      sampled: { f: { degree: 3, coeff: [-2, 2], squash: [0, 1] } },
+      facts: ["f 在 [0, 1] 上連續", "f(_) > 0", "f(_) < 1"],
+      goal: { text: ["f(c) = c", "存在不動點", "f 有不動點"], relation: "f(c) = c" },
+      skeleton: "direct",
+      reference: [
+        "令 g(x) = f(x) − x。",
+        "因為 f 連續，所以 g 連續。",
+        "則 g(0) = f(0) > 0 且 g(1) = f(1) − 1 < 0。",
+        "由中間值定理，存在 c ∈ [0, 1] 使 g(c) = 0。",
+        "故 f(c) = c。"
+      ],
+      coach: "不動點就是 g(x) = f(x) − x 的根。兩端異號（g(0) > 0、g(1) < 0）加連續，IVT 給根。"
+    },
+    {
       id: "pl-ivt-cubic",
       family: "direct",
       title: "中間值定理：x³ − 3x + 1 = 0 有實根",

@@ -315,6 +315,53 @@ lessons.forEach((lesson, index) => {
   if (sumBad.lines[0].status !== "error") fail(`v2.5：Σ k = n(n−1)/2 應該紅：${sumBad.lines[0].status} ${sumBad.lines[0].note}`);
 }
 
+
+// 10. v2.6 隨機抽的具體函數（sampled）與存在句的證人：f 每個取樣點是不同的多項式，所以「對所有 f」的主張在幾十個 f 上驗；
+//     「令 h(x) = f(x) − …」算得出來；Rolle／IVT 給的 c 是方程的根（數值求根），之後 f'(c) = … 真的驗；
+//     Rolle 要 h 可微＋h(a) = h(b) 兩個前提都立住；全是等號、只用定義的鏈算「由定義」接地。
+{
+  const mvt = problems.find((spec) => spec.id === "pl-mvt-from-rolle");
+  const ref = mvt.reference;
+  const run = (lines) => lang.check(mvt, lines.join("\n"));
+  // f 真的在變：f(b) = f(a) 對隨機多項式不成立 → 紅
+  const varies = run(["則 f(b) = f(a)。"]);
+  checks += 1;
+  if (varies.lines[0].status !== "error") fail(`v2.6：sampled 的 f 每個取樣點應該不同，f(b) = f(a) 應該紅：${varies.lines[0].status} ${varies.lines[0].note}`);
+  // 定義接地：h(a) = 0 = h(b) 的來源是 definition
+  const good = run(ref);
+  checks += 1;
+  const defLine = good.lines[1];
+  if (good.verdict !== "verified" || !defLine.grounding || defLine.grounding.rule !== "definition") fail(`v2.6：h(a) = 0 = h(b) 應該由定義接地：${good.verdict} ${defLine && JSON.stringify(defLine.grounding)} ${defLine && defLine.note}`);
+  // 證人：c 是 h′ 的根 → f'(c) 真的等於差商（不是文字引用而已）
+  const witnessLine = good.lines[3];
+  if (!/取成「h'\(c\) = 0」.*的根/.test(witnessLine.note)) fail(`v2.6：Rolle 的 c 應該是 h′ 的根：${witnessLine.note}`);
+  const useWitness = run(ref.slice(0, 4).concat(["則 f'(c)(b − a) = f(b) − f(a)。"]));
+  checks += 1;
+  if (useWitness.lines[4].status !== "ok") fail(`v2.6：用證人 c 算 f'(c)(b − a) = f(b) − f(a) 應該成立：${useWitness.lines[4].status} ${useWitness.lines[4].note}`);
+  const wrongUse = run(ref.slice(0, 4).concat(["則 f'(c) = f(b) − f(a)。"]));
+  checks += 1;
+  if (wrongUse.lines[4].status !== "error") fail(`v2.6：f'(c) = f(b) − f(a)（少除以 b − a）應該紅：${wrongUse.lines[4].status} ${wrongUse.lines[4].note}`);
+  // Rolle 的兩個前提
+  const noEndpoints = run(ref.filter((_, i) => i !== 1));
+  const noDiff = run(ref.filter((_, i) => i !== 2));
+  checks += 2;
+  if (noEndpoints.verdict === "verified" || !/兩端相等/.test(noEndpoints.lines[2].note)) fail(`v2.6：沒有 h(a) = h(b) 那一行，Rolle 應該黃並說缺兩端相等：${noEndpoints.verdict} ${noEndpoints.lines[2].note}`);
+  if (noDiff.verdict === "verified" || !/可微/.test(noDiff.lines[2].note)) fail(`v2.6：沒有「h 可微」那一行，Rolle 應該黃：${noDiff.verdict} ${noDiff.lines[2].note}`);
+  // 找不到根：存在句說找不到、黃
+  const noRoot = run(["令 h(x) = f(x)^2 + 1。", "由中間值定理，存在 c ∈ (a, b) 使 h(c) = 0。"]);
+  checks += 1;
+  if (noRoot.lines[1].status === "ok" || !/找不到/.test(noRoot.lines[1].note)) fail(`v2.6：h(x) = f(x)² + 1 沒有根，存在句應該黃並說找不到：${noRoot.lines[1].status} ${noRoot.lines[1].note}`);
+  // squash：f 的值域壓在 (0, 1)，題目給的 f(_) > 0 套到 f(0)
+  const fixed = problems.find((spec) => spec.id === "pl-fixed-point");
+  const fixedReport = lang.check(fixed, fixed.reference.join("\n"));
+  checks += 1;
+  if (fixedReport.verdict !== "verified") fail(`v2.6：不動點證明應該全綠：${fixedReport.verdict} ${fixedReport.lines.map((l) => l.status).join(",")}`);
+  // squash 真的把值域壓在 (0, 1)：f(0.5) > 1 在任何取樣點都不成立 → 紅
+  const squashed = lang.check(fixed, "則 f(0.5) > 1。");
+  checks += 1;
+  if (squashed.lines[0].status !== "error") fail(`v2.6：squash 到 (0, 1) 的 f 不該有 f(0.5) > 1：${squashed.lines[0].status} ${squashed.lines[0].note}`);
+}
+
 // classic：機器判版本要指到 proofs.js 真的存在的題（題目頁上的「自己寫，機器判」按鈕靠這個）；一題經典證明只能有一個機器判版本
 require(path.join(__dirname, "..", "src", "proofs.js"));
 const classicIds = new Set((global.window.BUZZ_PROOFS || []).map((item) => item.id));

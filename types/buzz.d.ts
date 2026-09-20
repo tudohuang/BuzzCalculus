@@ -136,6 +136,8 @@ interface BuzzProofLangSpec {
   given?: string[];
   facts?: string[];
   abstract?: Record<string, { min?: number; max?: number }>;
+  /** v2.6 隨機抽的具體函數：每個取樣點一組多項式係數；squash 把值域壓進 (lo, hi) */
+  sampled?: Record<string, { degree?: number; coeff?: [number, number]; squash?: [number, number] }>;
   functions?: Record<string, (...args: number[]) => number>;
   macros?: { pattern: string; replace: string }[];
   goal: { relation?: string; text?: string[] };

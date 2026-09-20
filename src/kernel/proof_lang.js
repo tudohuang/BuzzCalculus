@@ -443,23 +443,67 @@
     };
   }
 
+  // g′、g″：中央差分＋Richardson 外推（誤差 O(h⁴)）；g 要帶 env（本體可能用到外面的參數）
+  function attachDerivatives(functions, name, g) {
+    functions[name] = Object.assign(g, { needsEnv: true });
+    const first = (v, h, env) => (g(v + h, env) - g(v - h, env)) / (2 * h);
+    const second = (v, h, env) => (g(v + h, env) - 2 * g(v, env) + g(v - h, env)) / (h * h);
+    functions[name + "'"] = Object.assign((v, env) => { const h = 1e-4 * Math.max(1, Math.abs(v)); return (4 * first(v, h / 2, env) - first(v, h, env)) / 3; }, { needsEnv: true });
+    functions[name + "''"] = Object.assign((v, env) => { const h = 1e-3 * Math.max(1, Math.abs(v)); return (4 * second(v, h / 2, env) - second(v, h, env)) / 3; }, { needsEnv: true });
+  }
+  /* ── v2.6 隨機抽的具體函數：spec.sampled = { f: { degree: 3, coeff: [-2, 2], squash: [0, 1] } } ──
+     跟 abstract 的 atom 不同：每一個取樣點抽一組多項式係數，f 就是一個真的函數——f(a)、f'(c)、∫ f 都算得出來，
+     「令 h(x) = f(x)(g(b) − g(a)) − …」也能定義。squash 把值域壓進 (lo, hi)：f = 中點 + 半寬·tanh(多項式)。
+     係數放在 env 的 zzc_f_0… 裡，隨每個取樣點變；所以「對所有 f」的主張是在幾十個不同的 f 上驗的。 */
+  function sampledFunctions(spec) {
+    const out = {};
+    Object.keys(spec.sampled || {}).forEach((name) => {
+      const cfg = spec.sampled[name] || {};
+      const degree = Number.isInteger(cfg.degree) ? cfg.degree : 3;
+      const g = (x, env) => {
+        let value = 0;
+        for (let i = 0; i <= degree; i += 1) value += (env && Number.isFinite(env["zzc_" + name + "_" + i]) ? env["zzc_" + name + "_" + i] : 0) * Math.pow(x, i);
+        if (cfg.squash) { const lo = cfg.squash[0]; const hi = cfg.squash[1]; value = (lo + hi) / 2 + ((hi - lo) / 2) * 0.9 * Math.tanh(value); }
+        return value;
+      };
+      attachDerivatives(out, name, g);
+    });
+    return out;
+  }
   function makeScope(spec, ctx) {
-    const vars = new Set([...Object.keys(spec.vars || {}), ...ctx.vars.keys(), ...Object.keys(ctx.defs), ...(ctx.atoms ? ctx.atoms.keys() : [])]);
-    const functions = Object.assign({}, spec.functions || {});
-    // 使用者自己「令 g(x) = x^5 + x − 1」的函數：本體只認參數與常數。
-    // v2.4：g′、g″ 也算得出來——中央差分加 Richardson 外推（誤差 O(h⁴)），
-    // 所以「則 g'(x) = e^x − 1」這種句子可以數值驗，不用符號微分。
-    // 本體可以用到外面的參數（q、a），所以帶著呼叫當下的 env（needsEnv）
+    const vars = new Set([...Object.keys(spec.vars || {}), ...ctx.vars.keys(), ...Object.keys(ctx.defs), ...(ctx.atoms ? ctx.atoms.keys() : []), ...Object.keys(ctx.witnesses || {})]);
+    const functions = Object.assign({}, spec.functions || {}, sampledFunctions(spec));
+    // 使用者自己「令 g(x) = …」的函數：本體可以用到外面的參數（q、a），所以帶著呼叫當下的 env（needsEnv）；
+    // g′、g″ 由 attachDerivatives 給，所以「則 g'(x) = e^x − 1」這種句子可以數值驗，不用符號微分
     Object.keys(ctx.userFunctions || {}).forEach((name) => {
       const entry = ctx.userFunctions[name];
-      const g = (value, env) => entry.fn(Object.assign({}, env || {}, { [entry.param]: value }));
-      functions[name] = Object.assign(g, { needsEnv: true });
-      const first = (v, h, env) => (g(v + h, env) - g(v - h, env)) / (2 * h);
-      const second = (v, h, env) => (g(v + h, env) - 2 * g(v, env) + g(v - h, env)) / (h * h);
-      functions[`${name}'`] = Object.assign((v, env) => { const h = 1e-4 * Math.max(1, Math.abs(v)); return (4 * first(v, h / 2, env) - first(v, h, env)) / 3; }, { needsEnv: true });
-      functions[`${name}''`] = Object.assign((v, env) => { const h = 1e-3 * Math.max(1, Math.abs(v)); return (4 * second(v, h / 2, env) - second(v, h, env)) / 3; }, { needsEnv: true });
+      attachDerivatives(functions, name, (value, env) => entry.fn(Object.assign({}, env || {}, { [entry.param]: value })));
     });
     return { vars, functions };
+  }
+  // v2.6 存在句的證人：存在 c ∈ (a, b) 使 E(c) = 0，而 E 全部算得出來 → c 是 E 在 (a, b) 上的根（掃 48 段找變號再二分）
+  function findRoot(f, lo, hi) {
+    if (!(Number.isFinite(lo) && Number.isFinite(hi)) || !(hi > lo)) return NaN;
+    const steps = 32;
+    let previousX = lo + (hi - lo) * 1e-6;
+    let previous = f(previousX);
+    for (let k = 1; k <= steps; k += 1) {
+      const x = lo + (hi - lo) * (k === steps ? 1 - 1e-6 : k / steps);
+      const value = f(x);
+      if (!Number.isFinite(value)) { previous = value; previousX = x; continue; }
+      if (Math.abs(value) < 1e-12) return x;
+      if (Number.isFinite(previous) && previous * value < 0) {
+        let a = previousX; let b = x; let fa = previous;
+        for (let i = 0; i < 44; i += 1) {
+          const m = (a + b) / 2; const fm = f(m);
+          if (!Number.isFinite(fm)) return NaN;
+          if (fa * fm <= 0) b = m; else { a = m; fa = fm; }
+        }
+        return (a + b) / 2;
+      }
+      previous = value; previousX = x;
+    }
+    return NaN;
   }
 
   // 抽象函數：f(y)、f'(c) 這種驗不了的東西，變成「不透明的取樣變數」（atom）。
@@ -496,7 +540,26 @@
     return out;
   }
 
+  // v2.6：同一個上下文狀態的取樣結果快取。證人（根）與含積分的定義讓每次抽樣都很貴，
+  // 而一行的驗證會呼叫 evaluate 幾十次（目標比對、等價、錨定…），狀態沒變就不該重抽
+  function sampleCacheKey(spec, ctx, count) {
+    const constraints = ctx.constraints.filter((item) => item.caseId === null || item.caseId === ctx.currentCase).map((item) => [item.lhs, item.op, item.rhs]);
+    const atoms = ctx.atoms ? Array.from(ctx.atoms.entries()).map(([key, atom]) => [key, atom.domain]) : [];
+    return JSON.stringify([count, spec.id, spec.seed, Array.from(ctx.vars.entries()), ctx.defs, ctx.witnesses || {}, constraints, atoms, Object.keys(ctx.userFunctions || {}).map((name) => [name, ctx.userFunctions[name].body])]);
+  }
   function drawSamples(spec, ctx, count) {
+    // 同一個種子、同樣的拒絕取樣，前 k 個接受的點對任何 ≥ k 的 count 都一樣：快取最大的那一份，小的用切片
+    const key = sampleCacheKey(spec, ctx, 0);
+    ctx.sampleCache = ctx.sampleCache || new Map();
+    const cached = ctx.sampleCache.get(key);
+    if (cached && (cached.samples.length >= count || cached.exhausted)) return { samples: cached.samples.slice(0, count), tries: cached.tries, scope: cached.scope };
+    const drawn = drawSamplesUncached(spec, ctx, count);
+    drawn.exhausted = drawn.samples.length < count;
+    if (ctx.sampleCache.size >= 12) ctx.sampleCache.delete(ctx.sampleCache.keys().next().value);
+    ctx.sampleCache.set(key, drawn);
+    return { samples: drawn.samples.slice(0, count), tries: drawn.tries, scope: drawn.scope };
+  }
+  function drawSamplesUncached(spec, ctx, count) {
     const scope = makeScope(spec, ctx);
     const random = seeded(spec.seed || 20260913);
     const domains = {};
@@ -510,6 +573,14 @@
       };
     });
     const defs = Object.keys(ctx.defs).map((name) => ({ name, fn: compile(ctx.defs[name], scope) }));
+    // v2.6 證人：c 是 E(c) = 0 在 (lo, hi) 上的根，跟定義一樣在多輪迴圈裡算（可能依賴定義，定義也可能依賴它）
+    Object.keys(ctx.witnesses || {}).forEach((name) => {
+      const witness = ctx.witnesses[name];
+      let expr; let lo; let hi;
+      try { expr = compile(witness.expr, scope); lo = compile(witness.lo, scope); hi = compile(witness.hi, scope); } catch (_error) { return; }
+      defs.push({ name, fn: (env) => findRoot((t) => expr(Object.assign({}, env, { [name]: t })), lo(env), hi(env)) });
+    });
+    const sampledNames = Object.keys(spec.sampled || {});
     const constraints = ctx.constraints.filter((item) => item.caseId === null || item.caseId === ctx.currentCase);
     // 編不出來的條件（含抽象符號）不擋取樣 —— 它們在登記時就已經標黃了
     const compiled = constraints.map((item) => {
@@ -522,8 +593,15 @@
       tries += 1;
       const env = {};
       let ok = true;
+      // v2.6：每個取樣點抽一組函數係數（zzc_f_0…），f 在這一點就是一個具體的多項式
+      sampledNames.forEach((name) => {
+        const cfg = spec.sampled[name] || {};
+        const degree = Number.isInteger(cfg.degree) ? cfg.degree : 3;
+        const range = Array.isArray(cfg.coeff) ? cfg.coeff : [-2, 2];
+        for (let i = 0; i <= degree; i += 1) env["zzc_" + name + "_" + i] = range[0] + (range[1] - range[0]) * random();
+      });
       [...scope.vars].forEach((name) => {
-        if (ctx.defs[name] !== undefined) return;
+        if (ctx.defs[name] !== undefined || (ctx.witnesses && ctx.witnesses[name])) return;
         const domain = domains[name];
         let value = domain.min + (domain.max - domain.min) * random();
         if (domain.int) value = Math.round(value);
@@ -560,7 +638,7 @@
     { id: "mvt", names: ["平均值定理", "均值定理", "mvt", "mean value theorem", "lagrange"], shapes: [/(\w+)\((\w+)\)-\1\((\w+)\)=\1'\((\w+)\)\*?\((\w+)-(\w+)\)/, /(\w+)'\((\w+)\)=\(?\1\((\w+)\)-\1\((\w+)\)\)?\/\((\w+)-(\w+)\)/], requires: "differentiable" },
     // 泰勒（Lagrange 餘項）：f(a+h) = f(a) + h f'(a) + (h²/2) f''(ξ)。形狀只認「f(某點) = 含 f''(ξ) 的展開式」
     { id: "taylor", names: ["泰勒定理", "泰勒展開", "泰勒", "taylor", "taylor's theorem", "taylor expansion", "lagrange remainder"], shapes: [/(\w+)\((.+?)\)=.*\1''\((\w+)\)/], requires: "twice-differentiable" },
-    { id: "rolle", names: ["Rolle 定理", "rolle", "rolle定理", "洛爾定理", "rolle theorem"], shapes: [/(\w+)'\((\w+)\)=0/], requires: "differentiable" },
+    { id: "rolle", names: ["Rolle 定理", "rolle", "rolle定理", "洛爾定理", "rolle theorem"], shapes: [/(\w+)'\((\w+)\)=0/], requires: "rolle" },
     { id: "evt", names: ["極值定理", "extreme value theorem", "evt", "最大最小值定理"], shapes: [/(最大值|最小值|maximum|minimum|max|min)/], requires: "continuous" },
     { id: "fermat", names: ["費馬定理", "fermat", "fermat theorem", "內點極值"], shapes: [/(\w+)'\((\w+)\)=0/] },
     { id: "squeeze", names: ["夾擠定理", "夾擠", "squeeze", "sandwich", "squeeze theorem"], shapes: [/lim/], requires: "sandwich" },
@@ -750,6 +828,7 @@
       goalDoneInCases: new Set(),
       atoms: new Map(),
       userFunctions: {},
+      witnesses: {},
       textFacts: new Set(),
       asserted: [],
       skeleton: { let: false, define: false, assume: false, bound: false, base: false, hypothesis: false, step: false, contradictionClosed: false }
@@ -782,7 +861,8 @@
         return { ok: false, unsure: true, reason: error.message };
       }
       // v2.5：式子裡有積分或和（或自訂函數本體裡有）時每點都要做數值積分，取樣點減到 48 個——夠抓反例，不拖 UI
-      const heavy = /\b(int|sum)\(/.test(`${lhs} ${rhs}`) || Object.values(context.userFunctions || {}).some((entry) => /\b(int|sum)\(/.test(entry.body));
+      // 有證人（根）時每個取樣點都要解一次方程，也算重
+      const heavy = /\b(int|sum)\(/.test(`${lhs} ${rhs}`) || Object.values(context.userFunctions || {}).some((entry) => /\b(int|sum)\(/.test(entry.body)) || Object.keys(context.witnesses || {}).length > 0;
       const { samples } = drawSamples(spec, context, heavy ? 48 : 160);
       if (!samples.length) return { ok: false, unsure: true, reason: "在目前的假設下抽不到任何一個點（假設互相矛盾，或條件太緊）" };
       let checked = 0;
@@ -1014,7 +1094,7 @@
     for (const part of parts) {
       const chain = splitChain(part);
       const fnDef = chain && chain.ops.length === 1 && chain.ops[0] === "=" && chain.exprs[0].match(/^([A-Za-z_]\w*)\(([A-Za-z_]\w*)\)$/);
-      if (fnDef && !(spec.abstract && spec.abstract[fnDef[1]])) {
+      if (fnDef && !(spec.abstract && spec.abstract[fnDef[1]]) && !(spec.sampled && spec.sampled[fnDef[1]])) {
         // 令 g(x) = x^5 + x − 1：使用者自己定義的函數，本體只能用參數、常數、內建函數
         const name = fnDef[1];
         const param = fnDef[2];
@@ -1022,7 +1102,8 @@
         try {
           // 本體：參數之外也可以用題目的變數、前面宣告的變數與定義（令 I(p) = ∫₀¹ (x^p − x^q)/ln x dx 裡的 q）
           const outer = [...Object.keys(spec.vars || {}), ...ctx.vars.keys(), ...Object.keys(ctx.defs)].filter((v) => v !== param);
-          const fn = compile(body, { vars: new Set([param, ...outer]), functions: Object.assign({}, spec.functions || {}) });
+          // 本體可以呼叫題目給的函數（sampled 的 f、g）與前面令的函數
+          const fn = compile(body, { vars: new Set([param, ...outer]), functions: makeScope(spec, ctx).functions });
           ctx.userFunctions[name] = { param, body, fn };
           ctx.vars.delete(name);
           notes.push(`定義函數 ${name}(${param}) = ${chain.exprs[1]}，後面的 ${name}(…) 都會照這個算。`);
@@ -1218,11 +1299,22 @@
         // 長名字先比（cosh 不能被當成 cos + h）；cosx 這種不加括號的寫法也要抓到
         const builtinNames = Object.keys(MATH_FUNCTIONS).sort((a, b) => b.length - a.length).join("|");
         const builtins = (item) => (compact(item.body).match(new RegExp(`(${builtinNames})`, "g")) || []);
-        const tameBody = (item) => Boolean(item) && !/\^\s*\(?-|\/\s*[A-Za-z(]/.test(item.body) && !/\^\s*\(?\d*\.\d/.test(item.body);
-        const polynomialBody = (item) => tameBody(item) && builtins(item).length === 0;
+        // 除法只有分母含參數才危險（1/x）；(f(b) − f(a))/(b − a) 這種除以常數沒問題
+        const dividesByParam = (item) => {
+          const body = item.body; const param = item.param;
+          const re = /\/\s*(\([^()]*\)|[A-Za-z_]\w*'*(?:\([^()]*\))?|\d+(?:\.\d+)?)/g;
+          let m;
+          while ((m = re.exec(body))) { if (new RegExp("\\b" + param + "\\b").test(m[1])) return true; }
+          return false;
+        };
+        const tameBody = (item) => Boolean(item) && !/\^\s*\(?-/.test(item.body) && !dividesByParam(item) && !/\^\s*\(?\d*\.\d/.test(item.body);
+        // 本體裡呼叫的具名函數（題目給的 f、自己令的 g）：前面說過它可微／連續就算初等
+        const namedCalls = (item) => Array.from(new Set((item.body.match(/[A-Za-z_]\w*(?='*\()/g) || []).filter((n) => !MATH_FUNCTIONS[n])));
+        const namedOk = (item, kind) => namedCalls(item).every((n) => ctx.textFacts.has(kind + ":" + n) || ctx.textFacts.has("polynomial:" + n) || (kind === "continuous" && (ctx.textFacts.has("differentiable:" + n) || ctx.textFacts.has("twice-differentiable:" + n))) || (kind === "differentiable" && ctx.textFacts.has("twice-differentiable:" + n)));
+        const polynomialBody = (item) => tameBody(item) && builtins(item).length === 0 && namedCalls(item).length === 0;
         // 令 g(x) = cos(x) − x 這種：由處處連續（可微）的初等函數加減乘出來的，也連續（可微）
         const ELEMENTARY = { continuous: ["sin", "cos", "exp", "abs", "sinh", "cosh", "tanh", "atan"], differentiable: ["sin", "cos", "exp", "sinh", "cosh", "tanh", "atan"] };
-        const elementaryBody = (item, kind) => tameBody(item) && builtins(item).every((name) => ELEMENTARY[kind].includes(name));
+        const elementaryBody = (item, kind) => tameBody(item) && builtins(item).every((name) => ELEMENTARY[kind].includes(name)) && namedOk(item, kind);
         let ok = false;
         let why = "";
         if (ctx.textFacts.has(fact.key)) { ok = true; why = "前面（或題目）已經給了"; }
@@ -1352,6 +1444,9 @@
           const provenance = structural ? { kind: structural.kind, rule: structural.rule, from: structural.from }
             : isPremise ? { kind: "premise", from: [] } : (rule && rule.id !== "unknown") ? { kind: "theorem", rule: rule.id, from: [] } : { kind: grounded ? "anchored" : "numeric", from: [] };
           verified.results.forEach((item) => { ctx.verifiedLinks.push({ lhs: item.lhs, op: item.op, rhs: item.rhs }); recordFact(ctx, item, line, provenance); });
+          // 多段鏈的頭尾也是一條驗過的關係（h(a) = 0 = h(b) 給的是 h(a) = h(b)；A < B ≤ C 給的是 A < C）
+          const overallOp = verified.chain.ops.length > 1 ? chainOverallOp(verified.chain.ops) : null;
+          if (overallOp && overallOp !== "!=") ctx.verifiedLinks.push({ lhs: verified.chain.exprs[0], op: overallOp, rhs: verified.chain.exprs[verified.chain.exprs.length - 1] });
           if (structural) grounding = { kind: structural.kind, rule: structural.rule, from: structural.from, exact: structural.exact };
           if (!grounded) {
             status = worst(status, "unsure");
@@ -1639,7 +1734,9 @@
     // 自己令的函數（g、g′）也算定義：g(0) = 0 代進去就能算
     // identifiers 是 compact 過的（小寫），自訂函數名（I）要不分大小寫地找
     const userFunctionNames = Object.keys(ctx.userFunctions || {}).map((name) => name.toLowerCase());
-    const byDefinition = (name) => ctx.defs[name] !== undefined || Object.keys(ctx.defs).some((key) => key.toLowerCase() === name) || userFunctionNames.includes(name.replace(/'+$/, ""));
+    const witnessNames = Object.keys(ctx.witnesses || {}).map((name) => name.toLowerCase());
+    const sampledNames = Object.keys(spec.sampled || {}).map((name) => name.toLowerCase());
+    const byDefinition = (name) => ctx.defs[name] !== undefined || Object.keys(ctx.defs).some((key) => key.toLowerCase() === name) || userFunctionNames.includes(name.replace(/'+$/, "")) || witnessNames.includes(name) || sampledNames.includes(name.replace(/'+$/, ""));
     if (identifiers.length && identifiers.every(byDefinition)) return true;
     // v2.5：等式裡有自己定義的東西、其餘是題目的變數（I(q) = 0、I(0) = π ln a）：把定義代進去就算得出來，算「由定義」。
     // 不等式不算（g(x) > 0 是主張不是計算），沒有任何定義的等式也不算
@@ -1777,6 +1874,14 @@
     const op = chain.ops[0];
     let [lhs, rhs] = chain.exprs;
     if (op === "<=" || op === "<") [lhs, rhs] = [rhs, lhs];
+    // v2.6：0 ≤ ∫_a^b (…)² dx——本體顯然非負、上限 ≥ 下限，積分就非負
+    const quad = compact(lhs).match(/^int\((\w+),([^,]+),([^,]+),(.+)\)$/);
+    if (quad && compact(rhs) === "0" && (op === "<=" || op === ">=")) {
+      try {
+        const bodySign = signOf(parseTree(quad[4]), spec || {}, { constraints: [], vars: new Map(), currentCase: null });
+        if (bodySign) return true;
+      } catch (_error) { /* 本體讀不成樹：不算顯然 */ }
+    }
     const strict = op === ">" || op === "<";
     if (op === "=" || op === "!=") return false;
     const key = (text) => compact(text);
@@ -1811,7 +1916,7 @@
     const squeeze = (text) => normalize(text).replace(/\s+/g, "");
     const all = chain.exprs.map((expr) => squeeze(applyMacros(spec, expr, ctx)));
     const ends = [all[0], all[all.length - 1]];
-    const names = new Set([...Object.keys(spec.vars || {}), ...ctx.vars.keys(), ...Object.keys(ctx.defs), ...(ctx.atoms ? ctx.atoms.keys() : [])]);
+    const names = new Set([...Object.keys(spec.vars || {}), ...ctx.vars.keys(), ...Object.keys(ctx.defs), ...(ctx.atoms ? ctx.atoms.keys() : []), ...Object.keys(ctx.witnesses || {})]);
     // 中間的式子裡包著一個前面出現過的長式子（|x + 3| ≤ |x − 3| + 6 < 7 裡的 |x − 3|）
     const longKnown = knownExpressions(spec, ctx).map((expr) => squeeze(expr)).filter((expr) => expr.length >= 4);
     if (all.some((expr) => longKnown.some((known) => expr.includes(known)))) return true;
@@ -1958,7 +2063,8 @@
     { id: "interval_bound", title: "a < x < b 時 E(x) 的界", explain: "x 只在這個區間裡動，E(x) 的範圍就算得出來" },
     { id: "triangle", title: "|a+b| ≤ |a|+|b|", explain: "三角不等式（不用特別寫「由三角不等式」）" },
     { id: "derivative", title: "g′(x) = …（g 是你令的函數）", explain: "自己令的 g，g′ 與 g″ 由定義數值微分驗；寫出 g'(x) = e^x − 1 就會對" },
-    { id: "monotone", title: "g 遞增且 a > b ⇒ g(a) > g(b)", explain: "先立住「g 在 … 上遞增」（要有對所有 x 的 g'(x) > 0），比大小就接得上" }
+    { id: "monotone", title: "g 遞增且 a > b ⇒ g(a) > g(b)", explain: "先立住「g 在 … 上遞增」（要有對所有 x 的 g'(x) > 0），比大小就接得上" },
+    { id: "definition", title: "把定義代進去（等式）", explain: "h(a) = f(a)g(b) − g(a)f(b) 這種全是等號、只用到定義與題目變數的鏈，算出來對就接得上" }
   ];
   // 鏈的某一邊是不是「自訂函數的導數」：g'(x)、g''(t)
   function derivativeCallOf(ctx, text) {
@@ -2102,6 +2208,15 @@
   // 依優先序找這一句的來源：直接引用 → 代數等價 → 改寫規則。回傳 { kind, rule, from, note, exact } 或 null
   function groundStatement(spec, ctx, chain, evaluate) {
     const same = (a, b) => compact(a) === compact(b) || evaluate(a, b, "=", ctx).ok;
+    // v2.6 由定義：全是等號的鏈、每個名字都是定義／自訂函數／證人／題目給的函數／變數、而且至少有一個定義——把定義代進去就算得出來
+    if (chain.ops.every((op) => op === "=")) {
+      const names = Array.from(new Set((normalize(replaceBars(chain.exprs.join("+"))).toLowerCase().match(/[a-z_]\w*'*/g) || []).filter((n) => !MATH_FUNCTIONS[n] && CONSTANTS[n] === undefined && !/^zzq\d+$/.test(n))));
+      const defined = (n) => Object.keys(ctx.defs).some((k) => k.toLowerCase() === n) || Object.keys(ctx.userFunctions || {}).some((k) => k.toLowerCase() === n.replace(/'+$/, "")) || Object.keys(ctx.witnesses || {}).some((k) => k.toLowerCase() === n) || Object.keys(spec.sampled || {}).some((k) => k.toLowerCase() === n.replace(/'+$/, ""));
+      const variable = (n) => (spec.vars && spec.vars[n] !== undefined) || Array.from(ctx.vars.keys()).some((k) => k.toLowerCase() === n);
+      if (names.length && names.some(defined) && names.every((n) => defined(n) || variable(n))) {
+        return { kind: "rule", rule: "definition", from: names.filter(defined), exact: true, note: "「" + chain.exprs.map((expr, i) => (i ? "= " + expr : expr)).join(" ") + "」把定義代進去就算得出來，在取樣點上成立。" };
+      }
+    }
     // v2.4 導數：g'(x) = … 的等式段（g 是自訂函數）——右邊是不是 g′ 由數值微分驗過了（verifyChain 已驗），這裡給來源
     const derivativeSeg = chain.ops.map((op, i) => ({ op, lhs: chain.exprs[i], rhs: chain.exprs[i + 1] }))
       .find((seg) => seg.op === "=" && (derivativeCallOf(ctx, seg.lhs) || derivativeCallOf(ctx, seg.rhs)));
@@ -2193,6 +2308,12 @@
       const seen = (ctx.verifiedLinks || []).some((link) => head.test(compact(link.lhs)) || head.test(compact(link.rhs)));
       return seen ? "" : `前面還沒算出 ${fnName}′（先寫一行 ${fnName}'(…) = …）`;
     }
+    if (rule.requires === "rolle") {
+      if (!has("differentiable")) return "前面沒說 " + fnName + " 可微（題目給了就寫「因為 " + fnName + " 可微」，或它由可微的函數加減乘出來）";
+      const head = new RegExp("^" + fnName.toLowerCase() + "\\(");
+      const endpoints = (ctx.verifiedLinks || []).some((link) => link.op === "=" && head.test(compact(link.lhs)) && head.test(compact(link.rhs)) && compact(link.lhs) !== compact(link.rhs));
+      return endpoints ? "" : "前面還沒驗出兩端相等（" + fnName + "(a) = " + fnName + "(b) 那一行）";
+    }
     if (rule.requires === "differentiable") return has("differentiable") ? "" : `前面沒說 ${fnName} 可微（題目給了就寫「因為 ${fnName} 可微」，或它是多項式）`;
     if (rule.requires === "continuous") return has("continuous") ? "" : `前面沒說 ${fnName} 連續`;
     if (rule.requires === "twice-differentiable") return has("twice-differentiable") ? "" : `前面沒說 ${fnName} 二次可微（題目給了就寫「因為 ${fnName} 二次可微」）`;
@@ -2242,6 +2363,31 @@
       notes.push(`引用${rule.names[0]}，但「${relation}」跟它的形狀對不上，先當你是對的。`);
     } else {
       notes.push(`由${rule.names[0]}得到 ${name}，「${relation}」登記成條件。`);
+    }
+    // v2.6 證人：單一等式、全部算得出來（沒有抽象 atom）、c 在裡面 → c 是根，不是條件。
+    // Rolle 的 h'(c) = 0、IVT 的 g(c) = 0、積分平均值的 f(c) = 平均，都是這一種
+    if (chain.ops.length === 1 && chain.ops[0] === "=" && match[4] !== undefined && new RegExp("\\b" + name + "\\b").test(relation)) {
+      const lhs = applyMacros(spec, chain.exprs[0], ctx);
+      const rhs = applyMacros(spec, chain.exprs[1], ctx);
+      const probeScope = makeScope(spec, ctx);
+      let computable = !/\bat_/.test(lhs + rhs);
+      if (computable) { try { compile("(" + lhs + ")-(" + rhs + ")", probeScope); compile(match[4], probeScope); compile(match[5], probeScope); } catch (_error) { computable = false; } }
+      if (computable) {
+        ctx.vars.delete(name);
+        ctx.witnesses[name] = { expr: "(" + lhs + ")-(" + rhs + ")", lo: applyMacros(spec, match[4], ctx), hi: applyMacros(spec, match[5], ctx), relation: chain.exprs[0] + " = " + chain.exprs[1] };
+        ctx.asserted.push({ lhs, op: "=", rhs });
+        const probe = drawSamples(spec, ctx, 12);
+        if (!probe.samples.length) {
+          delete ctx.witnesses[name];
+          ctx.vars.set(name, {});
+          status = "unsure";
+          notes.push("在 (" + match[4] + ", " + match[5] + ") 裡找不到讓「" + relation + "」成立的 " + name + "（沒有變號），之後只認字面引用。");
+        } else {
+          notes.push(name + " 取成「" + relation + "」在 (" + match[4] + ", " + match[5] + ") 裡的根，之後的驗算都用它。");
+        }
+        rememberChain(ctx, chain);
+        return { status, note: notes.join(" "), results: [] };
+      }
     }
     // 登記關係式；解不了又抽不到點的等式退回「主張過的關係」
     const before = ctx.constraints.length;
@@ -2372,6 +2518,7 @@
       ...ctx,
       vars: new Map(ctx.vars),
       defs: { ...ctx.defs },
+      witnesses: { ...(ctx.witnesses || {}) },
       constraints: ctx.constraints.slice(),
       facts: ctx.facts.slice()
     };
@@ -2447,7 +2594,7 @@
     triangle: { form: "|a + b| ≤ |a| + |b|" },
     mvt: { form: "f(b) − f(a) = f'(c)(b − a)，c 在 a、b 之間", requires: "f 可微（先寫「f 可微」或「f 是多項式」）" },
     taylor: { form: "f(a + h) = f(a) + h f'(a) + (h²/2) f''(ξ)", requires: "f 二次可微" },
-    rolle: { form: "f'(c) = 0", requires: "f 可微" },
+    rolle: { form: "f'(c) = 0", requires: "f 可微，且前面驗過 f(a) = f(b)" },
     evt: { form: "f 在 [a, b] 上有最大值／最小值", requires: "f 連續" },
     fermat: { form: "內點極值處 f'(c) = 0" },
     squeeze: { form: "lim … 由 A ≤ B ≤ C 夾出", requires: "前面先寫出 A ≤ B ≤ C 的鏈" },
