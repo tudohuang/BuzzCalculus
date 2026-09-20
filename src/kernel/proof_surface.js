@@ -43,7 +43,8 @@
       if ((m = rest.match(/^\\(d?frac|tfrac|dfrac)\s*/))) {
         const a = readGroup(text, i + m[0].length);
         const b = a && readGroup(text, a[1]);
-        if (a && b) { out += `(${rewriteGroups(a[0])})/(${rewriteGroups(b[0])})`; i = b[1]; continue; }
+        // 整個分數再包一層括號：\ln\frac{a}{b} 是 ln 整個分數，不是 ln(a)/(b)
+        if (a && b) { out += `((${rewriteGroups(a[0])})/(${rewriteGroups(b[0])}))`; i = b[1]; continue; }
       }
       if ((m = rest.match(/^\\sqrt\s*/))) {
         const a = readGroup(text, i + m[0].length);
@@ -53,7 +54,8 @@
         const a = readGroup(text, i + m[0].length);
         if (a) { out += ` ${a[0]} `; i = a[1]; continue; }
       }
-      if ((m = rest.match(/^\\(displaystyle|left|right|,|;|!|quad|qquad|limits|nolimits)\b/))) { i += m[0].length; continue; }
+      // \, \; \! \quad 是空隙：換成空白（x\,dx 要變成 x dx，不然積分的 dx 黏在本體上讀不出來）
+      if ((m = rest.match(/^\\(displaystyle|left|right|,|;|!|quad|qquad|limits|nolimits)\b/))) { out += " "; i += m[0].length; continue; }
       if (rest.startsWith("\\lvert") || rest.startsWith("\\rvert") || rest.startsWith("\\mid")) { out += "|"; i += rest.startsWith("\\mid") ? 4 : 6; continue; }
       if (text[i] === "^" || text[i] === "_") {
         const a = readGroup(text, i + 1);
@@ -85,7 +87,9 @@
     infty: "inf", in: " in ", notin: " notin ", forall: "forall ", exists: "exists ",
     cdot: "*", times: "*", div: "/", pm: "+-",
     sin: "sin", cos: "cos", tan: "tan", sec: "sec", csc: "csc", cot: "cot", sinh: "sinh", cosh: "cosh", tanh: "tanh", exp: "exp", ln: "ln", log: "log", lim: "lim", min: "min", max: "max", sup: "sup", inf: "inf", abs: "abs",
-    cdots: "...", ldots: "...", dots: "...", langle: "", rangle: ""
+    cdots: "...", ldots: "...", dots: "...", langle: "", rangle: "",
+    // v2.5 積分與和：交給引擎的 normalize 改寫成 int(…)、sum(…)
+    int: "∫", iint: "∫∫", sum: "Σ", mathrm: "", partial: "d"
   };
   const braceBalanced = (text) => { let depth = 0; for (const ch of text) { if (ch === "{") depth += 1; else if (ch === "}") { depth -= 1; if (depth < 0) return false; } } return depth === 0; };
 
@@ -313,6 +317,10 @@
     if ((m = s.match(EN.hypothesis))) return [{ type: "induction", canonical: `假設 ${m[1]} = ${m[2]} 時成立${m[3] ? `，即 ${strip(m[3])}` : ""}。` }];
     if ((m = s.match(EN.cases))) return [{ type: "case", canonical: `分${{ two: "兩", three: "三", four: "四" }[m[1].toLowerCase()] || m[1]}種情況。` }];
     if ((m = s.match(EN.caseN))) return [{ type: "case", canonical: `情況${CASE_WORDS[m[1].toLowerCase()] || m[1]}：${strip(m[2]) || "否則"}。` }];
+    // v2.5：Differentiating under the integral sign, …／Differentiating with respect to p, … → 由積分號下微分，…
+    if ((m = s.match(/^differentiating\s+(?:under the integral sign|with respect to\s+\w+|both sides|in\s+\w+)\s*[,:]\s*(?:we (?:get|have|obtain)\s*)?(.+)$/i))) {
+      return [{ type: "theorem", canonical: `由積分號下微分，${strip(m[1])}。` }];
+    }
     if ((m = s.match(EN.theorem))) {
       const name = strip(m[1]).replace(/^(?:the )/i, "").replace(/'s\b/i, "");
       const rest = strip(m[2]);

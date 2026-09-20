@@ -25,15 +25,178 @@
     "ξ": "xi", "η": "eta", "θ": "theta", "λ": "lambda", "μ": "mu", "α": "alpha", "β": "beta", "γ": "gamma"
   };
 
+  // v2.5 積分與和：上下標數字（₀¹）、∑、∫ 都要先變成引擎認得的字
+  const SUB_DIGITS = { "₀": "_0", "₁": "_1", "₂": "_2", "₃": "_3", "₄": "_4", "₅": "_5", "₆": "_6", "₇": "_7", "₈": "_8", "₉": "_9", "⁰": "^0", "¹": "^1", "⁷": "^7", "⁸": "^8", "⁹": "^9", "∑": "Σ" };
+
   function normalize(text) {
     let out = String(text || "");
     out = out.replace(/[０-９]/g, (ch) => String.fromCharCode(ch.charCodeAt(0) - 0xff10 + 48));
     out = out.replace(/[Ａ-Ｚａ-ｚ]/g, (ch) => String.fromCharCode(ch.charCodeAt(0) - 0xff21 + 65 + (ch.charCodeAt(0) >= 0xff41 ? 32 : 0)));
     out = out.replace(/[，。：；（）「」『』≤≦≥≧≠−–—×·⋅÷∈∞√πεδ→⇒∀∃…²³⁴⁵⁶ⁿ＝＜＞＋－／　′’ξηθλμαβγ]/g, (ch) => CHAR_MAP[ch]);
+    out = out.replace(/[₀₁₂₃₄₅₆₇₈₉⁰¹⁷⁸⁹∑]/g, (ch) => SUB_DIGITS[ch]);
     out = out.replace(/\\(epsilon|varepsilon)/g, "eps").replace(/\\delta/g, "delta").replace(/\\(le|leq)\b/g, "<=").replace(/\\(ge|geq)\b/g, ">=");
     out = out.replace(/\\(cdot|times)\b/g, "*").replace(/\\(sqrt|pi|sin|cos|tan|log|ln|exp|lim|to|infty)\b/g, "$1");
+    // \int_0 的 _ 是 word 字元，\b 在那裡不成立：用「後面不是字母」
+    out = out.replace(/\\int(?![A-Za-z])/g, "∫").replace(/\\sum(?![A-Za-z])/g, "Σ").replace(/\\[,;!]/g, " ");
     out = out.replace(/\bepsilon\b/g, "eps").replace(/\binfty\b/g, "inf");
+    out = rewriteIntegrals(out);
     return out.replace(/\s+/g, " ").trim();
+  }
+
+  /* ── v2.5 積分與和的寫法 → int(x, a, b, body)、sum(k, a, b, body) ──────
+     ∫₀¹ x^p dx、∫_0^{inf} e^(-x) dx、∫_a^b f(t) dt：從最右邊的 ∫ 開始改（雙重積分裡面的先），
+     上下限接受 _0、_{0}、_(0)、^inf、^{pi}；本體到「d<變數>」為止。
+     Σ_{k=1}^{n} k(k+1)：本體到深度 0 的 + − 或關係符號或字串尾為止。沒有上下限的積分改成 intindef(…)，之後編譯會說算不了。 */
+  function readLimit(text, at) {
+    // 回傳 [內容, 結束位置]；at 指在 _ 或 ^ 之後
+    if (text[at] === "{" || text[at] === "(") {
+      const close = text[at] === "{" ? "}" : ")";
+      let depth = 0;
+      for (let i = at; i < text.length; i += 1) {
+        if (text[i] === text[at]) depth += 1;
+        else if (text[i] === close) { depth -= 1; if (depth === 0) return [text.slice(at + 1, i).trim(), i + 1]; }
+      }
+      return [text.slice(at + 1).trim(), text.length];
+    }
+    // 光溜溜的上下限：一個數字或一個名字（1、inf、pi、a）；「^1int(」要停在 1 之後
+    const m = text.slice(at).match(/^-?(?:\d+(?:\.\d+)?|[A-Za-z_]\w*)/);
+    return m ? [m[0], at + m[0].length] : ["", at];
+  }
+  function rewriteIntegrals(text) {
+    let out = text;
+    for (let guard = 0; guard < 12; guard += 1) {
+      const at = out.lastIndexOf("∫");
+      if (at < 0) break;
+      let i = at + 1;
+      let lo = null; let hi = null;
+      for (let k = 0; k < 2; k += 1) {
+        while (out[i] === " ") i += 1;
+        if (out[i] === "_") { const [v, next] = readLimit(out, i + 1); lo = v; i = next; }
+        else if (out[i] === "^") { const [v, next] = readLimit(out, i + 1); hi = v; i = next; }
+      }
+      const rest = out.slice(i);
+      // 本體到 d<變數> 為止（dx、dt、d x）；delta 這種不算
+      const end = rest.match(/\s*\bd\s?([a-z])(?![a-z0-9(])/i);
+      if (!end) { out = out.slice(0, at) + "intbroken" + rest; continue; }
+      const body = rest.slice(0, end.index).trim();
+      const variable = end[1];
+      const after = rest.slice(end.index + end[0].length);
+      const call = lo !== null && hi !== null ? `int(${variable}, ${lo}, ${hi}, ${body})` : `intindef(${variable}, ${body})`;
+      out = out.slice(0, at) + call + after;
+    }
+    for (let guard = 0; guard < 12; guard += 1) {
+      const at = out.lastIndexOf("Σ");
+      if (at < 0) break;
+      let i = at + 1;
+      let lo = null; let hi = null;
+      for (let k = 0; k < 2; k += 1) {
+        while (out[i] === " ") i += 1;
+        if (out[i] === "_") { const [v, next] = readLimit(out, i + 1); lo = v; i = next; }
+        else if (out[i] === "^") { const [v, next] = readLimit(out, i + 1); hi = v; i = next; }
+      }
+      const rest = out.slice(i);
+      // 本體：到深度 0 的 + − 、關係符號、右括號或字尾
+      let depth = 0; let stop = rest.length;
+      for (let j = 0; j < rest.length; j += 1) {
+        const ch = rest[j];
+        if (ch === "(") depth += 1;
+        else if (ch === ")") { if (depth === 0) { stop = j; break; } depth -= 1; }
+        else if (depth === 0 && j > 0 && /[+\-<>=!]/.test(ch) && !/[eE(]$/.test(rest.slice(0, j).trim())) { stop = j; break; }
+      }
+      const body = rest.slice(0, stop).trim();
+      const after = rest.slice(stop);
+      // 下限寫成 k=1：拆出變數與起點
+      const start = lo !== null ? lo.match(/^([A-Za-z_]\w*)\s*=\s*(.+)$/) : null;
+      const call = start && hi !== null ? `sum(${start[1]}, ${start[2].trim()}, ${hi}, ${body})` : `sumbroken(${body})`;
+      out = out.slice(0, at) + call + after;
+    }
+    return out;
+  }
+
+  /* ── v2.5 數值積分：tanh–sinh（雙指數）；端點奇異（ln x、x^(−1/2)）也收斂，無窮區間換元 ── */
+  function tanhSinh(f, a, b) {
+    const c = (a + b) / 2; const d = (b - a) / 2;
+    if (!(d > 0)) return d === 0 ? 0 : -tanhSinh(f, b, a);
+    const half = Math.PI / 2;
+    let h = 1; let sum = 0; let previous = NaN;
+    const evalAt = (t) => {
+      const u = half * Math.sinh(t);
+      const x = c + d * Math.tanh(u);
+      const w = d * half * Math.cosh(t) / (Math.cosh(u) * Math.cosh(u));
+      if (!(w > 1e-300) || x <= a || x >= b) return 0;
+      const y = f(x);
+      return Number.isFinite(y) ? y * w : NaN;
+    };
+    // 第 0 層：t = 0, ±1, ±2, ±3；之後每層只補奇數倍的新點
+    const base = [0];
+    for (let k = 1; k <= 4; k += 1) base.push(k, -k);
+    sum = base.reduce((acc, t) => acc + evalAt(t), 0);
+    let total = sum * h;
+    for (let level = 1; level <= 7; level += 1) {
+      h /= 2;
+      let add = 0;
+      for (let t = h; t <= 4; t += 2 * h) add += evalAt(t) + evalAt(-t);
+      sum += add;
+      previous = total;
+      total = sum * h;
+      if (!Number.isFinite(total)) return NaN;
+      if (level >= 3 && Math.abs(total - previous) <= 1e-11 * (1 + Math.abs(total))) break;
+    }
+    return total;
+  }
+  function integrate(f, a, b) {
+    if (!Number.isFinite(a) && !Number.isFinite(b)) {
+      if (a === b) return 0;
+      const sign = a < b ? 1 : -1;
+      return sign * tanhSinh((t) => { const x = t / (1 - t * t); return f(x) * (1 + t * t) / ((1 - t * t) * (1 - t * t)); }, -1, 1);
+    }
+    if (!Number.isFinite(b)) return (b > 0 ? 1 : -1) * tanhSinh((t) => f(a + t / (1 - t)) / ((1 - t) * (1 - t)), 0, 1);
+    if (!Number.isFinite(a)) return -integrate(f, b, a);
+    return tanhSinh(f, a, b);
+  }
+  function summate(f, lo, hi) {
+    const from = Math.round(lo); const to = Math.round(hi);
+    if (!Number.isFinite(from) || !Number.isFinite(to)) return NaN;
+    if (to - from > 100000) return NaN;
+    let total = 0;
+    for (let k = from; k <= to; k += 1) total += f(k);
+    return total;
+  }
+  // int(x, a, b, body) 或 int(body, x, a, b)：從字串裡切出四個參數（括號配對），回傳 { variable, lo, hi, body }
+  function splitCallArgs(text) {
+    const args = []; let depth = 0; let current = "";
+    for (const ch of text) {
+      if (ch === "(") depth += 1;
+      if (ch === ")") depth -= 1;
+      if (ch === "," && depth === 0) { args.push(current.trim()); current = ""; continue; }
+      current += ch;
+    }
+    args.push(current.trim());
+    return args;
+  }
+  function extractQuadratures(text) {
+    // 回傳 { text: 換成 zzq0… 的字串, items: [{ kind, variable, lo, hi, body }] }
+    const items = [];
+    let out = text;
+    for (let guard = 0; guard < 20; guard += 1) {
+      const m = out.match(/\b(int|sum)\(/);
+      if (!m) break;
+      const open = m.index + m[0].length - 1;
+      let depth = 0; let close = -1;
+      for (let i = open; i < out.length; i += 1) {
+        if (out[i] === "(") depth += 1;
+        else if (out[i] === ")") { depth -= 1; if (depth === 0) { close = i; break; } }
+      }
+      if (close < 0) throw new Error("積分的括號沒有關");
+      const args = splitCallArgs(out.slice(open + 1, close));
+      if (args.length !== 4) throw new Error(`${m[1] === "int" ? "積分" : "和"}要寫成 ${m[1]}(變數, 下限, 上限, 本體) 四個部分`);
+      const varFirst = /^[A-Za-z_]\w*$/.test(args[0]);
+      const item = varFirst ? { kind: m[1], variable: args[0], lo: args[1], hi: args[2], body: args[3] } : { kind: m[1], variable: args[1], lo: args[2], hi: args[3], body: args[0] };
+      if (!/^[A-Za-z_]\w*$/.test(item.variable)) throw new Error(`${m[1] === "int" ? "積分" : "和"}變數「${item.variable}」不是一個名字`);
+      items.push(item);
+      out = out.slice(0, m.index) + `zzq${items.length - 1}` + out.slice(close + 1);
+    }
+    return { text: out, items };
   }
 
   const compact = (text) => normalize(text).replace(/\s+/g, "").toLowerCase();
@@ -124,7 +287,19 @@
     return parts;
   }
 
-  function compile(text, scope) {
+  function compile(source, outerScope) {
+    if (/\bintindef\(/.test(source)) throw new Error("這個積分沒有上下限（不定積分算不了）：請寫成 ∫_a^b … dx 的定積分");
+    if (/\bintbroken\b|\bsumbroken\(/.test(source)) throw new Error("積分或和的寫法讀不出來：∫ 要寫成「∫_a^b 本體 dx」、Σ 要寫成「Σ_{k=1}^{n} 本體」");
+    // v2.5：積分與和先切出來，各自編譯（本體多一個積分變數），主式子裡用 zzq0… 代替；求值時先算它們
+    const quadratures = extractQuadratures(source);
+    const text = quadratures.text;
+    const scope = quadratures.items.length
+      ? { vars: new Set([...(outerScope.vars || []), ...quadratures.items.map((_, i) => `zzq${i}`)]), functions: outerScope.functions }
+      : outerScope;
+    const compiled = quadratures.items.map((item) => {
+      const inner = { vars: new Set([...(outerScope.vars || []), item.variable]), functions: outerScope.functions };
+      return { kind: item.kind, variable: item.variable, lo: compile(item.lo, outerScope), hi: compile(item.hi, outerScope), body: compile(item.body, inner) };
+    });
     const isFunction = (name) => Boolean(MATH_FUNCTIONS[name] || (scope.functions && scope.functions[name]));
     const known = (name) => isFunction(name) || (scope.vars && scope.vars.has(name)) || CONSTANTS[name] !== undefined;
     const raw = tokenize(text).flatMap((token) => {
@@ -202,13 +377,14 @@
           }
           expect(")");
           const fn = MATH_FUNCTIONS[name] || scope.functions[name];
-          return (env) => fn(...args.map((arg) => arg(env)));
+          // 自訂函數的本體可以用到外面的參數（令 I(p) = ∫₀¹ (x^p − x^q)/ln x dx 裡的 q）：把 env 一起傳
+          return fn.needsEnv ? (env) => fn(...args.map((arg) => arg(env)), env) : (env) => fn(...args.map((arg) => arg(env)));
         }
         if (isFunction(name) && peek() && (peek().type === "id" || peek().type === "num")) {
           // sqrt a、sin x：函數名後面直接接一個原子，當成 f(原子)
           const arg = parseAtom();
           const fn = MATH_FUNCTIONS[name] || scope.functions[name];
-          return (env) => fn(arg(env));
+          return fn.needsEnv ? (env) => fn(arg(env), env) : (env) => fn(arg(env));
         }
         if (CONSTANTS[name] !== undefined && !(scope.vars && scope.vars.has(name))) return () => CONSTANTS[name];
         if (scope.vars && scope.vars.has(name)) return (env) => env[name];
@@ -220,7 +396,16 @@
     }
     const root = parseExpr();
     if (pos < tokens.length) throw new Error(`「${tokens[pos].value}」之後讀不下去`);
-    return root;
+    if (!compiled.length) return root;
+    return (env) => {
+      const local = Object.assign({}, env);
+      compiled.forEach((item, index) => {
+        const lo = item.lo(local); const hi = item.hi(local);
+        const f = (v) => item.body(Object.assign({}, local, { [item.variable]: v }));
+        local[`zzq${index}`] = item.kind === "int" ? integrate(f, lo, hi) : summate(f, lo, hi);
+      });
+      return root(local);
+    };
   }
 
   /* ── 關係鏈：A = B <= C ──────────────────────────────────────── */
@@ -264,14 +449,15 @@
     // 使用者自己「令 g(x) = x^5 + x − 1」的函數：本體只認參數與常數。
     // v2.4：g′、g″ 也算得出來——中央差分加 Richardson 外推（誤差 O(h⁴)），
     // 所以「則 g'(x) = e^x − 1」這種句子可以數值驗，不用符號微分。
+    // 本體可以用到外面的參數（q、a），所以帶著呼叫當下的 env（needsEnv）
     Object.keys(ctx.userFunctions || {}).forEach((name) => {
       const entry = ctx.userFunctions[name];
-      const g = (value) => entry.fn({ [entry.param]: value });
-      functions[name] = g;
-      const first = (v, h) => (g(v + h) - g(v - h)) / (2 * h);
-      const second = (v, h) => (g(v + h) - 2 * g(v) + g(v - h)) / (h * h);
-      functions[`${name}'`] = (v) => { const h = 1e-4 * Math.max(1, Math.abs(v)); return (4 * first(v, h / 2) - first(v, h)) / 3; };
-      functions[`${name}''`] = (v) => { const h = 1e-3 * Math.max(1, Math.abs(v)); return (4 * second(v, h / 2) - second(v, h)) / 3; };
+      const g = (value, env) => entry.fn(Object.assign({}, env || {}, { [entry.param]: value }));
+      functions[name] = Object.assign(g, { needsEnv: true });
+      const first = (v, h, env) => (g(v + h, env) - g(v - h, env)) / (2 * h);
+      const second = (v, h, env) => (g(v + h, env) - 2 * g(v, env) + g(v - h, env)) / (h * h);
+      functions[`${name}'`] = Object.assign((v, env) => { const h = 1e-4 * Math.max(1, Math.abs(v)); return (4 * first(v, h / 2, env) - first(v, h, env)) / 3; }, { needsEnv: true });
+      functions[`${name}''`] = Object.assign((v, env) => { const h = 1e-3 * Math.max(1, Math.abs(v)); return (4 * second(v, h / 2, env) - second(v, h, env)) / 3; }, { needsEnv: true });
     });
     return { vars, functions };
   }
@@ -388,7 +574,13 @@
     { id: "continuity", names: ["連續性", "連續", "continuity", "continuous"], shapes: [] },
     { id: "bernoulli", names: ["白努利不等式", "bernoulli", "伯努利不等式"], shapes: [/\(1\+(.+)\)\^(\w+)>=1\+/] },
     { id: "cauchy", names: ["柯西不等式", "cauchy", "cauchy-schwarz"], shapes: [] },
-    { id: "binomial", names: ["二項式定理", "binomial theorem", "二項展開"], shapes: [] }
+    { id: "binomial", names: ["二項式定理", "binomial theorem", "二項展開"], shapes: [] },
+    // v2.5 積分：對參數微分（式子本身數值驗：I′ 用數值微分、右邊的積分用數值積分）；
+    // 微積分基本定理要前面先算出 I′；Frullani 與積分平均值定理對形狀
+    { id: "leibniz", names: ["積分號下微分", "對參數微分", "在積分號下微分", "微分積分交換", "feynman", "feynman 積分法", "leibniz", "leibniz rule", "leibniz integral rule", "differentiation under the integral sign", "differentiating under the integral sign"], shapes: [/(\w+)'\((\w+)\)=int\(/] },
+    { id: "ftc", names: ["微積分基本定理", "基本定理", "牛頓-萊布尼茲公式", "牛頓萊布尼茲", "newton-leibniz", "fundamental theorem of calculus", "ftc"], shapes: [/=.*int\(/], requires: "derivative" },
+    { id: "frullani", names: ["frullani", "frullani 公式", "frullani 積分", "frullani's theorem"], shapes: [/int\(\w+,0,inf,/] },
+    { id: "integral-mvt", names: ["積分平均值定理", "積分中值定理", "積分均值定理", "mean value theorem for integrals", "integral mean value theorem"], shapes: [/int\(.+\)=(\w+)\((\w+)\)\*?\(/], requires: "continuous" }
   ];
 
   function findRule(name) {
@@ -589,7 +781,9 @@
         if (/看不懂的符號/.test(error.message)) return { ok: false, unsure: false, reason: `${error.message}：式子裡只能有數學，中文要放在句型的位置。` };
         return { ok: false, unsure: true, reason: error.message };
       }
-      const { samples } = drawSamples(spec, context, 160);
+      // v2.5：式子裡有積分或和（或自訂函數本體裡有）時每點都要做數值積分，取樣點減到 48 個——夠抓反例，不拖 UI
+      const heavy = /\b(int|sum)\(/.test(`${lhs} ${rhs}`) || Object.values(context.userFunctions || {}).some((entry) => /\b(int|sum)\(/.test(entry.body));
+      const { samples } = drawSamples(spec, context, heavy ? 48 : 160);
       if (!samples.length) return { ok: false, unsure: true, reason: "在目前的假設下抽不到任何一個點（假設互相矛盾，或條件太緊）" };
       let checked = 0;
       for (const env of samples) {
@@ -826,13 +1020,15 @@
         const param = fnDef[2];
         const body = applyMacros(spec, chain.exprs[1], ctx);
         try {
-          const fn = compile(body, { vars: new Set([param]), functions: Object.assign({}, spec.functions || {}) });
+          // 本體：參數之外也可以用題目的變數、前面宣告的變數與定義（令 I(p) = ∫₀¹ (x^p − x^q)/ln x dx 裡的 q）
+          const outer = [...Object.keys(spec.vars || {}), ...ctx.vars.keys(), ...Object.keys(ctx.defs)].filter((v) => v !== param);
+          const fn = compile(body, { vars: new Set([param, ...outer]), functions: Object.assign({}, spec.functions || {}) });
           ctx.userFunctions[name] = { param, body, fn };
           ctx.vars.delete(name);
           notes.push(`定義函數 ${name}(${param}) = ${chain.exprs[1]}，後面的 ${name}(…) 都會照這個算。`);
         } catch (error) {
           status = worst(status, "error");
-          notes.push(`「${part}」：${error.unknownSymbol ? `函數本體只能用參數 ${param}（「${error.unknownSymbol}」不是）` : error.message}`);
+          notes.push(`「${part}」：${error.unknownSymbol ? `函數本體只能用參數 ${param}、題目的變數與前面宣告過的東西（「${error.unknownSymbol}」不是）` : error.message}`);
         }
         continue;
       }
@@ -1106,6 +1302,11 @@
           }
           status = worst(status, "error");
           notes.push(`「${bad.lhs} ${bad.op} ${bad.rhs}」不成立：${bad.reason}`);
+        } else if (rule && rule.id !== "unknown" && !isPremise && ruleRequirementMissing(rule, ctx, part)) {
+          // 式子數值上對，但引用的定理前提沒立住（微積分基本定理要先算出 I′、均值定理要 f 可微）：黃，說缺什麼
+          status = worst(status, "unsure");
+          notes.push(`「${part}」式子本身驗過了，但引用${rule.names[0]}，${ruleRequirementMissing(rule, ctx, part)}。`);
+          rememberChain(ctx, verified.chain);
         } else if (unsure.length) {
           const shapeHit = rule && rule.shapes && rule.shapes.some((shape) => shape.test(shapeKey(part))) && ruleRequirementsMet(rule, ctx, part);
           if (shapeHit) {
@@ -1433,10 +1634,17 @@
     if (equivalentToKnown(spec, ctx, chain, evaluate)) return true;
     if (equivalentToConstraint(spec, ctx, chain, evaluate)) return true;
     // 只有定義與常數：把定義代進去就能算，等於「由定義」
-    const identifiers = (compact(replaceBars(lhs + "+" + rhs)).match(/[A-Za-z_]\w*'*/g) || []).filter((name) => !MATH_FUNCTIONS[name] && CONSTANTS[name] === undefined);
+    // 用有空白的版本抓識別字（compact 會把 pi ln a 黏成 pilna），再小寫
+    const identifiers = (normalize(replaceBars(lhs + "+" + rhs)).toLowerCase().match(/[a-z_]\w*'*/g) || []).filter((name) => !MATH_FUNCTIONS[name] && CONSTANTS[name] === undefined && !/^zzq\d+$/.test(name));
     // 自己令的函數（g、g′）也算定義：g(0) = 0 代進去就能算
-    const byDefinition = (name) => ctx.defs[name] !== undefined || Boolean(ctx.userFunctions && ctx.userFunctions[name.replace(/'+$/, "")]);
+    // identifiers 是 compact 過的（小寫），自訂函數名（I）要不分大小寫地找
+    const userFunctionNames = Object.keys(ctx.userFunctions || {}).map((name) => name.toLowerCase());
+    const byDefinition = (name) => ctx.defs[name] !== undefined || Object.keys(ctx.defs).some((key) => key.toLowerCase() === name) || userFunctionNames.includes(name.replace(/'+$/, ""));
     if (identifiers.length && identifiers.every(byDefinition)) return true;
+    // v2.5：等式裡有自己定義的東西、其餘是題目的變數（I(q) = 0、I(0) = π ln a）：把定義代進去就算得出來，算「由定義」。
+    // 不等式不算（g(x) > 0 是主張不是計算），沒有任何定義的等式也不算
+    const isVariable = (name) => (spec.vars && spec.vars[name] !== undefined) || ctx.vars.has(name);
+    if (op === "=" && identifiers.some(byDefinition) && identifiers.every((name) => byDefinition(name) || isVariable(name))) return true;
     return false;
   }
 
@@ -1979,6 +2187,12 @@
       return signs.has(1) && signs.has(-1);
     };
     if (rule.requires === "sandwich") return ctx.hasSandwich ? "" : "前面還沒有把它夾住的鏈（A ≤ B ≤ C 那一行）";
+    // 微積分基本定理：I(b) − I(a) = ∫_a^b I′，前面要先算出 I′（I'(p) = … 那一行）
+    if (rule.requires === "derivative") {
+      const head = new RegExp("^" + fnName.toLowerCase() + "'\\(");
+      const seen = (ctx.verifiedLinks || []).some((link) => head.test(compact(link.lhs)) || head.test(compact(link.rhs)));
+      return seen ? "" : `前面還沒算出 ${fnName}′（先寫一行 ${fnName}'(…) = …）`;
+    }
     if (rule.requires === "differentiable") return has("differentiable") ? "" : `前面沒說 ${fnName} 可微（題目給了就寫「因為 ${fnName} 可微」，或它是多項式）`;
     if (rule.requires === "continuous") return has("continuous") ? "" : `前面沒說 ${fnName} 連續`;
     if (rule.requires === "twice-differentiable") return has("twice-differentiable") ? "" : `前面沒說 ${fnName} 二次可微（題目給了就寫「因為 ${fnName} 二次可微」）`;
@@ -2246,7 +2460,11 @@
     continuity: { form: "文字引用，式子本身照樣驗" },
     bernoulli: { form: "(1 + x)^n ≥ 1 + nx" },
     cauchy: { form: "文字引用；式子驗不了的會標黃" },
-    binomial: { form: "文字引用；式子驗不了的會標黃" }
+    binomial: { form: "文字引用；式子驗不了的會標黃" },
+    leibniz: { form: "I'(p) = ∫_a^b ∂/∂p(被積函數) dx：I′ 用數值微分、右邊用數值積分，兩邊對上就綠（交換的正當性先當你是對的）" },
+    ftc: { form: "I(b) = I(a) + ∫_a^b I'(t) dt", requires: "前面先算出 I′（I'(p) = … 那一行）" },
+    frullani: { form: "∫_0^inf (f(ax) − f(bx))/x dx = (f(0) − f(inf)) ln(b/a)；f 具體才算得出來" },
+    "integral-mvt": { form: "∫_a^b f(x) dx = f(c)(b − a)", requires: "f 連續" }
   };
   const CHEAT_FACTS = [
     "f 是多項式（蘊含連續、可微）",
@@ -2266,6 +2484,8 @@
     ["存在", "存在 c ∈ (a, b) 使 …（要接在「由 <定理>，」後面）"],
     ["對所有", "對所有正整數 n、對任意 x：是裝飾，不是主張"],
     ["空格", "可打可不打：|x-3| 跟 |x − 3| 一樣"],
+    ["定積分", "∫_0^1 x^p dx、∫₀¹ … dx、∫_0^{inf} e^(-x) dx、\\int_0^1 x\\,dx；本體寫到 dx 為止；上下限要寫（不定積分算不了）。令 I(p) = ∫ … dx 之後 I'(p) 也算得出來"],
+    ["有限和", "Σ_{k=1}^{n} k(k+1)、\\sum_{k=1}^n k^2；本體到 + − 或關係符號為止；無窮級數算不了"],
     ["一行一句", "句號只能在最後；「且」與逗號可以分開兩個主張"],
     ["顏色", "綠＝驗過成立；黃＝讀得懂但驗不了（抽象函數、字典外的定理、接不上前文）；紅＝不成立、沒宣告的變數、還沒對上目標就得證"]
   ];

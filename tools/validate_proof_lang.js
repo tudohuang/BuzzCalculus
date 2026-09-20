@@ -266,6 +266,55 @@ lessons.forEach((lesson, index) => {
   if (decreasing.lines[2].status === "ok") fail(`v2.4：g' > 0 不能推出 g 遞減：${decreasing.lines[2].status} ${decreasing.lines[2].note}`);
 }
 
+
+// 9. v2.5 積分與和：∫、Σ 的寫法改寫成 int()/sum()，tanh–sinh 數值積分（端點奇異、無窮區間都收斂），
+//    令 I(p) = ∫ … 之後 I′ 是數值微分；對參數微分／基本定理／Frullani 進規則字典；基本定理要先算出 I′；不定積分算不了要說清楚。
+{
+  const n = (text) => lang.normalize(text);
+  const cases = [
+    ["∫₀¹ x^p dx", "int(x, 0, 1, x^p)"],
+    ["∫_0^{inf} e^(-x) dx = 1", "int(x, 0, inf, e^(-x)) = 1"],
+    ["\\int_{0}^{\\pi} \\cos x\\,dx", "int(x, 0, pi, cos x)"],
+    ["Σ_{k=1}^{n} k(k+1)", "sum(k, 1, n, k(k+1))"],
+    ["∫₀¹∫₀¹ x y dx dy", "int(y, 0, 1, int(x, 0, 1, x y))"]
+  ];
+  cases.forEach(([text, expected]) => {
+    checks += 1;
+    if (n(text).replace(/\s+/g, " ") !== expected) fail(`v2.5 寫法：「${text}」應該改寫成「${expected}」，卻是「${n(text)}」`);
+  });
+  const value = (text, env) => lang.compile(n(text), { vars: new Set(Object.keys(env || {})), functions: {} })(env || {});
+  const near = (a, b, tol) => Math.abs(a - b) <= (tol || 1e-7) * (1 + Math.abs(b));
+  checks += 5;
+  if (!near(value("∫_0^1 ln(x) dx"), -1)) fail(`v2.5 積分：∫₀¹ ln x dx 應該是 −1，算出 ${value("∫_0^1 ln(x) dx")}`);
+  if (!near(value("∫_0^1 x^(-0.5) dx"), 2)) fail(`v2.5 積分：∫₀¹ x^(−1/2) dx 應該是 2，算出 ${value("∫_0^1 x^(-0.5) dx")}`);
+  if (!near(value("∫_0^inf e^(-x) dx"), 1)) fail(`v2.5 積分：∫₀^∞ e^(−x) dx 應該是 1`);
+  if (!near(value("∫_{-inf}^{inf} e^(-x^2) dx"), Math.sqrt(Math.PI))) fail(`v2.5 積分：∫ e^(−x²) 應該是 √π`);
+  if (value("Σ_{k=1}^{n} k^2", { n: 5 }) !== 55) fail(`v2.5 和：Σ k² 到 5 應該是 55，算出 ${value("Σ_{k=1}^{n} k^2", { n: 5 })}`);
+  const feynman = problems.find((spec) => spec.id === "pl-classic-305");
+  const ref = feynman.reference;
+  const run = (lines) => lang.check(feynman, lines.join("\n"));
+  // 錯的積分號下微分：紅
+  const wrong = run(ref.map((line, i) => (i === 1 ? "由積分號下微分，I'(p) = ∫₀¹ x^(p+1) dx = 1/(p + 2)。" : line)));
+  checks += 1;
+  if (wrong.lines[1].status !== "error") fail(`v2.5：I'(p) = ∫ x^(p+1) dx 是錯的，應該紅：${wrong.lines[1].status} ${wrong.lines[1].note}`);
+  // 基本定理前面沒算出 I′：黃並說缺什麼
+  const noDerivative = run(ref.filter((_, i) => i !== 1));
+  checks += 1;
+  const ftcLine = noDerivative.lines[1];
+  if (noDerivative.verdict === "verified" || !ftcLine || ftcLine.status !== "unsure" || !/前面還沒算出 I′/.test(ftcLine.note)) fail(`v2.5：沒有 I′ 那一行時基本定理應該黃並說前面還沒算出 I′：${noDerivative.verdict} ${ftcLine && `${ftcLine.status} ${ftcLine.note}`}`);
+  // 不定積分：黃，訊息講清楚
+  const indefinite = run(["令 I(p) = ∫ x^p dx。"]);
+  checks += 1;
+  if (indefinite.lines[0].status === "ok" || !/不定積分算不了/.test(indefinite.lines[0].note)) fail(`v2.5：不定積分應該說算不了：${indefinite.lines[0].status} ${indefinite.lines[0].note}`);
+  // 和：Σ_{k=1}^{n} k = n(n+1)/2 在整數 n 上驗得過；寫錯紅
+  const sumSpec = Object.assign({}, feynman, { id: "pl-sum-test", vars: { n: { min: 1, max: 30, int: true } }, goal: { relation: "Σ_{k=1}^{n} k = n(n+1)/2" } });
+  const sumOk = lang.check(sumSpec, "則 Σ_{k=1}^{n} k = n(n + 1)/2。");
+  const sumBad = lang.check(sumSpec, "則 Σ_{k=1}^{n} k = n(n − 1)/2。");
+  checks += 2;
+  if (sumOk.lines[0].status === "error") fail(`v2.5：Σ k = n(n+1)/2 不該紅：${sumOk.lines[0].note}`);
+  if (sumBad.lines[0].status !== "error") fail(`v2.5：Σ k = n(n−1)/2 應該紅：${sumBad.lines[0].status} ${sumBad.lines[0].note}`);
+}
+
 // classic：機器判版本要指到 proofs.js 真的存在的題（題目頁上的「自己寫，機器判」按鈕靠這個）；一題經典證明只能有一個機器判版本
 require(path.join(__dirname, "..", "src", "proofs.js"));
 const classicIds = new Set((global.window.BUZZ_PROOFS || []).map((item) => item.id));
