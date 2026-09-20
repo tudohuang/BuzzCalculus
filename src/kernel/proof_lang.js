@@ -261,10 +261,17 @@
   function makeScope(spec, ctx) {
     const vars = new Set([...Object.keys(spec.vars || {}), ...ctx.vars.keys(), ...Object.keys(ctx.defs), ...(ctx.atoms ? ctx.atoms.keys() : [])]);
     const functions = Object.assign({}, spec.functions || {});
-    // 使用者自己「令 g(x) = x^5 + x − 1」的函數：本體只認參數與常數
+    // 使用者自己「令 g(x) = x^5 + x − 1」的函數：本體只認參數與常數。
+    // v2.4：g′、g″ 也算得出來——中央差分加 Richardson 外推（誤差 O(h⁴)），
+    // 所以「則 g'(x) = e^x − 1」這種句子可以數值驗，不用符號微分。
     Object.keys(ctx.userFunctions || {}).forEach((name) => {
       const entry = ctx.userFunctions[name];
-      functions[name] = (value) => entry.fn({ [entry.param]: value });
+      const g = (value) => entry.fn({ [entry.param]: value });
+      functions[name] = g;
+      const first = (v, h) => (g(v + h) - g(v - h)) / (2 * h);
+      const second = (v, h) => (g(v + h) - 2 * g(v) + g(v - h)) / (h * h);
+      functions[`${name}'`] = (v) => { const h = 1e-4 * Math.max(1, Math.abs(v)); return (4 * first(v, h / 2) - first(v, h)) / 3; };
+      functions[`${name}''`] = (v) => { const h = 1e-3 * Math.max(1, Math.abs(v)); return (4 * second(v, h / 2) - second(v, h)) / 3; };
     });
     return { vars, functions };
   }
@@ -403,7 +410,10 @@
     { key: "continuous", re: /^([A-Za-z]\w*)\s*(?:在.*?上|on\s+.+?)?\s*(?:是|為|is)?\s*(連續|continuous)(?:的|函數| function)?$/i },
     { key: "differentiable", re: /^([A-Za-z]\w*)\s*(?:在.*?上|on\s+.+?)?\s*(?:是|為|is)?\s*(可微|可導|可微分|differentiable)(?:的|函數| function)?$/i },
     // 二次可微：泰勒定理的前提（也蘊含可微）
-    { key: "twice-differentiable", re: /^([A-Za-z]\w*)\s*(?:在.*?上|on\s+.+?)?\s*(?:是|為|is)?\s*(二次可微|二階可微|兩次可微|二次可導|twice differentiable|c\^?2)(?:的|函數| function| 級)?$/i }
+    { key: "twice-differentiable", re: /^([A-Za-z]\w*)\s*(?:在.*?上|on\s+.+?)?\s*(?:是|為|is)?\s*(二次可微|二階可微|兩次可微|二次可導|twice differentiable|c\^?2)(?:的|函數| function| 級)?$/i },
+    // v2.4 單調性：g 在 (0, ∞) 上遞增／g is increasing on (0, inf)。要先有「對所有 x∈…，g'(x) > 0」才立得住
+    { key: "increasing", re: /^([A-Za-z]\w*)\s*(?:在\s*(.+?)\s*上)?\s*(?:是|為|is)?\s*(?:嚴格|strictly)?\s*(遞增|單調遞增|單調增|increasing|monotonically increasing)(?:\s+on\s+(.+))?(?:的)?$/i },
+    { key: "decreasing", re: /^([A-Za-z]\w*)\s*(?:在\s*(.+?)\s*上)?\s*(?:是|為|is)?\s*(?:嚴格|strictly)?\s*(遞減|單調遞減|單調減|decreasing|monotonically decreasing)(?:\s+on\s+(.+))?(?:的)?$/i }
   ];
   function textFactKey(part) {
     for (const fact of TEXT_FACTS) {
@@ -436,6 +446,9 @@
     { kind: "let", label: "任取／設／取", re: /^(任取|任意取|任給|給定|固定|設|令|取|let|fix|take|choose|pick|given)(?:(?<=[取給定設令])\s*|\s+)(.+)$/i },
     { kind: "assume", label: "假設／若…則…", re: /^(假設|若|如果|suppose|assume|if)(?:(?<=[設若果])\s*|\s+)(.+?)(?:\s*[,;]\s*(則|那麼|then)(?:(?<=[則麼])\s*|\s+)(.+))?$/i },
     { kind: "by", label: "由 <規則>，…", re: /^(由|根據|依|依據|利用|by|using|from|applying)\s*(.+?)\s*[,:]\s*(.+)$/i },
+    // v2.4 全稱主張：對所有 x > 0，g'(x) > 0／當 x > 0 時，g(x) > 0／for all x > 0, …／whenever x > 0, …
+    // 條件只在這一句裡有效（不是整份證明的假設）；驗過之後登記成「對所有點成立」的事實，之後 g'(c) > 0 可以直接套
+    { kind: "forall", label: "對所有 <條件>，<主張>", re: /^(對(?:所有|任意|每個|一切|任何|於)|for (?:all|every|any|each)|當|when|whenever)\s*(.+?)\s*(時)?\s*[,:]\s*(?:我們有|有|we have|then)?\s*(.+)$/i },
     // 中文關鍵字後面可以不空格（因為x>0，所以x²>0）；英文的要空格，不然 as/so 會咬到 assume、some
     { kind: "because", label: "因為…，所以…", re: /^(因為|because|since|as)(?:(?<=為)\s*|\s+)(.+?)\s*[,;]\s*(所以|故|因此|so|hence|therefore|thus)(?:(?<=[以故此])\s*|\s+)(.+)$/i },
     { kind: "claim", label: "則／所以 <推導>", re: /^(則|那麼|得|得到|所以|故|因此|於是|即|然後|接著|同理|(?:展開|整理|化簡|移項|通分|配方|代入|平方|開根號|兩邊[^,]{0,12}?)(?:後|可得|得到|得)?|then|so|hence|thus|therefore|we (get|have|obtain)|it follows that|this gives|expanding|simplifying|rearranging)\s*[,:]?\s*(.+)$/i }
@@ -690,6 +703,12 @@
         push(line, worst(reason.status, claim.status), `前提：${reason.note} 結論：${claim.note}`, { results: [...(reason.results || []), ...(claim.results || [])], grounding: claim.grounding || reason.grounding || null });
         continue;
       }
+      if (line.kind === "forall") {
+        // 整句交給 handleClaim：它會把「對所有 <條件>，」剝下來，在條件之下驗，再登記成全稱事實
+        const claim = handleClaim(spec, ctx, line.text, line, verifyChain, evaluate, null);
+        push(line, claim.status, claim.note, { results: claim.results, grounding: claim.grounding || null });
+        continue;
+      }
       if (line.kind === "claim") {
         const body = line.bare ? line.text : line.match[3];
         // 分情況之後的總結句（故／因此／綜上 …）：它不屬於最後一個情況，它是在收所有情況
@@ -893,7 +912,86 @@
   }
 
   /* 推導：則 |3x − 6| = 3|x − 2| < 3δ = ε */
+  /* ── v2.4 全稱主張：對所有 x > 0，g'(x) > 0 ───────────────────────
+     條件只在這一句裡有效：複製一份上下文、把條件當假設加進去、在裡面驗主張。
+     驗過之後：(1) 驗過的關係複製回主上下文（供之後接地）；(2) 每一條含量化變數的
+     關係把變數換成 _ 登記成全稱事實（帶 domain），之後「g'(c) > 0」寫出來就是它的實例
+     （c 要滿足 domain，matchUniversal 會用取樣驗）。 */
+  const QUANTIFIER_HEAD = /^(?:對(?:所有|任意|每個|一切|任何|於)|for (?:all|every|any|each)|當|when|whenever)\s*(.+?)\s*(?:時)?\s*[,:]\s*(?:我們有|有|we have|then)?\s*(.+)$/i;
+  const QUANTIFIER_TAIL = /^(.+?)\s*,?\s*(?:對(?:所有|任意|每個|一切|任何)|for (?:all|every|any|each)|whenever|when)\s+(.+?)\s*(?:成立|holds)?$/i;
+  function parseQuantifier(body) {
+    const text = String(body || "").trim();
+    let m = text.match(QUANTIFIER_HEAD);
+    if (m && /(<=|>=|!=|<|>|=| in )/.test(m[2])) return { condition: m[1].trim(), rest: m[2].trim() };
+    m = text.match(QUANTIFIER_TAIL);
+    if (m && /(<=|>=|!=|<|>|=| in )/.test(m[1]) && /(<=|>=|!=|<|>|=| in |∈)/.test(m[2]) && !/^(所有|任意|all|every|any)/.test(m[2])) return { condition: m[2].trim(), rest: m[1].trim() };
+    return null;
+  }
+  // 「x in (0, inf)」「x ∈ [a, b)」→ 「0 < x < inf」；無限的那一邊略過
+  function conditionToChain(condition) {
+    const interval = condition.match(/^([A-Za-z_]\w*)\s+in\s*([\(\[])\s*([^,]+?)\s*,\s*([^\)\]]+?)\s*([\)\]])$/i);
+    if (!interval) return condition;
+    const [, name, open, lo, hi, close] = interval;
+    const parts = [];
+    if (!/^-?inf$/i.test(lo.trim())) parts.push(`${lo.trim()} ${open === "[" ? "<=" : "<"} ${name}`);
+    if (!/^-?inf$/i.test(hi.trim())) parts.push(`${parts.length ? "" : name + " "}${close === "]" ? "<=" : "<"} ${hi.trim()}`.replace(/^(<=?) /, `${name} $1 `));
+    return parts.length ? parts.join(" 且 ").replace(/(\S+) (<=?) (\w+) 且 \3 (<=?) (\S+)/, "$1 $2 $3 $4 $5") : name;
+  }
+  function handleQuantified(spec, ctx, quantified, line, verifyChain, evaluate, rule, isPremise) {
+    const conditionChain = conditionToChain(quantified.condition);
+    const local = cloneCtx(ctx);
+    local.skeleton = { ...ctx.skeleton };
+    local.verifiedLinks = (ctx.verifiedLinks || []).slice();
+    local.knownExprs = (ctx.knownExprs || []).slice();
+    local.factLog = (ctx.factLog || []).slice();
+    local.goalDone = false;
+    local.goalDoneInCases = new Set(ctx.goalDoneInCases);
+    // 量化變數：條件裡的識別字（x > 0 的 x）；還沒宣告就在這一句裡當變數
+    const names = Array.from(new Set((conditionChain.match(/[A-Za-z_]\w*/g) || []).filter((name) => !MATH_FUNCTIONS[name] && CONSTANTS[name] === undefined && !/^(in|and|且)$/i.test(name))));
+    names.forEach((name) => { if (!local.defs[name] && !(local.userFunctions && local.userFunctions[name])) local.vars.set(name, local.vars.get(name) || {}); });
+    const assumed = splitChain(conditionChain) || /且/.test(conditionChain) ? applyAssumption(spec, local, conditionChain, null) : { status: "ok", note: "" };
+    if (local.infeasible) return { status: "unsure", note: `條件「${quantified.condition}」之下抽不到任何點，主張沒法驗。`, results: [], grounding: null };
+    const inner = handleClaim(spec, local, quantified.rest, line, verifyChain, evaluate, rule, isPremise);
+    const results = inner.results || [];
+    if (inner.status === "error") return { status: "error", note: `在「${quantified.condition}」之下：${inner.note}`, results, grounding: inner.grounding || null };
+    // 驗過的東西帶回主上下文（不帶條件本身：條件只在這一句有效）
+    ctx.verifiedLinks = ctx.verifiedLinks || [];
+    local.verifiedLinks.slice((ctx.verifiedLinks || []).length).forEach((link) => ctx.verifiedLinks.push(link));
+    ctx.knownExprs = ctx.knownExprs || [];
+    local.knownExprs.slice(ctx.knownExprs.length).forEach((expr) => ctx.knownExprs.push(expr));
+    ctx.factLog = ctx.factLog || [];
+    local.factLog.slice(ctx.factLog.length).forEach((fact) => ctx.factLog.push(fact));
+    if (local.goalDone) { ctx.goalDone = true; if (ctx.currentCase !== null) ctx.goalDoneInCases.add(ctx.currentCase); }
+    if (local.skeleton.bound) ctx.skeleton.bound = true;
+    if (local.skeleton.step) ctx.skeleton.step = true;
+    local.textFacts.forEach((key) => ctx.textFacts.add(key));
+    if (local.monotone) ctx.monotone = Object.assign(ctx.monotone || {}, local.monotone);
+    // 登記成全稱事實：每一條含量化變數的關係，變數換成 _
+    const variable = names.find((name) => local.vars.has(name) || (spec.vars && spec.vars[name])) || names[0];
+    const registered = [];
+    if (variable && inner.status === "ok") {
+      const hole = (text) => text.replace(new RegExp(`\\b${variable}\\b`, "g"), "_");
+      statementList(quantified.rest).map((part) => splitChain(part)).filter(Boolean).forEach((chain) => {
+        const segments = chain.ops.map((op, i) => ({ lhs: chain.exprs[i], op, rhs: chain.exprs[i + 1] }));
+        // 多段鏈的頭尾也是一條事實：g'(x) = e^x − 1 > 0 給的是 g'(_) > 0
+        const overall = chain.ops.length > 1 ? chainOverallOp(chain.ops) : null;
+        if (overall) segments.push({ lhs: chain.exprs[0], op: overall, rhs: chain.exprs[chain.exprs.length - 1] });
+        for (const { lhs, op, rhs } of segments) {
+          if (!new RegExp(`\\b${variable}\\b`).test(`${lhs} ${rhs}`)) continue;
+          const text = `${hole(lhs)} ${op} ${hole(rhs)}`;
+          ctx.universal.push({ lhs: hole(lhs), op, rhs: hole(rhs), text, sourceExpr: `${text}（對所有 ${conditionChain}）`, domain: hole(conditionChain), fromClaim: true });
+          registered.push(text);
+        }
+      });
+      ctx.universal = expandUniversals(ctx.universal);
+    }
+    const note = `在「${quantified.condition}」之下：${inner.note}${registered.length ? ` 登記成對所有 ${variable} 成立的事實：${registered.join("、")}。` : ""}`;
+    return { status: inner.status, note, results, grounding: inner.grounding || null, quantified: true };
+  }
+
   function handleClaim(spec, ctx, body, line, verifyChain, evaluate, rule, isPremise) {
+    const quantified = parseQuantifier(body);
+    if (quantified) return handleQuantified(spec, ctx, quantified, line, verifyChain, evaluate, rule, isPremise);
     const parts = statementList(body);
     const notes = [];
     const results = [];
@@ -940,6 +1038,22 @@
           why = ok ? "多項式／可微的函數都連續" : "";
           if (!ok && elementaryBody(entry, "continuous")) { ok = true; why = `${fact.name} 由 sin、cos、exp、絕對值與多項式加減乘組成，處處連續`; }
           if (!ok) why = `要先說 ${fact.name} 是多項式或可微（或題目給了連續）`;
+        } else if (fact.kind === "increasing" || fact.kind === "decreasing") {
+          // v2.4：g 遞增要靠「對所有 x∈…，g'(x) > 0」（前面驗過的全稱主張，或題目給的）
+          const wantOps = fact.kind === "increasing" ? [">", ">="] : ["<", "<="];
+          const derivativeSign = (ctx.universal || []).find((item) => {
+            const oriented = (item.op === "<" || item.op === "<=") && shapeKey(item.rhs) === `${fact.name.toLowerCase()}'(_)` && shapeKey(item.lhs) === "0"
+              ? { lhs: item.rhs, op: FLIP[item.op], rhs: item.lhs } : item;
+            return shapeKey(oriented.lhs) === `${fact.name.toLowerCase()}'(_)` && shapeKey(oriented.rhs) === "0" && wantOps.includes(oriented.op);
+          });
+          ok = Boolean(derivativeSign) || Boolean(rule && rule.id === "monotone" && derivativeSign);
+          if (ok) {
+            ctx.monotone = ctx.monotone || {};
+            ctx.monotone[fact.name] = { kind: fact.kind, strict: derivativeSign.op === ">" || derivativeSign.op === "<", domain: derivativeSign.domain || null };
+            why = `前面已經有「${derivativeSign.sourceExpr || derivativeSign.text}」，導數${fact.kind === "increasing" ? "正" : "負"}則${fact.kind === "increasing" ? "遞增" : "遞減"}`;
+          } else {
+            why = `要先寫出「對所有 x∈…，${fact.name}'(x) ${fact.kind === "increasing" ? ">" : "<"} 0」（可以用 g'(x) = … 的鏈驗）`;
+          }
         } else {
           ok = polynomialBody(entry) || (fact.kind === "differentiable" && ctx.textFacts.has(`twice-differentiable:${fact.name}`));
           why = ok ? (polynomialBody(entry) ? "多項式處處可微" : "二次可微的函數當然可微") : "";
@@ -956,7 +1070,7 @@
       // 題目給的「對所有點成立」的條件（f'(_) = 0）：寫出來才登記，之後的取樣就吃它
       // 一段（|f'(c)| ≤ 2）或兩段（−2 ≤ f'(c) ≤ 2）都可以：每一段各自對上一條全稱條件才算
       const universalLinks = plain && !handled && plain.ops.length <= 2
-        ? plain.ops.map((op, i) => ({ link: { lhs: plain.exprs[i], op, rhs: plain.exprs[i + 1] }, hit: matchUniversal(ctx, { exprs: [plain.exprs[i], plain.exprs[i + 1]], ops: [op] }) }))
+        ? plain.ops.map((op, i) => ({ link: { lhs: plain.exprs[i], op, rhs: plain.exprs[i + 1] }, hit: matchUniversal(ctx, { exprs: [plain.exprs[i], plain.exprs[i + 1]], ops: [op] }, evaluate) }))
         : null;
       const universal = universalLinks && universalLinks.every((entry) => entry.hit) ? universalLinks : null;
       if (universal) {
@@ -970,7 +1084,7 @@
         rememberChain(ctx, plain);
         const first = universal[0].hit;
         grounding = { kind: "universal", rule: null, from: universal.map((entry) => entry.hit.sourceExpr), substitution: first.substitution, exact: true };
-        notes.push(`「${part}」：題目給的「${Array.from(new Set(universal.map((entry) => entry.hit.sourceExpr))).join("」「")}」對所有點成立，套用到 ${first.substitution._}。`);
+        notes.push(`「${part}」：${universal.some((entry) => entry.hit.item.fromClaim) ? "前面推出的" : "題目給的"}「${Array.from(new Set(universal.map((entry) => entry.hit.sourceExpr))).join("」「")}」對所有點成立，套用到 ${first.substitution._}。`);
         handled = true;
       }
       if (plain && !handled && matchesAsserted(spec, ctx, plain, evaluate)) {
@@ -1021,8 +1135,15 @@
           // 接地（v2.2）：先問「由哪裡來」——直接引用、代數等價、改寫規則（絕對值⇔區間、傳遞、區間裡的界、三角不等式）；
           // 都不是，再看鏈的某一端是不是已知的東西（前面出現過、宣告過的變數、定義、題目的目標或 ε-δ 的起點）、
           // 第一段是不是顯然的起點。多段但憑空出現的鏈不算。只有數值成立而找不到來源：黃。
-          const structural = (!trivial && !mixed && !isPremise && !(rule && rule.id !== "unknown")) ? groundStatement(spec, ctx, verified.chain, evaluate) : null;
-          const grounded = !trivial && !mixed && (isPremise || (rule && rule.id !== "unknown")
+          let structural = (!trivial && !mixed && !isPremise && !(rule && rule.id !== "unknown")) ? groundStatement(spec, ctx, verified.chain, evaluate) : null;
+          // v2.4：鏈裡「同一個自訂函數比大小」的段（g(x) > g(0)）——數值上對不算理由，
+          // 它要靠單調性（或前面已經推出這一段）。錨定規則對這種段不放行。
+          const comparisons = verified.chain.ops.map((op, i) => ({ lhs: verified.chain.exprs[i], op, rhs: verified.chain.exprs[i + 1] })).filter((seg) => comparesSameUserFunction(ctx, seg));
+          const knownSeg = (seg) => knownLinks(ctx).map(orientLess).some((fact) => { const mine = orientLess(seg); return implies(fact.op, mine.op) && compact(fact.lhs) === compact(mine.lhs) && compact(fact.rhs) === compact(mine.rhs); });
+          const monotoneGrounds = comparisons.map((seg) => groundMonotone(spec, ctx, seg, evaluate) || (knownSeg(seg) ? { kind: "direct", rule: null, from: [showLink(seg)], exact: true, note: `「${showLink(seg)}」前面已經有了。` } : null));
+          const comparisonBlocked = comparisons.length > 0 && monotoneGrounds.some((item) => !item);
+          if (!structural && comparisons.length && !comparisonBlocked) structural = monotoneGrounds[0];
+          const grounded = !trivial && !mixed && !comparisonBlocked && (isPremise || (rule && rule.id !== "unknown")
             || Boolean(structural)
             || (goalHit && skeletonReady(spec, ctx))
             || isObviousStart(headOf(verified.chain), spec, ctx) || anchored(spec, ctx, verified.chain, evaluate) || equivalentToKnown(spec, ctx, verified.chain, evaluate));
@@ -1033,7 +1154,13 @@
           if (structural) grounding = { kind: structural.kind, rule: structural.rule, from: structural.from, exact: structural.exact };
           if (!grounded) {
             status = worst(status, "unsure");
-            notes.push(`「${part}」在目前條件下成立，但找不到它是由哪一步推出的（兩邊都沒在前面出現過，也不是顯然的起點）—— 從前一步寫一條鏈過來。`);
+            if (comparisonBlocked) {
+              const seg = comparisons[monotoneGrounds.findIndex((item) => !item)];
+              const cmp = comparesSameUserFunction(ctx, seg);
+              notes.push(`「${showLink(seg)}」是 ${cmp.name} 在兩個點的比大小：數值上對，但理由要是單調性——先寫「對所有 x∈…，${cmp.name}'(x) > 0」再寫「${cmp.name} 遞增」，或前面先推出這一段。`);
+            } else {
+              notes.push(`「${part}」在目前條件下成立，但找不到它是由哪一步推出的（兩邊都沒在前面出現過，也不是顯然的起點）—— 從前一步寫一條鏈過來。`);
+            }
           } else if (structural) {
             notes.push(structural.note);
           } else {
@@ -1292,11 +1419,11 @@
   function premiseEstablished(spec, ctx, chain, evaluate, rawChain) {
     // −2 ≤ f'(c) ≤ 2：兩段各自對上題目的全稱條件，整條就是題目給的
     const links = (c) => c.ops.map((op, i) => ({ exprs: [c.exprs[i], c.exprs[i + 1]], ops: [op] }));
-    if (rawChain && rawChain.ops.length === 2 && links(rawChain).every((link) => matchUniversal(ctx, link))) return true;
+    if (rawChain && rawChain.ops.length === 2 && links(rawChain).every((link) => matchUniversal(ctx, link, evaluate))) return true;
     if (chain.ops.length !== 1) return anchored(spec, ctx, chain, evaluate);
     if (isObviousStart(chain, spec, ctx)) return true;
     // 題目給的「對所有點成立」的條件（f'(_) = 0），寫出 f'(c) = 0 就是拿題目的條件來用（比對用沒 atom 化的原文）
-    if (rawChain && rawChain.ops.length === 1 && matchUniversal(ctx, rawChain)) return true;
+    if (rawChain && rawChain.ops.length === 1 && matchUniversal(ctx, rawChain, evaluate)) return true;
     const [lhs, rhs] = chain.exprs;
     const op = chain.ops[0];
     const flipped = { "<": ">", ">": "<", "<=": ">=", ">=": "<=", "=": "=", "!=": "!=" };
@@ -1307,7 +1434,9 @@
     if (equivalentToConstraint(spec, ctx, chain, evaluate)) return true;
     // 只有定義與常數：把定義代進去就能算，等於「由定義」
     const identifiers = (compact(replaceBars(lhs + "+" + rhs)).match(/[A-Za-z_]\w*'*/g) || []).filter((name) => !MATH_FUNCTIONS[name] && CONSTANTS[name] === undefined);
-    if (identifiers.length && identifiers.every((name) => ctx.defs[name] !== undefined)) return true;
+    // 自己令的函數（g、g′）也算定義：g(0) = 0 代進去就能算
+    const byDefinition = (name) => ctx.defs[name] !== undefined || Boolean(ctx.userFunctions && ctx.userFunctions[name.replace(/'+$/, "")]);
+    if (identifiers.length && identifiers.every(byDefinition)) return true;
     return false;
   }
 
@@ -1492,7 +1621,11 @@
     }
     if (spec.bound && spec.bound.lhs) goalSides.push(normalize(spec.bound.lhs));
     const userFunctions = Object.keys(ctx.userFunctions || {});
-    if (ends.some((end) => names.has(end) || userFunctions.some((name) => new RegExp(`^${name}\\([-0-9./pi]+\\)$`).test(end)))) return true;
+    // 自訂函數代常數（g(0)）算已知——但 g(x) > g(0) 這種兩端都是同一個函數的鏈不算：
+    // 那是單調性的結論，要靠「g 遞增」的事實接（groundStatement 的 monotone 規則）
+    const callOf = (name, end) => new RegExp(`^${name}\\(`).test(end);
+    const sameFunctionBothEnds = userFunctions.some((name) => ends.every((end) => callOf(name, end)));
+    if (ends.some((end) => names.has(end) || (!sameFunctionBothEnds && userFunctions.some((name) => new RegExp(`^${name}\\([-0-9./pi]+\\)$`).test(end))))) return true;
     // 從目標的一邊出發推：只認多段鏈的第一個式子。單獨一句目標不是「從目標出發」，是直接寫答案
     if (chain.ops.length < 2) return false;
     // 第一段本身就是目標（2x ≤ x² + 1 = …）的話，不叫「從目標出發推」，叫先寫答案再湊
@@ -1615,8 +1748,20 @@
     { id: "abs_interval", title: "|x−a| < r ⇔ a−r < x < a+r", explain: "|x−a|<r ⇔ a−r<x<a+r（≤ 也一樣）" },
     { id: "transitive", title: "A < B 且 B ≤ C ⇒ A < C", explain: "把前面兩條關係串起來" },
     { id: "interval_bound", title: "a < x < b 時 E(x) 的界", explain: "x 只在這個區間裡動，E(x) 的範圍就算得出來" },
-    { id: "triangle", title: "|a+b| ≤ |a|+|b|", explain: "三角不等式（不用特別寫「由三角不等式」）" }
+    { id: "triangle", title: "|a+b| ≤ |a|+|b|", explain: "三角不等式（不用特別寫「由三角不等式」）" },
+    { id: "derivative", title: "g′(x) = …（g 是你令的函數）", explain: "自己令的 g，g′ 與 g″ 由定義數值微分驗；寫出 g'(x) = e^x − 1 就會對" },
+    { id: "monotone", title: "g 遞增且 a > b ⇒ g(a) > g(b)", explain: "先立住「g 在 … 上遞增」（要有對所有 x 的 g'(x) > 0），比大小就接得上" }
   ];
+  // 鏈的某一邊是不是「自訂函數的導數」：g'(x)、g''(t)
+  function derivativeCallOf(ctx, text) {
+    const m = compact(text).match(/^([a-z_]\w*)('+)\((.+)\)$/);
+    return m && ctx.userFunctions && ctx.userFunctions[m[1]] ? { name: m[1], order: m[2].length, arg: m[3] } : null;
+  }
+  // 兩邊是同一個函數（自訂或抽象）代不同的東西：g(a) 與 g(b)
+  function sameFunctionCall(text) {
+    const m = compact(text).match(/^([a-z_]\w*)\((.+)\)$/);
+    return m ? { name: m[1], arg: m[2] } : null;
+  }
 
   // 這一條鏈是不是由前面的關係經一條改寫規則得到。回傳 { rule, from: [關係], note, exact } 或 null
   function groundTransformation(spec, ctx, chain, evaluate) {
@@ -1726,9 +1871,41 @@
     return null;
   }
 
+  // 這一段是不是「同一個自訂函數比大小」：g(x) > g(0)。是的話它的理由只能是單調性（或前面已經推出它）
+  function comparesSameUserFunction(ctx, seg) {
+    if (seg.op === "=" || seg.op === "!=") return null;
+    const left = sameFunctionCall(seg.lhs); const right = sameFunctionCall(seg.rhs);
+    if (!left || !right || left.name !== right.name || !ctx.userFunctions) return null;
+    const name = Object.keys(ctx.userFunctions).find((k) => k.toLowerCase() === left.name);
+    return name ? { name, left, right } : null;
+  }
+  function groundMonotone(spec, ctx, seg, evaluate) {
+    const cmp = comparesSameUserFunction(ctx, seg);
+    const fact = cmp && ctx.monotone ? ctx.monotone[cmp.name] : null;
+    if (!fact) return null;
+    const bigger = (seg.op === ">" || seg.op === ">=") ? [cmp.left.arg, cmp.right.arg] : [cmp.right.arg, cmp.left.arg];
+    const argOrder = fact.kind === "increasing" ? bigger : [bigger[1], bigger[0]];
+    const strictOk = fact.strict || seg.op === ">=" || seg.op === "<=";
+    if (!strictOk || !evaluate(argOrder[0], argOrder[1], ">", ctx).ok) return null;
+    const word = fact.kind === "increasing" ? "遞增" : "遞減";
+    return { kind: "rule", rule: "monotone", from: [`${cmp.name} ${word}`, `${argOrder[0]} > ${argOrder[1]}`], exact: true, note: `${cmp.name} ${word}且 ${argOrder[0]} > ${argOrder[1]}，所以 ${seg.lhs} ${seg.op} ${seg.rhs}。` };
+  }
+
   // 依優先序找這一句的來源：直接引用 → 代數等價 → 改寫規則。回傳 { kind, rule, from, note, exact } 或 null
   function groundStatement(spec, ctx, chain, evaluate) {
     const same = (a, b) => compact(a) === compact(b) || evaluate(a, b, "=", ctx).ok;
+    // v2.4 導數：g'(x) = … 的等式段（g 是自訂函數）——右邊是不是 g′ 由數值微分驗過了（verifyChain 已驗），這裡給來源
+    const derivativeSeg = chain.ops.map((op, i) => ({ op, lhs: chain.exprs[i], rhs: chain.exprs[i + 1] }))
+      .find((seg) => seg.op === "=" && (derivativeCallOf(ctx, seg.lhs) || derivativeCallOf(ctx, seg.rhs)));
+    if (derivativeSeg) {
+      const d = derivativeCallOf(ctx, derivativeSeg.lhs) || derivativeCallOf(ctx, derivativeSeg.rhs);
+      return { kind: "rule", rule: "derivative", from: [`${d.name}(${ctx.userFunctions[d.name].param}) = ${ctx.userFunctions[d.name].body}`], exact: true, note: `${d.name}${"′".repeat(d.order)}(${d.arg}) 由 ${d.name} 的定義數值微分驗過，「${chain.exprs.map((expr, i) => (i ? `${chain.ops[i - 1]} ${expr}` : expr)).join(" ")}」在取樣點上成立。` };
+    }
+    // v2.4 單調：g(a) > g(b)（前面立住 g 遞增、而且 a > b 在目前條件下成立）
+    if (chain.ops.length === 1) {
+      const mono = groundMonotone(spec, ctx, { lhs: chain.exprs[0], op: chain.ops[0], rhs: chain.exprs[1] }, evaluate);
+      if (mono) return mono;
+    }
     if (chain.ops.length === 1) {
       const mine = orientLess({ lhs: chain.exprs[0], op: chain.ops[0], rhs: chain.exprs[1] });
       const direct = knownLinks(ctx).map(orientLess).find((fact) => implies(fact.op, mine.op) && same(fact.lhs, mine.lhs) && same(fact.rhs, mine.rhs));
@@ -1894,7 +2071,8 @@
     for (const ch of m[1]) { if (ch === "(") depth += 1; else if (ch === ")") { depth -= 1; if (depth < 0) return null; } }
     return depth === 0 ? m[1] : null;
   };
-  function expandUniversals(items) {
+  function expandUniversals(all) {
+    const items = all.filter((item) => !item.expanded);
     const out = items.map((item) => Object.assign({ sourceExpr: item.text }, item));
     // −r 寫成使用者會寫的樣子：2 → -2、a → -a、a+b → -(a+b)、-2 → 2（鍵要對得上，不能多一層括號）
     const negOf = (text) => { const k = shapeKey(text); if (/^-/.test(k)) return k.slice(1); return /^[a-z0-9.']+$/.test(k) ? `-${k}` : `-(${k})`; };
@@ -1904,8 +2082,8 @@
       if (oriented.op !== "<=" && oriented.op !== "<") return;
       const inner = absInner(oriented.lhs);
       if (!inner) return;
-      out.push({ lhs: inner, op: oriented.op, rhs: oriented.rhs, text: item.text, sourceExpr: item.text, derived: true });
-      out.push({ lhs: inner, op: FLIP[oriented.op], rhs: negOf(oriented.rhs), text: item.text, sourceExpr: item.text, derived: true });
+      out.push({ lhs: inner, op: oriented.op, rhs: oriented.rhs, text: item.text, sourceExpr: item.sourceExpr || item.text, domain: item.domain, expanded: true });
+      out.push({ lhs: inner, op: FLIP[oriented.op], rhs: negOf(oriented.rhs), text: item.text, sourceExpr: item.sourceExpr || item.text, domain: item.domain, expanded: true });
     });
     // X <= r 且 X >= -r → abs(X) <= r
     items.forEach((upper) => {
@@ -1915,12 +2093,12 @@
         const l = (other.op === "<=" || other.op === "<") ? { lhs: other.rhs, op: FLIP[other.op], rhs: other.lhs } : other;
         return other !== upper && l.op === FLIP[u.op] && shapeKey(l.lhs) === shapeKey(u.lhs) && shapeKey(l.rhs) === shapeKey(negOf(u.rhs));
       });
-      if (lower) out.push({ lhs: `abs(${u.lhs})`, op: u.op, rhs: u.rhs, text: `${upper.text}、${lower.text}`, sourceExpr: `${upper.text}、${lower.text}`, derived: true });
+      if (lower && (upper.domain || null) === (lower.domain || null)) out.push({ lhs: `abs(${u.lhs})`, op: u.op, rhs: u.rhs, text: `${upper.text}、${lower.text}`, sourceExpr: `${upper.sourceExpr || upper.text}、${lower.sourceExpr || lower.text}`, domain: upper.domain, expanded: true });
     });
     return out;
   }
   // 回傳 { item, substitution: { _: 式子 }, text } 或 null
-  function matchUniversal(ctx, chain) {
+  function matchUniversal(ctx, chain, evaluate) {
     if (chain.ops.length !== 1) return null;
     const escape = (text) => text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
     const key = (lhs, op, rhs) => `${shapeKey(lhs)}${op}${shapeKey(rhs)}`;
@@ -1936,7 +2114,16 @@
       const re = new RegExp(pattern + "$");
       for (const mine of candidates) {
         const hit = mine.match(re);
-        if (hit) return { item, substitution: { _: hit[1] }, text: item.text, sourceExpr: item.sourceExpr || item.text };
+        if (!hit) continue;
+        // 全稱主張帶 domain（對所有 x > 0）：代進去的東西要在 domain 裡，用取樣驗；驗不了就不算
+        if (item.domain && evaluate) {
+          const cond = splitChain(item.domain.replace(/_/g, `(${hit[1]})`));
+          if (!cond) continue;
+          let inside = true;
+          for (let i = 0; i < cond.ops.length && inside; i += 1) inside = evaluate(cond.exprs[i], cond.exprs[i + 1], cond.ops[i], ctx).ok;
+          if (!inside) continue;
+        }
+        return { item, substitution: { _: hit[1] }, text: item.text, sourceExpr: item.sourceExpr || item.text };
       }
     }
     return null;
@@ -2031,6 +2218,7 @@
     { kind: "assume", label: "假設條件", keywords: "假設、若、如果、suppose、assume；可接「則 …」", example: "假設 0 < |x − 2| < δ。" },
     { kind: "claim", label: "推導一條鏈", keywords: "則、那麼、得、所以、故、因此、於是、即、然後、同理、展開得、整理得、化簡得", example: "則 |3x − 6| = 3|x − 2| < 3δ = ε。" },
     { kind: "by", label: "引用定理", keywords: "由、根據、依據、利用、by、using；定理名後接逗號再接結論", example: "由均值定理，存在 c ∈ (a, b) 使 f(b) − f(a) = f'(c)(b − a)。" },
+    { kind: "forall", label: "全稱主張", keywords: "對所有 <條件>，<主張>；當 … 時，…；for all …, …；主張 for all …", example: "對所有 x > 0，g'(x) = e^x − 1 > 0。" },
     { kind: "because", label: "因為…所以…", keywords: "因為 …，所以／故／因此 …；前提要是前面立住的東西", example: "因為 δ ≤ 1，所以 |x + 3| ≤ |x − 3| + 6 < 7。" },
     { kind: "induction", label: "宣告歸納法", keywords: "用數學歸納法、對 n 做歸納、by induction on n", example: "用數學歸納法。" },
     { kind: "base", label: "歸納基底", keywords: "當 n = 1 時 …", example: "當 n = 1 時，左式 = 1 = 右式，成立。" },
@@ -2065,6 +2253,7 @@
     "f 連續／f 在 [a, b] 上連續",
     "f 可微／可導",
     "f 二次可微（泰勒定理的前提）",
+    "g 在 (0, ∞) 上遞增／g is increasing on (0, inf)：要先寫出「對所有 x > 0，g'(x) > 0」；之後 g(a) > g(b) 靠它接地",
     "題目給的「對所有點 |f′(x)| ≤ 2」：寫出 |f′(c)| ≤ 2（c 可以是定理給的點或任何式子）就會被認成題目條件的實例，之後的取樣也吃它",
     "自己令的 g(x) = …：只由 sin、cos、exp、絕對值與多項式組成就自動算連續；沒有絕對值就自動算可微"
   ];

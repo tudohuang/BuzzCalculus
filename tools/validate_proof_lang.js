@@ -222,6 +222,50 @@ lessons.forEach((lesson, index) => {
   if (diffHole.lines[2] && /套用到/.test(diffHole.lines[2].note)) fail(`v2.3：f(c) − g(d) 不該對上 f(_) − g(_)（同一個 _ 要配同一個式子）：${diffHole.lines[2].note}`);
 }
 
+
+// 8. v2.4 輔助函數法：自訂函數的 g′ 由數值微分驗；「對所有 x > 0，…」是只在這一句有效的條件，驗過登記成全稱事實（帶 domain）；
+//    「g 遞增」要靠 g'(_) > 0；g(x) > g(0) 這種同一個函數比大小只能靠單調性（數值上對不算）。
+{
+  const exp = problems.find((spec) => spec.id === "pl-exp-inequality");
+  const ref = exp.reference;
+  const run = (lines) => lang.check(exp, lines.join("\n"));
+  const good = run(ref);
+  checks += 1;
+  const dline = good.lines[1];
+  if (!dline || dline.status !== "ok" || !dline.grounding || dline.grounding.rule !== "derivative" || !/數值微分驗過/.test(dline.note)) fail(`v2.4：g'(x) = e^x − 1 要由數值微分接地：${dline && `${dline.status} ${JSON.stringify(dline.grounding)} ${dline.note}`}`);
+  if (!/登記成對所有 x 成立的事實：.*g'\(_\) > 0/.test(dline.note)) fail(`v2.4：多段鏈的頭尾 g'(_) > 0 也要登記成全稱事實：${dline.note}`);
+  const mline = good.lines[2];
+  if (!mline || mline.status !== "ok" || !/導數正則遞增/.test(mline.note)) fail(`v2.4：「由單調性，g 在 (0, ∞) 上遞增」要靠 g'(_) > 0 立住：${mline && `${mline.status} ${mline.note}`}`);
+  const cline = good.lines[3];
+  if (!cline || cline.status !== "ok" || !cline.grounding || cline.grounding.rule !== "monotone") fail(`v2.4：g(x) > g(0) 要由單調性接地：${cline && `${cline.status} ${JSON.stringify(cline.grounding)} ${cline.note}`}`);
+  // 錯的導數符號：紅在那一句
+  const wrongSign = run(ref.map((line, i) => (i === 1 ? "則對所有 x > 0，g'(x) = e^x − 1 > 1。" : line)));
+  checks += 1;
+  if (wrongSign.lines[1].status !== "error" || wrongSign.verdict !== "broken") fail(`v2.4：g'(x) > 1 在 x > 0 之下不成立，應該紅：${wrongSign.lines[1].status} ${wrongSign.lines[1].note}`);
+  // 錯的導數式：紅（數值微分對得出 g′ 不是 e^x）
+  const wrongDerivative = run(ref.map((line, i) => (i === 1 ? "則對所有 x > 0，g'(x) = e^x > 0。" : line)));
+  checks += 1;
+  if (wrongDerivative.lines[1].status !== "error") fail(`v2.4：g'(x) = e^x 是錯的導數，應該紅：${wrongDerivative.lines[1].status} ${wrongDerivative.lines[1].note}`);
+  // 沒有單調性那一行：g(x) > g(0) 只剩數值真話 → 黃，訊息說要單調性
+  const noMono = run(ref.filter((_, i) => i !== 2));
+  checks += 1;
+  const cmp = noMono.lines[2];
+  if (noMono.verdict === "verified" || !cmp || cmp.status !== "unsure" || !/理由要是單調性/.test(cmp.note)) fail(`v2.4：沒有「g 遞增」時 g(x) > g(0) 應該黃並說要單調性：${noMono.verdict} ${cmp && `${cmp.status} ${cmp.note}`}`);
+  // 全稱事實的 domain：g'(2) > 0 是實例（2 > 0）；g'(−1) > 0 不在 domain 裡，走數值 → 紅
+  const domain = run(ref.slice(0, 2).concat(["因為 g'(2) > 0，所以 g'(2) > 0。", "因為 g'(−1) > 0，所以 g'(−1) > 0。"]));
+  checks += 2;
+  if (domain.lines[2].status !== "ok" || !/套用到 2/.test(domain.lines[2].note)) fail(`v2.4：g'(2) > 0 應該是全稱事實的實例：${domain.lines[2].status} ${domain.lines[2].note}`);
+  if (domain.lines[3].status !== "error") fail(`v2.4：g'(−1) > 0 不在 x > 0 的 domain 裡、數值上也錯，應該紅：${domain.lines[3].status} ${domain.lines[3].note}`);
+  // 條件只在這一句有效：後面沒有量化的句子不受 x > 0 影響（spec 範圍本來就是 x > 0，這裡驗「當 x > 5 時」的條件不外漏）
+  const scoped = run(["令 g(x) = e^x − 1 − x。", "則當 x > 1 時，g'(x) = e^x − 1 > 1。", "則 g'(x) > 1。"]);
+  checks += 1;
+  if (scoped.lines[1].status !== "ok" || scoped.lines[2].status !== "error") fail(`v2.4：「當 x > 1 時」的條件不該外漏到下一句（下一句在整個範圍上驗，應該紅）：${scoped.lines.map((l) => l.status).join(",")} ${scoped.lines[1].note} / ${scoped.lines[2].note}`);
+  // 遞減：導數負才立得住；方向寫反不放行
+  const decreasing = run(["令 g(x) = e^x − 1 − x。", "則對所有 x > 0，g'(x) = e^x − 1 > 0。", "則 g 在 (0, ∞) 上遞減。"]);
+  checks += 1;
+  if (decreasing.lines[2].status === "ok") fail(`v2.4：g' > 0 不能推出 g 遞減：${decreasing.lines[2].status} ${decreasing.lines[2].note}`);
+}
+
 // classic：機器判版本要指到 proofs.js 真的存在的題（題目頁上的「自己寫，機器判」按鈕靠這個）；一題經典證明只能有一個機器判版本
 require(path.join(__dirname, "..", "src", "proofs.js"));
 const classicIds = new Set((global.window.BUZZ_PROOFS || []).map((item) => item.id));

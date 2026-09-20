@@ -388,6 +388,35 @@ const V22_CANONICAL = [
   if (stronger.verdict === "verified") fail("v2.3：|f'(c)| ≤ 1 經翻譯層不得全綠");
 }
 
+
+/* ── 7. v2.4：輔助函數法的英文寫法（for all 在句尾、By monotonicity、g is increasing on） ── */
+{
+  const exp = byId("pl-exp-inequality");
+  const text = [
+    "Let $g(x)=e^x-1-x$.",
+    "",
+    "Then $g'(x)=e^x-1>0$ for all $x>0$.",
+    "",
+    "By monotonicity, $g$ is increasing on $(0,\\infty)$.",
+    "",
+    "Since $g(0)=0$, we have $g(x)>g(0)=0$ for all $x>0$.",
+    "",
+    "Hence $g(x)>0$, that is, $e^x>1+x$."
+  ].join("\n");
+  const report = surfaceCheck(exp, text);
+  checks += 1;
+  if (report.verdict !== "verified") fail(`v2.4 e^x > 1 + x 的英文證明應該全綠，卻是 ${report.verdict}：${statuses(report)}\n    ${report.lines.filter((l) => l.status !== "ok").map((l) => `${l.raw.slice(0, 40)} → ${l.note}`).join("\n    ")}`);
+  // For all x > 0, … 是全稱主張（推導），不是「任取」；Whenever 也是
+  const forAll = surface.translate("For all $x>0$, $g'(x)>0$.", lang, exp).nodes;
+  const whenever = surface.translate("Whenever $x>0$, $g(x)>0$.", lang, exp).nodes;
+  checks += 2;
+  if (forAll.length !== 1 || forAll[0].type !== "derive" || !/^則對所有 x>0，g'\(x\)>0/.test(forAll[0].canonical)) fail(`v2.4：For all x > 0, g'(x) > 0 應該翻成「則對所有 …，…」：${JSON.stringify(forAll.map((n) => [n.type, n.canonical]))}`);
+  if (whenever.length !== 1 || whenever[0].type !== "derive") fail(`v2.4：Whenever x > 0, … 是全稱主張不是假設：${JSON.stringify(whenever.map((n) => [n.type, n.canonical]))}`);
+  const still = surface.translate("For any ε > 0, choose δ = ε/3.", lang, byId("pl-limit-linear")).nodes;
+  checks += 1;
+  if (!still.length || still[0].type === "derive") fail(`v2.4：For any ε > 0, choose … 仍是引入，不是全稱主張：${JSON.stringify(still.map((n) => [n.type, n.canonical]))}`);
+}
+
 console.log("Proof Input v2（自由書寫層）");
 console.log(`  相容      ${problems.length} 題參考證明經翻譯層判定不變`);
 console.log(`  寫法      ${Object.keys(VARIANTS).length + 1} 種同一證明的寫法全綠`);

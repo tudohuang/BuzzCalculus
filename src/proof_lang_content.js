@@ -668,6 +668,49 @@
       coach: "MVT 把「函數值的差」換成「導數 × 自變數的差」；導數有界，差就有界。題目給的 |f′| ≤ 2 對所有點成立，寫出「因為 |f′(c)| ≤ 2」就是把它套到 MVT 給的 c 上。"
     },
     {
+      // v2.4 輔助函數法：令 g、算 g′ 的符號（數值微分驗）、單調、跟 g(0) 比。經典題 proof-ineq-001 的機器判版本。
+      id: "pl-exp-inequality",
+      classic: "proof-ineq-001",
+      optional: [0],
+      family: "direct",
+      title: "e^x > 1 + x（x > 0）",
+      difficulty: 2,
+      statement: "證明對所有 x > 0，e^x > 1 + x。",
+      prompt: "x>0\\ \\Rightarrow\\ e^x>1+x",
+      vars: { x: { min: 0.01, max: 3 } },
+      goal: { relation: "e^x > 1 + x" },
+      skeleton: "direct",
+      reference: [
+        "令 g(x) = e^x − 1 − x。",
+        "則對所有 x > 0，g'(x) = e^x − 1 > 0。",
+        "由單調性，g 在 (0, ∞) 上遞增。",
+        "因為 g(0) = 0，所以對所有 x > 0，g(x) > g(0) = 0。",
+        "故 g(x) > 0，即 e^x > 1 + x。"
+      ],
+      coach: "輔助函數四步：令 g = 左 − 右；算 g′ 並說它在 x > 0 時的符號（寫成「對所有 x > 0，g'(x) = … > 0」，檢查器會用 g 的定義數值微分驗）；由單調性說 g 遞增；跟基準點 g(0) 比。最後把 g(x) > 0 翻回原式。"
+    },
+    {
+      id: "pl-log-inequality",
+      classic: "proof-ineq-002",
+      optional: [0],
+      family: "direct",
+      title: "ln(1 + x) < x（x > 0）",
+      difficulty: 2,
+      statement: "證明對所有 x > 0，ln(1 + x) < x。",
+      prompt: "x>0\\ \\Rightarrow\\ \\ln(1+x)<x",
+      vars: { x: { min: 0.01, max: 3 } },
+      goal: { relation: "ln(1 + x) < x" },
+      skeleton: "direct",
+      reference: [
+        "令 g(x) = x − ln(1 + x)。",
+        "則對所有 x > 0，g'(x) = 1 − 1/(1 + x) = x/(1 + x) > 0。",
+        "由單調性，g 在 (0, ∞) 上遞增。",
+        "因為 g(0) = 0，所以對所有 x > 0，g(x) > g(0) = 0。",
+        "故 x − ln(1 + x) > 0，即 ln(1 + x) < x。"
+      ],
+      coach: "跟 e^x > 1 + x 同一套：令 g = x − ln(1 + x)，g′ = x/(1 + x) 在 x > 0 時為正，g 遞增，g(0) = 0，所以 g > 0。"
+    },
+    {
       id: "pl-ivt-cubic",
       family: "direct",
       title: "中間值定理：x³ − 3x + 1 = 0 有實根",
