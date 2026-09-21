@@ -3665,6 +3665,7 @@
             </details>
 
             <nav class="home-more-links" aria-label="其他頁面">
+              <button data-action="open-course">${icon("book-open")}入門課程</button>
               <button data-action="open-library">${icon("search")}題庫</button>
               <button data-action="open-boss-lab">${icon("trophy")}Boss 專區</button>
               <button data-action="open-proofs">${icon("file-pen-line")}證明題</button>

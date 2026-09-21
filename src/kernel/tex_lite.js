@@ -129,6 +129,74 @@
     return total ? text / total : 0;
   }
 
+  // 排完量一次：字元數門檻是猜的，真正的裁判是畫面。
+  //
+  // 390px 的手機上「x²+y²=25 在點 (3,4) 的切線斜率」量起來只有 40 欄，
+  // 沒過長題門檻，於是走 display 模式一行到底 —— 題幹後半要橫向捲才看得到，
+  // 而使用者不會捲，他看到的是「在點 (3,4) 的」就沒了。
+  // 所以排完以後量 scrollWidth：真的超寬，有文字段就改走換行流；
+  // 純式子換不了行就把字縮小到剛好塞進去（最多縮到 55%），再不行才留橫向捲。
+  function fitDisplayMath(node, tex) {
+    if (!node.isConnected || !node.clientWidth) return;
+    const need = () => Math.max(node.scrollWidth, (node.querySelector(".katex-display") || node).scrollWidth);
+    const have = node.clientWidth;
+    if (need() <= have + 1) return;
+    const segments = splitLongTex(tex);
+    if (segments.some((seg) => seg.text !== undefined && seg.text.trim()) && segments.length > 1 && renderLongTexFlow(node, tex)) {
+      node.classList.add("is-long-tex");
+      if (need() <= node.clientWidth + 1) return;
+    }
+    // 「f(x)=x²+1, \qquad f(2)=5, \qquad f(-3)=10」這種用 \qquad 排成一列的好幾個式子：
+    // 拆成一式一行，比縮字或橫向捲都好讀。
+    const lines = splitAtQuad(tex);
+    if (lines.length > 1 && renderStackedLines(node, lines)) {
+      if (need() <= node.clientWidth + 1) return;
+    }
+    // 縮字有底線：縮完不能小於 13px（概念卡的式子本來就只有 1rem，縮到 55% 就讀不了）。
+    const fontPx = parseFloat(getComputedStyle(node).fontSize) || 16;
+    const floor = Math.max(0.55, Math.min(1, 13 / fontPx));
+    const ratio = Math.max(floor, Math.min(1, (node.clientWidth - 2) / need()));
+    if (ratio < 0.995) node.style.fontSize = ratio.toFixed(3) + "em";
+  }
+
+  function splitAtQuad(tex) {
+    const parts = [];
+    let depth = 0;
+    let start = 0;
+    for (let i = 0; i < tex.length; i += 1) {
+      const ch = tex[i];
+      if (ch === "\\" && /[A-Za-z]/.test(tex[i + 1] || "")) {
+        let j = i + 1;
+        while (/[A-Za-z]/.test(tex[j] || "")) j += 1;
+        const word = tex.slice(i, j);
+        if (depth === 0 && (word === "\\qquad" || word === "\\quad")) {
+          parts.push(tex.slice(start, i));
+          start = j;
+        }
+        i = j - 1;
+        continue;
+      }
+      if (ch === "{") depth += 1;
+      if (ch === "}") depth -= 1;
+    }
+    parts.push(tex.slice(start));
+    return parts.map((p) => p.trim().replace(/^,\s*|,\s*$/g, "").trim()).filter(Boolean);
+  }
+
+  function renderStackedLines(node, lines) {
+    const html = [];
+    for (const line of lines) {
+      try {
+        html.push('<div class="tex-line">' + window.katex.renderToString(line, { displayMode: true, throwOnError: true, strict: "ignore", output: "htmlAndMathml" }) + "</div>");
+      } catch (_error) {
+        return false;
+      }
+    }
+    node.innerHTML = html.join("");
+    node.classList.add("is-stacked-tex");
+    return true;
+  }
+
   function renderMathNode(node, displayMode) {
     const tex = node.dataset.tex || "";
     // Long-form prompts (長題、應用情境題 etc.) wrap onto multiple lines
@@ -136,6 +204,8 @@
     const width = texVisualWidth(tex);
     const longform = displayMode && (width > 72 || (width > 34 && texTextShare(tex) > 0.55));
     node.classList.toggle("is-long-tex", longform);
+    node.classList.remove("is-stacked-tex");
+    node.style.fontSize = "";
     if (longform && window.katex && renderLongTexFlow(node, tex)) return;
     if (window.katex) {
       try {
@@ -147,6 +217,7 @@
           // 只有 html 的話，螢幕閱讀器讀到的是一串沒有意義的字元。
           output: "htmlAndMathml"
         });
+        if (displayMode) fitDisplayMath(node, tex);
         return;
       } catch (_error) {
         node.innerHTML = renderLiteTex(tex, displayMode);

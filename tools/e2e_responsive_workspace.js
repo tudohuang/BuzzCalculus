@@ -169,6 +169,56 @@ let checked = 0;
     await size(390, 844, true);
     await snapshot("phone-quiz");
 
+    // 2026-09-21 全站響應式走查釘住的四件事（都是 128 個畫面×4 種尺寸量出來的）：
+    //  1. 課程頁的概念卡：display 式子把 grid 的 auto 欄撐到 480px，整頁在 390px 橫向溢出 130px。
+    //  2. 題幹：「x²+y²=25 在點 (3,4) 的…」沒過長題門檻，走一行到底要橫向捲，後半題看不到。
+    //     現在排完量畫面：有文字段就換行流、\qquad 排的一列式子拆行、純式子縮字。
+    //  3. 手機沒有側欄，入門課程只在側欄 —— 「更多練習」面板要有它。
+    //  4. 觸控裝置上的摺疊標題／篩選片／句型鍵至少 40px 高。
+    for (const [device, width, height] of [["phone", 390, 844], ["small-phone", 320, 740]]) {
+      await size(width, height, true);
+      await chrome.navigate(server.url + "#p=db-imp-005");
+      await chrome.sleep(900);
+      const prompt = await chrome.evaluate(`
+        const node = document.querySelector('.prompt.math-block');
+        const disp = node && (node.querySelector('.katex-display') || node);
+        return { overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth,
+          fits: !!node && Math.max(node.scrollWidth, disp.scrollWidth) <= node.clientWidth + 1,
+          text: node ? node.innerText.replace(/\\s+/g, ' ') : '' };`);
+      if (!prompt.fits) failures.push(`${device}/quiz prompt still needs horizontal scrolling`);
+      if (prompt.overflow > 1) failures.push(`${device}/quiz page overflow ${prompt.overflow}px`);
+
+      await chrome.navigate(server.url);
+      await chrome.sleep(600);
+      // 手機的「更多練習」面板住在 訓練 → 練習 頁籤下面，不在「今天」。
+      await click('[data-action="open-train"]');
+      await click('[data-action="set-bucket"][data-bucket="practice"]');
+      await chrome.evaluate(`const p = document.querySelector('[data-home-more-panel]'); if (p) p.open = true; return true;`);
+      const courseEntry = await chrome.evaluate(`const b = document.querySelector('.home-more-links [data-action="open-course"]'); return !!(b && b.getClientRects().length);`);
+      if (!courseEntry) failures.push(`${device}/home: 入門課程 missing from the phone more-panel`);
+      await click('.home-more-links [data-action="open-course"]');
+      await click('[data-action="open-course-lesson"]');
+      await chrome.sleep(700);
+      const lesson = await chrome.evaluate(`
+        const vw = document.documentElement.clientWidth;
+        return { overflow: document.documentElement.scrollWidth - vw,
+          wide: [...document.querySelectorAll('.course-block, .pl-intro')].filter((el) => el.getBoundingClientRect().right > vw + 1).length,
+          stacked: !!document.querySelector('.course-concept-math.is-stacked-tex') };`);
+      if (lesson.overflow > 1 || lesson.wide) failures.push(`${device}/lesson overflow ${lesson.overflow}px (${lesson.wide} wide blocks)`);
+
+      await click('[data-action="open-train"]');
+      await click('[data-action="set-bucket"][data-bucket="practice"]');
+      await chrome.evaluate(`const p = document.querySelector('[data-home-more-panel]'); if (p) p.open = true; return true;`);
+      await click('.home-more-links [data-action="open-proofs"]');
+      const targets = await chrome.evaluate(`
+        return [...document.querySelectorAll('.lc-chip, .lc-cheat summary, .lc-sort')]
+          .filter((el) => el.getClientRects().length)
+          .map((el) => { const r = el.getBoundingClientRect(); return el.className + ' ' + Math.round(r.width) + 'x' + Math.round(r.height); })
+          .filter((s) => { const [w, h] = s.split(' ').pop().split('x').map(Number); return w < 40 || h < 40; });`);
+      if (targets.length) failures.push(`${device}/proofs touch targets under 40px: ${targets.slice(0, 4).join(', ')}`);
+      checked += 4;
+    }
+
     if (chrome.pageErrors.length) failures.push(...chrome.pageErrors);
     if (server.missing.length) failures.push(`Missing assets: ${server.missing.join(', ')}`);
     fs.writeFileSync(path.join(output, "report.json"), JSON.stringify({checked, failures}, null, 2));
