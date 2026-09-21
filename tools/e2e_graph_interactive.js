@@ -157,6 +157,75 @@ async function run() {
       check("拖到正解方向判對", slope.correct, slope.feedback);
     }
 
+    /* ── 3. 作圖題：真的用 pointer 事件在格子上畫，退一筆有效、照著畫判對、翻轉判錯有話 ── */
+    await chrome.navigate(`${server.url}/index.html`);
+    await chrome.sleep(900);
+    const sketch = await chrome.evaluate(`
+      ${OPEN("sk-008")}
+      ${POINTER}
+      const svg = document.querySelector('svg[data-graph-interactive="sketch"]');
+      if (!svg) return { ok:false, why:"沒有可畫的 svg" };
+      const problem = window.BUZZ_PROBLEMS.find(p => p.id === "sk-008");
+      const fn = new Function("x", "const {sin,cos,exp,log,sqrt,abs}=Math; return (" + problem.sketch.expr + ");");
+      const [a, b] = problem.sketch.pieces[0];
+      const wait = (ms) => new Promise(r=>setTimeout(r, ms * (window.__slow || 1)));
+      const draw = async (transform) => {
+        const s = document.querySelector('svg[data-graph-interactive="sketch"]');
+        for (let i = 0; i <= 40; i += 1) {
+          const x = a + ((b - a) * i) / 40;
+          const y = transform(fn(x));
+          fire(s, i === 0 ? "pointerdown" : "pointermove", x, y);
+          if (i === 40) fire(s, "pointerup", x, y);
+        }
+        await wait(400);
+      };
+      // 先畫一筆亂的，退掉，再照著 f 畫
+      await draw((y) => -y);
+      const strokesBefore = (document.querySelector("[data-sketch-count]")||{}).textContent;
+      const pathsBefore = document.querySelectorAll('svg[data-graph-interactive="sketch"] path[stroke="var(--gold)"]').length;
+      document.querySelector('[data-action="undo-sketch"]').click();
+      await wait(300);
+      const strokesAfterUndo = (document.querySelector("[data-sketch-count]")||{}).textContent;
+      await draw((y) => y + 0.12 * Math.sin(6 * y));
+      const submit = document.querySelector('[data-action="submit-sketch"]');
+      const enabled = Boolean(submit) && !submit.disabled;
+      const touchAction = getComputedStyle(document.querySelector('svg[data-graph-interactive="sketch"]')).getPropertyValue("touch-action");
+      if (submit) submit.click();
+      let text = "";
+      for (const end = Date.now() + 4000; Date.now() < end; await wait(60)) {
+        const f = document.querySelector(".feedback");
+        if (f) { text = f.innerText; break; }
+      }
+      return { ok:true, strokesBefore, pathsBefore, strokesAfterUndo, enabled, touchAction,
+               correct: /圖形正確/.test(text), feedback: text.replace(/\\s+/g, " ").slice(0, 120) };
+    `);
+    check("作圖題的 svg 是可畫的", sketch.ok, sketch.why || "");
+    if (sketch.ok) {
+      check("畫一筆之後圖上有筆畫、計數是 1", sketch.pathsBefore >= 1 && sketch.strokesBefore === "1", `path ${sketch.pathsBefore}、計數 ${sketch.strokesBefore}`);
+      check("退一筆之後計數回到 0", sketch.strokesAfterUndo === "0", `計數 ${sketch.strokesAfterUndo}`);
+      check("畫了之後送出鈕才能按", sketch.enabled, "");
+      check("畫布吃掉觸控手勢，不會變成整頁捲動", sketch.touchAction === "none", `touch-action: ${sketch.touchAction}`);
+      check("照著 f 畫（帶手抖）判對", sketch.correct, sketch.feedback);
+    }
+    await chrome.navigate(`${server.url}/index.html`);
+    await chrome.sleep(900);
+    const flipped = await chrome.evaluate(`
+      ${OPEN("sk-008")}
+      ${POINTER}
+      const svg = document.querySelector('svg[data-graph-interactive="sketch"]');
+      if (!svg) return { ok:false, why:"沒有可畫的 svg" };
+      const problem = window.BUZZ_PROBLEMS.find(p => p.id === "sk-008");
+      const fn = new Function("x", "return (" + problem.sketch.expr + ");");
+      const [a, b] = problem.sketch.pieces[0];
+      for (let i = 0; i <= 40; i += 1) { const x = a + ((b - a) * i) / 40; fire(svg, i === 0 ? "pointerdown" : "pointermove", x, -fn(x)); if (i === 40) fire(svg, "pointerup", x, -fn(x)); }
+      await new Promise(r=>setTimeout(r, 400 * (window.__slow || 1)));
+      document.querySelector('[data-action="submit-sketch"]').click();
+      let text = "";
+      for (const end = Date.now() + 4000; Date.now() < end; await new Promise(r=>setTimeout(r, 60))) { const f = document.querySelector(".feedback"); if (f) { text = f.innerText; break; } }
+      return { ok:true, wrong: /應該遞增|應該遞減/.test(text), feedback: text.replace(/\\s+/g, " ").slice(0, 120) };
+    `);
+    check("上下翻轉的圖判錯，而且說出哪一段增減錯了（不是選擇題的誘答理由）", flipped.ok && flipped.wrong, flipped.feedback || flipped.why);
+
     const errors = chrome.consoleMessages.filter((m) => m.type === "error");
     check("console 沒有錯誤", errors.length === 0, errors.slice(0, 2).map((e) => e.text).join(" | "));
     check("沒有未捕捉的例外", chrome.pageErrors.length === 0, chrome.pageErrors.slice(0, 2).join(" | "));

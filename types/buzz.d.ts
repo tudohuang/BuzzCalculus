@@ -31,6 +31,8 @@ interface BuzzProblem {
   choices?: unknown[];
   hints?: string[];
   keyIdea?: string;
+  /** 作圖題：判分用的曲線與必須畫到的 x 區段 */
+  sketch?: { expr: string; pieces: number[][]; tolerance?: number };
   [key: string]: unknown;
 }
 
@@ -309,6 +311,16 @@ interface Window {
   BuzzCourseUI: { create(deps: { escapeHtml: (s: unknown) => string; escapeAttr: (s: unknown) => string; icon: (name: string) => string; referenceAnswerHTML: (problem: BuzzProblem) => string }): any };
   /** src/share_cards.js：題目圖形的 SVG 渲染器（從 app.js 搬出去） */
   BuzzGraphRender: { graphCurveFn(expr: string): ((x: number) => number) | null; renderProblemGraph(problem: any, opts: any, escapeAttr: (s: unknown) => string): string };
+  /** src/share_cards.js：作圖題（answerKind "sketch"）的判分、畫面與筆畫綁定 */
+  BuzzGraphSketch: {
+    parse(input: string): number[][][];
+    serialize(strokes: number[][][]): string;
+    check(problem: any, input: string): { correct: boolean; message: string };
+    renderControls(problem: any, strokes: number[][][], helpers: { done: boolean; renderProblemGraph: (problem: any, opts: any) => string; icon: (name: string) => string; extra?: string }): string;
+    bind(svg: Element, ctx: any, strokes: number[][][], onCommit: () => void): void;
+    piecesOf(problem: any): number[][];
+    trace(problem: any): string;
+  };
   /** src/share_cards.js：本週戰報與成就分享卡（canvas → PNG，本機） */
   BuzzShareCards: { create(deps: Record<string, unknown>): { weeklyShareData(records: BuzzRecords): any; downloadWeeklyReport(): void; shareAchievementCard(from: string): void; shareDailyOneCard(data: Record<string, unknown>, onFallback?: () => void): void } };
   BUZZ_PROOF_LANG_PROBLEMS: BuzzProofLangSpec[];

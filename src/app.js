@@ -5687,9 +5687,9 @@
           <strong>${escapeHtml(item.tag || answerReasonLabel(item.reason) || "錯誤")}</strong>
         </div>
         <div class="review-prompt math-block" data-tex="${escapeAttr(problem.prompt)}"></div>
-        ${renderProblemGraph(problem)}
+        ${renderProblemGraph(problem, { reveal: true })}
         <div class="review-answer">
-          最近答案：${escapeHtml(item.lastInput || "未作答")}<br />
+          最近答案：${escapeHtml(shownInput(problem, item.lastInput))}<br />
           參考答案：${referenceAnswerHTML(problem)}<br />
           標註：${escapeHtml(item.tag || "未標註")}
         </div>
@@ -5828,7 +5828,7 @@
                 <div class="history-review-item ${answer.correct ? "is-correct" : "is-wrong"}">
                   <strong>#${index + 1} · ${TOPICS[problem.topic].label} · ${answer.unanswered ? "未作答" : `${answer.elapsed}s`}</strong>
                   <div class="review-prompt math-block-lazy" data-tex="${escapeAttr(problem.prompt)}"></div>
-                  <span>你的答案：${escapeHtml(answer.input || "未作答")} · ${answer.correct ? "正確" : answerReasonLabel(answer.reason)}</span>
+                  <span>你的答案：${escapeHtml(shownInput(problem, answer.input))} · ${answer.correct ? "正確" : answerReasonLabel(answer.reason)}</span>
                 </div>
               `;
             })
@@ -6031,7 +6031,7 @@
                   // 的第一名問題 —— 而使用者想切的那一刻，人就在這裡。
                   // 所以它同時是切換鈕：作答中隨時可以換，換完這一題立刻重畫。
                   // 模擬考不給換（換作答形式等於換考試條件）。
-                  ["graph", "worksheet", "graphtap", "graphslope"].includes(current.answerKind)
+                  ["graph", "worksheet", "graphtap", "graphslope", "sketch"].includes(current.answerKind)
                     ? ""
                     : quiz.examMode || feedback
                       ? `<span class="chip">${answerModeLabel(answerMode)}</span>`
@@ -6040,7 +6040,7 @@
                 ${verifiedChip(current)}
               </div>
               <div class="prompt math-block" data-tex="${escapeAttr(current.prompt)}"></div>
-              ${["graphtap", "graphslope"].includes(current.answerKind) ? "" : renderProblemGraph(current)}
+              ${["graphtap", "graphslope", "sketch"].includes(current.answerKind) ? "" : renderProblemGraph(current)}
               <!-- 題目下面一條工具列：提示、跳過、規則。
                    提示本來是一張佔滿寬度的黃色橫幅，永遠亮著，跟題目搶視線；
                    跳過與規則則流放在頁尾，離作答區半個螢幕。三顆都是「作答時偶爾會按」
@@ -6113,6 +6113,10 @@
   // 三個地方都是。答案是這個產品最重要的一行字，不能是生字串。
   function referenceAnswerHTML(problem) {
     const raw = displayAnswer(problem);
+    // 作圖題的參考答案就是 f 本身（answer 存的是 LaTeX）；圖在回顧的附圖裡。
+    if (problem.answerKind === "sketch") {
+      return `<span class="math-inline" data-tex="${escapeAttr("f(x)=" + raw)}">${renderLiteTex("f(x)=" + raw, false)}</span>`;
+    }
     if (["worksheet", "graph", "graphtap", "graphslope"].includes(problem.answerKind)) {
       return escapeHtml(raw);
     }
@@ -6131,6 +6135,12 @@
     // 互動圖形題：作答的動作就發生在圖上，同樣不受作答形式影響。
     if (problem.answerKind === "graphtap") return renderGraphTapControls(problem);
     if (problem.answerKind === "graphslope") return renderGraphSlopeControls(problem);
+    // 作圖題：在空格子上畫 f。畫面與判分都在 share_cards.js 的 BuzzGraphSketch（app.js 撞預算）。
+    if (problem.answerKind === "sketch") {
+      return window.BuzzGraphSketch.renderControls(problem, graphSketchStrokes(problem), {
+        done: Boolean(quiz.feedback), renderProblemGraph, icon, extra: attachedScratchboard(problem, quiz.feedback ? "disabled" : "")
+      });
+    }
     if (quiz.answerMode === "choice") return renderChoiceControls(problem);
     return renderFreeAnswerControls(problem);
   }
@@ -6356,6 +6366,19 @@
     return quiz.graphTap[problem.id];
   }
 
+  // 回顧裡印作答內容：作圖題存的是一串筆畫座標，印出來是亂碼，改印一句人話。
+  function shownInput(problem, input) {
+    if (!input) return "未作答";
+    if (problem && problem.answerKind === "sketch") return "手繪的圖形";
+    return input;
+  }
+
+  function graphSketchStrokes(problem) {
+    if (!quiz.graphSketch) quiz.graphSketch = {};
+    if (!quiz.graphSketch[problem.id]) quiz.graphSketch[problem.id] = [];
+    return quiz.graphSketch[problem.id];
+  }
+
   function graphTapTargets(problem) {
     return String(problem.answer || "").split(",").map(Number).filter(Number.isFinite);
   }
@@ -6514,6 +6537,11 @@
         }
         render();
       });
+    }
+    const sketchSvg = app.querySelector('svg[data-graph-interactive="sketch"]');
+    if (sketchSvg) {
+      const problem = quiz && !quiz.feedback ? getCurrentProblem() : null;
+      if (problem && problem.answerKind === "sketch") window.BuzzGraphSketch.bind(sketchSvg, svgGraphContext(sketchSvg), graphSketchStrokes(problem), render);
     }
     const slopeSvg = app.querySelector('svg[data-graph-interactive="slope"]');
     if (slopeSvg) {
@@ -7823,7 +7851,7 @@
             : ""
         }
         <div class="review-answer">
-          你的答案：${escapeHtml(answer.input || "未作答")}<br />
+          你的答案：${escapeHtml(shownInput(item, answer.input))}<br />
           提示使用：${answer.hintsUsed || 0}<br />
           參考答案：${referenceAnswerHTML(item)}
         </div>
@@ -8220,6 +8248,15 @@
       render();
     }
     if (action === "submit-graphtap") submitGraphTap();
+    if (action === "submit-sketch" || action === "undo-sketch" || action === "clear-sketch") {
+      const problem = getCurrentProblem();
+      if (quiz && problem && !quiz.feedback && problem.answerKind === "sketch") {
+        const strokes = graphSketchStrokes(problem);
+        if (action === "undo-sketch") { strokes.pop(); render(); }
+        if (action === "clear-sketch") { strokes.length = 0; render(); }
+        if (action === "submit-sketch" && strokes.flat().length >= 6) submitChoiceAnswer(window.BuzzGraphSketch.serialize(strokes));
+      }
+    }
     if (action === "submit-graphslope") submitGraphSlope();
     if (action === "clear-graphtap") {
       const current = quiz && !quiz.feedback ? getCurrentProblem() : null;
@@ -9118,7 +9155,7 @@
     // 那些題對任何自陳等級 ≤ 大一的人都測不出「反射」，只測得出「沒學過」。
     // 定位是四選一：作圖表、點位、切線這些沒有選項的作答形式不進來 ——
     // 走查時第 6 題抽到「在圖上點出極值點」，整個定位卡在那裡。
-    const NO_CHOICE_KINDS = ["worksheet", "graphtap", "graphslope"];
+    const NO_CHOICE_KINDS = ["worksheet", "graphtap", "graphslope", "sketch"];
     const source = beyondBasicsFilter(problems)
       .filter((problem) => !NO_CHOICE_KINDS.includes(problem.answerKind))
       .filter((problem) => !topics || topics.includes(problem.topic));
@@ -10499,7 +10536,7 @@
     const pool = problems.filter((problem) =>
       ["limits", "derivatives", "integrals", "series"].includes(problem.topic) &&
       !problem.custom &&
-      !["worksheet", "graph", "graphtap", "graphslope"].includes(problem.answerKind) &&
+      !["worksheet", "graph", "graphtap", "graphslope", "sketch"].includes(problem.answerKind) &&
       problemRank(problem) >= 2 && problemRank(problem) <= 5);
     const picked = shuffle(pool, seedFromString(`duel-${Date.now()}`)).slice(0, 10);
     if (picked.length < 10) return;
@@ -10789,7 +10826,9 @@
     const submission = resolveAnswerSubmission(current, String(input || "").trim(), "Wrong");
     // 選擇題答錯時，「在 x=0.31 代入時不相同」是判分器的話，不是給人看的。
     // 改成：你選的是哪一個、它像是怎麼錯的（誘答理由），正解在下面。
-    if (submission.status !== "correct" && current) {
+    // 互動圖形題（點位／切線／作圖）走的也是這條路，但它們的判分訊息本來就是給人看的
+    // （「x 從 −1 到 1 這一段 f 應該遞減，你畫的往上」），誘答理由反而牛頭不對馬嘴。
+    if (submission.status !== "correct" && current && !["graphtap", "graphslope", "sketch"].includes(current.answerKind)) {
       const options = getChoiceOptions(current);
       const index = options.findIndex((option) => option.value === input);
       const letter = index >= 0 ? String.fromCharCode(65 + index) : "";
@@ -11392,6 +11431,9 @@
     if (problem.answerKind === "graphslope") {
       return checkGraphSlope(problem, input);
     }
+    if (problem.answerKind === "sketch") {
+      return window.BuzzGraphSketch.check(problem, input);
+    }
     if (problem.answerKind === "worksheet") {
       return checkWorksheet(problem, input);
     }
@@ -11687,7 +11729,7 @@
   function wellFormedDistractor(problem, value) {
     const text = String(value || "").trim();
     if (!text) return false;
-    if (["text", "set", "interval", "worksheet", "graph", "graphtap", "graphslope"].includes(problem.answerKind)) return true;
+    if (["text", "set", "interval", "worksheet", "graph", "graphtap", "graphslope", "sketch"].includes(problem.answerKind)) return true;
     if (/^[*/^+]/.test(text) || /[*/^+(-]$/.test(text) || /[*/^]{2}/.test(text) || /\(\)/.test(text)) return false;
     if (text.includes(",")) return false;
     let depth = 0;
@@ -14777,6 +14819,7 @@
       graph: "選圖",
       graphtap: "點位",
       graphslope: "切線",
+      sketch: "作圖",
       worksheet: "作圖表"
       // 少一個對應就會在題目上印出一個 undefined chip。
       // 加新 answerKind 的時候這裡是最容易忘記的地方 —— 實測就漏了。

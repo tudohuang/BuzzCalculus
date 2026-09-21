@@ -172,7 +172,10 @@ if (!timeoutPassed) failures.push({ name: "timeout keeps correct draft", input: 
 
 const canonicalProblems = global.window.BUZZ_PROBLEMS || [];
 canonicalProblems.forEach((problem) => {
-  const input = problem.answerKind === "text" ? problem.canonical || problem.answers[0] : problem.answer;
+  // 作圖題的 answer 是 f 的 LaTeX（顯示用）；標準作答是照正解描一遍的筆畫。
+  const input = problem.answerKind === "text" ? problem.canonical || problem.answers[0]
+    : problem.answerKind === "sketch" ? global.window.BuzzGraphSketch.trace(problem)
+      : problem.answer;
   const result = api.checkAnswer(problem, input);
   const passed = Boolean(result.correct);
   const status = passed ? "PASS" : "FAIL";

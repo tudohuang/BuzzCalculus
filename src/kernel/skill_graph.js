@@ -53,8 +53,9 @@
     //   domain-aware   這題的答案要考慮定義域
     //   repeated-root  這題的根是重根（陷阱的位置，不是能力座標）
     "composition", "domain-aware", "repeated-root",
-    //   even-function  函數的對稱性，是題目的性質不是能力座標（跟 symmetry 同一類）
-    "even-function"
+    //   even-function / odd-function  函數的對稱性，是題目的性質不是能力座標（跟 symmetry 同一類）
+    //   absolute-value  函數型態（作圖題的 |x|、|x²−1|），跟 rational / radical 同一類
+    "even-function", "odd-function", "absolute-value"
   ]);
 
   // ── Skill 節點 ────────────────────────────────────────────────
