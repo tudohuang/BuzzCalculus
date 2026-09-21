@@ -108,7 +108,7 @@
   [
     ["exam-int-001", "\\int \\frac{x}{(1+x^2)^2}\\,dx", "-1/(2*(1+x^2))", ["substitution", "rational"], "Let u=1+x^2."],
     ["exam-int-002", "\\int \\frac{x^3}{1+x^2}\\,dx", "x^2/2-log(1+x^2)/2", ["algebra", "rational"], "Divide x^3 by 1+x^2 as x - x/(1+x^2)."],
-    ["exam-int-004", "\\int x\\ln x\\,dx", "x^2*log(x)/2-x^2/4", ["integration-by-parts", "log"], "Let u=log x and dv=x dx."],
+    ["exam-int-004", "\\int \\sqrt{x}\\,\\ln x\\,dx", "2*x^(3/2)*log(x)/3-4*x^(3/2)/9", ["integration-by-parts", "log"], "Let u=log x and dv=sqrt(x) dx."],
     ["exam-int-005", "\\int \\frac{\\ln x}{x}\\,dx", "log(x)^2/2", ["substitution", "log"], "Let u=log x."],
     ["exam-int-007", "\\int \\sec^2x\\tan x\\,dx", "tan(x)^2/2", ["trig-integral", "substitution"], "Let u=tan x."],
     ["exam-int-010", "\\int \\frac{\\sqrt{x}}{1+x^{3/2}}\\,dx", "2*log(1+x^(3/2))/3", ["substitution", "radical"], "Let u=1+x^{3/2}."],

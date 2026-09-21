@@ -444,6 +444,12 @@
         </main>`;
     }
 
+    // 手機是單欄：題目說明排在編輯器前面，「同一種證法」那四張卡會把編輯器推到 800px 以下。
+    // 窄畫面預設收起來（桌機側欄夠高，照樣攤開）。
+    function narrowScreen() {
+      return Boolean(window.matchMedia && window.matchMedia("(max-width: 900px)").matches);
+    }
+
     // 白話證明的題目頁。tab：problem / hint / solution / submissions
     function renderProblem(row, spec, proofWrite, records, nav) {
       const tab = proofWrite.tab || "problem";
@@ -468,10 +474,12 @@
             <p>一行一句，每句用一種句型開頭（任取／取／假設／則／由…／因為…所以／故）。右邊每打一行就檢查：代數鏈在假設下取樣驗、定理對形狀、骨架看有沒有到齊。綠＝驗過、黃＝讀得懂但驗不了、紅＝不成立或讀不懂。按「提交」會記一筆，全綠就是通過。</p>
           </details>
           ${related.length ? `
-            <div class="lc-related">
-              <p class="section-label">同一種證法</p>
+            <details class="lc-related" ${narrowScreen() ? "" : "open"}>
+              <summary class="section-label">同一種證法 · ${related.length} 題</summary>
+              <div class="lc-related-list">
               ${related.map((item) => `<button type="button" class="lc-related-item" data-action="open-proof-problem" data-proof-key="pl:${escapeAttr(item.id)}"><span>${escapeHtml(item.title)}</span>${levelPill(levelOf("auto", item.difficulty))}</button>`).join("")}
-            </div>` : ""}`,
+              </div>
+            </details>` : ""}`,
         hint: `
           <div class="lc-hint">
             <p class="section-label">教練提示</p>

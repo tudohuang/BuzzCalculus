@@ -189,14 +189,14 @@
       topic: "integrals",
       difficulty: 4,
       source: "Buzz hard integrals",
-      prompt: "\\int (\\ln x)^2\\,dx",
+      prompt: "\\int x(\\ln x)^2\\,dx",
       answerKind: "antiderivative",
-      answer: "x*(log(x)^2-2*log(x)+2)",
-      timeLimit: 100,
+      answer: "x^2*log(x)^2/2-x^2*log(x)/2+x^2/4",
+      timeLimit: 110,
       tabLimit: 1,
       tags: ["integration-by-parts", "ibp", "log"],
-      hints: ["Take u=(log x)^2 and dv=dx.", "Then du=2log(x)/x dx.", "A second known integral int log x dx appears."],
-      solution: "IBP gives x(log x)^2-2int log x dx = x(log x)^2-2(xlog x-x)."
+      hints: ["Take u=(log x)^2 and dv=x dx.", "Then du=2log(x)/x dx, so int x(log x)^2 dx = x^2(log x)^2/2 - int x log x dx.", "A second known integral int x log x dx = x^2 log x/2 - x^2/4 appears."],
+      solution: "IBP gives x^2(log x)^2/2 - int x log x dx = x^2(log x)^2/2 - (x^2 log x/2 - x^2/4)."
     },
     {
       id: "int-056",

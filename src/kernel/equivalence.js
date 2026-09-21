@@ -7,7 +7,7 @@
 // 一個是考古題風格。刪任何一邊都會在那個題包上開一個洞。
 // 真正的傷害是同一局或同一份考卷抽到兩題一樣的 —— 所以改成抽題時去重。
 //
-// 產生時：42 組語意重複，其中 3 組經人工複核判定為誤判（見產生器內的 NOT_EQUIVALENT）。
+// 產生時：43 組語意重複，其中 3 組經人工複核判定為誤判（見產生器內的 NOT_EQUIVALENT）。
 
 (function registerEquivalence() {
   "use strict";
@@ -20,6 +20,8 @@
     "burst-boss-lim-008": "burst-boss-lim-008",
     "burst-int-012": "burst-int-012",
     "burst-int-027": "burst-int-027",
+    "ch-inv-004": "ch-inv-004",
+    "ch-pow-006": "ch-pow-006",
     "ch-trap-004": "ch-trap-004",
     "cx-der-002": "cx-der-002",
     "cx-der-005": "cx-der-005",
@@ -32,8 +34,12 @@
     "cx-smid-011": "cx-smid-011",
     "cx-smid-012": "cx-smid-012",
     "cx-smid-013": "cx-smid-013",
+    "db-itrig-007": "ch-inv-004",
+    "db-logd-004": "db-logd-004",
+    "db-logd-005": "ch-pow-006",
     "dd-def-001": "cx-lim-005",
     "dd-inv-001": "dd-inv-001",
+    "dd-log-005": "db-logd-004",
     "depth-der-001": "depth-der-001",
     "depth-int-020": "depth-int-020",
     "depth-lim-001": "depth-lim-001",
@@ -49,16 +55,12 @@
     "exam-der-006": "der-015",
     "exam-der-017": "der-020",
     "exam-int-002": "exam-int-002",
-    "exam-int-004": "exam-int-004",
     "exam-int-021": "cx-int-008",
     "exam-lim-019": "exam-lim-019",
     "gap-ser-cond-001": "gap-ser-cond-001",
     "hc-rad-008": "burst-boss-int-006",
     "hd-010": "depth-der-001",
-    "int-009": "exam-int-004",
-    "int-013": "int-013",
     "int-014": "exam-int-002",
-    "int-055": "int-013",
     "lim-012": "lim-012",
     "mob-conv-003": "gap-ser-cond-001",
     "mob-limtrap-004": "lim-012",
@@ -96,6 +98,6 @@
   window.BuzzEquivalence = {
     // 抽題去重用的鍵：等價題共用同一個鍵，其餘題目就是自己的 id
     keyOf: function (id) { return (id && MAP[id]) || id; },
-    size: 80
+    size: 82
   };
 })();
