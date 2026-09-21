@@ -2626,6 +2626,43 @@ function verifyInteractiveGraph(problem) {
 }
 
 // 選圖題的關係：圖上畫的是 f，選項是 f′（derivative）或 F（antiderivative）的候選——正解要跟數值微分對得上
+// 作圖題：答案就是 f 本身，能獨立驗的是「題幹寫的 f 跟判分用的 sketch.expr 是同一個函數」
+// （題幹是 LaTeX、expr 是 JS，兩邊各自打，打錯一邊使用者畫對也會被判錯），
+// 以及「畫得出來」：每一段 pieces 上 f 有定義，而且大半落在窗內。
+function verifySketch(problem) {
+  if (problem.answerKind !== "sketch") return null;
+  const spec = problem.sketch || {};
+  const f = compileCurveExpr(spec.expr);
+  if (!f) return { status: "error", reason: "sketch.expr 編譯不了" };
+  const m = /f\(x\)\s*=\s*([^]*?)\s*(?:\\text\{|\\quad|$)/.exec(String(problem.prompt || ""));
+  if (!m) return { status: "unverified", reason: "題幹裡讀不到 f(x)=…" };
+  let g;
+  try {
+    g = latex.compile(m[1], ["x"]);
+  } catch (error) {
+    return { status: "unverified", reason: "題幹的 f 編譯不了：" + error.message };
+  }
+  const pieces = Array.isArray(spec.pieces) && spec.pieces.length ? spec.pieces : [(problem.graph.window || []).slice(0, 2)];
+  const [, , ymin, ymax] = (problem.graph && problem.graph.window || [-5, 5, -5, 5]).map(Number);
+  let checked = 0;
+  let inside = 0;
+  for (const [a, b] of pieces) {
+    for (let i = 1; i < 24; i += 1) {
+      const x = a + ((b - a) * i) / 24;
+      const ye = f(x);
+      const yp = g(x);
+      if (!Number.isFinite(ye) || !Number.isFinite(yp)) return { status: "mismatch", method: "sketch", detail: "x = " + x.toFixed(3) + " 上 f 沒有定義，卻在要畫的區段裡" };
+      if (Math.abs(ye - yp) > 1e-6 * (1 + Math.abs(ye))) {
+        return { status: "mismatch", method: "sketch", detail: "x = " + x.toFixed(3) + "：題幹的 f 是 " + yp.toFixed(5) + "，sketch.expr 算出 " + ye.toFixed(5) };
+      }
+      checked += 1;
+      if (ye >= ymin && ye <= ymax) inside += 1;
+    }
+  }
+  if (inside < checked * 0.6) return { status: "mismatch", method: "sketch", detail: "要畫的區段有 " + Math.round((1 - inside / checked) * 100) + "% 落在窗外，畫不出來" };
+  return { status: "ok", method: "sketch", detail: "題幹的 f 與 sketch.expr 在 " + checked + " 個取樣點上一致，" + Math.round((inside / checked) * 100) + "% 在窗內" };
+}
+
 function verifyGraphRelation(problem) {
   if (problem.answerKind !== "graph" || !problem.graphRelation) return null;
   const shown = problem.graph && (problem.graph.curves || [])[0];
@@ -2831,6 +2868,8 @@ function verifyProblem(problem, options = {}) {
   if (interactive) return interactive;
   const relation = verifyGraphRelation(problem);
   if (relation) return relation;
+  const sketch = verifySketch(problem);
+  if (sketch) return sketch;
 
   // 明確寫在題目上的 verify 欄位優先於自動推導
   if (problem.verify) return runExplicit(problem, compileAnswer);

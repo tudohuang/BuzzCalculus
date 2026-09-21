@@ -1127,7 +1127,7 @@ console.log(`Resume smoke: ${json.length} bytes for a 12-question exam, round-tr
   // 這兩個題型不進對戰池（作答動作是拖與點，沒辦法用一個答案字串比賽）
   const dueled = global.window.BUZZ_PROBLEMS.filter((p) => ["graphtap", "graphslope"].includes(p.answerKind));
   const appSrc = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "app.js"), "utf8");
-  if (!/\["worksheet", "graph", "graphtap", "graphslope"\]\.includes\(problem\.answerKind\)/.test(appSrc)) {
+  if (!/\["worksheet", "graph", "graphtap", "graphslope", "sketch"\]\.includes\(problem\.answerKind\)/.test(appSrc)) {
     throw new Error("對戰題池沒有排除互動圖形題");
   }
   // 每一題的判分規格都要能被驗算器獨立重算 —— 側表裡有紀錄才算數
@@ -1136,6 +1136,45 @@ console.log(`Resume smoke: ${json.length} bytes for a 12-question exam, round-tr
   const missing = dueled.filter((p) => !verified || !verified.has(p.id));
   if (missing.length) throw new Error("互動圖形題沒有進驗算側表：" + missing.map((p) => p.id).join(","));
   console.log("互動圖形 smoke: " + dueled.length + " 題、點位與斜率容差兩端都判對、對戰池排除、全部經過獨立驗算");
+}
+
+// ── 作圖題：四關判分的兩端都要對（2026-09-21）──
+{
+  const sketch = global.window.BuzzGraphSketch;
+  if (!sketch) throw new Error("share_cards.js 沒有掛上 BuzzGraphSketch");
+  const byId = (id) => global.window.BUZZ_PROBLEMS.find((p) => p.id === id);
+  const cubic = byId("sk-008");            // x³−3x on [-2.1,2.1]
+  if (!cubic || cubic.answerKind !== "sketch") throw new Error("sk-008 不是作圖題");
+  const fn = global.window.BuzzGraphRender.graphCurveFn(cubic.sketch.expr);
+  const trace = (transform, a, b, n = 60) => {
+    const pts = [];
+    for (let i = 0; i <= n; i += 1) { const x = a + ((b - a) * i) / n; pts.push([x, transform(fn(x), x)]); }
+    return pts;
+  };
+  const good = sketch.serialize([trace((y) => y + 0.15 * Math.sin(7 * (y + 1)), -2.1, 2.1)]);
+  const r1 = api.checkAnswer(cubic, good);
+  if (!r1.correct) throw new Error("照著 f 畫（帶一點手抖）應該判對：" + r1.message);
+  const flipped = api.checkAnswer(cubic, sketch.serialize([trace((y) => -y, -2.1, 2.1)]));
+  if (flipped.correct || !/應該遞增|應該遞減/.test(flipped.message)) throw new Error("上下翻轉的曲線要說哪一段增減錯了：" + flipped.message);
+  const half = api.checkAnswer(cubic, sketch.serialize([trace((y) => y, -2.1, 0)]));
+  if (half.correct || !/畫滿/.test(half.message)) throw new Error("只畫一半要說沒畫滿：" + half.message);
+  const shifted = api.checkAnswer(cubic, sketch.serialize([trace((y) => y + 2.2, -2.1, 2.1)]));
+  if (shifted.correct || !/位置/.test(shifted.message)) throw new Error("整條上移 2.2 增減都對但位置錯，要說位置：" + shifted.message);
+  const fold = api.checkAnswer(cubic, sketch.serialize([[[-2, -1], [0, 1], [1, 2], [-1, 3], [-2, 3.5], [0.5, 3.8]]]));
+  if (fold.correct || !/往回折/.test(fold.message)) throw new Error("往回折的筆畫不是函數：" + fold.message);
+  const twoStrokes = api.checkAnswer(cubic, sketch.serialize([trace((y) => y, -2.1, 0.1), trace((y) => y, -0.1, 2.1)]));
+  if (!twoStrokes.correct) throw new Error("分兩筆畫同一條曲線應該判對：" + twoStrokes.message);
+  const hyper = byId("sk-013");            // 1/x：兩支，中間不能穿
+  const f13 = global.window.BuzzGraphRender.graphCurveFn(hyper.sketch.expr);
+  const branch = (a, b) => { const pts = []; for (let i = 0; i <= 40; i += 1) { const x = a + ((b - a) * i) / 40; pts.push([x, f13(x)]); } return pts; };
+  const through = api.checkAnswer(hyper, sketch.serialize([branch(-4, -0.3).concat([[-0.1, -3.5], [0, 0], [0.1, 3.5]], branch(0.3, 4))]));
+  if (through.correct || !/沒有定義|漸近線/.test(through.message)) throw new Error("穿過垂直漸近線要被抓到：" + through.message);
+  const twoBranches = api.checkAnswer(hyper, sketch.serialize([branch(-4, -0.3), branch(0.3, 4)]));
+  if (!twoBranches.correct) throw new Error("兩支分開畫的 1/x 應該判對：" + twoBranches.message);
+  const all = global.window.BUZZ_PROBLEMS.filter((p) => p.answerKind === "sketch");
+  const missing = all.filter((p) => !global.window.BuzzVerifiedAnswers || !global.window.BuzzVerifiedAnswers.has(p.id));
+  if (missing.length) throw new Error("作圖題沒有進驗算側表：" + missing.map((p) => p.id).join(","));
+  console.log("作圖題 smoke: " + all.length + " 題、對／翻轉／半條／平移／往回折／穿漸近線六種輸入判分正確、全部經過獨立驗算");
 }
 
 // ── 真機 UAT 回報修正的釘子（2026-09-06）──

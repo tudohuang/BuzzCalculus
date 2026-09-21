@@ -8,7 +8,7 @@ const topics = new Set(["limits", "derivatives", "integrals", "series"]);
 // 那些檢查（誘答要看得出差別、要寫錯在哪）在這裡驗不了。
 // worksheet = 作圖表題（一張要填的表，每一格自己判分）。
 // 每一格的獨立驗算由 tools/validate_worksheets.js 把關。
-const answerKinds = new Set(["numeric", "expression", "antiderivative", "text", "set", "interval", "graph", "graphtap", "graphslope", "worksheet"]);
+const answerKinds = new Set(["numeric", "expression", "antiderivative", "text", "set", "interval", "graph", "graphtap", "graphslope", "worksheet", "sketch"]);
 const ids = new Set();
 const errors = [];
 const allowedRawWords = new Set([
@@ -148,6 +148,23 @@ problems.forEach((problem, index) => {
     for (let i = 1; i < sorted.length; i += 1) {
       if (sorted[i] - sorted[i - 1] < tol * 2) fail(id, `graphtap targets ${sorted[i - 1]} and ${sorted[i]} closer than 2×tolerance ${tol}`);
     }
+  }
+  // 作圖題：格子只給 window，曲線在 sketch.expr；pieces 是必須畫到的 x 區段（漸近線兩側分開）。
+  if (problem.answerKind === "sketch") {
+    const spec = problem.sketch || {};
+    if (!spec.expr) fail(id, "sketch needs sketch.expr (判分與驗算都要重算曲線)");
+    if (!problem.graph || !Array.isArray(problem.graph.window) || problem.graph.window.length !== 4) fail(id, "sketch needs graph.window [xmin,xmax,ymin,ymax]");
+    if (problem.graph && Array.isArray(problem.graph.curves) && problem.graph.curves.length) fail(id, "sketch graph must not draw curves — the student draws them");
+    if (!Array.isArray(spec.pieces) || !spec.pieces.length) fail(id, "sketch needs sketch.pieces [[a,b],…]");
+    else {
+      const [xmin, xmax] = (problem.graph && problem.graph.window || [0, 0]).map(Number);
+      spec.pieces.forEach((piece) => {
+        if (!Array.isArray(piece) || piece.length !== 2 || !(piece[1] > piece[0])) fail(id, "sketch piece must be [a,b] with a<b");
+        else if (piece[0] < xmin || piece[1] > xmax) fail(id, "sketch piece outside graph.window");
+      });
+    }
+    if (!/f\(x\)\s*=/.test(problem.prompt || "")) fail(id, "sketch prompt must state f(x)=… (驗算器從題幹讀 f 跟 sketch.expr 對)");
+    if (!String(problem.answer || "").trim()) fail(id, "sketch answer must be the LaTeX of f (參考答案顯示用)");
   }
   if (problem.answerKind === "graphslope") {
     if (!problem.pivot || !Number.isFinite(Number(problem.pivot.x))) fail(id, "graphslope needs pivot.x");
