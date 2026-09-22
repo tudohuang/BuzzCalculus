@@ -1257,6 +1257,20 @@
     }
   }
 
+  // 會觸發整頁重繪的輸入框，要等輸入法組完字才算「打了字」。
+  // 注音／拼音每敲一鍵都會發 input 事件；200ms 後整頁 render 把輸入框換掉，
+  // 組到一半的字就被強制送出（實測回報「打了之後沒有成字就自動 enter」，手機電腦都一樣）。
+  // compositionstart 到 compositionend 之間一律不理，結束時才補一次。
+  function onTypedInput(input, handler) {
+    let composing = false;
+    input.addEventListener("compositionstart", () => { composing = true; });
+    input.addEventListener("compositionend", () => { composing = false; handler(); });
+    input.addEventListener("input", (event) => {
+      if (composing || (event && event.isComposing)) return;
+      handler();
+    });
+  }
+
   function restoreLibrarySearchFocus() {
     if (!librarySearchShouldFocus || view !== "library") return;
     librarySearchShouldFocus = false;
@@ -5903,6 +5917,7 @@
   const renderProblemGraph = (problem, opts) => window.BuzzGraphRender.renderProblemGraph(problem, opts, escapeAttr);
   const renderMiniGraph = window.BuzzGraphRender.renderMiniGraph;
   const svgGraphContext = window.BuzzGraphRender.svgGraphContext;
+  const graphProblemFn = window.BuzzGraphRender.graphProblemFn;
 
   // ── 作答舞台的三個儀表 ─────────────────────────────────────
   //
@@ -6446,20 +6461,6 @@
     return String(problem.answer || "").split(",").map(Number).filter(Number.isFinite);
   }
 
-  function graphProblemFn(problem) {
-    const curve = problem.graph && (problem.graph.curves || [])[0];
-    if (curve) return graphCurveFn(curve.expr);
-    // 折線題（角點、由 f′ 圖找 f 的極值）：點到的位置吸附到折線上
-    const pts = problem.graph && (problem.graph.polylines || [])[0];
-    if (!Array.isArray(pts) || pts.length < 2) return null;
-    return (x) => {
-      for (let i = 0; i + 1 < pts.length; i += 1) {
-        const [x0, y0] = pts[i]; const [x1, y1] = pts[i + 1];
-        if (x >= x0 - 1e-9 && x <= x1 + 1e-9) return y0 + ((y1 - y0) * (x - x0)) / (x1 - x0);
-      }
-      return NaN;
-    };
-  }
 
   function renderGraphTapControls(problem) {
     const done = Boolean(quiz.feedback);
@@ -8000,7 +8001,7 @@
     });
     const proofSearch = app.querySelector("[data-proof-search]");
     if (proofSearch) {
-      proofSearch.addEventListener("input", () => {
+      onTypedInput(proofSearch, () => {
         if (proofSearchTimer) window.clearTimeout(proofSearchTimer);
         const value = proofSearch.value;
         proofSearchTimer = window.setTimeout(() => {
@@ -8034,7 +8035,7 @@
     const librarySearchInput = app.querySelector("[data-library-search]");
     if (librarySearchInput) {
       // Debounced: a full render per keystroke makes typing laggy.
-      librarySearchInput.addEventListener("input", () => {
+      onTypedInput(librarySearchInput, () => {
         librarySearch = librarySearchInput.value || "";
         librarySearchShouldFocus = true;
         resetLibraryPaging();

@@ -513,7 +513,23 @@
     };
   }
 
-  window.BuzzGraphRender = { graphCurveFn, renderProblemGraph, renderMiniGraph, svgGraphContext };
+  // 題目的曲線函數：有 curves 就編譯式子；折線題（角點、由 f′ 圖找 f 的極值）點到的位置吸附到折線上
+  function graphProblemFn(problem) {
+    const curve = problem.graph && (problem.graph.curves || [])[0];
+    if (curve) return graphCurveFn(curve.expr);
+    // 折線題（角點、由 f′ 圖找 f 的極值）：點到的位置吸附到折線上
+    const pts = problem.graph && (problem.graph.polylines || [])[0];
+    if (!Array.isArray(pts) || pts.length < 2) return null;
+    return (x) => {
+      for (let i = 0; i + 1 < pts.length; i += 1) {
+        const [x0, y0] = pts[i]; const [x1, y1] = pts[i + 1];
+        if (x >= x0 - 1e-9 && x <= x1 + 1e-9) return y0 + ((y1 - y0) * (x - x0)) / (x1 - x0);
+      }
+      return NaN;
+    };
+  }
+
+  window.BuzzGraphRender = { graphCurveFn, renderProblemGraph, renderMiniGraph, svgGraphContext, graphProblemFn };
 })();
 
 /* ── 作圖題（answerKind: "sketch"）：在空的格子上把 f 畫出來 ──

@@ -115,6 +115,24 @@ let checked = 0;
     }
     assert(emptyState, "Search empty state missing");
     await snapshot("phone-library-empty");
+    // 注音／拼音組字中不能把輸入框換掉（2026-09-22 回報：打了之後沒有成字就自動 enter，手機電腦都一樣）。
+    // 模擬 ㄊㄞˊ → 台：組字中的 input 事件不觸發重繪，compositionend 之後才搜。
+    const ime = await chrome.evaluate(`
+      const input = document.querySelector('[data-library-search]');
+      input.focus();
+      const before = input;
+      input.dispatchEvent(new CompositionEvent('compositionstart', { bubbles: true, data: '' }));
+      for (const chunk of ['ㄊ', 'ㄊㄞ', 'ㄊㄞˊ']) { input.value = chunk; input.dispatchEvent(new InputEvent('input', { bubbles: true, isComposing: true, data: chunk, inputType: 'insertCompositionText' })); }
+      await new Promise((r) => setTimeout(r, 450));
+      const survived = document.querySelector('[data-library-search]') === before && input.value === 'ㄊㄞˊ';
+      input.value = '台'; input.dispatchEvent(new CompositionEvent('compositionend', { bubbles: true, data: '台' }));
+      input.dispatchEvent(new InputEvent('input', { bubbles: true, isComposing: false, data: '台', inputType: 'insertFromComposition' }));
+      await new Promise((r) => setTimeout(r, 450));
+      const after = document.querySelector('[data-library-search]');
+      return { survived, searched: after !== before && after.value === '台' };
+    `);
+    assert(ime.survived, "輸入法組字中搜尋框被重繪換掉了（注音會被強制送出）");
+    assert(ime.searched, "組完字之後沒有真的搜尋");
     await click('[data-action="home"]');
     await click('[data-action="toggle-theme"]');
     assert.equal(await chrome.evaluate(`return document.documentElement.dataset.theme;`), "dark");
