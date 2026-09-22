@@ -798,10 +798,43 @@
       build_date: BUILD_DATE
     });
     if (!document.head || !document.createElement) return;
-    const script = document.createElement("script");
-    script.async = true;
-    script.src = `https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(GA_MEASUREMENT_ID)}`;
-    document.head.appendChild(script);
+    // gtag.js 在中階手機上要吃掉主執行緒 250ms，而它跟首屏無關：
+    // 等畫面畫出來、閒下來再載。事件在那之前先排進 dataLayer，一個都不會掉。
+    const inject = () => {
+      const script = document.createElement("script");
+      script.async = true;
+      script.src = `https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(GA_MEASUREMENT_ID)}`;
+      document.head.appendChild(script);
+    };
+    const later = () => (window.requestIdleCallback ? window.requestIdleCallback(inject, { timeout: 4000 }) : window.setTimeout(inject, 1500));
+    if (document.readyState === "complete") later();
+    else window.addEventListener("load", later, { once: true });
+  }
+
+  // ── 延後載入的模組 ─────────────────────────────────────────
+  // index.html 用 type="text/lazy" data-lazy="<group>" 標的 script 瀏覽器不會抓；
+  // 第一次需要時照文件順序注入真的 <script>，回傳 Promise。載完再 render 一次。
+  const lazyGroups = {};
+  function lazyReady(group) {
+    return lazyGroups[group] === true;
+  }
+  function ensureLazy(group) {
+    if (lazyGroups[group] === true) return Promise.resolve();
+    if (lazyGroups[group]) return lazyGroups[group];
+    const tags = [...document.querySelectorAll(`script[type="text/lazy"][data-lazy="${group}"]`)];
+    if (!tags.length) { lazyGroups[group] = true; return Promise.resolve(); }
+    const loadOne = (src) => new Promise((resolve, reject) => {
+      const script = document.createElement("script");
+      script.src = src;
+      script.async = false;
+      script.onload = resolve;
+      script.onerror = () => reject(new Error("載不到 " + src));
+      document.head.appendChild(script);
+    });
+    lazyGroups[group] = tags.reduce((chain, tag) => chain.then(() => loadOne(tag.getAttribute("src"))), Promise.resolve())
+      .then(() => { lazyGroups[group] = true; })
+      .catch((error) => { lazyGroups[group] = null; throw error; });
+    return lazyGroups[group];
   }
 
   // ── 正式事件表 ──────────────────────────────────────────────
@@ -1078,6 +1111,8 @@
       }
       if (lastRenderedView === "library" && view !== "library") librarySearch = "";
       lastRenderedView = view;
+      // 作答中把 html 標起來：CSS 用它關掉下拉重新整理（見 html.in-quiz）
+      if (document.documentElement && document.documentElement.classList) document.documentElement.classList.toggle("in-quiz", view === "quiz");
       releaseDetachedCanvases();
       app.innerHTML = [renderTopbar(), renderWorkspaceBar(), renderScreen(), renderAppNoticeModal(), renderCalibrationPreviewModal(), renderEraseConfirmModal(), renderReportModal(), renderConfirmDialog(), renderUndoToast(), renderUpdateBanner()].join("");
       const main = app.querySelector("main");
@@ -1294,7 +1329,25 @@
     return `<header class="workspace-heading"><div><p class="section-label">${escapeHtml(eyebrow)}</p><h1>${escapeHtml(title)}</h1>${description ? `<p class="workspace-description">${escapeHtml(description)}</p>` : ""}</div>${actions ? `<div class="heading-actions">${actions}</div>` : ""}</header>`;
   }
 
+  const PROOF_VIEWS = ["proofs", "proof-write", "proof-view", "proof-tutorial"];
+
   function renderScreen() {
+    // 證明引擎是延後載入的（見 ensureLazy）：還沒到就先給一個載入中的殼，載完再 render。
+    if (PROOF_VIEWS.includes(view) && !lazyReady("proof")) {
+      ensureLazy("proof").then(render).catch(() => {
+        showAppNotice("證明引擎載不進來 —— 檢查一下網路，再點一次證明題。");
+        view = "home";
+        render();
+      });
+      return `
+        <main class="screen lazy-loading" aria-busy="true">
+          <section class="panel page-panel">
+            <p class="section-label">證明訓練</p>
+            <p class="panel-note">載入證明引擎…</p>
+          </section>
+        </main>
+      `;
+    }
     if (view === "quiz") return renderQuiz();
     if (view === "results") return renderResults();
     if (view === "path-intro") return renderPathIntro();
@@ -5123,6 +5176,13 @@
   }
 
   function openProofWrite(id, options = {}) {
+    // 引擎還沒載（從課程頁或深連結直接跳進來）：先載，載完再開同一題。
+    if (!lazyReady("proof")) {
+      view = options.lessonId ? "proof-tutorial" : "proof-write";
+      render();
+      ensureLazy("proof").then(() => openProofWrite(id, options)).catch(() => {});
+      return;
+    }
     const spec = proofLangSpec(id);
     if (!spec) return;
     const records = loadRecords();
@@ -5841,6 +5901,8 @@
   // ---- 圖形題：problem.graph -> inline SVG。渲染器住在 src/share_cards.js（從 app.js 搬出去的獨立畫面片段） ----
   const graphCurveFn = window.BuzzGraphRender.graphCurveFn;
   const renderProblemGraph = (problem, opts) => window.BuzzGraphRender.renderProblemGraph(problem, opts, escapeAttr);
+  const renderMiniGraph = window.BuzzGraphRender.renderMiniGraph;
+  const svgGraphContext = window.BuzzGraphRender.svgGraphContext;
 
   // ── 作答舞台的三個儀表 ─────────────────────────────────────
   //
@@ -6137,9 +6199,10 @@
     if (problem.answerKind === "graphslope") return renderGraphSlopeControls(problem);
     // 作圖題：在空格子上畫 f。畫面與判分都在 share_cards.js 的 BuzzGraphSketch（app.js 撞預算）。
     if (problem.answerKind === "sketch") {
-      return window.BuzzGraphSketch.renderControls(problem, graphSketchStrokes(problem), {
-        done: Boolean(quiz.feedback), renderProblemGraph, icon, extra: attachedScratchboard(problem, quiz.feedback ? "disabled" : "")
+      const sketch = window.BuzzGraphSketch.renderControls(problem, graphSketchStrokes(problem), {
+        done: Boolean(quiz.feedback), tool: quiz.sketchTool || "draw", renderProblemGraph, icon
       });
+      return fullscreenShell(problem, quiz.boardFullscreen ? boardOnlyNote("圖") : sketch, attachedScratchboard(problem, quiz.feedback ? "disabled" : ""));
     }
     if (quiz.answerMode === "choice") return renderChoiceControls(problem);
     return renderFreeAnswerControls(problem);
@@ -6421,7 +6484,7 @@
       });
       return parts.join("");
     };
-    return `
+    const controls = `
       <div class="graph-interactive">
         ${renderProblemGraph(problem, { interactive: done ? null : "tap", overlay })}
         <div class="helper-row">
@@ -6431,9 +6494,11 @@
           <button class="button" data-action="submit-graphtap" ${!done && marks.length === targets.length ? "" : "disabled"}>${icon("check")}送出</button>
           <button class="button ghost" data-action="clear-graphtap" ${done || !marks.length ? "disabled" : ""}>清除重點</button>
         </div>
-        ${attachedScratchboard(problem, done ? "disabled" : "")}
       </div>
     `;
+    // 手機開計算紙會進全螢幕殼（見 board toggle）；互動圖形題原本沒走這個殼，
+    // 於是計算紙攤在圖下面、被作答浮條壓住 —— 使用者回報「畫圖題的計算紙打不開」。
+    return fullscreenShell(problem, quiz.boardFullscreen ? boardOnlyNote("圖") : controls, attachedScratchboard(problem, done ? "disabled" : ""));
   }
 
   function graphSlopePivot(problem) {
@@ -6468,7 +6533,7 @@
       parts.push(`<circle cx="${ctx.sx(pivot.x)}" cy="${ctx.sy(pivot.y)}" r="4.6" fill="var(--gold)" stroke="var(--ink)" stroke-width="1.4"/>`);
       return parts.join("");
     };
-    return `
+    const controls = `
       <div class="graph-interactive">
         ${renderProblemGraph(problem, { interactive: done ? null : "slope", overlay })}
         <div class="helper-row">
@@ -6478,35 +6543,16 @@
         <div class="action-row">
           <button class="button" data-action="submit-graphslope" ${done ? "disabled" : ""}>${icon("check")}送出</button>
         </div>
-        ${attachedScratchboard(problem, done ? "disabled" : "")}
       </div>
     `;
+    return fullscreenShell(problem, quiz.boardFullscreen ? boardOnlyNote("圖") : controls, attachedScratchboard(problem, done ? "disabled" : ""));
   }
 
-  // 螢幕座標 → 數學座標。轉換參數（窗、內距、畫布大小）由
-  // renderProblemGraph 寫在 svg 的 data-* 上，這裡只做反運算。
-  function svgGraphContext(svg) {
-    const win = String(svg.dataset.graphWindow || "").split(",").map(Number);
-    const size = String(svg.dataset.graphSize || "").split(",").map(Number);
-    const pad = Number(svg.dataset.graphPad);
-    if (win.length !== 4 || size.length !== 2 || !Number.isFinite(pad)) return null;
-    const [xmin, xmax, ymin, ymax] = win;
-    const [width, height] = size;
-    return {
-      xmin, xmax, ymin, ymax,
-      toMath(event) {
-        const rect = svg.getBoundingClientRect();
-        const u = ((event.clientX - rect.left) / rect.width) * width;
-        const v = ((event.clientY - rect.top) / rect.height) * height;
-        return {
-          x: xmin + ((u - pad) / (width - 2 * pad)) * (xmax - xmin),
-          y: ymin + ((height - pad - v) / (height - 2 * pad)) * (ymax - ymin)
-        };
-      },
-      sx: (x) => pad + ((x - xmin) / (xmax - xmin)) * (width - 2 * pad),
-      sy: (y) => height - pad - ((y - ymin) / (ymax - ymin)) * (height - 2 * pad)
-    };
+  // 全螢幕計算紙時互動圖形放不下：留一句話告訴人怎麼回到圖上。
+  function boardOnlyNote(what) {
+    return `<p class="board-only-note">${icon("info")}算完按右上角的縮小鍵，回到${what}上作答。</p>`;
   }
+
 
   function setupInteractiveGraphs() {
     const tapSvg = app.querySelector('svg[data-graph-interactive="tap"]');
@@ -6541,7 +6587,7 @@
     const sketchSvg = app.querySelector('svg[data-graph-interactive="sketch"]');
     if (sketchSvg) {
       const problem = quiz && !quiz.feedback ? getCurrentProblem() : null;
-      if (problem && problem.answerKind === "sketch") window.BuzzGraphSketch.bind(sketchSvg, svgGraphContext(sketchSvg), graphSketchStrokes(problem), render);
+      if (problem && problem.answerKind === "sketch") window.BuzzGraphSketch.bind(sketchSvg, svgGraphContext(sketchSvg), graphSketchStrokes(problem), render, { tool: quiz.sketchTool || "draw" });
     }
     const slopeSvg = app.querySelector('svg[data-graph-interactive="slope"]');
     if (slopeSvg) {
@@ -6611,50 +6657,6 @@
     submitChoiceAnswer(graphSlopeValue(problem).toFixed(3));
   }
 
-  // 迷你繪圖。跟 renderProblemGraph 共用座標與格線的邏輯，
-  // 但尺寸小、不畫刻度數字 —— 四張並排的時候刻度只會變成雜訊。
-  function renderMiniGraph(expr, windowSpec, domainSpec) {
-    const win = Array.isArray(windowSpec) && windowSpec.length === 4 ? windowSpec.map(Number) : [-4, 4, -4, 4];
-    const [xmin, xmax, ymin, ymax] = win;
-    if (!(xmax > xmin) || !(ymax > ymin)) return "";
-    const fn = graphCurveFn(expr);
-    if (!fn) return "";
-    const width = 150;
-    const height = 118;
-    const pad = 6;
-    const sx = (x) => pad + ((x - xmin) / (xmax - xmin)) * (width - 2 * pad);
-    const sy = (y) => height - pad - ((y - ymin) / (ymax - ymin)) * (height - 2 * pad);
-    const parts = [];
-    if (ymin <= 0 && ymax >= 0) {
-      parts.push(`<line x1="${sx(xmin)}" y1="${sy(0)}" x2="${sx(xmax)}" y2="${sy(0)}" stroke="var(--line-strong)" stroke-width="1"/>`);
-    }
-    if (xmin <= 0 && xmax >= 0) {
-      parts.push(`<line x1="${sx(0)}" y1="${sy(ymin)}" x2="${sx(0)}" y2="${sy(ymax)}" stroke="var(--line-strong)" stroke-width="1"/>`);
-    }
-    // 曲線可能在窗內斷開（極點、定義域邊界）。斷了就開新的一段，
-    // 不要用一條直線把兩支接起來 —— 那會把漸近線畫成穿過去，
-    // 而「有沒有穿過去」正是這類題目要看的。
-    const [a, b] = Array.isArray(domainSpec) && domainSpec.length === 2 ? domainSpec.map(Number) : [xmin, xmax];
-    const steps = 220;
-    const segments = [];
-    let current = [];
-    for (let i = 0; i <= steps; i += 1) {
-      const x = a + ((b - a) * i) / steps;
-      const y = fn(x);
-      if (Number.isFinite(y) && y >= ymin && y <= ymax) {
-        current.push([x, y]);
-      } else {
-        if (current.length > 1) segments.push(current);
-        current = [];
-      }
-    }
-    if (current.length > 1) segments.push(current);
-    segments.forEach((pts) => {
-      const path = pts.map((pt, i) => `${i ? "L" : "M"}${sx(pt[0]).toFixed(1)},${sy(pt[1]).toFixed(1)}`).join(" ");
-      parts.push(`<path d="${path}" fill="none" stroke="var(--blue)" stroke-width="2" stroke-linejoin="round"/>`);
-    });
-    return `<svg viewBox="0 0 ${width} ${height}" role="img" aria-label="候選圖形">${parts.join("")}</svg>`;
-  }
 
   // renderExamLockStatus() 已移除 —— 那是全螢幕鎖定的狀態列與「鎖定全螢幕」按鈕。
   // 大考模式現在只剩整份倒數與無提示，剩下的倒數資訊在上面的計時盒裡就看得到。
@@ -8248,10 +8250,11 @@
       render();
     }
     if (action === "submit-graphtap") submitGraphTap();
-    if (action === "submit-sketch" || action === "undo-sketch" || action === "clear-sketch") {
+    if (action === "submit-sketch" || action === "undo-sketch" || action === "clear-sketch" || action === "sketch-tool") {
       const problem = getCurrentProblem();
       if (quiz && problem && !quiz.feedback && problem.answerKind === "sketch") {
         const strokes = graphSketchStrokes(problem);
+        if (action === "sketch-tool") { quiz.sketchTool = actionNode.dataset.tool === "erase" ? "erase" : "draw"; render(); }
         if (action === "undo-sketch") { strokes.pop(); render(); }
         if (action === "clear-sketch") { strokes.length = 0; render(); }
         if (action === "submit-sketch" && strokes.flat().length >= 6) submitChoiceAnswer(window.BuzzGraphSketch.serialize(strokes));
@@ -10849,6 +10852,16 @@
     };
   }
 
+  // 手機的觸覺回饋：答對輕點一下、答錯兩短震。只在觸控裝置上、只在支援 vibrate 的瀏覽器（Android）；
+  // iOS Safari 沒有這個 API，什麼都不會發生。跟著「減少動態效果」一起關。
+  function hapticFeedback(correct) {
+    try {
+      if (!navigator.vibrate || !window.matchMedia("(pointer: coarse)").matches) return;
+      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+      navigator.vibrate(correct ? 12 : [35, 40, 35]);
+    } catch (_error) { /* 沒有就算了 */ }
+  }
+
   function recordAnswer({ status, reason, input, detail }) {
     if (!quiz) return;
     if (quiz.feedback) return;
@@ -10858,6 +10871,7 @@
     const problem = getCurrentProblem();
     const elapsed = Math.max(0, Math.floor((Date.now() - quiz.questionStartedAt) / 1000));
     const correct = status === "correct";
+    hapticFeedback(correct);
     const usedHints = quiz.hintsUsed?.[problem.id] || 0;
     const timeBonus = correct && !quiz.practice && !quiz.examMode ? Math.max(0, problem.timeLimit - elapsed) : 0;
     const difficultyBonus = problemRank(problem) * 10;

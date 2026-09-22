@@ -1171,6 +1171,16 @@ console.log(`Resume smoke: ${json.length} bytes for a 12-question exam, round-tr
   if (through.correct || !/沒有定義|漸近線/.test(through.message)) throw new Error("穿過垂直漸近線要被抓到：" + through.message);
   const twoBranches = api.checkAnswer(hyper, sketch.serialize([branch(-4, -0.3), branch(0.3, 4)]));
   if (!twoBranches.correct) throw new Error("兩支分開畫的 1/x 應該判對：" + twoBranches.message);
+  // 橡皮擦：擦中間一段，一筆斷成兩筆；擦不到的地方什麼都不動
+  const ctx = { xmin: -3, xmax: 3, ymin: -4, ymax: 4 };
+  const line = [[-2, 0], [-1, 0], [0, 0], [1, 0], [2, 0]];
+  const strokes = [line.map((p) => p.slice())];
+  if (sketch.eraseAt(strokes, 0, 3.5, ctx)) throw new Error("離筆畫很遠的橡皮擦不該擦到東西");
+  if (!sketch.eraseAt(strokes, 0, 0, ctx) || strokes.length !== 2 || strokes[0].length !== 2 || strokes[1].length !== 2) throw new Error("擦中間一點應該把一筆斷成兩筆：" + JSON.stringify(strokes));
+  // 手畫寬鬆度：比例畫偏 15%、整條偏 5%、有手抖的 x³−3x 要過；上下翻轉照樣擋
+  const hand = sketch.serialize([trace((y, x) => y * 1.15 + 0.4 + 0.25 * Math.sin(4 * x), -2.0, 2.0)]);
+  const rh = api.checkAnswer(cubic, hand);
+  if (!rh.correct) throw new Error("比例偏一點、有手抖的手畫應該判對：" + rh.message);
   const all = global.window.BUZZ_PROBLEMS.filter((p) => p.answerKind === "sketch");
   const missing = all.filter((p) => !global.window.BuzzVerifiedAnswers || !global.window.BuzzVerifiedAnswers.has(p.id));
   if (missing.length) throw new Error("作圖題沒有進驗算側表：" + missing.map((p) => p.id).join(","));

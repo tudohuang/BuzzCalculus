@@ -122,6 +122,7 @@
     "2026-09-19": "mob-tech-015",
     "2026-09-20": "der-025",
     "2026-09-21": "gap-int-cov-002",
+    "2026-09-22": "depth-int-011",
   };
   if (typeof module !== "undefined" && module.exports) module.exports = { HISTORY };
   if (typeof window !== "undefined") window.BUZZ_DAILY_ONE_HISTORY = HISTORY;

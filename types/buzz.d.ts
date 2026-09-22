@@ -310,14 +310,15 @@ interface Window {
   BUZZ_COURSE: BuzzCourseLesson[];
   BuzzCourseUI: { create(deps: { escapeHtml: (s: unknown) => string; escapeAttr: (s: unknown) => string; icon: (name: string) => string; referenceAnswerHTML: (problem: BuzzProblem) => string }): any };
   /** src/share_cards.js：題目圖形的 SVG 渲染器（從 app.js 搬出去） */
-  BuzzGraphRender: { graphCurveFn(expr: string): ((x: number) => number) | null; renderProblemGraph(problem: any, opts: any, escapeAttr: (s: unknown) => string): string };
+  BuzzGraphRender: { graphCurveFn(expr: string): ((x: number) => number) | null; renderProblemGraph(problem: any, opts: any, escapeAttr: (s: unknown) => string): string; renderMiniGraph(expr: string, windowSpec: number[], domainSpec?: number[]): string; svgGraphContext(svg: Element): any };
   /** src/share_cards.js：作圖題（answerKind "sketch"）的判分、畫面與筆畫綁定 */
   BuzzGraphSketch: {
     parse(input: string): number[][][];
     serialize(strokes: number[][][]): string;
     check(problem: any, input: string): { correct: boolean; message: string };
-    renderControls(problem: any, strokes: number[][][], helpers: { done: boolean; renderProblemGraph: (problem: any, opts: any) => string; icon: (name: string) => string; extra?: string }): string;
-    bind(svg: Element, ctx: any, strokes: number[][][], onCommit: () => void): void;
+    renderControls(problem: any, strokes: number[][][], helpers: { done: boolean; tool?: string; renderProblemGraph: (problem: any, opts: any) => string; icon: (name: string) => string; extra?: string }): string;
+    bind(svg: Element, ctx: any, strokes: number[][][], onCommit: () => void, options?: { tool?: "draw" | "erase" }): void;
+    eraseAt(strokes: number[][][], x: number, y: number, ctx: { xmin: number; xmax: number; ymin: number; ymax: number }): boolean;
     piecesOf(problem: any): number[][];
     trace(problem: any): string;
   };

@@ -105,6 +105,7 @@ module.exports = function loadAppApi() {
   // 順序錯了，校準就走 fallback，驗證器測到的難度跟使用者看到的不一樣 ——
   // 而 fallback 存在的意義是「kernel 壞掉時還能用」，不該是驗證時的預設狀態。
   const indexHtml = fs.readFileSync(path.join(__dirname, "..", "..", "index.html"), "utf8");
+  // type="text/lazy" 的（證明引擎）瀏覽器是延後載的；node 裡照文件順序一起載，驗證器要驗的是全部。
   [...indexHtml.matchAll(/src="(src\/[^"]+\.js)"/g)].forEach((match) => {
     if (match[1] === "src/app.js") return;
     require(path.join(__dirname, "..", "..", match[1]));
