@@ -443,7 +443,77 @@
     `;
   }
 
-  window.BuzzGraphRender = { graphCurveFn, renderProblemGraph };
+  // 迷你繪圖。跟 renderProblemGraph 共用座標與格線的邏輯，
+  // 但尺寸小、不畫刻度數字 —— 四張並排的時候刻度只會變成雜訊。
+  function renderMiniGraph(expr, windowSpec, domainSpec) {
+    const win = Array.isArray(windowSpec) && windowSpec.length === 4 ? windowSpec.map(Number) : [-4, 4, -4, 4];
+    const [xmin, xmax, ymin, ymax] = win;
+    if (!(xmax > xmin) || !(ymax > ymin)) return "";
+    const fn = graphCurveFn(expr);
+    if (!fn) return "";
+    const width = 150;
+    const height = 118;
+    const pad = 6;
+    const sx = (x) => pad + ((x - xmin) / (xmax - xmin)) * (width - 2 * pad);
+    const sy = (y) => height - pad - ((y - ymin) / (ymax - ymin)) * (height - 2 * pad);
+    const parts = [];
+    if (ymin <= 0 && ymax >= 0) {
+      parts.push(`<line x1="${sx(xmin)}" y1="${sy(0)}" x2="${sx(xmax)}" y2="${sy(0)}" stroke="var(--line-strong)" stroke-width="1"/>`);
+    }
+    if (xmin <= 0 && xmax >= 0) {
+      parts.push(`<line x1="${sx(0)}" y1="${sy(ymin)}" x2="${sx(0)}" y2="${sy(ymax)}" stroke="var(--line-strong)" stroke-width="1"/>`);
+    }
+    // 曲線可能在窗內斷開（極點、定義域邊界）。斷了就開新的一段，
+    // 不要用一條直線把兩支接起來 —— 那會把漸近線畫成穿過去，
+    // 而「有沒有穿過去」正是這類題目要看的。
+    const [a, b] = Array.isArray(domainSpec) && domainSpec.length === 2 ? domainSpec.map(Number) : [xmin, xmax];
+    const steps = 220;
+    const segments = [];
+    let current = [];
+    for (let i = 0; i <= steps; i += 1) {
+      const x = a + ((b - a) * i) / steps;
+      const y = fn(x);
+      if (Number.isFinite(y) && y >= ymin && y <= ymax) {
+        current.push([x, y]);
+      } else {
+        if (current.length > 1) segments.push(current);
+        current = [];
+      }
+    }
+    if (current.length > 1) segments.push(current);
+    segments.forEach((pts) => {
+      const path = pts.map((pt, i) => `${i ? "L" : "M"}${sx(pt[0]).toFixed(1)},${sy(pt[1]).toFixed(1)}`).join(" ");
+      parts.push(`<path d="${path}" fill="none" stroke="var(--blue)" stroke-width="2" stroke-linejoin="round"/>`);
+    });
+    return `<svg viewBox="0 0 ${width} ${height}" role="img" aria-label="候選圖形">${parts.join("")}</svg>`;
+  }
+
+  // 螢幕座標 → 數學座標。轉換參數（窗、內距、畫布大小）由
+  // renderProblemGraph 寫在 svg 的 data-* 上，這裡只做反運算。
+  function svgGraphContext(svg) {
+    const win = String(svg.dataset.graphWindow || "").split(",").map(Number);
+    const size = String(svg.dataset.graphSize || "").split(",").map(Number);
+    const pad = Number(svg.dataset.graphPad);
+    if (win.length !== 4 || size.length !== 2 || !Number.isFinite(pad)) return null;
+    const [xmin, xmax, ymin, ymax] = win;
+    const [width, height] = size;
+    return {
+      xmin, xmax, ymin, ymax,
+      toMath(event) {
+        const rect = svg.getBoundingClientRect();
+        const u = ((event.clientX - rect.left) / rect.width) * width;
+        const v = ((event.clientY - rect.top) / rect.height) * height;
+        return {
+          x: xmin + ((u - pad) / (width - 2 * pad)) * (xmax - xmin),
+          y: ymin + ((height - pad - v) / (height - 2 * pad)) * (ymax - ymin)
+        };
+      },
+      sx: (x) => pad + ((x - xmin) / (xmax - xmin)) * (width - 2 * pad),
+      sy: (y) => height - pad - ((y - ymin) / (ymax - ymin)) * (height - 2 * pad)
+    };
+  }
+
+  window.BuzzGraphRender = { graphCurveFn, renderProblemGraph, renderMiniGraph, svgGraphContext };
 })();
 
 /* ── 作圖題（answerKind: "sketch"）：在空的格子上把 f 畫出來 ──
@@ -533,15 +603,17 @@
     };
     const pieces = piecesOf(problem);
 
-    // 2a. 覆蓋：每一段都要畫到
-    for (const [a, b] of pieces) {
+    // 2a. 覆蓋：每一段都要畫到（兩端各讓 6%：人起筆收筆不會剛好頂到邊）
+    for (const [a0, b0] of pieces) {
+      const a = a0 + (b0 - a0) * 0.06;
+      const b = b0 - (b0 - a0) * 0.06;
       const N = 30;
       const missing = [];
       for (let i = 0; i <= N; i += 1) {
         const x = a + ((b - a) * i) / N;
         if (userY(x) === null) missing.push(x);
       }
-      if (missing.length > 0.15 * N) {
+      if (missing.length > 0.2 * N) {
         return { correct: false, message: `曲線要畫滿 x 從 ${fmt(a)} 到 ${fmt(b)} 這一段，現在 x ≈ ${fmt(missing[0])} 附近還是空的。` };
       }
     }
@@ -579,15 +651,19 @@
         const uq = userY(q);
         if (up === null || uq === null) continue;
         const uy = uq - up;
-        if (uy * fy > 0 && Math.abs(uy) >= 0.2 * Math.abs(fy)) continue;
+        // 方向對、而且真的有起伏就算：門檻是 f 起伏的兩成或窗高的 8%，取小的 ——
+        // 漸近線旁 f 衝到 ±∞（被窗夾住）時「兩成」會大到手畫追不上（模擬 840 筆手畫抓到的）。
+        if (uy * fy > 0 && Math.abs(uy) >= Math.min(0.2 * Math.abs(fy), 0.08 * H)) continue;
         const should = fy > 0 ? "遞增" : "遞減";
         const drew = uy * fy < 0 ? `往${fy > 0 ? "下" : "上"}` : "幾乎是平的";
         return { correct: false, message: `x 從 ${fmt(cuts[i])} 到 ${fmt(cuts[i + 1])} 這一段 f 應該${should}（f′ ${fy > 0 ? ">" : "<"} 0），你畫的${drew}。先找 f′ 的零點，再決定每一段往上還是往下。` };
       }
     }
 
-    // 4. 位置：取樣點到正確曲線的距離（允許 x 方向 3% 的滑動）
-    const tol = (Number(problem.sketch && problem.sketch.tolerance) || 0.1) * H;
+    // 4. 位置：取樣點到正確曲線的距離（允許 x 方向 5% 的滑動）。
+    // 寬鬆度用模擬手畫（手抖、比例偏 15%、整條偏 8%、不到邊）校過：過關率要在九成五以上，
+    // 而上下翻轉、整條抬 35% 窗高的要全擋下。
+    const tol = (Number(problem.sketch && problem.sketch.tolerance) || 0.12) * H;
     let ok = 0;
     let total = 0;
     let worst = { err: 0, x: null };
@@ -599,7 +675,7 @@
         if (uy === null) continue;
         let best = Infinity;
         for (let k = -4; k <= 4; k += 1) {
-          const xx = x + (k / 4) * 0.03 * W;
+          const xx = x + (k / 4) * 0.05 * W;
           const y = fn(xx);
           if (!Number.isFinite(y) || y < ymin - 0.5 * H || y > ymax + 0.5 * H) continue;
           best = Math.min(best, Math.abs(uy - Math.max(ymin, Math.min(ymax, y))));
@@ -612,7 +688,7 @@
     }
     if (!total) return { correct: false, message: "畫的地方跟 f 有定義的範圍對不上。" };
     const ratio = ok / total;
-    if (ratio < 0.85) {
+    if (ratio < 0.8) {
       const truth = fn(worst.x);
       return {
         correct: false,
@@ -623,8 +699,14 @@
   }
 
   // 畫面：空格子 + 已畫的筆畫；送出後疊上正確曲線（綠虛線）。
+  // 筆畫的 path 帶 data-sketch-stroke，橡皮擦拖動時 repaint() 只換這些、不整頁 render。
+  function strokePath(ctx, stroke) {
+    return stroke.map((p, i) => `${i ? "L" : "M"}${ctx.sx(p[0]).toFixed(1)},${ctx.sy(p[1]).toFixed(1)}`).join(" ");
+  }
+
   function renderControls(problem, strokes, h) {
     const done = Boolean(h.done);
+    const erasing = h.tool === "erase" && !done;
     const fn = curveOf(problem);
     const [, , ymin, ymax] = windowOf(problem);
     const overlay = (ctx) => {
@@ -638,26 +720,32 @@
             const y = fn(x);
             if (Number.isFinite(y) && y >= ymin - 1 && y <= ymax + 1) pts.push([x, Math.max(ymin, Math.min(ymax, y))]);
           }
-          if (pts.length > 1) parts.push(`<path d="${pts.map((p, i) => `${i ? "L" : "M"}${ctx.sx(p[0]).toFixed(1)},${ctx.sy(p[1]).toFixed(1)}`).join(" ")}" fill="none" stroke="var(--green)" stroke-width="2.2" stroke-dasharray="6 4"/>`);
+          if (pts.length > 1) parts.push(`<path d="${strokePath(ctx, pts)}" fill="none" stroke="var(--green)" stroke-width="2.2" stroke-dasharray="6 4"/>`);
         });
       }
       (strokes || []).forEach((stroke) => {
-        parts.push(`<path d="${stroke.map((p, i) => `${i ? "L" : "M"}${ctx.sx(p[0]).toFixed(1)},${ctx.sy(p[1]).toFixed(1)}`).join(" ")}" fill="none" stroke="var(--gold)" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>`);
+        parts.push(`<path data-sketch-stroke d="${strokePath(ctx, stroke)}" fill="none" stroke="var(--gold)" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>`);
       });
       return parts.join("");
     };
     const count = (strokes || []).reduce((n, s) => n + s.length, 0);
     const pieces = piecesOf(problem);
     const range = pieces.map(([a, b]) => `${fmt(a)} 到 ${fmt(b)}`).join("、");
+    const tip = done
+      ? "綠色虛線是正確圖形，金色是你畫的。"
+      : erasing
+        ? "橡皮擦：在要擦掉的線上拖過去。再點一次橡皮擦回到畫筆。"
+        : `直接在格子上畫出 f 的圖形（x 從 ${range}）。可以分好幾筆；斷開的地方就分開畫。`;
     return `
-      <div class="graph-interactive graph-sketch">
+      <div class="graph-interactive graph-sketch ${erasing ? "is-erasing" : ""}">
         ${h.renderProblemGraph(problem, { interactive: done ? null : "sketch", overlay })}
         <div class="helper-row">
-          <span>${done ? "綠色虛線是正確圖形，金色是你畫的。" : `用手指或滑鼠直接在格子上畫出 f 的圖形（x 從 ${range}）。可以分好幾筆；斷開的地方就分開畫。`}</span>
+          <span>${tip}</span>
           <span class="slope-readout">已畫 <strong data-sketch-count>${(strokes || []).length}</strong> 筆</span>
         </div>
         <div class="action-row">
           <button class="button" data-action="submit-sketch" ${!done && count >= 6 ? "" : "disabled"}>${h.icon("check")}送出</button>
+          <button class="button ghost ${erasing ? "is-active" : ""}" data-action="sketch-tool" data-tool="${erasing ? "draw" : "erase"}" aria-pressed="${erasing ? "true" : "false"}" ${done ? "disabled" : ""}>${h.icon("eraser")}橡皮擦</button>
           <button class="button ghost" data-action="undo-sketch" ${done || !(strokes || []).length ? "disabled" : ""}>退一筆</button>
           <button class="button ghost" data-action="clear-sketch" ${done || !(strokes || []).length ? "disabled" : ""}>清除</button>
         </div>
@@ -666,24 +754,84 @@
     `;
   }
 
-  // 綁在 svg 上：pointerdown 開新的一筆，move 直接改 path 的 d（不整頁 render），
-  // 放手才 onCommit 一次。跟切線題的拖動同一個原則：拖動中換掉 DOM 會丟 pointer capture。
-  function bind(svg, ctx, strokes, onCommit) {
-    if (!svg || !ctx) return;
+  // 橡皮擦：把離 (x,y) 太近的點拿掉，一筆可能斷成好幾筆。距離用窗的比例算（x 跟 y 各自正規化），
+  // 半徑 3.5% —— 手指的寬度。回傳有沒有擦到東西。
+  function eraseAt(strokes, x, y, ctx) {
+    const W = ctx.xmax - ctx.xmin;
+    const H = ctx.ymax - ctx.ymin;
+    const r = 0.035;
+    let touched = false;
+    const next = [];
+    strokes.forEach((stroke) => {
+      let run = [];
+      stroke.forEach((p) => {
+        const d = Math.hypot((p[0] - x) / W, (p[1] - y) / H);
+        if (d <= r) { touched = true; if (run.length >= 2) next.push(run); run = []; }
+        else run.push(p);
+      });
+      if (run.length >= 2) next.push(run);
+    });
+    if (touched) strokes.splice(0, strokes.length, ...next);
+    return touched;
+  }
+
+  function repaint(svg, ctx, strokes) {
     const NS = "http://www.w3.org/2000/svg";
-    svg.addEventListener("pointerdown", (event) => {
-      event.preventDefault();
-      try { svg.setPointerCapture(event.pointerId); } catch (_error) { /* 沒有 capture 就拖出去會斷，可接受 */ }
-      const start = ctx.toMath(event);
-      const stroke = [[start.x, start.y]];
+    svg.querySelectorAll("[data-sketch-stroke]").forEach((node) => node.remove());
+    strokes.forEach((stroke) => {
       const path = document.createElementNS(NS, "path");
+      path.setAttribute("data-sketch-stroke", "");
+      path.setAttribute("d", strokePath(ctx, stroke));
       path.setAttribute("fill", "none");
       path.setAttribute("stroke", "var(--gold)");
       path.setAttribute("stroke-width", "2.8");
       path.setAttribute("stroke-linecap", "round");
       path.setAttribute("stroke-linejoin", "round");
       svg.appendChild(path);
-      const draw = () => path.setAttribute("d", stroke.map((p, i) => `${i ? "L" : "M"}${ctx.sx(p[0]).toFixed(1)},${ctx.sy(p[1]).toFixed(1)}`).join(" "));
+    });
+  }
+
+  // 綁在 svg 上：pointerdown 開新的一筆，move 直接改 path 的 d（不整頁 render），
+  // 放手才 onCommit 一次。跟切線題的拖動同一個原則：拖動中換掉 DOM 會丟 pointer capture。
+  // 手機：touch-action:none 在 CSS 上，這裡再擋 touchstart／touchmove 的預設動作 ——
+  // iOS Safari 手指一動有時先當成捲頁（實測回報「畫圖時頁面被拖」），兩道都要有。
+  function bind(svg, ctx, strokes, onCommit, options) {
+    if (!svg || !ctx) return;
+    const tool = (options && options.tool) || "draw";
+    const NS = "http://www.w3.org/2000/svg";
+    const block = (event) => { if (event.cancelable) event.preventDefault(); };
+    svg.addEventListener("touchstart", block, { passive: false });
+    svg.addEventListener("touchmove", block, { passive: false });
+    svg.addEventListener("contextmenu", block);
+    svg.addEventListener("pointerdown", (event) => {
+      event.preventDefault();
+      try { svg.setPointerCapture(event.pointerId); } catch (_error) { /* 沒有 capture 就拖出去會斷，可接受 */ }
+      const start = ctx.toMath(event);
+      if (tool === "erase") {
+        let changed = eraseAt(strokes, start.x, start.y, ctx);
+        if (changed) repaint(svg, ctx, strokes);
+        const move = (ev) => { const pt = ctx.toMath(ev); if (eraseAt(strokes, pt.x, pt.y, ctx)) { changed = true; repaint(svg, ctx, strokes); } };
+        const up = () => {
+          svg.removeEventListener("pointermove", move);
+          svg.removeEventListener("pointerup", up);
+          svg.removeEventListener("pointercancel", up);
+          if (changed) onCommit();
+        };
+        svg.addEventListener("pointermove", move);
+        svg.addEventListener("pointerup", up);
+        svg.addEventListener("pointercancel", up);
+        return;
+      }
+      const stroke = [[start.x, start.y]];
+      const path = document.createElementNS(NS, "path");
+      path.setAttribute("data-sketch-stroke", "");
+      path.setAttribute("fill", "none");
+      path.setAttribute("stroke", "var(--gold)");
+      path.setAttribute("stroke-width", "2.8");
+      path.setAttribute("stroke-linecap", "round");
+      path.setAttribute("stroke-linejoin", "round");
+      svg.appendChild(path);
+      const draw = () => path.setAttribute("d", strokePath(ctx, stroke));
       const move = (ev) => {
         const pt = ctx.toMath(ev);
         const last = stroke[stroke.length - 1];
@@ -726,5 +874,5 @@
     }));
   }
 
-  window.BuzzGraphSketch = { parse, serialize, check, renderControls, bind, piecesOf, trace };
+  window.BuzzGraphSketch = { parse, serialize, check, renderControls, bind, piecesOf, trace, eraseAt };
 })();

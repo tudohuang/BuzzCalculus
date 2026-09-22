@@ -92,10 +92,12 @@
     <script defer src="src/board_store.js"></script>
     <script defer src="src/custom_problems.js"></script>
     <script defer src="src/proofs.js"></script>
-    <!-- 白話證明：kernel 檢查器 + 題目 spec + 八課教學 -->
-    <script defer src="src/kernel/proof_lang.js"></script>
-    <script defer src="src/kernel/proof_surface.js"></script>
-    <script defer src="src/proof_lang_content.js"></script>
+    <!-- 白話證明：kernel 檢查器 + 題目 spec + 八課教學。
+         type="text/lazy" 讓瀏覽器不抓也不跑；進證明頁時 app.js 的 ensureLazy("proof") 才照順序載入
+         （首屏少 280KB 的解析——手機開站每一毫秒都是白畫面）。sw.js 照樣預快取，離線也能進。 -->
+    <script type="text/lazy" data-lazy="proof" src="src/kernel/proof_lang.js"></script>
+    <script type="text/lazy" data-lazy="proof" src="src/kernel/proof_surface.js"></script>
+    <script type="text/lazy" data-lazy="proof" src="src/proof_lang_content.js"></script>
     <script defer src="src/proof_lab_ui.js"></script>
     <script defer src="src/course.js"></script>
     <script defer src="src/share_cards.js"></script>
@@ -110,7 +112,36 @@
     <script defer src="src/app.js"></script>
   </head>
   <body>
+    <!-- 開站骨架：3MB 的 JS 在手機上要解析 2 秒，這段時間不能是白畫面。
+         純 HTML + 行內樣式，styles.css 還沒到就先畫得出來；app.js 第一次 render 會整個換掉。 -->
     <div id="app" class="app-shell">
+      <style>
+        .app-skeleton{min-height:100vh;background:#f6f7f4;color:#20211f;font-family:system-ui,-apple-system,"Segoe UI","Noto Sans TC",sans-serif}
+        .app-skeleton .sk-bar{display:flex;align-items:center;gap:10px;height:64px;padding:0 16px;border-bottom:1px solid #e6e3d8;background:#fff}
+        .app-skeleton .sk-mark{width:38px;height:38px;border-radius:11px;background:#e4b447;color:#20211f;font:700 20px/38px serif;text-align:center}
+        .app-skeleton .sk-brand{font-weight:700;font-size:17px}
+        .app-skeleton .sk-body{max-width:960px;margin:0 auto;padding:22px 16px}
+        .app-skeleton .sk-line,.app-skeleton .sk-card{border-radius:12px;background:#e9e6dc;animation:sk-pulse 1.3s ease-in-out infinite}
+        .app-skeleton .sk-line{height:14px;margin:0 0 12px}
+        .app-skeleton .sk-card{height:120px;margin:0 0 14px}
+        .app-skeleton .sk-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:0 0 14px}
+        .app-skeleton .sk-grid .sk-card{height:78px;margin:0}
+        .app-skeleton .sk-note{margin-top:28px;font-size:13px;color:#6d6a60;text-align:center}
+        @keyframes sk-pulse{0%,100%{opacity:.55}50%{opacity:1}}
+        @media (prefers-color-scheme:dark){.app-skeleton{background:#15171a;color:#e8e6df}.app-skeleton .sk-bar{background:#1c1f23;border-color:#2b2f35}.app-skeleton .sk-line,.app-skeleton .sk-card{background:#262a30}}
+        @media (prefers-reduced-motion:reduce){.app-skeleton .sk-line,.app-skeleton .sk-card{animation:none}}
+      </style>
+      <div class="app-skeleton" aria-hidden="true">
+        <div class="sk-bar"><div class="sk-mark">∫</div><div class="sk-brand">BuzzCalculus</div></div>
+        <div class="sk-body">
+          <div class="sk-line" style="width:38%"></div>
+          <div class="sk-line" style="width:64%;height:22px"></div>
+          <div class="sk-grid"><div class="sk-card"></div><div class="sk-card"></div></div>
+          <div class="sk-card" style="height:200px"></div>
+          <div class="sk-card"></div>
+          <div class="sk-note">題庫載入中…</div>
+        </div>
+      </div>
       <noscript>BuzzCalculus 需要啟用 JavaScript 才能開始挑戰。</noscript>
     </div>
   </body>

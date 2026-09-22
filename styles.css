@@ -83,10 +83,20 @@ button {
 .app-shell {
   position: relative;
   z-index: 1;
+  /* 手機瀏覽器的網址列會伸縮：100vh 是「網址列收起時」的高度，比可見區高一截；
+     dvh 跟著實際可見高度走（支援的瀏覽器蓋掉上一行）。 */
   min-height: 100vh;
+  min-height: 100dvh;
   display: flex;
   flex-direction: column;
 }
+
+/* 作答中：下拉不要觸發整頁重新整理（Android Chrome／PWA 的 pull-to-refresh 會把一局丟掉） */
+html.in-quiz { overscroll-behavior-y: contain; }
+
+/* 觸控：按鈕不要等 300ms 的雙擊判定，也不要因為連點兩下把畫面放大 */
+button, [role="button"], a, summary, input, select, textarea { touch-action: manipulation; }
+.problem-graph.is-interactive, .problem-graph.is-interactive svg, .blackboard, .board-live { touch-action: none; }
 
 .topbar {
   position: fixed;
@@ -1540,6 +1550,7 @@ button {
   grid-template-rows: auto minmax(320px, 1fr) auto;
   gap: 18px;
   min-height: calc(100vh - 140px);
+  min-height: calc(100dvh - 140px);
 }
 
 .progress-bar {
@@ -1990,7 +2001,17 @@ button {
   cursor: crosshair;
   width: min(420px, 100%);
   border-color: var(--line-strong);
+  /* 手機：長按不要跳出圖片選單／選取放大鏡，手指畫線時不能有這些 */
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
 }
+
+/* 互動圖的外框也擋掉捲動手勢：手指從 svg 邊緣外 2px 起筆時，捲的是外框不是 svg */
+.problem-graph.is-interactive { touch-action: none; }
+.graph-sketch.is-erasing .problem-graph.is-interactive svg { cursor: cell; }
+.graph-sketch .button.is-active { border-color: var(--gold); background: var(--brand-soft); color: var(--gold-dark); }
+.board-only-note { display: flex; align-items: center; gap: 6px; margin: 0; padding: 10px 12px; color: var(--muted); font-size: 0.86rem; }
 
 .graph-interactive .helper-row {
   display: flex;
@@ -4576,6 +4597,14 @@ button,
     display: flex;
     font-size: 0.78rem;
   }
+
+  /* 作圖題四顆鍵在手機排成 2×2，每顆一樣寬；送出佔第一格 */
+  .quiz-screen .graph-sketch .action-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .quiz-screen .graph-sketch .action-row .button { width: 100%; justify-content: center; }
 
   .quiz-screen .choice-grid {
     gap: 8px;

@@ -228,7 +228,8 @@ async function launch(options = {}) {
           appReady
             ? `
           const app = document.getElementById("app");
-          return document.readyState === "complete" && app && app.innerHTML.length > 500;
+          // index.html 自帶開站骨架（.app-skeleton），innerHTML 一開始就不是空的 —— 要等它被換掉
+          return document.readyState === "complete" && app && app.innerHTML.length > 500 && !app.querySelector(".app-skeleton");
         `
             : `return document.readyState === "complete" && document.body && document.body.innerHTML.length > 200;`
         );
