@@ -55,7 +55,10 @@
     "composition", "domain-aware", "repeated-root",
     //   even-function / odd-function  函數的對稱性，是題目的性質不是能力座標（跟 symmetry 同一類）
     //   absolute-value  函數型態（作圖題的 |x|、|x²−1|），跟 rational / radical 同一類
-    "even-function", "odd-function", "absolute-value"
+    "even-function", "odd-function", "absolute-value",
+    //   applied-limit / word-problem  這題包著一段情境敘述，要練的技巧在別的標籤上
+    //   geometric / geometry          等比與幾何是題材不是技巧
+    "applied-limit", "word-problem", "geometric", "geometry"
   ]);
 
   // ── Skill 節點 ────────────────────────────────────────────────
@@ -88,7 +91,7 @@
     { id: "limit.continuity", label: "連續性與 IVT", tier: 2, obscurity: 1, family: "limit", prereq: ["limit.direct"],
       // domain / rational-function：判定「哪些 x 可以代進去」跟判定連續性
       // 是同一件事的兩個問法，同一個技巧節點。
-      tags: ["continuity", "ivt", "removable-singularity", "asymptote", "domain", "rational-function", "one-sided-limit", "removable", "zeros"] },
+      tags: ["continuity", "ivt", "removable-singularity", "asymptote", "domain", "rational-function", "one-sided-limit", "removable", "zeros", "epsilon-delta", "limit-from-table", "piecewise"] },
     { id: "limit.sequence", label: "數列極限", tier: 2, obscurity: 1, family: "limit", prereq: ["limit.direct"],
       // 無窮乘積放這裡而不是自成一節：∏ 的定義就是部分乘積這個**數列**的極限，
       // 遞迴、巢狀根式、連分數同理 —— 它們共用「先確定收斂，再對遞迴式取極限」這一步。
@@ -97,7 +100,7 @@
     { id: "limit.discontinuous", label: "單邊極限與跳躍", tier: 3, obscurity: 2, family: "limit", topics: ["limits"], prereq: ["limit.direct"],
       // 高斯括號與單邊極限合成一個節點：兩者練的是同一件事 ——
       // 函數在不連續點附近的行為，只能用不等式夾，不能代進去也不能展開。
-      tags: ["floor", "one-sided"] },
+      tags: ["floor", "one-sided", "sequence-limit", "recursion"] },
 
     /* ===== 微分 ===== */
     { id: "diff.basic", label: "基本微分律", tier: 1, obscurity: 1, family: "diff", topics: ["derivatives"], prereq: [],

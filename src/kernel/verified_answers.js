@@ -6,7 +6,7 @@
 // 為什麼放側表而不是寫進題目物件：題目物件多一個欄位就會改變抽題與 golden 測試的結果。
 // 內容的中繼資料一律走側表，這是專案的既有約定。
 //
-// 產生時的統計：2227 題中 1986 題通過，不符 0 題。
+// 產生時的統計：2272 題中 2030 題通過，不符 0 題。
 
 (function registerVerifiedAnswers() {
   "use strict";
@@ -1310,6 +1310,50 @@
     "lm-st-002",
     "lm-st-004",
     "lm-st-006",
+    "lx-app-001",
+    "lx-app-002",
+    "lx-app-003",
+    "lx-app-004",
+    "lx-app-005",
+    "lx-app-006",
+    "lx-app-007",
+    "lx-app-008",
+    "lx-app-009",
+    "lx-app-010",
+    "lx-app-011",
+    "lx-app-012",
+    "lx-con-001",
+    "lx-con-002",
+    "lx-con-003",
+    "lx-con-004",
+    "lx-con-006",
+    "lx-der-001",
+    "lx-der-002",
+    "lx-der-003",
+    "lx-der-004",
+    "lx-der-005",
+    "lx-eps-001",
+    "lx-eps-002",
+    "lx-hard-001",
+    "lx-hard-002",
+    "lx-hard-003",
+    "lx-hard-004",
+    "lx-hard-005",
+    "lx-hard-006",
+    "lx-hard-007",
+    "lx-hard-008",
+    "lx-seq-001",
+    "lx-seq-002",
+    "lx-seq-003",
+    "lx-seq-004",
+    "lx-seq-005",
+    "lx-sq-001",
+    "lx-sq-002",
+    "lx-sq-003",
+    "lx-sq-004",
+    "lx-sq-005",
+    "lx-tab-001",
+    "lx-tab-002",
     "mob-bessel-001",
     "mob-bessel-002",
     "mob-bessel-003",
@@ -2003,6 +2047,6 @@
   window.BuzzVerifiedAnswers = {
     has: function (id) { return Boolean(id && SET[id]); },
     count: IDS.length,
-    total: 2227
+    total: 2272
   };
 })();

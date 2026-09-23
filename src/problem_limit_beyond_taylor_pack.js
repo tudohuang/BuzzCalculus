@@ -572,3 +572,372 @@
 
   window.BUZZ_PROBLEMS = (window.BUZZ_PROBLEMS || []).concat(problems);
 })();
+
+/* ═══════════════════════════════════════════════════════════════════
+   極限深化包（lx-，2026-09-23）：應用題 × 觀念題 × 更難的計算。
+   起因：盤點發現 335 題極限**全部**是純計算，帶敘述的應用題 0 題。
+   真實的考卷不是這樣：瞬時速度、藥物濃度的長期行為、連續複利、
+   終端速度、學習曲線、電路充電、連分數、幾何逼近，全是極限在用。
+
+   驗算：題幹是文字敘述的題，自動辨識器讀不出結構，一律自帶 verify 欄位
+   （新的 m: "limit" 路徑走數值逼近＋外插，不重複作者的代數）。
+   ═══════════════════════════════════════════════════════════════════ */
+(function () {
+  "use strict";
+
+  const SOURCE = "Buzz 極限深化 2026-09";
+  const problems = [];
+
+  function add(problem) {
+    const tags = (problem.tags || []).slice();
+    tags.push(`rank-${problem.rank}`);
+    if (problem.rank >= 5) tags.push("boss-rank");
+    if (problem.rank <= 2) tags.push("beginner-friendly");
+    problems.push({
+      source: SOURCE,
+      topic: "limits",
+      difficulty: Math.min(4, problem.rank),
+      answerKind: "numeric",
+      timeLimit: problem.timeLimit || 90,
+      ...problem,
+      tags
+    });
+  }
+
+  // 應用題：題幹一段敘述，答案是一個數，驗算走 m:"limit"。
+  const applied = (id, rank, prompt, answer, verify, extra) => add({
+    id, rank, prompt, answer, verify,
+    tags: (extra.tags || []).concat(["applied-limit", "word-problem"]),
+    hints: extra.hints,
+    solution: extra.solution,
+    timeLimit: extra.timeLimit || 100
+  });
+
+  /* ── A. 變化率與瞬時速度（R2–R4）：極限最原始的用途 ── */
+  applied("lx-app-001", 2,
+    "\\text{石頭從 }80\\text{ 公尺高的崖上落下，}t\\text{ 秒後的高度 }h(t)=80-4.9t^2\\text{（公尺）。}\\quad\\text{求 }t=2\\text{ 秒時的瞬時速度（公尺／秒，向下為負）}",
+    "-19.6", { m: "limit", f: "\\frac{(80-4.9(2+h)^2)-(80-4.9 \\cdot 4)}{h}", at: 0, v: "h" },
+    { tags: ["motion", "derivative-definition"],
+      hints: ["瞬時速度＝平均速度在時間間隔趨近 0 時的極限。", "算 (h(2+Δt)−h(2))/Δt，再讓 Δt→0。", "−4.9(4+4Δt+Δt²−4)/Δt = −4.9(4+Δt)。"],
+      solution: "極限是 −4.9·4 = −19.6 公尺／秒（向下）。" });
+
+  applied("lx-app-002", 3,
+    "\\text{某城市 }t\\text{ 年後的人口（萬人）為}\\quad P(t)=\\frac{120t+300}{t+6}\\text{。}\\quad\\text{長期而言人口趨近多少萬人？}",
+    "120", { m: "limit", f: "\\frac{120t+300}{t+6}", at: "inf", v: "t" },
+    { tags: ["rational-limit", "asymptote"],
+      hints: ["t→∞ 時分子分母同除以 t。", "常數項除以 t 之後都趨近 0，只剩兩個領導係數的比。"],
+      solution: "同除以 t 之後趨近 120／1 = 120 萬人，這是水平漸近線。" });
+
+  applied("lx-app-003", 3,
+    "\\text{點滴每小時注入固定劑量，}t\\text{ 小時後血中濃度為}\\quad C(t)=12\\left(1-e^{-0.4t}\\right)\\text{ 毫克／公升。}\\quad\\text{長期穩定濃度是多少？}",
+    "12", { m: "limit", f: "12(1-e^{-0.4t})", at: "inf", v: "t" },
+    { tags: ["exponential-limit", "asymptote"],
+      hints: ["t→∞ 時 e^{−0.4t}→0。"],
+      solution: "指數項趨近 0，濃度趨近 12 毫克／公升（穩定值）。" });
+
+  applied("lx-app-004", 3,
+    "\\text{本金 }10000\\text{ 元、年利率 }5\\%\\text{，一年內複利 }n\\text{ 次的本利和是 }10000\\left(1+\\frac{0.05}{n}\\right)^{n}\\text{。}\\quad\\text{連續複利（}n\\to\\infty\\text{）一年後是多少元？}",
+    "10000*exp(0.05)", { m: "limit", f: "10000(1+\\frac{0.05}{n})^{n}", at: "inf", v: "n" },
+    { tags: ["exponential-limit", "standard-limit"],
+      hints: ["這是 (1+1/m)^m → e 的變形。", "令 m = n/0.05。"],
+      solution: "極限是 10000·e^{0.05} ≈ 10512.71 元。" });
+
+  applied("lx-app-005", 4,
+    "\\text{跳傘者的速度為 }v(t)=55\\left(1-e^{-0.18t}\\right)\\text{ 公尺／秒。}\\quad\\text{終端速度是多少公尺／秒？}",
+    "55", { m: "limit", f: "55(1-e^{-0.18t})", at: "inf", v: "t" },
+    { tags: ["exponential-limit", "motion"],
+      hints: ["終端速度＝t→∞ 的極限。"],
+      solution: "e^{−0.18t}→0，終端速度 55 公尺／秒。" });
+
+  applied("lx-app-006", 4,
+    "\\text{電容充電電壓 }V(t)=9\\left(1-e^{-t/\\tau}\\right)\\text{，時間常數 }\\tau=0.25\\text{ 秒。}\\quad\\text{充電一段時間後電壓趨近多少伏特？}",
+    "9", { m: "limit", f: "9(1-e^{-t/0.25})", at: "inf", v: "t" },
+    { tags: ["exponential-limit", "applications"],
+      hints: ["t→∞ 時指數項趨近 0。"],
+      solution: "趨近電源電壓 9 伏特。" });
+
+  applied("lx-app-007", 4,
+    "\\text{某工廠的平均成本為 }\\bar{C}(x)=\\frac{2400+18x}{x}\\text{ 元／件。}\\quad\\text{產量很大時平均成本趨近多少元／件？}",
+    "18", { m: "limit", f: "\\frac{2400+18x}{x}", at: "inf" },
+    { tags: ["rational-limit", "applications"],
+      hints: ["拆成 2400/x + 18。"],
+      solution: "固定成本被攤薄，平均成本趨近邊際成本 18 元／件。" });
+
+  applied("lx-app-008", 4,
+    "\\text{學習曲線：練習 }x\\text{ 小時後的正確率為}\\quad A(x)=\\frac{95x}{x+12}\\text{ 百分比。}\\quad\\text{再怎麼練也不會超過多少百分比？}",
+    "95", { m: "limit", f: "\\frac{95x}{x+12}", at: "inf" },
+    { tags: ["rational-limit", "asymptote"],
+      hints: ["同除以 x。"],
+      solution: "上界是水平漸近線 95%，永遠達不到。" });
+
+  applied("lx-app-009", 4,
+    "\\text{每天服藥一次，長期後體內殘留量為 }\\sum_{k=0}^{n}200\\left(0.7\\right)^{k}\\text{ 毫克。}\\quad n\\to\\infty\\text{ 時殘留量趨近多少毫克？}",
+    "2000/3", { m: "limit", f: "200\\frac{1-0.7^{n+1}}{1-0.7}", at: "inf", v: "n" },
+    { tags: ["geometric", "applications"],
+      hints: ["這是等比級數的部分和。", "首項 200、公比 0.7。"],
+      solution: "部分和 200(1−0.7^{n+1})/0.3 → 200/0.3 = 2000/3 ≈ 666.7 毫克。" });
+
+  applied("lx-app-010", 5,
+    "\\text{正 }n\\text{ 邊形內接於半徑 }1\\text{ 的圓，面積為 }A_n=\\frac{n}{2}\\sin\\frac{2\\pi}{n}\\text{。}\\quad n\\to\\infty\\text{ 時面積趨近多少？}",
+    "pi", { m: "limit", f: "\\frac{n}{2}\\sin\\frac{2\\pi}{n}", at: "inf", v: "n" },
+    { tags: ["trig-limit", "geometry"],
+      hints: ["令 t = 2π/n，則 n = 2π/t。", "式子變成 π·(sin t)/t。"],
+      solution: "π·lim (sin t)/t = π：多邊形面積趨近圓面積 π。" });
+
+  applied("lx-app-011", 5,
+    "\\text{一顆球從 }2\\text{ 公尺高落下，每次反彈到前一次高度的 }0.6\\text{ 倍。}\\quad\\text{停下來前走過的總路程是多少公尺？}",
+    "8", { m: "limit", f: "2+2 \\cdot 2 \\cdot 0.6\\frac{1-0.6^{n}}{1-0.6}", at: "inf", v: "n" },
+    { tags: ["geometric", "applications"],
+      hints: ["先落下 2 公尺。", "之後每次上去又下來，各是等比級數。", "2 + 2·(2·0.6)/(1−0.6)。"],
+      solution: "2 + 2·(1.2/0.4) = 2 + 6 = 8 公尺。" });
+
+  applied("lx-app-012", 5,
+    "\\text{把 }1\\text{ 公升食鹽水稀釋：每次倒掉 }\\frac{1}{n}\\text{ 再補純水，重複 }n\\text{ 次之後濃度為原來的 }\\left(1-\\frac{1}{n}\\right)^{n}\\text{ 倍。}\\quad n\\to\\infty\\text{ 時是原來的幾倍？}",
+    "1/e", { m: "limit", f: "(1-\\frac{1}{n})^{n}", at: "inf", v: "n" },
+    { tags: ["exponential-limit", "standard-limit"],
+      hints: ["(1−1/n)^n 是 e 的標準極限。"],
+      solution: "極限是 e^{−1} ≈ 0.368 倍。" });
+
+  /* ── B. 連續性與中間值定理（R3–R5）：觀念題 ── */
+  add({ id: "lx-con-001", rank: 3,
+    prompt: "\\text{設 }f(x)=x^2+a\\ (x\\le 2)\\text{、}f(x)=3x-4\\ (x>2)\\text{。}\\quad\\text{求使 }f\\text{ 在 }x=2\\text{ 連續的 }a",
+    answer: "-2", verify: { m: "root", f: "(4+x)-2", x0: 0 },
+    tags: ["continuity", "piecewise"], timeLimit: 70,
+    hints: ["連續＝左極限＝右極限＝函數值。", "左邊是 4+a，右邊是 2。"],
+    solution: "4+a = 2 → a = −2。" });
+
+  add({ id: "lx-con-002", rank: 4,
+    prompt: "\\text{設 }f(x)=\\frac{\\sin 3x}{x}\\ (x\\ne 0)\\text{、}f(0)=c\\text{。}\\quad\\text{求使 }f\\text{ 在 }x=0\\text{ 連續的 }c",
+    answer: "3", verify: { m: "limit", f: "\\frac{\\sin 3x}{x}", at: 0 },
+    tags: ["continuity", "trig-limit"], timeLimit: 70,
+    hints: ["c 必須等於 x→0 的極限。", "(sin 3x)/x = 3·(sin 3x)/(3x)。"],
+    solution: "極限是 3，所以 c = 3。" });
+
+  add({ id: "lx-con-003", rank: 4,
+    prompt: "\\text{求使 }f(x)=\\frac{x^2+ax+6}{x-3}\\text{ 在 }x=3\\text{ 有可去間斷點（補一個值就連續）的 }a",
+    answer: "-5", verify: { m: "root", f: "9+3x+6", x0: -1 },
+    tags: ["continuity", "removable"], timeLimit: 80,
+    hints: ["可去＝分子在 x=3 也是 0。", "9+3a+6 = 0。"],
+    solution: "9+3a+6=0 → a = −5（此時分子 x²−5x+6=(x−2)(x−3)）。" });
+
+  add({ id: "lx-con-004", rank: 5,
+    prompt: "\\text{已知 }\\lim_{x\\to 2}\\frac{x^2+ax-10}{x-2}\\text{ 存在，求 }a",
+    answer: "3", verify: { m: "root", f: "4+2x-10", x0: 0 },
+    tags: ["continuity", "limit-trap"], timeLimit: 90,
+    hints: ["分母→0 而極限存在，分子在 x=2 也必須是 0。", "4+2a−10 = 0。", "（順帶一提，此時極限是 7。）"],
+    solution: "分子必須有因式 x−2：4+2a−10=0 → a=3。此時分子 =(x−2)(x+5)，極限 = 7。" });
+
+  add({ id: "lx-con-005", rank: 4, answerKind: "text",
+    prompt: "\\text{函數 }f(x)=\\frac{|x-4|}{x-4}\\text{ 在 }x=4\\text{ 的間斷屬於哪一種？}",
+    answers: ["跳躍", "跳躍間斷", "jump", "跳躍不連續"], canonical: "跳躍",
+    distractors: ["可去", "無窮", "振盪"],
+    tags: ["continuity", "removable"], timeLimit: 60,
+    hints: ["左極限 −1、右極限 +1。", "兩個單側極限都存在但不相等。"],
+    solution: "左右極限都存在卻不相等，是跳躍間斷（補值也救不回來）。" });
+
+  add({ id: "lx-con-006", rank: 4,
+    prompt: "\\text{因為 }f(x)=x^3-4x+1\\text{ 連續且 }f(0)=1>0>f(1)=-2\\text{，中間值定理保證 }(0,1)\\text{ 內有根。}\\quad\\text{從 }x_0=\\tfrac{1}{2}\\text{ 出發跑一次牛頓法，}x_1\\text{ 是多少？}",
+    answer: "3/13", verify: { m: "root", f: "x^3-4x+1", x0: 0.5, n: 1 },
+    tags: ["ivt", "continuity"], timeLimit: 100,
+    hints: ["牛頓法：x₁ = x₀ − f(x₀)/f′(x₀)。", "f(0.5) = −0.875，f′(x)=3x²−4 → f′(0.5) = −3.25。", "0.5 − 7/26。"],
+    solution: "x₁ = 1/2 − 7/26 = 3/13 ≈ 0.2308（真正的根約 0.2541）。" });
+
+
+  /* ── C. 認出「這個極限就是某個導數」（R3–R5）──
+     課本最常考、學生最常沒看出來的一種：題目長得像極限，其實是導數定義。 */
+  add({ id: "lx-der-001", rank: 3,
+    prompt: "\\lim_{h\\to 0}\\frac{(3+h)^4-81}{h}",
+    answer: "108", verify: { m: "deriv", f: "x^4", at: [3] },
+    tags: ["derivative-definition", "standard-limit"], timeLimit: 70,
+    hints: ["這是 f(x)=x⁴ 在 x=3 的導數定義。", "f′(x)=4x³。"],
+    solution: "f′(3)=4·27=108。" });
+
+  add({ id: "lx-der-002", rank: 4,
+    prompt: "\\lim_{h\\to 0}\\frac{\\sqrt{16+h}-4}{h}",
+    answer: "1/8", verify: { m: "deriv", f: "\\sqrt{x}", at: [16] },
+    tags: ["derivative-definition", "rationalize"], timeLimit: 70,
+    hints: ["f(x)=√x 在 x=16 的導數。", "也可以分子有理化。"],
+    solution: "f′(16)=1/(2·4)=1/8。" });
+
+  add({ id: "lx-der-003", rank: 4,
+    prompt: "\\lim_{x\\to 4}\\frac{\\ln x-\\ln 4}{x-4}",
+    answer: "1/4", verify: { m: "deriv", f: "\\ln x", at: [4] },
+    tags: ["derivative-definition", "log"], timeLimit: 70,
+    hints: ["這是 ln 在 x=4 的導數定義。", "f′(x)=1/x。"],
+    solution: "f′(4)=1/4。" });
+
+  add({ id: "lx-der-004", rank: 5,
+    prompt: "\\lim_{h\\to 0}\\frac{\\sec\\left(\\frac{\\pi}{4}+h\\right)-\\sqrt{2}}{h}",
+    answer: "sqrt(2)", verify: { m: "deriv", f: "\\frac{1}{\\cos x}", at: ["\\pi/4"] },
+    tags: ["derivative-definition", "trig"], timeLimit: 90,
+    hints: ["f(x)=sec x 在 x=π/4 的導數定義。", "f′=sec x·tan x。", "sec(π/4)=√2、tan(π/4)=1。"],
+    solution: "f′(π/4) = √2·1 = √2 ≈ 1.414。" });
+
+  add({ id: "lx-der-005", rank: 5,
+    prompt: "\\lim_{h\\to 0}\\frac{e^{2+h}-e^{2}}{h}",
+    answer: "exp(2)", verify: { m: "deriv", f: "e^{x}", at: [2] },
+    tags: ["derivative-definition", "exponential"], timeLimit: 70,
+    hints: ["f(x)=eˣ 在 x=2 的導數。"],
+    solution: "f′(2)=e²≈7.389。" });
+
+  /* ── D. 夾擠定理與振盪（R3–R5）── */
+  add({ id: "lx-sq-001", rank: 3,
+    prompt: "\\lim_{x\\to 0}x^2\\cos\\frac{5}{x}",
+    answer: "0", verify: { m: "limit", f: "x^2\\cos\\frac{5}{x}", at: 0 },
+    tags: ["squeeze", "trig-limit"], timeLimit: 70,
+    hints: ["|cos| ≤ 1。", "−x² ≤ x²cos(5/x) ≤ x²。"],
+    solution: "兩側都趨近 0，夾擠得 0。" });
+
+  add({ id: "lx-sq-002", rank: 4,
+    prompt: "\\lim_{x\\to\\infty}\\frac{2x+3\\sin x}{x+5}",
+    answer: "2", verify: { m: "limit", f: "\\frac{2x+3\\sin x}{x+5}", at: "inf" },
+    tags: ["squeeze", "trig-limit"], timeLimit: 80,
+    hints: ["3 sin x 被夾在 −3 與 3 之間。", "(2x−3)/(x+5) ≤ 式子 ≤ (2x+3)/(x+5)。", "兩側都趨近 2。"],
+    solution: "夾擠：兩邊的極限都是 2，所以極限是 2（振盪被分母壓平）。" });
+
+  add({ id: "lx-sq-005", rank: 4,
+    prompt: "\\lim_{x\\to\\infty}\\frac{\\cos(x^2)}{x^2}",
+    answer: "0", verify: { m: "limit", f: "\\frac{\\cos(x^2)}{x^2}", at: "inf" },
+    tags: ["squeeze", "trig-limit"], timeLimit: 70,
+    hints: ["|cos| ≤ 1。", "−1/x² ≤ 式子 ≤ 1/x²。"],
+    solution: "兩側都趨近 0，夾擠得 0（分子怎麼振盪都被 1/x² 壓住）。" });
+
+  add({ id: "lx-sq-003", rank: 5,
+    prompt: "\\lim_{n\\to\\infty}\\frac{\\left\\lfloor 7n\\right\\rfloor}{n}",
+    answer: "7", verify: { m: "seqLimit", f: "\\frac{\\lfloor 7n\\rfloor}{n}", v: "n" },
+    tags: ["squeeze", "floor"], timeLimit: 90,
+    hints: ["7n−1 < ⌊7n⌋ ≤ 7n。", "同除以 n 之後夾擠。"],
+    solution: "7−1/n < ⌊7n⌋/n ≤ 7，夾擠得 7。" });
+
+  add({ id: "lx-sq-004", rank: 5,
+    prompt: "\\lim_{x\\to 0^{+}}x\\left\\lfloor\\frac{3}{x}\\right\\rfloor",
+    answer: "3", verify: { m: "limit", f: "x\\lfloor\\frac{3}{x}\\rfloor", at: 0, dir: "+" },
+    tags: ["squeeze", "floor"], timeLimit: 90,
+    hints: ["3/x−1 < ⌊3/x⌋ ≤ 3/x。", "乘上 x>0 之後夾擠。"],
+    solution: "3−x < x⌊3/x⌋ ≤ 3，夾擠得 3。" });
+
+  /* ── E. 更難的計算：參數、三次根、指對數混合（R4–R6）── */
+  add({ id: "lx-hard-001", rank: 4,
+    prompt: "\\lim_{x\\to 8}\\frac{\\sqrt[3]{x}-2}{x-8}",
+    answer: "1/12", verify: { m: "deriv", f: "x^{1/3}", at: [8] },
+    tags: ["rationalize", "radical"], timeLimit: 90,
+    hints: ["用 a³−b³ 的因式分解，或視為 x^{1/3} 在 8 的導數。"],
+    solution: "(1/3)·8^{−2/3}=1/12。" });
+
+  add({ id: "lx-hard-002", rank: 5,
+    prompt: "\\lim_{x\\to 0}\\frac{\\sqrt[3]{1+3x}-\\sqrt{1+2x}}{x^2}",
+    answer: "-1/2", verify: { m: "limit", f: "\\frac{(1+3x)^{1/3}-(1+2x)^{1/2}}{x^2}", at: 0 },
+    tags: ["taylor", "radical"], timeLimit: 120,
+    hints: ["兩邊各展開到 x²。", "(1+3x)^{1/3}=1+x−x²+…", "(1+2x)^{1/2}=1+x−x²/2+…"],
+    solution: "相減得 −x²/2 + …，除以 x² 得 −1/2。" });
+
+  add({ id: "lx-hard-003", rank: 5,
+    prompt: "\\lim_{x\\to\\infty}x\\left(\\ln(x+3)-\\ln x\\right)",
+    answer: "3", verify: { m: "limit", f: "x(\\ln(x+3)-\\ln x)", at: "inf" },
+    tags: ["log", "lhopital"], timeLimit: 100,
+    hints: ["合併成 x·ln(1+3/x)。", "ln(1+u)≈u。"],
+    solution: "x·(3/x+O(1/x²)) → 3。" });
+
+  add({ id: "lx-hard-004", rank: 5,
+    prompt: "\\lim_{x\\to 0^{+}}\\left(\\cos\\sqrt{x}\\right)^{\\frac{1}{x}}",
+    answer: "exp(-1/2)", verify: { m: "limit", f: "(\\cos(\\sqrt{x}))^{\\frac{1}{x}}", at: 0, dir: "+" },
+    tags: ["log", "exponential-limit", "taylor"], timeLimit: 120,
+    hints: ["取對數：(1/x)·ln cos√x。", "cos u ≈ 1 − u²/2、ln(1+t) ≈ t。", "ln cos√x ≈ −x/2。"],
+    solution: "對數趨近 −1/2，極限是 e^{−1/2} ≈ 0.6065。" });
+
+  add({ id: "lx-hard-005", rank: 5,
+    prompt: "\\lim_{x\\to\\infty}\\left(\\frac{2x+5}{2x-1}\\right)^{3x}",
+    answer: "exp(9)", verify: { m: "limit", f: "(\\frac{2x+5}{2x-1})^{3x}", at: "inf" },
+    tags: ["exponential-limit", "standard-limit"], timeLimit: 110,
+    hints: ["寫成 (1+6/(2x−1))^{3x}。", "指數乘上去：3x·6/(2x)=9。"],
+    solution: "極限是 e⁹。" });
+
+  add({ id: "lx-hard-006", rank: 6,
+    prompt: "\\lim_{x\\to 0}\\frac{\\arcsin x-\\tan x}{x^{3}}",
+    answer: "-1/6", verify: { m: "limit", f: "\\frac{\\arcsin x-\\tan x}{x^3}", at: 0 },
+    tags: ["taylor", "inverse-trig"], timeLimit: 110,
+    hints: ["arcsin x = x + x³/6 + …", "tan x = x + x³/3 + …", "一次項互相抵消。"],
+    solution: "(1/6 − 1/3) = −1/6。" });
+
+  add({ id: "lx-hard-007", rank: 6,
+    prompt: "\\lim_{n\\to\\infty}n^{2}\\left(\\sqrt[n]{5}-\\sqrt[n+1]{5}\\right)",
+    answer: "log(5)", verify: { m: "seqLimit", f: "n^2(5^{1/n}-5^{1/(n+1)})", v: "n", n0: 400 },
+    tags: ["taylor", "exponential-limit"], timeLimit: 150,
+    hints: ["a^{1/n}=e^{(ln 5)/n}≈1+(ln 5)/n+…", "相減之後主項是 ln 5·(1/n−1/(n+1))=ln5/(n(n+1))。"],
+    solution: "n²·ln5/(n(n+1)) → ln 5 ≈ 1.609。" });
+
+  add({ id: "lx-hard-008", rank: 6,
+    prompt: "\\lim_{x\\to 0}\\frac{\\ln(\\cos 3x)}{x^{2}}",
+    answer: "-9/2", verify: { m: "limit", f: "\\frac{\\ln(\\cos(3x))}{x^2}", at: 0 },
+    tags: ["taylor", "log"], timeLimit: 100,
+    hints: ["cos 3x ≈ 1 − 9x²/2。", "ln(1+t) ≈ t。"],
+    solution: "ln(cos 3x) ≈ −9x²/2，極限是 −9/2。" });
+
+  /* ── F. 遞迴與連分數（R4–R6）：數列的極限 ── */
+  add({ id: "lx-seq-001", rank: 4,
+    prompt: "\\text{數列 }a_1=1,\\ a_{n+1}=\\sqrt{2+a_n}\\quad\\text{求 }\\lim_{n\\to\\infty}a_n",
+    answer: "2", verify: { m: "recSeq", f: "\\sqrt{2+a}", g: "a", a0: 1 },
+    tags: ["sequence-limit", "recursion"], timeLimit: 100,
+    hints: ["極限 L 滿足 L=√(2+L)。", "L²−L−2=0。"],
+    solution: "L²=2+L → L=2（負根不合）。" });
+
+  add({ id: "lx-seq-002", rank: 5,
+    prompt: "\\text{連分數 }x=1+\\cfrac{1}{1+\\cfrac{1}{1+\\cdots}}\\quad\\text{求 }x",
+    answer: "(1+sqrt(5))/2", verify: { m: "recSeq", f: "1+\\frac{1}{a}", g: "a", a0: 1 },
+    tags: ["sequence-limit", "recursion"], timeLimit: 110,
+    hints: ["x=1+1/x。", "x²−x−1=0。"],
+    solution: "黃金比例 (1+√5)/2 ≈ 1.618。" });
+
+  add({ id: "lx-seq-003", rank: 5,
+    prompt: "\\text{梯形電阻網路的等效電阻滿足 }R_{n+1}=1+\\cfrac{2}{1+R_n},\\ R_1=1\\quad\\text{求 }\\lim_{n\\to\\infty}R_n",
+    answer: "sqrt(3)", verify: { m: "recSeq", f: "1+\\frac{2}{1+a}", g: "a", a0: 1 },
+    tags: ["sequence-limit", "recursion", "applications"], timeLimit: 130,
+    hints: ["極限 R 滿足 R = 1 + 2/(1+R)。", "兩邊乘 (1+R)：R + R² = 1 + R + 2。"],
+    solution: "R² = 3，取正根 R = √3 ≈ 1.732。" });
+
+  add({ id: "lx-seq-004", rank: 5,
+    prompt: "\\text{巴比倫開方法：}a_1=3,\\ a_{n+1}=\\frac{1}{2}\\left(a_n+\\frac{5}{a_n}\\right)\\quad\\text{求 }\\lim_{n\\to\\infty}a_n",
+    answer: "sqrt(5)", verify: { m: "recSeq", f: "\\frac{1}{2}(a+\\frac{5}{a})", g: "a", a0: 3 },
+    tags: ["sequence-limit", "recursion", "applications"], timeLimit: 110,
+    hints: ["極限 L 滿足 L = (L + 5/L)/2。", "兩邊乘 2L：2L² = L² + 5。"],
+    solution: "L² = 5，取正根 √5 ≈ 2.236（這就是牛頓法求平方根）。" });
+
+  add({ id: "lx-seq-005", rank: 6,
+    prompt: "\\text{數列 }x_1=\\frac{1}{2},\\ x_{n+1}=\\sin x_n\\quad\\text{求 }\\lim_{n\\to\\infty}n\\,x_n^{2}",
+    answer: "3", verify: { m: "recSeq", f: "\\sin a", g: "n \\cdot a^2", a0: 0.5, tol: 1e-4 },
+    tags: ["sequence-limit", "recursion", "asymptotic"], timeLimit: 160,
+    hints: ["x 很小時 sin x ≈ x − x³/6。", "看 1/x_{n+1}² − 1/x_n² 趨近多少（約 2/3）。", "所以 1/x_n² ≈ 2n/3，x_n² ≈ 3/(2n)…（自己算清楚係數）。"],
+    solution: "1/x_n² 每步增加約 1/3，故 n·x_n² → 3。" });
+
+  /* ── G. 從表格與圖讀極限（R2–R4）：考卷上真的會出 ── */
+  add({ id: "lx-tab-001", rank: 2,
+    prompt: "\\text{下表是 }f(x)=\\frac{x^2-9}{x-3}\\text{ 的值：}\\quad f(2.9)=5.9,\\ f(2.99)=5.99,\\ f(3.01)=6.01\\quad\\text{由表推測 }\\lim_{x\\to 3}f(x)",
+    answer: "6", verify: { m: "limit", f: "\\frac{x^2-9}{x-3}", at: 3 },
+    tags: ["limit-from-table", "rational-limit"], timeLimit: 60,
+    hints: ["兩側都趨近同一個數。", "其實 f(x)=x+3（x≠3）。"],
+    solution: "極限是 6（x=3 是可去間斷點）。" });
+
+  add({ id: "lx-tab-002", rank: 3,
+    prompt: "\\text{下表是 }g(x)=\\frac{\\sin 2x}{5x}\\text{ 的值：}\\quad g(0.1)\\approx 0.397,\\ g(0.01)\\approx 0.39997\\quad\\text{由表推測 }\\lim_{x\\to 0}g(x)",
+    answer: "2/5", verify: { m: "limit", f: "\\frac{\\sin 2x}{5x}", at: 0 },
+    tags: ["limit-from-table", "trig-limit"], timeLimit: 70,
+    hints: ["(sin 2x)/(2x)→1。", "把式子湊成 (sin 2x)/(2x) 之後，前面還剩一個常數倍。"],
+    solution: "極限是 0.4 = 2/5。" });
+
+  /* ── H. ε-δ 的可算版本（R4–R5）：抽象定義落到一個數 ── */
+  add({ id: "lx-eps-001", rank: 4,
+    prompt: "\\text{對 }f(x)=3x+1,\\ L=7,\\ x_0=2\\text{，要讓 }|f(x)-L|<0.06\\text{，}\\delta\\text{ 最大可以取多少？}",
+    answer: "0.02", verify: { m: "root", f: "3x-0.06", x0: 0.01 },
+    tags: ["epsilon-delta", "continuity"], timeLimit: 80,
+    hints: ["|3x+1−7|=3|x−2|。", "要 3|x−2|<0.06。"],
+    solution: "|x−2|<0.02，所以 δ 最大 0.02。" });
+
+  add({ id: "lx-eps-002", rank: 5,
+    prompt: "\\text{對 }f(x)=x^2,\\ L=9,\\ x_0=3\\text{，要讓 }|f(x)-L|<0.25\\text{ 對所有 }|x-3|<\\delta\\text{ 成立，}\\delta\\text{ 最大可以取多少？}",
+    answer: "sqrt(9.25)-3", verify: { m: "root", f: "(3+x)^2-9.25", x0: 0.04 },
+    tags: ["epsilon-delta", "continuity"], timeLimit: 110,
+    hints: ["右側較緊：(3+δ)²−9 ≤ 0.25。", "δ = √9.25 − 3。"],
+    solution: "√9.25−3 ≈ 0.0414（左側 3−√8.75≈0.0420 較寬，取小的）。" });
+
+  window.BUZZ_PROBLEMS = (window.BUZZ_PROBLEMS || []).concat(problems);
+})();
