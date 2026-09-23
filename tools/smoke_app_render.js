@@ -229,6 +229,11 @@ const trainRecords = (() => {
   return seeded;
 })();
 
+// 四種練法是跟著使用逐步出現的（featureGate）：全新帳號只有「練習」。
+// 這裡要驗的是「收納不刪除」，所以整段用一個已經練過的帳號 render。
+const originalGetItem = global.localStorage.getItem;
+global.localStorage.getItem = () => JSON.stringify(trainRecords);
+
 api.trainBuckets.forEach((bucket) => {
   api.setBucket(bucket.key);
   const html = api.renderTrain();
@@ -255,6 +260,20 @@ const unreachable = Object.keys(api.modes).filter((key) => {
 });
 if (unreachable.length) {
   throw new Error(`these modes are unreachable from the train page: ${unreachable.join(", ")}`);
+}
+global.localStorage.getItem = originalGetItem;
+
+// 全新帳號：訓練頁只有「練習」，其他三種練法確實不在畫面上（使用者回報「一進來功能一大堆」）
+{
+  api.setBucket("practice");
+  const fresh = api.renderTrain();
+  const leaked = api.trainBuckets.filter((bucket) => bucket.key !== "practice" && fresh.includes(`data-bucket="${bucket.key}"`));
+  if (leaked.length) throw new Error("全新帳號的訓練頁不該出現：" + leaked.map((bucket) => bucket.label).join("、"));
+  if (!/data-bucket="practice"/.test(fresh)) throw new Error("全新帳號的訓練頁連「練習」都沒有");
+  if (/更多練習/.test(fresh)) throw new Error("全新帳號的訓練頁不該有「更多練習」面板（大考模式、競賽魔王、模擬卷）");
+  const home = api.renderHome();
+  if (/探索更多|接下來練什麼/.test(home)) throw new Error("全新帳號的首頁不該有「探索更多」或「接下來練什麼」");
+  console.log("逐步出現 smoke: 全新帳號的訓練頁只有「練習」、首頁沒有探索更多；練過的帳號四種練法全在");
 }
 
 const emptyInsights = api.renderInsights();

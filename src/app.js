@@ -433,22 +433,47 @@
     "complex",
     "ode-intro"
   ];
+  // 期中考與期末考的差別是**範圍**，不是難度。
+  //
+  // 原本兩張卷是用 rank 分的（期中 R2-R4、期末 R3-R5）—— 那等於說「期末比較難」，
+  // 但真實的課不是這樣跑：期中考完極限與微分，期末考積分與級數，兩邊的題目一樣難，
+  // 考的是不同章節。用難度分的後果是期中卷裡會出現積分題（只要它是 R3），
+  // 而那一章根本還沒教到。
+  //
+  // 所以 scope 是主題清單，兩張卷的難度區間一樣寬；要整學期一起複習的人走「全範圍」。
   const NAMED_EXAMS = {
     midterm: {
       label: "期中模擬",
-      note: "60 分鐘 · 12 題 · R2-R4 · 單變數",
+      note: "60 分鐘 · 12 題 · 範圍：極限與連續、導數與微分應用",
+      scopeNote: "不含積分技巧、級數與多變數",
       count: 12,
       durationSec: 60 * 60,
-      minRank: 2,
-      maxRank: 4,
+      topics: ["limits", "derivatives"],
+      group: "scope",
+      minRank: 1,
+      maxRank: 5,
       singleVariable: true
     },
     final: {
       label: "期末模擬",
-      note: "90 分鐘 · 15 題 · R3-R5 · 全主題",
+      note: "90 分鐘 · 15 題 · 範圍：積分與其應用、級數",
+      scopeNote: "期中之後的章節；想整學期一起複習就考全範圍",
       count: 15,
       durationSec: 90 * 60,
-      minRank: 3,
+      topics: ["integrals", "series"],
+      group: "scope",
+      minRank: 1,
+      maxRank: 5
+    },
+    full_term: {
+      label: "全範圍總複習",
+      note: "90 分鐘 · 15 題 · 範圍：整學期（極限到級數）",
+      scopeNote: "期中期末混在一起，考前一週用這張",
+      count: 15,
+      durationSec: 90 * 60,
+      topics: ["limits", "derivatives", "integrals", "series"],
+      group: "scope",
+      minRank: 2,
       maxRank: 5
     },
     transfer: {
@@ -458,6 +483,7 @@
       durationSec: 90 * 60,
       minRank: 3,
       maxRank: 6,
+      group: "style",
       preferTags: ["transfer-exam", "exam-style"]
     },
     integral_bee: {
@@ -467,7 +493,8 @@
       durationSec: 20 * 60,
       minRank: 4,
       maxRank: 6,
-      topic: "integrals"
+      topic: "integrals",
+      group: "style"
     },
     // 2026-09 擴充：免修考與段考各有自己的節奏 —— 免修考偏難偏廣，
     // 段考短而基本。用既有的 preferTags 機制，不動抽卷邏輯。
@@ -478,13 +505,16 @@
       durationSec: 60 * 60,
       minRank: 3,
       maxRank: 6,
+      group: "style",
       preferTags: ["proficiency-exam", "university-exam-style"]
     },
     quiz_sprint: {
-      label: "段考衝刺",
-      note: "45 分鐘 · 10 題 · R2-R4 · 段考節奏",
+      label: "小考節奏",
+      note: "45 分鐘 · 10 題 · 範圍不限 · 練整份卷的節奏",
+      scopeNote: "要指定範圍就考期中或期末那兩張",
       count: 10,
       durationSec: 45 * 60,
+      group: "style",
       minRank: 2,
       maxRank: 4,
       preferTags: ["midterm-style", "exam-style"]
@@ -809,6 +839,57 @@
     const later = () => (window.requestIdleCallback ? window.requestIdleCallback(inject, { timeout: 4000 }) : window.setTimeout(inject, 1500));
     if (document.readyState === "complete") later();
     else window.addEventListener("load", later, { once: true });
+  }
+
+  // ── 一進來看到多少東西 ─────────────────────────────────────
+  //
+  // 使用者回報的第一名不是「功能不夠」，是「一進來功能一大堆，不知道怎麼開始」。
+  // 量過：全新使用者的首頁有 24 個可以按的東西（第一屏 14 個），其中錯題本、數據、
+  // 對戰、出題、證明在他還沒答第一題的時候全都是空的或用不到的。
+  //
+  // 所以功能跟著使用出現，分三級：
+  //   起步（還沒練完一局）：首頁只有一張「開始」卡與三步說明；訓練頁只有主線練習。
+  //   熟悉（練完第一局）：換練法（弱點／模擬／挑戰）、接下來練什麼、練習紀錄、本週格子。
+  //   全開（3 局或 60 題）：每日一題、證明訓練、對戰、出題、Boss 專區。
+  // 錯題本不看等級 —— 有錯題就出現，沒有就不出現。
+  //
+  // 三個原則：
+  //   1. 只藏「入口」，不藏「東西」：設定頁一個開關可以直接全開，已經在用的人不受影響。
+  //   2. 藏起來的東西解鎖時講一句話，不要讓人以為介面壞了。
+  //   3. 主要分頁（今天／訓練／數據／題庫／設定）永遠都在 —— 骨架變形比多兩個按鈕更迷路。
+  const FEATURE_LEVELS = { started: 1, explore: 3 };
+
+  function featureGate(records) {
+    const settings = (records && records.settings) || {};
+    const all = settings.showAllFeatures === true;
+    const sessions = Array.isArray(records && records.history) ? records.history.length : 0;
+    const answered = Number((records && records.totalAnswered) || 0);
+    const familiar = all || sessions >= FEATURE_LEVELS.started || answered >= 8;
+    const full = all || sessions >= FEATURE_LEVELS.explore || answered >= 60;
+    return {
+      all,
+      familiar,
+      full,
+      // 有錯題才給錯題本；沒有的話那一頁只會說「這裡還沒有東西」
+      mistakes: all || Object.keys((records && records.mistakes) || {}).length > 0,
+      history: all || sessions > 0
+    };
+  }
+
+  // 解鎖的那一刻講一句話。只講一次，記在 records.unlocked 裡。
+  function noticeUnlocks(records) {
+    const gate = featureGate(records);
+    const seen = records.unlocked && typeof records.unlocked === "object" ? records.unlocked : {};
+    const news = [];
+    if (gate.familiar && !seen.familiar) news.push(["familiar", "練完第一局了 —— 訓練頁多了弱點、模擬考與挑戰題。"]);
+    if (gate.full && !seen.full) news.push(["full", "首頁多了「探索更多」：每日一題、證明訓練、好友對戰、我要出題。"]);
+    if (!news.length) return false;
+    const next = loadRecords();
+    next.unlocked = { ...seen };
+    news.forEach(([key]) => { next.unlocked[key] = true; });
+    saveRecords(next);
+    showAppNotice(news[news.length - 1][1]);
+    return true;
   }
 
   // ── 導覽 ───────────────────────────────────────────────────
@@ -1353,6 +1434,7 @@
   // 要查的人在設定頁最底下找得到。
   function renderTopbar() {
     const inQuiz = view === "quiz";
+    const navGate = featureGate(loadRecords());
     const themeIcon = selectedTheme === "dark" ? "sun" : "moon";
     const themeLabel = selectedTheme === "dark" ? "亮色" : "深色";
     const parentView = { "path-intro": "train", mistakes: "train", history: "insights", results: "insights", proofs: "library", creator: "library", "proof-write": "library", "proof-tutorial": "library", "proof-view": "library", course: "home", "course-lesson": "home" }[view] || view;
@@ -1380,9 +1462,9 @@
               <div class="sidebar-resources">
                 <span class="nav-section-label">學習工具</span>
                 <button class="sidebar-link ${/^course/.test(view) ? "is-active" : ""}" data-action="open-course" title="入門課程">${icon("book-open")}<span>入門課程</span></button>
-                <button class="sidebar-link ${view === "mistakes" ? "is-active" : ""}" data-action="open-mistakes" title="錯題本">${icon("refresh")}<span>錯題本</span></button>
-                <button class="sidebar-link ${view === "history" ? "is-active" : ""}" data-action="open-history" title="練習紀錄">${icon("history")}<span>練習紀錄</span></button>
-                <button class="sidebar-link ${/^proof/.test(view) ? "is-active" : ""}" data-action="open-proofs" title="證明訓練">${icon("file-pen-line")}<span>證明訓練</span></button>
+                ${navGate.mistakes ? `<button class="sidebar-link ${view === "mistakes" ? "is-active" : ""}" data-action="open-mistakes" title="錯題本">${icon("refresh")}<span>錯題本</span></button>` : ""}
+                ${navGate.history ? `<button class="sidebar-link ${view === "history" ? "is-active" : ""}" data-action="open-history" title="練習紀錄">${icon("history")}<span>練習紀錄</span></button>` : ""}
+                ${navGate.full ? `<button class="sidebar-link ${/^proof/.test(view) ? "is-active" : ""}" data-action="open-proofs" title="證明訓練">${icon("file-pen-line")}<span>證明訓練</span></button>` : ""}
               </div>
               <a class="sidebar-guide" href="guide.html">${icon("book-open")}<span><strong>把每次練習，變成進步</strong><small>閱讀使用手冊 ${icon("chevron-right")}</small></span></a>
               <div class="topbar-utils">
@@ -1482,6 +1564,7 @@
     const mission = dailyMissionInfo(records, daily);
     const weaknesses = topWeaknesses(records);
     const path = learningPathState(records);
+    const gate = featureGate(records);
 
     // spec 04.3：首頁只有一個主 CTA。其餘全部收進「訓練」與「數據」兩個分頁 ——
     // 收納不刪除，19 個模式一個都沒少，只是不再全部擠在同一屏。
@@ -1511,20 +1594,20 @@
             // 首頁只留一顆主按鈕（上面那張卡）。四種訓練方向收進摺疊：要換練法的人再打開。
             ""
           }
+          ${gate.familiar ? `
           <details class="home-more home-bucket-more">
             <summary><span><strong>換一種練法</strong></span>${icon("chevron-down")}</summary>
             <div class="home-more-body">${renderBucketNav()}</div>
-          </details>
+          </details>` : ""}
           ${renderHomeRetentionRow(records)}
           ${renderBackupNotice(records)}
         </div>
         <div class="home-aside">
-          ${renderHomeWeek(records, mission)}
-          <div class="workspace-section-head"><h2>接下來練什麼</h2></div>
-          ${renderHomeSecondary(records, path, mission)}
+          ${gate.familiar ? renderHomeWeek(records, mission) : ""}
+          ${gate.familiar ? `<div class="workspace-section-head"><h2>接下來練什麼</h2></div>${renderHomeSecondary(records, path, mission)}` : ""}
           ${renderGrowthLine(records)}
           ${renderHomeWeakness(records)}
-          <section class="workspace-section"><div class="workspace-section-head"><h2>探索更多</h2></div>${renderHomeQuickLinks()}</section>
+          ${gate.full ? `<section class="workspace-section"><div class="workspace-section-head"><h2>探索更多</h2></div>${renderHomeQuickLinks()}</section>` : ""}
         </div>
       </main>
     `;
@@ -1764,7 +1847,7 @@
             <button class="button home-primary" data-action="start-planned" data-length="${escapeAttr(recipe.length)}">
               ${icon("play")}<span>開始</span>${icon("chevron-right")}
             </button>
-            <button class="button secondary" data-action="open-train">${icon("target")}走主線第 1 關</button>
+            ${featureGate(records).familiar ? `<button class="button secondary" data-action="open-train">${icon("target")}走主線第 1 關</button>` : ""}
           </div>
           <p class="today-note">新手保護期還有 ${gentleStartQuota(records) - played} 局；之後每題會開始倒數，那時候「來不及」才是有用的訊號。</p>
         </section>
@@ -2230,13 +2313,16 @@
     const path = learningPathState(records);
     const today = new Date().toISOString().slice(0, 10);
     const mission = dailyMissionInfo(records, records.daily && records.daily[today]);
-    const bucket = TRAIN_BUCKETS.some((item) => item.key === selectedBucket) ? selectedBucket : "practice";
+    const gate = featureGate(records);
+    // 起步階段只有「練習」：弱點沒有錯題可練、模擬考沒有基準、挑戰題超過現在的難度。
+    const buckets = gate.familiar ? TRAIN_BUCKETS : TRAIN_BUCKETS.filter((item) => item.key === "practice");
+    const bucket = buckets.some((item) => item.key === selectedBucket) ? selectedBucket : "practice";
 
     return `
       <main class="screen train-screen">
         ${renderPageHeading("TRAINING / 訓練中心", "每個技巧，都能練得更熟。", "")}
-        <div class="segmented bucket-tabs" role="group" aria-label="訓練分類">
-          ${TRAIN_BUCKETS.map(
+        <div class="segmented bucket-tabs ${buckets.length < 2 ? "is-single" : ""}" role="group" aria-label="訓練分類">
+          ${buckets.map(
             (item) => `
               <button class="segment ${bucket === item.key ? "is-active" : ""}"
                 aria-pressed="${bucket === item.key ? "true" : "false"}"
@@ -2815,149 +2901,15 @@
 
   // Speed × Accuracy 象限圖。橫軸是「相對耗時」（elapsed / timeLimit），
   // 縱軸是限時正確率 —— 這張圖回答的是「你是不會，還是來不及」。
-  function renderSpeedQuadrant(profile) {
-    const points = Object.values(profile.skills).filter(
-      (entry) => entry.quadrant && entry.speed !== null && entry.pressureAccuracy !== null
-    );
+  // 速度／正確率四象限圖在 share_cards.js（從 app.js 搬出去的獨立畫面片段）。
+  const renderSpeedQuadrant = (profile) => window.BuzzGraphRender.renderSpeedQuadrant(profile, { escapeHtml });
 
-    if (!points.length) {
-      return `
-        <section class="study-card">
-          <p class="section-label">速度 × 正確率</p>
-          <h3>還測不出來</h3>
-          <p class="panel-note">需要同一個技巧累積 8 題以上的限時作答。多打幾局限時訓練就會出現。</p>
-        </section>
-      `;
-    }
-
-    const W = 320;
-    const H = 240;
-    const pad = 34;
-    // 相對耗時超過 1.2 的都畫在最右邊：超時本來就不需要再細分
-    const x = (speed) => pad + (Math.min(1.2, speed) / 1.2) * (W - pad - 12);
-    const y = (acc) => H - pad - acc * (H - pad - 12);
-    const fastLine = x(0.6);
-    const accLine = y(0.7);
-
-    const dots = points
-      .map((entry) => {
-        const cx = x(entry.speed).toFixed(1);
-        const cy = y(entry.pressureAccuracy).toFixed(1);
-        return `<circle class="quad-dot is-${entry.quadrant.key}" cx="${cx}" cy="${cy}" r="5">
-          <title>${escapeHtml(entry.label)}：${entry.quadrant.label} · 正確率 ${Math.round(entry.pressureAccuracy * 100)}% · 相對耗時 ${entry.speed.toFixed(2)}</title>
-        </circle>`;
-      })
-      .join("");
-
-    const counts = points.reduce((acc, entry) => {
-      acc[entry.quadrant.key] = (acc[entry.quadrant.key] || 0) + 1;
-      return acc;
-    }, {});
-    const legend = [
-      { key: "reflex", label: "反射區", note: "快又準" },
-      { key: "slow", label: "會但慢", note: "方法對、不熟" },
-      { key: "rushed", label: "衝太快", note: "讀題或代數不穩" },
-      { key: "unbuilt", label: "還沒建立", note: "缺技巧" }
-    ];
-
-    return `
-      <section class="study-card quadrant-card">
-        <div class="panel-title-row">
-          <div>
-            <p class="section-label">速度 × 正確率</p>
-            <h3>你是不會，還是來不及</h3>
-          </div>
-        </div>
-        <svg class="quadrant-svg" viewBox="0 0 ${W} ${H}" role="img" aria-label="速度與正確率的四象限圖">
-          <line class="quad-axis" x1="${pad}" y1="${H - pad}" x2="${W - 8}" y2="${H - pad}"></line>
-          <line class="quad-axis" x1="${pad}" y1="8" x2="${pad}" y2="${H - pad}"></line>
-          <line class="quad-split" x1="${fastLine}" y1="8" x2="${fastLine}" y2="${H - pad}"></line>
-          <line class="quad-split" x1="${pad}" y1="${accLine}" x2="${W - 8}" y2="${accLine}"></line>
-          <text class="quad-label" x="${pad}" y="${H - 10}">快</text>
-          <text class="quad-label" x="${W - 24}" y="${H - 10}">慢</text>
-          <text class="quad-label" x="6" y="16">準</text>
-          <text class="quad-label" x="6" y="${H - pad}">錯</text>
-          ${dots}
-        </svg>
-        <div class="quad-legend">
-          ${legend
-            .map(
-              (item) => `
-                <div class="quad-legend-item is-${item.key}">
-                  <span class="quad-swatch"></span>
-                  <strong>${item.label}</strong>
-                  <small>${item.note} · ${counts[item.key] || 0} 個技巧</small>
-                </div>`
-            )
-            .join("")}
-        </div>
-      </section>
-    `;
-  }
 
   // 技巧清單：只列測得準的，並且每一列都帶一句診斷。
   // 只給分數不給診斷的話，使用者知道「Frullani 41 分」但不知道要做什麼。
-  function renderSkillTable(profile) {
-    const rows = profile.weakest
-      .map((id) => profile.skills[id])
-      .filter((entry) => entry && entry.mastery !== null)
-      .slice(0, 12);
+  // 技巧表的畫面在 share_cards.js（從 app.js 搬出去的獨立畫面片段）。
+  const renderSkillTable = (profile) => window.BuzzGraphRender.renderSkillTable(profile, { escapeHtml });
 
-    const stale = Object.values(profile.skills).filter((entry) => entry.stale);
-
-    if (!rows.length) {
-      return `
-        <section class="study-card">
-          <p class="section-label">技巧</p>
-          <h3>還沒有技巧測得準</h3>
-        </section>
-      `;
-    }
-
-    return `
-      <section class="study-card skill-table-card">
-        <div class="panel-title-row">
-          <div>
-            <p class="section-label">技巧精熟度</p>
-            <h3>從最弱的開始</h3>
-          </div>
-        </div>
-        <ul class="skill-rows">
-          ${rows
-            .map((entry) => {
-              const pct = entry.mastery;
-              const pa = entry.pressureAccuracy === null ? null : Math.round(entry.pressureAccuracy * 100);
-              const ua = entry.untimedAccuracy === null ? null : Math.round(entry.untimedAccuracy * 100);
-              return `
-                <li class="skill-row is-${entry.state}">
-                  <div class="skill-row-head">
-                    <strong>${escapeHtml(entry.label)}</strong>
-                    <span class="skill-state">${escapeHtml(entry.stateLabel)} ${pct}</span>
-                  </div>
-                  <div class="skill-bar"><div class="skill-fill" style="width:${pct}%"></div></div>
-                  <div class="skill-row-meta">
-                    <span>${entry.n} 題</span>
-                    ${pa !== null ? `<span>限時 ${pa}%</span>` : ""}
-                    ${ua !== null ? `<span>不限時 ${ua}%</span>` : ""}
-                    ${entry.quadrant ? `<span>${escapeHtml(entry.quadrant.label)}</span>` : ""}
-                  </div>
-                  ${
-                    entry.diagnosis
-                      ? `<p class="skill-diagnosis">${escapeHtml(entry.diagnosis.text)} —— ${escapeHtml(entry.diagnosis.advice)}</p>`
-                      : ""
-                  }
-                </li>`;
-            })
-            .join("")}
-        </ul>
-        ${
-          stale.length
-            ? `<p class="panel-note">另外有 ${stale.length} 個技巧碰過但還測不準 —— 樣本不夠，或太久沒練已經衰減。多練幾題就會進到這張表。</p>`
-            : ""
-        }
-      </section>
-    `;
-  }
 
   // 錯因分佈。「我其實是算錯，不是不會」這句話要有數字支撐才有意義。
   function renderCauseBreakdown(profile) {
@@ -3724,6 +3676,11 @@
   }
 
   function renderHomeMorePanel(records, weaknesses, mistakeCount) {
+    const panelGate = featureGate(records);
+    // 「更多練習」裡面是大考模式、競賽魔王、具名模擬卷、自訂一局、題包挑選 ——
+    // 全部都是「已經知道自己要練什麼」的人才用得上的東西。第一局還沒打完就看到，
+    // 只會變成一整頁不知道該按哪個。練完一局再出現。
+    if (!panelGate.familiar) return "";
     return `
       <section class="home-more">
         <details class="home-more-panel" data-home-more-panel ${homeMoreOpen ? "open" : ""}>
@@ -3800,9 +3757,9 @@
             <nav class="home-more-links" aria-label="其他頁面">
               <button data-action="open-course">${icon("book-open")}入門課程</button>
               <button data-action="open-library">${icon("search")}題庫</button>
-              <button data-action="open-boss-lab">${icon("trophy")}Boss 專區</button>
+              ${panelGate.full ? `<button data-action="open-boss-lab">${icon("trophy")}Boss 專區</button>
               <button data-action="open-proofs">${icon("file-pen-line")}證明題</button>
-              <button data-action="open-creator">${icon("file-pen-line")}出題工作坊</button>
+              <button data-action="open-creator">${icon("file-pen-line")}出題工作坊</button>` : ""}
               <button data-action="open-settings">${icon("settings")}資料與設定</button>
             </nav>
           </div>
@@ -3818,10 +3775,13 @@
         <div class="named-exam-head">
           <p class="section-label">模擬考</p>
           <h3>整份限時，考前拿這幾張卷自我檢測</h3>
-          <span>同一次挑戰抽題固定；重考會換一份新卷。及格線 60%。</span>
+          <span>期中與期末的差別是<strong>範圍</strong>不是難度：期中考極限與微分，期末考積分與級數。同一次挑戰抽題固定；重考會換一份新卷。及格線 60%。</span>
         </div>
+        ${["scope", "style"].map((group) => `
+        <p class="section-label named-exam-group">${group === "scope" ? "依考試範圍" : "依考卷風格"}</p>
         <div class="named-exam-grid">
           ${Object.entries(NAMED_EXAMS)
+            .filter(([, config]) => (config.group || "style") === group)
             .map(([id, config]) => {
               const stat = stats[id];
               const line = stat && stat.attempts
@@ -3831,11 +3791,12 @@
                 <button class="named-exam-card" data-action="start-named-exam" data-exam-id="${escapeAttr(id)}">
                   <strong>${escapeHtml(config.label)}</strong>
                   <span>${escapeHtml(config.note)}</span>
+                  ${config.scopeNote ? `<em>${escapeHtml(config.scopeNote)}</em>` : ""}
                   <small>${escapeHtml(line)}</small>
                 </button>`;
             })
             .join("")}
-        </div>
+        </div>`).join("")}
       </section>
     `;
   }
@@ -4212,6 +4173,11 @@
     return `
       <section class="study-card interface-card">
         ${renderSettingRow(
+          "顯示全部功能",
+          "預設是跟著練習慢慢出現：練完一局才有弱點與模擬考，三局之後才有每日一題、證明訓練、對戰與出題。想一次看到全部就打開。",
+          onOffControl("set-show-all-features", settings.showAllFeatures === true, "顯示全部功能")
+        )}
+        ${renderSettingRow(
           "專注模式",
           "收起連勝、盾牌與成就，只留練習本身。連勝照算，只是不顯示。",
           onOffControl("set-focus-mode", focusModeOn(), "專注模式")
@@ -4490,7 +4456,7 @@
               <p>${problems.length.toLocaleString()} 題微積分，從基礎觀念到進階挑戰。搜尋、收藏，建立你的練習清單。</p>
             </div>
             <div class="action-row">
-              <button class="button secondary" data-action="open-creator">${icon("file-pen-line")}我要出題</button>
+              ${featureGate(loadRecords()).full ? `<button class="button secondary" data-action="open-creator">${icon("file-pen-line")}我要出題</button>` : ""}
               <button class="button" data-action="start-library-filter" ${allItems.length ? "" : "disabled"}>${icon("shuffle")}練目前篩選</button>
             </div>
           </div>
@@ -8643,6 +8609,13 @@
     if (action === "lock-library") setLibraryFullAccess(false);
     if (action === "open-unit-chest") openUnitChest(actionNode.dataset.unit);
     if (action === "set-analytics") { setAnalyticsEnabled(Boolean(actionNode.dataset.on)); render(); }
+    if (action === "set-show-all-features") {
+      const next = loadRecords();
+      next.settings = next.settings || {};
+      next.settings.showAllFeatures = Boolean(actionNode.dataset.on);
+      saveRecords(next);
+      render();
+    }
     if (action === "set-focus-mode") setFocusMode(Boolean(actionNode.dataset.on));
     if (action === "set-board-surface") { setBoardSurface(actionNode.dataset.surface || "paper"); render(); }
     if (action === "preview-calibration") showCalibrationPreview();
@@ -9359,6 +9332,8 @@
       const rank = problemRank(problem);
       if (rank < config.minRank || rank > config.maxRank) return false;
       if (config.topic && problem.topic !== config.topic) return false;
+      // scope：期中考不該出現還沒教到的章節（見 NAMED_EXAMS 上方的註解）
+      if (Array.isArray(config.topics) && !config.topics.includes(problem.topic)) return false;
       if (config.singleVariable) {
         const tags = problem.tags || [];
         if (SINGLE_VARIABLE_EXCLUDE_TAGS.some((tag) => tags.includes(tag))) return false;
@@ -11278,6 +11253,9 @@
     clearActiveSession();
     resultsDetailOpen = false;
     view = "results";
+    // 這一局讓什麼東西解鎖了就講一句 —— 介面自己長出新東西而沒有人說，
+    // 使用者會以為是自己按錯了。
+    noticeUnlocks(loadRecords());
     render();
   }
 
@@ -13528,6 +13506,7 @@
     next.pathLessonRuns = next.pathLessonRuns && typeof next.pathLessonRuns === "object" ? next.pathLessonRuns : {};
     next.proofs = next.proofs && typeof next.proofs === "object" ? next.proofs : {};
     next.tours = next.tours && typeof next.tours === "object" ? next.tours : {};
+    next.unlocked = next.unlocked && typeof next.unlocked === "object" ? next.unlocked : {};
     next.favorites = next.favorites && typeof next.favorites === "object" ? next.favorites : {};
     next.problemReports = next.problemReports && typeof next.problemReports === "object" ? next.problemReports : {};
     next.streakShields = next.streakShields && typeof next.streakShields === "object" ? next.streakShields : {};
@@ -14614,61 +14593,11 @@
   }
 
   // GitHub 式練習熱力圖：一次算完 counts / streak，再一次吐出整片格子。
-  function renderActivityHeatmap(records) {
-    const counts = activityCounts(records);
-    const streakInfo = practiceStreakInfo(records, counts);
-    const today = new Date();
-    today.setHours(12, 0, 0, 0);
-    const todayKey = localDateKey(today);
-    const start = startOfWeek(today);
-    start.setDate(start.getDate() - (HEATMAP_WEEKS - 1) * 7);
-    const monthCells = [];
-    const cells = [];
-    let previousMonth = -1;
-    for (let week = 0; week < HEATMAP_WEEKS; week += 1) {
-      const weekStart = new Date(start);
-      weekStart.setDate(start.getDate() + week * 7);
-      const month = weekStart.getMonth();
-      monthCells.push(`<span>${month !== previousMonth ? `${month + 1}月` : ""}</span>`);
-      previousMonth = month;
-      for (let day = 0; day < 7; day += 1) {
-        const date = new Date(weekStart);
-        date.setDate(weekStart.getDate() + day);
-        const key = localDateKey(date);
-        if (key > todayKey) {
-          cells.push(`<span class="heatmap-cell is-future" data-level="0"></span>`);
-          continue;
-        }
-        const count = counts[key] || 0;
-        const shielded = streakInfo.usedDates.has(key);
-        const title = `${key} · ${count} 題${shielded ? " · 盾牌保護" : ""}`;
-        cells.push(`<span class="heatmap-cell ${shielded ? "is-shielded" : ""}" data-level="${activityLevel(count)}" title="${escapeAttr(title)}"></span>`);
-      }
-    }
-    return `
-      <section class="heatmap-panel">
-        <div class="heatmap-head">
-          <div>
-            <p class="section-label">練習熱力圖</p>
-            <h3>每天至少 1 題</h3>
-          </div>
-          <div class="streak-status">
-            <strong>連勝 ${streakInfo.streak} 天</strong>
-            <span class="shield-chip ${streakInfo.shieldAvailable ? "is-ready" : "is-used"}">${icon("shield")}盾牌${streakInfo.shieldAvailable ? "可用" : "本週已用"}</span>
-          </div>
-        </div>
-        <div class="heatmap-wrap">
-          <div class="heatmap-months" style="grid-template-columns: repeat(${HEATMAP_WEEKS}, 1fr);">${monthCells.join("")}</div>
-          <div class="heatmap-grid">${cells.join("")}</div>
-          <div class="heatmap-legend">
-            <span>少</span>
-            ${[0, 1, 2, 3, 4].map((level) => `<i class="heatmap-cell" data-level="${level}"></i>`).join("")}
-            <span>多</span>
-          </div>
-        </div>
-      </section>
-    `;
-  }
+  // 練習熱力圖的 SVG/HTML 在 share_cards.js（從 app.js 搬出去的獨立畫面片段）。
+  const renderActivityHeatmap = (records) => window.BuzzGraphRender.renderActivityHeatmap(records, {
+    activityCounts, practiceStreakInfo, localDateKey, startOfWeek, activityLevel, escapeAttr, icon, weeks: HEATMAP_WEEKS
+  });
+
 
   function buildWeaknessAnalysis(records) {
     const topicCounts = {};

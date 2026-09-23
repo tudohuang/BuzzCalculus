@@ -295,6 +295,19 @@ async function run() {
     await clickText("直接開始練", 800);
     await click('button[data-action="dismiss-notice"]');
     await click('[data-action="open-train"]', 700);
+    // 功能是跟著練習逐步出現的：全新帳號的訓練頁只有「練習」。
+    const gated = await evaluate(`return [...document.querySelectorAll('[data-bucket]')].map((n) => n.dataset.bucket);`);
+    check("全新帳號的訓練頁只有「練習」，沒有弱點／模擬／挑戰", gated.every((key) => key === "practice"), gated.join(","));
+    // 挑戰分頁本身的斷言照跑 —— 用設定頁那個「顯示全部功能」開關打開（使用者也是這樣做）
+    await chrome.evaluate(`
+      const records = JSON.parse(localStorage.getItem("buzzcalculus.records.v1") || "{}");
+      records.settings = records.settings || {};
+      records.settings.showAllFeatures = true;
+      localStorage.setItem("buzzcalculus.records.v1", JSON.stringify(records));
+      location.reload();
+      return 1;`);
+    await chrome.sleep(900);
+    await click('[data-action="open-train"]', 500);
     await click('[data-action="set-bucket"][data-bucket="challenge"]', 700);
     const challenge = await evaluate(`return { firstPanel: window.__b.text(".train-screen .study-card"), cards: [...document.querySelectorAll(".challenge-mode")].map((n) => n.innerText.replace(/\\s+/g, " ")) };`);
     check("挑戰分頁第一張就是挑戰模式", /挑戰模式/.test(challenge.firstPanel), challenge.firstPanel.slice(0, 30));

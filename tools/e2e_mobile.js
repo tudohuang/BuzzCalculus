@@ -103,10 +103,10 @@ async function run() {
     await chrome.send("Emulation.setTouchEmulationEnabled", { enabled: true, maxTouchPoints: 5 });
     await chrome.navigate(`${server.url}/index.html`);
     await chrome.evaluate("localStorage.clear(); return 1;");
-    // 新手導覽（coach marks）會蓋住作答畫面，而這支測的是作答機制本身。
-    // 存一筆「導覽看過了」的真實紀錄（不是後門，就是 app 自己寫的那個欄位）；
-    // 導覽本身由 e2e_beginner 釘。
-    await chrome.evaluate('localStorage.setItem("buzzcalculus.records.v1", JSON.stringify({ tours: { home: 1, quiz: 1 } })); return 1;');
+    // 兩件事都用 app 自己的欄位（不是測試後門）：
+    //   導覽看過了 —— coach marks 會蓋住作答畫面，而這支測的是作答機制本身（導覽由 e2e_beginner 釘）；
+    //   顯示全部功能 —— 功能預設跟著練習逐步出現，這支要走遍作答相關的入口（逐步出現由 smoke 釘）。
+    await chrome.evaluate('localStorage.setItem("buzzcalculus.records.v1", JSON.stringify({ tours: { home: 1, quiz: 1 }, settings: { showAllFeatures: true } })); return 1;');
     await chrome.navigate(`${server.url}/index.html`);
     await chrome.sleep(700);
     const input = await chrome.evaluate(`
@@ -407,7 +407,7 @@ async function run() {
     // 新手導覽（coach marks）會蓋住作答畫面，而這支測的是作答機制本身。
     // 存一筆「導覽看過了」的真實紀錄（不是後門，就是 app 自己寫的那個欄位）；
     // 導覽本身由 e2e_beginner 釘。
-    await chrome.evaluate('localStorage.setItem("buzzcalculus.records.v1", JSON.stringify({ tours: { home: 1, quiz: 1 } })); return 1;');
+    await chrome.evaluate('localStorage.setItem("buzzcalculus.records.v1", JSON.stringify({ tours: { home: 1, quiz: 1 }, settings: { showAllFeatures: true } })); return 1;');
       await chrome.navigate(`${server.url}/index.html`);
       await chrome.sleep(700);
       const pad_ = await chrome.evaluate(`
