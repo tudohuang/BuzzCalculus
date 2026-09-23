@@ -3276,6 +3276,46 @@ function extrapolateSequence(f, options) {
 //
 // 小尺度那把梯子在這兩種情況下都會給出不一樣的答案：前者因為誤差項還很大，
 // 後者因為 640! 也溢位但 40! 不會。兩把不一致就是「驗不了」，不是「不符」。
+// 夾擠的數值版：被夾住的振盪（x²cos(5/x)、x⌊3/x⌋、(sin x³+2)/√x）外插不了，
+// 但「每一圈的擺幅趨近 0、圈與圈的中心一致」就是極限存在的證據。
+// 逼近方式：無窮遠用幾何級數放大，有限點用幾何級數縮小；每圈取 240 個取樣點。
+function squeezeLimit(f, target, dir) {
+  const rings = [];
+  for (let ring = 0; ring < 6; ring += 1) {
+    const values = [];
+    for (let i = 0; i < 240; i += 1) {
+      const t = (i + 0.5) / 240;
+      let x;
+      if (!Number.isFinite(target)) {
+        // 無窮遠要跑得夠遠：(sin x³+2)/√x 這種 1/√x 階的收斂，x=10⁸ 時還有 10⁻⁴
+        const base = 1e4 * Math.pow(100, ring);
+        x = (target > 0 ? 1 : -1) * base * (1 + 9 * t);
+      } else {
+        const step = Math.pow(10, -(ring + 3));
+        const offset = step * (1 + 9 * t);
+        x = dir === "-" ? target - offset : target + offset;
+        if (!dir && i % 2 === 1) x = target - offset;
+      }
+      const y = f(x);
+      if (Number.isFinite(y)) values.push(y);
+    }
+    if (values.length < 200) return NaN;
+    const min = Math.min(...values);
+    const max = Math.max(...values);
+    rings.push({ min, max, mid: (min + max) / 2 });
+  }
+  const last = rings[rings.length - 1];
+  const prev = rings[rings.length - 2];
+  // 極限是 0 的時候不能用相對誤差（0 的相對誤差沒有意義），一律用 1+|L| 當尺度
+  const scale = 1 + Math.abs(last.mid);
+  // 擺幅要一圈比一圈小，最後一圈小到可忽略，而且兩圈的中心對得上
+  const shrinking = rings.every((ring, i) => i === 0 || ring.max - ring.min <= (rings[i - 1].max - rings[i - 1].min) * 1.05 + 1e-12);
+  if (!shrinking) return NaN;
+  if (last.max - last.min > 1e-6 * scale) return NaN;
+  if (Math.abs(last.mid - prev.mid) > 1e-5 * scale) return NaN;
+  return last.mid;
+}
+
 function sequenceLimit(f) {
   const coarse = extrapolateSequence(f, { n0: 40, levels: 5 });
   const fine = extrapolateSequence(f, { n0: 500, levels: 7 });
@@ -4077,6 +4117,41 @@ const EXPLICIT_METHODS = {
     const extrapolated = [];
     for (let i = 0; i + 1 < values.length; i += 1) extrapolated.push(2 * values[i + 1] - values[i]);
     return extrapolated[extrapolated.length - 1];
+  },
+
+  // 函數的極限。應用題專用：題幹是一段文字敘述（濃度、速度、複利…），
+  // 自動辨識器讀不出 lim 的結構，所以把「要取極限的那個函數」寫成 verify 欄位。
+  //   { m: "limit", f: "…", at: 0 | "inf" | "-inf", dir: "+" | "-"（可省）, v: "x"（可省） }
+  // 驗算端一律數值逼近＋外插（numeric.limit），不重複作者的代數。
+  limit: (spec) => {
+    const f = latex.compile(spec.f, [spec.v || "x"]);
+    const raw = String(spec.at === undefined ? 0 : spec.at).trim();
+    const target = /^-?inf(inity)?$/i.test(raw) ? (raw.startsWith("-") ? -Infinity : Infinity) : latex.compile(raw, [])();
+    // x→±∞：兩個獨立尺度各做一次外插，**相對**誤差對得上才算數。
+    //
+    // 不用 sequenceLimit：它的粗尺度從 n=40 起跳，而 2000t/(t+50) 的誤差是 50/t 階，
+    // n=40 時還差 2019 vs 2000 —— 兩個尺度對不上就被判為不可信，但那只是粗尺度太粗。
+    // 這裡兩個尺度都取得夠遠，並且用相對誤差比對（量級 2000 的答案不該用絕對值判）。
+    if (!Number.isFinite(target)) {
+      const sign = target > 0 ? 1 : -1;
+      const near = extrapolateSequence((n) => f(sign * n), { n0: 500, levels: 7 });
+      const far = extrapolateSequence((n) => f(sign * n), { n0: 4000, levels: 7 });
+      if (Number.isFinite(near.value) && Number.isFinite(far.value)) {
+        const scale = Math.max(1e-9, Math.abs(near.value), Math.abs(far.value));
+        if (Math.abs(near.value - far.value) <= 1e-6 * scale) return far.value;
+        throw new Error(`兩個取樣尺度外插出不同的值（${near.value} vs ${far.value}）`);
+      }
+    }
+    const options = spec.dir ? { side: spec.dir } : {};
+    const result = numeric.limit(f, target, options);
+    if (result && Number.isFinite(result.value)) return result.value;
+    // 外插失敗不代表極限不存在：x²cos(5/x)、x⌊3/x⌋ 這種被夾住的振盪，
+    // 函數在任何一個小鄰域裡都在跳，沒有可以外插的漸近展開 —— 但極限確實存在。
+    // 這裡直接做「夾擠」的數值版：一圈一圈往目標逼近，量每一圈的最大最小值。
+    // 圈內的擺幅要縮到可忽略，而且相鄰兩圈的中心要對得上，才算數。
+    const squeezed = squeezeLimit(f, target, spec.dir);
+    if (Number.isFinite(squeezed)) return squeezed;
+    throw new Error((result && result.reason) || "極限算不出來");
   },
 
   // 慢慢收斂的數列極限。細節見 extrapolateSequence。
