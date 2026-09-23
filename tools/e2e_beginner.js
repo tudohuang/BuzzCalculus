@@ -133,6 +133,60 @@ async function run() {
     /* ── 2. 首頁：第一份訓練 ── */
     await clickText("先看看首頁", 700);
     await click('button[data-action="dismiss-notice"]');
+
+    /* ── 2a. 新手導覽：指著真的那顆按鈕，走得完、關得掉、只出現一次 ── */
+    await chrome.sleep(700);
+    const tourFirst = await chrome.evaluate(`
+      const card = document.querySelector("[data-tour-card]");
+      if (!card) return { shown: false };
+      const hole = document.querySelector("[data-tour-hole]");
+      const hr = hole && hole.style.display !== "none" ? hole.getBoundingClientRect() : null;
+      const cr = card.getBoundingClientRect();
+      return {
+        shown: true,
+        count: card.querySelector("[data-tour-count]").textContent,
+        title: card.querySelector("h2").textContent,
+        inView: cr.top >= 0 && cr.bottom <= innerHeight + 1 && cr.left >= 0 && cr.right <= innerWidth + 1,
+        anchored: Boolean(hr && hr.width > 8 && hr.height > 8),
+        blocked: hr ? String((document.elementFromPoint(hr.left + hr.width / 2, hr.top + hr.height / 2) || {}).className).includes("tour") : false,
+        focused: card.contains(document.activeElement) || document.activeElement === card
+      };
+    `);
+    check("新手走完開場之後會自動出現導覽", tourFirst.shown, tourFirst.count || "");
+    if (tourFirst.shown) {
+      check("導覽第一步框住的是首頁上真的存在的元件", tourFirst.anchored, tourFirst.title);
+      check("導覽卡整張在視窗內（手機也不會被切掉）", tourFirst.inView, "");
+      check("導覽期間點不到背後的按鈕", tourFirst.blocked, "");
+      check("焦點在導覽卡上（鍵盤族不會迷路）", tourFirst.focused, "");
+      const walk = await chrome.evaluate(`
+        const seen = [];
+        for (let i = 0; i < 8; i += 1) {
+          const card = document.querySelector("[data-tour-card]");
+          if (!card) break;
+          const hole = document.querySelector("[data-tour-hole]");
+          const hr = hole && hole.style.display !== "none" ? hole.getBoundingClientRect() : null;
+          seen.push({ title: card.querySelector("h2").textContent, anchored: Boolean(hr && hr.width > 8) });
+          const next = card.querySelector("[data-tour-next]");
+          const last = next.textContent.includes("開始使用");
+          next.click();
+          await new Promise((r) => setTimeout(r, 420 * (window.__slow || 1)));
+          if (last) break;
+        }
+        return { seen, stillOpen: Boolean(document.querySelector("[data-tour-card]")),
+          saved: (JSON.parse(localStorage.getItem("buzzcalculus.records.v1") || "{}").tours || {}).home };
+      `);
+      check("導覽每一步都指著看得見的元件", walk.seen.length >= 3 && walk.seen.every((item) => item.anchored), walk.seen.map((item) => item.title).join(" · "));
+      check("走完最後一步導覽會收掉", !walk.stillOpen, "");
+      check("走過的導覽記起來了，不會每次進首頁都跳", Number(walk.saved) >= 1, String(walk.saved));
+      const again = await chrome.evaluate(`
+        document.querySelector('[data-action="open-train"]').click();
+        await new Promise((r) => setTimeout(r, 400 * (window.__slow || 1)));
+        document.querySelector('[data-action="home"]').click();
+        await new Promise((r) => setTimeout(r, 600 * (window.__slow || 1)));
+        return Boolean(document.querySelector("[data-tour-card]"));
+      `);
+      check("回到首頁不會再跳一次導覽", !again, "");
+    }
     const home = await evaluate(`
       const stats = [...document.querySelectorAll(".overview-stat")].map((n) => n.innerText.replace(/\\s+/g, " "));
       const due = stats.find((t) => /待複習錯題/.test(t)) || "";

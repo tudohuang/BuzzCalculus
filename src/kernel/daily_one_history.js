@@ -123,6 +123,7 @@
     "2026-09-20": "der-025",
     "2026-09-21": "gap-int-cov-002",
     "2026-09-22": "depth-int-011",
+    "2026-09-23": "lim-010",
   };
   if (typeof module !== "undefined" && module.exports) module.exports = { HISTORY };
   if (typeof window !== "undefined") window.BUZZ_DAILY_ONE_HISTORY = HISTORY;

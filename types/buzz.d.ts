@@ -310,7 +310,16 @@ interface Window {
   BUZZ_COURSE: BuzzCourseLesson[];
   BuzzCourseUI: { create(deps: { escapeHtml: (s: unknown) => string; escapeAttr: (s: unknown) => string; icon: (name: string) => string; referenceAnswerHTML: (problem: BuzzProblem) => string }): any };
   /** src/share_cards.js：題目圖形的 SVG 渲染器（從 app.js 搬出去） */
-  BuzzGraphRender: { graphCurveFn(expr: string): ((x: number) => number) | null; renderProblemGraph(problem: any, opts: any, escapeAttr: (s: unknown) => string): string; renderMiniGraph(expr: string, windowSpec: number[], domainSpec?: number[]): string; svgGraphContext(svg: Element): any; graphProblemFn(problem: any): ((x: number) => number) | null };
+  BuzzGraphRender: { graphCurveFn(expr: string): ((x: number) => number) | null; renderProblemGraph(problem: any, opts: any, escapeAttr: (s: unknown) => string): string; renderMiniGraph(expr: string, windowSpec: number[], domainSpec?: number[]): string; svgGraphContext(svg: Element): any; graphProblemFn(problem: any): ((x: number) => number) | null; renderMasteryRadar(axes: any[], helpers: { escapeHtml: (s: unknown) => string; escapeAttr: (s: unknown) => string }): string };
+  /** src/share_cards.js：新手導覽（coach marks）。DOM 在 document.body，render 之後要 refresh() */
+  BuzzTour: {
+    steps(name: string): Array<{ id: string; title: string; body: string; targets?: string[]; view?: string; pad?: number; required?: boolean }>;
+    start(name: string, steps: Array<{ id: string; title: string; body: string; targets?: string[]; view?: string; pad?: number; required?: boolean }>, deps: { goto?: (view: string) => void; track?: (payload: Record<string, unknown>) => void }, onDone?: (reason: string, name: string) => void): boolean;
+    stop(): void;
+    running(): boolean;
+    refresh(): void;
+  };
+
   /** src/share_cards.js：作圖題（answerKind "sketch"）的判分、畫面與筆畫綁定 */
   BuzzGraphSketch: {
     parse(input: string): number[][][];
