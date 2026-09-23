@@ -51,6 +51,9 @@ async function run() {
     await chrome.send("Emulation.setDeviceMetricsOverride", { width: 1280, height: 1000, deviceScaleFactor: 1, mobile: false });
     await chrome.navigate(server.url + "/index.html");
     await chrome.evaluate("localStorage.clear(); return 1;");
+    // 證明訓練是「練過三局才出現」的功能（featureGate）。這支測的是證明引擎與證明頁本身，
+    // 所以用設定頁那個「顯示全部功能」開關把入口打開（app 自己的欄位，不是測試後門）。
+    await chrome.evaluate('localStorage.setItem("buzzcalculus.records.v1", JSON.stringify({ settings: { showAllFeatures: true }, tours: { home: 1, quiz: 1 } })); return 1;');
     await chrome.navigate(server.url + "/index.html");
     await clickText("開始"); await clickText("大一微積分"); await clickText("直接開始練");
     await click('button[data-action="dismiss-notice"]');

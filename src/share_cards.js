@@ -637,7 +637,213 @@
     `;
   }
 
-  window.BuzzGraphRender = { graphCurveFn, renderProblemGraph, renderMiniGraph, svgGraphContext, graphProblemFn, renderMasteryRadar };
+  /* 練習熱力圖：一格一天、顏色深淺是當天題數。純畫面 ——
+     哪一天練了幾題、連勝幾天由呼叫端算好傳進來（deps）。 */
+  function renderActivityHeatmap(records, deps) {
+    const { activityCounts, practiceStreakInfo, localDateKey, startOfWeek, activityLevel, escapeAttr, icon } = deps;
+    const HEATMAP_WEEKS = deps.weeks;
+    const counts = activityCounts(records);
+    const streakInfo = practiceStreakInfo(records, counts);
+    const today = new Date();
+    today.setHours(12, 0, 0, 0);
+    const todayKey = localDateKey(today);
+    const start = startOfWeek(today);
+    start.setDate(start.getDate() - (HEATMAP_WEEKS - 1) * 7);
+    const monthCells = [];
+    const cells = [];
+    let previousMonth = -1;
+    for (let week = 0; week < HEATMAP_WEEKS; week += 1) {
+      const weekStart = new Date(start);
+      weekStart.setDate(start.getDate() + week * 7);
+      const month = weekStart.getMonth();
+      monthCells.push(`<span>${month !== previousMonth ? `${month + 1}月` : ""}</span>`);
+      previousMonth = month;
+      for (let day = 0; day < 7; day += 1) {
+        const date = new Date(weekStart);
+        date.setDate(weekStart.getDate() + day);
+        const key = localDateKey(date);
+        if (key > todayKey) {
+          cells.push(`<span class="heatmap-cell is-future" data-level="0"></span>`);
+          continue;
+        }
+        const count = counts[key] || 0;
+        const shielded = streakInfo.usedDates.has(key);
+        const title = `${key} · ${count} 題${shielded ? " · 盾牌保護" : ""}`;
+        cells.push(`<span class="heatmap-cell ${shielded ? "is-shielded" : ""}" data-level="${activityLevel(count)}" title="${escapeAttr(title)}"></span>`);
+      }
+    }
+    return `
+      <section class="heatmap-panel">
+        <div class="heatmap-head">
+          <div>
+            <p class="section-label">練習熱力圖</p>
+            <h3>每天至少 1 題</h3>
+          </div>
+          <div class="streak-status">
+            <strong>連勝 ${streakInfo.streak} 天</strong>
+            <span class="shield-chip ${streakInfo.shieldAvailable ? "is-ready" : "is-used"}">${icon("shield")}盾牌${streakInfo.shieldAvailable ? "可用" : "本週已用"}</span>
+          </div>
+        </div>
+        <div class="heatmap-wrap">
+          <div class="heatmap-months" style="grid-template-columns: repeat(${HEATMAP_WEEKS}, 1fr);">${monthCells.join("")}</div>
+          <div class="heatmap-grid">${cells.join("")}</div>
+          <div class="heatmap-legend">
+            <span>少</span>
+            ${[0, 1, 2, 3, 4].map((level) => `<i class="heatmap-cell" data-level="${level}"></i>`).join("")}
+            <span>多</span>
+          </div>
+        </div>
+      </section>
+    `;
+  }
+
+  /* 速度 × 正確率的四象限圖。純畫面：能力剖面由呼叫端算好傳進來。 */
+  function renderSpeedQuadrant(profile, helpers) {
+    const escapeHtml = helpers.escapeHtml;
+    const points = Object.values(profile.skills).filter(
+      (entry) => entry.quadrant && entry.speed !== null && entry.pressureAccuracy !== null
+    );
+
+    if (!points.length) {
+      return `
+        <section class="study-card">
+          <p class="section-label">速度 × 正確率</p>
+          <h3>還測不出來</h3>
+          <p class="panel-note">需要同一個技巧累積 8 題以上的限時作答。多打幾局限時訓練就會出現。</p>
+        </section>
+      `;
+    }
+
+    const W = 320;
+    const H = 240;
+    const pad = 34;
+    // 相對耗時超過 1.2 的都畫在最右邊：超時本來就不需要再細分
+    const x = (speed) => pad + (Math.min(1.2, speed) / 1.2) * (W - pad - 12);
+    const y = (acc) => H - pad - acc * (H - pad - 12);
+    const fastLine = x(0.6);
+    const accLine = y(0.7);
+
+    const dots = points
+      .map((entry) => {
+        const cx = x(entry.speed).toFixed(1);
+        const cy = y(entry.pressureAccuracy).toFixed(1);
+        return `<circle class="quad-dot is-${entry.quadrant.key}" cx="${cx}" cy="${cy}" r="5">
+          <title>${escapeHtml(entry.label)}：${entry.quadrant.label} · 正確率 ${Math.round(entry.pressureAccuracy * 100)}% · 相對耗時 ${entry.speed.toFixed(2)}</title>
+        </circle>`;
+      })
+      .join("");
+
+    const counts = points.reduce((acc, entry) => {
+      acc[entry.quadrant.key] = (acc[entry.quadrant.key] || 0) + 1;
+      return acc;
+    }, {});
+    const legend = [
+      { key: "reflex", label: "反射區", note: "快又準" },
+      { key: "slow", label: "會但慢", note: "方法對、不熟" },
+      { key: "rushed", label: "衝太快", note: "讀題或代數不穩" },
+      { key: "unbuilt", label: "還沒建立", note: "缺技巧" }
+    ];
+
+    return `
+      <section class="study-card quadrant-card">
+        <div class="panel-title-row">
+          <div>
+            <p class="section-label">速度 × 正確率</p>
+            <h3>你是不會，還是來不及</h3>
+          </div>
+        </div>
+        <svg class="quadrant-svg" viewBox="0 0 ${W} ${H}" role="img" aria-label="速度與正確率的四象限圖">
+          <line class="quad-axis" x1="${pad}" y1="${H - pad}" x2="${W - 8}" y2="${H - pad}"></line>
+          <line class="quad-axis" x1="${pad}" y1="8" x2="${pad}" y2="${H - pad}"></line>
+          <line class="quad-split" x1="${fastLine}" y1="8" x2="${fastLine}" y2="${H - pad}"></line>
+          <line class="quad-split" x1="${pad}" y1="${accLine}" x2="${W - 8}" y2="${accLine}"></line>
+          <text class="quad-label" x="${pad}" y="${H - 10}">快</text>
+          <text class="quad-label" x="${W - 24}" y="${H - 10}">慢</text>
+          <text class="quad-label" x="6" y="16">準</text>
+          <text class="quad-label" x="6" y="${H - pad}">錯</text>
+          ${dots}
+        </svg>
+        <div class="quad-legend">
+          ${legend
+            .map(
+              (item) => `
+                <div class="quad-legend-item is-${item.key}">
+                  <span class="quad-swatch"></span>
+                  <strong>${item.label}</strong>
+                  <small>${item.note} · ${counts[item.key] || 0} 個技巧</small>
+                </div>`
+            )
+            .join("")}
+        </div>
+      </section>
+    `;
+  }
+
+  /* 技巧掌握度表：一列一個技巧，量到的分數與最近趨勢。純畫面。 */
+  function renderSkillTable(profile, helpers) {
+    const escapeHtml = helpers.escapeHtml;
+    const rows = profile.weakest
+      .map((id) => profile.skills[id])
+      .filter((entry) => entry && entry.mastery !== null)
+      .slice(0, 12);
+
+    const stale = Object.values(profile.skills).filter((entry) => entry.stale);
+
+    if (!rows.length) {
+      return `
+        <section class="study-card">
+          <p class="section-label">技巧</p>
+          <h3>還沒有技巧測得準</h3>
+        </section>
+      `;
+    }
+
+    return `
+      <section class="study-card skill-table-card">
+        <div class="panel-title-row">
+          <div>
+            <p class="section-label">技巧精熟度</p>
+            <h3>從最弱的開始</h3>
+          </div>
+        </div>
+        <ul class="skill-rows">
+          ${rows
+            .map((entry) => {
+              const pct = entry.mastery;
+              const pa = entry.pressureAccuracy === null ? null : Math.round(entry.pressureAccuracy * 100);
+              const ua = entry.untimedAccuracy === null ? null : Math.round(entry.untimedAccuracy * 100);
+              return `
+                <li class="skill-row is-${entry.state}">
+                  <div class="skill-row-head">
+                    <strong>${escapeHtml(entry.label)}</strong>
+                    <span class="skill-state">${escapeHtml(entry.stateLabel)} ${pct}</span>
+                  </div>
+                  <div class="skill-bar"><div class="skill-fill" style="width:${pct}%"></div></div>
+                  <div class="skill-row-meta">
+                    <span>${entry.n} 題</span>
+                    ${pa !== null ? `<span>限時 ${pa}%</span>` : ""}
+                    ${ua !== null ? `<span>不限時 ${ua}%</span>` : ""}
+                    ${entry.quadrant ? `<span>${escapeHtml(entry.quadrant.label)}</span>` : ""}
+                  </div>
+                  ${
+                    entry.diagnosis
+                      ? `<p class="skill-diagnosis">${escapeHtml(entry.diagnosis.text)} —— ${escapeHtml(entry.diagnosis.advice)}</p>`
+                      : ""
+                  }
+                </li>`;
+            })
+            .join("")}
+        </ul>
+        ${
+          stale.length
+            ? `<p class="panel-note">另外有 ${stale.length} 個技巧碰過但還測不準 —— 樣本不夠，或太久沒練已經衰減。多練幾題就會進到這張表。</p>`
+            : ""
+        }
+      </section>
+    `;
+  }
+
+  window.BuzzGraphRender = { graphCurveFn, renderProblemGraph, renderMiniGraph, svgGraphContext, graphProblemFn, renderMasteryRadar, renderActivityHeatmap, renderSpeedQuadrant, renderSkillTable };
 })();
 
 /* ── 作圖題（answerKind: "sketch"）：在空的格子上把 f 畫出來 ──

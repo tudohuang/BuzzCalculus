@@ -37,6 +37,8 @@ interface BuzzProblem {
 }
 
 interface BuzzSettings {
+  /** 一次顯示全部功能（預設 false：功能跟著練習逐步出現） */
+  showAllFeatures?: boolean;
   difficultyCap?: number;
   penColor?: string;
   penNib?: string;
@@ -310,7 +312,7 @@ interface Window {
   BUZZ_COURSE: BuzzCourseLesson[];
   BuzzCourseUI: { create(deps: { escapeHtml: (s: unknown) => string; escapeAttr: (s: unknown) => string; icon: (name: string) => string; referenceAnswerHTML: (problem: BuzzProblem) => string }): any };
   /** src/share_cards.js：題目圖形的 SVG 渲染器（從 app.js 搬出去） */
-  BuzzGraphRender: { graphCurveFn(expr: string): ((x: number) => number) | null; renderProblemGraph(problem: any, opts: any, escapeAttr: (s: unknown) => string): string; renderMiniGraph(expr: string, windowSpec: number[], domainSpec?: number[]): string; svgGraphContext(svg: Element): any; graphProblemFn(problem: any): ((x: number) => number) | null; renderMasteryRadar(axes: any[], helpers: { escapeHtml: (s: unknown) => string; escapeAttr: (s: unknown) => string }): string };
+  BuzzGraphRender: { graphCurveFn(expr: string): ((x: number) => number) | null; renderProblemGraph(problem: any, opts: any, escapeAttr: (s: unknown) => string): string; renderMiniGraph(expr: string, windowSpec: number[], domainSpec?: number[]): string; svgGraphContext(svg: Element): any; graphProblemFn(problem: any): ((x: number) => number) | null; renderMasteryRadar(axes: any[], helpers: { escapeHtml: (s: unknown) => string; escapeAttr: (s: unknown) => string }): string; renderActivityHeatmap(records: any, deps: Record<string, any>): string; renderSpeedQuadrant(profile: any, helpers: { escapeHtml: (s: unknown) => string }): string; renderSkillTable(profile: any, helpers: { escapeHtml: (s: unknown) => string }): string };
   /** src/share_cards.js：新手導覽（coach marks）。DOM 在 document.body，render 之後要 refresh() */
   BuzzTour: {
     steps(name: string): Array<{ id: string; title: string; body: string; targets?: string[]; view?: string; pad?: number; required?: boolean }>;

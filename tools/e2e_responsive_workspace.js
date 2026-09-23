@@ -55,6 +55,18 @@ let checked = 0;
     await click('[data-action="set-onboarding-context"][data-context="freshman"]');
     await click('[data-action="skip-placement"]');
     await click('button[data-action="dismiss-notice"]');
+    // 功能跟著練習逐步出現（featureGate）：全新帳號的訓練頁只有「練習」、首頁沒有探索更多。
+    // 這支測的是**版面**，要走遍九個頁面，所以種一個已經練過的帳號。
+    // 逐步出現本身由 e2e_beginner 與 smoke_app_render 釘。
+    await chrome.evaluate(`
+      const records = JSON.parse(localStorage.getItem("buzzcalculus.records.v1") || "{}");
+      records.totalAnswered = 120;
+      records.history = [{ id: "layout-seed", mode: "quick", total: 8, correct: 6, accuracy: 75, finishedAt: new Date().toISOString(), answers: [] }];
+      records.tours = { home: 1, quiz: 1 };
+      localStorage.setItem("buzzcalculus.records.v1", JSON.stringify(records));
+      location.reload();
+      return 1;`);
+    await chrome.sleep(900);
 
     for (const [device, width, height, touch] of sizes) {
       await size(width, height, touch);
