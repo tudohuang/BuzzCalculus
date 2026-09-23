@@ -529,7 +529,115 @@
     };
   }
 
-  window.BuzzGraphRender = { graphCurveFn, renderProblemGraph, renderMiniGraph, svgGraphContext, graphProblemFn };
+  /* 能力雷達圖：六軸、量好的分數進來就畫。純函式 —— 分數怎麼算是 app.js 的事（能力模型），
+     這裡只負責把它變成 SVG。escapeHtml／escapeAttr 由呼叫端傳進來。 */
+  function renderMasteryRadar(axes, helpers) {
+    const escapeHtml = helpers.escapeHtml;
+    const escapeAttr = helpers.escapeAttr;
+    const measured = axes.filter((axis) => axis.score !== null);
+    const n = Math.max(3, axes.length);
+    const cx = 140;
+    const cy = 120;
+    const radius = 80;
+    const point = (index, r) => {
+      const angle = -Math.PI / 2 + (index * 2 * Math.PI) / n;
+      return [cx + r * Math.cos(angle), cy + r * Math.sin(angle)];
+    };
+    const ringPoints = (frac) => axes
+      .map((_, index) => point(index, radius * frac).map((value) => value.toFixed(1)).join(","))
+      .join(" ");
+    const rings = [0.25, 0.5, 0.75, 1]
+      .map((frac) => `<polygon class="radar-ring" points="${ringPoints(frac)}"></polygon>`)
+      .join("");
+    const spokes = axes
+      .map((_, index) => {
+        const [x, y] = point(index, radius);
+        return `<line class="radar-spoke" x1="${cx}" y1="${cy}" x2="${x.toFixed(1)}" y2="${y.toFixed(1)}"></line>`;
+      })
+      .join("");
+    const dataPoints = axes
+      .map((axis, index) => point(index, radius * ((axis.score || 0) / 100)).map((value) => value.toFixed(1)).join(","))
+      .join(" ");
+    const dots = axes
+      .map((axis, index) => {
+        if (axis.score === null) return "";
+        const [x, y] = point(index, radius * (axis.score / 100));
+        return `<circle class="radar-dot" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="2.6"></circle>`;
+      })
+      .join("");
+    // 「未測」改成進度。對一個練了兩週的人顯示一圈灰字「未測」，
+    // 讀起來像功能沒做；「差 3 題」告訴他離亮起來多近、而且暗示怎麼讓它亮。
+    // 軸要 12 次加權作答才算測準（kernel 的 MIN_CONFIDENCE_W）；
+    // legacy fallback 沒有 confidence 欄位，那條路維持舊字。
+    const remainingFor = (axis) => {
+      if (axis.confidence === undefined) return null;
+      if (axis.stale) return null;
+      const weight = Number(axis.n || 0);
+      return Math.max(1, Math.ceil(12 - weight));
+    };
+    const emptyText = (axis) => {
+      if (axis.confidence === undefined) return "未測";
+      // stale = 碰過但信心不足 —— 可能是樣本太少，也可能是太久沒練衰減。
+      // 對註冊第一天的人寫「該重測」像在指控他偷懶（實測回報原話：
+      // 「這些技巧我從來沒被測過」）。「還測不準」兩種原因都誠實。
+      if (axis.stale) return "還測不準";
+      const remaining = remainingFor(axis);
+      return remaining >= 12 ? "未測" : `差 ${remaining} 題`;
+    };
+    const labels = axes
+      .map((axis, index) => {
+        const [x, y] = point(index, radius + 16);
+        const anchor = Math.abs(x - cx) < 12 ? "middle" : x > cx ? "start" : "end";
+        const scoreText = axis.score === null ? emptyText(axis) : String(axis.score);
+        return `
+          <g class="radar-label ${axis.score === null ? "is-empty" : ""}">
+            <title>${escapeHtml(axis.label)}：${axis.score === null ? `${emptyText(axis)}（答滿 12 題就會亮起來）` : `${axis.score} 分`}</title>
+            <text x="${x.toFixed(1)}" y="${(y - 1).toFixed(1)}" text-anchor="${anchor}">${escapeHtml(axis.label)}</text>
+            <text class="radar-score" x="${x.toFixed(1)}" y="${(y + 11).toFixed(1)}" text-anchor="${anchor}">${escapeHtml(scoreText)}</text>
+          </g>`;
+      })
+      .join("");
+
+    // 收尾行是一顆可以按的處方，不是一句評語。
+    // 優先序：最弱的已測軸 > 最接近亮起來的未測軸 > 從頭開始。
+    const weakest = measured.slice().sort((a, b) => a.score - b.score)[0] || null;
+    const nearest = axes
+      .filter((axis) => axis.score === null && remainingFor(axis) !== null && remainingFor(axis) < 12)
+      .sort((a, b) => remainingFor(a) - remainingFor(b))[0] || null;
+    let takeaway;
+    if (weakest) {
+      takeaway = `
+        <p class="radar-takeaway">
+          最弱：${escapeHtml(weakest.label)} ${weakest.score} 分。
+          <button class="link-button" data-action="practice-axis" data-axis="${escapeAttr(weakest.key)}">練 10 題 →</button>
+        </p>`;
+    } else if (nearest) {
+      takeaway = `
+        <p class="radar-takeaway">
+          ${escapeHtml(nearest.label)}再答 ${remainingFor(nearest)} 題就會亮起來。
+          <button class="link-button" data-action="practice-axis" data-axis="${escapeAttr(nearest.key)}">現在練 →</button>
+        </p>`;
+    } else {
+      takeaway = `<p class="radar-takeaway">還沒有雷達資料，先打一輪快速訓練。</p>`;
+    }
+    return `
+      <div class="radar-panel">
+        <div class="radar-head">
+          <strong>技巧精熟雷達</strong>
+          <span>最近作答加權正確率，久沒練會慢慢褪色。</span>
+        </div>
+        <svg class="radar-svg" viewBox="0 0 280 240" role="img" aria-label="技巧精熟雷達">
+          ${rings}
+          ${spokes}
+          ${measured.length ? `<polygon class="radar-data" points="${dataPoints}"></polygon>${dots}` : ""}
+          ${labels}
+        </svg>
+        ${takeaway}
+      </div>
+    `;
+  }
+
+  window.BuzzGraphRender = { graphCurveFn, renderProblemGraph, renderMiniGraph, svgGraphContext, graphProblemFn, renderMasteryRadar };
 })();
 
 /* ── 作圖題（answerKind: "sketch"）：在空的格子上把 f 畫出來 ──
@@ -891,4 +999,262 @@
   }
 
   window.BuzzGraphSketch = { parse, serialize, check, renderControls, bind, piecesOf, trace, eraseAt };
+})();
+
+/* ── 導覽（coach marks）：指著畫面上真的那顆按鈕說話 ──────────────────
+   為什麼自己寫：站上所有第三方資源都在本地，而 intro.js／shepherd 這類函式庫
+   最小的也有 30KB＋自己一套樣式；這裡要的只有「挖洞 + 一張卡 + 上一步/下一步」。
+   而且 script 標籤預算滿了，新檔開不了。
+
+   設計上的三個硬條件：
+   1. 導覽的 DOM 住在 document.body，不在 #app —— app.js 每次 render 都會
+      整個換掉 #app.innerHTML，住在裡面的東西會連同焦點一起消失。
+      每次 render 之後呼叫 refresh() 重新量錨點。
+   2. 錨點用「一串候選 selector，取第一個看得見的」：手機沒有側欄、
+      桌機沒有底部分頁列，同一步在兩種版面上指的是不同元件。
+      一個都看不到就跳過那一步，不要指著空氣。
+   3. 遮罩吃掉點擊（導覽期間只有導覽的按鈕能按），但 Esc、上一步／下一步、
+      方向鍵都要能用，而且焦點不能跑到被遮住的地方。 */
+(function () {
+  "use strict";
+
+  const GUTTER = 12;
+  const state = { steps: [], at: 0, name: "", deps: null, nodes: null, onDone: null, bound: null };
+
+  function visible(node) {
+    if (!node || !node.getBoundingClientRect) return false;
+    const rect = node.getBoundingClientRect();
+    if (rect.width < 4 || rect.height < 4) return false;
+    const style = window.getComputedStyle(node);
+    if (style.visibility === "hidden" || style.display === "none" || Number(style.opacity) === 0) return false;
+    return rect.bottom > -40 && rect.top < window.innerHeight + 400;
+  }
+
+  function anchorOf(step) {
+    for (const selector of step.targets || []) {
+      const node = document.querySelector(selector);
+      if (visible(node)) return node;
+    }
+    return null;
+  }
+
+  function build() {
+    const root = document.createElement("div");
+    root.className = "tour-root";
+    root.innerHTML = `
+      <div class="tour-veil" data-tour-veil></div>
+      <div class="tour-hole" data-tour-hole aria-hidden="true"></div>
+      <section class="tour-card" data-tour-card role="dialog" aria-modal="true" aria-labelledby="tour-title" tabindex="-1">
+        <p class="tour-step" data-tour-count></p>
+        <h2 id="tour-title" data-tour-title></h2>
+        <p class="tour-body" data-tour-body></p>
+        <div class="tour-actions">
+          <button type="button" class="tour-skip" data-tour-skip>略過</button>
+          <span class="tour-spacer"></span>
+          <button type="button" class="tour-back" data-tour-back>上一步</button>
+          <button type="button" class="tour-next" data-tour-next></button>
+        </div>
+      </section>`;
+    document.body.appendChild(root);
+    return {
+      root,
+      hole: root.querySelector("[data-tour-hole]"),
+      card: root.querySelector("[data-tour-card]"),
+      count: root.querySelector("[data-tour-count]"),
+      title: root.querySelector("[data-tour-title]"),
+      body: root.querySelector("[data-tour-body]"),
+      back: root.querySelector("[data-tour-back]"),
+      next: root.querySelector("[data-tour-next]"),
+      skip: root.querySelector("[data-tour-skip]")
+    };
+  }
+
+  // 卡片放在錨點的下面；下面塞不下就放上面；兩邊都塞不下（錨點很高或在正中間）
+  // 就貼著視窗底部。左右夾在視窗內，兩側各留 12px。
+  function place(card, rect) {
+    const cw = Math.min(card.offsetWidth || 320, window.innerWidth - GUTTER * 2);
+    const ch = card.offsetHeight || 180;
+    const safeTop = GUTTER;
+    const safeBottom = window.innerHeight - GUTTER;
+    let top;
+    if (!rect) top = Math.max(safeTop, (window.innerHeight - ch) / 2);
+    else if (rect.bottom + 14 + ch <= safeBottom) top = rect.bottom + 14;
+    else if (rect.top - 14 - ch >= safeTop) top = rect.top - 14 - ch;
+    else top = Math.max(safeTop, safeBottom - ch);
+    let left = rect ? rect.left + rect.width / 2 - cw / 2 : (window.innerWidth - cw) / 2;
+    left = Math.max(GUTTER, Math.min(left, window.innerWidth - GUTTER - cw));
+    card.style.width = cw + "px";
+    card.style.top = Math.round(top) + "px";
+    card.style.left = Math.round(left) + "px";
+  }
+
+  function paint() {
+    const step = state.steps[state.at];
+    const nodes = state.nodes;
+    if (!step || !nodes) return;
+    const node = anchorOf(step);
+    const rect = node ? node.getBoundingClientRect() : null;
+    if (rect) {
+      const pad = step.pad == null ? 8 : step.pad;
+      nodes.hole.style.display = "block";
+      nodes.hole.style.top = Math.round(rect.top - pad) + "px";
+      nodes.hole.style.left = Math.round(rect.left - pad) + "px";
+      nodes.hole.style.width = Math.round(rect.width + pad * 2) + "px";
+      nodes.hole.style.height = Math.round(rect.height + pad * 2) + "px";
+    } else {
+      nodes.hole.style.display = "none";
+    }
+    nodes.count.textContent = `導覽 ${state.at + 1} / ${state.steps.length}`;
+    nodes.title.textContent = step.title;
+    nodes.body.textContent = step.body;
+    nodes.back.hidden = state.at === 0;
+    nodes.next.textContent = state.at === state.steps.length - 1 ? "開始使用" : "下一步";
+    place(nodes.card, rect);
+  }
+
+  function show(index) {
+    const total = state.steps.length;
+    state.at = Math.max(0, Math.min(index, total - 1));
+    const step = state.steps[state.at];
+    // 這一步要先換頁（例如「訓練」那一步要站在訓練頁上講）：換完等 render 完成再量。
+    if (step.view && state.deps.goto) state.deps.goto(step.view);
+    const node = anchorOf(step);
+    if (node && node.scrollIntoView) {
+      const smooth = !(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+      try { node.scrollIntoView({ block: "center", behavior: smooth ? "smooth" : "auto" }); } catch (_error) { node.scrollIntoView(); }
+    }
+    window.setTimeout(paint, node ? 220 : 60);
+    paint();
+    state.nodes.card.focus();
+    if (state.deps.track) state.deps.track({ tour: state.name, step: step.id, index: state.at + 1 });
+  }
+
+  function step(delta) {
+    const next = state.at + delta;
+    if (next >= state.steps.length) return finish("done");
+    if (next < 0) return;
+    show(next);
+  }
+
+  function finish(reason) {
+    if (!state.nodes) return;
+    if (state.bound) state.bound();
+    state.bound = null;
+    state.nodes.root.remove();
+    state.nodes = null;
+    const done = state.onDone;
+    const name = state.name;
+    state.steps = [];
+    state.onDone = null;
+    state.name = "";
+    if (done) done(reason, name);
+  }
+
+  function start(name, steps, deps, onDone) {
+    if (state.nodes) finish("restart");
+    const usable = (steps || []).filter((item) => !item.targets || !item.required || anchorOf(item));
+    if (!usable.length) return false;
+    state.name = name;
+    state.steps = usable;
+    state.deps = deps || {};
+    state.onDone = onDone;
+    state.nodes = build();
+    const nodes = state.nodes;
+    const onKey = (event) => {
+      if (event.key === "Escape") { event.preventDefault(); finish("skip"); return; }
+      if (event.key === "ArrowRight" || event.key === "Enter") { event.preventDefault(); step(1); return; }
+      if (event.key === "ArrowLeft") { event.preventDefault(); step(-1); return; }
+      // 焦點關在卡片裡：導覽期間 Tab 不該跑到被遮住的按鈕上
+      if (event.key === "Tab") {
+        const focusables = [...nodes.card.querySelectorAll("button:not([hidden])")];
+        if (!focusables.length) return;
+        const first = focusables[0];
+        const last = focusables[focusables.length - 1];
+        if (event.shiftKey && (document.activeElement === first || document.activeElement === nodes.card)) { event.preventDefault(); last.focus(); }
+        else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
+      }
+    };
+    const onResize = () => paint();
+    nodes.next.addEventListener("click", () => step(1));
+    nodes.back.addEventListener("click", () => step(-1));
+    nodes.skip.addEventListener("click", () => finish("skip"));
+    nodes.root.addEventListener("pointerdown", (event) => { if (event.target === nodes.root || event.target.hasAttribute("data-tour-veil")) event.preventDefault(); });
+    document.addEventListener("keydown", onKey, true);
+    window.addEventListener("resize", onResize);
+    window.addEventListener("scroll", onResize, true);
+    state.bound = () => {
+      document.removeEventListener("keydown", onKey, true);
+      window.removeEventListener("resize", onResize);
+      window.removeEventListener("scroll", onResize, true);
+    };
+    show(0);
+    return true;
+  }
+
+  // 兩段導覽的步驟表。錨點一律寫成候選清單：手機是底部分頁列、桌機是左側欄，
+  // 同一步在兩種版面上是不同的元件；一個都看不到就跳過那一步。
+  const STEPS = {
+    home: () => [
+      {
+        id: "today",
+        view: "home",
+        targets: ['[data-action="start-planned"]', '[data-action="start-mode"]', ".home-primary"],
+        title: "每天從這裡開始",
+        body: "今天的訓練已經排好：到期的錯題、你最弱的技巧、一點新東西。按下去就開始，不用自己挑。"
+      },
+      {
+        id: "train",
+        targets: ['.nav-button[data-action="open-train"]', '[data-action="open-train"]'],
+        title: "想練特定的東西就進訓練",
+        body: "四種練法：照主線走、補弱點、模擬考、挑戰題。難度會跟著你的表現自己調。"
+      },
+      {
+        id: "library",
+        targets: ['.nav-button[data-action="open-library"]', '[data-action="open-library"]'],
+        title: "題庫可以自己挑題",
+        body: "搜技巧、搜題號都可以，找到的題目可以直接開一局。入門課程與證明訓練也在這一區。"
+      },
+      {
+        id: "insights",
+        targets: ['.nav-button[data-action="open-insights"]', '[data-action="open-insights"]'],
+        title: "數據會說你是哪一種錯",
+        body: "分得出「不會」還是「來不及」，也看得到哪個技巧在退步。錯題會自動排程回鍋。"
+      },
+      {
+        id: "settings",
+        targets: ['.nav-button[data-action="open-settings"]', '[data-action="open-settings"]'],
+        title: "紀錄只存在這台裝置",
+        body: "不用註冊。要換裝置就在設定頁匯出備份，導覽也可以在這裡再看一次。"
+      }
+    ],
+    quiz: () => [
+      {
+        id: "prompt",
+        targets: [".quiz-screen .prompt", ".problem-card"],
+        title: "一次一題，答完就知道對錯",
+        body: "答錯不會只跟你說錯：下面會一段一段揭解法，你可以只看第一段就自己接下去。"
+      },
+      {
+        id: "hint",
+        targets: ['[data-action="show-hint"]', ".problem-tools"],
+        title: "卡住先看提示，不要硬撐",
+        body: "提示分層給，一次一層。練習模式不扣分，正式局才會記。"
+      },
+      {
+        id: "board",
+        targets: ['[data-board-action="toggle"]', ".scratchboard-summary", ".scratchboard-shell"],
+        title: "計算紙在這裡",
+        body: "手寫算式不用另外拿紙。打開計算紙的時候這一題的倒數會暫停，寫算不會被秒數懲罰。"
+      }
+    ]
+  };
+
+  window.BuzzTour = {
+    steps: (name) => (STEPS[name] ? STEPS[name]() : []),
+    start,
+    stop: () => finish("stop"),
+    running: () => Boolean(state.nodes),
+    // app.js 每次 render 之後呼叫：錨點的元素是新的，位置要重量。
+    refresh: () => { if (state.nodes) paint(); }
+  };
 })();

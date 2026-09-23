@@ -811,6 +811,67 @@
     else window.addEventListener("load", later, { once: true });
   }
 
+  // ── 導覽 ───────────────────────────────────────────────────
+  //
+  // 開場的三步問答（歡迎／階段／定位）只問了「你是誰」，沒有告訴人「這裡有什麼」。
+  // 走完之後人落在首頁，五個分頁、計算紙、提示、錯題本全都要自己發現 —— 實際上不會。
+  // 這個導覽指著畫面上真的那顆按鈕講一句話，引擎在 share_cards.js（BuzzTour）。
+  //
+  // 錨點一律寫成「候選清單」：手機是底部分頁列、桌機是左側欄，同一步在兩種版面上
+  // 是不同的元件；一個都看不到就跳過那一步（例如手機沒有側欄的「錯題本」）。
+  const TOUR_VERSION = 1;
+
+  function tourSeen(records, name) {
+    const tours = (records && records.tours) || {};
+    return Number(tours[name] || 0) >= TOUR_VERSION;
+  }
+
+  function markTourSeen(name) {
+    const records = loadRecords();
+    records.tours = records.tours && typeof records.tours === "object" ? records.tours : {};
+    records.tours[name] = TOUR_VERSION;
+    saveRecords(records);
+  }
+
+  function startTour(name) {
+    if (!window.BuzzTour) return false;
+    const steps = window.BuzzTour.steps(name);
+    if (!steps.length) return false;
+    return window.BuzzTour.start(name, steps, {
+      goto: (target) => {
+        if (view === target) return;
+        view = target;
+        render();
+      },
+      track: (payload) => trackEvent("tour_step", payload)
+    }, (reason) => {
+      markTourSeen(name);
+      trackEvent("tour_done", { tour: name, reason });
+      render();
+    });
+  }
+
+  // 該不該自己跳出來：只給真的沒看過的人，而且畫面要已經是可以導覽的那一頁。
+  // 作答中不打斷（除了作答導覽本身），有 modal 開著也不打斷。
+  function maybeAutoTour() {
+    if (!window.BuzzTour || window.BuzzTour.running()) return;
+    if (appNotice) return;
+    const records = loadRecords();
+    // 開場三步還沒走完（首頁那時畫的是開場畫面）就不要插隊。
+    // 注意不能用 onboardingStep 當條件：做過定位測驗的人 onboardingStep 會停在 "placement"，
+    // 拿它當閘門等於「做過定位的人永遠看不到導覽」（E2E 第一次跑就抓到）。
+    if (!records.onboardingSeen) return;
+    // 只有真的還在頭幾十題的人會被自動帶導覽。已經在用的人升級版本之後不該被攔下來
+    // 講一遍他早就知道的事 —— 他要看的話設定頁有「再看一次導覽」。
+    if (Number(records.totalAnswered || 0) > 20) return;
+    // 定位測驗也是 view === "quiz"，但那是在測程度，不是在教操作 —— 不要插隊。
+    if (view === "quiz" && quiz && !quiz.placement && !quiz.examMode && !quiz.feedback && !tourSeen(records, "quiz")) {
+      startTour("quiz");
+      return;
+    }
+    if (view === "home" && !tourSeen(records, "home")) startTour("home");
+  }
+
   // ── 延後載入的模組 ─────────────────────────────────────────
   // index.html 用 type="text/lazy" data-lazy="<group>" 標的 script 瀏覽器不會抓；
   // 第一次需要時照文件順序注入真的 <script>，回傳 Promise。載完再 render 一次。
@@ -848,6 +909,8 @@
   const ANALYTICS_EVENTS = {
     // 取得
     onboarding_step: "開局流程的每一步（含是否跳過）",
+    tour_step: "導覽走到第幾步（哪一段導覽、步驟 id）",
+    tour_done: "導覽結束（走完 / 略過 / 中斷）",
     placement_complete: "定位測驗完成，帶回定位等級與最弱家族",
     proof_input_mode: "白話證明切換書寫模式（free 自由書寫 / guided 引導句型）",
     // 練習
@@ -1130,6 +1193,9 @@
       setupInteractiveGraphs();
       restoreViewState(carried);
       restoreLibrarySearchFocus();
+      // 導覽的 DOM 在 document.body，#app 被換掉之後錨點是新的元素，位置要重量。
+      if (window.BuzzTour) window.BuzzTour.refresh();
+      maybeAutoTour();
       if (view !== lastAnimatedView) {
         lastAnimatedView = view;
         animateMounts(app);
@@ -4199,6 +4265,7 @@
         </div>
         <div class="action-row">
           <a class="button secondary" href="guide.html" target="_blank" rel="noopener">${icon("book")}打開使用手冊</a>
+          <button class="button ghost" data-action="replay-tour">${icon("sparkles")}再看一次導覽</button>
         </div>
       </section>
     `;
@@ -8422,6 +8489,12 @@
       proofWrite.report = runProofLangCheck(proofLangSpec(proofWrite.id), "");
       saveProofLangDraft(proofWrite.id, "", proofWrite.report);
       render();
+    }
+    if (action === "replay-tour") {
+      view = "home";
+      render();
+      window.setTimeout(() => startTour("home"), 60);
+      return;
     }
     if (action === "open-creator") {
       view = "creator";
@@ -13454,6 +13527,7 @@
     next.pathGateAttempts = next.pathGateAttempts && typeof next.pathGateAttempts === "object" ? next.pathGateAttempts : {};
     next.pathLessonRuns = next.pathLessonRuns && typeof next.pathLessonRuns === "object" ? next.pathLessonRuns : {};
     next.proofs = next.proofs && typeof next.proofs === "object" ? next.proofs : {};
+    next.tours = next.tours && typeof next.tours === "object" ? next.tours : {};
     next.favorites = next.favorites && typeof next.favorites === "object" ? next.favorites : {};
     next.problemReports = next.problemReports && typeof next.problemReports === "object" ? next.problemReports : {};
     next.streakShields = next.streakShields && typeof next.streakShields === "object" ? next.streakShields : {};
@@ -14518,110 +14592,9 @@
     });
   }
 
-  function renderMasteryRadar(records) {
-    const axes = masteryRadarData(records);
-    const measured = axes.filter((axis) => axis.score !== null);
-    const n = Math.max(3, axes.length);
-    const cx = 140;
-    const cy = 120;
-    const radius = 80;
-    const point = (index, r) => {
-      const angle = -Math.PI / 2 + (index * 2 * Math.PI) / n;
-      return [cx + r * Math.cos(angle), cy + r * Math.sin(angle)];
-    };
-    const ringPoints = (frac) => axes
-      .map((_, index) => point(index, radius * frac).map((value) => value.toFixed(1)).join(","))
-      .join(" ");
-    const rings = [0.25, 0.5, 0.75, 1]
-      .map((frac) => `<polygon class="radar-ring" points="${ringPoints(frac)}"></polygon>`)
-      .join("");
-    const spokes = axes
-      .map((_, index) => {
-        const [x, y] = point(index, radius);
-        return `<line class="radar-spoke" x1="${cx}" y1="${cy}" x2="${x.toFixed(1)}" y2="${y.toFixed(1)}"></line>`;
-      })
-      .join("");
-    const dataPoints = axes
-      .map((axis, index) => point(index, radius * ((axis.score || 0) / 100)).map((value) => value.toFixed(1)).join(","))
-      .join(" ");
-    const dots = axes
-      .map((axis, index) => {
-        if (axis.score === null) return "";
-        const [x, y] = point(index, radius * (axis.score / 100));
-        return `<circle class="radar-dot" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="2.6"></circle>`;
-      })
-      .join("");
-    // 「未測」改成進度。對一個練了兩週的人顯示一圈灰字「未測」，
-    // 讀起來像功能沒做；「差 3 題」告訴他離亮起來多近、而且暗示怎麼讓它亮。
-    // 軸要 12 次加權作答才算測準（kernel 的 MIN_CONFIDENCE_W）；
-    // legacy fallback 沒有 confidence 欄位，那條路維持舊字。
-    const remainingFor = (axis) => {
-      if (axis.confidence === undefined) return null;
-      if (axis.stale) return null;
-      const weight = Number(axis.n || 0);
-      return Math.max(1, Math.ceil(12 - weight));
-    };
-    const emptyText = (axis) => {
-      if (axis.confidence === undefined) return "未測";
-      // stale = 碰過但信心不足 —— 可能是樣本太少，也可能是太久沒練衰減。
-      // 對註冊第一天的人寫「該重測」像在指控他偷懶（實測回報原話：
-      // 「這些技巧我從來沒被測過」）。「還測不準」兩種原因都誠實。
-      if (axis.stale) return "還測不準";
-      const remaining = remainingFor(axis);
-      return remaining >= 12 ? "未測" : `差 ${remaining} 題`;
-    };
-    const labels = axes
-      .map((axis, index) => {
-        const [x, y] = point(index, radius + 16);
-        const anchor = Math.abs(x - cx) < 12 ? "middle" : x > cx ? "start" : "end";
-        const scoreText = axis.score === null ? emptyText(axis) : String(axis.score);
-        return `
-          <g class="radar-label ${axis.score === null ? "is-empty" : ""}">
-            <title>${escapeHtml(axis.label)}：${axis.score === null ? `${emptyText(axis)}（答滿 12 題就會亮起來）` : `${axis.score} 分`}</title>
-            <text x="${x.toFixed(1)}" y="${(y - 1).toFixed(1)}" text-anchor="${anchor}">${escapeHtml(axis.label)}</text>
-            <text class="radar-score" x="${x.toFixed(1)}" y="${(y + 11).toFixed(1)}" text-anchor="${anchor}">${escapeHtml(scoreText)}</text>
-          </g>`;
-      })
-      .join("");
+  // 能力雷達圖的 SVG 在 share_cards.js（從 app.js 搬出去的獨立畫面片段）。
+  const renderMasteryRadar = (records) => window.BuzzGraphRender.renderMasteryRadar(masteryRadarData(records), { escapeHtml, escapeAttr });
 
-    // 收尾行是一顆可以按的處方，不是一句評語。
-    // 優先序：最弱的已測軸 > 最接近亮起來的未測軸 > 從頭開始。
-    const weakest = measured.slice().sort((a, b) => a.score - b.score)[0] || null;
-    const nearest = axes
-      .filter((axis) => axis.score === null && remainingFor(axis) !== null && remainingFor(axis) < 12)
-      .sort((a, b) => remainingFor(a) - remainingFor(b))[0] || null;
-    let takeaway;
-    if (weakest) {
-      takeaway = `
-        <p class="radar-takeaway">
-          最弱：${escapeHtml(weakest.label)} ${weakest.score} 分。
-          <button class="link-button" data-action="practice-axis" data-axis="${escapeAttr(weakest.key)}">練 10 題 →</button>
-        </p>`;
-    } else if (nearest) {
-      takeaway = `
-        <p class="radar-takeaway">
-          ${escapeHtml(nearest.label)}再答 ${remainingFor(nearest)} 題就會亮起來。
-          <button class="link-button" data-action="practice-axis" data-axis="${escapeAttr(nearest.key)}">現在練 →</button>
-        </p>`;
-    } else {
-      takeaway = `<p class="radar-takeaway">還沒有雷達資料，先打一輪快速訓練。</p>`;
-    }
-    return `
-      <div class="radar-panel">
-        <div class="radar-head">
-          <strong>技巧精熟雷達</strong>
-          <span>最近作答加權正確率，久沒練會慢慢褪色。</span>
-        </div>
-        <svg class="radar-svg" viewBox="0 0 280 240" role="img" aria-label="技巧精熟雷達">
-          ${rings}
-          ${spokes}
-          ${measured.length ? `<polygon class="radar-data" points="${dataPoints}"></polygon>${dots}` : ""}
-          ${labels}
-        </svg>
-        ${takeaway}
-      </div>
-    `;
-  }
 
   // 雷達軸的一鍵處方：抓帶著這個軸標籤的題，尊重難度上限，開一局 10 題。
   // 用 quick（計時）而不是 practice —— 計時作答才會餵回雷達，

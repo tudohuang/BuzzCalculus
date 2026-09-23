@@ -49,8 +49,8 @@
 | 有作者撰寫 `hints` | 1722 |  |
 | 有 `solutionSteps` | 232 | 結構化步驟，仍是最大的內容缺口 |
 | 證明題 | 68 | 含 Lean 機器驗證 8 則 |
-| `src/app.js` | 15559 行 | 單一 IIFE，拆分進行中 |
-| `styles.css` | 11938 行 |  |
+| `src/app.js` | 15532 行 | 單一 IIFE，拆分進行中 |
+| `styles.css` | 12048 行 |  |
 | 題庫檔 `src/problem_*.js` | 35 |  |
 | kernel 模組 `src/kernel/*.js` | 22 | 純函式層 |
 | CI 驗證器 `tools/` | 42 支 | validate / verify / smoke / e2e |
