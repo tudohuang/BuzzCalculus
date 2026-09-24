@@ -1221,6 +1221,130 @@
       一個都看不到就跳過那一步，不要指著空氣。
    3. 遮罩吃掉點擊（導覽期間只有導覽的按鈕能按），但 Esc、上一步／下一步、
       方向鍵都要能用，而且焦點不能跑到被遮住的地方。 */
+
+/* ── 計算紙：工具列與畫布 ─────────────────────────────────────────
+   純畫面片段。開著沒、用哪支筆、畫了幾筆這些狀態由 app.js 算好傳進來，
+   互動（畫線、橡皮擦、全螢幕）仍然在 app.js 綁事件。 */
+(function () {
+  "use strict";
+
+  function render(o) {
+    const { problem, disabled, boardTool, fullscreen, boardOpen, strokeCount,
+      boardSurface, penScaleKey, penColorSetting, penNibSetting, highlightColorSetting,
+      icon, escapeAttr, escapeHtml, PEN_SCALES, HIGHLIGHT_COLORS,
+      PEN_COLORS, BOARD_SURFACES, renderPreviousBoard } = o;
+    const surface = boardSurface();
+    const surfaceNext = surface === "paper" ? "換成黑板" : "換成方格紙";
+    const penScale = PEN_SCALES.find((item) => item.key === penScaleKey()) || PEN_SCALES[1];
+    const penColor = penColorSetting();
+    const penNib = penNibSetting();
+    const highlightColor = highlightColorSetting();
+    return `
+      <section class="scratchboard-shell ${boardOpen ? "is-open" : "is-collapsed"}">
+        <div class="scratchboard-summary">
+          <div>
+            <span>計算紙</span>
+            <strong data-board-count>${strokeCount ? `${strokeCount} 筆` : "手寫草稿"}</strong>
+          </div>
+          <!-- 工具列的邏輯跟 GoodNotes 一樣：一顆工具 = 一個主要動作，
+               再點一次已經選中的工具才打開它的細節（顏色、粗細、筆型／紙型）。
+               這樣每一顆都保持一個字的寬度，細節不常駐在工具列上。 -->
+          <div class="board-tools" aria-label="計算紙工具">
+            ${
+              boardOpen
+                ? `
+                  <span class="board-tool-group" role="group" aria-label="畫">
+                    <button class="icon-button tool-pen ${boardTool === "pen" ? "is-active" : ""}" type="button" data-board-action="tool" data-tool="pen" data-color="${escapeAttr(penColor)}" title="筆（再點一次選顏色與粗細）" aria-pressed="${boardTool === "pen" ? "true" : "false"}" ${disabled}>${icon("pen")}<i class="tool-swatch" aria-hidden="true"></i></button>
+                    <button class="icon-button tool-highlighter ${boardTool === "highlighter" ? "is-active" : ""}" type="button" data-board-action="tool" data-tool="highlighter" data-color="${escapeAttr(highlightColor)}" title="螢光筆（再點一次選顏色）" aria-pressed="${boardTool === "highlighter" ? "true" : "false"}" ${disabled}>${icon("highlighter")}<i class="tool-swatch" aria-hidden="true"></i></button>
+                    <button class="icon-button ${boardTool === "eraser" ? "is-active" : ""}" type="button" data-board-action="tool" data-tool="eraser" title="橡皮擦" aria-pressed="${boardTool === "eraser" ? "true" : "false"}" ${disabled}>${icon("eraser")}</button>
+                  </span>
+                  <span class="board-tool-group" role="group" aria-label="改">
+                    <button class="icon-button" type="button" data-board-action="undo" title="復原上一筆（兩指點一下也可以）" ${disabled}>${icon("undo")}</button>
+                    <button class="icon-button" type="button" data-board-action="redo" title="重做" ${disabled}>${icon("redo")}</button>
+                  </span>
+                  <span class="board-tool-group" role="group" aria-label="紙">
+                    <button class="icon-button" type="button" data-board-action="clear" title="全部擦掉（可以重做救回來）" ${disabled}>${icon("trash")}</button>
+                    <button class="icon-button" type="button" data-board-action="surface" title="換紙" aria-haspopup="true" ${disabled}>${icon("grid")}</button>
+                  </span>
+                  <button class="icon-button" type="button" data-board-action="fullscreen" title="${fullscreen ? "退出全螢幕" : "全螢幕書寫"}" ${disabled}>${icon(fullscreen ? "minimize" : "maximize")}</button>
+                `
+                : ""
+            }
+            <button class="icon-button board-toggle" type="button" data-board-action="toggle" title="${boardOpen ? "收起計算紙" : "攤開計算紙"}" ${disabled}>${icon(boardOpen ? "chevron-up" : "chevron-down")}</button>
+          </div>
+        </div>
+        ${
+          boardOpen
+            ? `<div class="board-surface">
+                <canvas class="blackboard" data-blackboard data-surface="${surface}" data-tool="${escapeAttr(boardTool)}" data-problem-id="${escapeAttr(problem.id)}" aria-label="手寫計算紙"></canvas>
+                <!-- 螢光筆書寫中的即時預覽層：半透明的筆畫不能逐段疊在主畫布上（接點會變深），
+                     所以寫的時候畫在這一層，收筆再整筆落到主畫布。 -->
+                <canvas class="board-live" data-board-live aria-hidden="true"></canvas>
+                <p class="board-empty-hint" data-board-empty-hint ${strokeCount ? "hidden" : ""} aria-hidden="true">${icon("pen")}<span>在這裡算，算完再填答案</span></p>
+                <div class="board-popover" data-board-popover="pen" hidden>
+                  <div class="popover-row" role="group" aria-label="顏色">
+                    ${PEN_COLORS.map((item) => `<button type="button" class="swatch ${item.key === penColor ? "is-active" : ""}" data-board-action="set-color" data-color="${item.key}" title="${escapeAttr(item.label)}" aria-label="${escapeAttr(item.label)}" style="--swatch:${item.swatch}"></button>`).join("")}
+                  </div>
+                  <div class="popover-row" role="group" aria-label="粗細">
+                    ${PEN_SCALES.map((item) => `<button type="button" class="scale-pick ${item.key === penScale.key ? "is-active" : ""}" data-board-action="set-pen-scale" data-scale="${item.key}" title="${escapeAttr(item.label)}" aria-label="筆寬 ${escapeAttr(item.label)}"><i style="--pen-dot:${item.dot}px"></i></button>`).join("")}
+                  </div>
+                  <div class="popover-row popover-segment" role="group" aria-label="筆型">
+                    <button type="button" class="${penNib === "fountain" ? "is-active" : ""}" data-board-action="set-nib" data-nib="fountain" aria-pressed="${penNib === "fountain" ? "true" : "false"}">鋼筆<small>有粗細</small></button>
+                    <button type="button" class="${penNib === "ball" ? "is-active" : ""}" data-board-action="set-nib" data-nib="ball" aria-pressed="${penNib === "ball" ? "true" : "false"}">原子筆<small>等寬</small></button>
+                  </div>
+                </div>
+                <div class="board-popover" data-board-popover="highlighter" hidden>
+                  <div class="popover-row" role="group" aria-label="螢光筆顏色">
+                    ${HIGHLIGHT_COLORS.map((item) => `<button type="button" class="swatch is-highlight ${item.key === highlightColor ? "is-active" : ""}" data-board-action="set-color" data-color="${item.key}" title="${escapeAttr(item.label)}" aria-label="${escapeAttr(item.label)}" style="--swatch:${item.swatch}"></button>`).join("")}
+                  </div>
+                </div>
+                <div class="board-popover" data-board-popover="surface" hidden>
+                  <div class="popover-row popover-papers" role="group" aria-label="紙型">
+                    ${BOARD_SURFACES.map((item) => `<button type="button" class="paper-pick ${item.key === surface ? "is-active" : ""}" data-board-action="set-surface" data-surface="${item.key}" aria-pressed="${item.key === surface ? "true" : "false"}"><i data-surface="${item.key}"></i><span>${escapeHtml(item.label)}</span></button>`).join("")}
+                  </div>
+                </div>
+              </div>`
+            : ""
+        }
+        ${renderPreviousBoard(problem)}
+      </section>
+    `;
+  }
+
+  window.BuzzBoardUI = { render };
+})();
+
+/* ── 考卷裡的證明題：作答畫面 ─────────────────────────────────────
+   一塊文字板加句型鍵，判分是白話證明的檢查器（呼叫端傳進來）。
+   純畫面：spec、文字、報告、要不要即時三色，全部由呼叫端決定。 */
+(function () {
+  "use strict";
+
+  const WORDS = ["任取 ", "取 ", "假設 ", "則 ", "由定理 ", "因為 ", "所以 ", "故 "];
+
+  function render(options) {
+    const { spec, text, done, live, examMode, report, escapeHtml, escapeAttr, icon, renderVerdict, renderLines, extra } = options;
+    return `
+      <div class="proof-answer">
+        <div class="pl-goal math-block" data-tex="${escapeAttr(spec.prompt)}"></div>
+        <p class="panel-note">${escapeHtml(spec.statement)}</p>
+        <div class="pl-templates" aria-label="句型">
+          ${WORDS.map((word) => `<button type="button" class="pl-template" data-action="pl-insert" data-text="${escapeAttr(word)}">${escapeHtml(word.trim())}</button>`).join("")}
+        </div>
+        <textarea data-proof-answer rows="8" spellcheck="false" placeholder="一行一句。可以用中文、英文或 LaTeX 寫。" ${done ? "disabled" : ""}>${escapeHtml(text)}</textarea>
+        ${live && report ? `<div class="proof-answer-report">${renderVerdict(report)}${renderLines(report)}</div>` : ""}
+        ${examMode && !done ? `<p class="panel-note">模擬考不給即時判讀：寫完按送出，判分跟練習時同一套檢查器。</p>` : ""}
+        <div class="action-row">
+          <button class="button" data-action="submit-proof" ${done || !String(text).trim() ? "disabled" : ""}>${icon("send")}送出證明</button>
+        </div>
+        ${extra || ""}
+      </div>
+    `;
+  }
+
+  window.BuzzProofAnswer = { render };
+})();
+
 (function () {
   "use strict";
 

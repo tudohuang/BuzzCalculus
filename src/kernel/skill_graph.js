@@ -60,7 +60,12 @@
     //   geometric / geometry          等比與幾何是題材不是技巧
     "applied-limit", "word-problem", "geometric", "geometry",
     //   applied-derivative  同上：情境的外衣，要練的技巧在 optimization / related-rates / curvature 上
-    "applied-derivative"
+    "applied-derivative",
+    //   proof / written-proof  這是「作答形式是寫證明」，不是一項能練起來的技巧
+    //   induction / inequality 是真的證明技巧，但目前各只有 3 題與 4 題 ——
+    //   節點的下限是 8 題（見 validate_skill_graph 的每節點題數），開了節點只會讓
+    //   能力模型拿三題去估一整個座標。題數夠了再從這裡搬進 SKILLS。
+    "proof", "written-proof", "induction", "inequality"
   ]);
 
   // ── Skill 節點 ────────────────────────────────────────────────

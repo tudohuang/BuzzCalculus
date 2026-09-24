@@ -1,4 +1,4 @@
-const CACHE_NAME = "buzzcalculus-v1.2.1-2026-09-24-derivdepth";
+const CACHE_NAME = "buzzcalculus-v1.2.1-2026-09-24-exammix";
 const CACHE_PREFIX = "buzzcalculus-";
 const APP_SHELL = [
   "./privacy.html",

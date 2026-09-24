@@ -3775,7 +3775,7 @@
         <div class="named-exam-head">
           <p class="section-label">模擬考</p>
           <h3>整份限時，考前拿這幾張卷自我檢測</h3>
-          <span>期中與期末的差別是<strong>範圍</strong>不是難度：期中考極限與微分，期末考積分與級數。同一次挑戰抽題固定；重考會換一份新卷。及格線 60%。</span>
+          <span>期中與期末的差別是<strong>範圍</strong>不是難度：期中考極限與微分，期末考積分與級數。每份卷會混進圖形題，依範圍的三張最後一題是證明題。同一次挑戰抽題固定；重考會換一份新卷。及格線 60%。</span>
         </div>
         ${["scope", "style"].map((group) => `
         <p class="section-label named-exam-group">${group === "scope" ? "依考試範圍" : "依考卷風格"}</p>
@@ -6141,7 +6141,7 @@
                   // 的第一名問題 —— 而使用者想切的那一刻，人就在這裡。
                   // 所以它同時是切換鈕：作答中隨時可以換，換完這一題立刻重畫。
                   // 模擬考不給換（換作答形式等於換考試條件）。
-                  ["graph", "worksheet", "graphtap", "graphslope", "sketch"].includes(current.answerKind)
+                  ["graph", "worksheet", "graphtap", "graphslope", "sketch", "proof"].includes(current.answerKind)
                     ? ""
                     : quiz.examMode || feedback
                       ? `<span class="chip">${answerModeLabel(answerMode)}</span>`
@@ -6227,6 +6227,13 @@
     if (problem.answerKind === "sketch") {
       return `<span class="math-inline" data-tex="${escapeAttr("f(x)=" + raw)}">${renderLiteTex("f(x)=" + raw, false)}</span>`;
     }
+    if (problem.answerKind === "proof") {
+      const spec = lazyReady("proof") ? proofLangSpec(problem.proofSpec) : null;
+      const lines = spec && Array.isArray(spec.reference) ? spec.reference : [];
+      return lines.length
+        ? `<ol class="proof-reference">${lines.map((line) => `<li>${escapeHtml(line)}</li>`).join("")}</ol>`
+        : escapeHtml(raw);
+    }
     if (["worksheet", "graph", "graphtap", "graphslope"].includes(problem.answerKind)) {
       return escapeHtml(raw);
     }
@@ -6245,6 +6252,8 @@
     // 互動圖形題：作答的動作就發生在圖上，同樣不受作答形式影響。
     if (problem.answerKind === "graphtap") return renderGraphTapControls(problem);
     if (problem.answerKind === "graphslope") return renderGraphSlopeControls(problem);
+    // 證明題：作答區是一塊文字板，判分交給白話證明的檢查器（引擎延後載入）。
+    if (problem.answerKind === "proof") return renderProofAnswerControls(problem);
     // 作圖題：在空格子上畫 f。畫面與判分都在 share_cards.js 的 BuzzGraphSketch（app.js 撞預算）。
     if (problem.answerKind === "sketch") {
       const sketch = window.BuzzGraphSketch.renderControls(problem, graphSketchStrokes(problem), {
@@ -6481,7 +6490,38 @@
   function shownInput(problem, input) {
     if (!input) return "未作答";
     if (problem && problem.answerKind === "sketch") return "手繪的圖形";
+    // 證明是一整段文字，回顧列表印不下：只印第一行加行數
+    if (problem && problem.answerKind === "proof") {
+      const lines = String(input).split("\n").map((line) => line.trim()).filter(Boolean);
+      return lines.length ? `${lines[0]}…（共 ${lines.length} 行）` : "未作答";
+    }
     return input;
+  }
+
+  // 考卷裡的證明題。
+  //
+  // 練習時給即時三色（那是這個產品的核心體驗：寫一行就知道那一行站不站得住）；
+  // 模擬考時不給 —— 考試裡即時回饋等於可以一直改到全綠，那就不是考試了。
+  // 考卷證明題的作答畫面在 share_cards.js（從 app.js 搬出去的獨立畫面片段）。
+  function renderProofAnswerControls(problem) {
+    const done = Boolean(quiz.feedback);
+    if (!lazyReady("proof")) {
+      ensureLazy("proof").then(render).catch(() => showAppNotice("證明引擎載不進來 —— 檢查一下網路再試一次。"));
+      return `<div class="proof-answer is-loading" aria-busy="true"><p class="panel-note">載入證明引擎…</p></div>`;
+    }
+    const spec = proofLangSpec(problem.proofSpec);
+    if (!spec) return `<p class="panel-note">這一題的證明題目找不到（${escapeHtml(problem.proofSpec || "")}）。</p>`;
+    const text = quiz.draft || "";
+    // 練習時給即時三色（寫一行就知道那一行站不站得住）；模擬考時不給 ——
+    // 考試裡即時回饋等於可以一直改到全綠，那就不是考試了。
+    const live = !quiz.examMode && !done;
+    return window.BuzzProofAnswer.render({
+      spec, text, done, live, examMode: Boolean(quiz.examMode),
+      report: live && text.trim() ? runProofLangCheck(spec, text) : null,
+      escapeHtml, escapeAttr, icon,
+      renderVerdict: plUI.renderVerdict, renderLines: plUI.renderLines,
+      extra: attachedScratchboard(problem, done ? "disabled" : "")
+    });
   }
 
   function graphSketchStrokes(problem) {
@@ -6846,84 +6886,16 @@
     `;
   }
 
+  // 計算紙的工具列與畫布在 share_cards.js（從 app.js 搬出去的獨立畫面片段）。
+  // 這一段是純畫面：狀態（開著沒、哪支筆、幾筆）由呼叫端算好傳進去。
   function renderScratchboard(problem, disabled, boardTool, fullscreen, boardOpen, strokeCount) {
-    const surface = boardSurface();
-    const surfaceNext = surface === "paper" ? "換成黑板" : "換成方格紙";
-    const penScale = PEN_SCALES.find((item) => item.key === penScaleKey()) || PEN_SCALES[1];
-    const penColor = penColorSetting();
-    const penNib = penNibSetting();
-    const highlightColor = highlightColorSetting();
-    return `
-      <section class="scratchboard-shell ${boardOpen ? "is-open" : "is-collapsed"}">
-        <div class="scratchboard-summary">
-          <div>
-            <span>計算紙</span>
-            <strong data-board-count>${strokeCount ? `${strokeCount} 筆` : "手寫草稿"}</strong>
-          </div>
-          <!-- 工具列的邏輯跟 GoodNotes 一樣：一顆工具 = 一個主要動作，
-               再點一次已經選中的工具才打開它的細節（顏色、粗細、筆型／紙型）。
-               這樣每一顆都保持一個字的寬度，細節不常駐在工具列上。 -->
-          <div class="board-tools" aria-label="計算紙工具">
-            ${
-              boardOpen
-                ? `
-                  <span class="board-tool-group" role="group" aria-label="畫">
-                    <button class="icon-button tool-pen ${boardTool === "pen" ? "is-active" : ""}" type="button" data-board-action="tool" data-tool="pen" data-color="${escapeAttr(penColor)}" title="筆（再點一次選顏色與粗細）" aria-pressed="${boardTool === "pen" ? "true" : "false"}" ${disabled}>${icon("pen")}<i class="tool-swatch" aria-hidden="true"></i></button>
-                    <button class="icon-button tool-highlighter ${boardTool === "highlighter" ? "is-active" : ""}" type="button" data-board-action="tool" data-tool="highlighter" data-color="${escapeAttr(highlightColor)}" title="螢光筆（再點一次選顏色）" aria-pressed="${boardTool === "highlighter" ? "true" : "false"}" ${disabled}>${icon("highlighter")}<i class="tool-swatch" aria-hidden="true"></i></button>
-                    <button class="icon-button ${boardTool === "eraser" ? "is-active" : ""}" type="button" data-board-action="tool" data-tool="eraser" title="橡皮擦" aria-pressed="${boardTool === "eraser" ? "true" : "false"}" ${disabled}>${icon("eraser")}</button>
-                  </span>
-                  <span class="board-tool-group" role="group" aria-label="改">
-                    <button class="icon-button" type="button" data-board-action="undo" title="復原上一筆（兩指點一下也可以）" ${disabled}>${icon("undo")}</button>
-                    <button class="icon-button" type="button" data-board-action="redo" title="重做" ${disabled}>${icon("redo")}</button>
-                  </span>
-                  <span class="board-tool-group" role="group" aria-label="紙">
-                    <button class="icon-button" type="button" data-board-action="clear" title="全部擦掉（可以重做救回來）" ${disabled}>${icon("trash")}</button>
-                    <button class="icon-button" type="button" data-board-action="surface" title="換紙" aria-haspopup="true" ${disabled}>${icon("grid")}</button>
-                  </span>
-                  <button class="icon-button" type="button" data-board-action="fullscreen" title="${fullscreen ? "退出全螢幕" : "全螢幕書寫"}" ${disabled}>${icon(fullscreen ? "minimize" : "maximize")}</button>
-                `
-                : ""
-            }
-            <button class="icon-button board-toggle" type="button" data-board-action="toggle" title="${boardOpen ? "收起計算紙" : "攤開計算紙"}" ${disabled}>${icon(boardOpen ? "chevron-up" : "chevron-down")}</button>
-          </div>
-        </div>
-        ${
-          boardOpen
-            ? `<div class="board-surface">
-                <canvas class="blackboard" data-blackboard data-surface="${surface}" data-tool="${escapeAttr(boardTool)}" data-problem-id="${escapeAttr(problem.id)}" aria-label="手寫計算紙"></canvas>
-                <!-- 螢光筆書寫中的即時預覽層：半透明的筆畫不能逐段疊在主畫布上（接點會變深），
-                     所以寫的時候畫在這一層，收筆再整筆落到主畫布。 -->
-                <canvas class="board-live" data-board-live aria-hidden="true"></canvas>
-                <p class="board-empty-hint" data-board-empty-hint ${strokeCount ? "hidden" : ""} aria-hidden="true">${icon("pen")}<span>在這裡算，算完再填答案</span></p>
-                <div class="board-popover" data-board-popover="pen" hidden>
-                  <div class="popover-row" role="group" aria-label="顏色">
-                    ${PEN_COLORS.map((item) => `<button type="button" class="swatch ${item.key === penColor ? "is-active" : ""}" data-board-action="set-color" data-color="${item.key}" title="${escapeAttr(item.label)}" aria-label="${escapeAttr(item.label)}" style="--swatch:${item.swatch}"></button>`).join("")}
-                  </div>
-                  <div class="popover-row" role="group" aria-label="粗細">
-                    ${PEN_SCALES.map((item) => `<button type="button" class="scale-pick ${item.key === penScale.key ? "is-active" : ""}" data-board-action="set-pen-scale" data-scale="${item.key}" title="${escapeAttr(item.label)}" aria-label="筆寬 ${escapeAttr(item.label)}"><i style="--pen-dot:${item.dot}px"></i></button>`).join("")}
-                  </div>
-                  <div class="popover-row popover-segment" role="group" aria-label="筆型">
-                    <button type="button" class="${penNib === "fountain" ? "is-active" : ""}" data-board-action="set-nib" data-nib="fountain" aria-pressed="${penNib === "fountain" ? "true" : "false"}">鋼筆<small>有粗細</small></button>
-                    <button type="button" class="${penNib === "ball" ? "is-active" : ""}" data-board-action="set-nib" data-nib="ball" aria-pressed="${penNib === "ball" ? "true" : "false"}">原子筆<small>等寬</small></button>
-                  </div>
-                </div>
-                <div class="board-popover" data-board-popover="highlighter" hidden>
-                  <div class="popover-row" role="group" aria-label="螢光筆顏色">
-                    ${HIGHLIGHT_COLORS.map((item) => `<button type="button" class="swatch is-highlight ${item.key === highlightColor ? "is-active" : ""}" data-board-action="set-color" data-color="${item.key}" title="${escapeAttr(item.label)}" aria-label="${escapeAttr(item.label)}" style="--swatch:${item.swatch}"></button>`).join("")}
-                  </div>
-                </div>
-                <div class="board-popover" data-board-popover="surface" hidden>
-                  <div class="popover-row popover-papers" role="group" aria-label="紙型">
-                    ${BOARD_SURFACES.map((item) => `<button type="button" class="paper-pick ${item.key === surface ? "is-active" : ""}" data-board-action="set-surface" data-surface="${item.key}" aria-pressed="${item.key === surface ? "true" : "false"}"><i data-surface="${item.key}"></i><span>${escapeHtml(item.label)}</span></button>`).join("")}
-                  </div>
-                </div>
-              </div>`
-            : ""
-        }
-        ${renderPreviousBoard(problem)}
-      </section>
-    `;
+    return window.BuzzBoardUI.render({
+      problem, disabled, boardTool, fullscreen, boardOpen, strokeCount,
+      boardSurface, penScaleKey, penColorSetting, penNibSetting, highlightColorSetting, icon, escapeAttr, escapeHtml,
+      PEN_SCALES, HIGHLIGHT_COLORS, PEN_COLORS, BOARD_SURFACES, renderPreviousBoard
+    });
   }
+
 
   function answerSyntaxInfo(problem, value) {
     const raw = String(value || "").trim();
@@ -8065,6 +8037,23 @@
 
     bindProofLangEvents();
 
+    const proofAnswerInput = app.querySelector("[data-proof-answer]");
+    if (proofAnswerInput) {
+      // 練習時打字要即時三色，但每個字都重繪整頁太貴 —— 跟題庫搜尋同一套節流。
+      let timer = null;
+      onTypedInput(proofAnswerInput, () => {
+        quiz.draft = proofAnswerInput.value;
+        // 送出鈕的可按狀態直接改，不等重繪 —— 模擬考模式根本不重繪（沒有即時判讀），
+        // 等重繪的話使用者打完字會發現按鈕還是灰的。
+        const submit = app.querySelector('[data-action="submit-proof"]');
+        if (submit) submit.disabled = !proofAnswerInput.value.trim();
+        if (quiz.examMode) return;
+        if (timer) window.clearTimeout(timer);
+        timer = window.setTimeout(() => { timer = null; render(); }, 320);
+      });
+      proofAnswerInput.addEventListener("blur", () => { quiz.draft = proofAnswerInput.value; });
+    }
+
     const librarySearchInput = app.querySelector("[data-library-search]");
     if (librarySearchInput) {
       // Debounced: a full render per keystroke makes typing laggy.
@@ -8282,6 +8271,13 @@
       selectedLibraryFilter = "all";
       libraryVisibleCount = LIBRARY_PAGE_SIZE;
       render();
+    }
+    // 證明題的送出是一顆按鈕（自己的動作名）：submit-answer 那個名字是表單的 submit 事件，
+    // 掛在按鈕上永遠不會觸發 —— 第一版就是這樣，按下去什麼都沒發生。
+    if (action === "submit-proof") {
+      const box = app.querySelector("[data-proof-answer]");
+      if (box) quiz.draft = box.value;
+      submitCurrentAnswer();
     }
     if (action === "submit-graphtap") submitGraphTap();
     if (action === "submit-sketch" || action === "undo-sketch" || action === "clear-sketch" || action === "sketch-tool") {
@@ -9205,7 +9201,7 @@
     // 那些題對任何自陳等級 ≤ 大一的人都測不出「反射」，只測得出「沒學過」。
     // 定位是四選一：作圖表、點位、切線這些沒有選項的作答形式不進來 ——
     // 走查時第 6 題抽到「在圖上點出極值點」，整個定位卡在那裡。
-    const NO_CHOICE_KINDS = ["worksheet", "graphtap", "graphslope", "sketch"];
+    const NO_CHOICE_KINDS = ["worksheet", "graphtap", "graphslope", "sketch", "proof"];
     const source = beyondBasicsFilter(problems)
       .filter((problem) => !NO_CHOICE_KINDS.includes(problem.answerKind))
       .filter((problem) => !topics || topics.includes(problem.topic));
@@ -9326,9 +9322,12 @@
 
   // ---- Feature 10：具名模擬卷（沿用大考模式的整份倒數 / WebWork 機制） ----
 
-  function namedExamProblems(config) {
+  function namedExamProblems(config, kind = "answer") {
     return problems.filter((problem) => {
-      if (!isExamAnswerProblem(problem)) return false;
+      const match = kind === "graph" ? isExamGraphProblem(problem)
+        : kind === "proof" ? isExamProofProblem(problem)
+          : isExamAnswerProblem(problem);
+      if (!match) return false;
       const rank = problemRank(problem);
       if (rank < config.minRank || rank > config.maxRank) return false;
       if (config.topic && problem.topic !== config.topic) return false;
@@ -9344,10 +9343,20 @@
 
   // 抽卷完全由 seed 決定（卷 id + 已考次數）：同一輪重進拿到同一份卷，
   // 交卷後 attempts +1，下一次就是一份新卷，但仍可重現。
+  // 一份卷裡的圖形題與證明題配額。寫成函式而不是常數：12 題的卷給 2 題圖形，
+  // 15 題的卷給 3 題，短卷（10 題）給 2 題；證明題只有「依範圍」的卷才放，
+  // 而且固定一題 —— 證明要寫字，放兩題會把整份卷的節奏吃掉。
+  function namedExamQuota(config) {
+    const graph = config.graph === undefined ? Math.max(1, Math.round(config.count / 5)) : config.graph;
+    const proof = config.proof === undefined ? (config.group === "scope" ? 1 : 0) : config.proof;
+    return { graph, proof };
+  }
+
   function buildNamedExamPaper(setId, attemptIndex) {
     const config = NAMED_EXAMS[setId];
     if (!config) return [];
     const seed = seedFromString(`${setId}-attempt-${Number(attemptIndex) || 0}`);
+    const quota = namedExamQuota(config);
     const source = namedExamProblems(config);
     const preferredIds = new Set(
       config.preferTags
@@ -9386,7 +9395,19 @@
       used.add(problem.id);
       paper.push(problem);
     });
-    return shuffle(paper.slice(0, config.count), seed + 3);
+    const graphPicks = shuffle(namedExamProblems(config, "graph"), seed + 7).slice(0, quota.graph);
+    const proofPicks = shuffle(namedExamProblems(config, "proof"), seed + 11).slice(0, quota.proof);
+    // 範圍內沒有圖形題或證明題（例如只考積分的卷）就不硬塞，但空出來的名額要退回給主體，
+    // 不然那份卷會莫名其妙少兩題。
+    const body = shuffle(paper.slice(0, config.count), seed + 3)
+      .slice(0, Math.max(0, config.count - graphPicks.length - proofPicks.length));
+    // 圖形題插在中段（讓整份卷的節奏有變化），證明題永遠在最後一題。
+    const mixed = body.slice();
+    graphPicks.forEach((problem, index) => {
+      const at = Math.min(mixed.length, Math.round(((index + 1) * mixed.length) / (graphPicks.length + 1)));
+      mixed.splice(at, 0, problem);
+    });
+    return mixed.concat(proofPicks).slice(0, config.count);
   }
 
   function startNamedExam(setId) {
@@ -10588,7 +10609,7 @@
     const pool = problems.filter((problem) =>
       ["limits", "derivatives", "integrals", "series"].includes(problem.topic) &&
       !problem.custom &&
-      !["worksheet", "graph", "graphtap", "graphslope", "sketch"].includes(problem.answerKind) &&
+      !["worksheet", "graph", "graphtap", "graphslope", "sketch", "proof"].includes(problem.answerKind) &&
       problemRank(problem) >= 2 && problemRank(problem) <= 5);
     const picked = shuffle(pool, seedFromString(`duel-${Date.now()}`)).slice(0, 10);
     if (picked.length < 10) return;
@@ -10824,6 +10845,22 @@
 
   function isExamAnswerProblem(problem) {
     return ["numeric", "expression", "antiderivative"].includes(problem.answerKind);
+  }
+
+  // 模擬卷除了「自己輸入答案」的題，也收圖形互動題與證明題。
+  //
+  // 真實的考卷本來就長這樣：一份期末卷會有讀圖、作圖、一題證明。
+  // 原本整份卷只抽 numeric/expression，於是站上最有特色的兩種題型
+  // （圖上點位／拖切線／作圖、白話證明的機器判分）在模擬考裡完全看不到。
+  // 配額壓在少數：圖形題最多四分之一，證明題固定一題放在最後。
+  const EXAM_GRAPH_KINDS = ["graph", "graphtap", "graphslope", "sketch"];
+
+  function isExamGraphProblem(problem) {
+    return EXAM_GRAPH_KINDS.includes(problem.answerKind);
+  }
+
+  function isExamProofProblem(problem) {
+    return problem.answerKind === "proof";
   }
 
   function problemRank(problem) {
@@ -11500,6 +11537,9 @@
     if (problem.answerKind === "sketch") {
       return window.BuzzGraphSketch.check(problem, input);
     }
+    if (problem.answerKind === "proof") {
+      return checkProofAnswer(problem, input);
+    }
     if (problem.answerKind === "worksheet") {
       return checkWorksheet(problem, input);
     }
@@ -11519,6 +11559,23 @@
       correct: false,
       message: chosen && chosen.why ? chosen.why : "這張圖跟 f 的性質對不上。"
     };
+  }
+
+  // 證明題：判分就是白話證明的檢查器 —— 每一行都站得住、而且結論扣回題目要證的那件事，
+  // 才算對。「看起來很像證明」不算：unsure 是黃的，那代表檢查器讀不懂或那一步沒被支持。
+  function checkProofAnswer(problem, input) {
+    const spec = proofLangSpec(problem.proofSpec);
+    if (!spec) return { correct: false, message: "這一題的證明題目找不到。" };
+    if (!String(input || "").trim()) return { correct: false, message: "還沒寫任何東西。" };
+    const report = runProofLangCheck(spec, input);
+    if (!report) return { correct: false, message: "證明引擎還沒載入。" };
+    if (report.verdict === "verified") {
+      return { correct: true, message: "每一行都站得住，結論也扣回題目 —— 機器判過了。" };
+    }
+    const bad = (report.counts && report.counts.error) || 0;
+    const unsure = (report.counts && report.counts.unsure) || 0;
+    const detail = bad ? `有 ${bad} 行站不住` : unsure ? `有 ${unsure} 行檢查器讀不懂或支持不了` : "結論沒有扣回題目要證的那件事";
+    return { correct: false, message: `${detail}。${report.verdictText || ""}` };
   }
 
   // 點位題：答案是一串 x 座標，判分是「每個目標位置附近都有恰好
@@ -11795,7 +11852,7 @@
   function wellFormedDistractor(problem, value) {
     const text = String(value || "").trim();
     if (!text) return false;
-    if (["text", "set", "interval", "worksheet", "graph", "graphtap", "graphslope", "sketch"].includes(problem.answerKind)) return true;
+    if (["text", "set", "interval", "worksheet", "graph", "graphtap", "graphslope", "sketch", "proof"].includes(problem.answerKind)) return true;
     if (/^[*/^+]/.test(text) || /[*/^+(-]$/.test(text) || /[*/^]{2}/.test(text) || /\(\)/.test(text)) return false;
     if (text.includes(",")) return false;
     let depth = 0;
@@ -14737,6 +14794,7 @@
       graphtap: "點位",
       graphslope: "切線",
       sketch: "作圖",
+      proof: "證明",
       worksheet: "作圖表"
       // 少一個對應就會在題目上印出一個 undefined chip。
       // 加新 answerKind 的時候這裡是最容易忘記的地方 —— 實測就漏了。

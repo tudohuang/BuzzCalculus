@@ -8,7 +8,7 @@ const topics = new Set(["limits", "derivatives", "integrals", "series"]);
 // 那些檢查（誘答要看得出差別、要寫錯在哪）在這裡驗不了。
 // worksheet = 作圖表題（一張要填的表，每一格自己判分）。
 // 每一格的獨立驗算由 tools/validate_worksheets.js 把關。
-const answerKinds = new Set(["numeric", "expression", "antiderivative", "text", "set", "interval", "graph", "graphtap", "graphslope", "worksheet", "sketch"]);
+const answerKinds = new Set(["numeric", "expression", "antiderivative", "text", "set", "interval", "graph", "graphtap", "graphslope", "worksheet", "sketch", "proof"]);
 const ids = new Set();
 const errors = [];
 const allowedRawWords = new Set([
@@ -149,6 +149,13 @@ problems.forEach((problem, index) => {
       if (sorted[i] - sorted[i - 1] < tol * 2) fail(id, `graphtap targets ${sorted[i - 1]} and ${sorted[i]} closer than 2×tolerance ${tol}`);
     }
   }
+  // 考卷裡的證明題：只是一個指向 proof-lang spec 的指標，判分由檢查器做。
+  // spec 存不存在、參考解過不過，由 tools/validate_proof_lang.js 第 11 節驗。
+  if (problem.answerKind === "proof") {
+    if (!problem.proofSpec) fail(id, "proof needs proofSpec (指向 proof_lang_content.js 的 spec id)");
+    if (!/^pl-[a-z0-9-]+$/.test(String(problem.proofSpec || ""))) fail(id, "proofSpec 看起來不是 spec id：" + problem.proofSpec);
+  }
+
   // 作圖題：格子只給 window，曲線在 sketch.expr；pieces 是必須畫到的 x 區段（漸近線兩側分開）。
   if (problem.answerKind === "sketch") {
     const spec = problem.sketch || {};

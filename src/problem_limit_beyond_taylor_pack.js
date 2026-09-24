@@ -570,6 +570,7 @@
     if (HINTS[problem.id]) problem.hints = HINTS[problem.id];
   });
 
+
   window.BUZZ_PROBLEMS = (window.BUZZ_PROBLEMS || []).concat(problems);
 })();
 
@@ -938,6 +939,98 @@
     tags: ["epsilon-delta", "continuity"], timeLimit: 110,
     hints: ["右側較緊：(3+δ)²−9 ≤ 0.25。", "δ = √9.25 − 3。"],
     solution: "√9.25−3 ≈ 0.0414（左側 3−√8.75≈0.0420 較寬，取小的）。" });
+
+  window.BUZZ_PROBLEMS = (window.BUZZ_PROBLEMS || []).concat(problems);
+})();
+
+/* ═══════════════════════════════════════════════════════════════════
+   考卷裡的證明題（px-，2026-09-24）：answerKind "proof"。
+   每一題只是一個指標，指向 proof_lang_content.js 裡的一個 spec；
+   作答區是文字板，判分交給白話證明的檢查器（全綠才算對）。
+
+   為什麼不把題目敘述再寫一遍：spec 自己有 statement 與參考解，
+   畫面上顯示的是 spec 的版本，這裡的 prompt 只是考卷上的題目行。
+   兩者若不一致，tools/validate_proof_lang.js 的第 11 節會擋下來。
+   ═══════════════════════════════════════════════════════════════════ */
+(function () {
+  "use strict";
+
+  const SOURCE = "Buzz 考卷證明題 2026-09";
+  const problems = [];
+
+  const add = (id, rank, spec, topic, prompt, tags, timeLimit) => problems.push({
+    id,
+    source: SOURCE,
+    topic,
+    rank,
+    difficulty: Math.min(4, rank),
+    answerKind: "proof",
+    proofSpec: spec,
+    prompt,
+    answer: "（白話證明．機器判分）",
+    timeLimit: timeLimit || 300,
+    tags: ["proof", "written-proof"].concat(tags || [], [`rank-${rank}`], rank >= 5 ? ["boss-rank"] : [], rank <= 2 ? ["beginner-friendly"] : []),
+    hints: ["一行一句，每句用一種句型開頭：任取／取／假設／則／由…／因為…所以／故。", "先寫出要證的東西長什麼樣，再一步一步扣回去。", "每一行都會被檢查：站不住的那一行會標紅。"],
+    solution: "按送出之後會顯示參考解；跟自己寫的比對哪一步沒接上。"
+  });
+
+  /* ε-δ：期中卷最常見的證明題 */
+  add("px-eps-001", 3, "pl-limit-linear", "limits",
+    "\\text{用 }\\varepsilon\\text{-}\\delta\\text{ 定義證明 }\\lim_{x\\to 2}(3x-1)=5",
+    ["epsilon-delta", "continuity"], 300);
+  add("px-eps-002", 4, "pl-limit-square", "limits",
+    "\\text{用 }\\varepsilon\\text{-}\\delta\\text{ 定義證明 }\\lim_{x\\to 3}x^{2}=9",
+    ["epsilon-delta", "continuity"], 360);
+  add("px-eps-003", 3, "pl-seq-reciprocal", "limits",
+    "\\text{用 }\\varepsilon\\text{-}N\\text{ 定義證明 }\\lim_{n\\to\\infty}\\frac{1}{n}=0",
+    ["epsilon-delta", "sequence-limit"], 300);
+
+  /* 不等式：直接鏈，適合當短證明 */
+  add("px-ineq-001", 2, "pl-amgm", "derivatives",
+    "\\text{證明：}a,b>0\\text{ 時 }\\frac{a+b}{2}\\ge\\sqrt{a\\,b}",
+    ["inequality"], 240);
+  add("px-ineq-002", 2, "pl-square-bound", "derivatives",
+    "\\text{證明：對所有實數 }x\\text{，}x^{2}+1\\ge 2x",
+    ["inequality"], 210);
+  add("px-ineq-003", 3, "pl-reverse-triangle", "limits",
+    "\\text{證明反向三角不等式：}\\left|\\,|a|-|b|\\,\\right|\\le|a-b|",
+    ["inequality", "absolute-value"], 270);
+
+  /* 微分的定理：期末卷的證明題 */
+  add("px-mvt-001", 3, "pl-mvt-constant", "derivatives",
+    "\\text{證明：若 }f'(x)=0\\text{ 在一個區間上恆成立，則 }f\\text{ 在那個區間上是常數}",
+    ["mean-value", "mvt"], 300);
+  add("px-mvt-002", 4, "pl-mvt-increasing", "derivatives",
+    "\\text{證明：若 }f'(x)>0\\text{ 在一個區間上恆成立，則 }f\\text{ 在那個區間上嚴格遞增}",
+    ["mean-value", "mvt"], 330);
+  add("px-mvt-003", 5, "pl-mvt-from-rolle", "derivatives",
+    "\\text{由 Rolle 定理證明平均值定理}",
+    ["mean-value", "rolle", "mvt"], 420);
+
+  /* 連續性：中間值定理與夾擠 */
+  add("px-ivt-001", 3, "pl-ivt-cubic", "limits",
+    "\\text{證明 }x^{3}-3x+1=0\\text{ 在 }(0,1)\\text{ 內有實根}",
+    ["ivt", "continuity"], 270);
+  add("px-ivt-002", 4, "pl-ivt-root", "limits",
+    "\\text{證明 }x^{5}+x-1=0\\text{ 有實根}",
+    ["ivt", "continuity"], 300);
+  add("px-sq-001", 4, "pl-squeeze-sin", "limits",
+    "\\text{用夾擠定理證明 }\\lim_{x\\to 0}x\\sin\\frac{1}{x}=0",
+    ["squeeze", "trig-limit"], 300);
+
+  /* 積分與級數的範圍：期末卷與全範圍卷要用（前面那些都是極限與微分） */
+  add("px-ind-001", 2, "pl-sum-odd", "series",
+    "\\text{用數學歸納法證明 }1+3+5+\\cdots+(2n-1)=n^{2}",
+    ["induction"], 270);
+  add("px-ind-002", 3, "pl-induction-squares", "series",
+    "\\text{用數學歸納法證明 }1^{2}+2^{2}+\\cdots+n^{2}=\\frac{n(n+1)(2n+1)}{6}",
+    ["induction"], 300);
+  add("px-ind-003", 4, "pl-bernoulli", "series",
+    "\\text{用數學歸納法證明 Bernoulli 不等式：}(1+x)^{n}\\ge 1+n\\,x\\quad(x>-1)",
+    ["induction", "inequality"], 330);
+  add("px-int-001", 5, "pl-frullani-exp", "integrals",
+    "\\text{證明 Frullani 積分：}\\int_{0}^{\\infty}\\frac{e^{-a\\,x}-e^{-b\\,x}}{x}\\,dx=\\ln\\frac{b}{a}\\quad(a,b>0)",
+    ["improper-integral"], 420);
 
   window.BUZZ_PROBLEMS = (window.BUZZ_PROBLEMS || []).concat(problems);
 })();
