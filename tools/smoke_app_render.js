@@ -276,6 +276,40 @@ global.localStorage.getItem = originalGetItem;
   console.log("逐步出現 smoke: 全新帳號的訓練頁只有「練習」、首頁沒有探索更多；練過的帳號四種練法全在");
 }
 
+// ── 用過的功能不會被收回去（2026-09-24）──
+// 逐步出現的第一版只看局數：寫過證明的人換一台裝置、只練了一局，
+// 證明訓練的三個入口會同時消失（使用者回報「證明題庫怎麼突然找不到了」）。
+// 這裡釘住兩條：碰過證明就一定看得到入口；練完第一局，題庫頁就有「證明題庫」。
+{
+  const render = (records) => {
+    const original = global.localStorage.getItem;
+    global.localStorage.getItem = () => JSON.stringify(records);
+    try {
+      return { home: api.renderHome(), library: api.renderLibrary(), topbar: api.renderTopbar() };
+    } finally {
+      global.localStorage.getItem = original;
+    }
+  };
+  const hasProofEntry = (html) => /data-action="open-proofs"/.test(html);
+
+  const oneSession = { onboardingSeen: true, totalAnswered: 12, history: [{ at: Date.now(), answers: [] }] };
+  const wroteProofs = { ...oneSession, proofs: { "proof-mvt-001": { status: "understood" } } };
+
+  const plain = render(oneSession);
+  if (!hasProofEntry(plain.library)) throw new Error("練完第一局的人在題庫頁找不到證明題庫");
+
+  const veteran = render(wroteProofs);
+  ["home", "library", "topbar"].forEach((where) => {
+    if (!hasProofEntry(veteran[where])) throw new Error(`寫過證明的人在 ${where} 看不到證明訓練的入口`);
+  });
+
+  // 反面：完全沒練過的人仍然乾淨（逐步出現本身還在）
+  const fresh = render({ onboardingSeen: true, totalAnswered: 0 });
+  if (hasProofEntry(fresh.home)) throw new Error("全新帳號的首頁不該有證明入口");
+
+  console.log("證明入口 smoke: 碰過證明就不會消失、練完一局題庫頁就有、全新帳號仍然乾淨");
+}
+
 const emptyInsights = api.renderInsights();
 if (!emptyInsights.includes("還沒有資料")) {
   throw new Error("insights should tell a brand-new user there is no data yet");
