@@ -282,6 +282,16 @@
     { id: "adv.bessel", label: "Bessel 與特殊方程", tier: 5, obscurity: 3, family: "adv", prereq: ["adv.ode.second"], radarAxis: "special",
       tags: ["bessel"] },
 
+    /* ===== 積分與級數的圖形／估計（2026-09）=====
+       這三個節點練的是「看得見的積分」：累積函數的形狀、數值公式的偏差、
+       級數部分和收到哪裡。它們不是新技巧，是既有技巧的圖形面 ——
+       但能力模型上必須分得出來：會算 ∫x²dx 不代表看得懂 g(x)=∫₀ˣf 的圖。 */
+    { id: "integral.accumulation", label: "累積函數與 FTC 的圖", tier: 3, obscurity: 1, family: "integral", topics: ["integrals"], prereq: ["integral.ftc"],
+      tags: ["accumulation", "antiderivative-graph"] },
+    { id: "integral.numeric", label: "數值積分", tier: 3, obscurity: 2, family: "integral", topics: ["integrals"], prereq: ["integral.basic"],
+      tags: ["numerical-integration", "simpson"] },
+    { id: "series.estimate", label: "級數的估計與誤差", tier: 4, obscurity: 2, family: "series", topics: ["series"], prereq: ["series.alternating"],
+      tags: ["series-estimate", "error-bound"] },
     /* ===== 分析學（2026-09）=====
        微積分問「算出來是多少」，分析學問「這個算法為什麼可以用」。
        三個節點對應三件在計算層看不見、但大二會被考的事：

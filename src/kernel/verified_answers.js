@@ -6,7 +6,7 @@
 // 為什麼放側表而不是寫進題目物件：題目物件多一個欄位就會改變抽題與 golden 測試的結果。
 // 內容的中繼資料一律走側表，這是專案的既有約定。
 //
-// 產生時的統計：2345 題中 2102 題通過，不符 0 題。
+// 產生時的統計：2387 題中 2144 題通過，不符 0 題。
 
 (function registerVerifiedAnswers() {
   "use strict";
@@ -1215,6 +1215,37 @@
     "hd-010",
     "hd-011",
     "hd-012",
+    "ig-num-001",
+    "ig-num-002",
+    "ig-num-003",
+    "ig-num-004",
+    "ig-num-005",
+    "ig-num-006",
+    "ig-num-007",
+    "ig-num-008",
+    "ig-num-009",
+    "ig-num-010",
+    "ig-num-011",
+    "ig-pick-001",
+    "ig-pick-002",
+    "ig-pick-003",
+    "ig-pick-004",
+    "ig-pick-005",
+    "ig-pick-006",
+    "ig-pick-007",
+    "ig-pick-008",
+    "ig-tap-001",
+    "ig-tap-002",
+    "ig-tap-003",
+    "ig-tap-004",
+    "ig-tap-005",
+    "ig-tap-006",
+    "ig-tap-007",
+    "ig-tap-008",
+    "ig-tap-009",
+    "ig-tap-010",
+    "ig-tap-011",
+    "ig-tap-012",
     "int-001",
     "int-002",
     "int-003",
@@ -1653,6 +1684,17 @@
     "ser-037",
     "ser-038",
     "ser-039",
+    "sg-est-001",
+    "sg-est-002",
+    "sg-est-003",
+    "sg-est-004",
+    "sg-est-005",
+    "sg-est-006",
+    "sg-est-007",
+    "sg-est-008",
+    "sg-est-009",
+    "sg-est-010",
+    "sg-est-011",
     "si-int-001",
     "si-int-002",
     "si-int-003",
@@ -2119,6 +2161,6 @@
   window.BuzzVerifiedAnswers = {
     has: function (id) { return Boolean(id && SET[id]); },
     count: IDS.length,
-    total: 2345
+    total: 2387
   };
 })();

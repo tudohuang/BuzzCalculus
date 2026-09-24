@@ -831,3 +831,443 @@
 
   window.BUZZ_PROBLEMS = (window.BUZZ_PROBLEMS || []).concat(problems);
 })();
+
+/* ═══════════════════════════════════════════════════════════════
+   積分與級數的圖形包（2026-09-25）：42 題。
+
+   盤點出來的洞很具體：全站 128 題「有圖」的題目裡，102 題是微分，
+   而互動題型（點位、拖切線、作圖、選圖）118 題**全部**是微分。
+   積分只有 21 題折線讀圖、級數是 0 —— 一張圖都沒有。
+
+   可是這兩章的核心概念恰恰是圖形的：
+     累積函數 g(x)=∫₀ˣf  ── g 的增減由 f 的正負決定，g 的極值在 f 的變號零點，
+                            g 的反曲點在 f 的極值。這件事用講的要三句，用點的一秒。
+     數值積分            ── 梯形法為什麼高估？因為弦在凹向上的曲線上方。看圖就懂。
+     級數的收斂          ── 部分和的折線在兩條包絡線之間收緊，那就是交錯級數判別法。
+
+   四節：
+     累積函數的點位   12 ── 圖上是 f，點出 g 的極大／極小／反曲點（重用 fmax/fmin/finflection）
+     哪一張是累積函數  8 ── 選圖題，graphRelation: "antiderivative"
+     數值積分         11 ── 梯形／中點／左右和／辛普森，外加三題「高估還是低估」
+     級數的估計       11 ── 部分和折線圖、交錯級數誤差界、積分判別法的尾端界
+
+   驗算器補兩條：riemannRule（從 f、[a,b]、n 自己套一次公式）與 ruleBias
+   （公式值跟真值比大小，不背「凹向上就高估」那條結論）。
+   辛普森法對三次多項式是精確的 —— 那一題的「估計值」就是真值，
+   ruleBias 會誠實地說「差不到 1e-6，判不出來」，所以那題問的是值不是方向。 */
+(function () {
+  "use strict";
+
+  const SOURCE = "Buzz 積分與級數圖形包 2026-09";
+  const problems = [];
+
+  function add(problem) {
+    const rank = problem.rank;
+    const tags = [...(problem.tags || []), "graph-reading", `rank-${rank}`];
+    if (rank >= 5) tags.push("boss-rank");
+    if (rank === 6) tags.push("boss-plus");
+    if (rank <= 2) tags.push("beginner-friendly");
+    problems.push({
+      source: SOURCE,
+      difficulty: Math.min(4, rank),
+      answerKind: "numeric",
+      ...problem,
+      tags
+    });
+  }
+
+  /* ── 一、累積函數的點位（12）──────────────────────────────────
+     圖上畫的是 f，要點的是 g(x)=∫₀ˣf(t)dt 的極值與反曲點。
+     這跟「圖上是 f′、點出 f 的極值」是同一件事 —— 判分重用 fmax/fmin/finflection。 */
+
+  const tap = (id, rank, prompt, answer, window, expr, tapKind, tags, solution, timeLimit) =>
+    add({
+      id, topic: "integrals", rank, prompt, answer, tags, solution, timeLimit,
+      answerKind: "graphtap", tapKind,
+      graph: { window, curves: [{ expr }] }
+    });
+
+  tap("ig-tap-001", 3,
+    "\\text{圖為 }f(x)=x^2-4\\text{。設 }g(x)=\\int_0^x f(t)\\,dt\\text{，在圖上點出 }g\\text{ 的極大值位置}",
+    "-2", [-3, 3, -5, 6], "x**2-4", "fmax",
+    ["accumulation", "ftc"],
+    "g′=f，所以 g 的極大在 f 由正變負的地方。f=x²−4 在 x=−2 由正變負（左邊是正的），那裡就是 g 的極大。", 80);
+
+  tap("ig-tap-002", 3,
+    "\\text{圖為 }f(x)=x^2-4\\text{。設 }g(x)=\\int_0^x f(t)\\,dt\\text{，在圖上點出 }g\\text{ 的極小值位置}",
+    "2", [-3, 3, -5, 6], "x**2-4", "fmin",
+    ["accumulation", "ftc"],
+    "g 的極小在 f 由負變正的地方，也就是 x=2。注意兩個零點各對應一種極值，不是兩個都極小。", 80);
+
+  tap("ig-tap-003", 4,
+    "\\text{圖為 }f(x)=x^2-4\\text{。設 }g(x)=\\int_0^x f(t)\\,dt\\text{，在圖上點出 }g\\text{ 的反曲點位置}",
+    "0", [-3, 3, -5, 6], "x**2-4", "finflection",
+    ["accumulation", "ftc"],
+    "g″=f′，所以 g 的反曲點在 f 的極值處。f 的最低點在 x=0，那就是 g 的反曲點 —— 也是 g 下降得最快的地方。", 100);
+
+  tap("ig-tap-004", 3,
+    "\\text{圖為 }f(x)=9-x^2\\text{。設 }g(x)=\\int_0^x f(t)\\,dt\\text{，在圖上點出 }g\\text{ 的極大值位置}",
+    "3", [-4, 4, -8, 10], "9-x**2", "fmax",
+    ["accumulation", "ftc"],
+    "f 在 (−3,3) 為正、過了 x=3 變負，所以 g 一路累積到 x=3 達到最大。開口向下的拋物線，右邊那個零點就是 g 的頂點。", 80);
+
+  tap("ig-tap-005", 4,
+    "\\text{圖為 }f(x)=\\sin x\\ (0\\le x\\le 2\\pi)\\text{。設 }g(x)=\\int_0^x f(t)\\,dt\\text{，點出 }g\\text{ 的極大值位置}",
+    "3.14159", [0, 6.4, -1.5, 1.5], "sin(x)", "fmax",
+    ["accumulation", "ftc", "trig"],
+    "g=1−cos x，極大在 f 由正變負處 x=π。畫面上就是正弦波第一次穿過 x 軸往下的那一點。", 100);
+
+  tap("ig-tap-006", 4,
+    "\\text{圖為 }f(x)=\\cos x\\ (0\\le x\\le 2\\pi)\\text{。設 }g(x)=\\int_0^x f(t)\\,dt\\text{，點出 }g\\text{ 的極大值位置}",
+    "1.5708", [0, 6.4, -1.5, 1.5], "cos(x)", "fmax",
+    ["accumulation", "ftc", "trig"],
+    "g=sin x，極大在 x=π/2 —— 也就是餘弦波第一次由正變負的位置。", 100);
+
+  tap("ig-tap-007", 3,
+    "\\text{圖為 }f(x)=x^2-3x\\text{。設 }g(x)=\\int_0^x f(t)\\,dt\\text{，點出 }g\\text{ 的極大值位置}",
+    "0", [-1.5, 4.5, -3, 6], "x**2-3*x", "fmax",
+    ["accumulation", "ftc"],
+    "f 的零點是 0 與 3。在 x=0 由正變負（左邊 f>0），所以 g 的極大在原點；x=3 由負變正，那裡是極小。", 90);
+
+  tap("ig-tap-008", 3,
+    "\\text{圖為 }f(x)=x^2-3x\\text{。設 }g(x)=\\int_0^x f(t)\\,dt\\text{，點出 }g\\text{ 的極小值位置}",
+    "3", [-1.5, 4.5, -3, 6], "x**2-3*x", "fmin",
+    ["accumulation", "ftc"],
+    "g 在 (0,3) 一路下降（f<0），過了 x=3 才回頭上升，所以最低點在 x=3。", 90);
+
+  tap("ig-tap-009", 5,
+    "\\text{圖為 }f(x)=x^3-4x\\text{。設 }g(x)=\\int_0^x f(t)\\,dt\\text{，點出 }g\\text{ 的所有極小值位置}",
+    "-2,2", [-3, 3, -6, 6], "x**3-4*x", "fmin",
+    ["accumulation", "ftc"],
+    "f 的零點是 −2、0、2，符號依序是 −、+、−、+。由負變正的有兩個：x=−2 與 x=2，所以 g 有兩個極小。", 130);
+
+  tap("ig-tap-010", 5,
+    "\\text{圖為 }f(x)=x^3-4x\\text{。設 }g(x)=\\int_0^x f(t)\\,dt\\text{，點出 }g\\text{ 的極大值位置}",
+    "0", [-3, 3, -6, 6], "x**3-4*x", "fmax",
+    ["accumulation", "ftc"],
+    "三個零點裡只有 x=0 是由正變負的，所以 g 只有一個極大 —— 而且它夾在兩個極小之間。", 130);
+
+  tap("ig-tap-011", 4,
+    "\\text{圖為 }f(x)=(x-1)(x-3)\\text{。設 }g(x)=\\int_0^x f(t)\\,dt\\text{，點出 }g\\text{ 的極大值位置}",
+    "1", [-0.5, 4.5, -2, 4], "(x-1)*(x-3)", "fmax",
+    ["accumulation", "ftc"],
+    "f 在 x=1 由正變負，所以 g 在那裡由升轉降。展開成 x²−4x+3 也行，但看零點更快。", 100);
+
+  tap("ig-tap-012", 4,
+    "\\text{圖為 }f(x)=(x-1)(x-3)\\text{。設 }g(x)=\\int_0^x f(t)\\,dt\\text{，點出 }g\\text{ 的反曲點位置}",
+    "2", [-0.5, 4.5, -2, 4], "(x-1)*(x-3)", "finflection",
+    ["accumulation", "ftc"],
+    "g″=f′，反曲點在 f 的最低點 x=2（兩個零點的中間）。那裡也是 g 下降最快的一點。", 110);
+
+  /* ── 二、哪一張是累積函數（8）───────────────────────────────
+     選圖題。誘答故意做成三種真實的畫圖錯誤：把 f 自己當成 g、
+     常數項錯（g(0)=0 這個條件被忽略）、積分與微分做反。 */
+
+  const pickGraph = (id, rank, fExpr, fLabel, gLabel, window, choices, tags, steps, solution, timeLimit) => {
+    const correct = choices.find((choice) => choice.correct);
+    add({
+      id, topic: "integrals", rank, tags, solution, timeLimit,
+      prompt: `\\text{圖為 }f(x)=${fLabel}\\text{。哪一張是 }g(x)=\\int_0^x f(t)\\,dt\\text{ 的圖？}`,
+      answerKind: "graph", graphRelation: "antiderivative",
+      answer: correct.expr,
+      graph: { window, curves: [{ expr: fExpr }] },
+      graphWindow: window,
+      graphChoices: choices,
+      solutionSteps: steps
+    });
+  };
+
+  pickGraph("ig-pick-001", 3, "2*x", "2x", "g", [-2, 3, -3, 9],
+    [
+      { expr: "x**2", correct: true },
+      { expr: "2*x", why: "這是 f 自己。g 是累積面積，f 是直線時 g 應該是拋物線。" },
+      { expr: "x**2+2", why: "形狀對了，但 g(0)=∫₀⁰f=0，圖必須過原點。" },
+      { expr: "x**3/3", why: "這是把 f 當成 x² 積出來的。f 是 2x，它的原函數是 x²。" }
+    ],
+    ["accumulation", "antiderivative-graph"],
+    ["f=2x 在 x>0 為正 → g 在右邊遞增，在 x<0 為負 → g 在左邊遞減。",
+      "g(0)=0，圖一定過原點。",
+      "f 是一次式 → g 是二次式，排除直線與三次曲線。",
+      "只剩 x²。"],
+    "g(x)=∫₀ˣ2t dt = x²：過原點、左降右升的拋物線。", 70);
+
+  pickGraph("ig-pick-002", 3, "cos(x)", "\\cos x", "g", [-0.5, 6.5, -2, 2],
+    [
+      { expr: "sin(x)", correct: true },
+      { expr: "cos(x)", why: "這是 f 自己。g 的極大應該落在 f 的變號零點上，不是 f 的最高點。" },
+      { expr: "-sin(x)", why: "方向反了：f 在 0 附近為正，g 必須先上升。" },
+      { expr: "sin(x)+1", why: "上下平移了。g(0)=0，圖要過原點。" }
+    ],
+    ["accumulation", "antiderivative-graph", "trig"],
+    ["g(0)=0，先排除不過原點的。",
+      "f=cos x 在 (0,π/2) 為正 → g 在那一段遞增。",
+      "f 在 x=π/2 變號 → g 的極大在 π/2。",
+      "符合的只有 sin x。"],
+    "g(x)=∫₀ˣcos t dt = sin x。", 70);
+
+  pickGraph("ig-pick-003", 3, "x**2", "x^2", "g", [-2, 3, -3, 9],
+    [
+      { expr: "x**3/3", correct: true },
+      { expr: "x**2", why: "這是 f 自己。f 恆為正 → g 必須一路遞增，拋物線在左半邊是遞減的。" },
+      { expr: "x**3", why: "係數錯了：∫x²dx = x³/3，不是 x³。在 x=3 差了三倍。" },
+      { expr: "2*x", why: "這是 f 的導數不是原函數，方向做反了。" }
+    ],
+    ["accumulation", "antiderivative-graph"],
+    ["f=x²≥0 → g 在整條線上遞增（在 x=0 短暫持平）。",
+      "f(0)=0 → g 在原點的切線是水平的。",
+      "f 是二次 → g 是三次。",
+      "係數要對：∫₀ˣt²dt = x³/3。"],
+    "g(x)=x³/3：遞增、在原點有水平切線的三次曲線。", 80);
+
+  pickGraph("ig-pick-004", 4, "exp(x)", "e^x", "g", [-1.5, 1.6, -1.5, 5],
+    [
+      { expr: "exp(x)-1", correct: true },
+      { expr: "exp(x)", why: "差一個常數：g(0) 必須是 0，而 e⁰=1。" },
+      { expr: "exp(x)+1", why: "同樣是常數錯，而且方向反了 —— 這張圖在 x=0 的高度是 2。" },
+      { expr: "x*exp(x)", why: "這是把 e^x 乘上 x，不是積分。在 x<0 它會變負，但 f>0 保證 g 遞增。" }
+    ],
+    ["accumulation", "antiderivative-graph"],
+    ["f=e^x>0 → g 在整條線上嚴格遞增。",
+      "g(0)=0 → 圖過原點，這一條就刷掉兩個。",
+      "x→−∞ 時 f→0 → g 趨近一條水平線。",
+      "e^x−1 同時滿足這三件事。"],
+    "g(x)=∫₀ˣe^t dt = e^x−1：過原點、往左趨近 −1 的指數曲線。", 90);
+
+  pickGraph("ig-pick-005", 4, "sin(x)", "\\sin x", "g", [-0.5, 6.5, -1, 2.5],
+    [
+      { expr: "1-cos(x)", correct: true },
+      { expr: "-cos(x)", why: "形狀對，但 g(0) 要等於 0，這張在 0 的高度是 −1。" },
+      { expr: "cos(x)", why: "方向反了：f 在 (0,π) 為正，g 必須先上升。" },
+      { expr: "sin(x)", why: "這是 f 自己。g 的極大在 f 的變號零點 x=π，不是 x=π/2。" }
+    ],
+    ["accumulation", "antiderivative-graph", "trig"],
+    ["g(0)=0。",
+      "f=sin x 在 (0,π) 為正 → g 在那一段遞增，極大在 x=π。",
+      "f 在 (π,2π) 為負 → g 回落，在 2π 回到 0。",
+      "1−cos x 三件事都對。"],
+    "g(x)=∫₀ˣsin t dt = 1−cos x：在 0 與 2π 觸底、在 π 達到 2。", 90);
+
+  pickGraph("ig-pick-006", 4, "3*x**2", "3x^2", "g", [-2, 2, -8, 8],
+    [
+      { expr: "x**3", correct: true },
+      { expr: "6*x", why: "這是 f 的導數，方向做反了。" },
+      { expr: "x**3+2", why: "常數項錯：g(0)=0。" },
+      { expr: "3*x**3", why: "係數錯：∫3t²dt = t³，不用再乘 3。" }
+    ],
+    ["accumulation", "antiderivative-graph"],
+    ["f=3x²≥0 → g 遞增。",
+      "g(0)=0。",
+      "二次的 f → 三次的 g。",
+      "係數對一下：∫₀ˣ3t²dt = x³。"],
+    "g(x)=x³。", 80);
+
+  pickGraph("ig-pick-007", 4, "2-2*x", "2-2x", "g", [-1, 3, -4, 2],
+    [
+      { expr: "2*x-x**2", correct: true },
+      { expr: "-2", why: "這是 f 的導數（常數），不是累積函數。" },
+      { expr: "x**2-2*x", why: "開口反了：f 在 x<1 為正，g 必須先上升。" },
+      { expr: "2*x-x**2+1", why: "形狀對但沒過原點，g(0)=0 這個條件漏了。" }
+    ],
+    ["accumulation", "antiderivative-graph"],
+    ["f 在 x<1 為正、x>1 為負 → g 先升後降，極大在 x=1。",
+      "g(0)=0。",
+      "f 是一次 → g 是開口向下的二次。",
+      "2x−x² 全中。"],
+    "g(x)=2x−x²：過原點、頂點在 (1,1) 的下開拋物線。", 90);
+
+  pickGraph("ig-pick-008", 5, "1/(1+x**2)", "\\frac{1}{1+x^2}", "g", [-4, 4, -2, 2],
+    [
+      { expr: "atan(x)", correct: true },
+      { expr: "-atan(x)", why: "方向反了：f>0 保證 g 遞增。" },
+      { expr: "atan(x)+1", why: "常數錯：g(0)=0。" },
+      { expr: "1/(1+x**2)", why: "這是 f 自己。f 是鐘形的，但它恆為正 → g 只能一路遞增。" }
+    ],
+    ["accumulation", "antiderivative-graph"],
+    ["f>0 → g 嚴格遞增，先刷掉下降與鐘形的。",
+      "g(0)=0。",
+      "x→±∞ 時 f→0 且積分收斂 → g 有兩條水平漸近線。",
+      "arctan x：遞增、過原點、趨近 ±π/2。"],
+    "g(x)=arctan x。這題順便解釋了為什麼 arctan 的圖是 S 形：它累積的是一個鐘形的正函數。", 110);
+
+  /* ── 三、數值積分（11）──────────────────────────────────────
+     被積函數刻意都用多項式，估計值才會是乾淨的分數 ——
+     這一節要練的是公式的權重，不是輸入小數點後幾位。 */
+
+  const rule = (id, rank, prompt, answer, tags, solution, timeLimit, verify) =>
+    add({ id, topic: "integrals", rank, prompt, answer, tags, solution, timeLimit, verify });
+
+  rule("ig-num-001", 3,
+    "\\text{用梯形法（}n=4\\text{ 等分）估計 }\\int_0^1 x^2\\,dx",
+    "11/32",
+    ["numerical-integration", "riemann-sum"],
+    "h=1/4，T = h[f(0)/2 + f(¼) + f(½) + f(¾) + f(1)/2] = ¼[0 + 1/16 + 1/4 + 9/16 + 1/2] = 11/32 = 0.34375。真值是 1/3，梯形法高估了。", 120,
+    { m: "riemannRule", f: "x^2", a: 0, b: 1, n: 4, rule: "trapezoid" });
+
+  rule("ig-num-002", 4,
+    "\\text{用中點法（}n=4\\text{ 等分）估計 }\\int_0^1 x^2\\,dx",
+    "21/64",
+    ["numerical-integration", "riemann-sum"],
+    "取每一段的中點 1/8、3/8、5/8、7/8：M = ¼[(1/8)²+(3/8)²+(5/8)²+(7/8)²] = 21/64 = 0.328125。真值 1/3，中點法低估 —— 跟梯形法剛好在兩邊。", 130,
+    { m: "riemannRule", f: "x^2", a: 0, b: 1, n: 4, rule: "mid" });
+
+  rule("ig-num-003", 2,
+    "\\text{用左端點和（}n=4\\text{ 等分）估計 }\\int_0^2 x^2\\,dx",
+    "7/4",
+    ["numerical-integration", "riemann-sum"],
+    "h=1/2，取左端點 0、½、1、3/2：L = ½(0 + ¼ + 1 + 9/4) = 7/4。真值是 8/3≈2.67，遞增函數的左端點和一定低估。", 100,
+    { m: "riemannRule", f: "x^2", a: 0, b: 2, n: 4, rule: "left" });
+
+  rule("ig-num-004", 2,
+    "\\text{用右端點和（}n=4\\text{ 等分）估計 }\\int_0^2 x^2\\,dx",
+    "15/4",
+    ["numerical-integration", "riemann-sum"],
+    "取右端點 ½、1、3/2、2：R = ½(¼ + 1 + 9/4 + 4) = 15/4。跟左端點和差的剛好是 h[f(2)−f(0)] = 2。", 100,
+    { m: "riemannRule", f: "x^2", a: 0, b: 2, n: 4, rule: "right" });
+
+  rule("ig-num-005", 4,
+    "\\text{用辛普森法（}n=2\\text{ 等分）估計 }\\int_0^1 x^3\\,dx",
+    "1/4",
+    ["numerical-integration", "simpson"],
+    "S = (h/3)[f(0) + 4f(½) + f(1)] = (1/6)[0 + 4(1/8) + 1] = 1/4 —— 剛好等於真值。辛普森法對三次以下的多項式是精確的（雖然它是用拋物線去逼近）。", 150,
+    { m: "riemannRule", f: "x^3", a: 0, b: 1, n: 2, rule: "simpson" });
+
+  rule("ig-num-006", 4,
+    "\\text{用辛普森法（}n=4\\text{ 等分）估計 }\\int_0^2 x^3\\,dx",
+    "4",
+    ["numerical-integration", "simpson"],
+    "權重是 1,4,2,4,1：S = (0.5/3)[0 + 4(0.125) + 2(1) + 4(3.375) + 8] = 4，正好是真值。再一次印證：三次多項式辛普森法沒有誤差。", 150,
+    { m: "riemannRule", f: "x^3", a: 0, b: 2, n: 4, rule: "simpson" });
+
+  rule("ig-num-007", 3,
+    "\\text{用梯形法（}n=2\\text{ 等分）估計 }\\int_0^2 x^3\\,dx",
+    "5",
+    ["numerical-integration", "riemann-sum"],
+    "T = 1·[0/2 + 1 + 8/2] = 5。真值是 4 —— 凹向上的曲線，弦在曲線上方，所以梯形法高估了 25%。", 120,
+    { m: "riemannRule", f: "x^3", a: 0, b: 2, n: 2, rule: "trapezoid" });
+
+  rule("ig-num-008", 4,
+    "\\text{用中點法（}n=2\\text{ 等分）估計 }\\int_0^2 x^3\\,dx",
+    "7/2",
+    ["numerical-integration", "riemann-sum"],
+    "中點是 ½ 與 3/2：M = 1·(0.125 + 3.375) = 3.5。真值 4，低估。中點法的誤差大約是梯形法的一半，而且方向相反 —— 這就是辛普森法 (2M+T)/3 的來源。", 140,
+    { m: "riemannRule", f: "x^3", a: 0, b: 2, n: 2, rule: "mid" });
+
+  const bias = (id, rank, prompt, answers, distractors, tags, solution, timeLimit, verify) =>
+    add({
+      id, topic: "integrals", rank, prompt, tags, solution, timeLimit, verify,
+      answerKind: "text", answers, canonical: answers[0], distractors
+    });
+
+  bias("ig-num-009", 3,
+    "\\text{對凹向上的 }f(x)=\\frac{1}{x}\\text{ 在 }[1,2]\\text{ 上，梯形法（}n=4\\text{）的估計值會高估還是低估？}",
+    ["高估", "偏大", "overestimate"],
+    ["低估", "剛好等於真值", "無法判斷"],
+    ["numerical-integration", "riemann-sum"],
+    "凹向上時每一段的弦都在曲線上方，梯形的面積因此比曲線下的面積大 —— 一定高估。這跟函數是遞增還是遞減無關，只看凹向。", 110,
+    { m: "ruleBias", f: "1/x", a: 1, b: 2, n: 4, rule: "trapezoid" });
+
+  bias("ig-num-010", 4,
+    "\\text{對凹向上的 }f(x)=\\frac{1}{x}\\text{ 在 }[1,2]\\text{ 上，中點法（}n=4\\text{）的估計值會高估還是低估？}",
+    ["低估", "偏小", "underestimate"],
+    ["高估", "剛好等於真值", "無法判斷"],
+    ["numerical-integration", "riemann-sum"],
+    "中點法等價於用「過中點的切線」圍成的梯形，而凹向上的曲線整段在切線上方，所以低估。梯形法高估、中點法低估，真值被夾在中間 —— 這對組合可以拿來估誤差。", 130,
+    { m: "ruleBias", f: "1/x", a: 1, b: 2, n: 4, rule: "mid" });
+
+  bias("ig-num-011", 2,
+    "\\text{對遞增函數 }f(x)=x^2\\text{ 在 }[0,1]\\text{ 上，左端點和（}n=4\\text{）會高估還是低估？}",
+    ["低估", "偏小", "underestimate"],
+    ["高估", "剛好等於真值", "無法判斷"],
+    ["numerical-integration", "riemann-sum"],
+    "遞增函數在每一小段的最小值都在左端點，所以左端點和是下和 —— 一定低估。這一題看的是單調性，不是凹向。", 90,
+    { m: "ruleBias", f: "x^2", a: 0, b: 1, n: 4, rule: "left" });
+
+  /* ── 四、級數的估計（11）────────────────────────────────────
+     部分和的折線圖 + 尾端的積分界。級數這一章在題庫裡原本一張圖都沒有，
+     但「收斂」這件事本來就是看部分和的折線有沒有停下來。 */
+
+  const ser = (id, rank, prompt, answer, tags, solution, timeLimit, verify, graph) =>
+    add({ id, topic: "series", rank, prompt, answer, tags, solution, timeLimit, verify, graph });
+
+  ser("sg-est-001", 3,
+    "\\text{交錯調和級數的部分和 }S_1=1,\\ S_2=0.5,\\ S_3\\approx 0.833,\\ S_4\\approx 0.583\\text{（如圖）。求 }S_6",
+    "37/60",
+    ["series-estimate", "alternating-series"],
+    "S_6 = 1 − ½ + ⅓ − ¼ + ⅕ − ⅙ = 37/60 ≈ 0.6167。折線在奇數項與偶數項兩條包絡線之間一步步收緊，極限 ln 2 被夾在中間。", 130,
+    { m: "series", f: "(-1)^(n+1)/n", from: 1, to: 6 },
+    { window: [0, 7, 0, 1.2], polylines: [[[1, 1], [2, 0.5], [3, 0.8333], [4, 0.5833], [5, 0.7833], [6, 0.6167]]] });
+
+  ser("sg-est-002", 4,
+    "\\text{要讓交錯調和級數的部分和與級數和的誤差小於 }0.01\\text{，至少要取幾項？}",
+    "100",
+    ["series-estimate", "alternating-series", "error-bound"],
+    "交錯級數判別法的誤差界是第一個被丟掉的項：|S − S_n| ≤ a_{n+1} = 1/(n+1)。要它小於 0.01 需要 n+1 > 100，也就是取 100 項。收斂慢得驚人。", 150,
+    { m: "firstIndex", f: "1/(n+1)", below: 0.01, max: 10000 });
+
+  ser("sg-est-003", 5,
+    "\\text{調和級數的部分和 }H_n=\\sum_{k=1}^{n}\\frac{1}{k}\\text{ 第一次超過 }5\\text{ 時，}n\\text{ 是多少？}",
+    "83",
+    ["series-estimate", "integral-test"],
+    "H_n ≈ ln n + γ（γ≈0.5772），解 ln n + 0.5772 = 5 得 n ≈ 82.7，實際上 H_83 ≈ 5.002 是第一個超過 5 的。發散，但慢到要 83 項才走到 5。", 200,
+    { m: "firstIndex", f: "5-\\sum_{k=1}^{n}1/k", below: 0, max: 1000 });
+
+  ser("sg-est-004", 4,
+    "\\text{用積分判別法估 }\\sum_{n=11}^{\\infty}\\frac{1}{n^2}\\text{ 的上界（取 }\\int_{10}^{\\infty}\\frac{dx}{x^2}\\text{）}",
+    "1/10",
+    ["series-estimate", "integral-test", "error-bound"],
+    "1/x² 遞減，所以 Σ_{n≥11} 1/n² ≤ ∫₁₀^∞ dx/x² = 1/10。圖上就是「把每一個矩形塞進曲線下方」—— 這也是用部分和估 π²/6 時的誤差界。", 160,
+    { m: "integral", f: "1/x^2", a: 10, b: 10000000 });
+
+  ser("sg-est-005", 5,
+    "\\text{要讓 }\\sum_{n=1}^{N}\\frac{1}{n^3}\\text{ 與級數和的誤差小於 }10^{-3}\\text{，用積分界 }\\frac{1}{2N^2}\\text{ 估計時最小的 }N",
+    "23",
+    ["series-estimate", "integral-test", "error-bound"],
+    "尾端 Σ_{n>N} 1/n³ ≤ ∫_N^∞ dx/x³ = 1/(2N²)。解 1/(2N²) < 10⁻³ 得 N² > 500，N ≥ 23。比交錯調和級數的 100 項快得多 —— 收斂速度差在指數。", 190,
+    { m: "firstIndex", f: "1/(2n^2)", below: 0.001, max: 5000 });
+
+  ser("sg-est-006", 3,
+    "\\text{幾何級數的部分和 }S_1\\approx 0.667,\\ S_2\\approx 0.889,\\ S_3\\approx 0.963,\\ S_4\\approx 0.988\\text{（如圖）。求 }\\sum_{n=1}^{\\infty}\\frac{2}{3^n}",
+    "1",
+    ["series-estimate", "geometric-series"],
+    "首項 2/3、公比 1/3：和 = (2/3)/(1−1/3) = 1。折線從下方逼近水平線 y=1，每一步把剩下的距離縮成三分之一。", 110,
+    { m: "series", f: "2/3^n", from: 1 },
+    { window: [0, 6, 0, 1.3], polylines: [[[1, 0.6667], [2, 0.8889], [3, 0.963], [4, 0.9877], [5, 0.9959]]], dashed: [{ expr: "1" }] });
+
+  ser("sg-est-007", 4,
+    "\\text{Leibniz 級數 }\\sum_{n=1}^{\\infty}\\frac{(-1)^{n+1}}{2n-1}=\\frac{\\pi}{4}\\text{。求它的第四個部分和 }S_4",
+    "76/105",
+    ["series-estimate", "alternating-series"],
+    "S_4 = 1 − ⅓ + ⅕ − ⅐ = 76/105 ≈ 0.7238。π/4 ≈ 0.7854，誤差約 0.06，而下一項 1/9 ≈ 0.111 確實是它的上界。", 140,
+    { m: "series", f: "(-1)^(n+1)/(2n-1)", from: 1, to: 4 },
+    { window: [0, 6, 0, 1.2], polylines: [[[1, 1], [2, 0.6667], [3, 0.8667], [4, 0.7238], [5, 0.8349]]], dashed: [{ expr: "0.7854" }] });
+
+  ser("sg-est-008", 5,
+    "\\text{求 }\\max_{0\\le x\\le 1}\\left|\\sin x-\\left(x-\\frac{x^3}{6}\\right)\\right|",
+    "sin(1)-5/6",
+    ["series-estimate", "taylor", "error-bound"],
+    "差值在 [0,1] 上遞增（餘項是 x⁵/120 級的正量），最大值在端點：sin 1 − 5/6 ≈ 0.00814。拉格朗日餘項給的界是 1/120 ≈ 0.0083，跟實際誤差只差一點點。", 200,
+    { m: "extremeOf", f: "|\\sin x-(x-x^3/6)|", kind: "sup", integer: false, range: [0, 1] });
+
+  ser("sg-est-009", 5,
+    "\\text{求 }\\max_{0\\le x\\le 1}\\left|e^x-\\left(1+x+\\frac{x^2}{2}\\right)\\right|",
+    "exp(1)-5/2",
+    ["series-estimate", "taylor", "error-bound"],
+    "e^x 減去二階泰勒多項式之後恆為正且遞增，最大值在 x=1：e − 5/2 ≈ 0.2183。餘項界 e/6 ≈ 0.453 是對的但寬鬆 —— 界不等於實際誤差。", 200,
+    { m: "extremeOf", f: "|e^x-(1+x+x^2/2)|", kind: "sup", integer: false, range: [0, 1] });
+
+  ser("sg-est-010", 4,
+    "\\text{求 }\\sum_{n=1}^{\\infty}\\frac{1}{n^2+n}",
+    "1",
+    ["series-estimate", "telescoping"],
+    "1/(n²+n) = 1/n − 1/(n+1)，部分和裂項剩下 1 − 1/(N+1) → 1。部分和的折線一路貼著 y=1 往上，這是「看得出收斂」最乾淨的一個例子。", 150,
+    { m: "series", f: "1/(n^2+n)", from: 1 });
+
+  ser("sg-est-011", 3,
+    "\\text{交錯級數 }\\sum_{n=1}^{\\infty}\\frac{(-1)^{n+1}}{n^2}\\text{ 的第三個部分和 }S_3",
+    "31/36",
+    ["series-estimate", "alternating-series"],
+    "S_3 = 1 − ¼ + ⅑ = 31/36 ≈ 0.8611。級數和是 π²/12 ≈ 0.8225，而下一項 1/16 = 0.0625 是誤差的上界（實際誤差 0.039）。", 120,
+    { m: "series", f: "(-1)^(n+1)/n^2", from: 1, to: 3 });
+
+  window.BUZZ_PROBLEMS = (window.BUZZ_PROBLEMS || []).concat(problems);
+})();
