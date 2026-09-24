@@ -857,6 +857,10 @@
   //   1. 只藏「入口」，不藏「東西」：設定頁一個開關可以直接全開，已經在用的人不受影響。
   //   2. 藏起來的東西解鎖時講一句話，不要讓人以為介面壞了。
   //   3. 主要分頁（今天／訓練／數據／題庫／設定）永遠都在 —— 骨架變形比多兩個按鈕更迷路。
+  //   4. 用過的東西不會再被收回去（2026-09-24 補）：第一版只看局數，結果
+  //      「寫過證明但這台裝置只練了一局」的人，證明訓練的三個入口同時消失 ——
+  //      使用者的第一句話是「證明題庫怎麼突然找不到了」。功能可以晚點出現，
+  //      但不能在人家已經在用之後消失，那不是精簡，那是壞掉。
   const FEATURE_LEVELS = { started: 1, explore: 3 };
 
   function featureGate(records) {
@@ -866,13 +870,22 @@
     const answered = Number((records && records.totalAnswered) || 0);
     const familiar = all || sessions >= FEATURE_LEVELS.started || answered >= 8;
     const full = all || sessions >= FEATURE_LEVELS.explore || answered >= 60;
+    const touched = (value) => Boolean(value && typeof value === "object" && Object.keys(value).length);
+    // 證明：自評、機器判、草稿、課程進度 —— 任何一個碰過就算用過
+    const usedProofs = touched(records && records.proofs) || touched(records && records.proofLang)
+      || touched(records && records.proofLangLessons);
     return {
       all,
       familiar,
       full,
       // 有錯題才給錯題本；沒有的話那一頁只會說「這裡還沒有東西」
       mistakes: all || Object.keys((records && records.mistakes) || {}).length > 0,
-      history: all || sessions > 0
+      history: all || sessions > 0,
+      // 證明訓練：練到全開、或者這個人本來就在寫證明。題庫頁另外從「熟悉」就給入口 ——
+      // 那一頁本來就是來找題目的，證明題庫是題庫的一半內容，不是進階彩蛋。
+      proofs: full || usedProofs,
+      proofsInLibrary: familiar || usedProofs,
+      dailyOne: full || touched(records && records.dailyOne)
     };
   }
 
@@ -1464,7 +1477,7 @@
                 <button class="sidebar-link ${/^course/.test(view) ? "is-active" : ""}" data-action="open-course" title="入門課程">${icon("book-open")}<span>入門課程</span></button>
                 ${navGate.mistakes ? `<button class="sidebar-link ${view === "mistakes" ? "is-active" : ""}" data-action="open-mistakes" title="錯題本">${icon("refresh")}<span>錯題本</span></button>` : ""}
                 ${navGate.history ? `<button class="sidebar-link ${view === "history" ? "is-active" : ""}" data-action="open-history" title="練習紀錄">${icon("history")}<span>練習紀錄</span></button>` : ""}
-                ${navGate.full ? `<button class="sidebar-link ${/^proof/.test(view) ? "is-active" : ""}" data-action="open-proofs" title="證明訓練">${icon("file-pen-line")}<span>證明訓練</span></button>` : ""}
+                ${navGate.proofs ? `<button class="sidebar-link ${/^proof/.test(view) ? "is-active" : ""}" data-action="open-proofs" title="證明訓練">${icon("file-pen-line")}<span>證明訓練</span></button>` : ""}
               </div>
               <a class="sidebar-guide" href="guide.html">${icon("book-open")}<span><strong>把每次練習，變成進步</strong><small>閱讀使用手冊 ${icon("chevron-right")}</small></span></a>
               <div class="topbar-utils">
@@ -1607,7 +1620,7 @@
           ${gate.familiar ? `<div class="workspace-section-head"><h2>接下來練什麼</h2></div>${renderHomeSecondary(records, path, mission)}` : ""}
           ${renderGrowthLine(records)}
           ${renderHomeWeakness(records)}
-          ${gate.full ? `<section class="workspace-section"><div class="workspace-section-head"><h2>探索更多</h2></div>${renderHomeQuickLinks()}</section>` : ""}
+          ${gate.full || gate.proofs || gate.dailyOne ? `<section class="workspace-section"><div class="workspace-section-head"><h2>探索更多</h2></div>${renderHomeQuickLinks(gate)}</section>` : ""}
         </div>
       </main>
     `;
@@ -1648,13 +1661,15 @@
   // 藏得最深的幾個入口，在首頁給一排小門。
   // 每日一題與證明訓練原本要挖到「訓練 · 挑戰」（證明還要再開摺疊區）
   // 才找得到 —— 功能寫好了但沒有門，等於沒有。
-  function renderHomeQuickLinks() {
+  // 每一顆各自看閘門：練到全開的人四顆都有；只是「以前寫過證明」的人至少看得到
+  // 證明訓練那一顆，不會因為換了裝置就整排消失。
+  function renderHomeQuickLinks(gate) {
     return `
       <nav class="home-quick-links" aria-label="更多入口">
-        <button data-action="start-daily-one">${icon("puzzle")}<span>每日一題</span></button>
-        <button data-action="open-proofs">${icon("file-pen-line")}<span>證明訓練</span></button>
-        <button data-action="open-train" data-bucket="challenge">${icon("zap")}<span>好友對戰</span></button>
-        <button data-action="open-creator">${icon("pen")}<span>我要出題</span></button>
+        ${gate.dailyOne ? `<button data-action="start-daily-one">${icon("puzzle")}<span>每日一題</span></button>` : ""}
+        ${gate.proofs ? `<button data-action="open-proofs">${icon("file-pen-line")}<span>證明訓練</span></button>` : ""}
+        ${gate.full ? `<button data-action="open-train" data-bucket="challenge">${icon("zap")}<span>好友對戰</span></button>
+        <button data-action="open-creator">${icon("pen")}<span>我要出題</span></button>` : ""}
       </nav>
     `;
   }
@@ -3757,8 +3772,8 @@
             <nav class="home-more-links" aria-label="其他頁面">
               <button data-action="open-course">${icon("book-open")}入門課程</button>
               <button data-action="open-library">${icon("search")}題庫</button>
+              ${panelGate.proofs ? `<button data-action="open-proofs">${icon("file-pen-line")}證明題庫</button>` : ""}
               ${panelGate.full ? `<button data-action="open-boss-lab">${icon("trophy")}Boss 專區</button>
-              <button data-action="open-proofs">${icon("file-pen-line")}證明題</button>
               <button data-action="open-creator">${icon("file-pen-line")}出題工作坊</button>` : ""}
               <button data-action="open-settings">${icon("settings")}資料與設定</button>
             </nav>
@@ -4446,6 +4461,7 @@
     const fullAccess = libraryFullAccess(records);
     const lockedCount = fullAccess ? 0 : libraryProblems(records, { ignoreGate: true }).length - allItems.length;
     const browseCap = libraryBrowseCap(records);
+    const libraryGate = featureGate(records);
     return `
       <main class="screen">
         <section class="panel page-panel problem-library">
@@ -4456,7 +4472,8 @@
               <p>${problems.length.toLocaleString()} 題微積分，從基礎觀念到進階挑戰。搜尋、收藏，建立你的練習清單。</p>
             </div>
             <div class="action-row">
-              ${featureGate(loadRecords()).full ? `<button class="button secondary" data-action="open-creator">${icon("file-pen-line")}我要出題</button>` : ""}
+              ${libraryGate.proofsInLibrary ? `<button class="button secondary" data-action="open-proofs">${icon("file-pen-line")}證明題庫</button>` : ""}
+              ${libraryGate.full ? `<button class="button secondary" data-action="open-creator">${icon("file-pen-line")}我要出題</button>` : ""}
               <button class="button" data-action="start-library-filter" ${allItems.length ? "" : "disabled"}>${icon("shuffle")}練目前篩選</button>
             </div>
           </div>
@@ -4684,79 +4701,15 @@
     `;
   }
 
+  // 出題表單的畫面在 share_cards.js（app.js 撞預算搬出去的獨立片段）；
+  // 這裡只負責把狀態餵給它，驗證與存檔仍在本檔。
   function renderCreatorForm() {
-    const draft = activeCreatorDraft();
-    const needsVariable = draft.answerKind === "expression" || draft.answerKind === "antiderivative";
-    const answerHelp = {
-      numeric: "數值答案，可用 1/2、pi/4、sqrt(2)、ln(2) 這類寫法。",
-      expression: "寫成變數的函數，例如 2*x*cos(x^2)。系統會多點代入判分。",
-      antiderivative: "原函數，可省略 +C，例如 x*ln(x)-x。判分時檢查是否只差常數。",
-      text: "判定型答案，用逗號列出所有可接受的寫法，例如：收斂, converges。"
-    }[draft.answerKind];
-    const difficultyLabels = { 1: "R1 暖身", 2: "R2 基礎", 3: "R3 標準", 4: "R4 進階" };
-    return `
-      <section class="study-card creator-form">
-        <div class="panel-title-row">
-          <div>
-            <p class="section-label">${creatorEditingId ? "編輯題目" : "新題目"}</p>
-            <h3>${creatorEditingId ? escapeHtml(creatorEditingId) : "先驗證，才進題庫"}</h3>
-          </div>
-          ${creatorEditingId ? `<button class="button ghost" data-action="creator-new">${icon("x")}取消編輯</button>` : ""}
-        </div>
-        <div class="creator-fields">
-          <label>
-            <span>主題</span>
-            <select data-creator-field="topic">
-              ${Object.entries(TOPICS)
-                .filter(([key]) => key !== "all")
-                .map(([key, topic]) => `<option value="${key}" ${draft.topic === key ? "selected" : ""}>${topic.label}</option>`)
-                .join("")}
-            </select>
-          </label>
-          <label>
-            <span>難度</span>
-            <select data-creator-field="difficulty">
-              ${[1, 2, 3, 4].map((level) => `<option value="${level}" ${String(draft.difficulty) === String(level) ? "selected" : ""}>${difficultyLabels[level]}</option>`).join("")}
-            </select>
-          </label>
-          <label>
-            <span>作答型態</span>
-            <select data-creator-field="answerKind">
-              ${["numeric", "expression", "antiderivative", "text"].map((kind) => `<option value="${kind}" ${draft.answerKind === kind ? "selected" : ""}>${answerKindLabel(kind)}</option>`).join("")}
-            </select>
-          </label>
-          <label>
-            <span>時限（秒）</span>
-            <input type="number" min="10" max="600" data-creator-field="timeLimit" value="${escapeAttr(draft.timeLimit)}" />
-          </label>
-          ${
-            needsVariable
-              ? `<label><span>變數</span><input maxlength="1" data-creator-field="variable" value="${escapeAttr(draft.variable)}" placeholder="x" /></label>`
-              : ""
-          }
-          <label class="creator-wide">
-            <span>題目（LaTeX，不用寫 $）</span>
-            <textarea data-creator-field="prompt" rows="3" placeholder="\\lim_{x \\to 0}\\frac{\\sin x}{x}">${escapeHtml(draft.prompt)}</textarea>
-          </label>
-          <div class="creator-preview creator-wide">
-            <span>預覽</span>
-            <div class="math-block" data-creator-preview data-tex="${escapeAttr(draft.prompt)}"></div>
-          </div>
-          <label class="creator-wide">
-            <span>答案</span>
-            <input data-creator-field="answer" value="${escapeAttr(draft.answer)}" placeholder="${draft.answerKind === "text" ? "收斂, converges" : "例如 1/2 或 pi/4"}" />
-          </label>
-          <p class="panel-note creator-wide">${escapeHtml(answerHelp)}</p>
-          <label class="creator-wide">
-            <span>解說（答錯的人會看到，建議寫）</span>
-            <textarea data-creator-field="solution" rows="2" placeholder="為什麼答案是這個？一兩句就好。">${escapeHtml(draft.solution)}</textarea>
-          </label>
-        </div>
-        <div class="action-row">
-          <button class="button" data-action="creator-save">${icon("check")}驗證並${creatorEditingId ? "更新" : "加入"}</button>
-        </div>
-      </section>
-    `;
+    return window.BuzzCreatorForm.render({
+      draft: activeCreatorDraft(),
+      editingId: creatorEditingId,
+      topics: TOPICS,
+      answerKindLabel, escapeHtml, escapeAttr, icon
+    });
   }
 
   function renderCreatorSharePanel(mine) {
@@ -15449,6 +15402,8 @@
       nextUnansweredIndex,
       getQuiz: () => quiz,
       renderHome,
+      renderLibrary: renderProblemLibrary,
+      renderTopbar,
       trainBuckets: TRAIN_BUCKETS,
       setView: (next) => { view = next; },
       setBucket: (next) => { selectedBucket = next; },

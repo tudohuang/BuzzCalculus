@@ -317,6 +317,8 @@ interface Window {
   BuzzProofAnswer: { render(options: Record<string, any>): string };
   /** src/share_cards.js：手寫計算紙的外殼（畫布的事件與筆跡仍在 app.js） */
   BuzzBoardUI: { render(options: Record<string, any>): string };
+  /** src/share_cards.js：出題工作坊的表單（驗證與存檔仍在 app.js） */
+  BuzzCreatorForm: { render(options: Record<string, any>): string };
 
   /** src/share_cards.js：新手導覽（coach marks）。DOM 在 document.body，render 之後要 refresh() */
   BuzzTour: {

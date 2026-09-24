@@ -1588,3 +1588,86 @@
     refresh: () => { if (state.nodes) paint(); }
   };
 })();
+
+/* ── 出題工作坊：表單 ──────────────────────────────────────────
+   純畫面（下拉、輸入框、預覽格）。草稿、編輯中的題號、主題表都由呼叫端傳進來；
+   驗證與存檔仍在 app.js。2026-09-24 從 app.js 搬出來（主程式撞 720KB 預算）。 */
+(function () {
+  "use strict";
+  function render(options) {
+    const { draft, editingId, topics, answerKindLabel, escapeHtml, escapeAttr, icon } = options;
+    const needsVariable = draft.answerKind === "expression" || draft.answerKind === "antiderivative";
+    const answerHelp = {
+      numeric: "數值答案，可用 1/2、pi/4、sqrt(2)、ln(2) 這類寫法。",
+      expression: "寫成變數的函數，例如 2*x*cos(x^2)。系統會多點代入判分。",
+      antiderivative: "原函數，可省略 +C，例如 x*ln(x)-x。判分時檢查是否只差常數。",
+      text: "判定型答案，用逗號列出所有可接受的寫法，例如：收斂, converges。"
+    }[draft.answerKind];
+    const difficultyLabels = { 1: "R1 暖身", 2: "R2 基礎", 3: "R3 標準", 4: "R4 進階" };
+    return `
+      <section class="study-card creator-form">
+        <div class="panel-title-row">
+          <div>
+            <p class="section-label">${editingId ? "編輯題目" : "新題目"}</p>
+            <h3>${editingId ? escapeHtml(editingId) : "先驗證，才進題庫"}</h3>
+          </div>
+          ${editingId ? `<button class="button ghost" data-action="creator-new">${icon("x")}取消編輯</button>` : ""}
+        </div>
+        <div class="creator-fields">
+          <label>
+            <span>主題</span>
+            <select data-creator-field="topic">
+              ${Object.entries(topics)
+                .filter(([key]) => key !== "all")
+                .map(([key, topic]) => `<option value="${key}" ${draft.topic === key ? "selected" : ""}>${topic.label}</option>`)
+                .join("")}
+            </select>
+          </label>
+          <label>
+            <span>難度</span>
+            <select data-creator-field="difficulty">
+              ${[1, 2, 3, 4].map((level) => `<option value="${level}" ${String(draft.difficulty) === String(level) ? "selected" : ""}>${difficultyLabels[level]}</option>`).join("")}
+            </select>
+          </label>
+          <label>
+            <span>作答型態</span>
+            <select data-creator-field="answerKind">
+              ${["numeric", "expression", "antiderivative", "text"].map((kind) => `<option value="${kind}" ${draft.answerKind === kind ? "selected" : ""}>${answerKindLabel(kind)}</option>`).join("")}
+            </select>
+          </label>
+          <label>
+            <span>時限（秒）</span>
+            <input type="number" min="10" max="600" data-creator-field="timeLimit" value="${escapeAttr(draft.timeLimit)}" />
+          </label>
+          ${
+            needsVariable
+              ? `<label><span>變數</span><input maxlength="1" data-creator-field="variable" value="${escapeAttr(draft.variable)}" placeholder="x" /></label>`
+              : ""
+          }
+          <label class="creator-wide">
+            <span>題目（LaTeX，不用寫 $）</span>
+            <textarea data-creator-field="prompt" rows="3" placeholder="\\lim_{x \\to 0}\\frac{\\sin x}{x}">${escapeHtml(draft.prompt)}</textarea>
+          </label>
+          <div class="creator-preview creator-wide">
+            <span>預覽</span>
+            <div class="math-block" data-creator-preview data-tex="${escapeAttr(draft.prompt)}"></div>
+          </div>
+          <label class="creator-wide">
+            <span>答案</span>
+            <input data-creator-field="answer" value="${escapeAttr(draft.answer)}" placeholder="${draft.answerKind === "text" ? "收斂, converges" : "例如 1/2 或 pi/4"}" />
+          </label>
+          <p class="panel-note creator-wide">${escapeHtml(answerHelp)}</p>
+          <label class="creator-wide">
+            <span>解說（答錯的人會看到，建議寫）</span>
+            <textarea data-creator-field="solution" rows="2" placeholder="為什麼答案是這個？一兩句就好。">${escapeHtml(draft.solution)}</textarea>
+          </label>
+        </div>
+        <div class="action-row">
+          <button class="button" data-action="creator-save">${icon("check")}驗證並${editingId ? "更新" : "加入"}</button>
+        </div>
+      </section>
+    `;
+  }
+
+  window.BuzzCreatorForm = { render };
+})();
