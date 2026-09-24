@@ -3661,6 +3661,22 @@ function runExplicit(problem, compileAnswer) {
     if (value && typeof value.__odeCheck === "function") {
       return value.__odeCheck(compileAnswer(["x"]));
     }
+    // 是非題（一致連續、一致收斂）：答案是一句話不是一個數。
+    // 驗算端算出「成不成立」，這裡只比對那句話有沒有否定詞 ——
+    // 「不一致連續」對上 false 才算過，寫反了會被抓到。
+    if (value && typeof value === "object" && "__claim" in value) {
+      const says = String(problem.canonical || (problem.answers || [])[0] || problem.answer || "").trim();
+      if (!says) return { status: "unverified", reason: "這一題沒有可以比對的文字答案" };
+      const saysYes = !/不|非|not|non/i.test(says);
+      if (saysYes === Boolean(value.__claim)) {
+        return { status: "ok", method: `verify:${spec.m}`, detail: `「${says}」與數值判定一致` };
+      }
+      return {
+        status: "mismatch",
+        method: `verify:${spec.m}`,
+        detail: `題目說「${says}」，但數值上判定為${value.__claim ? "成立" : "不成立"}`
+      };
+    }
     if (!Number.isFinite(value)) {
       return { status: "unverified", reason: `verify 算出 ${value}` };
     }
@@ -4388,8 +4404,234 @@ const EXPLICIT_METHODS = {
     let factorial = 1;
     for (let i = 2; i <= n; i += 1) factorial *= i;
     return (mono[n] / Math.pow(r, n)) * factorial;
+  },
+
+  /* ── 2026-09 分析學包補的六條路徑 ────────────────────────────
+     上下確界、上下極限、ε-N 的第一個 N、ε-δ 的最大 δ、Lipschitz 常數，
+     以及兩個「是非題」（一致連續、一致收斂）。
+     原則跟前面一樣：驗算端只從定義出發做數值搜尋，不重複作者的推導 ——
+     sup 就真的去掃，最大的 δ 就真的去二分，一致連續就真的去量振幅。 */
+
+  // 集合的上／下確界。兩種集合：
+  //   integer: true  → {a_n : n ∈ ℕ}，掃 n 到 N，再把「取不到但趨近」的極限一起算進來
+  //                    （sup{1−1/n}=1 掃不到，但它確實是上確界）
+  //   integer: false → {f(x) : x ∈ [a,b]}，密掃再局部加密
+  // sup 是「掃到的最大值」與「極限／上極限」兩者取大 —— 這正是上確界的定義在數值上的樣子。
+  extremeOf: (spec) => {
+    const wantSup = (spec.kind || "sup") === "sup";
+    const pick = (a, b) => (wantSup ? Math.max(a, b) : Math.min(a, b));
+    const f = latex.compile(spec.f, [spec.v || (spec.integer === false ? "x" : "n")]);
+    if (spec.integer === false) {
+      const [a, b] = spec.range.map((value) => constant(value));
+      let best = wantSup ? -Infinity : Infinity;
+      let bestAt = a;
+      const scan = (lo, hi, steps) => {
+        for (let i = 0; i <= steps; i += 1) {
+          const x = lo + ((hi - lo) * i) / steps;
+          const value = f(x);
+          if (!Number.isFinite(value)) continue;
+          if (wantSup ? value > best : value < best) { best = value; bestAt = x; }
+        }
+      };
+      scan(a, b, 200000);
+      const span = (b - a) / 200000;
+      scan(Math.max(a, bestAt - span), Math.min(b, bestAt + span), 20000);
+      if (!Number.isFinite(best)) throw new Error("掃不到有限的極值");
+      return best;
+    }
+    const N = Math.round(spec.n || 200000);
+    let best = wantSup ? -Infinity : Infinity;
+    for (let n = 1; n <= N; n += 1) {
+      const value = f(n);
+      if (Number.isFinite(value) && (wantSup ? value > best : value < best)) best = value;
+    }
+    if (!Number.isFinite(best)) throw new Error("數列掃不出有限的極值");
+    // 尾端：極限（收斂數列）或上／下極限（震盪數列）也是候選人
+    const tail = extrapolateSequence(f, { n0: 4000, levels: 7 });
+    if (Number.isFinite(tail.value)) return pick(best, tail.value);
+    const windowed = windowLimit(f, wantSup ? "max" : "min");
+    return Number.isFinite(windowed) ? pick(best, windowed) : best;
+  },
+
+  // 上極限 / 下極限。窗口 [N, 2N] 的極值當作 N 的函數再外插 ——
+  // 直接取一個窗口的極值會少掉收斂那一段（(−1)ⁿn/(n+1) 的窗口最大值是
+  // 0.99999，跟 1 差 1e-5，相對誤差比不過）。
+  limsup: (spec) => {
+    const f = latex.compile(spec.f, [spec.v || "n"]);
+    const kind = (spec.kind || "limsup") === "limsup" ? "max" : "min";
+    const value = windowLimit(f, kind, spec.n0);
+    if (Number.isFinite(value)) return value;
+    // 外插失敗不一定是判不出來：sin n 的窗口極值隨 N 跳動（等分布是機率式的，
+    // 不是漸近展開），外插在上面沒有意義 —— 但兩個差四倍的大窗口如果本來就
+    // 對得上，那個值就是上極限。
+    const direct = (N) => windowExtreme(f, N, kind);
+    const small = direct(200000);
+    const large = direct(800000);
+    const scale = Math.max(1e-9, Math.abs(small), Math.abs(large));
+    if (Number.isFinite(small) && Number.isFinite(large) && Math.abs(small - large) <= 1e-6 * scale) {
+      return kind === "max" ? Math.max(small, large) : Math.min(small, large);
+    }
+    throw new Error(`上／下極限判不出來（窗口值 ${small} vs ${large}）`);
+  },
+
+  // ε-N：第一個讓 |a_n − L| 一直小於 ε 的 n。
+  // f 寫成「誤差本身」（作者要自己寫出 |a_n − L|，那是題目的一部分不是答案）。
+  // 「一直」很重要：只找第一次掉下去會被震盪的數列騙 —— 找到之後要再往後
+  // 看一段，確認沒有跳回去。
+  firstIndex: (spec) => {
+    const f = latex.compile(spec.f, [spec.v || "n"]);
+    const below = constant(spec.below);
+    const limit = Math.round(spec.max || 5e6);
+    const holds = (n) => {
+      const value = f(n);
+      return Number.isFinite(value) && value < below;
+    };
+    for (let n = 1; n <= limit; n += 1) {
+      if (!holds(n)) continue;
+      let steady = true;
+      for (let k = 1; k <= 200 && steady; k += 1) steady = holds(n + k);
+      if (steady) return n;
+    }
+    throw new Error(`掃到 n=${limit} 都沒有一直小於 ${below}`);
+  },
+
+  // ε-δ：讓 |f(x) − L| < ε 對 0 < |x − x₀| < δ 全部成立的最大 δ。
+  // 左右各二分一次取小的那邊。這裡不解不等式 —— 解不等式是題目要做的事。
+  maxDelta: (spec) => {
+    const f = latex.compile(spec.f, [spec.v || "x"]);
+    const x0 = constant(spec.at);
+    const L = constant(spec.L);
+    const eps = constant(spec.eps);
+    const okAt = (x) => {
+      const value = f(x);
+      return Number.isFinite(value) && Math.abs(value - L) < eps;
+    };
+    // δ 之內的每一點都要成立，所以檢查整段而不是只檢查端點
+    const okUpTo = (side, delta) => {
+      const steps = 400;
+      for (let i = 1; i <= steps; i += 1) {
+        if (!okAt(x0 + side * delta * (i / steps))) return false;
+      }
+      return true;
+    };
+    const search = (side) => {
+      let hi = 1e-6;
+      while (hi < 1e7 && okUpTo(side, hi)) hi *= 2;
+      let lo = hi / 2;
+      for (let i = 0; i < 80; i += 1) {
+        const mid = (lo + hi) / 2;
+        if (okUpTo(side, mid)) lo = mid; else hi = mid;
+      }
+      return lo;
+    };
+    return Math.min(search(1), search(-1));
+  },
+
+  // 最佳（最小的）Lipschitz 常數 = sup|f′|。數值微分掃過整段，
+  // 作者手推的 f′ 不參與。
+  lipschitz: (spec) => {
+    const f = latex.compile(spec.f, [spec.v || "x"]);
+    const [a, b] = spec.range.map((value) => constant(value));
+    const steps = Math.round(spec.n || 200000);
+    let best = 0;
+    for (let i = 0; i <= steps; i += 1) {
+      const x = a + ((b - a) * i) / steps;
+      const slope = numeric.derivative(f, x).value;
+      if (Number.isFinite(slope)) best = Math.max(best, Math.abs(slope));
+    }
+    if (!(best > 0)) throw new Error("掃不到有限的斜率");
+    return best;
+  },
+
+  // 一致連續（是非題）。量連續模數 ω(δ) = sup{|f(x)−f(y)| : |x−y| ≤ δ}：
+  // δ 縮十倍，ω 也要跟著小下去才叫一致連續；ω 卡在那裡（1/x 在 0 附近、
+  // x² 在無窮遠）就是反例存在。判不出來就說判不出來，不猜。
+  uniformContinuity: (spec) => {
+    const f = latex.compile(spec.f, [spec.v || "x"]);
+    const a = constant(spec.range[0]);
+    // 無界定義域（[a,∞)）不能只掃一段固定的範圍：x² 在任何有界閉區間上都
+    // 是一致連續的，它的反例住在「x 大到 2xδ 不是小量」的地方。所以掃描範圍
+    // 跟著 δ 走 —— δ 縮十倍，就往外看十倍遠。這樣 ω(δ) 才是整條半線上的振幅。
+    const unbounded = spec.range[1] === "inf";
+    const fixedB = unbounded ? Infinity : constant(spec.range[1]);
+    const omega = (delta) => {
+      const b = unbounded ? a + 10 / delta : fixedB;
+      let worst = 0;
+      const steps = 40000;
+      for (let i = 0; i <= steps; i += 1) {
+        // 取樣可以壓向左端：1/x 的麻煩在 0 附近，log 尺度才抓得到
+        const t = i / steps;
+        const x = a + (b - a) * (spec.log ? Math.pow(t, 3) : t);
+        if (x + delta > b) continue;
+        const left = f(x);
+        const right = f(x + delta);
+        if (!Number.isFinite(left) || !Number.isFinite(right)) continue;
+        worst = Math.max(worst, Math.abs(right - left));
+      }
+      return worst;
+    };
+    const coarse = omega(1e-2);
+    const fine = omega(1e-4);
+    const finer = omega(1e-6);
+    // 一致連續：ω 隨 δ 一路掉下去（每縮 100 倍至少掉一個數量級），而且最後很小
+    if (finer < fine / 5 && fine < coarse / 5 && finer < 1e-2) return { __claim: true };
+
+    // 不一致連續：δ 縮了 10⁴ 倍 ω 幾乎沒動，或者 δ 都到 10⁻⁶ 了振幅還是 O(1) 以上
+    // （e^x 在無窮遠的振幅會直接溢位 —— 那不是判不出來，那是反例大到爆表）
+    if (finer > coarse / 5 || finer > 1) return { __claim: false };
+    throw new Error(`連續模數判不出來：ω(1e-2)=${coarse}, ω(1e-4)=${fine}, ω(1e-6)=${finer}`);
+  },
+
+  // 一致收斂（是非題）。算 ‖f_n − g‖ = sup_x |f_n(x) − g(x)|，
+  // n 一路變大看它有沒有趨近 0。g 是逐點極限函數，由題目給。
+  uniformConvergence: (spec) => {
+    const fn = latex.compile(spec.f, ["n", spec.v || "x"]);
+    const g = latex.compile(String(spec.limit), [spec.v || "x"]);
+    const [a, b] = spec.range.map((value) => constant(value));
+    const supDiff = (n) => {
+      let worst = 0;
+      const steps = 40000;
+      for (let i = 0; i <= steps; i += 1) {
+        const x = a + ((b - a) * i) / steps;
+        const diff = Math.abs(fn(n, x) - g(x));
+        if (Number.isFinite(diff)) worst = Math.max(worst, diff);
+      }
+      return worst;
+    };
+    const norms = [8, 64, 512, 4096].map(supDiff);
+    if (norms.some((value) => !Number.isFinite(value))) throw new Error("sup 範數算不出來");
+    if (norms[3] < 1e-3 && norms[3] < norms[0] / 10) return { __claim: true };
+    if (norms[3] > norms[0] / 5) return { __claim: false };
+    throw new Error(`sup 範數的走向判不出來：${norms.map((v) => v.toPrecision(3)).join(" → ")}`);
   }
 };
+
+// 窗口 [N, 2N] 的極值當 N 的函數再外插 —— 上／下極限的數值版。
+// spec 裡的數字：已經是數就直接用。
+// 不能一律丟給 latex 編譯器 —— String(0.0000001) 是 "1e-7"，而 LaTeX 裡的 e 是
+// 尤拉數，那串會被讀成 1·e−7 = −4.28。一個誤差半徑因此變成負的下界，
+// 掃描範圍整個跑掉，判定還「很有自信」地給了相反的答案。
+function constant(value) {
+  if (typeof value === "number") return value;
+  return latex.compile(String(value), [])();
+}
+
+function windowExtreme(f, N, kind) {
+  let best = kind === "max" ? -Infinity : Infinity;
+  const to = Math.round(2 * N);
+  for (let n = Math.round(N); n <= to; n += 1) {
+    const value = f(n);
+    if (!Number.isFinite(value)) continue;
+    best = kind === "max" ? Math.max(best, value) : Math.min(best, value);
+  }
+  return best;
+}
+
+function windowLimit(f, kind, n0) {
+  const start = Math.max(50, Math.round(n0 || 2000));
+  const result = extrapolateSequence((N) => windowExtreme(f, N, kind), { n0: start, levels: 5 });
+  return result.value;
+}
 
 /* ── 回報 ──────────────────────────────────────────────────── */
 

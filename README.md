@@ -48,7 +48,7 @@ Boss
 ## Current Features
 
 - **從零開始的十六課，加九課進階技巧**：還沒學過微積分也能用，照課本順序走——函數是什麼與函數家族 → 極限、0/0、無窮遠、要背的極限、連續與中間值定理 → 導數是斜率、微分公式、乘除法則、連鎖律、極值、均值定理 → 反導函數、定積分是面積、黎曼和與基本定理。計算課＝白話概念 → 一題逐步示範 → 小測（選錯會說為什麼）→ 三題不倒數的練習；理論課（定理那幾課）＝概念 → 逐步推導 → 小測全對就算完成。onboarding 選「我還沒學過」直接進課程；上完有 10 題**畢業關**（8 題過），畢業前與畢業後頭三局，主線只出課裡教過的題
-- **<!--claim:problems-->2318<!--/claim--> 題微積分題庫**
+- **<!--claim:problems-->2361<!--/claim--> 題微積分題庫**
 - **46 個技巧題包**
 - **主線路線圖**
 - **每日任務**
@@ -274,11 +274,11 @@ Technique: Frullani-type parameter integral
 
 | Type | Count |
 | --- | ---: |
-| Limits | <!--claim:limits-->387<!--/claim--> |
-| Derivatives / Multivariable derivatives | <!--claim:derivatives-->939<!--/claim--> |
-| Integrals / Multiple integrals | <!--claim:integrals-->719<!--/claim--> |
-| Series | <!--claim:series-->273<!--/claim--> |
-| **Total** | **<!--claim:problems-->2318<!--/claim-->** |
+| Limits | <!--claim:limits-->409<!--/claim--> |
+| Derivatives / Multivariable derivatives | <!--claim:derivatives-->945<!--/claim--> |
+| Integrals / Multiple integrals | <!--claim:integrals-->724<!--/claim--> |
+| Series | <!--claim:series-->283<!--/claim--> |
+| **Total** | **<!--claim:problems-->2361<!--/claim-->** |
 
 Proof Lab currently includes **41 proof problems**. Proof problems are not included in timed sessions or daily missions.
 

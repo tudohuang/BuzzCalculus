@@ -6,11 +6,54 @@
 // 為什麼放側表而不是寫進題目物件：題目物件多一個欄位就會改變抽題與 golden 測試的結果。
 // 內容的中繼資料一律走側表，這是專案的既有約定。
 //
-// 產生時的統計：2302 題中 2059 題通過，不符 0 題。
+// 產生時的統計：2345 題中 2102 題通過，不符 0 題。
 
 (function registerVerifiedAnswers() {
   "use strict";
   var IDS = [
+    "an-ca-001",
+    "an-ca-002",
+    "an-ca-003",
+    "an-ed-001",
+    "an-ed-002",
+    "an-ed-003",
+    "an-ed-004",
+    "an-en-001",
+    "an-en-002",
+    "an-en-003",
+    "an-en-004",
+    "an-int-001",
+    "an-int-002",
+    "an-int-003",
+    "an-int-004",
+    "an-int-005",
+    "an-ls-001",
+    "an-ls-002",
+    "an-ls-003",
+    "an-ls-004",
+    "an-sr-001",
+    "an-sr-002",
+    "an-sr-003",
+    "an-sr-004",
+    "an-sup-001",
+    "an-sup-002",
+    "an-sup-003",
+    "an-sup-004",
+    "an-sup-005",
+    "an-sup-006",
+    "an-sup-007",
+    "an-sup-008",
+    "an-uc-001",
+    "an-uc-002",
+    "an-uc-003",
+    "an-uc-004",
+    "an-uc-005",
+    "an-uc-006",
+    "an-uf-001",
+    "an-uf-002",
+    "an-uf-003",
+    "an-uf-004",
+    "an-uf-005",
     "app-001",
     "app-002",
     "app-003",
@@ -2076,6 +2119,6 @@
   window.BuzzVerifiedAnswers = {
     has: function (id) { return Boolean(id && SET[id]); },
     count: IDS.length,
-    total: 2302
+    total: 2345
   };
 })();

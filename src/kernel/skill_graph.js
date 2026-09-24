@@ -65,7 +65,9 @@
     //   induction / inequality 是真的證明技巧，但目前各只有 3 題與 4 題 ——
     //   節點的下限是 8 題（見 validate_skill_graph 的每節點題數），開了節點只會讓
     //   能力模型拿三題去估一整個座標。題數夠了再從這裡搬進 SKILLS。
-    "proof", "written-proof", "induction", "inequality"
+    "proof", "written-proof", "induction", "inequality",
+    //   analysis  分析學包的來源標記（整包都帶著它），不是一項技巧
+    "analysis"
   ]);
 
   // ── Skill 節點 ────────────────────────────────────────────────
@@ -91,19 +93,20 @@
         "cesaro", "euler-mascheroni", "nth-root"] },
     { id: "limit.squeeze", label: "夾擠與有界", tier: 2, obscurity: 1, family: "limit", topics: ["limits"], prereq: ["limit.direct"],
       tags: ["squeeze", "dne", "periodicity", "product-limit", "oscillation"] },
-    { id: "limit.riemann", label: "Riemann 和極限", tier: 3, obscurity: 2, family: "limit", prereq: ["limit.direct"],
-      tags: ["riemann-sum"] },
+    { id: "limit.riemann", label: "Riemann 和與達布和", tier: 3, obscurity: 2, family: "limit", prereq: ["limit.direct"],
+      // 達布上下和跟黎曼和是同一件事的兩個切面：一個取樣點、一個取上下界。
+      tags: ["riemann-sum", "darboux"] },
     { id: "limit.trap", label: "極限陷阱", tier: 3, obscurity: 2, family: "limit", topics: ["limits"], prereq: ["limit.direct"],
       tags: ["limit-trap", "hard-limit"] },
     { id: "limit.continuity", label: "連續性與 IVT", tier: 2, obscurity: 1, family: "limit", prereq: ["limit.direct"],
       // domain / rational-function：判定「哪些 x 可以代進去」跟判定連續性
       // 是同一件事的兩個問法，同一個技巧節點。
-      tags: ["continuity", "ivt", "removable-singularity", "asymptote", "domain", "rational-function", "one-sided-limit", "removable", "zeros", "epsilon-delta", "limit-from-table", "piecewise"] },
+      tags: ["continuity", "ivt", "removable-singularity", "asymptote", "domain", "rational-function", "one-sided-limit", "removable", "zeros", "limit-from-table", "piecewise"] },
     { id: "limit.sequence", label: "數列極限", tier: 2, obscurity: 1, family: "limit", prereq: ["limit.direct"],
       // 無窮乘積放這裡而不是自成一節：∏ 的定義就是部分乘積這個**數列**的極限，
       // 遞迴、巢狀根式、連分數同理 —— 它們共用「先確定收斂，再對遞迴式取極限」這一步。
       tags: ["sequence", "sequences", "recursive", "recurrence", "nested-radical", "continued-fraction",
-        "fixed-point", "newton", "infinite-product"] },
+        "fixed-point", "newton", "infinite-product", "cauchy-sequence"] },
     { id: "limit.discontinuous", label: "單邊極限與跳躍", tier: 3, obscurity: 2, family: "limit", topics: ["limits"], prereq: ["limit.direct"],
       // 高斯括號與單邊極限合成一個節點：兩者練的是同一件事 ——
       // 函數在不連續點附近的行為，只能用不等式夾，不能代進去也不能展開。
@@ -252,7 +255,7 @@
     { id: "series.compare", label: "比較判別", tier: 2, obscurity: 1, family: "series", prereq: ["series.geometric"], radarAxis: "series",
       tags: ["comparison", "limit-comparison", "integral-test", "term-test", "convergence-test", "series-test"] },
     { id: "series.alternating", label: "交錯級數", tier: 3, obscurity: 1, family: "series", prereq: ["series.compare"], radarAxis: "series",
-      tags: ["alternating-series", "alternating", "absolute-conditional"] },
+      tags: ["alternating-series", "alternating", "absolute-conditional", "rearrangement"] },
     { id: "series.power.radius", label: "冪級數收斂範圍", tier: 3, obscurity: 1, family: "series", prereq: ["series.ratio"], radarAxis: "series",
       // 收斂區間的端點要不要算進去，正是這個技巧最容易錯的地方
       tags: ["power-series", "radius", "radius-of-convergence", "endpoint-analysis",
@@ -277,7 +280,22 @@
     { id: "adv.ode.second", label: "二階 ODE 與積分變換", tier: 4, obscurity: 2, family: "adv", prereq: ["adv.ode.first"], radarAxis: "improper",
       tags: ["second-order", "ode-style", "laplace-transform", "laplace", "convolution"] },
     { id: "adv.bessel", label: "Bessel 與特殊方程", tier: 5, obscurity: 3, family: "adv", prereq: ["adv.ode.second"], radarAxis: "special",
-      tags: ["bessel"] }
+      tags: ["bessel"] },
+
+    /* ===== 分析學（2026-09）=====
+       微積分問「算出來是多少」，分析學問「這個算法為什麼可以用」。
+       三個節點對應三件在計算層看不見、但大二會被考的事：
+         嚴格定義   ε-δ / ε-N —— 極限的定義本身變成一個可以算的量
+         確界       sup / inf / limsup —— 極限不存在時仍然說得出話的那個上界
+         一致性     一致連續 / 一致收斂 —— 「每點都有 δ」與「一個 δ 全區通用」的差別
+       epsilon-delta 從 limit.continuity 搬過來：它練的是定義的嚴格性，
+       不是「哪些 x 代得進去」，掛在連續性節點下量出來的能力座標會失真。 */
+    { id: "analysis.rigor", label: "ε-δ 與 ε-N", tier: 4, obscurity: 2, family: "analysis", prereq: ["limit.direct"],
+      tags: ["epsilon-delta"] },
+    { id: "analysis.supinf", label: "確界與上下極限", tier: 4, obscurity: 2, family: "analysis", prereq: ["limit.sequence"],
+      tags: ["supremum", "infimum", "limsup"] },
+    { id: "analysis.uniform", label: "一致連續與一致收斂", tier: 5, obscurity: 3, family: "analysis", prereq: ["analysis.rigor"],
+      tags: ["uniform-continuity", "uniform-convergence", "lipschitz"] }
   ];
 
   // ── 索引 ──────────────────────────────────────────────────────

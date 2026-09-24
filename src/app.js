@@ -276,6 +276,7 @@
     convergence_tests: { label: "審斂", note: "級數判別與端點", tags: ["convergence-test", "endpoint-analysis", "root-test", "limit-comparison"] },
     special_functions: { label: "特殊函數", note: "Beta / Gamma / Wallis / Bessel", tags: ["beta-function", "gamma-function", "wallis", "bessel"] },
     nabla_vector: { label: "Nabla / Vector", note: "grad / div / curl / laplacian", tags: ["nabla", "vector-calculus"] },
+    analysis_intro: { label: "分析學入門", note: "確界、ε-δ、一致連續、達布和", tags: ["analysis"] },
   };
 
   const PACK_GROUPS = [
@@ -284,7 +285,7 @@
     { label: "積分技巧", keys: ["partial_fraction", "trig_substitution", "frullani", "ode_style", "kings_property", "double_integral", "multi_integral_advanced", "integral_applications"] },
     { label: "向量分析", keys: ["vector_theorems", "nabla_vector"] },
     { label: "微分 / 應用", keys: ["chain", "lagrange_multiplier", "parametric_polar", "applications", "classic_theory", "total_differential", "hessian", "wronskian", "jacobian_chain"] },
-    { label: "級數 / ODE / 其他", keys: ["taylor", "power_series", "convergence_tests", "endpoint_root", "sequences", "special_functions", "ode_intro", "complex"] },
+    { label: "級數 / ODE / 其他", keys: ["taylor", "power_series", "convergence_tests", "endpoint_root", "sequences", "special_functions", "ode_intro", "complex", "analysis_intro"] },
   ];
 
   const PATH_NODES = [
