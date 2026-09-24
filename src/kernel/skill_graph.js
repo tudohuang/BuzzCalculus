@@ -58,7 +58,9 @@
     "even-function", "odd-function", "absolute-value",
     //   applied-limit / word-problem  這題包著一段情境敘述，要練的技巧在別的標籤上
     //   geometric / geometry          等比與幾何是題材不是技巧
-    "applied-limit", "word-problem", "geometric", "geometry"
+    "applied-limit", "word-problem", "geometric", "geometry",
+    //   applied-derivative  同上：情境的外衣，要練的技巧在 optimization / related-rates / curvature 上
+    "applied-derivative"
   ]);
 
   // ── Skill 節點 ────────────────────────────────────────────────
@@ -127,7 +129,7 @@
       // 而且這樣選圖題才會算進能力模型（列成非技巧的話它們對雷達是隱形的）。
       tags: ["concavity", "inflection", "critical-point", "critical-points", "derivative-zero",
         "first-derivative", "monotonicity", "tangent-normal", "curve-sketching", "extrema",
-        "mvt", "rolle", "curvature", "derivative-graph"] },
+        "mvt", "mean-value", "rolle", "curvature", "derivative-graph"] },
     { id: "diff.optimize", label: "最佳化", tier: 3, obscurity: 1, family: "diff", prereq: ["diff.shape"],
       tags: ["optimization"] },
     { id: "diff.related", label: "隱微分與相關變率", tier: 3, obscurity: 1, family: "diff", prereq: ["diff.chain"],

@@ -4162,6 +4162,42 @@ const EXPLICIT_METHODS = {
     return result.value;
   },
 
+  /* ── 2026-09 微分深化包補的三條路徑 ───────────────────────────
+     曲率、鏈鎖變率、價格彈性。共同原則跟前面一樣：驗算端只做數值微分，
+     不重複作者的代數 —— 作者寫下的是一個數，這裡從 f 自己算一遍。 */
+
+  // 曲率 κ = |f″|/(1+f′²)^{3/2}，kind: "radius" 時回半徑 1/κ
+  curvature: (spec) => {
+    const f = latex.compile(spec.f, ["x"]);
+    const a = latex.compile(String(spec.at), [])();
+    const d1 = numeric.derivative(f, a).value;
+    const d2 = numeric.partial((x) => f(x), [a], 0, { order: 2 }).value;
+    const kappa = Math.abs(d2) / Math.pow(1 + d1 * d1, 1.5);
+    if (spec.kind === "radius") {
+      if (!kappa) throw new Error("曲率是 0，曲率半徑無限大");
+      return 1 / kappa;
+    }
+    return kappa;
+  },
+
+  // 鏈鎖變率：dy/dt = f′(x)·dx/dt。relatedRate 是反過來除的那一支
+  // （已知 dV/dt 求 dr/dt）；這一支是正向的（已知 dx/dt 求 dθ/dt）。
+  chainRate: (spec) => {
+    const f = latex.compile(spec.f, [spec.v || "x"]);
+    const at = latex.compile(String(spec.at), [])();
+    const given = latex.compile(String(spec.given), [])();
+    return numeric.derivative(f, at).value * given;
+  },
+
+  // 需求的價格彈性 E = −p·q′(p)/q(p)
+  elasticity: (spec) => {
+    const q = latex.compile(spec.f, [spec.v || "p"]);
+    const at = latex.compile(String(spec.at), [])();
+    const value = q(at);
+    if (!value) throw new Error("需求量是 0，彈性沒有定義");
+    return (-at * numeric.derivative(q, at).value) / value;
+  },
+
   // 微分（誤差傳遞）df = f′(a)·dx
   differential: (spec) => {
     const f = latex.compile(spec.f, ["x"]);
