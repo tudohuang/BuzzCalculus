@@ -3667,7 +3667,11 @@ function runExplicit(problem, compileAnswer) {
     if (value && typeof value === "object" && "__claim" in value) {
       const says = String(problem.canonical || (problem.answers || [])[0] || problem.answer || "").trim();
       if (!says) return { status: "unverified", reason: "這一題沒有可以比對的文字答案" };
-      const saysYes = !/不|非|not|non/i.test(says);
+      // 「高估／低估」不是靠否定詞分的（兩個詞裡都沒有「不」），
+      // 但它跟「成不成立」是同一件事：估計值大於真值 = 高估。
+      const saysYes = /高估|偏大|over/i.test(says) ? true
+        : /低估|偏小|under/i.test(says) ? false
+          : !/不|非|not|non/i.test(says);
       if (saysYes === Boolean(value.__claim)) {
         return { status: "ok", method: `verify:${spec.m}`, detail: `「${says}」與數值判定一致` };
       }
@@ -3922,6 +3926,53 @@ const EXPLICIT_METHODS = {
     const variable = spec.v || "x";
     const f = latex.compile(spec.f, [variable]);
     return numeric.integrate(f, latex.compile(String(spec.a), [])(), latex.compile(String(spec.b), [])()).value;
+  },
+
+  // 數值積分公式的值（梯形、辛普森、左／右／中點和）。
+  //
+  // 作者寫下的是一個數，這裡從 f、[a,b]、n 自己套一次公式 ——
+  // 不重複作者的算術，也不用 numeric.integrate 的真值（那是另一件事）。
+  //   { m: "riemannRule", f: "…", a, b, n, rule: "trapezoid"|"simpson"|"left"|"right"|"mid" }
+  riemannRule: (spec) => {
+    const f = latex.compile(spec.f, [spec.v || "x"]);
+    const a = constant(spec.a);
+    const b = constant(spec.b);
+    const n = Math.round(constant(spec.n));
+    const h = (b - a) / n;
+    const at = (i) => f(a + i * h);
+    const rule = spec.rule || "trapezoid";
+    if (rule === "left" || rule === "right" || rule === "mid") {
+      let sum = 0;
+      for (let i = 0; i < n; i += 1) {
+        const offset = rule === "left" ? 0 : rule === "right" ? 1 : 0.5;
+        sum += f(a + (i + offset) * h);
+      }
+      return sum * h;
+    }
+    if (rule === "simpson") {
+      if (n % 2 !== 0) throw new Error("辛普森法的 n 必須是偶數");
+      let sum = at(0) + at(n);
+      for (let i = 1; i < n; i += 1) sum += at(i) * (i % 2 === 1 ? 4 : 2);
+      return (sum * h) / 3;
+    }
+    let sum = (at(0) + at(n)) / 2;
+    for (let i = 1; i < n; i += 1) sum += at(i);
+    return sum * h;
+  },
+
+  // 數值積分公式是高估還是低估（是非題）。
+  // 凹向決定方向：凹向上時梯形法高估、中點法低估 —— 但這裡不背結論，
+  // 直接把公式值跟真值比。差距小到看不出來就說判不出來，不猜。
+  ruleBias: (spec) => {
+    const f = latex.compile(spec.f, [spec.v || "x"]);
+    const a = constant(spec.a);
+    const b = constant(spec.b);
+    const approx = EXPLICIT_METHODS.riemannRule(spec);
+    const exact = numeric.integrate(f, a, b).value;
+    if (!Number.isFinite(exact)) throw new Error("真值積不出來");
+    const scale = Math.max(1e-9, Math.abs(exact));
+    if (Math.abs(approx - exact) < 1e-6 * scale) throw new Error(`估計值與真值差不到 1e-6（${approx} vs ${exact}）`);
+    return { __claim: approx > exact };
   },
 
   // 級數和

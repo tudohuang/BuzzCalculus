@@ -24,6 +24,11 @@ const close = (a, b) => Number.isFinite(a) && Math.abs(a - b) <= 1e-5 * Math.max
 /* ── 一、正向：已知的值要算得出來 ────────────────────────────── */
 
 const VALUE_CASES = [
+  ["梯形法（權重 ½,1,1,1,½）", { m: "riemannRule", f: "x^2", a: 0, b: 1, n: 4, rule: "trapezoid" }, 11 / 32],
+  ["中點法", { m: "riemannRule", f: "x^2", a: 0, b: 1, n: 4, rule: "mid" }, 21 / 64],
+  ["左端點和", { m: "riemannRule", f: "x^2", a: 0, b: 2, n: 4, rule: "left" }, 7 / 4],
+  ["右端點和", { m: "riemannRule", f: "x^2", a: 0, b: 2, n: 4, rule: "right" }, 15 / 4],
+  ["辛普森法對三次多項式是精確的", { m: "riemannRule", f: "x^3", a: 0, b: 2, n: 4, rule: "simpson" }, 4],
   ["上確界取不到（掃描掃不到，要靠極限）", { m: "extremeOf", f: "1-1/n", kind: "sup" }, 1],
   ["下確界被取到", { m: "extremeOf", f: "(-1)^n*(1+1/n)", kind: "inf" }, -2],
   ["上確界在中間（不在趨近的那一端）", { m: "extremeOf", f: "n/2^n", kind: "sup" }, 0.5],
@@ -54,6 +59,10 @@ VALUE_CASES.forEach(([name, spec, expected]) => {
 /* ── 二、正向：是非題的兩個方向都要判對 ─────────────────────── */
 
 const CLAIM_CASES = [
+  ["凹向上時梯形法高估", { m: "ruleBias", f: "1/x", a: 1, b: 2, n: 4, rule: "trapezoid" }, true],
+  ["凹向上時中點法低估", { m: "ruleBias", f: "1/x", a: 1, b: 2, n: 4, rule: "mid" }, false],
+  ["遞增函數的左端點和低估", { m: "ruleBias", f: "x^2", a: 0, b: 1, n: 4, rule: "left" }, false],
+  ["凹向下時梯形法低估", { m: "ruleBias", f: "x^(1/2)", a: 1, b: 4, n: 6, rule: "trapezoid" }, false],
   ["1/x 在 (0,1] 不一致連續", { m: "uniformContinuity", f: "1/x", range: [0.0000001, 1], log: true }, false],
   ["√x 在 [0,∞) 一致連續", { m: "uniformContinuity", f: "\\sqrt{x}", range: [0, "inf"] }, true],
   ["x² 在有界閉區間上一致連續", { m: "uniformContinuity", f: "x^2", range: [0, 3] }, true],
@@ -87,6 +96,8 @@ const numericProblem = (answer, verify) => ({
 });
 
 const WRONG_CASES = [
+  ["把梯形法的端點權重也算成 1", numericProblem("3/8", { m: "riemannRule", f: "x^2", a: 0, b: 1, n: 4, rule: "trapezoid" })],
+  ["辛普森法的 4-2-4 權重記成 1-1-1", numericProblem("5", { m: "riemannRule", f: "x^3", a: 0, b: 2, n: 4, rule: "simpson" })],
   // sup 寫成 inf 是這一節最常見的錯（1−1/n 的下確界才是 0）。
   // 沒寫「0.99999 當成 1」那種案例：預設容差是相對 1e-5，那個差距本來就在容差內 ——
   // 這支要擋的是判定錯誤，不是浮點精度。
@@ -111,6 +122,7 @@ const textProblem = (canonical, verify) => ({
 });
 
 const WRONG_CLAIMS = [
+  ["把梯形法對凹向上說成低估", textProblem("低估", { m: "ruleBias", f: "1/x", a: 1, b: 2, n: 4, rule: "trapezoid" })],
   ["把 1/x 在 (0,1] 說成一致連續", textProblem("一致連續", { m: "uniformContinuity", f: "1/x", range: [0.0000001, 1], log: true })],
   ["把 √x 在 [0,∞) 說成不一致連續", textProblem("不一致連續", { m: "uniformContinuity", f: "\\sqrt{x}", range: [0, "inf"] })],
   ["把 xⁿ 在 [0,1) 說成一致收斂", textProblem("一致收斂", { m: "uniformConvergence", f: "x^n", limit: "0", range: [0, 0.999999] })]
