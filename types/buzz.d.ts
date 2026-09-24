@@ -313,6 +313,11 @@ interface Window {
   BuzzCourseUI: { create(deps: { escapeHtml: (s: unknown) => string; escapeAttr: (s: unknown) => string; icon: (name: string) => string; referenceAnswerHTML: (problem: BuzzProblem) => string }): any };
   /** src/share_cards.js：題目圖形的 SVG 渲染器（從 app.js 搬出去） */
   BuzzGraphRender: { graphCurveFn(expr: string): ((x: number) => number) | null; renderProblemGraph(problem: any, opts: any, escapeAttr: (s: unknown) => string): string; renderMiniGraph(expr: string, windowSpec: number[], domainSpec?: number[]): string; svgGraphContext(svg: Element): any; graphProblemFn(problem: any): ((x: number) => number) | null; renderMasteryRadar(axes: any[], helpers: { escapeHtml: (s: unknown) => string; escapeAttr: (s: unknown) => string }): string; renderActivityHeatmap(records: any, deps: Record<string, any>): string; renderSpeedQuadrant(profile: any, helpers: { escapeHtml: (s: unknown) => string }): string; renderSkillTable(profile: any, helpers: { escapeHtml: (s: unknown) => string }): string };
+  /** src/share_cards.js：考卷證明題的作答畫面（判分在 app.js 呼叫檢查器） */
+  BuzzProofAnswer: { render(options: Record<string, any>): string };
+  /** src/share_cards.js：手寫計算紙的外殼（畫布的事件與筆跡仍在 app.js） */
+  BuzzBoardUI: { render(options: Record<string, any>): string };
+
   /** src/share_cards.js：新手導覽（coach marks）。DOM 在 document.body，render 之後要 refresh() */
   BuzzTour: {
     steps(name: string): Array<{ id: string; title: string; body: string; targets?: string[]; view?: string; pad?: number; required?: boolean }>;

@@ -26,8 +26,14 @@ const listAll = args.includes("--list");
 const ciMode = args.includes("--ci");
 
 const api = loadAppApi();
-const problems = loadAppApi.allProblems();
-const targets = onlyId ? problems.filter((p) => p.id === onlyId) : problems;
+const allLoaded = loadAppApi.allProblems();
+// 證明題不走數值驗算：它沒有「一個可以代進去比對的答案」，它的正確性由
+// 證明檢查器負責 —— validate_answer_checker 會拿那道 spec 的參考解餵進
+// checkAnswer 要求判對，verify_proof_claims 再把參考解裡的量化主張逐條算過。
+// 把它們丟進不可驗證白名單只會讓白名單變成「反正驗不了」的垃圾桶。
+const proofProblems = allLoaded.filter((p) => p.answerKind === "proof");
+const problems = allLoaded.filter((p) => p.answerKind !== "proof");
+const targets = onlyId ? allLoaded.filter((p) => p.id === onlyId) : problems;
 if (onlyId && !targets.length) {
   console.error(`找不到題目 ${onlyId}`);
   process.exit(1);
@@ -66,7 +72,7 @@ const verified = buckets.ok.length + buckets.mismatch.length;
 const pct = (n) => ((100 * n) / total).toFixed(1) + "%";
 
 console.log("答案獨立驗算");
-console.log(`  題數        ${total}`);
+console.log(`  題數        ${total}${proofProblems.length && !onlyId ? `（另有 ${proofProblems.length} 題證明題走證明檢查器，不在這裡驗）` : ""}`);
 console.log(`  可驗證      ${verified} (${pct(verified)})`);
 console.log(`    通過      ${buckets.ok.length}`);
 console.log(`    不符      ${buckets.mismatch.length}`);

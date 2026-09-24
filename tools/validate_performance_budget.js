@@ -51,11 +51,17 @@ const BUDGETS = {
   // 已盡量沿用 pl-tutorial / pl-intro / pl-goal / first-steps。再撞頂該做的是
   // 把 styles.css 的三層歷史覆蓋（見 duolingo-path-design 那次的教訓）清一輪。
   "樣式 styles.css": { pattern: /^styles\.css$/, budget: 310 * 1024, fromCss: true },
-  "其他 src 腳本": { pattern: /^src\//, budget: 300 * 1024, catchAll: true }
+  "其他 src 腳本": { pattern: /^src\//, budget: 300 * 1024, catchAll: true },
+  // 2026-09-24 新增這一類：index.html 上 type="text/lazy" 的檔案瀏覽器不會在首屏抓，
+  // 進到需要它的頁面才載（目前是證明引擎三支）。它們跟首屏無關，預算也不該跟首屏的檔搶 ——
+  // 但仍然要有上限：延後載入不是「隨便長」的許可證，載入那一刻使用者還是要等。
+  "延後載入（進到該頁才抓）": { pattern: /^$/, budget: 320 * 1024, lazy: true }
 };
 
 const html = fs.readFileSync(path.join(ROOT, "index.html"), "utf8");
-const scripts = [...html.matchAll(/src="(src\/[^"]+\.js)"/g)].map((m) => m[1]);
+const allTags = [...html.matchAll(/<script[^>]*src="(src\/[^"]+\.js)"[^>]*>/g)];
+const lazyScripts = new Set(allTags.filter((m) => /type="text\/lazy"/.test(m[0])).map((m) => m[1]));
+const scripts = allTags.map((m) => m[1]).filter((rel) => !lazyScripts.has(rel));
 const failures = [];
 
 const sizeOf = (rel) => {
@@ -66,7 +72,9 @@ const claimed = new Set();
 const rows = [];
 for (const [label, spec] of Object.entries(BUDGETS)) {
   let files = [];
-  if (spec.fromCss) {
+  if (spec.lazy) {
+    files = [...lazyScripts];
+  } else if (spec.fromCss) {
     files = ["styles.css"];
   } else if (spec.catchAll) {
     files = scripts.filter((s) => spec.pattern.test(s) && !claimed.has(s));

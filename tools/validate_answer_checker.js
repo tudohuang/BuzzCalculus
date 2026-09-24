@@ -170,12 +170,22 @@ const timeoutPassed = timeoutResult.status === "correct" && timeoutResult.reason
 console.log(`${timeoutPassed ? "PASS" : "FAIL"} timeout keeps correct draft: status=${timeoutResult.status} reason=${timeoutResult.reason}`);
 if (!timeoutPassed) failures.push({ name: "timeout keeps correct draft", input: timeoutResult.input, expected: true, result: timeoutResult });
 
+const proofSpecs = global.window.BUZZ_PROOF_LANG_PROBLEMS || [];
+const proofReference = (problem) => {
+  const spec = proofSpecs.find((item) => item.id === problem.proofSpec);
+  if (!spec) throw new Error(`${problem.id} 的 proofSpec ${problem.proofSpec} 不在證明題庫裡`);
+  return (spec.reference || []).join("\n");
+};
+
 const canonicalProblems = global.window.BUZZ_PROBLEMS || [];
 canonicalProblems.forEach((problem) => {
   // 作圖題的 answer 是 f 的 LaTeX（顯示用）；標準作答是照正解描一遍的筆畫。
+  // 證明題的 answer 只是一句「機器判分」的說明；標準作答是那道 spec 的參考解 ——
+  // 這裡等於順便釘住「參考解自己過得了檢查器」，出題時抄壞了會在這一支紅。
   const input = problem.answerKind === "text" ? problem.canonical || problem.answers[0]
     : problem.answerKind === "sketch" ? global.window.BuzzGraphSketch.trace(problem)
-      : problem.answer;
+      : problem.answerKind === "proof" ? proofReference(problem)
+        : problem.answer;
   const result = api.checkAnswer(problem, input);
   const passed = Boolean(result.correct);
   const status = passed ? "PASS" : "FAIL";

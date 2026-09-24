@@ -375,6 +375,47 @@ console.log("Removal smoke: 自動錯因存活、舊 records.conf 容忍、六�
   if (next !== 0) throw new Error("應繞回第 0 題，得到 " + next);
   console.log("Exam jump smoke: 亂序結算無重複無漏題、未答輪回正確");
 
+// ── 模擬卷的組成：圖形題混進中段、證明題在最後一題（2026-09-24）──
+// 卷子原本清一色是「打一個答案進去」的題。真實的期中考不是那樣 ——
+// 會有一題叫你畫圖、一題叫你證明。抽卷完全由 seed 決定，所以這件事驗得起來：
+// 同一份卷每次抽都一樣，配額掉了就會在這裡紅。
+{
+  const GRAPH_KINDS = ["graph", "graphtap", "graphslope", "sketch"];
+  const rows = [];
+  Object.entries(api.namedExams).forEach(([id, config]) => {
+    [0, 1, 2].forEach((attempt) => {
+      const paper = api.buildNamedExamPaper(id, attempt);
+      if (paper.length !== config.count) {
+        throw new Error(`${id} 第 ${attempt} 份卷 ${paper.length} 題，應該是 ${config.count} 題`);
+      }
+      if (new Set(paper.map((p) => p.id)).size !== paper.length) {
+        throw new Error(`${id} 第 ${attempt} 份卷有重複題`);
+      }
+      const graph = paper.filter((p) => GRAPH_KINDS.includes(p.answerKind)).length;
+      const proof = paper.filter((p) => p.answerKind === "proof").length;
+      if (proof > 1) throw new Error(`${id} 第 ${attempt} 份卷有 ${proof} 題證明 —— 一份卷最多一題`);
+      // 證明題只能在最後一題：它要寫字，夾在中間會把整份卷的節奏切斷
+      if (proof === 1 && paper[paper.length - 1].answerKind !== "proof") {
+        throw new Error(`${id} 第 ${attempt} 份卷的證明題不在最後一題`);
+      }
+      // 依範圍的三張卷（期中／期末／全範圍）是在模擬一次真的考試，而真的考卷會叫你證明
+      if ((config.group || "style") === "scope" && proof !== 1) {
+        throw new Error(`${id} 第 ${attempt} 份卷沒有證明題`);
+      }
+      rows.push({ id, graph, proof });
+    });
+  });
+  // 範圍涵蓋極限與微分的卷一定抽得到圖形題；只考積分的快篩沒有圖形題是正常的（不硬塞）
+  ["midterm", "full_term", "quiz_sprint"].forEach((id) => {
+    if (!rows.filter((row) => row.id === id && row.graph > 0).length) {
+      throw new Error(`${id} 三份卷都沒抽到圖形題`);
+    }
+  });
+  const graphTotal = rows.reduce((sum, row) => sum + row.graph, 0);
+  const proofTotal = rows.reduce((sum, row) => sum + row.proof, 0);
+  console.log(`模擬卷組成 smoke: ${rows.length} 份卷、圖形題 ${graphTotal} 題、證明題 ${proofTotal} 題且都在最後一題`);
+}
+
 // ── 反射進步卡（成效證據）─────────────────────────────────────
 // 兩個方向都要驗：真的變快要亮；資料不足或沒變快絕不能亮 ——
 // 一張灌水的進步卡比沒有卡更傷信用。
@@ -771,11 +812,18 @@ console.log(`Resume smoke: ${json.length} bytes for a 12-question exam, round-tr
 // 「練到反射」，因為反射的瓶頸變成手的移動而不是腦。
 {
   const appSource = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "app.js"), "utf8");
+  // app.js 撞預算之後，整段整段的畫面（手寫計算紙、證明作答區、圖形）搬去了
+  // share_cards.js。無障礙是看「使用者會看到的那份 HTML」，所以標記類的檢查
+  // 要連搬出去的那支一起讀 —— 只讀 app.js 的話，搬家等於默默繞過檢查。
+  const markupSource = appSource + require("fs").readFileSync(require("path").join(__dirname, "..", "src", "share_cards.js"), "utf8");
   const css = require("fs").readFileSync(require("path").join(__dirname, "..", "styles.css"), "utf8");
 
-  // KaTeX 必須輸出 MathML，否則螢幕閱讀器讀到的是一串無意義字元
-  const mathmlCalls = (appSource.match(/output:\s*"htmlAndMathml"/g) || []).length;
-  const katexCalls = (appSource.match(/window\.katex\.render\(/g) || []).length;
+  // KaTeX 必須輸出 MathML，否則螢幕閱讀器讀到的是一串無意義字元。
+  // 呼叫點在 kernel/tex_lite.js（排版層），不在 app.js —— 讀 app.js 的話
+  // 這個檢查永遠是 0 比 0，看起來綠的其實什麼都沒驗到。
+  const texSource = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "kernel", "tex_lite.js"), "utf8");
+  const mathmlCalls = (texSource.match(/output:\s*"htmlAndMathml"/g) || []).length;
+  const katexCalls = (texSource.match(/window\.katex\.render/g) || []).length;
   if (mathmlCalls < katexCalls) {
     throw new Error(`${katexCalls} 個 katex.render 但只有 ${mathmlCalls} 個輸出 MathML`);
   }
@@ -848,7 +896,7 @@ console.log(`Resume smoke: ${json.length} bytes for a 12-question exam, round-tr
   // 每一個 modal 都要有 role / aria-modal / 標題關聯，一個都不能漏
   // 只抓對話框本體。class="modal-backdrop" 是遮罩，不需要這些屬性 ——
   // 所以 "modal" 後面必須是引號或空格，不能是連字號。
-  const modals = appSource.match(/<div class="modal(?: [^"]*)?"[^>]*>/g) || [];
+  const modals = markupSource.match(/<div class="modal(?: [^"]*)?"[^>]*>/g) || [];
   modals.forEach((tag) => {
     ["role=\"dialog\"", "aria-modal=\"true\"", "aria-labelledby="].forEach((needle) => {
       if (!tag.includes(needle)) {
@@ -858,7 +906,7 @@ console.log(`Resume smoke: ${json.length} bytes for a 12-question exam, round-tr
   });
 
   // 手寫計算紙：畫布本身對螢幕閱讀器是空的，至少要有標籤說明它是什麼
-  if (!/data-blackboard[^>]*aria-label=/.test(appSource)) {
+  if (!/data-blackboard[^>]*aria-label=/.test(markupSource)) {
     throw new Error("手寫計算紙的 canvas 沒有 aria-label");
   }
 
@@ -1146,7 +1194,7 @@ console.log(`Resume smoke: ${json.length} bytes for a 12-question exam, round-tr
   // 這兩個題型不進對戰池（作答動作是拖與點，沒辦法用一個答案字串比賽）
   const dueled = global.window.BUZZ_PROBLEMS.filter((p) => ["graphtap", "graphslope"].includes(p.answerKind));
   const appSrc = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "app.js"), "utf8");
-  if (!/\["worksheet", "graph", "graphtap", "graphslope", "sketch"\]\.includes\(problem\.answerKind\)/.test(appSrc)) {
+  if (!/\["worksheet", "graph", "graphtap", "graphslope", "sketch", "proof"\]\.includes\(problem\.answerKind\)/.test(appSrc)) {
     throw new Error("對戰題池沒有排除互動圖形題");
   }
   // 每一題的判分規格都要能被驗算器獨立重算 —— 側表裡有紀錄才算數
