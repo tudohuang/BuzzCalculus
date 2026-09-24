@@ -1585,3 +1585,257 @@
 
   window.BUZZ_PROBLEMS = (window.BUZZ_PROBLEMS || []).concat(problems);
 })();
+
+/* ═══════════════════════════════════════════════════════════════════
+   微分深化包（dx-，2026-09-24）：把應用題的領域拉開，並補 R5–R6 的厚度。
+   盤點：904 題微分裡有 109 題應用題，但幾乎全擠在三種情境 ——
+   最佳化（圍籬、盒子、內接柱）、相關變率（梯子、影子、球脹大）、運動學。
+   經濟（彈性、最大利潤）、生醫（藥物峰值、族群成長最快）、工程（光照、樑、
+   折射）、曲率、正交軌線、誤差上界這些課本明明會教的，一題都沒有。
+   難度也偏：R5 只有 74 題、R6 只有 37 題（8% 與 4%）。
+
+   驗算：敘述型題幹自動辨識器讀不出結構，一律自帶 verify；
+   新的三條路徑 curvature / chainRate / elasticity 都只做數值微分。
+   ═══════════════════════════════════════════════════════════════════ */
+(function () {
+  "use strict";
+
+  const SOURCE = "Buzz 微分深化 2026-09";
+  const problems = [];
+
+  function add(problem) {
+    const tags = (problem.tags || []).slice();
+    tags.push(`rank-${problem.rank}`);
+    if (problem.rank >= 5) tags.push("boss-rank");
+    if (problem.rank <= 2) tags.push("beginner-friendly");
+    problems.push({
+      source: SOURCE,
+      topic: "derivatives",
+      difficulty: Math.min(4, problem.rank),
+      answerKind: "numeric",
+      timeLimit: problem.timeLimit || 110,
+      ...problem,
+      tags
+    });
+  }
+
+  /* ── A. 經濟：彈性、邊際、最大利潤（R4–R5）── */
+  add({ id: "dx-eco-001", rank: 4,
+    prompt: "\\text{需求函數 }q(p)=500-4p^{2}\\text{（件），價格 }p=5\\text{ 元。}\\quad\\text{價格彈性 }E=-\\dfrac{p\\,q'(p)}{q(p)}\\text{ 是多少？}",
+    answer: "0.5", verify: { m: "elasticity", f: "500-4p^2", at: 5, v: "p" },
+    tags: ["marginal", "applied-derivative", "word-problem"], timeLimit: 110,
+    hints: ["q′(p)=−8p。", "E = −p(−8p)/(500−4p²)。", "p=5 時 q=400。"],
+    solution: "E = 8·25/400 = 0.5（|E|<1，需求缺乏彈性：漲價總收益會增加）。" });
+
+  add({ id: "dx-eco-002", rank: 5,
+    prompt: "\\text{需求 }q(p)=1200e^{-0.05p}\\text{，價格 }p=30\\text{ 元。}\\quad\\text{價格彈性 }E=-\\dfrac{p\\,q'(p)}{q(p)}\\text{ 是多少？}",
+    answer: "1.5", verify: { m: "elasticity", f: "1200e^{-0.05p}", at: 30, v: "p" },
+    tags: ["marginal", "applied-derivative", "word-problem", "exponential"], timeLimit: 110,
+    hints: ["指數需求的彈性 E = 0.05p。", "不用算 q 本身，它會約掉。"],
+    solution: "E = 0.05·30 = 1.5（|E|>1，需求有彈性：漲價總收益會下降）。" });
+
+  add({ id: "dx-eco-003", rank: 4,
+    prompt: "\\text{總成本 }C(x)=0.02x^{3}-1.8x^{2}+60x+800\\text{ 元。}\\quad\\text{產量 }x=20\\text{ 件時的邊際成本（元／件）}",
+    answer: "12", verify: { m: "deriv", f: "0.02x^3-1.8x^2+60x+800", at: [20] },
+    tags: ["marginal", "applied-derivative", "word-problem"], timeLimit: 90,
+    hints: ["邊際成本＝C′(x)。", "C′ = 0.06x² − 3.6x + 60。"],
+    solution: "C′(20) = 24 − 72 + 60 = 12 元／件。" });
+
+  add({ id: "dx-eco-004", rank: 5,
+    prompt: "\\text{收益 }R(x)=x(90-0.5x)\\text{、成本 }C(x)=20x+300\\text{（元）。}\\quad\\text{利潤最大時的產量 }x",
+    answer: "70", verify: { m: "criticalPoint", f: "x(90-0.5x)-(20x+300)", x0: 60, order: 1 },
+    tags: ["optimization", "applied-derivative", "word-problem"], timeLimit: 110,
+    hints: ["利潤 P = R − C。", "P′ = 90 − x − 20 = 0。"],
+    solution: "P′ = 70 − x = 0 → x = 70（此時邊際收益＝邊際成本）。" });
+
+  /* ── B. 生醫：藥物峰值、族群成長最快、血流（R4–R6）── */
+  add({ id: "dx-bio-001", rank: 5,
+    prompt: "\\text{口服後血中濃度 }C(t)=8\\left(e^{-0.2t}-e^{-0.8t}\\right)\\text{ 毫克／公升。}\\quad\\text{濃度最高在第幾小時？}",
+    answer: "log(4)/0.6", verify: { m: "criticalPoint", f: "8(e^{-0.2x}-e^{-0.8x})", x0: 2, order: 1 },
+    tags: ["optimization", "applied-derivative", "word-problem", "exponential"], timeLimit: 130,
+    hints: ["C′(t)=0：0.8e^{−0.8t}=0.2e^{−0.2t}。", "兩邊取對數。", "t = ln4 / 0.6。"],
+    solution: "t = ln 4/0.6 ≈ 2.31 小時。" });
+
+  add({ id: "dx-bio-002", rank: 5,
+    prompt: "\\text{族群 }P(t)=\\dfrac{9}{1+8e^{-0.4t}}\\text{ 千隻。}\\quad\\text{成長最快（}P'\\text{ 最大）在第幾年？}",
+    answer: "log(8)/0.4", verify: { m: "criticalPoint", f: "\\frac{9}{1+8e^{-0.4x}}", x0: 5, order: 2 },
+    tags: ["inflection", "applied-derivative", "word-problem", "exponential"], timeLimit: 140,
+    hints: ["成長最快＝P″=0，也就是 logistic 曲線的反曲點。", "反曲點在 P = 承載量的一半。", "9/(1+8e^{−0.4t}) = 4.5 → 8e^{−0.4t}=1。"],
+    solution: "t = ln 8/0.4 ≈ 5.20 年（此時族群正好是 4.5 千隻，承載量的一半）。" });
+
+  add({ id: "dx-bio-003", rank: 4,
+    prompt: "\\text{Poiseuille 定律：血流量 }Q=k\\,r^{4}\\text{，}k=0.02\\text{。}\\quad\\text{半徑 }r=0.5\\text{ 公分、每分鐘縮小 }0.01\\text{ 公分時，血流量的變化率（立方公分／分）}",
+    answer: "-0.0001", verify: { m: "chainRate", f: "0.02x^4", at: 0.5, given: -0.01 },
+    tags: ["related-rates", "applied-derivative", "word-problem"], timeLimit: 110,
+    hints: ["dQ/dt = 4k r³ · dr/dt。", "4·0.02·0.125 = 0.01。"],
+    solution: "dQ/dt = 0.01·(−0.01) = −1×10⁻⁴（半徑少 2% 流量掉 8%）。" });
+
+  /* ── C. 工程與幾何：光照、樑、折射、曲率（R4–R6）── */
+  add({ id: "dx-eng-001", rank: 5,
+    prompt: "\\text{兩盞燈相距 }10\\text{ 公尺，亮度分別為 }1\\text{ 與 }8\\text{（強度與距離平方成反比）。}\\quad\\text{兩燈之間最暗的點離第一盞燈多遠？}",
+    answer: "10/3", verify: { m: "criticalPoint", f: "\\frac{1}{x^2}+\\frac{8}{(10-x)^2}", x0: 3, order: 1 },
+    tags: ["optimization", "applied-derivative", "word-problem"], timeLimit: 150,
+    hints: ["總強度 I(x)=1/x² + 8/(10−x)²。", "I′=0 → 2/x³ = 16/(10−x)³。", "(10−x)/x = 2。"],
+    solution: "10−x = 2x → x = 10/3 ≈ 3.33 公尺（離較暗的那盞近一些）。" });
+
+  add({ id: "dx-eng-002", rank: 5,
+    prompt: "\\text{從直徑 }30\\text{ 公分的圓木鋸出矩形樑，強度正比於寬 }\\times\\text{ 高}^{2}\\text{。}\\quad\\text{最強的樑寬是多少公分？}",
+    answer: "10*sqrt(3)", verify: { m: "criticalPoint", f: "x(900-x^2)", x0: 17, order: 1 },
+    tags: ["optimization", "applied-derivative", "word-problem"], timeLimit: 150,
+    hints: ["寬 w、高 h 滿足 w²+h²=30²。", "強度 S = w·h² = w(900−w²)。", "S′ = 900 − 3w² = 0。"],
+    solution: "w = √300 = 10√3 ≈ 17.3 公分（高 = √600 ≈ 24.5）。" });
+
+  add({ id: "dx-eng-003", rank: 4,
+    prompt: "\\text{曲線 }y=x^{3}-2x\\text{ 在 }x=1\\text{ 的曲率半徑}",
+    answer: "sqrt(2)/3", verify: { m: "curvature", f: "x^3-2x", at: 1, kind: "radius" },
+    tags: ["curvature", "applied-derivative"], timeLimit: 120,
+    hints: ["κ = |y″|/(1+y′²)^{3/2}。", "y′(1)=1、y″(1)=6。"],
+    solution: "κ = 6/2^{3/2} = 3√2/2，曲率半徑 = 2^{3/2}/6 = √2/3 ≈ 0.471。" });
+
+  add({ id: "dx-eng-004", rank: 4,
+    prompt: "\\text{懸鏈線 }y=\\cosh x\\text{ 在 }x=0\\text{ 的曲率}",
+    answer: "1", verify: { m: "curvature", f: "\\cosh x", at: 0 },
+    tags: ["curvature", "hyperbolic"], timeLimit: 100,
+    hints: ["y′(0)=0、y″(0)=1。", "κ = |y″|/(1+y′²)^{3/2}。"],
+    solution: "κ = 1/1 = 1（曲率半徑也是 1）。" });
+
+  /* ── D. 更難的相關變率（R4–R6）── */
+  add({ id: "dx-rr-001", rank: 5,
+    prompt: "\\text{倒圓錐水槽：頂半徑 }3\\text{ 公尺、深 }6\\text{ 公尺，注水 }2\\text{ 立方公尺／分。}\\quad\\text{水深 }4\\text{ 公尺時水面上升多快（公尺／分）？}",
+    answer: "1/(2*pi)", verify: { m: "relatedRate", f: "\\frac{\\pi}{12}h^3", at: 4, given: 2, v: "h" },
+    tags: ["related-rates", "applied-derivative", "word-problem"], timeLimit: 150,
+    hints: ["相似三角形：r = h/2。", "V = (π/3)r²h = (π/12)h³。", "dV/dt = (π/4)h²·dh/dt。"],
+    solution: "2 = (π/4)·16·dh/dt → dh/dt = 1/(2π) ≈ 0.159 公尺／分。" });
+
+  add({ id: "dx-rr-002", rank: 5,
+    prompt: "\\text{雷達站在跑道旁 }500\\text{ 公尺處，飛機以 }200\\text{ 公尺／秒沿跑道飛離。}\\quad\\text{飛機距雷達正對點 }500\\text{ 公尺時，仰角變化率（弧度／秒）}",
+    answer: "-0.2", verify: { m: "chainRate", f: "\\arctan(\\frac{500}{x})", at: 500, given: 200 },
+    tags: ["related-rates", "applied-derivative", "word-problem", "inverse-trig"], timeLimit: 150,
+    hints: ["θ = arctan(500/x)，x 是水平距離。", "dθ/dx = −500/(x²+500²)。", "x=500 時 dθ/dx = −1/1000。"],
+    solution: "dθ/dt = (−1/1000)·200 = −0.2 弧度／秒（角度在變小）。" });
+
+  add({ id: "dx-rr-003", rank: 5,
+    prompt: "\\text{甲船在乙船正北 }60\\text{ 海里，甲以 }15\\text{ 節向南、乙以 }20\\text{ 節向東。}\\quad 2\\text{ 小時後兩船距離的變化率（節）}",
+    answer: "7", verify: { m: "chainRate", f: "\\sqrt{(60-15x)^2+(20x)^2}", at: 2, given: 1 },
+    tags: ["related-rates", "applied-derivative", "word-problem"], timeLimit: 160,
+    hints: ["t 小時後：南北距 60−15t、東西距 20t。", "D(t)=√((60−15t)²+(20t)²)。", "對 t 微分再代 t=2。"],
+    solution: "D(2)=√(30²+40²)=50；D′(2) = (30·(−15) + 40·20)/50 = 350/50 = 7 節（正在遠離）。" });
+
+  add({ id: "dx-rr-004", rank: 6,
+    prompt: "\\text{熱氣球從距觀測者 }150\\text{ 公尺處垂直上升，速率 }6\\text{ 公尺／秒。}\\quad\\text{高度 }150\\text{ 公尺時仰角的變化率（弧度／秒）}",
+    answer: "0.02", verify: { m: "chainRate", f: "\\arctan(\\frac{x}{150})", at: 150, given: 6 },
+    tags: ["related-rates", "applied-derivative", "word-problem", "inverse-trig"], timeLimit: 140,
+    hints: ["θ = arctan(h/150)。", "dθ/dh = 150/(h²+150²)。", "h=150 時 dθ/dh = 1/300。"],
+    solution: "dθ/dt = 6/300 = 0.02 弧度／秒。" });
+
+  /* ── E. 定理與觀念（R4–R6）── */
+  add({ id: "dx-thm-001", rank: 4,
+    prompt: "\\text{一輛車在 }2\\text{ 小時內走了 }180\\text{ 公里，位置 }s(t)=50t^{2}-10t^{3}+30t\\text{（公里）。}\\quad\\text{由均值定理，瞬時速度等於平均速度的時刻 }t\\text{（小時）}",
+    answer: "(5-sqrt(7))/3", verify: { m: "mvtPoint", f: "50x^2-10x^3+30x", a: 0, b: 2, x0: 0.8 },
+    tags: ["mean-value", "applied-derivative", "word-problem"], timeLimit: 150,
+    hints: ["平均速度 = (s(2)−s(0))/2。", "解 s′(t) = 該平均值。", "s′ = 100t − 30t² + 30。"],
+    solution: "平均速度 90 公里／時；解 3t²−10t+6=0 取 (0,2) 內的根 t = (5−√7)/3 ≈ 0.78 小時。" });
+
+  add({ id: "dx-thm-002", rank: 5,
+    prompt: "\\text{用線性近似估 }\\sqrt[3]{28}\\text{（以 }a=27\\text{ 為基準）}",
+    answer: "82/27", verify: { m: "linApprox", f: "x^{1/3}", a: 27, dx: 1 },
+    tags: ["linear-approximation", "applied-derivative"], timeLimit: 100,
+    hints: ["f(x)=x^{1/3}，f′(x)=1/(3x^{2/3})。", "f′(27)=1/27。", "3 + 1/27。"],
+    solution: "≈ 3 + 1/27 ≈ 3.0370（真值 3.03659）。" });
+
+  add({ id: "dx-thm-003", rank: 5,
+    prompt: "\\text{球半徑量得 }10\\text{ 公分，誤差 }\\pm 0.05\\text{ 公分。}\\quad\\text{用微分估體積的最大誤差（立方公分）}",
+    answer: "20*pi", verify: { m: "differential", f: "\\frac{4}{3}\\pi x^3", a: 10, dx: 0.05 },
+    tags: ["linear-approximation", "applied-derivative", "word-problem"], timeLimit: 110,
+    hints: ["dV = 4πr²·dr。", "4π·100·0.05。"],
+    solution: "dV = 20π ≈ 62.8 立方公分（相對誤差 1.5%）。" });
+
+  add({ id: "dx-thm-004", rank: 5,
+    prompt: "\\text{用牛頓法解 }x^{3}+x-3=0\\text{，從 }x_{0}=1\\text{ 出發。}\\quad x_{2}\\text{ 是多少？}",
+    answer: "17/14", verify: { m: "root", f: "x^3+x-3", x0: 1, n: 2 },
+    tags: ["newton", "applied-derivative"], timeLimit: 130,
+    hints: ["x₁ = 1 − f(1)/f′(1) = 1 + 1/4 = 1.25。", "再跑一次：f(1.25)=0.203、f′(1.25)=5.6875。"],
+    solution: "x₂ = 1.25 − 0.203125/5.6875 = 17/14 ≈ 1.2143（真根 1.21341）。" });
+
+  add({ id: "dx-thm-005", rank: 5, answerKind: "text",
+    prompt: "\\text{函數 }f(x)=x^{2/3}\\text{ 在 }x=0\\text{ 的性質為何？}",
+    answers: ["連續但不可微", "連續不可微", "連續但不可導", "尖點"], canonical: "連續但不可微",
+    distractors: ["可微且連續", "不連續", "可微但不連續"],
+    tags: ["differentiability", "applied-derivative"], timeLimit: 80,
+    hints: ["f(0)=0，左右極限都是 0。", "f′(x)=2/(3x^{1/3}) 在 0 炸開。"],
+    solution: "連續但不可微：x=0 是尖點，切線垂直。" });
+
+  /* ── F. 更難的計算（R5–R6）── */
+  add({ id: "dx-calc-001", rank: 5, answerKind: "expression",
+    prompt: "\\frac{d}{dx}\\left(x^{\\sin x}\\right)\\quad (x>0)",
+    answer: "x^(sin(x))*(cos(x)*log(x)+sin(x)/x)", variable: "x",
+    tags: ["log-differentiation", "trig"], timeLimit: 140,
+    hints: ["取對數：ln y = sin x · ln x。", "兩邊微分：y′/y = cos x·ln x + sin x/x。"],
+    solution: "y′ = x^{sin x}(cos x·ln x + sin x/x)。" });
+
+  add({ id: "dx-calc-002", rank: 6, answerKind: "expression",
+    prompt: "\\frac{d}{dx}\\left(\\left(\\ln x\\right)^{x}\\right)\\quad (x>1)",
+    answer: "(log(x))^x*(log(log(x))+1/log(x))", variable: "x",
+    tags: ["log-differentiation", "log"], timeLimit: 150,
+    hints: ["取對數：ln y = x·ln(ln x)。", "微分：y′/y = ln(ln x) + x·(1/ln x)·(1/x)。"],
+    solution: "y′ = (ln x)^x(ln(ln x) + 1/ln x)。" });
+
+  add({ id: "dx-calc-003", rank: 5,
+    prompt: "\\text{曲線 }x^{3}+y^{3}=6xy\\text{ 在點 }(3,3)\\text{ 的切線斜率}",
+    answer: "-1", verify: { m: "implicitDeriv", F: "x^3+y^3-6xy", at: [3, 3], order: 1 },
+    tags: ["implicit-differentiation"], timeLimit: 120,
+    hints: ["3x²+3y²y′ = 6y + 6xy′。", "代 (3,3)：27+27y′ = 18+18y′。"],
+    solution: "9y′ = −9 → y′ = −1（笛卡兒葉形線在該點的切線）。" });
+
+  add({ id: "dx-calc-004", rank: 6,
+    prompt: "\\text{曲線 }x^{2}+xy+y^{2}=3\\text{ 在點 }(1,1)\\text{ 的 }\\dfrac{d^{2}y}{dx^{2}}",
+    answer: "-2/3", verify: { m: "implicitDeriv", F: "x^2+xy+y^2-3", at: [1, 1], order: 2 },
+    tags: ["implicit-differentiation", "higher-derivative"], timeLimit: 160,
+    hints: ["先得 y′ = −(2x+y)/(x+2y)，在 (1,1) 是 −1。", "再對 x 微分一次，代入 y′=−1。"],
+    solution: "2 + 3y″ = 0 → y″(1) = −2/3。" });
+
+  add({ id: "dx-calc-005", rank: 6,
+    prompt: "f(x)=\\dfrac{1}{1-2x}\\quad\\text{求 }f^{(5)}(0)",
+    answer: "3840", verify: { m: "derivAt0", f: "\\frac{1}{1-2x}", n: 5, r: 0.2 },
+    tags: ["higher-derivative", "taylor"], timeLimit: 140,
+    hints: ["1/(1−2x) = Σ(2x)ⁿ。", "x⁵ 的係數是 2⁵=32。", "f⁽⁵⁾(0) = 5!·32。"],
+    solution: "120·32 = 3840。" });
+
+  add({ id: "dx-calc-006", rank: 6,
+    prompt: "\\text{參數式 }x=t-\\sin t,\\ y=1-\\cos t\\text{（擺線）在 }t=\\dfrac{\\pi}{2}\\text{ 的 }\\dfrac{d^{2}y}{dx^{2}}",
+    answer: "-1", verify: { m: "paramSecond", x: "t-\\sin t", y: "1-\\cos t", at: "\\pi/2" },
+    tags: ["parametric", "higher-derivative"], timeLimit: 170,
+    hints: ["dy/dx = sin t/(1−cos t)。", "d²y/dx² = (d/dt)(dy/dx) / (dx/dt)。"],
+    solution: "在 t=π/2 得 −1。" });
+
+  add({ id: "dx-calc-007", rank: 5,
+    prompt: "g\\text{ 是 }f(x)=x^{5}+x^{3}+2x\\text{ 的反函數。}\\quad\\text{求 }g'(4)",
+    answer: "1/10", verify: { m: "inverseDeriv", f: "x^5+x^3+2x", at: 4, x0: 1 },
+    tags: ["inverse-function", "derivative-definition"], timeLimit: 120,
+    hints: ["先找 a 使 f(a)=4：試 a=1。", "g′(4)=1/f′(1)。", "f′=5x⁴+3x²+2。"],
+    solution: "f(1)=4、f′(1)=10 → g′(4)=1/10。" });
+
+  add({ id: "dx-calc-008", rank: 6, answerKind: "expression",
+    prompt: "\\frac{d}{dx}\\left(\\operatorname{arcsinh}\\left(e^{x}\\right)\\right)",
+    answer: "exp(x)/sqrt(1+exp(2*x))", variable: "x",
+    tags: ["inverse-trig", "hyperbolic", "chain-rule"], timeLimit: 150,
+    hints: ["(arcsinh u)′ = u′/√(1+u²)。", "u = eˣ，u′ = eˣ。", "分母是 √(1+e^{2x})。"],
+    solution: "導數是 eˣ/√(1+e^{2x})。" });
+
+  /* ── G. 切線、法線與正交軌線（R4–R5）── */
+  add({ id: "dx-tan-001", rank: 4,
+    prompt: "\\text{曲線 }y=\\dfrac{x}{x^{2}+1}\\text{ 在 }x=2\\text{ 的切線與 }x\\text{ 軸的交點}",
+    answer: "16/3", verify: { m: "tangentNormal", f: "\\frac{x}{x^2+1}", a: 2, kind: "xIntercept" },
+    tags: ["tangent-normal"], timeLimit: 120,
+    hints: ["y′ = (1−x²)/(1+x²)²，在 x=2 是 −3/25。", "切點 (2, 2/5)。", "x 截距 = 2 − (2/5)/(−3/25)。"],
+    solution: "2 + 10/3 = 16/3 ≈ 5.33。" });
+
+  add({ id: "dx-tan-002", rank: 5,
+    prompt: "\\text{從原點畫 }y=\\ln x\\text{ 的切線，切點的 }x\\text{ 座標}",
+    answer: "exp(1)", verify: { m: "root", f: "\\ln x-1", x0: 2 },
+    tags: ["tangent-normal", "log"], timeLimit: 140,
+    hints: ["切點 (a, ln a)，切線斜率 1/a。", "過原點：ln a − 0 = (1/a)(a − 0)。", "ln a = 1。"],
+    solution: "a = e ≈ 2.718（切線是 y = x/e）。" });
+
+  window.BUZZ_PROBLEMS = (window.BUZZ_PROBLEMS || []).concat(problems);
+})();
