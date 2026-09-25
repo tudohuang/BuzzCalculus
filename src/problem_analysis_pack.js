@@ -411,3 +411,237 @@
 
   window.BUZZ_PROBLEMS = (window.BUZZ_PROBLEMS || []).concat(problems);
 })();
+
+
+/* ═══════════════════════════════════════════════════════════════
+   泰勒餘項與誤差上界（2026-09-25）：30 題。
+
+   盤點：帶 taylor 標籤的題目有 146 題，但提到「餘項」或「誤差上界」的只有 4 題，
+   而且其中兩題是這個月剛加的。也就是說，這個站練得起來「把展開式寫出來」，
+   練不到「這個近似到底準不準」—— 可是後者才是泰勒定理的內容。
+   展開式本身只是代數，餘項才是定理。
+
+   四節，刻意照這個順序：
+     多項式的值   7 ── 先把 T_n 算對（連這個都錯的話，後面的誤差都沒意義）
+     實際誤差     8 ── |f(x) − T_n(x)| 真正是多少
+     餘項上界     9 ── 拉格朗日餘項 M|x−a|ⁿ⁺¹/(n+1)!，M 取實際最大值
+     要展到幾階   6 ── 反過來問：給定精度，n 要多少
+   第二節與第三節故意配成對（同一個 f、同一個 n、同一個 x）：
+   實際誤差 0.218 對上上界 0.453 —— 上界是「保證不會更糟」，不是「就是這麼多」。
+   很多人把這兩件事當成同一個數，是因為從來沒有把它們並排算過。
+
+   驗算器為此補四條路徑（taylorValue / taylorError / lagrangeBound / taylorTerms）。
+   共同底層是「在 a 附近用 Chebyshev 取樣解出所有階的係數」：重複數值微分每微一次
+   放大一次雜訊，四階以後就不能看；Chebyshev 一次取樣到九階仍然穩。
+   取樣半徑要蓋得住代入點 —— r=0.4 而 x=1 時，sin 的九階係數差了 3e-5，
+   「要展到幾階」那一節會整個算錯（實際踩到，第一版跑出「十二階還不夠」）。
+   lagrangeBound 的 M 是數值掃出來的最大值，不是題目給的 —— 所以「M 要取多少」
+   這一步也在驗算範圍內。 */
+(function () {
+  "use strict";
+
+  const SOURCE = "Buzz 泰勒餘項包 2026-09";
+  const problems = [];
+
+  const add = (id, rank, prompt, answer, tags, solution, timeLimit, verify) => {
+    const all = [...tags, "taylor", `rank-${rank}`];
+    if (rank >= 5) all.push("boss-rank");
+    if (rank === 6) all.push("boss-plus");
+    problems.push({
+      source: SOURCE, id, rank, difficulty: Math.min(4, rank), topic: "series",
+      answerKind: "numeric", prompt, answer, solution, timeLimit, verify, tags: all
+    });
+  };
+
+  /* ── 一、泰勒多項式的值（7）──────────────────────────────── */
+
+  add("tr-val-001", 3,
+    "\\text{設 }T_3\\text{ 為 }e^x\\text{ 在 }x=0\\text{ 的三階泰勒多項式}\\quad\\text{求 }T_3(1)",
+    "8/3", ["taylor-polynomial"],
+    "T_3(x)=1+x+x²/2+x³/6，代 x=1 得 1+1+1/2+1/6 = 8/3 ≈ 2.667。真值 e≈2.718，差了 0.052。", 90,
+    { m: "taylorValue", f: "e^x", a: 0, n: 3, at: 1 });
+
+  add("tr-val-002", 3,
+    "\\text{設 }T_5\\text{ 為 }\\sin x\\text{ 在 }x=0\\text{ 的五階泰勒多項式}\\quad\\text{求 }T_5(1)",
+    "101/120", ["taylor-polynomial", "trig"],
+    "T_5(x)=x−x³/6+x⁵/120，代 1 得 1−1/6+1/120 = 101/120 ≈ 0.84167。真值 sin 1 ≈ 0.84147。", 90,
+    { m: "taylorValue", f: "\\sin x", a: 0, n: 5, at: 1 });
+
+  add("tr-val-003", 3,
+    "\\text{設 }T_4\\text{ 為 }\\cos x\\text{ 在 }x=0\\text{ 的四階泰勒多項式}\\quad\\text{求 }T_4\\!\\left(\\frac{1}{2}\\right)",
+    "337/384", ["taylor-polynomial", "trig"],
+    "T_4(x)=1−x²/2+x⁴/24，代 1/2 得 1−1/8+1/384 = 337/384 ≈ 0.87760。cos 0.5 ≈ 0.87758，四階已經準到小數第四位。", 100,
+    { m: "taylorValue", f: "\\cos x", a: 0, n: 4, at: 0.5 });
+
+  add("tr-val-004", 4,
+    "\\text{設 }T_3\\text{ 為 }\\ln(1+x)\\text{ 在 }x=0\\text{ 的三階泰勒多項式}\\quad\\text{求 }T_3\\!\\left(\\frac{1}{2}\\right)",
+    "5/12", ["taylor-polynomial", "log"],
+    "T_3(x)=x−x²/2+x³/3，代 1/2 得 1/2−1/8+1/24 = 5/12 ≈ 0.4167。真值 ln 1.5 ≈ 0.4055 —— 這個級數收斂慢，三階還差 0.011。", 110,
+    { m: "taylorValue", f: "\\ln(1+x)", a: 0, n: 3, at: 0.5 });
+
+  add("tr-val-005", 3,
+    "\\text{設 }T_2\\text{ 為 }\\sqrt{1+x}\\text{ 在 }x=0\\text{ 的二階泰勒多項式}\\quad\\text{求 }T_2(0.2)",
+    "219/200", ["taylor-polynomial"],
+    "T_2(x)=1+x/2−x²/8，代 0.2 得 1+0.1−0.005 = 1.095 = 219/200。√1.2 ≈ 1.09545，兩階就準到小數第三位。", 100,
+    { m: "taylorValue", f: "\\sqrt{1+x}", a: 0, n: 2, at: 0.2 });
+
+  add("tr-val-006", 4,
+    "\\text{設 }T_3\\text{ 為 }\\frac{1}{1-x}\\text{ 在 }x=0\\text{ 的三階泰勒多項式}\\quad\\text{求 }T_3(0.2)",
+    "156/125", ["taylor-polynomial", "geometric-series"],
+    "這裡的泰勒多項式就是等比級數的部分和：T_3=1+x+x²+x³，代 0.2 得 1.248 = 156/125。真值 1/0.8 = 1.25。", 100,
+    { m: "taylorValue", f: "1/(1-x)", a: 0, n: 3, at: 0.2 });
+
+  add("tr-val-007", 4,
+    "\\text{設 }T_4\\text{ 為 }e^{-x^2}\\text{ 在 }x=0\\text{ 的四階泰勒多項式}\\quad\\text{求 }T_4\\!\\left(\\frac{1}{2}\\right)",
+    "25/32", ["taylor-polynomial", "composition"],
+    "把 e^u 的展開代 u=−x²：T_4(x)=1−x²+x⁴/2，代 1/2 得 1−1/4+1/32 = 25/32 = 0.78125。真值 e^{−0.25} ≈ 0.7788。", 120,
+    { m: "taylorValue", f: "e^{-x^2}", a: 0, n: 4, at: 0.5 });
+
+  /* ── 二、實際誤差（8）────────────────────────────────────── */
+
+  add("tr-err-001", 4,
+    "\\text{求 }e^x\\text{ 在 }x=0\\text{ 展開的三階泰勒多項式在 }x=1\\text{ 的實際誤差 }|e-T_3(1)|",
+    "exp(1)-8/3", ["error-bound"],
+    "e − 8/3 ≈ 2.71828 − 2.66667 = 0.05162。下一節會算同一個設定的上界 e/24 ≈ 0.11326 —— 上界大約是實際誤差的兩倍。", 130,
+    { m: "taylorError", f: "e^x", a: 0, n: 3, at: 1 });
+
+  add("tr-err-002", 4,
+    "\\text{求 }\\sin x\\text{ 在 }x=0\\text{ 展開的三階泰勒多項式在 }x=\\frac{1}{2}\\text{ 的實際誤差}",
+    "sin(1/2)-23/48", ["error-bound", "trig"],
+    "T_3(1/2)=1/2−1/48 = 23/48 ≈ 0.479167，sin 0.5 ≈ 0.479426，差 0.000259。離展開點越近誤差掉得越快（差距是 x⁵ 級的）。", 140,
+    { m: "taylorError", f: "\\sin x", a: 0, n: 3, at: 0.5 });
+
+  add("tr-err-003", 4,
+    "\\text{求 }\\max_{0\\le x\\le 1/2}\\left|\\cos x-\\left(1-\\frac{x^2}{2}\\right)\\right|",
+    "cos(1/2)-7/8", ["error-bound", "trig"],
+    "差值在 [0,1/2] 上遞增（餘項是 x⁴/24 級的正量），最大在端點：cos 0.5 − 0.875 ≈ 0.002583。", 150,
+    { m: "taylorError", f: "\\cos x", a: 0, n: 2, range: [0, 0.5] });
+
+  add("tr-err-004", 4,
+    "\\text{求 }\\ln(1+x)\\text{ 在 }x=0\\text{ 展開的二階泰勒多項式在 }x=\\frac{1}{2}\\text{ 的實際誤差}",
+    "log(3/2)-3/8", ["error-bound", "log"],
+    "T_2(1/2)=1/2−1/8 = 3/8 = 0.375，ln 1.5 ≈ 0.40546，差 0.03047。跟 sin 那一題比：同樣是二、三階，這裡的誤差大了一百倍 —— 收斂速度差很多。", 150,
+    { m: "taylorError", f: "\\ln(1+x)", a: 0, n: 2, at: 0.5 });
+
+  add("tr-err-005", 4,
+    "\\text{求 }\\frac{1}{1-x}\\text{ 在 }x=0\\text{ 展開的三階泰勒多項式在 }x=0.2\\text{ 的實際誤差}",
+    "1/500", ["error-bound", "geometric-series"],
+    "等比級數的尾巴可以直接加起來：誤差 = x⁴/(1−x) = 0.0016/0.8 = 0.002 = 1/500。這是少數能把餘項寫成封閉式的例子。", 150,
+    { m: "taylorError", f: "1/(1-x)", a: 0, n: 3, at: 0.2 });
+
+  add("tr-err-006", 5,
+    "\\text{求 }\\max_{-1/2\\le x\\le 1/2}\\left|e^x-\\left(1+x+\\frac{x^2}{2}\\right)\\right|",
+    "exp(1/2)-13/8", ["error-bound"],
+    "兩個端點都要算：左端 |e^{−0.5}−0.625| ≈ 0.01847，右端 |e^{0.5}−1.625| ≈ 0.02372。右邊大，所以答案是 e^{1/2}−13/8。對稱區間不代表誤差對稱。", 180,
+    { m: "taylorError", f: "e^x", a: 0, n: 2, range: [-0.5, 0.5] });
+
+  add("tr-err-007", 5,
+    "\\text{求 }\\sqrt{1+x}\\text{ 在 }x=0\\text{ 展開的二階泰勒多項式在 }x=0.2\\text{ 的實際誤差}",
+    "sqrt(6/5)-219/200", ["error-bound"],
+    "√1.2 − 1.095 ≈ 1.0954451 − 1.095 = 0.0004451。二階就到小數第四位 —— 這也是為什麼工程上算 √ 常常只展到二階。", 170,
+    { m: "taylorError", f: "\\sqrt{1+x}", a: 0, n: 2, at: 0.2 });
+
+  add("tr-err-008", 5,
+    "\\text{求 }\\arctan x\\text{ 在 }x=0\\text{ 展開的三階泰勒多項式在 }x=\\frac{1}{2}\\text{ 的實際誤差}",
+    "atan(1/2)-11/24", ["error-bound"],
+    "T_3(x)=x−x³/3，代 1/2 得 11/24 ≈ 0.458333；arctan 0.5 ≈ 0.463648，差 0.005314。下一項是 x⁵/5 = 0.00625，跟實際誤差同一個量級 —— 交錯級數的誤差界在這裡很準。", 180,
+    { m: "taylorError", f: "\\arctan x", a: 0, n: 3, at: 0.5 });
+
+  /* ── 三、拉格朗日餘項的上界（9）──────────────────────────────
+     一律取 M 為 |f⁽ⁿ⁺¹⁾| 在展開點與代入點之間的**實際最大值**（不是課本常用的粗略 1）。
+     這樣「M 要取多少」也是題目的一部分，而不是背一個數。 */
+
+  add("tr-bnd-001", 4,
+    "\\text{用拉格朗日餘項估 }e^x\\text{ 的二階泰勒多項式在 }x=1\\text{ 的誤差上界}\\quad\\text{（}M\\text{ 取 }|f^{(3)}|\\text{ 在 }[0,1]\\text{ 上的最大值）}",
+    "exp(1)/6", ["error-bound", "lagrange-remainder"],
+    "f⁽³⁾=e^x 在 [0,1] 的最大值是 e，餘項界 = e·1³/3! = e/6 ≈ 0.4530。實際誤差是 e−2.5 ≈ 0.2183 —— 上界大了約一倍，但它保證了「不會更糟」。", 160,
+    { m: "lagrangeBound", f: "e^x", a: 0, n: 2, at: 1 });
+
+  add("tr-bnd-002", 4,
+    "\\text{用拉格朗日餘項估 }e^x\\text{ 的三階泰勒多項式在 }x=1\\text{ 的誤差上界}\\quad\\text{（}M\\text{ 取 }|f^{(4)}|\\text{ 在 }[0,1]\\text{ 上的最大值）}",
+    "exp(1)/24", ["error-bound", "lagrange-remainder"],
+    "e·1⁴/4! = e/24 ≈ 0.1133。多展一階，上界掉了四倍（分母多乘一個 4）。", 160,
+    { m: "lagrangeBound", f: "e^x", a: 0, n: 3, at: 1 });
+
+  add("tr-bnd-003", 4,
+    "\\text{用拉格朗日餘項估 }\\sin x\\text{ 的三階泰勒多項式在 }x=1\\text{ 的誤差上界}\\quad\\text{（}M\\text{ 取 }|f^{(4)}|\\text{ 在 }[0,1]\\text{ 上的最大值）}",
+    "sin(1)/24", ["error-bound", "lagrange-remainder", "trig"],
+    "f⁽⁴⁾=sin x，在 [0,1] 的最大值是 sin 1 ≈ 0.8415，所以界是 sin(1)/24 ≈ 0.03506。課本常直接取 M=1 得 1/24 ≈ 0.04167 —— 那也是對的上界，只是鬆一點。", 180,
+    { m: "lagrangeBound", f: "\\sin x", a: 0, n: 3, at: 1 });
+
+  add("tr-bnd-004", 5,
+    "\\text{用拉格朗日餘項估 }\\ln(1+x)\\text{ 的二階泰勒多項式在 }x=\\frac{1}{2}\\text{ 的誤差上界}\\quad\\text{（}M\\text{ 取 }|f^{(3)}|\\text{ 在 }[0,1/2]\\text{ 上的最大值）}",
+    "1/24", ["error-bound", "lagrange-remainder", "log"],
+    "f⁽³⁾=2/(1+x)³ 在 x=0 最大，M=2。界 = 2·(1/2)³/3! = 1/24 ≈ 0.0417。實際誤差 0.0305，同一個量級。", 190,
+    { m: "lagrangeBound", f: "\\ln(1+x)", a: 0, n: 2, at: 0.5 });
+
+  add("tr-bnd-005", 4,
+    "\\text{用拉格朗日餘項估 }e^{-x}\\text{ 的二階泰勒多項式在 }x=\\frac{1}{2}\\text{ 的誤差上界}\\quad\\text{（}M\\text{ 取 }|f^{(3)}|\\text{ 在 }[0,1/2]\\text{ 上的最大值）}",
+    "1/48", ["error-bound", "lagrange-remainder"],
+    "f⁽³⁾=−e^{−x}，絕對值在 x=0 最大，M=1。界 = 1·(1/2)³/6 = 1/48 ≈ 0.0208。", 160,
+    { m: "lagrangeBound", f: "e^{-x}", a: 0, n: 2, at: 0.5 });
+
+  add("tr-bnd-006", 5,
+    "\\text{用拉格朗日餘項估 }\\cos x\\text{ 的二階泰勒多項式在 }x=0.3\\text{ 的誤差上界}\\quad\\text{（}M\\text{ 取 }|f^{(3)}|\\text{ 在 }[0,0.3]\\text{ 上的最大值）}",
+    "sin(3/10)*9/2000", ["error-bound", "lagrange-remainder", "trig"],
+    "f⁽³⁾=sin x，在 [0,0.3] 遞增，M=sin 0.3 ≈ 0.2955。界 = M·0.3³/6 = M·0.0045 ≈ 0.00133。取 M=1 會得到 0.0045，鬆了三倍多 —— 在小區間上算實際的 M 值得。", 200,
+    { m: "lagrangeBound", f: "\\cos x", a: 0, n: 2, at: 0.3 });
+
+  add("tr-bnd-007", 5,
+    "\\text{用拉格朗日餘項估 }\\sqrt{1+x}\\text{ 的一階泰勒多項式在 }x=0.2\\text{ 的誤差上界}\\quad\\text{（}M\\text{ 取 }|f''|\\text{ 在 }[0,0.2]\\text{ 上的最大值）}",
+    "1/200", ["error-bound", "lagrange-remainder"],
+    "f''=−(1/4)(1+x)^{−3/2}，絕對值在 x=0 最大，M=1/4。界 = (1/4)(0.2)²/2 = 0.005 = 1/200。一階泰勒多項式就是線性近似，這個界就是線性近似的誤差界。", 190,
+    { m: "lagrangeBound", f: "\\sqrt{1+x}", a: 0, n: 1, at: 0.2 });
+
+  add("tr-bnd-008", 5,
+    "\\text{用拉格朗日餘項估 }\\frac{1}{1-x}\\text{ 的三階泰勒多項式在 }x=0.2\\text{ 的誤差上界}\\quad\\text{（}M\\text{ 取 }|f^{(4)}|\\text{ 在 }[0,0.2]\\text{ 上的最大值）}",
+    "5/1024", ["error-bound", "lagrange-remainder", "geometric-series"],
+    "f⁽⁴⁾=24/(1−x)⁵ 在 x=0.2 最大，M=24/0.8⁵ = 73.24。界 = M·0.2⁴/24 ≈ 0.004883 = 5/1024。實際誤差 0.002，上界大約兩倍。", 210,
+    { m: "lagrangeBound", f: "1/(1-x)", a: 0, n: 3, at: 0.2, r: 0.25 });
+
+  add("tr-bnd-009", 6,
+    "\\text{用拉格朗日餘項估 }e^x\\text{ 在 }x=1\\text{ 展開的二階泰勒多項式在 }x=1.5\\text{ 的誤差上界}\\quad\\text{（}M\\text{ 取 }|f^{(3)}|\\text{ 在 }[1,1.5]\\text{ 上的最大值）}",
+    "exp(3/2)/48", ["error-bound", "lagrange-remainder"],
+    "展開點不是 0 的版本：M = e^{1.5}（在右端最大），界 = e^{1.5}·(0.5)³/6 = e^{1.5}/48 ≈ 0.0934。注意 |x−a| 是 0.5 不是 1.5 —— 距離要從展開點量。", 230,
+    { m: "lagrangeBound", f: "e^x", a: 1, n: 2, at: 1.5 });
+
+  /* ── 四、要展到幾階（6）──────────────────────────────────── */
+
+  add("tr-num-001", 5,
+    "\\text{要讓 }e^x\\text{ 在 }x=0\\text{ 展開的泰勒多項式在整個 }[0,1]\\text{ 上誤差小於 }10^{-3}\\text{，最小的階數 }n",
+    "6", ["error-bound", "lagrange-remainder"],
+    "誤差界 e/(n+1)!：n=5 給 e/720 ≈ 0.0038 還不夠，n=6 給 e/5040 ≈ 0.00054 過關。所以 n=6。", 200,
+    { m: "taylorTerms", f: "e^x", a: 0, range: [0, 1], eps: 0.001 });
+
+  add("tr-num-002", 5,
+    "\\text{要讓 }e^x\\text{ 在 }x=0\\text{ 展開的泰勒多項式在整個 }[0,1]\\text{ 上誤差小於 }10^{-4}\\text{，最小的階數 }n",
+    "7", ["error-bound", "lagrange-remainder"],
+    "n=6 的界是 5.4×10⁻⁴，n=7 是 6.7×10⁻⁵。精度要求嚴十倍，只多一階 —— 階乘長得比要求快。", 200,
+    { m: "taylorTerms", f: "e^x", a: 0, range: [0, 1], eps: 0.0001 });
+
+  add("tr-num-003", 6,
+    "\\text{要讓 }\\sin x\\text{ 在 }x=0\\text{ 展開的泰勒多項式在整個 }[0,1]\\text{ 上誤差小於 }10^{-6}\\text{，最小的階數 }n",
+    "9", ["error-bound", "lagrange-remainder", "trig"],
+    "sin 的展開只有奇次項，所以 n=8 跟 n=7 是同一個多項式。誤差界 1/(n+1)!：n=7 給 1/40320 ≈ 2.5×10⁻⁵，n=9 給 1/3628800 ≈ 2.8×10⁻⁷ 才過關。", 240,
+    { m: "taylorTerms", f: "\\sin x", a: 0, range: [0, 1], eps: 0.000001 });
+
+  add("tr-num-004", 5,
+    "\\text{要讓 }\\cos x\\text{ 在 }x=0\\text{ 展開的泰勒多項式在整個 }\\left[0,\\frac{\\pi}{4}\\right]\\text{ 上誤差小於 }10^{-4}\\text{，最小的階數 }n",
+    "6", ["error-bound", "lagrange-remainder", "trig"],
+    "區間右端 π/4 ≈ 0.785，誤差界 (π/4)^{n+1}/(n+1)!：n=5 給 3.3×10⁻⁴、n=6 給 3.7×10⁻⁵。區間縮小比多展一階更省力 —— 這就是查表法把角度先化到第一象限的理由。", 220,
+    { m: "taylorTerms", f: "\\cos x", a: 0, range: [0, 0.7853981634], eps: 0.0001 });
+
+  add("tr-num-005", 4,
+    "\\text{要讓 }\\ln(1+x)\\text{ 在 }x=0\\text{ 展開的泰勒多項式在 }x=\\frac{1}{2}\\text{ 誤差小於 }10^{-2}\\text{，最小的階數 }n",
+    "4", ["error-bound", "log"],
+    "這裡的餘項就是交錯級數的第一個被丟掉的項 (1/2)^{n+1}/(n+1)：n=3 給 0.0156 不夠，n=4 給 0.00625 過關。", 190,
+    { m: "taylorTerms", f: "\\ln(1+x)", a: 0, at: 0.5, eps: 0.01 });
+
+  add("tr-num-006", 5,
+    "\\text{要讓 }\\ln(1+x)\\text{ 在 }x=0\\text{ 展開的泰勒多項式在 }x=\\frac{1}{2}\\text{ 誤差小於 }10^{-3}\\text{，最小的階數 }n",
+    "6", ["error-bound", "log"],
+    "n=5 給 (1/2)⁶/6 ≈ 0.0026、n=6 給 (1/2)⁷/7 ≈ 0.0011，而實際誤差比界再小一點，n=6 剛好過關。跟 e^x 比：同樣要 10⁻³，這裡也要六階，但每一階只換到兩倍的精度。", 210,
+    { m: "taylorTerms", f: "\\ln(1+x)", a: 0, at: 0.5, eps: 0.001 });
+
+  window.BUZZ_PROBLEMS = (window.BUZZ_PROBLEMS || []).concat(problems);
+})();

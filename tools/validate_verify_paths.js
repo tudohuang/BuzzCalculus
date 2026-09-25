@@ -24,6 +24,13 @@ const close = (a, b) => Number.isFinite(a) && Math.abs(a - b) <= 1e-5 * Math.max
 /* ── 一、正向：已知的值要算得出來 ────────────────────────────── */
 
 const VALUE_CASES = [
+  ["泰勒多項式的值", { m: "taylorValue", f: "e^x", a: 0, n: 3, at: 1 }, 8 / 3],
+  ["泰勒多項式（展開點不是 0）", { m: "taylorValue", f: "\\ln x", a: 1, n: 2, at: 1.2, r: 0.3 }, 0.18],
+  ["實際誤差（一點）", { m: "taylorError", f: "e^x", a: 0, n: 2, at: 1 }, Math.E - 2.5],
+  ["實際誤差（整段的最大值）", { m: "taylorError", f: "e^x", a: 0, n: 2, range: [-0.5, 0.5] }, Math.exp(0.5) - 13 / 8],
+  ["拉格朗日餘項上界", { m: "lagrangeBound", f: "e^x", a: 0, n: 2, at: 1 }, Math.E / 6],
+  ["餘項上界（M 不在端點取到 1）", { m: "lagrangeBound", f: "\\sin x", a: 0, n: 3, at: 1 }, Math.sin(1) / 24],
+  ["要展到幾階（九階才夠，取樣半徑要跟著代入點走）", { m: "taylorTerms", f: "\\sin x", a: 0, range: [0, 1], eps: 0.000001 }, 9],
   ["梯形法（權重 ½,1,1,1,½）", { m: "riemannRule", f: "x^2", a: 0, b: 1, n: 4, rule: "trapezoid" }, 11 / 32],
   ["中點法", { m: "riemannRule", f: "x^2", a: 0, b: 1, n: 4, rule: "mid" }, 21 / 64],
   ["左端點和", { m: "riemannRule", f: "x^2", a: 0, b: 2, n: 4, rule: "left" }, 7 / 4],
@@ -100,6 +107,9 @@ const numericProblem = (answer, verify) => ({
 });
 
 const WRONG_CASES = [
+  ["把餘項上界當成實際誤差", numericProblem("0.2182818284590451", { m: "lagrangeBound", f: "e^x", a: 0, n: 2, at: 1 })],
+  ["餘項的階乘寫成 n! 而不是 (n+1)!", numericProblem("1.359140914295092", { m: "lagrangeBound", f: "e^x", a: 0, n: 2, at: 1 })],
+  ["要展到幾階少算一階", numericProblem("5", { m: "taylorTerms", f: "e^x", a: 0, range: [0, 1], eps: 0.001 })],
   ["把梯形法的端點權重也算成 1", numericProblem("3/8", { m: "riemannRule", f: "x^2", a: 0, b: 1, n: 4, rule: "trapezoid" })],
   ["辛普森法的 4-2-4 權重記成 1-1-1", numericProblem("5", { m: "riemannRule", f: "x^3", a: 0, b: 2, n: 4, rule: "simpson" })],
   // sup 寫成 inf 是這一節最常見的錯（1−1/n 的下確界才是 0）。

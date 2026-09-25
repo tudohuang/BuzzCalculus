@@ -263,7 +263,7 @@
       tags: ["power-series", "radius", "radius-of-convergence", "endpoint-analysis",
         "interval-of-convergence", "endpoint"] },
     { id: "series.taylor.coeff", label: "Taylor 係數", tier: 4, obscurity: 2, family: "series", topics: ["series", "derivatives"], prereq: ["series.power.radius"], radarAxis: "taylor",
-      tags: ["taylor", "coefficient", "binomial", "binomial-series", "euler-number"] },
+      tags: ["taylor", "coefficient", "binomial", "binomial-series", "euler-number", "taylor-polynomial"] },
     { id: "series.sum", label: "級數求和", tier: 4, obscurity: 2, family: "series", prereq: ["series.telescoping"], radarAxis: "series",
       tags: ["sum-series", "special-sum", "exponential-series", "log-series"] },
     { id: "series.euler", label: "Euler 和與 zeta", tier: 5, obscurity: 3, family: "series", prereq: ["series.sum"], radarAxis: "series",
@@ -292,8 +292,9 @@
       tags: ["accumulation", "antiderivative-graph"] },
     { id: "integral.numeric", label: "數值積分", tier: 3, obscurity: 2, family: "integral", topics: ["integrals"], prereq: ["integral.basic"],
       tags: ["numerical-integration", "simpson"] },
-    { id: "series.estimate", label: "級數的估計與誤差", tier: 4, obscurity: 2, family: "series", topics: ["series"], prereq: ["series.alternating"],
-      tags: ["series-estimate", "error-bound"] },
+    { id: "series.estimate", label: "級數與泰勒的誤差估計", tier: 4, obscurity: 2, family: "series", topics: ["series"], prereq: ["series.alternating"],
+      // 拉格朗日餘項跟交錯級數的誤差界練的是同一件事：把「還差多少」變成一個可以算的量。
+      tags: ["series-estimate", "error-bound", "lagrange-remainder"] },
     /* ===== 分析學（2026-09）=====
        微積分問「算出來是多少」，分析學問「這個算法為什麼可以用」。
        三個節點對應三件在計算層看不見、但大二會被考的事：

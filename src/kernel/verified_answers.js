@@ -6,7 +6,7 @@
 // 為什麼放側表而不是寫進題目物件：題目物件多一個欄位就會改變抽題與 golden 測試的結果。
 // 內容的中繼資料一律走側表，這是專案的既有約定。
 //
-// 產生時的統計：2365 題中 2144 題通過，不符 0 題。
+// 產生時的統計：2395 題中 2174 題通過，不符 0 題。
 
 (function registerVerifiedAnswers() {
   "use strict";
@@ -1955,6 +1955,36 @@
     "tmpl-ser-radius-geo-002",
     "tmpl-ser-radius-geo-003",
     "tmpl-ser-radius-geo-004",
+    "tr-bnd-001",
+    "tr-bnd-002",
+    "tr-bnd-003",
+    "tr-bnd-004",
+    "tr-bnd-005",
+    "tr-bnd-006",
+    "tr-bnd-007",
+    "tr-bnd-008",
+    "tr-bnd-009",
+    "tr-err-001",
+    "tr-err-002",
+    "tr-err-003",
+    "tr-err-004",
+    "tr-err-005",
+    "tr-err-006",
+    "tr-err-007",
+    "tr-err-008",
+    "tr-num-001",
+    "tr-num-002",
+    "tr-num-003",
+    "tr-num-004",
+    "tr-num-005",
+    "tr-num-006",
+    "tr-val-001",
+    "tr-val-002",
+    "tr-val-003",
+    "tr-val-004",
+    "tr-val-005",
+    "tr-val-006",
+    "tr-val-007",
     "uni-der-001",
     "uni-der-002",
     "uni-der-003",
@@ -2161,6 +2191,6 @@
   window.BuzzVerifiedAnswers = {
     has: function (id) { return Boolean(id && SET[id]); },
     count: IDS.length,
-    total: 2365
+    total: 2395
   };
 })();
