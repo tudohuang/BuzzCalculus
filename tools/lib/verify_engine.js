@@ -3932,7 +3932,25 @@ const EXPLICIT_METHODS = {
   integral: (spec) => {
     const variable = spec.v || "x";
     const f = latex.compile(spec.f, [variable]);
-    return numeric.integrate(f, latex.compile(String(spec.a), [])(), latex.compile(String(spec.b), [])()).value;
+    const a = constant(spec.a);
+    const b = constant(spec.b);
+    // breaks：被積函數在這幾點上跳（階梯函數、⌊x⌋ 型）。
+    // 自適應積分對跳躍點沒辦法 —— ∫₀¹(2⌊2x⌋+1) 它給 2.00077 而不是 2，
+    // 誤差 4e-4 遠大於預設容差。分段積再加起來就準了，而「跳在哪裡」
+    // 本來就是題目的一部分（作者宣告，面積仍然由這裡算）。
+    if (Array.isArray(spec.breaks) && spec.breaks.length) {
+      const points = [a, ...spec.breaks.map(constant), b].sort((x, y) => x - y);
+      let total = 0;
+      for (let i = 0; i + 1 < points.length; i += 1) {
+        if (!(points[i + 1] > points[i])) continue;
+        // 端點往內縮一點，才不會正好踩在跳躍點上取到另一段的值
+        const lo = points[i] + (points[i + 1] - points[i]) * 1e-9;
+        const hi = points[i + 1] - (points[i + 1] - points[i]) * 1e-9;
+        total += numeric.integrate(f, lo, hi).value;
+      }
+      return total;
+    }
+    return numeric.integrate(f, a, b).value;
   },
 
   // 數值積分公式的值（梯形、辛普森、左／右／中點和）。
@@ -4078,6 +4096,35 @@ const EXPLICIT_METHODS = {
       if (worst < eps) return n;
     }
     throw new Error(`展到 ${max} 階誤差還是不夠小`);
+  },
+
+  /* ── 2026-09 勒貝格包補的兩條路徑 ──────────────────────────── */
+
+  // lim∫fₙ：先對每一個 n 算 ∫ₐᵇ fₙ，再把這串數外插。
+  //
+  // 這一條是收斂定理那一節的核心：定理在講的就是「先積分再取極限」跟
+  // 「先取極限再積分」會不會一樣，而前者只有把它真的算出來才有意義。
+  //   { m: "integralLimit", f: "…（n 與 x 的式子）", a, b, n0, levels }
+  integralLimit: (spec) => {
+    const f = latex.compile(spec.f, ["n", spec.v || "x"]);
+    const a = constant(spec.a);
+    const b = constant(spec.b);
+    const area = (n) => numeric.integrate((x) => f(n, x), a, b).value;
+    const result = extrapolateSequence(area, { n0: spec.n0 || 40, levels: spec.levels || 6 });
+    if (!Number.isFinite(result.value)) throw new Error(result.reason || "積分序列外插不了");
+    return result.value;
+  },
+
+  // Lᵖ 範數 ‖f‖_p = (∫ₐᵇ|f|^p)^{1/p}。
+  // p 與積分都由這裡算，作者只寫下那個數 —— 開 p 次方這一步也在驗算範圍內。
+  lpNorm: (spec) => {
+    const f = latex.compile(spec.f, [spec.v || "x"]);
+    const a = constant(spec.a);
+    const b = constant(spec.b);
+    const p = constant(spec.p);
+    const value = numeric.integrate((x) => Math.pow(Math.abs(f(x)), p), a, b).value;
+    if (!Number.isFinite(value)) throw new Error("∫|f|^p 算不出來");
+    return Math.pow(value, 1 / p);
   },
 
   // 級數和

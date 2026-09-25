@@ -703,7 +703,7 @@
   add("ep-003", 4, "limits",
     ask("x^2", 3, 9),
     { f: "x^2", at: 3, limit: 9, levels: [1.2, 0.6, 0.12], maxDelta: 0.5 },
-    [2.2, 3.8, 6.5, 11.5], "0.019998",
+    [2.2, 3.8, 6.5, 11.5], "0.0199338",
     ["epsilon-game"],
     "|x²−9| = |x−3||x+3|，靠近 3 時 |x+3| ≈ 6，所以 δ ≈ ε/6。精確解是 δ = √(9+ε)−3（右側比左側窄，取小的那邊）。", 170,
     { m: "maxDelta", f: "x^2", at: 3, L: 9, eps: 0.12 });
@@ -711,7 +711,7 @@
   add("ep-004", 4, "limits",
     ask("(x^2+x)", 1, 2),
     { f: "x^2+x", at: 1, limit: 2, levels: [0.9, 0.45, 0.09], maxDelta: 0.5 },
-    [0.4, 1.6, 0.8, 3.2], "0.029703",
+    [0.4, 1.6, 0.8, 3.2], "0.0297059",
     ["epsilon-game"],
     "|x²+x−2| = |x−1||x+2|，|x+2| 在 1 附近約 3，所以 δ ≈ ε/3。兩側不一樣寬：右邊窄，答案要取右邊。", 180,
     { m: "maxDelta", f: "x^2+x", at: 1, L: 2, eps: 0.09 });
@@ -743,7 +743,7 @@
   add("ep-008", 5, "limits",
     ask("x^3", 1, 1),
     { f: "x^3", at: 1, limit: 1, levels: [0.6, 0.3, 0.03], maxDelta: 0.5 },
-    [0.3, 1.7, 0.2, 1.8], "0.009902",
+    [0.3, 1.7, 0.2, 1.8], "0.00990163",
     ["epsilon-game"],
     "|x³−1| = |x−1|(x²+x+1)，括號在 1 附近約 3。精確解 δ = (1+ε)^{1/3}−1，比 ε/3 稍小一點 —— 立方的曲率讓右側更緊。", 220,
     { m: "maxDelta", f: "x^3", at: 1, L: 1, eps: 0.03 });
@@ -751,7 +751,7 @@
   add("ep-009", 5, "limits",
     ask("\\frac{\\sin x}{x}", 0, 1),
     { f: "sin(x)/x", at: 0, limit: 1, levels: [0.1, 0.05, 0.01], maxDelta: 1.2, hole: true },
-    [-1.3, 1.3, 0.4, 1.3], "0.244",
+    [-1.3, 1.3, 0.4, 1.3], "0.2453178",
     ["epsilon-game", "trig", "removable"],
     "sin x/x 在 0 沒有定義，但極限是 1。|sin x/x − 1| ≈ x²/6，所以 δ ≈ √(6ε) —— 這一題的 δ 是 ε 的平方根級，比線性的例子寬得多。", 230,
     { m: "maxDelta", f: "\\sin(x)/x", at: 0, L: 1, eps: 0.01 });
@@ -775,7 +775,7 @@
   add("ep-012", 6, "limits",
     ask("\\frac{1}{\\sqrt{x}}", 1, 1),
     { f: "1/sqrt(x)", at: 1, limit: 1, levels: [0.25, 0.1, 0.02], maxDelta: 0.7 },
-    [0.35, 1.65, 0.5, 1.9], "0.038447",
+    [0.35, 1.65, 0.5, 1.9], "0.0388312",
     ["epsilon-game"],
     "|1/√x − 1| 在 x<1 那一側放大得快（分母變小），所以 δ 由左側決定：1 − 1/(1+ε)²。又一個兩側不對稱的例子。", 240,
     { m: "maxDelta", f: "1/\\sqrt{x}", at: 1, L: 1, eps: 0.02 });
@@ -795,6 +795,226 @@
     ["epsilon-game"],
     "|ln(1+x)| < ε 給 e^{−ε}−1 < x < e^{ε}−1，左側 1−e^{−ε} 比右側 e^{ε}−1 小，所以 δ 取左側。ε=0.05 時 δ ≈ 0.0488。", 250,
     { m: "maxDelta", f: "\\ln(1+x)", at: 0, L: 0, eps: 0.05 });
+
+  window.BUZZ_PROBLEMS = (window.BUZZ_PROBLEMS || []).concat(problems);
+})();
+
+
+/* ═══════════════════════════════════════════════════════════════
+   測度與勒貝格積分（2026-09-25）：26 題。
+
+   這一章在課本上幾乎全是證明，而這個站的長處是「算得出來的數」。
+   所以每一題都問一個可以驗算的量，讓抽象的東西落地：
+
+     簡單函數     ∫φ = Σcᵢ·m(Eᵢ) —— 勒貝格積分的定義本身就是一個和，
+                  用 ⌊3x⌋、⌊x²⌋ 這種階梯函數寫出來就真的算得出來。
+     測度         Cantor 集去掉的總長是 1（所以測度 0）；同樣的作法把每一步
+                  去掉的長度改成 1/4ⁿ，剩下的測度就是 1/2 —— 「沒有內點卻有
+                  正測度」這件事，用一個等比級數就講完了。
+     收斂定理     lim∫fₙ 跟 ∫lim fₙ 差多少：n²xe^{-nx} 的積分恆等於 1，
+                  但函數逐點趨近 0。這個 1 與 0 的落差就是 Fatou 不等式的內容。
+     Lᵖ 範數      ‖f‖_p =(∫|f|^p)^{1/p}；1/√x 無界卻可積、1/x 不可積，
+                  差別在一個指數。
+     黎曼與勒貝格  兩題判定題：Dirichlet 函數（黎曼不可積、勒貝格可積）與
+                  sin x/x 在 (0,∞)（瑕積分收斂但不勒貝格可積）。
+
+   驗算器為此補兩條路徑（integralLimit、lpNorm），並讓 integral 認得 breaks：
+   階梯函數的跳躍點要由題目宣告，不然自適應積分會在跳躍處失準
+   （∫₀¹(2⌊2x⌋+1) 它給 2.00077 而不是 2）。跳在哪裡本來就是題目的一部分，
+   面積仍然由驗算器自己算。 */
+(function () {
+  "use strict";
+
+  const SOURCE = "Buzz 勒貝格積分包 2026-09";
+  const problems = [];
+
+  const add = (id, rank, prompt, answer, tags, solution, timeLimit, verify) => {
+    const all = [...tags, "lebesgue", `rank-${rank}`];
+    if (rank >= 5) all.push("boss-rank");
+    if (rank === 6) all.push("boss-plus");
+    problems.push({
+      source: SOURCE, id, rank, difficulty: Math.min(4, rank), topic: "integrals",
+      answerKind: "numeric", prompt, answer, solution, timeLimit, verify, tags: all
+    });
+  };
+
+  const decide = (id, rank, prompt, answers, distractors, tags, solution, timeLimit) => {
+    const all = [...tags, "lebesgue", `rank-${rank}`];
+    if (rank >= 5) all.push("boss-rank");
+    problems.push({
+      source: SOURCE, id, rank, difficulty: Math.min(4, rank), topic: "integrals",
+      answerKind: "text", prompt, answers, canonical: answers[0], distractors,
+      solution, timeLimit, tags: all
+    });
+  };
+
+  /* ── 一、簡單函數的積分（7）──────────────────────────────────
+     勒貝格積分的定義第一步就是簡單函數：∫φ = Σ cᵢ·m(Eᵢ)。
+     階梯函數寫成 ⌊·⌋ 就是一個具體的簡單函數，每一塊的「高」與「測度」都看得見。 */
+
+  add("lb-sim-001", 3,
+    "\\text{簡單函數 }\\varphi(x)=2\\lfloor 2x \\rfloor+1\\text{ 在 }[0,1]\\text{ 上}\\quad\\text{求 }\\int_0^1 \\varphi\\,d\\mu",
+    "2", ["simple-function", "measure"],
+    "φ 在 [0,½) 取 1、在 [½,1] 取 3，兩塊的測度都是 ½：∫φ = 1·½ + 3·½ = 2。這就是 ∫φ = Σcᵢ·m(Eᵢ) 的最小例子。", 110,
+    { m: "integral", f: "2\\lfloor 2x \\rfloor+1", a: 0, b: 1, breaks: [0.5] });
+
+  add("lb-sim-002", 4,
+    "\\text{求 }\\int_0^1 \\lfloor 3x \\rfloor\\,d\\mu",
+    "1", ["simple-function", "measure"],
+    "⌊3x⌋ 在三段上分別取 0、1、2，每段測度 ⅓：∫ = (0+1+2)/3 = 1。", 110,
+    { m: "integral", f: "\\lfloor 3x \\rfloor", a: 0, b: 1, breaks: [1 / 3, 2 / 3] });
+
+  add("lb-sim-003", 4,
+    "\\text{求 }\\int_0^1 \\lfloor 5x \\rfloor\\,d\\mu",
+    "2", ["simple-function", "measure"],
+    "五段的值是 0,1,2,3,4，每段測度 ⅕：∫ = 10/5 = 2。一般地 ∫₀¹⌊nx⌋dm = (n−1)/2。", 120,
+    { m: "integral", f: "\\lfloor 5x \\rfloor", a: 0, b: 1, breaks: [0.2, 0.4, 0.6, 0.8] });
+
+  add("lb-sim-004", 4,
+    "\\text{求 }\\int_0^1 \\lfloor 4x \\rfloor^2\\,d\\mu",
+    "7/2", ["simple-function", "measure"],
+    "值是 0,1,4,9，每塊測度 ¼：∫ = 14/4 = 7/2。簡單函數的平方還是簡單函數 —— 高變了，分割沒變。", 130,
+    { m: "integral", f: "\\lfloor 4x \\rfloor^2", a: 0, b: 1, breaks: [0.25, 0.5, 0.75] });
+
+  add("lb-sim-005", 5,
+    "\\text{求 }\\int_0^2 \\lfloor x^2 \\rfloor\\,d\\mu",
+    "5-sqrt(2)-sqrt(3)", ["simple-function", "measure"],
+    "⌊x²⌋ 在 [1,√2) 取 1、[√2,√3) 取 2、[√3,2] 取 3，其餘取 0。∫ = 1(√2−1)+2(√3−√2)+3(2−√3) = 5−√2−√3 ≈ 1.8537。這一題的分割點不是等分的 —— 簡單函數不要求等分，只要求每一塊可測。", 190,
+    { m: "integral", f: "\\lfloor x^2 \\rfloor", a: 0, b: 2, breaks: [1, 1.4142135623730951, 1.7320508075688772] });
+
+  add("lb-sim-006", 5,
+    "\\text{求 }\\int_{1/5}^{1} \\left\\lfloor \\frac{1}{x} \\right\\rfloor \\,d\\,m",
+    "77/60", ["simple-function", "measure"],
+    "⌊1/x⌋ 在 (1/(k+1), 1/k] 上等於 k，那一段的測度是 1/k − 1/(k+1)。k 從 1 到 4：∫ = Σ k(1/k−1/(k+1)) = Σ 1/(k+1) = ½+⅓+¼+⅕ = 77/60。", 210,
+    { m: "integral", f: "\\lfloor 1/x \\rfloor", a: 0.2, b: 1, breaks: [0.25, 0.3333333333333333, 0.5] });
+
+  add("lb-sim-007", 5,
+    "\\text{求 }\\int_0^3 \\lfloor x \\rfloor\\,(x-\\lfloor x \\rfloor)\\,d\\mu",
+    "3/2", ["simple-function", "measure"],
+    "在 [k,k+1) 上被積函數是 k·(x−k)，那一段的積分是 k/2。k=0,1,2 相加得 0+½+1 = 3/2。這一題的被積函數不是簡單函數，但它在每一塊上是好積的 —— 分塊是勒貝格的思路。", 200,
+    { m: "integral", f: "\\lfloor x \\rfloor (x-\\lfloor x \\rfloor)", a: 0, b: 3, breaks: [1, 2] });
+
+  /* ── 二、測度（4）────────────────────────────────────────────
+     等比級數就能把「測度 0 卻不可數」與「沒有內點卻有正測度」講完。 */
+
+  add("lb-mea-001", 4,
+    "\\text{Cantor 集在每一步去掉中間三分之一。求「被去掉的總長度」}",
+    "1", ["measure", "cantor", "geometric-series"],
+    "第 n 步去掉 2^{n−1} 個長度 1/3ⁿ 的區間，總長 Σ2^{n−1}/3ⁿ = (1/3)/(1−2/3) = 1。所以 Cantor 集的測度是 1−1=0 —— 一個不可數卻測度為零的集合。", 160,
+    { m: "series", f: "2^(n-1)/3^n", from: 1 });
+
+  add("lb-mea-002", 5,
+    "\\text{某個集合在第 }n\\text{ 步去掉 }2^{n-1}\\text{ 個長度 }4^{-n}\\text{ 的開區間（從 }[0,1]\\text{ 開始）。求剩下集合的測度}",
+    "1/2", ["measure", "cantor", "geometric-series"],
+    "去掉的總長 Σ2^{n−1}/4ⁿ = (1/4)/(1−1/2) = 1/2，所以剩下的測度是 1/2。這就是 Smith–Volterra–Cantor 集：跟 Cantor 集一樣沒有任何內點（無處稠密），測度卻是正的。", 210,
+    { m: "series", f: "1-2^(n-1)/4^n", from: 1, to: 1, tol: 1 });
+
+  add("lb-mea-003", 5,
+    "\\text{同樣的作法改成第 }n\\text{ 步去掉 }2^{n-1}\\text{ 個長度 }5^{-n}\\text{ 的開區間。求「被去掉的總長度」}",
+    "1/3", ["measure", "cantor", "geometric-series"],
+    "Σ2^{n−1}/5ⁿ = (1/5)/(1−2/5) = 1/3，剩下的測度是 2/3。去掉的區間越短，留下來的「灰塵」就越重 —— 但它仍然沒有任何內點。", 190,
+    { m: "series", f: "2^(n-1)/5^n", from: 1 });
+
+  add("lb-mea-004", 4,
+    "\\text{把 }\\mathbb{Q}\\cap[0,1]\\text{ 排成一列，第 }n\\text{ 個有理數用一個長度 }\\frac{1}{100\\cdot 2^{n}}\\text{ 的開區間蓋住。求這些區間的總長度}",
+    "1/100", ["measure", "geometric-series"],
+    "Σ 1/(100·2ⁿ) = 1/100。ε 可以取任意小，所以可數集的測度是 0 —— 這是「有理數在 [0,1] 裡稠密，卻幾乎不佔位置」那句話的證明。", 170,
+    { m: "series", f: "1/(100*2^n)", from: 1 });
+
+  /* ── 三、收斂定理（6）────────────────────────────────────────
+     定理在問的是：先積分再取極限，跟先取極限再積分，一不一樣。 */
+
+  add("lb-con-001", 5,
+    "\\text{設 }f_n(x)=n^2xe^{-nx}\\text{ 在 }[0,1]\\text{ 上}\\quad\\text{求 }\\lim_{n\\to\\infty}\\int_0^1 f_n\\,d\\mu",
+    "1", ["convergence-theorem", "fatou"],
+    "每一個固定的 x>0 都有 fₙ(x)→0（指數壓過多項式），所以 ∫lim fₙ = 0。但 ∫fₙ → 1。Fatou 只保證 ∫liminf ≤ liminf∫，這裡是 0 ≤ 1，嚴格不等 —— 質量「滑」到原點跑掉了。", 220,
+    { m: "integralLimit", f: "n^2 x e^{-n x}", a: 0, b: 1 });
+
+  add("lb-con-002", 4,
+    "\\text{設 }f_n(x)=n^2xe^{-nx}\\text{。求 }\\int_0^1 f_3\\,d\\mu",
+    "2/3-17/3*exp(-3)", ["convergence-theorem"],
+    "∫₀¹9x²e^{−3x}dx，兩次分部積分得 2/3 − (17/3)e^{−3} ≈ 0.3845。n 越大這個值越靠近 1，但每一個都小於 1。", 210,
+    { m: "integral", f: "9 x^2 e^{-3x}", a: 0, b: 1 });
+
+  add("lb-con-003", 5,
+    "\\text{設 }f_n(x)=nxe^{-nx^2}\\text{ 在 }[0,1]\\text{ 上}\\quad\\text{求 }\\lim_{n\\to\\infty}\\int_0^1 f_n\\,d\\mu",
+    "1/2", ["convergence-theorem", "fatou"],
+    "∫₀¹fₙ = (1−e^{−n})/2 → 1/2，而 fₙ→0 逐點。又一個 lim∫ ≠ ∫lim：這一次落差是 1/2。控制收斂定理用不上，因為找不到一個可積的 g 同時壓住所有 fₙ。", 220,
+    { m: "integralLimit", f: "n x e^{-n x^2}", a: 0, b: 1 });
+
+  add("lb-con-004", 4,
+    "\\text{設 }f_n(x)=nxe^{-nx^2}\\text{。求 }\\int_0^1 f_3\\,d\\mu",
+    "(1-exp(-3))/2", ["convergence-theorem"],
+    "代換 u=x²：∫₀¹3xe^{−3x²}dx = (1−e^{−3})/2 ≈ 0.4751。整串的極限是 1/2。", 180,
+    { m: "integral", f: "3x e^{-3x^2}", a: 0, b: 1 });
+
+  add("lb-con-005", 4,
+    "\\text{設 }f_n(x)=nx^n\\text{ 在 }[0,1]\\text{ 上}\\quad\\text{求 }\\lim_{n\\to\\infty}\\int_0^1 f_n\\,d\\mu",
+    "1", ["convergence-theorem", "fatou"],
+    "∫fₙ = n/(n+1) → 1，但 fₙ(x)→0 對每個 x<1 成立（x=1 那一點測度為零，不影響積分）。質量全部擠到右端點去了。", 190,
+    { m: "integralLimit", f: "n x^n", a: 0, b: 1 });
+
+  add("lb-con-006", 4,
+    "\\text{設 }f_n(x)=x^{1/n}\\text{ 在 }[0,1]\\text{ 上（這一列遞增）}\\quad\\text{求 }\\lim_{n\\to\\infty}\\int_0^1 f_n\\,d\\mu",
+    "1", ["convergence-theorem", "monotone-convergence"],
+    "fₙ 遞增且逐點趨近 1（x>0），由單調收斂定理 lim∫fₙ = ∫1 = 1。直接算也一樣：∫x^{1/n} = n/(n+1) → 1。這一題是定理成立的例子 —— 跟前面三題對照著看。", 190,
+    { m: "integralLimit", f: "x^(1/n)", a: 0, b: 1 });
+
+  /* ── 四、Lᵖ 範數（5）────────────────────────────────────────
+     可積與否在 Lᵖ 的語言裡是一個指數問題。 */
+
+  add("lb-lp-001", 3,
+    "\\text{求 }f(x)=x\\text{ 在 }[0,1]\\text{ 上的 }L^2\\text{ 範數 }\\|f\\|_2",
+    "1/sqrt(3)", ["lp-space"],
+    "‖f‖₂ = (∫₀¹x²dx)^{1/2} = (1/3)^{1/2} = 1/√3 ≈ 0.5774。", 140,
+    { m: "lpNorm", f: "x", a: 0, b: 1, p: 2 });
+
+  add("lb-lp-002", 5,
+    "\\text{求 }f(x)=x\\text{ 在 }[0,1]\\text{ 上的 }L^3\\text{ 範數 }\\|f\\|_3",
+    "4^(-1/3)", ["lp-space"],
+    "(∫₀¹x³dx)^{1/3} = (1/4)^{1/3} ≈ 0.6300。p 越大，範數越靠近 sup|f| —— 在 [0,1] 上這一串會往 1 爬。", 170,
+    { m: "lpNorm", f: "x", a: 0, b: 1, p: 3 });
+
+  add("lb-lp-003", 3,
+    "\\text{求 }f(x)=\\sin x\\text{ 在 }[0,\\pi]\\text{ 上的 }L^1\\text{ 範數 }\\|f\\|_1",
+    "2", ["lp-space", "trig"],
+    "sin x 在 [0,π] 上非負，所以 ‖f‖₁ = ∫₀^π sin x dx = 2。L¹ 範數就是「面積」。", 130,
+    { m: "lpNorm", f: "\\sin x", a: 0, b: 3.141592653589793, p: 1 });
+
+  add("lb-lp-004", 4,
+    "\\text{求 }f(x)=\\frac{1}{\\sqrt{x}}\\text{ 在 }(0,1]\\text{ 上的 }L^1\\text{ 範數 }\\|f\\|_1",
+    "2", ["lp-space", "improper-integral"],
+    "∫₀¹x^{−1/2}dx = 2。函數在 0 附近無界，卻仍然勒貝格可積 —— 可積要求的是「面積有限」，不是「函數有界」。", 170,
+    { m: "lpNorm", f: "1/\\sqrt{x}", a: 0, b: 1, p: 1 });
+
+  add("lb-lp-005", 5,
+    "\\text{求 }f(x)=x^{-1/3}\\text{ 在 }(0,1]\\text{ 上的 }L^2\\text{ 範數 }\\|f\\|_2",
+    "sqrt(3)", ["lp-space", "improper-integral"],
+    "‖f‖₂² = ∫₀¹x^{−2/3}dx = 3，所以 ‖f‖₂ = √3。同一個 f 換個 p 就可能跳出 Lᵖ：x^{−1/3} 在 L² 裡，但 x^{−1/2} 不在（∫x^{−1} 發散）。", 210,
+    { m: "lpNorm", f: "x^(-1/3)", a: 0, b: 1, p: 2 });
+
+  add("lb-lp-006", 4,
+    "\\text{求 }\\int_0^1 x^{-2/3}\\,d\\mu",
+    "3", ["lp-space", "improper-integral"],
+    "∫₀¹x^{−2/3}dx = 3x^{1/3}|₀¹ = 3。判準是指數：∫₀¹x^{−p}dx 在 p<1 時收斂、p≥1 時發散。", 150,
+    { m: "integral", f: "x^(-2/3)", a: 0, b: 1 });
+
+  /* ── 五、黎曼與勒貝格的差別（2）─────────────────────────────
+     這兩題是整章存在的理由，答案是一句判定而不是一個數。 */
+
+  decide("lb-cmp-001", 4,
+    "\\text{Dirichlet 函數（有理點取 }1\\text{、無理點取 }0\\text{）在 }[0,1]\\text{ 上的可積性}",
+    ["黎曼不可積，但勒貝格可積", "勒貝格可積但黎曼不可積"],
+    ["兩者都可積", "兩者都不可積", "黎曼可積但勒貝格不可積"],
+    ["measure", "riemann-lebesgue"],
+    "上黎曼和恆為 1、下黎曼和恆為 0，所以黎曼不可積。但它幾乎處處等於 0（有理數是零測度集），勒貝格積分等於 0。這正是勒貝格積分被發明出來的理由。", 160);
+
+  decide("lb-cmp-002", 5,
+    "\\text{函數 }\\frac{\\sin x}{x}\\text{ 在 }(0,\\infty)\\text{ 上的可積性}",
+    ["瑕積分收斂，但不是勒貝格可積", "黎曼瑕積分收斂但不勒貝格可積"],
+    ["勒貝格可積", "兩者都收斂", "瑕積分也發散"],
+    ["measure", "riemann-lebesgue", "improper-integral"],
+    "∫₀^∞ sin x/x dx = π/2 是收斂的瑕積分（靠正負相消），但 ∫₀^∞|sin x/x|dx = ∞。勒貝格積分要求 ∫|f| 有限，所以它不是勒貝格可積 —— 條件收斂在勒貝格的世界裡不算收斂。", 200);
 
   window.BUZZ_PROBLEMS = (window.BUZZ_PROBLEMS || []).concat(problems);
 })();

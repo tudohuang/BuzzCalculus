@@ -309,6 +309,18 @@
       tags: ["epsilon-delta"] },
     { id: "analysis.supinf", label: "確界與上下極限", tier: 4, obscurity: 2, family: "analysis", prereq: ["limit.sequence"],
       tags: ["supremum", "infimum", "limsup"] },
+    /* 測度與勒貝格積分（2026-09-25）：三個節點。
+       分開的理由跟 analysis 其他節點一樣 —— 會算 ∫x dx 不代表看得懂
+       「簡單函數的積分就是 Σcᵢm(Eᵢ)」，更不代表分得出 lim∫ 與 ∫lim。 */
+    { id: "analysis.measure", label: "測度與簡單函數", tier: 4, obscurity: 3, family: "analysis", topics: ["integrals"], prereq: ["integral.basic"],
+      // 前置放基本反導數而不是確界：測度那一節真正要先會的是「積分是一個面積」，
+      // 確界是它的工具不是它的門檻。
+      tags: ["measure", "simple-function", "cantor", "lebesgue"] },
+    { id: "analysis.convergence", label: "收斂定理與 Lᵖ", tier: 5, obscurity: 3, family: "analysis", topics: ["integrals"], prereq: ["analysis.measure"],
+      // Fatou／單調收斂／控制收斂練的是同一個問題：先積分還是先取極限。
+      // Lᵖ 範數只有六題（節點下限是八題），併進來而不是自成一節 ——
+      // 而且「可積與否」在 Lᵖ 的語言裡本來就是同一個問題的另一種問法。
+      tags: ["convergence-theorem", "fatou", "monotone-convergence", "riemann-lebesgue", "lp-space"] },
     { id: "analysis.uniform", label: "一致連續與一致收斂", tier: 5, obscurity: 3, family: "analysis", prereq: ["analysis.rigor"],
       tags: ["uniform-continuity", "uniform-convergence", "lipschitz"] }
   ];
