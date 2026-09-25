@@ -6087,7 +6087,7 @@
               <div class="problem-meta">
                 ${topicChip(current)}
                 <span class="chip">${difficultyBadge(current)}</span>
-                <span class="chip">${answerKindLabel(current.answerKind)}</span>
+                <span class="chip">${escapeHtml(current.tableCaption || answerKindLabel(current.answerKind))}</span>
                 ${
                   // 作圖表與選圖題不受本局的作答形式影響，
                   // 標一個「選擇題」在旁邊只會讓人以為選錯模式了。
@@ -6278,7 +6278,8 @@
       correct: wrong.length === 0,
       rows,
       message: wrong.length === 0
-        ? "整張表都對了。對照一下你畫的圖。"
+        // 沒有對照圖的表（審斂表、定積分分析表）不要叫人去對照一張不存在的圖
+        ? (problem.sketch && problem.sketch.expr ? "整張表都對了。對照一下你畫的圖。" : "整張表都對了。")
         : `有 ${wrong.length} 格對不上：${wrong.map((row) => row.field.label).join("、")}`
     };
   }
@@ -6302,10 +6303,14 @@
       return `<small class="ws-answer">正解 ${escapeHtml(row.field.answer || (row.field.answers || []).join(" / "))}</small>`;
     };
 
+    // 作業表有兩種：要照著畫圖的作圖表，以及只要填格子的分析表（累積函數、審斂）。
+    // 差別在下面三處：無障礙的表格標題、記號提示、以及「填完去畫圖」那句話。
+    const hasShape = (problem.fields || []).some((field) => field.kind === "interval" || field.kind === "set");
+    const willSketch = Boolean(problem.sketch && problem.sketch.expr);
     return `
       <section class="worksheet">
         <table class="ws-table">
-          <caption class="sr-only">作圖表</caption>
+          <caption class="sr-only">${escapeHtml(problem.tableCaption || (willSketch ? "作圖表" : "分析表"))}</caption>
           <tbody>
             ${(problem.fields || [])
               .map(
@@ -6329,10 +6334,14 @@
           </tbody>
         </table>
         <p class="ws-hint">
-          區間寫成 <code>(-inf, -1) U (1, inf)</code>，集合寫成 <code>{-1, 1}</code>，沒有就填 <code>{}</code> 或 <code>無</code>。
+          ${
+            hasShape
+              ? `區間寫成 <code>(-inf, -1) U (1, inf)</code>，集合寫成 <code>{-1, 1}</code>，沒有就填 <code>{}</code> 或 <code>無</code>。`
+              : `數值可以寫成算式（<code>pi/4</code>、<code>ln(2)</code>、<code>1/6</code>），判定型的格子照欄位說明填。`
+          }
         </p>
         ${
-          disabled
+          disabled || !hasShape
             ? ""
             : `<div class="ws-symbols" aria-label="快速插入記號">
                 ${["(-inf, ", ", inf)", " U ", "(", ")", "[", "]", "{", "}", "無"]
@@ -6343,7 +6352,9 @@
         ${
           quiz.feedback
             ? renderWorksheetSketchCompare(problem)
-            : `<p class="ws-sketch-cue">${icon("pen")}表格填完之後，在下面的計算紙上把圖畫出來 —— 送出後會顯示正確的圖讓你對照。</p>`
+            : willSketch
+              ? `<p class="ws-sketch-cue">${icon("pen")}表格填完之後，在下面的計算紙上把圖畫出來 —— 送出後會顯示正確的圖讓你對照。</p>`
+              : ""
         }
         <form class="answer-panel ws-form" data-action="submit-answer">
           <button class="button" type="submit" ${disabled}>${icon("send")}送出整張表</button>
@@ -10315,7 +10326,12 @@
   }
 
   function selectBossPool(pool, count, records = loadRecords(), ladder = false) {
-    const bossPool = pool.filter((problem) => problemRank(problem) >= 5);
+    // 挑戰類的模式（階梯、Boss 連戰、生存）本分是「一題一個答案、越來越硬」，
+    // 而且都 forceAnswerMode: "free" —— 表格題（要填六格、260 秒）與圖形互動題
+    // 在這個節奏裡是異物，作答形式也吃不到那個設定。跟對戰池同一個排除清單。
+    const typed = pool.filter(isExamAnswerProblem);
+    const bossPool = typed.filter((problem) => problemRank(problem) >= 5);
+    pool = typed.length ? typed : pool;
     const sourcePool = bossPool.length ? bossPool : pool.filter((problem) => problemRank(problem) >= 4);
     const ranked = [6, 5, 4].flatMap((rank) =>
       preferFreshProblems(shuffle(sourcePool.filter((problem) => problemRank(problem) === rank), seedFromString(`${Date.now()}-boss-${rank}`)), records).slice(0, rank === 6 ? 7 : 5)

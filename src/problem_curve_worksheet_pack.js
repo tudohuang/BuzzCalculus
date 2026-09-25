@@ -728,3 +728,284 @@
   window.BUZZ_CURVE_WORKSHEET_PROBLEMS = problems;
   window.BUZZ_PROBLEMS = (window.BUZZ_PROBLEMS || []).concat(problems);
 })();
+
+
+/* ═══════════════════════════════════════════════════════════════
+   積分與級數的分析表（2026-09-25）：20 張。
+
+   作業表原本 22 張全部是微分的作圖表。可是「照順序把欄位填完，答案就浮出來」
+   這件事，在積分與級數同樣成立 —— 而且那正是這兩章最難自學的部分：
+
+     累積函數分析表  g(x)=∫₀ˣf 的增減看 f 的正負、極值在 f 的變號零點、
+                     反曲點在 f 的極值。三件事一起填，FTC 才變成一個可以用的工具。
+     定積分分析表    ∫f、∫|f|、平均值、零點填在同一張表上，
+                     「有號面積」與「面積」的差別就不用再解釋第二次。
+     級數審斂表      比值極限 → 結論 → 取絕對值之後如何 → 部分和。
+                     條件收斂與絕對收斂的差別，在同一張表上是兩格不同的答案。
+
+   為此把作業表的機制放寬了三處（都在 tools/validate_worksheets.js 與 app.js）：
+     1. 數值與是非欄位改走主驗算器（原本只有集合／區間走 set_interval_verify）
+     2. 對照圖只有「要照著畫圖」的表才強制（審斂表沒有圖可以畫）
+     3. 累積函數的表多一條不變式：對照圖畫的 g 必須滿足 g′=f，
+        不然作者把 g 抄錯的話，整張表會自洽地全錯而沒有任何一格驗得到
+
+   區間的答案不能寫 π（parseIntervals 不吃符號），所以累積函數那六張的 f
+   全部選多項式 —— 這是刻意的限制，不是巧合。 */
+(function () {
+  "use strict";
+
+  const SOURCE = "Buzz 積分與級數分析表 2026-09";
+  const problems = [];
+
+  function add(problem) {
+    const rank = problem.rank;
+    const tags = [...(problem.tags || []), `rank-${rank}`];
+    if (rank >= 5) tags.push("boss-rank");
+    problems.push({
+      source: SOURCE,
+      difficulty: Math.min(4, rank),
+      answerKind: "worksheet",
+      timeLimit: 260,
+      ...problem,
+      answer: (problem.fields || []).map((field) => `${field.key}=${String(field.answer || "").trim()}`).join("; "),
+      tags
+    });
+  }
+
+  /* ── 一、累積函數分析表（6）──────────────────────────────────
+     題幹給 f，整張表問的是 g(x)=∫₀ˣf(t)dt。
+     每一格都不是「算 g 再看」，而是「從 f 的圖直接讀 g 的性質」。 */
+
+  const RANGE = [-20, 20];
+
+  const accumulation = (id, rank, fLabel, fExpr, gExpr, rows, at, atValue, window, steps, solution) => add({
+    id, rank, topic: "integrals",
+    prompt: `\\text{設 }f(x)=${fLabel}\\text{，}g(x)=\\int_0^x f(t)\\,dt\\text{。完成 }g\\text{ 的分析表}`,
+    tableCaption: "累積函數分析表",
+    accumulationOf: gExpr === null ? undefined : fExpr,
+    fields: [
+      { key: "increasing", label: "g 的遞增區間", note: "f > 0 的地方", kind: "interval", answer: rows.increasing, verify: { m: "increasing", f: gExpr, range: RANGE } },
+      { key: "decreasing", label: "g 的遞減區間", note: "f < 0 的地方", kind: "interval", answer: rows.decreasing, verify: { m: "decreasing", f: gExpr, range: RANGE } },
+      { key: "localMax", label: "g 的極大點 x", note: "f 由正變負", kind: "set", answer: rows.localMax, verify: { m: "localMax", f: gExpr, range: RANGE } },
+      { key: "localMin", label: "g 的極小點 x", note: "f 由負變正", kind: "set", answer: rows.localMin, verify: { m: "localMin", f: gExpr, range: RANGE } },
+      ...(rows.inflection ? [{ key: "inflection", label: "g 的反曲點 x", note: "f 的極值處", kind: "set", answer: rows.inflection, verify: { m: "inflection", f: gExpr, range: RANGE } }] : []),
+      { key: "endValue", label: `g(${at}) 的值`, note: "就是那一段的有號面積", kind: "numeric", answer: atValue, verify: { m: "integral", f: fExpr, a: 0, b: at } }
+    ],
+    sketch: { expr: gExpr.replace(/\^/g, "**"), window },
+    tags: ["accumulation", "ftc", "worksheet-table"],
+    solutionSteps: steps,
+    solution
+  });
+
+  accumulation("wg-acc-001", 3, "x^2-4", "x^2-4", "x^3/3-4*x",
+    { increasing: "(-inf, -2) U (2, inf)", decreasing: "(-2, 2)", localMax: "{-2}", localMin: "{2}", inflection: "{0}" },
+    3, "-3", [-4, 4, -8, 8],
+    ["先標出 f 的零點：x=±2，那是 g 唯一可能有極值的地方。",
+      "f 在 (−2,2) 為負 → g 在那一段遞減，兩側為正 → 遞增。",
+      "由正變負的是 x=−2（極大），由負變正的是 x=2（極小）。",
+      "g″=f′，f 的最低點 x=0 就是 g 的反曲點。",
+      "g(3)=∫₀³(t²−4)dt = 9−12 = −3：面積在 x 軸下方比較多。"],
+    "f 的正負決定 g 的增減，f 的變號零點決定 g 的極值，f 的極值決定 g 的反曲點 —— 一張表把 FTC 的三件事講完。");
+
+  accumulation("wg-acc-002", 3, "9-x^2", "9-x^2", "9*x-x^3/3",
+    { increasing: "(-3, 3)", decreasing: "(-inf, -3) U (3, inf)", localMax: "{3}", localMin: "{-3}", inflection: "{0}" },
+    3, "18", [-5, 5, -25, 25],
+    ["f 的零點是 ±3。",
+      "f 在 (−3,3) 為正 → g 在那一段遞增。",
+      "x=3 由正變負 → 極大；x=−3 由負變正 → 極小。",
+      "f 的最高點 x=0 是 g 的反曲點。",
+      "g(3)=27−9=18。"],
+    "開口向下的 f：g 先降後升再降，極大剛好落在 f 的右零點上。");
+
+  accumulation("wg-acc-003", 4, "(x-1)(x-3)", "(x-1)*(x-3)", "x^3/3-2*x^2+3*x",
+    { increasing: "(-inf, 1) U (3, inf)", decreasing: "(1, 3)", localMax: "{1}", localMin: "{3}", inflection: "{2}" },
+    3, "0", [-1, 5, -3, 3],
+    ["f 的零點是 1 與 3。",
+      "f 在 (1,3) 為負 → g 遞減。",
+      "x=1 極大、x=3 極小。",
+      "f 的最低點在兩根的中間 x=2 → g 的反曲點。",
+      "g(3)=9−18+9=0：0 到 1 的正面積剛好被 1 到 3 的負面積抵掉。"],
+    "g(3)=0 是這張表最值得記的一格：有號面積可以互相抵消，而「回到 0」不代表沒發生事情。");
+
+  accumulation("wg-acc-004", 4, "2x-x^2", "2*x-x^2", "x^2-x^3/3",
+    { increasing: "(0, 2)", decreasing: "(-inf, 0) U (2, inf)", localMax: "{2}", localMin: "{0}", inflection: "{1}" },
+    3, "0", [-1, 4, -4, 4],
+    ["f=x(2−x) 的零點是 0 與 2。",
+      "f 在 (0,2) 為正 → g 在那一段遞增。",
+      "x=0 由負變正（極小）、x=2 由正變負（極大）。",
+      "f 的頂點 x=1 → g 的反曲點。",
+      "g(3)=9−9=0。"],
+    "極小在 x=0 這一格最容易填錯：g(0)=0 不代表那裡是最小值，要看 f 在 0 左右的正負。");
+
+  accumulation("wg-acc-005", 4, "x^2-2x", "x^2-2*x", "x^3/3-x^2",
+    { increasing: "(-inf, 0) U (2, inf)", decreasing: "(0, 2)", localMax: "{0}", localMin: "{2}", inflection: "{1}" },
+    3, "0", [-2, 4, -4, 4],
+    ["f 的零點是 0 與 2。",
+      "f 在 (0,2) 為負 → g 遞減。",
+      "x=0 極大、x=2 極小。",
+      "f 的頂點 x=1 → g 的反曲點。",
+      "g(3)=9−9=0。"],
+    "跟前一張互為鏡像：同樣的零點，f 的正負相反，g 的極大極小就整個對調。");
+
+  accumulation("wg-acc-006", 5, "x^3-4x", "x^3-4*x", "x^4/4-2*x^2",
+    { increasing: "(-2, 0) U (2, inf)", decreasing: "(-inf, -2) U (0, 2)", localMax: "{0}", localMin: "{-2, 2}" },
+    2, "-4", [-3, 3, -5, 3],
+    ["f 的零點有三個：−2、0、2。",
+      "符號依序是 −、+、−、+ → g 降、升、降、升。",
+      "由負變正的兩個（−2 與 2）是極小，由正變負的一個（0）是極大。",
+      "g(2)=4−8=−4。"],
+    "三個零點的 f 讓 g 有兩個極小一個極大 —— 極值的個數由 f 變號的次數決定，不是由 f 的次數決定。");
+
+  /* ── 二、定積分分析表（4）────────────────────────────────────
+     有號面積、面積、平均值、零點填在同一張表上。
+     第一格與第二格的差別就是「∫f 與 ∫|f|」，那是最常被混在一起的一對。 */
+
+  const definite = (id, rank, fLabel, fExpr, a, b, rows, steps, solution) => add({
+    id, rank, topic: "integrals",
+    prompt: `\\text{設 }f(x)=${fLabel}\\text{。完成 }[${a},${b}]\\text{ 上的定積分分析表}`,
+    tableCaption: "定積分分析表",
+    fields: [
+      { key: "signed", label: "有號面積 ∫f", note: "x 軸下方算負的", kind: "numeric", answer: rows.signed, verify: { m: "integral", f: fExpr, a, b } },
+      { key: "area", label: "實際面積 ∫|f|", note: "全部算正的", kind: "numeric", answer: rows.area, verify: { m: "integral", f: `|${fExpr}|`, a, b } },
+      { key: "average", label: "平均值", note: "有號面積除以區間長", kind: "numeric", answer: rows.average, verify: { m: "integral", f: `(${fExpr})/(${b}-(${a}))`, a, b } },
+      { key: "zeros", label: "f 在區間內的零點", note: "面積變號的地方", kind: "set", answer: rows.zeros, verify: { m: "zeros", f: fExpr, range: [a, b] } }
+    ],
+    tags: ["definite-integral", "worksheet-table"],
+    solutionSteps: steps,
+    solution
+  });
+
+  definite("wg-def-001", 3, "x^2-4", "x^2-4", 0, 3,
+    { signed: "-3", area: "23/3", average: "-1", zeros: "{2}" },
+    ["零點在 x=2：0 到 2 在軸下、2 到 3 在軸上。",
+      "有號面積 ∫₀³(x²−4)dx = 9−12 = −3。",
+      "面積要分段：∫₀²(4−x²)+∫₂³(x²−4) = 16/3 + 7/3 = 23/3。",
+      "平均值 = −3/3 = −1。"],
+    "有號面積 −3、實際面積 23/3，兩個差很多 —— 這一格填一樣的人，多半整章都把「面積」當成「積分」。");
+
+  definite("wg-def-002", 3, "x-1", "x-1", 0, 3,
+    { signed: "3/2", area: "5/2", average: "1/2", zeros: "{1}" },
+    ["零點在 x=1。",
+      "有號面積 = ∫₀³(x−1)dx = 9/2−3 = 3/2。",
+      "面積 = 0 到 1 的三角形 1/2 加 1 到 3 的三角形 2 = 5/2。",
+      "平均值 = (3/2)/3 = 1/2。"],
+    "直線最容易用幾何檢查：兩個三角形的面積 1/2 與 2，有號相加是 3/2、絕對值相加是 5/2。");
+
+  definite("wg-def-003", 4, "x^3-4x", "x^3-4*x", -2, 2,
+    { signed: "0", area: "8", average: "0", zeros: "{-2, 0, 2}" },
+    ["f 是奇函數，區間對稱 → 有號面積必為 0。",
+      "零點是 −2、0、2。",
+      "面積算一半再乘 2：2∫₀²(4x−x³)dx = 2(8−4) = 8。",
+      "平均值 = 0/4 = 0。"],
+    "有號面積 0 不代表「什麼都沒有」：實際面積是 8。對稱性可以省掉一半的計算，但只省得掉有號的那一半。");
+
+  definite("wg-def-004", 4, "3x^2-12", "3*x^2-12", 0, 3,
+    { signed: "-9", area: "23", average: "-3", zeros: "{2}" },
+    ["零點在 x=2。",
+      "有號面積 = x³−12x 從 0 到 3 = 27−36 = −9。",
+      "面積 = ∫₀²(12−3x²) + ∫₂³(3x²−12) = 16 + 7 = 23。",
+      "平均值 = −9/3 = −3。"],
+    "跟第一張同一個形狀乘 3：每一格都跟著乘 3，零點不動 —— 係數只縮放面積，不搬動變號的位置。");
+
+  /* ── 三、級數審斂表（10）─────────────────────────────────────
+     比值極限 → 結論 → 取絕對值之後如何 → 部分和。
+     第二格與第三格不一樣的那幾張，就是條件收斂。 */
+
+  const series = (id, rank, label, term, rows, steps, solution, extra) => add({
+    id, rank, topic: "series",
+    prompt: `\\text{完成 }\\sum_{n=1}^{\\infty}${label}\\text{ 的審斂表}`,
+    tableCaption: "級數審斂表",
+    fields: [
+      { key: "ratio", label: "比值極限 lim |aₙ₊₁/aₙ|", note: "比值判別法的 L", kind: "numeric", answer: rows.ratio, verify: { m: "seqLimit", f: rows.ratioExpr, n0: rows.ratioN0 || 2000, levels: rows.ratioLevels || 6, tol: rows.ratioTol } },
+      { key: "verdict", label: "級數收斂還是發散", note: "填「收斂」或「發散」", kind: "text", answers: rows.verdict, answer: rows.verdict[0], verify: { m: "seriesConverges", f: term, from: 1 } },
+      { key: "absolute", label: "取絕對值之後 Σ|aₙ|", note: "填「收斂」或「發散」", kind: "text", answers: rows.absolute, answer: rows.absolute[0], verify: { m: "seriesConverges", f: term, from: 1, absolute: true } },
+      ...(extra || []),
+      { key: "partial", label: "部分和 S₃", note: "前三項相加", kind: "numeric", answer: rows.partial, verify: { m: "series", f: term, from: 1, to: 3 } }
+    ],
+    tags: ["convergence-test", "worksheet-table"],
+    solutionSteps: steps,
+    solution
+  });
+
+  series("wg-ser-001", 4, "\\frac{n}{2^n}", "n/2^n",
+    { ratio: "1/2", ratioExpr: "((n+1)/2^(n+1))/(n/2^n)", ratioN0: 20, ratioLevels: 5, verdict: ["收斂", "converges"], absolute: ["收斂", "converges"], partial: "11/8" },
+    ["比值 = ((n+1)/2ⁿ⁺¹)·(2ⁿ/n) = (n+1)/(2n) → 1/2。",
+      "L=1/2<1 → 收斂。",
+      "每一項本來就是正的，所以 Σ|aₙ| 就是原級數 → 一樣收斂（絕對收斂）。",
+      "S₃ = 1/2 + 2/4 + 3/8 = 11/8。"],
+    "正項級數的第二格與第三格永遠一樣 —— 會不一樣的只有帶負號的級數。");
+
+  series("wg-ser-002", 4, "\\frac{(-1)^{n+1}}{n}", "(-1)^(n+1)/n",
+    { ratio: "1", ratioExpr: "(1/(n+1))/(1/n)", verdict: ["收斂", "converges"], absolute: ["發散", "diverges"], partial: "5/6" },
+    ["比值 = n/(n+1) → 1，比值判別法在 L=1 時無效。",
+      "改用交錯級數判別法：1/n 遞減趨近 0 → 收斂。",
+      "取絕對值之後是調和級數 → 發散。",
+      "S₃ = 1 − 1/2 + 1/3 = 5/6。"],
+    "這一張就是「條件收斂」的定義攤開來：第二格收斂、第三格發散。比值判別法在這裡什麼都沒說，別硬用。");
+
+  series("wg-ser-003", 3, "\\frac{1}{n^2}", "1/n^2",
+    { ratio: "1", ratioExpr: "(1/(n+1)^2)/(1/n^2)", verdict: ["收斂", "converges"], absolute: ["收斂", "converges"], partial: "49/36" },
+    ["比值 = n²/(n+1)² → 1 → 比值判別法無效。",
+      "改用 p 級數：p=2>1 → 收斂。",
+      "正項級數，第三格跟第二格一樣。",
+      "S₃ = 1 + 1/4 + 1/9 = 49/36。"],
+    "L=1 出現過兩次了：比值判別法對所有 p 級數都失效，因為它看不出 n 的冪次差別。");
+
+  series("wg-ser-004", 3, "\\frac{1}{n}", "1/n",
+    { ratio: "1", ratioExpr: "(1/(n+1))/(1/n)", verdict: ["發散", "diverges"], absolute: ["發散", "diverges"], partial: "11/6" },
+    ["比值 → 1，無效。",
+      "p 級數 p=1 → 發散（積分判別法：∫dx/x = ln x 無界）。",
+      "正項，第三格同第二格。",
+      "S₃ = 1 + 1/2 + 1/3 = 11/6。"],
+    "aₙ→0 不保證收斂，這是最經典的反例。跟上一張只差一個指數，結論卻相反。");
+
+  series("wg-ser-005", 4, "\\frac{n^2}{3^n}", "n^2/3^n",
+    { ratio: "1/3", ratioExpr: "((n+1)^2/3^(n+1))/(n^2/3^n)", ratioN0: 20, ratioLevels: 5, verdict: ["收斂", "converges"], absolute: ["收斂", "converges"], partial: "10/9" },
+    ["比值 = (1/3)·((n+1)/n)² → 1/3。",
+      "L=1/3<1 → 收斂：指數壓得過任何多項式。",
+      "正項，第三格同第二格。",
+      "S₃ = 1/3 + 4/9 + 9/27 = 10/9。"],
+    "分子是 n² 會讓人以為它「長得很快」，但 3ⁿ 一開始就贏了 —— 比值判別法把這件事變成一個比大小的動作。");
+
+  series("wg-ser-006", 4, "\\frac{(-1)^n}{\\sqrt{n}}", "(-1)^n/\\sqrt{n}",
+    { ratio: "1", ratioExpr: "(1/\\sqrt{n+1})/(1/\\sqrt{n})", verdict: ["收斂", "converges"], absolute: ["發散", "diverges"], partial: "-1+1/sqrt(2)-1/sqrt(3)" },
+    ["比值 → 1，無效。",
+      "交錯級數判別法：1/√n 遞減趨近 0 → 收斂。",
+      "取絕對值是 p=1/2 的 p 級數 → 發散。",
+      "S₃ = −1 + 1/√2 − 1/√3 ≈ −0.5871。"],
+    "又一張條件收斂。p=1/2 比調和級數更慢趨近 0，但交錯的符號仍然救得回來。");
+
+  series("wg-ser-007", 5, "\\frac{3^n}{n\\,4^n}", "3^n/(n*4^n)",
+    { ratio: "3/4", ratioExpr: "(3^(n+1)/((n+1)*4^(n+1)))/(3^n/(n*4^n))", ratioN0: 20, ratioLevels: 5, verdict: ["收斂", "converges"], absolute: ["收斂", "converges"], partial: "75/64" },
+    ["比值 = (3/4)·n/(n+1) → 3/4。",
+      "L=3/4<1 → 收斂。",
+      "正項，第三格同第二格。",
+      "S₃ = 3/4 + 9/32 + 27/192 = 75/64 ≈ 1.1719。"],
+    "這是 −ln(1−x) 的級數在 x=3/4 的值，和是 ln 4。比值判別法只給收斂，給不出和 —— 兩件事要分開。");
+
+  series("wg-ser-008", 5, "\\frac{n!}{n^n}", "n!/n^n",
+    { ratio: "1/e", ratioExpr: "((n+1)!/(n+1)^(n+1))/(n!/n^n)", ratioN0: 20, ratioLevels: 4, ratioTol: 0.0005, verdict: ["收斂", "converges"], absolute: ["收斂", "converges"], partial: "31/18" },
+    ["比值 = (n/(n+1))ⁿ = 1/(1+1/n)ⁿ → 1/e ≈ 0.368。",
+      "L=1/e<1 → 收斂。",
+      "正項，第三格同第二格。",
+      "S₃ = 1 + 1/2 + 2/9 = 31/18 ≈ 1.7222。"],
+    "比值極限是 1/e 這件事本身就是 (1+1/n)ⁿ→e 的應用 —— 判別法用得上，是因為那個經典極限先站得住。");
+
+  series("wg-ser-009", 4, "\\frac{1}{n^2+n}", "1/(n^2+n)",
+    { ratio: "1", ratioExpr: "(1/((n+1)^2+(n+1)))/(1/(n^2+n))", verdict: ["收斂", "converges"], absolute: ["收斂", "converges"], partial: "3/4" },
+    ["比值 → 1，無效。",
+      "改用比較判別法：1/(n²+n) < 1/n² → 收斂。",
+      "正項，第三格同第二格。",
+      "S₃ = 1/2 + 1/6 + 1/12 = 3/4。"],
+    "裂項之後 S_N = 1 − 1/(N+1)，所以和是 1 —— 而 S₃=3/4 正好是 1−1/4，填完就看得出裂項的形狀。");
+
+  series("wg-ser-010", 5, "\\frac{(-1)^{n+1}}{n^2}", "(-1)^(n+1)/n^2",
+    { ratio: "1", ratioExpr: "(1/(n+1)^2)/(1/n^2)", verdict: ["收斂", "converges"], absolute: ["收斂", "converges"], partial: "31/36" },
+    ["比值 → 1，無效。",
+      "交錯級數判別法 → 收斂。",
+      "取絕對值是 p=2 的 p 級數 → 也收斂，所以是絕對收斂。",
+      "S₃ = 1 − 1/4 + 1/9 = 31/36。"],
+    "交錯 + 絕對值也收斂 = 絕對收斂。跟第二張放在一起看：同樣是交錯級數，差別只在取絕對值之後那一格。");
+
+  window.BUZZ_PROBLEMS = (window.BUZZ_PROBLEMS || []).concat(problems);
+})();

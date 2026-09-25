@@ -283,7 +283,11 @@
     "tmpl-int-sin-def-003": ["integral.basic"],
     "tmpl-int-sin-def-004": ["integral.basic"],
     "uni-int-013": ["integral.usub"],
-    "uni-int-020": ["integral.partialfrac"]
+    "uni-int-020": ["integral.partialfrac"],
+    "wg-def-001": ["integral.basic"],
+    "wg-def-002": ["integral.basic"],
+    "wg-def-003": ["integral.basic"],
+    "wg-def-004": ["integral.basic"]
   };
 
   if (typeof module !== "undefined" && module.exports) module.exports = SKILL_TAGS;

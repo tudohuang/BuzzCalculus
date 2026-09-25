@@ -59,6 +59,10 @@ VALUE_CASES.forEach(([name, spec, expected]) => {
 /* ── 二、正向：是非題的兩個方向都要判對 ─────────────────────── */
 
 const CLAIM_CASES = [
+  ["Σ1/n² 收斂", { m: "seriesConverges", f: "1/n^2", from: 1 }, true],
+  ["Σ1/n 發散", { m: "seriesConverges", f: "1/n", from: 1 }, false],
+  ["交錯調和收斂", { m: "seriesConverges", f: "(-1)^(n+1)/n", from: 1 }, true],
+  ["交錯調和取絕對值後發散", { m: "seriesConverges", f: "(-1)^(n+1)/n", from: 1, absolute: true }, false],
   ["凹向上時梯形法高估", { m: "ruleBias", f: "1/x", a: 1, b: 2, n: 4, rule: "trapezoid" }, true],
   ["凹向上時中點法低估", { m: "ruleBias", f: "1/x", a: 1, b: 2, n: 4, rule: "mid" }, false],
   ["遞增函數的左端點和低估", { m: "ruleBias", f: "x^2", a: 0, b: 1, n: 4, rule: "left" }, false],
@@ -122,6 +126,11 @@ const textProblem = (canonical, verify) => ({
 });
 
 const WRONG_CLAIMS = [
+  // 「不一致收斂」裡有「收斂」兩個字：比對器必須先看關鍵詞再看否定詞，
+  // 順序反了這一條會綠（實際踩過，兩題一致收斂被判反）。
+  ["把 xⁿ 在 [0,1) 說成收斂到 0（一致）", textProblem("一致收斂", { m: "uniformConvergence", f: "x^n", limit: "0", range: [0, 0.999999] })],
+  ["把 Σ1/n 說成收斂", textProblem("收斂", { m: "seriesConverges", f: "1/n", from: 1 })],
+  ["把交錯調和的絕對值說成收斂", textProblem("收斂", { m: "seriesConverges", f: "(-1)^(n+1)/n", from: 1, absolute: true })],
   ["把梯形法對凹向上說成低估", textProblem("低估", { m: "ruleBias", f: "1/x", a: 1, b: 2, n: 4, rule: "trapezoid" })],
   ["把 1/x 在 (0,1] 說成一致連續", textProblem("一致連續", { m: "uniformContinuity", f: "1/x", range: [0.0000001, 1], log: true })],
   ["把 √x 在 [0,∞) 說成不一致連續", textProblem("不一致連續", { m: "uniformContinuity", f: "\\sqrt{x}", range: [0, "inf"] })],

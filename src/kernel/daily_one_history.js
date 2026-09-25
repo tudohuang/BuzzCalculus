@@ -125,6 +125,7 @@
     "2026-09-22": "depth-int-011",
     "2026-09-23": "lim-010",
     "2026-09-24": "si-int-021",
+    "2026-09-25": "vc-cons-002",
   };
   if (typeof module !== "undefined" && module.exports) module.exports = { HISTORY };
   if (typeof window !== "undefined") window.BUZZ_DAILY_ONE_HISTORY = HISTORY;

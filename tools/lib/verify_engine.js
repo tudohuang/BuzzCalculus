@@ -3667,11 +3667,18 @@ function runExplicit(problem, compileAnswer) {
     if (value && typeof value === "object" && "__claim" in value) {
       const says = String(problem.canonical || (problem.answers || [])[0] || problem.answer || "").trim();
       if (!says) return { status: "unverified", reason: "這一題沒有可以比對的文字答案" };
-      // 「高估／低估」不是靠否定詞分的（兩個詞裡都沒有「不」），
-      // 但它跟「成不成立」是同一件事：估計值大於真值 = 高估。
-      const saysYes = /高估|偏大|over/i.test(says) ? true
-        : /低估|偏小|under/i.test(says) ? false
-          : !/不|非|not|non/i.test(says);
+      // 這句話在說「成立」還是「不成立」？分兩步，順序不能反：
+      //   先看關鍵詞（發散／收斂、低估／高估），沒有關鍵詞就當它在說「成立」；
+      //   再看有沒有否定詞，有就整個翻過來。
+      // 兩步是必要的：「不一致收斂」裡有「收斂」兩個字，只看關鍵詞會判成成立 ——
+      // 一致收斂那幾題就是這樣被判反的（2026-09-25 修）。
+      const base = /發散|diverg/i.test(says) ? false
+        : /收斂|converg/i.test(says) ? true
+          : /低估|偏小|under/i.test(says) ? false
+            : /高估|偏大|over/i.test(says) ? true
+              : true;
+      const negated = /不|非|not|non/i.test(says);
+      const saysYes = negated ? !base : base;
       if (saysYes === Boolean(value.__claim)) {
         return { status: "ok", method: `verify:${spec.m}`, detail: `「${says}」與數值判定一致` };
       }
@@ -3973,6 +3980,20 @@ const EXPLICIT_METHODS = {
     const scale = Math.max(1e-9, Math.abs(exact));
     if (Math.abs(approx - exact) < 1e-6 * scale) throw new Error(`估計值與真值差不到 1e-6（${approx} vs ${exact}）`);
     return { __claim: approx > exact };
+  },
+
+  // 級數收不收斂（是非題）。作業表的「結論」那一格用的就是這個 ——
+  // 判別法是解題者的工作，這裡只問「數值上它收不收斂」。
+  //   { m: "seriesConverges", f: "…", from: 1, absolute: true }
+  // absolute: true 時驗的是 Σ|aₙ|，也就是「絕對收斂嗎」那一格。
+  seriesConverges: (spec) => {
+    const term = latex.compile(spec.f, [spec.v || "n"]);
+    const from = Math.round(constant(spec.from === undefined ? 1 : spec.from));
+    const result = spec.absolute
+      ? numeric.seriesConvergesAbsolutely(term, from)
+      : numeric.seriesConverges(term, from);
+    if (result.unknown) throw new Error(result.reason || "收斂性判不出來");
+    return { __claim: Boolean(result.converges) };
   },
 
   // 級數和
