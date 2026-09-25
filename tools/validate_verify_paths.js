@@ -24,6 +24,9 @@ const close = (a, b) => Number.isFinite(a) && Math.abs(a - b) <= 1e-5 * Math.max
 /* ── 一、正向：已知的值要算得出來 ────────────────────────────── */
 
 const VALUE_CASES = [
+  ["階梯函數的積分（跳躍點要宣告）", { m: "integral", f: "2\\lfloor 2x \\rfloor+1", a: 0, b: 1, breaks: [0.5] }, 2],
+  ["lim∫fₙ（先積分再取極限）", { m: "integralLimit", f: "n x e^{-n x^2}", a: 0, b: 1 }, 0.5],
+  ["Lᵖ 範數", { m: "lpNorm", f: "x", a: 0, b: 1, p: 2 }, 1 / Math.sqrt(3)],
   ["泰勒多項式的值", { m: "taylorValue", f: "e^x", a: 0, n: 3, at: 1 }, 8 / 3],
   ["泰勒多項式（展開點不是 0）", { m: "taylorValue", f: "\\ln x", a: 1, n: 2, at: 1.2, r: 0.3 }, 0.18],
   ["實際誤差（一點）", { m: "taylorError", f: "e^x", a: 0, n: 2, at: 1 }, Math.E - 2.5],
@@ -107,6 +110,9 @@ const numericProblem = (answer, verify) => ({
 });
 
 const WRONG_CASES = [
+  ["階梯函數的積分寫錯一塊的高", numericProblem("1.9", { m: "integral", f: "2\\lfloor 2x \\rfloor+1", a: 0, b: 1, breaks: [0.5] })],
+  ["把 lim∫ 當成 ∫lim（那是 0）", numericProblem("0", { m: "integralLimit", f: "n x e^{-n x^2}", a: 0, b: 1 })],
+  ["Lᵖ 忘了開 p 次方", numericProblem("0.3333333333", { m: "lpNorm", f: "x", a: 0, b: 1, p: 2 })],
   ["把餘項上界當成實際誤差", numericProblem("0.2182818284590451", { m: "lagrangeBound", f: "e^x", a: 0, n: 2, at: 1 })],
   ["餘項的階乘寫成 n! 而不是 (n+1)!", numericProblem("1.359140914295092", { m: "lagrangeBound", f: "e^x", a: 0, n: 2, at: 1 })],
   ["要展到幾階少算一階", numericProblem("5", { m: "taylorTerms", f: "e^x", a: 0, range: [0, 1], eps: 0.001 })],
