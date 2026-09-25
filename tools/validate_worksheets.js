@@ -19,6 +19,9 @@
 
 const appApi = require("./lib/app_api.js");
 const siv = require("./lib/set_interval_verify.js");
+// 作業表不再只有作圖表（2026-09-25）：數值與是非欄位走主驗算器，
+// 集合與區間欄位仍然走 set_interval_verify。兩邊都是獨立重算，差別只在回傳的型別。
+const engine = require("./lib/verify_engine.js");
 
 const api = appApi();
 const problems = appApi.allProblems().filter((problem) => problem.answerKind === "worksheet");
@@ -97,10 +100,13 @@ problems.forEach((problem) => {
       fail(id, `${label} 沒有 verify 描述子 —— 作圖表的每一格都必須獨立驗算過`);
       return;
     }
-    const result = siv.verify(
-      { answerKind: field.kind, answer: field.answer, verify: field.verify },
-      { normalizeAnswer: api.normalizeExpression }
-    );
+    const subject = {
+      answerKind: field.kind, answer: field.answer, answers: field.answers,
+      canonical: field.answer, verify: field.verify, prompt: problem.prompt
+    };
+    const result = field.kind === "set" || field.kind === "interval"
+      ? siv.verify(subject, { normalizeAnswer: api.normalizeExpression })
+      : engine.verifyProblem(subject, { normalizeAnswer: api.normalizeExpression });
     if (result.status !== "ok") {
       fail(id, `${label} 驗算不過 [${result.status}] ${result.detail || result.reason}`);
       return;
@@ -119,8 +125,15 @@ problems.forEach((problem) => {
   }
 
   // 5. 對照圖
+  //
+  // 只有「填完表要照著畫圖」的那種表需要對照圖 —— 增減、凹凸、極值、反曲點
+  // 這幾格就是畫圖的依據。級數的審斂表沒有圖可以畫，硬要一張反而是雜訊。
+  const SKETCHING_KEYS = ["increasing", "decreasing", "concaveUp", "concaveDown", "localMax", "localMin", "inflection"];
+  const isSketchingTable = fields.some((field) => SKETCHING_KEYS.includes(field.key));
   if (!problem.sketch || !problem.sketch.expr) {
-    fail(id, "沒有 sketch —— 手繪不判分，但一定要有正確的圖讓使用者對照");
+    if (isSketchingTable) {
+      fail(id, "有增減／凹凸欄位卻沒有 sketch —— 手繪不判分，但一定要有正確的圖讓使用者對照");
+    }
   } else {
     const fn = compile(problem.sketch.expr);
     if (!fn) {
@@ -141,8 +154,33 @@ problems.forEach((problem) => {
     }
   }
 
+  // 6. 累積函數的表：對照圖畫的是 g(x)=∫₀ˣf，而題幹給的是 f。
+  //    這兩者的關係沒有任何一格驗得到 —— 作者把 g 的式子抄錯的話，
+  //    整張表會「自洽地」全錯。所以在這裡直接數值檢查 g′ = f。
+  if (problem.accumulationOf) {
+    const g = compile((problem.sketch || {}).expr);
+    const f = compile(problem.accumulationOf);
+    if (!g || !f) {
+      fail(id, `accumulationOf 或 sketch.expr 編譯不了（${problem.accumulationOf}）`);
+    } else {
+      const win = (problem.sketch || {}).window || [-3, 3];
+      let worst = 0;
+      for (let i = 1; i < 120; i += 1) {
+        const x = win[0] + ((win[1] - win[0]) * i) / 120;
+        const h = 1e-5;
+        const slope = (g(x + h) - g(x - h)) / (2 * h);
+        const want = f(x);
+        if (!Number.isFinite(slope) || !Number.isFinite(want)) continue;
+        worst = Math.max(worst, Math.abs(slope - want) / Math.max(1, Math.abs(want)));
+      }
+      if (worst > 1e-4) {
+        fail(id, `對照圖畫的不是題幹那個 f 的累積函數：g′ 與 f 最大差 ${worst.toExponential(2)}`);
+      }
+    }
+  }
+
   if (!problem.solutionSteps || problem.solutionSteps.length < 3) {
-    fail(id, "作圖表一定要有 solutionSteps —— 那個填表順序就是解法");
+    fail(id, "作業表一定要有 solutionSteps —— 那個填表順序就是解法");
   }
 });
 

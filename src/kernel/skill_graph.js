@@ -67,7 +67,9 @@
     //   能力模型拿三題去估一整個座標。題數夠了再從這裡搬進 SKILLS。
     "proof", "written-proof", "induction", "inequality",
     //   analysis  分析學包的來源標記（整包都帶著它），不是一項技巧
-    "analysis"
+    "analysis",
+    //   worksheet-table  這一題是一張表（作答形式），不是一項技巧
+    "worksheet-table"
   ]);
 
   // ── Skill 節點 ────────────────────────────────────────────────
