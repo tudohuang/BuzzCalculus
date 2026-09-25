@@ -37,6 +37,28 @@ knownKeys.forEach((key) => {
   if (!Number.isFinite(count)) failures.push(`Pack "${key}" produced non-numeric count`);
   if (count <= 0) failures.push(`Pack "${key}" has no matching problems`);
   if (!pack.label || !pack.note || !Array.isArray(pack.tags)) failures.push(`Pack "${key}" is missing label, note, or tags`);
+  // 挑選器（2026-09-25 取代 47 個選項的下拉）會把 label 與 note 一起印在卡片上，
+  // 所以這兩件事變成硬規則：
+  //   1. label 至少要有一個中文字 —— 舊版有「LM」「Mobile Sprint」「King's」這種
+  //      開發期代號，使用者看不出那是什麼；純英文的專有名詞要配一個中文的說明詞
+  //      （「Taylor 展開」「Hessian 判別」）。
+  //   2. note 不能跟 label 一樣，也不能是空話 —— 卡片上那一行就是「這包在練什麼」。
+  if (pack.label && !/[一-鿿]/.test(pack.label)) {
+    failures.push(`Pack "${key}" 的標籤「${pack.label}」沒有中文字 —— 挑選器上的卡片會變成一個看不懂的代號`);
+  }
+  if (pack.note && pack.label && pack.note.trim() === pack.label.trim()) {
+    failures.push(`Pack "${key}" 的說明跟標籤一樣（${pack.label}）—— 卡片上那一行要說「這包在練什麼」`);
+  }
+});
+
+// 一組最多十包：挑選器是一排卡片，超過十張就回到「要先猜它在哪一組」那個問題。
+api.packGroups.forEach((group) => {
+  if (group.keys.length > 10) {
+    failures.push(`分組「${group.label}」有 ${group.keys.length} 包 —— 一組最多十包（一眼掃得完），超過就再拆一組`);
+  }
+  if (!group.note) {
+    failures.push(`分組「${group.label}」沒有 note —— 挑選器的組標題旁邊要有一句話說這一組是什麼`);
+  }
 });
 
 const ungrouped = [...knownKeys].filter((key) => !groupedKeys.has(key));

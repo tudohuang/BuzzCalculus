@@ -327,6 +327,10 @@ interface Window {
     maxDelta(spec: any, eps: number): number;
     solve(problem: any): string;
   };
+  /** src/share_cards.js：題庫的題包挑選器（取代 47 個選項的下拉） */
+  BuzzPackPicker: { render(options: Record<string, any>): string; matches(pack: any, key: string, query: string): boolean };
+  /** src/share_cards.js：打字作答區（輸入框、語法狀態、數學鍵盤、範例） */
+  BuzzAnswerWorkspace: { render(options: Record<string, any>): string };
   /** src/share_cards.js：互動圖形題的作答區（點位與選圖） */
   BuzzGraphAnswerUI: { renderTap(options: Record<string, any>): string; renderChoice(options: Record<string, any>): string };
   /** src/share_cards.js：出題工作坊的表單（驗證與存檔仍在 app.js） */
