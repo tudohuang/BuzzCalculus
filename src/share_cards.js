@@ -1671,3 +1671,270 @@
 
   window.BuzzCreatorForm = { render };
 })();
+
+/* ── ε-δ 挑戰：把定義變成一個可以玩的東西 ─────────────────────────
+   「對任意 ε 存在 δ」這句話，學生背得出來、也考得過，但多數人從來沒有
+   真的「找過一個 δ」。這個題型把量詞的順序做成遊戲規則：
+     系統先給 ε（畫成一條水平帶 L±ε），你拖 δ（垂直帶 x₀±δ），
+     曲線在垂直帶裡的部分必須整段落在水平帶內。過關之後 ε 縮小，再來一次。
+   三關全過才算答對 —— 那正是 ∀ε 的意思：一次成功不算，要每一個 ε 都行。
+
+   判分不在畫面上做：checkEpsilon 會拿使用者用過的 δ 重新掃一遍。
+   畫面只是讓人看見自己在做什麼。 */
+(function () {
+  "use strict";
+
+  const WIDTH = 340;
+  const HEIGHT = 250;
+  const PAD = 22;
+
+  function compile(expr) {
+    const cleaned = String(expr || "");
+    if (!/^[0-9x+\-*/().,^\sa-z]*$/i.test(cleaned)) return null;
+    try {
+      const body = `"use strict"; const {sin,cos,tan,asin,acos,atan,log,exp,sqrt,abs,pow,sinh,cosh,tanh,PI,E}=Math; return (${cleaned.replace(/\^/g, "**")});`;
+      return new Function("x", body);
+    } catch (_error) { return null; }
+  }
+
+  // 這個 δ 過不過關：在 0<|x−x₀|≤δ 上掃一遍，回報最遠的那一點。
+  // 取樣刻意往 x₀ 兩側加密 —— 1/x 這種函數的麻煩都在最靠近的地方。
+  function evaluate(spec, delta, eps) {
+    const f = compile(spec.f);
+    if (!f || !(delta > 0)) return { ok: false, worstX: null, worstGap: Infinity };
+    const at = Number(spec.at);
+    const limit = Number(spec.limit);
+    let worstGap = 0;
+    let worstX = null;
+    const steps = 600;
+    for (let side of [-1, 1]) {
+      for (let i = 1; i <= steps; i += 1) {
+        // t³ 讓取樣點往 x₀ 擠：邊界與極靠近的地方都要看得到
+        const t = i / steps;
+        const x = at + side * delta * (0.02 + 0.98 * Math.pow(t, 0.7));
+        const y = f(x);
+        if (!Number.isFinite(y)) return { ok: false, worstX: x, worstGap: Infinity };
+        const gap = Math.abs(y - limit);
+        if (gap > worstGap) { worstGap = gap; worstX = x; }
+      }
+    }
+    return { ok: worstGap < eps, worstX, worstGap };
+  }
+
+  // 使用者三關用過的 δ，序列化成一個字串（判分與紀錄都吃這個）
+  const serialize = (deltas) => deltas.map((d) => Number(d).toFixed(4)).join("|");
+  const parse = (input) => String(input || "").split("|").map(Number).filter((d) => Number.isFinite(d));
+
+  // 判分：拿使用者用過的 δ 重新掃一遍，每一關都要真的過。
+  function check(problem, input) {
+    const spec = problem.epsilon || {};
+    const levels = spec.levels || [];
+    const deltas = parse(input);
+    // 先驗交出來的每一個 δ —— 卡在哪一關要講清楚。
+    // 「關數不夠」只有在交出來的那幾關都成立時才是真正的原因（例如中途離開）。
+    for (let i = 0; i < Math.min(deltas.length, levels.length); i += 1) {
+      const result = evaluate(spec, deltas[i], levels[i]);
+      if (!result.ok) {
+        return {
+          correct: false,
+          message: `第 ${i + 1} 關（ε=${levels[i]}）的 δ=${deltas[i]} 不成立：x≈${Number(result.worstX).toFixed(3)} 時 |f(x)−L|≈${Number(result.worstGap).toFixed(3)} 已經超出 ε。`
+        };
+      }
+    }
+    if (deltas.length < levels.length) {
+      return {
+        correct: false,
+        message: `前 ${deltas.length} 關成立，但還有 ${levels.length - deltas.length} 關沒完成 —— ∀ε 的意思是每一個 ε 都要行。`
+      };
+    }
+    return { correct: true, message: `${levels.length} 關都成立：ε 每縮一次你都找得到對應的 δ —— 那就是「極限存在」的定義。` };
+  }
+
+  function curvePath(f, spec, sx, sy, win, inside) {
+    const [xmin, xmax, ymin, ymax] = win;
+    const segments = [];
+    let current = [];
+    const steps = 420;
+    for (let i = 0; i <= steps; i += 1) {
+      const x = xmin + ((xmax - xmin) * i) / steps;
+      const near = Math.abs(x - Number(spec.at)) <= 1e-9;
+      const y = near && spec.hole ? NaN : f(x);
+      const within = inside === null ? true : (Math.abs(x - Number(spec.at)) <= inside) === true;
+      if (!Number.isFinite(y) || y < ymin || y > ymax || !within) {
+        if (current.length > 1) segments.push(current);
+        current = [];
+        continue;
+      }
+      current.push(`${current.length ? "L" : "M"}${sx(x).toFixed(1)},${sy(y).toFixed(1)}`);
+    }
+    if (current.length > 1) segments.push(current);
+    return segments.map((s) => s.join(" ")).join(" ");
+  }
+
+  function render(options) {
+    const { problem, state, done, icon, escapeHtml } = options;
+    const spec = problem.epsilon || {};
+    const levels = spec.levels || [];
+    const level = Math.min(state.level || 0, levels.length - 1);
+    const eps = Number(levels[level]);
+    const delta = Number(state.delta || spec.maxDelta || 1);
+    const win = (problem.graph && problem.graph.window) || [Number(spec.at) - 2, Number(spec.at) + 2, Number(spec.limit) - 2, Number(spec.limit) + 2];
+    const [xmin, xmax, ymin, ymax] = win.map(Number);
+    const sx = (x) => PAD + ((x - xmin) / (xmax - xmin)) * (WIDTH - 2 * PAD);
+    const sy = (y) => HEIGHT - PAD - ((y - ymin) / (ymax - ymin)) * (HEIGHT - 2 * PAD);
+    const f = compile(spec.f);
+    const at = Number(spec.at);
+    const limit = Number(spec.limit);
+    const probe = f ? evaluate(spec, delta, eps) : { ok: false, worstGap: Infinity, worstX: null };
+
+    const parts = [];
+    // 水平帶：|f−L| < ε
+    parts.push(`<rect x="${sx(xmin)}" y="${sy(limit + eps)}" width="${sx(xmax) - sx(xmin)}" height="${Math.max(1, sy(limit - eps) - sy(limit + eps))}" fill="var(--green)" opacity="0.14"/>`);
+    parts.push(`<line x1="${sx(xmin)}" y1="${sy(limit)}" x2="${sx(xmax)}" y2="${sy(limit)}" stroke="var(--green)" stroke-width="1.2" stroke-dasharray="4 3"/>`);
+    // 垂直帶：0<|x−x₀| < δ
+    parts.push(`<rect x="${sx(at - delta)}" y="${sy(ymax)}" width="${Math.max(1, sx(at + delta) - sx(at - delta))}" height="${sy(ymin) - sy(ymax)}" fill="var(--blue)" opacity="0.12"/>`);
+    parts.push(`<line x1="${sx(at)}" y1="${sy(ymin)}" x2="${sx(at)}" y2="${sy(ymax)}" stroke="var(--blue)" stroke-width="1.2" stroke-dasharray="3 3"/>`);
+    // 座標軸
+    if (ymin <= 0 && ymax >= 0) parts.push(`<line x1="${sx(xmin)}" y1="${sy(0)}" x2="${sx(xmax)}" y2="${sy(0)}" stroke="var(--line-strong)" stroke-width="1.2"/>`);
+    if (xmin <= 0 && xmax >= 0) parts.push(`<line x1="${sx(0)}" y1="${sy(ymin)}" x2="${sx(0)}" y2="${sy(ymax)}" stroke="var(--line-strong)" stroke-width="1.2"/>`);
+    if (f) {
+      // 帶外的整條曲線畫淡的，帶內那一段畫粗 —— 眼睛要看的就是那一段有沒有跑出水平帶
+      parts.push(`<path d="${curvePath(f, spec, sx, sy, [xmin, xmax, ymin, ymax], null)}" fill="none" stroke="var(--muted)" stroke-width="1.2" opacity="0.5"/>`);
+      parts.push(`<path d="${curvePath(f, spec, sx, sy, [xmin, xmax, ymin, ymax], delta)}" fill="none" stroke="${probe.ok ? "var(--green)" : "var(--red)"}" stroke-width="2.4"/>`);
+    }
+    if (spec.hole) parts.push(`<circle cx="${sx(at)}" cy="${sy(limit)}" r="3.2" fill="var(--bg)" stroke="var(--muted)" stroke-width="1.4"/>`);
+    if (!probe.ok && Number.isFinite(probe.worstX) && probe.worstX >= xmin && probe.worstX <= xmax) {
+      parts.push(`<line x1="${sx(probe.worstX)}" y1="${sy(ymin)}" x2="${sx(probe.worstX)}" y2="${sy(ymax)}" stroke="var(--red)" stroke-width="1" stroke-dasharray="2 3"/>`);
+    }
+    parts.push(`<text x="${sx(at)}" y="${HEIGHT - 6}" font-size="10" text-anchor="middle" fill="var(--muted)">x₀=${at}</text>`);
+    parts.push(`<text x="${WIDTH - 6}" y="${sy(limit) - 5}" font-size="10" text-anchor="end" fill="var(--muted)">L=${limit}</text>`);
+
+    const max = Number(spec.maxDelta || Math.max(0.5, (xmax - xmin) / 4));
+    const step = max / 200;
+    const passed = (state.passed || []).length;
+    const tries = state.tries || 0;
+    return `
+      <section class="epsilon-game">
+        <div class="eps-levels" role="status">
+          ${levels.map((value, index) => `
+            <span class="eps-level ${index < passed ? "is-done" : index === level ? "is-now" : ""}">
+              ${index < passed ? icon("check") : ""}ε=${value}
+            </span>`).join("")}
+        </div>
+        <svg class="eps-svg" viewBox="0 0 ${WIDTH} ${HEIGHT}" role="img"
+          aria-label="第 ${level + 1} 關：ε=${eps}，目前 δ=${delta.toFixed(3)}，${probe.ok ? "曲線都在帶內" : "有一段跑出帶外"}">
+          ${parts.join("")}
+        </svg>
+        <p class="eps-status ${probe.ok ? "is-ok" : "is-bad"}">
+          ${probe.ok
+            ? `這個 δ 成立：帶內最遠也只差 ${probe.worstGap.toFixed(4)} &lt; ε`
+            : `還不行：x≈${Number.isFinite(probe.worstX) ? Number(probe.worstX).toFixed(3) : "?"} 時差了 ${Number.isFinite(probe.worstGap) ? probe.worstGap.toFixed(4) : "∞"}，超過 ε=${eps}`}
+        </p>
+        ${done ? "" : `
+          <label class="eps-slider">
+            <span>δ = ${delta.toFixed(3)}</span>
+            <input type="range" data-eps-delta min="${(step * 2).toFixed(5)}" max="${max}" step="${step.toFixed(5)}" value="${delta}">
+          </label>
+          <div class="action-row eps-actions">
+            <button class="button" data-action="epsilon-submit">${icon("check")}這一關用這個 δ</button>
+            <span class="eps-tries">${tries ? `這一關試過 ${tries} 次` : "把 δ 拖到曲線整段落在綠帶裡"}</span>
+          </div>`}
+        ${state.note ? `<p class="eps-note">${escapeHtml(state.note)}</p>` : ""}
+      </section>
+    `;
+  }
+
+  // 每一關的最大可用 δ（二分）。用在三個地方：
+  //   validate_answer_checker 的標準作答、E2E 的「照正解玩一遍」、以及題目資料的驗算。
+  // 回傳的 δ 刻意取最大值的八成 —— 邊界上的值在不同取樣密度下會擺動，
+  // 標準作答不該卡在容差邊緣。
+  function maxDelta(spec, eps) {
+    let lo = 0;
+    let hi = Number(spec.maxDelta || 1);
+    if (evaluate(spec, hi, eps).ok) return hi;
+    for (let i = 0; i < 60; i += 1) {
+      const mid = (lo + hi) / 2;
+      if (evaluate(spec, mid, eps).ok) lo = mid; else hi = mid;
+    }
+    return lo;
+  }
+
+  function solve(problem) {
+    const spec = problem.epsilon || {};
+    return serialize((spec.levels || []).map((eps) => maxDelta(spec, Number(eps)) * 0.8));
+  }
+
+  window.BuzzEpsilonGame = { render, evaluate, check, serialize, parse, maxDelta, solve };
+})();
+
+/* ── 互動圖形題的作答區：點位與選圖（2026-09-25 從 app.js 搬出來）──
+   app.js 撞 720KB 預算，而這兩段是純畫面：已標的點、正解位置、被選錯的那個
+   選項都由呼叫端算好傳進來。判分、吸附、狀態都還在 app.js。 */
+(function () {
+  "use strict";
+
+  // 點位題：圖上點出位置。overlay 會畫已標的點（金色）與送出後的正解（綠圈）。
+  function renderTap(options) {
+    const { problem, marks, targets, fn, done, renderProblemGraph, icon, shell, extra } = options;
+    const overlay = (ctx) => {
+      const parts = [];
+      const dotY = (x) => {
+        const y = fn ? fn(x) : 0;
+        return Number.isFinite(y) ? Math.max(ctx.ymin, Math.min(ctx.ymax, y)) : 0;
+      };
+      if (done) {
+        targets.forEach((x) => {
+          parts.push(`<line x1="${ctx.sx(x)}" y1="${ctx.sy(ctx.ymin)}" x2="${ctx.sx(x)}" y2="${ctx.sy(ctx.ymax)}" stroke="var(--green)" stroke-width="1.4" stroke-dasharray="4 3"/>`);
+          parts.push(`<circle cx="${ctx.sx(x)}" cy="${ctx.sy(dotY(x))}" r="5" fill="none" stroke="var(--green)" stroke-width="2"/>`);
+        });
+      }
+      marks.forEach((x) => {
+        parts.push(`<line x1="${ctx.sx(x)}" y1="${ctx.sy(ctx.ymin)}" x2="${ctx.sx(x)}" y2="${ctx.sy(ctx.ymax)}" stroke="var(--gold)" stroke-width="1.2" stroke-dasharray="3 3"/>`);
+        parts.push(`<circle cx="${ctx.sx(x)}" cy="${ctx.sy(dotY(x))}" r="4.4" fill="var(--gold)" stroke="var(--ink)" stroke-width="1.2"/>`);
+      });
+      return parts.join("");
+    };
+    const controls = `
+      <div class="graph-interactive">
+        ${renderProblemGraph(problem, { interactive: done ? null : "tap", overlay })}
+        <div class="helper-row">
+          <span>${done ? "綠圈是正確位置，對照一下你標的點。" : `直接點在圖上（點到的位置會吸附到曲線）· 已標 ${marks.length} / ${targets.length}，點錯再點一次取消`}</span>
+        </div>
+        <div class="action-row">
+          <button class="button" data-action="submit-graphtap" ${!done && marks.length === targets.length ? "" : "disabled"}>${icon("check")}送出</button>
+          <button class="button ghost" data-action="clear-graphtap" ${done || !marks.length ? "disabled" : ""}>清除重點</button>
+        </div>
+      </div>
+    `;
+    return shell(controls, extra);
+  }
+
+  // 選圖題：四張小圖選一張。答錯時只在被選到的那一張下面印出「錯在哪」。
+  function renderChoice(options) {
+    const { choices, disabled, wrongExpr, window: win, domain, renderMiniGraph, escapeAttr, escapeHtml, extra } = options;
+    return `
+      <div class="graph-choice-grid" role="radiogroup" aria-label="選擇正確的圖形">
+        ${choices
+          .map((choice, index) => {
+            const letter = String.fromCharCode(65 + index);
+            const wrong = wrongExpr !== null && wrongExpr === choice.expr;
+            return `
+              <button class="graph-choice ${wrong ? "is-wrong" : ""}" type="button"
+                data-action="choose-answer" data-choice="${escapeAttr(choice.expr)}" ${disabled}
+                aria-label="選項 ${letter}">
+                <span class="graph-choice-letter">${letter}</span>
+                ${renderMiniGraph(choice.expr, win, domain)}
+                ${wrong && choice.why ? `<small class="graph-choice-why">${escapeHtml(choice.why)}</small>` : ""}
+              </button>`;
+          })
+          .join("")}
+      </div>
+      <div class="helper-row">
+        <span>四張圖只有一張的 f′、f″ 與定義域全部對得上</span>
+      </div>
+      ${extra}
+    `;
+  }
+
+  window.BuzzGraphAnswerUI = { renderTap, renderChoice };
+})();

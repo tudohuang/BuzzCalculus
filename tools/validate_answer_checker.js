@@ -184,6 +184,7 @@ canonicalProblems.forEach((problem) => {
   // 這裡等於順便釘住「參考解自己過得了檢查器」，出題時抄壞了會在這一支紅。
   const input = problem.answerKind === "text" ? problem.canonical || problem.answers[0]
     : problem.answerKind === "sketch" ? global.window.BuzzGraphSketch.trace(problem)
+      : problem.answerKind === "epsilon" ? global.window.BuzzEpsilonGame.solve(problem)
       : problem.answerKind === "proof" ? proofReference(problem)
         : problem.answer;
   const result = api.checkAnswer(problem, input);

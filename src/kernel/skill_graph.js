@@ -69,7 +69,9 @@
     //   analysis  分析學包的來源標記（整包都帶著它），不是一項技巧
     "analysis",
     //   worksheet-table  這一題是一張表（作答形式），不是一項技巧
-    "worksheet-table"
+    "worksheet-table",
+    //   epsilon-game  這一題是一個互動挑戰（作答形式），不是一項技巧
+    "epsilon-game"
   ]);
 
   // ── Skill 節點 ────────────────────────────────────────────────

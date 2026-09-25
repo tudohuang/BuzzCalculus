@@ -317,6 +317,18 @@ interface Window {
   BuzzProofAnswer: { render(options: Record<string, any>): string };
   /** src/share_cards.js：手寫計算紙的外殼（畫布的事件與筆跡仍在 app.js） */
   BuzzBoardUI: { render(options: Record<string, any>): string };
+  /** src/share_cards.js：ε-δ 挑戰（畫面與判分；狀態在 quiz.epsilon） */
+  BuzzEpsilonGame: {
+    render(options: Record<string, any>): string;
+    evaluate(spec: any, delta: number, eps: number): { ok: boolean; worstX: number | null; worstGap: number };
+    check(problem: any, input: string): { correct: boolean; message: string };
+    serialize(deltas: number[]): string;
+    parse(input: string): number[];
+    maxDelta(spec: any, eps: number): number;
+    solve(problem: any): string;
+  };
+  /** src/share_cards.js：互動圖形題的作答區（點位與選圖） */
+  BuzzGraphAnswerUI: { renderTap(options: Record<string, any>): string; renderChoice(options: Record<string, any>): string };
   /** src/share_cards.js：出題工作坊的表單（驗證與存檔仍在 app.js） */
   BuzzCreatorForm: { render(options: Record<string, any>): string };
 

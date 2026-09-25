@@ -226,6 +226,86 @@ async function run() {
     `);
     check("上下翻轉的圖判錯，而且說出哪一段增減錯了（不是選擇題的誘答理由）", flipped.ok && flipped.wrong, flipped.feedback || flipped.why);
 
+
+    /* ── ε-δ 挑戰（2026-09-25）────────────────────────────────
+       這個題型的價值全在「看得見」與「一關一關縮」，所以 E2E 要釘的是
+       畫面上真的有帶、拖滑桿真的會改判定、過關真的會換 ε、
+       以及交一個不成立的 δ 會被判錯並說出卡在哪一關。 */
+    await chrome.navigate(`${server.url}/index.html#p=ep-001`);
+    await chrome.sleep(1300);
+    const epsStart = await chrome.evaluate(`
+      const svg = document.querySelector(".eps-svg");
+      const slider = document.querySelector("[data-eps-delta]");
+      const levels = [...document.querySelectorAll(".eps-level")].map(n => n.innerText.trim());
+      return {
+        ok: true,
+        svg: Boolean(svg),
+        slider: Boolean(slider),
+        levels,
+        now: (document.querySelector(".eps-level.is-now") || {}).innerText || "",
+        status: (document.querySelector(".eps-status") || {}).innerText || "",
+        bands: svg ? svg.innerHTML.split("<rect").length - 1 : 0
+      };
+    `);
+    check("ε-δ 挑戰畫出兩條帶與一根 δ 滑桿", epsStart.svg && epsStart.slider && epsStart.bands >= 2, `帶 ${epsStart.bands} 個 · 滑桿 ${epsStart.slider}`);
+    check("關卡列印出三個 ε，第一關是現在", epsStart.levels.length === 3 && epsStart.now.includes("0.6"), epsStart.levels.join(" / "));
+
+    const epsDrag = await chrome.evaluate(`
+      const slider = document.querySelector("[data-eps-delta]");
+      if (!slider) return { ok:false, why:"沒有滑桿" };
+      const problem = window.BUZZ_PROBLEMS.find(p => p.id === "ep-001");
+      const best = window.BuzzEpsilonGame.maxDelta(problem.epsilon, problem.epsilon.levels[0]);
+      slider.value = String(best * 1.4);
+      slider.dispatchEvent(new Event("input", { bubbles: true }));
+      await new Promise(r=>setTimeout(r, 400 * (window.__slow || 1)));
+      const tooBig = (document.querySelector(".eps-status") || {}).innerText || "";
+      slider.value = String(best * 0.7);
+      slider.dispatchEvent(new Event("input", { bubbles: true }));
+      await new Promise(r=>setTimeout(r, 400 * (window.__slow || 1)));
+      const okNow = (document.querySelector(".eps-status") || {}).innerText || "";
+      return { ok:true, tooBig, okNow };
+    `);
+    check("δ 太大時說「還不行」並指出跑出帶外的 x", /還不行/.test(epsDrag.tooBig) && /x≈/.test(epsDrag.tooBig), epsDrag.tooBig.slice(0, 60));
+    check("δ 縮小之後即時變成「這個 δ 成立」", /成立/.test(epsDrag.okNow), epsDrag.okNow.slice(0, 60));
+
+    const epsWin = await chrome.evaluate(`
+      const problem = window.BUZZ_PROBLEMS.find(p => p.id === "ep-001");
+      const game = window.BuzzEpsilonGame;
+      const seen = [];
+      for (let i = 0; i < problem.epsilon.levels.length; i += 1) {
+        const badge = document.querySelector(".eps-level.is-now");
+        seen.push(badge ? badge.innerText.trim() : "(沒有)");
+        const eps = Number(problem.epsilon.levels[i]);
+        const slider = document.querySelector("[data-eps-delta]");
+        if (!slider) return { ok:false, why:"第 " + (i+1) + " 關沒有滑桿" };
+        slider.value = String(game.maxDelta(problem.epsilon, eps) * 0.7);
+        slider.dispatchEvent(new Event("input", { bubbles: true }));
+        await new Promise(r=>setTimeout(r, 300 * (window.__slow || 1)));
+        document.querySelector('[data-action="epsilon-submit"]').click();
+        await new Promise(r=>setTimeout(r, 600 * (window.__slow || 1)));
+      }
+      let text = "";
+      for (const end = Date.now() + 4000; Date.now() < end; await new Promise(r=>setTimeout(r, 60))) { const f = document.querySelector(".feedback"); if (f) { text = f.innerText; break; } }
+      return { ok:true, seen, feedback: text.replace(/\\s+/g, " ").slice(0, 120) };
+    `);
+    check("三關的 ε 一關比一關小（過關才前進）", epsWin.ok && epsWin.seen.length === 3 && epsWin.seen[0] !== epsWin.seen[1] && epsWin.seen[1] !== epsWin.seen[2], (epsWin.seen || []).join(" → ") || epsWin.why);
+    check("三關全過判對，而且說出「每一個 ε 都找得到 δ」", /答對/.test(epsWin.feedback) && /都成立/.test(epsWin.feedback), epsWin.feedback);
+
+    await chrome.navigate(`${server.url}/index.html#p=ep-003`);
+    await chrome.sleep(1300);
+    const epsFail = await chrome.evaluate(`
+      const problem = window.BUZZ_PROBLEMS.find(p => p.id === "ep-003");
+      const slider = document.querySelector("[data-eps-delta]");
+      if (!slider) return { ok:false, why:"沒有滑桿" };
+      slider.value = String(window.BuzzEpsilonGame.maxDelta(problem.epsilon, problem.epsilon.levels[0]) * 1.6);
+      slider.dispatchEvent(new Event("input", { bubbles: true }));
+      await new Promise(r=>setTimeout(r, 300 * (window.__slow || 1)));
+      document.querySelector('[data-action="epsilon-submit"]').click();
+      let text = "";
+      for (const end = Date.now() + 4000; Date.now() < end; await new Promise(r=>setTimeout(r, 60))) { const f = document.querySelector(".feedback"); if (f) { text = f.innerText; break; } }
+      return { ok:true, feedback: text.replace(/\\s+/g, " ").slice(0, 140) };
+    `);
+    check("交一個不成立的 δ 判錯，而且說出卡在第幾關、哪一點跑出去", /答案不對/.test(epsFail.feedback) && /第 1 關/.test(epsFail.feedback) && /x≈/.test(epsFail.feedback), epsFail.feedback || epsFail.why);
     const errors = chrome.consoleMessages.filter((m) => m.type === "error");
     check("console 沒有錯誤", errors.length === 0, errors.slice(0, 2).map((e) => e.text).join(" | "));
     check("沒有未捕捉的例外", chrome.pageErrors.length === 0, chrome.pageErrors.slice(0, 2).join(" | "));

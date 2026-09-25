@@ -8,7 +8,7 @@ const topics = new Set(["limits", "derivatives", "integrals", "series"]);
 // 那些檢查（誘答要看得出差別、要寫錯在哪）在這裡驗不了。
 // worksheet = 作圖表題（一張要填的表，每一格自己判分）。
 // 每一格的獨立驗算由 tools/validate_worksheets.js 把關。
-const answerKinds = new Set(["numeric", "expression", "antiderivative", "text", "set", "interval", "graph", "graphtap", "graphslope", "worksheet", "sketch", "proof"]);
+const answerKinds = new Set(["numeric", "expression", "antiderivative", "text", "set", "interval", "graph", "graphtap", "graphslope", "worksheet", "sketch", "proof", "epsilon"]);
 const ids = new Set();
 const errors = [];
 const allowedRawWords = new Set([

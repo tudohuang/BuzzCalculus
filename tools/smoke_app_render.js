@@ -1228,7 +1228,7 @@ console.log(`Resume smoke: ${json.length} bytes for a 12-question exam, round-tr
   // 這兩個題型不進對戰池（作答動作是拖與點，沒辦法用一個答案字串比賽）
   const dueled = global.window.BUZZ_PROBLEMS.filter((p) => ["graphtap", "graphslope"].includes(p.answerKind));
   const appSrc = require("fs").readFileSync(require("path").join(__dirname, "..", "src", "app.js"), "utf8");
-  if (!/\["worksheet", "graph", "graphtap", "graphslope", "sketch", "proof"\]\.includes\(problem\.answerKind\)/.test(appSrc)) {
+  if (!/\["worksheet", "graph", "graphtap", "graphslope", "sketch", "proof", "epsilon"\]\.includes\(problem\.answerKind\)/.test(appSrc)) {
     throw new Error("對戰題池沒有排除互動圖形題");
   }
   // 每一題的判分規格都要能被驗算器獨立重算 —— 側表裡有紀錄才算數

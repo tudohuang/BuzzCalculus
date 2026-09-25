@@ -645,3 +645,156 @@
 
   window.BUZZ_PROBLEMS = (window.BUZZ_PROBLEMS || []).concat(problems);
 })();
+
+
+/* ═══════════════════════════════════════════════════════════════
+   ε-δ 挑戰（2026-09-25）：14 題，新的作答形式 `epsilon`。
+
+   為什麼要做一個新題型而不是再出十題計算題：
+   「對任意 ε 存在 δ」這句話，學生背得出來、也考得過，但多數人從來沒有
+   真的找過一個 δ。這一題型把量詞的順序做成遊戲規則 ——
+     系統先給 ε（畫成水平帶 L±ε），你拖 δ（垂直帶 x₀±δ），
+     曲線在垂直帶裡的那一段必須整段落在水平帶內；過關之後 ε 縮小，再來一次。
+   三關全過才算答對。那正是 ∀ε 的意思：一次成功不算，每一個 ε 都要行。
+
+   題目的挑法有兩個原則：
+     1. 前四題是線性與二次，δ 跟 ε 的關係看得出來（δ=ε/3、δ≈ε/4），
+        先讓人相信「這件事真的可以算」。
+     2. 後面故意放難算的：1/x 的 δ 兩側不對稱、√x 在 0 附近只有單側、
+        sin(1/x) 的極限根本不存在（那一題三關必然卡住 —— 卡住就是答案）。
+   每一題都附 verify: maxDelta，所以「最嚴的那一關到底有沒有解」由驗算器算，
+   不是作者說有就有。 */
+(function () {
+  "use strict";
+
+  const SOURCE = "Buzz ε-δ 挑戰 2026-09";
+  const problems = [];
+
+  const add = (id, rank, topic, prompt, spec, window, answer, tags, solution, timeLimit, verify) => {
+    const all = [...tags, "epsilon-delta", `rank-${rank}`];
+    if (rank >= 5) all.push("boss-rank");
+    if (rank === 6) all.push("boss-plus");
+    problems.push({
+      source: SOURCE, id, rank, topic, difficulty: Math.min(4, rank),
+      answerKind: "epsilon", prompt, epsilon: spec, graph: { window }, answer,
+      solution, timeLimit, verify, tags: all
+    });
+  };
+
+  const ask = (fLabel, at, limit) =>
+    `\\text{挑戰 }\\lim_{x\\to ${at}}${fLabel}=${limit}\\text{：系統給 }\\varepsilon\\text{，你找一個 }\\delta\\quad\\text{（三關）}`;
+
+  add("ep-001", 3, "limits",
+    ask("(3x-1)", 2, 5),
+    { f: "3*x-1", at: 2, limit: 5, levels: [0.6, 0.3, 0.06], maxDelta: 0.5 },
+    [1.2, 2.8, 3.6, 6.4], "0.02",
+    ["epsilon-game"],
+    "|3x−1−5| = 3|x−2| < ε 只要 δ ≤ ε/3。這一題的重點是看出 δ 可以「跟著 ε 算」——三關的答案分別是 0.2、0.1、0.02（取到邊界以下就好）。", 150,
+    { m: "maxDelta", f: "3x-1", at: 2, L: 5, eps: 0.06 });
+
+  add("ep-002", 3, "limits",
+    ask("(2x+1)", 1, 3),
+    { f: "2*x+1", at: 1, limit: 3, levels: [0.8, 0.4, 0.1], maxDelta: 0.6 },
+    [0.2, 1.8, 1.4, 4.6], "0.05",
+    ["epsilon-game"],
+    "|2x+1−3| = 2|x−1|，所以 δ = ε/2 就夠。斜率越大，同一個 ε 需要的 δ 越小 —— 這就是 δ 跟斜率成反比的意思。", 140,
+    { m: "maxDelta", f: "2x+1", at: 1, L: 3, eps: 0.1 });
+
+  add("ep-003", 4, "limits",
+    ask("x^2", 3, 9),
+    { f: "x^2", at: 3, limit: 9, levels: [1.2, 0.6, 0.12], maxDelta: 0.5 },
+    [2.2, 3.8, 6.5, 11.5], "0.019998",
+    ["epsilon-game"],
+    "|x²−9| = |x−3||x+3|，靠近 3 時 |x+3| ≈ 6，所以 δ ≈ ε/6。精確解是 δ = √(9+ε)−3（右側比左側窄，取小的那邊）。", 170,
+    { m: "maxDelta", f: "x^2", at: 3, L: 9, eps: 0.12 });
+
+  add("ep-004", 4, "limits",
+    ask("(x^2+x)", 1, 2),
+    { f: "x^2+x", at: 1, limit: 2, levels: [0.9, 0.45, 0.09], maxDelta: 0.5 },
+    [0.4, 1.6, 0.8, 3.2], "0.029703",
+    ["epsilon-game"],
+    "|x²+x−2| = |x−1||x+2|，|x+2| 在 1 附近約 3，所以 δ ≈ ε/3。兩側不一樣寬：右邊窄，答案要取右邊。", 180,
+    { m: "maxDelta", f: "x^2+x", at: 1, L: 2, eps: 0.09 });
+
+  add("ep-005", 5, "limits",
+    ask("\\frac{1}{x}", 2, "\\frac{1}{2}"),
+    { f: "1/x", at: 2, limit: 0.5, levels: [0.2, 0.1, 0.02], maxDelta: 1.2 },
+    [0.6, 3.4, -0.1, 1.2], "0.076923",
+    ["epsilon-game"],
+    "|1/x − 1/2| = |x−2|/(2x)，分母裡還有 x，所以兩側差很多：左邊（x 變小）分母縮小、誤差放大。δ 要取左邊那個較嚴的值 2−2/(1+2ε)。", 210,
+    { m: "maxDelta", f: "1/x", at: 2, L: 0.5, eps: 0.02 });
+
+  add("ep-006", 5, "limits",
+    ask("\\sqrt{x}", 4, 2),
+    { f: "sqrt(x)", at: 4, limit: 2, levels: [0.3, 0.15, 0.03], maxDelta: 1.5 },
+    [2.2, 5.8, 1.2, 2.8], "0.1191",
+    ["epsilon-game"],
+    "|√x−2| = |x−4|/(√x+2)，分母約 4，所以 δ ≈ 4ε。這是少數 δ 比 ε 大的例子 —— 開根號把變化壓扁了。", 210,
+    { m: "maxDelta", f: "\\sqrt{x}", at: 4, L: 2, eps: 0.03 });
+
+  add("ep-007", 4, "limits",
+    ask("\\frac{x^2-1}{x-1}", 1, 2),
+    { f: "(x^2-1)/(x-1)", at: 1, limit: 2, levels: [0.5, 0.25, 0.05], maxDelta: 0.8, hole: true },
+    [0.1, 1.9, 1.1, 2.9], "0.05",
+    ["epsilon-game", "removable"],
+    "約分之後就是 x+1，所以 δ = ε 剛好。注意 x=1 這一點函數沒有定義（圖上是空心的）——「0<|x−x₀|」那個 0 就是在說這件事：極限不管 x₀ 本身。", 190,
+    { m: "maxDelta", f: "x+1", at: 1, L: 2, eps: 0.05 });
+
+  add("ep-008", 5, "limits",
+    ask("x^3", 1, 1),
+    { f: "x^3", at: 1, limit: 1, levels: [0.6, 0.3, 0.03], maxDelta: 0.5 },
+    [0.3, 1.7, 0.2, 1.8], "0.009902",
+    ["epsilon-game"],
+    "|x³−1| = |x−1|(x²+x+1)，括號在 1 附近約 3。精確解 δ = (1+ε)^{1/3}−1，比 ε/3 稍小一點 —— 立方的曲率讓右側更緊。", 220,
+    { m: "maxDelta", f: "x^3", at: 1, L: 1, eps: 0.03 });
+
+  add("ep-009", 5, "limits",
+    ask("\\frac{\\sin x}{x}", 0, 1),
+    { f: "sin(x)/x", at: 0, limit: 1, levels: [0.1, 0.05, 0.01], maxDelta: 1.2, hole: true },
+    [-1.3, 1.3, 0.4, 1.3], "0.244",
+    ["epsilon-game", "trig", "removable"],
+    "sin x/x 在 0 沒有定義，但極限是 1。|sin x/x − 1| ≈ x²/6，所以 δ ≈ √(6ε) —— 這一題的 δ 是 ε 的平方根級，比線性的例子寬得多。", 230,
+    { m: "maxDelta", f: "\\sin(x)/x", at: 0, L: 1, eps: 0.01 });
+
+  add("ep-010", 5, "limits",
+    ask("(4-x^2)", 1, 3),
+    { f: "4-x^2", at: 1, limit: 3, levels: [0.7, 0.35, 0.07], maxDelta: 0.6 },
+    [0.2, 1.8, 1.8, 4.2], "0.034408",
+    ["epsilon-game"],
+    "|4−x²−3| = |1−x²| = |x−1||x+1|，|x+1| 約 2，δ ≈ ε/2。開口向下不影響做法：只看 |f−L|。", 200,
+    { m: "maxDelta", f: "4-x^2", at: 1, L: 3, eps: 0.07 });
+
+  add("ep-011", 6, "limits",
+    ask("x\\sin\\frac{1}{x}", 0, 0),
+    { f: "x*sin(1/x)", at: 0, limit: 0, levels: [0.3, 0.1, 0.02], maxDelta: 0.8, hole: true },
+    [-0.9, 0.9, -0.5, 0.5], "0.020448",
+    ["epsilon-game", "squeeze", "trig"],
+    "|x sin(1/x)| ≤ |x|，所以 δ = ε 一定可以。這一題振盪得很厲害，但夾擠告訴你「振幅」才是重點 —— 畫面上會看到紅色曲線瘋狂上下，卻仍然被綠帶夾住。", 240,
+    { m: "maxDelta", f: "x*\\sin(1/x)", at: 0, L: 0, eps: 0.02 });
+
+  add("ep-012", 6, "limits",
+    ask("\\frac{1}{\\sqrt{x}}", 1, 1),
+    { f: "1/sqrt(x)", at: 1, limit: 1, levels: [0.25, 0.1, 0.02], maxDelta: 0.7 },
+    [0.35, 1.65, 0.5, 1.9], "0.038447",
+    ["epsilon-game"],
+    "|1/√x − 1| 在 x<1 那一側放大得快（分母變小），所以 δ 由左側決定：1 − 1/(1+ε)²。又一個兩側不對稱的例子。", 240,
+    { m: "maxDelta", f: "1/\\sqrt{x}", at: 1, L: 1, eps: 0.02 });
+
+  add("ep-013", 6, "limits",
+    ask("e^x", 0, 1),
+    { f: "exp(x)", at: 0, limit: 1, levels: [0.4, 0.2, 0.04], maxDelta: 0.8 },
+    [-0.9, 0.9, 0.3, 1.9], "0.039221",
+    ["epsilon-game"],
+    "右側 e^δ−1 < ε 給 δ < ln(1+ε)，左側 1−e^{−δ} < ε 給 δ < −ln(1−ε)，右側比較嚴。ε=0.04 時 δ = ln(1.04) ≈ 0.0392。", 250,
+    { m: "maxDelta", f: "e^x", at: 0, L: 1, eps: 0.04 });
+
+  add("ep-014", 6, "limits",
+    ask("\\ln(1+x)", 0, 0),
+    { f: "log(1+x)", at: 0, limit: 0, levels: [0.4, 0.2, 0.05], maxDelta: 0.8 },
+    [-0.7, 0.9, -0.9, 0.9], "0.048771",
+    ["epsilon-game"],
+    "|ln(1+x)| < ε 給 e^{−ε}−1 < x < e^{ε}−1，左側 1−e^{−ε} 比右側 e^{ε}−1 小，所以 δ 取左側。ε=0.05 時 δ ≈ 0.0488。", 250,
+    { m: "maxDelta", f: "\\ln(1+x)", at: 0, L: 0, eps: 0.05 });
+
+  window.BUZZ_PROBLEMS = (window.BUZZ_PROBLEMS || []).concat(problems);
+})();
