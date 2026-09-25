@@ -230,62 +230,69 @@
 
   const TRAINING_PACKS = {
     // 題包 key 不進 records（只在程式裡），2026-09-15 連 key 一起去掉名校字樣。
-    burst: { label: "高速反射 R6", note: "R6 IBP / Wallis / 高階導數速決", tags: ["burst"] },
+    burst: { label: "高速反射", note: "R6 難題限時速決：分部、Wallis、高階導數", tags: ["burst"] },
     nightmare_boss: { label: "終極挑戰", note: "R6 最難題：硬派數分 / 理論型 / 長鏈推導", tags: ["true-boss"] },
-    world_universities: { label: "國際難題", note: "R1-R6 全跨度，由易到爆難 100 題", tags: ["world-universities"] },
+    world_universities: { label: "國際難題", note: "R1–R6 全跨度，由易到爆難", tags: ["world-universities"] },
     competition: { label: "競賽難題", note: "競賽級：硬微分 / 應用難題（R4-6）", tags: ["competition"] },
     longform: { label: "長題挑戰", note: "競賽風格長題：漸近 / 難積分 / 難級數（R4-6）", tags: ["longform"] },
     putnam: { label: "競賽經典", note: "競賽風格經典題型（R4-6）", tags: ["putnam"] },
-    all: { label: "全部技巧", note: "不限制 tags", tags: [] },
-    beginner_warmup: { label: "新手暖身", note: "R1-R2 基礎題", tags: ["beginner-friendly"] },
-    boss_challenge: { label: "Boss 挑戰", note: "R5-R6 防強人題", tags: ["boss-rank"] },
+    all: { label: "不限題包", note: "整個題庫，什麼技巧都可能出現", tags: [] },
+    beginner_warmup: { label: "新手暖身", note: "R1–R2 的基礎題，先把手感打開", tags: ["beginner-friendly"] },
+    boss_challenge: { label: "Boss 挑戰", note: "R5–R6 的硬題，一題要想很久", tags: ["boss-rank"] },
     exam_style: { label: "大考題感", note: "轉學考 / 免修 / 段考式混合題", tags: ["exam-style"] },
-    exam_depth: { label: "大考深水區", note: "R5-R6 多步驟混合題", tags: ["exam-depth"] },
+    exam_depth: { label: "大考深水區", note: "R5–R6 多步驟的混合題", tags: ["exam-depth"] },
     multivariable: { label: "多變數", note: "極限 / 偏導 / 二重積分", tags: ["multivariable"] },
-    taylor: { label: "Taylor", note: "展開與係數", tags: ["taylor", "coefficient"] },
+    taylor: { label: "Taylor 展開", note: "展開式、係數、餘項與誤差", tags: ["taylor", "coefficient"] },
     chain: { label: "鏈鎖律", note: "一元與偏導鏈鎖律", tags: ["chain-rule"] },
-    substitution: { label: "換元積分", note: "u-sub 與座標換元", tags: ["substitution", "polar-coordinates"] },
+    substitution: { label: "換元積分", note: "u 代換與座標換元", tags: ["substitution", "polar-coordinates"] },
     trig_substitution: { label: "三角代換", note: "根式與反三角型", tags: ["trig-substitution"] },
-    integration_by_parts: { label: "分部積分", note: "IBP 與循環分部", tags: ["integration-by-parts", "ibp"] },
-    partial_fraction: { label: "Partial Fraction", note: "有理函數拆分", tags: ["partial-fraction"] },
-    ode_style: { label: "ODE 型積分", note: "卷積 / 參數積分", tags: ["ode-style", "convolution", "parameter-integral"] },
-    kings_property: { label: "King's", note: "對稱定積分", tags: ["kings-property"] },
+    integration_by_parts: { label: "分部積分", note: "u 與 dv 怎麼選，還有循環型", tags: ["integration-by-parts", "ibp"] },
+    partial_fraction: { label: "部分分式", note: "有理函數拆成好積的幾塊", tags: ["partial-fraction"] },
+    ode_style: { label: "卷積與參數積分", note: "把積分當成方程來解", tags: ["ode-style", "convolution", "parameter-integral"] },
+    kings_property: { label: "對稱積分", note: "把 x 換成 a−x 就解開（King's property）", tags: ["kings-property"] },
     double_integral: { label: "二重積分", note: "區域 / 換序 / 極座標", tags: ["double-integral", "polar-coordinates"] },
-    multi_integral_advanced: { label: "多重積分進階", note: "三重積分 / 變數變換", tags: ["triple-integral", "change-of-variables"] },
-    frullani: { label: "Frullani", note: "廣義積分公式", tags: ["frullani"] },
-    total_differential: { label: "全微分", note: "估計 / 最小化", tags: ["total-differential", "total-differential-min"] },
-    hessian: { label: "Hessian", note: "二階判別 / 極值", tags: ["hessian"] },
-    wronskian: { label: "Wronskian", note: "線性獨立判定", tags: ["wronskian"] },
-    jacobian_chain: { label: "Jacobian 鏈鎖", note: "合成映射行列式", tags: ["jacobian-chain", "jacobian"] },
-    parametric_polar: { label: "參數 / 極座標", note: "參數微分與極座標面積", tags: ["parametric", "polar-curve"] },
+    multi_integral_advanced: { label: "多重積分進階", note: "三重積分、變數變換", tags: ["triple-integral", "change-of-variables"] },
+    frullani: { label: "Frullani 公式", note: "∫(f(ax)−f(bx))/x 型的廣義積分", tags: ["frullani"] },
+    total_differential: { label: "全微分與估計", note: "微小變化量的估算", tags: ["total-differential", "total-differential-min"] },
+    hessian: { label: "Hessian 判別", note: "多變數的二階導數判極值", tags: ["hessian"] },
+    wronskian: { label: "Wronskian 判別", note: "幾個解是不是線性獨立", tags: ["wronskian"] },
+    jacobian_chain: { label: "Jacobian 與合成映射", note: "換變數的伸縮倍率", tags: ["jacobian-chain", "jacobian"] },
+    parametric_polar: { label: "參數式與極座標", note: "參數微分、極座標面積", tags: ["parametric", "polar-curve"] },
     applications: { label: "微分應用", note: "相關變率 / 最佳化 / 隱微分 / 曲率", tags: ["related-rates", "tangent-normal", "linear-approximation", "newton-method", "curvature", "optimization", "implicit-differentiation"] },
-    classic_theory: { label: "經典觀念", note: "L'Hôpital / MVT / 連續性 / 曲線分析", tags: ["lhopital", "mvt", "rolle", "continuity", "ivt", "concavity", "inflection", "asymptote", "squeeze"] },
-    vector_theorems: { label: "向量三大定理", note: "線積分 / Green / Stokes / 散度定理", tags: ["line-integral", "green-theorem", "stokes-theorem", "divergence-theorem", "surface-integral", "flux", "conservative-field"] },
+    classic_theory: { label: "經典定理與觀念", note: "L'Hôpital、均值定理、連續性、曲線分析", tags: ["lhopital", "mvt", "rolle", "continuity", "ivt", "concavity", "inflection", "asymptote", "squeeze"] },
+    vector_theorems: { label: "向量三大定理", note: "Green、Stokes、散度定理", tags: ["line-integral", "green-theorem", "stokes-theorem", "divergence-theorem", "surface-integral", "flux", "conservative-field"] },
     integral_applications: { label: "積分應用", note: "弧長 / 旋轉體 / 平均值 / Riemann 和", tags: ["arc-length", "solid-of-revolution", "surface-area", "average-value", "riemann-sum", "area"] },
-    sequences: { label: "數列", note: "極限 / 遞迴 / 夾擠", tags: ["sequence", "recursive"] },
-    applied_story: { label: "應用情境", note: "運動 / 冷卻 / 功 / 混合 / 邊際", tags: ["story-problem"] },
-    graph_reading: { label: "圖形判讀", note: "看圖答：面積 / 極值 / 反曲點", tags: ["graph-reading"] },
-    complex: { label: "複變", note: "CR / 留數 / 調和", tags: ["complex"] },
+    sequences: { label: "數列與遞迴", note: "數列極限、遞迴式、夾擠", tags: ["sequence", "recursive"] },
+    applied_story: { label: "應用情境", note: "運動、冷卻、做功、濃度、邊際", tags: ["story-problem"] },
+    graph_reading: { label: "看圖作答", note: "面積、極值、反曲點、累積函數", tags: ["graph-reading"] },
+    complex: { label: "複變基礎", note: "Cauchy–Riemann、留數、調和函數", tags: ["complex"] },
     ode_intro: { label: "ODE 入門", note: "一階 / 二階基本方程", tags: ["ode-intro"] },
-    series_test: { label: "級數判別", note: "比值 / 積分 / p 級數", tags: ["ratio-test", "root-test", "integral-test", "p-series", "alternating-series", "comparison"] },
+    series_test: { label: "級數判別法", note: "比值、積分、p 級數三大判別", tags: ["ratio-test", "root-test", "integral-test", "p-series", "alternating-series", "comparison"] },
     power_series: { label: "冪級數", note: "半徑與 Taylor 係數", tags: ["power-series", "radius", "taylor", "coefficient"] },
-    endpoint_root: { label: "端點 / Root Test", note: "端點分析與根值判別", tags: ["endpoint-analysis", "root-test", "limit-comparison"] },
-    technique_recognition: { label: "技巧辨識", note: "先判斷該用哪個工具", tags: ["technique-recognition"] },
-    mobile_sprint: { label: "Mobile Sprint", note: "技巧辨識 / 陷阱 / 極限快練", tags: ["technique-sprint", "trap-drill", "limit-trap"] },
-    lagrange_multiplier: { label: "LM", note: "Lagrange multiplier 最值", tags: ["lagrange-multiplier"] },
-    convergence_tests: { label: "審斂", note: "級數判別與端點", tags: ["convergence-test", "endpoint-analysis", "root-test", "limit-comparison"] },
-    special_functions: { label: "特殊函數", note: "Beta / Gamma / Wallis / Bessel", tags: ["beta-function", "gamma-function", "wallis", "bessel"] },
-    nabla_vector: { label: "Nabla / Vector", note: "grad / div / curl / laplacian", tags: ["nabla", "vector-calculus"] },
+    endpoint_root: { label: "端點與根值判別", note: "收斂區間的兩個端點要分開驗", tags: ["endpoint-analysis", "root-test", "limit-comparison"] },
+    technique_recognition: { label: "技巧辨識", note: "不用算完：先判斷該用哪個工具", tags: ["technique-recognition"] },
+    mobile_sprint: { label: "零碎時間速練", note: "一題十秒：判型、陷阱、基本極限", tags: ["technique-sprint", "trap-drill", "limit-trap"] },
+    lagrange_multiplier: { label: "拉格朗日乘數", note: "有約束條件的最大最小值", tags: ["lagrange-multiplier"] },
+    convergence_tests: { label: "審斂總複習", note: "所有判別法混在一起考", tags: ["convergence-test", "endpoint-analysis", "root-test", "limit-comparison"] },
+    special_functions: { label: "特殊函數", note: "Beta、Gamma、Wallis、Bessel", tags: ["beta-function", "gamma-function", "wallis", "bessel"] },
+    nabla_vector: { label: "向量微分算子", note: "梯度、散度、旋度、拉普拉斯", tags: ["nabla", "vector-calculus"] },
     analysis_intro: { label: "分析學入門", note: "確界、ε-δ、一致連續、達布和", tags: ["analysis"] },
   };
 
+  // 題包的分組。這一版（2026-09-25）按**學期順序**排，不再按「常用／其他」分 ——
+  // 舊版的「常用」有 13 包（多變數、換元、分部都混在裡面），而「其他」變成垃圾桶：
+  // 使用者要找「級數判別」得先猜它被歸到哪一類。
+  // 三條規則：一包只屬於一組、一組最多十包（一眼掃得完）、組名是課本章節而不是產品用語。
   const PACK_GROUPS = [
-    { label: "競賽 / 難題", keys: ["putnam", "competition", "longform", "world_universities", "nightmare_boss", "burst"] },
-    { label: "常用", keys: ["all", "beginner_warmup", "boss_challenge", "exam_style", "exam_depth", "mobile_sprint", "technique_recognition", "applied_story", "graph_reading", "multivariable", "substitution", "integration_by_parts", "series_test"] },
-    { label: "積分技巧", keys: ["partial_fraction", "trig_substitution", "frullani", "ode_style", "kings_property", "double_integral", "multi_integral_advanced", "integral_applications"] },
-    { label: "向量分析", keys: ["vector_theorems", "nabla_vector"] },
-    { label: "微分 / 應用", keys: ["chain", "lagrange_multiplier", "parametric_polar", "applications", "classic_theory", "total_differential", "hessian", "wronskian", "jacobian_chain"] },
-    { label: "級數 / ODE / 其他", keys: ["taylor", "power_series", "convergence_tests", "endpoint_root", "sequences", "special_functions", "ode_intro", "complex", "analysis_intro"] },
+    { label: "先從這裡開始", note: "還不確定練什麼就挑這一排", keys: ["all", "beginner_warmup", "technique_recognition", "graph_reading", "applied_story"] },
+    { label: "極限與連續", note: "數列、定理、嚴格定義", keys: ["sequences", "classic_theory", "analysis_intro"] },
+    { label: "微分", note: "鏈鎖律到應用題", keys: ["chain", "applications", "parametric_polar", "total_differential"] },
+    { label: "積分技巧", note: "看到式子要用哪一招", keys: ["substitution", "integration_by_parts", "partial_fraction", "trig_substitution", "kings_property", "frullani", "ode_style"] },
+    { label: "積分應用與重積分", note: "算面積、體積、平均值", keys: ["integral_applications", "double_integral", "multi_integral_advanced"] },
+    { label: "級數", note: "判別、展開、冪級數", keys: ["series_test", "convergence_tests", "endpoint_root", "taylor", "power_series", "special_functions"] },
+    { label: "多變數與向量", note: "偏導、極值、三大定理", keys: ["multivariable", "hessian", "lagrange_multiplier", "jacobian_chain", "nabla_vector", "vector_theorems"] },
+    { label: "微分方程與複變", note: "大二會用到的那兩塊", keys: ["ode_intro", "wronskian", "complex"] },
+    { label: "考試與挑戰", note: "考前衝刺與硬題", keys: ["exam_style", "exam_depth", "mobile_sprint", "boss_challenge", "burst", "nightmare_boss", "competition", "longform", "putnam", "world_universities"] }
   ];
 
   const PATH_NODES = [
@@ -605,6 +612,10 @@
   let selectedHistoryTopic = "all";
   let selectedLibraryTopic = "all";
   let selectedLibraryPack = "all";
+  // 挑選器的兩個畫面狀態：面板開著沒、面板裡的搜尋字串。
+  // 不進 records —— 它們是「這一次瀏覽」的狀態，跟收藏不同層級。
+  let libraryPackOpen = false;
+  let libraryPackQuery = "";
   let selectedLibraryRank = "all";
   let selectedLibraryFilter = "all";
   let librarySearch = "";
@@ -1045,6 +1056,8 @@
     print_mistakes: "列印錯題本（只記幾題，不記內容）",
     perf_render: "render 耗時取樣（1%）",
     return_visit: "隔日回訪（帶距離上次幾天）",
+    epsilon_level: "ε-δ 挑戰過了一關（帶第幾關，不帶使用者的 δ）",
+    library_pack_pick: "題庫挑了一個題包（只記題包 key）",
     app_error: "未捕捉的錯誤（只送錯誤型別、來源檔與行號，不送訊息內容）"
   };
 
@@ -4485,12 +4498,7 @@
               <span>搜尋</span>
               <input data-library-search type="search" value="${escapeAttr(librarySearch)}" placeholder="泰勒、分部、Taylor、題號…" />
             </label>
-            <label>
-              <span>題包</span>
-              <select data-library-pack-select>
-                ${renderLibraryPackOptions()}
-              </select>
-            </label>
+            ${renderLibraryPackPicker(records)}
             <label>
               <span>難度</span>
               <select data-library-rank-select>
@@ -4569,13 +4577,49 @@
     libraryVisibleCount = LIBRARY_PAGE_SIZE;
   }
 
-  function renderLibraryPackOptions() {
-    const selected = selectedLibraryPack || "all";
-    const oldSelected = selectedPack;
-    selectedPack = selected;
-    const markup = renderPackOptions();
-    selectedPack = oldSelected;
-    return markup;
+  // 挑選器要印「目前篩選下這一包有幾題」，所以每一包都要跑一次 libraryProblems。
+  // 47 次過濾 2467 題在本機是 40ms 級，但每次 render 都算一遍就會被人感覺到 ——
+  // 依「其他四個篩選的組合」記住結果，篩選不動就不重算。
+  let packCountCache = { key: "", counts: null };
+
+  function libraryPackCounts(records) {
+    const cacheKey = [librarySearch.trim(), selectedLibraryTopic, selectedLibraryRank, selectedLibraryFilter, libraryFullAccess(records) ? "open" : "gate"].join("|");
+    if (packCountCache.key === cacheKey && packCountCache.counts) return packCountCache.counts;
+    const keep = selectedLibraryPack;
+    const counts = {};
+    Object.keys(TRAINING_PACKS).forEach((key) => {
+      selectedLibraryPack = key;
+      counts[key] = libraryProblems(records).length;
+    });
+    selectedLibraryPack = keep;
+    packCountCache = { key: cacheKey, counts };
+    return counts;
+  }
+
+  // 0 題的時候要說得出是哪個條件卡住的 —— 不然使用者會以為那一包是空的。
+  function libraryFilterSummary() {
+    const parts = [];
+    if (librarySearch.trim()) parts.push(`搜尋「${librarySearch.trim()}」`);
+    if (selectedLibraryTopic !== "all") parts.push(`主題：${(TOPICS[selectedLibraryTopic] || {}).label || selectedLibraryTopic}`);
+    if (selectedLibraryRank !== "all") parts.push(`難度 R${selectedLibraryRank}`);
+    if (selectedLibraryFilter === "favorites") parts.push("只看收藏");
+    if (selectedLibraryFilter === "boss") parts.push("只看 Boss");
+    if (selectedLibraryFilter === "reported") parts.push("只看已回報");
+    return parts.length ? `題數是在這些條件之下算的：${parts.join("、")}。把它們放寬，0 題的包就會有東西。` : "";
+  }
+
+  function renderLibraryPackPicker(records) {
+    return window.BuzzPackPicker.render({
+      packs: TRAINING_PACKS,
+      groups: PACK_GROUPS,
+      selected: selectedLibraryPack || "all",
+      counts: libraryPackCounts(records),
+      query: libraryPackQuery,
+      recent: (records.recentPacks || []).slice(0, 3),
+      open: libraryPackOpen,
+      activeFilters: libraryFilterSummary(),
+      escapeHtml, escapeAttr, icon
+    });
   }
 
   // 單題分享連結。純前端：#p=<題號>，打開直接進練習模式。
@@ -6745,106 +6789,21 @@
     `;
   }
 
+  // 打字作答區的畫面在 share_cards.js（app.js 撞預算搬出去的純畫面）。
+  // 兩個鍵盤相關的預設值留在這裡決定：觸控裝置預設不叫系統鍵盤、數學鍵盤預設收起。
   function renderWebWorkAnswerWorkspace(problem, disabled, previewTex, compact) {
-    // 已判定（答對/答錯/逾時）之後，「可送出」是謊話 —— 送出鈕已 disable，
-    // 但綠色的狀態 pill 還在慫恿人按（二輪實測：逾時後照樣寫著可送出）。
-    const syntax = quiz.feedback
-      ? { label: "已判定", className: "is-empty" }
-      : answerSyntaxInfo(problem, quiz.draft);
-    const examples = answerExamples(problem);
-
-    // 觸控裝置預設不叫系統鍵盤。
-    //
-    // iPad 上點一下輸入框，系統鍵盤就蓋掉半個畫面 —— 蓋住的正是剛剛寫滿算式的
-    // 計算紙，而且你得先放下筆。既然畫面上已經有一套數學鍵盤（現在含數字），
-    // 那才是這個裝置上正確的輸入法。
-    //
-    // inputmode="none" 是標準做法：「我自己提供輸入介面，不要跳虛擬鍵盤」。
-    // 但一定要留逃生門 —— 有人接了實體鍵盤，也有人就是想用系統鍵盤打字，
-    // 所以旁邊有一顆可以切回去，而且選擇會記在這一局裡。
-    const touchDevice = typeof window !== "undefined" && typeof window.matchMedia === "function"
-      && window.matchMedia("(pointer: coarse)").matches;
+    const touchDevice = Boolean(window.matchMedia && window.matchMedia("(pointer: coarse)").matches);
     if (quiz.systemKeyboard == null) quiz.systemKeyboard = !touchDevice;
-    const suppressKeyboard = touchDevice && !quiz.systemKeyboard;
-    const hasDraft = Boolean(quiz.draft.trim());
-
-    // 鍵盤／範例收在「輸入工具」抽屜裡；窄畫面預設收起來，讓題目與答案欄先站穩。
-    //
-    // 這裡**不能**因為「鍵盤是唯一輸入法」就預設展開：手機版的
-    // .webwork-answer 是 position:fixed 的底部浮條，把鍵盤攤在裡面會讓
-    // 浮條撐到 641px，直接蓋掉題目與計算紙（實測 390×844 整個版面爛掉）。
-    // 正確做法是互動而不是預設值 —— 點答案欄就叫鍵盤出來，
-    // 跟真的鍵盤一樣（見 openKeypadForInput）。
-    // 2026-09-15：桌機也預設收起。有實體鍵盤的人直接打字比點鍵快，
-    // 而攤開的鍵盤把題目、計算紙、逐步驗證全推到第二屏；符號鍵與範例
-    // 一鍵就開（觸控裝置點答案欄也會自動開，見 openKeypadForInput）。
     if (quiz.keypadOpen == null) quiz.keypadOpen = false;
-    const extrasOpen = quiz.keypadOpen;
-    const previewBlock = `
-        <div class="answer-preview webwork-preview">
-          <span>預覽</span>
-          <div class="answer-preview-math math-inline ${hasDraft ? "" : "is-empty"}" data-answer-preview data-tex="${escapeAttr(previewTex)}">${renderLiteTex(previewTex, false)}</div>
-        </div>`;
-    return `
-      <section class="webwork-answer ${compact ? "is-docked" : ""}">
-        <div class="webwork-head">
-          <div>
-            <span>作答</span>
-            <strong>${answerKindLabel(problem.answerKind)}</strong>
-          </div>
-          <span class="syntax-pill ${syntax.className}" data-syntax-status>${syntax.label}</span>
-        </div>
-        <form class="answer-panel webwork-form" data-action="submit-answer">
-        <label class="sr-only" for="answer">答案</label>
-        <input id="answer" class="answer-input ${quiz.feedback ? (quiz.feedback.status === "correct" ? "is-correct" : "is-wrong") : ""}" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="done" inputmode="${suppressKeyboard ? "none" : "text"}" value="${escapeAttr(quiz.draft)}" placeholder="${placeholderFor(problem)}" ${disabled} />
-        ${
-          touchDevice
-            ? `<button class="icon-button keyboard-toggle ${quiz.systemKeyboard ? "is-active" : ""}" type="button" data-action="toggle-system-keyboard" title="${quiz.systemKeyboard ? "改用畫面上的數學鍵盤" : "叫出系統鍵盤"}" aria-pressed="${quiz.systemKeyboard ? "true" : "false"}" ${disabled}>${icon("keyboard")}</button>`
-            : ""
-        }
-        <button class="button" type="submit" ${disabled}>${icon("send")}送出</button>
-        </form>
-        <!-- 預覽：打了東西才出現在抽屜外面。它回答的是「我打的被讀成什麼」，
-             那是送出前唯一能自我檢查的地方，收進抽屜等於沒有；但空的時候
-             只會寫「尚未輸入」，白佔一條 —— 而手機版這整塊是 fixed 的底部
-             浮條，每多一條就少一條螢幕。
-             全螢幕書寫例外：那個版面把每像素給書寫板，預覽留在抽屜裡
-             （手寫 E2E 量到板子被壓成 353px 就是這樣抓到的）。 -->
-        ${!compact && hasDraft ? previewBlock : ""}
-        <button class="webwork-extras-toggle" type="button" data-action="toggle-keypad" aria-expanded="${extrasOpen ? "true" : "false"}" ${disabled}>
-          <span>${icon(extrasOpen ? "chevron-up" : "chevron-down")}${suppressKeyboard ? "數學鍵盤" : "輸入工具"}</span>
-          <small>${extrasOpen ? "符號鍵 · 範例" : suppressKeyboard ? "點開才能打字" : "符號鍵 · 範例"}</small>
-        </button>
-        <div class="webwork-extras ${extrasOpen ? "is-open" : "is-collapsed"}">
-          ${compact ? previewBlock : ""}
-          <div class="webwork-examples" aria-label="常用答案格式">
-            ${examples.map((item) => `<button type="button" data-insert-example="${escapeAttr(item)}" ${disabled}>${escapeHtml(item)}</button>`).join("")}${canReadInk(problem) ? `<button type="button" class="ink-read-button" data-action="read-ink" ${disabled}>讀取手寫 →</button>` : ""}
-            <button type="button" data-action="clear-answer" ${disabled}>清除</button>
-          </div>
-          ${(() => {
-            const keys = webworkKeys(problem);
-            const button = (key) => `<button type="button" data-insert="${escapeAttr(key.insert)}" ${disabled}>${escapeHtml(key.label)}</button>`;
-            return `
-          <div class="keypad webwork-keypad" aria-label="快速輸入">
-            ${keys.digits.length ? `<div class="keypad-digits">${keys.digits.map(button).join("")}</div>` : ""}
-            <div class="keypad-rest">
-              ${keys.rest.map(button).join("")}<button type="button" class="keypad-backspace" data-action="answer-backspace" title="退格" ${disabled}>⌫</button>
-            </div>
-          </div>`;
-          })()}
-          <div class="helper-row webwork-helper">
-            <span>${formatHelp(problem.answerKind)}</span>
-            <span>不定積分可省略 +C</span>
-            <span>送出前先看預覽</span>
-          </div>
-        </div>
-        ${compact ? "" : renderStepChecker(problem)}
-      </section>
-    `;
+    return window.BuzzAnswerWorkspace.render({
+      problem, disabled, previewTex, compact, touchDevice,
+      draft: quiz.draft, feedback: quiz.feedback,
+      systemKeyboard: quiz.systemKeyboard, keypadOpen: quiz.keypadOpen,
+      answerSyntaxInfo, answerExamples, answerKindLabel, placeholderFor,
+      renderLiteTex, escapeAttr, escapeHtml, icon, canReadInk, webworkKeys, formatHelp, renderStepChecker
+    });
   }
 
-  // 計算紙的工具列與畫布在 share_cards.js（從 app.js 搬出去的獨立畫面片段）。
-  // 這一段是純畫面：狀態（開著沒、哪支筆、幾筆）由呼叫端算好傳進去。
   function renderScratchboard(problem, disabled, boardTool, fullscreen, boardOpen, strokeCount) {
     return window.BuzzBoardUI.render({
       problem, disabled, boardTool, fullscreen, boardOpen, strokeCount,
@@ -8023,6 +7982,22 @@
       proofAnswerInput.addEventListener("blur", () => { quiz.draft = proofAnswerInput.value; });
     }
 
+    const packSearchInput = app.querySelector("[data-pack-search]");
+    if (packSearchInput) {
+      let packTimer = null;
+      onTypedInput(packSearchInput, () => {
+        libraryPackQuery = packSearchInput.value;
+        libraryPackOpen = true;
+        if (packTimer) window.clearTimeout(packTimer);
+        packTimer = window.setTimeout(() => { packTimer = null; render(); }, 180);
+      });
+    }
+
+    const packPanel = app.querySelector("details.pack-chooser");
+    if (packPanel) {
+      packPanel.addEventListener("toggle", () => { libraryPackOpen = packPanel.open; });
+    }
+
     const librarySearchInput = app.querySelector("[data-library-search]");
     if (librarySearchInput) {
       // Debounced: a full render per keystroke makes typing laggy.
@@ -8035,15 +8010,6 @@
           librarySearchTimer = null;
           render();
         }, 200);
-      });
-    }
-
-    const libraryPackSelect = app.querySelector("[data-library-pack-select]");
-    if (libraryPackSelect) {
-      libraryPackSelect.addEventListener("change", () => {
-        selectedLibraryPack = libraryPackSelect.value || "all";
-        resetLibraryPaging();
-        render();
       });
     }
 
@@ -8232,12 +8198,29 @@
     if (action === "choose-answer") submitChoiceAnswer(actionNode.dataset.choice || "");
     if (action === "toggle-answer-mode") toggleQuizAnswerMode();
     if (action === "set-sound") setSoundEnabled(Boolean(actionNode.dataset.on));
+    if (action === "library-pack-pick") {
+      const key = actionNode.dataset.pack || "all";
+      selectedLibraryPack = key;
+      libraryPackOpen = false;
+      libraryPackQuery = "";
+      resetLibraryPaging();
+      if (key !== "all") {
+        const records = loadRecords();
+        const recent = [key, ...(records.recentPacks || []).filter((item) => item !== key)].slice(0, 6);
+        records.recentPacks = recent;
+        saveRecords(records);
+        trackEvent("library_pack_pick", { pack: key });
+      }
+      render();
+    }
     if (action === "library-clear-filters") {
       librarySearch = "";
       selectedPack = "all";
       selectedLibraryRank = "all";
       selectedLibraryTopic = "all";
       selectedLibraryFilter = "all";
+      selectedLibraryPack = "all";
+      libraryPackQuery = "";
       libraryVisibleCount = LIBRARY_PAGE_SIZE;
       render();
     }

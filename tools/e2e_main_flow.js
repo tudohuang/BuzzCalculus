@@ -380,6 +380,56 @@ async function run() {
     // 這條斷言擋的是一個「量錯」的門檻：折行原本看 tex.length > 90，
     // 但中文一個字只佔一個字元卻佔兩欄寬，梯子那題量起來只有 78 —— 於是不折行，
     // 使用者只看得到「長 5 公尺的梯子靠牆，底端以每秒 1 公尺遠」。
+
+    /* ── 題包挑選器（2026-09-25 取代 47 個選項的下拉）──────────
+       釘住三件會讓它退回「猜它在哪一組」的事：
+       面板裡有搜尋、卡片印得出說明與題數、挑完題庫真的跟著變。 */
+    const packPicker = await chrome.evaluate(`
+      ${HELPERS}
+      window.__e2e.clickSelector('[data-action="open-library"]');
+      const summary = await window.__e2e.waitFor("details.pack-chooser > summary", 6000);
+      if (!summary) return { missing: true, why: "題庫頁沒有題包挑選器" };
+      const before = (document.querySelector(".library-count") || {}).innerText || "";
+      summary.click();
+      const search = await window.__e2e.waitFor("[data-pack-search]", 4000);
+      if (!search) return { missing: true, why: "挑選器裡沒有搜尋框" };
+      const groups = [...document.querySelectorAll(".pack-group h4")].length;
+      const firstCard = document.querySelector(".pack-card");
+      const hasNote = Boolean(firstCard && firstCard.querySelector("small"));
+      const hasCount = Boolean(firstCard && firstCard.querySelector(".pack-card-count"));
+      search.value = "分部";
+      search.dispatchEvent(new Event("input", { bubbles: true }));
+      await new Promise((r) => setTimeout(r, 500 * (window.__slow || 1)));
+      const hits = [...document.querySelectorAll(".pack-card")].map((c) => (c.innerText || "").split("\\n")[0].trim());
+      const target = [...document.querySelectorAll(".pack-card")].find((c) => (c.innerText || "").includes("分部積分"));
+      if (!target) return { missing: true, why: "搜「分部」找不到分部積分那一包（命中：" + hits.join("/") + "）" };
+      target.click();
+      await new Promise((r) => setTimeout(r, 700 * (window.__slow || 1)));
+      const after = (document.querySelector(".library-count") || {}).innerText || "";
+      const label = (document.querySelector("details.pack-chooser > summary") || {}).innerText || "";
+      // 挑完要還原：後面幾條檢查會用題庫搜尋找題目，題包還鎖在「分部積分」的話它們會空手而回。
+      window.__e2e.clickSelector('[data-action="library-pack-pick"][data-pack="all"]');
+      await new Promise((r) => setTimeout(r, 500 * (window.__slow || 1)));
+      return {
+        groups, hasNote, hasCount, hits,
+        before: before.replace(/\\s+/g, " ").trim(),
+        after: after.replace(/\\s+/g, " ").trim(),
+        label: label.replace(/\\s+/g, " ").trim()
+      };
+    `);
+    if (packPicker.missing) {
+      check("題包挑選器可以搜尋並挑一包", false, packPicker.why);
+    } else {
+      check("題包分成多組，每張卡片都有說明與題數",
+        packPicker.groups >= 5 && packPicker.hasNote && packPicker.hasCount,
+        `${packPicker.groups} 組 · 說明 ${packPicker.hasNote} · 題數 ${packPicker.hasCount}`);
+      check("挑選器裡打「分部」就找得到分部積分（不必記得它在哪一組）",
+        packPicker.hits.some((name) => name.includes("分部積分")),
+        packPicker.hits.join(" / "));
+      check("挑完題包，摘要與題庫題數都跟著變",
+        packPicker.label.includes("分部積分") && packPicker.after !== packPicker.before,
+        `${packPicker.label} ｜ ${packPicker.before} → ${packPicker.after}`);
+    }
     // 字串比對抓不到這種事：DOM 裡的字是全的，壞掉的是版面。
     // 所以這裡真的從題庫開一題出來量 scrollWidth。
     const proseWrap = await chrome.evaluate(`

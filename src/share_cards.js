@@ -1938,3 +1938,216 @@
 
   window.BuzzGraphAnswerUI = { renderTap, renderChoice };
 })();
+
+/* ── 題包挑選器（2026-09-25 取代那個 47 個選項的下拉）────────────
+   舊版是一個 <select>：47 個選項、六個 optgroup、標籤寫著「LM」「King's」
+   「Mobile Sprint」，而且在手機上是一個系統原生的滾輪。實際的使用流程是
+   「我想練級數判別」→ 拉開 → 猜它在哪一組 → 找到「審斂」→ 不確定是不是同一件事。
+
+   新版三件事：
+     1. 每一包印出**說明**（note 本來就有，只是沒顯示）與**目前篩選下的題數**，
+        點之前就知道會得到什麼；0 題的直接告訴你是哪個條件卡住。
+     2. 面板裡有自己的搜尋框，打「分部」就只剩分部積分 —— 不必記得它在哪一組。
+     3. 最近用過的三包釘在最上面。挑題包這件事重複性很高。 */
+(function () {
+  "use strict";
+
+  function matches(pack, key, query) {
+    if (!query) return true;
+    const haystack = `${pack.label} ${pack.note || ""} ${key} ${(pack.tags || []).join(" ")}`.toLowerCase();
+    return query.toLowerCase().split(/\s+/).filter(Boolean).every((word) => haystack.includes(word));
+  }
+
+  function card(key, pack, options) {
+    const { selected, counts, escapeHtml, escapeAttr, icon } = options;
+    const count = counts[key];
+    const active = selected === key;
+    const empty = count === 0;
+    return `
+      <button type="button" class="pack-card ${active ? "is-active" : ""} ${empty ? "is-empty" : ""}"
+        data-action="library-pack-pick" data-pack="${escapeAttr(key)}"
+        aria-pressed="${active ? "true" : "false"}">
+        <span class="pack-card-top">
+          <strong>${escapeHtml(pack.label)}</strong>
+          <span class="pack-card-count">${empty ? "0" : count}</span>
+        </span>
+        ${pack.note ? `<small>${escapeHtml(pack.note)}</small>` : ""}
+        ${active ? `<span class="pack-card-mark">${icon("check")}正在用</span>` : ""}
+      </button>`;
+  }
+
+  function render(options) {
+    const { packs, groups, selected, counts, query, recent, open, escapeHtml, escapeAttr, icon, activeFilters } = options;
+    const current = packs[selected] || packs.all;
+    const q = String(query || "").trim();
+    // 目前篩選下 0 題的包全部收到最底下一個摺疊區。
+    // 實測：主題選「級數」加難度 R1，47 包裡有 41 包是 0 —— 全部攤開的話
+    // 面板變成一片灰卡，真正能點的六包反而找不到。
+    const empties = [];
+    const shownGroups = groups
+      .map((group) => {
+        const keys = group.keys.filter((key) => packs[key] && matches(packs[key], key, q));
+        const live = keys.filter((key) => counts[key] !== 0);
+        keys.filter((key) => counts[key] === 0 && key !== selected).forEach((key) => empties.push(key));
+        return live.length ? { group, keys: live } : null;
+      })
+      .filter(Boolean);
+    const hitCount = shownGroups.reduce((sum, row) => sum + row.keys.length, 0) + empties.length;
+    const recentKeys = (recent || []).filter((key) => packs[key] && key !== "all" && matches(packs[key], key, q)).slice(0, 3);
+
+    return `
+      <details class="pack-chooser" data-keep="pack-picker" ${open ? "open" : ""}>
+        <summary>
+          <span class="pack-chooser-label">題包</span>
+          <strong>${escapeHtml(current.label)}</strong>
+          <span class="pack-chooser-count">${counts[selected] === undefined ? "" : `${counts[selected]} 題`}</span>
+          ${icon("chevron-down")}
+        </summary>
+        <div class="pack-panel">
+          <label class="pack-search">
+            <span class="sr-only">搜尋題包</span>
+            ${icon("search")}
+            <input data-pack-search type="search" value="${escapeAttr(q)}" placeholder="打「分部」「級數」或「Taylor」" />
+          </label>
+          ${selected !== "all" ? `
+            <div class="pack-current">
+              <span>正在用：<strong>${escapeHtml(current.label)}</strong></span>
+              <button type="button" class="button ghost" data-action="library-pack-pick" data-pack="all">${icon("x")}不限題包</button>
+            </div>` : ""}
+          ${recentKeys.length ? `
+            <section class="pack-group">
+              <h4>最近用過</h4>
+              <div class="pack-grid">${recentKeys.map((key) => card(key, packs[key], options)).join("")}</div>
+            </section>` : ""}
+          ${shownGroups.map(({ group, keys }) => `
+            <section class="pack-group">
+              <h4>${escapeHtml(group.label)}${group.note ? `<small>${escapeHtml(group.note)}</small>` : ""}</h4>
+              <div class="pack-grid">${keys.map((key) => card(key, packs[key], options)).join("")}</div>
+            </section>`).join("")}
+          ${hitCount ? "" : `<p class="pack-none">沒有題包叫「${escapeHtml(q)}」。試試「分部」「級數」「多變數」。</p>`}
+          ${empties.length ? `
+            <details class="pack-empty-more">
+              <summary>另有 ${empties.length} 包在目前的篩選下是 0 題</summary>
+              <div class="pack-grid">${empties.map((key) => card(key, packs[key], options)).join("")}</div>
+            </details>` : ""}
+          ${activeFilters ? `<p class="pack-hint">${escapeHtml(activeFilters)}<button type="button" class="link-button" data-action="library-clear-filters">清掉這些條件</button></p>` : ""}
+        </div>
+      </details>
+    `;
+  }
+
+  window.BuzzPackPicker = { render, matches };
+})();
+
+/* ── 打字作答區（2026-09-25 從 app.js 搬出來）───────────────────
+   輸入框、語法狀態 pill、數學鍵盤、可接受的寫法範例。
+   app.js 撞 720KB 預算，而這一段是純畫面：草稿、鍵盤開合、回饋狀態
+   都由呼叫端傳進來（quiz.systemKeyboard / quiz.keypadOpen 的預設值仍在 app.js 決定）。 */
+(function () {
+  "use strict";
+
+  function render(options) {
+    const {
+      problem, disabled, previewTex, compact, draft, feedback, systemKeyboard, keypadOpen,
+      touchDevice, answerSyntaxInfo, answerExamples, answerKindLabel, placeholderFor,
+      renderLiteTex, escapeAttr, escapeHtml, icon, canReadInk, webworkKeys, formatHelp, renderStepChecker
+    } = options;
+    const quiz = { draft, feedback, systemKeyboard, keypadOpen };
+    // 已判定（答對/答錯/逾時）之後，「可送出」是謊話 —— 送出鈕已 disable，
+    // 但綠色的狀態 pill 還在慫恿人按（二輪實測：逾時後照樣寫著可送出）。
+    const syntax = quiz.feedback
+      ? { label: "已判定", className: "is-empty" }
+      : answerSyntaxInfo(problem, quiz.draft);
+    const examples = answerExamples(problem);
+
+    // 觸控裝置預設不叫系統鍵盤。
+    //
+    // iPad 上點一下輸入框，系統鍵盤就蓋掉半個畫面 —— 蓋住的正是剛剛寫滿算式的
+    // 計算紙，而且你得先放下筆。既然畫面上已經有一套數學鍵盤（現在含數字），
+    // 那才是這個裝置上正確的輸入法。
+    //
+    // inputmode="none" 是標準做法：「我自己提供輸入介面，不要跳虛擬鍵盤」。
+    // 但一定要留逃生門 —— 有人接了實體鍵盤，也有人就是想用系統鍵盤打字，
+    // 所以旁邊有一顆可以切回去，而且選擇會記在這一局裡。
+    const suppressKeyboard = touchDevice && !quiz.systemKeyboard;
+    const hasDraft = Boolean(quiz.draft.trim());
+
+    // 鍵盤／範例收在「輸入工具」抽屜裡；窄畫面預設收起來，讓題目與答案欄先站穩。
+    //
+    // 這裡**不能**因為「鍵盤是唯一輸入法」就預設展開：手機版的
+    // .webwork-answer 是 position:fixed 的底部浮條，把鍵盤攤在裡面會讓
+    // 浮條撐到 641px，直接蓋掉題目與計算紙（實測 390×844 整個版面爛掉）。
+    // 正確做法是互動而不是預設值 —— 點答案欄就叫鍵盤出來，
+    // 跟真的鍵盤一樣（見 openKeypadForInput）。
+    // 2026-09-15：桌機也預設收起。有實體鍵盤的人直接打字比點鍵快，
+    // 而攤開的鍵盤把題目、計算紙、逐步驗證全推到第二屏；符號鍵與範例
+    // 一鍵就開（觸控裝置點答案欄也會自動開，見 openKeypadForInput）。
+    const extrasOpen = quiz.keypadOpen;
+    const previewBlock = `
+        <div class="answer-preview webwork-preview">
+          <span>預覽</span>
+          <div class="answer-preview-math math-inline ${hasDraft ? "" : "is-empty"}" data-answer-preview data-tex="${escapeAttr(previewTex)}">${renderLiteTex(previewTex, false)}</div>
+        </div>`;
+    return `
+      <section class="webwork-answer ${compact ? "is-docked" : ""}">
+        <div class="webwork-head">
+          <div>
+            <span>作答</span>
+            <strong>${answerKindLabel(problem.answerKind)}</strong>
+          </div>
+          <span class="syntax-pill ${syntax.className}" data-syntax-status>${syntax.label}</span>
+        </div>
+        <form class="answer-panel webwork-form" data-action="submit-answer">
+        <label class="sr-only" for="answer">答案</label>
+        <input id="answer" class="answer-input ${quiz.feedback ? (quiz.feedback.status === "correct" ? "is-correct" : "is-wrong") : ""}" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="done" inputmode="${suppressKeyboard ? "none" : "text"}" value="${escapeAttr(quiz.draft)}" placeholder="${placeholderFor(problem)}" ${disabled} />
+        ${
+          touchDevice
+            ? `<button class="icon-button keyboard-toggle ${quiz.systemKeyboard ? "is-active" : ""}" type="button" data-action="toggle-system-keyboard" title="${quiz.systemKeyboard ? "改用畫面上的數學鍵盤" : "叫出系統鍵盤"}" aria-pressed="${quiz.systemKeyboard ? "true" : "false"}" ${disabled}>${icon("keyboard")}</button>`
+            : ""
+        }
+        <button class="button" type="submit" ${disabled}>${icon("send")}送出</button>
+        </form>
+        <!-- 預覽：打了東西才出現在抽屜外面。它回答的是「我打的被讀成什麼」，
+             那是送出前唯一能自我檢查的地方，收進抽屜等於沒有；但空的時候
+             只會寫「尚未輸入」，白佔一條 —— 而手機版這整塊是 fixed 的底部
+             浮條，每多一條就少一條螢幕。
+             全螢幕書寫例外：那個版面把每像素給書寫板，預覽留在抽屜裡
+             （手寫 E2E 量到板子被壓成 353px 就是這樣抓到的）。 -->
+        ${!compact && hasDraft ? previewBlock : ""}
+        <button class="webwork-extras-toggle" type="button" data-action="toggle-keypad" aria-expanded="${extrasOpen ? "true" : "false"}" ${disabled}>
+          <span>${icon(extrasOpen ? "chevron-up" : "chevron-down")}${suppressKeyboard ? "數學鍵盤" : "輸入工具"}</span>
+          <small>${extrasOpen ? "符號鍵 · 範例" : suppressKeyboard ? "點開才能打字" : "符號鍵 · 範例"}</small>
+        </button>
+        <div class="webwork-extras ${extrasOpen ? "is-open" : "is-collapsed"}">
+          ${compact ? previewBlock : ""}
+          <div class="webwork-examples" aria-label="常用答案格式">
+            ${examples.map((item) => `<button type="button" data-insert-example="${escapeAttr(item)}" ${disabled}>${escapeHtml(item)}</button>`).join("")}${canReadInk(problem) ? `<button type="button" class="ink-read-button" data-action="read-ink" ${disabled}>讀取手寫 →</button>` : ""}
+            <button type="button" data-action="clear-answer" ${disabled}>清除</button>
+          </div>
+          ${(() => {
+            const keys = webworkKeys(problem);
+            const button = (key) => `<button type="button" data-insert="${escapeAttr(key.insert)}" ${disabled}>${escapeHtml(key.label)}</button>`;
+            return `
+          <div class="keypad webwork-keypad" aria-label="快速輸入">
+            ${keys.digits.length ? `<div class="keypad-digits">${keys.digits.map(button).join("")}</div>` : ""}
+            <div class="keypad-rest">
+              ${keys.rest.map(button).join("")}<button type="button" class="keypad-backspace" data-action="answer-backspace" title="退格" ${disabled}>⌫</button>
+            </div>
+          </div>`;
+          })()}
+          <div class="helper-row webwork-helper">
+            <span>${formatHelp(problem.answerKind)}</span>
+            <span>不定積分可省略 +C</span>
+            <span>送出前先看預覽</span>
+          </div>
+        </div>
+        ${compact ? "" : renderStepChecker(problem)}
+      </section>
+    `;
+  }
+
+  // 計算紙的工具列與畫布在 share_cards.js（從 app.js 搬出去的獨立畫面片段）。
+  // 這一段是純畫面：狀態（開著沒、哪支筆、幾筆）由呼叫端算好傳進去。
+
+  window.BuzzAnswerWorkspace = { render };
+})();
