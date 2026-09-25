@@ -3996,6 +3996,90 @@ const EXPLICIT_METHODS = {
     return { __claim: Boolean(result.converges) };
   },
 
+  /* ── 2026-09 泰勒餘項包補的四條路徑 ──────────────────────────
+     共同的底層是「在 a 附近把 f 展成多項式」：用 Chebyshev 取樣再換成單項式，
+     一次拿到 c_k = f⁽ᵏ⁾(a)/k!（跟 derivAt0 同一套，差別只在中心可以不是 0）。
+     為什麼不用重複微分：數值上每微分一次就放大一次雜訊，四階以後就不能看了；
+     Chebyshev 是一次取樣解出所有階，n=6 仍然穩。 */
+
+  // T_n(x)：在 a 展開的 n 階泰勒多項式，代 x 的值
+  taylorValue: (spec) => {
+    const f = latex.compile(spec.f, [spec.v || "x"]);
+    const a = constant(spec.a === undefined ? 0 : spec.a);
+    const n = Math.round(constant(spec.n));
+    const at = constant(spec.at);
+    // 取樣半徑要蓋得住代入點：Chebyshev 係數的雜訊會被 (1/r)^k 放大，
+    // r 小於 |x−a| 時，七階以上的係數就開始失真（sin 在 r=0.4、n=9 差了 3e-5）。
+    return taylorPolyAt(f, a, n, at, spec.r || Math.max(0.4, Math.abs(at - a) * 1.2));
+  },
+
+  // 實際誤差 |f − T_n|：給 at 就是一點，給 range 就是整段的最大值。
+  // 「實際誤差」跟「餘項上界」是兩件事 —— 這一條算的是前者。
+  taylorError: (spec) => {
+    const f = latex.compile(spec.f, [spec.v || "x"]);
+    const a = constant(spec.a === undefined ? 0 : spec.a);
+    const n = Math.round(constant(spec.n));
+    if (spec.at !== undefined) {
+      const at = constant(spec.at);
+      return Math.abs(f(at) - taylorPolyAt(f, a, n, at, spec.r || Math.max(0.4, Math.abs(at - a) * 1.2)));
+    }
+    const [lo, hi] = spec.range.map(constant);
+    const radius = spec.r || Math.max(0.4, Math.max(Math.abs(lo - a), Math.abs(hi - a)) * 1.2);
+    let worst = 0;
+    for (let i = 0; i <= 4000; i += 1) {
+      const x = lo + ((hi - lo) * i) / 4000;
+      const gap = Math.abs(f(x) - taylorPolyAt(f, a, n, x, radius));
+      if (Number.isFinite(gap)) worst = Math.max(worst, gap);
+    }
+    return worst;
+  },
+
+  // 拉格朗日餘項的上界 M·|x−a|ⁿ⁺¹/(n+1)!，其中 M 是 |f⁽ⁿ⁺¹⁾| 在 a 與 x 之間的最大值。
+  // M 由數值算出來（不是題目給的），所以「M 取多少」這一步也在驗算範圍內。
+  lagrangeBound: (spec) => {
+    const f = latex.compile(spec.f, [spec.v || "x"]);
+    const a = constant(spec.a === undefined ? 0 : spec.a);
+    const n = Math.round(constant(spec.n));
+    const at = constant(spec.at);
+    const lo = Math.min(a, at);
+    const hi = Math.max(a, at);
+    let worst = 0;
+    const steps = 60;
+    for (let i = 0; i <= steps; i += 1) {
+      const t = lo + ((hi - lo) * i) / steps;
+      const value = Math.abs(nthDerivative(f, t, n + 1, spec.r));
+      if (Number.isFinite(value)) worst = Math.max(worst, value);
+    }
+    let factorial = 1;
+    for (let k = 2; k <= n + 1; k += 1) factorial *= k;
+    return (worst * Math.pow(Math.abs(at - a), n + 1)) / factorial;
+  },
+
+  // 要展到幾階？從 n=1 往上找第一個讓**實際**最大誤差小於 eps 的階數。
+  // 用實際誤差而不是餘項上界：上界是解題者選 M 的結果，實際誤差不是。
+  taylorTerms: (spec) => {
+    const f = latex.compile(spec.f, [spec.v || "x"]);
+    const a = constant(spec.a === undefined ? 0 : spec.a);
+    const eps = constant(spec.eps);
+    const max = Math.round(spec.max || 12);
+    const points = [];
+    if (spec.at !== undefined) points.push(constant(spec.at));
+    else {
+      const [lo, hi] = spec.range.map(constant);
+      for (let i = 0; i <= 200; i += 1) points.push(lo + ((hi - lo) * i) / 200);
+    }
+    const radius = spec.r || Math.max(0.4, points.reduce((m, x) => Math.max(m, Math.abs(x - a)), 0) * 1.2);
+    for (let n = 1; n <= max; n += 1) {
+      let worst = 0;
+      for (const x of points) {
+        const gap = Math.abs(f(x) - taylorPolyAt(f, a, n, x, radius));
+        if (Number.isFinite(gap)) worst = Math.max(worst, gap);
+      }
+      if (worst < eps) return n;
+    }
+    throw new Error(`展到 ${max} 階誤差還是不夠小`);
+  },
+
   // 級數和
   series: (spec) => {
     const variable = spec.v || "n";
@@ -4686,6 +4770,55 @@ const EXPLICIT_METHODS = {
 function constant(value) {
   if (typeof value === "number") return value;
   return latex.compile(String(value), [])();
+}
+
+// 在 center 附近把 f 展成單項式係數 c_k = f⁽ᵏ⁾(center)/k!。
+//
+// 做法跟 derivAt0 一樣：在 [center−r, center+r] 上取 Chebyshev 點，
+// 解出 Chebyshev 係數再換成單項式。一次取樣拿到所有階 ——
+// 重複數值微分每微一次放大一次雜訊，四階以後就不能看了。
+//
+// r 太大會踩到奇點（ln(1+x) 在 −1、1/(1−x) 在 1），太小則單項式換算的
+// 2^N 係數會把捨入誤差放大。預設 0.4，個別題目可以自己指定。
+function taylorMonomials(f, center, radius, upto) {
+  const r = radius || 0.4;
+  const N = Math.max(24, 2 * upto + 8);
+  const coefficients = [];
+  for (let k = 0; k < N; k += 1) {
+    let sum = 0;
+    for (let j = 0; j < N; j += 1) {
+      const theta = (Math.PI * (j + 0.5)) / N;
+      sum += f(center + r * Math.cos(theta)) * Math.cos(k * theta);
+    }
+    coefficients.push((2 * sum) / N);
+  }
+  coefficients[0] /= 2;
+  let prev = [1]; let cur = [0, 1];
+  const mono = new Array(N).fill(0);
+  mono[0] += coefficients[0];
+  for (let k = 1; k < N; k += 1) {
+    cur.forEach((c, i) => { mono[i] += coefficients[k] * c; });
+    const next = new Array(cur.length + 1).fill(0);
+    cur.forEach((c, i) => { next[i + 1] += 2 * c; });
+    prev.forEach((c, i) => { next[i] -= c; });
+    prev = cur; cur = next;
+  }
+  // mono 是以 u=(x−center)/r 為變數，換回 (x−center) 的係數
+  return mono.slice(0, upto + 1).map((c, k) => c / Math.pow(r, k));
+}
+
+function taylorPolyAt(f, center, n, x, radius) {
+  const coefficients = taylorMonomials(f, center, radius, n);
+  let sum = 0;
+  for (let k = 0; k <= n; k += 1) sum += coefficients[k] * Math.pow(x - center, k);
+  return sum;
+}
+
+function nthDerivative(f, at, n, radius) {
+  const coefficients = taylorMonomials(f, at, radius, n);
+  let factorial = 1;
+  for (let k = 2; k <= n; k += 1) factorial *= k;
+  return coefficients[n] * factorial;
 }
 
 function windowExtreme(f, N, kind) {
