@@ -6095,7 +6095,7 @@
                   // 的第一名問題 —— 而使用者想切的那一刻，人就在這裡。
                   // 所以它同時是切換鈕：作答中隨時可以換，換完這一題立刻重畫。
                   // 模擬考不給換（換作答形式等於換考試條件）。
-                  ["graph", "worksheet", "graphtap", "graphslope", "sketch", "proof"].includes(current.answerKind)
+                  ["graph", "worksheet", "graphtap", "graphslope", "sketch", "proof", "epsilon"].includes(current.answerKind)
                     ? ""
                     : quiz.examMode || feedback
                       ? `<span class="chip">${answerModeLabel(answerMode)}</span>`
@@ -6104,7 +6104,7 @@
                 ${verifiedChip(current)}
               </div>
               <div class="prompt math-block" data-tex="${escapeAttr(current.prompt)}"></div>
-              ${["graphtap", "graphslope", "sketch"].includes(current.answerKind) ? "" : renderProblemGraph(current)}
+              ${["graphtap", "graphslope", "sketch", "epsilon"].includes(current.answerKind) ? "" : renderProblemGraph(current)}
               <!-- 題目下面一條工具列：提示、跳過、規則。
                    提示本來是一張佔滿寬度的黃色橫幅，永遠亮著，跟題目搶視線；
                    跳過與規則則流放在頁尾，離作答區半個螢幕。三顆都是「作答時偶爾會按」
@@ -6188,6 +6188,12 @@
         ? `<ol class="proof-reference">${lines.map((line) => `<li>${escapeHtml(line)}</li>`).join("")}</ol>`
         : escapeHtml(raw);
     }
+    // ε-δ 的參考答案是一個 δ，但光印一個數看不懂它是哪一關的
+    if (problem.answerKind === "epsilon") {
+      const levels = (problem.epsilon || {}).levels || [];
+      const last = levels[levels.length - 1];
+      return escapeHtml(`最嚴的那一關（ε=${last}）δ 最大可以取到 ${raw}`);
+    }
     if (["worksheet", "graph", "graphtap", "graphslope"].includes(problem.answerKind)) {
       return escapeHtml(raw);
     }
@@ -6208,6 +6214,8 @@
     if (problem.answerKind === "graphslope") return renderGraphSlopeControls(problem);
     // 證明題：作答區是一塊文字板，判分交給白話證明的檢查器（引擎延後載入）。
     if (problem.answerKind === "proof") return renderProofAnswerControls(problem);
+    // ε-δ 挑戰：系統給 ε，使用者拖 δ。畫面與判分在 share_cards.js 的 BuzzEpsilonGame。
+    if (problem.answerKind === "epsilon") return renderEpsilonControls(problem);
     // 作圖題：在空格子上畫 f。畫面與判分都在 share_cards.js 的 BuzzGraphSketch（app.js 撞預算）。
     if (problem.answerKind === "sketch") {
       const sketch = window.BuzzGraphSketch.renderControls(problem, graphSketchStrokes(problem), {
@@ -6399,31 +6407,17 @@
   // 每一個誘答都是一個**具名的畫圖錯誤**（符號反了、極值位置錯、
   // 少了漸近線…），答錯時直接告訴使用者他犯的是哪一個 ——
   // 這也是題庫裡第一批有作者撰寫誘答的題目。
+  // 選圖題的作答區同樣搬去 share_cards.js；「哪一個選項被選錯了」由這裡判。
   function renderGraphChoiceControls(problem) {
     const disabled = quiz.feedback ? "disabled" : "";
-    const choices = getGraphChoiceOptions(problem);
-    return `
-      <div class="graph-choice-grid" role="radiogroup" aria-label="選擇正確的圖形">
-        ${choices
-          .map((choice, index) => {
-            const letter = String.fromCharCode(65 + index);
-            const wrong = quiz.feedback && quiz.draft === choice.expr && !checkAnswer(problem, choice.expr).correct;
-            return `
-              <button class="graph-choice ${wrong ? "is-wrong" : ""}" type="button"
-                data-action="choose-answer" data-choice="${escapeAttr(choice.expr)}" ${disabled}
-                aria-label="選項 ${letter}">
-                <span class="graph-choice-letter">${letter}</span>
-                ${renderMiniGraph(choice.expr, problem.graphWindow, problem.graphDomain)}
-                ${wrong && choice.why ? `<small class="graph-choice-why">${escapeHtml(choice.why)}</small>` : ""}
-              </button>`;
-          })
-          .join("")}
-      </div>
-      <div class="helper-row">
-        <span>四張圖只有一張的 f′、f″ 與定義域全部對得上</span>
-      </div>
-      ${attachedScratchboard(problem, disabled)}
-    `;
+    const picked = quiz.feedback && quiz.draft && !checkAnswer(problem, quiz.draft).correct ? quiz.draft : null;
+    return window.BuzzGraphAnswerUI.renderChoice({
+      choices: getGraphChoiceOptions(problem),
+      disabled, wrongExpr: picked,
+      window: problem.graphWindow, domain: problem.graphDomain,
+      renderMiniGraph, escapeAttr, escapeHtml,
+      extra: attachedScratchboard(problem, disabled)
+    });
   }
 
   function getGraphChoiceOptions(problem) {
@@ -6455,6 +6449,10 @@
   function shownInput(problem, input) {
     if (!input) return "未作答";
     if (problem && problem.answerKind === "sketch") return "手繪的圖形";
+    if (problem && problem.answerKind === "epsilon") {
+      const deltas = window.BuzzEpsilonGame.parse(input);
+      return deltas.length ? `用過的 δ：${deltas.join("、")}` : "未作答";
+    }
     // 證明是一整段文字，回顧列表印不下：只印第一行加行數
     if (problem && problem.answerKind === "proof") {
       const lines = String(input).split("\n").map((line) => line.trim()).filter(Boolean);
@@ -6489,6 +6487,24 @@
     });
   }
 
+  // ε-δ 挑戰的進度：第幾關、目前的 δ、過關用過的 δ、這一關試過幾次。
+  // 放在 quiz 上而不是 records：它是一局之內的作答狀態，跟草稿同一個層級。
+  function epsilonState(problem) {
+    if (!quiz.epsilon) quiz.epsilon = {};
+    if (!quiz.epsilon[problem.id]) {
+      const spec = problem.epsilon || {};
+      quiz.epsilon[problem.id] = { level: 0, delta: Number(spec.maxDelta || 1), passed: [], tries: 0, note: "" };
+    }
+    return quiz.epsilon[problem.id];
+  }
+
+  function renderEpsilonControls(problem) {
+    return window.BuzzEpsilonGame.render({
+      problem, state: epsilonState(problem), done: Boolean(quiz.feedback),
+      icon, escapeHtml, escapeAttr
+    }) + attachedScratchboard(problem, quiz.feedback ? "disabled" : "");
+  }
+
   function graphSketchStrokes(problem) {
     if (!quiz.graphSketch) quiz.graphSketch = {};
     if (!quiz.graphSketch[problem.id]) quiz.graphSketch[problem.id] = [];
@@ -6500,44 +6516,20 @@
   }
 
 
+  // 點位題的作答區在 share_cards.js（app.js 撞預算搬出去的純畫面）。
+  // 手機開計算紙會進全螢幕殼 —— 互動圖形題原本沒走這個殼，於是計算紙攤在圖下面
+  // 被作答浮條壓住（使用者回報「畫圖題的計算紙打不開」），所以這裡要包 shell。
   function renderGraphTapControls(problem) {
     const done = Boolean(quiz.feedback);
-    const marks = graphTapMarks(problem);
-    const targets = graphTapTargets(problem);
-    const fn = graphProblemFn(problem);
-    const overlay = (ctx) => {
-      const parts = [];
-      const dotY = (x) => {
-        const y = fn ? fn(x) : 0;
-        return Number.isFinite(y) ? Math.max(ctx.ymin, Math.min(ctx.ymax, y)) : 0;
-      };
-      if (done) {
-        targets.forEach((x) => {
-          parts.push(`<line x1="${ctx.sx(x)}" y1="${ctx.sy(ctx.ymin)}" x2="${ctx.sx(x)}" y2="${ctx.sy(ctx.ymax)}" stroke="var(--green)" stroke-width="1.4" stroke-dasharray="4 3"/>`);
-          parts.push(`<circle cx="${ctx.sx(x)}" cy="${ctx.sy(dotY(x))}" r="5" fill="none" stroke="var(--green)" stroke-width="2"/>`);
-        });
-      }
-      marks.forEach((x) => {
-        parts.push(`<line x1="${ctx.sx(x)}" y1="${ctx.sy(ctx.ymin)}" x2="${ctx.sx(x)}" y2="${ctx.sy(ctx.ymax)}" stroke="var(--gold)" stroke-width="1.2" stroke-dasharray="3 3"/>`);
-        parts.push(`<circle cx="${ctx.sx(x)}" cy="${ctx.sy(dotY(x))}" r="4.4" fill="var(--gold)" stroke="var(--ink)" stroke-width="1.2"/>`);
-      });
-      return parts.join("");
-    };
-    const controls = `
-      <div class="graph-interactive">
-        ${renderProblemGraph(problem, { interactive: done ? null : "tap", overlay })}
-        <div class="helper-row">
-          <span>${done ? "綠圈是正確位置，對照一下你標的點。" : `直接點在圖上（點到的位置會吸附到曲線）· 已標 ${marks.length} / ${targets.length}，點錯再點一次取消`}</span>
-        </div>
-        <div class="action-row">
-          <button class="button" data-action="submit-graphtap" ${!done && marks.length === targets.length ? "" : "disabled"}>${icon("check")}送出</button>
-          <button class="button ghost" data-action="clear-graphtap" ${done || !marks.length ? "disabled" : ""}>清除重點</button>
-        </div>
-      </div>
-    `;
-    // 手機開計算紙會進全螢幕殼（見 board toggle）；互動圖形題原本沒走這個殼，
-    // 於是計算紙攤在圖下面、被作答浮條壓住 —— 使用者回報「畫圖題的計算紙打不開」。
-    return fullscreenShell(problem, quiz.boardFullscreen ? boardOnlyNote("圖") : controls, attachedScratchboard(problem, done ? "disabled" : ""));
+    return window.BuzzGraphAnswerUI.renderTap({
+      problem, done,
+      marks: graphTapMarks(problem),
+      targets: graphTapTargets(problem),
+      fn: graphProblemFn(problem),
+      renderProblemGraph, icon,
+      shell: (controls, extra) => fullscreenShell(problem, quiz.boardFullscreen ? boardOnlyNote("圖") : controls, extra),
+      extra: attachedScratchboard(problem, done ? "disabled" : "")
+    });
   }
 
   function graphSlopePivot(problem) {
@@ -8002,6 +7994,18 @@
 
     bindProofLangEvents();
 
+    const epsilonSlider = app.querySelector("[data-eps-delta]");
+    if (epsilonSlider) {
+      epsilonSlider.addEventListener("input", () => {
+        const problem = getCurrentProblem();
+        if (!problem || problem.answerKind !== "epsilon") return;
+        const state = epsilonState(problem);
+        state.delta = Number(epsilonSlider.value);
+        state.note = "";
+        render();
+      });
+    }
+
     const proofAnswerInput = app.querySelector("[data-proof-answer]");
     if (proofAnswerInput) {
       // 練習時打字要即時三色，但每個字都重繪整頁太貴 —— 跟題庫搜尋同一套節流。
@@ -8244,6 +8248,7 @@
       if (box) quiz.draft = box.value;
       submitCurrentAnswer();
     }
+    if (action === "epsilon-submit") submitEpsilonLevel();
     if (action === "submit-graphtap") submitGraphTap();
     if (action === "submit-sketch" || action === "undo-sketch" || action === "clear-sketch" || action === "sketch-tool") {
       const problem = getCurrentProblem();
@@ -9166,7 +9171,7 @@
     // 那些題對任何自陳等級 ≤ 大一的人都測不出「反射」，只測得出「沒學過」。
     // 定位是四選一：作圖表、點位、切線這些沒有選項的作答形式不進來 ——
     // 走查時第 6 題抽到「在圖上點出極值點」，整個定位卡在那裡。
-    const NO_CHOICE_KINDS = ["worksheet", "graphtap", "graphslope", "sketch", "proof"];
+    const NO_CHOICE_KINDS = ["worksheet", "graphtap", "graphslope", "sketch", "proof", "epsilon"];
     const source = beyondBasicsFilter(problems)
       .filter((problem) => !NO_CHOICE_KINDS.includes(problem.answerKind))
       .filter((problem) => !topics || topics.includes(problem.topic));
@@ -10579,7 +10584,7 @@
     const pool = problems.filter((problem) =>
       ["limits", "derivatives", "integrals", "series"].includes(problem.topic) &&
       !problem.custom &&
-      !["worksheet", "graph", "graphtap", "graphslope", "sketch", "proof"].includes(problem.answerKind) &&
+      !["worksheet", "graph", "graphtap", "graphslope", "sketch", "proof", "epsilon"].includes(problem.answerKind) &&
       problemRank(problem) >= 2 && problemRank(problem) <= 5);
     const picked = shuffle(pool, seedFromString(`duel-${Date.now()}`)).slice(0, 10);
     if (picked.length < 10) return;
@@ -10871,6 +10876,33 @@
     }).length;
   }
 
+  // 一關一關來：過關就把 δ 收進 passed 並縮小 ε，最後一關過了才記錄答對。
+  // 交一個不成立的 δ 直接判錯 —— 畫面上本來就寫著「還不行」，那是刻意送出的。
+  function submitEpsilonLevel() {
+    const problem = getCurrentProblem();
+    if (!quiz || !problem || quiz.feedback || problem.answerKind !== "epsilon") return;
+    const spec = problem.epsilon || {};
+    const levels = spec.levels || [];
+    const state = epsilonState(problem);
+    const level = Math.min(state.level, levels.length - 1);
+    const result = window.BuzzEpsilonGame.evaluate(spec, state.delta, Number(levels[level]));
+    if (!result.ok) {
+      state.tries += 1;
+      submitChoiceAnswer(window.BuzzEpsilonGame.serialize([...state.passed, state.delta]));
+      return;
+    }
+    state.passed = [...state.passed, state.delta];
+    if (state.passed.length >= levels.length) {
+      submitChoiceAnswer(window.BuzzEpsilonGame.serialize(state.passed));
+      return;
+    }
+    state.level = state.passed.length;
+    state.tries = 0;
+    state.note = `過關。ε 縮到 ${levels[state.level]} —— 同一個 δ 還夠嗎？`;
+    trackEvent("epsilon_level", { problemId: problem.id, level: state.level });
+    render();
+  }
+
   function submitCurrentAnswer() {
     if (!quiz) return;
     const current = getCurrentProblem();
@@ -10887,7 +10919,7 @@
     // 改成：你選的是哪一個、它像是怎麼錯的（誘答理由），正解在下面。
     // 互動圖形題（點位／切線／作圖）走的也是這條路，但它們的判分訊息本來就是給人看的
     // （「x 從 −1 到 1 這一段 f 應該遞減，你畫的往上」），誘答理由反而牛頭不對馬嘴。
-    if (submission.status !== "correct" && current && !["graphtap", "graphslope", "sketch"].includes(current.answerKind)) {
+    if (submission.status !== "correct" && current && !["graphtap", "graphslope", "sketch", "epsilon"].includes(current.answerKind)) {
       const options = getChoiceOptions(current);
       const index = options.findIndex((option) => option.value === input);
       const letter = index >= 0 ? String.fromCharCode(65 + index) : "";
@@ -11507,6 +11539,10 @@
     if (problem.answerKind === "sketch") {
       return window.BuzzGraphSketch.check(problem, input);
     }
+    if (problem.answerKind === "epsilon") {
+      // 判分不看畫面上的狀態：拿使用者用過的每一個 δ 重新掃一遍
+      return window.BuzzEpsilonGame.check(problem, input);
+    }
     if (problem.answerKind === "proof") {
       return checkProofAnswer(problem, input);
     }
@@ -11822,7 +11858,7 @@
   function wellFormedDistractor(problem, value) {
     const text = String(value || "").trim();
     if (!text) return false;
-    if (["text", "set", "interval", "worksheet", "graph", "graphtap", "graphslope", "sketch", "proof"].includes(problem.answerKind)) return true;
+    if (["text", "set", "interval", "worksheet", "graph", "graphtap", "graphslope", "sketch", "proof", "epsilon"].includes(problem.answerKind)) return true;
     if (/^[*/^+]/.test(text) || /[*/^+(-]$/.test(text) || /[*/^]{2}/.test(text) || /\(\)/.test(text)) return false;
     if (text.includes(",")) return false;
     let depth = 0;
@@ -14765,7 +14801,8 @@
       graphslope: "切線",
       sketch: "作圖",
       proof: "證明",
-      worksheet: "作圖表"
+      worksheet: "作圖表",
+      epsilon: "ε-δ 挑戰"
       // 少一個對應就會在題目上印出一個 undefined chip。
       // 加新 answerKind 的時候這裡是最容易忘記的地方 —— 實測就漏了。
     }[kind] || "";
