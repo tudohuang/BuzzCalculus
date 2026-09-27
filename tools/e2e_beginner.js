@@ -188,11 +188,14 @@ async function run() {
       check("回到首頁不會再跳一次導覽", !again, "");
     }
     const home = await evaluate(`
-      const stats = [...document.querySelectorAll(".overview-stat")].map((n) => n.innerText.replace(/\\s+/g, " "));
-      const due = stats.find((t) => /待複習錯題/.test(t)) || "";
+      // 待複習錯題原本讀首頁那排儀表板，但它 2026-09-27 起要練滿三局才出現
+      // （只練一局的人看到的是四格 0）。改讀紀錄本身 —— 這條要釘的本來就是
+      // 「定位測驗不會把題目塞進錯題本」，跟畫面上印不印那個數字無關。
+      const records = JSON.parse(localStorage.getItem("buzzcalculus.records.v1") || "{}");
+      const due = Object.keys(records.mistakes || {}).length;
       return { due, card: window.__b.text(".today-card"), recipe: window.__b.text(".training-recipe") };
     `);
-    check("定位的 8 題不會變成待複習錯題", /待複習錯題 0/.test(home.due), home.due);
+    check("定位的 8 題不會變成待複習錯題", home.due === 0, `錯題本有 ${home.due} 題`);
     check("首頁給的是「第一份訓練」，不倒數不計分", /第一份訓練/.test(home.card) && /不倒數、不計分/.test(home.card), home.card.slice(0, 60));
     check("第一份訓練不宣稱到期複習／弱點／前置已穩", !/到期複習|弱點|前置已經穩了/.test(home.card), "");
     check("第一份訓練是 8 題", /8 題/.test(home.card), home.recipe);

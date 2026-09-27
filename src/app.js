@@ -1515,7 +1515,8 @@
 
   function renderPageHeading(eyebrow, title, description, actions = "") {
     // 副標只在真的有話要說時才印（2026-09-16 把「從一份適合你的練習開始…」這類口號全拿掉了）
-    return `<header class="workspace-heading"><div><p class="section-label">${escapeHtml(eyebrow)}</p><h1>${escapeHtml(title)}</h1>${description ? `<p class="workspace-description">${escapeHtml(description)}</p>` : ""}</div>${actions ? `<div class="heading-actions">${actions}</div>` : ""}</header>`;
+    // eyebrow 給空字串就整行不印 —— 首頁不需要再說一次「今天」（分頁列與麵包屑都寫了）
+    return `<header class="workspace-heading"><div>${eyebrow ? `<p class="section-label">${escapeHtml(eyebrow)}</p>` : ""}<h1>${escapeHtml(title)}</h1>${description ? `<p class="workspace-description">${escapeHtml(description)}</p>` : ""}</div>${actions ? `<div class="heading-actions">${actions}</div>` : ""}</header>`;
   }
 
   const PROOF_VIEWS = ["proofs", "proof-write", "proof-view", "proof-tutorial"];
@@ -1609,7 +1610,9 @@
     // 但這裡其實有 1,459 題。窄螢幕維持單欄，順序不變。
     return `
       <main class="screen home-screen" id="buzz-main">
-        ${renderPageHeading("TODAY / 今日概覽", `${homeGreeting().split("，")[0]}，把進步留給今天。`, "", `<span class="workspace-date">${icon("calendar")}${escapeHtml(new Date().toLocaleDateString("zh-TW", { month: "long", day: "numeric", weekday: "short" }))}</span>`)}
+        ${
+          // eyebrow 拿掉：分頁列與麵包屑都已經寫著「今天」，同一個字在第一屏出現三次。
+          renderPageHeading("", `${homeGreeting().split("，")[0]}，把進步留給今天。`, "", `<span class="workspace-date">${icon("calendar")}${escapeHtml(new Date().toLocaleDateString("zh-TW", { month: "long", day: "numeric", weekday: "short" }))}</span>`)}
         ${renderHomeOverview(records, mission)}
         <div class="home-lead">
           ${renderResumeCard()}
@@ -1646,6 +1649,9 @@
   function renderHomeOverview(records, mission) {
     const total = Number(records.totalAnswered || 0);
     if (!total || (records.onboardingContext === "newbie" && !courseUI.graduated(records))) return renderFirstSteps(records);
+    // 儀表板要有東西可看才有意義。練不到三局的時候這四格有一半是 0，
+    // 而第一屏的四分之一就被「你什麼都還沒做」佔掉了 —— 改成累積夠了才出現。
+    if (!featureGate(records).full) return "";
     const profile = abilityProfile(records);
     const measured = profile ? profile.coverage.skillsMeasured : 0;
     const due = srsDueSummary(records).due;
@@ -1910,18 +1916,14 @@
           <button class="button home-primary" data-action="start-planned" data-length="${escapeAttr(recipe.length)}">
             ${icon("play")}<span>開始訓練</span>${icon("chevron-right")}
           </button>
-          ${
-            recipe.length !== "sprint5"
-              ? `<button class="button secondary" data-action="start-planned" data-length="sprint5">${icon("zap")}5 分鐘快刷</button>`
-              : ""
-          }
-          ${
-            dueCount
-              ? `<button class="button secondary" data-action="start-srs-review">${icon("repeat")}錯題 ${dueCount} 題到期</button>`
-              : ""
-          }
         </div>
-        <p class="today-note">${escapeHtml(reason)}${adjusted ? ` · ${escapeHtml(adjusted)}` : ""}</p>
+        <p class="today-note">${escapeHtml(reason)}${adjusted ? ` · ${escapeHtml(adjusted)}` : ""}${
+          // 「今天只有五分鐘」是逃生門不是並列選項：放成一行文字連結，
+          // 主按鈕旁邊就不會有第二顆搶視線的深色按鈕。
+          recipe.length !== "sprint5"
+            ? ` · <button type="button" class="link-button" data-action="start-planned" data-length="sprint5">只有 5 分鐘？改快刷</button>`
+            : ""
+        }</p>
       </section>
     `;
   }
@@ -3064,11 +3066,19 @@
 
   // 首頁保留區：錯題 SRS 到期卡 + 練習連勝（含盾牌）迷你熱力圖。
   function renderHomeRetentionRow(records) {
-    const srsCard = renderHomeSrsCard(records);
+    // 錯題複習的入口只留「接下來練什麼」那一張（renderHomeSecondary）。
+    // 這裡原本還有一張一模一樣的卡（renderHomeSrsCard，已刪）—— 量過首頁有三個
+    // start-srs-review，而「錯題到期」四個字在一頁裡出現五次。
+    const srsCard = "";
     const retestCard = renderHomePathRetestCard(records);
     const refreshCard = renderHomeSkillRefreshCard(records);
-    const streakCard = (records.totalAnswered || 0) && !focusModeOn() ? renderHomeStreakCard(records) : "";
-    const questsCard = (records.totalAnswered || 0) ? renderHomeQuestsCard(records) : "";
+    // 連勝卡與任務卡要等到真的有東西可看。練完第一局就看到
+    // 「連勝 0 天 · 盾牌可用 · Lv.1 0/100 XP · 分享成就卡」，那是四格空白 ——
+    // 跟頂部那排 0 是同一個病：遊戲化的外殼跑在進度前面。
+    const streakInfo = practiceStreakInfo(records, activityCounts(records));
+    const worthShowing = featureGate(records).full || streakInfo.streak > 0;
+    const streakCard = worthShowing && !focusModeOn() ? renderHomeStreakCard(records) : "";
+    const questsCard = worthShowing ? renderHomeQuestsCard(records) : "";
     if (!srsCard && !retestCard && !refreshCard && !streakCard && !questsCard) return "";
     return `
       <section class="home-retention" aria-label="複習與連勝">
@@ -3292,32 +3302,6 @@
     selectedTopic = "all";
     const ordered = adaptiveShuffle(preferFreshProblems(pool, records), records, seedFromString(`skill-refresh-${Date.now()}`));
     startQuiz(ordered.slice(0, 8), { modeKey: "quick" });
-  }
-
-  function renderHomeSrsCard(records) {
-    const summary = srsDueSummary(records);
-    if (!summary.total) return "";
-    if (!summary.due) {
-      return `
-        <div class="retention-card srs-card is-clear">
-          <div class="retention-copy">
-            <p class="section-label">錯題複習</p>
-            <strong>全部複習完成</strong>
-            <span>${summary.nextDueDays ? `下一批 ${summary.nextDueDays} 天後到期。` : "沒有排程中的錯題。"}</span>
-          </div>
-        </div>
-      `;
-    }
-    return `
-      <div class="retention-card srs-card is-due">
-        <div class="retention-copy">
-          <p class="section-label">錯題複習</p>
-          <strong>今天到期 ${summary.due} 題</strong>
-          <span>照排程清掉，才會真的記住。</span>
-        </div>
-        <button class="button" data-action="start-srs-review">${icon("refresh")}開始複習</button>
-      </div>
-    `;
   }
 
   // ── 每日任務（多鄰國 quests）──────────────────────────────
