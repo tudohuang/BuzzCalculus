@@ -310,6 +310,49 @@ global.localStorage.getItem = originalGetItem;
   console.log("證明入口 smoke: 碰過證明就不會消失、練完一局題庫頁就有、全新帳號仍然乾淨");
 }
 
+// ── 首頁不重複（2026-09-27）──
+// 量出來的問題不是「元素太多」，是同一件事講了三遍：練過一局的首頁有 16 個
+// 可以按的東西，卻只通向 7 個地方 —— start-srs-review 有三個入口，
+// 「錯題到期」四個字在一頁裡出現五次。這一段把去重釘住。
+{
+  const renderFor = (records) => {
+    const original = global.localStorage.getItem;
+    global.localStorage.getItem = () => JSON.stringify(records);
+    try { return api.renderHome(); } finally { global.localStorage.getItem = original; }
+  };
+  const actionsIn = (html) => {
+    const found = {};
+    (html.match(/data-action="([a-z-]+)"/g) || []).forEach((hit) => {
+      const name = hit.slice(13, -1);
+      found[name] = (found[name] || 0) + 1;
+    });
+    return found;
+  };
+
+  const onePass = {
+    onboardingSeen: true, backupNoticeSeen: true, totalAnswered: 12,
+    history: [{ at: Date.now(), answers: [] }],
+    mistakes: { "lim-001": { problemId: "lim-001", wrongCount: 1, srs: { interval: 1, dueAt: 0 } } }
+  };
+  const html = renderFor(onePass);
+  const actions = actionsIn(html);
+
+  // 一個動作最多一個入口。唯一的例外是 start-planned：主按鈕，加上
+  // 「只有 5 分鐘？改快刷」那一行文字連結（同一個動作、不同長度）。
+  const repeated = Object.entries(actions).filter(([name, count]) => count > 1 && name !== "start-planned" && name !== "open-train");
+  if (repeated.length) {
+    throw new Error(`首頁有動作被重複放了：${repeated.map(([name, count]) => `${name}×${count}`).join("、")}`);
+  }
+  if ((actions["start-srs-review"] || 0) > 1) throw new Error("錯題複習又有第二個入口了");
+
+  // 練不到三局的人不該看到那排儀表板（四格裡有一半是 0）
+  if (/overview-stat/.test(html)) throw new Error("只練過一局就印出了首頁的四格數字 —— 那時候它有一半是 0");
+  const veteran = renderFor({ onboardingSeen: true, totalAnswered: 200, history: [1, 2, 3, 4, 5].map(() => ({ at: Date.now(), answers: [] })) });
+  if (!/overview-stat/.test(veteran)) throw new Error("練滿三局之後反而沒有那排數字了");
+
+  console.log(`首頁去重 smoke: 練過一局的首頁 ${Object.keys(actions).length} 種動作、沒有重複入口；儀表板要練滿三局才出現`);
+}
+
 const emptyInsights = api.renderInsights();
 if (!emptyInsights.includes("還沒有資料")) {
   throw new Error("insights should tell a brand-new user there is no data yet");
