@@ -16,6 +16,9 @@
 
 (function () {
   "use strict";
+  // 語言層：t() 由 src/kernel/i18n.js 掛在 globalThis；node 的驗證器直接 require 這一支時沒有它，
+  // 就原樣印出（佔位符照填），所以每個模組都能單獨載入。
+  const t = typeof globalThis.t === "function" ? globalThis.t : (text, vars) => (vars ? String(text).replace(/\{(\w+)(?:\|[^}]*)?\}/g, (m, k) => (k in vars ? String(vars[k]) : m)) : text);
 
   const DAY_MS = 86400000;
 
@@ -27,7 +30,7 @@
   const LENGTHS = {
     sprint5: {
       key: "sprint5",
-      label: "5 分鐘快刷",
+      label: t("5 分鐘快刷"),
       minutes: 5,
       count: 6,
       // 短時間只夠做兩件事：清掉到期的、把已經反射的維持住。
@@ -38,7 +41,7 @@
     },
     daily15: {
       key: "daily15",
-      label: "15 分鐘每日訓練",
+      label: t("15 分鐘每日訓練"),
       minutes: 15,
       count: 12,
       mix: [
@@ -50,7 +53,7 @@
     },
     deep45: {
       key: "deep45",
-      label: "45 分鐘完整 Session",
+      label: t("45 分鐘完整 Session"),
       minutes: 45,
       count: 26,
       mix: [
@@ -71,13 +74,13 @@
   const WEAK = 40;
 
   const ROLE_LABEL = {
-    review: "到期複習",
-    weak: "弱點",
-    new: "新技巧",
-    stretch: "拉高難度",
-    maintain: "反射維持",
-    warmup: "熱身",
-    hard: "難題",
+    review: t("到期複習"),
+    weak: t("弱點"),
+    new: t("新技巧"),
+    stretch: t("拉高難度"),
+    maintain: t("反射維持"),
+    warmup: t("熱身"),
+    hard: t("難題"),
     boss: "Boss"
   };
 
@@ -157,7 +160,7 @@
     const coverable = Math.floor(dailyCapacity * usableDays / (totalWork / Math.max(1, gaps.length)));
 
     return {
-      label: plan.label || "考試",
+      label: plan.label || t("考試"),
       examAt,
       daysLeft,
       target,
@@ -231,22 +234,22 @@
 
     if (exam && exam.daysLeft <= 14 && exam.gaps.length) {
       const top = exam.gaps.slice(0, 2).map((row) => row.label).join("、");
-      parts.push(`${exam.label}剩 ${exam.daysLeft} 天，${top} 還沒到目標`);
+      parts.push(`${t("{label}剩 {daysLeft} 天，{top} 還沒到目標", { label: exam.label, daysLeft: exam.daysLeft, top })}`);
     }
 
     const down = profile && profile.trend && profile.trend.fastestDown;
-    if (down && down.delta <= -3) parts.push(`${down.label}這週掉了 ${Math.abs(down.delta)} 分`);
+    if (down && down.delta <= -3) parts.push(`${t("{label}這週掉了 {delta} 分", { label: down.label, delta: Math.abs(down.delta) })}`);
 
     const dangerous = (profile && profile.dangerous) || [];
     if (dangerous.length) {
       const entry = profile.skills[dangerous[0]];
-      if (entry) parts.push(`${entry.label}你標「確定」卻常錯`);
+      if (entry) parts.push(`${t("{label}你標「確定」卻常錯", { label: entry.label })}`);
     }
 
     const pressure = (profile && profile.pressureGap) || [];
     if (pressure.length) {
       const entry = profile.skills[pressure[0]];
-      if (entry) parts.push(`${entry.label}你不限時會、限時垮`);
+      if (entry) parts.push(`${t("{label}你不限時會、限時垮", { label: entry.label })}`);
     }
 
     if (parts.length < 2 && groups.weak.length) {
@@ -254,26 +257,26 @@
       // 「冪級數收斂範圍還沒到目標；冪級數收斂範圍還沒穩」是同一件事講兩遍。
       const mentioned = parts.join("");
       const names = groups.weak.filter((entry) => !mentioned.includes(entry.label)).slice(0, 2).map((entry) => entry.label).join("、");
-      if (names) parts.push(`${names}還沒穩`);
+      if (names) parts.push(`${t("{names}還沒穩", { names })}`);
     }
 
     if (parts.length < 2 && due.filter((row) => row.due).length >= 3) {
-      parts.push(`${due.filter((row) => row.due).length} 題錯題今天到期`);
+      parts.push(`${t("{length} 題錯題今天到期", { length: due.filter((row) => row.due).length })}`);
     }
 
     if (parts.length < 2 && groups.fresh.length) {
       // 中文緊貼拉丁字母（「開始練u-substitution」）讀起來像 tag 串進句子
       const first = groups.fresh[0];
       const gap = /^[\x20-\x7e]/.test(first.label) ? " " : "";
-      parts.push(first.root ? `從最基礎的${gap}${first.label}${gap}開始` : `前置已經穩了，可以開始練${gap}${first.label}`);
+      parts.push(first.root ? `${t("從最基礎的{gap}{label}{gap2}開始", { gap, label: first.label, gap2: gap })}` : `${t("前置已經穩了，可以開始練{gap}{label}", { gap, label: first.label })}`);
     }
 
     // 保底：新使用者什麼資料都沒有時也必須給得出一句話
     if (!parts.length) {
       parts.push(
         profile && profile.coverage && profile.coverage.attempts
-          ? "先把最近練過的技巧鞏固一輪"
-          : "第一次練，先做一輪混合題看看你的底"
+          ? t("先把最近練過的技巧鞏固一輪")
+          : t("第一次練，先做一輪混合題看看你的底")
       );
     }
 
@@ -448,20 +451,20 @@
     const idleDays = lastPlayed ? (now - lastPlayed) / DAY_MS : Infinity;
 
     let key = "daily15";
-    let reason = "維持每天的節奏";
+    let reason = t("維持每天的節奏");
 
     if (exam && exam.sprint) {
       key = "daily15";
-      reason = `${exam.label}剩 ${exam.daysLeft} 天，衝刺模式`;
+      reason = `${t("{label}剩 {daysLeft} 天，衝刺模式", { label: exam.label, daysLeft: exam.daysLeft })}`;
     } else if (!profile.coverage || !profile.coverage.attempts) {
       key = "daily15";
-      reason = "第一次練，先測出你的底";
+      reason = t("第一次練，先測出你的底");
     } else if (idleDays >= 7) {
       key = "sprint5";
-      reason = "隔了一週沒練，先用短的把手感找回來";
+      reason = t("隔了一週沒練，先用短的把手感找回來");
     } else if (due >= 8) {
       key = "daily15";
-      reason = `${due} 題錯題到期，今天以複習為主`;
+      reason = `${t("{due} 題錯題到期，今天以複習為主", { due })}`;
     }
 
     const plan = recipe(safeRecords, key, Object.assign({}, options, { now, profile }));
@@ -507,28 +510,31 @@
 // selectProblemPool 用 deps 注入，這裡不碰 DOM。掛在同一個 BuzzPlanner 上。
 (function () {
   "use strict";
+  // 語言層：t() 由 src/kernel/i18n.js 掛在 globalThis；node 的驗證器直接 require 這一支時沒有它，
+  // 就原樣印出（佔位符照填），所以每個模組都能單獨載入。
+  const t = typeof globalThis.t === "function" ? globalThis.t : (text, vars) => (vars ? String(text).replace(/\{(\w+)(?:\|[^}]*)?\}/g, (m, k) => (k in vars ? String(vars[k]) : m)) : text);
   const g = typeof window !== "undefined" ? window : globalThis;
 
   const CAUSE_PRESCRIPTIONS = {
     "algebra-slip": {
       mode: "accuracy",
-      advice: (count) => `30 天內 ${count} 題錯在「算錯，不是不會」—— 對症是不限時、錯題重罰的正確率模式：把手放慢，讓代價教會手。`
+      advice: (count) => `${t("30 天內 {count} 題錯在「算錯，不是不會」—— 對症是不限時、錯題重罰的正確率模式：把手放慢，讓代價教會手。", { count })}`
     },
     "misread": {
       mode: "accuracy",
-      advice: (count) => `30 天內 ${count} 題錯在看錯題目 —— 正確率模式不限時：先把「讀完再動筆」練成習慣。`
+      advice: (count) => `${t("30 天內 {count} 題錯在看錯題目 —— 正確率模式不限時：先把「讀完再動筆」練成習慣。", { count })}`
     },
     "wrong-technique": {
       mode: "topic",
-      advice: (count) => `30 天內 ${count} 題錯在選錯方法 —— 單範圍集中練最快把「看題判型」建起來。`
+      advice: (count) => `${t("30 天內 {count} 題錯在選錯方法 —— 單範圍集中練最快把「看題判型」建起來。", { count })}`
     },
     "forgot-formula": {
       mode: "practice",
-      advice: (count) => `30 天內 ${count} 題錯在忘公式 —— 用可看提示的練習模式把公式重新掛回手上，並清一輪錯題複習。`
+      advice: (count) => `${t("30 天內 {count} 題錯在忘公式 —— 用可看提示的練習模式把公式重新掛回手上，並清一輪錯題複習。", { count })}`
     },
     "timeout": {
       mode: "pressure",
-      advice: (count) => `30 天內 ${count} 題是時間到 —— 壓力訓練的遞減計時就是為這個造的。`
+      advice: (count) => `${t("30 天內 {count} 題是時間到 —— 壓力訓練的遞減計時就是為這個造的。", { count })}`
     }
   };
 
@@ -624,15 +630,15 @@
       const weak = skills.filter((entry) => entry.state === "weak" || entry.state === "shaky").length;
       const reflex = skills.filter((entry) => entry.state === "reflex").length;
       if (pressured >= 2) {
-        recos.set("pressure", `${pressured} 個技巧「會但一計時就垮」—— 練縮短的時間窗`);
+        recos.set("pressure", `${t("{pressured} 個技巧「會但一計時就垮」—— 練縮短的時間窗", { pressured })}`);
       }
       if (weak >= 5) {
-        recos.set("topic", `${weak} 個技巧還不穩 —— 單範圍集中補洞`);
+        recos.set("topic", `${t("{weak} 個技巧還不穩 —— 單範圍集中補洞", { weak })}`);
       } else if (reflex >= 8 && recos.size < 2) {
-        recos.set("boss_rush", `${reflex} 個技巧已反射級 —— 往上打`);
+        recos.set("boss_rush", `${t("{reflex} 個技巧已反射級 —— 往上打", { reflex })}`);
       }
     }
-    if (!recos.size) recos.set("quick", "混合訓練維持手感，模型會自動偏向你的弱技巧");
+    if (!recos.size) recos.set("quick", t("混合訓練維持手感，模型會自動偏向你的弱技巧"));
     return new Map([...recos.entries()].slice(0, 2));
   }
 

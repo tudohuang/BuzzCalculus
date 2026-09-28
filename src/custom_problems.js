@@ -1,5 +1,8 @@
 (function () {
   "use strict";
+  // 語言層：t() 由 src/kernel/i18n.js 掛在 globalThis；node 的驗證器直接 require 這一支時沒有它，
+  // 就原樣印出（佔位符照填），所以每個模組都能單獨載入。
+  const t = typeof globalThis.t === "function" ? globalThis.t : (text, vars) => (vars ? String(text).replace(/\{(\w+)(?:\|[^}]*)?\}/g, (m, k) => (k in vars ? String(vars[k]) : m)) : text);
 
   // 使用者自訂題：存在 localStorage，開機時併入 window.BUZZ_PROBLEMS。
   // app.js 的出題工作坊、分享與匯入都走這裡的 sanitize/encode/decode，
@@ -47,9 +50,9 @@
       // tabLimit 已停用（切頁判錯在 2026-08 移除）。這裡照樣正規化，
       // 是為了讓早期匯出的自訂題包還匯得進來，不是因為還有人讀它。
       tabLimit: clampInt(raw.tabLimit, 0, 9, 2),
-      solution: cleanText(raw.solution, 1200) || "出題者沒有附解說。",
+      solution: cleanText(raw.solution, 1200) || t("出題者沒有附解說。"),
       tags: ["custom"],
-      source: "自訂",
+      source: t("自訂"),
       custom: true
     };
 
@@ -102,7 +105,7 @@
     const hashIndex = text.indexOf("#pack=");
     const code = (hashIndex >= 0 ? text.slice(hashIndex + 6) : text).trim();
     if (!code.startsWith(CODE_PREFIX)) {
-      return { problems: [], dropped: 0, error: "這不是 BuzzCalculus 題包（代碼要以 BZP1. 開頭）。" };
+      return { problems: [], dropped: 0, error: t("這不是 BuzzCalculus 題包（代碼要以 BZP1. 開頭）。") };
     }
     try {
       const base64 = code.slice(CODE_PREFIX.length).replace(/-/g, "+").replace(/_/g, "/");
@@ -112,11 +115,11 @@
       const rawList = Array.isArray(payload && payload.problems) ? payload.problems : [];
       const problems = rawList.map(sanitize).filter(Boolean);
       if (!problems.length) {
-        return { problems: [], dropped: rawList.length, error: "代碼解得開，但裡面沒有格式合法的題目。" };
+        return { problems: [], dropped: rawList.length, error: t("代碼解得開，但裡面沒有格式合法的題目。") };
       }
       return { problems, dropped: rawList.length - problems.length, error: "" };
     } catch (_error) {
-      return { problems: [], dropped: 0, error: "代碼解不開，可能沒有複製完整。" };
+      return { problems: [], dropped: 0, error: t("代碼解不開，可能沒有複製完整。") };
     }
   }
 

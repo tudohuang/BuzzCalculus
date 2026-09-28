@@ -1,4 +1,4 @@
-const CACHE_NAME = "buzzcalculus-v1.2.1-2026-09-27-homeclean";
+const CACHE_NAME = "buzzcalculus-v1.2.1-2026-09-28-i18n";
 const CACHE_PREFIX = "buzzcalculus-";
 const APP_SHELL = [
   "./privacy.html",
@@ -91,6 +91,9 @@ const APP_SHELL = [
   "./src/kernel/ink_read.js",
   "./src/kernel/canned_hints.js",
   "./src/kernel/tag_labels.js",
+  "./src/kernel/i18n.js",
+  "./src/kernel/i18n_en.js",
+  "./src/kernel/i18n_problems_en.js",
   "./src/kernel/proof_lang.js",
   "./src/kernel/proof_surface.js",
   "./src/proof_lang_content.js",

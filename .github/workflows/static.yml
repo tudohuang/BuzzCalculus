@@ -51,7 +51,7 @@ jobs:
           validate_app_shell.js validate_version.js spec_snapshot.js validate_content_metadata.js
           validate_privacy.js validate_derived_hints.js validate_graph_choices.js validate_worksheets.js
           validate_katex.js validate_public_claims.js validate_hints.js validate_performance_budget.js
-          validate_proof_lang.js validate_proof_surface.js validate_course.js validate_golden.js validate_verify_paths.js validate_epsilon_game.js smoke_app_render.js verify_proof_claims.js
+          validate_proof_lang.js validate_proof_surface.js validate_course.js validate_golden.js validate_verify_paths.js validate_epsilon_game.js validate_i18n.js smoke_app_render.js verify_proof_claims.js
       - name: E2E main flow
         # 真的開一顆 Chrome、走完「開局 → 答題 → 結算 → 錯題進本」。
         # 這一步測的是其他驗證器看不到的那一層：東西有沒有**顯示出來**、
@@ -88,6 +88,10 @@ jobs:
         # 事件沒綁、座標換算 y 軸沒翻、touch-action 沒設（手機上一拖變捲頁）
         # 三種壞法在 DOM 裡看起來都完全正常。這一步派真的 pointer 事件進去。
         run: node tools/e2e_graph_interactive.js
+      - name: E2E English interface
+        # lang=en 之後每一頁看得見的字都不能是中文、題幹要換成英文側表、設定頁切回中文要 reload 回來。
+        # validate_i18n 在原始碼層擋漏包的字串；這一步抓的是「字典有、但 render 走了別條路」。
+        run: node tools/e2e_i18n.js
       - name: Verify answers independently
         # 這一步是題庫的品質底線：從題幹推出一條與解題無關的數值路徑，
         # 再跟答案比對。不符必須是零 —— spec 00 說得很直白，

@@ -96,6 +96,10 @@ async function launch(options = {}) {
     // 那是實際踩過的坑，headless 下也要明確關掉節流。
     "--disable-renderer-backgrounding",
     "--disable-backgrounding-occluded-windows",
+    // 語言層會看 navigator.language 決定第一次進站的語言；E2E 全部寫的是中文畫面，
+    // 所以把瀏覽器釘在 zh-TW（開發機的 Windows 常常是 en-US，沒釘住九支 E2E 會整批變英文）。
+    "--lang=zh-TW",
+    "--accept-lang=zh-TW,zh",
     "--window-size=1280,900"
   ];
 

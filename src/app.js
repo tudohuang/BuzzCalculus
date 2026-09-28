@@ -1,5 +1,8 @@
 (function () {
   "use strict";
+  // 語言層：t() 由 src/kernel/i18n.js 掛在 globalThis；node 的驗證器直接 require 這一支時沒有它，
+  // 就原樣印出（佔位符照填），所以每個模組都能單獨載入。
+  const t = typeof globalThis.t === "function" ? globalThis.t : (text, vars) => (vars ? String(text).replace(/\{(\w+)(?:\|[^}]*)?\}/g, (m, k) => (k in vars ? String(vars[k]) : m)) : text);
 
   const problems = window.BUZZ_PROBLEMS || [];
   const proofs = window.BUZZ_PROOFS || [];
@@ -10,11 +13,11 @@
   const answerSampling = window.BuzzAnswerSampling.create({ evaluateExpression, stripConstant, friendlyWrongHint });
 
   const TOPICS = {
-    all: { label: "全混合", short: "All", className: "", accent: "#f6b739" },
-    limits: { label: "極限", short: "Lim", className: "topic-limits", accent: "#f6b739" },
-    derivatives: { label: "微分", short: "Der", className: "topic-derivatives", accent: "#4ba8dd" },
-    integrals: { label: "積分", short: "Int", className: "topic-integrals", accent: "#9370d8" },
-    series: { label: "級數", short: "Ser", className: "topic-series", accent: "#31ad72" }
+    all: { label: t("全混合"), short: "All", className: "", accent: "#f6b739" },
+    limits: { label: t("極限"), short: "Lim", className: "topic-limits", accent: "#f6b739" },
+    derivatives: { label: t("微分"), short: "Der", className: "topic-derivatives", accent: "#4ba8dd" },
+    integrals: { label: t("積分"), short: "Int", className: "topic-integrals", accent: "#9370d8" },
+    series: { label: t("級數"), short: "Ser", className: "topic-series", accent: "#31ad72" }
   };
 
   // 2026-08：理科秒殺包（物理 90 + 化學 81）已從 BuzzCalculus 移除。
@@ -24,36 +27,36 @@
 
   const MODES = {
     quick: {
-      label: "快速訓練",
+      label: t("快速訓練"),
       bucket: "practice",
-      note: "12 題混合",
+      note: t("12 題混合"),
       count: 12,
       topicLocked: false,
       daily: false,
       boss: false
     },
     topic: {
-      label: "單題型訓練",
+      label: t("單題型訓練"),
       bucket: "practice",
-      note: "單主題 10 題",
+      note: t("單主題 10 題"),
       count: 10,
       topicLocked: true,
       daily: false,
       boss: false
     },
     daily: {
-      label: "每日挑戰",
+      label: t("每日挑戰"),
       bucket: "challenge",
-      note: "每日固定題組",
+      note: t("每日固定題組"),
       count: 12,
       topicLocked: false,
       daily: true,
       boss: false
     },
     practice: {
-      label: "練習模式",
+      label: t("練習模式"),
       bucket: "practice",
-      note: "不限時不扣分 12 題",
+      note: t("不限時不扣分 12 題"),
       count: 12,
       topicLocked: false,
       daily: false,
@@ -61,9 +64,9 @@
       practice: true
     },
     brutal: {
-      label: "進階訓練",
+      label: t("進階訓練"),
       bucket: "challenge",
-      note: "只抽難題 14 題",
+      note: t("只抽難題 14 題"),
       count: 14,
       topicLocked: false,
       daily: false,
@@ -74,9 +77,9 @@
       forceAnswerMode: "free"
     },
     boss: {
-      label: "階梯測驗",
+      label: t("階梯測驗"),
       bucket: "challenge",
-      note: "由易到難 16 題",
+      note: t("由易到難 16 題"),
       count: 16,
       topicLocked: false,
       daily: false,
@@ -85,9 +88,9 @@
       forceAnswerMode: "free"
     },
     boss_rush: {
-      label: "Boss 連戰",
+      label: t("Boss 連戰"),
       bucket: "challenge",
-      note: "Boss 題連戰，錯一題就結算",
+      note: t("Boss 題連戰，錯一題就結算"),
       count: 10,
       topicLocked: false,
       daily: false,
@@ -96,18 +99,18 @@
       forceAnswerMode: "free"
     },
     daily_one: {
-      label: "每日一題",
+      label: t("每日一題"),
       bucket: "challenge",
-      note: "全站同一題，一天一次",
+      note: t("全站同一題，一天一次"),
       count: 1,
       topicLocked: false,
       daily: false,
       boss: false
     },
     exam: {
-      label: "大考模式",
+      label: t("大考模式"),
       bucket: "exam",
-      note: "20 題 / 45 分鐘，整份倒數，自己輸入答案",
+      note: t("20 題 / 45 分鐘，整份倒數，自己輸入答案"),
       count: 20,
       topicLocked: false,
       daily: false,
@@ -124,7 +127,7 @@
       bucket: "challenge",
       hidden: true, // 2026-09-16 挑戰分頁收斂成四種（進階／階梯／Boss 連戰／生存）；定義留著給舊紀錄
 
-      note: "積分速度訓練 12 題",
+      note: t("積分速度訓練 12 題"),
       count: 12,
       topicLocked: false,
       daily: false,
@@ -132,9 +135,9 @@
       integralBee: true
     },
     no_hint: {
-      label: "無提示",
+      label: t("無提示"),
       bucket: "practice",
-      note: "無提示計分挑戰",
+      note: t("無提示計分挑戰"),
       count: 12,
       topicLocked: false,
       daily: false,
@@ -142,10 +145,10 @@
       noHint: true
     },
     accuracy: {
-      label: "正確率",
+      label: t("正確率"),
       bucket: "challenge",
       hidden: true,
-      note: "不限時，錯題重罰",
+      note: t("不限時，錯題重罰"),
       count: 12,
       topicLocked: false,
       daily: false,
@@ -154,9 +157,9 @@
       accuracyMode: true
     },
     survival: {
-      label: "生存",
+      label: t("生存"),
       bucket: "challenge",
-      note: "最多錯 3 題",
+      note: t("最多錯 3 題"),
       count: 30,
       topicLocked: false,
       daily: false,
@@ -164,10 +167,10 @@
       survival: true
     },
     pressure: {
-      label: "壓力訓練",
+      label: t("壓力訓練"),
       bucket: "challenge",
       hidden: true,
-      note: "計時逐題縮短，練「會但來不及」",
+      note: t("計時逐題縮短，練「會但來不及」"),
       count: 10,
       topicLocked: false,
       daily: false,
@@ -177,7 +180,7 @@
     warmup: {
       label: "Warm-up",
       bucket: "practice",
-      note: "入場暖身 5 題",
+      note: t("入場暖身 5 題"),
       count: 5,
       topicLocked: false,
       daily: false,
@@ -187,7 +190,7 @@
     cooldown: {
       label: "Cooldown",
       bucket: "practice",
-      note: "收操複習，不計分",
+      note: t("收操複習，不計分"),
       count: 5,
       topicLocked: false,
       daily: false,
@@ -196,9 +199,9 @@
       cooldown: true
     },
     mistakes: {
-      label: "錯題重練",
+      label: t("錯題重練"),
       bucket: "weakness",
-      note: "錯題重練",
+      note: t("錯題重練"),
       count: 12,
       topicLocked: false,
       daily: false,
@@ -206,9 +209,9 @@
       hidden: true
     },
     placement: {
-      label: "定位測驗",
+      label: t("定位測驗"),
       bucket: "practice",
-      note: "8 題調適定位，約 5 分鐘",
+      note: t("8 題調適定位，約 5 分鐘"),
       count: 8,
       topicLocked: false,
       daily: false,
@@ -219,64 +222,64 @@
 
   const ANSWER_MODES = {
     choice: {
-      label: "選擇題",
-      note: "四選一，點選即作答"
+      label: t("選擇題"),
+      note: t("四選一，點選即作答")
     },
     free: {
-      label: "自己寫",
-      note: "答案欄 + 算式預覽 + 手寫計算紙"
+      label: t("自己寫"),
+      note: t("答案欄 + 算式預覽 + 手寫計算紙")
     }
   };
 
   const TRAINING_PACKS = {
     // 題包 key 不進 records（只在程式裡），2026-09-15 連 key 一起去掉名校字樣。
-    burst: { label: "高速反射", note: "R6 難題限時速決：分部、Wallis、高階導數", tags: ["burst"] },
-    nightmare_boss: { label: "終極挑戰", note: "R6 最難題：硬派數分 / 理論型 / 長鏈推導", tags: ["true-boss"] },
-    world_universities: { label: "國際難題", note: "R1–R6 全跨度，由易到爆難", tags: ["world-universities"] },
-    competition: { label: "競賽難題", note: "競賽級：硬微分 / 應用難題（R4-6）", tags: ["competition"] },
-    longform: { label: "長題挑戰", note: "競賽風格長題：漸近 / 難積分 / 難級數（R4-6）", tags: ["longform"] },
-    putnam: { label: "競賽經典", note: "競賽風格經典題型（R4-6）", tags: ["putnam"] },
-    all: { label: "不限題包", note: "整個題庫，什麼技巧都可能出現", tags: [] },
-    beginner_warmup: { label: "新手暖身", note: "R1–R2 的基礎題，先把手感打開", tags: ["beginner-friendly"] },
-    boss_challenge: { label: "Boss 挑戰", note: "R5–R6 的硬題，一題要想很久", tags: ["boss-rank"] },
-    exam_style: { label: "大考題感", note: "轉學考 / 免修 / 段考式混合題", tags: ["exam-style"] },
-    exam_depth: { label: "大考深水區", note: "R5–R6 多步驟的混合題", tags: ["exam-depth"] },
-    multivariable: { label: "多變數", note: "極限 / 偏導 / 二重積分", tags: ["multivariable"] },
-    taylor: { label: "Taylor 展開", note: "展開式、係數、餘項與誤差", tags: ["taylor", "coefficient"] },
-    chain: { label: "鏈鎖律", note: "一元與偏導鏈鎖律", tags: ["chain-rule"] },
-    substitution: { label: "換元積分", note: "u 代換與座標換元", tags: ["substitution", "polar-coordinates"] },
-    trig_substitution: { label: "三角代換", note: "根式與反三角型", tags: ["trig-substitution"] },
-    integration_by_parts: { label: "分部積分", note: "u 與 dv 怎麼選，還有循環型", tags: ["integration-by-parts", "ibp"] },
-    partial_fraction: { label: "部分分式", note: "有理函數拆成好積的幾塊", tags: ["partial-fraction"] },
-    ode_style: { label: "卷積與參數積分", note: "把積分當成方程來解", tags: ["ode-style", "convolution", "parameter-integral"] },
-    kings_property: { label: "對稱積分", note: "把 x 換成 a−x 就解開（King's property）", tags: ["kings-property"] },
-    double_integral: { label: "二重積分", note: "區域 / 換序 / 極座標", tags: ["double-integral", "polar-coordinates"] },
-    multi_integral_advanced: { label: "多重積分進階", note: "三重積分、變數變換", tags: ["triple-integral", "change-of-variables"] },
-    frullani: { label: "Frullani 公式", note: "∫(f(ax)−f(bx))/x 型的廣義積分", tags: ["frullani"] },
-    total_differential: { label: "全微分與估計", note: "微小變化量的估算", tags: ["total-differential", "total-differential-min"] },
-    hessian: { label: "Hessian 判別", note: "多變數的二階導數判極值", tags: ["hessian"] },
-    wronskian: { label: "Wronskian 判別", note: "幾個解是不是線性獨立", tags: ["wronskian"] },
-    jacobian_chain: { label: "Jacobian 與合成映射", note: "換變數的伸縮倍率", tags: ["jacobian-chain", "jacobian"] },
-    parametric_polar: { label: "參數式與極座標", note: "參數微分、極座標面積", tags: ["parametric", "polar-curve"] },
-    applications: { label: "微分應用", note: "相關變率 / 最佳化 / 隱微分 / 曲率", tags: ["related-rates", "tangent-normal", "linear-approximation", "newton-method", "curvature", "optimization", "implicit-differentiation"] },
-    classic_theory: { label: "經典定理與觀念", note: "L'Hôpital、均值定理、連續性、曲線分析", tags: ["lhopital", "mvt", "rolle", "continuity", "ivt", "concavity", "inflection", "asymptote", "squeeze"] },
-    vector_theorems: { label: "向量三大定理", note: "Green、Stokes、散度定理", tags: ["line-integral", "green-theorem", "stokes-theorem", "divergence-theorem", "surface-integral", "flux", "conservative-field"] },
-    integral_applications: { label: "積分應用", note: "弧長 / 旋轉體 / 平均值 / Riemann 和", tags: ["arc-length", "solid-of-revolution", "surface-area", "average-value", "riemann-sum", "area"] },
-    sequences: { label: "數列與遞迴", note: "數列極限、遞迴式、夾擠", tags: ["sequence", "recursive"] },
-    applied_story: { label: "應用情境", note: "運動、冷卻、做功、濃度、邊際", tags: ["story-problem"] },
-    graph_reading: { label: "看圖作答", note: "面積、極值、反曲點、累積函數", tags: ["graph-reading"] },
-    complex: { label: "複變基礎", note: "Cauchy–Riemann、留數、調和函數", tags: ["complex"] },
-    ode_intro: { label: "ODE 入門", note: "一階 / 二階基本方程", tags: ["ode-intro"] },
-    series_test: { label: "級數判別法", note: "比值、積分、p 級數三大判別", tags: ["ratio-test", "root-test", "integral-test", "p-series", "alternating-series", "comparison"] },
-    power_series: { label: "冪級數", note: "半徑與 Taylor 係數", tags: ["power-series", "radius", "taylor", "coefficient"] },
-    endpoint_root: { label: "端點與根值判別", note: "收斂區間的兩個端點要分開驗", tags: ["endpoint-analysis", "root-test", "limit-comparison"] },
-    technique_recognition: { label: "技巧辨識", note: "不用算完：先判斷該用哪個工具", tags: ["technique-recognition"] },
-    mobile_sprint: { label: "零碎時間速練", note: "一題十秒：判型、陷阱、基本極限", tags: ["technique-sprint", "trap-drill", "limit-trap"] },
-    lagrange_multiplier: { label: "拉格朗日乘數", note: "有約束條件的最大最小值", tags: ["lagrange-multiplier"] },
-    convergence_tests: { label: "審斂總複習", note: "所有判別法混在一起考", tags: ["convergence-test", "endpoint-analysis", "root-test", "limit-comparison"] },
-    special_functions: { label: "特殊函數", note: "Beta、Gamma、Wallis、Bessel", tags: ["beta-function", "gamma-function", "wallis", "bessel"] },
-    nabla_vector: { label: "向量微分算子", note: "梯度、散度、旋度、拉普拉斯", tags: ["nabla", "vector-calculus"] },
-    analysis_intro: { label: "分析學入門", note: "確界、ε-δ、一致連續、達布和", tags: ["analysis"] },
+    burst: { label: t("高速反射"), note: t("R6 難題限時速決：分部、Wallis、高階導數"), tags: ["burst"] },
+    nightmare_boss: { label: t("終極挑戰"), note: t("R6 最難題：硬派數分 / 理論型 / 長鏈推導"), tags: ["true-boss"] },
+    world_universities: { label: t("國際難題"), note: t("R1–R6 全跨度，由易到爆難"), tags: ["world-universities"] },
+    competition: { label: t("競賽難題"), note: t("競賽級：硬微分 / 應用難題（R4-6）"), tags: ["competition"] },
+    longform: { label: t("長題挑戰"), note: t("競賽風格長題：漸近 / 難積分 / 難級數（R4-6）"), tags: ["longform"] },
+    putnam: { label: t("競賽經典"), note: t("競賽風格經典題型（R4-6）"), tags: ["putnam"] },
+    all: { label: t("不限題包"), note: t("整個題庫，什麼技巧都可能出現"), tags: [] },
+    beginner_warmup: { label: t("新手暖身"), note: t("R1–R2 的基礎題，先把手感打開"), tags: ["beginner-friendly"] },
+    boss_challenge: { label: t("Boss 挑戰"), note: t("R5–R6 的硬題，一題要想很久"), tags: ["boss-rank"] },
+    exam_style: { label: t("大考題感"), note: t("轉學考 / 免修 / 段考式混合題"), tags: ["exam-style"] },
+    exam_depth: { label: t("大考深水區"), note: t("R5–R6 多步驟的混合題"), tags: ["exam-depth"] },
+    multivariable: { label: t("多變數"), note: t("極限 / 偏導 / 二重積分"), tags: ["multivariable"] },
+    taylor: { label: t("Taylor 展開"), note: t("展開式、係數、餘項與誤差"), tags: ["taylor", "coefficient"] },
+    chain: { label: t("鏈鎖律"), note: t("一元與偏導鏈鎖律"), tags: ["chain-rule"] },
+    substitution: { label: t("換元積分"), note: t("u 代換與座標換元"), tags: ["substitution", "polar-coordinates"] },
+    trig_substitution: { label: t("三角代換"), note: t("根式與反三角型"), tags: ["trig-substitution"] },
+    integration_by_parts: { label: t("分部積分"), note: t("u 與 dv 怎麼選，還有循環型"), tags: ["integration-by-parts", "ibp"] },
+    partial_fraction: { label: t("部分分式"), note: t("有理函數拆成好積的幾塊"), tags: ["partial-fraction"] },
+    ode_style: { label: t("卷積與參數積分"), note: t("把積分當成方程來解"), tags: ["ode-style", "convolution", "parameter-integral"] },
+    kings_property: { label: t("對稱積分"), note: t("把 x 換成 a−x 就解開（King's property）"), tags: ["kings-property"] },
+    double_integral: { label: t("二重積分"), note: t("區域 / 換序 / 極座標"), tags: ["double-integral", "polar-coordinates"] },
+    multi_integral_advanced: { label: t("多重積分進階"), note: t("三重積分、變數變換"), tags: ["triple-integral", "change-of-variables"] },
+    frullani: { label: t("Frullani 公式"), note: t("∫(f(ax)−f(bx))/x 型的廣義積分"), tags: ["frullani"] },
+    total_differential: { label: t("全微分與估計"), note: t("微小變化量的估算"), tags: ["total-differential", "total-differential-min"] },
+    hessian: { label: t("Hessian 判別"), note: t("多變數的二階導數判極值"), tags: ["hessian"] },
+    wronskian: { label: t("Wronskian 判別"), note: t("幾個解是不是線性獨立"), tags: ["wronskian"] },
+    jacobian_chain: { label: t("Jacobian 與合成映射"), note: t("換變數的伸縮倍率"), tags: ["jacobian-chain", "jacobian"] },
+    parametric_polar: { label: t("參數式與極座標"), note: t("參數微分、極座標面積"), tags: ["parametric", "polar-curve"] },
+    applications: { label: t("微分應用"), note: t("相關變率 / 最佳化 / 隱微分 / 曲率"), tags: ["related-rates", "tangent-normal", "linear-approximation", "newton-method", "curvature", "optimization", "implicit-differentiation"] },
+    classic_theory: { label: t("經典定理與觀念"), note: t("L'Hôpital、均值定理、連續性、曲線分析"), tags: ["lhopital", "mvt", "rolle", "continuity", "ivt", "concavity", "inflection", "asymptote", "squeeze"] },
+    vector_theorems: { label: t("向量三大定理"), note: t("Green、Stokes、散度定理"), tags: ["line-integral", "green-theorem", "stokes-theorem", "divergence-theorem", "surface-integral", "flux", "conservative-field"] },
+    integral_applications: { label: t("積分應用"), note: t("弧長 / 旋轉體 / 平均值 / Riemann 和"), tags: ["arc-length", "solid-of-revolution", "surface-area", "average-value", "riemann-sum", "area"] },
+    sequences: { label: t("數列與遞迴"), note: t("數列極限、遞迴式、夾擠"), tags: ["sequence", "recursive"] },
+    applied_story: { label: t("應用情境"), note: t("運動、冷卻、做功、濃度、邊際"), tags: ["story-problem"] },
+    graph_reading: { label: t("看圖作答"), note: t("面積、極值、反曲點、累積函數"), tags: ["graph-reading"] },
+    complex: { label: t("複變基礎"), note: t("Cauchy–Riemann、留數、調和函數"), tags: ["complex"] },
+    ode_intro: { label: t("ODE 入門"), note: t("一階 / 二階基本方程"), tags: ["ode-intro"] },
+    series_test: { label: t("級數判別法"), note: t("比值、積分、p 級數三大判別"), tags: ["ratio-test", "root-test", "integral-test", "p-series", "alternating-series", "comparison"] },
+    power_series: { label: t("冪級數"), note: t("半徑與 Taylor 係數"), tags: ["power-series", "radius", "taylor", "coefficient"] },
+    endpoint_root: { label: t("端點與根值判別"), note: t("收斂區間的兩個端點要分開驗"), tags: ["endpoint-analysis", "root-test", "limit-comparison"] },
+    technique_recognition: { label: t("技巧辨識"), note: t("不用算完：先判斷該用哪個工具"), tags: ["technique-recognition"] },
+    mobile_sprint: { label: t("零碎時間速練"), note: t("一題十秒：判型、陷阱、基本極限"), tags: ["technique-sprint", "trap-drill", "limit-trap"] },
+    lagrange_multiplier: { label: t("拉格朗日乘數"), note: t("有約束條件的最大最小值"), tags: ["lagrange-multiplier"] },
+    convergence_tests: { label: t("審斂總複習"), note: t("所有判別法混在一起考"), tags: ["convergence-test", "endpoint-analysis", "root-test", "limit-comparison"] },
+    special_functions: { label: t("特殊函數"), note: "Beta、Gamma、Wallis、Bessel", tags: ["beta-function", "gamma-function", "wallis", "bessel"] },
+    nabla_vector: { label: t("向量微分算子"), note: t("梯度、散度、旋度、拉普拉斯"), tags: ["nabla", "vector-calculus"] },
+    analysis_intro: { label: t("分析學入門"), note: t("確界、ε-δ、一致連續、達布和"), tags: ["analysis"] },
   };
 
   // 題包的分組。這一版（2026-09-25）按**學期順序**排，不再按「常用／其他」分 ——
@@ -284,82 +287,82 @@
   // 使用者要找「級數判別」得先猜它被歸到哪一類。
   // 三條規則：一包只屬於一組、一組最多十包（一眼掃得完）、組名是課本章節而不是產品用語。
   const PACK_GROUPS = [
-    { label: "先從這裡開始", note: "還不確定練什麼就挑這一排", keys: ["all", "beginner_warmup", "technique_recognition", "graph_reading", "applied_story"] },
-    { label: "極限與連續", note: "數列、定理、嚴格定義", keys: ["sequences", "classic_theory", "analysis_intro"] },
-    { label: "微分", note: "鏈鎖律到應用題", keys: ["chain", "applications", "parametric_polar", "total_differential"] },
-    { label: "積分技巧", note: "看到式子要用哪一招", keys: ["substitution", "integration_by_parts", "partial_fraction", "trig_substitution", "kings_property", "frullani", "ode_style"] },
-    { label: "積分應用與重積分", note: "算面積、體積、平均值", keys: ["integral_applications", "double_integral", "multi_integral_advanced"] },
-    { label: "級數", note: "判別、展開、冪級數", keys: ["series_test", "convergence_tests", "endpoint_root", "taylor", "power_series", "special_functions"] },
-    { label: "多變數與向量", note: "偏導、極值、三大定理", keys: ["multivariable", "hessian", "lagrange_multiplier", "jacobian_chain", "nabla_vector", "vector_theorems"] },
-    { label: "微分方程與複變", note: "大二會用到的那兩塊", keys: ["ode_intro", "wronskian", "complex"] },
-    { label: "考試與挑戰", note: "考前衝刺與硬題", keys: ["exam_style", "exam_depth", "mobile_sprint", "boss_challenge", "burst", "nightmare_boss", "competition", "longform", "putnam", "world_universities"] }
+    { label: t("先從這裡開始"), note: t("還不確定練什麼就挑這一排"), keys: ["all", "beginner_warmup", "technique_recognition", "graph_reading", "applied_story"] },
+    { label: t("極限與連續"), note: t("數列、定理、嚴格定義"), keys: ["sequences", "classic_theory", "analysis_intro"] },
+    { label: t("微分"), note: t("鏈鎖律到應用題"), keys: ["chain", "applications", "parametric_polar", "total_differential"] },
+    { label: t("積分技巧"), note: t("看到式子要用哪一招"), keys: ["substitution", "integration_by_parts", "partial_fraction", "trig_substitution", "kings_property", "frullani", "ode_style"] },
+    { label: t("積分應用與重積分"), note: t("算面積、體積、平均值"), keys: ["integral_applications", "double_integral", "multi_integral_advanced"] },
+    { label: t("級數"), note: t("判別、展開、冪級數"), keys: ["series_test", "convergence_tests", "endpoint_root", "taylor", "power_series", "special_functions"] },
+    { label: t("多變數與向量"), note: t("偏導、極值、三大定理"), keys: ["multivariable", "hessian", "lagrange_multiplier", "jacobian_chain", "nabla_vector", "vector_theorems"] },
+    { label: t("微分方程與複變"), note: t("大二會用到的那兩塊"), keys: ["ode_intro", "wronskian", "complex"] },
+    { label: t("考試與挑戰"), note: t("考前衝刺與硬題"), keys: ["exam_style", "exam_depth", "mobile_sprint", "boss_challenge", "burst", "nightmare_boss", "competition", "longform", "putnam", "world_universities"] }
   ];
 
   const PATH_NODES = [
-    { id: "onevar_limit", label: "單變極限", short: "極限", note: "先練標準極限、Taylor、化簡", topic: "limits", mode: "quick", icon: "zap", target: 16, maxRank: 3, excludeTags: ["multivariable", "path-test"] },
+    { id: "onevar_limit", label: t("單變極限"), short: t("極限"), note: t("先練標準極限、Taylor、化簡"), topic: "limits", mode: "quick", icon: "zap", target: 16, maxRank: 3, excludeTags: ["multivariable", "path-test"] },
     // special-functions / bessel：英文知識問答（「Bessel 函數出現在哪類
     // ODE 之後？」）不是微分／積分的手感訓練，實測混進基礎主線只會
     // 讓人一頭霧水 —— 它們留在技巧包與 Boss 池就好。
-    { id: "onevar_diff", label: "單變微分", short: "微分", note: "乘除、鏈鎖、隱微分與 log 微分", topic: "derivatives", mode: "quick", icon: "git-branch", target: 16, maxRank: 3, excludeTags: ["multivariable", "hessian", "jacobian", "wronskian", "nabla", "vector-calculus", "complex", "special-functions", "bessel"] },
-    { id: "basic_integral", label: "基礎積分", short: "積分", note: "先把基本反導數和定積分節奏打穩", topic: "integrals", mode: "quick", icon: "play", target: 16, maxRank: 3, excludeTags: ["frullani", "ode-style", "trig-substitution", "kings-property", "triple-integral", "change-of-variables", "special-functions", "bessel"] },
-    { id: "usub", label: "U-sub 換元", short: "U-sub", note: "看到內外層就要反射換元", pack: "substitution", topic: "integrals", mode: "quick", icon: "shuffle", target: 14 },
-    { id: "ibp", label: "分部積分", short: "IBP", note: "判斷誰微分、誰積分", pack: "integration_by_parts", topic: "integrals", mode: "quick", icon: "repeat", target: 12 },
-    { id: "integral_tools", label: "技巧積分", short: "技巧", note: "Partial fraction、三角代換、King's、Frullani", topic: "integrals", mode: "quick", icon: "target", target: 18, includeTags: ["partial-fraction", "trig-substitution", "kings-property", "frullani", "ode-style", "improper-integral"] },
-    { id: "series", label: "級數與審斂", short: "級數", note: "比值、根值、比較、端點分析", topic: "series", mode: "quick", icon: "list-checks", target: 18 },
-    { id: "multivariable", label: "多變數", short: "多變", note: "多變極限、偏導、二重積分", pack: "multivariable", mode: "quick", icon: "boxes", target: 18 },
-    { id: "advanced_tools", label: "進階工具", short: "進階", note: "Hessian、Jacobian、LM、Nabla、複變", mode: "quick", icon: "wrench", target: 18, includeTags: ["hessian", "jacobian-chain", "lagrange-multiplier", "nabla", "vector-calculus", "complex", "total-differential"] },
-    { id: "boss", label: "Boss 挑戰", short: "Boss", note: "R5-R6 防強人題，可直接挑戰", pack: "boss_challenge", mode: "boss", icon: "trophy", target: 20, boss: true }
+    { id: "onevar_diff", label: t("單變微分"), short: t("微分"), note: t("乘除、鏈鎖、隱微分與 log 微分"), topic: "derivatives", mode: "quick", icon: "git-branch", target: 16, maxRank: 3, excludeTags: ["multivariable", "hessian", "jacobian", "wronskian", "nabla", "vector-calculus", "complex", "special-functions", "bessel"] },
+    { id: "basic_integral", label: t("基礎積分"), short: t("積分"), note: t("先把基本反導數和定積分節奏打穩"), topic: "integrals", mode: "quick", icon: "play", target: 16, maxRank: 3, excludeTags: ["frullani", "ode-style", "trig-substitution", "kings-property", "triple-integral", "change-of-variables", "special-functions", "bessel"] },
+    { id: "usub", label: t("U-sub 換元"), short: "U-sub", note: t("看到內外層就要反射換元"), pack: "substitution", topic: "integrals", mode: "quick", icon: "shuffle", target: 14 },
+    { id: "ibp", label: t("分部積分"), short: "IBP", note: t("判斷誰微分、誰積分"), pack: "integration_by_parts", topic: "integrals", mode: "quick", icon: "repeat", target: 12 },
+    { id: "integral_tools", label: t("技巧積分"), short: t("技巧"), note: t("Partial fraction、三角代換、King's、Frullani"), topic: "integrals", mode: "quick", icon: "target", target: 18, includeTags: ["partial-fraction", "trig-substitution", "kings-property", "frullani", "ode-style", "improper-integral"] },
+    { id: "series", label: t("級數與審斂"), short: t("級數"), note: t("比值、根值、比較、端點分析"), topic: "series", mode: "quick", icon: "list-checks", target: 18 },
+    { id: "multivariable", label: t("多變數"), short: t("多變"), note: t("多變極限、偏導、二重積分"), pack: "multivariable", mode: "quick", icon: "boxes", target: 18 },
+    { id: "advanced_tools", label: t("進階工具"), short: t("進階"), note: t("Hessian、Jacobian、LM、Nabla、複變"), mode: "quick", icon: "wrench", target: 18, includeTags: ["hessian", "jacobian-chain", "lagrange-multiplier", "nabla", "vector-calculus", "complex", "total-differential"] },
+    { id: "boss", label: t("Boss 挑戰"), short: "Boss", note: t("R5-R6 防強人題，可直接挑戰"), pack: "boss_challenge", mode: "boss", icon: "trophy", target: 20, boss: true }
   ];
 
   const PATH_LESSONS = {
     onevar_limit: {
-      focus: "先判斷能不能直接代入；不行再看化簡、標準極限或 Taylor。",
-      bullets: ["0/0 通常先因式分解、約分或有理化。", "sin x / x、(1-cos x)/x^2、log(1+x) 是高頻核心。", "高階小量相減時，Taylor 通常最快。"],
+      focus: t("先判斷能不能直接代入；不行再看化簡、標準極限或 Taylor。"),
+      bullets: [t("0/0 通常先因式分解、約分或有理化。"), t("sin x / x、(1-cos x)/x^2、log(1+x) 是高頻核心。"), t("高階小量相減時，Taylor 通常最快。")],
       example: "\\lim_{x\\to 0}\\frac{\\sin x}{x}=1"
     },
     onevar_diff: {
-      focus: "單變微分的重點是先看外層，再處理內層。",
-      bullets: ["乘積、商數、鏈鎖律要先判型。", "log 微分適合冪次、乘除混合的式子。", "隱微分時 y 是 y(x)，微分 y 要補 y'。"],
+      focus: t("單變微分的重點是先看外層，再處理內層。"),
+      bullets: [t("乘積、商數、鏈鎖律要先判型。"), t("log 微分適合冪次、乘除混合的式子。"), t("隱微分時 y 是 y(x)，微分 y 要補 y'。")],
       example: "\\frac{d}{dx}\\sin(x^2)=2x\\cos(x^2)"
     },
     basic_integral: {
-      focus: "基礎積分先反向看微分表，不急著套高級技巧。",
-      bullets: ["冪次、指數、三角函數先用基本表。", "定積分要注意上下限與對稱。", "答案差一個常數仍是同一個不定積分。"],
+      focus: t("基礎積分先反向看微分表，不急著套高級技巧。"),
+      bullets: [t("冪次、指數、三角函數先用基本表。"), t("定積分要注意上下限與對稱。"), t("答案差一個常數仍是同一個不定積分。")],
       example: "\\int x^n\\,dx=\\frac{x^{n+1}}{n+1}+C"
     },
     usub: {
-      focus: "看到內函數和它的導數同時出現，就先想 U-sub。",
-      bullets: ["先找最複雜的內層當 u。", "du 要能吃掉剩下的因子。", "定積分換元後上下限也要一起換。"],
+      focus: t("看到內函數和它的導數同時出現，就先想 U-sub。"),
+      bullets: [t("先找最複雜的內層當 u。"), t("du 要能吃掉剩下的因子。"), t("定積分換元後上下限也要一起換。")],
       example: "\\int x e^{x^2}\\,dx"
     },
     ibp: {
-      focus: "分部積分用在一個因子會變簡單、另一個因子容易積的情況。",
-      bullets: ["常見選擇：log、反三角、x^n 優先微分。", "e^x、sin x、cos x 通常拿去積分。", "循環分部時要把原積分移回同一邊。"],
+      focus: t("分部積分用在一個因子會變簡單、另一個因子容易積的情況。"),
+      bullets: [t("常見選擇：log、反三角、x^n 優先微分。"), t("e^x、sin x、cos x 通常拿去積分。"), t("循環分部時要把原積分移回同一邊。")],
       example: "\\int x e^x\\,dx"
     },
     integral_tools: {
-      focus: "技巧積分先判形狀，再選工具，不要硬算。",
-      bullets: ["有理函數先想 partial fraction。", "根式 a^2-x^2、x^2+a^2 常對應三角代換。", "對稱定積分、Frullani、廣義積分要先看條件。"],
+      focus: t("技巧積分先判形狀，再選工具，不要硬算。"),
+      bullets: [t("有理函數先想 partial fraction。"), t("根式 a^2-x^2、x^2+a^2 常對應三角代換。"), t("對稱定積分、Frullani、廣義積分要先看條件。")],
       example: "\\int \\frac{1}{x^2-1}\\,dx"
     },
     series: {
-      focus: "級數先做快速排除，再選審斂法。",
-      bullets: ["第 n 項不趨近 0，直接發散。", "p-series、幾何級數先認出來。", "冪級數半徑用 ratio/root，端點要另外檢查。"],
+      focus: t("級數先做快速排除，再選審斂法。"),
+      bullets: [t("第 n 項不趨近 0，直接發散。"), t("p-series、幾何級數先認出來。"), t("冪級數半徑用 ratio/root，端點要另外檢查。")],
       example: "\\sum_{n=1}^{\\infty}\\frac{1}{n^p}"
     },
     multivariable: {
-      focus: "多變數先分清楚：極限看路徑，偏導固定其他變數，積分看區域。",
-      bullets: ["多變極限常用路徑測試或極座標。", "偏導時其他變數先當常數。", "二重積分先畫區域，再決定是否換序或換座標。"],
+      focus: t("多變數先分清楚：極限看路徑，偏導固定其他變數，積分看區域。"),
+      bullets: [t("多變極限常用路徑測試或極座標。"), t("偏導時其他變數先當常數。"), t("二重積分先畫區域，再決定是否換序或換座標。")],
       example: "\\lim_{(x,y)\\to(0,0)}\\frac{xy}{x^2+y^2}"
     },
     advanced_tools: {
-      focus: "進階工具不是硬算，是先辨識結構。",
-      bullets: ["Hessian 用來判斷多變數極值。", "Jacobian 負責變數變換的面積倍率。", "LM、Nabla、複變題先判定使用哪個框架。"],
+      focus: t("進階工具不是硬算，是先辨識結構。"),
+      bullets: [t("Hessian 用來判斷多變數極值。"), t("Jacobian 負責變數變換的面積倍率。"), t("LM、Nabla、複變題先判定使用哪個框架。")],
       example: "\\det\\frac{\\partial(u,v)}{\\partial(x,y)}"
     },
     boss: {
-      focus: "Boss 題混合多種技巧，第一步永遠是判型。",
-      bullets: ["先判斷題目屬於極限、微分、積分、級數或多變數。", "看到特殊結構先想工具，不要直接展開硬算。", "速度來自少走錯路，不只是算得快。"],
+      focus: t("Boss 題混合多種技巧，第一步永遠是判型。"),
+      bullets: [t("先判斷題目屬於極限、微分、積分、級數或多變數。"), t("看到特殊結構先想工具，不要直接展開硬算。"), t("速度來自少走錯路，不只是算得快。")],
       example: "\\text{identify the tool first}"
     }
   };
@@ -451,9 +454,9 @@
   // 所以 scope 是主題清單，兩張卷的難度區間一樣寬；要整學期一起複習的人走「全範圍」。
   const NAMED_EXAMS = {
     midterm: {
-      label: "期中模擬",
-      note: "60 分鐘 · 12 題 · 範圍：極限與連續、導數與微分應用",
-      scopeNote: "不含積分技巧、級數與多變數",
+      label: t("期中模擬"),
+      note: t("60 分鐘 · 12 題 · 範圍：極限與連續、導數與微分應用"),
+      scopeNote: t("不含積分技巧、級數與多變數"),
       count: 12,
       durationSec: 60 * 60,
       topics: ["limits", "derivatives"],
@@ -463,9 +466,9 @@
       singleVariable: true
     },
     final: {
-      label: "期末模擬",
-      note: "90 分鐘 · 15 題 · 範圍：積分與其應用、級數",
-      scopeNote: "期中之後的章節；想整學期一起複習就考全範圍",
+      label: t("期末模擬"),
+      note: t("90 分鐘 · 15 題 · 範圍：積分與其應用、級數"),
+      scopeNote: t("期中之後的章節；想整學期一起複習就考全範圍"),
       count: 15,
       durationSec: 90 * 60,
       topics: ["integrals", "series"],
@@ -474,9 +477,9 @@
       maxRank: 5
     },
     full_term: {
-      label: "全範圍總複習",
-      note: "90 分鐘 · 15 題 · 範圍：整學期（極限到級數）",
-      scopeNote: "期中期末混在一起，考前一週用這張",
+      label: t("全範圍總複習"),
+      note: t("90 分鐘 · 15 題 · 範圍：整學期（極限到級數）"),
+      scopeNote: t("期中期末混在一起，考前一週用這張"),
       count: 15,
       durationSec: 90 * 60,
       topics: ["limits", "derivatives", "integrals", "series"],
@@ -485,8 +488,8 @@
       maxRank: 5
     },
     transfer: {
-      label: "轉學考風格",
-      note: "90 分鐘 · 15 題 · R3-R6 · 大考題感",
+      label: t("轉學考風格"),
+      note: t("90 分鐘 · 15 題 · R3-R6 · 大考題感"),
       count: 15,
       durationSec: 90 * 60,
       minRank: 3,
@@ -495,8 +498,8 @@
       preferTags: ["transfer-exam", "exam-style"]
     },
     integral_bee: {
-      label: "Integral Bee 快篩",
-      note: "20 分鐘 · 10 題 · 積分 R4-R6",
+      label: t("Integral Bee 快篩"),
+      note: t("20 分鐘 · 10 題 · 積分 R4-R6"),
       count: 10,
       durationSec: 20 * 60,
       minRank: 4,
@@ -507,8 +510,8 @@
     // 2026-09 擴充：免修考與段考各有自己的節奏 —— 免修考偏難偏廣，
     // 段考短而基本。用既有的 preferTags 機制，不動抽卷邏輯。
     exemption: {
-      label: "免修考風格",
-      note: "60 分鐘 · 12 題 · R3-R6 · 免修/檢定題感",
+      label: t("免修考風格"),
+      note: t("60 分鐘 · 12 題 · R3-R6 · 免修/檢定題感"),
       count: 12,
       durationSec: 60 * 60,
       minRank: 3,
@@ -517,9 +520,9 @@
       preferTags: ["proficiency-exam", "university-exam-style"]
     },
     quiz_sprint: {
-      label: "小考節奏",
-      note: "45 分鐘 · 10 題 · 範圍不限 · 練整份卷的節奏",
-      scopeNote: "要指定範圍就考期中或期末那兩張",
+      label: t("小考節奏"),
+      note: t("45 分鐘 · 10 題 · 範圍不限 · 練整份卷的節奏"),
+      scopeNote: t("要指定範圍就考期中或期末那兩張"),
       count: 10,
       durationSec: 45 * 60,
       group: "style",
@@ -539,46 +542,46 @@
   // 蓋住的正是剛剛寫滿算式的計算紙。
   // 鍵盤補上數字之後，這個作答介面才真的是一個「不用系統鍵盤也能打完」的東西。
   const WEBWORK_KEY_GROUPS = [
-    { label: "數字", keys: ["7", "8", "9", "4", "5", "6", "1", "2", "3", "0", ".", "-"] },
-    { label: "常用", keys: ["x", "pi", "e", "(", ")", "+", "*", "/", "^"] },
-    { label: "函數", keys: ["sqrt(|)", "sin(|)", "cos(|)", "tan(|)", "ln(|)", "exp(|)"] },
+    { label: t("數字"), keys: ["7", "8", "9", "4", "5", "6", "1", "2", "3", "0", ".", "-"] },
+    { label: t("常用"), keys: ["x", "pi", "e", "(", ")", "+", "*", "/", "^"] },
+    { label: t("函數"), keys: ["sqrt(|)", "sin(|)", "cos(|)", "tan(|)", "ln(|)", "exp(|)"] },
     // 收斂性判定詞（convergent / divergent / conditional）只有 answerKind
     // 是 text 的題目收得到 —— 全庫掃過：沒有任何 numeric / expression /
     // antiderivative 題的答案是那三個字。擺在數值題的鍵盤上是三顆長按鈕的
     // 純噪音，還把真正會用到的符號擠到下面去。
     // DNE 留著：有 7 題 numeric 的答案就是 dne（極限不存在）。
-    { label: "判定", keys: ["DNE"] }
+    { label: t("判定"), keys: ["DNE"] }
   ];
   const DIGIT_KEYS = ["7", "8", "9", "4", "5", "6", "1", "2", "3", "0", ".", "-"];
-  const ERROR_TAGS = ["粗心", "不會", "忘公式"];
+  const ERROR_TAGS = [t("粗心"), t("不會"), t("忘公式")];
   const PROOF_TIERS = {
-    all: "全部",
-    basic: "基礎",
-    standard: "標準",
-    advanced: "進階",
-    boss: "終極",
-    contest: "競賽",
-    classic: "經典解析",
+    all: t("全部"),
+    basic: t("基礎"),
+    standard: t("標準"),
+    advanced: t("進階"),
+    boss: t("終極"),
+    contest: t("競賽"),
+    classic: t("經典解析"),
     lean: "Lean"
   };
   const SIMPLE_MODE_KEYS = ["quick", "topic", "practice"];
   const EXPERIMENTAL_MODE_KEYS = ["exam", "pressure", "boss_rush", "brutal", "boss", "integral_bee", "no_hint", "accuracy", "survival", "warmup", "cooldown"];
   const DEFAULT_DIFFICULTY_CAP = 2;
   const DIFFICULTY_LEVELS = {
-    1: { label: "入門", note: "只抽 R1，先建立基礎。", short: "R1" },
-    2: { label: "新手", note: "R1-R2，避開 Taylor 和怪題。", short: "R1-R2" },
-    3: { label: "標準", note: "R1-R3，開始進入段考基本題型。", short: "R1-R3" },
-    4: { label: "進階", note: "R1-R4，加入多步驟與常見陷阱。", short: "R1-R4" },
-    5: { label: "高手", note: "R1-R5，Boss 題會進一般抽題。", short: "R1-R5" },
-    6: { label: "大師", note: "R1-R6，高速反射 / Wallis / 特殊函數全開。", short: "R1-R6" }
+    1: { label: t("入門"), note: t("只抽 R1，先建立基礎。"), short: "R1" },
+    2: { label: t("新手"), note: t("R1-R2，避開 Taylor 和怪題。"), short: "R1-R2" },
+    3: { label: t("標準"), note: t("R1-R3，開始進入段考基本題型。"), short: "R1-R3" },
+    4: { label: t("進階"), note: t("R1-R4，加入多步驟與常見陷阱。"), short: "R1-R4" },
+    5: { label: t("高手"), note: t("R1-R5，Boss 題會進一般抽題。"), short: "R1-R5" },
+    6: { label: t("大師"), note: t("R1-R6，高速反射 / Wallis / 特殊函數全開。"), short: "R1-R6" }
   };
   const LIBRARY_PAGE_SIZE = 72;
   // 顯示名側表搬到 kernel/tag_labels.js（app.js 效能預算 700KB 到頂）；缺席時退回 Title Case
   const TAG_LABELS = (typeof window !== "undefined" && window.BuzzTagLabels) || {};
   const ONBOARDING_LEVELS = {
-    beginner: { label: "先暖身", pack: "beginner_warmup", mode: "warmup", topic: "all", difficultyCap: 2 },
-    standard: { label: "照主線", pack: "all", mode: "daily", topic: "all", difficultyCap: 3 },
-    advanced: { label: "直接挑戰", pack: "boss_challenge", mode: "boss_rush", topic: "all", difficultyCap: 6 }
+    beginner: { label: t("先暖身"), pack: "beginner_warmup", mode: "warmup", topic: "all", difficultyCap: 2 },
+    standard: { label: t("照主線"), pack: "all", mode: "daily", topic: "all", difficultyCap: 3 },
+    advanced: { label: t("直接挑戰"), pack: "boss_challenge", mode: "boss_rush", topic: "all", difficultyCap: 6 }
   };
   const HISTORY_LIMIT = 40;
   const RECENT_PROBLEM_COOLDOWN = 30;
@@ -588,13 +591,13 @@
   const HEATMAP_WEEKS = 20;
   const RADAR_AXES = [
     { key: "taylor", label: "Taylor", tags: ["taylor", "coefficient", "nested-taylor", "composite-taylor", "asymptotic-expansion"] },
-    { key: "substitution", label: "換元", tags: ["substitution", "trig-substitution", "change-of-variables", "polar-coordinates"] },
-    { key: "ibp", label: "分部", tags: ["integration-by-parts", "ibp", "multi-ibp"] },
-    { key: "partial_fraction", label: "部分分式", tags: ["partial-fraction"] },
-    { key: "improper", label: "瑕積分", tags: ["improper-integral", "frullani", "ode-style", "kings-property", "parameter-integral", "laplace-transform", "convolution"] },
-    { key: "series", label: "級數", tags: ["ratio-test", "root-test", "integral-test", "p-series", "alternating-series", "comparison", "limit-comparison", "power-series", "radius", "endpoint-analysis", "convergence-test", "special-sum"] },
-    { key: "multivariable", label: "多變數", tags: ["multivariable", "double-integral", "triple-integral", "hessian", "jacobian", "jacobian-chain", "lagrange-multiplier", "nabla", "vector-calculus", "total-differential", "total-differential-min", "line-integral", "surface-integral", "green-theorem", "stokes-theorem", "divergence-theorem", "flux", "conservative-field", "directional-derivative"] },
-    { key: "special", label: "特殊函數", tags: ["beta-function", "gamma-function", "wallis", "bessel", "special-function"] }
+    { key: "substitution", label: t("換元"), tags: ["substitution", "trig-substitution", "change-of-variables", "polar-coordinates"] },
+    { key: "ibp", label: t("分部"), tags: ["integration-by-parts", "ibp", "multi-ibp"] },
+    { key: "partial_fraction", label: t("部分分式"), tags: ["partial-fraction"] },
+    { key: "improper", label: t("瑕積分"), tags: ["improper-integral", "frullani", "ode-style", "kings-property", "parameter-integral", "laplace-transform", "convolution"] },
+    { key: "series", label: t("級數"), tags: ["ratio-test", "root-test", "integral-test", "p-series", "alternating-series", "comparison", "limit-comparison", "power-series", "radius", "endpoint-analysis", "convergence-test", "special-sum"] },
+    { key: "multivariable", label: t("多變數"), tags: ["multivariable", "double-integral", "triple-integral", "hessian", "jacobian", "jacobian-chain", "lagrange-multiplier", "nabla", "vector-calculus", "total-differential", "total-differential-min", "line-integral", "surface-integral", "green-theorem", "stokes-theorem", "divergence-theorem", "flux", "conservative-field", "directional-derivative"] },
+    { key: "special", label: t("特殊函數"), tags: ["beta-function", "gamma-function", "wallis", "bessel", "special-function"] }
   ];
   const APP_VERSION = "v1.2.1";
   const BUILD_DATE = "2026-09-01";
@@ -676,14 +679,14 @@
   // 規則：正在輸入時（input / textarea / contenteditable）一律不攔截，
   // 否則使用者打 "h" 會變成叫出提示。
   const SHORTCUTS = [
-    { keys: "1 – 4", what: "選擇題直接選 A–D" },
-    { keys: "Enter", what: "送出答案 / 下一題" },
-    { keys: "空白鍵", what: "下一題" },
-    { keys: "H", what: "看提示" },
-    { keys: "S", what: "跳過這題" },
-    { keys: "Esc", what: "關閉對話框 / 離開本局" },
-    { keys: "Tab", what: "對話框內循環焦點（不會跑到後面的畫面）" },
-    { keys: "?", what: "顯示這張表" }
+    { keys: "1 – 4", what: t("選擇題直接選 A–D") },
+    { keys: "Enter", what: t("送出答案 / 下一題") },
+    { keys: t("空白鍵"), what: t("下一題") },
+    { keys: "H", what: t("看提示") },
+    { keys: "S", what: t("跳過這題") },
+    { keys: "Esc", what: t("關閉對話框 / 離開本局") },
+    { keys: "Tab", what: t("對話框內循環焦點（不會跑到後面的畫面）") },
+    { keys: "?", what: t("顯示這張表") }
   ];
 
   function isTypingTarget(node) {
@@ -906,8 +909,8 @@
     const gate = featureGate(records);
     const seen = records.unlocked && typeof records.unlocked === "object" ? records.unlocked : {};
     const news = [];
-    if (gate.familiar && !seen.familiar) news.push(["familiar", "練完第一局了 —— 訓練頁多了弱點、模擬考與挑戰題。"]);
-    if (gate.full && !seen.full) news.push(["full", "首頁多了「探索更多」：每日一題、證明訓練、好友對戰、我要出題。"]);
+    if (gate.familiar && !seen.familiar) news.push(["familiar", t("練完第一局了 —— 訓練頁多了弱點、模擬考與挑戰題。")]);
+    if (gate.full && !seen.full) news.push(["full", t("首頁多了「探索更多」：每日一題、證明訓練、好友對戰、我要出題。")]);
     if (!news.length) return false;
     const next = loadRecords();
     next.unlocked = { ...seen };
@@ -995,7 +998,7 @@
       script.src = src;
       script.async = false;
       script.onload = resolve;
-      script.onerror = () => reject(new Error("載不到 " + src));
+      script.onerror = () => reject(new Error(t("載不到 ") + src));
       document.head.appendChild(script);
     });
     lazyGroups[group] = tags.reduce((chain, tag) => chain.then(() => loadOne(tag.getAttribute("src"))), Promise.resolve())
@@ -1014,51 +1017,52 @@
   // 隱私原則（spec 06.4）：**不上報使用者輸入的答案文字**，只帶題目 id 與對錯。
   const ANALYTICS_EVENTS = {
     // 取得
-    onboarding_step: "開局流程的每一步（含是否跳過）",
-    tour_step: "導覽走到第幾步（哪一段導覽、步驟 id）",
-    tour_done: "導覽結束（走完 / 略過 / 中斷）",
-    placement_complete: "定位測驗完成，帶回定位等級與最弱家族",
-    proof_input_mode: "白話證明切換書寫模式（free 自由書寫 / guided 引導句型）",
+    onboarding_step: t("開局流程的每一步（含是否跳過）"),
+    tour_step: t("導覽走到第幾步（哪一段導覽、步驟 id）"),
+    tour_done: t("導覽結束（走完 / 略過 / 中斷）"),
+    placement_complete: t("定位測驗完成，帶回定位等級與最弱家族"),
+    proof_input_mode: t("白話證明切換書寫模式（free 自由書寫 / guided 引導句型）"),
     // 練習
-    session_start: "開一局（模式 / 長度 / 從哪裡進來）",
-    session_complete: "完成一局",
-    session_abandon: "中途離開（答了幾題 / 共幾題）",
-    session_resume: "續傳一局中斷的訓練",
-    problem_start: "題目顯示",
-    problem_submit: "送出答案",
-    problem_timeout: "逾時未作答",
-    hint_open: "打開提示（第幾層）",
-    open_full_solution: "展開完整推導（會記為借助解答）",
+    session_start: t("開一局（模式 / 長度 / 從哪裡進來）"),
+    session_complete: t("完成一局"),
+    session_abandon: t("中途離開（答了幾題 / 共幾題）"),
+    session_resume: t("續傳一局中斷的訓練"),
+    problem_start: t("題目顯示"),
+    problem_submit: t("送出答案"),
+    problem_timeout: t("逾時未作答"),
+    hint_open: t("打開提示（第幾層）"),
+    open_full_solution: t("展開完整推導（會記為借助解答）"),
     // 弱點
-    mistake_added: "題目進錯題本",
-    mistake_cleared: "錯題被清掉",
+    mistake_added: t("題目進錯題本"),
+    mistake_cleared: t("錯題被清掉"),
     // 主線
-    unit_chest_open: "開啟單元寶箱（只記第幾單元）",
+    unit_chest_open: t("開啟單元寶箱（只記第幾單元）"),
     // 計畫
     // 內容
-    report_submit: "回報題目",
-    custom_problem_saved: "儲存自訂題",
-    custom_pack_imported: "匯入自訂題包",
-    library_full_access: "切換題庫完整瀏覽（只記開／關）",
-    view_proof_solution: "查看參考證明",
-    mark_proof_status: "自評證明理解程度",
-    mark_proof_blocker: "標記證明卡在哪",
+    report_submit: t("回報題目"),
+    custom_problem_saved: t("儲存自訂題"),
+    custom_pack_imported: t("匯入自訂題包"),
+    library_full_access: t("切換題庫完整瀏覽（只記開／關）"),
+    view_proof_solution: t("查看參考證明"),
+    mark_proof_status: t("自評證明理解程度"),
+    mark_proof_blocker: t("標記證明卡在哪"),
     // 資料
-    share_card: "分享成就卡（只記從哪裡按、等級與連勝天數）",
-    export_records: "匯出紀錄",
-    import_records: "匯入紀錄（含是否真的合併進新資料）",
-    calibration_export: "匯出難度校準包（去識別化，opt-in）",
-    erase_data: "使用者刪除本機所有資料（只記刪了幾類，不記內容）",
-    analytics_opt_out: "使用者關閉或開啟分析",
+    share_card: t("分享成就卡（只記從哪裡按、等級與連勝天數）"),
+    export_records: t("匯出紀錄"),
+    import_records: t("匯入紀錄（含是否真的合併進新資料）"),
+    calibration_export: t("匯出難度校準包（去識別化，opt-in）"),
+    erase_data: t("使用者刪除本機所有資料（只記刪了幾類，不記內容）"),
+    analytics_opt_out: t("使用者關閉或開啟分析"),
     // 其他
-    install_pwa: "安裝 PWA",
-    app_update_apply: "使用者接受新版本並重新載入",
-    print_mistakes: "列印錯題本（只記幾題，不記內容）",
-    perf_render: "render 耗時取樣（1%）",
-    return_visit: "隔日回訪（帶距離上次幾天）",
-    epsilon_level: "ε-δ 挑戰過了一關（帶第幾關，不帶使用者的 δ）",
-    library_pack_pick: "題庫挑了一個題包（只記題包 key）",
-    app_error: "未捕捉的錯誤（只送錯誤型別、來源檔與行號，不送訊息內容）"
+    install_pwa: t("安裝 PWA"),
+    app_update_apply: t("使用者接受新版本並重新載入"),
+    print_mistakes: t("列印錯題本（只記幾題，不記內容）"),
+    perf_render: t("render 耗時取樣（1%）"),
+    return_visit: t("隔日回訪（帶距離上次幾天）"),
+    epsilon_level: t("ε-δ 挑戰過了一關（帶第幾關，不帶使用者的 δ）"),
+    library_pack_pick: t("題庫挑了一個題包（只記題包 key）"),
+    set_lang: t("切換介面語言（只記語言代碼）"),
+    app_error: t("未捕捉的錯誤（只送錯誤型別、來源檔與行號，不送訊息內容）")
   };
 
   // 分析開關。
@@ -1098,7 +1102,7 @@
   function trackEvent(name, params = {}) {
     if (!ANALYTICS_EVENTS[name] && typeof console !== "undefined" && console.warn) {
       // 表上沒有的事件在開發時就要被看見，不要等半年後對著 GA 猜這是什麼
-      console.warn(`[buzz] 未登記的分析事件：${name}。請先加進 ANALYTICS_EVENTS。`);
+      console.warn(`${t("[buzz] 未登記的分析事件：{name}。請先加進 ANALYTICS_EVENTS。", { name })}`);
     }
     if (!GA_MEASUREMENT_ID || typeof window.gtag !== "function") return;
     // opt-out 之後只有「重新開啟分析」這個事件本身可以送出去，
@@ -1463,40 +1467,40 @@
     const inQuiz = view === "quiz";
     const navGate = featureGate(loadRecords());
     const themeIcon = selectedTheme === "dark" ? "sun" : "moon";
-    const themeLabel = selectedTheme === "dark" ? "亮色" : "深色";
+    const themeLabel = selectedTheme === "dark" ? t("亮色") : t("深色");
     const parentView = { "path-intro": "train", mistakes: "train", history: "insights", results: "insights", proofs: "library", creator: "library", "proof-write": "library", "proof-tutorial": "library", "proof-view": "library", course: "home", "course-lesson": "home" }[view] || view;
     const navItem = (v, action, label, iconName) =>
       `<button class="nav-button ${parentView === v ? "is-active" : ""}" data-action="${action}" aria-label="${label}" title="${label}" ${parentView === v ? 'aria-current="page"' : ""}>${icon(iconName)}<span>${label}</span></button>`;
     return `
-      <a class="skip-to-content" href="#buzz-main">跳到主要內容</a>
+      <a class="skip-to-content" href="#buzz-main">${t("跳到主要內容")}</a>
       <header class="topbar ${inQuiz ? "is-quiz" : ""}">
-        <button class="brand" data-action="home" title="回到工作台" aria-label="BuzzCalculus 首頁">
+        <button class="brand" data-action="home" title="${t("回到工作台")}" aria-label="${t("BuzzCalculus 首頁")}">
           <div class="brand-mark" aria-hidden="true">∫</div>
-          <span class="brand-copy"><span class="brand-title">BuzzCalculus</span><span class="brand-caption">微積分學習工作台</span></span>
+          <span class="brand-copy"><span class="brand-title">BuzzCalculus</span><span class="brand-caption">${t("微積分學習工作台")}</span></span>
         </button>
         ${
           inQuiz
-            ? `<div class="topbar-utils"><button class="button ghost" data-action="confirm-exit" title="離開本局">${icon("x")}<span>離開</span></button></div>`
+            ? `<div class="topbar-utils"><button class="button ghost" data-action="confirm-exit" title="${t("離開本局")}">${icon("x")}<span>${t("離開")}</span></button></div>`
             : `
-              <span class="nav-section-label">學習空間</span>
-              <nav class="topbar-nav" aria-label="主要導覽">
-                ${navItem("home", "home", "今天", "home")}
-                ${navItem("train", "open-train", "訓練", "target")}
-                ${navItem("insights", "open-insights", "數據", "activity")}
-                ${navItem("library", "open-library", "題庫", "search")}
-                ${navItem("settings", "open-settings", "設定", "settings")}
+              <span class="nav-section-label">${t("學習空間")}</span>
+              <nav class="topbar-nav" aria-label="${t("主要導覽")}">
+                ${navItem("home", "home", t("今天"), "home")}
+                ${navItem("train", "open-train", t("訓練"), "target")}
+                ${navItem("insights", "open-insights", t("數據"), "activity")}
+                ${navItem("library", "open-library", t("題庫"), "search")}
+                ${navItem("settings", "open-settings", t("設定"), "settings")}
               </nav>
               <div class="sidebar-resources">
-                <span class="nav-section-label">學習工具</span>
-                <button class="sidebar-link ${/^course/.test(view) ? "is-active" : ""}" data-action="open-course" title="入門課程">${icon("book-open")}<span>入門課程</span></button>
-                ${navGate.mistakes ? `<button class="sidebar-link ${view === "mistakes" ? "is-active" : ""}" data-action="open-mistakes" title="錯題本">${icon("refresh")}<span>錯題本</span></button>` : ""}
-                ${navGate.history ? `<button class="sidebar-link ${view === "history" ? "is-active" : ""}" data-action="open-history" title="練習紀錄">${icon("history")}<span>練習紀錄</span></button>` : ""}
-                ${navGate.proofs ? `<button class="sidebar-link ${/^proof/.test(view) ? "is-active" : ""}" data-action="open-proofs" title="證明訓練">${icon("file-pen-line")}<span>證明訓練</span></button>` : ""}
+                <span class="nav-section-label">${t("學習工具")}</span>
+                <button class="sidebar-link ${/^course/.test(view) ? "is-active" : ""}" data-action="open-course" title="${t("入門課程")}">${icon("book-open")}<span>${t("入門課程")}</span></button>
+                ${navGate.mistakes ? `<button class="sidebar-link ${view === "mistakes" ? "is-active" : ""}" data-action="open-mistakes" title="${t("錯題本")}">${icon("refresh")}<span>${t("錯題本")}</span></button>` : ""}
+                ${navGate.history ? `<button class="sidebar-link ${view === "history" ? "is-active" : ""}" data-action="open-history" title="${t("練習紀錄")}">${icon("history")}<span>${t("練習紀錄")}</span></button>` : ""}
+                ${navGate.proofs ? `<button class="sidebar-link ${/^proof/.test(view) ? "is-active" : ""}" data-action="open-proofs" title="${t("證明訓練")}">${icon("file-pen-line")}<span>${t("證明訓練")}</span></button>` : ""}
               </div>
-              <a class="sidebar-guide" href="guide.html">${icon("book-open")}<span><strong>把每次練習，變成進步</strong><small>閱讀使用手冊 ${icon("chevron-right")}</small></span></a>
+              <a class="sidebar-guide" href="guide.html">${icon("book-open")}<span><strong>${t("把每次練習，變成進步")}</strong><small>${t("閱讀使用手冊")} ${icon("chevron-right")}</small></span></a>
               <div class="topbar-utils">
-                ${deferredInstallPrompt ? `<button class="icon-button" data-action="install-app" title="安裝 BuzzCalculus">${icon("download")}</button>` : ""}
-                <button class="icon-button theme-toggle" data-action="toggle-theme" title="切換${themeLabel}模式" aria-label="切換${themeLabel}模式">${icon(themeIcon)}<span>${themeLabel}模式</span></button>
+                ${deferredInstallPrompt ? `<button class="icon-button" data-action="install-app" title="${t("安裝 BuzzCalculus")}">${icon("download")}</button>` : ""}
+                <button class="icon-button theme-toggle" data-action="toggle-theme" title="${t("切換{themeLabel}模式", { themeLabel })}" aria-label="${t("切換{themeLabel}模式", { themeLabel })}">${icon(themeIcon)}<span>${t("{themeLabel}模式", { themeLabel })}</span></button>
               </div>`
         }
       </header>
@@ -1505,11 +1509,11 @@
 
   function renderWorkspaceBar() {
     if (view === "quiz") return "";
-    const labels = { home: "今日概覽", train: "訓練中心", insights: "學習數據", library: "探索題庫", settings: "偏好與設定", mistakes: "錯題本", history: "練習紀錄", proofs: "證明訓練", "proof-write": "證明題", "proof-tutorial": "白話證明教學", "proof-view": "證明題", course: "入門九課", "course-lesson": "入門九課", creator: "出題工作坊", results: "訓練回顧", "path-intro": "學習路線" };
+    const labels = { home: t("今日概覽"), train: t("訓練中心"), insights: t("學習數據"), library: t("探索題庫"), settings: t("偏好與設定"), mistakes: t("錯題本"), history: t("練習紀錄"), proofs: t("證明訓練"), "proof-write": t("證明題"), "proof-tutorial": t("白話證明教學"), "proof-view": t("證明題"), course: t("入門九課"), "course-lesson": t("入門九課"), creator: t("出題工作坊"), results: t("訓練回顧"), "path-intro": t("學習路線") };
     return `
       <div class="workspace-bar">
-        <div class="workspace-breadcrumb"><span>我的學習空間</span>${icon("chevron-right")}<strong>${labels[view] || "今日概覽"}</strong></div>
-        <div class="workspace-tools"><span class="local-status">${icon("shield")}紀錄保存在此瀏覽器</span><a href="guide.html" class="workspace-help">${icon("book-open")}使用手冊</a></div>
+        <div class="workspace-breadcrumb"><span>${t("我的學習空間")}</span>${icon("chevron-right")}<strong>${labels[view] || t("今日概覽")}</strong></div>
+        <div class="workspace-tools"><span class="local-status">${icon("shield")}${t("紀錄保存在此瀏覽器")}</span><a href="guide.html" class="workspace-help">${icon("book-open")}${t("使用手冊")}</a></div>
       </div>`;
   }
 
@@ -1525,15 +1529,15 @@
     // 證明引擎是延後載入的（見 ensureLazy）：還沒到就先給一個載入中的殼，載完再 render。
     if (PROOF_VIEWS.includes(view) && !lazyReady("proof")) {
       ensureLazy("proof").then(render).catch(() => {
-        showAppNotice("證明引擎載不進來 —— 檢查一下網路，再點一次證明題。");
+        showAppNotice(t("證明引擎載不進來 —— 檢查一下網路，再點一次證明題。"));
         view = "home";
         render();
       });
       return `
         <main class="screen lazy-loading" aria-busy="true">
           <section class="panel page-panel">
-            <p class="section-label">證明訓練</p>
-            <p class="panel-note">載入證明引擎…</p>
+            <p class="section-label">${t("證明訓練")}</p>
+            <p class="panel-note">${t("載入證明引擎…")}</p>
           </section>
         </main>
       `;
@@ -1567,11 +1571,11 @@
   function renderStorageWarning() {
     if (unsavedRecordsJson === null) return "";
     return `<aside class="backup-bar storage-warning" role="status">
-      <div class="backup-bar-text"><strong>練習紀錄尚未存到裝置</strong>
-        <span>儲存空間不足或無法寫入。目前暫存在這個分頁；請先匯出備份，關閉或重新整理可能遺失。</span></div>
+      <div class="backup-bar-text"><strong>${t("練習紀錄尚未存到裝置")}</strong>
+        <span>${t("儲存空間不足或無法寫入。目前暫存在這個分頁；請先匯出備份，關閉或重新整理可能遺失。")}</span></div>
       <div class="backup-bar-actions">
-        <button class="button secondary" data-action="export-records">匯出備份</button>
-        <button class="button secondary" data-action="retry-records-save">重試儲存</button>
+        <button class="button secondary" data-action="export-records">${t("匯出備份")}</button>
+        <button class="button secondary" data-action="retry-records-save">${t("重試儲存")}</button>
       </div></aside>`;
   }
 
@@ -1612,7 +1616,8 @@
       <main class="screen home-screen" id="buzz-main">
         ${
           // eyebrow 拿掉：分頁列與麵包屑都已經寫著「今天」，同一個字在第一屏出現三次。
-          renderPageHeading("", `${homeGreeting().split("，")[0]}，把進步留給今天。`, "", `<span class="workspace-date">${icon("calendar")}${escapeHtml(new Date().toLocaleDateString("zh-TW", { month: "long", day: "numeric", weekday: "short" }))}</span>`)}
+          // 問候語只留逗號前那一截（中文用「，」、英文用「 — 」分）；日期照介面語言排
+          renderPageHeading("", `${t("{v}，把進步留給今天。", { v: homeGreeting().split(/，|\s—\s/)[0] })}`, "", `<span class="workspace-date">${icon("calendar")}${escapeHtml(new Date().toLocaleDateString(window.BuzzI18n ? window.BuzzI18n.locale : "zh-TW", { month: "long", day: "numeric", weekday: "short" }))}</span>`)}
         ${renderHomeOverview(records, mission)}
         <div class="home-lead">
           ${renderResumeCard()}
@@ -1626,7 +1631,7 @@
           }
           ${gate.familiar ? `
           <details class="home-more home-bucket-more">
-            <summary><span><strong>換一種練法</strong></span>${icon("chevron-down")}</summary>
+            <summary><span><strong>${t("換一種練法")}</strong></span>${icon("chevron-down")}</summary>
             <div class="home-more-body">${renderBucketNav()}</div>
           </details>` : ""}
           ${renderHomeRetentionRow(records)}
@@ -1634,10 +1639,10 @@
         </div>
         <div class="home-aside">
           ${gate.familiar ? renderHomeWeek(records, mission) : ""}
-          ${gate.familiar ? `<div class="workspace-section-head"><h2>接下來練什麼</h2></div>${renderHomeSecondary(records, path, mission)}` : ""}
+          ${gate.familiar ? `<div class="workspace-section-head"><h2>${t("接下來練什麼")}</h2></div>${renderHomeSecondary(records, path, mission)}` : ""}
           ${renderGrowthLine(records)}
           ${renderHomeWeakness(records)}
-          ${gate.full || gate.proofs || gate.dailyOne ? `<section class="workspace-section"><div class="workspace-section-head"><h2>探索更多</h2></div>${renderHomeQuickLinks(gate)}</section>` : ""}
+          ${gate.full || gate.proofs || gate.dailyOne ? `<section class="workspace-section"><div class="workspace-section-head"><h2>${t("探索更多")}</h2></div>${renderHomeQuickLinks(gate)}</section>` : ""}
         </div>
       </main>
     `;
@@ -1656,12 +1661,12 @@
     const measured = profile ? profile.coverage.skillsMeasured : 0;
     const due = srsDueSummary(records).due;
     const stats = [
-      ["今日目標", `${mission.completed}<small> / ${mission.target} 題</small>`, "", "target", "home"],
-      ["累計作答", `${total.toLocaleString()}<small> 題</small>`, "", "activity", "open-history"],
-      ["已測量技巧", `${measured}<small> 個</small>`, "", "layers", "open-insights"],
-      ["待複習錯題", `${due}<small> 題</small>`, "", "refresh", "open-mistakes"]
+      [t("今日目標"), `${mission.completed}<small> ${t("/ {target} 題", { target: mission.target })}</small>`, "", "target", "home"],
+      [t("累計作答"), `${total.toLocaleString()}<small> ${t("題")}</small>`, "", "activity", "open-history"],
+      [t("已測量技巧"), `${measured}<small> ${t("個")}</small>`, "", "layers", "open-insights"],
+      [t("待複習錯題"), `${due}<small> ${t("題")}</small>`, "", "refresh", "open-mistakes"]
     ];
-    return `<section class="overview-grid" aria-label="學習概覽">${stats.map(([label, value, note, name, action]) => `<button class="overview-stat" data-action="${action}"><span class="overview-label">${label}${icon(name)}</span><strong class="overview-value">${value}</strong>${note ? `<span class="overview-note">${note}</span>` : ""}</button>`).join("")}</section>`;
+    return `<section class="overview-grid" aria-label="${t("學習概覽")}">${stats.map(([label, value, note, name, action]) => `<button class="overview-stat" data-action="${action}"><span class="overview-label">${label}${icon(name)}</span><strong class="overview-value">${value}</strong>${note ? `<span class="overview-note">${note}</span>` : ""}</button>`).join("")}</section>`;
   }
 
   function renderHomeWeek(records, mission) {
@@ -1672,10 +1677,10 @@
     const days = [];
     for (let i = 0; i < 7; i += 1) {
       const count = counts[localDateKey(cursor)] || 0;
-      days.push(`<div class="week-day ${count ? "is-complete" : ""} ${i === 6 ? "is-today" : ""}" title="${escapeAttr(`${localDateKey(cursor)} · ${count} 題`)}"><span>${["日", "一", "二", "三", "四", "五", "六"][cursor.getDay()]}</span><span class="week-day-mark">${count ? icon("check") : i === 6 ? "今" : "·"}</span></div>`);
+      days.push(`<div class="week-day ${count ? "is-complete" : ""} ${i === 6 ? "is-today" : ""}" title="${escapeAttr(`${t("{cursor} · {count} 題", { cursor: localDateKey(cursor), count })}`)}"><span>${[t("日"), t("一"), t("二"), t("三"), t("四"), t("五"), t("六")][cursor.getDay()]}</span><span class="week-day-mark">${count ? icon("check") : i === 6 ? t("今") : "·"}</span></div>`);
       cursor.setDate(cursor.getDate() + 1);
     }
-    return `<section class="week-card" aria-label="最近七天的練習"><div class="workspace-section-head"><h2>一點一滴，練成習慣</h2>${icon("calendar")}</div><div class="week-days">${days.join("")}</div><div class="week-goal"><span>今日目標</span><strong>${mission.completed} / ${mission.target} 題</strong></div><div class="week-progress" role="progressbar" aria-label="今日目標" aria-valuemin="0" aria-valuemax="${mission.target}" aria-valuenow="${mission.completed}"><span style="width:${Math.min(100, mission.progress)}%"></span></div></section>`;
+    return `<section class="week-card" aria-label="${t("最近七天的練習")}"><div class="workspace-section-head"><h2>${t("一點一滴，練成習慣")}</h2>${icon("calendar")}</div><div class="week-days">${days.join("")}</div><div class="week-goal"><span>${t("今日目標")}</span><strong>${t("{completed} / {target} 題", { completed: mission.completed, target: mission.target })}</strong></div><div class="week-progress" role="progressbar" aria-label="${t("今日目標")}" aria-valuemin="0" aria-valuemax="${mission.target}" aria-valuenow="${mission.completed}"><span style="width:${Math.min(100, mission.progress)}%"></span></div></section>`;
   }
 
   // 藏得最深的幾個入口，在首頁給一排小門。
@@ -1685,11 +1690,11 @@
   // 證明訓練那一顆，不會因為換了裝置就整排消失。
   function renderHomeQuickLinks(gate) {
     return `
-      <nav class="home-quick-links" aria-label="更多入口">
-        ${gate.dailyOne ? `<button data-action="start-daily-one">${icon("puzzle")}<span>每日一題</span></button>` : ""}
-        ${gate.proofs ? `<button data-action="open-proofs">${icon("file-pen-line")}<span>證明訓練</span></button>` : ""}
-        ${gate.full ? `<button data-action="open-train" data-bucket="challenge">${icon("zap")}<span>好友對戰</span></button>
-        <button data-action="open-creator">${icon("pen")}<span>我要出題</span></button>` : ""}
+      <nav class="home-quick-links" aria-label="${t("更多入口")}">
+        ${gate.dailyOne ? `<button data-action="start-daily-one">${icon("puzzle")}<span>${t("每日一題")}</span></button>` : ""}
+        ${gate.proofs ? `<button data-action="open-proofs">${icon("file-pen-line")}<span>${t("證明訓練")}</span></button>` : ""}
+        ${gate.full ? `<button data-action="open-train" data-bucket="challenge">${icon("zap")}<span>${t("好友對戰")}</span></button>
+        <button data-action="open-creator">${icon("pen")}<span>${t("我要出題")}</span></button>` : ""}
       </nav>
     `;
   }
@@ -1704,16 +1709,16 @@
       entries.push({
         action: "start-srs-review",
         icon: "refresh",
-        label: `錯題 ${summary.due} 題到期`,
-        note: "照排程清掉才會真的記住"
+        label: `${t("錯題 {due} 題到期", { due: summary.due })}`,
+        note: t("照排程清掉才會真的記住")
       });
     }
     if (!mission.done && (records.totalAnswered || 0)) {
       entries.push({
         action: "start-daily",
         icon: "calendar",
-        label: `每日 ${mission.completed}/${mission.target}`,
-        note: "維持連勝"
+        label: `${t("每日 {completed}/{target}", { completed: mission.completed, target: mission.target })}`,
+        note: t("維持連勝")
       });
     }
     if (entries.length < 2 && path && path.next) {
@@ -1721,14 +1726,14 @@
         action: "start-path-node",
         data: `data-node-id="${escapeAttr(path.next.id)}"`,
         icon: "play",
-        label: `主線：${path.next.short}`,
+        label: `${t("主線：{short}", { short: path.next.short })}`,
         note: escapeHtml(path.next.label)
       });
     }
     if (!entries.length) return "";
 
     return `
-      <section class="home-secondary" aria-label="次要入口">
+      <section class="home-secondary" aria-label="${t("次要入口")}">
         ${entries
           .slice(0, 2)
           .map(
@@ -1768,8 +1773,8 @@
     return `
       <section class="home-weakness">
         <div class="home-weakness-head">
-          <p class="section-label">最弱的三個技巧</p>
-          <button class="button ghost" data-action="start-weakness">${icon("target")}練弱點</button>
+          <p class="section-label">${t("最弱的三個技巧")}</p>
+          <button class="button ghost" data-action="start-weakness">${icon("target")}${t("練弱點")}</button>
         </div>
         <ul class="home-weakness-list">
           ${weakest
@@ -1804,22 +1809,22 @@
 
     const parts = [];
     if (profile.trend.d7 !== null && profile.trend.d7 !== 0) {
-      parts.push(`能力 ${profile.trend.d7 > 0 ? "+" : ""}${profile.trend.d7}`);
+      parts.push(`${t("能力 {v}{d7}", { v: profile.trend.d7 > 0 ? "+" : "", d7: profile.trend.d7 })}`);
     }
 
     const days = activeDaysInLastWeek(records);
-    if (days) parts.push(`本週練了 ${days} 天`);
+    if (days) parts.push(`${t("本週練了 {days} 天", { days })}`);
 
     const up = profile.trend.fastestUp;
     if (up) parts.push(`${up.label} +${up.delta}`);
 
     if (!parts.length) {
-      parts.push(`累計 ${profile.coverage.attempts} 題 · 測得出 ${profile.coverage.skillsMeasured} 個技巧`);
+      parts.push(`${t("累計 {attempts} 題 · 測得出 {skillsMeasured} 個技巧", { attempts: profile.coverage.attempts, skillsMeasured: profile.coverage.skillsMeasured })}`);
     }
 
     return `
       <button class="growth-line" data-action="open-insights">
-        <span class="section-label">本週</span>
+        <span class="section-label">${t("本週")}</span>
         <strong>${escapeHtml(parts.join(" · "))}</strong>
         ${icon("chevron-right")}
       </button>
@@ -1838,7 +1843,7 @@
 
   function renderBucketNav() {
     return `
-      <nav class="bucket-nav" aria-label="訓練分類">
+      <nav class="bucket-nav" aria-label="${t("訓練分類")}">
         ${TRAIN_BUCKETS.map(
           (item) => `
             <button data-action="open-train" data-bucket="${escapeAttr(item.key)}">
@@ -1870,21 +1875,21 @@
       const played = (records.history || []).filter((item) => item.mode !== "placement").length;
       const topics = Array.from(new Set(first.map((problem) => TOPICS[problem.topic]?.label).filter(Boolean))).join("、");
       return `
-        <section class="today-card training-feature" aria-label="今天的訓練">
+        <section class="today-card training-feature" aria-label="${t("今天的訓練")}">
           <div class="today-head">
-            <p class="section-label">${icon("sparkles")}為你安排 · ${played ? "新手保護期" : "第一份訓練"}</p>
-            <span class="today-meta">約 ${Math.max(3, Math.round(first.length * 0.75))} 分鐘 · ${first.length} 題</span>
+            <p class="section-label">${icon("sparkles")}${t("為你安排 ·")} ${played ? t("新手保護期") : t("第一份訓練")}</p>
+            <span class="today-meta">${t("約 {n} 分鐘 · {length} 題", { n: Math.max(3, Math.round(first.length * 0.75)), length: first.length })}</span>
           </div>
-          <h2 class="today-title">${played ? "再認識 " : "先認識 "}${first.length} 題${topics ? `${topics}` : "基礎題"}</h2>
-          <p class="today-why">不倒數、不計分，提示不扣分 —— 看懂題目在問什麼，比答對重要。</p>
-          <div class="training-recipe"><span><strong>${first.length}</strong>由淺入深</span><span><strong>0</strong>秒倒數</span></div>
+          <h2 class="today-title">${played ? t("再認識 ") : t("先認識 ")}${t("{length} 題", { length: first.length })}${topics ? `${topics}` : t("基礎題")}</h2>
+          <p class="today-why">${t("不倒數、不計分，提示不扣分 —— 看懂題目在問什麼，比答對重要。")}</p>
+          <div class="training-recipe"><span><strong>${first.length}</strong>${t("由淺入深")}</span><span><strong>0</strong>${t("秒倒數")}</span></div>
           <div class="today-actions">
             <button class="button home-primary" data-action="start-planned" data-length="${escapeAttr(recipe.length)}">
-              ${icon("play")}<span>開始</span>${icon("chevron-right")}
+              ${icon("play")}<span>${t("開始")}</span>${icon("chevron-right")}
             </button>
-            ${featureGate(records).familiar ? `<button class="button secondary" data-action="open-train">${icon("target")}走主線第 1 關</button>` : ""}
+            ${featureGate(records).familiar ? `<button class="button secondary" data-action="open-train">${icon("target")}${t("走主線第 1 關")}</button>` : ""}
           </div>
-          <p class="today-note">新手保護期還有 ${gentleStartQuota(records) - played} 局；之後每題會開始倒數，那時候「來不及」才是有用的訊號。</p>
+          <p class="today-note">${t("新手保護期還有 {v} 局；之後每題會開始倒數，那時候「來不及」才是有用的訊號。", { v: gentleStartQuota(records) - played })}</p>
         </section>
       `;
     }
@@ -1901,27 +1906,27 @@
       .map((slot) => ({ label: slot.label, count: Math.max(0, slot.count - (fallbackByRole[slot.role] || 0)) }))
       .filter((slot) => slot.count > 0);
     const fillerCount = Object.values(fallbackByRole).reduce((sum, count) => sum + count, 0);
-    if (fillerCount > 0) honestSlots.push({ label: "一般練習", count: Math.min(fillerCount, filled.problems.length) });
+    if (fillerCount > 0) honestSlots.push({ label: t("一般練習"), count: Math.min(fillerCount, filled.problems.length) });
 
     return `
-      <section class="today-card training-feature" aria-label="今天的訓練">
+      <section class="today-card training-feature" aria-label="${t("今天的訓練")}">
         <div class="today-head">
-          <p class="section-label">${icon("sparkles")}為你安排 · 今天的訓練</p>
-          <span class="today-meta">${minutes} 分鐘 · ${filled.problems.length} 題</span>
+          <p class="section-label">${icon("sparkles")}${t("為你安排 · 今天的訓練")}</p>
+          <span class="today-meta">${t("{minutes} 分鐘 · {length} 題", { minutes, length: filled.problems.length })}</span>
         </div>
-        <h2 class="today-title">${escapeHtml(recipe.label.replace(/^\d+\s*分鐘\s*/, `${minutes} 分鐘`))}</h2>
+        <h2 class="today-title">${escapeHtml(recipe.label.replace(/^\d+\s*分鐘\s*/, `${t("{minutes} 分鐘", { minutes })}`))}</h2>
         <p class="today-why">${escapeHtml(recipe.why)}</p>
         <div class="training-recipe">${honestSlots.map((slot) => `<span><strong>${slot.count}</strong>${escapeHtml(slot.label)}</span>`).join("")}</div>
         <div class="today-actions">
           <button class="button home-primary" data-action="start-planned" data-length="${escapeAttr(recipe.length)}">
-            ${icon("play")}<span>開始訓練</span>${icon("chevron-right")}
+            ${icon("play")}<span>${t("開始訓練")}</span>${icon("chevron-right")}
           </button>
         </div>
         <p class="today-note">${escapeHtml(reason)}${adjusted ? ` · ${escapeHtml(adjusted)}` : ""}${
           // 「今天只有五分鐘」是逃生門不是並列選項：放成一行文字連結，
           // 主按鈕旁邊就不會有第二顆搶視線的深色按鈕。
           recipe.length !== "sprint5"
-            ? ` · <button type="button" class="link-button" data-action="start-planned" data-length="sprint5">只有 5 分鐘？改快刷</button>`
+            ? ` · <button type="button" class="link-button" data-action="start-planned" data-length="sprint5">${t("只有 5 分鐘？改快刷")}</button>`
             : ""
         }</p>
       </section>
@@ -1964,28 +1969,28 @@
   // 台灣學生打「泰勒」會撲空（四輪實測：泰勒 0 題、Taylor 199 題）。
   // 只收最常被中文搜的那批 —— 這是別名表，不是翻譯工程。
   const TAG_ZH_ALIASES = {
-    taylor: "泰勒",
-    "taylor-limit": "泰勒 極限",
-    lhopital: "洛必達 羅必達",
-    "integration-by-parts": "分部 分部積分",
-    ibp: "分部",
-    substitution: "換元 代換 變數變換",
-    "u-sub": "換元",
-    "partial-fraction": "部分分式",
-    "trig-substitution": "三角代換",
-    "ratio-test": "比值 審斂",
-    "root-test": "根值 審斂",
-    "power-series": "冪級數 幂級數",
-    radius: "收斂半徑",
-    "improper-integral": "瑕積分",
-    "chain-rule": "鏈鎖 連鎖",
-    implicit: "隱微分 隱函數",
-    "critical-points": "臨界點 極值",
-    inflection: "反曲點 拐點",
-    concavity: "凹向",
-    multivariable: "多變數",
-    frullani: "弗魯拉尼",
-    "kings-property": "國王 對稱代換"
+    taylor: t("泰勒"),
+    "taylor-limit": t("泰勒 極限"),
+    lhopital: t("洛必達 羅必達"),
+    "integration-by-parts": t("分部 分部積分"),
+    ibp: t("分部"),
+    substitution: t("換元 代換 變數變換"),
+    "u-sub": t("換元"),
+    "partial-fraction": t("部分分式"),
+    "trig-substitution": t("三角代換"),
+    "ratio-test": t("比值 審斂"),
+    "root-test": t("根值 審斂"),
+    "power-series": t("冪級數 幂級數"),
+    radius: t("收斂半徑"),
+    "improper-integral": t("瑕積分"),
+    "chain-rule": t("鏈鎖 連鎖"),
+    implicit: t("隱微分 隱函數"),
+    "critical-points": t("臨界點 極值"),
+    inflection: t("反曲點 拐點"),
+    concavity: t("凹向"),
+    multivariable: t("多變數"),
+    frullani: t("弗魯拉尼"),
+    "kings-property": t("國王 對稱代換")
   };
 
   // 冷門支線不進「每日訓練 / 快刷」這種混合池。
@@ -2024,7 +2029,7 @@
     const records = loadRecords();
     const plan = plannedSession(records, lengthKey);
     if (!plan) {
-      showAppNotice("目前抽不到適合的題目，請把難度上限拉高一點。");
+      showAppNotice(t("目前抽不到適合的題目，請把難度上限拉高一點。"));
       return;
     }
     selectedMode = "quick";
@@ -2182,7 +2187,7 @@
     const saved = readActiveSession();
     if (!saved) return "";
     const mode = MODES[saved.quiz.mode] || {};
-    const label = saved.quiz.namedExam ? saved.quiz.namedExam.label : mode.label || "訓練";
+    const label = saved.quiz.namedExam ? saved.quiz.namedExam.label : mode.label || t("訓練");
     const minutesAgo = Math.max(1, Math.round((Date.now() - saved.savedAt) / 60000));
     const examExpired =
       saved.quiz.examMode && saved.quiz.examEndAt && Date.now() > Number(saved.quiz.examEndAt);
@@ -2191,23 +2196,23 @@
       <section class="study-card resume-card">
         <div class="panel-title-row">
           <div>
-            <p class="section-label">還沒做完</p>
-            <h3>${escapeHtml(label)} 第 ${saved.answered + 1} / ${saved.total} 題</h3>
+            <p class="section-label">${t("還沒做完")}</p>
+            <h3>${t("{label} 第 {v} / {total} 題", { label: escapeHtml(label), v: saved.answered + 1, total: saved.total })}</h3>
           </div>
-          <span class="resume-age">${minutesAgo} 分鐘前</span>
+          <span class="resume-age">${t("{minutesAgo} 分鐘前", { minutesAgo })}</span>
         </div>
         <p class="panel-note">
           ${
             examExpired
-              ? "這份考卷的整份倒數已經結束，只能結算不能續作。"
+              ? t("這份考卷的整份倒數已經結束，只能結算不能續作。")
               : saved.quiz.examMode
-                ? "考卷的整份倒數是照實走的，中斷的時間不會還給你。"
-                : "接著上次的地方繼續，作答紀錄都還在。"
+                ? t("考卷的整份倒數是照實走的，中斷的時間不會還給你。")
+                : t("接著上次的地方繼續，作答紀錄都還在。")
           }
         </p>
         <div class="action-row">
-          <button class="button home-primary" data-action="resume-session">${icon("play")}${examExpired ? "結算這份" : "繼續"}</button>
-          <button class="button ghost" data-action="discard-session">${icon("trash")}放棄</button>
+          <button class="button home-primary" data-action="resume-session">${icon("play")}${examExpired ? t("結算這份") : t("繼續")}</button>
+          <button class="button ghost" data-action="discard-session">${icon("trash")}${t("放棄")}</button>
         </div>
       </section>
     `;
@@ -2216,14 +2221,14 @@
   function resumeSession() {
     const saved = readActiveSession();
     if (!saved) {
-      showAppNotice("上次那局已經無法續傳了。");
+      showAppNotice(t("上次那局已經無法續傳了。"));
       render();
       return;
     }
     const restored = deserializeQuiz(saved.quiz);
     if (!restored) {
       clearActiveSession();
-      showAppNotice("上次那局包含已經下架的題目，無法續傳。");
+      showAppNotice(t("上次那局包含已經下架的題目，無法續傳。"));
       render();
       return;
     }
@@ -2274,9 +2279,9 @@
   // 沒有人會為了統計去點三個按鈕 —— 所以這裡先猜一個最可能的預選起來，
   // 使用者只要按一下確認，或改選。猜錯沒關係，改一下的成本遠低於從零選。
   const CAUSE_OPTIONS = [
-    { key: "algebra-slip", tag: "粗心", label: "算錯，不是不會" },
-    { key: "wrong-technique", tag: "不會", label: "選錯方法" },
-    { key: "forgot-formula", tag: "忘公式", label: "忘公式" }
+    { key: "algebra-slip", tag: t("粗心"), label: t("算錯，不是不會") },
+    { key: "wrong-technique", tag: t("不會"), label: t("選錯方法") },
+    { key: "forgot-formula", tag: t("忘公式"), label: t("忘公式") }
   ];
 
   // 推薦規則刻意用「證據」而不是機率模型：每一條都要能一句話解釋給使用者聽。
@@ -2290,19 +2295,19 @@
 
     // 讀太快就答錯 —— 幾乎都是看錯題目
     if (limit && elapsed > 0 && elapsed < limit * 0.25) {
-      return { key: "wrong-technique", why: "你只花了不到四分之一的時間就答錯，通常是看錯題目或選錯方法" };
+      return { key: "wrong-technique", why: t("你只花了不到四分之一的時間就答錯，通常是看錯題目或選錯方法") };
     }
     // 看過第二層提示才會 —— 那是記憶問題不是理解問題
     if ((answer.hintsUsed || 0) >= 2) {
-      return { key: "forgot-formula", why: "你看到第二層提示才會，多半是公式忘了而不是不懂" };
+      return { key: "forgot-formula", why: t("你看到第二層提示才會，多半是公式忘了而不是不懂") };
     }
     // 有草稿、時間也花夠，而且這個技巧其實不弱 —— 那就是算錯
     const strokes = quiz && quiz.boardStrokes && quiz.boardStrokes[problem.id];
     const skillOk = causeSkillIsSolid(problem);
     if ((strokes && strokes.length) || (skillOk && limit && elapsed > limit * 0.5)) {
-      return { key: "algebra-slip", why: "你有動筆、時間也花夠了，而且這個技巧你其實會 —— 比較像算錯" };
+      return { key: "algebra-slip", why: t("你有動筆、時間也花夠了，而且這個技巧你其實會 —— 比較像算錯") };
     }
-    return { key: "wrong-technique", why: "這個技巧的精熟度還沒起來" };
+    return { key: "wrong-technique", why: t("這個技巧的精熟度還沒起來") };
   }
 
   function causeSkillIsSolid(problem) {
@@ -2333,10 +2338,10 @@
   // spec 04.2：19 個模式全部保留，但收成四類。分類的依據不是「像不像」，
   // 而是**焦慮該不該存在**：練習區不得製造焦慮，高壓規則只准出現在模擬區。
   const TRAIN_BUCKETS = [
-    { key: "practice", label: "練習", note: "沒有倒數，可以看提示" },
-    { key: "weakness", label: "弱點", note: "依你的錯題自動選題" },
-    { key: "exam", label: "模擬", note: "整份倒數、無提示" },
-    { key: "challenge", label: "挑戰", note: "高難度、有失敗條件" }
+    { key: "practice", label: t("練習"), note: t("沒有倒數，可以看提示") },
+    { key: "weakness", label: t("弱點"), note: t("依你的錯題自動選題") },
+    { key: "exam", label: t("模擬"), note: t("整份倒數、無提示") },
+    { key: "challenge", label: t("挑戰"), note: t("高難度、有失敗條件") }
   ];
 
   function renderTrain() {
@@ -2351,8 +2356,8 @@
 
     return `
       <main class="screen train-screen">
-        ${renderPageHeading("TRAINING / 訓練中心", "每個技巧，都能練得更熟。", "")}
-        <div class="segmented bucket-tabs ${buckets.length < 2 ? "is-single" : ""}" role="group" aria-label="訓練分類">
+        ${renderPageHeading(t("TRAINING / 訓練中心"), t("每個技巧，都能練得更熟。"), "")}
+        <div class="segmented bucket-tabs ${buckets.length < 2 ? "is-single" : ""}" role="group" aria-label="${t("訓練分類")}">
           ${buckets.map(
             (item) => `
               <button class="segment ${bucket === item.key ? "is-active" : ""}"
@@ -2414,11 +2419,11 @@
     });
 
     if (!worst) {
-      return { kind: "direct", text: "前置都穩了，直接練這個技巧就會有進步。", skillId };
+      return { kind: "direct", text: t("前置都穩了，直接練這個技巧就會有進步。"), skillId };
     }
     return {
       kind: "backtrack",
-      text: `先回去補「${worst.label}」（${worst.mastery} 分）—— 它是這個技巧的前置，卡在那裡的話這裡怎麼練都會卡。`,
+      text: `${t("先回去補「{label}」（{mastery} 分）—— 它是這個技巧的前置，卡在那裡的話這裡怎麼練都會卡。", { label: worst.label, mastery: worst.mastery })}`,
       skillId: worst.id,
       label: worst.label
     };
@@ -2437,33 +2442,33 @@
       <section class="study-card">
         <div class="panel-title-row">
           <div>
-            <p class="section-label">錯題複習</p>
-            <h3>${summary.due ? `今天到期 ${summary.due} 題` : mistakeCount ? "目前沒有到期的" : "錯題本是空的"}</h3>
+            <p class="section-label">${t("錯題複習")}</p>
+            <h3>${summary.due ? `${t("今天到期 {due} 題", { due: summary.due })}` : mistakeCount ? t("目前沒有到期的") : t("錯題本是空的")}</h3>
           </div>
         </div>
         <p class="panel-note">
           ${
             summary.due
-              ? "照排程清掉，才會真的記住。"
+              ? t("照排程清掉，才會真的記住。")
               : summary.nextDueDays
-                ? `下一批 ${summary.nextDueDays} 天後到期。`
-                : "答錯的題會自動進來，並照間隔重複排程回鍋。"
+                ? `${t("下一批 {nextDueDays} 天後到期。", { nextDueDays: summary.nextDueDays })}`
+                : t("答錯的題會自動進來，並照間隔重複排程回鍋。")
           }
         </p>
         ${
           // 到期預測：讓「明天會有幾題」可以被規劃，而不是每天被突襲。
           forecast.tomorrow || forecast.week
             ? `<p class="srs-forecast">${[
-                forecast.today ? `今天 ${forecast.today}` : "",
-                forecast.tomorrow ? `明天 ${forecast.tomorrow}` : "",
-                forecast.week ? `一週內再 ${forecast.week}` : ""
-              ].filter(Boolean).join(" · ")} 題到期</p>`
+                forecast.today ? `${t("今天 {today}", { today: forecast.today })}` : "",
+                forecast.tomorrow ? `${t("明天 {tomorrow}", { tomorrow: forecast.tomorrow })}` : "",
+                forecast.week ? `${t("一週內再 {week}", { week: forecast.week })}` : ""
+              ].filter(Boolean).join(" · ")} ${t("題到期")}</p>`
             : ""
         }
         <div class="action-row">
-          ${summary.due ? `<button class="button home-primary" data-action="start-srs-review">${icon("refresh")}開始複習</button>` : ""}
-          <button class="button ghost" data-action="open-mistakes">${icon("book-open-check")}看錯題本</button>
-          ${mistakeCount ? `<button class="button secondary" data-action="open-mistakes">${icon("book")}錯題本（${mistakeCount}）</button>` : ""}
+          ${summary.due ? `<button class="button home-primary" data-action="start-srs-review">${icon("refresh")}${t("開始複習")}</button>` : ""}
+          <button class="button ghost" data-action="open-mistakes">${icon("book-open-check")}${t("看錯題本")}</button>
+          ${mistakeCount ? `<button class="button secondary" data-action="open-mistakes">${icon("book")}${t("錯題本（{mistakeCount}）", { mistakeCount })}</button>` : ""}
         </div>
       </section>
       ${
@@ -2472,8 +2477,8 @@
         <section class="study-card">
           <div class="panel-title-row">
             <div>
-              <p class="section-label">弱點技巧</p>
-              <h3>系統挑最弱的給你</h3>
+              <p class="section-label">${t("弱點技巧")}</p>
+              <h3>${t("系統挑最弱的給你")}</h3>
             </div>
           </div>
           <ul class="weak-pick-list">
@@ -2497,8 +2502,8 @@
               .join("")}
           </ul>
           <div class="action-row">
-            <button class="button home-primary" data-action="start-weakness">${icon("target")}練弱點</button>
-            <button class="button secondary" data-action="open-insights">${icon("activity")}看完整診斷</button>
+            <button class="button home-primary" data-action="start-weakness">${icon("target")}${t("練弱點")}</button>
+            <button class="button secondary" data-action="open-insights">${icon("activity")}${t("看完整診斷")}</button>
           </div>
         </section>`
           : ""
@@ -2511,12 +2516,12 @@
       <section class="study-card">
         <div class="panel-title-row">
           <div>
-            <p class="section-label">大考模式</p>
-            <h3>20 題 / 45 分鐘</h3>
+            <p class="section-label">${t("大考模式")}</p>
+            <h3>${t("20 題 / 45 分鐘")}</h3>
           </div>
         </div>
         <div class="action-row">
-          <button class="button home-primary" data-action="start-mode" data-mode-key="exam">${icon("file-pen-line")}開始</button>
+          <button class="button home-primary" data-action="start-mode" data-mode-key="exam">${icon("file-pen-line")}${t("開始")}</button>
         </div>
       </section>
     `;
@@ -2526,20 +2531,20 @@
   // 之前每一個模式只有三個字的註（「階梯」「三命制」），想挑戰難題的人
   // 得一個個點進去才知道規則 —— 而規則正是他挑模式的依據。
   const CHALLENGE_MODE_META = {
-    brutal: { rule: "只抽 R4 以上 · 14 題 · 每題倒數", tagline: "不客氣的一局" },
-    boss: { rule: "16 題 R5 起由易到難爬到 R6 · 每題倒數", tagline: "看你能爬到哪一階" },
-    boss_rush: { rule: "R5–R6 連戰 · 錯一題就結算 · 10 題", tagline: "沒有第二次機會" },
-    integral_bee: { rule: "積分限定 · 12 題 · 比速度", tagline: "Integral Bee 的節奏" },
-    accuracy: { rule: "12 題 · 不倒數 · 答錯扣 80 分", tagline: "慢慢算，但不准錯" },
-    survival: { rule: "30 題由易到難，難度不設上限 · 三條命", tagline: "掉三條命就結束" },
-    pressure: { rule: "10 題 · 時限逐題縮短到 60% · 練「會但來不及」", tagline: "會不會，限時才知道" }
+    brutal: { rule: t("只抽 R4 以上 · 14 題 · 每題倒數"), tagline: t("不客氣的一局") },
+    boss: { rule: t("16 題 R5 起由易到難爬到 R6 · 每題倒數"), tagline: t("看你能爬到哪一階") },
+    boss_rush: { rule: t("R5–R6 連戰 · 錯一題就結算 · 10 題"), tagline: t("沒有第二次機會") },
+    integral_bee: { rule: t("積分限定 · 12 題 · 比速度"), tagline: t("Integral Bee 的節奏") },
+    accuracy: { rule: t("12 題 · 不倒數 · 答錯扣 80 分"), tagline: t("慢慢算，但不准錯") },
+    survival: { rule: t("30 題由易到難，難度不設上限 · 三條命"), tagline: t("掉三條命就結束") },
+    pressure: { rule: t("10 題 · 時限逐題縮短到 60% · 練「會但來不及」"), tagline: t("會不會，限時才知道") }
   };
 
   function challengeBest(records, key) {
     const runs = (records.history || []).filter((item) => item.mode === key);
     if (!runs.length) return "";
     const best = runs.reduce((top, item) => (Number(item.score || 0) > Number(top.score || 0) ? item : top), runs[0]);
-    return `最佳 ${Number(best.score || 0)} 分 · ${best.correct}/${best.total} · 打過 ${runs.length} 局`;
+    return `${t("最佳 {v} 分 · {correct}/{total} · 打過 {length} 局", { v: Number(best.score || 0), correct: best.correct, total: best.total, length: runs.length })}`;
   }
 
   function renderChallengeBucket(records, mission) {
@@ -2548,14 +2553,14 @@
       <button class="challenge-mode" ${action}>
         <span class="challenge-mode-head"><strong>${escapeHtml(label)}</strong><em>${escapeHtml(tagline)}</em></span>
         <span class="challenge-mode-rule">${escapeHtml(rule)}</span>
-        <span class="challenge-mode-best">${best ? escapeHtml(best) : "還沒打過"}</span>
+        <span class="challenge-mode-best">${best ? escapeHtml(best) : t("還沒打過")}</span>
       </button>`;
     return `
       <section class="study-card challenge-panel">
         <div class="panel-title-row">
           <div>
-            <p class="section-label">挑戰模式</p>
-            <h3>高難度，而且會失敗</h3>
+            <p class="section-label">${t("挑戰模式")}</p>
+            <h3>${t("高難度，而且會失敗")}</h3>
           </div>
         </div>
         <div class="challenge-mode-grid">
@@ -2563,48 +2568,48 @@
             const meta = CHALLENGE_MODE_META[key] || { rule: modeDescription(key), tagline: "" };
             return modeCard(key, MODES[key].label, meta.rule, meta.tagline, `data-action="start-mode" data-mode-key="${escapeAttr(key)}"`, challengeBest(records, key));
           }).join("")}
-          ${modeCard("god", "競賽魔王", "R6 · 競賽級 · 自己寫答案 · 每題倒數", "全站最硬的一份", 'data-action="start-god-run"', "")}
+          ${modeCard("god", t("競賽魔王"), t("R6 · 競賽級 · 自己寫答案 · 每題倒數"), t("全站最硬的一份"), 'data-action="start-god-run"', "")}
         </div>
       </section>
       <section class="study-card">
         <div class="panel-title-row">
           <div>
-            <p class="section-label">每日</p>
-            <h3>固定題組與每日一題</h3>
+            <p class="section-label">${t("每日")}</p>
+            <h3>${t("固定題組與每日一題")}</h3>
           </div>
         </div>
         <div class="action-row">
-          <button class="button home-primary" data-action="start-daily">${icon("calendar")}每日挑戰 ${mission.completed}/${mission.target}</button>
-          <button class="button secondary" data-action="start-daily-one">${icon("puzzle")}每日一題 ${renderDailyOneBadge(records)}</button>
+          <button class="button home-primary" data-action="start-daily">${icon("calendar")}${t("每日挑戰 {completed}/{target}", { completed: mission.completed, target: mission.target })}</button>
+          <button class="button secondary" data-action="start-daily-one">${icon("puzzle")}${t("每日一題 {records}", { records: renderDailyOneBadge(records) })}</button>
         </div>
       </section>
       <section class="study-card">
         <div class="panel-title-row">
           <div>
-            <p class="section-label">證明</p>
-            <h3>會算之外，還要會證</h3>
+            <p class="section-label">${t("證明")}</p>
+            <h3>${t("會算之外，還要會證")}</h3>
           </div>
         </div>
         <!-- 證明訓練原本只藏在「更多練習」摺疊區的頁尾連結裡 ——
              跟作答形式一樣的病：功能寫好了，但要挖三層才找得到。
              它是訓練內容，就放在挑戰分頁上當一張看得到的卡。 -->
         <div class="action-row">
-          <button class="button secondary" data-action="open-proofs">${icon("file-pen-line")}進證明訓練</button>
+          <button class="button secondary" data-action="open-proofs">${icon("file-pen-line")}${t("進證明訓練")}</button>
         </div>
       </section>
       <section class="study-card duel-card">
         <div class="panel-title-row">
           <div>
-            <p class="section-label">好友對戰</p>
-            <h3>同一份題，比對題數、再比時間</h3>
+            <p class="section-label">${t("好友對戰")}</p>
+            <h3>${t("同一份題，比對題數、再比時間")}</h3>
           </div>
         </div>
         <div class="action-row">
-          <button class="button" data-action="duel-create">${icon("zap")}出戰帖（10 題）</button>
+          <button class="button" data-action="duel-create">${icon("zap")}${t("出戰帖（10 題）")}</button>
         </div>
         <div class="duel-code-row">
-          <input id="duel-code-input" placeholder="貼上朋友的戰帖碼（BZD1:…）" autocomplete="off" spellcheck="false">
-          <button class="button secondary" data-action="duel-accept">${icon("play")}應戰</button>
+          <input id="duel-code-input" placeholder="${t("貼上朋友的戰帖碼（BZD1:…）")}" autocomplete="off" spellcheck="false">
+          <button class="button secondary" data-action="duel-accept">${icon("play")}${t("應戰")}</button>
         </div>
       </section>
     `;
@@ -2664,12 +2669,12 @@
       <section class="study-card weekly-digest">
         <div class="panel-title-row">
           <div>
-            <p class="section-label">上週戰報</p>
-            <h3>${data.answered} 題 · ${data.accuracy}% · ${data.days} 天有練${data.streak > 1 ? ` · 連勝 ${data.streak} 天` : ""}</h3>
+            <p class="section-label">${t("上週戰報")}</p>
+            <h3>${t("{answered} 題 · {accuracy}% · {days} 天有練", { answered: data.answered, accuracy: data.accuracy, days: data.days })}${data.streak > 1 ? ` ${t("· 連勝 {streak} 天", { streak: data.streak })}` : ""}</h3>
           </div>
-          <button class="button secondary" data-action="download-weekly-report">${icon("download")}下載戰報</button>
+          <button class="button secondary" data-action="download-weekly-report">${icon("download")}${t("下載戰報")}</button>
         </div>
-        ${data.up ? `<p class="panel-note">進步最快：${escapeHtml(data.up.label)} +${data.up.delta}</p>` : ""}
+        ${data.up ? `<p class="panel-note">${t("進步最快：{label} +{delta}", { label: escapeHtml(data.up.label), delta: data.up.delta })}</p>` : ""}
       </section>`;
   }
 
@@ -2681,7 +2686,7 @@
     const delta = (nowValue, thenValue, unit) => {
       if (thenValue === null || nowValue === null) return "";
       const diff = nowValue - thenValue;
-      if (!diff) return `<small class="report-delta">與上週持平</small>`;
+      if (!diff) return `<small class="report-delta">${t("與上週持平")}</small>`;
       const sign = diff > 0 ? "+" : "−";
       return `<small class="report-delta ${diff > 0 ? "is-up" : "is-down"}">${sign}${Math.abs(diff)}${unit}</small>`;
     };
@@ -2690,20 +2695,20 @@
       <section class="study-card weekly-report">
         <div class="panel-title-row">
           <div>
-            <p class="section-label">本週</p>
-            <h3>${current.answered ? `練了 ${current.answered} 題` : "這週還沒開始"}</h3>
+            <p class="section-label">${t("本週")}</p>
+            <h3>${current.answered ? `${t("練了 {answered} 題", { answered: current.answered })}` : t("這週還沒開始")}</h3>
           </div>
         </div>
         <div class="report-grid">
-          <div><span>題數</span><strong class="num">${current.answered}</strong>${delta(current.answered, previous.answered, " 題")}</div>
-          <div><span>正確率</span><strong class="num">${current.accuracy === null ? "—" : `${current.accuracy}%`}</strong>${delta(current.accuracy, previous.accuracy, " 點")}</div>
-          <div><span>有練的天數</span><strong class="num">${current.days}</strong>${delta(current.days, previous.days, " 天")}</div>
-          <div><span>局數</span><strong class="num">${current.sessions}</strong>${delta(current.sessions, previous.sessions, " 局")}</div>
+          <div><span>${t("題數")}</span><strong class="num">${current.answered}</strong>${delta(current.answered, previous.answered, t(" 題"))}</div>
+          <div><span>${t("正確率")}</span><strong class="num">${current.accuracy === null ? "—" : `${current.accuracy}%`}</strong>${delta(current.accuracy, previous.accuracy, t(" 點"))}</div>
+          <div><span>${t("有練的天數")}</span><strong class="num">${current.days}</strong>${delta(current.days, previous.days, t(" 天"))}</div>
+          <div><span>${t("局數")}</span><strong class="num">${current.sessions}</strong>${delta(current.sessions, previous.sessions, t(" 局"))}</div>
         </div>
-        ${previous.answered ? `<p class="panel-note">上週：${previous.answered} 題 · ${previous.accuracy === null ? "—" : `${previous.accuracy}%`} · ${previous.days} 天</p>` : ""}
+        ${previous.answered ? `<p class="panel-note">${t("上週：{answered} 題 ·", { answered: previous.answered })} ${previous.accuracy === null ? "—" : `${previous.accuracy}%`} ${t("· {days} 天", { days: previous.days })}</p>` : ""}
         ${
           current.answered
-            ? `<div class="action-row"><button class="button secondary" data-action="download-weekly-report">${icon("download")}下載本週戰報（PNG）</button></div>`
+            ? `<div class="action-row"><button class="button secondary" data-action="download-weekly-report">${icon("download")}${t("下載本週戰報（PNG）")}</button></div>`
             : ""
         }
       </section>
@@ -2780,8 +2785,8 @@
       <section class="study-card speed-progress">
         <div class="panel-title-row">
           <div>
-            <p class="section-label">反射進步</p>
-            <h3>同型題，你變快了</h3>
+            <p class="section-label">${t("反射進步")}</p>
+            <h3>${t("同型題，你變快了")}</h3>
           </div>
         </div>
         <div class="speed-rows">
@@ -2791,7 +2796,7 @@
                 <div class="speed-row">
                   <strong>${escapeHtml(row.label)}</strong>
                   <span class="speed-figures num">${row.beforeSec}s → <b>${row.afterSec}s</b></span>
-                  <small>${row.daysSpan} 天內快了 ${row.speedup >= 1.95 ? Math.round(row.speedup * 10) / 10 + " 倍" : Math.round((1 - 1 / row.speedup) * 100) + "%"}</small>
+                  <small>${t("{daysSpan} 天內快了 {gain}", { daysSpan: row.daysSpan, gain: row.speedup >= 1.95 ? Math.round(row.speedup * 10) / 10 + t(" 倍") : Math.round((1 - 1 / row.speedup) * 100) + "%" })}</small>
                 </div>`
             )
             .join("")}
@@ -2807,11 +2812,11 @@
     if (!profile) {
       return `
         <main class="screen insights-screen">
-          ${renderPageHeading("INSIGHTS / 學習數據", "看見你的每一點進步。", "")}
+          ${renderPageHeading(t("INSIGHTS / 學習數據"), t("看見你的每一點進步。"), "")}
           <section class="study-card">
-            <p class="section-label">數據</p>
-            <h3>能力模型未載入</h3>
-            <p class="panel-note">重新整理一次頁面。若持續發生，代表 kernel 檔沒有載入成功。</p>
+            <p class="section-label">${t("數據")}</p>
+            <h3>${t("能力模型未載入")}</h3>
+            <p class="panel-note">${t("重新整理一次頁面。若持續發生，代表 kernel 檔沒有載入成功。")}</p>
           </section>
         </main>
       `;
@@ -2820,14 +2825,14 @@
     if (!profile.coverage.attempts) {
       return `
         <main class="screen insights-screen">
-          ${renderPageHeading("INSIGHTS / 學習數據", "看見你的每一點進步。", "")}
+          ${renderPageHeading(t("INSIGHTS / 學習數據"), t("看見你的每一點進步。"), "")}
           <section class="study-card workspace-empty">
             <span class="empty-symbol">${icon("activity")}</span>
-            <p class="section-label">數據</p>
-            <h3>你的進步，從第一份練習開始</h3>
-            <p class="panel-note">目前還沒有資料。完成訓練後，這裡會整理你的技巧掌握度、解題速度與常見錯因，幫你找到下一步。</p>
+            <p class="section-label">${t("數據")}</p>
+            <h3>${t("你的進步，從第一份練習開始")}</h3>
+            <p class="panel-note">${t("目前還沒有資料。完成訓練後，這裡會整理你的技巧掌握度、解題速度與常見錯因，幫你找到下一步。")}</p>
             <div class="action-row">
-              <button class="button home-primary" data-action="home">${icon("play")}開始第一份訓練</button>
+              <button class="button home-primary" data-action="home">${icon("play")}${t("開始第一份訓練")}</button>
             </div>
           </section>
         </main>
@@ -2836,7 +2841,7 @@
 
     return `
       <main class="screen insights-screen">
-        ${renderPageHeading("INSIGHTS / 學習數據", "看見你的每一點進步。", "", `<button class="button secondary" data-action="open-history">${icon("history")}練習紀錄</button>`)}
+        ${renderPageHeading(t("INSIGHTS / 學習數據"), t("看見你的每一點進步。"), "", `<button class="button secondary" data-action="open-history">${icon("history")}${t("練習紀錄")}</button>`)}
         ${renderInsightsSummary(profile)}
         ${renderWeeklyReport(records)}
         ${renderSpeedProgress(records)}
@@ -2885,7 +2890,7 @@
 
   function trendChip(value, unit = "") {
     if (value === null || value === undefined) return `<span class="trend-chip is-flat">—</span>`;
-    if (value === 0) return `<span class="trend-chip is-flat">持平</span>`;
+    if (value === 0) return `<span class="trend-chip is-flat">${t("持平")}</span>`;
     const cls = value > 0 ? "is-up" : "is-down";
     return `<span class="trend-chip ${cls}">${value > 0 ? "+" : ""}${value}${unit}</span>`;
   }
@@ -2898,32 +2903,31 @@
       <section class="study-card insights-summary">
         <div class="panel-title-row">
           <div>
-            <p class="section-label">整體能力</p>
-            <h3>${overall.mastery === null ? "資料不足" : `${overall.mastery} 分`}</h3>
+            <p class="section-label">${t("整體能力")}</p>
+            <h3>${overall.mastery === null ? t("資料不足") : `${t("{mastery} 分", { mastery: overall.mastery })}`}</h3>
           </div>
-          <div class="insights-trends" title="能力分數相對 7 / 30 天前的變化 —— 樣本不足時顯示「—」，練起來就會有數字">
-            <div><span>7 天</span>${trendChip(profile.trend.d7)}</div>
-            <div><span>30 天</span>${trendChip(profile.trend.d30)}</div>
+          <div class="insights-trends" title="${t("能力分數相對 7 / 30 天前的變化 —— 樣本不足時顯示「—」，練起來就會有數字")}">
+            <div><span>${t("7 天")}</span>${trendChip(profile.trend.d7)}</div>
+            <div><span>${t("30 天")}</span>${trendChip(profile.trend.d30)}</div>
           </div>
         </div>
         <p class="panel-note">
-          測得出來的技巧 ${profile.coverage.skillsMeasured} 個 / 碰過 ${profile.coverage.skillsTouched} 個 ·
-          累計 ${profile.coverage.attempts} 次作答
+          ${t("測得出來的技巧 {skillsMeasured} 個 / 碰過 {skillsTouched} 個 · 累計 {attempts} 次作答", { skillsMeasured: profile.coverage.skillsMeasured, skillsTouched: profile.coverage.skillsTouched, attempts: profile.coverage.attempts })}
         </p>
         ${
           // 個人遺忘係數：有足夠回訪樣本才顯示（kernel 樣本 <12 時恆為 1）
           profile.decaySamples >= 12 && Math.abs(profile.decayScale - 1) >= 0.08
-            ? `<p class="panel-note">依你 ${profile.decaySamples} 次隔多天回訪的實績，你忘得比模型預設${profile.decayScale > 1 ? "慢" : "快"} ${Math.round(Math.abs(profile.decayScale - 1) * 100)}% —— 複習到期日已自動${profile.decayScale > 1 ? "拉長" : "提前"}。</p>`
+            ? `<p class="panel-note">${t("依你 {decaySamples} 次隔多天回訪的實績，你忘得比模型預設{dir} {v}% —— 複習到期日已自動{adj}。", { decaySamples: profile.decaySamples, dir: profile.decayScale > 1 ? t("慢") : t("快"), v: Math.round(Math.abs(profile.decayScale - 1) * 100), adj: profile.decayScale > 1 ? t("拉長") : t("提前") })}</p>`
             : ""
         }
         <div class="insights-movers">
           <div class="mover is-up">
-            <span>本週進步最快</span>
-            <strong>${up ? `${escapeHtml(up.label)} ${trendChip(up.delta)}` : "還看不出來"}</strong>
+            <span>${t("本週進步最快")}</span>
+            <strong>${up ? `${escapeHtml(up.label)} ${trendChip(up.delta)}` : t("還看不出來")}</strong>
           </div>
           <div class="mover is-down">
-            <span>本週退步最快</span>
-            <strong>${down ? `${escapeHtml(down.label)} ${trendChip(down.delta)}` : "沒有退步的技巧"}</strong>
+            <span>${t("本週退步最快")}</span>
+            <strong>${down ? `${escapeHtml(down.label)} ${trendChip(down.delta)}` : t("沒有退步的技巧")}</strong>
           </div>
         </div>
       </section>
@@ -2951,11 +2955,11 @@
       });
     });
     const labels = {
-      "algebra-slip": "算錯，不是不會",
-      "wrong-technique": "選錯方法",
-      "forgot-formula": "忘公式",
-      timeout: "來不及",
-      misread: "看錯題目"
+      "algebra-slip": t("算錯，不是不會"),
+      "wrong-technique": t("選錯方法"),
+      "forgot-formula": t("忘公式"),
+      timeout: t("來不及"),
+      misread: t("看錯題目")
     };
     const rows = Object.entries(totals).sort((a, b) => b[1] - a[1]);
     const total = rows.reduce((sum, row) => sum + row[1], 0);
@@ -2963,9 +2967,9 @@
     if (!total) {
       return `
         <section class="study-card">
-          <p class="section-label">錯因</p>
-          <h3>還沒有錯因資料</h3>
-          <p class="panel-note">答錯後在結算頁標一下原因（粗心 / 不會 / 忘公式），這裡就會統計出你最常犯的錯。</p>
+          <p class="section-label">${t("錯因")}</p>
+          <h3>${t("還沒有錯因資料")}</h3>
+          <p class="panel-note">${t("答錯後在結算頁標一下原因（粗心 / 不會 / 忘公式），這裡就會統計出你最常犯的錯。")}</p>
         </section>
       `;
     }
@@ -2977,8 +2981,8 @@
       <section class="study-card cause-card">
         <div class="panel-title-row">
           <div>
-            <p class="section-label">錯因分佈</p>
-            <h3>${slipRate >= 40 ? "你的問題主要是穩定度，不是技巧" : "你最常犯的錯"}</h3>
+            <p class="section-label">${t("錯因分佈")}</p>
+            <h3>${slipRate >= 40 ? t("你的問題主要是穩定度，不是技巧") : t("你最常犯的錯")}</h3>
           </div>
         </div>
         <ul class="cause-rows">
@@ -2989,20 +2993,20 @@
                 <li class="cause-row is-${escapeAttr(cause)}">
                   <span class="cause-name">${escapeHtml(labels[cause] || cause)}</span>
                   <div class="cause-bar"><div class="cause-fill" style="width:${pct}%"></div></div>
-                  <span class="cause-count">${count} 次 · ${pct}%</span>
+                  <span class="cause-count">${t("{count} 次 · {pct}%", { count, pct })}</span>
                 </li>`;
             })
             .join("")}
         </ul>
         ${
           slipRate >= 40
-            ? `<p class="panel-note">算錯佔了 ${slipRate}%。這種情況該練的是低難度高計算量的題目來穩定代數，而不是往上加難度。</p>`
+            ? `<p class="panel-note">${t("算錯佔了 {slipRate}%。這種情況該練的是低難度高計算量的題目來穩定代數，而不是往上加難度。", { slipRate })}</p>`
             : ""
         }
         <div class="action-row">
           <!-- 錯題本原本只有結算頁與 訓練→弱點 兩個入口 —— 想「看」錯題
                （不是練）的人在數據頁最有可能，這裡給一扇門。 -->
-          <button class="button ghost" data-action="open-mistakes">${icon("book-open-check")}開錯題本</button>
+          <button class="button ghost" data-action="open-mistakes">${icon("book-open-check")}${t("開錯題本")}</button>
         </div>
       </section>
     `;
@@ -3021,42 +3025,42 @@
     const mastery = Math.round(next.mastery || 0);
     const remaining = Math.max(0, (mission.target || 0) - (mission.completed || 0));
     const streak = mission.dailyStreak || 0;
-    const statusMap = { jump: "可略過", ready: "可開始", active: "進行中", mastered: "已熟練", gold: "已精熟" };
-    const statusText = statusMap[next.status] || "可挑戰";
+    const statusMap = { jump: t("可略過"), ready: t("可開始"), active: t("進行中"), mastered: t("已熟練"), gold: t("已精熟") };
+    const statusText = statusMap[next.status] || t("可挑戰");
     const isNew = !(records.totalAnswered || 0);
     const hook = isNew
-      ? "先清 3 題暖機，找回手感"
+      ? t("先清 3 題暖機，找回手感")
       : mission.done
-        ? "今日達標，超前部署一波"
+        ? t("今日達標，超前部署一波")
         : remaining <= 1
-          ? `再 ${remaining} 題就達成今日目標`
-          : `再 ${remaining} 題達成今日目標`;
+          ? `${t("再 {remaining} 題就達成今日目標", { remaining })}`
+          : `${t("再 {remaining} 題達成今日目標", { remaining })}`;
     return `
-      <section class="home-launch-pad quest-hero" aria-label="今日練習入口">
+      <section class="home-launch-pad quest-hero" aria-label="${t("今日練習入口")}">
         <div class="launch-copy">
-          <p class="section-label launch-eyebrow" data-enter>${escapeHtml(homeGreeting())}${streak ? ` · 連勝 ${streak} 天` : ""}</p>
+          <p class="section-label launch-eyebrow" data-enter>${escapeHtml(homeGreeting())}${streak ? ` ${t("· 連勝 {streak} 天", { streak })}` : ""}</p>
           <div class="quest-tag" data-enter>
-            <span class="quest-level">第 ${level} / ${total} 階</span>
+            <span class="quest-level">${t("第 {level} / {total} 階", { level, total })}</span>
             <span class="quest-status is-${escapeAttr(next.status || "ready")}">${escapeHtml(statusText)}</span>
           </div>
           <h1 data-enter>${escapeHtml(next.label)}</h1>
           <p class="launch-hook" data-enter>${escapeHtml(hook)}</p>
           <div class="mastery-row" data-enter>
-            <span class="mastery-name">精熟度</span>
+            <span class="mastery-name">${t("精熟度")}</span>
             <span class="mastery-pct">${mastery}%</span>
           </div>
-          <div class="mastery-gauge" data-enter role="img" aria-label="熟練度 ${mastery}%">
+          <div class="mastery-gauge" data-enter role="img" aria-label="${t("熟練度 {mastery}%", { mastery })}">
             <div class="mastery-fill" data-fill="${mastery}" style="width:${mastery}%"></div>
           </div>
           <div class="launch-actions" data-enter>
             <button class="button home-primary launch-start" data-action="start-path-node" data-node-id="${escapeAttr(next.id)}">
-              ${icon("play")}<span>繼續主線</span><small>${escapeHtml(next.short)}</small>
+              ${icon("play")}<span>${t("繼續主線")}</span><small>${escapeHtml(next.short)}</small>
             </button>
             <button class="button secondary launch-daily" data-action="start-daily">
-              ${icon("calendar")}<span>每日</span><small>${mission.completed}/${mission.target}</small>
+              ${icon("calendar")}<span>${t("每日")}</span><small>${mission.completed}/${mission.target}</small>
             </button>
             <button class="button secondary launch-daily-one" data-action="start-daily-one">
-              ${icon("puzzle")}<span>每日一題</span><small>${renderDailyOneBadge(records)}</small>
+              ${icon("puzzle")}<span>${t("每日一題")}</span><small>${renderDailyOneBadge(records)}</small>
             </button>
           </div>
         </div>
@@ -3081,7 +3085,7 @@
     const questsCard = worthShowing ? renderHomeQuestsCard(records) : "";
     if (!srsCard && !retestCard && !refreshCard && !streakCard && !questsCard) return "";
     return `
-      <section class="home-retention" aria-label="複習與連勝">
+      <section class="home-retention" aria-label="${t("複習與連勝")}">
         ${srsCard}
         ${retestCard}
         ${refreshCard}
@@ -3105,28 +3109,28 @@
     const measured = profile && profile.coverage ? profile.coverage.skillsMeasured : 0;
     const unmeasured = !measured;
     const forecastLine = forecast && forecast.coverage >= 0.35
-      ? `目前模擬考預測 <strong>${Math.round(forecast.expected)}/${forecast.total}</strong>（九成把握落在 ${Math.round(forecast.low)}–${Math.round(forecast.high)}）`
+      ? `${t("目前模擬考預測")} <strong>${Math.round(forecast.expected)}/${forecast.total}</strong>${t("（九成把握落在 {low}–{high}）", { low: Math.round(forecast.low), high: Math.round(forecast.high) })}`
       : unmeasured
-        ? "還沒量到你任何一個技巧 —— 先寫一份模擬卷，缺口與預測才會出現"
-        : "預測還不準 —— 模型要多看你幾場才量得出你";
+        ? t("還沒量到你任何一個技巧 —— 先寫一份模擬卷，缺口與預測才會出現")
+        : t("預測還不準 —— 模型要多看你幾場才量得出你");
     const gapLine = unmeasured
       ? ""
       : info.gaps.length
-        ? `缺口最大：${info.gaps.slice(0, 3).map((gap) => escapeHtml(gap.label)).join("、")}${info.gaps.length > 3 ? ` 等 ${info.gaps.length} 個` : ""}`
-        : "範圍內的技巧都到標了，剩下的是保持";
+        ? `${t("缺口最大：")}${info.gaps.slice(0, 3).map((gap) => escapeHtml(gap.label)).join("、")}${info.gaps.length > 3 ? ` ${t("等 {length} 個", { length: info.gaps.length })}` : ""}`
+        : t("範圍內的技巧都到標了，剩下的是保持");
     const paceLine = unmeasured
-      ? `每天 ${info.dailyMinutes} 分鐘，剩 ${info.daysLeft} 天 —— 量到缺口之後這裡會告訴你排不排得完`
+      ? `${t("每天 {dailyMinutes} 分鐘，剩 {daysLeft} 天 —— 量到缺口之後這裡會告訴你排不排得完", { dailyMinutes: info.dailyMinutes, daysLeft: info.daysLeft })}`
       : info.feasible
-        ? `每天 ${info.dailyMinutes} 分鐘排得完（涵蓋 ${info.coverableSkills}/${info.totalSkills} 個缺口）`
-        : `誠實說：每天 ${info.dailyMinutes} 分鐘排不完，約需 ${info.neededMinutes} 分鐘 —— 加時間，或縮小目標`;
+        ? `${t("每天 {dailyMinutes} 分鐘排得完（涵蓋 {coverableSkills}/{totalSkills} 個缺口）", { dailyMinutes: info.dailyMinutes, coverableSkills: info.coverableSkills, totalSkills: info.totalSkills })}`
+        : `${t("誠實說：每天 {dailyMinutes} 分鐘排不完，約需 {neededMinutes} 分鐘 —— 加時間，或縮小目標", { dailyMinutes: info.dailyMinutes, neededMinutes: info.neededMinutes })}`;
     // 這張卡以前沒有任何按鈕：講完「排不完」就把人留在原地。
     const mockId = info.daysLeft <= 7 ? "quiz_sprint" : "midterm";
     const mock = NAMED_EXAMS[mockId] || NAMED_EXAMS.midterm;
     return `
-      <section class="today-card exam-countdown-card" aria-label="考前衝刺">
+      <section class="today-card exam-countdown-card" aria-label="${t("考前衝刺")}">
         <div class="today-head">
-          <p class="section-label">考前衝刺</p>
-          <span class="today-meta">D-${info.daysLeft}${info.sprint ? " · 衝刺週" : ""}</span>
+          <p class="section-label">${t("考前衝刺")}</p>
+          <span class="today-meta">D-${info.daysLeft}${info.sprint ? t(" · 衝刺週") : ""}</span>
         </div>
         <h2 class="today-title">${escapeHtml(info.label)}</h2>
         <p class="today-why">${forecastLine}</p>
@@ -3135,11 +3139,11 @@
         <div class="today-actions">
           ${
             unmeasured
-              ? `<button class="button home-primary" data-action="start-named-exam" data-exam-id="${escapeAttr(mockId)}">${icon("file-pen-line")}先寫一份${escapeHtml(mock.label)} · ${Math.round(mock.durationSec / 60)} 分鐘</button>`
-              : `<button class="button home-primary" data-action="start-planned">${icon("play")}練今天的缺口</button>
-                 <button class="button secondary" data-action="start-named-exam" data-exam-id="${escapeAttr(mockId)}">${icon("file-pen-line")}再寫一份${escapeHtml(mock.label)}</button>`
+              ? `<button class="button home-primary" data-action="start-named-exam" data-exam-id="${escapeAttr(mockId)}">${icon("file-pen-line")}${t("先寫一份{label} · {v} 分鐘", { label: escapeHtml(mock.label), v: Math.round(mock.durationSec / 60) })}</button>`
+              : `<button class="button home-primary" data-action="start-planned">${icon("play")}${t("練今天的缺口")}</button>
+                 <button class="button secondary" data-action="start-named-exam" data-exam-id="${escapeAttr(mockId)}">${icon("file-pen-line")}${t("再寫一份{label}", { label: escapeHtml(mock.label) })}</button>`
           }
-          <button class="button ghost" data-action="open-settings">${icon("settings")}調整日期與時間</button>
+          <button class="button ghost" data-action="open-settings">${icon("settings")}${t("調整日期與時間")}</button>
         </div>
       </section>
     `;
@@ -3154,49 +3158,49 @@
     if (records.examSetupDismissed) return "";
     const soon = new Date(Date.now() + 7 * 86400000).toISOString().slice(0, 10);
     return `
-      <section class="today-card exam-setup-card" aria-label="設定考試日期">
+      <section class="today-card exam-setup-card" aria-label="${t("設定考試日期")}">
         <div class="today-head">
-          <p class="section-label">${icon("flag")}你說快考了</p>
-          <span class="today-meta">30 秒設定</span>
+          <p class="section-label">${icon("flag")}${t("你說快考了")}</p>
+          <span class="today-meta">${t("30 秒設定")}</span>
         </div>
-        <h2 class="today-title">考試是哪一天？</h2>
-        <p class="today-why">設好日期，首頁會倒數、每日訓練會自動偏向考試範圍的缺口，模擬考會估你大概能拿幾分。</p>
+        <h2 class="today-title">${t("考試是哪一天？")}</h2>
+        <p class="today-why">${t("設好日期，首頁會倒數、每日訓練會自動偏向考試範圍的缺口，模擬考會估你大概能拿幾分。")}</p>
         <div class="exam-plan-form">
-          <label>名稱 <input id="exam-plan-label" type="text" maxlength="12" value="" placeholder="期中考"></label>
-          <label>日期 <input id="exam-plan-date" type="date" value="${soon}"></label>
-          <label>每天
+          <label>${t("名稱")} <input id="exam-plan-label" type="text" maxlength="12" value="" placeholder="${t("期中考")}"></label>
+          <label>${t("日期")} <input id="exam-plan-date" type="date" value="${soon}"></label>
+          <label>${t("每天")}
             <select id="exam-plan-minutes">
-              ${[15, 30, 45].map((value) => `<option value="${value}" ${value === 30 ? "selected" : ""}>${value} 分鐘</option>`).join("")}
+              ${[15, 30, 45].map((value) => `<option value="${value}" ${value === 30 ? "selected" : ""}>${t("{value} 分鐘", { value })}</option>`).join("")}
             </select>
           </label>
-          <label>目標精熟
+          <label>${t("目標精熟")}
             <select id="exam-plan-target">
               ${[60, 70, 85].map((value) => `<option value="${value}" ${value === 70 ? "selected" : ""}>${value}</option>`).join("")}
             </select>
           </label>
         </div>
         <div class="today-actions">
-          <button class="button home-primary" data-action="exam-countdown-set">${icon("flag")}開始倒數</button>
-          <button class="button secondary" data-action="start-named-exam" data-exam-id="midterm">${icon("file-pen-line")}先寫一份期中模擬 · 60 分鐘</button>
-          <button class="button ghost" data-action="exam-setup-dismiss">先不用</button>
+          <button class="button home-primary" data-action="exam-countdown-set">${icon("flag")}${t("開始倒數")}</button>
+          <button class="button secondary" data-action="start-named-exam" data-exam-id="midterm">${icon("file-pen-line")}${t("先寫一份期中模擬 · 60 分鐘")}</button>
+          <button class="button ghost" data-action="exam-setup-dismiss">${t("先不用")}</button>
         </div>
       </section>
     `;
   }
 
   function saveExamCountdown() {
-    const label = String((app.querySelector("#exam-plan-label") || {}).value || "").trim() || "期中考";
+    const label = String((app.querySelector("#exam-plan-label") || {}).value || "").trim() || t("期中考");
     const date = String((app.querySelector("#exam-plan-date") || {}).value || "");
     const minutes = Number((app.querySelector("#exam-plan-minutes") || {}).value || 15);
     const target = Number((app.querySelector("#exam-plan-target") || {}).value || 70);
     if (!date || !Number.isFinite(Date.parse(date))) {
-      showAppNotice("先選一個考試日期。");
+      showAppNotice(t("先選一個考試日期。"));
       return;
     }
     const records = loadRecords();
     records.plan = { label, examAt: new Date(`${date}T09:00:00`).toISOString(), dailyMinutes: minutes, target };
     saveRecords(records);
-    showAppNotice(`${label}倒數開始 —— 首頁與每日訓練會跟著調整。`);
+    showAppNotice(`${t("{label}倒數開始 —— 首頁與每日訓練會跟著調整。", { label })}`);
     render();
   }
 
@@ -3231,11 +3235,11 @@
     return `
       <div class="retention-card srs-card is-due">
         <div class="retention-copy">
-          <p class="section-label">昨日所學回測</p>
-          <strong>「${escapeHtml(pending.node.label)}」還記得多少？</strong>
-          <span>練完當下會 ≠ 隔天還會 —— 5 題驗收，過了才算真的學進去。</span>
+          <p class="section-label">${t("昨日所學回測")}</p>
+          <strong>${t("「{label}」還記得多少？", { label: escapeHtml(pending.node.label) })}</strong>
+          <span>${t("練完當下會 ≠ 隔天還會 —— 5 題驗收，過了才算真的學進去。")}</span>
         </div>
-        <button class="button" data-action="start-path-retest">${icon("repeat")}回測 5 題</button>
+        <button class="button" data-action="start-path-retest">${icon("repeat")}${t("回測 5 題")}</button>
       </div>
     `;
   }
@@ -3280,11 +3284,11 @@
     return `
       <div class="retention-card srs-card is-due">
         <div class="retention-copy">
-          <p class="section-label">技巧回溫</p>
-          <strong>${due.length} 個技巧太久沒碰</strong>
-          <span>${labels}${due.length > 3 ? "…" : ""} —— 練會的東西也會忘，8 題拉回來。</span>
+          <p class="section-label">${t("技巧回溫")}</p>
+          <strong>${t("{length} 個技巧太久沒碰", { length: due.length })}</strong>
+          <span>${t("{labels}{v} —— 練會的東西也會忘，8 題拉回來。", { labels, v: due.length > 3 ? "…" : "" })}</span>
         </div>
-        <button class="button" data-action="start-skill-refresh">${icon("zap")}回溫 8 題</button>
+        <button class="button" data-action="start-skill-refresh">${icon("zap")}${t("回溫 8 題")}</button>
       </div>
     `;
   }
@@ -3319,9 +3323,9 @@
     const perfectRun = sessions.some((item) => Number(item.total) >= 5 && item.correct === item.total);
     const goal = dailyGoal(records);
     const quests = [
-      { icon: "check", label: `答對 ${goal} 題`, progress: Math.min(correctToday, goal), target: goal },
-      { icon: "zap", label: "賺 60 XP", progress: Math.min(xpToday, 60), target: 60 },
-      { icon: "star", label: "一局全對（5 題以上）", progress: perfectRun ? 1 : 0, target: 1 }
+      { icon: "check", label: `${t("答對 {goal} 題", { goal })}`, progress: Math.min(correctToday, goal), target: goal },
+      { icon: "zap", label: t("賺 60 XP"), progress: Math.min(xpToday, 60), target: 60 },
+      { icon: "star", label: t("一局全對（5 題以上）"), progress: perfectRun ? 1 : 0, target: 1 }
     ].map((quest) => ({ ...quest, done: quest.progress >= quest.target }));
     return { quests, allDone: quests.every((quest) => quest.done), today };
   }
@@ -3335,7 +3339,7 @@
     return `
       <div class="retention-card quests-card">
         <div class="retention-copy quests-copy">
-          <p class="section-label">今日任務</p>
+          <p class="section-label">${t("今日任務")}</p>
           ${state.quests.map((quest) => `
             <div class="quest-row ${quest.done ? "is-done" : ""}">
               <span class="quest-icon">${icon(quest.done ? "check" : quest.icon)}</span>
@@ -3345,7 +3349,7 @@
               </div>
               <strong class="quest-count">${quest.progress}/${quest.target}</strong>
             </div>`).join("")}
-          ${claimed ? `<p class="quest-bonus-line">${icon("sparkles")}全部完成，+${QUEST_BONUS_XP} XP 已入帳</p>` : ""}
+          ${claimed ? `<p class="quest-bonus-line">${icon("sparkles")}${t("全部完成，+{QUEST_BONUS_XP} XP 已入帳", { QUEST_BONUS_XP })}</p>` : ""}
         </div>
       </div>
     `;
@@ -3362,18 +3366,18 @@
       const key = localDateKey(cursor);
       const count = counts[key] || 0;
       const shielded = streakInfo.usedDates.has(key);
-      cells.push(`<i class="heatmap-cell ${shielded ? "is-shielded" : ""}" data-level="${activityLevel(count)}" title="${escapeAttr(`${key} · ${count} 題${shielded ? " · 盾牌保護" : ""}`)}"></i>`);
+      cells.push(`<i class="heatmap-cell ${shielded ? "is-shielded" : ""}" data-level="${activityLevel(count)}" title="${escapeAttr(`${t("{key} · {count} 題", { key, count })}${shielded ? t(" · 盾牌保護") : ""}`)}"></i>`);
       cursor.setDate(cursor.getDate() + 1);
     }
     return `
       <div class="retention-card streak-card">
         <div class="retention-copy">
-          <p class="section-label">練習連勝</p>
-          <strong class="streak-number ${streakInfo.streak > 0 ? "is-lit" : ""}">${icon("flame")}${streakInfo.streak} 天</strong>
-          <span class="shield-chip ${streakInfo.shieldAvailable ? "is-ready" : "is-used"}">${icon("shield")}盾牌${streakInfo.shieldAvailable ? "可用" : "本週已用"}</span>
+          <p class="section-label">${t("練習連勝")}</p>
+          <strong class="streak-number ${streakInfo.streak > 0 ? "is-lit" : ""}">${icon("flame")}${t("{streak} 天", { streak: streakInfo.streak })}</strong>
+          <span class="shield-chip ${streakInfo.shieldAvailable ? "is-ready" : "is-used"}">${icon("shield")}${t("盾牌")}${streakInfo.shieldAvailable ? t("可用") : t("本週已用")}</span>
           ${(() => {
             const info = xpLevelInfo(loadRecords().xp);
-            return `<span class="level-chip" title="再 ${info.span - info.into} XP 升級">${icon("sparkles")}Lv.${info.level} · ${info.into}/${info.span} XP</span>`;
+            return `<span class="level-chip" title="${t("再 {v} XP 升級", { v: info.span - info.into })}">${icon("sparkles")}Lv.${info.level} · ${info.into}/${info.span} XP</span>`;
           })()}
           ${(() => {
             // 連勝倒數：今天還沒練，就說清楚還剩幾小時。盾牌是保底，不是理由。
@@ -3382,11 +3386,11 @@
             const end = new Date();
             end.setHours(24, 0, 0, 0);
             const hoursLeft = Math.max(1, Math.ceil((end.getTime() - Date.now()) / 3600000));
-            return `<span class="streak-countdown">${icon("clock")}今天還沒練 · ${hoursLeft} 小時內練一題，連勝才延續${streakInfo.shieldAvailable ? "（漏掉有盾牌墊一次）" : ""}</span>`;
+            return `<span class="streak-countdown">${icon("clock")}${t("今天還沒練 · {hoursLeft} 小時內練一題，連勝才延續", { hoursLeft })}${streakInfo.shieldAvailable ? t("（漏掉有盾牌墊一次）") : ""}</span>`;
           })()}
-          <button class="button ghost share-card-button" type="button" data-action="share-achievement-card" data-from="home">${icon("share-2")}分享成就卡</button>
+          <button class="button ghost share-card-button" type="button" data-action="share-achievement-card" data-from="home">${icon("share-2")}${t("分享成就卡")}</button>
         </div>
-        <div class="mini-heatmap" aria-label="最近 7 天練習量">${cells.join("")}</div>
+        <div class="mini-heatmap" aria-label="${t("最近 7 天練習量")}">${cells.join("")}</div>
       </div>
     `;
   }
@@ -3399,7 +3403,7 @@
       <section class="session-settings-wrap">
         <details class="session-settings" data-session-settings ${sessionSettingsOpen ? "open" : ""}>
           <summary>
-            <span><strong>本局難度</strong><small>${escapeHtml(level.label)} ${escapeHtml(level.short)}</small></span>
+            <span><strong>${t("本局難度")}</strong><small>${escapeHtml(level.label)} ${escapeHtml(level.short)}</small></span>
             ${icon("chevron-down")}
           </summary>
           <div class="session-settings-body">
@@ -3412,20 +3416,20 @@
 
   function homeGreeting() {
     const hour = new Date().getHours();
-    if (hour < 5) return "夜深了，慢慢來";
-    if (hour < 11) return "早安，開練吧";
-    if (hour < 14) return "午安，來幾題";
-    if (hour < 18) return "下午好，繼續";
-    if (hour < 23) return "晚安，練一輪";
-    return "夜深了，慢慢來";
+    if (hour < 5) return t("夜深了，慢慢來");
+    if (hour < 11) return t("早安，開練吧");
+    if (hour < 14) return t("午安，來幾題");
+    if (hour < 18) return t("下午好，繼續");
+    if (hour < 23) return t("晚安，練一輪");
+    return t("夜深了，慢慢來");
   }
 
   function renderHomeAnswerModeBar() {
     return `
-      <section class="answer-mode-strip" aria-label="作答形式">
+      <section class="answer-mode-strip" aria-label="${t("作答形式")}">
         <div>
-          <p class="section-label">作答形式</p>
-          <strong>${ANSWER_MODES[selectedAnswerMode]?.label || "選擇題"}</strong>
+          <p class="section-label">${t("作答形式")}</p>
+          <strong>${ANSWER_MODES[selectedAnswerMode]?.label || t("選擇題")}</strong>
         </div>
         ${renderAnswerModePicker("strip-answer-picker")}
       </section>
@@ -3439,14 +3443,14 @@
     const count = difficultyScopedCount(cap, selectedTopic, selectedPack);
     const percent = ((cap - 1) / 5) * 100;
     return `
-      <section class="difficulty-strip" aria-label="難度上限">
+      <section class="difficulty-strip" aria-label="${t("難度上限")}">
         <div class="difficulty-copy">
-          <p class="section-label">難度上限</p>
+          <p class="section-label">${t("難度上限")}</p>
           <strong>${escapeHtml(level.label)} · ${escapeHtml(level.short)}</strong>
-          <span>${escapeHtml(level.note)} 一般訓練目前可抽 ${count} 題。</span>
+          <span>${t("{note} 一般訓練目前可抽 {count} 題。", { note: escapeHtml(level.note), count })}</span>
         </div>
         <div class="difficulty-range" style="--difficulty-progress:${percent}%">
-          <input type="range" min="1" max="6" step="1" value="${cap}" data-difficulty-cap aria-label="調整難度上限" />
+          <input type="range" min="1" max="6" step="1" value="${cap}" data-difficulty-cap aria-label="${t("調整難度上限")}" />
           <div class="difficulty-scale" aria-hidden="true">
             ${Object.entries(DIFFICULTY_LEVELS)
               .map(([rank, item]) => `<span class="${Number(rank) <= cap ? "is-active" : ""}">R${rank}<small>${escapeHtml(item.label)}</small></span>`)
@@ -3467,13 +3471,13 @@
       <section class="buzz-path-card">
         <div class="path-hero">
           <div class="path-hero-copy">
-            <p class="section-label">主線路線</p>
-            <h2>下一格：${escapeHtml(next.label)}</h2>
+            <p class="section-label">${t("主線路線")}</p>
+            <h2>${t("下一格：{label}", { label: escapeHtml(next.label) })}</h2>
             <p>${escapeHtml(next.note)}</p>
           </div>
         </div>
         <div class="path-recommendation">
-          <span>推薦下一步</span>
+          <span>${t("推薦下一步")}</span>
           <strong>${escapeHtml(recommendation)}</strong>
         </div>
 
@@ -3482,16 +3486,16 @@
             <span class="path-node-core">${icon(next.icon)}</span>
           </span>
           <div class="next-lesson-copy">
-            <span>第 ${nextIndex + 1} 格</span>
+            <span>${t("第 {v} 格", { v: nextIndex + 1 })}</span>
             <strong>${escapeHtml(next.label)}</strong>
             <small>${escapeHtml(next.note)}</small>
           </div>
-          <button class="button home-primary" data-action="start-path-node" data-node-id="${escapeAttr(next.id)}">${icon("play")}開始</button>
+          <button class="button home-primary" data-action="start-path-node" data-node-id="${escapeAttr(next.id)}">${icon("play")}${t("開始")}</button>
         </div>
 
         <div class="path-progress-line">
           <div>
-            <span>已熟練 ${masteredCount}/${path.nodes.length}</span>
+            <span>${t("已熟練 {masteredCount}/{length}", { masteredCount, length: path.nodes.length })}</span>
             <strong>${totalProgress}%</strong>
           </div>
           <div class="meter-track"><div class="meter-fill" style="width:${totalProgress}%"></div></div>
@@ -3541,10 +3545,10 @@
   // 現在的視覺語言改成 BuzzCalculus 自己的「路線圖」：一條直線串起方形站點，
   // 章節標題用細色條而不是整條色塊。
   const PATH_UNITS = [
-    { title: "第 1 單元", subtitle: "單變數基礎", accent: "#c9911d", startId: "onevar_limit" },
-    { title: "第 2 單元", subtitle: "積分技巧", accent: "#3f95c6", startId: "usub" },
-    { title: "第 3 單元", subtitle: "級數與多變數", accent: "#8a63cf", startId: "series" },
-    { title: "第 4 單元", subtitle: "高階挑戰", accent: "#2c9a67", startId: "advanced_tools" }
+    { title: t("第 1 單元"), subtitle: t("單變數基礎"), accent: "#c9911d", startId: "onevar_limit" },
+    { title: t("第 2 單元"), subtitle: t("積分技巧"), accent: "#3f95c6", startId: "usub" },
+    { title: t("第 3 單元"), subtitle: t("級數與多變數"), accent: "#8a63cf", startId: "series" },
+    { title: t("第 4 單元"), subtitle: t("高階挑戰"), accent: "#2c9a67", startId: "advanced_tools" }
   ];
 
   // 單元寶箱：整個單元的關卡都通過才能開，開了給一次性的 +80 XP。
@@ -3557,15 +3561,15 @@
     const opened = Boolean((records.unitChests || {})[unitIdx]);
     const cleared = unitNodes.length > 0 && unitNodes.every((node) => node.status === "mastered" || node.status === "gold");
     const state = opened ? "is-open" : cleared ? "is-ready" : "is-locked";
-    const label = opened ? `已開啟 · +${UNIT_CHEST_XP} XP` : cleared ? "點開領獎" : "全單元通過後解鎖";
+    const label = opened ? `${t("已開啟 · +{UNIT_CHEST_XP} XP", { UNIT_CHEST_XP })}` : cleared ? t("點開領獎") : t("全單元通過後解鎖");
     return `
       <div class="path-step path-chest ${state}" style="--unit-accent:${unit.accent}">
-        <button class="path-node-button" data-action="open-unit-chest" data-unit="${unitIdx}" ${state === "is-ready" ? "" : "disabled"} aria-label="${escapeAttr(`${unit.subtitle} 寶箱，${label}`)}">
+        <button class="path-node-button" data-action="open-unit-chest" data-unit="${unitIdx}" ${state === "is-ready" ? "" : "disabled"} aria-label="${escapeAttr(`${t("{subtitle} 寶箱，{label}", { subtitle: unit.subtitle, label })}`)}">
           <span class="path-node-ring">
             <span class="path-node-core">${icon(opened ? "sparkles" : "gift")}</span>
           </span>
           <span class="path-node-copy">
-            <strong>寶箱</strong>
+            <strong>${t("寶箱")}</strong>
             <small>${label}</small>
           </span>
         </button>
@@ -3584,19 +3588,19 @@
     saveRecords(records);
     trackEvent("unit_chest_open", { unit: Number(unitIdx) });
     playFinishFanfare(1);
-    showAppNotice(`寶箱打開：${unit.subtitle} 全通過，+${UNIT_CHEST_XP} XP！`);
+    showAppNotice(`${t("寶箱打開：{subtitle} 全通過，+{UNIT_CHEST_XP} XP！", { subtitle: unit.subtitle, UNIT_CHEST_XP })}`);
     render();
   }
 
   function renderPathNode(node, index, isNext = false, accent = "") {
     const statusText = {
-      jump: "可跳關",
-      ready: "可開始",
-      active: "進行中",
-      mastered: "熟練",
-      gold: "金色"
-    }[node.status] || "可開始";
-    const label = isNext ? "下一格" : statusText;
+      jump: t("可跳關"),
+      ready: t("可開始"),
+      active: t("進行中"),
+      mastered: t("熟練"),
+      gold: t("金色")
+    }[node.status] || t("可開始");
+    const label = isNext ? t("下一格") : statusText;
     const done = node.status === "mastered" || node.status === "gold";
     const justUnlocked = node.id === justUnlockedNodeId;
     if (justUnlocked) justUnlockedNodeId = "";
@@ -3604,16 +3608,16 @@
     const ringStyle = isNext ? ` style="--mastery:${Math.max(6, node.mastery)}"` : "";
     return `
       <div class="path-step is-${node.status} ${isNext ? "is-next" : ""} ${node.gated ? "is-gated" : ""} ${justUnlocked ? "is-just-unlocked" : ""}"${accent ? ` style="--unit-accent:${accent}"` : ""}>
-        <button class="path-node-button" data-action="start-path-node" data-node-id="${escapeAttr(node.id)}" aria-label="${escapeAttr(`${node.label}，${label}`)}" title="${escapeAttr(`${node.label} · ${label} · ${node.relatedCount} 題`)}">
+        <button class="path-node-button" data-action="start-path-node" data-node-id="${escapeAttr(node.id)}" aria-label="${escapeAttr(`${node.label}，${label}`)}" title="${escapeAttr(`${t("{label} · {label2} · {relatedCount} 題", { label: node.label, label2: label, relatedCount: node.relatedCount })}`)}">
           <span class="path-node-ring"${ringStyle}>
             <span class="path-node-core">${icon(done ? "check" : node.icon)}</span>
             ${node.gated && !done ? `<span class="path-gate-chip" aria-hidden="true">${icon("flag")}</span>` : ""}
           </span>
           <span class="path-node-copy">
             <strong>${escapeHtml(node.short)}</strong>
-            <small>${done ? (node.status === "gold" ? "金色" : "已通過") : `${label} · ${node.relatedCount} 題`}</small>
+            <small>${done ? (node.status === "gold" ? t("金色") : t("已通過")) : `${t("{label} · {relatedCount} 題", { label, relatedCount: node.relatedCount })}`}</small>
           </span>
-          ${isNext ? `<span class="path-now-chip">${icon("play")}下一關</span>` : ""}
+          ${isNext ? `<span class="path-now-chip">${icon("play")}${t("下一關")}</span>` : ""}
         </button>
       </div>
     `;
@@ -3625,7 +3629,7 @@
     const node = path.nodes.find((item) => item.id === activePathNodeId) || path.next || path.nodes[0];
     const lesson = PATH_LESSONS[node.id] || {
       focus: node.note,
-      bullets: ["先判斷題型，再選擇最短工具。"],
+      bullets: [t("先判斷題型，再選擇最短工具。")],
       example: ""
     };
     const index = Math.max(0, path.nodes.findIndex((item) => item.id === node.id));
@@ -3635,15 +3639,15 @@
       <main class="screen path-intro-screen">
         <section class="path-intro-card">
           <div class="path-intro-head">
-            <button class="button ghost" data-action="home">${icon("home")}回主線</button>
-            <span>第 ${index + 1} 關 · ${node.relatedCount} 題</span>
+            <button class="button ghost" data-action="home">${icon("home")}${t("回主線")}</button>
+            <span>${t("第 {v} 關 · {relatedCount} 題", { v: index + 1, relatedCount: node.relatedCount })}</span>
           </div>
           <div class="path-intro-main">
             <span class="path-node-ring next-lesson-ring">
               <span class="path-node-core">${icon(node.icon)}</span>
             </span>
             <div>
-              <p class="section-label">${node.gated && !unlocked ? "跳關前測" : "關卡簡介"}</p>
+              <p class="section-label">${node.gated && !unlocked ? t("跳關前測") : t("關卡簡介")}</p>
               <h2>${escapeHtml(node.label)}</h2>
               <p>${escapeHtml(lesson.focus)}</p>
             </div>
@@ -3651,17 +3655,17 @@
 
           <div class="path-lesson-grid">
             <section class="path-lesson-panel">
-              <h3>先記這幾件事</h3>
+              <h3>${t("先記這幾件事")}</h3>
               <ul>
                 ${lesson.bullets.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}
               </ul>
             </section>
             <section class="path-lesson-panel">
-              <h3>本關目標</h3>
+              <h3>${t("本關目標")}</h3>
               <div class="path-intro-stats">
-                <div><span>熟練度</span><strong>${node.mastery}%</strong></div>
-                <div><span>已練</span><strong>${node.unique}/${node.relatedCount}</strong></div>
-                <div><span>題數</span><strong>${(MODES[node.mode] || MODES.quick).count}</strong></div>
+                <div><span>${t("熟練度")}</span><strong>${node.mastery}%</strong></div>
+                <div><span>${t("已練")}</span><strong>${node.unique}/${node.relatedCount}</strong></div>
+                <div><span>${t("題數")}</span><strong>${(MODES[node.mode] || MODES.quick).count}</strong></div>
               </div>
               ${lesson.example ? `<div class="path-example math-block" data-tex="${escapeAttr(lesson.example)}"></div>` : ""}
             </section>
@@ -3671,16 +3675,16 @@
             unlocked
               ? `
                 <div class="path-intro-actions">
-                  <button class="button home-primary" data-action="start-path-lesson" data-node-id="${escapeAttr(node.id)}">${icon("play")}開始本關</button>
-                  <button class="button secondary" data-action="home">${icon("home")}稍後再練</button>
+                  <button class="button home-primary" data-action="start-path-lesson" data-node-id="${escapeAttr(node.id)}">${icon("play")}${t("開始本關")}</button>
+                  <button class="button secondary" data-action="home">${icon("home")}${t("稍後再練")}</button>
                 </div>`
               : `
                 <div class="path-gate-box">
                   <div>
-                    <strong>這是跳關</strong>
-                    <span>先完成 ${gate.total} 題小測驗，答對 ${gate.required} 題即可進入本關。</span>
+                    <strong>${t("這是跳關")}</strong>
+                    <span>${t("先完成 {total} 題小測驗，答對 {required} 題即可進入本關。", { total: gate.total, required: gate.required })}</span>
                   </div>
-                  <button class="button home-primary" data-action="start-path-gate" data-node-id="${escapeAttr(node.id)}">${icon("play")}開始小測驗</button>
+                  <button class="button home-primary" data-action="start-path-gate" data-node-id="${escapeAttr(node.id)}">${icon("play")}${t("開始小測驗")}</button>
                 </div>`
           }
         </section>
@@ -3699,60 +3703,60 @@
         <details class="home-more-panel" data-home-more-panel ${homeMoreOpen ? "open" : ""}>
           <summary>
             <span>
-              <strong>更多練習</strong>
+              <strong>${t("更多練習")}</strong>
             </span>
             ${icon("chevron-down")}
           </summary>
           <div class="home-more-body">
-            <nav class="quick-entries" aria-label="快速入口">
-              <button data-action="start-friendly-run">${icon("sparkles")}<span>輕鬆暖身</span><small>R1-R2</small></button>
-              <button data-action="start-mode" data-mode-key="exam">${icon("file-pen-line")}<span>大考模式</span><small>20 題 / 45 分</small></button>
-              <button data-action="start-god-run">${icon("flame")}<span>競賽魔王</span><small>R6 · 競賽級</small></button>
+            <nav class="quick-entries" aria-label="${t("快速入口")}">
+              <button data-action="start-friendly-run">${icon("sparkles")}<span>${t("輕鬆暖身")}</span><small>R1-R2</small></button>
+              <button data-action="start-mode" data-mode-key="exam">${icon("file-pen-line")}<span>${t("大考模式")}</span><small>${t("20 題 / 45 分")}</small></button>
+              <button data-action="start-god-run">${icon("flame")}<span>${t("競賽魔王")}</span><small>${t("R6 · 競賽級")}</small></button>
             </nav>
             ${renderNamedExamPanel(records)}
             <section class="control-band practice-control home-compact-control">
               <div class="home-control-head">
                 <div>
-                  <p class="section-label">自訂一局</p>
-                  <h3>挑題目自己練</h3>
+                  <p class="section-label">${t("自訂一局")}</p>
+                  <h3>${t("挑題目自己練")}</h3>
                 </div>
                 <div class="home-selected-pill">${packAvailabilityText(selectedPack)}</div>
               </div>
 
               <div class="home-control-grid">
                 <div class="control-section">
-                  <p class="section-label">模式</p>
+                  <p class="section-label">${t("模式")}</p>
                   ${renderModePicker()}
                 </div>
                 <div class="control-section">
-                  <p class="section-label">範圍</p>
+                  <p class="section-label">${t("範圍")}</p>
                   ${renderTopicPicker()}
                 </div>
               </div>
 
               <div class="pack-picker home-pack compact-pack">
                 <label for="pack-select">
-                  <span>題包</span>
-                  <select id="pack-select" data-pack-select aria-label="題包選擇">
+                  <span>${t("題包")}</span>
+                  <select id="pack-select" data-pack-select aria-label="${t("題包選擇")}">
                     ${renderPackOptions()}
                   </select>
                 </label>
               </div>
 
               <div class="control-section">
-                <p class="section-label">每日目標</p>
-                <div class="goal-options" role="group" aria-label="每日目標">
-                  ${[5, 10, 12, 20].map((value) => `<button class="tag-button ${dailyGoal(records) === value ? "is-active" : ""}" data-action="set-daily-goal" data-goal="${value}">${value} 題</button>`).join("")}
+                <p class="section-label">${t("每日目標")}</p>
+                <div class="goal-options" role="group" aria-label="${t("每日目標")}">
+                  ${[5, 10, 12, 20].map((value) => `<button class="tag-button ${dailyGoal(records) === value ? "is-active" : ""}" data-action="set-daily-goal" data-goal="${value}">${t("{value} 題", { value })}</button>`).join("")}
                 </div>
               </div>
 
               <div class="action-row">
-                <button class="button custom-start" data-action="start">${icon("play")}自訂開始</button>
+                <button class="button custom-start" data-action="start">${icon("play")}${t("自訂開始")}</button>
               </div>
             </section>
 
             <details class="extra-challenge-drawer home-extra-modes">
-              <summary>其他模式（${EXPERIMENTAL_MODE_KEYS.filter((key) => key !== "exam").length}）</summary>
+              <summary>${t("其他模式（{length}）", { length: EXPERIMENTAL_MODE_KEYS.filter((key) => key !== "exam").length })}</summary>
               <div class="challenge-mode-grid">
                 ${EXPERIMENTAL_MODE_KEYS.filter((key) => key !== "exam")
                   .map((key) => {
@@ -3767,13 +3771,13 @@
               </div>
             </details>
 
-            <nav class="home-more-links" aria-label="其他頁面">
-              <button data-action="open-course">${icon("book-open")}入門課程</button>
-              <button data-action="open-library">${icon("search")}題庫</button>
-              ${panelGate.proofs ? `<button data-action="open-proofs">${icon("file-pen-line")}證明題庫</button>` : ""}
-              ${panelGate.full ? `<button data-action="open-boss-lab">${icon("trophy")}Boss 專區</button>
-              <button data-action="open-creator">${icon("file-pen-line")}出題工作坊</button>` : ""}
-              <button data-action="open-settings">${icon("settings")}資料與設定</button>
+            <nav class="home-more-links" aria-label="${t("其他頁面")}">
+              <button data-action="open-course">${icon("book-open")}${t("入門課程")}</button>
+              <button data-action="open-library">${icon("search")}${t("題庫")}</button>
+              ${panelGate.proofs ? `<button data-action="open-proofs">${icon("file-pen-line")}${t("證明題庫")}</button>` : ""}
+              ${panelGate.full ? `<button data-action="open-boss-lab">${icon("trophy")}${t("Boss 專區")}</button>
+              <button data-action="open-creator">${icon("file-pen-line")}${t("出題工作坊")}</button>` : ""}
+              <button data-action="open-settings">${icon("settings")}${t("資料與設定")}</button>
             </nav>
           </div>
         </details>
@@ -3784,22 +3788,22 @@
   function renderNamedExamPanel(records) {
     const stats = records.namedExams || {};
     return `
-      <section class="named-exam-panel" aria-label="模擬考">
+      <section class="named-exam-panel" aria-label="${t("模擬考")}">
         <div class="named-exam-head">
-          <p class="section-label">模擬考</p>
-          <h3>整份限時，考前拿這幾張卷自我檢測</h3>
-          <span>期中與期末的差別是<strong>範圍</strong>不是難度：期中考極限與微分，期末考積分與級數。每份卷會混進圖形題，依範圍的三張最後一題是證明題。同一次挑戰抽題固定；重考會換一份新卷。及格線 60%。</span>
+          <p class="section-label">${t("模擬考")}</p>
+          <h3>${t("整份限時，考前拿這幾張卷自我檢測")}</h3>
+          <span>${t("期中與期末的差別是")}<strong>${t("範圍")}</strong>${t("不是難度：期中考極限與微分，期末考積分與級數。每份卷會混進圖形題，依範圍的三張最後一題是證明題。同一次挑戰抽題固定；重考會換一份新卷。及格線 60%。")}</span>
         </div>
         ${["scope", "style"].map((group) => `
-        <p class="section-label named-exam-group">${group === "scope" ? "依考試範圍" : "依考卷風格"}</p>
+        <p class="section-label named-exam-group">${group === "scope" ? t("依考試範圍") : t("依考卷風格")}</p>
         <div class="named-exam-grid">
           ${Object.entries(NAMED_EXAMS)
             .filter(([, config]) => (config.group || "style") === group)
             .map(([id, config]) => {
               const stat = stats[id];
               const line = stat && stat.attempts
-                ? `最佳 ${Math.round(Number(stat.best || 0))}% · 上次 ${String(stat.lastAt || "").slice(0, 10) || "—"} · 已考 ${Number(stat.attempts || 0)} 次`
-                : "尚未挑戰";
+                ? `${t("最佳 {v}% · 上次 {v2} · 已考 {v3} 次", { v: Math.round(Number(stat.best || 0)), v2: String(stat.lastAt || "").slice(0, 10) || "—", v3: Number(stat.attempts || 0) })}`
+                : t("尚未挑戰");
               return `
                 <button class="named-exam-card" data-action="start-named-exam" data-exam-id="${escapeAttr(id)}">
                   <strong>${escapeHtml(config.label)}</strong>
@@ -3826,11 +3830,11 @@
   //   - 最後一步的出口只有一個：開始練。不給「隨便逛逛」
   //   - 第一次進站永遠不會看到 1407 題的題庫頁
   const ONBOARDING_CONTEXTS = [
-    { key: "newbie", label: "我還沒學過", note: "從「函數是什麼」開始，十六課加畢業關，過了再進主線", cap: 1, course: true },
-    { key: "highschool", label: "高中先修", note: "先把基本工具練熟", cap: 2 },
-    { key: "freshman", label: "大一微積分", note: "跟著課程進度練", cap: 2 },
-    { key: "exam", label: "期中期末要考了", note: "考前衝刺，抓弱點", cap: 3, suggestExam: true },
-    { key: "maintain", label: "想維持手感", note: "已經學過，不想生鏽", cap: 3 }
+    { key: "newbie", label: t("我還沒學過"), note: t("從「函數是什麼」開始，十六課加畢業關，過了再進主線"), cap: 1, course: true },
+    { key: "highschool", label: t("高中先修"), note: t("先把基本工具練熟"), cap: 2 },
+    { key: "freshman", label: t("大一微積分"), note: t("跟著課程進度練"), cap: 2 },
+    { key: "exam", label: t("期中期末要考了"), note: t("考前衝刺，抓弱點"), cap: 3, suggestExam: true },
+    { key: "maintain", label: t("想維持手感"), note: t("已經學過，不想生鏽"), cap: 3 }
   ];
 
   function renderOnboarding() {
@@ -3843,25 +3847,25 @@
     return `
       <main class="screen onboarding-screen">
         <section class="onboarding-card onboarding-intro">
-          <div class="onboarding-visual" aria-hidden="true"><span class="visual-kicker">BUILD YOUR CALCULUS REFLEXES</span><span class="visual-integral">∫</span><span class="visual-equation">practice × consistency = progress</span><div class="visual-topics"><span>極限</span><span>微分</span><span>積分</span><span>級數</span></div></div>
+          <div class="onboarding-visual" aria-hidden="true"><span class="visual-kicker">BUILD YOUR CALCULUS REFLEXES</span><span class="visual-integral">∫</span><span class="visual-equation">practice × consistency = progress</span><div class="visual-topics"><span>${t("極限")}</span><span>${t("微分")}</span><span>${t("積分")}</span><span>${t("級數")}</span></div></div>
           <div class="onboarding-content">
-          <p class="section-label">歡迎來到 BUZZCALCULUS · 1 / 3</p>
-          <h1>把學過的微積分，<br>練成你的直覺。</h1>
+          <p class="section-label">${t("歡迎來到 BUZZCALCULUS · 1 / 3")}</p>
+          <h1>${t("把學過的微積分，")}<br>${t("練成你的直覺。")}</h1>
           <p class="onboarding-lead">
-            這是你的微積分健身房。每天一點練習，讓你看到題目就知道該用哪個工具。從適合你的難度開始，一步步建立解題的把握。
+            ${t("這是你的微積分健身房。每天一點練習，讓你看到題目就知道該用哪個工具。從適合你的難度開始，一步步建立解題的把握。")}
           </p>
           <ul class="onboarding-points">
             <!-- 題數要從題庫算，不能寫死。寫死的那版停在 1407，
                  而使用者第一眼看到的數字跟題庫頁顯示的 1459 對不上 ——
                  這是最不該在第一畫面出現的那種不一致。 -->
-            <li>${icon("target")}<span>${problems.length} 題微積分，依技巧分類而不是章節</span></li>
-            <li>${icon("activity")}<span>會告訴你是「不會」還是「來不及」</span></li>
-            <li>${icon("refresh")}<span>錯題自動排程回鍋，不是丟進倉庫</span></li>
+            <li>${icon("target")}<span>${t("{length} 題微積分，依技巧分類而不是章節", { length: problems.length })}</span></li>
+            <li>${icon("activity")}<span>${t("會告訴你是「不會」還是「來不及」")}</span></li>
+            <li>${icon("refresh")}<span>${t("錯題自動排程回鍋，不是丟進倉庫")}</span></li>
           </ul>
-          <p class="onboarding-privacy">紀錄只存在這台裝置的瀏覽器，不需要註冊。<small>（匿名使用統計除外，設定頁可關）</small></p>
+          <p class="onboarding-privacy">${t("紀錄只存在這台裝置的瀏覽器，不需要註冊。")}<small>${t("（匿名使用統計除外，設定頁可關）")}</small></p>
           <div class="action-row">
-            <button class="button home-primary" data-action="onboarding-next">開始建立我的訓練${icon("chevron-right")}</button>
-            <button class="button ghost" data-action="set-onboarding-context" data-context="newbie">我還沒學過微積分，先上入門課</button>
+            <button class="button home-primary" data-action="onboarding-next">${t("開始建立我的訓練")}${icon("chevron-right")}</button>
+            <button class="button ghost" data-action="set-onboarding-context" data-context="newbie">${t("我還沒學過微積分，先上入門課")}</button>
           </div>
           </div>
         </section>
@@ -3873,9 +3877,9 @@
     return `
       <main class="screen onboarding-screen">
         <section class="onboarding-card">
-          <p class="section-label">第 2 步 / 共 3 步</p>
-          <h1>你現在在哪個階段？</h1>
-          <p class="onboarding-lead">這只是用來決定起始難度，之後隨時可以調。</p>
+          <p class="section-label">${t("第 2 步 / 共 3 步")}</p>
+          <h1>${t("你現在在哪個階段？")}</h1>
+          <p class="onboarding-lead">${t("這只是用來決定起始難度，之後隨時可以調。")}</p>
           <div class="context-grid">
             ${ONBOARDING_CONTEXTS.map(
               (item) => `
@@ -3895,16 +3899,15 @@
     return `
       <main class="screen onboarding-screen">
         <section class="onboarding-card">
-          <p class="section-label">第 3 步 / 共 3 步</p>
-          <h1>先花 5 分鐘測出你的底</h1>
+          <p class="section-label">${t("第 3 步 / 共 3 步")}</p>
+          <h1>${t("先花 5 分鐘測出你的底")}</h1>
           <p class="onboarding-lead">
-            8 題自適應：答對就變難、答錯就變簡單。測完你會看到自己落在哪一級、
-            哪個技巧最弱，之後的每日訓練都會照這個排。
+            ${t("8 題自適應：答對就變難、答錯就變簡單。測完你會看到自己落在哪一級、 哪個技巧最弱，之後的每日訓練都會照這個排。")}
           </p>
-          <p class="onboarding-privacy">不想測也可以直接開始，我們會先給你${context ? `「${escapeHtml(context.label)}」` : ""}的保守起點，再從實際作答慢慢校準。</p>
+          <p class="onboarding-privacy">${t("不想測也可以直接開始，我們會先給你")}${context ? `「${escapeHtml(context.label)}」` : ""}${t("的保守起點，再從實際作答慢慢校準。")}</p>
           <div class="action-row">
-            <button class="button home-primary" data-action="start-placement">${icon("target")}開始定位測驗</button>
-            <button class="button ghost" data-action="skip-placement">直接開始練</button>
+            <button class="button home-primary" data-action="start-placement">${icon("target")}${t("開始定位測驗")}</button>
+            <button class="button ghost" data-action="skip-placement">${t("直接開始練")}</button>
           </div>
         </section>
       </main>
@@ -3947,7 +3950,7 @@
     saveRecords(records);
     onboardingStep = "intro";
     trackEvent("onboarding_step", { step: "placement", skipped: true });
-    showAppNotice("已用你選的階段設定起始難度。實際練幾局之後會自動校準。");
+    showAppNotice(t("已用你選的階段設定起始難度。實際練幾局之後會自動校準。"));
     view = "home";
     render();
   }
@@ -3963,12 +3966,12 @@
     const minutes = plan ? (gentle ? Math.max(3, Math.round(count * 0.75)) : Math.max(1, Math.round(plan.filled.estSeconds / 60))) : 15;
     return `
       <div class="placement-next" data-enter>
-        <p class="placement-next-lead">${gentle ? "第一份訓練不倒數、不計分：先把題目看懂。" : plan ? escapeHtml(plan.recipe.why) : "已經照你的定位排好第一份訓練。"}</p>
+        <p class="placement-next-lead">${gentle ? t("第一份訓練不倒數、不計分：先把題目看懂。") : plan ? escapeHtml(plan.recipe.why) : t("已經照你的定位排好第一份訓練。")}</p>
         <div class="action-row">
           <button class="button home-primary" data-action="start-planned" data-length="daily15">
-            ${icon("play")}開始第一份訓練 · ${minutes} 分鐘 ${count} 題
+            ${icon("play")}${t("開始第一份訓練 · {minutes} 分鐘 {count} 題", { minutes, count })}
           </button>
-          <button class="button ghost" data-action="home">${icon("home")}先看看首頁</button>
+          <button class="button ghost" data-action="home">${icon("home")}${t("先看看首頁")}</button>
         </div>
       </div>
     `;
@@ -3978,16 +3981,16 @@
     return `
       <section class="first-run-panel">
         <div>
-          <p class="section-label launch-eyebrow">歡迎</p>
-          <h3>微積分反射訓練</h3>
-          <p>選一個起點。紀錄只會保存在本機瀏覽器。</p>
+          <p class="section-label launch-eyebrow">${t("歡迎")}</p>
+          <h3>${t("微積分反射訓練")}</h3>
+          <p>${t("選一個起點。紀錄只會保存在本機瀏覽器。")}</p>
         </div>
         <div class="onboarding-actions">
-          <button class="button placement-cta" data-action="start-placement">${icon("target")}5 分鐘定位測驗</button>
+          <button class="button placement-cta" data-action="start-placement">${icon("target")}${t("5 分鐘定位測驗")}</button>
           ${Object.entries(ONBOARDING_LEVELS)
             .map(([key, item]) => `<button class="button ${key === "standard" ? "secondary" : "ghost"}" data-action="set-onboarding-level" data-level="${escapeAttr(key)}">${escapeHtml(item.label)}</button>`)
             .join("")}
-          <button class="button ghost" data-action="dismiss-onboarding">${icon("check")}稍後</button>
+          <button class="button ghost" data-action="dismiss-onboarding">${icon("check")}${t("稍後")}</button>
         </div>
       </section>
     `;
@@ -4002,18 +4005,18 @@
       const reco = recos.get(key);
       return `
         <button class="segment rich-segment ${selectedMode === key ? "is-active" : ""}" aria-pressed="${selectedMode === key ? "true" : "false"}" data-mode="${key}" ${reco ? `title="${escapeAttr(reco)}"` : ""}>
-          <strong>${item.label}${reco ? `<em class="mode-reco">今天適合</em>` : ""}</strong>
+          <strong>${item.label}${reco ? `<em class="mode-reco">${t("今天適合")}</em>` : ""}</strong>
           <span>${reco ? escapeHtml(reco) : modeDescription(key)}</span>
         </button>`;
     };
     // 推薦落在抽屜裡的模式時抽屜要自己打開 —— 收起來的推薦等於沒有推薦
     const advancedRecommended = advanced.some((key) => recos.has(key));
     return `
-      <div class="segmented modes learning-picker" role="group" aria-label="模式選擇">
+      <div class="segmented modes learning-picker" role="group" aria-label="${t("模式選擇")}">
         ${primary.filter((key) => MODES[key]).map(modeButton).join("")}
       </div>
       <details class="advanced-mode-drawer" data-advanced-mode-drawer ${(advancedModeOpen || advancedRecommended || advanced.includes(selectedMode)) ? "open" : ""}>
-        <summary>高壓 / 進階玩法（${advanced.length}）</summary>
+        <summary>${t("高壓 / 進階玩法（{length}）", { length: advanced.length })}</summary>
         <div class="segmented modes learning-picker">
           ${advanced.filter((key) => MODES[key]).map(modeButton).join("")}
         </div>
@@ -4023,7 +4026,7 @@
 
   function renderTopicPicker() {
     return `
-      <div class="segmented home-topic-grid learning-picker" role="group" aria-label="題型選擇">
+      <div class="segmented home-topic-grid learning-picker" role="group" aria-label="${t("題型選擇")}">
         ${Object.entries(TOPICS)
           .filter(([key]) => key !== "all" || selectedMode !== "topic")
           .map(
@@ -4040,7 +4043,7 @@
 
   function renderAnswerModePicker(extraClass = "") {
     return `
-      <div class="segmented answer-modes learning-picker ${escapeAttr(extraClass)}" role="group" aria-label="答題方式選擇">
+      <div class="segmented answer-modes learning-picker ${escapeAttr(extraClass)}" role="group" aria-label="${t("答題方式選擇")}">
         ${Object.entries(ANSWER_MODES)
           .map(
             ([key, item]) => `
@@ -4059,24 +4062,24 @@
       <section class="study-card data-card">
         <div class="panel-title-row">
           <div>
-            <p class="section-label">本機紀錄</p>
-            <h3>備份、搬家、清除</h3>
+            <p class="section-label">${t("本機紀錄")}</p>
+            <h3>${t("備份、搬家、清除")}</h3>
           </div>
         </div>
         <!-- 這三個數字原本叫「作答歷史 / 錯題 / 練習局」，而前後兩個
              在使用者眼裡是同一件事，數字卻不一樣（一個是累計，一個只留最近 40 局）。
              看到兩個矛盾的數字之後，人會開始懷疑畫面上所有的數字。 -->
         <div class="mini-stats">
-          <div><span>練過幾局</span><strong>${(records.attempts || 0) + (records.practiceRuns || 0)}</strong></div>
-          <div><span>錯題本</span><strong>${Object.keys(records.mistakes || {}).length}</strong></div>
-          <div title="逐題明細只保留最近 ${HISTORY_LIMIT} 局；更早的局數仍然算在「練過幾局」裡"><span>保留明細</span><strong>${(records.history || []).length}<small> / ${HISTORY_LIMIT}</small></strong></div>
+          <div><span>${t("練過幾局")}</span><strong>${(records.attempts || 0) + (records.practiceRuns || 0)}</strong></div>
+          <div><span>${t("錯題本")}</span><strong>${Object.keys(records.mistakes || {}).length}</strong></div>
+          <div title="${t("逐題明細只保留最近 {HISTORY_LIMIT} 局；更早的局數仍然算在「練過幾局」裡", { HISTORY_LIMIT })}"><span>${t("保留明細")}</span><strong>${(records.history || []).length}<small> / ${HISTORY_LIMIT}</small></strong></div>
         </div>
-        <p class="panel-note">匯入是<strong>合併</strong>不是覆蓋 —— 兩台裝置各自練過的都會留下來。</p>
+        <p class="panel-note">${t("匯入是")}<strong>${t("合併")}</strong>${t("不是覆蓋 —— 兩台裝置各自練過的都會留下來。")}</p>
         <div class="stack-actions home-record-actions">
-          <button class="button secondary" data-action="open-history">${icon("clock")}作答歷史</button>
-          <button class="button ghost" data-action="export-records">${icon("download")}匯出 JSON</button>
-          <label class="button ghost import-label" for="import-records">${icon("upload")}匯入 JSON</label>
-          <button class="button ghost" data-action="reset-records">${icon("trash")}清除資料</button>
+          <button class="button secondary" data-action="open-history">${icon("clock")}${t("作答歷史")}</button>
+          <button class="button ghost" data-action="export-records">${icon("download")}${t("匯出 JSON")}</button>
+          <label class="button ghost import-label" for="import-records">${icon("upload")}${t("匯入 JSON")}</label>
+          <button class="button ghost" data-action="reset-records">${icon("trash")}${t("清除資料")}</button>
           <input class="sr-only" id="import-records" type="file" accept="application/json" />
         </div>
       </section>
@@ -4114,7 +4117,7 @@
       try {
         window.print();
       } catch (_error) {
-        showAppNotice("這個瀏覽器擋住了列印。可以用瀏覽器選單裡的「列印」。");
+        showAppNotice(t("這個瀏覽器擋住了列印。可以用瀏覽器選單裡的「列印」。"));
       }
     }, 200);
   }
@@ -4149,7 +4152,7 @@
     if (!cards || !String(cards).trim()) return "";
     return `
       <section class="settings-section" id="settings-${{ "練習": "practice", "介面": "interface", "資料": "data", "隱私": "privacy", "說明": "help" }[title] || "other"}" tabindex="-1">
-        <h3 class="settings-section-title">${escapeHtml(title)}</h3>
+        <h3 class="settings-section-title">${escapeHtml(t(title))}</h3>
         <div class="settings-cards">${cards}</div>
       </section>
     `;
@@ -4173,8 +4176,8 @@
   function onOffControl(action, on, ariaLabel) {
     return `
       <div class="segmented compact" role="radiogroup" aria-label="${escapeAttr(ariaLabel)}">
-        <button class="tag-button ${on ? "is-active" : ""}" aria-pressed="${on ? "true" : "false"}" data-action="${escapeAttr(action)}" data-on="1">開</button>
-        <button class="tag-button ${on ? "" : "is-active"}" aria-pressed="${on ? "false" : "true"}" data-action="${escapeAttr(action)}" data-on="">關</button>
+        <button class="tag-button ${on ? "is-active" : ""}" aria-pressed="${on ? "true" : "false"}" data-action="${escapeAttr(action)}" data-on="1">${t("開")}</button>
+        <button class="tag-button ${on ? "" : "is-active"}" aria-pressed="${on ? "false" : "true"}" data-action="${escapeAttr(action)}" data-on="">${t("關")}</button>
       </div>
     `;
   }
@@ -4183,38 +4186,48 @@
     const settings = records.settings || {};
     const penScale = settings.penScale || "standard";
     const surface = boardSurface();
+    const langSetting = LANG_OPTIONS.some((item) => item.key === settings.lang) ? settings.lang : "auto";
     return `
       <section class="study-card interface-card">
         ${renderSettingRow(
-          "顯示全部功能",
-          "預設是跟著練習慢慢出現：練完一局才有弱點與模擬考，三局之後才有每日一題、證明訓練、對戰與出題。想一次看到全部就打開。",
-          onOffControl("set-show-all-features", settings.showAllFeatures === true, "顯示全部功能")
+          t("介面語言"),
+          t("沒設定就跟著瀏覽器。紀錄、錯題本與連結兩種語言共用，換語言會重新載入頁面。"),
+          `<div class="segmented compact lang-row" role="radiogroup" aria-label="${t("介面語言")}">
+            ${LANG_OPTIONS.map(
+              (item) => `<button class="tag-button ${langSetting === item.key ? "is-active" : ""}" aria-pressed="${langSetting === item.key ? "true" : "false"}" data-action="set-lang" data-lang="${item.key}">${item.label}</button>`
+            ).join("")}
+          </div>`
         )}
         ${renderSettingRow(
-          "專注模式",
-          "收起連勝、盾牌與成就，只留練習本身。連勝照算，只是不顯示。",
-          onOffControl("set-focus-mode", focusModeOn(), "專注模式")
+          t("顯示全部功能"),
+          t("預設是跟著練習慢慢出現：練完一局才有弱點與模擬考，三局之後才有每日一題、證明訓練、對戰與出題。想一次看到全部就打開。"),
+          onOffControl("set-show-all-features", settings.showAllFeatures === true, t("顯示全部功能"))
         )}
         ${renderSettingRow(
-          "答題音效",
-          "答對上行兩聲、答錯低一聲，跳過不出聲。圖書館練習就關掉。",
-          onOffControl("set-sound", soundEnabled(), "答題音效")
+          t("專注模式"),
+          t("收起連勝、盾牌與成就，只留練習本身。連勝照算，只是不顯示。"),
+          onOffControl("set-focus-mode", focusModeOn(), t("專注模式"))
         )}
         ${renderSettingRow(
-          "計算紙筆寬",
-          "用 Apple Pencil 覺得線太粗或太細，在這裡調。橡皮擦不受影響。",
-          `<div class="segmented compact pen-scale-row" role="radiogroup" aria-label="筆寬">
+          t("答題音效"),
+          t("答對上行兩聲、答錯低一聲，跳過不出聲。圖書館練習就關掉。"),
+          onOffControl("set-sound", soundEnabled(), t("答題音效"))
+        )}
+        ${renderSettingRow(
+          t("計算紙筆寬"),
+          t("用 Apple Pencil 覺得線太粗或太細，在這裡調。橡皮擦不受影響。"),
+          `<div class="segmented compact pen-scale-row" role="radiogroup" aria-label="${t("筆寬")}">
             ${PEN_SCALES.map(
               (item) => `<button class="tag-button ${penScale === item.key ? "is-active" : ""}" aria-pressed="${penScale === item.key ? "true" : "false"}" data-action="set-pen-scale" data-scale="${item.key}">${item.label}</button>`
             ).join("")}
           </div>`
         )}
         ${renderSettingRow(
-          "計算紙紙面",
-          "白紙配深色筆跡，黑板反過來。計算紙的工具列上也能隨手切。",
-          `<div class="segmented compact" role="radiogroup" aria-label="紙面">
-            <button class="tag-button ${surface === "paper" ? "is-active" : ""}" aria-pressed="${surface === "paper" ? "true" : "false"}" data-action="set-board-surface" data-surface="paper">白紙</button>
-            <button class="tag-button ${surface === "board" ? "is-active" : ""}" aria-pressed="${surface === "board" ? "true" : "false"}" data-action="set-board-surface" data-surface="board">黑板</button>
+          t("計算紙紙面"),
+          t("白紙配深色筆跡，黑板反過來。計算紙的工具列上也能隨手切。"),
+          `<div class="segmented compact" role="radiogroup" aria-label="${t("紙面")}">
+            <button class="tag-button ${surface === "paper" ? "is-active" : ""}" aria-pressed="${surface === "paper" ? "true" : "false"}" data-action="set-board-surface" data-surface="paper">${t("白紙")}</button>
+            <button class="tag-button ${surface === "board" ? "is-active" : ""}" aria-pressed="${surface === "board" ? "true" : "false"}" data-action="set-board-surface" data-surface="board">${t("黑板")}</button>
           </div>`
         )}
       </section>
@@ -4225,9 +4238,9 @@
     return `
       <section class="study-card privacy-card">
         ${renderSettingRow(
-          "使用分析",
-          "只送「哪個功能被用了幾次」這種計數。<strong>不會</strong>送你的作答內容、答案或題目。",
-          onOffControl("set-analytics", analyticsEnabled(), "使用分析")
+          t("使用分析"),
+          t("只送「哪個功能被用了幾次」這種計數。<strong>不會</strong>送你的作答內容、答案或題目。"),
+          onOffControl("set-analytics", analyticsEnabled(), t("使用分析"))
         )}
       </section>
     `;
@@ -4238,13 +4251,13 @@
       <section class="study-card guide-card">
         <div class="panel-title-row">
           <div>
-            <p class="section-label">使用手冊</p>
-            <h3>十分鐘搞懂全部功能</h3>
+            <p class="section-label">${t("使用手冊")}</p>
+            <h3>${t("十分鐘搞懂全部功能")}</h3>
           </div>
         </div>
         <div class="action-row">
-          <a class="button secondary" href="guide.html" target="_blank" rel="noopener">${icon("book")}打開使用手冊</a>
-          <button class="button ghost" data-action="replay-tour">${icon("sparkles")}再看一次導覽</button>
+          <a class="button secondary" href="guide.html" target="_blank" rel="noopener">${icon("book")}${t("打開使用手冊")}</a>
+          <button class="button ghost" data-action="replay-tour">${icon("sparkles")}${t("再看一次導覽")}</button>
         </div>
       </section>
     `;
@@ -4255,7 +4268,7 @@
       <section class="study-card about-links-card">
         <div class="panel-title-row">
           <div>
-            <p class="section-label">關於</p>
+            <p class="section-label">${t("關於")}</p>
             <h3>BuzzCalculus</h3>
           </div>
           <span class="settings-version">${APP_VERSION} · ${BUILD_DATE}</span>
@@ -4266,7 +4279,7 @@
           ""
         }
         <p class="privacy-links">
-          <a href="about.html" target="_blank" rel="noopener">關於</a>
+          <a href="about.html" target="_blank" rel="noopener">${t("關於")}</a>
         </p>
       </section>
     `;
@@ -4281,19 +4294,17 @@
       <section class="study-card calibration-card">
         <div class="panel-title-row">
           <div>
-            <p class="section-label">幫忙校準難度（選填）</p>
-            <h3>匯出一份作答統計</h3>
+            <p class="section-label">${t("幫忙校準難度（選填）")}</p>
+            <h3>${t("匯出一份作答統計")}</h3>
           </div>
         </div>
         <p class="panel-note calibration-contents">
-          檔案裡只有 <strong>題號、難度、對錯次數、中位秒數</strong>，
-          以及你的整體程度分層（高／中／低）。
-          <strong>沒有</strong>題目內容、作答內容、時間戳記，也沒有任何可以認出你的東西。
-          自訂題一律不匯出。
+          ${t("檔案裡只有")} <strong>${t("題號、難度、對錯次數、中位秒數")}</strong>${t("， 以及你的整體程度分層（高／中／低）。")}
+          <strong>${t("沒有")}</strong>${t("題目內容、作答內容、時間戳記，也沒有任何可以認出你的東西。 自訂題一律不匯出。")}
         </p>
         <div class="action-row">
-          <button class="button ghost" data-action="preview-calibration">${icon("eye")}先看內容</button>
-          <button class="button ghost" data-action="export-calibration">${icon("download")}匯出校準包（${answered} 題）</button>
+          <button class="button ghost" data-action="preview-calibration">${icon("eye")}${t("先看內容")}</button>
+          <button class="button ghost" data-action="export-calibration">${icon("download")}${t("匯出校準包（{answered} 題）", { answered })}</button>
         </div>
       </section>
     `;
@@ -4306,16 +4317,16 @@
       <section class="study-card">
         <div class="panel-title-row">
           <div>
-            <p class="section-label">目標</p>
-            <h3>每日 ${goal} 題</h3>
+            <p class="section-label">${t("目標")}</p>
+            <h3>${t("每日 {goal} 題", { goal })}</h3>
           </div>
           <span class="study-count">${week.completed}/${week.target}</span>
         </div>
         <div class="goal-options">
-          ${[5, 10, 12, 20].map((value) => `<button class="tag-button ${goal === value ? "is-active" : ""}" data-action="set-daily-goal" data-goal="${value}">${value} 題</button>`).join("")}
+          ${[5, 10, 12, 20].map((value) => `<button class="tag-button ${goal === value ? "is-active" : ""}" data-action="set-daily-goal" data-goal="${value}">${t("{value} 題", { value })}</button>`).join("")}
         </div>
         <div class="meter-track"><div class="meter-fill" style="width:${week.progress}%"></div></div>
-        <p class="panel-note">本週已完成 ${week.completed} 題，${week.daysDone} 天有練。</p>
+        <p class="panel-note">${t("本週已完成 {completed} 題，{daysDone} 天有練。", { completed: week.completed, daysDone: week.daysDone })}</p>
       </section>
     `;
   }
@@ -4327,17 +4338,17 @@
         <section class="panel page-panel settings-page">
           <div class="page-head">
             <div>
-              <p class="section-label">PREFERENCES / 偏好與設定</p>
-              <h2>打造適合你的練習環境。</h2>
+              <p class="section-label">${t("PREFERENCES / 偏好與設定")}</p>
+              <h2>${t("打造適合你的練習環境。")}</h2>
             </div>
-            <button class="button secondary" data-action="home">${icon("home")}回首頁</button>
+            <button class="button secondary" data-action="home">${icon("home")}${t("回首頁")}</button>
           </div>
-          <nav class="settings-jump" aria-label="設定分類"><a href="#settings-practice">練習</a><a href="#settings-interface">介面</a><a href="#settings-data">資料</a><a href="#settings-privacy">隱私</a><a href="#settings-help">說明</a></nav>
-          ${settingsSection("練習", renderGoalCard(records) + renderPlacementSettingsCard(records) + renderExamCountdownSettingsCard(records))}
-          ${settingsSection("介面", renderInterfaceSettingsCard(records))}
-          ${settingsSection("資料", renderDataManagementCard(records) + renderSyncSettingsCard() + renderCalibrationCard(records))}
-          ${settingsSection("隱私", renderPrivacyCard())}
-          ${settingsSection("說明", renderGuideCard() + renderIosInstallCard() + renderAboutLinksCard())}
+          <nav class="settings-jump" aria-label="${t("設定分類")}"><a href="#settings-practice">${t("練習")}</a><a href="#settings-interface">${t("介面")}</a><a href="#settings-data">${t("資料")}</a><a href="#settings-privacy">${t("隱私")}</a><a href="#settings-help">${t("說明")}</a></nav>
+          ${settingsSection(/* zh-key */ "練習",renderGoalCard(records) + renderPlacementSettingsCard(records) + renderExamCountdownSettingsCard(records))}
+          ${settingsSection(/* zh-key */ "介面",renderInterfaceSettingsCard(records))}
+          ${settingsSection(/* zh-key */ "資料",renderDataManagementCard(records) + renderSyncSettingsCard() + renderCalibrationCard(records))}
+          ${settingsSection(/* zh-key */ "隱私",renderPrivacyCard())}
+          ${settingsSection(/* zh-key */ "說明",renderGuideCard() + renderIosInstallCard() + renderAboutLinksCard())}
         </section>
       </main>
     `;
@@ -4350,27 +4361,27 @@
       <section class="study-card exam-countdown-settings">
         <div class="panel-title-row">
           <div>
-            <p class="section-label">考前衝刺</p>
-            <h3>${plan && plan.examAt ? `${escapeHtml(plan.label || "考試")} · ${dateValue}` : "設一個考試日期"}</h3>
+            <p class="section-label">${t("考前衝刺")}</p>
+            <h3>${plan && plan.examAt ? `${escapeHtml(plan.label || t("考試"))} · ${dateValue}` : t("設一個考試日期")}</h3>
           </div>
         </div>
         <div class="exam-plan-form">
-          <label>名稱 <input id="exam-plan-label" type="text" maxlength="12" value="${escapeAttr(plan ? plan.label || "" : "")}" placeholder="期中考"></label>
-          <label>日期 <input id="exam-plan-date" type="date" value="${escapeAttr(dateValue)}"></label>
-          <label>每天
+          <label>${t("名稱")} <input id="exam-plan-label" type="text" maxlength="12" value="${escapeAttr(plan ? plan.label || "" : "")}" placeholder="${t("期中考")}"></label>
+          <label>${t("日期")} <input id="exam-plan-date" type="date" value="${escapeAttr(dateValue)}"></label>
+          <label>${t("每天")}
             <select id="exam-plan-minutes">
-              ${[15, 30, 45].map((value) => `<option value="${value}" ${plan && Number(plan.dailyMinutes) === value ? "selected" : ""}>${value} 分鐘</option>`).join("")}
+              ${[15, 30, 45].map((value) => `<option value="${value}" ${plan && Number(plan.dailyMinutes) === value ? "selected" : ""}>${t("{value} 分鐘", { value })}</option>`).join("")}
             </select>
           </label>
-          <label>目標精熟
+          <label>${t("目標精熟")}
             <select id="exam-plan-target">
               ${[60, 70, 85].map((value) => `<option value="${value}" ${plan && Number(plan.target) === value ? "selected" : ""}>${value}</option>`).join("")}
             </select>
           </label>
         </div>
         <div class="action-row">
-          <button class="button" data-action="exam-countdown-set">${icon("flag")}${plan && plan.examAt ? "更新倒數" : "開始倒數"}</button>
-          ${plan && plan.examAt ? `<button class="button ghost" data-action="exam-countdown-clear">清除（封存到歷史）</button>` : ""}
+          <button class="button" data-action="exam-countdown-set">${icon("flag")}${plan && plan.examAt ? t("更新倒數") : t("開始倒數")}</button>
+          ${plan && plan.examAt ? `<button class="button ghost" data-action="exam-countdown-clear">${t("清除（封存到歷史）")}</button>` : ""}
         </div>
       </section>
     `;
@@ -4379,22 +4390,22 @@
   function renderPlacementSettingsCard(records) {
     const placement = records.placement;
     const summary = placement
-      ? `目前定位 R${placement.rank}${placement.weakTag ? ` · 最不穩：${tagLabel(placement.weakTag)}` : ""}`
-      : "還沒做過定位測驗";
+      ? `${t("目前定位 R{rank}", { rank: placement.rank })}${placement.weakTag ? ` ${t("· 最不穩：{weakTag}", { weakTag: tagLabel(placement.weakTag) })}` : ""}`
+      : t("還沒做過定位測驗");
     const note = placement
-      ? `上次定位：${String(placement.date || "").slice(0, 10) || "—"}。重新定位會覆蓋結果，並依表現重新解鎖主線。`
-      : "8 題調適測驗，約 5 分鐘。做完會依表現解鎖主線起點。";
+      ? `${t("上次定位：{v}。重新定位會覆蓋結果，並依表現重新解鎖主線。", { v: String(placement.date || "").slice(0, 10) || "—" })}`
+      : t("8 題調適測驗，約 5 分鐘。做完會依表現解鎖主線起點。");
     return `
       <section class="study-card placement-card">
         <div class="panel-title-row">
           <div>
-            <p class="section-label">定位</p>
+            <p class="section-label">${t("定位")}</p>
             <h3>${escapeHtml(summary)}</h3>
           </div>
         </div>
         <p class="panel-note">${escapeHtml(note)}</p>
         <div class="action-row">
-          <button class="button secondary" data-action="start-placement">${icon("target")}${placement ? "重新定位" : "開始定位測驗"}</button>
+          <button class="button secondary" data-action="start-placement">${icon("target")}${placement ? t("重新定位") : t("開始定位測驗")}</button>
         </div>
       </section>
     `;
@@ -4420,32 +4431,32 @@
         return `<option value="${escapeAttr(key)}" ${selectedPack === key ? "selected" : ""}>${escapeHtml(pack.label)} (${packTotalCountText(key)})</option>`;
       })
       .join("");
-    return groups + (rest ? `<optgroup label="其他">${rest}</optgroup>` : "");
+    return groups + (rest ? `<optgroup label="${t("其他")}">${rest}</optgroup>` : "");
   }
 
   function renderLibraryBoard(records) {
     const mistakeCount = Object.keys(records.mistakes || {}).length;
-    const weakLabel = topWeaknesses(records)[0]?.label || "綜合";
+    const weakLabel = topWeaknesses(records)[0]?.label || t("綜合");
     const techCount = difficultyScopedCount(6, "all", "technique_recognition");
     const bossCount = difficultyScopedCount(6, "all", "boss_challenge");
     return `
       <details class="library-discovery" data-keep="library-discovery">
-      <summary>${icon("lightbulb")}<span>還沒決定練什麼？</span>${icon("chevron-down")}</summary>
+      <summary>${icon("lightbulb")}<span>${t("還沒決定練什麼？")}</span>${icon("chevron-down")}</summary>
       <div class="library-board">
         <button class="board-card" data-action="train-pack" data-pack="technique_recognition">
-          <span class="board-tag">今日推薦</span>
-          <strong>先練判型</strong>
-          <small>技巧辨識 · ${techCount} 題</small>
+          <span class="board-tag">${t("今日推薦")}</span>
+          <strong>${t("先練判型")}</strong>
+          <small>${t("技巧辨識 · {techCount} 題", { techCount })}</small>
         </button>
         <button class="board-card is-weak" data-action="start-weakness" ${mistakeCount ? "" : "disabled"}>
-          <span class="board-tag">弱點包</span>
-          <strong>${mistakeCount ? "清弱點" : "尚無錯題"}</strong>
-          <small>${escapeHtml(weakLabel)} · ${mistakeCount} 題</small>
+          <span class="board-tag">${t("弱點包")}</span>
+          <strong>${mistakeCount ? t("清弱點") : t("尚無錯題")}</strong>
+          <small>${t("{weakLabel} · {mistakeCount} 題", { weakLabel: escapeHtml(weakLabel), mistakeCount })}</small>
         </button>
         <button class="board-card is-boss" data-action="train-pack" data-pack="boss_challenge">
-          <span class="board-tag">Boss 前置</span>
-          <strong>強人題熱身</strong>
-          <small>R5–6 · ${bossCount} 題</small>
+          <span class="board-tag">${t("Boss 前置")}</span>
+          <strong>${t("強人題熱身")}</strong>
+          <small>${t("R5–6 · {bossCount} 題", { bossCount })}</small>
         </button>
       </div>
       </details>
@@ -4465,44 +4476,44 @@
         <section class="panel page-panel problem-library">
           <div class="page-head">
             <div>
-              <p class="section-label">LIBRARY / 探索題庫</p>
-              <h2>找到值得練習的下一題。</h2>
-              <p>${problems.length.toLocaleString()} 題微積分，從基礎觀念到進階挑戰。搜尋、收藏，建立你的練習清單。</p>
+              <p class="section-label">${t("LIBRARY / 探索題庫")}</p>
+              <h2>${t("找到值得練習的下一題。")}</h2>
+              <p>${t("{toLocaleString} 題微積分，從基礎觀念到進階挑戰。搜尋、收藏，建立你的練習清單。", { toLocaleString: problems.length.toLocaleString() })}</p>
             </div>
             <div class="action-row">
-              ${libraryGate.proofsInLibrary ? `<button class="button secondary" data-action="open-proofs">${icon("file-pen-line")}證明題庫</button>` : ""}
-              ${libraryGate.full ? `<button class="button secondary" data-action="open-creator">${icon("file-pen-line")}我要出題</button>` : ""}
-              <button class="button" data-action="start-library-filter" ${allItems.length ? "" : "disabled"}>${icon("shuffle")}練目前篩選</button>
+              ${libraryGate.proofsInLibrary ? `<button class="button secondary" data-action="open-proofs">${icon("file-pen-line")}${t("證明題庫")}</button>` : ""}
+              ${libraryGate.full ? `<button class="button secondary" data-action="open-creator">${icon("file-pen-line")}${t("我要出題")}</button>` : ""}
+              <button class="button" data-action="start-library-filter" ${allItems.length ? "" : "disabled"}>${icon("shuffle")}${t("練目前篩選")}</button>
             </div>
           </div>
 
-          <p class="section-label library-filter-label">自己挑</p>
+          <p class="section-label library-filter-label">${t("自己挑")}</p>
           <div class="library-toolbar">
             <label class="library-search">
-              <span>搜尋</span>
-              <input data-library-search type="search" value="${escapeAttr(librarySearch)}" placeholder="泰勒、分部、Taylor、題號…" />
+              <span>${t("搜尋")}</span>
+              <input data-library-search type="search" value="${escapeAttr(librarySearch)}" placeholder="${t("泰勒、分部、Taylor、題號…")}" />
             </label>
             ${renderLibraryPackPicker(records)}
             <label>
-              <span>難度</span>
+              <span>${t("難度")}</span>
               <select data-library-rank-select>
-                ${["all", "1", "2", "3", "4", "5", "6"].map((rank) => `<option value="${rank}" ${selectedLibraryRank === rank ? "selected" : ""}>${rank === "all" ? "全部" : `R${rank}`}</option>`).join("")}
+                ${["all", "1", "2", "3", "4", "5", "6"].map((rank) => `<option value="${rank}" ${selectedLibraryRank === rank ? "selected" : ""}>${rank === "all" ? t("全部") : `R${rank}`}</option>`).join("")}
               </select>
             </label>
           </div>
 
-          <div class="segmented compact library-tabs" role="group" aria-label="題庫題型篩選">
+          <div class="segmented compact library-tabs" role="group" aria-label="${t("題庫題型篩選")}">
             ${Object.entries(TOPICS)
               .map(([key, topic]) => `<button class="segment ${selectedLibraryTopic === key ? "is-active" : ""}" aria-pressed="${selectedLibraryTopic === key ? "true" : "false"}" data-library-topic="${key}">${topic.label}</button>`)
               .join("")}
           </div>
 
-          <div class="segmented compact library-tabs" role="group" aria-label="題庫狀態篩選">
+          <div class="segmented compact library-tabs" role="group" aria-label="${t("題庫狀態篩選")}">
             ${[
-              ["all", "全部"],
-              ["favorites", `收藏 ${Object.keys(records.favorites || {}).length}`],
+              ["all", t("全部")],
+              ["favorites", `${t("收藏 {length}", { length: Object.keys(records.favorites || {}).length })}`],
               ["boss", "Boss"],
-              ["reported", `已回報 ${Object.keys(records.problemReports || {}).length}`]
+              ["reported", `${t("已回報 {length}", { length: Object.keys(records.problemReports || {}).length })}`]
             ].map(([key, label]) => `<button class="segment ${selectedLibraryFilter === key ? "is-active" : ""}" aria-pressed="${selectedLibraryFilter === key ? "true" : "false"}" data-library-filter="${key}">${escapeHtml(label)}</button>`).join("")}
           </div>
 
@@ -4510,18 +4521,18 @@
 
           <div class="library-count">
             <strong>${allItems.length}</strong>
-            <span>符合條件${allItems.length > shown.length ? `，先顯示 ${shown.length} 題` : ""}${allItems.length ? " · 練目前篩選會從中抽 12 題" : ""}</span>
+            <span>${t("符合條件")}${allItems.length > shown.length ? `${t("，先顯示 {length} 題", { length: shown.length })}` : ""}${allItems.length ? t(" · 練目前篩選會從中抽 12 題") : ""}</span>
           </div>
           ${
             lockedCount > 0
               ? `<div class="library-lock-note">
-                  ${icon("info")}<span>另有 <strong>${lockedCount}</strong> 題在 R${Math.min(6, browseCap + 1)} 以上 —— 練上去就會自己打開。</span>
-                  <button class="button ghost" data-action="unlock-library">直接解鎖瀏覽</button>
+                  ${icon("info")}<span>${t("另有")} <strong>${lockedCount}</strong> ${t("題在 R{n} 以上 —— 練上去就會自己打開。", { n: Math.min(6, browseCap + 1) })}</span>
+                  <button class="button ghost" data-action="unlock-library">${t("直接解鎖瀏覽")}</button>
                 </div>`
               : fullAccess
                 ? `<div class="library-lock-note is-open">
-                    ${icon("check")}<span>完整題庫已解鎖瀏覽。</span>
-                    <button class="button ghost" data-action="lock-library">恢復依等級鎖定</button>
+                    ${icon("check")}<span>${t("完整題庫已解鎖瀏覽。")}</span>
+                    <button class="button ghost" data-action="lock-library">${t("恢復依等級鎖定")}</button>
                   </div>`
                 : ""
           }
@@ -4530,26 +4541,26 @@
             // 搜尋框又在畫面外 1500px —— 只印「0 符合條件」等於讓人猜謎。
             allItems.length === 0
               ? `<div class="library-empty">
-                  <p>目前生效的條件：</p>
+                  <p>${t("目前生效的條件：")}</p>
                   <div class="tag-row">
-                    ${librarySearch.trim() ? `<span class="chip">搜尋「${escapeHtml(librarySearch.trim())}」</span>` : ""}
-                    ${selectedPack !== "all" ? `<span class="chip">題包：${escapeHtml(TRAINING_PACKS[selectedPack]?.label || selectedPack)}</span>` : ""}
-                    ${selectedLibraryRank !== "all" ? `<span class="chip">難度 R${escapeHtml(selectedLibraryRank)}</span>` : ""}
-                    ${selectedLibraryTopic !== "all" ? `<span class="chip">主題：${escapeHtml(TOPICS[selectedLibraryTopic]?.label || selectedLibraryTopic)}</span>` : ""}
-                    ${selectedLibraryFilter !== "all" ? `<span class="chip">狀態篩選</span>` : ""}
+                    ${librarySearch.trim() ? `<span class="chip">${t("搜尋「{trim}」", { trim: escapeHtml(librarySearch.trim()) })}</span>` : ""}
+                    ${selectedPack !== "all" ? `<span class="chip">${t("題包：{v}", { v: escapeHtml(TRAINING_PACKS[selectedPack]?.label || selectedPack) })}</span>` : ""}
+                    ${selectedLibraryRank !== "all" ? `<span class="chip">${t("難度 R{selectedLibraryRank}", { selectedLibraryRank: escapeHtml(selectedLibraryRank) })}</span>` : ""}
+                    ${selectedLibraryTopic !== "all" ? `<span class="chip">${t("主題：")}${escapeHtml(TOPICS[selectedLibraryTopic]?.label || selectedLibraryTopic)}</span>` : ""}
+                    ${selectedLibraryFilter !== "all" ? `<span class="chip">${t("狀態篩選")}</span>` : ""}
                   </div>
-                  <button class="button secondary" data-action="library-clear-filters">${icon("x")}清除全部篩選</button>
+                  <button class="button secondary" data-action="library-clear-filters">${icon("x")}${t("清除全部篩選")}</button>
                 </div>`
               : ""
           }
 
           <div class="problem-library-grid">
-            ${shown.length ? shown.map((problem) => renderLibraryProblemCard(problem, records)).join("") : `<div class="empty-state">沒有符合條件的題目。</div>`}
+            ${shown.length ? shown.map((problem) => renderLibraryProblemCard(problem, records)).join("") : `<div class="empty-state">${t("沒有符合條件的題目。")}</div>`}
           </div>
 
           ${
             allItems.length > shown.length
-              ? `<div class="library-more"><button class="button secondary" data-action="library-show-more">顯示更多（還有 ${allItems.length - shown.length} 題）</button></div>`
+              ? `<div class="library-more"><button class="button secondary" data-action="library-show-more">${t("顯示更多（還有 {v} 題）", { v: allItems.length - shown.length })}</button></div>`
               : ""
           }
         </section>
@@ -4583,13 +4594,13 @@
   // 0 題的時候要說得出是哪個條件卡住的 —— 不然使用者會以為那一包是空的。
   function libraryFilterSummary() {
     const parts = [];
-    if (librarySearch.trim()) parts.push(`搜尋「${librarySearch.trim()}」`);
-    if (selectedLibraryTopic !== "all") parts.push(`主題：${(TOPICS[selectedLibraryTopic] || {}).label || selectedLibraryTopic}`);
-    if (selectedLibraryRank !== "all") parts.push(`難度 R${selectedLibraryRank}`);
-    if (selectedLibraryFilter === "favorites") parts.push("只看收藏");
-    if (selectedLibraryFilter === "boss") parts.push("只看 Boss");
-    if (selectedLibraryFilter === "reported") parts.push("只看已回報");
-    return parts.length ? `題數是在這些條件之下算的：${parts.join("、")}。把它們放寬，0 題的包就會有東西。` : "";
+    if (librarySearch.trim()) parts.push(`${t("搜尋「{trim}」", { trim: librarySearch.trim() })}`);
+    if (selectedLibraryTopic !== "all") parts.push(`${t("主題：{v}", { v: (TOPICS[selectedLibraryTopic] || {}).label || selectedLibraryTopic })}`);
+    if (selectedLibraryRank !== "all") parts.push(`${t("難度 R{selectedLibraryRank}", { selectedLibraryRank })}`);
+    if (selectedLibraryFilter === "favorites") parts.push(t("只看收藏"));
+    if (selectedLibraryFilter === "boss") parts.push(t("只看 Boss"));
+    if (selectedLibraryFilter === "reported") parts.push(t("只看已回報"));
+    return parts.length ? `${t("題數是在這些條件之下算的：")}${parts.join("、")}${t("。把它們放寬，0 題的包就會有東西。")}` : "";
   }
 
   function renderLibraryPackPicker(records) {
@@ -4613,7 +4624,7 @@
     const problem = problemById(problemId);
     if (!problem) return;
     const url = window.location.origin + window.location.pathname + "#p=" + encodeURIComponent(problemId);
-    const done = () => showAppNotice("連結已複製。傳給同學，點開直接作答這一題。");
+    const done = () => showAppNotice(t("連結已複製。傳給同學，點開直接作答這一題。"));
     if (navigator.clipboard && navigator.clipboard.writeText) {
       navigator.clipboard.writeText(url).then(done, () => showAppNotice(url));
     } else {
@@ -4629,24 +4640,24 @@
       <article class="library-problem-card">
         <div class="library-problem-top">
           <div>
-            <strong>${escapeHtml(problemShortCode(problem) || "自訂題")}</strong>
+            <strong>${escapeHtml(problemShortCode(problem) || t("自訂題"))}</strong>
             <span>${TOPICS[problem.topic]?.label || problem.topic} · ${difficultyBadge(problem)}</span>
           </div>
           <div class="problem-card-actions">
-            <button class="icon-button ${favorite ? "is-active" : ""}" data-action="toggle-favorite" data-problem-id="${escapeAttr(problem.id)}" title="${favorite ? "取消收藏" : "收藏題目"}">${icon("star")}</button>
-            <button class="icon-button ${reported ? "is-active" : ""}" data-action="report-problem" data-problem-id="${escapeAttr(problem.id)}" title="${reported ? "已回報" : "回報題目"}">${icon("flag")}</button>
-            <button class="icon-button" data-action="copy-problem-link" data-problem-id="${escapeAttr(problem.id)}" title="複製這題的連結">${icon("copy")}</button>
+            <button class="icon-button ${favorite ? "is-active" : ""}" data-action="toggle-favorite" data-problem-id="${escapeAttr(problem.id)}" title="${favorite ? t("取消收藏") : t("收藏題目")}">${icon("star")}</button>
+            <button class="icon-button ${reported ? "is-active" : ""}" data-action="report-problem" data-problem-id="${escapeAttr(problem.id)}" title="${reported ? t("已回報") : t("回報題目")}">${icon("flag")}</button>
+            <button class="icon-button" data-action="copy-problem-link" data-problem-id="${escapeAttr(problem.id)}" title="${t("複製這題的連結")}">${icon("copy")}</button>
           </div>
         </div>
         <div class="library-prompt math-block" data-tex="${escapeAttr(problem.prompt)}"></div>
         ${renderProblemGraph(problem)}
         <div class="library-problem-foot">
           <div class="library-quality">
-          <span class="solution-quality is-${quality.level}" title="這題參考解說的完整度：完整＝有推導與提示；簡短＝一兩句；待補＝還沒寫">${escapeHtml(quality.label)}</span>
+          <span class="solution-quality is-${quality.level}" title="${t("這題參考解說的完整度：完整＝有推導與提示；簡短＝一兩句；待補＝還沒寫")}">${escapeHtml(quality.label)}</span>
           ${verifiedChip(problem)}
           ${rubricChip(problem)}
           </div>
-          <button class="button ghost" data-action="start-problem" data-problem-id="${escapeAttr(problem.id)}">${icon("play")}練這題</button>
+          <button class="button ghost" data-action="start-problem" data-problem-id="${escapeAttr(problem.id)}">${icon("play")}${t("練這題")}</button>
         </div>
       </article>
     `;
@@ -4709,13 +4720,13 @@
         <section class="panel page-panel creator-page">
           <div class="page-head">
             <div>
-              <p class="section-label">出題工作坊</p>
-              <h2>自己出題，練給自己或分享給朋友</h2>
-              <p>題目存在這台裝置的瀏覽器裡；分享連結把題目編進網址本身，不經過任何伺服器。</p>
+              <p class="section-label">${t("出題工作坊")}</p>
+              <h2>${t("自己出題，練給自己或分享給朋友")}</h2>
+              <p>${t("題目存在這台裝置的瀏覽器裡；分享連結把題目編進網址本身，不經過任何伺服器。")}</p>
             </div>
             <div class="action-row">
-              <button class="button ghost" data-action="home">${icon("home")}回首頁</button>
-              <button class="button" data-action="start-custom-practice" ${enabledCount ? "" : "disabled"}>${icon("play")}練自訂題（${enabledCount}）</button>
+              <button class="button ghost" data-action="home">${icon("home")}${t("回首頁")}</button>
+              <button class="button" data-action="start-custom-practice" ${enabledCount ? "" : "disabled"}>${icon("play")}${t("練自訂題（{enabledCount}）", { enabledCount })}</button>
             </div>
           </div>
           ${creatorStatus ? `<div class="creator-status is-${creatorStatus.tone}">${escapeHtml(creatorStatus.text)}</div>` : ""}
@@ -4747,20 +4758,20 @@
       <section class="study-card creator-share">
         <div class="panel-title-row">
           <div>
-            <p class="section-label">分享 / 匯入</p>
-            <h3>用連結交換題包</h3>
+            <p class="section-label">${t("分享 / 匯入")}</p>
+            <h3>${t("用連結交換題包")}</h3>
           </div>
         </div>
         <div class="action-row">
-          <button class="button secondary" data-action="creator-copy-link" ${shareable.length ? "" : "disabled"}>${icon("upload")}複製分享連結</button>
-          <button class="button ghost" data-action="creator-copy-code" ${shareable.length ? "" : "disabled"}>複製題包代碼</button>
+          <button class="button secondary" data-action="creator-copy-link" ${shareable.length ? "" : "disabled"}>${icon("upload")}${t("複製分享連結")}</button>
+          <button class="button ghost" data-action="creator-copy-code" ${shareable.length ? "" : "disabled"}>${t("複製題包代碼")}</button>
         </div>
         <label class="creator-import-label">
-          <span>匯入：貼上朋友的分享連結或 BZP1. 代碼</span>
-          <textarea data-creator-import-input rows="2" placeholder="BZP1.… 或 https://…#pack=BZP1.…"></textarea>
+          <span>${t("匯入：貼上朋友的分享連結或 BZP1. 代碼")}</span>
+          <textarea data-creator-import-input rows="2" placeholder="${t("BZP1.… 或 https://…#pack=BZP1.…")}"></textarea>
         </label>
         <div class="action-row">
-          <button class="button secondary" data-action="creator-import-decode">${icon("download")}解析題包</button>
+          <button class="button secondary" data-action="creator-import-decode">${icon("download")}${t("解析題包")}</button>
         </div>
       </section>
     `;
@@ -4771,9 +4782,9 @@
     if (preview.error) {
       return `
         <section class="study-card creator-import-preview">
-          <p class="section-label">匯入題包</p>
+          <p class="section-label">${t("匯入題包")}</p>
           <p class="panel-note">${escapeHtml(preview.error)}</p>
-          <div class="action-row"><button class="button ghost" data-action="creator-import-dismiss">${icon("x")}關閉</button></div>
+          <div class="action-row"><button class="button ghost" data-action="creator-import-dismiss">${icon("x")}${t("關閉")}</button></div>
         </section>
       `;
     }
@@ -4783,8 +4794,8 @@
       <section class="study-card creator-import-preview">
         <div class="panel-title-row">
           <div>
-            <p class="section-label">匯入題包</p>
-            <h3>收到 ${preview.problems.length} 題${preview.dropped ? `（另有 ${preview.dropped} 題格式不合，已略過）` : ""}</h3>
+            <p class="section-label">${t("匯入題包")}</p>
+            <h3>${t("收到 {length} 題", { length: preview.problems.length })}${preview.dropped ? `${t("（另有 {dropped} 題格式不合，已略過）", { dropped: preview.dropped })}` : ""}</h3>
           </div>
         </div>
         <div class="creator-import-list">
@@ -4794,15 +4805,15 @@
               (problem) => `
                 <div class="creator-import-item ${mineIds.has(problem.id) ? "is-dupe" : ""}">
                   <div class="math-block" data-tex="${escapeAttr(problem.prompt)}"></div>
-                  <small>${TOPICS[problem.topic]?.label || problem.topic} · ${answerKindLabel(problem.answerKind)} · R${problem.difficulty}${mineIds.has(problem.id) ? " · 已有同一題，會略過" : ""}</small>
+                  <small>${TOPICS[problem.topic]?.label || problem.topic} · ${answerKindLabel(problem.answerKind)} · R${problem.difficulty}${mineIds.has(problem.id) ? t(" · 已有同一題，會略過") : ""}</small>
                 </div>`
             )
             .join("")}
-          ${preview.problems.length > 6 ? `<p class="panel-note">…還有 ${preview.problems.length - 6} 題。</p>` : ""}
+          ${preview.problems.length > 6 ? `<p class="panel-note">${t("…還有 {v} 題。", { v: preview.problems.length - 6 })}</p>` : ""}
         </div>
         <div class="action-row">
-          <button class="button" data-action="creator-import-confirm" ${fresh.length ? "" : "disabled"}>${icon("check")}匯入 ${fresh.length} 題</button>
-          <button class="button ghost" data-action="creator-import-dismiss">${icon("x")}取消</button>
+          <button class="button" data-action="creator-import-confirm" ${fresh.length ? "" : "disabled"}>${icon("check")}${t("匯入 {length} 題", { length: fresh.length })}</button>
+          <button class="button ghost" data-action="creator-import-dismiss">${icon("x")}${t("取消")}</button>
         </div>
       </section>
     `;
@@ -4810,10 +4821,10 @@
 
   function renderCreatorList(mine) {
     if (!mine.length) {
-      return `<div class="empty-state">還沒有自訂題。出一題試試，或請朋友傳分享連結給你。</div>`;
+      return `<div class="empty-state">${t("還沒有自訂題。出一題試試，或請朋友傳分享連結給你。")}</div>`;
     }
     return `
-      <p class="section-label">我的題目（${mine.length}）</p>
+      <p class="section-label">${t("我的題目（{length}）", { length: mine.length })}</p>
       <div class="creator-list">
         ${mine
           .map((raw) => {
@@ -4823,18 +4834,18 @@
                 <div class="creator-item-top">
                   <div>
                     <strong>${escapeHtml(raw.id || "")}</strong>
-                    <span>${TOPICS[raw.topic]?.label || raw.topic} · ${answerKindLabel(raw.answerKind) || raw.answerKind} · R${escapeHtml(String(raw.difficulty || ""))}${enabled ? "" : " · 已停用"}</span>
+                    <span>${TOPICS[raw.topic]?.label || raw.topic} · ${answerKindLabel(raw.answerKind) || raw.answerKind} · R${escapeHtml(String(raw.difficulty || ""))}${enabled ? "" : t(" · 已停用")}</span>
                   </div>
                   <div class="problem-card-actions">
-                    <button class="icon-button ${enabled ? "is-active" : ""}" data-action="creator-toggle" data-problem-id="${escapeAttr(raw.id)}" title="${enabled ? "停用（不再抽進練習）" : "重新啟用"}">${icon(enabled ? "check" : "x")}</button>
-                    <button class="icon-button" data-action="creator-edit" data-problem-id="${escapeAttr(raw.id)}" title="編輯">${icon("file-pen-line")}</button>
-                    <button class="icon-button" data-action="creator-delete" data-problem-id="${escapeAttr(raw.id)}" title="刪除">${icon("trash")}</button>
+                    <button class="icon-button ${enabled ? "is-active" : ""}" data-action="creator-toggle" data-problem-id="${escapeAttr(raw.id)}" title="${enabled ? t("停用（不再抽進練習）") : t("重新啟用")}">${icon(enabled ? "check" : "x")}</button>
+                    <button class="icon-button" data-action="creator-edit" data-problem-id="${escapeAttr(raw.id)}" title="${t("編輯")}">${icon("file-pen-line")}</button>
+                    <button class="icon-button" data-action="creator-delete" data-problem-id="${escapeAttr(raw.id)}" title="${t("刪除")}">${icon("trash")}</button>
                   </div>
                 </div>
                 <div class="math-block" data-tex="${escapeAttr(raw.prompt || "")}"></div>
                 <div class="creator-item-foot">
-                  <span>答案：${escapeHtml(raw.answerKind === "text" ? (raw.answers || []).join(" / ") : String(raw.answer || ""))}</span>
-                  ${enabled ? `<button class="button ghost" data-action="start-problem" data-problem-id="${escapeAttr(raw.id)}">${icon("play")}練這題</button>` : ""}
+                  <span>${t("答案：")}${escapeHtml(raw.answerKind === "text" ? (raw.answers || []).join(" / ") : String(raw.answer || ""))}</span>
+                  ${enabled ? `<button class="button ghost" data-action="start-problem" data-problem-id="${escapeAttr(raw.id)}">${icon("play")}${t("練這題")}</button>` : ""}
                 </div>
               </article>`;
           })
@@ -4874,13 +4885,13 @@
       try {
         window.katex.renderToString(problem.prompt, { displayMode: true, throwOnError: true, strict: "ignore" });
       } catch (error) {
-        issues.push(`LaTeX 讀不懂：${String((error && error.message) || error).slice(0, 120)}`);
+        issues.push(`${t("LaTeX 讀不懂：{n}", { n: String((error && error.message) || error).slice(0, 120) })}`);
       }
     }
     const sample = problem.answerKind === "text" ? problem.answers[0] : problem.answer;
     const graded = checkAnswer(problem, sample);
     if (!graded.correct) {
-      issues.push(`判分器吃不下這個答案（${graded.message}）請改用這類寫法，例如 pi/4、2*x、x*ln(x)-x。`);
+      issues.push(`${t("判分器吃不下這個答案（{message}）請改用這類寫法，例如 pi/4、2*x、x*ln(x)-x。", { message: graded.message })}`);
     }
     return issues;
   }
@@ -4889,19 +4900,19 @@
     if (!CUSTOM) return;
     const draft = activeCreatorDraft();
     if (!String(draft.prompt || "").trim() || !String(draft.answer || "").trim()) {
-      creatorStatus = { tone: "error", text: "題目和答案都要填。" };
+      creatorStatus = { tone: "error", text: t("題目和答案都要填。") };
       render();
       return;
     }
     const problem = buildCreatorCandidate();
     if (!problem) {
-      creatorStatus = { tone: "error", text: "欄位格式不對，請再檢查一次。" };
+      creatorStatus = { tone: "error", text: t("欄位格式不對，請再檢查一次。") };
       render();
       return;
     }
     const issues = creatorProblemIssues(problem);
     if (issues.length) {
-      creatorStatus = { tone: "error", text: `還不能儲存：${issues.join(" ")}` };
+      creatorStatus = { tone: "error", text: `${t("還不能儲存：")}${issues.join(" ")}` };
       render();
       return;
     }
@@ -4918,7 +4929,7 @@
     }
     persistCustomProblems(list);
     trackEvent("custom_problem_saved", { topic: problem.topic, answer_kind: problem.answerKind });
-    creatorStatus = { tone: "ok", text: `已通過驗證並${creatorEditingId ? "更新" : "加入"}：${problem.id}。` };
+    creatorStatus = { tone: "ok", text: `${t("已通過驗證並")}${creatorEditingId ? t("更新") : t("加入")}：${problem.id}。` };
     creatorEditingId = "";
     creatorDraft = defaultCreatorDraft();
     render();
@@ -4935,7 +4946,7 @@
       variable: raw.variable || "x",
       prompt: raw.prompt || "",
       answer: raw.answerKind === "text" ? (raw.answers || []).join(", ") : String(raw.answer || ""),
-      solution: raw.solution === "出題者沒有附解說。" ? "" : raw.solution || "",
+      solution: raw.solution === "出題者沒有附解說。" || raw.solution === t("出題者沒有附解說。") ? "" : raw.solution || "",
       timeLimit: String(raw.timeLimit || 45)
     };
     creatorStatus = null;
@@ -4946,13 +4957,13 @@
   function deleteCustomProblem(problemId) {
     const list = customProblemStore();
     if (!list.some((item) => item.id === problemId)) return;
-    if (!window.confirm(`刪除 ${problemId}？只會從這台裝置移除。`)) return;
+    if (!window.confirm(`${t("刪除 {problemId}？只會從這台裝置移除。", { problemId })}`)) return;
     persistCustomProblems(list.filter((item) => item.id !== problemId));
     if (creatorEditingId === problemId) {
       creatorEditingId = "";
       creatorDraft = defaultCreatorDraft();
     }
-    creatorStatus = { tone: "ok", text: `已刪除 ${problemId}。` };
+    creatorStatus = { tone: "ok", text: `${t("已刪除 {problemId}。", { problemId })}` };
     render();
   }
 
@@ -4984,11 +4995,11 @@
     const nav = window.navigator;
     if (nav && nav.clipboard && typeof nav.clipboard.writeText === "function") {
       Promise.resolve(nav.clipboard.writeText(text))
-        .then(() => showAppNotice(asLink ? "分享連結已複製，貼給朋友就能匯入。" : "題包代碼已複製。"))
-        .catch(() => showAppNotice("一鍵複製失敗，請改用「複製題包代碼」後手動複製。"));
+        .then(() => showAppNotice(asLink ? t("分享連結已複製，貼給朋友就能匯入。") : t("題包代碼已複製。")))
+        .catch(() => showAppNotice(t("一鍵複製失敗，請改用「複製題包代碼」後手動複製。")));
       return;
     }
-    showAppNotice("這個瀏覽器不支援一鍵複製。");
+    showAppNotice(t("這個瀏覽器不支援一鍵複製。"));
   }
 
   function decodeCustomImport() {
@@ -4996,7 +5007,7 @@
     const input = app.querySelector("[data-creator-import-input]");
     const raw = input ? input.value : "";
     if (!String(raw).trim()) {
-      creatorStatus = { tone: "warn", text: "先貼上分享連結或題包代碼。" };
+      creatorStatus = { tone: "warn", text: t("先貼上分享連結或題包代碼。") };
       render();
       return;
     }
@@ -5021,8 +5032,8 @@
     trackEvent("custom_pack_imported", { count: added });
     creatorImportPreview = null;
     creatorStatus = added
-      ? { tone: "ok", text: `已匯入 ${added} 題，抽題和題庫搜尋都會出現。` }
-      : { tone: "warn", text: "沒有新題目（都已經在你的清單裡）。" };
+      ? { tone: "ok", text: `${t("已匯入 {added} 題，抽題和題庫搜尋都會出現。", { added })}` }
+      : { tone: "warn", text: t("沒有新題目（都已經在你的清單裡）。") };
     render();
   }
 
@@ -5181,7 +5192,7 @@
       records.proofs[spec.classic] = { ...(records.proofs[spec.classic] || {}), machinePassedAt: records.proofs[spec.classic] && records.proofs[spec.classic].machinePassedAt || now, updatedAt: now };
     }
     saveRecords(records);
-    proofWrite.lastSubmit = { verdict: report.verdict, source: proofWrite.text, text: report.verdict === "verified" ? "全綠、骨架齊。這題算解了 —— 下一題。" : (report.verdictText || "") };
+    proofWrite.lastSubmit = { verdict: report.verdict, source: proofWrite.text, text: report.verdict === "verified" ? t("全綠、骨架齊。這題算解了 —— 下一題。") : (report.verdictText || "") };
     if (proofWrite.lessonId && report.verdict === "verified") markProofLessonDone(records);
     render();
     const result = app.querySelector("[data-pl-submit-result]");
@@ -5288,46 +5299,46 @@
         <span class="lc-tag">${escapeHtml(PROOF_TIERS[proof.tier] || proof.tier)}</span>
         <span class="lc-tag">R${proof.difficulty}</span>
       </div>
-      <p class="proof-ladder">${proof.tier === "lean" ? "開 Playground 補完 sorry → 編譯零錯誤＝通過 → 卡了開提示 → 最後對參考解答" : "先自己寫 → 卡了開提示 → 還卡開關鍵步驟 → 骨架重排／填空機器判 → 最後對參考證明"}</p>
+      <p class="proof-ladder">${proof.tier === "lean" ? t("開 Playground 補完 sorry → 編譯零錯誤＝通過 → 卡了開提示 → 最後對參考解答") : t("先自己寫 → 卡了開提示 → 還卡開關鍵步驟 → 骨架重排／填空機器判 → 最後對參考證明")}</p>
       ${(proof.hints || []).length ? `
         <details class="proof-step proof-hints" data-proof-step="${escapeAttr(`${proof.id}:hints`)}" ${openProofSteps.has(`${proof.id}:hints`) ? "open" : ""}>
-          <summary><span class="proof-step-no">1</span>提示</summary>
+          <summary><span class="proof-step-no">1</span>${t("提示")}</summary>
           <ul>${(proof.hints || []).map((hint) => `<li>${escapeHtml(hint)}</li>`).join("")}</ul>
         </details>` : ""}
       ${(proof.keySteps || []).length ? `
         <details class="proof-step proof-key-steps" data-proof-step="${escapeAttr(`${proof.id}:keys`)}" ${openProofSteps.has(`${proof.id}:keys`) ? "open" : ""}>
-          <summary><span class="proof-step-no">2</span>關鍵步驟</summary>
+          <summary><span class="proof-step-no">2</span>${t("關鍵步驟")}</summary>
           <div class="proof-key-steps-body">${(proof.keySteps || []).map((step) => `<span>${escapeHtml(step)}</span>`).join("")}</div>
         </details>` : ""}
-      ${proof.leanSkeleton ? `<a class="button secondary proof-lean-link" href="https://live.lean-lang.org/#code=${encodeURIComponent(proof.leanSkeleton)}" target="_blank" rel="noopener">${icon("play")}在 Lean Playground 開啟（真・機器判卷）</a>` : ""}`;
+      ${proof.leanSkeleton ? `<a class="button secondary proof-lean-link" href="https://live.lean-lang.org/#code=${encodeURIComponent(proof.leanSkeleton)}" target="_blank" rel="noopener">${icon("play")}${t("在 Lean Playground 開啟（真・機器判卷）")}</a>` : ""}`;
     const machineSpec = plUI.specForClassic(proof.id);
     const right = `
       <div class="lc-work-head">
-        <span class="section-label">${proof.tier === "lean" ? "Lean · 編譯判" : machineSpec ? "自己寫機器判 · 骨架重排 · 填空" : "骨架重排 · 填空 · 自評"}</span>
-        <span class="lc-live">${progress.machinePassedAt ? "機器判通過" : status ? escapeHtml(proofStatusLabel(status)) : "還沒自評"}</span>
+        <span class="section-label">${proof.tier === "lean" ? t("Lean · 編譯判") : machineSpec ? t("自己寫機器判 · 骨架重排 · 填空") : t("骨架重排 · 填空 · 自評")}</span>
+        <span class="lc-live">${progress.machinePassedAt ? t("機器判通過") : status ? escapeHtml(proofStatusLabel(status)) : t("還沒自評")}</span>
       </div>
       ${plUI.renderMachineCard(machineSpec, progress)}
       <article class="proof-card is-${escapeAttr(proof.tier)} ${status ? `status-${escapeAttr(status)}` : ""} lc-proof-card">
         ${renderProofOrderDrill(proof, progress)}
         ${renderProofClozeDrill(proof, progress)}
-        ${viewed ? renderProofSolution(proof) : `<button class="button secondary proof-solution-button" data-action="view-proof-solution" data-proof-id="${escapeAttr(proof.id)}"><span class="proof-step-no">3</span>${icon("book-open-check")}看參考證明</button>`}
+        ${viewed ? renderProofSolution(proof) : `<button class="button secondary proof-solution-button" data-action="view-proof-solution" data-proof-id="${escapeAttr(proof.id)}"><span class="proof-step-no">3</span>${icon("book-open-check")}${t("看參考證明")}</button>`}
         <div class="proof-self-check">
-          <span>自評</span>
+          <span>${t("自評")}</span>
           <div class="tag-row">
-            ${renderProofStatusButton(proof.id, status, "understood", "看懂")}
-            ${renderProofStatusButton(proof.id, status, "partial", "部分會")}
-            ${renderProofStatusButton(proof.id, status, "stuck", "還不會")}
-            ${status ? `<button class="tag-button" data-action="mark-proof-status" data-proof-id="${escapeAttr(proof.id)}" data-proof-status="">清除</button>` : ""}
+            ${renderProofStatusButton(proof.id, status, "understood", t("看懂"))}
+            ${renderProofStatusButton(proof.id, status, "partial", t("部分會"))}
+            ${renderProofStatusButton(proof.id, status, "stuck", t("還不會"))}
+            ${status ? `<button class="tag-button" data-action="mark-proof-status" data-proof-id="${escapeAttr(proof.id)}" data-proof-status="">${t("清除")}</button>` : ""}
           </div>
         </div>
         ${status === "partial" || status === "stuck" ? `
           <div class="proof-self-check proof-blocker">
-            <span>卡在哪</span>
+            <span>${t("卡在哪")}</span>
             <div class="tag-row">
-              ${renderProofBlockerButton(proof.id, progress.blocker, "start", "起手式")}
-              ${renderProofBlockerButton(proof.id, progress.blocker, "algebra", "代數整理")}
-              ${renderProofBlockerButton(proof.id, progress.blocker, "theorem", "定理選擇")}
-              ${renderProofBlockerButton(proof.id, progress.blocker, "finish", "收尾")}
+              ${renderProofBlockerButton(proof.id, progress.blocker, "start", t("起手式"))}
+              ${renderProofBlockerButton(proof.id, progress.blocker, "algebra", t("代數整理"))}
+              ${renderProofBlockerButton(proof.id, progress.blocker, "theorem", t("定理選擇"))}
+              ${renderProofBlockerButton(proof.id, progress.blocker, "finish", t("收尾"))}
             </div>
           </div>` : ""}
       </article>`;
@@ -5345,12 +5356,12 @@
     const steps = proof.solution || [];
     if (steps.length < 3) return "";
     const drill = proofOrderDrill && proofOrderDrill.proofId === proof.id ? proofOrderDrill : null;
-    const badge = progress.orderPassed ? `<span class="proof-order-badge">骨架 ✓</span>` : "";
+    const badge = progress.orderPassed ? `<span class="proof-order-badge">${t("骨架 ✓")}</span>` : "";
     if (!drill) {
       return `
         <div class="proof-order-launch">
           <button class="button secondary" data-action="proof-order-start" data-proof-id="${escapeAttr(proof.id)}">
-            ${icon("shuffle")}排步驟練習（${steps.length} 步）
+            ${icon("shuffle")}${t("排步驟練習（{length} 步）", { length: steps.length })}
           </button>
           ${badge}
         </div>
@@ -5363,7 +5374,7 @@
     // 位置穩定是點擊介面的底線。
     return `
       <div class="proof-order-drill">
-        <p class="section-label">把步驟按邏輯順序點回去</p>
+        <p class="section-label">${t("把步驟按邏輯順序點回去")}</p>
         ${
           drill.picked.length
             ? `<ol class="proof-order-picked">
@@ -5389,15 +5400,15 @@
         ${
           graded
             ? graded.every(Boolean)
-              ? `<p class="proof-order-result is-pass">順序全對 —— 這條證明的骨架你有了。</p>`
-              : `<p class="proof-order-result is-fail">第 ${graded.findIndex((ok) => !ok) + 1} 步開始錯位 —— 那裡就是還沒接起來的邏輯。</p>`
+              ? `<p class="proof-order-result is-pass">${t("順序全對 —— 這條證明的骨架你有了。")}</p>`
+              : `<p class="proof-order-result is-fail">${t("第 {v} 步開始錯位 —— 那裡就是還沒接起來的邏輯。", { v: graded.findIndex((ok) => !ok) + 1 })}</p>`
             : ""
         }
         <div class="action-row">
-          ${drill.picked.length ? `<button class="button ghost" data-action="proof-order-reset" data-proof-id="${escapeAttr(proof.id)}">重來</button>` : ""}
-          <button class="button ghost" data-action="proof-order-close">收起</button>
+          ${drill.picked.length ? `<button class="button ghost" data-action="proof-order-reset" data-proof-id="${escapeAttr(proof.id)}">${t("重來")}</button>` : ""}
+          <button class="button ghost" data-action="proof-order-close">${t("收起")}</button>
         </div>
-        <p class="panel-note">只認參考證明的順序 —— 可交換的相鄰步驟這一版會被算錯，別跟它吵。</p>
+        <p class="panel-note">${t("只認參考證明的順序 —— 可交換的相鄰步驟這一版會被算錯，別跟它吵。")}</p>
       </div>
     `;
   }
@@ -5412,12 +5423,12 @@
     const blanks = proof.cloze || [];
     if (!blanks.length) return "";
     const drill = proofClozeDrill && proofClozeDrill.proofId === proof.id ? proofClozeDrill : null;
-    const badge = progress.clozePassed ? `<span class="proof-order-badge">填空 ✓</span>` : "";
+    const badge = progress.clozePassed ? `<span class="proof-order-badge">${t("填空 ✓")}</span>` : "";
     if (!drill) {
       return `
         <div class="proof-order-launch">
           <button class="button secondary" data-action="proof-cloze-start" data-proof-id="${escapeAttr(proof.id)}">
-            ${icon("pen")}填空證明（${blanks.length} 個決策點）
+            ${icon("pen")}${t("填空證明（{length} 個決策點）", { length: blanks.length })}
           </button>
           ${badge}
         </div>
@@ -5426,7 +5437,7 @@
     const graded = drill.graded;
     return `
       <div class="proof-order-drill proof-cloze-drill">
-        <p class="section-label">證明的決策點 —— 每一格選（或填）出正確的那一步</p>
+        <p class="section-label">${t("證明的決策點 —— 每一格選（或填）出正確的那一步")}</p>
         ${blanks.map((blank, index) => {
           const verdict = graded ? graded[index] : null;
           if (blank.kind === "expression") {
@@ -5434,7 +5445,7 @@
               <div class="proof-cloze-blank ${verdict ? (verdict.ok ? "is-ok" : "is-break") : ""}">
                 <p class="proof-cloze-ask">${escapeHtml(blank.ask)}</p>
                 <input class="proof-cloze-input" data-cloze-index="${index}" placeholder="${escapeAttr(blank.placeholder || "")}" value="${escapeAttr(drill.inputs[index] || "")}" autocomplete="off" spellcheck="false">
-                ${verdict && !verdict.ok ? `<p class="proof-cloze-why">跟正解不等價 —— 這格要的是一個具體的式子，判分是多點代入。</p>` : ""}
+                ${verdict && !verdict.ok ? `<p class="proof-cloze-why">${t("跟正解不等價 —— 這格要的是一個具體的式子，判分是多點代入。")}</p>` : ""}
               </div>`;
           }
           return `
@@ -5454,13 +5465,13 @@
         ${
           graded
             ? graded.every((verdict) => verdict.ok)
-              ? `<p class="proof-order-result is-pass">決策點全對 —— 這條證明的關鍵抉擇你都會做了。</p>`
-              : `<p class="proof-order-result is-fail">還有 ${graded.filter((verdict) => !verdict.ok).length} 個決策點沒過 —— 錯誤選項下面寫著為什麼。</p>`
+              ? `<p class="proof-order-result is-pass">${t("決策點全對 —— 這條證明的關鍵抉擇你都會做了。")}</p>`
+              : `<p class="proof-order-result is-fail">${t("還有 {length} 個決策點沒過 —— 錯誤選項下面寫著為什麼。", { length: graded.filter((verdict) => !verdict.ok).length })}</p>`
             : ""
         }
         <div class="action-row">
-          <button class="button secondary" data-action="proof-cloze-check" data-proof-id="${escapeAttr(proof.id)}">${icon("check")}檢查</button>
-          <button class="button ghost" data-action="proof-cloze-close">收起</button>
+          <button class="button secondary" data-action="proof-cloze-check" data-proof-id="${escapeAttr(proof.id)}">${icon("check")}${t("檢查")}</button>
+          <button class="button ghost" data-action="proof-cloze-close">${t("收起")}</button>
         </div>
       </div>
     `;
@@ -5505,7 +5516,7 @@
         }
       }
       const pick = proofClozeDrill.picks[index];
-      if (pick === undefined) return { ok: false, why: "還沒選。" };
+      if (pick === undefined) return { ok: false, why: t("還沒選。") };
       const option = blank.options[pick];
       return { ok: Boolean(option.correct), why: option.why || "" };
     });
@@ -5556,8 +5567,8 @@
     return `
       <section class="proof-solution">
         <div class="proof-solution-head">
-          <strong>參考證明</strong>
-          <span>請先自己寫完再對照。</span>
+          <strong>${t("參考證明")}</strong>
+          <span>${t("請先自己寫完再對照。")}</span>
         </div>
         <ol>
           ${(proof.solution || []).map((step) => renderProofSolutionStep(step)).join("")}
@@ -5583,10 +5594,10 @@
 
   function proofStatusLabel(status) {
     return {
-      understood: "看懂",
-      partial: "部分會",
-      stuck: "還不會"
-    }[status] || "未標記";
+      understood: t("看懂"),
+      partial: t("部分會"),
+      stuck: t("還不會")
+    }[status] || t("未標記");
   }
 
   function mistakePressure(item) {
@@ -5608,10 +5619,10 @@
 
   function mistakeDueStatus(item, now = Date.now()) {
     const srs = mistakeSrs(item);
-    if (srs.dueAt <= now) return { due: true, days: 0, label: "今天到期" };
+    if (srs.dueAt <= now) return { due: true, days: 0, label: t("今天到期") };
     const days = Math.max(1, Math.ceil((srs.dueAt - now) / DAY_MS));
-    if (days <= 7) return { due: false, days, label: `${days} 天後` };
-    return { due: false, days, label: "已排程" };
+    if (days <= 7) return { due: false, days, label: `${t("{days} 天後", { days })}` };
+    return { due: false, days, label: t("已排程") };
   }
 
   function srsDueSummary(records) {
@@ -5683,7 +5694,7 @@
   function topMistakeReason(entries) {
     const counts = {};
     entries.forEach((item) => {
-      const reason = item.tag || answerReasonLabel(item.reason) || "其他";
+      const reason = item.tag || answerReasonLabel(item.reason) || t("其他");
       counts[reason] = (counts[reason] || 0) + 1;
     });
     return Object.entries(counts).sort((a, b) => b[1] - a[1])[0]?.[0] || "—";
@@ -5702,14 +5713,14 @@
         <section class="panel page-panel">
           <div class="page-head">
             <div>
-              <p class="section-label">弱點急救室</p>
-              <h2>錯題本</h2>
+              <p class="section-label">${t("弱點急救室")}</p>
+              <h2>${t("錯題本")}</h2>
             </div>
             <div class="action-row">
-              <button class="button secondary" data-action="home">${icon("home")}回首頁</button>
-              <button class="button" data-action="start-mistakes" ${entries.length ? "" : "disabled"}>${icon("refresh")}重練目前篩選</button>
-              <button class="button ghost" data-action="print-mistakes" ${entries.length ? "" : "disabled"}>${icon("printer")}列印 / 存 PDF</button>
-              <button class="button ghost" data-action="clear-mistakes" ${entries.length ? "" : "disabled"}>${icon("trash")}清除目前篩選</button>
+              <button class="button secondary" data-action="home">${icon("home")}${t("回首頁")}</button>
+              <button class="button" data-action="start-mistakes" ${entries.length ? "" : "disabled"}>${icon("refresh")}${t("重練目前篩選")}</button>
+              <button class="button ghost" data-action="print-mistakes" ${entries.length ? "" : "disabled"}>${icon("printer")}${t("列印 / 存 PDF")}</button>
+              <button class="button ghost" data-action="clear-mistakes" ${entries.length ? "" : "disabled"}>${icon("trash")}${t("清除目前篩選")}</button>
             </div>
           </div>
           ${
@@ -5717,36 +5728,36 @@
               ? `<div class="triage">
                   <div class="triage-today">
                     <div class="triage-head">
-                      <div><p class="section-label">今天先清</p><strong>${top3.length} 題優先</strong></div>
-                      <button class="button" data-action="start-mistake-triage" data-problem-ids="${escapeAttr(top3Ids.join(","))}">${icon("play")}練這 ${top3.length} 題</button>
+                      <div><p class="section-label">${t("今天先清")}</p><strong>${t("{length} 題優先", { length: top3.length })}</strong></div>
+                      <button class="button" data-action="start-mistake-triage" data-problem-ids="${escapeAttr(top3Ids.join(","))}">${icon("play")}${t("練這 {length} 題", { length: top3.length })}</button>
                     </div>
                     <ol class="triage-list">
                       ${top3
                         .map((item) => {
                           const w = Number(item.wrongCount || 1);
                           const tier = w >= 3 ? "is-danger" : w <= 1 ? "is-win" : "";
-                          return `<li class="${tier}"><span>${TOPICS[item.problem.topic].label} · ${difficultyBadge(item.problem)}</span><small>錯 ${Math.round(w)} 次 · ${escapeHtml(item.tag || answerReasonLabel(item.reason) || "錯誤")}</small></li>`;
+                          return `<li class="${tier}"><span>${TOPICS[item.problem.topic].label} · ${difficultyBadge(item.problem)}</span><small>${t("錯 {w} 次 ·", { w: Math.round(w) })} ${escapeHtml(item.tag || answerReasonLabel(item.reason) || t("錯誤"))}</small></li>`;
                         })
                         .join("")}
                     </ol>
                   </div>
                   <div class="triage-stats">
-                    <div class="triage-stat is-danger"><strong>${danger}</strong><span>危險題 · 連錯多次</span></div>
-                    <div class="triage-stat is-win"><strong>${quickWin}</strong><span>快清掉</span></div>
-                    <div class="triage-stat"><strong>${escapeHtml(topReason)}</strong><span>最常錯因</span></div>
+                    <div class="triage-stat is-danger"><strong>${danger}</strong><span>${t("危險題 · 連錯多次")}</span></div>
+                    <div class="triage-stat is-win"><strong>${quickWin}</strong><span>${t("快清掉")}</span></div>
+                    <div class="triage-stat"><strong>${escapeHtml(topReason)}</strong><span>${t("最常錯因")}</span></div>
                   </div>
                 </div>`
               : ""
           }
           ${entries.length ? renderWeaknessPanel(records) : ""}
           ${renderMasteryRadar(records)}
-          <div class="segmented compact" role="group" aria-label="錯題題型篩選">
+          <div class="segmented compact" role="group" aria-label="${t("錯題題型篩選")}">
             ${Object.entries(TOPICS)
               .map(
                 ([key, topic]) => `
                   <button class="segment ${selectedMistakeTopic === key ? "is-active" : ""}" aria-pressed="${selectedMistakeTopic === key ? "true" : "false"}" data-mistake-topic="${key}">
                     <strong>${topic.label}</strong>
-                    <span>${mistakeTopicCount(records, key)} 題</span>
+                    <span>${t("{records} 題", { records: mistakeTopicCount(records, key) })}</span>
                   </button>`
               )
               .join("")}
@@ -5755,7 +5766,7 @@
             ${
               entries.length
                 ? entries.map((item) => renderMistakeItem(item, records)).join("")
-                : `<div class="empty-state">目前沒有符合篩選的錯題。</div>`
+                : `<div class="empty-state">${t("目前沒有符合篩選的錯題。")}</div>`
             }
           </div>
         </section>
@@ -5767,30 +5778,30 @@
     const problem = item.problem;
     const w = Number(item.wrongCount || 1);
     const tier = w >= 3 ? "is-danger" : w <= 1 ? "is-win" : "";
-    const tierLabel = w >= 3 ? "危險" : w <= 1 ? "快清掉" : "";
+    const tierLabel = w >= 3 ? t("危險") : w <= 1 ? t("快清掉") : "";
     const dueStatus = mistakeDueStatus(item);
     return `
       <article class="review-item is-wrong ${tier}">
         <div class="review-top">
-          <span>${TOPICS[problem.topic].label} · ${difficultyBadge(problem)} · 錯 ${Math.round(w)} 次${tierLabel ? ` <span class="tier-chip">${tierLabel}</span>` : ""} <span class="srs-chip ${dueStatus.due ? "is-due" : "is-scheduled"}">${escapeHtml(dueStatus.label)}</span></span>
-          <strong>${escapeHtml(item.tag || answerReasonLabel(item.reason) || "錯誤")}</strong>
+          <span>${t("{label} · {problem} · 錯 {w} 次", { label: TOPICS[problem.topic].label, problem: difficultyBadge(problem), w: Math.round(w) })}${tierLabel ? ` <span class="tier-chip">${tierLabel}</span>` : ""} <span class="srs-chip ${dueStatus.due ? "is-due" : "is-scheduled"}">${escapeHtml(dueStatus.label)}</span></span>
+          <strong>${escapeHtml(item.tag || answerReasonLabel(item.reason) || t("錯誤"))}</strong>
         </div>
         <div class="review-prompt math-block" data-tex="${escapeAttr(problem.prompt)}"></div>
         ${renderProblemGraph(problem, { reveal: true })}
         <div class="review-answer">
-          最近答案：${escapeHtml(shownInput(problem, item.lastInput))}<br />
-          參考答案：${referenceAnswerHTML(problem)}<br />
-          標註：${escapeHtml(item.tag || "未標註")}
+          ${t("最近答案：{problem}", { problem: escapeHtml(shownInput(problem, item.lastInput)) })}<br />
+          ${t("參考答案：{problem}", { problem: referenceAnswerHTML(problem) })}<br />
+          ${t("標註：")}${escapeHtml(item.tag || t("未標註"))}
         </div>
         <div class="tag-row">
           ${ERROR_TAGS.map((tag) => `<button class="tag-button ${item.tag === tag ? "is-active" : ""}" data-action="tag-mistake" data-problem-id="${escapeAttr(problem.id)}" data-tag="${escapeAttr(tag)}">${tag}</button>`).join("")}
         </div>
         <div class="action-row">
-          <button class="button secondary" data-action="start-mistake-one" data-problem-id="${escapeAttr(problem.id)}">${icon("play")}重練這題</button>
-          <button class="button secondary" data-action="practice-similar" data-problem-id="${escapeAttr(problem.id)}">${icon("shuffle")}練同型</button>
-          <button class="button ghost" data-action="toggle-favorite" data-problem-id="${escapeAttr(problem.id)}">${icon("star")}${records.favorites?.[problem.id] ? "已收藏" : "收藏"}</button>
-          <button class="button ghost" data-action="report-problem" data-problem-id="${escapeAttr(problem.id)}">${icon("flag")}${records.problemReports?.[problem.id] ? "已回報" : "回報"}</button>
-          <button class="button ghost" data-action="clear-mistake-one" data-problem-id="${escapeAttr(problem.id)}">${icon("trash")}移除</button>
+          <button class="button secondary" data-action="start-mistake-one" data-problem-id="${escapeAttr(problem.id)}">${icon("play")}${t("重練這題")}</button>
+          <button class="button secondary" data-action="practice-similar" data-problem-id="${escapeAttr(problem.id)}">${icon("shuffle")}${t("練同型")}</button>
+          <button class="button ghost" data-action="toggle-favorite" data-problem-id="${escapeAttr(problem.id)}">${icon("star")}${records.favorites?.[problem.id] ? t("已收藏") : t("收藏")}</button>
+          <button class="button ghost" data-action="report-problem" data-problem-id="${escapeAttr(problem.id)}">${icon("flag")}${records.problemReports?.[problem.id] ? t("已回報") : t("回報")}</button>
+          <button class="button ghost" data-action="clear-mistake-one" data-problem-id="${escapeAttr(problem.id)}">${icon("trash")}${t("移除")}</button>
         </div>
       </article>
     `;
@@ -5800,30 +5811,30 @@
     const analysis = buildWeaknessAnalysis(records);
     const hasData = analysis.tags.length || analysis.topics.length || analysis.errorTags.length;
     if (!hasData) {
-      return `<div class="weakness-panel"><strong>弱點分析</strong><p class="panel-note">錯題累積後，這裡會顯示最常錯的題型、技巧 tags 和錯因。</p></div>`;
+      return `<div class="weakness-panel"><strong>${t("弱點分析")}</strong><p class="panel-note">${t("錯題累積後，這裡會顯示最常錯的題型、技巧 tags 和錯因。")}</p></div>`;
     }
     return `
       <div class="weakness-panel">
         <div class="weakness-head">
           <div>
-            <strong>弱點分析</strong>
-            <span>依錯題本統計，點擊 tag 可直接練習。</span>
+            <strong>${t("弱點分析")}</strong>
+            <span>${t("依錯題本統計，點擊 tag 可直接練習。")}</span>
           </div>
         </div>
         <div class="weakness-grid">
           <div>
-            <h3>題型</h3>
-            ${analysis.topics.map((item) => renderWeaknessBar(item.label, item.count, item.max)).join("") || `<p class="panel-note">尚無資料</p>`}
+            <h3>${t("題型")}</h3>
+            ${analysis.topics.map((item) => renderWeaknessBar(item.label, item.count, item.max)).join("") || `<p class="panel-note">${t("尚無資料")}</p>`}
           </div>
           <div>
-            <h3>技巧 tags</h3>
+            <h3>${t("技巧 tags")}</h3>
             <div class="weakness-tags">
-              ${analysis.tags.map((item) => `<button class="tag-button tag-train" data-action="train-tag" data-tag="${escapeAttr(item.key)}" title="開一局專練「${escapeAttr(item.label)}」">${icon("play")}${escapeHtml(item.label)} · ${item.count}</button>`).join("") || `<p class="panel-note">尚無資料</p>`}
+              ${analysis.tags.map((item) => `<button class="tag-button tag-train" data-action="train-tag" data-tag="${escapeAttr(item.key)}" title="${t("開一局專練「{label}」", { label: escapeAttr(item.label) })}">${icon("play")}${escapeHtml(item.label)} · ${item.count}</button>`).join("") || `<p class="panel-note">${t("尚無資料")}</p>`}
             </div>
           </div>
           <div>
-            <h3>錯因</h3>
-            ${analysis.errorTags.map((item) => renderWeaknessBar(item.label, item.count, item.max)).join("") || `<p class="panel-note">尚無標註</p>`}
+            <h3>${t("錯因")}</h3>
+            ${analysis.errorTags.map((item) => renderWeaknessBar(item.label, item.count, item.max)).join("") || `<p class="panel-note">${t("尚無標註")}</p>`}
           </div>
         </div>
       </div>
@@ -5851,21 +5862,21 @@
           <div class="page-head">
             <div>
               <p class="section-label">Records</p>
-              <h2>作答歷史</h2>
+              <h2>${t("作答歷史")}</h2>
             </div>
             <div class="action-row">
-              <button class="button secondary" data-action="home">${icon("home")}回首頁</button>
-              <button class="button ghost" data-action="clear-history" ${history.length ? "" : "disabled"}>${icon("trash")}清除歷史</button>
+              <button class="button secondary" data-action="home">${icon("home")}${t("回首頁")}</button>
+              <button class="button ghost" data-action="clear-history" ${history.length ? "" : "disabled"}>${icon("trash")}${t("清除歷史")}</button>
             </div>
           </div>
           ${renderActivityHeatmap(records)}
-          <div class="segmented compact" role="group" aria-label="歷史題型篩選">
+          <div class="segmented compact" role="group" aria-label="${t("歷史題型篩選")}">
             ${Object.entries(TOPICS)
               .map(
                 ([key, topic]) => `
                   <button class="segment ${selectedHistoryTopic === key ? "is-active" : ""}" aria-pressed="${selectedHistoryTopic === key ? "true" : "false"}" data-history-topic="${key}">
                     <strong>${topic.label}</strong>
-                    <span>${historyTopicCount(records, key)} 局</span>
+                    <span>${t("{records} 局", { records: historyTopicCount(records, key) })}</span>
                   </button>`
               )
               .join("")}
@@ -5874,7 +5885,7 @@
             ${
               history.length
                 ? history.map(renderHistoryItem).join("")
-                : `<div class="empty-state">尚無作答歷史。</div>`
+                : `<div class="empty-state">${t("尚無作答歷史。")}</div>`
             }
           </div>
         </section>
@@ -5888,10 +5899,10 @@
         <div class="history-main">
           <div>
             <strong>${escapeHtml(item.modeLabel || item.mode || "Quiz")}</strong>
-            <span>${formatDateTime(item.finishedAt)} · ${answerModeLabel(item.answerMode || "free")} · ${item.practice ? "練習" : "計分"}</span>
+            <span>${formatDateTime(item.finishedAt)} · ${answerModeLabel(item.answerMode || "free")} · ${item.practice ? t("練習") : t("計分")}</span>
           </div>
           <div class="history-metrics">
-            <span>${item.score} 分</span>
+            <span>${t("{score} 分", { score: item.score })}</span>
             <span>${item.correct}/${item.total}</span>
             <span>${item.accuracy}%</span>
             <span>${item.avgTime}s</span>
@@ -5907,7 +5918,7 @@
     if (!answers.length) return "";
     return `
       <details class="history-detail" data-history-detail>
-        <summary>題目回顧</summary>
+        <summary>${t("題目回顧")}</summary>
         <div class="history-review-list">
           ${answers
             .map((answer, index) => {
@@ -5915,9 +5926,9 @@
               if (!problem) return "";
               return `
                 <div class="history-review-item ${answer.correct ? "is-correct" : "is-wrong"}">
-                  <strong>#${index + 1} · ${TOPICS[problem.topic].label} · ${answer.unanswered ? "未作答" : `${answer.elapsed}s`}</strong>
+                  <strong>#${index + 1} · ${TOPICS[problem.topic].label} · ${answer.unanswered ? t("未作答") : `${answer.elapsed}s`}</strong>
                   <div class="review-prompt math-block-lazy" data-tex="${escapeAttr(problem.prompt)}"></div>
-                  <span>你的答案：${escapeHtml(shownInput(problem, answer.input))} · ${answer.correct ? "正確" : answerReasonLabel(answer.reason)}</span>
+                  <span>${t("你的答案：{problem} ·", { problem: escapeHtml(shownInput(problem, answer.input)) })} ${answer.correct ? t("正確") : answerReasonLabel(answer.reason)}</span>
                 </div>
               `;
             })
@@ -5955,7 +5966,7 @@
         return `<i class="pip ${state}"></i>`;
       })
       .join("");
-    return `<div class="progress-pips" role="img" aria-label="第 ${currentQuiz.index + 1} / ${currentQuiz.problems.length} 題">${pips}</div>`;
+    return `<div class="progress-pips" role="img" aria-label="${t("第 {v} / {length} 題", { v: currentQuiz.index + 1, length: currentQuiz.problems.length })}">${pips}</div>`;
   }
 
   // 計時環的掃描比例（1 = 滿、0 = 沒了）。CSS 用它畫 conic 圓環，
@@ -5975,17 +5986,17 @@
   // 連續卡關時遞出的建議。刻意都是**可以立刻做的動作**，
   // 不是「別灰心」這種話 —— 卡住的人需要的是下一步，不是情緒安慰。
   function stuckNudge(missStreak) {
-    if (missStreak === 2) return "連兩題卡住了。這種時候放慢比加速有用：先把第一步寫在計算紙上，再決定用哪個工具。";
-    if (missStreak === 3) return "第三題了 —— 提示的第一層只講方向不破梗，這時候用它很划算。";
-    if (missStreak >= 4) return "這一段明顯還沒熟。練完這局到錯題本重練一次，比硬撐下去有效。";
+    if (missStreak === 2) return t("連兩題卡住了。這種時候放慢比加速有用：先把第一步寫在計算紙上，再決定用哪個工具。");
+    if (missStreak === 3) return t("第三題了 —— 提示的第一層只講方向不破梗，這時候用它很划算。");
+    if (missStreak >= 4) return t("這一段明顯還沒熟。練完這局到錯題本重練一次，比硬撐下去有效。");
     return "";
   }
 
   // 答對讚語：每次都不太一樣。連對 3 題起改報 combo 數。
-  const PRAISE_WORDS = ["漂亮！", "乾淨俐落！", "就是這樣！", "穩！", "好球！", "反射成形了", "手感正熱"];
+  const PRAISE_WORDS = [t("漂亮！"), t("乾淨俐落！"), t("就是這樣！"), t("穩！"), t("好球！"), t("反射成形了"), t("手感正熱")];
 
   function praiseLine(streak) {
-    if (streak >= 3) return `連對 ${streak} 題！`;
+    if (streak >= 3) return `${t("連對 {streak} 題！", { streak })}`;
     return PRAISE_WORDS[Math.floor(Math.random() * PRAISE_WORDS.length)];
   }
 
@@ -5994,13 +6005,13 @@
     const lost = currentQuiz.answers.filter((answer) => !answer.correct).length;
     const left = Math.max(0, 3 - lost);
     const hearts = [0, 1, 2].map((i) => `<i class="${i < left ? "is-alive" : "is-lost"}" aria-hidden="true">${i < left ? "♥" : "♡"}</i>`).join("");
-    return `<span class="hud-lives ${left <= 1 ? "is-danger" : ""}" role="status" aria-label="剩 ${left} 條命">${hearts}<small>剩 ${left} 條命</small></span>`;
+    return `<span class="hud-lives ${left <= 1 ? "is-danger" : ""}" role="status" aria-label="${t("剩 {left} 條命", { left })}">${hearts}<small>${t("剩 {left} 條命", { left })}</small></span>`;
   }
 
   // 連勝 combo 籌片：0 淡灰、2+ 點火、5+ 燒起來（配一個小彈跳）。
   function renderComboChip(streak) {
     const heat = streak >= 5 ? "is-hot" : streak >= 2 ? "is-warm" : "";
-    return `<span class="combo-chip ${heat}">${icon("flame")}連勝 ${streak}</span>`;
+    return `<span class="combo-chip ${heat}">${icon("flame")}${t("連勝 {streak}", { streak })}</span>`;
   }
 
   // 「手機尺寸」= 作答區已經變成 fixed 底部浮條的那個寬度。
@@ -6026,8 +6037,8 @@
     const isDanger = !noTimer && remaining <= (quiz.examMode ? 180 : 8) ? "is-danger" : "";
     const feedback = quiz.feedback;
     const answerMode = quiz.answerMode || "free";
-    const timeLabel = noTimer ? "模式" : quiz.examMode ? "考試" : timerPaused ? "暫停中" : "時間";
-    const timeValue = noTimer ? "自由" : quiz.examMode ? formatCountdown(remaining) : String(remaining);
+    const timeLabel = noTimer ? t("模式") : quiz.examMode ? t("考試") : timerPaused ? t("暫停中") : t("時間");
+    const timeValue = noTimer ? t("自由") : quiz.examMode ? formatCountdown(remaining) : String(remaining);
     const pathNodeIdx = quiz.pathNodeId ? PATH_NODES.findIndex((node) => node.id === quiz.pathNodeId) : -1;
     const pathNode = pathNodeIdx >= 0 ? PATH_NODES[pathNodeIdx] : null;
     const totalQ = quiz.problems.length;
@@ -6037,13 +6048,13 @@
     const goldTh = Math.ceil(totalQ * 0.9);
     const clearLost = correctSoFar < passTh && maxPossible < passTh;
     const clearLine =
-      correctSoFar >= goldTh ? "已達金牌"
-      : correctSoFar >= passTh ? `差 ${goldTh - correctSoFar} 題金牌`
-      : maxPossible >= passTh ? `差 ${passTh - correctSoFar} 題過關`
-      : "本關失守，專心清錯";
+      correctSoFar >= goldTh ? t("已達金牌")
+      : correctSoFar >= passTh ? `${t("差 {v} 題金牌", { v: goldTh - correctSoFar })}`
+      : maxPossible >= passTh ? `${t("差 {v} 題過關", { v: passTh - correctSoFar })}`
+      : t("本關失守，專心清錯");
     // 本局規則的一句話版：從 300px 側欄、再從頁尾一行小字，一路縮到 HUD 的註腳。
     // 它是被動資訊 —— 想看細節的人按「規則」。
-    const modeNote = quiz.placement ? "定位：答對變難、答錯變簡單；沒學過就按「還沒學過」" : quiz.gentle ? "新手保護期：不倒數、不計分，提示不扣分 —— 先把題目看懂" : quiz.examMode ? "整份倒數 · 時間到直接交卷" : quiz.survival ? "生存：最多錯 3 題" : quiz.suddenDeath ? "Boss 連戰：錯一題就結算" : quiz.pressureMode ? "壓力訓練：時限逐題遞減（練到 60%），時間到算未作答" : noTimer ? "本局不倒數" : "每題各自倒數，時間到算未作答";
+    const modeNote = quiz.placement ? t("定位：答對變難、答錯變簡單；沒學過就按「還沒學過」") : quiz.gentle ? t("新手保護期：不倒數、不計分，提示不扣分 —— 先把題目看懂") : quiz.examMode ? t("整份倒數 · 時間到直接交卷") : quiz.survival ? t("生存：最多錯 3 題") : quiz.suddenDeath ? t("Boss 連戰：錯一題就結算") : quiz.pressureMode ? t("壓力訓練：時限逐題遞減（練到 60%），時間到算未作答") : noTimer ? t("本局不倒數") : t("每題各自倒數，時間到算未作答");
 
     return `
       <main class="screen quiz-screen" id="buzz-main">
@@ -6054,17 +6065,17 @@
           <header class="arena-hud">
             <div class="hud-context">
               ${pathNode
-                ? `<strong class="hud-title">第 ${pathNodeIdx + 1} 關 · <span class="lvl-full">${escapeHtml(pathNode.label)}</span><span class="lvl-short">${escapeHtml(pathNode.short || pathNode.label)}</span></strong>
-                   <span class="hud-sub">第 ${quiz.index + 1} / ${totalQ} 題</span>
+                ? `<strong class="hud-title">${t("第 {v} 關 ·", { v: pathNodeIdx + 1 })} <span class="lvl-full">${escapeHtml(pathNode.label)}</span><span class="lvl-short">${escapeHtml(pathNode.short || pathNode.label)}</span></strong>
+                   <span class="hud-sub">${t("第 {v} / {totalQ} 題", { v: quiz.index + 1, totalQ })}</span>
                    <span class="clear-need ${clearLost ? "is-lost" : ""}">${clearLine}</span>
                    ${renderComboChip(quiz.currentStreak)}`
                 : quiz.placement
-                  ? `<strong class="hud-title">定位測驗</strong>
-                     <span class="hud-sub">第 ${quiz.index + 1} / ${quiz.problems.length} 題</span>
-                     <span class="hud-sub">不計分</span>`
+                  ? `<strong class="hud-title">${t("定位測驗")}</strong>
+                     <span class="hud-sub">${t("第 {v} / {length} 題", { v: quiz.index + 1, length: quiz.problems.length })}</span>
+                     <span class="hud-sub">${t("不計分")}</span>`
                   : `<strong class="hud-title">${escapeHtml(quiz.namedExam ? quiz.namedExam.label : modeLabel(quiz.mode))}</strong>
-                   <span class="hud-sub">第 ${quiz.index + 1} / ${quiz.problems.length} 題</span>
-                   <span class="hud-sub">${isPractice ? (quiz.gentle ? "新手保護 · 不計時不計分" : "不計分") : `目前分數 ${quiz.score}`}</span>
+                   <span class="hud-sub">${t("第 {v} / {length} 題", { v: quiz.index + 1, length: quiz.problems.length })}</span>
+                   <span class="hud-sub">${isPractice ? (quiz.gentle ? t("新手保護 · 不計時不計分") : t("不計分")) : `${t("目前分數 {score}", { score: quiz.score })}`}</span>
                    ${quiz.survival ? renderLivesChip(quiz) : ""}
                    ${renderComboChip(quiz.currentStreak)}`}
             </div>
@@ -6074,7 +6085,7 @@
                 // 一個一直盯著你看的數字，本身就是壓力來源，而它防不了任何東西。
                 quiz.examMode
                   ? `<div class="timer-box" data-live-box="answered">
-                <span>已答</span>
+                <span>${t("已答")}</span>
                 <strong data-live="answered">${quiz.answers.length}/${totalQ}</strong>
               </div>`
                   : ""
@@ -6082,8 +6093,8 @@
               <!-- 快捷鍵存在了很久，但沒有任何地方告訴使用者。
                    這顆只在有實體鍵盤的環境出現（CSS 用 pointer: fine 篩），
                    觸控裝置上按不到鍵盤，顯示它只是雜訊。 -->
-              <button class="kbd-hint" data-action="show-shortcuts" title="鍵盤快捷鍵">
-                <kbd>?</kbd><span>快捷鍵</span>
+              <button class="kbd-hint" data-action="show-shortcuts" title="${t("鍵盤快捷鍵")}">
+                <kbd>?</kbd><span>${t("快捷鍵")}</span>
               </button>
               <!-- 計時環：數字仍然是 data-live="time"（每秒更新的單一真相），
                    外圈的 conic 掃描只是把同一個數字畫成看得懂的形狀。 -->
@@ -6111,7 +6122,7 @@
           }
 
           <div class="problem-stage ${feedback ? "has-feedback" : ""}">
-            <article class="problem-card" role="group" aria-label="作答區">
+            <article class="problem-card" role="group" aria-label="${t("作答區")}">
               <div class="problem-meta">
                 ${topicChip(current)}
                 <span class="chip">${difficultyBadge(current)}</span>
@@ -6127,7 +6138,7 @@
                     ? ""
                     : quiz.examMode || feedback
                       ? `<span class="chip">${answerModeLabel(answerMode)}</span>`
-                      : `<button class="chip chip-button" data-action="toggle-answer-mode" title="切換作答形式" aria-label="切換作答形式，目前是${answerModeLabel(answerMode)}">${answerModeLabel(answerMode)}${icon("shuffle")}</button>`
+                      : `<button class="chip chip-button" data-action="toggle-answer-mode" title="${t("切換作答形式")}" aria-label="${t("切換作答形式，目前是{answerMode}", { answerMode: answerModeLabel(answerMode) })}">${answerModeLabel(answerMode)}${icon("shuffle")}</button>`
                 }
                 ${verifiedChip(current)}
               </div>
@@ -6145,10 +6156,10 @@
                   // 定位測驗把「跳過」換成「還沒學過」：那是誠實的答案，不是放棄，
                   // 而且不會進錯題本（定位是診斷）。
                   feedback ? "" : quiz.placement
-                    ? `<button class="tool-button tool-unlearned" type="button" data-action="placement-unlearned">${icon("skip")}<span>我還沒學過這個</span></button>`
-                    : `<button class="tool-button" type="button" data-action="skip">${icon("skip")}<span>跳過</span></button>`
+                    ? `<button class="tool-button tool-unlearned" type="button" data-action="placement-unlearned">${icon("skip")}<span>${t("我還沒學過這個")}</span></button>`
+                    : `<button class="tool-button" type="button" data-action="skip">${icon("skip")}<span>${t("跳過")}</span></button>`
                 }
-                <button class="tool-button" type="button" data-action="show-rules">${icon("info")}<span>規則</span></button>
+                <button class="tool-button" type="button" data-action="show-rules">${icon("info")}<span>${t("規則")}</span></button>
               </div>
               ${renderHintList(current)}
               ${renderAnswerControls(current)}
@@ -6176,8 +6187,8 @@
                       // 截圖實測看到「參考答案：convergent」上下相鄰重複。
                       feedback.status !== "correct"
                       && current.answerKind !== "worksheet"
-                      && !String(feedback.message || "").includes("參考答案")
-                        ? `<p class="feedback-reference">參考答案：${referenceAnswerHTML(current)}</p>`
+                      && !String(feedback.message || "").includes(t("參考答案"))
+                        ? `<p class="feedback-reference">${t("參考答案：{current}", { current: referenceAnswerHTML(current) })}</p>`
                         : ""
                     }
                     ${renderKeyIdea(current)}
@@ -6186,7 +6197,7 @@
                       // 「下一題」放在回饋卡最底、而且是 sticky 的：推導攤開之後卡片會變很長，
                       // 按鈕跟著貼在視窗底緣，不用捲到最下面才找得到。
                       (feedback.status !== "correct" && !quiz.examMode) || (feedback.status === "correct" && current.answerKind === "worksheet" && !quiz.examMode)
-                        ? `<div class="feedback-actions"><button class="button feedback-next" data-action="next-question">${icon("play")}${quiz.forceFinishAfterFeedback || quiz.index + 1 >= quiz.problems.length ? "看結算" : "下一題"}</button></div>`
+                        ? `<div class="feedback-actions"><button class="button feedback-next" data-action="next-question">${icon("play")}${quiz.forceFinishAfterFeedback || quiz.index + 1 >= quiz.problems.length ? t("看結算") : t("下一題")}</button></div>`
                         : ""
                     }
                   </div>`
@@ -6220,7 +6231,7 @@
     if (problem.answerKind === "epsilon") {
       const levels = (problem.epsilon || {}).levels || [];
       const last = levels[levels.length - 1];
-      return escapeHtml(`最嚴的那一關（ε=${last}）δ 最大可以取到 ${raw}`);
+      return escapeHtml(`${t("最嚴的那一關（ε={last}）δ 最大可以取到 {raw}", { last, raw })}`);
     }
     if (["worksheet", "graph", "graphtap", "graphslope"].includes(problem.answerKind)) {
       return escapeHtml(raw);
@@ -6249,7 +6260,7 @@
       const sketch = window.BuzzGraphSketch.renderControls(problem, graphSketchStrokes(problem), {
         done: Boolean(quiz.feedback), tool: quiz.sketchTool || "draw", renderProblemGraph, icon
       });
-      return fullscreenShell(problem, quiz.boardFullscreen ? boardOnlyNote("圖") : sketch, attachedScratchboard(problem, quiz.feedback ? "disabled" : ""));
+      return fullscreenShell(problem, quiz.boardFullscreen ? boardOnlyNote(t("圖")) : sketch, attachedScratchboard(problem, quiz.feedback ? "disabled" : ""));
     }
     if (quiz.answerMode === "choice") return renderChoiceControls(problem);
     return renderFreeAnswerControls(problem);
@@ -6304,7 +6315,7 @@
     const values = parseWorksheet(problem, input);
     const rows = (problem.fields || []).map((field) => {
       const given = values[field.key] || "";
-      if (!given) return { field, given, correct: false, message: "沒有填" };
+      if (!given) return { field, given, correct: false, message: t("沒有填") };
       const sub = { answerKind: field.kind, answer: field.answer, answers: field.answers };
       const result = checkAnswer(sub, given);
       return { field, given, correct: result.correct, message: result.message };
@@ -6315,8 +6326,8 @@
       rows,
       message: wrong.length === 0
         // 沒有對照圖的表（審斂表、定積分分析表）不要叫人去對照一張不存在的圖
-        ? (problem.sketch && problem.sketch.expr ? "整張表都對了。對照一下你畫的圖。" : "整張表都對了。")
-        : `有 ${wrong.length} 格對不上：${wrong.map((row) => row.field.label).join("、")}`
+        ? (problem.sketch && problem.sketch.expr ? t("整張表都對了。對照一下你畫的圖。") : t("整張表都對了。"))
+        : `${t("有 {length} 格對不上：", { length: wrong.length })}${wrong.map((row) => row.field.label).join("、")}`
     };
   }
 
@@ -6336,7 +6347,7 @@
       if (!graded) return "";
       const row = graded.rows.find((entry) => entry.field.key === key);
       if (!row || row.correct) return "";
-      return `<small class="ws-answer">正解 ${escapeHtml(row.field.answer || (row.field.answers || []).join(" / "))}</small>`;
+      return `<small class="ws-answer">${t("正解")} ${escapeHtml(row.field.answer || (row.field.answers || []).join(" / "))}</small>`;
     };
 
     // 作業表有兩種：要照著畫圖的作圖表，以及只要填格子的分析表（累積函數、審斂）。
@@ -6346,7 +6357,7 @@
     return `
       <section class="worksheet">
         <table class="ws-table">
-          <caption class="sr-only">${escapeHtml(problem.tableCaption || (willSketch ? "作圖表" : "分析表"))}</caption>
+          <caption class="sr-only">${escapeHtml(problem.tableCaption || (willSketch ? t("作圖表") : t("分析表")))}</caption>
           <tbody>
             ${(problem.fields || [])
               .map(
@@ -6372,15 +6383,15 @@
         <p class="ws-hint">
           ${
             hasShape
-              ? `區間寫成 <code>(-inf, -1) U (1, inf)</code>，集合寫成 <code>{-1, 1}</code>，沒有就填 <code>{}</code> 或 <code>無</code>。`
-              : `數值可以寫成算式（<code>pi/4</code>、<code>ln(2)</code>、<code>1/6</code>），判定型的格子照欄位說明填。`
+              ? `${t("區間寫成")} <code>(-inf, -1) U (1, inf)</code>${t("，集合寫成")} <code>{-1, 1}</code>${t("，沒有就填")} <code>{}</code> ${t("或")} <code>${t("無")}</code>。`
+              : `${t("數值可以寫成算式（")}<code>pi/4</code>、<code>ln(2)</code>、<code>1/6</code>${t("），判定型的格子照欄位說明填。")}`
           }
         </p>
         ${
           disabled || !hasShape
             ? ""
-            : `<div class="ws-symbols" aria-label="快速插入記號">
-                ${["(-inf, ", ", inf)", " U ", "(", ")", "[", "]", "{", "}", "無"]
+            : `<div class="ws-symbols" aria-label="${t("快速插入記號")}">
+                ${["(-inf, ", ", inf)", " U ", "(", ")", "[", "]", "{", "}", t("無")]
                   .map((token) => `<button type="button" class="ws-symbol" data-ws-insert="${escapeAttr(token)}">${escapeHtml(token.trim() || token)}</button>`)
                   .join("")}
               </div>`
@@ -6389,11 +6400,11 @@
           quiz.feedback
             ? renderWorksheetSketchCompare(problem)
             : willSketch
-              ? `<p class="ws-sketch-cue">${icon("pen")}表格填完之後，在下面的計算紙上把圖畫出來 —— 送出後會顯示正確的圖讓你對照。</p>`
+              ? `<p class="ws-sketch-cue">${icon("pen")}${t("表格填完之後，在下面的計算紙上把圖畫出來 —— 送出後會顯示正確的圖讓你對照。")}</p>`
               : ""
         }
         <form class="answer-panel ws-form" data-action="submit-answer">
-          <button class="button" type="submit" ${disabled}>${icon("send")}送出整張表</button>
+          <button class="button" type="submit" ${disabled}>${icon("send")}${t("送出整張表")}</button>
         </form>
       </section>
       ${attachedScratchboard(problem, disabled)}
@@ -6401,9 +6412,9 @@
   }
 
   function worksheetPlaceholder(kind) {
-    if (kind === "interval") return "例如 (-inf, 0) U (2, inf)";
-    if (kind === "set") return "例如 {-1, 1}，沒有就填 {}";
-    if (kind === "numeric") return "一個數";
+    if (kind === "interval") return t("例如 (-inf, 0) U (2, inf)");
+    if (kind === "set") return t("例如 {-1, 1}，沒有就填 {}");
+    if (kind === "numeric") return t("一個數");
     return "";
   }
 
@@ -6414,12 +6425,11 @@
     return `
       <div class="ws-compare">
         <div>
-          <p class="section-label">正確的圖形</p>
+          <p class="section-label">${t("正確的圖形")}</p>
           ${renderMiniGraph(sketch.expr, sketch.window, sketch.domain)}
         </div>
         <p class="ws-compare-note">
-          跟你畫的比一下：極值的位置、凹向翻轉的那一點、兩端往哪裡去 ——
-          這三件事對了，圖就對了。
+          ${t("跟你畫的比一下：極值的位置、凹向翻轉的那一點、兩端往哪裡去 —— 這三件事對了，圖就對了。")}
         </p>
       </div>
     `;
@@ -6475,16 +6485,16 @@
 
   // 回顧裡印作答內容：作圖題存的是一串筆畫座標，印出來是亂碼，改印一句人話。
   function shownInput(problem, input) {
-    if (!input) return "未作答";
-    if (problem && problem.answerKind === "sketch") return "手繪的圖形";
+    if (!input) return t("未作答");
+    if (problem && problem.answerKind === "sketch") return t("手繪的圖形");
     if (problem && problem.answerKind === "epsilon") {
       const deltas = window.BuzzEpsilonGame.parse(input);
-      return deltas.length ? `用過的 δ：${deltas.join("、")}` : "未作答";
+      return deltas.length ? `${t("用過的 δ：")}${deltas.join("、")}` : t("未作答");
     }
     // 證明是一整段文字，回顧列表印不下：只印第一行加行數
     if (problem && problem.answerKind === "proof") {
       const lines = String(input).split("\n").map((line) => line.trim()).filter(Boolean);
-      return lines.length ? `${lines[0]}…（共 ${lines.length} 行）` : "未作答";
+      return lines.length ? `${t("{v}…（共 {length} 行）", { v: lines[0], length: lines.length })}` : t("未作答");
     }
     return input;
   }
@@ -6497,11 +6507,11 @@
   function renderProofAnswerControls(problem) {
     const done = Boolean(quiz.feedback);
     if (!lazyReady("proof")) {
-      ensureLazy("proof").then(render).catch(() => showAppNotice("證明引擎載不進來 —— 檢查一下網路再試一次。"));
-      return `<div class="proof-answer is-loading" aria-busy="true"><p class="panel-note">載入證明引擎…</p></div>`;
+      ensureLazy("proof").then(render).catch(() => showAppNotice(t("證明引擎載不進來 —— 檢查一下網路再試一次。")));
+      return `<div class="proof-answer is-loading" aria-busy="true"><p class="panel-note">${t("載入證明引擎…")}</p></div>`;
     }
     const spec = proofLangSpec(problem.proofSpec);
-    if (!spec) return `<p class="panel-note">這一題的證明題目找不到（${escapeHtml(problem.proofSpec || "")}）。</p>`;
+    if (!spec) return `<p class="panel-note">${t("這一題的證明題目找不到（{v}）。", { v: escapeHtml(problem.proofSpec || "") })}</p>`;
     const text = quiz.draft || "";
     // 練習時給即時三色（寫一行就知道那一行站不站得住）；模擬考時不給 ——
     // 考試裡即時回饋等於可以一直改到全綠，那就不是考試了。
@@ -6555,7 +6565,7 @@
       targets: graphTapTargets(problem),
       fn: graphProblemFn(problem),
       renderProblemGraph, icon,
-      shell: (controls, extra) => fullscreenShell(problem, quiz.boardFullscreen ? boardOnlyNote("圖") : controls, extra),
+      shell: (controls, extra) => fullscreenShell(problem, quiz.boardFullscreen ? boardOnlyNote(t("圖")) : controls, extra),
       extra: attachedScratchboard(problem, done ? "disabled" : "")
     });
   }
@@ -6596,20 +6606,20 @@
       <div class="graph-interactive">
         ${renderProblemGraph(problem, { interactive: done ? null : "slope", overlay })}
         <div class="helper-row">
-          <span>${done ? "虛線是正確的切線，實線是你拖的。" : "按住圖面拖動，讓金色直線貼上曲線在定點的方向"}</span>
-          <span class="slope-readout">斜率 <strong data-slope-readout>${slope.toFixed(2)}</strong></span>
+          <span>${done ? t("虛線是正確的切線，實線是你拖的。") : t("按住圖面拖動，讓金色直線貼上曲線在定點的方向")}</span>
+          <span class="slope-readout">${t("斜率")} <strong data-slope-readout>${slope.toFixed(2)}</strong></span>
         </div>
         <div class="action-row">
-          <button class="button" data-action="submit-graphslope" ${done ? "disabled" : ""}>${icon("check")}送出</button>
+          <button class="button" data-action="submit-graphslope" ${done ? "disabled" : ""}>${icon("check")}${t("送出")}</button>
         </div>
       </div>
     `;
-    return fullscreenShell(problem, quiz.boardFullscreen ? boardOnlyNote("圖") : controls, attachedScratchboard(problem, done ? "disabled" : ""));
+    return fullscreenShell(problem, quiz.boardFullscreen ? boardOnlyNote(t("圖")) : controls, attachedScratchboard(problem, done ? "disabled" : ""));
   }
 
   // 全螢幕計算紙時互動圖形放不下：留一句話告訴人怎麼回到圖上。
   function boardOnlyNote(what) {
-    return `<p class="board-only-note">${icon("info")}算完按右上角的縮小鍵，回到${what}上作答。</p>`;
+    return `<p class="board-only-note">${icon("info")}${t("算完按右上角的縮小鍵，回到{what}上作答。", { what })}</p>`;
   }
 
 
@@ -6726,13 +6736,13 @@
   // 代價照樣講清楚（誠實），只是換成標籤而不是警告。
   function renderHintPanel(problem) {
     if (quiz.noHint) {
-      return `<span class="tool-button is-static" title="本局不提供提示，答錯不扣提示分">${icon("lightbulb")}<span>本局無提示</span></span>`;
+      return `<span class="tool-button is-static" title="${t("本局不提供提示，答錯不扣提示分")}">${icon("lightbulb")}<span>${t("本局無提示")}</span></span>`;
     }
     const hints = hintsFor(problem);
     const shown = Math.min(quiz.hintsUsed?.[problem.id] || 0, hints.length);
     const exhausted = shown >= hints.length;
-    const cost = quiz.practice ? "不扣分" : `一層 −${hintPenalty(problem)} 分`;
-    const label = exhausted ? "提示看完了" : shown ? "再給一層" : "看提示";
+    const cost = quiz.practice ? t("不扣分") : `${t("一層 −{problem} 分", { problem: hintPenalty(problem) })}`;
+    const label = exhausted ? t("提示看完了") : shown ? t("再給一層") : t("看提示");
     const meta = hints.length ? `${shown}/${hints.length}` : "";
     return `
       <button class="tool-button tool-hint ${shown ? "is-open" : ""}" type="button" data-action="show-hint" ${quiz.feedback || exhausted ? "disabled" : ""} title="${escapeAttr(cost)}">
@@ -6746,7 +6756,7 @@
     const hints = hintsFor(problem);
     const shown = Math.min(quiz.hintsUsed?.[problem.id] || 0, hints.length);
     if (!shown) return "";
-    return `<ol class="hint-list">${hints.slice(0, shown).map((hint, index) => `<li><span class="hint-index">提示 ${index + 1}</span><span>${escapeHtml(hint)}</span></li>`).join("")}</ol>`;
+    return `<ol class="hint-list">${hints.slice(0, shown).map((hint, index) => `<li><span class="hint-index">${t("提示 {v}", { v: index + 1 })}</span><span>${escapeHtml(hint)}</span></li>`).join("")}</ol>`;
   }
 
   function renderFreeAnswerControls(problem) {
@@ -6757,7 +6767,7 @@
     // 有筆畫就自動攤開（重做錯題時上次的草稿要看得到），但使用者親手收起來的那一題
     // 不要再彈回來 —— 原本是「有筆畫永遠攤開」，寫了兩筆之後就關不起來了（實測）。
     const boardOpen = fullscreen || Boolean(quiz.boardOpen) || (strokes.length > 0 && quiz.boardDismissedFor !== problem.id);
-    const previewTex = answerToTex(quiz.draft, problem) || "\\text{尚未輸入}";
+    const previewTex = answerToTex(quiz.draft, problem) || t("\\text{尚未輸入}");
     const answerWorkspace = renderWebWorkAnswerWorkspace(problem, disabled, previewTex, fullscreen);
     const scratchboard = renderScratchboard(problem, disabled, boardTool, fullscreen, boardOpen, strokes.length);
     // 全螢幕書寫時題目必須留在畫面上。
@@ -6799,11 +6809,11 @@
 
   function answerSyntaxInfo(problem, value) {
     const raw = String(value || "").trim();
-    if (!raw) return { label: "空白", className: "is-empty" };
-    if (problem.answerKind === "text") return { label: "文字", className: "is-ready" };
+    if (!raw) return { label: t("空白"), className: "is-empty" };
+    if (problem.answerKind === "text") return { label: t("文字"), className: "is-ready" };
     if (isTexLike(raw)) return { label: "TeX", className: "is-ready" };
-    if (expressionToTex(raw)) return { label: "可送出", className: "is-ready" };
-    return { label: "格式", className: "is-warning" };
+    if (expressionToTex(raw)) return { label: t("可送出"), className: "is-ready" };
+    return { label: t("格式"), className: "is-warning" };
   }
 
   // 觸控筆／手指操作的平板（iPad 直式 834、橫式 1194，都算）。
@@ -6836,7 +6846,7 @@
     const disabled = quiz.feedback ? "disabled" : "";
     const choices = getChoiceOptions(problem);
     const grid = `
-      <div class="choice-grid" role="radiogroup" aria-label="選擇答案">
+      <div class="choice-grid" role="radiogroup" aria-label="${t("選擇答案")}">
         ${choices
           .map(
             (choice, index) => {
@@ -6861,9 +6871,9 @@
           .join("")}
       </div>
       <div class="helper-row">
-        <span>點選選項後會直接送出</span>
+        <span>${t("點選選項後會直接送出")}</span>
         <!-- 全螢幕時計算紙在上面，寫「下面有計算紙」會把人往錯的方向指 -->
-        <span>${quiz.boardFullscreen ? "算完直接點答案" : "要算的話下面有計算紙"}</span>
+        <span>${quiz.boardFullscreen ? t("算完直接點答案") : t("要算的話下面有計算紙")}</span>
       </div>
     `;
     // 全螢幕書寫時選項收成一條精簡列。
@@ -6872,7 +6882,7 @@
     // 反而比不按少 100px 的寫字空間，跟按鈕的承諾整個相反。
     // 精簡列：一橫排、字母＋小號數學、可橫向捲，板拿回大多數高度。
     const compactStrip = `
-      <div class="choice-strip" role="radiogroup" aria-label="選擇答案">
+      <div class="choice-strip" role="radiogroup" aria-label="${t("選擇答案")}">
         ${choices
           .map((choice, index) => {
             const choiceTex = answerToTex(choice.label, problem) || textToTex(choice.label);
@@ -6918,14 +6928,14 @@
 
   function renderRulesModal() {
     const ruleText = quiz && quiz.examMode
-      ? `大考模式為整份 ${Math.round((quiz.examDurationSec || 0) / 60)} 分鐘倒數，全部題目自己輸入答案。時間到會直接交卷。中途切出去做別的事不會被記錄，也不會影響成績。`
-      : "每題都有自己的倒數。超時、跳過或答案不等價都會記為錯題。答題後會顯示簡短解法，而且每一題都附一張計算紙。";
+      ? `${t("大考模式為整份 {v} 分鐘倒數，全部題目自己輸入答案。時間到會直接交卷。中途切出去做別的事不會被記錄，也不會影響成績。", { v: Math.round((quiz.examDurationSec || 0) / 60) })}`
+      : t("每題都有自己的倒數。超時、跳過或答案不等價都會記為錯題。答題後會顯示簡短解法，而且每一題都附一張計算紙。");
     return `
       <div class="modal-backdrop" data-action="close-modal">
         <div class="modal" role="dialog" aria-modal="true" aria-labelledby="rules-title" data-modal>
-          <h3 id="rules-title">本局規則</h3>
+          <h3 id="rules-title">${t("本局規則")}</h3>
           <p>${escapeHtml(ruleText)}</p>
-          <button class="button" data-action="close-modal">${icon("check")}繼續</button>
+          <button class="button" data-action="close-modal">${icon("check")}${t("繼續")}</button>
         </div>
       </div>
     `;
@@ -6941,17 +6951,17 @@
     return `
       <div class="modal-backdrop" data-action="close-modal">
         <div class="modal" role="dialog" aria-modal="true" aria-labelledby="exit-title" data-modal>
-          <h3 id="exit-title">${untouched ? "離開？" : exam ? "提早交卷？" : "離開本局？"}</h3>
+          <h3 id="exit-title">${untouched ? t("離開？") : exam ? t("提早交卷？") : t("離開本局？")}</h3>
           <p>${
             untouched
-              ? "一題都還沒作答 —— 直接離開，不計分、不留任何紀錄。"
+              ? t("一題都還沒作答 —— 直接離開，不計分、不留任何紀錄。")
               : exam
-                ? "還沒作答的題目會算未作答，交卷後直接看分析。"
-                : "目前進度會直接結算，未完成的題目不會加分。"
+                ? t("還沒作答的題目會算未作答，交卷後直接看分析。")
+                : t("目前進度會直接結算，未完成的題目不會加分。")
           }</p>
           <div class="action-row">
-            <button class="button ${untouched ? "secondary" : "warning"}" data-action="finish-now">${icon("x")}${untouched ? "離開（不計分）" : exam ? "交卷" : "結算離開"}</button>
-            <button class="button secondary" data-action="close-modal">${icon("check")}${exam ? "繼續作答" : "繼續挑戰"}</button>
+            <button class="button ${untouched ? "secondary" : "warning"}" data-action="finish-now">${icon("x")}${untouched ? t("離開（不計分）") : exam ? t("交卷") : t("結算離開")}</button>
+            <button class="button secondary" data-action="close-modal">${icon("check")}${exam ? t("繼續作答") : t("繼續挑戰")}</button>
           </div>
         </div>
       </div>
@@ -6973,7 +6983,7 @@
       return `
         <div class="modal-backdrop" data-action="dismiss-notice">
           <div class="modal shortcuts-modal" role="dialog" aria-modal="true" aria-labelledby="app-notice-title" data-modal>
-            <h3 id="app-notice-title">鍵盤快捷鍵</h3>
+            <h3 id="app-notice-title">${t("鍵盤快捷鍵")}</h3>
             <dl class="shortcuts-table">
               ${SHORTCUTS.map(
                 (item) => `
@@ -6983,7 +6993,7 @@
                   </div>`
               ).join("")}
             </dl>
-            <button class="button" data-action="dismiss-notice">${icon("check")}知道了</button>
+            <button class="button" data-action="dismiss-notice">${icon("check")}${t("知道了")}</button>
           </div>
         </div>
       `;
@@ -6991,9 +7001,9 @@
     return `
       <div class="modal-backdrop" data-action="dismiss-notice">
         <div class="modal" role="dialog" aria-modal="true" aria-labelledby="app-notice-title" data-modal>
-          <h3 id="app-notice-title">提醒</h3>
+          <h3 id="app-notice-title">${t("提醒")}</h3>
           <p>${escapeHtml(appNotice)}</p>
-          <button class="button" data-action="dismiss-notice">${icon("check")}知道了</button>
+          <button class="button" data-action="dismiss-notice">${icon("check")}${t("知道了")}</button>
         </div>
       </div>
     `;
@@ -7001,9 +7011,9 @@
 
   function askConfirm(options) {
     confirmDialog = {
-      title: options.title || "確定嗎？",
+      title: options.title || t("確定嗎？"),
       body: options.body || "",
-      confirmLabel: options.confirmLabel || "確定",
+      confirmLabel: options.confirmLabel || t("確定"),
       onConfirm: options.onConfirm
     };
     render();
@@ -7018,7 +7028,7 @@
           <p>${escapeHtml(confirmDialog.body)}</p>
           <div class="action-row">
             <button class="button warning" data-action="confirm-dialog-yes">${icon("check")}${escapeHtml(confirmDialog.confirmLabel)}</button>
-            <button class="button secondary" data-action="confirm-dialog-no">${icon("x")}取消</button>
+            <button class="button secondary" data-action="confirm-dialog-no">${icon("x")}${t("取消")}</button>
           </div>
         </div>
       </div>
@@ -7040,7 +7050,7 @@
     return `
       <div class="undo-toast" role="status">
         <span>${escapeHtml(undoToast.message)}</span>
-        <button class="button secondary" data-action="undo-toast">${icon("refresh")}復原</button>
+        <button class="button secondary" data-action="undo-toast">${icon("refresh")}${t("復原")}</button>
       </div>
     `;
   }
@@ -7059,14 +7069,14 @@
     if (!calibrationPreview) return "";
     const pack = calibrationPreview;
     const shown = { ...pack, rows: pack.rows.slice(0, 8) };
-    const rest = pack.rows.length > 8 ? `\n… 其餘 ${pack.rows.length - 8} 筆格式完全相同` : "";
+    const rest = pack.rows.length > 8 ? `${t(" … 其餘 {v} 筆格式完全相同", { v: pack.rows.length - 8 })}` : "";
     return `
       <div class="modal-backdrop" data-action="dismiss-calibration-preview">
         <div class="modal wide-modal" role="dialog" aria-modal="true" aria-labelledby="calib-title" data-modal>
-          <h3 id="calib-title">校準包內容</h3>
-          <p>按「匯出」會產生的就是下面這份檔案，共 ${pack.rows.length} 筆。</p>
+          <h3 id="calib-title">${t("校準包內容")}</h3>
+          <p>${t("按「匯出」會產生的就是下面這份檔案，共 {length} 筆。", { length: pack.rows.length })}</p>
           <pre class="calibration-preview">${escapeHtml(JSON.stringify(shown, null, 2) + rest)}</pre>
-          <button class="button" data-action="dismiss-calibration-preview">${icon("check")}關閉</button>
+          <button class="button" data-action="dismiss-calibration-preview">${icon("check")}${t("關閉")}</button>
         </div>
       </div>
     `;
@@ -7075,7 +7085,7 @@
   function showCalibrationPreview() {
     const pack = buildCalibrationPack();
     if (!pack.rows.length) {
-      showAppNotice("還沒有可用的作答統計，先練幾題再看。");
+      showAppNotice(t("還沒有可用的作答統計，先練幾題再看。"));
       return;
     }
     calibrationPreview = pack;
@@ -7105,14 +7115,14 @@
     if (!cards.length) return "";
     return `
       <section class="takeaway" data-enter>
-        <p class="section-label">這局帶走</p>
+        <p class="section-label">${t("這局帶走")}</p>
         <div class="takeaway-grid">
           ${cards
             .map(
               (card) => `
                 <div class="takeaway-card">
                   <p>${escapeHtml(card.idea.text)}</p>
-                  <button class="link-button" data-action="practice-similar" data-problem-id="${escapeAttr(card.problem.id)}">練同型 8 題 →</button>
+                  <button class="link-button" data-action="practice-similar" data-problem-id="${escapeAttr(card.problem.id)}">${t("練同型 8 題 →")}</button>
                 </div>`
             )
             .join("")}
@@ -7165,13 +7175,13 @@
     const pathResult = !gateResult && quiz.pathNodeId ? pathLessonResult(quiz, records, accuracy) : null;
 
     const momentum = quiz.placementResult
-      ? (quiz.placementResult.correct ? "8 題調適完成，起點已經校準好。之後想重測，設定頁隨時可以重新定位。" : "定位只是找起點，不算成績、不進錯題本。之後想重測，設定頁隨時可以。")
+      ? (quiz.placementResult.correct ? t("8 題調適完成，起點已經校準好。之後想重測，設定頁隨時可以重新定位。") : t("定位只是找起點，不算成績、不進錯題本。之後想重測，設定頁隨時可以。"))
       : quiz.examMode
         ? examResultMomentum(quiz, accuracy, correct, total)
         : quiz.answers.length < 4 && quiz.answers.length < quiz.problems.length && !pathResult && !gateResult
-          ? "提早離開的局只記已答的題，不下評語。"
+          ? t("提早離開的局只記已答的題，不下評語。")
           : quiz.gentle && !pathResult && !gateResult
-            ? "新手保護期不計分：這局的重點是把題型看熟。"
+            ? t("新手保護期不計分：這局的重點是把題型看熟。")
             : resultMomentum(accuracy, avgTime, pathResult, gateResult);
     const speedInsight = quiz.speedInsight || speedInsightText(avgTime, recentAnswerStats(records, 30).avgSeconds);
     const pathIdx = quiz.pathNodeId ? PATH_NODES.findIndex((node) => node.id === quiz.pathNodeId) : -1;
@@ -7179,63 +7189,63 @@
     let verdictClass;
     let nextLine = "";
     if (gateResult) {
-      verdict = gateResult.passed ? "跳關通過" : "跳關未通過";
+      verdict = gateResult.passed ? t("跳關通過") : t("跳關未通過");
       verdictClass = gateResult.passed ? "is-gold" : "is-fail";
     } else if (quiz.placementResult) {
       const placement = quiz.placementResult;
       // 一題都沒答對的定位不是「完成」，是「從頭開始」——不撒彩帶、不說反射。
       if (!placement.correct) {
-        verdict = "從基礎開始";
+        verdict = t("從基礎開始");
         verdictClass = "is-neutral";
         nextLine = placement.unlearned >= Math.ceil(placement.total / 2)
-          ? "這幾題大多還沒學到 —— 沒關係，主線會從最基礎的極限一格一格帶。"
-          : "這 8 題都還沒把握 —— 沒關係，主線會從最基礎的極限一格一格帶，先不計時。";
+          ? t("這幾題大多還沒學到 —— 沒關係，主線會從最基礎的極限一格一格帶。")
+          : t("這 8 題都還沒把握 —— 沒關係，主線會從最基礎的極限一格一格帶，先不計時。");
       } else {
-        verdict = `定位完成：R${placement.rank}`;
+        verdict = `${t("定位完成：R{rank}", { rank: placement.rank })}`;
         verdictClass = "is-pass";
         nextLine = placement.weakTag
-          ? `你的反射大約在 R${placement.rank}。最不穩：${tagLabel(placement.weakTag)} — 已把路線解鎖到 ${placement.nodeLabel}`
-          : `你的反射大約在 R${placement.rank}。這 8 題沒有明顯弱點 — 已把路線解鎖到 ${placement.nodeLabel}`;
+          ? `${t("你的反射大約在 R{rank}。最不穩：{weakTag} — 已把路線解鎖到 {nodeLabel}", { rank: placement.rank, weakTag: tagLabel(placement.weakTag), nodeLabel: placement.nodeLabel })}`
+          : `${t("你的反射大約在 R{rank}。這 8 題沒有明顯弱點 — 已把路線解鎖到 {nodeLabel}", { rank: placement.rank, nodeLabel: placement.nodeLabel })}`;
       }
     } else if (quiz.courseGraduation) {
       ({ verdict, verdictClass, nextLine } = courseUI.graduationVerdict(correct, total));
     } else if (quiz.namedExamOutcome) {
       const outcome = quiz.namedExamOutcome;
-      verdict = outcome.passed ? (accuracy >= 85 ? "高分及格" : "及格") : "未及格";
+      verdict = outcome.passed ? (accuracy >= 85 ? t("高分及格") : t("及格")) : t("未及格");
       verdictClass = outcome.passed ? (accuracy >= 85 ? "is-gold" : "is-pass") : "is-fail";
       nextLine = outcome.passed
-        ? `超過及格線 ${outcome.correct - outcome.passLine} 題（及格 ${outcome.passLine}/${outcome.total}）· 本卷最佳 ${outcome.best}%`
-        : `距離及格還差 ${outcome.passLine - outcome.correct} 題（及格線 60% = ${outcome.passLine}/${outcome.total}），先清錯題再重考一份新卷`;
+        ? `${t("超過及格線 {v} 題（及格 {passLine}/{total}）· 本卷最佳 {best}%", { v: outcome.correct - outcome.passLine, passLine: outcome.passLine, total: outcome.total, best: outcome.best })}`
+        : `${t("距離及格還差 {v} 題（及格線 60% = {passLine}/{total}），先清錯題再重考一份新卷", { v: outcome.passLine - outcome.correct, passLine: outcome.passLine, total: outcome.total })}`;
     } else if (pathResult) {
       const gold = pathResult.cleared && pathResult.accuracy >= 90;
-      verdict = gold ? "金牌過關" : pathResult.cleared ? "過關" : "再加強";
+      verdict = gold ? t("金牌過關") : pathResult.cleared ? t("過關") : t("再加強");
       verdictClass = gold ? "is-gold" : pathResult.cleared ? "is-pass" : "is-fail";
       nextLine = pathResult.cleared
         ? pathResult.nextNode
-          ? `解鎖下一關：${pathResult.nextNode.label}`
-          : "主線全數完成"
-        : `差 ${pathResult.needed || 1} 題過關，建議重練一次`;
+          ? `${t("解鎖下一關：{label}", { label: pathResult.nextNode.label })}`
+          : t("主線全數完成")
+        : `${t("差 {v} 題過關，建議重練一次", { v: pathResult.needed || 1 })}`;
     } else if (quiz.answers.length < 4 && quiz.answers.length < quiz.problems.length) {
       // 做 1、2 題就離開：樣本太小，不下判斷，也不說「先重建基礎」
-      verdict = "提早離開";
+      verdict = t("提早離開");
       verdictClass = "is-neutral";
-      nextLine = `只答了 ${quiz.answers.length} 題，還看不出什麼 —— 下次多做幾題再結算。`;
+      nextLine = `${t("只答了 {length} 題，還看不出什麼 —— 下次多做幾題再結算。", { length: quiz.answers.length })}`;
     } else if (quiz.gentle) {
       // 新手保護期：重點是看懂題型，不是分數
-      verdict = accuracy >= 70 ? "有感覺了" : "先看懂，再求對";
+      verdict = accuracy >= 70 ? t("有感覺了") : t("先看懂，再求對");
       verdictClass = accuracy >= 70 ? "is-pass" : "is-neutral";
-      nextLine = accuracy >= 70 ? "這一輪的題型你已經認得了，下一局可以多做幾題。" : "答錯的題下面都有解法，看完再打一局同型的。";
+      nextLine = accuracy >= 70 ? t("這一輪的題型你已經認得了，下一局可以多做幾題。") : t("答錯的題下面都有解法，看完再打一局同型的。");
     } else {
       verdict = resultTitle(accuracy);
       verdictClass = accuracy >= 70 ? "is-pass" : "is-fail";
     }
     const levelTag = pathIdx >= 0
-      ? `結算 · 第 ${pathIdx + 1} 關 · ${PATH_NODES[pathIdx].label}`
+      ? `${t("結算 · 第 {v} 關 · {label}", { v: pathIdx + 1, label: PATH_NODES[pathIdx].label })}`
       : quiz.namedExam
-        ? `結算 · 模擬考 · ${quiz.namedExam.label}`
+        ? `${t("結算 · 模擬考 · {label}", { label: quiz.namedExam.label })}`
         : quiz.placementResult
-          ? "結算 · 定位測驗"
-          : "結算";
+          ? t("結算 · 定位測驗")
+          : t("結算");
 
     return `
       <main class="screen results-screen">
@@ -7256,8 +7266,8 @@
             const timed = quiz.answers.filter((answer) => Number.isFinite(answer.elapsed));
             const nowAvg = timed.length ? Math.round(timed.reduce((sum, answer) => sum + answer.elapsed, 0) / timed.length) : null;
             const faster = nowAvg !== null && previous.avgTime ? previous.avgTime - nowAvg : 0;
-            const pace = faster >= 2 ? `、快了 ${faster} 秒` : faster <= -2 ? `、慢了 ${-faster} 秒` : "";
-            return `<p class="verdict-progress" data-enter>${icon("sparkles")}上次這關 ${previous.correct}/${previous.total} → 這次 ${nowCorrect}/${nowTotal}${pace}</p>`;
+            const pace = faster >= 2 ? `${t("、快了 {faster} 秒", { faster })}` : faster <= -2 ? `${t("、慢了 {v} 秒", { v: -faster })}` : "";
+            return `<p class="verdict-progress" data-enter>${icon("sparkles")}${t("上次這關 {correct}/{total} → 這次 {nowCorrect}/{nowTotal}{pace}", { correct: previous.correct, total: previous.total, nowCorrect, nowTotal, pace })}</p>`;
           })()}
           <!-- 這四個數字不做 count-up 動畫：手機上 rAF 被節流時動畫會
                停在半路，畫面就停格在「61% 正確率」—— 三次實測重現的
@@ -7266,19 +7276,19 @@
             ${
               // 定位是診斷：「還沒學過」是答案不是失分，正確率對它沒有意義
               quiz.placementResult
-                ? `<span><strong>${correct}/${total}</strong>答對</span>${quiz.placementResult.unlearned ? `<span><strong>${quiz.placementResult.unlearned}</strong>還沒學過</span>` : ""}`
-                : `<span><strong>${correct}/${total}</strong>答對</span>
-            <span><strong>${accuracy}%</strong>正確率</span>`
+                ? `<span><strong>${correct}/${total}</strong>${t("答對")}</span>${quiz.placementResult.unlearned ? `<span><strong>${quiz.placementResult.unlearned}</strong>${t("還沒學過")}</span>` : ""}`
+                : `<span><strong>${correct}/${total}</strong>${t("答對")}</span>
+            <span><strong>${accuracy}%</strong>${t("正確率")}</span>`
             }
-            <span><strong>${avgTime}s</strong>平均</span>
-            ${quiz.practice || quiz.placement ? "" : `<span><strong>${quiz.score}</strong>分數</span>`}
+            <span><strong>${avgTime}s</strong>${t("平均")}</span>
+            ${quiz.practice || quiz.placement ? "" : `<span><strong>${quiz.score}</strong>${t("分數")}</span>`}
             ${quiz.xpGained ? `<span class="xp-chip"><strong>+${quiz.xpGained}</strong>XP</span>` : ""}
-            ${quiz.questBonus ? `<span class="xp-chip quest-bonus-chip"><strong>+${quiz.questBonus}</strong>任務全清</span>` : ""}
+            ${quiz.questBonus ? `<span class="xp-chip quest-bonus-chip"><strong>+${quiz.questBonus}</strong>${t("任務全清")}</span>` : ""}
           </div>
           ${quiz.placementResult ? renderPlacementNextStep() : renderResultsActions(gateResult, pathResult)}
           ${quiz.dailyOneOutcome ? renderDailyOneOutcomePanel(quiz.dailyOneOutcome) : ""}
           <div class="action-row results-share-row" data-enter>
-            ${quiz.dailyOneOutcome ? `<button class="button ghost" data-action="share-daily-one">${icon("share-2")}分享成績卡</button>` : ""}
+            ${quiz.dailyOneOutcome ? `<button class="button ghost" data-action="share-daily-one">${icon("share-2")}${t("分享成績卡")}</button>` : ""}
           </div>
         </section>
 
@@ -7286,7 +7296,7 @@
 
         ${renderDuelResultSection()}
         <details class="results-detail" data-results-detail ${resultsDetailOpen ? "open" : ""}>
-          <summary><span>詳細分析與逐題回顧</span>${icon("chevron-down")}</summary>
+          <summary><span>${t("詳細分析與逐題回顧")}</span>${icon("chevron-down")}</summary>
           <div class="results-detail-body">
             ${quiz.mode === "daily" ? renderDailyCompletionResult(quiz, records, accuracy) : ""}
             ${renderSpeedResultCard(speedInsight)}
@@ -7295,7 +7305,7 @@
             ${quiz.examMode ? renderExamAnalysisSection(examAnalysis) : ""}
             <div class="results-detail-grid">
               <section class="panel">
-                <h3>題型表現</h3>
+                <h3>${t("題型表現")}</h3>
                 <div class="topic-meter">
                   ${Object.entries(TOPICS)
                     .filter(([key]) => key !== "all")
@@ -7308,35 +7318,35 @@
                 </div>
               </section>
               <section class="panel">
-                <h3>本機最佳</h3>
+                <h3>${t("本機最佳")}</h3>
                 <div class="topic-meter">
-                  <div class="meter-row"><span>最高分</span><div class="meter-track"><div class="meter-fill" style="width:${Math.min(100, records.bestScore || 0)}%"></div></div><strong>${records.bestScore || 0}</strong></div>
-                  <div class="meter-row"><span>最佳連勝</span><div class="meter-track"><div class="meter-fill" style="width:${Math.min(100, (records.bestStreak || 0) * 10)}%"></div></div><strong>${records.bestStreak || 0}</strong></div>
-                  <div class="meter-row"><span>局數</span><div class="meter-track"><div class="meter-fill" style="width:${Math.min(100, (records.attempts || 0) * 8)}%"></div></div><strong>${records.attempts || 0}</strong></div>
+                  <div class="meter-row"><span>${t("最高分")}</span><div class="meter-track"><div class="meter-fill" style="width:${Math.min(100, records.bestScore || 0)}%"></div></div><strong>${records.bestScore || 0}</strong></div>
+                  <div class="meter-row"><span>${t("最佳連勝")}</span><div class="meter-track"><div class="meter-fill" style="width:${Math.min(100, (records.bestStreak || 0) * 10)}%"></div></div><strong>${records.bestStreak || 0}</strong></div>
+                  <div class="meter-row"><span>${t("局數")}</span><div class="meter-track"><div class="meter-fill" style="width:${Math.min(100, (records.attempts || 0) * 8)}%"></div></div><strong>${records.attempts || 0}</strong></div>
                 </div>
               </section>
               ${
                 focusModeOn()
                   ? ""
                   : `<section class="panel">
-                <h3>本局成就</h3>
+                <h3>${t("本局成就")}</h3>
                 <div class="achievement-list">
                   ${
                     unlocked.length
                       ? unlocked.map((item) => `<div class="achievement is-new"><strong>${escapeHtml(item.title)}</strong><span>${escapeHtml(item.detail)}</span></div>`).join("")
-                      : `<div class="empty-state">本局沒有新成就。</div>`
+                      : `<div class="empty-state">${t("本局沒有新成就。")}</div>`
                   }
                 </div>
               </section>`
               }
             </div>
             <section class="panel">
-              <h3>答題回顧</h3>
+              <h3>${t("答題回顧")}</h3>
               <div class="review-list">
                 ${
                   quiz.answers.length
                     ? quiz.answers.map((answer, index) => renderReviewItem(answer, index, records)).join("")
-                    : `<div class="empty-state">本局尚未作答。</div>`
+                    : `<div class="empty-state">${t("本局尚未作答。")}</div>`
                 }
               </div>
             </section>
@@ -7362,12 +7372,12 @@
     return `
       <div class="daily-complete-result">
         <div>
-          <strong>今日完成</strong>
-          <span>${currentQuiz.answers.length}/${goal} 題 · ${accuracy}%</span>
+          <strong>${t("今日完成")}</strong>
+          <span>${t("{length}/{goal} 題 · {accuracy}%", { length: currentQuiz.answers.length, goal, accuracy })}</span>
         </div>
         <div>
-          <strong>${streak} 天</strong>
-          <span>streak 已延續</span>
+          <strong>${t("{streak} 天", { streak })}</strong>
+          <span>${t("streak 已延續")}</span>
         </div>
       </div>
     `;
@@ -7377,7 +7387,7 @@
     if (!text) return "";
     return `
       <div class="speed-result-card">
-        <strong>速度定位</strong>
+        <strong>${t("速度定位")}</strong>
         <span>${escapeHtml(text)}</span>
       </div>
     `;
@@ -7388,8 +7398,8 @@
     if (!cleared) return "";
     return `
       <div class="mistake-clear-result">
-        <strong>錯題清理</strong>
-        <span>本輪移出錯題本 ${cleared} 題</span>
+        <strong>${t("錯題清理")}</strong>
+        <span>${t("本輪移出錯題本 {cleared} 題", { cleared })}</span>
       </div>
     `;
   }
@@ -7417,12 +7427,12 @@
   function renderPathLessonResult(result) {
     const progress = Math.max(0, Math.min(100, result.mastery));
     const gold = result.cleared && result.accuracy >= 90;
-    const title = gold ? "金牌" : result.cleared ? "過關" : "再加強";
+    const title = gold ? t("金牌") : result.cleared ? t("過關") : t("再加強");
     const note = result.cleared
       ? result.nextNode
-        ? `下一關：${result.nextNode.label}`
-        : "主線完成"
-      : `差 ${result.needed || 1} 題過關，建議重練一次`;
+        ? `${t("下一關：{label}", { label: result.nextNode.label })}`
+        : t("主線完成")
+      : `${t("差 {v} 題過關，建議重練一次", { v: result.needed || 1 })}`;
     return `
       <div class="path-lesson-result ${result.cleared ? "is-cleared" : "is-review"} ${gold ? "is-gold" : ""}">
         <div class="lesson-result-badge">
@@ -7435,34 +7445,34 @@
           <div class="meter-track"><div class="meter-fill" style="width:${progress}%"></div></div>
         </div>
         <div class="lesson-result-stats">
-          <div><span>本局</span><strong>${result.correct}/${result.total}</strong></div>
-          <div><span>熟練</span><strong>${result.mastery}%</strong></div>
-          <div><span>最佳</span><strong>${result.bestAccuracy}%</strong></div>
+          <div><span>${t("本局")}</span><strong>${result.correct}/${result.total}</strong></div>
+          <div><span>${t("熟練")}</span><strong>${result.mastery}%</strong></div>
+          <div><span>${t("最佳")}</span><strong>${result.bestAccuracy}%</strong></div>
         </div>
       </div>
     `;
   }
 
   function examResultMomentum(currentQuiz, accuracy, correct, total) {
-    const prefix = currentQuiz.examTimedOut ? "時間到交卷。" : "已交卷。";
-    if (accuracy >= 85) return `${prefix}大考題組 ${correct}/${total}，可以開始挑戰更長題組。`;
-    if (accuracy >= 65) return `${prefix}大考題組 ${correct}/${total}，先回看錯題分布。`;
-    return `${prefix}大考題組 ${correct}/${total}，建議先補同類型題再重考。`;
+    const prefix = currentQuiz.examTimedOut ? t("時間到交卷。") : t("已交卷。");
+    if (accuracy >= 85) return `${t("{prefix}大考題組 {correct}/{total}，可以開始挑戰更長題組。", { prefix, correct, total })}`;
+    if (accuracy >= 65) return `${t("{prefix}大考題組 {correct}/{total}，先回看錯題分布。", { prefix, correct, total })}`;
+    return `${t("{prefix}大考題組 {correct}/{total}，建議先補同類型題再重考。", { prefix, correct, total })}`;
   }
 
   function resultMomentum(accuracy, avgTime, pathResult, gateResult) {
     if (gateResult) {
-      if (gateResult.passed) return "跳關門檻已達成，現在可以直接進入該關。";
-      return `小測驗需要 ${gateResult.required}/${gateResult.total}，這次是 ${gateResult.correct}/${gateResult.total}。`;
+      if (gateResult.passed) return t("跳關門檻已達成，現在可以直接進入該關。");
+      return `${t("小測驗需要 {required}/{total}，這次是 {correct}/{total2}。", { required: gateResult.required, total: gateResult.total, correct: gateResult.correct, total2: gateResult.total })}`;
     }
     if (pathResult) {
-      if (pathResult.cleared && pathResult.nextNode) return `已清掉 ${pathResult.node.label}，下一格是 ${pathResult.nextNode.label}。`;
-      if (pathResult.cleared) return "主線最後一關已完成，可以改打 Boss 或 Proof Lab。";
-      return `本關門檻是 70%，這次 ${accuracy}%。先重練錯題會最快。`;
+      if (pathResult.cleared && pathResult.nextNode) return `${t("已清掉 {label}，下一格是 {label2}。", { label: pathResult.node.label, label2: pathResult.nextNode.label })}`;
+      if (pathResult.cleared) return t("主線最後一關已完成，可以改打 Boss 或 Proof Lab。");
+      return `${t("本關門檻是 70%，這次 {accuracy}%。先重練錯題會最快。", { accuracy })}`;
     }
-    if (accuracy >= 90) return `穩。平均 ${avgTime}s，下一局可以提高難度。`;
-    if (accuracy >= 70) return `可以進下一輪。平均 ${avgTime}s，錯題會進本機紀錄。`;
-    return "先把錯題撿回來，系統會優先安排弱點。";
+    if (accuracy >= 90) return `${t("穩。平均 {avgTime}s，下一局可以提高難度。", { avgTime })}`;
+    if (accuracy >= 70) return `${t("可以進下一輪。平均 {avgTime}s，錯題會進本機紀錄。", { avgTime })}`;
+    return t("先把錯題撿回來，系統會優先安排弱點。");
   }
 
   function renderResultsActions(gateResult, pathResult) {
@@ -7471,18 +7481,18 @@
     if (!gateResult && !pathResult && quiz && quiz.placementResult) {
       return `
         <div class="action-row">
-          <button class="button" data-action="home">${icon("play")}回主線開打</button>
-          <button class="button secondary" data-action="start-placement">${icon("refresh")}重新定位</button>
-          <button class="button ghost" data-action="open-mistakes">${icon("book")}錯題本</button>
+          <button class="button" data-action="home">${icon("play")}${t("回主線開打")}</button>
+          <button class="button secondary" data-action="start-placement">${icon("refresh")}${t("重新定位")}</button>
+          <button class="button ghost" data-action="open-mistakes">${icon("book")}${t("錯題本")}</button>
         </div>
       `;
     }
     if (!gateResult && !pathResult && quiz && quiz.namedExam) {
       return `
         <div class="action-row">
-          <button class="button" data-action="start-named-exam" data-exam-id="${escapeAttr(quiz.namedExam.id)}">${icon("refresh")}再考一份新卷</button>
-          <button class="button secondary" data-action="home">${icon("home")}回首頁</button>
-          <button class="button ghost" data-action="open-mistakes">${icon("book")}錯題本</button>
+          <button class="button" data-action="start-named-exam" data-exam-id="${escapeAttr(quiz.namedExam.id)}">${icon("refresh")}${t("再考一份新卷")}</button>
+          <button class="button secondary" data-action="home">${icon("home")}${t("回首頁")}</button>
+          <button class="button ghost" data-action="open-mistakes">${icon("book")}${t("錯題本")}</button>
         </div>
       `;
     }
@@ -7491,40 +7501,40 @@
         <div class="action-row">
           ${
             gateResult.passed
-              ? `<button class="button" data-action="start-path-lesson" data-node-id="${escapeAttr(gateResult.targetId)}">${icon("play")}進入本關</button>`
-              : `<button class="button" data-action="start-path-gate" data-node-id="${escapeAttr(gateResult.targetId)}">${icon("refresh")}重考小測驗</button>`
+              ? `<button class="button" data-action="start-path-lesson" data-node-id="${escapeAttr(gateResult.targetId)}">${icon("play")}${t("進入本關")}</button>`
+              : `<button class="button" data-action="start-path-gate" data-node-id="${escapeAttr(gateResult.targetId)}">${icon("refresh")}${t("重考小測驗")}</button>`
           }
-          <button class="button secondary" data-action="home">${icon("home")}回主線</button>
-          <button class="button ghost" data-action="open-mistakes">${icon("book")}錯題本</button>
+          <button class="button secondary" data-action="home">${icon("home")}${t("回主線")}</button>
+          <button class="button ghost" data-action="open-mistakes">${icon("book")}${t("錯題本")}</button>
         </div>
       `;
     }
     if (pathResult) {
       const primaryAction = pathResult.cleared
         ? pathResult.nextNode
-          ? `<button class="button" data-action="start-path-node" data-node-id="${escapeAttr(pathResult.nextNode.id)}">${icon("play")}下一關</button>`
-          : `<button class="button" data-action="home">${icon("home")}看主線</button>`
-        : `<button class="button" data-action="start-path-lesson" data-node-id="${escapeAttr(pathResult.node.id)}">${icon("refresh")}重練本關</button>`;
+          ? `<button class="button" data-action="start-path-node" data-node-id="${escapeAttr(pathResult.nextNode.id)}">${icon("play")}${t("下一關")}</button>`
+          : `<button class="button" data-action="home">${icon("home")}${t("看主線")}</button>`
+        : `<button class="button" data-action="start-path-lesson" data-node-id="${escapeAttr(pathResult.node.id)}">${icon("refresh")}${t("重練本關")}</button>`;
       return `
         <div class="action-row">
           ${primaryAction}
         </div>
         <div class="results-secondary">
-          ${pathResult.cleared ? `<button type="button" class="link-button" data-action="start-path-lesson" data-node-id="${escapeAttr(pathResult.node.id)}">${icon("repeat")}再練一次</button>` : ""}
-          ${pathResult.nextNode || !pathResult.cleared ? `<button type="button" class="link-button" data-action="home">${icon("home")}回主線</button>` : ""}
-          ${pathResult.cleared ? `<button type="button" class="link-button" data-action="share-achievement-card" data-from="path">${icon("share-2")}分享成就卡</button>` : ""}
+          ${pathResult.cleared ? `<button type="button" class="link-button" data-action="start-path-lesson" data-node-id="${escapeAttr(pathResult.node.id)}">${icon("repeat")}${t("再練一次")}</button>` : ""}
+          ${pathResult.nextNode || !pathResult.cleared ? `<button type="button" class="link-button" data-action="home">${icon("home")}${t("回主線")}</button>` : ""}
+          ${pathResult.cleared ? `<button type="button" class="link-button" data-action="share-achievement-card" data-from="path">${icon("share-2")}${t("分享成就卡")}</button>` : ""}
         </div>
       `;
     }
     // 一顆主按鈕，其餘降成文字連結：結算頁不該再是一個要選的畫面
     return `
       <div class="action-row">
-        <button class="button" data-action="restart">${icon("refresh")}再打一局</button>
+        <button class="button" data-action="restart">${icon("refresh")}${t("再打一局")}</button>
       </div>
       <div class="results-secondary">
-        <button type="button" class="link-button" data-action="home">${icon("home")}回首頁</button>
-        <button type="button" class="link-button" data-action="open-mistakes">${icon("book")}錯題本</button>
-        <button type="button" class="link-button" data-action="share-achievement-card" data-from="results">${icon("share-2")}分享成就卡</button>
+        <button type="button" class="link-button" data-action="home">${icon("home")}${t("回首頁")}</button>
+        <button type="button" class="link-button" data-action="open-mistakes">${icon("book")}${t("錯題本")}</button>
+        <button type="button" class="link-button" data-action="share-achievement-card" data-from="results">${icon("share-2")}${t("分享成就卡")}</button>
       </div>
     `;
   }
@@ -7535,8 +7545,8 @@
       <section class="panel exam-analysis-panel">
         <div class="exam-analysis-head">
           <div>
-            <p class="section-label">考試分析</p>
-            <h3>大考戰況分析</h3>
+            <p class="section-label">${t("考試分析")}</p>
+            <h3>${t("大考戰況分析")}</h3>
           </div>
         </div>
         <div class="exam-insight-grid">
@@ -7544,16 +7554,16 @@
         </div>
         <div class="exam-analysis-grid">
           <div>
-            <h4>主題速度 / 正確率</h4>
-            ${analysis.topicRows.map(renderExamAnalysisRow).join("") || `<p class="panel-note">尚無資料</p>`}
+            <h4>${t("主題速度 / 正確率")}</h4>
+            ${analysis.topicRows.map(renderExamAnalysisRow).join("") || `<p class="panel-note">${t("尚無資料")}</p>`}
           </div>
           <div>
-            <h4>技巧錯誤熱區</h4>
-            ${analysis.tagRows.slice(0, 7).map(renderExamAnalysisRow).join("") || `<p class="panel-note">尚無資料</p>`}
+            <h4>${t("技巧錯誤熱區")}</h4>
+            ${analysis.tagRows.slice(0, 7).map(renderExamAnalysisRow).join("") || `<p class="panel-note">${t("尚無資料")}</p>`}
           </div>
           <div>
-            <h4>難度層級</h4>
-            ${analysis.rankRows.map(renderExamAnalysisRow).join("") || `<p class="panel-note">尚無資料</p>`}
+            <h4>${t("難度層級")}</h4>
+            ${analysis.rankRows.map(renderExamAnalysisRow).join("") || `<p class="panel-note">${t("尚無資料")}</p>`}
           </div>
         </div>
       </section>
@@ -7577,11 +7587,11 @@
       <div class="exam-analysis-row">
         <div class="exam-analysis-title">
           <span>${escapeHtml(row.label)}</span>
-          <small>${row.correct}/${row.total} · 平均 ${formatSeconds(row.avgSec)}</small>
+          <small>${t("{correct}/{total} · 平均 {avgSec}", { correct: row.correct, total: row.total, avgSec: formatSeconds(row.avgSec) })}</small>
         </div>
         <div class="exam-analysis-bars">
           <div class="meter-track" aria-label="correct rate"><div class="meter-fill" style="width:${accuracy}%"></div></div>
-          <div class="meter-track miss-track" aria-label="失誤率"><div class="meter-fill" style="width:${miss}%"></div></div>
+          <div class="meter-track miss-track" aria-label="${t("失誤率")}"><div class="meter-fill" style="width:${miss}%"></div></div>
         </div>
         <strong>${accuracy}%</strong>
       </div>
@@ -7618,7 +7628,7 @@
       // 中英之間補一個空格 ——「這題考的是L'Hôpital。」讀起來像 tag 直接
       // 串進句子。CJK 後面接拉丁字母時加空格是中文排版的基本禮貌。
       const joined = names.join("＋");
-      const lead = /^[ -ÿ]/.test(joined) ? "這題考的是 " : "這題考的是";
+      const lead = /^[ -ÿ]/.test(joined) ? t("這題考的是 ") : t("這題考的是");
       return { text: `${lead}${joined}。`, authored: false };
     } catch (_error) {
       return null;
@@ -7632,7 +7642,7 @@
     if (!idea) return "";
     return `
       <p class="key-idea">
-        <span>關鍵</span>
+        <span>${t("關鍵")}</span>
         ${escapeHtml(idea.text)}
       </p>
     `;
@@ -7673,7 +7683,7 @@
     const live = Boolean(options.live);
     const hints = hintsFor(problem);
     const authored = authoredHints(problem);
-    const lead = hints[0] || "先判斷題型，再選最短的工具。";
+    const lead = hints[0] || t("先判斷題型，再選最短的工具。");
     // 第二層優先吃作者寫的；作者沒寫時才用機器推導的事實補。
     const authoredSteps = authored.slice(1);
     const derived = authoredSteps.length ? "" : derivedHint(problem);
@@ -7686,30 +7696,30 @@
     return `
       <div class="solution-stages" data-solution-stages>
         <details class="solution-stage">
-          <summary><span class="stage-index">①</span>該用什麼技巧</summary>
+          <summary><span class="stage-index">①</span>${t("該用什麼技巧")}</summary>
           <div class="stage-body">
             <p>${escapeHtml(lead)}</p>
             ${techniqueTags.length ? `<div class="stage-tags">${techniqueTags.map((tag) => `<span class="chip">${escapeHtml(tag)}</span>`).join("")}</div>` : ""}
           </div>
         </details>
         <details class="solution-stage ${steps.length || derived ? "" : "is-empty"}">
-          <summary><span class="stage-index">②</span>關鍵步驟${steps.length || derived ? "" : `<small class="stage-cost">這題沒有</small>`}</summary>
+          <summary><span class="stage-index">②</span>${t("關鍵步驟")}${steps.length || derived ? "" : `<small class="stage-cost">${t("這題沒有")}</small>`}</summary>
           <div class="stage-body">
             ${
               steps.length
                 ? `<ol>${steps.map((step) => `<li>${escapeHtml(step)}</li>`).join("")}</ol>`
                 : derived
                   ? `<p>${escapeHtml(derived)}</p>
-                     <p class="stage-derived">這一條是系統從題目本身算出來的，不是作者寫的。</p>`
-                  : `<p>這題直接看完整推導就好。</p>`
+                     <p class="stage-derived">${t("這一條是系統從題目本身算出來的，不是作者寫的。")}</p>`
+                  : `<p>${t("這題直接看完整推導就好。")}</p>`
             }
           </div>
         </details>
         <details class="solution-stage is-full" ${live ? `data-live-solution="1"` : ""} data-problem-id="${escapeAttr(problem.id)}">
-          <summary><span class="stage-index">③</span>完整推導${live ? `<small class="stage-cost">會記為「借助解答」</small>` : ""}</summary>
+          <summary><span class="stage-index">③</span>${t("完整推導")}${live ? `<small class="stage-cost">${t("會記為「借助解答」")}</small>` : ""}</summary>
           <div class="stage-body">
             ${renderSolutionBody(problem)}
-            <p class="stage-answer">參考答案：${referenceAnswerHTML(problem)}</p>
+            <p class="stage-answer">${t("參考答案：{problem}", { problem: referenceAnswerHTML(problem) })}</p>
           </div>
         </details>
       </div>
@@ -7729,7 +7739,7 @@
     if (steps.length >= 2) {
       return `<ol class="solution-steps">${steps.map((step) => `<li>${escapeHtml(step)}</li>`).join("")}</ol>`;
     }
-    return `<p>${escapeHtml(problem.solution || "推導就是上面的關鍵步驟，照著走即可。")}</p>`;
+    return `<p>${escapeHtml(problem.solution || t("推導就是上面的關鍵步驟，照著走即可。"))}</p>`;
   }
 
   function markSolutionAssisted(problemId) {
@@ -7749,19 +7759,19 @@
     return `
       <article class="review-item ${answer.correct ? "is-correct" : "is-wrong"}">
         <div class="review-top">
-          <span>#${index + 1} · ${TOPICS[item.topic].label} · ${answer.unanswered ? "未作答" : `${answer.elapsed}s`}${answer.assisted ? ` <span class="assist-chip">借助解答</span>` : ""}</span>
-          <strong>${answer.correct ? "正確" : answerReasonLabel(answer.reason)}</strong>
+          <span>#${index + 1} · ${TOPICS[item.topic].label} · ${answer.unanswered ? t("未作答") : `${answer.elapsed}s`}${answer.assisted ? ` <span class="assist-chip">${t("借助解答")}</span>` : ""}</span>
+          <strong>${answer.correct ? t("正確") : answerReasonLabel(answer.reason)}</strong>
         </div>
         <div class="review-prompt math-block" data-tex="${escapeAttr(item.prompt)}"></div>
         ${
           answer.boardStrokes && answer.boardStrokes.length
-            ? `<canvas class="review-board" data-review-board="${index}" data-surface="${boardSurface()}" aria-label="手寫草稿回顧"></canvas>`
+            ? `<canvas class="review-board" data-review-board="${index}" data-surface="${boardSurface()}" aria-label="${t("手寫草稿回顧")}"></canvas>`
             : ""
         }
         <div class="review-answer">
-          你的答案：${escapeHtml(shownInput(item, answer.input))}<br />
-          提示使用：${answer.hintsUsed || 0}<br />
-          參考答案：${referenceAnswerHTML(item)}
+          ${t("你的答案：{item}", { item: escapeHtml(shownInput(item, answer.input)) })}<br />
+          ${t("提示使用：{v}", { v: answer.hintsUsed || 0 })}<br />
+          ${t("參考答案：{item}", { item: referenceAnswerHTML(item) })}
         </div>
         ${renderKeyIdea(item)}
         ${renderSolutionStages(item)}
@@ -7771,8 +7781,8 @@
             : `<div class="tag-row">${ERROR_TAGS.map((tag) => `<button class="tag-button ${answer.errorTag === tag ? "is-active" : ""}" data-action="tag-answer" data-problem-id="${escapeAttr(item.id)}" data-tag="${escapeAttr(tag)}">${tag}</button>`).join("")}</div>`
         }
         <div class="action-row">
-          <button class="button ghost" data-action="toggle-favorite" data-problem-id="${escapeAttr(item.id)}">${icon("star")}${records.favorites?.[item.id] ? "已收藏" : "收藏"}</button>
-          <button class="button ghost" data-action="report-problem" data-problem-id="${escapeAttr(item.id)}">${icon("flag")}${records.problemReports?.[item.id] ? "已回報" : "回報"}</button>
+          <button class="button ghost" data-action="toggle-favorite" data-problem-id="${escapeAttr(item.id)}">${icon("star")}${records.favorites?.[item.id] ? t("已收藏") : t("收藏")}</button>
+          <button class="button ghost" data-action="report-problem" data-problem-id="${escapeAttr(item.id)}">${icon("flag")}${records.problemReports?.[item.id] ? t("已回報") : t("回報")}</button>
         </div>
       </article>
     `;
@@ -8159,9 +8169,9 @@
       const existing = loadRecords().placement;
       if (existing && existing.rank) {
         askConfirm({
-          title: "重新定位？",
-          body: `目前的定位是 R${existing.rank}。重測會用新結果覆蓋它（已解鎖的主線關卡不會收回）。`,
-          confirmLabel: "重新定位",
+          title: t("重新定位？"),
+          body: `${t("目前的定位是 R{rank}。重測會用新結果覆蓋它（已解鎖的主線關卡不會收回）。", { rank: existing.rank })}`,
+          confirmLabel: t("重新定位"),
           onConfirm: () => startPlacementQuiz()
         });
       } else {
@@ -8234,7 +8244,7 @@
     }
     if (action === "show-hint") showHint();
     if (action === "placement-unlearned" && quiz && quiz.placement && !quiz.feedback) {
-      recordAnswer({ status: "wrong", reason: "Unlearned", input: "", detail: "還沒學過就先跳過，定位會往基礎那邊調；這題不會進錯題本。" });
+      recordAnswer({ status: "wrong", reason: "Unlearned", input: "", detail: t("還沒學過就先跳過，定位會往基礎那邊調；這題不會進錯題本。") });
     }
     if (action === "toggle-keypad" && quiz) {
       quiz.keypadOpen = !quiz.keypadOpen;
@@ -8475,9 +8485,9 @@
         (id) => selectedMistakeTopic === "all" || problemById(id)?.topic === selectedMistakeTopic
       ).length;
       askConfirm({
-        title: "清空錯題本？",
-        body: `會刪掉目前篩選下的 ${count} 筆錯題與它們的複習排程，無法復原。錯題是複習的原料 —— 確定不留？`,
-        confirmLabel: `刪除 ${count} 筆`,
+        title: t("清空錯題本？"),
+        body: `${t("會刪掉目前篩選下的 {count} 筆錯題與它們的複習排程，無法復原。錯題是複習的原料 —— 確定不留？", { count })}`,
+        confirmLabel: `${t("刪除 {count} 筆", { count })}`,
         onConfirm: () => clearMistakes(selectedMistakeTopic)
       });
     }
@@ -8488,7 +8498,7 @@
       const backup = records.mistakes && records.mistakes[id] ? { ...records.mistakes[id] } : null;
       clearMistakes("all", [id]);
       if (backup) {
-        showUndoToast("已移除 1 筆錯題", () => {
+        showUndoToast(t("已移除 1 筆錯題"), () => {
           const current = loadRecords();
           current.mistakes[id] = backup;
           saveRecords(current);
@@ -8533,9 +8543,9 @@
     if (action === "toggle-analytics") setAnalyticsEnabled(!analyticsEnabled());
     if (action === "unlock-library") {
       askConfirm({
-        title: "直接解鎖整個題庫？",
-        body: "練到的難度本來就會自己開。跳關解鎖也完全可以 —— 只是先翻過的題，之後練起來會少掉第一眼的手感。",
-        confirmLabel: "解鎖瀏覽",
+        title: t("直接解鎖整個題庫？"),
+        body: t("練到的難度本來就會自己開。跳關解鎖也完全可以 —— 只是先翻過的題，之後練起來會少掉第一眼的手感。"),
+        confirmLabel: t("解鎖瀏覽"),
         onConfirm: () => setLibraryFullAccess(true)
       });
     }
@@ -8549,6 +8559,7 @@
       saveRecords(next);
       render();
     }
+    if (action === "set-lang") setLanguage(actionNode.dataset.lang || "");
     if (action === "set-focus-mode") setFocusMode(Boolean(actionNode.dataset.on));
     if (action === "set-board-surface") { setBoardSurface(actionNode.dataset.surface || "paper"); render(); }
     if (action === "preview-calibration") showCalibrationPreview();
@@ -8617,7 +8628,7 @@
     if (action === "confirm-erase") {
       eraseConfirm = false;
       const removed = eraseEverything();
-      showAppNotice(`已刪除：${removed.join("、")}。這台裝置上不再有你的練習資料。`);
+      showAppNotice(`${t("已刪除：")}${removed.join("、")}${t("。這台裝置上不再有你的練習資料。")}`);
     }
     if (action === "sync-now") syncNow();
   }
@@ -8753,8 +8764,8 @@
 
   function renderDailyOneBadge(records) {
     const entry = records && records.dailyOne ? records.dailyOne[dailyOneDateKey()] : null;
-    if (!entry) return "今日未解";
-    return entry.correct ? "✅ 已解" : "❌ 已試";
+    if (!entry) return t("今日未解");
+    return entry.correct ? t("✅ 已解") : t("❌ 已試");
   }
 
   function dailyOneStreak(records) {
@@ -8787,8 +8798,8 @@
     const problem = problemById(outcome.problemId);
     return `
       <div class="daily-one-outcome ${outcome.correct ? "is-win" : "is-loss"}" data-enter>
-        <strong>每日一題 ${escapeHtml(outcome.dateKey)}：${dailyOneEmoji(outcome)} ${outcome.correct ? `${outcome.elapsed}s 解決` : "明天再來"}</strong>
-        <p>${problem ? `R${problemRank(problem)} · ` : ""}${outcome.streak > 1 ? `🔥 已連續答對 ${outcome.streak} 天` : outcome.correct ? "連勝開張，明天繼續" : "連勝中斷，明天重新累積"}</p>
+        <strong>${t("每日一題 {dateKey}：{outcome}", { dateKey: escapeHtml(outcome.dateKey), outcome: dailyOneEmoji(outcome) })} ${outcome.correct ? `${t("{elapsed}s 解決", { elapsed: outcome.elapsed })}` : t("明天再來")}</strong>
+        <p>${problem ? `R${problemRank(problem)} · ` : ""}${outcome.streak > 1 ? `${t("🔥 已連續答對 {streak} 天", { streak: outcome.streak })}` : outcome.correct ? t("連勝開張，明天繼續") : t("連勝中斷，明天重新累積")}</p>
       </div>
     `;
   }
@@ -8801,16 +8812,16 @@
     const problem = problemById(entry.problemId);
     const streak = dailyOneStreak(records);
     const lines = [
-      `BuzzCalculus 每日一題 ${dateKey}`,
-      `${dailyOneEmoji(entry)}${entry.correct ? ` ${entry.elapsed}s` : ""}${problem ? ` · R${problemRank(problem)}` : ""}${entry.correct && !entry.hintsUsed ? " · 無提示" : ""}`,
-      streak > 1 ? `🔥 連續 ${streak} 天` : "",
+      `${t("BuzzCalculus 每日一題 {dateKey}", { dateKey })}`,
+      `${dailyOneEmoji(entry)}${entry.correct ? ` ${entry.elapsed}s` : ""}${problem ? ` · R${problemRank(problem)}` : ""}${entry.correct && !entry.hintsUsed ? t(" · 無提示") : ""}`,
+      streak > 1 ? `${t("🔥 連續 {streak} 天", { streak })}` : "",
       SITE_URL
     ].filter(Boolean);
     const text = lines.join("\n");
     // 先出圖（手機直接進系統分享）；桌機下載 PNG，同時把文字版複製起來
     shareCards.shareDailyOneCard(
       { dateKey, emoji: dailyOneEmoji(entry), rank: problem ? problemRank(problem) : 0, elapsed: entry.elapsed, correct: Boolean(entry.correct), streak, text },
-      () => copyPlainText(text, "成績卡已存成 PNG，文字版也複製好了。")
+      () => copyPlainText(text, t("成績卡已存成 PNG，文字版也複製好了。"))
     );
   }
 
@@ -8818,11 +8829,11 @@
     const nav = window.navigator;
     if (nav && nav.clipboard && typeof nav.clipboard.writeText === "function") {
       Promise.resolve(nav.clipboard.writeText(text))
-        .then(() => showAppNotice(okMessage || "已複製。"))
-        .catch(() => showAppNotice("一鍵複製失敗，請截圖分享。"));
+        .then(() => showAppNotice(okMessage || t("已複製。")))
+        .catch(() => showAppNotice(t("一鍵複製失敗，請截圖分享。")));
       return;
     }
-    showAppNotice("這個瀏覽器不支援一鍵複製。");
+    showAppNotice(t("這個瀏覽器不支援一鍵複製。"));
   }
 
   function startLibraryFilterPractice() {
@@ -8863,10 +8874,10 @@
   // 這也是唯一不違反「沒有伺服器收你的資料」這句承諾的做法。
 
   const REPORT_REASONS = [
-    { key: "wrong-answer", label: "答案好像有誤" },
-    { key: "unclear", label: "題目看不懂" },
-    { key: "typo", label: "排版或錯字" },
-    { key: "other", label: "其他" }
+    { key: "wrong-answer", label: t("答案好像有誤") },
+    { key: "unclear", label: t("題目看不懂") },
+    { key: "typo", label: t("排版或錯字") },
+    { key: "other", label: t("其他") }
   ];
 
   const REPO_URL = "https://github.com/tudohuang/BuzzCalculus";
@@ -8884,13 +8895,13 @@
     if (!problem) return "";
     const reason = REPORT_REASONS.find((item) => item.key === reasonKey) || REPORT_REASONS[0];
     const lines = [
-      `題號：${problemShortCode(problem) || "自訂題"}`,
-      `題目：${problem.prompt}`,
-      `參考答案：${displayAnswer(problem)}`,
-      `難度：R${problem.rank}`,
-      `問題類型：${reason.label}`,
+      `${t("題號：")}${problemShortCode(problem) || t("自訂題")}`,
+      `${t("題目：{prompt}", { prompt: problem.prompt })}`,
+      `${t("參考答案：{problem}", { problem: displayAnswer(problem) })}`,
+      `${t("難度：R{rank}", { rank: problem.rank })}`,
+      `${t("問題類型：{label}", { label: reason.label })}`,
       "",
-      "說明（請補充你看到的狀況）：",
+      t("說明（請補充你看到的狀況）："),
       "",
       "",
       `— ${APP_VERSION} · ${BUILD_DATE}`
@@ -8917,7 +8928,7 @@
     const { problemId, reason } = reportDraft;
     const problem = problemById(problemId);
     if (!problem) return;
-    const title = `題目回報：${problem.id}`;
+    const title = `${t("題目回報：{id}", { id: problem.id })}`;
     const url =
       `${REPO_URL}/issues/new?title=${encodeURIComponent(title)}` +
       `&body=${encodeURIComponent(buildReportText(problemId, reason))}`;
@@ -8934,7 +8945,7 @@
     const text = buildReportText(problemId, reason);
     reportDraft = null;
     render();
-    copyPlainText(text, "回報內容已複製。貼到 GitHub issue 或直接寄給我們都可以。");
+    copyPlainText(text, t("回報內容已複製。貼到 GitHub issue 或直接寄給我們都可以。"));
   }
 
   function renderReportModal() {
@@ -8945,12 +8956,11 @@
     return `
       <div class="modal-backdrop" data-action="cancel-report">
         <div class="modal report-modal" role="dialog" aria-modal="true" aria-labelledby="report-title" data-modal>
-          <h3 id="report-title">回報這一題</h3>
+          <h3 id="report-title">${t("回報這一題")}</h3>
           <p class="report-lead">
-            這個網站沒有伺服器收你的訊息，所以回報是<strong>你自己送出</strong>的 ——
-            下面就是會送出去的完整內容，你可以先看過。
+            ${t("這個網站沒有伺服器收你的訊息，所以回報是")}<strong>${t("你自己送出")}</strong>${t("的 —— 下面就是會送出去的完整內容，你可以先看過。")}
           </p>
-          <div class="report-reasons" role="group" aria-label="問題類型">
+          <div class="report-reasons" role="group" aria-label="${t("問題類型")}">
             ${REPORT_REASONS.map(
               (item) => `
                 <button class="tag-button ${reportDraft.reason === item.key ? "is-active" : ""}"
@@ -8960,11 +8970,11 @@
           </div>
           <pre class="report-preview">${escapeHtml(text)}</pre>
           <div class="action-row">
-            <button class="button home-primary" data-action="submit-report-github">${icon("flag")}開 GitHub issue</button>
-            <button class="button secondary" data-action="copy-report">${icon("copy")}複製內容</button>
-            <button class="button" data-action="cancel-report">${icon("x")}取消</button>
+            <button class="button home-primary" data-action="submit-report-github">${icon("flag")}${t("開 GitHub issue")}</button>
+            <button class="button secondary" data-action="copy-report">${icon("copy")}${t("複製內容")}</button>
+            <button class="button" data-action="cancel-report">${icon("x")}${t("取消")}</button>
           </div>
-          <p class="panel-note">沒有 GitHub 帳號的話，按「複製內容」再用你方便的方式傳。</p>
+          <p class="panel-note">${t("沒有 GitHub 帳號的話，按「複製內容」再用你方便的方式傳。")}</p>
         </div>
       </div>
     `;
@@ -9189,7 +9199,7 @@
       lineup.push(pick);
     }
     if (lineup.length < 4) {
-      showAppNotice("題庫載入不完整，暫時無法定位。請重新整理後再試。");
+      showAppNotice(t("題庫載入不完整，暫時無法定位。請重新整理後再試。"));
       return;
     }
     selectedMode = "quick";
@@ -9354,7 +9364,7 @@
     const attemptIndex = Number(records.namedExams?.[setId]?.attempts || 0);
     const paper = buildNamedExamPaper(setId, attemptIndex);
     if (paper.length < Math.min(6, config.count)) {
-      showAppNotice("這份模擬卷可抽的題目不足，先試試其他卷別。");
+      showAppNotice(t("這份模擬卷可抽的題目不足，先試試其他卷別。"));
       return;
     }
     selectedMode = "quick";
@@ -9468,7 +9478,7 @@
   async function syncNow() {
     if (!BuzzSync.isConfigured() || syncBusy) return;
     syncBusy = true;
-    syncMessage = "同步中…";
+    syncMessage = t("同步中…");
     render();
     try {
       const local = loadRecords();
@@ -9480,9 +9490,9 @@
       await BuzzSync.push(merged);
       BuzzSync.markSynced();
       const gained = (merged.attemptLog || []).length - (local.attemptLog || []).length;
-      syncMessage = gained > 0 ? `同步完成，合併了 ${gained} 筆作答` : "同步完成";
+      syncMessage = gained > 0 ? `${t("同步完成，合併了 {gained} 筆作答", { gained })}` : t("同步完成");
     } catch (_error) {
-      syncMessage = "同步失敗，稍後再試";
+      syncMessage = t("同步失敗，稍後再試");
     }
     syncBusy = false;
     render();
@@ -9500,13 +9510,12 @@
       <section class="study-card">
         <div class="panel-title-row">
           <div>
-            <p class="section-label">裝到主畫面</p>
-            <h3>像 App 一樣開，離線也能練</h3>
+            <p class="section-label">${t("裝到主畫面")}</p>
+            <h3>${t("像 App 一樣開，離線也能練")}</h3>
           </div>
         </div>
         <p class="panel-note">
-          Safari 分享鈕 ${icon("share-2")} → 「加入主畫面」。
-          之後從主畫面開啟：全螢幕、沒有網址列、沒訊號照樣出題。
+          ${t("Safari 分享鈕")} ${icon("share-2")} ${t("→ 「加入主畫面」。 之後從主畫面開啟：全螢幕、沒有網址列、沒訊號照樣出題。")}
         </p>
       </section>
     `;
@@ -9519,21 +9528,21 @@
     // 功能掛在牆上。自架者設了 BUZZ_SYNC_ENDPOINT 才會看到下面那張。
     if (!status.configured) return "";
     const lastLine = status.lastSyncAt
-      ? `上次同步：${String(status.lastSyncAt).slice(0, 16).replace("T", " ")}`
-      : "尚未同步過";
+      ? `${t("上次同步：{v}", { v: String(status.lastSyncAt).slice(0, 16).replace("T", " ") })}`
+      : t("尚未同步過");
     return `
       <section class="study-card sync-card">
         <div class="panel-title-row">
           <div>
-            <p class="section-label">雲端同步</p>
-            <h3>已連接同步端點</h3>
+            <p class="section-label">${t("雲端同步")}</p>
+            <h3>${t("已連接同步端點")}</h3>
           </div>
-          <span class="sync-chip is-on">已設定</span>
+          <span class="sync-chip is-on">${t("已設定")}</span>
         </div>
-        <p class="panel-note">${escapeHtml(lastLine)}。衝突時以最新的一份為準。</p>
+        <p class="panel-note">${t("{lastLine}。衝突時以最新的一份為準。", { lastLine: escapeHtml(lastLine) })}</p>
         ${syncMessage ? `<p class="panel-note sync-message">${escapeHtml(syncMessage)}</p>` : ""}
         <div class="action-row">
-          <button class="button secondary" data-action="sync-now" ${syncBusy ? "disabled" : ""}>${icon("refresh")}手動同步</button>
+          <button class="button secondary" data-action="sync-now" ${syncBusy ? "disabled" : ""}>${icon("refresh")}${t("手動同步")}</button>
         </div>
       </section>
     `;
@@ -9761,7 +9770,7 @@
   function exportCalibrationPack() {
     const pack = buildCalibrationPack();
     if (!pack.rows.length) {
-      showAppNotice("還沒有可用的作答統計，先練幾題再匯出。");
+      showAppNotice(t("還沒有可用的作答統計，先練幾題再匯出。"));
       return;
     }
     const blob = new Blob([JSON.stringify(pack, null, 2)], { type: "application/json" });
@@ -9787,11 +9796,11 @@
   // 對一個叫「清除資料」的按鈕來說，那既是 UX 上的謊言，也是法遵上的問題：
   // 把電腦借給別人之前按了清除，結果手寫的草稿還在。
   const ERASABLE = [
-    [STORAGE_KEY, "練習紀錄"],
-    [ACTIVE_KEY, "進行中的存檔"],
-    [SYNC_META_KEY, "同步中繼資料"],
-    [THEME_KEY, "外觀設定"],
-    ["buzzcalculus.customProblems.v1", "自訂題目"]
+    [STORAGE_KEY, t("練習紀錄")],
+    [ACTIVE_KEY, t("進行中的存檔")],
+    [SYNC_META_KEY, t("同步中繼資料")],
+    [THEME_KEY, t("外觀設定")],
+    ["buzzcalculus.customProblems.v1", t("自訂題目")]
   ];
 
   // 命名空間前綴。刪除以這個開頭的**全部** key，而不是刪一份固定清單。
@@ -9817,17 +9826,17 @@
       const keys = Object.keys(localStorage).filter((key) => key.startsWith(STORAGE_NAMESPACE));
       const hadBackup = keys.some((key) => key.startsWith(BACKUP_PREFIX));
       keys.forEach((key) => localStorage.removeItem(key));
-      if (hadBackup) removed.push("自動備份");
+      if (hadBackup) removed.push(t("自動備份"));
     } catch (_error) { /* storage 被鎖住時不要讓整個流程掛掉 */ }
     // 手寫草稿在 IndexedDB，是非同步的 —— 不能 await，但一定要發出去
     try {
       if (window.BuzzBoardStore) {
         window.BuzzBoardStore.clearBoards();
-        removed.push("手寫草稿");
+        removed.push(t("手寫草稿"));
       }
     } catch (_error) { /* 同上 */ }
     trackEvent("erase_data", { buckets: removed.length });
-    return removed.length ? removed : ["（本來就沒有資料）"];
+    return removed.length ? removed : [t("（本來就沒有資料）")];
   }
 
   // 刪除前把「會刪掉什麼」攤開講。
@@ -9838,20 +9847,20 @@
     const counts = [
       // 用詞跟資料管理卡片一致。同一份資料在兩個畫面上叫兩個名字，
       // 使用者會以為那是兩份不同的東西。
-      `${(records.attempts || 0) + (records.practiceRuns || 0)} 局練習紀錄`,
-      `${Object.keys(records.mistakes || {}).length} 題錯題本`,
-      `${(records.attemptLog || []).length} 筆逐題作答`
+      `${t("{v} 局練習紀錄", { v: (records.attempts || 0) + (records.practiceRuns || 0) })}`,
+      `${t("{length} 題錯題本", { length: Object.keys(records.mistakes || {}).length })}`,
+      `${t("{length} 筆逐題作答", { length: (records.attemptLog || []).length })}`
     ];
     return `
       <div class="modal-backdrop" data-action="cancel-erase">
         <div class="modal" role="dialog" aria-modal="true" aria-labelledby="erase-title" data-modal>
-          <h3 id="erase-title">刪除這台裝置上的所有資料？</h3>
-          <p>會刪掉：${escapeHtml(counts.join("、"))}，以及進行中的存檔、自訂題目、手寫草稿與外觀設定。</p>
-          <p class="erase-warning"><strong>這個動作無法復原。</strong>沒有帳號、沒有雲端備份 —— 刪掉就是真的沒了。</p>
-          <p class="erase-hint">想留一份的話，先按「取消」再去匯出 JSON。</p>
+          <h3 id="erase-title">${t("刪除這台裝置上的所有資料？")}</h3>
+          <p>${t("會刪掉：")}${escapeHtml(counts.join("、"))}${t("，以及進行中的存檔、自訂題目、手寫草稿與外觀設定。")}</p>
+          <p class="erase-warning"><strong>${t("這個動作無法復原。")}</strong>${t("沒有帳號、沒有雲端備份 —— 刪掉就是真的沒了。")}</p>
+          <p class="erase-hint">${t("想留一份的話，先按「取消」再去匯出 JSON。")}</p>
           <div class="action-row">
-            <button class="button danger" data-action="confirm-erase">${icon("trash")}確定刪除</button>
-            <button class="button" data-action="cancel-erase">${icon("x")}取消</button>
+            <button class="button danger" data-action="confirm-erase">${icon("trash")}${t("確定刪除")}</button>
+            <button class="button" data-action="cancel-erase">${icon("x")}${t("取消")}</button>
           </div>
         </div>
       </div>
@@ -9949,9 +9958,9 @@
     try { if (sessionStorage.getItem("buzzcalculus.update-dismissed")) return ""; } catch (_error) { /* 私密模式 */ }
     return `
       <div class="update-banner" role="status">
-        <span>有新版本可以用了。</span>
-        <button class="button secondary" data-action="apply-update">${icon("refresh")}重新載入更新</button>
-        <button class="icon-button" data-action="dismiss-update" title="稍後再說" aria-label="稍後再說">${icon("x")}</button>
+        <span>${t("有新版本可以用了。")}</span>
+        <button class="button secondary" data-action="apply-update">${icon("refresh")}${t("重新載入更新")}</button>
+        <button class="icon-button" data-action="dismiss-update" title="${t("稍後再說")}" aria-label="${t("稍後再說")}">${icon("x")}</button>
       </div>
     `;
   }
@@ -9963,8 +9972,8 @@
       const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
       showAppNotice(
         isIOS
-          ? "iPhone / iPad 安裝方式：Safari 下方的「分享」按鈕 → 往下捲 →「加入主畫面」。"
-          : "這個瀏覽器目前沒有開放安裝提示 —— 從瀏覽器選單找「安裝應用程式」或「加入主畫面」。"
+          ? t("iPhone / iPad 安裝方式：Safari 下方的「分享」按鈕 → 往下捲 →「加入主畫面」。")
+          : t("這個瀏覽器目前沒有開放安裝提示 —— 從瀏覽器選單找「安裝應用程式」或「加入主畫面」。")
       );
       return;
     }
@@ -9994,7 +10003,7 @@
         incoming = parsed && parsed.format === "buzz.records" && parsed.records ? parsed.records : parsed;
         if (!incoming || typeof incoming !== "object") throw new Error("bad shape");
       } catch (_error) {
-        showAppNotice("匯入失敗：檔案不是有效的 BuzzCalculus JSON。");
+        showAppNotice(t("匯入失敗：檔案不是有效的 BuzzCalculus JSON。"));
         return;
       }
 
@@ -10014,7 +10023,7 @@
 
       if (!mergedRecords) {
         // kernel 缺席時退回舊的覆蓋行為，但要先講清楚會發生什麼事。
-        if (beforeCount && !window.confirm("這台裝置上已經有練習紀錄。合併功能無法使用，繼續會直接覆蓋。要繼續嗎？")) return;
+        if (beforeCount && !window.confirm(t("這台裝置上已經有練習紀錄。合併功能無法使用，繼續會直接覆蓋。要繼續嗎？"))) return;
         mergedRecords = normalizeRecords(incoming);
       }
 
@@ -10028,8 +10037,8 @@
       });
       showAppNotice(
         afterCount > beforeCount
-          ? `已合併：作答紀錄從 ${beforeCount} 筆增加到 ${afterCount} 筆。`
-          : "已匯入。這份檔案沒有帶來新的作答紀錄。"
+          ? `${t("已合併：作答紀錄從 {beforeCount} 筆增加到 {afterCount} 筆。", { beforeCount, afterCount })}`
+          : t("已匯入。這份檔案沒有帶來新的作答紀錄。")
       );
       render();
     });
@@ -10079,12 +10088,12 @@
     return `
       <aside class="backup-bar" role="note">
         <div class="backup-bar-text">
-          <strong>紀錄只在這台裝置上</strong>
-          <span>已累積 ${answered} 題。清除瀏覽器資料就會全部消失，而且救不回來。</span>
+          <strong>${t("紀錄只在這台裝置上")}</strong>
+          <span>${t("已累積 {answered} 題。清除瀏覽器資料就會全部消失，而且救不回來。", { answered })}</span>
         </div>
         <div class="backup-bar-actions">
-          <button class="button secondary" data-action="export-records">${icon("download")}匯出備份</button>
-          <button class="icon-button" data-action="dismiss-backup-notice" title="之後再說">${icon("x")}</button>
+          <button class="button secondary" data-action="export-records">${icon("download")}${t("匯出備份")}</button>
+          <button class="icon-button" data-action="dismiss-backup-notice" title="${t("之後再說")}">${icon("x")}</button>
         </div>
       </aside>
     `;
@@ -10132,7 +10141,7 @@
     }
     if (!pool.length) {
       view = "home";
-      showAppNotice("目前篩選沒有符合難度的題目。請把難度上限拉高，或換一個題包 / 範圍。");
+      showAppNotice(t("目前篩選沒有符合難度的題目。請把難度上限拉高，或換一個題包 / 範圍。"));
       return;
     }
     quiz = {
@@ -10444,21 +10453,21 @@
     const steps = (lines || [])
       .map((line) => String(line || "").replace(/^\s*=+\s*/, "").trim())
       .filter(Boolean);
-    if (steps.length < 2) return { steps: [], error: "至少要兩行（原式一行、變形一行）才有東西可以比。" };
+    if (steps.length < 2) return { steps: [], error: t("至少要兩行（原式一行、變形一行）才有東西可以比。") };
     const normalized = steps.map((raw) => ({ raw, js: normalizeExpression(raw) }));
-    const results = [{ raw: normalized[0].raw, ok: normalized[0].js ? true : false, message: normalized[0].js ? "起點" : "這行讀不懂 —— 用 2*x、sin(x)、ln(x) 這種寫法" }];
+    const results = [{ raw: normalized[0].raw, ok: normalized[0].js ? true : false, message: normalized[0].js ? t("起點") : t("這行讀不懂 —— 用 2*x、sin(x)、ln(x) 這種寫法") }];
     for (let index = 1; index < normalized.length; index += 1) {
       const previous = normalized[index - 1];
       const current = normalized[index];
       if (!previous.js || !current.js) {
-        results.push({ raw: current.raw, ok: false, message: "這行讀不懂 —— 用 2*x、sin(x)、ln(x) 這種寫法" });
+        results.push({ raw: current.raw, ok: false, message: t("這行讀不懂 —— 用 2*x、sin(x)、ln(x) 這種寫法") });
         continue;
       }
       const verdict = checkExpression(previous.js, current.js, variable || "x", null);
       results.push({
         raw: current.raw,
         ok: verdict.correct,
-        message: verdict.correct ? "與上一行等價" : "從這裡開始跟上一行不相等 —— 斷點在這一步"
+        message: verdict.correct ? t("與上一行等價") : t("從這裡開始跟上一行不相等 —— 斷點在這一步")
       });
     }
     // 加碼：最後一行如果就是正確答案，直接說
@@ -10466,7 +10475,7 @@
     if (problem) {
       try {
         const graded = checkAnswer(problem, steps[steps.length - 1]);
-        if (graded.correct) finalNote = "而且最後一行就是正確答案。";
+        if (graded.correct) finalNote = t("而且最後一行就是正確答案。");
       } catch (_error) { /* 判不了就不說 */ }
     }
     return { steps: results, error: "", finalNote };
@@ -10495,13 +10504,13 @@
         : "";
     return `
       <details class="step-checker" data-keep="step-checker">
-        <summary>${icon("git-branch")}逐步驗證 —— 每一步寫一行，找出你從哪裡開始算錯</summary>
+        <summary>${icon("git-branch")}${t("逐步驗證 —— 每一步寫一行，找出你從哪裡開始算錯")}</summary>
         <textarea id="derivation-steps" rows="4" placeholder="x^2+2x+1&#10;(x+1)^2" spellcheck="false">${escapeHtml(text)}</textarea>
         <div class="action-row">
-          <button class="button secondary" data-action="check-steps" type="button">${icon("check")}檢查每一步</button>
+          <button class="button secondary" data-action="check-steps" type="button">${icon("check")}${t("檢查每一步")}</button>
         </div>
         ${rows}
-        <p class="panel-note">每行跟上一行做多點代入的等價比對 —— 只驗「有沒有變錯」，不管你用哪招變的。</p>
+        <p class="panel-note">${t("每行跟上一行做多點代入的等價比對 —— 只驗「有沒有變錯」，不管你用哪招變的。")}</p>
       </details>
     `;
   }
@@ -10564,7 +10573,7 @@
     const field = app.querySelector("#duel-code-input");
     const decoded = decodeDuelCode(field ? field.value : "");
     if (!decoded) {
-      showAppNotice("戰帖碼讀不出來 —— 檢查有沒有貼完整（BZD1: 開頭）。");
+      showAppNotice(t("戰帖碼讀不出來 —— 檢查有沒有貼完整（BZD1: 開頭）。"));
       return;
     }
     selectedMode = "quick";
@@ -10582,7 +10591,7 @@
     if (navigator.clipboard && navigator.clipboard.writeText) {
       navigator.clipboard.writeText(field.value).catch(copy);
     } else copy();
-    showAppNotice("戰帖碼已複製 —— 傳給朋友，同一份題比時間。");
+    showAppNotice(t("戰帖碼已複製 —— 傳給朋友，同一份題比時間。"));
   }
 
   function renderDuelResultSection() {
@@ -10597,17 +10606,17 @@
       const tie = correct === rival.correct && Math.abs(timeSec - rival.timeSec) <= 1;
       versus = `
         <p class="duel-versus ${tie ? "" : won ? "is-win" : "is-loss"}">
-          ${tie ? "平手！" : won ? "你贏了 🏆" : "這局輸了"} —— 你 ${correct}/${quiz.duel.ids.length} · ${formatCountdown(timeSec)}，對手 ${rival.correct}/${quiz.duel.ids.length} · ${formatCountdown(rival.timeSec)}
+          ${tie ? t("平手！") : won ? t("你贏了 🏆") : t("這局輸了")} ${t("—— 你 {correct}/{length} · {timeSec}，對手 {correct2}/{length2} · {timeSec2}", { correct, length: quiz.duel.ids.length, timeSec: formatCountdown(timeSec), correct2: rival.correct, length2: quiz.duel.ids.length, timeSec2: formatCountdown(rival.timeSec) })}
         </p>`;
     }
     return `
       <section class="panel duel-result">
-        <p class="section-label">好友對戰</p>
+        <p class="section-label">${t("好友對戰")}</p>
         ${versus}
-        <p class="panel-note">${rival ? "把你的成績回敬給對方：" : "把戰帖傳給朋友 —— 同一份題，比對題數、再比時間："}</p>
+        <p class="panel-note">${rival ? t("把你的成績回敬給對方：") : t("把戰帖傳給朋友 —— 同一份題，比對題數、再比時間：")}</p>
         <div class="duel-code-row">
           <input id="duel-code-output" readonly value="${escapeAttr(myCode)}">
-          <button class="button secondary" data-action="copy-duel-code">${icon("copy")}複製</button>
+          <button class="button secondary" data-action="copy-duel-code">${icon("copy")}${t("複製")}</button>
         </div>
       </section>
     `;
@@ -10865,7 +10874,7 @@
     }
     state.level = state.passed.length;
     state.tries = 0;
-    state.note = `過關。ε 縮到 ${levels[state.level]} —— 同一個 δ 還夠嗎？`;
+    state.note = `${t("過關。ε 縮到 {v} —— 同一個 δ 還夠嗎？", { v: levels[state.level] })}`;
     trackEvent("epsilon_level", { problemId: problem.id, level: state.level });
     render();
   }
@@ -10891,7 +10900,7 @@
       const index = options.findIndex((option) => option.value === input);
       const letter = index >= 0 ? String.fromCharCode(65 + index) : "";
       const reason = choiceDistractorReason(current, input);
-      submission.detail = `${letter ? `選了 ${letter}。` : ""}${reason}`;
+      submission.detail = `${letter ? `${t("選了 {letter}。", { letter })}` : ""}${reason}`;
     }
     recordAnswer(submission);
   }
@@ -10993,9 +11002,9 @@
       // 「答對」二字固定在最前面（toast 的 e2e 靠它），後面接讚語：
       // 連對 3 題起改報 combo，讓連勝變成看得見的手感。
       title: correct
-        ? `${quiz.practice ? "答對" : `答對，+${earned}`} · ${praiseLine(quiz.currentStreak)}`
+        ? `${quiz.practice ? t("答對") : `${t("答對，+{earned}", { earned })}`} · ${praiseLine(quiz.currentStreak)}`
         : answerReasonLabel(reason),
-      message: detail || (correct ? "" : "先想想卡在哪一步，下面可以一段一段看解法。"),
+      message: detail || (correct ? "" : t("先想想卡在哪一步，下面可以一段一段看解法。")),
       // 連錯兩題以上遞一句建議 —— 給的是**下一步怎麼做**，不是加油。
       // 大考模式不給：那裡的節奏是考試，插話只是干擾。
       nudge: !correct && !quiz.examMode ? stuckNudge(quiz.missStreak) : "",
@@ -11103,7 +11112,7 @@
           isCurrent ? "is-current" : "",
           flagged ? "is-flagged" : ""
         ].filter(Boolean).join(" ");
-        const label = `第 ${index + 1} 題${answered ? "（已作答）" : flagged ? "（已標記）" : ""}`;
+        const label = `${t("第 {v} 題", { v: index + 1 })}${answered ? t("（已作答）") : flagged ? t("（已標記）") : ""}`;
         return answered
           ? `<span class="${classes}" title="${escapeAttr(label)}">${index + 1}</span>`
           : `<button class="${classes}" data-action="jump-question" data-index="${index}" title="${escapeAttr(label)}">${index + 1}</button>`;
@@ -11111,10 +11120,10 @@
       .join("");
     const flagged = current && flags[current.id];
     return `
-      <div class="exam-map" role="navigation" aria-label="考卷題號">
+      <div class="exam-map" role="navigation" aria-label="${t("考卷題號")}">
         <div class="exam-map-cells">${cells}</div>
-        <button class="button ghost exam-flag ${flagged ? "is-on" : ""}" data-action="toggle-flag" title="標記這題，待會回來">
-          ${icon("flag")}${flagged ? "取消標記" : "標記待回頭"}
+        <button class="button ghost exam-flag ${flagged ? "is-on" : ""}" data-action="toggle-flag" title="${t("標記這題，待會回來")}">
+          ${icon("flag")}${flagged ? t("取消標記") : t("標記待回頭")}
         </button>
       </div>
     `;
@@ -11231,7 +11240,7 @@
       clearActiveSession();
       quiz = null;
       view = "home";
-      showAppNotice("一題都還沒作答，這局不計分也不留紀錄。");
+      showAppNotice(t("一題都還沒作答，這局不計分也不留紀錄。"));
       render();
       return;
     }
@@ -11310,7 +11319,7 @@
           status: "wrong",
           reason: currentQuiz.examTimedOut ? "Timeout" : "Unanswered",
           input: "",
-          detail: currentQuiz.examTimedOut ? "時間到，這題未送出。" : "交卷時未作答。"
+          detail: currentQuiz.examTimedOut ? t("時間到，這題未送出。") : t("交卷時未作答。")
         },
         0,
         true
@@ -11422,28 +11431,28 @@
     // 巢狀括號（f(g(x))）才提鏈鎖律；對 e^x·ln x 說「別忘了乘上內層導數」是誤導。
     const nested = /\\(sin|cos|tan|ln|log|sqrt|exp)\s*\\?\(?[^)]*\\(sin|cos|tan|ln|log|sqrt|exp|frac)|\^\{[^}]*\\(sin|cos|tan|ln|log|frac)/.test(prompt) || /\\sqrt\{[^}]*\\(sin|cos|tan|ln|log)/.test(prompt);
     if (problem.topic === "limits") {
-      hints.push("先找可否代入；若出現 0/0，再考慮展開、約分或標準極限。");
-      hints.push("含三角函數時，優先想 sin x ~ x、1 - cos x ~ x^2/2。");
+      hints.push(t("先找可否代入；若出現 0/0，再考慮展開、約分或標準極限。"));
+      hints.push(t("含三角函數時，優先想 sin x ~ x、1 - cos x ~ x^2/2。"));
     }
     if (problem.topic === "derivatives") {
-      hints.push("先看最外層的結構：兩個函數相乘用乘法規則、相除用商法、套在一起才用鏈鎖律。");
-      if (nested) hints.push("複合函數微分後，別忘了乘上內層導數。");
+      hints.push(t("先看最外層的結構：兩個函數相乘用乘法規則、相除用商法、套在一起才用鏈鎖律。"));
+      if (nested) hints.push(t("複合函數微分後，別忘了乘上內層導數。"));
     }
     if (problem.topic === "integrals") {
-      hints.push("先觀察是否能換元，找出函數與其導數是否同時出現。");
-      hints.push("若是乘積型態，再考慮分部積分。");
+      hints.push(t("先觀察是否能換元，找出函數與其導數是否同時出現。"));
+      hints.push(t("若是乘積型態，再考慮分部積分。"));
     }
     if (problem.topic === "series") {
-      hints.push("先判斷是等比、p 級數、交錯級數，或需要比較判別。");
-      hints.push("收斂判定題要分清楚收斂、條件收斂與絕對收斂。");
+      hints.push(t("先判斷是等比、p 級數、交錯級數，或需要比較判別。"));
+      hints.push(t("收斂判定題要分清楚收斂、條件收斂與絕對收斂。"));
     }
     // 格式提示只對「自己寫」有意義；選擇題不用打字，這幾句在那裡是噪音（還要扣分）。
     if (quiz && quiz.answerMode === "choice") return hints.slice(0, 3);
-    if (problem.answerKind === "antiderivative") hints.push("不定積分答案可省略 +C，系統會檢查是否相差常數。");
-    if (problem.answerKind === "expression") hints.push("答案請寫成 x 的函數，例如用 sin(x)、ln(x)、sqrt(x)。");
-    if (problem.answerKind === "numeric") hints.push("數值答案可用分數、pi、e、sqrt 表示。");
-    if (problem.answerKind === "set") hints.push("把找到的值全部列出來，順序不影響判分 —— 但少一個就算錯。");
-    if (problem.answerKind === "interval") hints.push("端點取不取得到，決定用小括號還是中括號。多段用 U 連起來。");
+    if (problem.answerKind === "antiderivative") hints.push(t("不定積分答案可省略 +C，系統會檢查是否相差常數。"));
+    if (problem.answerKind === "expression") hints.push(t("答案請寫成 x 的函數，例如用 sin(x)、ln(x)、sqrt(x)。"));
+    if (problem.answerKind === "numeric") hints.push(t("數值答案可用分數、pi、e、sqrt 表示。"));
+    if (problem.answerKind === "set") hints.push(t("把找到的值全部列出來，順序不影響判分 —— 但少一個就算錯。"));
+    if (problem.answerKind === "interval") hints.push(t("端點取不取得到，決定用小括號還是中括號。多段用 U 連起來。"));
     return hints.slice(0, 3);
   }
 
@@ -11465,9 +11474,9 @@
     const median = personalMedianElapsed(loadRecords());
     if (median === null || !Number.isFinite(elapsed)) return "";
     const diff = median - elapsed;
-    if (diff >= 2) return `比你平常快 ${diff} 秒`;
-    if (diff <= -2) return `比你平常慢 ${-diff} 秒`;
-    return "跟你平常的速度差不多";
+    if (diff >= 2) return `${t("比你平常快 {diff} 秒", { diff })}`;
+    if (diff <= -2) return `${t("比你平常慢 {v} 秒", { v: -diff })}`;
+    return t("跟你平常的速度差不多");
   }
 
   function hintPenalty(problem) {
@@ -11475,7 +11484,7 @@
   }
 
   function checkAnswer(problem, input) {
-    if (!input) return { correct: false, message: "沒有輸入答案。" };
+    if (!input) return { correct: false, message: t("沒有輸入答案。") };
     if (problem.answerKind === "numeric") {
       return checkNumeric(problem.answer, input);
     }
@@ -11516,7 +11525,7 @@
     if (problem.answerKind === "worksheet") {
       return checkWorksheet(problem, input);
     }
-    return { correct: false, message: "這個題型目前不能自動判分。" };
+    return { correct: false, message: t("這個題型目前不能自動判分。") };
   }
 
   // 選圖題：選項本身是圖，作答的值是那條曲線的式子。
@@ -11526,11 +11535,11 @@
   // 「你選到的是不是那一張」，而不是「兩個式子是否等價」。
   function checkGraphChoice(problem, input) {
     const tidy = (value) => String(value || "").replace(/\s+/g, "");
-    if (tidy(input) === tidy(problem.answer)) return { correct: true, message: "圖形判讀正確。" };
+    if (tidy(input) === tidy(problem.answer)) return { correct: true, message: t("圖形判讀正確。") };
     const chosen = (problem.graphChoices || []).find((choice) => tidy(choice.expr) === tidy(input));
     return {
       correct: false,
-      message: chosen && chosen.why ? chosen.why : "這張圖跟 f 的性質對不上。"
+      message: chosen && chosen.why ? chosen.why : t("這張圖跟 f 的性質對不上。")
     };
   }
 
@@ -11538,16 +11547,16 @@
   // 才算對。「看起來很像證明」不算：unsure 是黃的，那代表檢查器讀不懂或那一步沒被支持。
   function checkProofAnswer(problem, input) {
     const spec = proofLangSpec(problem.proofSpec);
-    if (!spec) return { correct: false, message: "這一題的證明題目找不到。" };
-    if (!String(input || "").trim()) return { correct: false, message: "還沒寫任何東西。" };
+    if (!spec) return { correct: false, message: t("這一題的證明題目找不到。") };
+    if (!String(input || "").trim()) return { correct: false, message: t("還沒寫任何東西。") };
     const report = runProofLangCheck(spec, input);
-    if (!report) return { correct: false, message: "證明引擎還沒載入。" };
+    if (!report) return { correct: false, message: t("證明引擎還沒載入。") };
     if (report.verdict === "verified") {
-      return { correct: true, message: "每一行都站得住，結論也扣回題目 —— 機器判過了。" };
+      return { correct: true, message: t("每一行都站得住，結論也扣回題目 —— 機器判過了。") };
     }
     const bad = (report.counts && report.counts.error) || 0;
     const unsure = (report.counts && report.counts.unsure) || 0;
-    const detail = bad ? `有 ${bad} 行站不住` : unsure ? `有 ${unsure} 行檢查器讀不懂或支持不了` : "結論沒有扣回題目要證的那件事";
+    const detail = bad ? `${t("有 {bad} 行站不住", { bad })}` : unsure ? `${t("有 {unsure} 行檢查器讀不懂或支持不了", { unsure })}` : t("結論沒有扣回題目要證的那件事");
     return { correct: false, message: `${detail}。${report.verdictText || ""}` };
   }
 
@@ -11559,7 +11568,7 @@
     const marks = String(input || "").split(",").map(Number).filter(Number.isFinite);
     const tol = Number(problem.tapTolerance) || 0.35;
     if (marks.length !== targets.length) {
-      return { correct: false, message: `要標 ${targets.length} 個位置，收到 ${marks.length} 個。` };
+      return { correct: false, message: `${t("要標 {length} 個位置，收到 {length2} 個。", { length: targets.length, length2: marks.length })}` };
     }
     const used = new Set();
     let missed = 0;
@@ -11574,8 +11583,8 @@
       if (best >= 0 && bestDist <= tol) used.add(best);
       else missed += 1;
     });
-    if (!missed) return { correct: true, message: "位置全對。" };
-    return { correct: false, message: `有 ${missed} 個位置沒點準（容差 ±${tol}，看綠圈對照）。` };
+    if (!missed) return { correct: true, message: t("位置全對。") };
+    return { correct: false, message: `${t("有 {missed} 個位置沒點準（容差 ±{tol}，看綠圈對照）。", { missed, tol })}` };
   }
 
   // 切線題：答案是斜率。容差預設 max(0.25, 15%)——拖出來的東西
@@ -11583,12 +11592,12 @@
   function checkGraphSlope(problem, input) {
     const target = Number(problem.answer);
     const got = Number(input);
-    if (!Number.isFinite(got)) return { correct: false, message: "先把直線拖到位再送出。" };
+    if (!Number.isFinite(got)) return { correct: false, message: t("先把直線拖到位再送出。") };
     const tol = Number(problem.slopeTolerance) || Math.max(0.25, Math.abs(target) * 0.15);
     if (Math.abs(got - target) <= tol) {
-      return { correct: true, message: `斜率 ${got.toFixed(2)}，在正解 ${target} 的容差內。` };
+      return { correct: true, message: `${t("斜率 {n}，在正解 {target} 的容差內。", { n: got.toFixed(2), target })}` };
     }
-    return { correct: false, message: `你拖出的斜率是 ${got.toFixed(2)}，正解是 ${target}（容差 ±${tol.toFixed(2)}）。` };
+    return { correct: false, message: `${t("你拖出的斜率是 {n}，正解是 {target}（容差 ±{n2}）。", { n: got.toFixed(2), target, n2: tol.toFixed(2) })}` };
   }
 
   // 題幹尾巴寫的定義域限制（",\ x>0"、"\quad(x\ge 1)"）。
@@ -11611,19 +11620,19 @@
 
   function checkNumeric(expected, input) {
     const normalized = normalizeText(input);
-    if (["dne", "doesnotexist", "不存在"].includes(normalized)) {
-      return { correct: normalizeText(expected) === "dne", message: "已用 DNE 判定。" };
+    if (["dne", "doesnotexist", t("不存在")].includes(normalized)) {
+      return { correct: normalizeText(expected) === "dne", message: t("已用 DNE 判定。") };
     }
     const a = evaluateExpression(expected, {});
     const b = evaluateExpression(input, {});
     if (!Number.isFinite(a) || !Number.isFinite(b)) {
-      return { correct: false, message: "我讀不懂這個數值格式。可以用 pi/4、sqrt(2)、ln(2) 這類寫法。" };
+      return { correct: false, message: t("我讀不懂這個數值格式。可以用 pi/4、sqrt(2)、ln(2) 這類寫法。") };
     }
     const tolerance = Math.max(1e-7, Math.abs(a) * 1e-6);
     const ok = Math.abs(a - b) <= tolerance;
     return {
       correct: ok,
-      message: ok ? "數值等價。" : `數值不對。${friendlyWrongHint({ answerKind: "numeric" }, input, expected)}`
+      message: ok ? t("數值等價。") : `${t("數值不對。{v}", { v: friendlyWrongHint({ answerKind: "numeric" }, input, expected) })}`
     };
   }
 
@@ -11669,14 +11678,14 @@
   function checkSet(problem, input) {
     const expected = parseNumberSet(problem.answer);
     const actual = parseNumberSet(input);
-    if (!expected) return { correct: false, message: "這題的參考答案格式有問題，請回報。" };
+    if (!expected) return { correct: false, message: t("這題的參考答案格式有問題，請回報。") };
     if (!actual) {
-      return { correct: false, message: "集合請寫成 {1, -2} 或 1, -2 這種形式，元素可以用 pi/3、sqrt(2)。" };
+      return { correct: false, message: t("集合請寫成 {1, -2} 或 1, -2 這種形式，元素可以用 pi/3、sqrt(2)。") };
     }
     if (actual.length !== expected.length) {
       return {
         correct: false,
-        message: `元素個數不對：你給了 ${actual.length} 個，答案有 ${expected.length} 個。參考答案：${problem.answer}`
+        message: `${t("元素個數不對：你給了 {length} 個，答案有 {length2} 個。參考答案：{answer}", { length: actual.length, length2: expected.length, answer: problem.answer })}`
       };
     }
     const same = expected.every((value, index) => {
@@ -11685,7 +11694,7 @@
     });
     return {
       correct: same,
-      message: same ? "集合元素完全吻合（順序不影響）。" : `集合內容不對。參考答案：${problem.answer}`
+      message: same ? t("集合元素完全吻合（順序不影響）。") : `${t("集合內容不對。參考答案：{answer}", { answer: problem.answer })}`
     };
   }
 
@@ -11743,14 +11752,14 @@
   function checkInterval(problem, input) {
     const expected = parseIntervals(problem.answer);
     const actual = parseIntervals(input);
-    if (!expected) return { correct: false, message: "這題的參考答案格式有問題，請回報。" };
+    if (!expected) return { correct: false, message: t("這題的參考答案格式有問題，請回報。") };
     if (!actual) {
-      return { correct: false, message: "區間請寫成 (0, 1]、[2, inf) 這種形式，聯集用 U 連接。" };
+      return { correct: false, message: t("區間請寫成 (0, 1]、[2, inf) 這種形式，聯集用 U 連接。") };
     }
     if (actual.length !== expected.length) {
       return {
         correct: false,
-        message: `區間段數不對：你給了 ${actual.length} 段，答案是 ${expected.length} 段。參考答案：${problem.answer}`
+        message: `${t("區間段數不對：你給了 {length} 段，答案是 {length2} 段。參考答案：{answer}", { length: actual.length, length2: expected.length, answer: problem.answer })}`
       };
     }
     for (let index = 0; index < expected.length; index += 1) {
@@ -11758,15 +11767,15 @@
       const got = actual[index];
       const near = (a, b) => (a === b) || Math.abs(a - b) <= Math.max(1e-7, Math.abs(a) * 1e-6);
       if (!near(want.lo, got.lo) || !near(want.hi, got.hi)) {
-        return { correct: false, message: `端點不對。參考答案：${problem.answer}` };
+        return { correct: false, message: `${t("端點不對。參考答案：{answer}", { answer: problem.answer })}` };
       }
       // 開閉是這個題型的重點。端點對了但開閉錯，代表沒搞清楚
       // 端點到底屬不屬於定義域 —— 那正是這類題目要考的事。
       if (want.loOpen !== got.loOpen || want.hiOpen !== got.hiOpen) {
-        return { correct: false, message: `端點的開閉不對（差在中括號還是小括號）。參考答案：${problem.answer}` };
+        return { correct: false, message: `${t("端點的開閉不對（差在中括號還是小括號）。參考答案：{answer}", { answer: problem.answer })}` };
       }
     }
-    return { correct: true, message: "區間與開閉都吻合。" };
+    return { correct: true, message: t("區間與開閉都吻合。") };
   }
 
   function checkText(problem, input) {
@@ -11774,7 +11783,7 @@
     const ok = problem.answers.some((answer) => normalizeText(answer) === normalized);
     return {
       correct: ok,
-      message: ok ? "文字判定吻合。" : `判定不對。參考答案：${problem.canonical || problem.answers[0]}`
+      message: ok ? t("文字判定吻合。") : `${t("判定不對。參考答案：{v}", { v: problem.canonical || problem.answers[0] })}`
     };
   }
 
@@ -11972,7 +11981,7 @@
 
   function fallbackChoiceDistractors(problem) {
     const variable = problem.variable || "x";
-    if (problem.answerKind === "text") return ["收斂", "發散", "條件收斂", "絕對收斂", "converges", "diverges"];
+    if (problem.answerKind === "text") return [t("收斂"), t("發散"), t("條件收斂"), t("絕對收斂"), "converges", "diverges"];
     if (problem.answerKind === "numeric") return ["-2", "-1", "0", "1", "2", "pi", "e", "DNE"];
     if (problem.answerKind === "antiderivative") {
       return ["0", variable, `${variable}^2`, `${variable}^3`, `ln(${variable})`, `sin(${variable})`, `cos(${variable})`, `exp(${variable})`];
@@ -11985,48 +11994,48 @@
 
   function choiceDistractorReason(problem, value, expectedValue = "") {
     const correct = expectedValue || displayAnswer(problem);
-    if (authoredDistractors(problem).length) return "這是同一張表上最容易記混的選項，回去把規則再過一次。";
-    if (problem.answerKind === "text") return "判定方向不同；先確認端點、絕對/條件或 DNE 條件。";
+    if (authoredDistractors(problem).length) return t("這是同一張表上最容易記混的選項，回去把規則再過一次。");
+    if (problem.answerKind === "text") return t("判定方向不同；先確認端點、絕對/條件或 DNE 條件。");
     const variable = problem.variable || "x";
     const normalized = normalizeChoice(value);
-    if (normalized === normalizeChoice(`-(${correct})`) || normalized === normalizeChoice(`-${correct}`)) return "像是符號相反。";
-    if (normalized === normalizeChoice(`2*(${correct})`)) return "像是係數多乘一倍。";
-    if (normalized === normalizeChoice(`(${correct})/2`)) return "像是係數少了一半。";
-    if (normalized === normalizeChoice(stripOuterScale(correct))) return "像是漏掉外層係數。";
-    if (normalized === normalizeChoice(stripLikelyChainFactor(correct, variable))) return "像是漏掉鏈鎖律或換元係數。";
-    if (String(value).includes(`+${variable}`) || String(value).includes(`-${variable}`)) return "像是多加了不該有的項。";
+    if (normalized === normalizeChoice(`-(${correct})`) || normalized === normalizeChoice(`-${correct}`)) return t("像是符號相反。");
+    if (normalized === normalizeChoice(`2*(${correct})`)) return t("像是係數多乘一倍。");
+    if (normalized === normalizeChoice(`(${correct})/2`)) return t("像是係數少了一半。");
+    if (normalized === normalizeChoice(stripOuterScale(correct))) return t("像是漏掉外層係數。");
+    if (normalized === normalizeChoice(stripLikelyChainFactor(correct, variable))) return t("像是漏掉鏈鎖律或換元係數。");
+    if (String(value).includes(`+${variable}`) || String(value).includes(`-${variable}`)) return t("像是多加了不該有的項。");
     if (problem.answerKind === "numeric") return numericDistractorReason(correct, value);
-    if (problem.answerKind === "antiderivative") return "檢查微分回去是否得到原 integrand。";
-    return "檢查符號、係數與鏈鎖律。";
+    if (problem.answerKind === "antiderivative") return t("檢查微分回去是否得到原 integrand。");
+    return t("檢查符號、係數與鏈鎖律。");
   }
 
   function numericDistractorReason(expected, input) {
     const a = evaluateExpression(expected, {});
     const b = evaluateExpression(input, {});
-    if (!Number.isFinite(a) || !Number.isFinite(b)) return "這是常見干擾值。";
+    if (!Number.isFinite(a) || !Number.isFinite(b)) return t("這是常見干擾值。");
     const close = (target) => Number.isFinite(target) && Math.abs(b - target) <= Math.max(1e-6, Math.abs(target) * 1e-5);
     // 順序即優先序：先驗結構性的錯（號、倒數、平方），再驗係數滑掉。
     // 每一條都要能一句話說出「你是怎麼走到這個值的」—— 說不出來的不加。
-    if (close(-a)) return "像是漏負號。";
-    if (a && close(1 / a)) return "像是取倒數了。";
-    if (a && close(-1 / a)) return "像是取倒數又掉了負號。";
-    if (close(a * a) && Math.abs(a) > 1e-6 && Math.abs(Math.abs(a) - 1) > 1e-6) return "像是多平方了一次。";
-    if (a >= 0 && close(Math.sqrt(a)) && Math.abs(a - 1) > 1e-6) return "像是多開了一次根號。";
-    if (close(a * 2)) return "像是多乘 2。";
-    if (close(a / 2)) return "像是少了一個 2。";
-    if (close(a * 3)) return "像是係數多乘 3。";
-    if (close(a / 3)) return "像是少除 3。";
-    if (close(a * Math.PI)) return "像是多乘了一個 π。";
-    if (Math.abs(a) > 1e-9 && close(a / Math.PI)) return "像是把 π 除掉了 —— sin(πx) 積分後的 1/π 別漏。";
-    if (close(a + 1)) return "像是多了 1 —— 常數、冪次或上下限差一。";
-    if (close(a - 1)) return "像是少了 1 —— 常數、冪次或上下限差一。";
-    if (close(a * Math.E)) return "像是多乘一個 e。";
-    if (Math.abs(a) > 1e-9 && close(a / Math.E)) return "像是少乘一個 e。";
-    if (a > 0 && close(Math.log(a)) && Math.abs(a - 1) > 0.1) return "像是多取了一次 log。";
-    if (close(Math.exp(a)) && Math.abs(a) > 0.1) return "像是把指數忘在外面了。";
+    if (close(-a)) return t("像是漏負號。");
+    if (a && close(1 / a)) return t("像是取倒數了。");
+    if (a && close(-1 / a)) return t("像是取倒數又掉了負號。");
+    if (close(a * a) && Math.abs(a) > 1e-6 && Math.abs(Math.abs(a) - 1) > 1e-6) return t("像是多平方了一次。");
+    if (a >= 0 && close(Math.sqrt(a)) && Math.abs(a - 1) > 1e-6) return t("像是多開了一次根號。");
+    if (close(a * 2)) return t("像是多乘 2。");
+    if (close(a / 2)) return t("像是少了一個 2。");
+    if (close(a * 3)) return t("像是係數多乘 3。");
+    if (close(a / 3)) return t("像是少除 3。");
+    if (close(a * Math.PI)) return t("像是多乘了一個 π。");
+    if (Math.abs(a) > 1e-9 && close(a / Math.PI)) return t("像是把 π 除掉了 —— sin(πx) 積分後的 1/π 別漏。");
+    if (close(a + 1)) return t("像是多了 1 —— 常數、冪次或上下限差一。");
+    if (close(a - 1)) return t("像是少了 1 —— 常數、冪次或上下限差一。");
+    if (close(a * Math.E)) return t("像是多乘一個 e。");
+    if (Math.abs(a) > 1e-9 && close(a / Math.E)) return t("像是少乘一個 e。");
+    if (a > 0 && close(Math.log(a)) && Math.abs(a - 1) > 0.1) return t("像是多取了一次 log。");
+    if (close(Math.exp(a)) && Math.abs(a) > 0.1) return t("像是把指數忘在外面了。");
     // 走到這裡代表**看不出**它是怎麼錯的 ——
     // 說不知道比斷言一件系統不知道的事誠實。
-    return "這個值和正確答案對不上；回頭檢查第一步的判型。";
+    return t("這個值和正確答案對不上；回頭檢查第一步的判型。");
   }
 
   function friendlyWrongHint(problem, input, expected) {
@@ -12038,7 +12047,7 @@
 
   function generatedChoiceDistractors(problem, correct) {
     if (problem.answerKind === "text") {
-      return ["收斂", "發散", "條件收斂", "絕對收斂"];
+      return [t("收斂"), t("發散"), t("條件收斂"), t("絕對收斂")];
     }
     if (problem.answerKind === "numeric") {
       // 精確形（π(5√5−1)/6、sqrt(2)/2）先做數字微擾：6√5、5√5−2、/7 —— 每一個都像
@@ -12495,9 +12504,9 @@
     if (!problem || !window.BuzzInkRead) return;
     const strokes = (quiz.boardStrokes && quiz.boardStrokes[problem.id]) || [];
     const result = window.BuzzInkRead.readAnswer(strokes);
-    if (!result.text) { showAppNotice("計算紙上讀不到可辨識的數字。"); return; }
+    if (!result.text) { showAppNotice(t("計算紙上讀不到可辨識的數字。")); return; }
     replaceAnswerDraft(result.text);
-    if (!result.confident) showAppNotice("讀到「" + result.text + "」但不太確定 —— 檢查一下再送出。");
+    if (!result.confident) showAppNotice(t("讀到「") + result.text + t("」但不太確定 —— 檢查一下再送出。"));
   }
 
   function backspaceAnswer() {
@@ -12534,7 +12543,7 @@
     if (!node || !quiz) return;
     const problem = getCurrentProblem();
     const hasValue = Boolean(String(value || "").trim());
-    node.dataset.tex = answerToTex(value, problem) || "\\text{尚未輸入}";
+    node.dataset.tex = answerToTex(value, problem) || t("\\text{尚未輸入}");
     node.classList.toggle("is-empty", !hasValue);
     renderMathNode(node, false);
     const statusNode = app.querySelector("[data-syntax-status]");
@@ -12576,25 +12585,25 @@
   // 點陣、橫線、空白，還有原本就有的黑板。畫布本身永遠透明 ——
   // 紙型只是 CSS 背景，橡皮擦才挖得動。
   const BOARD_SURFACES = [
-    { key: "paper", label: "方格" },
-    { key: "dots", label: "點陣" },
-    { key: "lines", label: "橫線" },
-    { key: "blank", label: "空白" },
-    { key: "board", label: "黑板" }
+    { key: "paper", label: t("方格") },
+    { key: "dots", label: t("點陣") },
+    { key: "lines", label: t("橫線") },
+    { key: "blank", label: t("空白") },
+    { key: "board", label: t("黑板") }
   ];
   // 筆的顏色與螢光筆的顏色。色碼本身在 kernel/board_render.js（紙／黑板各一版），
   // 這裡只有名字與工具列上色塊要用的代表色。
   const PEN_COLORS = [
-    { key: "ink", label: "墨色", swatch: "#1d2b3a" },
-    { key: "blue", label: "藍", swatch: "#2456b8" },
-    { key: "red", label: "紅", swatch: "#c8383a" },
-    { key: "green", label: "綠", swatch: "#1e7f52" }
+    { key: "ink", label: t("墨色"), swatch: "#1d2b3a" },
+    { key: "blue", label: t("藍"), swatch: "#2456b8" },
+    { key: "red", label: t("紅"), swatch: "#c8383a" },
+    { key: "green", label: t("綠"), swatch: "#1e7f52" }
   ];
   const HIGHLIGHT_COLORS = [
-    { key: "yellow", label: "黃", swatch: "#ffd83d" },
-    { key: "green", label: "綠", swatch: "#8fe39a" },
-    { key: "pink", label: "粉", swatch: "#ff9cc2" },
-    { key: "blue", label: "藍", swatch: "#8fcbff" }
+    { key: "yellow", label: t("黃"), swatch: "#ffd83d" },
+    { key: "green", label: t("綠"), swatch: "#8fe39a" },
+    { key: "pink", label: t("粉"), swatch: "#ff9cc2" },
+    { key: "blue", label: t("藍"), swatch: "#8fcbff" }
   ];
 
   // 設定的快取。計算紙每一 frame 都會問筆寬／紙型／顏色，原本每問一次就 loadRecords()
@@ -13131,7 +13140,7 @@
   // 筆畫數的標籤不需要整頁重繪才更新。
   function updateBoardCount(count) {
     const label = app.querySelector("[data-board-count]");
-    if (label) label.textContent = count ? `${count} 筆` : "手寫草稿";
+    if (label) label.textContent = count ? `${t("{count} 筆", { count })}` : t("手寫草稿");
     const hint = app.querySelector("[data-board-empty-hint]");
     if (hint) hint.hidden = count > 0;
   }
@@ -13186,13 +13195,13 @@
     if (!previousBoard.entry || previousBoard.problemId !== problem.id) return "";
     const entry = previousBoard.entry;
     const days = Math.max(0, Math.round((Date.now() - entry.savedAt) / 86400000));
-    const when = days === 0 ? "今天" : `${days} 天前`;
+    const when = days === 0 ? t("今天") : `${t("{days} 天前", { days })}`;
     return `
       <details class="previous-board"${previousBoard.open ? " open" : ""}>
         <summary>
-          <span>上次的草稿（${when}，${entry.correct ? "答對" : "答錯"}${entry.answer ? "：" + escapeHtml(entry.answer) : ""}）</span>
+          <span>${t("上次的草稿（{when}，", { when })}${entry.correct ? t("答對") : t("答錯")}${entry.answer ? "：" + escapeHtml(entry.answer) : ""}）</span>
         </summary>
-        <canvas class="blackboard is-readonly" data-previous-board="${escapeAttr(problem.id)}" data-surface="${boardSurface()}" aria-label="上次的手寫草稿"></canvas>
+        <canvas class="blackboard is-readonly" data-previous-board="${escapeAttr(problem.id)}" data-surface="${boardSurface()}" aria-label="${t("上次的手寫草稿")}"></canvas>
       </details>
     `;
   }
@@ -13261,10 +13270,29 @@
     drawStrokesOnBlackboard(canvas, ctx, getBoardStrokes(problemId));
   }
 
+  // 介面語言的三個選項。語言自己的名字不翻（中文人看得懂「中文」，英文人看得懂 English），
+  // /* zh-key */ 是告訴 validate_i18n「這個中文字串是故意不翻的」。
+  const LANG_OPTIONS = [
+    { key: "auto", label: t("跟著瀏覽器") },
+    { key: "zh", label: /* zh-key */ "中文" },
+    { key: "en", label: "English" }
+  ];
+
+  // 切語言＝存設定後重新載入：語言在載入時就定案（模組初始化期的表也吃 t()），不做熱切換。
+  function setLanguage(key) {
+    if (!LANG_OPTIONS.some((item) => item.key === key)) return;
+    const records = loadRecords();
+    records.settings = records.settings || {};
+    if (key === "auto") delete records.settings.lang; else records.settings.lang = key;
+    saveRecords(records);
+    trackEvent("set_lang", { lang: key });
+    window.location.reload();
+  }
+
   const PEN_SCALES = [
-    { key: "thin", label: "細", value: 0.75, dot: 5 },
-    { key: "standard", label: "標準", value: 1, dot: 8 },
-    { key: "thick", label: "粗", value: 1.3, dot: 12 }
+    { key: "thin", label: t("細"), value: 0.75, dot: 5 },
+    { key: "standard", label: t("標準"), value: 1, dot: 8 },
+    { key: "thick", label: t("粗"), value: 1.3, dot: 12 }
   ];
 
   // ── 答題音效 ────────────────────────────────────────────────
@@ -13932,15 +13960,15 @@
   function updateAchievements(records, currentQuiz, historyItem) {
     /** @type {[string, string, string, () => boolean][]} */
     const definitions = [
-      ["first_run", "開局", "完成第一局", () => records.attempts + records.practiceRuns >= 1],
-      ["perfect_run", "零失誤", "單局 10 題以上全對", () => historyItem.total >= 10 && historyItem.correct === historyItem.total],
-      ["speed_runner", "速算節奏", "單局平均 20 秒內且正確率 70% 以上", () => historyItem.avgTime > 0 && historyItem.avgTime <= 20 && historyItem.accuracy >= 70],
-      ["streak_10", "連勝 10", "單局連勝達 10 題", () => currentQuiz.bestStreak >= 10 || records.bestStreak >= 10],
-      ["boss_ace", "Boss Ace", "Boss 題組正確率 90% 以上", () => currentQuiz.mode === "boss" && historyItem.accuracy >= 90],
-      ["exam_clear", "大考通關", "大考模式正確率 70% 以上", () => currentQuiz.mode === "exam" && historyItem.accuracy >= 70],
-      ["hundred_answers", "百題訓練", "累積作答 100 題", () => records.totalAnswered >= 100],
-      ["five_hundred_answers", "五百題訓練", "累積作答 500 題", () => records.totalAnswered >= 500],
-      ["thousand_answers", "千題訓練", "累積作答 1000 題", () => records.totalAnswered >= 1000]
+      ["first_run", t("開局"), t("完成第一局"), () => records.attempts + records.practiceRuns >= 1],
+      ["perfect_run", t("零失誤"), t("單局 10 題以上全對"), () => historyItem.total >= 10 && historyItem.correct === historyItem.total],
+      ["speed_runner", t("速算節奏"), t("單局平均 20 秒內且正確率 70% 以上"), () => historyItem.avgTime > 0 && historyItem.avgTime <= 20 && historyItem.accuracy >= 70],
+      ["streak_10", t("連勝 10"), t("單局連勝達 10 題"), () => currentQuiz.bestStreak >= 10 || records.bestStreak >= 10],
+      ["boss_ace", "Boss Ace", t("Boss 題組正確率 90% 以上"), () => currentQuiz.mode === "boss" && historyItem.accuracy >= 90],
+      ["exam_clear", t("大考通關"), t("大考模式正確率 70% 以上"), () => currentQuiz.mode === "exam" && historyItem.accuracy >= 70],
+      ["hundred_answers", t("百題訓練"), t("累積作答 100 題"), () => records.totalAnswered >= 100],
+      ["five_hundred_answers", t("五百題訓練"), t("累積作答 500 題"), () => records.totalAnswered >= 500],
+      ["thousand_answers", t("千題訓練"), t("累積作答 1000 題"), () => records.totalAnswered >= 1000]
     ];
     const unlocked = [];
     definitions.forEach(([id, title, detail, test]) => {
@@ -13955,7 +13983,7 @@
         const stat = records.topicStats[key] || { correct: 0, total: 0 };
         const id = `master_${key}`;
         if (!records.achievements[id] && stat.total >= 12 && stat.correct / stat.total >= 0.8) {
-          const item = { id, title: `${topic.label} 熟練`, detail: `${topic.label} 正確率達 80%`, unlockedAt: new Date().toISOString() };
+          const item = { id, title: `${t("{label} 熟練", { label: topic.label })}`, detail: `${t("{label} 正確率達 80%", { label: topic.label })}`, unlockedAt: new Date().toISOString() };
           records.achievements[id] = item;
           unlocked.push(item);
         }
@@ -14121,11 +14149,11 @@
 
   function speedInsightText(avgTime, recentAvg) {
     if (!avgTime) return "";
-    if (!recentAvg) return `平均 ${avgTime}s / 題。累積更多紀錄後會比較最近 30 題。`;
+    if (!recentAvg) return `${t("平均 {avgTime}s / 題。累積更多紀錄後會比較最近 30 題。", { avgTime })}`;
     const diff = avgTime - recentAvg;
-    if (Math.abs(diff) <= 2) return `平均 ${avgTime}s / 題，和最近 30 題差不多。`;
-    if (diff < 0) return `平均 ${avgTime}s / 題，比最近 30 題快 ${Math.abs(diff)}s。`;
-    return `平均 ${avgTime}s / 題，比最近 30 題慢 ${diff}s。`;
+    if (Math.abs(diff) <= 2) return `${t("平均 {avgTime}s / 題，和最近 30 題差不多。", { avgTime })}`;
+    if (diff < 0) return `${t("平均 {avgTime}s / 題，比最近 30 題快 {diff}s。", { avgTime, diff: Math.abs(diff) })}`;
+    return `${t("平均 {avgTime}s / 題，比最近 30 題慢 {diff}s。", { avgTime, diff })}`;
   }
 
   function formatSeconds(value) {
@@ -14246,11 +14274,11 @@
   }
 
   function pathRecommendation(path, mission) {
-    if (!mission.done) return `先完成每日 ${mission.target} 題，維持練習節奏。`;
+    if (!mission.done) return `${t("先完成每日 {target} 題，維持練習節奏。", { target: mission.target })}`;
     const weakNode = path.nodes.find((node) => node.attempts > 0 && node.mastery < 70);
-    if (weakNode) return `重練 ${weakNode.label}，差一點就能 CLEAR。`;
-    if (path.next) return `推進 ${path.next.label}，打開下一段技巧。`;
-    return "主線完成後可以打 Boss 連戰或證明題。";
+    if (weakNode) return `${t("重練 {label}，差一點就能 CLEAR。", { label: weakNode.label })}`;
+    if (path.next) return `${t("推進 {label}，打開下一段技巧。", { label: path.next.label })}`;
+    return t("主線完成後可以打 Boss 連戰或證明題。");
   }
 
   function startOfWeek(date) {
@@ -14338,9 +14366,9 @@
 
   function solutionQuality(problem) {
     const solution = String(problem.solution || "");
-    if (solution.length >= 48 || (problem.hints || []).length >= 2) return { level: "good", label: "解析完整" };
-    if (solution.length >= 16) return { level: "basic", label: "解析簡短" };
-    return { level: "todo", label: "解析待補" };
+    if (solution.length >= 48 || (problem.hints || []).length >= 2) return { level: "good", label: t("解析完整") };
+    if (solution.length >= 16) return { level: "basic", label: t("解析簡短") };
+    return { level: "todo", label: t("解析待補") };
   }
 
   function mistakeWeight(item) {
@@ -14354,28 +14382,28 @@
 
   function modeDescription(mode) {
     return {
-      quick: "12 題",
-      topic: "單範圍",
-      daily: "固定題組",
-      practice: "不限時",
-      brutal: "高難度",
-      boss: "階梯",
-      boss_rush: "錯一題結束",
-      exam: "整份限時",
-      pressure: "計時遞減",
-      integral_bee: "積分快速戰",
-      no_hint: "關閉提示",
-      accuracy: "不限時精準",
-      survival: "三命制",
-      warmup: "5 題暖身",
-      cooldown: "錯題收操",
-      mistakes: "錯題"
+      quick: t("12 題"),
+      topic: t("單範圍"),
+      daily: t("固定題組"),
+      practice: t("不限時"),
+      brutal: t("高難度"),
+      boss: t("階梯"),
+      boss_rush: t("錯一題結束"),
+      exam: t("整份限時"),
+      pressure: t("計時遞減"),
+      integral_bee: t("積分快速戰"),
+      no_hint: t("關閉提示"),
+      accuracy: t("不限時精準"),
+      survival: t("三命制"),
+      warmup: t("5 題暖身"),
+      cooldown: t("錯題收操"),
+      mistakes: t("錯題")
     }[mode] || "";
   }
 
   function topicDescription(topic) {
     return {
-      all: "混合",
+      all: t("混合"),
       limits: "Limit",
       derivatives: "Derivative",
       integrals: "Integral",
@@ -14391,13 +14419,13 @@
   function verifiedChip(problem) {
     if (!problem || !window.BuzzVerifiedAnswers || typeof window.BuzzVerifiedAnswers.has !== "function") return "";
     if (!window.BuzzVerifiedAnswers.has(problem.id)) return "";
-    return `<span class="chip is-verified" title="這一題的答案由一條與解法無關的數值路徑獨立算過，每次改版都會重跑">${icon("check")}答案已驗算</span>`;
+    return `<span class="chip is-verified" title="${t("這一題的答案由一條與解法無關的數值路徑獨立算過，每次改版都會重跑")}">${icon("check")}${t("答案已驗算")}</span>`;
   }
 
   function answerModeDescription(mode) {
     return {
-      choice: "四選一",
-      free: "自己輸入答案，附手寫計算紙"
+      choice: t("四選一"),
+      free: t("自己輸入答案，附手寫計算紙")
     }[mode] || "";
   }
 
@@ -14468,33 +14496,33 @@
       rankRows,
       insights: [
         {
-          label: "最快主題",
-          value: fastestTopic ? `${fastestTopic.label} · ${formatSeconds(fastestTopic.avgSec)}` : "尚無資料",
-          note: fastestTopic ? `${fastestTopic.correct}/${fastestTopic.total} correct` : "至少作答一題後顯示",
+          label: t("最快主題"),
+          value: fastestTopic ? `${fastestTopic.label} · ${formatSeconds(fastestTopic.avgSec)}` : t("尚無資料"),
+          note: fastestTopic ? `${fastestTopic.correct}/${fastestTopic.total} correct` : t("至少作答一題後顯示"),
           tone: "speed"
         },
         {
-          label: "最快技巧",
-          value: fastestTag ? `${fastestTag.label} · ${formatSeconds(fastestTag.avgSec)}` : "尚無資料",
-          note: fastestTag ? `${fastestTag.correct}/${fastestTag.total} correct` : "tag 數不足時不顯示",
+          label: t("最快技巧"),
+          value: fastestTag ? `${fastestTag.label} · ${formatSeconds(fastestTag.avgSec)}` : t("尚無資料"),
+          note: fastestTag ? `${fastestTag.correct}/${fastestTag.total} correct` : t("tag 數不足時不顯示"),
           tone: "speed"
         },
         {
-          label: "最慢主題",
-          value: slowestTopic ? `${slowestTopic.label} · ${formatSeconds(slowestTopic.avgSec)}` : "尚無資料",
-          note: slowestTopic ? "優先檢查是否第一步判型太慢" : "未作答不列入秒數",
+          label: t("最慢主題"),
+          value: slowestTopic ? `${slowestTopic.label} · ${formatSeconds(slowestTopic.avgSec)}` : t("尚無資料"),
+          note: slowestTopic ? t("優先檢查是否第一步判型太慢") : t("未作答不列入秒數"),
           tone: "slow"
         },
         {
-          label: "錯誤最多技巧",
-          value: weakTag ? `${weakTag.label} · ${weakTag.wrong}/${weakTag.total}` : "尚無資料",
-          note: weakTag ? `失誤率 ${Math.round(weakTag.wrongRate * 100)}%` : "目前沒有明顯錯誤熱區",
+          label: t("錯誤最多技巧"),
+          value: weakTag ? `${weakTag.label} · ${weakTag.wrong}/${weakTag.total}` : t("尚無資料"),
+          note: weakTag ? `${t("失誤率 {v}%", { v: Math.round(weakTag.wrongRate * 100) })}` : t("目前沒有明顯錯誤熱區"),
           tone: "miss"
         },
         {
-          label: "難度斷點",
-          value: rankWall ? `${rankWall.label} · ${rankWall.correct}/${rankWall.total}` : "尚無資料",
-          note: rankWall ? `avg ${formatSeconds(rankWall.avgSec)}，錯 ${rankWall.wrong}` : "R5/R6 分層會在這裡顯示",
+          label: t("難度斷點"),
+          value: rankWall ? `${rankWall.label} · ${rankWall.correct}/${rankWall.total}` : t("尚無資料"),
+          note: rankWall ? `${t("avg {avgSec}，錯 {wrong}", { avgSec: formatSeconds(rankWall.avgSec), wrong: rankWall.wrong })}` : t("R5/R6 分層會在這裡顯示"),
           tone: "rank"
         }
       ]
@@ -14529,8 +14557,8 @@
   }
 
   function modeLabel(mode) {
-    if (mode === "path_gate") return "跳關小測驗";
-    if (mode === "named_exam") return "模擬考";
+    if (mode === "path_gate") return t("跳關小測驗");
+    if (mode === "named_exam") return t("模擬考");
     return MODES[mode] ? MODES[mode].label : "Quiz";
   }
 
@@ -14686,7 +14714,7 @@
 
   function topicCountText(topic) {
     const cap = activeDifficultyCap();
-    return `${difficultyScopedCount(cap, topic, "all")} 題`;
+    return `${t("{cap} 題", { cap: difficultyScopedCount(cap, topic, "all") })}`;
   }
 
   function packCountText(packKey) {
@@ -14700,10 +14728,10 @@
 
   function packAvailabilityText(packKey) {
     const current = packCountText(packKey);
-    if (selectedTopic === "all") return `${current} 題`;
+    if (selectedTopic === "all") return `${t("{current} 題", { current })}`;
     const total = packTotalCountText(packKey);
-    if (!current && total) return `0 / ${total} 題`;
-    return `${current} / ${total} 題`;
+    if (!current && total) return `${t("0 / {total} 題", { total })}`;
+    return `${t("{current} / {total} 題", { current, total })}`;
   }
 
   function topicChip(problem) {
@@ -14716,7 +14744,7 @@
   function sourceChip(problem) {
     const parts = [];
     if (problem.source) parts.push(escapeHtml(problem.source));
-    if (problem.school) parts.push(`${escapeHtml(problem.school)} 風格`);
+    if (problem.school) parts.push(`${t("{school} 風格", { school: escapeHtml(problem.school) })}`);
     // 來源聲明（原創／改編／取材）由 kernel/origin.js 提供。
     // school 那 135 題一律是「取材自風格的原創題」，不是該校真題 ——
     // 這件事必須讓人看得到，含糊其辭正是這個欄位要防的。
@@ -14726,8 +14754,8 @@
     // 「風格」兩個字太容易被讀成「這是該校的考古題」。
     // 一句話的說明放在 title 上，而且不是含糊的免責聲明，是直接講事實。
     const title = problem.school
-      ? `仿照 ${problem.school} 的出題習慣所寫的原創題，不是該校真題，也與該校無關`
-      : "題目來源聲明";
+      ? `${t("仿照 {school} 的出題習慣所寫的原創題，不是該校真題，也與該校無關", { school: problem.school })}`
+      : t("題目來源聲明");
     return `<span class="chip" title="${escapeAttr(title)}">${parts.join(" · ")}</span>`;
   }
 
@@ -14749,27 +14777,27 @@
     const reason = window.BuzzRubric.reasonFor(problem.id);
     const reviewed = window.BuzzRubric.isReviewed(problem.id);
     return `
-      <span class="chip rubric-chip${reviewed ? " is-reviewed" : ""}" title="${escapeAttr(`難度三軸（各 1–3）：解題步數 ${axes.steps} / 手法冷門度 ${axes.obscurity} / 計算量 ${axes.load}。${reason || ""}`)}">
-        步數 ${axes.steps} · 冷門 ${axes.obscurity} · 計算 ${axes.load}
+      <span class="chip rubric-chip${reviewed ? " is-reviewed" : ""}" title="${escapeAttr(`${t("難度三軸（各 1–3）：解題步數 {steps} / 手法冷門度 {obscurity} / 計算量 {load}。{v}", { steps: axes.steps, obscurity: axes.obscurity, load: axes.load, v: reason || "" })}`)}">
+        ${t("步數 {steps} · 冷門 {obscurity} · 計算 {load}", { steps: axes.steps, obscurity: axes.obscurity, load: axes.load })}
       </span>
     `;
   }
 
   function answerKindLabel(kind) {
     return {
-      numeric: "數值",
-      expression: "函數式",
-      antiderivative: "原函數",
-      text: "判定",
-      set: "集合",
-      interval: "區間",
-      graph: "選圖",
-      graphtap: "點位",
-      graphslope: "切線",
-      sketch: "作圖",
-      proof: "證明",
-      worksheet: "作圖表",
-      epsilon: "ε-δ 挑戰"
+      numeric: t("數值"),
+      expression: t("函數式"),
+      antiderivative: t("原函數"),
+      text: t("判定"),
+      set: t("集合"),
+      interval: t("區間"),
+      graph: t("選圖"),
+      graphtap: t("點位"),
+      graphslope: t("切線"),
+      sketch: t("作圖"),
+      proof: t("證明"),
+      worksheet: t("作圖表"),
+      epsilon: t("ε-δ 挑戰")
       // 少一個對應就會在題目上印出一個 undefined chip。
       // 加新 answerKind 的時候這裡是最容易忘記的地方 —— 實測就漏了。
     }[kind] || "";
@@ -14780,7 +14808,7 @@
   }
 
   function difficultyBadge(problem) {
-    const labels = ["", "暖身", "基礎", "標準", "進階", "Boss", "Boss+"];
+    const labels = ["", t("暖身"), t("基礎"), t("標準"), t("進階"), "Boss", "Boss+"];
     const level = problemRank(problem);
     return `${labels[level]} R${level}/6`;
   }
@@ -14795,15 +14823,15 @@
 
   function placeholderFor(problem) {
     if (problem.answerKind === "text") {
-      if (isConvergenceText(problem)) return "收斂 / 發散 / 條件收斂";
-      if ((problem.tags || []).includes("technique-recognition")) return "輸入技巧名稱（英文），例如 taylor、u-sub";
-      return "輸入文字答案（中英文皆可）";
+      if (isConvergenceText(problem)) return t("收斂 / 發散 / 條件收斂");
+      if ((problem.tags || []).includes("technique-recognition")) return t("輸入技巧名稱（英文），例如 taylor、u-sub");
+      return t("輸入文字答案（中英文皆可）");
     }
-    if (problem.answerKind === "set") return "例如：{-1, 3}（順序無所謂）";
-    if (problem.answerKind === "interval") return "例如：(-inf, 2) U [3, 5]";
-    if (problem.answerKind === "antiderivative") return "例如：x^2*ln(x)/2-x^2/4";
-    if (problem.answerKind === "expression") return "例如：2*x*sin(x)+x^2*cos(x)";
-    return "例如：pi/4 或 3/2";
+    if (problem.answerKind === "set") return t("例如：{-1, 3}（順序無所謂）");
+    if (problem.answerKind === "interval") return t("例如：(-inf, 2) U [3, 5]");
+    if (problem.answerKind === "antiderivative") return t("例如：x^2*ln(x)/2-x^2/4");
+    if (problem.answerKind === "expression") return t("例如：2*x*sin(x)+x^2*cos(x)");
+    return t("例如：pi/4 或 3/2");
   }
 
   function answerExamples(problem) {
@@ -14821,11 +14849,11 @@
     // 集合與區間的元素也是數字（{-2, 2}、(0, inf)），所以除了純文字判定題，
     // 其他都要有數字鍵，不然還是得回去叫系統鍵盤。
     const groups = problem.answerKind === "text"
-      ? [{ label: "判定", keys: ["convergent", "divergent", "conditional", "absolute", "DNE"] }]
+      ? [{ label: t("判定"), keys: ["convergent", "divergent", "conditional", "absolute", "DNE"] }]
       : problem.answerKind === "interval"
-        ? [{ label: "數字", keys: DIGIT_KEYS }, { label: "區間", keys: ["(", ")", "[", "]", ",", "U", "inf", "-inf", "pi", "/"] }]
+        ? [{ label: t("數字"), keys: DIGIT_KEYS }, { label: t("區間"), keys: ["(", ")", "[", "]", ",", "U", "inf", "-inf", "pi", "/"] }]
         : problem.answerKind === "set"
-          ? [{ label: "數字", keys: DIGIT_KEYS }, { label: "集合", keys: ["{", "}", ",", "pi", "sqrt(|)", "/"] }]
+          ? [{ label: t("數字"), keys: DIGIT_KEYS }, { label: t("集合"), keys: ["{", "}", ",", "pi", "sqrt(|)", "/"] }]
           : WEBWORK_KEY_GROUPS;
     // 數字鍵拆出來自己排成 3 欄的計算機配置。
     //
@@ -14835,9 +14863,9 @@
     // 函數鍵只顯示名字（sin、log…），按下去照樣插入 sin(|) 並把游標放進括號 ——
     // 計算機都是這樣，而「sqrt()」六個字在 44px 的鍵上會折成兩行。
     const toKey = (token) => ({ label: token.replace("(|)", "").replace("|", ""), insert: token });
-    const digits = groups.some((group) => group.label === "數字") ? DIGIT_KEYS.map(toKey) : [];
+    const digits = groups.some((group) => group.label === t("數字")) ? DIGIT_KEYS.map(toKey) : [];
     const rest = groups
-      .filter((group) => group.label !== "數字")
+      .filter((group) => group.label !== t("數字"))
       .flatMap((group) => group.keys.map(toKey));
     // 依題型把最常用的鍵排到第一排：積分題先看到 ^ / ( ) sqrt，極限題先看到 inf pi e。
     // 只調順序不換內容 —— 鍵在哪一排是習慣，鍵有沒有是功能。
@@ -14856,26 +14884,26 @@
   };
 
   function formatHelp(kind) {
-    if (kind === "text") return "可輸入 convergent / divergent / conditional";
-    if (kind === "numeric") return "支援分數、pi、e、sqrt、log";
+    if (kind === "text") return t("可輸入 convergent / divergent / conditional");
+    if (kind === "numeric") return t("支援分數、pi、e、sqrt、log");
     // 集合的順序不影響判分，區間的開閉會 —— 這兩件事都要先講清楚，
     // 不然使用者會為了猜格式而重打好幾次，那不是這題要考的東西。
-    if (kind === "set") return "元素用逗號隔開，順序不影響判分";
-    if (kind === "interval") return "端點用 ( ) 或 [ ]（開閉有差），聯集用 U，無窮寫 inf";
-    return "用 * 表乘法，用 ^ 表次方，例如 x^2";
+    if (kind === "set") return t("元素用逗號隔開，順序不影響判分");
+    if (kind === "interval") return t("端點用 ( ) 或 [ ]（開閉有差），聯集用 U，無窮寫 inf");
+    return t("用 * 表乘法，用 ^ 表次方，例如 x^2");
   }
 
   function answerReasonLabel(reason) {
     return {
-      Wrong: "答案不對",
-      Timeout: "時間到",
-      Skipped: "已跳過",
-      Unanswered: "未作答",
-      Unlearned: "還沒學過",
+      Wrong: t("答案不對"),
+      Timeout: t("時間到"),
+      Skipped: t("已跳過"),
+      Unanswered: t("未作答"),
+      Unlearned: t("還沒學過"),
       // 「切頁次數超過」這個判定已經移除，但舊紀錄裡可能還有這個 reason，
       // 標籤留著才不會在歷史畫面上顯示成原始字串
-      "Tab limit": "切頁次數超過（舊制，已停用）"
-    }[reason] || reason || "未通過";
+      "Tab limit": t("切頁次數超過（舊制，已停用）")
+    }[reason] || reason || t("未通過");
   }
 
   function displayAnswer(problem) {
@@ -14884,10 +14912,10 @@
   }
 
   function resultTitle(accuracy) {
-    if (accuracy >= 90) return "表現穩定";
-    if (accuracy >= 70) return "接近熟練";
-    if (accuracy >= 45) return "需要複習";
-    return "先重建基礎";
+    if (accuracy >= 90) return t("表現穩定");
+    if (accuracy >= 70) return t("接近熟練");
+    if (accuracy >= 45) return t("需要複習");
+    return t("先重建基礎");
   }
 
   function shuffle(items, seed) {
@@ -15490,5 +15518,14 @@
     startQuiz([shared], { modeKey: "practice", practice: true });
     render();
   });
-  render();
+  // 英文介面：題目的英文側表是延後載入的（中文使用者一個位元組都不用抓），
+  // 載完、把題庫換成英文之後才畫第一幀。載不到就照中文題幹畫，介面仍是英文。
+  if (window.BuzzI18n && window.BuzzI18n.lang !== "zh") {
+    ensureLazy("i18n")
+      .then(() => { window.BuzzI18n.localizeProblems(problems); })
+      .catch(() => {})
+      .then(render);
+  } else {
+    render();
+  }
 })();

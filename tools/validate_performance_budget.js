@@ -29,8 +29,13 @@ const BUDGETS = {
   // 2026-09-13 從 700 調到 720：初學者走查補進新手保護期、診斷式定位、
   // 考前衝刺卡（+14KB），同時把 TAG_LABELS 搬成 kernel/tag_labels.js（−7KB）。
   // 下一次撞頂不該再調數字 —— 該搬的是整頁的 render（首頁、結算、設定）。
-  "app.js 主程式": { pattern: /^src\/app\.js$/, budget: 720 * 1024 },
+  // 2026-09-28 720 → 736：英文版。1,800 個中文字串包成 t("…") 是純語法開銷（+14.6KB），
+  // 不是新功能長胖；量出來多少就加多少。功能再撞頂仍然照上一條：搬 render，不調數字。
+  "app.js 主程式": { pattern: /^src\/app\.js$/, budget: 736 * 1024 },
   "kernel 產生側表": { pattern: GENERATED_TABLES, budget: 500 * 1024 },
+  // 2026-09-28 新增：zh→en 介面字典（i18n_en.js）。每個使用者都會抓（模組初始化期就要有語言），
+  // 所以它有自己的上限；題目的英文側表走延後載入，不在這裡。
+  "語言字典（zh→en）": { pattern: /^src\/kernel\/i18n_en\.js$/, budget: 240 * 1024 },
   // 2026-09-13 200 → 260：kernel/proof_lang.js（句型、代數、規則三個引擎）59KB 一次進來。
   // 2026-09-14 260 → 280：proof_lang.js 101KB —— 收緊語法（接地、前提、符號正負引擎 parseTree/signOf、
   // 線性解 solveLinear、泰勒規則）。這是檢查器的骨幹，不是可以搬去別處的 render；再撞頂該做的是
@@ -55,7 +60,8 @@ const BUDGETS = {
   // 2026-09-24 新增這一類：index.html 上 type="text/lazy" 的檔案瀏覽器不會在首屏抓，
   // 進到需要它的頁面才載（目前是證明引擎三支）。它們跟首屏無關，預算也不該跟首屏的檔搶 ——
   // 但仍然要有上限：延後載入不是「隨便長」的許可證，載入那一刻使用者還是要等。
-  "延後載入（進到該頁才抓）": { pattern: /^$/, budget: 320 * 1024, lazy: true }
+  // 2026-09-28 320 → 460：題目的英文側表（i18n_problems_en.js）只在英文介面載，中文使用者零成本。
+  "延後載入（進到該頁才抓）": { pattern: /^$/, budget: 460 * 1024, lazy: true }
 };
 
 const html = fs.readFileSync(path.join(ROOT, "index.html"), "utf8");

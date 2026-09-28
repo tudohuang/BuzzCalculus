@@ -58,7 +58,12 @@ function start(root, port) {
       resolve({
         url: `http://127.0.0.1:${server.address().port}`,
         missing,
-        stop: () => new Promise((done) => server.close(done))
+        // Chrome 的 keep-alive 連線會讓 server.close 等到天荒地老（E2E 斷言失敗之後整支卡住、
+        // 真正的錯誤訊息印不出來）。先把連線全部切掉再關。
+        stop: () => new Promise((done) => {
+          if (typeof server.closeAllConnections === "function") server.closeAllConnections();
+          server.close(done);
+        })
       });
     });
   });

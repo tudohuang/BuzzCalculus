@@ -9,6 +9,9 @@
 
 (function () {
   "use strict";
+  // 語言層：t() 由 src/kernel/i18n.js 掛在 globalThis；node 的驗證器直接 require 這一支時沒有它，
+  // 就原樣印出（佔位符照填），所以每個模組都能單獨載入。
+  const t = typeof globalThis.t === "function" ? globalThis.t : (text, vars) => (vars ? String(text).replace(/\{(\w+)(?:\|[^}]*)?\}/g, (m, k) => (k in vars ? String(vars[k]) : m)) : text);
 
   function create(deps) {
     const { loadRecords, showAppNotice, abilityProfile, activityCounts, practiceStreakInfo, activeDaysInLastWeek, localDateKey, activityLevel, xpLevelInfo, siteUrl, problemById, problemRank, topicLabel } = deps;
@@ -69,7 +72,7 @@
       const records = loadRecords();
       const data = weeklyShareData(records);
       if (!data.answered) {
-        showAppNotice("這七天還沒有作答紀錄 —— 先練一場再來領戰報。");
+        showAppNotice(t("這七天還沒有作答紀錄 —— 先練一場再來領戰報。"));
         return;
       }
       const canvas = document.createElement("canvas");
@@ -87,7 +90,7 @@
 
       ctx.fillStyle = "#20211f";
       ctx.font = `800 54px ${ui}`;
-      ctx.fillText("BuzzCalculus 週報", 72, 128);
+      ctx.fillText(t("BuzzCalculus 週報"), 72, 128);
       ctx.fillStyle = "#6d6a60";
       ctx.font = `600 30px ${ui}`;
       const end = new Date();
@@ -103,17 +106,17 @@
         ctx.font = `700 32px ${ui}`;
         ctx.fillText(label, x, y + 48);
       };
-      stat(72, 340, data.answered, "題");
-      stat(400, 340, `${data.accuracy}%`, "正確率");
-      stat(732, 340, data.minutes, "分鐘");
-      stat(72, 540, data.days, "天有練");
-      stat(400, 540, data.streak, "連勝天數");
-      if (data.trend !== null) stat(732, 540, `${data.trend > 0 ? "+" : ""}${data.trend}`, "能力變化（7 天）");
+      stat(72, 340, data.answered, t("題"));
+      stat(400, 340, `${data.accuracy}%`, t("正確率"));
+      stat(732, 340, data.minutes, t("分鐘"));
+      stat(72, 540, data.days, t("天有練"));
+      stat(400, 540, data.streak, t("連勝天數"));
+      if (data.trend !== null) stat(732, 540, `${data.trend > 0 ? "+" : ""}${data.trend}`, t("能力變化（7 天）"));
 
       if (data.up) {
         ctx.fillStyle = "#14663f";
         ctx.font = `800 40px ${ui}`;
-        ctx.fillText(`本週進步最快：${data.up.label} +${data.up.delta}`, 72, 700);
+        ctx.fillText(`${t("本週進步最快：{label} +{delta}", { label: data.up.label, delta: data.up.delta })}`, 72, 700);
       }
 
       // 七天熱力條
@@ -135,7 +138,7 @@
 
       ctx.fillStyle = "#20211f";
       ctx.font = `700 34px ${ui}`;
-      ctx.fillText("每一題的答案都經過獨立數值驗算。", 72, 1180);
+      ctx.fillText(t("每一題的答案都經過獨立數值驗算。"), 72, 1180);
       ctx.fillStyle = "#6d6a60";
       ctx.font = `600 30px ${ui}`;
       ctx.fillText("buzz-calculus.vercel.app", 72, 1240);
@@ -194,7 +197,7 @@
       ctx.fillStyle = "#b8b3a4";
       ctx.font = `600 30px ${ui}`;
       const today = new Date();
-      ctx.fillText(`${today.getFullYear()}/${today.getMonth() + 1}/${today.getDate()} · 微積分反射訓練`, 72, 180);
+      ctx.fillText(`${t("{getFullYear}/{v}/{getDate} · 微積分反射訓練", { getFullYear: today.getFullYear(), v: today.getMonth() + 1, getDate: today.getDate() })}`, 72, 180);
 
       ctx.fillStyle = "#e4b447";
       ctx.font = `800 210px ${ui}`;
@@ -211,22 +214,22 @@
         ctx.font = `700 32px ${ui}`;
         ctx.fillText(label, x, y + 48);
       };
-      stat(72, 760, data.streak, "天連勝");
-      stat(400, 760, data.answered, "題累計");
-      stat(732, 760, `${data.accuracy}%`, "正確率");
-      stat(72, 960, data.week.answered, "本週題數");
-      stat(400, 960, data.week.days, "本週有練的天數");
-      stat(732, 960, data.week.minutes, "本週分鐘");
+      stat(72, 760, data.streak, t("天連勝"));
+      stat(400, 760, data.answered, t("題累計"));
+      stat(732, 760, `${data.accuracy}%`, t("正確率"));
+      stat(72, 960, data.week.answered, t("本週題數"));
+      stat(400, 960, data.week.days, t("本週有練的天數"));
+      stat(732, 960, data.week.minutes, t("本週分鐘"));
 
       if (data.today) {
         ctx.fillStyle = "#e4b447";
         ctx.font = `800 40px ${ui}`;
-        ctx.fillText(`今天啃下的最硬一題：R${data.today.rank} ${data.today.topic}${data.today.elapsed ? ` · ${data.today.elapsed} 秒` : ""}`, 72, 1100);
+        ctx.fillText(`${t("今天啃下的最硬一題：R{rank} {topic}", { rank: data.today.rank, topic: data.today.topic })}${data.today.elapsed ? ` ${t("· {elapsed} 秒", { elapsed: data.today.elapsed })}` : ""}`, 72, 1100);
       }
 
       ctx.fillStyle = "#f5f3ed";
       ctx.font = `700 34px ${ui}`;
-      ctx.fillText("每一題的答案都經過獨立數值驗算。", 72, 1180);
+      ctx.fillText(t("每一題的答案都經過獨立數值驗算。"), 72, 1180);
       ctx.fillStyle = "#b8b3a4";
       ctx.font = `600 30px ${ui}`;
       ctx.fillText("buzz-calculus.vercel.app", 72, 1240);
@@ -248,7 +251,7 @@
       const records = loadRecords();
       const data = achievementShareData(records);
       if (!data.answered) {
-        showAppNotice("還沒有作答紀錄 —— 先練一場，卡片才有東西可以秀。");
+        showAppNotice(t("還沒有作答紀錄 —— 先練一場，卡片才有東西可以秀。"));
         return;
       }
       const canvas = drawAchievementCard(data);
@@ -259,12 +262,12 @@
         const nav = window.navigator;
         const file = typeof File === "function" ? new File([blob], fileName, { type: "image/png" }) : null;
         if (file && nav && typeof nav.share === "function" && typeof nav.canShare === "function" && nav.canShare({ files: [file] })) {
-          nav.share({ files: [file], title: "BuzzCalculus", text: `Lv.${data.level} · 連勝 ${data.streak} 天 · ${siteUrl()}` })
+          nav.share({ files: [file], title: "BuzzCalculus", text: `${t("Lv.{level} · 連勝 {streak} 天 · {siteUrl}", { level: data.level, streak: data.streak, siteUrl: siteUrl() })}` })
             .catch(() => { /* 使用者取消分享：不下載、不吵 */ });
           return;
         }
         downloadBlob(blob, fileName);
-        showAppNotice("成就卡已存成 PNG，貼到 IG 或群組吧。");
+        showAppNotice(t("成就卡已存成 PNG，貼到 IG 或群組吧。"));
       }, "image/png");
     }
 
@@ -298,7 +301,7 @@
       ctx.fillRect(0, 0, 1080, 14);
       ctx.fillStyle = "#f5f3ed";
       ctx.font = `800 54px ${ui}`;
-      ctx.fillText("BuzzCalculus 每日一題", 72, 128);
+      ctx.fillText(t("BuzzCalculus 每日一題"), 72, 128);
       ctx.fillStyle = "#b8b3a4";
       ctx.font = `600 34px ${ui}`;
       ctx.fillText(data.dateKey, 72, 184);
@@ -307,15 +310,15 @@
       ctx.fillText(data.emoji, 64, 470);
       ctx.fillStyle = "#e4b447";
       ctx.font = `800 72px ${ui}`;
-      ctx.fillText(data.correct ? `R${data.rank} · ${data.elapsed} 秒` : `R${data.rank} · 明天再來`, 72, 620);
+      ctx.fillText(data.correct ? `${t("R{rank} · {elapsed} 秒", { rank: data.rank, elapsed: data.elapsed })}` : `${t("R{rank} · 明天再來", { rank: data.rank })}`, 72, 620);
       if (data.streak > 1) {
         ctx.fillStyle = "#f5f3ed";
         ctx.font = `700 48px ${ui}`;
-        ctx.fillText(`🔥 連續 ${data.streak} 天`, 72, 720);
+        ctx.fillText(`${t("🔥 連續 {streak} 天", { streak: data.streak })}`, 72, 720);
       }
       ctx.fillStyle = "#f5f3ed";
       ctx.font = `700 34px ${ui}`;
-      ctx.fillText("全站同一題，一天一次。你來試試？", 72, 900);
+      ctx.fillText(t("全站同一題，一天一次。你來試試？"), 72, 900);
       ctx.fillStyle = "#b8b3a4";
       ctx.font = `600 30px ${ui}`;
       ctx.fillText("buzz-calculus.vercel.app", 72, 960);
@@ -332,6 +335,9 @@
    純函式：只讀 problem.graph 與 opts，escapeAttr 由呼叫端傳進來。互動（點位、拖切線）的覆蓋層由 opts.overlay 給。 */
 (function () {
   "use strict";
+  // 語言層：t() 由 src/kernel/i18n.js 掛在 globalThis；node 的驗證器直接 require 這一支時沒有它，
+  // 就原樣印出（佔位符照填），所以每個模組都能單獨載入。
+  const t = typeof globalThis.t === "function" ? globalThis.t : (text, vars) => (vars ? String(text).replace(/\{(\w+)(?:\|[^}]*)?\}/g, (m, k) => (k in vars ? String(vars[k]) : m)) : text);
 
   function graphCurveFn(expr) {
     const cleaned = String(expr || "");
@@ -438,7 +444,7 @@
       : "";
     return `
       <div class="problem-graph ${opts.interactive ? "is-interactive" : ""}">
-        <svg viewBox="0 0 ${width} ${height}" role="img" aria-label="題目附圖"${interactiveAttrs}>${parts.join("")}</svg>
+        <svg viewBox="0 0 ${width} ${height}" role="img" aria-label="${t("題目附圖")}"${interactiveAttrs}>${parts.join("")}</svg>
       </div>
     `;
   }
@@ -485,7 +491,7 @@
       const path = pts.map((pt, i) => `${i ? "L" : "M"}${sx(pt[0]).toFixed(1)},${sy(pt[1]).toFixed(1)}`).join(" ");
       parts.push(`<path d="${path}" fill="none" stroke="var(--blue)" stroke-width="2" stroke-linejoin="round"/>`);
     });
-    return `<svg viewBox="0 0 ${width} ${height}" role="img" aria-label="候選圖形">${parts.join("")}</svg>`;
+    return `<svg viewBox="0 0 ${width} ${height}" role="img" aria-label="${t("候選圖形")}">${parts.join("")}</svg>`;
   }
 
   // 螢幕座標 → 數學座標。轉換參數（窗、內距、畫布大小）由
@@ -576,13 +582,13 @@
       return Math.max(1, Math.ceil(12 - weight));
     };
     const emptyText = (axis) => {
-      if (axis.confidence === undefined) return "未測";
+      if (axis.confidence === undefined) return t("未測");
       // stale = 碰過但信心不足 —— 可能是樣本太少，也可能是太久沒練衰減。
       // 對註冊第一天的人寫「該重測」像在指控他偷懶（實測回報原話：
       // 「這些技巧我從來沒被測過」）。「還測不準」兩種原因都誠實。
-      if (axis.stale) return "還測不準";
+      if (axis.stale) return t("還測不準");
       const remaining = remainingFor(axis);
-      return remaining >= 12 ? "未測" : `差 ${remaining} 題`;
+      return remaining >= 12 ? t("未測") : `${t("差 {remaining} 題", { remaining })}`;
     };
     const labels = axes
       .map((axis, index) => {
@@ -591,7 +597,7 @@
         const scoreText = axis.score === null ? emptyText(axis) : String(axis.score);
         return `
           <g class="radar-label ${axis.score === null ? "is-empty" : ""}">
-            <title>${escapeHtml(axis.label)}：${axis.score === null ? `${emptyText(axis)}（答滿 12 題就會亮起來）` : `${axis.score} 分`}</title>
+            <title>${escapeHtml(axis.label)}：${axis.score === null ? `${t("{axis}（答滿 12 題就會亮起來）", { axis: emptyText(axis) })}` : `${t("{score} 分", { score: axis.score })}`}</title>
             <text x="${x.toFixed(1)}" y="${(y - 1).toFixed(1)}" text-anchor="${anchor}">${escapeHtml(axis.label)}</text>
             <text class="radar-score" x="${x.toFixed(1)}" y="${(y + 11).toFixed(1)}" text-anchor="${anchor}">${escapeHtml(scoreText)}</text>
           </g>`;
@@ -608,25 +614,25 @@
     if (weakest) {
       takeaway = `
         <p class="radar-takeaway">
-          最弱：${escapeHtml(weakest.label)} ${weakest.score} 分。
-          <button class="link-button" data-action="practice-axis" data-axis="${escapeAttr(weakest.key)}">練 10 題 →</button>
+          ${t("最弱：{label} {score} 分。", { label: escapeHtml(weakest.label), score: weakest.score })}
+          <button class="link-button" data-action="practice-axis" data-axis="${escapeAttr(weakest.key)}">${t("練 10 題 →")}</button>
         </p>`;
     } else if (nearest) {
       takeaway = `
         <p class="radar-takeaway">
-          ${escapeHtml(nearest.label)}再答 ${remainingFor(nearest)} 題就會亮起來。
-          <button class="link-button" data-action="practice-axis" data-axis="${escapeAttr(nearest.key)}">現在練 →</button>
+          ${t("{label}再答 {nearest} 題就會亮起來。", { label: escapeHtml(nearest.label), nearest: remainingFor(nearest) })}
+          <button class="link-button" data-action="practice-axis" data-axis="${escapeAttr(nearest.key)}">${t("現在練 →")}</button>
         </p>`;
     } else {
-      takeaway = `<p class="radar-takeaway">還沒有雷達資料，先打一輪快速訓練。</p>`;
+      takeaway = `<p class="radar-takeaway">${t("還沒有雷達資料，先打一輪快速訓練。")}</p>`;
     }
     return `
       <div class="radar-panel">
         <div class="radar-head">
-          <strong>技巧精熟雷達</strong>
-          <span>最近作答加權正確率，久沒練會慢慢褪色。</span>
+          <strong>${t("技巧精熟雷達")}</strong>
+          <span>${t("最近作答加權正確率，久沒練會慢慢褪色。")}</span>
         </div>
-        <svg class="radar-svg" viewBox="0 0 280 240" role="img" aria-label="技巧精熟雷達">
+        <svg class="radar-svg" viewBox="0 0 280 240" role="img" aria-label="${t("技巧精熟雷達")}">
           ${rings}
           ${spokes}
           ${measured.length ? `<polygon class="radar-data" points="${dataPoints}"></polygon>${dots}` : ""}
@@ -656,7 +662,7 @@
       const weekStart = new Date(start);
       weekStart.setDate(start.getDate() + week * 7);
       const month = weekStart.getMonth();
-      monthCells.push(`<span>${month !== previousMonth ? `${month + 1}月` : ""}</span>`);
+      monthCells.push(`<span>${month !== previousMonth ? `${t("{v}月", { v: month + 1 })}` : ""}</span>`);
       previousMonth = month;
       for (let day = 0; day < 7; day += 1) {
         const date = new Date(weekStart);
@@ -668,7 +674,7 @@
         }
         const count = counts[key] || 0;
         const shielded = streakInfo.usedDates.has(key);
-        const title = `${key} · ${count} 題${shielded ? " · 盾牌保護" : ""}`;
+        const title = `${t("{key} · {count} 題", { key, count })}${shielded ? t(" · 盾牌保護") : ""}`;
         cells.push(`<span class="heatmap-cell ${shielded ? "is-shielded" : ""}" data-level="${activityLevel(count)}" title="${escapeAttr(title)}"></span>`);
       }
     }
@@ -676,21 +682,21 @@
       <section class="heatmap-panel">
         <div class="heatmap-head">
           <div>
-            <p class="section-label">練習熱力圖</p>
-            <h3>每天至少 1 題</h3>
+            <p class="section-label">${t("練習熱力圖")}</p>
+            <h3>${t("每天至少 1 題")}</h3>
           </div>
           <div class="streak-status">
-            <strong>連勝 ${streakInfo.streak} 天</strong>
-            <span class="shield-chip ${streakInfo.shieldAvailable ? "is-ready" : "is-used"}">${icon("shield")}盾牌${streakInfo.shieldAvailable ? "可用" : "本週已用"}</span>
+            <strong>${t("連勝 {streak} 天", { streak: streakInfo.streak })}</strong>
+            <span class="shield-chip ${streakInfo.shieldAvailable ? "is-ready" : "is-used"}">${icon("shield")}${t("盾牌")}${streakInfo.shieldAvailable ? t("可用") : t("本週已用")}</span>
           </div>
         </div>
         <div class="heatmap-wrap">
           <div class="heatmap-months" style="grid-template-columns: repeat(${HEATMAP_WEEKS}, 1fr);">${monthCells.join("")}</div>
           <div class="heatmap-grid">${cells.join("")}</div>
           <div class="heatmap-legend">
-            <span>少</span>
+            <span>${t("少")}</span>
             ${[0, 1, 2, 3, 4].map((level) => `<i class="heatmap-cell" data-level="${level}"></i>`).join("")}
-            <span>多</span>
+            <span>${t("多")}</span>
           </div>
         </div>
       </section>
@@ -707,9 +713,9 @@
     if (!points.length) {
       return `
         <section class="study-card">
-          <p class="section-label">速度 × 正確率</p>
-          <h3>還測不出來</h3>
-          <p class="panel-note">需要同一個技巧累積 8 題以上的限時作答。多打幾局限時訓練就會出現。</p>
+          <p class="section-label">${t("速度 × 正確率")}</p>
+          <h3>${t("還測不出來")}</h3>
+          <p class="panel-note">${t("需要同一個技巧累積 8 題以上的限時作答。多打幾局限時訓練就會出現。")}</p>
         </section>
       `;
     }
@@ -728,7 +734,7 @@
         const cx = x(entry.speed).toFixed(1);
         const cy = y(entry.pressureAccuracy).toFixed(1);
         return `<circle class="quad-dot is-${entry.quadrant.key}" cx="${cx}" cy="${cy}" r="5">
-          <title>${escapeHtml(entry.label)}：${entry.quadrant.label} · 正確率 ${Math.round(entry.pressureAccuracy * 100)}% · 相對耗時 ${entry.speed.toFixed(2)}</title>
+          <title>${t("{label}：{label2} · 正確率 {v}% · 相對耗時 {n}", { label: escapeHtml(entry.label), label2: entry.quadrant.label, v: Math.round(entry.pressureAccuracy * 100), n: entry.speed.toFixed(2) })}</title>
         </circle>`;
       })
       .join("");
@@ -738,29 +744,29 @@
       return acc;
     }, {});
     const legend = [
-      { key: "reflex", label: "反射區", note: "快又準" },
-      { key: "slow", label: "會但慢", note: "方法對、不熟" },
-      { key: "rushed", label: "衝太快", note: "讀題或代數不穩" },
-      { key: "unbuilt", label: "還沒建立", note: "缺技巧" }
+      { key: "reflex", label: t("反射區"), note: t("快又準") },
+      { key: "slow", label: t("會但慢"), note: t("方法對、不熟") },
+      { key: "rushed", label: t("衝太快"), note: t("讀題或代數不穩") },
+      { key: "unbuilt", label: t("還沒建立"), note: t("缺技巧") }
     ];
 
     return `
       <section class="study-card quadrant-card">
         <div class="panel-title-row">
           <div>
-            <p class="section-label">速度 × 正確率</p>
-            <h3>你是不會，還是來不及</h3>
+            <p class="section-label">${t("速度 × 正確率")}</p>
+            <h3>${t("你是不會，還是來不及")}</h3>
           </div>
         </div>
-        <svg class="quadrant-svg" viewBox="0 0 ${W} ${H}" role="img" aria-label="速度與正確率的四象限圖">
+        <svg class="quadrant-svg" viewBox="0 0 ${W} ${H}" role="img" aria-label="${t("速度與正確率的四象限圖")}">
           <line class="quad-axis" x1="${pad}" y1="${H - pad}" x2="${W - 8}" y2="${H - pad}"></line>
           <line class="quad-axis" x1="${pad}" y1="8" x2="${pad}" y2="${H - pad}"></line>
           <line class="quad-split" x1="${fastLine}" y1="8" x2="${fastLine}" y2="${H - pad}"></line>
           <line class="quad-split" x1="${pad}" y1="${accLine}" x2="${W - 8}" y2="${accLine}"></line>
-          <text class="quad-label" x="${pad}" y="${H - 10}">快</text>
-          <text class="quad-label" x="${W - 24}" y="${H - 10}">慢</text>
-          <text class="quad-label" x="6" y="16">準</text>
-          <text class="quad-label" x="6" y="${H - pad}">錯</text>
+          <text class="quad-label" x="${pad}" y="${H - 10}">${t("快")}</text>
+          <text class="quad-label" x="${W - 24}" y="${H - 10}">${t("慢")}</text>
+          <text class="quad-label" x="6" y="16">${t("準")}</text>
+          <text class="quad-label" x="6" y="${H - pad}">${t("錯")}</text>
           ${dots}
         </svg>
         <div class="quad-legend">
@@ -770,7 +776,7 @@
                 <div class="quad-legend-item is-${item.key}">
                   <span class="quad-swatch"></span>
                   <strong>${item.label}</strong>
-                  <small>${item.note} · ${counts[item.key] || 0} 個技巧</small>
+                  <small>${t("{note} · {v} 個技巧", { note: item.note, v: counts[item.key] || 0 })}</small>
                 </div>`
             )
             .join("")}
@@ -792,8 +798,8 @@
     if (!rows.length) {
       return `
         <section class="study-card">
-          <p class="section-label">技巧</p>
-          <h3>還沒有技巧測得準</h3>
+          <p class="section-label">${t("技巧")}</p>
+          <h3>${t("還沒有技巧測得準")}</h3>
         </section>
       `;
     }
@@ -802,8 +808,8 @@
       <section class="study-card skill-table-card">
         <div class="panel-title-row">
           <div>
-            <p class="section-label">技巧精熟度</p>
-            <h3>從最弱的開始</h3>
+            <p class="section-label">${t("技巧精熟度")}</p>
+            <h3>${t("從最弱的開始")}</h3>
           </div>
         </div>
         <ul class="skill-rows">
@@ -820,9 +826,9 @@
                   </div>
                   <div class="skill-bar"><div class="skill-fill" style="width:${pct}%"></div></div>
                   <div class="skill-row-meta">
-                    <span>${entry.n} 題</span>
-                    ${pa !== null ? `<span>限時 ${pa}%</span>` : ""}
-                    ${ua !== null ? `<span>不限時 ${ua}%</span>` : ""}
+                    <span>${t("{n} 題", { n: entry.n })}</span>
+                    ${pa !== null ? `<span>${t("限時 {pa}%", { pa })}</span>` : ""}
+                    ${ua !== null ? `<span>${t("不限時 {ua}%", { ua })}</span>` : ""}
                     ${entry.quadrant ? `<span>${escapeHtml(entry.quadrant.label)}</span>` : ""}
                   </div>
                   ${
@@ -836,7 +842,7 @@
         </ul>
         ${
           stale.length
-            ? `<p class="panel-note">另外有 ${stale.length} 個技巧碰過但還測不準 —— 樣本不夠，或太久沒練已經衰減。多練幾題就會進到這張表。</p>`
+            ? `<p class="panel-note">${t("另外有 {length} 個技巧碰過但還測不準 —— 樣本不夠，或太久沒練已經衰減。多練幾題就會進到這張表。", { length: stale.length })}</p>`
             : ""
         }
       </section>
@@ -857,6 +863,9 @@
    判分是純函式，驗證器與 smoke 在 node 裡直接呼叫；畫面的綁定另外一支。 */
 (function () {
   "use strict";
+  // 語言層：t() 由 src/kernel/i18n.js 掛在 globalThis；node 的驗證器直接 require 這一支時沒有它，
+  // 就原樣印出（佔位符照填），所以每個模組都能單獨載入。
+  const t = typeof globalThis.t === "function" ? globalThis.t : (text, vars) => (vars ? String(text).replace(/\{(\w+)(?:\|[^}]*)?\}/g, (m, k) => (k in vars ? String(vars[k]) : m)) : text);
 
   const fmt = (x) => {
     const r = Math.round(x * 10) / 10;
@@ -896,13 +905,13 @@
   // 全部判分都在這裡。回傳 { correct, message }，跟其他 checkXxx 一樣。
   function check(problem, input) {
     const fn = curveOf(problem);
-    if (!fn) return { correct: false, message: "這題的曲線式子壞了，不能判分。" };
+    if (!fn) return { correct: false, message: t("這題的曲線式子壞了，不能判分。") };
     const [xmin, xmax, ymin, ymax] = windowOf(problem);
     const W = xmax - xmin;
     const H = ymax - ymin;
     const strokes = parse(input);
     const pts = strokes.flat();
-    if (pts.length < 6) return { correct: false, message: "先在圖上把曲線畫出來，再送出。" };
+    if (pts.length < 6) return { correct: false, message: t("先在圖上把曲線畫出來，再送出。") };
 
     // 1. 垂直線測試：一筆之內 x 往回超過窗寬 8% 就不是函數的圖形
     for (const stroke of strokes) {
@@ -914,7 +923,7 @@
         else back = Math.max(back, dir * (peak - x));
       });
       if (back > 0.08 * W) {
-        return { correct: false, message: "函數的圖形不能往回折：同一個 x 只能對應一個 y。把往回的那一筆退掉重畫。" };
+        return { correct: false, message: t("函數的圖形不能往回折：同一個 x 只能對應一個 y。把往回的那一筆退掉重畫。") };
       }
     }
 
@@ -944,7 +953,7 @@
         if (userY(x) === null) missing.push(x);
       }
       if (missing.length > 0.2 * N) {
-        return { correct: false, message: `曲線要畫滿 x 從 ${fmt(a)} 到 ${fmt(b)} 這一段，現在 x ≈ ${fmt(missing[0])} 附近還是空的。` };
+        return { correct: false, message: `${t("曲線要畫滿 x 從 {a} 到 {b} 這一段，現在 x ≈ {v} 附近還是空的。", { a: fmt(a), b: fmt(b), v: fmt(missing[0]) })}` };
       }
     }
     // 2b. 段與段之間的縫隙（垂直漸近線、沒定義的地方）不能有點
@@ -953,7 +962,7 @@
       const gapB = pieces[i + 1][0];
       const inner = [gapA + (gapB - gapA) * 0.3, gapB - (gapB - gapA) * 0.3];
       if (sorted.some((p) => p[0] > inner[0] && p[0] < inner[1])) {
-        return { correct: false, message: `x ≈ ${fmt((gapA + gapB) / 2)} 附近 f 沒有定義（垂直漸近線），曲線不該穿過去 —— 兩邊要分開畫，各自往上或往下衝。` };
+        return { correct: false, message: `${t("x ≈ {v} 附近 f 沒有定義（垂直漸近線），曲線不該穿過去 —— 兩邊要分開畫，各自往上或往下衝。", { v: fmt((gapA + gapB) / 2) })}` };
       }
     }
 
@@ -984,9 +993,9 @@
         // 方向對、而且真的有起伏就算：門檻是 f 起伏的兩成或窗高的 8%，取小的 ——
         // 漸近線旁 f 衝到 ±∞（被窗夾住）時「兩成」會大到手畫追不上（模擬 840 筆手畫抓到的）。
         if (uy * fy > 0 && Math.abs(uy) >= Math.min(0.2 * Math.abs(fy), 0.08 * H)) continue;
-        const should = fy > 0 ? "遞增" : "遞減";
-        const drew = uy * fy < 0 ? `往${fy > 0 ? "下" : "上"}` : "幾乎是平的";
-        return { correct: false, message: `x 從 ${fmt(cuts[i])} 到 ${fmt(cuts[i + 1])} 這一段 f 應該${should}（f′ ${fy > 0 ? ">" : "<"} 0），你畫的${drew}。先找 f′ 的零點，再決定每一段往上還是往下。` };
+        const should = fy > 0 ? t("遞增") : t("遞減");
+        const drew = uy * fy < 0 ? `${t("往")}${fy > 0 ? t("下") : t("上")}` : t("幾乎是平的");
+        return { correct: false, message: `${t("x 從 {v} 到 {v2} 這一段 f 應該{should}（f′", { v: fmt(cuts[i]), v2: fmt(cuts[i + 1]), should })} ${fy > 0 ? ">" : "<"} ${t("0），你畫的{drew}。先找 f′ 的零點，再決定每一段往上還是往下。", { drew })}` };
       }
     }
 
@@ -1016,16 +1025,16 @@
         if (best > worst.err) worst = { err: best, x };
       }
     }
-    if (!total) return { correct: false, message: "畫的地方跟 f 有定義的範圍對不上。" };
+    if (!total) return { correct: false, message: t("畫的地方跟 f 有定義的範圍對不上。") };
     const ratio = ok / total;
     if (ratio < 0.8) {
       const truth = fn(worst.x);
       return {
         correct: false,
-        message: `增減方向都對了，但位置差太多：x ≈ ${fmt(worst.x)} 附近離正確曲線最遠。f(${fmt(worst.x)}) 應該是 ${fmt(truth)}，先把幾個關鍵點（零點、極值、截距）的值算出來再連線。`
+        message: `${t("增減方向都對了，但位置差太多：x ≈ {x} 附近離正確曲線最遠。f({x2}) 應該是 {truth}，先把幾個關鍵點（零點、極值、截距）的值算出來再連線。", { x: fmt(worst.x), x2: fmt(worst.x), truth: fmt(truth) })}`
       };
     }
-    return { correct: true, message: `圖形正確：每一段的增減都對，${Math.round(ratio * 100)}% 的取樣點在容差內。` };
+    return { correct: true, message: `${t("圖形正確：每一段的增減都對，{v}% 的取樣點在容差內。", { v: Math.round(ratio * 100) })}` };
   }
 
   // 畫面：空格子 + 已畫的筆畫；送出後疊上正確曲線（綠虛線）。
@@ -1060,24 +1069,24 @@
     };
     const count = (strokes || []).reduce((n, s) => n + s.length, 0);
     const pieces = piecesOf(problem);
-    const range = pieces.map(([a, b]) => `${fmt(a)} 到 ${fmt(b)}`).join("、");
+    const range = pieces.map(([a, b]) => `${t("{a} 到 {b}", { a: fmt(a), b: fmt(b) })}`).join("、");
     const tip = done
-      ? "綠色虛線是正確圖形，金色是你畫的。"
+      ? t("綠色虛線是正確圖形，金色是你畫的。")
       : erasing
-        ? "橡皮擦：在要擦掉的線上拖過去。再點一次橡皮擦回到畫筆。"
-        : `直接在格子上畫出 f 的圖形（x 從 ${range}）。可以分好幾筆；斷開的地方就分開畫。`;
+        ? t("橡皮擦：在要擦掉的線上拖過去。再點一次橡皮擦回到畫筆。")
+        : `${t("直接在格子上畫出 f 的圖形（x 從 {range}）。可以分好幾筆；斷開的地方就分開畫。", { range })}`;
     return `
       <div class="graph-interactive graph-sketch ${erasing ? "is-erasing" : ""}">
         ${h.renderProblemGraph(problem, { interactive: done ? null : "sketch", overlay })}
         <div class="helper-row">
           <span>${tip}</span>
-          <span class="slope-readout">已畫 <strong data-sketch-count>${(strokes || []).length}</strong> 筆</span>
+          <span class="slope-readout">${t("已畫")} <strong data-sketch-count>${(strokes || []).length}</strong> ${t("筆")}</span>
         </div>
         <div class="action-row">
-          <button class="button" data-action="submit-sketch" ${!done && count >= 6 ? "" : "disabled"}>${h.icon("check")}送出</button>
-          <button class="button ghost ${erasing ? "is-active" : ""}" data-action="sketch-tool" data-tool="${erasing ? "draw" : "erase"}" aria-pressed="${erasing ? "true" : "false"}" ${done ? "disabled" : ""}>${h.icon("eraser")}橡皮擦</button>
-          <button class="button ghost" data-action="undo-sketch" ${done || !(strokes || []).length ? "disabled" : ""}>退一筆</button>
-          <button class="button ghost" data-action="clear-sketch" ${done || !(strokes || []).length ? "disabled" : ""}>清除</button>
+          <button class="button" data-action="submit-sketch" ${!done && count >= 6 ? "" : "disabled"}>${h.icon("check")}${t("送出")}</button>
+          <button class="button ghost ${erasing ? "is-active" : ""}" data-action="sketch-tool" data-tool="${erasing ? "draw" : "erase"}" aria-pressed="${erasing ? "true" : "false"}" ${done ? "disabled" : ""}>${h.icon("eraser")}${t("橡皮擦")}</button>
+          <button class="button ghost" data-action="undo-sketch" ${done || !(strokes || []).length ? "disabled" : ""}>${t("退一筆")}</button>
+          <button class="button ghost" data-action="clear-sketch" ${done || !(strokes || []).length ? "disabled" : ""}>${t("清除")}</button>
         </div>
         ${h.extra || ""}
       </div>
@@ -1227,6 +1236,9 @@
    互動（畫線、橡皮擦、全螢幕）仍然在 app.js 綁事件。 */
 (function () {
   "use strict";
+  // 語言層：t() 由 src/kernel/i18n.js 掛在 globalThis；node 的驗證器直接 require 這一支時沒有它，
+  // 就原樣印出（佔位符照填），所以每個模組都能單獨載入。
+  const t = typeof globalThis.t === "function" ? globalThis.t : (text, vars) => (vars ? String(text).replace(/\{(\w+)(?:\|[^}]*)?\}/g, (m, k) => (k in vars ? String(vars[k]) : m)) : text);
 
   function render(o) {
     const { problem, disabled, boardTool, fullscreen, boardOpen, strokeCount,
@@ -1234,7 +1246,7 @@
       icon, escapeAttr, escapeHtml, PEN_SCALES, HIGHLIGHT_COLORS,
       PEN_COLORS, BOARD_SURFACES, renderPreviousBoard } = o;
     const surface = boardSurface();
-    const surfaceNext = surface === "paper" ? "換成黑板" : "換成方格紙";
+    const surfaceNext = surface === "paper" ? t("換成黑板") : t("換成方格紙");
     const penScale = PEN_SCALES.find((item) => item.key === penScaleKey()) || PEN_SCALES[1];
     const penColor = penColorSetting();
     const penNib = penNibSetting();
@@ -1243,63 +1255,63 @@
       <section class="scratchboard-shell ${boardOpen ? "is-open" : "is-collapsed"}">
         <div class="scratchboard-summary">
           <div>
-            <span>計算紙</span>
-            <strong data-board-count>${strokeCount ? `${strokeCount} 筆` : "手寫草稿"}</strong>
+            <span>${t("計算紙")}</span>
+            <strong data-board-count>${strokeCount ? `${t("{strokeCount} 筆", { strokeCount })}` : t("手寫草稿")}</strong>
           </div>
           <!-- 工具列的邏輯跟 GoodNotes 一樣：一顆工具 = 一個主要動作，
                再點一次已經選中的工具才打開它的細節（顏色、粗細、筆型／紙型）。
                這樣每一顆都保持一個字的寬度，細節不常駐在工具列上。 -->
-          <div class="board-tools" aria-label="計算紙工具">
+          <div class="board-tools" aria-label="${t("計算紙工具")}">
             ${
               boardOpen
                 ? `
-                  <span class="board-tool-group" role="group" aria-label="畫">
-                    <button class="icon-button tool-pen ${boardTool === "pen" ? "is-active" : ""}" type="button" data-board-action="tool" data-tool="pen" data-color="${escapeAttr(penColor)}" title="筆（再點一次選顏色與粗細）" aria-pressed="${boardTool === "pen" ? "true" : "false"}" ${disabled}>${icon("pen")}<i class="tool-swatch" aria-hidden="true"></i></button>
-                    <button class="icon-button tool-highlighter ${boardTool === "highlighter" ? "is-active" : ""}" type="button" data-board-action="tool" data-tool="highlighter" data-color="${escapeAttr(highlightColor)}" title="螢光筆（再點一次選顏色）" aria-pressed="${boardTool === "highlighter" ? "true" : "false"}" ${disabled}>${icon("highlighter")}<i class="tool-swatch" aria-hidden="true"></i></button>
-                    <button class="icon-button ${boardTool === "eraser" ? "is-active" : ""}" type="button" data-board-action="tool" data-tool="eraser" title="橡皮擦" aria-pressed="${boardTool === "eraser" ? "true" : "false"}" ${disabled}>${icon("eraser")}</button>
+                  <span class="board-tool-group" role="group" aria-label="${t("畫")}">
+                    <button class="icon-button tool-pen ${boardTool === "pen" ? "is-active" : ""}" type="button" data-board-action="tool" data-tool="pen" data-color="${escapeAttr(penColor)}" title="${t("筆（再點一次選顏色與粗細）")}" aria-pressed="${boardTool === "pen" ? "true" : "false"}" ${disabled}>${icon("pen")}<i class="tool-swatch" aria-hidden="true"></i></button>
+                    <button class="icon-button tool-highlighter ${boardTool === "highlighter" ? "is-active" : ""}" type="button" data-board-action="tool" data-tool="highlighter" data-color="${escapeAttr(highlightColor)}" title="${t("螢光筆（再點一次選顏色）")}" aria-pressed="${boardTool === "highlighter" ? "true" : "false"}" ${disabled}>${icon("highlighter")}<i class="tool-swatch" aria-hidden="true"></i></button>
+                    <button class="icon-button ${boardTool === "eraser" ? "is-active" : ""}" type="button" data-board-action="tool" data-tool="eraser" title="${t("橡皮擦")}" aria-pressed="${boardTool === "eraser" ? "true" : "false"}" ${disabled}>${icon("eraser")}</button>
                   </span>
-                  <span class="board-tool-group" role="group" aria-label="改">
-                    <button class="icon-button" type="button" data-board-action="undo" title="復原上一筆（兩指點一下也可以）" ${disabled}>${icon("undo")}</button>
-                    <button class="icon-button" type="button" data-board-action="redo" title="重做" ${disabled}>${icon("redo")}</button>
+                  <span class="board-tool-group" role="group" aria-label="${t("改")}">
+                    <button class="icon-button" type="button" data-board-action="undo" title="${t("復原上一筆（兩指點一下也可以）")}" ${disabled}>${icon("undo")}</button>
+                    <button class="icon-button" type="button" data-board-action="redo" title="${t("重做")}" ${disabled}>${icon("redo")}</button>
                   </span>
-                  <span class="board-tool-group" role="group" aria-label="紙">
-                    <button class="icon-button" type="button" data-board-action="clear" title="全部擦掉（可以重做救回來）" ${disabled}>${icon("trash")}</button>
-                    <button class="icon-button" type="button" data-board-action="surface" title="換紙" aria-haspopup="true" ${disabled}>${icon("grid")}</button>
+                  <span class="board-tool-group" role="group" aria-label="${t("紙")}">
+                    <button class="icon-button" type="button" data-board-action="clear" title="${t("全部擦掉（可以重做救回來）")}" ${disabled}>${icon("trash")}</button>
+                    <button class="icon-button" type="button" data-board-action="surface" title="${t("換紙")}" aria-haspopup="true" ${disabled}>${icon("grid")}</button>
                   </span>
-                  <button class="icon-button" type="button" data-board-action="fullscreen" title="${fullscreen ? "退出全螢幕" : "全螢幕書寫"}" ${disabled}>${icon(fullscreen ? "minimize" : "maximize")}</button>
+                  <button class="icon-button" type="button" data-board-action="fullscreen" title="${fullscreen ? t("退出全螢幕") : t("全螢幕書寫")}" ${disabled}>${icon(fullscreen ? "minimize" : "maximize")}</button>
                 `
                 : ""
             }
-            <button class="icon-button board-toggle" type="button" data-board-action="toggle" title="${boardOpen ? "收起計算紙" : "攤開計算紙"}" ${disabled}>${icon(boardOpen ? "chevron-up" : "chevron-down")}</button>
+            <button class="icon-button board-toggle" type="button" data-board-action="toggle" title="${boardOpen ? t("收起計算紙") : t("攤開計算紙")}" ${disabled}>${icon(boardOpen ? "chevron-up" : "chevron-down")}</button>
           </div>
         </div>
         ${
           boardOpen
             ? `<div class="board-surface">
-                <canvas class="blackboard" data-blackboard data-surface="${surface}" data-tool="${escapeAttr(boardTool)}" data-problem-id="${escapeAttr(problem.id)}" aria-label="手寫計算紙"></canvas>
+                <canvas class="blackboard" data-blackboard data-surface="${surface}" data-tool="${escapeAttr(boardTool)}" data-problem-id="${escapeAttr(problem.id)}" aria-label="${t("手寫計算紙")}"></canvas>
                 <!-- 螢光筆書寫中的即時預覽層：半透明的筆畫不能逐段疊在主畫布上（接點會變深），
                      所以寫的時候畫在這一層，收筆再整筆落到主畫布。 -->
                 <canvas class="board-live" data-board-live aria-hidden="true"></canvas>
-                <p class="board-empty-hint" data-board-empty-hint ${strokeCount ? "hidden" : ""} aria-hidden="true">${icon("pen")}<span>在這裡算，算完再填答案</span></p>
+                <p class="board-empty-hint" data-board-empty-hint ${strokeCount ? "hidden" : ""} aria-hidden="true">${icon("pen")}<span>${t("在這裡算，算完再填答案")}</span></p>
                 <div class="board-popover" data-board-popover="pen" hidden>
-                  <div class="popover-row" role="group" aria-label="顏色">
+                  <div class="popover-row" role="group" aria-label="${t("顏色")}">
                     ${PEN_COLORS.map((item) => `<button type="button" class="swatch ${item.key === penColor ? "is-active" : ""}" data-board-action="set-color" data-color="${item.key}" title="${escapeAttr(item.label)}" aria-label="${escapeAttr(item.label)}" style="--swatch:${item.swatch}"></button>`).join("")}
                   </div>
-                  <div class="popover-row" role="group" aria-label="粗細">
-                    ${PEN_SCALES.map((item) => `<button type="button" class="scale-pick ${item.key === penScale.key ? "is-active" : ""}" data-board-action="set-pen-scale" data-scale="${item.key}" title="${escapeAttr(item.label)}" aria-label="筆寬 ${escapeAttr(item.label)}"><i style="--pen-dot:${item.dot}px"></i></button>`).join("")}
+                  <div class="popover-row" role="group" aria-label="${t("粗細")}">
+                    ${PEN_SCALES.map((item) => `<button type="button" class="scale-pick ${item.key === penScale.key ? "is-active" : ""}" data-board-action="set-pen-scale" data-scale="${item.key}" title="${escapeAttr(item.label)}" aria-label="${t("筆寬 {label}", { label: escapeAttr(item.label) })}"><i style="--pen-dot:${item.dot}px"></i></button>`).join("")}
                   </div>
-                  <div class="popover-row popover-segment" role="group" aria-label="筆型">
-                    <button type="button" class="${penNib === "fountain" ? "is-active" : ""}" data-board-action="set-nib" data-nib="fountain" aria-pressed="${penNib === "fountain" ? "true" : "false"}">鋼筆<small>有粗細</small></button>
-                    <button type="button" class="${penNib === "ball" ? "is-active" : ""}" data-board-action="set-nib" data-nib="ball" aria-pressed="${penNib === "ball" ? "true" : "false"}">原子筆<small>等寬</small></button>
+                  <div class="popover-row popover-segment" role="group" aria-label="${t("筆型")}">
+                    <button type="button" class="${penNib === "fountain" ? "is-active" : ""}" data-board-action="set-nib" data-nib="fountain" aria-pressed="${penNib === "fountain" ? "true" : "false"}">${t("鋼筆")}<small>${t("有粗細")}</small></button>
+                    <button type="button" class="${penNib === "ball" ? "is-active" : ""}" data-board-action="set-nib" data-nib="ball" aria-pressed="${penNib === "ball" ? "true" : "false"}">${t("原子筆")}<small>${t("等寬")}</small></button>
                   </div>
                 </div>
                 <div class="board-popover" data-board-popover="highlighter" hidden>
-                  <div class="popover-row" role="group" aria-label="螢光筆顏色">
+                  <div class="popover-row" role="group" aria-label="${t("螢光筆顏色")}">
                     ${HIGHLIGHT_COLORS.map((item) => `<button type="button" class="swatch is-highlight ${item.key === highlightColor ? "is-active" : ""}" data-board-action="set-color" data-color="${item.key}" title="${escapeAttr(item.label)}" aria-label="${escapeAttr(item.label)}" style="--swatch:${item.swatch}"></button>`).join("")}
                   </div>
                 </div>
                 <div class="board-popover" data-board-popover="surface" hidden>
-                  <div class="popover-row popover-papers" role="group" aria-label="紙型">
+                  <div class="popover-row popover-papers" role="group" aria-label="${t("紙型")}">
                     ${BOARD_SURFACES.map((item) => `<button type="button" class="paper-pick ${item.key === surface ? "is-active" : ""}" data-board-action="set-surface" data-surface="${item.key}" aria-pressed="${item.key === surface ? "true" : "false"}"><i data-surface="${item.key}"></i><span>${escapeHtml(item.label)}</span></button>`).join("")}
                   </div>
                 </div>
@@ -1319,8 +1331,11 @@
    純畫面：spec、文字、報告、要不要即時三色，全部由呼叫端決定。 */
 (function () {
   "use strict";
+  // 語言層：t() 由 src/kernel/i18n.js 掛在 globalThis；node 的驗證器直接 require 這一支時沒有它，
+  // 就原樣印出（佔位符照填），所以每個模組都能單獨載入。
+  const t = typeof globalThis.t === "function" ? globalThis.t : (text, vars) => (vars ? String(text).replace(/\{(\w+)(?:\|[^}]*)?\}/g, (m, k) => (k in vars ? String(vars[k]) : m)) : text);
 
-  const WORDS = ["任取 ", "取 ", "假設 ", "則 ", "由定理 ", "因為 ", "所以 ", "故 "];
+  const WORDS = [t("任取 "), t("取 "), t("假設 "), t("則 "), t("由定理 "), t("因為 "), t("所以 "), t("故 ")];
 
   function render(options) {
     const { spec, text, done, live, examMode, report, escapeHtml, escapeAttr, icon, renderVerdict, renderLines, extra } = options;
@@ -1328,14 +1343,14 @@
       <div class="proof-answer">
         <div class="pl-goal math-block" data-tex="${escapeAttr(spec.prompt)}"></div>
         <p class="panel-note">${escapeHtml(spec.statement)}</p>
-        <div class="pl-templates" aria-label="句型">
+        <div class="pl-templates" aria-label="${t("句型")}">
           ${WORDS.map((word) => `<button type="button" class="pl-template" data-action="pl-insert" data-text="${escapeAttr(word)}">${escapeHtml(word.trim())}</button>`).join("")}
         </div>
-        <textarea data-proof-answer rows="8" spellcheck="false" placeholder="一行一句。可以用中文、英文或 LaTeX 寫。" ${done ? "disabled" : ""}>${escapeHtml(text)}</textarea>
+        <textarea data-proof-answer rows="8" spellcheck="false" placeholder="${t("一行一句。可以用中文、英文或 LaTeX 寫。")}" ${done ? "disabled" : ""}>${escapeHtml(text)}</textarea>
         ${live && report ? `<div class="proof-answer-report">${renderVerdict(report)}${renderLines(report)}</div>` : ""}
-        ${examMode && !done ? `<p class="panel-note">模擬考不給即時判讀：寫完按送出，判分跟練習時同一套檢查器。</p>` : ""}
+        ${examMode && !done ? `<p class="panel-note">${t("模擬考不給即時判讀：寫完按送出，判分跟練習時同一套檢查器。")}</p>` : ""}
         <div class="action-row">
-          <button class="button" data-action="submit-proof" ${done || !String(text).trim() ? "disabled" : ""}>${icon("send")}送出證明</button>
+          <button class="button" data-action="submit-proof" ${done || !String(text).trim() ? "disabled" : ""}>${icon("send")}${t("送出證明")}</button>
         </div>
         ${extra || ""}
       </div>
@@ -1347,6 +1362,9 @@
 
 (function () {
   "use strict";
+  // 語言層：t() 由 src/kernel/i18n.js 掛在 globalThis；node 的驗證器直接 require 這一支時沒有它，
+  // 就原樣印出（佔位符照填），所以每個模組都能單獨載入。
+  const t = typeof globalThis.t === "function" ? globalThis.t : (text, vars) => (vars ? String(text).replace(/\{(\w+)(?:\|[^}]*)?\}/g, (m, k) => (k in vars ? String(vars[k]) : m)) : text);
 
   const GUTTER = 12;
   const state = { steps: [], at: 0, name: "", deps: null, nodes: null, onDone: null, bound: null };
@@ -1379,9 +1397,9 @@
         <h2 id="tour-title" data-tour-title></h2>
         <p class="tour-body" data-tour-body></p>
         <div class="tour-actions">
-          <button type="button" class="tour-skip" data-tour-skip>略過</button>
+          <button type="button" class="tour-skip" data-tour-skip>${t("略過")}</button>
           <span class="tour-spacer"></span>
-          <button type="button" class="tour-back" data-tour-back>上一步</button>
+          <button type="button" class="tour-back" data-tour-back>${t("上一步")}</button>
           <button type="button" class="tour-next" data-tour-next></button>
         </div>
       </section>`;
@@ -1434,11 +1452,11 @@
     } else {
       nodes.hole.style.display = "none";
     }
-    nodes.count.textContent = `導覽 ${state.at + 1} / ${state.steps.length}`;
+    nodes.count.textContent = `${t("導覽 {v} / {length}", { v: state.at + 1, length: state.steps.length })}`;
     nodes.title.textContent = step.title;
     nodes.body.textContent = step.body;
     nodes.back.hidden = state.at === 0;
-    nodes.next.textContent = state.at === state.steps.length - 1 ? "開始使用" : "下一步";
+    nodes.next.textContent = state.at === state.steps.length - 1 ? t("開始使用") : t("下一步");
     place(nodes.card, rect);
   }
 
@@ -1529,52 +1547,52 @@
         id: "today",
         view: "home",
         targets: ['[data-action="start-planned"]', '[data-action="start-mode"]', ".home-primary"],
-        title: "每天從這裡開始",
-        body: "今天的訓練已經排好：到期的錯題、你最弱的技巧、一點新東西。按下去就開始，不用自己挑。"
+        title: t("每天從這裡開始"),
+        body: t("今天的訓練已經排好：到期的錯題、你最弱的技巧、一點新東西。按下去就開始，不用自己挑。")
       },
       {
         id: "train",
         targets: ['.nav-button[data-action="open-train"]', '[data-action="open-train"]'],
-        title: "想練特定的東西就進訓練",
-        body: "四種練法：照主線走、補弱點、模擬考、挑戰題。難度會跟著你的表現自己調。"
+        title: t("想練特定的東西就進訓練"),
+        body: t("四種練法：照主線走、補弱點、模擬考、挑戰題。難度會跟著你的表現自己調。")
       },
       {
         id: "library",
         targets: ['.nav-button[data-action="open-library"]', '[data-action="open-library"]'],
-        title: "題庫可以自己挑題",
-        body: "搜技巧、搜題號都可以，找到的題目可以直接開一局。入門課程與證明訓練也在這一區。"
+        title: t("題庫可以自己挑題"),
+        body: t("搜技巧、搜題號都可以，找到的題目可以直接開一局。入門課程與證明訓練也在這一區。")
       },
       {
         id: "insights",
         targets: ['.nav-button[data-action="open-insights"]', '[data-action="open-insights"]'],
-        title: "數據會說你是哪一種錯",
-        body: "分得出「不會」還是「來不及」，也看得到哪個技巧在退步。錯題會自動排程回鍋。"
+        title: t("數據會說你是哪一種錯"),
+        body: t("分得出「不會」還是「來不及」，也看得到哪個技巧在退步。錯題會自動排程回鍋。")
       },
       {
         id: "settings",
         targets: ['.nav-button[data-action="open-settings"]', '[data-action="open-settings"]'],
-        title: "紀錄只存在這台裝置",
-        body: "不用註冊。要換裝置就在設定頁匯出備份，導覽也可以在這裡再看一次。"
+        title: t("紀錄只存在這台裝置"),
+        body: t("不用註冊。要換裝置就在設定頁匯出備份，導覽也可以在這裡再看一次。")
       }
     ],
     quiz: () => [
       {
         id: "prompt",
         targets: [".quiz-screen .prompt", ".problem-card"],
-        title: "一次一題，答完就知道對錯",
-        body: "答錯不會只跟你說錯：下面會一段一段揭解法，你可以只看第一段就自己接下去。"
+        title: t("一次一題，答完就知道對錯"),
+        body: t("答錯不會只跟你說錯：下面會一段一段揭解法，你可以只看第一段就自己接下去。")
       },
       {
         id: "hint",
         targets: ['[data-action="show-hint"]', ".problem-tools"],
-        title: "卡住先看提示，不要硬撐",
-        body: "提示分層給，一次一層。練習模式不扣分，正式局才會記。"
+        title: t("卡住先看提示，不要硬撐"),
+        body: t("提示分層給，一次一層。練習模式不扣分，正式局才會記。")
       },
       {
         id: "board",
         targets: ['[data-board-action="toggle"]', ".scratchboard-summary", ".scratchboard-shell"],
-        title: "計算紙在這裡",
-        body: "手寫算式不用另外拿紙。打開計算紙的時候這一題的倒數會暫停，寫算不會被秒數懲罰。"
+        title: t("計算紙在這裡"),
+        body: t("手寫算式不用另外拿紙。打開計算紙的時候這一題的倒數會暫停，寫算不會被秒數懲罰。")
       }
     ]
   };
@@ -1594,28 +1612,31 @@
    驗證與存檔仍在 app.js。2026-09-24 從 app.js 搬出來（主程式撞 720KB 預算）。 */
 (function () {
   "use strict";
+  // 語言層：t() 由 src/kernel/i18n.js 掛在 globalThis；node 的驗證器直接 require 這一支時沒有它，
+  // 就原樣印出（佔位符照填），所以每個模組都能單獨載入。
+  const t = typeof globalThis.t === "function" ? globalThis.t : (text, vars) => (vars ? String(text).replace(/\{(\w+)(?:\|[^}]*)?\}/g, (m, k) => (k in vars ? String(vars[k]) : m)) : text);
   function render(options) {
     const { draft, editingId, topics, answerKindLabel, escapeHtml, escapeAttr, icon } = options;
     const needsVariable = draft.answerKind === "expression" || draft.answerKind === "antiderivative";
     const answerHelp = {
-      numeric: "數值答案，可用 1/2、pi/4、sqrt(2)、ln(2) 這類寫法。",
-      expression: "寫成變數的函數，例如 2*x*cos(x^2)。系統會多點代入判分。",
-      antiderivative: "原函數，可省略 +C，例如 x*ln(x)-x。判分時檢查是否只差常數。",
-      text: "判定型答案，用逗號列出所有可接受的寫法，例如：收斂, converges。"
+      numeric: t("數值答案，可用 1/2、pi/4、sqrt(2)、ln(2) 這類寫法。"),
+      expression: t("寫成變數的函數，例如 2*x*cos(x^2)。系統會多點代入判分。"),
+      antiderivative: t("原函數，可省略 +C，例如 x*ln(x)-x。判分時檢查是否只差常數。"),
+      text: t("判定型答案，用逗號列出所有可接受的寫法，例如：收斂, converges。")
     }[draft.answerKind];
-    const difficultyLabels = { 1: "R1 暖身", 2: "R2 基礎", 3: "R3 標準", 4: "R4 進階" };
+    const difficultyLabels = { 1: t("R1 暖身"), 2: t("R2 基礎"), 3: t("R3 標準"), 4: t("R4 進階") };
     return `
       <section class="study-card creator-form">
         <div class="panel-title-row">
           <div>
-            <p class="section-label">${editingId ? "編輯題目" : "新題目"}</p>
-            <h3>${editingId ? escapeHtml(editingId) : "先驗證，才進題庫"}</h3>
+            <p class="section-label">${editingId ? t("編輯題目") : t("新題目")}</p>
+            <h3>${editingId ? escapeHtml(editingId) : t("先驗證，才進題庫")}</h3>
           </div>
-          ${editingId ? `<button class="button ghost" data-action="creator-new">${icon("x")}取消編輯</button>` : ""}
+          ${editingId ? `<button class="button ghost" data-action="creator-new">${icon("x")}${t("取消編輯")}</button>` : ""}
         </div>
         <div class="creator-fields">
           <label>
-            <span>主題</span>
+            <span>${t("主題")}</span>
             <select data-creator-field="topic">
               ${Object.entries(topics)
                 .filter(([key]) => key !== "all")
@@ -1624,46 +1645,46 @@
             </select>
           </label>
           <label>
-            <span>難度</span>
+            <span>${t("難度")}</span>
             <select data-creator-field="difficulty">
               ${[1, 2, 3, 4].map((level) => `<option value="${level}" ${String(draft.difficulty) === String(level) ? "selected" : ""}>${difficultyLabels[level]}</option>`).join("")}
             </select>
           </label>
           <label>
-            <span>作答型態</span>
+            <span>${t("作答型態")}</span>
             <select data-creator-field="answerKind">
               ${["numeric", "expression", "antiderivative", "text"].map((kind) => `<option value="${kind}" ${draft.answerKind === kind ? "selected" : ""}>${answerKindLabel(kind)}</option>`).join("")}
             </select>
           </label>
           <label>
-            <span>時限（秒）</span>
+            <span>${t("時限（秒）")}</span>
             <input type="number" min="10" max="600" data-creator-field="timeLimit" value="${escapeAttr(draft.timeLimit)}" />
           </label>
           ${
             needsVariable
-              ? `<label><span>變數</span><input maxlength="1" data-creator-field="variable" value="${escapeAttr(draft.variable)}" placeholder="x" /></label>`
+              ? `<label><span>${t("變數")}</span><input maxlength="1" data-creator-field="variable" value="${escapeAttr(draft.variable)}" placeholder="x" /></label>`
               : ""
           }
           <label class="creator-wide">
-            <span>題目（LaTeX，不用寫 $）</span>
+            <span>${t("題目（LaTeX，不用寫 $）")}</span>
             <textarea data-creator-field="prompt" rows="3" placeholder="\\lim_{x \\to 0}\\frac{\\sin x}{x}">${escapeHtml(draft.prompt)}</textarea>
           </label>
           <div class="creator-preview creator-wide">
-            <span>預覽</span>
+            <span>${t("預覽")}</span>
             <div class="math-block" data-creator-preview data-tex="${escapeAttr(draft.prompt)}"></div>
           </div>
           <label class="creator-wide">
-            <span>答案</span>
-            <input data-creator-field="answer" value="${escapeAttr(draft.answer)}" placeholder="${draft.answerKind === "text" ? "收斂, converges" : "例如 1/2 或 pi/4"}" />
+            <span>${t("答案")}</span>
+            <input data-creator-field="answer" value="${escapeAttr(draft.answer)}" placeholder="${draft.answerKind === "text" ? t("收斂, converges") : t("例如 1/2 或 pi/4")}" />
           </label>
           <p class="panel-note creator-wide">${escapeHtml(answerHelp)}</p>
           <label class="creator-wide">
-            <span>解說（答錯的人會看到，建議寫）</span>
-            <textarea data-creator-field="solution" rows="2" placeholder="為什麼答案是這個？一兩句就好。">${escapeHtml(draft.solution)}</textarea>
+            <span>${t("解說（答錯的人會看到，建議寫）")}</span>
+            <textarea data-creator-field="solution" rows="2" placeholder="${t("為什麼答案是這個？一兩句就好。")}">${escapeHtml(draft.solution)}</textarea>
           </label>
         </div>
         <div class="action-row">
-          <button class="button" data-action="creator-save">${icon("check")}驗證並${editingId ? "更新" : "加入"}</button>
+          <button class="button" data-action="creator-save">${icon("check")}${t("驗證並")}${editingId ? t("更新") : t("加入")}</button>
         </div>
       </section>
     `;
@@ -1683,6 +1704,9 @@
    畫面只是讓人看見自己在做什麼。 */
 (function () {
   "use strict";
+  // 語言層：t() 由 src/kernel/i18n.js 掛在 globalThis；node 的驗證器直接 require 這一支時沒有它，
+  // 就原樣印出（佔位符照填），所以每個模組都能單獨載入。
+  const t = typeof globalThis.t === "function" ? globalThis.t : (text, vars) => (vars ? String(text).replace(/\{(\w+)(?:\|[^}]*)?\}/g, (m, k) => (k in vars ? String(vars[k]) : m)) : text);
 
   const WIDTH = 340;
   const HEIGHT = 250;
@@ -1737,17 +1761,17 @@
       if (!result.ok) {
         return {
           correct: false,
-          message: `第 ${i + 1} 關（ε=${levels[i]}）的 δ=${deltas[i]} 不成立：x≈${Number(result.worstX).toFixed(3)} 時 |f(x)−L|≈${Number(result.worstGap).toFixed(3)} 已經超出 ε。`
+          message: `${t("第 {v} 關（ε={v2}）的 δ={v3} 不成立：x≈{n} 時 |f(x)−L|≈{n2} 已經超出 ε。", { v: i + 1, v2: levels[i], v3: deltas[i], n: Number(result.worstX).toFixed(3), n2: Number(result.worstGap).toFixed(3) })}`
         };
       }
     }
     if (deltas.length < levels.length) {
       return {
         correct: false,
-        message: `前 ${deltas.length} 關成立，但還有 ${levels.length - deltas.length} 關沒完成 —— ∀ε 的意思是每一個 ε 都要行。`
+        message: `${t("前 {length} 關成立，但還有 {v} 關沒完成 —— ∀ε 的意思是每一個 ε 都要行。", { length: deltas.length, v: levels.length - deltas.length })}`
       };
     }
-    return { correct: true, message: `${levels.length} 關都成立：ε 每縮一次你都找得到對應的 δ —— 那就是「極限存在」的定義。` };
+    return { correct: true, message: `${t("{length} 關都成立：ε 每縮一次你都找得到對應的 δ —— 那就是「極限存在」的定義。", { length: levels.length })}` };
   }
 
   function curvePath(f, spec, sx, sy, win, inside) {
@@ -1822,13 +1846,13 @@
             </span>`).join("")}
         </div>
         <svg class="eps-svg" viewBox="0 0 ${WIDTH} ${HEIGHT}" role="img"
-          aria-label="第 ${level + 1} 關：ε=${eps}，目前 δ=${delta.toFixed(3)}，${probe.ok ? "曲線都在帶內" : "有一段跑出帶外"}">
+          aria-label="${t("第 {v} 關：ε={eps}，目前 δ={n}，", { v: level + 1, eps, n: delta.toFixed(3) })}${probe.ok ? t("曲線都在帶內") : t("有一段跑出帶外")}">
           ${parts.join("")}
         </svg>
         <p class="eps-status ${probe.ok ? "is-ok" : "is-bad"}">
           ${probe.ok
-            ? `這個 δ 成立：帶內最遠也只差 ${probe.worstGap.toFixed(4)} &lt; ε`
-            : `還不行：x≈${Number.isFinite(probe.worstX) ? Number(probe.worstX).toFixed(3) : "?"} 時差了 ${Number.isFinite(probe.worstGap) ? probe.worstGap.toFixed(4) : "∞"}，超過 ε=${eps}`}
+            ? `${t("這個 δ 成立：帶內最遠也只差 {n} &lt; ε", { n: probe.worstGap.toFixed(4) })}`
+            : `${t("還不行：x≈{v} 時差了 {v2}，超過 ε={eps}", { v: Number.isFinite(probe.worstX) ? Number(probe.worstX).toFixed(3) : "?", v2: Number.isFinite(probe.worstGap) ? probe.worstGap.toFixed(4) : "∞", eps })}`}
         </p>
         ${done ? "" : `
           <label class="eps-slider">
@@ -1836,8 +1860,8 @@
             <input type="range" data-eps-delta min="${(step * 2).toFixed(5)}" max="${max}" step="${step.toFixed(5)}" value="${delta}">
           </label>
           <div class="action-row eps-actions">
-            <button class="button" data-action="epsilon-submit">${icon("check")}這一關用這個 δ</button>
-            <span class="eps-tries">${tries ? `這一關試過 ${tries} 次` : "把 δ 拖到曲線整段落在綠帶裡"}</span>
+            <button class="button" data-action="epsilon-submit">${icon("check")}${t("這一關用這個 δ")}</button>
+            <span class="eps-tries">${tries ? `${t("這一關試過 {tries} 次", { tries })}` : t("把 δ 拖到曲線整段落在綠帶裡")}</span>
           </div>`}
         ${state.note ? `<p class="eps-note">${escapeHtml(state.note)}</p>` : ""}
       </section>
@@ -1872,6 +1896,9 @@
    選項都由呼叫端算好傳進來。判分、吸附、狀態都還在 app.js。 */
 (function () {
   "use strict";
+  // 語言層：t() 由 src/kernel/i18n.js 掛在 globalThis；node 的驗證器直接 require 這一支時沒有它，
+  // 就原樣印出（佔位符照填），所以每個模組都能單獨載入。
+  const t = typeof globalThis.t === "function" ? globalThis.t : (text, vars) => (vars ? String(text).replace(/\{(\w+)(?:\|[^}]*)?\}/g, (m, k) => (k in vars ? String(vars[k]) : m)) : text);
 
   // 點位題：圖上點出位置。overlay 會畫已標的點（金色）與送出後的正解（綠圈）。
   function renderTap(options) {
@@ -1898,11 +1925,11 @@
       <div class="graph-interactive">
         ${renderProblemGraph(problem, { interactive: done ? null : "tap", overlay })}
         <div class="helper-row">
-          <span>${done ? "綠圈是正確位置，對照一下你標的點。" : `直接點在圖上（點到的位置會吸附到曲線）· 已標 ${marks.length} / ${targets.length}，點錯再點一次取消`}</span>
+          <span>${done ? t("綠圈是正確位置，對照一下你標的點。") : `${t("直接點在圖上（點到的位置會吸附到曲線）· 已標 {length} / {length2}，點錯再點一次取消", { length: marks.length, length2: targets.length })}`}</span>
         </div>
         <div class="action-row">
-          <button class="button" data-action="submit-graphtap" ${!done && marks.length === targets.length ? "" : "disabled"}>${icon("check")}送出</button>
-          <button class="button ghost" data-action="clear-graphtap" ${done || !marks.length ? "disabled" : ""}>清除重點</button>
+          <button class="button" data-action="submit-graphtap" ${!done && marks.length === targets.length ? "" : "disabled"}>${icon("check")}${t("送出")}</button>
+          <button class="button ghost" data-action="clear-graphtap" ${done || !marks.length ? "disabled" : ""}>${t("清除重點")}</button>
         </div>
       </div>
     `;
@@ -1913,7 +1940,7 @@
   function renderChoice(options) {
     const { choices, disabled, wrongExpr, window: win, domain, renderMiniGraph, escapeAttr, escapeHtml, extra } = options;
     return `
-      <div class="graph-choice-grid" role="radiogroup" aria-label="選擇正確的圖形">
+      <div class="graph-choice-grid" role="radiogroup" aria-label="${t("選擇正確的圖形")}">
         ${choices
           .map((choice, index) => {
             const letter = String.fromCharCode(65 + index);
@@ -1921,7 +1948,7 @@
             return `
               <button class="graph-choice ${wrong ? "is-wrong" : ""}" type="button"
                 data-action="choose-answer" data-choice="${escapeAttr(choice.expr)}" ${disabled}
-                aria-label="選項 ${letter}">
+                aria-label="${t("選項 {letter}", { letter })}">
                 <span class="graph-choice-letter">${letter}</span>
                 ${renderMiniGraph(choice.expr, win, domain)}
                 ${wrong && choice.why ? `<small class="graph-choice-why">${escapeHtml(choice.why)}</small>` : ""}
@@ -1930,7 +1957,7 @@
           .join("")}
       </div>
       <div class="helper-row">
-        <span>四張圖只有一張的 f′、f″ 與定義域全部對得上</span>
+        <span>${t("四張圖只有一張的 f′、f″ 與定義域全部對得上")}</span>
       </div>
       ${extra}
     `;
@@ -1951,6 +1978,9 @@
      3. 最近用過的三包釘在最上面。挑題包這件事重複性很高。 */
 (function () {
   "use strict";
+  // 語言層：t() 由 src/kernel/i18n.js 掛在 globalThis；node 的驗證器直接 require 這一支時沒有它，
+  // 就原樣印出（佔位符照填），所以每個模組都能單獨載入。
+  const t = typeof globalThis.t === "function" ? globalThis.t : (text, vars) => (vars ? String(text).replace(/\{(\w+)(?:\|[^}]*)?\}/g, (m, k) => (k in vars ? String(vars[k]) : m)) : text);
 
   function matches(pack, key, query) {
     if (!query) return true;
@@ -1972,7 +2002,7 @@
           <span class="pack-card-count">${empty ? "0" : count}</span>
         </span>
         ${pack.note ? `<small>${escapeHtml(pack.note)}</small>` : ""}
-        ${active ? `<span class="pack-card-mark">${icon("check")}正在用</span>` : ""}
+        ${active ? `<span class="pack-card-mark">${icon("check")}${t("正在用")}</span>` : ""}
       </button>`;
   }
 
@@ -1998,25 +2028,25 @@
     return `
       <details class="pack-chooser" data-keep="pack-picker" ${open ? "open" : ""}>
         <summary>
-          <span class="pack-chooser-label">題包</span>
+          <span class="pack-chooser-label">${t("題包")}</span>
           <strong>${escapeHtml(current.label)}</strong>
-          <span class="pack-chooser-count">${counts[selected] === undefined ? "" : `${counts[selected]} 題`}</span>
+          <span class="pack-chooser-count">${counts[selected] === undefined ? "" : `${t("{v} 題", { v: counts[selected] })}`}</span>
           ${icon("chevron-down")}
         </summary>
         <div class="pack-panel">
           <label class="pack-search">
-            <span class="sr-only">搜尋題包</span>
+            <span class="sr-only">${t("搜尋題包")}</span>
             ${icon("search")}
-            <input data-pack-search type="search" value="${escapeAttr(q)}" placeholder="打「分部」「級數」或「Taylor」" />
+            <input data-pack-search type="search" value="${escapeAttr(q)}" placeholder="${t("打「分部」「級數」或「Taylor」")}" />
           </label>
           ${selected !== "all" ? `
             <div class="pack-current">
-              <span>正在用：<strong>${escapeHtml(current.label)}</strong></span>
-              <button type="button" class="button ghost" data-action="library-pack-pick" data-pack="all">${icon("x")}不限題包</button>
+              <span>${t("正在用：")}<strong>${escapeHtml(current.label)}</strong></span>
+              <button type="button" class="button ghost" data-action="library-pack-pick" data-pack="all">${icon("x")}${t("不限題包")}</button>
             </div>` : ""}
           ${recentKeys.length ? `
             <section class="pack-group">
-              <h4>最近用過</h4>
+              <h4>${t("最近用過")}</h4>
               <div class="pack-grid">${recentKeys.map((key) => card(key, packs[key], options)).join("")}</div>
             </section>` : ""}
           ${shownGroups.map(({ group, keys }) => `
@@ -2024,13 +2054,13 @@
               <h4>${escapeHtml(group.label)}${group.note ? `<small>${escapeHtml(group.note)}</small>` : ""}</h4>
               <div class="pack-grid">${keys.map((key) => card(key, packs[key], options)).join("")}</div>
             </section>`).join("")}
-          ${hitCount ? "" : `<p class="pack-none">沒有題包叫「${escapeHtml(q)}」。試試「分部」「級數」「多變數」。</p>`}
+          ${hitCount ? "" : `<p class="pack-none">${t("沒有題包叫「{q}」。試試「分部」「級數」「多變數」。", { q: escapeHtml(q) })}</p>`}
           ${empties.length ? `
             <details class="pack-empty-more">
-              <summary>另有 ${empties.length} 包在目前的篩選下是 0 題</summary>
+              <summary>${t("另有 {length} 包在目前的篩選下是 0 題", { length: empties.length })}</summary>
               <div class="pack-grid">${empties.map((key) => card(key, packs[key], options)).join("")}</div>
             </details>` : ""}
-          ${activeFilters ? `<p class="pack-hint">${escapeHtml(activeFilters)}<button type="button" class="link-button" data-action="library-clear-filters">清掉這些條件</button></p>` : ""}
+          ${activeFilters ? `<p class="pack-hint">${escapeHtml(activeFilters)}<button type="button" class="link-button" data-action="library-clear-filters">${t("清掉這些條件")}</button></p>` : ""}
         </div>
       </details>
     `;
@@ -2045,6 +2075,9 @@
    都由呼叫端傳進來（quiz.systemKeyboard / quiz.keypadOpen 的預設值仍在 app.js 決定）。 */
 (function () {
   "use strict";
+  // 語言層：t() 由 src/kernel/i18n.js 掛在 globalThis；node 的驗證器直接 require 這一支時沒有它，
+  // 就原樣印出（佔位符照填），所以每個模組都能單獨載入。
+  const t = typeof globalThis.t === "function" ? globalThis.t : (text, vars) => (vars ? String(text).replace(/\{(\w+)(?:\|[^}]*)?\}/g, (m, k) => (k in vars ? String(vars[k]) : m)) : text);
 
   function render(options) {
     const {
@@ -2056,7 +2089,7 @@
     // 已判定（答對/答錯/逾時）之後，「可送出」是謊話 —— 送出鈕已 disable，
     // 但綠色的狀態 pill 還在慫恿人按（二輪實測：逾時後照樣寫著可送出）。
     const syntax = quiz.feedback
-      ? { label: "已判定", className: "is-empty" }
+      ? { label: t("已判定"), className: "is-empty" }
       : answerSyntaxInfo(problem, quiz.draft);
     const examples = answerExamples(problem);
 
@@ -2085,27 +2118,27 @@
     const extrasOpen = quiz.keypadOpen;
     const previewBlock = `
         <div class="answer-preview webwork-preview">
-          <span>預覽</span>
+          <span>${t("預覽")}</span>
           <div class="answer-preview-math math-inline ${hasDraft ? "" : "is-empty"}" data-answer-preview data-tex="${escapeAttr(previewTex)}">${renderLiteTex(previewTex, false)}</div>
         </div>`;
     return `
       <section class="webwork-answer ${compact ? "is-docked" : ""}">
         <div class="webwork-head">
           <div>
-            <span>作答</span>
+            <span>${t("作答")}</span>
             <strong>${answerKindLabel(problem.answerKind)}</strong>
           </div>
           <span class="syntax-pill ${syntax.className}" data-syntax-status>${syntax.label}</span>
         </div>
         <form class="answer-panel webwork-form" data-action="submit-answer">
-        <label class="sr-only" for="answer">答案</label>
+        <label class="sr-only" for="answer">${t("答案")}</label>
         <input id="answer" class="answer-input ${quiz.feedback ? (quiz.feedback.status === "correct" ? "is-correct" : "is-wrong") : ""}" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="done" inputmode="${suppressKeyboard ? "none" : "text"}" value="${escapeAttr(quiz.draft)}" placeholder="${placeholderFor(problem)}" ${disabled} />
         ${
           touchDevice
-            ? `<button class="icon-button keyboard-toggle ${quiz.systemKeyboard ? "is-active" : ""}" type="button" data-action="toggle-system-keyboard" title="${quiz.systemKeyboard ? "改用畫面上的數學鍵盤" : "叫出系統鍵盤"}" aria-pressed="${quiz.systemKeyboard ? "true" : "false"}" ${disabled}>${icon("keyboard")}</button>`
+            ? `<button class="icon-button keyboard-toggle ${quiz.systemKeyboard ? "is-active" : ""}" type="button" data-action="toggle-system-keyboard" title="${quiz.systemKeyboard ? t("改用畫面上的數學鍵盤") : t("叫出系統鍵盤")}" aria-pressed="${quiz.systemKeyboard ? "true" : "false"}" ${disabled}>${icon("keyboard")}</button>`
             : ""
         }
-        <button class="button" type="submit" ${disabled}>${icon("send")}送出</button>
+        <button class="button" type="submit" ${disabled}>${icon("send")}${t("送出")}</button>
         </form>
         <!-- 預覽：打了東西才出現在抽屜外面。它回答的是「我打的被讀成什麼」，
              那是送出前唯一能自我檢查的地方，收進抽屜等於沒有；但空的時候
@@ -2115,30 +2148,30 @@
              （手寫 E2E 量到板子被壓成 353px 就是這樣抓到的）。 -->
         ${!compact && hasDraft ? previewBlock : ""}
         <button class="webwork-extras-toggle" type="button" data-action="toggle-keypad" aria-expanded="${extrasOpen ? "true" : "false"}" ${disabled}>
-          <span>${icon(extrasOpen ? "chevron-up" : "chevron-down")}${suppressKeyboard ? "數學鍵盤" : "輸入工具"}</span>
-          <small>${extrasOpen ? "符號鍵 · 範例" : suppressKeyboard ? "點開才能打字" : "符號鍵 · 範例"}</small>
+          <span>${icon(extrasOpen ? "chevron-up" : "chevron-down")}${suppressKeyboard ? t("數學鍵盤") : t("輸入工具")}</span>
+          <small>${extrasOpen ? t("符號鍵 · 範例") : suppressKeyboard ? t("點開才能打字") : t("符號鍵 · 範例")}</small>
         </button>
         <div class="webwork-extras ${extrasOpen ? "is-open" : "is-collapsed"}">
           ${compact ? previewBlock : ""}
-          <div class="webwork-examples" aria-label="常用答案格式">
-            ${examples.map((item) => `<button type="button" data-insert-example="${escapeAttr(item)}" ${disabled}>${escapeHtml(item)}</button>`).join("")}${canReadInk(problem) ? `<button type="button" class="ink-read-button" data-action="read-ink" ${disabled}>讀取手寫 →</button>` : ""}
-            <button type="button" data-action="clear-answer" ${disabled}>清除</button>
+          <div class="webwork-examples" aria-label="${t("常用答案格式")}">
+            ${examples.map((item) => `<button type="button" data-insert-example="${escapeAttr(item)}" ${disabled}>${escapeHtml(item)}</button>`).join("")}${canReadInk(problem) ? `<button type="button" class="ink-read-button" data-action="read-ink" ${disabled}>${t("讀取手寫 →")}</button>` : ""}
+            <button type="button" data-action="clear-answer" ${disabled}>${t("清除")}</button>
           </div>
           ${(() => {
             const keys = webworkKeys(problem);
             const button = (key) => `<button type="button" data-insert="${escapeAttr(key.insert)}" ${disabled}>${escapeHtml(key.label)}</button>`;
             return `
-          <div class="keypad webwork-keypad" aria-label="快速輸入">
+          <div class="keypad webwork-keypad" aria-label="${t("快速輸入")}">
             ${keys.digits.length ? `<div class="keypad-digits">${keys.digits.map(button).join("")}</div>` : ""}
             <div class="keypad-rest">
-              ${keys.rest.map(button).join("")}<button type="button" class="keypad-backspace" data-action="answer-backspace" title="退格" ${disabled}>⌫</button>
+              ${keys.rest.map(button).join("")}<button type="button" class="keypad-backspace" data-action="answer-backspace" title="${t("退格")}" ${disabled}>⌫</button>
             </div>
           </div>`;
           })()}
           <div class="helper-row webwork-helper">
             <span>${formatHelp(problem.answerKind)}</span>
-            <span>不定積分可省略 +C</span>
-            <span>送出前先看預覽</span>
+            <span>${t("不定積分可省略 +C")}</span>
+            <span>${t("送出前先看預覽")}</span>
           </div>
         </div>
         ${compact ? "" : renderStepChecker(problem)}
