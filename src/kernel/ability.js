@@ -15,6 +15,9 @@
 
 (function () {
   "use strict";
+  // 語言層：t() 由 src/kernel/i18n.js 掛在 globalThis；node 的驗證器直接 require 這一支時沒有它，
+  // 就原樣印出（佔位符照填），所以每個模組都能單獨載入。
+  const t = typeof globalThis.t === "function" ? globalThis.t : (text, vars) => (vars ? String(text).replace(/\{(\w+)(?:\|[^}]*)?\}/g, (m, k) => (k in vars ? String(vars[k]) : m)) : text);
 
   /* ── 參數 ────────────────────────────────────────────────────
      每個常數都要能解釋為什麼，否則就會變成沒人敢動的魔術數字。 */
@@ -43,10 +46,10 @@
 
   // 精熟度分級。門檻要能對應到明確的訓練動作，不然分級只是裝飾。
   const STATES = [
-    { max: 39, state: "weak", label: "還沒建立" },
-    { max: 64, state: "shaky", label: "會但不穩" },
-    { max: 84, state: "solid", label: "穩了" },
-    { max: 100, state: "reflex", label: "反射" }
+    { max: 39, state: "weak", label: t("還沒建立") },
+    { max: 64, state: "shaky", label: t("會但不穩") },
+    { max: 84, state: "solid", label: t("穩了") },
+    { max: 100, state: "reflex", label: t("反射") }
   ];
 
   // 不限時的模式。以 src/app.js 的 MODES 為準：只有 practice flag
@@ -58,13 +61,13 @@
   // 這裡的預設只是為了讓 kernel 單獨在 node 裡也跑得動。
   const DEFAULT_AXES = [
     { key: "taylor", label: "Taylor" },
-    { key: "substitution", label: "換元" },
-    { key: "ibp", label: "分部" },
-    { key: "partial_fraction", label: "部分分式" },
-    { key: "improper", label: "瑕積分" },
-    { key: "series", label: "級數" },
-    { key: "multivariable", label: "多變數" },
-    { key: "special", label: "特殊函數" }
+    { key: "substitution", label: t("換元") },
+    { key: "ibp", label: t("分部") },
+    { key: "partial_fraction", label: t("部分分式") },
+    { key: "improper", label: t("瑕積分") },
+    { key: "series", label: t("級數") },
+    { key: "multivariable", label: t("多變數") },
+    { key: "special", label: t("特殊函數") }
   ];
 
   // 既有的 ERROR_TAGS 是中文，能力模型要用穩定的 key。
@@ -368,10 +371,10 @@
     if (speed === null || pressureAccuracy === null) return null;
     const fast = speed < FAST_RATIO;
     const accurate = pressureAccuracy >= SOLID_ACCURACY;
-    if (fast && accurate) return { key: "reflex", label: "反射區", advice: "拉高難度或進 Boss" };
-    if (!fast && accurate) return { key: "slow", label: "會但慢", advice: "同技巧限時訓練，時限逐次收緊" };
-    if (fast && !accurate) return { key: "rushed", label: "衝太快", advice: "練習模式 + 標註錯因" };
-    return { key: "unbuilt", label: "還沒建立", advice: "看關鍵一句 + 三層提示 + 慢練" };
+    if (fast && accurate) return { key: "reflex", label: t("反射區"), advice: t("拉高難度或進 Boss") };
+    if (!fast && accurate) return { key: "slow", label: t("會但慢"), advice: t("同技巧限時訓練，時限逐次收緊") };
+    if (fast && !accurate) return { key: "rushed", label: t("衝太快"), advice: t("練習模式 + 標註錯因") };
+    return { key: "unbuilt", label: t("還沒建立"), advice: t("看關鍵一句 + 三層提示 + 慢練") };
   }
 
   /* ── 6. 診斷：這個技巧到底怎麼了 ────────────────────────────
@@ -381,19 +384,19 @@
     const { pressureAccuracy: pa, untimedAccuracy: ua, gap, timeoutRate, wrongRate } = entry;
 
     if (gap !== null && gap >= GAP_PRESSURE && ua !== null && ua >= 0.7) {
-      return { key: "pressure", text: "你會做，是壓力下垮掉", advice: "同技巧限時重練，時限設在你自己的中位數 ×1.2" };
+      return { key: "pressure", text: t("你會做，是壓力下垮掉"), advice: t("同技巧限時重練，時限設在你自己的中位數 ×1.2") };
     }
     if (pa !== null && ua !== null && Math.abs(gap) < 0.1 && pa < 0.5 && ua < 0.5) {
-      return { key: "unknown", text: "這個技巧還沒建立", advice: "先看關鍵一句 + 慢練 5 題不限時" };
+      return { key: "unknown", text: t("這個技巧還沒建立"), advice: t("先看關鍵一句 + 慢練 5 題不限時") };
     }
     if (timeoutRate !== null && timeoutRate > 0.3) {
-      return { key: "timeout", text: "不是不會，是來不及", advice: "練熟不練新，同一批題重複到反射" };
+      return { key: "timeout", text: t("不是不會，是來不及"), advice: t("練熟不練新，同一批題重複到反射") };
     }
     if (wrongRate !== null && timeoutRate !== null && wrongRate > timeoutRate * 2 && wrongRate > 0.3) {
-      return { key: "wrong", text: "時間夠但做錯，是方法問題", advice: "補技巧本身，先別加速" };
+      return { key: "wrong", text: t("時間夠但做錯，是方法問題"), advice: t("補技巧本身，先別加速") };
     }
     if (pa !== null && pa >= 0.8 && (ua === null || ua >= 0.8)) {
-      return { key: "reflex", text: "這題型你已經反射", advice: "提高難度或拉長複習間隔" };
+      return { key: "reflex", text: t("這題型你已經反射"), advice: t("提高難度或拉長複習間隔") };
     }
     return null;
   }

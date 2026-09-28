@@ -29,7 +29,8 @@ if (!tableSource) {
   process.exit(1);
 }
 const declared = new Map();
-[...tableSource.matchAll(/^\s*([a-z_][a-z0-9_]*):\s*"([^"]*)"/gm)].forEach((m) => {
+// 事件說明是 UI 字串（隱私頁會列出來），所以包在 t("…") 裡；不包的舊寫法也認。
+[...tableSource.matchAll(/^\s*([a-z_][a-z0-9_]*):\s*(?:t\()?"([^"]*)"/gm)].forEach((m) => {
   declared.set(m[1], m[2]);
 });
 if (!declared.size) fail("事件表是空的");

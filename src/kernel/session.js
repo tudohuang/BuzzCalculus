@@ -19,6 +19,9 @@
 
 (function () {
   "use strict";
+  // 語言層：t() 由 src/kernel/i18n.js 掛在 globalThis；node 的驗證器直接 require 這一支時沒有它，
+  // 就原樣印出（佔位符照填），所以每個模組都能單獨載入。
+  const t = typeof globalThis.t === "function" ? globalThis.t : (text, vars) => (vars ? String(text).replace(/\{(\w+)(?:\|[^}]*)?\}/g, (m, k) => (k in vars ? String(vars[k]) : m)) : text);
 
   /* ── 可重現的亂數 ─────────────────────────────────────────── */
 
@@ -75,16 +78,16 @@
       const loosened = Object.assign({}, filter);
       delete loosened.minRank;
       delete loosened.maxRank;
-      steps.push({ note: "放寬難度範圍", filter: loosened });
+      steps.push({ note: t("放寬難度範圍"), filter: loosened });
     }
 
     // 第二階：技巧擴大到同一個 family（同家族的題練起來仍然有遷移效果）
     if (filter.skills && filter.skills.length) {
-      steps.push({ note: "擴大到同家族技巧", filter: { families: true, skills: filter.skills } });
+      steps.push({ note: t("擴大到同家族技巧"), filter: { families: true, skills: filter.skills } });
     }
 
     // 第三階：只剩題數要求，什麼都收
-    steps.push({ note: "改用一般練習題補滿", filter: {} });
+    steps.push({ note: t("改用一般練習題補滿"), filter: {} });
     return steps;
   }
 
@@ -205,7 +208,7 @@
       const short = recipe.count - picked.length;
       const got = take(shuffle(pool, seed + 7), short, "filler");
       if (got > 0) {
-        meta.fallbacks.push({ role: "filler", label: "補滿", note: "題庫可用題不足，改抽一般練習題", count: got });
+        meta.fallbacks.push({ role: "filler", label: t("補滿"), note: t("題庫可用題不足，改抽一般練習題"), count: got });
       }
     }
 
@@ -273,8 +276,8 @@
     if (!meta || !meta.fallbacks || !meta.fallbacks.length) return "";
     const first = meta.fallbacks[0];
     const extra = meta.fallbacks.length - 1;
-    const base = `${first.label}${first.note}（${first.count} 題）`;
-    return extra > 0 ? `${base}，另有 ${extra} 項調整` : base;
+    const base = `${t("{label}{note}（{count} 題）", { label: first.label, note: first.note, count: first.count })}`;
+    return extra > 0 ? `${t("{base}，另有 {extra} 項調整", { base, extra })}` : base;
   }
 
   const api = {

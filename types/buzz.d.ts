@@ -39,6 +39,8 @@ interface BuzzProblem {
 interface BuzzSettings {
   /** 一次顯示全部功能（預設 false：功能跟著練習逐步出現） */
   showAllFeatures?: boolean;
+  /** 介面語言；沒設就跟瀏覽器（src/kernel/i18n.js 的 detect） */
+  lang?: "zh" | "en";
   difficultyCap?: number;
   penColor?: string;
   penNib?: string;
@@ -306,7 +308,30 @@ interface Navigator {
 
 /* ── window 上的模組與資料 ────────────────────────────────────────── */
 
+/** src/kernel/i18n.js：語言層。t("中文") 以原文當 key 查 zh→en 字典；語言在載入時定案。 */
+interface BuzzI18nApi {
+  lang: "zh" | "en";
+  locale: string;
+  supported: string[];
+  setting: string;
+  detected: "zh" | "en";
+  t(text: string, vars?: Record<string, unknown>): string;
+  fill(text: string, vars?: Record<string, unknown>): string;
+  register(code: string, table: Record<string, string>): void;
+  registerProblems(code: string, table: Record<string, any>): void;
+  problemOverlay(id: string): any;
+  localizeProblems<T>(list: T[]): T[];
+  missing: Set<string>;
+  hasDictionary(code: string): boolean;
+  dictionary(code: string): Record<string, string>;
+  problemTable(code: string): Record<string, any>;
+}
+declare function t(text: string, vars?: Record<string, unknown>): string;
+declare const BuzzI18n: BuzzI18nApi;
+
 interface Window {
+  BuzzI18n: BuzzI18nApi;
+  t: typeof t;
   BUZZ_PROBLEMS: BuzzProblem[];
   BUZZ_PROOFS: BuzzProof[];
   BUZZ_COURSE: BuzzCourseLesson[];
