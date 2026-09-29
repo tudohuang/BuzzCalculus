@@ -237,6 +237,8 @@
     nightmare_boss: { label: t("終極挑戰"), note: t("R6 最難題：硬派數分 / 理論型 / 長鏈推導"), tags: ["true-boss"] },
     world_universities: { label: t("國際難題"), note: t("R1–R6 全跨度，由易到爆難"), tags: ["world-universities"] },
     competition: { label: t("競賽難題"), note: t("競賽級：硬微分 / 應用難題（R4-6）"), tags: ["competition"] },
+    // 2026-09-29：微積分 20 講隨堂測驗（GPA 戰士的 caNN.tex 拆進來的 336 題；20 張固定卷在模擬考那一區）
+    lecture_quiz: { label: t("二十講隨堂"), note: t("照大一課程進度出的隨堂測驗題，選擇與計算題都有"), tags: ["lecture"] },
     longform: { label: t("長題挑戰"), note: t("競賽風格長題：漸近 / 難積分 / 難級數（R4-6）"), tags: ["longform"] },
     putnam: { label: t("競賽經典"), note: t("競賽風格經典題型（R4-6）"), tags: ["putnam"] },
     all: { label: t("不限題包"), note: t("整個題庫，什麼技巧都可能出現"), tags: [] },
@@ -287,7 +289,7 @@
   // 使用者要找「級數判別」得先猜它被歸到哪一類。
   // 三條規則：一包只屬於一組、一組最多十包（一眼掃得完）、組名是課本章節而不是產品用語。
   const PACK_GROUPS = [
-    { label: t("先從這裡開始"), note: t("還不確定練什麼就挑這一排"), keys: ["all", "beginner_warmup", "technique_recognition", "graph_reading", "applied_story"] },
+    { label: t("先從這裡開始"), note: t("還不確定練什麼就挑這一排"), keys: ["all", "beginner_warmup", "lecture_quiz", "technique_recognition", "graph_reading", "applied_story"] },
     { label: t("極限與連續"), note: t("數列、定理、嚴格定義"), keys: ["sequences", "classic_theory", "analysis_intro"] },
     { label: t("微分"), note: t("鏈鎖律到應用題"), keys: ["chain", "applications", "parametric_polar", "total_differential"] },
     { label: t("積分技巧"), note: t("看到式子要用哪一招"), keys: ["substitution", "integration_by_parts", "partial_fraction", "trig_substitution", "kings_property", "frullani", "ode_style"] },
@@ -531,6 +533,15 @@
       preferTags: ["midterm-style", "exam-style"]
     }
   };
+
+  // 微積分 20 講隨堂測驗（2026-09-29）：20 張**固定**卷，不抽籤。
+  //
+  // 上面那幾張卷是「範圍或風格 + 抽籤」；這 20 張是真的考卷（GPA 戰士的 caNN.tex，
+  // 每份 5 題選擇 + 4 題計算題，60 分鐘），題序照考卷、每次重考都是同一份 —— 因為它模擬的是
+  // 「第 N 講上完的隨堂測驗」，而不是「這個範圍隨便抽一份」。第 N 講只會用到第 1～N 講教過的東西。
+  // 題目資料在 src/problem_lecture_pack.js（產生的），題序在 window.BUZZ_LECTURE_PAPERS。
+  // 講次標題與卷的定義在 share_cards.js（BuzzNamedExamPanel.lectureExams）—— app.js 撞頂，資料表搬出去
+  Object.assign(NAMED_EXAMS, window.BuzzNamedExamPanel.lectureExams(window.BUZZ_LECTURE_PAPERS || {}));
 
   const STORAGE_KEY = "buzzcalculus.records.v1";
   const THEME_KEY = "buzzcalculus.theme";
@@ -3785,37 +3796,9 @@
     `;
   }
 
+  // 模擬考面板的畫面在 share_cards.js（BuzzNamedExamPanel）：純 view，app.js 撞頂時搬出去的
   function renderNamedExamPanel(records) {
-    const stats = records.namedExams || {};
-    return `
-      <section class="named-exam-panel" aria-label="${t("模擬考")}">
-        <div class="named-exam-head">
-          <p class="section-label">${t("模擬考")}</p>
-          <h3>${t("整份限時，考前拿這幾張卷自我檢測")}</h3>
-          <span>${t("期中與期末的差別是")}<strong>${t("範圍")}</strong>${t("不是難度：期中考極限與微分，期末考積分與級數。每份卷會混進圖形題，依範圍的三張最後一題是證明題。同一次挑戰抽題固定；重考會換一份新卷。及格線 60%。")}</span>
-        </div>
-        ${["scope", "style"].map((group) => `
-        <p class="section-label named-exam-group">${group === "scope" ? t("依考試範圍") : t("依考卷風格")}</p>
-        <div class="named-exam-grid">
-          ${Object.entries(NAMED_EXAMS)
-            .filter(([, config]) => (config.group || "style") === group)
-            .map(([id, config]) => {
-              const stat = stats[id];
-              const line = stat && stat.attempts
-                ? `${t("最佳 {v}% · 上次 {v2} · 已考 {v3} 次", { v: Math.round(Number(stat.best || 0)), v2: String(stat.lastAt || "").slice(0, 10) || "—", v3: Number(stat.attempts || 0) })}`
-                : t("尚未挑戰");
-              return `
-                <button class="named-exam-card" data-action="start-named-exam" data-exam-id="${escapeAttr(id)}">
-                  <strong>${escapeHtml(config.label)}</strong>
-                  <span>${escapeHtml(config.note)}</span>
-                  ${config.scopeNote ? `<em>${escapeHtml(config.scopeNote)}</em>` : ""}
-                  <small>${escapeHtml(line)}</small>
-                </button>`;
-            })
-            .join("")}
-        </div>`).join("")}
-      </section>
-    `;
+    return window.BuzzNamedExamPanel.render(records, { NAMED_EXAMS, escapeHtml, escapeAttr });
   }
 
   // ── 開局 Onboarding ─────────────────────────────────────────
@@ -9302,6 +9285,10 @@
   function buildNamedExamPaper(setId, attemptIndex) {
     const config = NAMED_EXAMS[setId];
     if (!config) return [];
+    // 固定卷（20 講隨堂測驗）：照題序給，不抽籤、不混圖形題、重考也是同一份
+    if (Array.isArray(config.fixed)) {
+      return config.fixed.map((id) => problemById(id)).filter(Boolean);
+    }
     const seed = seedFromString(`${setId}-attempt-${Number(attemptIndex) || 0}`);
     const quota = namedExamQuota(config);
     const source = namedExamProblems(config);
@@ -12288,7 +12275,14 @@
       return null;
     }
     const match = expr.slice(start).match(/^([A-Za-z_][A-Za-z0-9_]*|\d+(?:\.\d+)?)/);
-    return match ? { end: start + match[0].length } : null;
+    if (!match) return null;
+    let end = start + match[0].length;
+    // 函數呼叫也是一個底：-cos(x)**3 要讀成 -(cos(x)**3)，不然 JS 直接是語法錯（2026-09-29 隨堂測驗包踩到）
+    if (expr[end] === "(") {
+      const call = readPowerAtom(expr, end);
+      if (call) end = call.end;
+    }
+    return { end };
   }
 
   function applyImplicitMultiplication(expr, variables = []) {

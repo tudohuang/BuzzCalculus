@@ -491,6 +491,26 @@ console.log("Removal smoke: 自動錯因存活、舊 records.conf 容忍、六�
   const graphTotal = rows.reduce((sum, row) => sum + row.graph, 0);
   const proofTotal = rows.reduce((sum, row) => sum + row.proof, 0);
   console.log(`模擬卷組成 smoke: ${rows.length} 份卷、圖形題 ${graphTotal} 題、證明題 ${proofTotal} 題且都在最後一題`);
+
+  // 20 講隨堂測驗（2026-09-29）：固定卷，題序照考卷、重考同一份、選擇題在前計算題在後
+  const lectureIds = Object.keys(api.namedExams).filter((id) => id.startsWith("lecture_"));
+  if (lectureIds.length !== 20) throw new Error(`20 講隨堂測驗應該是 20 張卷，實際 ${lectureIds.length}`);
+  lectureIds.forEach((id) => {
+    const config = api.namedExams[id];
+    const first = api.buildNamedExamPaper(id, 0).map((p) => p.id);
+    const again = api.buildNamedExamPaper(id, 3).map((p) => p.id);
+    if (first.join() !== config.fixed.join()) throw new Error(`${id} 沒有照考卷題序出題`);
+    if (first.join() !== again.join()) throw new Error(`${id} 重考換了一份卷 —— 固定卷不該抽籤`);
+    const parts = api.buildNamedExamPaper(id, 0).map((p) => p.examPart);
+    const lastMc = parts.lastIndexOf("mc");
+    const firstLong = parts.indexOf("long");
+    if (lastMc >= 0 && firstLong >= 0 && lastMc > firstLong) throw new Error(`${id} 選擇題跑到計算題後面`);
+    // 跟題庫一字不差的考卷題直接引用既有 id（build_lecture_pack.js 的 shared），那些不算混進別講
+    const shared = ((global.window.BUZZ_LECTURE_PAPERS || {})[config.lecture] || {}).shared || {};
+    if (!config.fixed.every((pid) => shared[pid] || config.lecture === (global.window.BUZZ_PROBLEMS.find((p) => p.id === pid) || {}).lecture)) {
+      throw new Error(`${id} 混進了別講的題`);
+    }  });
+  console.log(`隨堂測驗 smoke: 20 張固定卷、題序照考卷、重考同一份、每張只含自己那一講`);
 }
 
 // ── 反射進步卡（成效證據）─────────────────────────────────────
@@ -584,9 +604,10 @@ if (!html.includes("關鍵")) throw new Error("keyIdea did not render");
 if (/undefined|NaN|\[object/.test(html)) throw new Error("keyIdea rendered a broken value");
 
 let covered = 0;
-global.window.BUZZ_PROBLEMS.forEach((p) => { if (api.keyIdeaFor(p)) covered += 1; });
+const uncovered = [];
+global.window.BUZZ_PROBLEMS.forEach((p) => { if (api.keyIdeaFor(p)) covered += 1; else uncovered.push(p.id); });
 if (covered !== global.window.BUZZ_PROBLEMS.length) {
-  throw new Error(`keyIdea covers only ${covered}/${global.window.BUZZ_PROBLEMS.length} problems`);
+  throw new Error(`keyIdea covers only ${covered}/${global.window.BUZZ_PROBLEMS.length} problems; missing: ${uncovered.slice(0, 20).join(", ")}`);
 }
 
 const authoredCount = global.window.BUZZ_PROBLEMS.filter((p) => api.authoredHints(p).length >= 2).length;

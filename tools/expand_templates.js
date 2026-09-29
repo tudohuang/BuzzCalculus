@@ -81,12 +81,7 @@ const skipped = [];
 // 模板本身沒錯，只是那組參數剛好撞到一題已經有人手寫過的題目。
 // 這件事必須由管線自己處理 —— 模板越多、參數越多，撞車只會越常發生，
 // 靠人事後發現不是辦法。
-function literalKey(prompt) {
-  return String(prompt)
-    .replace(/\\left|\\right|\\displaystyle|\\,|\\;|\\!|\\quad|\\qquad|\s/g, "")
-    .replace(/\\dfrac|\\tfrac/g, "\\frac")
-    .replace(/\{([a-zA-Z0-9])\}/g, "$1");
-}
+const literalKey = require("./lib/literal_key.js");
 const existingKeys = new Set(
   loadAppApi.allProblems()
     .filter((problem) => !/^tmpl-/.test(problem.id))

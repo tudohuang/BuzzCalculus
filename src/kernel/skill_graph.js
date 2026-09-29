@@ -36,6 +36,9 @@
     "burst", "world-universities", "competition", "longform", "putnam",
     "true-boss", "hardcore", "long-form", "depth-r5", "depth-r6",
     "series-boss",
+    // 20 講隨堂測驗：講次是課程進度，不是技巧
+    "lecture", "lecture-01", "lecture-02", "lecture-03", "lecture-04", "lecture-05", "lecture-06", "lecture-07", "lecture-08", "lecture-09", "lecture-10",
+    "lecture-11", "lecture-12", "lecture-13", "lecture-14", "lecture-15", "lecture-16", "lecture-17", "lecture-18", "lecture-19", "lecture-20",
     // 考試類型（是情境不是技巧）
     "exam-style", "exam-depth", "transfer-exam", "proficiency-exam",
     "midterm-style", "university-exam-style",
@@ -112,7 +115,7 @@
     { id: "limit.sequence", label: t("數列極限"), tier: 2, obscurity: 1, family: "limit", prereq: ["limit.direct"],
       // 無窮乘積放這裡而不是自成一節：∏ 的定義就是部分乘積這個**數列**的極限，
       // 遞迴、巢狀根式、連分數同理 —— 它們共用「先確定收斂，再對遞迴式取極限」這一步。
-      tags: ["sequence", "sequences", "recursive", "recurrence", "nested-radical", "continued-fraction",
+      tags: ["sequence", "sequences", "recursive", "recursive-sequence", "recurrence", "nested-radical", "continued-fraction",
         "fixed-point", "newton", "infinite-product", "cauchy-sequence"] },
     { id: "limit.discontinuous", label: t("單邊極限與跳躍"), tier: 3, obscurity: 2, family: "limit", topics: ["limits"], prereq: ["limit.direct"],
       // 高斯括號與單邊極限合成一個節點：兩者練的是同一件事 ——
@@ -142,7 +145,7 @@
       // curve-sketching / extrema 歸在這裡而不是列成非技巧：
       // 「把 f′、f″ 合起來看出形狀」就是曲線分析這個技巧本身，
       // 而且這樣選圖題才會算進能力模型（列成非技巧的話它們對雷達是隱形的）。
-      tags: ["concavity", "inflection", "critical-point", "critical-points", "derivative-zero",
+      tags: ["concavity", "inflection", "critical-point", "critical-points", "derivative-zero", "mean-value-theorem",
         "first-derivative", "monotonicity", "tangent-normal", "curve-sketching", "extrema",
         "mvt", "mean-value", "rolle", "curvature", "derivative-graph"] },
     { id: "diff.optimize", label: t("最佳化"), tier: 3, obscurity: 1, family: "diff", prereq: ["diff.shape"],
@@ -161,9 +164,10 @@
 
     /* ===== 多變數微分 ===== */
     { id: "mvcalc.partial", label: t("偏導與多變數極限"), tier: 3, obscurity: 1, family: "mvcalc", prereq: ["diff.chain"], radarAxis: "multivariable",
-      tags: ["partial-derivative", "mixed-partial", "path-test", "multivariable-limit"] },
+      // 空間向量（內積／外積／平面）是第 16 講進多變數的門檻，掛在偏導這一節
+      tags: ["partial-derivative", "mixed-partial", "path-test", "multivariable-limit", "vector", "dot-product", "cross-product", "plane"] },
     { id: "mvcalc.total", label: t("全微分"), tier: 4, obscurity: 1, family: "mvcalc", prereq: ["mvcalc.partial"], radarAxis: "multivariable",
-      tags: ["total-differential", "total-differential-min"] },
+      tags: ["total-differential", "total-differential-min", "tangent-plane"] },
     { id: "mvcalc.directional", label: t("方向導數 / 梯度"), tier: 4, obscurity: 1, family: "mvcalc", prereq: ["mvcalc.partial"], radarAxis: "multivariable",
       tags: ["directional-derivative", "gradient"] },
     { id: "mvcalc.hessian", label: t("Hessian 判別"), tier: 4, obscurity: 2, family: "mvcalc", prereq: ["mvcalc.partial"], radarAxis: "multivariable",
@@ -227,28 +231,28 @@
 
     /* ===== 積分：多重與應用 ===== */
     { id: "integral.double", label: t("二重積分"), tier: 3, obscurity: 1, family: "integral", prereq: ["integral.usub"], radarAxis: "multivariable",
-      tags: ["double-integral", "iterated-integral", "change-order"] },
+      tags: ["double-integral", "iterated-integral", "change-order", "order-of-integration"] },
     { id: "integral.triple", label: t("三重積分"), tier: 4, obscurity: 1, family: "integral", prereq: ["integral.double"], radarAxis: "multivariable",
       tags: ["triple-integral", "simplex"] },
     { id: "integral.changevars", label: t("變數變換"), tier: 4, obscurity: 2, family: "integral", prereq: ["integral.double"], radarAxis: "substitution",
-      tags: ["change-of-variables", "polar-coordinates", "cylindrical-coordinates",
+      tags: ["change-of-variables", "polar-coordinates", "cylindrical-coordinates", "cylindrical",
         "spherical-coordinates", "spherical"] },
     { id: "integral.area", label: t("面積與極座標"), tier: 3, obscurity: 1, family: "integral", prereq: ["integral.ftc"],
       tags: ["area", "polar-area", "polar", "polar-curve", "between-curves"] },
     { id: "integral.volume", label: t("體積與旋轉體"), tier: 3, obscurity: 1, family: "integral", prereq: ["integral.ftc"],
-      tags: ["solid-of-revolution", "volume", "surface-area", "centroid"] },
+      tags: ["solid-of-revolution", "volume", "surface-area", "centroid", "shell-method", "cross-section"] },
     { id: "integral.arclength", label: t("弧長與均值"), tier: 3, obscurity: 1, family: "integral", prereq: ["integral.ftc"],
-      tags: ["arc-length", "average-value", "work-integral"] },
+      tags: ["arc-length", "average-value", "work-integral", "work"] },
 
     /* ===== 向量分析 ===== */
     { id: "vector.line", label: t("線積分與保守場"), tier: 3, obscurity: 1, family: "vector", prereq: ["integral.usub"], radarAxis: "multivariable",
-      tags: ["line-integral", "conservative-field"] },
+      tags: ["line-integral", "conservative-field", "potential"] },
     { id: "vector.green", label: t("Green 定理"), tier: 4, obscurity: 2, family: "vector", prereq: ["vector.line"], radarAxis: "multivariable",
       tags: ["green-theorem"] },
     { id: "vector.surface", label: t("面積分與通量"), tier: 4, obscurity: 2, family: "vector", prereq: ["integral.double"], radarAxis: "multivariable",
       tags: ["surface-integral", "flux"] },
     { id: "vector.divergence", label: t("Stokes 與散度定理"), tier: 5, obscurity: 2, family: "vector", prereq: ["vector.surface"], radarAxis: "multivariable",
-      tags: ["divergence-theorem", "stokes-theorem"] },
+      tags: ["divergence-theorem", "stokes-theorem", "curl", "divergence"] },
 
     /* ===== 級數 ===== */
     { id: "series.geometric", label: t("等比與 p 級數"), tier: 1, obscurity: 1, family: "series", prereq: [], radarAxis: "series",
@@ -260,7 +264,7 @@
     { id: "series.root", label: t("根值判別"), tier: 2, obscurity: 1, family: "series", prereq: ["series.geometric"], radarAxis: "series",
       tags: ["root-test"] },
     { id: "series.compare", label: t("比較判別"), tier: 2, obscurity: 1, family: "series", prereq: ["series.geometric"], radarAxis: "series",
-      tags: ["comparison", "limit-comparison", "integral-test", "term-test", "convergence-test", "series-test"] },
+      tags: ["comparison", "comparison-test", "limit-comparison", "integral-test", "term-test", "convergence-test", "series-test"] },
     { id: "series.alternating", label: t("交錯級數"), tier: 3, obscurity: 1, family: "series", prereq: ["series.compare"], radarAxis: "series",
       tags: ["alternating-series", "alternating", "absolute-conditional", "rearrangement"] },
     { id: "series.power.radius", label: t("冪級數收斂範圍"), tier: 3, obscurity: 1, family: "series", prereq: ["series.ratio"], radarAxis: "series",
@@ -270,7 +274,7 @@
     { id: "series.taylor.coeff", label: t("Taylor 係數"), tier: 4, obscurity: 2, family: "series", topics: ["series", "derivatives"], prereq: ["series.power.radius"], radarAxis: "taylor",
       tags: ["taylor", "coefficient", "binomial", "binomial-series", "euler-number", "taylor-polynomial"] },
     { id: "series.sum", label: t("級數求和"), tier: 4, obscurity: 2, family: "series", prereq: ["series.telescoping"], radarAxis: "series",
-      tags: ["sum-series", "special-sum", "exponential-series", "log-series"] },
+      tags: ["sum-series", "series-sum", "special-sum", "exponential-series", "log-series"] },
     { id: "series.euler", label: t("Euler 和與 zeta"), tier: 5, obscurity: 3, family: "series", prereq: ["series.sum"], radarAxis: "series",
       tags: ["zeta", "euler-sum", "central-binomial", "mittag-leffler"] },
     { id: "series.generating", label: t("生成函數"), tier: 5, obscurity: 3, family: "series", prereq: ["series.power.radius"], radarAxis: "series",
