@@ -376,31 +376,30 @@
     { m: "uniformConvergence", f: "n x e^{-n x^2}", limit: "0", range: [0, 1] });
 
   /* ═══════════ 九、級數的細緻判別（4）═══════════
-     絕對收斂與條件收斂的差別、以及 1/(n ln n) 那一對經典的分水嶺。 */
+     絕對收斂與條件收斂的差別、以及 1/(n ln n) 那一對經典的分水嶺。
+     「收斂還是發散」這三題題庫裡早就有（ser-010／ser-024／ser-037），這裡改問算得出來的數：
+     收斂得多慢、判別法裡的那個常數是多少。 */
 
-  t("an-sr-001", "series", 4,
-    "\\sum_{n=1}^{\\infty}\\frac{(-1)^n}{\\sqrt{n}}",
-    ["條件收斂", "conditionally converges", "conditional"],
-    ["絕對收斂", "發散", "收斂到 0"],
+  q("an-sr-001", "series", 4,
+    "\\text{交錯級數 }\\sum_{n=1}^{\\infty}\\frac{(-1)^n}{\\sqrt{n}}\\text{ 條件收斂。用交錯級數的誤差估計 }|S-S_N|\\le\\frac{1}{\\sqrt{N+1}}\\text{，要保證誤差小於 }0.1\\text{，最小的 }N",
+    "100",
     ["convergence-test", "alternating-series"],
-    "交錯級數判別法：1/√n 遞減趨近 0，所以收斂。但取絕對值之後是 Σ1/√n，p=1/2 ≤ 1 的 p 級數，發散。所以是條件收斂。", 140,
-    undefined);
+    "交錯級數判別法：1/√n 遞減趨近 0，所以收斂；取絕對值是 p=1/2 的 p 級數，發散 —— 條件收斂。誤差不超過下一項：1/√(N+1) < 0.1 ⇔ N+1 > 100，所以 N = 100。一百項才換到一位小數，條件收斂的級數通常就是這麼慢。", 140,
+    { m: "firstIndex", f: "\\frac{1}{\\sqrt{n+1}}", below: 0.1 });
 
-  t("an-sr-002", "series", 5,
-    "\\sum_{n=2}^{\\infty}\\frac{1}{n\\ln n}",
-    ["發散", "diverges", "divergent"],
-    ["收斂", "條件收斂", "絕對收斂"],
-    ["convergence-test", "integral-test"],
-    "用積分判別法：∫ dx/(x ln x) = ln(ln x) → ∞，所以發散。它比 Σ1/n 收斂得「更接近」卻仍然過不了關 —— 這是分水嶺的左邊。", 170,
-    undefined);
+  q("an-sr-002", "series", 5,
+    "\\text{用 Cauchy 凝聚判別 }\\sum_{n=2}^{\\infty}\\frac{1}{n\\ln n}\\text{：凝聚後的第 }k\\text{ 項 }2^k a_{2^k}=\\frac{c}{k}\\text{，求常數 }c",
+    "1/log(2)",
+    ["convergence-test"],
+    "aₙ 遞減，所以 Σaₙ 與 Σ2ᵏa_{2ᵏ} 同斂散。2ᵏ · 1/(2ᵏ ln 2ᵏ) = 1/(k ln 2)，c = 1/ln 2 ≈ 1.4427。凝聚之後是調和級數乘上一個常數，所以發散 —— 它比 Σ1/n 更接近收斂，卻仍然過不了關，這是分水嶺的左邊。", 170,
+    { m: "seqLimit", f: "n\\cdot 2^n\\cdot\\frac{1}{2^n\\ln(2^n)}", n0: 8, levels: 4 });
 
-  t("an-sr-003", "series", 5,
-    "\\sum_{n=2}^{\\infty}\\frac{1}{n(\\ln n)^2}",
-    ["收斂", "converges", "convergent"],
-    ["發散", "條件收斂", "無法判定"],
+  q("an-sr-003", "series", 5,
+    "\\sum_{n=2}^{\\infty}\\frac{1}{n(\\ln n)^2}\\text{ 收斂。積分判別給的尾巴上界 }\\sum_{n=N+1}^{\\infty}\\frac{1}{n(\\ln n)^2}\\le\\int_N^{\\infty}\\frac{dx}{x(\\ln x)^2}=\\frac{1}{\\ln N}\\text{。要保證尾巴小於 }0.1\\text{，最小的 }N",
+    "22027",
     ["convergence-test", "integral-test"],
-    "同樣用積分判別法：∫ dx/(x(ln x)²) = −1/ln x 有界，所以收斂。跟上一題只差一個指數 —— Σ1/(n(ln n)^p) 在 p>1 時收斂、p≤1 時發散。", 170,
-    undefined);
+    "被加的函數遞減，所以尾巴不超過從 N 開始的積分：∫_N^∞ dx/(x(ln x)²) = [−1/ln x]_N^∞ = 1/ln N。1/ln N < 0.1 ⇔ N > e¹⁰ ≈ 22026.47，所以 N = 22027。跟上一題只差一個指數就收斂了，可是收斂得極慢 —— 兩萬多項才保證誤差 0.1。", 170,
+    { m: "firstIndex", f: "\\frac{1}{\\ln n}", below: 0.1 });
 
   q("an-sr-004", "series", 6,
     "\\text{把交錯調和級數重排成「兩個正項配一個負項」}\\quad 1+\\frac{1}{3}-\\frac{1}{2}+\\frac{1}{5}+\\frac{1}{7}-\\frac{1}{4}+\\cdots\\quad\\text{求它的和}",

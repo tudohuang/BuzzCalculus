@@ -332,6 +332,13 @@ declare const BuzzI18n: BuzzI18nApi;
 interface Window {
   BuzzI18n: BuzzI18nApi;
   t: typeof t;
+  /** src/share_cards.js：訓練頁的模擬考面板（範圍卷／風格卷／20 講隨堂測驗） */
+  BuzzNamedExamPanel: {
+    render(records: BuzzRecords, deps: { NAMED_EXAMS: Record<string, any>; escapeHtml: (s: unknown) => string; escapeAttr: (s: unknown) => string }): string;
+    lectureExams(papers: Record<string, { topic: string; ids: string[] }>): Record<string, any>;
+  };
+  /** src/problem_lecture_pack.js：20 張固定卷的題序 */
+  BUZZ_LECTURE_PAPERS?: Record<string, { topic: string; ids: string[] }>;
   BUZZ_PROBLEMS: BuzzProblem[];
   BUZZ_PROOFS: BuzzProof[];
   BUZZ_COURSE: BuzzCourseLesson[];

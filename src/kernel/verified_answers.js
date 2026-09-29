@@ -6,7 +6,7 @@
 // 為什麼放側表而不是寫進題目物件：題目物件多一個欄位就會改變抽題與 golden 測試的結果。
 // 內容的中繼資料一律走側表，這是專案的既有約定。
 //
-// 產生時的統計：2434 題中 2211 題通過，不符 0 題。
+// 產生時的統計：2749 題中 2262 題通過，不符 0 題。
 
 (function registerVerifiedAnswers() {
   "use strict";
@@ -1357,6 +1357,57 @@
     "lb-sim-005",
     "lb-sim-006",
     "lb-sim-007",
+    "lec-01-m2",
+    "lec-01-m3",
+    "lec-01-q1b",
+    "lec-01-q1c",
+    "lec-02-m2",
+    "lec-03-m2",
+    "lec-03-m5",
+    "lec-05-m2",
+    "lec-05-q1d",
+    "lec-05-q1e",
+    "lec-06-m1",
+    "lec-06-m2",
+    "lec-06-m3",
+    "lec-06-m4",
+    "lec-06-m5",
+    "lec-06-q3a",
+    "lec-06-q3c",
+    "lec-06-q3d",
+    "lec-07-m1",
+    "lec-07-m4",
+    "lec-07-m5",
+    "lec-07-q1c",
+    "lec-07-q1d",
+    "lec-07-q3a",
+    "lec-07-q3b",
+    "lec-07-q3c",
+    "lec-07-q3d",
+    "lec-08-m2",
+    "lec-08-q1b",
+    "lec-08-q2a",
+    "lec-08-q2c",
+    "lec-08-q4d",
+    "lec-11-m1",
+    "lec-11-m3",
+    "lec-11-m4",
+    "lec-11-q1a",
+    "lec-11-q1c",
+    "lec-11-q1d",
+    "lec-11-q4a",
+    "lec-11-q4b",
+    "lec-11-q4c",
+    "lec-12-m1",
+    "lec-13-m4",
+    "lec-13-q1a",
+    "lec-13-q1b",
+    "lec-13-q1c",
+    "lec-13-q1d",
+    "lec-15-q2b",
+    "lec-15-q2c",
+    "lec-15-q2d",
+    "lec-19-m1",
     "lim-001",
     "lim-002",
     "lim-003",
@@ -2228,6 +2279,6 @@
   window.BuzzVerifiedAnswers = {
     has: function (id) { return Boolean(id && SET[id]); },
     count: IDS.length,
-    total: 2434
+    total: 2749
   };
 })();

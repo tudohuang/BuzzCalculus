@@ -1,4 +1,4 @@
-const CACHE_NAME = "buzzcalculus-v1.2.1-2026-09-28-i18n";
+const CACHE_NAME = "buzzcalculus-v1.2.1-2026-09-29-lecture";
 const CACHE_PREFIX = "buzzcalculus-";
 const APP_SHELL = [
   "./privacy.html",
@@ -59,6 +59,7 @@ const APP_SHELL = [
   "./src/problem_analysis_pack.js",
   "./src/problem_textbook_pack.js",
   "./src/problem_ode_pack.js",
+  "./src/problem_lecture_pack.js",
   "./src/problem_authored_hints.js",
   "./src/problem_authored_solutions.js",
   "./src/problem_generated_pack.js",

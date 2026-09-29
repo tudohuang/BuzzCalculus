@@ -30,13 +30,8 @@ const problems = loadAppApi.allProblems();
 
 /* ── 正規化 ───────────────────────────────────────────────── */
 
-// 只拿掉排版差異，不動數學內容
-function literalKey(prompt) {
-  return String(prompt)
-    .replace(/\\left|\\right|\\displaystyle|\\,|\\;|\\!|\\quad|\\qquad|\s/g, "")
-    .replace(/\\dfrac|\\tfrac/g, "\\frac")
-    .replace(/\{([a-zA-Z0-9])\}/g, "$1");
-}
+// 只拿掉排版差異，不動數學內容（三支工具共用同一個定義）
+const literalKey = require("./lib/literal_key.js");
 
 // 數值指紋。
 //
@@ -220,6 +215,11 @@ const NOT_EQUIVALENT = [
     why: "x→0⁺ 與 x→0⁻ 的同一個 x⌊1/x⌋。指紋把逼近方向正規化掉了，但方向正是這兩題的全部：" +
       "從左邊來的時候乘不等式要變號，⌊1/x⌋ 也跟著換到負的那側，兩個變號抵消 —— " +
       "答案同樣是 1 這件事，恰恰是第二題要練的反直覺，不是重複。"
+  },
+  {
+    ids: ["fd-der-011", "lec-06-m1"],
+    why: "d/dx sin(x²) 是連鎖律；d/dx ∫₀^{x²} cos t dt 是微積分基本定理配連鎖律。" +
+      "指紋在 x 上求值時兩邊都是 2x cos(x²)，但後一題的重點是認出「對上限微分」，不是同一題。"
   }
 ];
 

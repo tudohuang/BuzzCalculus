@@ -2184,3 +2184,83 @@
 
   window.BuzzAnswerWorkspace = { render };
 })();
+
+// ── 模擬考面板 ──────────────────────────────────────────────
+// 訓練頁的「模擬考」區：範圍卷、風格卷、20 講隨堂測驗（固定卷）三排卡片。
+// 純畫面：卷的定義（NAMED_EXAMS）與紀錄由 app.js 傳進來；2026-09-29 app.js 撞頂時搬出來的。
+(function () {
+  "use strict";
+  const t = typeof globalThis.t === "function" ? globalThis.t : (text, vars) => (vars ? String(text).replace(/\{(\w+)(?:\|[^}]*)?\}/g, (m, k) => (k in vars ? String(vars[k]) : m)) : text);
+
+  const GROUP_LABEL = {
+    scope: () => t("依考試範圍"),
+    style: () => t("依考卷風格"),
+    lecture: () => t("依講次：微積分 20 講隨堂測驗（固定卷，60 分鐘）")
+  };
+
+  function render(records, { NAMED_EXAMS, escapeHtml, escapeAttr }) {
+    const stats = (records && records.namedExams) || {};
+    return `
+      <section class="named-exam-panel" aria-label="${t("模擬考")}">
+        <div class="named-exam-head">
+          <p class="section-label">${t("模擬考")}</p>
+          <h3>${t("整份限時，考前拿這幾張卷自我檢測")}</h3>
+          <span>${t("期中與期末的差別是")}<strong>${t("範圍")}</strong>${t("不是難度：期中考極限與微分，期末考積分與級數。每份卷會混進圖形題，依範圍的三張最後一題是證明題。同一次挑戰抽題固定；重考會換一份新卷。及格線 60%。")}</span>
+        </div>
+        ${["scope", "style", "lecture"].map((group) => {
+          const cards = Object.entries(NAMED_EXAMS).filter(([, config]) => (config.group || "style") === group);
+          if (!cards.length) return "";
+          return `
+        <p class="section-label named-exam-group">${GROUP_LABEL[group]()}</p>
+        <div class="named-exam-grid ${group === "lecture" ? "is-lecture" : ""}">
+          ${cards.map(([id, config]) => {
+            const stat = stats[id];
+            const line = stat && stat.attempts
+              ? t("最佳 {v}% · 上次 {v2} · 已考 {v3} 次", { v: Math.round(Number(stat.best || 0)), v2: String(stat.lastAt || "").slice(0, 10) || "—", v3: Number(stat.attempts || 0) })
+              : t("尚未挑戰");
+            return `
+                <button class="named-exam-card" data-action="start-named-exam" data-exam-id="${escapeAttr(id)}">
+                  <strong>${escapeHtml(config.label)}</strong>
+                  <span>${escapeHtml(config.note)}</span>
+                  ${config.scopeNote ? `<em>${escapeHtml(config.scopeNote)}</em>` : ""}
+                  <small>${escapeHtml(line)}</small>
+                </button>`;
+          }).join("")}
+        </div>`;
+        }).join("")}
+      </section>
+    `;
+  }
+
+  // 微積分 20 講的講次標題（大綱在 GPA 戰士的 SYLLABUS.md）
+  const LECTURE_TITLES = {
+    "01": () => t("極限與連續"), "02": () => t("導數與微分法則"), "03": () => t("隱微分、反函數與超越函數"), "04": () => t("微分的應用 I：函數的形狀"),
+    "05": () => t("微分的應用 II：最佳化、L'Hôpital 與近似"), "06": () => t("定積分與微積分基本定理"), "07": () => t("積分技巧 I：分部、三角積分、三角代換"),
+    "08": () => t("積分技巧 II 與瑕積分"), "09": () => t("積分的幾何應用"), "10": () => t("參數曲線、極座標與物理應用"), "11": () => t("數列"),
+    "12": () => t("級數與收斂判別 I"), "13": () => t("收斂判別 II"), "14": () => t("冪級數"), "15": () => t("Taylor 與 Maclaurin 級數"),
+    "16": () => t("空間向量與多變數函數"), "17": () => t("可微性、連鎖律與梯度"), "18": () => t("多變數極值"), "19": () => t("重積分"), "20": () => t("向量微積分")
+  };
+
+  // 20 張固定卷的 NAMED_EXAMS 定義：題序來自 window.BUZZ_LECTURE_PAPERS（problem_lecture_pack.js）。
+  // 固定卷不抽籤：app.js 的 buildNamedExamPaper 看到 fixed 就照題序給。
+  function lectureExams(papers) {
+    const exams = {};
+    Object.entries(papers || {}).forEach(([lecture, paper]) => {
+      if (!paper || !Array.isArray(paper.ids) || !paper.ids.length) return;
+      exams[`lecture_${lecture}`] = {
+        label: t("第 {n} 講隨堂測驗", { n: Number(lecture) }),
+        note: LECTURE_TITLES[lecture] ? LECTURE_TITLES[lecture]() : "",
+        count: paper.ids.length,
+        durationSec: 60 * 60,
+        group: "lecture",
+        lecture,
+        fixed: paper.ids.slice(),
+        minRank: 1,
+        maxRank: 6
+      };
+    });
+    return exams;
+  }
+
+  window.BuzzNamedExamPanel = { render, lectureExams };
+})();

@@ -113,7 +113,9 @@ rows.forEach((r) => {
 // 題庫檔合併（37 檔）還是欠著的債，下一支再加就先合併。
 // 2026-09-19 65 → 66：kernel/proof_surface.js（Proof Input v2 自由書寫層）是一支獨立的 kernel 模組，
 // 讓 proof_lang.js 不用學自然語言；舊測試繼續保護引擎，新測試只管翻譯。
-const SCRIPT_COUNT_BUDGET = 66;
+// 2026-09-29 66 → 67：problem_lecture_pack.js 是 tools/build_lecture_pack.js 從外部考卷產生的檔（336 題＋ 20 張固定卷的題序），
+// 有自己的重產流程；塞進手寫的題庫檔會讓產生的內容跟手寫的內容擠在同一個檔裡，下一次重產就沖掉人家的字。
+const SCRIPT_COUNT_BUDGET = 67;
 console.log(`  script 標籤        ${String(scripts.length).padStart(5)} 支 / ${SCRIPT_COUNT_BUDGET} 支上限`);
 if (scripts.length > SCRIPT_COUNT_BUDGET) {
   failures.push(`index.html 的 script 數量 ${scripts.length} 超過 ${SCRIPT_COUNT_BUDGET}`);
