@@ -201,6 +201,15 @@ async function run() {
       return blocks.length > 0 && blocks.every((b) => b.querySelector('.katex')) && !blocks.some((b) => /[\\u4e00-\\u9fff]/.test(b.innerText));
     `));
 
+    // ── 3d. 靜態頁（使用手冊、關於、條款、隱私）：英文介面看到英文版 ──
+    for (const page of ["guide.html", "about.html", "terms.html", "privacy.html"]) {
+      await chrome.navigate(`${server.url}/${page}`, { appReady: false });
+      await chrome.sleep(wait(600));
+      const info = await chrome.evaluate(`return { lang: document.documentElement.lang, title: document.title, visible: [...document.querySelectorAll('main')].filter((m) => m.getClientRects().length).length };`);
+      check(`${page} 英文版：lang=en、只顯示一個 main、標題是英文`, info.lang === "en" && info.visible === 1 && !/[一-鿿]/.test(info.title), JSON.stringify(info));
+      await expectNoCjk(`${page} 看得見的字沒有中文`, "body");
+    }
+
     // ── 4. 設定頁切回中文：存設定、reload、整站變回中文 ──
     await chrome.navigate(server.url + "/index.html");
     await chrome.sleep(wait(2000));
@@ -212,6 +221,11 @@ async function run() {
     const zhHome = await cjk("#app");
     check("首頁回到中文", zhHome.count > 50, `只有 ${zhHome.count} 個中文字`);
     check("中文版沒有載題目側表（一個位元組都不用抓）", await chrome.evaluate("return Object.keys(window.BuzzI18n.problemTable('en')).length === 0;"));
+    await chrome.navigate(`${server.url}/about.html`, { appReady: false });
+    await chrome.sleep(wait(500));
+    check("中文設定下 about.html 是中文版", await chrome.evaluate(`return document.documentElement.lang === 'zh-Hant' && /tudohuang/.test(document.body.innerText) && /[\\u4e00-\\u9fff]/.test(document.body.innerText) && !/Who made it/.test(document.body.innerText);`));
+    await chrome.navigate(server.url + "/index.html");
+    await chrome.sleep(wait(2000));
     check("中文版也沒有載內容句型表", await chrome.evaluate("return Object.keys(window.BuzzI18n.textTable('en')).length === 0 && !document.querySelector('script[src$=\"i18n_text_en.js\"]:not([type])');"));
 
     // ── 5. 跟著瀏覽器：清掉設定就回到偵測（這顆 Chrome 釘在 zh-TW） ──
