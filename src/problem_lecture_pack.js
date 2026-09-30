@@ -1,4 +1,4 @@
-// 微積分 20 講隨堂測驗（2026-09-29）：由 tools/build_lecture_pack.js 產生，不要手改。
+// 微積分 20 講隨堂測驗（2026-09-30）：由 tools/build_lecture_pack.js 產生，不要手改。
 // 來源：GPA 戰士的 caNN.tex（20 份 60 分鐘卷，每份 5 選擇 + 4 計算題），骨架由 tools/import_lecture_exams.js 拆出，
 // 判分層（answerKind／答案語法／rank／tags／驗算描述子）在 tools/content/lecture_exams_answers.json 手寫。
 // 證明題、畫圖題與「說明為什麼」這類小題不進題庫（skip），其餘小題各自獨立成題、題幹帶著原題的設定。
@@ -205,7 +205,12 @@
       "examPoints": 20,
       "examGroup": "lec-01-q2",
       "examTitle": "夾擠定理。",
-      "answer": "0"
+      "answer": "0",
+      "verify": {
+        "m": "limit",
+        "f": "\\frac{\\sin x}{x}",
+        "at": "inf"
+      }
     },
     {
       "id": "lec-01-q2c",
@@ -232,7 +237,12 @@
       "examPoints": 20,
       "examGroup": "lec-01-q2",
       "examTitle": "夾擠定理。",
-      "answer": "1"
+      "answer": "1",
+      "verify": {
+        "m": "limit",
+        "f": "x\\left\\lfloor\\frac{1}{x}\\right\\rfloor",
+        "at": 0
+      }
     },
     {
       "id": "lec-01-q3a",
@@ -285,7 +295,15 @@
       "examPoints": 20,
       "examGroup": "lec-01-q4",
       "examTitle": "漸近線與 $\\varepsilon$–$\\delta$ 定義。",
-      "answer": "{1, 2}"
+      "answer": "{1, 2}",
+      "verify": {
+        "m": "zeros",
+        "f": "x^2-3x+2",
+        "range": [
+          -10,
+          10
+        ]
+      }
     },
     {
       "id": "lec-01-q4b",
@@ -312,7 +330,12 @@
       "examPoints": 20,
       "examGroup": "lec-01-q4",
       "examTitle": "漸近線與 $\\varepsilon$–$\\delta$ 定義。",
-      "answer": "1"
+      "answer": "1",
+      "verify": {
+        "m": "limit",
+        "f": "\\frac{x^2-1}{x^2-3x+2}",
+        "at": "inf"
+      }
     },
     {
       "id": "lec-02-m1",
@@ -340,7 +363,14 @@
         "-1",
         "3",
         "-2"
-      ]
+      ],
+      "verify": {
+        "m": "deriv",
+        "f": "x^3-2x",
+        "at": [
+          1
+        ]
+      }
     },
     {
       "id": "lec-02-m2",
@@ -431,7 +461,15 @@
       "examGroup": "lec-02-q1",
       "examTitle": "由定義求導數。",
       "answer": "-1/a^2",
-      "variable": "a"
+      "variable": "a",
+      "verify": {
+        "m": "fn",
+        "vars": [
+          "a"
+        ],
+        "kind": "deriv",
+        "f": "\\frac{1}{a}"
+      }
     },
     {
       "id": "lec-02-q1c",
@@ -459,7 +497,35 @@
       "examGroup": "lec-02-q1",
       "examTitle": "由定義求導數。",
       "answer": "1/(2*sqrt(a))",
-      "variable": "a"
+      "variable": "a",
+      "verify": {
+        "m": "fn",
+        "vars": [
+          "a"
+        ],
+        "kind": "deriv",
+        "f": "\\sqrt{a}",
+        "pts": [
+          [
+            0.37
+          ],
+          [
+            0.81
+          ],
+          [
+            1.23
+          ],
+          [
+            1.77
+          ],
+          [
+            2.41
+          ],
+          [
+            3.13
+          ]
+        ]
+      }
     },
     {
       "id": "lec-02-q1d",
@@ -485,7 +551,35 @@
       "examPoints": 20,
       "examGroup": "lec-02-q1",
       "examTitle": "由定義求導數。",
-      "answer": "x/4+1"
+      "answer": "x/4+1",
+      "verify": {
+        "m": "fn",
+        "cases": [
+          {
+            "at": {
+              "x": 0
+            },
+            "v": {
+              "m": "tangentNormal",
+              "f": "\\sqrt{x}",
+              "a": 4,
+              "kind": "yIntercept"
+            }
+          },
+          {
+            "at": {
+              "x": 0
+            },
+            "d": "x",
+            "v": {
+              "m": "tangentNormal",
+              "f": "\\sqrt{x}",
+              "a": 4,
+              "kind": "slope"
+            }
+          }
+        ]
+      }
     },
     {
       "id": "lec-02-q2a",
@@ -511,7 +605,12 @@
       "examPoints": 20,
       "examGroup": "lec-02-q2",
       "examTitle": "微分法則。",
-      "answer": "5*x^4-1"
+      "answer": "5*x^4-1",
+      "verify": {
+        "m": "fn",
+        "kind": "deriv",
+        "f": "(x^2+1)(x^3-x)"
+      }
     },
     {
       "id": "lec-02-q2b",
@@ -537,7 +636,12 @@
       "examPoints": 20,
       "examGroup": "lec-02-q2",
       "examTitle": "微分法則。",
-      "answer": "2/(x+1)^2"
+      "answer": "2/(x+1)^2",
+      "verify": {
+        "m": "fn",
+        "kind": "deriv",
+        "f": "\\frac{x-1}{x+1}"
+      }
     },
     {
       "id": "lec-02-q2c",
@@ -564,7 +668,12 @@
       "examPoints": 20,
       "examGroup": "lec-02-q2",
       "examTitle": "微分法則。",
-      "answer": "6*sin(2*x)^2*cos(2*x)"
+      "answer": "6*sin(2*x)^2*cos(2*x)",
+      "verify": {
+        "m": "fn",
+        "kind": "deriv",
+        "f": "(\\sin(2x))^3"
+      }
     },
     {
       "id": "lec-02-q2d",
@@ -591,7 +700,12 @@
       "examPoints": 20,
       "examGroup": "lec-02-q2",
       "examTitle": "微分法則。",
-      "answer": "-sin(x)*cos(x)/sqrt(1+cos(x)^2)"
+      "answer": "-sin(x)*cos(x)/sqrt(1+cos(x)^2)",
+      "verify": {
+        "m": "fn",
+        "kind": "deriv",
+        "f": "\\sqrt{1+(\\cos x)^2}"
+      }
     },
     {
       "id": "lec-02-q3a",
@@ -618,7 +732,14 @@
       "examPoints": 20,
       "examGroup": "lec-02-q3",
       "examTitle": "可微性。",
-      "answer": "2"
+      "answer": "2",
+      "verify": {
+        "m": "deriv",
+        "f": "x^2",
+        "at": [
+          1
+        ]
+      }
     },
     {
       "id": "lec-02-q3b",
@@ -645,7 +766,12 @@
       "examPoints": 20,
       "examGroup": "lec-02-q3",
       "examTitle": "可微性。",
-      "answer": "0"
+      "answer": "0",
+      "verify": {
+        "m": "limit",
+        "f": "\\frac{x^2\\sin(1/x)-0}{x}",
+        "at": 0
+      }
     },
     {
       "id": "lec-02-q3c",
@@ -672,7 +798,12 @@
       "examPoints": 20,
       "examGroup": "lec-02-q3",
       "examTitle": "可微性。",
-      "answer": "2*x*sin(1/x)-cos(1/x)"
+      "answer": "2*x*sin(1/x)-cos(1/x)",
+      "verify": {
+        "m": "fn",
+        "kind": "deriv",
+        "f": "x^2\\sin(1/x)"
+      }
     },
     {
       "id": "lec-02-q3d",
@@ -736,7 +867,16 @@
       "examGroup": "lec-02-q4",
       "examTitle": "直線運動。",
       "answer": "6*t-12",
-      "variable": "t"
+      "variable": "t",
+      "verify": {
+        "m": "fn",
+        "vars": [
+          "t"
+        ],
+        "kind": "deriv",
+        "order": 2,
+        "f": "t^3-6t^2+9t"
+      }
     },
     {
       "id": "lec-02-q4b",
@@ -762,7 +902,15 @@
       "examPoints": 20,
       "examGroup": "lec-02-q4",
       "examTitle": "直線運動。",
-      "answer": "{1, 3}"
+      "answer": "{1, 3}",
+      "verify": {
+        "m": "critical",
+        "f": "x^3-6x^2+9x",
+        "range": [
+          0,
+          10
+        ]
+      }
     },
     {
       "id": "lec-02-q4c",
@@ -788,7 +936,17 @@
       "examPoints": 20,
       "examGroup": "lec-02-q4",
       "examTitle": "直線運動。",
-      "answer": "12"
+      "answer": "12",
+      "verify": {
+        "m": "integral",
+        "f": "|3x^2-12x+9|",
+        "a": 0,
+        "b": 4,
+        "breaks": [
+          1,
+          3
+        ]
+      }
     },
     {
       "id": "lec-02-q4d",
@@ -814,7 +972,15 @@
       "examPoints": 20,
       "examGroup": "lec-02-q4",
       "examTitle": "直線運動。",
-      "answer": "(1, 2) U (3, inf)"
+      "answer": "(1, 2) U (3, inf)",
+      "verify": {
+        "m": "increasing",
+        "f": "|3x^2-12x+9|",
+        "range": [
+          0,
+          40
+        ]
+      }
     },
     {
       "id": "lec-03-m2",
@@ -871,7 +1037,13 @@
         "13",
         "1/13",
         "4"
-      ]
+      ],
+      "verify": {
+        "m": "inverseDeriv",
+        "f": "x^3+x",
+        "at": 2,
+        "x0": 1
+      }
     },
     {
       "id": "lec-03-m5",
@@ -926,7 +1098,15 @@
       "examPoints": 20,
       "examGroup": "lec-03-q1",
       "examTitle": "隱函數微分。",
-      "answer": "-4/5"
+      "answer": "-4/5",
+      "verify": {
+        "m": "implicit",
+        "F": "x^2+xy+y^2-7",
+        "at": [
+          1,
+          2
+        ]
+      }
     },
     {
       "id": "lec-03-q1b",
@@ -953,7 +1133,35 @@
       "examPoints": 20,
       "examGroup": "lec-03-q1",
       "examTitle": "隱函數微分。",
-      "answer": "(14-4*x)/5"
+      "answer": "(14-4*x)/5",
+      "verify": {
+        "m": "fn",
+        "cases": [
+          {
+            "at": {
+              "x": 1
+            },
+            "v": {
+              "m": "value",
+              "f": "2"
+            }
+          },
+          {
+            "at": {
+              "x": 1
+            },
+            "d": "x",
+            "v": {
+              "m": "implicit",
+              "F": "x^2+xy+y^2-7",
+              "at": [
+                1,
+                2
+              ]
+            }
+          }
+        ]
+      }
     },
     {
       "id": "lec-03-q1c",
@@ -1008,7 +1216,17 @@
       "examPoints": 20,
       "examGroup": "lec-03-q1",
       "examTitle": "隱函數微分。",
-      "answer": "-42/125"
+      "answer": "-42/125",
+      "verify": {
+        "m": "implicitDeriv",
+        "F": "x^2+xy+y^2-7",
+        "at": [
+          1,
+          2
+        ],
+        "order": 2,
+        "tol": 0.0001
+      }
     },
     {
       "id": "lec-03-q2a",
@@ -1034,7 +1252,32 @@
       "examPoints": 20,
       "examGroup": "lec-03-q2",
       "examTitle": "對數微分法。",
-      "answer": "x^x*(ln(x)+1)"
+      "answer": "x^x*(ln(x)+1)",
+      "verify": {
+        "m": "fn",
+        "kind": "deriv",
+        "f": "x^x",
+        "pts": [
+          [
+            0.37
+          ],
+          [
+            0.81
+          ],
+          [
+            1.23
+          ],
+          [
+            1.77
+          ],
+          [
+            2.41
+          ],
+          [
+            3.13
+          ]
+        ]
+      }
     },
     {
       "id": "lec-03-q2b",
@@ -1060,7 +1303,32 @@
       "examPoints": 20,
       "examGroup": "lec-03-q2",
       "examTitle": "對數微分法。",
-      "answer": "x^sin(x)*(cos(x)*ln(x)+sin(x)/x)"
+      "answer": "x^sin(x)*(cos(x)*ln(x)+sin(x)/x)",
+      "verify": {
+        "m": "fn",
+        "kind": "deriv",
+        "f": "x^{\\sin x}",
+        "pts": [
+          [
+            0.37
+          ],
+          [
+            0.81
+          ],
+          [
+            1.23
+          ],
+          [
+            1.77
+          ],
+          [
+            2.41
+          ],
+          [
+            3.13
+          ]
+        ]
+      }
     },
     {
       "id": "lec-03-q2c",
@@ -1086,7 +1354,32 @@
       "examPoints": 20,
       "examGroup": "lec-03-q2",
       "examTitle": "對數微分法。",
-      "answer": "x^2*sqrt(x+1)/(x-1)^3*(2/x+1/(2*(x+1))-3/(x-1))"
+      "answer": "x^2*sqrt(x+1)/(x-1)^3*(2/x+1/(2*(x+1))-3/(x-1))",
+      "verify": {
+        "m": "fn",
+        "kind": "deriv",
+        "f": "\\frac{x^2\\sqrt{x+1}}{(x-1)^3}",
+        "pts": [
+          [
+            1.37
+          ],
+          [
+            1.81
+          ],
+          [
+            2.23
+          ],
+          [
+            2.77
+          ],
+          [
+            3.41
+          ],
+          [
+            4.13
+          ]
+        ]
+      }
     },
     {
       "id": "lec-03-q2d",
@@ -1113,7 +1406,32 @@
       "examPoints": 20,
       "examGroup": "lec-03-q2",
       "examTitle": "對數微分法。",
-      "answer": "3/(x*ln(2))"
+      "answer": "3/(x*ln(2))",
+      "verify": {
+        "m": "fn",
+        "kind": "deriv",
+        "f": "\\frac{\\ln(x^3)}{\\ln 2}",
+        "pts": [
+          [
+            0.37
+          ],
+          [
+            0.81
+          ],
+          [
+            1.23
+          ],
+          [
+            1.77
+          ],
+          [
+            2.41
+          ],
+          [
+            3.13
+          ]
+        ]
+      }
     },
     {
       "id": "lec-03-q3b",
@@ -1140,7 +1458,12 @@
       "examPoints": 20,
       "examGroup": "lec-03-q3",
       "examTitle": "反函數與反三角函數。",
-      "answer": "1/sqrt(16-x^2)"
+      "answer": "1/sqrt(16-x^2)",
+      "verify": {
+        "m": "fn",
+        "kind": "deriv",
+        "f": "\\arcsin\\frac{x}{4}"
+      }
     },
     {
       "id": "lec-03-q3c",
@@ -1167,7 +1490,32 @@
       "examPoints": 20,
       "examGroup": "lec-03-q3",
       "examTitle": "反函數與反三角函數。",
-      "answer": "-1/(1+x^2)"
+      "answer": "-1/(1+x^2)",
+      "verify": {
+        "m": "fn",
+        "kind": "deriv",
+        "f": "\\arctan\\frac{1}{x}",
+        "pts": [
+          [
+            0.37
+          ],
+          [
+            0.81
+          ],
+          [
+            1.23
+          ],
+          [
+            1.77
+          ],
+          [
+            2.41
+          ],
+          [
+            3.13
+          ]
+        ]
+      }
     },
     {
       "id": "lec-03-q3d",
@@ -1194,7 +1542,13 @@
       "examPoints": 20,
       "examGroup": "lec-03-q3",
       "examTitle": "反函數與反三角函數。",
-      "answer": "1/2"
+      "answer": "1/2",
+      "verify": {
+        "m": "inverseDeriv",
+        "f": "x+e^x",
+        "at": 1,
+        "x0": 0
+      }
     },
     {
       "id": "lec-03-q4a",
@@ -1220,7 +1574,13 @@
       "examPoints": 20,
       "examGroup": "lec-03-q4",
       "examTitle": "相關變率：滑動的梯子。",
-      "answer": "3/4"
+      "answer": "3/4",
+      "verify": {
+        "m": "chainRate",
+        "f": "-\\sqrt{25-x^2}",
+        "at": 3,
+        "given": 1
+      }
     },
     {
       "id": "lec-03-q4b",
@@ -1246,7 +1606,13 @@
       "examPoints": 20,
       "examGroup": "lec-03-q4",
       "examTitle": "相關變率：滑動的梯子。",
-      "answer": "-1/4"
+      "answer": "-1/4",
+      "verify": {
+        "m": "chainRate",
+        "f": "\\arccos\\frac{x}{5}",
+        "at": 3,
+        "given": 1
+      }
     },
     {
       "id": "lec-04-m1",
@@ -1274,7 +1640,15 @@
         "{0}",
         "{sqrt(3), -sqrt(3)}",
         "{0, sqrt(3), -sqrt(3)}"
-      ]
+      ],
+      "verify": {
+        "m": "critical",
+        "f": "x^3-3x",
+        "range": [
+          -10,
+          10
+        ]
+      }
     },
     {
       "id": "lec-04-m2",
@@ -1368,7 +1742,13 @@
         "1/2",
         "sqrt(2)",
         "2"
-      ]
+      ],
+      "verify": {
+        "m": "mvtPoint",
+        "f": "x^2",
+        "a": 0,
+        "b": 2
+      }
     },
     {
       "id": "lec-04-m5",
@@ -1397,7 +1777,15 @@
         "(1, inf)",
         "(0, inf)",
         "(-1, inf)"
-      ]
+      ],
+      "verify": {
+        "m": "increasing",
+        "f": "xe^{-x}",
+        "range": [
+          -20,
+          10
+        ]
+      }
     },
     {
       "id": "lec-04-q1a",
@@ -1423,7 +1811,15 @@
       "examPoints": 20,
       "examGroup": "lec-04-q1",
       "examTitle": "閉區間上的絕對極值。",
-      "answer": "10"
+      "answer": "10",
+      "verify": {
+        "m": "extremum1d",
+        "f": "x^3-3x^2-9x+5",
+        "v": "x",
+        "lo": -2,
+        "hi": 4,
+        "kind": "max"
+      }
     },
     {
       "id": "lec-04-q1b",
@@ -1450,7 +1846,15 @@
       "examPoints": 20,
       "examGroup": "lec-04-q1",
       "examTitle": "閉區間上的絕對極值。",
-      "answer": "6"
+      "answer": "6",
+      "verify": {
+        "m": "extremum1d",
+        "f": "(x^2)^{1/3}(5-x)",
+        "v": "x",
+        "lo": -1,
+        "hi": 5,
+        "kind": "max"
+      }
     },
     {
       "id": "lec-04-q3a",
@@ -1502,7 +1906,33 @@
       "examPoints": 25,
       "examGroup": "lec-04-q3",
       "examTitle": "曲線描繪。",
-      "answer": "x+1"
+      "answer": "x+1",
+      "verify": {
+        "m": "fn",
+        "cases": [
+          {
+            "at": {
+              "x": 0
+            },
+            "d": "x",
+            "v": {
+              "m": "limit",
+              "f": "\\frac{x^2}{(x-1)x}",
+              "at": "inf"
+            }
+          },
+          {
+            "at": {
+              "x": 0
+            },
+            "v": {
+              "m": "limit",
+              "f": "\\frac{x^2}{x-1}-x",
+              "at": "inf"
+            }
+          }
+        ]
+      }
     },
     {
       "id": "lec-04-q3c",
@@ -1555,7 +1985,15 @@
       "examPoints": 25,
       "examGroup": "lec-04-q3",
       "examTitle": "曲線描繪。",
-      "answer": "(1, inf)"
+      "answer": "(1, inf)",
+      "verify": {
+        "m": "concaveUp",
+        "f": "\\frac{x^2}{x-1}",
+        "range": [
+          -20,
+          40
+        ]
+      }
     },
     {
       "id": "lec-04-q4a",
@@ -1646,7 +2084,15 @@
       "examPoints": 15,
       "examGroup": "lec-04-q4",
       "examTitle": "由導函數的圖形讀出函數的性質。",
-      "answer": "{-1, 1}"
+      "answer": "{-1, 1}",
+      "verify": {
+        "m": "critical",
+        "f": "(x+2)(x-1)^2",
+        "range": [
+          -10,
+          10
+        ]
+      }
     },
     {
       "id": "lec-05-m2",
@@ -1703,7 +2149,13 @@
         "2.01",
         "2.02",
         "2.05"
-      ]
+      ],
+      "verify": {
+        "m": "linApprox",
+        "f": "\\sqrt{x}",
+        "a": 4,
+        "dx": 0.1
+      }
     },
     {
       "id": "lec-05-m5",
@@ -1731,7 +2183,13 @@
         "5/4",
         "1.414",
         "2"
-      ]
+      ],
+      "verify": {
+        "m": "root",
+        "f": "x^2-2",
+        "x0": 1,
+        "n": 1
+      }
     },
     {
       "id": "lec-05-q1b",
@@ -1758,7 +2216,12 @@
       "examPoints": 20,
       "examGroup": "lec-05-q1",
       "examTitle": "L'Hôpital 法則與不定型。",
-      "answer": "0"
+      "answer": "0",
+      "verify": {
+        "m": "limit",
+        "f": "\\frac{\\ln x}{\\sqrt{x}}",
+        "at": "inf"
+      }
     },
     {
       "id": "lec-05-q1d",
@@ -1863,7 +2326,15 @@
       "examPoints": 20,
       "examGroup": "lec-05-q2",
       "examTitle": "無蓋紙盒。",
-      "answer": "128"
+      "answer": "128",
+      "verify": {
+        "m": "extremum1d",
+        "f": "x(12-2x)^2",
+        "v": "x",
+        "lo": 0,
+        "hi": 6,
+        "kind": "max"
+      }
     },
     {
       "id": "lec-05-q3b",
@@ -1890,7 +2361,15 @@
       "examPoints": 20,
       "examGroup": "lec-05-q3",
       "examTitle": "拋物線上最近的點。",
-      "answer": "{0, sqrt(5/2), -sqrt(5/2)}"
+      "answer": "{0, sqrt(5/2), -sqrt(5/2)}",
+      "verify": {
+        "m": "critical",
+        "f": "x^2+(x^2-3)^2",
+        "range": [
+          -10,
+          10
+        ]
+      }
     },
     {
       "id": "lec-05-q3c",
@@ -1916,7 +2395,15 @@
       "examPoints": 20,
       "examGroup": "lec-05-q3",
       "examTitle": "拋物線上最近的點。",
-      "answer": "sqrt(11)/2"
+      "answer": "sqrt(11)/2",
+      "verify": {
+        "m": "extremum1d",
+        "f": "\\sqrt{x^2+(x^2-3)^2}",
+        "v": "x",
+        "lo": -5,
+        "hi": 5,
+        "kind": "min"
+      }
     },
     {
       "id": "lec-05-q3d",
@@ -1969,7 +2456,13 @@
       "examPoints": 20,
       "examGroup": "lec-05-q4",
       "examTitle": "線性近似、微分與 Newton 法。",
-      "answer": "2.005"
+      "answer": "2.005",
+      "verify": {
+        "m": "linApprox",
+        "f": "x^{1/3}",
+        "a": 8,
+        "dx": 0.06
+      }
     },
     {
       "id": "lec-05-q4b",
@@ -1995,7 +2488,13 @@
       "examPoints": 20,
       "examGroup": "lec-05-q4",
       "examTitle": "線性近似、微分與 Newton 法。",
-      "answer": "20*pi"
+      "answer": "20*pi",
+      "verify": {
+        "m": "differential",
+        "f": "\\frac{4}{3}\\pi x^3",
+        "a": 10,
+        "dx": 0.05
+      }
     },
     {
       "id": "lec-05-q4c",
@@ -2021,7 +2520,13 @@
       "examPoints": 20,
       "examGroup": "lec-05-q4",
       "examTitle": "線性近似、微分與 Newton 法。",
-      "answer": "161/72"
+      "answer": "161/72",
+      "verify": {
+        "m": "root",
+        "f": "x^2-5",
+        "x0": 2,
+        "n": 2
+      }
     },
     {
       "id": "lec-06-m1",
@@ -2191,7 +2696,15 @@
       "examPoints": 20,
       "examGroup": "lec-06-q1",
       "examTitle": "用 Riemann 和定義計算積分。",
-      "answer": "15/4"
+      "answer": "15/4",
+      "verify": {
+        "m": "riemannRule",
+        "f": "x^2",
+        "a": 0,
+        "b": 2,
+        "n": 4,
+        "rule": "right"
+      }
     },
     {
       "id": "lec-06-q1b",
@@ -2218,7 +2731,54 @@
       "examGroup": "lec-06-q1",
       "examTitle": "用 Riemann 和定義計算積分。",
       "answer": "4*(n+1)*(2*n+1)/(3*n^2)",
-      "variable": "n"
+      "variable": "n",
+      "verify": {
+        "m": "fn",
+        "vars": [
+          "n"
+        ],
+        "cases": [
+          {
+            "at": {
+              "n": 4
+            },
+            "v": {
+              "m": "riemannRule",
+              "f": "x^2",
+              "a": 0,
+              "b": 2,
+              "n": 4,
+              "rule": "right"
+            }
+          },
+          {
+            "at": {
+              "n": 7
+            },
+            "v": {
+              "m": "riemannRule",
+              "f": "x^2",
+              "a": 0,
+              "b": 2,
+              "n": 7,
+              "rule": "right"
+            }
+          },
+          {
+            "at": {
+              "n": 13
+            },
+            "v": {
+              "m": "riemannRule",
+              "f": "x^2",
+              "a": 0,
+              "b": 2,
+              "n": 13,
+              "rule": "right"
+            }
+          }
+        ]
+      }
     },
     {
       "id": "lec-06-q1c",
@@ -2245,7 +2805,13 @@
       "examPoints": 20,
       "examGroup": "lec-06-q1",
       "examTitle": "用 Riemann 和定義計算積分。",
-      "answer": "8/3"
+      "answer": "8/3",
+      "verify": {
+        "m": "integral",
+        "f": "x^2",
+        "a": 0,
+        "b": 2
+      }
     },
     {
       "id": "lec-06-q2a",
@@ -2271,7 +2837,14 @@
       "examPoints": 20,
       "examGroup": "lec-06-q2",
       "examTitle": "微積分基本定理第一部分。",
-      "answer": "3"
+      "answer": "3",
+      "verify": {
+        "m": "ftcDeriv",
+        "g": "\\sqrt{1+t^3}",
+        "lo": 1,
+        "hi": "x",
+        "at": 2
+      }
     },
     {
       "id": "lec-06-q2b",
@@ -2298,7 +2871,48 @@
       "examPoints": 20,
       "examGroup": "lec-06-q2",
       "examTitle": "微積分基本定理第一部分。",
-      "answer": "(2*sin(x^2)-sin(x))/x"
+      "answer": "(2*sin(x^2)-sin(x))/x",
+      "verify": {
+        "m": "fn",
+        "cases": [
+          {
+            "at": {
+              "x": 0.7
+            },
+            "v": {
+              "m": "ftcDeriv",
+              "g": "\\frac{\\sin t}{t}",
+              "lo": "x",
+              "hi": "x^2",
+              "at": 0.7
+            }
+          },
+          {
+            "at": {
+              "x": 1.3
+            },
+            "v": {
+              "m": "ftcDeriv",
+              "g": "\\frac{\\sin t}{t}",
+              "lo": "x",
+              "hi": "x^2",
+              "at": 1.3
+            }
+          },
+          {
+            "at": {
+              "x": 2.1
+            },
+            "v": {
+              "m": "ftcDeriv",
+              "g": "\\frac{\\sin t}{t}",
+              "lo": "x",
+              "hi": "x^2",
+              "at": 2.1
+            }
+          }
+        ]
+      }
     },
     {
       "id": "lec-06-q2c",
@@ -2324,7 +2938,14 @@
       "examPoints": 20,
       "examGroup": "lec-06-q2",
       "examTitle": "微積分基本定理第一部分。",
-      "answer": "1"
+      "answer": "1",
+      "verify": {
+        "m": "deriv",
+        "f": "x\\sin x",
+        "at": [
+          "\\pi/2"
+        ]
+      }
     },
     {
       "id": "lec-06-q2d",
@@ -2351,7 +2972,12 @@
       "examPoints": 20,
       "examGroup": "lec-06-q2",
       "examTitle": "微積分基本定理第一部分。",
-      "answer": "1/3"
+      "answer": "1/3",
+      "verify": {
+        "m": "limit",
+        "f": "\\frac{1}{x^3}\\int_0^x\\sin(t^2)\\,dt",
+        "at": 0
+      }
     },
     {
       "id": "lec-06-q3a",
@@ -2458,7 +3084,13 @@
       "examPoints": 20,
       "examGroup": "lec-06-q4",
       "examTitle": "淨變化與總路程。",
-      "answer": "5/3"
+      "answer": "5/3",
+      "verify": {
+        "m": "integral",
+        "f": "x^2-2x-3",
+        "a": 0,
+        "b": 5
+      }
     },
     {
       "id": "lec-06-q4b",
@@ -2485,7 +3117,16 @@
       "examPoints": 20,
       "examGroup": "lec-06-q4",
       "examTitle": "淨變化與總路程。",
-      "answer": "59/3"
+      "answer": "59/3",
+      "verify": {
+        "m": "integral",
+        "f": "|x^2-2x-3|",
+        "a": 0,
+        "b": 5,
+        "breaks": [
+          3
+        ]
+      }
     },
     {
       "id": "lec-06-q4c",
@@ -2512,7 +3153,13 @@
       "examPoints": 20,
       "examGroup": "lec-06-q4",
       "examTitle": "淨變化與總路程。",
-      "answer": "1/3"
+      "answer": "1/3",
+      "verify": {
+        "m": "integral",
+        "f": "\\frac{x^2-2x-3}{5}",
+        "a": 0,
+        "b": 5
+      }
     },
     {
       "id": "lec-07-m1",
@@ -2713,7 +3360,13 @@
       "examPoints": 20,
       "examGroup": "lec-07-q2",
       "examTitle": "遞迴公式。",
-      "answer": "pi/2"
+      "answer": "pi/2",
+      "verify": {
+        "m": "integral",
+        "f": "(\\sin x)^0",
+        "a": 0,
+        "b": "\\pi/2"
+      }
     },
     {
       "id": "lec-07-q2c",
@@ -2739,7 +3392,13 @@
       "examPoints": 20,
       "examGroup": "lec-07-q2",
       "examTitle": "遞迴公式。",
-      "answer": "8/15"
+      "answer": "8/15",
+      "verify": {
+        "m": "integral",
+        "f": "(\\sin x)^5",
+        "a": 0,
+        "b": "\\pi/2"
+      }
     },
     {
       "id": "lec-07-q3a",
@@ -2871,7 +3530,13 @@
       "examPoints": 20,
       "examGroup": "lec-07-q4",
       "examTitle": "三角代換。",
-      "answer": "pi"
+      "answer": "pi",
+      "verify": {
+        "m": "integral",
+        "f": "\\sqrt{4-x^2}",
+        "a": 0,
+        "b": 2
+      }
     },
     {
       "id": "lec-07-q4b",
@@ -2897,7 +3562,32 @@
       "examPoints": 20,
       "examGroup": "lec-07-q4",
       "examTitle": "三角代換。",
-      "answer": "-sqrt(x^2+9)/(9*x)"
+      "answer": "-sqrt(x^2+9)/(9*x)",
+      "verify": {
+        "m": "fn",
+        "kind": "antideriv",
+        "f": "\\frac{1}{x^2\\sqrt{x^2+9}}",
+        "pts": [
+          [
+            0.37
+          ],
+          [
+            0.81
+          ],
+          [
+            1.23
+          ],
+          [
+            1.77
+          ],
+          [
+            2.41
+          ],
+          [
+            3.13
+          ]
+        ]
+      }
     },
     {
       "id": "lec-07-q4c",
@@ -2923,7 +3613,13 @@
       "examPoints": 20,
       "examGroup": "lec-07-q4",
       "examTitle": "三角代換。",
-      "answer": "sqrt(2)/2"
+      "answer": "sqrt(2)/2",
+      "verify": {
+        "m": "integral",
+        "f": "\\frac{1}{(1+x^2)^{3/2}}",
+        "a": 0,
+        "b": 1
+      }
     },
     {
       "id": "lec-08-m1",
@@ -3078,6 +3774,31 @@
         "variable": "x",
         "operator": ">",
         "value": -1
+      },
+      "verify": {
+        "m": "fn",
+        "kind": "antideriv",
+        "f": "\\frac{5x-3}{x^2-2x-3}",
+        "pts": [
+          [
+            -0.63
+          ],
+          [
+            0.37
+          ],
+          [
+            0.81
+          ],
+          [
+            1.23
+          ],
+          [
+            1.77
+          ],
+          [
+            2.41
+          ]
+        ]
       }
     },
     {
@@ -3130,7 +3851,32 @@
       "examPoints": 20,
       "examGroup": "lec-08-q1",
       "examTitle": "部分分式。",
-      "answer": "ln(x+1)+ln(x^2+1)/2"
+      "answer": "ln(x+1)+ln(x^2+1)/2",
+      "verify": {
+        "m": "fn",
+        "kind": "antideriv",
+        "f": "\\frac{2x^2+x+1}{(x+1)(x^2+1)}",
+        "pts": [
+          [
+            -0.63
+          ],
+          [
+            0.37
+          ],
+          [
+            0.81
+          ],
+          [
+            1.23
+          ],
+          [
+            1.77
+          ],
+          [
+            2.41
+          ]
+        ]
+      }
     },
     {
       "id": "lec-08-q2a",
@@ -3363,7 +4109,32 @@
       "examPoints": 20,
       "examGroup": "lec-08-q4",
       "examTitle": "有理化代換與遞迴。",
-      "answer": "2*sqrt(x)-2*ln(1+sqrt(x))"
+      "answer": "2*sqrt(x)-2*ln(1+sqrt(x))",
+      "verify": {
+        "m": "fn",
+        "kind": "antideriv",
+        "f": "\\frac{1}{1+\\sqrt{x}}",
+        "pts": [
+          [
+            0.37
+          ],
+          [
+            0.81
+          ],
+          [
+            1.23
+          ],
+          [
+            1.77
+          ],
+          [
+            2.41
+          ],
+          [
+            3.13
+          ]
+        ]
+      }
     },
     {
       "id": "lec-08-q4b",
@@ -3390,7 +4161,13 @@
       "examPoints": 20,
       "examGroup": "lec-08-q4",
       "examTitle": "有理化代換與遞迴。",
-      "answer": "1"
+      "answer": "1",
+      "verify": {
+        "m": "integral",
+        "f": "e^{-x}",
+        "a": 0,
+        "b": "\\infty"
+      }
     },
     {
       "id": "lec-08-q4d",
@@ -3445,7 +4222,13 @@
         "1/3",
         "1/2",
         "5/6"
-      ]
+      ],
+      "verify": {
+        "m": "integral",
+        "f": "x-x^2",
+        "a": 0,
+        "b": 1
+      }
     },
     {
       "id": "lec-09-m2",
@@ -3473,7 +4256,13 @@
         "pi/3",
         "pi",
         "2*pi/3"
-      ]
+      ],
+      "verify": {
+        "m": "integral",
+        "f": "\\pi(\\sqrt{x})^2",
+        "a": 0,
+        "b": 1
+      }
     },
     {
       "id": "lec-09-m3",
@@ -3501,7 +4290,13 @@
         "0",
         "1/2",
         "1/pi"
-      ]
+      ],
+      "verify": {
+        "m": "integral",
+        "f": "\\frac{\\sin x}{\\pi}",
+        "a": 0,
+        "b": "\\pi"
+      }
     },
     {
       "id": "lec-09-m4",
@@ -3530,7 +4325,14 @@
         "pi/3",
         "pi/2",
         "pi"
-      ]
+      ],
+      "verify": {
+        "m": "integral",
+        "v": "y",
+        "f": "\\pi(1^2-y^2)",
+        "a": 0,
+        "b": 1
+      }
     },
     {
       "id": "lec-09-m5",
@@ -3588,7 +4390,13 @@
       "examPoints": 20,
       "examGroup": "lec-09-q1",
       "examTitle": "面積：對 $x$ 或對 $y$ 積分。",
-      "answer": "1/3"
+      "answer": "1/3",
+      "verify": {
+        "m": "integral",
+        "f": "(2x-x^2)-x^2",
+        "a": 0,
+        "b": 1
+      }
     },
     {
       "id": "lec-09-q1b",
@@ -3614,7 +4422,14 @@
       "examPoints": 20,
       "examGroup": "lec-09-q1",
       "examTitle": "面積：對 $x$ 或對 $y$ 積分。",
-      "answer": "9/2"
+      "answer": "9/2",
+      "verify": {
+        "m": "integral",
+        "v": "y",
+        "f": "(y+2)-y^2",
+        "a": -1,
+        "b": 2
+      }
     },
     {
       "id": "lec-09-q2a",
@@ -3640,7 +4455,13 @@
       "examPoints": 20,
       "examGroup": "lec-09-q2",
       "examTitle": "旋轉體積。",
-      "answer": "16*pi/15"
+      "answer": "16*pi/15",
+      "verify": {
+        "m": "integral",
+        "f": "\\pi(2x-x^2)^2",
+        "a": 0,
+        "b": 2
+      }
     },
     {
       "id": "lec-09-q2b",
@@ -3667,7 +4488,13 @@
       "examPoints": 20,
       "examGroup": "lec-09-q2",
       "examTitle": "旋轉體積。",
-      "answer": "8*pi/3"
+      "answer": "8*pi/3",
+      "verify": {
+        "m": "integral",
+        "f": "2\\pi x(2x-x^2)",
+        "a": 0,
+        "b": 2
+      }
     },
     {
       "id": "lec-09-q2c",
@@ -3694,7 +4521,13 @@
       "examPoints": 20,
       "examGroup": "lec-09-q2",
       "examTitle": "旋轉體積。",
-      "answer": "16*pi/3"
+      "answer": "16*pi/3",
+      "verify": {
+        "m": "integral",
+        "f": "2\\pi(x+1)(2x-x^2)",
+        "a": 0,
+        "b": 2
+      }
     },
     {
       "id": "lec-09-q2d",
@@ -3720,7 +4553,13 @@
       "examPoints": 20,
       "examGroup": "lec-09-q2",
       "examTitle": "旋轉體積。",
-      "answer": "8*pi/5"
+      "answer": "8*pi/5",
+      "verify": {
+        "m": "integral",
+        "f": "\\pi(1^2-(1-(2x-x^2))^2)",
+        "a": 0,
+        "b": 2
+      }
     },
     {
       "id": "lec-09-q3a",
@@ -3746,7 +4585,18 @@
       "examPoints": 20,
       "examGroup": "lec-09-q3",
       "examTitle": "弧長與旋轉曲面。",
-      "answer": "14/3"
+      "answer": "14/3",
+      "verify": {
+        "m": "lineIntegral",
+        "kind": "ds",
+        "f": "1",
+        "path": {
+          "x": "t",
+          "y": "\\frac{2}{3}t^{3/2}",
+          "from": 0,
+          "to": 3
+        }
+      }
     },
     {
       "id": "lec-09-q3b",
@@ -3772,7 +4622,18 @@
       "examPoints": 20,
       "examGroup": "lec-09-q3",
       "examTitle": "弧長與旋轉曲面。",
-      "answer": "exp(2)/2-1/4"
+      "answer": "exp(2)/2-1/4",
+      "verify": {
+        "m": "lineIntegral",
+        "kind": "ds",
+        "f": "1",
+        "path": {
+          "x": "t",
+          "y": "\\frac{t^2}{2}-\\frac{\\ln t}{4}",
+          "from": 1,
+          "to": "e"
+        }
+      }
     },
     {
       "id": "lec-09-q4a",
@@ -3798,7 +4659,12 @@
       "examPoints": 20,
       "examGroup": "lec-09-q4",
       "examTitle": "截面法與平均值。",
-      "answer": "sqrt(3)"
+      "answer": "sqrt(3)",
+      "verify": {
+        "m": "root",
+        "f": "x^2-\\frac{1}{3}\\int_0^3t^2\\,dt",
+        "x0": 1
+      }
     },
     {
       "id": "lec-09-q4b",
@@ -3825,7 +4691,13 @@
       "examPoints": 20,
       "examGroup": "lec-09-q4",
       "examTitle": "截面法與平均值。",
-      "answer": "128/3"
+      "answer": "128/3",
+      "verify": {
+        "m": "integral",
+        "f": "(2\\sqrt{4-x^2})^2",
+        "a": -2,
+        "b": 2
+      }
     },
     {
       "id": "lec-09-q4c",
@@ -3852,7 +4724,13 @@
       "examPoints": 20,
       "examGroup": "lec-09-q4",
       "examTitle": "截面法與平均值。",
-      "answer": "32*sqrt(3)/3"
+      "answer": "32*sqrt(3)/3",
+      "verify": {
+        "m": "integral",
+        "f": "\\frac{\\sqrt{3}}{4}(2\\sqrt{4-x^2})^2",
+        "a": -2,
+        "b": 2
+      }
     },
     {
       "id": "lec-10-m1",
@@ -3881,7 +4759,48 @@
         "2/(3*t)",
         "3*t^2",
         "3*t^2/2"
-      ]
+      ],
+      "verify": {
+        "m": "fn",
+        "vars": [
+          "t"
+        ],
+        "cases": [
+          {
+            "at": {
+              "t": 0.7
+            },
+            "v": {
+              "m": "paramSlope",
+              "x": "t^2",
+              "y": "t^3",
+              "at": 0.7
+            }
+          },
+          {
+            "at": {
+              "t": 1.3
+            },
+            "v": {
+              "m": "paramSlope",
+              "x": "t^2",
+              "y": "t^3",
+              "at": 1.3
+            }
+          },
+          {
+            "at": {
+              "t": 2.2
+            },
+            "v": {
+              "m": "paramSlope",
+              "x": "t^2",
+              "y": "t^3",
+              "at": 2.2
+            }
+          }
+        ]
+      }
     },
     {
       "id": "lec-10-m2",
@@ -3977,7 +4896,13 @@
         "pi",
         "2*pi",
         "pi/2"
-      ]
+      ],
+      "verify": {
+        "m": "integral",
+        "f": "\\frac{1}{2}(1+\\cos x)^2",
+        "a": 0,
+        "b": "2\\pi"
+      }
     },
     {
       "id": "lec-10-m5",
@@ -4005,7 +4930,13 @@
         "1.5",
         "3",
         "4.5"
-      ]
+      ],
+      "verify": {
+        "m": "integral",
+        "f": "\\frac{10}{0.2}x",
+        "a": 0,
+        "b": 0.3
+      }
     },
     {
       "id": "lec-10-q1a",
@@ -4032,7 +4963,33 @@
       "examPoints": 20,
       "examGroup": "lec-10-q1",
       "examTitle": "擺線。",
-      "answer": "x+2-pi/2"
+      "answer": "x+2-pi/2",
+      "verify": {
+        "m": "fn",
+        "cases": [
+          {
+            "at": {
+              "x": "\\pi/2-1"
+            },
+            "v": {
+              "m": "value",
+              "f": "1-\\cos\\frac{\\pi}{2}"
+            }
+          },
+          {
+            "at": {
+              "x": "\\pi/2-1"
+            },
+            "d": "x",
+            "v": {
+              "m": "paramSlope",
+              "x": "t-\\sin t",
+              "y": "1-\\cos t",
+              "at": "\\pi/2"
+            }
+          }
+        ]
+      }
     },
     {
       "id": "lec-10-q1b",
@@ -4060,7 +5017,49 @@
       "examGroup": "lec-10-q1",
       "examTitle": "擺線。",
       "answer": "-1/(1-cos(t))^2",
-      "variable": "t"
+      "variable": "t",
+      "verify": {
+        "m": "fn",
+        "vars": [
+          "t"
+        ],
+        "tol": 0.0001,
+        "cases": [
+          {
+            "at": {
+              "t": 0.9
+            },
+            "v": {
+              "m": "paramSecond",
+              "x": "t-\\sin t",
+              "y": "1-\\cos t",
+              "at": 0.9
+            }
+          },
+          {
+            "at": {
+              "t": 2
+            },
+            "v": {
+              "m": "paramSecond",
+              "x": "t-\\sin t",
+              "y": "1-\\cos t",
+              "at": 2
+            }
+          },
+          {
+            "at": {
+              "t": 4.1
+            },
+            "v": {
+              "m": "paramSecond",
+              "x": "t-\\sin t",
+              "y": "1-\\cos t",
+              "at": 4.1
+            }
+          }
+        ]
+      }
     },
     {
       "id": "lec-10-q1c",
@@ -4087,7 +5086,18 @@
       "examPoints": 20,
       "examGroup": "lec-10-q1",
       "examTitle": "擺線。",
-      "answer": "8"
+      "answer": "8",
+      "verify": {
+        "m": "lineIntegral",
+        "kind": "ds",
+        "f": "1",
+        "path": {
+          "x": "t-\\sin t",
+          "y": "1-\\cos t",
+          "from": 0,
+          "to": "2\\pi"
+        }
+      }
     },
     {
       "id": "lec-10-q2a",
@@ -4177,7 +5187,13 @@
       "examPoints": 20,
       "examGroup": "lec-10-q2",
       "examTitle": "極座標的面積與弧長。",
-      "answer": "pi"
+      "answer": "pi",
+      "verify": {
+        "m": "integral",
+        "f": "(3\\cos x)^2-(1+\\cos x)^2",
+        "a": 0,
+        "b": "\\pi/3"
+      }
     },
     {
       "id": "lec-10-q2d",
@@ -4204,7 +5220,18 @@
       "examPoints": 20,
       "examGroup": "lec-10-q2",
       "examTitle": "極座標的面積與弧長。",
-      "answer": "8"
+      "answer": "8",
+      "verify": {
+        "m": "lineIntegral",
+        "kind": "ds",
+        "f": "1",
+        "path": {
+          "x": "(1+\\cos t)\\cos t",
+          "y": "(1+\\cos t)\\sin t",
+          "from": 0,
+          "to": "2\\pi"
+        }
+      }
     },
     {
       "id": "lec-10-q3a",
@@ -4230,7 +5257,13 @@
       "examPoints": 20,
       "examGroup": "lec-10-q3",
       "examTitle": "功。",
-      "answer": "6"
+      "answer": "6",
+      "verify": {
+        "m": "integral",
+        "f": "\\frac{2}{0.1^2/2}x",
+        "a": 0.1,
+        "b": 0.2
+      }
     },
     {
       "id": "lec-10-q3b",
@@ -4256,7 +5289,13 @@
       "examPoints": 20,
       "examGroup": "lec-10-q3",
       "examTitle": "功。",
-      "answer": "78400*pi"
+      "answer": "78400*pi",
+      "verify": {
+        "m": "integral",
+        "f": "1000\\cdot9.8\\cdot\\pi\\cdot1^2(4-x)",
+        "a": 0,
+        "b": 4
+      }
     },
     {
       "id": "lec-10-q3c",
@@ -4282,7 +5321,13 @@
       "examPoints": 20,
       "examGroup": "lec-10-q3",
       "examTitle": "功。",
-      "answer": "3920"
+      "answer": "3920",
+      "verify": {
+        "m": "integral",
+        "f": "2\\cdot9.8\\cdot x",
+        "a": 0,
+        "b": 20
+      }
     },
     {
       "id": "lec-10-q4a",
@@ -4308,7 +5353,11 @@
       "examPoints": 20,
       "examGroup": "lec-10-q4",
       "examTitle": "質心。",
-      "answer": "8/5"
+      "answer": "8/5",
+      "verify": {
+        "m": "value",
+        "f": "\\frac{\\int_{-2}^{2}\\frac{1}{2}(4-x^2)^2\\,dx}{\\int_{-2}^{2}(4-x^2)\\,dx}"
+      }
     },
     {
       "id": "lec-10-q4c",
@@ -4335,7 +5384,33 @@
       "examGroup": "lec-10-q4",
       "examTitle": "質心。",
       "answer": "4*r/(3*pi)",
-      "variable": "r"
+      "variable": "r",
+      "verify": {
+        "m": "fn",
+        "vars": [
+          "r"
+        ],
+        "cases": [
+          {
+            "at": {
+              "r": 1
+            },
+            "v": {
+              "m": "value",
+              "f": "\\frac{\\int_0^{1}x\\sqrt{1^2-x^2}\\,dx}{\\int_0^{1}\\sqrt{1^2-x^2}\\,dx}"
+            }
+          },
+          {
+            "at": {
+              "r": 2.5
+            },
+            "v": {
+              "m": "value",
+              "f": "\\frac{\\int_0^{2.5}x\\sqrt{2.5^2-x^2}\\,dx}{\\int_0^{2.5}\\sqrt{2.5^2-x^2}\\,dx}"
+            }
+          }
+        ]
+      }
     },
     {
       "id": "lec-11-m1",
@@ -4541,7 +5616,12 @@
       "examPoints": 20,
       "examGroup": "lec-11-q1",
       "examTitle": "求數列極限。",
-      "answer": "0"
+      "answer": "0",
+      "verify": {
+        "m": "limit",
+        "f": "\\frac{\\ln x}{x}",
+        "at": "inf"
+      }
     },
     {
       "id": "lec-11-q1c",
@@ -4622,7 +5702,12 @@
       "examPoints": 20,
       "examGroup": "lec-11-q2",
       "examTitle": "夾擠定理與階乘。",
-      "answer": "0"
+      "answer": "0",
+      "verify": {
+        "m": "limit",
+        "f": "\\frac{\\cos x}{x}",
+        "at": "inf"
+      }
     },
     {
       "id": "lec-11-q2d",
@@ -4686,7 +5771,12 @@
       "examPoints": 20,
       "examGroup": "lec-11-q3",
       "examTitle": "遞迴數列。",
-      "answer": "2"
+      "answer": "2",
+      "verify": {
+        "m": "recurrence",
+        "f": "\\sqrt{2+a}",
+        "a0": "\\sqrt{2}"
+      }
     },
     {
       "id": "lec-11-q4a",
@@ -4795,7 +5885,11 @@
       "examPoints": 20,
       "examGroup": "lec-11-q4",
       "examTitle": "$1^\\infty$ 型與 $e$。",
-      "answer": "1"
+      "answer": "1",
+      "verify": {
+        "m": "seqLimit",
+        "f": "\\left(1+\\frac{1}{n^2}\\right)^n"
+      }
     },
     {
       "id": "lec-12-m1",
@@ -4949,7 +6043,12 @@
       "examPoints": 20,
       "examGroup": "lec-12-q1",
       "examTitle": "幾何級數與望遠鏡級數。",
-      "answer": "3/2"
+      "answer": "3/2",
+      "verify": {
+        "m": "series",
+        "f": "\\frac{3^n+2^n}{6^n}",
+        "from": 1
+      }
     },
     {
       "id": "lec-12-q1b",
@@ -4975,7 +6074,12 @@
       "examPoints": 20,
       "examGroup": "lec-12-q1",
       "examTitle": "幾何級數與望遠鏡級數。",
-      "answer": "4/33"
+      "answer": "4/33",
+      "verify": {
+        "m": "series",
+        "f": "\\frac{12}{100^n}",
+        "from": 1
+      }
     },
     {
       "id": "lec-12-q1c",
@@ -5001,7 +6105,12 @@
       "examPoints": 20,
       "examGroup": "lec-12-q1",
       "examTitle": "幾何級數與望遠鏡級數。",
-      "answer": "3/4"
+      "answer": "3/4",
+      "verify": {
+        "m": "series",
+        "f": "\\frac{1}{n^2-1}",
+        "from": 2
+      }
     },
     {
       "id": "lec-12-q1d",
@@ -5028,7 +6137,42 @@
       "examPoints": 20,
       "examGroup": "lec-12-q1",
       "examTitle": "幾何級數與望遠鏡級數。",
-      "answer": "2/(3-x)"
+      "answer": "2/(3-x)",
+      "verify": {
+        "m": "fn",
+        "cases": [
+          {
+            "at": {
+              "x": 0.3
+            },
+            "v": {
+              "m": "series",
+              "f": "\\frac{(0.3-1)^n}{2^n}",
+              "from": 0
+            }
+          },
+          {
+            "at": {
+              "x": 1.7
+            },
+            "v": {
+              "m": "series",
+              "f": "\\frac{(1.7-1)^n}{2^n}",
+              "from": 0
+            }
+          },
+          {
+            "at": {
+              "x": -0.5
+            },
+            "v": {
+              "m": "series",
+              "f": "\\frac{(-0.5-1)^n}{2^n}",
+              "from": 0
+            }
+          }
+        ]
+      }
     },
     {
       "id": "lec-12-q2b",
@@ -5061,7 +6205,12 @@
         "divergent"
       ],
       "canonical": "發散",
-      "answer": "發散"
+      "answer": "發散",
+      "verify": {
+        "m": "seriesConverges",
+        "f": "\\frac{1}{n\\ln n}",
+        "from": 2
+      }
     },
     {
       "id": "lec-12-q2c",
@@ -5094,7 +6243,12 @@
         "convergent"
       ],
       "canonical": "收斂",
-      "answer": "收斂"
+      "answer": "收斂",
+      "verify": {
+        "m": "seriesConverges",
+        "f": "ne^{-n^2}",
+        "from": 1
+      }
     },
     {
       "id": "lec-12-q2d",
@@ -5121,7 +6275,12 @@
       "examPoints": 20,
       "examGroup": "lec-12-q2",
       "examTitle": "積分判別。",
-      "answer": "10"
+      "answer": "10",
+      "verify": {
+        "m": "firstIndex",
+        "f": "\\int_n^{\\infty}x^{-3}\\,dx",
+        "below": 0.0050000001
+      }
     },
     {
       "id": "lec-12-q3a",
@@ -5154,7 +6313,12 @@
         "convergent"
       ],
       "canonical": "收斂",
-      "answer": "收斂"
+      "answer": "收斂",
+      "verify": {
+        "m": "seriesConverges",
+        "f": "\\frac{1}{2^n+n}",
+        "from": 1
+      }
     },
     {
       "id": "lec-12-q3b",
@@ -5187,7 +6351,12 @@
         "convergent"
       ],
       "canonical": "收斂",
-      "answer": "收斂"
+      "answer": "收斂",
+      "verify": {
+        "m": "seriesConverges",
+        "f": "\\frac{n+1}{n^3-n+5}",
+        "from": 1
+      }
     },
     {
       "id": "lec-12-q3c",
@@ -5220,7 +6389,12 @@
         "divergent"
       ],
       "canonical": "發散",
-      "answer": "發散"
+      "answer": "發散",
+      "verify": {
+        "m": "seriesConverges",
+        "f": "\\sin\\frac{1}{n}",
+        "from": 1
+      }
     },
     {
       "id": "lec-12-q3d",
@@ -5253,7 +6427,12 @@
         "convergent"
       ],
       "canonical": "收斂",
-      "answer": "收斂"
+      "answer": "收斂",
+      "verify": {
+        "m": "seriesConverges",
+        "f": "\\frac{\\ln n}{n^3}",
+        "from": 1
+      }
     },
     {
       "id": "lec-12-q4d",
@@ -5286,7 +6465,12 @@
         "divergent"
       ],
       "canonical": "發散",
-      "answer": "發散"
+      "answer": "發散",
+      "verify": {
+        "m": "seriesConverges",
+        "f": "\\ln\\frac{n}{n+1}",
+        "from": 1
+      }
     },
     {
       "id": "lec-13-m1",
@@ -5350,7 +6534,11 @@
         "exp(1)",
         "1",
         "0"
-      ]
+      ],
+      "verify": {
+        "m": "seqLimit",
+        "f": "\\left(\\frac{n}{n+1}\\right)^n"
+      }
     },
     {
       "id": "lec-13-m3",
@@ -5448,7 +6636,13 @@
         "1/6",
         "1/120",
         "1/720"
-      ]
+      ],
+      "verify": {
+        "m": "series",
+        "f": "\\frac{1}{n!}",
+        "from": 4,
+        "to": 4
+      }
     },
     {
       "id": "lec-13-q1a",
@@ -5632,7 +6826,12 @@
         "convergent"
       ],
       "canonical": "收斂",
-      "answer": "收斂"
+      "answer": "收斂",
+      "verify": {
+        "m": "seriesConverges",
+        "f": "\\frac{n^2}{2^n}",
+        "from": 1
+      }
     },
     {
       "id": "lec-13-q2b",
@@ -5664,7 +6863,12 @@
         "convergent"
       ],
       "canonical": "收斂",
-      "answer": "收斂"
+      "answer": "收斂",
+      "verify": {
+        "m": "seriesConverges",
+        "f": "\\frac{3^n}{n!}",
+        "from": 0
+      }
     },
     {
       "id": "lec-13-q2c",
@@ -5696,7 +6900,12 @@
         "convergent"
       ],
       "canonical": "收斂",
-      "answer": "收斂"
+      "answer": "收斂",
+      "verify": {
+        "m": "seriesConverges",
+        "f": "\\left(\\frac{n}{2n+1}\\right)^n",
+        "from": 1
+      }
     },
     {
       "id": "lec-13-q2d",
@@ -5728,7 +6937,12 @@
         "divergent"
       ],
       "canonical": "發散",
-      "answer": "發散"
+      "answer": "發散",
+      "verify": {
+        "m": "seriesConverges",
+        "f": "\\frac{n^n}{n!}",
+        "from": 1
+      }
     },
     {
       "id": "lec-13-q2e",
@@ -5760,7 +6974,12 @@
         "convergent"
       ],
       "canonical": "收斂",
-      "answer": "收斂"
+      "answer": "收斂",
+      "verify": {
+        "m": "seriesConverges",
+        "f": "\\frac{(1+\\frac{1}{n})^{n^2}}{3^n}",
+        "from": 1
+      }
     },
     {
       "id": "lec-13-q3b",
@@ -5787,7 +7006,12 @@
       "examPoints": 20,
       "examGroup": "lec-13-q3",
       "examTitle": "交錯級數的誤差估計。",
-      "answer": "4"
+      "answer": "4",
+      "verify": {
+        "m": "firstIndex",
+        "f": "\\frac{1}{(n+1)^3}",
+        "below": 0.01
+      }
     },
     {
       "id": "lec-13-q3c",
@@ -5813,7 +7037,13 @@
       "examPoints": 20,
       "examGroup": "lec-13-q3",
       "examTitle": "交錯級數的誤差估計。",
-      "answer": "1549/1728"
+      "answer": "1549/1728",
+      "verify": {
+        "m": "series",
+        "f": "\\frac{(-1)^{n+1}}{n^3}",
+        "from": 1,
+        "to": 4
+      }
     },
     {
       "id": "lec-13-q4a",
@@ -5999,7 +7229,17 @@
         "(-1, 1)",
         "[-1, 1]",
         "(-1, 1]"
-      ]
+      ],
+      "verify": {
+        "m": "convergence",
+        "f": "\\frac{x^n}{n}",
+        "center": 0,
+        "from": 1,
+        "range": [
+          -100,
+          100
+        ]
+      }
     },
     {
       "id": "lec-14-q1a",
@@ -6026,7 +7266,17 @@
       "examPoints": 20,
       "examGroup": "lec-14-q1",
       "examTitle": "收斂半徑與收斂區間。",
-      "answer": "[-1, 5)"
+      "answer": "[-1, 5)",
+      "verify": {
+        "m": "convergence",
+        "f": "\\frac{1}{n}\\left(\\frac{x-2}{3}\\right)^n",
+        "center": 2,
+        "from": 1,
+        "range": [
+          -100,
+          100
+        ]
+      }
     },
     {
       "id": "lec-14-q1b",
@@ -6053,7 +7303,17 @@
       "examPoints": 20,
       "examGroup": "lec-14-q1",
       "examTitle": "收斂半徑與收斂區間。",
-      "answer": "(-5, 3)"
+      "answer": "(-5, 3)",
+      "verify": {
+        "m": "convergence",
+        "f": "n\\left(\\frac{x+1}{4}\\right)^n",
+        "center": -1,
+        "from": 1,
+        "range": [
+          -100,
+          100
+        ]
+      }
     },
     {
       "id": "lec-14-q1c",
@@ -6080,7 +7340,17 @@
       "examPoints": 20,
       "examGroup": "lec-14-q1",
       "examTitle": "收斂半徑與收斂區間。",
-      "answer": "[-3, 3]"
+      "answer": "[-3, 3]",
+      "verify": {
+        "m": "convergence",
+        "f": "\\frac{1}{n^2}\\left(\\frac{x^2}{9}\\right)^n",
+        "center": 0,
+        "from": 1,
+        "range": [
+          -100,
+          100
+        ]
+      }
     },
     {
       "id": "lec-14-q1d",
@@ -6107,7 +7377,17 @@
       "examPoints": 20,
       "examGroup": "lec-14-q1",
       "examTitle": "收斂半徑與收斂區間。",
-      "answer": "[0, 1)"
+      "answer": "[0, 1)",
+      "verify": {
+        "m": "convergence",
+        "f": "\\frac{(2x-1)^n}{\\sqrt{n}}",
+        "center": "\\frac{1}{2}",
+        "from": 1,
+        "range": [
+          -100,
+          100
+        ]
+      }
     },
     {
       "id": "lec-14-q2a",
@@ -6161,7 +7441,14 @@
       "examPoints": 20,
       "examGroup": "lec-14-q2",
       "examTitle": "把函數寫成冪級數。",
-      "answer": "-1/4"
+      "answer": "-1/4",
+      "verify": {
+        "m": "derivAt0",
+        "coef": true,
+        "f": "\\ln(1+x)",
+        "n": 4,
+        "r": 0.5
+      }
     },
     {
       "id": "lec-14-q2c",
@@ -6188,7 +7475,14 @@
       "examPoints": 20,
       "examGroup": "lec-14-q2",
       "examTitle": "把函數寫成冪級數。",
-      "answer": "-1/7"
+      "answer": "-1/7",
+      "verify": {
+        "m": "derivAt0",
+        "coef": true,
+        "f": "\\arctan x",
+        "n": 7,
+        "r": 0.5
+      }
     },
     {
       "id": "lec-14-q3a",
@@ -6215,7 +7509,12 @@
       "examPoints": 20,
       "examGroup": "lec-14-q3",
       "examTitle": "求級數的和。",
-      "answer": "2"
+      "answer": "2",
+      "verify": {
+        "m": "series",
+        "f": "\\frac{n}{2^n}",
+        "from": 1
+      }
     },
     {
       "id": "lec-14-q3b",
@@ -6242,7 +7541,12 @@
       "examPoints": 20,
       "examGroup": "lec-14-q3",
       "examTitle": "求級數的和。",
-      "answer": "6"
+      "answer": "6",
+      "verify": {
+        "m": "series",
+        "f": "\\frac{n^2}{2^n}",
+        "from": 1
+      }
     },
     {
       "id": "lec-14-q3c",
@@ -6269,7 +7573,12 @@
       "examPoints": 20,
       "examGroup": "lec-14-q3",
       "examTitle": "求級數的和。",
-      "answer": "ln(2)"
+      "answer": "ln(2)",
+      "verify": {
+        "m": "series",
+        "f": "\\frac{1}{n2^n}",
+        "from": 1
+      }
     },
     {
       "id": "lec-14-q3d",
@@ -6296,7 +7605,12 @@
       "examPoints": 20,
       "examGroup": "lec-14-q3",
       "examTitle": "求級數的和。",
-      "answer": "pi/(2*sqrt(3))"
+      "answer": "pi/(2*sqrt(3))",
+      "verify": {
+        "m": "series",
+        "f": "\\frac{(-1)^n}{(2n+1)3^n}",
+        "from": 0
+      }
     },
     {
       "id": "lec-14-q4a",
@@ -6323,7 +7637,17 @@
       "examPoints": 20,
       "examGroup": "lec-14-q4",
       "examTitle": "用冪級數定義函數。",
-      "answer": "(-inf, inf)"
+      "answer": "(-inf, inf)",
+      "verify": {
+        "m": "convergence",
+        "f": "\\frac{x^n}{n!}",
+        "center": 0,
+        "from": 0,
+        "range": [
+          -100,
+          100
+        ]
+      }
     },
     {
       "id": "lec-14-q4d",
@@ -6350,7 +7674,12 @@
       "examPoints": 20,
       "examGroup": "lec-14-q4",
       "examTitle": "用冪級數定義函數。",
-      "answer": "2*exp(1)"
+      "answer": "2*exp(1)",
+      "verify": {
+        "m": "series",
+        "f": "\\frac{n^2}{n!}",
+        "from": 1
+      }
     },
     {
       "id": "lec-15-m1",
@@ -6379,7 +7708,13 @@
         "1/6",
         "1/3",
         "0"
-      ]
+      ],
+      "verify": {
+        "m": "derivAt0",
+        "coef": true,
+        "f": "\\sin x",
+        "n": 3
+      }
     },
     {
       "id": "lec-15-m2",
@@ -6408,7 +7743,13 @@
         "1/40320",
         "10",
         "3628800"
-      ]
+      ],
+      "verify": {
+        "m": "derivAt0",
+        "f": "x^2e^x",
+        "n": 10,
+        "r": 3
+      }
     },
     {
       "id": "lec-15-m4",
@@ -6437,7 +7778,51 @@
         "1+x+x^2/2",
         "1+x/2+x^2/8",
         "1-x/2+3*x^2/8"
-      ]
+      ],
+      "verify": {
+        "m": "fn",
+        "cases": [
+          {
+            "at": {
+              "x": 0.3
+            },
+            "v": {
+              "m": "taylorValue",
+              "f": "\\sqrt{1+x}",
+              "a": 0,
+              "n": 2,
+              "at": 0.3,
+              "r": 0.5
+            }
+          },
+          {
+            "at": {
+              "x": 0.7
+            },
+            "v": {
+              "m": "taylorValue",
+              "f": "\\sqrt{1+x}",
+              "a": 0,
+              "n": 2,
+              "at": 0.7,
+              "r": 0.5
+            }
+          },
+          {
+            "at": {
+              "x": -0.4
+            },
+            "v": {
+              "m": "taylorValue",
+              "f": "\\sqrt{1+x}",
+              "a": 0,
+              "n": 2,
+              "at": -0.4,
+              "r": 0.5
+            }
+          }
+        ]
+      }
     },
     {
       "id": "lec-15-m5",
@@ -6496,7 +7881,51 @@
       "examPoints": 20,
       "examGroup": "lec-15-q1",
       "examTitle": "Taylor 多項式與誤差估計。",
-      "answer": "2+(x-4)/4-(x-4)^2/64"
+      "answer": "2+(x-4)/4-(x-4)^2/64",
+      "verify": {
+        "m": "fn",
+        "cases": [
+          {
+            "at": {
+              "x": 3
+            },
+            "v": {
+              "m": "taylorValue",
+              "f": "\\sqrt{x}",
+              "a": 4,
+              "n": 2,
+              "at": 3,
+              "r": 1
+            }
+          },
+          {
+            "at": {
+              "x": 4.5
+            },
+            "v": {
+              "m": "taylorValue",
+              "f": "\\sqrt{x}",
+              "a": 4,
+              "n": 2,
+              "at": 4.5,
+              "r": 1
+            }
+          },
+          {
+            "at": {
+              "x": 6
+            },
+            "v": {
+              "m": "taylorValue",
+              "f": "\\sqrt{x}",
+              "a": 4,
+              "n": 2,
+              "at": 6,
+              "r": 1
+            }
+          }
+        ]
+      }
     },
     {
       "id": "lec-15-q1b",
@@ -6523,7 +7952,15 @@
       "examPoints": 20,
       "examGroup": "lec-15-q1",
       "examTitle": "Taylor 多項式與誤差估計。",
-      "answer": "2.02484375"
+      "answer": "2.02484375",
+      "verify": {
+        "m": "taylorValue",
+        "f": "\\sqrt{x}",
+        "a": 4,
+        "n": 2,
+        "at": 4.1,
+        "r": 1
+      }
     },
     {
       "id": "lec-15-q1c",
@@ -6550,7 +7987,15 @@
       "examPoints": 20,
       "examGroup": "lec-15-q1",
       "examTitle": "Taylor 多項式與誤差估計。",
-      "answer": "1/512000"
+      "answer": "1/512000",
+      "verify": {
+        "m": "lagrangeBound",
+        "f": "\\sqrt{x}",
+        "a": 4,
+        "n": 2,
+        "at": 4.1,
+        "r": 1
+      }
     },
     {
       "id": "lec-15-q2b",
@@ -6658,7 +8103,13 @@
       "examPoints": 20,
       "examGroup": "lec-15-q3",
       "examTitle": "近似積分與求和。",
-      "answer": "5651/7560"
+      "answer": "5651/7560",
+      "verify": {
+        "m": "series",
+        "f": "\\frac{(-1)^n}{n!(2n+1)}",
+        "from": 0,
+        "to": 4
+      }
     },
     {
       "id": "lec-15-q3c",
@@ -6685,7 +8136,12 @@
       "examPoints": 20,
       "examGroup": "lec-15-q3",
       "examTitle": "近似積分與求和。",
-      "answer": "1/2"
+      "answer": "1/2",
+      "verify": {
+        "m": "series",
+        "f": "\\frac{(-1)^n\\pi^{2n+1}}{6^{2n+1}(2n+1)!}",
+        "from": 0
+      }
     },
     {
       "id": "lec-15-q3d",
@@ -6712,7 +8168,12 @@
       "examPoints": 20,
       "examGroup": "lec-15-q3",
       "examTitle": "近似積分與求和。",
-      "answer": "ln(4/3)"
+      "answer": "ln(4/3)",
+      "verify": {
+        "m": "series",
+        "f": "\\frac{(-1)^{n+1}}{n3^n}",
+        "from": 1
+      }
     },
     {
       "id": "lec-15-q4a",
@@ -6739,7 +8200,14 @@
       "examPoints": 20,
       "examGroup": "lec-15-q4",
       "examTitle": "二項級數與誤差控制。",
-      "answer": "-5/16"
+      "answer": "-5/16",
+      "verify": {
+        "m": "derivAt0",
+        "coef": true,
+        "f": "(1+x)^{-1/2}",
+        "n": 3,
+        "r": 0.5
+      }
     },
     {
       "id": "lec-15-q4c",
@@ -6766,7 +8234,15 @@
       "examPoints": 20,
       "examGroup": "lec-15-q4",
       "examTitle": "二項級數與誤差控制。",
-      "answer": "0.0075"
+      "answer": "0.0075",
+      "verify": {
+        "m": "taylorValue",
+        "f": "\\frac{(1-x)^{-1/2}-1-x/2}{x/2}",
+        "a": 0,
+        "n": 1,
+        "at": 0.01,
+        "r": 0.4
+      }
     },
     {
       "id": "lec-15-q4d",
@@ -6793,7 +8269,12 @@
       "examPoints": 20,
       "examGroup": "lec-15-q4",
       "examTitle": "二項級數與誤差控制。",
-      "answer": "6"
+      "answer": "6",
+      "verify": {
+        "m": "firstIndex",
+        "f": "\\frac{3}{(n+1)!}",
+        "below": 0.001
+      }
     },
     {
       "id": "lec-16-m1",
@@ -6823,7 +8304,11 @@
         "30",
         "90",
         "45"
-      ]
+      ],
+      "verify": {
+        "m": "value",
+        "f": "\\frac{180}{\\pi}\\arccos\\frac{1\\cdot1+1\\cdot0+0\\cdot1}{\\sqrt{1^2+1^2+0^2}\\sqrt{1^2+0^2+1^2}}"
+      }
     },
     {
       "id": "lec-16-m2",
@@ -6853,7 +8338,11 @@
         "sqrt(14)",
         "7",
         "sqrt(46)/2"
-      ]
+      ],
+      "verify": {
+        "m": "value",
+        "f": "\\sqrt{(1^2+2^2+0^2)(0^2+1^2+3^2)-(1\\cdot0+2\\cdot1+0\\cdot3)^2}"
+      }
     },
     {
       "id": "lec-16-m3",
@@ -6958,7 +8447,20 @@
         "2*x*y^3",
         "3*x^2*y^2",
         "6*x^2*y"
-      ]
+      ],
+      "verify": {
+        "m": "fn",
+        "vars": [
+          "x",
+          "y"
+        ],
+        "kind": "deriv",
+        "wrt": [
+          "x",
+          "y"
+        ],
+        "f": "x^2y^3"
+      }
     },
     {
       "id": "lec-16-q1a",
@@ -6986,7 +8488,19 @@
       "examPoints": 20,
       "examGroup": "lec-16-q1",
       "examTitle": "直線與平面。",
-      "answer": "1/3"
+      "answer": "1/3",
+      "verify": {
+        "m": "constrained",
+        "f": "\\sqrt{(x-1)^2+(y-2)^2+(z-3)^2}",
+        "g": "2x-y+2z",
+        "c": 5,
+        "vars": [
+          "x",
+          "y",
+          "z"
+        ],
+        "kind": "min"
+      }
     },
     {
       "id": "lec-16-q1b",
@@ -7014,7 +8528,12 @@
       "examPoints": 20,
       "examGroup": "lec-16-q1",
       "examTitle": "直線與平面。",
-      "answer": "-1/9"
+      "answer": "-1/9",
+      "verify": {
+        "m": "root",
+        "f": "2(1+2x)-(2-x)+2(3+2x)-5",
+        "x0": 0
+      }
     },
     {
       "id": "lec-16-q1c",
@@ -7084,7 +8603,11 @@
       "examPoints": 20,
       "examGroup": "lec-16-q1",
       "examTitle": "直線與平面。",
-      "answer": "4*sqrt(5)/15"
+      "answer": "4*sqrt(5)/15",
+      "verify": {
+        "m": "value",
+        "f": "\\frac{|2\\cdot0+(-1)\\cdot2+2\\cdot(-1)|}{\\sqrt{2^2+1^2+2^2}\\sqrt{0^2+2^2+1^2}}"
+      }
     },
     {
       "id": "lec-16-q2a",
@@ -7138,7 +8661,12 @@
       "examPoints": 20,
       "examGroup": "lec-16-q2",
       "examTitle": "極限與連續。",
-      "answer": "0"
+      "answer": "0",
+      "verify": {
+        "m": "limit",
+        "f": "\\frac{\\frac{x\\cdot0}{x^2+0^2}-0}{x}",
+        "at": 0
+      }
     },
     {
       "id": "lec-16-q3b",
@@ -7197,7 +8725,17 @@
       "variables": [
         "x",
         "y"
-      ]
+      ],
+      "verify": {
+        "m": "fn",
+        "vars": [
+          "x",
+          "y"
+        ],
+        "kind": "deriv",
+        "wrt": "x",
+        "f": "x^3y+e^{xy^2}"
+      }
     },
     {
       "id": "lec-16-q4b",
@@ -7228,7 +8766,20 @@
       "variables": [
         "x",
         "y"
-      ]
+      ],
+      "verify": {
+        "m": "fn",
+        "vars": [
+          "x",
+          "y"
+        ],
+        "kind": "deriv",
+        "wrt": [
+          "x",
+          "y"
+        ],
+        "f": "x^3y+e^{xy^2}"
+      }
     },
     {
       "id": "lec-17-m1",
@@ -7258,7 +8809,13 @@
         "5.050",
         "4.950",
         "5.014"
-      ]
+      ],
+      "verify": {
+        "m": "linApprox",
+        "f": "\\sqrt{(3+0.03x)^2+(4-0.04x)^2}",
+        "a": 0,
+        "dx": 1
+      }
     },
     {
       "id": "lec-17-m2",
@@ -7288,7 +8845,15 @@
         "6",
         "sqrt(5)",
         "20"
-      ]
+      ],
+      "verify": {
+        "m": "extremum1d",
+        "v": "x",
+        "lo": 0,
+        "hi": "2\\pi",
+        "kind": "max",
+        "f": "\\frac{((1+0.001\\cos x)^2+(2+0.001\\sin x)^2)-((1-0.001\\cos x)^2+(2-0.001\\sin x)^2)}{0.002}"
+      }
     },
     {
       "id": "lec-17-m3",
@@ -7322,7 +8887,44 @@
         "(x^2-2*y)/(y^2-2*x)",
         "-x^2/y^2",
         "(2*y-x^2)/(2*x-y^2)"
-      ]
+      ],
+      "verify": {
+        "m": "fn",
+        "vars": [
+          "x",
+          "y"
+        ],
+        "cases": [
+          {
+            "at": {
+              "x": 3,
+              "y": 3
+            },
+            "v": {
+              "m": "implicit",
+              "F": "x^3+y^3-6xy",
+              "at": [
+                3,
+                3
+              ]
+            }
+          },
+          {
+            "at": {
+              "x": "\\frac{4}{3}",
+              "y": "\\frac{8}{3}"
+            },
+            "v": {
+              "m": "implicit",
+              "F": "x^3+y^3-6xy",
+              "at": [
+                "\\frac{4}{3}",
+                "\\frac{8}{3}"
+              ]
+            }
+          }
+        ]
+      }
     },
     {
       "id": "lec-17-m4",
@@ -7459,7 +9061,13 @@
       "examPoints": 20,
       "examGroup": "lec-17-q1",
       "examTitle": "切平面、線性近似與可微性。",
-      "answer": "4.05"
+      "answer": "4.05",
+      "verify": {
+        "m": "linApprox",
+        "f": "(1+0.1x)^2+(1+0.1x)(1-0.05x)+2(1-0.05x)^2",
+        "a": 0,
+        "dx": 1
+      }
     },
     {
       "id": "lec-17-q1c",
@@ -7486,7 +9094,19 @@
       "examPoints": 20,
       "examGroup": "lec-17-q1",
       "examTitle": "切平面、線性近似與可微性。",
-      "answer": "0.78*pi"
+      "answer": "0.78*pi",
+      "verify": {
+        "m": "totalDiff",
+        "f": "\\pi x^2y",
+        "at": [
+          3,
+          10
+        ],
+        "d": [
+          0.01,
+          0.02
+        ]
+      }
     },
     {
       "id": "lec-17-q2a",
@@ -7514,7 +9134,20 @@
       "examPoints": 20,
       "examGroup": "lec-17-q2",
       "examTitle": "連鎖律與隱函數。",
-      "answer": "55"
+      "answer": "55",
+      "verify": {
+        "m": "deriv",
+        "f": "(st)^2(s+t)+(s+t)^3",
+        "vars": [
+          "s",
+          "t"
+        ],
+        "at": [
+          1,
+          2
+        ],
+        "wrt": "s"
+      }
     },
     {
       "id": "lec-17-q2b",
@@ -7542,7 +9175,15 @@
       "examPoints": 20,
       "examGroup": "lec-17-q2",
       "examTitle": "連鎖律與隱函數。",
-      "answer": "-1"
+      "answer": "-1",
+      "verify": {
+        "m": "implicit",
+        "F": "x^2+1^2+y^2+x\\cdot1\\cdot y-4",
+        "at": [
+          1,
+          1
+        ]
+      }
     },
     {
       "id": "lec-17-q3a",
@@ -7607,7 +9248,14 @@
       "examPoints": 20,
       "examGroup": "lec-17-q3",
       "examTitle": "梯度與溫度分布。",
-      "answer": "-28/5"
+      "answer": "-28/5",
+      "verify": {
+        "m": "deriv",
+        "f": "100-(2+\\frac{3}{5}x)^2-2(1+\\frac{4}{5}x)^2",
+        "at": [
+          0
+        ]
+      }
     },
     {
       "id": "lec-17-q3c",
@@ -7635,7 +9283,15 @@
       "examPoints": 20,
       "examGroup": "lec-17-q3",
       "examTitle": "梯度與溫度分布。",
-      "answer": "4*sqrt(2)"
+      "answer": "4*sqrt(2)",
+      "verify": {
+        "m": "extremum1d",
+        "v": "x",
+        "lo": 0,
+        "hi": "2\\pi",
+        "kind": "max",
+        "f": "\\frac{(100-(2+0.001\\cos x)^2-2(1+0.001\\sin x)^2)-(100-(2-0.001\\cos x)^2-2(1-0.001\\sin x)^2)}{0.002}"
+      }
     },
     {
       "id": "lec-17-q4a",
@@ -7834,7 +9490,14 @@
         "50",
         "100",
         "20"
-      ]
+      ],
+      "verify": {
+        "m": "constrained",
+        "f": "xy",
+        "g": "x+y",
+        "c": 10,
+        "kind": "max"
+      }
     },
     {
       "id": "lec-18-m5",
@@ -8029,7 +9692,15 @@
       "examPoints": 20,
       "examGroup": "lec-18-q2",
       "examTitle": "閉區域上的絕對極值。",
-      "answer": "9"
+      "answer": "9",
+      "verify": {
+        "m": "extremum1d",
+        "f": "3^2-2\\cdot3x+2x",
+        "v": "x",
+        "lo": 0,
+        "hi": 2,
+        "kind": "max"
+      }
     },
     {
       "id": "lec-18-q2c",
@@ -8084,7 +9755,14 @@
       "examPoints": 20,
       "examGroup": "lec-18-q3",
       "examTitle": "Lagrange 乘子。",
-      "answer": "2"
+      "answer": "2",
+      "verify": {
+        "m": "constrained",
+        "f": "x^2+2y^2",
+        "g": "x^2+y^2",
+        "c": 1,
+        "kind": "max"
+      }
     },
     {
       "id": "lec-18-q3b",
@@ -8139,7 +9817,19 @@
       "examPoints": 20,
       "examGroup": "lec-18-q3",
       "examTitle": "Lagrange 乘子。",
-      "answer": "3"
+      "answer": "3",
+      "verify": {
+        "m": "constrained",
+        "f": "\\sqrt{x^2+y^2+z^2}",
+        "g": "x+2y+2z",
+        "c": 9,
+        "vars": [
+          "x",
+          "y",
+          "z"
+        ],
+        "kind": "min"
+      }
     },
     {
       "id": "lec-18-q4a",
@@ -8167,7 +9857,20 @@
       "examPoints": 20,
       "examGroup": "lec-18-q4",
       "examTitle": "應用題與兩個約束。",
-      "answer": "48"
+      "answer": "48",
+      "verify": {
+        "m": "constrained",
+        "f": "xy+2xz+2yz",
+        "g": "xyz",
+        "c": 32,
+        "vars": [
+          "x",
+          "y",
+          "z"
+        ],
+        "kind": "min",
+        "positive": true
+      }
     },
     {
       "id": "lec-18-q4b",
@@ -8195,7 +9898,14 @@
       "examPoints": 20,
       "examGroup": "lec-18-q4",
       "examTitle": "應用題與兩個約束。",
-      "answer": "3"
+      "answer": "3",
+      "verify": {
+        "m": "constrained",
+        "f": "1-x-y",
+        "g": "x^2+y^2",
+        "c": 2,
+        "kind": "max"
+      }
     },
     {
       "id": "lec-19-m1",
@@ -8326,7 +10036,17 @@
         "pi",
         "2*pi",
         "pi/4"
-      ]
+      ],
+      "verify": {
+        "m": "double",
+        "f": "x^2+y^2",
+        "u": "x",
+        "v": "y",
+        "a": -1,
+        "b": 1,
+        "c": "-\\sqrt{1-x^2}",
+        "d": "\\sqrt{1-x^2}"
+      }
     },
     {
       "id": "lec-19-m5",
@@ -8359,7 +10079,48 @@
         "pi*(a+b)",
         "pi*a^2*b^2",
         "2*pi*a*b"
-      ]
+      ],
+      "verify": {
+        "m": "fn",
+        "vars": [
+          "a",
+          "b"
+        ],
+        "cases": [
+          {
+            "at": {
+              "a": 2,
+              "b": 3
+            },
+            "v": {
+              "m": "double",
+              "f": "1",
+              "u": "x",
+              "v": "y",
+              "a": -2,
+              "b": 2,
+              "c": "-3\\sqrt{1-x^2/2^2}",
+              "d": "3\\sqrt{1-x^2/2^2}"
+            }
+          },
+          {
+            "at": {
+              "a": 1.5,
+              "b": 0.5
+            },
+            "v": {
+              "m": "double",
+              "f": "1",
+              "u": "x",
+              "v": "y",
+              "a": -1.5,
+              "b": 1.5,
+              "c": "-0.5\\sqrt{1-x^2/1.5^2}",
+              "d": "0.5\\sqrt{1-x^2/1.5^2}"
+            }
+          }
+        ]
+      }
     },
     {
       "id": "lec-19-q1b",
@@ -8387,7 +10148,17 @@
       "examPoints": 20,
       "examGroup": "lec-19-q1",
       "examTitle": "改變積分順序。",
-      "answer": "(exp(1)-1)/2"
+      "answer": "(exp(1)-1)/2",
+      "verify": {
+        "m": "double",
+        "f": "e^{y^2}",
+        "u": "x",
+        "v": "y",
+        "a": 0,
+        "b": 1,
+        "c": "x",
+        "d": "1"
+      }
     },
     {
       "id": "lec-19-q1c",
@@ -8415,7 +10186,17 @@
       "examPoints": 20,
       "examGroup": "lec-19-q1",
       "examTitle": "改變積分順序。",
-      "answer": "2"
+      "answer": "2",
+      "verify": {
+        "m": "double",
+        "f": "\\frac{\\sin y}{y}",
+        "u": "x",
+        "v": "y",
+        "a": 0,
+        "b": "\\pi",
+        "c": "x",
+        "d": "\\pi"
+      }
     },
     {
       "id": "lec-19-q2a",
@@ -8443,7 +10224,17 @@
       "examPoints": 20,
       "examGroup": "lec-19-q2",
       "examTitle": "極座標。",
-      "answer": "2*pi*ln(2)"
+      "answer": "2*pi*ln(2)",
+      "verify": {
+        "m": "double",
+        "f": "\\frac{1}{r^2}\\cdot r",
+        "u": "t",
+        "v": "r",
+        "a": 0,
+        "b": "2\\pi",
+        "c": 1,
+        "d": 2
+      }
     },
     {
       "id": "lec-19-q2b",
@@ -8471,7 +10262,17 @@
       "examPoints": 20,
       "examGroup": "lec-19-q2",
       "examTitle": "極座標。",
-      "answer": "8/3"
+      "answer": "8/3",
+      "verify": {
+        "m": "double",
+        "f": "x",
+        "u": "x",
+        "v": "y",
+        "a": 0,
+        "b": 2,
+        "c": 0,
+        "d": "\\sqrt{4-x^2}"
+      }
     },
     {
       "id": "lec-19-q2c",
@@ -8500,7 +10301,17 @@
       "examPoints": 20,
       "examGroup": "lec-19-q2",
       "examTitle": "極座標。",
-      "answer": "4*sqrt(3)*pi"
+      "answer": "4*sqrt(3)*pi",
+      "verify": {
+        "m": "double",
+        "f": "2\\sqrt{4-r^2}\\cdot r",
+        "u": "t",
+        "v": "r",
+        "a": 0,
+        "b": "2\\pi",
+        "c": 1,
+        "d": 2
+      }
     },
     {
       "id": "lec-19-q3a",
@@ -8527,7 +10338,17 @@
       "examPoints": 20,
       "examGroup": "lec-19-q3",
       "examTitle": "三重積分。",
-      "answer": "1/24"
+      "answer": "1/24",
+      "verify": {
+        "m": "double",
+        "f": "\\int_0^{1-x-y}z\\,dz",
+        "u": "x",
+        "v": "y",
+        "a": 0,
+        "b": 1,
+        "c": 0,
+        "d": "1-x"
+      }
     },
     {
       "id": "lec-19-q3b",
@@ -8555,7 +10376,17 @@
       "examPoints": 20,
       "examGroup": "lec-19-q3",
       "examTitle": "三重積分。",
-      "answer": "8*pi"
+      "answer": "8*pi",
+      "verify": {
+        "m": "double",
+        "f": "(4-r^2)\\cdot r",
+        "u": "t",
+        "v": "r",
+        "a": 0,
+        "b": "2\\pi",
+        "c": 0,
+        "d": 2
+      }
     },
     {
       "id": "lec-19-q3c",
@@ -8584,7 +10415,37 @@
       "examGroup": "lec-19-q3",
       "examTitle": "三重積分。",
       "answer": "4*pi*a^5/5",
-      "variable": "a"
+      "variable": "a",
+      "verify": {
+        "m": "fn",
+        "vars": [
+          "a"
+        ],
+        "cases": [
+          {
+            "at": {
+              "a": 1
+            },
+            "v": {
+              "m": "integral",
+              "f": "x^2\\cdot4\\pi x^2",
+              "a": 0,
+              "b": 1
+            }
+          },
+          {
+            "at": {
+              "a": 1.5
+            },
+            "v": {
+              "m": "integral",
+              "f": "x^2\\cdot4\\pi x^2",
+              "a": 0,
+              "b": 1.5
+            }
+          }
+        ]
+      }
     },
     {
       "id": "lec-19-q4a",
@@ -8679,7 +10540,17 @@
       "examPoints": 20,
       "examGroup": "lec-19-q4",
       "examTitle": "變數變換與 Jacobian。",
-      "answer": "2"
+      "answer": "2",
+      "verify": {
+        "m": "double",
+        "f": "x^2-y^2",
+        "u": "x",
+        "v": "y",
+        "a": 0,
+        "b": 2,
+        "c": "-(1-|x-1|)",
+        "d": "1-|x-1|"
+      }
     },
     {
       "id": "lec-20-m1",
@@ -8749,7 +10620,68 @@
         "2*x+y+1",
         "2*x+y*z+z",
         "2*x+z"
-      ]
+      ],
+      "verify": {
+        "m": "fn",
+        "vars": [
+          "x",
+          "y",
+          "z"
+        ],
+        "cases": [
+          {
+            "at": {
+              "x": 0.4,
+              "y": 1.3,
+              "z": -0.7
+            },
+            "v": {
+              "m": "deriv",
+              "f": "(0.4+s)^2+(1.3+s)(-0.7)+(-0.7+s)",
+              "vars": [
+                "s"
+              ],
+              "at": [
+                0
+              ]
+            }
+          },
+          {
+            "at": {
+              "x": -1.1,
+              "y": 0.6,
+              "z": 2.2
+            },
+            "v": {
+              "m": "deriv",
+              "f": "(-1.1+s)^2+(0.6+s)(2.2)+(2.2+s)",
+              "vars": [
+                "s"
+              ],
+              "at": [
+                0
+              ]
+            }
+          },
+          {
+            "at": {
+              "x": 2,
+              "y": -1,
+              "z": 0.5
+            },
+            "v": {
+              "m": "deriv",
+              "f": "(2+s)^2+(-1+s)(0.5)+(0.5+s)",
+              "vars": [
+                "s"
+              ],
+              "at": [
+                0
+              ]
+            }
+          }
+        ]
+      }
     },
     {
       "id": "lec-20-m3",
@@ -8879,7 +10811,18 @@
       "examPoints": 20,
       "examGroup": "lec-20-q1",
       "examTitle": "線積分與功。",
-      "answer": "205/6"
+      "answer": "205/6",
+      "verify": {
+        "m": "lineIntegral",
+        "kind": "ds",
+        "f": "x+y^2",
+        "path": {
+          "x": "3t",
+          "y": "4t",
+          "from": 0,
+          "to": 1
+        }
+      }
     },
     {
       "id": "lec-20-q1b",
@@ -8908,7 +10851,21 @@
       "examPoints": 20,
       "examGroup": "lec-20-q1",
       "examTitle": "線積分與功。",
-      "answer": "-pi/2"
+      "answer": "-pi/2",
+      "verify": {
+        "m": "lineIntegral",
+        "kind": "work",
+        "F": [
+          "y",
+          "-x"
+        ],
+        "path": {
+          "x": "\\cos t",
+          "y": "\\sin t",
+          "from": 0,
+          "to": "\\pi/2"
+        }
+      }
     },
     {
       "id": "lec-20-q1c",
@@ -8937,7 +10894,21 @@
       "examPoints": 20,
       "examGroup": "lec-20-q1",
       "examTitle": "線積分與功。",
-      "answer": "-1"
+      "answer": "-1",
+      "verify": {
+        "m": "lineIntegral",
+        "kind": "work",
+        "F": [
+          "y",
+          "-x"
+        ],
+        "path": {
+          "x": "1-t",
+          "y": "t",
+          "from": 0,
+          "to": 1
+        }
+      }
     },
     {
       "id": "lec-20-q2b",
@@ -8971,7 +10942,100 @@
         "x",
         "y",
         "z"
-      ]
+      ],
+      "verify": {
+        "m": "fn",
+        "vars": [
+          "x",
+          "y",
+          "z"
+        ],
+        "cases": [
+          {
+            "at": {
+              "x": 0,
+              "y": 0,
+              "z": 0
+            },
+            "v": {
+              "m": "value",
+              "f": "0"
+            }
+          },
+          {
+            "at": {
+              "x": 0.4,
+              "y": 1.3,
+              "z": -0.7
+            },
+            "d": "x",
+            "v": {
+              "m": "value",
+              "f": "2(0.4)(1.3)"
+            }
+          },
+          {
+            "at": {
+              "x": 0.4,
+              "y": 1.3,
+              "z": -0.7
+            },
+            "d": "y",
+            "v": {
+              "m": "value",
+              "f": "(0.4)^2+2(1.3)(-0.7)"
+            }
+          },
+          {
+            "at": {
+              "x": 0.4,
+              "y": 1.3,
+              "z": -0.7
+            },
+            "d": "z",
+            "v": {
+              "m": "value",
+              "f": "(1.3)^2"
+            }
+          },
+          {
+            "at": {
+              "x": -1.1,
+              "y": 0.6,
+              "z": 2.2
+            },
+            "d": "x",
+            "v": {
+              "m": "value",
+              "f": "2(-1.1)(0.6)"
+            }
+          },
+          {
+            "at": {
+              "x": -1.1,
+              "y": 0.6,
+              "z": 2.2
+            },
+            "d": "y",
+            "v": {
+              "m": "value",
+              "f": "(-1.1)^2+2(0.6)(2.2)"
+            }
+          },
+          {
+            "at": {
+              "x": -1.1,
+              "y": 0.6,
+              "z": 2.2
+            },
+            "d": "z",
+            "v": {
+              "m": "value",
+              "f": "(0.6)^2"
+            }
+          }
+        ]
+      }
     },
     {
       "id": "lec-20-q2c",
@@ -9000,7 +11064,23 @@
       "examPoints": 20,
       "examGroup": "lec-20-q2",
       "examTitle": "保守場與位勢函數。",
-      "answer": "14"
+      "answer": "14",
+      "verify": {
+        "m": "lineIntegral",
+        "kind": "work",
+        "F": [
+          "2xy",
+          "x^2+2yz",
+          "y^2"
+        ],
+        "path": {
+          "x": "t",
+          "y": "2t",
+          "z": "3t",
+          "from": 0,
+          "to": 1
+        }
+      }
     },
     {
       "id": "lec-20-q3a",
@@ -9028,7 +11108,35 @@
       "examPoints": 20,
       "examGroup": "lec-20-q3",
       "examTitle": "Green 定理。",
-      "answer": "1/3"
+      "answer": "1/3",
+      "verify": {
+        "m": "lineIntegral",
+        "kind": "work",
+        "F": [
+          "xy",
+          "x^2"
+        ],
+        "paths": [
+          {
+            "x": "t",
+            "y": "0",
+            "from": 0,
+            "to": 1
+          },
+          {
+            "x": "1",
+            "y": "t",
+            "from": 0,
+            "to": 1
+          },
+          {
+            "x": "1-t",
+            "y": "1-t",
+            "from": 0,
+            "to": 1
+          }
+        ]
+      }
     },
     {
       "id": "lec-20-q3b",
@@ -9061,7 +11169,56 @@
       "variables": [
         "a",
         "b"
-      ]
+      ],
+      "verify": {
+        "m": "fn",
+        "vars": [
+          "a",
+          "b"
+        ],
+        "cases": [
+          {
+            "at": {
+              "a": 2,
+              "b": 3
+            },
+            "v": {
+              "m": "lineIntegral",
+              "kind": "work",
+              "F": [
+                "-y/2",
+                "x/2"
+              ],
+              "path": {
+                "x": "2\\cos t",
+                "y": "3\\sin t",
+                "from": 0,
+                "to": "2\\pi"
+              }
+            }
+          },
+          {
+            "at": {
+              "a": 1.5,
+              "b": 0.5
+            },
+            "v": {
+              "m": "lineIntegral",
+              "kind": "work",
+              "F": [
+                "-y/2",
+                "x/2"
+              ],
+              "path": {
+                "x": "1.5\\cos t",
+                "y": "0.5\\sin t",
+                "from": 0,
+                "to": "2\\pi"
+              }
+            }
+          }
+        ]
+      }
     },
     {
       "id": "lec-20-q3c",
@@ -9089,7 +11246,21 @@
       "examPoints": 20,
       "examGroup": "lec-20-q3",
       "examTitle": "Green 定理。",
-      "answer": "-24*pi"
+      "answer": "-24*pi",
+      "verify": {
+        "m": "lineIntegral",
+        "kind": "work",
+        "F": [
+          "y^3",
+          "-x^3"
+        ],
+        "path": {
+          "x": "2\\cos t",
+          "y": "2\\sin t",
+          "from": 0,
+          "to": "2\\pi"
+        }
+      }
     },
     {
       "id": "lec-20-q4a",
@@ -9119,7 +11290,67 @@
       "examGroup": "lec-20-q4",
       "examTitle": "散度定理與 Stokes 定理。",
       "answer": "4*pi*a^3",
-      "variable": "a"
+      "variable": "a",
+      "verify": {
+        "m": "fn",
+        "vars": [
+          "a"
+        ],
+        "cases": [
+          {
+            "at": {
+              "a": 1
+            },
+            "v": {
+              "m": "surfaceFlux",
+              "F": [
+                "x",
+                "y",
+                "z"
+              ],
+              "surface": {
+                "x": "1\\sin u\\cos v",
+                "y": "1\\sin u\\sin v",
+                "z": "1\\cos u",
+                "u": [
+                  0,
+                  "\\pi"
+                ],
+                "v": [
+                  0,
+                  "2\\pi"
+                ]
+              }
+            }
+          },
+          {
+            "at": {
+              "a": 1.7
+            },
+            "v": {
+              "m": "surfaceFlux",
+              "F": [
+                "x",
+                "y",
+                "z"
+              ],
+              "surface": {
+                "x": "1.7\\sin u\\cos v",
+                "y": "1.7\\sin u\\sin v",
+                "z": "1.7\\cos u",
+                "u": [
+                  0,
+                  "\\pi"
+                ],
+                "v": [
+                  0,
+                  "2\\pi"
+                ]
+              }
+            }
+          }
+        ]
+      }
     },
     {
       "id": "lec-20-q4b",
@@ -9147,7 +11378,28 @@
       "examPoints": 20,
       "examGroup": "lec-20-q4",
       "examTitle": "散度定理與 Stokes 定理。",
-      "answer": "2*pi"
+      "answer": "2*pi",
+      "verify": {
+        "m": "curlFlux",
+        "F": [
+          "-y",
+          "x",
+          "0"
+        ],
+        "surface": {
+          "x": "\\sin u\\cos v",
+          "y": "\\sin u\\sin v",
+          "z": "\\cos u",
+          "u": [
+            0,
+            "\\pi/2"
+          ],
+          "v": [
+            0,
+            "2\\pi"
+          ]
+        }
+      }
     }
   ];
 

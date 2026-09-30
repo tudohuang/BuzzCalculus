@@ -129,6 +129,39 @@ const WRONG_CASES = [
   ["Lipschitz 常數寫成函數的最大值", numericProblem("0.5", { m: "lipschitz", f: "x/(1+x^2)", range: [-50, 50] })]
 ];
 
+// 答案是函數（fn）與收斂區間（convergence）：講次隨堂包補的兩條路徑。
+// 答案字串直接給 JS（** 不是 ^ —— ^ 在 JS 是 XOR）。
+const fnProblem = (answer, verify, kind = "expression") => ({
+  id: "probe-fn", topic: "derivatives", rank: 3, difficulty: 3, answerKind: kind,
+  prompt: "\\text{驗算器自測}", answer, verify
+});
+const TANGENT_AT_4 = [
+  { at: { x: 0 }, v: { m: "tangentNormal", f: "\\sqrt{x}", a: 4, kind: "yIntercept" } },
+  { at: { x: 0 }, d: "x", v: { m: "tangentNormal", f: "\\sqrt{x}", a: 4, kind: "slope" } }
+];
+const FN_RIGHT = [
+  ["導函數", fnProblem("3*x**2-2", { m: "fn", kind: "deriv", f: "x^3-2x" })],
+  ["混合偏導", fnProblem("6*x*y**2", { m: "fn", vars: ["x", "y"], kind: "deriv", wrt: ["x", "y"], f: "x^2y^3" })],
+  ["反導數（常數差不管）", fnProblem("x**3+x+7", { m: "fn", kind: "antideriv", f: "3x^2+1" }, "antiderivative")],
+  ["切線（截距＋斜率兩點定死）", fnProblem("x/4+1", { m: "fn", cases: TANGENT_AT_4 })],
+  ["收斂區間（左閉右開）", fnProblem("[-1, 1)", { m: "convergence", f: "\\frac{x^n}{n}", center: 0, from: 1, range: [-100, 100] }, "interval")],
+  ["Maclaurin 係數", fnProblem("-1/4", { m: "derivAt0", coef: true, f: "\\ln(1+x)", n: 4, r: 0.5 }, "numeric")]
+];
+FN_RIGHT.forEach(([name, problem]) => {
+  const result = verifyProblem(problem, { normalizeAnswer: (value) => String(value) });
+  if (result.status !== "ok") fail(`${name}：應該通過，卻回了 ${result.status}（${result.detail || result.reason || ""}）`);
+});
+WRONG_CASES.push(
+  ["導函數漏掉常數項的導數", fnProblem("3*x**2", { m: "fn", kind: "deriv", f: "x^3-2x" })],
+  ["混合偏導少乘一個 y", fnProblem("6*x*y", { m: "fn", vars: ["x", "y"], kind: "deriv", wrt: ["x", "y"], f: "x^2y^3" })],
+  ["反導數的係數錯（x³/3 當成 x³ 的反導數）", fnProblem("x**3+x", { m: "fn", kind: "antideriv", f: "x^2+1" }, "antiderivative")],
+  ["切線截距寫錯", fnProblem("x/4+2", { m: "fn", cases: TANGENT_AT_4 })],
+  ["切線斜率寫成 f′(x) 在 0 附近的值（½）", fnProblem("x/2+0", { m: "fn", cases: TANGENT_AT_4 })],
+  ["收斂區間的端點全開（漏了交錯調和那一端）", fnProblem("(-1, 1)", { m: "convergence", f: "\\frac{x^n}{n}", center: 0, from: 1, range: [-100, 100] }, "interval")],
+  ["收斂區間的端點全閉（調和級數那一端其實發散）", fnProblem("[-1, 1]", { m: "convergence", f: "\\frac{x^n}{n}", center: 0, from: 1, range: [-100, 100] }, "interval")],
+  ["把 f⁽⁴⁾(0) 當成 x⁴ 的係數", fnProblem("-6", { m: "derivAt0", coef: true, f: "\\ln(1+x)", n: 4, r: 0.5 }, "numeric")]
+);
+
 WRONG_CASES.forEach(([name, problem]) => {
   const result = verifyProblem(problem, { normalizeAnswer: (value) => String(value) });
   if (result.status !== "mismatch") {
@@ -174,6 +207,7 @@ WRONG_CLAIMS.forEach(([name, problem]) => {
 console.log("驗算路徑自測");
 console.log(`  已知值      ${VALUE_CASES.length} 條`);
 console.log(`  是非判定    ${CLAIM_CASES.length} 條`);
+console.log(`  函數／區間  ${FN_RIGHT.length} 條`);
 console.log(`  故意寫錯    ${WRONG_CASES.length + WRONG_CLAIMS.length} 條（要被判 mismatch）`);
 
 if (failures.length) {
