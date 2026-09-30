@@ -602,6 +602,42 @@ async function run() {
       `刪除前 ${erased.before.length} 個 key（${erased.before.join(", ")}）→ 刪除後 ${erased.after.length} 個`
     );
 
+    /* ── 8.5 逐步解答：延後載入的側表真的到了，而且「完整推導」照步驟列 ──
+       側表是 type="text/lazy"，由 problem_authored_solutions.js 在頁面閒下來時注入。
+       這一段要抓的是「側表沒載到 → 使用者永遠只看到一段話」這種不會報錯的壞法。 */
+    await chrome.navigate(`${server.url}/index.html#p=lim-003`);
+    await chrome.sleep(1300);
+    const steps = await chrome.evaluate(`
+      ${HELPERS}
+      for (const end = Date.now() + 8000; !window.BUZZ_SOLUTION_STEP_TABLE && Date.now() < end; await new Promise((r) => setTimeout(r, 100)));
+      const loaded = Boolean(window.BUZZ_SOLUTION_STEP_TABLE);
+      // 入門題可能以選擇題出現（作答形式看設定），兩種都要會答錯
+      const wrongChoice = [...document.querySelectorAll('[data-action="choose-answer"]')].find((c) => !c.disabled && c.getAttribute("data-choice") !== "4");
+      const input = document.querySelector(".answer-input");
+      if (wrongChoice) {
+        wrongChoice.click();
+      } else if (input) {
+        input.value = "5";
+        input.dispatchEvent(new Event("input", { bubbles: true }));
+        const submit = document.querySelector('[data-action="submit-answer"]');
+        if (submit) submit.click(); else window.__e2e.clickText("送出");
+      } else {
+        return { loaded, why: "沒有作答框也沒有選項：" + window.__e2e.visibleText().slice(0, 80) };
+      }
+      let full = null;
+      for (const end = Date.now() + 4000; !full && Date.now() < end; await new Promise((r) => setTimeout(r, 100))) {
+        full = document.querySelector("details.solution-stage.is-full");
+      }
+      if (!full) return { loaded, why: "答錯之後沒有出現「完整推導」" };
+      full.querySelector("summary").click();
+      await new Promise((r) => setTimeout(r, 300 * (window.__slow || 1)));
+      const items = [...full.querySelectorAll("ol.solution-steps li")].filter((li) => li.getBoundingClientRect().height > 0);
+      return { loaded, count: items.length, first: items.length ? items[0].innerText : "", text: items.map((li) => li.innerText).join(" / ").slice(0, 160) };
+    `);
+    check("逐步解答側表在頁面閒下來後載入", steps.loaded, steps.why || "");
+    check("答錯後打開「完整推導」，看得到一步一步的解答", steps.count >= 3 && /0\/0/.test(steps.first),
+      steps.why || `${steps.count} 步：${steps.text}`);
+
     /* ── 9. 全程不能有 console 錯誤或 404 ── */
     const errors = chrome.consoleMessages.filter((m) => m.type === "error");
     check("console 沒有錯誤", errors.length === 0, errors.slice(0, 3).map((e) => e.text).join(" | "));

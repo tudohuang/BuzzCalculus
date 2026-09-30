@@ -1451,7 +1451,7 @@
         "midterm-style",
         "rank-2"
       ],
-      "solution": "1/(√(1-4x^2))·2=2/(√(1-4x^2))。",
+      "solution": "令 u=x/4：(arcsin u)′=u′/√(1-u^2)=(1/4)/√(1-x^2/16)=1/√(16-x^2)。",
       "source": "微積分 20 講 · 第 03 講隨堂測驗",
       "lecture": "03",
       "examPart": "long",
@@ -8161,7 +8161,7 @@
         "midterm-style",
         "rank-3"
       ],
-      "solution": "Σ((ln2)^n)/(n!)=e^(ln2)=2。Σ((-1)^(n+1))/n(1/3)^n=ln(1+1/3)=ln4/3。",
+      "solution": "ln(1+x)=Σ((-1)^(n+1)x^n)/n（|x|<1），代 x=1/3：Σ((-1)^(n+1))/(n3^n)=ln(1+1/3)=ln4/3。",
       "source": "微積分 20 講 · 第 15 講隨堂測驗",
       "lecture": "15",
       "examPart": "long",

@@ -111,7 +111,7 @@ function render() {
     row("有 `tags`", stats.tags, `distinct tag ${stats.distinctTags} 個，其中 ${stats.skillTags} 個是技巧 tag`),
     row("有 `solution`", stats.solution, "單段文字"),
     row("有作者撰寫 `hints`", stats.hints, ""),
-    row("有 `solutionSteps`", stats.solutionSteps, "結構化步驟，仍是最大的內容缺口"),
+    row("有 `solutionSteps`", stats.solutionSteps, "結構化步驟；側表 problem_solution_steps.js 的每一步由 validate_solution_steps 數值驗算"),
     row("證明題", stats.proofs, "含 Lean 機器驗證 8 則"),
     row("`src/app.js`", `${stats.appLines} 行`, "單一 IIFE，拆分進行中"),
     row("`styles.css`", `${stats.cssLines} 行`, ""),

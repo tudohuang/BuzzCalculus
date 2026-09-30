@@ -61,7 +61,12 @@ const BUDGETS = {
   // 進到需要它的頁面才載（目前是證明引擎三支）。它們跟首屏無關，預算也不該跟首屏的檔搶 ——
   // 但仍然要有上限：延後載入不是「隨便長」的許可證，載入那一刻使用者還是要等。
   // 2026-09-28 320 → 460：題目的英文側表（i18n_problems_en.js）只在英文介面載，中文使用者零成本。
-  "延後載入（進到該頁才抓）": { pattern: /^$/, budget: 460 * 1024, lazy: true }
+  // 2026-09-30 新增：逐步解答側表（problem_solution_steps.js）。它也是 text/lazy，但跟上面那類不同：
+  // 不是「進到某一頁才抓」，是頁面載完、閒下來就抓（答完題看解答時一定要已經在）。
+  // 首屏不用解析它，所以不跟首屏的檔搶；也不跟證明引擎、英文側表搶同一個上限。
+  // 它隨內容成長（每題約 0.5KB），上限給到現況的兩倍左右 —— 再撞頂就該拆成按題包載入。
+  "逐步解答側表（閒置時載入）": { pattern: /^src\/problem_solution_steps\.js$/, budget: 400 * 1024, lazy: true },
+  "延後載入（進到該頁才抓）": { pattern: /^/, budget: 460 * 1024, lazy: true }
 };
 
 const html = fs.readFileSync(path.join(ROOT, "index.html"), "utf8");
@@ -79,7 +84,8 @@ const rows = [];
 for (const [label, spec] of Object.entries(BUDGETS)) {
   let files = [];
   if (spec.lazy) {
-    files = [...lazyScripts];
+    files = [...lazyScripts].filter((s) => spec.pattern.test(s) && !claimed.has(s));
+    files.forEach((f) => claimed.add(f));
   } else if (spec.fromCss) {
     files = ["styles.css"];
   } else if (spec.catchAll) {
