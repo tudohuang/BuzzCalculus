@@ -1158,6 +1158,262 @@
   ];
 })();
 
+// 微積分 20 講隨堂測驗裡的證明小題（pl-lec-*，2026-09-30）。
+//
+// 考卷上的題號寫在 lecture 欄位；tools/build_lecture_pack.js 把它們做成 answerKind "proof" 的題，
+// 照考卷題序排進第 N 講的固定卷。第 N 講的參考證明只用 1～N 講教過的東西（第 1 講的中間值定理
+// 說的是「g 連續」，不說「g 可微」—— 可微是第 2 講）。
+// 收進來的標準跟其他題一樣：validate_proof_lang 的三種變異（刪行、翻符號、橡皮圖章）釘得住；
+// 釘不住的（恆等式的計算題、要 n! 記號、唯一性、偏導數、抽象的偶函數）留在考卷上 skip。
+// 每一題可算的主張另外在 tools/verify_proof_claims.js 用純數值重驗一次（不經過檢查器）。
+(function () {
+  "use strict";
+
+  // aₙ：a₁ = √2，aₙ₊₁ = √(2 + aₙ)（第 11 講的遞迴數列）
+  const nestedRoot = (n) => { let a = Math.SQRT2; for (let i = 1; i < Math.round(n); i += 1) a = Math.sqrt(2 + a); return a; };
+  const harmonic = (n) => { let total = 0; for (let i = 1; i <= Math.round(n); i += 1) total += 1 / i; return total; };
+  // 使用者寫 a_n、a_{k+1}、a_(k+1)：檢查器讀成 a(n)、a(k+1)
+  const SUBSCRIPT_A = [
+    { pattern: "a_\\{([^{}]+)\\}", replace: "a($1)" },
+    { pattern: "a_\\(([^()]+)\\)", replace: "a($1)" },
+    { pattern: "a_([A-Za-z0-9])", replace: "a($1)" }
+  ];
+  const SOURCE = (n) => `微積分 20 講 · 第 ${n} 講`;
+
+  window.BUZZ_PROOF_LANG_PROBLEMS = (window.BUZZ_PROOF_LANG_PROBLEMS || []).concat([
+    {
+      id: "pl-lec-squeeze-cos",
+      lecture: "lec-01-q2a",
+      source: SOURCE(1),
+      optional: [0, 1],
+      family: "direct",
+      title: "夾擠：x² cos(1/x) 的極限",
+      difficulty: 1,
+      statement: "證明 lim_{x→0} x² cos(1/x) = 0。（不能用「乘積的極限＝極限的乘積」：lim cos(1/x) 不存在。）",
+      prompt: "\\lim_{x\\to 0} x^2\\cos\\frac{1}{x}=0",
+      vars: { x: { min: -2, max: 2 } },
+      given: ["x != 0"],
+      goal: { text: ["lim_{x->0} x^2*cos(1/x) = 0", "lim_{x->0} x^2 cos(1/x) = 0", "lim x->0 x^2*cos(1/x) = 0", "lim_{x->0}(x^2*cos(1/x))=0", "x^2*cos(1/x)→0"] },
+      skeleton: "direct",
+      reference: [
+        "設 x ≠ 0。",
+        "因為 |cos(1/x)| ≤ 1，所以 |x² cos(1/x)| = x² |cos(1/x)| ≤ x²。",
+        "則 −x² ≤ x² cos(1/x) ≤ x²。",
+        "由夾擠定理，因為 lim_{x→0} x² = 0，所以 lim_{x→0} x² cos(1/x) = 0。"
+      ],
+      coach: "跟 x·sin(1/x) 同一招：|cos| ≤ 1 把振盪的部分綁住，剩下 −x² ≤ … ≤ x²，兩邊都趨近 0。"
+    },
+    {
+      id: "pl-lec-ivt-cos",
+      lecture: "lec-01-q3b",
+      source: SOURCE(1),
+      family: "direct",
+      title: "中間值定理：cos x = x 在 (0, π/2) 內有解",
+      difficulty: 1,
+      statement: "證明方程式 cos x = x 在 (0, π/2) 內至少有一個解。",
+      prompt: "\\exists\\,c\\in(0,\\tfrac{\\pi}{2}):\\ \\cos c = c",
+      vars: {},
+      goal: { text: ["g(c) = 0", "cos(c) = c", "cos c = c", "方程式有解", "cos x = x 有解"] },
+      skeleton: "direct",
+      reference: [
+        "令 g(x) = cos(x) − x。",
+        "則 g(0) = 1 > 0，g(π/2) = −π/2 < 0。",
+        "則 g 在 [0, π/2] 上連續。",
+        "由中間值定理，存在 c ∈ (0, π/2) 使 g(c) = 0。",
+        "故 cos c = c，即方程式有解。"
+      ],
+      coach: "把「cos x = x」改成「g(x) = cos x − x 有零點」：兩端異號、g 連續（cos 與 x 都連續，相減還是連續），中間值定理給零點。"
+    },
+    {
+      id: "pl-lec-limit-2x-1",
+      lecture: "lec-01-q4d",
+      source: SOURCE(1),
+      family: "epsilon-delta",
+      title: "ε-δ：2x − 1 在 x→3 的極限",
+      difficulty: 1,
+      statement: "用 ε-δ 定義證明 lim_{x→3} (2x − 1) = 5。",
+      prompt: "\\lim_{x\\to 3} (2x-1) = 5",
+      vars: { x: { min: -1, max: 7 }, eps: { min: 0.05, max: 2 } },
+      goal: { text: ["lim_{x->3} (2x-1) = 5", "lim_{x->3} 2x-1 = 5", "2x-1→5"] },
+      bound: { lhs: "abs(2*x-1-5)", rhs: "eps" },
+      skeleton: "epsilon-delta",
+      reference: [
+        "任取 ε > 0。",
+        "取 δ = ε/2。",
+        "假設 0 < |x − 3| < δ。",
+        "則 |(2x − 1) − 5| = |2x − 6| = 2|x − 3| < 2δ = ε。",
+        "所以 lim_{x→3} (2x − 1) = 5。"
+      ],
+      coach: "|(2x − 1) − 5| 整理成 2|x − 3|，δ 就是 ε 除以 2。"
+    },
+    {
+      id: "pl-lec-sin-lipschitz",
+      lecture: "lec-04-q2a",
+      source: SOURCE(4),
+      optional: [0, 4, 6],
+      family: "direct",
+      title: "|sin a − sin b| ≤ |a − b|",
+      difficulty: 2,
+      statement: "證明對所有實數 a, b，|sin a − sin b| ≤ |a − b|。（a = b 時兩邊都是 0；兩邊對 a、b 對稱，只要處理 a < b。）",
+      prompt: "|\\sin a-\\sin b|\\le|a-b|",
+      vars: { a: { min: -4, max: 4 }, b: { min: -4, max: 4 } },
+      goal: { relation: "abs(sin(a) - sin(b)) <= abs(a - b)" },
+      skeleton: "direct",
+      reference: [
+        "任取實數 a, b 且 a < b。",
+        "令 f(x) = sin(x)。",
+        "則 f 可微。",
+        "由平均值定理，存在 c ∈ (a, b) 使 f(b) − f(a) = f'(c)(b − a)。",
+        "則 f'(c) = cos(c)。",
+        "因為 |cos(c)| ≤ 1，所以 |f(b) − f(a)| = |cos(c)| |b − a| ≤ |b − a|。",
+        "故 |sin a − sin b| ≤ |a − b|。"
+      ],
+      coach: "平均值定理把「函數值的差」換成「導數 × 自變數的差」；sin 的導數是 cos，|cos| ≤ 1。"
+    },
+    {
+      id: "pl-lec-exp-cases",
+      lecture: "lec-04-q2b",
+      source: SOURCE(4),
+      optional: [0, 3, 12],
+      family: "cases",
+      title: "e^x > 1 + x（x ≠ 0）",
+      difficulty: 2,
+      statement: "證明對所有 x ≠ 0，e^x > 1 + x。",
+      prompt: "x\\neq 0\\ \\Rightarrow\\ e^x>1+x",
+      vars: { x: { min: -3, max: 3 } },
+      given: ["x != 0"],
+      goal: { relation: "e^x > 1 + x" },
+      skeleton: "cases",
+      reference: [
+        "令 g(x) = e^x − 1 − x。",
+        "則對所有 x > 0，g'(x) = e^x − 1 > 0。",
+        "則對所有 x < 0，g'(x) = e^x − 1 < 0。",
+        "分兩種情況。",
+        "情況一：x > 0。",
+        "由單調性，g 在 (0, ∞) 上遞增。",
+        "則 g(x) > g(0) = 0。",
+        "因為 g(x) > 0，所以 e^x = 1 + x + g(x) > 1 + x。",
+        "情況二：x < 0。",
+        "由單調性，g 在 (−∞, 0) 上遞減。",
+        "則 g(x) > g(0) = 0。",
+        "因為 g(x) > 0，所以 e^x = 1 + x + g(x) > 1 + x。",
+        "故對所有 x ≠ 0，e^x > 1 + x。"
+      ],
+      coach: "g = e^x − 1 − x 在 0 的右邊遞增、左邊遞減，所以 g(0) = 0 是最小值：x > 0 時 g(x) > g(0)，x < 0 時也是 g(x) > g(0)（遞減的函數往左走會變大）。兩種情況分開寫。"
+    },
+    {
+      id: "pl-lec-recursive-bound",
+      lecture: "lec-11-q3a",
+      source: SOURCE(11),
+      optional: [0],
+      family: "induction",
+      title: "歸納法：aₙ₊₁ = √(2 + aₙ) 有上界 2",
+      difficulty: 1,
+      statement: "設 a₁ = √2，aₙ₊₁ = √(2 + aₙ)。用數學歸納法證明 aₙ < 2 對所有正整數 n 成立。（aₙ 寫成 a_n 或 a(n) 都可以。）",
+      prompt: "a_1=\\sqrt2,\\ a_{n+1}=\\sqrt{2+a_n}\\ \\Rightarrow\\ a_n<2",
+      vars: { n: { min: 1, max: 9, int: true } },
+      functions: { a: nestedRoot },
+      macros: SUBSCRIPT_A,
+      goal: { relation: "a(n) < 2" },
+      induction: { variable: "n", base: 1 },
+      skeleton: "induction",
+      reference: [
+        "對 n 做歸納法。",
+        "當 n = 1 時，a(1) = √(2) < 2，成立。",
+        "假設 n = k 時成立，即 a(k) < 2。",
+        "則 a(k+1) = √(2 + a(k)) < √(2 + 2) = 2。",
+        "故對所有正整數 n，a(n) < 2。"
+      ],
+      coach: "歸納步驟只用一件事：√ 是遞增的。a(k) < 2 代進去，√(2 + a(k)) < √4 = 2。"
+    },
+    {
+      id: "pl-lec-recursive-increasing",
+      lecture: "lec-11-q3b",
+      source: SOURCE(11),
+      optional: [0],
+      family: "direct",
+      title: "aₙ₊₁ = √(2 + aₙ) 遞增",
+      difficulty: 2,
+      statement: "設 a₁ = √2，aₙ₊₁ = √(2 + aₙ)。已知（上一小題）0 < aₙ < 2 對所有 n 成立。證明 aₙ₊₁ > aₙ。（aₙ 寫成 a_n 或 a(n) 都可以。）",
+      prompt: "a_1=\\sqrt2,\\ a_{n+1}=\\sqrt{2+a_n}\\ \\Rightarrow\\ a_{n+1}>a_n",
+      vars: { n: { min: 1, max: 9, int: true } },
+      functions: { a: nestedRoot },
+      macros: SUBSCRIPT_A,
+      facts: ["a(_) < 2", "a(_) > 0"],
+      goal: { relation: "a(n+1) > a(n)" },
+      skeleton: "direct",
+      reference: [
+        "設 n 為正整數。",
+        "因為 a(n) < 2 且 a(n) > 0，所以 a(n+1)² − a(n)² = 2 + a(n) − a(n)² = (2 − a(n))(1 + a(n)) > 0。",
+        "因為 a(n+1)² > a(n)² 且 a(n+1) > 0，所以 a(n+1) > a(n)。"
+      ],
+      coach: "比平方比較好算：a(n+1)² = 2 + a(n)，所以 a(n+1)² − a(n)² 可以因式分解成 (2 − a(n))(1 + a(n))，兩個因子的正負由上一小題決定。兩個正數，平方大的那個本身就大。"
+    },
+    {
+      id: "pl-lec-harmonic-lower",
+      lecture: "lec-12-q2a",
+      source: SOURCE(12),
+      optional: [0],
+      family: "direct",
+      title: "調和級數的部分和 ≥ ln(N + 1)",
+      difficulty: 2,
+      statement: "證明對所有正整數 N，Σ_{n=1}^{N} 1/n ≥ ln(N + 1)。（在 [n, n + 1] 上 1/x ≤ 1/n：第 n 個長方形蓋住曲線下方那一段。右邊 → ∞，所以調和級數發散。）",
+      prompt: "\\sum_{n=1}^{N}\\frac1n\\ge\\ln(N+1)",
+      vars: { N: { min: 1, max: 40, int: true } },
+      goal: { relation: "Σ_{n=1}^{N} 1/n >= ln(N + 1)" },
+      skeleton: "direct",
+      reference: [
+        "設 N 為正整數。",
+        "則 ln(N + 1) = ∫_1^{N+1} 1/x dx = Σ_{n=1}^{N} ∫_n^{n+1} 1/x dx ≤ Σ_{n=1}^{N} 1/n。"
+      ],
+      coach: "把 ∫₁^{N+1} 1/x dx 切成 N 段 [n, n + 1]，每一段的積分都不超過長方形的面積 1/n。右邊 ln(N + 1) → ∞，所以部分和也 → ∞。"
+    },
+    {
+      id: "pl-lec-harmonic-doubling",
+      lecture: "lec-12-q4a",
+      source: SOURCE(12),
+      optional: [0],
+      family: "induction",
+      title: "歸納法：H(2^k) ≥ 1 + k/2",
+      difficulty: 3,
+      statement: "令 H(n) = 1 + 1/2 + ⋯ + 1/n。用數學歸納法證明對所有正整數 k，H(2^k) ≥ 1 + k/2。（從 2^k 到 2^(k+1) 多出來的 2^k 項，每一項都 ≥ 1/2^(k+1)。右邊 → ∞，所以調和級數發散。）",
+      prompt: "H_{2^k}\\ge 1+\\frac k2",
+      vars: { k: { min: 1, max: 12, int: true } },
+      functions: { H: harmonic },
+      goal: { relation: "H(2^k) >= 1 + k/2" },
+      induction: { variable: "k", base: 1 },
+      skeleton: "induction",
+      reference: [
+        "對 k 做歸納法。",
+        "當 k = 1 時，左式 = H(2) = 3/2，右式 = 3/2，成立。",
+        "假設 k = m 時成立，即 H(2^m) ≥ 1 + m/2。",
+        "則 H(2^(m+1)) = H(2^m) + Σ_{j=2^m+1}^{2^(m+1)} 1/j ≥ 1 + m/2 + 2^m · 1/2^(m+1) = 1 + (m+1)/2。",
+        "故對所有正整數 k，H(2^k) ≥ 1 + k/2。"
+      ],
+      coach: "分組的想法寫成歸納：H(2^(m+1)) 比 H(2^m) 多出 2^m 項，最小的一項是 1/2^(m+1)，所以多出來的至少 1/2。"
+    },
+    {
+      id: "pl-lec-harmonic-upper",
+      lecture: "lec-12-q4b",
+      source: SOURCE(12),
+      optional: [0],
+      family: "direct",
+      title: "調和數 Hₙ ≤ 1 + ln n",
+      difficulty: 2,
+      statement: "證明對所有正整數 n，Σ_{k=1}^{n} 1/k ≤ 1 + ln n。（在 [k − 1, k] 上 1/x ≥ 1/k：長方形落在曲線下方。）",
+      prompt: "\\sum_{k=1}^{n}\\frac1k\\le 1+\\ln n",
+      vars: { n: { min: 1, max: 40, int: true } },
+      goal: { relation: "Σ_{k=1}^{n} 1/k <= 1 + ln(n)" },
+      skeleton: "direct",
+      reference: [
+        "設 n 為正整數。",
+        "則 Σ_{k=1}^{n} 1/k = 1 + Σ_{k=2}^{n} 1/k ≤ 1 + Σ_{k=2}^{n} ∫_{k−1}^{k} 1/x dx = 1 + ∫_1^n 1/x dx = 1 + ln(n)。"
+      ],
+      coach: "跟下界那題反過來：第一項 1 先拿出來，其餘每一項 1/k 都不超過 ∫_{k−1}^{k} 1/x dx，加起來是 ∫₁ⁿ 1/x dx = ln n。"
+    }
+  ]);
+})();
+
 // 白話證明的八課。
 //
 // 每一課：一段話講規則 → 一份寫好的證明（每一行旁邊是檢查器真的跑出來的註解）

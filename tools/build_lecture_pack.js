@@ -4,7 +4,8 @@
 // 每一題：
 //   id            lec-NN-mK（選擇）／lec-NN-qJx（計算題第 J 題的第 x 小題）
 //   prompt        答案檔的 p（整段覆寫）＞ pre + 小題 ＞ 計算題的 stem + 小題
-//   answer 等     依 k：numeric/expression/antiderivative 走 answer；text 走 answers+canonical；set/interval 走 answer
+//   answer 等     依 k：numeric/expression/antiderivative 走 answer；text 走 answers+canonical；set/interval 走 answer；
+//                 proof 是指向白話證明 spec（src/proof_lang_content.js 的 pl-lec-*）的指標，判分交給檢查器（全綠才算對）
 //   distractors   選擇題把考卷原本的三個錯誤選項固定進來（buildChoiceDistractors 只用作者給的）
 //   solution      考卷解答（純文字）；小題只帶自己那一段
 //   tags          答案檔的 g + lecture + lecture-NN + exam-style + midterm-style
@@ -44,12 +45,18 @@ const TOPIC_BY_LECTURE = {
   "16": "derivatives", "17": "derivatives", "18": "derivatives", "19": "integrals", "20": "integrals"
 };
 const EXTRA_TAGS_BY_LECTURE = { "16": ["multivariable"], "17": ["multivariable"], "18": ["multivariable"], "19": ["multivariable"], "20": ["multivariable", "vector-calculus"] };
-const TIME_LIMIT = { numeric: 90, expression: 120, antiderivative: 150, set: 120, interval: 120, text: 60 };
+const TIME_LIMIT = { numeric: 90, expression: 120, antiderivative: 150, set: 120, interval: 120, text: 60, proof: 300 };
 const KINDS = new Set(Object.keys(TIME_LIMIT));
 // 純指令的 stem（只有一段 \text{…}、裡面沒有數學，像「計算：」「求下列極限：」）接在以數學開頭的小題前面時省略：
 // 驗算器要從題幹認形式，「計算：∫…」它認不出來，「∫…」就認得。
 const instructionOnly = (stem) => /^\\text\{[^{}\\$]*\}$/.test(String(stem || "").trim());
 const startsWithMath = (tex) => !/^\\text\{/.test(String(tex || "").trim());
+
+// 證明小題的 spec：id 要存在，而且 spec 自己的 lecture 欄位要指回這一題（兩邊對得上，才不會接錯題）
+global.window = global.window || {};
+require(path.join(ROOT, "src", "proof_lang_content.js"));
+const proofSpecs = new Map((global.window.BUZZ_PROOF_LANG_PROBLEMS || []).map((spec) => [spec.id, spec]));
+const PROOF_HINTS = ["一行一句，每句用一種句型開頭：任取／取／假設／則／由…／因為…所以／故。", "先寫出要證的東西長什麼樣，再一步一步扣回去。", "每一行都會被檢查：站不住的那一行會標紅。"];
 
 const problems = [];
 const papers = {};
@@ -90,7 +97,15 @@ function build(id, spec, prompt, solution, lecture, extra = {}) {
     lecture,
     ...extra
   };
-  if (spec.k === "text") {
+  if (spec.k === "proof") {
+    const target = proofSpecs.get(spec.spec);
+    if (!target) throw new Error(`${id}: 證明題指向的 spec ${spec.spec} 不在 src/proof_lang_content.js`);
+    if (target.lecture !== id) throw new Error(`${id}: spec ${spec.spec} 的 lecture 欄位是 ${target.lecture}，對不上`);
+    problem.proofSpec = spec.spec;
+    problem.answer = "（白話證明．機器判分）";
+    problem.tags = ["proof", "written-proof", ...problem.tags];
+    problem.hints = PROOF_HINTS.slice();
+  } else if (spec.k === "text") {
     problem.answers = [spec.a, ...(spec.alts || [])];
     problem.canonical = spec.a;
     problem.answer = spec.a;
@@ -150,7 +165,8 @@ if (unused.size) console.error(`答案檔有 ${unused.size} 個 id 骨架裡沒�
 const header = `// 微積分 20 講隨堂測驗（${new Date().toISOString().slice(0, 10)}）：由 tools/build_lecture_pack.js 產生，不要手改。
 // 來源：GPA 戰士的 caNN.tex（20 份 60 分鐘卷，每份 5 選擇 + 4 計算題），骨架由 tools/import_lecture_exams.js 拆出，
 // 判分層（answerKind／答案語法／rank／tags／驗算描述子）在 tools/content/lecture_exams_answers.json 手寫。
-// 證明題、畫圖題與「說明為什麼」這類小題不進題庫（skip），其餘小題各自獨立成題、題幹帶著原題的設定。
+// 證明小題：引擎釘得住的做成 answerKind "proof"（指向 src/proof_lang_content.js 的 pl-lec-* spec，照考卷題序排在卷上）；
+// 釘不住的證明、畫圖題與「說明為什麼」這類小題不進題庫（skip）。其餘小題各自獨立成題、題幹帶著原題的設定。
 // window.BUZZ_LECTURE_PAPERS 是 20 張固定卷的題序：第 N 講隨堂測驗照考卷順序出題，不抽籤。
 (function () {
   "use strict";
@@ -163,5 +179,5 @@ const header = `// 微積分 20 講隨堂測驗（${new Date().toISOString().sli
 `;
 const out = path.join(ROOT, "src", "problem_lecture_pack.js");
 fs.writeFileSync(out, header);
-console.log(`題庫 ${problems.length} 題（跳過 ${skipped}、缺答案 ${missing.length}）→ ${path.relative(ROOT, out)}，${Object.keys(papers).length} 張卷`);
+console.log(`題庫 ${problems.length} 題（證明 ${problems.filter((p) => p.answerKind === "proof").length}、跳過 ${skipped}、缺答案 ${missing.length}）→ ${path.relative(ROOT, out)}，${Object.keys(papers).length} 張卷`);
 if (missing.length) process.exit(1);

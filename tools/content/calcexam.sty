@@ -1,0 +1,95 @@
+% calcexam.sty —— 微積分 20 講隨堂測驗的考卷樣式（XeLaTeX + xeCJK）
+% 內部工具 tools/export_lecture_tex.js 用：從站上的題庫反過來印出考卷時，把這一支複製到輸出資料夾。
+% 取自原始考卷的樣式，只留反向匯出用得到的部分（沒有圖、沒有解答框：答案另外印在卷末）。
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{calcexam}
+
+\RequirePackage[a4paper,landscape,top=1.5cm,bottom=1.6cm,left=1.6cm,right=1.6cm]{geometry}
+\RequirePackage{fontspec}
+\RequirePackage{xeCJK}
+\RequirePackage{amsmath,amssymb,bm}
+\RequirePackage{enumitem}
+\RequirePackage{array}
+\RequirePackage{xcolor}
+\RequirePackage{fancyhdr}
+\RequirePackage{lastpage}
+
+% ---------- 字型 ----------
+% 站上的解說與參考證明是 Unicode 純文字（∫ π ≤ ⇒ ₀ ⁿ …），Latin Modern 沒有這些字；
+% 西文內文改用字很全的 DejaVu Serif（沒裝就維持預設，只是那些符號會缺字）。
+\IfFontExistsTF{DejaVu Serif}{\setmainfont{DejaVu Serif}[Scale=0.9]}{}
+\setCJKmainfont{Noto Serif CJK TC}[BoldFont={Noto Serif CJK TC Bold}]
+\setCJKsansfont{Noto Sans CJK TC}[BoldFont={Noto Sans CJK TC Bold}]
+\xeCJKsetup{CJKecglue={\hskip 0.15em plus 0.05em}}
+\linespread{1.18}
+
+% ---------- 版面：雙欄 ----------
+\setlength{\columnsep}{1.1cm}
+\setlength{\columnseprule}{0.4pt}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.3em}
+\emergencystretch=3em
+
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0pt}
+\fancyfoot[C]{\small 第 \thepage\ 頁／共 \pageref{LastPage} 頁}
+\newcommand{\lecno}{}
+\fancyfoot[L]{\small\sffamily 微積分\ 第 \lecno\ 講}
+
+\definecolor{solred}{HTML}{B22222}
+
+% ---------- 題目格式 ----------
+\newcommand{\pts}[1]{{\sffamily\small（#1 分）}}
+\newcommand{\sect}[2]{\par\medskip{\sffamily\bfseries\large #1}\quad{\small #2}\par\smallskip}
+
+\newcounter{prob}
+\newcommand{\prob}[1][]{\par\medskip\stepcounter{prob}%
+  {\sffamily\bfseries \theprob.}\ \ifx\relax#1\relax\else\pts{#1}\ \fi}
+
+\setlist[enumerate,1]{label=(\alph*),leftmargin=2em,itemsep=1pt,topsep=2pt}
+
+% 選項：一列四個 / 各自一行
+\newcommand{\chA}[4]{\par\smallskip
+  \noindent\makebox[0.25\linewidth][l]{(A) #1}\makebox[0.25\linewidth][l]{(B) #2}%
+  \makebox[0.25\linewidth][l]{(C) #3}\makebox[0.25\linewidth][l]{(D) #4}\par}
+\newcommand{\chC}[4]{\par\smallskip
+  \begin{tabular}{@{}l@{\ }p{0.9\linewidth}@{}}
+  (A)&#1\\(B)&#2\\(C)&#3\\(D)&#4\end{tabular}\par}
+
+% 卷末答案：一題一段，小字
+\newcommand{\anskey}[2]{\par\smallskip{\sffamily\bfseries #1}\quad{\color{solred}#2}\par}
+\newenvironment{anssol}{\par\small\sloppy}{\par}
+
+% ---------- 考卷抬頭 ----------
+% \examheader{講次}{主題}{考試時間}
+\newcommand{\examheader}[3]{%
+  \gdef\lecno{#1}%
+  \begin{center}
+    {\sffamily\bfseries\LARGE 微積分\quad 第 #1 講隨堂測驗}\par\smallskip
+    {\sffamily\large #2}\par\medskip
+    {\small 考試時間：#3\qquad 不可使用計算機\qquad 答案附在卷末}\par\medskip
+    \renewcommand{\arraystretch}{1.6}
+    \begin{tabular}{|p{2.2cm}|p{4.2cm}|p{2.2cm}|p{4.2cm}|p{2.2cm}|p{3.2cm}|}\hline
+      \centering 系\,級 & & \centering 學\,號 & & \centering 姓\,名 & \\\hline
+    \end{tabular}\hspace{1em}%
+    \begin{tabular}{|p{1.2cm}|p{2.2cm}|}\hline
+      \centering 得分 & \\\hline
+    \end{tabular}
+  \end{center}\vspace{-0.3em}}
+
+% ---------- 微積分符號（含站上 KaTeX 內建、LaTeX 沒有的幾個） ----------
+\newcommand{\dd}{\mathrm{d}}
+\newcommand{\abs}[1]{\left|#1\right|}
+\newcommand{\ee}{\mathrm{e}}
+\providecommand{\R}{\mathbb{R}}
+\providecommand{\N}{\mathbb{N}}
+\providecommand{\Z}{\mathbb{Z}}
+\providecommand{\Q}{\mathbb{Q}}
+\newcommand{\vv}[1]{\mathbf{#1}}
+\newcommand{\grad}{\nabla}
+\providecommand{\sech}{\operatorname{sech}}
+\providecommand{\csch}{\operatorname{csch}}
+\providecommand{\arcsec}{\operatorname{arcsec}}
+\providecommand{\arccot}{\operatorname{arccot}}
+\providecommand{\arccsc}{\operatorname{arccsc}}
