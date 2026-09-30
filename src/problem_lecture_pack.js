@@ -1,7 +1,8 @@
-// 微積分 20 講隨堂測驗（2026-09-29）：由 tools/build_lecture_pack.js 產生，不要手改。
+// 微積分 20 講隨堂測驗（2026-09-30）：由 tools/build_lecture_pack.js 產生，不要手改。
 // 來源：GPA 戰士的 caNN.tex（20 份 60 分鐘卷，每份 5 選擇 + 4 計算題），骨架由 tools/import_lecture_exams.js 拆出，
 // 判分層（answerKind／答案語法／rank／tags／驗算描述子）在 tools/content/lecture_exams_answers.json 手寫。
-// 證明題、畫圖題與「說明為什麼」這類小題不進題庫（skip），其餘小題各自獨立成題、題幹帶著原題的設定。
+// 證明小題：引擎釘得住的做成 answerKind "proof"（指向 src/proof_lang_content.js 的 pl-lec-* spec，照考卷題序排在卷上）；
+// 釘不住的證明、畫圖題與「說明為什麼」這類小題不進題庫（skip）。其餘小題各自獨立成題、題幹帶著原題的設定。
 // window.BUZZ_LECTURE_PAPERS 是 20 張固定卷的題序：第 N 講隨堂測驗照考卷順序出題，不抽籤。
 (function () {
   "use strict";
@@ -182,6 +183,41 @@
       "answer": "1/2"
     },
     {
+      "id": "lec-01-q2a",
+      "topic": "limits",
+      "difficulty": 2,
+      "rank": 2,
+      "authoredRank": 2,
+      "prompt": "\\text{用夾擠定理證明 }\\lim_{x\\to0}x^2\\cos\\frac{1}{x}=0",
+      "answerKind": "proof",
+      "timeLimit": 300,
+      "tags": [
+        "proof",
+        "written-proof",
+        "squeeze",
+        "trig-limit",
+        "lecture",
+        "lecture-01",
+        "exam-style",
+        "midterm-style",
+        "rank-2"
+      ],
+      "solution": "-1≤ cos1/x≤1⇒-x^2≤ x^2cos1/x≤ x^2（x≠0）。\nlim_(x→0)(± x^2)=0，由夾擠定理極限為 0。\n注意不能用「極限的乘積＝乘積的極限」，因為 limcos1/x 不存在。",
+      "source": "微積分 20 講 · 第 01 講隨堂測驗",
+      "lecture": "01",
+      "examPart": "long",
+      "examPoints": 20,
+      "examGroup": "lec-01-q2",
+      "examTitle": "夾擠定理。",
+      "proofSpec": "pl-lec-squeeze-cos",
+      "answer": "（白話證明．機器判分）",
+      "hints": [
+        "一行一句，每句用一種句型開頭：任取／取／假設／則／由…／因為…所以／故。",
+        "先寫出要證的東西長什麼樣，再一步一步扣回去。",
+        "每一行都會被檢查：站不住的那一行會標紅。"
+      ]
+    },
+    {
       "id": "lec-01-q2b",
       "topic": "limits",
       "difficulty": 2,
@@ -261,6 +297,41 @@
       "answer": "1"
     },
     {
+      "id": "lec-01-q3b",
+      "topic": "limits",
+      "difficulty": 2,
+      "rank": 2,
+      "authoredRank": 2,
+      "prompt": "\\text{證明方程式 }\\cos x=x\\text{ 在 }\\bigl(0,\\frac\\pi2\\bigr)\\text{ 內至少有一個解。}",
+      "answerKind": "proof",
+      "timeLimit": 300,
+      "tags": [
+        "proof",
+        "written-proof",
+        "ivt",
+        "continuity",
+        "lecture",
+        "lecture-01",
+        "exam-style",
+        "midterm-style",
+        "rank-2"
+      ],
+      "solution": "g(x)=cos x-x 在 [0,(π)/2] 連續，g(0)=1>0，g((π)/2)=-(π)/2<0。由中間值定理存在 c∈(0,(π)/2) 使 g(c)=0，即 cos c=c。",
+      "source": "微積分 20 講 · 第 01 講隨堂測驗",
+      "lecture": "01",
+      "examPart": "long",
+      "examPoints": 20,
+      "examGroup": "lec-01-q3",
+      "examTitle": "連續性與中間值定理。",
+      "proofSpec": "pl-lec-ivt-cos",
+      "answer": "（白話證明．機器判分）",
+      "hints": [
+        "一行一句，每句用一種句型開頭：任取／取／假設／則／由…／因為…所以／故。",
+        "先寫出要證的東西長什麼樣，再一步一步扣回去。",
+        "每一行都會被檢查：站不住的那一行會標紅。"
+      ]
+    },
+    {
       "id": "lec-01-q4a",
       "topic": "limits",
       "difficulty": 2,
@@ -313,6 +384,41 @@
       "examGroup": "lec-01-q4",
       "examTitle": "漸近線與 $\\varepsilon$–$\\delta$ 定義。",
       "answer": "1"
+    },
+    {
+      "id": "lec-01-q4d",
+      "topic": "limits",
+      "difficulty": 3,
+      "rank": 3,
+      "authoredRank": 3,
+      "prompt": "\\text{用 }\\varepsilon\\text{ – }\\delta\\text{ 定義證明 }\\lim_{x\\to3}(2x-1)=5\\text{。}",
+      "answerKind": "proof",
+      "timeLimit": 300,
+      "tags": [
+        "proof",
+        "written-proof",
+        "epsilon-delta",
+        "continuity",
+        "lecture",
+        "lecture-01",
+        "exam-style",
+        "midterm-style",
+        "rank-3"
+      ],
+      "solution": "任給 ε>0，取 δ=ε/2。則當 0<|x-3|<δ 時，\n|(2x-1)-5|=2|x-3|<2δ=ε，故得證。",
+      "source": "微積分 20 講 · 第 01 講隨堂測驗",
+      "lecture": "01",
+      "examPart": "long",
+      "examPoints": 20,
+      "examGroup": "lec-01-q4",
+      "examTitle": "漸近線與 $\\varepsilon$–$\\delta$ 定義。",
+      "proofSpec": "pl-lec-limit-2x-1",
+      "answer": "（白話證明．機器判分）",
+      "hints": [
+        "一行一句，每句用一種句型開頭：任取／取／假設／則／由…／因為…所以／故。",
+        "先寫出要證的東西長什麼樣，再一步一步扣回去。",
+        "每一行都會被檢查：站不住的那一行會標紅。"
+      ]
     },
     {
       "id": "lec-02-m1",
@@ -1451,6 +1557,77 @@
       "examGroup": "lec-04-q1",
       "examTitle": "閉區間上的絕對極值。",
       "answer": "6"
+    },
+    {
+      "id": "lec-04-q2a",
+      "topic": "derivatives",
+      "difficulty": 3,
+      "rank": 3,
+      "authoredRank": 3,
+      "prompt": "\\text{證明：對所有實數 }\\,a,b\\text{， }\\left|\\sin a-\\sin b\\right|\\le\\left|a-b\\right|\\text{。}",
+      "answerKind": "proof",
+      "timeLimit": 330,
+      "tags": [
+        "proof",
+        "written-proof",
+        "mean-value",
+        "mvt",
+        "lecture",
+        "lecture-04",
+        "exam-style",
+        "midterm-style",
+        "rank-3"
+      ],
+      "solution": "a=b 顯然成立。a≠ b 時，由均值定理存在 c 使 sin a-sin b=cos c(a-b)，而 |cos c|≤1，得證。",
+      "source": "微積分 20 講 · 第 04 講隨堂測驗",
+      "lecture": "04",
+      "examPart": "long",
+      "examPoints": 20,
+      "examGroup": "lec-04-q2",
+      "examTitle": "均值定理與 Rolle 定理的應用。",
+      "proofSpec": "pl-lec-sin-lipschitz",
+      "answer": "（白話證明．機器判分）",
+      "hints": [
+        "一行一句，每句用一種句型開頭：任取／取／假設／則／由…／因為…所以／故。",
+        "先寫出要證的東西長什麼樣，再一步一步扣回去。",
+        "每一行都會被檢查：站不住的那一行會標紅。"
+      ]
+    },
+    {
+      "id": "lec-04-q2b",
+      "topic": "derivatives",
+      "difficulty": 4,
+      "rank": 4,
+      "authoredRank": 4,
+      "prompt": "\\text{證明：對所有 }\\,x\\neq0\\text{， }\\,e^x>1+x\\text{。}",
+      "answerKind": "proof",
+      "timeLimit": 420,
+      "tags": [
+        "proof",
+        "written-proof",
+        "mean-value",
+        "mvt",
+        "inequality",
+        "lecture",
+        "lecture-04",
+        "exam-style",
+        "midterm-style",
+        "rank-4"
+      ],
+      "solution": "對 e^t 在 0 與 x 之間用均值定理：e^x-1=e^cx，c 介於 0 與 x 之間。\n\nx>0：c>0⇒ e^c>1⇒ e^cx>x。\n\nx<0：c<0⇒ e^c<1，乘以負數 x 反向：e^cx>x。\n\n兩種情形都有 e^x-1>x。",
+      "source": "微積分 20 講 · 第 04 講隨堂測驗",
+      "lecture": "04",
+      "examPart": "long",
+      "examPoints": 20,
+      "examGroup": "lec-04-q2",
+      "examTitle": "均值定理與 Rolle 定理的應用。",
+      "proofSpec": "pl-lec-exp-cases",
+      "answer": "（白話證明．機器判分）",
+      "hints": [
+        "一行一句，每句用一種句型開頭：任取／取／假設／則／由…／因為…所以／故。",
+        "先寫出要證的東西長什麼樣，再一步一步扣回去。",
+        "每一行都會被檢查：站不住的那一行會標紅。"
+      ]
     },
     {
       "id": "lec-04-q3a",
@@ -4662,6 +4839,76 @@
       ]
     },
     {
+      "id": "lec-11-q3a",
+      "topic": "series",
+      "difficulty": 3,
+      "rank": 3,
+      "authoredRank": 3,
+      "prompt": "\\text{設 }\\,a_1=\\sqrt2\\text{， }\\,a_{n+1}=\\sqrt{2+a_n}\\text{，即 }\\sqrt2,\\quad \\sqrt{2+\\sqrt2},\\quad \\sqrt{2+\\sqrt{2+\\sqrt2}},\\quad \\dots \\text{用數學歸納法證明 }\\,a_n<2\\text{ 對所有 }\\,n\\text{ 成立。}",
+      "answerKind": "proof",
+      "timeLimit": 300,
+      "tags": [
+        "proof",
+        "written-proof",
+        "induction",
+        "recursive-sequence",
+        "lecture",
+        "lecture-11",
+        "exam-style",
+        "midterm-style",
+        "rank-3"
+      ],
+      "solution": "a_1=√(2)<2。設 a_k<2，則 a_(k+1)=√(2+a_k)<√(4)=2。由歸納法得證。",
+      "source": "微積分 20 講 · 第 11 講隨堂測驗",
+      "lecture": "11",
+      "examPart": "long",
+      "examPoints": 20,
+      "examGroup": "lec-11-q3",
+      "examTitle": "遞迴數列。",
+      "proofSpec": "pl-lec-recursive-bound",
+      "answer": "（白話證明．機器判分）",
+      "hints": [
+        "一行一句，每句用一種句型開頭：任取／取／假設／則／由…／因為…所以／故。",
+        "先寫出要證的東西長什麼樣，再一步一步扣回去。",
+        "每一行都會被檢查：站不住的那一行會標紅。"
+      ]
+    },
+    {
+      "id": "lec-11-q3b",
+      "topic": "series",
+      "difficulty": 3,
+      "rank": 3,
+      "authoredRank": 3,
+      "prompt": "\\text{設 }\\,a_1=\\sqrt2\\text{，}\\,a_{n+1}=\\sqrt{2+a_n}\\text{。已知 }0<a_n<2\\text{ 對所有 }\\,n\\text{ 成立，證明 }\\{a_n\\}\\text{ 遞增。}",
+      "answerKind": "proof",
+      "timeLimit": 300,
+      "tags": [
+        "proof",
+        "written-proof",
+        "sequence",
+        "recursive-sequence",
+        "lecture",
+        "lecture-11",
+        "exam-style",
+        "midterm-style",
+        "rank-3"
+      ],
+      "solution": "a_(n+1)^2-a_n^2=2+a_n-a_n^2=(2-a_n)(1+a_n)>0（由 (a) 且 a_n>0），又 a_n>0，故 a_(n+1)>a_n。",
+      "source": "微積分 20 講 · 第 11 講隨堂測驗",
+      "lecture": "11",
+      "examPart": "long",
+      "examPoints": 20,
+      "examGroup": "lec-11-q3",
+      "examTitle": "遞迴數列。",
+      "proofSpec": "pl-lec-recursive-increasing",
+      "answer": "（白話證明．機器判分）",
+      "hints": [
+        "一行一句，每句用一種句型開頭：任取／取／假設／則／由…／因為…所以／故。",
+        "先寫出要證的東西長什麼樣，再一步一步扣回去。",
+        "每一行都會被檢查：站不住的那一行會標紅。"
+      ]
+    },
+    {
       "id": "lec-11-q3c",
       "topic": "series",
       "difficulty": 3,
@@ -5031,6 +5278,41 @@
       "answer": "2/(3-x)"
     },
     {
+      "id": "lec-12-q2a",
+      "topic": "series",
+      "difficulty": 3,
+      "rank": 3,
+      "authoredRank": 3,
+      "prompt": "\\text{證明 }\\sum_{n=1}^N\\frac1n\\ge\\ln(N+1)\\text{（在 }[n,n+1]\\text{ 上 }\\frac1x\\le\\frac1n\\text{），所以調和級數發散。}",
+      "answerKind": "proof",
+      "timeLimit": 300,
+      "tags": [
+        "proof",
+        "written-proof",
+        "integral-test",
+        "convergence-test",
+        "lecture",
+        "lecture-12",
+        "exam-style",
+        "midterm-style",
+        "rank-3"
+      ],
+      "solution": "在 [n,n+1] 上 1/x≤ 1/n，所以長方形面積 1/n≥ ∫_n^(n+1)dx/x。相加得 Σ_(n=1)^N1/n≥ ∫_1^(N+1)dx/x=ln(N+1)→ ∞ ，故發散。",
+      "source": "微積分 20 講 · 第 12 講隨堂測驗",
+      "lecture": "12",
+      "examPart": "long",
+      "examPoints": 20,
+      "examGroup": "lec-12-q2",
+      "examTitle": "積分判別。",
+      "proofSpec": "pl-lec-harmonic-lower",
+      "answer": "（白話證明．機器判分）",
+      "hints": [
+        "一行一句，每句用一種句型開頭：任取／取／假設／則／由…／因為…所以／故。",
+        "先寫出要證的東西長什麼樣，再一步一步扣回去。",
+        "每一行都會被檢查：站不住的那一行會標紅。"
+      ]
+    },
+    {
       "id": "lec-12-q2b",
       "topic": "series",
       "difficulty": 3,
@@ -5254,6 +5536,76 @@
       ],
       "canonical": "收斂",
       "answer": "收斂"
+    },
+    {
+      "id": "lec-12-q4a",
+      "topic": "series",
+      "difficulty": 4,
+      "rank": 4,
+      "authoredRank": 4,
+      "prompt": "\\text{令 }\\,H_n=1+\\frac12+\\cdots+\\frac1n\\text{。用數學歸納法證明 }\\,H_{2^k}\\ge1+\\frac k2\\text{ 對所有正整數 }\\,k\\text{ 成立。}",
+      "answerKind": "proof",
+      "timeLimit": 360,
+      "tags": [
+        "proof",
+        "written-proof",
+        "induction",
+        "convergence-test",
+        "lecture",
+        "lecture-12",
+        "exam-style",
+        "midterm-style",
+        "rank-4"
+      ],
+      "solution": "第 j 組為 1/(2^(j-1)+1)+… +1/(2^j)，共 2^(j-1) 項，每項 ≥ 1/(2^j)，組和 ≥ 1/2。\nH_(2^k)=1+1/2+(第 2 組)+… +(第 k 組)≥1+k/2。\nk→ ∞ 時右式 → ∞ ，而 H_n 遞增，故發散。",
+      "source": "微積分 20 講 · 第 12 講隨堂測驗",
+      "lecture": "12",
+      "examPart": "long",
+      "examPoints": 20,
+      "examGroup": "lec-12-q4",
+      "examTitle": "調和級數有多慢？",
+      "proofSpec": "pl-lec-harmonic-doubling",
+      "answer": "（白話證明．機器判分）",
+      "hints": [
+        "一行一句，每句用一種句型開頭：任取／取／假設／則／由…／因為…所以／故。",
+        "先寫出要證的東西長什麼樣，再一步一步扣回去。",
+        "每一行都會被檢查：站不住的那一行會標紅。"
+      ]
+    },
+    {
+      "id": "lec-12-q4b",
+      "topic": "series",
+      "difficulty": 3,
+      "rank": 3,
+      "authoredRank": 3,
+      "prompt": "\\text{令 }\\,H_n=1+\\frac12+\\cdots+\\frac1n\\text{。證明 }\\,H_n\\le1+\\ln n\\text{（在 }[k-1,k]\\text{ 上 }\\frac1x\\ge\\frac1k\\text{）。}",
+      "answerKind": "proof",
+      "timeLimit": 300,
+      "tags": [
+        "proof",
+        "written-proof",
+        "integral-test",
+        "convergence-test",
+        "lecture",
+        "lecture-12",
+        "exam-style",
+        "midterm-style",
+        "rank-3"
+      ],
+      "solution": "在 [k-1,k] 上 1/x≥ 1/k，所以 1/k≤ ∫_(k-1)^kdx/x。對 k=2,…,n 相加：\nH_n-1≤ ∫_1^ndx/x=ln n。",
+      "source": "微積分 20 講 · 第 12 講隨堂測驗",
+      "lecture": "12",
+      "examPart": "long",
+      "examPoints": 20,
+      "examGroup": "lec-12-q4",
+      "examTitle": "調和級數有多慢？",
+      "proofSpec": "pl-lec-harmonic-upper",
+      "answer": "（白話證明．機器判分）",
+      "hints": [
+        "一行一句，每句用一種句型開頭：任取／取／假設／則／由…／因為…所以／故。",
+        "先寫出要證的東西長什麼樣，再一步一步扣回去。",
+        "每一行都會被檢查：站不住的那一行會標紅。"
+      ]
     },
     {
       "id": "lec-12-q4d",
@@ -9190,6 +9542,8 @@
         "lec-11-q1d",
         "lec-11-q2a",
         "lec-11-q2d",
+        "lec-11-q3a",
+        "lec-11-q3b",
         "lec-11-q3c",
         "lec-11-q4a",
         "lec-11-q4b",
@@ -9210,6 +9564,7 @@
         "lec-12-q1b",
         "lec-12-q1c",
         "lec-12-q1d",
+        "lec-12-q2a",
         "lec-12-q2b",
         "lec-12-q2c",
         "lec-12-q2d",
@@ -9217,6 +9572,8 @@
         "lec-12-q3b",
         "lec-12-q3c",
         "lec-12-q3d",
+        "lec-12-q4a",
+        "lec-12-q4b",
         "lec-12-q4d"
       ],
       "shared": {
@@ -9415,11 +9772,14 @@
         "lec-01-q1b",
         "lec-01-q1c",
         "lim-002",
+        "lec-01-q2a",
         "lec-01-q2b",
         "lec-01-q2c",
         "lec-01-q3a",
+        "lec-01-q3b",
         "lec-01-q4a",
-        "lec-01-q4b"
+        "lec-01-q4b",
+        "lec-01-q4d"
       ],
       "shared": {
         "lim-003": "lec-01-m1",
@@ -9493,6 +9853,8 @@
         "lec-04-m5",
         "lec-04-q1a",
         "lec-04-q1b",
+        "lec-04-q2a",
+        "lec-04-q2b",
         "lec-04-q3a",
         "lec-04-q3b",
         "lec-04-q3c",

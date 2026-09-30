@@ -41,12 +41,12 @@
 
 | 項目 | 數字 | 備註 |
 | --- | ---: | --- |
-| 題目總數 | 2807 | 純微積分；理科秒殺包已於 2026-08 移出 |
-| 答案通過獨立數值驗算 | 2262（81%） | 其餘是證明題與定性題，本質上沒有可比對的數值 |
-| 有 `source` | 2727 |  |
-| 有 `tags` | 2807 | distinct tag 414 個，其中 311 個是技巧 tag |
-| 有 `solution` | 2807 | 單段文字 |
-| 有作者撰寫 `hints` | 1813 |  |
+| 題目總數 | 2817 | 純微積分；理科秒殺包已於 2026-08 移出 |
+| 答案通過獨立數值驗算 | 2262（80%） | 其餘是證明題與定性題，本質上沒有可比對的數值 |
+| 有 `source` | 2737 |  |
+| 有 `tags` | 2817 | distinct tag 414 個，其中 311 個是技巧 tag |
+| 有 `solution` | 2817 | 單段文字 |
+| 有作者撰寫 `hints` | 1823 |  |
 | 有 `solutionSteps` | 260 | 結構化步驟，仍是最大的內容缺口 |
 | 證明題 | 68 | 含 Lean 機器驗證 8 則 |
 | `src/app.js` | 15526 行 | 單一 IIFE，拆分進行中 |
@@ -55,9 +55,9 @@
 | kernel 模組 `src/kernel/*.js` | 25 | 純函式層 |
 | CI 驗證器 `tools/` | 46 支 | validate / verify / smoke / e2e |
 
-**答案型別分佈**：`numeric` 1846、`expression` 387、`text` 178、`antiderivative` 151、`sketch` 42、`worksheet` 42、`graphtap` 38、`interval` 34、`graph` 26、`set` 23、`proof` 16、`epsilon` 14、`graphslope` 10。
+**答案型別分佈**：`numeric` 1846、`expression` 387、`text` 178、`antiderivative` 151、`sketch` 42、`worksheet` 42、`graphtap` 38、`interval` 34、`graph` 26、`proof` 26、`set` 23、`epsilon` 14、`graphslope` 10。
 
-**難度分佈**：R1 218 / R2 497 / R3 721 / R4 870 / R5 381 / R6 120。
+**難度分佈**：R1 218 / R2 499 / R3 727 / R4 872 / R5 381 / R6 120。
 rank 由 `src/kernel/rubric.js` 的三軸（步驟數 / 冷僻度 / 計算負擔）算出，
 不再由 tag 規則推導；黃金檔 `tools/golden/difficulty.json` 釘住分佈與錨點題。
 

@@ -16,6 +16,7 @@ const byId = new Map(proofs.map((p) => [p.id, p]));
 
 let checks = 0;
 let failures = 0;
+let lectureProofCount = 0;
 
 function assert(proofId, label, ok, detail) {
   checks += 1;
@@ -698,9 +699,137 @@ function simpson(f, a, b, n) {
   }
 }
 
+/* ===== 微積分 20 講的證明小題（pl-lec-*，2026-09-30）=====
+   這些題在站上由白話證明的檢查器判分（validate_proof_lang 驗參考證明全綠、刪行不綠、翻符號紅）。
+   這裡是第二道：不經過檢查器，用純數值把參考證明裡每一條可算的主張重驗一次 ——
+   檢查器的取樣如果剛好漏掉反例，這裡的密網格／精確整數會抓到。另外釘住「每一題都有對應的考卷小題」。 */
+{
+  global.window.BUZZ_PROOF_LANG_PROBLEMS = undefined;
+  require("../src/proof_lang_content.js");
+  const specs = (global.window.BUZZ_PROOF_LANG_PROBLEMS || []).filter((spec) => /^pl-lec-/.test(spec.id));
+  const lectureAnswers = require("./content/lecture_exams_answers.json");
+  const grid = (lo, hi, n) => Array.from({ length: n + 1 }, (_, i) => lo + ((hi - lo) * i) / n);
+  const near = (a, b, tol) => Math.abs(a - b) <= (tol || 1e-9) * (1 + Math.abs(b));
+  const lnInt = (a, b) => Math.log(b / a); // ∫_a^b dx/x
+  const H = (n) => { let s = 0; for (let k = 1; k <= n; k += 1) s += 1 / k; return s; };
+  const nested = (n) => { let a = Math.SQRT2; for (let i = 1; i < n; i += 1) a = Math.sqrt(2 + a); return a; };
+  const CLAIMS = {
+    "pl-lec-squeeze-cos": (id) => {
+      const xs = grid(-2, 2, 40001).filter((x) => x !== 0);
+      assert(id, "|x² cos(1/x)| ≤ x² on a dense grid", xs.every((x) => Math.abs(x * x * Math.cos(1 / x)) <= x * x + 1e-15));
+      assert(id, "sandwich −x² ≤ x² cos(1/x) ≤ x² and x² → 0", xs.every((x) => -x * x <= x * x * Math.cos(1 / x) && x * x * Math.cos(1 / x) <= x * x) && 1e-6 * 1e-6 < 1e-11);
+    },
+    "pl-lec-ivt-cos": (id) => {
+      const g = (x) => Math.cos(x) - x;
+      assert(id, "g(0) = 1 > 0 and g(π/2) = −π/2 < 0", g(0) === 1 && near(g(Math.PI / 2), -Math.PI / 2, 1e-12));
+      let lo = 0, hi = Math.PI / 2;
+      for (let i = 0; i < 80; i += 1) { const mid = (lo + hi) / 2; if (g(mid) > 0) lo = mid; else hi = mid; }
+      assert(id, "the root c of cos c = c lies strictly inside (0, π/2)", lo > 0 && hi < Math.PI / 2 && Math.abs(Math.cos(lo) - lo) < 1e-12, `c ≈ ${lo}`);
+    },
+    "pl-lec-limit-2x-1": (id) => {
+      let ok = true;
+      [2, 1, 0.1, 1e-3, 1e-6].forEach((eps) => {
+        const delta = eps / 2;
+        grid(3 - delta, 3 + delta, 2000).forEach((x) => {
+          const d = Math.abs(x - 3);
+          if (d === 0 || d >= delta) return;
+          const lhs = Math.abs((2 * x - 1) - 5);
+          if (!(near(lhs, 2 * d, 1e-12) && lhs < eps)) ok = false;
+        });
+      });
+      assert(id, "δ = ε/2: |(2x − 1) − 5| = 2|x − 3| < ε for 0 < |x − 3| < δ", ok);
+    },
+    "pl-lec-sin-lipschitz": (id) => {
+      let ok = true, mvt = true;
+      const pts = grid(-6, 6, 120);
+      pts.forEach((a) => pts.forEach((b) => {
+        if (!(a < b)) return;
+        if (Math.abs(Math.sin(a) - Math.sin(b)) > Math.abs(a - b) + 1e-15) ok = false;
+        // MVT：存在 c ∈ (a, b) 使 cos c = (sin b − sin a)/(b − a)；在 (a, b) 上 cos 的值域包住這個斜率
+        const slope = (Math.sin(b) - Math.sin(a)) / (b - a);
+        let min = Infinity, max = -Infinity;
+        grid(a, b, 400).slice(1, -1).forEach((c) => { min = Math.min(min, Math.cos(c)); max = Math.max(max, Math.cos(c)); });
+        if (!(min - 1e-9 <= slope && slope <= max + 1e-9)) mvt = false;
+      }));
+      assert(id, "|sin a − sin b| ≤ |a − b| on a 121×121 grid", ok);
+      assert(id, "MVT slope (sin b − sin a)/(b − a) is attained by cos on (a, b)", mvt);
+    },
+    "pl-lec-exp-cases": (id) => {
+      const g = (x) => Math.exp(x) - 1 - x;
+      const dg = (x) => Math.exp(x) - 1;
+      const pos = grid(1e-4, 5, 5000), neg = grid(-5, -1e-4, 5000);
+      assert(id, "g'(x) = e^x − 1 > 0 for x > 0 and < 0 for x < 0", pos.every((x) => dg(x) > 0) && neg.every((x) => dg(x) < 0));
+      assert(id, "g increasing on (0, ∞), decreasing on (−∞, 0)", pos.every((x, i) => i === 0 || g(x) > g(pos[i - 1])) && neg.every((x, i) => i === 0 || g(x) < g(neg[i - 1])));
+      assert(id, "g(0) = 0 and e^x = 1 + x + g(x) > 1 + x for x ≠ 0", g(0) === 0 && pos.concat(neg).every((x) => g(x) > 0 && near(Math.exp(x), 1 + x + g(x), 1e-12)));
+    },
+    "pl-lec-recursive-bound": (id) => {
+      assert(id, "base: a₁ = √2 < 2", nested(1) === Math.SQRT2 && Math.SQRT2 < 2);
+      const as = grid(-2, 2 - 1e-9, 4000);
+      assert(id, "step: a < 2 (and 2 + a ≥ 0) ⇒ √(2 + a) < √4 = 2", as.every((a) => Math.sqrt(2 + a) < 2));
+      assert(id, "a_n < 2 for n ≤ 20 (a_n = 2cos(π/2^(n+1)); beyond that a double rounds to 2)", Array.from({ length: 20 }, (_, i) => i + 1).every((n) => nested(n) < 2 && near(nested(n), 2 * Math.cos(Math.PI / Math.pow(2, n + 1)), 1e-12)));
+    },
+    "pl-lec-recursive-increasing": (id) => {
+      let ok = true;
+      for (let n = 1; n <= 25; n += 1) {
+        const a = nested(n), b = nested(n + 1);
+        if (!near(b * b - a * a, (2 - a) * (1 + a), 1e-12) || !((2 - a) * (1 + a) > 0) || !(b > a) || !(a > 0 && a < 2)) ok = false;
+      }
+      assert(id, "a_{n+1}² − a_n² = (2 − a_n)(1 + a_n) > 0 and a_{n+1} > a_n for n ≤ 25", ok);
+      const as = grid(1e-9, 2 - 1e-9, 4000);
+      assert(id, "(2 − a)(1 + a) > 0 for every 0 < a < 2", as.every((a) => (2 - a) * (1 + a) > 0));
+    },
+    "pl-lec-harmonic-lower": (id) => {
+      let ok = true, split = true;
+      for (let N = 1; N <= 2000; N += 1) {
+        let pieces = 0;
+        for (let n = 1; n <= N; n += 1) { const piece = lnInt(n, n + 1); if (!(piece <= 1 / n)) ok = false; pieces += piece; }
+        if (!near(pieces, Math.log(N + 1), 1e-10)) split = false;
+        if (!(H(N) >= Math.log(N + 1))) ok = false;
+      }
+      assert(id, "∫_n^{n+1} dx/x ≤ 1/n and H_N ≥ ln(N + 1) for N ≤ 2000", ok);
+      assert(id, "Σ_{n=1}^{N} ∫_n^{n+1} dx/x = ∫_1^{N+1} dx/x = ln(N + 1)", split);
+      assert(id, "right side is unbounded: ln(N + 1) > 10 at N = 22026", Math.log(22027) > 10);
+    },
+    "pl-lec-harmonic-doubling": (id) => {
+      assert(id, "base: H(2) = 3/2 = 1 + 1/2", H(2) === 1.5);
+      let ok = true, blocks = true;
+      for (let m = 1; m <= 20; m += 1) {
+        let block = 0;
+        for (let j = Math.pow(2, m) + 1; j <= Math.pow(2, m + 1); j += 1) { block += 1 / j; if (!(1 / j >= 1 / Math.pow(2, m + 1))) blocks = false; }
+        if (!(block >= 0.5)) blocks = false;
+        if (!near(H(Math.pow(2, m + 1)), H(Math.pow(2, m)) + block, 1e-12)) ok = false;
+        if (!(H(Math.pow(2, m + 1)) >= 1 + (m + 1) / 2)) ok = false;
+      }
+      assert(id, "each of the 2^m new terms ≥ 1/2^(m+1), so the block sum ≥ 1/2 (m ≤ 20)", blocks);
+      assert(id, "H(2^(m+1)) = H(2^m) + block ≥ 1 + (m+1)/2 (m ≤ 20)", ok);
+    },
+    "pl-lec-harmonic-upper": (id) => {
+      let ok = true, split = true;
+      for (let n = 1; n <= 2000; n += 1) {
+        let pieces = 0;
+        for (let k = 2; k <= n; k += 1) { const piece = lnInt(k - 1, k); if (!(1 / k <= piece)) ok = false; pieces += piece; }
+        if (!near(pieces, Math.log(n), 1e-10)) split = false;
+        if (!(H(n) <= 1 + Math.log(n) + 1e-15)) ok = false;
+      }
+      assert(id, "1/k ≤ ∫_{k−1}^{k} dx/x and H_n ≤ 1 + ln n for n ≤ 2000", ok);
+      assert(id, "Σ_{k=2}^{n} ∫_{k−1}^{k} dx/x = ∫_1^n dx/x = ln n", split);
+    }
+  };
+  specs.forEach((spec) => {
+    const answer = lectureAnswers[spec.lecture];
+    assert(spec.id, `wired to lecture item ${spec.lecture}`, Boolean(answer && answer.k === "proof" && answer.spec === spec.id));
+    if (!CLAIMS[spec.id]) { assert(spec.id, "has numeric claim checks in verify_proof_claims.js", false); return; }
+    CLAIMS[spec.id](spec.id);
+  });
+  Object.entries(lectureAnswers).filter(([, entry]) => entry && entry.k === "proof").forEach(([item, entry]) => {
+    assert(item, `proof item points at an existing pl-lec- spec (${entry.spec})`, specs.some((spec) => spec.id === entry.spec));
+  });
+  lectureProofCount = specs.length;
+}
+
 /* ===== summary ===== */
 const contest = proofs.filter((p) => p.tier === "contest" || p.tier === "classic");
-console.log(`\nChecked ${checks} claims across ${contest.length} contest + classic proofs (+bank structure).`);
+console.log(`\nChecked ${checks} claims across ${contest.length} contest + classic proofs and ${lectureProofCount} lecture proof items (+bank structure).`);
 if (failures) {
   console.error(`${failures} claim checks FAILED.`);
   process.exit(1);

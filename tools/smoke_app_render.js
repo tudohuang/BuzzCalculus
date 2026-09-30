@@ -470,6 +470,8 @@ console.log("Removal smoke: 自動錯因存活、舊 records.conf 容忍、六�
       }
       const graph = paper.filter((p) => GRAPH_KINDS.includes(p.answerKind)).length;
       const proof = paper.filter((p) => p.answerKind === "proof").length;
+      // 20 講的固定卷照考卷題序：證明小題在它原本的題號上（可能不只一題、也不一定在最後），下面另外驗
+      if (Array.isArray(config.fixed)) return;
       if (proof > 1) throw new Error(`${id} 第 ${attempt} 份卷有 ${proof} 題證明 —— 一份卷最多一題`);
       // 證明題只能在最後一題：它要寫字，夾在中間會把整份卷的節奏切斷
       if (proof === 1 && paper[paper.length - 1].answerKind !== "proof") {
@@ -495,6 +497,7 @@ console.log("Removal smoke: 自動錯因存活、舊 records.conf 容忍、六�
   // 20 講隨堂測驗（2026-09-29）：固定卷，題序照考卷、重考同一份、選擇題在前計算題在後
   const lectureIds = Object.keys(api.namedExams).filter((id) => id.startsWith("lecture_"));
   if (lectureIds.length !== 20) throw new Error(`20 講隨堂測驗應該是 20 張卷，實際 ${lectureIds.length}`);
+  let lectureProofs = 0;
   lectureIds.forEach((id) => {
     const config = api.namedExams[id];
     const first = api.buildNamedExamPaper(id, 0).map((p) => p.id);
@@ -509,8 +512,18 @@ console.log("Removal smoke: 自動錯因存活、舊 records.conf 容忍、六�
     const shared = ((global.window.BUZZ_LECTURE_PAPERS || {})[config.lecture] || {}).shared || {};
     if (!config.fixed.every((pid) => shared[pid] || config.lecture === (global.window.BUZZ_PROBLEMS.find((p) => p.id === pid) || {}).lecture)) {
       throw new Error(`${id} 混進了別講的題`);
-    }  });
-  console.log(`隨堂測驗 smoke: 20 張固定卷、題序照考卷、重考同一份、每張只含自己那一講`);
+    }
+    // 證明小題（2026-09-30）：指向的白話證明 spec 要存在，而且在卷上的位置就是考卷的題號順序（lec-NN-qJx 遞增）
+    const paper = api.buildNamedExamPaper(id, 0);
+    const longIds = paper.filter((p) => p.examPart === "long" && /^lec-/.test(p.id)).map((p) => p.id);
+    if (longIds.join() !== longIds.slice().sort().join()) throw new Error(`${id} 計算題沒有照考卷題號排`);
+    paper.filter((p) => p.answerKind === "proof").forEach((p) => {
+      if (!/^pl-lec-/.test(p.proofSpec || "")) throw new Error(`${id} 的證明題 ${p.id} 沒有指向 pl-lec- spec`);
+      lectureProofs += 1;
+    });
+  });
+  if (lectureProofs < 10) throw new Error(`20 講的卷上只有 ${lectureProofs} 題證明小題，應該至少 10 題`);
+  console.log(`隨堂測驗 smoke: 20 張固定卷、題序照考卷、重考同一份、每張只含自己那一講、證明小題 ${lectureProofs} 題在原題號上`);
 }
 
 // ── 反射進步卡（成效證據）─────────────────────────────────────
