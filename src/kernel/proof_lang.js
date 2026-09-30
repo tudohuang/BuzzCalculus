@@ -897,6 +897,8 @@
     };
 
     for (const line of lines) {
+      // 情況一推出來的關係只屬於情況一：到了情況二不能再「前面已經有了」（每條驗過的關係記下它是在哪個情況推的）
+      (ctx.verifiedLinks || []).forEach((link) => { if (!("caseId" in link)) link.caseId = ctx.currentCase; });
       if (line.kind === "unknown") {
         push(line, "error", line.reason || "讀不懂這一句。每一行要用一種句型開頭：任取／設／取、假設、則／所以、由 <定理>、因為…所以…、分情況、情況一、用歸納法、當 n=1 時、反設、得證。");
         continue;
@@ -1725,7 +1727,8 @@
     const flipped = { "<": ">", ">": "<", "<=": ">=", ">=": "<=", "=": "=", "!=": "!=" };
     const same = (a, b) => compact(a) === compact(b) || evaluate(a, b, "=", ctx).ok;
     const matches = (item) => (item.op === op && same(item.lhs, lhs) && same(item.rhs, rhs)) || (item.op === flipped[op] && same(item.lhs, rhs) && same(item.rhs, lhs));
-    if (ctx.constraints.some(matches) || (ctx.verifiedLinks || []).some(matches) || (ctx.asserted || []).some(matches)) return true;
+    const here = (item) => item.caseId == null || item.caseId === ctx.currentCase;
+    if (ctx.constraints.filter(here).some(matches) || (ctx.verifiedLinks || []).filter(here).some(matches) || (ctx.asserted || []).some(matches)) return true;
     if (equivalentToKnown(spec, ctx, chain, evaluate)) return true;
     if (equivalentToConstraint(spec, ctx, chain, evaluate)) return true;
     // 只有定義與常數：把定義代進去就能算，等於「由定義」
@@ -1987,7 +1990,7 @@
   function equivalentLink(spec, ctx, chain, evaluate) {
     void evaluate;
     if (chain.ops.length !== 1) return null;
-    const links = (ctx.verifiedLinks || []).filter((link) => link.op !== "=" && link.op !== "!=");
+    const links = (ctx.verifiedLinks || []).filter((link) => link.op !== "=" && link.op !== "!=" && (link.caseId == null || link.caseId === ctx.currentCase));
     if (!links.length || chain.ops[0] === "=" || chain.ops[0] === "!=") return null;
     const oriented = (lhs, op, rhs) => (op === ">" || op === ">=") ? `(${lhs})-(${rhs})` : `(${rhs})-(${lhs})`;
     const mine = oriented(chain.exprs[0], chain.ops[0], chain.exprs[1]);
@@ -2035,7 +2038,7 @@
   function knownLinks(ctx) {
     const facts = [];
     ctx.constraints.forEach((item) => { if (item.caseId === null || item.caseId === ctx.currentCase) facts.push({ lhs: item.lhs, op: item.op, rhs: item.rhs }); });
-    (ctx.verifiedLinks || []).forEach((link) => facts.push({ lhs: link.lhs, op: link.op, rhs: link.rhs }));
+    (ctx.verifiedLinks || []).forEach((link) => { if (link.caseId == null || link.caseId === ctx.currentCase) facts.push({ lhs: link.lhs, op: link.op, rhs: link.rhs }); });
     return facts.filter((fact) => fact.op !== "=" && fact.op !== "!=");
   }
 

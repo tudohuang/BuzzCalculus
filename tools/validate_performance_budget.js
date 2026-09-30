@@ -65,13 +65,20 @@ const BUDGETS = {
   // 不是「進到某一頁才抓」，是頁面載完、閒下來就抓（答完題看解答時一定要已經在）。
   // 首屏不用解析它，所以不跟首屏的檔搶；也不跟證明引擎、英文側表搶同一個上限。
   // 它隨內容成長（每題約 0.5KB），上限給到現況的兩倍左右 —— 再撞頂就該拆成按題包載入。
-  "逐步解答側表（閒置時載入）": { pattern: /^src\/problem_solution_steps\.js$/, budget: 400 * 1024, lazy: true },
-  "延後載入（進到該頁才抓）": { pattern: /^/, budget: 460 * 1024, lazy: true }
+  "延後載入：逐步解答": { pattern: /^$/, budget: 400 * 1024, lazy: "steps" },
+  // 2026-09-30 拆成兩類：兩組是各自載入的（進證明頁才抓 proof 那三支；英文介面才抓 i18n 那一支），
+  // 合在一起算等於讓英文側表跟證明引擎搶同一個額度 —— 載入的那一刻，使用者等的只是其中一組。
+  // 拆開時的量：證明組 290KB（proof_lang 167 ＋ proof_surface 44 ＋ 內容 79；內容多了 20 講的 10 題證明小題 +10KB），
+  // 英文側表 175KB。上限各留約兩成：證明組 320KB（下一次撞頂照 kernel 那條：把 proof_lang.js 拆檔，不是調數字）、
+  // 英文側表 240KB（第二批翻譯——解說、提示——會進這一支，那是預期中的成長）。
+  "延後載入：證明頁": { pattern: /^$/, budget: 320 * 1024, lazy: "proof" },
+  "延後載入：英文題目": { pattern: /^$/, budget: 240 * 1024, lazy: "i18n" }
 };
 
 const html = fs.readFileSync(path.join(ROOT, "index.html"), "utf8");
 const allTags = [...html.matchAll(/<script[^>]*src="(src\/[^"]+\.js)"[^>]*>/g)];
 const lazyScripts = new Set(allTags.filter((m) => /type="text\/lazy"/.test(m[0])).map((m) => m[1]));
+const lazyGroupOf = new Map(allTags.filter((m) => /type="text\/lazy"/.test(m[0])).map((m) => [m[1], (m[0].match(/data-lazy="([^"]+)"/) || [])[1] || ""]));
 const scripts = allTags.map((m) => m[1]).filter((rel) => !lazyScripts.has(rel));
 const failures = [];
 
@@ -84,8 +91,7 @@ const rows = [];
 for (const [label, spec] of Object.entries(BUDGETS)) {
   let files = [];
   if (spec.lazy) {
-    files = [...lazyScripts].filter((s) => spec.pattern.test(s) && !claimed.has(s));
-    files.forEach((f) => claimed.add(f));
+    files = [...lazyScripts].filter((rel) => lazyGroupOf.get(rel) === spec.lazy);
   } else if (spec.fromCss) {
     files = ["styles.css"];
   } else if (spec.catchAll) {
@@ -126,6 +132,12 @@ console.log(`  script 標籤        ${String(scripts.length).padStart(5)} 支 / 
 if (scripts.length > SCRIPT_COUNT_BUDGET) {
   failures.push(`index.html 的 script 數量 ${scripts.length} 超過 ${SCRIPT_COUNT_BUDGET}`);
 }
+
+// 每一支延後載入的檔都要屬於某個有預算的組：新加一組 data-lazy 就要在上面寫它的上限
+const budgetedGroups = new Set(Object.values(BUDGETS).map((spec) => spec.lazy).filter(Boolean));
+[...lazyScripts].filter((rel) => !budgetedGroups.has(lazyGroupOf.get(rel))).forEach((rel) => {
+  failures.push(`${rel} 是延後載入（data-lazy="${lazyGroupOf.get(rel)}"），但這一組沒有預算`);
+});
 
 if (failures.length) {
   console.error(`\n效能預算超支（${failures.length}）：`);

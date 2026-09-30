@@ -183,3 +183,9 @@
 - 新題：pl-mvt-from-rolle（classic proof-mvt-002）、pl-cauchy-mvt（classic proof-mvt-005）、pl-fixed-point。經典題可機器判 7 → 9。
 - 測試：validate_proof_lang 第 10 節（f 真的在變、定義接地、證人真的驗、少除以 b − a 紅、Rolle 兩個前提各缺一個黃、找不到根黃、squash 值域），validate_proof_surface 第 9 節（Cauchy MVT 英文全綠）。
 - 還不行：積分形 Cauchy–Schwarz（要「乘正數的等價」與 ∫ 平方非負的展開）、極值定理（EVT 給的 max/min 點不是根）、需要 ≠ 的唯一性論證。
+
+## 20 講隨堂測驗的證明小題（2026-09-30）
+
+- 考卷上的證明小題有 10 題接得上（`pl-lec-*`，spec 的 `lecture` 欄位記考卷題號）：夾擠、IVT、ε-δ（第 1 講）、MVT 與單調性分兩種情況（第 4 講）、遞迴數列的歸納與遞增（第 11 講）、調和數的上下界與倍增分組（第 12 講）。`tools/build_lecture_pack.js` 把它們做成 `answerKind: "proof"`，照原題號排在固定卷上；`tools/verify_proof_claims.js` 另外用純數值重驗每一條可算的主張。
+- **修了一個洩漏**：驗過的關係以前不記是在哪個情況推的，情況二可以直接「前面已經有了」借用情況一的結論（情況二什麼都不寫也全綠）。現在 `verifiedLinks` 記 `caseId`，`knownLinks`／`equivalentLink`／`premiseEstablished` 只看目前情況（validate_proof_lang 第 11 節釘住）。
+- 釘不住、留在考卷上 skip 的：恆等式的計算題（題目的兩邊數值相等，任何 `A = 中間 = B` 的第一段都會被當成「先寫答案」，而用「令」定義又會讓一行寫答案就全綠——球面積、橢圓面積、重排的第 k 組、Gaussian 積分、arctan x + arctan(1/x)）、`n!` 記號（翻譯層把 `!` 當句號）、唯一性（x³ + x − 1 = 0 恰一根）、偏導數與向量場（熱方程、Laplace、curl）、抽象的偶函數積分、數列極限不存在的路徑論證。
