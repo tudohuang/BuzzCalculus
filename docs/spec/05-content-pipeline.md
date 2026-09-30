@@ -508,13 +508,14 @@ quarantine 後：該題退出所有抽題池；已在進行中的 session 保留
 ## 5.8 解析驗證
 
 證明題已有 `tools/verify_proof_claims.js`（數值檢查所有量化宣稱）與 Lean 驗證。
-一般題的 `solutionSteps` 也要驗：
+一般題的 `solutionSteps` 也要驗（2026-09 落地，`tools/validate_solution_steps.js`，進 CI）：
 
-- 每個 step 的 `latex` 必須是合法 KaTeX（用 `katex.renderToString` 在 node 下試算）。
-- 最後一個 step 的結果必須與 `answer` 數值等價。
-- `\text{}` 內不得含數學符號（既有 lint 經驗）。
-
-`tools/validate_solutions.js`，進 CI。
+- 步驟是純文字（畫面用 escapeHtml 印，數學寫 Unicode），不得含 LaTeX 指令或 $。
+- 側表 `src/problem_solution_steps.js` 的每一步可帶一條「驗算宣稱」（`[文字, 宣稱]`），
+  記法跟答案欄相同，另有 D／D2／INT／LIM／SUM／SUB／ANS 運算子（`tools/lib/step_claims.js`），
+  在取樣點上數值重算；算不出來也算失敗。
+- 數值／運算式／不定積分題的最後一步必須有一條跟 ANS 比的宣稱；是非題的最後一步要說出答案；答案 dne 的要說「不存在」。
+- 宣稱裡不認得的名字（`gamma(n)` 會被判分器拆成 g·a·m·m·a）直接報錯，不當成自由變數取樣。
 
 ## 5.9 CI 總表
 
@@ -535,7 +536,7 @@ quarantine 後：該題退出所有抽題池；已在進行中的 session 保留
 | `detect_duplicates.js` | **新** | 完全重複擋 PR，疑似重複出報告 |
 | `validate_skill_graph.js` | **新** | skill 圖無環、覆蓋率、最小題數 |
 | `validate_ability_model.js` | **新** | 能力公式的單調性與邊界 |
-| `validate_solutions.js` | **新** | 解析步驟可 render 且結論正確 |
+| `validate_solution_steps.js` | 既有 | 逐步解答每一步的驗算宣稱成立、最後一步接回答案 |
 | `validate_kernel_deps.js` | **新** | kernel 依賴單向無環 |
 | `test_records_migration.js` | **新** | v1 → v2 不丟資料 |
 | `test_kernel.js` | **新** | kernel golden 快照 |
