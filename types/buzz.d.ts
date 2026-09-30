@@ -321,6 +321,7 @@ interface BuzzI18nApi {
   registerProblems(code: string, table: Record<string, any>): void;
   problemOverlay(id: string): any;
   localizeProblems<T>(list: T[]): T[];
+  localizeProofs<T>(list: T[]): T[];
   missing: Set<string>;
   hasDictionary(code: string): boolean;
   dictionary(code: string): Record<string, string>;

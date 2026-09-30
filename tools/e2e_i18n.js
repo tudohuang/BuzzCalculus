@@ -201,6 +201,25 @@ async function run() {
       return blocks.length > 0 && blocks.every((b) => b.querySelector('.katex')) && !blocks.some((b) => /[\\u4e00-\\u9fff]/.test(b.innerText));
     `));
 
+    // ── 3c'. 證明題（proofs.js）：敘述、提示、參考證明是英文（白話證明的句型引擎本身是中文的，不在這裡驗）──
+    await chrome.evaluate(`
+      const el = document.createElement("button");
+      el.dataset.action = "open-proof-problem"; el.dataset.proofKey = "pf:proof-mvt-001";
+      document.querySelector("#app").appendChild(el); el.click();
+      return true;
+    `);
+    await chrome.sleep(wait(2500));
+    await chrome.evaluate(`
+      document.querySelectorAll('.proof-hints').forEach((d) => { d.open = true; });
+      const b = document.querySelector('[data-action="view-proof-solution"]'); if (b) b.click();
+      return true;
+    `);
+    await chrome.sleep(wait(900));
+    check("證明題頁：敘述、提示、參考證明都在畫面上", await chrome.evaluate("return Boolean(document.querySelector('.lc-statement')) && document.querySelectorAll('.proof-hints li').length > 0 && Boolean(document.querySelector('.proof-solution'));"));
+    await expectNoCjk("證明題的敘述沒有中文", ".lc-statement");
+    await expectNoCjk("證明題的提示沒有中文", ".proof-hints");
+    await expectNoCjk("參考證明的每一步沒有中文", ".proof-solution");
+
     // ── 3d. 靜態頁（使用手冊、關於、條款、隱私）：英文介面看到英文版 ──
     for (const page of ["guide.html", "about.html", "terms.html", "privacy.html"]) {
       await chrome.navigate(`${server.url}/${page}`, { appReady: false });
