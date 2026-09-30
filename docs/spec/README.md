@@ -47,13 +47,13 @@
 | 有 `tags` | 2807 | distinct tag 414 個，其中 311 個是技巧 tag |
 | 有 `solution` | 2807 | 單段文字 |
 | 有作者撰寫 `hints` | 1813 |  |
-| 有 `solutionSteps` | 260 | 結構化步驟，仍是最大的內容缺口 |
+| 有 `solutionSteps` | 812 | 結構化步驟；側表 problem_solution_steps.js 的每一步由 validate_solution_steps 數值驗算 |
 | 證明題 | 68 | 含 Lean 機器驗證 8 則 |
 | `src/app.js` | 15526 行 | 單一 IIFE，拆分進行中 |
 | `styles.css` | 12153 行 |  |
-| 題庫檔 `src/problem_*.js` | 37 |  |
+| 題庫檔 `src/problem_*.js` | 38 |  |
 | kernel 模組 `src/kernel/*.js` | 25 | 純函式層 |
-| CI 驗證器 `tools/` | 46 支 | validate / verify / smoke / e2e |
+| CI 驗證器 `tools/` | 47 支 | validate / verify / smoke / e2e |
 
 **答案型別分佈**：`numeric` 1846、`expression` 387、`text` 178、`antiderivative` 151、`sketch` 42、`worksheet` 42、`graphtap` 38、`interval` 34、`graph` 26、`set` 23、`proof` 16、`epsilon` 14、`graphslope` 10。
 
