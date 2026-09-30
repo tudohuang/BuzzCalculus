@@ -255,4 +255,23 @@
   // 這個檔案必須排在所有題庫檔之後才有東西可以補。
   // 排錯位置會安靜地什麼都不做，留一個可檢查的痕跡。
   window.BUZZ_AUTHORED_SOLUTIONS_APPLIED = applied;
+
+  // 逐步解答側表（problem_solution_steps.js）是延後載入的：只有看解答時才用得到，
+  // 首屏不為它多解析一百多 KB。頁面載完、瀏覽器閒下來再注入 —— 使用者答完第一題
+  // 之前早就到了；萬一沒到，「完整推導」照舊印一段文字，不會壞。
+  // 放在這裡而不是 app.js 的 ensureLazy：app.js 的預算已經滿了，而這支本來就是「補解析」。
+  if (typeof document !== "undefined" && document.createElement && document.head) {
+    const loadSteps = () => {
+      if (window.BUZZ_SOLUTION_STEP_TABLE) return;
+      const tag = document.querySelector('script[type="text/lazy"][data-lazy="steps"]');
+      if (!tag) return;
+      const script = document.createElement("script");
+      script.src = tag.getAttribute("src");
+      script.async = true;
+      document.head.appendChild(script);
+    };
+    const later = () => (window.requestIdleCallback ? window.requestIdleCallback(loadSteps, { timeout: 3000 }) : window.setTimeout(loadSteps, 1200));
+    if (document.readyState === "complete") later();
+    else window.addEventListener("load", later, { once: true });
+  }
 })();
