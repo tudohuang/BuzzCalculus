@@ -44,6 +44,18 @@ function collect() {
   });
   const derived = (win.BuzzDerivedHints && win.BuzzDerivedHints.table) || {};
   Object.entries(derived).forEach(([id, entry]) => add("derived", id, entry && entry.text));
+  (win.BUZZ_PROOFS || []).forEach((proof) => {
+    const at = (suffix) => `${proof.id}.${suffix}`;
+    add("proof", at("title"), proof.title);
+    add("proof", at("statement"), proof.statement);
+    (proof.hints || []).forEach((hint, i) => add("proof", at(`hint${i}`), hint));
+    (proof.solution || []).forEach((step, i) => { if (!step) return; add("proof", at(`step${i}`), step.text); add("proof", at(`step${i}.tex`), step.tex, true); });
+    (proof.cloze || []).forEach((blank, bi) => {
+      if (!blank) return;
+      add("proof", at(`cloze${bi}`), blank.ask);
+      (blank.options || []).forEach((option, oi) => { if (!option) return; add("proof", at(`cloze${bi}.${oi}`), option.label); add("proof", at(`cloze${bi}.${oi}.why`), option.why); });
+    });
+  });
   (win.BUZZ_COURSE || []).forEach((lesson) => {
     const at = (suffix) => `${lesson.id}.${suffix}`;
     add("course", at("title"), String(lesson.title || "").replace(/^第 \d+ 課 · /, ""));

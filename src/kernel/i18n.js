@@ -166,10 +166,40 @@
   }
   const tx = (text) => translateText(text);
 
+  // 證明題（BUZZ_PROOFS）：標題、敘述、提示、參考證明的每一步、填空題的問句與選項。
+  // 判分只看 option.correct／blank.answer，id 與步驟順序不動，所以就地換字是安全的。
+  function localizeProofs(list) {
+    if (lang === "zh" || !Array.isArray(list)) return list;
+    list.forEach((proof) => {
+      if (!proof || localized.has(proof)) return;
+      localized.add(proof);
+      proof.title = tx(proof.title);
+      proof.statement = tx(proof.statement);
+      if (Array.isArray(proof.hints)) proof.hints = proof.hints.map(tx);
+      (proof.solution || []).forEach((step) => {
+        if (!step) return;
+        step.text = tx(step.text);
+        if (step.tex) step.tex = tx(step.tex);
+      });
+      (proof.cloze || []).forEach((blank) => {
+        if (!blank) return;
+        blank.ask = tx(blank.ask);
+        (blank.options || []).forEach((option) => {
+          if (!option) return;
+          if (option.label) option.label = tx(option.label);
+          if (option.why) option.why = tx(option.why);
+        });
+      });
+    });
+    return list;
+  }
+
   // 把題庫換成目前語言：原文留在 promptZh，判分用的 answers 別名照舊。
   // 可以重複呼叫（每個欄位只換一次，原文存在 *Zh）。
+  // 證明題（window.BUZZ_PROOFS）也在這裡一起換：app.js 開場只呼叫這一支（app.js 的預算貼線，不多加一行呼叫）。
   function localizeProblems(list) {
     if (lang === "zh") return list;
+    if (typeof window !== "undefined" && Array.isArray(window.BUZZ_PROOFS)) localizeProofs(window.BUZZ_PROOFS);
     const canned = typeof window !== "undefined" && window.BuzzCannedHints;
     list.forEach((problem) => {
       if (!problem || localized.has(problem)) return;
@@ -222,6 +252,7 @@
     registerProblems,
     problemOverlay,
     localizeProblems,
+    localizeProofs,
     registerText,
     tx,
     translateText,

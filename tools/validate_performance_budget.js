@@ -64,8 +64,8 @@ const BUDGETS = {
   // 2026-09-30 460 → 320：英文側表搬去下一類自己算（它們跟「進到該頁才抓」的證明引擎不是同一種成本）。
   "延後載入（進到該頁才抓）": { pattern: /^$/, budget: 320 * 1024, lazy: true, exclude: /^src\/kernel\/i18n_\w+_en\.js$/ },
   // 2026-09-30 新增：英文內容側表（題幹 i18n_problems_en.js＋解說／提示／課文句型 i18n_text_en.js）。
-  // 只有英文介面在開站時抓（中文使用者零位元組，sw.js 也不預快取）；英文使用者第一幀要等它，所以仍然要有上限（現況 598KB：題幹 174KB＋句型表 424KB）。
-  "英文內容側表（只有英文介面抓）": { pattern: /^src\/kernel\/i18n_\w+_en\.js$/, budget: 680 * 1024, lazy: true }
+  // 只有英文介面在開站時抓（中文使用者零位元組，sw.js 也不預快取）；英文使用者第一幀要等它，所以仍然要有上限（現況 655KB：題幹 174KB＋句型表 481KB，含證明題內容）。
+  "英文內容側表（只有英文介面抓）": { pattern: /^src\/kernel\/i18n_\w+_en\.js$/, budget: 720 * 1024, lazy: true }
 };
 
 const html = fs.readFileSync(path.join(ROOT, "index.html"), "utf8");
