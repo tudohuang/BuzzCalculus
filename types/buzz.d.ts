@@ -138,6 +138,8 @@ interface BuzzProofLangSpec {
   statement: string;
   prompt: string;
   source?: string;
+  /** 二十講隨堂測驗的證明小題：對應考卷上的題號（lec-NN-…） */
+  lecture?: string;
   vars?: Record<string, { min?: number; max?: number; int?: boolean }>;
   given?: string[];
   facts?: string[];

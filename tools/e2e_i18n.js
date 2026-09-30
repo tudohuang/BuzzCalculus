@@ -164,6 +164,33 @@ async function run() {
       return Boolean(p && p.solutionZh && body && /[a-z]{3,}/.test(body.innerText) && body.innerText.includes(p.solution.slice(0, 20)));
     `));
 
+    // ── 3b'. 逐步解答側表（problem_solution_steps.js）是 load 之後才注入的，比 localizeProblems 晚：
+    //        英文使用者看到的步驟仍然要是英文（lim-011 的步驟只在側表裡）
+    await chrome.navigate(server.url + "/index.html#p=lim-011");
+    await chrome.sleep(wait(2500));
+    check("逐步解答側表注入了", await chrome.evaluate(`
+      for (let i = 0; i < 50 && !window.BUZZ_SOLUTION_STEP_TABLE; i += 1) await new Promise((r) => setTimeout(r, 200));
+      return Boolean(window.BUZZ_SOLUTION_STEP_TABLE && window.BUZZ_SOLUTION_STEP_TABLE['lim-011']);
+    `));
+    await chrome.evaluate(`
+      const p = (window.BUZZ_PROBLEMS || []).find((x) => x.id === 'lim-011');
+      const wrongChoice = [...document.querySelectorAll('[data-action="choose-answer"]')].find((c) => !c.disabled && c.getAttribute("data-choice") !== String(p.answer));
+      if (wrongChoice) { wrongChoice.click(); return true; }
+      const input = document.querySelector(".answer-input");
+      if (input) { input.value = "12345"; input.dispatchEvent(new Event("input", { bubbles: true })); }
+      const form = document.querySelector('form[data-action="submit-answer"]');
+      if (form) form.requestSubmit ? form.requestSubmit() : form.dispatchEvent(new Event("submit", { bubbles: true, cancelable: true }));
+      return true;
+    `);
+    await chrome.sleep(wait(1200));
+    await chrome.evaluate(`document.querySelectorAll('.solution-stages details').forEach((d) => { d.open = true; }); return true;`);
+    await chrome.sleep(wait(400));
+    check("lim-011 的完整推導照側表的步驟列出來", await chrome.evaluate(`
+      const p = (window.BUZZ_PROBLEMS || []).find((x) => x.id === 'lim-011');
+      return document.querySelectorAll('.solution-stage.is-full .solution-steps li').length >= 2 && Array.isArray(p.solutionStepsZh);
+    `));
+    await expectNoCjk("側表注入的步驟是英文", ".solution-stage.is-full");
+
     // ── 3c. 入門課：課程表與一堂理論課（概念、逐步推導、小測、選錯的理由）──
     await chrome.navigate(server.url + "/index.html");
     await chrome.sleep(wait(2000));
