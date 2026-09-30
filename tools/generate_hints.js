@@ -64,10 +64,13 @@ fs.writeFileSync(output, `// 自動產生 —— 不要手改。來源：tools/g
 ${lines.join(",\n")}
   };
 
+  // 英文介面：句子照 i18n.js 的樣板表翻（數字原封不動填回）；claim 與中文原文不動，驗算照舊
+  const localize = (text) => (text && typeof window !== "undefined" && window.BuzzI18n ? window.BuzzI18n.tx(text) : text);
+
   const API = {
     version: 1,
     table: DERIVED_HINTS,
-    textFor: (id) => (DERIVED_HINTS[id] ? DERIVED_HINTS[id].text : ""),
+    textFor: (id) => (DERIVED_HINTS[id] ? localize(DERIVED_HINTS[id].text) : ""),
     has: (id) => Boolean(DERIVED_HINTS[id])
   };
 

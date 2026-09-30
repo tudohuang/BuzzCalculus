@@ -95,7 +95,6 @@ const APP_SHELL = [
   "./src/kernel/tag_labels.js",
   "./src/kernel/i18n.js",
   "./src/kernel/i18n_en.js",
-  "./src/kernel/i18n_problems_en.js",
   "./src/kernel/proof_lang.js",
   "./src/kernel/proof_surface.js",
   "./src/proof_lang_content.js",
@@ -106,6 +105,13 @@ const APP_SHELL = [
   "./src/kernel/planner.js",
   "./src/kernel/session.js",
   "./src/app.js"
+];
+
+// 只有英文介面才抓的內容側表：不進 install 預快取 —— 中文使用者一個位元組都不用下載。
+// 英文使用者開站時 app.js 會抓它們，下面的 fetch handler 順手存進快取，之後離線照樣能用。
+const LANG_ONLY = [
+  "./src/kernel/i18n_problems_en.js",
+  "./src/kernel/i18n_text_en.js"
 ];
 
 // 新版本要等使用者同意才生效。

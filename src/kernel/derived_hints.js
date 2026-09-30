@@ -164,10 +164,13 @@
     "world-021": { text: "比值判別：|aₙ₊₁/aₙ| 在 n=20…120 之間一路落在 0.0551 以下（最後約 0.0084728），明顯小於 1 —— 收斂。", claim: {"k":"ratio","v":0.0084728} },
   };
 
+  // 英文介面：句子照 i18n.js 的樣板表翻（數字原封不動填回）；claim 與中文原文不動，驗算照舊
+  const localize = (text) => (text && typeof window !== "undefined" && window.BuzzI18n ? window.BuzzI18n.tx(text) : text);
+
   const API = {
     version: 1,
     table: DERIVED_HINTS,
-    textFor: (id) => (DERIVED_HINTS[id] ? DERIVED_HINTS[id].text : ""),
+    textFor: (id) => (DERIVED_HINTS[id] ? localize(DERIVED_HINTS[id].text) : ""),
     has: (id) => Boolean(DERIVED_HINTS[id])
   };
 

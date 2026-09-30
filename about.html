@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="assets/vendor/katex/katex.min.css" />
   </head>
   <body class="legal-body">
-    <main class="legal-page">
+    <main class="legal-page" data-page-lang="zh">
       <p class="legal-back"><a href="index.html">← 回到 BuzzCalculus</a></p>
 
       <h1>關於 BuzzCalculus</h1>
@@ -35,5 +35,41 @@
 
       <p>發現題目錯了，用題目右上角的「回報」。</p>
     </main>
+    <main class="legal-page" data-page-lang="en" lang="en" data-title="About · BuzzCalculus" hidden>
+      <p class="legal-back"><a href="index.html">← Back to BuzzCalculus</a></p>
+
+      <h1>About BuzzCalculus</h1>
+      <p class="legal-updated">Last updated: 2026-09-30</p>
+
+      <p class="legal-lead">You see a problem and need three minutes to know which tool to use. This site trains those three minutes.</p>
+
+      <h2>Who made it</h2>
+      <p>Tudo Huang (tudohuang), on his own. No server, no accounts.</p>
+
+      <h2>Problems</h2>
+      <p>
+        <strong data-claim="problems">2,817 problems</strong>, original or adapted, sorted by technique.
+        Problems labeled "in the style of" an exam are written to imitate its habits; they are not real exam problems and have no connection to any school or institution.
+      </p>
+
+      <h2>Answers</h2>
+      <p>Every answer is checked by an independent computation that doesn't use the solution. Problems that fail don't make it into the bank.</p>
+
+      <h2>Your data</h2>
+      <p>It all stays in your own browser. We can't see it.</p>
+
+      <p>Found a wrong problem? Use "Report" at the top right of the problem.</p>
+    </main>
+    <script>
+      // 英文介面看英文版：語言判定跟 src/kernel/i18n.js 一樣（設定 settings.lang → 沒設定看瀏覽器，中文任何地區 → zh）
+      (function () {
+        var lang = "";
+        try { var r = JSON.parse(localStorage.getItem("buzzcalculus.records.v1") || "null"); lang = (r && r.settings && r.settings.lang) || ""; } catch (e) { lang = ""; }
+        if (lang !== "zh" && lang !== "en") { var n = String((navigator.languages && navigator.languages[0]) || navigator.language || "").toLowerCase(); lang = !n || n.indexOf("zh") === 0 ? "zh" : "en"; }
+        if (lang !== "en") return;
+        document.documentElement.lang = "en";
+        document.querySelectorAll("[data-page-lang]").forEach(function (el) { el.hidden = el.getAttribute("data-page-lang") !== "en"; if (!el.hidden && el.getAttribute("data-title")) document.title = el.getAttribute("data-title"); });
+      })();
+    </script>
   </body>
 </html>
