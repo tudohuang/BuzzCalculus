@@ -72,7 +72,9 @@ const BUDGETS = {
   // 英文側表 175KB。上限各留約兩成：證明組 320KB（下一次撞頂照 kernel 那條：把 proof_lang.js 拆檔，不是調數字）、
   // 英文側表 240KB（第二批翻譯——解說、提示——會進這一支，那是預期中的成長）。
   "延後載入：證明頁": { pattern: /^$/, budget: 320 * 1024, lazy: "proof" },
-  "延後載入：英文題目": { pattern: /^$/, budget: 240 * 1024, lazy: "i18n" }
+  // 2026-09-30 240 → 720：英文第二批（解說／提示／逐步解／課文／證明的句型表 i18n_text_en.js 481KB）進了這一組。
+  // 只有英文介面在開站時抓（中文使用者零位元組，sw.js 也不預快取）；英文使用者第一幀要等它，所以仍然要有上限（現況 655KB）。
+  "延後載入：英文內容": { pattern: /^$/, budget: 720 * 1024, lazy: "i18n" }
 };
 
 const html = fs.readFileSync(path.join(ROOT, "index.html"), "utf8");

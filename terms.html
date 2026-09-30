@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="assets/vendor/katex/katex.min.css" />
   </head>
   <body class="legal-body">
-    <main class="legal-page">
+    <main class="legal-page" data-page-lang="zh">
       <p class="legal-back"><a href="index.html">← 回到 BuzzCalculus</a></p>
 
       <h1>服務條款</h1>
@@ -46,5 +46,52 @@
 
       <p class="legal-back"><a href="index.html">← 回到 BuzzCalculus</a> · <a href="about.html">關於</a> · <a href="privacy.html">隱私政策</a></p>
     </main>
+    <main class="legal-page" data-page-lang="en" lang="en" data-title="Terms of Service · BuzzCalculus" hidden>
+      <p class="legal-back"><a href="index.html">← Back to BuzzCalculus</a></p>
+
+      <h1>Terms of Service</h1>
+      <p class="legal-updated">Last updated: 2026-09-30</p>
+
+      <p class="legal-lead">
+        This is a tool for practicing calculus: no accounts, and your records stay on your own device.
+        We work hard to keep problems and answers correct, but it isn't your teacher and doesn't promise you a good grade.
+      </p>
+
+      <h2>What you can do</h2>
+      <p>Personal study, exam prep, classroom use, and putting problems in handouts (please credit the source) are all fine. You can export your records at any time and do what you like with them.</p>
+      <p>Please don't scrape the whole problem bank to repackage it, flood the site with automated requests, or share custom problems containing infringing or unrelated content.</p>
+
+      <h2>Problems and answers</h2>
+      <p>
+        Every problem is labeled with its source type: <strong>original</strong>, adapted, written in a certain style, or public domain.
+        Problems labeled "in the style of" an exam are our own originals, not official problems of any school or exam body, and we have no connection to them.
+      </p>
+      <p>
+        Answers are checked by automated verification, and the R1–R6 difficulty ranks are our own judgment.
+        Even so, <strong>we don't guarantee every problem is correct</strong>; if you find a mistake, please tell us with the report button next to the problem.
+      </p>
+
+      <h2>No warranty or liability</h2>
+      <p>
+        The service is provided as is, without any promise that it will be uninterrupted or error-free. Your records live only in your browser: clearing browser data, switching devices, or the browser reclaiming storage will erase them, and we can't recover them. If they matter to you, export the JSON regularly.
+        To the extent permitted by law, we are not liable for losses from using or being unable to use the service.
+      </p>
+
+      <h2>Changes and contact</h2>
+      <p>We may change or stop the service; with no accounts, significant changes update the date on this page. Questions: use "Report" at the top right of any problem.</p>
+
+      <p class="legal-back"><a href="index.html">← Back to BuzzCalculus</a> · <a href="about.html">About</a> · <a href="privacy.html">Privacy policy</a></p>
+    </main>
+    <script>
+      // 英文介面看英文版：語言判定跟 src/kernel/i18n.js 一樣（設定 settings.lang → 沒設定看瀏覽器，中文任何地區 → zh）
+      (function () {
+        var lang = "";
+        try { var r = JSON.parse(localStorage.getItem("buzzcalculus.records.v1") || "null"); lang = (r && r.settings && r.settings.lang) || ""; } catch (e) { lang = ""; }
+        if (lang !== "zh" && lang !== "en") { var n = String((navigator.languages && navigator.languages[0]) || navigator.language || "").toLowerCase(); lang = !n || n.indexOf("zh") === 0 ? "zh" : "en"; }
+        if (lang !== "en") return;
+        document.documentElement.lang = "en";
+        document.querySelectorAll("[data-page-lang]").forEach(function (el) { el.hidden = el.getAttribute("data-page-lang") !== "en"; if (!el.hidden && el.getAttribute("data-title")) document.title = el.getAttribute("data-title"); });
+      })();
+    </script>
   </body>
 </html>
