@@ -578,7 +578,8 @@ function recognizeTextForm(rawPrompt) {
   }
 
   // 「Σ… 的收斂半徑」：中文後綴形
-  const radiusSuffix = prompt.match(/^(.+?)(?:\\ |\s)*\\text\{\s*的收斂半徑\s*\}$/);
+  // 選擇題的題幹會多一個「為」（「…的收斂半徑為」後面接選項）
+  const radiusSuffix = prompt.match(/^(.+?)(?:\\ |\s)*\\text\{\s*的收斂半徑為?\s*\}$/);
   if (radiusSuffix) {
     const series = topLevelOperator(radiusSuffix[1].trim());
     if (series && series.op === "series") {
@@ -3661,6 +3662,10 @@ function runExplicit(problem, compileAnswer) {
     if (value && typeof value.__odeCheck === "function") {
       return value.__odeCheck(compileAnswer(["x"]));
     }
+    // 答案是函數（導函數、反導數、切線、以參數表示的量）：比對交給 fn 自己
+    if (value && typeof value.__fnCheck === "function") {
+      return value.__fnCheck(compileAnswer);
+    }
     // 是非題（一致連續、一致收斂）：答案是一句話不是一個數。
     // 驗算端算出「成不成立」，這裡只比對那句話有沒有否定詞 ——
     // 「不一致連續」對上 false 才算過，寫反了會被抓到。
@@ -4604,6 +4609,8 @@ const EXPLICIT_METHODS = {
       prev.forEach((c, i) => { next[i] -= c; });
       prev = cur; cur = next;
     }
+    // coef: true 回 Maclaurin 係數 f⁽ⁿ⁾(0)/n!（「xⁿ 的係數」這種問法）
+    if (spec.coef) return mono[n] / Math.pow(r, n);
     let factorial = 1;
     for (let i = 2; i <= n; i += 1) factorial *= i;
     return (mono[n] / Math.pow(r, n)) * factorial;
@@ -4785,6 +4792,82 @@ const EXPLICIT_METHODS = {
     throw new Error(`連續模數判不出來：ω(1e-2)=${coarse}, ω(1e-4)=${fine}, ω(1e-6)=${finer}`);
   },
 
+  // 答案是一個**函數**的題（2026-09 講次隨堂包補）。
+  //
+  // 前面的路徑都回一個數，runExplicit 拿 compileAnswer([]) 去比 —— 答案裡有 x、t、a
+  // 就編不起來。課堂考卷上「求 y′」「求切線方程式」「以 a 表示」的題型很多，
+  // 題幹又常帶「設…求…」的前言，自動辨識器接不到。這條補三種比法：
+  //   kind: "deriv"      答案 ≡ ∂ⁿf/∂(wrt)（wrt 可以是陣列＝混合偏導），在多個點上數值微分比對
+  //   kind: "antideriv"  答案′ ≡ f（常數差不管）
+  //   cases: [...]       逐點比對：把 at 代進答案（d 給了就比答案對 d 的偏導），
+  //                      跟巢狀的另一條驗算路徑（v）算出來的數比。「以 a 表示」的題
+  //                      取幾組具體的 a 讓巢狀路徑算；切線取 x=0 的值與斜率兩點就定死。
+  // 驗算端一律數值：導數由 f 數值微分，巢狀路徑各自獨立 —— 作者的代數一步都不重用。
+  fn: (spec) => {
+    const vars = spec.vars || ["x"];
+    const tol = spec.tol || 1e-5;
+    const near = (a, b, t) => Math.abs(a - b) <= t * Math.max(1, Math.abs(b));
+    const defaultPoints = vars.length === 1
+      ? [[0.37], [0.81], [1.23], [1.77], [2.41], [-0.63], [-1.29], [3.13]]
+      : [[0.37, 0.81], [1.23, -0.44], [-0.71, 0.53], [0.92, 1.36], [1.61, 0.29], [-1.18, -0.86]]
+        .map((p) => vars.map((_, i) => (i < p.length ? p[i] : 0.5 + 0.17 * i)));
+    const points = (spec.pts || defaultPoints).map((p) => p.map(constant));
+    return { __fnCheck: (compileAnswer) => {
+      const answer = compileAnswer(vars);
+      const method = "verify:fn";
+      if (spec.kind === "deriv" || spec.kind === "antideriv") {
+        const f = latex.compile(spec.f, vars);
+        const chain = [].concat(spec.wrt || vars[0]).map((name) => vars.indexOf(name));
+        if (chain.some((i) => i < 0)) throw new Error(`fn.wrt 不在 vars 裡：${spec.wrt}`);
+        const order = spec.order || 1;
+        // 混合偏導：外層再對內層的數值偏導做一次中央差分（h=1e-3，誤差 O(h²)）
+        const derivAt = (fn, point, steps) => {
+          if (steps.length === 1) {
+            return numeric.partial((...args) => fn(...args), point, steps[0], { order }).value;
+          }
+          const h = 1e-3;
+          const last = steps[steps.length - 1];
+          const shifted = (delta) => point.map((value, i) => (i === last ? value + delta : value));
+          const inner = steps.slice(0, -1);
+          return (derivAt(fn, shifted(h), inner) - derivAt(fn, shifted(-h), inner)) / (2 * h);
+        };
+        const localTol = chain.length > 1 || order > 1 ? Math.max(tol, 1e-4) : tol;
+        let checked = 0;
+        for (const point of points) {
+          const expected = spec.kind === "deriv" ? derivAt(f, point, chain) : f(...point);
+          const actual = spec.kind === "deriv" ? answer(...point) : derivAt(answer, point, chain);
+          if (!Number.isFinite(expected) || !Number.isFinite(actual)) continue;
+          if (!near(actual, expected, localTol)) {
+            return { status: "mismatch", method, detail: `在 (${point.map(format).join(", ")}) 答案${spec.kind === "antideriv" ? "的導數" : ""}給 ${format(actual)}，獨立算出來是 ${format(expected)}`, actual, expected };
+          }
+          checked += 1;
+        }
+        if (checked < 3) return { status: "unverified", reason: `可用的取樣點只有 ${checked} 個` };
+        return { status: "ok", method, detail: `${spec.kind === "deriv" ? "答案 ≡ 數值導數" : "答案的導數 ≡ 被積函數"}（比對 ${checked} 點）` };
+      }
+      if (!Array.isArray(spec.cases) || !spec.cases.length) throw new Error("fn 要給 kind（deriv/antideriv）或 cases");
+      spec.cases.forEach((entry) => {
+        if (!entry.v || entry.v.m === "fn") throw new Error("fn.cases 的 v 要是另一條數值路徑");
+      });
+      for (const entry of spec.cases) {
+        const point = vars.map((name) => {
+          if (!entry.at || entry.at[name] === undefined) throw new Error(`fn.cases 少了 ${name} 的值`);
+          return constant(entry.at[name]);
+        });
+        const expected = EXPLICIT_METHODS[entry.v.m](entry.v);
+        if (!Number.isFinite(expected)) return { status: "unverified", reason: `巢狀路徑 ${entry.v.m} 算出 ${expected}` };
+        const actual = entry.d
+          ? numeric.partial((...args) => answer(...args), point, vars.indexOf(entry.d)).value
+          : answer(...point);
+        if (!Number.isFinite(actual)) return { status: "error", method, reason: `答案在 (${point.map(format).join(", ")}) 求值得到 ${actual}` };
+        if (!near(actual, expected, entry.tol || tol)) {
+          return { status: "mismatch", method, detail: `在 (${point.map(format).join(", ")}) 答案${entry.d ? "對 " + entry.d + " 的偏導" : ""}給 ${format(actual)}，${entry.v.m} 算出來是 ${format(expected)}`, actual, expected };
+        }
+      }
+      return { status: "ok", method, detail: `${spec.cases.length} 組代入值都對上巢狀路徑` };
+    } };
+  },
+
   // 一致收斂（是非題）。算 ‖f_n − g‖ = sup_x |f_n(x) − g(x)|，
   // n 一路變大看它有沒有趨近 0。g 是逐點極限函數，由題目給。
   uniformConvergence: (spec) => {
@@ -4938,5 +5021,5 @@ function substitute(names, variable, value) {
 
 module.exports = {
   verifyProblem, topLevelOperator, stripDomain, satisfiesDomain,
-  stripTrailingText, readBraced, EXPLICIT_METHODS
+  stripTrailingText, readBraced, EXPLICIT_METHODS, scanConvergenceEdge
 };

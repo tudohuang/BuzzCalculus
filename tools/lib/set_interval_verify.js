@@ -407,6 +407,44 @@ const METHODS = {
     return { kind: "set", value: extremaOf(spec, "min") };
   },
 
+  // 冪級數的收斂區間（端點要檢查）。{ m: "convergence", f: "…(n 與 x)", center, from, range }
+  //
+  // 兩步，各自獨立：
+  //   1. 邊緣：從 center 往兩側掃「項的幾何成長率」越過 1 的地方（跟收斂半徑同一支掃描器），
+  //      超出 range 就當作無界。
+  //   2. 端點：邊緣要落在分母 ≤ 12 的有理數上（課本題一定是），就在那一點上
+  //      直接問 numeric.seriesConverges（Leibniz／積分審斂）。落不上、或判不出來 → 丟錯，
+  //      不猜端點 —— 端點開閉就是這種題的全部重點。
+  convergence(spec) {
+    const { scanConvergenceEdge } = require("./verify_engine.js");
+    const term = latex.compile(spec.f, [spec.v || "n", "x"]);
+    const num = (value) => (typeof value === "number" ? value : latex.compile(String(value), [])());
+    const from = spec.from === undefined ? 1 : num(spec.from);
+    const center = spec.center === undefined ? 0 : num(spec.center);
+    const [lo, hi] = spec.range;
+    const snap = (edge) => {
+      for (let q = 1; q <= 12; q += 1) {
+        const p = Math.round(edge * q);
+        if (Math.abs(edge - p / q) < 1e-6 * Math.max(1, Math.abs(edge))) return p / q;
+      }
+      throw new Error(`收斂邊緣 ${edge} 不是分母 ≤ 12 的有理數，端點判不了`);
+    };
+    const endpointConverges = (x) => {
+      const result = numeric.seriesConverges((n) => term(n, x), from);
+      if (result.unknown) throw new Error(`x = ${x} 的端點級數判不出收斂性：${result.reason || ""}`);
+      return Boolean(result.converges);
+    };
+    const edge = (direction) => {
+      const raw = scanConvergenceEdge((n, x) => term(n, x), center, direction);
+      if (!Number.isFinite(raw) || raw < lo || raw > hi) return { value: direction * Infinity, closed: false };
+      const value = snap(raw);
+      return { value, closed: endpointConverges(value) };
+    };
+    const left = edge(-1);
+    const right = edge(+1);
+    return { kind: "interval", value: [{ lo: left.value, hi: right.value, loClosed: left.closed, hiClosed: right.closed }] };
+  },
+
   increasing(spec) {
     const f = latex.compile(spec.f, ["x"]);
     const [from, to] = spec.range;
