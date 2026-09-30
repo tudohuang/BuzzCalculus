@@ -61,7 +61,11 @@ const BUDGETS = {
   // 進到需要它的頁面才載（目前是證明引擎三支）。它們跟首屏無關，預算也不該跟首屏的檔搶 ——
   // 但仍然要有上限：延後載入不是「隨便長」的許可證，載入那一刻使用者還是要等。
   // 2026-09-28 320 → 460：題目的英文側表（i18n_problems_en.js）只在英文介面載，中文使用者零成本。
-  "延後載入（進到該頁才抓）": { pattern: /^$/, budget: 460 * 1024, lazy: true }
+  // 2026-09-30 460 → 320：英文側表搬去下一類自己算（它們跟「進到該頁才抓」的證明引擎不是同一種成本）。
+  "延後載入（進到該頁才抓）": { pattern: /^$/, budget: 320 * 1024, lazy: true, exclude: /^src\/kernel\/i18n_\w+_en\.js$/ },
+  // 2026-09-30 新增：英文內容側表（題幹 i18n_problems_en.js＋解說／提示／課文句型 i18n_text_en.js）。
+  // 只有英文介面在開站時抓（中文使用者零位元組，sw.js 也不預快取）；英文使用者第一幀要等它，所以仍然要有上限（現況 598KB：題幹 174KB＋句型表 424KB）。
+  "英文內容側表（只有英文介面抓）": { pattern: /^src\/kernel\/i18n_\w+_en\.js$/, budget: 680 * 1024, lazy: true }
 };
 
 const html = fs.readFileSync(path.join(ROOT, "index.html"), "utf8");
@@ -79,7 +83,7 @@ const rows = [];
 for (const [label, spec] of Object.entries(BUDGETS)) {
   let files = [];
   if (spec.lazy) {
-    files = [...lazyScripts];
+    files = [...lazyScripts].filter((f) => (spec.exclude ? !spec.exclude.test(f) : spec.pattern.test(f)));
   } else if (spec.fromCss) {
     files = ["styles.css"];
   } else if (spec.catchAll) {

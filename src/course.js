@@ -1105,7 +1105,11 @@
 (function () {
   "use strict";
 
-  const UNITS = [["functions", "函數"], ["limits", "極限與連續"], ["derivatives", "微分"], ["integrals", "積分"], ["advanced", "進階技巧"]];
+  const t = typeof globalThis.t === "function" ? globalThis.t : (text, vars) => (vars ? String(text).replace(/\{(\w+)(?:\|[^}]*)?\}/g, (m, k) => (k in vars ? String(vars[k]) : m)) : text);
+  // 課文（BUZZ_COURSE 裡的句子與式子）走 i18n.js 的句型表（延後載入的 i18n_text_en.js）；中文介面原樣回傳
+  const tx = (text) => (typeof text === "string" && typeof window !== "undefined" && window.BuzzI18n && window.BuzzI18n.tx ? window.BuzzI18n.tx(text) : text);
+
+  const UNITS = [["functions", t("函數")], ["limits", t("極限與連續")], ["derivatives", t("微分")], ["integrals", t("積分")], ["advanced", t("進階技巧")]];
   // 進階技巧九課對應題庫 R5–R6 會出現的招式；它們不在畢業關的門檻裡（畢業關只看前十六課）。
   const CORE_UNITS = ["functions", "limits", "derivatives", "integrals"];
   const isCore = (item) => CORE_UNITS.includes(item.unit);
@@ -1126,6 +1130,9 @@
     const entryOf = (records, id) => ((records.course || {})[id]) || {};
     const isDone = (records, id) => Boolean(entryOf(records, id).doneAt);
     const number = (item) => lessons().indexOf(item) + 1;
+    // 課名「第 n 課 · 名字」拆兩半各自翻：課號走字典、名字走句型表
+    const lessonName = (item) => tx(String(item.title).replace(/^第 \d+ 課 · /, ""));
+    const lessonNo = (item) => t("第 {n} 課", { n: (/^第 (\d+) 課/.exec(item.title) || [])[1] || number(item) });
 
     function progress(records) {
       const all = lessons().filter(isCore);
@@ -1149,32 +1156,32 @@
           <section class="panel page-panel course-index">
             <div class="page-head">
               <div>
-                <p class="section-label">從零開始</p>
-                <h2>微積分的 ${all.length} 課</h2>
-                <p>還沒學過也沒關係。每課 6–9 分鐘，照課本的順序走：函數 → 極限與連續 → 微分 → 積分。計算課是白話概念 → 一題逐步示範 → 小測 → 三題不倒數的練習；理論課（函數是什麼、中間值定理、極值、均值定理、基本定理）沒有練習題，示範是一段推導，小測全對就算完成。上完考畢業關，再去走主線關卡。</p>
+                <p class="section-label">${t("從零開始")}</p>
+                <h2>${t("微積分的 {n} 課", { n: all.length })}</h2>
+                <p>${t("還沒學過也沒關係。每課 6–9 分鐘，照課本的順序走：函數 → 極限與連續 → 微分 → 積分。計算課是白話概念 → 一題逐步示範 → 小測 → 三題不倒數的練習；理論課（函數是什麼、中間值定理、極值、均值定理、基本定理）沒有練習題，示範是一段推導，小測全對就算完成。上完考畢業關，再去走主線關卡。")}</p>
               </div>
               <div class="action-row">
-                ${summary.next ? `<button class="button home-primary" data-action="open-course-lesson" data-lesson-id="${escapeAttr(summary.next.id)}">${icon("play")}${summary.done ? "繼續" : "從第 1 課開始"}：${escapeHtml(summary.next.title.replace(/^第 \d+ 課 · /, ""))}</button>` : (graduated(records) ? `<button class="button home-primary" data-action="open-train">${icon("target")}畢業了，去走主線</button>` : `<button class="button home-primary" data-action="course-graduation">${icon("play")}${all.length} 課上完了，考畢業關</button>`)}
-                <button class="button secondary" data-action="home">${icon("home")}回主線</button>
+                ${summary.next ? `<button class="button home-primary" data-action="open-course-lesson" data-lesson-id="${escapeAttr(summary.next.id)}">${icon("play")}${summary.done ? t("繼續：{name}", { name: escapeHtml(lessonName(summary.next)) }) : t("從第 1 課開始：{name}", { name: escapeHtml(lessonName(summary.next)) })}</button>` : (graduated(records) ? `<button class="button home-primary" data-action="open-train">${icon("target")}${t("畢業了，去走主線")}</button>` : `<button class="button home-primary" data-action="course-graduation">${icon("play")}${t("{n} 課上完了，考畢業關", { n: all.length })}</button>`)}
+                <button class="button secondary" data-action="home">${icon("home")}${t("回主線")}</button>
               </div>
             </div>
-            <div class="course-progress"><strong>${summary.done}<small> / ${summary.total} 課</small></strong><i style="--pct:${summary.total ? Math.round(summary.done / summary.total * 100) : 0}%"></i></div>
+            <div class="course-progress"><strong>${summary.done}<small>${t(" / {n} 課", { n: summary.total })}</small></strong><i style="--pct:${summary.total ? Math.round(summary.done / summary.total * 100) : 0}%"></i></div>
             ${renderGraduationCard(records)}
             ${UNITS.map(([unit, label]) => {
               const group = all.filter((item) => item.unit === unit);
               if (!group.length) return "";
               return `
                 <section class="course-unit">
-                  <p class="section-label">${escapeHtml(label)} · ${group.length} 課</p>
+                  <p class="section-label">${escapeHtml(label)} · ${t("{n} 課", { n: group.length })}</p>
                   <div class="course-grid">
                     ${group.map((item) => {
                       const state = status(records, item);
                       return `
                         <button type="button" class="course-card is-${state}" data-action="open-course-lesson" data-lesson-id="${escapeAttr(item.id)}">
                           <span class="course-card-no">${state === "done" ? "✔" : number(item)}</span>
-                          <strong>${escapeHtml(item.title.replace(/^第 \d+ 課 · /, ""))}</strong>
-                          <small>${escapeHtml(item.goal)}</small>
-                          <em>${item.minutes} 分鐘${isTheory(item) ? " · 理論課" : ""}${state === "started" ? " · 進行中" : state === "done" ? " · 完成" : ""}</em>
+                          <strong>${escapeHtml(lessonName(item))}</strong>
+                          <small>${escapeHtml(tx(item.goal))}</small>
+                          <em>${t("{n} 分鐘", { n: item.minutes })}${isTheory(item) ? t(" · 理論課") : ""}${state === "started" ? t(" · 進行中") : state === "done" ? t(" · 完成") : ""}</em>
                         </button>`;
                     }).join("")}
                   </div>
@@ -1192,17 +1199,19 @@
       const next = steps[revealed];
       const decoyIndex = revealed + 1 < steps.length ? revealed + 1 : revealed - 1;
       const decoy = decoyIndex >= 0 ? steps[decoyIndex] : null;
-      const brief = (step) => { const text = step.text.replace(/\s+/g, " "); return text.length > 46 ? `${text.slice(0, 46)}…` : text; };
-      const plain = `<button class="button secondary" data-action="course-step">${icon("chevron-down")}${revealed ? "直接看下一步" : "直接看第一步"}<small>${revealed} / ${steps.length}</small></button>`;
+      // 英文字比較長，截斷門檻跟著放寬（中文 46 字 ≈ 英文 90 字元）
+      const cut = window.BuzzI18n && window.BuzzI18n.lang === "en" ? 90 : 46;
+      const brief = (step) => { const text = tx(step.text).replace(/\s+/g, " "); return text.length > cut ? `${text.slice(0, cut)}…` : text; };
+      const plain = `<button class="button secondary" data-action="course-step">${icon("chevron-down")}${revealed ? t("直接看下一步") : t("直接看第一步")}<small>${revealed} / ${steps.length}</small></button>`;
       if (!decoy) return plain;
-      const verdict = state.lastGuess === true ? `<p class="course-check-why is-right">${icon("check")}猜對了，就是這一步。</p>` : state.lastGuess === false ? `<p class="course-check-why">其實是另一個 —— 上面新揭的那一步才是。</p>` : "";
+      const verdict = state.lastGuess === true ? `<p class="course-check-why is-right">${icon("check")}${t("猜對了，就是這一步。")}</p>` : state.lastGuess === false ? `<p class="course-check-why">${t("其實是另一個 —— 上面新揭的那一步才是。")}</p>` : "";
       const swap = (revealed + item.id.length) % 2 === 1;
       const option = (step, ok) => `<button type="button" class="course-option" data-action="course-guess" data-ok="${ok ? 1 : 0}">${escapeHtml(brief(step))}</button>`;
       const options = swap ? option(decoy, false) + option(next, true) : option(next, true) + option(decoy, false);
       return `
         ${verdict}
         <div class="course-check course-guess">
-          <p class="course-check-ask">先猜：${revealed ? "下一步" : "第一步"}該做什麼？</p>
+          <p class="course-check-ask">${revealed ? t("先猜：下一步該做什麼？") : t("先猜：第一步該做什麼？")}</p>
           <div class="course-check-options">${options}</div>
           <div class="action-row">${plain}</div>
         </div>`;
@@ -1226,14 +1235,14 @@
       const practiceProblems = item.practice.map(problem).filter(Boolean);
       const next = all[index + 1] || null;
       const nextButton = next
-        ? `<button class="button home-primary" data-action="open-course-lesson" data-lesson-id="${escapeAttr(next.id)}">${icon("chevron-right")}下一課：${escapeHtml(next.title.replace(/^第 \d+ 課 · /, ""))}</button>`
-        : `<button class="button home-primary" data-action="course-graduation">${icon("play")}${all.length} 課上完了，考畢業關</button>`;
+        ? `<button class="button home-primary" data-action="open-course-lesson" data-lesson-id="${escapeAttr(next.id)}">${icon("chevron-right")}${t("下一課：{name}", { name: escapeHtml(lessonName(next)) })}</button>`
+        : `<button class="button home-primary" data-action="course-graduation">${icon("play")}${t("{n} 課上完了，考畢業關", { n: all.length })}</button>`;
       const stepHtml = (step, i) => `
         <li class="course-step">
           <span class="course-step-no">${i + 1}</span>
           <div>
-            <p>${escapeHtml(step.text)}</p>
-            ${step.tex ? `<div class="math-block course-step-math" data-tex="${escapeAttr(step.tex)}"></div>` : ""}
+            <p>${escapeHtml(tx(step.text))}</p>
+            ${step.tex ? `<div class="math-block course-step-math" data-tex="${escapeAttr(tx(step.tex))}"></div>` : ""}
           </div>
         </li>`;
       return `
@@ -1241,74 +1250,74 @@
           <section class="panel page-panel pl-screen pl-tutorial course-lesson">
             <div class="page-head">
               <div>
-                <p class="section-label">從零開始 · 第 ${index + 1} / ${all.length} 課 · ${escapeHtml(UNIT_LABEL[item.unit] || item.unit)}</p>
-                <h2>${escapeHtml(item.title.replace(/^第 \d+ 課 · /, ""))}</h2>
-                <p>${escapeHtml(item.goal)}</p>
+                <p class="section-label">${t("從零開始 · 第 {n} / {total} 課", { n: index + 1, total: all.length })} · ${escapeHtml(UNIT_LABEL[item.unit] || item.unit)}</p>
+                <h2>${escapeHtml(lessonName(item))}</h2>
+                <p>${escapeHtml(tx(item.goal))}</p>
               </div>
               <div class="action-row">
-                <button class="button secondary" data-action="open-course">${icon("list")}課程表</button>
+                <button class="button secondary" data-action="open-course">${icon("list")}${t("課程表")}</button>
               </div>
             </div>
-            <nav class="pl-lesson-nav" aria-label="課程">
+            <nav class="pl-lesson-nav" aria-label="${t("課程")}">
               ${all.map((other, i) => `<button type="button" class="${other.id === item.id ? "is-active" : ""} ${isDone(records, other.id) ? "is-done" : ""}" data-action="open-course-lesson" data-lesson-id="${escapeAttr(other.id)}">${i + 1}${isDone(records, other.id) ? " ✔" : ""}</button>`).join("")}
             </nav>
 
             <section class="course-block">
-              <p class="section-label">① 概念 · 約 ${item.minutes} 分鐘</p>
+              <p class="section-label">${t("① 概念 · 約 {n} 分鐘", { n: item.minutes })}</p>
               <div class="pl-intro">
-                ${item.concept.map((para) => `<p>${escapeHtml(para.text)}</p>${para.tex ? `<div class="math-block course-concept-math" data-tex="${escapeAttr(para.tex)}"></div>` : ""}`).join("")}
+                ${item.concept.map((para) => `<p>${escapeHtml(tx(para.text))}</p>${para.tex ? `<div class="math-block course-concept-math" data-tex="${escapeAttr(tx(para.tex))}"></div>` : ""}`).join("")}
               </div>
             </section>
 
             <section class="course-block" data-course-worked>
-              <p class="section-label">② ${theory ? "逐步推導" : "逐步示範"} · 一步一步揭</p>
+              <p class="section-label">${theory ? t("② 逐步推導 · 一步一步揭") : t("② 逐步示範 · 一步一步揭")}</p>
               ${workedTex ? `
-                <div class="pl-goal math-block" data-tex="${escapeAttr(workedTex)}"></div>
+                <div class="pl-goal math-block" data-tex="${escapeAttr(worked ? workedTex : tx(workedTex))}"></div>
                 <ol class="course-steps">${item.worked.steps.slice(0, revealed).map(stepHtml).join("")}</ol>
                 ${revealed < item.worked.steps.length
                   ? renderStepGuess(item, revealed, state)
-                  : (worked ? `<p class="course-answer">${icon("check")}答案：${referenceAnswerHTML(worked)}</p>` : `<p class="course-answer">${icon("check")}推導完了。</p>`)}` : `<p class="panel-note">示範題找不到（${escapeHtml(item.worked.problemId || "")}）。</p>`}
+                  : (worked ? `<p class="course-answer">${icon("check")}${t("答案：")}${referenceAnswerHTML(worked)}</p>` : `<p class="course-answer">${icon("check")}${t("推導完了。")}</p>`)}` : `<p class="panel-note">${t("示範題找不到（{id}）。", { id: escapeHtml(item.worked.problemId || "") })}</p>`}
             </section>
 
             <section class="course-block" data-course-checks>
-              <p class="section-label">③ 小測 · 選錯會告訴你為什麼</p>
+              <p class="section-label">${t("③ 小測 · 選錯會告訴你為什麼")}</p>
               ${item.checks.map((check, ci) => {
                 const picked = picks[ci];
                 const done = Boolean(entry.checksPassed) && picked === undefined;
                 return `
                   <div class="course-check ${picked !== undefined ? (check.options[picked].correct ? "is-right" : "is-wrong") : done ? "is-right" : ""}">
-                    <p class="course-check-ask">${escapeHtml(check.ask)}</p>
+                    <p class="course-check-ask">${escapeHtml(tx(check.ask))}</p>
                     <div class="course-check-options">
                       ${check.options.map((option, oi) => `
-                        <button type="button" class="course-option ${picked === oi ? (option.correct ? "is-correct" : "is-picked") : ""} ${(picked !== undefined || done) && option.correct ? "is-correct" : ""}" data-action="course-pick" data-check="${ci}" data-option="${oi}">${escapeHtml(option.label)}</button>`).join("")}
+                        <button type="button" class="course-option ${picked === oi ? (option.correct ? "is-correct" : "is-picked") : ""} ${(picked !== undefined || done) && option.correct ? "is-correct" : ""}" data-action="course-pick" data-check="${ci}" data-option="${oi}">${escapeHtml(tx(option.label))}</button>`).join("")}
                     </div>
-                    ${picked !== undefined && !check.options[picked].correct ? `<p class="course-check-why">${escapeHtml(check.options[picked].why || "")}</p>` : ""}
-                    ${(picked !== undefined && check.options[picked].correct) || done ? `<p class="course-check-why is-right">${icon("check")}對了。</p>` : ""}
+                    ${picked !== undefined && !check.options[picked].correct ? `<p class="course-check-why">${escapeHtml(tx(check.options[picked].why || ""))}</p>` : ""}
+                    ${(picked !== undefined && check.options[picked].correct) || done ? `<p class="course-check-why is-right">${icon("check")}${t("對了。")}</p>` : ""}
                   </div>`;
               }).join("")}
             </section>
 
             ${theory ? `
             <section class="course-block" data-course-practice>
-              <p class="section-label">④ 這一課是理論課，沒有練習題</p>
-              <p class="panel-note">題庫裡沒有「函數是什麼」「定理說了什麼」這種題——它們不是反射題。這一課的概念會在後面的課一直用到；小測全對就算完成。</p>
+              <p class="section-label">${t("④ 這一課是理論課，沒有練習題")}</p>
+              <p class="panel-note">${t("題庫裡沒有「函數是什麼」「定理說了什麼」這種題——它們不是反射題。這一課的概念會在後面的課一直用到；小測全對就算完成。")}</p>
               <div class="action-row">
-                ${checksPassed ? `<span class="course-done-pill">${icon("check")}小測全對</span>${nextButton}` : `<span class="panel-note">小測全對，這一課就算完成。</span>`}
+                ${checksPassed ? `<span class="course-done-pill">${icon("check")}${t("小測全對")}</span>${nextButton}` : `<span class="panel-note">${t("小測全對，這一課就算完成。")}</span>`}
               </div>
             </section>` : `
             <section class="course-block" data-course-practice>
-              <p class="section-label">④ 導引練習 · ${practiceProblems.length} 題，不倒數、可看提示</p>
+              <p class="section-label">${t("④ 導引練習 · {n} 題，不倒數、可看提示", { n: practiceProblems.length })}</p>
               <div class="course-practice-list">
                 ${practiceProblems.map((p) => `<div class="course-practice-item"><div class="math-inline" data-tex="${escapeAttr(p.prompt)}"></div></div>`).join("")}
               </div>
               <div class="action-row">
                 ${practiceDone
-                  ? `<span class="course-done-pill">${icon("check")}練過了 · ${entry.practiceCorrect || 0} / ${entry.practiceTotal || practiceProblems.length} 對</span>
-                     <button class="button secondary" data-action="course-practice" data-lesson-id="${escapeAttr(item.id)}">${icon("refresh")}再練一次</button>`
-                  : `<button class="button home-primary" data-action="course-practice" data-lesson-id="${escapeAttr(item.id)}">${icon("play")}開始練這 ${practiceProblems.length} 題</button>`}
+                  ? `<span class="course-done-pill">${icon("check")}${t("練過了 · {correct} / {total} 對", { correct: entry.practiceCorrect || 0, total: entry.practiceTotal || practiceProblems.length })}</span>
+                     <button class="button secondary" data-action="course-practice" data-lesson-id="${escapeAttr(item.id)}">${icon("refresh")}${t("再練一次")}</button>`
+                  : `<button class="button home-primary" data-action="course-practice" data-lesson-id="${escapeAttr(item.id)}">${icon("play")}${t("開始練這 {n} 題", { n: practiceProblems.length })}</button>`}
                 ${checksPassed && practiceDone
-                  ? `${nextButton}${extensionPool(item.id).length ? `<button class="button ghost" data-action="course-extension" data-lesson-id="${escapeAttr(item.id)}">${icon("zap")}延伸挑戰：一題 R2</button>` : ""}`
-                  : `<span class="panel-note">${checksPassed ? "練完這三題就算完成這一課。" : "小測答對、練習做完，這一課就算完成。"}</span>`}
+                  ? `${nextButton}${extensionPool(item.id).length ? `<button class="button ghost" data-action="course-extension" data-lesson-id="${escapeAttr(item.id)}">${icon("zap")}${t("延伸挑戰：一題 R2")}</button>` : ""}`
+                  : `<span class="panel-note">${checksPassed ? t("練完這三題就算完成這一課。") : t("小測答對、練習做完，這一課就算完成。")}</span>`}
               </div>
             </section>`}
           </section>
@@ -1322,12 +1331,12 @@
       if (records.onboardingContext === "newbie") {
         const course = progress(records);
         const steps = [
-          [course.next ? `上${course.next.title.split(" · ")[0]}：${course.next.title.split(" · ")[1] || ""}` : `${course.total} 課都上完了`, "白話概念 → 逐步示範 → 小測 → 3 題練習", "open-course"],
-          ["練完就有能力輪廓", "哪些概念穩、哪些還卡，數據頁看得到", "open-insights"],
-          ["畢業關 10 題，過了再走主線", "只出學過的題；主線頭三局也是，不倒數", "open-course"]
+          [course.next ? t("上{no}：{name}", { no: lessonNo(course.next), name: lessonName(course.next) }) : t("{n} 課都上完了", { n: course.total }), t("白話概念 → 逐步示範 → 小測 → 3 題練習"), "open-course"],
+          [t("練完就有能力輪廓"), t("哪些概念穩、哪些還卡，數據頁看得到"), "open-insights"],
+          [t("畢業關 10 題，過了再走主線"), t("只出學過的題；主線頭三局也是，不倒數"), "open-course"]
         ];
         return `
-          <section class="first-steps" aria-label="開始的三步">
+          <section class="first-steps" aria-label="${t("開始的三步")}">
             ${steps.map(([title, note, action], index) => `
               <button type="button" class="first-step ${index === (course.next ? 0 : 2) ? "is-current" : ""}" data-action="${action}">
                 <span class="first-step-no">${index === 0 && course.done ? `${course.done}/${course.total}` : index + 1}</span>
@@ -1338,17 +1347,17 @@
       }
       const steps = advanced
         ? [
-          ["直接挑戰一局", "R5–R6 的難題，倒數計時；先知道自己在哪", "open-train"],
-          ["看哪裡掉分", "不是「不會」就是「來不及」——數據頁分得出來", "open-insights"],
-          ["證明訓練與國際難題", "白話證明的高手路線、競賽風格、經典解析", "open-proofs"]
+          [t("直接挑戰一局"), t("R5–R6 的難題，倒數計時；先知道自己在哪"), "open-train"],
+          [t("看哪裡掉分"), t("不是「不會」就是「來不及」——數據頁分得出來"), "open-insights"],
+          [t("證明訓練與國際難題"), t("白話證明的高手路線、競賽風格、經典解析"), "open-proofs"]
         ]
         : [
-          ["先練一份 8 題", "不倒數、不計分，看懂題目在問什麼", "open-train"],
-          ["看你的能力輪廓", "練完就有：哪些技巧穩、哪些卡", "open-insights"],
-          ["走主線關卡", "從極限開始，一格一格解鎖", "open-train"]
+          [t("先練一份 8 題"), t("不倒數、不計分，看懂題目在問什麼"), "open-train"],
+          [t("看你的能力輪廓"), t("練完就有：哪些技巧穩、哪些卡"), "open-insights"],
+          [t("走主線關卡"), t("從極限開始，一格一格解鎖"), "open-train"]
         ];
       return `
-        <section class="first-steps" aria-label="開始的三步">
+        <section class="first-steps" aria-label="${t("開始的三步")}">
           ${steps.map(([title, note, action], index) => `
             <button type="button" class="first-step ${index === 0 ? "is-current" : ""}" data-action="${action}">
               <span class="first-step-no">${index + 1}</span>
@@ -1366,9 +1375,9 @@
         const next = item ? all[all.indexOf(item) + 1] : null;
         return `
           <div class="action-row">
-            <button class="button" data-action="open-course-lesson" data-lesson-id="${escapeAttr(lessonId)}">${icon("book-open")}回到${item ? escapeHtml(item.title.split(" · ")[0]) : "課程"}</button>
-            ${next ? `<button class="button secondary" data-action="open-course-lesson" data-lesson-id="${escapeAttr(next.id)}">${icon("chevron-right")}下一課</button>` : `<button class="button secondary" data-action="open-course">${icon("list")}課程表</button>`}
-            <button class="button ghost" data-action="open-mistakes">${icon("book")}錯題本</button>
+            <button class="button" data-action="open-course-lesson" data-lesson-id="${escapeAttr(lessonId)}">${icon("book-open")}${t("回到{name}", { name: item ? escapeHtml(lessonNo(item)) : t("課程") })}</button>
+            ${next ? `<button class="button secondary" data-action="open-course-lesson" data-lesson-id="${escapeAttr(next.id)}">${icon("chevron-right")}${t("下一課")}</button>` : `<button class="button secondary" data-action="open-course">${icon("list")}${t("課程表")}</button>`}
+            <button class="button ghost" data-action="open-mistakes">${icon("book")}${t("錯題本")}</button>
           </div>
         `;
     }
@@ -1376,7 +1385,7 @@
     // 答錯時：這題是哪一課教的
     function renderFeedbackLink(problemId) {
       const taught = problemLesson(problemId);
-      return taught ? `<p class="feedback-course"><button type="button" class="link-button" data-action="open-course-lesson" data-lesson-id="${escapeAttr(taught.id)}">${icon("book-open")}這題是「${escapeHtml(taught.title)}」教的 —— 回去看一眼</button></p>` : "";
+      return taught ? `<p class="feedback-course"><button type="button" class="link-button" data-action="open-course-lesson" data-lesson-id="${escapeAttr(taught.id)}">${icon("book-open")}${t("這題是「{name}」教的 —— 回去看一眼", { name: `${escapeHtml(lessonNo(taught))} · ${escapeHtml(lessonName(taught))}` })}</button></p>` : "";
     }
 
     // 首頁主卡：還沒學過的人在課上完之前，主 CTA 是「接著上課」，不是 15 題每日訓練
@@ -1387,10 +1396,10 @@
         if (grad && grad.passed) return "";
         return `
           <section class="today-card course-home-card">
-            <div class="today-card-head"><p class="section-label">${icon("book-open")}從零開始 · ${summary.total} 課都完成了</p><span>約 10 分鐘</span></div>
-            <h2>${grad ? `畢業關再考一次（上次 ${grad.correct} / ${grad.total}）` : "畢業關：10 題，8 題過關"}</h2>
-            <p>只出課裡教過的東西，不倒數。過了就去主線第 1 關——頭三局也只出你學過的題。</p>
-            <div class="action-row"><button class="button home-primary" data-action="course-graduation">${icon("play")}${grad ? "再考一次" : "開始畢業關"}</button><button class="button secondary" data-action="open-course">${icon("list")}課程表</button></div>
+            <div class="today-card-head"><p class="section-label">${icon("book-open")}${t("從零開始 · {n} 課都完成了", { n: summary.total })}</p><span>${t("約 10 分鐘")}</span></div>
+            <h2>${grad ? t("畢業關再考一次（上次 {correct} / {total}）", { correct: grad.correct, total: grad.total }) : t("畢業關：10 題，8 題過關")}</h2>
+            <p>${t("只出課裡教過的東西，不倒數。過了就去主線第 1 關——頭三局也只出你學過的題。")}</p>
+            <div class="action-row"><button class="button home-primary" data-action="course-graduation">${icon("play")}${grad ? t("再考一次") : t("開始畢業關")}</button><button class="button secondary" data-action="open-course">${icon("list")}${t("課程表")}</button></div>
           </section>`;
       }
       const item = summary.next;
@@ -1399,16 +1408,16 @@
       return `
         <section class="today-card course-home-card">
           <div class="today-card-head">
-            <p class="section-label">${icon("book-open")}從零開始 · ${summary.done} / ${summary.total} 課</p>
-            <span>約 ${item.minutes} 分鐘</span>
+            <p class="section-label">${icon("book-open")}${t("從零開始 · {done} / {total} 課", { done: summary.done, total: summary.total })}</p>
+            <span>${t("約 {n} 分鐘", { n: item.minutes })}</span>
           </div>
-          <h2>${started ? "接著上" : "上"}${escapeHtml(item.title.split(" · ")[0])}：${escapeHtml(item.title.split(" · ")[1] || "")}</h2>
-          <p>${escapeHtml(item.goal)}</p>
+          <h2>${started ? t("接著上{no}：{name}", { no: escapeHtml(lessonNo(item)), name: escapeHtml(lessonName(item)) }) : t("上{no}：{name}", { no: escapeHtml(lessonNo(item)), name: escapeHtml(lessonName(item)) })}</h2>
+          <p>${escapeHtml(tx(item.goal))}</p>
           <div class="action-row">
-            <button class="button home-primary" data-action="open-course-lesson" data-lesson-id="${escapeAttr(item.id)}">${icon("play")}${started ? "繼續這一課" : "開始"}</button>
-            <button class="button secondary" data-action="open-course">${icon("list")}課程表</button>
+            <button class="button home-primary" data-action="open-course-lesson" data-lesson-id="${escapeAttr(item.id)}">${icon("play")}${started ? t("繼續這一課") : t("開始")}</button>
+            <button class="button secondary" data-action="open-course">${icon("list")}${t("課程表")}</button>
           </div>
-          <p class="panel-note">${isTheory(item) ? "理論課：白話概念 → 一段逐步推導 → 小測。" : "白話概念 → 一題逐步示範 → 小測 → 3 題不倒數的練習。"}${summary.total} 課上完考畢業關，再走主線。</p>
+          <p class="panel-note">${isTheory(item) ? t("理論課：白話概念 → 一段逐步推導 → 小測。") : t("白話概念 → 一題逐步示範 → 小測 → 3 題不倒數的練習。")}${t("{n} 課上完考畢業關，再走主線。", { n: summary.total })}</p>
         </section>`;
     }
 
@@ -1465,11 +1474,11 @@
       const passed = correct >= GRADUATION_PASS;
       return {
         passed,
-        verdict: passed ? "畢業了" : "再回去看一眼",
+        verdict: passed ? t("畢業了") : t("再回去看一眼"),
         verdictClass: passed ? "is-gold" : "is-neutral",
         nextLine: passed
-          ? `${correct} / ${total}。課裡教的東西你會用了。接下來走主線第 1 關：頭三局還是只出你學過的題、不倒數。`
-          : `${correct} / ${total}，過關要 ${GRADUATION_PASS} 題。答錯的題下面都寫著是哪一課教的——回去看那幾課，再考一次。`
+          ? t("{correct} / {total}。課裡教的東西你會用了。接下來走主線第 1 關：頭三局還是只出你學過的題、不倒數。", { correct, total })
+          : t("{correct} / {total}，過關要 {pass} 題。答錯的題下面都寫著是哪一課教的——回去看那幾課，再考一次。", { correct, total, pass: GRADUATION_PASS })
       };
     }
 
@@ -1479,11 +1488,11 @@
       return `
         <div class="action-row">
           ${passed
-            ? `<button class="button" data-action="open-train">${icon("target")}去走主線第 1 關</button>
-               <button class="button secondary" data-action="open-course">${icon("list")}課程表</button>`
-            : `<button class="button" data-action="open-course">${icon("book-open")}回課程表看那幾課</button>
-               <button class="button secondary" data-action="course-graduation">${icon("refresh")}再考一次</button>`}
-          <button class="button ghost" data-action="open-mistakes">${icon("book")}錯題本</button>
+            ? `<button class="button" data-action="open-train">${icon("target")}${t("去走主線第 1 關")}</button>
+               <button class="button secondary" data-action="open-course">${icon("list")}${t("課程表")}</button>`
+            : `<button class="button" data-action="open-course">${icon("book-open")}${t("回課程表看那幾課")}</button>
+               <button class="button secondary" data-action="course-graduation">${icon("refresh")}${t("再考一次")}</button>`}
+          <button class="button ghost" data-action="open-mistakes">${icon("book")}${t("錯題本")}</button>
         </div>`;
     }
 
@@ -1492,12 +1501,12 @@
       const summary = progress(records);
       const grad = graduation(records);
       if (summary.done < summary.total) {
-        return `<section class="course-graduation is-locked"><p class="section-label">畢業關</p><strong>${summary.total} 課都完成後解鎖</strong><small>${GRADUATION_TOTAL} 題只出課裡教過的東西，${GRADUATION_PASS} 題過關；過了再走主線，主線頭三局也只出你學過的題。</small></section>`;
+        return `<section class="course-graduation is-locked"><p class="section-label">${t("畢業關")}</p><strong>${t("{n} 課都完成後解鎖", { n: summary.total })}</strong><small>${t("{total} 題只出課裡教過的東西，{pass} 題過關；過了再走主線，主線頭三局也只出你學過的題。", { total: GRADUATION_TOTAL, pass: GRADUATION_PASS })}</small></section>`;
       }
       if (grad && grad.passed) {
-        return `<section class="course-graduation is-passed"><p class="section-label">畢業關</p><strong>${icon("check")}畢業了 · ${grad.correct} / ${grad.total}</strong><small>主線第 1 關等你；頭三局只出學過的題、不倒數。</small><div class="action-row"><button class="button home-primary" data-action="open-train">${icon("target")}去走主線第 1 關</button><button class="button ghost" data-action="course-graduation">${icon("refresh")}再考一次</button></div></section>`;
+        return `<section class="course-graduation is-passed"><p class="section-label">${t("畢業關")}</p><strong>${icon("check")}${t("畢業了 · {correct} / {total}", { correct: grad.correct, total: grad.total })}</strong><small>${t("主線第 1 關等你；頭三局只出學過的題、不倒數。")}</small><div class="action-row"><button class="button home-primary" data-action="open-train">${icon("target")}${t("去走主線第 1 關")}</button><button class="button ghost" data-action="course-graduation">${icon("refresh")}${t("再考一次")}</button></div></section>`;
       }
-      return `<section class="course-graduation"><p class="section-label">畢業關</p><strong>${grad ? `上次 ${grad.correct} / ${grad.total}，再來一次` : `${GRADUATION_TOTAL} 題，${GRADUATION_PASS} 題過關`}</strong><small>只出課裡教過的東西，不倒數、可看提示。答錯的題會告訴你是哪一課教的。</small><div class="action-row"><button class="button home-primary" data-action="course-graduation">${icon("play")}${grad ? "再考一次" : "開始畢業關"}</button></div></section>`;
+      return `<section class="course-graduation"><p class="section-label">${t("畢業關")}</p><strong>${grad ? t("上次 {correct} / {total}，再來一次", { correct: grad.correct, total: grad.total }) : t("{total} 題，{pass} 題過關", { total: GRADUATION_TOTAL, pass: GRADUATION_PASS })}</strong><small>${t("只出課裡教過的東西，不倒數、可看提示。答錯的題會告訴你是哪一課教的。")}</small><div class="action-row"><button class="button home-primary" data-action="course-graduation">${icon("play")}${grad ? t("再考一次") : t("開始畢業關")}</button></div></section>`;
     }
 
     /* ── 新手保護期的第一份訓練：不管配方排了幾題，取 8 題、由淺入深 ──

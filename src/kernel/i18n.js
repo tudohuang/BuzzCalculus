@@ -90,10 +90,103 @@
     return table ? table[id] || null : null;
   }
 
+  // ── 內容句子（解說、提示、課文）：樣板翻譯 ─────────────────────────
+  // 解說與提示是夾著 Unicode 數學的中文句子。把中文字與全形標點當分隔，剩下的每一段
+  // （不是純標點的）就是數學，換成 〔n〕 → 得到「樣板」。英文表以樣板的雜湊當 key、
+  // 存英文樣板；執行時把原句壓成樣板、查表、把數學原封不動填回去。
+  // 好處：式子一個位元組都不會被翻譯動到；同一句型（「代 x=1 得 3」）只翻一次；
+  // 別人改了題目的數字，句型沒變的話英文照樣對得上。
+  // tools/build_i18n_text.js 產生表（src/kernel/i18n_text_en.js，延後載入）、tools/validate_i18n.js 驗。
+  const TEXT_SEPARATOR = /[　-〿㐀-䶿一-鿿！-／：-＠［-｀｛-･‘’“”…—]+/g;
+  // 只有標點、空白、箭頭或間隔號的片段不算數學，留在樣板裡給翻譯處理
+  const TEXT_TRIVIAL = /^[\s()[\].,;:!?'"`\-–—/·→⇒]*$/;
+  const CJK_TEXT = /[㐀-䶿一-鿿]/;
+  const textTables = { en: {} };
+  const missingText = new Set();
+  const localized = new WeakSet();
+
+  /** @param {string} text @returns {{ template: string, spans: string[] }} */
+  function textTemplate(text) {
+    const source = String(text == null ? "" : text);
+    const spans = [];
+    let out = "";
+    let last = 0;
+    const take = (piece) => {
+      const trimmed = piece.trim();
+      if (!trimmed || TEXT_TRIVIAL.test(trimmed)) { out += piece; return; }
+      const at = piece.indexOf(trimmed);
+      out += `${piece.slice(0, at)}〔${spans.length}〕${piece.slice(at + trimmed.length)}`;
+      spans.push(trimmed);
+    };
+    TEXT_SEPARATOR.lastIndex = 0;
+    let match;
+    while ((match = TEXT_SEPARATOR.exec(source))) {
+      take(source.slice(last, match.index));
+      out += match[0];
+      last = match.index + match[0].length;
+    }
+    take(source.slice(last));
+    return { template: out, spans };
+  }
+
+  /** 中文句子裡的數學片段（依出現順序） */
+  const textSpans = (text) => textTemplate(text).spans;
+
+  // FNV-1a 32 位元 → base36。碰撞由 validate_i18n 對全部現有句型檢查。
+  /** @param {string} text */
+  function textKey(text) {
+    let h = 2166136261;
+    const s = String(text);
+    for (let i = 0; i < s.length; i += 1) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619) >>> 0; }
+    return h.toString(36);
+  }
+
+  function fillTemplate(template, spans) {
+    return String(template).replace(/〔(\d+)〕/g, (m, n) => (Number(n) < spans.length ? spans[Number(n)] : m));
+  }
+
+  function registerText(code, table) {
+    if (!textTables[code]) textTables[code] = {};
+    Object.assign(textTables[code], table);
+  }
+
+  // 整句查表：key「=雜湊」是整句（LaTeX 的課文式子不能切，整句翻）；否則照樣板查
+  /** @param {string} text @param {string} [code] */
+  function translateText(text, code) {
+    const target = code || lang;
+    if (target === "zh" || typeof text !== "string" || !CJK_TEXT.test(text)) return text;
+    const table = textTables[target];
+    if (!table) return text;
+    const whole = table[`=${textKey(text)}`];
+    if (whole !== undefined) return whole;
+    const { template, spans } = textTemplate(text);
+    const hit = table[textKey(template)];
+    if (hit === undefined) { missingText.add(text); return text; }
+    return fillTemplate(hit, spans);
+  }
+  const tx = (text) => translateText(text);
+
   // 把題庫換成目前語言：原文留在 promptZh，判分用的 answers 別名照舊。
+  // 可以重複呼叫（每個欄位只換一次，原文存在 *Zh）。
   function localizeProblems(list) {
     if (lang === "zh") return list;
+    const canned = typeof window !== "undefined" && window.BuzzCannedHints;
     list.forEach((problem) => {
+      if (!problem || localized.has(problem)) return;
+      localized.add(problem);
+      if (typeof problem.solution === "string" && problem.solutionZh === undefined && CJK_TEXT.test(problem.solution)) {
+        const en = tx(problem.solution);
+        if (en !== problem.solution) { problem.solutionZh = problem.solution; problem.solution = en; }
+      }
+      if (Array.isArray(problem.solutionSteps) && !problem.solutionStepsZh) {
+        const en = problem.solutionSteps.map((step) => (typeof step === "string" ? tx(step) : step));
+        if (en.some((step, i) => step !== problem.solutionSteps[i])) { problem.solutionStepsZh = problem.solutionSteps; problem.solutionSteps = en; }
+      }
+      if (Array.isArray(problem.hints) && !problem.hintsZh) {
+        // 罐頭句（對每題都成立的提示）留中文原文：app.js 用原文比對把它們濾掉，翻了反而會漏網
+        const en = problem.hints.map((hint) => (typeof hint === "string" && !(canned && canned.isCanned(hint)) ? tx(hint) : hint));
+        if (en.some((hint, i) => hint !== problem.hints[i])) { problem.hintsZh = problem.hints; problem.hints = en; }
+      }
       const overlay = problemOverlay(problem.id);
       if (!overlay) return;
       if (overlay.prompt) { problem.promptZh = problem.prompt; problem.prompt = overlay.prompt; }
@@ -129,6 +222,15 @@
     registerProblems,
     problemOverlay,
     localizeProblems,
+    registerText,
+    tx,
+    translateText,
+    textTemplate,
+    textSpans,
+    textKey,
+    fillTemplate,
+    textTable: (code) => textTables[code] || {},
+    missingText,
     missing,
     hasDictionary: (code) => Boolean(dicts[code]) && Object.keys(dicts[code]).length > 0,
     dictionary: (code) => dicts[code] || {},
