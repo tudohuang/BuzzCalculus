@@ -7,8 +7,8 @@
 // 這裡抓的是另一類壞法 —— 字典有、但 render 走的是別條路（例如靜態骨架、
 // 延後載入的題目側表沒等到、切語言沒 reload）。
 //
-// 第一批（介面＋題幹）之外的內容（課程、解說、提示、證明內容）還是中文，
-// 所以題庫頁只看「介面骨架」（按鈕、標題、標籤），作答頁只看題幹與按鈕。
+// 第二批之後：解說三層、提示、入門課（課程表與單課頁）、四個靜態頁也要整塊沒有中文。
+// 證明內容與白話證明還是中文，所以題庫頁仍只看「介面骨架」（按鈕、標題、標籤）。
 const assert = require("node:assert/strict");
 const path = require("node:path");
 const { launch, ciFail } = require("./lib/cdp.js");
@@ -133,6 +133,74 @@ async function run() {
       return Boolean(p && p.promptZh && /[\\u4e00-\\u9fff]/.test(p.promptZh));
     `));
 
+    // ── 3b. 提示與解說（第二批）：先看提示，再故意答錯，三層解說全部打開，裡面不能有中文 ──
+    check("句型表（延後載入）也到了", await chrome.evaluate("return Object.keys(window.BuzzI18n.textTable('en')).length > 4000;"));
+    await chrome.evaluate(`const b = document.querySelector('[data-action="show-hint"]'); if (b && !b.disabled) b.click(); return true;`);
+    await chrome.sleep(wait(500));
+    check("看得到提示", await chrome.evaluate("return document.querySelectorAll('.hint-list li').length > 0;"));
+    await expectNoCjk("提示是英文", ".hint-list");
+    console.log("… 故意答錯");
+    await chrome.evaluate(`
+      // 選擇題：點一個不是正解的選項；填答：填一個一定錯的數
+      const p = (window.BUZZ_PROBLEMS || []).find((x) => x.id === 'dd-imp-001');
+      const wrongChoice = [...document.querySelectorAll('[data-action="choose-answer"]')].find((c) => !c.disabled && c.getAttribute("data-choice") !== String(p.answer));
+      if (wrongChoice) { wrongChoice.click(); return true; }
+      const input = document.querySelector(".answer-input");
+      if (input) { input.value = "12345"; input.dispatchEvent(new Event("input", { bubbles: true })); }
+      // submit-answer 是表單（submit 事件），不是按鈕
+      const form = document.querySelector('form[data-action="submit-answer"]');
+      if (form) form.requestSubmit ? form.requestSubmit() : form.dispatchEvent(new Event("submit", { bubbles: true, cancelable: true }));
+      return true;
+    `);
+    await chrome.sleep(wait(1200));
+    const stages = await chrome.evaluate(`return { n: document.querySelectorAll('.solution-stages details').length, input: Boolean(document.querySelector('.answer-input')), form: Boolean(document.querySelector('form[data-action="submit-answer"]')), feedback: (document.querySelector('.feedback, [class*="feedback"]') || {}).className || "" };`);
+    check("答錯之後有三層解說", stages.n === 3, JSON.stringify(stages));
+    await chrome.evaluate(`document.querySelectorAll('.solution-stages details').forEach((d) => { d.open = true; }); return true;`);
+    await chrome.sleep(wait(400));
+    await expectNoCjk("解說三層（技巧／關鍵步驟／完整推導）都沒有中文", ".solution-stages");
+    check("完整推導是英文句子、數學原封不動", await chrome.evaluate(`
+      const p = (window.BUZZ_PROBLEMS || []).find((x) => x.id === 'dd-imp-001');
+      const body = document.querySelector('.solution-stage.is-full .stage-body');
+      return Boolean(p && p.solutionZh && body && /[a-z]{3,}/.test(body.innerText) && body.innerText.includes(p.solution.slice(0, 20)));
+    `));
+
+    // ── 3c. 入門課：課程表與一堂理論課（概念、逐步推導、小測、選錯的理由）──
+    await chrome.navigate(server.url + "/index.html");
+    await chrome.sleep(wait(2000));
+    // 老使用者的畫面上不一定有課程入口：在 #app 裡放一顆同樣 data-action 的按鈕去點（走的是 app 自己的事件委派）
+    await chrome.evaluate(`
+      let el = [...document.querySelectorAll('[data-action="open-course"]')].find((n) => n.getClientRects().length);
+      if (!el) { el = document.createElement("button"); el.dataset.action = "open-course"; document.querySelector("#app").appendChild(el); }
+      el.click();
+      return true;
+    `);
+    await chrome.sleep(wait(700));
+    check("課程表打得開", await chrome.evaluate("return Boolean(document.querySelector('.course-index'));"));
+    await expectNoCjk("課程表沒有中文", "#app");
+    await chrome.evaluate(`document.querySelector('[data-action="open-course-lesson"][data-lesson-id="fn-what-is-a-function"]').click(); return true;`);
+    await chrome.sleep(wait(900));
+    for (let i = 0; i < 4; i += 1) {
+      await chrome.evaluate(`const b = document.querySelector('[data-action="course-step"]'); if (b) b.click(); return true;`);
+      await chrome.sleep(wait(300));
+    }
+    // 每一題小測都先點一個錯的選項，讓「為什麼錯」印出來
+    await chrome.evaluate(`
+      const lesson = window.BUZZ_COURSE.find((l) => l.id === 'fn-what-is-a-function');
+      lesson.checks.forEach((check, ci) => {
+        const wrong = check.options.findIndex((o) => !o.correct);
+        const b = document.querySelector('[data-action="course-pick"][data-check="' + ci + '"][data-option="' + wrong + '"]');
+        if (b) b.click();
+      });
+      return true;
+    `);
+    await chrome.sleep(wait(700));
+    check("課文、步驟、小測選錯的理由都在畫面上", await chrome.evaluate("return document.querySelectorAll('.course-step').length >= 3 && document.querySelectorAll('.course-check-why').length >= 1;"));
+    await expectNoCjk("單課頁（概念、逐步推導、小測、選錯理由）沒有中文", "#app");
+    check("課文的 KaTeX 渲染得出來（\\\\text 裡是英文）", await chrome.evaluate(`
+      const blocks = [...document.querySelectorAll('.course-lesson .math-block')];
+      return blocks.length > 0 && blocks.every((b) => b.querySelector('.katex')) && !blocks.some((b) => /[\\u4e00-\\u9fff]/.test(b.innerText));
+    `));
+
     // ── 4. 設定頁切回中文：存設定、reload、整站變回中文 ──
     await chrome.navigate(server.url + "/index.html");
     await chrome.sleep(wait(2000));
@@ -144,6 +212,7 @@ async function run() {
     const zhHome = await cjk("#app");
     check("首頁回到中文", zhHome.count > 50, `只有 ${zhHome.count} 個中文字`);
     check("中文版沒有載題目側表（一個位元組都不用抓）", await chrome.evaluate("return Object.keys(window.BuzzI18n.problemTable('en')).length === 0;"));
+    check("中文版也沒有載內容句型表", await chrome.evaluate("return Object.keys(window.BuzzI18n.textTable('en')).length === 0 && !document.querySelector('script[src$=\"i18n_text_en.js\"]:not([type])');"));
 
     // ── 5. 跟著瀏覽器：清掉設定就回到偵測（這顆 Chrome 釘在 zh-TW） ──
     await open("open-settings");

@@ -26,8 +26,11 @@ const UI_FILES = [
   "src/kernel/planner.js",
   "src/kernel/session.js",
   "src/kernel/ability.js",
-  "src/kernel/i18n.js"
+  "src/kernel/i18n.js",
+  "src/course.js"
 ];
+// 上半是內容、下半是介面的檔：只掃標記之後（上半的課文走 i18n_text_en.js 的句型表，由第 5 段驗）
+const UI_FILE_FROM = { "src/course.js": "// ── 課程畫面 ──" };
 const DICT_FILE = "src/kernel/i18n_en.js";
 const PROBLEMS_FILE = "src/kernel/i18n_problems_en.js";
 const CJK = /[一-鿿]/;
@@ -175,7 +178,13 @@ function allowedRawContext(source, start, end) {
 const usedKeys = new Map(); // key → [file:line]
 let dynamicCalls = 0;
 UI_FILES.forEach((rel) => {
-  const source = fs.readFileSync(path.join(ROOT, rel), "utf8");
+  let source = fs.readFileSync(path.join(ROOT, rel), "utf8");
+  if (UI_FILE_FROM[rel]) {
+    const at = source.indexOf(UI_FILE_FROM[rel]);
+    if (at < 0) fail(rel + " 找不到介面段的標記 " + UI_FILE_FROM[rel]);
+    // 標記之前換成空白（保留換行，行號才對得上）
+    else source = source.slice(0, at).replace(/[^\n]/g, " ") + source.slice(at);
+  }
   const tokens = scan(source);
   tokens.forEach((token) => {
     if (token.kind === "template") {
@@ -212,6 +221,16 @@ function loadTable(rel, method) {
   return table;
 }
 const dict = loadTable(DICT_FILE, "register");
+// 同一個 key 寫兩次：物件字面值後面的蓋掉前面的，改了前面那句卻看不到效果
+{
+  const seenKeys = new Set();
+  fs.readFileSync(path.join(ROOT, DICT_FILE), "utf8").split("\n").forEach((line, i) => {
+    const m = /^\s*("(?:[^"\\]|\\.)*")\s*:/.exec(line);
+    if (!m) return;
+    if (seenKeys.has(m[1])) fail(`${DICT_FILE}:${i + 1} 字典 key 重複：${m[1]}`);
+    seenKeys.add(m[1]);
+  });
+}
 const placeholders = (text) => new Set([...String(text).matchAll(/\{(\w+)(?:\|[^}]*)?\}/g)].map((m) => m[1]));
 
 usedKeys.forEach((sites, key) => {
@@ -282,6 +301,58 @@ Object.keys(problemsTable).forEach((id) => {
   if (!problems.some((p) => p.id === id)) fail(`題目側表裡的殭屍 id（題庫已經沒有）：${id}`);
 });
 
+// ── 5. 內容句子：解說、推導步驟、提示、機器推的提示、入門課課文 ────────
+// 來源 tools/content/i18n_text_en.json（中文樣板 → 英文樣板），產物 src/kernel/i18n_text_en.js（build_i18n_text.js 產生）。
+// 每一句含中文的內容都要有英文；英文裡中文版的每一段數學都要原封不動在（切法跟瀏覽器同一份 i18n.js）；
+// 整句翻的 LaTeX 去掉 \text 之後要一模一樣、KaTeX 渲染得過；產物跟來源同步；沒有雜湊碰撞。
+const textBuild = require("./build_i18n_text.js");
+const i18nSpans = require("./lib/i18n_spans.js");
+const textUnits = textBuild.collect();
+const textSource = textBuild.loadSource();
+// 反向案例：檢查器自己要擋得住這幾種壞法，不然上面的全綠沒有意義
+[
+  ["代 〔0〕 得 〔1〕。", "Plug in 〔0〕."],
+  ["代 〔0〕 得 〔1〕。", "Plug in 〔0〕 to get 〔1〕 〔2〕."],
+  ["代 〔0〕 得 〔1〕。", "Plug in 〔0〕 得 〔1〕."],
+  ["=\\text{證明 } x^2\\ge 0", "\\text{Prove } x^3\\ge 0"],
+  ["=\\text{證明 } x^2\\ge 0", "\\text{Prove } x^2\\ge 0\\frac{"]
+].forEach(([zhKey, en]) => {
+  if (!textBuild.checkEntry(zhKey, en).length) fail(`句型檢查器沒擋下壞例子：${zhKey} → ${en}`);
+});
+if (i18nSpans.missingSpans("剩 (3−1/x)/(2+5/x²) → 3/2。", "leaving (3−1/x)/(2+5/x²) → 3/2.").length) fail("數學片段比對誤判了正確的翻譯");
+if (!i18nSpans.missingSpans("剩 (3−1/x)/(2+5/x²) → 3/2。", "leaving (3-1/x)/(2+5/x²) → 3/2.").length) fail("數學片段比對沒抓到被改過的式子");
+const textByKind = {};
+const textChecked = new Map(); // 同一個句型只檢查一次
+textUnits.forEach((unit) => {
+  const stat = textByKind[unit.kind] || (textByKind[unit.kind] = { need: 0, done: 0 });
+  stat.need += 1;
+  const { key } = textBuild.sourceKey(unit);
+  if (!(key in textSource)) { fail(`${unit.kind} ${unit.where} 沒有英文（跑 node tools/build_i18n_text.js --extract 取出待翻句型）：${unit.text.slice(0, 50)}`); return; }
+  if (!textChecked.has(key)) textChecked.set(key, textBuild.checkEntry(key, textSource[key]));
+  const problemsFound = textChecked.get(key);
+  if (problemsFound.length) { fail(`${unit.kind} ${unit.where} 的英文有問題：${problemsFound.join("、")}`); return; }
+  stat.done += 1;
+});
+{
+  const { text, collisions } = textBuild.render(textUnits, textSource);
+  collisions.forEach((c) => fail(`句型表雜湊碰撞：${c}`));
+  const shipped = fs.existsSync(textBuild.OUTPUT) ? fs.readFileSync(textBuild.OUTPUT, "utf8") : "";
+  if (shipped !== text) fail("src/kernel/i18n_text_en.js 跟 tools/content/i18n_text_en.json 不同步：跑 node tools/build_i18n_text.js");
+  // 用出貨的那一支在「英文介面」的 i18n.js 裡實際翻一次：不能還有中文、數學片段一個都不能少
+  const en = i18nSpans.loadI18n("en");
+  const sandbox = { window: { BuzzI18n: en }, BuzzI18n: en, console };
+  vm.runInNewContext(shipped, sandbox, { filename: "i18n_text_en.js" });
+  let leaked = 0;
+  textUnits.forEach((unit) => {
+    const out = en.translateText(unit.text);
+    const missingMath = unit.whole ? [] : i18nSpans.missingSpans(unit.text, out);
+    if ((CJK.test(out) || missingMath.length) && leaked < 20) {
+      leaked += 1;
+      fail(`${unit.kind} ${unit.where} 在英文介面${CJK.test(out) ? "還是中文" : `少了數學 ${JSON.stringify(missingMath.slice(0, 3))}`}：${out.slice(0, 60)}`);
+    }
+  });
+}
+
 // ── 4. 載入時的語言判定 ────────────────────────────────────────
 // i18n.js 在載入那一刻就定案：有設定聽設定，沒設定看瀏覽器（中文任何地區 → zh，其他 → en）。
 // 這三條規則寫錯的話，台灣使用者第一次開站會看到英文 —— 那是最貴的一種壞法。
@@ -315,8 +386,9 @@ bootCases.forEach(([languages, stored, expected]) => {
 
 // ── 結果 ────────────────────────────────────────────────────────
 console.log(`i18n：UI 檔 ${UI_FILES.length} 支、t() key ${usedKeys.size} 個（動態呼叫 ${dynamicCalls} 處）、字典 ${Object.keys(dict).length} 條；題目要翻 ${needed} 題、翻齊 ${covered} 題`);
+console.log(`內容句子（${textChecked.size} 句型）：${Object.entries(textByKind).map(([kind, s]) => `${kind} ${s.done}/${s.need}`).join("、")}`);
 if (failures.length) {
-  const shown = failures.slice(0, 60);
+  const shown = failures.slice(0, Number(process.env.I18N_SHOW || 60));
   shown.forEach((message) => console.error("  ✗ " + message));
   if (failures.length > shown.length) console.error(`  … 還有 ${failures.length - shown.length} 條`);
   console.error(`validate_i18n：${failures.length} 個問題`);

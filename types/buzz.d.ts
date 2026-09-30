@@ -325,6 +325,17 @@ interface BuzzI18nApi {
   hasDictionary(code: string): boolean;
   dictionary(code: string): Record<string, string>;
   problemTable(code: string): Record<string, any>;
+  /** 內容句子（解說、提示、課文）的句型表：key 是中文樣板的雜湊，值是英文樣板 */
+  registerText(code: string, table: Record<string, string>): void;
+  /** 目前語言的內容句子；中文介面或查不到就原樣回傳 */
+  tx(text: string): string;
+  translateText(text: string, code?: string): string;
+  textTemplate(text: string): { template: string; spans: string[] };
+  textSpans(text: string): string[];
+  textKey(text: string): string;
+  fillTemplate(template: string, spans: string[]): string;
+  textTable(code: string): Record<string, string>;
+  missingText: Set<string>;
 }
 declare function t(text: string, vars?: Record<string, unknown>): string;
 declare const BuzzI18n: BuzzI18nApi;
