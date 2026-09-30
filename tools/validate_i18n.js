@@ -353,6 +353,23 @@ textUnits.forEach((unit) => {
   });
 }
 
+// ── 6. 靜態頁（手冊、關於、條款、隱私）：同一頁放中英兩版，頁尾的小段 script 依語言切 ──
+// 英文版要在、不能有中文、連結與 data-claim 數字標記要跟中文版一樣（改了中文版的連結忘了英文版就會紅）
+["guide.html", "about.html", "terms.html", "privacy.html"].forEach((page) => {
+  const html = fs.readFileSync(path.join(ROOT, page), "utf8");
+  const block = (lang) => (html.match(new RegExp(`<main[^>]*data-page-lang="${lang}"[\\s\\S]*?</main>`)) || [""])[0];
+  const zhBlock = block("zh");
+  const enBlock = block("en");
+  if (!zhBlock || !enBlock) { fail(`${page} 缺中文版或英文版（<main data-page-lang="zh|en">）`); return; }
+  if (!/<main[^>]*data-page-lang="en"[^>]*\shidden[\s>]/.test(enBlock)) fail(`${page} 的英文版預設要 hidden（中文使用者先看到中文）`);
+  if (CJK.test(enBlock.replace(/<!--[\s\S]*?-->/g, ""))) fail(`${page} 的英文版還有中文：${(enBlock.match(/[一-鿿]+/) || [""])[0]}`);
+  if (!/data-page-lang/.test(html.slice(html.lastIndexOf("<script")))) fail(`${page} 沒有切換語言的 script`);
+  const hrefs = (b) => [...b.matchAll(/href="([^"]+)"/g)].map((m) => m[1]).sort().join(" ");
+  if (hrefs(zhBlock) !== hrefs(enBlock)) fail(`${page} 中英兩版的連結不一樣：${hrefs(zhBlock)} ≠ ${hrefs(enBlock)}`);
+  const claims = (b) => [...b.matchAll(/data-claim="(\w+)"[^>]*>([^<]*)/g)].map((m) => `${m[1]}=${(m[2].match(/[\d,]+/) || [""])[0]}`).sort().join(" ");
+  if (claims(zhBlock) !== claims(enBlock)) fail(`${page} 中英兩版的對外數字不一樣：${claims(zhBlock)} ≠ ${claims(enBlock)}`);
+});
+
 // ── 4. 載入時的語言判定 ────────────────────────────────────────
 // i18n.js 在載入那一刻就定案：有設定聽設定，沒設定看瀏覽器（中文任何地區 → zh，其他 → en）。
 // 這三條規則寫錯的話，台灣使用者第一次開站會看到英文 —— 那是最貴的一種壞法。

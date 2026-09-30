@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="assets/vendor/katex/katex.min.css" />
   </head>
   <body class="legal-body">
-    <main class="legal-page">
+    <main class="legal-page" data-page-lang="zh">
       <p class="legal-back"><a href="index.html">← 回到 BuzzCalculus</a></p>
 
       <h1>隱私政策</h1>
@@ -143,5 +143,136 @@
 
       <p class="legal-back"><a href="index.html">← 回到 BuzzCalculus</a> · <a href="about.html">關於</a> · <a href="terms.html">服務條款</a></p>
     </main>
+    <main class="legal-page" data-page-lang="en" lang="en" data-title="Privacy Policy · BuzzCalculus" hidden>
+      <p class="legal-back"><a href="index.html">← Back to BuzzCalculus</a></p>
+
+      <h1>Privacy Policy</h1>
+      <p class="legal-updated">Last updated: 2026-09-30</p>
+
+      <p class="legal-lead">
+        This page describes what BuzzCalculus actually does; it is not a generic template.
+        Every item maps to a place in the code.
+      </p>
+
+      <h2>In one sentence</h2>
+      <p>
+        Your practice records <strong>exist only in your own browser</strong>. There are no accounts and no server database,
+        and we can't see your answers. The only thing that leaves your device is anonymous usage counts, and you can turn those off.
+      </p>
+
+      <h2>Where things are stored</h2>
+      <p>Everything is in this device's browser storage:</p>
+      <ul>
+        <li><strong>localStorage</strong>: practice records, mistake notebook, in-progress saves, custom problems, appearance settings.</li>
+        <li><strong>IndexedDB</strong>: handwritten scratch work (so you can see how you worked a problem last time).</li>
+      </ul>
+      <p>
+        Two consequences: a new device is a fresh start (we can't recover anything for you),
+        and clearing browser data deletes all your records.
+      </p>
+
+      <h2>What leaves your device</h2>
+
+      <h3>1. Usage analytics (can be turned off)</h3>
+      <p>
+        We use Google Analytics 4 to count how often features are used: starting a session, submitting an answer,
+        opening a hint, finishing a session. Events carry fields like the mode name, the problem's difficulty, and seconds spent.
+      </p>
+      <p class="legal-emphasis">
+        What is sent <strong>never includes</strong> the answers you type, problem content, scratch work, or anything that identifies you.
+        An automated test enforces this (<code>tools/validate_analytics.js</code> scans every event and fails the build if user input slips in).
+      </p>
+      <p>
+        You can turn it off in Settings. Once off, <strong>the Google analytics script isn't even loaded</strong>:
+        not only are no events sent, the request for that script is never made.
+      </p>
+
+      <h3>2. Difficulty calibration pack (off by default; only when you click)</h3>
+      <p>
+        If you'd like to help fix problem difficulty, you can export a stats file from Settings. It contains only:
+        permanent problem numbers, difficulty ranks, right/wrong counts, median answer time, and your overall level band (high / middle / low).
+      </p>
+      <p>
+        No problem content, no answers, no timestamps, and custom problems are always excluded.
+        Before exporting you can click "Preview first": what it shows is the actual file that will be produced, not a separate description.
+      </p>
+      <p>It is a <strong>file download</strong>. Whether to send it to us is entirely up to you.</p>
+
+      <h3>3. Crash reports (on/off together with analytics)</h3>
+      <p>
+        When something breaks, one event is sent so we know. It holds only three things:
+        <strong>the error type</strong> (e.g. TypeError), <strong>the file and line number</strong>, and which screen you were on.
+      </p>
+      <p class="legal-emphasis">
+        <strong>The error message and stack trace are never sent.</strong>
+        JavaScript error messages often print variable values, which could be a problem, your answer, or part of a save.
+        <code>tools/validate_privacy.js</code> enforces this too: any code that touches <code>.message</code> or <code>.stack</code> fails the build.
+      </p>
+      <p>Turning off analytics also turns off crash reports.</p>
+
+      <h3>4. Reporting a problem (only when you click)</h3>
+      <p>
+        Clicking "Report" sends nothing. It gathers the problem number, the problem, the reference answer, the issue type and the version
+        into a block of text, <strong>shows it to you</strong>, and lets you choose whether to open a GitHub issue or copy it.
+      </p>
+      <p>
+        If you open an issue, its content appears on a public GitHub page under GitHub's own privacy policy.
+        If you'd rather not make it public, use "Copy content"; whether and to whom you send it is your call.
+      </p>
+
+      <h3>5. Static assets</h3>
+      <p>
+        The site itself is served as static files. The math typesetting, icon and animation libraries are bundled with the site,
+        so no requests go to third-party CDNs.
+      </p>
+
+      <h2>What we don't do</h2>
+      <ul>
+        <li>No accounts, no passwords, no email collection.</li>
+        <li>No ads and no ad trackers.</li>
+        <li>We don't sell or trade any data.</li>
+        <li>No server-side user database: there's nothing of yours to leak.</li>
+      </ul>
+
+      <h2>How to delete</h2>
+      <p>Settings → "Clear data". It deletes:</p>
+      <ul>
+        <li>Practice records and the mistake notebook</li>
+        <li>In-progress saves</li>
+        <li>Custom problems</li>
+        <li>Handwritten scratch work (IndexedDB)</li>
+        <li>Appearance and sync settings</li>
+      </ul>
+      <p>
+        Before deleting it lists how much will be removed and asks you to confirm.
+        <strong>This can't be undone</strong>: there's no cloud backup. Export the JSON first if you want a copy.
+      </p>
+      <p>
+        Anonymous analytics events already sent can't be deleted one by one (they can't be tied to anyone in the first place).
+        To stop sending them, turn off analytics in Settings.
+      </p>
+
+      <h2>Children</h2>
+      <p>This tool is for people learning calculus. It isn't designed for children and doesn't collect ages.</p>
+
+      <h2>Changes</h2>
+      <p>If this page changes materially, the date above is updated. With no accounts, we have no way to notify you.</p>
+
+      <h2>Contact</h2>
+      <p>For questions or concerns about data handling, please open an issue on the project's GitHub.</p>
+
+      <p class="legal-back"><a href="index.html">← Back to BuzzCalculus</a> · <a href="about.html">About</a> · <a href="terms.html">Terms of Service</a></p>
+    </main>
+    <script>
+      // 英文介面看英文版：語言判定跟 src/kernel/i18n.js 一樣（設定 settings.lang → 沒設定看瀏覽器，中文任何地區 → zh）
+      (function () {
+        var lang = "";
+        try { var r = JSON.parse(localStorage.getItem("buzzcalculus.records.v1") || "null"); lang = (r && r.settings && r.settings.lang) || ""; } catch (e) { lang = ""; }
+        if (lang !== "zh" && lang !== "en") { var n = String((navigator.languages && navigator.languages[0]) || navigator.language || "").toLowerCase(); lang = !n || n.indexOf("zh") === 0 ? "zh" : "en"; }
+        if (lang !== "en") return;
+        document.documentElement.lang = "en";
+        document.querySelectorAll("[data-page-lang]").forEach(function (el) { el.hidden = el.getAttribute("data-page-lang") !== "en"; if (!el.hidden && el.getAttribute("data-title")) document.title = el.getAttribute("data-title"); });
+      })();
+    </script>
   </body>
 </html>
