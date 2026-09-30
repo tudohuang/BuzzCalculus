@@ -2820,6 +2820,7 @@
   const textOf = (step) => (Array.isArray(step) ? step[0] : step);
   const scope = typeof window !== "undefined" ? window : {};
   const problems = scope.BUZZ_PROBLEMS || [];
+  const i18n = scope.BuzzI18n && typeof scope.BuzzI18n.tx === "function" ? scope.BuzzI18n : null;
   const skipped = [];
   let applied = 0;
   problems.forEach((problem) => {
@@ -2830,6 +2831,12 @@
       return;
     }
     problem.solutionSteps = steps.map(textOf);
+    // 英文介面：這張表是 load 之後才注入的，localizeProblems 早就跑過了 —— 這裡自己照句型表翻
+    // （句型表跟題幹表同一個延後載入群組，app 開站就抓，load 事件會等它，所以這時一定已經到了）
+    if (i18n && i18n.lang !== "zh") {
+      problem.solutionStepsZh = problem.solutionSteps;
+      problem.solutionSteps = problem.solutionSteps.map((step) => i18n.tx(step));
+    }
     applied += 1;
   });
 
