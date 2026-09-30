@@ -324,9 +324,7 @@ async function run() {
     /* ── 3.45 答對的「+分數」toast ── */
     // 答對 950ms 就自動前進，回饋卡在手機上根本來不及看 ——
     // 修法是把分數帶到下一題的畫面上當 toast。這條釘住它真的有出現。
-    // 做法純 DOM：搜「正立方體」命中三題（dd-rr-013 體積變率 600、
-    // dd-rr-014 表面積變率 1/96、dd-lin-005 誤差估計 1.5），
-    // 從題幹的關鍵詞判斷抽到哪一題，送出正確答案。
+    // 做法純 DOM：搜「變化率」開一局，從畫面上的題幹認出抽到哪一題，送出正確答案。
     await chrome.navigate(`${server.url}/index.html`);
     await chrome.sleep(800);
     const toast = await chrome.evaluate(`
@@ -339,7 +337,7 @@ async function run() {
       lib.click(); await new Promise(r => setTimeout(r, 900 * (window.__slow || 1)));
       const s=document.querySelector("[data-library-search]");
       if(!s) return { ok:false, why:"沒有搜尋框" };
-      // 新使用者的難度鎖是 R2：「變化率」在鎖之內有三題（漣漪、甲車乙車、正立方體），
+      // 新使用者的難度鎖是 R2：「變化率」在鎖之內有好幾題（漣漪、甲車乙車、正立方體、球…），
       // 答完第一題才有「下一題」讓 toast 出現；只搜一題的關鍵字會直接進結算頁。
       s.value="變化率"; s.dispatchEvent(new Event("input",{bubbles:true}));
       await new Promise(r => setTimeout(r, 700 * (window.__slow || 1)));
@@ -351,19 +349,39 @@ async function run() {
       const input=document.querySelector("#answer");
       const form=document.querySelector('[data-action="submit-answer"]');
       if(!input||!form) return { ok:false, why:"不是自己寫模式" };
-      const promptText=document.body.innerText;
-      input.value = promptText.includes("漣漪") ? "40*pi"
-        : promptText.includes("甲車") ? "100" : "600";
+      // 一局至少兩題，答完第一題才會有「下一題」可以帶 toast 過去。
+      const total=Number(((document.body.innerText||"").match(/第\\s*1\\s*\\/\\s*(\\d+)\\s*題/)||[])[1]||0);
+      if(total<2) return { ok:false, why:"「變化率」這一局只有 "+total+" 題，答完直接進結算，沒有下一題可以帶 toast" };
+      // 抽到哪一題是亂數（adaptiveShuffle），而題庫會長：以前寫死「漣漪／甲車／
+      // 其餘一律 600」，題庫多了 db-rr-001（球，72π）之後就有機率送錯答案 ——
+      // 那是這條斷言偶爾會紅的原因（實測 12 次紅 1 次）。改成跟 e2e_main_flow 一樣只用公開資料：
+      // 畫面上題幹的 data-tex 對回 BUZZ_PROBLEMS，送那一題的正解。
+      const promptNode=document.querySelector(".prompt.math-block[data-tex]");
+      const tex=promptNode ? promptNode.getAttribute("data-tex") : null;
+      const problem=tex ? (window.BUZZ_PROBLEMS||[]).find(p=>p.prompt===tex) : null;
+      if(!problem||!problem.answer) return { ok:false, why:"從畫面上的題幹對不回題庫裡的題目：" + String(tex).slice(0,60) };
+      input.value=String(problem.answer);
       input.dispatchEvent(new Event("input",{bubbles:true}));
       if(form.requestSubmit) form.requestSubmit();
       else form.dispatchEvent(new Event("submit",{bubbles:true,cancelable:true}));
-      // 950ms 自動前進 + 重繪
-      await new Promise(r => setTimeout(r, 1400 * (window.__slow || 1)));
-      const node=document.querySelector(".correct-toast");
-      if(!node) return { ok:true, shown:false };
+      // 等「真的條件」而不是固定睡：toast 只在自動前進（950ms）後的 1.9 秒內
+      // 被畫出來，固定等 N 毫秒在慢機器上會剛好錯過。一出現就抓；
+      // 途中先看到答錯回饋或結算頁就直接說是哪一種，不要只剩「沒出現」。
+      const deadline=Date.now() + (950 + 4000) * (window.__slow || 1);
+      let node=null;
+      while(Date.now()<deadline){
+        node=document.querySelector(".correct-toast");
+        if(node) break;
+        if(document.querySelector(".feedback.wrong, .feedback.timeout"))
+          return { ok:false, why:problem.id+" 送出正解「"+problem.answer+"」卻被判錯" };
+        if(document.querySelector(".results-screen"))
+          return { ok:true, shown:false, diag:"答完 "+problem.id+" 直接進了結算頁" };
+        await new Promise(r => setTimeout(r, 40));
+      }
+      if(!node) return { ok:true, shown:false, diag:problem.id+" 答對後等了 "+((950+4000)*(window.__slow||1))+"ms 都沒有 toast" };
       const rect=node.getBoundingClientRect();
       return {
-        ok:true, shown:true,
+        ok:true, shown:true, id:problem.id,
         text:(node.textContent||"").trim(),
         inViewport: rect.top >= 0 && rect.bottom <= window.innerHeight && rect.width > 0,
         onNextQuestion: Boolean(document.querySelector("#answer"))
@@ -373,7 +391,7 @@ async function run() {
       check("答對後下一題畫面出現 +分數 toast", false, toast.why);
     } else {
       check("答對後下一題畫面出現 +分數 toast", toast.shown && /答對/.test(toast.text || ""),
-        toast.shown ? `「${toast.text}」· 在視窗內=${toast.inViewport} · 已前進=${toast.onNextQuestion}` : "toast 沒出現（答錯了？還是被結算頁吃掉？）");
+        toast.shown ? `${toast.id} 答對 →「${toast.text}」· 在視窗內=${toast.inViewport} · 已前進=${toast.onNextQuestion}` : `toast 沒出現：${toast.diag}`);
     }
 
     if (!wrongFb.ok) {
