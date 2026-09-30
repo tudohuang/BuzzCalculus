@@ -130,6 +130,7 @@
     "2026-09-27": "burst-boss-param-006",
     "2026-09-28": "lim-010",
     "2026-09-29": "gap-der-ode-004",
+    "2026-09-30": "exam-der-005",
   };
   if (typeof module !== "undefined" && module.exports) module.exports = { HISTORY };
   if (typeof window !== "undefined") window.BUZZ_DAILY_ONE_HISTORY = HISTORY;

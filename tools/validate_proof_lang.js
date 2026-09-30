@@ -362,6 +362,20 @@ lessons.forEach((lesson, index) => {
   if (squashed.lines[0].status !== "error") fail(`v2.6：squash 到 (0, 1) 的 f 不該有 f(0.5) > 1：${squashed.lines[0].status} ${squashed.lines[0].note}`);
 }
 
+// 11. 情況之間不能互借（2026-09-30）：情況一推出的關係（g(x) > 0、e^x > 1 + x）只在情況一成立。
+//     以前驗過的鏈不記情況，情況二直接「前面已經有了」—— 情況二什麼都不寫也全綠。
+{
+  const cases = problems.find((spec) => spec.id === "pl-lec-exp-cases");
+  if (cases) {
+    const ref = cases.reference;
+    const secondCaseStep = ref.findIndex((line, i) => i > ref.indexOf("情況二：x < 0。") && /g\(x\) > g\(0\)/.test(line));
+    const borrowed = lang.check(cases, ref.filter((_, i) => i !== secondCaseStep).join("\n"));
+    checks += 1;
+    const premise = borrowed.lines.find((line) => line.n === secondCaseStep + 1);
+    if (borrowed.verdict === "verified" || !premise || premise.status === "ok") fail(`情況二借用了情況一推出的 g(x) > 0：${borrowed.verdict} ${premise && `${premise.status} ${premise.note}`}`);
+  }
+}
+
 // classic：機器判版本要指到 proofs.js 真的存在的題（題目頁上的「自己寫，機器判」按鈕靠這個）；一題經典證明只能有一個機器判版本
 require(path.join(__dirname, "..", "src", "proofs.js"));
 const classicIds = new Set((global.window.BUZZ_PROOFS || []).map((item) => item.id));
