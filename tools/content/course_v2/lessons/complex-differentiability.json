@@ -1,0 +1,136 @@
+{
+  "id": "complex-differentiability",
+  "title": "複變可微",
+  "readMinutes": 11,
+  "totalMinutes": 35,
+  "prerequisites": ["complex-limit", "derivative-definition", "jacobian-geometry"],
+  "next": ["cauchy-riemann"],
+  "related": [],
+  "objectives": [
+    "寫得出 f′(z₀) = lim_{h→0} (f(z₀ + h) − f(z₀))/h，並說清楚 h 是複數、要從所有方向趨近。",
+    "用定義證明 z² 可微、z̄ 處處不可微、|z|² 只在 0 可微。",
+    "說出 f′(z₀) 的幾何意義：在 z₀ 附近，f 把小圖形旋轉 arg f′(z₀)、放大 |f′(z₀)| 倍。"
+  ],
+  "visual": "z 平面上 z₀ 附近畫一個小方格與一個小圓，右邊畫它們在 f 之下的像。f = z² 時，小方格被轉了一個角度、等比例放大，仍然是小方格（角度保持）。f = z̄ 時小方格被鏡射，方向反了；f = x + 2iy 這類只在一個方向拉長的映射，小圓變成橢圓。",
+  "concept": [
+    {
+      "heading": "① 定義跟實數長得一樣",
+      "body": [
+        "f′(z₀) = lim_{h→0} (f(z₀ + h) − f(z₀))/h。差別在 h 是複數：h 可以沿實軸、虛軸、任何方向趨近 0，差商都要趨近同一個複數。",
+        "這個要求比看起來嚴格得多。在 ℝ² 上可微（〈Jacobian 的幾何意義〉）只要求局部長得像一個 2×2 線性映射；複變可微要求這個線性映射是「乘以一個複數 f′(z₀)」，也就是旋轉加等比例縮放，不能拉成橢圓、不能鏡射。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 例子：z² 可以，z̄ 不行",
+      "body": [
+        "f(z) = z²：((z + h)² − z²)/h = 2z + h → 2z，跟 h 的方向無關。所以 (z²)′ = 2z。",
+        "f(z) = z̄：差商是 h̄/h。h 沿實軸時 h̄/h = 1，沿虛軸時 h̄/h = −1，沒有極限。所以 z̄ 在每一點都不可微——雖然它的實部 x、虛部 −y 都是最平滑的函數。",
+        "f(z) = |z|² = z z̄：差商 = z̄ + z(h̄/h) + h̄。z ≠ 0 時中間那項跟方向有關，不可微；z = 0 時差商 = h̄ → 0，可微，f′(0) = 0。可微的點可以只有一個。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 運算法則照搬",
+      "body": [
+        "和、差、積、商、合成的微分法則，證明跟實數一字不差（只用到極限定律）。所以多項式處處可微、(zⁿ)′ = nz^{n−1}，有理函數在分母不為 0 處可微。e^z、sin z 的可微性下一課用 Cauchy–Riemann 方程確認。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 幾何：局部是旋轉加縮放",
+      "body": [
+        "f(z₀ + h) ≈ f(z₀) + f′(z₀)h。乘以 f′(z₀) = r e^{iφ} 就是轉 φ、放大 r 倍。所以 f′(z₀) ≠ 0 時，f 在 z₀ 附近保持兩條曲線的夾角（含方向），這叫保角。"
+      ],
+      "collapsible": false
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "z² 在 1 + i 的導數",
+      "prompt": "f(z) = z²，求 f′(1 + i)，並用實部虛部檢查。",
+      "steps": [
+        "(z²)′ = 2z，f′(1 + i) = 2 + 2i。",
+        "檢查：沿實軸方向的差商就是 ∂f/∂x = u_x + i v_x。u = x² − y²、v = 2xy。",
+        "在 (1, 1)：u_x = 2x = 2，v_x = 2y = 2，所以 f′ = 2 + 2i。一致。"
+      ],
+      "answer": "2 + 2i",
+      "claim": "D(x^2-1, 1) == 2 ;; D(2*x*1, 1) == 2"
+    },
+    {
+      "title": "z̄ 的差商跟方向有關",
+      "prompt": "證明 f(z) = z̄ 在任何一點都不可微。",
+      "steps": [
+        "差商 (f(z + h) − f(z))/h = (z̄ + h̄ − z̄)/h = h̄/h，跟 z 無關。",
+        "沿直線 h = t(1 + im)（t 實數 → 0）：h̄/h = (1 − im)/(1 + im)，實部 (1 − m²)/(1 + m²)。",
+        "m = 0（實軸）得 1，m = 1 得 0。方向不同、值不同，極限不存在，所以處處不可微。"
+      ],
+      "answer": "處處不可微",
+      "claim": "LIM((x^2-x^2)/(x^2+x^2), 0) == 0 ;; LIM(x^2/x^2, 0) == 1"
+    },
+    {
+      "title": "高次方",
+      "prompt": "f(z) = z⁴，求 Re f′(1 + i)。",
+      "problemId": "der-085",
+      "steps": [
+        "f′(z) = 4z³。(1 + i)² = 2i，(1 + i)³ = 2i(1 + i) = −2 + 2i。",
+        "f′(1 + i) = 4(−2 + 2i) = −8 + 8i，實部 −8。",
+        "用 u_x + i v_x 檢查：u = x⁴ − 6x²y² + y⁴、v = 4x³y − 4xy³；在 (1, 1)，u_x = 4 − 12 = −8，v_x = 12 − 4 = 8。"
+      ],
+      "answer": "−8",
+      "claim": "D(x^4-6*x^2+1, 1) == -8 ;; D(4*x^3-4*x, 1) == 8"
+    }
+  ],
+  "pitfalls": [
+    "只沿實軸算差商，就說可微。",
+    "以為實部虛部都光滑，f 就複變可微（z̄ 是反例）。",
+    "以為不可微的點一定很多，或可微的點一定成片（|z|² 只在 0 可微）。",
+    "(1 + i)³ 展開錯；先算 (1 + i)² = 2i 比較不會錯。"
+  ],
+  "checks": [
+    {
+      "ask": "f(z) = z̄ 在哪些點複變可微？",
+      "options": [
+        { "label": "沒有任何一點", "correct": true },
+        { "label": "處處可微，因為 x 與 −y 都可微", "why": "實部虛部可微只保證 ℝ² 意義下可微；差商 h̄/h 沿不同方向是 1 或 −1。" },
+        { "label": "只在 0", "why": "差商 h̄/h 跟 z 無關，在 0 也一樣沒有極限。只在 0 可微的是 |z|²。" }
+      ]
+    },
+    {
+      "ask": "(z³)′ 在 z = i 的值是？",
+      "options": [
+        { "label": "−3", "correct": true },
+        { "label": "3", "why": "3z² 在 z = i 是 3i² = −3。" },
+        { "label": "3i", "why": "要代 z² = i² = −1，不是 z = i。" }
+      ]
+    },
+    {
+      "ask": "f′(z₀) = 2i 的幾何意義是？",
+      "options": [
+        { "label": "在 z₀ 附近把小圖形逆時針轉 90°、放大 2 倍", "correct": true },
+        { "label": "往上平移 2", "why": "導數描述的是局部的線性部分（乘法），不是平移。" },
+        { "label": "在虛軸方向拉長 2 倍、實軸方向不變", "why": "那種非等比例的拉伸不是複數乘法；複變可微要求各方向一樣伸縮。" }
+      ]
+    },
+    {
+      "ask": "|z|² 在 z = 0 的導數是？",
+      "options": [
+        { "label": "0", "correct": true },
+        { "label": "不存在", "why": "在 0 的差商是 |h|²/h = h̄ → 0，有極限。只有 z ≠ 0 的點不可微。" },
+        { "label": "2z̄", "why": "|z|² 在 z ≠ 0 根本不可微；在 0 直接用定義算出 0。" }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": ["complex", "complex-derivative"],
+    "fine": ["complex-derivative-definition", "complex-derivative-direction-test", "complex-derivative-rules", "complex-derivative-conformal"]
+  },
+  "practice": [
+    { "id": "der-085", "core": true, "trains": "complex-derivative-rules" },
+    { "id": "der-086", "trains": "complex-derivative-conformal" }
+  ],
+  "gaps": [
+    { "tag": "complex-derivative-direction-test", "count": 2, "note": "用差商沿兩個方向判斷不可微的題（z̄、Re z、|z|²），R3。" },
+    { "tag": "complex-derivative-rules", "count": 3, "note": "多項式與有理函數在複數點的導數（答案是複數），R2。" }
+  ]
+}

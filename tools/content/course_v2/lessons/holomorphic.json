@@ -1,0 +1,137 @@
+{
+  "id": "holomorphic",
+  "title": "全純函數",
+  "readMinutes": 11,
+  "totalMinutes": 30,
+  "prerequisites": ["cauchy-riemann", "complex-functions"],
+  "next": ["complex-curves"],
+  "related": ["cauchy-integral-formula", "complex-taylor"],
+  "objectives": [
+    "分清楚「在一點可微」與「在一點全純」：全純要求在那一點的某個鄰域裡每一點都可微。",
+    "判斷常見函數在哪裡全純：多項式、e^z 是整函數；有理函數去掉分母的零點；Log z 去掉 (−∞, 0]。",
+    "說得出全純函數跟實數可微函數最不一樣的地方：可微一次就自動無限次可微，而且能展成冪級數（後面的課證明）。"
+  ],
+  "visual": null,
+  "concept": [
+    {
+      "heading": "① 定義：在一整塊開集上可微",
+      "body": [
+        "f 在開集 D 上全純（holomorphic），是指 f 在 D 的每一點都複變可微。說 f 在 z₀ 全純，意思是 f 在 z₀ 的某個小圓盤裡處處可微。",
+        "所以 |z|² 在 0 可微，但在 0 不全純：0 的任何小圓盤裡都有它不可微的點。在全平面全純的函數叫整函數，例如多項式、e^z、sin z、cos z。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 常見函數的全純範圍",
+      "body": [
+        "有理函數 p(z)/q(z)：在 q ≠ 0 的地方全純。1/(z² + 1) 在 ℂ 去掉 ±i 的地方全純，雖然在實數線上它處處光滑——它的「問題」藏在實數線外面。",
+        "Log z：在 ℂ 去掉負實軸與 0（記作 ℂ ∖ (−∞, 0]）上全純，導數 1/z。在負實軸上 Log 不連續，當然也不可微。",
+        "z̄、Re z、|z|：哪裡都不全純。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 為什麼值得一個名字：剛性",
+      "body": [
+        "實數函數可以可微一次但不能微兩次（例如 x|x|），也可以無限次可微卻不等於它的 Taylor 級數（e^{−1/x²} 在 0 的所有導數都是 0）。",
+        "全純函數完全不是這樣：只要在開集上可微一次，就自動無限次可微，而且在每一點附近等於它的冪級數（〈Cauchy 積分公式〉與〈複數上的 Taylor 級數〉會證明）。它在一小塊上的值，就決定了它在整個連通區域上的值。這種「一處決定全部」的剛性，是複變能拿來算實積分的根本原因。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "預告：幾個因此成立的定理",
+      "body": [
+        "Liouville 定理：有界的整函數一定是常數（所以 sin z、cos z 在複數上無界）。最大模原理：非常數的全純函數，|f| 的最大值只會出現在區域的邊界。恆等定理：兩個全純函數若在一個有聚點的集合上相等，就處處相等。"
+      ],
+      "collapsible": true
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "有理函數",
+      "prompt": "f(z) = 1/(z² + 1) 在哪裡全純？求 f′。",
+      "steps": [
+        "分母 z² + 1 = 0 ⇔ z = ±i。",
+        "在 ℂ ∖ {i, −i} 上，f 是兩個全純函數的商，分母不為 0，所以全純。",
+        "f′(z) = −2z/(z² + 1)²（除法法則照搬）。限制在實數線上就是熟悉的 d/dx (1/(x² + 1))。"
+      ],
+      "answer": "ℂ ∖ {±i}；f′ = −2z/(z² + 1)²",
+      "claim": "D(1/(x^2+1)) == -2x/(x^2+1)^2"
+    },
+    {
+      "title": "主值對數",
+      "prompt": "證明 Log z 在右半平面 x > 0 上全純，導數是 1/z。",
+      "steps": [
+        "x > 0 時 Arg z = arctan(y/x)，Log z = (1/2)ln(x² + y²) + i arctan(y/x)。",
+        "u_x = x/(x² + y²)、v_y = (1/x)/(1 + y²/x²) = x/(x² + y²)，相等；u_y = y/(x² + y²)、v_x = −y/(x² + y²)，u_y = −v_x。",
+        "偏導數連續，所以全純。f′ = u_x + i v_x = (x − iy)/(x² + y²) = z̄/|z|² = 1/z。"
+      ],
+      "answer": "(Log z)′ = 1/z",
+      "claim": "D(ln(x^2+y^2)/2, , x) == D(arctan(y/x), , y) ;; D(ln(x^2+y^2)/2, , y) == -D(arctan(y/x), , x)"
+    },
+    {
+      "title": "可微但不全純",
+      "prompt": "f(z) = |z|²：在 0 全純嗎？",
+      "steps": [
+        "u = x² + y²、v = 0。CR 要 u_x = 2x = v_y = 0 而且 u_y = 2y = −v_x = 0，只有 (0, 0) 成立。",
+        "所以 f 只在 0 一點可微。",
+        "全純要求一整個鄰域裡都可微；0 的任何小圓盤裡都有 x ≠ 0 的點，那裡不可微。所以 f 在 0 不全純，在任何地方都不全純。"
+      ],
+      "answer": "不全純",
+      "claim": "D(x^2+y^2, , x) - D(0*y, , y) == 2*x"
+    }
+  ],
+  "pitfalls": [
+    "把「在一點可微」當成「在一點全純」。",
+    "以為實數線上光滑的函數，延伸到複數就處處全純（1/(z² + 1) 在 ±i 出問題）。",
+    "把 Log z 用在負實軸上。",
+    "以為 sin z、cos z 跟實數時一樣有界。"
+  ],
+  "checks": [
+    {
+      "ask": "下面哪一個是整函數（在全平面全純）？",
+      "options": [
+        { "label": "e^{z²} + z³", "correct": true },
+        { "label": "1/z", "why": "在 z = 0 沒有定義，只在 ℂ ∖ {0} 全純。" },
+        { "label": "z z̄", "why": "z z̄ = |z|²，只在 0 可微，哪裡都不全純。" }
+      ]
+    },
+    {
+      "ask": "f(z) = 1/(z² + 4) 在哪裡全純？",
+      "options": [
+        { "label": "ℂ ∖ {2i, −2i}", "correct": true },
+        { "label": "ℂ ∖ {2, −2}", "why": "z² + 4 = 0 的根是 ±2i，不是 ±2。" },
+        { "label": "整個 ℂ", "why": "分母在 ±2i 是 0，f 在那裡沒有定義。" }
+      ]
+    },
+    {
+      "ask": "f 在 z₀ 可微，能不能推出 f 在 z₀ 全純？",
+      "options": [
+        { "label": "不能，全純要求 z₀ 附近每一點都可微", "correct": true },
+        { "label": "能，可微就是全純", "why": "|z|² 在 0 可微，但在 0 附近其他點都不可微，所以不全純。" },
+        { "label": "能，只要再加上 CR 方程", "why": "可微已經蘊含 CR 在那一點成立；問題是其他點。" }
+      ]
+    },
+    {
+      "ask": "跟實數函數比，全純函數最特別的性質是？",
+      "options": [
+        { "label": "在開集上可微一次，就自動無限次可微", "correct": true },
+        { "label": "它們都是有界的", "why": "相反：有界的整函數只有常數（Liouville），e^z、sin z 都無界。" },
+        { "label": "它們都是多項式", "why": "e^z、Log z 都不是多項式；它們只是「局部等於冪級數」。" }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": ["complex", "cauchy-riemann", "harmonic"],
+    "fine": ["holomorphic-domain", "holomorphic-vs-differentiable", "holomorphic-log-branch", "holomorphic-rigidity"]
+  },
+  "practice": [
+    { "id": "der-080", "core": true, "trains": "holomorphic-vs-differentiable" },
+    { "id": "der-079", "core": true, "trains": "holomorphic-domain" },
+    { "id": "der-087", "trains": "holomorphic-rigidity" }
+  ],
+  "gaps": [
+    { "tag": "holomorphic-domain", "count": 3, "note": "判斷函數在哪裡全純的題（有理函數、Log、根號），R2–R3。" },
+    { "tag": "holomorphic-vs-differentiable", "count": 2, "note": "「只在一點或一條線上可微」與全純的辨別題，R3。" }
+  ]
+}

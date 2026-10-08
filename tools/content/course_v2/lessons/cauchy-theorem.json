@@ -1,0 +1,139 @@
+{
+  "id": "cauchy-theorem",
+  "title": "Cauchy 定理",
+  "readMinutes": 12,
+  "totalMinutes": 40,
+  "prerequisites": ["contour-integral", "green-theorem", "cauchy-riemann"],
+  "next": ["cauchy-integral-formula"],
+  "related": [],
+  "objectives": [
+    "寫得出 Cauchy 定理的條件與結論：f 在簡單封閉曲線 C 上與 C 的內部全純，則 ∮_C f dz = 0。",
+    "用 Green 定理加上 CR 方程說明它為什麼成立（假設 f′ 連續）。",
+    "用「奇異點在不在曲線裡面」判斷積分是不是 0，並用變形曲線把複雜的圍道換成小圓。"
+  ],
+  "visual": "一條可拖動的封閉曲線 C 與一個標出的奇異點 z₀（例如 1/(z − z₀) 的極點）。z₀ 在 C 外面時，積分讀數一直是 0；把曲線拉過 z₀ 讓它跑進裡面，讀數跳成 2πi，之後怎麼捏曲線都不變。",
+  "concept": [
+    {
+      "heading": "① 結論：全純就繞一圈是 0",
+      "body": [
+        "Cauchy 定理：C 是簡單封閉的分段光滑曲線，f 在 C 上以及 C 的內部（某個包含它們的開集上）全純，則 ∮_C f dz = 0。",
+        "條件的重點是「內部沒有洞」：1/z 在單位圓上全純，但在內部的 0 不是，所以 ∮ dz/z = 2πi 不違反定理。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 為什麼：Green 定理 + CR",
+      "body": [
+        "寫成實部虛部：∮ f dz = ∮ (u dx − v dy) + i ∮ (v dx + u dy)。",
+        "對兩個實線積分用〈Green 定理〉（假設 u、v 有連續偏導數）：第一個變成 ∬ (−v_x − u_y) dA，第二個變成 ∬ (u_x − v_y) dA。",
+        "CR 方程說 u_y = −v_x、u_x = v_y，兩個被積函數都是 0。所以 ∮ f dz = 0。",
+        "這個證明多假設了 f′ 連續；Goursat 證明了只要可微就夠，不需要這個假設。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 推論：路徑無關與變形",
+      "body": [
+        "路徑無關：在沒有洞的區域裡全純，從 a 到 b 的積分只看端點（兩條路徑合起來是一條封閉曲線，積分為 0）。",
+        "變形：f 在兩條封閉曲線 C₁、C₂ 之間的環形區域全純，則 ∮_{C₁} f dz = ∮_{C₂} f dz。所以繞著奇異點的任何曲線，都可以縮成一個小圓來算。這就是為什麼 ∮ dz/(z − z₀) 對任何繞 z₀ 一圈的曲線都是 2πi。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "變形原理的證明",
+      "body": [
+        "在 C₁（外）與 C₂（內）之間切一刀，連成一條繞過環形區域邊界的封閉曲線：沿 C₁ 逆時針、沿切口進去、沿 C₂ 順時針、沿切口出來。這條曲線的內部不含奇異點，由 Cauchy 定理積分為 0；切口來回各走一次互相抵銷，剩下 ∮_{C₁} − ∮_{C₂} = 0。"
+      ],
+      "collapsible": true
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "整函數",
+      "prompt": "∮_{|z|=1} e^{z²} dz",
+      "steps": [
+        "e^{z²} 是整函數，在單位圓及其內部全純。由 Cauchy 定理，積分是 0。",
+        "用參數式檢查：z = e^{it}，e^{z²} = e^{cos 2t}(cos(sin 2t) + i sin(sin 2t))，dz = (−sin t + i cos t) dt。",
+        "相乘後實部、虛部在 [0, 2π] 上的積分數值上都是 0。"
+      ],
+      "answer": "0",
+      "claim": "INT(e^(cos(2x))*(-cos(sin(2x))*sin(x)-sin(sin(2x))*cos(x)), 0, 2*pi) == 0 ;; INT(e^(cos(2x))*(cos(sin(2x))*cos(x)-sin(sin(2x))*sin(x)), 0, 2*pi) == 0"
+    },
+    {
+      "title": "奇異點在外面還是裡面",
+      "prompt": "∮ dz/(z − 3)，沿 |z| = 2 與 |z| = 4（逆時針）",
+      "steps": [
+        "1/(z − 3) 只在 z = 3 不全純。",
+        "|z| = 2：3 在圓外，函數在圓及其內部全純，積分 0。",
+        "|z| = 4：3 在圓內。由變形原理，換成繞 3 的小圓，∮ dz/(z − 3) = 2πi。",
+        "參數式檢查：|z| = 2 時虛部的被積函數化成 (4 − 6 cos t)/(13 − 12 cos t)，積分 0；|z| = 4 時是 (16 − 12 cos t)/(25 − 24 cos t)，積分 2π。"
+      ],
+      "answer": "|z| = 2：0；|z| = 4：2πi",
+      "claim": "INT(6*sin(x)/(13-12*cos(x)), 0, 2*pi) == 0 ;; INT((4-6*cos(x))/(13-12*cos(x)), 0, 2*pi) == 0 ;; INT((16-12*cos(x))/(25-24*cos(x)), 0, 2*pi) == 2*pi"
+    },
+    {
+      "title": "兩個奇異點，各自變形",
+      "prompt": "∮_{|z|=2} dz/(z² − 1)",
+      "steps": [
+        "奇異點 ±1 都在圓內，Cauchy 定理不能直接用。",
+        "部分分式：1/(z² − 1) = (1/2)(1/(z − 1) − 1/(z + 1))。",
+        "每一項各自變形成小圓：∮ dz/(z − 1) = 2πi、∮ dz/(z + 1) = 2πi。",
+        "結果 (1/2)(2πi − 2πi) = 0。注意：答案是 0，但不是因為 Cauchy 定理，而是兩個貢獻剛好抵銷。"
+      ],
+      "answer": "0",
+      "claim": "INT((-2*sin(x)*(4*cos(2x)-1) + 2*cos(x)*4*sin(2x))/(17-8*cos(2x)), 0, 2*pi) == 0 ;; INT((8*sin(x)*sin(2x) + 2*cos(x)*(4*cos(2x)-1))/(17-8*cos(2x)), 0, 2*pi) == 0"
+    }
+  ],
+  "pitfalls": [
+    "只看曲線上全純，沒檢查內部有沒有奇異點。",
+    "反過來以為「積分是 0」就代表內部全純（範例 3）。",
+    "奇異點剛好在曲線上時也套定理；那時積分本身要另外定義。",
+    "變形時把曲線拉過奇異點；只能在全純的區域裡變形。"
+  ],
+  "checks": [
+    {
+      "ask": "∮_{|z|=1} dz/(z − 2) 是？",
+      "options": [
+        { "label": "0", "correct": true },
+        { "label": "2πi", "why": "奇異點 z = 2 在單位圓外面；圓及其內部全純，Cauchy 定理給 0。" },
+        { "label": "沒有定義", "why": "被積函數在圓上連續，積分有定義。" }
+      ]
+    },
+    {
+      "ask": "∮_{|z|=1} dz/z = 2πi ≠ 0，跟 Cauchy 定理矛盾嗎？",
+      "options": [
+        { "label": "不矛盾：1/z 在圓的內部 z = 0 不全純，條件不成立", "correct": true },
+        { "label": "矛盾，所以 Cauchy 定理有例外", "why": "定理要求內部全純；條件不成立時定理不說任何事。" },
+        { "label": "不矛盾，因為 1/z 不連續", "why": "1/z 在圓上連續；問題在內部的 0。" }
+      ]
+    },
+    {
+      "ask": "用 Green 定理證明 Cauchy 定理時，哪一步用到 CR 方程？",
+      "options": [
+        { "label": "讓 ∬(−v_x − u_y) 與 ∬(u_x − v_y) 的被積函數都等於 0", "correct": true },
+        { "label": "把 ∮ f dz 拆成實部虛部", "why": "那只是代數展開，任何 f 都可以這樣拆。" },
+        { "label": "把線積分換成二重積分", "why": "那是 Green 定理本身，跟 CR 無關。" }
+      ]
+    },
+    {
+      "ask": "C 是任意一條繞 z = 5i 一圈的正向簡單封閉曲線。∮_C dz/(z − 5i) 是？",
+      "options": [
+        { "label": "2πi", "correct": true },
+        { "label": "要知道 C 的形狀才能算", "why": "由變形原理，任何繞 5i 一圈的正向曲線都可以換成小圓，答案相同。" },
+        { "label": "10πi", "why": "答案跟奇異點的位置、曲線的大小都無關，永遠是 2πi。" }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": ["complex", "contour-integral", "green-theorem"],
+    "fine": ["cauchy-theorem-apply", "cauchy-theorem-singularity-location", "cauchy-theorem-deformation", "cauchy-theorem-green-proof"]
+  },
+  "practice": [
+    { "id": "der-084", "core": true, "trains": "cauchy-theorem-deformation" }
+  ],
+  "gaps": [
+    { "tag": "cauchy-theorem-singularity-location", "count": 3, "note": "判斷奇異點在不在曲線內、積分是否為 0 的題，R2–R3。" },
+    { "tag": "cauchy-theorem-deformation", "count": 2, "note": "部分分式後各自變形的題（例如 ∮ dz/(z² − 1) 沿不同圓），R3。" },
+    { "tag": "cauchy-theorem-green-proof", "count": 1, "note": "白話證明題：用 Green 定理與 CR 方程證明 Cauchy 定理。" }
+  ]
+}

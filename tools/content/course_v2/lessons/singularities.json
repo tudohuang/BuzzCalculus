@@ -1,0 +1,139 @@
+{
+  "id": "singularities",
+  "title": "奇異點",
+  "readMinutes": 12,
+  "totalMinutes": 35,
+  "prerequisites": ["laurent-series", "discontinuity-types"],
+  "next": ["residue"],
+  "related": ["taylor-limits-higher"],
+  "objectives": [
+    "用 Laurent 級數的主要部分把孤立奇異點分成三類：可去（沒有負次方）、m 階極點（最低到 (z − z₀)^{−m}）、本性（無窮多個負次方）。",
+    "不展開也能判斷：看 lim f 是否存在、(z − z₀)ᵐ f 的極限是否為有限非零，或用分子分母零點的階數相減。",
+    "知道本性奇異點附近 f 的行為極端：沿不同方向趨近，f 可以趨近 0、∞ 或任何值附近。"
+  ],
+  "visual": "三張圖並排，用顏色表示 f 的輻角、亮度表示 |f|，中心是奇異點。可去（sin z/z）：中心附近顏色平順，像沒事一樣；極點（1/z²）：中心變成一個亮點，顏色繞兩圈；本性（e^{1/z}）：中心附近顏色與亮度瘋狂變化，任何顏色都出現無限多次。",
+  "concept": [
+    {
+      "heading": "① 孤立奇異點：只有中間一個洞",
+      "body": [
+        "f 在 0 < |z − z₀| < r 全純、但在 z₀ 沒定義或不全純，z₀ 叫孤立奇異點。在這個去心圓盤上 f 有 Laurent 級數，分類就看主要部分（負次方）長什麼樣。",
+        "不是孤立的例子：Log z 在 0（負實軸整條都有問題）、1/sin(1/z) 在 0（奇異點 1/(kπ) 往 0 擠）。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 三類",
+      "body": [
+        "可去：主要部分是 0。lim_{z→z₀} f 存在，補上這個值 f 就在 z₀ 全純。例：sin z/z、(1 − cos z)/z²。跟〈不連續的種類〉裡的可去不連續同一個想法。",
+        "m 階極點：主要部分有限，最低一項是 a₋ₘ/(z − z₀)ᵐ（a₋ₘ ≠ 0）。等價說法：(z − z₀)ᵐ f(z) → 有限非零的數。這時 |f| → ∞。例：1/(z − 1)² 在 1 是二階極點。",
+        "本性：主要部分有無窮多項。例：e^{1/z} = 1 + 1/z + 1/(2! z²) + ⋯ 在 0。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 快速判斷極點的階數",
+      "body": [
+        "f = g/h，g、h 在 z₀ 全純：若 h 在 z₀ 有 k 階零點、g 有 j 階零點（j 可以是 0），則 k > j 時是 (k − j) 階極點，k ≤ j 時是可去。零點的階數看 Taylor 展開的第一個非零項（〈高階 Taylor 求極限〉的技術）。",
+        "例：z/sin² z 在 0：sin² z = z² − ⋯ 是 2 階零點，分子 z 是 1 階，所以是 1 階極點。sin z/z⁴：分子 1 階、分母 4 階，3 階極點。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "本性奇異點的極端行為",
+      "body": [
+        "Casorati–Weierstrass 定理：z₀ 是本性奇異點時，在 z₀ 的任何小去心圓盤裡，f 的值可以任意接近任何一個複數。（更強的 Picard 定理說：除了至多一個例外值，每個複數都會被取到無限多次。）e^{1/z} 從正實軸趨近 0 時 → ∞，從負實軸趨近時 → 0，沿虛軸時在單位圓上繞。"
+      ],
+      "collapsible": true
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "可去奇異點",
+      "prompt": "判斷 (1 − cos z)/z² 在 0 的奇異點類型",
+      "steps": [
+        "1 − cos z = z²/2 − z⁴/24 + ⋯，除以 z²：1/2 − z²/24 + ⋯，沒有負次方。",
+        "所以是可去奇異點；補上 f(0) = 1/2，f 就在 0 全純。",
+        "等價檢查：lim_{z→0} (1 − cos z)/z² = 1/2 存在。"
+      ],
+      "answer": "可去，補值 1/2",
+      "claim": "LIM((1-cos(x))/x^2, 0) == 1/2"
+    },
+    {
+      "title": "用零點階數判斷極點",
+      "prompt": "z/sin² z 在 0 是幾階極點？",
+      "problemId": "rel-hard-cpx-007",
+      "steps": [
+        "sin z = z − z³/6 + ⋯，sin² z = z² − ⋯，分母是 2 階零點；分子 z 是 1 階零點。",
+        "2 − 1 = 1，所以是 1 階（簡單）極點。",
+        "檢查：(z − 0)¹ · z/sin² z = z²/sin² z → 1，有限而且不為 0。"
+      ],
+      "answer": "1 階極點",
+      "claim": "LIM(x*(x/sin(x)^2), 0) == 1"
+    },
+    {
+      "title": "本性奇異點",
+      "prompt": "e^{1/z} 在 0 是哪一類？沿實軸兩側趨近時會怎樣？",
+      "steps": [
+        "e^{1/z} = Σ_{n≥0} 1/(n! zⁿ)，負次方有無窮多項：本性奇異點。",
+        "沿負實軸 z = x → 0⁻：1/x → −∞，e^{1/x} → 0。",
+        "沿正實軸 x → 0⁺：e^{1/x} → ∞，例如 x = 0.01 時 e^{100} ≈ 2.7 × 10⁴³。",
+        "兩個方向的極限一個是 0、一個是 ∞：既不是可去（極限不存在），也不是極點（|f| 沒有一致地 → ∞）。"
+      ],
+      "answer": "本性奇異點",
+      "claim": "LIM(e^(1/x), 0-) == 0 ;; SUB(e^(1/x), 0.01) > 1000000"
+    }
+  ],
+  "pitfalls": [
+    "看到分母是 0 就說是極點；(1 − cos z)/z² 是可去。",
+    "極點階數只看分母的次方，忘了扣掉分子的零點（z/sin² z 是 1 階，不是 2 階）。",
+    "把「|f| → ∞」當成本性奇異點的特徵；那是極點的特徵。",
+    "把不孤立的奇異點（Log z 在 0）也拿來分類。"
+  ],
+  "checks": [
+    {
+      "ask": "sin z/z 在 0 的奇異點是？",
+      "options": [
+        { "label": "可去", "correct": true },
+        { "label": "1 階極點", "why": "分子 sin z 在 0 也是 1 階零點，跟分母抵銷；sin z/z = 1 − z²/6 + ⋯，沒有負次方。" },
+        { "label": "本性", "why": "Laurent 級數根本沒有負次方，不可能是本性。" }
+      ]
+    },
+    {
+      "ask": "sin z/z⁴ 在 0 是幾階極點？",
+      "options": [
+        { "label": "3 階", "correct": true },
+        { "label": "4 階", "why": "分子 sin z 在 0 有 1 階零點，4 − 1 = 3。" },
+        { "label": "可去", "why": "分母的零點階數比分子高，所以是極點。" }
+      ]
+    },
+    {
+      "ask": "下列哪一個在 z = 0 是本性奇異點？",
+      "options": [
+        { "label": "cos(1/z)", "correct": true },
+        { "label": "1/z⁵", "why": "主要部分只有一項，是 5 階極點。" },
+        { "label": "(e^z − 1)/z", "why": "(e^z − 1)/z = 1 + z/2 + ⋯，可去。" }
+      ]
+    },
+    {
+      "ask": "z₀ 是 m 階極點的等價說法是？",
+      "options": [
+        { "label": "(z − z₀)ᵐ f(z) 趨近一個有限、非零的數", "correct": true },
+        { "label": "(z − z₀)ᵐ f(z) → 0", "why": "那表示 m 取太大了；剛好的 m 會讓極限有限而且不為 0。" },
+        { "label": "f(z) → ∞，而且 m 是分母的次方", "why": "分子可能也有零點；階數要用 (z − z₀)ᵐ f 的極限或零點相減來定。" }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": ["complex", "removable-singularity", "laurent"],
+    "fine": ["singularity-classify", "pole-order", "essential-singularity", "removable-singularity-limit"]
+  },
+  "practice": [
+    { "id": "hc-der-007", "trains": "removable-singularity-limit" },
+    { "id": "rel-hard-cpx-007", "core": true, "trains": "pole-order" },
+    { "id": "rel-boss-020", "trains": "pole-order" }
+  ],
+  "gaps": [
+    { "tag": "singularity-classify", "count": 4, "note": "判斷可去、極點、本性的選擇題（sin z/z、1/sin z、e^{1/z}、z/(e^z − 1)），R3。" },
+    { "tag": "pole-order", "count": 3, "note": "求極點階數的題（例如 (1 − cos z)/z⁵、1/(z² sin z)），R3。" }
+  ]
+}

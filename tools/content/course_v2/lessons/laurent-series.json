@@ -1,0 +1,218 @@
+{
+  "id": "laurent-series",
+  "title": "Laurent 級數",
+  "readMinutes": 12,
+  "totalMinutes": 40,
+  "prerequisites": [
+    "complex-taylor",
+    "geometric-series",
+    "partial-fractions-linear"
+  ],
+  "next": [
+    "singularities"
+  ],
+  "related": [
+    "residue",
+    "contour-integral"
+  ],
+  "objectives": [
+    "說得出 Laurent 級數：在環形區域 r < |z − z₀| < R 上全純的函數可以寫成 Σ_{n=−∞}^{∞} aₙ(z − z₀)ⁿ。",
+    "用已知級數（eᶻ、sin z、幾何級數）算 Laurent 展開，讀出 z^{−1} 的係數。",
+    "知道同一個函數在不同的環形區域有不同的 Laurent 展開，並會用 1/(1 − w) 往兩個方向展。"
+  ],
+  "visual": "複平面上 1/(z(1 − z)) 的兩個奇異點 0 與 1。兩個以 0 為圓心的環：0 < |z| < 1 與 |z| > 1，各自上色，旁邊顯示該環上的 Laurent 展開前幾項。把滑鼠移到不同的環，展開式隨之切換。",
+  "concept": [
+    {
+      "heading": "① 允許負次方",
+      "body": [
+        "Taylor 級數只有非負次方，所以只能描述在 z₀ 全純的函數。e^z/z³ 在 0 不全純，但把 e^z 展開再除以 z³：e^z/z³ = z^{−3} + z^{−2} + z^{−1}/2 + 1/6 + z/24 + ⋯。多了負次方，就能描述奇異點附近的行為。",
+        "一般定理：f 在環形區域 r < |z − z₀| < R 全純（r 可以是 0、R 可以是 ∞），則 f 在這個環上可以唯一地寫成雙向無窮級數 Σ aₙ(z − z₀)ⁿ。負次方的部分叫主要部分。"
+      ],
+      "tex": [
+        "f(z)=\\sum_{n=-\\infty}^{\\infty}a_n(z-z_0)^n=\\underbrace{\\cdots+\\frac{a_{-2}}{(z-z_0)^2}+\\frac{a_{-1}}{z-z_0}}_{\\text{主要部分}}+a_0+a_1(z-z_0)+\\cdots"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 最重要的係數：a₋₁",
+      "body": [
+        "對以 z₀ 為圓心、落在環內的圓逐項積分，由〈圍道積分〉的 ∮ (z − z₀)ⁿ dz 只有 n = −1 時是 2πi，得到 ∮ f dz = 2πi a₋₁。整個級數只有 a₋₁ 活下來。下一課開始，這個係數叫留數。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 同一個函數，不同的環，不同的展開",
+      "body": [
+        "1/(z(1 − z)) = 1/z + 1/(1 − z)。",
+        "在 0 < |z| < 1：|z| < 1，1/(1 − z) = 1 + z + z² + ⋯，所以 f = 1/z + 1 + z + z² + ⋯。",
+        "在 |z| > 1：要讓幾何級數的公比小於 1，改寫 1/(1 − z) = −(1/z) · 1/(1 − 1/z) = −1/z − 1/z² − ⋯。於是 f = −1/z² − 1/z³ − ⋯。",
+        "兩個展開都對，只是各自在自己的環上成立。展開之前一定要先說在哪個環。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "係數公式",
+      "body": [
+        "aₙ = (1/2πi)∮ f(z)/(z − z₀)^{n+1} dz（任何落在環內、繞 z₀ 一圈的正向圓）。證明跟〈複數上的 Taylor 級數〉一樣：在環的外圓與內圓上各用一次 Cauchy 公式，外圓那一項展成正次方、內圓那一項展成負次方。實際計算幾乎都用已知級數代換，不用這個公式。"
+      ],
+      "collapsible": true
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "除以 z 的次方",
+      "prompt": "e^z/z³ 在 0 < |z| 上的 Laurent 級數，以及 z^{−1} 的係數",
+      "problemId": "der-083",
+      "steps": [
+        "e^z = 1 + z + z²/2 + z³/6 + ⋯ 對所有 z 成立。",
+        "除以 z³：z^{−3} + z^{−2} + z^{−1}/2 + 1/6 + z/24 + ⋯（z ≠ 0）。",
+        "z^{−1} 的係數 a₋₁ = 1/2。常數項 1/6 可以在實數線上檢查：lim_{x→0} (eˣ/x³ − 1/x³ − 1/x² − 1/(2x)) = 1/6。"
+      ],
+      "answer": "a₋₁ = 1/2",
+      "claim": "LIM((e^x/x^3 - 1/x^3 - 1/x^2 - 1/(2x)), 0) == 1/6"
+    },
+    {
+      "title": "兩個環，兩個展開",
+      "prompt": "1/(z(1 − z)) 在 0 < |z| < 1 與 |z| > 1 的 Laurent 級數",
+      "steps": [
+        "部分分式：1/(z(1 − z)) = 1/z + 1/(1 − z)。",
+        "0 < |z| < 1：1/z + Σ_{n≥0} zⁿ。檢查 z = 0.5：2 + 2 = 4 = 1/(0.5 · 0.5)。",
+        "|z| > 1：1/(1 − z) = −Σ_{n≥1} z^{−n}，加上 1/z 後 z^{−1} 項抵銷，f = −Σ_{n≥2} z^{−n}。檢查 z = 3：−(1/9 + 1/27 + ⋯) = −1/6 = 1/(3 · (−2))。"
+      ],
+      "answer": "0 < |z| < 1：1/z + 1 + z + ⋯；|z| > 1：−1/z² − 1/z³ − ⋯",
+      "claim": "1/(x*(1-x)) == 1/x + 1/(1-x) ;; 2 + SUM(0.5^n, 0) == 1/(0.5*0.5) ;; SUM(-(1/3)^n, 2) == 1/(3*(1-3))"
+    },
+    {
+      "title": "sin z/z⁴",
+      "prompt": "sin z/z⁴ 在 0 附近的 Laurent 級數與 a₋₁",
+      "problemId": "rel-hard-cpx-001",
+      "steps": [
+        "sin z = z − z³/6 + z⁵/120 − ⋯。",
+        "除以 z⁴：z^{−3} − z^{−1}/6 + z/120 − ⋯。",
+        "a₋₁ = −1/6。注意 z^{−2} 的係數是 0（sin 沒有偶次方項）。"
+      ],
+      "answer": "a₋₁ = −1/6",
+      "claim": "LIM((sin(x)/x^4 - 1/x^3 + 1/(6x))/x, 0) == 1/120"
+    }
+  ],
+  "pitfalls": [
+    "不說明在哪個環上展開；|z| > 1 用了 |z| < 1 的幾何級數。",
+    "除以 zᵏ 時次方移錯：e^z 的 z³ 項除以 z³ 是常數，z² 項才變成 z^{−1}。",
+    "把「a₋₁」跟「主要部分的第一項」混淆；a₋₁ 永遠是 (z − z₀)^{−1} 的係數。",
+    "|z| > 1 的展開漏了 1/z 與 −1/z 的抵銷。"
+  ],
+  "checks": [
+    {
+      "ask": "e^z/z² 在 0 附近的 Laurent 級數中，z^{−1} 的係數是？",
+      "options": [
+        {
+          "label": "1",
+          "correct": true
+        },
+        {
+          "label": "1/2",
+          "why": "e^z 的 z¹ 項係數 1，除以 z² 變成 z^{−1}；1/2 是 z² 項，除完變常數。"
+        },
+        {
+          "label": "0",
+          "why": "e^z 有 z¹ 項，除以 z² 後正好落在 z^{−1}。"
+        }
+      ]
+    },
+    {
+      "ask": "1/(1 − z) 在 |z| > 1 的展開是？",
+      "options": [
+        {
+          "label": "−1/z − 1/z² − 1/z³ − ⋯",
+          "correct": true
+        },
+        {
+          "label": "1 + z + z² + ⋯",
+          "why": "那只在 |z| < 1 收斂；|z| > 1 時公比 z 的絕對值大於 1，發散。"
+        },
+        {
+          "label": "1/z + 1/z² + ⋯",
+          "why": "改寫成 −(1/z)/(1 − 1/z) 時有一個負號。"
+        }
+      ]
+    },
+    {
+      "ask": "對一個落在環內、繞 z₀ 的正向圓，∮ f dz 等於？",
+      "options": [
+        {
+          "label": "2πi a₋₁",
+          "correct": true
+        },
+        {
+          "label": "2πi a₀",
+          "why": "∮ (z − z₀)⁰ dz = 0；只有 n = −1 的那一項積分不為 0。"
+        },
+        {
+          "label": "0",
+          "why": "f 在 z₀ 可能不全純，負一次方那一項會留下 2πi a₋₁。"
+        }
+      ]
+    },
+    {
+      "ask": "為什麼同一個函數可以有不同的 Laurent 級數？",
+      "options": [
+        {
+          "label": "不同的環形區域上展開不同；每個環上的展開是唯一的",
+          "correct": true
+        },
+        {
+          "label": "因為 Laurent 級數不唯一，怎麼展都可以",
+          "why": "在同一個環上展開是唯一的；不同的是環。"
+        },
+        {
+          "label": "因為計算方法不同（代換或微分）",
+          "why": "方法不同，在同一個環上的答案一定相同。"
+        }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": [
+      "laurent",
+      "residue",
+      "complex"
+    ],
+    "fine": [
+      "laurent-substitution",
+      "laurent-annulus-choice",
+      "laurent-a-minus-one"
+    ]
+  },
+  "practice": [
+    {
+      "id": "der-083",
+      "core": true,
+      "trains": "laurent-a-minus-one"
+    },
+    {
+      "id": "rel-boss-009",
+      "core": true,
+      "trains": "laurent-substitution"
+    },
+    {
+      "id": "rel-hard-cpx-001",
+      "core": true,
+      "trains": "laurent-substitution"
+    },
+    {
+      "id": "rel-hard-cpx-002",
+      "trains": "laurent-substitution"
+    },
+    {
+      "id": "der-082",
+      "trains": "laurent-a-minus-one"
+    }
+  ],
+  "gaps": [
+    {
+      "tag": "laurent-annulus-choice",
+      "count": 3,
+      "note": "同一個有理函數在不同環上的 Laurent 展開（寫出前幾項或某個係數），R4。"
+    }
+  ]
+}
