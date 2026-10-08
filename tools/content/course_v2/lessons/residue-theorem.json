@@ -1,0 +1,215 @@
+{
+  "id": "residue-theorem",
+  "title": "留數定理",
+  "readMinutes": 11,
+  "totalMinutes": 40,
+  "prerequisites": [
+    "residue",
+    "cauchy-theorem"
+  ],
+  "next": [
+    "residue-real-integrals"
+  ],
+  "related": [
+    "cauchy-integral-formula"
+  ],
+  "objectives": [
+    "寫得出留數定理與條件：∮_C f dz = 2πi Σ（C 內部所有奇異點的留數）。",
+    "說明它為什麼成立：把 C 變形成一個個繞奇異點的小圓，每個小圓貢獻 2πi 乘留數。",
+    "照步驟算圍道積分：找奇異點 → 判斷在不在 C 內 → 算留數 → 相加乘 2πi。"
+  ],
+  "visual": "一條可拖動的封閉曲線 C 與幾個標好留數的奇異點。C 內部的奇異點亮起來，旁邊顯示 2πi × (亮點留數的和)。把 C 拉過某個奇異點，它亮或暗，積分值跳一個 2πi × 那個留數。",
+  "concept": [
+    {
+      "heading": "① 定理",
+      "body": [
+        "C 是正向的簡單封閉分段光滑曲線；f 在 C 上以及 C 的內部全純，只有有限個孤立奇異點 z₁, …, zₖ 例外，而且它們都不在 C 上。則：",
+        "內部沒有奇異點時，右邊是 0，就是〈Cauchy 定理〉；只有一個奇異點而且 f = g/(z − z₀)^{n+1} 時，就是〈Cauchy 積分公式〉。留數定理把兩者合成一條。"
+      ],
+      "tex": [
+        "\\oint_C f(z)\\,dz=2\\pi i\\sum_{k}\\operatorname{Res}_{z_k}f"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 為什麼：每個洞各自貢獻",
+      "body": [
+        "在每個 zₖ 周圍畫一個小圓 Cₖ。在 C 與這些小圓之間的區域 f 全純，由變形原理（切開連成一條曲線，再用 Cauchy 定理），∮_C f dz = Σ ∮_{Cₖ} f dz。",
+        "每個小圓上把 f 展成 Laurent 級數，只有 a₋₁ 那一項積分不為 0，∮_{Cₖ} f dz = 2πi Res_{zₖ} f。相加就是定理。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 計算步驟",
+      "body": [
+        "1. 找出 f 的所有奇異點（分母的零點、e^{1/z} 這類）。",
+        "2. 只留下在 C 內部的。用距離判斷：|zₖ − 圓心| < 半徑。",
+        "3. 每個算留數（〈留數〉的三個公式或 Laurent 級數）。",
+        "4. 相加乘 2πi。曲線是順時針時再乘 −1。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 它把積分變成代數",
+      "body": [
+        "算一個圍道積分，原本要參數化、再積一個複雜的實積分；留數定理把它換成「在幾個點附近展開、讀一個係數」。下一課〈用留數算實積分〉反過來利用這件事：把一個難算的實積分，接上一段半圓或改寫成單位圓上的圍道積分，再用留數一次算完。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "一個檢查：很大的圓",
+      "body": [
+        "若 f = p/q 是有理函數、而且 q 的次數比 p 至少高 2，則沿 |z| = R 的積分在 R → ∞ 時 → 0（ML 不等式：|f| 大約 C/R²，長度 2πR）。而 R 夠大時所有奇異點都在圓內，積分又等於 2πi 乘全部留數的和。所以這類函數全部留數的和一定是 0——範例 1 的 1/(z² + 1) 就是如此。算完可以用這個檢查。"
+      ],
+      "collapsible": true
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "兩個留數互相抵銷",
+      "prompt": "∮_{|z|=2} dz/(z² + 1)",
+      "steps": [
+        "奇異點 ±i，|±i| = 1 < 2，都在圓內。",
+        "Res_i = 1/(2i)，Res_{−i} = 1/(−2i)（g/h′，h′ = 2z）。",
+        "和為 0，積分 = 2πi · 0 = 0。",
+        "參數式檢查：z = 2e^{it} 時實部與虛部的被積函數積分都是 0。"
+      ],
+      "answer": "0",
+      "claim": "INT((-2*sin(x)*(4*cos(2x)+1) + 2*cos(x)*4*sin(2x))/(17+8*cos(2x)), 0, 2*pi) == 0 ;; INT((2*cos(x)*(4*cos(2x)+1) + 8*sin(x)*sin(2x))/(17+8*cos(2x)), 0, 2*pi) == 0"
+    },
+    {
+      "title": "高階極點",
+      "prompt": "∮_{|z|=1} e^z/z³ dz",
+      "steps": [
+        "唯一的奇異點 0 在圓內，是 3 階極點。",
+        "Res = e^z 的 z² 係數 = 1/2。",
+        "積分 = 2πi · 1/2 = πi。",
+        "參數式檢查：z = e^{it}，積分 = i∫₀^{2π} e^{e^{it}} e^{−2it} dt，裡面的實部積分是 π。"
+      ],
+      "answer": "πi",
+      "claim": "INT(e^(cos(x))*(cos(sin(x))*cos(2x)+sin(sin(x))*sin(2x)), 0, 2*pi) == pi"
+    },
+    {
+      "title": "只有一部分奇異點在裡面",
+      "prompt": "∮_{|z|=2} z/((z − 1)(z − 3)) dz",
+      "steps": [
+        "奇異點 1 與 3。|1| < 2 在內，|3| > 2 在外，只算 z = 1。",
+        "z = 1 是簡單極點：Res = lim_{z→1} (z − 1)f = 1/(1 − 3) = −1/2。",
+        "積分 = 2πi · (−1/2) = −πi。（數值積分 z = 2e^{it} 也得到 −πi。）"
+      ],
+      "answer": "−πi",
+      "claim": "LIM((x-1)*x/((x-1)*(x-3)), 1) == -1/2"
+    }
+  ],
+  "pitfalls": [
+    "把曲線外面的奇異點也算進去。",
+    "忘了乘 2πi，或只乘 2π。",
+    "奇異點剛好在曲線上時也套定理（那時積分要另外定義）。",
+    "順時針的曲線沒有變號。"
+  ],
+  "checks": [
+    {
+      "ask": "∮_{|z|=3} dz/(z(z − 2)) 是？",
+      "options": [
+        {
+          "label": "0",
+          "correct": true
+        },
+        {
+          "label": "−πi",
+          "why": "那只算了 z = 0 的留數 −1/2；z = 2 也在圓內，留數 1/2，兩者抵銷。"
+        },
+        {
+          "label": "πi",
+          "why": "那只算了 z = 2；|0| < 3，z = 0 也在圓內。"
+        }
+      ]
+    },
+    {
+      "ask": "∮_{|z|=1} dz/(z(z − 2)) 是？",
+      "options": [
+        {
+          "label": "−πi",
+          "correct": true
+        },
+        {
+          "label": "0",
+          "why": "z = 2 在單位圓外，不算；只剩 z = 0 的留數 1/(0 − 2) = −1/2。"
+        },
+        {
+          "label": "−1/2",
+          "why": "那是留數；積分要再乘 2πi。"
+        }
+      ]
+    },
+    {
+      "ask": "留數定理的證明中，關鍵的一步是？",
+      "options": [
+        {
+          "label": "把 C 變形成繞各奇異點的小圓，每個小圓上只有 a₋₁ 項積分不為 0",
+          "correct": true
+        },
+        {
+          "label": "用 Green 定理把線積分換成二重積分",
+          "why": "奇異點處 f 不全純，Green 定理加 CR 不能直接用在整個內部。"
+        },
+        {
+          "label": "把 f 寫成多項式",
+          "why": "f 一般不是多項式；關鍵是每個奇異點附近的 Laurent 級數。"
+        }
+      ]
+    },
+    {
+      "ask": "∮_{|z|=1} sin z/z⁴ dz 是？",
+      "options": [
+        {
+          "label": "−πi/3",
+          "correct": true
+        },
+        {
+          "label": "πi/3",
+          "why": "sin z 的 z³ 係數是 −1/6，留數 −1/6，乘 2πi 得 −πi/3。"
+        },
+        {
+          "label": "0",
+          "why": "sin z/z⁴ 在 0 有 3 階極點，留數 −1/6 ≠ 0。"
+        }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": [
+      "residue",
+      "contour-integral",
+      "complex"
+    ],
+    "fine": [
+      "residue-theorem-inside-check",
+      "residue-theorem-sum",
+      "residue-theorem-higher-pole"
+    ]
+  },
+  "practice": [
+    {
+      "id": "der-084",
+      "core": true,
+      "trains": "residue-theorem-sum"
+    },
+    {
+      "id": "rel-hard-cpx-001",
+      "trains": "residue-theorem-higher-pole"
+    }
+  ],
+  "gaps": [
+    {
+      "tag": "residue-theorem-inside-check",
+      "count": 3,
+      "note": "同一個函數沿不同半徑的圓積分（哪些奇異點在內）的題，R3。"
+    },
+    {
+      "tag": "residue-theorem-sum",
+      "count": 3,
+      "note": "多個奇異點留數相加的圍道積分題，R4；判分要能接受含 πi 的答案。"
+    }
+  ]
+}

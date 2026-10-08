@@ -1,0 +1,141 @@
+{
+  "id": "cauchy-riemann",
+  "title": "Cauchy–Riemann 方程",
+  "readMinutes": 12,
+  "totalMinutes": 40,
+  "prerequisites": ["complex-differentiability", "partial-derivatives", "clairaut"],
+  "next": ["holomorphic"],
+  "related": [],
+  "objectives": [
+    "從「沿實軸與沿虛軸的差商要相等」推出 u_x = v_y、u_y = −v_x，以及 f′ = u_x + i v_x。",
+    "說清楚條件：CR 方程是可微的必要條件；加上偏導數連續才是充分條件。",
+    "用 CR 方程判斷可微的點、算 f′，並由實部 u 求出共軛調和函數 v。"
+  ],
+  "visual": null,
+  "concept": [
+    {
+      "heading": "① 兩個方向，兩個式子",
+      "body": [
+        "設 f = u + iv 在 z₀ 可微。讓 h 沿實軸趨近 0（h = t）：差商 → ∂f/∂x = u_x + i v_x。",
+        "讓 h 沿虛軸趨近 0（h = it）：差商 = (f(z₀ + it) − f(z₀))/(it) → (1/i)(u_y + i v_y) = v_y − i u_y。",
+        "可微時兩者都等於 f′(z₀)，比較實部與虛部就得到 Cauchy–Riemann 方程。"
+      ],
+      "tex": ["u_x=v_y,\\qquad u_y=-v_x,\\qquad f'(z_0)=u_x+i\\,v_x"],
+      "collapsible": false
+    },
+    {
+      "heading": "② 必要與充分",
+      "body": [
+        "必要：可微 ⇒ CR 方程在那一點成立。所以只要 CR 不成立，就一定不可微。z̄ = x − iy：u_x = 1、v_y = −1，不相等，處處不可微。",
+        "反過來，只有 CR 成立還不夠（有偏導數存在、CR 成立、卻不可微的反例）。常用的充分條件：u、v 在 z₀ 附近有連續的一階偏導數，而且在 z₀ 滿足 CR，則 f 在 z₀ 可微。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 調和函數",
+      "body": [
+        "若 u、v 有連續二階偏導數（下一課會看到全純函數自動如此），由 CR：u_xx = v_yx、u_yy = −v_xy，而 v_xy = v_yx（〈Clairaut 定理〉），相加得 u_xx + u_yy = 0。u 是調和函數，v 也是。",
+        "反過來，給一個調和的 u，可以用 CR 解出 v（叫 u 的共軛調和函數），湊成一個全純函數 u + iv。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "充分條件的證明骨架",
+      "body": [
+        "偏導數連續 ⇒ u、v 在 ℝ² 意義下可微：Δu = u_x a + u_y b + o(|h|)、Δv = v_x a + v_y b + o(|h|)（h = a + ib）。代入 CR（u_y = −v_x、v_y = u_x）：Δu + iΔv = (u_x + i v_x)(a + ib) + o(|h|)。除以 h，o(|h|)/h → 0，差商 → u_x + i v_x。"
+      ],
+      "collapsible": true
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "e^z 處處可微",
+      "prompt": "用 CR 方程證明 e^z 處處可微，並求導數。",
+      "steps": [
+        "e^z = eˣ cos y + i eˣ sin y：u = eˣ cos y、v = eˣ sin y。",
+        "u_x = eˣ cos y、v_y = eˣ cos y，相等；u_y = −eˣ sin y、v_x = eˣ sin y，u_y = −v_x。",
+        "四個偏導數處處連續，所以 e^z 處處可微，f′ = u_x + i v_x = eˣ cos y + i eˣ sin y = e^z。"
+      ],
+      "answer": "(e^z)′ = e^z",
+      "claim": "D(e^x*cos(y), , x) == D(e^x*sin(y), , y) ;; D(e^x*cos(y), , y) == -D(e^x*sin(y), , x)"
+    },
+    {
+      "title": "只在一條線上可微",
+      "prompt": "f(z) = x² + i y² 在哪些點可微？",
+      "steps": [
+        "u = x²、v = y²。u_x = 2x、v_y = 2y；u_y = 0、v_x = 0。",
+        "第二條 u_y = −v_x 永遠成立；第一條要 2x = 2y，也就是 y = x。",
+        "偏導數處處連續，所以 f 恰好在直線 y = x 上的點可微，其他點都不可微。"
+      ],
+      "answer": "只在直線 y = x 上",
+      "claim": "D(x^2, , x) - D(y^2, , y) == 2*x - 2*y"
+    },
+    {
+      "title": "求共軛調和函數",
+      "prompt": "u = x³ − 3xy²。找 v 使 u + iv 全純。",
+      "problemId": "der-088",
+      "steps": [
+        "先檢查調和：u_xx = 6x，u_yy = −6x，和為 0。",
+        "v_y = u_x = 3x² − 3y²，對 y 積分：v = 3x²y − y³ + g(x)。",
+        "v_x = 6xy + g′(x) 要等於 −u_y = 6xy，所以 g′ = 0，g 是常數。",
+        "v = 3x²y − y³ + C，u + iv = z³ + iC。"
+      ],
+      "answer": "v = 3x²y − y³ + C",
+      "claim": "D(x^3-3*x*y^2, , x) == D(3*x^2*y-y^3, , y) ;; D(x^3-3*x*y^2, , y) == -D(3*x^2*y-y^3, , x) ;; D2(x^3-3*x*y^2, , x) + D2(x^3-3*x*y^2, , y) == 0"
+    }
+  ],
+  "pitfalls": [
+    "第二條方程的負號：u_y = −v_x。",
+    "把 CR 成立當成可微的充分條件，忘了偏導數連續的要求。",
+    "求共軛調和函數時，積分常數寫成常數 C，而不是 g(x)（另一個變數的函數），結果漏項。",
+    "f′ 寫成 u_x + i u_y；正確是 u_x + i v_x。"
+  ],
+  "checks": [
+    {
+      "ask": "Cauchy–Riemann 方程是？",
+      "options": [
+        { "label": "u_x = v_y，u_y = −v_x", "correct": true },
+        { "label": "u_x = v_x，u_y = v_y", "why": "比較的是沿實軸 (u_x + iv_x) 與沿虛軸 (v_y − iu_y) 的差商，交叉相等。" },
+        { "label": "u_x = −v_y，u_y = v_x", "why": "負號放錯了：用 z² 檢查，u = x² − y²、v = 2xy，u_x = 2x = v_y。" }
+      ]
+    },
+    {
+      "ask": "u = x² + y²、v = 0。f = u + iv 在哪裡可微？",
+      "options": [
+        { "label": "只在 0", "correct": true },
+        { "label": "處處可微", "why": "u_x = 2x 要等於 v_y = 0，只有 x = 0；u_y = 2y 要等於 −v_x = 0，只有 y = 0。" },
+        { "label": "處處不可微", "why": "在 0 兩條方程都成立，偏導數也連續，所以在 0 可微（這就是 |z|²）。" }
+      ]
+    },
+    {
+      "ask": "f 在 z₀ 可微時，f′(z₀) 用 u、v 表示是？",
+      "options": [
+        { "label": "u_x + i v_x", "correct": true },
+        { "label": "u_x + i u_y", "why": "那是 u 的梯度寫成複數，不是 f′。沿實軸的差商是 ∂f/∂x = u_x + i v_x。" },
+        { "label": "u_y + i v_y", "why": "沿虛軸的差商要除以 i：(u_y + iv_y)/i = v_y − iu_y。" }
+      ]
+    },
+    {
+      "ask": "u = x² − y² 是哪個全純函數的實部？",
+      "options": [
+        { "label": "z²", "correct": true },
+        { "label": "|z|²", "why": "|z|² = x² + y²，而且它不是全純函數。" },
+        { "label": "z̄²", "why": "z̄² 的實部也是 x² − y²，但 z̄² 不全純（虛部是 −2xy，不滿足 CR）。" }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": ["cauchy-riemann", "complex", "harmonic"],
+    "fine": ["cauchy-riemann-derive", "cauchy-riemann-check", "cauchy-riemann-derivative", "harmonic-conjugate"]
+  },
+  "practice": [
+    { "id": "der-079", "core": true, "trains": "cauchy-riemann-check" },
+    { "id": "der-080", "core": true, "trains": "cauchy-riemann-check" },
+    { "id": "der-088", "core": true, "trains": "harmonic-conjugate" },
+    { "id": "der-087", "trains": "harmonic-conjugate" }
+  ],
+  "gaps": [
+    { "tag": "cauchy-riemann-check", "count": 2, "note": "找出 f = u + iv 可微的點集合的題（例如 x² + iy²），R3。" },
+    { "tag": "harmonic-conjugate", "count": 2, "note": "給 u 求 v 的題（答案是含 x、y 的式子），R3。" }
+  ]
+}

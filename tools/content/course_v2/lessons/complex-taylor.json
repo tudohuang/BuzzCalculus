@@ -1,0 +1,209 @@
+{
+  "id": "complex-taylor",
+  "title": "複數上的 Taylor 級數",
+  "readMinutes": 12,
+  "totalMinutes": 35,
+  "prerequisites": [
+    "cauchy-integral-formula",
+    "taylor-series",
+    "radius-of-convergence",
+    "geometric-series"
+  ],
+  "next": [
+    "laurent-series"
+  ],
+  "related": [
+    "holomorphic",
+    "taylor-limits-higher"
+  ],
+  "objectives": [
+    "說得出定理：f 在圓盤 |z − z₀| < R 上全純，則它在整個圓盤上等於自己的 Taylor 級數，係數 aₙ = f⁽ⁿ⁾(z₀)/n!。",
+    "用「收斂半徑 = 到最近奇異點的距離」直接讀出收斂半徑，包括實數函數的 Maclaurin 級數。",
+    "解釋 1/(1 + x²) 在實數線上處處光滑、Maclaurin 級數卻只在 |x| < 1 收斂的原因。"
+  ],
+  "visual": "複平面上標出 f 的奇異點（例如 1/(1 + z²) 的 ±i）。以展開中心 z₀ 為圓心畫圓，半徑自動停在碰到最近奇異點的地方；拖動 z₀，圓跟著變大變小。下方同步畫實數線上的部分和，圓的範圍以外部分和明顯發散。",
+  "concept": [
+    {
+      "heading": "① 全純就能展開，而且展開到碰到奇異點為止",
+      "body": [
+        "定理：f 在 |z − z₀| < R 上全純，則 f(z) = Σ aₙ(z − z₀)ⁿ 對整個圓盤成立，aₙ = f⁽ⁿ⁾(z₀)/n!。",
+        "所以收斂半徑至少是「z₀ 到最近奇異點的距離」；而級數在收斂圓盤裡定義一個全純函數，不可能跨過奇異點，所以收斂半徑正好就是這個距離（f 在奇異點真的不能延伸時）。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 解開實數的謎",
+      "body": [
+        "1/(1 + x²) = 1 − x² + x⁴ − ⋯ 只在 |x| < 1 收斂。在實數線上看，x = 1 一點特別的事都沒有：函數光滑、有界。",
+        "答案在複平面：1/(1 + z²) 在 z = ±i 有奇異點，到 0 的距離是 1。收斂圓盤是圓，它在實數線上的部分就是 (−1, 1)。實數上看不到的奇異點，控制了實數級數的收斂範圍。",
+        "同理，tan x 的 Maclaurin 級數收斂半徑是 π/2（cos z 在 ±π/2 為 0），eˣ、sin x 的半徑是 ∞（整函數）。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 實際算係數：借用已知的級數",
+      "body": [
+        "係數公式 f⁽ⁿ⁾(z₀)/n! 很少真的去微分。因為展開是唯一的（同一個圓盤上兩個冪級數相等，係數就逐項相等），任何方法得到的冪級數都是「那一個」Taylor 級數：代換（e^{z²} = Σ z^{2n}/n!）、幾何級數（1/(1 − z)）、相乘相除、逐項微分或積分，全部合法，而且在圓盤裡處處成立，不只在實數線上。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "為什麼可以展開：幾何級數 + Cauchy 公式",
+      "body": [
+        "取 |z − z₀| < r < R，在圓 |w − z₀| = r 上用 Cauchy 積分公式 f(z) = (1/2πi)∮ f(w)/(w − z) dw。",
+        "把 1/(w − z) 寫成 (1/(w − z₀)) · 1/(1 − (z − z₀)/(w − z₀))，而 |(z − z₀)/(w − z₀)| < 1，展成〈幾何級數〉。級數在圓上一致收斂，可以逐項積分，每一項正好是 aₙ(z − z₀)ⁿ，aₙ = (1/2πi)∮ f(w)/(w − z₀)^{n+1} dw = f⁽ⁿ⁾(z₀)/n!。"
+      ],
+      "collapsible": true
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "實數級數的收斂半徑",
+      "prompt": "1/(1 + x²) 的 Maclaurin 級數收斂半徑是多少？在 x = 0.5、0.9 檢查。",
+      "steps": [
+        "1/(1 + z²) 的奇異點在 z = ±i，到 0 的距離 1，所以半徑 1。",
+        "也可以從幾何級數看：1/(1 + x²) = Σ (−1)ⁿ x^{2n}，公比 −x²，|x| < 1 才收斂。",
+        "x = 0.5：Σ (−1)ⁿ 0.25ⁿ = 1/1.25 = 0.8；x = 0.9：和是 1/1.81。都在半徑內，跟函數值一致。"
+      ],
+      "answer": "1",
+      "claim": "SUM((-1)^n*0.5^(2n), 0) == 1/1.25 ;; SUM((-1)^n*0.9^(2n), 0) == 1/(1+0.81)"
+    },
+    {
+      "title": "不在原點展開",
+      "prompt": "1/(z² + 4) 在 z₀ = 1 的 Taylor 級數收斂半徑",
+      "steps": [
+        "奇異點 z = ±2i。",
+        "距離 |1 − 2i| = √(1 + 4) = √5，|1 + 2i| = √5。",
+        "收斂半徑 √5。如果只看實數線（1/(x² + 4) 在實數上沒有奇異點），完全猜不到這個數。"
+      ],
+      "answer": "√5",
+      "claim": "sqrt(1^2+2^2) == sqrt(5)"
+    },
+    {
+      "title": "tan 的係數與半徑",
+      "prompt": "tan z 在 0 的 Taylor 級數：前三項與收斂半徑",
+      "steps": [
+        "tan z = sin z/cos z，奇異點是 cos z 的零點 ±π/2, ±3π/2, …（cos z 的零點全在實數線上）。最近的距離 π/2，所以半徑 π/2。",
+        "係數：用〈高階 Taylor 求極限〉的相除展開，tan z = z + z³/3 + 2z⁵/15 + ⋯。",
+        "檢查 z⁵ 的係數：lim (tan x − x − x³/3)/x⁵ = 2/15。"
+      ],
+      "answer": "z + z³/3 + 2z⁵/15 + ⋯，半徑 π/2",
+      "claim": "LIM((tan(x)-x-x^3/3)/x^5, 0) == 2/15"
+    }
+  ],
+  "pitfalls": [
+    "只看實數線找奇異點，算錯收斂半徑。",
+    "不在原點展開時，距離算成 |奇異點| 而不是 |奇異點 − z₀|。",
+    "以為「無限次可微」就能等於 Taylor 級數；那只對全純函數保證，實數的 e^{−1/x²} 是反例。",
+    "收斂半徑內的端點行為：圓盤邊界上可能收斂也可能發散，定理不管邊界。"
+  ],
+  "checks": [
+    {
+      "ask": "1/(1 + x²) 的 Maclaurin 級數只在 |x| < 1 收斂，原因是？",
+      "options": [
+        {
+          "label": "1/(1 + z²) 在 ±i 有奇異點，距離原點 1",
+          "correct": true
+        },
+        {
+          "label": "1/(1 + x²) 在 x = 1 不可微",
+          "why": "它在實數線上處處無限次可微；限制來自複平面上的 ±i。"
+        },
+        {
+          "label": "因為 x = 1 時分母等於 2",
+          "why": "分母不為 0 不構成任何限制；看的是複數的奇異點。"
+        }
+      ]
+    },
+    {
+      "ask": "1/(z − 3) 在 z₀ = i 的 Taylor 級數收斂半徑是？",
+      "options": [
+        {
+          "label": "√10",
+          "correct": true
+        },
+        {
+          "label": "3",
+          "why": "3 是奇異點到原點的距離；展開中心是 i，距離是 |3 − i| = √10。"
+        },
+        {
+          "label": "1",
+          "why": "1 是 |i|，跟奇異點無關。"
+        }
+      ]
+    },
+    {
+      "ask": "e^z 的 Maclaurin 級數收斂半徑是？",
+      "options": [
+        {
+          "label": "∞",
+          "correct": true
+        },
+        {
+          "label": "1",
+          "why": "e^z 是整函數，沒有奇異點，半徑沒有上限。"
+        },
+        {
+          "label": "2π",
+          "why": "週期 2πi 跟奇異點無關；e^z 處處全純。"
+        }
+      ]
+    },
+    {
+      "ask": "f 在 |z| < 2 全純，在 z = 2 有奇異點。它在 0 的 Taylor 級數在 z = 1 + i 收斂嗎？",
+      "options": [
+        {
+          "label": "收斂：|1 + i| = √2 < 2",
+          "correct": true
+        },
+        {
+          "label": "發散：1 + i 不是實數",
+          "why": "收斂範圍是一個圓盤，不只實數線。"
+        },
+        {
+          "label": "不能判斷",
+          "why": "定理保證整個 |z| < 2 都收斂，√2 < 2。"
+        }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": [
+      "taylor",
+      "power-series",
+      "complex"
+    ],
+    "fine": [
+      "complex-taylor-radius-singularity",
+      "complex-taylor-coefficients",
+      "complex-taylor-real-mystery"
+    ]
+  },
+  "practice": [
+    {
+      "id": "world-036",
+      "core": true,
+      "trains": "complex-taylor-coefficients"
+    },
+    {
+      "id": "td-ser-002",
+      "trains": "complex-taylor-coefficients"
+    },
+    {
+      "id": "burst-boss-lim-001",
+      "trains": "complex-taylor-coefficients"
+    }
+  ],
+  "gaps": [
+    {
+      "tag": "complex-taylor-radius-singularity",
+      "count": 4,
+      "note": "用「到最近奇異點的距離」求收斂半徑的題（1/(1 + x²)、tan x、在非原點展開），R3。"
+    },
+    {
+      "tag": "complex-taylor-real-mystery",
+      "count": 1,
+      "note": "概念選擇題：實數上光滑但收斂半徑有限的原因，R2。"
+    }
+  ]
+}
