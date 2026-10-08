@@ -1,0 +1,151 @@
+{
+  "id": "dominated-convergence",
+  "title": "控制收斂定理",
+  "readMinutes": 12,
+  "totalMinutes": 35,
+  "prerequisites": ["fatou-lemma", "monotone-convergence-theorem", "lebesgue-integral"],
+  "next": [],
+  "related": ["limit-integral-swap", "uniform-convergence"],
+  "objectives": [
+    "寫得出控制收斂定理的完整假設：fₙ → f a.e.，且有一個可積的 g 使 |fₙ| ≤ g 對所有 n 成立。",
+    "遇到 lim ∫ fₙ，會找控制函數 g、驗證 ∫g < ∞，再把極限搬進積分。",
+    "能說明為什麼 n x e^{−nx²} 這類例子找不到可積的控制函數，以及這跟結論失敗的關係。"
+  ],
+  "visual": "y = n x e^{−nx²} 在 (0, 1] 上，n 從 1 拉到 50，同時畫出所有已畫過曲線的上包絡（陰影）。包絡貼近 y = 1/(e x)，在 x → 0 時衝上去，面積讀數發散。對照組 y = nx/(1 + n²x²)：上包絡被水平線 y = 1/2 壓住，面積有限，曲線的面積讀數 ln(1 + n²)/(2n) 往 0 掉。",
+  "concept": [
+    {
+      "heading": "① 給所有 fₙ 蓋一個屋頂",
+      "body": [
+        "回到〈極限與積分交換〉的問題：lim ∫ fₙ 什麼時候等於 ∫ lim fₙ？單調收斂定理要求遞增；Fatou 引理只給 ≤，因為面積可能漏掉：推到無窮遠、或擠進尖峰。",
+        "直覺，不是證明：如果有一個固定的屋頂 g，所有 |fₙ| 都待在它底下，而屋頂底下的總面積有限，那麼面積既推不到無窮遠（g 的尾巴面積很小），也擠不成無限高的尖峰（g 在小集合上的面積很小）。漏不掉，等號就回來了。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 定理",
+      "body": [
+        "設 fₙ 可測，fₙ → f 幾乎處處，而且存在可積的 g（∫g < ∞）使得對所有 n，|fₙ| ≤ g 幾乎處處。則 f 可積，而且",
+        "關鍵字是「一個」g 管住「所有」n。每個 fₙ 各自有界是不夠的。",
+        "特例（有界收斂定理）：μ(X) < ∞、|fₙ| ≤ M，就取 g = M。這比 Riemann 理論要的一致收斂寬鬆得多：逐點（甚至幾乎處處）收斂就好。"
+      ],
+      "tex": ["\\lim_{n\\to\\infty}\\int_X |f_n-f|\\,d\\mu=0,\\qquad \\lim_{n\\to\\infty}\\int_X f_n\\,d\\mu=\\int_X f\\,d\\mu"],
+      "collapsible": false
+    },
+    {
+      "heading": "證明：對 2g − |fₙ − f| 用 Fatou",
+      "body": [
+        "f 是可測函數列的幾乎處處極限，所以可測（在零測集上改值，Lebesgue 測度完備）。由 |fₙ| ≤ g 取極限得 |f| ≤ g a.e.，所以 ∫|f| ≤ ∫g < ∞，f 可積。",
+        "令 hₙ = 2g − |fₙ − f|。因為 |fₙ − f| ≤ |fₙ| + |f| ≤ 2g，hₙ ≥ 0 a.e.；而 fₙ → f a.e.，所以 hₙ → 2g a.e.。",
+        "Fatou：∫2g ≤ liminf ∫hₙ = ∫2g − limsup ∫|fₙ − f|（liminf(c − aₙ) = c − limsup aₙ）。∫2g 是有限數，兩邊消去得 limsup ∫|fₙ − f| ≤ 0，所以 ∫|fₙ − f| → 0。",
+        "最後 |∫fₙ − ∫f| ≤ ∫|fₙ − f| → 0。g 可積用在哪裡：消去 ∫2g 那一步，若 ∫g = ∞ 就是 ∞ − ∞，證明斷掉。"
+      ],
+      "collapsible": true
+    },
+    {
+      "heading": "③ 最小的屋頂",
+      "body": [
+        "能當屋頂的函數一定 ≥ sup_n |fₙ|。所以判斷有沒有可積的控制函數，就看 sup_n |fₙ| 可不可積。sup_n |fₙ| 可積，就拿它當 g；它不可積，就沒有任何 g 可用，定理不適用（但結論不一定錯，只是要另外判斷）。"
+      ],
+      "collapsible": false
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "常數屋頂",
+      "prompt": "求 lim_{n→∞} ∫₀¹ nx/(1 + n²x²) dx。",
+      "problemId": "an-uf-004",
+      "steps": [
+        "逐點：x = 0 時 fₙ = 0；x > 0 時 fₙ(x) ≤ nx/(n²x²) = 1/(nx) → 0。極限函數是 0。",
+        "屋頂：由 1 + (nx)² ≥ 2nx（因為 (1 − nx)² ≥ 0），0 ≤ fₙ(x) ≤ 1/2 對所有 n、x 成立。g = 1/2 在 [0, 1] 上可積。",
+        "控制收斂定理：lim ∫₀¹ fₙ = ∫₀¹ 0 = 0。",
+        "核對：∫₀¹ nx/(1 + n²x²) dx = ln(1 + n²)/(2n) → 0。注意這不是一致收斂：x = 1/n 時 fₙ = 1/2，sup 範數一直是 1/2。"
+      ],
+      "answer": "0",
+      "claim": "n*x/(1+n^2*x^2) <= 1/2 ;; INT(n*x/(1+n^2*x^2), 0, 1) == ln(1+n^2)/(2n) ;; LIM(ln(1+n^2)/(2n), inf) == 0 ;; SUB(n*x/(1+n^2*x^2), 1/n) == 1/2"
+    },
+    {
+      "title": "無窮區間：屋頂要自己找",
+      "prompt": "求 lim_{n→∞} ∫₀^∞ (1 + x/n)^{−n} dx。",
+      "steps": [
+        "逐點：(1 + x/n)ⁿ → eˣ，所以 fₙ(x) = (1 + x/n)^{−n} → e^{−x}。",
+        "屋頂：n ≥ 2、x ≥ 0 時，二項展開每一項都非負，(1 + x/n)ⁿ ≥ 1 + x + (n(n − 1)/2)(x/n)² = 1 + x + (1 − 1/n)x²/2 ≥ 1 + x + x²/4 = (1 + x/2)²。",
+        "所以 0 < fₙ ≤ g(x) = (1 + x/2)^{−2}，而 ∫₀^∞ (1 + x/2)^{−2} dx = 2 < ∞。（n = 1 時 ∫(1 + x)^{−1} = ∞，所以從 n = 2 開始看。）",
+        "控制收斂定理：lim ∫₀^∞ fₙ = ∫₀^∞ e^{−x} dx = 1。核對：∫₀^∞ (1 + x/n)^{−n} dx = n/(n − 1) → 1。"
+      ],
+      "answer": "1",
+      "note": "屋頂只要「可積」，不必是 fₙ 的極限或什麼漂亮的函數；常用技巧是把 n 固定在最小的那一項。",
+      "claim": "(1+x/n)^n >= (1+x/2)^2 ;; INT((1+x/2)^(-2), 0, inf) == 2 ;; INT((1+x/n)^(-n), 0, inf) == n/(n-1) ;; INT(e^(-x), 0, inf) == 1"
+    },
+    {
+      "title": "找不到屋頂的例子",
+      "prompt": "fₙ(x) = n x e^{−nx²} 在 [0, 1]。逐點收斂到 0，但 ∫₀¹ fₙ = (1 − e^{−n})/2 → 1/2。說明為什麼控制收斂定理用不上。",
+      "problemId": "lb-con-003",
+      "steps": [
+        "最小的屋頂是 G(x) = sup_n fₙ(x)。固定 x ∈ (0, 1]，取 n = ⌈1/x²⌉，則 1/x² ≤ n ≤ 1/x² + 1，所以 nx² ≤ 1 + x² ≤ 2。",
+        "fₙ(x) = n x e^{−nx²} ≥ (1/x²) · x · e^{−2} = e^{−2}/x。所以 G(x) ≥ e^{−2}/x。",
+        "∫₀¹ (1/x) dx = ∞，所以 G 不可積，任何屋頂 g ≥ G 也不可積。定理的假設不成立。",
+        "結論也確實失敗：lim ∫ fₙ = 1/2 ≠ 0 = ∫ lim fₙ。面積擠進 x = 1/√(2n) 附近的尖峰裡。"
+      ],
+      "answer": "sup_n fₙ(x) ≥ e^{−2}/x 不可積，沒有可積的控制函數",
+      "note": "把 n 當連續變數，t x e^{−tx²} 在 t = 1/x² 取最大值 1/(e x)，同樣是 1/x 的大小。",
+      "claim": "INT(n*x*e^(-n*x^2), 0, 1) == (1-e^(-n))/2 ;; LIM((1-e^(-n))/2, inf) == 1/2 ;; SUB(t*x*e^(-t*x^2), 1/x^2, t) == 1/(e*x)"
+    }
+  ],
+  "pitfalls": [
+    "每個 fₙ 都有界就以為可以用。n χ_{(0,1/n)} 每個都有界，但沒有一個可積的 g 同時壓住全部。",
+    "找了屋頂卻忘了驗證 ∫g < ∞。在無窮區間上，常數屋頂通常不可積。",
+    "把定理用在 a.e. 都不收斂的函數列。收斂是假設，不是結論。",
+    "以為沒有控制函數就代表 lim ∫ ≠ ∫ lim。定理只是不適用，結論可能碰巧仍然成立，要另外判斷。"
+  ],
+  "checks": [
+    {
+      "ask": "控制收斂定理需要的假設是？",
+      "options": [
+        { "label": "fₙ → f a.e.，且有一個可積的 g 使 |fₙ| ≤ g 對所有 n 成立", "correct": true },
+        { "label": "fₙ → f a.e.，且每個 fₙ 都有界", "why": "各自有界不夠：n χ_{(0,1/n)} 每個都有界，∫ = 1 卻收斂到 0。要的是同一個可積的 g。" },
+        { "label": "fₙ 一致收斂到 f", "why": "那是 Riemann 理論的條件，在無窮區間上甚至不夠。控制收斂定理只要 a.e. 收斂加可積的屋頂。" }
+      ]
+    },
+    {
+      "ask": "lim_{n→∞} ∫₀¹ nx/(1 + n²x²) dx 是？",
+      "options": [
+        { "label": "0", "correct": true },
+        { "label": "1/2", "why": "1/2 是屋頂 g 的高度，也是 sup 範數，不是極限。逐點極限是 0，用 g = 1/2 控制後積分的極限是 0。" },
+        { "label": "不存在，因為 fₙ 不一致收斂", "why": "不一致收斂只代表 Riemann 版的交換定理不能用；控制收斂定理照樣適用。" }
+      ]
+    },
+    {
+      "ask": "fₙ = n χ_{(0, 1/n)} 在 [0, 1]。為什麼控制收斂定理用不上？",
+      "options": [
+        { "label": "sup_n fₙ(x) 大約是 1/x，不可積，找不到可積的屋頂", "correct": true },
+        { "label": "fₙ 不可測", "why": "常數乘區間的指示函數是可測的。問題是沒有一個共同的可積屋頂。" },
+        { "label": "fₙ 不逐點收斂", "why": "每個 x > 0，n > 1/x 之後 fₙ(x) = 0；x = 0 時恆為 0。逐點收斂到 0。" }
+      ]
+    },
+    {
+      "ask": "下列哪一個一定成立？",
+      "options": [
+        { "label": "在 [0, 1] 上 |fₙ| ≤ 5 且 fₙ → f a.e.，則 ∫fₙ → ∫f", "correct": true },
+        { "label": "在 [0, ∞) 上 |fₙ| ≤ 5 且 fₙ → f a.e.，則 ∫fₙ → ∫f", "why": "在無窮長的區間上常數 5 不可積，不能當屋頂；χ_{[n,n+1]} 就是反例。" },
+        { "label": "在 [0, 1] 上每個 fₙ 連續且 fₙ → f 逐點，則 ∫fₙ → ∫f", "why": "連續不代表有共同屋頂。n x e^{−nx²} 連續、逐點趨近 0，積分卻趨近 1/2。" }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": ["lebesgue", "convergence-theorem", "uniform-convergence"],
+    "fine": ["dct-hypothesis-check", "dct-find-dominator", "dct-no-dominator", "dct-limit-compute"]
+  },
+  "practice": [
+    { "id": "an-uf-004", "core": true, "trains": "dct-find-dominator" },
+    { "id": "lb-con-006", "core": true, "trains": "dct-limit-compute" },
+    { "id": "lb-con-003", "core": true, "trains": "dct-no-dominator" },
+    { "id": "lb-con-001", "core": true, "trains": "dct-no-dominator" },
+    { "id": "lb-con-004", "trains": "dct-limit-compute" },
+    { "id": "lb-con-005", "challenge": true, "trains": "dct-no-dominator", "note": "挑戰：證明 sup_n n xⁿ 在 x → 1 時不可積，所以 1 ≠ 0 不違反定理。" }
+  ],
+  "gaps": [
+    { "tag": "dct-limit-compute", "count": 3, "note": "要先找控制函數才能算的 lim ∫ fₙ（例如 lim ∫₀^∞ sin(x/n)/(x(1 + x²)) dx、lim ∫₀ⁿ (1 − x/n)ⁿ e^{x/2} dx）。" },
+    { "tag": "dct-find-dominator", "count": 2, "note": "給函數列，選出可積的控制函數（選擇題，含不可積的誘答）。" },
+    { "tag": "dct-hypothesis-check", "count": 2, "note": "判斷題：哪一個定理（單調收斂、Fatou、控制收斂）可以用。" }
+  ]
+}

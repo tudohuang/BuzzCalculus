@@ -1,0 +1,152 @@
+{
+  "id": "initial-value-problem",
+  "title": "初值問題",
+  "readMinutes": 9,
+  "totalMinutes": 25,
+  "prerequisites": ["ode-intro"],
+  "next": ["separation-of-variables"],
+  "related": ["second-order-linear"],
+  "objectives": [
+    "用初始條件從一整族解裡定出常數，條件不在 x = 0 也會做。",
+    "說出解只在某個區間上存在，會找出含初始點的那段區間。",
+    "知道一階要一個條件、二階要兩個條件，並說得出存在唯一定理要求什麼。"
+  ],
+  "visual": "畫出 y = Ce^{2x} 的一整族曲線（C 從 −3 到 3）。拖動平面上的一個點 (x₀, y₀)，只有一條曲線被點亮：恰好通過該點的那條，旁邊顯示對應的 C。第二張圖畫 y = 1/(1 − x)：從 (0, 1) 出發往右走，在 x = 1 前衝上無窮大；x > 1 那一支用灰色畫，標示「不屬於這個初值問題」。",
+  "concept": [
+    {
+      "heading": "① 從一族解裡挑一條",
+      "body": [
+        "y′ = 2y 的解是 y = Ce^{2x}，每個 C 是一條曲線。再加一句「y(0) = 3」，意思是：要通過點 (0, 3) 的那一條。代進去 3 = Ce⁰ = C，答案 y = 3e^{2x}。",
+        "微分方程加上初始條件，叫初值問題。做法永遠是兩步：先找出帶常數的一族解，再用條件定常數。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 條件不在 0 也一樣",
+      "body": [
+        "y(1) = 2 就是代 x = 1：2 = Ce³，C = 2e^{−3}，y = 2e^{3(x−1)}（以 y′ = 3y 為例）。不要把 2 直接當成 C；只有條件給在 x = 0、而且一族解在 0 的值剛好是 C 時，兩者才相等。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 解不一定活在整條數線上",
+      "body": [
+        "y′ = y²、y(0) = 1 的解是 y = 1/(1 − x)（〈分離變數〉會推導）。代回去：y′ = 1/(1 − x)² = y²，y(0) = 1。",
+        "但 x → 1⁻ 時 y → ∞。公式在 x > 1 也有值，可是那一支和 (0, 1) 中間隔著一個斷點，解不能跳過去。所以這個初值問題的解只活在 x < 1。方程看起來很溫和，解卻在有限的距離內衝到無窮大，這叫爆破。",
+        "所以初值問題的答案要包含區間：含初始點、而且解在上面好好定義的最大區間。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 二階要兩個條件",
+      "body": [
+        "二階方程的一族解有兩個常數，例如 y″ + y = 0 的解是 A cos x + B sin x。一個條件只定得出一個常數，所以要給兩個：通常是 y(x₀) 與 y′(x₀)，物理上就是起始位置與起始速度（〈二階線性〉）。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "存在唯一定理（一階）",
+      "body": [
+        "考慮 y′ = f(x, y)、y(x₀) = y₀。若 f 與 ∂f/∂y 在某個包含 (x₀, y₀) 的矩形裡連續，則存在一個包含 x₀ 的區間，上面恰好有一個解。",
+        "注意兩點。第一，定理只保證「某個區間」，不保證整條數線：y′ = y² 的 f = y² 處處連續，解仍然在 x = 1 爆破。第二，條件不成立時唯一性可能失敗：y′ = 3y^{2/3}、y(0) = 0 同時有 y = 0 與 y = x³ 兩個解；這裡 ∂f/∂y = 2y^{−1/3} 在 y = 0 不連續。"
+      ],
+      "collapsible": true
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "條件在 x = 0",
+      "prompt": "y′ = −2y，y(0) = 5。",
+      "problemId": "cx-ode-002",
+      "steps": [
+        "y′ = ky 的解是 Ce^{kx}，這裡 k = −2：y = Ce^{−2x}。",
+        "代 x = 0：5 = Ce⁰ = C。",
+        "y = 5e^{−2x}。指數部分處處有定義，解在整條數線上都存在。"
+      ],
+      "answer": "y = 5e^{−2x}",
+      "claim": "D(5*e^(-2x)) == -2*(5*e^(-2x)) ;; SUB(5*e^(-2x),0) == 5"
+    },
+    {
+      "title": "條件不在 0",
+      "prompt": "y′ = 3y，y(1) = 2。",
+      "steps": [
+        "一族解：y = Ce^{3x}。",
+        "代 x = 1：2 = Ce³，所以 C = 2/e³ = 2e^{−3}。",
+        "y = 2e^{−3} · e^{3x} = 2e^{3(x−1)}。",
+        "檢查：x = 1 時 2e⁰ = 2。"
+      ],
+      "answer": "y = 2e^{3(x−1)}",
+      "claim": "D(2*e^(3(x-1))) == 3*(2*e^(3(x-1))) ;; SUB(2*e^(3(x-1)),1) == 2"
+    },
+    {
+      "title": "會爆破的解",
+      "prompt": "驗證 y = 1/(1 − x) 是 y′ = y²、y(0) = 1 的解，並求它存在的區間。",
+      "problemId": "ode-sep-003",
+      "steps": [
+        "y = (1 − x)^{−1}，y′ = −(1 − x)^{−2} · (−1) = 1/(1 − x)²。",
+        "y² = 1/(1 − x)²，和 y′ 相同。y(0) = 1/1 = 1。",
+        "x = 1 時分母為 0。含 x = 0 而且沒有斷點的最大區間是 (−∞, 1)。",
+        "x → 1⁻ 時 y → +∞：解在 x = 1 之前就爆破了。"
+      ],
+      "answer": "y = 1/(1 − x)，x < 1",
+      "claim": "D(1/(1-x)) == (1/(1-x))^2 ;; SUB(1/(1-x),0) == 1"
+    }
+  ],
+  "pitfalls": [
+    "條件給 y(1) = 2，卻直接寫 C = 2。",
+    "忘了寫區間：y = 1/(1 − x) 這個初值問題的解只在 x < 1。",
+    "二階方程只用一個條件，留下一個沒定的常數。",
+    "先代條件再積分：要先得到帶常數的一族解，最後才代條件。"
+  ],
+  "checks": [
+    {
+      "ask": "y = Ce^{4x}，y(0) = 7，C 是？",
+      "options": [
+        { "label": "7", "correct": true },
+        { "label": "4", "why": "4 是指數裡的 k，由方程決定；C 由條件決定。" },
+        { "label": "7e^{−4}", "why": "那是條件給在 x = 1 時的答案；這裡 x = 0，e⁰ = 1。" }
+      ]
+    },
+    {
+      "ask": "y = Ce^{2x}，y(1) = e²，C 是？",
+      "options": [
+        { "label": "1", "correct": true },
+        { "label": "e²", "why": "直接把 y 值當成 C 只在 x = 0 成立；這裡要解 Ce² = e²。" },
+        { "label": "e⁴", "why": "C 要除以 e^{2·1}，不是乘：Ce² = e² 得 C = 1。" }
+      ]
+    },
+    {
+      "ask": "y′ = y²、y(0) = 1 的解 y = 1/(1 − x)，存在的區間是？",
+      "options": [
+        { "label": "x < 1", "correct": true },
+        { "label": "所有實數", "why": "x = 1 時分母為 0，解在那裡衝到無窮大，過不去。" },
+        { "label": "x > 1", "why": "那一支不含初始點 x = 0，和 (0, 1) 隔著斷點，不是這個初值問題的解。" }
+      ]
+    },
+    {
+      "ask": "二階方程 y″ + y = 0 要確定唯一一個解，需要什麼？",
+      "options": [
+        { "label": "y(x₀) 與 y′(x₀) 兩個條件", "correct": true },
+        { "label": "只要 y(x₀)", "why": "一族解 A cos x + B sin x 有兩個常數，一個條件只能定一個。" },
+        { "label": "不需要條件，解是唯一的", "why": "cos x、sin x、2 cos x 都是解，沒有條件挑不出哪一個。" }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": ["ode", "ivp", "ode-intro"],
+    "fine": ["ivp-solve-constant", "ivp-interval-of-existence", "ivp-existence-uniqueness", "ivp-second-order-conditions"]
+  },
+  "practice": [
+    { "id": "gap-der-ode-001", "core": true, "trains": "ivp-solve-constant" },
+    { "id": "cx-ode-002", "core": true, "trains": "ivp-solve-constant" },
+    { "id": "ode-val-001", "core": true, "trains": "ivp-solve-constant" },
+    { "id": "gap-der-ode-002", "core": true, "trains": "ivp-solve-constant" },
+    { "id": "ode-h2-002", "trains": "ivp-second-order-conditions", "note": "一族解 A cos x + B sin x 已知時，用兩個條件定 A、B。" },
+    { "id": "ode-sep-003", "challenge": true, "trains": "ivp-interval-of-existence", "note": "挑戰：要先會〈分離變數〉；注意解只活在 x < 1。" }
+  ],
+  "gaps": [
+    { "tag": "ivp-interval-of-existence", "count": 2, "note": "R2–R3：給解的公式，問含初始點的存在區間（例如 1/(1 − x)、tan x）。" },
+    { "tag": "ivp-existence-uniqueness", "count": 2, "note": "R3：判斷存在唯一定理的條件是否成立（例如 y′ = 3y^{2/3}、y(0) = 0 有兩個解）。" },
+    { "tag": "ivp-solve-constant", "count": 1, "note": "R1：條件不在 x = 0 的定常數題（例如 y′ = 3y、y(1) = 2）。題庫幾乎都是 y(0)。" }
+  ]
+}

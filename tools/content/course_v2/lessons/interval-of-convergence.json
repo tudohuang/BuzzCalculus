@@ -1,0 +1,143 @@
+{
+  "id": "interval-of-convergence",
+  "title": "收斂區間",
+  "readMinutes": 9,
+  "totalMinutes": 40,
+  "prerequisites": ["radius-of-convergence", "conditional-convergence"],
+  "next": ["power-series-calculus"],
+  "related": ["p-series", "alternating-series-test", "divergence-test"],
+  "objectives": [
+    "求出 R 之後，把兩個端點分別代回，變成數值級數各自判斷。",
+    "知道端點上比值判別一定給 L = 1，要改用 p 級數、交錯級數判別或發散判別。",
+    "寫出四種可能的區間 (a, b)、[a, b)、(a, b]、[a, b] 之一，並能說出端點是絕對還是條件收斂。"
+  ],
+  "visual": "數線上先畫出開區間 (−1, 1)，兩端畫成空心圈。點一下右端點 x = 1：旁邊展開級數 1 + 1/2 + 1/3 + …，部分和曲線一路上升，圈保持空心。點左端點 x = −1：展開 −1 + 1/2 − 1/3 + …，部分和來回收斂，圈變成實心。最後顯示 [−1, 1)。",
+  "concept": [
+    {
+      "heading": "① 收斂半徑只回答了一半",
+      "body": [
+        "〈收斂半徑〉告訴我們 |x − a| < R 收斂、|x − a| > R 發散，但兩個端點 x = a − R、x = a + R 什麼都沒說。端點上比值的極限剛好是 1，比值判別在那裡一定失效。",
+        "所以端點要「代進去」：x 換成具體的數，冪級數就變成一個普通的數值級數，再用前面學過的工具判斷。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 端點常見的三種樣子",
+      "body": [
+        "代進去以後，通常會變成：p 級數（看 p 是否 > 1，〈p 級數〉）；交錯的 p 級數（用〈交錯級數判別〉，可能條件收斂）；各項不趨近 0 的級數（〈發散判別〉）。",
+        "兩個端點的結果可以不一樣，所以收斂區間有四種可能：(a − R, a + R)、[a − R, a + R)、(a − R, a + R]、[a − R, a + R]。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 完整流程",
+      "body": [
+        "1. 對整個項用比值（或根值）判別，得到 |x − a| < R。",
+        "2. 寫出兩個端點 a ± R。",
+        "3. 每個端點代回去，化簡成數值級數，判斷收斂或發散（有需要時說明絕對或條件收斂）。",
+        "4. 寫出區間，收斂的端點用中括號。",
+        "中心不在 0 的時候，例如 (2x − 1)ⁿ = 2ⁿ(x − 1/2)ⁿ，先把它化成 (x − a) 的形式，中心與半徑才不會讀錯。"
+      ],
+      "collapsible": false
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "一邊收斂一邊發散",
+      "prompt": "求 Σ_{n=1}^∞ xⁿ/n 的收斂區間。",
+      "problemId": "lec-14-m5",
+      "steps": [
+        "比值：(n/(n + 1))|x| → |x|，R = 1，中心 0。",
+        "x = 1：Σ 1/n，調和級數，發散。",
+        "x = −1：Σ (−1)ⁿ/n，1/n 遞減到 0，交錯級數判別給收斂（條件收斂，和是 −ln 2）。",
+        "收斂區間 [−1, 1)。"
+      ],
+      "answer": "[−1, 1)",
+      "claim": "LIM(x/(x+1), inf) == 1 ;; SUM((-1)^n/n, 1) == -ln(2)"
+    },
+    {
+      "title": "中心不在 0",
+      "prompt": "求 Σ_{n=1}^∞ (x − 2)ⁿ/(n · 3ⁿ) 的收斂區間。",
+      "problemId": "lec-14-q1a",
+      "steps": [
+        "比值 → |x − 2|/3，R = 3，中心 2。端點 2 − 3 = −1 與 2 + 3 = 5。",
+        "x = 5：(x − 2)ⁿ/3ⁿ = 1，級數是 Σ 1/n，發散。",
+        "x = −1：(x − 2)ⁿ/3ⁿ = (−3)ⁿ/3ⁿ = (−1)ⁿ，級數是 Σ (−1)ⁿ/n，收斂。",
+        "收斂區間 [−1, 5)。"
+      ],
+      "answer": "[−1, 5)",
+      "claim": "LIM((x/(x+1))/3, inf) == 1/3 ;; SUB((x-2)^n/3^n, -1) == (-1)^n ;; SUM((-1)^n/n, 1) == -ln(2)"
+    },
+    {
+      "title": "兩端都發散",
+      "prompt": "求 Σ_{n=1}^∞ n(x + 1)ⁿ/4ⁿ 的收斂區間。",
+      "problemId": "lec-14-q1b",
+      "steps": [
+        "比值：((n + 1)/n) · |x + 1|/4 → |x + 1|/4，R = 4，中心 −1。端點 −5 與 3。",
+        "x = 3：(x + 1)ⁿ/4ⁿ = 1，級數是 Σ n，各項 → ∞，發散。",
+        "x = −5：(x + 1)ⁿ/4ⁿ = (−1)ⁿ，級數是 Σ (−1)ⁿ n，各項大小是 n，不趨近 0，發散。",
+        "收斂區間 (−5, 3)。"
+      ],
+      "answer": "(−5, 3)",
+      "claim": "LIM(((x+1)/x)/4, inf) == 1/4 ;; SUB(abs(n*(-4)^n/4^n), 10) == 10"
+    }
+  ],
+  "pitfalls": [
+    "忘了檢查端點，直接寫開區間。",
+    "在端點上用比值判別，得到 1 之後卡住。",
+    "(x − 2)ⁿ 的中心讀成 −2，端點全部錯位。",
+    "(2x − 1)ⁿ 的半徑沒有除以 2。",
+    "端點代入後符號算錯：(−3)ⁿ/3ⁿ = (−1)ⁿ。"
+  ],
+  "checks": [
+    {
+      "ask": "Σ xⁿ/n² 的收斂區間是？",
+      "options": [
+        { "label": "[−1, 1]", "correct": true },
+        { "label": "(−1, 1)", "why": "兩個端點都要代：x = ±1 時是 Σ (±1)ⁿ/n²，絕對值是 Σ 1/n²，收斂。" },
+        { "label": "[−1, 1)", "why": "x = 1 時是 Σ 1/n²，p = 2 > 1，收斂，不是調和級數。" }
+      ]
+    },
+    {
+      "ask": "Σ_{n=0}^∞ xⁿ 的收斂區間是？",
+      "options": [
+        { "label": "(−1, 1)", "correct": true },
+        { "label": "[−1, 1)", "why": "x = −1 時是 1 − 1 + 1 − …，各項不趨近 0，發散。" },
+        { "label": "[−1, 1]", "why": "兩個端點的各項都是 ±1，不趨近 0，都發散。" }
+      ]
+    },
+    {
+      "ask": "為什麼端點不能用比值判別？",
+      "options": [
+        { "label": "在端點上比值的極限剛好是 1，判別法沒有結論", "correct": true },
+        { "label": "因為端點上級數一定發散", "why": "端點可能收斂，例如 Σ xⁿ/n 在 x = −1。" },
+        { "label": "因為端點上級數一定收斂", "why": "也可能發散，例如 Σ xⁿ/n 在 x = 1。" }
+      ]
+    },
+    {
+      "ask": "Σ_{n=1}^∞ (2x − 1)ⁿ/√n 的收斂區間是？",
+      "options": [
+        { "label": "[0, 1)", "correct": true },
+        { "label": "[−1, 1)", "why": "(2x − 1)ⁿ = 2ⁿ(x − 1/2)ⁿ，中心 1/2、半徑 1/2；|2x − 1| < 1 給的是 0 < x < 1。" },
+        { "label": "(0, 1]", "why": "端點反了：x = 1 時是 Σ 1/√n，發散；x = 0 時是 Σ (−1)ⁿ/√n，收斂。" }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": ["endpoint-analysis", "power-series", "radius"],
+    "fine": ["interval-endpoint-test", "interval-center-shift", "interval-endpoint-classify"]
+  },
+  "practice": [
+    { "id": "lec-14-m5", "core": true, "trains": "interval-endpoint-test" },
+    { "id": "lec-14-q1a", "core": true, "trains": "interval-center-shift" },
+    { "id": "lec-14-q1b", "core": true, "trains": "interval-center-shift" },
+    { "id": "lec-14-q1c", "core": true, "trains": "interval-endpoint-test" },
+    { "id": "gap-ser-end-002", "trains": "interval-endpoint-test" },
+    { "id": "gap-ser-end-001", "trains": "interval-endpoint-classify" },
+    { "id": "rel-adv-020", "trains": "interval-endpoint-classify" },
+    { "id": "rel-hard-ser-011", "trains": "interval-endpoint-classify" },
+    { "id": "lec-14-q4a", "trains": "interval-endpoint-test" },
+    { "id": "lec-14-q1d", "challenge": true, "trains": "interval-center-shift", "note": "挑戰：(2x − 1)ⁿ 要先改寫成 2ⁿ(x − 1/2)ⁿ，中心和半徑才讀得對。" }
+  ],
+  "gaps": []
+}

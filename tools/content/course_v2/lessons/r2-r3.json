@@ -1,0 +1,150 @@
+{
+  "id": "r2-r3",
+  "title": "ℝ² 與 ℝ³",
+  "readMinutes": 10,
+  "totalMinutes": 30,
+  "prerequisites": ["trig-functions"],
+  "next": ["two-variable-functions"],
+  "related": ["gradient", "directional-derivative", "tangent-plane"],
+  "objectives": [
+    "會算 ℝ³ 中兩點的距離與向量的長度，會把向量化成單位向量。",
+    "會用內積判斷兩個向量是否垂直，並算出夾角。",
+    "看到平面方程式 ax + by + cz = d 就讀得出法向量 (a, b, c)，也會反過來寫出平面。"
+  ],
+  "visual": "一個可以轉動的 ℝ³ 座標系。拖動兩個向量 u、v 的箭頭端點，旁邊即時顯示 u·v、|u|、|v| 與夾角 θ；當 u·v = 0 時兩個箭頭之間出現直角記號。第二個畫面：一支法向量 n 立在一點上，與 n 垂直的所有箭頭鋪成一個平面。",
+  "concept": [
+    {
+      "heading": "① 從平面到空間",
+      "body": [
+        "ℝ² 是平面，點寫成 (x, y)；ℝ³ 多一個高度，點寫成 (x, y, z)。三個軸兩兩垂直。",
+        "兩點距離用兩次畢氏定理：先在 xy 平面上走 √(Δx² + Δy²)，再和高度差 Δz 組成直角三角形，得 √(Δx² + Δy² + Δz²)。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 向量：有方向、有長度的箭頭",
+      "body": [
+        "向量 v = (a, b, c) 只記「往哪裡走、走多遠」，不管從哪裡出發。從 P 到 Q 的向量是 Q − P。",
+        "長度 |v| = √(a² + b² + c²)。把向量除以自己的長度，得到同方向、長度為 1 的單位向量 v/|v|。後面〈方向導數〉要求方向一定是單位向量，就是這個動作。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 內積：量兩個方向有多一致",
+      "body": [
+        "u·v = u₁v₁ + u₂v₂ + u₃v₃，對應分量相乘再加起來，結果是一個數。",
+        "它和夾角 θ 的關係是 u·v = |u||v| cos θ（0 ≤ θ ≤ π）。所以：u·v > 0 夾角是銳角，u·v < 0 是鈍角，u·v = 0 兩向量垂直（u、v 都不是零向量時）。判斷垂直只要算內積，不用算長度。"
+      ],
+      "tex": ["\\mathbf u\\cdot\\mathbf v=|\\mathbf u|\\,|\\mathbf v|\\cos\\theta"],
+      "collapsible": false
+    },
+    {
+      "heading": "【為什麼】u·v = |u||v| cos θ 的推導",
+      "body": [
+        "u、v 與 u − v 圍成三角形。餘弦定理：|u − v|² = |u|² + |v|² − 2|u||v| cos θ。",
+        "左邊用分量展開：|u − v|² = (u − v)·(u − v) = |u|² − 2u·v + |v|²。兩式比較，得 u·v = |u||v| cos θ。"
+      ],
+      "collapsible": true
+    },
+    {
+      "heading": "④ 平面：用一支垂直的箭頭決定",
+      "body": [
+        "過點 P₀ = (x₀, y₀, z₀)、和 n = (a, b, c) 垂直的平面：平面上任一點 P，向量 P − P₀ 都和 n 垂直，也就是 n·(P − P₀) = 0：",
+        "a(x − x₀) + b(y − y₀) + c(z − z₀) = 0。n 叫法向量。反過來，看到 ax + by + cz = d，x、y、z 的係數 (a, b, c) 就是法向量。〈切平面〉會用到這個寫法。"
+      ],
+      "collapsible": false
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "空間中的距離",
+      "prompt": "求 P(1, 2, 3) 與 Q(3, −1, 9) 的距離。",
+      "steps": [
+        "差：Q − P = (3 − 1, −1 − 2, 9 − 3) = (2, −3, 6)。",
+        "平方相加：2² + (−3)² + 6² = 4 + 9 + 36 = 49。",
+        "開根號：√49 = 7。"
+      ],
+      "answer": "7",
+      "claim": "sqrt(2^2+3^2+6^2) == 7"
+    },
+    {
+      "title": "垂直判斷與夾角",
+      "prompt": "a = (1, 2, 2)、b = (2, 1, −2)、c = (2, 2, 1)。a 和 b 垂直嗎？a 和 c 的夾角的 cos 是多少？",
+      "steps": [
+        "a·b = 1·2 + 2·1 + 2·(−2) = 2 + 2 − 4 = 0，而且兩個都不是零向量，所以垂直。",
+        "a·c = 1·2 + 2·2 + 2·1 = 8。",
+        "|a| = √(1 + 4 + 4) = 3，|c| = √(4 + 4 + 1) = 3。",
+        "cos θ = 8/(3·3) = 8/9。內積是正的，夾角是銳角。"
+      ],
+      "answer": "a ⊥ b；a、c 夾角的 cos θ = 8/9",
+      "claim": "1*2+2*1+2*(-2) == 0 ;; (1*2+2*2+2*1)/(3*3) == 8/9"
+    },
+    {
+      "title": "由點與法向量寫平面",
+      "prompt": "寫出過 (1, 2, 3)、法向量 n = (2, −1, 2) 的平面方程式。",
+      "steps": [
+        "套 a(x − x₀) + b(y − y₀) + c(z − z₀) = 0：2(x − 1) − (y − 2) + 2(z − 3) = 0。",
+        "展開：2x − 2 − y + 2 + 2z − 6 = 0，得 2x − y + 2z = 6。",
+        "檢查：代 (1, 2, 3)，2 − 2 + 6 = 6，點在平面上；係數 (2, −1, 2) 正是 n。"
+      ],
+      "answer": "2x − y + 2z = 6",
+      "claim": "2*(x-1)-(y-2)+2*(z-3) == 2x - y + 2z - 6"
+    }
+  ],
+  "pitfalls": [
+    "距離忘了開根號，或把座標差直接相加而不是平方相加。",
+    "把內積算成一個向量。u·v 是一個數。",
+    "單位向量除以分量的和，而不是除以長度。",
+    "把平面 ax + by + cz = d 的常數 d 放進法向量。d 只決定平面平移到哪裡。"
+  ],
+  "checks": [
+    {
+      "ask": "原點到 (2, 3, 6) 的距離是？",
+      "options": [
+        { "label": "7", "correct": true },
+        { "label": "11", "why": "這是把座標直接相加 2 + 3 + 6。距離要平方相加再開根號：√(4 + 9 + 36) = 7。" },
+        { "label": "49", "why": "49 是平方和，還沒開根號。" }
+      ]
+    },
+    {
+      "ask": "u = (1, 2, −1)、v = (3, −1, 1)，兩者的關係是？",
+      "options": [
+        { "label": "垂直", "correct": true },
+        { "label": "平行", "why": "平行要分量成比例；(3, −1, 1) 不是 (1, 2, −1) 的倍數。算內積：3 − 2 − 1 = 0，是垂直。" },
+        { "label": "要先算長度才能判斷", "why": "內積是 0 就已經代表垂直（兩者都不是零向量），長度用不到。" }
+      ]
+    },
+    {
+      "ask": "(3, 0, 4) 方向的單位向量是？",
+      "options": [
+        { "label": "(3/5, 0, 4/5)", "correct": true },
+        { "label": "(3/7, 0, 4/7)", "why": "7 是分量的和，不是長度。長度是 √(9 + 16) = 5。" },
+        { "label": "(1, 0, 1)", "why": "這只是把非零分量改成 1，方向變了，長度也不是 1（是 √2）。" }
+      ]
+    },
+    {
+      "ask": "平面 3x − y + 2z = 7 的一個法向量是？",
+      "options": [
+        { "label": "(3, −1, 2)", "correct": true },
+        { "label": "(0, −7, 0)", "why": "這是平面上的一個點（x = z = 0 時 y = −7），不是法向量。法向量讀 x、y、z 的係數。" },
+        { "label": "(1, 1, 1)", "why": "係數不是都當成 1；y 前面是 −1、z 前面是 2。" }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": ["vector", "dot-product", "plane", "multivariable"],
+    "fine": ["r3-distance", "vector-unit", "vector-dot-angle", "vector-perpendicular", "plane-normal-equation"]
+  },
+  "practice": [
+    { "id": "lec-16-m1", "core": true, "trains": "vector-dot-angle" },
+    { "id": "lec-16-q1d", "core": true, "trains": "plane-normal-equation", "note": "兩平面的夾角就是兩個法向量的夾角（取銳角）。" },
+    { "id": "lec-16-q1b", "core": true, "trains": "plane-normal-equation", "note": "垂直於平面的直線，方向就是法向量；把直線代入平面解 t。" },
+    { "id": "lec-16-m3", "trains": "plane-normal-equation", "note": "設平面 ax + by + cz = d，三點代進去，用 d 表示 a、b、c，再挑一個讓係數都是整數的 d。" },
+    { "id": "lec-16-q1a", "challenge": true, "trains": "plane-normal-equation", "note": "挑戰：從 Q 沿法向量走到平面，走過的長度就是距離（接上一題的 t）。" }
+  ],
+  "gaps": [
+    { "tag": "r3-distance", "count": 2, "note": "R1：ℝ³ 兩點距離、球面方程式。" },
+    { "tag": "vector-perpendicular", "count": 2, "note": "R1–R2：用內積判斷垂直、求使兩向量垂直的參數。" },
+    { "tag": "vector-unit", "count": 1, "note": "R1：化成單位向量（接〈方向導數〉）。" }
+  ]
+}

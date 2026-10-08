@@ -1,0 +1,243 @@
+{
+  "id": "second-derivative-test-2d",
+  "title": "二階判別",
+  "readMinutes": 9,
+  "totalMinutes": 35,
+  "prerequisites": [
+    "hessian",
+    "critical-points-2d",
+    "second-derivative-test"
+  ],
+  "next": [
+    "lagrange-one"
+  ],
+  "related": [],
+  "objectives": [
+    "照 D 與 f_xx 的符號把臨界點分成局部極大、局部極小、鞍點。",
+    "說出判別法的前提：∇f = 0，而且二階偏導數在附近連續。",
+    "遇到 D = 0 知道判別法沒有結論，能舉出 x⁴ + y⁴、x⁴ − y⁴ 的例子並改用其他方法。"
+  ],
+  "visual": "f = x³ + y³ − 3xy 的等高線圖與 3D 曲面並排，兩個臨界點用點標出。點 (1, 1) 附近等高線是一圈圈封閉的小橢圓（谷底）；點 (0, 0) 附近等高線交叉成 X 形（鞍點）。點選任一臨界點，旁邊顯示 f_xx、f_yy、f_xy、D 的值與判斷結果。",
+  "concept": [
+    {
+      "heading": "① 判別法",
+      "body": [
+        "設 (a, b) 是臨界點（∇f(a, b) = 0），f 的二階偏導數在 (a, b) 附近連續。令 D = f_xx f_yy − f_xy²（在 (a, b) 取值）：",
+        "操作順序：1. 解 f_x = f_y = 0 找出所有臨界點。2. 算出 f_xx、f_yy、f_xy 的一般式。3. 每個臨界點分別代入，算 D，對上表。每個臨界點都要各算一次，不同點的結果可以不一樣。"
+      ],
+      "tex": [
+        "\\begin{aligned}D>0,\\ f_{xx}>0&\\ \\Rightarrow\\ \\text{局部極小}\\\\ D>0,\\ f_{xx}<0&\\ \\Rightarrow\\ \\text{局部極大}\\\\ D<0&\\ \\Rightarrow\\ \\text{鞍點}\\\\ D=0&\\ \\Rightarrow\\ \\text{沒有結論}\\end{aligned}"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 為什麼是這樣",
+      "body": [
+        "〈Hessian〉那一課的配方：臨界點附近 f 的變化像 ½(A h² + 2B hk + C k²)。D > 0 時整個二次式跟 A = f_xx 同號，往任何方向走 f 都變大（A > 0）或都變小（A < 0）。D < 0 時有的方向變大、有的方向變小，就是鞍點。",
+        "D > 0 時 f_xx f_yy > f_xy² ≥ 0，所以 f_xx 與 f_yy 一定同號，用 f_yy 判斷也可以。這也代表 D > 0 時 f_xx 不可能是 0。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ D = 0：判別法沒有結論",
+      "body": [
+        "x⁴ + y⁴、−x⁴ − y⁴、x⁴ − y⁴ 在原點都是臨界點，二階偏導數全是 0，D = 0。但第一個是極小、第二個是極大、第三個是鞍點。D = 0 時二次式看不出形狀，要回到原函數：配方、沿幾條路徑比較 f 的符號等。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 局部不等於絕對",
+      "body": [
+        "判別法只看臨界點附近。x³ + y³ − 3xy 在 (1, 1) 是局部極小，值 −1；但沿 x 軸 f = x³，x → −∞ 時 f → −∞，所以 −1 不是絕對極小。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "證明的想法（嚴格版要補的地方）",
+      "body": [
+        "以 D > 0、f_xx > 0 為例。用兩變數 Taylor 定理（帶餘項）：f(a + h, b + k) − f(a, b) = ½(A* h² + 2B* hk + C* k²)，其中 A*、B*、C* 是二階偏導數在 (a, b) 與 (a + h, b + k) 連線上某一點的值。",
+        "二階偏導數連續，所以 (h, k) 夠小時 A* > 0 且 A*C* − B*² > 0 仍成立（D 與 f_xx 在 (a, b) 都是嚴格不等式）。由配方，右邊在 (h, k) ≠ (0, 0) 時大於 0，所以 (a, b) 是嚴格局部極小。這就是為什麼前提要寫「連續」。"
+      ],
+      "collapsible": true
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "兩個臨界點，兩種結果",
+      "prompt": "分類 f = x³ + y³ − 3xy 的臨界點 (0, 0) 與 (1, 1)，並求局部極小值。",
+      "problemId": "lec-18-q1b",
+      "steps": [
+        "二階偏導數：f_xx = 6x，f_yy = 6y，f_xy = −3。",
+        "(0, 0)：f_xx = 0，f_yy = 0，D = 0 − 9 = −9 < 0，鞍點。",
+        "(1, 1)：f_xx = 6，f_yy = 6，D = 36 − 9 = 27 > 0，而且 f_xx > 0，局部極小。",
+        "局部極小值 f(1, 1) = 1 + 1 − 3 = −1。"
+      ],
+      "answer": "(0, 0) 鞍點；(1, 1) 局部極小，值 −1",
+      "claim": "SUB(x^3+1-3x, 1) == -1 ;; 0*0 - (-3)^2 == -9 ;; 6*6 - (-3)^2 == 27"
+    },
+    {
+      "title": "二次函數的最小值",
+      "prompt": "求 f = x² + 2xy + 3y² − 4x − 6y 的最小值。",
+      "problemId": "der-047",
+      "steps": [
+        "f_x = 2x + 2y − 4 = 0，f_y = 2x + 6y − 6 = 0。相減得 4y − 2 = 0，y = 1/2，x = 3/2。",
+        "f_xx = 2，f_yy = 6，f_xy = 2，D = 12 − 4 = 8 > 0，f_xx > 0：局部極小。",
+        "f(3/2, 1/2) = 9/4 + 3/2 + 3/4 − 6 − 3 = −9/2。",
+        "這裡的局部極小也是全域最小：f 是二次多項式，二次部分 x² + 2xy + 3y² = (x + y)² + 2y² 只在原點為 0、其他都正，往任何方向走遠 f 都會變大。"
+      ],
+      "answer": "−9/2",
+      "claim": "SUB(x^2 + x + 3/4 - 4x - 3, 3/2) == -9/2 ;; D(x^2+2*x*(1/2)+3/4-4x-3, 3/2) + 1 == 1 ;; 2*6 - 2^2 == 8"
+    },
+    {
+      "title": "D = 0：回到原函數",
+      "prompt": "f = x⁴ + y⁴ 與 g = x⁴ − y⁴ 在原點各是什麼？",
+      "problemId": "lec-18-m3",
+      "steps": [
+        "兩者在原點的二階偏導數都是 0，D = 0，判別法沒有結論。",
+        "f：除了原點以外 x⁴ + y⁴ > 0 = f(0, 0)，所以原點是局部（也是絕對）極小。",
+        "g：沿 x 軸 g = x⁴ > 0，沿 y 軸 g = −y⁴ < 0，原點兩邊都有比它大和比它小的值，是鞍點。"
+      ],
+      "answer": "f 是極小，g 是鞍點",
+      "claim": null,
+      "claimNote": "結論來自符號論證（沿兩軸比較 g 的正負），不是一個可以數值比對的等式。"
+    }
+  ],
+  "pitfalls": [
+    "D < 0 時還去看 f_xx 的正負；D < 0 就是鞍點。",
+    "D = 0 時說「是鞍點」或「不是極值」；正確的說法是判別法沒有結論。",
+    "在不是臨界點的地方套判別法。",
+    "把局部極小當成絕對極小。"
+  ],
+  "checks": [
+    {
+      "ask": "臨界點處 f_xx = 2、f_yy = −2、f_xy = 0，這一點是？",
+      "options": [
+        {
+          "label": "鞍點",
+          "correct": true
+        },
+        {
+          "label": "局部極小",
+          "why": "f_xx > 0 只有在 D > 0 時才代表極小；這裡 D = −4 < 0。"
+        },
+        {
+          "label": "判別法沒有結論",
+          "why": "D = 2·(−2) − 0 = −4，不是 0，判別法有結論。"
+        }
+      ]
+    },
+    {
+      "ask": "臨界點處 f_xx = −3、f_yy = −2、f_xy = 1，這一點是？",
+      "options": [
+        {
+          "label": "局部極大",
+          "correct": true
+        },
+        {
+          "label": "局部極小",
+          "why": "D = 6 − 1 = 5 > 0 只說明是極值；f_xx < 0 代表往下彎，是極大。"
+        },
+        {
+          "label": "鞍點",
+          "why": "鞍點要 D < 0；這裡 D = 5 > 0。"
+        }
+      ]
+    },
+    {
+      "ask": "臨界點處 f_xx = 4、f_yy = 1、f_xy = 3，這一點是？",
+      "options": [
+        {
+          "label": "鞍點",
+          "correct": true
+        },
+        {
+          "label": "局部極小",
+          "why": "f_xx、f_yy 都正還不夠，交叉項太大：D = 4 − 9 = −5 < 0。"
+        },
+        {
+          "label": "局部極大",
+          "why": "D < 0 是鞍點；而且 f_xx > 0 也不會是極大。"
+        }
+      ]
+    },
+    {
+      "ask": "在臨界點算出 D = 0，代表？",
+      "options": [
+        {
+          "label": "判別法沒有結論，要用別的方法",
+          "correct": true
+        },
+        {
+          "label": "一定是鞍點",
+          "why": "x⁴ + y⁴ 在原點 D = 0，卻是極小。"
+        },
+        {
+          "label": "這一點不是臨界點",
+          "why": "臨界點看的是 ∇f = 0，跟 D 無關。"
+        }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": [
+      "hessian",
+      "extrema",
+      "multivariable"
+    ],
+    "fine": [
+      "second-test-2d-classify",
+      "second-test-2d-degenerate",
+      "local-vs-absolute-2d"
+    ]
+  },
+  "practice": [
+    {
+      "id": "lec-18-m2",
+      "core": true,
+      "trains": "second-test-2d-classify"
+    },
+    {
+      "id": "der-055",
+      "core": true,
+      "trains": "second-test-2d-classify"
+    },
+    {
+      "id": "der-056",
+      "core": true,
+      "trains": "second-test-2d-classify"
+    },
+    {
+      "id": "lec-18-q1b",
+      "core": true,
+      "trains": "second-test-2d-classify"
+    },
+    {
+      "id": "der-047",
+      "core": true,
+      "trains": "second-test-2d-classify"
+    },
+    {
+      "id": "der-048",
+      "core": true,
+      "trains": "second-test-2d-classify"
+    },
+    {
+      "id": "lec-18-m3",
+      "core": true,
+      "trains": "second-test-2d-degenerate"
+    },
+    {
+      "id": "lec-18-q1c",
+      "challenge": true,
+      "trains": "local-vs-absolute-2d",
+      "note": "挑戰：局部極小不一定是絕對極小，看 f 沿某條線往哪裡去。"
+    }
+  ],
+  "gaps": [
+    {
+      "tag": "second-test-2d-degenerate",
+      "count": 2,
+      "note": "R3：D = 0 時改用配方或路徑比較來判斷（只有一題選擇題）。"
+    }
+  ]
+}

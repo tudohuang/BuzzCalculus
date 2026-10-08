@@ -1,0 +1,146 @@
+{
+  "id": "critical-points-2d",
+  "title": "臨界點",
+  "readMinutes": 10,
+  "totalMinutes": 35,
+  "prerequisites": ["critical-points", "partial-derivatives", "gradient"],
+  "next": ["hessian"],
+  "related": ["second-derivative-test-2d", "lagrange-one"],
+  "objectives": [
+    "說得出為什麼內部的局部極值點（偏導數存在時）一定滿足 f_x = f_y = 0。",
+    "解 f_x = 0、f_y = 0 的聯立方程，找出所有臨界點。",
+    "在有界閉區域上找絕對極值：內部臨界點加上邊界，全部比大小。"
+  ],
+  "visual": "三個曲面並排：碗 x² + y²（底部是極小）、倒碗 −x² − y²（頂部是極大）、馬鞍 x² − y²。三個曲面在原點的切平面都是水平的。在馬鞍上沿 x 軸走是往上彎，沿 y 軸走是往下彎：同一個點，一個方向是谷底、另一個方向是山頂。",
+  "concept": [
+    {
+      "heading": "① 山頂和谷底的切平面是水平的",
+      "body": [
+        "f 在內部點 (a, b) 有局部極大。把 y 固定成 b，只看 x 的函數 g(x) = f(x, b)：它在 x = a 也是局部極大，所以單變數的結果（內部極值點若可微，導數為 0）給 g′(a) = 0，也就是 f_x(a, b) = 0。同理固定 x，得 f_y(a, b) = 0。",
+        "所以 ∇f(a, b) = 0：切平面是水平的。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 臨界點的定義，以及它不保證極值",
+      "body": [
+        "定義域內部，∇f = 0 或某個偏導數不存在的點，叫臨界點。內部的極值只會發生在臨界點，所以找極值先找臨界點。",
+        "反過來不成立：f = x² − y² 在原點 ∇f = 0，但沿 x 軸往上、沿 y 軸往下，既不是極大也不是極小，這種點叫鞍點。分辨是哪一種，要等〈Hessian〉與〈二階判別〉。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 找臨界點就是解聯立方程",
+      "body": [
+        "寫出 f_x = 0、f_y = 0 兩條方程，聯立解。常用的手法：從一條解出某個變數代入另一條；或兩條相減消去一項。非線性的時候要小心不要漏解，例如兩邊同除以 x 之前先問 x 能不能是 0。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 絕對極值：別忘了邊界",
+      "body": [
+        "f 連續、區域 D 有界而且包含邊界（有界閉集，例如閉圓盤、閉矩形），f 在 D 上一定有絕對極大和絕對極小。它們可能在內部（那就是臨界點），也可能在邊界上。",
+        "步驟：1. 內部臨界點的值；2. 邊界上的最大最小（把邊界一段一段寫成單變數，或用〈Lagrange 乘數：一個條件〉）；3. 全部比大小。"
+      ],
+      "collapsible": false
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "一個臨界點",
+      "prompt": "f(x, y) = x² + y² − 2x + 4y 的臨界點。",
+      "problemId": "lec-18-m1",
+      "steps": [
+        "f_x = 2x − 2 = 0 得 x = 1；f_y = 2y + 4 = 0 得 y = −2。",
+        "臨界點 (1, −2)。",
+        "配方看形狀：f = (x − 1)² + (y + 2)² − 5，是一個碗，(1, −2) 是最低點，最小值 −5。"
+      ],
+      "answer": "(1, −2)",
+      "claim": "D(x^2+4-2x-8, 1) == 0 ;; D(1+y^2-2+4y, -2, y) == 0 ;; (1)^2 + (-2)^2 - 2*1 + 4*(-2) == -5"
+    },
+    {
+      "title": "非線性聯立",
+      "prompt": "f(x, y) = x³ + y³ − 3xy 的所有臨界點。",
+      "problemId": "lec-18-q1a",
+      "steps": [
+        "f_x = 3x² − 3y = 0 得 y = x²；f_y = 3y² − 3x = 0 得 x = y²。",
+        "把 y = x² 代入 x = y²：x = x⁴，也就是 x(x³ − 1) = 0。不要直接除以 x，x = 0 也是解。",
+        "x = 0 時 y = 0；x = 1 時 y = 1。（x³ = 1 的實數解只有 x = 1。）",
+        "臨界點：(0, 0) 與 (1, 1)。"
+      ],
+      "answer": "(0, 0) 與 (1, 1)",
+      "claim": "D(x^3+1-3x, 1) == 0 ;; D(1+y^3-3y, 1, y) == 0 ;; D(x^3+1, 0) + 1 == 1"
+    },
+    {
+      "title": "矩形上的絕對極值",
+      "prompt": "f(x, y) = x² − 2xy + 2y 在 R：0 ≤ x ≤ 3、0 ≤ y ≤ 2 上的絕對極大與絕對極小。",
+      "problemId": "lec-18-q2c",
+      "steps": [
+        "內部：f_x = 2x − 2y = 0、f_y = −2x + 2 = 0，得 (1, 1)，f(1, 1) = 1。",
+        "邊 y = 0：f = x²，0 ≤ x ≤ 3，值域 0 到 9。邊 y = 2：f = x² − 4x + 4 = (x − 2)²，值域 0 到 4。",
+        "邊 x = 0：f = 2y，值域 0 到 4。邊 x = 3：f = 9 − 4y，值域 1 到 9。",
+        "全部比大小：最大 9（在 (3, 0)），最小 0（在 (0, 0) 與 (2, 2)）。內部臨界點的值 1 兩者都不是。"
+      ],
+      "answer": "絕對極大 9，絕對極小 0",
+      "claim": "SUB(x^2, 3) == 9 ;; SUB((x-2)^2, 2) == 0 ;; SUB(9-4y, 0, y) == 9 ;; 1 - 2 + 2 == 1"
+    }
+  ],
+  "pitfalls": [
+    "只解 f_x = 0，忘了 f_y = 0 也要成立。",
+    "解聯立時兩邊同除以 x，漏掉 x = 0 的解。",
+    "把每個臨界點都當成極值，忽略鞍點。",
+    "找絕對極值只看臨界點，沒有檢查邊界。"
+  ],
+  "checks": [
+    {
+      "ask": "f(x, y) 在內部的臨界點是指？",
+      "options": [
+        { "label": "f_x = f_y = 0，或某個偏導數不存在的點", "correct": true },
+        { "label": "只要 f_x = 0 的點", "why": "還要 f_y = 0：只有 x 方向平，y 方向可能還在爬坡。" },
+        { "label": "f = 0 的點", "why": "那是零點（等高線 f = 0），跟切平面水不水平無關。" }
+      ]
+    },
+    {
+      "ask": "f = x² − y² 在原點是什麼？",
+      "options": [
+        { "label": "臨界點，但不是極值（鞍點）", "correct": true },
+        { "label": "極小值", "why": "沿 y 軸 f = −y² < 0 = f(0, 0)，往那邊走會變小。" },
+        { "label": "不是臨界點", "why": "f_x = 2x、f_y = −2y 在原點都是 0，它是臨界點。" }
+      ]
+    },
+    {
+      "ask": "f = x² + xy + y² − 3x 的臨界點是？",
+      "options": [
+        { "label": "(2, −1)", "correct": true },
+        { "label": "(3/2, 0)", "why": "只用了 f_x = 2x + y − 3 = 0 又隨便取 y = 0；兩條要聯立，f_y = x + 2y = 0 也要成立。" },
+        { "label": "(−1, 2)", "why": "x、y 寫反了：由 x + 2y = 0 得 x = −2y，代入 2x + y = 3 得 y = −1、x = 2。" }
+      ]
+    },
+    {
+      "ask": "在閉圓盤 x² + y² ≤ 1 上找連續函數的絕對極值，要檢查？",
+      "options": [
+        { "label": "內部的臨界點，以及邊界圓上的點", "correct": true },
+        { "label": "只要內部的臨界點", "why": "極值可能在邊界上，例如 f = x 在圓盤上的最大值在 (1, 0)，那裡 ∇f ≠ 0。" },
+        { "label": "只要邊界", "why": "內部的臨界點也可能是極值，例如 x² + y² 的最小值在圓心。" }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": ["critical-points", "extrema", "multivariable"],
+    "fine": ["critical-2d-solve-system", "critical-2d-saddle-concept", "absolute-extrema-closed-region"]
+  },
+  "practice": [
+    { "id": "lec-18-m1", "core": true, "trains": "critical-2d-solve-system" },
+    { "id": "der-049", "core": true, "trains": "critical-2d-solve-system" },
+    { "id": "lec-18-q1a", "core": true, "trains": "critical-2d-solve-system" },
+    { "id": "lec-18-q2a", "core": true, "trains": "critical-2d-solve-system" },
+    { "id": "lec-18-m5", "core": true, "trains": "absolute-extrema-closed-region" },
+    { "id": "lec-18-q2b", "core": true, "trains": "absolute-extrema-closed-region" },
+    { "id": "lec-18-q2c", "trains": "absolute-extrema-closed-region" },
+    { "id": "lec-18-q3b", "trains": "absolute-extrema-closed-region" }
+  ],
+  "gaps": [
+    { "tag": "critical-2d-saddle-concept", "count": 2, "note": "R2：判斷 ∇f = 0 的點不一定是極值（沿兩條路徑比較符號）。" },
+    { "tag": "critical-2d-solve-system", "count": 2, "note": "R3：非線性聯立、容易漏解的臨界點題（例 xy(1 − x − y) 型）。" }
+  ]
+}

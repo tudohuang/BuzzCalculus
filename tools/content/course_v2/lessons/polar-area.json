@@ -1,0 +1,143 @@
+{
+  "id": "polar-area",
+  "title": "極座標面積",
+  "readMinutes": 10,
+  "totalMinutes": 40,
+  "prerequisites": ["polar-graphs", "riemann-sum-intuition", "trig-identity-integrals"],
+  "next": ["polar-arc-length"],
+  "related": ["polar-coordinates", "area-between-curves", "polar-double-integral"],
+  "objectives": [
+    "用扇形說明 A = ½∫ r² dθ 的來由。",
+    "選對 θ 的上下限：讓區域恰好被掃過一次（一片花瓣、一個圓）。",
+    "求兩條極座標曲線之間的面積：½∫ (R² − r²) dθ，交點由 R(θ) = r(θ) 解出。"
+  ],
+  "visual": "一根從原點出發的射線從 θ = α 轉到 θ = β，掃過心臟線 r = 1 + cos θ 圍起來的區域。掃過的部分切成很多個細扇形，每一個扇形半徑 r(θ)、角度 Δθ，即時累加 ½r²Δθ。第二個模式：射線掃過 r = 2cos θ，θ 超過 π/2 之後又把同一個圓掃一遍，累積面積變成兩倍，那一段塗成警告色。",
+  "concept": [
+    {
+      "heading": "① 切成扇形，不是長條",
+      "body": [
+        "直角座標算面積是切成鉛直長條，因為 y = f(x) 給的是每個 x 的高度。極座標給的是每個方向的距離 r(θ)，自然的切法是從原點出發的細扇形。",
+        "半徑 r、圓心角 Δθ 的扇形，面積是整個圓 πr² 乘上 Δθ/(2π)，也就是 ½r²Δθ。角度很小時，曲線在這個小角度內的 r 幾乎不變，那一小塊就約等於這樣的扇形。把它們加起來、取極限，就是積分。"
+      ],
+      "tex": ["A=\\int_\\alpha^\\beta \\frac12\\,r(\\theta)^2\\,d\\theta"],
+      "collapsible": false
+    },
+    {
+      "heading": "② 上下限：讓區域剛好被掃一次",
+      "body": [
+        "公式量的是射線從 α 轉到 β 時掃過的面積。轉多了，同一塊會被算兩次；轉少了，會漏掉。",
+        "怎麼找：先畫圖（〈極座標圖形〉），找 r = 0 的角度，那通常是一片花瓣或一個圈的起點和終點。例如 r = 2cos θ 從 θ = −π/2 到 π/2 就畫完整個圓；0 到 2π 會畫兩次。",
+        "r 是負的也沒關係：r² 一定是正的，公式照用，但要確認那一段沒有跟別段重疊。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 兩條曲線之間",
+      "body": [
+        "外面那條是 R(θ)、裡面那條是 r(θ)，同一個角度範圍內兩者之間的面積是 ½∫ (R² − r²) dθ：大扇形減小扇形。",
+        "注意是平方相減，不是相減再平方。角度範圍由兩曲線的交點決定：解 R(θ) = r(θ)。",
+        "有一個陷阱：兩條曲線可能在原點相交，但在不同的 θ 到達原點。這種交點解方程式找不到，要另外畫圖確認。"
+      ],
+      "collapsible": false
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "心臟線圍成的面積",
+      "prompt": "求 r = 1 + cos θ 所圍面積。",
+      "problemId": "lec-10-m4",
+      "steps": [
+        "θ 從 0 到 2π，曲線剛好畫一圈，r ≥ 0，沒有重疊。",
+        "r² = 1 + 2cos θ + cos²θ。",
+        "∫₀^{2π} 1 dθ = 2π；∫₀^{2π} 2cos θ dθ = 0；∫₀^{2π} cos²θ dθ = π。",
+        "A = ½(2π + 0 + π) = 3π/2。"
+      ],
+      "answer": "3π/2",
+      "claim": "INT((1+cos(t))^2/2, 0, 2*pi) == 3*pi/2"
+    },
+    {
+      "title": "上下限取錯會怎樣",
+      "prompt": "求 r = 2cos θ 所圍面積。",
+      "problemId": "exam-multi-007",
+      "steps": [
+        "這是圓心 (1, 0)、半徑 1 的圓（〈極座標〉），答案應該是 π。",
+        "θ 從 −π/2 到 π/2 時 r = 2cos θ ≥ 0，剛好畫一圈：A = ½∫_{−π/2}^{π/2} 4cos²θ dθ = 2 · (π/2) = π。",
+        "如果寫成 ½∫₀^{2π} 4cos²θ dθ，會得到 2π：π/2 到 3π/2 時 r ≤ 0，點跑到反方向，把同一個圓又畫了一次。"
+      ],
+      "answer": "π",
+      "claim": "INT((2*cos(t))^2/2, -pi/2, pi/2) == pi ;; INT((2*cos(t))^2/2, 0, 2*pi) == 2*pi"
+    },
+    {
+      "title": "圓內、心臟線外",
+      "prompt": "求在圓 r = 3cos θ 內、心臟線 r = 1 + cos θ 外的區域面積。",
+      "problemId": "lec-10-q2c",
+      "steps": [
+        "交點：3cos θ = 1 + cos θ，cos θ = 1/2，θ = ±π/3。在 −π/3 < θ < π/3 時 3cos θ > 1 + cos θ，圓在外。",
+        "A = ½∫_{−π/3}^{π/3} [(3cos θ)² − (1 + cos θ)²] dθ = ½∫_{−π/3}^{π/3} (8cos²θ − 2cos θ − 1) dθ。",
+        "被積函數是偶函數，改成 ∫₀^{π/3}，再用 8cos²θ = 4 + 4cos 2θ：∫₀^{π/3} (3 + 4cos 2θ − 2cos θ) dθ。",
+        "= π + 2sin(2π/3) − 2sin(π/3) = π + √3 − √3 = π。"
+      ],
+      "answer": "π",
+      "claim": "INT(((3*cos(t))^2-(1+cos(t))^2)/2, -pi/3, pi/3) == pi"
+    }
+  ],
+  "pitfalls": [
+    "忘了 ½，或寫成 ∫ r dθ。",
+    "上下限一律用 0 到 2π，把圓或花瓣算兩次。",
+    "兩曲線之間寫成 ½∫ (R − r)² dθ。",
+    "只靠解 R = r 找交點，漏掉在原點的交點。"
+  ],
+  "checks": [
+    {
+      "ask": "A = ½∫ r² dθ 裡的 ½ 從哪裡來？",
+      "options": [
+        { "label": "半徑 r、角度 Δθ 的扇形面積是 ½r²Δθ", "correct": true },
+        { "label": "因為圖形對稱，只算一半", "why": "½ 跟對稱無關，每個極座標面積都有它；它來自扇形面積 = πr² × Δθ/(2π)。" },
+        { "label": "因為三角形面積是底乘高除以 2", "why": "很接近（細扇形像細三角形），但式子是 ½r²Δθ，要從扇形看。" }
+      ]
+    },
+    {
+      "ask": "r = cos 2θ 一片花瓣的面積是？",
+      "options": [
+        { "label": "π/8", "correct": true },
+        { "label": "π/4", "why": "∫_{−π/4}^{π/4} cos²2θ dθ = π/4，還要乘 ½。" },
+        { "label": "π/2", "why": "那是整朵四葉玫瑰的面積（四片各 π/8）。" }
+      ]
+    },
+    {
+      "ask": "½∫₀^{2π} (2cos θ)² dθ = 2π，但 r = 2cos θ 是半徑 1 的圓。問題出在？",
+      "options": [
+        { "label": "θ 從 0 到 2π 把這個圓畫了兩次", "correct": true },
+        { "label": "½ 應該拿掉", "why": "拿掉會變 4π，更錯。公式沒錯，是上下限讓區域被掃兩次。" },
+        { "label": "r 是負的部分要扣掉", "why": "r² 不會是負的，什麼都扣不掉；要做的是把範圍縮成 −π/2 到 π/2。" }
+      ]
+    },
+    {
+      "ask": "外曲線 R(θ)、內曲線 r(θ) 之間的面積是？",
+      "options": [
+        { "label": "½∫ (R² − r²) dθ", "correct": true },
+        { "label": "½∫ (R − r)² dθ", "why": "大扇形減小扇形是 ½R²Δθ − ½r²Δθ，先平方再相減。" },
+        { "label": "∫ (R − r) dθ", "why": "這是直角座標「上減下」的習慣搬過來；極座標的基本單位是扇形，要用 ½r²。" }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": ["polar", "polar-area", "area"],
+    "fine": ["polar-area-formula", "polar-area-limits", "polar-area-petal", "polar-area-between"]
+  },
+  "practice": [
+    { "id": "gap-int-polar-001", "core": true, "trains": "polar-area-formula" },
+    { "id": "gap-int-polar-002", "core": true, "trains": "polar-area-limits" },
+    { "id": "lec-10-m4", "core": true, "trains": "polar-area-formula" },
+    { "id": "exam-multi-007", "core": true, "trains": "polar-area-limits" },
+    { "id": "gx-042", "core": true, "trains": "polar-area-petal" },
+    { "id": "gx-041", "trains": "polar-area-formula" },
+    { "id": "gx-040", "trains": "polar-area-limits" },
+    { "id": "lec-10-q2b", "trains": "polar-area-between", "note": "先求交點：這是兩曲線間面積的第一步。" },
+    { "id": "lec-10-q2c", "challenge": true, "trains": "polar-area-between", "note": "挑戰：圓內、心臟線外，記得是 R² − r²。" }
+  ],
+  "gaps": [
+    { "tag": "polar-area-between", "count": 2, "note": "R3–R4：其他兩曲線之間的面積（例：r = 1 外、r = 1 + cos θ 內）。" },
+    { "tag": "polar-area-petal", "count": 1, "note": "R3：r = sin 3θ 一片花瓣（n 奇數的花瓣範圍）。" }
+  ]
+}

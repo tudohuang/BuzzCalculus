@@ -1,0 +1,144 @@
+{
+  "id": "ratio-test",
+  "title": "比值判別",
+  "readMinutes": 8,
+  "totalMinutes": 30,
+  "prerequisites": ["geometric-series", "comparison-test", "limit-e-type"],
+  "next": ["root-test"],
+  "related": ["absolute-convergence", "limit-comparison-test", "radius-of-convergence"],
+  "objectives": [
+    "算 L = lim |aₙ₊₁/aₙ|，並說出 L < 1、L > 1、L = 1 各自的結論。",
+    "熟練約分 (n + 1)!/n!、(n/(n + 1))ⁿ 這類比值。",
+    "看出什麼時候該用比值判別（階乘、bⁿ、nⁿ），什麼時候它一定失效（有理式、p 級數）。"
+  ],
+  "visual": "畫出 aₙ = n²/2ⁿ 的相鄰比值 aₙ₊₁/aₙ，n = 1 到 30：點先在 1 以上，很快掉到 1 以下並貼向 0.5。另一個面板把同一個級數的長條，和從第 N 項開始、公比 0.75 的幾何級數長條疊在一起：從那之後，原級數的長條都被幾何級數蓋住。",
+  "concept": [
+    {
+      "heading": "① 直觀：最後長得像幾何級數",
+      "body": [
+        "如果相鄰兩項的比 aₙ₊₁/aₙ 趨近 L，那麼 n 很大時每一項大約是前一項的 L 倍，級數的尾巴長得像公比 L 的幾何級數（〈幾何級數〉）。L < 1 就收斂，L > 1 就發散。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 定理",
+      "body": [
+        "設 L = lim_{n→∞} |aₙ₊₁/aₙ|（可以是 ∞）。",
+        "L < 1：Σ aₙ 收斂，而且是絕對收斂（Σ |aₙ| 也收斂，見〈絕對收斂〉；正項級數就是收斂）。",
+        "L > 1 或 L = ∞：發散。此時從某一項起 |aₙ₊₁| > |aₙ|，各項不趨近 0。",
+        "L = 1：沒有結論。Σ 1/n 和 Σ 1/n² 的比值極限都是 1，一個發散、一個收斂。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 什麼時候用",
+      "body": [
+        "有階乘、bⁿ、nⁿ 的級數：比值會大量約分。(n + 1)! / n! = n + 1；2ⁿ⁺¹/2ⁿ = 2；(n + 1)ⁿ⁺¹/nⁿ 要拆成 (n + 1) · ((n + 1)/n)ⁿ，後者 → e（〈e 型極限〉）。",
+        "有理式、根號、p 級數：比值一定 → 1，比值判別必定失效。這類用〈極限比較判別〉。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 證明",
+      "body": [
+        "L < 1：取 r 滿足 L < r < 1。存在 N 使 n ≥ N 時 |aₙ₊₁| ≤ r|aₙ|，反覆用得 |a_{N+k}| ≤ rᵏ |a_N|。Σ rᵏ|a_N| 是公比 r < 1 的幾何級數，由比較判別 Σ |aₙ| 收斂；絕對收斂推出收斂。L > 1：從某項起 |aₙ₊₁| > |aₙ| > 0，|aₙ| 遞增而且不是 0，不可能 → 0，由發散判別發散。"
+      ],
+      "collapsible": true
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "多項式 × 指數",
+      "prompt": "Σ_{n=1}^∞ n²/2ⁿ 收斂嗎？",
+      "problemId": "lec-13-q2a",
+      "steps": [
+        "aₙ₊₁/aₙ = ((n + 1)²/2ⁿ⁺¹) · (2ⁿ/n²) = ((n + 1)/n)² · (1/2)。",
+        "(n + 1)/n → 1，所以 L = 1/2 < 1。",
+        "收斂。"
+      ],
+      "answer": "收斂",
+      "claim": "LIM(((x+1)^2/2^(x+1))/(x^2/2^x), inf) == 1/2"
+    },
+    {
+      "title": "階乘配 nⁿ",
+      "prompt": "Σ_{n=1}^∞ n!/nⁿ 收斂嗎？",
+      "problemId": "lec-13-m2",
+      "steps": [
+        "aₙ₊₁/aₙ = ((n + 1)!/(n + 1)ⁿ⁺¹) · (nⁿ/n!) = (n + 1) · nⁿ/(n + 1)ⁿ⁺¹ = nⁿ/(n + 1)ⁿ = (n/(n + 1))ⁿ。",
+        "(n/(n + 1))ⁿ = 1/(1 + 1/n)ⁿ → 1/e ≈ 0.368 < 1。",
+        "收斂。"
+      ],
+      "answer": "收斂（L = 1/e）",
+      "claim": "LIM((x/(x+1))^x, inf) == e^(-1)"
+    },
+    {
+      "title": "L > 1",
+      "prompt": "Σ_{n=1}^∞ nⁿ/n! 收斂嗎？",
+      "problemId": "lec-13-q2d",
+      "steps": [
+        "aₙ₊₁/aₙ = ((n + 1)ⁿ⁺¹/(n + 1)!) · (n!/nⁿ) = (n + 1)ⁿ/nⁿ = (1 + 1/n)ⁿ。",
+        "→ e ≈ 2.718 > 1。",
+        "發散。（其實 nⁿ/n! ≥ 1，各項根本不趨近 0。）"
+      ],
+      "answer": "發散（L = e）",
+      "claim": "LIM((1+1/x)^x, inf) == e"
+    }
+  ],
+  "pitfalls": [
+    "L = 1 時說收斂或發散。",
+    "對有理式用比值判別，算出 1 之後卡住。",
+    "(n + 1)! 與 n! 約分錯，或 (n + 1)ⁿ⁺¹ 少拆一個 (n + 1)。",
+    "比值寫反成 aₙ/aₙ₊₁，結論跟著顛倒。"
+  ],
+  "checks": [
+    {
+      "ask": "比值判別得到 L = 1，代表？",
+      "options": [
+        { "label": "這個判別法沒有結論", "correct": true },
+        { "label": "收斂", "why": "Σ 1/n 的 L 也是 1，它發散。" },
+        { "label": "發散", "why": "Σ 1/n² 的 L 也是 1，它收斂。" }
+      ]
+    },
+    {
+      "ask": "Σ 3ⁿ/n! 用比值判別：",
+      "options": [
+        { "label": "比值 3/(n + 1) → 0，收斂", "correct": true },
+        { "label": "比值 → 3，發散", "why": "只看了 3ⁿ⁺¹/3ⁿ = 3，忘了階乘也要約：n!/(n + 1)! = 1/(n + 1)。" },
+        { "label": "比值 → 1，無法判斷", "why": "3/(n + 1) → 0，不是 1；階乘長得比 3ⁿ 快。" }
+      ]
+    },
+    {
+      "ask": "Σ (n² + 1)/(n⁴ + 3) 該用什麼？",
+      "options": [
+        { "label": "極限比較（跟 1/n² 比）；比值判別會得到 L = 1", "correct": true },
+        { "label": "比值判別，L < 1 所以收斂", "why": "有理式的相鄰比值一定 → 1，比值判別在這裡沒有結論。" },
+        { "label": "比值判別，L > 1 所以發散", "why": "比值 → 1，不是大於 1；而且這個級數其實收斂。" }
+      ]
+    },
+    {
+      "ask": "Σ (2n)!/(n!)² 的比值極限是？",
+      "options": [
+        { "label": "4，所以發散", "correct": true },
+        { "label": "2，所以發散", "why": "(2n + 2)!/(2n)! 有兩個因子 (2n + 2)(2n + 1)，不是一個；除以 (n + 1)² 之後 → 4。" },
+        { "label": "1，無法判斷", "why": "分子分母都是 n 的二次式，但領導係數 4 和 1 不同，極限是 4。" }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": ["ratio-test", "convergence-test"],
+    "fine": ["ratio-test-factorial", "ratio-test-exponential", "ratio-test-inconclusive"]
+  },
+  "practice": [
+    { "id": "lec-13-q2a", "core": true, "trains": "ratio-test-exponential" },
+    { "id": "lec-13-q2b", "core": true, "trains": "ratio-test-factorial" },
+    { "id": "mob-conv-006", "core": true, "trains": "ratio-test-factorial" },
+    { "id": "lec-13-m2", "core": true, "trains": "ratio-test-factorial" },
+    { "id": "lec-13-m3", "core": true, "trains": "ratio-test-inconclusive" },
+    { "id": "fd-serx-305", "trains": "ratio-test-factorial" },
+    { "id": "cx-smid-011", "trains": "ratio-test-factorial" },
+    { "id": "lec-13-q2d", "trains": "ratio-test-factorial" }
+  ],
+  "gaps": [
+    { "tag": "ratio-test-inconclusive", "count": 2, "note": "R2：對 p 級數或有理式用比值判別得到 1、要求改用別的判別法的題。" }
+  ]
+}

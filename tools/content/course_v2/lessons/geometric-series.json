@@ -1,0 +1,245 @@
+{
+  "id": "geometric-series",
+  "title": "幾何級數",
+  "readMinutes": 8,
+  "totalMinutes": 30,
+  "prerequisites": [
+    "partial-sums",
+    "sequence-limit"
+  ],
+  "next": [
+    "telescoping-series"
+  ],
+  "related": [
+    "power-series"
+  ],
+  "objectives": [
+    "推出部分和 sₙ = a(1 − rⁿ)/(1 − r)，並由 rⁿ 的極限得到收斂條件 |r| < 1。",
+    "用「首項／(1 − 公比)」求和，首項依起始指標認清楚。",
+    "判斷 |r| ≥ 1 時發散，不硬套公式。"
+  ],
+  "visual": "部分和圖：滑桿調公比 r（−1.5 到 1.5），首項固定為 1。|r| < 1 時點列貼向水平線 1/(1 − r)；r 為負時點列上下交錯地貼近。r 拖到 1 或 −1、再往外，點列不是沿直線往上衝、就是越跳越大，旁邊的「1/(1 − r)」讀數變成灰色，表示公式失效。",
+  "concept": [
+    {
+      "heading": "① 每一項乘同一個數",
+      "body": [
+        "幾何級數：a + ar + ar² + ar³ + …，每一項都是前一項乘 r（公比）。a 是首項。用 Σ 寫成 Σ_{n=0}^∞ arⁿ。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 部分和有公式",
+      "body": [
+        "sₙ = a + ar + … + arⁿ⁻¹（前 n 項）。乘上 r：rsₙ = ar + ar² + … + arⁿ。兩式相減，中間全部消掉：sₙ − rsₙ = a − arⁿ。r ≠ 1 時兩邊除以 1 − r：sₙ = a(1 − rⁿ)/(1 − r)。",
+        "（r = 1 時每一項都是 a，sₙ = na。）"
+      ],
+      "tex": [
+        "s_n=\\frac{a\\,(1-r^n)}{1-r}\\qquad(r\\ne 1)"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 收斂的條件",
+      "body": [
+        "部分和裡唯一跟 n 有關的是 rⁿ。〈數列與數列極限〉說過：|r| < 1 時 rⁿ → 0，所以 sₙ → a/(1 − r)。",
+        "|r| ≥ 1（而 a ≠ 0）時發散：r = 1 是 na → ±∞；r = −1 時部分和在 a 與 0 之間跳；|r| > 1 時 rⁿ 爆掉。"
+      ],
+      "tex": [
+        "\\sum_{n=0}^{\\infty} a r^n=\\frac{a}{1-r}\\qquad(\\lvert r\\rvert<1)"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 實用口訣與陷阱",
+      "body": [
+        "和 = 首項 /（1 − 公比）。「首項」是級數真正的第一項，不一定是 a：Σ_{n=2}^∞ (1/3)ⁿ 的首項是 (1/3)² = 1/9。",
+        "公比也要看清楚：Σ (−1/2)ⁿ 的公比是 −1/2；Σ 5/2ⁿ 的公比是 1/2，5 是乘在外面的常數。",
+        "公式只在 |r| < 1 時能用。把 r = 3/2 代進 1/(1 − r) 會得到 −2，一堆正數加起來不可能是負的。"
+      ],
+      "collapsible": false
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "拆成兩個幾何級數",
+      "prompt": "求 Σ_{n=1}^∞ (3ⁿ + 2ⁿ)/6ⁿ。",
+      "problemId": "lec-12-q1a",
+      "steps": [
+        "拆開：(3ⁿ + 2ⁿ)/6ⁿ = (1/2)ⁿ + (1/3)ⁿ。兩個都是 |r| < 1 的幾何級數，各自收斂，可以分開加。",
+        "Σ_{n=1}^∞ (1/2)ⁿ：首項 1/2，和 = (1/2)/(1 − 1/2) = 1。",
+        "Σ_{n=1}^∞ (1/3)ⁿ：首項 1/3，和 = (1/3)/(1 − 1/3) = 1/2。",
+        "總和 = 1 + 1/2 = 3/2。"
+      ],
+      "answer": "3/2",
+      "claim": "SUM((3^n+2^n)/6^n, 1) == 3/2"
+    },
+    {
+      "title": "循環小數化分數",
+      "prompt": "把 0.121212… 化成最簡分數。",
+      "problemId": "lec-12-q1b",
+      "steps": [
+        "0.121212… = 12/100 + 12/100² + 12/100³ + …，首項 12/100，公比 1/100。",
+        "和 = (12/100)/(1 − 1/100) = (12/100)/(99/100) = 12/99 = 4/33。"
+      ],
+      "answer": "4/33",
+      "claim": "SUM(12/100^n, 1) == 4/33"
+    },
+    {
+      "title": "公比裡有 x",
+      "prompt": "對哪些 x，Σ_{n=0}^∞ (x − 1)ⁿ/2ⁿ 收斂？和是多少？",
+      "problemId": "lec-12-q1d",
+      "steps": [
+        "這是公比 r = (x − 1)/2、首項 1 的幾何級數。",
+        "收斂 ⇔ |(x − 1)/2| < 1 ⇔ |x − 1| < 2 ⇔ −1 < x < 3。",
+        "和 = 1/(1 − (x − 1)/2) = 2/(2 − (x − 1)) = 2/(3 − x)。",
+        "這是第一個「和是 x 的函數」的級數，〈冪級數〉會從這裡出發。"
+      ],
+      "answer": "−1 < x < 3 時收斂，和為 2/(3 − x)",
+      "claim": "SUM(((x-1)/2)^n, 0) == 2/(3-x)"
+    }
+  ],
+  "pitfalls": [
+    "起始指標不是 0 時，首項還用 a（例如把 Σ_{n=2}^∞ (1/3)ⁿ 的首項當成 1）。",
+    "|r| ≥ 1 時還套 a/(1 − r)。",
+    "負的公比少了負號：Σ (−1/2)ⁿ = 1/(1 + 1/2)。",
+    "把有限項的公式 a(1 − rⁿ)/(1 − r) 和無窮和 a/(1 − r) 搞混。"
+  ],
+  "checks": [
+    {
+      "ask": "Σ_{n=2}^∞ (1/3)ⁿ = ？",
+      "options": [
+        {
+          "label": "1/6",
+          "correct": true
+        },
+        {
+          "label": "3/2",
+          "why": "1/(1 − 1/3) = 3/2 是從 n = 0 開始、首項 1 的和；這裡從 n = 2 開始，首項是 1/9。"
+        },
+        {
+          "label": "1/2",
+          "why": "(1/3)/(1 − 1/3) = 1/2 是從 n = 1 開始的和；n = 2 起首項是 1/9，(1/9)/(2/3) = 1/6。"
+        }
+      ]
+    },
+    {
+      "ask": "Σ_{n=0}^∞ (3/2)ⁿ 是？",
+      "options": [
+        {
+          "label": "發散",
+          "correct": true
+        },
+        {
+          "label": "−2",
+          "why": "這是把 r = 3/2 硬套 1/(1 − r)。公式只在 |r| < 1 時成立；一堆正數不可能加出負數。"
+        },
+        {
+          "label": "收斂，因為每一項都是有限的數",
+          "why": "每一項有限不代表和有限；(3/2)ⁿ → ∞，部分和也 → ∞。"
+        }
+      ]
+    },
+    {
+      "ask": "Σ_{n=0}^∞ (−1/2)ⁿ = ？",
+      "options": [
+        {
+          "label": "2/3",
+          "correct": true
+        },
+        {
+          "label": "2",
+          "why": "那是公比 1/2 的答案。公比是 −1/2：1/(1 − (−1/2)) = 2/3。"
+        },
+        {
+          "label": "發散，因為正負交替",
+          "why": "|r| = 1/2 < 1 就收斂；正負交替不影響。"
+        }
+      ]
+    },
+    {
+      "ask": "首項 a、公比 r（r ≠ 1）的幾何級數，前 n 項的和是？",
+      "options": [
+        {
+          "label": "a(1 − rⁿ)/(1 − r)",
+          "correct": true
+        },
+        {
+          "label": "a/(1 − r)",
+          "why": "這是 |r| < 1 時無窮多項的和（n → ∞ 的極限），不是前 n 項。"
+        },
+        {
+          "label": "arⁿ/(1 − r)",
+          "why": "推導是 sₙ − rsₙ = a − arⁿ，分子是 a − arⁿ = a(1 − rⁿ)。"
+        }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": [
+      "geometric-series"
+    ],
+    "fine": [
+      "geometric-identify-a-r",
+      "geometric-sum-formula",
+      "geometric-divergence",
+      "geometric-with-x"
+    ]
+  },
+  "practice": [
+    {
+      "id": "fd-ser-001",
+      "core": true,
+      "trains": "geometric-sum-formula"
+    },
+    {
+      "id": "fd-ser-006",
+      "core": true,
+      "trains": "geometric-identify-a-r"
+    },
+    {
+      "id": "fd-ser-007",
+      "core": true,
+      "trains": "geometric-identify-a-r"
+    },
+    {
+      "id": "fd-ser-017",
+      "core": true,
+      "trains": "geometric-identify-a-r"
+    },
+    {
+      "id": "fd-ser-012",
+      "core": true,
+      "trains": "geometric-divergence"
+    },
+    {
+      "id": "lec-12-q1a",
+      "core": true,
+      "trains": "geometric-sum-formula"
+    },
+    {
+      "id": "fd-ser-004",
+      "trains": "geometric-sum-formula"
+    },
+    {
+      "id": "tmpl-ser-geo-tail-001",
+      "trains": "geometric-identify-a-r"
+    },
+    {
+      "id": "fd-ser-016",
+      "trains": "geometric-sum-formula"
+    },
+    {
+      "id": "lec-12-q1b",
+      "trains": "geometric-sum-formula"
+    },
+    {
+      "id": "fd-ser-011",
+      "trains": "geometric-divergence"
+    },
+    {
+      "id": "lec-12-q1d",
+      "trains": "geometric-with-x"
+    }
+  ],
+  "gaps": []
+}

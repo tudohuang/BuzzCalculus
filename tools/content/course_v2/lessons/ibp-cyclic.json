@@ -1,0 +1,155 @@
+{
+  "id": "ibp-cyclic",
+  "title": "重複分部與循環積分",
+  "readMinutes": 10,
+  "totalMinutes": 40,
+  "prerequisites": ["ibp-log-invtrig", "ibp-poly-trig"],
+  "next": ["partial-fractions-linear"],
+  "related": ["reduction-formula", "trig-integral-tan-sec"],
+  "objectives": [
+    "會積 (ln x)ⁿ：每分部一次，次方降一。",
+    "會處理 e^{ax} sin bx、e^{ax} cos bx：分部兩次繞回原積分，再解方程式。",
+    "知道循環型兩次分部要「同一邊當 u」，換邊會白做。"
+  ],
+  "visual": null,
+  "concept": [
+    {
+      "heading": "① 重複分部：每次降一次方",
+      "body": [
+        "∫ (ln x)² dx：u = (ln x)²，dv = dx。du = 2 ln x · (1/x) dx，v = x，新積分是 ∫ 2 ln x dx，次方從 2 降到 1。再做一次（上一課的 ∫ ln x dx）就結束。",
+        "一般地 ∫ (ln x)ⁿ dx = x(ln x)ⁿ − n ∫ (ln x)^{n−1} dx。這種「用小一號的自己表示自己」的式子叫遞迴公式，〈遞迴公式〉會專門處理。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 循環：做兩次，原題又出現了",
+      "body": [
+        "∫ eˣ sin x dx：不管誰當 u，微分或積分 eˣ 都還是 eˣ，sin 變 cos 再變回 sin。做兩次之後，原來的積分會帶著負號再出現一次。",
+        "這不是白做。把原積分叫 I，你會得到一個方程式 I = （已經算好的東西）− I，移項得 2I = （已經算好的東西），除以 2 就解出 I。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 兩次要選同一邊",
+      "body": [
+        "第一次讓三角當 u，第二次也要讓三角當 u。第二次如果換成 eˣ 當 u，等於把第一次的分部原封不動拆回去，得到 I = I，什麼也沒得到。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 解方程式為什麼合法",
+      "body": [
+        "兩邊的 I 指的是同一個反導函數（等號成立到差一個常數），移項、除以 2 都只是代數。最後補上 + C，再微分檢查一次。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "通用公式與另一個循環例子",
+      "body": [
+        "對 a² + b² ≠ 0：∫ e^{ax} sin bx dx = e^{ax}(a sin bx − b cos bx)/(a² + b²) + C，∫ e^{ax} cos bx dx = e^{ax}(a cos bx + b sin bx)/(a² + b²) + C。推導就是本課的兩次分部，把 a、b 留著。不必背，記得「分部兩次、解方程式」就推得出來。",
+        "∫ sec³ x dx 也是循環型：u = sec x、dv = sec² x dx，分部一次後用 tan² x = sec² x − 1，原積分又出現。結果是 (1/2)(sec x tan x + ln|sec x + tan x|) + C，在〈tanᵐ x secⁿ x〉會用到。"
+      ],
+      "collapsible": true
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "重複分部",
+      "prompt": "∫ (ln x)² dx",
+      "problemId": "int-013",
+      "steps": [
+        "u = (ln x)²，dv = dx。du = (2 ln x)/x dx，v = x。",
+        "∫ (ln x)² dx = x(ln x)² − ∫ x · (2 ln x)/x dx = x(ln x)² − 2 ∫ ln x dx。",
+        "∫ ln x dx = x ln x − x。",
+        "答案：x(ln x)² − 2x ln x + 2x + C。"
+      ],
+      "answer": "x(ln x)² − 2x ln x + 2x + C",
+      "claim": "D(x*ln(x)^2-2*x*ln(x)+2*x) == ln(x)^2"
+    },
+    {
+      "title": "循環積分",
+      "prompt": "∫ eˣ sin x dx",
+      "problemId": "int-015",
+      "steps": [
+        "令 I = ∫ eˣ sin x dx。第一次：u = sin x，dv = eˣ dx。I = eˣ sin x − ∫ eˣ cos x dx。",
+        "第二次（三角還是當 u）：u = cos x，dv = eˣ dx。∫ eˣ cos x dx = eˣ cos x − ∫ eˣ(−sin x) dx = eˣ cos x + I。",
+        "代回：I = eˣ sin x − (eˣ cos x + I) = eˣ sin x − eˣ cos x − I。",
+        "移項：2I = eˣ(sin x − cos x)，所以 I = eˣ(sin x − cos x)/2 + C。"
+      ],
+      "answer": "eˣ(sin x − cos x)/2 + C",
+      "claim": "D(e^x*(sin(x)-cos(x))/2) == e^x*sin(x)"
+    },
+    {
+      "title": "循環型的定積分",
+      "prompt": "∫₀^π eˣ sin x dx",
+      "steps": [
+        "用上一題的反導函數 eˣ(sin x − cos x)/2。",
+        "代 π：e^π(0 − (−1))/2 = e^π/2。",
+        "代 0：1 · (0 − 1)/2 = −1/2。",
+        "答案：e^π/2 − (−1/2) = (e^π + 1)/2 ≈ 12.07。"
+      ],
+      "answer": "(e^π + 1)/2",
+      "claim": "INT(e^x*sin(x),0,pi) == (e^(pi)+1)/2"
+    }
+  ],
+  "pitfalls": [
+    "循環型第二次分部換邊當 u，得到 I = I。",
+    "移項時把 −I 當成消掉，而不是變成 2I。",
+    "解出 I 之後忘了除以 2，或忘了 + C。",
+    "(ln x)ⁿ 的 du 漏了連鎖律的 1/x，或係數 n。"
+  ],
+  "checks": [
+    {
+      "ask": "∫ eˣ cos x dx 第一次取 u = cos x。第二次分部 u 應該選？",
+      "options": [
+        { "label": "sin x（還是三角當 u）", "correct": true },
+        { "label": "eˣ", "why": "換邊會把第一次的分部原封不動拆回去，最後得到 I = I。" },
+        { "label": "不需要第二次", "why": "一次之後剩 ∫ eˣ sin x dx，還是同一型。要再做一次，原積分才會繞回來。" }
+      ]
+    },
+    {
+      "ask": "算到 I = eˣ sin x + eˣ cos x − I。I 是？",
+      "options": [
+        { "label": "eˣ(sin x + cos x)/2 + C", "correct": true },
+        { "label": "eˣ(sin x + cos x) + C", "why": "移項後左邊是 2I，還要除以 2。" },
+        { "label": "0", "why": "兩邊的 I 不是消掉。右邊的 −I 移到左邊，變成 2I。" }
+      ]
+    },
+    {
+      "ask": "∫ (ln x)³ dx 要分部幾次？",
+      "options": [
+        { "label": "3 次", "correct": true },
+        { "label": "1 次", "why": "一次只把 (ln x)³ 降成 3(ln x)²，還要繼續。" },
+        { "label": "會無限循環", "why": "ln 的次方每次降一，最後會停。循環的是 e^{ax} 乘 sin、cos 那種。" }
+      ]
+    },
+    {
+      "ask": "循環型裡「解方程式」求出積分，為什麼合法？",
+      "options": [
+        { "label": "兩邊的 I 是同一個反導函數，移項只是代數；最後補 + C", "correct": true },
+        { "label": "不合法，只是剛好答案對", "why": "每一步都是等式（差一個常數），而且微分檢查答案確實回到被積函數。" },
+        { "label": "因為 I 其實是 0", "why": "I 不是 0。右邊的 −I 移過去後解出 I = eˣ(…)/2。" }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": ["integration-by-parts", "ibp", "multi-ibp", "exponential", "trig", "log"],
+    "fine": ["ibp-repeat-log", "ibp-cyclic-exp-trig", "ibp-cyclic-solve", "ibp-cyclic-consistent-choice"]
+  },
+  "practice": [
+    { "id": "uni-int-010", "core": true, "trains": "ibp-cyclic-exp-trig" },
+    { "id": "exam-int-012", "core": true, "trains": "ibp-cyclic-exp-trig" },
+    { "id": "hc-ibp-006", "core": true, "trains": "ibp-cyclic-solve" },
+    { "id": "int-055", "core": true, "trains": "ibp-repeat-log" },
+    { "id": "burst-int-038", "core": true, "trains": "ibp-repeat-log" },
+    { "id": "depth-int-006", "trains": "ibp-cyclic-solve" },
+    { "id": "burst-boss-anti-006", "trains": "ibp-repeat-log" },
+    { "id": "depth-int-009", "challenge": true, "trains": "ibp-cyclic-consistent-choice", "note": "挑戰：sin(ln x) 也會循環，dv = dx。" },
+    { "id": "hc-ibp-003", "challenge": true, "trains": "ibp-cyclic-solve", "note": "挑戰：多項式 × eˣ sin x，先處理 eˣ sin x 的循環，再處理多項式。" },
+    { "id": "world-027", "challenge": true, "trains": "ibp-cyclic-solve", "note": "挑戰：上限是 ∞，邊界項要用極限。" }
+  ],
+  "gaps": [
+    { "tag": "ibp-cyclic-consistent-choice", "count": 2, "note": "判斷題：第二次分部換邊會發生什麼，R2。" },
+    { "tag": "ibp-cyclic-exp-trig", "count": 1, "note": "循環型的定積分（例如 ∫₀^π eˣ sin x dx），R3。" }
+  ]
+}

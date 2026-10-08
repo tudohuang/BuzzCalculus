@@ -1,0 +1,235 @@
+{
+  "id": "sequence-limit",
+  "title": "數列與數列極限",
+  "readMinutes": 9,
+  "totalMinutes": 35,
+  "prerequisites": [
+    "limit-at-infinity",
+    "squeeze-theorem"
+  ],
+  "next": [
+    "monotone-bounded"
+  ],
+  "related": [
+    "lhopital",
+    "epsilon-n-definition",
+    "limit-e-type"
+  ],
+  "objectives": [
+    "把數列看成只在正整數上取值的函數，說出 lim aₙ = L 的意思。",
+    "用代數化簡、借函數極限（含 L'Hôpital）、夾擠三種方法求數列極限。",
+    "記住 rⁿ 的收斂範圍與 ln n ≪ nᵖ ≪ bⁿ ≪ n! ≪ nⁿ 的增長順序。"
+  ],
+  "visual": "平面上畫出 aₙ = (3n² + n)/(n² + 2) 的點 (n, aₙ)，n = 1 到 60，一顆一顆冒出來。一條水平帶 3 ± ε 可以拖動寬窄；每換一個 ε，畫面標出「從第幾項開始全部落進帶子裡」的 N。帶子越窄，N 越大，但永遠找得到。",
+  "concept": [
+    {
+      "heading": "① 數列是一串點",
+      "body": [
+        "數列 a₁, a₂, a₃, … 是只在正整數上有定義的函數：aₙ = f(n)。畫出來不是一條曲線，而是一顆一顆的點。",
+        "lim_{n→∞} aₙ = L 的意思是：n 夠大以後，aₙ 能要多靠近 L 就多靠近 L。這時說數列收斂到 L；不收斂就叫發散（可能往 ∞ 跑，也可能一直跳）。精確的寫法在〈ε-N 定義〉。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 借用函數的極限",
+      "body": [
+        "如果 lim_{x→∞} f(x) = L，而 aₙ = f(n)，那麼 aₙ → L：函數在所有大 x 都靠近 L，整數點當然也是。這讓我們可以對 f(x) 用〈L'Hôpital 法則〉，再把結論搬回數列。",
+        "反過來不成立：aₙ = sin(πn) 每一項都是 0，極限是 0；但 sin(πx) 在 x → ∞ 時一直振盪、沒有極限。數列只看整數點。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 三個要記的結果",
+      "body": [
+        "rⁿ：|r| < 1 時 → 0；r = 1 時恆為 1；r > 1 時 → ∞；r ≤ −1 時正負跳動，發散。所以 rⁿ 收斂的充要條件是 −1 < r ≤ 1。",
+        "夾擠：bₙ ≤ aₙ ≤ cₙ 而兩邊收斂到同一個 L，aₙ 也 → L（〈夾擠定理〉的數列版）。例如 |cos n / n| ≤ 1/n → 0。",
+        "增長速度：ln n ≪ nᵖ（p > 0）≪ bⁿ（b > 1）≪ n! ≪ nⁿ。「≪」的意思是左邊除以右邊 → 0。"
+      ],
+      "collapsible": false
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "有理式：同除最高次",
+      "prompt": "lim_{n→∞} (3n² + n)/(n² + 2)",
+      "problemId": "cx-seq-001",
+      "steps": [
+        "分子分母同除以 n²：(3 + 1/n)/(1 + 2/n²)。",
+        "n → ∞ 時 1/n → 0、2/n² → 0，極限 = 3/1 = 3。"
+      ],
+      "answer": "3",
+      "claim": "LIM((3x^2+x)/(x^2+2), inf) == 3"
+    },
+    {
+      "title": "借函數用 L'Hôpital",
+      "prompt": "lim_{n→∞} (ln n)/n",
+      "problemId": "lec-11-q1b",
+      "steps": [
+        "L'Hôpital 只能對可微函數用，不能直接對 n 微分。改看 f(x) = (ln x)/x，x → ∞ 時是 ∞/∞。",
+        "lim_{x→∞} (ln x)/x = lim_{x→∞} (1/x)/1 = 0。",
+        "aₙ = f(n)，所以 lim (ln n)/n = 0。這也是「ln n ≪ n」的一個證明。"
+      ],
+      "answer": "0",
+      "claim": "LIM(ln(x)/x, inf) == 0"
+    },
+    {
+      "title": "夾擠",
+      "prompt": "lim_{n→∞} (3ⁿ + 4ⁿ)^{1/n}",
+      "problemId": "lec-11-q1d",
+      "steps": [
+        "最大的一項是 4ⁿ：4ⁿ ≤ 3ⁿ + 4ⁿ ≤ 4ⁿ + 4ⁿ = 2 · 4ⁿ。",
+        "三邊開 n 次方（都是正數，開方保持大小順序）：4 ≤ (3ⁿ + 4ⁿ)^{1/n} ≤ 2^{1/n} · 4。",
+        "2^{1/n} = e^{(ln 2)/n} → e⁰ = 1，右邊 → 4。由夾擠，極限是 4。"
+      ],
+      "answer": "4",
+      "claim": "LIM((3^x+4^x)^(1/x), inf) == 4 ;; LIM(2^(1/x)*4, inf) == 4"
+    }
+  ],
+  "pitfalls": [
+    "直接對 n 微分用 L'Hôpital：要先換成連續變數 x 的函數。",
+    "以為函數 f(x) 沒有極限，數列 f(n) 也一定沒有。",
+    "把 rⁿ 的收斂範圍寫成 |r| < 1，漏了 r = 1。",
+    "看到 cos n、sin n 就說發散，沒想到分母可能把它壓到 0。"
+  ],
+  "checks": [
+    {
+      "ask": "數列 rⁿ 收斂的充要條件是？",
+      "options": [
+        {
+          "label": "−1 < r ≤ 1",
+          "correct": true
+        },
+        {
+          "label": "|r| < 1",
+          "why": "漏了 r = 1：1ⁿ 每一項都是 1，收斂到 1。"
+        },
+        {
+          "label": "−1 ≤ r ≤ 1",
+          "why": "r = −1 時 (−1)ⁿ 在 −1 與 1 之間跳，不收斂。"
+        }
+      ]
+    },
+    {
+      "ask": "aₙ = sin(πn)，lim aₙ 是？",
+      "options": [
+        {
+          "label": "0",
+          "correct": true
+        },
+        {
+          "label": "不存在，因為 sin(πx) 在 x → ∞ 沒有極限",
+          "why": "數列只看整數點；n 是整數時 sin(πn) 全是 0。函數沒有極限，不代表數列沒有。"
+        },
+        {
+          "label": "1",
+          "why": "sin 在 π 的整數倍都是 0，不是 1。"
+        }
+      ]
+    },
+    {
+      "ask": "n → ∞ 時，由慢到快的增長順序是？",
+      "options": [
+        {
+          "label": "ln n、n²、2ⁿ、n!",
+          "correct": true
+        },
+        {
+          "label": "ln n、2ⁿ、n²、n!",
+          "why": "前幾項 n² 比較大，但指數最終一定贏過多項式：n = 10 時 2¹⁰ = 1024 已經超過 100。"
+        },
+        {
+          "label": "n²、ln n、2ⁿ、n!",
+          "why": "對數長得比任何正次方都慢：(ln n)/n² → 0。"
+        }
+      ]
+    },
+    {
+      "ask": "lim_{n→∞} (cos n)/n 是？",
+      "options": [
+        {
+          "label": "0",
+          "correct": true
+        },
+        {
+          "label": "不存在，因為 cos n 一直振盪",
+          "why": "分子雖然振盪，但被 −1 與 1 夾住；−1/n ≤ (cos n)/n ≤ 1/n，兩邊都 → 0。"
+        },
+        {
+          "label": "1",
+          "why": "cos n 沒有趨近 1；而且分母 n → ∞，整個分式會被壓到 0。"
+        }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": [
+      "sequence",
+      "squeeze"
+    ],
+    "fine": [
+      "sequence-limit-algebra",
+      "sequence-limit-function",
+      "sequence-limit-squeeze",
+      "sequence-growth-order",
+      "sequence-power-rn"
+    ]
+  },
+  "practice": [
+    {
+      "id": "lec-11-m1",
+      "core": true,
+      "trains": "sequence-limit-algebra"
+    },
+    {
+      "id": "cx-seq-001",
+      "core": true,
+      "trains": "sequence-limit-algebra"
+    },
+    {
+      "id": "lec-11-q1b",
+      "core": true,
+      "trains": "sequence-limit-function"
+    },
+    {
+      "id": "lec-11-q2a",
+      "core": true,
+      "trains": "sequence-limit-squeeze"
+    },
+    {
+      "id": "lec-11-q1d",
+      "core": true,
+      "trains": "sequence-limit-squeeze"
+    },
+    {
+      "id": "lec-11-q1a",
+      "trains": "sequence-limit-algebra"
+    },
+    {
+      "id": "cx-seq-006",
+      "trains": "sequence-limit-squeeze"
+    },
+    {
+      "id": "lec-11-q1c",
+      "trains": "sequence-limit-function"
+    },
+    {
+      "id": "lec-11-m3",
+      "trains": "sequence-limit-function"
+    },
+    {
+      "id": "lec-11-m2",
+      "trains": "sequence-power-rn"
+    },
+    {
+      "id": "lec-11-q2d",
+      "trains": "sequence-growth-order"
+    }
+  ],
+  "gaps": [
+    {
+      "tag": "sequence-growth-order",
+      "count": 3,
+      "note": "R2：比較增長速度的數列極限（如 n¹⁰⁰/2ⁿ、2ⁿ/n!、n!/nⁿ → 0），題庫只有一題排序題。"
+    }
+  ]
+}

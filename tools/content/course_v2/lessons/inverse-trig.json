@@ -1,0 +1,138 @@
+{
+  "id": "inverse-trig",
+  "title": "反三角函數",
+  "readMinutes": 8,
+  "totalMinutes": 20,
+  "prerequisites": ["inverse-function", "trig-functions", "trig-identities"],
+  "next": ["limit-intro"],
+  "related": ["inverse-trig-derivative", "limit-at-infinity"],
+  "objectives": [
+    "說得出 arcsin、arccos、arctan 各自的定義域與值域，以及為什麼要限制。",
+    "會求特殊值，答案一定落在值域裡。",
+    "分清楚 sin(arcsin x) = x 永遠成立，而 arcsin(sin x) = x 只在 x ∈ [−π/2, π/2] 成立。"
+  ],
+  "visual": "畫出 y = sin x，把 [−π/2, π/2] 那一段加粗，其餘變淡：加粗段通過水平線測試。按「翻轉」，加粗段對 y = x 鏡射成 y = arcsin x，定義域 [−1, 1]、值域 [−π/2, π/2] 的框同時標出。",
+  "concept": [
+    {
+      "heading": "① 先把 sin 剪成一對一",
+      "body": [
+        "sin 不是一對一：sin(π/6) = sin(5π/6) = 1/2。所以「哪個角的 sin 是 1/2」有無限多個答案，沒有反函數。",
+        "只留 [−π/2, π/2] 這段：sin 在這段從 −1 一路增加到 1，每個值剛好一次。這段的反函數叫 arcsin，也寫成 sin⁻¹。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 三個反三角函數",
+      "body": [
+        "arcsin x：定義域 [−1, 1]，值域 [−π/2, π/2]。意思是「[−π/2, π/2] 裡，sin 等於 x 的那個角」。",
+        "arccos x：cos 剪在 [0, π]。定義域 [−1, 1]，值域 [0, π]。",
+        "arctan x：tan 剪在 (−π/2, π/2)。定義域是全體實數，值域 (−π/2, π/2)。x → ∞ 時 arctan x 往 π/2 靠，圖形有兩條水平漸近線 y = ±π/2（〈x → ∞〉）。"
+      ],
+      "tex": ["\\arcsin:[-1,1]\\to\\left[-\\tfrac{\\pi}{2},\\tfrac{\\pi}{2}\\right],\\quad \\arccos:[-1,1]\\to[0,\\pi],\\quad \\arctan:\\mathbb{R}\\to\\left(-\\tfrac{\\pi}{2},\\tfrac{\\pi}{2}\\right)"],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 兩個方向的抵消不一樣",
+      "body": [
+        "sin(arcsin x) = x 對 [−1, 1] 裡每個 x 都成立：先找角、再取 sin，回到原數。",
+        "arcsin(sin x) = x 只在 x ∈ [−π/2, π/2] 成立。arcsin 永遠回傳 [−π/2, π/2] 裡的角，所以 arcsin(sin(5π/6)) = arcsin(1/2) = π/6，不是 5π/6。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 記號",
+      "body": [
+        "sin⁻¹ x 是 arcsin x，不是 1/sin x（那是 csc x）。但 sin²x 又是 (sin x)²。上標 −1 是反函數的記號，跟次方無關，這是歷史留下的不一致，看到要分清楚。",
+        "這三個函數的導數在〈反函數與反三角函數微分〉；它們的導數是很乾淨的代數式，這是之後積分裡常看到 arctan 的原因。"
+      ],
+      "collapsible": false
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "特殊值：答案要落在值域",
+      "prompt": "求 arcsin(−1/2)、arccos(−1/2)、arctan(√3)。",
+      "steps": [
+        "arcsin(−1/2)：[−π/2, π/2] 裡 sin 是 −1/2 的角是 −π/6。7π/6 的 sin 也是 −1/2，但不在值域裡。",
+        "arccos(−1/2)：[0, π] 裡 cos 是 −1/2 的角。參考角 π/3，cos 為負在第二象限：π − π/3 = 2π/3。",
+        "arctan(√3)：(−π/2, π/2) 裡 tan 是 √3 的角是 π/3。"
+      ],
+      "answer": "−π/6；2π/3；π/3",
+      "claim": "arcsin(-1/2) == -pi/6 ;; arccos(-1/2) == 2*pi/3 ;; arctan(sqrt(3)) == pi/3"
+    },
+    {
+      "title": "先 sin 再 arcsin",
+      "prompt": "求 arcsin(sin(5π/6))",
+      "steps": [
+        "5π/6 不在 [−π/2, π/2]，不能直接抵消。",
+        "先算裡面：sin(5π/6) = 1/2。",
+        "再算 arcsin(1/2)：[−π/2, π/2] 裡 sin 是 1/2 的角是 π/6。"
+      ],
+      "answer": "π/6",
+      "claim": "arcsin(sin(5*pi/6)) == pi/6"
+    },
+    {
+      "title": "三角函數套反三角函數",
+      "prompt": "把 cos(arcsin x) 寫成 x 的代數式（−1 ≤ x ≤ 1）",
+      "steps": [
+        "令 θ = arcsin x，所以 sin θ = x，而且 θ ∈ [−π/2, π/2]。",
+        "cos²θ = 1 − sin²θ = 1 − x²，所以 |cos θ| = √(1 − x²)。",
+        "θ ∈ [−π/2, π/2] 時 cos θ ≥ 0，取正號：cos(arcsin x) = √(1 − x²)。",
+        "畫圖也行：斜邊 1、對邊 x 的直角三角形，鄰邊 √(1 − x²)。"
+      ],
+      "answer": "√(1 − x²)",
+      "claim": "SUB(cos(arcsin(x)), x/3) == sqrt(1-x^2/9) ;; SUB(cos(arcsin(x)), -x/3) == sqrt(1-x^2/9)"
+    }
+  ],
+  "pitfalls": [
+    "arcsin(−1/2) 寫成 7π/6 或 11π/6：答案必須在 [−π/2, π/2]。",
+    "以為 arcsin(sin x) = x 永遠成立。",
+    "把 sin⁻¹ x 當成 1/sin x。",
+    "以為 arccos(−x) = −arccos x；arccos 的值永遠在 [0, π]，不會是負的。",
+    "寫出 arcsin 2：sin 的值不會超過 1，arcsin 2 沒有定義。"
+  ],
+  "checks": [
+    {
+      "ask": "arccos(0) 是？",
+      "options": [
+        { "label": "0", "why": "cos 0 = 1，不是 0。" },
+        { "label": "π/2", "correct": true },
+        { "label": "−π/2", "why": "cos(−π/2) 也是 0，但 arccos 的值在 [0, π]。" }
+      ]
+    },
+    {
+      "ask": "arctan(−1) 是？",
+      "options": [
+        { "label": "3π/4", "why": "tan(3π/4) = −1 沒錯，但 arctan 只回傳 (−π/2, π/2) 裡的那一個。" },
+        { "label": "−π/4", "correct": true },
+        { "label": "π/4", "why": "tan(π/4) = 1，不是 −1。" }
+      ]
+    },
+    {
+      "ask": "arcsin(sin(3π/4)) 是？",
+      "options": [
+        { "label": "π/4", "correct": true },
+        { "label": "3π/4", "why": "3π/4 不在 [−π/2, π/2]；arcsin 回傳的是那個範圍裡 sin 值相同的角。" },
+        { "label": "−π/4", "why": "sin(3π/4) = √2/2 是正的，arcsin 的結果也是正的。" }
+      ]
+    },
+    {
+      "ask": "sin⁻¹(1/2) 的意思是？",
+      "options": [
+        { "label": "1/sin(1/2)", "why": "那是 csc(1/2)。sin⁻¹ 的 −1 表示反函數。" },
+        { "label": "2", "why": "(1/2)⁻¹ = 2 是把 −1 次方用在數字上；sin⁻¹ 是作用在 sin 這個函數上。" },
+        { "label": "arcsin(1/2) = π/6", "correct": true }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": ["inverse-trig"],
+    "fine": ["inverse-trig-values", "inverse-trig-range", "inverse-trig-cancel", "inverse-trig-compose"]
+  },
+  "practice": [],
+  "gaps": [
+    { "tag": "inverse-trig-values", "count": 3, "note": "R1：arcsin、arccos、arctan 的特殊值（含負數）" },
+    { "tag": "inverse-trig-cancel", "count": 2, "note": "R1–R2：arcsin(sin a)，a 不在值域內" },
+    { "tag": "inverse-trig-compose", "count": 2, "note": "R2：cos(arcsin x)、tan(arccos x) 寫成代數式" }
+  ]
+}

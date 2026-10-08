@@ -1,0 +1,227 @@
+{
+  "id": "binomial-series",
+  "title": "二項級數",
+  "readMinutes": 9,
+  "totalMinutes": 35,
+  "prerequisites": [
+    "maclaurin-series"
+  ],
+  "next": [
+    "taylor-error"
+  ],
+  "related": [
+    "geometric-series",
+    "linear-approximation"
+  ],
+  "objectives": [
+    "會算廣義二項係數 C(k, n) = k(k − 1)⋯(k − n + 1)/n!，k 可以是負數或分數。",
+    "寫出 (1 + x)ᵏ = Σ C(k, n) xⁿ（|x| < 1），並知道 k 是非負整數時它退化成有限的二項式定理。",
+    "用它展開 √(1 + x)、1/√(1 + x)、1/(1 − x)³，讀出係數或做近似。"
+  ],
+  "visual": "滑桿調指數 k（−3 到 3）。畫出 (1 + x)ᵏ 與前 2、3、5、10 項的部分和。k 停在 0、1、2、3 時，部分和到某一項以後就不再變（係數全變 0），整條實數線都貼合；k 是其他值時，只在 −1 < x < 1 內越貼越好。",
+  "concept": [
+    {
+      "heading": "① 從二項式定理出發",
+      "body": [
+        "k 是正整數時，(1 + x)ᵏ = Σ_{n=0}^{k} C(k, n) xⁿ，是有限和。把 C(k, n) 寫成 k(k − 1)⋯(k − n + 1)/n!，這個寫法對任何實數 k 都有意義，叫廣義二項係數；規定 C(k, 0) = 1。",
+        "例：C(1/2, 2) = (1/2)(−1/2)/2! = −1/8；C(−1, n) = (−1)(−2)⋯(−n)/n! = (−1)ⁿ。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 二項級數",
+      "body": [
+        "f(x) = (1 + x)ᵏ 的 n 階導數是 k(k − 1)⋯(k − n + 1)(1 + x)^{k−n}，在 0 的值除以 n! 正好是 C(k, n)。所以它的 Maclaurin 級數是 (1 + x)ᵏ = Σ C(k, n) xⁿ = 1 + kx + k(k − 1)x²/2! + …。",
+        "k 不是非負整數時，係數永遠不會變 0，比值 |C(k, n + 1)/C(k, n)| = |k − n|/(n + 1) → 1，收斂半徑是 1。可以證明在 |x| < 1 內級數確實等於 (1 + x)ᵏ。端點的情況隨 k 而不同，這裡不討論。",
+        "k 是非負整數時，n > k 的係數都含有因子 (k − k) = 0，級數變成有限多項式，對所有 x 成立，就是原本的二項式定理。"
+      ],
+      "tex": [
+        "(1+x)^k=\\sum_{n=0}^{\\infty}\\binom{k}{n}x^n=1+kx+\\frac{k(k-1)}{2!}x^2+\\frac{k(k-1)(k-2)}{3!}x^3+\\cdots\\qquad(\\lvert x\\rvert<1)"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 幾個常用的",
+      "body": [
+        "k = −1：1/(1 + x) = 1 − x + x² − …，跟〈幾何級數〉一致。",
+        "k = 1/2：√(1 + x) = 1 + x/2 − x²/8 + x³/16 − …。前兩項就是〈線性近似〉的 √(1 + x) ≈ 1 + x/2。",
+        "k = −1/2：1/√(1 + x) = 1 − x/2 + 3x²/8 − 5x³/16 + …。",
+        "(1 − x)ᵏ 就把 x 換成 −x；(a + x)ᵏ 先提出 aᵏ：(a + x)ᵏ = aᵏ(1 + x/a)ᵏ，條件變成 |x| < |a|。"
+      ],
+      "collapsible": false
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "√(1 + x) 與近似",
+      "prompt": "寫出 √(1 + x) 的二項級數到 x³，並估計 √1.1。",
+      "problemId": "lec-15-m4",
+      "steps": [
+        "k = 1/2。C(1/2, 1) = 1/2；C(1/2, 2) = (1/2)(−1/2)/2 = −1/8；C(1/2, 3) = (1/2)(−1/2)(−3/2)/6 = 1/16。",
+        "√(1 + x) = 1 + x/2 − x²/8 + x³/16 − …。",
+        "x = 0.1：1 + 0.05 − 0.00125 + 0.0000625 = 1.0488125。真正的 √1.1 ≈ 1.0488088，差約 4 × 10⁻⁶。"
+      ],
+      "answer": "1 + x/2 − x²/8 + x³/16；√1.1 ≈ 1.0488125",
+      "claim": "LIM((sqrt(1+x) - 1 - x/2 + x^2/8)/x^3, 0) == 1/16 ;; SUB(1+x/2-x^2/8+x^3/16, 0.1) == 1.0488125"
+    },
+    {
+      "title": "負分數次方",
+      "prompt": "求 (1 + x)^{−1/2} 的 Maclaurin 級數中 x³ 的係數。",
+      "problemId": "lec-15-q4a",
+      "steps": [
+        "C(−1/2, 3) = (−1/2)(−3/2)(−5/2)/3!。",
+        "分子 = −15/8，除以 6：−15/48 = −5/16。"
+      ],
+      "answer": "−5/16",
+      "claim": "LIM(((1+x)^(-1/2) - 1 + x/2 - 3x^2/8)/x^3, 0) == -5/16"
+    },
+    {
+      "title": "負整數次方",
+      "prompt": "求 1/(1 − x)³ 的 Maclaurin 級數中 x⁴ 的係數。",
+      "problemId": "uni-ser-013",
+      "steps": [
+        "1/(1 − x)³ = (1 + (−x))^{−3}，k = −3，x 換成 −x。",
+        "x⁴ 的係數 = C(−3, 4) · (−1)⁴ = (−3)(−4)(−5)(−6)/4! = 360/24 = 15。",
+        "檢查：一般項是 C(n + 2, 2)xⁿ，前幾個係數 1, 3, 6, 10, 15，n = 4 時是 15。"
+      ],
+      "answer": "15",
+      "claim": "LIM(((1-x)^(-3) - 1 - 3x - 6x^2 - 10x^3)/x^4, 0) == 15"
+    }
+  ],
+  "pitfalls": [
+    "C(k, n) 忘了除以 n!。",
+    "分數次方的連乘，負號數錯：(1/2)(−1/2)(−3/2) 有兩個負號，是正的。",
+    "(1 − x)ᵏ 換成 −x 之後，忘了 (−x)ⁿ 的符號。",
+    "以為二項級數對所有 x 都成立；k 不是非負整數時只在 |x| < 1。"
+  ],
+  "checks": [
+    {
+      "ask": "C(1/2, 2) = ？",
+      "options": [
+        {
+          "label": "−1/8",
+          "correct": true
+        },
+        {
+          "label": "1/8",
+          "why": "(1/2)(1/2 − 1) = (1/2)(−1/2) = −1/4，有一個負號。"
+        },
+        {
+          "label": "−1/4",
+          "why": "還要除以 2! = 2。"
+        }
+      ]
+    },
+    {
+      "ask": "(1 + x)⁵ 用二項級數展開，結果是？",
+      "options": [
+        {
+          "label": "有限多項式，對所有 x 成立",
+          "correct": true
+        },
+        {
+          "label": "無窮級數，只在 |x| < 1 成立",
+          "why": "k = 5 是非負整數，n > 5 的係數都含有因子 0，級數在第 5 次就停了。"
+        },
+        {
+          "label": "無窮級數，對所有 x 成立",
+          "why": "根本沒有無窮多項：C(5, n) 在 n ≥ 6 全是 0。"
+        }
+      ]
+    },
+    {
+      "ask": "用二項級數展開 1/(1 − x) = (1 − x)^{−1}，得到？",
+      "options": [
+        {
+          "label": "Σ xⁿ",
+          "correct": true
+        },
+        {
+          "label": "Σ (−1)ⁿ xⁿ",
+          "why": "那是 1/(1 + x)。C(−1, n) = (−1)ⁿ，再乘 (−x)ⁿ 的 (−1)ⁿ，兩個負號抵銷。"
+        },
+        {
+          "label": "Σ n xⁿ",
+          "why": "C(−1, n) 的大小是 1，不是 n；Σ n xⁿ⁻¹ 是 1/(1 − x)²。"
+        }
+      ]
+    },
+    {
+      "ask": "用前兩項估計 √1.02，得到？",
+      "options": [
+        {
+          "label": "1.01",
+          "correct": true
+        },
+        {
+          "label": "1.02",
+          "why": "一次項的係數是 C(1/2, 1) = 1/2，不是 1：1 + 0.02/2。"
+        },
+        {
+          "label": "1.001",
+          "why": "x = 0.02，x/2 = 0.01，不是 0.001。"
+        }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": [
+      "binomial-series",
+      "binomial",
+      "coefficient",
+      "taylor"
+    ],
+    "fine": [
+      "binomial-coefficient-general",
+      "binomial-series-expand",
+      "binomial-series-approx"
+    ]
+  },
+  "practice": [
+    {
+      "id": "lec-15-m4",
+      "core": true,
+      "trains": "binomial-series-expand"
+    },
+    {
+      "id": "lec-15-q4a",
+      "core": true,
+      "trains": "binomial-coefficient-general"
+    },
+    {
+      "id": "uni-ser-013",
+      "core": true,
+      "trains": "binomial-coefficient-general"
+    },
+    {
+      "id": "tr-val-005",
+      "core": true,
+      "trains": "binomial-series-approx"
+    },
+    {
+      "id": "uni-ser-018",
+      "trains": "binomial-coefficient-general"
+    },
+    {
+      "id": "depth-ser-011",
+      "trains": "binomial-coefficient-general"
+    },
+    {
+      "id": "lec-15-q4c",
+      "trains": "binomial-series-approx"
+    },
+    {
+      "id": "world-048",
+      "challenge": true,
+      "trains": "binomial-series-expand",
+      "note": "挑戰：把 (1 − t²)^{−1/2} 用二項級數展開再逐項積分，得到 arcsin x 的級數，最後代 x = 1。"
+    }
+  ],
+  "gaps": [
+    {
+      "tag": "binomial-series-expand",
+      "count": 2,
+      "note": "R2–R3：(a + x)ᵏ 先提出 aᵏ 的展開（如 √(4 + x)、1/(2 − x)²），並寫出成立範圍。"
+    }
+  ]
+}

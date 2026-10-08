@@ -1,0 +1,159 @@
+{
+  "id": "inverse-trig-derivative",
+  "title": "反函數與反三角函數微分",
+  "readMinutes": 10,
+  "totalMinutes": 35,
+  "prerequisites": ["inverse-function", "inverse-trig", "implicit-differentiation", "chain-rule", "derivative-trig"],
+  "next": ["higher-derivatives"],
+  "related": [],
+  "objectives": [
+    "用 (f⁻¹)′(b) = 1/f′(a)（其中 f(a) = b）求反函數在一點的導數，不必解出反函數。",
+    "推導並記住 arcsin、arccos、arctan 的導數，說得出 √ 為什麼取正。",
+    "反三角函數套連鎖律，例如 arcsin(x/4)、arctan(x²)。"
+  ],
+  "visual": "同一張圖上畫 y = f(x)（例如 x³ + x）、它的反函數，和鏡射線 y = x。在 f 上 (a, b) 畫切線，斜率 m；它對 y = x 的鏡像是反函數在 (b, a) 的切線，斜率顯示為 1/m。拖動 a，兩個斜率同步變化，乘積一直是 1。",
+  "concept": [
+    {
+      "heading": "① 圖像：鏡射把斜率變成倒數",
+      "body": [
+        "f 和 f⁻¹ 的圖形對 y = x 對稱：f 上的點 (a, b) 對應 f⁻¹ 上的點 (b, a)。鏡射把「x 方向」和「y 方向」對調，所以上升除以前進變成前進除以上升：斜率 m 變成 1/m。",
+        "所以：f⁻¹ 在 b 的導數，是 f 在 a 的導數的倒數，其中 f(a) = b。要 f′(a) ≠ 0，否則倒數不存在（那一點反函數的切線是鉛直的）。"
+      ],
+      "tex": ["(f^{-1})'(b)=\\frac{1}{f'(a)},\\qquad f(a)=b"],
+      "collapsible": false
+    },
+    {
+      "heading": "② 公式從哪裡來（假設 f⁻¹ 可微）",
+      "body": [
+        "f(f⁻¹(x)) = x。兩邊對 x 微分，左邊用連鎖律：f′(f⁻¹(x)) · (f⁻¹)′(x) = 1。除過去就是上面的公式。",
+        "這個推法先假設了 f⁻¹ 可微。定理保證：f 在一個區間上連續且嚴格單調、在區間內部的 a 可微且 f′(a) ≠ 0，f⁻¹ 就在 b = f(a) 可微。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ arcsin 與 arctan",
+      "body": [
+        "y = arcsin x 的意思是 sin y = x，而且 y 在 [−π/2, π/2]。對 x 隱函數微分：cos y · y′ = 1，y′ = 1/cos y。",
+        "要把 cos y 寫回 x：cos y = ±√(1 − sin² y) = ±√(1 − x²)。y 在 [−π/2, π/2]，那裡 cos y ≥ 0，所以取正號。x = ±1 時分母是 0，導數只在 −1 < x < 1 存在。",
+        "y = arctan x：tan y = x，y 在 (−π/2, π/2)。sec² y · y′ = 1，y′ = 1/sec² y = 1/(1 + tan² y) = 1/(1 + x²)，對所有 x 成立。",
+        "arccos x = π/2 − arcsin x，所以導數多一個負號。"
+      ],
+      "tex": ["(\\arcsin x)'=\\frac{1}{\\sqrt{1-x^2}},\\quad(\\arccos x)'=-\\frac{1}{\\sqrt{1-x^2}},\\quad(\\arctan x)'=\\frac{1}{1+x^2}"],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 定理的證明",
+      "body": [
+        "設 f 在區間 I 上連續、嚴格單調，在 a 可微且 f′(a) ≠ 0，b = f(a)。連續且嚴格單調的函數，反函數也連續（這一步本身需要中間值定理，這裡接受它）。",
+        "取 k ≠ 0 很小，令 x = f⁻¹(b + k)。因為 f⁻¹ 一對一，x ≠ a；因為 f⁻¹ 連續，k → 0 時 x → a。",
+        "[f⁻¹(b + k) − f⁻¹(b)]/k = (x − a)/(f(x) − f(a)) = 1 / [(f(x) − f(a))/(x − a)]。",
+        "k → 0 時 x → a 而且 x ≠ a，分母 → f′(a) ≠ 0，所以整個 → 1/f′(a)。"
+      ],
+      "collapsible": true
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "不解反函數，求它的導數",
+      "prompt": "f(x) = x³ + x，求 (f⁻¹)′(2)",
+      "problemId": "db-inv-001",
+      "steps": [
+        "f′(x) = 3x² + 1 > 0，f 嚴格遞增，有反函數。",
+        "先找 a 使 f(a) = 2：a³ + a = 2，試 a = 1：1 + 1 = 2。所以 f⁻¹(2) = 1。",
+        "f′(1) = 3 + 1 = 4。",
+        "(f⁻¹)′(2) = 1/f′(1) = 1/4。"
+      ],
+      "answer": "1/4",
+      "note": "最常見的錯是算 1/f′(2) = 1/13：2 是反函數的輸入，要先換成 f 的輸入 a = 1。",
+      "claim": "SUB(x^3+x, 1) == 2 ;; 1/D(x^3+x, 1) == 1/4"
+    },
+    {
+      "title": "arcsin 套連鎖律",
+      "prompt": "d/dx arcsin(x/4)",
+      "problemId": "lec-03-q3b",
+      "steps": [
+        "外層 arcsin u，導數 1/√(1 − u²)；裡層 u = x/4，導數 1/4。",
+        "相乘：(1/4) · 1/√(1 − x²/16)。",
+        "化簡根號：1 − x²/16 = (16 − x²)/16，所以 √(1 − x²/16) = √(16 − x²)/4。",
+        "(1/4) · 4/√(16 − x²) = 1/√(16 − x²)（−4 < x < 4）。"
+      ],
+      "answer": "1/√(16 − x²)",
+      "claim": "D(arcsin(x/4)) == 1/sqrt(16-x^2)"
+    },
+    {
+      "title": "arctan 套連鎖律",
+      "prompt": "d/dx arctan(x²)",
+      "problemId": "db-itrig-002",
+      "steps": [
+        "外層 arctan u，導數 1/(1 + u²)；裡層 u = x²，導數 2x。",
+        "1/(1 + (x²)²) · 2x = 2x/(1 + x⁴)。"
+      ],
+      "answer": "2x/(1 + x⁴)",
+      "claim": "D(arctan(x^2)) == 2x/(1+x^4)"
+    }
+  ],
+  "pitfalls": [
+    "(f⁻¹)′(b) 算成 1/f′(b)，忘了先找 a = f⁻¹(b)。",
+    "把 arcsin x 當成 1/sin x。sin⁻¹ x 這個寫法指的是反函數，不是倒數。",
+    "忘了連鎖律：arctan(x²) 寫成 1/(1 + x⁴)。",
+    "把 (x²)² 寫成 x²，得到 2x/(1 + x²)。",
+    "arccos 的導數漏了負號。"
+  ],
+  "checks": [
+    {
+      "ask": "f(x) = x³ + x，(f⁻¹)′(2) 是？",
+      "options": [
+        { "label": "1/13", "why": "這是 1/f′(2)。2 是反函數的輸入，要先找 f(a) = 2 的 a = 1，再算 1/f′(1)。" },
+        { "label": "1/4", "correct": true },
+        { "label": "4", "why": "這是 f′(1)，忘了取倒數。" }
+      ]
+    },
+    {
+      "ask": "arctan x 在 x = 1 的導數是？",
+      "options": [
+        { "label": "π/4", "why": "這是函數值 arctan 1，不是導數。" },
+        { "label": "2", "why": "倒數弄反了：導數是 1/(1 + x²) = 1/2，不是 1 + x²。" },
+        { "label": "1/2", "correct": true }
+      ]
+    },
+    {
+      "ask": "d/dx arcsin(2x) 是？",
+      "options": [
+        { "label": "2/√(1 − 4x²)", "correct": true },
+        { "label": "1/√(1 − 4x²)", "why": "外層對了，忘了乘裡層 2x 的導數 2。" },
+        { "label": "2/√(1 − 2x²)", "why": "(2x)² 是 4x²，不是 2x²。" }
+      ]
+    },
+    {
+      "ask": "推導 (arcsin x)′ 時，cos y = √(1 − x²) 為什麼取正號？",
+      "options": [
+        { "label": "因為 y = arcsin x 在 [−π/2, π/2]，那裡 cos y ≥ 0", "correct": true },
+        { "label": "因為根號一律取正", "why": "√ 本身是正的沒錯，但問題是 cos y 該等於 +√ 還是 −√；決定這件事的是 y 的範圍。" },
+        { "label": "因為 x > 0", "why": "x 可以是負的，例如 arcsin(−1/2) = −π/6，那裡 cos 仍然是正的。" }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": ["inverse-function", "inverse-trig"],
+    "fine": ["invtrig-deriv-inverse-function", "invtrig-deriv-arcsin", "invtrig-deriv-arctan", "invtrig-deriv-chain", "invtrig-deriv-arccos"]
+  },
+  "practice": [
+    { "id": "db-inv-001", "core": true, "trains": "invtrig-deriv-inverse-function" },
+    { "id": "lec-03-q3d", "core": true, "trains": "invtrig-deriv-inverse-function" },
+    { "id": "dd-invf-003", "core": true, "trains": "invtrig-deriv-inverse-function" },
+    { "id": "world-004", "core": true, "trains": "invtrig-deriv-arctan" },
+    { "id": "cx-der-008", "core": true, "trains": "invtrig-deriv-arctan" },
+    { "id": "db-itrig-001", "core": true, "trains": "invtrig-deriv-arcsin" },
+    { "id": "db-itrig-002", "core": true, "trains": "invtrig-deriv-chain" },
+    { "id": "lec-03-q3b", "trains": "invtrig-deriv-arcsin" },
+    { "id": "der-028", "trains": "invtrig-deriv-chain" },
+    { "id": "exam-der-017", "trains": "invtrig-deriv-chain" },
+    { "id": "hd-009", "trains": "invtrig-deriv-arcsin" },
+    { "id": "db-inv-003", "trains": "invtrig-deriv-inverse-function" },
+    { "id": "dd-inv-003", "challenge": true, "trains": "invtrig-deriv-arcsin", "note": "挑戰：x arcsin x + √(1 − x²) 微分後會大量消掉，只剩 arcsin x。" },
+    { "id": "depth-der-015", "challenge": true, "trains": "invtrig-deriv-arccos", "note": "挑戰：arccos 套連鎖律，化簡時要用到 x > 0。" }
+  ],
+  "gaps": [
+    { "tag": "invtrig-deriv-arccos", "count": 2, "note": "R1–R2 的 arccos 導數題（含負號），例如 d/dx arccos x、d/dx arccos(3x)。題庫只有 R3 以上。" }
+  ]
+}

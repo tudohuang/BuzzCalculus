@@ -1,0 +1,148 @@
+{
+  "id": "continuity-definition",
+  "title": "連續的定義",
+  "readMinutes": 8,
+  "totalMinutes": 30,
+  "prerequisites": ["limit-existence", "limit-laws-direct"],
+  "next": ["discontinuity-types"],
+  "related": ["continuity-formal", "limit-factor", "limit-trig-standard"],
+  "objectives": [
+    "說得出 f 在 a 連續的三個條件，並逐條檢查。",
+    "知道哪些函數在哪裡連續，以及「可以直接代入」就是連續。",
+    "會解分段函數的連續參數題，會補一個值讓函數連續。"
+  ],
+  "visual": "畫出一個在 x = 2 有洞的函數，旁邊列出三個條件的勾選框。拖動「f(2) 的值」那個點上下移動：放在洞以外的地方，第三條打叉；剛好放進洞裡，三條全部打勾，曲線變成一筆畫完。",
+  "concept": [
+    {
+      "heading": "① 定義：極限等於函數值",
+      "body": [
+        "f 在 x = a 連續，意思是 lim_{x→a} f(x) = f(a)。這一行其實包含三件事：f(a) 有定義；lim_{x→a} f(x) 存在；兩者相等。少一件就不連續。",
+        "直覺的說法是「畫到 x = a 不用抬筆」。這是直覺，不是定義：它對奇怪的函數不可靠，而且只描述了圖形，檢查時一律回到上面三條。"
+      ],
+      "tex": ["\\lim_{x\\to a}f(x)=f(a)"],
+      "collapsible": false
+    },
+    {
+      "heading": "② 哪些函數連續",
+      "body": [
+        "多項式處處連續；有理函數在分母不為 0 的每一點連續；√x、eˣ、ln x、sin x、cos x 在它們的定義域上連續。",
+        "連續函數相加、相減、相乘、相除（分母不為 0）、合成，結果還是連續。所以〈直接代入與極限定律〉裡「可以直接代入」的函數，正是在那一點連續的函數。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 合成：極限可以穿進連續函數裡",
+      "body": [
+        "若 lim_{x→a} g(x) = b，而 f 在 b 連續，則 lim_{x→a} f(g(x)) = f(b)。例：lim_{x→1} √((x² − 1)/(x − 1))，裡面的極限是 2，√ 在 2 連續，答案 √2。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 區間上的連續",
+      "body": [
+        "在開區間 (a, b) 連續：裡面每一點都連續。在閉區間 [a, b] 連續：裡面每點連續，而且端點只看一側：lim_{x→a⁺} f(x) = f(a)，lim_{x→b⁻} f(x) = f(b)。例：√x 在 [0, ∞) 連續，0 那一點用右極限。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "⑤ 嚴格版預告",
+      "body": [
+        "用 ε-δ 寫出來是：任給 ε > 0，存在 δ > 0，使 |x − a| < δ 時 |f(x) − f(a)| < ε。跟極限的定義只差兩處：x = a 本身也算進來，而且 L 換成 f(a)。細節在〈連續的正式定義〉。"
+      ],
+      "collapsible": true
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "補一個值",
+      "prompt": "f(x) = (x² − 9)/(x − 3)（x ≠ 3），f(3) = k。k 是多少時 f 在 3 連續？",
+      "problemId": "cx-cont-001",
+      "steps": [
+        "連續要 lim_{x→3} f(x) = f(3) = k。",
+        "x ≠ 3 時 (x² − 9)/(x − 3) = x + 3（〈0/0：因式分解〉），極限是 6。",
+        "所以 k = 6。"
+      ],
+      "answer": "k = 6",
+      "claim": "LIM((x^2-9)/(x-3), 3) == 6"
+    },
+    {
+      "title": "分段函數的參數",
+      "prompt": "f(x) = ax + 1（x ≤ 2），x²（x > 2）。a 是多少時 f 在 2 連續？",
+      "problemId": "cx-cont-002",
+      "steps": [
+        "f(2)：2 屬於 x ≤ 2 那段，f(2) = 2a + 1。左極限也是 2a + 1（同一段，多項式）。",
+        "右極限：x² → 4。",
+        "三條件要成立：2a + 1 = 4，a = 3/2。"
+      ],
+      "answer": "a = 3/2",
+      "claim": "LIM(x^2, 2+) == SUB(1.5x+1, 2) ;; LIM(1.5x+1, 2-) == 4"
+    },
+    {
+      "title": "極限穿進根號",
+      "prompt": "lim_{x→1} √((x² − 1)/(x − 1))",
+      "steps": [
+        "裡面：(x² − 1)/(x − 1) = x + 1（x ≠ 1），x → 1 時 → 2。",
+        "√ 在 2 連續，所以極限可以穿進去：√2。"
+      ],
+      "answer": "√2",
+      "claim": "LIM(sqrt((x^2-1)/(x-1)), 1) == sqrt(2)"
+    }
+  ],
+  "pitfalls": [
+    "只檢查極限存在，沒檢查 f(a) 有定義、兩者相等。",
+    "只檢查 f(a) 有定義，就說連續。",
+    "分段題把分界點代進不包含它的那一段。",
+    "把 1/x 說成「在定義域上不連續」：它在定義域的每一點都連續，x = 0 根本不在定義域裡。"
+  ],
+  "checks": [
+    {
+      "ask": "f(2) = 5，而且 lim_{x→2} f(x) = 5。f 在 2：",
+      "options": [
+        { "label": "不連續", "why": "三個條件都滿足：有定義、極限存在、兩者相等。" },
+        { "label": "連續", "correct": true },
+        { "label": "要看圖才知道", "why": "定義只要這三件事，題目都給了。" }
+      ]
+    },
+    {
+      "ask": "f(x) = (x² − 4)/(x − 2) 在 x = 2：",
+      "options": [
+        { "label": "連續，因為極限是 4", "why": "極限存在只是三個條件之一；f(2) 沒有定義。" },
+        { "label": "不連續，因為極限不存在", "why": "極限存在，是 4。缺的是 f(2)。" },
+        { "label": "不連續，因為 f(2) 沒有定義", "correct": true }
+      ]
+    },
+    {
+      "ask": "f(x) = x² + b（x < 1），3x − 1（x ≥ 1）在 1 連續。b 是？",
+      "options": [
+        { "label": "1", "correct": true },
+        { "label": "2", "why": "左段在 1 的極限是 1 + b，不是 b；要 1 + b = 2。" },
+        { "label": "0", "why": "左極限 1 + b 要等於 f(1) = 3 − 1 = 2，b = 1。" }
+      ]
+    },
+    {
+      "ask": "哪一個函數在所有實數上連續？",
+      "options": [
+        { "label": "1/(x² − 1)", "why": "x = ±1 時分母是 0，那兩點沒有定義。" },
+        { "label": "x²/(x² + 1)", "correct": true },
+        { "label": "√x", "why": "x < 0 沒有定義。" }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": ["continuity", "piecewise"],
+    "fine": ["continuity-three-conditions", "continuity-piecewise-param", "continuity-fill-value", "continuity-where", "continuity-composition"]
+  },
+  "practice": [
+    { "id": "lx-con-001", "core": true, "trains": "continuity-piecewise-param" },
+    { "id": "lx-con-002", "core": true, "trains": "continuity-fill-value", "note": "極限要用〈三角標準極限〉。" },
+    { "id": "lec-01-q4a", "core": true, "trains": "continuity-where" },
+    { "id": "si-set-021", "trains": "continuity-where" },
+    { "id": "cx-cont-005", "trains": "continuity-piecewise-param" },
+    { "id": "lec-01-m4", "trains": "continuity-three-conditions" },
+    { "id": "lec-01-q3a", "challenge": true, "trains": "continuity-piecewise-param", "note": "挑戰：兩個分界點、兩個參數，各列一條方程式。" }
+  ],
+  "gaps": [
+    { "tag": "continuity-three-conditions", "count": 2, "note": "R1：給 f(a) 與左右極限，判斷連不連續、缺哪一條" },
+    { "tag": "continuity-composition", "count": 2, "note": "R2：極限穿進連續函數（√、e^、ln 套 0/0 化簡）" }
+  ]
+}

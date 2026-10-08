@@ -1,0 +1,153 @@
+{
+  "id": "beta-gamma-relation",
+  "title": "Beta 與 Gamma 的關係",
+  "readMinutes": 12,
+  "totalMinutes": 40,
+  "prerequisites": ["beta-function", "gamma-half-integer", "change-of-variables", "jacobian-determinant"],
+  "next": ["beta-trig"],
+  "related": ["gamma-half", "residue-real-integrals"],
+  "objectives": [
+    "寫得出 B(p, q) = Γ(p)Γ(q)/Γ(p + q)，並用它算非整數的 Beta 值。",
+    "說得出證明的骨架：Γ(p)Γ(q) 寫成二重積分，換成「總和 u = x + y、比例 v = x/(x + y)」兩個變數。",
+    "把 [0, 1] 與 [0, ∞) 上的 Beta 型積分化成 Gamma 值計算。"
+  ],
+  "visual": "第一象限的點 (x, y)，畫出 x + y = u 的斜線族與 x/(x + y) = v 的射線族，兩族線把象限切成彎曲的小格子。點一個格子顯示它的面積約 u du dv，說明 Jacobian 為什麼是 u。",
+  "concept": [
+    {
+      "heading": "① 公式",
+      "body": [
+        "Beta 可以完全用 Gamma 表示。整數時它就是上一課的 (m − 1)!(n − 1)!/(m + n − 1)!，因為 Γ(m) = (m − 1)!。",
+        "這條公式讓所有非整數的 Beta 都能算：B(1/2, 1/2) = Γ(1/2)²/Γ(1) = π，B(3/2, 3/2) = (√π/2)²/Γ(3) = (π/4)/2 = π/8。",
+        "分母 Γ(p + q) 最容易漏掉：B 是三個 Gamma 的組合，不是兩個相乘。"
+      ],
+      "tex": ["B(p,q)=\\frac{\\Gamma(p)\\,\\Gamma(q)}{\\Gamma(p+q)}"],
+      "collapsible": false
+    },
+    {
+      "heading": "② 為什麼：把兩個 Gamma 合成一個二重積分",
+      "body": [
+        "Γ(p)Γ(q) = ∫₀^∞∫₀^∞ x^{p−1} y^{q−1} e^{−(x+y)} dx dy。指數只跟 x + y 有關，所以換成兩個新變數：u = x + y（總和）、v = x/(x + y)（x 佔的比例）。反過來 x = uv、y = u(1 − v)，u 從 0 到 ∞、v 從 0 到 1，剛好蓋滿第一象限。",
+        "代進去：x^{p−1}y^{q−1} = u^{p+q−2} v^{p−1}(1 − v)^{q−1}，再乘上 Jacobian u，被積函數拆成「只有 u」乘「只有 v」，兩個積分分開算：u 那邊是 Γ(p + q)，v 那邊是 B(p, q)。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "Jacobian 的計算與嚴格性",
+      "body": [
+        "x = uv、y = u − uv：∂(x, y)/∂(u, v) 的行列式 = (v)(−u) − (u)(1 − v) = −u，絕對值是 u（〈Jacobian 行列式〉）。",
+        "被積函數非負，所以 Fubini–Tonelli 定理保證可以把瑕二重積分寫成累次積分、也可以換變數，不用擔心收斂順序。"
+      ],
+      "collapsible": true
+    },
+    {
+      "heading": "③ 一個副產品：再證一次 Γ(1/2) = √π",
+      "body": [
+        "B(1/2, 1/2) = ∫₀¹ dx/√(x(1 − x))。令 x = sin² θ，dx = 2 sin θ cos θ dθ，√(x(1 − x)) = sin θ cos θ，積分變成 ∫₀^{π/2} 2 dθ = π。",
+        "另一方面 B(1/2, 1/2) = Γ(1/2)²/Γ(1) = Γ(1/2)²。所以 Γ(1/2)² = π，跟〈Γ(1/2) = √π〉的極座標算法得到同一個答案。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "預告：反射公式",
+      "body": [
+        "p + q = 1 時分母是 Γ(1) = 1，B(s, 1 − s) = Γ(s)Γ(1 − s)。可以證明 Γ(s)Γ(1 − s) = π/sin(πs)（0 < s < 1），證明要用複變（〈用留數算實積分〉）。有了它，∫₀^∞ dx/(1 + x⁴) = (1/4)B(1/4, 3/4) = π/(4 sin(π/4)) = π/(2√2) 這類積分都能一行算完。"
+      ],
+      "collapsible": true
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "半圓的面積",
+      "prompt": "∫₀¹ √(x(1 − x)) dx",
+      "problemId": "burst-int-008",
+      "steps": [
+        "√(x(1 − x)) = x^{1/2}(1 − x)^{1/2}，次方加 1：B(3/2, 3/2)。",
+        "B(3/2, 3/2) = Γ(3/2)²/Γ(3) = (√π/2)²/2 = (π/4)/2 = π/8。",
+        "幾何檢查：y = √(x(1 − x)) 是以 (1/2, 0) 為圓心、半徑 1/2 的上半圓，面積 (1/2)π(1/2)² = π/8。"
+      ],
+      "answer": "π/8",
+      "claim": "INT(sqrt(x*(1-x)), 0, 1) == pi/8"
+    },
+    {
+      "title": "一端無界",
+      "prompt": "∫₀¹ x^{−1/2}(1 − x)^{3/2} dx",
+      "problemId": "rel-boss-005",
+      "steps": [
+        "p − 1 = −1/2，p = 1/2；q − 1 = 3/2，q = 5/2。p、q > 0，收斂。",
+        "B(1/2, 5/2) = Γ(1/2)Γ(5/2)/Γ(3)。",
+        "Γ(1/2) = √π，Γ(5/2) = 3√π/4，Γ(3) = 2：(√π · 3√π/4)/2 = 3π/8。"
+      ],
+      "answer": "3π/8",
+      "claim": "INT(x^(-1/2)*(1-x)^(3/2), 0, 1) == 3*pi/8"
+    },
+    {
+      "title": "[0, ∞) 上的 Beta",
+      "prompt": "∫₀^∞ √x/(1 + x)³ dx",
+      "problemId": "hc-spec-002",
+      "steps": [
+        "對照 t^{p−1}/(1 + t)^{p+q}（〈Beta 函數〉的變形）：p − 1 = 1/2，p = 3/2；p + q = 3，q = 3/2。",
+        "積分 = B(3/2, 3/2) = π/8（範例 1 算過）。"
+      ],
+      "answer": "π/8",
+      "claim": "INT(sqrt(x)/(1+x)^3, 0, inf) == pi/8"
+    }
+  ],
+  "pitfalls": [
+    "漏掉分母 Γ(p + q)，寫成 B(p, q) = Γ(p)Γ(q)。",
+    "Γ(3/2) 用成 √π（那是 Γ(1/2)）。",
+    "[0, ∞) 形式的 q 讀錯：分母的次方是 p + q，要減掉 p。",
+    "Jacobian 漏掉，或寫成 uv。"
+  ],
+  "checks": [
+    {
+      "ask": "B(p, q) 用 Gamma 表示是？",
+      "options": [
+        { "label": "Γ(p)Γ(q)/Γ(p + q)", "correct": true },
+        { "label": "Γ(p)Γ(q)", "why": "少了分母 Γ(p + q)；例如 B(1, 1) = 1，但 Γ(1)Γ(1)/Γ(2) 才等於 1。" },
+        { "label": "Γ(p + q)/(Γ(p)Γ(q))", "why": "上下顛倒了；B(1, 2) = 1/2，代進去會得到 2。" }
+      ]
+    },
+    {
+      "ask": "B(1/2, 1/2) 是？",
+      "options": [
+        { "label": "π", "correct": true },
+        { "label": "√π", "why": "Γ(1/2)² = (√π)² = π，分母 Γ(1) = 1。" },
+        { "label": "2", "why": "2 是 B(1/2, 1) = Γ(1/2)Γ(1)/Γ(3/2) = √π/(√π/2)。" }
+      ]
+    },
+    {
+      "ask": "B(3/2, 1/2) 是？",
+      "options": [
+        { "label": "π/2", "correct": true },
+        { "label": "π/4", "why": "分母是 Γ(2) = 1：(√π/2)(√π)/1 = π/2。" },
+        { "label": "π", "why": "Γ(3/2) = √π/2，不是 √π。" }
+      ]
+    },
+    {
+      "ask": "證明裡用 x = uv、y = u(1 − v) 換變數，Jacobian 的絕對值是？",
+      "options": [
+        { "label": "u", "correct": true },
+        { "label": "1", "why": "這個變換會拉伸面積：行列式 v(−u) − u(1 − v) = −u。" },
+        { "label": "uv", "why": "算行列式時 v 的項會消掉，剩 −u。" }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": ["beta-function", "gamma-function", "special-functions"],
+    "fine": ["beta-gamma-formula", "beta-gamma-half-values", "beta-gamma-infinite-form", "beta-gamma-proof"]
+  },
+  "practice": [
+    { "id": "mob-trap-012", "core": true, "trains": "beta-gamma-formula" },
+    { "id": "mob-beta-005", "core": true, "trains": "beta-gamma-half-values" },
+    { "id": "mob-beta-006", "core": true, "trains": "beta-gamma-half-values" },
+    { "id": "mob-beta-007", "core": true, "trains": "beta-gamma-half-values" },
+    { "id": "burst-int-008", "core": true, "trains": "beta-gamma-half-values" },
+    { "id": "rel-boss-005", "core": true, "trains": "beta-gamma-half-values" },
+    { "id": "hc-spec-002", "trains": "beta-gamma-infinite-form" },
+    { "id": "burst-int-029", "challenge": true, "trains": "beta-gamma-infinite-form", "note": "挑戰：令 u = x²，化成 [0, ∞) 的 Beta，再用反射公式。" }
+  ],
+  "gaps": [
+    { "tag": "beta-gamma-proof", "count": 1, "note": "白話證明題：用 x = uv、y = u(1 − v) 證明 Γ(p)Γ(q) = Γ(p + q)B(p, q)。" },
+    { "tag": "beta-gamma-infinite-form", "count": 2, "note": "∫₀^∞ x^{a}/(1 + x)^{b} dx 的半整數值題，R4。" }
+  ]
+}

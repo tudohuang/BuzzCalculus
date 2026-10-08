@@ -1,0 +1,160 @@
+{
+  "id": "reverse-chain",
+  "title": "反連鎖律",
+  "readMinutes": 8,
+  "totalMinutes": 30,
+  "prerequisites": ["chain-rule", "integral-table", "ftc-part2"],
+  "next": ["u-sub-basic"],
+  "related": [],
+  "objectives": [
+    "會積「裡面是 ax + b」的函數：照表積，再除以 a。",
+    "被積函數裡出現「裡面那一層的導數」時，會用「猜外層、微分、修正常數」找到反導函數。",
+    "知道只有常數可以修正；差的是含 x 的因子時，猜法行不通。"
+  ],
+  "visual": null,
+  "concept": [
+    {
+      "heading": "① 微分時多乘的，積分時要除回去",
+      "body": [
+        "(sin 3x)′ = 3 cos 3x：連鎖律多乘了裡面的導數 3。倒過來，∫ cos 3x dx 要把那個 3 除掉：(1/3) sin 3x + C。",
+        "一般地，裡面是 ax + b（a ≠ 0）時：先照〈基本積分表〉積外層，再除以 a。"
+      ],
+      "tex": ["\\int f(ax+b)\\,dx=\\frac1a\\,F(ax+b)+C,\\qquad F'=f"],
+      "collapsible": false
+    },
+    {
+      "heading": "② 猜、微分、修正",
+      "body": [
+        "沒把握的時候，用三步：先猜外層的反導函數（裡面原封不動），微分一次，看差幾倍，再除掉。",
+        "∫ (2x + 3)⁴ dx：猜 (2x + 3)⁵。微分：5(2x + 3)⁴ · 2 = 10(2x + 3)⁴，多了 10 倍。答案 (2x + 3)⁵/10 + C。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 裡面不是一次式也可以，只要它的導數在場",
+      "body": [
+        "∫ 2x(x² + 1)³ dx：外層是 ( )³，裡面是 x² + 1，它的導數 2x 剛好在式子裡。猜 (x² + 1)⁴，微分得 4(x² + 1)³ · 2x，多了 4 倍。答案 (x² + 1)⁴/4 + C。",
+        "∫ x e^{x²} dx：猜 e^{x²}，微分得 2x e^{x²}，多了 2 倍。答案 e^{x²}/2 + C。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 只能修正常數",
+      "body": [
+        "∫ (x² + 1)² dx：猜 (x² + 1)³/3，微分得 (x² + 1)² · 2x，多了一個 2x。2x 含 x，不能除掉：(x² + 1)³/(6x) 用除法法則微分會多出別的項，不會回到原式。這題要先展開成 x⁴ + 2x² + 1 再逐項積。",
+        "判斷方法：猜完微分，多出來的如果是常數就修正，含 x 就換方法。下一課〈換元：基礎〉把這套猜法整理成固定步驟。"
+      ],
+      "collapsible": false
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "裡面是 3x",
+      "prompt": "∫ cos 3x dx",
+      "steps": [
+        "外層 cos 的反導函數是 sin，先猜 sin 3x。",
+        "微分：(sin 3x)′ = 3 cos 3x，多了 3。",
+        "答案：(1/3) sin 3x + C。"
+      ],
+      "answer": "(1/3) sin 3x + C",
+      "claim": "D(sin(3*x)/3) == cos(3*x)"
+    },
+    {
+      "title": "一次式的次方",
+      "prompt": "∫ (2x + 3)⁴ dx",
+      "problemId": "tmpl-int-linear-power-001",
+      "steps": [
+        "外層是 ( )⁴，反導函數 ( )⁵/5。先猜 (2x + 3)⁵。",
+        "微分：5(2x + 3)⁴ · 2 = 10(2x + 3)⁴，多了 10 倍。",
+        "答案：(2x + 3)⁵/10 + C。不必展開 (2x + 3)⁴。"
+      ],
+      "answer": "(2x + 3)⁵/10 + C",
+      "claim": "D((2*x+3)^5/10) == (2*x+3)^4"
+    },
+    {
+      "title": "裡面的導數在場",
+      "prompt": "∫ x e^{x²} dx",
+      "problemId": "int-005",
+      "steps": [
+        "外層是 e^( )，裡面是 x²，它的導數 2x 跟式子裡的 x 只差常數 2。",
+        "猜 e^{x²}，微分：e^{x²} · 2x，多了 2 倍。",
+        "答案：e^{x²}/2 + C。"
+      ],
+      "answer": "e^{x²}/2 + C",
+      "claim": "D(e^(x^2)/2) == x*e^(x^2)"
+    },
+    {
+      "title": "猜不出來：先展開",
+      "prompt": "∫ (x² + 1)² dx",
+      "steps": [
+        "猜 (x² + 1)³/3，微分得 (x² + 1)² · 2x，多了 2x。2x 含 x，不能修正。",
+        "改成展開：(x² + 1)² = x⁴ + 2x² + 1。",
+        "逐項積：x⁵/5 + 2x³/3 + x + C。",
+        "檢查：(x⁵/5 + 2x³/3 + x)′ = x⁴ + 2x² + 1。"
+      ],
+      "answer": "x⁵/5 + 2x³/3 + x + C",
+      "claim": "D(x^5/5+2*x^3/3+x) == (x^2+1)^2"
+    }
+  ],
+  "pitfalls": [
+    "∫ cos 3x dx 寫成 sin 3x（忘了除 3）或 3 sin 3x（乘反了）。",
+    "∫ 1/(2x + 1) dx 寫成 ln|2x + 1|，漏了 1/2。",
+    "差一個含 x 的因子，也硬除掉，例如寫成 (x² + 1)³/(6x)。",
+    "∫ sin 4x dx 漏了負號。"
+  ],
+  "checks": [
+    {
+      "ask": "∫ e^{5x} dx 是？",
+      "options": [
+        { "label": "e^{5x}/5 + C", "correct": true },
+        { "label": "5e^{5x} + C", "why": "那是 e^{5x} 的導數，你往前微分了。" },
+        { "label": "e^{5x} + C", "why": "(e^{5x})′ = 5e^{5x}，多了 5，要除掉。" }
+      ]
+    },
+    {
+      "ask": "∫ 1/(2x + 1) dx 是？",
+      "options": [
+        { "label": "(1/2) ln|2x + 1| + C", "correct": true },
+        { "label": "ln|2x + 1| + C", "why": "微分得 2/(2x + 1)，多了裡面的導數 2，要除掉。" },
+        { "label": "2 ln|2x + 1| + C", "why": "方向反了：多出來的 2 要除掉，不是再乘上去。" }
+      ]
+    },
+    {
+      "ask": "有人寫 ∫ (x² + 1)² dx = (x² + 1)³/(6x) + C。錯在哪？",
+      "options": [
+        { "label": "只能除以常數；2x 含 x，除掉之後微分回去對不上", "correct": true },
+        { "label": "應該除以 3，不是 6x", "why": "(x² + 1)³/3 微分是 2x(x² + 1)²，還是多一個 2x。問題是式子裡沒有 2x 可以配，要先展開。" },
+        { "label": "沒有錯", "why": "用除法法則微分 (x² + 1)³/(6x)，會多出一項含 (x² + 1)³/x² 的東西，回不到 (x² + 1)²。" }
+      ]
+    },
+    {
+      "ask": "∫ sin 4x dx 是？",
+      "options": [
+        { "label": "−(1/4) cos 4x + C", "correct": true },
+        { "label": "(1/4) cos 4x + C", "why": "sin 的反導函數是 −cos，負號不能丟。" },
+        { "label": "−4 cos 4x + C", "why": "微分 −4 cos 4x 得 16 sin 4x。多出來的 4 要除，不是乘。" }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": ["substitution", "basic-integral", "trig", "exponential"],
+    "fine": ["reverse-chain-linear-inner", "reverse-chain-linear-power", "reverse-chain-inner-derivative", "reverse-chain-constant-only"]
+  },
+  "practice": [
+    { "id": "fd-int-003", "core": true, "trains": "reverse-chain-linear-inner" },
+    { "id": "fd-int-004", "core": true, "trains": "reverse-chain-linear-inner" },
+    { "id": "int-004", "core": true, "trains": "reverse-chain-linear-inner" },
+    { "id": "tmpl-int-linear-power-002", "core": true, "trains": "reverse-chain-linear-power" },
+    { "id": "rel-basic-015", "core": true, "trains": "reverse-chain-linear-inner" },
+    { "id": "tmpl-int-sin-def-001", "core": true, "trains": "reverse-chain-linear-inner" },
+    { "id": "int-007", "core": true, "trains": "reverse-chain-inner-derivative" },
+    { "id": "int-006", "core": true, "trains": "reverse-chain-inner-derivative" },
+    { "id": "fd-int-015", "trains": "reverse-chain-linear-inner" },
+    { "id": "tmpl-int-linear-power-004", "trains": "reverse-chain-linear-power" },
+    { "id": "tmpl-int-usub-poly-001", "trains": "reverse-chain-inner-derivative" },
+    { "id": "mob-trap-002", "trains": "reverse-chain-linear-inner" }
+  ],
+  "gaps": [
+    { "tag": "reverse-chain-constant-only", "count": 2, "note": "判斷題：猜外層後多出來的是常數還是含 x 的因子、能不能修正，例如 ∫ (x² + 1)² dx，R1–R2。" }
+  ]
+}

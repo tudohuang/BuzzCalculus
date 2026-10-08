@@ -1,0 +1,144 @@
+{
+  "id": "gamma-half",
+  "title": "Γ(1/2) = √π",
+  "readMinutes": 12,
+  "totalMinutes": 35,
+  "prerequisites": ["gamma-recurrence-apps", "polar-double-integral", "improper-infinite", "u-sub-definite"],
+  "next": ["gamma-half-integer"],
+  "related": ["gaussian-integral", "beta-gamma-relation"],
+  "objectives": [
+    "用換元 x = u² 把 Γ(1/2) 變成 2∫₀^∞ e^{−u²} du。",
+    "用「平方之後換極座標」算出 ∫₀^∞ e^{−u²} du = √π/2，並說得出多出來的 r 為什麼是關鍵。",
+    "用縮放算 ∫₀^∞ e^{−ax²} dx = (1/2)√(π/a)。"
+  ],
+  "visual": "左圖：曲面 z = e^{−(x²+y²)} 像一頂鐘形帽子，從上方看是一圈圈同心圓等高線。右圖：同一塊區域用方格切（x、y 分開積，卡住）與用同心圓環切（每個環的面積約 2πr dr，剛好配上 e^{−r²}）對照，顯示換極座標為什麼能算。",
+  "concept": [
+    {
+      "heading": "① 從 Gamma 到鐘形曲線",
+      "body": [
+        "Γ(1/2) = ∫₀^∞ x^{−1/2} e^{−x} dx。令 x = u²（u ≥ 0），dx = 2u du，x^{−1/2} = 1/u：",
+        "Γ(1/2) = ∫₀^∞ (1/u) e^{−u²} 2u du = 2∫₀^∞ e^{−u²} du。",
+        "問題變成鐘形曲線 e^{−u²} 底下的面積。e^{−u²} 有反導函數，但寫不成常見初等函數的有限組合，所以要換個方法。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 一維算不動，就算它的平方",
+      "body": [
+        "令 I = ∫₀^∞ e^{−x²} dx。I² 是兩個一樣的積分相乘，可以寫成第一象限上的二重積分：I² = ∫₀^∞∫₀^∞ e^{−(x²+y²)} dx dy。",
+        "被積函數只跟 x² + y² = r² 有關，換極座標：第一象限是 0 ≤ θ ≤ π/2、0 ≤ r < ∞，面積元素 dx dy = r dr dθ（〈極座標二重積分〉）。",
+        "多出來的 r 是關鍵：∫ e^{−r²} r dr 用 u = r² 一行就積出來。"
+      ],
+      "tex": ["I^{2}=\\int_0^{\\pi/2}\\!\\!\\int_0^{\\infty}e^{-r^{2}}\\,r\\,dr\\,d\\theta=\\frac{\\pi}{2}\\cdot\\frac12=\\frac{\\pi}{4}"],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 結果",
+      "body": [
+        "I > 0，所以 I = √π/2，Γ(1/2) = 2I = √π。由對稱，∫_{−∞}^∞ e^{−x²} dx = √π。",
+        "一個 π 出現在沒有圓的積分裡，是因為平方之後的被積函數 e^{−(x²+y²)} 有旋轉對稱，圓是藏在裡面的。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "這個計算為什麼嚴格",
+      "body": [
+        "I² = (∫₀^∞ e^{−x²} dx)² 寫成整個第一象限的二重積分，需要先在有限區域上做、再取極限。令 S_R = [0, R]²，D_R 是半徑 R 的四分之一圓盤。被積函數為正，而且 D_R ⊂ S_R ⊂ D_{R√2}，所以",
+        "∬_{D_R} ≤ (∫₀^R e^{−x²} dx)² ≤ ∬_{D_{R√2}}。左右兩邊用極座標算出來是 (π/4)(1 − e^{−R²}) 與 (π/4)(1 − e^{−2R²})，R → ∞ 都 → π/4，夾擠得 I² = π/4。"
+      ],
+      "collapsible": true
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "完整推導",
+      "prompt": "證明 Γ(1/2) = √π。",
+      "problemId": "mob-gamma-002",
+      "steps": [
+        "x = u²：Γ(1/2) = 2∫₀^∞ e^{−u²} du = 2I。",
+        "I² = ∫₀^{π/2}∫₀^∞ e^{−r²} r dr dθ。",
+        "內層：∫₀^∞ e^{−r²} r dr = [−e^{−r²}/2]₀^∞ = 1/2。外層乘上 θ 的範圍 π/2：I² = π/4。",
+        "I = √π/2（取正根，因為被積函數為正），Γ(1/2) = √π ≈ 1.7725。"
+      ],
+      "answer": "√π",
+      "claim": "INT(x^(-1/2)*e^(-x), 0, inf) == sqrt(pi) ;; INT(x*e^(-x^2), 0, inf) == 1/2 ;; INT(e^(-x^2), 0, inf)^2 == pi/4"
+    },
+    {
+      "title": "指數有係數",
+      "prompt": "∫₀^∞ e^{−3x²} dx",
+      "steps": [
+        "令 u = √3 x，dx = du/√3，3x² = u²。",
+        "積分 = (1/√3) ∫₀^∞ e^{−u²} du = (1/√3)(√π/2)。",
+        "一般公式：∫₀^∞ e^{−ax²} dx = (1/2)√(π/a)，a > 0。這裡 a = 3，得 (1/2)√(π/3) ≈ 0.5117。"
+      ],
+      "answer": "(1/2)√(π/3)",
+      "claim": "INT(e^(-3x^2), 0, inf) == sqrt(pi/3)/2"
+    },
+    {
+      "title": "常態分布的常數",
+      "prompt": "∫_{−∞}^∞ e^{−x²/2} dx",
+      "steps": [
+        "用上面的公式，a = 1/2：∫₀^∞ e^{−x²/2} dx = (1/2)√(π/(1/2)) = (1/2)√(2π)。",
+        "被積函數是偶函數，整條實數線是兩倍：√(2π)。",
+        "這就是常態分布密度前面為什麼是 1/√(2π)：讓總面積等於 1。"
+      ],
+      "answer": "√(2π)",
+      "claim": "INT(e^(-x^2/2), -inf, inf) == sqrt(2*pi)"
+    }
+  ],
+  "pitfalls": [
+    "換元 x = u² 時漏了 dx = 2u du 的 2，得到 Γ(1/2) = √π/2。",
+    "極座標忘了 r：沒有 r，∫ e^{−r²} dr 一樣積不出來。",
+    "θ 的範圍：只算第一象限是 π/2；整個平面才是 2π（那時得到的是 (∫_{−∞}^∞)² = π）。",
+    "∫₀^∞ 與 ∫_{−∞}^∞ 混用，差一個 2。"
+  ],
+  "checks": [
+    {
+      "ask": "Γ(1/2) 等於？",
+      "options": [
+        { "label": "√π", "correct": true },
+        { "label": "π", "why": "π 是 I² 那一層的量（整個平面上的 (∫_{−∞}^∞ e^{−x²} dx)²），開根號才是 √π。" },
+        { "label": "√π/2", "why": "那是 ∫₀^∞ e^{−x²} dx。Γ(1/2) = 2∫₀^∞ e^{−u²} du，多一個 2。" }
+      ]
+    },
+    {
+      "ask": "∫_{−∞}^∞ e^{−x²} dx 等於？",
+      "options": [
+        { "label": "√π", "correct": true },
+        { "label": "√π/2", "why": "那是從 0 積到 ∞ 的一半。" },
+        { "label": "π", "why": "π 是它的平方；面積本身要開根號。" }
+      ]
+    },
+    {
+      "ask": "換極座標之後為什麼算得出來？",
+      "options": [
+        { "label": "面積元素多了一個 r，∫ e^{−r²} r dr 可以用 u = r² 積出來", "correct": true },
+        { "label": "因為 e^{−r²} 本身有初等反導函數", "why": "e^{−r²} 跟 e^{−x²} 是同一個函數，一樣沒有初等反導函數；靠的是多出來的 r。" },
+        { "label": "因為極座標下積分區域變成有限", "why": "r 還是從 0 到 ∞，區域沒有變有限。" }
+      ]
+    },
+    {
+      "ask": "∫₀^∞ e^{−4x²} dx 等於？",
+      "options": [
+        { "label": "√π/4", "correct": true },
+        { "label": "√π/8", "why": "令 u = 2x，dx = du/2，只除以 2，不是 4：(1/2)(√π/2) = √π/4。" },
+        { "label": "√π/2", "why": "係數 4 會讓曲線變窄、面積變小，不能忽略。" }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": ["gamma-function", "gaussian", "special-functions"],
+    "fine": ["gamma-half-value", "gamma-half-gaussian-link", "gaussian-polar-trick", "gaussian-scaling"]
+  },
+  "practice": [
+    { "id": "mob-gamma-002", "core": true, "trains": "gamma-half-value" },
+    { "id": "world-090", "core": true, "trains": "gamma-half-gaussian-link" },
+    { "id": "mob-gamma-007", "trains": "gamma-half-value" },
+    { "id": "mob-gamma-003", "trains": "gamma-half-value" }
+  ],
+  "gaps": [
+    { "tag": "gaussian-scaling", "count": 3, "note": "∫₀^∞ e^{−ax²} dx 與 ∫_{−∞}^∞ e^{−ax²} dx 的直接求值題（a = 2、3、1/2），R3。" },
+    { "tag": "gaussian-polar-trick", "count": 1, "note": "白話證明題：用極座標證明 ∫_{−∞}^∞ e^{−x²} dx = √π。" },
+    { "tag": "gamma-half-gaussian-link", "count": 2, "note": "∫₀^∞ e^{−x}/√x dx 這類「換元後變 Gaussian」的題，R3。" }
+  ]
+}

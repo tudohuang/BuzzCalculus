@@ -1,0 +1,151 @@
+{
+  "id": "uniform-convergence-tests",
+  "title": "怎麼判斷一致收斂",
+  "readMinutes": 11,
+  "totalMinutes": 35,
+  "prerequisites": ["uniform-convergence", "bolzano-weierstrass", "extreme-value-theorem"],
+  "next": ["weierstrass-m-test"],
+  "related": [],
+  "objectives": [
+    "照固定流程判斷：先求逐點極限，再算或估計 ‖fₙ − f‖∞。",
+    "會用三種工具：微分求 sup、找與 x 無關的上界、找一串點 xₙ 證明不一致。",
+    "知道「縮小定義域」常常把不一致變成一致，並會用 Dini 定理。"
+  ],
+  "visual": null,
+  "concept": [
+    {
+      "heading": "① 第一步永遠是逐點極限",
+      "body": [
+        "一致收斂問的是「fₙ 一致收斂到誰」。所以先固定 x 求 f(x) = lim fₙ(x)；沒有 f，就沒有 ‖fₙ − f‖∞ 可算。逐點極限不存在，一致收斂當然也不成立。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 三種工具",
+      "body": [
+        "算出來：把 gₙ(x) = |fₙ(x) − f(x)| 當成 x 的函數，用微分找最大值，得到 ‖fₙ − f‖∞ 的公式，看它是否 → 0。",
+        "估出來：不必算到精確，只要找到與 x 無關的 aₙ → 0，使 |fₙ(x) − f(x)| ≤ aₙ 對所有 x 成立。例如 |sin(nx)/n| ≤ 1/n。",
+        "否定：要證不一致，找一串點 xₙ ∈ D 使 |fₙ(xₙ) − f(xₙ)| 不趨近 0。最常見的 xₙ 是高峰的位置，例如 1/n、1/√n、1 − 1/n。另一條捷徑：每個 fₙ 連續而 f 不連續，就不一致。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 壞事通常發生在一個點附近",
+      "body": [
+        "nx/(1 + n²x²) 在 [0, 1] 上不一致，是因為高峰擠向 x = 0；把定義域改成 [1/2, 1]，高峰在 n ≥ 2 時就跑出定義域，收斂變成一致的（範例 2）。很多「在 D 上不一致、但在每個遠離壞點的閉子區間上一致」的例子都是這種形狀。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "④ Dini 定理",
+      "body": [
+        "若 (1) D = [a, b] 是有界閉區間；(2) 每個 fₙ 連續；(3) 極限 f 連續；(4) 對每個 x，fₙ(x) 對 n 單調；則 fₙ → f 一致收斂。",
+        "四個條件都要：xⁿ 在 [0, 1] 上滿足 (1)(2)(4)，缺 (3)，不一致；xⁿ 在 [0, 1) 上滿足 (2)(3)(4)，缺 (1)，也不一致。"
+      ],
+      "collapsible": true
+    },
+    {
+      "heading": "證明：Dini 定理",
+      "body": [
+        "不妨設 fₙ 對 n 遞減（遞增時改看 −fₙ）。令 gₙ = fₙ − f：每個 gₙ 連續、gₙ ≥ 0、gₙ(x) 對 n 遞減且 → 0。因為 gₙ₊₁ ≤ gₙ，‖gₙ‖∞ 對 n 遞減。",
+        "反設不一致，則 ‖gₙ‖∞ 不趨近 0，又因為遞減，有 ε₀ > 0 使 ‖gₙ‖∞ ≥ ε₀ 對所有 n 成立。gₙ 在 [a, b] 上連續，由極值定理取得到最大值，取 xₙ 使 gₙ(xₙ) ≥ ε₀。",
+        "由 Bolzano–Weierstrass，有子數列 x_{n_k} → x* ∈ [a, b]。固定 m；當 n_k ≥ m 時，g_m(x_{n_k}) ≥ g_{n_k}(x_{n_k}) ≥ ε₀。令 k → ∞，g_m 連續，得 g_m(x*) ≥ ε₀。這對每個 m 成立，和 g_m(x*) → 0 矛盾。"
+      ],
+      "collapsible": true
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "找與 x 無關的上界",
+      "prompt": "fₙ(x) = x/(1 + nx²)，x ∈ ℝ。是否一致收斂？",
+      "steps": [
+        "逐點極限：x = 0 時 fₙ = 0；x ≠ 0 時分母 → ∞，fₙ(x) → 0。f ≡ 0。",
+        "估計：由 (√n|x| − 1)² ≥ 0 得 1 + nx² ≥ 2√n|x|，所以 |fₙ(x)| ≤ |x|/(2√n|x|) = 1/(2√n)（x ≠ 0；x = 0 時顯然）。",
+        "上界 1/(2√n) 跟 x 無關且 → 0，所以在整條實數線上一致收斂。等號在 x = 1/√n 取到，所以 ‖fₙ‖∞ 恰好是 1/(2√n)。"
+      ],
+      "answer": "一致收斂，‖fₙ‖∞ = 1/(2√n)",
+      "claim": "SUB(x/(1+n*x^2), 1/sqrt(n)) == 1/(2*sqrt(n)) ;; x/(1+n*x^2) <= 1/(2*sqrt(n))"
+    },
+    {
+      "title": "縮小定義域",
+      "prompt": "fₙ(x) = nx/(1 + n²x²)。在 [0, 1] 與 [1/2, 1] 上分別判斷是否一致收斂到 0。",
+      "problemId": "an-uf-004",
+      "steps": [
+        "逐點極限都是 0。fₙ′(x) = n(1 − n²x²)/(1 + n²x²)²：x < 1/n 時遞增，x > 1/n 時遞減。",
+        "[0, 1]：取 xₙ = 1/n，fₙ(xₙ) = 1/2，不趨近 0，不一致。",
+        "[1/2, 1]：n ≥ 2 時 1/n ≤ 1/2，fₙ 在這段遞減，‖fₙ‖∞ = fₙ(1/2) = (n/2)/(1 + n²/4) = 2n/(4 + n²) → 0，一致收斂。"
+      ],
+      "answer": "[0, 1] 上不一致；[1/2, 1] 上一致",
+      "claim": "SUB(n*x/(1+n^2*x^2), 1/n) == 1/2 ;; SUB(n*x/(1+n^2*x^2), 1/2) == 2n/(4+n^2) ;; LIM(2n/(4+n^2), inf) == 0"
+    },
+    {
+      "title": "用 Dini 定理",
+      "prompt": "fₙ(x) = (1 + x/n)ⁿ 在 [0, 1] 上收斂到 eˣ。證明是一致的，並求 n = 10 時的 ‖eˣ − f₁₀‖∞。",
+      "steps": [
+        "單調：x ≥ 0 時，對 1 與 n 個 (1 + x/n) 用算幾不等式，(1 + x/n)^{n/(n+1)} ≤ (1 + n(1 + x/n))/(n + 1) = 1 + x/(n + 1)，兩邊 n + 1 次方得 fₙ(x) ≤ fₙ₊₁(x)。",
+        "[0, 1] 有界閉、fₙ 與 eˣ 連續、對 n 單調，由 Dini 定理一致收斂。",
+        "誤差 h(x) = eˣ − (1 + x/n)ⁿ，h′(x) = eˣ − (1 + x/n)^{n−1} ≥ eˣ − (1 + x/n)ⁿ ≥ 0（因為 1 + x/n ≥ 1，且 (1 + x/n)ⁿ ≤ eˣ），所以最大在 x = 1：‖h‖∞ = e − (1 + 1/n)ⁿ。",
+        "n = 10：e − 1.1¹⁰ ≈ 2.71828 − 2.59374 ≈ 0.1245。"
+      ],
+      "answer": "一致收斂；n = 10 時 ‖eˣ − f₁₀‖∞ = e − 1.1¹⁰ ≈ 0.1245",
+      "note": "Dini 只告訴你「一致」，不告訴你速度；誤差的公式還是要自己算。",
+      "claim": "(1+x/9)^9 <= (1+x/10)^10 ;; (1+x/10)^10 <= e^x ;; e - (1+1/10)^10 > 0.124 ;; e - (1+1/10)^10 < 0.125"
+    }
+  ],
+  "pitfalls": [
+    "沒先求逐點極限就開始估 ‖fₙ − f‖∞。",
+    "上界裡還留著 x（例如 |fₙ(x)| ≤ 1/(nx)），就宣稱一致收斂。上界必須與 x 無關。",
+    "只代幾個固定的 x 看到誤差 → 0，就說一致。固定 x 的檢查只能證逐點收斂。",
+    "用 Dini 時忘了檢查「極限連續」或「區間有界閉」。"
+  ],
+  "checks": [
+    {
+      "ask": "判斷 fₙ 是否一致收斂，第一步應該做什麼？",
+      "options": [
+        { "label": "先固定 x 求逐點極限 f", "correct": true },
+        { "label": "直接對 fₙ 微分找最大值", "why": "你要的是 |fₙ − f| 的最大值，不是 fₙ 的。不先知道 f，算出來的 sup 沒有意義（除非 f ≡ 0）。" },
+        { "label": "檢查每個 fₙ 是否連續", "why": "連續性只能拿來否定（極限不連續 ⇒ 不一致），不能當判斷的起點。" }
+      ]
+    },
+    {
+      "ask": "fₙ(x) = x/(1 + nx²) 在 ℝ 上，‖fₙ‖∞ 是？",
+      "options": [
+        { "label": "1/(2√n)", "correct": true },
+        { "label": "1/n", "why": "你可能代了 x = 1：1/(1 + n)，大約 1/n。最大值在 x = 1/√n，不在 x = 1。" },
+        { "label": "∞", "why": "分子 x 變大時分母 nx² 變得更快，fₙ 有界。由 1 + nx² ≥ 2√n|x| 可得上界 1/(2√n)。" }
+      ]
+    },
+    {
+      "ask": "fₙ(x) = nx/(1 + n²x²) 在 [1/2, 1] 上，下列何者正確？",
+      "options": [
+        { "label": "一致收斂，因為 n ≥ 2 時 ‖fₙ‖∞ = 2n/(4 + n²) → 0", "correct": true },
+        { "label": "不一致，因為 fₙ(1/n) = 1/2", "why": "你沿用了 [0, 1] 的論證。n ≥ 3 時 1/n < 1/2，xₙ = 1/n 根本不在 [1/2, 1] 裡。" },
+        { "label": "不一致，因為高峰的高度一直是 1/2", "why": "高峰在 x = 1/n，已經跑出 [1/2, 1]。這段區間上 fₙ 是遞減的，最大在 x = 1/2。" }
+      ]
+    },
+    {
+      "ask": "xⁿ 在 [0, 1) 上單調遞減到連續的 0，每個 xⁿ 也連續，卻不一致收斂。它違反 Dini 定理的哪個條件？",
+      "options": [
+        { "label": "定義域不是有界閉區間", "correct": true },
+        { "label": "極限函數不連續", "why": "在 [0, 1) 上極限是 0，連續。不連續是 [0, 1] 那個例子的問題。" },
+        { "label": "fₙ(x) 對 n 不單調", "why": "0 ≤ x < 1 時 xⁿ⁺¹ ≤ xⁿ，是單調的。" }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": ["uniform-convergence"],
+    "fine": ["uniformconv-sup-norm", "uniformconv-bound-independent-of-x", "uniformconv-negation-witness", "uniformconv-restrict-domain", "uniformconv-dini"]
+  },
+  "practice": [
+    { "id": "an-uf-002", "core": true, "trains": "uniformconv-sup-norm" },
+    { "id": "an-uf-004", "core": true, "trains": "uniformconv-negation-witness" },
+    { "id": "an-uf-001", "core": true, "trains": "uniformconv-negation-witness" },
+    { "id": "an-uf-003", "core": true, "trains": "uniformconv-sup-norm" },
+    { "id": "an-uf-005", "challenge": true, "trains": "uniformconv-negation-witness", "note": "挑戰：高峰位置 1/√(2n) 就是要找的 xₙ。" }
+  ],
+  "gaps": [
+    { "tag": "uniformconv-bound-independent-of-x", "count": 3, "note": "求 ‖fₙ‖∞ 或與 x 無關的最佳上界：x/(1 + nx²) 在 ℝ、sin(nx)/n、x e^{−nx} 在 [0, ∞)。" },
+    { "tag": "uniformconv-restrict-domain", "count": 2, "note": "同一列函數在 [0, 1] 與 [a, 1] 上分別判斷，或求 [a, 1] 上的 ‖fₙ‖∞。" },
+    { "tag": "uniformconv-dini", "count": 2, "note": "Dini 定理哪個條件不成立的判斷題；求 e − (1 + 1/n)ⁿ 這類誤差值。" }
+  ]
+}

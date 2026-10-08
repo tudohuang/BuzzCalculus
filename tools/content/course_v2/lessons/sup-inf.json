@@ -1,0 +1,156 @@
+{
+  "id": "sup-inf",
+  "title": "上確界與下確界",
+  "readMinutes": 11,
+  "totalMinutes": 35,
+  "prerequisites": ["bounds", "max-min"],
+  "next": ["completeness-axiom"],
+  "related": ["archimedean-property"],
+  "objectives": [
+    "說得出上確界的定義：最小的上界，而且它不一定屬於集合。",
+    "會用 ε 判準證明某個數就是 sup S：它是上界，而且任何比它小一點的數都不是上界。",
+    "分得清 sup 與 max：max 存在時兩者相等；max 不存在時 sup 仍可能存在。"
+  ],
+  "visual": "數線上畫出 S = {1 − 1/n} 的點：0, 1/2, 2/3, 3/4, … 越來越密地擠向 1。拖一條紅色直線 y = s：s ≥ 1 時所有點都在線的左邊（是上界）；把 s 拉到 1 − ε，立刻有點跑到右邊，並標出第一個越界的 n。",
+  "concept": [
+    {
+      "heading": "① 沒有最大元，但有一個「天花板」",
+      "body": [
+        "S = {1 − 1/n : n ∈ ℕ} = {0, 1/2, 2/3, 3/4, …}。每一項都小於 1，所以 1 是 S 的上界；2、10 也都是上界。",
+        "S 沒有最大元：任何一項 1 − 1/n，下一項 1 − 1/(n + 1) 都比它大。但所有上界裡有一個最小的，就是 1。這個「最小的上界」叫做 S 的上確界，寫成 sup S。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 定義",
+      "body": [
+        "設 S ⊆ ℝ 非空。實數 s 叫做 S 的上確界（最小上界），如果：(i) s 是 S 的上界，也就是對所有 x ∈ S，x ≤ s；(ii) 若 b 是 S 的任一上界，則 s ≤ b。",
+        "下確界 inf S 對稱地定義：最大的下界。由 (ii)，上確界若存在就唯一：兩個都是最小上界，就互相 ≤，所以相等。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 實際在用的版本：ε 判準",
+      "body": [
+        "條件 (ii) 很難直接檢查，因為上界有無限多個。等價的說法是：s = sup S 若且唯若 (i) s 是上界，而且 (ii′) 對每一個 ε > 0，都存在 x ∈ S 使得 x > s − ε。",
+        "人話：s 往下退任何一點點，就不再是上界了。注意量詞順序：先給 ε，再找 x；不同的 ε 可以找不同的 x。"
+      ],
+      "tex": ["s=\\sup S\\iff\\begin{cases}\\forall x\\in S,\\ x\\le s\\\\ \\forall\\varepsilon>0\\ \\exists x\\in S,\\ x>s-\\varepsilon\\end{cases}"],
+      "collapsible": false
+    },
+    {
+      "heading": "證明：(ii) 與 (ii′) 等價",
+      "body": [
+        "(ii) ⇒ (ii′)：給定 ε > 0。s − ε < s，由 (ii)，s − ε 不可能是上界（否則 s ≤ s − ε）。「不是上界」的意思正是：存在 x ∈ S 使 x > s − ε。",
+        "(ii′) ⇒ (ii)：設 b 是上界，要證 s ≤ b。反設 b < s，取 ε = s − b > 0。由 (ii′) 有 x ∈ S 使 x > s − ε = b，與 b 是上界矛盾。所以 s ≤ b。"
+      ],
+      "collapsible": true
+    },
+    {
+      "heading": "④ sup 與 max 的關係",
+      "body": [
+        "如果 S 有最大元 m，那麼 sup S = m：m 是上界，而且任何上界 b 都 ≥ m（因為 m ∈ S）。反過來，sup S 屬於 S 時它就是最大元。",
+        "所以 sup 是 max 的推廣：max 只在「天花板剛好被摸到」時存在，sup 只要 S 非空、有上界就存在——這件事不是證出來的，而是實數的公理，見〈完備性公理〉。"
+      ],
+      "collapsible": false
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "證明 sup{1 − 1/n} = 1",
+      "prompt": "S = {1 − 1/n : n ∈ ℕ}，證明 sup S = 1，並說明 1 不在 S 裡。",
+      "problemId": "an-sup-001",
+      "steps": [
+        "(i) 上界：對每個 n ∈ ℕ，1/n > 0，所以 1 − 1/n < 1。",
+        "(ii′) 給定 ε > 0。要找 n 使 1 − 1/n > 1 − ε，也就是 1/n < ε，也就是 n > 1/ε。由阿基米德性質，這樣的自然數 n 存在。",
+        "具體一次：ε = 0.01 時要 n > 100，取 n = 101，1 − 1/101 ≈ 0.990099 > 0.99。",
+        "1 ∉ S：1 − 1/n = 1 會推出 1/n = 0，沒有自然數做得到。"
+      ],
+      "answer": "sup S = 1，而且取不到（S 沒有最大元）",
+      "note": "步驟 2 用到「n 可以比任何實數大」，這就是〈阿基米德性質〉；它看似顯然，其實要靠完備性證。",
+      "claim": "1 - 1/n < 1 ;; 1 - 1/101 > 0.99 ;; LIM(1 - 1/n, inf) == 1"
+    },
+    {
+      "title": "交錯的集合：上下確界都取得到",
+      "prompt": "S = {(−1)ⁿ(1 + 1/n) : n ∈ ℕ}，求 sup S 與 inf S。",
+      "problemId": "an-sup-002",
+      "steps": [
+        "先列幾項：n = 1, 2, 3, 4, 5, 6 得 −2, 3/2, −4/3, 5/4, −6/5, 7/6。偶數項為正、遞減；奇數項為負、遞增。",
+        "偶數 n 時值是 1 + 1/n ≤ 1 + 1/2 = 3/2；奇數 n 時值是負的，也 < 3/2。所以 3/2 是上界，而且 n = 2 時取到，是最大元，sup S = 3/2。",
+        "奇數 n 時值是 −(1 + 1/n) ≥ −(1 + 1) = −2；偶數 n 時值是正的，也 > −2。所以 −2 是下界，而且 n = 1 時取到，inf S = −2。"
+      ],
+      "answer": "sup S = 3/2，inf S = −2（都取得到）",
+      "note": "有最大元時不必用 ε 判準：最大元自動是上確界（觀念 ④）。",
+      "claim": "SUB((-1)^n*(1+1/n), 2) == 3/2 ;; SUB((-1)^n*(1+1/n), 1) == -2 ;; (-1)^n*(1+1/n) <= 3/2 ;; (-1)^n*(1+1/n) >= -2"
+    },
+    {
+      "title": "先增後減的數列",
+      "prompt": "S = {n/2ⁿ : n ∈ ℕ}，求 sup S。",
+      "problemId": "an-sup-006",
+      "steps": [
+        "前幾項：1/2, 2/4 = 1/2, 3/8, 4/16 = 1/4, …。",
+        "比較相鄰兩項：a_{n+1}/a_n = (n + 1)/(2n)。n = 1 時等於 1，n ≥ 2 時 (n + 1)/(2n) ≤ 3/4 < 1。所以 a₁ = a₂，之後嚴格遞減。",
+        "最大元是 a₁ = a₂ = 1/2，所以 sup S = 1/2。"
+      ],
+      "answer": "1/2",
+      "claim": "n/2^n <= 1/2 ;; SUB(n/2^n, 1) == 1/2 ;; SUB(n/2^n, 2) == 1/2"
+    }
+  ],
+  "pitfalls": [
+    "以為 sup S 一定屬於 S。sup{1 − 1/n} = 1 就不在 S 裡。",
+    "只證了「s 是上界」就宣稱 s = sup S。10 也是 {1 − 1/n} 的上界，最小性 (ii′) 一定要證。",
+    "ε 判準的量詞寫反：「存在 x，對所有 ε，x > s − ε」會逼出 x ≥ s，那是 max 不是 sup。",
+    "把「沒有上界」的集合寫 sup S = ∞ 卻當成一個實數來運算。∞ 只是記號，表示沒有上界。"
+  ],
+  "checks": [
+    {
+      "ask": "S = {1 − 1/n : n ∈ ℕ}。下列何者正確？",
+      "options": [
+        { "label": "sup S = 1，但 S 沒有最大元", "correct": true },
+        { "label": "sup S = 1，而且 1 是 S 的最大元", "why": "你把 sup 當成一定取得到。1 − 1/n = 1 沒有自然數解，1 不在 S 裡。" },
+        { "label": "S 沒有上確界，因為沒有最大元", "why": "你把 sup 跟 max 混成一件事。沒有最大元，最小上界 1 仍然存在。" }
+      ]
+    },
+    {
+      "ask": "要證 s = sup S，除了「s 是上界」，還要證哪一件？",
+      "options": [
+        { "label": "對每個 ε > 0，存在 x ∈ S 使 x > s − ε", "correct": true },
+        { "label": "存在 x ∈ S，使 x > s − ε 對每個 ε > 0 都成立", "why": "量詞順序寫反了。同一個 x 要對所有 ε 都成立，等於 x ≥ s，那是在證 s 是最大元。" },
+        { "label": "s ∈ S", "why": "那是最大元的條件。上確界可以不屬於 S，例如 sup{1 − 1/n} = 1。" }
+      ]
+    },
+    {
+      "ask": "S = {(−1)ⁿ(1 + 1/n) : n ∈ ℕ}。inf S 是？",
+      "options": [
+        { "label": "−2", "correct": true },
+        { "label": "−1", "why": "你看的是 n → ∞ 時奇數項的去向（−1）。但 n = 1 這一項 −2 比它更小，下確界要看整個集合。" },
+        { "label": "1", "why": "1 是偶數項往下靠近的值，跟下確界無關；奇數項全是負的。" }
+      ]
+    },
+    {
+      "ask": "ε = 0.01 時，要讓 1 − 1/n > 1 − ε，n 至少要多大？",
+      "options": [
+        { "label": "n > 100，例如 n = 101", "correct": true },
+        { "label": "n > 10", "why": "你可能解成 1/n² < ε。這裡是 1/n < 0.01，要 n > 100。" },
+        { "label": "n = 100 就夠", "why": "n = 100 時 1/n = 0.01，不是嚴格小於 ε；要 n > 100。" }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": ["supremum", "infimum", "sequence"],
+    "fine": ["supinf-epsilon-characterization", "supinf-attained-vs-not", "supinf-sequence-set", "supinf-upper-bound-check"]
+  },
+  "practice": [
+    { "id": "an-sup-001", "core": true, "trains": "supinf-attained-vs-not" },
+    { "id": "an-sup-002", "core": true, "trains": "supinf-sequence-set" },
+    { "id": "an-sup-006", "core": true, "trains": "supinf-sequence-set" },
+    { "id": "an-sup-007", "core": true, "trains": "supinf-attained-vs-not" },
+    { "id": "an-sup-005", "trains": "supinf-upper-bound-check" },
+    { "id": "an-sup-008", "challenge": true, "trains": "supinf-sequence-set", "note": "挑戰：n^{1/n} 先增後減，比較 n = 2 與 n = 3。" },
+    { "id": "an-sup-004", "challenge": true, "trains": "supinf-attained-vs-not", "note": "挑戰：(1 + 1/n)ⁿ 遞增，上確界是極限 e，取不到。" }
+  ],
+  "gaps": [
+    { "tag": "supinf-epsilon-characterization", "count": 3, "note": "給 S 與 ε，求最小的 n 使某元素 > sup S − ε（把 ε 判準問成一個數）；目前只問 sup 的值。" },
+    { "tag": "supinf-upper-bound-check", "count": 2, "note": "是非題：某數是不是 S 的上界／上確界（例如 0.999 對 {1 − 1/n}）。" }
+  ]
+}

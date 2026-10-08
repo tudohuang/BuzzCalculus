@@ -1,0 +1,222 @@
+{
+  "id": "stokes-theorem",
+  "title": "Stokes 定理",
+  "readMinutes": 12,
+  "totalMinutes": 45,
+  "prerequisites": [
+    "curl",
+    "flux",
+    "green-theorem"
+  ],
+  "next": [
+    "divergence-theorem"
+  ],
+  "related": [
+    "fundamental-theorems-unified",
+    "conservative-fields",
+    "divergence"
+  ],
+  "objectives": [
+    "寫出 Stokes 定理與它的條件，特別是邊界方向與曲面法向量怎麼用右手定則配對。",
+    "把空間封閉曲線的環流換成旋度通量（或反過來），並挑一張好算的曲面。",
+    "說出 Green 定理是 Stokes 定理在平面上的特例。"
+  ],
+  "visual": "一個上半球面像一頂帽子，帽沿是單位圓。曲面上鋪滿小格，每格邊界畫著依右手定則（拇指沿法向量）繞的小箭頭圈，相鄰兩格的共用邊互相抵消，最後只剩帽沿的環流。拖動滑桿把帽子壓扁成平圓盤，旋度通量的讀數始終不變；按「翻轉法向量」，帽沿的箭頭方向與讀數同時反向。",
+  "concept": [
+    {
+      "heading": "① 把 Green 定理拿到空間裡",
+      "body": [
+        "〈Green 定理〉：平面區域邊界的環流 = 區域裡所有小漩渦（Q_x − P_y）的總和。",
+        "空間裡換成一張曲面 S，邊界是一條封閉曲線 C。把 S 切成小片，每一小片邊界的環流 ≈ (∇ × F) · n × 小片面積（〈旋度〉在 n 方向的分量）。相鄰小片的共用邊抵消，只剩 S 的邊界 C。這是直觀，不是證明。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 定理與方向配對",
+      "body": [
+        "先講方向怎麼配。右手定則：右手拇指指向曲面的法向量 n，四指彎曲的方向就是邊界 C 的方向。等價的說法：頭朝 n 的方向，沿 C 走，曲面在你的左手邊。",
+        "例：上半球面、法向量朝上，邊界單位圓要「從上往下看逆時針」。",
+        "定理：S 是可定向、分段光滑的曲面，邊界 C 是分段光滑的簡單封閉曲線，C 依右手定則跟 n 配對；F 的分量在一個包含 S 的開集上有連續偏導。那麼"
+      ],
+      "tex": [
+        "\\oint_C \\mathbf F\\cdot d\\mathbf r=\\iint_S (\\nabla\\times\\mathbf F)\\cdot d\\mathbf S"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 兩個用法",
+      "body": [
+        "線積分難、旋度簡單：把 ∮_C 換成曲面積分，而且曲面可以任選，只要邊界是 C、方向配好。通常選最平的那張（圓盤、平面上的一片）。",
+        "旋度通量難：反過來換成邊界的線積分。推論：兩張曲面邊界相同、方向一致，旋度通量一定相同。",
+        "Green 是特例：S 是 xy 平面上的區域、n = k，(∇ × F) · k = Q_x − P_y，C 逆時針，就回到 Green。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 封閉曲面與保守場（給想知道的人）",
+      "body": [
+        "封閉曲面（像整個球面）沒有邊界，所以 ∯ (∇ × F) · dS = 0。這跟〈散度〉的 ∇ · (∇ × F) = 0 是同一件事的兩面。",
+        "如果在整個 ℝ³ 上 ∇ × F = 0，任何封閉曲線都是某張曲面的邊界，環流都是 0，所以 F 保守，這正是〈保守場〉那個充分條件在三維的理由。"
+      ],
+      "collapsible": true
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "換成平面上的一片",
+      "prompt": "∮_C F · dr，F = ⟨−y², x, z²⟩，C 是平面 y + z = 2 與圓柱 x² + y² = 1 的交線，從上往下看逆時針。",
+      "steps": [
+        "∇ × F = ⟨0 − 0, 0 − 0, 1 − (−2y)⟩ = ⟨0, 0, 1 + 2y⟩。",
+        "選 S：平面 y + z = 2 在圓柱裡的那一片（一個橢圓），z = 2 − y。C 從上往下看逆時針，右手定則給法向量朝上。",
+        "朝上的通量公式：−P g_x − Q g_y + R，其中 (P, Q, R) = ∇ × F = (0, 0, 1 + 2y)，得 1 + 2y。",
+        "∬_{x²+y²≤1} (1 + 2y) dA：2y 對稱抵消，剩 π。",
+        "驗算：直接參數化 r(t) = ⟨cos t, sin t, 2 − sin t⟩ 算線積分，也是 π。"
+      ],
+      "answer": "π",
+      "claim": "INT(INT((1+2*r*sin(t))*r,0,1,r),0,2*pi,t) == pi ;; INT((-sin(t)^2)*(-sin(t)) + cos(t)*cos(t) + (2-sin(t))^2*(-cos(t)),0,2*pi,t) == pi"
+    },
+    {
+      "title": "旋度通量換成邊界",
+      "prompt": "∬_S (∇ × F) · dS，F = ⟨xz, yz, xy⟩，S 是球面 x² + y² + z² = 4 在圓柱 x² + y² = 1 裡、xy 平面上方的部分，法向量朝上。",
+      "steps": [
+        "S 的邊界：x² + y² = 1 且 z = √(4 − 1) = √3，是高度 √3 的圓。法向量朝上，所以從上往下看逆時針：r(t) = ⟨cos t, sin t, √3⟩。",
+        "F 在 C 上 = ⟨√3 cos t, √3 sin t, cos t sin t⟩，r′(t) = ⟨−sin t, cos t, 0⟩。",
+        "F · r′ = −√3 cos t sin t + √3 sin t cos t + 0 = 0。",
+        "所以答案是 0，完全不用算旋度。"
+      ],
+      "answer": "0",
+      "claim": "INT(sqrt(3)*cos(t)*(-sin(t)) + sqrt(3)*sin(t)*cos(t) + cos(t)*sin(t)*0,0,2*pi,t) == 0"
+    }
+  ],
+  "pitfalls": [
+    "邊界方向跟法向量沒有用右手定則配對，差一個負號。",
+    "曲面的邊界找錯（例如上半球面的邊界是赤道那一圈，不是一個點）。",
+    "換成別的曲面時，新曲面的邊界跟原來的不一樣。",
+    "旋度第二分量的正負號算錯（P_z − R_x）。"
+  ],
+  "checks": [
+    {
+      "ask": "S 是上半球面、法向量朝上。Stokes 定理裡邊界單位圓的方向是？",
+      "options": [
+        {
+          "label": "從上往下看逆時針",
+          "correct": true
+        },
+        {
+          "label": "從上往下看順時針",
+          "why": "右手拇指朝上，四指彎曲的方向從上看是逆時針。順時針配的是朝下的法向量。"
+        },
+        {
+          "label": "哪個方向都可以",
+          "why": "兩個方向差一個負號；方向必須跟法向量配對。"
+        }
+      ]
+    },
+    {
+      "ask": "兩張曲面 S₁、S₂ 有相同的邊界 C，方向也一致。它們的旋度通量？",
+      "options": [
+        {
+          "label": "一定相等",
+          "correct": true
+        },
+        {
+          "label": "一般不相等，要看曲面形狀",
+          "why": "兩者都等於 ∮_C F · dr，只看邊界。這正是可以換成平坦曲面的理由。"
+        },
+        {
+          "label": "只有兩者都是平面時才相等",
+          "why": "Stokes 定理對任何（可定向、分段光滑）曲面都成立，不限平面。"
+        }
+      ]
+    },
+    {
+      "ask": "S 是 xy 平面上的區域、n = k。(∇ × F) · k 等於？",
+      "options": [
+        {
+          "label": "Q_x − P_y",
+          "correct": true
+        },
+        {
+          "label": "P_x + Q_y",
+          "why": "那是平面上的散度，對應的是通量形式，不是環流。"
+        },
+        {
+          "label": "R_z",
+          "why": "旋度的 k 分量是 Q_x − P_y，跟 R 無關。"
+        }
+      ]
+    },
+    {
+      "ask": "F 在整個 ℝ³ 偏導連續，而且 ∇ × F = 0。任一封閉曲線 C 上的 ∮ F · dr 是？",
+      "options": [
+        {
+          "label": "0",
+          "correct": true
+        },
+        {
+          "label": "2π",
+          "why": "2π 來自有洞（例如去掉 z 軸）的反例。這裡定義域是整個 ℝ³，沒有洞。"
+        },
+        {
+          "label": "無法判斷",
+          "why": "用 Stokes：環流 = 任一張以 C 為邊界的曲面上旋度的通量 = 0。"
+        }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": [
+      "stokes-theorem",
+      "curl",
+      "vector-calculus"
+    ],
+    "fine": [
+      "stokes-orientation",
+      "stokes-surface-swap",
+      "stokes-line-to-surface"
+    ]
+  },
+  "practice": [
+    {
+      "id": "vc-stokes-001",
+      "core": true,
+      "trains": "stokes-line-to-surface"
+    },
+    {
+      "id": "vc-stokes-002",
+      "core": true,
+      "trains": "stokes-line-to-surface"
+    },
+    {
+      "id": "lec-20-q4b",
+      "core": true,
+      "trains": "stokes-surface-swap"
+    },
+    {
+      "id": "vc-stokes-005",
+      "core": true,
+      "trains": "stokes-surface-swap"
+    },
+    {
+      "id": "vc-stokes-003",
+      "trains": "stokes-line-to-surface"
+    },
+    {
+      "id": "vc-stokes-006",
+      "trains": "stokes-orientation"
+    },
+    {
+      "id": "vc-stokes-004",
+      "challenge": true,
+      "trains": "stokes-orientation",
+      "note": "挑戰：三角形在平面 x + y + z = 1 上，先用走的順序判斷法向量是 ⟨1, 1, 1⟩ 還是反方向。"
+    }
+  ],
+  "gaps": [
+    {
+      "tag": "stokes-orientation",
+      "count": 3,
+      "note": "R4：法向量朝下或朝內、邊界從下往上看的情形，需要自己配方向。"
+    }
+  ]
+}

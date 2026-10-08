@@ -134,7 +134,11 @@ const SELF_TEST = [
   ["SUM(1/n^2, 1) == pi^2/6", true],
   ["2pi == 2*pi", false],
   ["x^2 ~= x^2+5", true],
-  ["x^2 ~= x^2+x", false]
+  ["x^2 ~= x^2+x", false],
+  // 2026-10-08：收斂到 0 的慢衰減在 ∞ 曾被外插成 1（numeric.limit 的外插落到序列走過的那一側），錯的宣稱因此過關
+  ["LIM(0.99^n, inf) == 1", false],
+  ["LIM(0.99^n, inf) == 0", true],
+  ["LIM(x^2/e^x, inf) == 0", true]
 ];
 SELF_TEST.forEach(([claim, expected]) => {
   const result = checkClaim(claim, { normalize: api.normalizeExpression, answer: null });

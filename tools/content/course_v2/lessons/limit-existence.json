@@ -1,0 +1,151 @@
+{
+  "id": "limit-existence",
+  "title": "極限存在的條件",
+  "readMinutes": 8,
+  "totalMinutes": 25,
+  "prerequisites": ["limit-one-sided"],
+  "next": ["limit-from-graph-table"],
+  "related": ["infinite-limits"],
+  "objectives": [
+    "會用「左極限 = 右極限」判斷極限存不存在。",
+    "認得極限不存在的三種常見樣子：左右不等、往無窮跑、一直振盪。",
+    "會解「參數取多少，極限才存在」這類題目。"
+  ],
+  "visual": "y = sin(1/x) 的圖，按「放大」時鏡頭往 x = 0 推近：不管放大多少倍，曲線在 −1 與 1 之間擺盪得越來越密，從不往任何一個高度靠攏。",
+  "concept": [
+    {
+      "heading": "① 判準：左右都存在，而且相等",
+      "body": [
+        "lim_{x→a} f(x) = L 若且唯若 lim_{x→a⁻} f(x) = L 而且 lim_{x→a⁺} f(x) = L。",
+        "道理：雙側極限要求「x 夠靠近 a 時 f(x) 就靠近 L」，而 a 的附近同時包含左邊和右邊，兩邊都得靠近同一個 L。"
+      ],
+      "tex": ["\\lim_{x\\to a}f(x)=L\\iff \\lim_{x\\to a^-}f(x)=L\\ \\text{ 且 }\\ \\lim_{x\\to a^+}f(x)=L"],
+      "collapsible": false
+    },
+    {
+      "heading": "② 跟 f(a) 無關",
+      "body": [
+        "判準裡沒有 f(a)。左右極限都是 2、f(a) = 7，極限照樣是 2；f(a) 沒有定義，極限也可以存在。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 不存在的三種樣子",
+      "body": [
+        "左右不等：|x|/x 在 0 的左極限 −1、右極限 1，極限不存在。圖形是跳開的。",
+        "往無窮跑：1/x² 在 0 附近要多大有多大，不靠近任何數，極限不存在。習慣上寫 lim_{x→0} 1/x² = ∞，這只是在說明「它怎麼不存在」，∞ 不是一個數（〈無窮極限與垂直漸近線〉）。",
+        "振盪：sin(1/x) 在 0 附近不停在 −1 與 1 之間來回，左右兩邊各自都沒有極限。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "為什麼 sin(1/x) 在 0 沒有極限",
+      "body": [
+        "取 x = 1/(nπ)（n = 1, 2, 3, …）：這些 x 從右邊靠近 0，而 sin(1/x) = sin(nπ) = 0。",
+        "取 x = 2/((4n + 1)π)：這些 x 也從右邊靠近 0，而 sin(1/x) = sin((4n + 1)π/2) = 1。",
+        "如果右極限是某個 L，兩串 x 上的值都得靠近 L，但一串一直是 0、一串一直是 1，不可能同時靠近同一個數。所以右極限不存在；左邊同理。"
+      ],
+      "collapsible": true
+    },
+    {
+      "heading": "④ 什麼時候要拆兩邊算",
+      "body": [
+        "函數在 a 的兩側由同一個式子給出、化簡後可以代入：直接算就好。",
+        "分段函數的分界點、絕對值裡面為 0 的點、取整函數的整數點：兩側的式子不一樣，一定要分開算再比較。"
+      ],
+      "collapsible": false
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "絕對值造成左右不等",
+      "prompt": "lim_{x→2} (x² − 4)/|x − 2| 存在嗎？",
+      "steps": [
+        "分子 x² − 4 = (x − 2)(x + 2)。分母有絕對值，分兩邊。",
+        "x > 2：|x − 2| = x − 2，式子 = x + 2，右極限 4。",
+        "x < 2：|x − 2| = −(x − 2)，式子 = −(x + 2)，左極限 −4。",
+        "4 ≠ −4，極限不存在。"
+      ],
+      "answer": "不存在（左極限 −4，右極限 4）",
+      "claim": "LIM((x^2-4)/abs(x-2), 2+) == 4 ;; LIM((x^2-4)/abs(x-2), 2-) == -4"
+    },
+    {
+      "title": "左右相等，函數值另外定義",
+      "prompt": "f(x) = x² + 1（x < 1），3x − 1（x > 1），f(1) = 7。求 lim_{x→1} f(x)。",
+      "steps": [
+        "左極限：x² + 1 → 2。",
+        "右極限：3x − 1 → 2。",
+        "左右都是 2，所以 lim_{x→1} f(x) = 2。f(1) = 7 不影響極限。"
+      ],
+      "answer": "2",
+      "claim": "LIM(x^2+1, 1-) == 2 ;; LIM(3x-1, 1+) == 2"
+    },
+    {
+      "title": "參數取多少，極限才存在",
+      "prompt": "f(x) = kx + 1（x < 2），x² − 1（x ≥ 2）。k 是多少時 lim_{x→2} f(x) 存在？",
+      "steps": [
+        "右極限：x² − 1 → 4 − 1 = 3。",
+        "左極限：kx + 1 → 2k + 1。",
+        "要相等：2k + 1 = 3，k = 1。此時極限是 3。"
+      ],
+      "answer": "k = 1",
+      "claim": "LIM(x+1, 2-) == LIM(x^2-1, 2+) ;; LIM(x^2-1, 2+) == 3"
+    }
+  ],
+  "pitfalls": [
+    "只算一邊就說極限是多少。",
+    "看到 f(a) 跟左右極限不一樣，就說極限不存在。",
+    "左右不等時取平均當答案。",
+    "把 lim = ∞ 當成「極限存在」。",
+    "去絕對值時兩邊用了同一個號。"
+  ],
+  "checks": [
+    {
+      "ask": "左極限 3、右極限 3、f(a) = 5。lim_{x→a} f(x) 是？",
+      "options": [
+        { "label": "3", "correct": true },
+        { "label": "不存在", "why": "判準只看左右極限；f(a) 是多少都不影響。" },
+        { "label": "5", "why": "5 是函數值，不是極限。" }
+      ]
+    },
+    {
+      "ask": "左極限 1、右極限 2。lim_{x→a} f(x) 是？",
+      "options": [
+        { "label": "1.5", "why": "極限不是左右取平均；左右不等，極限就不存在。" },
+        { "label": "不存在", "correct": true },
+        { "label": "2", "why": "只看了右邊。雙側極限要左右一起。" }
+      ]
+    },
+    {
+      "ask": "lim_{x→0} sin(1/x) 是？",
+      "options": [
+        { "label": "0", "why": "sin(1/x) 不會變小，它一直在 −1 與 1 之間來回擺。" },
+        { "label": "1", "why": "只有某些 x 讓 sin(1/x) = 1，也有很多 x 讓它等於 0 或 −1。" },
+        { "label": "不存在（振盪）", "correct": true }
+      ]
+    },
+    {
+      "ask": "f(x) = |x|/x。lim_{x→0} f(x) 是？",
+      "options": [
+        { "label": "不存在", "correct": true },
+        { "label": "0", "why": "左 −1、右 1。兩者的平均是 0，但極限不是平均。" },
+        { "label": "1", "why": "只看了右邊；左邊 x < 0 時比值是 −1。" }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": ["one-sided", "dne", "oscillation", "continuity"],
+    "fine": ["limit-exist-compare-sides", "limit-exist-ignore-value", "limit-dne-jump", "limit-dne-oscillation", "limit-exist-piecewise-param"]
+  },
+  "practice": [
+    { "id": "lm-os-005", "core": true, "trains": "limit-dne-jump" },
+    { "id": "lm-sq-006", "core": true, "trains": "limit-dne-oscillation" },
+    { "id": "lx-con-001", "core": true, "trains": "limit-exist-piecewise-param", "note": "題目問連續；f(2) 由左段給，所以等於要求左右極限相等。" },
+    { "id": "lm-os-002", "trains": "limit-exist-compare-sides", "note": "兩邊都要看：x 是正是負，x² 都是正的。" },
+    { "id": "lm-os-004", "challenge": true, "trains": "limit-dne-jump", "note": "挑戰：x → 0⁺ 時 1/x → ∞，x → 0⁻ 時 1/x → −∞；arctan 在兩端各往哪裡靠？" }
+  ],
+  "gaps": [
+    { "tag": "limit-exist-piecewise-param", "count": 2, "note": "R1–R2：只問極限存在（不問連續）的參數題" },
+    { "tag": "limit-exist-ignore-value", "count": 2, "note": "R1：另外定義 f(a) 的函數，問極限" }
+  ]
+}

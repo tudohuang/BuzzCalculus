@@ -1,0 +1,153 @@
+{
+  "id": "integral-table",
+  "title": "基本積分表",
+  "readMinutes": 9,
+  "totalMinutes": 30,
+  "prerequisites": ["indefinite-integral", "derivative-exp", "derivative-trig", "inverse-trig-derivative"],
+  "next": ["definite-signed-area"],
+  "related": ["reverse-chain", "u-sub-basic", "integration-by-parts"],
+  "objectives": [
+    "把每一條基本積分公式對回它來自的微分公式，不靠死背。",
+    "分清楚容易混的幾條：1/(1 + x²) 是 arctan、不是 ln；aˣ 要除以 ln a。",
+    "會用代數變形，把不在表上的式子改成表上的樣子。"
+  ],
+  "visual": null,
+  "concept": [
+    {
+      "heading": "① 每一行都是一條微分公式倒過來",
+      "body": [
+        "積分表不是新東西。你學過 (sin x)′ = cos x，倒過來就是 ∫ cos x dx = sin x + C。下面每一行都可以這樣對回去："
+      ],
+      "tex": [
+        "\\int x^n\\,dx=\\frac{x^{n+1}}{n+1}+C\\ (n\\ne-1),\\qquad \\int\\frac{dx}{x}=\\ln|x|+C",
+        "\\int e^x\\,dx=e^x+C,\\qquad \\int a^x\\,dx=\\frac{a^x}{\\ln a}+C\\ (a>0,\\ a\\ne1)",
+        "\\int\\cos x\\,dx=\\sin x+C,\\qquad \\int\\sin x\\,dx=-\\cos x+C",
+        "\\int\\sec^2x\\,dx=\\tan x+C,\\qquad \\int\\sec x\\tan x\\,dx=\\sec x+C",
+        "\\int\\frac{dx}{1+x^2}=\\arctan x+C,\\qquad \\int\\frac{dx}{\\sqrt{1-x^2}}=\\arcsin x+C"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 最容易混的地方",
+      "body": [
+        "1/(1 + x²) 積出來是 arctan x，不是 ln(1 + x²)：(ln(1 + x²))′ = 2x/(1 + x²)，分子多了 2x。",
+        "aˣ 要除以 ln a，因為 (aˣ)′ = aˣ ln a。只有底數剛好是 e，ln e = 1，才不用除。",
+        "sin x 積出來有負號，cos x 沒有。忘了哪個有，就微分檢查一次。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 帶常數 a 的版本",
+      "body": [
+        "分母是 x² + a²（a > 0）時，答案是 (1/a) arctan(x/a)。檢查：((1/a) arctan(x/a))′ = (1/a) · (1/a)/(1 + x²/a²) = 1/(a² + x²)。",
+        "根號裡是 a² − x² 時，答案是 arcsin(x/a)，前面沒有 1/a：(arcsin(x/a))′ = (1/a)/√(1 − x²/a²) = 1/√(a² − x²)，兩個 1/a 剛好抵消。"
+      ],
+      "tex": ["\\int\\frac{dx}{x^2+a^2}=\\frac1a\\arctan\\frac xa+C,\\qquad \\int\\frac{dx}{\\sqrt{a^2-x^2}}=\\arcsin\\frac xa+C"],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 不在表上的，先變形",
+      "body": [
+        "x²/(x² + 1) 不在表上，但 x² = (x² + 1) − 1，所以 x²/(x² + 1) = 1 − 1/(x² + 1)，兩項都在表上。",
+        "e^{3x}、cos 3x 這種「裡面是 ax」的，下一步在〈反連鎖律〉處理；tan x、ln x 也不在表上，要等〈換元：基礎〉與〈分部積分推導〉。"
+      ],
+      "collapsible": false
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "逐項查表",
+      "prompt": "∫ (eˣ + 3/(1 + x²) − 2 cos x) dx",
+      "steps": [
+        "逐項：eˣ → eˣ；3/(1 + x²) → 3 arctan x；−2 cos x → −2 sin x。",
+        "答案：eˣ + 3 arctan x − 2 sin x + C。",
+        "檢查：(eˣ + 3 arctan x − 2 sin x)′ = eˣ + 3/(1 + x²) − 2 cos x。"
+      ],
+      "answer": "eˣ + 3 arctan x − 2 sin x + C",
+      "claim": "D(e^x+3*atan(x)-2*sin(x)) == e^x+3/(1+x^2)-2*cos(x)"
+    },
+    {
+      "title": "帶常數的 arctan",
+      "prompt": "∫ 1/(x² + 9) dx",
+      "problemId": "int-029",
+      "steps": [
+        "分母是 x² + a²，a² = 9，a = 3。",
+        "套公式：(1/3) arctan(x/3) + C。",
+        "檢查：((1/3) arctan(x/3))′ = (1/3) · (1/3)/(1 + x²/9) = (1/9) · 9/(9 + x²) = 1/(x² + 9)。"
+      ],
+      "answer": "(1/3) arctan(x/3) + C",
+      "claim": "D(atan(x/3)/3) == 1/(x^2+9)"
+    },
+    {
+      "title": "先變形再查表",
+      "prompt": "∫ x²/(x² + 1) dx",
+      "problemId": "exam-int-014",
+      "steps": [
+        "分子寫成 (x² + 1) − 1：x²/(x² + 1) = 1 − 1/(x² + 1)。",
+        "∫ 1 dx = x；∫ 1/(x² + 1) dx = arctan x。",
+        "答案：x − arctan x + C。",
+        "檢查：(x − arctan x)′ = 1 − 1/(1 + x²) = x²/(1 + x²)。"
+      ],
+      "answer": "x − arctan x + C",
+      "claim": "D(x-atan(x)) == x^2/(x^2+1)"
+    }
+  ],
+  "pitfalls": [
+    "∫ 1/(1 + x²) dx 寫成 ln(1 + x²)。",
+    "∫ 2ˣ dx 寫成 2ˣ，忘了除以 ln 2；或把冪次公式套到 2ˣ 上。",
+    "∫ sin x dx 漏了負號。",
+    "arcsin 版本也加上 1/a。只有 arctan 版本有 1/a。"
+  ],
+  "checks": [
+    {
+      "ask": "∫ 1/(1 + x²) dx 是？",
+      "options": [
+        { "label": "arctan x + C", "correct": true },
+        { "label": "ln(1 + x²) + C", "why": "(ln(1 + x²))′ = 2x/(1 + x²)，分子多了 2x。分子剛好是分母的導數時才會積出 ln。" },
+        { "label": "1/(x + x³/3) + C", "why": "你把分母積分之後再取倒數，這不是任何一條規則；微分回去對不上。" }
+      ]
+    },
+    {
+      "ask": "∫ 2ˣ dx 是？",
+      "options": [
+        { "label": "2ˣ/ln 2 + C", "correct": true },
+        { "label": "2ˣ + C", "why": "(2ˣ)′ = 2ˣ ln 2，多了 ln 2，要除掉。只有底數是 e 才不用除。" },
+        { "label": "2^{x+1}/(x + 1) + C", "why": "你把冪次公式套到指數函數上了。冪次公式只管 xⁿ：底數是變數、指數是常數。" }
+      ]
+    },
+    {
+      "ask": "∫ sec x tan x dx 是？",
+      "options": [
+        { "label": "sec x + C", "correct": true },
+        { "label": "tan x + C", "why": "(tan x)′ = sec² x，不是 sec x tan x。" },
+        { "label": "sec² x/2 + C", "why": "(sec² x/2)′ = sec² x tan x，多了一個 sec x。直接對回微分公式：(sec x)′ = sec x tan x。" }
+      ]
+    },
+    {
+      "ask": "∫ 1/√(4 − x²) dx 是？",
+      "options": [
+        { "label": "arcsin(x/2) + C", "correct": true },
+        { "label": "(1/2) arcsin(x/2) + C", "why": "你把 arctan 版本的 1/a 帶過來了。(arcsin(x/2))′ = 1/√(4 − x²)，係數已經剛好。" },
+        { "label": "(1/2) arctan(x/2) + C", "why": "arctan 對應的是 x² + a²、沒有根號；這題是根號裡的 a² − x²，對應 arcsin。" }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": ["basic-integral", "inverse-trig", "trig", "exponential"],
+    "fine": ["table-trig", "table-exp-base", "table-inverse-trig", "table-scaled-arctan", "table-algebra-first"]
+  },
+  "practice": [
+    { "id": "fd-int-009", "core": true, "trains": "table-trig" },
+    { "id": "cx-int-004", "core": true, "trains": "table-inverse-trig" },
+    { "id": "fd-int-010", "core": true, "trains": "table-inverse-trig" },
+    { "id": "int-011", "core": true, "trains": "table-scaled-arctan" },
+    { "id": "cx-trig-003", "core": true, "trains": "table-inverse-trig", "note": "根號裡是 4 − x²：對應 arcsin(x/2)。" },
+    { "id": "exam-int-014", "core": true, "trains": "table-algebra-first" },
+    { "id": "mob-trap-003", "trains": "table-inverse-trig" },
+    { "id": "mob-trap-010", "trains": "table-trig" }
+  ],
+  "gaps": [
+    { "tag": "table-exp-base", "count": 2, "note": "∫ aˣ dx（a ≠ e）的計算題，例如 ∫ 2ˣ dx、∫₀¹ 3ˣ dx，R1–R2。" },
+    { "tag": "table-algebra-first", "count": 2, "note": "先用恆等式或拆項變成表上形式的題，例如 ∫ (1 + x)²/x dx、∫ tan² x dx，R2。" }
+  ]
+}

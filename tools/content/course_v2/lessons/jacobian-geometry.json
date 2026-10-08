@@ -1,0 +1,137 @@
+{
+  "id": "jacobian-geometry",
+  "title": "Jacobian 的幾何意義",
+  "readMinutes": 10,
+  "totalMinutes": 30,
+  "prerequisites": ["polar-double-integral", "multivariable-linearization"],
+  "next": ["jacobian-determinant"],
+  "related": ["change-of-variables", "r2-r3"],
+  "objectives": [
+    "說出一個座標變換把小正方形變成近似平行四邊形，面積放大倍率是 |行列式|。",
+    "會算線性變換把單位正方形送去的平行四邊形面積。",
+    "認出極座標的 r 就是這個放大倍率的特例。"
+  ],
+  "visual": "左邊是 uv 平面的方格紙，右邊是經過變換 (x, y) = T(u, v) 之後的 xy 平面，方格變成彎曲的網格。在左邊點選一個小方格，右邊對應的那一塊同步亮起，旁邊顯示兩者的面積比，並跟該點的 |J| 比較。線性變換時整張網格都是同樣大小的平行四邊形；換成極座標變換，越往外的格子越大。",
+  "concept": [
+    {
+      "heading": "① 先看線性變換",
+      "body": [
+        "T(u, v) = (au + bv, cu + dv)。uv 平面的單位正方形，兩條邊是 (1, 0) 與 (0, 1)，被送到 (a, c) 與 (b, d)。正方形變成以這兩個向量為邊的平行四邊形。",
+        "平行四邊形面積是 |ad − bc|。所以這個變換把每一塊面積都放大 |ad − bc| 倍，處處一樣。"
+      ],
+      "tex": ["\\text{面積放大倍率}=\\left|\\det\\begin{pmatrix}a&b\\\\c&d\\end{pmatrix}\\right|=|ad-bc|"],
+      "collapsible": false
+    },
+    {
+      "heading": "② 行列式的正負號",
+      "body": [
+        "ad − bc 可能是負的，例如 (u, v) ↦ (v, u)，行列式 −1。負號表示圖形被翻面（逆時針變順時針），面積本身不會是負的，所以放大倍率取絕對值。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 非線性變換：每一點各有各的倍率",
+      "body": [
+        "一般的變換 x = x(u, v)、y = y(u, v) 會把方格扭成彎的。但放大到夠小的一格，它看起來幾乎是線性的（跟〈多變數線性近似〉同一個道理）。",
+        "從 (u, v) 走 Δu，像點大約移動 (x_u, y_u) Δu；走 Δv，大約移動 (x_v, y_v) Δv。小方格 Δu × Δv 變成以這兩個向量為邊的近似平行四邊形，面積約 |x_u y_v − x_v y_u| Δu Δv。",
+        "這個 x_u y_v − x_v y_u 叫做 Jacobian，記成 ∂(x, y)/∂(u, v)。它隨點改變：有的地方放大，有的地方縮小。這是直觀，不是證明；誤差要比 ΔuΔv 小，需要偏導數連續，下一課〈Jacobian 行列式〉再整理。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 回頭看極座標",
+      "body": [
+        "x = r cos θ、y = r sin θ。算出 ∂(x, y)/∂(r, θ) = r（範例 2）。這正是〈極座標二重積分〉裡 dA = r dr dθ 的那個 r：在半徑 r 的地方，Δr × Δθ 的小矩形被放大 r 倍。"
+      ],
+      "collapsible": false
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "線性變換的面積",
+      "prompt": "T(u, v) = (2u + v, u + 3v)。單位正方形 [0, 1]² 被送到的平行四邊形面積是？",
+      "steps": [
+        "四個頂點的像：(0, 0) → (0, 0)，(1, 0) → (2, 1)，(1, 1) → (3, 4)，(0, 1) → (1, 3)。",
+        "放大倍率 |ad − bc| = |2 · 3 − 1 · 1| = 5。",
+        "用鞋帶公式驗算頂點 (0, 0)、(2, 1)、(3, 4)、(1, 3)：½|0 + (8 − 3) + (9 − 4) + 0| = 5。"
+      ],
+      "answer": "5",
+      "claim": "(0*1-2*0+2*4-3*1+3*3-1*4+1*0-0*3)/2 == 5"
+    },
+    {
+      "title": "極座標的放大倍率",
+      "prompt": "x = r cos θ、y = r sin θ，求 ∂(x, y)/∂(r, θ)。",
+      "steps": [
+        "x_r = cos θ，x_θ = −r sin θ；y_r = sin θ，y_θ = r cos θ。",
+        "x_r y_θ − x_θ y_r = cos θ · r cos θ − (−r sin θ) · sin θ = r(cos² θ + sin² θ) = r。",
+        "所以在 r = 2 附近，一個 Δr × Δθ 的小矩形，面積約 2 Δr Δθ。"
+      ],
+      "answer": "r",
+      "claim": "D(r*cos(t), , r)*D(r*sin(t), , t) - D(r*cos(t), , t)*D(r*sin(t), , r) == r"
+    },
+    {
+      "title": "把圓拉成橢圓",
+      "prompt": "x = 3u、y = 2v。單位圓盤 u² + v² ≤ 1 被送到哪裡？面積多少？",
+      "steps": [
+        "u = x/3、v = y/2，代入 u² + v² ≤ 1 得 x²/9 + y²/4 ≤ 1，是半軸 3、2 的橢圓。",
+        "Jacobian = 3 · 2 − 0 · 0 = 6，處處一樣。",
+        "圓盤面積 π，放大 6 倍：橢圓面積 6π。"
+      ],
+      "answer": "橢圓 x²/9 + y²/4 ≤ 1，面積 6π",
+      "claim": "INT(4*sqrt(1-x^2/9), -3, 3) == 6*pi"
+    }
+  ],
+  "pitfalls": [
+    "把負的行列式直接當面積；面積要取絕對值。",
+    "以為非線性變換的放大倍率處處一樣；它隨點改變。",
+    "把 x 方向與 y 方向的倍率相加；面積倍率是相乘（更一般是行列式）。"
+  ],
+  "checks": [
+    {
+      "ask": "T(u, v) = (u + v, u − v) 把單位正方形送去的圖形面積是？",
+      "options": [
+        { "label": "2", "correct": true },
+        { "label": "−2", "why": "行列式 1 · (−1) − 1 · 1 = −2，負號只代表翻面，面積是 2。" },
+        { "label": "1", "why": "這不只是旋轉；兩條邊變成 (1, 1) 與 (1, −1)，長度都是 √2，面積 2。" }
+      ]
+    },
+    {
+      "ask": "某點的 |∂(x, y)/∂(u, v)| = 3，意思是？",
+      "options": [
+        { "label": "那一點附近的小塊面積被放大約 3 倍", "correct": true },
+        { "label": "整個區域的面積是 3", "why": "Jacobian 是逐點的倍率，會隨點改變。總面積要把它積分起來。" },
+        { "label": "那一點附近的曲線長度被放大 3 倍", "why": "行列式量的是面積的倍率，不是長度。同一個變換在不同方向可以拉長不同倍數。" }
+      ]
+    },
+    {
+      "ask": "極座標在 r = 3 附近，一個 Δr × Δθ 的小矩形對應的 xy 面積約是？",
+      "options": [
+        { "label": "3 Δr Δθ", "correct": true },
+        { "label": "Δr Δθ", "why": "忽略了放大倍率 r。離原點越遠，同樣的 Δθ 張出越長的弧。" },
+        { "label": "9 Δr Δθ", "why": "倍率是 r 不是 r²。" }
+      ]
+    },
+    {
+      "ask": "x = 2u、y = 5v 的面積放大倍率是？",
+      "options": [
+        { "label": "10", "correct": true },
+        { "label": "7", "why": "兩個方向的倍率要相乘，不是相加：寬變 2 倍、高變 5 倍，面積變 10 倍。" },
+        { "label": "2.5", "why": "沒有相除的道理；行列式是 2 · 5 − 0 · 0 = 10。" }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": ["jacobian", "change-of-variables", "area"],
+    "fine": ["jacobian-area-scale", "jacobian-linear-parallelogram", "jacobian-polar-r"]
+  },
+  "practice": [
+    { "id": "gap-int-cov-002", "core": true, "trains": "jacobian-linear-parallelogram" },
+    { "id": "lec-19-m5", "core": true, "trains": "jacobian-area-scale" },
+    { "id": "der-071", "trains": "jacobian-polar-r" },
+    { "id": "gap-int-cov-001", "trains": "jacobian-linear-parallelogram" }
+  ],
+  "gaps": [
+    { "tag": "jacobian-linear-parallelogram", "count": 3, "note": "R2–R3：給線性變換，求單位正方形（或某三角形）的像的面積。" },
+    { "tag": "jacobian-area-scale", "count": 2, "note": "R3：給非線性變換，估計某點附近小方格的像的面積。" }
+  ]
+}

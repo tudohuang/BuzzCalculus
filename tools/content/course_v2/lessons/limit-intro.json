@@ -1,0 +1,150 @@
+{
+  "id": "limit-intro",
+  "title": "極限到底在問什麼",
+  "readMinutes": 8,
+  "totalMinutes": 20,
+  "prerequisites": ["function-intro", "piecewise-function"],
+  "next": ["limit-one-sided"],
+  "related": ["continuity-definition", "limit-laws-direct", "limit-trig-standard"],
+  "objectives": [
+    "用自己的話說出 lim_{x→a} f(x) = L 在問什麼：x 靠近 a 的時候，f(x) 靠近誰。",
+    "能從一張數值表估計極限。",
+    "分清楚三件不同的事：f(a) 是多少、極限是多少、兩者相不相等。"
+  ],
+  "visual": "一條在 x = 1 挖了洞的曲線。一個點從左邊沿曲線滑向洞，另一個點從右邊滑過來；旁邊即時顯示兩個點的 x 與 f(x)。兩個點的高度都往同一個值擠，但永遠不會停在洞上。拖一個「另外定義 f(1)」的點到別處，極限讀數不變。",
+  "concept": [
+    {
+      "heading": "① 一個代不進去的函數",
+      "body": [
+        "f(x) = (x² − 1)/(x − 1) 在 x = 1 沒有定義：代進去分母是 0。但 x 靠近 1 的時候，f(x) 好好的有值（見下表）。",
+        "從左邊、從右邊靠近，f(x) 都往 2 擠。我們寫成 lim_{x→1} (x² − 1)/(x − 1) = 2。"
+      ],
+      "tex": ["\\begin{array}{c|ccc|ccc} x & 0.9 & 0.99 & 0.999 & 1.001 & 1.01 & 1.1 \\\\ \\hline f(x) & 1.9 & 1.99 & 1.999 & 2.001 & 2.01 & 2.1 \\end{array}"],
+      "collapsible": false
+    },
+    {
+      "heading": "② 極限問的是「靠近」，不是「等於」",
+      "body": [
+        "lim_{x→a} f(x) = L 的意思是：只要 x 夠靠近 a（但不等於 a），f(x) 就能要多靠近 L 就多靠近 L。",
+        "「要多靠近就多靠近」是這個意思：要求 f(x) 跟 L 的差小於 0.1 做得到，小於 0.01 做得到，小於 0.000001 也做得到——只要 x 離 a 夠近。",
+        "「不等於 a」是重點：極限完全不看 f 在 a 這一點的值，只看 a 的附近。所以上面的 f 在 x = 1 沒有定義，極限照樣存在。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 三件不一樣的事",
+      "body": [
+        "g(x) = x + 1（x ≠ 1），g(1) = 5。",
+        "g(1) = 5：函數在那一點的值。lim_{x→1} g(x) = 2：x 靠近 1 時，g(x) = x + 1 靠近 2。兩者不相等。",
+        "很多時候兩者剛好相等，那叫做「連續」（〈連續的定義〉）。但不是每次都相等，而微積分最有趣的地方，正好發生在它們不相等、或代不進去的時候。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 圖形上怎麼看",
+      "body": [
+        "極限是「沿著曲線從兩邊走向 x = a 時，高度往哪裡去」。曲線在 a 挖洞、或 a 那一點被另外畫在別處，都不影響極限。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "⑤ 兩個常見誤解",
+      "body": [
+        "「極限就是把 a 代進去」：只對連續的函數成立。上面的 f 代不進去，g 代進去會得到錯的 5。",
+        "「極限是永遠到不了的值」：不一定。lim_{x→3} (2x + 1) = 7，f(3) 也剛好是 7。極限不管到不到得了。"
+      ],
+      "collapsible": false
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "用數值表估極限",
+      "prompt": "估計 lim_{x→1} (x² + x − 2)/(x − 1)",
+      "steps": [
+        "x = 1 代不進去（分子分母都是 0），所以從兩邊靠近。",
+        "x = 0.9、0.99、0.999 時，值是 2.9、2.99、2.999；x = 1.001、1.01、1.1 時，值是 3.001、3.01、3.1。",
+        "左右都往 3 擠，估計極限是 3。"
+      ],
+      "answer": "3",
+      "note": "表格只能「估計」，不能「證明」。從〈直接代入與極限定律〉開始會學怎麼用代數算出來；同一個表格方法之後也會拿來猜 (sin x)/x 的極限（〈三角標準極限〉）。",
+      "claim": "LIM((x^2+x-2)/(x-1), 1) == 3 ;; SUB((x^2+x-2)/(x-1), 0.99) == 2.99 ;; SUB((x^2+x-2)/(x-1), 1.001) == 3.001"
+    },
+    {
+      "title": "從圖形讀極限（挖洞＋另外定義）",
+      "prompt": "f 的圖形是通過 (0, 1) 與 (3, 4) 的直線，但在 x = 2 挖空，另外定義 f(2) = 1。求 lim_{x→2} f(x) 與 f(2)。",
+      "problemId": "gx-022",
+      "steps": [
+        "直線通過 (0, 1)、(3, 4)，斜率 (4 − 1)/(3 − 0) = 1，所以除了 x = 2 以外 f(x) = x + 1。",
+        "x 靠近 2 時，沿著直線走，高度靠近 3。極限是 3。",
+        "f(2) 題目另外定義成 1。"
+      ],
+      "answer": "lim_{x→2} f(x) = 3，f(2) = 1，兩者不相等",
+      "claim": "LIM(x+1, 2) == 3 ;; SUB(x+1, 0) == 1 ;; SUB(x+1, 3) == 4"
+    },
+    {
+      "title": "極限剛好等於函數值",
+      "prompt": "lim_{x→3} (2x + 1)",
+      "problemId": "cx-lim-001",
+      "steps": [
+        "x 靠近 3 時，2x 靠近 6，2x + 1 靠近 7。",
+        "代進去也是 7。多項式沒有洞、沒有跳，極限就等於函數值（〈直接代入與極限定律〉）。"
+      ],
+      "answer": "7",
+      "claim": "LIM(2x+1, 3) == 7 ;; SUB(2x+1, 3) == 7"
+    }
+  ],
+  "pitfalls": [
+    "看到 f(a) 沒有定義，就說極限不存在。",
+    "把 f(a) 當成極限。",
+    "表格只算一邊（左右可能去不同地方，見〈左極限與右極限〉）。"
+  ],
+  "checks": [
+    {
+      "ask": "g(x) = x + 1（x ≠ 1），g(1) = 5。lim_{x→1} g(x) 是？",
+      "options": [
+        { "label": "5", "why": "那是 g(1)。極限不看 x = 1 這一點本身，只看它旁邊。" },
+        { "label": "2", "correct": true },
+        { "label": "不存在", "why": "x 靠近 1 時 g(x) 穩穩地靠近 2，極限存在。" }
+      ]
+    },
+    {
+      "ask": "函數在 x = a 沒有定義，那 lim_{x→a} f(x)：",
+      "options": [
+        { "label": "一定不存在", "why": "(x² − 1)/(x − 1) 在 1 沒定義，極限卻是 2。" },
+        { "label": "一定是 0", "why": "沒有定義不代表是 0，0/0 不是一個數。" },
+        { "label": "可能存在，也可能不存在，要看 a 附近的行為", "correct": true }
+      ]
+    },
+    {
+      "ask": "h(x) 在 x = 3.9、3.99、3.999 的值是 7.8、7.98、7.998；在 x = 4.001、4.01、4.1 的值是 8.002、8.02、8.2。最合理的估計是？",
+      "options": [
+        { "label": "lim_{x→4} h(x) = 8", "correct": true },
+        { "label": "lim_{x→4} h(x) = 4", "why": "4 是 x 靠近的地方，題目問的是 h(x) 靠近哪裡。" },
+        { "label": "無法判斷，因為表裡沒有 x = 4", "why": "極限本來就不看 x = 4 那一點。" }
+      ]
+    },
+    {
+      "ask": "「f(x) 能要多靠近 L 就多靠近 L」最接近哪個意思？",
+      "options": [
+        { "label": "f(x) 最後會等於 L", "why": "不一定等於，只要能任意靠近。" },
+        { "label": "不管要求誤差多小（0.1、0.01、0.000001），只要 x 離 a 夠近都做得到", "correct": true },
+        { "label": "f(x) 會越來越接近 L，但永遠差 0.1 以上", "why": "那就不是「要多靠近就多靠近」了。" }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": ["direct-substitution", "graph-reading", "removable", "limit-from-table"],
+    "fine": ["limit-vs-value", "limit-table-estimate", "limit-graph-hole", "limit-approach-meaning"]
+  },
+  "practice": [
+    { "id": "fd-lim-001", "core": true, "trains": "limit-vs-value" },
+    { "id": "fd-lim-002", "core": true, "trains": "limit-vs-value" },
+    { "id": "lx-tab-001", "core": true, "trains": "limit-table-estimate" },
+    { "id": "lx-tab-002", "trains": "limit-table-estimate", "note": "表格裡只有右邊的值；題目暗示左右一樣（函數是偶函數），之後〈左極限與右極限〉會說為什麼兩邊都要看。" }
+  ],
+  "gaps": [
+    { "tag": "limit-graph-hole", "count": 2, "note": "R1–R2 讀圖：挖洞的圖求極限（範例 2 用掉了 gx-022）" },
+    { "tag": "limit-vs-value", "count": 2, "note": "R1–R2：另外定義 f(a) 的函數，分別問 f(a) 與極限" },
+    { "tag": "limit-table-estimate", "count": 1, "note": "R1：兩側都給值的表格（現有兩題 lx-tab-001 只給三個點、lx-tab-002 只給右側）" }
+  ]
+}

@@ -1,0 +1,150 @@
+{
+  "id": "basel-problem",
+  "title": "Basel 問題",
+  "readMinutes": 13,
+  "totalMinutes": 40,
+  "prerequisites": ["p-series", "maclaurin-series", "squeeze-theorem", "partial-fractions-linear"],
+  "next": ["complex-numbers"],
+  "related": ["euler-formula", "residue-theorem", "euler-maclaurin-intro", "gamma-scaled"],
+  "objectives": [
+    "說得出 Euler 的論證（把 sin x/x 當成無窮次多項式分解），並說清楚它是直覺、漏了什麼。",
+    "從 Σ 1/n² = π²/6 推出奇數項和 π²/8、交錯和 π²/12。",
+    "把級數與積分互換，算出 ∫₀^∞ x/(eˣ − 1) dx、∫₀¹ ln(1 + x)/x dx 這類積分，並說出交換的理由。"
+  ],
+  "visual": "部分和 Sₙ = Σ_{k≤n} 1/k² 的點列慢慢爬向水平線 π²/6 ≈ 1.6449；旁邊用顏色標出奇數項的部分和爬向 π²/8、偶數項爬向 π²/24，兩者相加正好是總和。",
+  "concept": [
+    {
+      "heading": "① 問題",
+      "body": [
+        "〈p 級數〉說 Σ 1/n² 收斂（p = 2 > 1），但收斂到多少？部分和 1 + 1/4 + 1/9 + ⋯ 收斂得很慢，加一萬項還差約 10⁻⁴。答案是 π²/6，一個圓周率出現在只有整數的級數裡。"
+      ],
+      "tex": ["\\sum_{n=1}^{\\infty}\\frac{1}{n^{2}}=\\frac{\\pi^{2}}{6}"],
+      "collapsible": false
+    },
+    {
+      "heading": "② Euler 的論證（直覺，不是證明）",
+      "body": [
+        "多項式可以用根分解。sin x/x 的根是 x = ±π, ±2π, ±3π, …，而且在 x = 0 的值是 1。Euler 大膽假設它可以像多項式一樣寫成 (1 − x²/π²)(1 − x²/(4π²))(1 − x²/(9π²))⋯。",
+        "比較 x² 的係數：右邊乘開，x² 項是 −(1/π²)(1 + 1/4 + 1/9 + ⋯)；左邊由 Maclaurin 級數 sin x/x = 1 − x²/6 + ⋯ 得 −1/6。兩邊相等就得到 Σ 1/n² = π²/6。",
+        "漏掉的是：無窮乘積是否收斂、是否真的等於 sin x/x（例如乘上 e^{x} 這種沒有根的因子，根完全不變），以及能不能逐項比較係數。這些都要複變的工具才能補齊。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "一個初等的嚴格證明（Cauchy）",
+      "body": [
+        "0 < x < π/2 時 sin x < x < tan x，所以 cot² x < 1/x² < 1 + cot² x。取 x = kπ/(2m + 1)，k = 1, …, m，相加。",
+        "需要一個恆等式：Σ_{k=1}^m cot²(kπ/(2m + 1)) = m(2m − 1)/3（由 (cos θ + i sin θ)^{2m+1} 的虛部展開得到，見〈Euler 公式〉）。",
+        "得 m(2m − 1)/3 < ((2m + 1)/π)² Σ_{k≤m} 1/k² < m + m(2m − 1)/3。乘上 π²/(2m + 1)² 後兩邊都 → π²/6，由夾擠定理得證。"
+      ],
+      "collapsible": true
+    },
+    {
+      "heading": "③ 一個值，推出一串",
+      "body": [
+        "偶數項：Σ 1/(2n)² = (1/4) Σ 1/n² = π²/24。",
+        "奇數項：π²/6 − π²/24 = π²/8。",
+        "交錯：Σ (−1)^{n+1}/n² = 奇數項 − 偶數項 = π²/8 − π²/24 = π²/12。（這些重組合法，因為級數絕對收斂。）"
+      ],
+      "collapsible": false
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "奇數項與交錯和",
+      "prompt": "求 Σ_{n≥1} 1/(2n − 1)² 與 Σ_{n≥1} (−1)^{n+1}/n²。",
+      "problemId": "burst-boss-ser-004",
+      "steps": [
+        "偶數項 Σ 1/(2n)² = (1/4)(π²/6) = π²/24。",
+        "奇數項 = 全部 − 偶數項 = π²/6 − π²/24 = 3π²/24 = π²/8。",
+        "交錯和 = 奇數項 − 偶數項 = π²/8 − π²/24 = 2π²/24 = π²/12。"
+      ],
+      "answer": "π²/8 與 π²/12",
+      "claim": "SUM(1/(2n)^2, 1) == pi^2/24 ;; SUM(1/(2n-1)^2, 1) == pi^2/8 ;; SUM((-1)^(n+1)/n^2, 1) == pi^2/12"
+    },
+    {
+      "title": "積分裡藏著 Basel",
+      "prompt": "∫₀^∞ x/(eˣ − 1) dx",
+      "problemId": "burst-int-026",
+      "steps": [
+        "x > 0 時 1/(eˣ − 1) = e^{−x}/(1 − e^{−x}) = Σ_{n≥1} e^{−nx}（幾何級數，公比 e^{−x} < 1）。",
+        "被積函數 = Σ_{n≥1} x e^{−nx}，每一項都非負，所以可以逐項積分（非負項的級數與積分可以交換，即單調收斂定理）。",
+        "∫₀^∞ x e^{−nx} dx = 1/n²（〈縮放的 Gamma 積分〉，Γ(2)/n²）。",
+        "總和 Σ 1/n² = π²/6。"
+      ],
+      "answer": "π²/6",
+      "claim": "INT(x/(e^x-1), 0, inf) == pi^2/6 ;; INT(x*e^(-t*x), 0, inf) == 1/t^2"
+    },
+    {
+      "title": "部分分式 + Basel",
+      "prompt": "Σ_{n≥1} 1/(n²(n + 1))",
+      "problemId": "world-075",
+      "steps": [
+        "部分分式：1/(n²(n + 1)) = 1/n² − 1/n + 1/(n + 1)。（通分檢查：(n + 1) − n(n + 1) + n² = 1。）",
+        "Σ (−1/n + 1/(n + 1)) 是望遠鏡級數，部分和 −1 + 1/(N + 1) → −1。",
+        "Σ 1/n² = π²/6。兩個收斂級數可以相加：總和 π²/6 − 1 ≈ 0.6449。"
+      ],
+      "answer": "π²/6 − 1",
+      "note": "不能把 Σ 1/n² − Σ 1/n + Σ 1/(n + 1) 拆成三個級數：後兩個各自發散。要先把後兩項合成望遠鏡。",
+      "claim": "SUM(1/(n^2*(n+1)), 1) == pi^2/6-1"
+    }
+  ],
+  "pitfalls": [
+    "把 Euler 的乘積論證當成證明。",
+    "偶數項寫成 (1/2)·π²/6：(2n)² = 4n²，是 1/4。",
+    "部分分式後把發散的 Σ 1/n 單獨拆出來。",
+    "逐項積分不說理由；非負項或一致收斂才能交換。"
+  ],
+  "checks": [
+    {
+      "ask": "1 + 1/9 + 1/25 + 1/49 + ⋯ 是？",
+      "options": [
+        { "label": "π²/8", "correct": true },
+        { "label": "π²/12", "why": "那是交錯和 1 − 1/4 + 1/9 − ⋯。奇數項和是 π²/6 − π²/24。" },
+        { "label": "π²/24", "why": "π²/24 是偶數項 1/4 + 1/16 + ⋯ 的和。" }
+      ]
+    },
+    {
+      "ask": "1 − 1/4 + 1/9 − 1/16 + ⋯ 是？",
+      "options": [
+        { "label": "π²/12", "correct": true },
+        { "label": "π²/6", "why": "那是全部取正號的和；交錯和要減掉兩倍的偶數項。" },
+        { "label": "ln 2", "why": "ln 2 是 1 − 1/2 + 1/3 − ⋯（分母沒有平方）。" }
+      ]
+    },
+    {
+      "ask": "Euler 用乘積 sin x/x = Π(1 − x²/(n²π²)) 的論證，問題在哪裡？",
+      "options": [
+        { "label": "只知道兩邊根相同，沒證明乘積收斂而且真的等於 sin x/x", "correct": true },
+        { "label": "sin x/x 的 Maclaurin 級數算錯了", "why": "sin x/x = 1 − x²/6 + ⋯ 是對的；問題在乘積那一邊。" },
+        { "label": "答案 π²/6 是錯的", "why": "答案對，論證不完整；嚴格證明（例如 Cauchy 的夾擠法）給出同樣的值。" }
+      ]
+    },
+    {
+      "ask": "∫₀¹ ln(1 + x)/x dx 是？",
+      "options": [
+        { "label": "π²/12", "correct": true },
+        { "label": "π²/6", "why": "ln(1 + x)/x = 1 − x/2 + x²/3 − ⋯，逐項積分得 1 − 1/4 + 1/9 − ⋯，是交錯和。" },
+        { "label": "ln 2", "why": "那是 ∫₀¹ dx/(1 + x)；這裡被積函數是 ln(1 + x)/x。" }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": ["zeta", "special-sum", "series-integral"],
+    "fine": ["basel-derived-sums", "basel-series-integral-swap", "basel-partial-fraction", "basel-euler-argument"]
+  },
+  "practice": [
+    { "id": "burst-boss-ser-004", "core": true, "trains": "basel-derived-sums" },
+    { "id": "world-075", "core": true, "trains": "basel-partial-fraction" },
+    { "id": "depth-int-017", "core": true, "trains": "basel-series-integral-swap" },
+    { "id": "burst-int-026", "core": true, "trains": "basel-series-integral-swap" },
+    { "id": "burst-boss-int-010", "core": true, "trains": "basel-series-integral-swap" },
+    { "id": "world-023", "trains": "basel-partial-fraction" },
+    { "id": "dm-int-002", "trains": "basel-series-integral-swap" },
+    { "id": "dm-int-005", "trains": "basel-series-integral-swap" },
+    { "id": "dm-int-007", "challenge": true, "trains": "basel-series-integral-swap", "note": "挑戰：∫∫ dx dy/(1 − xy) 展成 Σ (xy)ⁿ⁻¹，逐項積分正好是 Σ 1/n²。" }
+  ],
+  "gaps": [
+    { "tag": "basel-euler-argument", "count": 1, "note": "用 Euler 的乘積比較 x⁴ 係數推出 ζ(4) = π⁴/90 的引導題，R5。" }
+  ]
+}

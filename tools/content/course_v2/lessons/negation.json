@@ -1,0 +1,137 @@
+{
+  "id": "negation",
+  "title": "否定",
+  "readMinutes": 10,
+  "totalMinutes": 28,
+  "prerequisites": ["propositions-quantifiers"],
+  "next": ["direct-proof"],
+  "related": ["epsilon-n-definition"],
+  "objectives": [
+    "會否定且、或、若…則：¬(P ∧ Q)、¬(P ∨ Q)、¬(P ⇒ Q)。",
+    "會機械地否定多層量詞：每個 ∀ 換 ∃、每個 ∃ 換 ∀，最後把條件否定。",
+    "寫得出「數列不收斂到 L」「f 無界」的正確否定，並拿它來證明。"
+  ],
+  "visual": null,
+  "concept": [
+    {
+      "heading": "① 否定是證明的另一半",
+      "body": [
+        "要證明「某件事不成立」，例如「(−1)ⁿ 不收斂到 1」，你得先知道「不收斂到 1」用符號怎麼寫。直接在定義前面加一個「不」沒有用，因為你沒辦法拿「不（對每個 ε 存在 N……）」去做事。否定要一路推進去，推到最裡面變成一個可以檢查的不等式。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 連接詞的否定",
+      "body": [
+        "¬(P ∧ Q) ≡ ¬P ∨ ¬Q：「既…又…」不成立，表示至少有一個不成立。",
+        "¬(P ∨ Q) ≡ ¬P ∧ ¬Q：「…或…」不成立，表示兩個都不成立。",
+        "¬(P ⇒ Q) ≡ P ∧ ¬Q：蘊含只在「P 真而 Q 假」時為假，所以它的否定是「P 成立，但 Q 不成立」。注意否定裡沒有箭頭。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 量詞的否定：一路翻過去",
+      "body": [
+        "¬(∀x, P(x)) ≡ ∃x, ¬P(x)：不是每個都成立，就是有一個不成立（反例）。¬(∃x, P(x)) ≡ ∀x, ¬P(x)。",
+        "多層量詞照順序一個一個翻，變數範圍（ε > 0、n ≥ N）不動，只動量詞與最後的條件："
+      ],
+      "tex": ["\\neg\\big(\\forall\\varepsilon>0\\ \\exists N\\ \\forall n\\ge N,\\ |a_n-L|<\\varepsilon\\big)\\equiv\\exists\\varepsilon>0\\ \\forall N\\ \\exists n\\ge N,\\ |a_n-L|\\ge\\varepsilon"],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 否定句的人話",
+      "body": [
+        "「aₙ 不收斂到 L」：有一個固定的誤差 ε，不管你把起點 N 推得多遠，後面總還有某一項跟 L 差至少 ε。",
+        "這個 ε 是你挑的，而且只要挑一個。之後證明「不收斂」「不一致連續」，全都是先寫出這種否定，再把那個 ε 找出來。"
+      ],
+      "collapsible": false
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "證明 (−1)ⁿ 不收斂到 1",
+      "prompt": "aₙ = (−1)ⁿ。用否定形式證明 aₙ 不收斂到 1。",
+      "steps": [
+        "要證的是：∃ε > 0 ∀N ∃n ≥ N, |aₙ − 1| ≥ ε。",
+        "取 ε = 1（挑一個就好）。",
+        "任意給定 N。取 n = 2N + 1，它是奇數而且 n ≥ N。",
+        "aₙ = −1，|aₙ − 1| = |−1 − 1| = 2 ≥ 1。每個 N 都找得到這樣的 n，證畢。"
+      ],
+      "answer": "取 ε = 1；對每個 N，奇數 n = 2N + 1 ≥ N 給出 |aₙ − 1| = 2 ≥ 1",
+      "note": "0 < ε ≤ 2 都可以，因為 |aₙ − 1| 在奇數項等於 2；ε > 2 就不行。",
+      "claim": "abs(-1-1) >= 1"
+    },
+    {
+      "title": "否定「有界」並用它",
+      "prompt": "f 在 ℝ 上有界的意思是 ∃M ∀x ∈ ℝ, |f(x)| ≤ M。寫出否定，並證明 f(x) = x 無界。",
+      "steps": [
+        "否定：∀M ∃x ∈ ℝ, |f(x)| > M。（∃ 換 ∀、∀ 換 ∃，≤ 換 >。）",
+        "證明 f(x) = x 無界：任意給定 M。取 x = |M| + 1。",
+        "|f(x)| = |M| + 1 > |M| ≥ M。每個 M 都被超過，f 無界。"
+      ],
+      "answer": "否定：∀M ∃x, |f(x)| > M；對 f(x) = x 取 x = |M| + 1",
+      "claim": "abs(x) + 1 > x"
+    },
+    {
+      "title": "否定蘊含",
+      "prompt": "否定「∀x ∈ ℝ, x² < 1 ⇒ x < 1」，並判斷原命題真假。",
+      "steps": [
+        "外層 ∀ 換 ∃；裡面 ¬(P ⇒ Q) ≡ P ∧ ¬Q。否定是：∃x ∈ ℝ, x² < 1 且 x ≥ 1。",
+        "檢查否定能否成立：x ≥ 1 時兩邊乘正數 x 得 x² ≥ x ≥ 1，與 x² < 1 矛盾。所以否定為假。",
+        "否定為假，原命題為真。"
+      ],
+      "answer": "否定：∃x, x² < 1 且 x ≥ 1；原命題為真",
+      "claim": "(1+x)^2 >= 1+x ;; 1+x >= 1"
+    }
+  ],
+  "pitfalls": [
+    "只否定最後的不等式，量詞沒翻：寫成「∀ε ∃N ∀n ≥ N, |aₙ − L| ≥ ε」。",
+    "把 ε > 0 也否定成 ε ≤ 0。變數範圍不是被否定的對象。",
+    "把 < 否定成 >。< 的否定是 ≥，相等的情況要算進去。",
+    "¬(P ⇒ Q) 寫成 ¬P ⇒ ¬Q 或 P ⇒ ¬Q。否定裡沒有箭頭，是 P ∧ ¬Q。"
+  ],
+  "checks": [
+    {
+      "ask": "「∃x ∈ S ∀y ∈ S, y ≤ x」（S 有最大元）的否定是？",
+      "options": [
+        { "label": "∀x ∈ S ∃y ∈ S, y > x", "correct": true },
+        { "label": "∃x ∈ S ∀y ∈ S, y > x", "why": "你只否定了最後的 ≤，量詞沒翻。每個量詞都要換。" },
+        { "label": "∀x ∈ S ∃y ∈ S, y ≥ x", "why": "≤ 的否定是 >，不是 ≥；y = x 永遠滿足 y ≥ x，這句對任何集合都成立。" }
+      ]
+    },
+    {
+      "ask": "¬(P ⇒ Q) 等價於？",
+      "options": [
+        { "label": "P ∧ ¬Q", "correct": true },
+        { "label": "¬P ⇒ ¬Q", "why": "那是「否命題」，跟原命題的否定是兩回事；P ⇒ Q 只有在 P 真 Q 假時才不成立。" },
+        { "label": "P ⇒ ¬Q", "why": "P 為假時 P ⇒ ¬Q 自動為真，但原命題此時也為真，兩者不可能互為否定。" }
+      ]
+    },
+    {
+      "ask": "要證「aₙ 不收斂到 L」，ε 由誰決定？",
+      "options": [
+        { "label": "由你挑一個固定的 ε > 0，對所有 N 都用它", "correct": true },
+        { "label": "每個 N 各挑一個 ε", "why": "否定裡 ∃ε 寫在最前面，ε 不能依賴 N。讓 ε 跟著 N 變小，就證不出任何東西。" },
+        { "label": "要對所有 ε > 0 都證", "why": "那是在證收斂的另一種說法。否定的最外層是 ∃ε，找到一個就夠。" }
+      ]
+    },
+    {
+      "ask": "「對所有 x > 0，f(x) < 1 或 f(x) > 2」的否定是？",
+      "options": [
+        { "label": "存在 x > 0，使 1 ≤ f(x) ≤ 2", "correct": true },
+        { "label": "存在 x ≤ 0，使 1 ≤ f(x) ≤ 2", "why": "你把變數範圍 x > 0 也否定了。範圍不動，只換量詞與條件。" },
+        { "label": "存在 x > 0，使 f(x) ≥ 1 或 f(x) ≤ 2", "why": "¬(P ∨ Q) 是 ¬P ∧ ¬Q，「或」要換成「且」。你寫的這句幾乎永遠成立。" }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": ["proof"],
+    "fine": ["negation-connectives", "negation-nested-quantifiers", "negation-use-to-disprove"]
+  },
+  "practice": [],
+  "gaps": [
+    { "tag": "negation-nested-quantifiers", "count": 4, "note": "選出多層量詞句（收斂、有界、連續、一致連續）的正確否定，誘答是只否定最後條件或否定了變數範圍。" },
+    { "tag": "negation-use-to-disprove", "count": 2, "note": "給一個不收斂的數列，問「可以用的最大 ε」這種算得出的數。" },
+    { "tag": "negation-connectives", "count": 2, "note": "且／或／若則的否定，選擇題。" }
+  ]
+}

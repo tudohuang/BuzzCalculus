@@ -1,0 +1,216 @@
+{
+  "id": "parametric-area",
+  "title": "參數式面積",
+  "readMinutes": 9,
+  "totalMinutes": 30,
+  "prerequisites": [
+    "parametric-curves",
+    "area-under-curve",
+    "u-sub-definite",
+    "trig-identity-integrals"
+  ],
+  "next": [
+    "polar-coordinates"
+  ],
+  "related": [
+    "green-theorem"
+  ],
+  "objectives": [
+    "把 ∫ y dx 改寫成 ∫ y(t) x′(t) dt，上下限換成 t 的值。",
+    "看懂走向造成的正負號：t 增加時 x 變小，積分會是負的。",
+    "對逆時針走一圈的封閉曲線，用 A = ∫ x y′ dt 或 ½∫ (x y′ − y x′) dt 求圍成的面積。"
+  ],
+  "visual": "擺線一拱下方的區域，用很多條細長的鉛直長條填滿。點沿擺線前進時，每一條長條的寬 dx = x′(t)dt、高 y(t) 即時標示；點在尖點附近幾乎不往右走，長條就很窄。第二張圖：一個點沿橢圓逆時針走一圈，上半圈（從右往左）長條塗成紅色、表示負的貢獻，下半圈塗成藍色。",
+  "concept": [
+    {
+      "heading": "① 還是 ∫ y dx，只是 dx 換成 x′(t) dt",
+      "body": [
+        "曲線在 x 軸上方時，曲線下的面積是 ∫ₐᵇ y dx。曲線用參數給的時候，y = y(t)，而 x 也隨 t 變：dx = x′(t) dt（〈定積分換元〉的同一個規則）。",
+        "上下限要換成 t：找出 x = a 和 x = b 各對應哪個 t。",
+        "小例子：x = t²、y = t，0 ≤ t ≤ 1。x 從 0 走到 1，A = ∫₀¹ t · 2t dt = 2/3。檢查：這條曲線就是 y = √x，∫₀¹ √x dx 也是 2/3。"
+      ],
+      "tex": [
+        "A=\\int_a^b y\\,dx=\\int_{t_a}^{t_b} y(t)\\,x'(t)\\,dt"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 走向決定正負號",
+      "body": [
+        "上面的公式要求 t 從 t_a 走到 t_b 時，x 從左邊的 a 走到右邊的 b。如果 t 增加時點是從右往左走，x′(t) < 0，照 t 的大小順序積分會得到負值，它的絕對值才是面積。",
+        "例：橢圓 x = 2cos t、y = 3sin t 的上半部，t 從 0 到 π，x 從 2 走到 −2，是從右往左。∫₀^π 3sin t · (−2sin t) dt = −3π，上半部面積是 3π。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 封閉曲線：一個公式算圍起來的面積",
+      "body": [
+        "曲線逆時針恰好走一圈時，圍成的面積可以直接寫成下面三種形式之一，挑最好積的那一個。",
+        "「逆時針」的意思是：沿著曲線前進時，區域在左手邊。順時針走，三個式子都會差一個負號；繞兩圈，就算兩次。",
+        "最對稱的是 ½∫(x y′ − y x′) dt，對星形線這種 x、y 地位相同的曲線特別好用（範例 3）。"
+      ],
+      "tex": [
+        "A=\\int x\\,y'(t)\\,dt=-\\int y\\,x'(t)\\,dt=\\frac12\\int\\bigl(x\\,y'(t)-y\\,x'(t)\\bigr)\\,dt"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "為什麼 −∮ y dx 是面積",
+      "body": [
+        "先看一個左右各只有一個最遠點、上下各一段弧的凸區域，並假設它在 x 軸上方（例如往上平移的橢圓）。逆時針走時，下方的弧從左往右，∫ y dx 給出「下弧底下的面積」；上方的弧從右往左，∫ y dx 給出「負的上弧底下的面積」。",
+        "兩者相加 = 下弧底下 − 上弧底下 = −（區域面積），所以面積 = −∮ y dx。同理 ∮ x dy 也是面積。一般的區域要靠〈Green 定理〉證明，這裡的說明只涵蓋這種簡單形狀。"
+      ],
+      "collapsible": true
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "擺線一拱底下",
+      "prompt": "求擺線 x = t − sin t、y = 1 − cos t（0 ≤ t ≤ 2π）與 x 軸之間的面積。",
+      "steps": [
+        "t 從 0 到 2π 時 x′ = 1 − cos t ≥ 0，x 從 0 走到 2π，由左往右，上下限直接用 t = 0 與 2π。",
+        "A = ∫₀^{2π} y x′ dt = ∫₀^{2π} (1 − cos t)² dt = ∫₀^{2π} (1 − 2cos t + cos²t) dt。",
+        "逐項：∫₀^{2π} 1 dt = 2π；∫₀^{2π} cos t dt = 0；∫₀^{2π} cos²t dt = π（用 cos²t = (1 + cos 2t)/2）。",
+        "A = 2π − 0 + π = 3π。"
+      ],
+      "answer": "3π",
+      "claim": "INT((1-cos(t))^2, 0, 2*pi) == 3*pi",
+      "note": "擺線一拱底下的面積正好是滾動圓面積 π 的三倍。"
+    },
+    {
+      "title": "橢圓：兩種做法",
+      "prompt": "求 x = 2cos t、y = 3sin t 圍成的面積。",
+      "problemId": "uni-int-023",
+      "steps": [
+        "做法一（上半部乘 2）：上半部 t 從 0 到 π，點從右往左走，∫₀^π y x′ dt = ∫₀^π 3sin t · (−2sin t) dt = −6 · (π/2) = −3π。取絕對值得上半部 3π，全部 6π。",
+        "做法二（封閉曲線公式）：t 從 0 到 2π 是逆時針一圈，A = ∫₀^{2π} x y′ dt = ∫₀^{2π} 2cos t · 3cos t dt = 6 · π = 6π。",
+        "檢查：半軸 a、b 的橢圓面積是 πab = π · 2 · 3 = 6π。"
+      ],
+      "answer": "6π",
+      "claim": "INT(3*sin(t)*(-2*sin(t)), 0, pi) == -3*pi ;; INT(2*cos(t)*3*cos(t), 0, 2*pi) == 6*pi"
+    },
+    {
+      "title": "星形線：用對稱的公式",
+      "prompt": "求星形線 x = cos³t、y = sin³t（0 ≤ t ≤ 2π）圍成的面積。",
+      "steps": [
+        "x′ = −3cos²t sin t，y′ = 3sin²t cos t。",
+        "x y′ − y x′ = 3sin²t cos⁴t + 3sin⁴t cos²t = 3sin²t cos²t (cos²t + sin²t) = 3sin²t cos²t。",
+        "sin t cos t = (1/2)sin 2t，所以 3sin²t cos²t = (3/4)sin²2t。",
+        "A = ½ ∫₀^{2π} (3/4)sin²2t dt = (3/8) · π = 3π/8（∫₀^{2π} sin²2t dt = π）。"
+      ],
+      "answer": "3π/8",
+      "claim": "INT((cos(t)^3*3*sin(t)^2*cos(t) - sin(t)^3*(-3*cos(t)^2*sin(t)))/2, 0, 2*pi) == 3*pi/8"
+    }
+  ],
+  "pitfalls": [
+    "寫成 ∫ y(t) dt，漏了 x′(t)。",
+    "上下限用 x 的值，而不是對應的 t 值。",
+    "點從右往左走，積出負值就直接當答案。",
+    "封閉曲線繞了兩圈或順時針走，面積變兩倍或變號。"
+  ],
+  "checks": [
+    {
+      "ask": "曲線 x = x(t)、y = y(t) 在 x 軸上方，由左往右走。曲線下的面積 ∫ y dx 改寫成？",
+      "options": [
+        {
+          "label": "∫ y(t) x′(t) dt",
+          "correct": true
+        },
+        {
+          "label": "∫ y(t) dt",
+          "why": "dx 不等於 dt：x 隨 t 變，dx = x′(t) dt，少乘了 x′(t)。"
+        },
+        {
+          "label": "∫ x(t) y(t) dt",
+          "why": "要乘的是 x 的變化率 x′(t)，不是 x(t) 本身。"
+        }
+      ]
+    },
+    {
+      "ask": "某段曲線在 x 軸上方，照 t 從小到大積分 ∫ y x′ dt 得到 −5。最可能的原因？",
+      "options": [
+        {
+          "label": "t 增加時點從右往左走，面積是 5",
+          "correct": true
+        },
+        {
+          "label": "曲線在 x 軸下方",
+          "why": "題目說曲線在 x 軸上方，y > 0；負號來自 x′ < 0，也就是走向。"
+        },
+        {
+          "label": "算錯了，面積不可能從這個式子得到",
+          "why": "式子沒錯，只是方向反了；取絕對值（或對調上下限）就是面積。"
+        }
+      ]
+    },
+    {
+      "ask": "擺線一拱底下的面積 ∫₀^{2π} (1 − cos t)² dt 是？",
+      "options": [
+        {
+          "label": "3π",
+          "correct": true
+        },
+        {
+          "label": "2π",
+          "why": "展開後還有 cos²t 一項，它在 [0, 2π] 積分是 π，不是 0。"
+        },
+        {
+          "label": "π",
+          "why": "那是滾動圓本身的面積；拱底下是它的三倍。"
+        }
+      ]
+    },
+    {
+      "ask": "x = cos t、y = sin t，0 ≤ t ≤ 4π，代入 ∫ x y′ dt 得 2π。為什麼不是單位圓面積 π？",
+      "options": [
+        {
+          "label": "點逆時針繞了兩圈，每一圈都算一次",
+          "correct": true
+        },
+        {
+          "label": "公式應該再乘 ½",
+          "why": "∫ x y′ dt 本身就是面積，不用乘 ½；乘 ½ 的是對稱形式 ½∫(x y′ − y x′) dt。"
+        },
+        {
+          "label": "因為是順時針",
+          "why": "t 增加時 (cos t, sin t) 是逆時針；問題出在繞了兩圈。"
+        }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": [
+      "parametric",
+      "area"
+    ],
+    "fine": [
+      "parametric-area-integral",
+      "parametric-area-orientation",
+      "parametric-closed-curve-area"
+    ]
+  },
+  "practice": [
+    {
+      "id": "uni-int-023",
+      "core": true,
+      "trains": "parametric-closed-curve-area"
+    }
+  ],
+  "gaps": [
+    {
+      "tag": "parametric-area-integral",
+      "count": 3,
+      "note": "R2–R3：參數曲線下的面積（擺線一拱 3π、x = t²、y = t³ 這類多項式參數）。"
+    },
+    {
+      "tag": "parametric-area-orientation",
+      "count": 2,
+      "note": "R2 選擇題：判斷走向造成的負號，或上下限該用哪個 t。"
+    },
+    {
+      "tag": "parametric-closed-curve-area",
+      "count": 2,
+      "note": "R3–R4：星形線 3π/8 等封閉曲線面積。"
+    }
+  ]
+}

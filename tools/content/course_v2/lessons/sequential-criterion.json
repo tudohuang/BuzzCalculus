@@ -1,0 +1,142 @@
+{
+  "id": "sequential-criterion",
+  "title": "數列判準",
+  "readMinutes": 11,
+  "totalMinutes": 35,
+  "prerequisites": ["continuity-formal", "epsilon-n-definition", "limit-laws-proof"],
+  "next": ["ivt-proof"],
+  "related": ["extreme-value-theorem", "heine-cantor"],
+  "objectives": [
+    "說得出數列判準：f 在 a 連續，若且唯若每一個趨近 a 的數列 xₙ 都使 f(xₙ) → f(a)。",
+    "會用「找兩個數列」證明函數在某點不連續。",
+    "知道為什麼「某一個數列行得通」不足以證明連續。"
+  ],
+  "visual": "y = sin(1/x)（x ≠ 0）、f(0) = 0 的圖。兩串點 xₙ = 1/(2πn + π/2) 與 yₙ = 1/(2πn + 3π/2) 從右邊走向 0：前一串的函數值全是 1，後一串全是 −1，旁邊顯示兩串函數值各自的極限。",
+  "concept": [
+    {
+      "heading": "① 把 ε-δ 換成數列",
+      "body": [
+        "ε-δ 定義一次要管 a 附近「所有」的 x。數列判準換個角度：不管你沿著哪一串點走向 a，函數值都要走向 f(a)。",
+        "直覺，不是證明：連續就是「輸入靠近，輸出就靠近」，而數列 xₙ → a 正是一種「輸入靠近」的方式。漏掉的是另一個方向——為什麼檢查所有數列就夠了，要靠下面的證明。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 定理",
+      "body": [
+        "設 f 定義在 D 上，a ∈ D。f 在 a 連續，若且唯若：對 D 中每一個滿足 xₙ → a 的數列 (xₙ)，都有 f(xₙ) → f(a)。",
+        "注意是「每一個」數列。找到一個數列使 f(xₙ) → f(a) 什麼都證明不了；但只要找到一個數列使 f(xₙ) 不趨近 f(a)，就證明了不連續。"
+      ],
+      "tex": ["f\\text{ 在 }a\\text{ 連續}\\iff\\bigl(\\forall (x_n)\\subseteq D,\\ x_n\\to a\\Rightarrow f(x_n)\\to f(a)\\bigr)"],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 兩個用途",
+      "body": [
+        "證不連續：找一串 xₙ → a，讓 f(xₙ) 趨近別的值或根本不收斂；或找兩串，讓函數值趨近不同的數。這通常比寫出 ε 與每個 δ 的壞點快。",
+        "證連續：把數列的極限定律搬過來。例如 f、g 在 a 連續，xₙ → a，則 f(xₙ) → f(a)、g(xₙ) → g(a)，由〈極限定律〉f(xₙ)g(xₙ) → f(a)g(a)，所以 fg 在 a 連續。合成函數也一樣。這個判準之後會在〈極值定理〉與〈Heine–Cantor 定理〉的證明裡反覆出現。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "證明：兩個方向",
+      "body": [
+        "(⇒) 設 f 在 a 連續，xₙ → a。給定 ε > 0，由連續取 δ > 0，使 |x − a| < δ ⇒ |f(x) − f(a)| < ε。由 xₙ → a，對這個 δ 存在 N，n ≥ N 時 |xₙ − a| < δ，於是 |f(xₙ) − f(a)| < ε。所以 f(xₙ) → f(a)。",
+        "(⇐) 用逆否：設 f 在 a 不連續。則存在 ε₀ > 0，使每個 δ > 0 都有壞點。對每個 n 取 δ = 1/n，得到 xₙ ∈ D 滿足 |xₙ − a| < 1/n 且 |f(xₙ) − f(a)| ≥ ε₀。這串 xₙ → a，但 f(xₙ) 與 f(a) 永遠差至少 ε₀，不趨近 f(a)。所以「每個數列都行」不成立。"
+      ],
+      "collapsible": true
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "sin(1/x) 在 0 補什麼值都不連續",
+      "prompt": "f(x) = sin(1/x)（x ≠ 0），f(0) = 0。證明 f 在 0 不連續。",
+      "steps": [
+        "找讓 sin(1/x) = 1 的點：1/x = 2πn + π/2，取 xₙ = 1/(2πn + π/2)。xₙ > 0 且 xₙ → 0。",
+        "f(xₙ) = sin(2πn + π/2) = 1，對每個 n 都是 1，所以 f(xₙ) → 1 ≠ 0 = f(0)。",
+        "由數列判準，f 在 0 不連續。",
+        "更多：再取 yₙ = 1/(2πn + 3π/2) → 0，f(yₙ) = −1。兩串的函數值趨近不同的數，所以不管 f(0) 定成多少都不連續。"
+      ],
+      "answer": "xₙ = 1/(2πn + π/2) → 0，但 f(xₙ) = 1 不趨近 f(0) = 0",
+      "claim": "sin(1/(1/(2*pi*n+pi/2))) == 1 ;; sin(1/(1/(2*pi*n+3*pi/2))) == -1 ;; LIM(1/(2*pi*n+pi/2), inf) == 0"
+    },
+    {
+      "title": "只在一點連續的函數",
+      "prompt": "f(x) = x（x 有理），f(x) = 0（x 無理）。f 在哪些點連續？",
+      "steps": [
+        "在 0：|f(x) − f(0)| = |f(x)| ≤ |x|。給定 ε，取 δ = ε，|x| < δ ⇒ |f(x)| < ε。所以 f 在 0 連續。",
+        "在 a ≠ 0：有理數與無理數都在實數中稠密，可取有理數列 qₙ → a 與無理數列 rₙ → a。",
+        "f(qₙ) = qₙ → a，f(rₙ) = 0 → 0。兩者極限不同（a ≠ 0），所以至少有一串不趨近 f(a)，f 在 a 不連續。"
+      ],
+      "answer": "只在 x = 0 連續",
+      "note": "連續的點用 ε-δ，不連續的點用數列：哪個方向好用就用哪個。",
+      "claim": null,
+      "claimNote": "函數在有理點與無理點取不同值，數值取樣分不出有理與無理，無法機器驗算。"
+    },
+    {
+      "title": "一個數列行得通，不代表連續",
+      "prompt": "上例的 f 在 a = 1。取 xₙ = 1 + 1/n，f(xₙ) → f(1) 嗎？這能說明什麼？",
+      "steps": [
+        "xₙ = 1 + 1/n 是有理數，f(xₙ) = 1 + 1/n → 1 = f(1)。這一串行得通。",
+        "但換成無理數列 rₙ = 1 + √2/n → 1，f(rₙ) = 0 → 0 ≠ 1。",
+        "定理要求「每一個」數列；一個成功的例子不夠，一個失敗的例子就推翻。f 在 1 不連續。"
+      ],
+      "answer": "有理數列行得通，無理數列不行；f 在 1 不連續",
+      "claim": "LIM(1 + 1/n, inf) == 1 ;; LIM(1 + sqrt(2)/n, inf) == 1"
+    }
+  ],
+  "pitfalls": [
+    "用一個數列 f(xₙ) → f(a) 就宣稱連續。要每一個數列都成立。",
+    "選的數列沒有落在定義域 D 裡，或沒有真的趨近 a。",
+    "以為 xₙ 必須 ≠ a。數列判準允許 xₙ = a 的項，因為 f(a) − f(a) = 0。",
+    "(⇐) 方向直接證很難，要走逆否：從不連續造出一個壞數列。"
+  ],
+  "checks": [
+    {
+      "ask": "要用數列判準證明 f 在 a 不連續，最少需要什麼？",
+      "options": [
+        { "label": "一個 xₙ → a 的數列，使 f(xₙ) 不趨近 f(a)", "correct": true },
+        { "label": "每一個 xₙ → a 的數列都使 f(xₙ) 不趨近 f(a)", "why": "你把「不是每一個都行」否定成「每一個都不行」。只要一個壞數列就夠，sin(1/x) 也有讓 f(xₙ) → 0 的數列。" },
+        { "label": "兩個數列，使 f(xₙ) 與 f(yₙ) 趨近不同的值", "why": "兩個數列是常用技巧（不知道 f(a) 或要證補什麼值都不行時），但不是必要；一個 f(xₙ) 不趨近 f(a) 就夠。" }
+      ]
+    },
+    {
+      "ask": "f(x) = sin(1/x)，f(0) = 0。xₙ = 1/(πn) → 0 時 f(xₙ) 是多少？",
+      "options": [
+        { "label": "0，這串剛好行得通，但不能據此說 f 在 0 連續", "correct": true },
+        { "label": "1，所以 f 在 0 不連續", "why": "sin(πn) = 0，不是 1。讓 sin 等於 1 的是 1/x = 2πn + π/2。" },
+        { "label": "0，所以 f 在 0 連續", "why": "一個數列成功不代表每個數列都成功；xₙ = 1/(2πn + π/2) 給出 f(xₙ) = 1。" }
+      ]
+    },
+    {
+      "ask": "證明定理 (⇐) 方向時，為什麼取 δ = 1/n？",
+      "options": [
+        { "label": "為了造出一串壞點 xₙ，而且 |xₙ − a| < 1/n 保證 xₙ → a", "correct": true },
+        { "label": "因為連續的定義要求 δ = 1/n", "why": "定義只要求 δ > 0。這裡是在不連續的假設下，對每個 δ 都有壞點，挑 δ = 1/n 這一串來用。" },
+        { "label": "為了讓 f(xₙ) → f(a)", "why": "正好相反：這些 xₙ 滿足 |f(xₙ) − f(a)| ≥ ε₀，是用來證 f(xₙ) 不趨近 f(a)。" }
+      ]
+    },
+    {
+      "ask": "f(x) = x（x 有理），f(x) = 0（x 無理）。f 在 2 連續嗎？",
+      "options": [
+        { "label": "不連續：無理數列 rₙ → 2 給 f(rₙ) = 0，不趨近 f(2) = 2", "correct": true },
+        { "label": "連續：有理數列 qₙ → 2 給 f(qₙ) → 2", "why": "你只檢查了有理數列。無理數列給出 0，至少有一串失敗。" },
+        { "label": "連續，因為 |f(x)| ≤ |x|", "why": "這個不等式只在 0 處有用（夾到 f(0) = 0）；在 2 處它夾不出 f(x) → 2。" }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": ["continuity", "sequence"],
+    "fine": ["seqcrit-disprove-continuity", "seqcrit-two-sequences", "seqcrit-proof-direction", "seqcrit-limit-laws-transfer"]
+  },
+  "practice": [
+    { "id": "lec-02-q3d", "core": true, "trains": "seqcrit-two-sequences", "note": "f′(x) = 2x sin(1/x) − cos(1/x)；取兩串讓 cos(1/x) = 1 與 −1 的點。" },
+    { "id": "px-sq-001", "trains": "seqcrit-limit-laws-transfer", "note": "對照組：x sin(1/x) 補 f(0) = 0 後在 0 連續。" },
+    { "id": "ep-011", "challenge": true, "trains": "seqcrit-limit-laws-transfer", "note": "挑戰：x sin(1/x) 的 ε-δ 互動挑戰，跟 sin(1/x) 的不連續對照。" }
+  ],
+  "gaps": [
+    { "tag": "seqcrit-disprove-continuity", "count": 3, "note": "給函數與點，選出（或寫出）一個使 f(xₙ) 不趨近 f(a) 的數列；R3–R4。" },
+    { "tag": "seqcrit-two-sequences", "count": 2, "note": "像 sin(1/x)、Dirichlet 型函數：求兩串數列的函數值極限各是多少（數值答案）。" },
+    { "tag": "seqcrit-proof-direction", "count": 2, "note": "白話證明：用數列判準證 f + g、f∘g 連續。" }
+  ]
+}

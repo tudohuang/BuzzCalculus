@@ -1,0 +1,147 @@
+{
+  "id": "dirichlet-integral",
+  "title": "Dirichlet 積分",
+  "readMinutes": 13,
+  "totalMinutes": 40,
+  "prerequisites": ["improper-conditional", "feynman-trick-basic", "parameter-integral"],
+  "next": ["log-sine-integral"],
+  "related": ["frullani", "residue-real-integrals"],
+  "objectives": [
+    "用 Feynman 法算出 ∫₀^∞ e^{−ax} sin x/x dx = π/2 − arctan a，並說得出讓 a → 0⁺ 為什麼需要額外論證。",
+    "用縮放、奇偶、積化和差，從 ∫₀^∞ sin x/x dx = π/2 推出 ∫₀^∞ sin(bx)/x dx = (π/2)·sgn b 等結果。",
+    "用分部積分把 sin² x/x²、(cos ax − cos bx)/x² 化回 Dirichlet 積分。"
+  ],
+  "visual": "上圖：I(a) = ∫₀^∞ e^{−ax} sin x/x dx 的圖形 π/2 − arctan a，a 從 5 拉向 0，曲線爬向 π/2。下圖：同一個 a 下的被積函數 e^{−ax} sin x/x，a 越小振盪的尾巴越長；a = 0 時尾巴不再衰減成指數，只剩 1/x。",
+  "concept": [
+    {
+      "heading": "① 目標：一個條件收斂的積分的精確值",
+      "body": [
+        "〈條件收斂的瑕積分〉證明了 ∫₀^∞ sin x/x dx 收斂但不絕對收斂。sin x/x 沒有初等反導函數，值要靠別的方法。答案是 π/2。"
+      ],
+      "tex": ["\\int_0^{\\infty}\\frac{\\sin x}{x}\\,dx=\\frac{\\pi}{2}"],
+      "collapsible": false
+    },
+    {
+      "heading": "② Feynman 法：先加阻尼，再拿掉",
+      "body": [
+        "〈Feynman 積分法：基礎〉算過：a > 0 時 I(a) = ∫₀^∞ e^{−ax} sin x/x dx = π/2 − arctan a。a > 0 時 e^{−ax} 讓一切都絕對收斂，交換微分與積分沒有問題。",
+        "要的是 I(0)。如果 I 在 a = 0 右連續，答案就是 lim_{a→0⁺}(π/2 − arctan a) = π/2。",
+        "這一步不能用控制函數：控制 e^{−ax}|sin x|/x 的最好函數是 |sin x|/x，它不可積。需要另一個論證（可折疊段落）。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "I 在 0 右連續的證明",
+      "body": [
+        "把積分切成 [0, A] 與 [A, ∞)。[0, A] 上 e^{−ax} sin x/x 在閉矩形 [0, A] × [0, 1] 上連續（x = 0 處補值），〈參數積分〉的定理保證這一段對 a 連續。",
+        "尾巴：g(x) = e^{−ax}/x 在 [A, ∞) 上遞減到 0，而 |∫_A^B sin x dx| ≤ 2。用分部積分（Dirichlet 判別法的估計）得 |∫_A^∞ g(x) sin x dx| ≤ 2g(A) ≤ 2/A，對所有 a ≥ 0 一致成立。",
+        "所以 |I(a) − I(0)| ≤ |[0, A] 那段的差| + 4/A。先取 A 大讓 4/A < ε，再讓 a → 0⁺ 讓前一項 < ε。"
+      ],
+      "collapsible": true
+    },
+    {
+      "heading": "③ 一個值，變出很多個",
+      "body": [
+        "縮放：b > 0 時令 u = bx，sin(bx)/x dx = sin u/u du，值不變，還是 π/2；b < 0 時 sin 變號，得 −π/2。所以 ∫₀^∞ sin(bx)/x dx = (π/2)·sgn b。",
+        "奇偶：sin x/x 是偶函數，∫_{−∞}^∞ sin x/x dx = π。",
+        "分部積分：分母是 x² 時，分部一次讓分母降成 x，再回到 Dirichlet 積分。"
+      ],
+      "collapsible": false
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "Feynman 法的兩步",
+      "prompt": "用 I(a) = ∫₀^∞ e^{−ax} sin x/x dx 算 ∫₀^∞ sin x/x dx。",
+      "problemId": "world-088",
+      "steps": [
+        "a > 0：I′(a) = −∫₀^∞ e^{−ax} sin x dx = −1/(1 + a²)；a → ∞ 時 I → 0，所以 I(a) = π/2 − arctan a。",
+        "I 在 a = 0 右連續（可折疊段落的論證：前段用閉矩形連續，尾巴用 2/A 的一致估計）。",
+        "I(0) = lim_{a→0⁺} (π/2 − arctan a) = π/2。"
+      ],
+      "answer": "π/2",
+      "claim": "INT(sin(x)/x, 0, inf) == pi/2 ;; INT(e^(-t*x)*sin(x)/x, 0, inf) == pi/2-arctan(t)"
+    },
+    {
+      "title": "縮放與積化和差",
+      "prompt": "∫₀^∞ sin 3x/x dx 與 ∫₀^∞ sin x cos x/x dx",
+      "problemId": "rel-boss-001",
+      "steps": [
+        "令 u = 3x：∫₀^∞ sin 3x/x dx = ∫₀^∞ sin u/u du = π/2。係數 3 不影響答案。",
+        "sin x cos x = (sin 2x)/2，所以第二個 = (1/2) · π/2 = π/4。"
+      ],
+      "answer": "π/2 與 π/4",
+      "claim": "INT(sin(3x)/x, 0, inf) == pi/2 ;; INT(sin(x)*cos(x)/x, 0, inf) == pi/4"
+    },
+    {
+      "title": "分部積分降分母",
+      "prompt": "∫₀^∞ sin² x/x² dx",
+      "problemId": "dm-int-001",
+      "steps": [
+        "u = sin² x、dv = dx/x²：du = 2 sin x cos x dx = sin 2x dx，v = −1/x。",
+        "邊界項 [−sin² x/x]₀^∞：x → ∞ 時 ≤ 1/x → 0；x → 0⁺ 時 sin² x/x ~ x → 0。所以是 0。",
+        "剩下 ∫₀^∞ sin 2x/x dx = π/2（縮放）。",
+        "所以 ∫₀^∞ sin² x/x² dx = π/2。注意原積分絕對收斂，分部之後變成條件收斂的積分。"
+      ],
+      "answer": "π/2",
+      "claim": "D(sin(x)^2) == sin(2x) ;; LIM(sin(x)^2/x, 0+) == 0 ;; INT(sin(2x)/x, 0, inf) == pi/2"
+    }
+  ],
+  "pitfalls": [
+    "以為 sin(bx)/x 的積分會變成 bπ/2；dx/x 在縮放下不變，答案還是 π/2（或 −π/2）。",
+    "用控制收斂讓 a → 0⁺：|sin x|/x 不可積，這一步需要專門的論證。",
+    "把 ∫_{−∞}^∞ sin x/x dx 當成 0（以為是奇函數）；sin x/x 是偶函數，值是 π。",
+    "分部積分後不檢查兩端的邊界項。"
+  ],
+  "checks": [
+    {
+      "ask": "∫₀^∞ sin 5x/x dx 是？",
+      "options": [
+        { "label": "π/2", "correct": true },
+        { "label": "5π/2", "why": "令 u = 5x，sin 5x/x dx = sin u/u du，係數被吸收了。" },
+        { "label": "π/10", "why": "係數不會留在分母；dx/x 在縮放下不變。" }
+      ]
+    },
+    {
+      "ask": "∫₀^∞ sin(−2x)/x dx 是？",
+      "options": [
+        { "label": "−π/2", "correct": true },
+        { "label": "π/2", "why": "sin(−2x) = −sin 2x，整個積分變號。" },
+        { "label": "−π", "why": "大小不受係數影響，還是 π/2，只是符號變負。" }
+      ]
+    },
+    {
+      "ask": "用 I(a) = ∫₀^∞ e^{−ax} sin x/x dx 證明時，最需要小心的一步是？",
+      "options": [
+        { "label": "證明 I 在 a = 0 右連續，因為找不到可積的控制函數", "correct": true },
+        { "label": "算 ∫₀^∞ e^{−ax} sin x dx", "why": "那是標準積分（分部兩次），a > 0 時沒有任何收斂問題。" },
+        { "label": "用 a → ∞ 定常數", "why": "|I(a)| ≤ 1/a → 0 很直接；困難在另一端 a → 0⁺。" }
+      ]
+    },
+    {
+      "ask": "∫_{−∞}^∞ sin x/x dx 是？",
+      "options": [
+        { "label": "π", "correct": true },
+        { "label": "0", "why": "sin x 與 x 都是奇函數，相除是偶函數，左右兩半相等，不會抵銷。" },
+        { "label": "π/2", "why": "那只是 [0, ∞) 的一半。" }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": ["dirichlet", "dirichlet-integral", "improper-integral"],
+    "fine": ["dirichlet-scaling", "dirichlet-ibp-reduce", "dirichlet-continuity-at-zero", "dirichlet-product-to-sum"]
+  },
+  "practice": [
+    { "id": "world-088", "core": true, "trains": "dirichlet-continuity-at-zero" },
+    { "id": "rel-boss-001", "core": true, "trains": "dirichlet-scaling" },
+    { "id": "dm-int-001", "core": true, "trains": "dirichlet-ibp-reduce" },
+    { "id": "world-033", "core": true, "trains": "dirichlet-ibp-reduce" },
+    { "id": "world-089", "trains": "dirichlet-ibp-reduce" },
+    { "id": "world-070", "trains": "dirichlet-continuity-at-zero" },
+    { "id": "world-038", "challenge": true, "trains": "dirichlet-product-to-sum", "note": "挑戰：sin³ x = (3 sin x − sin 3x)/4，分部積分兩次。" },
+    { "id": "world-047", "challenge": true, "trains": "dirichlet-product-to-sum", "note": "挑戰：sin⁴ x 化成 cos 2x、cos 4x 的組合，分部積分三次。" }
+  ],
+  "gaps": [
+    { "tag": "dirichlet-scaling", "count": 2, "note": "∫₀^∞ sin(bx)/x dx 對負 b、或 ∫ sin ax cos bx/x dx 的分段答案題，R3。" }
+  ]
+}

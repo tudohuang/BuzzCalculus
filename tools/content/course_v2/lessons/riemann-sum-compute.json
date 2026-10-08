@@ -1,0 +1,150 @@
+{
+  "id": "riemann-sum-compute",
+  "title": "用 Riemann 和算簡單積分",
+  "readMinutes": 10,
+  "totalMinutes": 35,
+  "prerequisites": ["riemann-sum-notation", "limit-at-infinity"],
+  "next": ["ftc-part1"],
+  "related": ["ftc-part2"],
+  "objectives": [
+    "記得 Σi、Σi²、Σi³ 三個求和公式，知道它們怎麼來。",
+    "會照「寫出 Rₙ → 展開 → 套公式 → 取極限」算出多項式的定積分。",
+    "說得出為什麼有限的 n 只是近似，等於積分的是極限。"
+  ],
+  "visual": null,
+  "concept": [
+    {
+      "heading": "① 目標：把極限真的算出來",
+      "body": [
+        "上一課把定積分寫成 lim Σ f(xᵢ)Δx。要算出這個極限，關鍵是把「n 項相加」化成一個只含 n 的式子，然後讓 n → ∞。",
+        "對多項式，這件事靠三個求和公式就能做到。"
+      ],
+      "tex": ["\\sum_{i=1}^{n} i=\\frac{n(n+1)}{2},\\quad \\sum_{i=1}^{n} i^2=\\frac{n(n+1)(2n+1)}{6},\\quad \\sum_{i=1}^{n} i^3=\\left(\\frac{n(n+1)}{2}\\right)^2"],
+      "collapsible": false
+    },
+    {
+      "heading": "② 四個步驟",
+      "body": [
+        "1. 寫出 Δx = (b − a)/n、xᵢ = a + iΔx、Rₙ = Σ f(xᵢ)Δx。",
+        "2. 把 f(xᵢ) 展開成「常數、i、i²、i³」的組合，跟 i 無關的東西提到 Σ 外面。",
+        "3. 套公式，把 Σ 消掉，得到只含 n 的式子。",
+        "4. 取 n → ∞（〈x → ∞〉的方法：看最高次）。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 為什麼要取極限，不能取 n = 1000 就好",
+      "body": [
+        "任何有限的 n 都只是近似。例如 ∫₁³ (2x + 1) dx 的右端點和是 Rₙ = 6 + 4(n + 1)/n，R₁₀₀₀ = 10.004，真正的值是 10。只有極限才剛好相等。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 這條路很慢",
+      "body": [
+        "x² 要 Σi²、x³ 要 Σi³，換成 √x 或 sin x 就沒有這麼好用的公式。所以實際算積分不會走這條路，而是用〈微積分基本定理 II〉：只要找到反導函數。這一課的價值是確定「定義」本身是算得出來的，而且等一下可以拿來對答案。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "求和公式從哪裡來",
+      "body": [
+        "Σi：把 1 + 2 + … + n 正著寫一次、倒著寫一次，上下相加每一對都是 n + 1，共 n 對，所以兩倍的和是 n(n + 1)。",
+        "Σi²：(i + 1)³ − i³ = 3i² + 3i + 1。對 i = 1 到 n 相加，左邊前後相消剩 (n + 1)³ − 1，右邊是 3Σi² + 3Σi + n。代入 Σi 的公式解出 Σi²，就得到 n(n + 1)(2n + 1)/6。Σi³ 用 (i + 1)⁴ − i⁴ 做同樣的事。"
+      ],
+      "collapsible": true
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "最簡單的一個",
+      "prompt": "用右端點和的極限算 ∫₀¹ x dx。",
+      "steps": [
+        "Δx = 1/n，xᵢ = i/n，f(xᵢ) = i/n。",
+        "Rₙ = Σ_{i=1}^{n} (i/n)(1/n) = (1/n²) Σ i = (1/n²) · n(n + 1)/2 = (n + 1)/(2n) = 1/2 + 1/(2n)。",
+        "n → ∞ 時 1/(2n) → 0，所以 ∫₀¹ x dx = 1/2。",
+        "對照幾何：底 1、高 1 的三角形，面積 1/2。"
+      ],
+      "answer": "1/2",
+      "claim": "LIM(1/2+1/(2*n), inf) == INT(x,0,1)"
+    },
+    {
+      "title": "用 Σi²",
+      "prompt": "用右端點和的極限算 ∫₀³ x² dx。",
+      "steps": [
+        "Δx = 3/n，xᵢ = 3i/n，f(xᵢ) = 9i²/n²。",
+        "Rₙ = Σ (9i²/n²)(3/n) = (27/n³) Σ i² = (27/n³) · n(n + 1)(2n + 1)/6。",
+        "約掉一個 n：Rₙ = 9(n + 1)(2n + 1)/(2n²)。",
+        "分子最高次 9 · 2n² = 18n²，分母 2n²，所以極限是 9。"
+      ],
+      "answer": "9",
+      "claim": "LIM(9*(n+1)*(2*n+1)/(2*n^2), inf) == 9 ;; INT(x^2,0,3) == 9"
+    },
+    {
+      "title": "起點不是 0",
+      "prompt": "用右端點和的極限算 ∫₁³ (2x + 1) dx。",
+      "steps": [
+        "Δx = 2/n，xᵢ = 1 + 2i/n，f(xᵢ) = 2(1 + 2i/n) + 1 = 3 + 4i/n。",
+        "Rₙ = Σ (3 + 4i/n)(2/n) = (6/n) Σ 1 + (8/n²) Σ i = (6/n) · n + (8/n²) · n(n + 1)/2 = 6 + 4(n + 1)/n。",
+        "n → ∞：6 + 4 = 10。",
+        "對照幾何：梯形，兩邊高 f(1) = 3、f(3) = 7，寬 2，面積 (3 + 7)/2 × 2 = 10。"
+      ],
+      "answer": "10",
+      "claim": "LIM(6+4*(n+1)/n, inf) == 10 ;; INT(2*x+1,1,3) == 10"
+    }
+  ],
+  "pitfalls": [
+    "Σ 1 寫成 1。從 1 加到 n 共 n 個 1，是 n。",
+    "把跟 i 有關的東西提到 Σ 外面。",
+    "取極限前就把 n(n + 1) 換成 n²，再約分時係數錯掉。",
+    "起點不是 0 時，xᵢ 忘了加 a。"
+  ],
+  "checks": [
+    {
+      "ask": "Σ_{i=1}^{n} i 等於？",
+      "options": [
+        { "label": "n(n + 1)/2", "correct": true },
+        { "label": "n²/2", "why": "那只是最高次項，精確的和還有 n/2。取極限之前不能先丟。" },
+        { "label": "n(n + 1)", "why": "少除了 2：正寫倒寫配成 n 對、每對 n + 1，那是兩倍的和。" }
+      ]
+    },
+    {
+      "ask": "lim_{n→∞} (n + 1)(2n + 1)/(6n²) 是？",
+      "options": [
+        { "label": "1/3", "correct": true },
+        { "label": "1/6", "why": "分子展開最高次是 2n²，不是 n²：2/6 = 1/3。" },
+        { "label": "0", "why": "分子分母都是 n² 次，比值趨近最高次係數的比，不是 0。" }
+      ]
+    },
+    {
+      "ask": "∫₀¹ x³ dx 的右端點和是 (1/n⁴) · (n(n + 1)/2)²。極限是？",
+      "options": [
+        { "label": "1/4", "correct": true },
+        { "label": "1/2", "why": "(n(n + 1)/2)² 的最高次是 n⁴/4：分母的 2 也要平方。" },
+        { "label": "1", "why": "你把 (n(n + 1)/2)² 的最高次當成 n⁴，漏了 1/2 的平方 1/4。" }
+      ]
+    },
+    {
+      "ask": "∫₁³ (2x + 1) dx 的 R₁₀₀₀ = 10.004，真正的值是 10。這代表？",
+      "options": [
+        { "label": "有限的 n 只是近似，等於積分的是 n → ∞ 的極限", "correct": true },
+        { "label": "R₁₀₀₀ 算錯了", "why": "沒有算錯：f 遞增，右端點和本來就高估一點點。" },
+        { "label": "n 夠大就等於積分，n = 1000 還不夠大", "why": "這裡任何有限的 n 都給 6 + 4(n + 1)/n > 10，永遠不會剛好等於 10。" }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": ["riemann-sum"],
+    "fine": ["riemann-sum-formulas", "riemann-closed-form", "riemann-limit-evaluate"]
+  },
+  "practice": [
+    { "id": "lec-06-q1b", "core": true, "trains": "riemann-closed-form" },
+    { "id": "lec-06-q1c", "core": true, "trains": "riemann-limit-evaluate" },
+    { "id": "cx-ftc-001", "core": true, "trains": "riemann-limit-evaluate", "note": "認出是 ∫₀¹ x² dx，再用 Σi² 算。" },
+    { "id": "lec-06-m5", "core": true, "trains": "riemann-closed-form", "note": "把 (1 + i/n)² 展開成三項，各自用公式。" }
+  ],
+  "gaps": [
+    { "tag": "riemann-closed-form", "count": 2, "note": "一次函數（起點不是 0）的 Rₙ 化簡與極限，R1–R2。" },
+    { "tag": "riemann-sum-formulas", "count": 2, "note": "Σi、Σi²、Σi³ 公式的直接應用（例如 Σ_{i=1}^{10} i²），R1。" }
+  ]
+}

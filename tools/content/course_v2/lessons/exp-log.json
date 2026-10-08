@@ -1,0 +1,154 @@
+{
+  "id": "exp-log",
+  "title": "指數與對數",
+  "readMinutes": 8,
+  "totalMinutes": 25,
+  "prerequisites": ["inverse-function", "domain-range"],
+  "next": ["trig-functions"],
+  "related": ["limit-e-type", "derivative-exp"],
+  "objectives": [
+    "會用指數律與對數律化簡，知道哪些「看起來很像」的式子其實是錯的。",
+    "知道 ln 是 eˣ 的反函數：ln(eˣ) = x，e^{ln x} = x（x > 0）。",
+    "會解簡單的指數、對數方程式，並且檢查定義域。"
+  ],
+  "visual": null,
+  "concept": [
+    {
+      "heading": "① 指數律",
+      "body": [
+        "底數 a > 0：a^m · aⁿ = a^{m+n}，(a^m)ⁿ = a^{mn}，a⁰ = 1，a^{−n} = 1/aⁿ，a^{1/n} = ⁿ√a。",
+        "沒有「加法律」：2³ + 2⁴ 不是 2⁷。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 指數函數的長相",
+      "body": [
+        "y = aˣ（a > 0、a ≠ 1）：永遠是正的，通過 (0, 1)。a > 1 時遞增，往左貼近 0 但碰不到；0 < a < 1 時遞減。",
+        "成長得非常快：2ˣ 每往右走 1 就翻倍，2¹⁰ = 1024，2²⁰ 已經超過一百萬。反過來，對數長得非常慢：ln 1000000 ≈ 13.8。",
+        "微積分最常用的底數是 e ≈ 2.71828。為什麼是它：eˣ 在 (0, 1) 的切線斜率剛好是 1，微分起來最乾淨（〈指數函數微分〉）；e 本身怎麼來，〈e 型極限〉會講。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 對數：指數的反函數",
+      "body": [
+        "log_a x = y 的意思是 a^y = x。它問的是「a 的幾次方是 x」：log₂ 8 = 3。aˣ 永遠是正的，所以 log_a x 只吃 x > 0。",
+        "以 e 為底的對數寫成 ln x。它們互為反函數：ln(eˣ) = x 對所有 x 成立，e^{ln x} = x 只在 x > 0 成立。"
+      ],
+      "tex": ["\\ln(xy)=\\ln x+\\ln y,\\qquad \\ln\\frac{x}{y}=\\ln x-\\ln y,\\qquad \\ln(x^r)=r\\ln x\\qquad (x,y>0)"],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 對數律：把乘變加",
+      "body": [
+        "上面三條都來自指數律，而且都要求 x、y > 0。換底：log_a x = ln x / ln a，任何底的對數都能換成 ln。",
+        "ln 沒有加法律：ln(x + y) 沒有好的拆法，不等於 ln x + ln y。(ln x)² 也不是 ln(x²) = 2 ln x。"
+      ],
+      "collapsible": false
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "化簡",
+      "prompt": "求 log₂ 8 + log₂(1/2) 與 e^{2 ln 3}。",
+      "steps": [
+        "log₂ 8 = 3（2³ = 8），log₂(1/2) = −1（2^{−1} = 1/2），和是 2。",
+        "2 ln 3 = ln(3²) = ln 9。",
+        "e^{ln 9} = 9。"
+      ],
+      "answer": "2；9",
+      "claim": "log(8)/log(2)+log(1/2)/log(2) == 2 ;; e^(2ln(3)) == 9"
+    },
+    {
+      "title": "解指數方程式",
+      "prompt": "解 2^{x+1} = 12",
+      "steps": [
+        "兩邊取 ln：(x + 1) ln 2 = ln 12。",
+        "x + 1 = ln 12 / ln 2 = log₂ 12。",
+        "x = log₂ 12 − 1 = log₂ 12 − log₂ 2 = log₂ 6 ≈ 2.585。",
+        "檢查：2^{log₂ 6 + 1} = 6 · 2 = 12。"
+      ],
+      "answer": "x = log₂ 6 = ln 6 / ln 2 ≈ 2.585",
+      "claim": "SUB(2^(x+1), log(6)/log(2)) == 12"
+    },
+    {
+      "title": "換底",
+      "prompt": "把 log₃ 10 換成 ln 表示，並估計它的值。",
+      "steps": [
+        "設 y = log₃ 10，意思是 3^y = 10。",
+        "兩邊取 ln：y ln 3 = ln 10，所以 y = ln 10 / ln 3。",
+        "ln 10 ≈ 2.3026，ln 3 ≈ 1.0986，y ≈ 2.096。合理性：3² = 9 比 10 小一點，所以 y 比 2 大一點。"
+      ],
+      "answer": "log₃ 10 = ln 10 / ln 3 ≈ 2.096",
+      "claim": "3^(ln(10)/ln(3)) == 10 ;; ln(10)/ln(3) > 2"
+    },
+    {
+      "title": "解對數方程式，記得檢查",
+      "prompt": "解 ln x + ln(x − 2) = ln 3",
+      "steps": [
+        "先寫定義域：x > 0 而且 x − 2 > 0，所以 x > 2。",
+        "合併：ln(x(x − 2)) = ln 3。ln 是一對一的，所以 x(x − 2) = 3。",
+        "x² − 2x − 3 = 0，(x − 3)(x + 1) = 0，x = 3 或 x = −1。",
+        "x = −1 不滿足 x > 2，丟掉（ln(−1) 根本沒有定義）。答案 x = 3。"
+      ],
+      "answer": "x = 3",
+      "claim": "SUB(ln(x)+ln(x-2), 3) == ln(3)"
+    }
+  ],
+  "pitfalls": [
+    "ln(a + b) 拆成 ln a + ln b。",
+    "e^{a+b} 寫成 eᵃ + eᵇ；正確是 eᵃ · eᵇ。",
+    "(ln x)² 與 ln(x²) 混為一談。",
+    "解完對數方程式沒有回頭檢查定義域。",
+    "以為 e^{ln x} = x 對負的 x 也成立。"
+  ],
+  "checks": [
+    {
+      "ask": "ln(e⁵) 是？",
+      "options": [
+        { "label": "e⁵", "why": "ln 跟 e 的次方互相抵消，剩下指數 5。" },
+        { "label": "5e", "why": "ln 不是乘法；它問的是「e 的幾次方」，e⁵ 是 e 的 5 次方。" },
+        { "label": "5", "correct": true }
+      ]
+    },
+    {
+      "ask": "ln 6 等於？",
+      "options": [
+        { "label": "ln 2 + ln 3", "correct": true },
+        { "label": "ln 2 · ln 3", "why": "乘積的 ln 是 ln 的和，不是 ln 的積。" },
+        { "label": "ln 4 + ln 2", "why": "4 + 2 = 6，但 ln 把「乘」變成「加」：ln 4 + ln 2 = ln 8。" }
+      ]
+    },
+    {
+      "ask": "e^{2 ln 3} 是？",
+      "options": [
+        { "label": "6", "why": "2 ln 3 = ln(3²) = ln 9，不是 ln 6。" },
+        { "label": "9", "correct": true },
+        { "label": "e⁶", "why": "e 與 ln 抵消之後只剩 3²，不會留下 e。" }
+      ]
+    },
+    {
+      "ask": "ln(x − 2) 的定義域？",
+      "options": [
+        { "label": "x ≥ 2", "why": "x = 2 時是 ln 0，沒有定義；e 的任何次方都不是 0。" },
+        { "label": "所有實數", "why": "對數只吃正數，x − 2 要大於 0。" },
+        { "label": "x > 2", "correct": true }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": ["log", "exponential", "domain"],
+    "fine": ["exp-laws", "log-laws", "log-domain", "exp-log-inverse", "exp-log-solve-equation"]
+  },
+  "practice": [
+    { "id": "si-int-001", "core": true, "trains": "log-domain" },
+    { "id": "si-int-011", "core": true, "trains": "log-domain" },
+    { "id": "si-int-014", "challenge": true, "trains": "log-domain", "note": "挑戰：ln(ln x) 要兩層都成立：x > 0，而且 ln x > 0。" }
+  ],
+  "gaps": [
+    { "tag": "log-laws", "count": 3, "note": "R1：用對數律化簡求值（含 ln(a + b) 的陷阱選項）" },
+    { "tag": "exp-log-solve-equation", "count": 2, "note": "R1–R2：解 aˣ = b 與對數方程式（含要丟掉的假解）" },
+    { "tag": "exp-log-inverse", "count": 2, "note": "R1：ln(eᵃ)、e^{k ln b} 求值" }
+  ]
+}

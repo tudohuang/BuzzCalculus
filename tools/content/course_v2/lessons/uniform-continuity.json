@@ -1,0 +1,149 @@
+{
+  "id": "uniform-continuity",
+  "title": "一致連續",
+  "readMinutes": 12,
+  "totalMinutes": 40,
+  "prerequisites": ["continuity-formal", "negation", "sequential-criterion"],
+  "next": ["heine-cantor"],
+  "related": [],
+  "objectives": [
+    "寫得出一致連續的定義，說清楚它跟連續只差在量詞順序：∃δ ∀x 而不是 ∀x ∃δ。",
+    "會用「兩串越來越近、函數值卻不靠近的點」證明不一致連續。",
+    "會用 Lipschitz 條件或代數不等式證明一致連續，並寫出不依賴 x 的 δ。"
+  ],
+  "visual": "y = 1/x 在 (0, 1] 上，固定 ε = 0.5。學生把寬度 δ 的垂直帶沿 x 軸往左拖：在 x = 0.8 附近帶內曲線很平，輕鬆過關；越往 0 靠，同一個 δ 框住的曲線越陡，函數值的落差超過 ε 而變紅。旁邊換成 √x 在 [0, ∞) 上：同一個 δ 拖到哪裡都過關。",
+  "concept": [
+    {
+      "heading": "① 連續的 δ 可以看位置",
+      "body": [
+        "1/x 在 (0, 1] 上每一點都連續。但在 a 處（ε ≤ 1 時）可以取 δ = εa²/2：a 越靠近 0，曲線越陡，δ 就得越小。例如 ε = 0.5 時，a = 0.5 可用 δ = 1/16，a = 0.01 只能用 δ = 1/40000。",
+        "所有點一起看，沒有一個 δ 對每個 a 都有效。一致連續問的正是：存不存在一個「全區通用」的 δ？"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 定義：量詞換一個位置",
+      "body": [
+        "f 在 D 上一致連續，是指：對每一個 ε > 0，存在 δ > 0，使得對所有 x、y ∈ D，只要 |x − y| < δ，就有 |f(x) − f(y)| < ε。",
+        "跟「在 D 上連續」並排比較：連續是 ∀a ∀ε ∃δ ∀x，δ 在 a 之後選，可以依賴 a；一致連續是 ∀ε ∃δ ∀x ∀y，δ 在點之前選，只能依賴 ε。一致連續 ⇒ 連續，反過來不對。"
+      ],
+      "tex": [
+        "\\text{連續：}\\ \\forall a\\in D\\ \\forall\\varepsilon>0\\ \\exists\\delta>0\\ \\forall x\\in D:\\ |x-a|<\\delta\\Rightarrow|f(x)-f(a)|<\\varepsilon",
+        "\\text{一致連續：}\\ \\forall\\varepsilon>0\\ \\exists\\delta>0\\ \\forall x,y\\in D:\\ |x-y|<\\delta\\Rightarrow|f(x)-f(y)|<\\varepsilon"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 怎麼證「不是」",
+      "body": [
+        "否定：存在 ε > 0，對每一個 δ > 0，都有 x、y ∈ D，|x − y| < δ 但 |f(x) − f(y)| ≥ ε。",
+        "實用版：找兩串點 xₙ、yₙ ∈ D，|xₙ − yₙ| → 0，但 |f(xₙ) − f(yₙ)| ≥ ε 對所有 n 成立。給定 δ，取 n 大到 |xₙ − yₙ| < δ，這一對就是壞點。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 怎麼證「是」：Lipschitz",
+      "body": [
+        "若存在 K 使 |f(x) − f(y)| ≤ K|x − y| 對所有 x、y ∈ D 成立（Lipschitz 條件），取 δ = ε/K 就對所有點有效。可微時由均值定理，K 可以取 sup|f′|。但 Lipschitz 只是充分條件：√x 在 [0, ∞) 上不是 Lipschitz（在 0 附近斜率無界），仍然一致連續（範例 1）。"
+      ],
+      "collapsible": true
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "√x 在 [0, ∞) 上一致連續",
+      "prompt": "證明 f(x) = √x 在 [0, ∞) 上一致連續，並在 ε = 0.1 時給出 δ。",
+      "problemId": "an-uc-002",
+      "steps": [
+        "關鍵不等式：x ≥ y ≥ 0 時，√x − √y ≤ √(x − y)。理由：兩邊都非負，平方比較；(√y + √(x − y))² = x + 2√(y(x − y)) ≥ x，所以 √y + √(x − y) ≥ √x。",
+        "所以對所有 x、y ≥ 0，|√x − √y| ≤ √|x − y|。",
+        "給定 ε > 0，取 δ = ε²。|x − y| < δ ⇒ |√x − √y| ≤ √|x − y| < √δ = ε。δ 只依賴 ε。",
+        "ε = 0.1 時 δ = 0.01。"
+      ],
+      "answer": "δ = ε² 對所有 x、y 有效；ε = 0.1 時 δ = 0.01",
+      "claim": "abs(sqrt(x)-sqrt(x+0.01)) <= 0.1 ;; sqrt(x+0.3) - sqrt(x) <= sqrt(0.3) ;; 0.1^2 == 0.01"
+    },
+    {
+      "title": "1/x 在 (0, 1] 上不一致連續",
+      "prompt": "證明 f(x) = 1/x 在 (0, 1] 上不一致連續。",
+      "problemId": "an-uc-001",
+      "steps": [
+        "取 xₙ = 1/n、yₙ = 1/(n + 1)，都在 (0, 1]。",
+        "|xₙ − yₙ| = 1/(n(n + 1)) → 0。",
+        "|f(xₙ) − f(yₙ)| = |n − (n + 1)| = 1。取 ε = 1/2，每一對都差至少 ε。",
+        "給定任意 δ > 0，取 n 使 1/(n(n + 1)) < δ，這對點距離 < δ、函數值差 1 ≥ 1/2。所以不存在全區通用的 δ。"
+      ],
+      "answer": "不一致連續（ε = 1/2，xₙ = 1/n，yₙ = 1/(n + 1)）",
+      "claim": "abs(1/(1/n) - 1/(1/(n+1))) == 1 ;; 1/n - 1/(n+1) == 1/(n*(n+1)) ;; LIM(1/(n*(n+1)), inf) == 0"
+    },
+    {
+      "title": "x² 在 ℝ 上不一致連續",
+      "prompt": "證明 f(x) = x² 在 ℝ 上不一致連續。",
+      "steps": [
+        "函數越往外越陡，壞點住在 x 很大的地方。取 xₙ = n + 1/n、yₙ = n。",
+        "|xₙ − yₙ| = 1/n → 0。",
+        "xₙ² − yₙ² = (n + 1/n)² − n² = 2 + 1/n² > 2。取 ε = 2，每一對都差超過 ε。",
+        "所以不一致連續。對照：在任何有界區間 [−R, R] 上，|x² − y²| = |x + y||x − y| ≤ 2R|x − y|，是 Lipschitz，所以一致連續。"
+      ],
+      "answer": "不一致連續（ε = 2，xₙ = n + 1/n，yₙ = n）",
+      "claim": "(n+1/n)^2 - n^2 == 2 + 1/n^2 ;; (n+1/n)^2 - n^2 > 2"
+    }
+  ],
+  "pitfalls": [
+    "以為「每一點都連續」就是一致連續。1/x 在 (0, 1] 上處處連續，卻不一致連續。",
+    "給出的 δ 裡含有 x（例如 δ = εx²/2）。一致連續的 δ 只能依賴 ε。",
+    "不一致連續只舉一對壞點。要對每個 δ 都有一對：用 |xₙ − yₙ| → 0 的兩串點。",
+    "以為定義域無界就一定不一致連續。√x 在 [0, ∞) 上一致連續。",
+    "以為有界函數就一致連續。sin(1/x) 在 (0, 1] 上有界，但不一致連續。"
+  ],
+  "checks": [
+    {
+      "ask": "一致連續與連續的定義差在哪裡？",
+      "options": [
+        { "label": "一致連續的 δ 在選點之前決定，不能依賴點的位置", "correct": true },
+        { "label": "一致連續的 ε 可以依賴 x", "why": "ε 在兩個定義裡都是對手先給、任意的。差別在 δ 能不能依賴點。" },
+        { "label": "一致連續要求 f 可微", "why": "可微不是條件。√x 在 0 不可微仍一致連續；可微的 x² 在 ℝ 上反而不一致連續。" }
+      ]
+    },
+    {
+      "ask": "f(x) = 1/x 在 (0, 1] 上，xₙ = 1/n、yₙ = 1/(n + 1)。|f(xₙ) − f(yₙ)| 是多少？",
+      "options": [
+        { "label": "1", "correct": true },
+        { "label": "1/(n(n + 1))", "why": "那是 |xₙ − yₙ|，點的距離。函數值是 n 與 n + 1，差 1。" },
+        { "label": "趨近 0", "why": "你可能以為點靠近函數值就靠近——這正是一致連續失敗的地方：點越靠越近，函數值的差卻一直是 1。" }
+      ]
+    },
+    {
+      "ask": "f(x) = √x 在 [0, ∞) 上，ε = 0.1 時可以用哪個 δ？",
+      "options": [
+        { "label": "δ = 0.01", "correct": true },
+        { "label": "δ = 0.1", "why": "你直接讓 δ = ε。由 |√x − √y| ≤ √|x − y|，要 √δ ≤ ε，δ = ε² = 0.01。" },
+        { "label": "沒有，因為定義域無界", "why": "無界不代表不一致連續。√x 越往右越平，最難的是 0 附近，而 δ = ε² 在那裡也有效。" }
+      ]
+    },
+    {
+      "ask": "下列哪一個函數在所給定義域上一致連續？",
+      "options": [
+        { "label": "f(x) = 3x + 2 在 ℝ 上", "correct": true },
+        { "label": "f(x) = x² 在 ℝ 上", "why": "x² 在有界區間上一致連續，但在整條 ℝ 上越往外越陡；xₙ = n + 1/n 與 n 的函數值差 > 2。" },
+        { "label": "f(x) = sin(1/x) 在 (0, 1] 上", "why": "你可能以為有界就夠。讓 sin(1/x) = 1 與 −1 的兩串點越來越近，函數值差一直是 2。" }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": ["uniform-continuity", "lipschitz"],
+    "fine": ["unifcont-quantifier-order", "unifcont-two-sequences", "unifcont-delta-independent", "unifcont-lipschitz"]
+  },
+  "practice": [
+    { "id": "an-uc-001", "core": true, "trains": "unifcont-two-sequences" },
+    { "id": "an-uc-002", "core": true, "trains": "unifcont-delta-independent" },
+    { "id": "an-uc-006", "core": true, "trains": "unifcont-lipschitz" },
+    { "id": "an-uc-005", "trains": "unifcont-lipschitz" },
+    { "id": "an-uc-003", "challenge": true, "trains": "unifcont-two-sequences", "note": "挑戰：sin(x²) 有界、處處可微，但振盪越來越快；取 √(2πn + π/2) 與 √(2πn)。" }
+  ],
+  "gaps": [
+    { "tag": "unifcont-quantifier-order", "count": 3, "note": "判斷題：給一段量詞順序不同的敘述，問它是連續、一致連續還是都不是。" },
+    { "tag": "unifcont-delta-independent", "count": 2, "note": "給 ε，求全區通用的最大 δ（例如 √x 在 [0, ∞) 上 ε = 0.1）；目前只有 Lipschitz 常數題。" },
+    { "tag": "unifcont-two-sequences", "count": 2, "note": "白話證明：用兩串點證 x² 在 ℝ、1/x 在 (0, 1] 上不一致連續。" }
+  ]
+}

@@ -1,0 +1,299 @@
+{
+  "id": "lhopital",
+  "title": "L'Hôpital 法則",
+  "readMinutes": 10,
+  "totalMinutes": 40,
+  "prerequisites": [
+    "limit-factor",
+    "limit-trig-standard",
+    "derivative-power-rules",
+    "chain-rule",
+    "linear-approximation",
+    "mean-value-theorem"
+  ],
+  "next": [
+    "indeterminate-other"
+  ],
+  "related": [
+    "rolle-theorem",
+    "taylor-limits"
+  ],
+  "objectives": [
+    "每次使用前都先檢查是不是 0/0 或 ∞/∞。",
+    "會處理 0/0 與 ∞/∞，必要時連續使用。",
+    "知道它什麼時候不能用、或用了沒有結論。"
+  ],
+  "visual": "把 f 和 g 兩條曲線畫在同一張圖上，兩條都在 x = a 穿過 0。按「放大」，鏡頭往 (a, 0) 推近，兩條曲線越來越直，最後看起來就是兩條直線。旁邊即時顯示 f(x)/g(x) 與 f′(x)/g′(x)，兩個數字越來越接近。",
+  "concept": [
+    {
+      "heading": "① 操作版：先檢查，再各自微分",
+      "body": [
+        "第一步永遠是檢查：x → a 時，分子分母是不是都 → 0，或都 → ±∞？",
+        "不是，就不能用。是，就把分子微分、分母微分，再取極限：lim_{x→a} f(x)/g(x) = lim_{x→a} f′(x)/g′(x)。a 也可以是 ±∞。"
+      ],
+      "tex": [
+        "\\lim_{x\\to a}\\frac{f(x)}{g(x)}=\\lim_{x\\to a}\\frac{f'(x)}{g'(x)}"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "完整的定理條件",
+      "body": [
+        "f、g 在 a 附近（a 本身可以除外）可微；g′(x) 在 a 附近（a 本身除外）不為 0；x → a 時 f、g 都 → 0，或都 → ±∞；而且 lim_{x→a} f′(x)/g′(x) 存在（或是 ±∞）。",
+        "滿足這些，lim_{x→a} f(x)/g(x) 也存在，而且等於 lim_{x→a} f′(x)/g′(x)。a 換成 a⁺、a⁻、∞、−∞ 也成立。"
+      ],
+      "collapsible": true
+    },
+    {
+      "heading": "② 分子分母「各自」微分，不是用除法法則",
+      "body": [
+        "不是對 f/g 整個用除法法則 (f′g − fg′)/g²。那是在求 (f/g)′，跟極限無關。這是最常見的錯。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 一個理解 L'Hôpital 的直覺（不是證明）",
+      "body": [
+        "以 0/0 為例，假設 f(a) = g(a) = 0。在 a 附近，曲線看起來像它的切線（〈線性近似〉）：f(x) ≈ f′(a)(x − a)，g(x) ≈ g′(a)(x − a)。",
+        "兩個相除，(x − a) 約掉，剩 f′(a)/g′(a)：兩條都從 0 出發的直線，比值就是斜率的比。",
+        "這只是直覺：它假設了 f′(a)、g′(a) 存在而且 g′(a) ≠ 0，「≈」差多少也沒有交代，而且沒有涵蓋 ∞/∞。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "嚴格證明（只證 x → a⁺ 的 0/0 情況）",
+      "body": [
+        "設 x → a⁺ 時 f(x) → 0、g(x) → 0；f、g 在 (a, a + δ) 可微，g′ 在那裡不為 0；lim_{x→a⁺} f′(x)/g′(x) = L。x → a⁻ 的證法對稱，兩邊合起來就是雙邊版本；∞/∞ 與 a = ±∞ 的情況另有證明。",
+        "第 1 步：補上端點。f(a)、g(a) 可能沒有定義，或不是 0；不管原本是什麼，都把它們定成 0。極限不看 a 這一點的值，所以這樣改不影響要求的極限。改完之後 f、g 在 a 右連續；在 (a, a + δ) 可微所以連續。因此對每個 x ∈ (a, a + δ)，f、g 在 [a, x] 連續、在 (a, x) 可微。",
+        "第 2 步：g(x) ≠ 0。若某個 x ∈ (a, a + δ) 使 g(x) = 0 = g(a)，由〈Rolle 定理〉，(a, x) 裡有一點 g′ = 0，跟假設矛盾。",
+        "第 3 步：柯西均值定理。固定 x，令 h(t) = f(t)·g(x) − g(t)·f(x)（t ∈ [a, x]）。h(a) = 0 − 0 = 0，h(x) = f(x)g(x) − g(x)f(x) = 0，h 在 [a, x] 連續、(a, x) 可微。由 Rolle 定理，存在 c ∈ (a, x) 使 h′(c) = f′(c)g(x) − g′(c)f(x) = 0。g′(c) ≠ 0、g(x) ≠ 0，兩邊同除以 g′(c)g(x)，得 f(x)/g(x) = f′(c)/g′(c)。這一步用到了 f(a) = g(a) = 0；一般的柯西均值定理給的是 (f(x) − f(a))/(g(x) − g(a))。",
+        "第 4 步：取極限。c 跟著 x 變，但永遠滿足 a < c < x。任給 ε > 0，因為 f′/g′ → L，可以找 η > 0（η ≤ δ）使得 a < t < a + η 時 |f′(t)/g′(t) − L| < ε。那麼只要 a < x < a + η，就有 a < c < a + η，所以 |f(x)/g(x) − L| = |f′(c)/g′(c) − L| < ε。這正是 lim_{x→a⁺} f(x)/g(x) = L。"
+      ],
+      "tex": [
+        "\\frac{f(x)}{g(x)}=\\frac{f(x)-f(a)}{g(x)-g(a)}=\\frac{f'(c)}{g'(c)},\\qquad a<c<x"
+      ],
+      "collapsible": true
+    },
+    {
+      "heading": "④ 不是不定型就用，答案會錯",
+      "body": [
+        "lim_{x→0} (x + 1)/(x + 2) = 1/2（直接代入）。硬用 L'Hôpital：分子分母微分都是 1，得 1。錯的。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "⑤ f′/g′ 沒有極限時，L'Hôpital 不說任何事",
+      "body": [
+        "lim_{x→∞} (x + sin x)/x：同除以 x，得 1 + (sin x)/x → 1。",
+        "用 L'Hôpital：(1 + cos x)/1 在 0 到 2 之間一直晃，沒有極限。這不代表原極限不存在，只代表這把鑰匙在這裡打不開，要換方法。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "⑥ 可以連續用，每一次都要重新檢查",
+      "body": [
+        "微分一次後還是 0/0 或 ∞/∞，可以再用。用到三、四次通常很繁瑣，這時〈用 Taylor 求極限〉更快。"
+      ],
+      "collapsible": false
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "0/0",
+      "prompt": "lim_{x→1} (ln x)/(x − 1)",
+      "problemId": "cx-lh-007",
+      "steps": [
+        "檢查：ln 1 = 0、1 − 1 = 0，是 0/0。",
+        "分子微分 1/x，分母微分 1。",
+        "lim_{x→1} (1/x)/1 = 1。"
+      ],
+      "answer": "1",
+      "note": "這正好是 ln x 在 x = 1 的導數。很多 0/0 本身就是某個導數。",
+      "claim": "LIM(ln(x)/(x-1), 1) == 1 ;; D(ln(x), 1) == 1"
+    },
+    {
+      "title": "∞/∞，用兩次",
+      "prompt": "lim_{x→∞} x²/eˣ",
+      "problemId": "cx-lh-004",
+      "steps": [
+        "檢查：分子分母都 → ∞，是 ∞/∞。",
+        "微分一次：2x/eˣ。分子分母還是都 → ∞，再檢查一次，仍是 ∞/∞。",
+        "再微分一次：2/eˣ。分母 → ∞、分子固定是 2，所以 → 0。"
+      ],
+      "answer": "0",
+      "note": "指數成長比任何多項式都快。",
+      "claim": "LIM(x^2/e^x, inf) == 0 ;; LIM(2x/e^x, inf) == 0 ;; LIM(2/e^x, inf) == 0"
+    },
+    {
+      "title": "分母是三角函數",
+      "prompt": "lim_{x→0} (e^{2x} − 1)/sin 3x",
+      "problemId": "tb-lh-001",
+      "steps": [
+        "檢查：e⁰ − 1 = 0、sin 0 = 0，是 0/0。",
+        "分子微分 2e^{2x}（連鎖律，裡層 2x 的導數是 2），分母微分 3 cos 3x（裡層 3x 的導數是 3）。",
+        "新的分式在 x = 0 連續，直接代入：2e⁰/(3 cos 0) = 2/3。"
+      ],
+      "answer": "2/3",
+      "claim": "LIM((e^(2x)-1)/sin(3x), 0) == 2/3 ;; SUB(2*e^(2x)/(3*cos(3x)), 0) == 2/3"
+    },
+    {
+      "title": "用錯的例子",
+      "prompt": "lim_{x→0} (x + 1)/(x + 2)",
+      "steps": [
+        "檢查：x = 0 時分子是 1、分母是 2，不是不定型，不能用。",
+        "直接代入，答案 1/2。沒檢查就用，會得到 1/1 = 1，是錯的。"
+      ],
+      "answer": "1/2",
+      "claim": "LIM((x+1)/(x+2), 0) == 1/2"
+    }
+  ],
+  "pitfalls": [
+    "沒檢查就用（範例 4）。",
+    "用除法法則對整個分式微分。",
+    "連鎖律漏掉，例如 e^{2x} 微分寫成 e^{2x}。",
+    "f′/g′ 沒有極限，就以為原極限不存在（觀念 ⑤）。"
+  ],
+  "checks": [
+    {
+      "ask": "下面哪一個可以直接用 L'Hôpital？",
+      "options": [
+        {
+          "label": "lim_{x→0} (sin x)/x",
+          "correct": true
+        },
+        {
+          "label": "lim_{x→0} (cos x)/x",
+          "why": "分子 → cos 0 = 1，是 1/0 型，不是 0/0。你可能只看到分母 → 0 就以為能用。"
+        },
+        {
+          "label": "lim_{x→1} (x + 1)/x",
+          "why": "直接代入得 2，不是不定型。看到分式就想微分，是跳過了檢查。"
+        }
+      ]
+    },
+    {
+      "ask": "用 L'Hôpital 時，分子分母要怎麼處理？",
+      "options": [
+        {
+          "label": "分子微分、分母微分，各自分開",
+          "correct": true
+        },
+        {
+          "label": "整個分式用除法法則微分",
+          "why": "那是求 (f/g)′，不是 L'Hôpital。兩者長得都有「微分」，容易混在一起。"
+        },
+        {
+          "label": "分子分母同除以 x",
+          "why": "那是 x → ∞ 時看最高次的方法，不是 L'Hôpital。"
+        }
+      ]
+    },
+    {
+      "ask": "lim_{x→1} (x⁵ − 1)/(x³ − 1) 是？",
+      "options": [
+        {
+          "label": "5/3",
+          "correct": true
+        },
+        {
+          "label": "1",
+          "why": "0/0 不是 1。微分後 5x⁴/(3x²)，代 1 得 5/3。"
+        },
+        {
+          "label": "3/5",
+          "why": "分子分母弄反了：分子 x⁵ − 1 微分是 5x⁴，放在上面。"
+        }
+      ]
+    },
+    {
+      "ask": "lim_{x→∞} (x + sin x)/x 用 L'Hôpital 得 (1 + cos x)/1，它沒有極限。所以原極限：",
+      "options": [
+        {
+          "label": "是 1，要用別的方法算",
+          "correct": true
+        },
+        {
+          "label": "不存在",
+          "why": "f′/g′ 沒有極限時 L'Hôpital 沒有結論，不是「原極限不存在」。同除以 x 就知道是 1。"
+        },
+        {
+          "label": "是 2",
+          "why": "你可能把 cos x 當成 1 代進去。cos x 不會停在 1，這個值沒有根據。"
+        }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": [
+      "lhopital"
+    ],
+    "fine": [
+      "lhopital-check-form",
+      "lhopital-0-0",
+      "lhopital-inf-inf",
+      "lhopital-repeat",
+      "lhopital-chain-rule",
+      "lhopital-inconclusive"
+    ]
+  },
+  "practice": [
+    {
+      "id": "cx-lh-007",
+      "core": true,
+      "trains": "lhopital-0-0"
+    },
+    {
+      "id": "lec-05-m2",
+      "core": true,
+      "trains": "lhopital-inf-inf",
+      "note": "先改寫成 x/eˣ。"
+    },
+    {
+      "id": "cx-lh-013",
+      "core": true,
+      "trains": "lhopital-0-0",
+      "note": "先改寫成分式。"
+    },
+    {
+      "id": "tb-lh-003",
+      "core": true,
+      "trains": "lhopital-0-0"
+    },
+    {
+      "id": "cx-lh-010",
+      "core": true,
+      "trains": "lhopital-chain-rule"
+    },
+    {
+      "id": "lec-05-q1b",
+      "core": true,
+      "trains": "lhopital-inf-inf"
+    },
+    {
+      "id": "tb-lh-002",
+      "core": true,
+      "trains": "lhopital-chain-rule"
+    },
+    {
+      "id": "cx-lh-002",
+      "trains": "lhopital-repeat",
+      "note": "連用三次，每次都要重新檢查。"
+    },
+    {
+      "id": "cx-lh-001",
+      "trains": "lhopital-repeat"
+    }
+  ],
+  "gaps": [
+    {
+      "tag": "lhopital-check-form",
+      "count": 2,
+      "note": "不是不定型卻誤用的題（直接代入就有答案），R1–R2。"
+    },
+    {
+      "tag": "lhopital-inconclusive",
+      "count": 2,
+      "note": "f′/g′ 沒有極限、但原極限存在的題，例如 (x + sin x)/x 型，R2–R3。"
+    }
+  ]
+}

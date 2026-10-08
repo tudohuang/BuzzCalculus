@@ -1,0 +1,181 @@
+{
+  "id": "gamma-definition",
+  "title": "Gamma 函數：定義與遞迴",
+  "readMinutes": 12,
+  "totalMinutes": 35,
+  "prerequisites": ["integration-by-parts", "u-sub-basic", "u-sub-definite", "improper-infinite", "improper-singular", "improper-p-test"],
+  "next": ["gamma-recurrence-apps", "gamma-half"],
+  "related": [],
+  "objectives": [
+    "寫得出 Γ(s) 的積分定義，說得出這個積分什麼時候收斂。",
+    "用分部積分推出 Γ(s + 1) = sΓ(s)，以及 Γ(n + 1) = n!。",
+    "把 ∫₀^∞ xᵏ e^{−x} dx 這類積分直接讀成 Gamma 函數的值。"
+  ],
+  "visual": "畫出 y = x^{s−1} e^{−x}，s 用滑桿從 1 拉到 5，曲線底下的面積即時顯示：s = 1, 2, 3, 4, 5 時面積是 1, 1, 2, 6, 24。第二張圖畫 Γ(s) 本身，在 s = 1, 2, 3, 4, 5 標出 0!, 1!, 2!, 3!, 4!：一條平滑曲線穿過所有階乘。",
+  "concept": [
+    {
+      "heading": "① 為什麼要學它：一整族積分其實是同一個函數",
+      "body": [
+        "前面分部積分時會反覆遇到 ∫₀^∞ x e^{−x} dx、∫₀^∞ x² e^{−x} dx、∫₀^∞ x³ e^{−x} dx……每一個都要分部積分好幾次。",
+        "Gamma 函數把這一整族積分統一成一個函數。之後看到這種形狀，就不用再算，直接讀值。而它在整數點剛好是階乘，等於把 n! 延伸成一條平滑曲線。"
+      ],
+      "tex": ["\\Gamma(s)=\\int_0^{\\infty}x^{s-1}e^{-x}\\,dx"],
+      "collapsible": false
+    },
+    {
+      "heading": "② 這個積分什麼時候收斂",
+      "body": [
+        "這是兩端都要檢查的瑕積分：",
+        "x → ∞：e^{−x} 衰減得比任何 x 的次方增長都快，尾巴收斂。",
+        "x → 0⁺：e^{−x} → 1，被積函數像 x^{s−1}。由 p 判別，∫₀¹ x^{s−1} dx 收斂若且唯若 s − 1 > −1，也就是 s > 0。",
+        "所以：此積分表示式在 s > 0 時收斂。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "預告：s ≤ 0 呢？",
+      "body": [
+        "積分在 s ≤ 0 發散，但 Gamma 函數可以用別的方法延伸到負的非整數（例如用遞迴 Γ(s) = Γ(s + 1)/s 往左推）。這叫解析延拓。在 0、−1、−2、……仍然沒有定義。"
+      ],
+      "collapsible": true
+    },
+    {
+      "heading": "③ 第一個值：Γ(1) = 1",
+      "body": [
+        "s = 1 時 x⁰ = 1，Γ(1) = ∫₀^∞ e^{−x} dx = 1。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 遞迴：Γ(s + 1) = sΓ(s)",
+      "body": [
+        "對 Γ(s + 1) = ∫₀^∞ xˢ e^{−x} dx 做分部積分，令 u = xˢ、dv = e^{−x} dx。",
+        "邊界項：x → ∞ 時 e^{−x} 贏過 xˢ，趨近 0；x = 0 時 xˢ = 0（s > 0）。所以邊界項是 0，剩下 Γ(s + 1) = sΓ(s)。"
+      ],
+      "tex": ["\\Gamma(s+1)=\\Bigl[-x^{s}e^{-x}\\Bigr]_0^{\\infty}+s\\int_0^{\\infty}x^{s-1}e^{-x}\\,dx=s\\,\\Gamma(s)"],
+      "collapsible": false
+    },
+    {
+      "heading": "⑤ 在整數點就是階乘",
+      "body": [
+        "從 Γ(1) = 1 開始：Γ(2) = 1，Γ(3) = 2，Γ(4) = 6，……一般地 Γ(n + 1) = n!。",
+        "注意差一：Γ(n) = (n − 1)!，不是 n!。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "⑥ 讀積分：看到 xᵏ e^{−x} 就是 Gamma",
+      "body": [
+        "∫₀^∞ xᵏ e^{−x} dx = Γ(k + 1)。指數裡有常數 a > 0 時，換元 u = ax，得到下面的公式。"
+      ],
+      "tex": ["\\int_0^{\\infty}x^{k}e^{-ax}\\,dx=\\frac{\\Gamma(k+1)}{a^{k+1}}"],
+      "collapsible": false
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "直接讀成 Gamma",
+      "prompt": "∫₀^∞ x² e^{−x} dx",
+      "problemId": "mob-gamma-006",
+      "steps": [
+        "形狀是 xᵏ e^{−x}，k = 2，所以是 Γ(3)。",
+        "Γ(3) = 2! = 2。"
+      ],
+      "answer": "2",
+      "note": "分部積分兩次也會得到 2，但要寫半頁。",
+      "claim": "INT(x^2*e^(-x), 0, inf) == 2"
+    },
+    {
+      "title": "整數點的值",
+      "prompt": "Γ(6) 與 Γ(4)",
+      "steps": [
+        "Γ(n + 1) = n!，所以 Γ(6) = 5! = 120。",
+        "Γ(4) = 3! = 6。"
+      ],
+      "answer": "Γ(6) = 120，Γ(4) = 6",
+      "note": "不要寫成 Γ(6) = 6! = 720，那是差一的錯。",
+      "claim": "INT(x^5*e^(-x), 0, inf) == 120 ;; INT(x^3*e^(-x), 0, inf) == 6"
+    },
+    {
+      "title": "指數裡有常數",
+      "prompt": "∫₀^∞ x⁴ e^{−3x} dx",
+      "problemId": "burst-int-001",
+      "steps": [
+        "令 u = 3x，x = u/3，dx = du/3。x⁴ = u⁴/3⁴。",
+        "積分變成 (1/3⁵) ∫₀^∞ u⁴ e^{−u} du = Γ(5)/3⁵。",
+        "Γ(5) = 4! = 24，3⁵ = 243，答案是 24/243 = 8/81。"
+      ],
+      "answer": "8/81",
+      "claim": "INT(x^4*e^(-3x), 0, inf) == 8/81"
+    },
+    {
+      "title": "先換元才看得出來",
+      "prompt": "∫₀^∞ x³ e^{−x²} dx",
+      "problemId": "depth-int-026",
+      "steps": [
+        "指數是 −x²，不是標準形狀。令 u = x²，du = 2x dx。",
+        "把 x³ dx 拆成 x² · x dx = u · (du/2)。",
+        "積分變成 (1/2) ∫₀^∞ u e^{−u} du = (1/2) Γ(2) = 1/2。"
+      ],
+      "answer": "1/2",
+      "claim": "INT(x^3*e^(-x^2), 0, inf) == 1/2"
+    }
+  ],
+  "pitfalls": [
+    "差一：Γ(n) 寫成 n!。",
+    "換元時漏了 du 的係數，或 a^{k+1} 寫成 aᵏ。",
+    "以為 Γ(0) = 0! = 1。Γ(0) 的積分在 x → 0 發散，Γ 在 0 沒有定義。"
+  ],
+  "checks": [
+    {
+      "ask": "Γ(5) 是多少？",
+      "options": [
+        { "label": "24", "correct": true },
+        { "label": "120", "why": "那是 5! = Γ(6)。Γ(5) = 4! = 24。" },
+        { "label": "5", "why": "Γ 不是把參數直接拿出來，是階乘。" }
+      ]
+    },
+    {
+      "ask": "∫₀^∞ x³ e^{−x} dx 是？",
+      "options": [
+        { "label": "6", "correct": true },
+        { "label": "24", "why": "x³ 對應 Γ(4) = 3! = 6，不是 4!。" },
+        { "label": "3", "why": "那只是指數，還要做階乘。" }
+      ]
+    },
+    {
+      "ask": "積分 ∫₀^∞ x^{s−1} e^{−x} dx 為什麼要 s > 0 才收斂？",
+      "options": [
+        { "label": "x → 0 時被積函數像 x^{s−1}，s ≤ 0 時那一端發散", "correct": true },
+        { "label": "因為 e^{−x} 在 s ≤ 0 時不收斂", "why": "e^{−x} 跟 s 無關，問題出在 x → 0 那一端。" },
+        { "label": "因為負數沒有階乘", "why": "這是結果不是原因；限制來自積分收斂。" }
+      ]
+    },
+    {
+      "ask": "Γ(s + 1) = sΓ(s) 是用什麼推出來的？",
+      "options": [
+        { "label": "分部積分，而且邊界項是 0", "correct": true },
+        { "label": "換元 u = x + 1", "why": "遞迴來自分部積分，不是平移。" },
+        { "label": "定義直接代入", "why": "定義裡沒有 s 這個係數，要靠分部積分「生出來」。" }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": ["gamma-function", "special-functions", "improper-integral"],
+    "fine": ["gamma-read-integral", "gamma-integer-value", "gamma-off-by-one", "gamma-scaling", "gamma-substitution", "gamma-convergence"]
+  },
+  "practice": [
+    { "id": "mob-gamma-001", "core": true, "trains": "gamma-integer-value" },
+    { "id": "mob-gamma-008", "core": true, "trains": "gamma-off-by-one" },
+    { "id": "mob-gamma-005", "core": true, "trains": "gamma-off-by-one" },
+    { "id": "mob-gamma-006", "core": true, "trains": "gamma-read-integral" },
+    { "id": "depth-int-026", "core": true, "trains": "gamma-substitution" },
+    { "id": "int-040", "core": true, "trains": "gamma-read-integral" },
+    { "id": "rel-adv-011", "trains": "gamma-scaling" },
+    { "id": "world-079", "challenge": true, "trains": "gamma-substitution", "note": "挑戰：令 x = e^{−t}，看出是 −Γ(4)。" }
+  ],
+  "gaps": [
+    { "tag": "gamma-scaling", "count": 1, "note": "指數裡有常數 a 的 R3 題只有 rel-adv-011 一題，再補 1 題（例如 ∫₀^∞ x² e^{−2x} dx）。" },
+    { "tag": "gamma-convergence", "count": 2, "note": "判斷 ∫₀^∞ x^{s−1} e^{−x} dx 對哪些 s 收斂的判定題，R3。" }
+  ]
+}

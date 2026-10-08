@@ -1,0 +1,140 @@
+{
+  "id": "trig-functions",
+  "title": "三角函數",
+  "readMinutes": 8,
+  "totalMinutes": 25,
+  "prerequisites": ["function-intro", "graph-features"],
+  "next": ["trig-identities"],
+  "related": ["limit-trig-standard"],
+  "objectives": [
+    "會在角度與弧度之間換算，知道微積分一律用弧度。",
+    "用單位圓讀出特殊角的 sin、cos、tan，包含正負號。",
+    "說得出 sin、cos、tan 的週期與定義域，會算 sin(bx) 的週期。"
+  ],
+  "visual": "左邊是單位圓，一個點從 (1, 0) 開始逆時針繞圈，角度 θ 以弧度顯示；右邊同步畫出 (θ, sin θ) 的波形，點的高度和波形的高度用一條水平虛線連起來。切換成 cos 時改看點的橫座標。",
+  "concept": [
+    {
+      "heading": "① 弧度：用弧長量角度",
+      "body": [
+        "在半徑 1 的圓上，角 θ 對到的弧長就是 θ 的弧度數。繞一整圈弧長 2π，所以 360° = 2π，180° = π，1 弧度約 57.3°。",
+        "微積分一律用弧度。像 (sin x)′ = cos x、〈三角標準極限〉的 sin x / x → 1，只有在弧度下才成立；用角度會多出 π/180 這種係數。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 單位圓定義",
+      "body": [
+        "從正 x 軸逆時針轉 θ（順時針是負角），終邊跟單位圓的交點就是 (cos θ, sin θ)。所以 cos θ 是橫座標、sin θ 是縱座標，兩者都在 −1 到 1 之間，而且 sin²θ + cos²θ = 1（〈三角恆等式〉）。",
+        "tan θ = sin θ / cos θ，在 cos θ = 0 的地方沒有定義：θ = π/2 + kπ（k 是整數）。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 特殊角與正負號",
+      "body": [
+        "第一象限要記的：sin(π/6) = 1/2，sin(π/4) = √2/2，sin(π/3) = √3/2；cos 的值順序相反。",
+        "其他象限：先找參考角（終邊跟 x 軸的夾角），值的大小跟參考角一樣，正負看點在哪個象限：第二象限 x 負、y 正，第三象限都負，第四象限 x 正、y 負。"
+      ],
+      "tex": ["\\begin{array}{c|ccccc} \\theta & 0 & \\pi/6 & \\pi/4 & \\pi/3 & \\pi/2 \\\\ \\hline \\sin\\theta & 0 & 1/2 & \\sqrt2/2 & \\sqrt3/2 & 1 \\\\ \\cos\\theta & 1 & \\sqrt3/2 & \\sqrt2/2 & 1/2 & 0 \\end{array}"],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 週期與對稱",
+      "body": [
+        "繞一圈回到原點，所以 sin、cos 的週期是 2π；tan 的週期是 π。",
+        "sin(bx) 的週期是 2π/|b|：括號裡乘 b，波形擠 b 倍。sin 是奇函數，cos 是偶函數：sin(−θ) = −sin θ，cos(−θ) = cos θ。"
+      ],
+      "collapsible": false
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "第二象限的角",
+      "prompt": "把 150° 換成弧度，並求 sin 與 cos。",
+      "steps": [
+        "150° × π/180° = 5π/6。",
+        "5π/6 在第二象限，參考角 π − 5π/6 = π/6。",
+        "大小：sin(π/6) = 1/2，cos(π/6) = √3/2。",
+        "第二象限 y 正、x 負：sin(5π/6) = 1/2，cos(5π/6) = −√3/2。"
+      ],
+      "answer": "5π/6；sin = 1/2，cos = −√3/2",
+      "claim": "150*pi/180 == 5*pi/6 ;; sin(5*pi/6) == 1/2 ;; cos(5*pi/6) == -sqrt(3)/2"
+    },
+    {
+      "title": "第三象限的 tan",
+      "prompt": "求 tan(4π/3)",
+      "steps": [
+        "4π/3 = π + π/3，在第三象限，參考角 π/3。",
+        "sin(4π/3) = −√3/2，cos(4π/3) = −1/2（第三象限兩個都負）。",
+        "tan = sin/cos = (−√3/2)/(−1/2) = √3。"
+      ],
+      "answer": "√3",
+      "claim": "sin(4*pi/3) == -sqrt(3)/2 ;; cos(4*pi/3) == -1/2 ;; tan(4*pi/3) == sqrt(3)"
+    },
+    {
+      "title": "週期與值域",
+      "prompt": "f(x) = 3 sin(2x) 的週期與值域",
+      "steps": [
+        "週期：2π/2 = π。檢查：f(x + π) = 3 sin(2x + 2π) = 3 sin(2x)。",
+        "週期不是 π/2：f(π/4) = 3 sin(π/2) = 3，f(π/4 + π/2) = f(3π/4) = 3 sin(3π/2) = −3，不一樣。",
+        "sin 的值在 [−1, 1]，乘 3 之後在 [−3, 3]，而且 ±3 都取得到。"
+      ],
+      "answer": "週期 π，值域 [−3, 3]",
+      "claim": "3sin(2(x+pi)) == 3sin(2x) ;; SUB(3sin(2x), pi/4) == 3 ;; SUB(3sin(2x), 3*pi/4) == -3"
+    }
+  ],
+  "pitfalls": [
+    "計算機停在角度模式，或把度數直接代進微積分公式。",
+    "象限的正負號弄錯，例如把 cos(5π/6) 寫成正的。",
+    "sin(2x) 的週期寫成 4π：括號裡乘 2，週期要除以 2。",
+    "sin²x 讀成 sin(x²)；sin²x 的意思是 (sin x)²。"
+  ],
+  "checks": [
+    {
+      "ask": "cos(π/3) 是？",
+      "options": [
+        { "label": "√3/2", "why": "那是 sin(π/3)。π/3 的終邊比較靠近 y 軸，橫座標比較小。" },
+        { "label": "1/2", "correct": true },
+        { "label": "−1/2", "why": "π/3 在第一象限，cos 是正的。" }
+      ]
+    },
+    {
+      "ask": "sin(7π/6) 是？",
+      "options": [
+        { "label": "−1/2", "correct": true },
+        { "label": "1/2", "why": "7π/6 在第三象限，縱座標是負的。" },
+        { "label": "−√3/2", "why": "參考角是 7π/6 − π = π/6，sin(π/6) = 1/2，不是 √3/2。" }
+      ]
+    },
+    {
+      "ask": "cos(3x) 的週期是？",
+      "options": [
+        { "label": "6π", "why": "括號裡乘 3 讓波形變密，週期要除以 3，不是乘 3。" },
+        { "label": "2π", "why": "那是 cos x 的週期。" },
+        { "label": "2π/3", "correct": true }
+      ]
+    },
+    {
+      "ask": "tan x 在哪些地方沒有定義？",
+      "options": [
+        { "label": "x = kπ（k 是整數）", "why": "那是 sin x = 0 的地方，tan 在那裡等於 0，有定義。" },
+        { "label": "x = π/2 + kπ（k 是整數）", "correct": true },
+        { "label": "x = π/4", "why": "tan(π/4) = 1，有定義。" }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": ["trig"],
+    "fine": ["trig-radian", "trig-unit-circle-values", "trig-period", "trig-tan-domain"]
+  },
+  "practice": [
+    { "id": "si-set-022", "core": true, "trains": "trig-tan-domain", "note": "題目問「不連續點」；tan 的不連續點就是它沒有定義的地方。" },
+    { "id": "gr-009", "core": true, "trains": "trig-period" },
+    { "id": "gi-005", "trains": "trig-unit-circle-values", "note": "在單位圓上，縱座標什麼時候最大、最小？" },
+    { "id": "sk-035", "trains": "trig-period" }
+  ],
+  "gaps": [
+    { "tag": "trig-unit-circle-values", "count": 3, "note": "R1：特殊角的 sin、cos、tan（各象限，含正負號）" },
+    { "tag": "trig-radian", "count": 2, "note": "R1：角度與弧度換算" }
+  ]
+}

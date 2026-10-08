@@ -1,0 +1,147 @@
+{
+  "id": "jacobian-determinant",
+  "title": "Jacobian 行列式",
+  "readMinutes": 9,
+  "totalMinutes": 35,
+  "prerequisites": ["jacobian-geometry", "partial-derivatives"],
+  "next": ["change-of-variables"],
+  "related": ["multivariable-chain-rule", "spherical-coordinates", "cylindrical-coordinates"],
+  "objectives": [
+    "照定義算 2 × 2 的 Jacobian ∂(x, y)/∂(u, v)。",
+    "已知 u、v 是 x、y 的函數時，用倒數關係 ∂(x, y)/∂(u, v) = 1 / (∂(u, v)/∂(x, y))，不必先解出 x、y。",
+    "知道三變數的 Jacobian 也是行列式，柱座標是 r、球座標是 ρ² sin φ。"
+  ],
+  "visual": null,
+  "concept": [
+    {
+      "heading": "① 定義",
+      "body": [
+        "變換 x = x(u, v)、y = y(u, v)，偏導數連續。把四個偏導數排成矩陣：第一列是 x 對 u、v 的偏導，第二列是 y 對 u、v 的偏導。它的行列式就是 Jacobian（下式）。",
+        "上一課看到，|J| 是 (u, v) 附近小方格被放大的倍率；J 的正負號表示有沒有翻面。"
+      ],
+      "tex": ["\\frac{\\partial(x,y)}{\\partial(u,v)}=\\det\\begin{pmatrix}x_u&x_v\\\\y_u&y_v\\end{pmatrix}=x_u\\,y_v-x_v\\,y_u"],
+      "collapsible": false
+    },
+    {
+      "heading": "② 計算步驟",
+      "body": [
+        "1. 寫出 x、y 各自對 u、v 的四個偏導數。",
+        "2. 交叉相乘相減：主對角線 x_u y_v，減去反對角線 x_v y_u。",
+        "3. 化簡。答案通常還是 u、v 的函數。",
+        "例：x = 2u + v、y = u − v。x_u = 2、x_v = 1、y_u = 1、y_v = −1，J = 2 · (−1) − 1 · 1 = −3。面積放大 |J| = 3 倍，而且翻面。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 反方向：倒數關係",
+      "body": [
+        "很多題目給的是 u = u(x, y)、v = v(x, y)（從區域邊界讀出來的），要的卻是 ∂(x, y)/∂(u, v)。不必先解出 x、y，直接取倒數（下式）。",
+        "直觀理由：從 (x, y) 到 (u, v) 把面積放大 k 倍，反過來就縮小成 1/k 倍。正式的理由是〈多變數連鎖律〉：兩個變換合成是恆等映射，兩個 Jacobian 矩陣相乘是單位矩陣，行列式相乘等於 1。條件是 J ≠ 0。"
+      ],
+      "tex": ["\\frac{\\partial(x,y)}{\\partial(u,v)}=\\frac{1}{\\partial(u,v)/\\partial(x,y)}"],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 三個變數",
+      "body": [
+        "x、y、z 都是 u、v、w 的函數時，Jacobian 是 3 × 3 的行列式，|J| 是小方塊的體積放大倍率。兩個以後會一直用到：〈柱座標〉的 Jacobian 是 r，〈球座標〉的是 ρ² sin φ。"
+      ],
+      "tex": ["\\frac{\\partial(x,y,z)}{\\partial(u,v,w)}=\\det\\begin{pmatrix}x_u&x_v&x_w\\\\y_u&y_v&y_w\\\\z_u&z_v&z_w\\end{pmatrix}"],
+      "collapsible": false
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "照定義算",
+      "prompt": "x = u² − v²、y = 2uv，求 ∂(x, y)/∂(u, v)。",
+      "steps": [
+        "x_u = 2u，x_v = −2v；y_u = 2v，y_v = 2u。",
+        "x_u y_v − x_v y_u = 2u · 2u − (−2v)(2v) = 4u² + 4v²。"
+      ],
+      "answer": "4(u² + v²)",
+      "claim": "D(u^2-v^2, , u)*D(2*u*v, , v) - D(u^2-v^2, , v)*D(2*u*v, , u) == 4*(u^2+v^2)"
+    },
+    {
+      "title": "兩種方法對答案",
+      "prompt": "u = x + y、v = x − y，求 ∂(x, y)/∂(u, v)。",
+      "steps": [
+        "方法一：解出 x = (u + v)/2、y = (u − v)/2。x_u = 1/2、x_v = 1/2、y_u = 1/2、y_v = −1/2。J = (1/2)(−1/2) − (1/2)(1/2) = −1/2。",
+        "方法二：∂(u, v)/∂(x, y) = 1 · (−1) − 1 · 1 = −2，取倒數得 −1/2。",
+        "兩種一樣。用來換變數時取絕對值 1/2。"
+      ],
+      "answer": "−1/2（絕對值 1/2）",
+      "claim": "D((u+v)/2, , u)*D((u-v)/2, , v) - D((u+v)/2, , v)*D((u-v)/2, , u) == -1/2"
+    },
+    {
+      "title": "解不出來也沒關係",
+      "prompt": "u = xy、v = y/x（x, y > 0），求 ∂(x, y)/∂(u, v)。",
+      "steps": [
+        "先算反方向：u_x = y、u_y = x；v_x = −y/x²、v_y = 1/x。",
+        "∂(u, v)/∂(x, y) = y · (1/x) − x · (−y/x²) = y/x + y/x = 2y/x = 2v。",
+        "取倒數：∂(x, y)/∂(u, v) = 1/(2v)。",
+        "驗算：其實可以解出 x = √(u/v)、y = √(uv)，直接算也是 1/(2v)。但倒數法完全不需要這一步。"
+      ],
+      "answer": "1/(2v)",
+      "claim": "D(sqrt(u/v), , u)*D(sqrt(u*v), , v) - D(sqrt(u/v), , v)*D(sqrt(u*v), , u) == 1/(2*v)"
+    }
+  ],
+  "pitfalls": [
+    "要的是 ∂(x, y)/∂(u, v)，卻交出 ∂(u, v)/∂(x, y)，差了一個倒數。",
+    "交叉相乘用成相加：x_u y_v + x_v y_u。",
+    "求倒數之後忘了把結果改寫成 u、v（例如 2y/x 要寫成 2v）。",
+    "換變數時用 J 本身而不是 |J|。"
+  ],
+  "checks": [
+    {
+      "ask": "x = 3u + v、y = u + 2v，∂(x, y)/∂(u, v) 是？",
+      "options": [
+        { "label": "5", "correct": true },
+        { "label": "7", "why": "那是 3 · 2 + 1 · 1，用了相加。行列式是主對角線減反對角線：6 − 1。" },
+        { "label": "−5", "why": "順序反了：是 x_u y_v − x_v y_u = 6 − 1，不是 1 − 6。" }
+      ]
+    },
+    {
+      "ask": "已知 ∂(u, v)/∂(x, y) = 4（處處），那 ∂(x, y)/∂(u, v) 是？",
+      "options": [
+        { "label": "1/4", "correct": true },
+        { "label": "4", "why": "這是反方向的 Jacobian。從 (x, y) 到 (u, v) 放大 4 倍，反過來是縮小成 1/4。" },
+        { "label": "−4", "why": "倒數不會變號；兩者相乘等於 1。" }
+      ]
+    },
+    {
+      "ask": "x = r cos θ、y = r sin θ 的 ∂(x, y)/∂(r, θ) 是？",
+      "options": [
+        { "label": "r", "correct": true },
+        { "label": "1", "why": "cos² θ + sin² θ = 1 前面還有一個 r：r cos² θ + r sin² θ = r。" },
+        { "label": "r²", "why": "四個偏導裡只有 x_θ、y_θ 帶 r，每一項只乘到一次 r。" }
+      ]
+    },
+    {
+      "ask": "換變數公式裡乘的是什麼？",
+      "options": [
+        { "label": "|∂(x, y)/∂(u, v)|", "correct": true },
+        { "label": "∂(x, y)/∂(u, v)，正負號要保留", "why": "負號只表示翻面。面積是正的，所以取絕對值。" },
+        { "label": "|∂(u, v)/∂(x, y)|", "why": "方向反了。dA = dx dy 要換成 du dv，倍率是 x、y 對 u、v 的 Jacobian。" }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": ["jacobian", "jacobian-chain"],
+    "fine": ["jacobian-2x2-compute", "jacobian-inverse-reciprocal", "jacobian-3x3"]
+  },
+  "practice": [
+    { "id": "der-034", "core": true, "trains": "jacobian-2x2-compute" },
+    { "id": "der-069", "core": true, "trains": "jacobian-2x2-compute" },
+    { "id": "rel-adv-005", "trains": "jacobian-2x2-compute" },
+    { "id": "rel-hard-mv-005", "trains": "jacobian-2x2-compute" },
+    { "id": "der-072", "trains": "jacobian-2x2-compute" },
+    { "id": "lec-19-q4b", "trains": "jacobian-inverse-reciprocal" },
+    { "id": "gap-int-cov-001", "trains": "jacobian-inverse-reciprocal" },
+    { "id": "der-070", "challenge": true, "trains": "jacobian-2x2-compute", "note": "挑戰：兩層變換，Jacobian 相乘（連鎖律）。" },
+    { "id": "der-074", "challenge": true, "trains": "jacobian-2x2-compute", "note": "挑戰：合成映射的 Jacobian 行列式等於各自行列式相乘。" }
+  ],
+  "gaps": [
+    { "tag": "jacobian-inverse-reciprocal", "count": 3, "note": "R3–R4：給 u、v 用 x、y 表示，求 ∂(x, y)/∂(u, v)，最好是解不出 x、y 的。" },
+    { "tag": "jacobian-3x3", "count": 2, "note": "R4：算柱座標、球座標或線性 3 × 3 變換的 Jacobian。" }
+  ]
+}

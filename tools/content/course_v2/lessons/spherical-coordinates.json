@@ -1,0 +1,137 @@
+{
+  "id": "spherical-coordinates",
+  "title": "球座標",
+  "readMinutes": 10,
+  "totalMinutes": 40,
+  "prerequisites": ["cylindrical-coordinates", "jacobian-determinant"],
+  "next": ["vector-field"],
+  "related": ["triple-integral", "parametric-surfaces"],
+  "objectives": [
+    "用 (ρ, φ, θ) 描述空間中的點，知道 φ 是從 z 軸正向量起的角，範圍 0 到 π。",
+    "說出 dV = ρ² sin φ dρ dφ dθ 的三個邊長從哪裡來。",
+    "把球、圓錐、冰淇淋筒形狀的區域寫成球座標的範圍並積分。"
+  ],
+  "visual": "一個球座標小塊：沿半徑方向厚 Δρ、沿經線方向長 ρΔφ、沿緯線方向長 ρ sin φ Δθ，三條邊分別上色並顯示長度。拖動 φ 從北極到赤道，緯線方向那條邊從幾乎為 0 變到最長，小塊體積讀數跟著 sin φ 變化；拖動 ρ，三條邊中有兩條跟著 ρ 變長。",
+  "concept": [
+    {
+      "heading": "① 三個數：多遠、多斜、轉多少",
+      "body": [
+        "ρ = 點到原點的距離（ρ ≥ 0）。φ = 從 z 軸正向往下量到這個點的角（0 ≤ φ ≤ π：φ = 0 是北極方向，π/2 是 xy 平面，π 是南極方向）。θ = 跟柱座標一樣，繞 z 軸轉的角。",
+        "注意：有些物理書把 θ、φ 的名字對調。本課程一律用上面的約定。"
+      ],
+      "tex": ["x=\\rho\\sin\\varphi\\cos\\theta,\\quad y=\\rho\\sin\\varphi\\sin\\theta,\\quad z=\\rho\\cos\\varphi,\\quad x^2+y^2+z^2=\\rho^2"],
+      "collapsible": false
+    },
+    {
+      "heading": "② 小塊的三條邊",
+      "body": [
+        "ρ 增加 Δρ：沿半徑走，長度 Δρ。",
+        "φ 增加 Δφ：沿著半徑 ρ 的經線（大圓）走，長度 ρΔφ。",
+        "θ 增加 Δθ：沿著緯線走。緯線是一個圓，半徑是點到 z 軸的距離 ρ sin φ，所以長度 ρ sin φ Δθ。",
+        "三條邊互相垂直，小塊近似一個長方體：ΔV ≈ ρ² sin φ Δρ Δφ Δθ。這是直觀，不是證明；用〈Jacobian 行列式〉算 ∂(x, y, z)/∂(ρ, φ, θ) 的 3 × 3 行列式，確實得到 ρ² sin φ。"
+      ],
+      "tex": ["dV=\\rho^2\\sin\\varphi\\,d\\rho\\,d\\varphi\\,d\\theta"],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 常見曲面",
+      "body": [
+        "球面 x² + y² + z² = a² → ρ = a。",
+        "圓錐面 z = √(x² + y²) → φ = π/4（跟 z 軸夾 45°）。",
+        "xy 平面 → φ = π/2；上半空間 z ≥ 0 → 0 ≤ φ ≤ π/2。",
+        "立體以原點為中心、邊界是球面或圓錐面，或被積函數含 x² + y² + z² 時，用球座標。"
+      ],
+      "collapsible": false
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "球的體積",
+      "prompt": "半徑 3 的球 x² + y² + z² ≤ 9 的體積。",
+      "steps": [
+        "範圍：0 ≤ ρ ≤ 3、0 ≤ φ ≤ π、0 ≤ θ ≤ 2π。三層上下限都是常數，可分離。",
+        "∫_0^3 ρ² dρ = 9；∫_0^π sin φ dφ = 2；∫_0^{2π} dθ = 2π。",
+        "相乘：9 · 2 · 2π = 36π。跟 (4/3)π · 27 = 36π 一致。"
+      ],
+      "answer": "36π",
+      "claim": "INT(INT(INT(r^2*sin(u),0,3,r),0,pi,u),0,2*pi,t) == 36*pi"
+    },
+    {
+      "title": "冰淇淋筒",
+      "prompt": "在圓錐 z = √(x² + y²) 上方、單位球 x² + y² + z² ≤ 1 內部的立體體積。",
+      "steps": [
+        "圓錐上方是「跟 z 軸夾角小於 45°」：0 ≤ φ ≤ π/4。球內：0 ≤ ρ ≤ 1。θ 繞一整圈。",
+        "V = ∫_0^{2π} ∫_0^{π/4} ∫_0^1 ρ² sin φ dρ dφ dθ = 2π · (1/3) · [−cos φ]_0^{π/4}。",
+        "[−cos φ]_0^{π/4} = 1 − √2/2。",
+        "V = (2π/3)(1 − √2/2) = π(2 − √2)/3。"
+      ],
+      "answer": "π(2 − √2)/3",
+      "claim": "INT(INT(INT(r^2*sin(u),0,1,r),0,pi/4,u),0,2*pi,t) == pi*(2-sqrt(2))/3"
+    },
+    {
+      "title": "被積函數只跟距離有關",
+      "prompt": "∭_B e^{(x² + y² + z²)^{3/2}} dV，B 是單位球。",
+      "steps": [
+        "(x² + y² + z²)^{3/2} = ρ³。積分 = ∫_0^{2π} ∫_0^π ∫_0^1 e^{ρ³} ρ² sin φ dρ dφ dθ。",
+        "最內層：令 u = ρ³，du = 3ρ² dρ：∫_0^1 e^{ρ³} ρ² dρ = (e − 1)/3。dV 裡的 ρ² 剛好配成換元。",
+        "乘上 ∫ sin φ dφ = 2 與 2π：4π(e − 1)/3。"
+      ],
+      "answer": "4π(e − 1)/3",
+      "claim": "INT(INT(INT(r^2*sin(u)*e^(r^3),0,1,r),0,pi,u),0,2*pi,t) == 4*pi*(e-1)/3"
+    }
+  ],
+  "pitfalls": [
+    "漏了 sin φ，或把 ρ² 寫成 ρ。",
+    "φ 積到 2π：φ 只從 0 到 π，繞一圈的是 θ。",
+    "把 θ 跟 φ 的角色搞混：圓錐是 φ = 常數，不是 θ = 常數。",
+    "上半球寫成 0 ≤ φ ≤ π。上半是 0 ≤ φ ≤ π/2。"
+  ],
+  "checks": [
+    {
+      "ask": "球座標的 dV 是？",
+      "options": [
+        { "label": "ρ² sin φ dρ dφ dθ", "correct": true },
+        { "label": "ρ² dρ dφ dθ", "why": "漏了 sin φ。緯線圓的半徑是 ρ sin φ，靠近兩極時這條邊很短，小塊很小。" },
+        { "label": "ρ sin φ dρ dφ dθ", "why": "經線方向的邊 ρΔφ 也帶一個 ρ，一共是 ρ²。" }
+      ]
+    },
+    {
+      "ask": "圓錐面 z = √(x² + y²) 用球座標寫是？",
+      "options": [
+        { "label": "φ = π/4", "correct": true },
+        { "label": "θ = π/4", "why": "θ = 常數 是一片繞 z 軸的半平面。圓錐是「跟 z 軸夾角固定」，那是 φ。" },
+        { "label": "ρ = 1", "why": "ρ = 常數 是球面。" }
+      ]
+    },
+    {
+      "ask": "整顆球的 φ 範圍是？",
+      "options": [
+        { "label": "0 ≤ φ ≤ π", "correct": true },
+        { "label": "0 ≤ φ ≤ 2π", "why": "φ 從北極量到南極，π 就走完了；再走下去每個點會被算兩次。繞一圈的是 θ。" },
+        { "label": "0 ≤ φ ≤ π/2", "why": "那只到 xy 平面，是上半球。" }
+      ]
+    },
+    {
+      "ask": "∫_0^{2π} ∫_0^π ∫_0^2 ρ² sin φ dρ dφ dθ 是？",
+      "options": [
+        { "label": "32π/3", "correct": true },
+        { "label": "16π²/3", "why": "漏了 sin φ：∫_0^π dφ = π。正確是 ∫_0^π sin φ dφ = 2。" },
+        { "label": "16π/3", "why": "那是上半球（φ 只到 π/2，∫ sin φ dφ = 1）。這裡 φ 到 π。" }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": ["spherical", "spherical-coordinates", "triple-integral"],
+    "fine": ["spherical-volume-element", "spherical-cone-bounds", "spherical-radial-integrand"]
+  },
+  "practice": [
+    { "id": "gap-int-triple-006", "core": true, "trains": "spherical-volume-element" },
+    { "id": "rel-hard-mv-004", "core": true, "trains": "spherical-volume-element" },
+    { "id": "rel-hard-mv-003", "core": true, "trains": "spherical-radial-integrand" },
+    { "id": "rel-boss-012", "core": true, "trains": "spherical-radial-integrand" },
+    { "id": "lec-19-q3c", "trains": "spherical-radial-integrand" }
+  ],
+  "gaps": [
+    { "tag": "spherical-cone-bounds", "count": 3, "note": "R4：圓錐與球面圍成的立體（φ 的上下限不是 0、π），包括 ρ = cos φ 這類偏心球。" }
+  ]
+}

@@ -1,0 +1,150 @@
+{
+  "id": "integral-properties",
+  "title": "積分性質",
+  "readMinutes": 9,
+  "totalMinutes": 25,
+  "prerequisites": ["definite-signed-area"],
+  "next": ["riemann-sum-intuition"],
+  "related": ["ftc-part2", "indefinite-integral"],
+  "objectives": [
+    "會用區間相接、上下限對調、線性，從已知的定積分算出新的定積分。",
+    "會用奇偶對稱判斷 ∫₋ₐᵃ f(x) dx，奇函數直接得 0。",
+    "會用 m ≤ f ≤ M 估計 ∫ₐᵇ f(x) dx 的範圍。"
+  ],
+  "visual": "畫一個奇函數（例如 y = x³ − x）在 [−a, a] 上的圖。右邊的區域塗色並標出有號面積；按「鏡射」，它對原點轉 180° 落到左邊，正的變負的、負的變正的，兩邊加起來歸零。切換成偶函數（例如 y = x²）時，鏡射改成對 y 軸翻，兩邊一樣，總和是右邊的兩倍。",
+  "concept": [
+    {
+      "heading": "① 區間可以切開、接起來",
+      "body": [
+        "從 a 走到 c，中途經過 b：∫ₐᶜ f dx = ∫ₐᵇ f dx + ∫ᵦᶜ f dx。有號面積一段一段加起來就是全部。",
+        "所以 ∫₀⁵ f = 7、∫₀² f = 3 時，∫₂⁵ f = 7 − 3 = 4。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 上下限對調要變號；上下限相同是 0",
+      "body": [
+        "規定 ∫ᵦₐ f dx = −∫ₐᵇ f dx，也就是「從右往左走」算負的。這個規定讓 ① 不管 a、b、c 怎麼排都成立。",
+        "∫ₐᵃ f dx = 0：寬度是 0，什麼都沒圍到。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 線性：可以拆加法、提常數",
+      "body": [
+        "∫ₐᵇ (αf + βg) dx = α∫ₐᵇ f dx + β∫ₐᵇ g dx。這跟〈不定積分〉的線性是同一件事。",
+        "乘積一樣不能拆：∫ₐᵇ f g dx 一般不等於 (∫ₐᵇ f dx)(∫ₐᵇ g dx)。例：∫₀¹ x · x dx = 1/3（要等〈微積分基本定理 II〉才算得出），而 ∫₀¹ x dx = 1/2，(1/2)(1/2) = 1/4。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 對稱：奇函數歸零，偶函數加倍",
+      "body": [
+        "奇函數 f(−x) = −f(x)，圖形對原點對稱：右邊一塊在上方，左邊對應那塊就在下方，大小一樣。所以 ∫₋ₐᵃ f dx = 0。",
+        "偶函數 f(−x) = f(x)，圖形對 y 軸對稱，左右兩塊一樣：∫₋ₐᵃ f dx = 2∫₀ᵃ f dx。",
+        "這只對「對稱的區間 [−a, a]」有效。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "⑤ 比大小與估計",
+      "body": [
+        "a < b，而且在 [a, b] 上 f ≤ g，那麼 ∫ₐᵇ f dx ≤ ∫ₐᵇ g dx。特別地，若 m ≤ f(x) ≤ M，則 m(b − a) ≤ ∫ₐᵇ f dx ≤ M(b − a)：曲線被夾在兩條水平線之間，面積就被兩個矩形夾住。",
+        "當反導函數寫不出來時（例如 e^{−x²} 沒有初等反導函數），這是先知道答案大概多少的辦法。"
+      ],
+      "collapsible": false
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "拼接已知的積分",
+      "prompt": "已知 ∫₀² f dx = 3、∫₀⁵ f dx = 7、∫₀⁵ g dx = −2。求 ∫₂⁵ f dx 與 ∫₅⁰ (2f − 3g) dx。",
+      "steps": [
+        "∫₀⁵ f = ∫₀² f + ∫₂⁵ f，所以 ∫₂⁵ f = 7 − 3 = 4。",
+        "∫₀⁵ (2f − 3g) dx = 2 · 7 − 3 · (−2) = 14 + 6 = 20。",
+        "上下限對調要變號：∫₅⁰ (2f − 3g) dx = −20。"
+      ],
+      "answer": "∫₂⁵ f dx = 4；∫₅⁰ (2f − 3g) dx = −20",
+      "claim": "7 - 3 == 4 ;; -(2*7-3*(-2)) == -20",
+      "note": "f、g 是抽象函數，這裡驗算的是性質套用後的算術。"
+    },
+    {
+      "title": "奇偶拆開",
+      "prompt": "∫₋₂² (x³ + √(4 − x²)) dx",
+      "steps": [
+        "拆成兩項：∫₋₂² x³ dx + ∫₋₂² √(4 − x²) dx。",
+        "x³ 是奇函數：(−x)³ = −x³，區間 [−2, 2] 對稱，所以第一項是 0。",
+        "√(4 − x²) 是半徑 2 的上半圓（〈定積分與有號面積〉），面積 (1/2)π · 2² = 2π。",
+        "合計：0 + 2π = 2π。"
+      ],
+      "answer": "2π",
+      "claim": "INT(x^3+sqrt(4-x^2),-2,2) == 2*pi"
+    },
+    {
+      "title": "算不出來，先估計",
+      "prompt": "估計 ∫₀¹ e^{−x²} dx 的範圍。",
+      "steps": [
+        "在 [0, 1] 上 x² 從 0 增加到 1，所以 e^{−x²} 從 e⁰ = 1 減少到 e^{−1}。",
+        "也就是 e^{−1} ≤ e^{−x²} ≤ 1，區間長度 1 − 0 = 1。",
+        "所以 e^{−1} · 1 ≤ ∫₀¹ e^{−x²} dx ≤ 1 · 1，約 0.368 ≤ ∫₀¹ e^{−x²} dx ≤ 1。"
+      ],
+      "answer": "1/e ≤ ∫₀¹ e^{−x²} dx ≤ 1",
+      "claim": "INT(e^(-x^2),0,1) > e^(-1) ;; INT(e^(-x^2),0,1) < 1",
+      "note": "實際值約 0.747，確實在範圍內。"
+    }
+  ],
+  "pitfalls": [
+    "上下限對調忘記變號。",
+    "把有號面積當成面積相加：∫₀¹ f = 2、∫₁³ f = −1，合起來寫成 3。",
+    "在不對稱的區間（例如 [0, 2]）上用奇函數歸零。",
+    "估計時乘的是端點，不是區間長度 b − a。",
+    "把 ∫ f g dx 拆成 (∫ f dx)(∫ g dx)。"
+  ],
+  "checks": [
+    {
+      "ask": "∫₁⁴ f dx = 5。∫₄¹ f dx 是？",
+      "options": [
+        { "label": "−5", "correct": true },
+        { "label": "5", "why": "上下限對調代表反方向走，要變號。" },
+        { "label": "0", "why": "只有上下限相同（∫ₐᵃ）才是 0；這裡是同一段區間反著走。" }
+      ]
+    },
+    {
+      "ask": "∫₀¹ f dx = 2，∫₁³ f dx = −1。∫₀³ f dx 是？",
+      "options": [
+        { "label": "1", "correct": true },
+        { "label": "3", "why": "你把 −1 當成面積 1 加上去了。有號面積照正負相加：2 + (−1)。" },
+        { "label": "不知道 f 就無法判斷", "why": "區間相接就能直接相加，不需要知道 f 長什麼樣子。" }
+      ]
+    },
+    {
+      "ask": "∫_{−π}^{π} x² sin x dx 是？",
+      "options": [
+        { "label": "0", "correct": true },
+        { "label": "2∫₀^π x² sin x dx", "why": "那是偶函數的規則。(−x)² sin(−x) = −x² sin x，這是奇函數。" },
+        { "label": "要先找反導函數才知道", "why": "奇函數在對稱區間上，左右兩塊大小相同、正負相反，不用計算就是 0。" }
+      ]
+    },
+    {
+      "ask": "在 [2, 6] 上 1 ≤ f(x) ≤ 3。∫₂⁶ f dx 一定落在哪個範圍？",
+      "options": [
+        { "label": "4 到 12 之間", "correct": true },
+        { "label": "1 到 3 之間", "why": "那是 f 的範圍。積分還要乘上區間長度 6 − 2 = 4。" },
+        { "label": "2 到 18 之間", "why": "你把下界乘 2、上界乘 6（兩個端點）。兩邊都要乘區間長度 4。" }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": ["definite-integral", "symmetry"],
+    "fine": ["integral-properties-additivity", "integral-properties-reverse", "integral-properties-linearity", "integral-properties-symmetry", "integral-properties-bounds"]
+  },
+  "practice": [
+    { "id": "lec-06-m3", "core": true, "trains": "integral-properties-symmetry" }
+  ],
+  "gaps": [
+    { "tag": "integral-properties-additivity", "count": 3, "note": "給幾段已知的 ∫ f，求另一段（含上下限對調）的題，R1–R2。目前題庫完全沒有。" },
+    { "tag": "integral-properties-linearity", "count": 2, "note": "給 ∫ f、∫ g，求 ∫ (αf + βg) 的題，R1。" },
+    { "tag": "integral-properties-symmetry", "count": 2, "note": "奇偶對稱直接判斷的題（不需要反導函數），例如 ∫₋₁¹ x⁵ cos x dx、∫₋₂² (x³ + |x|) dx，R1–R2。" },
+    { "tag": "integral-properties-bounds", "count": 2, "note": "用 m(b − a) ≤ ∫ ≤ M(b − a) 估計範圍的題，R2。" }
+  ]
+}

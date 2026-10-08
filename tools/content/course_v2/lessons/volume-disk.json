@@ -1,0 +1,250 @@
+{
+  "id": "volume-disk",
+  "title": "圓盤法",
+  "readMinutes": 9,
+  "totalMinutes": 35,
+  "prerequisites": [
+    "area-under-curve",
+    "riemann-sum-intuition"
+  ],
+  "next": [
+    "volume-washer"
+  ],
+  "related": [
+    "area-dy"
+  ],
+  "objectives": [
+    "把體積看成薄片疊起來：V = ∫ A(x) dx，A(x) 是截面面積。",
+    "旋轉體的截面是圓：繞 x 軸時 V = ∫ π f(x)² dx。",
+    "繞 y 軸時把半徑寫成 y 的函數，對 y 積分；截面不是圓的立體也會用同一個想法。"
+  ],
+  "visual": "y = √x（0 ≤ x ≤ 4）繞 x 軸轉成碗狀實體。在 x 處切出一片薄圓盤，標出半徑 √x、厚度 dx。拖動 x，圓盤沿著軸滑動、半徑隨曲線變大；旁邊的讀數把已經掃過的薄片體積 π(√x)²dx 一片片加起來。",
+  "concept": [
+    {
+      "heading": "① 體積 = 截面面積疊起來",
+      "body": [
+        "把立體垂直於 x 軸切成很多薄片。在 x 處的薄片，截面面積是 A(x)，厚度 Δx，體積約 A(x)Δx。全部加起來、讓 Δx → 0，就是一個 Riemann 和變成積分（〈Riemann 和直觀〉）：V = ∫ₐᵇ A(x) dx。",
+        "這是直觀說明，不是證明：它假設每片薄片近似一個柱體，Δx 越小誤差越小。體積的嚴格定義就是這個極限。"
+      ],
+      "tex": [
+        "V=\\int_a^b A(x)\\,dx"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 繞 x 軸：截面是圓盤",
+      "body": [
+        "把 y = f(x)（a ≤ x ≤ b）與 x 軸之間的區域繞 x 軸轉一圈。在 x 處垂直切下去，截面是一個圓，圓心在軸上，半徑是曲線到軸的距離 |f(x)|。圓面積 πr²，所以 A(x) = π f(x)²："
+      ],
+      "tex": [
+        "V=\\int_a^b \\pi\\,f(x)^2\\,dx"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 繞 y 軸：半徑換成 y 的函數",
+      "body": [
+        "繞 y 軸時，要垂直於 y 軸切，薄片是水平的圓盤，厚度 dy。半徑是曲線到 y 軸的水平距離，也就是 x，要寫成 y 的函數 x = g(y)（〈對 y 積分〉的改寫）。於是 V = ∫ π g(y)² dy，上下限是 y 的範圍。",
+        "口訣：繞哪個軸，就沿那個軸切、對那個變數積分；半徑一律是「到旋轉軸的距離」。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 截面不是圓也可以",
+      "body": [
+        "V = ∫ A(x) dx 不只用在旋轉體。只要知道每個截面的形狀（正方形、三角形……），算出它的面積 A(x)，一樣積分。圓盤法只是 A(x) = πr² 的特例。"
+      ],
+      "collapsible": false
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "繞 x 軸",
+      "prompt": "y = √x，0 ≤ x ≤ 4 與 x 軸之間的區域繞 x 軸旋轉，求體積。",
+      "problemId": "cx-rev-001",
+      "steps": [
+        "在 x 處的截面是圓，半徑 √x，面積 A(x) = π(√x)² = πx。",
+        "V = ∫₀⁴ πx dx = π[x²/2]₀⁴ = 8π。"
+      ],
+      "answer": "8π",
+      "claim": "INT(pi*sqrt(x)^2, 0, 4) == 8*pi"
+    },
+    {
+      "title": "繞 y 軸",
+      "prompt": "y = x²（0 ≤ x ≤ 1）、y 軸與 y = 1 所圍區域繞 y 軸旋轉，求體積。",
+      "problemId": "cx-rev-004",
+      "steps": [
+        "繞 y 軸，所以水平切、對 y 積分。y 的範圍是 0 到 1。",
+        "在高度 y，截面圓的半徑是曲線到 y 軸的距離 x。由 y = x²、x ≥ 0 得 x = √y。",
+        "A(y) = π(√y)² = πy，V = ∫₀¹ πy dy = π/2。"
+      ],
+      "answer": "π/2",
+      "claim": "INT(pi*sqrt(y)^2, 0, 1) == pi/2"
+    },
+    {
+      "title": "截面是正方形",
+      "prompt": "立體的底面是圓盤 x² + y² ≤ 4；垂直於 x 軸的每個截面都是正方形，一邊落在底面上。求體積。",
+      "problemId": "lec-09-q4b",
+      "steps": [
+        "在 x 處，底面那條弦從 y = −√(4 − x²) 到 y = √(4 − x²)，長 2√(4 − x²)，這就是正方形的邊長。",
+        "A(x) = (2√(4 − x²))² = 4(4 − x²)。",
+        "V = ∫₋₂² 4(4 − x²) dx = 4[4x − x³/3]₋₂² = 4 · 32/3 = 128/3。"
+      ],
+      "answer": "128/3",
+      "claim": "INT(4*(4-x^2), -2, 2) == 128/3"
+    }
+  ],
+  "pitfalls": [
+    "半徑忘了平方，寫成 ∫ π f(x) dx。",
+    "把圓周長 2πr 當成截面面積。",
+    "繞 y 軸卻對 x 積分、半徑還用 f(x)。",
+    "截面是正方形或三角形時也乘了 π。",
+    "正方形的邊長只取半條弦。"
+  ],
+  "checks": [
+    {
+      "ask": "y = x（0 ≤ x ≤ 2）與 x 軸之間的區域繞 x 軸旋轉（一個圓錐），體積是？",
+      "options": [
+        {
+          "label": "8π/3",
+          "correct": true
+        },
+        {
+          "label": "2π",
+          "why": "這是 ∫₀² πx dx：半徑沒有平方。截面是半徑 x 的圓，面積 πx²。"
+        },
+        {
+          "label": "8/3",
+          "why": "這是 ∫₀² x² dx，漏了圓面積公式裡的 π。"
+        }
+      ]
+    },
+    {
+      "ask": "y = f(x) ≥ 0 繞 x 軸，x 處的截面面積是？",
+      "options": [
+        {
+          "label": "π f(x)²",
+          "correct": true
+        },
+        {
+          "label": "2π f(x)",
+          "why": "那是半徑 f(x) 的圓周長，不是面積。"
+        },
+        {
+          "label": "π f(x)",
+          "why": "圓面積是 πr²，半徑要平方。"
+        }
+      ]
+    },
+    {
+      "ask": "y = x²（x ≥ 0）、y 軸與 y = 4 所圍區域繞 y 軸旋轉，體積的積分是？",
+      "options": [
+        {
+          "label": "∫₀⁴ πy dy",
+          "correct": true
+        },
+        {
+          "label": "∫₀² πx⁴ dx",
+          "why": "這是把 y = x² 繞 x 軸的公式。繞 y 軸要水平切，半徑是 x = √y，對 y 積分。"
+        },
+        {
+          "label": "∫₀⁴ πy² dy",
+          "why": "半徑是 x = √y，平方之後是 y，不是 y²。"
+        }
+      ]
+    },
+    {
+      "ask": "底面是單位圓盤 x² + y² ≤ 1，垂直於 x 軸的截面是正方形（一邊在底面上）。A(x) 是？",
+      "options": [
+        {
+          "label": "4(1 − x²)",
+          "correct": true
+        },
+        {
+          "label": "π(1 − x²)",
+          "why": "截面是正方形，不是圓，不該有 π。"
+        },
+        {
+          "label": "1 − x²",
+          "why": "正方形的邊長是整條弦 2√(1 − x²)，不是半條 √(1 − x²)。"
+        }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": [
+      "volume",
+      "solid-of-revolution",
+      "cross-section"
+    ],
+    "fine": [
+      "volume-slice-area",
+      "volume-disk-x-axis",
+      "volume-disk-y-axis",
+      "volume-cross-section"
+    ]
+  },
+  "practice": [
+    {
+      "id": "lec-09-m2",
+      "core": true,
+      "trains": "volume-disk-x-axis"
+    },
+    {
+      "id": "tb-rev-003",
+      "core": true,
+      "trains": "volume-disk-x-axis"
+    },
+    {
+      "id": "tb-rev-001",
+      "core": true,
+      "trains": "volume-disk-x-axis"
+    },
+    {
+      "id": "cx-rev-002",
+      "core": true,
+      "trains": "volume-disk-x-axis"
+    },
+    {
+      "id": "lec-09-q4b",
+      "core": true,
+      "trains": "volume-cross-section"
+    },
+    {
+      "id": "tb-rev-002",
+      "trains": "volume-disk-x-axis"
+    },
+    {
+      "id": "cx-rev-006",
+      "trains": "volume-disk-x-axis"
+    },
+    {
+      "id": "cx-rev-007",
+      "trains": "volume-disk-x-axis"
+    },
+    {
+      "id": "lec-09-q2a",
+      "trains": "volume-disk-x-axis"
+    },
+    {
+      "id": "lec-09-q4c",
+      "trains": "volume-cross-section"
+    },
+    {
+      "id": "cx-rev-004",
+      "trains": "volume-disk-y-axis"
+    }
+  ],
+  "gaps": [
+    {
+      "tag": "volume-disk-y-axis",
+      "count": 3,
+      "note": "R2–R3：繞 y 軸、要把半徑寫成 y 的函數的圓盤題。題庫只有一題（而且未驗算）。"
+    },
+    {
+      "tag": "volume-cross-section",
+      "count": 2,
+      "note": "R2：底面是三角形或拋物線區域、截面是正方形或半圓的切片題，題庫只有兩題都以圓盤為底。"
+    }
+  ]
+}

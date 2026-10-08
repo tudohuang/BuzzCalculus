@@ -1,0 +1,168 @@
+{
+  "id": "ftc-part2",
+  "title": "微積分基本定理 II",
+  "readMinutes": 10,
+  "totalMinutes": 35,
+  "prerequisites": ["ftc-part1", "antiderivative", "integral-table"],
+  "next": ["reverse-chain"],
+  "related": ["definite-signed-area", "riemann-sum-notation", "improper-singular", "area-under-curve"],
+  "objectives": [
+    "會用 ∫ₐᵇ f(x) dx = F(b) − F(a) 算定積分，知道為什麼不用寫 + C。",
+    "記得結果仍然是有號面積：要面積就得在零點切開。",
+    "使用前會檢查 f 在 [a, b] 上連續；不連續時硬套會得到錯的答案。"
+  ],
+  "visual": null,
+  "concept": [
+    {
+      "heading": "① 定理：找到反導函數，代上限減代下限",
+      "body": [
+        "f 在 [a, b] 上連續，F 是 f 的任何一個反導函數，則",
+        "常用簡寫：F(b) − F(a) 記作 [F(x)]ₐᵇ。",
+        "這把〈用和式寫定積分〉裡那個難算的極限，換成「找反導函數」這件事。"
+      ],
+      "tex": ["\\int_a^b f(x)\\,dx = F(b)-F(a) = \\Big[F(x)\\Big]_a^b"],
+      "collapsible": false
+    },
+    {
+      "heading": "② 人話：變化率積起來，就是總變化",
+      "body": [
+        "把式子寫成 ∫ₐᵇ F′(x) dx = F(b) − F(a)：F′ 是 F 變化的快慢，把每一小段時間的「快慢 × 時間」加起來，就是 F 從頭到尾總共變了多少。",
+        "例：v(t) 是速度，位置是 s(t)，s′ = v。∫ₐᵇ v(t) dt = s(b) − s(a)，就是這段時間的位移。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "證明（用基本定理 I）",
+      "body": [
+        "令 A(x) = ∫ₐˣ f(t) dt。由〈微積分基本定理 I〉，A′ = f，所以 A 是 f 的一個反導函數。",
+        "F 也是 f 的反導函數，由〈反導函數〉，F = A + C。所以 F(b) − F(a) = (A(b) + C) − (A(a) + C) = A(b) − A(a)。",
+        "A(a) = ∫ₐᵃ f = 0，A(b) = ∫ₐᵇ f。得證。"
+      ],
+      "collapsible": true
+    },
+    {
+      "heading": "③ 為什麼不用 + C",
+      "body": [
+        "換成 F + C 也一樣：(F(b) + C) − (F(a) + C) = F(b) − F(a)。C 在相減時消掉了，所以挑最簡單的那個（C = 0）就好。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 算出來的仍是有號面積",
+      "body": [
+        "∫₀^{2π} sin x dx = [−cos x]₀^{2π} = −1 − (−1) = 0。上方一塊、下方一塊抵消（〈定積分與有號面積〉）。",
+        "要面積，先找 f 的零點，把區間切開，每段取絕對值再加（〈曲線與 x 軸圍成的面積〉）。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "⑤ 先檢查連續",
+      "body": [
+        "∫₋₁¹ 1/x² dx：如果硬套，[−1/x]₋₁¹ = −1 − 1 = −2。但 1/x² 處處為正，積分怎麼會是負的？",
+        "問題在 1/x² 在 x = 0 沒有定義、也不連續，定理的條件不成立。事實上在 0 附近的面積是無限大，這個積分發散（〈瑕積分 II：奇異點〉）。"
+      ],
+      "collapsible": false
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "多項式",
+      "prompt": "∫₀² (3x² − 2x) dx",
+      "problemId": "lec-06-m2",
+      "steps": [
+        "反導函數：F(x) = x³ − x²。",
+        "F(2) = 8 − 4 = 4；F(0) = 0。",
+        "∫₀² (3x² − 2x) dx = 4 − 0 = 4。"
+      ],
+      "answer": "4",
+      "claim": "INT(3*x^2-2*x,0,2) == 4"
+    },
+    {
+      "title": "有號面積與面積",
+      "prompt": "求 ∫₀^π sin x dx，再比較 ∫₀^{2π} sin x dx 與 ∫₀^{2π} |sin x| dx。",
+      "problemId": "rel-basic-014",
+      "steps": [
+        "反導函數 −cos x。∫₀^π sin x dx = −cos π − (−cos 0) = 1 + 1 = 2。",
+        "∫₀^{2π} sin x dx = −cos 2π + cos 0 = −1 + 1 = 0。",
+        "sin x 在 [π, 2π] 為負，那一塊的有號面積是 −2。面積要把它翻正：2 + 2 = 4。"
+      ],
+      "answer": "∫₀^π sin x dx = 2；∫₀^{2π} sin x dx = 0；∫₀^{2π} |sin x| dx = 4",
+      "claim": "INT(sin(x),0,pi) == 2 ;; INT(sin(x),0,2*pi) == 0 ;; INT(abs(sin(x)),0,2*pi) == 4"
+    },
+    {
+      "title": "不能套的例子",
+      "prompt": "∫₋₁¹ 1/x² dx 等於 −2 嗎？",
+      "steps": [
+        "被積函數 1/x² > 0，定積分不可能是負的，−2 一定有問題。",
+        "1/x² 在 x = 0 不連續，基本定理 II 的條件不成立，不能套。",
+        "看右半邊：∫_{0.01}^{1} 1/x² dx = 1/0.01 − 1 = 99，下限再靠近 0 就無限變大。這個積分發散，沒有值。"
+      ],
+      "answer": "不是；這個積分發散",
+      "claim": "INT(1/x^2,0.01,1) == 99"
+    }
+  ],
+  "pitfalls": [
+    "只代上限，忘了減下限。",
+    "代成 f(b) − f(a)，用的是被積函數本身而不是反導函數。",
+    "下限代進去是負的，減的時候符號錯：−(−1) 要變成 +1。",
+    "把有號面積當面積：沒有在零點切開。",
+    "沒檢查連續就套公式，例如 ∫₋₁¹ 1/x² dx。"
+  ],
+  "checks": [
+    {
+      "ask": "∫₁³ 2x dx 是？",
+      "options": [
+        { "label": "8", "correct": true },
+        { "label": "9", "why": "只代了上限 F(3) = 9，還要減 F(1) = 1。" },
+        { "label": "4", "why": "你算的是 f(3) − f(1) = 6 − 2。要代進反導函數 x²，不是 f 本身。" }
+      ]
+    },
+    {
+      "ask": "∫₀^π cos x dx 是？",
+      "options": [
+        { "label": "0", "correct": true },
+        { "label": "2", "why": "2 是面積（兩塊各 1 取絕對值相加）。有號面積是 sin π − sin 0 = 0，上下抵消。" },
+        { "label": "1", "why": "sin π = 0，不是 1。代值時要看 π 在單位圓上的位置。" }
+      ]
+    },
+    {
+      "ask": "為什麼定積分的答案不寫 + C？",
+      "options": [
+        { "label": "C 在 F(b) − F(a) 裡相減抵消了", "correct": true },
+        { "label": "因為定積分規定 C = 0", "why": "C 可以是任何數，只是 (F(b) + C) − (F(a) + C) 把它消掉了，所以選哪個都一樣。" },
+        { "label": "因為定積分跟反導函數無關", "why": "正好相反：定積分就是用反導函數算的，只是結果是一個數。" }
+      ]
+    },
+    {
+      "ask": "∫₋₁¹ 1/x² dx：",
+      "options": [
+        { "label": "不能用基本定理 II：1/x² 在 0 不連續，這個積分發散", "correct": true },
+        { "label": "等於 −2", "why": "[−1/x]₋₁¹ = −2 是硬套的結果。被積函數處處為正，答案卻是負的，這就是條件不成立的訊號。" },
+        { "label": "等於 2，把符號改正就好", "why": "不是符號的問題：x 靠近 0 時面積無限大，積分根本沒有值。" }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": ["ftc", "definite-integral", "riemann-sum"],
+    "fine": ["ftc2-evaluate", "ftc2-signed", "ftc2-net-change", "ftc2-continuity-check", "ftc2-riemann-limit"]
+  },
+  "practice": [
+    { "id": "rel-basic-013", "core": true, "trains": "ftc2-evaluate" },
+    { "id": "fd-int-005", "core": true, "trains": "ftc2-evaluate" },
+    { "id": "fd-int-006", "core": true, "trains": "ftc2-evaluate" },
+    { "id": "cx-int-006", "core": true, "trains": "ftc2-evaluate" },
+    { "id": "fd-int-016", "core": true, "trains": "ftc2-signed" },
+    { "id": "int-039", "core": true, "trains": "ftc2-evaluate" },
+    { "id": "lm-rs-004", "core": true, "trains": "ftc2-riemann-limit", "note": "先認出是 ∫₀¹ √x dx。" },
+    { "id": "fd-int-007", "trains": "ftc2-evaluate" },
+    { "id": "fd-int-008", "trains": "ftc2-evaluate" },
+    { "id": "cx-ftc-006", "trains": "ftc2-net-change", "note": "∫ f′ dx 就是 f 的總變化，不必先展開。" },
+    { "id": "lm-rs-009", "trains": "ftc2-riemann-limit" },
+    { "id": "lm-rs-005", "trains": "ftc2-riemann-limit" },
+    { "id": "wg-def-001", "challenge": true, "trains": "ftc2-signed", "note": "挑戰：同一張表上，有號面積與面積是兩個不同的答案。" }
+  ],
+  "gaps": [
+    { "tag": "ftc2-continuity-check", "count": 2, "note": "被積函數在區間內不連續、不能直接套公式的判斷題，例如 ∫₋₁¹ 1/x² dx，R2。" },
+    { "tag": "ftc2-net-change", "count": 2, "note": "已知變化率求總變化的情境題（速度求位移、流量求總量），R1–R2。" }
+  ]
+}

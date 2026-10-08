@@ -1,0 +1,148 @@
+{
+  "id": "area-under-curve",
+  "title": "曲線與 x 軸圍成的面積",
+  "readMinutes": 8,
+  "totalMinutes": 30,
+  "prerequisites": ["definite-signed-area", "ftc-part2"],
+  "next": ["area-between-curves"],
+  "related": ["intermediate-value-theorem", "riemann-sum-intuition"],
+  "objectives": [
+    "分清楚定積分（有號面積）與面積：面積是對 |f| 積分。",
+    "會找出 f 在區間內的零點，分段積分再把每段取正值相加。",
+    "用同一個想法算總路程：總路程是 ∫|v| dt，位移是 ∫v dt。"
+  ],
+  "visual": "f(x) = x² − 2x 在 [0, 3] 的圖形，x 軸上方塗藍、下方塗紅。拖動右端點 b，同時顯示兩個讀數：∫₀ᵇ f(x) dx（藍減紅）與面積（藍加紅）。b 還沒過零點 2 時兩個讀數只差一個負號；b 跨過 2 之後，有號面積開始被抵銷，面積卻一直變大。",
+  "concept": [
+    {
+      "heading": "① 定積分不等於面積",
+      "body": [
+        "〈定積分與有號面積〉說過：∫ₐᵇ f(x) dx 把 x 軸上方的面積算正、下方的算負。f 在整段上都 ≥ 0 時，它剛好就是面積；f 有正有負時，上下兩塊會互相抵銷。",
+        "例：∫₀^{2π} sin x dx = 0。可是 sin x 跟 x 軸在 [0, 2π] 圍出兩塊，各自的面積都是 2，合起來是 4，不是 0。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 面積是對 |f| 積分",
+      "body": [
+        "面積不會是負的。把 x 軸下方那塊翻到上面，就是把 f 換成 |f|。用〈Riemann 和直觀〉的話說：面積是很多細長矩形加起來，每個矩形的高度是 |f(xᵢ)|，不是 f(xᵢ)。"
+      ],
+      "tex": ["A=\\int_a^b \\lvert f(x)\\rvert\\,dx"],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 實際算法：先找變號的地方",
+      "body": [
+        "|f| 通常不好直接找反導函數，所以實際上這樣做：",
+        "1. 解 f(x) = 0，只留下落在 [a, b] 裡面的零點。2. 零點把 [a, b] 切成幾段。f 連續、一段內又沒有零點，這一段上 f 就不會變號（否則由〈中間值定理〉中間一定有零點）。3. 每段代一個點看正負，各自積分；負的那段取相反數，全部加起來。",
+        "畫一張草圖最快：哪一塊在上、哪一塊在下一眼就知道。算出來的面積是 0 或負數，一定是漏了翻正。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 同一件事的物理版本",
+      "body": [
+        "v(t) 是速度時，∫ v dt 是位移：往回走的路被扣掉。總路程是 ∫ |v| dt：往前、往回都算。做法一模一樣，先找 v = 0 的時刻。"
+      ],
+      "collapsible": false
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "整段都在 x 軸上方",
+      "prompt": "求 y = 4 − x² 與 x 軸所圍區域的面積。",
+      "problemId": "gx-059",
+      "steps": [
+        "找邊界：4 − x² = 0，x = ±2。區域是 −2 ≤ x ≤ 2。",
+        "在 (−2, 2) 裡代 x = 0：4 > 0，整段在 x 軸上方，面積就是定積分。",
+        "∫₋₂² (4 − x²) dx = [4x − x³/3]₋₂² = (8 − 8/3) − (−8 + 8/3) = 32/3。"
+      ],
+      "answer": "32/3",
+      "claim": "INT(4-x^2, -2, 2) == 32/3"
+    },
+    {
+      "title": "跨過 x 軸：要切開",
+      "prompt": "求 y = x² − 2x 在 0 ≤ x ≤ 3 與 x 軸之間的面積。",
+      "steps": [
+        "零點：x² − 2x = x(x − 2) = 0，x = 0 或 2。在 [0, 3] 裡切成 [0, 2] 與 [2, 3]。",
+        "[0, 2] 代 x = 1：1 − 2 = −1 < 0，這段在下方。∫₀² (x² − 2x) dx = [x³/3 − x²]₀² = 8/3 − 4 = −4/3，面積取 4/3。",
+        "[2, 3] 代 x = 2.5：6.25 − 5 > 0，這段在上方。∫₂³ (x² − 2x) dx = (9 − 9) − (8/3 − 4) = 4/3。",
+        "面積 = 4/3 + 4/3 = 8/3。對照：直接算 ∫₀³ (x² − 2x) dx = −4/3 + 4/3 = 0，兩塊完全抵銷。"
+      ],
+      "answer": "8/3",
+      "claim": "INT(x^2-2x, 0, 2) == -4/3 ;; INT(x^2-2x, 2, 3) == 4/3 ;; INT(abs(x^2-2x), 0, 3) == 8/3 ;; INT(x^2-2x, 0, 3) == 0"
+    },
+    {
+      "title": "位移與總路程",
+      "prompt": "質點速度 v(t) = t² − 2t − 3（m/s），0 ≤ t ≤ 5。求位移與總路程。",
+      "problemId": "lec-06-q4b",
+      "steps": [
+        "v = (t − 3)(t + 1) = 0，在 [0, 5] 裡只有 t = 3。t = 1 時 v = −4 < 0（往回走）；t = 4 時 v = 5 > 0。",
+        "反導函數 F(t) = t³/3 − t² − 3t。F(0) = 0，F(3) = 9 − 9 − 9 = −9，F(5) = 125/3 − 25 − 15 = 5/3。",
+        "∫₀³ v dt = −9，∫₃⁵ v dt = 5/3 − (−9) = 32/3。",
+        "位移 = ∫₀⁵ v dt = 5/3（m）。總路程 = 9 + 32/3 = 59/3（m）。"
+      ],
+      "answer": "位移 5/3 m，總路程 59/3 m",
+      "claim": "INT(x^2-2x-3, 0, 3) == -9 ;; INT(x^2-2x-3, 3, 5) == 32/3 ;; INT(x^2-2x-3, 0, 5) == 5/3 ;; INT(abs(x^2-2x-3), 0, 5) == 59/3"
+    }
+  ],
+  "pitfalls": [
+    "把 ∫ₐᵇ f(x) dx 直接當面積，上下兩塊抵銷掉。",
+    "先積分再取絕對值：|∫f| 和 ∫|f| 不一樣，前者已經抵銷過了。",
+    "只看端點的正負，漏掉區間中間的零點。",
+    "把落在區間外面的零點也拿來切。",
+    "速度題把位移當總路程。"
+  ],
+  "checks": [
+    {
+      "ask": "∫₀^{2π} sin x dx 的值，與 sin x 和 x 軸在 [0, 2π] 圍成的面積，分別是？",
+      "options": [
+        { "label": "0 與 4", "correct": true },
+        { "label": "0 與 0", "why": "定積分是 0 是因為上下兩塊抵銷；面積把下面那塊翻正，不會抵銷，是 2 + 2 = 4。" },
+        { "label": "4 與 4", "why": "定積分把 x 軸下方的 [π, 2π] 算成 −2，所以是 2 − 2 = 0，不是 4。" }
+      ]
+    },
+    {
+      "ask": "f(x) = x − 1 與 x 軸在 0 ≤ x ≤ 3 之間的面積是？",
+      "options": [
+        { "label": "5/2", "correct": true },
+        { "label": "3/2", "why": "這是直接積分 ∫₀³ (x − 1) dx：[0, 1] 那塊在 x 軸下方，面積 1/2 被算成負的。" },
+        { "label": "2", "why": "只算了 [1, 3] 上方的三角形，漏了 [0, 1] 下方那塊 1/2。" }
+      ]
+    },
+    {
+      "ask": "要算 ∫ₐᵇ |f(x)| dx，第一步通常是？",
+      "options": [
+        { "label": "找出 f 在 [a, b] 裡的零點", "correct": true },
+        { "label": "先算 ∫ₐᵇ f(x) dx 再取絕對值", "why": "那是 |∫f|，正負已經在積分裡抵銷掉了，只會小於或等於面積。" },
+        { "label": "找出 f 的極值點", "why": "決定正負的是零點；極值點兩側的 f 可以完全同號。" }
+      ]
+    },
+    {
+      "ask": "速度 v(t) 在 0 ≤ t ≤ T 走過的總路程是？",
+      "options": [
+        { "label": "∫₀ᵀ |v(t)| dt", "correct": true },
+        { "label": "∫₀ᵀ v(t) dt", "why": "這是位移：往回走的路程被扣掉了。" },
+        { "label": "|∫₀ᵀ v(t) dt|", "why": "先抵銷再取絕對值，得到的是位移的大小，不是總路程。" }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": ["area", "kinematics"],
+    "fine": ["area-signed-vs-total", "area-split-at-zeros", "area-total-distance"]
+  },
+  "practice": [
+    { "id": "gx-055", "core": true, "trains": "area-signed-vs-total" },
+    { "id": "gx-057", "core": true, "trains": "area-signed-vs-total" },
+    { "id": "gx-059", "core": true, "trains": "area-signed-vs-total" },
+    { "id": "gx-015", "core": true, "trains": "area-split-at-zeros" },
+    { "id": "lec-06-q4b", "core": true, "trains": "area-total-distance" },
+    { "id": "gx-058", "trains": "area-signed-vs-total" },
+    { "id": "gp-007", "trains": "area-split-at-zeros" },
+    { "id": "gx-060", "trains": "area-signed-vs-total" },
+    { "id": "gx-017", "trains": "area-total-distance" },
+    { "id": "gp-005", "challenge": true, "trains": "area-total-distance", "note": "挑戰：從折線速度圖讀出每一段的正負，再分段加總。" }
+  ],
+  "gaps": [
+    { "tag": "area-split-at-zeros", "count": 3, "note": "R2–R3：公式給的 f 在區間內變號（例如 x² − 2x 在 [0, 3]、sin x 在 [0, 2π]），要求面積而不是定積分。題庫現有的面積題幾乎都是整段非負，只有讀圖題練到切段。" }
+  ]
+}

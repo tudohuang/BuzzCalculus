@@ -1,0 +1,147 @@
+{
+  "id": "u-sub-nonobvious",
+  "title": "非顯然的換元",
+  "readMinutes": 9,
+  "totalMinutes": 35,
+  "prerequisites": ["u-sub-definite"],
+  "next": ["integration-by-parts"],
+  "related": ["integration-strategy"],
+  "objectives": [
+    "換完還剩下 x 時，會用 u 把 x 表示出來（反解）。",
+    "看到 √x、√(ax + b) 卡住時，會令 u 等於整個根號，連 dx 一起換掉。",
+    "知道有些積分要先變形（例如同乘 e^{−x}）才看得出 u。"
+  ],
+  "visual": null,
+  "concept": [
+    {
+      "heading": "① 剩下的 x，用 u 表示",
+      "body": [
+        "∫ x√(x + 1) dx：令 u = x + 1，du = dx。根號換好了，但外面還有一個 x，du 吃不掉它。",
+        "不要放棄：u = x + 1 也代表 x = u − 1。把 x 換成 u − 1，整個積分就只剩 u 了：∫ (u − 1)√u du = ∫ (u^{3/2} − u^{1/2}) du。",
+        "規則沒有變：x 和 dx 全部換掉。只是換 x 的方法從「配 du」多了一種「反解」。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 令 u 等於整個根號",
+      "body": [
+        "∫ √x/(1 + x) dx：找不到哪一層的導數在場。換個想法，令 u = √x，則 x = u²、dx = 2u du，根號整個消失：∫ u/(1 + u²) · 2u du = ∫ 2u²/(1 + u²) du，變成有理函數。",
+        "這招的特徵：根號裡是 x 或一次式，卡住的原因就是根號本身。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 先變形，u 才會出現",
+      "body": [
+        "∫ dx/(1 + eˣ)：令 u = 1 + eˣ，du = eˣ dx，可是分子是 1，配不起來。",
+        "先把分子分母同乘 e^{−x}：1/(1 + eˣ) = e^{−x}/(e^{−x} + 1)。現在分子是分母的導數乘上 −1，u = e^{−x} + 1 就配得起來。",
+        "另一種變形：1/(1 + eˣ) = 1 − eˣ/(1 + eˣ)，第二項是 u′/u。兩條路答案長得不同，但只差一個常數。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 什麼時候該想到這些",
+      "body": [
+        "換完剩下 x → 反解 x。",
+        "根號（或分數次方）卡住、而根號裡是一次式 → 令 u 等於根號。",
+        "eˣ 出現在分母、分子是常數 → 同乘 e^{−x} 或拆項。",
+        "這些都試過還不行，可能要換別的技巧（〈綜合積分：到底要用哪招？〉）。"
+      ],
+      "collapsible": false
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "反解 x",
+      "prompt": "∫ x√(x + 1) dx",
+      "steps": [
+        "令 u = x + 1，du = dx，而且 x = u − 1。",
+        "∫ x√(x + 1) dx = ∫ (u − 1)u^{1/2} du = ∫ (u^{3/2} − u^{1/2}) du。",
+        "= (2/5)u^{5/2} − (2/3)u^{3/2} + C。",
+        "換回 x：(2/5)(x + 1)^{5/2} − (2/3)(x + 1)^{3/2} + C。"
+      ],
+      "answer": "(2/5)(x + 1)^{5/2} − (2/3)(x + 1)^{3/2} + C",
+      "claim": "D((2/5)*(x+1)^(5/2)-(2/3)*(x+1)^(3/2)) == x*sqrt(x+1)"
+    },
+    {
+      "title": "令 u = √x",
+      "prompt": "∫ √x/(1 + x) dx",
+      "steps": [
+        "令 u = √x（x > 0），則 x = u²，dx = 2u du。",
+        "∫ √x/(1 + x) dx = ∫ u/(1 + u²) · 2u du = ∫ 2u²/(1 + u²) du。",
+        "分子寫成 2(1 + u²) − 2：2u²/(1 + u²) = 2 − 2/(1 + u²)。積分得 2u − 2 arctan u + C。",
+        "換回 x：2√x − 2 arctan √x + C。"
+      ],
+      "answer": "2√x − 2 arctan √x + C",
+      "claim": "D(2*sqrt(x)-2*atan(sqrt(x))) == sqrt(x)/(1+x)"
+    },
+    {
+      "title": "先拆項",
+      "prompt": "∫ 1/(1 + eˣ) dx",
+      "steps": [
+        "分子加一項減一項：1/(1 + eˣ) = (1 + eˣ − eˣ)/(1 + eˣ) = 1 − eˣ/(1 + eˣ)。",
+        "第二項：令 u = 1 + eˣ，du = eˣ dx，∫ eˣ/(1 + eˣ) dx = ln(1 + eˣ)。",
+        "答案：x − ln(1 + eˣ) + C。",
+        "同乘 e^{−x} 的做法得 −ln(1 + e^{−x}) + C，兩者只差一個常數（其實常數是 0：x − ln(1 + eˣ) = −ln(e^{−x}(1 + eˣ))）。"
+      ],
+      "answer": "x − ln(1 + eˣ) + C",
+      "claim": "D(x-ln(1+e^x)) == 1/(1+e^x) ;; x-ln(1+e^x) ~= -ln(1+e^(-x))"
+    }
+  ],
+  "pitfalls": [
+    "換完剩下 x 就直接把它當常數提出積分號。",
+    "令 u = √x 之後，dx 沒換成 2u du，只換了根號。",
+    "反解方向弄反：u = x + 1 寫成 x = u + 1。",
+    "定積分用反解時，上下限忘了換成 u 的值。"
+  ],
+  "checks": [
+    {
+      "ask": "∫ x(x − 2)⁵ dx，令 u = x − 2。剩下的 x 要寫成？",
+      "options": [
+        { "label": "u + 2", "correct": true },
+        { "label": "u − 2", "why": "u = x − 2，所以 x = u + 2。反解的方向弄反了。" },
+        { "label": "沒辦法，換完還有 x 就不能用換元", "why": "剩下的 x 用 u 表示就好：x = u + 2，積分變成 ∫ (u + 2)u⁵ du。" }
+      ]
+    },
+    {
+      "ask": "令 u = √x，dx 要換成？",
+      "options": [
+        { "label": "2u du", "correct": true },
+        { "label": "du/(2√x)", "why": "du = dx/(2√x)，所以 dx = 2√x du = 2u du。你把式子解反了，而且還留著 x。" },
+        { "label": "du", "why": "x = u²，dx = 2u du，不是 du。" }
+      ]
+    },
+    {
+      "ask": "∫ 1/(1 + eˣ) dx 最有效的第一步是？",
+      "options": [
+        { "label": "分子分母同乘 e^{−x}（或把 1 拆成 (1 + eˣ) − eˣ）", "correct": true },
+        { "label": "令 u = 1 + eˣ，直接得 ln|u|", "why": "du = eˣ dx，但分子是 1，配不起來，不能直接得 ln|u|。" },
+        { "label": "放棄，它沒有初等反導函數", "why": "它有：x − ln(1 + eˣ) + C。只是要先變形才看得出 u。" }
+      ]
+    },
+    {
+      "ask": "∫₀⁴ x/√(2x + 1) dx，令 u = 2x + 1。u 的上下限是？",
+      "options": [
+        { "label": "1 到 9", "correct": true },
+        { "label": "0 到 4", "why": "換成 u 之後上下限要換成 u 的值：2 · 0 + 1 = 1，2 · 4 + 1 = 9。" },
+        { "label": "1 到 3", "why": "那是令 u = √(2x + 1) 時的上下限。這裡 u = 2x + 1，沒有開根號。" }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": ["substitution", "u-sub", "radical", "exponential"],
+    "fine": ["u-sub-back-substitute", "u-sub-root-substitution", "u-sub-rewrite-first"]
+  },
+  "practice": [
+    { "id": "lec-06-q3d", "core": true, "trains": "u-sub-back-substitute" },
+    { "id": "hc-usub-001", "core": true, "trains": "u-sub-back-substitute", "note": "x³ dx 拆成 x² · x dx，x² 用 u 表示。" },
+    { "id": "hc-usub-008", "core": true, "trains": "u-sub-back-substitute" },
+    { "id": "int-019", "core": true, "trains": "u-sub-root-substitution" },
+    { "id": "exam-int-019", "core": true, "trains": "u-sub-root-substitution" },
+    { "id": "depth-int-010", "trains": "u-sub-root-substitution" },
+    { "id": "rel-adv-009", "challenge": true, "trains": "u-sub-back-substitute", "note": "挑戰：u = x² 之後還剩 u eᵘ，要接〈分部積分推導〉。" }
+  ],
+  "gaps": [
+    { "tag": "u-sub-rewrite-first", "count": 2, "note": "要先變形才看得出 u 的題，例如 ∫ dx/(1 + eˣ)、∫ dx/(eˣ + e^{−x})，R2–R3。" }
+  ]
+}

@@ -1,0 +1,230 @@
+{
+  "id": "cauchy-sequence",
+  "title": "Cauchy 數列",
+  "readMinutes": 12,
+  "totalMinutes": 40,
+  "prerequisites": [
+    "epsilon-n-proofs",
+    "monotone-convergence-proof",
+    "completeness-axiom"
+  ],
+  "next": [
+    "bolzano-weierstrass"
+  ],
+  "related": [
+    "basel-problem"
+  ],
+  "objectives": [
+    "寫得出 Cauchy 數列的定義，說得出它跟收斂定義的差別：不需要事先知道極限。",
+    "會用 Cauchy 判準證明收斂（不知道極限值時）與證明發散（調和級數）。",
+    "知道「相鄰兩項差 → 0」不夠，以及 Cauchy ⇒ 收斂要靠實數的完備性。"
+  ],
+  "visual": null,
+  "concept": [
+    {
+      "heading": "① 不知道終點，也能判斷會不會停",
+      "body": [
+        "用 ε-N 定義證明收斂，得先猜出極限 L。但很多數列（例如 1 + 1/4 + 1/9 + … + 1/n² 的部分和）收斂到哪裡並不好猜。Cauchy 的想法：不看項跟終點的距離，看項與項之間的距離。如果從某處開始，任何兩項都擠在一起，數列就停得下來。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 定義",
+      "body": [
+        "(aₙ) 叫做 Cauchy 數列，如果：",
+        "注意 m、n 是「任意兩個」都 ≥ N 的足標，不只是相鄰的兩項。"
+      ],
+      "tex": [
+        "\\forall\\varepsilon>0\\ \\exists N\\in\\mathbb{N}\\ \\forall m,n\\ge N:\\ |a_m-a_n|<\\varepsilon"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 在實數裡：收斂 ⇔ Cauchy",
+      "body": [
+        "收斂 ⇒ Cauchy：都靠近 L 的兩項，彼此也靠近（ε/2 分帳）。",
+        "Cauchy ⇒ 收斂：這個方向需要完備性。在有理數裡它是錯的：1, 1.4, 1.41, 1.414, …（√2 的小數截斷）第 n 項之後彼此相差不到 10⁻⁽ⁿ⁻¹⁾，是有理數裡的 Cauchy 數列，但在有理數裡沒有極限。所以 Cauchy 判準可以看成完備性的另一種說法。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 相鄰差 → 0 不夠",
+      "body": [
+        "Hₙ = 1 + 1/2 + … + 1/n 的相鄰差 1/(n + 1) → 0，但 Hₙ 發散（範例 2）。Cauchy 要求的是任意遠的兩項都靠近。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "證明：收斂 ⇒ Cauchy ⇒ 收斂",
+      "body": [
+        "收斂 ⇒ Cauchy：設 aₙ → L。給定 ε > 0，取 N 使 n ≥ N 時 |aₙ − L| < ε/2。則 m, n ≥ N 時 |a_m − aₙ| ≤ |a_m − L| + |L − aₙ| < ε。",
+        "Cauchy ⇒ 有界：對 ε = 1 取 N，n ≥ N 時 |aₙ − a_N| < 1，所以 |aₙ| < |a_N| + 1；再跟前面有限多項取最大值。",
+        "Cauchy ⇒ 收斂：數列有界，由〈Bolzano–Weierstrass〉有子數列 a_{n_k} → L。給定 ε > 0，取 N 使 m, n ≥ N 時 |a_m − aₙ| < ε/2；再取 k 夠大，使 n_k ≥ N 且 |a_{n_k} − L| < ε/2（n_k 嚴格遞增，所以 n_k ≥ k，k 夠大時 n_k ≥ N）。則 n ≥ N 時 |aₙ − L| ≤ |aₙ − a_{n_k}| + |a_{n_k} − L| < ε。"
+      ],
+      "collapsible": true
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "不知道極限也能證收斂",
+      "prompt": "sₙ = Σ_{k=1}^{n} 1/k²。證明 (sₙ) 是 Cauchy 數列，並對 ε = 0.01 給出 N。",
+      "steps": [
+        "設 m > n。s_m − sₙ = Σ_{k=n+1}^{m} 1/k²。k ≥ 2 時 1/k² < 1/(k(k − 1)) = 1/(k − 1) − 1/k。",
+        "望遠鏡相消：s_m − sₙ < Σ_{k=n+1}^{m} (1/(k − 1) − 1/k) = 1/n − 1/m < 1/n。",
+        "給定 ε > 0，取自然數 N > 1/ε。m > n ≥ N 時 |s_m − sₙ| < 1/n ≤ 1/N < ε（m = n 時差為 0）。所以 (sₙ) 是 Cauchy，因而收斂。",
+        "ε = 0.01：取 N = 101。我們證了收斂，卻完全沒用到極限值（它是 π²/6，要到〈Basel 問題〉才算得出來）。"
+      ],
+      "answer": "是 Cauchy 數列；ε = 0.01 取 N = 101",
+      "claim": "1/(k*(k-1)) == 1/(k-1) - 1/k ;; SUM(1/(k*(k-1)), 101) == 1/100 ;; SUM(1/k^2, 101) < 1/100"
+    },
+    {
+      "title": "調和級數不是 Cauchy",
+      "prompt": "證明 Hₙ = 1 + 1/2 + … + 1/n 不是 Cauchy 數列，所以發散。",
+      "problemId": "an-ca-001",
+      "steps": [
+        "H₂ₙ − Hₙ = 1/(n + 1) + 1/(n + 2) + … + 1/(2n)，共 n 項，每一項都 ≥ 1/(2n)，所以 H₂ₙ − Hₙ ≥ n · 1/(2n) = 1/2。",
+        "Cauchy 的否定：存在 ε > 0，對每個 N 都有 m, n ≥ N 使 |a_m − aₙ| ≥ ε。取 ε = 1/2；給任何 N，令 n = N、m = 2N，就有 |H_m − Hₙ| ≥ 1/2。",
+        "所以 (Hₙ) 不是 Cauchy，在實數裡不收斂。題庫的 an-ca-001 進一步算出 H₂ₙ − Hₙ → ln 2 ≈ 0.693，確實不趨近 0。"
+      ],
+      "answer": "不是 Cauchy；Hₙ 發散",
+      "claim": "1/(2n) <= 1/(n+1) ;; 1/(2n) <= 1/(2n-1)",
+      "note": "對照：相鄰差 H_{n+1} − Hₙ = 1/(n + 1) → 0，但這不夠。"
+    },
+    {
+      "title": "壓縮：每一步差距至少縮成 4/25",
+      "prompt": "a₁ = 0，aₙ₊₁ = 1/(3 − aₙ)。證明數列是 Cauchy 並求極限。",
+      "problemId": "an-ca-002",
+      "steps": [
+        "界（歸納）：a₁ = 0 ∈ [0, 1/2]。若 aₙ ∈ [0, 1/2]，則 3 − aₙ ∈ [5/2, 3]，aₙ₊₁ ∈ [1/3, 2/5] ⊂ [0, 1/2]。",
+        "差距：aₙ₊₁ − aₙ = 1/(3 − aₙ) − 1/(3 − aₙ₋₁) = (aₙ − aₙ₋₁)/((3 − aₙ)(3 − aₙ₋₁))，分母 ≥ (5/2)² = 25/4，所以 |aₙ₊₁ − aₙ| ≤ (4/25)|aₙ − aₙ₋₁|。",
+        "令 q = 4/25，則 |a_{k+1} − a_k| ≤ q^{k−1}|a₂ − a₁| = q^{k−1}/3。m > n 時 |a_m − aₙ| ≤ Σ_{k=n}^{m−1} q^{k−1}/3 < q^{n−1}/(3(1 − q))，n → ∞ 時 → 0，所以是 Cauchy，極限 L 存在。",
+        "L = 1/(3 − L) ⇒ L² − 3L + 1 = 0 ⇒ L = (3 ± √5)/2。L ∈ [0, 1/2]，所以 L = (3 − √5)/2 ≈ 0.38197。"
+      ],
+      "answer": "(3 − √5)/2",
+      "claim": "1/(3-(3-sqrt(5))/2) == (3-sqrt(5))/2 ;; 1/(3-1/2) == 2/5 ;; (5/2)^2 == 25/4"
+    }
+  ],
+  "pitfalls": [
+    "只檢查相鄰兩項 |aₙ₊₁ − aₙ| → 0。調和級數的部分和就是反例。",
+    "定義裡寫 ∀n ≥ N：|aₙ − a_N| < ε 也可以（差一個 2 倍），但寫成「對某些 m、n」就錯了。",
+    "以為 Cauchy ⇒ 收斂在任何數系都對。在有理數裡不成立，它等價於完備性。",
+    "用 Cauchy 判準證完收斂，還誤以為「知道極限值」。判準只保證存在。"
+  ],
+  "checks": [
+    {
+      "ask": "Cauchy 數列的定義是？",
+      "options": [
+        {
+          "label": "∀ε > 0 ∃N ∀m, n ≥ N：|a_m − aₙ| < ε",
+          "correct": true
+        },
+        {
+          "label": "∀ε > 0 ∃N ∀n ≥ N：|aₙ₊₁ − aₙ| < ε",
+          "why": "你只看相鄰兩項。Hₙ 滿足這一條卻發散；定義要求任意兩項。"
+        },
+        {
+          "label": "∃N ∀ε > 0 ∀m, n ≥ N：|a_m − aₙ| < ε",
+          "why": "N 放到 ε 前面，會逼出 N 之後全部相等。N 要能依賴 ε。"
+        }
+      ]
+    },
+    {
+      "ask": "為什麼說 Hₙ 不是 Cauchy？",
+      "options": [
+        {
+          "label": "對任何 N，H₂N − H_N ≥ 1/2",
+          "correct": true
+        },
+        {
+          "label": "因為 Hₙ₊₁ − Hₙ 不趨近 0",
+          "why": "Hₙ₊₁ − Hₙ = 1/(n + 1) 其實趨近 0。毛病出在相隔很遠的兩項。"
+        },
+        {
+          "label": "因為 Hₙ 沒有極限值的公式",
+          "why": "沒有公式不代表發散（Σ1/k² 的部分和也一樣是靠 Cauchy 證收斂）。要用 ε = 1/2 證出否定句。"
+        }
+      ]
+    },
+    {
+      "ask": "1, 1.4, 1.41, 1.414, … 在有理數 ℚ 裡是？",
+      "options": [
+        {
+          "label": "Cauchy 數列，但在 ℚ 裡不收斂",
+          "correct": true
+        },
+        {
+          "label": "收斂到 √2，所以在 ℚ 裡收斂",
+          "why": "√2 不是有理數。在 ℚ 裡談收斂，極限必須在 ℚ 裡。"
+        },
+        {
+          "label": "不是 Cauchy 數列，因為它不收斂",
+          "why": "第 n 項之後任兩項相差 < 10⁻⁽ⁿ⁻¹⁾，滿足 Cauchy 定義。缺的是 ℚ 的完備性。"
+        }
+      ]
+    },
+    {
+      "ask": "sₙ = Σ_{k≤n} 1/k²，用 |s_m − sₙ| < 1/n（m > n）。ε = 0.001 時可取哪個 N？",
+      "options": [
+        {
+          "label": "1001",
+          "correct": true
+        },
+        {
+          "label": "32",
+          "why": "你可能解成 1/n² < 0.001。我們得到的上界是 1/n，要 n > 1000。"
+        },
+        {
+          "label": "1000 以下任何數都行，因為級數收斂",
+          "why": "收斂只保證某個 N 存在，不代表小的 N 就夠；這裡的估計需要 N > 1/ε = 1000。"
+        }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": [
+      "cauchy-sequence",
+      "sequence",
+      "recursive-sequence"
+    ],
+    "fine": [
+      "cauchy-definition",
+      "cauchy-prove-convergence",
+      "cauchy-negation-divergence",
+      "cauchy-contraction"
+    ]
+  },
+  "practice": [
+    {
+      "id": "an-ca-001",
+      "core": true,
+      "trains": "cauchy-negation-divergence"
+    },
+    {
+      "id": "an-ca-002",
+      "core": true,
+      "trains": "cauchy-contraction"
+    },
+    {
+      "id": "an-ca-003",
+      "trains": "cauchy-contraction"
+    },
+    {
+      "id": "lec-12-q4a",
+      "challenge": true,
+      "trains": "cauchy-negation-divergence",
+      "note": "挑戰：白話證明 H_{2^k} ≥ 1 + k/2，是同一個「每段至少 1/2」的估計。"
+    }
+  ],
+  "gaps": [
+    {
+      "tag": "cauchy-definition",
+      "count": 2,
+      "note": "是非題：給數列判斷是否為 Cauchy（含「相鄰差 → 0 但不是 Cauchy」的陷阱）。"
+    },
+    {
+      "tag": "cauchy-prove-convergence",
+      "count": 2,
+      "note": "給 m > n 的上界（如 1/n、1/2ⁿ），對指定 ε 求 N；目前沒有這種題。"
+    }
+  ]
+}

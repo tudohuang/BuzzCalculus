@@ -1,0 +1,220 @@
+{
+  "id": "volume-shell",
+  "title": "圓殼法",
+  "readMinutes": 9,
+  "totalMinutes": 30,
+  "prerequisites": [
+    "volume-washer"
+  ],
+  "next": [
+    "volume-choose-method"
+  ],
+  "related": [
+    "volume-disk"
+  ],
+  "objectives": [
+    "知道圓殼法的切法：條子平行於旋轉軸，每一條掃出一個薄圓筒。",
+    "寫出 V = ∫ 2π（半徑）（高）dx，半徑是條子到軸的距離。",
+    "旋轉軸是 x = k 時正確寫出半徑；繞 x 軸時改成對 y 積分。"
+  ],
+  "visual": "y = 2x − x² 與 x 軸之間的區域，取一根位在 x 的細直條，繞 y 軸轉一圈掃出一個薄圓筒。接著把圓筒沿一條直線剪開攤平，變成長 2πx、高 2x − x²、厚 dx 的薄板。拖動 x，圓筒由內往外一層層疊滿整個立體。",
+  "concept": [
+    {
+      "heading": "① 換一個方向切",
+      "body": [
+        "墊圈法的條子垂直於旋轉軸。圓殼法反過來：條子平行於旋轉軸。繞 y 軸時取鉛直的細直條，位置在 x、寬 dx、高 h(x)。它繞 y 軸轉一圈，掃出一個薄薄的圓筒（圓殼），半徑 x。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 一個圓殼的體積",
+      "body": [
+        "把圓殼沿縱向剪開攤平，近似一塊薄板：長是圓周 2πx，高 h(x)，厚 dx。所以體積約 2πx · h(x) · dx。把所有圓殼加起來：V = ∫ₐᵇ 2πx h(x) dx。",
+        "這是直觀，不是證明：攤平時內外圈周長其實差一點點。下面的可折疊段落說明這個差別為什麼不影響積分。"
+      ],
+      "tex": [
+        "V=\\int_a^b 2\\pi\\,(\\text{半徑})(\\text{高})\\,dx=\\int_a^b 2\\pi x\\,h(x)\\,dx"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 半徑與高怎麼讀",
+      "body": [
+        "半徑 = 條子到旋轉軸的距離。繞 y 軸是 x（x ≥ 0）；繞 x = k 是 |x − k|，例如繞 x = −1 時是 x + 1。高 = 條子的長度 = 上面的曲線減下面的曲線，跟軸在哪裡無關。",
+        "繞 x 軸（或水平線）用圓殼時，條子要水平，對 y 積分：V = ∫ 2π y · （右減左）dy。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 為什麼要多學一種",
+      "body": [
+        "繞 y 軸用墊圈法，得把邊界解成 x = g(y)；y = 2x − x² 要解出 x = 1 ± √(1 − y)，很麻煩。圓殼法直接用 y = f(x)，不必解。下一課〈選墊圈還是圓殼〉專門講怎麼挑。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "⑤ 圓殼的精確體積",
+      "body": [
+        "內半徑 x、外半徑 x + Δx、高 h 的圓筒，體積是 π(x + Δx)²h − πx²h = 2πx h Δx + πh(Δx)²。多出來的 πh(Δx)² 是 Δx 的二次方，n 個加起來約 n · (Δx)² = (b − a)Δx → 0。所以極限只剩 Σ 2πx h Δx，也就是上面的積分。（嚴格來說還要處理 h 在一個小區間裡會變，用 h 的最大值、最小值把和夾住即可，跟 Riemann 和的論證一樣。）"
+      ],
+      "collapsible": true
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "繞 y 軸",
+      "prompt": "區域由 y = 2x − x² 與 x 軸圍成，繞 y 軸旋轉，求體積。",
+      "problemId": "lec-09-q2b",
+      "steps": [
+        "區域 0 ≤ x ≤ 2。位在 x 的直條：半徑 x，高 2x − x²。",
+        "V = ∫₀² 2πx(2x − x²) dx = 2π∫₀² (2x² − x³) dx = 2π(16/3 − 4) = 2π · 4/3 = 8π/3。"
+      ],
+      "answer": "8π/3",
+      "claim": "INT(2*pi*x*(2x-x^2), 0, 2) == 8*pi/3"
+    },
+    {
+      "title": "繞 x = −1",
+      "prompt": "同一個區域繞直線 x = −1 旋轉，求體積。",
+      "problemId": "lec-09-q2c",
+      "steps": [
+        "高不變，還是 2x − x²。半徑變成到 x = −1 的距離：x − (−1) = x + 1。",
+        "V = ∫₀² 2π(x + 1)(2x − x²) dx = 2π[∫₀² (2x² − x³) dx + ∫₀² (2x − x²) dx] = 2π(4/3 + 4/3) = 16π/3。"
+      ],
+      "answer": "16π/3",
+      "claim": "INT(2*pi*(x+1)*(2x-x^2), 0, 2) == 16*pi/3"
+    },
+    {
+      "title": "繞 x 軸，對 y 積分",
+      "prompt": "y = √x（0 ≤ x ≤ 4）與 x 軸之間的區域繞 x 軸旋轉，用圓殼法求體積。",
+      "steps": [
+        "繞 x 軸，條子要水平。y 從 0 到 2；高度 y 的橫條從 x = y² 到 x = 4，長 4 − y²。",
+        "半徑是橫條到 x 軸的距離 y。V = ∫₀² 2πy(4 − y²) dy = 2π(8 − 4) = 8π。",
+        "對照〈圓盤法〉的範例 1：∫₀⁴ πx dx = 8π，兩種方法答案一樣。"
+      ],
+      "answer": "8π",
+      "claim": "INT(2*pi*y*(4-y^2), 0, 2) == 8*pi"
+    }
+  ],
+  "pitfalls": [
+    "把圓殼的半徑和高寫反。",
+    "繞 x = k 時半徑還寫 x。",
+    "公式裡漏了 2π 或漏了半徑，只積高度。",
+    "條子方向切錯：圓殼法的條子要平行於旋轉軸。"
+  ],
+  "checks": [
+    {
+      "ask": "圓殼法的體積元素是？",
+      "options": [
+        {
+          "label": "2π · 半徑 · 高 · dx",
+          "correct": true
+        },
+        {
+          "label": "π · 半徑² · dx",
+          "why": "這是圓盤的體積元素：條子垂直於軸時才是圓盤。"
+        },
+        {
+          "label": "2π · 高 · dx",
+          "why": "漏了半徑：圓殼攤平後的長度是圓周 2π × 半徑。"
+        }
+      ]
+    },
+    {
+      "ask": "y = f(x) ≥ 0（1 ≤ x ≤ 3）下方的區域繞 x = −2 旋轉，圓殼的半徑是？",
+      "options": [
+        {
+          "label": "x + 2",
+          "correct": true
+        },
+        {
+          "label": "x",
+          "why": "x 是到 y 軸的距離；軸在 x = −2，要再加 2。"
+        },
+        {
+          "label": "x − 2",
+          "why": "到 x = −2 的距離是 x − (−2) = x + 2，符號弄反了。"
+        }
+      ]
+    },
+    {
+      "ask": "y = x²（0 ≤ x ≤ 1）與 x 軸之間的區域繞 y 軸，用圓殼法：",
+      "options": [
+        {
+          "label": "2π∫₀¹ x · x² dx = π/2",
+          "correct": true
+        },
+        {
+          "label": "2π∫₀¹ x² dx = 2π/3",
+          "why": "只積了高度 x²，漏了半徑 x。"
+        },
+        {
+          "label": "π∫₀¹ x⁴ dx = π/5",
+          "why": "這是繞 x 軸的圓盤公式，旋轉軸弄錯了。"
+        }
+      ]
+    },
+    {
+      "ask": "用圓殼法繞 y 軸時，細條該怎麼切？",
+      "options": [
+        {
+          "label": "鉛直的直條，對 x 積分",
+          "correct": true
+        },
+        {
+          "label": "水平的橫條，對 y 積分",
+          "why": "垂直於軸的橫條轉出來是圓盤或墊圈，那是另一種方法。"
+        },
+        {
+          "label": "怎麼切都可以，公式一樣",
+          "why": "切的方向決定了薄片的形狀：平行於軸才是圓殼，公式才是 2π r h。"
+        }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": [
+      "volume",
+      "solid-of-revolution",
+      "shell-method"
+    ],
+    "fine": [
+      "shell-radius-height",
+      "shell-shifted-axis",
+      "shell-dy"
+    ]
+  },
+  "practice": [
+    {
+      "id": "lec-09-m4",
+      "core": true,
+      "trains": "shell-radius-height"
+    },
+    {
+      "id": "cx-rev-005",
+      "core": true,
+      "trains": "shell-radius-height"
+    },
+    {
+      "id": "lec-09-q2b",
+      "core": true,
+      "trains": "shell-radius-height"
+    },
+    {
+      "id": "lec-09-q2c",
+      "core": true,
+      "trains": "shell-shifted-axis"
+    }
+  ],
+  "gaps": [
+    {
+      "tag": "shell-dy",
+      "count": 2,
+      "note": "R3：繞 x 軸、用水平條對 y 積分的圓殼題。"
+    },
+    {
+      "tag": "shell-shifted-axis",
+      "count": 2,
+      "note": "R3：繞 x = k（k 在區域右側，半徑是 k − x）的圓殼題。"
+    }
+  ]
+}

@@ -1,0 +1,157 @@
+{
+  "id": "derivative-log",
+  "title": "對數函數微分",
+  "readMinutes": 9,
+  "totalMinutes": 35,
+  "prerequisites": ["derivative-exp", "exp-log", "inverse-function", "limit-exp-log-standard"],
+  "next": ["product-rule"],
+  "related": ["inverse-trig-derivative", "chain-rule", "logarithmic-differentiation"],
+  "objectives": [
+    "用 (ln x)′ = 1/x 與 (logₐ x)′ = 1/(x ln a) 微分並求切線。",
+    "先用對數律把 ln(x³)、ln(5x)、log₂(x³) 拆開再微分。",
+    "知道 (ln|x|)′ = 1/x 對所有 x ≠ 0 成立。"
+  ],
+  "visual": "y = eˣ 與 y = ln x 對稱於直線 y = x。在 eˣ 上取一點 (a, eᵃ) 畫切線，同時在 ln x 上畫它的鏡像點 (eᵃ, a) 與鏡像切線。拖動 a，左邊顯示斜率 eᵃ，右邊顯示斜率 1/eᵃ，兩者乘積一直是 1。",
+  "concept": [
+    {
+      "heading": "① 鏡子裡的斜率（直覺，不是證明）",
+      "body": [
+        "ln x 是 eˣ 的反函數，兩個圖形對稱於 y = x（〈反函數〉）。在 eˣ 上的點 (a, eᵃ)，切線斜率是 eᵃ。",
+        "對 y = x 翻過去，點變成 (eᵃ, a)，直線的水平變化和鉛直變化對調，斜率變成倒數 1/eᵃ。這個點的 x 座標正是 eᵃ，所以 ln x 在 x 的斜率是 1/x。",
+        "這個論證先假設了 ln x 可微；嚴格的算法在下面，用的是導數定義。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 公式",
+      "body": [
+        "ln x 只在 x > 0 有定義，所以這個公式也是 x > 0。x = 1 時斜率 1；x = 100 時斜率 0.01：ln x 一直往上，但越爬越慢。",
+        "其他底數用換底：logₐ x = ln x / ln a，ln a 是常數，所以導數是 1/(x ln a)。"
+      ],
+      "tex": ["(\\ln x)'=\\frac1x\\quad(x>0),\\qquad (\\log_a x)'=\\frac{1}{x\\ln a}"],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 先拆再微",
+      "body": [
+        "對數律可以把乘、除、次方變成加、減、乘：ln(x³) = 3 ln x，導數 3/x。ln(5x) = ln 5 + ln x，ln 5 是常數，所以導數是 1/x，跟 ln x 一樣：圖形只是整條往上平移 ln 5。",
+        "ln(x² + 1) 拆不開（ln 不能拆加法），要用〈連鎖律 I：兩層〉。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "④ ln|x|：負數那一半",
+      "body": [
+        "ln|x| 在 x < 0 也有定義，圖形是 ln x 對 y 軸的鏡像。左右鏡射會把斜率變號，而 x 本身也變號，結果公式不變：對所有 x ≠ 0，(ln|x|)′ = 1/x。積分時會再用到它。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "用定義證明 (ln x)′ = 1/x 與 (ln|x|)′ = 1/x",
+      "body": [
+        "固定 x > 0。差商：(ln(x + h) − ln x)/h = ln((x + h)/x)/h = ln(1 + h/x)/h。",
+        "令 u = h/x：h → 0 時 u → 0，h ≠ 0 時 u ≠ 0，而且 h = xu。差商 = ln(1 + u)/(xu) = (1/x) · ln(1 + u)/u。",
+        "ln(1 + u)/u → 1（〈指數與對數標準極限〉），所以極限是 1/x。",
+        "x < 0 時，ln|x| = ln(−x)。記 v = −x > 0，差商 (ln(−x − h) − ln(−x))/h = −(ln(v + (−h)) − ln v)/(−h)。h → 0 時 −h → 0，後面那個分式是 ln 在 v 的差商，→ 1/v。所以極限是 −1/v = −1/(−x) = 1/x。"
+      ],
+      "collapsible": true
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "切線的 y 截距",
+      "prompt": "y = ln x 在 x = e² 的切線，y 截距是多少？",
+      "problemId": "db-tan-003",
+      "steps": [
+        "斜率：1/x 在 x = e² 是 1/e²。",
+        "切點：ln(e²) = 2，切點是 (e², 2)。",
+        "切線：y − 2 = (1/e²)(x − e²) = x/e² − 1，所以 y = x/e² + 1。",
+        "令 x = 0，y 截距是 1。"
+      ],
+      "answer": "1",
+      "claim": "D(ln(x), e^2) == e^(-2) ;; SUB(ln(x) - (x/e^2+1), e^2) == 0"
+    },
+    {
+      "title": "先用對數律",
+      "prompt": "y = log₂(x³)（x > 0），求 y′。",
+      "problemId": "lec-03-q2d",
+      "steps": [
+        "對數律：log₂(x³) = 3 log₂ x。",
+        "(log₂ x)′ = 1/(x ln 2)。",
+        "y′ = 3/(x ln 2)。"
+      ],
+      "answer": "3/(x ln 2)",
+      "claim": "D(ln(x^3)/ln(2)) == 3/(x*ln(2))"
+    },
+    {
+      "title": "ln|x| 在負數",
+      "prompt": "y = ln|x|，求 x = −2 處的切線斜率。",
+      "steps": [
+        "x ≠ 0 時 (ln|x|)′ = 1/x。",
+        "x = −2：1/(−2) = −1/2。",
+        "合理性：x < 0 那一半是 ln x 的左右鏡像，x 往右走時 |x| 變小，函數值下降，斜率應該是負的。"
+      ],
+      "answer": "−1/2",
+      "claim": "D(ln(abs(x)), -2) == -1/2"
+    }
+  ],
+  "pitfalls": [
+    "(ln 5)′ 寫成 1/5。ln 5 是常數，導數是 0。",
+    "ln(x + 1) 拆成 ln x + ln 1。對數不能拆加法。",
+    "(log₂ x)′ 寫成 1/x，漏了 ln 2。",
+    "(ln(5x))′ 寫成 1/(5x)，或 5/x：拆成 ln 5 + ln x 就知道是 1/x。",
+    "在 x ≤ 0 的地方用 ln x 的導數，忘了 ln x 只在 x > 0 有定義。"
+  ],
+  "checks": [
+    {
+      "ask": "d/dx ln(x⁴)（x > 0）是？",
+      "options": [
+        { "label": "4/x", "correct": true },
+        { "label": "1/x⁴", "why": "1/(裡面) 只對了一半：ln(x⁴) = 4 ln x，導數是 4/x。" },
+        { "label": "4 ln x", "why": "4 ln x 是 ln(x⁴) 改寫後的樣子，還沒微分。" }
+      ]
+    },
+    {
+      "ask": "d/dx ln(7x) 是？",
+      "options": [
+        { "label": "1/x", "correct": true },
+        { "label": "1/(7x)", "why": "ln(7x) = ln 7 + ln x，ln 7 是常數，導數只剩 1/x。" },
+        { "label": "7/x", "why": "7 是乘在裡面，不是次方；拆開後是 ln 7 + ln x，不是 7 ln x。" }
+      ]
+    },
+    {
+      "ask": "d/dx log₁₀ x 是？",
+      "options": [
+        { "label": "1/(x ln 10)", "correct": true },
+        { "label": "1/x", "why": "1/x 是 ln x（底數 e）的導數；底數 10 要多除 ln 10。" },
+        { "label": "ln 10/x", "why": "換底是 ln x / ln 10，ln 10 在分母，不是乘上去。" }
+      ]
+    },
+    {
+      "ask": "y = ln|x| 在 x = −4 的切線斜率是？",
+      "options": [
+        { "label": "−1/4", "correct": true },
+        { "label": "1/4", "why": "(ln|x|)′ = 1/x，不是 1/|x|。x = −4 時是 −1/4；左半邊往右走是下降的。" },
+        { "label": "不存在", "why": "ln|x| 在 x = −4 有定義而且可微；只有 x = 0 不行。" }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": ["log", "basic-derivative"],
+    "fine": ["ln-deriv-basic", "ln-deriv-base-a", "ln-deriv-simplify-first", "ln-deriv-abs"]
+  },
+  "practice": [
+    { "id": "rel-basic-011", "core": true, "trains": "ln-deriv-basic" },
+    { "id": "db-tan-003", "core": true, "trains": "ln-deriv-basic" },
+    { "id": "lec-03-q2d", "core": true, "trains": "ln-deriv-base-a" },
+    { "id": "dd-def-005", "core": true, "trains": "ln-deriv-basic" },
+    { "id": "ch-trap-002", "core": true, "trains": "ln-deriv-simplify-first", "note": "ln 和 e 互相抵消，先化簡就不用連鎖律。" },
+    { "id": "lx-der-003", "trains": "ln-deriv-basic" },
+    { "id": "db-def-006", "trains": "ln-deriv-basic" }
+  ],
+  "gaps": [
+    { "tag": "ln-deriv-simplify-first", "count": 3, "note": "R1–R2：ln(x⁵)、ln(3x)、ln(√x / x²) 這種先用對數律拆開再微分的題。" },
+    { "tag": "ln-deriv-abs", "count": 2, "note": "R2：ln|x| 在負數處的導數或切線。" },
+    { "tag": "ln-deriv-base-a", "count": 1, "note": "R1：log₁₀ x 或 log₃ x 在某點的導數。" }
+  ]
+}

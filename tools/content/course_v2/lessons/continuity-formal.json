@@ -1,0 +1,149 @@
+{
+  "id": "continuity-formal",
+  "title": "連續的正式定義",
+  "readMinutes": 10,
+  "totalMinutes": 35,
+  "prerequisites": ["continuity-definition", "epsilon-delta-definition"],
+  "next": ["sequential-criterion"],
+  "related": ["epsilon-delta-quadratic", "negation", "uniform-continuity"],
+  "objectives": [
+    "寫得出 f 在 a 連續的 ε-δ 定義，量詞順序是 ∀ε ∃δ ∀x。",
+    "會對具體函數找出 δ，並說明這個 δ 為什麼有效。",
+    "會寫出「不連續」的否定形式，並用它證明階梯函數在跳躍點不連續。"
+  ],
+  "visual": "y = f(x) 的圖上以 (a, f(a)) 為中心畫水平帶 f(a) ± ε 與垂直帶 a ± δ。ε 用滑桿縮小，δ 由學生拖動；垂直帶內的曲線只要有一段跑出水平帶就變紅。換成階梯函數時，ε 拉到 1/2 以下，δ 再小都有紅色段。",
+  "concept": [
+    {
+      "heading": "① 從「lim f = f(a)」到不用極限的說法",
+      "body": [
+        "主線裡說 f 在 a 連續，是指 lim_{x→a} f(x) = f(a)：靠近 a 時，函數值靠近 a 這一點自己的值。",
+        "把「靠近」換成 ε 與 δ，就是正式定義。跟極限的 ε-δ 定義比，有兩個差別：目標值是 f(a) 本身；而且不用排除 x = a，因為 x = a 時 |f(x) − f(a)| = 0，自動成立。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 定義",
+      "body": [
+        "設 f 定義在 D 上，a ∈ D。f 在 a 連續，是指：對每一個 ε > 0，都存在 δ > 0，使得對所有 x ∈ D，只要 |x − a| < δ，就有 |f(x) − f(a)| < ε。f 在 D 的每一點都連續，就說 f 在 D 上連續。",
+        "讀法：對手先出 ε（容許的誤差），你再回答 δ（x 可以離 a 多遠）。δ 可以依賴 ε，也可以依賴 a；這一點在〈一致連續〉會變成關鍵。"
+      ],
+      "tex": ["\\forall\\varepsilon>0\\ \\exists\\delta>0\\ \\forall x\\in D:\\ |x-a|<\\delta\\Rightarrow|f(x)-f(a)|<\\varepsilon"],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 不連續寫成什麼",
+      "body": [
+        "把定義整句否定（〈否定〉）：存在某個 ε > 0，使得對每一個 δ > 0，都找得到 x ∈ D，|x − a| < δ 但 |f(x) − f(a)| ≥ ε。",
+        "人話：有一個固定的誤差，不管把 x 限制得多靠近 a，總有點的函數值偏離超過它。證明不連續就是要拿出這個 ε，並對每個 δ 指出那個 x。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "細節：孤立點與極限版本的關係",
+      "body": [
+        "若 a 是 D 的孤立點（某個 δ 內除了 a 沒有別的 D 的點），定義自動成立，f 在 a 連續；這時 lim_{x→a} f(x) 根本沒有意義。所以「連續 ⇔ lim f = f(a)」只在 a 是 D 的極限點時才是等價的說法，ε-δ 版本是更一般的定義。例如定義在 ℕ 上的任何數列，看成函數時處處連續。"
+      ],
+      "collapsible": true
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "線性函數：δ = ε/3",
+      "prompt": "證明 f(x) = 3x − 1 在 a = 2 連續。",
+      "steps": [
+        "目標 |f(x) − f(2)| < ε。先化簡：|(3x − 1) − 5| = |3x − 6| = 3|x − 2|。",
+        "要 3|x − 2| < ε，只要 |x − 2| < ε/3。所以取 δ = ε/3。",
+        "驗證：給定 ε > 0，取 δ = ε/3 > 0。若 |x − 2| < δ，則 |f(x) − 5| = 3|x − 2| < 3δ = ε。",
+        "具體一次：ε = 0.06 時 δ = 0.02。"
+      ],
+      "answer": "δ = ε/3 有效，所以 f 在 2 連續",
+      "claim": "abs((3x-1)-5) == 3*abs(x-2) ;; 0.06/3 == 0.02"
+    },
+    {
+      "title": "二次函數：先限制 δ ≤ 1",
+      "prompt": "證明 f(x) = x² 在 a = 3 連續，並在 ε = 0.25 時給出一個 δ。",
+      "steps": [
+        "|x² − 9| = |x − 3| · |x + 3|。|x + 3| 會隨 x 變，先把它壓住。",
+        "先要求 δ ≤ 1。則 |x − 3| < 1 推出 2 < x < 4，所以 |x + 3| < 7。",
+        "這時 |x² − 9| < 7|x − 3|。要它 < ε，只要 |x − 3| < ε/7。",
+        "兩個要求同時滿足：δ = min(1, ε/7)。驗證：|x − 3| < δ ⇒ |x + 3| < 7 且 |x² − 9| < 7δ ≤ ε。",
+        "ε = 0.25：ε/7 ≈ 0.0357 < 1，所以 δ = 0.25/7 ≈ 0.0357。"
+      ],
+      "answer": "δ = min(1, ε/7)；ε = 0.25 時 δ = 1/28 ≈ 0.0357",
+      "note": "min(1, ε/k) 的寫法在〈二次函數的 ε-δ〉有完整練習。",
+      "claim": "abs(x^2-9) == abs(x-3)*abs(x+3) ;; 0.25/7 < 1 ;; 7*(0.25/7) <= 0.25"
+    },
+    {
+      "title": "階梯函數在跳躍點不連續",
+      "prompt": "H(x) = 0（x < 0），H(x) = 1（x ≥ 0）。證明 H 在 0 不連續。",
+      "steps": [
+        "要證否定形式：找一個 ε，對每個 δ 都找得到壞點。取 ε = 1/2。",
+        "給定任意 δ > 0，取 x = −δ/2。則 |x − 0| = δ/2 < δ。",
+        "但 |H(x) − H(0)| = |0 − 1| = 1 ≥ 1/2。",
+        "每個 δ 都失敗，所以 H 在 0 不連續。"
+      ],
+      "answer": "ε = 1/2 時沒有任何 δ 有效",
+      "note": "任何 ε ≤ 1 都可以當見證；ε > 1 時反而每個 δ 都行，所以 ε 要挑小的。",
+      "claim": null,
+      "claimNote": "否定形式的證明（∃ε ∀δ ∃x），沒有可數值檢查的等式；唯一的數字 |0 − 1| = 1 ≥ 1/2 是直接算。"
+    }
+  ],
+  "pitfalls": [
+    "先選 δ 再讓 ε 任意：那是在說「存在一個 δ 對所有 ε 都行」，幾乎只有常數函數做得到。",
+    "δ 寫成依賴 x 的式子（例如 δ = ε/|x + 3|）。δ 只能依賴 ε 與 a，x 是之後才拿來檢驗的。",
+    "證不連續時只舉一個 δ 失敗。要對每一個 δ 都找到壞點。",
+    "忘了 x 必須在定義域 D 裡；D 不同，同一個式子可能連續與否不同。"
+  ],
+  "checks": [
+    {
+      "ask": "f 在 a 連續的定義，量詞順序是哪一個？",
+      "options": [
+        { "label": "∀ε > 0 ∃δ > 0 ∀x ∈ D：|x − a| < δ ⇒ |f(x) − f(a)| < ε", "correct": true },
+        { "label": "∃δ > 0 ∀ε > 0 ∀x ∈ D：|x − a| < δ ⇒ |f(x) − f(a)| < ε", "why": "你把 δ 放到 ε 前面，變成同一個 δ 要應付所有 ε，這會逼 f 在 a 附近是常數。" },
+        { "label": "∀ε > 0 ∀δ > 0 ∃x ∈ D：|x − a| < δ ⇒ |f(x) − f(a)| < ε", "why": "δ 應該是你找的（∃），而且條件要對所有 x 成立；這樣寫只要求找到一個好點，x = a 就永遠滿足。" }
+      ]
+    },
+    {
+      "ask": "證明 f(x) = 3x − 1 在 2 連續，ε = 0.06 時最大可以取的 δ 是？",
+      "options": [
+        { "label": "0.02", "correct": true },
+        { "label": "0.18", "why": "你把 ε 乘以 3。|f(x) − 5| = 3|x − 2|，所以是 δ = ε/3。" },
+        { "label": "0.06", "why": "你直接讓 δ = ε，忘了斜率 3 會把 x 的誤差放大三倍。" }
+      ]
+    },
+    {
+      "ask": "證 x² 在 3 連續時，為什麼先限制 δ ≤ 1？",
+      "options": [
+        { "label": "為了讓 |x + 3| 有固定上界 7，才能解出 δ", "correct": true },
+        { "label": "因為 ε 一定小於 1", "why": "ε 可以是任何正數。限制 δ ≤ 1 跟 ε 無關，是為了壓住 |x + 3|。" },
+        { "label": "因為定義要求 δ < 1", "why": "定義只要求 δ > 0。≤ 1 是我們自己加的方便條件，換成 ≤ 2 也行，只是上界變成 8。" }
+      ]
+    },
+    {
+      "ask": "要證 f 在 a 不連續，需要做到哪一件事？",
+      "options": [
+        { "label": "找一個 ε > 0，使每個 δ > 0 都有 x 滿足 |x − a| < δ 且 |f(x) − f(a)| ≥ ε", "correct": true },
+        { "label": "對每個 ε > 0，找一個 δ 使條件失敗", "why": "你只否定了一半。ε 很大時條件通常成立，所以要「存在」一個 ε，而且對「每個」δ 都失敗。" },
+        { "label": "找一個 x 使 f(x) ≠ f(a)", "why": "連續函數也有 f(x) ≠ f(a) 的點，例如 x²。重點是靠多近都還差到 ε 以上。" }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": ["continuity", "epsilon-delta", "epsilon-game"],
+    "fine": ["continuity-formal-find-delta", "continuity-formal-bound-factor", "continuity-formal-negation", "continuity-formal-quantifier-order"]
+  },
+  "practice": [
+    { "id": "ep-001", "core": true, "trains": "continuity-formal-find-delta" },
+    { "id": "ep-010", "core": true, "trains": "continuity-formal-bound-factor" },
+    { "id": "lx-eps-001", "core": true, "trains": "continuity-formal-find-delta" },
+    { "id": "px-eps-001", "core": true, "trains": "continuity-formal-find-delta" },
+    { "id": "px-eps-002", "core": true, "trains": "continuity-formal-bound-factor" },
+    { "id": "lx-eps-002", "trains": "continuity-formal-bound-factor" },
+    { "id": "ep-013", "trains": "continuity-formal-find-delta" },
+    { "id": "ep-006", "challenge": true, "trains": "continuity-formal-bound-factor", "note": "挑戰：√x 在 4，左右兩邊允許的 δ 不一樣大，要取小的那邊。" }
+  ],
+  "gaps": [
+    { "tag": "continuity-formal-negation", "count": 3, "note": "證明不連續（階梯、符號函數、Dirichlet 型）的白話證明題，要求寫出 ε 與每個 δ 的壞點。" },
+    { "tag": "continuity-formal-quantifier-order", "count": 2, "note": "判斷量詞順序寫錯的定義各代表什麼（選擇或是非）。" }
+  ]
+}

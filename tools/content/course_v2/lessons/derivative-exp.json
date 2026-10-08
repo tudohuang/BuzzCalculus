@@ -1,0 +1,152 @@
+{
+  "id": "derivative-exp",
+  "title": "指數函數微分",
+  "readMinutes": 8,
+  "totalMinutes": 30,
+  "prerequisites": ["derivative-power-rules", "exp-log", "limit-exp-log-standard"],
+  "next": ["derivative-log"],
+  "related": ["chain-rule", "logarithmic-differentiation"],
+  "objectives": [
+    "說出為什麼指數函數的斜率跟自己的高度成正比。",
+    "用 (eˣ)′ = eˣ 與 (aˣ)′ = aˣ ln a 微分並求切線。",
+    "分清楚 aˣ（指數）和 xᵃ（冪次）用的是不同公式。"
+  ],
+  "visual": "同一張圖上畫 y = 2ˣ、y = eˣ、y = 3ˣ，各自在 x = 0 畫切線，斜率讀數分別約 0.693、1、1.099。拖動 x 的滑桿，三條曲線上的切線跟著走，旁邊顯示「斜率 ÷ 高度」，三個比值都固定不動。",
+  "concept": [
+    {
+      "heading": "① 斜率跟高度成正比",
+      "body": [
+        "用定義算 f(x) = aˣ（a > 0）：a^{x+h} = aˣ · aʰ，所以差商是 aˣ · (aʰ − 1)/h。",
+        "aˣ 跟 h 無關，可以提出來；剩下的 (aʰ − 1)/h 跟 x 無關。所以 (aˣ)′ = aˣ · k，k 是 (aʰ − 1)/h 在 h → 0 的極限，一個只跟底數 a 有關的常數。",
+        "圖形的意思：曲線越高，斜率越大，而且「斜率 ÷ 高度」處處相同。x = 0 時高度是 1，所以 k 就是曲線在 x = 0 的斜率。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② e 是讓 k 剛好等於 1 的底數",
+      "body": [
+        "數值上，h = 0.0001 時 (2ʰ − 1)/h ≈ 0.6932、(3ʰ − 1)/h ≈ 1.0987。底數從 2 到 3，k 從比 1 小變得比 1 大，中間有一個底數讓 k = 1，就是 e ≈ 2.718：lim_{h→0} (eʰ − 1)/h = 1（〈指數與對數標準極限〉）。",
+        "所以 eˣ 的導數就是它自己：每一點的斜率等於那一點的高度。這是微積分偏愛 e 的原因。"
+      ],
+      "tex": ["(e^x)'=e^x"],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 一般底數",
+      "body": [
+        "對一般的 a > 0，k = ln a（證明在下面）。2 的 k ≈ 0.6932 正是 ln 2。",
+        "0 < a < 1 時 ln a < 0，斜率是負的，aˣ 遞減，跟 (1/2)ˣ 的圖一致。a = 1 時 1ˣ = 1 是常數，公式給 1 · ln 1 = 0，也對。"
+      ],
+      "tex": ["(a^x)'=a^x\\ln a"],
+      "collapsible": false
+    },
+    {
+      "heading": "④ aˣ 不是 xᵃ",
+      "body": [
+        "x² 是冪次（底數在變），用冪次法則得 2x；2ˣ 是指數（次方在變），得 2ˣ ln 2。兩個混用是最常見的錯。底數和次方都在變的 xˣ 兩個公式都不能用，要等〈對數微分〉。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "(aʰ − 1)/h → ln a 的證明",
+      "body": [
+        "a = 1 時兩邊都是 0。以下設 a ≠ 1，所以 ln a ≠ 0。",
+        "aʰ = e^{h ln a}。令 u = h ln a：h → 0 時 u → 0，而且 h ≠ 0 時 u ≠ 0。",
+        "(aʰ − 1)/h = (eᵘ − 1)/(u/ln a) = ln a · (eᵘ − 1)/u。",
+        "u → 0 時 (eᵘ − 1)/u → 1（〈指數與對數標準極限〉），所以極限是 ln a。"
+      ],
+      "collapsible": true
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "eˣ 與多項式混在一起",
+      "prompt": "f(x) = 3eˣ − x²，求 f′(x) 與 f′(0)。",
+      "steps": [
+        "逐項：(3eˣ)′ = 3eˣ（常數倍留著），(x²)′ = 2x。",
+        "f′(x) = 3eˣ − 2x。",
+        "f′(0) = 3 · 1 − 0 = 3。"
+      ],
+      "answer": "f′(x) = 3eˣ − 2x；f′(0) = 3",
+      "claim": "D(3e^x-x^2) == 3e^x-2x ;; D(3e^x-x^2, 0) == 3"
+    },
+    {
+      "title": "底數 2",
+      "prompt": "d/dx 2ˣ，以及它在 x = 3 的值。",
+      "problemId": "lec-03-m5",
+      "steps": [
+        "次方在變，是指數函數：(2ˣ)′ = 2ˣ ln 2。",
+        "x = 3：2³ ln 2 = 8 ln 2 ≈ 5.545。"
+      ],
+      "answer": "2ˣ ln 2；8 ln 2",
+      "claim": "D(2^x) == 2^x*ln(2) ;; D(2^x, 3) == 8*ln(2)"
+    },
+    {
+      "title": "eˣ 在 x = 1 的切線過原點",
+      "prompt": "求 y = eˣ 在 x = 1 的切線方程式。",
+      "steps": [
+        "斜率：(eˣ)′ 在 x = 1 是 e。",
+        "切點：(1, e)。",
+        "y − e = e(x − 1)，整理得 y = ex。",
+        "常數項剛好消掉，這條切線通過原點。"
+      ],
+      "answer": "y = ex",
+      "claim": "D(e^x, 1) == e ;; SUB(e^x - e*x, 1) == 0"
+    }
+  ],
+  "pitfalls": [
+    "用冪次法則微分 eˣ，寫成 x e^{x−1}。",
+    "(2ˣ)′ 寫成 2ˣ，漏了 ln 2；或寫成 x · 2^{x−1}。",
+    "(e²)′ 寫成 e²。e² 是常數，導數是 0。",
+    "(eˣ)′ = eˣ 是對的，但 e^{3x} 直接寫成 e^{3x}；裡面不是單純的 x 要用〈連鎖律 I：兩層〉。"
+  ],
+  "checks": [
+    {
+      "ask": "d/dx (5ˣ) 是？",
+      "options": [
+        { "label": "5ˣ ln 5", "correct": true },
+        { "label": "x · 5^{x−1}", "why": "那是把 5ˣ 當冪次用冪次法則；這裡變的是次方，要用 (aˣ)′ = aˣ ln a。" },
+        { "label": "5ˣ", "why": "只有底數是 e 時導數才等於自己；底數 5 要多乘 ln 5。" }
+      ]
+    },
+    {
+      "ask": "d/dx (eˣ + eᵉ) 是？",
+      "options": [
+        { "label": "eˣ", "correct": true },
+        { "label": "eˣ + eᵉ", "why": "eᵉ 是一個常數（約 15.15），導數是 0。" },
+        { "label": "eˣ + e · e^{e−1}", "why": "eᵉ 裡面沒有 x，不能用冪次法則，它是常數。" }
+      ]
+    },
+    {
+      "ask": "y = (1/2)ˣ 的導數在每一點都是？",
+      "options": [
+        { "label": "負的", "correct": true },
+        { "label": "正的", "why": "(1/2)ˣ 的導數是 (1/2)ˣ ln(1/2)，ln(1/2) = −ln 2 < 0，所以是負的，函數遞減。" },
+        { "label": "0", "why": "(1/2)ˣ 不是常數；只有底數 1 才會導數處處為 0。" }
+      ]
+    },
+    {
+      "ask": "eˣ 在 x = 2 的切線斜率是？",
+      "options": [
+        { "label": "e²", "correct": true },
+        { "label": "2e", "why": "那是 x · e^{x−1} 之類的冪次法則結果；(eˣ)′ = eˣ，代 2 得 e²。" },
+        { "label": "1", "why": "斜率 1 是 x = 0 的時候；x = 2 時斜率等於高度 e²。" }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": ["exponential", "basic-derivative"],
+    "fine": ["exp-deriv-e", "exp-deriv-base-a", "exp-deriv-vs-power", "exp-deriv-tangent"]
+  },
+  "practice": [
+    { "id": "lec-03-m5", "core": true, "trains": "exp-deriv-base-a" },
+    { "id": "gx-032", "core": true, "trains": "exp-deriv-tangent" },
+    { "id": "gi-103", "core": true, "trains": "exp-deriv-tangent" },
+    { "id": "db-def-004", "challenge": true, "trains": "exp-deriv-e", "note": "挑戰：拆成 (e^{3h} − 1)/h − (e^{−2h} − 1)/h，各自用標準極限。" }
+  ],
+  "gaps": [
+    { "tag": "exp-deriv-e", "count": 3, "note": "R1：eˣ 與多項式、常數混合的逐項微分，含 eᵉ、e² 這種常數陷阱。" },
+    { "tag": "exp-deriv-base-a", "count": 2, "note": "R1–R2：3ˣ、(1/2)ˣ、10ˣ 的導數與在某點的值；題庫只有 2ˣ。" },
+    { "tag": "exp-deriv-vs-power", "count": 2, "note": "R1：同一題混 x³ 與 3ˣ，辨認哪個用冪次法則、哪個用指數公式。" }
+  ]
+}

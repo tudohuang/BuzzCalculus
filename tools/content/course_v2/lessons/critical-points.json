@@ -1,0 +1,269 @@
+{
+  "id": "critical-points",
+  "title": "臨界點",
+  "readMinutes": 9,
+  "totalMinutes": 35,
+  "prerequisites": [
+    "derivative-power-rules",
+    "chain-rule",
+    "quotient-rule"
+  ],
+  "next": [
+    "increasing-decreasing"
+  ],
+  "related": [
+    "domain-range",
+    "first-derivative-test",
+    "extreme-value-theorem"
+  ],
+  "objectives": [
+    "分清楚局部極值與絕對極值。",
+    "找出一個函數所有的臨界點：f′ = 0 的點，以及 f′ 不存在的點，而且都要在定義域裡面。",
+    "在閉區間上用「臨界點＋端點」比大小，求絕對最大值與最小值。"
+  ],
+  "visual": "一條有兩個山頂、一個谷底、一個尖角的曲線。一條短切線沿曲線滑動，旁邊顯示它的斜率；滑到山頂與谷底時切線變水平、斜率顯示 0；滑到尖角時切線消失，顯示「f′ 不存在」。",
+  "concept": [
+    {
+      "heading": "① 山頂與谷底",
+      "body": [
+        "f 在 c 有局部極大值（也叫相對極大值），意思是：在 c 附近的一小段裡，f(c) 最大。局部極小值同理。兩者合稱局部極值。",
+        "絕對最大值是整個考慮範圍裡最大的那個值。局部極大只跟「附近」比，所以一個函數可以有好幾個局部極大，而且不一定是絕對最大。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 光滑的山頂，切線是水平的",
+      "body": [
+        "在山頂，往左看是上坡、往右看是下坡；如果那裡有切線，它只能是水平的，也就是 f′(c) = 0。這叫 Fermat 定理：f 在定義域內部的點 c 有局部極值，而且 f′(c) 存在，那 f′(c) = 0。",
+        "但山頂也可能是尖的。f(x) = |x| 在 0 有極小值，那裡沒有切線，f′(0) 不存在。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "Fermat 定理的證明",
+      "body": [
+        "設 f 在 c 有局部極大，而且 f′(c) 存在。在 c 附近，f(c + h) − f(c) ≤ 0。",
+        "h > 0 時，(f(c + h) − f(c))/h ≤ 0，所以右極限 f′(c) ≤ 0；h < 0 時，分母是負的，(f(c + h) − f(c))/h ≥ 0，所以左極限 f′(c) ≥ 0。",
+        "f′(c) 存在，左右極限相等，只能是 0。局部極小的情形把不等號反過來，論證一樣。"
+      ],
+      "collapsible": true
+    },
+    {
+      "heading": "③ 臨界點的定義",
+      "body": [
+        "c 是 f 的臨界點，意思是：c 在 f 的定義域內部，而且 f′(c) = 0 或 f′(c) 不存在。",
+        "由 ②，內部的局部極值只會發生在臨界點。所以找極值的第一步，是把臨界點全部列出來。",
+        "臨界點只是候選人。f(x) = x³ 的 f′(0) = 0，但 x³ 在 0 只是平一下又繼續往上，不是極值。要判斷是不是極值，看〈一階導數判別〉。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 閉區間上的最大最小",
+      "body": [
+        "f 在閉區間 [a, b] 上連續，就一定有絕對最大值與最小值（〈極值定理〉）。它們不是出現在內部，就是出現在端點；在內部的話一定是臨界點。",
+        "所以做法是：列出 (a, b) 內的臨界點，連同 a、b 一起代進 f，最大的就是最大值，最小的就是最小值。不用判斷誰是山頂。"
+      ],
+      "collapsible": false
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "閉區間：臨界點＋端點",
+      "prompt": "求 f(x) = x³ − 3x² − 9x + 5 在 [−2, 4] 上的絕對最大值與最小值。",
+      "problemId": "lec-04-q1a",
+      "steps": [
+        "f′(x) = 3x² − 6x − 9 = 3(x² − 2x − 3) = 3(x − 3)(x + 1)。多項式的導數處處存在，臨界點只有 f′ = 0 的 x = −1、x = 3，兩個都在 (−2, 4) 裡。",
+        "四個候選點代進 f：f(−2) = −8 − 12 + 18 + 5 = 3；f(−1) = −1 − 3 + 9 + 5 = 10；f(3) = 27 − 27 − 27 + 5 = −22；f(4) = 64 − 48 − 36 + 5 = −15。",
+        "最大的是 10（在 x = −1），最小的是 −22（在 x = 3）。"
+      ],
+      "answer": "最大值 10，最小值 −22",
+      "claim": "D(x^3-3x^2-9x+5, -1) == 0 ;; D(x^3-3x^2-9x+5, 3) == 0 ;; SUB(x^3-3x^2-9x+5, -2) == 3 ;; SUB(x^3-3x^2-9x+5, -1) == 10 ;; SUB(x^3-3x^2-9x+5, 3) == -22 ;; SUB(x^3-3x^2-9x+5, 4) == -15"
+    },
+    {
+      "title": "f′ 不存在的臨界點",
+      "prompt": "求 g(x) = x^{2/3}(5 − x) 在 [−1, 5] 上的絕對最大值。",
+      "problemId": "lec-04-q1b",
+      "steps": [
+        "乘法法則：g′(x) = (2/3)x^{−1/3}(5 − x) − x^{2/3}。提出 (1/3)x^{−1/3}：g′(x) = (1/3)x^{−1/3}(2(5 − x) − 3x) = (10 − 5x)/(3x^{1/3})。",
+        "g′ = 0：10 − 5x = 0，x = 2。g′ 不存在：分母 x^{1/3} = 0，x = 0。g 在 x = 0 有定義（g(0) = 0），而 0 在區間內部，所以 0 也是臨界點。",
+        "代值：g(−1) = (−1)^{2/3} · 6 = 1 · 6 = 6（(−1)^{2/3} = ((−1)^{1/3})² = (−1)² = 1）；g(0) = 0；g(2) = 2^{2/3} · 3 ≈ 4.76；g(5) = 0。",
+        "最大值是 6，出現在端點 x = −1。"
+      ],
+      "answer": "6",
+      "note": "只解 g′ = 0 會漏掉 x = 0。這題的最小值 0 就出現在 x = 0 與 x = 5。",
+      "claim": "D(x^(2/3)*(5-x)) == (10-5x)/(3*x^(1/3)) ;; SUB(x^(2/3)*(5-x), 2) == 3*2^(2/3) ;; SUB((x^2)^(1/3)*(5-x), -1) == 6"
+    },
+    {
+      "title": "先看定義域",
+      "prompt": "求 f(x) = ln x − x 的所有臨界點。",
+      "problemId": "si-set-015",
+      "steps": [
+        "定義域是 x > 0。",
+        "f′(x) = 1/x − 1 = (1 − x)/x。f′ = 0 得 x = 1。",
+        "f′ 在 x = 0 不存在，但 0 不在定義域裡，所以不是臨界點。",
+        "臨界點只有 x = 1。"
+      ],
+      "answer": "x = 1",
+      "claim": "D(ln(x)-x, 1) == 0 ;; D(ln(x)-x) == (1-x)/x"
+    }
+  ],
+  "pitfalls": [
+    "只解 f′ = 0，漏掉 f′ 不存在的點（尖角、垂直切線）。",
+    "把定義域外的點也算成臨界點，例如 ln x − x 的 x = 0。",
+    "以為臨界點一定是極值：x³ 在 0 就不是。",
+    "閉區間題忘了把端點代進去比。"
+  ],
+  "checks": [
+    {
+      "ask": "f(x) = |x − 2| 的臨界點是？",
+      "options": [
+        {
+          "label": "x = 2，因為 f′(2) 不存在",
+          "correct": true
+        },
+        {
+          "label": "沒有，因為 f′ 從來不等於 0",
+          "why": "你只找了 f′ = 0。f′ 不存在的點也算臨界點，|x − 2| 在 2 是尖角。"
+        },
+        {
+          "label": "x = 0",
+          "why": "x = 0 是 |x| 的尖角；這裡平移了，尖角在 x = 2。"
+        }
+      ]
+    },
+    {
+      "ask": "f(x) = x³ 在 x = 0：",
+      "options": [
+        {
+          "label": "是臨界點，但不是極值",
+          "correct": true
+        },
+        {
+          "label": "是臨界點，所以是極值",
+          "why": "臨界點只是候選人。x³ 在 0 左邊比 0 小、右邊比 0 大，不是極大也不是極小。"
+        },
+        {
+          "label": "不是臨界點",
+          "why": "f′(x) = 3x²，f′(0) = 0，而且 0 在定義域內部，符合臨界點的定義。"
+        }
+      ]
+    },
+    {
+      "ask": "f(x) = x³ − 3x 在 [0, 2] 上的最大值是？",
+      "options": [
+        {
+          "label": "2",
+          "correct": true
+        },
+        {
+          "label": "−2",
+          "why": "−2 是臨界點 x = 1 的值，那是最小值；還要把端點代進去：f(0) = 0、f(2) = 2。"
+        },
+        {
+          "label": "0",
+          "why": "你可能只比了 f(0) 與 f(1)。右端點 f(2) = 8 − 6 = 2 比較大。"
+        }
+      ]
+    },
+    {
+      "ask": "局部極大值與絕對最大值的關係？",
+      "options": [
+        {
+          "label": "局部極大只跟附近比，不一定是絕對最大",
+          "correct": true
+        },
+        {
+          "label": "局部極大一定就是絕對最大",
+          "why": "一個函數可以有好幾個局部極大，高度各不相同；而且絕對最大也可能出現在端點。"
+        },
+        {
+          "label": "絕對最大一定是局部極大",
+          "why": "絕對最大可能出現在閉區間的端點，例如 x³ − 3x 在 [0, 2] 的最大值在 x = 2；端點不在定義域內部，不算局部極大。"
+        }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": [
+      "critical-points",
+      "extrema"
+    ],
+    "fine": [
+      "critical-solve-zero",
+      "critical-undefined-derivative",
+      "critical-domain-check",
+      "critical-closed-interval"
+    ]
+  },
+  "practice": [
+    {
+      "id": "lec-04-m1",
+      "core": true,
+      "trains": "critical-solve-zero"
+    },
+    {
+      "id": "si-set-002",
+      "core": true,
+      "trains": "critical-solve-zero"
+    },
+    {
+      "id": "si-set-015",
+      "core": true,
+      "trains": "critical-domain-check"
+    },
+    {
+      "id": "db-ext-001",
+      "core": true,
+      "trains": "critical-closed-interval"
+    },
+    {
+      "id": "lec-04-q1a",
+      "core": true,
+      "trains": "critical-closed-interval"
+    },
+    {
+      "id": "si-set-014",
+      "core": true,
+      "trains": "critical-solve-zero"
+    },
+    {
+      "id": "lec-04-q1b",
+      "core": true,
+      "trains": "critical-undefined-derivative"
+    },
+    {
+      "id": "si-set-013",
+      "trains": "critical-solve-zero"
+    },
+    {
+      "id": "si-set-016",
+      "trains": "critical-solve-zero"
+    },
+    {
+      "id": "db-ext-002",
+      "trains": "critical-closed-interval"
+    },
+    {
+      "id": "db-ext-003",
+      "trains": "critical-closed-interval"
+    },
+    {
+      "id": "db-ext-004",
+      "challenge": true,
+      "trains": "critical-closed-interval",
+      "note": "挑戰：sin x + cos x 的臨界點要解 tan x = 1，記得只取 [0, π] 裡的那一個。"
+    }
+  ],
+  "gaps": [
+    {
+      "tag": "critical-undefined-derivative",
+      "count": 3,
+      "note": "R1–R2：f′ 不存在的臨界點（|x − a|、x^{2/3}、∛x 型），目前只有 lec-04-q1b 一題。"
+    },
+    {
+      "tag": "critical-domain-check",
+      "count": 2,
+      "note": "R2：f′ 的分母為 0 但該點不在定義域裡（ln、√ 型）。"
+    }
+  ]
+}

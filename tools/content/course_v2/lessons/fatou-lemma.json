@@ -1,0 +1,156 @@
+{
+  "id": "fatou-lemma",
+  "title": "Fatou 引理",
+  "readMinutes": 10,
+  "totalMinutes": 30,
+  "prerequisites": ["monotone-convergence-theorem", "limsup-liminf"],
+  "next": ["dominated-convergence"],
+  "related": [],
+  "objectives": [
+    "寫得出 Fatou 引理：fₙ ≥ 0 可測時，∫ liminf fₙ ≤ liminf ∫ fₙ，並說得出不等號的方向。",
+    "認得面積「跑掉」的三種方式：往無窮遠移動、擠成尖峰、來回跳。",
+    "會用 Fatou 引理給極限函數的積分一個上界，並知道非負的假設不能拿掉。"
+  ],
+  "visual": "y = n²x e^{−nx} 在 [0, 1] 上，n 從 1 拉到 40。尖峰位置 x = 1/n 往 0 靠、高度 n/e 往上衝，面積讀數停在接近 1；同時在任一個固定的 x（可拖動）旁邊顯示 fₙ(x) 的值，它最後掉到 0。",
+  "concept": [
+    {
+      "heading": "① 沒有單調，至少還有一個方向",
+      "body": [
+        "上一課的 n xⁿ 不遞增，結果 lim ∫ fₙ = 1，∫ lim fₙ = 0：面積不見了。反過來的事情會不會發生，極限函數憑空多出面積？不會。",
+        "直覺，不是證明：非負函數的面積可以在極限過程中「漏掉」（推到無窮遠、擠進越來越窄的尖峰），但每一點的極限值都是由 fₙ 自己的值決定，面積不可能憑空增加。Fatou 引理把這句話寫成不等式。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 引理",
+      "body": [
+        "設 fₙ : X → [0, ∞] 可測。則",
+        "這裡用 liminf 而不是 lim，是因為 fₙ(x) 與 ∫fₙ 都不一定收斂；liminf 永遠存在（在 [0, ∞] 裡），見〈上極限與下極限〉。若 fₙ → f 逐點收斂，左邊就是 ∫f。",
+        "記方向的方法：「極限的積分」比較小，因為面積只會漏掉。"
+      ],
+      "tex": ["\\int_X \\liminf_{n\\to\\infty} f_n\\,d\\mu\\ \\le\\ \\liminf_{n\\to\\infty}\\int_X f_n\\,d\\mu"],
+      "collapsible": false
+    },
+    {
+      "heading": "證明：用單調收斂定理",
+      "body": [
+        "令 gₖ = inf_{n≥k} fₙ。gₖ 可測（可測函數列的下確界），非負，而且 k 越大取下確界的範圍越小，所以 g₁ ≤ g₂ ≤ ⋯，而 lim gₖ = liminf fₙ（這就是 liminf 的定義）。",
+        "對每個 n ≥ k，gₖ ≤ fₙ，所以 ∫gₖ ≤ ∫fₙ。這對所有 n ≥ k 成立，所以 ∫gₖ ≤ inf_{n≥k} ∫fₙ。",
+        "對 gₖ 用〈單調收斂定理（測度版）〉：∫ liminf fₙ = lim_k ∫gₖ ≤ lim_k inf_{n≥k} ∫fₙ = liminf ∫fₙ。"
+      ],
+      "collapsible": true
+    },
+    {
+      "heading": "③ 面積跑掉的三種方式",
+      "body": [
+        "往無窮遠走：χ_{[n, n+1]}，每點最後是 0，∫ = 1。",
+        "擠成尖峰：n χ_{(0, 1/n)}，每點最後是 0，∫ = n · 1/n = 1。",
+        "來回跳：奇數項 χ_{[0,1]}、偶數項 χ_{[1,2]}，liminf fₙ 只在 x = 1 是 1，積分 0；每個 ∫fₙ 都是 1。",
+        "三個例子都是嚴格不等式 0 < 1，所以 Fatou 一般不能改成等號。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 非負不能拿掉",
+      "body": [
+        "fₙ = −n χ_{(0, 1/n)}：每點 fₙ(x) → 0，所以 ∫ liminf fₙ = 0；但每個 ∫fₙ = −1。若 Fatou 仍成立就得到 0 ≤ −1，矛盾。負的尖峰讓「面積只會漏掉」變成「負面積只會漏掉」，方向就反了。"
+      ],
+      "collapsible": true
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "尖峰：面積漏掉",
+      "prompt": "fₙ(x) = n²x e^{−nx} 在 [0, 1]。求逐點極限、lim ∫₀¹ fₙ，並對照 Fatou 引理。",
+      "problemId": "lb-con-001",
+      "steps": [
+        "逐點：x = 0 時 fₙ = 0；x > 0 時 e^{−nx} 衰減得比 n² 增長快，fₙ(x) → 0。極限函數是 0。",
+        "積分：令 u = nx，∫₀¹ n²x e^{−nx} dx = ∫₀ⁿ u e^{−u} du = 1 − (n + 1)e^{−n} → 1。",
+        "Fatou：∫ liminf fₙ = 0 ≤ 1 = liminf ∫ fₙ，嚴格不等。",
+        "面積去哪了：fₙ′ = n²e^{−nx}(1 − nx)，最大值在 x = 1/n，高度 n/e。尖峰越來越高、越來越靠近 0，面積跟著它走，極限函數看不見。"
+      ],
+      "answer": "逐點極限 0；lim ∫ fₙ = 1；0 ≤ 1 是嚴格不等",
+      "claim": "INT(n^2*x*e^(-n*x), 0, 1) == 1-(n+1)*e^(-n) ;; LIM(1-(n+1)*e^(-n), inf) == 1 ;; SUB(n^2*x*e^(-n*x), 1/n) == n/e ;; D(n^2*x*e^(-n*x), 1/n) == 0"
+    },
+    {
+      "title": "來回跳的函數列",
+      "prompt": "fₙ = χ_{[0,1]}（n 奇數）、χ_{[1,2]}（n 偶數）。求 liminf fₙ、∫ liminf fₙ 與 liminf ∫ fₙ。",
+      "steps": [
+        "x ∈ [0, 1)：奇數項是 1、偶數項是 0，liminf = 0。x ∈ (1, 2]：奇數項 0、偶數項 1，liminf = 0。x = 1：兩種都是 1，liminf = 1。其餘 x 恆為 0。",
+        "liminf fₙ = χ_{{1}}，積分 m({1}) = 0。",
+        "每個 ∫fₙ = 1，所以 liminf ∫fₙ = 1。0 ≤ 1，嚴格。",
+        "這裡 fₙ 根本不收斂，Fatou 仍然適用，因為它用的是 liminf。"
+      ],
+      "answer": "liminf fₙ = χ_{{1}}；∫ liminf fₙ = 0；liminf ∫fₙ = 1",
+      "claim": null,
+      "claimNote": "結論是指示函數的逐點 liminf 與單點測度 0，沒有可代入的數值式。"
+    },
+    {
+      "title": "用 Fatou 給上界",
+      "prompt": "fₙ(x) = (1 − x/n)ⁿ（0 ≤ x ≤ n）、其餘為 0。已知 fₙ(x) → e^{−x}。不直接積 e^{−x}，用 Fatou 證明 ∫₀^∞ e^{−x} dx ≤ 1。",
+      "steps": [
+        "fₙ ≥ 0 可測，逐點收斂到 e^{−x}，所以 liminf fₙ = e^{−x}。",
+        "令 u = 1 − x/n：∫₀ⁿ (1 − x/n)ⁿ dx = n ∫₀¹ uⁿ du = n/(n + 1)。",
+        "Fatou：∫₀^∞ e^{−x} dx ≤ liminf n/(n + 1) = 1。",
+        "實際值正是 1。要得到等號需要更多資訊，例如下一課的控制收斂定理。"
+      ],
+      "answer": "∫₀^∞ e^{−x} dx ≤ 1（實際等於 1）",
+      "claim": "INT((1-x/n)^n, 0, n) == n/(n+1) ;; INT(e^(-x), 0, inf) == 1"
+    }
+  ],
+  "pitfalls": [
+    "把不等號寫反。極限函數的積分是比較小的那一邊。",
+    "以為 fₙ 要收斂才能用。Fatou 用 liminf，任何非負可測函數列都適用。",
+    "拿掉非負假設。−n χ_{(0,1/n)} 會給出 0 ≤ −1。",
+    "以為 Fatou 給的是等號。三種面積跑掉的例子都是嚴格不等。"
+  ],
+  "checks": [
+    {
+      "ask": "Fatou 引理（fₙ ≥ 0 可測）說的是？",
+      "options": [
+        { "label": "∫ liminf fₙ ≤ liminf ∫ fₙ", "correct": true },
+        { "label": "∫ liminf fₙ ≥ liminf ∫ fₙ", "why": "方向反了。n χ_{(0,1/n)} 的左邊是 0、右邊是 1，≥ 不成立。" },
+        { "label": "∫ liminf fₙ = liminf ∫ fₙ", "why": "等號一般不成立，n²x e^{−nx} 就是 0 對 1。等號需要單調或控制函數。" }
+      ]
+    },
+    {
+      "ask": "fₙ = n χ_{(0, 1/n)}。∫ liminf fₙ 與 liminf ∫ fₙ 分別是？",
+      "options": [
+        { "label": "0 與 1", "correct": true },
+        { "label": "1 與 1", "why": "你把積分的極限當成極限的積分。每一個固定的 x > 0，n > 1/x 之後 fₙ(x) = 0，所以 liminf fₙ = 0。" },
+        { "label": "0 與 0", "why": "每個 fₙ 的積分是 n · (1/n) = 1，不會隨 n 變小。" }
+      ]
+    },
+    {
+      "ask": "fₙ(x) = n x e^{−nx²} 在 [0, 1] 上逐點收斂到 0，而 ∫₀¹ fₙ = (1 − e^{−n})/2 → 1/2。這跟 Fatou 的關係是？",
+      "options": [
+        { "label": "符合 Fatou：0 ≤ 1/2，而且是嚴格不等", "correct": true },
+        { "label": "違反 Fatou，因為兩邊不相等", "why": "Fatou 只保證 ≤，不保證相等；0 < 1/2 完全符合。" },
+        { "label": "Fatou 告訴我們 lim ∫ fₙ 應該是 0", "why": "Fatou 只給「極限函數的積分 ≤ 積分的下極限」這個方向，推不出右邊等於 0。" }
+      ]
+    },
+    {
+      "ask": "fₙ = −n χ_{(0, 1/n)} 為什麼不能用 Fatou？",
+      "options": [
+        { "label": "fₙ 不是非負的；硬套會得到 0 ≤ −1", "correct": true },
+        { "label": "fₙ 不是可測的", "why": "−n 乘上區間的指示函數是可測的。出問題的是負號。" },
+        { "label": "fₙ 不逐點收斂", "why": "每點 fₙ(x) → 0，收斂得很好；而且 Fatou 本來就不需要收斂。" }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": ["lebesgue", "fatou", "convergence-theorem"],
+    "fine": ["fatou-statement", "fatou-mass-escape", "fatou-strict-example", "fatou-upper-bound"]
+  },
+  "practice": [
+    { "id": "lb-con-001", "core": true, "trains": "fatou-strict-example" },
+    { "id": "lb-con-004", "core": true, "trains": "fatou-mass-escape" },
+    { "id": "lb-con-003", "core": true, "trains": "fatou-strict-example" },
+    { "id": "lb-con-005", "trains": "fatou-strict-example" }
+  ],
+  "gaps": [
+    { "tag": "fatou-statement", "count": 2, "note": "選擇題：不等號方向、假設（非負、不需收斂）。" },
+    { "tag": "fatou-upper-bound", "count": 2, "note": "用 Fatou 給極限函數積分的上界，例如已知 ∫fₙ ≤ C 求 ∫f 的上界。" },
+    { "tag": "fatou-mass-escape", "count": 2, "note": "給函數列，判斷面積是往無窮遠跑、擠成尖峰還是來回跳，並求 liminf ∫fₙ。" }
+  ]
+}

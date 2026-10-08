@@ -1,0 +1,151 @@
+{
+  "id": "integration-by-parts",
+  "title": "分部積分推導",
+  "readMinutes": 10,
+  "totalMinutes": 35,
+  "prerequisites": ["product-rule", "u-sub-basic", "ftc-part2"],
+  "next": ["ibp-poly-exp"],
+  "related": ["ibp-log-invtrig", "ibp-cyclic"],
+  "objectives": [
+    "從乘法法則推出 ∫ u dv = uv − ∫ v du。",
+    "會挑 u 與 dv：u 微分後變簡單，dv 積得出來。",
+    "會做定積分版本：∫ₐᵇ u dv = [uv]ₐᵇ − ∫ₐᵇ v du。"
+  ],
+  "visual": "在 (v, u) 平面上畫一條曲線，從點 (v(a), u(a)) 走到 (v(b), u(b))。曲線左邊到 u 軸的區域塗一種顏色，標「∫ v du」；曲線下方到 v 軸的區域塗另一種顏色，標「∫ u dv」。兩塊合起來，正好是大矩形 u(b)v(b) 扣掉小矩形 u(a)v(a)。拖動端點，三個數字即時更新，等式 ∫ u dv + ∫ v du = [uv] 一直成立。",
+  "concept": [
+    {
+      "heading": "① 乘法法則倒過來",
+      "body": [
+        "〈乘法法則〉：(uv)′ = u′v + uv′。移項得 uv′ = (uv)′ − u′v，兩邊積分：∫ u v′ dx = uv − ∫ v u′ dx。",
+        "用 du = u′ dx、dv = v′ dx 的寫法，就是下面這行。換元是連鎖律倒過來，分部積分是乘法法則倒過來。"
+      ],
+      "tex": ["\\int u\\,dv = uv-\\int v\\,du"],
+      "collapsible": false
+    },
+    {
+      "heading": "② 它做了什麼交換",
+      "body": [
+        "把被積函數拆成兩塊：一塊叫 u，另一塊連同 dx 叫 dv。公式把 ∫ u dv 換成 ∫ v du：u 被微分了一次，dv 被積分了一次。",
+        "所以要挑：u 是「微分之後變簡單」的（x → 1、ln x → 1/x），dv 是「積得出來、積完不變複雜」的（eˣ、sin x、cos x）。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 挑錯會怎樣",
+      "body": [
+        "∫ x eˣ dx 如果挑 u = eˣ、dv = x dx，得 (x²/2)eˣ − ∫ (x²/2)eˣ dx：新的積分次方升高，比原來更難。這時換一種挑法，不是公式錯了。",
+        "一個常用的經驗口訣：對數、反三角、代數（多項式）、三角、指數，越前面越適合當 u。它是經驗，不是定理，偶爾有例外（〈重複分部與循環積分〉）。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 定積分版本",
+      "body": [
+        "上下限照原來的 x 走：uv 那一項直接代上下限，剩下的積分也帶著同樣的上下限。"
+      ],
+      "tex": ["\\int_a^b u\\,dv = \\Big[uv\\Big]_a^b-\\int_a^b v\\,du"],
+      "collapsible": false
+    },
+    {
+      "heading": "v 為什麼不用加 C",
+      "body": [
+        "把 v 換成 v + C：u(v + C) − ∫ (v + C) du = uv + Cu − ∫ v du − Cu = uv − ∫ v du。多出來的 Cu 互相抵消，所以 v 取最簡單的那個就好。最後的答案還是要加 + C。"
+      ],
+      "collapsible": true
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "多項式 × 指數",
+      "prompt": "∫ x e^{−x} dx",
+      "steps": [
+        "u = x（微分變 1），dv = e^{−x} dx（積得出來）。",
+        "du = dx，v = −e^{−x}。",
+        "∫ x e^{−x} dx = x(−e^{−x}) − ∫ (−e^{−x}) dx = −x e^{−x} + ∫ e^{−x} dx。",
+        "= −x e^{−x} − e^{−x} + C。",
+        "檢查：(−x e^{−x} − e^{−x})′ = −e^{−x} + x e^{−x} + e^{−x} = x e^{−x}。"
+      ],
+      "answer": "−x e^{−x} − e^{−x} + C",
+      "claim": "D(-x*e^(-x)-e^(-x)) == x*e^(-x)"
+    },
+    {
+      "title": "多項式 × 三角",
+      "prompt": "∫ x sin 2x dx",
+      "steps": [
+        "u = x，dv = sin 2x dx。du = dx，v = −(1/2) cos 2x。",
+        "∫ x sin 2x dx = −(x/2) cos 2x − ∫ (−(1/2) cos 2x) dx = −(x/2) cos 2x + (1/2) ∫ cos 2x dx。",
+        "= −(x/2) cos 2x + (1/4) sin 2x + C。"
+      ],
+      "answer": "−(x/2) cos 2x + (1/4) sin 2x + C",
+      "claim": "D(-(x/2)*cos(2*x)+sin(2*x)/4) == x*sin(2*x)"
+    },
+    {
+      "title": "定積分",
+      "prompt": "∫₀^π x cos x dx",
+      "steps": [
+        "u = x，dv = cos x dx。du = dx，v = sin x。",
+        "∫₀^π x cos x dx = [x sin x]₀^π − ∫₀^π sin x dx。",
+        "[x sin x]₀^π = π · 0 − 0 = 0；∫₀^π sin x dx = [−cos x]₀^π = 1 + 1 = 2。",
+        "答案：0 − 2 = −2。是負的：x cos x 在 (π/2, π) 為負，那一段的面積比 (0, π/2) 那一段大。"
+      ],
+      "answer": "−2",
+      "claim": "INT(x*cos(x),0,pi) == -2"
+    }
+  ],
+  "pitfalls": [
+    "公式中間寫成加號：uv + ∫ v du。",
+    "du 算錯：u = x 時 du = dx，新積分裡不會再有 x。",
+    "挑反了 u 和 dv，積分越做越難還繼續做。",
+    "定積分時 uv 那一項忘了代上下限。"
+  ],
+  "checks": [
+    {
+      "ask": "∫ x e^{2x} dx，u 應該選？",
+      "options": [
+        { "label": "u = x", "correct": true },
+        { "label": "u = e^{2x}", "why": "那 dv = x dx、v = x²/2，新積分是 ∫ (x²/2) · 2e^{2x} dx，次方反而升高。" },
+        { "label": "u = x e^{2x}", "why": "那 dv = dx、v = x，新積分是 ∫ x(e^{2x} + 2x e^{2x}) dx，比原來更複雜。" }
+      ]
+    },
+    {
+      "ask": "∫ u dv = uv − ∫ v du 是哪一條微分規則倒過來？",
+      "options": [
+        { "label": "乘法法則", "correct": true },
+        { "label": "連鎖律", "why": "連鎖律倒過來是換元。分部積分來自 (uv)′ = u′v + uv′。" },
+        { "label": "除法法則", "why": "推導只用到 (uv)′ = u′v + uv′，移項再積分。" }
+      ]
+    },
+    {
+      "ask": "∫ x cos x dx 取 u = x、dv = cos x dx，下一步是？",
+      "options": [
+        { "label": "x sin x − ∫ sin x dx", "correct": true },
+        { "label": "x sin x + ∫ sin x dx", "why": "公式中間是減號：uv − ∫ v du。" },
+        { "label": "x sin x − ∫ x sin x dx", "why": "du = dx，不是 x dx。新積分是 ∫ v du = ∫ sin x · 1 dx。" }
+      ]
+    },
+    {
+      "ask": "算 v 的時候，為什麼可以不加常數？",
+      "options": [
+        { "label": "加了 C，uv 與 ∫ v du 各多出 Cu，互相抵消", "correct": true },
+        { "label": "因為分部積分規定 C = 0", "why": "沒有這種規定；加任何 C 結果都一樣，所以選最簡單的。" },
+        { "label": "其實一定要加，不加會錯", "why": "加了也會消掉：u(v + C) − ∫ (v + C) du = uv − ∫ v du。只有最後的答案要加 + C。" }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": ["integration-by-parts", "ibp"],
+    "fine": ["ibp-formula", "ibp-choose-u", "ibp-definite", "ibp-no-constant-v"]
+  },
+  "practice": [
+    { "id": "lec-07-m1", "core": true, "trains": "ibp-formula" },
+    { "id": "int-038", "core": true, "trains": "ibp-formula" },
+    { "id": "int-017", "core": true, "trains": "ibp-definite" },
+    { "id": "exam-int-029", "core": true, "trains": "ibp-definite" },
+    { "id": "depth-int-016", "trains": "ibp-definite" },
+    { "id": "gap-tech-004", "trains": "ibp-choose-u" },
+    { "id": "int-040", "challenge": true, "trains": "ibp-definite", "note": "挑戰：上限是 ∞，[−x e^{−x}] 在 x → ∞ 的極限要自己算。" }
+  ],
+  "gaps": [
+    { "tag": "ibp-choose-u", "count": 3, "note": "只問「u 與 dv 該怎麼選」的判斷題（含選錯會怎樣），R1–R2。" }
+  ]
+}

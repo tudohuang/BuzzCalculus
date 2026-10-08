@@ -1,0 +1,171 @@
+{
+  "id": "derivative-trig",
+  "title": "三角函數微分",
+  "readMinutes": 9,
+  "totalMinutes": 35,
+  "prerequisites": ["derivative-power-rules", "limit-trig-standard", "trig-identities"],
+  "next": ["derivative-exp"],
+  "related": ["chain-rule", "quotient-rule"],
+  "objectives": [
+    "背熟六個三角函數的導數，並用「co 開頭的帶負號」記正負。",
+    "說出這些公式只在弧度下成立的原因。",
+    "算三角函數在某一點的切線斜率，以及認出 lim (sin(a + h) − sin a)/h 是哪個導數。"
+  ],
+  "visual": "上面是 y = sin x 的圖形，一條切線沿著曲線滑動；下面同步畫出每個 x 的切線斜率。滑過一整個週期之後，下面留下的軌跡正好是 y = cos x。",
+  "concept": [
+    {
+      "heading": "① 從圖看 (sin x)′ = cos x（直覺，不是證明）",
+      "body": [
+        "看 sin x 的圖：x = 0 時曲線以斜率 1 往上爬；x = π/2 在山頂，斜率 0；x = π 往下穿過 x 軸，斜率 −1；x = 3π/2 在谷底，斜率 0。",
+        "把這些斜率點出來：1、0、−1、0……正好是 cos x 在這些點的值。這只是抽樣幾個點，沒有說明中間每一點都對得上；真正的證明在下面。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 六個公式",
+      "body": [
+        "記法：sin、tan、sec 的導數都是正的；co 開頭的 cos、cot、csc，導數前面都有負號，而且長相是把前三個的答案「每個字都換成 co 版本」：sec² ↔ csc²，sec·tan ↔ csc·cot。"
+      ],
+      "tex": [
+        "(\\sin x)'=\\cos x,\\qquad (\\cos x)'=-\\sin x",
+        "(\\tan x)'=\\sec^2 x,\\qquad (\\cot x)'=-\\csc^2 x",
+        "(\\sec x)'=\\sec x\\tan x,\\qquad (\\csc x)'=-\\csc x\\cot x"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 只在弧度下成立",
+      "body": [
+        "證明的關鍵是 lim_{h→0} sin h/h = 1（〈三角標準極限〉），而這個極限只在 h 用弧度量的時候是 1。",
+        "如果 x 用度，sin(x°) = sin(πx/180)，導數會多一個因子 π/180（要用〈連鎖律 I：兩層〉）。所以微積分裡的三角函數一律用弧度。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 公式本身就是極限",
+      "body": [
+        "lim_{h→0} (sin(π/6 + h) − 1/2)/h 看起來很難，其實 1/2 = sin(π/6)，這就是 sin x 在 π/6 的導數 = cos(π/6) = √3/2。認出導數定義，就不用硬算。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "sin 與 cos 的證明",
+      "body": [
+        "需要兩個極限（〈三角標準極限〉）：sin h/h → 1，以及 (1 − cos h)/h² → 1/2。由後者，(cos h − 1)/h = −((1 − cos h)/h²) · h → −(1/2) · 0 = 0。",
+        "和角公式：sin(x + h) = sin x cos h + cos x sin h。所以 (sin(x + h) − sin x)/h = sin x · (cos h − 1)/h + cos x · (sin h/h)。",
+        "x 固定，h → 0：sin x · 0 + cos x · 1 = cos x。",
+        "同理 cos(x + h) = cos x cos h − sin x sin h，(cos(x + h) − cos x)/h = cos x · (cos h − 1)/h − sin x · (sin h/h) → cos x · 0 − sin x · 1 = −sin x。"
+      ],
+      "collapsible": true
+    },
+    {
+      "heading": "tan 與 sec 的證明（cos x ≠ 0 的地方）",
+      "body": [
+        "tan(x + h) − tan x = (sin(x + h)cos x − cos(x + h)sin x)/(cos(x + h)cos x) = sin h/(cos(x + h)cos x)，分子用的是 sin 的差角公式 sin((x + h) − x)。",
+        "除以 h：(sin h/h) · 1/(cos(x + h)cos x)。cos 連續，h → 0 時 cos(x + h) → cos x ≠ 0，所以極限是 1 · 1/cos² x = sec² x。",
+        "sec(x + h) − sec x = (cos x − cos(x + h))/(cos(x + h)cos x)。除以 h，分子部分 (cos x − cos(x + h))/h → −(cos x)′ = sin x，分母 → cos² x，所以極限是 sin x/cos² x = sec x tan x。",
+        "cot 與 csc 完全對稱（把 sin、cos 互換並注意正負），之後也可以用〈除法法則〉一行算出來。"
+      ],
+      "collapsible": true
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "逐項微分",
+      "prompt": "d/dx (sin x + cos x)",
+      "problemId": "der-002",
+      "steps": [
+        "加減可以逐項微分。",
+        "(sin x)′ = cos x。",
+        "(cos x)′ = −sin x，負號不能漏。",
+        "合起來 cos x − sin x。"
+      ],
+      "answer": "cos x − sin x",
+      "claim": "D(sin(x)+cos(x)) == cos(x)-sin(x)"
+    },
+    {
+      "title": "tan x 在 π/4 的切線",
+      "prompt": "求 y = tan x 在 x = π/4 的切線斜率與切線方程式。",
+      "problemId": "tb-tan-004",
+      "steps": [
+        "(tan x)′ = sec² x = 1/cos² x。",
+        "cos(π/4) = √2/2，cos²(π/4) = 1/2，所以斜率 = 1/(1/2) = 2。",
+        "切點：tan(π/4) = 1，切點是 (π/4, 1)。",
+        "切線：y − 1 = 2(x − π/4)，即 y = 2x + 1 − π/2。"
+      ],
+      "answer": "斜率 2；y = 2x + 1 − π/2",
+      "claim": "D(tan(x), pi/4) == 2 ;; SUB(2x+1-pi/2, pi/4) == 1"
+    },
+    {
+      "title": "sec 與 cot 混在一起",
+      "prompt": "f(x) = 2 sec x + cot x，求 f′(π/3)。",
+      "steps": [
+        "f′(x) = 2 sec x tan x − csc² x。",
+        "x = π/3：cos = 1/2，所以 sec = 2；tan = √3；sin = √3/2，所以 csc = 2/√3，csc² = 4/3。",
+        "f′(π/3) = 2 · 2 · √3 − 4/3 = 4√3 − 4/3。"
+      ],
+      "answer": "4√3 − 4/3",
+      "claim": "D(2*sec(x)+cot(x), pi/3) == 4*sqrt(3)-4/3"
+    }
+  ],
+  "pitfalls": [
+    "(cos x)′ 寫成 sin x，漏了負號。",
+    "(tan x)′ 寫成 sec x，漏了平方。",
+    "計算機或心算用度：x 是 30 而不是 π/6。",
+    "把 sec x 的導數記成 tan x，或記成 sec² x（那是 tan 的）。",
+    "sin 2x 直接寫成 cos 2x；裡面不是單純的 x 時要用〈連鎖律 I：兩層〉。"
+  ],
+  "checks": [
+    {
+      "ask": "d/dx (3 sin x − 2 cos x) 是？",
+      "options": [
+        { "label": "3 cos x + 2 sin x", "correct": true },
+        { "label": "3 cos x − 2 sin x", "why": "(cos x)′ = −sin x，所以 −2 cos x 微分是 −2 · (−sin x) = +2 sin x。" },
+        { "label": "−3 cos x − 2 sin x", "why": "(sin x)′ = cos x 沒有負號；負號只跟著 co 開頭的函數。" }
+      ]
+    },
+    {
+      "ask": "下面哪一個導數前面有負號？",
+      "options": [
+        { "label": "(csc x)′", "correct": true },
+        { "label": "(sec x)′", "why": "(sec x)′ = sec x tan x，是正的；有負號的是 co 開頭的 cos、cot、csc。" },
+        { "label": "(tan x)′", "why": "(tan x)′ = sec² x，是正的。" }
+      ]
+    },
+    {
+      "ask": "lim_{h→0} (cos(π/3 + h) − 1/2)/h 是？",
+      "options": [
+        { "label": "−√3/2", "correct": true },
+        { "label": "√3/2", "why": "這是 cos x 在 π/3 的導數，(cos x)′ = −sin x，負號不能漏：−sin(π/3) = −√3/2。" },
+        { "label": "0", "why": "0/0 不是 0。1/2 = cos(π/3)，所以這是 cos 在 π/3 的導數。" }
+      ]
+    },
+    {
+      "ask": "為什麼 (sin x)′ = cos x 要用弧度？",
+      "options": [
+        { "label": "證明用到 sin h/h → 1，這只在弧度下成立", "correct": true },
+        { "label": "因為度不能代進 sin", "why": "度可以代進 sin（sin 30° = 1/2）；問題是用度時 sin h/h 的極限是 π/180，不是 1。" },
+        { "label": "其實用度也一樣", "why": "用度的話 (sin x°)′ = (π/180) cos x°，多一個因子。" }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": ["trig", "basic-derivative"],
+    "fine": ["trig-deriv-sin-cos", "trig-deriv-tan-sec", "trig-deriv-recognize-limit", "trig-deriv-tangent-slope"]
+  },
+  "practice": [
+    { "id": "rel-basic-008", "core": true, "trains": "trig-deriv-sin-cos" },
+    { "id": "fd-der-008", "core": true, "trains": "trig-deriv-sin-cos" },
+    { "id": "der-002", "core": true, "trains": "trig-deriv-sin-cos" },
+    { "id": "cx-der-006", "core": true, "trains": "trig-deriv-tan-sec" },
+    { "id": "tb-tan-004", "core": true, "trains": "trig-deriv-tangent-slope" },
+    { "id": "dd-def-003", "core": true, "trains": "trig-deriv-recognize-limit" },
+    { "id": "db-def-002", "trains": "trig-deriv-recognize-limit" },
+    { "id": "dd-def-004", "trains": "trig-deriv-recognize-limit" },
+    { "id": "gi-102", "trains": "trig-deriv-tangent-slope" },
+    { "id": "db-def-008", "challenge": true, "trains": "trig-deriv-recognize-limit", "note": "挑戰：x → a 的寫法，先認出 1 = tan(π/4)。" }
+  ],
+  "gaps": [
+    { "tag": "trig-deriv-tan-sec", "count": 3, "note": "R1–R2：sec x、csc x、cot x 的導數與它們在特殊角的值；題庫目前只有 tan x。" }
+  ]
+}

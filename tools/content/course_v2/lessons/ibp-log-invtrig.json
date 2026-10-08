@@ -1,0 +1,170 @@
+{
+  "id": "ibp-log-invtrig",
+  "title": "ln x、反三角函數",
+  "readMinutes": 10,
+  "totalMinutes": 40,
+  "prerequisites": ["integration-by-parts", "u-sub-recognize"],
+  "next": ["ibp-cyclic"],
+  "related": ["ibp-cyclic", "derivative-log", "inverse-trig-derivative"],
+  "objectives": [
+    "會積單獨的 ln x、arctan x、arcsin x：令 dv = dx。",
+    "xⁿ ln x、xⁿ arctan x 會選 ln、arctan 當 u。",
+    "分部之後剩下的積分常要再換元或做代數變形，會接著做完。"
+  ],
+  "visual": null,
+  "concept": [
+    {
+      "heading": "① 為什麼它們要當 u",
+      "body": [
+        "ln x 與反三角函數的反導函數不在基本表上，但它們的導數很簡單：(ln x)′ = 1/x，(arctan x)′ = 1/(1 + x²)，(arcsin x)′ = 1/√(1 − x²)，都是代數式。",
+        "所以讓它們當 u：微分一次，超越函數就消失了，剩下的通常是代數式的積分。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 單獨一個：看不見的 dv = dx",
+      "body": [
+        "∫ ln x dx 看起來沒有東西可以拆。把它看成 ln x · 1：u = ln x，dv = dx，v = x。",
+        "∫ ln x dx = x ln x − ∫ x · (1/x) dx = x ln x − x + C。arctan x、arcsin x 一樣處理。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 乘上 xⁿ",
+      "body": [
+        "xⁿ ln x：u = ln x，dv = xⁿ dx。新積分裡 (1/x) · xⁿ⁺¹/(n + 1) 只剩冪次，一步積完。",
+        "xⁿ arctan x：u = arctan x，dv = xⁿ dx。新積分是 xⁿ⁺¹/((n + 1)(1 + x²))，要先做多項式除法或拆項。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 一個小技巧：挑一個好用的 v",
+      "body": [
+        "〈分部積分推導〉說 v 可以差任意常數。∫ x arctan x dx 取 v = (x² + 1)/2 而不是 x²/2：新積分變成 ∫ (x² + 1)/2 · 1/(1 + x²) dx = ∫ 1/2 dx，分母直接消掉。",
+        "兩種選法算到最後是同一個答案，只是這樣少一步代數。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "⑤ 定義域",
+      "body": [
+        "ln x 只在 x > 0 有定義，所以這些答案都預設 x > 0；arcsin x 只在 |x| ≤ 1。(ln x)²、(ln x)³ 要做好幾次，放在〈重複分部與循環積分〉。"
+      ],
+      "collapsible": false
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "單獨的 ln x",
+      "prompt": "∫ ln x dx",
+      "problemId": "int-028",
+      "steps": [
+        "u = ln x，dv = dx。du = dx/x，v = x。",
+        "∫ ln x dx = x ln x − ∫ x · (1/x) dx = x ln x − ∫ 1 dx。",
+        "= x ln x − x + C。"
+      ],
+      "answer": "x ln x − x + C",
+      "claim": "D(x*ln(x)-x) == ln(x)"
+    },
+    {
+      "title": "負次方 × ln x",
+      "prompt": "∫ (ln x)/x³ dx",
+      "steps": [
+        "u = ln x，dv = x^{−3} dx。du = dx/x，v = x^{−2}/(−2) = −1/(2x²)。",
+        "∫ = −(ln x)/(2x²) − ∫ (−1/(2x²)) · (1/x) dx = −(ln x)/(2x²) + (1/2) ∫ x^{−3} dx。",
+        "(1/2) ∫ x^{−3} dx = (1/2) · (−1/(2x²)) = −1/(4x²)。",
+        "答案：−(ln x)/(2x²) − 1/(4x²) + C。"
+      ],
+      "answer": "−(ln x)/(2x²) − 1/(4x²) + C",
+      "claim": "D(-ln(x)/(2*x^2)-1/(4*x^2)) == ln(x)/x^3"
+    },
+    {
+      "title": "單獨的 arctan x，接著換元",
+      "prompt": "∫ arctan x dx",
+      "problemId": "exam-int-013",
+      "steps": [
+        "u = arctan x，dv = dx。du = dx/(1 + x²)，v = x。",
+        "∫ arctan x dx = x arctan x − ∫ x/(1 + x²) dx。",
+        "剩下的是 u′/u 形狀（〈換元：辨識〉）：∫ x/(1 + x²) dx = (1/2) ln(1 + x²)。",
+        "答案：x arctan x − (1/2) ln(1 + x²) + C。"
+      ],
+      "answer": "x arctan x − (1/2) ln(1 + x²) + C",
+      "claim": "D(x*atan(x)-ln(1+x^2)/2) == atan(x)"
+    },
+    {
+      "title": "挑一個好用的 v",
+      "prompt": "∫ x arctan x dx",
+      "problemId": "uni-int-012",
+      "steps": [
+        "u = arctan x，dv = x dx。取 v = (x² + 1)/2（也是 x 的反導函數）。",
+        "∫ x arctan x dx = ((x² + 1)/2) arctan x − ∫ ((x² + 1)/2) · 1/(1 + x²) dx。",
+        "剩下的積分是 ∫ 1/2 dx = x/2。",
+        "答案：((x² + 1)/2) arctan x − x/2 + C。"
+      ],
+      "answer": "((x² + 1)/2) arctan x − x/2 + C",
+      "claim": "D((x^2+1)/2*atan(x)-x/2) == x*atan(x)"
+    }
+  ],
+  "pitfalls": [
+    "∫ ln x dx 讓 dv = ln x dx，結果需要先會 ∫ ln x，繞回原點。",
+    "xⁿ ln x 讓 u = xⁿ：dv = ln x dx 積不出來。",
+    "分部之後剩下 ∫ x/(1 + x²) dx，積成 arctan x。",
+    "v = −1/(2x²) 這種負次方，代進公式時負號漏掉。"
+  ],
+  "checks": [
+    {
+      "ask": "∫ ln x dx 做分部積分，dv 是？",
+      "options": [
+        { "label": "dx", "correct": true },
+        { "label": "ln x dx", "why": "那 v 要是 ln x 的反導函數，正是我們要求的東西，繞回原點。" },
+        { "label": "(1/x) dx", "why": "1/x 不在式子裡。它是 u = ln x 微分後的 du，不是 dv。" }
+      ]
+    },
+    {
+      "ask": "∫ x³ ln x dx，u 應該選？",
+      "options": [
+        { "label": "ln x", "correct": true },
+        { "label": "x³", "why": "那 dv = ln x dx，又得先積 ln x，而且新積分裡 x 的次方會升高。" },
+        { "label": "x³ ln x", "why": "那 dv = dx、v = x，新積分 ∫ x(3x² ln x + x²) dx 比原來更複雜。" }
+      ]
+    },
+    {
+      "ask": "∫ arctan x dx 分部後剩下 ∫ x/(1 + x²) dx，它等於？",
+      "options": [
+        { "label": "(1/2) ln(1 + x²) + C", "correct": true },
+        { "label": "arctan x + C", "why": "arctan 要分子是 1。分子是 x，正好是分母導數的一半，是 u′/u 形狀。" },
+        { "label": "(x²/2)/(x + x³/3) + C", "why": "分子分母不能各自積分。令 u = 1 + x²。" }
+      ]
+    },
+    {
+      "ask": "∫ x arctan x dx 取 v = (x² + 1)/2 而不是 x²/2。這樣：",
+      "options": [
+        { "label": "可以，v 差一個常數不影響結果，而且剩下的積分更好算", "correct": true },
+        { "label": "不行，∫ x dx 只能寫 x²/2", "why": "x²/2 + 1/2 也是 x 的反導函數，分部積分的 v 可以任選其中一個。" },
+        { "label": "可以，但最後答案會不一樣", "why": "兩種選法算到底是同一個式子：(x²/2) arctan x − x/2 + (1/2) arctan x = ((x² + 1)/2) arctan x − x/2。" }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": ["integration-by-parts", "ibp", "log", "inverse-trig"],
+    "fine": ["ibp-hidden-dv", "ibp-log-u", "ibp-invtrig-alone", "ibp-invtrig-times-poly", "ibp-smart-v"]
+  },
+  "practice": [
+    { "id": "int-009", "core": true, "trains": "ibp-log-u" },
+    { "id": "uni-int-011", "core": true, "trains": "ibp-log-u" },
+    { "id": "exam-int-004", "core": true, "trains": "ibp-log-u" },
+    { "id": "uni-int-003", "core": true, "trains": "ibp-log-u" },
+    { "id": "lec-07-q1d", "core": true, "trains": "ibp-log-u" },
+    { "id": "lec-07-q1c", "core": true, "trains": "ibp-invtrig-alone" },
+    { "id": "int-056", "core": true, "trains": "ibp-smart-v" },
+    { "id": "hc-ibp-007", "trains": "ibp-log-u" },
+    { "id": "burst-int-039", "trains": "ibp-log-u" },
+    { "id": "burst-boss-anti-007", "trains": "ibp-invtrig-times-poly" },
+    { "id": "world-050", "challenge": true, "trains": "ibp-log-u", "note": "挑戰：下限是 0，邊界項 x⁴ ln x 在 x → 0⁺ 的極限要自己算。" },
+    { "id": "uni-int-004", "challenge": true, "trains": "ibp-invtrig-times-poly", "note": "挑戰：分部後剩下 ∫ 1/(x(1 + x²)) dx，要拆成部分分式。" },
+    { "id": "world-082", "challenge": true, "trains": "ibp-invtrig-alone", "note": "挑戰：(arcsin x)² 要分部兩次，或先令 x = sin θ。" }
+  ],
+  "gaps": [
+    { "tag": "ibp-invtrig-alone", "count": 2, "note": "∫ arcsin x dx、∫ arccos x dx 的基本題，R2–R3。" }
+  ]
+}

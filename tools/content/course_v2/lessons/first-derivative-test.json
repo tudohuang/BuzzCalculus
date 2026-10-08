@@ -1,0 +1,272 @@
+{
+  "id": "first-derivative-test",
+  "title": "一階導數判別",
+  "readMinutes": 8,
+  "totalMinutes": 35,
+  "prerequisites": [
+    "critical-points",
+    "increasing-decreasing"
+  ],
+  "next": [
+    "second-derivative"
+  ],
+  "related": [
+    "mean-value-theorem",
+    "second-derivative-test"
+  ],
+  "objectives": [
+    "在每個臨界點看 f′ 左右的正負，判斷是局部極大、局部極小，還是都不是。",
+    "看出偶次方因式不會讓 f′ 換號，所以那裡不是極值。",
+    "只給 f′ 的式子或圖形，也能判斷 f 的極值位置。"
+  ],
+  "visual": "上方是 f(x) = x⁴ − 4x³，下方是 f′(x) = 4x²(x − 3) 的符號表。一個點沿曲線走過 x = 0 與 x = 3：在 x = 0，符號表兩側都是「−」，曲線只是平一下繼續往下；在 x = 3，符號表從「−」變「+」，曲線從下坡轉上坡，點停在谷底並標出「局部極小」。",
+  "concept": [
+    {
+      "heading": "① 先下坡再上坡，中間就是谷底",
+      "body": [
+        "〈增減區間〉告訴我們 f′ 的正負就是上坡下坡。設 c 是臨界點、f 在 c 連續：",
+        "f′ 在 c 的左邊正、右邊負：先上坡再下坡，f(c) 是局部極大。",
+        "f′ 在 c 的左邊負、右邊正：先下坡再上坡，f(c) 是局部極小。",
+        "f′ 在 c 的兩邊同號：一路上坡（或一路下坡），c 不是極值。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② f′(c) 不存在也能用",
+      "body": [
+        "判別只看 c 左右兩側的 f′，不需要 f′(c) 本身。f(x) = |x| 在 0 沒有導數，但左邊 f′ = −1、右邊 f′ = 1，所以 0 是局部極小。條件是 f 在 c 要連續；在 c 跳開的函數，左右的坡度說明不了 f(c) 本身的高度。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 偶次方的因式不換號",
+      "body": [
+        "f′ 因式分解之後，看每個因式在切點兩側有沒有換號。(x − 3) 這種一次因式過了 x = 3 會換號；(x − 1)²、x⁴ 這種偶次方因式恆不為負，過了零點不換號。",
+        "所以 f′(x) = (x + 2)(x − 1)² 在 x = 1 兩邊同號，x = 1 是臨界點但不是極值；在 x = −2 換號，那裡才是極值。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 完整步驟",
+      "body": [
+        "求 f′ 並因式分解 → 列出臨界點 → 畫 f′ 的符號表（跟〈增減區間〉一樣）→ 每個臨界點讀左右的正負：正變負是極大、負變正是極小、不變不是極值 → 把是極值的點代回 f，求出極值本身。",
+        "最後一步常被忘記：題目問「局部極大值」，要的是 f(c) 這個高度；問「在哪裡」，要的才是 c。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "為什麼左正右負就是局部極大",
+      "body": [
+        "設 f 在 c 連續，在 (c − δ, c) 與 (c, c + δ) 上可微，而且前一段 f′ > 0、後一段 f′ < 0。",
+        "任取 x ∈ (c − δ, c)。f 在 [x, c] 上連續（右端點用的是「f 在 c 連續」）、在 (x, c) 上可微，由〈均值定理〉有 ξ ∈ (x, c) 使 f(c) − f(x) = f′(ξ)(c − x)。f′(ξ) > 0、c − x > 0，所以 f(x) < f(c)。",
+        "任取 x ∈ (c, c + δ)，同樣有 ξ ∈ (c, x) 使 f(x) − f(c) = f′(ξ)(x − c) < 0，所以 f(x) < f(c)。",
+        "c 附近每一點都比 f(c) 低，f(c) 是局部極大。另外兩種情形把不等號換掉，論證一樣。"
+      ],
+      "collapsible": true
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "有一個臨界點不是極值",
+      "prompt": "f(x) = x⁴ − 4x³。找出所有局部極值。",
+      "problemId": "db-ext-012",
+      "steps": [
+        "f′(x) = 4x³ − 12x² = 4x²(x − 3)。臨界點：x = 0、x = 3。",
+        "4x² 恆 ≥ 0，只在 0 等於 0，不換號；正負看 x − 3。",
+        "x < 0：f′ < 0。0 < x < 3：f′ < 0。x > 3：f′ > 0。",
+        "x = 0 兩邊都是負，不是極值。x = 3 由負變正，是局部極小，f(3) = 81 − 108 = −27。"
+      ],
+      "answer": "只有局部極小 f(3) = −27；x = 0 不是極值",
+      "claim": "D(x^4-4x^3) == 4*x^2*(x-3) ;; D(x^4-4x^3, -1) < 0 ;; D(x^4-4x^3, 1) < 0 ;; D(x^4-4x^3, 4) > 0 ;; SUB(x^4-4x^3, 3) == -27"
+    },
+    {
+      "title": "只給 f′",
+      "prompt": "某函數的導函數是 f′(x) = (x + 2)(x − 1)²。f 的局部極值在哪裡？",
+      "problemId": "lec-04-q4a",
+      "steps": [
+        "臨界點：x = −2、x = 1（多項式 f′ 處處存在）。",
+        "(x − 1)² 恆 ≥ 0，正負看 x + 2。",
+        "x < −2：f′ < 0。−2 < x < 1：f′ > 0。x > 1：f′ > 0。",
+        "x = −2 由負變正，是局部極小。x = 1 兩邊都正，不是極值。"
+      ],
+      "answer": "x = −2 是局部極小；x = 1 不是極值",
+      "claim": "SUB((x+2)*(x-1)^2, -3) < 0 ;; SUB((x+2)*(x-1)^2, 0) > 0 ;; SUB((x+2)*(x-1)^2, 2) > 0"
+    },
+    {
+      "title": "三角函數",
+      "prompt": "f(x) = x − 2 sin x，0 < x < 2π。找出局部極值。",
+      "steps": [
+        "f′(x) = 1 − 2cos x。f′ = 0：cos x = 1/2，在 (0, 2π) 裡是 x = π/3、x = 5π/3。",
+        "0 < x < π/3：cos x > 1/2，f′ < 0。π/3 < x < 5π/3：cos x < 1/2，f′ > 0。5π/3 < x < 2π：cos x > 1/2，f′ < 0。",
+        "x = π/3 由負變正，局部極小 f(π/3) = π/3 − 2 · (√3/2) = π/3 − √3 ≈ −0.685。",
+        "x = 5π/3 由正變負，局部極大 f(5π/3) = 5π/3 − 2 · (−√3/2) = 5π/3 + √3 ≈ 6.968。"
+      ],
+      "answer": "局部極小 π/3 − √3（x = π/3）；局部極大 5π/3 + √3（x = 5π/3）",
+      "claim": "D(x-2*sin(x), pi/3) == 0 ;; D(x-2*sin(x), 5*pi/3) == 0 ;; D(x-2*sin(x), 0.5) < 0 ;; D(x-2*sin(x), 3) > 0 ;; D(x-2*sin(x), 6) < 0 ;; SUB(x-2*sin(x), pi/3) == pi/3-sqrt(3) ;; SUB(x-2*sin(x), 5*pi/3) == 5*pi/3+sqrt(3)"
+    }
+  ],
+  "pitfalls": [
+    "看到臨界點就宣布是極值，沒有檢查 f′ 有沒有換號。",
+    "把偶次方因式 (x − 1)² 也當成會換號。",
+    "左右弄反：先正後負是極大（上坡再下坡），不是極小。",
+    "題目給的是 f′ 的圖，卻去找 f′ 的山頂；f 的極值看的是 f′ 穿過 x 軸的地方。"
+  ],
+  "checks": [
+    {
+      "ask": "f′ 在 x = 2 左邊為負、右邊為正，f 在 2 連續。x = 2 是？",
+      "options": [
+        {
+          "label": "局部極小",
+          "correct": true
+        },
+        {
+          "label": "局部極大",
+          "why": "左負右正是先下坡再上坡，那是谷底。先上再下才是山頂。"
+        },
+        {
+          "label": "不是極值",
+          "why": "f′ 有換號就是極值；兩邊同號才不是。"
+        }
+      ]
+    },
+    {
+      "ask": "f′(x) = x²(x − 2)。x = 0 是？",
+      "options": [
+        {
+          "label": "不是極值",
+          "correct": true
+        },
+        {
+          "label": "局部極大",
+          "why": "x² 在 0 兩側都是正的，正負只看 x − 2，在 0 兩側都是負，f′ 沒換號。"
+        },
+        {
+          "label": "局部極小",
+          "why": "x = 0 附近 f′ 都是負的，f 一路下坡；真正的局部極小在 x = 2。"
+        }
+      ]
+    },
+    {
+      "ask": "圖上是 f′ 的圖形（不是 f）。f 的局部極大出現在哪？",
+      "options": [
+        {
+          "label": "f′ 的圖由上往下穿過 x 軸的地方",
+          "correct": true
+        },
+        {
+          "label": "f′ 的圖的最高點",
+          "why": "那是 f′ 最大、f 爬得最快的地方，不是 f 的山頂。f 的山頂要 f′ 由正變負。"
+        },
+        {
+          "label": "f′ 的圖由下往上穿過 x 軸的地方",
+          "why": "由下往上是 f′ 由負變正，那是 f 的局部極小。"
+        }
+      ]
+    },
+    {
+      "ask": "f(x) = |x| 在 0 沒有導數。0 是不是 f 的局部極值？",
+      "options": [
+        {
+          "label": "是局部極小，因為左邊 f′ = −1、右邊 f′ = 1",
+          "correct": true
+        },
+        {
+          "label": "不能判斷，因為 f′(0) 不存在",
+          "why": "一階導數判別只看 c 的左右兩側，不需要 f′(c)；需要的是 f 在 0 連續，|x| 是連續的。"
+        },
+        {
+          "label": "不是，因為只有 f′ = 0 的點才可能是極值",
+          "why": "f′ 不存在的點也是臨界點，尖角常常就是極值。"
+        }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": [
+      "extrema",
+      "derivative-graph"
+    ],
+    "fine": [
+      "fdt-sign-change",
+      "fdt-even-factor",
+      "fdt-from-fprime-graph",
+      "fdt-nondifferentiable"
+    ]
+  },
+  "practice": [
+    {
+      "id": "gx-001",
+      "core": true,
+      "trains": "fdt-from-fprime-graph"
+    },
+    {
+      "id": "gx-002",
+      "core": true,
+      "trains": "fdt-from-fprime-graph"
+    },
+    {
+      "id": "lec-04-q4a",
+      "core": true,
+      "trains": "fdt-sign-change"
+    },
+    {
+      "id": "lec-04-q4b",
+      "core": true,
+      "trains": "fdt-even-factor"
+    },
+    {
+      "id": "gi-004",
+      "core": true,
+      "trains": "fdt-sign-change"
+    },
+    {
+      "id": "gx-006",
+      "core": true,
+      "trains": "fdt-from-fprime-graph"
+    },
+    {
+      "id": "gx-004",
+      "trains": "fdt-from-fprime-graph"
+    },
+    {
+      "id": "gx-003",
+      "trains": "fdt-from-fprime-graph"
+    },
+    {
+      "id": "gx-007",
+      "trains": "fdt-from-fprime-graph"
+    },
+    {
+      "id": "gx-009",
+      "trains": "fdt-from-fprime-graph"
+    },
+    {
+      "id": "gx-010",
+      "trains": "fdt-from-fprime-graph"
+    },
+    {
+      "id": "db-ext-012",
+      "challenge": true,
+      "trains": "fdt-even-factor",
+      "note": "挑戰：x = 0 也是臨界點，但 4x² 不換號。"
+    },
+    {
+      "id": "gx-008",
+      "challenge": true,
+      "trains": "fdt-even-factor",
+      "note": "挑戰：f′ = x²(x − 2) 在 0 碰到 x 軸卻沒有穿過去。"
+    }
+  ],
+  "gaps": [
+    {
+      "tag": "fdt-nondifferentiable",
+      "count": 2,
+      "note": "R2–R3：在 f′ 不存在的點（尖角、x^{2/3} 型）用一階導數判別。"
+    },
+    {
+      "tag": "fdt-sign-change",
+      "count": 2,
+      "note": "R1–R2：給 f 的式子，同時問局部極大與局部極小的位置與值；目前多數題只給 f′ 的圖。"
+    }
+  ]
+}

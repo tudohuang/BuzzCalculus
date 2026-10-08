@@ -1,0 +1,148 @@
+{
+  "id": "complex-numbers",
+  "title": "複數",
+  "readMinutes": 10,
+  "totalMinutes": 30,
+  "prerequisites": ["polynomial-rational", "r2-r3"],
+  "next": ["complex-polar"],
+  "related": ["complex-roots"],
+  "objectives": [
+    "會做複數的四則運算，除法用分母的共軛複數把分母變成實數。",
+    "把複數 a + bi 看成平面上的點 (a, b)：加法是向量相加，|z| 是到原點的距離。",
+    "用 z z̄ = |z|² 與實係數多項式的根成對出現，解判別式為負的二次方程式。"
+  ],
+  "visual": "複數平面上兩個可拖動的點 z、w。畫出 z + w（平行四邊形法則）、z̄（對實軸鏡射）、|z|（到原點的線段長）。把 w 拖到 i 時，可以看到 i·z 正好是 z 繞原點轉 90°（為下一課的極式鋪路）。",
+  "concept": [
+    {
+      "heading": "① 為什麼要 i",
+      "body": [
+        "x² + 1 = 0 在實數裡沒有解。引進一個新的數 i，規定 i² = −1，再允許它跟實數做加法與乘法，得到形如 z = a + bi（a、b 為實數）的數，叫複數。a 是實部 Re z，b 是虛部 Im z（虛部是實數 b，不是 bi）。",
+        "在〈複數根〉解 y″ + y = 0 時已經用過它；這一章把它當成一個完整的數系來研究。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 運算：把 i 當成字母，最後用 i² = −1",
+      "body": [
+        "加減：實部與實部、虛部與虛部各自相加減。",
+        "乘法：(a + bi)(c + di) = ac + adi + bci + bd i² = (ac − bd) + (ad + bc)i。",
+        "i 的次方四個一循環：i¹ = i、i² = −1、i³ = −i、i⁴ = 1。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 共軛複數、絕對值與除法",
+      "body": [
+        "z = a + bi 的共軛複數是 z̄ = a − bi。關鍵恆等式：z z̄ = a² + b²，是一個非負實數，記作 |z|²。|z| = √(a² + b²) 就是點 (a, b) 到原點的距離。",
+        "除法：分子分母同乘分母的共軛複數，分母就變成實數 |w|²。例如 1/i = −i。",
+        "性質：|zw| = |z||w|，z + z̄ = 2 Re z，z − z̄ = 2i Im z，z = z̄ ⇔ z 是實數。"
+      ],
+      "tex": ["\\frac{z}{w}=\\frac{z\\,\\bar w}{w\\,\\bar w}=\\frac{z\\,\\bar w}{|w|^{2}}"],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 平面上的圖像",
+      "body": [
+        "a + bi ↔ 點 (a, b)：橫軸是實軸、縱軸是虛軸。加法就是向量相加（平行四邊形），共軛是對實軸的鏡射，|z − w| 是兩點距離。乘法的圖像（轉角度、伸縮長度）要等下一課的極式才看得清楚。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "實係數多項式的根成對出現",
+      "body": [
+        "若 p(x) 的係數都是實數，對 p(z) = 0 兩邊取共軛：共軛複數對加法、乘法都「可以穿過」，而實係數的共軛是自己，所以 p(z̄) = 0。因此非實數的根一定成對 z、z̄ 出現；例如 x² − 2x + 5 = 0 的根是 1 ± 2i。"
+      ],
+      "collapsible": true
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "乘法",
+      "prompt": "(2 + 3i)(1 − 2i)",
+      "steps": [
+        "展開：2 · 1 + 2 · (−2i) + 3i · 1 + 3i · (−2i) = 2 − 4i + 3i − 6i²。",
+        "i² = −1：−6i² = 6。",
+        "合併：(2 + 6) + (−4 + 3)i = 8 − i。"
+      ],
+      "answer": "8 − i",
+      "claim": "2*1 - 3*(-2) == 8 ;; 2*(-2) + 3*1 == -1"
+    },
+    {
+      "title": "除法",
+      "prompt": "(3 + 4i)/(1 − 2i)",
+      "steps": [
+        "分子分母同乘 1 + 2i（分母的共軛複數）。分母：(1 − 2i)(1 + 2i) = 1 + 4 = 5。",
+        "分子：(3 + 4i)(1 + 2i) = 3 + 6i + 4i + 8i² = −5 + 10i。",
+        "結果 (−5 + 10i)/5 = −1 + 2i。檢查：(−1 + 2i)(1 − 2i) = −1 + 2i + 2i − 4i² = 3 + 4i。"
+      ],
+      "answer": "−1 + 2i",
+      "claim": "(3*1 + 4*(-2))/(1+4) == -1 ;; (4*1 - 3*(-2))/(1+4) == 2"
+    },
+    {
+      "title": "判別式為負的二次方程式",
+      "prompt": "解 z² − 2z + 5 = 0",
+      "steps": [
+        "公式解：z = (2 ± √(4 − 20))/2 = (2 ± √(−16))/2。",
+        "√(−16) = 4i（因為 (4i)² = −16），所以 z = (2 ± 4i)/2 = 1 ± 2i。",
+        "驗算 z = 1 + 2i：z² = 1 + 4i + 4i² = −3 + 4i；z² − 2z + 5 = (−3 + 4i) − (2 + 4i) + 5 = 0。"
+      ],
+      "answer": "z = 1 ± 2i",
+      "claim": "1 - 4 - 2 + 5 == 0 ;; 4 - 4 == 0"
+    }
+  ],
+  "pitfalls": [
+    "把虛部寫成 bi；虛部是實數 b。",
+    "乘法忘了 i² = −1，留下 i² 或把它當成 1。",
+    "除法只乘分子、不乘分母，或乘的不是共軛複數。",
+    "|a + bi| 寫成 a + b 或 √(a² − b²)。"
+  ],
+  "checks": [
+    {
+      "ask": "i²⁰²⁵ 是？",
+      "options": [
+        { "label": "i", "correct": true },
+        { "label": "−1", "why": "i 的次方四個一循環，2025 = 4 · 506 + 1，所以是 i¹ = i。" },
+        { "label": "1", "why": "只有指數是 4 的倍數時才是 1；2025 除以 4 餘 1。" }
+      ]
+    },
+    {
+      "ask": "|3 − 4i| 是？",
+      "options": [
+        { "label": "5", "correct": true },
+        { "label": "−1", "why": "絕對值是距離 √(3² + (−4)²)，不是 3 + (−4)。" },
+        { "label": "√7", "why": "虛部也是平方後相加：9 + 16 = 25，不是 9 − 16 的絕對值。" }
+      ]
+    },
+    {
+      "ask": "1/i 是？",
+      "options": [
+        { "label": "−i", "correct": true },
+        { "label": "i", "why": "i · i = −1，不是 1；同乘 −i（共軛複數）得 −i/1 = −i。" },
+        { "label": "沒有定義", "why": "只有 0 不能當分母；i ≠ 0，1/i 有定義。" }
+      ]
+    },
+    {
+      "ask": "z z̄ 一定是？",
+      "options": [
+        { "label": "非負實數 |z|²", "correct": true },
+        { "label": "純虛數", "why": "(a + bi)(a − bi) = a² − (bi)² = a² + b²，虛部抵銷。" },
+        { "label": "z²", "why": "z̄ ≠ z（除非 z 是實數），所以 z z̄ 一般不等於 z²。" }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": ["complex", "modulus"],
+    "fine": ["complex-arithmetic", "complex-division", "complex-modulus-conjugate", "complex-quadratic-roots"]
+  },
+  "practice": [
+    { "id": "der-077", "core": true, "trains": "complex-modulus-conjugate" },
+    { "id": "der-078", "core": true, "trains": "complex-arithmetic" },
+    { "id": "der-075", "trains": "complex-arithmetic" },
+    { "id": "der-076", "trains": "complex-arithmetic" }
+  ],
+  "gaps": [
+    { "tag": "complex-arithmetic", "count": 3, "note": "複數加減乘、i 的次方，R1（現有的 der-075～078 都還沒驗算）。" },
+    { "tag": "complex-division", "count": 3, "note": "複數除法（答案寫成 a + bi），R1–R2；判分要能接受複數答案。" },
+    { "tag": "complex-quadratic-roots", "count": 2, "note": "判別式為負的二次方程式，R1。" }
+  ]
+}

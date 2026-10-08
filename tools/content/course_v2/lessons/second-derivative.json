@@ -1,0 +1,149 @@
+{
+  "id": "second-derivative",
+  "title": "二階導數",
+  "readMinutes": 8,
+  "totalMinutes": 30,
+  "prerequisites": ["higher-derivatives", "increasing-decreasing"],
+  "next": ["concavity"],
+  "related": ["first-derivative-test"],
+  "objectives": [
+    "說出 f″ 在問什麼：f′（斜率）變化得多快。",
+    "用 f″ 的正負判斷 f′ 在哪裡遞增、哪裡遞減。",
+    "在直線運動裡由位置求速度、加速度，並判斷速率在變大還是變小。"
+  ],
+  "visual": "f(x) = x e^{x} 的圖形上一條切線從左滑到右，旁邊的長條即時顯示切線斜率 f′(x)。x < −2 時長條越來越短（斜率在減少），過了 x = −2 之後越來越長（斜率在增加）；同時下方顯示 f″(x) 的正負，換號的地方正好是 x = −2。",
+  "concept": [
+    {
+      "heading": "① f″ 量的是「斜率怎麼變」",
+      "body": [
+        "f′(x) 是切線斜率。把 f′ 當成一個新的函數，再微分一次，得到 f″(x)：斜率每往右一單位，變化多少。",
+        "最熟悉的例子是運動。位置 s(t) 微分是速度 v(t) = s′(t)，再微分是加速度 a(t) = s″(t)。加速度不是「跑多快」，是「速度變化得多快」。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② f″ 的正負 → f′ 的增減",
+      "body": [
+        "把〈增減區間〉用在 f′ 身上：f″ > 0 的區間，f′ 遞增；f″ < 0 的區間，f′ 遞減。",
+        "f′ 遞增的意思是切線越來越往上翹：斜率從 −2、−1、0、1、2 一路變大，曲線像碗一樣往上彎。這就是下一課〈凹向上／凹向下〉的內容。",
+        "讀圖的版本：f″ 是 f′ 圖形的斜率。f′ 的圖往上走的地方，f″ > 0。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 加速與減速：看 v 和 a 是否同號",
+      "body": [
+        "「加速」在日常用語裡指速率 |v| 變大，跟 a 的正負不是同一件事。v = −5 而 a = −2：速度往負方向越來越大，速率在變大。",
+        "規則：在一段時間裡 v 與 a 同號，速率增加；異號，速率減少。原因是 (v²)′ = 2va。va > 0 時 v² 遞增，速率 |v| = √(v²) 也跟著遞增；va < 0 時則遞減。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 記號，以及 f″ 可能不存在",
+      "body": [
+        "f″(x)、y″、d²y/dx² 都是同一個東西。d²y/dx² 的寫法來自把 d/dx 作用兩次：d/dx(dy/dx)。",
+        "f′ 存在，不保證 f″ 存在。f(x) = x|x| 的導函數是 f′(x) = 2|x|，在 0 有尖角，所以 f″(0) 不存在。之後找 f″ 換號的點時，這種點也要列進去。"
+      ],
+      "collapsible": false
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "算 f″，看 f′ 的增減",
+      "prompt": "f(x) = x eˣ。求 f″，並說出 f′ 在哪裡遞增。",
+      "problemId": "der-029",
+      "steps": [
+        "乘法法則：f′(x) = eˣ + x eˣ = (x + 1)eˣ。",
+        "再用一次乘法法則：f″(x) = eˣ + (x + 1)eˣ = (x + 2)eˣ。",
+        "eˣ 恆正，f″ 的正負跟 x + 2 一樣：x > −2 時 f″ > 0。",
+        "所以 f′ 在 (−2, ∞) 上遞增，在 (−∞, −2) 上遞減。"
+      ],
+      "answer": "f″(x) = (x + 2)eˣ；f′ 在 (−2, ∞) 遞增",
+      "claim": "D(x*e^x) == (x+1)*e^x ;; D2(x*e^x) == (x+2)*e^x ;; D2(x*e^x, -3) < 0 ;; D2(x*e^x, -1) > 0"
+    },
+    {
+      "title": "直線運動：何時在加速",
+      "prompt": "質點位置 s(t) = t³ − 6t² + 9t（t ≥ 0）。求 a(4)，以及速率增加的時段。",
+      "problemId": "lec-02-q4d",
+      "steps": [
+        "v(t) = 3t² − 12t + 9 = 3(t − 1)(t − 3)；a(t) = 6t − 12 = 6(t − 2)。a(4) = 24 − 12 = 12。",
+        "v 在 t = 1、3 換號；a 在 t = 2 換號。把 t ≥ 0 切成四段看符號：",
+        "(0, 1)：v > 0、a < 0，異號，減速。(1, 2)：v < 0、a < 0，同號，加速。(2, 3)：v < 0、a > 0，減速。(3, ∞)：v > 0、a > 0，加速。",
+        "速率增加的時段是 (1, 2) 與 (3, ∞)。"
+      ],
+      "answer": "a(4) = 12；速率在 (1, 2)、(3, ∞) 增加",
+      "note": "在 (1, 2) 裡 a < 0，但質點正在加速：它往負方向跑得越來越快。",
+      "claim": "D(t^3-6t^2+9t) == 3*(t-1)*(t-3) ;; D2(t^3-6t^2+9t) == 6*(t-2) ;; D2(t^3-6t^2+9t, 4) == 12"
+    },
+    {
+      "title": "只給 f′",
+      "prompt": "f′(x) = x³ − 4x。f′ 在哪些區間遞增？",
+      "steps": [
+        "f″(x) = 3x² − 4。f″ = 0：x² = 4/3，x = ±2/√3 ≈ ±1.155。",
+        "3x² − 4 是開口向上的拋物線，在兩根之外為正、之間為負。",
+        "f′ 遞增：(−∞, −2/√3) 與 (2/√3, ∞)；遞減：(−2/√3, 2/√3)。"
+      ],
+      "answer": "(−∞, −2/√3) 與 (2/√3, ∞)",
+      "claim": "D(x^3-4x) == 3x^2-4 ;; SUB(3x^2-4, 2/sqrt(3)) == 0 ;; SUB(3x^2-4, 0) < 0 ;; SUB(3x^2-4, 2) > 0"
+    }
+  ],
+  "pitfalls": [
+    "把 f″ > 0 讀成「f 遞增」。f″ > 0 說的是 f′ 遞增，f 本身可能正在下坡。",
+    "以為 a < 0 就是減速；要看 v 和 a 是否同號。",
+    "第二次微分時把第一次的結果抄錯，或乘法法則只做一半。",
+    "看 f′ 的圖找 f″ 的正負時，去看 f′ 在 x 軸上方還是下方；要看的是 f′ 的圖往上還是往下走。"
+  ],
+  "checks": [
+    {
+      "ask": "某一段區間上 f′ < 0、f″ > 0。這段的 f：",
+      "options": [
+        { "label": "在下坡，但坡越來越緩", "correct": true },
+        { "label": "在上坡", "why": "上坡要 f′ > 0。f″ > 0 只說斜率在變大（例如 −3 變 −1），斜率本身仍是負的。" },
+        { "label": "在下坡，而且越來越陡", "why": "越來越陡是斜率越來越負，那是 f′ 遞減，要 f″ < 0。" }
+      ]
+    },
+    {
+      "ask": "某時刻 v = −4、a = −3。質點的速率：",
+      "options": [
+        { "label": "正在增加", "correct": true },
+        { "label": "正在減少，因為 a < 0", "why": "a 的正負只說速度往哪個方向變。v 和 a 都是負的，速度往負方向越來越大，速率在增加。" },
+        { "label": "不變", "why": "a ≠ 0，速度一定在變；va = 12 > 0，所以 v² 在增加，速率也在增加。" }
+      ]
+    },
+    {
+      "ask": "s(t) = t³ − 6t² + 9t。a(t) 是？",
+      "options": [
+        { "label": "6t − 12", "correct": true },
+        { "label": "3t² − 12t + 9", "why": "這是 v(t) = s′(t)。加速度要再微分一次。" },
+        { "label": "6t", "why": "−12t 微分是 −12，漏掉了。" }
+      ]
+    },
+    {
+      "ask": "圖上是 f′ 的圖形。f″ > 0 的地方在哪？",
+      "options": [
+        { "label": "f′ 的圖往上走的地方", "correct": true },
+        { "label": "f′ 的圖在 x 軸上方的地方", "why": "在 x 軸上方是 f′ > 0，那說的是 f 遞增。f″ 是 f′ 的斜率，要看 f′ 的圖往哪裡走。" },
+        { "label": "f′ 的圖穿過 x 軸的地方", "why": "f′ 穿過 x 軸是 f 的臨界點，跟 f″ 的正負無關。" }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": ["second-derivative", "kinematics"],
+    "fine": ["second-deriv-compute", "second-deriv-fprime-monotone", "second-deriv-acceleration", "second-deriv-speeding-up"]
+  },
+  "practice": [
+    { "id": "lec-02-q4a", "core": true, "trains": "second-deriv-acceleration" },
+    { "id": "db-mot-002", "core": true, "trains": "second-deriv-acceleration" },
+    { "id": "der-029", "core": true, "trains": "second-deriv-compute" },
+    { "id": "dd-kin-004", "core": true, "trains": "second-deriv-acceleration" },
+    { "id": "exam-der-007", "core": true, "trains": "second-deriv-compute" },
+    { "id": "lec-02-q4d", "core": true, "trains": "second-deriv-speeding-up" },
+    { "id": "dd-kin-003", "trains": "second-deriv-acceleration" },
+    { "id": "uni-der-005", "trains": "second-deriv-compute" },
+    { "id": "gx-005", "challenge": true, "trains": "second-deriv-fprime-monotone", "note": "挑戰：圖上是 f′ = x³ − 4x；f′ 的山頂與谷底就是 f″ 換號的地方。" }
+  ],
+  "gaps": [
+    { "tag": "second-deriv-speeding-up", "count": 2, "note": "R2–R3：由 v、a 的符號判斷加速或減速，目前只有 lec-02-q4d 一題。" },
+    { "tag": "second-deriv-fprime-monotone", "count": 2, "note": "R2：給 f 或 f′，問 f′ 在哪裡遞增（還沒提到凹性之前的版本）。" }
+  ]
+}

@@ -1,0 +1,140 @@
+{
+  "id": "harmonic-oscillator",
+  "title": "簡諧振盪",
+  "readMinutes": 10,
+  "totalMinutes": 30,
+  "prerequisites": ["complex-roots"],
+  "next": ["damped-oscillator"],
+  "related": ["spring-work"],
+  "objectives": [
+    "從牛頓第二定律與虎克定律寫出 mx″ + kx = 0，說出 ω₀ = √(k/m) 的物理意義。",
+    "用初始位置與初速度解出 x(t)，並改寫成 A cos(ω₀t − φ)，讀出振幅與週期。",
+    "用能量守恆 ½mx′² + ½kx² = 常數 檢查答案。"
+  ],
+  "visual": "左邊一個掛在彈簧上的木塊上下振動，右邊同步畫出 x(t)。滑桿調整 k 與 m：k 變大振得更快，m 變大振得更慢，振幅大小不影響週期。底下兩條能量長條（動能、位能）此消彼長，總和那條保持不動。",
+  "concept": [
+    {
+      "heading": "① 從物理寫出方程",
+      "body": [
+        "質量 m 的木塊接在彈簧上，x 是離開平衡位置的位移。虎克定律：彈簧的力是 −kx（拉長就往回拉，壓縮就往外推），k > 0 是彈簧常數。牛頓第二定律 力 = 質量 × 加速度："
+      ],
+      "tex": ["m x'' = -kx \\quad\\Longleftrightarrow\\quad x'' + \\omega_0^2 x = 0,\\qquad \\omega_0=\\sqrt{k/m}"],
+      "collapsible": false
+    },
+    {
+      "heading": "② 解：純虛根給 sin、cos",
+      "body": [
+        "特徵方程 r² + ω₀² = 0，r = ±iω₀（〈複數根〉，α = 0）。通解 x(t) = C₁cos ω₀t + C₂sin ω₀t。",
+        "代 t = 0：C₁ = x(0)；x′(0) = ω₀C₂，所以 C₂ = x′(0)/ω₀。",
+        "ω₀ 是角頻率（每秒轉幾弧度），週期 T = 2π/ω₀ = 2π√(m/k)：彈簧越硬振越快，木塊越重振越慢。週期跟振幅無關：拉遠一點，回復力也比較大，剛好抵銷。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 振幅與相位",
+      "body": [
+        "C₁cos ω₀t + C₂sin ω₀t 可以合成一個餘弦 A cos(ω₀t − φ)，其中 A = √(C₁² + C₂²)，cos φ = C₁/A、sin φ = C₂/A。A 是振幅（離平衡最遠多少），φ 說明最遠點發生在什麼時候。",
+        "φ 要看 C₁、C₂ 的正負決定象限，不能只用 tan φ = C₂/C₁。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 能量守恆",
+      "body": [
+        "動能 ½mx′² 加彈性位能 ½kx² 不隨時間改變：微分得 x′(mx″ + kx) = 0。木塊在平衡點最快、在最遠點瞬間靜止，能量在兩種形式之間來回交換。這是檢查答案的好方法。"
+      ],
+      "collapsible": false
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "從物理量到 x(t)",
+      "prompt": "m = 2 kg、k = 18 N/m 的彈簧系統，木塊從平衡位置以 3 m/s 出發。求 x(t)、振幅、週期。",
+      "steps": [
+        "ω₀ = √(k/m) = √9 = 3（rad/s）。方程 x″ + 9x = 0。",
+        "x(0) = 0 給 C₁ = 0；x′(0) = 3 給 C₂ = 3/ω₀ = 1。",
+        "x(t) = sin 3t（公尺）。振幅 1 m，週期 2π/3 ≈ 2.09 秒。"
+      ],
+      "answer": "x(t) = sin 3t，振幅 1 m，週期 2π/3 秒",
+      "claim": "sqrt(18/2) == 3 ;; D2(sin(3t)) == -9*sin(3t) ;; SUB(sin(3t), 0) == 0 ;; D(sin(3t), 0) == 3"
+    },
+    {
+      "title": "合成振幅與相位",
+      "prompt": "x″ + 4x = 0，x(0) = 3，x′(0) = 8。寫成 A cos(2t − φ)。",
+      "steps": [
+        "ω₀ = 2。C₁ = x(0) = 3，C₂ = x′(0)/ω₀ = 8/2 = 4。",
+        "x = 3cos 2t + 4sin 2t。A = √(3² + 4²) = 5。",
+        "cos φ = 3/5 > 0、sin φ = 4/5 > 0，φ 在第一象限：φ = arctan(4/3) ≈ 0.927。",
+        "最大速度 Aω₀ = 10。"
+      ],
+      "answer": "x = 5cos(2t − arctan(4/3))",
+      "claim": "3*cos(2t)+4*sin(2t) == 5*cos(2t - atan(4/3)) ;; D2(3*cos(2t)+4*sin(2t)) == -4*(3*cos(2t)+4*sin(2t)) ;; SUB(3*cos(2t)+4*sin(2t), 0) == 3 ;; D(3*cos(2t)+4*sin(2t), 0) == 8"
+    },
+    {
+      "title": "用能量檢查",
+      "prompt": "承上題，取 m = 1、k = 4，驗證總能量不變。",
+      "steps": [
+        "t = 0：動能 ½·1·8² = 32，位能 ½·4·3² = 18，總和 50。",
+        "在最遠點 x = ±5，速度為 0：位能 ½·4·5² = 50，動能 0。",
+        "任何時刻 ½x′² + 2x² 都是 50。"
+      ],
+      "answer": "總能量 50（焦耳）",
+      "claim": "0.5*D(3*cos(2t)+4*sin(2t))^2 + 0.5*4*(3*cos(2t)+4*sin(2t))^2 == 50"
+    }
+  ],
+  "pitfalls": [
+    "C₂ 寫成 x′(0)，忘了除以 ω₀。",
+    "把角頻率 ω₀ 當成每秒振動次數；次數是 ω₀/(2π)。",
+    "振幅寫成 |C₁| + |C₂|，正確是 √(C₁² + C₂²)。",
+    "只用 tan φ = C₂/C₁ 定相位，象限錯了差 π。",
+    "以為振幅越大週期越長：簡諧振盪的週期與振幅無關。"
+  ],
+  "checks": [
+    {
+      "ask": "同一根彈簧，木塊質量變成 4 倍，週期變成？",
+      "options": [
+        { "label": "2 倍", "correct": true },
+        { "label": "4 倍", "why": "T = 2π√(m/k)，m 在根號裡：√4 = 2。" },
+        { "label": "1/2", "why": "方向反了：越重越慢，週期變長。" }
+      ]
+    },
+    {
+      "ask": "x = 6cos t + 8sin t 的振幅是？",
+      "options": [
+        { "label": "10", "correct": true },
+        { "label": "14", "why": "cos 與 sin 不會同時達到最大，係數不能直接相加；A = √(36 + 64) = 10。" },
+        { "label": "8", "why": "只看較大的係數漏了 cos 那一項的貢獻；A = √(6² + 8²)。" }
+      ]
+    },
+    {
+      "ask": "把木塊拉得更遠再放手（振幅變 2 倍），週期？",
+      "options": [
+        { "label": "不變", "correct": true },
+        { "label": "變 2 倍", "why": "路程變 2 倍，但回復力與速度也都變 2 倍，剛好抵銷；T = 2π/ω₀ 裡沒有振幅。" },
+        { "label": "變一半", "why": "週期只由 k 與 m 決定，跟拉多遠無關。" }
+      ]
+    },
+    {
+      "ask": "木塊經過平衡位置 x = 0 時：",
+      "options": [
+        { "label": "速度最大，動能最大", "correct": true },
+        { "label": "速度為 0", "why": "速度為 0 的是最遠點（轉折點）；平衡點位能為 0，能量全是動能。" },
+        { "label": "加速度最大", "why": "加速度是 −ω₀²x，在 x = 0 時是 0；最大加速度在最遠點。" }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": ["ode", "second-order", "complex-roots", "ivp"],
+    "fine": ["sho-model", "sho-initial-conditions", "sho-amplitude-phase", "sho-energy"]
+  },
+  "practice": [
+    { "id": "ode-h2-002", "core": true, "trains": "sho-initial-conditions" },
+    { "id": "gap-der-ode-004", "core": true, "trains": "sho-initial-conditions" },
+    { "id": "ode-h2-007", "core": true, "trains": "sho-initial-conditions" }
+  ],
+  "gaps": [
+    { "tag": "sho-model", "count": 3, "note": "R2：給 m、k 求 ω₀、週期；質量或彈簧常數改變時週期怎麼變。題庫沒有物理情境的振盪題。" },
+    { "tag": "sho-amplitude-phase", "count": 2, "note": "R3：由 x(0)、x′(0) 求振幅與相位，含相位在第二、三象限的情形。" },
+    { "tag": "sho-energy", "count": 2, "note": "R3：用能量守恆求最大速度或最大位移。" }
+  ]
+}
