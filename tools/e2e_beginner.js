@@ -341,60 +341,85 @@ async function run() {
     /* ── 2. 完全沒學過的人：onboarding 有「我還沒學過」，進的是課程不是題目 ── */
     // 2026-09-15 使用者：「沒有很適合完全初學者」。以前 onboarding 第一句是「把學過的微積分
     // 練成直覺」、三個情境沒有一個是沒學過、站上沒有一段教「極限是什麼」。這一段釘住：
-    // 一鍵進課程、課程表九課、單課有概念／逐步示範／小測／練習、練完回得來、首頁主卡變成上課。
+    // 一鍵進課程、課程表列出全部的課、單課有觀念／逐步範例／小測／推薦題、練完回得來、首頁主卡變成上課。
+    // 2026-10 換成新版課程（317 課、Stage 0–12；手機寬度的細節由 e2e_course_v2 釘）：這裡走初學者的那一條路。
     await chrome.navigate(server.url + "/index.html");
     await chrome.evaluate("localStorage.clear(); return 1;");
     await chrome.navigate(server.url + "/index.html");
-    check("第一頁就有「我還沒學過微積分」", await click('[data-action="set-onboarding-context"][data-context="newbie"]', 900));
-    const course = await evaluate(`return { h2: window.__b.text(".course-index h2"), cards: document.querySelectorAll(".course-card").length, placement: Boolean(document.querySelector('[data-action="start-placement"]')) };`);
-    const lessonTotal = await evaluate(`return (window.BUZZ_COURSE || []).length;`);
-    check("選了直接進課程表（不做定位測驗），所有課都在", lessonTotal >= 16 && course.cards === lessonTotal && !course.placement, `${course.cards} / ${lessonTotal} 課 · ${course.h2}`);
+    check("第一頁就有「我還沒學過微積分」", await click('[data-action="set-onboarding-context"][data-context="newbie"]', 300));
+    for (const deadline = Date.now() + 8000; Date.now() < deadline; await chrome.sleep(120)) {
+      if (await evaluate(`return Boolean(document.querySelector(".cv2-index .cv2-stage"));`)) break;
+    }
+    const course = await evaluate(`
+      const total = (window.BUZZ_COURSE_V2 ? window.BUZZ_COURSE_V2.stages : []).reduce((n, s) => n + s.chapters.reduce((m, c) => m + c.lessons.length, 0), 0);
+      return { h2: window.__b.text(".course-index h2"), total, stages: document.querySelectorAll(".cv2-stage").length, rows: document.querySelectorAll(".cv2-row").length, placement: Boolean(document.querySelector('[data-action="start-placement"]')), primary: window.__b.text('.cv2-index .page-head [data-action="open-course-lesson"]') };`);
+    check("選了直接進課程表（不做定位測驗），所有課都在", course.total >= 300 && course.rows === course.total && course.stages === 13 && !course.placement, `${course.rows} / ${course.total} 課 · ${course.h2}`);
+    check("課程表的主按鈕是第一課", /^開始：0\.1 /.test(course.primary), course.primary);
 
-    // ── 理論課（第 1 課「函數是什麼」）：沒有練習題、小測全對就算完成、下一課按鈕出現 ──
-    await click('[data-action="open-course-lesson"][data-lesson-id="fn-what-is-a-function"]', 900);
-    const theoryPage = await evaluate(`return { label: window.__b.text("[data-course-practice] .section-label"), practiceButton: Boolean(document.querySelector('[data-action="course-practice"]')), tex: Boolean(document.querySelector("[data-course-worked] .pl-goal .katex")), checks: document.querySelectorAll(".course-check").length };`);
-    check("理論課：沒有練習按鈕、推導題有 TeX、小測至少三題", /沒有練習題/.test(theoryPage.label) && !theoryPage.practiceButton && theoryPage.tex && theoryPage.checks >= 3, JSON.stringify(theoryPage));
-    // 正解不一定在第一個：從課程內容讀每題正解的位置，一題一題點
-    const theoryPicks = await evaluate(`return window.BUZZ_COURSE.find((l) => l.id === "fn-what-is-a-function").checks.map((c) => c.options.findIndex((o) => o.correct));`);
-    for (let ci = 0; ci < theoryPicks.length; ci += 1) await click(`[data-action="course-pick"][data-check="${ci}"][data-option="${theoryPicks[ci]}"]`, 350);
-    const theoryDone = await evaluate(`return { pill: window.__b.text("[data-course-practice] .course-done-pill"), next: window.__b.text('[data-course-practice] [data-action="open-course-lesson"]') };`);
-    check("理論課小測全對：標成完成、出現「下一課」", /小測全對/.test(theoryDone.pill) && /下一課/.test(theoryDone.next), `${theoryDone.pill} · ${theoryDone.next}`);
-    await click('[data-action="open-course"]', 800);
-    check("課程表上第 1 課打勾", await evaluate(`return Boolean(document.querySelector('.course-card.is-done[data-lesson-id="fn-what-is-a-function"]'));`));
+    // ── 第一課（0.1）：觀念 → 範例 → 小測；小測第一次就選對 ≥ 3 題＝完成，下一課按鈕變主按鈕 ──
+    await click('.cv2-index .page-head [data-action="open-course-lesson"]', 300);
+    for (const deadline = Date.now() + 8000; Date.now() < deadline; await chrome.sleep(120)) {
+      if (await evaluate(`return Boolean(document.querySelector(".cv2-lesson [data-course-checks]"));`)) break;
+    }
+    const firstLesson = await evaluate(`return { title: window.__b.text(".cv2-lesson h2"), concept: document.querySelectorAll("[data-course-concept] .cv2-part p").length, checks: document.querySelectorAll(".course-check").length };`);
+    check("第一課：有觀念、有小測", firstLesson.concept >= 3 && firstLesson.checks >= 3, JSON.stringify(firstLesson));
+    // 正解不一定在第一個：從課文讀每題正解的位置，一題一題點
+    const firstPicks = await evaluate(`return window.BUZZ_COURSE_V2_LESSONS["function-intro"].checks.map((c) => c.options.findIndex((o) => o.correct));`);
+    for (let ci = 0; ci < firstPicks.length; ci += 1) await click(`[data-action="course-pick"][data-check="${ci}"][data-option="${firstPicks[ci]}"]`, 300);
+    const firstDone = await evaluate(`return { result: window.__b.text("[data-course-quiz-result]"), tier: window.__b.text(".cv2-lesson .cv2-meta .cv2-tier"), next: window.__b.text('.cv2-nav .home-primary[data-action="open-course-lesson"]') };`);
+    check("小測全對：標成完成、「下一課」變主按鈕", /完成/.test(firstDone.result) && firstDone.tier === "完成" && /下一課：0\.2/.test(firstDone.next), `${firstDone.result} · ${firstDone.next}`);
+    await click('[data-action="open-course"]', 600);
+    check("課程表上第一課標完成", await evaluate(`const row = document.querySelector('.cv2-row[data-lesson-id="function-intro"]'); return Boolean(row && /完成/.test(row.innerText));`));
 
-    // ── 計算課（第 3 課「極限是什麼」）──
-    await click('[data-action="open-course-lesson"][data-lesson-id="c1-limit-meaning"]', 900);
-    const lessonPage = await evaluate(`return { concept: document.querySelectorAll(".course-lesson .pl-intro p").length, tex: Boolean(document.querySelector("[data-course-worked] .pl-goal .katex")), steps: document.querySelectorAll(".course-step").length, stepButton: Boolean(document.querySelector('[data-action="course-step"]')), options: document.querySelectorAll(".course-option").length, practice: document.querySelectorAll(".course-practice-item").length };`);
-    check("單課：概念有字、示範題有 TeX、步驟先藏著、小測有選項、練習列出 3 題", lessonPage.concept >= 3 && lessonPage.tex && lessonPage.steps === 0 && lessonPage.stepButton && lessonPage.options >= 3 && lessonPage.practice === 3, JSON.stringify(lessonPage));
-    await click('[data-action="course-step"]', 300);
-    await click('[data-action="course-step"]', 300);
+    // ── 極限的第一課（1.1）：範例一步一步揭、選錯說為什麼、推薦題開一局 ──
+    await evaluate(`const d = document.querySelector('details[data-keep="cv2-stage-1"]'); d.open = true; [...d.querySelectorAll("details")].forEach((c) => { c.open = true; }); return 1;`);
+    await click('.cv2-row[data-lesson-id="limit-intro"]', 300);
+    for (const deadline = Date.now() + 8000; Date.now() < deadline; await chrome.sleep(120)) {
+      if (await evaluate(`return Boolean(document.querySelector(".cv2-lesson [data-course-checks]"));`)) break;
+    }
+    const lessonPage = await evaluate(`return { title: window.__b.text(".cv2-lesson h2"), label: window.__b.text(".cv2-lesson .page-head .section-label"), steps: document.querySelectorAll(".course-step").length, stepButton: Boolean(document.querySelector('[data-action="course-step"]')), options: document.querySelectorAll(".course-option").length, practice: document.querySelectorAll("[data-course-practice] .cv2-practice li").length };`);
+    check("單課：課號照大綱算、步驟先藏著、小測有選項、推薦題列出來", /^1\.1 ·/.test(lessonPage.label) && lessonPage.steps === 0 && lessonPage.stepButton && lessonPage.options >= 9 && lessonPage.practice >= 2, JSON.stringify(lessonPage));
+    await click('[data-action="course-step"][data-ex="0"]', 300);
+    await click('[data-action="course-step"][data-ex="0"]', 300);
     const revealed = await evaluate(`return document.querySelectorAll(".course-step").length;`);
-    check("逐步示範一步一步揭", revealed === 2, `${revealed} 步`);
-    await click('[data-action="course-pick"][data-check="0"][data-option="1"]', 400);
+    check("逐步範例一步一步揭", revealed === 2, `${revealed} 步`);
+    const limitChecks = await evaluate(`return window.BUZZ_COURSE_V2_LESSONS["limit-intro"].checks.map((c) => ({ right: c.options.findIndex((o) => o.correct), wrong: c.options.findIndex((o) => !o.correct) }));`);
+    await click(`[data-action="course-pick"][data-check="0"][data-option="${limitChecks[0].wrong}"]`, 400);
     const wrongPick = await evaluate(`return { why: window.__b.text(".course-check-why"), wrong: Boolean(document.querySelector(".course-check.is-wrong")) };`);
     check("小測選錯：標紅並說為什麼錯", wrongPick.wrong && wrongPick.why.length > 8, wrongPick.why.slice(0, 40));
-    await click('[data-action="course-pick"][data-check="0"][data-option="0"]', 400);
+    await click(`[data-action="course-pick"][data-check="0"][data-option="${limitChecks[0].right}"]`, 400);
     check("小測選對：綠", await evaluate(`return Boolean(document.querySelector(".course-check.is-right"));`));
-    check("練習按鈕在", await click('[data-action="course-practice"]', 1000));
-    const practice = await evaluate(`return { rank: window.__b.rank(), topic: window.__b.topic(), hud: window.__b.text(".hud-context"), choices: window.__b.choices().length };`);
-    check("課後練習是 R1 極限選擇題、不計分", practice.rank === 1 && practice.topic === "極限" && practice.choices >= 2, `R${practice.rank} ${practice.topic} · ${practice.hud}`);
-    // 隨便答完三題，看回饋裡有沒有「回去看第 1 課」、結算有沒有「回到第 1 課」
+    const practiceIds = await evaluate(`return window.BUZZ_COURSE_V2_LESSONS["limit-intro"].practice.filter((p) => !p.challenge).map((p) => p.id);`);
+    check("推薦題按鈕在", await click('[data-action="course-practice"][data-set="main"]', 1000));
+    const practice = await evaluate(`
+      const tex = window.__b.prompt();
+      const p = window.BUZZ_PROBLEMS.find((x) => x.prompt === tex);
+      return { id: p ? p.id : "", topic: window.__b.topic(), hud: window.__b.text(".hud-context"), choices: window.__b.choices().length };`);
+    check("推薦題是這一課的題、極限、選擇題", practiceIds.includes(practice.id) && practice.topic === "極限" && practice.choices >= 2, `${practice.id} ${practice.topic} · ${practice.hud}`);
+    // 隨便答完，看回饋裡有沒有「回去看一眼」、結算有沒有「回到 1.1」
     let sawLessonLink = false;
-    for (let i = 0; i < 3; i += 1) {
+    for (let i = 0; i < practiceIds.length + 1; i += 1) {
+      if (await evaluate(`return Boolean(document.querySelector(".verdict"));`)) break;
       await click('[data-action="choose-answer"]', 800);
       if (await evaluate(`return Boolean(document.querySelector('.feedback-course [data-action="open-course-lesson"]'));`)) sawLessonLink = true;
       await click('[data-action="next-question"]', 700);
     }
-    const results = await evaluate(`return { back: window.__b.text('[data-action="open-course-lesson"]'), next: Boolean([...document.querySelectorAll('[data-action="open-course-lesson"]')][1]) };`);
-    check("結算頁有「回到第 3 課」與「下一課」", /第 3 課/.test(results.back) && results.next, results.back);
-    check("答錯的回饋會說這題是第幾課教的", sawLessonLink);
+    for (const deadline = Date.now() + 5000; Date.now() < deadline; await chrome.sleep(120)) {
+      if (await evaluate(`return Boolean(document.querySelector(".verdict"));`)) break;
+    }
+    const results = await evaluate(`const links = [...document.querySelectorAll('[data-action="open-course-lesson"]')]; return { back: links[0] ? links[0].innerText : "", next: Boolean(links[1]) };`);
+    check("結算頁有「回到 1.1」與「下一課」", /回到 1\.1/.test(results.back) && results.next, results.back);
+    check("答錯的回饋會說這題是哪一課教的", sawLessonLink);
     await click('[data-action="open-course-lesson"]', 900);
-    const after = await evaluate(`return { done: window.__b.text(".course-done-pill"), next: window.__b.text('[data-course-practice] [data-action="open-course-lesson"]') };`);
-    check("回到課程：練習標成練過、出現「下一課」", /練過了/.test(after.done) && /下一課/.test(after.next), `${after.done} · ${after.next}`);
+    const after = await evaluate(`return { title: window.__b.text(".cv2-lesson h2"), practicedAt: Boolean((JSON.parse(localStorage.getItem("buzzcalculus.records.v1")).courseV2 || {})["limit-intro"].practicedAt) };`);
+    check("回到這一課；練過的時間記在 records.courseV2", Boolean(after.title) && after.practicedAt, after.title);
     await click('[data-action="home"]', 800);
+    for (const deadline = Date.now() + 5000; Date.now() < deadline; await chrome.sleep(120)) {
+      if (await evaluate(`return Boolean(document.querySelector(".course-home-card h2"));`)) break;
+    }
     const newbieHome = await evaluate(`return { card: window.__b.text(".course-home-card h2"), steps: window.__b.text(".first-steps .first-step.is-current strong") };`);
-    // 第 1 課（理論）與第 3 課做完了，下一個沒完成的是第 2 課
-    check("首頁主卡變成「接著上第 2 課」，三步的第一步是上課", /第 2 課/.test(newbieHome.card) && /第 2 課/.test(newbieHome.steps), `${newbieHome.card} · ${newbieHome.steps}`);
+    // 0.1 完成了、1.1 小測沒做完（第一題選錯、其他沒選）：下一個沒完成的是 0.2
+    check("首頁主卡變成「上 0.2」，三步的第一步是上課", /0\.2/.test(newbieHome.card) && /0\.2/.test(newbieHome.steps), `${newbieHome.card} · ${newbieHome.steps}`);
 
     // ── 橋：所有課都完成之後不能直接掉進主線 ──
     // 把全部課標成完成（不重走），看首頁主卡變畢業關；考完看判詞；再進主線第 1 關看抽到的題是不是都在橋池
@@ -409,14 +434,22 @@ async function run() {
       const key = "buzzcalculus.records.v1";
       const records = JSON.parse(localStorage.getItem(key) || "{}");
       const now = new Date().toISOString();
-      records.course = Object.fromEntries((window.BUZZ_COURSE || []).map((l) => [l.id, { openedAt: now, checksPassed: true, practiceDone: true, practiceCorrect: 3, practiceTotal: 3, doneAt: now }]));
+      // 新版課程：大綱裡每一課都標完成（這一頁剛打開過課程，大綱已經載進來）
+      const ids = window.BUZZ_COURSE_V2.stages.flatMap((s) => s.chapters.flatMap((c) => c.lessons.map((l) => l.id)));
+      records.courseV2 = Object.fromEntries(ids.map((id) => [id, { openedAt: now, quizBest: 4, doneAt: now }]));
       localStorage.setItem(key, JSON.stringify(records));
       return 1;`);
     await chrome.navigate(server.url + "/index.html");
-    await chrome.sleep(900);
+    // 首頁主卡要等課程大綱延後載入完才畫得出來
+    for (const deadline = Date.now() + 8000; Date.now() < deadline; await chrome.sleep(120)) {
+      if (await evaluate(`return Boolean(document.querySelector(".course-home-card h2"));`)) break;
+    }
     const gradHome = await evaluate(`return { card: window.__b.text(".course-home-card h2"), step: window.__b.text(".first-steps .first-step.is-current strong"), button: Boolean(document.querySelector('.course-home-card [data-action="course-graduation"]')) };`);
     check("所有課都完成：首頁主卡是畢業關，不是每日訓練", /畢業關/.test(gradHome.card) && /畢業關/.test(gradHome.step) && gradHome.button, `${gradHome.card} · ${gradHome.step}`);
     await click('[data-action="open-course"]', 800);
+    for (const deadline = Date.now() + 5000; Date.now() < deadline; await chrome.sleep(120)) {
+      if (await evaluate(`return Boolean(document.querySelector(".course-graduation"));`)) break;
+    }
     const gradCard = await evaluate(`return { text: window.__b.text(".course-graduation strong"), locked: Boolean(document.querySelector(".course-graduation.is-locked")) };`);
     check("課程表底下的畢業關已解鎖", !gradCard.locked && /10 題/.test(gradCard.text), gradCard.text);
     check("按下開始畢業關", await click('[data-action="course-graduation"]', 300));
