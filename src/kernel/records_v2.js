@@ -308,6 +308,32 @@
     return out;
   }
 
+  // 課程進度（records.course 舊 25 課、records.courseV2 新版課程）：同一課逐欄合併。
+  // 第一次打開／第一次完成取早的、最近一次練習取晚的、分數取高的 —— 換台裝置不會把完成的課變回沒完成。
+  const EARLIEST = ["openedAt", "doneAt"];
+  function mergeCourse(a, b) {
+    const out = Object.assign({}, a || {});
+    Object.keys(b || {}).forEach((id) => {
+      const mine = out[id];
+      const theirs = b[id];
+      if (!mine || typeof mine !== "object") { out[id] = theirs; return; }
+      if (!theirs || typeof theirs !== "object") return;
+      const merged = Object.assign({}, mine, theirs);
+      Object.keys(merged).forEach((key) => {
+        const x = mine[key];
+        const y = theirs[key];
+        if (x === undefined || y === undefined) return;
+        if (typeof x === "number" && typeof y === "number") merged[key] = Math.max(x, y);
+        else if (typeof x === "boolean" || typeof y === "boolean") merged[key] = Boolean(x || y);
+        else if (typeof x === "string" && typeof y === "string" && /At$/.test(key)) {
+          merged[key] = EARLIEST.includes(key) === (x < y) ? x : y;
+        }
+      });
+      out[id] = merged;
+    });
+    return out;
+  }
+
   // 錯題：錯得多的次數勝、最近錯的時間勝、SRS 到期日取**較早**者。
   // 到期日取早的是刻意的保守選擇 —— 寧可多複習一次，也不要漏掉一題。
   function mergeMistakes(a, b) {
@@ -481,6 +507,15 @@
     out.dailyOne = mergeByScore(left.dailyOne, right.dailyOne, "correct");
     out.weeklyChallenge = mergeByScore(left.weeklyChallenge, right.weeklyChallenge, "score");
     out.namedExams = mergeByScore(left.namedExams, right.namedExams, "score");
+
+    out.course = mergeCourse(left.course, right.course);
+    out.courseV2 = mergeCourse(left.courseV2, right.courseV2);
+    // 畢業關：過了就是過了（passed 只增不減），其餘取新的那一份
+    const gradOld = older.courseGraduation;
+    const gradNew = newer.courseGraduation;
+    out.courseGraduation = gradNew || gradOld
+      ? Object.assign({}, gradOld || {}, gradNew || {}, { passed: Boolean((gradOld && gradOld.passed) || (gradNew && gradNew.passed)) })
+      : null;
 
     out.mistakes = mergeMistakes(left.mistakes, right.mistakes);
     out.proofs = mergeProofs(left.proofs, right.proofs);

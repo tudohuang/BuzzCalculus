@@ -133,6 +133,28 @@ if (fs.existsSync(path.join(root, "assets/vendor/katex/fonts"))) {
   });
 }
 
+/* ── 6. 新版課程離線 ─────────────────────────────────────────
+   大綱＋畫面要在 install 預快取（離線也開得了課程表）；課文按 Stage 分檔、不預快取，
+   靠課程表第一次打開時 course_v2_ui.js 的 prefetchAll 抓一遍、fetch handler 存起來。
+   所以要擋的是：大綱列了某個 Stage、但那個 Stage 的課文檔不存在（prefetch 跟打開課都會 404）。 */
+["src/course_v2/outline.js", "src/course_v2_ui.js"].forEach((file) => {
+  if (!cached.has(file)) fail(`sw.js 沒有預快取 ${file} —— 離線時課程表打不開`);
+});
+const outlinePath = path.join(root, "src/course_v2/outline.js");
+if (fs.existsSync(outlinePath)) {
+  const sandbox = { window: {} };
+  require("vm").runInNewContext(fs.readFileSync(outlinePath, "utf8"), sandbox);
+  const stages = ((sandbox.window.BUZZ_COURSE_V2 || {}).stages) || [];
+  if (!stages.length) fail("src/course_v2/outline.js 讀不到任何 Stage");
+  stages.forEach((stage) => {
+    if (!fs.existsSync(path.join(root, `src/course_v2/stage-${stage.n}.js`))) fail(`大綱有 Stage ${stage.n}，但 src/course_v2/stage-${stage.n}.js 不存在`);
+  });
+  const ui = fs.existsSync(path.join(root, "src/course_v2_ui.js")) ? fs.readFileSync(path.join(root, "src/course_v2_ui.js"), "utf8") : "";
+  if (!/function prefetchAll/.test(ui) || !/src\/course_v2\/stage-\$\{/.test(ui)) fail("course_v2_ui.js 沒有在課程表打開時預抓各 Stage 的課文 —— 沒打開過的 Stage 離線讀不到");
+} else {
+  fail("缺少 src/course_v2/outline.js（跑 node tools/build_course_v2.js）");
+}
+
 /* ── 報告 ─────────────────────────────────────────────────── */
 
 function dirSize(dir) {
