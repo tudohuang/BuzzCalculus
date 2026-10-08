@@ -76,7 +76,14 @@ const BUDGETS = {
   // 只有英文介面在開站時抓（中文使用者零位元組，sw.js 也不預快取）；英文使用者第一幀要等它，所以仍然要有上限（現況 655KB）。
   // 2026-09-30 720 → 800：合併逐步解答分支後補翻 879 個句型（多是 552 題的步驟），句型表 481 → 554KB，合計 728KB。
   // 下一次撞頂該做的是把句型表按種類拆（解說／步驟／提示各一支，看解答時才抓步驟），不是再調數字。
-  "延後載入：英文內容": { pattern: /^$/, budget: 800 * 1024, lazy: "i18n" }
+  "延後載入：英文內容": { pattern: /^$/, budget: 800 * 1024, lazy: "i18n" },
+  // 2026-10-08 新增：新版課程（中文介面取代舊的 25 課）。317 課的課文合計 1.8MB，絕不進首屏：
+  // 打開課程（或新手首頁要畫主卡）才抓大綱＋畫面這一組（大綱 63KB ＋ 畫面 33KB）；英文介面永遠不抓。
+  // 上限留約四成：大綱隨課數與推薦題長，畫面再長就該拆，不是調數字。
+  "延後載入：課程": { pattern: /^$/, budget: 140 * 1024, lazy: "course" },
+  // 課文按 Stage 分檔（tools/build_course_v2.js 產生），打開某一課只抓那一個 Stage —— 使用者等的是「一個 Stage」，
+  // 所以上限管最大的那一支（現況 Stage 12 分析入門 351KB）。撞頂該做的是把那個 Stage 按章再拆，不是調數字。
+  "延後載入：課文（最大的 Stage）": { pattern: /^src\/course_v2\/stage-\d+\.js$/, budget: 450 * 1024, maxFile: true }
 };
 
 const html = fs.readFileSync(path.join(ROOT, "index.html"), "utf8");
@@ -94,7 +101,16 @@ const claimed = new Set();
 const rows = [];
 for (const [label, spec] of Object.entries(BUDGETS)) {
   let files = [];
-  if (spec.lazy) {
+  if (spec.maxFile) {
+    // 不在 index.html 上、由頁面自己按需抓的檔：量的是最大的那一支（一次只等一支）
+    const dir = path.join(ROOT, "src", "course_v2");
+    files = fs.existsSync(dir) ? fs.readdirSync(dir).map((name) => `src/course_v2/${name}`).filter((rel) => spec.pattern.test(rel)) : [];
+    const biggest = files.reduce((max, f) => Math.max(max, sizeOf(f)), 0);
+    const pctMax = Math.round((biggest / spec.budget) * 100);
+    rows.push({ label, total: biggest, budget: spec.budget, pct: pctMax, count: files.length });
+    if (biggest > spec.budget) failures.push(`${label} 超出預算：${Math.round(biggest / 1024)}KB / ${Math.round(spec.budget / 1024)}KB`);
+    continue;
+  } else if (spec.lazy) {
     files = [...lazyScripts].filter((rel) => lazyGroupOf.get(rel) === spec.lazy);
   } else if (spec.fromCss) {
     files = ["styles.css"];
