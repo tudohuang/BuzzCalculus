@@ -30,7 +30,7 @@ const suites = fs.readdirSync(dir)
 if (!suites.length) { console.error("沒有符合的 E2E"); process.exit(1); }
 
 // 最慢的先排，尾巴才不會只剩一支在跑
-const weight = { e2e_handwriting: 5, e2e_responsive_workspace: 5, e2e_mobile: 4, e2e_beginner: 4, e2e_main_flow: 3, e2e_proof_lang: 3 };
+const weight = { e2e_handwriting: 5, e2e_responsive_workspace: 5, e2e_mobile: 4, e2e_beginner: 4, e2e_course_v2: 3, e2e_main_flow: 3, e2e_proof_lang: 3 };
 suites.sort((a, b) => (weight[b.replace(".js", "")] || 1) - (weight[a.replace(".js", "")] || 1));
 
 const summaryLine = (output) => {
