@@ -3,6 +3,7 @@
 //
 // review 的顯示規則每一條都在這裡變成看得見的斷言：觀念預設顯示、collapsible 預設收起、範例一步一步揭、
 // 錯誤選項的理由選了才出現、挑戰題另外標、閱讀／完成時間分開、三層通過不鎖課、visual 規格不給學生看。
+// 圖（figures）：靜態圖畫得出曲線、widget 的滑桿真的改圖而且整頁重繪後停在原處、390 寬不溢出、亮暗兩色對比夠。
 // 另外釘住交付方式：首屏不抓任何課程檔、打開課程才抓大綱、打開一課只抓那一個 Stage。
 //
 // 用法：node tools/e2e_course_v2.js
@@ -51,6 +52,18 @@ OUTLINE.stages.filter((s) => s.n >= 1 && s.n <= 2).forEach((stage) => stage.chap
     && lesson.practice.some((p) => p.core) && lesson.practice.some((p) => p.challenge) && /〈/.test(JSON.stringify(lesson.concept));
   if (ok) SAMPLE = { lesson, stage, chapter };
 })));
+// 圖：大綱順序裡第一個有靜態圖的課、第一個有 widget 的課
+const figureLesson = (pred) => {
+  for (const stage of OUTLINE.stages) for (const chapter of stage.chapters) for (const entry of chapter.lessons) {
+    const lesson = sourceOf(entry.id);
+    // 收在可折疊段落裡的圖預設看不到，不拿來當樣本
+    const k = lesson ? (lesson.figures || []).findIndex((f) => pred(f) && !(lesson.concept[f.after === undefined ? 0 : f.after] || {}).collapsible) : -1;
+    if (k >= 0) return { lesson, k, fig: lesson.figures[k] };
+  }
+  return null;
+};
+const STATIC_FIG = figureLesson((f) => Boolean(f.graph));
+const WIDGET_FIG = figureLesson((f) => Boolean(f.widget));
 const TOTAL = OUTLINE.stages.reduce((n, s) => n + s.chapters.reduce((m, c) => m + c.lessons.length, 0), 0);
 const MISSING = OUTLINE.stages.reduce((n, s) => n + s.chapters.reduce((m, c) => m + c.lessons.filter((l) => typeof l.read !== "number").length, 0), 0);
 
@@ -304,6 +317,71 @@ async function run() {
     check("新手首頁主卡是上課（下一課是 0.1）", /^上 0\.1 /.test(home), home);
     const old = (await records()).course || {};
     check("舊版課程的紀錄還在（不刪、不轉）", Boolean(old["fn-what-is-a-function"] && old["fn-what-is-a-function"].doneAt));
+
+    /* ── 7½. 圖：靜態圖畫得出曲線；widget 的滑桿真的改圖；390 寬不溢出；深色模式看得清楚 ── */
+    check("有可以測的靜態圖與 widget", Boolean(STATIC_FIG && WIDGET_FIG), `${STATIC_FIG ? STATIC_FIG.lesson.id : "—"} · ${WIDGET_FIG ? WIDGET_FIG.lesson.id : "—"}`);
+    const openLesson = async (lesson) => {
+      await evaluate(`const b = document.createElement("button"); b.dataset.action = "open-course-lesson"; b.dataset.lessonId = ${JSON.stringify(lesson.id)}; document.querySelector("#app").appendChild(b); b.click(); return 1;`);
+      return waitFor(`document.querySelector(".cv2-lesson h2") && document.querySelector(".cv2-lesson h2").textContent === ${JSON.stringify(lesson.title)} && document.querySelector(".cv2-figure")`);
+    };
+    const FIG_PROBE = `
+      const lum = (c) => {
+        const nums = (c.match(/[\\d.]+/g) || []).map(Number);
+        const rgb = /^color\\(/.test(c) ? nums.slice(0, 3).map((v) => v * 255) : nums.slice(0, 3);
+        const [r, g, b] = rgb.map((v) => { v /= 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); });
+        return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+      };
+      const contrast = (a, b) => { const [x, y] = [lum(a), lum(b)].sort((p, q) => q - p); return Math.round(((x + 0.05) / (y + 0.05)) * 10) / 10; };
+      const bgOf = (el) => { for (let n = el; n; n = n.parentElement) { const c = getComputedStyle(n).backgroundColor; if (c && !/rgba\\(0, 0, 0, 0\\)|transparent/.test(c)) return c; } return "rgb(255, 255, 255)"; };
+      const probe = (fig) => {
+        const svg = fig.querySelector("svg");
+        const r = svg.getBoundingClientRect();
+        const curves = [...svg.querySelectorAll('path[fill="none"]')].filter((p) => { const b = p.getBoundingClientRect(); return b.width > 40 || b.height > 40; });
+        const main = curves.find((p) => Number(p.getAttribute("stroke-width")) >= 2) || curves[0];
+        const readout = fig.querySelector("[data-cv2-readout]");
+        const slider = fig.querySelector("input[type=range]");
+        const sr = slider ? slider.getBoundingClientRect() : null;
+        return {
+          visible: window.__c.visible(svg), left: r.left, right: r.right, vw: document.documentElement.clientWidth, overflow: window.__c.overflow(),
+          curves: curves.length, d: [...svg.querySelectorAll("path")].map((p) => p.getAttribute("d")).join("|"),
+          caption: fig.querySelector("figcaption").innerText,
+          readout: readout ? readout.innerText : "", slider: sr ? { h: sr.height, value: slider.value, min: slider.min, max: slider.max } : null,
+          curveContrast: main ? contrast(getComputedStyle(main).stroke, bgOf(svg)) : 0,
+          textContrast: readout ? contrast(getComputedStyle(readout).color, bgOf(readout)) : contrast(getComputedStyle(fig.querySelector("figcaption")).color, bgOf(fig))
+        };
+      };`;
+    if (STATIC_FIG && WIDGET_FIG) {
+      check(`打開有靜態圖的課（${STATIC_FIG.lesson.id}）`, await openLesson(STATIC_FIG.lesson));
+      const stat = await evaluate(`${FIG_PROBE} const fig = document.querySelector('[data-cv2-fig="${STATIC_FIG.k}"]'); fig.scrollIntoView({ block: "center" }); return probe(fig);`);
+      check("靜態圖：SVG 看得到、裡面有一條看得見的曲線", stat.visible && stat.curves >= 1, `${stat.curves} 條`);
+      check("靜態圖下面有說明", stat.caption === STATIC_FIG.fig.caption, stat.caption);
+      check("靜態圖在 390 寬裡、沒有橫向溢出", stat.left >= 0 && stat.right <= stat.vw + 0.5 && stat.overflow <= 1, `${Math.round(stat.left)}–${Math.round(stat.right)} / ${stat.vw} · 溢出 ${stat.overflow}px`);
+      await shot("07-figure-static");
+
+      check(`打開有 widget 的課（${WIDGET_FIG.lesson.id}，${WIDGET_FIG.fig.widget.type}）`, await openLesson(WIDGET_FIG.lesson));
+      const sel = `[data-cv2-fig="${WIDGET_FIG.k}"]`;
+      const before = await evaluate(`${FIG_PROBE} const fig = document.querySelector('${sel}'); fig.scrollIntoView({ block: "center" }); return probe(fig);`);
+      check("widget 不動滑桿也是一張圖：有曲線、有讀數", before.visible && before.curves >= 1 && before.readout.length > 0, before.readout);
+      check("滑桿的觸控高度 ≥ 40px", before.slider && before.slider.h >= 40, before.slider ? `${before.slider.h}px` : "沒有滑桿");
+      const target = Number(before.slider.min) + 0.8 * (Number(before.slider.max) - Number(before.slider.min));
+      await evaluate(`const s = document.querySelector('${sel} input[type=range]'); s.value = ${JSON.stringify(String(target))}; s.dispatchEvent(new Event("input", { bubbles: true })); return 1;`);
+      await sleep(200);
+      const after = await evaluate(`${FIG_PROBE} return probe(document.querySelector('${sel}'));`);
+      check("拖滑桿：圖跟著變（path 不一樣）、讀數跟著變", after.d !== before.d && after.readout !== before.readout, `${before.readout} → ${after.readout}`);
+      check("拖過之後沒有橫向溢出", after.overflow <= 1 && after.right <= after.vw + 0.5, `${after.overflow}px`);
+      await shot("08-figure-widget");
+      // 別的動作會整頁重繪（揭範例的一步）：圖要停在拖過的位置
+      await click('[data-action="course-step"][data-ex="0"]', 400);
+      const kept = await evaluate(`${FIG_PROBE} return probe(document.querySelector('${sel}'));`);
+      check("整頁重繪之後，圖停在拖過的位置", kept.slider && kept.slider.value === after.slider.value && kept.readout === after.readout, kept.readout);
+      check("亮色：曲線對底色對比 ≥ 3、讀數文字 ≥ 4.5", after.curveContrast >= 3 && after.textContrast >= 4.5, `曲線 ${after.curveContrast} · 文字 ${after.textContrast}`);
+      const theme = await evaluate(`const t = document.documentElement.dataset.theme || ""; document.documentElement.dataset.theme = "dark"; return t;`);
+      await sleep(200);
+      const dark = await evaluate(`${FIG_PROBE} return probe(document.querySelector('${sel}'));`);
+      check("深色：曲線對底色對比 ≥ 3、讀數文字 ≥ 4.5", dark.curveContrast >= 3 && dark.textContrast >= 4.5, `曲線 ${dark.curveContrast} · 文字 ${dark.textContrast}`);
+      await shot("09-figure-widget-dark");
+      await evaluate(`document.documentElement.dataset.theme = ${JSON.stringify(theme)}; return 1;`);
+    }
 
     const errors = chrome.pageErrors.slice();
     check("沒有頁面錯誤", !errors.length, errors.slice(0, 2).join(" | "));

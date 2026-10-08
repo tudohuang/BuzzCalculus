@@ -8,7 +8,7 @@
 //
 // 課號不存：畫面照大綱順序算（Stage 編號 ＋ 在 Stage 裡的第幾課）。資料之間一律用穩定 id。
 // 大綱有、但 lessons/ 還沒有檔的課照樣列進大綱（沒有分鐘數），畫面顯示「尚未開放」。
-// 不給學生看的欄位不出貨：visual（動態圖的規格，還沒做）、claim／claimNote（驗算用）、gaps（題庫缺口）、
+// 不給學生看的欄位不出貨：visual（給作者的動態圖文字規格；真正上畫面的是 figures）、claim／claimNote（驗算用）、gaps（題庫缺口）、
 // skillTags 與推薦題的 trains（內部標籤，不露在畫面上）。
 //
 // 用法：node tools/build_course_v2.js           重產
@@ -91,6 +91,8 @@ function shipLesson(lesson) {
       ...(ex.note ? { note: ex.note } : {})
     })),
     pitfalls: nonEmpty(lesson.pitfalls),
+    // 圖：原樣出貨（規格見 SCHEMA.md；畫法在 course_v2_ui.js 的 BuzzCourseFigures）
+    ...(Array.isArray(lesson.figures) && lesson.figures.length ? { figures: lesson.figures } : {}),
     checks: (lesson.checks || []).map((check) => ({
       ask: check.ask,
       options: check.options.map((option) => (option.correct ? { label: option.label, correct: true } : { label: option.label, why: option.why || "" }))
