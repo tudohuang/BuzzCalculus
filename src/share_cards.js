@@ -339,12 +339,13 @@
   // 就原樣印出（佔位符照填），所以每個模組都能單獨載入。
   const t = typeof globalThis.t === "function" ? globalThis.t : (text, vars) => (vars ? String(text).replace(/\{(\w+)(?:\|[^}]*)?\}/g, (m, k) => (k in vars ? String(vars[k]) : m)) : text);
 
-  function graphCurveFn(expr) {
+  // variable：參數曲線與極座標用 t（課程的圖）；題目一律是 x
+  function graphCurveFn(expr, variable) {
     const cleaned = String(expr || "");
     if (!/^[0-9x+\-*/().,^\sa-z]*$/i.test(cleaned)) return null;
     try {
       const body = `"use strict"; const {sin,cos,tan,asin,acos,atan,log,exp,sqrt,abs,pow,sinh,cosh,tanh,PI,E}=Math; return (${cleaned.replace(/\^/g, "**")});`;
-      const fn = new Function("x", body);
+      const fn = new Function(variable === "t" ? "t" : "x", body);
       // 探針不能只戳 x=1：1/(x−1) 在那裡是 ∞，會被當成壞式子（作圖題實測抓到）。
       // 三個點都是 ±∞ 才算壞。
       const probes = [1, 0.37, 2.61].map(fn);
@@ -362,40 +363,71 @@
     const [xmin, xmax, ymin, ymax] = graph.window.map(Number);
     if (!(xmax > xmin) || !(ymax > ymin)) return "";
     const width = 320;
-    const height = 220;
     const pad = 18;
+    // equal：x、y 同一個比例尺（極座標的圓要是圓）；高度跟著窗算，夾在 140–360
+    const height = graph.equal ? Math.round(Math.max(140, Math.min(360, 2 * pad + ((width - 2 * pad) * (ymax - ymin)) / (xmax - xmin)))) : 220;
     const sx = (x) => pad + ((x - xmin) / (xmax - xmin)) * (width - 2 * pad);
     const sy = (y) => height - pad - ((y - ymin) / (ymax - ymin)) * (height - 2 * pad);
     const parts = [];
-    const gridStep = (range) => (range <= 8 ? 1 : range <= 16 ? 2 : range <= 40 ? 5 : 10);
+    // 題目的窗都在 2–100 之間，照舊的四檔；課程的放大／拉遠鏡頭會到 0.001 或 10⁶，改用 1–2–5 的刻度
+    const gridStep = (range) => {
+      if (range >= 2 && range <= 100) return range <= 8 ? 1 : range <= 16 ? 2 : range <= 40 ? 5 : 10;
+      const raw = range / (range >= 2000 ? 4 : 6); // 大數字的刻度字寬，少放幾個
+      const unit = Math.pow(10, Math.floor(Math.log10(raw)));
+      return unit * (raw / unit >= 5 ? 5 : raw / unit >= 2 ? 2 : 1);
+    };
+    const tick = (v) => String(Number(v.toPrecision(6)));
     const gx = gridStep(xmax - xmin);
     const gy = gridStep(ymax - ymin);
-    for (let x = Math.ceil(xmin / gx) * gx; x <= xmax + 1e-9; x += gx) {
+    const showTicks = graph.ticks !== false;
+    // 刻度數字貼著軸；軸在窗外時貼著窗的邊（不然數字畫到畫布外面去）
+    const tickY = Math.min(height - 4, Math.max(pad + 10, sy(0) + 12));
+    // y 軸貼著左框（窗從 x = 0 開始）或在窗外時，數字改放到軸的右邊，不壓在軸線上、不被裁掉
+    const yTickStart = sx(0) - 5 < pad + 20;
+    const tickX = yTickStart ? Math.max(sx(0), pad) + 4 : Math.min(width - 4, sx(0) - 5);
+    for (let x = Math.ceil(xmin / gx - 1e-9) * gx; x <= xmax + 1e-9 * gx; x += gx) {
       parts.push(`<line x1="${sx(x)}" y1="${sy(ymin)}" x2="${sx(x)}" y2="${sy(ymax)}" stroke="var(--line)" stroke-width="1"/>`);
-      if (Math.abs(x) > 1e-9) parts.push(`<text x="${sx(x)}" y="${sy(0) + 12}" font-size="9" text-anchor="middle" fill="var(--muted)">${x}</text>`);
+      if (showTicks && Math.abs(x) > 1e-9 * gx) parts.push(`<text x="${sx(x)}" y="${tickY}" font-size="9" text-anchor="middle" fill="var(--muted)">${tick(x)}</text>`);
     }
-    for (let y = Math.ceil(ymin / gy) * gy; y <= ymax + 1e-9; y += gy) {
+    for (let y = Math.ceil(ymin / gy - 1e-9) * gy; y <= ymax + 1e-9 * gy; y += gy) {
       parts.push(`<line x1="${sx(xmin)}" y1="${sy(y)}" x2="${sx(xmax)}" y2="${sy(y)}" stroke="var(--line)" stroke-width="1"/>`);
-      if (Math.abs(y) > 1e-9) parts.push(`<text x="${sx(0) - 5}" y="${sy(y) + 3}" font-size="9" text-anchor="end" fill="var(--muted)">${y}</text>`);
+      if (showTicks && Math.abs(y) > 1e-9 * gy) parts.push(`<text x="${tickX}" y="${sy(y) + 3}" font-size="9" text-anchor="${yTickStart ? "start" : "end"}" fill="var(--muted)">${tick(y)}</text>`);
     }
     if (ymin <= 0 && ymax >= 0) parts.push(`<line x1="${sx(xmin)}" y1="${sy(0)}" x2="${sx(xmax)}" y2="${sy(0)}" stroke="var(--line-strong)" stroke-width="1.4"/>`);
     if (xmin <= 0 && xmax >= 0) parts.push(`<line x1="${sx(0)}" y1="${sy(ymin)}" x2="${sx(0)}" y2="${sy(ymax)}" stroke="var(--line-strong)" stroke-width="1.4"/>`);
     const strokes = ["var(--blue)", "var(--red)", "var(--green)", "var(--violet)"];
+    // 課程的圖用顏色名字（blue／red／…），題目照舊直接寫 var(--x) 或不寫
+    const paint = (name, fallback) => (/^(blue|red|green|violet|gold|muted|ink)$/.test(String(name)) ? `var(--${name})` : name || fallback);
     const toPath = (pts) => pts.map((pt, i) => `${i ? "L" : "M"}${sx(pt[0]).toFixed(1)},${sy(pt[1]).toFixed(1)}`).join(" ");
+    // 參數曲線 {x, y, t:[a,b]} 與極座標 {r, t:[a,b]}：取樣成點列
+    const sampleT = (fx, fy, range, steps) => {
+      const pts = [];
+      const [a, b] = (range || [0, 2 * Math.PI]).map(Number);
+      for (let i = 0; i <= steps; i += 1) { const t0 = a + ((b - a) * i) / steps; pts.push([fx(t0), fy(t0)]); }
+      return pts;
+    };
+    const polarPts = (spec, steps) => {
+      const r = graphCurveFn(spec.r, "t");
+      return r ? sampleT((t0) => r(t0) * Math.cos(t0), (t0) => r(t0) * Math.sin(t0), spec.t, steps) : null;
+    };
     // 塗色區域（面積題）：{ pts } 是多邊形頂點，或 { expr, from, to } 是曲線與 x 軸之間的區域
+    // （課程另外有 expr2：兩條曲線之間；polar：極座標扇形區域）
     (graph.fills || []).forEach((fill) => {
       let pts = Array.isArray(fill.pts) ? fill.pts.slice() : null;
+      if (!pts && fill.polar) pts = [[0, 0]].concat(polarPts(fill.polar, 120) || []);
       if (!pts && fill.expr) {
         const fn = graphCurveFn(fill.expr);
+        const low = fill.expr2 ? graphCurveFn(fill.expr2) : () => 0;
         const a = Number(fill.from); const b = Number(fill.to);
-        if (fn && Number.isFinite(a) && Number.isFinite(b)) {
-          pts = [[a, 0]];
-          for (let i = 0; i <= 80; i += 1) { const x = a + ((b - a) * i) / 80; const y = fn(x); if (Number.isFinite(y)) pts.push([x, Math.max(ymin, Math.min(ymax, y))]); }
-          pts.push([b, 0]);
+        if (fn && low && Number.isFinite(a) && Number.isFinite(b)) {
+          const clampY = (y) => Math.max(ymin, Math.min(ymax, y));
+          pts = [[a, clampY(low(a))]];
+          for (let i = 0; i <= 80; i += 1) { const x = a + ((b - a) * i) / 80; const y = fn(x); if (Number.isFinite(y)) pts.push([x, clampY(y)]); }
+          for (let i = 80; i >= 0; i -= 1) { const x = a + ((b - a) * i) / 80; const y = low(x); if (Number.isFinite(y)) pts.push([x, clampY(y)]); }
         }
       }
       if (!pts || pts.length < 3) return;
-      parts.push(`<path d="${toPath(pts)} Z" fill="${fill.color || "var(--blue)"}" fill-opacity="0.16" stroke="none"/>`);
+      parts.push(`<path d="${toPath(pts)} Z" fill="${paint(fill.color, "var(--blue)")}" fill-opacity="${Number(fill.opacity) || 0.16}" ${fill.stroke ? `stroke="${paint(fill.stroke)}" stroke-width="1" stroke-opacity="0.7"` : `stroke="none"`}/>`);
     });
     (graph.polylines || []).forEach((pts, index) => {
       if (!Array.isArray(pts) || pts.length < 2) return;
@@ -410,27 +442,74 @@
     const sketchCurves = problem.sketch && problem.sketch.expr && opts.reveal && window.BuzzGraphSketch
       ? window.BuzzGraphSketch.piecesOf(problem).map((piece) => ({ expr: problem.sketch.expr, domain: piece }))
       : [];
+    // 曲線：{ expr, domain }（題目）；課程另外有 param／polar／pts、color、dashed、width。
+    // 跑出窗外或沒定義的地方斷開重起一段 —— 不然漸近線兩側會被一條直線接起來。
     (graph.curves || []).concat(sketchCurves).forEach((curve, index) => {
-      const fn = graphCurveFn(curve && curve.expr);
-      if (!fn) return;
-      const [a, b] = Array.isArray(curve.domain) ? curve.domain.map(Number) : [xmin, xmax];
-      const pts = [];
-      const steps = 160;
-      for (let i = 0; i <= steps; i += 1) {
-        const x = a + ((b - a) * i) / steps;
-        const y = fn(x);
-        if (Number.isFinite(y) && y >= ymin - 1 && y <= ymax + 1) pts.push([x, Math.max(ymin, Math.min(ymax, y))]);
+      if (!curve) return;
+      let pts = Array.isArray(curve.pts) ? curve.pts : null;
+      if (!pts && curve.param) {
+        const fx = graphCurveFn(curve.param.x, "t");
+        const fy = graphCurveFn(curve.param.y, "t");
+        if (fx && fy) pts = sampleT(fx, fy, curve.param.t, 240);
       }
-      if (pts.length > 1) parts.push(`<path d="${toPath(pts)}" fill="none" stroke="${strokes[(index + (graph.polylines || []).length) % strokes.length]}" stroke-width="2.2"/>`);
+      if (!pts && curve.polar) pts = polarPts(curve.polar, 240);
+      if (!pts) {
+        const fn = graphCurveFn(curve.expr);
+        if (!fn) return;
+        const [a, b] = Array.isArray(curve.domain) ? curve.domain.map(Number) : [xmin, xmax];
+        const steps = Number(curve.steps) || 160;
+        pts = [];
+        for (let i = 0; i <= steps; i += 1) { const x = a + ((b - a) * i) / steps; pts.push([x, fn(x)]); }
+      }
+      // 進出窗的那一段切在窗邊（線性內插），不是把點壓扁在邊上 —— 壓扁會畫出一截貼著框的平線
+      const runs = [];
+      let run = [];
+      const inside = (p) => Number.isFinite(p[0]) && Number.isFinite(p[1]) && p[1] >= ymin && p[1] <= ymax && p[0] >= xmin - 1e-9 && p[0] <= xmax + 1e-9;
+      const edge = (p, q) => {
+        const yb = q[1] > ymax ? ymax : ymin;
+        const k = (yb - p[1]) / (q[1] - p[1]);
+        return [p[0] + k * (q[0] - p[0]), yb];
+      };
+      // 只在「順著原本的走勢出窗」時切到窗邊；走勢突然反向（跨過垂直漸近線、正負對調）就直接斷開
+      const steady = (a, b, c) => !a || !c || !Number.isFinite(a[1]) || !Number.isFinite(c[1]) || Math.sign(b[1] - a[1]) === Math.sign(c[1] - b[1]);
+      pts.forEach((p, i) => {
+        const prev = pts[i - 1];
+        const ok = (q) => q && Number.isFinite(q[0]) && Number.isFinite(q[1]) && (q[1] > ymax || q[1] < ymin);
+        if (inside(p)) {
+          if (!run.length && ok(prev) && !inside(prev) && prev[0] >= xmin - 1e-9 && steady(prev, p, pts[i + 1])) run.push(edge(p, prev));
+          run.push(p);
+        } else {
+          if (run.length && ok(p) && p[0] <= xmax + 1e-9 && steady(pts[i - 2], prev, p)) run.push(edge(prev, p));
+          if (run.length > 1) runs.push(run);
+          run = [];
+        }
+      });
+      if (run.length > 1) runs.push(run);
+      if (!runs.length) return;
+      const stroke = paint(curve.color, strokes[(index + (graph.polylines || []).length) % strokes.length]);
+      parts.push(`<path d="${runs.map(toPath).join(" ")}" fill="none" stroke="${stroke}" stroke-width="${Number(curve.width) || 2.2}"${curve.dashed ? ` stroke-dasharray="6 4"` : ""} stroke-linejoin="round"/>`);
+    });
+    // 箭頭（課程的圖）：{ from:[x,y], to:[x,y], color }，箭頭三角形直接算，不用 <marker>（同頁多張圖的 id 會撞）
+    (graph.arrows || []).forEach((arrow) => {
+      if (!arrow || !Array.isArray(arrow.from) || !Array.isArray(arrow.to)) return;
+      const [x1, y1, x2, y2] = [sx(arrow.from[0]), sy(arrow.from[1]), sx(arrow.to[0]), sy(arrow.to[1])];
+      const len = Math.hypot(x2 - x1, y2 - y1);
+      if (!(len > 1)) return;
+      const [ux, uy] = [(x2 - x1) / len, (y2 - y1) / len];
+      const color = paint(arrow.color, "var(--ink)");
+      const head = [[x2, y2], [x2 - 8 * ux - 4 * uy, y2 - 8 * uy + 4 * ux], [x2 - 8 * ux + 4 * uy, y2 - 8 * uy - 4 * ux]];
+      parts.push(`<line x1="${x1.toFixed(1)}" y1="${y1.toFixed(1)}" x2="${(x2 - 6 * ux).toFixed(1)}" y2="${(y2 - 6 * uy).toFixed(1)}" stroke="${color}" stroke-width="1.6"/><path d="M${head.map((p) => `${p[0].toFixed(1)},${p[1].toFixed(1)}`).join(" L")} Z" fill="${color}"/>`);
     });
     (graph.points || []).forEach((point) => {
       if (!point || !Number.isFinite(Number(point.x)) || !Number.isFinite(Number(point.y))) return;
       const open = point.open === true;
-      parts.push(`<circle cx="${sx(point.x)}" cy="${sy(point.y)}" r="3.4" fill="${open ? "var(--panel)" : "var(--blue)"}" stroke="var(--blue)" stroke-width="1.6"/>`);
+      const color = paint(point.color, "var(--blue)");
+      parts.push(`<circle cx="${sx(point.x)}" cy="${sy(point.y)}" r="3.4" fill="${open ? "var(--panel)" : color}" stroke="${color}" stroke-width="1.6"/>`);
     });
     (graph.labels || []).forEach((label) => {
       if (!label || typeof label.text !== "string") return;
-      parts.push(`<text x="${sx(label.x)}" y="${sy(label.y)}" font-size="11" fill="var(--ink)">${escapeAttr(label.text)}</text>`);
+      const anchor = /^(start|middle|end)$/.test(label.anchor) ? ` text-anchor="${label.anchor}"` : "";
+      parts.push(`<text x="${sx(label.x) + (Number(label.dx) || 0)}" y="${sy(label.y) + (Number(label.dy) || 0)}" font-size="11"${anchor} fill="${paint(label.color, "var(--ink)")}">${escapeAttr(label.text)}</text>`);
     });
     if (typeof opts.overlay === "function") {
       parts.push(opts.overlay({ sx, sy, xmin, xmax, ymin, ymax }) || "");
@@ -444,7 +523,7 @@
       : "";
     return `
       <div class="problem-graph ${opts.interactive ? "is-interactive" : ""}">
-        <svg viewBox="0 0 ${width} ${height}" role="img" aria-label="${t("題目附圖")}"${interactiveAttrs}>${parts.join("")}</svg>
+        <svg viewBox="0 0 ${width} ${height}" role="img" aria-label="${opts.label ? escapeAttr(opts.label) : t("題目附圖")}"${interactiveAttrs}>${parts.join("")}</svg>
       </div>
     `;
   }
@@ -1795,14 +1874,9 @@
     return segments.map((s) => s.join(" ")).join(" ");
   }
 
-  function render(options) {
-    const { problem, state, done, icon, escapeHtml } = options;
-    const spec = problem.epsilon || {};
-    const levels = spec.levels || [];
-    const level = Math.min(state.level || 0, levels.length - 1);
-    const eps = Number(levels[level]);
-    const delta = Number(state.delta || spec.maxDelta || 1);
-    const win = (problem.graph && problem.graph.window) || [Number(spec.at) - 2, Number(spec.at) + 2, Number(spec.limit) - 2, Number(spec.limit) + 2];
+  // 兩條帶＋曲線的畫法。挑戰題與課程的示範圖（course_v2_ui 的 epsilon-delta 圖）共用這一份。
+  function draw(spec, delta, eps, windowSpec) {
+    const win = windowSpec || [Number(spec.at) - 2, Number(spec.at) + 2, Number(spec.limit) - 2, Number(spec.limit) + 2];
     const [xmin, xmax, ymin, ymax] = win.map(Number);
     const sx = (x) => PAD + ((x - xmin) / (xmax - xmin)) * (WIDTH - 2 * PAD);
     const sy = (y) => HEIGHT - PAD - ((y - ymin) / (ymax - ymin)) * (HEIGHT - 2 * PAD);
@@ -1832,6 +1906,17 @@
     }
     parts.push(`<text x="${sx(at)}" y="${HEIGHT - 6}" font-size="10" text-anchor="middle" fill="var(--muted)">x₀=${at}</text>`);
     parts.push(`<text x="${WIDTH - 6}" y="${sy(limit) - 5}" font-size="10" text-anchor="end" fill="var(--muted)">L=${limit}</text>`);
+    return { svg: parts.join(""), probe, width: WIDTH, height: HEIGHT, xmin, xmax };
+  }
+
+  function render(options) {
+    const { problem, state, done, icon, escapeHtml } = options;
+    const spec = problem.epsilon || {};
+    const levels = spec.levels || [];
+    const level = Math.min(state.level || 0, levels.length - 1);
+    const eps = Number(levels[level]);
+    const delta = Number(state.delta || spec.maxDelta || 1);
+    const { svg, probe, xmin, xmax } = draw(spec, delta, eps, problem.graph && problem.graph.window);
 
     const max = Number(spec.maxDelta || Math.max(0.5, (xmax - xmin) / 4));
     const step = max / 200;
@@ -1847,7 +1932,7 @@
         </div>
         <svg class="eps-svg" viewBox="0 0 ${WIDTH} ${HEIGHT}" role="img"
           aria-label="${t("第 {v} 關：ε={eps}，目前 δ={n}，", { v: level + 1, eps, n: delta.toFixed(3) })}${probe.ok ? t("曲線都在帶內") : t("有一段跑出帶外")}">
-          ${parts.join("")}
+          ${svg}
         </svg>
         <p class="eps-status ${probe.ok ? "is-ok" : "is-bad"}">
           ${probe.ok
@@ -1888,7 +1973,7 @@
     return serialize((spec.levels || []).map((eps) => maxDelta(spec, Number(eps)) * 0.8));
   }
 
-  window.BuzzEpsilonGame = { render, evaluate, check, serialize, parse, maxDelta, solve };
+  window.BuzzEpsilonGame = { render, draw, evaluate, check, serialize, parse, maxDelta, solve };
 })();
 
 /* ── 互動圖形題的作答區：點位與選圖（2026-09-25 從 app.js 搬出來）──

@@ -93,8 +93,142 @@ const allText = (lesson) => {
   parts.push(...(lesson.pitfalls || []));
   (lesson.checks || []).forEach((c) => { parts.push(c.ask); (c.options || []).forEach((o) => parts.push(o.label, o.why || "")); });
   (lesson.practice || []).forEach((p) => parts.push(p.note || ""));
+  (lesson.figures || []).forEach((f) => parts.push(f.caption || "", ...((f.graph && f.graph.labels) || []).map((l) => l.text || "")));
   return parts.filter(Boolean).join("\n");
 };
+
+// ── 圖（lesson.figures）──
+// 用網站自己的編譯器（BuzzGraphRender.graphCurveFn）與 widget 的 build（BuzzCourseFigures），驗的就是畫面會畫的東西。
+const Graph = global.window.BuzzGraphRender;
+const Figures = global.window.BuzzCourseFigures;
+const isWin = (w) => Array.isArray(w) && w.length === 4 && w.every(Number.isFinite) && w[1] > w[0] && w[3] > w[2];
+const isRange = (r) => Array.isArray(r) && r.length === 2 && r.every(Number.isFinite) && r[1] > r[0];
+// 取樣點落在窗內的比例（曲線大半跑出窗外 ＝ 窗開錯了，畫面上只看得到一小截）
+function insideRatio(points, win) {
+  const finite = points.filter(([x, y]) => Number.isFinite(x) && Number.isFinite(y));
+  if (!finite.length) return 0;
+  return finite.filter(([x, y]) => x >= win[0] && x <= win[1] && y >= win[2] && y <= win[3]).length / points.length;
+}
+function curvePoints(curve, win) {
+  const N = 200;
+  if (Array.isArray(curve.pts)) return curve.pts;
+  if (curve.param || curve.polar) {
+    const spec = curve.param || curve.polar;
+    const [a, b] = Array.isArray(spec.t) ? spec.t.map(Number) : [0, 2 * Math.PI];
+    const fx = curve.param ? Graph.graphCurveFn(spec.x, "t") : null;
+    const fy = curve.param ? Graph.graphCurveFn(spec.y, "t") : null;
+    const r = curve.polar ? Graph.graphCurveFn(spec.r, "t") : null;
+    if (curve.param ? !(fx && fy) : !r) return null;
+    return Array.from({ length: N + 1 }, (_, i) => {
+      const t = a + ((b - a) * i) / N;
+      return curve.param ? [fx(t), fy(t)] : [r(t) * Math.cos(t), r(t) * Math.sin(t)];
+    });
+  }
+  const fn = Graph.graphCurveFn(curve.expr);
+  if (!fn) return null;
+  const [a, b] = Array.isArray(curve.domain) ? curve.domain.map(Number) : [win[0], win[1]];
+  return Array.from({ length: N + 1 }, (_, i) => { const x = a + ((b - a) * i) / N; return [x, fn(x)]; });
+}
+function checkGraph(id, where, graph, opts) {
+  if (!isWin(graph.window)) { err(id, `${where} 的 window 要是 [xmin, xmax, ymin, ymax]`); return; }
+  (graph.curves || []).forEach((curve, i) => {
+    const pts = curvePoints(curve, graph.window);
+    if (!pts) { err(id, `${where} 曲線 ${i + 1} 編譯不了：${JSON.stringify(curve.expr || curve.param || curve.polar)}（負號接次方要寫 -(x^2)）`); return; }
+    const ratio = insideRatio(pts, graph.window);
+    if (!(opts && opts.skipRatio) && !curve.dashed && ratio < 0.6) err(id, `${where} 曲線 ${i + 1}（${curve.expr || "參數曲線"}）只有 ${Math.round(ratio * 100)}% 的取樣點在窗內（要 ≥ 60%）`);
+  });
+  (graph.fills || []).forEach((fill, i) => {
+    if (fill.pts) return;
+    if (fill.polar ? !Graph.graphCurveFn(fill.polar.r, "t") : !(Graph.graphCurveFn(fill.expr) && (!fill.expr2 || Graph.graphCurveFn(fill.expr2)))) err(id, `${where} 塗色 ${i + 1} 編譯不了`);
+  });
+  (graph.points || []).forEach((p, i) => { if (!Number.isFinite(Number(p.x)) || !Number.isFinite(Number(p.y))) err(id, `${where} 點 ${i + 1} 座標不是數字`); });
+  (graph.labels || []).forEach((l, i) => { if (typeof l.text !== "string" || !Number.isFinite(Number(l.x)) || !Number.isFinite(Number(l.y))) err(id, `${where} 標籤 ${i + 1} 要有 text、x、y`); });
+}
+const WIDGET_NEEDS = {
+  "secant-tangent": ["f", "a", "h", "window"],
+  riemann: ["f", "a", "b", "n", "window"],
+  taylor: ["f", "center", "coeffs", "order", "window"],
+  "epsilon-delta": ["f", "at", "limit", "range", "window"],
+  family: ["f", "range", "window"],
+  accumulation: ["f", "a", "range", "window"],
+  zoom: ["curves", "center", "levels", "window"],
+  approach: ["f", "a", "range", "window"]
+};
+function checkFigures(id, L) {
+  const F = L.figures;
+  if (F === undefined) return;
+  if (!Array.isArray(F)) { err(id, "figures 要是陣列"); return; }
+  if (F.length > 4) err(id, `figures 最多 4 張，現在 ${F.length}`);
+  F.forEach((fig, k) => {
+    const where = `圖 ${k + 1}`;
+    if (typeof fig.caption !== "string" || !fig.caption.trim()) err(id, `${where} 沒有 caption`);
+    else if (cjkLen(fig.caption) > 40) err(id, `${where} 的 caption ${cjkLen(fig.caption)} 字，一行寫得完才算（≤ 40）`);
+    else if (cjkLen(fig.caption) > 28) warn(id, `${where} 的 caption ${cjkLen(fig.caption)} 字，手機上會折行（建議 ≤ 28）`);
+    if (fig.after !== undefined && fig.after !== "examples" && !(Number.isInteger(fig.after) && fig.after >= 0 && fig.after < (L.concept || []).length)) err(id, `${where} 的 after 要是觀念段落的索引（0–${(L.concept || []).length - 1}）或 "examples"`);
+    if (Boolean(fig.graph) === Boolean(fig.widget)) { err(id, `${where} 要恰好有 graph 或 widget 其中一個`); return; }
+    if (fig.graph) { checkGraph(id, where, fig.graph); return; }
+    const w = fig.widget;
+    const type = w.type;
+    if (!Figures.WIDGETS[type]) { err(id, `${where} 的 widget 種類「${type}」不存在（${Object.keys(Figures.WIDGETS).join("、")}）`); return; }
+    const missing = WIDGET_NEEDS[type].filter((key) => w[key] === undefined);
+    if (missing.length) { err(id, `${where}（${type}）缺 ${missing.join("、")}`); return; }
+    if (!isWin(w.window)) { err(id, `${where} 的 window 要是 [xmin, xmax, ymin, ymax]`); return; }
+    for (const key of ["h", "n", "order", "range"]) if (w[key] !== undefined && !isRange(w[key])) err(id, `${where} 的 ${key} 要是 [min, max] 且 min < max`);
+    const compiled = type === "family" ? Graph.graphCurveFn(Figures.WIDGETS.family.expr(w, w.range[0])) : Figures.fnOf(w.f);
+    if (type !== "zoom" && !compiled) { err(id, `${where} 的 f 編譯不了：${JSON.stringify(w.f)}`); return; }
+    if ((type === "accumulation" || type === "family" || type === "epsilon-delta") && typeof w.f !== "string") err(id, `${where}（${type}）的 f 要是單一式子，不能分段`);
+    if (type === "riemann" && !(Number.isInteger(w.n[0]) && w.n[0] >= 1 && Number.isInteger(w.n[1]) && w.n[1] <= 200 && w.a < w.b)) err(id, `${where} 的 n 要是 1–200 的整數範圍、a < b`);
+    if (type === "taylor") {
+      if (!(Number.isInteger(w.order[0]) && w.order[0] >= 0 && w.order[1] <= w.coeffs.length - 1)) err(id, `${where} 的 order 超出 coeffs 給的階數`);
+      // 係數對數值導數（到 4 階；更高階的數值微分不準，靠作者）
+      const f = Figures.fnOf(w.f);
+      const c = Number(w.center);
+      const h = 1e-2;
+      const derivs = [f(c), (f(c + h) - f(c - h)) / (2 * h), (f(c + h) - 2 * f(c) + f(c - h)) / (h * h),
+        (f(c + 2 * h) - 2 * f(c + h) + 2 * f(c - h) - f(c - 2 * h)) / (2 * h ** 3),
+        (f(c + 2 * h) - 4 * f(c + h) + 6 * f(c) - 4 * f(c - h) + f(c - 2 * h)) / h ** 4];
+      const fact = [1, 1, 2, 6, 24];
+      w.coeffs.slice(0, 5).forEach((coef, i) => {
+        const want = derivs[i] / fact[i];
+        const got = Graph.graphCurveFn(String(coef))(0);
+        if (!(Math.abs(got - want) <= 2e-3 * Math.max(1, Math.abs(want)))) err(id, `${where} 的 Taylor 係數 c${i} = ${coef}，數值算出來是 ${want.toFixed(5)}`);
+      });
+    }
+    if (type === "epsilon-delta") {
+      const f = Graph.graphCurveFn(w.f);
+      const near = [1e-4, -1e-4].map((d) => Math.abs(f(Number(w.at) + d) - Number(w.limit)));
+      if (near.some((gap) => !(gap < 1e-2))) err(id, `${where}：x → ${w.at} 時 f 不靠近 limit = ${w.limit}`);
+      if (w.drive === "delta" && !(Number(w.eps) > 0)) err(id, `${where}：drive 是 delta 時要給固定的 eps`);
+    }
+    if (type === "zoom") {
+      if (!Array.isArray(w.curves) || !w.curves.length) err(id, `${where} 的 curves 是空的`);
+      if (!(w.levels > 0 && w.levels <= 7)) err(id, `${where} 的 levels（10 的幾次方）要在 (0, 7]`);
+      if (!Array.isArray(w.center) || w.center.length !== 2) err(id, `${where} 的 center 要是 [x, y]`);
+    }
+    if (["secant-tangent", "approach"].includes(type) && !(w.a >= w.window[0] && w.a <= w.window[1])) err(id, `${where} 的 a 不在窗內`);
+    // 在滑桿的兩端與預設值各建一次：建得出來、主曲線大半在窗內
+    const s = Figures.sliderOf(fig);
+    if (!(s.value >= s.min - 1e-9 && s.value <= s.max + 1e-9)) err(id, `${where} 的預設值 ${s.value} 不在滑桿範圍 [${s.min}, ${s.max}]`);
+    [...new Set([s.min, s.value, s.max])].forEach((value) => {
+      let built;
+      try { built = Figures.WIDGETS[type].build(w, value); } catch (e) { err(id, `${where} 在滑桿 = ${value} 時建圖失敗：${e.message}`); return; }
+      if (!built.readout || /NaN|undefined/.test(built.readout)) err(id, `${where} 在滑桿 = ${value} 時讀數壞了：${built.readout}`);
+      if (built.svg) return;
+      // 每一條曲線都要編譯得過（例：-x^2 在 JS 是語法錯誤，要寫 -(x^2)；畫面上那條線會安靜地消失）
+      built.graphs.forEach((g) => (g.curves || []).forEach((c, i) => {
+        if (!curvePoints(c, g.window)) err(id, `${where} 在滑桿 = ${value} 時曲線 ${i + 1} 編譯不了：${JSON.stringify(c.expr)}${/(^|[(+*\/,-])-[a-z0-9(]+\^/.test(c.expr || "") ? "（負號接次方要寫 -(x^2)）" : ""}`);
+      }));
+      const main = built.graphs[0];
+      const first = (main.curves || []).find((c) => !c.dashed && c.color !== "muted");
+      // 主曲線（widget 自己的 f）要在窗內；作者加的 extra 與 Taylor 多項式不算（高階本來就會甩出去）
+      if (first && value === s.value) {
+        const ratio = insideRatio(curvePoints(first, main.window) || [], main.window);
+        if (ratio < 0.6) err(id, `${where} 的主曲線只有 ${Math.round(ratio * 100)}% 的取樣點在窗內（要 ≥ 60%）`);
+      }
+      if (w.extra) checkGraph(id, `${where} 的 extra`, { ...w.extra, window: main.window }, { skipRatio: true });
+    });
+  });
+}
 
 for (const L of lessons) {
   const id = L.id || "(沒有 id)";
@@ -169,6 +303,8 @@ for (const L of lessons) {
   if (P.length && !P.some((p) => p.core)) err(id, "推薦題至少要有一題 core");
   if (!P.length && !(L.gaps || []).length) err(id, "沒有推薦題就要在 gaps 寫清楚缺什麼");
   (L.gaps || []).forEach((g, i) => { if (!g.tag || !(g.count > 0)) err(id, `gaps[${i}] 要有 tag 與 count`); });
+
+  checkFigures(id, L);
 
   const text = allText(L);
   if (SCHOOL.test(text)) err(id, `出現學校名稱或 Putnam：${text.match(SCHOOL)[0]}`);

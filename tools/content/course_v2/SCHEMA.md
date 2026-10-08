@@ -57,6 +57,51 @@
 }
 ```
 
+## 圖（figures，可選，每課最多 4 張）
+
+`visual` 是給作者的文字規格；真正上畫面的是 `figures`。一張圖要嘛是靜態的 `graph`，要嘛是一個 `widget`（一根滑桿）。
+只在圖真的有教學價值時放；不動滑桿時就要是一張看得懂的靜態圖。
+
+```jsonc
+"figures": [
+  { "caption": "x = 1 挖了洞，兩側都往 2 擠",   // 必填，一行（≤ 28 字最好，> 40 擋）
+    "after": 0,                                // 放在第幾段觀念之後（0 起算；預設 0）；"examples" = 範例區最後
+    "graph": {                                 // 靜態圖：跟題目附圖同一個格式，同一支 renderProblemGraph 畫
+      "window": [-1, 3, -1, 4],                // [xmin, xmax, ymin, ymax]
+      "equal": true,                           // 可選：x、y 同比例（極座標）
+      "curves": [ { "expr": "x+1", "domain": [-1, 3], "color": "blue" },      // color：blue red green violet gold muted ink
+                  { "param": { "x": "cos(t)", "y": "sin(t)", "t": [0, 6.2832] } },
+                  { "polar": { "r": "1+cos(t)", "t": [0, 6.2832] }, "dashed": true } ],
+      "fills":  [ { "expr": "x^2", "from": 0, "to": 1, "color": "red" },     // 曲線與 x 軸之間；expr2 = 兩條曲線之間；polar = 扇形區域
+                  { "pts": [[0,0],[1,0],[1,1]] } ],
+      "dashed": [ [[1, -1], [1, 4]] ],         // 虛線（漸近線、輔助線）
+      "points": [ { "x": 1, "y": 2, "open": true } ],                       // open = 空心（洞）
+      "labels": [ { "x": 1.1, "y": 2.2, "text": "(1, 2)", "anchor": "start" } ],
+      "arrows": [ { "from": [0, 2], "to": [0.9, 2], "color": "green" } ] } },
+  { "caption": "Q 滑向 P，割線轉成切線",
+    "widget": { "type": "secant-tangent", "f": "x^2", "a": 1, "h": [0.05, 1.5], "window": [-1, 3, -1, 6] } }
+]
+```
+
+式子是**畫圖用的 JS 語法**（`x^2`、`sqrt(x)`、`exp(x)`、`log(x)` 是自然對數、`abs`、`sin`、`PI`），不是 LaTeX；只能用 x（參數曲線、極座標用 t）。
+分段函數寫成 `[{ "expr": "x+1", "domain": [-1, 2] }, { "expr": "4", "domain": [2, 4] }]`（secant-tangent／approach／riemann／taylor 的 f 可以分段）。
+
+widget（每一種都有 `window`；`value` 可選 = 不動滑桿時的那一格；`extra` 可選 = 疊上去的靜態 curves／points／labels／dashed／fills／arrows）：
+
+| type | 滑桿 | 其他參數 |
+|---|---|---|
+| `secant-tangent` | h ∈ `h:[min,max]`（預設 max） | `f`、`a`；`tangent: false` 不畫切線 |
+| `riemann` | n ∈ `n:[min,max]`（整數，預設 4） | `f`、`a`、`b`、`rule`: left／right／mid；讀數有矩形和與積分值 |
+| `taylor` | 階數 ∈ `order:[min,max]` | `f`、`center`、`coeffs`（c₀, c₁, …，可寫 "1/6"；驗證器拿數值導數對前 5 個）、`probe`（可選：讀數顯示這一點的值） |
+| `epsilon-delta` | `drive: "eps"`（預設：拖 ε，δ 自動取可用的）或 `"delta"`（拖 δ，`eps` 固定），範圍 `range` | `f`、`at`、`limit`、`hole` |
+| `family` | 參數 `param`（預設 a）∈ `range` | `f`（含參數）、`trail`（淡淡畫出的其他參數值）、`area: [from, to]`（塗色並讀面積，to 可以超出窗） |
+| `accumulation` | x ∈ `range` | `f`、`a`、`windowA`（下半張 A(x) 的窗）；上下兩張圖：f 與塗色、A(x) 與它在 x 的切線 |
+| `zoom` | 10 的 0 到 `levels` 次方 | `curves`（同 graph.curves）、`center: [x, y]`、`out: true` = 拉遠、`axes: "x"` = 只縮放 x、`yPower: 2` = y 用倍率的平方縮（x² 型的曲線放大後形狀不變） |
+| `approach` | 「靠近」：距離從 `range[1]` 縮到 `range[0]` | `f`、`a`、`side`: both／left／right |
+
+驗證器會擋：式子編譯不了、曲線取樣點在窗內 < 60%、widget 缺參數或範圍反了、滑桿兩端建不出圖或讀數壞掉、Taylor 係數不對、ε-δ 的 f 不靠近 limit、caption 空的或太長、超過 4 張。
+圖裡的關鍵數值（洞的位置、漸近線、切線斜率）寫之前一樣先用 node 算過。
+
 通過條件不寫在課裡，全站統一：完成＝小測答對 ≥ 3；熟練＝core 題全對；全破＝全部 practice 全對。不鎖課。
 
 ## 機器驗算（claim）
