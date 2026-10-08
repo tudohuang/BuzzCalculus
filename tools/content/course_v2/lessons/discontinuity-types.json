@@ -1,0 +1,149 @@
+{
+  "id": "discontinuity-types",
+  "title": "不連續的種類",
+  "readMinutes": 8,
+  "totalMinutes": 25,
+  "prerequisites": ["continuity-definition", "infinite-limits", "squeeze-theorem"],
+  "next": ["intermediate-value-theorem"],
+  "related": ["limit-one-sided"],
+  "objectives": [
+    "認得四種不連續：可去、跳躍、無窮、振盪。",
+    "會用左右極限依序判斷是哪一種。",
+    "知道只有可去不連續能靠「重新定義一個點」修好。"
+  ],
+  "visual": "四張小圖並排：可去（洞，另一點另外畫）、跳躍（兩段錯開）、無窮（垂直漸近線）、振盪（sin(1/x)）。點任一張，在不連續點左右各放一個點滑過去，下方顯示左極限、右極限的讀數：可去是兩個一樣的數，跳躍是兩個不同的數，無窮是一路衝大，振盪是讀數不停亂跳。",
+  "concept": [
+    {
+      "heading": "① 可去不連續",
+      "body": [
+        "lim_{x→a} f(x) 存在，但 f(a) 沒有定義，或 f(a) 不等於極限。圖形上是一個洞。",
+        "只要把 f(a) 重新定義成那個極限值，就連續了，所以叫「可去」。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 跳躍不連續",
+      "body": [
+        "左極限、右極限都存在，但不相等。圖形上是兩段錯開。",
+        "改一個點的值修不好：不管 f(a) 是多少，左右都接不起來。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 無窮不連續",
+      "body": [
+        "至少一側的極限是 +∞ 或 −∞，也就是有垂直漸近線（〈無窮極限與垂直漸近線〉）。例：1/(x − 1)² 在 x = 1。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 振盪不連續",
+      "body": [
+        "函數在 a 附近不停擺盪，不往任何數靠、也不往 ±∞ 跑。例：sin(1/x) 在 0。",
+        "對照：x sin(1/x)（x ≠ 0）、f(0) = 0 是連續的。它也在振盪，但振幅被 |x| 壓到 0（〈夾擠定理〉），所以極限是 0 = f(0)。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "⑤ 判斷順序",
+      "body": [
+        "先分別算左、右極限。都是有限數而且相等：可去（若 f(a) 不等於它或沒定義）。都是有限數但不相等：跳躍。有一側是 ±∞：無窮。有一側既不是有限數、也不是 ±∞：通常就是振盪。",
+        "一個用詞提醒：x = 0 不在 1/x 的定義域，嚴格說「連續」只在定義域的點上討論；課本通常仍把 x = 0 叫做 1/x 的無窮不連續點，意思是那裡有垂直漸近線。"
+      ],
+      "collapsible": false
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "一個函數裡兩種",
+      "prompt": "f(x) = (x² − x − 2)/(x² − 4)。分類每一個不連續點。",
+      "steps": [
+        "分母 (x − 2)(x + 2)，在 x = ±2 沒有定義，兩點都不連續。分子 (x − 2)(x + 1)。",
+        "x = 2：約掉 x − 2，x ≠ 2 時 f(x) = (x + 1)/(x + 2)，極限 3/4 存在。可去不連續；補 f(2) = 3/4 就連續。",
+        "x = −2：約分後分子 → −1、分母 → 0，是 k/0 型，兩側往 ±∞。無窮不連續。"
+      ],
+      "answer": "x = 2 可去（極限 3/4），x = −2 無窮",
+      "claim": "LIM((x^2-x-2)/(x^2-4), 2) == 3/4 ;; (x^2-x-2)/(x^2-4) == (x+1)/(x+2) ;; SUB((x^2-x-2)/(x^2-4), -2.001) > 100 ;; SUB((x^2-x-2)/(x^2-4), -1.999) < -100"
+    },
+    {
+      "title": "絕對值造成跳躍",
+      "prompt": "f(x) = |x − 4|/(x − 4) 在 x = 4 是哪一種不連續？",
+      "problemId": "lx-con-005",
+      "steps": [
+        "x > 4：|x − 4| = x − 4，f = 1，右極限 1。",
+        "x < 4：|x − 4| = −(x − 4)，f = −1，左極限 −1。",
+        "左右都是有限數，但不相等：跳躍不連續。"
+      ],
+      "answer": "跳躍不連續",
+      "claim": "LIM(abs(x-4)/(x-4), 4-) == -1 ;; LIM(abs(x-4)/(x-4), 4+) == 1"
+    },
+    {
+      "title": "振盪 vs. 被壓住的振盪",
+      "prompt": "sin(1/x) 在 0 是哪一種？x sin(1/x)（x ≠ 0）、f(0) = 0 在 0 連續嗎？",
+      "steps": [
+        "sin(1/x)：x = 1/(6π) 時是 sin(6π) = 0，x = 2/(13π) 時是 sin(13π/2) = 1，而這種 x 要多靠近 0 都找得到。不往任何數靠，也不爆掉：振盪不連續。",
+        "x sin(1/x)：|x sin(1/x)| ≤ |x| → 0，夾擠得極限 0。",
+        "極限 0 等於 f(0) = 0，所以連續。"
+      ],
+      "answer": "sin(1/x)：振盪不連續；x sin(1/x) 補 f(0) = 0 後連續",
+      "claim": "SUB(sin(1/x), 1/(6*pi)) == 0 ;; SUB(sin(1/x), 2/(13*pi)) == 1 ;; abs(x*sin(1/x)) <= abs(x)"
+    }
+  ],
+  "pitfalls": [
+    "看到分母為 0 就說是無窮不連續，沒先約分：可能是可去。",
+    "把跳躍當成可去，以為改一個點的值就能修好。",
+    "把振盪當成無窮：sin(1/x) 一直在 −1 與 1 之間，沒有爆掉。",
+    "只看圖形「有沒有斷」，沒用左右極限判斷。"
+  ],
+  "checks": [
+    {
+      "ask": "(x² − 1)/(x − 1) 在 x = 1 是哪一種不連續？",
+      "options": [
+        { "label": "無窮", "why": "分子在 1 也是 0；約掉後 x + 1 在 1 是 2，不會爆掉。" },
+        { "label": "可去", "correct": true },
+        { "label": "跳躍", "why": "左右都往 2 靠，不是兩個不同的數。" }
+      ]
+    },
+    {
+      "ask": "⌊x⌋ 在 x = 2 是哪一種不連續？",
+      "options": [
+        { "label": "跳躍", "correct": true },
+        { "label": "可去", "why": "左極限 1、右極限 2，不相等；改 f(2) 的值修不好。" },
+        { "label": "無窮", "why": "⌊x⌋ 在 2 附近只有 1 和 2 兩個值，沒有爆掉。" }
+      ]
+    },
+    {
+      "ask": "1/(x − 1)² 在 x = 1 是哪一種不連續？",
+      "options": [
+        { "label": "可去", "why": "分子是 1，約不掉；分母 → 0，值往 +∞ 跑。" },
+        { "label": "振盪", "why": "它沒有來回擺，而是一路往 +∞。" },
+        { "label": "無窮", "correct": true }
+      ]
+    },
+    {
+      "ask": "哪一種不連續，只要重新定義一個點的值就能變連續？",
+      "options": [
+        { "label": "跳躍", "why": "左右極限不同，一個點的值無法同時接上兩邊。" },
+        { "label": "可去", "correct": true },
+        { "label": "無窮", "why": "極限根本不是有限數，沒有值可以補。" }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": ["continuity", "removable", "dne", "oscillation"],
+    "fine": ["discontinuity-removable", "discontinuity-jump", "discontinuity-infinite", "discontinuity-oscillating", "discontinuity-classify"]
+  },
+  "practice": [
+    { "id": "lx-con-003", "core": true, "trains": "discontinuity-removable" },
+    { "id": "si-set-003", "core": true, "trains": "discontinuity-classify", "note": "找到兩個不連續點後，再判斷各是哪一種。" },
+    { "id": "lm-sq-006", "core": true, "trains": "discontinuity-oscillating" },
+    { "id": "lm-os-005", "core": true, "trains": "discontinuity-jump" },
+    { "id": "si-set-020", "trains": "discontinuity-infinite" },
+    { "id": "si-set-022", "trains": "discontinuity-infinite" },
+    { "id": "lec-01-m4", "trains": "discontinuity-oscillating" }
+  ],
+  "gaps": [
+    { "tag": "discontinuity-classify", "count": 3, "note": "R1–R2：直接問「是哪一種不連續」的選擇題（題庫只有 lx-con-005 一題，範例用掉了）" },
+    { "tag": "discontinuity-jump", "count": 2, "note": "R1：分段函數或取整函數的跳躍，問左右極限與類型" }
+  ]
+}

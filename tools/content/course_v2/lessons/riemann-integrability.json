@@ -1,0 +1,237 @@
+{
+  "id": "riemann-integrability",
+  "title": "Riemann 可積",
+  "readMinutes": 12,
+  "totalMinutes": 35,
+  "prerequisites": [
+    "darboux-integral"
+  ],
+  "next": [
+    "continuous-integrable"
+  ],
+  "related": [
+    "dirichlet-function"
+  ],
+  "objectives": [
+    "會用可積判準：對每個 ε > 0，存在分割 P 使 U(f, P) − L(f, P) < ε。",
+    "證明單調函數可積，並算出等長分割要切幾段才能讓 U − L < ε。",
+    "說得出 Riemann 和的定義（寬度 → 0 時、不論怎麼取點都收斂）與 Darboux 定義等價，以及「只用某一種取點」為什麼不夠。"
+  ],
+  "visual": null,
+  "concept": [
+    {
+      "heading": "① 不必算出積分，也能判斷可積",
+      "body": [
+        "照定義判斷可積，要先算出上積分和下積分。實際上我們只需要知道「上和與下和能被夾到任意近」。這就是可積判準，它把「兩個 inf/sup 相等」換成「找得到一個好分割」。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 可積判準",
+      "body": [
+        "有界的 f 在 [a, b] 上可積，若且唯若：對每一個 ε > 0，存在分割 P 使 U(f, P) − L(f, P) < ε。",
+        "量詞順序：先給 ε，再找 P；ε 越小，P 通常要越細。"
+      ],
+      "tex": [
+        "f\\ \\text{可積}\\iff\\forall\\varepsilon>0\\ \\exists P:\\ U(f,P)-L(f,P)<\\varepsilon"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "證明：可積判準",
+      "body": [
+        "(⇐) 對任何分割 P，L(f, P) ≤ 下積分 ≤ 上積分 ≤ U(f, P)，所以 0 ≤ 上積分 − 下積分 ≤ U(f, P) − L(f, P) < ε。一個非負數小於每個正數，只能是 0。",
+        "(⇒) 設上下積分都等於 I，給定 ε > 0。I 是上和的下確界，所以 I + ε/2 不是下界：存在 P₁ 使 U(f, P₁) < I + ε/2。同理存在 P₂ 使 L(f, P₂) > I − ε/2。取 P = P₁ ∪ P₂，由加細引理 U(f, P) − L(f, P) ≤ U(f, P₁) − L(f, P₂) < ε。"
+      ],
+      "collapsible": true
+    },
+    {
+      "heading": "③ 單調函數一定可積",
+      "body": [
+        "設 f 在 [a, b] 遞增，用等長分割 Pₙ。每段的 Mᵢ = f(xᵢ)、mᵢ = f(x_{i−1})，所以 U − L = Σ (f(xᵢ) − f(x_{i−1}))(b − a)/n。中間的項逐一相消，只剩 (f(b) − f(a))(b − a)/n。n 夠大就小於任何 ε，所以 f 可積。遞減函數同理，把 f(b) − f(a) 換成 f(a) − f(b)。",
+        "這個結果不需要連續：單調函數可以有無限多個跳躍點，照樣可積。"
+      ],
+      "tex": [
+        "U(f,P_n)-L(f,P_n)=\\frac{\\bigl(f(b)-f(a)\\bigr)(b-a)}{n}"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 跟 Riemann 和的關係",
+      "body": [
+        "Riemann 的原始定義：存在 I，使得對每個 ε > 0 有 δ > 0，只要 ‖P‖ < δ，不論每段取哪個點 tᵢ，|Σ f(tᵢ)Δxᵢ − I| < ε。可以證明這跟 Darboux 可積等價，積分值也相同，所以兩個名字通用。",
+        "重點在「不論取哪個點」。只用右端點、等長分割的和收斂，不足以推出可積：Dirichlet 函數在等長分割下取有理點（例如右端點 i/n）每次都得 1，取無理點每次都得 0（見〈Dirichlet 函數〉）。反過來，一旦知道 f 可積，就可以用任何方便的取點法來算積分。"
+      ],
+      "collapsible": false
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "f(x) = x 要切幾段",
+      "prompt": "[0, 1] 等分成 n 段，f(x) = x。求使 U(f, Pₙ) − L(f, Pₙ) < 0.01 的最小 n。",
+      "problemId": "an-int-001",
+      "steps": [
+        "f 遞增，用單調公式：U − L = (f(1) − f(0))(1 − 0)/n = 1/n。",
+        "要 1/n < 0.01，也就是 n > 100。",
+        "n = 100 時 1/n = 0.01，不是嚴格小於；所以最小的 n 是 101。"
+      ],
+      "answer": "101",
+      "claim": "1/101 < 0.01 ;; 1/100 >= 0.01"
+    },
+    {
+      "title": "f(x) = x² 要切幾段",
+      "prompt": "[0, 1] 等分成 n 段，f(x) = x²。求使 U − L < 0.005 的最小 n。",
+      "problemId": "an-int-003",
+      "steps": [
+        "x² 在 [0, 1] 遞增，U − L = (1 − 0)(1 − 0)/n = 1/n（與〈Darboux 積分〉直接算出的 1/n 一致）。",
+        "要 1/n < 0.005，也就是 n > 200；n = 200 時剛好等於 0.005，不算。",
+        "最小 n = 201。"
+      ],
+      "answer": "201",
+      "claim": "1/201 < 0.005 ;; 1/200 >= 0.005"
+    },
+    {
+      "title": "遞減函數：1/x 在 [1, 2]",
+      "prompt": "f(x) = 1/x 在 [1, 2] 等分成 n 段。下和與積分的誤差 ≤ U − L。求使 U − L < 10⁻³ 的最小 n。",
+      "problemId": "an-int-005",
+      "steps": [
+        "f 遞減，U − L = (f(1) − f(2))(2 − 1)/n = (1 − 1/2)/n = 1/(2n)。",
+        "積分夾在 L 與 U 之間，所以 |L − ∫₁² 1/x dx| ≤ U − L = 1/(2n)。",
+        "要 1/(2n) < 0.001，即 n > 500；n = 500 時剛好等於 0.001。最小 n = 501。"
+      ],
+      "answer": "501",
+      "claim": "(1-1/2)/501 < 0.001 ;; (1-1/2)/500 >= 0.001"
+    }
+  ],
+  "pitfalls": [
+    "可積判準的量詞寫成「存在 P，對所有 ε」。那會逼出 U(f, P) = L(f, P)，只有常數段做得到。",
+    "嚴格不等號在邊界：U − L = 1/n < 0.01 要 n > 100，n = 100 不算。",
+    "以為單調函數要連續才可積。跳躍點不影響單調公式的相消。",
+    "只驗一種取點（例如右端點）的 Riemann 和收斂，就宣稱可積。"
+  ],
+  "checks": [
+    {
+      "ask": "有界的 f 在 [a, b] 上可積，等價於：",
+      "options": [
+        {
+          "label": "對每個 ε > 0，存在分割 P 使 U(f, P) − L(f, P) < ε",
+          "correct": true
+        },
+        {
+          "label": "存在分割 P，使 U(f, P) − L(f, P) < ε 對每個 ε > 0 都成立",
+          "why": "量詞順序反了：同一個 P 要對所有 ε 成立，等於 U(f, P) = L(f, P)，比可積強太多。"
+        },
+        {
+          "label": "等長分割的右端點和 Σ f(i/n)/n 收斂",
+          "why": "只用一種取點不夠：Dirichlet 函數的右端點和恆為 1，卻不可積。"
+        }
+      ]
+    },
+    {
+      "ask": "f 在 [0, 2] 遞增，f(0) = 1、f(2) = 4。等長分割 Pₙ 的 U − L 是？",
+      "options": [
+        {
+          "label": "6/n",
+          "correct": true
+        },
+        {
+          "label": "3/n",
+          "why": "你漏了區間長度 b − a = 2。公式是 (f(b) − f(a))(b − a)/n = 3 · 2/n。"
+        },
+        {
+          "label": "2/n",
+          "why": "你只乘了區間長度，漏了 f(b) − f(a) = 3。"
+        }
+      ]
+    },
+    {
+      "ask": "下列哪個函數在 [0, 1] 上不是 Riemann 可積？",
+      "options": [
+        {
+          "label": "Dirichlet 函數：有理點取 1、無理點取 0（每個分割 U = 1、L = 0）",
+          "correct": true
+        },
+        {
+          "label": "一個遞增、有無限多個跳躍點的函數",
+          "why": "單調就夠了：U − L = (f(1) − f(0))/n → 0，跳躍點不影響。"
+        },
+        {
+          "label": "一個只在一點不連續的有界函數",
+          "why": "含那一點的段可以切得很窄，其他地方連續；這種函數可積。"
+        }
+      ]
+    },
+    {
+      "ask": "已知 f 在 [a, b] 可積。要算 ∫ₐᵇ f，可以：",
+      "options": [
+        {
+          "label": "用等長分割、任選一種取點的 Riemann 和取極限",
+          "correct": true
+        },
+        {
+          "label": "只能用上和取極限，Riemann 和不可靠",
+          "why": "可積之後，任何取點的 Riemann 和都夾在 L 與 U 之間，一起收斂到積分。"
+        },
+        {
+          "label": "一定要對所有分割取 inf",
+          "why": "那是定義；知道可積之後，任何一族寬度 → 0 的分割都可以拿來算。"
+        }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": [
+      "darboux",
+      "riemann-sum"
+    ],
+    "fine": [
+      "integrability-criterion",
+      "integrability-monotone-bound",
+      "integrability-min-n",
+      "integrability-riemann-sum-equivalence"
+    ]
+  },
+  "practice": [
+    {
+      "id": "an-int-001",
+      "core": true,
+      "trains": "integrability-min-n"
+    },
+    {
+      "id": "an-int-003",
+      "core": true,
+      "trains": "integrability-min-n"
+    },
+    {
+      "id": "an-int-005",
+      "core": true,
+      "trains": "integrability-monotone-bound"
+    },
+    {
+      "id": "lm-rs-004",
+      "trains": "integrability-riemann-sum-equivalence"
+    },
+    {
+      "id": "cx-ftc-002",
+      "trains": "integrability-riemann-sum-equivalence"
+    },
+    {
+      "id": "lb-cmp-001",
+      "challenge": true,
+      "trains": "integrability-criterion",
+      "note": "挑戰：說明 Dirichlet 函數為什麼對每個分割都有 U − L = 1。"
+    }
+  ],
+  "gaps": [
+    {
+      "tag": "integrability-criterion",
+      "count": 2,
+      "note": "給一個有跳躍的單調函數或分段函數，判斷可積並找出使 U − L < ε 的分割；R4。"
+    },
+    {
+      "tag": "integrability-monotone-bound",
+      "count": 2,
+      "note": "遞減函數（e^{−x}、1/(1 + x)）與非 [0, 1] 區間的單調誤差公式；R3。"
+    }
+  ]
+}

@@ -1,0 +1,145 @@
+{
+  "id": "fundamental-theorems-unified",
+  "title": "基本定理 → Green → Stokes → Gauss",
+  "readMinutes": 10,
+  "totalMinutes": 35,
+  "prerequisites": ["divergence-theorem", "stokes-theorem", "green-theorem", "path-independence"],
+  "next": ["ode-intro"],
+  "related": ["ftc-part2", "curl", "divergence"],
+  "objectives": [
+    "把微積分基本定理、線積分基本定理、Green、Stokes、散度定理排在一起，說出它們共同的樣子。",
+    "說出每個定理裡「邊界的方向」怎麼由區域的方向決定。",
+    "看到一個積分，判斷該用哪一個定理。"
+  ],
+  "visual": "五欄並排：線段與兩個端點、空間曲線與起終點、平面區域與邊界曲線、曲面與邊界曲線、立體與邊界曲面。每一欄上方是區域（塗色），下方是它的邊界（亮線或亮點），邊界上標出方向（端點的 +、−，逆時針箭頭，右手定則箭頭，朝外法向量）。點任一欄，展開對應的公式，左邊「區域上的導數」與右邊「邊界上的原函數」分別用跟圖形相同的顏色標出。",
+  "concept": [
+    {
+      "heading": "① 五個定理排在一起",
+      "body": [
+        "〈微積分基本定理 II〉：線段 [a, b] 上積 F′，等於 F 在兩個端點的差。",
+        "〈路徑無關〉：曲線上積 ∇f，等於 f 在起點、終點的差。",
+        "〈Green 定理〉：平面區域上積 Q_x − P_y，等於邊界曲線上的環流。",
+        "〈Stokes 定理〉：曲面上積旋度的通量，等於邊界曲線上的環流。",
+        "〈散度定理〉：立體裡積散度，等於邊界曲面上的通量。"
+      ],
+      "tex": ["\\begin{aligned}\\int_a^b F'(x)\\,dx&=F(b)-F(a)\\\\\\int_C\\nabla f\\cdot d\\mathbf r&=f(B)-f(A)\\\\\\iint_D(Q_x-P_y)\\,dA&=\\oint_{\\partial D}P\\,dx+Q\\,dy\\\\\\iint_S(\\nabla\\times\\mathbf F)\\cdot d\\mathbf S&=\\oint_{\\partial S}\\mathbf F\\cdot d\\mathbf r\\\\\\iiint_E\\nabla\\cdot\\mathbf F\\,dV&=\\iint_{\\partial E}\\mathbf F\\cdot d\\mathbf S\\end{aligned}"],
+      "collapsible": false
+    },
+    {
+      "heading": "② 共同的樣子",
+      "body": [
+        "每一行左邊：在一個區域上，積某種「導數」（F′、∇、平面旋度、旋度、散度）。右邊：在那個區域的邊界上，積「原來的東西」。區域是 k 維，邊界就是 k − 1 維：線段的邊界是兩個點，曲面的邊界是曲線，立體的邊界是曲面。",
+        "直觀理由每次都一樣：把區域切成小塊，每一小塊上「導數 × 大小」≈ 那一小塊邊界上的量；相鄰小塊的共用邊界方向相反、互相抵消，只剩最外圍。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 方向就是正負號",
+      "body": [
+        "每個定理都要求邊界的方向跟區域配好：線段的終點記 +、起點記 −（所以是 F(b) − F(a)）；Green 的邊界逆時針（區域在左手邊）；Stokes 用右手定則跟法向量配對；散度定理取朝外。方向配錯，就差一個負號。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 邊界的邊界是空的",
+      "body": [
+        "封閉曲線沒有端點，封閉曲面沒有邊界曲線。這件幾何事實對應到兩個恆等式：",
+        "∇ × (∇f) = 0：保守場繞封閉曲線一圈，線積分基本定理給 0（沒有端點），Stokes 也給 0。",
+        "∇ · (∇ × F) = 0：旋度場穿過封閉曲面，Stokes 給 0（沒有邊界曲線），散度定理也給 0。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "⑤ 預告：一個公式包辦全部（給想知道的人）",
+      "body": [
+        "更進階的課程會把這五個定理寫成同一個式子：∫_M dω = ∫_{∂M} ω，叫做廣義 Stokes 定理。M 是一個 k 維的區域（線段、曲面、立體，甚至更高維），∂M 是它帶方向的邊界。",
+        "ω 是「可以在 k − 1 維物件上積分的東西」：在點上取值的函數、像 P dx + Q dy 這種沿曲線積的式子、像通量那種沿曲面積的式子。d 是一個統一的微分運算，在不同維度分別變成梯度、旋度、散度；而「邊界的邊界是空的」對應到 d(dω) = 0。",
+        "要把 ω 與 d 說清楚，需要微分形式的語言，本課程不正式講。這裡只要記得：五個定理不是五件事，是同一件事在不同維度的樣子。"
+      ],
+      "collapsible": true
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "同一個數，三種算法",
+      "prompt": "F = ⟨−y, x, 0⟩，C 是 xy 平面上的單位圓，從上往下看逆時針。分別用 (a) 線積分 (b) 平圓盤 (c) 上半球面 算 ∮_C F · dr。",
+      "steps": [
+        "(a) r(t) = ⟨cos t, sin t, 0⟩：F · r′ = sin² t + cos² t = 1，∫_0^{2π} dt = 2π。",
+        "∇ × F = ⟨0, 0, 2⟩。",
+        "(b) 平圓盤、法向量朝上（右手定則）：(∇ × F) · k = 2，乘面積 π，得 2π。",
+        "(c) 上半球面、法向量朝外（也就是朝上）：n 的 z 分量是 cos φ，dS = sin φ dφ dθ。∫_0^{2π} ∫_0^{π/2} 2 cos φ sin φ dφ dθ = 2π · 2 · (1/2) = 2π。",
+        "三個都是 2π：曲面可以換，只要邊界與方向一樣。"
+      ],
+      "answer": "2π",
+      "claim": "INT((-sin(t))*(-sin(t))+cos(t)*cos(t),0,2*pi,t) == 2*pi ;; INT(INT(2*r,0,1,r),0,2*pi,t) == 2*pi ;; INT(INT(2*cos(u)*sin(u),0,pi/2,u),0,2*pi,t) == 2*pi"
+    },
+    {
+      "title": "該用哪一個？",
+      "prompt": "(a) ∮_C (eˣ + y) dx + 3x dy，C 是正方形 [0, 2]² 的邊界，逆時針。(b) ∫_C ∇(xyz) · dr，C 從 (0, 0, 0) 到 (1, 2, 3)。(c) ⟨x, y, z⟩ 穿出單位球面的通量。",
+      "steps": [
+        "(a) 平面上的封閉曲線 → Green。Q_x − P_y = 3 − 1 = 2，乘面積 4 得 8。（直接沿四條邊算：eˣ 那部分在上下兩邊抵消，結果一樣是 8。）",
+        "(b) 梯度場的線積分 → 線積分基本定理。xyz 在 (1, 2, 3) 是 6，在原點是 0，答案 6。",
+        "(c) 封閉曲面的通量 → 散度定理。∇ · F = 3，乘體積 4π/3 得 4π。"
+      ],
+      "answer": "(a) 8　(b) 6　(c) 4π",
+      "claim": "INT(e^x,0,2) + INT(6,0,2,y) - INT(e^x+2,0,2) == 8 ;; INT((2*t*3*t)*1 + (t*3*t)*2 + (t*2*t)*3, 0, 1, t) == 6 ;; INT(INT(INT(3*r^2*sin(u),0,1,r),0,pi,u),0,2*pi,t) == 4*pi"
+    }
+  ],
+  "pitfalls": [
+    "用了定理卻沒檢查條件：封閉嗎？方向對嗎？區域裡有沒有奇異點？",
+    "Stokes 與散度定理混用：曲線 ↔ 曲面用 Stokes，曲面 ↔ 立體用散度定理。",
+    "把「邊界的邊界是空的」誤用到不封閉的曲面上。"
+  ],
+  "checks": [
+    {
+      "ask": "S 是封閉曲面，F 在 S 圍住的立體上偏導連續。∯_S (∇ × F) · dS 是？",
+      "options": [
+        { "label": "0", "correct": true },
+        { "label": "要看 F", "why": "用散度定理：等於 ∭ ∇ · (∇ × F) dV，而 ∇ · (∇ × F) 恆為 0。" },
+        { "label": "4π", "why": "4π 是點源場 ⟨x, y, z⟩/ρ³ 的通量，它不是旋度場。" }
+      ]
+    },
+    {
+      "ask": "平面上封閉曲線的線積分換成二重積分，用的是？",
+      "options": [
+        { "label": "Green 定理", "correct": true },
+        { "label": "散度定理", "why": "散度定理連接的是封閉曲面與立體。" },
+        { "label": "線積分基本定理", "why": "它只適用於梯度場，而且結果是端點的差，不是二重積分。" }
+      ]
+    },
+    {
+      "ask": "把微積分基本定理看成這一族的一員時，[a, b] 的「邊界」是？",
+      "options": [
+        { "label": "兩個點：b 帶 +、a 帶 −", "correct": true },
+        { "label": "兩個點，都帶 +", "why": "那會得到 F(b) + F(a)。方向要配：終點 +、起點 −。" },
+        { "label": "整個區間 [a, b]", "why": "區間是區域本身，邊界是比它低一維的東西：兩個端點。" }
+      ]
+    },
+    {
+      "ask": "這五個定理共同的樣子是？",
+      "options": [
+        { "label": "區域上某種導數的積分 = 邊界上原來的東西的積分", "correct": true },
+        { "label": "封閉曲線或封閉曲面上的積分都是 0", "why": "只有特定的場（梯度場、旋度場）才是 0；Green、Stokes、散度定理一般給的是非零的值。" },
+        { "label": "只對保守場成立", "why": "Green、Stokes、散度定理對一般偏導連續的場都成立，不需要保守。" }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": ["vector-calculus", "green-theorem", "stokes-theorem", "divergence-theorem"],
+    "fine": ["theorem-recognition", "boundary-orientation-match"]
+  },
+  "practice": [
+    { "id": "mob-nabla-007", "core": true, "trains": "theorem-recognition" },
+    { "id": "vc-green-007", "core": true, "trains": "theorem-recognition" },
+    { "id": "vc-stokes-002", "core": true, "trains": "boundary-orientation-match" },
+    { "id": "vc-div-005", "core": true, "trains": "theorem-recognition" },
+    { "id": "vc-rec-001", "trains": "theorem-recognition" },
+    { "id": "vc-rec-002", "trains": "theorem-recognition" },
+    { "id": "mob-tech-013", "trains": "theorem-recognition" },
+    { "id": "mob-nabla-010", "trains": "theorem-recognition" }
+  ],
+  "gaps": [
+    { "tag": "theorem-recognition", "count": 4, "note": "R3–R4：混合題組，同一份裡有該用 Green、Stokes、散度定理、線積分基本定理的題，要先判斷再算。" },
+    { "tag": "boundary-orientation-match", "count": 2, "note": "R3：只問方向：給區域與法向量，選出邊界的正確方向。" }
+  ]
+}

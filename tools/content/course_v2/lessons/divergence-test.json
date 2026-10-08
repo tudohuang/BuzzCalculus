@@ -1,0 +1,243 @@
+{
+  "id": "divergence-test",
+  "title": "發散判別",
+  "readMinutes": 8,
+  "totalMinutes": 30,
+  "prerequisites": [
+    "infinite-series",
+    "sequence-limit"
+  ],
+  "next": [
+    "p-series"
+  ],
+  "related": [
+    "limit-e-type",
+    "alternating-series-test"
+  ],
+  "objectives": [
+    "證明並使用：Σ aₙ 收斂 ⇒ aₙ → 0；所以 aₙ 不趨近 0 的級數發散。",
+    "知道這個判別法只能證明發散，aₙ → 0 時它什麼都不說。",
+    "用調和級數 Σ 1/n 說明「各項 → 0 卻發散」。"
+  ],
+  "visual": "調和級數的分組圖：1、1/2、(1/3 + 1/4)、(1/5 + … + 1/8)、(1/9 + … + 1/16)、…，每一組畫成一根長條，旁邊一條 ½ 高的虛線。每一根長條都超過虛線，堆起來的高度沒有上限。上方同時畫出各項 1/n 的點越來越貼近 0。",
+  "concept": [
+    {
+      "heading": "① 收斂的級數，各項一定 → 0",
+      "body": [
+        "若 Σ aₙ 收斂到 S，部分和 sₙ → S，sₙ₋₁ 也 → S。而 aₙ = sₙ − sₙ₋₁，所以 aₙ → S − S = 0。這是完整的證明，沒有省略。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 判別法：反過來用",
+      "body": [
+        "上面那句話的逆否命題：如果 lim aₙ ≠ 0，或 lim aₙ 不存在，那 Σ aₙ 發散。",
+        "這叫發散判別（也叫第 n 項判別）。它是拿到任何級數的第一個檢查：算一下各項的極限，不是 0 就結束了。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 最常見的錯：aₙ → 0 不代表收斂",
+      "body": [
+        "aₙ → 0 時，判別法沒有結論，級數可能收斂（Σ 1/2ⁿ），也可能發散。標準反例是調和級數 Σ 1/n：各項 → 0，部分和卻沒有上界。",
+        "直觀：各項雖然變小，但變小得太慢，把後面的項適當分組，每一組都至少有 ½，可以無限多組（證明在下面）。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 三種情況一覽",
+      "body": [
+        "lim aₙ = L ≠ 0：發散。部分和每次大約加 L，不可能停下來。",
+        "lim aₙ 不存在（例如在 1 與 −1 附近來回）：發散。",
+        "lim aₙ = 0：沒有結論，換別的判別法。後面幾課的〈p 級數〉、比較、比值……全都是為這種情況準備的。",
+        "算 lim aₙ 用的是〈數列與數列極限〉的工具：同除最高次、e 型極限、增長速度的比較。常見的陷阱是把 aₙ 的極限和級數的和搞混：各項 → 1/e，跟級數和是多少毫無關係。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "⑤ 調和級數發散的證明",
+      "body": [
+        "把各項分組：1/3 + 1/4 > 1/4 + 1/4 = 1/2；1/5 + 1/6 + 1/7 + 1/8 > 4 · 1/8 = 1/2；1/9 到 1/16 共 8 項，每項 ≥ 1/16，和 ≥ 1/2。一般地，第 k 組是 1/(2^{k−1} + 1) 到 1/2^k 共 2^{k−1} 項，每項 ≥ 1/2^k，和 ≥ 1/2。",
+        "所以 s_{2^k} ≥ 1 + k/2。k → ∞ 時右邊 → ∞，而部分和遞增，整個 sₙ → ∞，Σ 1/n 發散。"
+      ],
+      "collapsible": true
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "極限不是 0",
+      "prompt": "Σ_{n=1}^∞ n/(n + 1) 收斂嗎？",
+      "problemId": "fd-ser-014",
+      "steps": [
+        "lim n/(n + 1) = lim 1/(1 + 1/n) = 1 ≠ 0。",
+        "由發散判別，級數發散。（部分和大約每次加 1，當然會往上衝。）"
+      ],
+      "answer": "發散",
+      "claim": "LIM(x/(x+1), inf) == 1"
+    },
+    {
+      "title": "要用 e 型極限的",
+      "prompt": "Σ_{n=1}^∞ (n/(n + 1))ⁿ 收斂嗎？",
+      "problemId": "ser-032",
+      "steps": [
+        "(n/(n + 1))ⁿ = 1/(1 + 1/n)ⁿ。",
+        "(1 + 1/n)ⁿ → e（〈e 型極限〉），所以各項 → 1/e ≈ 0.368 ≠ 0。",
+        "由發散判別，級數發散。"
+      ],
+      "answer": "發散",
+      "claim": "LIM((x/(x+1))^x, inf) == e^(-1)"
+    },
+    {
+      "title": "極限不存在",
+      "prompt": "Σ_{n=1}^∞ (−1)ⁿ n/(n + 1) 收斂嗎？",
+      "problemId": "lec-13-m4",
+      "steps": [
+        "|aₙ| = n/(n + 1) → 1。n 為偶數時 aₙ 靠近 1，n 為奇數時靠近 −1。",
+        "aₙ 沒有極限，當然不是「趨近 0」。由發散判別，級數發散。",
+        "正負交替不能救它：後面會學的〈交錯級數判別〉要求各項的大小 → 0。"
+      ],
+      "answer": "發散",
+      "claim": "SUB((-1)^n*n/(n+1), 100) > 0.9 ;; SUB((-1)^n*n/(n+1), 101) < -0.9"
+    }
+  ],
+  "pitfalls": [
+    "看到 aₙ → 0 就說收斂。",
+    "aₙ → 0 時說「由發散判別，級數收斂」：這個判別法從來不能證明收斂。",
+    "把 lim aₙ 和級數和搞混：各項 → 1/e，不是級數和是 1/e。",
+    "以為正負交替就一定收斂。"
+  ],
+  "checks": [
+    {
+      "ask": "已知 aₙ → 0。關於 Σ aₙ 可以說什麼？",
+      "options": [
+        {
+          "label": "光憑這點無法判斷",
+          "correct": true
+        },
+        {
+          "label": "一定收斂",
+          "why": "調和級數 Σ 1/n 各項 → 0，卻發散。"
+        },
+        {
+          "label": "一定發散",
+          "why": "Σ 1/2ⁿ 各項 → 0，而且收斂到 1。"
+        }
+      ]
+    },
+    {
+      "ask": "Σ (2n² + 1)/(n² + 5) 是？",
+      "options": [
+        {
+          "label": "發散，因為各項 → 2",
+          "correct": true
+        },
+        {
+          "label": "收斂，因為分子分母同次",
+          "why": "同次只說明各項趨近一個非零常數 2；各項不 → 0，部分和每次約加 2，會往上衝。"
+        },
+        {
+          "label": "發散判別無法判斷",
+          "why": "判別法只有在 aₙ → 0 時沒結論；這裡極限是 2 ≠ 0，結論就是發散。"
+        }
+      ]
+    },
+    {
+      "ask": "Σ cos(1/n) 是？",
+      "options": [
+        {
+          "label": "發散，因為各項 → 1",
+          "correct": true
+        },
+        {
+          "label": "收斂，因為 1/n → 0",
+          "why": "各項是 cos(1/n)，不是 1/n；cos(1/n) → cos 0 = 1。"
+        },
+        {
+          "label": "無法判斷",
+          "why": "各項的極限是 1 ≠ 0，發散判別直接給出發散。"
+        }
+      ]
+    },
+    {
+      "ask": "「Σ aₙ 收斂 ⇒ aₙ → 0」的證明關鍵是？",
+      "options": [
+        {
+          "label": "aₙ = sₙ − sₙ₋₁，兩個部分和都 → S",
+          "correct": true
+        },
+        {
+          "label": "收斂的級數各項越來越小",
+          "why": "這只是重述結論，沒有用到「收斂」的定義（部分和有極限）。"
+        },
+        {
+          "label": "Σ 1/n 發散",
+          "why": "調和級數是反方向的反例（aₙ → 0 但發散），證不了這個方向。"
+        }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": [
+      "term-test",
+      "convergence-test",
+      "limit-trap"
+    ],
+    "fine": [
+      "divergence-test-apply",
+      "divergence-test-inconclusive",
+      "divergence-test-harmonic"
+    ]
+  },
+  "practice": [
+    {
+      "id": "fd-ser-014",
+      "core": true,
+      "trains": "divergence-test-apply"
+    },
+    {
+      "id": "fd-serx-206",
+      "core": true,
+      "trains": "divergence-test-apply"
+    },
+    {
+      "id": "mob-conv-010",
+      "core": true,
+      "trains": "divergence-test-apply"
+    },
+    {
+      "id": "ser-032",
+      "core": true,
+      "trains": "divergence-test-apply"
+    },
+    {
+      "id": "lec-12-m2",
+      "core": true,
+      "trains": "divergence-test-inconclusive"
+    },
+    {
+      "id": "lec-13-m4",
+      "trains": "divergence-test-apply"
+    },
+    {
+      "id": "cx-ser-005",
+      "trains": "divergence-test-harmonic"
+    },
+    {
+      "id": "rel-hard-ser-010",
+      "trains": "divergence-test-apply"
+    },
+    {
+      "id": "lec-12-q4a",
+      "challenge": true,
+      "trains": "divergence-test-harmonic",
+      "note": "挑戰：用歸納法寫出 H_{2^k} ≥ 1 + k/2，就是本課分組證明的嚴格版。"
+    }
+  ],
+  "gaps": [
+    {
+      "tag": "divergence-test-inconclusive",
+      "count": 2,
+      "note": "R2：各項 → 0 的級數問「發散判別能下結論嗎」的概念題。"
+    }
+  ]
+}

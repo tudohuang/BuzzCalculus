@@ -1,0 +1,242 @@
+{
+  "id": "lagrange-one",
+  "title": "Lagrange 乘數：一個條件",
+  "readMinutes": 11,
+  "totalMinutes": 40,
+  "prerequisites": [
+    "gradient",
+    "level-curves",
+    "critical-points-2d"
+  ],
+  "next": [
+    "lagrange-multiple"
+  ],
+  "related": [],
+  "objectives": [
+    "從「等高線與約束曲線相切」看出條件 ∇f = λ∇g。",
+    "列出並解 ∇f = λ∇g、g = c 的聯立方程，找出所有候選點。",
+    "知道定理只給候選點：要確認 ∇g ≠ 0，並用有界閉集或其他理由判斷哪個是最大、最小。"
+  ],
+  "visual": "約束曲線 x² + y² = 50（一個圓）固定不動，背景是 f = xy 的等高線（一族雙曲線），滑桿控制 c，高亮 f = c 那一條。c 從 0 往上拉，等高線跟圓的交點越來越靠近，c = 25 時恰好在 (5, 5) 與 (−5, −5) 相切；再往上就碰不到圓了。切點上同時畫出 ∇f 與 ∇g，兩支箭頭在同一條直線上。",
+  "concept": [
+    {
+      "heading": "① 問題：只能在一條曲線上走",
+      "body": [
+        "求 f(x, y) 的最大值，但 (x, y) 必須滿足 g(x, y) = c，例如在圓 x² + y² = 50 上求 xy 的最大值。這時 ∇f = 0 不是要的條件：最大值發生在曲線上，那裡 ∇f 通常不是 0。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 圖像：等高線剛好碰到約束曲線",
+      "body": [
+        "畫出 f 的等高線 f = k，把 k 慢慢加大。只要 f = k 還穿過約束曲線，就還有點的 f 值等於 k；穿過的地方往某一邊走還能更大。當 k 大到等高線只「碰到」曲線而不穿過，就到了最大值：兩條曲線在那一點相切。",
+        "相切 ⇒ 法向量平行。f = k 的法向量是 ∇f，g = c 的法向量是 ∇g（〈梯度〉），所以存在一個數 λ：",
+        "這是直覺，不是證明：它默認約束曲線在那一點有切線、f 的等高線也有切線，也就是 ∇g、∇f 不是零向量。③ 是精確的敘述。"
+      ],
+      "tex": [
+        "\\nabla f(x,y)=\\lambda\\,\\nabla g(x,y),\\qquad g(x,y)=c"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 定理的條件",
+      "body": [
+        "f、g 的偏導數連續，P 是 f 在曲線 g = c 上的局部極值點，而且 ∇g(P) ≠ 0。那麼存在 λ 使 ∇f(P) = λ∇g(P)。",
+        "∇g(P) = 0 的點，條件可能不成立，要另外列入候選。例：曲線 y² = x³ 在原點有尖角，f = x 在這條曲線上的最小值在 (0, 0)，但 ∇g = (−3x², 2y) 在那裡是 0，∇f = (1, 0) 不是它的倍數。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 它只給候選點",
+      "body": [
+        "解出來的點只是「可能」的極值點。最後一步一定是：把每個候選點的 f 算出來比大小，並說明最大、最小確實存在。",
+        "約束曲線有界而且封閉（圓、橢圓），連續的 f 一定有最大、最小值，那就是候選值裡最大、最小的。曲線無界（直線、雙曲線）時，要另外論證，例如 f 走到遠處會變得很大，所以只有最小值。"
+      ],
+      "collapsible": false
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "圓上的最大值",
+      "prompt": "在 x² + y² = 50 上求 xy 的最大值。",
+      "problemId": "mob-lm-009",
+      "steps": [
+        "f = xy，g = x² + y²。∇f = (y, x)，∇g = (2x, 2y)，圓上 ∇g ≠ 0。",
+        "y = 2λx，x = 2λy。把第一式代入第二式：x = 4λ²x。",
+        "若 x = 0，則 y = 2λx = 0，但 (0, 0) 不在圓上；所以 x ≠ 0，4λ² = 1，λ = ±1/2，得 y = ±x。",
+        "代入 x² + y² = 50：x² = 25。候選點 (5, 5)、(−5, −5)（f = 25）與 (5, −5)、(−5, 5)（f = −25）。",
+        "圓有界而且封閉，f 連續，最大值存在，就是候選值中最大的 25。"
+      ],
+      "answer": "25",
+      "claim": "5*5 == 25 ;; 5^2 + 5^2 == 50 ;; 5*(-5) == -25"
+    },
+    {
+      "title": "分情況解",
+      "prompt": "用 Lagrange 乘數求 f = x² + 2y² 在圓 x² + y² = 1 上的最大值與最小值。",
+      "problemId": "lec-18-q3a",
+      "steps": [
+        "∇f = (2x, 4y)，∇g = (2x, 2y)。方程：2x = 2λx，4y = 2λy，也就是 x(1 − λ) = 0、y(2 − λ) = 0。",
+        "x 與 y 不能同時是 0（不在圓上）。若 x ≠ 0，λ = 1，第二式變成 y = 0；若 y ≠ 0，λ = 2，第一式變成 x = 0。",
+        "候選點：(±1, 0)，f = 1；(0, ±1)，f = 2。",
+        "圓有界封閉：最大值 2，最小值 1。"
+      ],
+      "answer": "最大 2，最小 1",
+      "claim": "SUB(x^2 + 2*0, 1) == 1 ;; SUB(0 + 2*y^2, 1, y) == 2"
+    },
+    {
+      "title": "約束是直線：只有最小值",
+      "prompt": "在 x + y = 6 上求 x² + y² 的最小值。",
+      "problemId": "mob-lm-002",
+      "steps": [
+        "∇f = (2x, 2y)，∇g = (1, 1)。2x = λ、2y = λ，所以 x = y；代入 x + y = 6 得 (3, 3)，f = 18。",
+        "只有一個候選點，它是最大還是最小？直線無界，沿直線走遠時 x² + y² → ∞，所以沒有最大值。",
+        "最小值存在：在直線上取一段夠長的線段，線段外的 f 都大於 18，線段是有界閉集，f 在上面有最小值，而它只能是候選點 (3, 3)。"
+      ],
+      "answer": "18",
+      "claim": "3^2 + 3^2 == 18 ;; SUB(x^2 + (6-x)^2, 3) == 18 ;; D(x^2 + (6-x)^2, 3) + 1 == 1"
+    }
+  ],
+  "pitfalls": [
+    "解方程時兩邊同除以 x 或 y，漏掉 x = 0 或 y = 0 的情況。",
+    "只解 ∇f = λ∇g，忘了代回約束 g = c。",
+    "把每個候選點都當成極值，或用 λ 的正負判斷最大最小。",
+    "約束曲線無界時，沒有說明最大或最小是否存在。"
+  ],
+  "checks": [
+    {
+      "ask": "Lagrange 條件 ∇f = λ∇g 的幾何意義是？",
+      "options": [
+        {
+          "label": "f 的等高線與約束曲線在該點相切",
+          "correct": true
+        },
+        {
+          "label": "f 在該點的切平面水平（∇f = 0）",
+          "why": "那是沒有約束時的條件；有約束時極值點的 ∇f 通常不是 0。"
+        },
+        {
+          "label": "∇f 垂直於 ∇g",
+          "why": "垂直代表等高線跟約束曲線正交地穿過，沿曲線走 f 還在變；相切時兩個法向量平行。"
+        }
+      ]
+    },
+    {
+      "ask": "在 x² + y² = 2 上，x + y 的最大值是？",
+      "options": [
+        {
+          "label": "2",
+          "correct": true
+        },
+        {
+          "label": "√2",
+          "why": "√2 是圓的半徑。(1, 1) = λ(2x, 2y) 給 x = y，再由 x² + y² = 2 得 x = y = 1，x + y = 2。"
+        },
+        {
+          "label": "4",
+          "why": "x = y 代回約束是 2x² = 2，x = 1，不是 2。"
+        }
+      ]
+    },
+    {
+      "ask": "用 Lagrange 乘數找到候選點之後，還要做什麼？",
+      "options": [
+        {
+          "label": "算每個候選點的 f 比大小，並說明最大、最小確實存在",
+          "correct": true
+        },
+        {
+          "label": "看 λ 的正負決定是最大還是最小",
+          "why": "λ 的符號不決定最大最小；要比 f 的值。"
+        },
+        {
+          "label": "什麼都不用，候選點都是極值",
+          "why": "例如圓上 xy 的候選點有 f = 25 和 f = −25，一個最大一個最小，不能都叫最大。"
+        }
+      ]
+    },
+    {
+      "ask": "f = x 在曲線 y² = x³ 上的最小值在 (0, 0)，但 ∇f = λ∇g 在那裡解不出 λ。原因是？",
+      "options": [
+        {
+          "label": "∇g(0, 0) = (0, 0)，定理的前提 ∇g ≠ 0 不成立",
+          "correct": true
+        },
+        {
+          "label": "(0, 0) 不在曲線上",
+          "why": "0² = 0³，(0, 0) 在曲線上。"
+        },
+        {
+          "label": "最小值其實不在 (0, 0)",
+          "why": "x³ = y² ≥ 0，所以曲線上 x ≥ 0，最小值 0 確實在 (0, 0)。"
+        }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": [
+      "lagrange-multiplier",
+      "optimization",
+      "multivariable"
+    ],
+    "fine": [
+      "lagrange-setup",
+      "lagrange-solve-system",
+      "lagrange-check-candidates"
+    ]
+  },
+  "practice": [
+    {
+      "id": "mob-lm-001",
+      "core": true,
+      "trains": "lagrange-setup"
+    },
+    {
+      "id": "mob-lm-002",
+      "core": true,
+      "trains": "lagrange-setup"
+    },
+    {
+      "id": "mob-lm-010",
+      "core": true,
+      "trains": "lagrange-solve-system"
+    },
+    {
+      "id": "mob-lm-009",
+      "core": true,
+      "trains": "lagrange-solve-system"
+    },
+    {
+      "id": "mob-lm-004",
+      "core": true,
+      "trains": "lagrange-solve-system"
+    },
+    {
+      "id": "lec-18-q3a",
+      "core": true,
+      "trains": "lagrange-check-candidates"
+    },
+    {
+      "id": "mob-lm-005",
+      "trains": "lagrange-solve-system"
+    },
+    {
+      "id": "lec-18-q3c",
+      "trains": "lagrange-setup"
+    },
+    {
+      "id": "mob-lm-003",
+      "trains": "lagrange-solve-system"
+    },
+    {
+      "id": "mob-lm-006",
+      "trains": "lagrange-solve-system"
+    }
+  ],
+  "gaps": [
+    {
+      "tag": "lagrange-check-candidates",
+      "count": 2,
+      "note": "R3：候選點裡挑最大最小、或說明無界約束上只有最小值的題。"
+    }
+  ]
+}

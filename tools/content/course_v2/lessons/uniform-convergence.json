@@ -1,0 +1,146 @@
+{
+  "id": "uniform-convergence",
+  "title": "一致收斂",
+  "readMinutes": 12,
+  "totalMinutes": 35,
+  "prerequisites": ["pointwise-convergence", "uniform-continuity"],
+  "next": ["uniform-convergence-tests"],
+  "related": ["continuity-formal"],
+  "objectives": [
+    "寫出一致收斂的定義（∀ε ∃N ∀n ≥ N ∀x），說得出它跟逐點收斂差在量詞順序。",
+    "用 sup 範數 ‖fₙ − f‖∞ 判斷一致收斂，並會寫出「不一致收斂」的否定句。",
+    "證明並使用：連續函數列一致收斂，極限仍連續。"
+  ],
+  "visual": "畫出極限函數 f，以及上下各平移 ε 的一條「ε 管子」。n 用滑桿調大：xⁿ 在 [0, 1/2] 上整條曲線很快整段掉進管子；xⁿ 在 [0, 1] 上，不論 n 多大，靠近 x = 1 的那一小段總是翹出管子。ε 也可以調，管子越細，要的 N 越大。",
+  "concept": [
+    {
+      "heading": "① 一根管子套住整條曲線",
+      "body": [
+        "以極限函數 f 為中心，畫一條上下寬 ε 的管子。一致收斂的意思是：從某個 N 開始，每一個 fₙ 的整條圖形都落在管子裡。逐點收斂只要求每個 x 各自最後落進去，各點可以有各自的 N。",
+        "直覺，不是證明：逐點收斂是「每個人最後都會到」，一致收斂是「同一個時刻，所有人都已經到了」。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 定義與 sup 範數",
+      "body": [
+        "fₙ 在 D 上一致收斂到 f：對每個 ε > 0，存在只跟 ε 有關的 N，使得所有 n ≥ N 與所有 x ∈ D 都有 |fₙ(x) − f(x)| < ε。",
+        "把「所有 x」收進一個數：‖fₙ − f‖∞ = sup_{x∈D} |fₙ(x) − f(x)|。一致收斂若且唯若 ‖fₙ − f‖∞ → 0。兩者等價，因為 |fₙ(x) − f(x)| < ε 對所有 x 成立推得 sup ≤ ε，而 sup < ε 又推回每一點都 < ε；ε 可任取，差一個等號不影響。",
+        "否定（不一致收斂）：存在 ε₀ > 0，對每個 N，都有 n ≥ N 與 x ∈ D 使 |fₙ(x) − f(x)| ≥ ε₀。實務上就是找一串點 xₙ，讓誤差停在 ε₀ 以上。"
+      ],
+      "tex": ["\\forall\\varepsilon>0\\ \\exists N\\ \\forall n\\ge N\\ \\forall x\\in D:\\ |f_n(x)-f(x)|<\\varepsilon\\iff\\|f_n-f\\|_\\infty\\to0"],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 一致收斂保住連續",
+      "body": [
+        "定理：若每個 fₙ 在 D 上連續，且 fₙ 在 D 上一致收斂到 f，則 f 在 D 上連續。",
+        "反過來用：連續函數列的逐點極限若不連續，收斂就一定不是一致的。xⁿ 在 [0, 1] 上就是這樣。但注意逆命題不成立：極限連續，不代表收斂是一致的（範例 2）。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "證明：連續函數列的一致極限連續（ε/3 論證）",
+      "body": [
+        "固定 a ∈ D 與 ε > 0。由一致收斂，取一個 N 使 |f_N(x) − f(x)| < ε/3 對所有 x ∈ D 成立。f_N 在 a 連續，所以有 δ > 0 使 x ∈ D、|x − a| < δ 時 |f_N(x) − f_N(a)| < ε/3。",
+        "於是 |x − a| < δ 時，|f(x) − f(a)| ≤ |f(x) − f_N(x)| + |f_N(x) − f_N(a)| + |f_N(a) − f(a)| < ε/3 + ε/3 + ε/3 = ε。",
+        "一致性用在哪裡：第一項要在 a 附近的每一個 x 都小於 ε/3，而且用的是同一個 N（δ 是由這個 N 決定的）。如果只有逐點收斂，N 會隨 x 變，就沒有一個固定的 f_N 可以拿來找 δ。"
+      ],
+      "collapsible": true
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "xⁿ 在 [0, 1/2] 上一致收斂",
+      "prompt": "fₙ(x) = xⁿ，D = [0, 1/2]。判斷是否一致收斂到 0；ε = 0.001 時 N 取多少？",
+      "problemId": "an-uf-002",
+      "steps": [
+        "逐點極限：0 ≤ x ≤ 1/2 時 xⁿ → 0，f ≡ 0。",
+        "xⁿ 在 [0, 1/2] 上遞增，最大值在右端：‖fₙ − 0‖∞ = (1/2)ⁿ → 0，所以一致收斂。",
+        "要 (1/2)ⁿ < 0.001：(1/2)⁹ ≈ 0.00195 不夠，(1/2)¹⁰ = 1/1024 ≈ 0.000977 夠。N = 10 對區間上每一個 x 同時有效。"
+      ],
+      "answer": "一致收斂；ε = 0.001 時 N = 10",
+      "claim": "(1/2)^10 < 0.001 ;; (1/2)^9 >= 0.001"
+    },
+    {
+      "title": "極限連續，仍然不一致：xⁿ 在 [0, 1)",
+      "prompt": "fₙ(x) = xⁿ，D = [0, 1)。逐點極限是 f ≡ 0（連續）。收斂是一致的嗎？",
+      "problemId": "an-uf-001",
+      "steps": [
+        "‖fₙ − 0‖∞ = sup_{0≤x<1} xⁿ。x → 1⁻ 時 xⁿ → 1，所以 sup = 1，對每個 n 都是 1，不趨近 0。不一致收斂。",
+        "用否定句寫：取 ε₀ = 1/4 與 xₙ = 1 − 1/n（n ≥ 2，落在 [0, 1) 內），fₙ(xₙ) = (1 − 1/n)ⁿ ≥ (1/2)² = 1/4。因為 (1 − 1/n)ⁿ 對 n 遞增，n = 2 時最小。",
+        "附帶：在 [0, 1] 上（加入 x = 1）極限不連續，由觀念 ③ 直接知道不一致。"
+      ],
+      "answer": "不一致收斂（‖fₙ‖∞ = 1）",
+      "note": "(1 − 1/n)ⁿ → 1/e ≈ 0.368，所以誤差最後停在 1/e 附近，不會消失。",
+      "claim": "(1-1/n)^n >= 1/4 ;; SUB((1-1/n)^n, 2) == 1/4 ;; LIM((1-1/n)^n, inf) == e^(-1)"
+    },
+    {
+      "title": "高峰越來越高",
+      "prompt": "fₙ(x) = nx e^{−nx²} 在 [0, 1] 上逐點收斂到 0。求 ‖fₙ‖∞，判斷是否一致收斂。",
+      "problemId": "an-uf-003",
+      "steps": [
+        "fₙ′(x) = n e^{−nx²}(1 − 2nx²)，在 x = 1/√(2n) 由正變負，這是 [0, 1] 上的最大值點（1/√(2n) ≤ 1）。",
+        "‖fₙ‖∞ = fₙ(1/√(2n)) = n · (1/√(2n)) · e^{−1/2} = √(n/2) · e^{−1/2}。",
+        "n = 8 時是 2e^{−1/2} ≈ 1.213；一般 n 時 → ∞，不趨近 0，所以不一致收斂。"
+      ],
+      "answer": "‖fₙ‖∞ = √(n/2)·e^{−1/2} → ∞，不一致收斂",
+      "claim": "SUB(n*x*e^(-n*x^2), 1/sqrt(2n)) == sqrt(n/2)*e^(-1/2) ;; SUB(8*x*e^(-8*x^2), 1/4) == 2*e^(-1/2)"
+    }
+  ],
+  "pitfalls": [
+    "量詞寫成「∀x ∃N」：那是逐點收斂。一致收斂的 N 要在 x 之前選定。",
+    "用「極限函數連續」證明一致收斂。定理只能單向用：極限不連續 ⇒ 不一致；極限連續什麼都推不出。",
+    "算 ‖fₙ − f‖∞ 時只代端點，漏掉內部的最大值點（例如 nx e^{−nx²} 的高峰在 1/√(2n)）。",
+    "在開區間上找不到最大值，就以為 sup 不存在；sup 可以取不到，例如 sup_{[0,1)} xⁿ = 1。"
+  ],
+  "checks": [
+    {
+      "ask": "下列哪一句是一致收斂？",
+      "options": [
+        { "label": "∀ε > 0 ∃N ∀n ≥ N ∀x ∈ D：|fₙ(x) − f(x)| < ε", "correct": true },
+        { "label": "∀x ∈ D ∀ε > 0 ∃N ∀n ≥ N：|fₙ(x) − f(x)| < ε", "why": "你把 ∀x 放到最前面，N 就可以隨 x 變，這是逐點收斂。" },
+        { "label": "∃N ∀ε > 0 ∀n ≥ N ∀x ∈ D：|fₙ(x) − f(x)| < ε", "why": "你把 ∃N 移到 ∀ε 前面，等於同一個 N 要對所有 ε 都行，逼出 n ≥ N 時 fₙ = f，太強了。" }
+      ]
+    },
+    {
+      "ask": "fₙ(x) = xⁿ 在 [0, 1/2] 上，‖fₙ − 0‖∞ 是？",
+      "options": [
+        { "label": "(1/2)ⁿ", "correct": true },
+        { "label": "0", "why": "你代了左端點 x = 0。sup 要看整個區間，xⁿ 遞增，最大在 x = 1/2。" },
+        { "label": "1", "why": "那是 [0, 1) 上的 sup。這裡 x 最大只到 1/2。" }
+      ]
+    },
+    {
+      "ask": "每個 fₙ 都連續，逐點極限 f 在某點不連續。可以推出什麼？",
+      "options": [
+        { "label": "fₙ 不是一致收斂到 f", "correct": true },
+        { "label": "fₙ 不是逐點收斂", "why": "題目說了逐點極限存在。定理告訴你的是「不一致」，不是「不收斂」。" },
+        { "label": "什麼都推不出", "why": "連續函數列的一致極限必連續；取逆否，極限不連續就不可能一致。" }
+      ]
+    },
+    {
+      "ask": "xⁿ 在 [0, 1) 上逐點收斂到 0（連續函數）。收斂是一致的嗎？",
+      "options": [
+        { "label": "不是，sup_{[0,1)} xⁿ = 1 不趨近 0", "correct": true },
+        { "label": "是，因為極限函數 0 連續", "why": "你把定理反過來用了。「一致 ⇒ 極限連續」的逆命題不成立。" },
+        { "label": "是，因為每個 x < 1 都有 xⁿ → 0", "why": "那只是逐點收斂。x 越靠近 1 要的 N 越大，沒有共用的 N。" }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": ["uniform-convergence", "sequence"],
+    "fine": ["uniformconv-quantifier-order", "uniformconv-sup-norm", "uniformconv-continuous-limit", "uniformconv-negation-witness"]
+  },
+  "practice": [
+    { "id": "an-uf-002", "core": true, "trains": "uniformconv-sup-norm" },
+    { "id": "an-uf-001", "core": true, "trains": "uniformconv-continuous-limit" },
+    { "id": "an-uf-004", "core": true, "trains": "uniformconv-sup-norm" },
+    { "id": "an-uf-003", "core": true, "trains": "uniformconv-sup-norm" },
+    { "id": "an-uf-005", "challenge": true, "trains": "uniformconv-negation-witness", "note": "挑戰：用上一題的 ‖fₙ‖∞ → ∞ 寫出否定句：取 ε₀ 與 xₙ = 1/√(2n)。" }
+  ],
+  "gaps": [
+    { "tag": "uniformconv-negation-witness", "count": 2, "note": "給一列函數，問「取 xₙ = 什麼可讓誤差停在 ε₀ 以上」或求 lim fₙ(xₙ)（例如 (1 − 1/n)ⁿ → 1/e）。" },
+    { "tag": "uniformconv-quantifier-order", "count": 2, "note": "量詞順序的選擇題：∀x∃N 與 ∃N∀x 哪一個是一致收斂。" }
+  ]
+}

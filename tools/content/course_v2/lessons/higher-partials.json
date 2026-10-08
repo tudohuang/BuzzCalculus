@@ -1,0 +1,148 @@
+{
+  "id": "higher-partials",
+  "title": "高階偏導",
+  "readMinutes": 8,
+  "totalMinutes": 30,
+  "prerequisites": ["partial-derivatives", "higher-derivatives"],
+  "next": ["clairaut"],
+  "related": ["hessian", "second-derivative-test-2d"],
+  "objectives": [
+    "會算二變數函數的四個二階偏導數 f_xx、f_xy、f_yx、f_yy。",
+    "分清楚兩種記號的順序：f_xy 是先 x 後 y，∂²f/∂y∂x 也是先 x 後 y。",
+    "說得出 f_xx 與 f_xy 在圖上的意思，會算 Laplacian f_xx + f_yy。"
+  ],
+  "visual": null,
+  "concept": [
+    {
+      "heading": "① 偏導數還是函數，可以再微分",
+      "body": [
+        "f_x(x, y) 本身也是 x、y 的函數，可以再對 x 或對 y 偏微分。二變數函數因此有四個二階偏導數：f_xx、f_xy、f_yx、f_yy。",
+        "例：f = x³y² + e^{2x}。f_x = 3x²y² + 2e^{2x}，f_y = 2x³y。再微分一次：f_xx = 6xy² + 4e^{2x}，f_xy = 6x²y，f_yx = 6x²y，f_yy = 2x³。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 記號的順序（最容易搞混）",
+      "body": [
+        "下標寫法從左讀到右：f_xy = (f_x)_y，先對 x、再對 y。",
+        "分式寫法從右讀到左：∂²f/∂y∂x = ∂/∂y (∂f/∂x)，最靠近 f 的 ∂x 先做，所以也是先 x 後 y。",
+        "兩種記號字母排列相反，意思卻一樣。看到題目先確定是哪一種。下一課〈Clairaut 定理〉會說明，大多數時候 f_xy = f_yx，順序不影響答案；但在那個定理的條件不成立時，順序真的會不一樣。"
+      ],
+      "tex": ["f_{xy}=\\left(f_x\\right)_y=\\frac{\\partial^2 f}{\\partial y\\,\\partial x}"],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 在圖上代表什麼",
+      "body": [
+        "f_xx：沿 x 方向切片曲線的二階導數，就是那條切片的凹向。f_xx > 0，沿 x 方向往上彎。",
+        "f_xy：先量 x 方向的斜率 f_x，再看往 y 方向挪一點，這個斜率變多少。它描述曲面「扭」的程度。〈Hessian〉會把四個二階偏導排成矩陣，用來判斷臨界點。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "④ Laplacian",
+      "body": [
+        "物理上常見的組合 Δf = f_xx + f_yy 叫 Laplacian（三變數再加 f_zz）。Δf = 0 的函數叫調和函數，例如 x² − y²：f_xx = 2，f_yy = −2，相加為 0。"
+      ],
+      "collapsible": false
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "四個二階偏導",
+      "prompt": "f(x, y) = x³y² + e^{2x}，求 f_xx、f_xy、f_yx、f_yy。",
+      "steps": [
+        "一階：f_x = 3x²y² + 2e^{2x}；f_y = 2x³y（e^{2x} 對 y 是常數）。",
+        "f_xx：對 f_x 再對 x 微分，6xy² + 4e^{2x}。",
+        "f_xy：對 f_x 對 y 微分，3x² · 2y = 6x²y（2e^{2x} 對 y 是常數）。",
+        "f_yx：對 f_y 對 x 微分，6x²y。f_yy：對 f_y 對 y 微分，2x³。",
+        "f_xy = f_yx，是個好的檢查。"
+      ],
+      "answer": "f_xx = 6xy² + 4e^{2x}，f_xy = f_yx = 6x²y，f_yy = 2x³",
+      "claim": "D2(x^3*y^2+e^(2x), , x) == 6x*y^2 + 4e^(2x) ;; D(D(x^3*y^2+e^(2x), , x), , y) == 6x^2*y ;; D(D(x^3*y^2+e^(2x), , y), , x) == 6x^2*y ;; D2(x^3*y^2+e^(2x), , y) == 2x^3"
+    },
+    {
+      "title": "混合偏導需要乘法法則",
+      "prompt": "∂²/∂x∂y e^{xy}",
+      "problemId": "der-023",
+      "steps": [
+        "∂²/∂x∂y：先對 y、再對 x。",
+        "∂/∂y e^{xy} = x e^{xy}。",
+        "對 x 微分：x e^{xy} 是兩個 x 的函數相乘。(x)′ · e^{xy} + x · (e^{xy})′ = e^{xy} + x · y e^{xy}。",
+        "= e^{xy}(1 + xy)。"
+      ],
+      "answer": "e^{xy}(1 + xy)",
+      "claim": "D(D(e^(x*y), , y), , x) == e^(x*y)*(1+x*y)"
+    },
+    {
+      "title": "Laplacian",
+      "prompt": "f(x, y) = ln(x² + y²)（原點以外），求 f_xx + f_yy。",
+      "steps": [
+        "f_x = 2x/(x² + y²)。",
+        "f_xx 用除法法則：[2(x² + y²) − 2x · 2x]/(x² + y²)² = 2(y² − x²)/(x² + y²)²。",
+        "x、y 的地位對稱，f_yy = 2(x² − y²)/(x² + y²)²。",
+        "相加：分子 2(y² − x²) + 2(x² − y²) = 0。"
+      ],
+      "answer": "0（ln(x² + y²) 在原點以外是調和函數）",
+      "claim": "D2(ln(x^2+y^2), , x) == 2(y^2-x^2)/(x^2+y^2)^2 ;; D2(ln(x^2+y^2), , x) == -D2(ln(x^2+y^2), , y)"
+    }
+  ],
+  "pitfalls": [
+    "把 ∂²f/∂y∂x 讀成先對 y：分式記號要從右往左讀。",
+    "混合偏導時忘了乘法法則：x e^{xy} 對 x 微分，x 和 e^{xy} 都含 x。",
+    "第二次微分時忘了第一次的結果裡，另一個變數仍然要當常數。",
+    "以為 f_xx 是 (f_x)²。它是再微分一次，不是平方。"
+  ],
+  "checks": [
+    {
+      "ask": "f = x²y³，f_xy 是？",
+      "options": [
+        { "label": "6xy²", "correct": true },
+        { "label": "2y³", "why": "那是 f_xx：f_x = 2xy³ 再對 x 微分。f_xy 要對 y 微分：2x · 3y² = 6xy²。" },
+        { "label": "6x²y", "why": "那是 f_yy：f_y = 3x²y² 再對 y 微分。" }
+      ]
+    },
+    {
+      "ask": "∂²f/∂y∂x 表示？",
+      "options": [
+        { "label": "先對 x 微分，再對 y 微分", "correct": true },
+        { "label": "先對 y 微分，再對 x 微分", "why": "分式記號從右往左讀：∂/∂y(∂f/∂x)，離 f 最近的 ∂x 先做。" },
+        { "label": "對 x 微分的結果乘上對 y 微分的結果", "why": "高階偏導是一次接一次地微分，不是把兩個偏導數相乘。" }
+      ]
+    },
+    {
+      "ask": "f = sin x + y⁴，f_xy 是？",
+      "options": [
+        { "label": "0", "correct": true },
+        { "label": "cos x", "why": "那是 f_x。再對 y 微分，cos x 不含 y，得 0。" },
+        { "label": "4y³ cos x", "why": "兩個偏導數不是相乘。f_x = cos x 不含 y，對 y 微分是 0。" }
+      ]
+    },
+    {
+      "ask": "f = x² − y²，f_xx + f_yy 是？",
+      "options": [
+        { "label": "0", "correct": true },
+        { "label": "4", "why": "f_yy = −2，不是 2：−y² 對 y 微分兩次是 −2。" },
+        { "label": "2x − 2y", "why": "那是 f_x + f_y（一階）。Laplacian 要二階。" }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": ["mixed-partial", "second-derivative", "laplacian", "multivariable"],
+    "fine": ["second-partial-pure", "second-partial-mixed", "second-partial-notation-order", "laplacian-compute"]
+  },
+  "practice": [
+    { "id": "der-033", "core": true, "trains": "second-partial-pure" },
+    { "id": "lec-16-m5", "core": true, "trains": "second-partial-mixed" },
+    { "id": "der-023", "core": true, "trains": "second-partial-mixed" },
+    { "id": "exam-multi-002", "core": true, "trains": "second-partial-mixed" },
+    { "id": "der-036", "core": true, "trains": "laplacian-compute" },
+    { "id": "vc-nab-008", "core": true, "trains": "laplacian-compute" },
+    { "id": "lec-16-q4b", "trains": "second-partial-mixed" },
+    { "id": "vc-nab-002", "trains": "laplacian-compute" },
+    { "id": "vc-nab-009", "challenge": true, "trains": "laplacian-compute", "note": "挑戰：先算 Δf 的式子再代點，比先代點快。" }
+  ],
+  "gaps": [
+    { "tag": "second-partial-notation-order", "count": 2, "note": "R2：f_xy 與 ∂²f/∂y∂x 讀法的判斷題；最好用一個 f_xy ≠ f_yx 的函數考順序。" }
+  ]
+}

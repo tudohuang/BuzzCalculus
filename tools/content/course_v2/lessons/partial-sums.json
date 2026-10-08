@@ -1,0 +1,234 @@
+{
+  "id": "partial-sums",
+  "title": "部分和",
+  "readMinutes": 8,
+  "totalMinutes": 30,
+  "prerequisites": [
+    "infinite-series"
+  ],
+  "next": [
+    "geometric-series"
+  ],
+  "related": [
+    "telescoping-series",
+    "alternating-series-test",
+    "integral-test",
+    "monotone-convergence-sequence"
+  ],
+  "objectives": [
+    "會算前幾個部分和，也會找部分和 sₙ 的公式再取極限。",
+    "已知 sₙ 反推各項：a₁ = s₁，aₙ = sₙ − sₙ₋₁（n ≥ 2）。",
+    "知道用 s_N 估計級數和時，誤差是整條尾巴 Σ_{n>N} aₙ。"
+  ],
+  "visual": "兩張部分和圖並排，橫軸是 n、縱軸是 sₙ。左邊是 Σ 1/(n(n + 1))：點一路往上、越爬越慢，貼近水平線 1。右邊是 1 − 1/2 + 1/3 − …：點在一條水平線 ln 2 ≈ 0.693 上下跳，跳的幅度越來越小。滑桿選一個 N，圖上標出 s_N 與極限之間的距離（尾巴）。",
+  "concept": [
+    {
+      "heading": "① 部分和是一個新的數列",
+      "body": [
+        "〈無窮級數〉把 Σ aₙ 定義成 lim sₙ。所以研究級數，常常就是研究 sₙ 這個數列：先算 s₁、s₂、s₃ 看趨勢，再想辦法寫出 sₙ 的公式，最後取極限。",
+        "能寫出公式的情況不多：等差、等比（〈幾何級數〉）、相消（〈望遠鏡級數〉）是三種主要的。寫不出公式時，要靠後面幾課的判別法：它們不算和，只判斷收不收斂。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 從部分和反推各項",
+      "body": [
+        "sₙ − sₙ₋₁ = aₙ（多加的就是第 n 項），而 a₁ = s₁。題目直接給 sₙ 時，級數的和就是 lim sₙ，連各項都不必先求。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 部分和圖的兩種樣子",
+      "body": [
+        "各項都是正的：sₙ 每次加正數，一路往上（遞增）。它收斂 ⇔ 有上界（〈單調收斂定理〉）。",
+        "正負交替：sₙ 一上一下地跳。如果跳的幅度縮到 0，就會夾住一個極限（〈交錯級數判別〉）。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 用部分和估計級數和",
+      "body": [
+        "實際算級數和時，常常只能取前 N 項 s_N。誤差是還沒加的整條尾巴 R_N = S − s_N = Σ_{n=N+1}^∞ aₙ，不是最後一項，也不是下一項。尾巴有多大，要用〈積分判別〉或〈交錯級數判別〉的估計式才能保證。"
+      ],
+      "collapsible": false
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "給部分和，求各項與和",
+      "prompt": "某級數的部分和 sₙ = n/(n + 1)。求 aₙ 與級數和。",
+      "steps": [
+        "a₁ = s₁ = 1/2。",
+        "n ≥ 2：aₙ = n/(n + 1) − (n − 1)/n = (n² − (n² − 1))/(n(n + 1)) = 1/(n(n + 1))。n = 1 代進去也是 1/2，所以這個公式對所有 n 都成立。",
+        "和 = lim sₙ = lim n/(n + 1) = 1。"
+      ],
+      "answer": "aₙ = 1/(n(n + 1))，和為 1",
+      "claim": "n/(n+1) - (n-1)/n == 1/(n*(n+1)) ;; SUM(1/(n*(n+1)), 1) == 1"
+    },
+    {
+      "title": "算前幾個部分和",
+      "prompt": "交錯調和級數 1 − 1/2 + 1/3 − 1/4 + …，求 S₁ 到 S₆。",
+      "problemId": "sg-est-001",
+      "steps": [
+        "S₁ = 1，S₂ = 1/2，S₃ = 5/6 ≈ 0.833，S₄ = 7/12 ≈ 0.583。",
+        "S₅ = 7/12 + 1/5 = 47/60 ≈ 0.783，S₆ = 47/60 − 1/6 = 37/60 ≈ 0.617。",
+        "奇數項的部分和往下、偶數項的往上，兩邊夾向同一個數；這個級數的和其實是 ln 2 ≈ 0.693。"
+      ],
+      "answer": "S₆ = 37/60",
+      "claim": "1 - 1/2 + 1/3 - 1/4 + 1/5 - 1/6 == 37/60 ;; SUM((-1)^(n+1)/n, 1) == ln(2)"
+    },
+    {
+      "title": "部分和公式顯示發散",
+      "prompt": "1 + 3 + 5 + 7 + …（奇數相加）。求 sₙ，並判斷收斂與否。",
+      "problemId": "fd-ser-018",
+      "steps": [
+        "等差數列求和：sₙ = n(首項 + 末項)/2 = n(1 + (2n − 1))/2 = n²。例如 s₆ = 36。",
+        "反推檢查：sₙ − sₙ₋₁ = n² − (n − 1)² = 2n − 1，正是第 n 個奇數。",
+        "sₙ = n² → ∞，級數發散。"
+      ],
+      "answer": "sₙ = n²，發散",
+      "claim": "n^2 - (n-1)^2 == 2n-1 ;; SUB(n^2, 6) == 36"
+    }
+  ],
+  "pitfalls": [
+    "把 sₙ 當成 aₙ，或把 aₙ 的極限當成級數和。",
+    "反推 aₙ = sₙ − sₙ₋₁ 時忘了單獨處理 a₁。",
+    "估計誤差時只看最後一項或下一項，忽略整條尾巴。",
+    "只看前幾個部分和就下結論：要看 sₙ 在 n → ∞ 的行為。"
+  ],
+  "checks": [
+    {
+      "ask": "某級數的部分和 sₙ = 5 − 2/n。級數的和是？",
+      "options": [
+        {
+          "label": "5",
+          "correct": true
+        },
+        {
+          "label": "3",
+          "why": "3 是 s₁ = 5 − 2；級數的和是 n → ∞ 時 sₙ 的極限。"
+        },
+        {
+          "label": "發散",
+          "why": "2/n → 0，sₙ → 5，有極限。"
+        }
+      ]
+    },
+    {
+      "ask": "某級數的部分和 sₙ = n²。第 n 項 aₙ 是？",
+      "options": [
+        {
+          "label": "2n − 1",
+          "correct": true
+        },
+        {
+          "label": "n²",
+          "why": "那是部分和；第 n 項是 sₙ − sₙ₋₁。"
+        },
+        {
+          "label": "2n",
+          "why": "n² − (n − 1)² = n² − (n² − 2n + 1) = 2n − 1；展開時漏了 −1。"
+        }
+      ]
+    },
+    {
+      "ask": "各項都是正數的級數，部分和 sₙ 一定？",
+      "options": [
+        {
+          "label": "遞增",
+          "correct": true
+        },
+        {
+          "label": "一上一下地跳",
+          "why": "每次都加正數，sₙ 只會往上；會跳的是正負交替的級數。"
+        },
+        {
+          "label": "遞減",
+          "why": "加上正數只會變大。"
+        }
+      ]
+    },
+    {
+      "ask": "用前 N 項的和 s_N 估計級數和 S，誤差 S − s_N 是？",
+      "options": [
+        {
+          "label": "Σ_{n=N+1}^∞ aₙ",
+          "correct": true
+        },
+        {
+          "label": "a_N",
+          "why": "a_N 已經加進 s_N 了；誤差是還沒加的所有項。"
+        },
+        {
+          "label": "a_{N+1}",
+          "why": "這只是下一項，後面還有無窮多項。下一項只在某些情況下（交錯級數）是誤差的上界。"
+        }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": [
+      "series-estimate",
+      "geometric-series",
+      "telescoping"
+    ],
+    "fine": [
+      "partial-sum-compute",
+      "partial-sum-formula",
+      "partial-sum-recover-terms",
+      "partial-sum-tail"
+    ]
+  },
+  "practice": [
+    {
+      "id": "sg-est-001",
+      "core": true,
+      "trains": "partial-sum-compute"
+    },
+    {
+      "id": "sg-est-011",
+      "core": true,
+      "trains": "partial-sum-compute"
+    },
+    {
+      "id": "lec-13-q3c",
+      "core": true,
+      "trains": "partial-sum-compute"
+    },
+    {
+      "id": "fd-ser-018",
+      "core": true,
+      "trains": "partial-sum-formula"
+    },
+    {
+      "id": "fd-ser-009",
+      "trains": "partial-sum-formula"
+    },
+    {
+      "id": "sg-est-007",
+      "trains": "partial-sum-compute"
+    },
+    {
+      "id": "sg-est-010",
+      "trains": "partial-sum-formula"
+    },
+    {
+      "id": "sg-est-003",
+      "challenge": true,
+      "trains": "partial-sum-tail",
+      "note": "挑戰：調和級數的部分和要到第 83 項才超過 5，部分和長得非常慢。"
+    }
+  ],
+  "gaps": [
+    {
+      "tag": "partial-sum-recover-terms",
+      "count": 3,
+      "note": "R2：給 sₙ 公式，求 aₙ、求某一項或求級數和。題庫一題都沒有。"
+    },
+    {
+      "tag": "partial-sum-tail",
+      "count": 2,
+      "note": "R2：已知級數和與 s_N，求尾巴 Σ_{n>N} aₙ 的概念題。"
+    }
+  ]
+}

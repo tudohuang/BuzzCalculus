@@ -1,0 +1,124 @@
+{
+  "id": "flux",
+  "title": "通量",
+  "readMinutes": 11,
+  "totalMinutes": 40,
+  "prerequisites": ["surface-integral", "parametric-surfaces", "vector-field"],
+  "next": ["curl"],
+  "related": ["divergence-theorem", "green-theorem"],
+  "objectives": [
+    "說出 ∬_S F · n dS 的意思：每單位時間穿過曲面、往選定那一面流過去的流體量。",
+    "選定曲面的方向（法向量朝哪一面），並知道換方向會變號；封閉曲面預設朝外。",
+    "用 ∬_D F(r(u, v)) · (r_u × r_v) dA 計算，包括函數圖形朝上的公式。"
+  ],
+  "visual": "一片曲面放在流場中，表面每一點畫出 F（流速）與單位法向量 n，曲面依 F · n 著色：往 n 那一面流出的地方是藍色，反方向是紅色。可以旋轉流場方向：與 n 平行時通量最大，與曲面相切時通量為 0；按「翻面」後 n 反向，所有顏色與總通量讀數一起變號。",
+  "concept": [
+    {
+      "heading": "① 直觀：每秒流過多少",
+      "body": [
+        "水以速度 F 流動，一片小網面積 ΔS、單位法向量 n。每秒穿過網子的水，是以網子為底、沿 F 斜著拉出去的斜柱體，體積 = 底面積 × 垂直高度 = (F · n) ΔS。",
+        "F 跟網子垂直時流過最多；跟網子平行（相切）時一滴都不穿過；F · n < 0 表示往反方向穿過。加起來取極限就是通量："
+      ],
+      "tex": ["\\iint_S \\mathbf F\\cdot d\\mathbf S=\\iint_S \\mathbf F\\cdot\\mathbf n\\,dS"],
+      "collapsible": false
+    },
+    {
+      "heading": "② 先選方向",
+      "body": [
+        "曲面有兩面，n 可以指向任一面。算通量前一定要先選定，而且 n 要在整片曲面上連續地選；能這樣選的曲面叫可定向曲面（Möbius 帶就不行）。",
+        "換成另一面，n 變號，通量也變號。這是它跟〈曲面積分〉∬ f dS 最大的不同。",
+        "慣例：封閉曲面（球面、立方體表面）沒特別說明時，取朝外的法向量。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 計算",
+      "body": [
+        "參數化 r(u, v)。r_u × r_v 本身就是「法向量 × 面積放大倍率」：n dS = (r_u × r_v)/|r_u × r_v| · |r_u × r_v| dA = (r_u × r_v) dA。所以長度會消掉，不用開根號。",
+        "如果 r_u × r_v 指向的不是你選的那一面，就整個加負號。",
+        "函數圖形 z = g(x, y)、法向量朝上：r_x × r_y = ⟨−g_x, −g_y, 1⟩，z 分量是正的，正好朝上。"
+      ],
+      "tex": ["\\iint_S \\mathbf F\\cdot d\\mathbf S=\\iint_D \\mathbf F\\big(\\mathbf r(u,v)\\big)\\cdot(\\mathbf r_u\\times\\mathbf r_v)\\,dA,\\qquad z=g:\\ \\iint_D\\big(-Pg_x-Qg_y+R\\big)\\,dA"],
+      "collapsible": false
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "向外穿過球面",
+      "prompt": "F = ⟨x, y, z⟩ 穿過半徑 2 的球面、法向量朝外的通量。",
+      "steps": [
+        "捷徑：球面上朝外的單位法向量是 n = ⟨x, y, z⟩/2。F · n = (x² + y² + z²)/2 = 4/2 = 2，處處一樣。",
+        "通量 = 2 × 球面積 = 2 × 4π · 2² = 32π。",
+        "用參數式驗算：r_φ × r_θ = 4 sin φ ⟨sin φ cos θ, sin φ sin θ, cos φ⟩（朝外，因為 sin φ ≥ 0）。F 在球面上是 2⟨sin φ cos θ, sin φ sin θ, cos φ⟩，點積 = 8 sin φ。∫_0^{2π} ∫_0^π 8 sin φ dφ dθ = 32π。"
+      ],
+      "answer": "32π",
+      "claim": "INT(INT(8*sin(u),0,pi,u),0,2*pi,t) == 32*pi"
+    },
+    {
+      "title": "穿過拋物面的碗，朝上",
+      "prompt": "F = ⟨y, x, z⟩ 穿過 z = 1 − x² − y²（z ≥ 0）的通量，法向量朝上。",
+      "steps": [
+        "g = 1 − x² − y²，g_x = −2x、g_y = −2y。朝上的公式：−P g_x − Q g_y + R = y · 2x + x · 2y + z = 4xy + 1 − x² − y²（z 要代成 g）。",
+        "D：x² + y² ≤ 1。換極座標：被積函數 4r² cos θ sin θ + 1 − r²，再乘 r。",
+        "4r² cos θ sin θ 對 θ 積一整圈是 0。剩下 ∫_0^{2π} ∫_0^1 (1 − r²) r dr dθ = 2π · 1/4 = π/2。"
+      ],
+      "answer": "π/2",
+      "claim": "INT(INT((4*r^2*cos(t)*sin(t)+1-r^2)*r,0,1,r),0,2*pi,t) == pi/2"
+    }
+  ],
+  "pitfalls": [
+    "沒選方向就開始算，或算出來之後才發現 r_u × r_v 指向另一面卻沒加負號。",
+    "把 r_u × r_v 先除以長度再乘 dA，弄成多除了一次。",
+    "函數圖形公式裡的 z 沒代成 g(x, y)。",
+    "以為 F 與曲面平行時通量最大；平行（相切）時通量是 0。"
+  ],
+  "checks": [
+    {
+      "ask": "同一片曲面把法向量換成另一面，通量會？",
+      "options": [
+        { "label": "變號", "correct": true },
+        { "label": "不變", "why": "不變的是純量曲面積分 ∬ f dS。通量的被積函數 F · n 會因為 n 反向而變號。" },
+        { "label": "變成 0", "why": "只是每一小片的 F · n 都變號，總和跟著變號，不會抵消成 0。" }
+      ]
+    },
+    {
+      "ask": "F 在曲面上處處與曲面相切，通量是？",
+      "options": [
+        { "label": "0", "correct": true },
+        { "label": "最大", "why": "相切表示流體沿著曲面滑過，沒有穿過去：F · n = 0。垂直穿過時才最大。" },
+        { "label": "要看曲面的面積", "why": "F · n 處處為 0，乘上多大的面積都是 0。" }
+      ]
+    },
+    {
+      "ask": "F = ⟨0, 0, 3⟩ 穿過 xy 平面上的單位正方形，法向量朝上，通量是？",
+      "options": [
+        { "label": "3", "correct": true },
+        { "label": "−3", "why": "F 朝上、n 也朝上，F · n = 3 > 0。法向量朝下時才是 −3。" },
+        { "label": "0", "why": "F 垂直穿過正方形（不是平行），F · n = 3，乘面積 1。" }
+      ]
+    },
+    {
+      "ask": "封閉曲面沒特別說明時，通量用哪個方向？",
+      "options": [
+        { "label": "朝外", "correct": true },
+        { "label": "朝內", "why": "慣例是朝外：通量為正代表淨流出。〈散度定理〉也是用朝外的方向。" },
+        { "label": "任選，結果一樣", "why": "兩個方向的答案差一個負號，不能任選。" }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": ["flux", "surface-integral", "vector-calculus"],
+    "fine": ["flux-orientation", "flux-param-normal", "flux-graph-upward"]
+  },
+  "practice": [
+    { "id": "lec-20-q4a", "core": true, "trains": "flux-param-normal", "note": "可以直接算：球面上 F · n = a。" },
+    { "id": "vc-div-001", "core": true, "trains": "flux-param-normal", "note": "直接算，不必用散度定理。" },
+    { "id": "vc-div-006", "core": true, "trains": "flux-param-normal", "note": "直接算：球面上 F · n = 1/25。" },
+    { "id": "vc-div-007", "core": true, "trains": "flux-orientation", "note": "三片分開算：上蓋、底、側面，各自注意朝外的方向。" },
+    { "id": "vc-stokes-005", "challenge": true, "trains": "flux-graph-upward", "note": "挑戰：∇ × F = ⟨0, 0, 2⟩，算它朝上穿過上半球面的通量。" }
+  ],
+  "gaps": [
+    { "tag": "flux-graph-upward", "count": 3, "note": "R4：z = g(x, y) 圖形上、法向量朝上（或朝下）的通量。" },
+    { "tag": "flux-orientation", "count": 2, "note": "R3：同一片曲面問兩個方向，或參數式的 r_u × r_v 指向相反那面。" }
+  ]
+}

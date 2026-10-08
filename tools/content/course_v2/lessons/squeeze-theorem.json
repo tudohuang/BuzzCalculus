@@ -1,0 +1,156 @@
+{
+  "id": "squeeze-theorem",
+  "title": "夾擠定理",
+  "readMinutes": 8,
+  "totalMinutes": 30,
+  "prerequisites": ["limit-laws-direct", "limit-existence", "trig-functions"],
+  "next": ["continuity-definition"],
+  "related": ["epsilon-delta-definition", "limit-trig-standard"],
+  "objectives": [
+    "說得出夾擠定理的條件與結論。",
+    "遇到「有界的東西 × 趨近 0 的東西」，會寫出上下界把它夾到 0。",
+    "會用 x − 1 < ⌊x⌋ ≤ x、−1 ≤ sin ≤ 1 這類不等式，處理 x → ∞ 與取整函數。"
+  ],
+  "visual": "畫出 y = x² sin(1/x)，以及上下兩條拋物線 y = x² 與 y = −x²。按「放大」，鏡頭往原點推近：中間的曲線擺盪得越來越密，但一直被兩條拋物線包住，三條線一起被擠進原點。",
+  "concept": [
+    {
+      "heading": "① 敘述",
+      "body": [
+        "在 a 附近（a 本身可以除外）有 g(x) ≤ f(x) ≤ h(x)，而且 lim_{x→a} g(x) = lim_{x→a} h(x) = L。那麼 lim_{x→a} f(x) = L。",
+        "直覺：f 被夾在兩條往同一點擠的曲線中間，沒有別的地方可去。結論不只說極限是 L，也保證了極限存在。"
+      ],
+      "tex": ["g(x)\\le f(x)\\le h(x),\\quad \\lim_{x\\to a}g=\\lim_{x\\to a}h=L\\ \\Longrightarrow\\ \\lim_{x\\to a}f=L"],
+      "collapsible": false
+    },
+    {
+      "heading": "② 為什麼需要它",
+      "body": [
+        "lim_{x→0} x² sin(1/x)：sin(1/x) 在 0 沒有極限（振盪），所以不能用乘積定律拆成 lim x² · lim sin(1/x)。",
+        "但 sin(1/x) 雖然亂跳，大小一定在 −1 與 1 之間。乘上 x²（≥ 0）：−x² ≤ x² sin(1/x) ≤ x²。兩邊都 → 0，中間只好也 → 0。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 最常見的樣子：有界 × 趨近 0",
+      "body": [
+        "|f(x)| ≤ |g(x)| 而且 g(x) → 0，就有 f(x) → 0。因為 −|g(x)| ≤ f(x) ≤ |g(x)|，兩側都 → 0。用絕對值寫比較不會搞錯不等式的方向（x 可能是負的）。",
+        "這招只直接給出「→ 0」。極限是 L ≠ 0 時，改成夾 |f(x) − L|。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "④ x → ∞ 也能用",
+      "body": [
+        "sin x / x：x > 0 時 −1/x ≤ sin x / x ≤ 1/x，兩邊 → 0，所以 lim_{x→∞} sin x / x = 0。",
+        "取整函數：x − 1 < ⌊x⌋ ≤ x 對所有 x 成立，這是夾擠⌊x⌋最好用的不等式。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "證明（用 ε-δ）",
+      "body": [
+        "給任意 ε > 0。因為 g → L，存在 δ₁ 使 0 < |x − a| < δ₁ 時 L − ε < g(x)；因為 h → L，存在 δ₂ 使 0 < |x − a| < δ₂ 時 h(x) < L + ε；設不等式 g ≤ f ≤ h 在 0 < |x − a| < δ₃ 成立。",
+        "取 δ = min(δ₁, δ₂, δ₃)。當 0 < |x − a| < δ：L − ε < g(x) ≤ f(x) ≤ h(x) < L + ε，也就是 |f(x) − L| < ε。這正是 lim_{x→a} f(x) = L 的定義（〈ε-δ 定義〉）。"
+      ],
+      "collapsible": true
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "有界乘以趨近 0",
+      "prompt": "lim_{x→0} x² cos(5/x)",
+      "problemId": "lx-sq-001",
+      "steps": [
+        "cos(5/x) 在 0 附近振盪，沒有極限，不能拆開。",
+        "但 |cos(5/x)| ≤ 1，所以 |x² cos(5/x)| ≤ x²，也就是 −x² ≤ x² cos(5/x) ≤ x²。",
+        "lim_{x→0} (−x²) = 0，lim_{x→0} x² = 0。",
+        "由夾擠定理，極限是 0。"
+      ],
+      "answer": "0",
+      "claim": "abs(x^2*cos(5/x)) <= x^2 ;; LIM(x^2, 0) == 0"
+    },
+    {
+      "title": "x → ∞，極限不是 0",
+      "prompt": "lim_{x→∞} (2x + 3 sin x)/(x + 5)",
+      "problemId": "lx-sq-002",
+      "steps": [
+        "−1 ≤ sin x ≤ 1，所以 2x − 3 ≤ 2x + 3 sin x ≤ 2x + 3。",
+        "x > 0 時 x + 5 > 0，除過去不等號不變：(2x − 3)/(x + 5) ≤ 原式 ≤ (2x + 3)/(x + 5)。",
+        "兩邊都是同次有理函數，x → ∞ 時都 → 2/1 = 2。",
+        "由夾擠定理，極限是 2。"
+      ],
+      "answer": "2",
+      "claim": "(2x+3sin(x))/(x+5) <= (2x+3)/(x+5) ;; (2x+3sin(x))/(x+5) >= (2x-3)/(x+5) ;; LIM((2x-3)/(x+5), inf) == 2 ;; LIM((2x+3)/(x+5), inf) == 2"
+    },
+    {
+      "title": "取整函數",
+      "prompt": "lim_{x→∞} ⌊x⌋/x",
+      "problemId": "lm-fl-004",
+      "steps": [
+        "x − 1 < ⌊x⌋ ≤ x。",
+        "x > 0 時同除以 x：(x − 1)/x < ⌊x⌋/x ≤ 1。",
+        "(x − 1)/x = 1 − 1/x → 1，右邊是常數 1。",
+        "由夾擠定理，極限是 1。"
+      ],
+      "answer": "1",
+      "claim": "LIM((x-1)/x, inf) == 1",
+      "claimNote": "驗算器沒有取整函數；這裡只驗下界 (x − 1)/x 的極限，上界是常數 1。"
+    }
+  ],
+  "pitfalls": [
+    "寫 lim x² sin(1/x) = lim x² · lim sin(1/x)：後者不存在，不能拆。",
+    "上下界的極限不相等，還是套用定理。",
+    "乘上一個可能是負數的量時，忘了不等號會反向；用絕對值寫最安全。",
+    "以為夾擠只能證明極限是 0。"
+  ],
+  "checks": [
+    {
+      "ask": "在 0 附近 −x² ≤ f(x) ≤ x²。lim_{x→0} f(x) 是？",
+      "options": [
+        { "label": "0", "correct": true },
+        { "label": "不一定存在", "why": "夾擠定理正好保證它存在：兩側都 → 0。" },
+        { "label": "無法判斷，要知道 f 的式子", "why": "不需要；被夾住就夠了。" }
+      ]
+    },
+    {
+      "ask": "lim_{x→0} x sin(1/x) 是？",
+      "options": [
+        { "label": "1", "why": "那是 lim_{u→0} sin u / u 的樣子；這裡 1/x → ∞，不是 → 0。" },
+        { "label": "不存在", "why": "sin(1/x) 雖然振盪，但 |x sin(1/x)| ≤ |x| → 0，被壓到 0。" },
+        { "label": "0", "correct": true }
+      ]
+    },
+    {
+      "ask": "在 0 附近 1 ≤ f(x) ≤ 1 + x²。lim_{x→0} f(x) 是？",
+      "options": [
+        { "label": "0", "why": "下界是常數 1，f 至少是 1，不會靠近 0。" },
+        { "label": "1", "correct": true },
+        { "label": "不一定存在", "why": "上下界都 → 1，夾擠定理保證極限存在。" }
+      ]
+    },
+    {
+      "ask": "lim_{x→∞} cos x / x 是？",
+      "options": [
+        { "label": "0", "correct": true },
+        { "label": "1", "why": "cos x 在 −1 與 1 之間，除以越來越大的 x，會被壓到 0。" },
+        { "label": "不存在", "why": "cos x 振盪，但 |cos x / x| ≤ 1/x → 0。" }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": ["squeeze", "oscillation", "floor"],
+    "fine": ["squeeze-bounded-times-zero", "squeeze-at-infinity", "squeeze-floor", "squeeze-write-proof"]
+  },
+  "practice": [
+    { "id": "cx-lim-010", "core": true, "trains": "squeeze-bounded-times-zero" },
+    { "id": "lm-sq-002", "core": true, "trains": "squeeze-bounded-times-zero" },
+    { "id": "lec-01-q2b", "core": true, "trains": "squeeze-at-infinity" },
+    { "id": "lx-sq-005", "core": true, "trains": "squeeze-at-infinity" },
+    { "id": "lm-fl-007", "core": true, "trains": "squeeze-floor" },
+    { "id": "lec-01-q2a", "trains": "squeeze-write-proof" },
+    { "id": "px-sq-001", "trains": "squeeze-write-proof" },
+    { "id": "lm-sq-005", "challenge": true, "trains": "squeeze-bounded-times-zero", "note": "挑戰：先確認 (1 − cos x)/x → 0（〈三角標準極限〉），再夾。" },
+    { "id": "lec-01-q2c", "challenge": true, "trains": "squeeze-floor", "note": "挑戰：令 t = 1/x，用 t − 1 < ⌊t⌋ ≤ t，x 的正負要分開處理。" }
+  ],
+  "gaps": []
+}

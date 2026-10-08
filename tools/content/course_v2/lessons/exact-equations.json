@@ -1,0 +1,152 @@
+{
+  "id": "exact-equations",
+  "title": "正合方程",
+  "readMinutes": 10,
+  "totalMinutes": 30,
+  "prerequisites": ["integrating-factor", "partial-derivatives", "clairaut", "implicit-differentiation"],
+  "next": ["second-order-linear"],
+  "related": ["conservative-fields", "potential-function", "first-order-linear", "separation-of-variables"],
+  "objectives": [
+    "把 M dx + N dy = 0 讀成「某個 F(x, y) 的等高線」，說出解寫成 F(x, y) = C 的理由。",
+    "用 ∂M/∂y = ∂N/∂x 判斷是否正合，並知道這個判準需要什麼條件。",
+    "用「先對 x 積分、再配 y」找出 F。"
+  ],
+  "visual": "畫出 F(x, y) = x²y + 3x − y 的等高線（C = −2 到 4）。點一條等高線，它被標成一條解曲線；旁邊顯示沿著這條曲線 dF = M dx + N dy = 0。",
+  "concept": [
+    {
+      "heading": "① 從等高線倒推回方程（本課選修）",
+      "body": [
+        "如果 y(x) 讓 F(x, y(x)) = C 一直成立，對 x 微分（〈隱函數微分〉）：F_x + F_y · y′ = 0，也就是 F_x dx + F_y dy = 0。",
+        "倒過來看：一個寫成 M dx + N dy = 0 的方程，如果剛好有 F 使 M = F_x、N = F_y，它就叫正合，解就是 F(x, y) = C 這一族等高線。解法變成「找 F」。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 怎麼知道 F 存在：比對交叉偏導",
+      "body": [
+        "若 M = F_x、N = F_y，而且 F 的二階偏導連續，〈Clairaut 定理〉給 M_y = F_xy = F_yx = N_x。所以正合的必要條件是 ∂M/∂y = ∂N/∂x。",
+        "反過來也成立，但要條件：M、N 與它們的一階偏導在一個矩形（更一般地，沒有破洞的區域）上連續，且 M_y = N_x，那 F 就存在。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 找 F：先對 x 積分，再配 y",
+      "body": [
+        "1. F = ∫ M dx，對 x 積分時把 y 當常數，所以「積分常數」可以是 y 的任意函數 g(y)。",
+        "2. 對 y 偏微分，令它等於 N，解出 g′(y)。g′(y) 一定只含 y；若出現 x，代表前面算錯了，或方程根本不正合。",
+        "3. 積出 g(y)，答案寫成 F(x, y) = C，有初始條件就代進去定 C。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 一階方程，先問三個問題",
+      "body": [
+        "能寫成 g(x)h(y) 嗎？能就〈分離變數〉。能整理成 y′ + P(x)y = Q(x) 嗎？能就用〈積分因子〉。寫成 M dx + N dy = 0 之後 M_y = N_x 嗎？是就找 F。三種都不是，這門課的工具就不夠了。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "為什麼要「沒有破洞」",
+      "body": [
+        "M = −y/(x² + y²)、N = x/(x² + y²) 在去掉原點的平面上處處滿足 M_y = N_x = (y² − x²)/(x² + y²)²。但沒有一個在整個去掉原點的平面上都可微的 F：局部上 F 就是極角 θ，繞原點一圈會多出 2π，接不回來。限制在一個不含原點的矩形裡，F 就存在。這和〈保守場〉與〈位勢函數〉是同一件事。",
+        "不正合的方程有時乘上一個因子就變成正合；〈一階線性〉方程乘上積分因子 μ 之後就是正合的。"
+      ],
+      "collapsible": true
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "判斷、找 F、寫解",
+      "prompt": "(2xy + 3) dx + (x² − 1) dy = 0",
+      "steps": [
+        "M = 2xy + 3，N = x² − 1。M_y = 2x，N_x = 2x，相等，正合（M、N 是多項式，處處連續）。",
+        "對 x 積分 M：F = x²y + 3x + g(y)。",
+        "對 y 偏微分：F_y = x² + g′(y)，令它等於 N = x² − 1，得 g′(y) = −1，g(y) = −y。",
+        "解：x²y + 3x − y = C。",
+        "需要的話可以解出 y = (C − 3x)/(x² − 1)（x ≠ ±1）。"
+      ],
+      "answer": "x²y + 3x − y = C",
+      "claim": "D(x^2*y+3x-y, , x) == 2x*y+3 ;; D(x^2*y+3x-y, , y) == x^2-1 ;; (x^2-1)*D((5-3x)/(x^2-1)) == -(2x*((5-3x)/(x^2-1))+3)",
+      "note": "第三條驗算取 C = 5，把解出的 y(x) 代回 M + N y′ = 0。"
+    },
+    {
+      "title": "線性方程也可以是正合",
+      "prompt": "xy′ + y = x²，y(1) = 1（x > 0）。",
+      "problemId": "ode-lin-004",
+      "steps": [
+        "寫成 (y − x²) dx + x dy = 0：M = y − x²，N = x。",
+        "M_y = 1，N_x = 1，正合。",
+        "F = ∫ (y − x²) dx = xy − x³/3 + g(y)。F_y = x + g′(y) = x，所以 g′ = 0，g 是常數。",
+        "解：xy − x³/3 = C。代 (1, 1)：1 − 1/3 = 2/3。",
+        "xy = x³/3 + 2/3，y = (x³ + 2)/(3x)，和用積分因子算的一樣。"
+      ],
+      "answer": "y = (x³ + 2)/(3x)",
+      "claim": "D(x*y-x^3/3, , x) == y-x^2 ;; D(x*y-x^3/3, , y) == x ;; SUB(x*((x^3+2)/(3x)) - x^3/3, 2) == 2/3"
+    },
+    {
+      "title": "含指數與三角",
+      "prompt": "(eˣ sin y + 2x) dx + eˣ cos y dy = 0，y(0) = π/2。",
+      "steps": [
+        "M_y = eˣ cos y，N_x = eˣ cos y，正合。",
+        "F = ∫ (eˣ sin y + 2x) dx = eˣ sin y + x² + g(y)。",
+        "F_y = eˣ cos y + g′(y) = eˣ cos y，g′ = 0。",
+        "F = eˣ sin y + x²。代 (0, π/2)：1 · 1 + 0 = 1。",
+        "解：eˣ sin y + x² = 1。"
+      ],
+      "answer": "eˣ sin y + x² = 1",
+      "claim": "D(e^x*sin(y)+x^2, , x) == e^x*sin(y)+2x ;; D(e^x*sin(y)+x^2, , y) == e^x*cos(y) ;; SUB(e^x*sin(pi/2)+x^2,0) == 1"
+    }
+  ],
+  "pitfalls": [
+    "比錯偏導：要比 M_y 和 N_x，不是 M_x 和 N_y。",
+    "對 x 積分後只加常數 C，忘了它可以是 g(y)。",
+    "把 g(y) 加進答案時又多加了一次重複的項（例如 x² 算兩次）。",
+    "答案寫成 F(x, y) = 0：解是一整族等高線 F = C。"
+  ],
+  "checks": [
+    {
+      "ask": "(3x² + y) dx + (x + 2y) dy = 0 是正合方程嗎？",
+      "options": [
+        { "label": "是，M_y = 1 = N_x", "correct": true },
+        { "label": "不是，因為 M 含 x²", "why": "判準是交叉偏導相等，x² 對 y 偏微分是 0，不影響。" },
+        { "label": "要先解出來才知道", "why": "正合的判斷不用解：直接比 ∂M/∂y 與 ∂N/∂x。" }
+      ]
+    },
+    {
+      "ask": "y dx + 2x dy = 0 是正合方程嗎？",
+      "options": [
+        { "label": "不是，M_y = 1、N_x = 2", "correct": true },
+        { "label": "是，因為 M、N 都是一次式", "why": "一次式不保證正合，要看交叉偏導是否相等。" },
+        { "label": "是，因為 M_x = N_y = 0", "why": "比錯了偏導：要比 M 對 y、N 對 x。" }
+      ]
+    },
+    {
+      "ask": "F = ∫ M dx 時加上的「積分常數」應該是？",
+      "options": [
+        { "label": "y 的任意函數 g(y)", "correct": true },
+        { "label": "一個數 C", "why": "對 x 積分時 y 被當成常數，所以任何只含 y 的式子對 x 偏微分都是 0。" },
+        { "label": "x 的任意函數 g(x)", "why": "g(x) 對 x 偏微分不是 0，會改變 F_x = M。" }
+      ]
+    },
+    {
+      "ask": "正合方程 M dx + N dy = 0 的解怎麼寫？",
+      "options": [
+        { "label": "F(x, y) = C", "correct": true },
+        { "label": "F(x, y) = 0", "why": "那只是其中一條等高線；每一個 C 都給一條解。" },
+        { "label": "y = F(x, y)", "why": "F 是位勢函數，解是它的等高線，不是 y 等於它。" }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": ["ode", "exact-form"],
+    "fine": ["exact-test", "exact-find-potential", "exact-implicit-solution"]
+  },
+  "practice": [
+    { "id": "ode-lin-004", "core": true, "trains": "exact-find-potential", "note": "寫成 (y − x²) dx + x dy = 0，或直接看出左邊是 (xy)′。" }
+  ],
+  "gaps": [
+    { "tag": "exact-test", "count": 2, "note": "R2：判斷是否正合（含比錯偏導的陷阱）。" },
+    { "tag": "exact-find-potential", "count": 3, "note": "R3：求 F 並寫出解，含一題帶初始條件；可用答案形式 F(x, y) = C 判分。" },
+    { "tag": "exact-implicit-solution", "count": 1, "note": "R3：從 F = C 解出 y(x) 並代初始條件。" }
+  ]
+}

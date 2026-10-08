@@ -1,0 +1,144 @@
+{
+  "id": "definite-signed-area",
+  "title": "定積分與有號面積",
+  "readMinutes": 9,
+  "totalMinutes": 30,
+  "prerequisites": ["graph-features", "indefinite-integral"],
+  "next": ["integral-properties"],
+  "related": ["riemann-sum-intuition", "ftc-part2", "area-under-curve"],
+  "objectives": [
+    "說得出 ∫ₐᵇ f(x) dx 量的是有號面積：x 軸上方算正、下方算負（a < b）。",
+    "分得清 ∫ₐᵇ f(x) dx 與 ∫ₐᵇ |f(x)| dx，也就是位移與總路程。",
+    "圖形由直線、圓弧組成時，會用幾何面積算出定積分。"
+  ],
+  "visual": "畫一條會穿過 x 軸的曲線，下限固定在 a，拖動上限 b。曲線與 x 軸之間，在上方的部分塗藍色、標「＋」，在下方的部分塗紅色、標「−」。旁邊即時顯示三個數：藍色面積、紅色面積、以及「藍 − 紅」＝ ∫ₐᵇ f(x) dx。把 b 拖過一個零點時，可以看到有號面積開始變小，甚至變成負的，而總面積還是一直變大。",
+  "concept": [
+    {
+      "heading": "① 要量的東西",
+      "body": [
+        "給一個函數 f 和一段區間 [a, b]。曲線 y = f(x)、x 軸、直線 x = a 與 x = b 圍出一塊區域。∫ₐᵇ f(x) dx 量的是這塊區域，但有一個重要的規則：有正負號。",
+        "這一課先用圖形理解它；它真正的定義（用長條逼近）在〈Riemann 和直觀〉，有效率的算法在〈微積分基本定理 II〉。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 上方算正，下方算負",
+      "body": [
+        "在 a < b 的情況下：曲線在 x 軸上方的部分，面積算正的；在 x 軸下方的部分，面積算負的；全部加起來。",
+        "所以定積分不是「面積」，而是「上方面積 − 下方面積」。上下一樣大時，定積分是 0，雖然圖上明明有東西被圍起來。",
+        "例：∫₋₃³ x dx。左邊三角形在下方，面積 9/2；右邊三角形在上方，面積 9/2。相加是 0。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 真正的面積要加絕對值",
+      "body": [
+        "把下方那幾塊翻到上方，就是 |f|：∫ₐᵇ |f(x)| dx = 上方面積 + 下方面積。這才是一般說的「面積」，〈曲線與 x 軸圍成的面積〉會正式處理。",
+        "物理上的對應：v(t) 是速度。∫ v dt 是位移，往回走的路要扣掉；∫ |v| dt 是總路程，往回走的也算進去。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 目前能算的：靠幾何",
+      "body": [
+        "圖形由矩形、三角形、梯形、圓的一部分組成時，算出每一塊的面積，再依上下加上正負號。一般的曲線要等 Riemann 和與基本定理。",
+        "定積分的結果是一個數，跟變數叫什麼無關：∫₀¹ x² dx 和 ∫₀¹ t² dt 是同一個數。"
+      ],
+      "collapsible": false
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "跨過 x 軸的直線",
+      "prompt": "求 ∫₋₁² x dx，並和 ∫₋₁² |x| dx 比較。",
+      "steps": [
+        "y = x 在 x = 0 穿過 x 軸。[−1, 0] 那塊在下方：直角三角形，兩股都是 1，面積 1/2，算 −1/2。",
+        "[0, 2] 那塊在上方：直角三角形，兩股都是 2，面積 2，算 +2。",
+        "∫₋₁² x dx = 2 − 1/2 = 3/2。",
+        "∫₋₁² |x| dx 兩塊都算正的：2 + 1/2 = 5/2。"
+      ],
+      "answer": "∫₋₁² x dx = 3/2；∫₋₁² |x| dx = 5/2",
+      "claim": "INT(x,-1,2) == 3/2 ;; INT(abs(x),-1,2) == 5/2"
+    },
+    {
+      "title": "半圓",
+      "prompt": "∫₋₂² √(4 − x²) dx",
+      "steps": [
+        "y = √(4 − x²) 兩邊平方得 x² + y² = 4，而且 y ≥ 0：這是半徑 2 的圓的上半部。",
+        "x 從 −2 到 2 剛好是整個上半圓，而且全部在 x 軸上方，算正的。",
+        "面積 = (1/2) · π · 2² = 2π。"
+      ],
+      "answer": "2π",
+      "claim": "INT(sqrt(4-x^2),-2,2) == 2*pi"
+    },
+    {
+      "title": "位移與總路程",
+      "prompt": "物體速度 v(t) = 2 − t（公尺／秒），0 ≤ t ≤ 4。求位移與總路程。",
+      "steps": [
+        "v 在 t = 2 由正變負：前 2 秒往前走，後 2 秒往回走。",
+        "[0, 2]：三角形底 2、高 2，面積 2，在上方，算 +2。",
+        "[2, 4]：三角形底 2、高 2，面積 2，在下方，算 −2。",
+        "位移 = ∫₀⁴ v dt = 2 − 2 = 0（回到原點）；總路程 = ∫₀⁴ |v| dt = 2 + 2 = 4 公尺。"
+      ],
+      "answer": "位移 0 公尺；總路程 4 公尺",
+      "claim": "INT(2-t,0,4,t) == 0 ;; INT(abs(2-t),0,4,t) == 4"
+    }
+  ],
+  "pitfalls": [
+    "把定積分直接當成面積，忽略 x 軸下方那幾塊是負的。",
+    "定積分算出 0，就以為曲線跟 x 軸沒有圍出任何東西。",
+    "要求面積時沒有先找出 f 在哪裡變號，就整段一起算。",
+    "以為 f 是負的，定積分就沒有意義。負值照樣可以積，只是貢獻負的有號面積。"
+  ],
+  "checks": [
+    {
+      "ask": "f 在 [0, 5] 上：在 x 軸上方的部分面積 7，在下方的部分面積 3。∫₀⁵ f(x) dx 是？",
+      "options": [
+        { "label": "4", "correct": true },
+        { "label": "10", "why": "10 是總面積，也就是 ∫₀⁵ |f(x)| dx。定積分把下方那塊算成負的：7 − 3。" },
+        { "label": "−4", "why": "正負號放反了：上方算正、下方算負，是 7 − 3，不是 3 − 7。" }
+      ]
+    },
+    {
+      "ask": "承上題，∫₀⁵ |f(x)| dx 是？",
+      "options": [
+        { "label": "10", "correct": true },
+        { "label": "4", "why": "加了絕對值，下方那塊被翻到上方，不再抵消：7 + 3。" },
+        { "label": "7", "why": "下方那塊也要算進去，只是翻成正的。你把它當成 0 了。" }
+      ]
+    },
+    {
+      "ask": "∫₋₃³ x dx 是？",
+      "options": [
+        { "label": "0", "correct": true },
+        { "label": "9", "why": "9 是兩個三角形面積 9/2 + 9/2 的和。左邊那塊在 x 軸下方，要算負的。" },
+        { "label": "不能算，因為 x 在 [−3, 0] 是負的", "why": "負值完全可以積分，那一段只是貢獻負的有號面積 −9/2。" }
+      ]
+    },
+    {
+      "ask": "∫₋₁¹ √(1 − x²) dx 是？",
+      "options": [
+        { "label": "π/2", "correct": true },
+        { "label": "π", "why": "π 是整個單位圓的面積。y = √(1 − x²) 只有 y ≥ 0 的上半圓。" },
+        { "label": "2", "why": "你把它當成底 2、高 1 的矩形。曲線是圓弧，兩側低下去，面積比矩形小。" }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": ["definite-integral", "area", "graph-reading"],
+    "fine": ["signed-area-meaning", "signed-area-geometry", "signed-area-cancellation", "signed-area-vs-area", "signed-area-displacement"]
+  },
+  "practice": [
+    { "id": "gx-013", "core": true, "trains": "signed-area-geometry" },
+    { "id": "gp-010", "core": true, "trains": "signed-area-geometry" },
+    { "id": "gx-014", "core": true, "trains": "signed-area-cancellation", "note": "g(4) 就是 ∫₀⁴ f(t) dt：上方算正、下方算負。" },
+    { "id": "gx-015", "core": true, "trains": "signed-area-vs-area" },
+    { "id": "gp-007", "core": true, "trains": "signed-area-vs-area" },
+    { "id": "gx-016", "core": true, "trains": "signed-area-displacement" },
+    { "id": "gx-017", "trains": "signed-area-displacement" },
+    { "id": "int-047", "challenge": true, "trains": "signed-area-geometry", "note": "挑戰：先認出曲線是什麼圖形，就不需要任何積分技巧。" }
+  ],
+  "gaps": [
+    { "tag": "signed-area-meaning", "count": 2, "note": "只看圖判斷 ∫ₐᵇ f dx 的正負或比大小（不需算出數值）的題，R1–R2。" }
+  ]
+}

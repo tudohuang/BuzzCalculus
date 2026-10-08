@@ -1,0 +1,153 @@
+{
+  "id": "partial-fractions-linear",
+  "title": "部分分式 I：相異一次因式",
+  "readMinutes": 10,
+  "totalMinutes": 40,
+  "prerequisites": ["polynomial-rational", "indefinite-integral", "u-sub-recognize"],
+  "next": ["partial-fractions-repeated"],
+  "related": ["partial-fractions-quadratic"],
+  "objectives": [
+    "先檢查是不是真分式；分子次數不小於分母時，先做長除法。",
+    "分母拆成相異一次因式時，會設 A/(x − a) + B/(x − b) + … 並求出係數。",
+    "會把每一項積成 A ln|x − a|。"
+  ],
+  "visual": null,
+  "concept": [
+    {
+      "heading": "① 通分的反方向",
+      "body": [
+        "1/(x − 1) − 1/(x + 1) 通分得 2/(x² − 1)。通分大家都會；部分分式就是倒過來：給你 2/(x² − 1)，把它拆回 1/(x − 1) − 1/(x + 1)。",
+        "拆開的好處：每一塊都是 A/(x − a)，積分就是 A ln|x − a|。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 第零步：是不是真分式",
+      "body": [
+        "分子次數 < 分母次數才叫真分式，才能直接拆。否則先做多項式長除法：P/Q = 商 + 餘式/Q，餘式的次數一定比 Q 小。",
+        "例：(x² + 1)/(x² − 1) 分子分母都是二次，先除：= 1 + 2/(x² − 1)。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 設、求、積",
+      "body": [
+        "設：把分母因式分解成相異的一次因式 (x − a)(x − b)…，寫成 A/(x − a) + B/(x − b) + …，有幾個因式就有幾個未知數。",
+        "求：兩邊同乘分母，得到一個對所有 x 都成立的多項式恆等式。代 x = a，除了 A 那一項以外全部變 0，A 直接出來；B 同理。",
+        "積：每一項 A/(x − a) 積成 A ln|x − a|，絕對值不能省。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 快速版：遮住法",
+      "body": [
+        "求 A 時，把原式分母裡的 (x − a) 遮住，剩下的式子代 x = a，就是 A。例：1/((x − 1)(x + 3)) 的 A：遮住 x − 1，剩 1/(x + 3)，代 x = 1 得 1/4。這只是「同乘再代根」的縮寫，只適用於相異一次因式。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "為什麼一定拆得開",
+      "body": [
+        "代數上有一個定理：真分式 P/Q，若 Q 能分解成相異一次因式的乘積，則存在唯一一組常數使 P/Q = Σ Aᵢ/(x − aᵢ)。重複因式與不可約二次式的版本見〈部分分式 II：重複因式〉、〈部分分式 III：不可約二次式〉。"
+      ],
+      "collapsible": true
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "最基本的一題",
+      "prompt": "∫ 1/(x² − 1) dx",
+      "problemId": "gap-int-pf-001",
+      "steps": [
+        "真分式。x² − 1 = (x − 1)(x + 1)。設 1/(x² − 1) = A/(x − 1) + B/(x + 1)。",
+        "同乘分母：1 = A(x + 1) + B(x − 1)。代 x = 1：1 = 2A，A = 1/2。代 x = −1：1 = −2B，B = −1/2。",
+        "∫ = (1/2) ln|x − 1| − (1/2) ln|x + 1| + C。"
+      ],
+      "answer": "(1/2) ln|x − 1| − (1/2) ln|x + 1| + C",
+      "claim": "D(ln(abs(x-1))/2-ln(abs(x+1))/2) == 1/(x^2-1)"
+    },
+    {
+      "title": "分子有 x",
+      "prompt": "∫ (x + 5)/(x² + x − 2) dx",
+      "steps": [
+        "真分式。x² + x − 2 = (x − 1)(x + 2)。設 (x + 5)/(x² + x − 2) = A/(x − 1) + B/(x + 2)。",
+        "同乘分母：x + 5 = A(x + 2) + B(x − 1)。代 x = 1：6 = 3A，A = 2。代 x = −2：3 = −3B，B = −1。",
+        "檢查：2/(x − 1) − 1/(x + 2) 通分，分子 2(x + 2) − (x − 1) = x + 5。",
+        "∫ = 2 ln|x − 1| − ln|x + 2| + C。"
+      ],
+      "answer": "2 ln|x − 1| − ln|x + 2| + C",
+      "claim": "2/(x-1)-1/(x+2) == (x+5)/(x^2+x-2) ;; D(2*ln(abs(x-1))-ln(abs(x+2))) == (x+5)/(x^2+x-2)"
+    },
+    {
+      "title": "先長除法",
+      "prompt": "∫ (x² + 1)/(x² − 1) dx",
+      "steps": [
+        "分子分母都是二次，不是真分式。除：x² + 1 = 1 · (x² − 1) + 2，所以 (x² + 1)/(x² − 1) = 1 + 2/(x² − 1)。",
+        "2/(x² − 1) = 1/(x − 1) − 1/(x + 1)（就是範例 1 的兩倍）。",
+        "∫ = x + ln|x − 1| − ln|x + 1| + C。"
+      ],
+      "answer": "x + ln|x − 1| − ln|x + 1| + C",
+      "claim": "1+1/(x-1)-1/(x+1) == (x^2+1)/(x^2-1) ;; D(x+ln(abs(x-1))-ln(abs(x+1))) == (x^2+1)/(x^2-1)"
+    }
+  ],
+  "pitfalls": [
+    "分子次數不小於分母，沒先長除法就直接設。",
+    "設成相乘 A/(x − a) · B/(x − b)。部分分式是相加。",
+    "代根時代錯：求 A 要代讓 (x − a) = 0 的 x = a，不是 x = −a。",
+    "積分寫成 ln(x − a)，漏了絕對值。",
+    "分子剛好是分母的導數時還硬拆（可以拆，但 u′/u 一步就完成）。"
+  ],
+  "checks": [
+    {
+      "ask": "1/((x − 1)(x + 3)) 應該設成？",
+      "options": [
+        { "label": "A/(x − 1) + B/(x + 3)", "correct": true },
+        { "label": "A/(x − 1) · B/(x + 3)", "why": "部分分式是把分式拆成「相加」的幾塊，通分回去才會等於原式。" },
+        { "label": "(Ax + B)/((x − 1)(x + 3))", "why": "那只是原式換個寫法，沒有拆開，積分還是做不了。" }
+      ]
+    },
+    {
+      "ask": "承上，A 是？",
+      "options": [
+        { "label": "1/4", "correct": true },
+        { "label": "1", "why": "遮住 x − 1 後，剩下的 1/(x + 3) 還要代 x = 1：1/4。" },
+        { "label": "−1/4", "why": "那是 B：遮住 x + 3，把 x = −3 代進 1/(x − 1) 得 −1/4。" }
+      ]
+    },
+    {
+      "ask": "∫ (x² + 1)/(x² − 1) dx 的第一步？",
+      "options": [
+        { "label": "長除法", "correct": true },
+        { "label": "直接設 A/(x − 1) + B/(x + 1)", "why": "分子分母同次，這樣設會漏掉整式部分 1，解不出一致的 A、B。" },
+        { "label": "令 u = x² − 1", "why": "du = 2x dx，分子是 x² + 1，配不起來。" }
+      ]
+    },
+    {
+      "ask": "∫ 3/(x − 2) dx 是？",
+      "options": [
+        { "label": "3 ln|x − 2| + C", "correct": true },
+        { "label": "−3/(x − 2)² + C", "why": "那是 3/(x − 2) 的導數，方向反了。" },
+        { "label": "3 ln(x − 2) + C", "why": "x < 2 時 ln(x − 2) 沒有定義，但被積函數在那裡有定義；要加絕對值。" }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": ["partial-fraction", "rational-integral", "log"],
+    "fine": ["pf-proper-check", "pf-linear-setup", "pf-coefficients", "pf-log-integrate"]
+  },
+  "practice": [
+    { "id": "gap-int-pf-003", "core": true, "trains": "pf-coefficients" },
+    { "id": "gap-int-pf-007", "core": true, "trains": "pf-coefficients" },
+    { "id": "gap-int-pf-006", "core": true, "trains": "pf-coefficients" },
+    { "id": "lec-08-q1a", "core": true, "trains": "pf-linear-setup" },
+    { "id": "cx-pf-001", "core": true, "trains": "pf-log-integrate" },
+    { "id": "cx-pf-002", "core": true, "trains": "pf-log-integrate" },
+    { "id": "tmpl-int-partialfrac-001", "trains": "pf-log-integrate" },
+    { "id": "gap-int-pf-004", "trains": "pf-linear-setup", "note": "分子剛好是分母的導數：拆或用 u′/u 都可以，比較一下哪個快。" },
+    { "id": "gap-int-pf-002", "trains": "pf-proper-check", "note": "先約分。" },
+    { "id": "hc-rad-003", "challenge": true, "trains": "pf-linear-setup", "note": "挑戰：分母 x³ − x 拆成三個一次因式。" }
+  ],
+  "gaps": [
+    { "tag": "pf-proper-check", "count": 2, "note": "分母是相異一次因式、但分子次數不小於分母、要先長除法的題，例如 ∫ (x² + 1)/(x² − 1) dx、∫ x³/(x² − 4) dx，R3。" }
+  ]
+}

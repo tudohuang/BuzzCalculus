@@ -1,0 +1,157 @@
+{
+  "id": "directional-derivative",
+  "title": "方向導數",
+  "readMinutes": 10,
+  "totalMinutes": 35,
+  "prerequisites": ["gradient", "multivariable-chain-rule"],
+  "next": ["tangent-plane"],
+  "related": [],
+  "objectives": [
+    "說得出 D_u f 是「沿單位向量 u 走時 f 的變化率」，偏導數是 u = (1, 0)、(0, 1) 的特例。",
+    "在 f 可微時用 D_u f = ∇f · u 計算；方向不是單位向量時先單位化。",
+    "由 D_u f = |∇f| cos θ 推出：最大值 |∇f| 在 ∇f 方向，最小值 −|∇f| 在 −∇f 方向，沿等高線為 0。"
+  ],
+  "visual": "f(x, y) = 100 − x² − 2y² 的等高線圖上固定一點 P，P 上有一支可以轉動的單位向量 u，以及固定的 ∇f(P)。轉動 u 時，旁邊的極座標圖畫出 D_u f 隨角度的變化：一條 |∇f| cos θ 的曲線，u 對齊 ∇f 時最大、垂直時為 0、反向時最小。",
+  "concept": [
+    {
+      "heading": "① 不只往東、往北",
+      "body": [
+        "f_x 是往 +x 方向的變化率，f_y 是往 +y 方向的。往東北走呢？",
+        "圖像：站在山坡上的某一點，面朝某個方向，腳下的坡度是多少？面朝不同方向，坡度不同。方向導數就是「面朝 u 時的坡度」。",
+        "任選一個單位向量 u = (u₁, u₂)，從 (a, b) 沿 u 走距離 h，看 f 的變化率："
+      ],
+      "tex": ["D_{\\mathbf u}f(a,b)=\\lim_{h\\to0}\\frac{f(a+hu_1,\\ b+hu_2)-f(a,b)}{h}"],
+      "collapsible": false
+    },
+    {
+      "heading": "② 計算公式：跟梯度做內積",
+      "body": [
+        "人話：沿 u 走一小段 h，x 方向實際走了 hu₁，帶來 f_x · hu₁ 的變化；y 方向走了 hu₂，帶來 f_y · hu₂。加起來除以 h，就是 f_x u₁ + f_y u₂。",
+        "u = (1, 0) 時得到 f_x，u = (0, 1) 時得到 f_y：偏導數只是兩個特別的方向。",
+        "f 在 (a, b) 可微時，這個人話說法是對的："
+      ],
+      "tex": ["D_{\\mathbf u}f=\\nabla f\\cdot\\mathbf u=f_x u_1+f_y u_2"],
+      "collapsible": false
+    },
+    {
+      "heading": "推導（證明）",
+      "body": [
+        "令 g(h) = f(a + hu₁, b + hu₂)。D_u f(a, b) 就是 g′(0)。",
+        "f 可微，所以可以用〈多變數連鎖律〉：g′(h) = f_x · u₁ + f_y · u₂（x = a + hu₁ 對 h 的導數是 u₁，y 同理）。代 h = 0 得 ∇f(a, b) · u。",
+        "這一步用到可微；只有偏導數存在時，公式可能不成立。"
+      ],
+      "collapsible": true
+    },
+    {
+      "heading": "③ u 一定要是單位向量",
+      "body": [
+        "定義裡 h 是走過的距離，所以 u 的長度必須是 1。題目給方向 (3, 4)，要先除以長度 5，變成 (3/5, 4/5)。不單位化，答案會被放大成 5 倍。",
+        "「從 P 指向 Q」的方向，就是 Q − P 再單位化。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 梯度的三個性質，現在有證明了",
+      "body": [
+        "內積可以寫成 ∇f · u = |∇f||u| cos θ = |∇f| cos θ，θ 是 u 與 ∇f 的夾角。只要 ∇f ≠ 0：",
+        "θ = 0（u 沿 ∇f）時最大，值是 |∇f|；θ = π（u 沿 −∇f）時最小，值是 −|∇f|；θ = π/2 時是 0，這個方向正是等高線的切線方向。這就證明了〈梯度〉那一課的三個性質。"
+      ],
+      "collapsible": false
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "先單位化，再內積",
+      "prompt": "f(x, y) = x² + y²，在 (1, 2) 沿 (3, 4)/5 方向的方向導數。",
+      "problemId": "der-024",
+      "steps": [
+        "(3, 4)/5 = (3/5, 4/5)，長度 1，已經是單位向量。",
+        "∇f = (2x, 2y)，在 (1, 2) 是 (2, 4)。",
+        "D_u f = 2 · 3/5 + 4 · 4/5 = 6/5 + 16/5 = 22/5。"
+      ],
+      "answer": "22/5",
+      "claim": "D((1+3t/5)^2 + (2+4t/5)^2, 0, t) == 22/5",
+      "note": "驗算直接用定義：沿直線 (1, 2) + t(3/5, 4/5) 把 f 寫成 t 的函數，在 t = 0 微分。"
+    },
+    {
+      "title": "方向沒有單位化",
+      "prompt": "T(x, y) = 100 − x² − 2y²，在 (2, 1) 沿向量 (3, 4) 方向的方向導數。",
+      "problemId": "lec-17-q3b",
+      "steps": [
+        "(3, 4) 的長度是 5，單位向量 u = (3/5, 4/5)。",
+        "∇T = (−2x, −4y)，在 (2, 1) 是 (−4, −4)。",
+        "D_u T = (−4)(3/5) + (−4)(4/5) = −12/5 − 16/5 = −28/5。",
+        "負值：往這個方向走，溫度下降。"
+      ],
+      "answer": "−28/5",
+      "claim": "D(100 - (2+3t/5)^2 - 2*(1+4t/5)^2, 0, t) == -28/5"
+    },
+    {
+      "title": "指向另一點",
+      "prompt": "f(x, y) = ln(x² + y²)，在 (1, 1) 沿指向 (2, 3) 的方向的方向導數。",
+      "problemId": "vc-nab-007",
+      "steps": [
+        "方向向量 (2, 3) − (1, 1) = (1, 2)，長度 √5，u = (1/√5, 2/√5)。",
+        "∇f = (2x/(x² + y²), 2y/(x² + y²))，在 (1, 1) 是 (1, 1)。",
+        "D_u f = 1/√5 + 2/√5 = 3/√5。"
+      ],
+      "answer": "3/√5",
+      "claim": "D(ln((1+t/sqrt(5))^2 + (1+2t/sqrt(5))^2), 0, t) == 3/sqrt(5)"
+    }
+  ],
+  "pitfalls": [
+    "沒有把方向單位化。",
+    "「指向 Q」的方向用了 Q 本身，而不是 Q − P。",
+    "答案寫成向量；方向導數是一個數。",
+    "以為最大變化率在 x 或 y 方向；它在 ∇f 方向。"
+  ],
+  "checks": [
+    {
+      "ask": "∇f(P) = (2, −1)，沿方向 (3, 4) 的方向導數是？",
+      "options": [
+        { "label": "2/5", "correct": true },
+        { "label": "2", "why": "沒有單位化：直接用 (3, 4) 得 6 − 4 = 2，要再除以長度 5。" },
+        { "label": "(6/5, −4/5)", "why": "內積要把分量乘完再相加，結果是一個數：6/5 − 4/5。" }
+      ]
+    },
+    {
+      "ask": "f 下降最快的方向是？",
+      "options": [
+        { "label": "−∇f 的方向", "correct": true },
+        { "label": "∇f 的方向", "why": "那是上升最快；cos θ = −1 時最小，也就是反方向。" },
+        { "label": "垂直於 ∇f 的方向", "why": "那個方向 cos θ = 0，f 第一階不變，是沿著等高線。" }
+      ]
+    },
+    {
+      "ask": "∇f(P) ≠ 0，哪個方向的 D_u f(P) = 0？",
+      "options": [
+        { "label": "與 ∇f 垂直、也就是等高線的切線方向", "correct": true },
+        { "label": "與 ∇f 平行的方向", "why": "平行時 cos θ = ±1，是最大或最小，不是 0。" },
+        { "label": "u = (0, 0)", "why": "零向量不是單位向量，不能拿來當方向。" }
+      ]
+    },
+    {
+      "ask": "∇f(P) = (1, 1)，在 P 的方向導數最大可以是多少？",
+      "options": [
+        { "label": "√2", "correct": true },
+        { "label": "2", "why": "最大值是 |∇f| = √(1² + 1²)，不是分量相加。" },
+        { "label": "1", "why": "1 是沿 x 軸或 y 軸的值；沿 ∇f 方向 (1, 1)/√2 會更大。" }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": ["directional-derivative", "gradient", "multivariable"],
+    "fine": ["directional-derivative-compute", "directional-unit-vector", "directional-max-min"]
+  },
+  "practice": [
+    { "id": "der-024", "core": true, "trains": "directional-derivative-compute" },
+    { "id": "exam-multi-005", "core": true, "trains": "directional-derivative-compute" },
+    { "id": "uni-der-014", "core": true, "trains": "directional-derivative-compute" },
+    { "id": "lec-17-q3b", "core": true, "trains": "directional-unit-vector" },
+    { "id": "vc-nab-007", "core": true, "trains": "directional-unit-vector" },
+    { "id": "lec-17-m4", "core": true, "trains": "directional-max-min" },
+    { "id": "lec-17-m2", "trains": "directional-max-min" },
+    { "id": "rel-hard-der-007", "challenge": true, "trains": "directional-derivative-compute", "note": "挑戰：三個變數，u = (1, 2, 2)/3。" }
+  ],
+  "gaps": []
+}

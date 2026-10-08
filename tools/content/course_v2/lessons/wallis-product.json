@@ -1,0 +1,143 @@
+{
+  "id": "wallis-product",
+  "title": "Wallis 乘積",
+  "readMinutes": 12,
+  "totalMinutes": 35,
+  "prerequisites": ["wallis-integral", "squeeze-theorem", "asymptotic-equivalence"],
+  "next": ["gamma-definition"],
+  "related": ["stirling"],
+  "objectives": [
+    "寫得出 π/2 = (2/1)(2/3)(4/3)(4/5)(6/5)(6/7)⋯，並認得它的另一個樣子 Π(1 − 1/(4k²)) = 2/π。",
+    "用 Wₙ 遞減與夾擠定理，從 Wallis 積分推出 Wallis 乘積。",
+    "用 nWₙWₙ₋₁ = π/2 推出 C(2n, n) ~ 4ⁿ/√(πn)，不需要 Stirling。"
+  ],
+  "visual": "橫軸是乘進去的因子個數 m，縱軸畫部分乘積 Pₘ = Π_{k≤m} (2k)²/((2k − 1)(2k + 1))，水平虛線標 π/2 ≈ 1.5708。點列 1.333、1.422、1.463…… 慢慢爬向虛線，m = 10 時還差約 2.4%，m = 100 時差約 0.25%。",
+  "concept": [
+    {
+      "heading": "① 一個用整數乘出 π 的公式",
+      "body": [
+        "把偶數平方除以左右兩個奇數，一直乘下去：(2·2)/(1·3) · (4·4)/(3·5) · (6·6)/(5·7) ⋯ 會收斂到 π/2。每個因子 (2k)²/((2k − 1)(2k + 1)) = 4k²/(4k² − 1) 都比 1 大一點點，乘起來剛好停在 π/2。",
+        "等價的寫法：取倒數，Π_{k=1}^∞ (1 − 1/(4k²)) = 2/π。"
+      ],
+      "tex": ["\\frac{\\pi}{2}=\\prod_{k=1}^{\\infty}\\frac{(2k)^2}{(2k-1)(2k+1)}"],
+      "collapsible": false
+    },
+    {
+      "heading": "② 證明的關鍵：Wₙ 遞減",
+      "body": [
+        "上一課：Wₙ = ∫₀^{π/2} sinⁿ x dx 隨 n 遞減，所以 W_{2m+1} ≤ W_{2m} ≤ W_{2m−1}。",
+        "全部除以 W_{2m+1}：1 ≤ W_{2m}/W_{2m+1} ≤ W_{2m−1}/W_{2m+1} = (2m + 1)/(2m)（遞迴 W_{2m+1} = (2m/(2m + 1)) W_{2m−1}）。右邊 → 1，由夾擠定理 W_{2m}/W_{2m+1} → 1。",
+        "最後把兩個 Wallis 的值代進去：W_{2m}/W_{2m+1} = (π/2) · [1·3·3·5⋯(2m − 1)(2m + 1)]/[2·2·4·4⋯(2m)(2m)]，它 → 1，也就是 π/2 等於那個乘積的極限。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 一個漂亮的不變量：nWₙWₙ₋₁ = π/2",
+      "body": [
+        "由 Wₙ = ((n − 1)/n)Wₙ₋₂，兩邊乘 nWₙ₋₁：nWₙWₙ₋₁ = (n − 1)Wₙ₋₁Wₙ₋₂。這個量不隨 n 改變，等於 1 · W₁W₀ = π/2。",
+        "配合 Wₙ ~ Wₙ₋₁（上面證的），得到 Wₙ² ~ π/(2n)，也就是 Wₙ ~ √(π/(2n))。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 收斂得很慢，但很有用",
+      "body": [
+        "部分乘積的相對誤差大約是 1/(4m)，拿來算 π 並不實際。它真正的用途是當橋樑：中央二項式係數、Stirling 公式裡的 √(2π)、Γ(1/2) = √π，都靠它定出常數。"
+      ],
+      "collapsible": false
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "另一種寫法",
+      "prompt": "Π_{k=1}^∞ (1 − 1/(4k²))",
+      "problemId": "putnam-006",
+      "steps": [
+        "1 − 1/(4k²) = (4k² − 1)/(4k²) = (2k − 1)(2k + 1)/(2k)²，正好是 Wallis 因子的倒數。",
+        "部分乘積互為倒數，Wallis 乘積 → π/2，所以這個乘積 → 2/π。",
+        "數值檢查：取對數變成級數 Σ ln(1 − 1/(4k²))，它收斂到 ln(2/π)。"
+      ],
+      "answer": "2/π",
+      "claim": "SUM(ln(1-1/(4n^2)), 1) == ln(2/pi)"
+    },
+    {
+      "title": "部分乘積有多準",
+      "prompt": "算 P₁、P₂ 與 P₁₀，跟 π/2 ≈ 1.5708 比較。",
+      "steps": [
+        "P₁ = 4/3 ≈ 1.3333。",
+        "P₂ = (4/3)(16/15) = 64/45 ≈ 1.4222。",
+        "P₁₀ ≈ 1.5339，還差約 2.4%；相對誤差大約 1/(4m)，m = 10 時是 1/40。"
+      ],
+      "answer": "P₁₀ ≈ 1.5339",
+      "claim": "e^(SUM(ln(4n^2/(4n^2-1)),1) - SUM(ln(4n^2/(4n^2-1)),11)) > 1.53 ;; e^(SUM(ln(4n^2/(4n^2-1)),1) - SUM(ln(4n^2/(4n^2-1)),11)) < 1.535"
+    },
+    {
+      "title": "不用 Stirling 的中央二項式係數",
+      "prompt": "用 Wallis 證明 C(2n, n) ~ 4ⁿ/√(πn)。",
+      "problemId": "dm-seq-004",
+      "steps": [
+        "W_{2n} = ((2n − 1)/(2n))((2n − 3)/(2n − 2))⋯(1/2) · π/2。分子分母同乘 2·4⋯(2n)：這個分數等於 (2n)!/(2ⁿ n!)² = C(2n, n)/4ⁿ。所以 C(2n, n)/4ⁿ = (2/π) W_{2n}。",
+        "由不變量 2n W_{2n} W_{2n−1} = π/2，以及 W_{2n} ~ W_{2n−1}：W_{2n}² ~ π/(4n)，W_{2n} ~ (1/2)√(π/n)。",
+        "代回：C(2n, n)/4ⁿ ~ (2/π)(1/2)√(π/n) = 1/√(πn)。",
+        "所以 √n · C(2n, n)/4ⁿ → 1/√π，跟〈Stirling 公式〉的結果一致。"
+      ],
+      "answer": "C(2n, n) ~ 4ⁿ/√(πn)",
+      "claim": "5*INT(sin(x)^5, 0, pi/2)*INT(sin(x)^4, 0, pi/2) == pi/2 ;; 8*INT(sin(x)^8, 0, pi/2)*INT(sin(x)^7, 0, pi/2) == pi/2"
+    }
+  ],
+  "pitfalls": [
+    "記成 π/4 或 2/π：(2/1)(2/3)(4/3)⋯ 的值是 π/2，倒數形式 Π(1 − 1/(4k²)) 才是 2/π。",
+    "夾擠時把不等式方向弄反：次方越高，Wₙ 越小。",
+    "以為部分乘積收斂得很快；誤差大約 1/(4m)。",
+    "因子寫成 (2k)²/((2k − 1)²)，少了 (2k + 1)。"
+  ],
+  "checks": [
+    {
+      "ask": "(2/1)(2/3)(4/3)(4/5)(6/5)(6/7)⋯ 的值是？",
+      "options": [
+        { "label": "π/2", "correct": true },
+        { "label": "π/4", "why": "π/4 是 Leibniz 級數 1 − 1/3 + 1/5 − ⋯ 的值，不是這個乘積。" },
+        { "label": "2/π", "why": "那是倒數 Π(1 − 1/(4k²)) 的值；每個因子都大於 1，乘積應該大於 1。" }
+      ]
+    },
+    {
+      "ask": "證明 W_{2m}/W_{2m+1} → 1 用到的關鍵事實是？",
+      "options": [
+        { "label": "Wₙ 隨 n 遞減，再配上 W_{2m−1}/W_{2m+1} = (2m + 1)/(2m) → 1", "correct": true },
+        { "label": "Wₙ 隨 n 遞增", "why": "方向反了：0 ≤ sin x ≤ 1，次方越高越小，Wₙ 遞減。" },
+        { "label": "sin x 的 Taylor 展開", "why": "證明只用了遞迴、單調性與夾擠定理，沒有用到展開。" }
+      ]
+    },
+    {
+      "ask": "Π_{k=1}^∞ (1 − 1/(4k²)) 是？",
+      "options": [
+        { "label": "2/π", "correct": true },
+        { "label": "π/2", "why": "每個因子都小於 1，乘積小於 1；π/2 是它的倒數。" },
+        { "label": "1/2", "why": "1/2 是 Π_{k≥2} (1 − 1/k²) 的值（望遠鏡乘積），分母是 k² 不是 4k²。" }
+      ]
+    },
+    {
+      "ask": "nWₙWₙ₋₁ 對所有 n ≥ 1 都等於？",
+      "options": [
+        { "label": "π/2", "correct": true },
+        { "label": "1", "why": "n = 1 時是 1 · W₁ · W₀ = 1 · 1 · π/2 = π/2。" },
+        { "label": "隨 n 遞減到 0", "why": "遞迴 Wₙ = ((n − 1)/n)Wₙ₋₂ 正好讓這個量不變：nWₙWₙ₋₁ = (n − 1)Wₙ₋₁Wₙ₋₂。" }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": ["wallis", "infinite-product", "central-binomial"],
+    "fine": ["wallis-product-value", "wallis-squeeze-proof", "wallis-invariant", "wallis-central-binomial"]
+  },
+  "practice": [
+    { "id": "putnam-006", "core": true, "trains": "wallis-product-value" },
+    { "id": "burst-rec-005", "core": true, "trains": "wallis-squeeze-proof" },
+    { "id": "burst-rec-006", "core": true, "trains": "wallis-squeeze-proof" },
+    { "id": "dm-seq-004", "core": true, "trains": "wallis-central-binomial" },
+    { "id": "world-074", "challenge": true, "trains": "wallis-central-binomial", "note": "挑戰：倒數形式，答案是 √π。" }
+  ],
+  "gaps": [
+    { "tag": "wallis-invariant", "count": 2, "note": "nWₙWₙ₋₁ = π/2 的應用題（例如給 W₉ 求 W₁₀），R3。" },
+    { "tag": "wallis-product-value", "count": 2, "note": "Wallis 乘積的變形求值（例如 Π (2k)²/((2k − 1)(2k + 1)) 只取奇數 k），R4。" }
+  ]
+}

@@ -1,0 +1,153 @@
+{
+  "id": "multivariable-limit",
+  "title": "多變數極限",
+  "readMinutes": 10,
+  "totalMinutes": 35,
+  "prerequisites": ["two-variable-functions", "limit-intro", "squeeze-theorem", "limit-trig-standard"],
+  "next": ["path-test"],
+  "related": ["multivariable-continuity", "limit-factor", "limit-exp-log-standard"],
+  "objectives": [
+    "說得出 lim_{(x,y)→(a,b)} f(x, y) = L 的意思：不管從哪個方向、沿什麼路線靠近，f 都要靠近 L。",
+    "會用直接代入、化簡、換成一變數標準極限來算。",
+    "會用極座標配合夾擠證明極限存在，而且知道上界必須跟 θ 無關。"
+  ],
+  "visual": "xy 平面上以 (a, b) 為圓心畫一個半徑 δ 的小圓盤，旁邊的數線標出 f 在這個圓盤上（圓心除外）取到的所有值。把 δ 縮小：f(x,y) = x²y/(x² + y²) 的值域區間跟著縮向 0；換成 xy/(x² + y²)，不管 δ 多小，值域都還是蓋住 [−1/2, 1/2]，縮不下去。",
+  "concept": [
+    {
+      "heading": "① 意思和一變數一樣",
+      "body": [
+        "lim_{(x,y)→(a,b)} f(x, y) = L：只要 (x, y) 離 (a, b) 夠近（但不等於它），f(x, y) 就能要多靠近 L 就多靠近 L。「離得近」量的是平面距離 √((x − a)² + (y − b)²)。和一變數一樣，完全不看 (a, b) 那一點本身。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 但靠近的方式有無限多種",
+      "body": [
+        "一變數只能從左右兩邊靠近。平面上可以從任何方向、沿直線、沿拋物線、甚至繞著螺旋靠近。極限存在，代表所有靠近的方式都得到同一個 L。所以二變數的極限比較容易不存在，下一課〈路徑測試〉專門處理這件事。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 算法一：代入、化簡、換成一變數",
+      "body": [
+        "多項式、有理函數（分母不為 0）、以及它們和 eˣ、sin、ln、√ 的合成，在定義域內直接代入就是極限（〈多變數連續〉）。",
+        "代入得 0/0 時，先試因式分解或有理化；或者整個式子只透過一個組合 u = xy、u = x² + y² 出現時，令 u 等於它，u → 0，就變成一變數標準極限。例如 sin(xy)/(xy)：u = xy → 0，得 1。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 算法二：極座標＋夾擠",
+      "body": [
+        "目標點是原點時，令 x = r cos θ、y = r sin θ。(x, y) → (0, 0) 等價於 r → 0，而 θ 可以任意變化。",
+        "如果能證明 |f(x, y) − L| ≤ g(r)，g(r) → 0，而且 g 不含 θ，那麼極限就是 L。例：x²y/(x² + y²) = r cos²θ sin θ，絕對值 ≤ r → 0，極限是 0。",
+        "直接用 x、y 也可以：x² ≤ x² + y²，所以 |x²y/(x² + y²)| ≤ |y| → 0。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "【為什麼】上界不能跟 θ 有關",
+      "body": [
+        "f = x²y/(x⁴ + y²) 換成極座標是 r cos²θ sin θ/(r² cos⁴θ + sin²θ)。固定任何一個 θ，r → 0 時它都 → 0：每一條射線都到 0。",
+        "但沿拋物線 y = x²，f = x⁴/(2x⁴) = 1/2。極限不存在。問題在於：θ 越接近 0，要 r 更小才能讓 f 變小，沒有一個對所有 θ 都管用的 g(r)。所以「每個固定 θ 都 → 0」不夠，必須有跟 θ 無關的上界。"
+      ],
+      "collapsible": true
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "0/0：先因式分解",
+      "prompt": "lim_{(x,y)→(1,1)} (x² − y²)/(x − y)",
+      "steps": [
+        "代入得 0/0（而且整條直線 y = x 上都沒有定義）。",
+        "x² − y² = (x − y)(x + y)，在 x ≠ y 的點約掉 x − y，剩 x + y。",
+        "x + y 是多項式，直接代入：1 + 1 = 2。"
+      ],
+      "answer": "2",
+      "claim": "(x^2-y^2)/(x-y) == x+y ;; SUB(SUB(x+y,1,x),1,y) == 2"
+    },
+    {
+      "title": "換成一變數標準極限",
+      "prompt": "lim_{(x,y)→(0,0)} sin(xy)/(xy)",
+      "problemId": "lim-025",
+      "steps": [
+        "x、y 只透過乘積 xy 出現。令 u = xy。",
+        "(x, y) → (0, 0) 時，|u| = |x||y| → 0。",
+        "lim_{u→0} sin u/u = 1（〈三角標準極限〉）。"
+      ],
+      "answer": "1",
+      "claim": "LIM(sin(u)/u, 0) == 1"
+    },
+    {
+      "title": "極座標夾擠",
+      "prompt": "lim_{(x,y)→(0,0)} x²y/(x² + y²)",
+      "problemId": "lim-026",
+      "steps": [
+        "代入得 0/0。目標是原點，換極座標：x² + y² = r²，x²y = r³ cos²θ sin θ。",
+        "f = r³ cos²θ sin θ / r² = r cos²θ sin θ（r > 0）。",
+        "|cos²θ sin θ| ≤ 1，所以 |f| ≤ r。這個上界不含 θ。",
+        "r → 0 時 r → 0，由夾擠，極限是 0。"
+      ],
+      "answer": "0",
+      "claim": "SUB(SUB(x^2*y/(x^2+y^2), r*cos(t), x), r*sin(t), y) == r*cos(t)^2*sin(t) ;; abs(x^2*y/(x^2+y^2)) <= abs(y)"
+    }
+  ],
+  "pitfalls": [
+    "只沿一兩條路徑算出相同的值，就宣稱極限存在。",
+    "極座標化簡後，上界還含 θ（例如分母有 cos²θ），就直接讓 r → 0。",
+    "以為 (a, b) 沒有定義，極限就不存在。極限不看那一點本身。",
+    "化成 u = xy 之後忘了確認 u → 0。"
+  ],
+  "checks": [
+    {
+      "ask": "lim_{(x,y)→(2,1)} (x²y + 3) 是？",
+      "options": [
+        { "label": "7", "correct": true },
+        { "label": "5", "why": "x² 要先平方：2² · 1 + 3 = 7，不是 2 · 1 + 3。" },
+        { "label": "不存在，因為要檢查所有路徑", "why": "多項式在每一點都連續，直接代入就是極限；路徑測試是用來處理 0/0 這類可疑情況的。" }
+      ]
+    },
+    {
+      "ask": "lim_{(x,y)→(0,0)} x³/(x² + y²) = 0，哪一個理由正確？",
+      "options": [
+        { "label": "|x³/(x² + y²)| ≤ |x|，而 |x| → 0", "correct": true },
+        { "label": "代入 (0, 0) 得 0", "why": "代入得 0/0，不是 0。0/0 本身不告訴你任何事。" },
+        { "label": "沿 y = 0 得 x → 0，所以極限是 0", "why": "一條路徑只能告訴你「如果極限存在，它必須是 0」，不能證明它存在。" }
+      ]
+    },
+    {
+      "ask": "用極座標算 (x, y) → (0, 0) 的極限時，要怎麼取？",
+      "options": [
+        { "label": "r → 0，θ 可以任意變化", "correct": true },
+        { "label": "r → 0，θ 固定", "why": "θ 固定只代表沿一條射線靠近，漏掉了曲線路徑（例如 y = x²）。" },
+        { "label": "θ → 0", "why": "θ 是方向，不是離原點的距離；靠近原點的是 r。" }
+      ]
+    },
+    {
+      "ask": "lim_{(x,y)→(0,0)} (e^{x² + y²} − 1)/(x² + y²) 是？",
+      "options": [
+        { "label": "1", "correct": true },
+        { "label": "0", "why": "0/0 不是 0。令 u = x² + y² → 0⁺，(eᵘ − 1)/u → 1。" },
+        { "label": "e", "why": "標準極限 (eᵘ − 1)/u 的值是 1，跟 e 本身無關。" }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": ["multivariable", "multivariable-limit", "squeeze"],
+    "fine": ["mv-limit-direct", "mv-limit-one-variable", "mv-limit-squeeze-polar"]
+  },
+  "practice": [
+    { "id": "lim-025", "core": true, "trains": "mv-limit-one-variable" },
+    { "id": "lim-033", "core": true, "trains": "mv-limit-one-variable" },
+    { "id": "lim-026", "core": true, "trains": "mv-limit-squeeze-polar" },
+    { "id": "lim-034", "core": true, "trains": "mv-limit-squeeze-polar" },
+    { "id": "lim-031", "core": true, "trains": "mv-limit-squeeze-polar" },
+    { "id": "lim-028", "core": true, "trains": "mv-limit-one-variable", "note": "令 u = x² + y²，再有理化。" },
+    { "id": "lim-029", "trains": "mv-limit-squeeze-polar" },
+    { "id": "rel-hard-lim-008", "trains": "mv-limit-one-variable" },
+    { "id": "rel-hard-lim-007", "trains": "mv-limit-one-variable" },
+    { "id": "mob-limtrap-008", "challenge": true, "trains": "mv-limit-squeeze-polar", "note": "挑戰：令 r = √(x² + y²)，|sin| ≤ 1。" }
+  ],
+  "gaps": [
+    { "tag": "mv-limit-direct", "count": 2, "note": "R1：連續點直接代入、或因式分解約掉的二變數極限（例如 (x² − y²)/(x − y)）。" }
+  ]
+}

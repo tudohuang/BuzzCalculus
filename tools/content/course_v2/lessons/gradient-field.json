@@ -1,0 +1,139 @@
+{
+  "id": "gradient-field",
+  "title": "梯度場",
+  "readMinutes": 8,
+  "totalMinutes": 25,
+  "prerequisites": ["vector-field", "gradient", "clairaut"],
+  "next": ["scalar-line-integral"],
+  "related": ["level-curves", "conservative-fields", "potential-function"],
+  "objectives": [
+    "把一個函數 f 的梯度 ∇f 看成向量場，並說出它跟等高線的關係。",
+    "用交叉偏導數 P_y 與 Q_x 判斷一個場「不可能」是梯度場。",
+    "知道「是不是梯度場」為什麼重要：之後的線積分會因此變簡單。"
+  ],
+  "visual": "f(x, y) = x² + y² 的等高線（同心圓）上疊著 ∇f 的箭頭，箭頭處處垂直於等高線、指向外圈（較高處），等高線越密箭頭越長。切換到 F = ⟨−y, x⟩：箭頭沿著圓繞，畫面上同時顯示 P_y = −1、Q_x = 1，標出「找不到任何 f」。",
+  "concept": [
+    {
+      "heading": "① 梯度本身就是一個向量場",
+      "body": [
+        "〈梯度〉：f(x, y) 在每一點有一個梯度 ∇f = ⟨f_x, f_y⟩。每一點配一個向量，這就是一個向量場，叫做 f 的梯度場。",
+        "例：f = x² + y²，∇f = ⟨2x, 2y⟩，正好是上一課的發散場放大 2 倍。",
+        "三個變數也一樣：∇f = ⟨f_x, f_y, f_z⟩ 是空間中的向量場，箭頭垂直於等值面 f = c。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 圖像：垂直於等高線、指向上坡",
+      "body": [
+        "把 f 當成地形高度。梯度場的箭頭處處垂直於等高線（〈圖形與等高線〉），指向 f 增加的方向；等高線越密，坡越陡，箭頭越長。",
+        "所以畫梯度場有一個捷徑：先畫 f 的等高線，再畫垂直穿過它們、往高處指的箭頭。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 反過來問：給一個場，它是誰的梯度？",
+      "body": [
+        "如果 F = ⟨P, Q⟩ = ∇f，就說 F 是梯度場，f 叫做 F 的位勢函數。這是之後〈保守場〉與〈位勢函數〉的主題。",
+        "物理書常寫 F = −∇U（U 是位能，力指向位能下降的方向）。數學上通常不帶負號，兩者只差 f = −U。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 一個必要條件：交叉偏導相等",
+      "body": [
+        "若 F = ∇f，P = f_x、Q = f_y，那 P_y = f_xy、Q_x = f_yx。f 的二階偏導連續時，〈Clairaut 定理〉說兩者相等。所以：",
+        "P_y ≠ Q_x，F 一定不是梯度場。",
+        "反過來，P_y = Q_x 還不夠保證是梯度場，還要看定義域有沒有「洞」，這是〈保守場〉要處理的事。"
+      ],
+      "collapsible": false
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "算一個梯度場",
+      "prompt": "f(x, y) = x²y + y³，寫出梯度場 ∇f。",
+      "steps": [
+        "f_x：把 y 當常數，得 2xy。",
+        "f_y：把 x 當常數，得 x² + 3y²。",
+        "∇f = ⟨2xy, x² + 3y²⟩。"
+      ],
+      "answer": "⟨2xy, x² + 3y²⟩",
+      "claim": "D(x^2*y+y^3, , x) == 2*x*y ;; D(x^2*y+y^3, , y) == x^2+3*y^2"
+    },
+    {
+      "title": "垂直於等高線",
+      "prompt": "f = x² + y²。在 (1, 2) 驗證 ∇f 跟經過該點的等高線垂直。",
+      "steps": [
+        "∇f(1, 2) = ⟨2, 4⟩。",
+        "經過 (1, 2) 的等高線是圓 x² + y² = 5。圓在 (1, 2) 的切線方向跟半徑 ⟨1, 2⟩ 垂直，可以取 ⟨−2, 1⟩。",
+        "⟨2, 4⟩ · ⟨−2, 1⟩ = −4 + 4 = 0，互相垂直。⟨2, 4⟩ 指向圓外，也就是 f 變大的方向。"
+      ],
+      "answer": "點積為 0，垂直",
+      "claim": "2*(-2)+4*1 == 0"
+    },
+    {
+      "title": "不可能是梯度場",
+      "prompt": "F = ⟨y, −x⟩ 是不是某個 f 的梯度場？",
+      "steps": [
+        "P = y、Q = −x。P_y = 1，Q_x = −1。",
+        "兩者不相等。如果 F = ∇f 且 f 的二階偏導連續，必須 P_y = Q_x，矛盾。",
+        "所以 F 不是任何（二階偏導連續的）f 的梯度場。它是順時針繞圈的旋轉場。"
+      ],
+      "answer": "不是",
+      "claim": "D(y, , y) == 1 ;; D(-x, , x) == -1"
+    }
+  ],
+  "pitfalls": [
+    "把 ∇f 的兩個分量放反：第一個是 f_x。",
+    "以為梯度箭頭沿著等高線走；它是垂直穿過等高線。",
+    "看到 P_y = Q_x 就斷定是梯度場，沒看定義域。",
+    "檢查時比的是 P 與 Q 本身，而不是交叉偏導數。"
+  ],
+  "checks": [
+    {
+      "ask": "∇(xy) 是？",
+      "options": [
+        { "label": "⟨y, x⟩", "correct": true },
+        { "label": "⟨x, y⟩", "why": "f_x 是把 y 當常數對 x 微分，得 y，放在第一個分量。" },
+        { "label": "⟨1, 1⟩", "why": "xy 對 x 微分是 y，不是 1。" }
+      ]
+    },
+    {
+      "ask": "梯度場 ∇f 的箭頭跟 f 的等高線是什麼關係？",
+      "options": [
+        { "label": "垂直，指向 f 增加的一側", "correct": true },
+        { "label": "相切，沿著等高線走", "why": "沿著等高線走 f 不變，變化率是 0；梯度指的是變化最快的方向，跟等高線垂直。" },
+        { "label": "垂直，指向 f 減少的一側", "why": "梯度指向上坡。指向下坡的是 −∇f。" }
+      ]
+    },
+    {
+      "ask": "下列哪一個一定不是梯度場？",
+      "options": [
+        { "label": "⟨−y, x⟩", "correct": true },
+        { "label": "⟨y, x⟩", "why": "它是 ∇(xy)：P_y = 1 = Q_x。" },
+        { "label": "⟨2x, 2y⟩", "why": "它是 ∇(x² + y²)。" }
+      ]
+    },
+    {
+      "ask": "F = ⟨P, Q⟩ = ∇f（f 的二階偏導連續），為什麼 P_y = Q_x？",
+      "options": [
+        { "label": "P_y = f_xy、Q_x = f_yx，混合偏導相等（Clairaut）", "correct": true },
+        { "label": "因為 P = Q", "why": "P 與 Q 通常不相等（例如 ∇(x²y) = ⟨2xy, x²⟩），相等的是交叉偏導數。" },
+        { "label": "因為梯度場一定是常數場", "why": "∇(x² + y²) = ⟨2x, 2y⟩ 就不是常數。" }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": ["vector-calculus", "conservative-field", "nabla"],
+    "fine": ["gradient-field-compute", "gradient-field-level-curves", "gradient-field-cross-partials"]
+  },
+  "practice": [
+    { "id": "exam-multi-003", "core": true, "trains": "gradient-field-compute" },
+    { "id": "lec-20-m1", "core": true, "trains": "gradient-field-cross-partials" },
+    { "id": "vc-nab-006", "trains": "gradient-field-level-curves", "note": "梯度的長度就是最大的方向變化率。" }
+  ],
+  "gaps": [
+    { "tag": "gradient-field-cross-partials", "count": 3, "note": "R2：判斷某個場是不是梯度場（交叉偏導），含 P_y = Q_x 成立與不成立的例子。" },
+    { "tag": "gradient-field-level-curves", "count": 2, "note": "R2：給等高線圖，選出對應的梯度場圖。" }
+  ]
+}

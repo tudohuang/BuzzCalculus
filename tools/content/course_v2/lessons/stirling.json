@@ -1,0 +1,147 @@
+{
+  "id": "stirling",
+  "title": "Stirling 公式",
+  "readMinutes": 12,
+  "totalMinutes": 40,
+  "prerequisites": ["big-o-little-o", "asymptotic-equivalence", "ibp-log-invtrig", "riemann-sum-intuition"],
+  "next": ["stolz-cesaro"],
+  "related": ["wallis-product", "euler-maclaurin-intro"],
+  "objectives": [
+    "寫得出 n! ~ √(2πn)(n/e)ⁿ，並說清楚「~」保證的是比值 → 1，不是差 → 0。",
+    "用 ln n! = Σ ln k 與 ∫ ln x dx 的比較，說出 (n/e)ⁿ 從哪裡來。",
+    "用 Stirling 算含階乘的極限：(n!)^{1/n}/n、中央二項式係數 C(2n, n)。"
+  ],
+  "visual": "橫軸 n = 1 到 30。上圖畫比值 n!/(√(2πn)(n/e)ⁿ)，點列從 1.084 往下貼近 1；下圖畫差 n! − √(2πn)(n/e)ⁿ（對數刻度），點列一路往上衝。兩張圖並排，看出「比值 → 1」與「差 → ∞」可以同時成立。",
+  "concept": [
+    {
+      "heading": "① 公式與它的意思",
+      "body": [
+        "n → ∞ 時 n! ~ √(2πn)(n/e)ⁿ，也就是兩者的比值 → 1。",
+        "n = 10：10! = 3,628,800，右邊約 3,598,696，比值約 1.0084，相對誤差不到 1%。但差約 30,104，而且 n 越大差越大（n = 20 時差約 10¹⁶）。Stirling 是相對誤差小，不是絕對誤差小，所以只能用在乘、除、開 n 次方這類看比值的地方。"
+      ],
+      "tex": ["n!\\sim\\sqrt{2\\pi n}\\left(\\frac{n}{e}\\right)^{n}"],
+      "collapsible": false
+    },
+    {
+      "heading": "② (n/e)ⁿ 從哪裡來（直覺，不是證明）",
+      "body": [
+        "取對數，乘積變成和：ln n! = ln 1 + ln 2 + … + ln n。這是 y = ln x 在 x = 1, 2, …, n 的高度相加，很像 ∫₁ⁿ ln x dx = n ln n − n + 1。",
+        "所以 ln n! ≈ n ln n − n，取指數得 n! ≈ (n/e)ⁿ 這個量級。再用梯形法修正（端點各算一半）會多出 (1/2) ln n，也就是 √n 這個因子。",
+        "這只是直覺：它說明了 nⁿ、e^{−n}、√n 三個因子，但沒有算出常數 √(2π)，也沒有證明誤差真的趨近 0。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 怎麼用：先把階乘換掉，再化簡",
+      "body": [
+        "因為 ~ 可以在乘積與商裡替換（〈漸近等價〉），含階乘的比值可以把每個 n! 換成 √(2πn)(n/e)ⁿ，然後把 e 的次方、n 的次方各自合併。開 n 次方也可以：若 aₙ ~ bₙ，則 (aₙ/bₙ)^{1/n} → 1。",
+        "最常用的兩個結果：(n!)^{1/n} ~ n/e，以及 C(2n, n) ~ 4ⁿ/√(πn)。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "證明的骨架：常數是怎麼定出來的",
+      "body": [
+        "令 dₙ = ln n! − (n + 1/2) ln n + n。用梯形法估 ∫ₖ^{k+1} ln x dx 的誤差，可以證明 dₙ − dₙ₊₁ = O(1/n²)，而 Σ 1/n² 收斂，所以 dₙ 收斂到某個常數 C，也就是 n! ~ e^C √n (n/e)ⁿ。",
+        "常數 e^C = √(2π) 要另外決定：把這個式子代進〈Wallis 乘積〉π/2 = lim 的那個比值，就解出 e^C。更精細的展開 n! = √(2πn)(n/e)ⁿ(1 + 1/(12n) + O(1/n²)) 來自〈Euler–Maclaurin 入門〉。"
+      ],
+      "collapsible": true
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "相對誤差 vs. 絕對誤差",
+      "prompt": "比較 10! 與 √(20π)(10/e)¹⁰。",
+      "steps": [
+        "10! = 3,628,800。",
+        "√(20π) ≈ 7.927，(10/e)¹⁰ ≈ 453,999.3，相乘約 3,598,695.6。",
+        "比值 3,628,800/3,598,695.6 ≈ 1.0084；差 ≈ 30,104。",
+        "比值已經很接近 1（實際上 ≈ 1 + 1/(12 · 10)），但差一點都不小。"
+      ],
+      "answer": "比值約 1.0084，差約 30,104",
+      "claim": "SUB(sqrt(2*pi*x)*(x/e)^x, 10) > 3598695 ;; SUB(sqrt(2*pi*x)*(x/e)^x, 10) < 3598696"
+    },
+    {
+      "title": "開 n 次方",
+      "prompt": "lim_{n→∞} (n!)^{1/n}/n",
+      "problemId": "cx-hl-004",
+      "steps": [
+        "n! ~ √(2πn)(n/e)ⁿ，開 n 次方：(n!)^{1/n} 與 (2πn)^{1/(2n)} · (n/e) 的比值 → 1。",
+        "(2πn)^{1/(2n)} = exp( ln(2πn)/(2n) )，而 ln(2πn)/(2n) → 0（對數 ≪ 冪次），所以這個因子 → 1。",
+        "剩下 (n/e)/n = 1/e。"
+      ],
+      "answer": "1/e",
+      "claim": "LIM((2*pi*x)^(1/(2x))/e, inf) == 1/e"
+    },
+    {
+      "title": "中央二項式係數",
+      "prompt": "證明 C(2n, n) ~ 4ⁿ/√(πn)，並求 lim √n · C(2n, n)/4ⁿ。",
+      "problemId": "dm-seq-004",
+      "steps": [
+        "C(2n, n) = (2n)!/(n!)²。分子換成 √(4πn)(2n/e)^{2n}，分母換成 (√(2πn)(n/e)ⁿ)² = 2πn (n/e)^{2n}。",
+        "根號部分：√(4πn)/(2πn) = 1/√(πn)。",
+        "次方部分：(2n/e)^{2n}/(n/e)^{2n} = 2^{2n} = 4ⁿ。",
+        "所以 C(2n, n) ~ 4ⁿ/√(πn)，√n · C(2n, n)/4ⁿ → 1/√π。"
+      ],
+      "answer": "1/√π",
+      "claim": "sqrt(4*pi*x)/(2*pi*x) == 1/sqrt(pi*x) ;; (2x/e)^(2x)/((x/e)^x)^2 == 4^x"
+    }
+  ],
+  "pitfalls": [
+    "把 Stirling 用在差上，例如以為 n! − √(2πn)(n/e)ⁿ → 0。",
+    "漏掉 √(2πn) 只寫 (n/e)ⁿ：開 n 次方時沒差，但算比值（例如 C(2n, n)）時答案會錯一個 √n 的倍數。",
+    "把 (n/e)ⁿ 寫成 nⁿ/e，e 也要 n 次方。",
+    "C(2n, n) 的分母 (n!)² 只換一次。"
+  ],
+  "checks": [
+    {
+      "ask": "Stirling 公式 n! ~ √(2πn)(n/e)ⁿ 保證的是哪一件事？",
+      "options": [
+        { "label": "n!/(√(2πn)(n/e)ⁿ) → 1", "correct": true },
+        { "label": "n! − √(2πn)(n/e)ⁿ → 0", "why": "差其實越來越大：n = 10 時已經約 30,104。~ 只保證比值 → 1。" },
+        { "label": "n 夠大時 n! = √(2πn)(n/e)ⁿ", "why": "右邊從來不是整數，兩者永遠不相等，只是比值越來越接近 1。" }
+      ]
+    },
+    {
+      "ask": "lim_{n→∞} (n!)^{1/n}/n 是？",
+      "options": [
+        { "label": "1/e", "correct": true },
+        { "label": "1", "why": "(n!)^{1/n} ~ n/e，不是 ~ n；e^{−n} 開 n 次方剩 1/e。" },
+        { "label": "0", "why": "n! 比 nⁿ 小得多是真的，但開 n 次方之後差距只剩常數倍 1/e。" }
+      ]
+    },
+    {
+      "ask": "ln(n!) 的主項是？",
+      "options": [
+        { "label": "n ln n", "correct": true },
+        { "label": "n", "why": "後一半的 n/2 項每一項都至少 ln(n/2)，總和至少 (n/2) ln(n/2)，比 n 大得多。" },
+        { "label": "n²", "why": "每一項 ln k ≤ ln n，n 項加起來最多 n ln n，到不了 n²。" }
+      ]
+    },
+    {
+      "ask": "C(2n, n) 漸近等價於？",
+      "options": [
+        { "label": "4ⁿ/√(πn)", "correct": true },
+        { "label": "4ⁿ", "why": "所有 C(2n, k) 加起來才是 4ⁿ；中間這一項只佔其中約 1/√(πn) 的比例。" },
+        { "label": "2ⁿ", "why": "太小了：C(2n, n) 是 2n + 1 個加起來等於 4ⁿ 的數裡最大的，至少 4ⁿ/(2n + 1)。" }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": ["stirling", "asymptotics", "central-binomial"],
+    "fine": ["stirling-ratio", "stirling-nth-root", "stirling-central-binomial", "stirling-log-factorial"]
+  },
+  "practice": [
+    { "id": "lm-nr-005", "core": true, "trains": "stirling-ratio" },
+    { "id": "cx-hl-004", "core": true, "trains": "stirling-nth-root" },
+    { "id": "lm-nr-004", "core": true, "trains": "stirling-nth-root" },
+    { "id": "world-035", "core": true, "trains": "stirling-nth-root" },
+    { "id": "fd-limx-609", "core": true, "trains": "stirling-ratio" },
+    { "id": "dm-seq-004", "core": true, "trains": "stirling-central-binomial" },
+    { "id": "world-067", "trains": "stirling-nth-root" },
+    { "id": "world-074", "challenge": true, "trains": "stirling-central-binomial", "note": "挑戰：倒數形式，答案是 √π；√n 的位置要看清楚。" }
+  ],
+  "gaps": [
+    { "tag": "stirling-log-factorial", "count": 2, "note": "用 ∫ ln x dx 夾 ln n! 的估計題（例如 lim ln(n!)/(n ln n)），R3，要已驗算。lm-st-005 是這類題但尚未驗算。" }
+  ]
+}

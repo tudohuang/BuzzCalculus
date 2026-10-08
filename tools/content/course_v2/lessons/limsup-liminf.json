@@ -1,0 +1,146 @@
+{
+  "id": "limsup-liminf",
+  "title": "上極限與下極限",
+  "readMinutes": 13,
+  "totalMinutes": 40,
+  "prerequisites": ["bolzano-weierstrass", "sup-inf", "monotone-convergence-proof"],
+  "next": ["epsilon-delta-definition"],
+  "related": ["root-test", "radius-of-convergence"],
+  "objectives": [
+    "用尾巴的上確界 sₙ = sup{a_k : k ≥ n} 定義 limsup，說得出為什麼這個極限一定存在（有界時）。",
+    "分清楚 sup S 與 limsup：前者看所有項，後者只看「最後」的行為。",
+    "會用「最大／最小的子數列極限」算 limsup、liminf，並用 limsup = liminf 判斷收斂。"
+  ],
+  "visual": "畫出 aₙ = (−1)ⁿ + 1/n 的散點，再疊一條階梯線 sₙ = sup{a_k : k ≥ n}：它從 3/2 開始一路往下走，貼著偶數項的上緣降到 1；另一條 tₙ = inf{a_k : k ≥ n} 從下方升到 −1。兩條線之間的縫就是數列「最後還在振盪的幅度」。",
+  "concept": [
+    {
+      "heading": "① 不收斂的數列，也有「最後的天花板」",
+      "body": [
+        "(−1)ⁿ + 1/n 不收斂，但它最後在 1 與 −1 附近來回跳。上極限 limsup 就是在描述「最後上緣在哪裡」，下極限 liminf 描述「最後下緣在哪裡」。",
+        "它跟 sup 不一樣：這個數列的 sup 是 a₂ = 3/2，但那只是前面某一項偶然很大；往後看，數列再也不會超過 1 太多。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 定義：尾巴的上確界，再取極限",
+      "body": [
+        "設 (aₙ) 有界。對每個 n，令 sₙ = sup{a_k : k ≥ n}（第 n 項以後的上確界）、tₙ = inf{a_k : k ≥ n}。",
+        "n 變大時取 sup 的集合變小，所以 sₙ 遞減，而且有下界；由單調收斂定理，sₙ 收斂。同理 tₙ 遞增有上界。定義",
+        "若數列沒有上界，約定 limsup aₙ = +∞；沒有下界時 liminf aₙ = −∞。"
+      ],
+      "tex": ["\\limsup_{n\\to\\infty}a_n=\\lim_{n\\to\\infty}\\,\\sup_{k\\ge n}a_k,\\qquad \\liminf_{n\\to\\infty}a_n=\\lim_{n\\to\\infty}\\,\\inf_{k\\ge n}a_k"],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 實際在用的兩個事實",
+      "body": [
+        "(a) 有界時，limsup 是所有子數列極限中最大的那一個，liminf 是最小的那一個。所以實際計算常常是：找出各個子數列的極限，取最大與最小。",
+        "(b) liminf aₙ ≤ limsup aₙ，而且 aₙ 收斂若且唯若兩者相等（都是實數），這時共同的值就是極限。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "證明：limsup 是最大的子數列極限",
+      "body": [
+        "記 L = lim sₙ。上界：若 a_{n_k} → ℓ，則 a_{n_k} ≤ s_{n_k}（a_{n_k} 屬於第 n_k 項以後的那個集合）。s_{n_k} 是 (sₙ) 的子數列，→ L；取極限得 ℓ ≤ L。",
+        "取得到：由 ε 判準取 n₁ 使 a_{n₁} > s₁ − 1。有了 n_k，看 s_{n_k + 1} = sup{a_j : j > n_k}，取 n_{k+1} > n_k 使 a_{n_{k+1}} > s_{n_k+1} − 1/(k + 1)。又 a_{n_{k+1}} ≤ s_{n_k+1}。夾在中間的兩端都 → L（s_{n_k+1} 是 (sₙ) 的子數列），由夾擠 a_{n_k} → L。",
+        "(b) 的證明：若 limsup = liminf = L，由 tₙ ≤ aₙ ≤ sₙ 夾擠得 aₙ → L。反之若 aₙ → L，每個子數列都 → L，最大與最小的子數列極限都是 L。"
+      ],
+      "collapsible": true
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "上確界取不到，但每條尾巴都一樣",
+      "prompt": "求 limsup 與 liminf：aₙ = (−1)ⁿ n/(n + 1)。",
+      "problemId": "an-ls-001",
+      "steps": [
+        "偶數項 2k/(2k + 1) < 1，遞增 → 1；奇數項 −(2k − 1)/(2k)，遞減 → −1。",
+        "尾巴的上確界：任何 n 之後都還有偶數項，而偶數項任意靠近 1、但都小於 1，所以 sₙ = 1 對每個 n 都成立。limsup = 1。",
+        "同理 tₙ = −1，liminf = −1。兩者不相等，數列發散。"
+      ],
+      "answer": "limsup = 1，liminf = −1",
+      "claim": "(2n)/(2n+1) < 1 ;; LIM((2n)/(2n+1), inf) == 1 ;; LIM(-(2n-1)/(2n), inf) == -1"
+    },
+    {
+      "title": "sup 與 limsup 不一樣",
+      "prompt": "aₙ = (−1)ⁿ + 1/n。求 sup{aₙ}、limsup aₙ、liminf aₙ。",
+      "problemId": "an-ls-002",
+      "steps": [
+        "前幾項：0, 3/2, −2/3, 5/4, −4/5, 7/6, …。偶數項 1 + 1/n 遞減，奇數項 −1 + 1/n 也遞減。",
+        "sup：偶數項最大的是 a₂ = 3/2，奇數項都 ≤ 0，所以 sup = 3/2。",
+        "子數列極限：偶數項 1 + 1/(2k) → 1，奇數項 −1 + 1/(2k − 1) → −1。每個子數列要嘛有無限多個偶數項、要嘛有無限多個奇數項，所以子數列極限只可能是 1 或 −1。limsup = 1，liminf = −1。",
+        "sup = 3/2 > limsup = 1：sup 被 a₂ 這一項拉高，limsup 不在乎前面有限多項。"
+      ],
+      "answer": "sup = 3/2，limsup = 1，liminf = −1",
+      "claim": "SUB((-1)^n+1/n, 2) == 3/2 ;; (-1)^n+1/n <= 3/2 ;; LIM(1+1/(2n), inf) == 1 ;; LIM(-1+1/(2n-1), inf) == -1"
+    },
+    {
+      "title": "limsup 的用處：根值判別",
+      "prompt": "冪級數 Σ aₙxⁿ，aₙ = 2ⁿ（n 偶數）、3ⁿ（n 奇數）。求收斂半徑。",
+      "problemId": "an-ls-004",
+      "steps": [
+        "|aₙ|^{1/n} 在 n 偶數時是 2、n 奇數時是 3，沒有極限，所以「lim |aₙ|^{1/n}」用不了。",
+        "收斂半徑的完整公式是 1/R = limsup |aₙ|^{1/n}。子數列極限只有 2 與 3，limsup = 3。",
+        "R = 1/3。比值 a_{n+1}/aₙ 在 n 偶數時是 3^{n+1}/2ⁿ（→ ∞）、n 奇數時是 2^{n+1}/3ⁿ（→ 0），比值判別完全失效。"
+      ],
+      "answer": "R = 1/3",
+      "claim": "(3^n)^(1/n) == 3 ;; (2^n)^(1/n) == 2"
+    }
+  ],
+  "pitfalls": [
+    "把 limsup 算成 sup。前面有限多項可以把 sup 拉高，limsup 完全不受影響。",
+    "以為 limsup 一定是數列裡的某一項。(−1)ⁿ n/(n + 1) 的 limsup = 1，沒有任何一項等於 1。",
+    "sₙ 寫成 sup{aₙ, aₙ₊₁}（只看兩項）。sₙ 是整條尾巴的上確界。",
+    "limsup = liminf 時忘了要求是實數：aₙ = n 的兩者都是 +∞，但數列不收斂（發散到 ∞）。"
+  ],
+  "checks": [
+    {
+      "ask": "aₙ = (−1)ⁿ + 1/n。limsup aₙ 是？",
+      "options": [
+        { "label": "1", "correct": true },
+        { "label": "3/2", "why": "那是 sup，被 a₂ 一項拉高。limsup 看的是最後的上緣：偶數項 1 + 1/n → 1。" },
+        { "label": "不存在，因為數列發散", "why": "有界數列的 limsup 一定存在（sₙ 遞減有下界）。發散只表示 limsup ≠ liminf。" }
+      ]
+    },
+    {
+      "ask": "為什麼 sₙ = sup{a_k : k ≥ n} 是遞減的？",
+      "options": [
+        { "label": "n 變大時，取 sup 的集合變小", "correct": true },
+        { "label": "因為 aₙ 遞減", "why": "aₙ 不必遞減；(−1)ⁿ + 1/n 就上下跳。sₙ 遞減是因為集合 {a_k : k ≥ n + 1} ⊆ {a_k : k ≥ n}。" },
+        { "label": "因為 sₙ 收斂", "why": "倒果為因：是先有遞減且有下界，才由單調收斂定理得到收斂。" }
+      ]
+    },
+    {
+      "ask": "有界數列 (aₙ) 收斂的充要條件是？",
+      "options": [
+        { "label": "limsup aₙ = liminf aₙ", "correct": true },
+        { "label": "limsup aₙ 存在", "why": "有界時 limsup 永遠存在，(−1)ⁿ 也有 limsup = 1。要上下兩個相等才收斂。" },
+        { "label": "sup = inf", "why": "sup = inf 表示數列是常數，太強了；1/n 收斂但 sup = 1、inf = 0。" }
+      ]
+    },
+    {
+      "ask": "aₙ = 2ⁿ（n 偶）、3ⁿ（n 奇），limsup |aₙ|^{1/n} 是？",
+      "options": [
+        { "label": "3", "correct": true },
+        { "label": "2", "why": "那是 liminf。limsup 取最大的子數列極限，奇數項給 3。" },
+        { "label": "5/2", "why": "limsup 不是把兩個子數列極限平均；它是最大的那一個。" }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": ["limsup", "sequence"],
+    "fine": ["limsup-tail-sup", "limsup-vs-sup", "limsup-subsequence-limits", "limsup-root-test-radius"]
+  },
+  "practice": [
+    { "id": "an-ls-001", "core": true, "trains": "limsup-subsequence-limits" },
+    { "id": "an-ls-002", "core": true, "trains": "limsup-vs-sup" },
+    { "id": "an-ls-004", "core": true, "trains": "limsup-root-test-radius" },
+    { "id": "an-sup-002", "trains": "limsup-vs-sup", "note": "對照：這題問的是 inf（含前面的項），不是 liminf。" },
+    { "id": "an-ls-003", "challenge": true, "trains": "limsup-subsequence-limits", "note": "挑戰：sin n 的子數列極限填滿 [−1, 1]（因為 π 是無理數），limsup = 1。" }
+  ],
+  "gaps": [
+    { "tag": "limsup-tail-sup", "count": 2, "note": "給數列求 sₙ 的公式（例如 sₙ 對 n 奇偶的寫法），再求 lim sₙ。" },
+    { "tag": "limsup-vs-sup", "count": 2, "note": "同一個數列同時問 sup 與 limsup、inf 與 liminf，兩者不同的題。" }
+  ]
+}

@@ -1,0 +1,158 @@
+{
+  "id": "derivative-power-rules",
+  "title": "常數、冪次、線性",
+  "readMinutes": 8,
+  "totalMinutes": 30,
+  "prerequisites": ["derivative-from-definition"],
+  "next": ["derivative-trig"],
+  "related": ["product-rule", "quotient-rule", "logarithmic-differentiation", "limit-laws-direct"],
+  "objectives": [
+    "用冪次法則 (xⁿ)′ = nxⁿ⁻¹ 微分任何次方，包括負數與分數次方。",
+    "用常數倍與加減的規則，一項一項微分多項式。",
+    "先把 1/x³、√x、(x² + 1)/x 改寫成次方的和，再微分。"
+  ],
+  "visual": null,
+  "concept": [
+    {
+      "heading": "① 常數與 x",
+      "body": [
+        "常數函數 f(x) = c 的圖形是水平線，每一點斜率都是 0：(c)′ = 0。用定義：(c − c)/h = 0。",
+        "f(x) = x 的圖形是斜率 1 的直線：(x)′ = 1。用定義：((x + h) − x)/h = 1。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 冪次法則",
+      "body": [
+        "上一課算出 x² → 2x、x³ → 3x²、x^{−1} → −x^{−2}、x^{1/2} → (1/2)x^{−1/2}。規律是：次方搬到前面當係數，次方減 1。",
+        "這對任何實數次方 n 都成立（n 不是整數時要 x > 0）。正整數的證明在下面；負整數可以用〈除法法則〉證，任意實數次方在〈對數微分〉證。"
+      ],
+      "tex": ["\\frac{d}{dx}x^n=n\\,x^{n-1}"],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 線性：常數倍與加減",
+      "body": [
+        "(c·f)′ = c·f′：常數倍留著不動。(f ± g)′ = f′ ± g′：加減可以一項一項微。",
+        "原因是差商也能這樣拆：(c·f(x + h) − c·f(x))/h = c·(f(x + h) − f(x))/h，取極限時常數提出來（極限定律，〈直接代入與極限定律〉）。",
+        "所以多項式可以逐項微分：(x⁵ − 3x² + 7)′ = 5x⁴ − 6x + 0。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 先改寫成次方，再微分",
+      "body": [
+        "冪次法則只認 xⁿ 的樣子，所以先改寫：1/x³ = x^{−3}，√x = x^{1/2}，∛(x²) = x^{2/3}，(x² + 1)/x = x + x^{−1}。",
+        "但乘法、除法不能逐項拆：(x² · x³)′ 不是 2x · 3x²。能展開或約分就先化成次方的和；不能的，要等〈乘法法則〉與〈除法法則〉。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "正整數 n 的證明",
+      "body": [
+        "由二項式定理，(x + h)ⁿ = xⁿ + n xⁿ⁻¹ h + C(n, 2) xⁿ⁻² h² + … + hⁿ。",
+        "減掉 xⁿ，剩下的每一項至少有一個 h；除以 h（h ≠ 0）：n xⁿ⁻¹ + C(n, 2) xⁿ⁻² h + … + hⁿ⁻¹。",
+        "第一項不含 h；其餘每一項都含 h 的一次方以上，是有限多項，h → 0 時各自 → 0。所以極限是 n xⁿ⁻¹。"
+      ],
+      "collapsible": true
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "多項式逐項微分",
+      "prompt": "d/dx (x⁵ − 3x² + 7)",
+      "problemId": "der-001",
+      "steps": [
+        "加減逐項：x⁵、−3x²、7 各自微分。",
+        "(x⁵)′ = 5x⁴。",
+        "(−3x²)′ = −3 · 2x = −6x（常數倍留著）。",
+        "(7)′ = 0。合起來 5x⁴ − 6x。"
+      ],
+      "answer": "5x⁴ − 6x",
+      "claim": "D(x^5-3x^2+7) == 5x^4-6x"
+    },
+    {
+      "title": "負次方與分數次方",
+      "prompt": "d/dx (2/x³ + 4√x)",
+      "steps": [
+        "改寫：2/x³ = 2x^{−3}，4√x = 4x^{1/2}。",
+        "(2x^{−3})′ = 2 · (−3)x^{−4} = −6x^{−4}。次方是 −3 − 1 = −4，不是 −2。",
+        "(4x^{1/2})′ = 4 · (1/2)x^{−1/2} = 2x^{−1/2}。",
+        "寫回分式：−6/x⁴ + 2/√x（x > 0）。"
+      ],
+      "answer": "−6/x⁴ + 2/√x",
+      "claim": "D(2/x^3+4*sqrt(x)) == -6/x^4+2/sqrt(x)"
+    },
+    {
+      "title": "先約分，再求切線斜率",
+      "prompt": "f(x) = (x² + 1)/x，求 f′(2)。",
+      "steps": [
+        "分子分母不能各自微分。先拆開：(x² + 1)/x = x + 1/x = x + x^{−1}。",
+        "f′(x) = 1 + (−1)x^{−2} = 1 − 1/x²。",
+        "f′(2) = 1 − 1/4 = 3/4。"
+      ],
+      "answer": "3/4",
+      "claim": "D((x^2+1)/x, 2) == 3/4 ;; D(x+1/x) == 1-1/x^2"
+    }
+  ],
+  "pitfalls": [
+    "(1/x³)′ 寫成 1/(3x²)：要先改成 x^{−3}，得 −3x^{−4}。",
+    "負次方減 1 往錯的方向：x^{−3} 的次方減 1 是 −4。",
+    "常數的導數寫成常數本身，例如 (7)′ = 7、(π²)′ = 2π。",
+    "分式的分子分母各自微分：((x² + 1)/x)′ 寫成 2x/1。",
+    "√x 微分成 √x/2 或 1/√x，漏了 1/2 或次方減 1。"
+  ],
+  "checks": [
+    {
+      "ask": "d/dx (4x³) 是？",
+      "options": [
+        { "label": "12x²", "correct": true },
+        { "label": "4x²", "why": "次方 3 要搬到前面乘：4 · 3 = 12。" },
+        { "label": "12x³", "why": "次方要減 1：x³ 微分後是 x²。" }
+      ]
+    },
+    {
+      "ask": "d/dx (1/x²) 是？",
+      "options": [
+        { "label": "−2/x³", "correct": true },
+        { "label": "1/(2x)", "why": "把分母當成 x² 去微分是錯的。先改寫 x^{−2}，得 −2x^{−3}。" },
+        { "label": "−2/x", "why": "x^{−2} 的次方減 1 是 −3，不是 −1。" }
+      ]
+    },
+    {
+      "ask": "d/dx (π³ + x) 是？",
+      "options": [
+        { "label": "1", "correct": true },
+        { "label": "3π² + 1", "why": "π³ 是常數（約 31），不是 x 的函數，導數是 0。" },
+        { "label": "π³", "why": "常數的導數是 0，不是它自己；x 的導數才是 1。" }
+      ]
+    },
+    {
+      "ask": "f(x) = x√x，f′(x) 是？",
+      "options": [
+        { "label": "(3/2)√x", "correct": true },
+        { "label": "1/(2√x)", "why": "只微了 √x，x 那個因子不能丟。先合併 x · x^{1/2} = x^{3/2}。" },
+        { "label": "(3/2)x^{3/2}", "why": "次方搬到前面之後要減 1：3/2 − 1 = 1/2，得 (3/2)x^{1/2}。" }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": ["power-rule", "basic-derivative"],
+    "fine": ["power-rule-integer", "power-rule-rewrite-exponent", "power-rule-linearity", "power-rule-evaluate-slope"]
+  },
+  "practice": [
+    { "id": "tmpl-der-simple-power-001", "core": true, "trains": "power-rule-integer" },
+    { "id": "fd-der-002", "core": true, "trains": "power-rule-linearity" },
+    { "id": "der-001", "core": true, "trains": "power-rule-linearity" },
+    { "id": "der-004", "core": true, "trains": "power-rule-rewrite-exponent" },
+    { "id": "fd-der-010", "core": true, "trains": "power-rule-rewrite-exponent" },
+    { "id": "cx-der-001", "core": true, "trains": "power-rule-evaluate-slope" },
+    { "id": "tb-tan-002", "trains": "power-rule-evaluate-slope" },
+    { "id": "rel-basic-010", "trains": "power-rule-rewrite-exponent" },
+    { "id": "td-der-002", "trains": "power-rule-linearity" },
+    { "id": "db-tan-001", "trains": "power-rule-evaluate-slope" }
+  ],
+  "gaps": [
+    { "tag": "power-rule-rewrite-exponent", "count": 3, "note": "R1–R2：1/x³、∛(x²)、x√x、(x³ + 2)/x² 這類要先改寫成次方和的題；題庫只有 √x 與 1/x。" }
+  ]
+}

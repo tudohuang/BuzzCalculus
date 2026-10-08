@@ -1,0 +1,260 @@
+{
+  "id": "taylor-error",
+  "title": "Taylor 誤差",
+  "readMinutes": 10,
+  "totalMinutes": 40,
+  "prerequisites": [
+    "taylor-polynomial",
+    "mean-value-theorem"
+  ],
+  "next": [
+    "taylor-limits"
+  ],
+  "related": [
+    "rolle-theorem",
+    "alternating-series-test",
+    "taylor-series",
+    "sequence-limit"
+  ],
+  "objectives": [
+    "寫出 Lagrange 餘項 Rₙ(x) = f⁽ⁿ⁺¹⁾(c)(x − a)ⁿ⁺¹/(n + 1)!，知道 c 在 a 與 x 之間、但不知道確切位置。",
+    "用 Taylor 不等式 |Rₙ(x)| ≤ M|x − a|ⁿ⁺¹/(n + 1)! 估計誤差，並正確選 M。",
+    "反過來求「要幾階才夠準」，以及用 Rₙ → 0 證明 eˣ 等於自己的級數。"
+  ],
+  "visual": "上方畫 sin x 與 T₃(x) = x − x³/6，下方畫兩者的差 |sin x − T₃(x)| 的曲線，再畫一條上界曲線 x⁵/120。拖動 x：誤差曲線永遠躲在上界曲線下面，在 x = 1 處讀數是 0.0081 對 0.0083。旁邊另一條較鬆的上界 sin(1)·x⁴/24 也畫出來，在 x = 1 是 0.035。",
+  "concept": [
+    {
+      "heading": "① 誤差長什麼樣子",
+      "body": [
+        "Rₙ(x) = f(x) − Tₙ(x)。Taylor 定理（Lagrange 形式）：若 f 在 a 與 x 之間有 n + 1 階導數，則存在某個 c 介於 a 與 x 之間，使 Rₙ(x) = f⁽ⁿ⁺¹⁾(c)(x − a)ⁿ⁺¹/(n + 1)!。",
+        "它長得就像 Taylor 多項式的「下一項」，只是導數不是在 a 取值，而是在某個不知道確切位置的 c。n = 0 時這就是〈均值定理〉：f(x) − f(a) = f′(c)(x − a)。"
+      ],
+      "tex": [
+        "R_n(x)=\\frac{f^{(n+1)}(c)}{(n+1)!}(x-a)^{n+1}"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② Taylor 不等式：把 c 換成最壞情況",
+      "body": [
+        "不知道 c 在哪，就用最壞的情況：若在 a 與 x 之間 |f⁽ⁿ⁺¹⁾| ≤ M，則 |Rₙ(x)| ≤ M|x − a|ⁿ⁺¹/(n + 1)!。",
+        "M 要涵蓋整段區間，不能只看中心 a。M 不必是最小的上界，取一個好算的也可以（例如 |sin| ≤ 1、e^c < 3），代價是估計比較鬆。",
+        "這是「保證不會更差」的上界，不是誤差本身；實際誤差通常小一些。"
+      ],
+      "tex": [
+        "\\lvert R_n(x)\\rvert\\le \\frac{M\\,\\lvert x-a\\rvert^{n+1}}{(n+1)!}"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 兩個常用的小技巧",
+      "body": [
+        "sin x 的 T₃ 和 T₄ 是同一個多項式（x⁴ 的係數是 0），所以可以把它當 T₄，用五階導數估誤差，得到更緊的上界（範例 3）。",
+        "如果代入後的級數是交錯的、各項遞減到 0，也可以直接用〈交錯級數判別〉的誤差：不超過第一個沒取的項。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 為什麼 eˣ 等於自己的級數",
+      "body": [
+        "固定 x。eˣ 的 n + 1 階導數是 eᶜ，c 在 0 與 x 之間，所以 |eᶜ| ≤ e^{|x|}。|Rₙ(x)| ≤ e^{|x|} |x|ⁿ⁺¹/(n + 1)!。階乘長得比任何 |x|ⁿ 快（〈數列與數列極限〉），所以 Rₙ(x) → 0，eˣ 在每一個 x 都等於它的 Maclaurin 級數。sin、cos 同理，M 取 1。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "⑤ Lagrange 餘項的證明",
+      "body": [
+        "固定 x ≠ a。對 t 定義 g(t) = f(x) − Σ_{k=0}^{n} f⁽ᵏ⁾(t)(x − t)ᵏ/k! − K(x − t)ⁿ⁺¹，選常數 K 使 g(a) = 0；而 g(x) = f(x) − f(x) = 0 自動成立。由〈Rolle 定理〉，a 與 x 之間有 c 使 g′(c) = 0。",
+        "對 t 微分時，Σ 那一串相鄰兩項會互相抵銷，只剩 g′(t) = −f⁽ⁿ⁺¹⁾(t)(x − t)ⁿ/n! + K(n + 1)(x − t)ⁿ。g′(c) = 0 且 x − c ≠ 0，得 K = f⁽ⁿ⁺¹⁾(c)/(n + 1)!。再由 g(a) = 0，Rₙ(x) = f(x) − Tₙ(x) = K(x − a)ⁿ⁺¹，就是所要的式子。"
+      ],
+      "collapsible": true
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "要幾階才夠準",
+      "prompt": "用 eˣ 的 n 次 Maclaurin 多項式 Tₙ(1) 近似 e。已知 e < 3，用 |Rₙ(1)| ≤ 3/(n + 1)! 求誤差小於 10⁻³ 的最小 n。",
+      "problemId": "lec-15-q4d",
+      "steps": [
+        "M：n + 1 階導數是 eᶜ，0 < c < 1，eᶜ < e < 3，所以 |Rₙ(1)| ≤ 3 · 1ⁿ⁺¹/(n + 1)!。",
+        "要 3/(n + 1)! < 0.001，即 (n + 1)! > 3000。6! = 720 不夠，7! = 5040 夠。",
+        "n + 1 = 7，n = 6。實際誤差 e − T₆(1) ≈ 0.00023，確實小於上界 3/5040 ≈ 0.0006。"
+      ],
+      "answer": "n = 6",
+      "claim": "3/720 > 0.001 ;; 3/5040 < 0.001 ;; abs(e - (1+1+1/2+1/6+1/24+1/120+1/720)) < 3/5040"
+    },
+    {
+      "title": "M 取區間上的最大值",
+      "prompt": "用 √x 在 a = 4 的二次 Taylor 多項式估計 √4.1，M 取 |f‴| 在 [4, 4.1] 的最大值，求誤差上界。",
+      "problemId": "lec-15-q1c",
+      "steps": [
+        "f‴(x) = (3/8)x^{−5/2}，在 [4, 4.1] 上遞減，最大值在 x = 4：(3/8)/32 = 3/256。",
+        "|R₂(4.1)| ≤ (3/256)(0.1)³/3! = 1/512000 ≈ 1.95 × 10⁻⁶。",
+        "對照〈Taylor 多項式〉的估計值 2.02484375：實際誤差約 1.92 × 10⁻⁶，在上界之內。"
+      ],
+      "answer": "1/512000",
+      "claim": "(3/8)*4^(-5/2) == 3/256 ;; (3/256)*0.1^3/6 == 1/512000 ;; abs(sqrt(4.1) - 2.02484375) < 1/512000"
+    },
+    {
+      "title": "多用一階，上界更緊",
+      "prompt": "用 x − x³/6 近似 sin 1，估計誤差。",
+      "steps": [
+        "當成 T₃：f⁽⁴⁾ = sin，在 [0, 1] 上最大是 sin 1，上界 sin 1/4! ≈ 0.035。",
+        "當成 T₄（x⁴ 的係數是 0，T₃ = T₄）：f⁽⁵⁾ = cos，|cos| ≤ 1，上界 1/5! = 1/120 ≈ 0.0083。",
+        "實際誤差 sin 1 − 5/6 ≈ 0.0081，第二個上界緊得多。"
+      ],
+      "answer": "誤差 ≤ 1/120",
+      "claim": "abs(sin(1) - 5/6) < sin(1)/24 ;; abs(sin(1) - 5/6) < 1/120"
+    }
+  ],
+  "pitfalls": [
+    "階數差一：Tₙ 的誤差用的是第 n + 1 階導數、除以 (n + 1)!。",
+    "M 只在中心 a 取值，沒有涵蓋到 x 的整段區間。",
+    "把上界當成實際誤差。",
+    "求「最小 n」時用了 ≤ 而題目要 <，或只試了一個 n 就停。"
+  ],
+  "checks": [
+    {
+      "ask": "Tₙ 的 Lagrange 餘項是？",
+      "options": [
+        {
+          "label": "f⁽ⁿ⁺¹⁾(c)(x − a)ⁿ⁺¹/(n + 1)!，c 在 a 與 x 之間",
+          "correct": true
+        },
+        {
+          "label": "f⁽ⁿ⁺¹⁾(a)(x − a)ⁿ⁺¹/(n + 1)!",
+          "why": "那只是 Taylor 級數的下一項；餘項的導數是在某個未知的 c 取值。"
+        },
+        {
+          "label": "f⁽ⁿ⁾(c)(x − a)ⁿ/n!",
+          "why": "階數少了一：Tₙ 已經用到 n 階，誤差由第 n + 1 階決定。"
+        }
+      ]
+    },
+    {
+      "ask": "估計 Tₙ(x) 的誤差時，M 應該是？",
+      "options": [
+        {
+          "label": "|f⁽ⁿ⁺¹⁾| 在 a 與 x 之間整段的一個上界",
+          "correct": true
+        },
+        {
+          "label": "|f⁽ⁿ⁺¹⁾(a)|",
+          "why": "c 不一定是 a；M 要蓋住 c 可能落在的整段區間。"
+        },
+        {
+          "label": "|f(x)| 的最大值",
+          "why": "餘項裡的是第 n + 1 階導數，不是函數本身。"
+        }
+      ]
+    },
+    {
+      "ask": "|Rₙ(1)| ≤ 3/(n + 1)!，要小於 10⁻³，最小的 n 是？",
+      "options": [
+        {
+          "label": "6",
+          "correct": true
+        },
+        {
+          "label": "5",
+          "why": "n = 5 時上界是 3/6! = 3/720 ≈ 0.0042，還大於 0.001。"
+        },
+        {
+          "label": "7",
+          "why": "n = 6 時 3/7! ≈ 0.0006 已經 < 0.001，7 不是最小。"
+        }
+      ]
+    },
+    {
+      "ask": "Taylor 不等式給出的上界跟實際誤差的關係是？",
+      "options": [
+        {
+          "label": "實際誤差 ≤ 上界，通常小一些",
+          "correct": true
+        },
+        {
+          "label": "兩者相等",
+          "why": "上界是把 c 換成最壞情況得到的，一般會比實際誤差大，例如 sin 1 的 0.035 對 0.0081。"
+        },
+        {
+          "label": "實際誤差可能比上界大",
+          "why": "那就不叫上界了；只要 M 真的蓋住整段區間，實際誤差一定不超過它。"
+        }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": [
+      "error-bound",
+      "lagrange-remainder",
+      "taylor"
+    ],
+    "fine": [
+      "taylor-error-lagrange",
+      "taylor-error-choose-m",
+      "taylor-error-find-n"
+    ]
+  },
+  "practice": [
+    {
+      "id": "tr-bnd-001",
+      "core": true,
+      "trains": "taylor-error-lagrange"
+    },
+    {
+      "id": "tr-bnd-003",
+      "core": true,
+      "trains": "taylor-error-choose-m"
+    },
+    {
+      "id": "lec-15-q1c",
+      "core": true,
+      "trains": "taylor-error-choose-m"
+    },
+    {
+      "id": "lec-15-q4d",
+      "core": true,
+      "trains": "taylor-error-find-n"
+    },
+    {
+      "id": "tr-err-001",
+      "core": true,
+      "trains": "taylor-error-lagrange"
+    },
+    {
+      "id": "tr-bnd-002",
+      "trains": "taylor-error-lagrange"
+    },
+    {
+      "id": "tr-bnd-005",
+      "trains": "taylor-error-choose-m"
+    },
+    {
+      "id": "tr-err-002",
+      "trains": "taylor-error-lagrange"
+    },
+    {
+      "id": "tr-num-005",
+      "trains": "taylor-error-find-n"
+    },
+    {
+      "id": "tr-num-001",
+      "trains": "taylor-error-find-n"
+    },
+    {
+      "id": "tr-bnd-009",
+      "trains": "taylor-error-choose-m"
+    },
+    {
+      "id": "lec-15-q3b",
+      "trains": "taylor-error-find-n"
+    },
+    {
+      "id": "tr-num-003",
+      "challenge": true,
+      "trains": "taylor-error-find-n",
+      "note": "挑戰：sin x 的多項式只有奇次項，要注意 Tₙ 與 Tₙ₊₁ 相同時可以用更高一階的導數估計。"
+    }
+  ],
+  "gaps": []
+}

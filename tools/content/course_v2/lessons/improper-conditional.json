@@ -1,0 +1,150 @@
+{
+  "id": "improper-conditional",
+  "title": "條件收斂的瑕積分",
+  "readMinutes": 12,
+  "totalMinutes": 35,
+  "prerequisites": ["improper-comparison", "integration-by-parts", "alternating-series-test", "conditional-convergence"],
+  "next": ["reduction-formula"],
+  "related": ["dirichlet-integral"],
+  "objectives": [
+    "用分部積分證明 ∫₁^∞ sin x/x dx 收斂，說得出為什麼比較判別在這裡失效。",
+    "證明 ∫₁^∞ |sin x|/x dx 發散，分清楚條件收斂與絕對收斂。",
+    "判斷 ∫ sin x/xᵖ、∫ sin(x²) 這類振盪積分是絕對收斂、條件收斂還是發散。"
+  ],
+  "visual": "畫 y = sin x/x（x ≥ 0），每一個半週期的拱塗上顏色：正的拱藍色、負的拱紅色，旁邊標出每塊面積（約 1.85、−0.43、0.26、−0.18……）。下方畫累積面積 ∫₀ᵗ，曲線一上一下、振幅越來越小，收斂到 π/2。切換成 |sin x|/x，所有拱都變藍，累積面積像 ln t 一樣慢慢往上爬、沒有上限。",
+  "concept": [
+    {
+      "heading": "① 比較判別在這裡失靈",
+      "body": [
+        "∫₀^∞ sin x/x dx：在 0 附近 sin x/x → 1，沒有問題；麻煩在 ∞ 那端。",
+        "想用比較：|sin x/x| ≤ 1/x，可是 ∫₁^∞ dx/x 發散，被發散的壓住什麼都說不出來。sin x/x 會變號，比較判別本來就不能直接用。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 圖像：一正一負、越來越小的拱",
+      "body": [
+        "sin x/x 的圖形是一串拱：[0, π] 正、[π, 2π] 負、[2π, 3π] 正……[kπ, (k + 1)π] 那個拱的面積大約 ±2/((k + 1/2)π)（k ≥ 1），一直變小、正負交替。這就像交錯級數 1 − 1/2 + 1/3 − …（〈交錯級數判別〉），所以有理由相信它收斂。",
+        "直覺，不是證明：拱的面積不是剛好 2/((k + 1/2)π)，而且 t 停在拱的中間時也要處理。下面用分部積分給出嚴格的論證。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 嚴格證明：分部積分把 1/x 變成 1/x²",
+      "body": [
+        "令 u = 1/x、dv = sin x dx：∫₁ᵗ sin x/x dx = [−cos x/x]₁ᵗ − ∫₁ᵗ cos x/x² dx。",
+        "邊界項：|cos t/t| ≤ 1/t → 0，所以 → cos 1。剩下的積分：|cos x/x²| ≤ 1/x²，絕對收斂。兩項都有極限，所以 ∫₁^∞ sin x/x dx 收斂。關鍵是分部積分把衰減從 1/x 提升到 1/x²。"
+      ],
+      "tex": ["\\int_1^{t}\\frac{\\sin x}{x}\\,dx=\\cos 1-\\frac{\\cos t}{t}-\\int_1^{t}\\frac{\\cos x}{x^{2}}\\,dx"],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 但不是絕對收斂",
+      "body": [
+        "∫₁^∞ |sin x|/x dx 發散。所以 sin x/x 是條件收斂：∫ f 收斂、∫ |f| 發散，跟 Σ(−1)ⁿ/n 是同一類。",
+        "後果：正負面積互相抵銷才收斂，不能隨意拆成正部與負部分開算；值 π/2 在〈Dirichlet 積分〉裡算。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "一般的 Dirichlet 判別法",
+      "body": [
+        "若 f 在 [a, ∞) 上單調遞減到 0、f′ 連續，而 G(t) = ∫ₐᵗ g 有界，則 ∫ₐ^∞ f g dx 收斂。證明就是上面的分部積分：∫ f g = [fG] − ∫ f′G，而 |f′G| ≤ M|f′| = −M f′ 可積。",
+        "例：∫₁^∞ sin x/xᵖ dx 對 p > 0 收斂；p > 1 時絕對收斂，0 < p ≤ 1 時條件收斂。"
+      ],
+      "collapsible": true
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "分部積分證明收斂",
+      "prompt": "證明 ∫₁^∞ sin x/x dx 收斂。",
+      "steps": [
+        "u = 1/x、dv = sin x dx，du = −dx/x²、v = −cos x。",
+        "∫₁ᵗ sin x/x dx = [−cos x/x]₁ᵗ − ∫₁ᵗ cos x/x² dx = cos 1 − cos t/t − ∫₁ᵗ cos x/x² dx。",
+        "t → ∞：|cos t/t| ≤ 1/t → 0。|cos x/x²| ≤ 1/x² 而 ∫₁^∞ dx/x² 收斂，所以 ∫₁^∞ cos x/x² dx 絕對收斂。",
+        "右邊每一項都有極限，所以左邊收斂，而且 ∫₁^∞ sin x/x dx = cos 1 − ∫₁^∞ cos x/x² dx。"
+      ],
+      "answer": "收斂",
+      "claim": "INT(sin(x)/x, 1, inf) == cos(1) - INT(cos(x)/x^2, 1, inf)"
+    },
+    {
+      "title": "絕對值版本發散",
+      "prompt": "證明 ∫_π^∞ |sin x|/x dx 發散。",
+      "steps": [
+        "在 [kπ, (k + 1)π] 上，x ≤ (k + 1)π，所以 |sin x|/x ≥ |sin x|/((k + 1)π)。",
+        "|sin x| 在任何一個長度 π 的區間 [kπ, (k + 1)π] 上積分都是 2，所以這一段的積分 ≥ 2/((k + 1)π)。",
+        "把 k = 1 到 N 加起來：∫_π^{(N+1)π} |sin x|/x dx ≥ (2/π)(1/2 + 1/3 + … + 1/(N + 1))。",
+        "右邊是調和級數的部分和，N → ∞ 時 → ∞，所以積分發散。"
+      ],
+      "answer": "發散",
+      "claim": "INT(abs(sin(x))/x, pi, 2*pi) > 1/pi ;; INT(abs(sin(x)), 0, pi) == 2"
+    },
+    {
+      "title": "被積函數不趨近 0 也能收斂",
+      "prompt": "判斷 ∫₀^∞ sin(x²) dx",
+      "steps": [
+        "x → ∞ 時 sin(x²) 在 −1 與 1 之間振盪，不 → 0。但振盪越來越快，正負抵銷得越來越好。",
+        "令 u = x²，x = √u，dx = du/(2√u)：積分變成 ∫₀^∞ sin u/(2√u) du。",
+        "0 端：sin u/(2√u) ~ √u/2 → 0，沒有問題。∞ 端：1/(2√u) 遞減到 0、∫ sin u 有界，跟範例 1 一樣分部積分（或用 Dirichlet 判別法），收斂。",
+        "所以原積分收斂（它的值是 √(π/8)，要用複變或 Gamma 函數才算得出來）。"
+      ],
+      "answer": "收斂（條件收斂）",
+      "note": "這是瑕積分跟級數不同的地方：級數收斂一定要 aₙ → 0，瑕積分收斂不需要 f(x) → 0。",
+      "claim": "INT(sin(x)/(2*sqrt(x)), 0, inf) == sqrt(pi/8)"
+    }
+  ],
+  "pitfalls": [
+    "用 |sin x/x| ≤ 1/x 推出「收斂」或「發散」：被發散的壓住，沒有結論。",
+    "以為收斂一定絕對收斂，把正負部分開積分。",
+    "分部積分後忘了證明邊界項的極限存在。",
+    "以為被積函數不 → 0 就一定發散（sin(x²) 是反例）。"
+  ],
+  "checks": [
+    {
+      "ask": "∫₁^∞ sin x/x dx 是：",
+      "options": [
+        { "label": "條件收斂", "correct": true },
+        { "label": "絕對收斂，因為 |sin x/x| ≤ 1/x", "why": "∫₁^∞ dx/x 發散，被它壓住推不出收斂；而且 ∫ |sin x|/x 確實發散。" },
+        { "label": "發散，因為 sin x 沒有極限", "why": "正負的拱互相抵銷，分部積分證明了它收斂。" }
+      ]
+    },
+    {
+      "ask": "「∫ f 條件收斂」的意思是？",
+      "options": [
+        { "label": "∫ f 收斂，但 ∫ |f| 發散", "correct": true },
+        { "label": "∫ |f| 收斂，但 ∫ f 發散", "why": "不可能發生：絕對收斂一定收斂。" },
+        { "label": "在某些參數條件下才收斂", "why": "「條件」不是指參數，是指收斂要靠正負抵銷，拿掉符號就發散。" }
+      ]
+    },
+    {
+      "ask": "∫₁^∞ cos x/x² dx 是：",
+      "options": [
+        { "label": "絕對收斂", "correct": true },
+        { "label": "條件收斂", "why": "|cos x/x²| ≤ 1/x²，而 ∫₁^∞ dx/x² 收斂，所以連絕對值都收斂。" },
+        { "label": "發散", "why": "被 1/x² 壓住，面積有限。" }
+      ]
+    },
+    {
+      "ask": "∫₁^∞ sin x/x^{1/2} dx 是：",
+      "options": [
+        { "label": "條件收斂", "correct": true },
+        { "label": "絕對收斂", "why": "x ≥ 1 時 |sin x|/√x ≥ |sin x|/x，而後者的積分已經發散。" },
+        { "label": "發散", "why": "1/√x 遞減到 0，跟 sin x/x 一樣分部積分就收斂；p > 0 都收斂。" }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": ["improper-integral", "convergence-test"],
+    "fine": ["conditional-ibp-boundary", "conditional-not-absolute", "conditional-dirichlet-test", "conditional-vs-absolute-classify"]
+  },
+  "practice": [
+    { "id": "lb-cmp-002", "core": true, "trains": "conditional-not-absolute" },
+    { "id": "dm-int-001", "challenge": true, "trains": "conditional-ibp-boundary", "note": "挑戰：sin² x/x² 絕對收斂，分部積分後變成條件收斂的 ∫ sin 2x/x，再用 Dirichlet 積分的值。" }
+  ],
+  "gaps": [
+    { "tag": "conditional-vs-absolute-classify", "count": 4, "note": "判斷 ∫₁^∞ sin x/xᵖ、cos x/x、sin(x²) 等是絕對收斂、條件收斂或發散，R3。" },
+    { "tag": "conditional-ibp-boundary", "count": 2, "note": "用分部積分把振盪積分改寫、處理邊界極限的題，R4。" },
+    { "tag": "conditional-not-absolute", "count": 1, "note": "證明 ∫ |sin x|/x 發散的證明題或填空題（lb-cmp-002 涉及 Lebesgue 積分，主線學生可能還沒學）。" }
+  ]
+}

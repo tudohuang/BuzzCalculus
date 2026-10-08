@@ -1,0 +1,209 @@
+{
+  "id": "surface-integral",
+  "title": "曲面積分",
+  "readMinutes": 9,
+  "totalMinutes": 35,
+  "prerequisites": [
+    "surface-area",
+    "scalar-line-integral"
+  ],
+  "next": [
+    "flux"
+  ],
+  "related": [
+    "center-of-mass",
+    "parametric-surfaces"
+  ],
+  "objectives": [
+    "說出 ∬_S f dS 的意思：薄殼上「密度 × 一小片面積」的總和。",
+    "用 dS = |r_u × r_v| dA 把它化成參數區域上的二重積分。",
+    "用對稱性簡化球面上的曲面積分。"
+  ],
+  "visual": "一片曲面被著色，顏色深淺代表 f 的值（例如薄殼的密度）。曲面被切成小片，滑鼠指到某一片時顯示它的面積 ΔS、f 的值與乘積 f ΔS，旁邊累計總和。切換參數化（例如球面用經緯度或用兩個半球的圖形），總和不變。",
+  "concept": [
+    {
+      "heading": "① 從線到面",
+      "body": [
+        "〈純量線積分〉∫_C f ds：一條鐵絲的質量。曲面版本是一片薄殼：每一點的面密度是 f（每單位面積的質量），切成小片，每片面積 ΔS，質量約 f ΔS，加起來取極限。這就是 ∬_S f dS。",
+        "f = 1 時，∬_S 1 dS 就是〈曲面面積〉。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 化成二重積分",
+      "body": [
+        "跟線積分的 ds = |r′(t)| dt 完全平行：曲面參數化 r(u, v)，(u, v) ∈ D，dS = |r_u × r_v| dA。f 也要代成 u、v。",
+        "函數圖形 z = g(x, y) 時：dS = √(1 + g_x² + g_y²) dA，f 裡的 z 換成 g(x, y)。"
+      ],
+      "tex": [
+        "\\iint_S f\\,dS=\\iint_D f\\big(\\mathbf r(u,v)\\big)\\,\\big|\\mathbf r_u\\times\\mathbf r_v\\big|\\,dA"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 跟方向無關",
+      "body": [
+        "dS 是面積，永遠是正的。所以 ∬_S f dS 不需要決定曲面的「正面」是哪一面，換參數化也不影響結果。下一課的〈通量〉就需要選方向了。",
+        "曲面由好幾片組成（例如圓柱的側面加上下底），每片各自算，再相加。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 球面上的對稱捷徑",
+      "body": [
+        "單位球面上 x² + y² + z² = 1，所以 ∬ (x² + y² + z²) dS = ∬ 1 dS = 4π。球面對 x、y、z 三個方向一樣，三項各佔三分之一：∬ x² dS = 4π/3。",
+        "奇函數也一樣：∬_{球面} z dS = 0，上下半球抵消。"
+      ],
+      "collapsible": false
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "球面上的 x²：參數化與對稱各做一次",
+      "prompt": "∬_S x² dS，S 是單位球面。",
+      "steps": [
+        "參數化：x = sin φ cos θ，dS = sin φ dφ dθ（上一課的 |r_φ × r_θ|，a = 1）。",
+        "∫_0^{2π} ∫_0^π sin² φ cos² θ · sin φ dφ dθ = (∫_0^{2π} cos² θ dθ)(∫_0^π sin³ φ dφ) = π · 4/3 = 4π/3。",
+        "對稱法：∬ (x² + y² + z²) dS = 球面積 4π，三項相等，每項 4π/3。一樣。"
+      ],
+      "answer": "4π/3",
+      "claim": "INT(INT(sin(u)^2*cos(t)^2*sin(u),0,pi,u),0,2*pi,t) == 4*pi/3"
+    },
+    {
+      "title": "函數圖形上",
+      "prompt": "∬_S y dS，S 是曲面 z = x + y²，0 ≤ x ≤ 1、0 ≤ y ≤ 2。",
+      "steps": [
+        "g_x = 1、g_y = 2y，dS = √(1 + 1 + 4y²) dA = √(2 + 4y²) dA。",
+        "∫_0^1 ∫_0^2 y √(2 + 4y²) dy dx。x 那層只貢獻 1。",
+        "令 w = 2 + 4y²，dw = 8y dy：∫_0^2 y √(2 + 4y²) dy = (1/8)(2/3)[w^{3/2}]_2^{18} = (1/12)(18√18 − 2√2) = (1/12)(54√2 − 2√2) = 13√2/3。"
+      ],
+      "answer": "13√2/3",
+      "claim": "INT(INT(y*sqrt(2+4*y^2),0,2,y),0,1,x) == 13*sqrt(2)/3"
+    },
+    {
+      "title": "好幾片拼成的曲面",
+      "prompt": "∬_S z dS，S 是圓柱 x² + y² ≤ 1、0 ≤ z ≤ 1 的整個表面（側面、上蓋、底）。",
+      "steps": [
+        "分三片算，再相加。",
+        "側面：r(θ, z) = ⟨cos θ, sin θ, z⟩，|r_θ × r_z| = 1（〈參數曲面〉的圓柱例子）。∫_0^{2π} ∫_0^1 z dz dθ = 2π · 1/2 = π。",
+        "上蓋：z = 1 的單位圓盤，dS = dA。∬ 1 dA = π。",
+        "底：z = 0，被積函數是 0，貢獻 0。",
+        "合計 2π。"
+      ],
+      "answer": "2π",
+      "claim": "INT(INT(z,0,1,z),0,2*pi,t) + INT(INT(1*r,0,1,r),0,2*pi,t) == 2*pi"
+    }
+  ],
+  "pitfalls": [
+    "直接寫 ∬_D f dA，漏了 |r_u × r_v|（或 √(1 + g_x² + g_y²)）。",
+    "f 裡的 z 沒有代成 g(x, y)。",
+    "用了奇函數對稱，但曲面其實不對稱（例如只有上半球）。",
+    "以為曲面積分會因為法向量方向而變號；純量曲面積分不會。"
+  ],
+  "checks": [
+    {
+      "ask": "∬_S 1 dS 是？",
+      "options": [
+        {
+          "label": "S 的面積",
+          "correct": true
+        },
+        {
+          "label": "S 圍住的體積",
+          "why": "dS 是曲面上的小片面積，加起來是面積。體積要用三重積分。"
+        },
+        {
+          "label": "0",
+          "why": "每一小片都貢獻正的面積，不會抵消。"
+        }
+      ]
+    },
+    {
+      "ask": "S 是 z = g(x, y) 的圖形，dS 換成？",
+      "options": [
+        {
+          "label": "√(1 + g_x² + g_y²) dA",
+          "correct": true
+        },
+        {
+          "label": "dA",
+          "why": "那是假設曲面是平的。斜的曲面比它的影子大，要乘放大倍率。"
+        },
+        {
+          "label": "g(x, y) dA",
+          "why": "g 是高度，跟小片面積的放大倍率無關。"
+        }
+      ]
+    },
+    {
+      "ask": "S 是單位球面（整顆），∬_S z dS 是？",
+      "options": [
+        {
+          "label": "0",
+          "correct": true
+        },
+        {
+          "label": "4π/3",
+          "why": "那是 ∬ z² dS。z 本身在上下半球正負相反，互相抵消。"
+        },
+        {
+          "label": "2π",
+          "why": "那是 ∬ |z| dS（上半球 π 加下半球 π）。z 在下半球是負的。"
+        }
+      ]
+    },
+    {
+      "ask": "把曲面的「正面」換成另一面，∬_S f dS 會？",
+      "options": [
+        {
+          "label": "不變",
+          "correct": true
+        },
+        {
+          "label": "變號",
+          "why": "變號的是通量 ∬ F · n dS。dS 是面積，跟選哪一面無關。"
+        },
+        {
+          "label": "變成 0",
+          "why": "沒有理由抵消，每一小片的 f ΔS 都沒變。"
+        }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": [
+      "surface-integral",
+      "vector-calculus"
+    ],
+    "fine": [
+      "surface-integral-param",
+      "surface-integral-graph",
+      "surface-integral-symmetry"
+    ]
+  },
+  "practice": [
+    {
+      "id": "vc-surf-001",
+      "core": true,
+      "trains": "surface-integral-param"
+    },
+    {
+      "id": "vc-surf-002",
+      "core": true,
+      "trains": "surface-integral-param",
+      "note": "圓柱側面：|r_θ × r_z| = 2。"
+    }
+  ],
+  "gaps": [
+    {
+      "tag": "surface-integral-graph",
+      "count": 3,
+      "note": "R3–R4：z = g(x, y) 圖形上的純量曲面積分（斜平面、拋物面）。"
+    },
+    {
+      "tag": "surface-integral-symmetry",
+      "count": 2,
+      "note": "R3：球面上用對稱直接得到 ∬ x² dS、∬ z dS 這類值。"
+    }
+  ]
+}

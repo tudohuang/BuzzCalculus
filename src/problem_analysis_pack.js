@@ -931,9 +931,9 @@
 
   add("lb-con-002", 4,
     "\\text{設 }f_n(x)=n^2xe^{-nx}\\text{。求 }\\int_0^1 f_3\\,d\\mu",
-    "2/3-17/3*exp(-3)", ["convergence-theorem"],
-    "∫₀¹9x²e^{−3x}dx，兩次分部積分得 2/3 − (17/3)e^{−3} ≈ 0.3845。n 越大這個值越靠近 1，但每一個都小於 1。", 210,
-    { m: "integral", f: "9 x^2 e^{-3x}", a: 0, b: 1 });
+    "1-4*exp(-3)", ["convergence-theorem"],
+    "f₃(x) = 9xe^{−3x}。分部積分：∫₀¹9xe^{−3x}dx = [−3xe^{−3x} − e^{−3x}]₀¹ = 1 − 4e^{−3} ≈ 0.8009。一般地 ∫₀¹fₙ = 1 − (n + 1)e^{−n}：n 越大越靠近 1，但每一個都小於 1。", 210,
+    { m: "integral", f: "9 x e^{-3x}", a: 0, b: 1 });
 
   add("lb-con-003", 5,
     "\\text{設 }f_n(x)=nxe^{-nx^2}\\text{ 在 }[0,1]\\text{ 上}\\quad\\text{求 }\\lim_{n\\to\\infty}\\int_0^1 f_n\\,d\\mu",

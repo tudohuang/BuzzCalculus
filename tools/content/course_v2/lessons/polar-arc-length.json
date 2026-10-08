@@ -1,0 +1,132 @@
+{
+  "id": "polar-arc-length",
+  "title": "極座標弧長",
+  "readMinutes": 8,
+  "totalMinutes": 25,
+  "prerequisites": ["polar-tangent", "parametric-arc-length", "trig-identities"],
+  "next": ["r2-r3"],
+  "related": ["polar-area"],
+  "objectives": [
+    "從參數式弧長推出 L = ∫ √(r² + (dr/dθ)²) dθ。",
+    "開根號時處理絕對值，例如 √(4cos²(θ/2)) = 2|cos(θ/2)|，必要時切區間或用對稱。",
+    "不把弧長公式和面積公式 ½∫ r² dθ 搞混。"
+  ],
+  "visual": "心臟線 r = 1 + cos θ 上一個點隨 θ 前進，在點上畫出一個小直角三角形：沿半徑方向的一邊長 |dr|，垂直半徑方向的一邊長 r dθ，斜邊就是那一小段弧長 ds。旁邊累加 ds，θ 走完一圈時停在 8。",
+  "concept": [
+    {
+      "heading": "① 從參數式來",
+      "body": [
+        "極座標曲線就是以 θ 為參數的 x = r cos θ、y = r sin θ（〈極座標切線〉）。代進〈參數式弧長〉的速率：",
+        "(x′)² = r′²cos²θ − 2rr′ sin θ cos θ + r²sin²θ，(y′)² = r′²sin²θ + 2rr′ sin θ cos θ + r²cos²θ。",
+        "相加，交叉項互相抵消，cos² + sin² = 1，只剩 r² + r′²。所以這不是新公式，只是參數式弧長在 x = r cos θ、y = r sin θ 時的樣子；考試忘了也能當場推回來。"
+      ],
+      "tex": ["L=\\int_\\alpha^\\beta\\sqrt{r^2+\\left(\\frac{dr}{d\\theta}\\right)^2}\\,d\\theta"],
+      "collapsible": false
+    },
+    {
+      "heading": "② 幾何上看：兩個方向的位移",
+      "body": [
+        "θ 增加一點點 dθ 時，點沿兩個互相垂直的方向移動：沿著半徑往外 dr，以及繞著原點轉 r dθ（半徑 r 的圓弧長）。小段弧長是這個小直角三角形的斜邊 √(dr² + (r dθ)²)。這是直覺，不是證明；上面的計算才是。",
+        "兩個特例檢查：r 是常數 a 時 r′ = 0，L = ∫ a dθ，就是圓弧長「半徑 × 角度」；θ 是常數時曲線是射線，公式不適用（θ 不能當參數）。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 跟面積一樣，範圍要剛好走一次",
+      "body": [
+        "r = 2cos θ 在 0 ≤ θ ≤ π 已經畫完整個圓，長度 2π；寫成 0 到 2π 會得到 4π。",
+        "根號裡常湊成完全平方，開出來要加絕對值，看正負再決定要不要切開積分區間。曲線對 x 軸對稱時（方程式裡只有 cos θ），常常只算上半部再乘 2，順便避開變號的那一段（範例 2）。"
+      ],
+      "collapsible": false
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "先拿圓檢查",
+      "prompt": "求 r = 2cos θ（0 ≤ θ ≤ π）的長度。",
+      "steps": [
+        "r′ = −2sin θ，r² + r′² = 4cos²θ + 4sin²θ = 4。",
+        "L = ∫₀^π 2 dθ = 2π。",
+        "這是半徑 1 的圓，周長 2π，對得上。"
+      ],
+      "answer": "2π",
+      "claim": "INT(sqrt((2*cos(t))^2+(2*sin(t))^2), 0, pi) == 2*pi"
+    },
+    {
+      "title": "心臟線的全長",
+      "prompt": "求 r = 1 + cos θ 的全長。",
+      "problemId": "lec-10-q2d",
+      "steps": [
+        "r′ = −sin θ。r² + r′² = 1 + 2cos θ + cos²θ + sin²θ = 2 + 2cos θ。",
+        "半角公式 1 + cos θ = 2cos²(θ/2)，所以 2 + 2cos θ = 4cos²(θ/2)，開根號得 2|cos(θ/2)|。",
+        "0 ≤ θ ≤ 2π 時 θ/2 在 0 到 π，cos(θ/2) 在 θ > π 時是負的，絕對值不能直接拿掉。",
+        "曲線對 x 軸對稱，算上半部 0 ≤ θ ≤ π 再乘 2：L = 2∫₀^π 2cos(θ/2) dθ = 2[4sin(θ/2)]₀^π = 2 · 4 = 8。",
+        "如果忘了絕對值，直接算 ∫₀^{2π} 2cos(θ/2) dθ，會得到 [4sin(θ/2)]₀^{2π} = 0。長度是 0 顯然不對。"
+      ],
+      "answer": "8",
+      "claim": "INT(sqrt((1+cos(t))^2+sin(t)^2), 0, 2*pi) == 8 ;; 2+2*cos(t) == 4*cos(t/2)^2 ;; INT(2*cos(t/2), 0, 2*pi) == 0"
+    },
+    {
+      "title": "對數螺線",
+      "prompt": "求 r = e^θ 從 θ = 0 到 θ = 1 的長度。",
+      "steps": [
+        "r′ = e^θ，r² + r′² = e^{2θ} + e^{2θ} = 2e^{2θ}。",
+        "√(2e^{2θ}) = √2 e^θ（e^θ > 0，不用絕對值）。",
+        "L = √2 ∫₀¹ e^θ dθ = √2(e − 1)。"
+      ],
+      "answer": "√2(e − 1)",
+      "claim": "INT(sqrt(e^(2t)+e^(2t)), 0, 1) == sqrt(2)*(e-1)"
+    }
+  ],
+  "pitfalls": [
+    "根號裡只寫 r′²，漏了 r²。",
+    "√(cos²(θ/2)) 直接寫成 cos(θ/2)，積出 0。",
+    "把面積公式 ½∫ r² dθ 當成弧長。",
+    "θ 範圍讓曲線走了兩次。"
+  ],
+  "checks": [
+    {
+      "ask": "極座標弧長的被積函數是？",
+      "options": [
+        { "label": "√(r² + (dr/dθ)²)", "correct": true },
+        { "label": "√(1 + (dr/dθ)²)", "why": "這是把 y = f(x) 版本的 √(1 + f′²) 硬搬過來；繞原點轉的那個方向位移是 r dθ，不是 dθ。" },
+        { "label": "½r²", "why": "那是面積的被積函數。" }
+      ]
+    },
+    {
+      "ask": "圓 r = 3，θ 從 0 到 2π，用弧長公式算出？",
+      "options": [
+        { "label": "6π", "correct": true },
+        { "label": "9π", "why": "這是 ½∫₀^{2π} 9 dθ，用到面積公式了。" },
+        { "label": "0", "why": "r′ = 0 不代表長度是 0：根號裡還有 r² = 9。" }
+      ]
+    },
+    {
+      "ask": "心臟線 r = 1 + cos θ 化簡到 L = ∫₀^{2π} 2|cos(θ/2)| dθ。有人寫成 ∫₀^{2π} 2cos(θ/2) dθ 得到 0。錯在哪？",
+      "options": [
+        { "label": "θ 在 π 到 2π 時 cos(θ/2) < 0，絕對值不能拿掉", "correct": true },
+        { "label": "半角公式用錯了", "why": "2 + 2cos θ = 4cos²(θ/2) 是對的；錯在開根號後把絕對值丟了。" },
+        { "label": "範圍應該是 0 到 4π", "why": "0 到 2π 已經畫完心臟線一圈，加倍範圍只會重複算。" }
+      ]
+    },
+    {
+      "ask": "r = 2cos θ 從 θ = 0 積到 2π，弧長公式給 4π。為什麼不是 2π？",
+      "options": [
+        { "label": "這個圓在 0 到 π 就畫完了，後半段重畫一次", "correct": true },
+        { "label": "因為 r 有負的部分，要取絕對值", "why": "r² + r′² = 4 一直是正的，公式沒有符號問題；多出來的是重複走的那一圈。" },
+        { "label": "因為直徑是 2，周長本來就是 4π", "why": "直徑 2 的圓周長是 2π；4π 是走了兩圈。" }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": ["polar", "arc-length"],
+    "fine": ["polar-arc-length-formula", "polar-arc-length-abs", "polar-arc-length-range"]
+  },
+  "practice": [
+    { "id": "lec-10-q2d", "core": true, "trains": "polar-arc-length-abs" }
+  ],
+  "gaps": [
+    { "tag": "polar-arc-length-formula", "count": 3, "note": "R2–R3：圓、對數螺線 r = e^θ、r = θ² 這類可以積出來的極座標弧長。" },
+    { "tag": "polar-arc-length-abs", "count": 1, "note": "R3：另一條需要切區間處理絕對值的曲線（例 r = 1 − cos θ）。" }
+  ]
+}

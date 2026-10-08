@@ -1,0 +1,239 @@
+{
+  "id": "recursive-sequence",
+  "title": "遞迴數列",
+  "readMinutes": 10,
+  "totalMinutes": 40,
+  "prerequisites": [
+    "monotone-convergence-sequence"
+  ],
+  "next": [
+    "infinite-series"
+  ],
+  "related": [
+    "induction",
+    "continuity-definition"
+  ],
+  "objectives": [
+    "照四個步驟處理 aₙ₊₁ = g(aₙ)：有界（歸納法）、單調、存在、解方程。",
+    "說明為什麼要先證極限存在，才能解 L = g(L)。",
+    "用數列的範圍篩掉方程多出來的根。"
+  ],
+  "visual": "蛛網圖：畫出 y = √(2 + x) 與 y = x。從 x = √2 出發，垂直走到曲線、水平走到 y = x、再垂直走到曲線……折線一階一階爬向兩條線的交點 (2, 2)。切換成 g(x) = 1 − x，折線變成在 (1, 0) 與 (0, 1) 之間繞同一個方框，永遠不靠近交點 (1/2, 1/2)。",
+  "concept": [
+    {
+      "heading": "① 一項由前一項決定",
+      "body": [
+        "a₁ = √2，aₙ₊₁ = √(2 + aₙ)：先算幾項，1.4142、1.8478、1.9616、1.9904、1.9976……看起來往 2 靠。猜答案很容易：如果極限 L 存在，對 aₙ₊₁ = √(2 + aₙ) 兩邊取極限，L = √(2 + L)，解出 L = 2。",
+        "關鍵字是「如果極限存在」。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 為什麼不能直接解方程",
+      "body": [
+        "a₁ = 1，aₙ₊₁ = 1 − aₙ：照抄上面的做法，L = 1 − L，L = 1/2。可是數列是 1, 0, 1, 0, …，根本不收斂。",
+        "a₁ = 1，aₙ₊₁ = 2aₙ：L = 2L 得 L = 0，但 aₙ = 2ⁿ⁻¹ → ∞。",
+        "方程 L = g(L) 的意思是「如果有極限，它只能是這些值之一」。極限存不存在，要另外證明。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 四個步驟",
+      "body": [
+        "1. 有界：用〈數學歸納法〉證明所有 aₙ 落在某個範圍裡。",
+        "2. 單調：看 aₙ₊₁ − aₙ（或平方差、比值）的正負，通常會用到第 1 步的範圍。",
+        "3. 存在：由〈單調收斂定理〉，極限 L 存在。",
+        "4. 求值：g 連續（〈連續的定義〉），對兩邊取極限得 L = g(L)。解出來若有好幾個根，用第 1 步的範圍挑出對的那個。"
+      ],
+      "collapsible": false
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "完整四步",
+      "prompt": "a₁ = √2，aₙ₊₁ = √(2 + aₙ)。求 lim aₙ。",
+      "problemId": "lec-11-q3c",
+      "steps": [
+        "有界：0 < a₁ < 2。若 0 < aₙ < 2，則 0 < aₙ₊₁ = √(2 + aₙ) < √4 = 2。由歸納法，所有 0 < aₙ < 2。",
+        "單調：aₙ₊₁² − aₙ² = 2 + aₙ − aₙ² = (2 − aₙ)(1 + aₙ)。由第 1 步兩個因子都正，所以 aₙ₊₁² > aₙ²；兩者都是正數，得 aₙ₊₁ > aₙ。遞增。",
+        "存在：遞增且有上界 2，極限 L 存在。",
+        "求值：√ 連續，L = √(2 + L)，L² − L − 2 = (L − 2)(L + 1) = 0。所有項都是正的，L ≥ 0，捨去 −1。L = 2。"
+      ],
+      "answer": "2",
+      "claim": "(2-x)*(1+x) == 2+x-x^2 ;; SUB(sqrt(2+x), 2) == 2"
+    },
+    {
+      "title": "牛頓法開根號：遞減的版本",
+      "prompt": "a₁ = 1，aₙ₊₁ = ½(aₙ + 2/aₙ)。求 lim aₙ。",
+      "problemId": "cx-seq-005",
+      "steps": [
+        "前幾項：1、1.5、1.41667、1.414216……",
+        "有下界：歸納可知 aₙ > 0。對任何 x > 0，½(x + 2/x) − √2 = (x − √2)²/(2x) ≥ 0，所以從第 2 項起 aₙ ≥ √2。",
+        "單調：n ≥ 2 時 aₙ₊₁ − aₙ = (2 − aₙ²)/(2aₙ) ≤ 0（因為 aₙ ≥ √2），遞減。",
+        "存在且求值：遞減有下界，極限 L 存在且 L ≥ √2。L = ½(L + 2/L) ⇒ L² = 2 ⇒ L = √2。"
+      ],
+      "answer": "√2",
+      "claim": "(x+2/x)/2 - sqrt(2) == (x-sqrt(2))^2/(2x) ;; SUB((x+2/x)/2, sqrt(2)) == sqrt(2)"
+    },
+    {
+      "title": "反例：方程有解，數列卻發散",
+      "prompt": "a₁ = 1，aₙ₊₁ = 1 − aₙ。lim aₙ 是 1/2 嗎？",
+      "steps": [
+        "直接寫出各項：a₂ = 0，a₃ = 1，a₄ = 0，……奇數項都是 1，偶數項都是 0。",
+        "數列在 0 與 1 之間跳，不收斂。方程 L = 1 − L 的解 1/2 只是「如果有極限，它會是多少」，而極限不存在。",
+        "跟四步驟對照：數列有界（在 0 與 1 之間），但不單調，第 2 步過不了。"
+      ],
+      "answer": "不是；數列發散",
+      "claim": "SUB(1-x, 1) == 0 ;; SUB(1-x, 0) == 1 ;; SUB(1-x, 1/2) == 1/2"
+    }
+  ],
+  "pitfalls": [
+    "還沒證明極限存在就解 L = g(L)。",
+    "用「極限是 2」去證明「每一項都小於 2」：循環論證。",
+    "解出兩個根卻不篩選（例如留下 L = −1）。",
+    "只算前幾項就宣稱遞增，沒有對所有 n 證明。"
+  ],
+  "checks": [
+    {
+      "ask": "為什麼要先證明極限存在，才解 L = g(L)？",
+      "options": [
+        {
+          "label": "L = g(L) 只說明「若極限存在，它必須滿足這個方程」",
+          "correct": true
+        },
+        {
+          "label": "因為方程可能沒有解",
+          "why": "有解也沒用：aₙ₊₁ = 1 − aₙ 的方程有解 1/2，數列卻在 0、1 之間跳。"
+        },
+        {
+          "label": "因為歸納法規定要這樣",
+          "why": "這跟歸納法無關，是邏輯順序：「對極限取極限」要先有極限。"
+        }
+      ]
+    },
+    {
+      "ask": "a₁ = √6，aₙ₊₁ = √(6 + aₙ)（已知遞增有界）。極限是？",
+      "options": [
+        {
+          "label": "3",
+          "correct": true
+        },
+        {
+          "label": "−2",
+          "why": "L² − L − 6 = 0 的另一個根。每一項都是正的根號，極限不可能是負數。"
+        },
+        {
+          "label": "3 或 −2",
+          "why": "數列只有一個極限；要用 aₙ > 0 把 −2 篩掉。"
+        }
+      ]
+    },
+    {
+      "ask": "要證明 aₙ₊₁ = √(2 + aₙ)（a₁ = √2）的每一項都 < 2，應該用？",
+      "options": [
+        {
+          "label": "數學歸納法",
+          "correct": true
+        },
+        {
+          "label": "先算出極限是 2，所以每一項都 < 2",
+          "why": "循環論證：極限的存在本身就要用到有界；而且就算極限是 2，也推不出每一項都 < 2。"
+        },
+        {
+          "label": "算前十項，都小於 2",
+          "why": "有限項的檢查涵蓋不了所有 n。"
+        }
+      ]
+    },
+    {
+      "ask": "a₁ = 1，aₙ₊₁ = 2aₙ。有人寫「L = 2L，所以 L = 0」。錯在哪？",
+      "options": [
+        {
+          "label": "aₙ = 2ⁿ⁻¹ → ∞，極限不存在",
+          "correct": true
+        },
+        {
+          "label": "沒有錯，極限是 0",
+          "why": "各項 1, 2, 4, 8, … 越來越大，不可能靠近 0。"
+        },
+        {
+          "label": "方程解錯了，應該是 L = 2",
+          "why": "L = 2L 的唯一解就是 0；問題不在解方程，而在極限根本不存在。"
+        }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": [
+      "sequence",
+      "recursive-sequence",
+      "recursive"
+    ],
+    "fine": [
+      "recursive-bounded-induction",
+      "recursive-monotone",
+      "recursive-fixed-point",
+      "recursive-choose-root"
+    ]
+  },
+  "practice": [
+    {
+      "id": "lec-11-q3a",
+      "core": true,
+      "trains": "recursive-bounded-induction"
+    },
+    {
+      "id": "lec-11-q3b",
+      "core": true,
+      "trains": "recursive-monotone"
+    },
+    {
+      "id": "lm-rc-001",
+      "core": true,
+      "trains": "recursive-fixed-point"
+    },
+    {
+      "id": "cx-seq-004",
+      "core": true,
+      "trains": "recursive-fixed-point"
+    },
+    {
+      "id": "lm-rc-002",
+      "core": true,
+      "trains": "recursive-choose-root"
+    },
+    {
+      "id": "lx-seq-001",
+      "trains": "recursive-fixed-point"
+    },
+    {
+      "id": "lm-rc-004",
+      "trains": "recursive-choose-root"
+    },
+    {
+      "id": "an-ca-003",
+      "trains": "recursive-choose-root"
+    },
+    {
+      "id": "lm-rc-006",
+      "trains": "recursive-fixed-point"
+    },
+    {
+      "id": "lx-seq-004",
+      "trains": "recursive-fixed-point"
+    },
+    {
+      "id": "lm-rc-003",
+      "challenge": true,
+      "trains": "recursive-monotone",
+      "note": "挑戰：這個數列不單調（1, 2, 1.5, 1.67, …），四步驟的第 2 步要改成奇數項、偶數項分開看。"
+    },
+    {
+      "id": "lm-rc-007",
+      "challenge": true,
+      "trains": "recursive-fixed-point",
+      "note": "挑戰：cos x = x 沒有公式解，答案是數值；而且數列忽大忽小，不是單調的。"
+    }
+  ],
+  "gaps": []
+}

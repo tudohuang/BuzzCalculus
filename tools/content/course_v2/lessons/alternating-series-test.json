@@ -1,0 +1,148 @@
+{
+  "id": "alternating-series-test",
+  "title": "交錯級數判別",
+  "readMinutes": 9,
+  "totalMinutes": 35,
+  "prerequisites": ["divergence-test", "partial-sums", "increasing-decreasing"],
+  "next": ["absolute-convergence"],
+  "related": ["monotone-convergence-sequence", "conditional-convergence", "power-series-calculus"],
+  "objectives": [
+    "說出交錯級數判別的三個條件：bₙ > 0、bₙ 遞減、bₙ → 0。",
+    "會檢查遞減（差、或 f′ ≤ 0），並在 bₙ 不 → 0 時改用發散判別。",
+    "用 |S − S_N| ≤ b_{N+1} 決定要取幾項。"
+  ],
+  "visual": "數線上的跳躍：從 0 出發，往右跳 b₁ = 1，往左跳 1/2，往右跳 1/3……每一跳比上一跳短，落點在一個越縮越小的區間裡左右擺盪，區間收向 ln 2 ≈ 0.693。滑桿選 N，標出 S_N 與 S_{N+1} 夾住的區間，長度正好是 b_{N+1}。",
+  "concept": [
+    {
+      "heading": "① 正負交替的級數",
+      "body": [
+        "交錯級數長這樣：Σ (−1)^{n+1} bₙ = b₁ − b₂ + b₃ − b₄ + …，其中 bₙ > 0。例如交錯調和級數 1 − 1/2 + 1/3 − 1/4 + …。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 圖像：越跳越短的來回",
+      "body": [
+        "部分和在數線上來回跳：往右 b₁、往左 b₂、往右 b₃……。如果每一跳都不比上一跳長，奇數次的落點一路往左、偶數次的一路往右，而且奇數落點永遠在偶數落點的右邊。兩組落點被夾在一起；只要跳的長度 bₙ → 0，夾住的區間就縮成一個點，那就是級數的和。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 定理與誤差",
+      "body": [
+        "若 (1) bₙ > 0，(2) bₙ₊₁ ≤ bₙ（從某一項開始即可），(3) lim bₙ = 0，則 Σ (−1)^{n+1} bₙ 收斂。",
+        "而且和 S 永遠夾在相鄰兩個部分和之間，所以 |S − S_N| ≤ b_{N+1}：誤差不超過第一個沒加進去的項。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 三個條件都要檢查",
+      "body": [
+        "bₙ 不 → 0：直接由〈發散判別〉發散，不必討論。",
+        "bₙ → 0 但不遞減：判別法不能用，級數可能發散。例如 1 − 1 + 1/2 − 1/4 + 1/3 − 1/9 + …（奇數位放 1/k、偶數位放 1/k²），每兩項的和是 1/k − 1/k²，加起來跟 Σ 1/k 一樣發散。",
+        "檢查遞減：看 bₙ₊₁ − bₙ，或令 bₙ = f(n) 看 f′(x) ≤ 0（〈增減區間〉）。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "⑤ 證明",
+      "body": [
+        "偶數項部分和：S_{2k+2} = S_{2k} + (b_{2k+1} − b_{2k+2}) ≥ S_{2k}，遞增。又 S_{2k} = b₁ − (b₂ − b₃) − … − (b_{2k−2} − b_{2k−1}) − b_{2k} ≤ b₁，有上界。由〈單調收斂定理〉S_{2k} → S。奇數項 S_{2k+1} = S_{2k} + b_{2k+1} → S + 0 = S。兩組子數列都收斂到 S，整個部分和數列收斂到 S。同樣的分組也顯示 S 夾在任兩個相鄰的部分和之間，得到誤差估計。"
+      ],
+      "collapsible": true
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "交錯調和級數",
+      "prompt": "Σ_{n=1}^∞ (−1)^{n+1}/n 收斂嗎？",
+      "steps": [
+        "bₙ = 1/n > 0。",
+        "遞減：1/(n + 1) < 1/n。",
+        "bₙ = 1/n → 0。三個條件都成立，收斂。（它的和是 ln 2，要用〈冪級數的微分與積分〉才算得出來。）"
+      ],
+      "answer": "收斂",
+      "claim": "SUM((-1)^(n+1)/n, 1) == ln(2)"
+    },
+    {
+      "title": "要用導數證遞減",
+      "prompt": "Σ_{n=1}^∞ (−1)ⁿ n/(n² + 1) 收斂嗎？",
+      "steps": [
+        "bₙ = n/(n² + 1) > 0，而且 → 0（分母次數較高）。",
+        "遞減不明顯（分子分母都在長）。令 f(x) = x/(x² + 1)，f′(x) = (1 − x²)/(x² + 1)²，x ≥ 1 時 ≤ 0，所以 bₙ 遞減。",
+        "三個條件成立，收斂。（這裡多一個負號 (−1)ⁿ = −(−1)^{n+1}，整個級數只是乘以 −1，不影響收斂。）"
+      ],
+      "answer": "收斂",
+      "claim": "D(x/(x^2+1)) == (1-x^2)/(x^2+1)^2 ;; SUM((-1)^n*n/(n^2+1), 1) < 0"
+    },
+    {
+      "title": "要取幾項",
+      "prompt": "S = Σ_{n=1}^∞ (−1)^{n+1}/n³。要保證 |S − Sₙ| < 0.01，n 至少多少？",
+      "problemId": "lec-13-q3b",
+      "steps": [
+        "bₙ = 1/n³ 為正、遞減、→ 0，誤差估計可以用：|S − Sₙ| ≤ bₙ₊₁ = 1/(n + 1)³。",
+        "要 1/(n + 1)³ < 0.01，即 (n + 1)³ > 100。4³ = 64 不夠，5³ = 125 可以，所以 n + 1 ≥ 5。",
+        "n = 4。此時 S₄ = 1 − 1/8 + 1/27 − 1/64 = 1549/1728 ≈ 0.8964，真正的 S ≈ 0.9015，誤差約 0.005 < 0.01。"
+      ],
+      "answer": "4",
+      "claim": "1 - 1/8 + 1/27 - 1/64 == 1549/1728 ;; abs(SUM((-1)^(n+1)/n^3, 1) - 1549/1728) < 1/125"
+    }
+  ],
+  "pitfalls": [
+    "只檢查 bₙ → 0，沒檢查遞減。",
+    "bₙ 不 → 0 時還在用交錯級數判別。",
+    "誤差估計用了 b_N 而不是 b_{N+1}。",
+    "以為交錯級數判別也說明了「絕對收斂」：它只說收斂。"
+  ],
+  "checks": [
+    {
+      "ask": "Σ (−1)ⁿ/√n 是？",
+      "options": [
+        { "label": "收斂", "correct": true },
+        { "label": "發散，因為 Σ 1/√n 發散", "why": "那是取絕對值之後的級數。交錯號讓正負互相抵銷，bₙ = 1/√n 遞減到 0，所以收斂。" },
+        { "label": "無法判斷", "why": "bₙ = 1/√n 為正、遞減、→ 0，三個條件都成立。" }
+      ]
+    },
+    {
+      "ask": "Σ (−1)ⁿ n/(n + 1) 是？",
+      "options": [
+        { "label": "發散", "correct": true },
+        { "label": "由交錯級數判別，收斂", "why": "第三個條件不成立：bₙ = n/(n + 1) → 1，不是 0。" },
+        { "label": "正負交替，所以一定收斂", "why": "交替不夠；各項的大小不趨近 0，由發散判別發散。" }
+      ]
+    },
+    {
+      "ask": "交錯級數判別的條件都成立，用 S_N 近似 S，誤差不超過？",
+      "options": [
+        { "label": "b_{N+1}", "correct": true },
+        { "label": "b_N", "why": "b_N 已經加進 S_N 了；控制誤差的是第一個還沒加的項。" },
+        { "label": "1/N", "why": "跟 bₙ 無關的猜測；誤差估計是 b_{N+1}，對 bₙ = 1/n 時才剛好是 1/(N + 1)。" }
+      ]
+    },
+    {
+      "ask": "bₙ > 0、bₙ → 0，但 bₙ 不遞減。Σ (−1)^{n+1} bₙ？",
+      "options": [
+        { "label": "判別法不能用，要另外判斷", "correct": true },
+        { "label": "一定收斂", "why": "反例：1 − 1 + 1/2 − 1/4 + 1/3 − 1/9 + … 每兩項和是 1/k − 1/k²，加總發散。" },
+        { "label": "一定發散", "why": "也可能收斂：bₙ = (2 + (−1)ⁿ)/n² 不遞減，但 Σ bₙ ≤ Σ 3/n² 收斂，交錯版本當然也收斂。" }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": ["alternating-series", "alternating", "error-bound"],
+    "fine": ["ast-conditions", "ast-decreasing-check", "ast-error-bound"]
+  },
+  "practice": [
+    { "id": "lec-13-m5", "core": true, "trains": "ast-error-bound" },
+    { "id": "lec-13-q3b", "core": true, "trains": "ast-error-bound" },
+    { "id": "sg-est-002", "core": true, "trains": "ast-error-bound" },
+    { "id": "lec-13-m4", "core": true, "trains": "ast-conditions" },
+    { "id": "lec-13-q3c", "trains": "ast-error-bound" },
+    { "id": "an-sr-001", "trains": "ast-error-bound" },
+    { "id": "sg-est-007", "trains": "ast-conditions" }
+  ],
+  "gaps": [
+    { "tag": "ast-conditions", "count": 3, "note": "R2：只問「交錯級數判別能不能用、收斂還是發散」的題（不涉及絕對／條件收斂的分類）。題庫的交錯題幾乎都直接問分類。" },
+    { "tag": "ast-decreasing-check", "count": 2, "note": "R3：bₙ 要用 f′ 才看得出遞減的題（如 (−1)ⁿ ln n/n，從 n = 3 起遞減）。" }
+  ]
+}

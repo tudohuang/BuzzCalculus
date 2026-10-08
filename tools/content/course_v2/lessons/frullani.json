@@ -1,0 +1,150 @@
+{
+  "id": "frullani",
+  "title": "Frullani 積分",
+  "readMinutes": 12,
+  "totalMinutes": 40,
+  "prerequisites": ["feynman-trick-basic", "improper-conditional", "mean-value-theorem"],
+  "next": ["gaussian-integral"],
+  "related": ["dirichlet-integral"],
+  "objectives": [
+    "寫得出 Frullani 公式與條件：f 在 [0, ∞) 連續、f(∞) = lim_{x→∞} f(x) 存在，a、b > 0。",
+    "用「把區間的兩端各縮成一小段」的論證說明公式為什麼成立。",
+    "處理變形：f(∞) 不存在但 ∫^∞ f(u)/u du 收斂（cos）、積化和差（sin · sin）、arctan 與有理函數。"
+  ],
+  "visual": "畫 y = e^{−2x}/x 與 y = e^{−5x}/x 以及兩者之差。滑桿把積分區間 [ε, R] 換成變數 u = ax、u = bx 後的兩段，中間大部分互相抵銷，只剩靠近 0 的 [2ε, 5ε] 與靠近 ∞ 的 [2R, 5R] 兩小段，各自上色並顯示面積 ≈ f(0) ln(5/2) 與 ≈ f(∞) ln(5/2)。",
+  "concept": [
+    {
+      "heading": "① 公式",
+      "body": [
+        "兩個同一個函數、不同縮放的版本相減，再除以 x，從 0 積到 ∞：答案只看 f 在兩端的值。",
+        "條件：f 在 [0, ∞) 上連續，f(∞) = lim_{x→∞} f(x) 存在（有限），a、b > 0。",
+        "符號檢查：f 遞減、b > a 時 f(ax) > f(bx)，被積函數為正；公式給 (f(0) − f(∞)) ln(b/a) > 0，一致。"
+      ],
+      "tex": ["\\int_0^{\\infty}\\frac{f(ax)-f(bx)}{x}\\,dx=\\bigl(f(0)-f(\\infty)\\bigr)\\ln\\frac{b}{a}"],
+      "collapsible": false
+    },
+    {
+      "heading": "② 為什麼：中間抵銷，只剩兩端",
+      "body": [
+        "先積 [ε, R]。第一項令 u = ax、第二項令 u = bx，dx/x 都變成 du/u：∫_ε^R f(ax)/x dx = ∫_{aε}^{aR} f(u)/u du，∫_ε^R f(bx)/x dx = ∫_{bε}^{bR} f(u)/u du。",
+        "兩個積分的區間大部分重疊，重疊部分抵銷。剩下 ∫_{aε}^{bε} f(u)/u du − ∫_{aR}^{bR} f(u)/u du。",
+        "ε → 0 時第一段裡 f(u) ≈ f(0)，∫_{aε}^{bε} du/u = ln(b/a)，所以 → f(0) ln(b/a)。R → ∞ 時第二段裡 f(u) ≈ f(∞)，→ f(∞) ln(b/a)。相減得到公式。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 三種變形",
+      "body": [
+        "振盪：cos 在 ∞ 沒有極限，但 ∫_A^∞ cos u/u du 收斂（〈條件收斂的瑕積分〉），② 的第二段 ∫_{aR}^{bR} cos u/u du → 0，所以把 f(∞) 當 0：∫₀^∞ (cos ax − cos bx)/x dx = ln(b/a)。",
+        "積化和差：sin ax sin bx = (cos((a − b)x) − cos((a + b)x))/2（a > b > 0），所以 ∫₀^∞ sin ax sin bx/x dx = (1/2) ln((a + b)/(a − b))。",
+        "其他函數：f(t) = arctan t，f(0) = 0、f(∞) = π/2；f(t) = 1/(1 + t)，f(0) = 1、f(∞) = 0。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 裡「f(u) ≈ f(0)」的嚴格版",
+      "body": [
+        "積分均值定理：f 連續、1/u > 0，所以存在 c ∈ [aε, bε]（設 a < b）使 ∫_{aε}^{bε} f(u)/u du = f(c) ln(b/a)。ε → 0 時 c → 0，f(c) → f(0)。∞ 那端同理，c ∈ [aR, bR]，f(c) → f(∞)。"
+      ],
+      "collapsible": true
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "指數",
+      "prompt": "∫₀^∞ (e^{−2x} − e^{−5x})/x dx",
+      "problemId": "rel-boss-002",
+      "steps": [
+        "f(t) = e^{−t}，a = 2，b = 5。f 連續，f(0) = 1，f(∞) = 0。",
+        "(1 − 0) ln(5/2) = ln(5/2) ≈ 0.916。",
+        "用 Feynman 法也可以驗：對 b 微分得 ∫₀^∞ e^{−bx} dx = 1/b，積回去 ln b + C，b = a 時積分是 0。"
+      ],
+      "answer": "ln(5/2)",
+      "claim": "INT((e^(-2x)-e^(-5x))/x, 0, inf) == ln(5/2)"
+    },
+    {
+      "title": "arctan：f(0) 與 f(∞) 都要代",
+      "prompt": "∫₀^∞ (arctan 5x − arctan 2x)/x dx",
+      "problemId": "int-074",
+      "steps": [
+        "f(t) = arctan t，題目是 f(ax) − f(bx)，a = 5、b = 2。",
+        "f(0) = 0，f(∞) = π/2。",
+        "(0 − π/2) ln(2/5) = (π/2) ln(5/2) ≈ 1.439。符號檢查：arctan 遞增，arctan 5x > arctan 2x，答案應為正，一致。"
+      ],
+      "answer": "(π/2) ln(5/2)",
+      "claim": "INT((arctan(5x)-arctan(2x))/x, 0, inf) == pi/2*ln(5/2)"
+    },
+    {
+      "title": "積化和差再套振盪版",
+      "prompt": "∫₀^∞ sin 3x sin 8x/x dx",
+      "problemId": "int-071",
+      "steps": [
+        "sin 3x sin 8x = (cos 5x − cos 11x)/2。",
+        "振盪版 Frullani：∫₀^∞ (cos 5x − cos 11x)/x dx = ln(11/5)。",
+        "乘上 1/2：(1/2) ln(11/5) ≈ 0.394。"
+      ],
+      "answer": "(1/2) ln(11/5)",
+      "claim": "INT(sin(3x)*sin(8x)/x, 0, inf) == ln(11/5)/2 ;; INT((cos(2x)-cos(5x))/x, 0, inf) == ln(5/2)"
+    }
+  ],
+  "pitfalls": [
+    "a、b 的順序搞反：公式是 f(ax) − f(bx) 對應 ln(b/a)。",
+    "只代 f(0)，忘了 f(∞)（arctan 的 f(∞) = π/2）。",
+    "f(∞) 不存在就直接放棄；cos 這類「∫^∞ f(u)/u du 收斂」的情況可以把 f(∞) 當 0。",
+    "把 f(ax) 與 f(bx) 拆成兩個積分分別算；兩個單獨都發散，合在一起才收斂。"
+  ],
+  "checks": [
+    {
+      "ask": "∫₀^∞ (e^{−x} − e^{−4x})/x dx 是？",
+      "options": [
+        { "label": "ln 4", "correct": true },
+        { "label": "ln(1/4)", "why": "a = 1、b = 4，公式是 ln(b/a) = ln 4；e^{−x} > e^{−4x}，答案應為正。" },
+        { "label": "3", "why": "答案是係數比的對數，不是係數的差。" }
+      ]
+    },
+    {
+      "ask": "Frullani 公式（標準版）需要 f 滿足？",
+      "options": [
+        { "label": "在 [0, ∞) 連續，而且 lim_{x→∞} f(x) 存在", "correct": true },
+        { "label": "f(0) = 0", "why": "f(0) 可以是任何數，它就是公式裡的係數之一。" },
+        { "label": "f 是多項式", "why": "非常數多項式在 ∞ 沒有有限極限，反而不能用。" }
+      ]
+    },
+    {
+      "ask": "∫₀^∞ (cos 2x − cos 5x)/x dx 是？",
+      "options": [
+        { "label": "ln(5/2)", "correct": true },
+        { "label": "不能用 Frullani，因為 cos 在 ∞ 沒有極限", "why": "振盪版成立：∫_A^∞ cos u/u du 收斂，∞ 那端的貢獻 → 0，把 f(∞) 當 0。" },
+        { "label": "ln(2/5)", "why": "a = 2、b = 5，答案 (1 − 0) ln(5/2)；順序反了。" }
+      ]
+    },
+    {
+      "ask": "∫₀^∞ (e^{−5x} − e^{−2x})/x dx 是？",
+      "options": [
+        { "label": "ln(2/5)", "correct": true },
+        { "label": "ln(5/2)", "why": "這題 a = 5、b = 2，ln(b/a) = ln(2/5)。e^{−5x} < e^{−2x}，被積函數為負，答案應為負。" },
+        { "label": "0", "why": "兩項不會抵銷：在 x 小的地方兩者差很多。" }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": ["frullani", "improper-integral"],
+    "fine": ["frullani-exp", "frullani-limits-f0-finf", "frullani-trig-oscillating", "frullani-product-to-sum", "frullani-proof"]
+  },
+  "practice": [
+    { "id": "int-066", "core": true, "trains": "frullani-exp" },
+    { "id": "cx-hi-008", "core": true, "trains": "frullani-exp" },
+    { "id": "td-int-003", "core": true, "trains": "frullani-exp" },
+    { "id": "int-075", "core": true, "trains": "frullani-limits-f0-finf" },
+    { "id": "putnam-012", "core": true, "trains": "frullani-limits-f0-finf" },
+    { "id": "int-069", "core": true, "trains": "frullani-trig-oscillating" },
+    { "id": "int-072", "core": true, "trains": "frullani-product-to-sum" },
+    { "id": "int-065", "trains": "frullani-exp" },
+    { "id": "rel-hard-int-008", "trains": "frullani-exp" },
+    { "id": "int-076", "trains": "frullani-limits-f0-finf" },
+    { "id": "rel-boss-003", "trains": "frullani-trig-oscillating" },
+    { "id": "td-int-004", "trains": "frullani-product-to-sum" },
+    { "id": "px-int-001", "challenge": true, "trains": "frullani-proof", "note": "挑戰：白話證明。照觀念 ② 的「中間抵銷、只剩兩端」寫。" }
+  ],
+  "gaps": []
+}

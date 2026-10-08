@@ -1,0 +1,144 @@
+{
+  "id": "change-order",
+  "title": "交換積分次序",
+  "readMinutes": 9,
+  "totalMinutes": 35,
+  "prerequisites": ["nonrectangular-regions"],
+  "next": ["polar-double-integral"],
+  "related": ["iterated-integral", "u-sub-definite"],
+  "objectives": [
+    "從一個累次積分的上下限還原出區域 D，再用另一個方向重新描述同一塊 D。",
+    "看到內層沒有初等反導函數（像 e^{y²}、sin(y²)）時，想到交換次序。",
+    "處理換次序後要切塊、或兩塊合成一塊的情形。"
+  ],
+  "visual": "左邊顯示一個累次積分的上下限，右邊同步畫出它代表的區域。先用鉛直線掃一遍，標出內層上下界；按「換次序」後改成水平線掃，新的左右界與 y 的範圍逐一點亮，左邊的式子同時改寫。區域本身從頭到尾不動。",
+  "concept": [
+    {
+      "heading": "① 為什麼要換",
+      "body": [
+        "∫_0^1 ∫_x^1 e^{y²} dy dx：內層要對 y 積 e^{y²}，可是 e^{y²} 沒有初等反導函數，卡住了。",
+        "但區域沒變，只是換個方向切。〈累次積分〉的 Fubini 說，連續函數在同一塊區域上換次序，值不變。換完之後，常常會多出一個剛好能配合換元的因子。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 不是把上下限對調",
+      "body": [
+        "最常見的錯：把 ∫_0^1 ∫_x^1 … dy dx 直接改寫成 ∫_x^1 ∫_0^1 … dx dy。外層出現了 x，答案會帶著變數，完全不對。",
+        "正確做法一定要經過「區域」這一步：上下限 → 畫出 D → 用另一個方向描述 D → 新的上下限。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 三個步驟",
+      "body": [
+        "1. 讀上下限，寫成不等式：例如 0 ≤ x ≤ 1、x ≤ y ≤ 1。",
+        "2. 畫出 D，標出頂點：這裡是 (0, 0)、(0, 1)、(1, 1) 的三角形，在 y = x 上方。",
+        "3. 換成水平線：y 從 0 到 1；每條水平線從 x = 0 進、從 x = y 出。所以 0 ≤ y ≤ 1、0 ≤ x ≤ y。",
+        "於是 ∫_0^1 ∫_x^1 e^{y²} dy dx = ∫_0^1 ∫_0^y e^{y²} dx dy = ∫_0^1 y e^{y²} dy。多出來的 y 正好讓 u = y² 能用。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 切塊與合併",
+      "body": [
+        "換方向之後，掃描線可能中途換邊界曲線，這時要切成兩塊；反過來，原本兩塊加起來的積分，換個方向也可能合成一塊。判斷方法一樣：看每條掃描線是不是從同一條曲線進、同一條曲線出。"
+      ],
+      "collapsible": false
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "內層卡住：sin(y²)",
+      "prompt": "∫_0^1 ∫_x^1 sin(y²) dy dx",
+      "steps": [
+        "sin(y²) 對 y 沒有初等反導函數，先 dy 做不下去。",
+        "區域：0 ≤ x ≤ 1、x ≤ y ≤ 1，是頂點 (0, 0)、(0, 1)、(1, 1) 的三角形。",
+        "改成水平線：0 ≤ y ≤ 1、0 ≤ x ≤ y。積分變成 ∫_0^1 ∫_0^y sin(y²) dx dy。",
+        "內層對 x 積，sin(y²) 是常數：結果 y sin(y²)。",
+        "外層令 u = y²，du = 2y dy：∫_0^1 y sin(y²) dy = (1/2) ∫_0^1 sin u du = (1 − cos 1)/2。"
+      ],
+      "answer": "(1 − cos 1)/2",
+      "claim": "INT(INT(sin(y^2),x,1,y),0,1,x) == (1-cos(1))/2 ;; INT(y*sin(y^2),0,1,y) == (1-cos(1))/2"
+    },
+    {
+      "title": "根號在下限",
+      "prompt": "∫_0^1 ∫_{√y}^{1} √(x³ + 1) dx dy",
+      "steps": [
+        "√(x³ + 1) 對 x 沒有初等反導函數。",
+        "區域：0 ≤ y ≤ 1、√y ≤ x ≤ 1。x ≥ √y 等價於 y ≤ x²（兩邊非負，可以平方），所以 D 是 y = x² 下方、0 ≤ x ≤ 1 的部分。",
+        "改成鉛直線：0 ≤ x ≤ 1、0 ≤ y ≤ x²。積分變成 ∫_0^1 x² √(x³ + 1) dx。",
+        "令 u = x³ + 1，du = 3x² dx：(1/3) ∫_1^2 √u du = (2/9)(2√2 − 1)。"
+      ],
+      "answer": "(2/9)(2√2 − 1)",
+      "claim": "INT(INT(sqrt(x^3+1),sqrt(y),1,x),0,1,y) == (2/9)*(2*sqrt(2)-1) ;; INT(x^2*sqrt(x^3+1),0,1) == (2/9)*(2*sqrt(2)-1)"
+    },
+    {
+      "title": "兩塊合成一塊",
+      "prompt": "把 ∫_0^1 ∫_0^y x dx dy + ∫_1^2 ∫_0^{2−y} x dx dy 寫成一個累次積分並求值。",
+      "steps": [
+        "第一塊：0 ≤ y ≤ 1、0 ≤ x ≤ y。第二塊：1 ≤ y ≤ 2、0 ≤ x ≤ 2 − y。",
+        "合起來是頂點 (0, 0)、(1, 1)、(0, 2) 的三角形：左邊是 y 軸，右邊由 y = x 與 y = 2 − x 兩條線組成，所以水平線要切兩塊。",
+        "改成鉛直線：x 從 0 到 1，每條鉛直線從 y = x 進、從 y = 2 − x 出。一塊就好：∫_0^1 ∫_x^{2−x} x dy dx。",
+        "內層 x(2 − 2x)，外層 ∫_0^1 (2x − 2x²) dx = 1 − 2/3 = 1/3。"
+      ],
+      "answer": "∫_0^1 ∫_x^{2−x} x dy dx = 1/3",
+      "claim": "INT(INT(x,0,y,x),0,1,y) + INT(INT(x,0,2-y,x),1,2,y) == 1/3 ;; INT(INT(x,x,2-x,y),0,1,x) == 1/3"
+    }
+  ],
+  "pitfalls": [
+    "直接把內外層的上下限對調，沒有畫區域。",
+    "√y ≤ x 換成 y ≤ x² 時，沒有確認兩邊都非負。",
+    "換次序之後新的掃描線中途換邊界，卻沒切塊。",
+    "以為換次序會改變答案：換的只是切法，區域與值都不變。"
+  ],
+  "checks": [
+    {
+      "ask": "∫_0^2 ∫_0^x f dy dx 換成先 dx，正確的是？",
+      "options": [
+        { "label": "∫_0^2 ∫_y^2 f dx dy", "correct": true },
+        { "label": "∫_0^x ∫_0^2 f dx dy", "why": "這是直接對調上下限，外層出現了變數。要先畫出區域：(0, 0)、(2, 0)、(2, 2) 的三角形。" },
+        { "label": "∫_0^2 ∫_0^y f dx dy", "why": "這是三角形的另一半（y = x 上方）。原區域在 y = x 下方，水平線從 x = y 進、x = 2 出。" }
+      ]
+    },
+    {
+      "ask": "∫_0^1 ∫_x^1 e^{y²} dy dx 為什麼要換次序？",
+      "options": [
+        { "label": "e^{y²} 對 y 沒有初等反導函數；換序後多一個 y，可以換元", "correct": true },
+        { "label": "換次序可以讓答案變小、比較好算", "why": "Fubini 保證換次序值不變。換的理由是算得動，不是答案改變。" },
+        { "label": "e^{y²} 在這個區域上不連續", "why": "e^{y²} 處處連續。卡住的是反導函數寫不出來，不是連續性。" }
+      ]
+    },
+    {
+      "ask": "∫_0^1 ∫_y^1 f dx dy 的區域是？",
+      "options": [
+        { "label": "頂點 (0, 0)、(1, 0)、(1, 1) 的三角形", "correct": true },
+        { "label": "頂點 (0, 0)、(0, 1)、(1, 1) 的三角形", "why": "x 從 y 到 1 表示點在 y = x 的右邊（x ≥ y），也就是 y = x 下方那一半。" },
+        { "label": "單位正方形", "why": "內層 x 從 y 開始，不是從 0 開始，只佔正方形的一半。" }
+      ]
+    },
+    {
+      "ask": "∫_0^{√π} ∫_x^{√π} sin(y²) dy dx 是？",
+      "options": [
+        { "label": "1", "correct": true },
+        { "label": "0", "why": "換序後是 ∫_0^{√π} y sin(y²) dy = (1 − cos π)/2，cos π = −1，所以是 (1 + 1)/2。" },
+        { "label": "2", "why": "u = y² 時 du = 2y dy，y dy = du/2，前面要乘 1/2。" }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": ["order-of-integration", "change-order", "double-integral"],
+    "fine": ["change-order-redraw-region", "change-order-nonelementary-inner", "change-order-split-merge"]
+  },
+  "practice": [
+    { "id": "lec-19-m2", "core": true, "trains": "change-order-redraw-region" },
+    { "id": "lec-19-q1b", "core": true, "trains": "change-order-nonelementary-inner" },
+    { "id": "lec-19-q1c", "core": true, "trains": "change-order-nonelementary-inner" },
+    { "id": "int-031", "trains": "change-order-redraw-region", "note": "先畫區域，再試試另一個次序是不是一樣。" },
+    { "id": "depth-int-022", "trains": "change-order-redraw-region" }
+  ],
+  "gaps": [
+    { "tag": "change-order-split-merge", "count": 2, "note": "R4：換次序後要切兩塊，或兩塊合成一塊。" },
+    { "tag": "change-order-nonelementary-inner", "count": 2, "note": "R4：√(x³ + 1)、e^{x/y} 這類內層卡住的題。" }
+  ]
+}

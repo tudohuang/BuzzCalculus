@@ -1,0 +1,147 @@
+{
+  "id": "divergence-theorem",
+  "title": "散度定理",
+  "readMinutes": 11,
+  "totalMinutes": 45,
+  "prerequisites": ["divergence", "flux", "triple-integral"],
+  "next": ["fundamental-theorems-unified"],
+  "related": ["spherical-coordinates", "stokes-theorem", "green-theorem"],
+  "objectives": [
+    "寫出散度定理與它的條件：封閉曲面、朝外法向量、F 在整個立體上偏導連續。",
+    "把封閉曲面的通量換成散度的三重積分；對不封閉的曲面，補一個蓋子再扣掉。",
+    "解釋點源場 ⟨x, y, z⟩/ρ³ 為什麼散度為 0、通量卻是 4π。"
+  ],
+  "visual": "一個立體被切成許多小方塊，每個方塊的六個面上標出流出量。相鄰方塊共用的面上，一邊的流出就是另一邊的流入，兩個數字一正一負後消失；最後只剩最外層表面的流出量，加起來等於所有方塊散度 × 體積的總和。可以把立體換成球、圓柱，讀數兩邊始終相等。",
+  "concept": [
+    {
+      "heading": "① 直觀：小方塊的流出量加起來",
+      "body": [
+        "〈散度〉：每個小方塊的淨流出 ≈ (∇ · F) × 體積。把立體 E 切成小方塊，全部加起來。",
+        "相鄰兩塊共用一個面：從左塊流出的，正好流進右塊，一正一負抵消。最後只剩最外面那層表面的流出。所以：表面的總流出 = 裡面所有小源的總和。這是直觀，不是證明。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 定理",
+      "body": [
+        "E 是空間中有界的立體，邊界 S 是分段光滑的封閉曲面，S 取朝外的法向量；F 的分量在一個包含 E（連同邊界）的開集上有連續偏導。那麼下式成立。也叫 Gauss 定理。"
+      ],
+      "tex": ["\\iint_S \\mathbf F\\cdot d\\mathbf S=\\iiint_E \\nabla\\cdot\\mathbf F\\,dV"],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 怎麼用",
+      "body": [
+        "封閉曲面的通量、而且散度很簡單（常數、或只剩多項式）：換成三重積分，通常再接〈球座標〉或柱座標。",
+        "曲面不封閉（像只有碗面、沒有底）：先補一片蓋子 S₀ 讓它封閉，用散度定理算總通量，再減去蓋子那片的通量（蓋子也要朝外）。",
+        "通量形式的〈Green 定理〉∮ F · n ds = ∬ (P_x + Q_y) dA 就是它的平面版本。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 條件壞掉時：點源",
+      "body": [
+        "F = ⟨x, y, z⟩/ρ³（ρ = √(x² + y² + z²)）在原點以外 ∇ · F = 0。但穿出任一個以原點為中心的球面，通量都是 4π：球面上 F · n = 1/ρ²，乘上面積 4πρ² 得 4π。",
+        "這不矛盾：F 在原點沒有定義，包含原點的立體不滿足定理的條件。所有的源都擠在原點一點上。物理上這就是 Gauss 定律：點電荷的電通量只看包住的電荷。",
+        "對不包含原點的封閉曲面，條件成立，通量是 0。"
+      ],
+      "collapsible": false
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "散度是常數",
+      "prompt": "F = ⟨z, y, x⟩ 穿出單位球面的通量。",
+      "steps": [
+        "∇ · F = 0 + 1 + 0 = 1。",
+        "F 處處偏導連續，單位球面封閉、朝外，條件成立。",
+        "通量 = ∭_{單位球} 1 dV = 4π/3。"
+      ],
+      "answer": "4π/3",
+      "claim": "INT(INT(INT(r^2*sin(u),0,1,r),0,pi,u),0,2*pi,t) == 4*pi/3"
+    },
+    {
+      "title": "避開難算的分量",
+      "prompt": "F = ⟨xy, y² + e^{xz²}, sin(xy)⟩，E 由拋物柱面 z = 1 − x² 與平面 z = 0、y = 0、y + z = 2 圍成。求穿出 E 表面的通量。",
+      "steps": [
+        "表面有四片，直接算要碰 e^{xz²}、sin(xy)，很難。",
+        "∇ · F = y + 2y + 0 = 3y：e^{xz²} 不含 y，sin(xy) 不含 z，偏微分都消失。",
+        "描述 E：x 從 −1 到 1，z 從 0 到 1 − x²，y 從 0 到 2 − z。",
+        "∭ 3y dV = ∫_{−1}^{1} ∫_0^{1−x²} ∫_0^{2−z} 3y dy dz dx = 184/35。"
+      ],
+      "answer": "184/35",
+      "claim": "INT(INT(INT(3*y,0,2-z,y),0,1-x^2,z),-1,1,x) == 184/35"
+    },
+    {
+      "title": "補蓋子",
+      "prompt": "F = ⟨y, x, z⟩ 朝上穿過碗面 z = 1 − x² − y²（z ≥ 0）的通量。",
+      "steps": [
+        "碗面不封閉。補上底部圓盤 S₀：z = 0、x² + y² ≤ 1，朝外就是朝下（−k）。",
+        "∇ · F = 1。封閉曲面總通量 = 碗下的體積 = ∫_0^{2π} ∫_0^1 (1 − r²) r dr dθ = π/2。",
+        "底部：F · (−k) = −z = 0，通量 0。",
+        "碗面通量 = π/2 − 0 = π/2。跟〈通量〉那一課直接算的結果一樣。"
+      ],
+      "answer": "π/2",
+      "claim": "INT(INT((1-r^2)*r,0,1,r),0,2*pi,t) == pi/2"
+    }
+  ],
+  "pitfalls": [
+    "用在不封閉的曲面上，忘了補蓋子再扣掉。",
+    "法向量朝內卻照用，差一個負號。",
+    "立體裡有 F 沒定義的點（像點源的原點）還照用。",
+    "補了蓋子，卻忘了蓋子的方向也要朝外。"
+  ],
+  "checks": [
+    {
+      "ask": "散度定理裡封閉曲面 S 的法向量要取？",
+      "options": [
+        { "label": "朝外", "correct": true },
+        { "label": "朝內", "why": "定理是「淨流出 = 內部源的總和」，所以要朝外；朝內會差一個負號。" },
+        { "label": "朝上", "why": "封閉曲面有朝上的部分也有朝下的部分（像球的下半），要一律朝外。" }
+      ]
+    },
+    {
+      "ask": "E 是邊長 3 的正方體，∇ · F = 2（處處）。穿出 E 表面的通量是？",
+      "options": [
+        { "label": "54", "correct": true },
+        { "label": "18", "why": "用了一個面的面積 9。要乘的是體積 27。" },
+        { "label": "2", "why": "散度是每單位體積的淨流出，要乘上體積。" }
+      ]
+    },
+    {
+      "ask": "S 是上半球面（沒有底），可以直接用散度定理嗎？",
+      "options": [
+        { "label": "不能直接用：先補上底部圓盤，算完再扣掉圓盤的通量", "correct": true },
+        { "label": "可以，直接換成半球的三重積分", "why": "上半球面不封閉，它本身不是任何立體的完整邊界。" },
+        { "label": "永遠不能用", "why": "補一片蓋子就能用，這是很常見的做法。" }
+      ]
+    },
+    {
+      "ask": "F = ⟨x, y, z⟩/ρ³ 穿出球面 ρ = 5 的通量是 4π，可是原點以外 ∇ · F = 0。為什麼？",
+      "options": [
+        { "label": "F 在原點沒有定義，球體不滿足定理的條件", "correct": true },
+        { "label": "散度定理錯了", "why": "定理沒錯，是條件不成立：它要求 F 在整個立體上偏導連續。" },
+        { "label": "其實通量應該是 0", "why": "球面上 F · n = 1/25，乘面積 100π 確實是 4π。" }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": ["divergence-theorem", "flux", "vector-calculus"],
+    "fine": ["divergence-theorem-closed", "divergence-theorem-add-lid", "divergence-theorem-hypotheses"]
+  },
+  "practice": [
+    { "id": "vc-div-001", "core": true, "trains": "divergence-theorem-closed" },
+    { "id": "vc-div-004", "core": true, "trains": "divergence-theorem-closed" },
+    { "id": "vc-div-003", "core": true, "trains": "divergence-theorem-closed" },
+    { "id": "vc-div-002", "core": true, "trains": "divergence-theorem-closed", "note": "散度 3ρ²，接球座標。" },
+    { "id": "vc-div-007", "core": true, "trains": "divergence-theorem-closed" },
+    { "id": "vc-div-005", "trains": "divergence-theorem-closed" },
+    { "id": "lec-20-q4a", "trains": "divergence-theorem-closed" },
+    { "id": "vc-rec-001", "trains": "divergence-theorem-closed" },
+    { "id": "vc-div-006", "challenge": true, "trains": "divergence-theorem-hypotheses", "note": "挑戰：散度在原點以外為 0，答案卻不是 0；想清楚為什麼。" }
+  ],
+  "gaps": [
+    { "tag": "divergence-theorem-add-lid", "count": 3, "note": "R4：不封閉曲面（碗、半球、圓錐側面）補蓋子後再扣掉。" },
+    { "tag": "divergence-theorem-hypotheses", "count": 2, "note": "R4：立體內有奇異點的情形，包括不含原點的封閉曲面通量為 0。" }
+  ]
+}

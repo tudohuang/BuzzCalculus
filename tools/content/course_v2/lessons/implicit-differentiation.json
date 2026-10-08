@@ -1,0 +1,164 @@
+{
+  "id": "implicit-differentiation",
+  "title": "隱函數微分",
+  "readMinutes": 9,
+  "totalMinutes": 35,
+  "prerequisites": ["chain-rule", "product-rule"],
+  "next": ["logarithmic-differentiation"],
+  "related": ["related-rates"],
+  "objectives": [
+    "不把 y 解出來，直接對方程式兩邊微分，求 dy/dx。",
+    "微分含 y 的項時記得乘 y′（連鎖律），xy 這種項用乘法法則。",
+    "在曲線上的點代值求切線斜率，並知道分母為 0 時代表什麼。"
+  ],
+  "visual": "圓 x² + y² = 25 上有一個可以拖動的點，點上畫出切線，旁邊顯示座標與斜率 −x/y。拖到最上面 (0, 5) 斜率是 0；拖向 (5, 0) 時切線越來越陡，到那一點變成鉛直線，斜率欄顯示「分母 y = 0，沒有斜率」。",
+  "concept": [
+    {
+      "heading": "① 曲線不一定寫得成 y = f(x)",
+      "body": [
+        "x² + y² = 25 是一個圓。解 y 會得到兩支：y = √(25 − x²) 與 y = −√(25 − x²)。x³ + y³ = 6xy 更麻煩，幾乎不可能好好解出 y。",
+        "可是曲線上每一點（大部分的點）還是有切線。我們想直接從方程式求斜率。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 想法：把 y 當成 x 的函數",
+      "body": [
+        "在曲線的一小段上，y 是 x 的函數 y(x)，只是我們沒寫出它的式子。方程式兩邊都是 x 的函數而且相等，所以兩邊對 x 的導數也相等。",
+        "唯一的新東西：微分含 y 的項要用連鎖律。y² 是「平方」套在 y(x) 外面，導數是 2y · y′。同理 (y³)′ = 3y² y′、(sin y)′ = cos y · y′。",
+        "x 和 y 相乘的項用乘法法則：(xy)′ = 1 · y + x · y′。"
+      ],
+      "tex": ["\\frac{d}{dx}\\,y^2=2y\\,\\frac{dy}{dx}"],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 四個步驟",
+      "body": [
+        "兩邊對 x 微分 → 含 y′ 的項移到一邊，其他移到另一邊 → 提出 y′ → 除過去。",
+        "結果通常同時含 x 和 y。要某一點的斜率，就把那一點的 x、y 都代進去（先確認那一點真的在曲線上）。",
+        "〈相關變率〉會用同一招，只是改成對時間 t 微分。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 分母是 0 的時候",
+      "body": [
+        "圓的斜率是 y′ = −x/y。在 (5, 0)，分母 y = 0：那裡的切線是鉛直線，斜率不存在。這不是方法失靈——上半圓 y = √(25 − x²) 在 x = 5 也不可微。曲線本身在那裡就是直上直下。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "⑤ 什麼時候「y 是 x 的函數」站得住",
+      "body": [
+        "上面默認了在那一點附近，曲線是某個可微函數 y(x) 的圖形。這不是永遠對：在圓的 (5, 0) 附近，同一個 x 對到上下兩個 y，曲線不是任何函數的圖形。",
+        "把方程式寫成 F(x, y) = c。多變數微積分會證明（隱函數定理）：如果 F 的偏導數連續，而且在那一點 F 對 y 的偏導數不是 0，那麼在那一點附近曲線就是某個可微函數 y(x) 的圖形。以圓來說，F 對 y 的偏導數是 2y，只在 y = 0 的兩點出事，正好是切線鉛直的地方。"
+      ],
+      "collapsible": true
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "圓上一點的切線斜率",
+      "prompt": "x² + y² = 25，求 dy/dx 在 (3, 4)",
+      "problemId": "cx-app-001",
+      "steps": [
+        "先確認：3² + 4² = 25，點在圓上。",
+        "兩邊對 x 微分：2x + 2y y′ = 0（25 是常數，導數 0）。",
+        "解 y′：y′ = −x/y。",
+        "代 (3, 4)：y′ = −3/4。",
+        "對答案：這一點在上半圓 y = √(25 − x²)，直接微分 y′ = −x/√(25 − x²)，代 x = 3 得 −3/4，一樣。"
+      ],
+      "answer": "−3/4",
+      "claim": "D(sqrt(25-x^2), 3) == -3/4"
+    },
+    {
+      "title": "有 xy 項：用乘法法則",
+      "prompt": "xy + y² = 6，求 dy/dx 在 (1, 2)",
+      "problemId": "tb-imp-002",
+      "steps": [
+        "確認：1 · 2 + 2² = 6，點在曲線上。",
+        "微分：(xy)′ = y + x y′，(y²)′ = 2y y′，(6)′ = 0。得 y + x y′ + 2y y′ = 0。",
+        "含 y′ 的放一邊：y′(x + 2y) = −y，所以 y′ = −y/(x + 2y)。",
+        "代 (1, 2)：y′ = −2/(1 + 4) = −2/5。"
+      ],
+      "answer": "−2/5",
+      "note": "這條曲線其實解得出 y = (−x + √(x² + 24))/2（取經過 (1, 2) 的那一支），直接微分也得 −2/5。",
+      "claim": "D((-x+sqrt(x^2+24))/2, 1) == -2/5"
+    },
+    {
+      "title": "解不出 y 的曲線",
+      "prompt": "x³ + y³ = 6xy，求 dy/dx 在 (3, 3)",
+      "problemId": "cx-app-002",
+      "steps": [
+        "確認：27 + 27 = 54 = 6 · 3 · 3，點在曲線上。",
+        "微分：3x² + 3y² y′ = 6y + 6x y′（右邊 6xy 用乘法法則）。",
+        "整理：y′(3y² − 6x) = 6y − 3x²，同除以 3：y′ = (2y − x²)/(y² − 2x)。",
+        "代 (3, 3)：y′ = (6 − 9)/(9 − 6) = −1。"
+      ],
+      "answer": "−1",
+      "note": "驗算用的是這條曲線的參數式 x = 6t/(1 + t³)、y = 6t²/(1 + t³)，t = 1 正好是 (3, 3)，斜率 = (dy/dt)/(dx/dt)。",
+      "claim": "D(6t^2/(1+t^3), 1)/D(6t/(1+t^3), 1) == -1"
+    }
+  ],
+  "pitfalls": [
+    "y² 微分寫成 2y，漏了 y′。",
+    "xy 微分寫成 y′，或只寫 x y′，漏了乘法法則的另一項。",
+    "右邊的常數微分後忘了變成 0。",
+    "移項時正負號弄錯，整個答案差一個負號。",
+    "代進一個不在曲線上的點。"
+  ],
+  "checks": [
+    {
+      "ask": "把 y 看成 x 的函數，d/dx (y³) 是？",
+      "options": [
+        { "label": "3y²", "why": "y 是 x 的函數，外層是三次方、裡層是 y(x)，連鎖律要再乘 y′。" },
+        { "label": "3y² y′", "correct": true },
+        { "label": "0", "why": "把 y 當成常數了。y 會隨 x 變，所以它的導數不是 0。" }
+      ]
+    },
+    {
+      "ask": "d/dx (xy) 是？",
+      "options": [
+        { "label": "y′", "why": "這是各自微分再相乘 1 · y′。xy 是乘積，要用乘法法則。" },
+        { "label": "x y′", "why": "只寫了一半，還有 (x)′ · y = y。" },
+        { "label": "y + x y′", "correct": true }
+      ]
+    },
+    {
+      "ask": "x² + y² = 13 在 (2, 3) 的 dy/dx 是？",
+      "options": [
+        { "label": "−2/3", "correct": true },
+        { "label": "−3/2", "why": "把 −x/y 寫成了 −y/x。從 2x + 2y y′ = 0 解出來是 y′ = −x/y。" },
+        { "label": "2/3", "why": "移項時漏了負號：2y y′ = −2x。" }
+      ]
+    },
+    {
+      "ask": "x² + y² = 25 在 (5, 0)，公式 y′ = −x/y 的分母是 0。這表示？",
+      "options": [
+        { "label": "切線是鉛直線，斜率不存在", "correct": true },
+        { "label": "斜率是 0", "why": "斜率 0 是水平切線，發生在 x = 0 的 (0, ±5)。這裡是分母為 0，不是分子。" },
+        { "label": "隱函數微分在這裡算錯了，要改用 y = √(25 − x²)", "why": "√(25 − x²) 在 x = 5 一樣不可微。圓在那一點本來就直上直下，不是方法的問題。" }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": ["implicit-differentiation"],
+    "fine": ["implicit-chain-y", "implicit-product-xy", "implicit-slope-at-point", "implicit-tangent-line", "implicit-second-derivative"]
+  },
+  "practice": [
+    { "id": "cx-app-001", "core": true, "trains": "implicit-chain-y" },
+    { "id": "tb-imp-001", "core": true, "trains": "implicit-slope-at-point" },
+    { "id": "db-imp-001", "core": true, "trains": "implicit-product-xy" },
+    { "id": "tb-imp-002", "core": true, "trains": "implicit-product-xy" },
+    { "id": "lec-03-q1a", "core": true, "trains": "implicit-product-xy" },
+    { "id": "cx-app-002", "core": true, "trains": "implicit-slope-at-point" },
+    { "id": "lec-03-q1b", "core": true, "trains": "implicit-tangent-line" },
+    { "id": "tb-imp-004", "trains": "implicit-chain-y" },
+    { "id": "dd-imp-005", "trains": "implicit-chain-y" },
+    { "id": "db-imp-003", "trains": "implicit-product-xy" },
+    { "id": "dd-imp-007", "trains": "implicit-chain-y" },
+    { "id": "db-imp-005", "challenge": true, "trains": "implicit-second-derivative", "note": "挑戰：對 y′ = −x/y 再微分一次（除法法則，y′ 再代回去）。" },
+    { "id": "lec-03-q1d", "challenge": true, "trains": "implicit-second-derivative", "note": "挑戰：二階導數，先求 y′ 再對 y′ 隱函數微分。" }
+  ],
+  "gaps": []
+}

@@ -1,0 +1,138 @@
+{
+  "id": "pointwise-convergence",
+  "title": "逐點收斂",
+  "readMinutes": 10,
+  "totalMinutes": 30,
+  "prerequisites": ["epsilon-n-definition", "uniform-continuity", "heine-cantor"],
+  "next": ["uniform-convergence"],
+  "related": ["limit-integral-swap"],
+  "objectives": [
+    "把一列函數 fₙ 在每個固定的 x 看成一個數列，求出極限函數 f。",
+    "寫出逐點收斂的量詞：N 可以同時依賴 ε 與 x。",
+    "舉出三個例子：每個 fₙ 都連續，極限不連續；fₙ → 0 但 ∫ fₙ 不趨近 0；fₙ 的高峰一直不消失。"
+  ],
+  "visual": "在 [0, 1] 上畫 y = xⁿ，n 用滑桿從 1 拉到 200。曲線在 x < 1 的部分一路被壓向 0，但右端永遠釘在 (1, 1)，越來越像一個直角。旁邊固定 x = 0.5、0.9、0.99 三個點，各自顯示第幾項之後 xⁿ < 0.01（7、44、459）。",
+  "concept": [
+    {
+      "heading": "① 一列函數，在每個點各是一個數列",
+      "body": [
+        "函數列 f₁, f₂, f₃, … 是一串定義在同一個集合 D 上的函數。固定一個 x，f₁(x), f₂(x), f₃(x), … 就是一個普通的數列，可以問它收不收斂。",
+        "例：fₙ(x) = xⁿ，x ∈ [0, 1]。x = 0.5 時是 0.5, 0.25, 0.125, … → 0；x = 1 時是 1, 1, 1, … → 1。每個 x 各算各的，得到極限函數 f(x) = 0（0 ≤ x < 1），f(1) = 1。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 定義",
+      "body": [
+        "fₙ 在 D 上逐點收斂到 f，意思是對每一個 x ∈ D，數列 fₙ(x) 收斂到 f(x)。把數列極限的 ε-N 定義展開：",
+        "量詞順序是「先固定 x，再給 ε，再找 N」，所以 N 可以隨 x 改變。這一點下一課會變成關鍵。"
+      ],
+      "tex": ["\\forall x\\in D\\ \\ \\forall\\varepsilon>0\\ \\ \\exists N=N(\\varepsilon,x)\\ \\ \\forall n\\ge N:\\ |f_n(x)-f(x)|<\\varepsilon"],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 逐點收斂會弄丟什麼",
+      "body": [
+        "連續：每個 xⁿ 都連續，極限 f 在 x = 1 跳了一下。",
+        "積分：fₙ(x) = nx e^{−nx²} 在 [0, 1] 上逐點收斂到 0，但 ∫₀¹ fₙ dx = (1 − e^{−n})/2 → 1/2，不是 ∫₀¹ 0 dx = 0（範例 3）。",
+        "直覺，不是證明：逐點收斂只保證每個點「最後」會靠近，但不同點靠近的速度可以差到沒有上限。高峰往 x = 0 擠、越來越窄，任何一個固定的點遲早都會被高峰甩在後面，但高峰本身從來沒消失。要把連續、積分保住，需要一個對所有 x 共用的 N，那就是〈一致收斂〉。"
+      ],
+      "collapsible": false
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "N 會隨 x 改變",
+      "prompt": "fₙ(x) = xⁿ，ε = 0.01。分別在 x = 0.5、0.9、0.99 找最小的 N，使 n ≥ N 時 xⁿ < 0.01。",
+      "steps": [
+        "0 < x < 1 時 xⁿ 遞減，所以只要找第一個 n 使 xⁿ < 0.01。取對數：n ln x < ln 0.01，ln x < 0，除過去要變號：n > ln 0.01 / ln x。",
+        "x = 0.5：ln 0.01 / ln 0.5 ≈ 6.64，N = 7。檢查：0.5⁶ = 0.015625 ≥ 0.01，0.5⁷ = 0.0078125 < 0.01。",
+        "x = 0.9：≈ 43.71，N = 44（0.9⁴³ ≈ 0.01078，0.9⁴⁴ ≈ 0.00970）。",
+        "x = 0.99：≈ 458.21，N = 459（0.99⁴⁵⁸ ≈ 0.01002，0.99⁴⁵⁹ ≈ 0.00992）。",
+        "x 越靠近 1，N 越大，而且沒有上限：給任何 N，取 x = 0.01^{1/N} < 1，就有 x^N = 0.01，不小於 ε。"
+      ],
+      "answer": "N = 7、44、459；沒有一個 N 對所有 x ∈ [0, 1) 都行",
+      "claim": "0.5^7 < 0.01 ;; 0.5^6 >= 0.01 ;; 0.9^44 < 0.01 ;; 0.9^43 >= 0.01 ;; 0.99^459 < 0.01 ;; 0.99^458 >= 0.01"
+    },
+    {
+      "title": "會移動的高峰",
+      "prompt": "fₙ(x) = nx/(1 + n²x²)，x ∈ [0, 1]。求逐點極限，並求 fₙ 在 [0, 1] 上的最大值。",
+      "problemId": "an-uf-004",
+      "steps": [
+        "x = 0：fₙ(0) = 0。x > 0：0 ≤ fₙ(x) ≤ nx/(n²x²) = 1/(nx) → 0。所以逐點極限 f ≡ 0。",
+        "最大值：令 t = nx ≥ 0，fₙ = t/(1 + t²)。由 (t − 1)² ≥ 0 得 1 + t² ≥ 2t，所以 t/(1 + t²) ≤ 1/2，等號在 t = 1，也就是 x = 1/n（落在 [0, 1] 內）。",
+        "所以每個 n 的最大值都是 fₙ(1/n) = 1/2：高峰一直在，只是往 0 擠。"
+      ],
+      "answer": "逐點極限 0；每個 fₙ 的最大值都是 1/2",
+      "claim": "SUB(n*x/(1+n^2*x^2), 1/n) == 1/2 ;; n*x/(1+n^2*x^2) <= 1/2 ;; LIM(0.3*n/(1+0.09*n^2), inf) == 0"
+    },
+    {
+      "title": "逐點極限是 0，積分卻不是",
+      "prompt": "fₙ(x) = nx e^{−nx²}，x ∈ [0, 1]。比較 lim ∫₀¹ fₙ dx 與 ∫₀¹ (lim fₙ) dx。",
+      "problemId": "lb-con-003",
+      "steps": [
+        "逐點：x = 0 時 fₙ = 0。x > 0 時固定 x，n e^{−nx²} 中指數衰減贏過 n，→ 0。所以 lim fₙ ≡ 0，∫₀¹ 0 dx = 0。",
+        "積分：令 u = nx²，du = 2nx dx，∫₀¹ nx e^{−nx²} dx = (1/2)∫₀ⁿ e^{−u} du = (1 − e^{−n})/2。",
+        "n → ∞：(1 − e^{−n})/2 → 1/2。",
+        "1/2 ≠ 0：逐點收斂下，極限與積分不能隨便交換。"
+      ],
+      "answer": "lim ∫ fₙ = 1/2，∫ lim fₙ = 0",
+      "claim": "INT(n*x*e^(-n*x^2), 0, 1) == (1-e^(-n))/2 ;; LIM((1-e^(-n))/2, inf) == 1/2 ;; LIM(n*0.3*e^(-0.09*n), inf) == 0"
+    }
+  ],
+  "pitfalls": [
+    "把 xⁿ 在 [0, 1] 的極限寫成 f ≡ 0，漏掉 x = 1 那一點 1ⁿ = 1。",
+    "以為「每個 fₙ 連續」就推得出「極限連續」。逐點收斂不保證。",
+    "以為逐點收斂就能交換極限與積分：lim ∫ fₙ 與 ∫ lim fₙ 可以不相等。",
+    "寫逐點收斂時把 N 寫成只跟 ε 有關；它允許跟 x 有關，這正是它弱的地方。"
+  ],
+  "checks": [
+    {
+      "ask": "fₙ(x) = xⁿ 在 [0, 1] 上的逐點極限 f 是？",
+      "options": [
+        { "label": "f(x) = 0（0 ≤ x < 1），f(1) = 1", "correct": true },
+        { "label": "f ≡ 0", "why": "你看了 x < 1 的部分就下結論。x = 1 時數列是 1, 1, 1, …，極限是 1。" },
+        { "label": "極限不存在，因為 f 不連續", "why": "你把「極限函數不連續」當成「不收斂」。每個 x 的數列都收斂，只是收斂到一個不連續的函數。" }
+      ]
+    },
+    {
+      "ask": "fₙ(x) = xⁿ，x = 0.9，ε = 0.01。使 n ≥ N 時 xⁿ < ε 的最小 N 是？",
+      "options": [
+        { "label": "44", "correct": true },
+        { "label": "43", "why": "你把 ln 0.01 / ln 0.9 ≈ 43.71 無條件捨去了。0.9⁴³ ≈ 0.0108 還不小於 0.01，要進位成 44。" },
+        { "label": "7", "why": "那是 x = 0.5 的答案。逐點收斂的 N 隨 x 改變，不能拿別的點的 N 來用。" }
+      ]
+    },
+    {
+      "ask": "逐點收斂的定義裡，N 可以依賴什麼？",
+      "options": [
+        { "label": "ε 與 x 都可以", "correct": true },
+        { "label": "只能依賴 ε", "why": "那是一致收斂的要求（∀ε ∃N ∀x）。逐點收斂先固定 x 才找 N。" },
+        { "label": "只能依賴 x", "why": "N 一定要能隨 ε 變大；ε 越小，通常要走越多項。" }
+      ]
+    },
+    {
+      "ask": "fₙ(x) = nx/(1 + n²x²) 在 [0, 1] 上，下列何者正確？",
+      "options": [
+        { "label": "逐點收斂到 0，但每個 fₙ 的最大值都是 1/2", "correct": true },
+        { "label": "逐點收斂到 1/2", "why": "1/2 是高峰的高度，可是高峰位置 1/n 一直在移動；任何固定的 x 上，fₙ(x) ≤ 1/(nx) → 0。" },
+        { "label": "在 x 靠近 0 的地方不收斂", "why": "你把高峰往 0 擠誤當成某個點不收斂。x = 0 時 fₙ(0) = 0；x > 0 時也 → 0。每個點都收斂。" }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": ["uniform-convergence", "convergence-theorem", "sequence"],
+    "fine": ["pointwise-limit-function", "pointwise-n-depends-on-x", "pointwise-moving-bump", "pointwise-integral-mismatch"]
+  },
+  "practice": [
+    { "id": "an-uf-004", "core": true, "trains": "pointwise-moving-bump" },
+    { "id": "lb-con-004", "core": true, "trains": "pointwise-integral-mismatch" },
+    { "id": "lb-con-003", "core": true, "trains": "pointwise-integral-mismatch" },
+    { "id": "lb-con-005", "trains": "pointwise-integral-mismatch" },
+    { "id": "lb-con-001", "challenge": true, "trains": "pointwise-integral-mismatch", "note": "挑戰：n²x e^{−nx} 逐點收斂到 0，令 u = nx 算出 ∫₀¹ = 1 − (n + 1)e^{−n}。" }
+  ],
+  "gaps": [
+    { "tag": "pointwise-limit-function", "count": 3, "note": "求逐點極限函數（要分段），例如 xⁿ/(1 + xⁿ) 在 [0, ∞)、x^{1/n} 在 [0, 1]；目前題庫只問極限的積分值。" },
+    { "tag": "pointwise-n-depends-on-x", "count": 2, "note": "給定 x 與 ε，求最小 N（例如 xⁿ、x = 0.9、ε = 0.01 → 44），讓「N 隨 x 變」變成一個數。" }
+  ]
+}

@@ -1,0 +1,144 @@
+{
+  "id": "parametric-arc-length",
+  "title": "參數式弧長",
+  "readMinutes": 9,
+  "totalMinutes": 35,
+  "prerequisites": ["parametric-derivative", "arc-length", "u-sub-definite", "trig-identities"],
+  "next": ["parametric-area"],
+  "related": ["polar-arc-length"],
+  "objectives": [
+    "寫出 L = ∫ √((dx/dt)² + (dy/dt)²) dt，說得出被積函數就是速率。",
+    "化簡根號時處理絕對值：√(4sin²(t/2)) = 2|sin(t/2)|。",
+    "知道公式量的是「走過的距離」：曲線被重複走過時，要把 t 的範圍縮成只走一次。"
+  ],
+  "visual": "一個點沿擺線移動，下方同步畫出速率 √(x′² + y′²) 對 t 的圖，曲線下的面積隨點前進一格一格填滿，旁邊顯示累積的路程。點在尖點 t = 0、2π 速率掉到 0，在拱頂 t = π 速率最大（等於 2）。",
+  "concept": [
+    {
+      "heading": "① 小段路程 ≈ 斜邊",
+      "body": [
+        "在很短的時間 Δt 內，點在 x 方向走了大約 x′(t)Δt，在 y 方向走了大約 y′(t)Δt。這一小段幾乎是直的，長度用畢氏定理：√((x′Δt)² + (y′Δt)²) = √(x′² + y′²) Δt。",
+        "把每一小段加起來，Δt → 0，就是積分。這是直覺，不是證明；嚴格的版本要求 x′、y′ 連續，並且曲線在 t 的範圍內沒有被重複走過。"
+      ],
+      "tex": ["L=\\int_a^b\\sqrt{\\left(\\frac{dx}{dt}\\right)^2+\\left(\\frac{dy}{dt}\\right)^2}\\,dt"],
+      "collapsible": false
+    },
+    {
+      "heading": "② 被積函數是速率",
+      "body": [
+        "(x′(t), y′(t)) 是點的速度向量，√(x′² + y′²) 是它的長度，也就是速率。所以公式在說：路程 = 速率對時間積分。",
+        "〈弧長〉的公式 ∫ √(1 + (f′)²) dx 是特例：令 x = t、y = f(t)，x′ = 1，就回到它。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 根號開出來要記得絕對值",
+      "body": [
+        "能算出來的弧長題，根號裡幾乎都會湊成完全平方。開根號時 √(A²) = |A|，不是 A。要先看 A 在積分範圍內的正負，必要時把區間切開。",
+        "例：x = t²、y = t³ 時 x′² + y′² = t²(4 + 9t²)，開根號是 |t|√(4 + 9t²)。在 t ≥ 0 的區間寫成 t√(4 + 9t²)；如果積分區間是 −1 ≤ t ≤ 1，要拆成兩段，或利用對稱把 [0, 1] 的結果乘 2。直接寫 t√(4 + 9t²) 從 −1 積到 1，會得到 0。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 公式量的是走過的距離",
+      "body": [
+        "x = cos 2t、y = sin 2t，0 ≤ t ≤ 2π，速率是 2，積分得 4π。但單位圓周長是 2π：點繞了兩圈，公式把兩圈都算進去。",
+        "所以題目問「曲線的長度」時，要先確定 t 的範圍讓曲線恰好走一次。"
+      ],
+      "collapsible": false
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "四分之一圓",
+      "prompt": "x = 3cos t、y = 3sin t，0 ≤ t ≤ π/2，求弧長。",
+      "problemId": "cx-arc-003",
+      "steps": [
+        "x′ = −3sin t，y′ = 3cos t。",
+        "x′² + y′² = 9sin²t + 9cos²t = 9，速率是 3。",
+        "L = ∫₀^{π/2} 3 dt = 3π/2。",
+        "檢查：半徑 3 的圓周長 6π，四分之一是 3π/2。"
+      ],
+      "answer": "3π/2",
+      "claim": "INT(sqrt((3*sin(t))^2+(3*cos(t))^2), 0, pi/2) == 3*pi/2"
+    },
+    {
+      "title": "根號裡提出 t²",
+      "prompt": "x = t²、y = t³，0 ≤ t ≤ 1，求弧長。",
+      "steps": [
+        "x′ = 2t，y′ = 3t²，x′² + y′² = 4t² + 9t⁴ = t²(4 + 9t²)。",
+        "√(t²(4 + 9t²)) = |t|√(4 + 9t²)。在 0 ≤ t ≤ 1，|t| = t。",
+        "L = ∫₀¹ t√(4 + 9t²) dt。令 u = 4 + 9t²，du = 18t dt，t = 0 → u = 4，t = 1 → u = 13。",
+        "L = (1/18) ∫₄¹³ √u du = (1/18)(2/3)[u^{3/2}]₄¹³ = (1/27)(13√13 − 8)。"
+      ],
+      "answer": "(13√13 − 8)/27",
+      "claim": "INT(sqrt((2t)^2+(3t^2)^2), 0, 1) == (13*sqrt(13)-8)/27"
+    },
+    {
+      "title": "擺線一拱",
+      "prompt": "擺線 x = t − sin t、y = 1 − cos t，求一拱（0 ≤ t ≤ 2π）的弧長。",
+      "problemId": "lec-10-q1c",
+      "steps": [
+        "x′ = 1 − cos t，y′ = sin t。",
+        "x′² + y′² = 1 − 2cos t + cos²t + sin²t = 2 − 2cos t。",
+        "半角公式 1 − cos t = 2sin²(t/2)，所以 2 − 2cos t = 4sin²(t/2)，開根號得 2|sin(t/2)|。",
+        "0 ≤ t ≤ 2π 時 0 ≤ t/2 ≤ π，sin(t/2) ≥ 0，絕對值可以拿掉。",
+        "L = ∫₀^{2π} 2sin(t/2) dt = [−4cos(t/2)]₀^{2π} = −4(−1) + 4(1) = 8。"
+      ],
+      "answer": "8",
+      "claim": "INT(sqrt((1-cos(t))^2+sin(t)^2), 0, 2*pi) == 8 ;; 2-2*cos(t) == 4*sin(t/2)^2"
+    }
+  ],
+  "pitfalls": [
+    "把根號裡寫成 x′ + y′，或寫成 (x′ + y′)²。是平方和再開根號。",
+    "√(A²) 直接寫成 A，沒先確認 A ≥ 0。",
+    "t 的範圍讓曲線走了兩次，算出兩倍長。",
+    "換元時忘了換積分上下限。"
+  ],
+  "checks": [
+    {
+      "ask": "x = 3t、y = 4t 的速率 √((dx/dt)² + (dy/dt)²) 是？",
+      "options": [
+        { "label": "5", "correct": true },
+        { "label": "7", "why": "這是 3 + 4。要先平方相加再開根號：√(9 + 16) = 5。" },
+        { "label": "25", "why": "9 + 16 = 25 之後還要開根號。" }
+      ]
+    },
+    {
+      "ask": "在 0 ≤ t ≤ 2π 上，√(4sin²(t/2)) 等於？",
+      "options": [
+        { "label": "2sin(t/2)，因為這個範圍內 sin(t/2) ≥ 0", "correct": true },
+        { "label": "2|sin t|", "why": "半角不能隨手變全角：根號裡是 sin²(t/2)，開出來是 2|sin(t/2)|。" },
+        { "label": "4sin(t/2)", "why": "√4 = 2，係數也要開根號。" }
+      ]
+    },
+    {
+      "ask": "x = cos 2t、y = sin 2t，0 ≤ t ≤ 2π，速率積分得 4π。單位圓的周長是 2π，差在哪？",
+      "options": [
+        { "label": "點繞了兩圈，公式算的是走過的距離", "correct": true },
+        { "label": "公式錯了，要除以 2", "why": "公式沒錯，它忠實地量了路程。要改的是 t 的範圍（0 ≤ t ≤ π 只走一圈）。" },
+        { "label": "速率應該是 1 不是 2", "why": "x′ = −2sin 2t、y′ = 2cos 2t，速率確實是 2。" }
+      ]
+    },
+    {
+      "ask": "下列哪一個是參數式弧長的被積函數？",
+      "options": [
+        { "label": "√((dx/dt)² + (dy/dt)²)", "correct": true },
+        { "label": "√(1 + (dy/dt)²)", "why": "這是把 y = f(x) 版本的 √(1 + f′²) 硬搬過來；只有 x = t 時兩者才一樣。" },
+        { "label": "√(1 + (dy/dx)²)", "why": "這要對 x 積分，配的是 dx 不是 dt；用 t 積分時就該用速率。" }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": ["parametric", "arc-length"],
+    "fine": ["parametric-speed", "parametric-arc-length-integral", "arc-length-sqrt-simplify", "parametric-arc-length-overlap"]
+  },
+  "practice": [
+    { "id": "gap-der-param-005", "core": true, "trains": "parametric-speed" },
+    { "id": "cx-arc-003", "core": true, "trains": "parametric-arc-length-integral" },
+    { "id": "lec-10-q1c", "core": true, "trains": "arc-length-sqrt-simplify" }
+  ],
+  "gaps": [
+    { "tag": "parametric-arc-length-integral", "count": 3, "note": "R2–R3：一般參數曲線的弧長（例 x = t²、y = t³ 在 [0, 1]；x = eᵗcos t、y = eᵗsin t）。題庫只有圓與擺線。" },
+    { "tag": "parametric-arc-length-overlap", "count": 1, "note": "R2 選擇題：t 範圍讓曲線走兩次時，速率積分 ≠ 曲線長度。" }
+  ]
+}

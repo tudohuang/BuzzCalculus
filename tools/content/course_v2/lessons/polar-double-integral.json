@@ -1,0 +1,160 @@
+{
+  "id": "polar-double-integral",
+  "title": "極座標二重積分",
+  "readMinutes": 10,
+  "totalMinutes": 40,
+  "prerequisites": ["polar-coordinates", "polar-area", "nonrectangular-regions"],
+  "next": ["jacobian-geometry"],
+  "related": ["gaussian-integral", "change-of-variables"],
+  "objectives": [
+    "說得出 dA = r dr dθ 裡那個 r 從哪裡來：外圈的小塊比內圈大。",
+    "把圓盤、圓環、扇形寫成 r、θ 的範圍，並把被積函數換成 r、θ。",
+    "看到 x² + y² 或圓形邊界時，想到改用極座標。"
+  ],
+  "visual": "極座標格線：同心圓加放射線。一塊「極座標矩形」被塗色，標出它的寬 Δr 與弧長 rΔθ。把這塊沿著放射線往外拖，Δr、Δθ 不變，但弧長與面積讀數跟著 r 成比例變大；拖回靠近原點時，小塊縮成細細的楔形。",
+  "concept": [
+    {
+      "heading": "① 圓形區域在直角座標裡很難寫",
+      "body": [
+        "單位圓盤用直角座標寫是 ∫_{−1}^{1} ∫_{−√(1−x²)}^{√(1−x²)} … dy dx，上下限帶根號，被積函數若也有 x² + y²，就更難積。",
+        "用〈極座標〉描述，同一塊圓盤只是 0 ≤ r ≤ 1、0 ≤ θ ≤ 2π，像一個矩形。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 小塊的面積：為什麼多一個 r",
+      "body": [
+        "用同心圓與放射線把區域切開，每一小塊是「極座標矩形」：徑向寬 Δr，角度張開 Δθ。",
+        "它近似一個長方形：一邊是 Δr，另一邊是半徑 r 的圓上、角度 Δθ 對應的弧長 rΔθ。所以面積 ≈ r Δr Δθ。",
+        "直觀上：同樣的 Δθ，離原點越遠，張出來的弧越長，小塊越大。這個 r 就是放大倍率。",
+        "以上是直觀，不是證明：小塊的兩條邊其實是彎的圓弧，「近似長方形」需要交代誤差。下面可展開的段落說明，取中間半徑時這個面積其實完全精確。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 公式",
+      "body": [
+        "x = r cos θ、y = r sin θ，x² + y² = r²，dA = r dr dθ。區域寫成 α ≤ θ ≤ β、r₁(θ) ≤ r ≤ r₂(θ)："
+      ],
+      "tex": ["\\iint_D f(x,y)\\,dA=\\int_\\alpha^\\beta\\!\\int_{r_1(\\theta)}^{r_2(\\theta)} f(r\\cos\\theta,\\,r\\sin\\theta)\\,r\\,dr\\,d\\theta"],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 三步驟",
+      "body": [
+        "1. 畫區域，寫出 θ 的範圍（外層，常數）與 r 的範圍（內層，可以隨 θ 變）。",
+        "2. 被積函數換掉：x → r cos θ、y → r sin θ、x² + y² → r²。",
+        "3. 補上 dA = r dr dθ 的 r，再積分。",
+        "f = 1 時，∫∫ r dr dθ = ½ ∫ r₂(θ)² dθ（r₁ = 0 時），就是〈極座標面積〉的公式。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "⑤ r Δr Δθ 其實是精確的（給想知道的人）",
+      "body": [
+        "極座標矩形 r₁ ≤ r ≤ r₂、θ₀ ≤ θ ≤ θ₀ + Δθ 的面積是兩個扇形相減：½(r₂² − r₁²)Δθ = ½(r₂ + r₁)(r₂ − r₁)Δθ = r̄ Δr Δθ，其中 r̄ 是 r₁、r₂ 的平均。",
+        "所以取每一塊的中間半徑，Riemann 和裡的面積完全沒有誤差；剩下的只是 f 取樣的誤差，切細就消失。下一課〈Jacobian 的幾何意義〉會把這個 r 推廣到任意的座標變換。"
+      ],
+      "collapsible": true
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "上半圓環",
+      "prompt": "∬_D (3x + 4y²) dA，D 是上半平面中 1 ≤ x² + y² ≤ 4 的部分。",
+      "steps": [
+        "範圍：1 ≤ r ≤ 2、0 ≤ θ ≤ π（上半平面）。",
+        "被積函數：3r cos θ + 4r² sin² θ。乘上 dA 的 r：(3r² cos θ + 4r³ sin² θ) dr dθ。",
+        "內層對 r：[r³ cos θ + r⁴ sin² θ]_1^2 = 7 cos θ + 15 sin² θ。",
+        "外層：∫_0^π 7 cos θ dθ = 0；∫_0^π 15 sin² θ dθ = 15 · π/2。合計 15π/2。"
+      ],
+      "answer": "15π/2",
+      "claim": "INT(INT((3*r*cos(t)+4*r^2*sin(t)^2)*r,1,2,r),0,pi,t) == 15*pi/2"
+    },
+    {
+      "title": "拋物面下的體積",
+      "prompt": "z = 1 − x² − y² 與 xy 平面圍成的立體體積。",
+      "steps": [
+        "z ≥ 0 的部分是 x² + y² ≤ 1，也就是單位圓盤：0 ≤ r ≤ 1、0 ≤ θ ≤ 2π。",
+        "高度 1 − r²，體積 = ∫_0^{2π} ∫_0^1 (1 − r²) r dr dθ。",
+        "內層 ∫_0^1 (r − r³) dr = 1/2 − 1/4 = 1/4。外層乘 2π，得 π/2。"
+      ],
+      "answer": "π/2",
+      "claim": "INT(INT((1-r^2)*r,0,1,r),0,2*pi,t) == pi/2"
+    },
+    {
+      "title": "多出來的 r 讓積分變得可做",
+      "prompt": "∬_D e^{−(x² + y²)} dA，D 是單位圓盤。",
+      "steps": [
+        "直角座標下 e^{−x²} 沒有初等反導函數，做不動。",
+        "極座標：∫_0^{2π} ∫_0^1 e^{−r²} r dr dθ。",
+        "內層令 u = r²，du = 2r dr：∫_0^1 e^{−r²} r dr = (1/2)(1 − e^{−1})。",
+        "外層乘 2π：π(1 − 1/e)。"
+      ],
+      "answer": "π(1 − 1/e)",
+      "claim": "INT(INT(e^(-r^2)*r,0,1,r),0,2*pi,t) == pi*(1-1/e)",
+      "note": "把半徑 1 換成 R、讓 R → ∞，得到 π。這就是〈Gaussian 積分〉∫ e^{−x²} dx = √π 的出發點。"
+    }
+  ],
+  "pitfalls": [
+    "漏掉 dA 的 r：這是本課最常見的錯。",
+    "x² + y² ≤ 9 寫成 0 ≤ r ≤ 9；應該是 r ≤ 3。",
+    "上半平面寫成 0 ≤ θ ≤ 2π；θ 的範圍要對照圖形。",
+    "被積函數只換了一半，留著 x 或 y。"
+  ],
+  "checks": [
+    {
+      "ask": "極座標下 dA 等於？",
+      "options": [
+        { "label": "r dr dθ", "correct": true },
+        { "label": "dr dθ", "why": "漏了 r。同樣的 Δθ，外圈的弧長 rΔθ 比內圈長，小塊面積跟 r 成正比。" },
+        { "label": "r² dr dθ", "why": "r² 常常來自被積函數 x² + y²，不是 dA 本身。dA 只有一個 r。" }
+      ]
+    },
+    {
+      "ask": "第一象限、x² + y² ≤ 9 的四分之一圓盤，r 與 θ 的範圍是？",
+      "options": [
+        { "label": "0 ≤ r ≤ 3、0 ≤ θ ≤ π/2", "correct": true },
+        { "label": "0 ≤ r ≤ 9、0 ≤ θ ≤ π/2", "why": "x² + y² ≤ 9 是 r² ≤ 9，半徑是 3。" },
+        { "label": "0 ≤ r ≤ 3、0 ≤ θ ≤ 2π", "why": "那是整個圓盤。第一象限只有 θ 從 0 到 π/2。" }
+      ]
+    },
+    {
+      "ask": "用極座標算 ∬_{x²+y²≤1} 1 dA，結果是？",
+      "options": [
+        { "label": "π", "correct": true },
+        { "label": "2π", "why": "漏了 r：∫_0^1 dr = 1，乘 2π 得 2π。正確是 ∫_0^1 r dr = 1/2。" },
+        { "label": "1/2", "why": "內層 1/2 之後還要乘外層 ∫_0^{2π} dθ = 2π。" }
+      ]
+    },
+    {
+      "ask": "∬_{x²+y²≤4} (x² + y²) dA 是？",
+      "options": [
+        { "label": "8π", "correct": true },
+        { "label": "16π/3", "why": "漏了 dA 的 r，只積了 r²：∫_0^2 r² dr = 8/3。被積函數 r² 再乘 r 是 r³，∫_0^2 r³ dr = 4。" },
+        { "label": "4π", "why": "那是 ∬ x² dA，只有 x² + y² 的一半（x² 與 y² 對稱，各佔一半）。" }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": ["polar", "polar-coordinates", "double-integral"],
+    "fine": ["polar-area-element", "polar-region-bounds", "polar-integrand-convert"]
+  },
+  "practice": [
+    { "id": "int-035", "core": true, "trains": "polar-area-element" },
+    { "id": "lec-19-m3", "core": true, "trains": "polar-area-element" },
+    { "id": "int-025", "core": true, "trains": "polar-integrand-convert" },
+    { "id": "int-032", "core": true, "trains": "polar-region-bounds" },
+    { "id": "lec-19-m4", "core": true, "trains": "polar-integrand-convert" },
+    { "id": "lec-19-q2a", "core": true, "trains": "polar-region-bounds" },
+    { "id": "lec-19-q2b", "trains": "polar-region-bounds" },
+    { "id": "int-033", "trains": "polar-integrand-convert" },
+    { "id": "rel-hard-mv-009", "trains": "polar-integrand-convert" },
+    { "id": "rel-hard-mv-002", "trains": "polar-integrand-convert" },
+    { "id": "lec-19-q2c", "challenge": true, "trains": "polar-region-bounds", "note": "挑戰：體積 = 2 × ∬ √(4 − r²)，r 從 1 到 2。" },
+    { "id": "world-090", "challenge": true, "trains": "polar-integrand-convert", "note": "挑戰：令 I = ∫_0^∞ e^{−x²} dx，算 I² 寫成第一象限上的二重積分，再換極座標。" }
+  ],
+  "gaps": [
+    { "tag": "polar-region-bounds", "count": 2, "note": "R4：r 的上下限隨 θ 變的區域（r = 2cos θ 圍成的圓盤、心臟線內部）上的二重積分。" }
+  ]
+}

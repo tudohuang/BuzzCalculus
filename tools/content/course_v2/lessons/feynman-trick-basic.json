@@ -1,0 +1,151 @@
+{
+  "id": "feynman-trick-basic",
+  "title": "Feynman 積分法：基礎",
+  "readMinutes": 12,
+  "totalMinutes": 45,
+  "prerequisites": ["leibniz-rule", "parameter-integral", "gamma-half"],
+  "next": ["feynman-trick-advanced"],
+  "related": ["frullani", "dirichlet-integral"],
+  "objectives": [
+    "照五個步驟用對參數微分算積分：放參數、對參數微分、算 I′(a)、積回 I(a)、用特殊值定常數。",
+    "選參數的原則：讓 ∂f/∂a 把難纏的因子（1/ln x、1/x）消掉。",
+    "每次交換微分與積分，都說得出用的是哪個充分條件（閉矩形連續，或可積的控制函數）。"
+  ],
+  "visual": null,
+  "concept": [
+    {
+      "heading": "① 想法：把一個積分放進一整族",
+      "body": [
+        "∫₀¹ (x² − 1)/ln x dx 的被積函數沒有初等反導函數。但把 2 換成參數 a，I(a) = ∫₀¹ (xᵃ − 1)/ln x dx，對 a 微分：∂/∂a (xᵃ − 1) = xᵃ ln x，分母的 ln x 被約掉，剩下 ∫₀¹ xᵃ dx = 1/(a + 1)，一行算完。",
+        "難的積分變簡單，代價是多一個變數；最後再積回來。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 五個步驟",
+      "body": [
+        "1. 放參數：把題目的某個常數換成 a（或乘上 e^{−ax} 之類的因子），讓原題是 I 在某個 a 的值。",
+        "2. 對 a 微分，搬進積分號（〈Leibniz 積分法則〉；確認條件）。",
+        "3. 算出 I′(a)。",
+        "4. 對 a 積分得 I(a) = … + C。",
+        "5. 找一個 I 容易知道的 a（常常是 a = 0 或 a → ∞）定出 C，再代入要的 a。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 怎麼選參數",
+      "body": [
+        "看哪個因子讓積分卡住：1/ln x 卡住，就把 x 的次方換成 a（微分生出 ln x）；1/x 卡住，就乘上 e^{−ax}（微分生出 −x）；1/x² 卡住，就把 e^{−x²} 改成 e^{−ax²}（微分生出 −x²）。",
+        "放進去的 e^{−ax} 還有一個好處：a > 0 時它讓積分絕對收斂，交換微分與積分時容易找到控制函數。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "範例 2 的交換為什麼合法",
+      "body": [
+        "f(x, a) = e^{−ax} sin x/x，∂f/∂a = −e^{−ax} sin x。對 a ≥ a₀ > 0，|∂f/∂a| ≤ e^{−a₀x}，在 [0, ∞) 可積，所以在 a > 0 上可以交換。",
+        "定常數用 a → ∞：|I(a)| ≤ ∫₀^∞ e^{−ax} dx = 1/a → 0（|sin x/x| ≤ 1）。I 在 a = 0 的值（Dirichlet 積分）要另外處理連續性，留到〈Dirichlet 積分〉。"
+      ],
+      "collapsible": true
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "1/ln x 卡住：把次方換成參數",
+      "prompt": "∫₀¹ (x² − 1)/ln x dx",
+      "problemId": "world-019",
+      "steps": [
+        "I(a) = ∫₀¹ (xᵃ − 1)/ln x dx（a ≥ 0），原題是 I(2)。",
+        "I′(a) = ∫₀¹ xᵃ ln x/ln x dx = ∫₀¹ xᵃ dx = 1/(a + 1)。（a > 0 時 |∂f/∂a| = xᵃ ≤ 1，可積，可以交換。）",
+        "積回去：I(a) = ln(a + 1) + C。",
+        "a = 0 時被積函數是 0，I(0) = 0；而且 0 < x < 1 時 |xᵃ − 1| ≤ a|ln x|，所以 |I(a)| ≤ a → 0，I 在 0 連續。於是 C = 0，I(2) = ln 3。"
+      ],
+      "answer": "ln 3",
+      "claim": "INT((x^2-1)/ln(x), 0, 1) == ln(3) ;; INT((x^t-1)/ln(x), 0, 1) == ln(t+1)"
+    },
+    {
+      "title": "1/x 卡住：乘上 e^{−ax}",
+      "prompt": "∫₀^∞ e^{−x} sin x/x dx",
+      "problemId": "world-070",
+      "steps": [
+        "I(a) = ∫₀^∞ e^{−ax} sin x/x dx（a > 0），原題是 I(1)。",
+        "I′(a) = −∫₀^∞ e^{−ax} sin x dx = −1/(1 + a²)（這個積分可用兩次分部積分或複數指數算出）。",
+        "積回去：I(a) = −arctan a + C。",
+        "a → ∞ 時 I(a) → 0，而 arctan a → π/2，所以 C = π/2。I(a) = π/2 − arctan a，I(1) = π/2 − π/4 = π/4。"
+      ],
+      "answer": "π/4",
+      "claim": "INT(e^(-x)*sin(x)/x, 0, inf) == pi/4 ;; INT(e^(-t*x)*sin(x)/x, 0, inf) == pi/2-arctan(t)"
+    },
+    {
+      "title": "1/x² 卡住：參數放進 Gaussian",
+      "prompt": "∫₀^∞ (1 − e^{−x²})/x² dx",
+      "steps": [
+        "I(a) = ∫₀^∞ (1 − e^{−ax²})/x² dx（a ≥ 0），原題是 I(1)。",
+        "I′(a) = ∫₀^∞ x² e^{−ax²}/x² dx = ∫₀^∞ e^{−ax²} dx = (1/2)√(π/a)（〈Γ(1/2) = √π〉的縮放）。",
+        "積回去：I(a) = √(πa) + C；a = 0 時被積函數是 0，C = 0。",
+        "I(1) = √π。"
+      ],
+      "answer": "√π",
+      "note": "交換條件：a ≥ a₀ > 0 時 e^{−ax²} ≤ e^{−a₀x²}，可積。",
+      "claim": "INT((1-e^(-x^2))/x^2, 0, inf) == sqrt(pi) ;; INT((1-e^(-t*x^2))/x^2, 0, inf) == sqrt(pi*t)"
+    }
+  ],
+  "pitfalls": [
+    "算出 I′(a) 就停了，忘了積回去。",
+    "積回去忘了 + C，或用一個 I 不知道的值去定 C。",
+    "參數放錯位置，微分之後沒有消掉難纏的因子。",
+    "沒檢查交換條件；尤其是 a = 0 這種邊界值，控制函數常常在那裡失效。"
+  ],
+  "checks": [
+    {
+      "ask": "∫₀¹ (x³ − 1)/ln x dx 是？",
+      "options": [
+        { "label": "ln 4", "correct": true },
+        { "label": "ln 3", "why": "I(a) = ln(a + 1)，原題是 a = 3，所以是 ln(3 + 1)。" },
+        { "label": "1/4", "why": "那是 I′(3) = 1/(3 + 1)，還要積回去。" }
+      ]
+    },
+    {
+      "ask": "I(a) = ∫₀^∞ e^{−ax} sin x/x dx 的積分常數，用哪個特殊值決定最方便？",
+      "options": [
+        { "label": "a → ∞，因為 I(a) → 0", "correct": true },
+        { "label": "a = 0", "why": "I(0) 就是 Dirichlet 積分，它的值正是我們還不知道的東西。" },
+        { "label": "a = 1", "why": "I(1) 是原題要求的值，不能拿來定常數。" }
+      ]
+    },
+    {
+      "ask": "為什麼要在 sin x/x 前面乘上 e^{−ax}？",
+      "options": [
+        { "label": "對 a 微分會生出 −x，把分母的 x 消掉；而且 a > 0 時積分絕對收斂", "correct": true },
+        { "label": "因為 e^{−ax} 讓 sin x/x 有初等反導函數", "why": "e^{−ax} sin x/x 一樣沒有初等反導函數；有用的是微分之後的 −e^{−ax} sin x。" },
+        { "label": "因為 a = 1 時剛好是原題，其他理由不重要", "why": "放參數的目的是讓 ∂f/∂a 好積；只讓原題落在某個 a 上是不夠的。" }
+      ]
+    },
+    {
+      "ask": "已知 I′(a) = 1/(a + 1)、I(0) = 0，I(a) 是？",
+      "options": [
+        { "label": "ln(a + 1)", "correct": true },
+        { "label": "ln(a + 1) + 1", "why": "代 a = 0 得 1，不滿足 I(0) = 0；常數應該是 0。" },
+        { "label": "−1/(a + 1)²", "why": "那是再微分一次；要的是積分。" }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": ["feynman", "parameter-integral"],
+    "fine": ["feynman-choose-parameter", "feynman-differentiate-integrate", "feynman-fix-constant", "feynman-justify"]
+  },
+  "practice": [
+    { "id": "world-041", "core": true, "trains": "feynman-differentiate-integrate" },
+    { "id": "world-019", "core": true, "trains": "feynman-choose-parameter" },
+    { "id": "world-064", "core": true, "trains": "feynman-choose-parameter" },
+    { "id": "world-070", "core": true, "trains": "feynman-fix-constant" },
+    { "id": "dm-int-008", "trains": "feynman-differentiate-integrate" },
+    { "id": "burst-boss-param-001", "trains": "feynman-differentiate-integrate" },
+    { "id": "world-057", "challenge": true, "trains": "feynman-choose-parameter", "note": "挑戰：令 I(a) = ∫₀^∞ ln(1 + a²x²)/(1 + x²) dx，I′(a) 用部分分式。" },
+    { "id": "world-015", "challenge": true, "trains": "feynman-choose-parameter", "note": "挑戰：令 I(a) = ∫₀¹ ln(1 + ax)/(1 + x²) dx，最後的常數用 a = 0。" }
+  ],
+  "gaps": [
+    { "tag": "feynman-justify", "count": 2, "note": "要求寫出交換條件（控制函數）的證明題或判斷題，R4。" },
+    { "tag": "feynman-fix-constant", "count": 2, "note": "需要用 a → ∞ 定常數的中等題，R4。" }
+  ]
+}

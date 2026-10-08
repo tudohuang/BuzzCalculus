@@ -1,0 +1,150 @@
+{
+  "id": "conditional-convergence",
+  "title": "條件收斂",
+  "readMinutes": 8,
+  "totalMinutes": 35,
+  "prerequisites": ["absolute-convergence", "alternating-series-test"],
+  "next": ["rearrangement"],
+  "related": ["limit-comparison-test", "p-series", "divergence-test"],
+  "objectives": [
+    "說出條件收斂的定義：Σ aₙ 收斂，但 Σ |aₙ| 發散。",
+    "照固定的順序把一個級數分類成絕對收斂、條件收斂或發散。",
+    "記住 Σ (−1)ⁿ/nᵖ 的三段：p > 1 絕對收斂，0 < p ≤ 1 條件收斂，p ≤ 0 發散。"
+  ],
+  "visual": "交錯調和級數拆成兩排：正項 1, 1/3, 1/5, … 的累加一路往上衝、負項 −1/2, −1/4, … 的累加一路往下衝，兩條曲線都沒有界。中間畫出兩者交替相加的部分和，卻穩穩地收向 ln 2。標題：兩個無限大，靠著一正一負的順序互相抵銷。",
+  "concept": [
+    {
+      "heading": "① 定義",
+      "body": [
+        "Σ aₙ 收斂，但 Σ |aₙ| 發散，就叫條件收斂。它的收斂完全靠正負抵銷：拿掉負號就加不完了。標準例子是交錯調和級數 Σ (−1)^{n+1}/n。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 分類的順序",
+      "body": [
+        "拿到一個有正有負的級數：",
+        "1. 各項 → 0 嗎？不是 → 發散（〈發散判別〉），結束。",
+        "2. 看 Σ |aₙ|，用正項級數的判別法（p 級數、比較、〈極限比較判別〉、比值）。收斂 → 絕對收斂，結束。",
+        "3. Σ |aₙ| 發散時，回頭看 Σ aₙ 本身，通常用交錯級數判別。收斂 → 條件收斂；否則發散。",
+        "順序很重要：先檢查絕對收斂，因為它是比較強、也比較好的結論。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 一整族的答案",
+      "body": [
+        "Σ (−1)ⁿ/nᵖ：",
+        "p > 1：Σ 1/nᵖ 收斂，絕對收斂。",
+        "0 < p ≤ 1：Σ 1/nᵖ 發散（〈p 級數〉），但 1/nᵖ 遞減到 0，交錯級數判別給收斂，所以條件收斂。",
+        "p ≤ 0：各項大小不趨近 0，發散。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 為什麼說它「有條件」",
+      "body": [
+        "直觀，不是證明：條件收斂的級數，正項部分加起來是 +∞，負項部分加起來是 −∞（如果有一邊有限，另一邊也會有限，整個就絕對收斂了）。它能收斂，靠的是「一正一負按某個順序」交替。換一個順序，兩個無限大抵銷的方式就變了，和也可能跟著變。這就是下一課〈重排的概念〉。"
+      ],
+      "collapsible": false
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "p = 1/2",
+      "prompt": "Σ_{n=1}^∞ (−1)ⁿ/√n 是絕對收斂、條件收斂還是發散？",
+      "problemId": "lec-13-q1a",
+      "steps": [
+        "各項大小 1/√n → 0，第 1 步通過。",
+        "Σ |aₙ| = Σ 1/√n，p = 1/2 ≤ 1，發散。不是絕對收斂。",
+        "交錯級數判別：1/√n > 0、遞減、→ 0，所以 Σ (−1)ⁿ/√n 收斂。",
+        "條件收斂。（和約為 −0.605。）"
+      ],
+      "answer": "條件收斂",
+      "claim": "INT(x^(-1/2), 1, 10^6) == 1998 ;; SUM((-1)^n/sqrt(n), 1) == -0.6048986434216305"
+    },
+    {
+      "title": "絕對值用極限比較",
+      "prompt": "Σ_{n=1}^∞ (−1)ⁿ n/(n² + 1) 是絕對收斂、條件收斂還是發散？",
+      "problemId": "lec-13-q1d",
+      "steps": [
+        "各項大小 n/(n² + 1) → 0。",
+        "Σ n/(n² + 1)：跟 1/n 做極限比較，比值 n²/(n² + 1) → 1，而 Σ 1/n 發散，所以 Σ |aₙ| 發散。",
+        "交錯級數判別：〈交錯級數判別〉的範例已證明 n/(n² + 1) 從 n = 1 起遞減到 0，所以原級數收斂。",
+        "條件收斂。"
+      ],
+      "answer": "條件收斂",
+      "claim": "LIM((x/(x^2+1))/(1/x), inf) == 1 ;; D(x/(x^2+1)) == (1-x^2)/(x^2+1)^2"
+    },
+    {
+      "title": "整族分類",
+      "prompt": "對哪些實數 p，Σ_{n=1}^∞ (−1)ⁿ/nᵖ 條件收斂？",
+      "problemId": "lec-13-q4a",
+      "steps": [
+        "p > 1：Σ 1/nᵖ 收斂，絕對收斂，不算條件收斂。",
+        "0 < p ≤ 1：絕對值發散；1/nᵖ 遞減到 0，交錯級數收斂。條件收斂。",
+        "p ≤ 0：|(−1)ⁿ/nᵖ| = n^{−p} ≥ 1，不趨近 0，發散。",
+        "答案：0 < p ≤ 1，也就是區間 (0, 1]。"
+      ],
+      "answer": "(0, 1]",
+      "claim": "SUM((-1)^n/n, 1) == -ln(2) ;; SUM((-1)^n/n^2, 1) == -pi^2/12"
+    }
+  ],
+  "pitfalls": [
+    "Σ |aₙ| 發散就直接說發散，忘了檢查 Σ aₙ 本身。",
+    "交錯級數判別成立就說「絕對收斂」：它只給收斂。",
+    "p 的範圍端點錯：p = 1 是條件收斂，p = 0 是發散。",
+    "跳過發散判別，對各項不趨近 0 的級數做了一堆白工。"
+  ],
+  "checks": [
+    {
+      "ask": "條件收斂的意思是？",
+      "options": [
+        { "label": "Σ aₙ 收斂，但 Σ |aₙ| 發散", "correct": true },
+        { "label": "Σ aₙ 發散，但 Σ |aₙ| 收斂", "why": "不可能發生：Σ |aₙ| 收斂就推得出 Σ aₙ 收斂。" },
+        { "label": "Σ aₙ 與 Σ |aₙ| 都收斂", "why": "那是絕對收斂，比條件收斂更強。" }
+      ]
+    },
+    {
+      "ask": "Σ (−1)ⁿ/n^{0.5} 是？",
+      "options": [
+        { "label": "條件收斂", "correct": true },
+        { "label": "絕對收斂", "why": "取絕對值是 Σ 1/√n，p = 1/2 ≤ 1，發散。" },
+        { "label": "發散", "why": "1/√n 遞減到 0，交錯級數判別給收斂。" }
+      ]
+    },
+    {
+      "ask": "Σ (−1)ⁿ/n² 是？",
+      "options": [
+        { "label": "絕對收斂", "correct": true },
+        { "label": "條件收斂", "why": "取絕對值 Σ 1/n² 已經收斂，屬於更強的絕對收斂。" },
+        { "label": "發散", "why": "各項 → 0，而且絕對值級數收斂。" }
+      ]
+    },
+    {
+      "ask": "Σ (−1)ⁿ (n + 1)/n 是？",
+      "options": [
+        { "label": "發散", "correct": true },
+        { "label": "條件收斂", "why": "各項大小 (n + 1)/n → 1，不是 0；發散判別第一步就出局。" },
+        { "label": "絕對收斂", "why": "Σ (n + 1)/n 的各項 → 1，絕對值級數顯然發散。" }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": ["absolute-conditional", "alternating-series", "convergence-test"],
+    "fine": ["cond-conv-classify", "cond-conv-p-family"]
+  },
+  "practice": [
+    { "id": "gap-ser-cond-001", "core": true, "trains": "cond-conv-classify" },
+    { "id": "lec-13-q1a", "core": true, "trains": "cond-conv-classify" },
+    { "id": "fd-serx-208", "core": true, "trains": "cond-conv-classify" },
+    { "id": "lec-13-q1d", "core": true, "trains": "cond-conv-classify" },
+    { "id": "mob-conv-003", "trains": "cond-conv-classify" },
+    { "id": "lec-13-m1", "trains": "cond-conv-classify" },
+    { "id": "rel-hard-ser-011", "trains": "cond-conv-classify" },
+    { "id": "lec-13-q4a", "challenge": true, "trains": "cond-conv-p-family", "note": "挑戰：答案是一個區間，三段都要想清楚，尤其端點 p = 1 與 p = 0。" }
+  ],
+  "gaps": [
+    { "tag": "cond-conv-classify", "count": 3, "note": "R2–R3：絕對值級數要用極限比較或積分判別才判得出發散、再用交錯級數判別得收斂的分類題（如 Σ (−1)ⁿ/(n ln n)、Σ (−1)ⁿ ln n/n）。" }
+  ]
+}

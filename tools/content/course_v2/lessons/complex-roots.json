@@ -1,0 +1,149 @@
+{
+  "id": "complex-roots",
+  "title": "複數根",
+  "readMinutes": 10,
+  "totalMinutes": 35,
+  "prerequisites": ["repeated-roots", "characteristic-equation"],
+  "next": ["undetermined-coefficients"],
+  "related": ["euler-formula", "complex-numbers", "harmonic-oscillator", "damped-oscillator"],
+  "objectives": [
+    "特徵方程的根是 α ± iβ（β > 0）時，寫出實數通解 y = e^{αx}(C₁cos βx + C₂sin βx)。",
+    "說得出為什麼複數解的實部與虛部各自是實數解。",
+    "從 α 的正負與 β 的大小，看出解是衰減振盪、等幅振盪還是發散振盪。"
+  ],
+  "visual": "畫 y = e^{αx}cos βx，旁邊用虛線畫出包絡線 ±e^{αx}。兩個滑桿：α 從 −1 拉到 1，β 從 0.5 拉到 4。α < 0 時波被包絡線壓扁到 0，α = 0 時等幅振盪，α > 0 時越振越大；β 只改變波的疏密。",
+  "concept": [
+    {
+      "heading": "① 判別式是負的時候",
+      "body": [
+        "y″ + 2y′ + 5y = 0 的特徵方程 r² + 2r + 5 = 0，判別式 4 − 20 = −16 < 0。公式解給 r = (−2 ± 4i)/2 = −1 ± 2i。",
+        "e^{(−1+2i)x} 是解，但它是複數值的函數。我們要的是實數的解。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② Euler 公式把它拆開",
+      "body": [
+        "Euler 公式 e^{iθ} = cos θ + i sin θ（〈Euler 公式〉）。所以根 r = α + iβ 給："
+      ],
+      "tex": ["e^{(\\alpha+i\\beta)x}=e^{\\alpha x}\\cos\\beta x + i\\,e^{\\alpha x}\\sin\\beta x"],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 實部、虛部各自是實數解",
+      "body": [
+        "方程的係數 a、b、c 都是實數。把複數解寫成 u + iv，代入左邊得 L[u] + iL[v] = 0，其中 L[y] = ay″ + by′ + cy。L[u]、L[v] 都是實數，一個複數是 0 必須實部虛部都是 0，所以 L[u] = 0、L[v] = 0。",
+        "於是 e^{αx}cos βx 與 e^{αx}sin βx 都是實數解，而且不是彼此的常數倍。通解："
+      ],
+      "tex": ["y = e^{\\alpha x}\\left(C_1\\cos\\beta x + C_2\\sin\\beta x\\right)"],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 另一個根 α − iβ 呢",
+      "body": [
+        "它給的是 e^{αx}cos βx − i e^{αx}sin βx，實部虛部跟上面一樣（差一個負號），沒有新東西。所以一對共軛根合起來給兩個實數解，正好是二階需要的數量。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "⑤ 讀圖",
+      "body": [
+        "β 決定振盪多快（週期 2π/β）；e^{αx} 是包絡線：α < 0 振幅衰減，α = 0 等幅，α > 0 越振越大。這就是〈簡諧振盪〉與〈阻尼振盪〉的數學。"
+      ],
+      "collapsible": false
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "純虛根：等幅振盪",
+      "prompt": "y″ + 9y = 0，y(0) = 0，y′(0) = 3",
+      "problemId": "ode-h2-007",
+      "steps": [
+        "r² + 9 = 0，r = ±3i：α = 0、β = 3。",
+        "通解 y = C₁cos 3x + C₂sin 3x，y′ = −3C₁sin 3x + 3C₂cos 3x。",
+        "y(0) = 0：C₁ = 0。y′(0) = 3：3C₂ = 3，C₂ = 1。"
+      ],
+      "answer": "y = sin 3x",
+      "claim": "D2(sin(3x)) == -9*sin(3x) ;; SUB(sin(3x), 0) == 0 ;; D(sin(3x), 0) == 3"
+    },
+    {
+      "title": "衰減振盪",
+      "prompt": "y″ + 2y′ + 5y = 0，y(0) = 1，y′(0) = −1",
+      "problemId": "ode-h2-005",
+      "steps": [
+        "r = −1 ± 2i：α = −1、β = 2。通解 y = e^{−x}(C₁cos 2x + C₂sin 2x)。",
+        "y(0) = 1：C₁ = 1。",
+        "y′ = −e^{−x}(C₁cos 2x + C₂sin 2x) + e^{−x}(−2C₁sin 2x + 2C₂cos 2x)，所以 y′(0) = −C₁ + 2C₂。",
+        "y′(0) = −1：−1 + 2C₂ = −1，C₂ = 0。"
+      ],
+      "answer": "y = e^{−x}cos 2x",
+      "claim": "D2(e^(-x)*cos(2x)) == -2*D(e^(-x)*cos(2x)) - 5*e^(-x)*cos(2x) ;; SUB(e^(-x)*cos(2x), 0) == 1 ;; D(e^(-x)*cos(2x), 0) == -1"
+    },
+    {
+      "title": "β 帶根號",
+      "prompt": "求 y″ + y′ + y = 0 的通解。",
+      "steps": [
+        "r² + r + 1 = 0，r = (−1 ± √(1 − 4))/2 = −1/2 ± (√3/2)i。",
+        "α = −1/2、β = √3/2。"
+      ],
+      "answer": "y = e^{−x/2}(C₁cos(√3x/2) + C₂sin(√3x/2))",
+      "claim": "D2(e^(-x/2)*cos(sqrt(3)*x/2)) == -D(e^(-x/2)*cos(sqrt(3)*x/2)) - e^(-x/2)*cos(sqrt(3)*x/2) ;; D2(e^(-x/2)*sin(sqrt(3)*x/2)) == -D(e^(-x/2)*sin(sqrt(3)*x/2)) - e^(-x/2)*sin(sqrt(3)*x/2)"
+    }
+  ],
+  "pitfalls": [
+    "r² + 4 = 0 的根是 ±2i，β = 2，不是 4。",
+    "α、β 放反：根 3 ± 2i 給 e^{3x}(… cos 2x …)，不是 e^{2x}cos 3x。",
+    "只留 cos 那一項，丟掉 sin：通解要兩個常數。",
+    "忘了 e^{αx}，或對 e^{αx}cos βx 微分時漏掉乘法法則。",
+    "最後答案留著 i。實數方程、實數初始條件，答案一定是實數。"
+  ],
+  "checks": [
+    {
+      "ask": "y″ + 4y = 0 的通解是？",
+      "options": [
+        { "label": "C₁cos 2x + C₂sin 2x", "correct": true },
+        { "label": "C₁e^{2x} + C₂e^{−2x}", "why": "那是 y″ − 4y = 0（r² = 4）。這裡 r² = −4，根是 ±2i。" },
+        { "label": "C₁cos 4x + C₂sin 4x", "why": "r² = −4 給 r = ±2i，β 是 √4 = 2，不是 4。" }
+      ]
+    },
+    {
+      "ask": "特徵方程的根是 3 ± 2i，通解是？",
+      "options": [
+        { "label": "e^{3x}(C₁cos 2x + C₂sin 2x)", "correct": true },
+        { "label": "e^{2x}(C₁cos 3x + C₂sin 3x)", "why": "實部虛部放反了：實部 3 進指數，虛部 2 是頻率。" },
+        { "label": "C₁e^{3x} + C₂e^{2x}", "why": "虛部不是另一個指數；e^{2ix} 經 Euler 公式變成 cos 2x、sin 2x。" }
+      ]
+    },
+    {
+      "ask": "為什麼 e^{αx}cos βx 與 e^{αx}sin βx 都是解？",
+      "options": [
+        { "label": "方程係數是實數，複數解代入後實部、虛部要各自為 0", "correct": true },
+        { "label": "因為 i 可以當成 1 來算", "why": "i² = −1，不能當 1；理由是 L[u] + iL[v] = 0 推出 L[u] = L[v] = 0。" },
+        { "label": "只有實部是解，虛部是丟掉的部分", "why": "虛部 e^{αx}sin βx 也是解，丟掉它通解就少一個常數。" }
+      ]
+    },
+    {
+      "ask": "y = e^{−x}(cos 2x + 3sin 2x)，x → ∞ 時？",
+      "options": [
+        { "label": "一邊振盪一邊衰減到 0", "correct": true },
+        { "label": "振幅越來越大", "why": "α = −1 < 0，包絡線 e^{−x} 在縮小。" },
+        { "label": "不振盪，直接衰減", "why": "β = 2 ≠ 0，有 cos 2x、sin 2x，會一直穿過 0。" }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": ["ode", "second-order", "constant-coefficients", "complex-roots"],
+    "fine": ["ode2-complex-general", "ode2-complex-ivp", "ode2-complex-why-real"]
+  },
+  "practice": [
+    { "id": "ode-h2-002", "core": true, "trains": "ode2-complex-ivp" },
+    { "id": "ode-h2-007", "core": true, "trains": "ode2-complex-ivp" },
+    { "id": "gap-der-ode-004", "trains": "ode2-complex-ivp" },
+    { "id": "ode-h2-005", "core": true, "trains": "ode2-complex-ivp" },
+    { "id": "ode-h2-008", "challenge": true, "trains": "ode2-complex-ivp", "note": "挑戰：α = 2 > 0，解一邊振盪一邊變大。" }
+  ],
+  "gaps": [
+    { "tag": "ode2-complex-general", "count": 2, "note": "R2：只求通解，β 帶根號（例：y″ + y′ + y = 0）。" },
+    { "tag": "ode2-complex-why-real", "count": 1, "note": "R2 概念題：為什麼實部虛部各自是解。" }
+  ]
+}

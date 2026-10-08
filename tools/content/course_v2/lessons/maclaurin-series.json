@@ -1,0 +1,153 @@
+{
+  "id": "maclaurin-series",
+  "title": "Maclaurin 級數",
+  "readMinutes": 10,
+  "totalMinutes": 40,
+  "prerequisites": ["taylor-series"],
+  "next": ["binomial-series"],
+  "related": ["geometric-series", "power-series-calculus", "taylor-error"],
+  "objectives": [
+    "背熟五個基本 Maclaurin 級數與它們成立的範圍：eˣ、sin x、cos x、ln(1 + x)、1/(1 − x)。",
+    "用代換、乘 xᵏ、逐項微分積分、兩個級數相乘，造出新級數並讀出係數。",
+    "認出數值級數是哪個基本級數在某一點的值。"
+  ],
+  "visual": "五張小圖並排：eˣ、sin x、cos x、ln(1 + x)、1/(1 − x)，各自疊上前 1、3、5、9 項的多項式。前三張的多項式隨著項數增加，貼合範圍一路向兩側延伸到整條實數線；後兩張不管加多少項，都卡在 |x| < 1 以內，ln(1 + x) 在 x = 1 那一端勉強貼上、在 −1 那端甩開。",
+  "concept": [
+    {
+      "heading": "① 五個要背的",
+      "body": [
+        "Maclaurin 級數就是中心 a = 0 的 Taylor 級數。下面五個是所有計算的起點："
+      ],
+      "tex": [
+        "e^x=\\sum_{n=0}^{\\infty}\\frac{x^n}{n!}=1+x+\\frac{x^2}{2!}+\\frac{x^3}{3!}+\\cdots\\qquad(\\text{所有 } x)",
+        "\\sin x=\\sum_{n=0}^{\\infty}\\frac{(-1)^n x^{2n+1}}{(2n+1)!}=x-\\frac{x^3}{3!}+\\frac{x^5}{5!}-\\cdots\\qquad(\\text{所有 } x)",
+        "\\cos x=\\sum_{n=0}^{\\infty}\\frac{(-1)^n x^{2n}}{(2n)!}=1-\\frac{x^2}{2!}+\\frac{x^4}{4!}-\\cdots\\qquad(\\text{所有 } x)",
+        "\\ln(1+x)=\\sum_{n=1}^{\\infty}\\frac{(-1)^{n+1}x^n}{n}=x-\\frac{x^2}{2}+\\frac{x^3}{3}-\\cdots\\qquad(-1<x\\le 1)",
+        "\\frac{1}{1-x}=\\sum_{n=0}^{\\infty}x^n=1+x+x^2+\\cdots\\qquad(-1<x<1)"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 它們從哪裡來",
+      "body": [
+        "eˣ：每一階導數都是 eˣ，在 0 都是 1，係數 1/n!。",
+        "sin x：導數在 0 依序是 0, 1, 0, −1 循環，所以只有奇次項、正負交替。cos x 是 sin x 逐項微分的結果，只有偶次項。",
+        "1/(1 − x)：〈幾何級數〉。ln(1 + x)：把 1/(1 + t) 逐項積分（〈冪級數的微分與積分〉）。",
+        "前三個在所有 x 都等於原函數，這需要證明餘項 → 0，在〈Taylor 誤差〉完成。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 造新級數的四招",
+      "body": [
+        "代換：x 換成 x²、−x、2x……，範圍跟著換。例如 e^{−x²} = Σ (−1)ⁿx²ⁿ/n!。",
+        "乘 xᵏ：每一項次方加 k。",
+        "逐項微分、積分。",
+        "兩個級數相乘：只展開到需要的次方。求 x³ 的係數，就只收集次方加起來是 3 的乘積。",
+        "這些捷徑得到的都是真正的 Maclaurin 級數（〈Taylor 級數〉的唯一性），不必再微分驗證。"
+      ],
+      "collapsible": false
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "代換",
+      "prompt": "求 sin(x²) 的 Maclaurin 級數中 x⁶ 與 x¹⁰ 的係數。",
+      "problemId": "rel-hard-ser-004",
+      "steps": [
+        "sin u = u − u³/3! + u⁵/5! − …，u = x²。",
+        "sin(x²) = x² − x⁶/6 + x¹⁰/120 − …。",
+        "x⁶ 的係數 −1/6，x¹⁰ 的係數 1/120。（x⁸ 的係數是 0：只有 4k + 2 次方的項。）"
+      ],
+      "answer": "−1/6 與 1/120",
+      "claim": "LIM((sin(x^2)-x^2)/x^6, 0) == -1/6 ;; LIM((sin(x^2) - x^2 + x^6/6)/x^10, 0) == 1/120"
+    },
+    {
+      "title": "兩個級數相乘",
+      "prompt": "求 eˣ ln(1 + x) 的 x³ 係數。",
+      "problemId": "depth-ser-015",
+      "steps": [
+        "eˣ = 1 + x + x²/2 + …，ln(1 + x) = x − x²/2 + x³/3 − …。",
+        "收集次方和為 3 的乘積：1 · (x³/3) + x · (−x²/2) + (x²/2) · x。",
+        "係數 = 1/3 − 1/2 + 1/2 = 1/3。"
+      ],
+      "answer": "1/3",
+      "claim": "LIM((e^x*ln(1+x) - x - x^2/2)/x^3, 0) == 1/3"
+    },
+    {
+      "title": "認出是哪個級數",
+      "prompt": "求 Σ_{n=0}^∞ (−1)ⁿ π^{2n+1}/(6^{2n+1}(2n + 1)!)。",
+      "problemId": "lec-15-q3c",
+      "steps": [
+        "π^{2n+1}/6^{2n+1} = (π/6)^{2n+1}，所以這是 Σ (−1)ⁿ (π/6)^{2n+1}/(2n + 1)!。",
+        "正是 sin x 的級數在 x = π/6 的值。",
+        "和 = sin(π/6) = 1/2。（只取到 x⁷ 項：π/6 − (π/6)³/6 + (π/6)⁵/120 − (π/6)⁷/5040 ≈ 0.5000000，已經非常準。）"
+      ],
+      "answer": "1/2",
+      "claim": "SUB(x - x^3/6 + x^5/120 - x^7/5040, pi/6) == 0.5"
+    }
+  ],
+  "pitfalls": [
+    "sin、cos 的奇偶次方或正負號記反。",
+    "代換 2x 時只換了 x，沒把係數一起 n 次方：(2x)ⁿ = 2ⁿxⁿ。",
+    "ln(1 + x) 的級數從 n = 0 開始，或以為它在所有 x 都成立。",
+    "相乘時漏掉某一組次方和相同的乘積。"
+  ],
+  "checks": [
+    {
+      "ask": "cos x 的 Maclaurin 級數是？",
+      "options": [
+        { "label": "Σ (−1)ⁿ x²ⁿ/(2n)!", "correct": true },
+        { "label": "Σ (−1)ⁿ x^{2n+1}/(2n + 1)!", "why": "這是 sin x：cos 0 = 1，常數項不是 0，所以是偶次方。" },
+        { "label": "Σ x²ⁿ/(2n)!", "why": "少了正負交替；cos x 的二階導數在 0 是 −1，所以 x² 的係數是 −1/2。" }
+      ]
+    },
+    {
+      "ask": "ln(1 + x) 的 Maclaurin 級數在哪裡成立？",
+      "options": [
+        { "label": "−1 < x ≤ 1", "correct": true },
+        { "label": "−1 < x < 1", "why": "x = 1 時是交錯調和級數 1 − 1/2 + 1/3 − …，收斂到 ln 2。" },
+        { "label": "所有實數", "why": "收斂半徑是 1；|x| > 1 時各項 xⁿ/n 不趨近 0。" }
+      ]
+    },
+    {
+      "ask": "e^{2x} 的 Maclaurin 級數中，x⁴ 的係數是？",
+      "options": [
+        { "label": "2/3", "correct": true },
+        { "label": "1/24", "why": "代換 2x 時要整個 4 次方：(2x)⁴/4! = 16x⁴/24。" },
+        { "label": "16", "why": "忘了除以 4! = 24。" }
+      ]
+    },
+    {
+      "ask": "Σ_{n=0}^∞ 3ⁿ/n! = ？",
+      "options": [
+        { "label": "e³", "correct": true },
+        { "label": "3e", "why": "3ⁿ/n! 是 xⁿ/n! 在 x = 3 的值，和是 e³，不是 e 乘 3。" },
+        { "label": "發散", "why": "比值 3/(n + 1) → 0，收斂；這正是 eˣ 的級數。" }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": ["taylor", "coefficient", "sum-series"],
+    "fine": ["maclaurin-five", "maclaurin-substitution", "maclaurin-product", "maclaurin-recognize-sum"]
+  },
+  "practice": [
+    { "id": "lec-15-m1", "core": true, "trains": "maclaurin-five" },
+    { "id": "ser-038", "core": true, "trains": "maclaurin-five" },
+    { "id": "ser-027", "core": true, "trains": "maclaurin-substitution" },
+    { "id": "rel-adv-017", "core": true, "trains": "maclaurin-substitution" },
+    { "id": "exam-ser-017", "core": true, "trains": "maclaurin-recognize-sum" },
+    { "id": "uni-ser-006", "core": true, "trains": "maclaurin-substitution" },
+    { "id": "uni-ser-004", "trains": "maclaurin-substitution" },
+    { "id": "depth-ser-005", "trains": "maclaurin-substitution" },
+    { "id": "depth-ser-013", "trains": "maclaurin-recognize-sum" },
+    { "id": "depth-ser-018", "trains": "maclaurin-recognize-sum" },
+    { "id": "lec-15-q3c", "trains": "maclaurin-recognize-sum" },
+    { "id": "lec-15-q3d", "trains": "maclaurin-recognize-sum" },
+    { "id": "depth-ser-015", "trains": "maclaurin-product" },
+    { "id": "lec-14-q4d", "trains": "maclaurin-recognize-sum" },
+    { "id": "uni-ser-016", "challenge": true, "trains": "maclaurin-product", "note": "挑戰：sin x cos x = ½ sin 2x，先用恆等式比直接相乘快得多。" },
+    { "id": "depth-ser-019", "challenge": true, "trains": "maclaurin-product" }
+  ],
+  "gaps": []
+}

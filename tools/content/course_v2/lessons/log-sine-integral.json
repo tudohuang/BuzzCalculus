@@ -1,0 +1,144 @@
+{
+  "id": "log-sine-integral",
+  "title": "∫₀^{π/2} ln(sin x) dx",
+  "readMinutes": 11,
+  "totalMinutes": 35,
+  "prerequisites": ["improper-singular", "trig-identities", "u-sub-definite", "integration-by-parts"],
+  "next": ["basel-problem"],
+  "related": ["wallis-integral"],
+  "objectives": [
+    "說明 ∫₀^{π/2} ln(sin x) dx 為什麼收斂（x → 0 時 ln(sin x) ~ ln x）。",
+    "用「sin、cos 對稱 + 倍角 + 自己等於自己的一部分」算出 −(π/2) ln 2，每一步都說得出理由。",
+    "用分部積分或換元，把 x cot x、ln x/√(1 − x²) 這類積分化成它。"
+  ],
+  "visual": "在 (0, π/2] 上畫 y = ln(sin x) 與 y = ln(cos x)，兩條曲線左右對稱，一條在 0 往下衝、一條在 π/2 往下衝。再畫兩者之和 ln(sin x cos x) = ln(sin 2x) − ln 2，它在兩端都往下衝，形狀像把 ln(sin x) 在 [0, π] 上壓縮一半再往下平移 ln 2。",
+  "concept": [
+    {
+      "heading": "① 先確認它收斂",
+      "body": [
+        "ln(sin x) 在 x → 0⁺ 時 → −∞，是瑕積分。x → 0 時 sin x ~ x，所以 ln(sin x) − ln x = ln(sin x/x) → 0，被積函數的行為跟 ln x 一樣，而 ∫₀¹ ln x dx = −1 收斂（〈瑕積分 II：奇異點〉）。所以 I = ∫₀^{π/2} ln(sin x) dx 收斂，是一個負數。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 三個對稱，讓 I 等於自己的一部分",
+      "body": [
+        "對稱一：令 x = π/2 − t，sin 變 cos，區間不變：∫₀^{π/2} ln(cos x) dx = I。",
+        "倍角：sin x cos x = (sin 2x)/2，所以 2I = ∫₀^{π/2} ln(sin x cos x) dx = ∫₀^{π/2} ln(sin 2x) dx − (π/2) ln 2。",
+        "對稱二：∫₀^{π/2} ln(sin 2x) dx 令 u = 2x 變成 (1/2)∫₀^π ln(sin u) du；sin u 對 u = π/2 對稱，∫₀^π = 2I，所以這一項等於 I。",
+        "合起來：2I = I − (π/2) ln 2，I = −(π/2) ln 2 ≈ −1.0888。"
+      ],
+      "tex": ["\\int_0^{\\pi/2}\\ln(\\sin x)\\,dx=\\int_0^{\\pi/2}\\ln(\\cos x)\\,dx=-\\frac{\\pi}{2}\\ln 2"],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 為什麼可以這樣移項",
+      "body": [
+        "「2I = I − (π/2) ln 2，所以 I = …」要先知道 I 是一個有限的數；如果 I 發散，這種移項會得到荒謬的結論。這就是 ① 先證收斂的原因。",
+        "另外，拆成 ∫ ln(sin 2x) − ∫ ln 2 也要每一項都收斂；兩項確實都收斂。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "相關的結果",
+      "body": [
+        "∫₀^π ln(sin x) dx = −π ln 2；∫₀^{π/2} ln(tan x) dx = 0（ln sin − ln cos，兩項相等）；用 x ↦ π − x 可得 ∫₀^π x ln(sin x) dx = (π/2)∫₀^π ln(sin x) dx = −(π²/2) ln 2。"
+      ],
+      "collapsible": true
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "完整推導",
+      "prompt": "∫₀^{π/2} ln(sin x) dx",
+      "problemId": "burst-int-011",
+      "steps": [
+        "收斂：x → 0⁺ 時 ln(sin x) ~ ln x，可積。記值為 I。",
+        "x ↦ π/2 − x：∫₀^{π/2} ln(cos x) dx = I。相加：2I = ∫₀^{π/2} ln(sin 2x/2) dx = ∫₀^{π/2} ln(sin 2x) dx − (π/2) ln 2。",
+        "u = 2x：∫₀^{π/2} ln(sin 2x) dx = (1/2)∫₀^π ln(sin u) du = (1/2)(2I) = I。",
+        "2I = I − (π/2) ln 2，I = −(π/2) ln 2。"
+      ],
+      "answer": "−(π/2) ln 2",
+      "claim": "INT(ln(sin(x)), 0, pi/2) == -pi/2*ln(2) ;; INT(ln(sin(2x)), 0, pi/2) == INT(ln(sin(x)), 0, pi/2) ;; INT(ln(cos(x)), 0, pi/2) == -pi/2*ln(2)"
+    },
+    {
+      "title": "分部積分化成 log-sine",
+      "prompt": "∫₀^{π/2} x cot x dx",
+      "problemId": "dm-int-003",
+      "steps": [
+        "u = x、dv = cot x dx，du = dx、v = ln(sin x)（0 < x < π/2 時 sin x > 0）。",
+        "邊界項 [x ln(sin x)]₀^{π/2}：x = π/2 時 ln 1 = 0；x → 0⁺ 時 x ln(sin x) ~ x ln x → 0。所以是 0。",
+        "剩下 −∫₀^{π/2} ln(sin x) dx = (π/2) ln 2 ≈ 1.0888。"
+      ],
+      "answer": "(π/2) ln 2",
+      "claim": "INT(x/tan(x), 0, pi/2) == pi/2*ln(2) ;; LIM(x*ln(sin(x)), 0+) == 0"
+    },
+    {
+      "title": "換元化成 log-sine",
+      "prompt": "∫₀¹ ln x/√(1 − x²) dx",
+      "steps": [
+        "令 x = sin θ，dx = cos θ dθ，√(1 − x²) = cos θ（0 ≤ θ < π/2 時 cos θ > 0）。",
+        "x 從 0 到 1 對應 θ 從 0 到 π/2。積分變成 ∫₀^{π/2} ln(sin θ) dθ。",
+        "= −(π/2) ln 2。"
+      ],
+      "answer": "−(π/2) ln 2",
+      "claim": "INT(ln(x)/sqrt(1-x^2), 0, 1) == -pi/2*ln(2)"
+    }
+  ],
+  "pitfalls": [
+    "沒先證收斂就移項。",
+    "u = 2x 時漏了 1/2，或忘了區間變成 [0, π]。",
+    "把 ln(sin x cos x) 拆成 ln(sin 2x) + ln 2，正負號錯：sin x cos x = (sin 2x)/2，是減 ln 2。",
+    "∫₀^π 與 ∫₀^{π/2} 混用，差一個 2。"
+  ],
+  "checks": [
+    {
+      "ask": "∫₀^π ln(sin x) dx 是？",
+      "options": [
+        { "label": "−π ln 2", "correct": true },
+        { "label": "−(π/2) ln 2", "why": "那是 [0, π/2] 的值；sin 對 π/2 對稱，[0, π] 是兩倍。" },
+        { "label": "0", "why": "ln(sin x) 在 (0, π) 上都 ≤ 0，積分是負的，不會抵銷成 0。" }
+      ]
+    },
+    {
+      "ask": "∫₀^{π/2} ln(tan x) dx 是？",
+      "options": [
+        { "label": "0", "correct": true },
+        { "label": "−π ln 2", "why": "ln(tan x) = ln(sin x) − ln(cos x)，兩項積分相等，相減是 0。" },
+        { "label": "發散", "why": "兩端都是瑕點，但都像 ±ln x，可積；而且 ln(tan x) 對 π/4 反對稱。" }
+      ]
+    },
+    {
+      "ask": "∫₀^{π/2} ln(sin x) dx 為什麼收斂？",
+      "options": [
+        { "label": "x → 0⁺ 時 ln(sin x) 的行為跟 ln x 一樣，而 ∫₀¹ ln x dx 收斂", "correct": true },
+        { "label": "因為 ln(sin x) 在 [0, π/2] 上有界", "why": "它在 x → 0⁺ 時 → −∞，無界。" },
+        { "label": "因為區間長度有限", "why": "區間有限不夠：∫₀¹ dx/x 區間也有限，但發散。" }
+      ]
+    },
+    {
+      "ask": "推導中 2I = ∫₀^{π/2} ln(sin x cos x) dx 之後，下一步是把 sin x cos x 寫成？",
+      "options": [
+        { "label": "(sin 2x)/2", "correct": true },
+        { "label": "sin 2x", "why": "sin 2x = 2 sin x cos x，所以 sin x cos x 是它的一半，會多出 −ln 2。" },
+        { "label": "(1 − cos 2x)/2", "why": "那是 sin² x 的半角公式，不是 sin x cos x。" }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": ["log-sine", "improper-integral", "kings-property"],
+    "fine": ["log-sine-symmetry-trick", "log-sine-convergence", "log-sine-reduce-ibp", "log-sine-substitution"]
+  },
+  "practice": [
+    { "id": "burst-int-011", "core": true, "trains": "log-sine-symmetry-trick" },
+    { "id": "rel-hard-int-017", "core": true, "trains": "log-sine-symmetry-trick" },
+    { "id": "dm-int-003", "core": true, "trains": "log-sine-reduce-ibp" },
+    { "id": "world-044", "core": true, "trains": "log-sine-reduce-ibp" },
+    { "id": "burst-int-012", "challenge": true, "trains": "log-sine-symmetry-trick", "note": "挑戰：(ln sin x)²，需要 Basel 值 π²/6 或 Fourier 級數。" },
+    { "id": "burst-boss-int-015", "challenge": true, "trains": "log-sine-substitution", "note": "挑戰：(ln tan x)²，令 u = tan x 變成 ∫₀^∞ (ln u)²/(1 + u²) du。" }
+  ],
+  "gaps": [
+    { "tag": "log-sine-substitution", "count": 2, "note": "∫₀¹ ln x/√(1 − x²) dx、∫₀^π x ln(sin x) dx 這類換元化成 log-sine 的題，R4。" },
+    { "tag": "log-sine-convergence", "count": 1, "note": "判斷 ∫₀^{π/2} ln(sin x) dx 收斂的理由題，R3。" }
+  ]
+}

@@ -1,0 +1,230 @@
+{
+  "id": "arc-length",
+  "title": "弧長",
+  "readMinutes": 9,
+  "totalMinutes": 35,
+  "prerequisites": [
+    "riemann-sum-intuition",
+    "mean-value-theorem"
+  ],
+  "next": [
+    "surface-area-revolution"
+  ],
+  "related": [
+    "parametric-arc-length",
+    "trig-sub-x2-plus-a2"
+  ],
+  "objectives": [
+    "從「短線段的長度 √(Δx² + Δy²)」推出 L = ∫ √(1 + f′(x)²) dx。",
+    "看出 1 + f′² 是完全平方的設計，把根號開掉。",
+    "知道多數弧長積分沒有初等反導函數，題目是刻意挑過的。"
+  ],
+  "visual": "曲線 y = x³/6 + 1/(2x)（1 ≤ x ≤ 2）上取 n 個點連成折線，旁邊顯示折線總長。拖動 n 從 2 加到 50，折線越來越貼曲線，總長從下方逼近 17/12 ≈ 1.4167。點開其中一段，標出 Δx、Δy 和斜邊。",
+  "concept": [
+    {
+      "heading": "① 用很多短線段去量",
+      "body": [
+        "直觀，不是證明：把曲線 y = f(x) 切成很多小段，每一小段幾乎是直的，用直線段代替。水平走 Δx、垂直走 Δy，線段長是 √(Δx² + Δy²) = √(1 + (Δy/Δx)²) · Δx。",
+        "Δx 很小時，Δy/Δx 接近斜率 f′(x)。全部加起來、讓 Δx → 0："
+      ],
+      "tex": [
+        "L=\\int_a^b \\sqrt{1+f'(x)^2}\\,dx"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 條件與嚴格的那一步",
+      "body": [
+        "公式要求 f′ 在 [a, b] 上連續。直觀說明裡「Δy/Δx 接近 f′(x)」是近似；嚴格的版本見下方可折疊段落，用的是〈均值定理〉。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 為什麼題目總是長得很奇怪",
+      "body": [
+        "√(1 + f′²) 大多數時候沒有初等反導函數。連 y = x³ 這麼簡單的曲線，弧長積分 ∫ √(1 + 9x⁴) dx 都寫不成常見函數。所以課本與考題的曲線都是挑過的，讓 1 + f′² 剛好是完全平方：",
+        "常見設計是 f′ = A − B 而且 AB = 1/4，這時 1 + (A − B)² = (A + B)²。另一種是三角恆等式 1 + tan² x = sec² x。遇到開不掉的，只能數值估計，或用〈√(x² + a²)〉這類代換硬算。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 對 y 的版本",
+      "body": [
+        "曲線寫成 x = g(y)（c ≤ y ≤ d）時，同樣的推導給 L = ∫ √(1 + g′(y)²) dy。參數曲線的版本在〈參數式弧長〉。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "⑤ 嚴格推導：均值定理",
+      "body": [
+        "在 [x_{i−1}, xᵢ] 上，f 可微，由均值定理存在 cᵢ 使 f(xᵢ) − f(x_{i−1}) = f′(cᵢ)Δx。所以第 i 段線段長恰好是 √(1 + f′(cᵢ)²) Δx，沒有任何近似。折線總長 Σ √(1 + f′(cᵢ)²) Δx 正是 √(1 + f′²) 的 Riemann 和；f′ 連續保證這個函數可積，Δx → 0 時和收斂到積分。弧長的定義就是折線長的極限，所以兩者相等。"
+      ],
+      "collapsible": true
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "1 + f′² 本身就簡單",
+      "prompt": "求 y = (2/3)x^{3/2}，0 ≤ x ≤ 3 的弧長。",
+      "problemId": "lec-09-q3a",
+      "steps": [
+        "y′ = (2/3) · (3/2) x^{1/2} = √x，1 + (y′)² = 1 + x。",
+        "L = ∫₀³ √(1 + x) dx = [(2/3)(1 + x)^{3/2}]₀³ = (2/3)(8 − 1) = 14/3。"
+      ],
+      "answer": "14/3",
+      "claim": "D((2/3)*x^(3/2)) == sqrt(x) ;; INT(sqrt(1+x), 0, 3) == 14/3"
+    },
+    {
+      "title": "完全平方的設計",
+      "prompt": "求 y = x³/6 + 1/(2x)，1 ≤ x ≤ 2 的弧長。",
+      "problemId": "cx-arc-002",
+      "steps": [
+        "y′ = x²/2 − 1/(2x²)。這是 A − B，A = x²/2、B = 1/(2x²)，AB = 1/4。",
+        "(y′)² = x⁴/4 − 1/2 + 1/(4x⁴)，所以 1 + (y′)² = x⁴/4 + 1/2 + 1/(4x⁴) = (x²/2 + 1/(2x²))²。",
+        "在 [1, 2] 上 x²/2 + 1/(2x²) > 0，開根號就是它本身。",
+        "L = ∫₁² (x²/2 + 1/(2x²)) dx = [x³/6 − 1/(2x)]₁² = (4/3 − 1/4) − (1/6 − 1/2) = 17/12。"
+      ],
+      "answer": "17/12",
+      "claim": "1+D(x^3/6+1/(2x))^2 == (x^2/2+1/(2x^2))^2 ;; INT(sqrt(1+(x^2/2-1/(2x^2))^2), 1, 2) == 17/12"
+    },
+    {
+      "title": "三角恆等式",
+      "prompt": "求 y = ln(cos x)，0 ≤ x ≤ π/3 的弧長。",
+      "problemId": "cx-arc-004",
+      "steps": [
+        "y′ = (−sin x)/cos x = −tan x。1 + tan² x = sec² x。",
+        "在 [0, π/3] 上 sec x > 0，√(sec² x) = sec x。",
+        "L = ∫₀^{π/3} sec x dx = [ln|sec x + tan x|]₀^{π/3} = ln(2 + √3) − ln 1 = ln(2 + √3)。"
+      ],
+      "answer": "ln(2 + √3)",
+      "claim": "INT(sqrt(1+tan(x)^2), 0, pi/3) == ln(2+sqrt(3))"
+    }
+  ],
+  "pitfalls": [
+    "根號裡放了 f(x)² 而不是 f′(x)²。",
+    "把 √(1 + f′²) 拆成 1 + f′。",
+    "開根號時沒確認被開的式子 ≥ 0（例如 sec x 在區間內要是正的）。",
+    "以為每個弧長積分都算得出來；多數只能數值估計。"
+  ],
+  "checks": [
+    {
+      "ask": "y = f(x) 在 [a, b] 的弧長是？",
+      "options": [
+        {
+          "label": "∫ₐᵇ √(1 + f′(x)²) dx",
+          "correct": true
+        },
+        {
+          "label": "∫ₐᵇ √(1 + f(x)²) dx",
+          "why": "每一小段的垂直變化是 Δy ≈ f′(x)Δx，根號裡要的是斜率，不是高度。"
+        },
+        {
+          "label": "∫ₐᵇ (1 + f′(x)) dx",
+          "why": "線段長是 √(Δx² + Δy²)，你把兩股直接相加了；兩股和比斜邊長。"
+        }
+      ]
+    },
+    {
+      "ask": "y = (2/3)x^{3/2} 時，1 + (y′)² 是？",
+      "options": [
+        {
+          "label": "1 + x",
+          "correct": true
+        },
+        {
+          "label": "1 + x³",
+          "why": "y′ = x^{1/2}，平方是 x；x³ 是把指數 3/2 再乘 2，是對 y 本身平方。"
+        },
+        {
+          "label": "1 + (4/9)x³",
+          "why": "這是 1 + y²：把函數本身平方了，公式要的是導數。"
+        }
+      ]
+    },
+    {
+      "ask": "直線 y = 2x + 1 在 0 ≤ x ≤ 3 的長度是？",
+      "options": [
+        {
+          "label": "3√5",
+          "correct": true
+        },
+        {
+          "label": "6",
+          "why": "6 只是高度的變化 Δy；線段長要 √(3² + 6²) = 3√5。"
+        },
+        {
+          "label": "9",
+          "why": "這是 Δx + Δy = 3 + 6：兩股相加比斜邊長。"
+        }
+      ]
+    },
+    {
+      "ask": "弧長考題的 1 + f′² 常常剛好是完全平方，原因是？",
+      "options": [
+        {
+          "label": "√(1 + f′²) 多半沒有初等反導函數，題目刻意挑了能開根號的曲線",
+          "correct": true
+        },
+        {
+          "label": "1 + f′² 對任何多項式都是完全平方",
+          "why": "y = x² 就不是：1 + 4x² 開不出多項式。"
+        },
+        {
+          "label": "弧長一定是有理數",
+          "why": "範例 3 的弧長是 ln(2 + √3)，不是有理數；重點是反導函數能不能寫出來。"
+        }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": [
+      "arc-length"
+    ],
+    "fine": [
+      "arc-length-formula",
+      "arc-length-perfect-square",
+      "arc-length-identity"
+    ]
+  },
+  "practice": [
+    {
+      "id": "lec-09-q3a",
+      "core": true,
+      "trains": "arc-length-formula"
+    },
+    {
+      "id": "tb-arc-003",
+      "core": true,
+      "trains": "arc-length-perfect-square"
+    },
+    {
+      "id": "tb-arc-001",
+      "core": true,
+      "trains": "arc-length-perfect-square"
+    },
+    {
+      "id": "lec-09-q3b",
+      "core": true,
+      "trains": "arc-length-perfect-square"
+    },
+    {
+      "id": "cx-arc-004",
+      "trains": "arc-length-identity"
+    },
+    {
+      "id": "cx-arc-005",
+      "trains": "arc-length-identity"
+    },
+    {
+      "id": "lec-09-m5",
+      "trains": "arc-length-formula"
+    },
+    {
+      "id": "tb-arc-002",
+      "challenge": true,
+      "trains": "arc-length-formula",
+      "note": "挑戰：1 + x² 開不掉，要用三角代換或 sinh 代換算 ∫₀¹ √(1 + x²) dx。"
+    }
+  ],
+  "gaps": []
+}

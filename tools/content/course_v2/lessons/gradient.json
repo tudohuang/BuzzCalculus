@@ -1,0 +1,143 @@
+{
+  "id": "gradient",
+  "title": "梯度",
+  "readMinutes": 9,
+  "totalMinutes": 30,
+  "prerequisites": ["partial-derivatives", "level-curves", "r2-r3"],
+  "next": ["directional-derivative"],
+  "related": ["tangent-plane", "critical-points-2d"],
+  "objectives": [
+    "把偏導數排成向量 ∇f = (f_x, f_y)（三變數多一個 f_z），在給定點算出來。",
+    "在等高線圖上說出梯度的三個性質：垂直等高線、指向上坡、長度是最大上升率。",
+    "知道 ∇f 是定義域裡的向量（二變數時在 xy 平面上），不是曲面上的箭頭。"
+  ],
+  "visual": "f(x, y) = 100 − x² − 2y² 的等高線圖（一圈圈橢圓），格點上畫出 ∇f 的箭頭：每支都垂直於經過它的等高線、指向山頂，等高線越密的地方箭頭越長。拖動一個點，顯示該點的 ∇f 與它的長度；切換到 3D 視角，看出箭頭畫在底下的平面上，指的是「往哪走上坡最陡」。",
+  "concept": [
+    {
+      "heading": "① 兩個偏導數合成一個向量",
+      "body": [
+        "f_x 告訴你往東（+x）走時 f 變多快，f_y 告訴你往北（+y）走時變多快。把它們排在一起，就是梯度：",
+        "例：f = x² + y²，∇f = (2x, 2y)。在 (1, 2) 是 (2, 4)：往東走一小段 h，f 約增加 2h；往北走一小段 h，約增加 4h。"
+      ],
+      "tex": ["\\nabla f(x,y)=\\bigl(f_x(x,y),\\ f_y(x,y)\\bigr)"],
+      "collapsible": false
+    },
+    {
+      "heading": "② 在等高線地圖上看",
+      "body": [
+        "把 f 想成地形的高度，畫出等高線（〈圖形與等高線〉）。在每一點畫出 ∇f 的箭頭，會看到三件事：",
+        "1. 箭頭垂直於經過那一點的等高線。2. 箭頭指向高度增加的一側。3. 箭頭的長度 |∇f| 是那一點最大的上升率；等高線越密，坡越陡，箭頭越長。",
+        "注意：f(x, y) 的梯度是 xy 平面上的二維向量，告訴你「在地圖上往哪走」，不是貼在曲面上的三維箭頭。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 直覺，不是證明：為什麼垂直於等高線",
+      "body": [
+        "沿著等高線走，高度不變，所以那個方向的變化率是 0。最陡的上坡方向不應該浪費任何一步在「高度不變」的方向上，所以跟等高線垂直。",
+        "這個說法還沒證明「梯度方向就是最陡方向」，也還沒說清楚「某個方向的變化率」是什麼。嚴格版本要用 D_u f = ∇f · u，在〈方向導數〉推出。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 三個變數、與梯度為零",
+      "body": [
+        "f(x, y, z) 的梯度是 (f_x, f_y, f_z)，垂直於等值面 f = c；這會在〈切平面〉用來找法向量。",
+        "∇f = 0 的點，往哪個方向第一階都不變，是找極值的候選點（〈臨界點〉）。"
+      ],
+      "collapsible": false
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "圓形等高線",
+      "prompt": "f(x, y) = x² + y²，求 ∇f(1, 2) 與 |∇f(1, 2)|²。",
+      "problemId": "exam-multi-003",
+      "steps": [
+        "f_x = 2x，f_y = 2y，所以 ∇f(1, 2) = (2, 4)。",
+        "|∇f|² = 2² + 4² = 20。",
+        "圖像：等高線是以原點為圓心的圓。(2, 4) 跟 (1, 2) 同方向，從原點往外指，正好垂直於過 (1, 2) 的那個圓，而且指向 f 變大的外側。"
+      ],
+      "answer": "∇f(1, 2) = (2, 4)，|∇f|² = 20",
+      "claim": "D(x^2+4, 1) == 2 ;; D(1+y^2, 2, y) == 4 ;; 2^2 + 4^2 == 20"
+    },
+    {
+      "title": "溫度分布",
+      "prompt": "平板溫度 T(x, y) = 100 − x² − 2y²。求 ∇T(2, 1)，以及在 (2, 1) 溫度上升最快的速率。",
+      "problemId": "lec-17-q3a",
+      "steps": [
+        "T_x = −2x，T_y = −4y。在 (2, 1)：∇T = (−4, −4)。",
+        "兩個分量都是負的：往 −x、−y 方向（朝原點，也就是最熱的地方）走溫度上升最快。",
+        "最大上升率是 |∇T| = √(16 + 16) = 4√2（理由在〈方向導數〉）。"
+      ],
+      "answer": "∇T(2, 1) = (−4, −4)，最大上升率 4√2",
+      "claim": "D(100-x^2-2, 2) == -4 ;; D(100-4-2*y^2, 1, y) == -4 ;; sqrt(16+16) == 4*sqrt(2)"
+    },
+    {
+      "title": "三個變數",
+      "prompt": "f(x, y, z) = x²y + z，求 ∇f(1, 2, 0) 與它的長度。",
+      "problemId": "vc-nab-006",
+      "steps": [
+        "f_x = 2xy，f_y = x²，f_z = 1。",
+        "在 (1, 2, 0)：∇f = (4, 1, 1)。",
+        "|∇f| = √(16 + 1 + 1) = √18 = 3√2。"
+      ],
+      "answer": "∇f = (4, 1, 1)，|∇f| = 3√2",
+      "claim": "D(2*x^2, 1) == 4 ;; D(y, 2, y) == 1 ;; sqrt(18) == 3*sqrt(2)"
+    }
+  ],
+  "pitfalls": [
+    "分量順序寫反：第一個分量是 f_x。",
+    "對 x 偏微分時把 y 當成 0 而不是常數。",
+    "以為 f(x, y) 的梯度是三維向量、畫在曲面上。",
+    "最大上升率寫成分量相加，而不是長度 √(f_x² + f_y²)。"
+  ],
+  "checks": [
+    {
+      "ask": "f(x, y) = x²y，∇f(1, 3) 是？",
+      "options": [
+        { "label": "(6, 1)", "correct": true },
+        { "label": "(1, 6)", "why": "順序反了：第一個分量是 f_x = 2xy = 6，第二個是 f_y = x² = 1。" },
+        { "label": "(2, 1)", "why": "對 x 偏微分時 y 是常數 3，要保留：f_x = 2xy = 6，不是 2x。" }
+      ]
+    },
+    {
+      "ask": "梯度和等高線的關係是？",
+      "options": [
+        { "label": "梯度垂直於經過該點的等高線", "correct": true },
+        { "label": "梯度沿著等高線的切線方向", "why": "沿等高線走 f 不變；梯度指的是 f 增加最快的方向，跟它垂直。" },
+        { "label": "梯度永遠平行 x 軸", "why": "只有 f_y = 0 時才平行 x 軸，一般不是。" }
+      ]
+    },
+    {
+      "ask": "∇f(P) = (3, 4)，在 P 的最大上升率是？",
+      "options": [
+        { "label": "5", "correct": true },
+        { "label": "7", "why": "把分量相加了；最大上升率是長度 √(3² + 4²)。" },
+        { "label": "25", "why": "那是長度的平方，還要開根號。" }
+      ]
+    },
+    {
+      "ask": "f(x, y) 的梯度 ∇f 是哪裡的向量？",
+      "options": [
+        { "label": "xy 平面上的二維向量", "correct": true },
+        { "label": "貼在曲面 z = f(x, y) 上、往上指的三維向量", "why": "∇f 只有 f_x、f_y 兩個分量，告訴你在地圖上往哪走，不是曲面上的箭頭。" },
+        { "label": "一個數", "why": "那是 |∇f| 或某個方向的變化率；梯度本身有方向。" }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": ["gradient", "multivariable"],
+    "fine": ["gradient-compute", "gradient-level-curve", "gradient-max-rate"]
+  },
+  "practice": [
+    { "id": "exam-multi-003", "core": true, "trains": "gradient-compute" },
+    { "id": "lec-17-q3a", "core": true, "trains": "gradient-compute" },
+    { "id": "lec-17-m2", "core": true, "trains": "gradient-max-rate" },
+    { "id": "lec-17-q3c", "core": true, "trains": "gradient-max-rate" },
+    { "id": "vc-nab-006", "trains": "gradient-max-rate" }
+  ],
+  "gaps": [
+    { "tag": "gradient-level-curve", "count": 2, "note": "R2：在等高線圖上判斷梯度方向與長短（讀圖題）。" }
+  ]
+}

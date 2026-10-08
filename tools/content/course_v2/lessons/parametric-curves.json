@@ -1,0 +1,139 @@
+{
+  "id": "parametric-curves",
+  "title": "參數曲線",
+  "readMinutes": 8,
+  "totalMinutes": 20,
+  "prerequisites": ["function-intro", "trig-functions", "trig-identities"],
+  "next": ["parametric-derivative"],
+  "related": ["polar-coordinates"],
+  "objectives": [
+    "把 x = x(t)、y = y(t) 讀成「一個點隨時間 t 移動」，說得出起點、終點與方向。",
+    "會消去參數，得到直角座標方程式，並說出參數範圍限制了曲線的哪一段。",
+    "知道消去參數會丟掉方向與速度，同一條曲線可以有很多種參數化。"
+  ],
+  "visual": "一個點沿參數曲線移動，滑桿控制 t，走過的地方留下軌跡，旁邊即時顯示 t、x(t)、y(t)。可切換三組：x = cos t, y = sin t 與 x = cos 2t, y = sin 2t 並排（同一個圓，第二個點跑兩倍快、繞兩圈）；橢圓 x = 2cos t, y = 3sin t；擺線 x = t − sin t, y = 1 − cos t，畫出一個在 x 軸上滾動的單位圓，圓周上的紅點留下擺線。",
+  "concept": [
+    {
+      "heading": "① 不是 y = f(x)，是一個在動的點",
+      "body": [
+        "到目前為止，曲線都寫成 y = f(x)：給一個 x，得到一個 y。但很多曲線不是函數圖形，例如圓：一個 x 對到兩個 y。",
+        "換個角度：把 t 想成時間，點在時刻 t 的位置是 (x(t), y(t))。t 從小到大，點就畫出一條曲線。這兩條式子 x = x(t)、y = y(t) 合起來叫參數式，t 叫參數。",
+        "例：x = cos t、y = sin t，0 ≤ t ≤ 2π。t = 0 在 (1, 0)，t = π/2 在 (0, 1)，t = π 在 (−1, 0)：點沿單位圓逆時針走一圈。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 消去參數：看出形狀",
+      "body": [
+        "想知道形狀，就把 t 消掉。上例用 cos²t + sin²t = 1，得 x² + y² = 1。",
+        "能解出 t 的就直接解：x = 1 + 2t、y = 3 − t，由第一式 t = (x − 1)/2，代入第二式得 y = (7 − x)/2，一條直線。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 消去參數會丟掉兩件事",
+      "body": [
+        "x = cos 2t、y = sin 2t（0 ≤ t ≤ 2π）消去參數也是 x² + y² = 1，但點跑得兩倍快，繞了兩圈。直角方程式只記得「點走過哪裡」，不記得方向、速度、走了幾次。",
+        "參數範圍也會限制曲線：x = t²、y = t⁴ 消去後是 y = x²，但 x = t² ≥ 0，只有右半邊的拋物線。消完參數，一定要回頭檢查 x、y 能取哪些值。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 幾條常見曲線",
+      "body": [
+        "直線：x = x₀ + at、y = y₀ + bt，過 (x₀, y₀)，方向 (a, b)。",
+        "橢圓：x = a cos t、y = b sin t，消去後 x²/a² + y²/b² = 1。",
+        "擺線：半徑 1 的輪子沿 x 軸滾動，輪緣上一點的軌跡是 x = t − sin t、y = 1 − cos t（t 是輪子轉過的角度）。這條曲線很難寫成 y = f(x)，參數式卻很簡單。"
+      ],
+      "collapsible": false
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "橢圓：形狀、起點、方向",
+      "prompt": "描述 x = 2cos t、y = 3sin t（0 ≤ t ≤ 2π）的曲線。",
+      "steps": [
+        "消去參數：cos t = x/2、sin t = y/3，代入 cos²t + sin²t = 1，得 x²/4 + y²/9 = 1，是橢圓（x 方向半軸 2，y 方向半軸 3）。",
+        "起點：t = 0 時 (2, 0)。",
+        "方向：t = π/2 時 (0, 3)。從 (2, 0) 往上走到 (0, 3)，是逆時針。",
+        "範圍：t 走完 0 到 2π，cos t、sin t 各走完一個週期，所以剛好繞一圈。"
+      ],
+      "answer": "橢圓 x²/4 + y²/9 = 1，從 (2, 0) 出發逆時針繞一圈。",
+      "claim": "(2*cos(t))^2/4 + (3*sin(t))^2/9 == 1",
+      "note": "驗算的是「每個 t 都落在橢圓上」；方向要看 t 增加時點往哪裡走。"
+    },
+    {
+      "title": "直線：解出 t 再代入",
+      "prompt": "x = 1 + 2t、y = 3 − t，寫成 y 與 x 的關係。",
+      "steps": [
+        "由 x = 1 + 2t 解出 t = (x − 1)/2。",
+        "代入 y = 3 − t：y = 3 − (x − 1)/2 = (7 − x)/2。",
+        "t 可以取所有實數，x = 1 + 2t 也取遍所有實數，所以是整條直線，不是線段。"
+      ],
+      "answer": "y = (7 − x)/2",
+      "claim": "SUB((7-x)/2, 1+2t) == 3 - t"
+    },
+    {
+      "title": "會自己交叉的曲線",
+      "prompt": "曲線 x = t²、y = t³ − 3t 經過同一點兩次，求那一點。",
+      "steps": [
+        "要找 t₁ ≠ t₂ 使兩個時刻的位置相同。x 相同：t₁² = t₂²，而 t₁ ≠ t₂，所以 t₂ = −t₁。",
+        "y 相同：t₁³ − 3t₁ = (−t₁)³ − 3(−t₁) = −(t₁³ − 3t₁)，所以 t₁³ − 3t₁ = 0。",
+        "t₁(t₁² − 3) = 0。t₁ = 0 會讓 t₂ = t₁，不算；所以 t₁ = √3、t₂ = −√3。",
+        "位置：x = 3、y = (√3)³ − 3√3 = 3√3 − 3√3 = 0。"
+      ],
+      "answer": "(3, 0)，在 t = ±√3 各經過一次。",
+      "claim": "SUB(t^2, sqrt(3)) == 3 ;; SUB(t^3-3t, sqrt(3)) == 0 ;; SUB(t^3-3t, -sqrt(3)) == 0"
+    }
+  ],
+  "pitfalls": [
+    "消去參數後忘了檢查範圍：x = t² 只能取 x ≥ 0。",
+    "以為 x = cos 2t、y = sin 2t 和 x = cos t、y = sin t 一樣：形狀一樣，速度與圈數不一樣。",
+    "只畫形狀不標方向。參數曲線的方向是 t 增加時點前進的方向。",
+    "把參數 t 當成 x：t 是第三個量，x、y 都是 t 的函數。"
+  ],
+  "checks": [
+    {
+      "ask": "x = cos t、y = sin t，0 ≤ t ≤ π，畫出的是？",
+      "options": [
+        { "label": "上半圓，從 (1, 0) 逆時針走到 (−1, 0)", "correct": true },
+        { "label": "整個單位圓", "why": "t 只走到 π，cos t、sin t 只走了半個週期，所以只有半圈。" },
+        { "label": "下半圓", "why": "0 ≤ t ≤ π 時 sin t ≥ 0，所以 y ≥ 0，是上半圓。" }
+      ]
+    },
+    {
+      "ask": "x = t²、y = t⁴（t 取所有實數）消去參數後的圖形是？",
+      "options": [
+        { "label": "y = x² 中 x ≥ 0 的那一半", "correct": true },
+        { "label": "整條拋物線 y = x²", "why": "x = t² 不可能是負的，左半邊的拋物線根本到不了。" },
+        { "label": "直線 y = x", "why": "y = t⁴ = (t²)² = x²，是拋物線，不是直線。" }
+      ]
+    },
+    {
+      "ask": "x = cos 2t、y = sin 2t，0 ≤ t ≤ 2π，點繞單位圓幾圈？",
+      "options": [
+        { "label": "2 圈", "correct": true },
+        { "label": "1 圈", "why": "角度是 2t，t 從 0 到 2π 時 2t 從 0 走到 4π，是兩圈。" },
+        { "label": "半圈", "why": "角度變快了不是變慢了：2t 走得比 t 多。" }
+      ]
+    },
+    {
+      "ask": "消去參數得到直角座標方程式之後，會丟掉什麼資訊？",
+      "options": [
+        { "label": "點前進的方向與速度", "correct": true },
+        { "label": "曲線的形狀", "why": "形狀正是消去參數要留下來的東西；丟掉的是「怎麼走」。" },
+        { "label": "什麼都不會丟", "why": "x = cos 2t、y = sin 2t 和 x = cos t、y = sin t 消去後一樣，可見速度與圈數不見了。" }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": ["parametric"],
+    "fine": ["parametric-eliminate", "parametric-direction-range", "parametric-self-intersection"]
+  },
+  "practice": [],
+  "gaps": [
+    { "tag": "parametric-eliminate", "count": 3, "note": "R1–R2：消去參數寫出直角座標方程式（直線、圓、橢圓）。題庫的參數題全是求 dy/dx。" },
+    { "tag": "parametric-direction-range", "count": 2, "note": "R2：判斷參數範圍畫出哪一段、方向為何（例：x = t²、y = t⁴ 只有右半拋物線）。" },
+    { "tag": "parametric-self-intersection", "count": 1, "note": "R3：求自交點，例如 x = t²、y = t³ − 3t。" }
+  ]
+}

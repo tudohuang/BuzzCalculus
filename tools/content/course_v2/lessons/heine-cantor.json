@@ -1,0 +1,233 @@
+{
+  "id": "heine-cantor",
+  "title": "Heine–Cantor 定理",
+  "readMinutes": 11,
+  "totalMinutes": 35,
+  "prerequisites": [
+    "uniform-continuity",
+    "bolzano-weierstrass",
+    "extreme-value-theorem"
+  ],
+  "next": [
+    "pointwise-convergence"
+  ],
+  "related": [
+    "continuous-integrable",
+    "cauchy-sequence"
+  ],
+  "objectives": [
+    "說得出 Heine–Cantor 定理：有界閉區間上的連續函數一致連續。",
+    "會用反證法加 Bolzano–Weierstrass 寫出完整證明。",
+    "用定理判斷一致連續，並對每個假設舉出拿掉之後失敗的反例。"
+  ],
+  "visual": null,
+  "concept": [
+    {
+      "heading": "① 為什麼閉區間上不會出事",
+      "body": [
+        "上一課的壞例子都有一個「逃生口」：1/x 在 (0, 1] 上的壞點擠向 0，而 0 不在定義域裡；x² 在 ℝ 上的壞點跑向無限遠。",
+        "直覺，不是證明：在 [a, b] 上，兩個口都被封住——點不能跑到無限遠（有界），擠向的地方也還在區間裡、函數在那裡連續（閉）。在那一點附近，連續就把函數值壓住了。漏掉的是「擠向某一點」這件事本身，要靠 Bolzano–Weierstrass。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 定理與反例",
+      "body": [
+        "Heine–Cantor 定理：f 在有界閉區間 [a, b] 上連續，則 f 在 [a, b] 上一致連續。",
+        "拿掉「閉」：1/x、sin(1/x) 在 (0, 1] 上連續，都不一致連續。拿掉「有界」：x² 在 [0, ∞) 上連續，不一致連續。拿掉「連續」：階梯函數在 [−1, 1] 上，跳躍點兩側的點要多近有多近，函數值差 1。",
+        "這是充分條件，不是必要條件：√x 在 [0, ∞) 上一致連續，區間卻無界。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 它用在哪裡",
+      "body": [
+        "需要「一個 δ 管住整個區間」的地方都靠它。最重要的一處是〈連續函數可積〉：把 [a, b] 切成寬度小於 δ 的小段，每一段上 f 的最大最小值差都小於 ε，上和與下和就夠接近。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "證明：反證法加 Bolzano–Weierstrass",
+      "body": [
+        "反設 f 在 [a, b] 上連續但不一致連續。由否定形式，存在 ε₀ > 0，使每個 δ > 0 都有壞的一對點。對每個 n 取 δ = 1/n，得到 xₙ、yₙ ∈ [a, b]，|xₙ − yₙ| < 1/n 且 |f(xₙ) − f(yₙ)| ≥ ε₀。",
+        "(xₙ) 有界，由 Bolzano–Weierstrass 有子數列 x_{n_k} → x*；a ≤ x_{n_k} ≤ b，所以 x* ∈ [a, b]（這裡用到閉）。",
+        "|y_{n_k} − x*| ≤ |y_{n_k} − x_{n_k}| + |x_{n_k} − x*| < 1/n_k + |x_{n_k} − x*| → 0，所以 y_{n_k} → x* 也成立。",
+        "f 在 x* 連續，由數列判準 f(x_{n_k}) → f(x*) 且 f(y_{n_k}) → f(x*)，相減得 |f(x_{n_k}) − f(y_{n_k})| → 0。但每一項都 ≥ ε₀ > 0，矛盾。"
+      ],
+      "collapsible": true
+    },
+    {
+      "heading": "延伸：開區間上的判準",
+      "body": [
+        "f 在 (a, b) 上連續（a、b 有限）時：f 一致連續，若且唯若 f 能補上端點值，延伸成 [a, b] 上的連續函數。「⇐」就是範例 3 的作法；「⇒」要證 f 把 Cauchy 數列送到 Cauchy 數列，再用〈Cauchy 數列〉收斂，這裡不展開。"
+      ],
+      "collapsible": true
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "x² 在 [0, 2] 上：寫出 δ",
+      "prompt": "Heine–Cantor 保證 x² 在 [0, 2] 上一致連續。寫出一個明確的 δ，並在 ε = 0.01 時算出來。",
+      "steps": [
+        "定理只說 δ 存在，不給公式。自己找：|x² − y²| = |x + y| · |x − y|。",
+        "x、y ∈ [0, 2] 時 |x + y| ≤ 4，所以 |x² − y²| ≤ 4|x − y|。",
+        "取 δ = ε/4。|x − y| < δ ⇒ |x² − y²| < 4δ = ε，δ 不依賴 x、y。",
+        "ε = 0.01 時 δ = 0.0025。"
+      ],
+      "answer": "δ = ε/4；ε = 0.01 時 δ = 0.0025",
+      "note": "在 [0, R] 上同樣的算法給 δ = ε/(2R)；R → ∞ 時 δ → 0，這就是 x² 在 [0, ∞) 上失敗的原因。",
+      "claim": "(x/1.5+0.001)^2 - (x/1.5)^2 <= 4*0.001 ;; 0.01/4 == 0.0025"
+    },
+    {
+      "title": "sin(1/x) 在 (0, 1] 上不一致連續",
+      "prompt": "證明 f(x) = sin(1/x) 在 (0, 1] 上不一致連續。它有界、連續，為什麼還是不行？",
+      "steps": [
+        "取 xₙ = 1/(2πn + π/2)、yₙ = 1/(2πn + 3π/2)，都在 (0, 1]。f(xₙ) = 1，f(yₙ) = −1。",
+        "|xₙ − yₙ| ≤ xₙ < 1/(2πn) → 0，而 |f(xₙ) − f(yₙ)| = 2。取 ε = 1，每個 δ 都有壞的一對。",
+        "原因：0 不在定義域裡，而 sin(1/x) 在 0 沒有極限，補不出連續的 f(0)；Heine–Cantor 的「閉」被拿掉了。"
+      ],
+      "answer": "不一致連續（ε = 1）",
+      "note": "題庫的 an-uc-003 是 sin(x²) 在 [0, ∞)：同一個現象，壞點跑到無限遠而不是擠向 0。",
+      "claim": "sin(2*pi*n+pi/2) - sin(2*pi*n+3*pi/2) == 2 ;; LIM(1/(2*pi*n+pi/2) - 1/(2*pi*n+3*pi/2), inf) == 0"
+    },
+    {
+      "title": "x sin(1/x) 在 (0, 1] 上一致連續",
+      "prompt": "判斷 f(x) = x sin(1/x) 在 (0, 1] 上是否一致連續。",
+      "problemId": "an-uc-004",
+      "steps": [
+        "定義域不是閉區間，不能直接套定理。試著把 0 補進來：|x sin(1/x)| ≤ |x| → 0，所以令 g(0) = 0、g(x) = x sin(1/x)（0 < x ≤ 1），g 在 0 連續。",
+        "g 在 (0, 1] 上是連續函數的乘積與合成，也連續。所以 g 在有界閉區間 [0, 1] 上連續。",
+        "由 Heine–Cantor，g 在 [0, 1] 上一致連續。同一個 δ 對 (0, 1] 裡的點當然也有效，所以 f = g 限制在 (0, 1] 上一致連續。"
+      ],
+      "answer": "一致連續",
+      "claim": "abs(x*sin(1/x)) <= x"
+    }
+  ],
+  "pitfalls": [
+    "把定理反過來用：「不是有界閉區間，所以不一致連續」。√x 在 [0, ∞) 上是反例。",
+    "以為定理會給出 δ 的公式。它只保證存在；要具體的 δ 得自己估。",
+    "證明裡只取 x_{n_k} 的子數列，忘了說明 y_{n_k} 跟著收斂到同一點。",
+    "以為有界的連續函數就一致連續。sin(1/x) 在 (0, 1] 上是反例。"
+  ],
+  "checks": [
+    {
+      "ask": "下列哪一個可以直接由 Heine–Cantor 定理得到一致連續？",
+      "options": [
+        {
+          "label": "eˣ 在 [−5, 5] 上",
+          "correct": true
+        },
+        {
+          "label": "eˣ 在 ℝ 上",
+          "why": "ℝ 不是有界區間，定理不適用；事實上 eˣ 在 ℝ 上也不一致連續（越往右越陡）。"
+        },
+        {
+          "label": "1/x 在 (0, 1] 上",
+          "why": "(0, 1] 不是閉區間，定理不適用；1/x 在那裡確實不一致連續。"
+        }
+      ]
+    },
+    {
+      "ask": "證明中，為什麼 y_{n_k} 也收斂到 x*？",
+      "options": [
+        {
+          "label": "|y_{n_k} − x_{n_k}| < 1/n_k → 0，再用三角不等式",
+          "correct": true
+        },
+        {
+          "label": "對 (yₙ) 再用一次 Bolzano–Weierstrass",
+          "why": "那只會給出 y 的某個收斂子數列，極限不一定是 x*，下標也不一定對得上。"
+        },
+        {
+          "label": "因為 f 連續",
+          "why": "連續是下一步用來推 f(x_{n_k}) 與 f(y_{n_k}) 的極限；點本身的收斂只靠 |xₙ − yₙ| < 1/n。"
+        }
+      ]
+    },
+    {
+      "ask": "sin(1/x) 在 (0, 1] 上有界又連續，為什麼不一致連續？",
+      "options": [
+        {
+          "label": "定義域不閉：在 0 附近振盪越來越快，0 又補不出連續的值",
+          "correct": true
+        },
+        {
+          "label": "因為它不可微",
+          "why": "sin(1/x) 在 (0, 1] 上處處可微。問題在 0 附近振盪越來越快。"
+        },
+        {
+          "label": "其實它一致連續，因為有界",
+          "why": "有界不夠。讓它等於 1 與 −1 的兩串點越來越近，函數值差一直是 2。"
+        }
+      ]
+    },
+    {
+      "ask": "對 x² 在 [0, 3] 上，ε 給定時哪個 δ 有效？",
+      "options": [
+        {
+          "label": "δ = ε/6",
+          "correct": true
+        },
+        {
+          "label": "δ = ε/3",
+          "why": "你用了 |x + y| ≤ 3，但 x、y 都可以到 3，|x + y| 最大是 6。"
+        },
+        {
+          "label": "δ = ε/(2x)",
+          "why": "這個 δ 依賴 x，是逐點連續的寫法；一致連續的 δ 只能依賴 ε。"
+        }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": [
+      "uniform-continuity"
+    ],
+    "fine": [
+      "heinecantor-apply",
+      "heinecantor-hypothesis-counterexample",
+      "heinecantor-extend-endpoint",
+      "heinecantor-explicit-delta"
+    ]
+  },
+  "practice": [
+    {
+      "id": "an-uc-004",
+      "core": true,
+      "trains": "heinecantor-extend-endpoint"
+    },
+    {
+      "id": "an-uc-001",
+      "core": true,
+      "trains": "heinecantor-hypothesis-counterexample"
+    },
+    {
+      "id": "an-uc-003",
+      "core": true,
+      "trains": "heinecantor-hypothesis-counterexample"
+    },
+    {
+      "id": "an-uc-002",
+      "challenge": true,
+      "trains": "heinecantor-hypothesis-counterexample",
+      "note": "挑戰：區間無界，定理不適用，但答案仍是一致連續。"
+    }
+  ],
+  "gaps": [
+    {
+      "tag": "heinecantor-explicit-delta",
+      "count": 3,
+      "note": "給閉區間上的函數與 ε，求一個全區通用的 δ（例如 x² 在 [0, 3]、ε = 0.01）。"
+    },
+    {
+      "tag": "heinecantor-apply",
+      "count": 2,
+      "note": "判斷題：哪些函數可以直接由 Heine–Cantor 得到一致連續。"
+    },
+    {
+      "tag": "heinecantor-proof-structure",
+      "count": 2,
+      "note": "白話證明：Heine–Cantor 的反證法證明（排序或填空）。"
+    }
+  ]
+}

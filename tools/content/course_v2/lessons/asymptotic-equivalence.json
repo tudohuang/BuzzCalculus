@@ -1,0 +1,153 @@
+{
+  "id": "asymptotic-equivalence",
+  "title": "漸近等價",
+  "readMinutes": 11,
+  "totalMinutes": 35,
+  "prerequisites": ["taylor-limits-higher", "limit-trig-standard", "limit-exp-log-standard", "limit-at-infinity"],
+  "next": ["big-o-little-o"],
+  "related": ["taylor-limits", "limit-comparison-test", "improper-comparison"],
+  "objectives": [
+    "說得出 f ~ g 的定義：f/g → 1，並背熟 x → 0 時的一組等價式。",
+    "在乘積與商裡用等價式替換，而且知道為什麼可以。",
+    "看出在相加、相減、指數裡替換為什麼會出錯，並會把差改寫成積再替換。"
+  ],
+  "visual": "在 x = 0 附近同時畫 y = sin 3x 與 y = 3x，下方畫比值 sin 3x/(3x)。按「放大」時兩條曲線越來越貼在一起，比值曲線越來越平、貼近高度 1；切換成 y = tan x − sin x 與 y = 0（把 tan x、sin x 都換成 x 的結果），可以看到兩者的比值根本不趨近 1。",
+  "concept": [
+    {
+      "heading": "① 兩個函數「長得一樣快」",
+      "body": [
+        "x → 0 時 sin x 與 x 都 → 0，而且 sin x/x → 1：越靠近 0，兩者的差相對於它們本身越來越小。這種關係叫漸近等價，記作 sin x ~ x（x → 0）。",
+        "一般定義：x → a 時，若 f(x)/g(x) → 1，就寫 f ~ g。a 可以是一個數，也可以是 ±∞；一定要說清楚 x 往哪裡跑。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 一組要背的等價式（x → 0）",
+      "body": [
+        "sin x ~ x、tan x ~ x、arcsin x ~ x、arctan x ~ x、eˣ − 1 ~ x、ln(1 + x) ~ x、1 − cos x ~ x²/2、(1 + x)ᵃ − 1 ~ ax（a ≠ 0）。",
+        "它們都是〈用 Taylor 求極限〉裡展開式的第一個非零項。x 可以換成任何 → 0 的東西 u(x)：例如 x → 0 時 sin 3x ~ 3x，ln(cos x) = ln(1 + (cos x − 1)) ~ cos x − 1 ~ −x²/2。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 乘積與商可以替換",
+      "body": [
+        "若 f ~ f₁、g ~ g₁，則 f·g ~ f₁·g₁、f/g ~ f₁/g₁。理由一行：f/g = (f/f₁)·(f₁/g₁)·(g₁/g)，頭尾兩個比值都 → 1，所以 f/g 與 f₁/g₁ 有相同的極限（一邊存在，另一邊就存在）。",
+        "所以 lim_{x→0} sin 3x · ln(1 + 2x)/(x(eˣ − 1)) 可以直接換成 3x · 2x/(x · x) = 6。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 相減不能替換",
+      "body": [
+        "tan x − sin x：把兩個都換成 x 得到 0，但真正的 tan x − sin x 不是 0，它 ~ x³/2。等價只保證「比值 → 1」，前兩項一樣、後面的項不一樣；相減時前面的項抵銷，剩下的正是被替換丟掉的部分。",
+        "補救：把差改寫成積。tan x − sin x = tan x · (1 − cos x) ~ x · x²/2 = x³/2，這樣就又能替換了。真的寫不成積，就回到 Taylor 展開。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "⑤ 指數裡也不能替換",
+      "body": [
+        "x → ∞ 時 x + 1 ~ x，但 e^{x+1}/eˣ = e，不 → 1。等價只控制比值，不控制差；指數裡的差 1 會被 e 放大成倍數。對數反而比較安全：若 f ~ g 且 g → 0⁺ 或 g → ∞，則 ln f ~ ln g，因為 ln f − ln g = ln(f/g) → 0，而 ln g 本身 → ±∞。"
+      ],
+      "collapsible": true
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "乘積與商：直接替換",
+      "prompt": "lim_{x→0} sin 3x · ln(1 + 2x) / ( x(eˣ − 1) )",
+      "steps": [
+        "每一個因子都 → 0，而且都是乘除關係，可以換。",
+        "sin 3x ~ 3x，ln(1 + 2x) ~ 2x，eˣ − 1 ~ x。",
+        "式子 ~ (3x)(2x)/(x · x) = 6。"
+      ],
+      "answer": "6",
+      "claim": "LIM((sin(3x)*ln(1+2x))/(x*(e^x-1)), 0) == 6"
+    },
+    {
+      "title": "相減：先改寫成積",
+      "prompt": "lim_{x→0} (tan x − sin x)/x³",
+      "problemId": "lim-013",
+      "steps": [
+        "分子是差，不能把 tan x、sin x 都換成 x（那樣會得到 0，是錯的）。",
+        "提出 tan x：tan x − sin x = tan x − tan x · cos x = tan x (1 − cos x)。",
+        "現在是積：tan x ~ x，1 − cos x ~ x²/2，所以分子 ~ x³/2。",
+        "除以 x³ → 1/2。"
+      ],
+      "answer": "1/2",
+      "claim": "LIM((tan(x)-sin(x))/x^3, 0) == 1/2 ;; LIM((tan(x)-sin(x))/(tan(x)*x^2/2), 0) == 1"
+    },
+    {
+      "title": "x → ∞ 的等價",
+      "prompt": "lim_{x→∞} √(x² + 1) · ln(1 + 3/x)",
+      "steps": [
+        "x → ∞ 時只看 x > 0。√(x² + 1) = x√(1 + 1/x²)（x > 0 時 √(x²) = x），而 √(1 + 1/x²) → 1，所以 √(x² + 1) ~ x。",
+        "u = 3/x → 0，所以 ln(1 + 3/x) ~ 3/x。",
+        "乘積 ~ x · (3/x) = 3。"
+      ],
+      "answer": "3",
+      "claim": "LIM(sqrt(x^2+1)*ln(1+3/x), inf) == 3"
+    }
+  ],
+  "pitfalls": [
+    "在相加或相減裡替換，前面的項抵銷後得到錯的 0。",
+    "忘了寫 x 往哪裡跑：sin x ~ x 只在 x → 0 成立，x → ∞ 時完全不對。",
+    "把等價用在指數裡：x + 1 ~ x 不代表 e^{x+1} ~ eˣ。",
+    "替換時漏掉係數：sin 3x ~ 3x，不是 ~ x。"
+  ],
+  "checks": [
+    {
+      "ask": "x → 0 時，1 − cos x 等價於？",
+      "options": [
+        { "label": "x²/2", "correct": true },
+        { "label": "x", "why": "(1 − cos x)/x → 0，不是 → 1。1 − cos x 是二階小量。" },
+        { "label": "x²", "why": "(1 − cos x)/x² → 1/2，不是 1；要寫 x²/2 比值才 → 1。" }
+      ]
+    },
+    {
+      "ask": "下面哪一個替換是對的？",
+      "options": [
+        { "label": "lim_{x→0} sin x · (eˣ − 1)/x²：換成 x · x/x²，得 1", "correct": true },
+        { "label": "lim_{x→0} (sin x − x)/x³：把 sin x 換成 x，得 0", "why": "這是相減。前面的 x 抵銷之後，剩下的正是被丟掉的 −x³/6，答案是 −1/6。" },
+        { "label": "x → ∞ 時 x + 1 ~ x，所以 lim e^{x+1}/eˣ = 1", "why": "等價不能放進指數。e^{x+1}/eˣ = e。" }
+      ]
+    },
+    {
+      "ask": "lim_{x→0} ln(1 + 5x)/arcsin 2x 是？",
+      "options": [
+        { "label": "5/2", "correct": true },
+        { "label": "1", "why": "兩個都「像 x」，但係數要留著：ln(1 + 5x) ~ 5x，arcsin 2x ~ 2x。" },
+        { "label": "10", "why": "這是商，不是積：5x/(2x) = 5/2。" }
+      ]
+    },
+    {
+      "ask": "x → 0 時 ln(cos x) 等價於？",
+      "options": [
+        { "label": "−x²/2", "correct": true },
+        { "label": "cos x", "why": "cos x → 1，ln(cos x) → 0，兩者比值不 → 1。要用 ln(1 + u) ~ u，u = cos x − 1。" },
+        { "label": "x²/2", "why": "cos x < 1 時 ln(cos x) < 0，符號是負的。" }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": ["asymptotics", "standard-limit", "trig-limit"],
+    "fine": ["asymptotic-equivalence-table", "asymptotic-equivalence-product", "asymptotic-equivalence-difference-trap", "asymptotic-equivalence-at-infinity"]
+  },
+  "practice": [
+    { "id": "tb-lh-001", "core": true, "trains": "asymptotic-equivalence-product" },
+    { "id": "tb-lh-002", "core": true, "trains": "asymptotic-equivalence-product" },
+    { "id": "lim-030", "core": true, "trains": "asymptotic-equivalence-table" },
+    { "id": "exam-lim-015", "core": true, "trains": "asymptotic-equivalence-table" },
+    { "id": "lim-013", "core": true, "trains": "asymptotic-equivalence-difference-trap" },
+    { "id": "depth-lim-010", "core": true, "trains": "asymptotic-equivalence-product" },
+    { "id": "rel-boss-019", "core": true, "trains": "asymptotic-equivalence-at-infinity" },
+    { "id": "lx-hard-008", "trains": "asymptotic-equivalence-table" },
+    { "id": "fd-limx-608", "trains": "asymptotic-equivalence-table" },
+    { "id": "lm-nr-003", "trains": "asymptotic-equivalence-at-infinity" },
+    { "id": "fd-limx-606", "challenge": true, "trains": "asymptotic-equivalence-difference-trap", "note": "挑戰：提出 eˣ，e^{tan x} − eˣ = eˣ(e^{tan x − x} − 1)，再用 eᵘ − 1 ~ u。" }
+  ],
+  "gaps": [
+    { "tag": "asymptotic-equivalence-difference-trap", "count": 2, "note": "判斷「這個替換對不對」的選擇題，R2–R3（相減、指數裡替換的陷阱）。" }
+  ]
+}

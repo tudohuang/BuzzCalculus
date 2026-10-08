@@ -1,0 +1,163 @@
+{
+  "id": "big-o-little-o",
+  "title": "Big-O 與 little-o",
+  "readMinutes": 12,
+  "totalMinutes": 40,
+  "prerequisites": ["asymptotic-equivalence", "taylor-limits-higher", "taylor-error"],
+  "next": ["stirling"],
+  "related": [],
+  "objectives": [
+    "分清楚 f = o(g)（比值 → 0）與 f = O(g)（被 g 的常數倍控制），而且每次都說明 x 往哪裡跑。",
+    "會用 o、O 的運算規則做展開的記帳：相加取低階、相乘次數相加、o − o 不是 0。",
+    "會用「主項 + 誤差項」的寫法算出 n((1 + 1/n)ⁿ − e) 這類極限。"
+  ],
+  "visual": null,
+  "concept": [
+    {
+      "heading": "① 為什麼需要記號：替「剩下的部分」記帳",
+      "body": [
+        "Taylor 展開寫「sin x = x − x³/6 + …」時，那個「…」到底多小？相乘、相除、代進別的函數之後，它會不會長大到影響答案？o 與 O 就是用來精確回答這個問題的記號。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 定義（x → a，a 可以是數或 ±∞）",
+      "body": [
+        "f = o(g)：f/g → 0。讀作「f 比 g 小得多」。",
+        "f = O(g)：存在常數 C，使得在 a 附近 |f| ≤ C|g|。讀作「f 最多跟 g 一樣大（差一個常數倍）」。",
+        "跟上一課接起來：f ~ g 等於 f = g + o(g)。",
+        "方向一定要寫：x → 0 時 x³ = o(x²)（次方越高越小）；x → ∞ 時反過來，x² = o(x³)。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 等號只能從左讀到右",
+      "body": [
+        "o(x²) 代表「某一個除以 x² 會 → 0 的函數」，是一整類函數，不是一個數。所以 x³ = o(x²) 對，倒過來寫 o(x²) = x³ 沒有意義。兩個 o(x²) 也不一定是同一個函數：o(x²) − o(x²) 還是 o(x²)，不是 0。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 運算規則（x → 0，m、n ≥ 0）",
+      "body": [
+        "相加取低階：o(xᵐ) + o(xⁿ) = o(x^{min(m,n)})。常數倍不變：c · o(xⁿ) = o(xⁿ)。",
+        "相乘次數相加：xᵐ · o(xⁿ) = o(x^{m+n})，o(xᵐ) · o(xⁿ) = o(x^{m+n})。相除次數相減：o(xⁿ)/xᵐ = o(x^{n−m})。",
+        "O 的規則一模一樣。一個實用的對照：o(xⁿ) 是「比 xⁿ 小」，O(x^{n+1}) 是「最多跟 x^{n+1} 一樣大」，後者是更精確的資訊。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "⑤ x → ∞ 的成長階梯",
+      "body": [
+        "對任何 p > 0、a > 0、b > 1：(ln x)ᵖ = o(xᵃ)，xᵃ = o(bˣ)。也就是 對數 ≪ 冪次 ≪ 指數。這張表在比較判別、瑕積分、Stirling 公式裡會一直用到。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "Peano 餘項與 Lagrange 餘項給的是哪一種",
+      "body": [
+        "f 在 0 有 n 階導數：f(x) = Tₙ(x) + o(xⁿ)（Peano）。若 f⁽ⁿ⁺¹⁾ 在 0 附近有界，由 Lagrange 餘項 f⁽ⁿ⁺¹⁾(c)x^{n+1}/(n + 1)! 得到更強的 f(x) = Tₙ(x) + O(x^{n+1})。〈Taylor 誤差〉裡的誤差上界，就是把 O 裡的常數 C 具體算出來。"
+      ],
+      "collapsible": true
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "相乘時的記帳",
+      "prompt": "把 eˣ sin x 展開到 x³，並求 lim_{x→0} (eˣ sin x − x − x²)/x³",
+      "steps": [
+        "sin x 從 x 開始，所以 eˣ 只要展到 x²：eˣ = 1 + x + x²/2 + o(x²)；sin x = x − x³/6 + o(x³)。",
+        "相乘並逐項記帳：1 · (x − x³/6) + x · x + (x²/2) · x = x + x² + x³/2 − x³/6。",
+        "誤差項：o(x²) · x = o(x³)；1 · o(x³) = o(x³)；x · (−x³/6) 是 x⁴，屬於 o(x³)。全部合起來是 o(x³)。",
+        "所以 eˣ sin x = x + x² + x³/3 + o(x³)，所求極限是 1/3。"
+      ],
+      "answer": "eˣ sin x = x + x² + x³/3 + o(x³)；極限 1/3",
+      "claim": "LIM((e^x*sin(x)-x-x^2)/x^3, 0) == 1/3"
+    },
+    {
+      "title": "x → ∞：主項與下一項",
+      "prompt": "x → ∞ 時，f(x) = (x³ + ln x)/(2x + √x)。找主項，並說明誤差多大。",
+      "steps": [
+        "提出最大的：f = (x²/2) · (1 + (ln x)/x³)/(1 + 1/(2√x))。",
+        "w = 1/(2√x) → 0，1/(1 + w) = 1 − w + O(w²) = 1 − 1/(2√x) + O(1/x)。又 (ln x)/x³ = o(1/x)（成長階梯）。",
+        "相乘：f = (x²/2)(1 − 1/(2√x) + O(1/x)) = x²/2 − x^{3/2}/4 + O(x)。",
+        "所以 f ~ x²/2，而且 f − x²/2 ~ −x^{3/2}/4。"
+      ],
+      "answer": "f = x²/2 − x^{3/2}/4 + O(x)",
+      "claim": "LIM(((x^3+ln(x))/(2x+sqrt(x)))/(x^2/2), inf) == 1 ;; LIM(((x^3+ln(x))/(2x+sqrt(x)) - x^2/2)/x^(3/2), inf) == -1/4"
+    },
+    {
+      "title": "經典：(1 + 1/n)ⁿ 離 e 多遠",
+      "prompt": "lim_{n→∞} n( (1 + 1/n)ⁿ − e )",
+      "problemId": "world-091",
+      "steps": [
+        "寫成指數：(1 + 1/n)ⁿ = exp( n ln(1 + 1/n) )。",
+        "t = 1/n → 0，ln(1 + t) = t − t²/2 + O(t³)，所以 n ln(1 + 1/n) = 1 − 1/(2n) + O(1/n²)。",
+        "exp(1 + h) = e · eʰ，h = −1/(2n) + O(1/n²) → 0，eʰ = 1 + h + O(h²) = 1 − 1/(2n) + O(1/n²)。",
+        "所以 (1 + 1/n)ⁿ − e = −e/(2n) + O(1/n²)，乘上 n → −e/2。"
+      ],
+      "answer": "−e/2",
+      "claim": "LIM(x*((1+1/x)^x - e), inf) == -e/2"
+    }
+  ],
+  "pitfalls": [
+    "沒寫 x 往哪裡跑：x² = o(x) 在 x → 0 對、在 x → ∞ 錯。",
+    "把 o(x²) − o(x²) 寫成 0。",
+    "相乘時次數相乘：x³ · o(x²) 是 o(x⁵)，不是 o(x⁶)。",
+    "把 o(…) 寫到等號左邊再倒推，例如由 o(x) = x² 推出別的結論。"
+  ],
+  "checks": [
+    {
+      "ask": "x → 0 時，下面哪一個成立？",
+      "options": [
+        { "label": "x³ = o(x²)", "correct": true },
+        { "label": "x² = o(x³)", "why": "x²/x³ = 1/x → ∞。在 0 附近次方越高越小，方向反了。" },
+        { "label": "x = o(x)", "why": "x/x = 1，不 → 0。o 是「小得多」，不是「一樣大」。" }
+      ]
+    },
+    {
+      "ask": "x → 0 時，o(x²) − o(x²) 等於？",
+      "options": [
+        { "label": "o(x²)", "correct": true },
+        { "label": "0", "why": "兩個 o(x²) 代表兩個不一定相同的函數，只知道各自比 x² 小得多，相減不會剛好抵銷。" },
+        { "label": "o(x⁴)", "why": "相減不會讓階數變高；只能保證結果仍然比 x² 小得多。" }
+      ]
+    },
+    {
+      "ask": "x → 0 時，x³ · o(x²) 等於？",
+      "options": [
+        { "label": "o(x⁵)", "correct": true },
+        { "label": "o(x⁶)", "why": "次數是相加，不是相乘：x³ · x² = x⁵。" },
+        { "label": "沒辦法化簡，只能保留 x³ · o(x²)", "why": "可以化簡：x³ · o(x²) 除以 x⁵ 等於 o(x²)/x² → 0。" }
+      ]
+    },
+    {
+      "ask": "x → ∞ 時，下面哪一個成立？",
+      "options": [
+        { "label": "(ln x)¹⁰ = o(√x)", "correct": true },
+        { "label": "eˣ = O(x¹⁰⁰)", "why": "指數成長比任何冪次快，eˣ/x¹⁰⁰ → ∞，找不到常數 C 壓住。" },
+        { "label": "√x = o(ln x)", "why": "方向反了：對數比任何正冪次都慢，是 ln x = o(√x)。" }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": ["asymptotics", "asymptotic-expansion", "taylor"],
+    "fine": ["little-o-arithmetic", "big-o-bound", "o-expansion-at-infinity", "growth-ladder"]
+  },
+  "practice": [
+    { "id": "mob-limtrap-005", "core": true, "trains": "little-o-arithmetic" },
+    { "id": "exam-lim-003", "core": true, "trains": "little-o-arithmetic" },
+    { "id": "exam-lim-007", "core": true, "trains": "o-expansion-at-infinity" },
+    { "id": "cx-hl-002", "core": true, "trains": "o-expansion-at-infinity" },
+    { "id": "world-091", "core": true, "trains": "o-expansion-at-infinity" },
+    { "id": "lm-nr-005", "trains": "growth-ladder" },
+    { "id": "dm-seq-010", "trains": "o-expansion-at-infinity" },
+    { "id": "depth-lim-012", "trains": "little-o-arithmetic" },
+    { "id": "dm-seq-005", "challenge": true, "trains": "o-expansion-at-infinity", "note": "挑戰：√(n² + n) = n + 1/2 − 1/(8n) + O(1/n²)，再用 sin 的週期。" },
+    { "id": "rel-hard-lim-010", "challenge": true, "trains": "o-expansion-at-infinity", "note": "挑戰：比範例 3 多展一項，誤差要算到 O(1/n³)。" }
+  ],
+  "gaps": [
+    { "tag": "little-o-arithmetic", "count": 2, "note": "直接問記號運算的題（x³ · o(x²) = ?、o(x²) + o(x³) = ?），R2。" },
+    { "tag": "growth-ladder", "count": 2, "note": "排列 ln x、x^a、b^x、x! 成長快慢的判斷題，R2。" }
+  ]
+}

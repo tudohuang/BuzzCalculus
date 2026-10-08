@@ -1,0 +1,152 @@
+{
+  "id": "separation-of-variables",
+  "title": "分離變數",
+  "readMinutes": 10,
+  "totalMinutes": 35,
+  "prerequisites": ["initial-value-problem", "u-sub-basic", "partial-fractions-linear"],
+  "next": ["first-order-linear"],
+  "related": ["chain-rule"],
+  "objectives": [
+    "認出 y′ = g(x)h(y) 的形狀，把 y 搬到一邊、x 搬到另一邊，兩邊各自積分。",
+    "處理 ln|y| 與絕對值，把常數整理成一個任意常數，再用初始條件定出來。",
+    "不漏掉除以 h(y) 時丟掉的平衡解。"
+  ],
+  "visual": "y′ = y(1 − y) 的斜率場。y = 0 與 y = 1 兩條水平線上的線段全是水平的，用顏色標成平衡解。拖動起點：從 0 與 1 之間出發的解往上爬、貼近 y = 1；從 y > 1 出發的往下貼近 y = 1；從 y < 0 出發的往下離開。",
+  "concept": [
+    {
+      "heading": "① 能分開的形狀",
+      "body": [
+        "如果 y′ 能寫成「只含 x 的函數」乘「只含 y 的函數」：dy/dx = g(x)h(y)，就叫可分離。例如 y′ = 2xy（g = 2x、h = y）、y′ = x/y、y′ = y²。",
+        "y′ = x + y 不行：加法拆不成乘積。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 做法：y 一邊、x 一邊，各自積分",
+      "body": [
+        "在 h(y) ≠ 0 的地方，寫成 dy/h(y) = g(x) dx，兩邊積分：∫ dy/h(y) = ∫ g(x) dx + C。只要一個常數，放在一邊就好。",
+        "把 dy、dx 拆開只是記號。真正的理由是連鎖律：設 H′(y) = 1/h(y)，則 d/dx H(y(x)) = y′/h(y) = g(x)，所以 H(y) 是 g 的反導函數，差一個常數。"
+      ],
+      "tex": ["\\frac{dy}{dx}=g(x)\\,h(y)\\ \\Longrightarrow\\ \\int\\frac{dy}{h(y)}=\\int g(x)\\,dx+C"],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 絕對值與常數",
+      "body": [
+        "y′ = 2xy：∫ dy/y = ∫ 2x dx，得 ln|y| = x² + C。取指數：|y| = e^C e^{x²}，所以 y = ±e^C e^{x²}。±e^C 可以是任何非零的數，記成 A：y = Ae^{x²}（A ≠ 0）。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 除以 h(y) 時丟掉的解",
+      "body": [
+        "第二步除以了 h(y)，等於先假設 h(y) ≠ 0。但若 h(y₀) = 0，常數函數 y = y₀ 的兩邊都是 0，它也是解，叫平衡解。",
+        "y′ = 2xy 的平衡解是 y = 0，剛好是上面公式 A = 0 的情形，所以最後寫 y = Ae^{x²}、A 任意。但不一定都能這樣補回來：y′ = y² 的分離結果是 y = −1/(x + C)，沒有任何 C 讓它等於 0，平衡解 y = 0 必須另外列出。"
+      ],
+      "collapsible": false
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "指數型",
+      "prompt": "y′ = 2xy，y(0) = 1。",
+      "problemId": "ode-sep-002",
+      "steps": [
+        "可分離：g(x) = 2x、h(y) = y。",
+        "y ≠ 0 時：∫ dy/y = ∫ 2x dx，ln|y| = x² + C。",
+        "整理成 y = Ae^{x²}，A 任意（A = 0 是平衡解 y = 0）。",
+        "代 y(0) = 1：A = 1，y = e^{x²}。"
+      ],
+      "answer": "y = e^{x²}",
+      "claim": "D(e^(x^2)) == 2x*e^(x^2) ;; SUB(e^(x^2),0) == 1"
+    },
+    {
+      "title": "用初始條件選正負號",
+      "prompt": "y′ = x/y，y(0) = 2。",
+      "problemId": "ode-sep-004",
+      "steps": [
+        "y dy = x dx，兩邊積分：y²/2 = x²/2 + C，即 y² = x² + K（K = 2C）。",
+        "代 x = 0、y = 2：4 = K，所以 y² = x² + 4。",
+        "y = ±√(x² + 4)。初始值 y = 2 > 0，選正號：y = √(x² + 4)。",
+        "x² + 4 > 0，所以解在整條數線上都有定義，而且 y 永遠不等於 0（方程裡除以 y 沒問題）。"
+      ],
+      "answer": "y = √(x² + 4)",
+      "claim": "D(sqrt(x^2+4)) == x/sqrt(x^2+4) ;; SUB(sqrt(x^2+4),0) == 2"
+    },
+    {
+      "title": "邏輯斯方程：要用部分分式",
+      "prompt": "y′ = y(1 − y)，y(0) = 1/2。",
+      "problemId": "ode-sep-006",
+      "steps": [
+        "平衡解：y(1 − y) = 0，即 y = 0 與 y = 1。初始值 1/2 不是平衡解，以下 0 < y < 1。",
+        "∫ dy/(y(1 − y)) = ∫ dx。部分分式：1/(y(1 − y)) = 1/y + 1/(1 − y)。",
+        "ln|y| − ln|1 − y| = x + C，即 y/(1 − y) = Aeˣ。",
+        "代 y(0) = 1/2：(1/2)/(1/2) = 1 = A。",
+        "y = eˣ(1 − y)，解出 y = eˣ/(1 + eˣ) = 1/(1 + e^{−x})。x → ∞ 時 y → 1，正是斜率場裡往 y = 1 貼近的那條曲線。"
+      ],
+      "answer": "y = 1/(1 + e^{−x})",
+      "claim": "D(1/(1+e^(-x))) == (1/(1+e^(-x)))*(1-1/(1+e^(-x))) ;; SUB(1/(1+e^(-x)),0) == 1/2"
+    }
+  ],
+  "pitfalls": [
+    "直接對 x 積分 ∫ y² dx，右邊還留著 y：要先把 y 全搬到左邊。",
+    "ln|y| = x + C 取指數寫成 y = eˣ + C：指數的和是乘積，應為 Aeˣ。",
+    "除以 h(y) 後忘了檢查平衡解（例如 y′ = y² 的 y = 0）。",
+    "y² = x² + 4 開根號時不管正負，要用初始條件選。",
+    "兩邊各加一個常數，最後多出兩個常數；合併成一個就好。"
+  ],
+  "checks": [
+    {
+      "ask": "下列哪一個方程可分離？",
+      "options": [
+        { "label": "y′ = x²y", "correct": true },
+        { "label": "y′ = x + y", "why": "加法拆不成 g(x)h(y) 的乘積；它是一階線性（〈一階線性〉）。" },
+        { "label": "y′ = sin(xy)", "why": "x、y 綁在同一個 sin 裡，拆不開。" }
+      ]
+    },
+    {
+      "ask": "解 y′ = y² 時把兩邊除以 y²，可能漏掉哪個解？",
+      "options": [
+        { "label": "y = 0", "correct": true },
+        { "label": "y = 1", "why": "y = 1 時 y′ = 0 但 y² = 1，不是解。" },
+        { "label": "沒有漏掉", "why": "y = 0 讓兩邊都是 0，是解；而分離出來的 y = −1/(x + C) 永遠不等於 0。" }
+      ]
+    },
+    {
+      "ask": "ln|y| = x + C 化簡後，所有解（含平衡解 y = 0）可以寫成？",
+      "options": [
+        { "label": "y = Aeˣ，A 任意", "correct": true },
+        { "label": "y = eˣ + C", "why": "e^{x + C} = e^C · eˣ，常數是乘上去的，不是加上去的。" },
+        { "label": "y = x + e^C", "why": "取指數要對整個等式做：|y| = e^{x + C}。" }
+      ]
+    },
+    {
+      "ask": "y′ = x/y，y(0) = −2 的解是？",
+      "options": [
+        { "label": "y = −√(x² + 4)", "correct": true },
+        { "label": "y = √(x² + 4)", "why": "這條在 x = 0 時是 +2，不滿足 y(0) = −2。" },
+        { "label": "y = ±√(x² + 4)", "why": "初值問題只要一條解；正負號由 y(0) = −2 決定。" }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": ["ode", "separable", "ivp"],
+    "fine": ["separable-recognize", "separable-integrate", "separable-equilibrium", "separable-sign-and-constant", "separable-partial-fractions"]
+  },
+  "practice": [
+    { "id": "ode-sep-002", "core": true, "trains": "separable-integrate" },
+    { "id": "ode-val-005", "core": true, "trains": "separable-integrate" },
+    { "id": "ode-sep-004", "core": true, "trains": "separable-sign-and-constant" },
+    { "id": "ode-sep-005", "core": true, "trains": "separable-integrate" },
+    { "id": "ode-sep-008", "core": true, "trains": "separable-integrate" },
+    { "id": "ode-sep-007", "core": true, "trains": "separable-integrate" },
+    { "id": "ode-val-002", "trains": "separable-integrate" },
+    { "id": "ode-sep-003", "trains": "separable-equilibrium", "note": "y′ = y²：注意解只活在 x < 1。" },
+    { "id": "ode-sep-006", "trains": "separable-partial-fractions" },
+    { "id": "ode-val-006", "challenge": true, "trains": "separable-integrate", "note": "挑戰：∫ sin x dx 的符號，最後代到 x = π。" }
+  ],
+  "gaps": [
+    { "tag": "separable-recognize", "count": 2, "note": "R1：判斷哪些方程可分離（y′ = x + y、y′ = sin(xy) 當陷阱）。" },
+    { "tag": "separable-equilibrium", "count": 2, "note": "R2：問分離時漏掉哪個常數解，或列出所有平衡解。" }
+  ]
+}

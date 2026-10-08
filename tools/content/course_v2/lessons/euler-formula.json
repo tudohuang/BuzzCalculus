@@ -1,0 +1,150 @@
+{
+  "id": "euler-formula",
+  "title": "Euler 公式",
+  "readMinutes": 12,
+  "totalMinutes": 40,
+  "prerequisites": ["complex-polar", "maclaurin-series", "radius-of-convergence"],
+  "next": ["complex-functions"],
+  "related": ["complex-roots", "ibp-cyclic", "basel-problem"],
+  "objectives": [
+    "從 eˣ、cos x、sin x 的 Maclaurin 級數推出 e^{iθ} = cos θ + i sin θ，並說清楚 e^{iθ} 是怎麼定義的。",
+    "用 cos θ = (e^{iθ} + e^{−iθ})/2、sin θ = (e^{iθ} − e^{−iθ})/(2i) 把三角函數換成指數。",
+    "用「取實部」算 ∫ e^{ax} cos bx dx 與 eˣ cos x 的高階導數，取代重複分部積分。"
+  ],
+  "visual": "單位圓上一個點 e^{iθ}，θ 用滑桿從 0 拉到 2π，點沿圓逆時針走一圈；同時在旁邊把 1 + iθ + (iθ)²/2! + ⋯ 的部分和畫成一條折線（每一段轉 90°、長度是 θᵏ/k!），折線的終點逐漸收斂到圓上那個點。",
+  "concept": [
+    {
+      "heading": "① 先問：e 的虛數次方是什麼意思",
+      "body": [
+        "e³ 是三個 e 相乘，e^{1/2} 是開根號，但 e^{i} 不能用「乘幾次」來理解。我們用級數來定義：對任何複數 z，e^z = 1 + z + z²/2! + z³/3! + ⋯。這個級數的收斂半徑是 ∞（跟實數時一樣用比值判別），所以對所有複數都有定義，而且 z 是實數時就是原來的 eˣ。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 代入 z = iθ，分成實部與虛部",
+      "body": [
+        "i 的次方四個一循環：i⁰ = 1、i¹ = i、i² = −1、i³ = −i。所以 e^{iθ} = 1 + iθ − θ²/2! − iθ³/3! + θ⁴/4! + iθ⁵/5! − ⋯。",
+        "把沒有 i 的項收在一起：1 − θ²/2! + θ⁴/4! − ⋯ = cos θ；有 i 的項：θ − θ³/3! + θ⁵/5! − ⋯ = sin θ。（級數絕對收斂，重新分組合法。）"
+      ],
+      "tex": ["e^{i\\theta}=\\cos\\theta+i\\sin\\theta"],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 立刻得到的東西",
+      "body": [
+        "極式可以寫成 z = r e^{iθ}，上一課的「長度相乘、角度相加」變成指數律 e^{iα}e^{iβ} = e^{i(α+β)}。θ = π 時 e^{iπ} = −1。",
+        "把 θ 換成 −θ 得 e^{−iθ} = cos θ − i sin θ，兩式相加減：cos θ = (e^{iθ} + e^{−iθ})/2，sin θ = (e^{iθ} − e^{−iθ})/(2i)。三角恆等式變成指數的代數，例如 sin³ θ = (3 sin θ − sin 3θ)/4 可以直接展開 ((e^{iθ} − e^{−iθ})/(2i))³ 得到。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 微積分裡的用法：先算複數，最後取實部",
+      "body": [
+        "對實變數 x 與複數常數 c，d/dx e^{cx} = c e^{cx}（逐項微分級數）。所以 e^{ax} cos bx = Re e^{(a+ib)x}，它的反導函數就是 Re[e^{(a+ib)x}/(a + ib)]，不必做〈重複分部與循環積分〉。同理 n 階導數是 Re[(a + ib)ⁿ e^{(a+ib)x}]。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "另一個證明：導數為零",
+      "body": [
+        "令 g(θ) = e^{−iθ}(cos θ + i sin θ)。g′(θ) = −i e^{−iθ}(cos θ + i sin θ) + e^{−iθ}(−sin θ + i cos θ) = e^{−iθ}(−i cos θ + sin θ − sin θ + i cos θ) = 0，而 g(0) = 1，所以 g ≡ 1，即 e^{iθ} = cos θ + i sin θ。這個證明用到 d/dθ e^{−iθ} = −i e^{−iθ}，它同樣來自級數逐項微分。"
+      ],
+      "collapsible": true
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "取實部算積分",
+      "prompt": "∫ e^{2x} cos 3x dx",
+      "steps": [
+        "e^{2x} cos 3x = Re e^{(2+3i)x}。∫ e^{(2+3i)x} dx = e^{(2+3i)x}/(2 + 3i)。",
+        "1/(2 + 3i) = (2 − 3i)/13；e^{(2+3i)x} = e^{2x}(cos 3x + i sin 3x)。",
+        "相乘取實部：e^{2x}(2 cos 3x + 3 sin 3x)/13。",
+        "答案：e^{2x}(2 cos 3x + 3 sin 3x)/13 + C。微分檢查會回到 e^{2x} cos 3x。"
+      ],
+      "answer": "e^{2x}(2 cos 3x + 3 sin 3x)/13 + C",
+      "claim": "D(e^(2x)*(2*cos(3x)+3*sin(3x))/13) == e^(2x)*cos(3x)"
+    },
+    {
+      "title": "高階導數",
+      "prompt": "d⁴/dx⁴ (eˣ cos x) 在 x = 0 的值",
+      "problemId": "world-024",
+      "steps": [
+        "eˣ cos x = Re e^{(1+i)x}，所以 n 階導數是 Re[(1 + i)ⁿ e^{(1+i)x}]。",
+        "1 + i = √2 e^{iπ/4}，(1 + i)ⁿ = 2^{n/2} e^{inπ/4}。所以 dⁿ/dxⁿ (eˣ cos x) = 2^{n/2} eˣ cos(x + nπ/4)。",
+        "n = 4、x = 0：4 · cos π = −4。"
+      ],
+      "answer": "−4",
+      "claim": "D(e^x*cos(x)) == sqrt(2)*e^x*cos(x+pi/4) ;; D2(e^x*cos(x)) == 2*e^x*cos(x+pi/2) ;; sqrt(2)^4*cos(4*pi/4) == -4"
+    },
+    {
+      "title": "三角恆等式",
+      "prompt": "用 Euler 公式證明 sin³ θ = (3 sin θ − sin 3θ)/4。",
+      "steps": [
+        "sin θ = (e^{iθ} − e^{−iθ})/(2i)，(2i)³ = −8i。",
+        "(e^{iθ} − e^{−iθ})³ = e^{3iθ} − 3e^{iθ} + 3e^{−iθ} − e^{−3iθ} = 2i sin 3θ − 3 · 2i sin θ。",
+        "除以 −8i：sin³ θ = (2i sin 3θ − 6i sin θ)/(−8i) = (3 sin θ − sin 3θ)/4。"
+      ],
+      "answer": "sin³ θ = (3 sin θ − sin 3θ)/4",
+      "claim": "sin(x)^3 == (3*sin(x)-sin(3x))/4"
+    }
+  ],
+  "pitfalls": [
+    "把 e^{iθ} 當成「e 乘 iθ 次」來理解；它是用級數定義的。",
+    "sin θ 的公式漏了分母的 i：(e^{iθ} − e^{−iθ})/(2i)。",
+    "取實部之前先把 1/(a + ib) 化成 (a − ib)/(a² + b²)，否則實部會取錯。",
+    "以為 e^{iθ} 的長度會隨 θ 變大；它永遠在單位圓上，|e^{iθ}| = 1。"
+  ],
+  "checks": [
+    {
+      "ask": "e^{iπ/2} 是？",
+      "options": [
+        { "label": "i", "correct": true },
+        { "label": "e^{π/2}", "why": "指數是純虛數，結果在單位圓上：cos(π/2) + i sin(π/2) = i。" },
+        { "label": "−1", "why": "那是 e^{iπ}。" }
+      ]
+    },
+    {
+      "ask": "cos θ 用指數表示是？",
+      "options": [
+        { "label": "(e^{iθ} + e^{−iθ})/2", "correct": true },
+        { "label": "(e^{iθ} − e^{−iθ})/2", "why": "相減會消掉 cos，剩 i sin θ；那是 i sin θ 的式子。" },
+        { "label": "e^{iθ}", "why": "e^{iθ} 是 cos θ + i sin θ，它的實部才是 cos θ。" }
+      ]
+    },
+    {
+      "ask": "用複數算 ∫ eˣ sin x dx，應該取哪一個的虛部？",
+      "options": [
+        { "label": "e^{(1+i)x}/(1 + i)", "correct": true },
+        { "label": "e^{(1+i)x}(1 + i)", "why": "積分要除以 1 + i；乘以 1 + i 是微分。" },
+        { "label": "e^{x}/(1 + i)", "why": "sin x 要從 e^{ix} 來，指數裡必須有 i。" }
+      ]
+    },
+    {
+      "ask": "|e^{iθ}| 是？",
+      "options": [
+        { "label": "1", "correct": true },
+        { "label": "e^θ", "why": "|e^{iθ}|² = cos² θ + sin² θ = 1；虛數的指數只轉角度，不改長度。" },
+        { "label": "|θ|", "why": "θ 是角度，不是長度。" }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": ["complex", "higher-derivative", "complex-roots"],
+    "fine": ["euler-formula-series", "euler-trig-to-exp", "euler-real-part-integral", "euler-high-derivative"]
+  },
+  "practice": [
+    { "id": "world-024", "core": true, "trains": "euler-high-derivative" },
+    { "id": "hd-006", "core": true, "trains": "euler-high-derivative" },
+    { "id": "world-027", "core": true, "trains": "euler-real-part-integral" },
+    { "id": "burst-int-002", "core": true, "trains": "euler-real-part-integral" },
+    { "id": "burst-der-008", "trains": "euler-high-derivative" },
+    { "id": "burst-der-010", "trains": "euler-high-derivative" },
+    { "id": "burst-int-003", "trains": "euler-real-part-integral" },
+    { "id": "ode-h2-008", "trains": "euler-trig-to-exp" },
+    { "id": "burst-boss-der-005", "challenge": true, "trains": "euler-high-derivative", "note": "挑戰：eˣ cos 2x 的 16 階導數，(1 + 2i)¹⁶ 用極式算。" }
+  ],
+  "gaps": [
+    { "tag": "euler-trig-to-exp", "count": 2, "note": "用 Euler 公式推三角恆等式或化簡 Σ cos kθ 的題，R3。" }
+  ]
+}

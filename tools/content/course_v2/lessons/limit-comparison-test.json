@@ -1,0 +1,153 @@
+{
+  "id": "limit-comparison-test",
+  "title": "極限比較判別",
+  "readMinutes": 8,
+  "totalMinutes": 30,
+  "prerequisites": ["comparison-test"],
+  "next": ["ratio-test"],
+  "related": ["limit-trig-standard", "limit-at-infinity"],
+  "objectives": [
+    "說出極限比較判別：aₙ, bₙ > 0 且 lim aₙ/bₙ = c，0 < c < ∞，則兩級數同收同散。",
+    "用主要項選出 bₙ（通常是 1/nᵖ），算比值的極限。",
+    "知道 c = 0 或 c = ∞ 時只剩單方向的結論。"
+  ],
+  "visual": "畫出比值 aₙ/bₙ 的點，aₙ = (n + 1)/(n³ − n + 5)、bₙ = 1/n²。點很快貼到水平線 c = 1，畫面上一條 c/2 到 3c/2 的帶子把第 N 項之後的點全部框住，旁邊註明：框住，就代表 aₙ 被 (c/2)bₙ 與 (3c/2)bₙ 夾著。",
+  "concept": [
+    {
+      "heading": "① 為什麼需要它",
+      "body": [
+        "〈比較判別〉要一個方向剛好對的不等式。(n + 1)/(n³ − n + 5) 明明「長得像」1/n²，但要寫出 ≤ C/n² 得處理分母裡的 −n，很煩。其實我們只關心兩者在 n 很大時的比例，所以改看比值的極限。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 定理",
+      "body": [
+        "設從某一項開始 aₙ > 0、bₙ > 0，且 lim aₙ/bₙ = c，0 < c < ∞（一個正的有限數）。則 Σ aₙ 與 Σ bₙ 同時收斂或同時發散。",
+        "直觀：比值靠近 c，代表 n 很大時 aₙ ≈ c · bₙ，兩個級數只差一個倍數，命運相同。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 怎麼選 bₙ",
+      "body": [
+        "有理式（含根號）：分子分母各留最高次項。(3n² + 1)/(n³ + 2) 的主要部分是 3n²/n³ = 3/n，取 bₙ = 1/n（常數 3 不用帶）。",
+        "小量代換：n → ∞ 時 1/n → 0，sin(1/n) 和 1/n 的比值 → 1（〈三角標準極限〉）；1 − cos(1/n) 和 1/(2n²) 的比值 → 1。",
+        "選好之後一定要真的算比值的極限，確認它是正的有限數。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "④ c = 0 或 c = ∞",
+      "body": [
+        "c = 0：aₙ 比 bₙ 小很多。Σ bₙ 收斂 ⇒ Σ aₙ 收斂；Σ bₙ 發散時沒有結論。",
+        "c = ∞：aₙ 比 bₙ 大很多。Σ bₙ 發散 ⇒ Σ aₙ 發散；Σ bₙ 收斂時沒有結論。",
+        "得到 0 或 ∞ 通常表示 bₙ 選錯了次方，回去重選比較省事。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "⑤ 證明",
+      "body": [
+        "取 ε = c/2。因為 aₙ/bₙ → c，存在 N 使 n ≥ N 時 |aₙ/bₙ − c| < c/2，也就是 (c/2) bₙ < aₙ < (3c/2) bₙ。右半邊：Σ bₙ 收斂 ⇒ Σ (3c/2)bₙ 收斂 ⇒（比較判別）Σ aₙ 收斂。左半邊：Σ bₙ 發散 ⇒ Σ (c/2)bₙ 發散 ⇒ Σ aₙ 發散。c > 0 保證了 c/2 > 0，左半邊才用得上。"
+      ],
+      "collapsible": true
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "像 1/n：發散",
+      "prompt": "Σ_{n=1}^∞ (3n² + 1)/(n³ + 2) 收斂嗎？",
+      "problemId": "gap-ser-lc-001",
+      "steps": [
+        "主要項 3n²/n³ = 3/n，取 bₙ = 1/n。兩者都為正。",
+        "aₙ/bₙ = (3n³ + n)/(n³ + 2) → 3，是正的有限數。",
+        "Σ 1/n 發散，所以原級數發散。"
+      ],
+      "answer": "發散",
+      "claim": "LIM(((3x^2+1)/(x^3+2))/(1/x), inf) == 3"
+    },
+    {
+      "title": "像 1/n²：收斂",
+      "prompt": "Σ_{n=1}^∞ (n + 1)/(n³ − n + 5) 收斂嗎？",
+      "problemId": "lec-12-q3b",
+      "steps": [
+        "n ≥ 1 時分母 n³ − n + 5 = n(n² − 1) + 5 > 0，各項為正。",
+        "主要項 n/n³ = 1/n²，取 bₙ = 1/n²。",
+        "aₙ/bₙ = (n³ + n²)/(n³ − n + 5) → 1。",
+        "Σ 1/n² 收斂（p = 2），所以原級數收斂。"
+      ],
+      "answer": "收斂",
+      "claim": "LIM(((x+1)/(x^3-x+5))/(1/x^2), inf) == 1"
+    },
+    {
+      "title": "小量代換",
+      "prompt": "Σ_{n=1}^∞ sin(1/n) 收斂嗎？",
+      "problemId": "lec-12-q3c",
+      "steps": [
+        "0 < 1/n ≤ 1 < π，所以 sin(1/n) > 0，可以用。",
+        "取 bₙ = 1/n。令 t = 1/n → 0⁺：sin(1/n)/(1/n) = (sin t)/t → 1。",
+        "Σ 1/n 發散，所以 Σ sin(1/n) 發散。",
+        "注意：各項 sin(1/n) → 0，發散判別在這裡沒有結論。"
+      ],
+      "answer": "發散",
+      "claim": "LIM(sin(1/x)/(1/x), inf) == 1"
+    }
+  ],
+  "pitfalls": [
+    "比值算出 0 或 ∞，卻照樣說兩者同收同散。",
+    "bₙ 只看分子或只看分母的最高次。",
+    "用在有負項的級數上：要求 aₙ, bₙ > 0。",
+    "選了 bₙ 卻沒有真的算比值的極限。"
+  ],
+  "checks": [
+    {
+      "ask": "判斷 Σ (2n + 3)/(n³ + 1)，最好的 bₙ 是？",
+      "options": [
+        { "label": "1/n²", "correct": true },
+        { "label": "1/n", "why": "主要項是 2n/n³ = 2/n²；跟 1/n 比，比值 → 0，配上發散的 Σ 1/n 沒有結論。" },
+        { "label": "1/n³", "why": "漏了分子的 n；比值 → ∞，配上收斂的 Σ 1/n³ 也沒有結論。" }
+      ]
+    },
+    {
+      "ask": "lim aₙ/bₙ = 0，而且 Σ bₙ 發散。關於 Σ aₙ？",
+      "options": [
+        { "label": "無法判斷", "correct": true },
+        { "label": "發散", "why": "aₙ 比 bₙ 小很多，可能收斂：aₙ = 1/n²、bₙ = 1/n。" },
+        { "label": "收斂", "why": "也可能發散：aₙ = 1/(n ln n)、bₙ = 1/n，比值 1/ln n → 0，但 Σ 1/(n ln n) 發散。" }
+      ]
+    },
+    {
+      "ask": "Σ (1 − cos(1/n)) 是？",
+      "options": [
+        { "label": "收斂：跟 1/n² 比，比值 → 1/2", "correct": true },
+        { "label": "發散：跟 1/n 比", "why": "1 − cos(1/n) 比 1/n 小得多，比值 → 0，配上發散的 Σ 1/n 沒有結論。" },
+        { "label": "發散：由發散判別", "why": "各項 → 1 − cos 0 = 0，發散判別沒有結論。" }
+      ]
+    },
+    {
+      "ask": "極限比較判別需要的是？",
+      "options": [
+        { "label": "aₙ, bₙ > 0，且 aₙ/bₙ 趨近一個正的有限數", "correct": true },
+        { "label": "aₙ ≤ bₙ", "why": "那是比較判別的條件；極限比較只看比值的極限，不需要大小關係。" },
+        { "label": "lim aₙ = lim bₙ", "why": "兩者通常都 → 0，相等沒有意義；重要的是它們的比值。" }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": ["limit-comparison", "comparison-test", "convergence-test"],
+    "fine": ["lct-choose-bn", "lct-compute-ratio", "lct-edge-cases"]
+  },
+  "practice": [
+    { "id": "gap-ser-lc-001", "core": true, "trains": "lct-choose-bn" },
+    { "id": "rel-adv-018", "core": true, "trains": "lct-choose-bn" },
+    { "id": "gap-ser-lc-002", "core": true, "trains": "lct-compute-ratio" },
+    { "id": "lec-12-q3b", "core": true, "trains": "lct-compute-ratio" },
+    { "id": "lec-12-q3c", "core": true, "trains": "lct-choose-bn" },
+    { "id": "lec-12-m4", "trains": "lct-choose-bn" }
+  ],
+  "gaps": [
+    { "tag": "lct-edge-cases", "count": 2, "note": "R3：比值 → 0 或 → ∞ 時能不能下結論的概念題。" },
+    { "tag": "lct-choose-bn", "count": 2, "note": "R2–R3：含根號的主要項（如 1/√(n³ + 1)、(√n + 1)/(n² + 3)）與小量代換（1 − cos(1/n)、ln(1 + 1/n²)）。" }
+  ]
+}

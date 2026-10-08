@@ -1,0 +1,147 @@
+{
+  "id": "leibniz-rule",
+  "title": "Leibniz 積分法則",
+  "readMinutes": 12,
+  "totalMinutes": 40,
+  "prerequisites": ["parameter-integral", "ftc-part1", "chain-rule", "multivariable-chain-rule"],
+  "next": ["feynman-trick-basic"],
+  "related": ["dominated-convergence"],
+  "objectives": [
+    "說得出把微分搬進積分號的一個充分條件：f 與 ∂f/∂a 在閉矩形上連續；瑕積分還要一個可積的控制函數。",
+    "會用完整版 Leibniz 法則：上下限與被積函數都含參數時，三項都要寫。",
+    "把一個已知的積分公式對參數微分，生出新的積分公式（例如 ∫₀¹ xⁿ ln x dx = −1/(n + 1)²）。"
+  ],
+  "visual": "曲線 y = f(x, a) 與兩條會動的直線 x = u(a)、x = v(a) 圍出一塊面積。a 增加一點點時，面積的變化拆成三塊並用三種顏色標出：右邊界外移多出的長條（f(v, a)v′）、左邊界外移少掉的長條（f(u, a)u′）、曲線本身上下移動造成的薄層（∫ ∂f/∂a dx）。",
+  "concept": [
+    {
+      "heading": "① 微分能不能搬進積分號",
+      "body": [
+        "I(a) = ∫_c^d f(x, a) dx。直覺上，I 的變化率就是每一條 x 處的變化率 ∂f/∂a 加起來，也就是 I′(a) = ∫_c^d ∂f/∂a dx。這個「微分與積分交換」不是永遠成立，需要條件。",
+        "充分條件（區間有限）：f 與 ∂f/∂a 都在閉矩形 [c, d] × [α, β] 上連續，則 I 在 (α, β) 上可微，而且可以交換。"
+      ],
+      "tex": ["\\frac{d}{da}\\int_c^{d}f(x,a)\\,dx=\\int_c^{d}\\frac{\\partial f}{\\partial a}(x,a)\\,dx"],
+      "collapsible": false
+    },
+    {
+      "heading": "② 上下限也會動：三項都要寫",
+      "body": [
+        "上下限是 u(a)、v(a) 時，面積的變化有三個來源：右邊界移動（f(v(a), a) v′(a)）、左邊界移動（−f(u(a), a) u′(a)）、曲線本身移動（∫ ∂f/∂a dx）。",
+        "f 不含 a 時只剩前兩項，就是〈微積分基本定理 I〉加上連鎖律；上下限不動時只剩第三項，就是 ①。"
+      ],
+      "tex": ["\\frac{d}{da}\\int_{u(a)}^{v(a)}f(x,a)\\,dx=f(v,a)\\,v'(a)-f(u,a)\\,u'(a)+\\int_{u(a)}^{v(a)}\\frac{\\partial f}{\\partial a}\\,dx"],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 瑕積分：要一個控制函數",
+      "body": [
+        "區間無限或端點無界時，閉矩形的條件用不上。一個常用的充分條件：在 a₀ 附近，存在不依賴 a 的 g(x)，使 |∂f/∂a (x, a)| ≤ g(x)，而且 ∫ g 收斂（另外 ∫ f(x, a) dx 本身收斂）。這是〈控制收斂定理〉的應用。",
+        "例：I(a) = ∫₀¹ xᵃ dx，a ≥ a₀ > −1 時 |∂(xᵃ)/∂a| = xᵃ|ln x| ≤ x^{a₀}|ln x|，後者在 [0, 1] 可積，所以可以對 a 微分。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "條件不滿足時會錯的例子",
+      "body": [
+        "I(a) = ∫₀^∞ sin(ax)/x dx：a > 0 時 I(a) = π/2 是常數，I′(a) = 0。硬把微分搬進去得到 ∫₀^∞ cos(ax) dx，這個積分根本不收斂。原因是 |∂f/∂a| = |cos(ax)| 找不到可積的控制函數。"
+      ],
+      "collapsible": true
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "上下限都在動",
+      "prompt": "d/dx ∫ₓ^{2x} (sin t)/t dt",
+      "steps": [
+        "被積函數不含 x，只有上下限在動：第三項是 0。",
+        "上限 v = 2x：(sin 2x)/(2x) · 2 = (sin 2x)/x。下限 u = x：(sin x)/x · 1。",
+        "答案 (sin 2x)/x − (sin x)/x = (sin 2x − sin x)/x。sin t/t 沒有初等反導函數，但導數照樣算得出來。"
+      ],
+      "answer": "(sin 2x − sin x)/x",
+      "claim": "D(INT(sin(t)/t, x, 2x, t)) == (sin(2x)-sin(x))/x"
+    },
+    {
+      "title": "三項都有",
+      "prompt": "F(x) = ∫₀ˣ e^{x−t} sin t dt。求 F′(x)，並說明它跟 F 的關係。",
+      "problemId": "int-057",
+      "steps": [
+        "上限 v = x：f(x, x) · 1 = e⁰ sin x = sin x。下限 0 不動。",
+        "被積函數對 x 偏微分：∂(e^{x−t} sin t)/∂x = e^{x−t} sin t，積分起來正好是 F(x)。",
+        "所以 F′(x) = sin x + F(x)，而且 F(0) = 0。這是一個一階線性微分方程，解出 F(x) = (eˣ − sin x − cos x)/2。"
+      ],
+      "answer": "F′ = sin x + F",
+      "claim": "D(INT(e^(x-t)*sin(t), 0, x, t)) == sin(x) + INT(e^(x-t)*sin(t), 0, x, t)"
+    },
+    {
+      "title": "對公式微分，生出新公式",
+      "prompt": "由 ∫₀¹ xᵃ dx = 1/(a + 1) 求 ∫₀¹ xᵃ ln x dx。",
+      "problemId": "burst-rec-001",
+      "steps": [
+        "∂(xᵃ)/∂a = xᵃ ln x（xᵃ = e^{a ln x}）。",
+        "條件：a ≥ a₀ > −1 時 |xᵃ ln x| ≤ x^{a₀}|ln x|，可積（③），可以交換。",
+        "兩邊對 a 微分：∫₀¹ xᵃ ln x dx = d/da (a + 1)^{−1} = −1/(a + 1)²。",
+        "a = n：∫₀¹ xⁿ ln x dx = −1/(n + 1)²。再微分一次得 ∫₀¹ xⁿ (ln x)² dx = 2/(n + 1)³。"
+      ],
+      "answer": "−1/(a + 1)²",
+      "claim": "INT(x^t*ln(x), 0, 1) == -1/(t+1)^2"
+    }
+  ],
+  "pitfalls": [
+    "上下限含參數時只寫 ∫ ∂f/∂a，漏了邊界兩項。",
+    "邊界項忘了乘 v′(a)、u′(a)（連鎖律）。",
+    "下限那一項的負號。",
+    "瑕積分不檢查控制函數就交換（sin(ax)/x 的反例）。"
+  ],
+  "checks": [
+    {
+      "ask": "d/dx ∫₀^{x²} cos t dt 是？",
+      "options": [
+        { "label": "2x cos(x²)", "correct": true },
+        { "label": "cos(x²)", "why": "上限是 x²，要乘上它的導數 2x（連鎖律）。" },
+        { "label": "sin(x²)", "why": "那是積分本身的值；題目問的是它對 x 的導數。" }
+      ]
+    },
+    {
+      "ask": "下面哪一個條件保證 d/da ∫_c^d f(x, a) dx = ∫_c^d ∂f/∂a dx？",
+      "options": [
+        { "label": "f 與 ∂f/∂a 在閉矩形 [c, d] × [α, β] 上連續", "correct": true },
+        { "label": "f 在閉矩形上連續就夠了", "why": "那只保證 I(a) 連續；要交換微分，∂f/∂a 也要連續。" },
+        { "label": "∂f/∂a 存在就夠了", "why": "只存在不夠，需要連續（或被可積函數控制）才能保證積分後的導數正確。" }
+      ]
+    },
+    {
+      "ask": "I(a) = ∫₀¹ e^{ax} dx，I′(0) 是？",
+      "options": [
+        { "label": "1/2", "correct": true },
+        { "label": "1", "why": "I′(a) = ∫₀¹ x e^{ax} dx，在 a = 0 是 ∫₀¹ x dx = 1/2。" },
+        { "label": "e − 1", "why": "那是 I(1)。題目問的是對 a 的導數在 a = 0 的值。" }
+      ]
+    },
+    {
+      "ask": "由 ∫₀^∞ e^{−ax} dx = 1/a（a > 0）對 a 微分一次，得到 ∫₀^∞ x e^{−ax} dx 等於？",
+      "options": [
+        { "label": "1/a²", "correct": true },
+        { "label": "−1/a²", "why": "左邊微分得 −∫ x e^{−ax} dx，右邊是 −1/a²，兩邊的負號約掉。" },
+        { "label": "1/a", "why": "微分會讓 a 的次方多一次：1/a 微分是 −1/a²。" }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": ["parameter-integral", "fundamental-theorem", "moving-limits"],
+    "fine": ["leibniz-moving-limits", "leibniz-under-integral", "leibniz-full-three-terms", "leibniz-generate-formula"]
+  },
+  "practice": [
+    { "id": "cx-ftc-004", "core": true, "trains": "leibniz-moving-limits" },
+    { "id": "exam-der-015", "core": true, "trains": "leibniz-moving-limits" },
+    { "id": "depth-der-005", "core": true, "trains": "leibniz-moving-limits" },
+    { "id": "burst-rec-001", "core": true, "trains": "leibniz-generate-formula" },
+    { "id": "burst-rec-002", "core": true, "trains": "leibniz-generate-formula" },
+    { "id": "int-057", "core": true, "trains": "leibniz-full-three-terms" },
+    { "id": "int-058", "trains": "leibniz-full-three-terms" },
+    { "id": "int-059", "trains": "leibniz-full-three-terms" },
+    { "id": "burst-boss-param-002", "trains": "leibniz-under-integral" },
+    { "id": "burst-boss-param-006", "challenge": true, "trains": "leibniz-generate-formula", "note": "挑戰：從 ∫₀¹ xⁿ dx = 1/(n + 1) 微分三次。" }
+  ],
+  "gaps": [
+    { "tag": "leibniz-under-integral", "count": 2, "note": "上下限固定、只對被積函數裡的參數微分的求值題（例如 I(a) = ∫₀¹ e^{ax²} dx 求 I′(0)），R3。" }
+  ]
+}

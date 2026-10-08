@@ -1,0 +1,149 @@
+{
+  "id": "secant-to-tangent",
+  "title": "割線到切線",
+  "readMinutes": 8,
+  "totalMinutes": 30,
+  "prerequisites": ["average-rate", "limit-intro", "limit-factor"],
+  "next": ["derivative-definition"],
+  "related": ["limit-one-sided", "limit-rationalize"],
+  "objectives": [
+    "說出切線斜率是「割線斜率在 h → 0 時的極限」。",
+    "用這個極限算出多項式、1/x 在某一點的切線斜率。",
+    "用點斜式寫出切線方程式。",
+    "知道切線不是「只碰曲線一次的直線」。"
+  ],
+  "visual": "y = x² 的圖形，固定點 P(1, 1)，另一點 Q(1 + h, (1 + h)²) 可以沿曲線拖動。P、Q 連成割線，旁邊顯示 h 與斜率 2 + h。把 Q 從右邊拖向 P，再從左邊拖向 P，割線轉向同一條直線，斜率讀數往 2 擠；Q 碰到 P 時讀數消失（0/0）。另一個按鈕把鏡頭往 P 推近，曲線越來越像那條直線。",
+  "concept": [
+    {
+      "heading": "① 一點算不出斜率",
+      "body": [
+        "曲線在某一點有多斜？直覺上是那一點切線的斜率。問題是斜率要兩個點才算得出來，切線上我們只知道一個點 P。",
+        "辦法是先借第二個點。P = (a, f(a))，Q = (a + h, f(a + h))，割線 PQ 的斜率就是上一課的平均變化率 (f(a + h) − f(a))/h。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 讓 Q 滑向 P",
+      "body": [
+        "以 f(x) = x²、a = 1 為例：割線斜率 = ((1 + h)² − 1)/h = (2h + h²)/h = 2 + h（h ≠ 0）。",
+        "h = 0.1、0.01 得 2.1、2.01；h = −0.01、−0.1 得 1.99、1.9。Q 從兩邊靠近 P，割線斜率都往 2 擠。",
+        "h 不能直接代 0：Q 跟 P 重合時只剩一個點，式子是 0/0。所以這是一個極限：切線斜率 = lim_{h→0} 割線斜率。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 切線的定義",
+      "body": [
+        "曲線在 P 的切線，是通過 P、斜率等於下面這個極限的直線（極限要存在）。",
+        "國中的圓「只碰一次」的說法，對一般曲線不對：y = x³ 在 (1, 1) 的切線會在 x = −2 再碰到曲線（範例 3）；反過來，鉛直線 x = 1 只碰 y = x² 一次，卻不是切線。"
+      ],
+      "tex": ["m=\\lim_{h\\to0}\\frac{f(a+h)-f(a)}{h}"],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 有了斜率，寫出直線",
+      "body": [
+        "通過 (a, f(a))、斜率 m 的直線：y − f(a) = m(x − a)。上面 y = x² 在 (1, 1) 的切線是 y − 1 = 2(x − 1)，也就是 y = 2x − 1。",
+        "左右兩邊的割線斜率擠向不同的數時（例如 |x| 在 0，右邊一直是 1、左邊一直是 −1，見〈左極限與右極限〉），極限不存在，那一點就沒有切線。"
+      ],
+      "collapsible": false
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "y = x² 在 x = 1",
+      "prompt": "求 y = x² 在 x = 1 的切線斜率與切線方程式。",
+      "steps": [
+        "割線斜率：((1 + h)² − 1²)/h = (1 + 2h + h² − 1)/h = (2h + h²)/h。",
+        "h ≠ 0，約掉 h：2 + h。",
+        "h → 0：斜率 m = 2。",
+        "點斜式：y − 1 = 2(x − 1)，即 y = 2x − 1。"
+      ],
+      "answer": "斜率 2；y = 2x − 1",
+      "claim": "LIM(((1+x)^2-1)/x, 0) == 2 ;; SUB(2x-1, 1) == 1"
+    },
+    {
+      "title": "y = 1/x 在 x = 2：要先通分",
+      "prompt": "求 y = 1/x 在 x = 2 的切線斜率與切線方程式。",
+      "steps": [
+        "割線斜率：(1/(2 + h) − 1/2)/h。",
+        "分子通分：1/(2 + h) − 1/2 = (2 − (2 + h))/(2(2 + h)) = −h/(2(2 + h))。",
+        "除以 h（h ≠ 0）：−1/(2(2 + h))。",
+        "h → 0：m = −1/(2 · 2) = −1/4。",
+        "切點是 (2, 1/2)：y − 1/2 = −(1/4)(x − 2)，即 y = −x/4 + 1。"
+      ],
+      "answer": "斜率 −1/4；y = −x/4 + 1",
+      "claim": "LIM((1/(2+x)-1/2)/x, 0) == -1/4 ;; SUB(-x/4+1, 2) == 1/2"
+    },
+    {
+      "title": "切線可以再碰到曲線",
+      "prompt": "求 y = x³ 在 x = 1 的切線，並找出它和曲線的其他交點。",
+      "steps": [
+        "割線斜率：((1 + h)³ − 1)/h = (3h + 3h² + h³)/h = 3 + 3h + h²（h ≠ 0）。h → 0 得 m = 3。",
+        "切線：y − 1 = 3(x − 1)，即 y = 3x − 2。",
+        "交點：x³ = 3x − 2，也就是 x³ − 3x + 2 = 0。x = 1 一定是根，分解得 (x − 1)²(x + 2) = 0。",
+        "所以除了切點，切線還在 x = −2、點 (−2, −8) 穿過曲線。"
+      ],
+      "answer": "y = 3x − 2；另一交點 (−2, −8)",
+      "claim": "LIM(((1+x)^3-1)/x, 0) == 3 ;; SUB(x^3-3x+2, -2) == 0 ;; SUB(3x-2, -2) == -8"
+    }
+  ],
+  "pitfalls": [
+    "在割線斜率裡直接代 h = 0，得到 0/0 就停住。要先化簡、約掉 h。",
+    "只從一邊看（只試 h > 0），沒有確認左右擠向同一個數。",
+    "斜率算對了，切線卻寫成 y = mx，忘了要通過切點 (a, f(a))。",
+    "以為切線只能碰曲線一次。",
+    "展開 (a + h)² 漏掉 2ah 那一項。"
+  ],
+  "checks": [
+    {
+      "ask": "y = x² 在 x = 3 的切線斜率是？",
+      "options": [
+        { "label": "6", "correct": true },
+        { "label": "9", "why": "9 是 f(3)，是切點的高度，不是斜率。割線斜率 ((3 + h)² − 9)/h = 6 + h → 6。" },
+        { "label": "6 + h", "why": "6 + h 是割線斜率；切線斜率要再讓 h → 0。" }
+      ]
+    },
+    {
+      "ask": "為什麼不能直接把 h = 0 代進 (f(a + h) − f(a))/h？",
+      "options": [
+        { "label": "h = 0 時 Q 和 P 重合，式子變成 0/0，沒有意義", "correct": true },
+        { "label": "因為 f(a) 可能不存在", "why": "P 就在曲線上，f(a) 是存在的；問題出在分母 h = 0。" },
+        { "label": "代進去會得到 0，答案太小", "why": "代進去不是 0，是 0/0，根本不是一個數。" }
+      ]
+    },
+    {
+      "ask": "某曲線在 (2, 5) 的切線斜率是 3。切線方程式是？",
+      "options": [
+        { "label": "y = 3x − 1", "correct": true },
+        { "label": "y = 3x", "why": "y = 3x 通過原點，不通過 (2, 5)。用點斜式 y − 5 = 3(x − 2)。" },
+        { "label": "y = 3x + 5", "why": "5 是切點的 y 座標，不是 y 截距。y − 5 = 3(x − 2) 整理成 y = 3x − 1。" }
+      ]
+    },
+    {
+      "ask": "下面哪一句對？",
+      "options": [
+        { "label": "切線可能在別的地方再和曲線相交", "correct": true },
+        { "label": "只和曲線碰一次的直線就是切線", "why": "鉛直線 x = 1 只碰 y = x² 一次，但它不是切線；切線是用割線斜率的極限定義的。" },
+        { "label": "每一條曲線在每一點都有切線", "why": "|x| 在 0：右邊割線斜率都是 1、左邊都是 −1，極限不存在，沒有切線。" }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": ["tangent-normal", "slope"],
+    "fine": ["tangent-secant-limit", "tangent-line-equation", "tangent-graph-estimate"]
+  },
+  "practice": [
+    { "id": "gi-101", "core": true, "trains": "tangent-graph-estimate" },
+    { "id": "tb-tan-001", "core": true, "trains": "tangent-secant-limit" },
+    { "id": "tb-tan-002", "core": true, "trains": "tangent-secant-limit" },
+    { "id": "gx-031", "core": true, "trains": "tangent-graph-estimate" },
+    { "id": "lec-02-q1d", "core": true, "trains": "tangent-line-equation" },
+    { "id": "tb-tan-006", "trains": "tangent-secant-limit", "note": "割線斜率要先有理化，見〈0/0：有理化〉。" },
+    { "id": "db-tan-001", "challenge": true, "trains": "tangent-secant-limit", "note": "挑戰：(2 + h)⁴ 要用二項式展開。" }
+  ],
+  "gaps": [
+    { "tag": "tangent-secant-limit", "count": 2, "note": "R1：給 h 的數值表，從割線斜率估切線斜率。" },
+    { "tag": "tangent-line-equation", "count": 2, "note": "R1：多項式在一點的切線方程式；目前只有一題（√x）。" }
+  ]
+}

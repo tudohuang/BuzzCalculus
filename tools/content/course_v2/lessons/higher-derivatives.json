@@ -1,0 +1,271 @@
+{
+  "id": "higher-derivatives",
+  "title": "高階導數",
+  "readMinutes": 8,
+  "totalMinutes": 30,
+  "prerequisites": [
+    "derivative-power-rules",
+    "derivative-trig",
+    "derivative-exp",
+    "product-rule",
+    "chain-rule"
+  ],
+  "next": [
+    "critical-points"
+  ],
+  "related": [
+    "second-derivative",
+    "concavity",
+    "taylor-polynomial"
+  ],
+  "objectives": [
+    "求二階、三階導函數，看懂 f″、f‴、f⁽ⁿ⁾、d²y/dx² 這些記號。",
+    "用位置、速度、加速度解釋 s′ 與 s″。",
+    "找出 sin、cos、e^{kx}、xⁿ 的 n 階導數規律，在 x = 0 代值。"
+  ],
+  "visual": null,
+  "concept": [
+    {
+      "heading": "① 導函數也是函數，可以再微分",
+      "body": [
+        "f′ 本身是一個函數，對它再微分一次，得到二階導函數 f″；再一次是 f‴；第 n 次寫成 f⁽ⁿ⁾（括號是為了跟 n 次方分開）。用萊布尼茲記號寫成 d²y/dx²、dⁿy/dxⁿ。",
+        "例：f(x) = x⁴，f′ = 4x³，f″ = 12x²，f‴ = 24x，f⁽⁴⁾ = 24，f⁽⁵⁾ = 0。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 意義：變化率的變化率",
+      "body": [
+        "直線上運動的位置 s(t)。s′(t) 是速度：位置變多快。s″(t) 是加速度：速度變多快。",
+        "在圖形上，f′ 是切線斜率，f″ 就是「斜率變多快」。f″ > 0 表示斜率越來越大，曲線往上彎；這是〈二階導數〉與〈凹向上／凹向下〉的主題。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 每一次都是一次完整的微分",
+      "body": [
+        "第二次微分時，乘法法則、連鎖律照樣要用。(x eˣ)′ = (x + 1)eˣ 還是乘積，再微分一次要再用一次乘法法則。",
+        "f″ 不是 (f′)²。f″ 是「微分兩次」，(f′)² 是「微分一次再平方」。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 會循環或有規律的家族",
+      "body": [
+        "sin x → cos x → −sin x → −cos x → sin x：每 4 階回到原樣。第 n 階看 n 除以 4 的餘數。",
+        "e^{kx} 每微分一次多乘一個 k：第 n 階是 kⁿ e^{kx}。sin(kx)、cos(kx) 也是每次多乘一個 k，同時照上面的順序循環。",
+        "xⁿ 微分 n 次得常數 n!，再多微一次就是 0。",
+        "這些在 x = 0 的值，之後會用來寫〈Taylor 多項式〉。"
+      ],
+      "collapsible": false
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "位置、速度、加速度",
+      "prompt": "s(t) = t³ − 6t² + 9t（公尺，t 秒），求加速度 a(t)",
+      "problemId": "lec-02-q4a",
+      "steps": [
+        "速度 v(t) = s′(t) = 3t² − 12t + 9。",
+        "加速度 a(t) = v′(t) = s″(t) = 6t − 12。",
+        "例如 t = 1 時 v = 0（瞬間停住），a = −6，表示速度正在往負的方向變。"
+      ],
+      "answer": "a(t) = 6t − 12",
+      "claim": "D2(t^3-6t^2+9t) == 6t-12 ;; D(t^3-6t^2+9t, 1) == 0"
+    },
+    {
+      "title": "第二次也要用乘法法則",
+      "prompt": "d²/dx² (x eˣ)",
+      "problemId": "der-029",
+      "steps": [
+        "第一次：(x eˣ)′ = 1 · eˣ + x · eˣ = (x + 1)eˣ。",
+        "第二次，(x + 1)eˣ 仍是乘積：1 · eˣ + (x + 1) · eˣ = (x + 2)eˣ。"
+      ],
+      "answer": "(x + 2)eˣ",
+      "note": "規律：再微下去是 (x + 3)eˣ、(x + 4)eˣ……第 n 階是 (x + n)eˣ。",
+      "claim": "D(x*e^x) == (x+1)*e^x ;; D2(x*e^x) == (x+2)*e^x"
+    },
+    {
+      "title": "找循環",
+      "prompt": "d⁴/dx⁴ cos(3x) 在 x = 0 的值",
+      "problemId": "depth-der-017",
+      "steps": [
+        "每微分一次，連鎖律多乘一個 3；cos → −sin → −cos → sin → cos 循環。",
+        "第 1 階 −3 sin(3x)，第 2 階 −9 cos(3x)，第 3 階 27 sin(3x)，第 4 階 81 cos(3x)。",
+        "代 x = 0：81 cos 0 = 81。"
+      ],
+      "answer": "81",
+      "claim": "D2(cos(3x)) == -9*cos(3x) ;; D2(-9*cos(3x)) == 81*cos(3x) ;; SUB(81*cos(3x), 0) == 81"
+    },
+    {
+      "title": "從前幾階猜出第 n 階",
+      "prompt": "f(x) = 1/(1 − x)，求 f⁽⁷⁾(0)",
+      "problemId": "hd-001",
+      "steps": [
+        "寫成 f(x) = (1 − x)⁻¹。連鎖律：裡層 1 − x 的導數是 −1，跟冪次法則拉下來的負號相乘變成正的。",
+        "f′ = (1 − x)⁻²，f″ = 2(1 − x)⁻³，f‴ = 2 · 3 (1 − x)⁻⁴ = 6(1 − x)⁻⁴。",
+        "規律：每微分一次，把目前的次方數乘到前面、次方數加 1。所以 f⁽ⁿ⁾(x) = n!/(1 − x)ⁿ⁺¹。",
+        "n = 7、x = 0：7! = 5040。"
+      ],
+      "answer": "5040",
+      "note": "「看前幾階猜規律」要用數學歸納法才算證明：假設 f⁽ⁿ⁾ = n!(1 − x)^{−(n+1)}，再微分一次得 n!(n + 1)(1 − x)^{−(n+2)} = (n + 1)!(1 − x)^{−(n+2)}，規律延續。",
+      "claim": "D((1-x)^(-1)) == (1-x)^(-2) ;; D2((1-x)^(-1)) == 2*(1-x)^(-3) ;; D(6*(1-x)^(-4)) == 24*(1-x)^(-5) ;; SUB(5040*(1-x)^(-8), 0) == 5040"
+    }
+  ],
+  "pitfalls": [
+    "把 f″ 當成 (f′)²。",
+    "第二次微分時忘了乘法法則或連鎖律。",
+    "sin 的高階導數循環數錯：週期是 4，不是 2。",
+    "e^{kx} 微分 n 次忘了每次乘 k，或把 kⁿ 寫成 nk。",
+    "先代 x = a 再微分，得到常數的導數 0。"
+  ],
+  "checks": [
+    {
+      "ask": "f(x) = x⁴，f‴(x) 是？",
+      "options": [
+        {
+          "label": "12x²",
+          "why": "這是 f″，只微分了兩次。"
+        },
+        {
+          "label": "24x",
+          "correct": true
+        },
+        {
+          "label": "64x⁹",
+          "why": "這是 (f′)³ = (4x³)³。f‴ 是微分三次，不是一階導數的三次方。"
+        }
+      ]
+    },
+    {
+      "ask": "s(t) = t³ − 3t²，t = 2 時的加速度是？",
+      "options": [
+        {
+          "label": "0",
+          "why": "這是速度 s′(2) = 3 · 4 − 6 · 2 = 0。加速度要再微分一次。"
+        },
+        {
+          "label": "6",
+          "correct": true
+        },
+        {
+          "label": "−4",
+          "why": "這是位置 s(2) = 8 − 12 = −4，還沒微分。"
+        }
+      ]
+    },
+    {
+      "ask": "d¹⁰/dx¹⁰ sin x 是？",
+      "options": [
+        {
+          "label": "sin x",
+          "why": "以為偶數階都回到 sin x。其實每 4 階才回到原樣；10 除以 4 餘 2。"
+        },
+        {
+          "label": "cos x",
+          "why": "循環數錯了。10 除以 4 餘 2，對應第 2 階 −sin x。"
+        },
+        {
+          "label": "−sin x",
+          "correct": true
+        }
+      ]
+    },
+    {
+      "ask": "d⁵/dx⁵ e^{2x} 在 x = 0 的值是？",
+      "options": [
+        {
+          "label": "32",
+          "correct": true
+        },
+        {
+          "label": "10",
+          "why": "每微分一次乘 2，五次是 2⁵ = 32，不是 2 × 5。"
+        },
+        {
+          "label": "1",
+          "why": "忘了連鎖律：e^{2x} 每微分一次都要乘裡層 2x 的導數 2。"
+        }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": [
+      "higher-derivative",
+      "second-derivative",
+      "kinematics"
+    ],
+    "fine": [
+      "higher-deriv-second",
+      "higher-deriv-motion",
+      "higher-deriv-pattern",
+      "higher-deriv-rules-again"
+    ]
+  },
+  "practice": [
+    {
+      "id": "lec-02-q4a",
+      "core": true,
+      "trains": "higher-deriv-motion"
+    },
+    {
+      "id": "dd-kin-004",
+      "core": true,
+      "trains": "higher-deriv-motion"
+    },
+    {
+      "id": "db-mot-002",
+      "core": true,
+      "trains": "higher-deriv-motion"
+    },
+    {
+      "id": "dd-kin-003",
+      "core": true,
+      "trains": "higher-deriv-motion"
+    },
+    {
+      "id": "der-029",
+      "core": true,
+      "trains": "higher-deriv-rules-again"
+    },
+    {
+      "id": "depth-der-017",
+      "core": true,
+      "trains": "higher-deriv-pattern"
+    },
+    {
+      "id": "uni-der-019",
+      "core": true,
+      "trains": "higher-deriv-pattern"
+    },
+    {
+      "id": "hc-der-009",
+      "trains": "higher-deriv-pattern"
+    },
+    {
+      "id": "depth-der-004",
+      "trains": "higher-deriv-rules-again"
+    },
+    {
+      "id": "exam-der-007",
+      "trains": "higher-deriv-rules-again"
+    },
+    {
+      "id": "burst-der-001",
+      "trains": "higher-deriv-pattern"
+    },
+    {
+      "id": "uni-der-003",
+      "challenge": true,
+      "trains": "higher-deriv-rules-again",
+      "note": "挑戰：e^{2x} sin x 微分三次，每次都要乘法法則。"
+    }
+  ],
+  "gaps": [
+    {
+      "tag": "higher-deriv-second",
+      "count": 3,
+      "note": "R1–R2：直接求多項式或基本函數的 f″、f‴（例如 f(x) = x⁴ − 2x² 求 f″），題庫的高階導數題都從 R3 起跳或包在運動題裡。"
+    }
+  ]
+}

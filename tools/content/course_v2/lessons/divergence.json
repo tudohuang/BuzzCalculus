@@ -1,0 +1,245 @@
+{
+  "id": "divergence",
+  "title": "散度",
+  "readMinutes": 9,
+  "totalMinutes": 35,
+  "prerequisites": [
+    "flux",
+    "partial-derivatives"
+  ],
+  "next": [
+    "stokes-theorem"
+  ],
+  "related": [
+    "curl",
+    "divergence-theorem",
+    "green-theorem"
+  ],
+  "objectives": [
+    "算 ∇ · F，並知道結果是一個純量函數。",
+    "說出散度的意義：每單位體積的淨流出量；正是源、負是匯。",
+    "知道 ∇ · (∇ × F) = 0、∇ · ∇f = ∇²f，並分清楚「箭頭往外」與「散度為正」不是同一件事。"
+  ],
+  "visual": "流場中放一個可拖動的小方框（或小圓），邊界上畫出每一處流進、流出的量，旁邊顯示淨流出除以面積的讀數，並跟該點的 P_x + Q_y 比較。在 ⟨x, y⟩ 裡處處淨流出；在 ⟨−y, x⟩ 裡流進等於流出；在 ⟨x, y⟩/(x² + y²) 裡，方框不包含原點時箭頭雖然往外，讀數仍是 0。",
+  "concept": [
+    {
+      "heading": "① 小方塊的淨流出",
+      "body": [
+        "在一點旁邊放一個小方塊，量它表面的通量（〈通量〉，朝外）：流出去的減掉流進來的。再除以方塊體積，讓方塊縮到一點：這個極限就是散度。",
+        "散度 > 0：那裡像水龍頭，淨流出（源）。散度 < 0：像排水孔，淨流入（匯）。散度 = 0：流進多少就流出多少，例如不可壓縮的水。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 公式",
+      "body": [
+        "F = ⟨P, Q, R⟩。為什麼是這三項：看 x 方向的一對面，右面流出約 P(x + Δx) ΔyΔz，左面流進約 P(x) ΔyΔz，淨流出約 P_x ΔxΔyΔz。三個方向加起來除以體積，得到 P_x + Q_y + R_z。這是直觀，不是證明；精確的版本就是〈散度定理〉。"
+      ],
+      "tex": [
+        "\\nabla\\cdot\\mathbf F=\\frac{\\partial P}{\\partial x}+\\frac{\\partial Q}{\\partial y}+\\frac{\\partial R}{\\partial z}"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 箭頭往外，不代表散度為正",
+      "body": [
+        "⟨x, y, z⟩：∇ · F = 3，處處淨流出，箭頭也確實往外。",
+        "⟨−y, x, 0⟩：∇ · F = 0，純粹旋轉，沒有源。",
+        "⟨x, y, z⟩/(x² + y² + z²)^{3/2}（像點電荷的電場）：箭頭全部往外，但在原點以外散度是 0（範例 2）。往外流的量被「越遠越弱」剛好補回來：任何不含原點的小方塊，流進等於流出。源全部集中在原點那一點，見〈散度定理〉。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 兩個恆等式",
+      "body": [
+        "∇ · (∇ × F) = 0（F 的二階偏導連續）：展開之後是三對混合偏導相減，由 Clairaut 抵消。",
+        "∇ · (∇f) = f_xx + f_yy + f_zz，記作 ∇²f 或 Δf，叫 Laplacian。∇²f = 0 的函數叫調和函數，例如 1/√(x² + y² + z²)（原點以外）。"
+      ],
+      "collapsible": false
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "照公式算",
+      "prompt": "F = ⟨xz, xyz, −y²⟩，求 ∇ · F。",
+      "steps": [
+        "P_x = z，Q_y = xz，R_z = 0（−y² 不含 z）。",
+        "∇ · F = z + xz。"
+      ],
+      "answer": "z + xz",
+      "claim": "D(x*z, , x) + D(x*y*z, , y) + D(-y^2, , z) == z+x*z"
+    },
+    {
+      "title": "往外卻沒有源",
+      "prompt": "F = ⟨x, y, z⟩/(x² + y² + z²)^{3/2}。證明在原點以外 ∇ · F = 0。",
+      "steps": [
+        "記 ρ² = x² + y² + z²，P = x ρ^{−3}。P_x = ρ^{−3} + x · (−3)ρ^{−4} · (x/ρ) = ρ^{−3} − 3x² ρ^{−5}。",
+        "同理 Q_y = ρ^{−3} − 3y² ρ^{−5}，R_z = ρ^{−3} − 3z² ρ^{−5}。",
+        "相加：3ρ^{−3} − 3(x² + y² + z²) ρ^{−5} = 3ρ^{−3} − 3ρ^{−3} = 0。"
+      ],
+      "answer": "原點以外 ∇ · F = 0",
+      "claim": "D(x/(x^2+y^2+z^2)^(3/2), , x) + D(y/(x^2+y^2+z^2)^(3/2), , y) + D(z/(x^2+y^2+z^2)^(3/2), , z) == 0"
+    },
+    {
+      "title": "旋度的散度",
+      "prompt": "F = ⟨xz, xyz, −y²⟩，驗證 ∇ · (∇ × F) = 0。",
+      "steps": [
+        "上一課〈旋度〉算過 ∇ × F = ⟨−y(2 + x), x, yz⟩。",
+        "散度：∂/∂x [−y(2 + x)] + ∂/∂y [x] + ∂/∂z [yz] = −y + 0 + y = 0。"
+      ],
+      "answer": "0",
+      "claim": "D(-y*(2+x), , x) + D(x, , y) + D(y*z, , z) == 0"
+    }
+  ],
+  "pitfalls": [
+    "把散度寫成向量 ⟨P_x, Q_y, R_z⟩；它是三項相加的純量。",
+    "對錯變數微分：P 對 x、Q 對 y、R 對 z，不是交叉的。",
+    "看到箭頭往外就說散度為正。",
+    "把 ∇ · (∇ × F) 與 ∇ × (∇f) 搞混：前者是純量 0、後者是零向量，兩者都來自混合偏導相等。"
+  ],
+  "checks": [
+    {
+      "ask": "F = ⟨x², y², z²⟩ 在 (1, 1, 1) 的散度是？",
+      "options": [
+        {
+          "label": "6",
+          "correct": true
+        },
+        {
+          "label": "3",
+          "why": "x² 對 x 微分是 2x，在 x = 1 是 2，不是 1。三項各 2，合計 6。"
+        },
+        {
+          "label": "⟨2, 2, 2⟩",
+          "why": "散度是三項相加的純量，不是向量。"
+        }
+      ]
+    },
+    {
+      "ask": "某點的散度為正，意思是？",
+      "options": [
+        {
+          "label": "那一點附近淨流出（像源）",
+          "correct": true
+        },
+        {
+          "label": "流體在那裡旋轉",
+          "why": "旋轉是旋度量的。純旋轉的 ⟨−y, x, 0⟩ 散度是 0。"
+        },
+        {
+          "label": "流速在那裡很大",
+          "why": "均勻的快速流動 ⟨100, 0, 0⟩ 散度是 0：流進多少流出多少。"
+        }
+      ]
+    },
+    {
+      "ask": "F = ⟨x, y, z⟩/(x² + y² + z²)^{3/2} 在原點以外的散度是？",
+      "options": [
+        {
+          "label": "0",
+          "correct": true
+        },
+        {
+          "label": "正的，因為箭頭全部往外",
+          "why": "箭頭往外，但越外越弱，小方塊流進與流出剛好抵消。"
+        },
+        {
+          "label": "處處沒有定義",
+          "why": "只有原點沒有定義；其他地方算得出來，結果是 0。"
+        }
+      ]
+    },
+    {
+      "ask": "∇ · (∇ × F) 等於？（F 的二階偏導連續）",
+      "options": [
+        {
+          "label": "0",
+          "correct": true
+        },
+        {
+          "label": "∇²F",
+          "why": "那是另一個運算。展開 ∇ · (∇ × F) 會得到三對混合偏導相減，全部抵消。"
+        },
+        {
+          "label": "|∇ × F|",
+          "why": "∇ × F 的長度一般不是 0；但先取旋度再取散度，展開後每一項都被另一項抵消，結果恆為 0。"
+        }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": [
+      "divergence",
+      "nabla",
+      "vector-calculus",
+      "vector-identity",
+      "laplacian"
+    ],
+    "fine": [
+      "divergence-compute",
+      "divergence-source-meaning",
+      "divergence-identities"
+    ]
+  },
+  "practice": [
+    {
+      "id": "mob-nabla-001",
+      "core": true,
+      "trains": "divergence-compute"
+    },
+    {
+      "id": "rel-hard-der-008",
+      "core": true,
+      "trains": "divergence-compute"
+    },
+    {
+      "id": "lec-20-m2",
+      "core": true,
+      "trains": "divergence-compute"
+    },
+    {
+      "id": "vc-nab-003",
+      "core": true,
+      "trains": "divergence-compute"
+    },
+    {
+      "id": "vc-nab-005",
+      "core": true,
+      "trains": "divergence-identities"
+    },
+    {
+      "id": "exam-multi-009",
+      "trains": "divergence-compute"
+    },
+    {
+      "id": "uni-der-015",
+      "trains": "divergence-compute"
+    },
+    {
+      "id": "depth-der-013",
+      "trains": "divergence-compute"
+    },
+    {
+      "id": "vc-nab-002",
+      "trains": "divergence-identities"
+    },
+    {
+      "id": "vc-nab-001",
+      "trains": "divergence-identities",
+      "note": "1/ρ 是調和函數。"
+    },
+    {
+      "id": "vc-nab-010",
+      "challenge": true,
+      "trains": "divergence-compute",
+      "note": "挑戰：先把 fF 乘出來，或用 ∇ · (fF) = ∇f · F + f ∇ · F。"
+    }
+  ],
+  "gaps": [
+    {
+      "tag": "divergence-source-meaning",
+      "count": 3,
+      "note": "R2：給場圖判斷某點散度的正負（含「箭頭往外但散度為 0」的例子）。"
+    }
+  ]
+}

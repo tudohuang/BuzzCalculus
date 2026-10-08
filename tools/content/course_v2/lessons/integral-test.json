@@ -1,0 +1,254 @@
+{
+  "id": "integral-test",
+  "title": "積分判別",
+  "readMinutes": 10,
+  "totalMinutes": 35,
+  "prerequisites": [
+    "p-series",
+    "improper-infinite"
+  ],
+  "next": [
+    "comparison-test"
+  ],
+  "related": [
+    "partial-sums",
+    "u-sub-definite",
+    "monotone-convergence-sequence"
+  ],
+  "objectives": [
+    "完整說出積分判別的條件：f 在 [N, ∞) 上連續、為正、遞減，且 aₙ = f(n)。",
+    "檢查遞減（常用 f′ ≤ 0），算瑕積分，判斷級數收斂或發散。",
+    "用 ∫_{N+1}^∞ f ≤ R_N ≤ ∫_N^∞ f 估計部分和的誤差。"
+  ],
+  "visual": "y = f(x) = 1/x³ 的圖形，下面畫兩排長條：一排左端對齊（高 f(n)，在曲線上方），一排右端對齊（在曲線下方）。滑桿選 N，把 N 之後的長條塗色，標出尾巴 R_N 被 ∫_{N+1}^∞ f 與 ∫_N^∞ f 夾在中間。",
+  "concept": [
+    {
+      "heading": "① 定理",
+      "body": [
+        "設 f 在 [N, ∞) 上連續、為正、遞減，而且 aₙ = f(n)（n ≥ N）。那麼 Σ_{n=N}^∞ aₙ 與 ∫_N^∞ f(x) dx 同時收斂或同時發散。",
+        "三個條件（連續、正、遞減）都要檢查。遞減只要從某個 N 開始成立就行，前面有限項不影響收斂。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 圖像",
+      "body": [
+        "跟〈p 級數〉那張圖一樣：f 遞減，所以在 [k, k + 1] 上 f(k + 1) ≤ f(x) ≤ f(k)。高 f(k) 的長條蓋住曲線，高 f(k + 1) 的長條躲在曲線下。級數被積分從上下夾住，有限就一起有限，無限就一起無限。",
+        "注意：收斂時，級數的和一般不等於積分的值。判別法只說「同生共死」。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 條件為什麼不能少",
+      "body": [
+        "遞減是夾住的關鍵。反例：f(x) = sin²(πx) 連續、非負，但不遞減。aₙ = sin²(πn) = 0，級數收斂到 0；∫₁^∞ sin²(πx) dx 卻是無限大（每一段 [k, k + 1] 貢獻 1/2）。沒有遞減，級數與積分可以各走各的路。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 誤差估計",
+      "body": [
+        "同一張圖還能估尾巴。用 s_N 近似和 S 時，尾巴 R_N = Σ_{n=N+1}^∞ aₙ 滿足："
+      ],
+      "tex": [
+        "\\int_{N+1}^{\\infty} f(x)\\,dx\\ \\le\\ R_N\\ \\le\\ \\int_{N}^{\\infty} f(x)\\,dx"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "⑤ 證明",
+      "body": [
+        "f 遞減，在 [k, k + 1] 上 f(k + 1) ≤ f(x) ≤ f(k)，積分得 a_{k+1} ≤ ∫_k^{k+1} f ≤ aₖ。從 k = N 加到 M − 1：Σ_{k=N+1}^{M} aₖ ≤ ∫_N^M f ≤ Σ_{k=N}^{M−1} aₖ。",
+        "f > 0，部分和與 ∫_N^M f 都隨 M 遞增。若積分收斂，左式說部分和有上界，由〈單調收斂定理〉級數收斂；若積分發散（→ ∞），右式說部分和也 → ∞。誤差估計是同一組不等式取 M → ∞ 的結果。"
+      ],
+      "collapsible": true
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "發散：ln ln",
+      "prompt": "Σ_{n=2}^∞ 1/(n ln n) 收斂嗎？",
+      "problemId": "lec-12-q2b",
+      "steps": [
+        "f(x) = 1/(x ln x) 在 [2, ∞)：連續；x ln x > 0，所以 f > 0；x 與 ln x 都遞增，分母遞增，f 遞減。條件成立。",
+        "令 u = ln x（〈定積分換元〉）：∫₂^M dx/(x ln x) = ln(ln M) − ln(ln 2)。",
+        "M → ∞ 時 ln(ln M) → ∞（很慢：M = 10⁶ 時才約 2.99），積分發散，所以級數發散。"
+      ],
+      "answer": "發散",
+      "claim": "D(ln(ln(x))) == 1/(x*ln(x)) ;; INT(1/(x*ln(x)), 2, 10^6) == ln(ln(10^6)) - ln(ln(2))"
+    },
+    {
+      "title": "收斂：要先證遞減",
+      "prompt": "Σ_{n=1}^∞ n e^{−n²} 收斂嗎？",
+      "problemId": "lec-12-q2c",
+      "steps": [
+        "f(x) = x e^{−x²}：連續、在 x ≥ 1 為正。遞減：f′(x) = e^{−x²}(1 − 2x²)，x ≥ 1 時 1 − 2x² < 0，所以 f′ < 0。",
+        "∫₁^∞ x e^{−x²} dx：令 u = x²，= ½∫₁^∞ e^{−u} du = 1/(2e)。有限。",
+        "積分收斂，級數收斂。（級數的和不是 1/(2e)。）"
+      ],
+      "answer": "收斂",
+      "claim": "D(x*e^(-x^2)) == e^(-x^2)*(1-2x^2) ;; INT(x*e^(-x^2), 1, inf) == 1/(2*e)"
+    },
+    {
+      "title": "要取幾項？",
+      "prompt": "用 sₙ = Σ_{k=1}^{n} 1/k³ 近似 Σ 1/k³，要保證誤差 Rₙ ≤ 0.005，n 至少多少？",
+      "problemId": "lec-12-q2d",
+      "steps": [
+        "f(x) = 1/x³ 在 [1, ∞) 連續、為正、遞減。",
+        "Rₙ ≤ ∫ₙ^∞ x⁻³ dx = 1/(2n²)。",
+        "要 1/(2n²) ≤ 0.005，即 n² ≥ 100，n ≥ 10。",
+        "檢查：n = 10 時上界是 0.005，實際的尾巴約 0.0045。"
+      ],
+      "answer": "n = 10",
+      "claim": "INT(x^(-3), 10, inf) == 0.005 ;; SUM(1/n^3, 11) < 0.005"
+    }
+  ],
+  "pitfalls": [
+    "沒檢查遞減就用（或只檢查了正與連續）。",
+    "以為級數的和等於積分的值。",
+    "誤差估計的上下限差一：上界是 ∫_N^∞，下界是 ∫_{N+1}^∞。",
+    "把積分判別用在正負交替的級數上。"
+  ],
+  "checks": [
+    {
+      "ask": "用積分判別之前，f 在 [N, ∞) 上要滿足哪些條件？",
+      "options": [
+        {
+          "label": "連續、為正、遞減",
+          "correct": true
+        },
+        {
+          "label": "可微、為正",
+          "why": "不需要可微；少了最關鍵的遞減。f′ 只是檢查遞減的工具之一。"
+        },
+        {
+          "label": "連續，而且 f(n) → 0",
+          "why": "f(n) → 0 不夠：sin²(πx) 的例子顯示，不遞減時級數與積分可以結論不同。"
+        }
+      ]
+    },
+    {
+      "ask": "Σ_{n=2}^∞ 1/(n (ln n)²) 是？",
+      "options": [
+        {
+          "label": "收斂",
+          "correct": true
+        },
+        {
+          "label": "發散，因為它跟 Σ 1/(n ln n) 很像",
+          "why": "多一次方的 ln 就不一樣：∫₂^∞ dx/(x (ln x)²) = [−1/ln x]₂^∞ = 1/ln 2，有限。"
+        },
+        {
+          "label": "收斂，而且和等於 1/ln 2",
+          "why": "積分判別只說同收同散；級數的和一般不等於積分的值。"
+        }
+      ]
+    },
+    {
+      "ask": "f 符合積分判別的條件，且 ∫₁^∞ f(x) dx = 3。關於 Σ_{n=1}^∞ f(n)？",
+      "options": [
+        {
+          "label": "收斂，但和不一定是 3",
+          "correct": true
+        },
+        {
+          "label": "收斂，而且和是 3",
+          "why": "長條的面積和曲線下的面積不一樣；長條在曲線上方，和其實比 3 大。"
+        },
+        {
+          "label": "發散",
+          "why": "積分收斂，級數就收斂；它們同生共死。"
+        }
+      ]
+    },
+    {
+      "ask": "用前 100 項近似 Σ 1/n²，誤差 R₁₀₀ 的上界（積分估計）是？",
+      "options": [
+        {
+          "label": "∫₁₀₀^∞ dx/x² = 1/100",
+          "correct": true
+        },
+        {
+          "label": "1/101²",
+          "why": "那只是下一項；尾巴有無窮多項，加起來大得多。"
+        },
+        {
+          "label": "1/100²",
+          "why": "a₁₀₀ 已經算進部分和裡了，它不是誤差。"
+        }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": [
+      "integral-test",
+      "convergence-test",
+      "series-estimate"
+    ],
+    "fine": [
+      "integral-test-conditions",
+      "integral-test-compute",
+      "integral-test-remainder"
+    ]
+  },
+  "practice": [
+    {
+      "id": "ser-024",
+      "core": true,
+      "trains": "integral-test-compute"
+    },
+    {
+      "id": "ser-037",
+      "core": true,
+      "trains": "integral-test-compute"
+    },
+    {
+      "id": "lec-12-q2c",
+      "core": true,
+      "trains": "integral-test-conditions"
+    },
+    {
+      "id": "sg-est-004",
+      "core": true,
+      "trains": "integral-test-remainder"
+    },
+    {
+      "id": "lec-12-q2d",
+      "core": true,
+      "trains": "integral-test-remainder"
+    },
+    {
+      "id": "cx-smid-013",
+      "trains": "integral-test-compute"
+    },
+    {
+      "id": "cx-smid-012",
+      "trains": "integral-test-compute"
+    },
+    {
+      "id": "lec-12-q2a",
+      "trains": "integral-test-conditions"
+    },
+    {
+      "id": "lec-12-q4b",
+      "trains": "integral-test-conditions"
+    },
+    {
+      "id": "sg-est-005",
+      "trains": "integral-test-remainder"
+    },
+    {
+      "id": "an-sr-003",
+      "challenge": true,
+      "trains": "integral-test-remainder",
+      "note": "挑戰：Σ 1/(n (ln n)²) 收斂得極慢，用積分上界 1/ln N 保證尾巴小於 0.1，N 要兩萬多。"
+    }
+  ],
+  "gaps": [
+    {
+      "tag": "integral-test-conditions",
+      "count": 2,
+      "note": "R2：要先證明 f 遞減（例如 f′ 只在 x ≥ 2 之後為負）才能用積分判別的題，或問「為什麼不能用」的概念題。"
+    }
+  ]
+}

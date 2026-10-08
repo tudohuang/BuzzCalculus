@@ -1,0 +1,228 @@
+{
+  "id": "driven-oscillator",
+  "title": "受迫振盪",
+  "readMinutes": 12,
+  "totalMinutes": 40,
+  "prerequisites": [
+    "damped-oscillator",
+    "undetermined-coefficients"
+  ],
+  "next": [
+    "resonance"
+  ],
+  "related": [
+    "complex-roots"
+  ],
+  "objectives": [
+    "寫出受週期外力推動的方程 x″ + 2γx′ + ω₀²x = F₀cos ωt，說出解 = 暫態 + 穩態。",
+    "用待定係數求穩態解，並用公式 A(ω) = F₀/√((ω₀² − ω²)² + (2γω)²) 讀出振幅。",
+    "說得出有阻尼時，長時間後系統以外力的頻率 ω 振動，與初始條件無關。"
+  ],
+  "visual": "木塊被一個以角頻率 ω 來回推動的馬達帶著。右上畫 x(t)：一開始波形雜亂（暫態），幾個週期後變成跟著馬達節奏的整齊正弦（穩態）；淡色線單獨畫出穩態解，兩條線逐漸重合。右下畫振幅 A(ω) 對 ω 的曲線，拖動 ω 的滑桿，曲線上的點跟著移動，木塊的振幅同步變化。",
+  "concept": [
+    {
+      "heading": "① 有人在推",
+      "body": [
+        "在阻尼振盪上加一個週期外力 mF₀cos ωt（例如馬達、地震、聲波）。除以 m："
+      ],
+      "tex": [
+        "x'' + 2\\gamma x' + \\omega_0^2 x = F_0\\cos\\omega t"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 解 = 暫態 + 穩態",
+      "body": [
+        "這是非齊次方程，通解是齊次解加一個特解（〈待定係數〉）。",
+        "齊次解就是〈阻尼振盪〉的解，帶著 e^{−γt}，γ > 0 時會消失，叫做暫態。初始條件只影響它。",
+        "特解用待定係數猜 a cos ωt + b sin ωt（cos 與 sin 都要），它不會消失，叫做穩態。長時間之後，系統以外力的角頻率 ω 振動，不是以自己的 ω₀ 或 ω_d。",
+        "生活裡的例子：洗衣機脫水時機身先亂抖一陣，轉速穩定之後，機身就跟著滾筒的轉速規律地振動。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 穩態振幅",
+      "body": [
+        "把 a、b 解出來，穩態可以寫成 A cos(ωt − δ)，振幅只跟 ω 有關：",
+        "δ 是位移落後外力的相位角（0 < δ < π）。推得慢（ω < ω₀）時 δ 接近 0，木塊幾乎和力同步；ω = ω₀ 時 δ = π/2；推得快（ω > ω₀）時 δ 接近 π，木塊和力幾乎反向。tan δ 只定出 δ 的正切，ω > ω₀ 時分母為負，δ 在 π/2 與 π 之間。"
+      ],
+      "tex": [
+        "A(\\omega)=\\frac{F_0}{\\sqrt{(\\omega_0^2-\\omega^2)^2+(2\\gamma\\omega)^2}},\\qquad \\tan\\delta=\\frac{2\\gamma\\omega}{\\omega_0^2-\\omega^2}"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 推導（用複數比較快）",
+      "body": [
+        "F₀cos ωt 是 F₀e^{iωt} 的實部。試 x = Ze^{iωt}：x′ = iωZe^{iωt}、x″ = −ω²Ze^{iωt}，代入得 Z(ω₀² − ω² + 2iγω) = F₀。",
+        "所以 Z = F₀/(ω₀² − ω² + 2iγω)，穩態解是 Ze^{iωt} 的實部（係數都是實數，實部仍是解，見〈複數根〉）。振幅 |Z| 就是上面的公式；δ 是分母的輻角，代表位移落後外力多少。"
+      ],
+      "collapsible": true
+    },
+    {
+      "heading": "⑤ 讀公式",
+      "body": [
+        "ω 很小（推得很慢）：A ≈ F₀/ω₀²，木塊幾乎跟著力靜態地移動。ω 很大：A ≈ F₀/ω²，推太快木塊來不及反應。中間 ω 接近 ω₀ 時分母最小、振幅最大，這是下一課〈共振〉。"
+      ],
+      "collapsible": false
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "沒有阻尼，從靜止開始推",
+      "prompt": "x″ + 4x = 3cos t，x(0) = 0，x′(0) = 0",
+      "steps": [
+        "ω₀ = 2、ω = 1，不相等。cos t 不是齊次解，猜 x_p = A cos t（方程裡沒有 x′，sin t 的係數會是 0）。",
+        "代入：−A + 4A = 3，A = 1。x = C₁cos 2t + C₂sin 2t + cos t。",
+        "x(0) = 0：C₁ + 1 = 0，C₁ = −1。x′(0) = 2C₂ = 0，C₂ = 0。",
+        "x = cos t − cos 2t：沒有阻尼，自然頻率那一項不會消失，兩個頻率一直疊在一起。"
+      ],
+      "answer": "x(t) = cos t − cos 2t",
+      "claim": "D2(cos(t)-cos(2t)) + 4*(cos(t)-cos(2t)) == 3*cos(t) ;; SUB(cos(t)-cos(2t), 0) == 0 ;; D(cos(t)-cos(2t), 0) == 0"
+    },
+    {
+      "title": "有阻尼的穩態",
+      "prompt": "x″ + 2x′ + 2x = 10cos 2t，求穩態解與振幅。",
+      "steps": [
+        "γ = 1、ω₀² = 2、ω = 2。猜 x_p = a cos 2t + b sin 2t。",
+        "x_p′ = −2a sin 2t + 2b cos 2t，x_p″ = −4a cos 2t − 4b sin 2t。",
+        "代入比較係數：cos：−4a + 4b + 2a = 10，即 −2a + 4b = 10；sin：−4b − 4a + 2b = 0，即 b = −2a。",
+        "−2a − 8a = 10，a = −1、b = 2。振幅 √(1 + 4) = √5，與公式 10/√((2 − 4)² + (2·1·2)²) = 10/√20 = √5 一致。"
+      ],
+      "answer": "x_p = −cos 2t + 2sin 2t，振幅 √5",
+      "claim": "D2(-cos(2t)+2*sin(2t)) + 2*D(-cos(2t)+2*sin(2t)) + 2*(-cos(2t)+2*sin(2t)) == 10*cos(2t) ;; 10/sqrt((2-4)^2+(2*1*2)^2) == sqrt(5)"
+    },
+    {
+      "title": "完整解：暫態會消失",
+      "prompt": "同上方程，x(0) = 0，x′(0) = 0，求 x(t)。",
+      "steps": [
+        "齊次：r² + 2r + 2 = 0，r = −1 ± i。x = e^{−t}(C₁cos t + C₂sin t) − cos 2t + 2sin 2t。",
+        "x(0) = 0：C₁ − 1 = 0，C₁ = 1。",
+        "x′(0) = −C₁ + C₂ + 4 = 0，C₂ = −3。",
+        "e^{−t} 那一項幾秒後就小到看不見，剩下穩態 −cos 2t + 2sin 2t。換一組初始條件只會改 C₁、C₂，穩態不變。"
+      ],
+      "answer": "x(t) = e^{−t}(cos t − 3sin t) − cos 2t + 2sin 2t",
+      "claim": "D2(e^(-t)*(cos(t)-3*sin(t))-cos(2t)+2*sin(2t)) + 2*D(e^(-t)*(cos(t)-3*sin(t))-cos(2t)+2*sin(2t)) + 2*(e^(-t)*(cos(t)-3*sin(t))-cos(2t)+2*sin(2t)) == 10*cos(2t) ;; SUB(e^(-t)*(cos(t)-3*sin(t))-cos(2t)+2*sin(2t), 0) == 0 ;; D(e^(-t)*(cos(t)-3*sin(t))-cos(2t)+2*sin(2t), 0) == 0"
+    }
+  ],
+  "pitfalls": [
+    "有 x′ 項時只猜 a cos ωt，漏了 b sin ωt。",
+    "初始條件代進穩態解，忘了暫態那一項。",
+    "以為長時間後以自然頻率 ω₀ 振動：有阻尼時留下來的是外力的頻率 ω。",
+    "振幅公式漏了 2γω 那一項，或把 ω₀² − ω² 寫成 ω₀ − ω。"
+  ],
+  "checks": [
+    {
+      "ask": "有阻尼（γ > 0）的受迫振盪，很久以後木塊以什麼角頻率振動？",
+      "options": [
+        {
+          "label": "外力的 ω",
+          "correct": true
+        },
+        {
+          "label": "欠阻尼的 ω_d",
+          "why": "ω_d 屬於齊次解（暫態），它帶著 e^{−γt}，會消失。"
+        },
+        {
+          "label": "不振動，停在平衡點",
+          "why": "外力一直在推，持續提供能量，穩態解不會消失。"
+        }
+      ]
+    },
+    {
+      "ask": "x″ + 9x = 8cos t 的穩態解振幅是？",
+      "options": [
+        {
+          "label": "1",
+          "correct": true
+        },
+        {
+          "label": "8/9",
+          "why": "忘了 x″ 的貢獻：猜 A cos t 代入得 (9 − 1)A = 8，A = 1。"
+        },
+        {
+          "label": "8/10",
+          "why": "符號錯了：x″ = −A cos t，是 9 − 1，不是 9 + 1。"
+        }
+      ]
+    },
+    {
+      "ask": "換一組初始條件，穩態解會改變嗎？",
+      "options": [
+        {
+          "label": "不會，初始條件只影響暫態的常數",
+          "correct": true
+        },
+        {
+          "label": "會，振幅跟著 x(0) 改變",
+          "why": "穩態解是特解，它的係數由方程本身決定，跟 x(0)、x′(0) 無關。"
+        },
+        {
+          "label": "只有 x′(0) 會影響它",
+          "why": "兩個初始條件都只用來決定齊次解的 C₁、C₂。"
+        }
+      ]
+    },
+    {
+      "ask": "振幅公式在 γ = 0、ω = ω₀ 時會怎樣？",
+      "options": [
+        {
+          "label": "分母為 0，公式不能用，要另外處理",
+          "correct": true
+        },
+        {
+          "label": "振幅是 0",
+          "why": "是分母為 0 不是分子為 0；這時猜 a cos ωt 根本失敗，因為它是齊次解（〈共振〉）。"
+        },
+        {
+          "label": "振幅是 F₀",
+          "why": "代進去分母是 √0，不是 1。"
+        }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": [
+      "ode",
+      "second-order",
+      "undetermined-coefficients",
+      "ivp"
+    ],
+    "fine": [
+      "driven-steady-state",
+      "driven-amplitude-formula",
+      "driven-transient",
+      "driven-full-solution"
+    ]
+  },
+  "practice": [
+    {
+      "id": "ode-p2-003",
+      "core": true,
+      "trains": "driven-full-solution",
+      "note": "固定外力：木塊繞著新的平衡點 x = 2 振動。"
+    }
+  ],
+  "gaps": [
+    {
+      "tag": "driven-steady-state",
+      "count": 3,
+      "note": "R3：x″ + 2γx′ + ω₀²x = F₀cos ωt 求穩態解。題庫沒有 cos ωt 外力的有阻尼題。"
+    },
+    {
+      "tag": "driven-amplitude-formula",
+      "count": 2,
+      "note": "R3：用 A(ω) 求振幅或比較不同 ω 的振幅。"
+    },
+    {
+      "tag": "driven-full-solution",
+      "count": 2,
+      "note": "R4：完整初值問題（暫態 + 穩態）。"
+    },
+    {
+      "tag": "driven-transient",
+      "count": 1,
+      "note": "R2 概念題：哪一部分會消失、長時間後的頻率。"
+    }
+  ]
+}

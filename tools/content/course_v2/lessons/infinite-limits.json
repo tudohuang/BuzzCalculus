@@ -1,0 +1,140 @@
+{
+  "id": "infinite-limits",
+  "title": "無窮極限與垂直漸近線",
+  "readMinutes": 8,
+  "totalMinutes": 25,
+  "prerequisites": ["limit-one-sided", "limit-factor"],
+  "next": ["squeeze-theorem"],
+  "related": ["polynomial-rational", "asymptotes"],
+  "objectives": [
+    "說得出 lim_{x→a} f(x) = ∞ 的意思，並知道它仍然是「極限不存在」的一種。",
+    "遇到 k/0 型（k ≠ 0），會分左右判斷是 +∞ 還是 −∞。",
+    "會找垂直漸近線，並排除約分後消失的洞。"
+  ],
+  "visual": "畫出 y = (x + 1)/(x − 3)。左右各一個點沿曲線滑向 x = 3，旁邊顯示 x 與 f(x)：右邊的讀數 401、4001、40001 一路往上衝，左邊的讀數 −399、−3999、−39999 一路往下衝。虛線 x = 3 標成垂直漸近線。",
+  "concept": [
+    {
+      "heading": "① 意思：要多大有多大",
+      "body": [
+        "lim_{x→a} f(x) = ∞：只要 x 夠靠近 a（x ≠ a），f(x) 就能大過任何指定的數，例如大過 1000、大過 10⁶。= −∞ 是能小過任何指定的負數。",
+        "f(x) 沒有靠近任何一個數，所以極限其實不存在；寫 = ∞ 是在說「它怎麼不存在」：往正的方向無限變大。∞ 不是數，不能拿來做加減：∞ − ∞ 沒有意義。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② k/0 型：分子不是 0、分母靠近 0",
+      "body": [
+        "代入時分子靠近 k ≠ 0、分母靠近 0：分母越小，商的絕對值越大，所以會往 ±∞ 跑。正負號要看兩側分母的符號。",
+        "1/x：x → 0⁺ 時分母是很小的正數，1/x → +∞；x → 0⁻ 時是很小的負數，1/x → −∞。兩側不同，雙側寫不出一個 ±∞。1/x²：兩側分母都是正的，lim_{x→0} 1/x² = +∞。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 垂直漸近線",
+      "body": [
+        "只要左極限或右極限有一個是 +∞ 或 −∞，直線 x = a 就叫垂直漸近線。",
+        "候選是分母為 0 的點，但先約分：(x² − 1)/(x² − 3x + 2) = (x + 1)/(x − 2)（x ≠ 1），x = 1 約掉了，是洞不是漸近線（〈多項式與有理函數〉）。",
+        "不只有理函數：ln x 在 x → 0⁺ 時 → −∞，tan x 在 x → π/2⁻ 時 → +∞。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 判斷流程",
+      "body": [
+        "代入。得到 k/0（k ≠ 0）：一定是 ±∞，接著分左右看符號。得到 0/0：先化簡，化簡後再看一次。"
+      ],
+      "collapsible": false
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "左右符號不同",
+      "prompt": "求 lim_{x→3⁺} (x + 1)/(x − 3) 與 lim_{x→3⁻} (x + 1)/(x − 3)",
+      "steps": [
+        "代入：分子 → 4，分母 → 0，是 k/0 型。",
+        "x → 3⁺：x − 3 是很小的正數，4/(小正數) → +∞。",
+        "x → 3⁻：x − 3 是很小的負數，4/(小負數) → −∞。",
+        "雙側極限不存在，x = 3 是垂直漸近線。"
+      ],
+      "answer": "右 +∞，左 −∞",
+      "claim": "LIM((x-3)/(x+1), 3) == 0 ;; SUB((x+1)/(x-3), 3.001) > 1000 ;; SUB((x+1)/(x-3), 2.999) < -1000"
+    },
+    {
+      "title": "兩側同號",
+      "prompt": "lim_{x→2} (x − 1)/(x − 2)²",
+      "steps": [
+        "分子 → 1，分母 → 0，是 k/0 型。",
+        "(x − 2)² 不管 x 在 2 的哪一側都是正的。",
+        "分子正、分母是很小的正數，兩側都 → +∞，所以 lim_{x→2} (x − 1)/(x − 2)² = +∞。"
+      ],
+      "answer": "+∞",
+      "claim": "SUB((x-1)/(x-2)^2, 2.001) > 100000 ;; SUB((x-1)/(x-2)^2, 1.999) > 100000 ;; LIM((x-2)^2/(x-1), 2) == 0"
+    },
+    {
+      "title": "找漸近線，排除洞",
+      "prompt": "r(x) = (x² − 1)/(x² − 3x + 2) 的垂直漸近線",
+      "steps": [
+        "分母 (x − 1)(x − 2)，候選 x = 1、x = 2。分子 (x − 1)(x + 1)。",
+        "約掉 x − 1：r(x) = (x + 1)/(x − 2)（x ≠ 1）。",
+        "x = 1：約分後的式子在 1 是 2/(−1) = −2，有限，所以 lim_{x→1} r(x) = −2，是洞。",
+        "x = 2：分子 3、分母 0，k/0 型，是垂直漸近線。"
+      ],
+      "answer": "只有 x = 2（x = 1 是洞）",
+      "claim": "(x^2-1)/(x^2-3x+2) == (x+1)/(x-2) ;; LIM((x^2-1)/(x^2-3x+2), 1) == -2 ;; LIM((x-2)/(x+1), 2) == 0"
+    }
+  ],
+  "pitfalls": [
+    "分母為 0 的點全部當成垂直漸近線，沒有先約分。",
+    "只看一側的符號就寫 +∞。",
+    "把 ∞ 當數字做運算，例如 ∞ − ∞ = 0。",
+    "寫 1/0 = ∞：1/0 沒有定義，是「x → 0 時 1/x 的行為」才談得上 ±∞。"
+  ],
+  "checks": [
+    {
+      "ask": "lim_{x→0} 1/x² 是？",
+      "options": [
+        { "label": "+∞（兩側都往正無窮）", "correct": true },
+        { "label": "左 −∞、右 +∞", "why": "那是 1/x。x² 在 0 的兩側都是正的。" },
+        { "label": "0", "why": "是分母 x² 往 0 靠；整個分式往無窮大跑。" }
+      ]
+    },
+    {
+      "ask": "lim_{x→1⁻} 2/(x − 1) 是？",
+      "options": [
+        { "label": "+∞", "why": "x < 1 時 x − 1 是很小的負數，2 除以小負數是很大的負數。" },
+        { "label": "−∞", "correct": true },
+        { "label": "2", "why": "分母往 0 靠，分式不會停在 2。" }
+      ]
+    },
+    {
+      "ask": "f(x) = (x − 3)/(x² − 9) 的垂直漸近線是？",
+      "options": [
+        { "label": "x = 3 與 x = −3", "why": "x = 3 約得掉：約分後 1/(x + 3) 在 3 是 1/6，那裡是洞。" },
+        { "label": "沒有", "why": "x = −3 約不掉：分子 → −6、分母 → 0，是 k/0 型。" },
+        { "label": "只有 x = −3", "correct": true }
+      ]
+    },
+    {
+      "ask": "lim_{x→0⁺} ln x 是？",
+      "options": [
+        { "label": "0", "why": "ln 1 = 0，不是 ln 0。x 越靠近 0，ln x 越負。" },
+        { "label": "−∞", "correct": true },
+        { "label": "+∞", "why": "0 < x < 1 時 ln x 是負的。" }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": ["asymptote", "one-sided"],
+    "fine": ["infinite-limit-k-over-zero", "infinite-limit-sign", "vertical-asymptote-find", "vertical-asymptote-vs-hole"]
+  },
+  "practice": [
+    { "id": "cx-curve-006", "core": true, "trains": "vertical-asymptote-vs-hole" },
+    { "id": "lec-04-q3a", "trains": "vertical-asymptote-find" },
+    { "id": "si-set-003", "trains": "vertical-asymptote-find", "note": "題目問不連續點；再多想一步：哪一個是洞、哪一個是漸近線？" },
+    { "id": "sk-014", "trains": "infinite-limit-sign" }
+  ],
+  "gaps": [
+    { "tag": "infinite-limit-sign", "count": 3, "note": "R1：答案是 +∞ 或 −∞ 的單側極限；題庫目前沒有任何答案是 ±∞ 的極限題" },
+    { "tag": "infinite-limit-k-over-zero", "count": 2, "note": "R1–R2：雙側 k/0，判斷是 +∞、−∞ 還是左右不同" }
+  ]
+}

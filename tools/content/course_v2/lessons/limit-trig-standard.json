@@ -1,0 +1,157 @@
+{
+  "id": "limit-trig-standard",
+  "title": "三角標準極限",
+  "readMinutes": 9,
+  "totalMinutes": 35,
+  "prerequisites": ["limit-laws-direct", "trig-functions", "trig-identities"],
+  "next": ["limit-exp-log-standard"],
+  "related": ["squeeze-theorem", "derivative-trig"],
+  "objectives": [
+    "知道 lim_{x→0} sin x / x = 1，而且 x 要用弧度。",
+    "會把 sin(ax)/(bx)、tan(ax)/(bx) 這類式子「配」成標準形，得到 a/b。",
+    "會算 lim_{x→0} (1 − cos x)/x² = 1/2，並知道它是怎麼由 sin x / x 推出來的。"
+  ],
+  "visual": "單位圓上角 x 從 1 弧度慢慢縮向 0，同時畫出三塊面積：小三角形（面積 ½ sin x）、扇形（面積 ½ x）、大三角形（面積 ½ tan x）。旁邊顯示 sin x、x、tan x 三個數字，它們一直保持 sin x < x < tan x，而且越來越接近。",
+  "concept": [
+    {
+      "heading": "① 代不進去，但表格很清楚",
+      "body": [
+        "lim_{x→0} sin x / x：代入得 0/0，而 sin x 不是多項式，前幾課的化簡都不能用。",
+        "先看數字：x = 0.1 時 sin x / x ≈ 0.998334，x = 0.01 時 ≈ 0.99998333，x = 0.001 時 ≈ 0.9999998。x 換成負的，值完全一樣（sin x / x 是偶函數）。它往 1 靠。"
+      ],
+      "tex": ["\\lim_{x\\to0}\\frac{\\sin x}{x}=1"],
+      "collapsible": false
+    },
+    {
+      "heading": "② 直覺：x 很小時 sin x 幾乎就是 x",
+      "body": [
+        "在單位圓上，角 x 很小時，弧長 x 和高度 sin x 幾乎一樣長。這是直覺，不是證明：「幾乎一樣」到底多接近、為什麼比值剛好趨近 1，需要下面的不等式。",
+        "x 一定要用弧度。用角度的話，sin(1°) ≈ 0.017452，跟 1 差很遠；比值會變成 π/180。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "證明（用面積夾出來）",
+      "body": [
+        "先看 0 < x < π/2。單位圓上取角 x：以原點、(1, 0)、(cos x, sin x) 為頂點的三角形面積是 ½ sin x；同一個角的扇形面積是 ½ x（這一步用到弧度：扇形面積 = ½ · 半徑² · 弧度）；以原點、(1, 0)、(1, tan x) 為頂點的三角形面積是 ½ tan x。三塊一塊包住一塊，所以 sin x < x < tan x。",
+        "全部除以 sin x（> 0）：1 < x / sin x < 1/cos x，取倒數得 cos x < sin x / x < 1。",
+        "x → 0⁺ 時 cos x → 1，sin x / x 被夾在往 1 靠的 cos x 與常數 1 之間，所以右極限是 1（〈夾擠定理〉）。sin x / x 是偶函數，左極限一樣是 1。",
+        "這個證明只用到面積與 cos 的連續性，沒有用到 sin 的導數，所以之後〈三角函數微分〉拿它來推 (sin x)′ = cos x 不會循環論證。"
+      ],
+      "collapsible": true
+    },
+    {
+      "heading": "③ 配湊：分母要跟 sin 裡面一樣",
+      "body": [
+        "sin(5x)/(3x)：sin 裡面是 5x，分母要配成 5x。寫成 (5/3) · sin(5x)/(5x)。x → 0 時 5x → 0，所以 sin(5x)/(5x) → 1，答案 5/3。一般地，sin(ax)/(bx) → a/b。",
+        "tan x / x = (sin x / x) · (1/cos x) → 1 · 1 = 1，所以 tan 也能照樣配。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 第二個標準極限：(1 − cos x)/x² → 1/2",
+      "body": [
+        "分子分母同乘 1 + cos x（x 靠近 0 時它靠近 2，不是 0）：(1 − cos x)(1 + cos x) = 1 − cos²x = sin²x。",
+        "所以 (1 − cos x)/x² = (sin x / x)² · 1/(1 + cos x) → 1² · 1/2 = 1/2。順帶得到 (1 − cos x)/x = x · (1 − cos x)/x² → 0。"
+      ],
+      "tex": ["\\lim_{x\\to0}\\frac{1-\\cos x}{x^2}=\\frac12"],
+      "collapsible": false
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "配係數",
+      "prompt": "lim_{x→0} sin(5x)/(3x)",
+      "steps": [
+        "代入是 0/0。sin 裡面是 5x，把分母配成 5x。",
+        "sin(5x)/(3x) = (5/3) · sin(5x)/(5x)。",
+        "x → 0 時 5x → 0，sin(5x)/(5x) → 1。",
+        "答案 5/3。"
+      ],
+      "answer": "5/3",
+      "claim": "LIM(sin(5x)/(3x), 0) == 5/3"
+    },
+    {
+      "title": "tan 與 sin 混合",
+      "prompt": "lim_{x→0} tan(2x)/sin(3x)",
+      "steps": [
+        "拆成三塊：tan(2x)/sin(3x) = [tan(2x)/(2x)] · [3x/sin(3x)] · (2x/3x)。",
+        "tan(2x)/(2x) → 1，3x/sin(3x) → 1，2x/3x = 2/3。",
+        "相乘：2/3。"
+      ],
+      "answer": "2/3",
+      "claim": "LIM(tan(2x)/sin(3x), 0) == 2/3"
+    },
+    {
+      "title": "1 − cos 的配湊",
+      "prompt": "lim_{x→0} (1 − cos 4x)/x²",
+      "problemId": "tmpl-lim-cos-square-002",
+      "steps": [
+        "標準形是 (1 − cos u)/u² → 1/2，這裡 u = 4x，分母要配成 (4x)² = 16x²。",
+        "(1 − cos 4x)/x² = 16 · (1 − cos 4x)/(4x)²。",
+        "x → 0 時 4x → 0，(1 − cos 4x)/(4x)² → 1/2。",
+        "答案 16 · 1/2 = 8。"
+      ],
+      "answer": "8",
+      "claim": "LIM((1-cos(4x))/x^2, 0) == 8"
+    }
+  ],
+  "pitfalls": [
+    "sin(5x)/x 直接寫 1：分母要配成 5x，答案是 5。",
+    "以為 lim_{x→∞} sin x / x 也是 1；它是 0，標準極限只在 x → 0。",
+    "(1 − cos 4x)/x² 配係數時只乘 4，忘了平方。",
+    "用角度算：sin x° / x 的極限是 π/180，不是 1。"
+  ],
+  "checks": [
+    {
+      "ask": "lim_{x→0} sin(3x)/x 是？",
+      "options": [
+        { "label": "1", "why": "分母要是 3x 才是 1；這裡分母只有 x，配完多一個 3。" },
+        { "label": "3", "correct": true },
+        { "label": "1/3", "why": "倒過來了：sin(3x)/x = 3 · sin(3x)/(3x)。" }
+      ]
+    },
+    {
+      "ask": "lim_{x→∞} sin x / x 是？",
+      "options": [
+        { "label": "1", "why": "sin x / x → 1 只在 x → 0。x → ∞ 時分子在 −1 與 1 之間，分母越來越大。" },
+        { "label": "不存在", "why": "sin x 雖然振盪，但被 1/x 壓到 0：|sin x / x| ≤ 1/x。" },
+        { "label": "0", "correct": true }
+      ]
+    },
+    {
+      "ask": "lim_{x→0} (1 − cos x)/x² 是？",
+      "options": [
+        { "label": "1/2", "correct": true },
+        { "label": "0", "why": "1 − cos x 跟 x² 一樣快趨近 0，比值不是 0。只有 (1 − cos x)/x 才 → 0。" },
+        { "label": "1", "why": "同乘 1 + cos x 之後，多出一個 1/(1 + cos x) → 1/2。" }
+      ]
+    },
+    {
+      "ask": "lim_{x→0} sin(x²)/x 是？",
+      "options": [
+        { "label": "1", "why": "sin 裡面是 x²，分母要配成 x²：sin(x²)/x = x · sin(x²)/x² → 0 · 1。" },
+        { "label": "0", "correct": true },
+        { "label": "不存在", "why": "拆成 x · sin(x²)/x² 之後，兩塊的極限都存在。" }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": ["trig-limit", "standard-limit"],
+    "fine": ["trig-limit-sinx-over-x", "trig-limit-rescale", "trig-limit-tan", "trig-limit-one-minus-cos"]
+  },
+  "practice": [
+    { "id": "lim-001", "core": true, "trains": "trig-limit-sinx-over-x" },
+    { "id": "cx-lim-004", "core": true, "trains": "trig-limit-rescale" },
+    { "id": "fd-lim-005", "core": true, "trains": "trig-limit-rescale" },
+    { "id": "fd-lim-006", "core": true, "trains": "trig-limit-tan" },
+    { "id": "fd-lim-012", "core": true, "trains": "trig-limit-rescale" },
+    { "id": "lim-002", "core": true, "trains": "trig-limit-one-minus-cos" },
+    { "id": "exam-lim-005", "core": true, "trains": "trig-limit-one-minus-cos" },
+    { "id": "lim-007", "trains": "trig-limit-tan" },
+    { "id": "lim-030", "trains": "trig-limit-one-minus-cos" },
+    { "id": "lim-015", "challenge": true, "trains": "trig-limit-one-minus-cos", "note": "挑戰：sec x − 1 = (1 − cos x)/cos x。" },
+    { "id": "depth-lim-010", "challenge": true, "trains": "trig-limit-one-minus-cos", "note": "挑戰：分子分母各自配成標準形。" }
+  ],
+  "gaps": []
+}

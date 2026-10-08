@@ -1,0 +1,136 @@
+{
+  "id": "function-arithmetic",
+  "title": "函數加減乘除",
+  "readMinutes": 6,
+  "totalMinutes": 15,
+  "prerequisites": ["function-intro", "domain-range"],
+  "next": ["function-composition"],
+  "related": ["limit-factor", "product-rule", "quotient-rule"],
+  "objectives": [
+    "會算 (f + g)(x)、(f − g)(x)、(fg)(x)、(f/g)(x)，以及它們在某一點的值。",
+    "會找 f/g 的定義域：兩者都要有定義，而且分母 g(x) ≠ 0。",
+    "分得清 fg（相乘）與 f(g(x))（合成）。"
+  ],
+  "visual": null,
+  "concept": [
+    {
+      "heading": "① 逐點運算",
+      "body": [
+        "兩個函數相加，意思是在每一個 x 把兩個輸出加起來：(f + g)(x) = f(x) + g(x)。減、乘、除同理。",
+        "f(x) = √x、g(x) = x − 2：(f + g)(4) = √4 + (4 − 2) = 4，(fg)(9) = 3 · 7 = 21。"
+      ],
+      "tex": ["(f+g)(x)=f(x)+g(x),\\quad (fg)(x)=f(x)\\,g(x),\\quad \\left(\\frac{f}{g}\\right)(x)=\\frac{f(x)}{g(x)}"],
+      "collapsible": false
+    },
+    {
+      "heading": "② 定義域：交集，除法再扣掉分母的零點",
+      "body": [
+        "(f + g)(x) 要算得出來，f(x) 和 g(x) 都得有定義，所以定義域是兩者的交集。",
+        "f/g 還多一條：g(x) ≠ 0。上面的例子 f/g = √x/(x − 2)，定義域是 x ≥ 0 而且 x ≠ 2，也就是 [0, 2) ∪ (2, ∞)。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 化簡不會改變定義域",
+      "body": [
+        "f(x) = x² − 1、g(x) = x + 1：(f/g)(x) = (x − 1)(x + 1)/(x + 1) = x − 1，但只在 x ≠ −1 時成立。f/g 的圖形是直線 y = x − 1 在 (−1, −2) 挖了一個洞。",
+        "「化簡之後跟某條直線一樣，只差一個洞」——〈0/0：因式分解〉整課就在處理這個洞。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 相乘不是合成",
+      "body": [
+        "fg 是兩個輸出相乘；f(g(x)) 是把 g 的輸出餵給 f（下一課）。f(x) = x²、g(x) = x + 3：(fg)(x) = x²(x + 3)，f(g(x)) = (x + 3)²，x = 1 時一個是 4、一個是 16。",
+        "會把複雜的函數拆成「誰加誰、誰乘誰」，之後的〈乘法法則〉、〈除法法則〉就是在問：拆開之後怎麼微分。"
+      ],
+      "collapsible": false
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "求值與定義域",
+      "prompt": "f(x) = √x、g(x) = x − 2。求 (f + g)(4)、(fg)(9)，以及 f/g 的定義域。",
+      "steps": [
+        "(f + g)(4) = f(4) + g(4) = 2 + 2 = 4。",
+        "(fg)(9) = f(9) · g(9) = 3 · 7 = 21。",
+        "f/g：f 要 x ≥ 0；g 處處有定義；分母 g(x) = x − 2 ≠ 0，x ≠ 2。",
+        "合起來：[0, 2) ∪ (2, ∞)。"
+      ],
+      "answer": "4；21；[0, 2) ∪ (2, ∞)",
+      "claim": "SUB(sqrt(x)+x-2, 4) == 4 ;; SUB(sqrt(x)*(x-2), 9) == 21"
+    },
+    {
+      "title": "相減要整個括起來",
+      "prompt": "f(x) = x² + 1、g(x) = 3x − 2。求 (f − g)(x) 與 (fg)(x)。",
+      "steps": [
+        "(f − g)(x) = (x² + 1) − (3x − 2)。減號要分配給 g 的每一項：x² + 1 − 3x + 2 = x² − 3x + 3。",
+        "(fg)(x) = (x² + 1)(3x − 2) = 3x³ − 2x² + 3x − 2。",
+        "檢查一點：x = 1 時 f(1) = 2、g(1) = 1，(f − g)(1) = 1，代入 x² − 3x + 3 也是 1。"
+      ],
+      "answer": "(f − g)(x) = x² − 3x + 3；(fg)(x) = 3x³ − 2x² + 3x − 2",
+      "claim": "(x^2+1)-(3x-2) == x^2-3x+3 ;; (x^2+1)(3x-2) == 3x^3-2x^2+3x-2"
+    },
+    {
+      "title": "化簡之後的洞",
+      "prompt": "f(x) = x² − 9、g(x) = x − 3。化簡 f/g，並問 (f/g)(3) 是多少。",
+      "steps": [
+        "(f/g)(x) = (x − 3)(x + 3)/(x − 3)。",
+        "x ≠ 3 時可以約掉 x − 3：(f/g)(x) = x + 3。",
+        "但 g(3) = 0，3 不在 f/g 的定義域裡，(f/g)(3) 沒有定義。",
+        "x + 3 在 3 的值是 6；這個 6 之後會變成「x 靠近 3 時 f/g 靠近的值」。"
+      ],
+      "answer": "x ≠ 3 時 (f/g)(x) = x + 3；(f/g)(3) 沒有定義",
+      "claim": "(x^2-9)/(x-3) == x+3 ;; LIM((x^2-9)/(x-3), 3) == 6"
+    }
+  ],
+  "pitfalls": [
+    "f/g 的定義域忘了扣掉 g(x) = 0 的點。",
+    "化簡之後忘了原本的限制。",
+    "(f − g)(x) 的減號沒有分配到 g 的每一項。",
+    "把 fg 跟 f(g(x)) 搞混。"
+  ],
+  "checks": [
+    {
+      "ask": "f(x) = x + 1、g(x) = x − 1，(fg)(x) 是？",
+      "options": [
+        { "label": "x² − 1", "correct": true },
+        { "label": "2x", "why": "那是 f + g。" },
+        { "label": "x", "why": "那是 f(g(x)) = (x − 1) + 1，合成不是相乘。" }
+      ]
+    },
+    {
+      "ask": "f(x) = x²、g(x) = x − 3，(f − g)(x) 是？",
+      "options": [
+        { "label": "x² − x − 3", "why": "減號沒有分配：−(x − 3) = −x + 3。" },
+        { "label": "−x² + x − 3", "why": "那是 g − f，順序反了。" },
+        { "label": "x² − x + 3", "correct": true }
+      ]
+    },
+    {
+      "ask": "f(x) = √x、g(x) = x − 4，f/g 的定義域？",
+      "options": [
+        { "label": "[0, ∞)", "why": "漏了 g(4) = 0，x = 4 時分母是 0。" },
+        { "label": "[0, 4) ∪ (4, ∞)", "correct": true },
+        { "label": "x ≠ 4", "why": "漏了 √x 要 x ≥ 0，負數放不進 f。" }
+      ]
+    },
+    {
+      "ask": "f(x) = x² − 9、g(x) = x − 3。(f/g)(3) 是？",
+      "options": [
+        { "label": "6", "why": "6 是化簡式 x + 3 在 3 的值；但 g(3) = 0，(f/g)(3) 本身沒有定義。" },
+        { "label": "0", "why": "0/0 不是 0，它根本不是一個數。" },
+        { "label": "沒有定義", "correct": true }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": [],
+    "fine": ["function-arithmetic-evaluate", "function-arithmetic-domain", "function-arithmetic-simplify"]
+  },
+  "practice": [],
+  "gaps": [
+    { "tag": "function-arithmetic-evaluate", "count": 2, "note": "R1：給 f、g，求 (f + g)(a)、(fg)(a)、(f − g)(x)" },
+    { "tag": "function-arithmetic-domain", "count": 2, "note": "R1–R2：f/g 的定義域（交集再扣掉分母零點）" }
+  ]
+}

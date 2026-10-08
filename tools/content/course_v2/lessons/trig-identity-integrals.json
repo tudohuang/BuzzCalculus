@@ -1,0 +1,145 @@
+{
+  "id": "trig-identity-integrals",
+  "title": "用三角恆等式積分",
+  "readMinutes": 9,
+  "totalMinutes": 30,
+  "prerequisites": ["trig-integral-tan-sec", "trig-identities"],
+  "next": ["trig-sub-a2-minus-x2"],
+  "related": ["trig-integral-sin-cos", "indeterminate-other"],
+  "objectives": [
+    "會用積化和差積 sin mx cos nx、sin mx sin nx、cos mx cos nx。",
+    "會用 sin² + cos² = 1 處理 1/(1 ± sin x) 這類分母。",
+    "會用半角公式把 √(1 ± cos x) 的根號拿掉，並注意絕對值。"
+  ],
+  "visual": null,
+  "concept": [
+    {
+      "heading": "① 這一課在做什麼",
+      "body": [
+        "前兩課的被積函數都是同一個角的 sin、cos、tan、sec 的次方。這一課處理其他形狀：角度不同的乘積、分母有 1 ± sin x、根號裡有 1 ± cos x。共同的做法是：先用恆等式把它改寫成已經會積的樣子。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 角度不同的乘積：積化和差",
+      "body": [
+        "sin 3x cos 2x 不能用「留一個當 du」，因為角度不同。用積化和差把乘積拆成兩個單一的三角函數："
+      ],
+      "tex": [
+        "\\sin A\\cos B=\\tfrac12\\big[\\sin(A-B)+\\sin(A+B)\\big]",
+        "\\sin A\\sin B=\\tfrac12\\big[\\cos(A-B)-\\cos(A+B)\\big],\\qquad \\cos A\\cos B=\\tfrac12\\big[\\cos(A-B)+\\cos(A+B)\\big]"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 一個整週期上的結果",
+      "body": [
+        "m、n 是正整數且 m ≠ n 時，∫₀^{2π} sin mx sin nx dx = 0：積化和差後是 cos((m − n)x) 與 cos((m + n)x)，各自在整數個週期上積分都是 0。m = n 時，sin² mx = (1 − cos 2mx)/2，積出 π。",
+        "這個「不同頻率相乘、整週期積分為 0」的性質，是之後把函數拆成正弦波的基礎。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 分母是 1 + sin x：同乘 1 − sin x",
+      "body": [
+        "1/(1 + sin x) 的分子分母同乘 1 − sin x，分母變成 1 − sin² x = cos² x：1/(1 + sin x) = (1 − sin x)/cos² x = sec² x − sec x tan x。兩項都在表上。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "⑤ 根號裡有 1 ± cos x：半角，然後看正負",
+      "body": [
+        "1 + cos x = 2 cos²(x/2)，所以 √(1 + cos x) = √2 |cos(x/2)|。√(平方) 是絕對值，要看區間決定正負：在 [0, π] 上 x/2 ∈ [0, π/2]，cos(x/2) ≥ 0，絕對值可以拿掉。",
+        "同理 1 − cos x = 2 sin²(x/2)。"
+      ],
+      "collapsible": false
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "積化和差",
+      "prompt": "∫ sin 3x cos 2x dx",
+      "steps": [
+        "sin 3x cos 2x = (1/2)[sin x + sin 5x]（A − B = x，A + B = 5x）。",
+        "∫ (1/2) sin x dx = −(1/2) cos x；∫ (1/2) sin 5x dx = −(1/10) cos 5x。",
+        "答案：−(1/2) cos x − (1/10) cos 5x + C。"
+      ],
+      "answer": "−(1/2) cos x − (1/10) cos 5x + C",
+      "claim": "(sin(x)+sin(5*x))/2 == sin(3*x)*cos(2*x) ;; D(-cos(x)/2-cos(5*x)/10) == sin(3*x)*cos(2*x)"
+    },
+    {
+      "title": "分母 1 + sin x",
+      "prompt": "∫ 1/(1 + sin x) dx",
+      "steps": [
+        "同乘 (1 − sin x)/(1 − sin x)：(1 − sin x)/(1 − sin² x) = (1 − sin x)/cos² x。",
+        "拆開：1/cos² x − sin x/cos² x = sec² x − sec x tan x。",
+        "∫ = tan x − sec x + C。"
+      ],
+      "answer": "tan x − sec x + C",
+      "claim": "D(tan(x)-sec(x)) == 1/(1+sin(x))"
+    },
+    {
+      "title": "根號與絕對值",
+      "prompt": "∫₀^π √(1 + cos x) dx",
+      "steps": [
+        "1 + cos x = 2 cos²(x/2)，所以 √(1 + cos x) = √2 |cos(x/2)|。",
+        "x ∈ [0, π] 時 x/2 ∈ [0, π/2]，cos(x/2) ≥ 0，絕對值拿掉。",
+        "√2 ∫₀^π cos(x/2) dx = √2 [2 sin(x/2)]₀^π = √2 · 2 · 1 = 2√2。"
+      ],
+      "answer": "2√2",
+      "claim": "INT(sqrt(1+cos(x)),0,pi) == 2*sqrt(2)"
+    }
+  ],
+  "pitfalls": [
+    "積化和差只寫 sin(A + B)，漏了 sin(A − B) 和前面的 1/2。",
+    "√(1 + cos x) 寫成 √2 cos(x/2) 卻沒檢查區間，在 cos(x/2) < 0 的地方會差一個負號。",
+    "1/(1 + sin x) 直接積成 ln|1 + sin x|：分子不是分母的導數。",
+    "1 + cos x 與 1 − cos x 的半角搞混。"
+  ],
+  "checks": [
+    {
+      "ask": "sin 3x cos 2x 等於？",
+      "options": [
+        { "label": "(sin x + sin 5x)/2", "correct": true },
+        { "label": "sin 5x", "why": "只取了 A + B 那一項，而且漏了 1/2。完整是 (sin(A − B) + sin(A + B))/2。" },
+        { "label": "(sin 5x − sin x)/2", "why": "sin A cos B 的兩項都是加號；A − B = 3x − 2x = x。" }
+      ]
+    },
+    {
+      "ask": "∫₀^{2π} sin 2x sin 3x dx 是？",
+      "options": [
+        { "label": "0", "correct": true },
+        { "label": "π", "why": "π 是 m = n 時的值（例如 ∫₀^{2π} sin² 3x dx）。m ≠ n 時積化和差得 cos x 與 cos 5x，整週期上都積成 0。" },
+        { "label": "算不出來", "why": "積化和差：sin 2x sin 3x = (cos x − cos 5x)/2，兩項都會積。" }
+      ]
+    },
+    {
+      "ask": "∫ 1/(1 + sin x) dx 的第一步？",
+      "options": [
+        { "label": "分子分母同乘 1 − sin x", "correct": true },
+        { "label": "令 u = 1 + sin x", "why": "du = cos x dx，但分子是 1，配不起來。" },
+        { "label": "直接寫 ln|1 + sin x|", "why": "ln 要分子是分母的導數 cos x，這裡分子是 1。" }
+      ]
+    },
+    {
+      "ask": "在 [0, π] 上，√(1 + cos x) 等於？",
+      "options": [
+        { "label": "√2 cos(x/2)", "correct": true },
+        { "label": "1 + √(cos x)", "why": "根號不能拆加法；而且 cos x 在 (π/2, π] 是負的，√(cos x) 沒有定義。" },
+        { "label": "√2 sin(x/2)", "why": "1 + cos x = 2 cos²(x/2)。2 sin²(x/2) 是 1 − cos x。" }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": ["trig-integral", "trig", "half-angle"],
+    "fine": ["trig-product-to-sum", "trig-orthogonality", "trig-pythagorean-multiply", "trig-half-angle-root"]
+  },
+  "practice": [
+    { "id": "hc-rad-006", "core": true, "trains": "trig-pythagorean-multiply", "note": "反導函數 tan x − sec x 在 x → π/2 是 ∞ − ∞，要寫成 (sin x − 1)/cos x 再取極限（〈其他不定型〉）。" }
+  ],
+  "gaps": [
+    { "tag": "trig-product-to-sum", "count": 3, "note": "∫ sin mx cos nx dx 等積化和差的不定積分與定積分，R2–R3。題庫目前沒有。" },
+    { "tag": "trig-orthogonality", "count": 2, "note": "∫₀^{2π} sin mx sin nx dx（m ≠ n 與 m = n）的判斷與計算，R2。" },
+    { "tag": "trig-half-angle-root", "count": 2, "note": "√(1 ± cos x) 的積分，含要分段處理絕對值的區間，R3。" }
+  ]
+}

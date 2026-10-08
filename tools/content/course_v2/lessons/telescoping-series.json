@@ -1,0 +1,246 @@
+{
+  "id": "telescoping-series",
+  "title": "望遠鏡級數",
+  "readMinutes": 8,
+  "totalMinutes": 35,
+  "prerequisites": [
+    "partial-sums",
+    "partial-fractions-linear"
+  ],
+  "next": [
+    "divergence-test"
+  ],
+  "related": [
+    "limit-rationalize"
+  ],
+  "objectives": [
+    "把 aₙ 寫成 bₙ − bₙ₊₁（或 bₙ − bₙ₊ₖ），寫出部分和、看出中間全部相消。",
+    "間隔是 k 時，知道前面會留下 k 項、後面會留下 k 項。",
+    "相消之後還要取極限：lim bₙ 不存在時級數發散。"
+  ],
+  "visual": "把 (1 − 1/2) + (1/2 − 1/3) + (1/3 − 1/4) + … 排成一長列，同色的正負項一對一對亮起再淡出，像望遠鏡一節一節收起來，最後只剩頭 1 和尾 −1/(n + 1)。拖動 n，尾巴越縮越小。切換成間隔 2 的例子，頭尾各留下兩項。",
+  "concept": [
+    {
+      "heading": "① 中間全部消掉",
+      "body": [
+        "如果每一項都能寫成相鄰兩個數的差 aₙ = bₙ − bₙ₊₁，部分和就會大量相消：sₙ = (b₁ − b₂) + (b₂ − b₃) + … + (bₙ − bₙ₊₁) = b₁ − bₙ₊₁。",
+        "所以 Σ aₙ = b₁ − lim bₙ，前提是 lim bₙ 存在；不存在，級數就發散。"
+      ],
+      "tex": [
+        "s_n=(b_1-b_2)+(b_2-b_3)+\\cdots+(b_n-b_{n+1})=b_1-b_{n+1}"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 怎麼拆成差",
+      "body": [
+        "有理式用〈部分分式 I：相異一次因式〉：1/(n(n + 1)) = 1/n − 1/(n + 1)。",
+        "對數用 ln(A/B) = ln A − ln B：ln(n/(n + 1)) = ln n − ln(n + 1)。",
+        "根號用有理化（〈0/0：有理化〉）造出差的形式。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 間隔不是 1 的時候",
+      "body": [
+        "aₙ = bₙ − bₙ₊₂：正項是 b₁, b₂, b₃, …，負項從 b₃ 開始。前面留下 b₁ + b₂ 沒被消，後面留下 −bₙ₊₁ − bₙ₊₂。一般來說間隔 k 就留頭 k 項、尾 k 項。不確定時，把前四五項和最後兩三項實際寫出來，看誰沒有配對。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 一定要經過部分和",
+      "body": [
+        "不要在無窮和裡直接「消項」。先寫出有限的 sₙ，相消是有限和的運算，絕對安全；再取 n → ∞。跳過這一步，就會把 Σ ln(n/(n + 1)) 誤當成收斂（範例 3）。"
+      ],
+      "collapsible": false
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "最基本的形式",
+      "prompt": "求 Σ_{n=1}^∞ 1/(n(n + 1))。",
+      "steps": [
+        "部分分式：1/(n(n + 1)) = 1/n − 1/(n + 1)。（檢查：通分得 ((n + 1) − n)/(n(n + 1))。）",
+        "sₙ = (1 − 1/2) + (1/2 − 1/3) + … + (1/n − 1/(n + 1)) = 1 − 1/(n + 1)。",
+        "n → ∞，1/(n + 1) → 0，和 = 1。"
+      ],
+      "answer": "1",
+      "claim": "1/(n*(n+1)) == 1/n - 1/(n+1) ;; SUM(1/(n*(n+1)), 1) == 1"
+    },
+    {
+      "title": "間隔 2：留兩項",
+      "prompt": "求 Σ_{n=2}^∞ 1/(n² − 1)。",
+      "problemId": "lec-12-q1c",
+      "steps": [
+        "n² − 1 = (n − 1)(n + 1)。部分分式：1/(n² − 1) = ½(1/(n − 1) − 1/(n + 1))，間隔 2。",
+        "s_N = ½[(1 − 1/3) + (1/2 − 1/4) + (1/3 − 1/5) + … + (1/(N − 1) − 1/(N + 1))]。",
+        "正項 1, 1/2, 1/3, …, 1/(N − 1)；負項 1/3, …, 1/(N + 1)。沒被消的：頭 1 + 1/2，尾 −1/N − 1/(N + 1)。",
+        "s_N = ½(3/2 − 1/N − 1/(N + 1)) → ½ · 3/2 = 3/4。"
+      ],
+      "answer": "3/4",
+      "claim": "1/(n^2-1) == (1/(n-1) - 1/(n+1))/2 ;; SUM(1/(n^2-1), 2) == 3/4"
+    },
+    {
+      "title": "會相消，但發散",
+      "prompt": "Σ_{n=1}^∞ ln(n/(n + 1)) 收斂嗎？",
+      "problemId": "lec-12-q4d",
+      "steps": [
+        "ln(n/(n + 1)) = ln n − ln(n + 1)，是望遠鏡形式。",
+        "sₙ = (ln 1 − ln 2) + (ln 2 − ln 3) + … + (ln n − ln(n + 1)) = −ln(n + 1)。",
+        "n → ∞ 時 −ln(n + 1) → −∞，級數發散。",
+        "注意各項 ln(n/(n + 1)) → ln 1 = 0，各項趨近 0 也救不了它。"
+      ],
+      "answer": "發散",
+      "claim": "ln(n/(n+1)) == ln(n) - ln(n+1) ;; SUB(-ln(n+1), 10^6) < -13"
+    }
+  ],
+  "pitfalls": [
+    "部分分式前面的係數（如 ½）漏掉。",
+    "間隔 2 時只留下第一項。",
+    "相消完忘了檢查 lim bₙ 是否存在。",
+    "不寫部分和，直接在無窮和裡消項。"
+  ],
+  "checks": [
+    {
+      "ask": "Σ_{n=1}^∞ 1/(n(n + 2)) = ？",
+      "options": [
+        {
+          "label": "3/4",
+          "correct": true
+        },
+        {
+          "label": "1/2",
+          "why": "1/(n(n + 2)) = ½(1/n − 1/(n + 2))，間隔 2，頭會留下 1 和 1/2 兩項；只留 1 就得 1/2。"
+        },
+        {
+          "label": "3/2",
+          "why": "1 + 1/2 = 3/2 沒錯，但忘了部分分式前面的 ½。"
+        }
+      ]
+    },
+    {
+      "ask": "Σ_{n=1}^∞ ln(n/(n + 1)) 是？",
+      "options": [
+        {
+          "label": "發散",
+          "correct": true
+        },
+        {
+          "label": "收斂，因為各項 → 0",
+          "why": "各項 → 0 不夠。部分和 sₙ = −ln(n + 1) → −∞。"
+        },
+        {
+          "label": "收斂到 −ln 2",
+          "why": "只留頭的 ln 1 − ln 2 是錯的：尾巴 −ln(n + 1) 不會消失，它 → −∞。"
+        }
+      ]
+    },
+    {
+      "ask": "aₙ = bₙ − bₙ₊₁，而且 lim bₙ = L 存在。Σ_{n=1}^∞ aₙ = ？",
+      "options": [
+        {
+          "label": "b₁ − L",
+          "correct": true
+        },
+        {
+          "label": "b₁",
+          "why": "只有 bₙ → 0 時才對；一般要減掉 bₙ 的極限。"
+        },
+        {
+          "label": "b₁ − b₂",
+          "why": "那只是第一項 a₁，不是整個級數的和。"
+        }
+      ]
+    },
+    {
+      "ask": "1/(4n² − 1) 的部分分式是？",
+      "options": [
+        {
+          "label": "½(1/(2n − 1) − 1/(2n + 1))",
+          "correct": true
+        },
+        {
+          "label": "1/(2n − 1) − 1/(2n + 1)",
+          "why": "通分得 2/(4n² − 1)，多了 2 倍；要乘 ½。"
+        },
+        {
+          "label": "½(1/(2n − 1) + 1/(2n + 1))",
+          "why": "通分得 2n/(4n² − 1)，不對；而且加號不會相消。"
+        }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": [
+      "telescoping",
+      "telescoping-series",
+      "partial-fraction"
+    ],
+    "fine": [
+      "telescoping-partial-fraction",
+      "telescoping-gap-k",
+      "telescoping-divergent",
+      "telescoping-other-forms"
+    ]
+  },
+  "practice": [
+    {
+      "id": "sg-est-010",
+      "core": true,
+      "trains": "telescoping-partial-fraction"
+    },
+    {
+      "id": "depth-ser-003",
+      "core": true,
+      "trains": "telescoping-partial-fraction"
+    },
+    {
+      "id": "fd-serx-202",
+      "core": true,
+      "trains": "telescoping-partial-fraction"
+    },
+    {
+      "id": "lec-12-q1c",
+      "core": true,
+      "trains": "telescoping-gap-k"
+    },
+    {
+      "id": "lec-12-q4d",
+      "core": true,
+      "trains": "telescoping-divergent"
+    },
+    {
+      "id": "world-006",
+      "trains": "telescoping-partial-fraction"
+    },
+    {
+      "id": "rel-hard-ser-008",
+      "trains": "telescoping-partial-fraction"
+    },
+    {
+      "id": "fd-serx-201",
+      "trains": "telescoping-gap-k"
+    },
+    {
+      "id": "fd-serx-306",
+      "trains": "telescoping-other-forms"
+    },
+    {
+      "id": "depth-ser-014",
+      "trains": "telescoping-partial-fraction"
+    },
+    {
+      "id": "rel-hard-ser-005",
+      "challenge": true,
+      "trains": "telescoping-partial-fraction",
+      "note": "挑戰：1/(n(n + 1)(n + 2)(n + 3)) 寫成 (1/3)[1/(n(n + 1)(n + 2)) − 1/((n + 1)(n + 2)(n + 3))]。"
+    },
+    {
+      "id": "putnam-001",
+      "challenge": true,
+      "trains": "telescoping-other-forms",
+      "note": "挑戰：用 arctan 的差角公式，把 arctan(1/(n² + n + 1)) 寫成 arctan(n + 1) − arctan n。"
+    }
+  ],
+  "gaps": []
+}

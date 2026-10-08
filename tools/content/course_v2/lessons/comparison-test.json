@@ -1,0 +1,143 @@
+{
+  "id": "comparison-test",
+  "title": "比較判別",
+  "readMinutes": 8,
+  "totalMinutes": 30,
+  "prerequisites": ["p-series", "geometric-series"],
+  "next": ["limit-comparison-test"],
+  "related": ["monotone-convergence-sequence", "improper-comparison"],
+  "objectives": [
+    "說出比較判別：0 ≤ aₙ ≤ bₙ 時，Σ bₙ 收斂 ⇒ Σ aₙ 收斂；Σ aₙ 發散 ⇒ Σ bₙ 發散。",
+    "抓住主要項，選 p 級數或幾何級數當比較對象。",
+    "分辨「方向對、有結論」與「方向錯、沒結論」的不等式。"
+  ],
+  "visual": "兩排長條：下排是 aₙ = 1/(2ⁿ + n)，上排是 bₙ = 1/2ⁿ，每一根下排都比上排矮。右側兩個累加讀數：上排停在 1，下排一直被它壓著。切換到「方向錯」的例子：下排 1/n² 被上排 1/n 壓著，但上排一路往上衝，下排停在 1.645，壓住它的東西無限大，什麼都說明不了。",
+  "concept": [
+    {
+      "heading": "① 直觀：被收斂的壓住",
+      "body": [
+        "各項都 ≥ 0 的級數，部分和只會往上走。如果每一項都比一個收斂級數的對應項小，部分和就被那個級數的和壓住，有上界，所以收斂（〈單調收斂定理〉）。反過來，每一項都比一個發散級數的對應項大，部分和就被拖著衝向 ∞。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 定理",
+      "body": [
+        "設從某一項開始 0 ≤ aₙ ≤ bₙ。",
+        "若 Σ bₙ 收斂，則 Σ aₙ 收斂（大的收斂，小的也收斂）。",
+        "若 Σ aₙ 發散，則 Σ bₙ 發散（小的發散，大的也發散）。",
+        "其餘兩種組合沒有結論：比發散的小、比收斂的大，都什麼都說明不了。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 怎麼找比較對象",
+      "body": [
+        "先猜：只留下 n 很大時的主要項。1/(2ⁿ + n) 的分母裡 2ⁿ 遠大於 n，所以它「長得像」1/2ⁿ。猜它收斂，就要找一個比它大、而且收斂的級數；猜它發散，就要找一個比它小、而且發散的。",
+        "標準尺：p 級數（〈p 級數〉）與幾何級數。常用的不等式：ln n < n、|sin n| ≤ 1、去掉分母裡的正項會變大。",
+        "不等式方向剛好不對時（例如 1/(n² − 3) 比 1/n² 大），可以改比 2/n²，或直接用下一課的〈極限比較判別〉。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 證明",
+      "body": [
+        "aₙ ≥ 0，部分和 sₙ = Σ_{k≤n} aₖ 遞增。若 Σ bₖ = B 收斂，則 sₙ ≤ Σ_{k≤n} bₖ ≤ B（bₖ ≥ 0），有上界，由單調收斂定理收斂。第二句是第一句的逆否命題。「從某一項開始」只是丟掉前面有限項，不影響收斂。"
+      ],
+      "collapsible": true
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "跟幾何級數比",
+      "prompt": "Σ_{n=1}^∞ 1/(2ⁿ + n) 收斂嗎？",
+      "problemId": "lec-12-q3a",
+      "steps": [
+        "主要項是 2ⁿ，猜它像 Σ 1/2ⁿ，收斂。",
+        "要找比它大的收斂級數：分母去掉正的 n 會變小，分式變大，1/(2ⁿ + n) < 1/2ⁿ。",
+        "Σ 1/2ⁿ 是公比 1/2 的幾何級數，收斂。由比較判別，原級數收斂。"
+      ],
+      "answer": "收斂",
+      "claim": "1/(2^n+n) < 1/2^n ;; SUM(1/(2^n+n), 1) < SUM(1/2^n, 1)"
+    },
+    {
+      "title": "用 ln n < n 壓掉對數",
+      "prompt": "Σ_{n=1}^∞ (ln n)/n³ 收斂嗎？",
+      "problemId": "lec-12-q3d",
+      "steps": [
+        "ln n 長得比 n 慢，猜它比 1/n² 還小，收斂。",
+        "n ≥ 1 時 0 ≤ ln n < n，所以 0 ≤ (ln n)/n³ < n/n³ = 1/n²。",
+        "Σ 1/n² 是 p = 2 的 p 級數，收斂。由比較判別，原級數收斂。"
+      ],
+      "answer": "收斂",
+      "claim": "ln(n)/n^3 < 1/n^2 ;; SUM(ln(n)/n^3, 1) < pi^2/6"
+    },
+    {
+      "title": "從下面比，證明發散",
+      "prompt": "Σ_{n=3}^∞ (ln n)/n 收斂嗎？",
+      "steps": [
+        "ln n 會長大，猜它比 1/n 還大，發散。",
+        "n ≥ 3 時 ln n ≥ ln 3 > 1，所以 (ln n)/n > 1/n。",
+        "Σ 1/n 發散，比它大的也發散。"
+      ],
+      "answer": "發散",
+      "claim": "ln(n)/n > 1/n ;; ln(3) > 1"
+    }
+  ],
+  "pitfalls": [
+    "aₙ ≤ bₙ 而 Σ bₙ 發散，就說 Σ aₙ 發散。",
+    "aₙ ≥ bₙ 而 Σ bₙ 收斂，就說 Σ aₙ 收斂。",
+    "用在有負項的級數上：比較判別要求 aₙ ≥ 0。",
+    "不等式只對大的 n 成立時，沒有說明「從第幾項開始」。"
+  ],
+  "checks": [
+    {
+      "ask": "0 ≤ aₙ ≤ bₙ，且 Σ bₙ 發散。關於 Σ aₙ？",
+      "options": [
+        { "label": "無法判斷", "correct": true },
+        { "label": "發散", "why": "比發散的小，可能收斂：1/n² ≤ 1/n，Σ 1/n² 卻收斂。" },
+        { "label": "收斂", "why": "也可能發散：1/(2n) ≤ 1/n，Σ 1/(2n) 發散。" }
+      ]
+    },
+    {
+      "ask": "判斷 Σ 1/(n² + 5)，正確的比較是？",
+      "options": [
+        { "label": "1/(n² + 5) < 1/n²，Σ 1/n² 收斂，所以收斂", "correct": true },
+        { "label": "1/(n² + 5) < 1/n，Σ 1/n 發散，所以發散", "why": "比發散的小得不到任何結論，方向沒用。" },
+        { "label": "1/(n² + 5) > 1/n³，Σ 1/n³ 收斂，所以收斂", "why": "比收斂的大得不到結論；而且 n 大時這個不等式其實是對的，卻沒有用。" }
+      ]
+    },
+    {
+      "ask": "Σ_{n=2}^∞ 1/(n² − 3)：發現 1/(n² − 3) > 1/n²。下一步？",
+      "options": [
+        { "label": "改比 2/n²：n ≥ 3 時 n² − 3 ≥ n²/2，所以 1/(n² − 3) ≤ 2/n²", "correct": true },
+        { "label": "結論是發散", "why": "比收斂的級數大，得不到發散；它其實收斂。" },
+        { "label": "結論是收斂，因為它和 1/n² 很像", "why": "「很像」不是比較判別；要嘛找到方向對的不等式，要嘛用極限比較判別。" }
+      ]
+    },
+    {
+      "ask": "Σ (2 + sin n)/n 是？",
+      "options": [
+        { "label": "發散，因為 (2 + sin n)/n ≥ 1/n", "correct": true },
+        { "label": "收斂，因為 sin n 有界", "why": "有界的是分子；分子在 1 到 3 之間，整項跟 1/n 一樣大小，而 Σ 1/n 發散。" },
+        { "label": "無法比較，因為 sin n 會振盪", "why": "2 + sin n 永遠 ≥ 1，振盪也跑不出這個範圍，可以拿 1/n 從下面比。" }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": ["comparison-test", "comparison", "convergence-test"],
+    "fine": ["comparison-direction", "comparison-choose-benchmark", "comparison-bound-inequality"]
+  },
+  "practice": [
+    { "id": "lec-12-q3a", "core": true, "trains": "comparison-choose-benchmark" },
+    { "id": "ser-036", "core": true, "trains": "comparison-choose-benchmark" },
+    { "id": "lec-12-q3d", "core": true, "trains": "comparison-bound-inequality" },
+    { "id": "lec-12-m4", "core": true, "trains": "comparison-direction" },
+    { "id": "lec-13-q1c", "trains": "comparison-bound-inequality" },
+    { "id": "lec-12-q3b", "trains": "comparison-choose-benchmark" }
+  ],
+  "gaps": [
+    { "tag": "comparison-direction", "count": 3, "note": "R2：給一個不等式，問能不能下結論（方向錯的比較）的概念題。" },
+    { "tag": "comparison-bound-inequality", "count": 2, "note": "R2–R3：要用 |sin| ≤ 1、ln n < n 之類的不等式才比得起來的題（如 Σ (2 + sin n)/n、Σ sin²n/n²）。" }
+  ]
+}

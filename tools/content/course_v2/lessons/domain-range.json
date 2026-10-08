@@ -1,0 +1,156 @@
+{
+  "id": "domain-range",
+  "title": "定義域與值域",
+  "readMinutes": 7,
+  "totalMinutes": 25,
+  "prerequisites": ["function-intro"],
+  "next": ["piecewise-function"],
+  "related": ["exp-log", "limit-factor"],
+  "objectives": [
+    "找得出一個式子的定義域：分母、偶次根號、對數三個禁區，同時檢查。",
+    "會用區間寫答案：[ ]、( )、∪。",
+    "會找簡單函數的值域，而且知道要確認「每個值都拿得到」。"
+  ],
+  "visual": null,
+  "concept": [
+    {
+      "heading": "① 定義域：放得進去的 x",
+      "body": [
+        "題目只給式子、沒另外說的時候，定義域指「讓式子有意義的所有實數 x」。多項式什麼都能放，定義域是全體實數。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 三個禁區",
+      "body": [
+        "分母不能是 0：1/(x − 3) 要 x ≠ 3。",
+        "偶次根號裡不能是負的：√(x + 3) 要 x + 3 ≥ 0。奇次根號沒有限制，∛(−8) = −2。",
+        "對數裡要是正的：ln(x − 1) 要 x − 1 > 0，等號不行（ln 是什麼見〈指數與對數〉）。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 好幾個條件：同時成立",
+      "body": [
+        "√x/(x − 4)：根號要 x ≥ 0，分母要 x ≠ 4，兩個都要成立，定義域是 [0, 4) ∪ (4, ∞)。",
+        "1/√(x − 2)：根號要 x − 2 ≥ 0，但它又在分母，不能是 0，合起來是 x − 2 > 0。",
+        "先化簡再找定義域會出錯：(x² − 1)/(x − 1) 可以約成 x + 1，但原式在 x = 1 分母是 0，定義域仍然是 x ≠ 1。這件事在〈0/0：因式分解〉會變成主角。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 區間的寫法",
+      "body": [
+        "[a, b] 包含兩端，(a, b) 不包含，[a, b) 包左不包右；∪ 是「或」，把兩段接起來。∞ 不是一個數，永遠配小括號：[1, ∞)。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "⑤ 值域：真的跑得出來的輸出",
+      "body": [
+        "f(x) = x² + 1：x² ≥ 0，所以 f(x) ≥ 1。但這只說了「不會低於 1」，還要說「每個 ≥ 1 的值都拿得到」：給 y ≥ 1，取 x = √(y − 1) 就有 f(x) = y。兩個方向都對，值域才是 [1, ∞)。",
+        "再一個：1/x 的值域是「除了 0 以外的所有實數」。任何 y ≠ 0 都能用 x = 1/y 拿到，但 1/x = 0 沒有解。從圖形看，值域就是圖形在 y 方向蓋到的範圍。"
+      ],
+      "collapsible": false
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "根號加分母",
+      "prompt": "f(x) = √(x + 3)/(x − 1) 的定義域",
+      "steps": [
+        "根號：x + 3 ≥ 0，x ≥ −3。",
+        "分母：x − 1 ≠ 0，x ≠ 1。",
+        "兩個同時成立：x ≥ −3 而且 x ≠ 1。",
+        "寫成區間：[−3, 1) ∪ (1, ∞)。−3 用中括號，因為 √0 = 0 可以，而且 x = −3 時分母是 −4，沒問題。"
+      ],
+      "answer": "[−3, 1) ∪ (1, ∞)",
+      "claim": "SUB(sqrt(x+3)/(x-1), -3) == 0 ;; SUB(sqrt(x+3)/(x-1), 6) == 3/5",
+      "claimNote": "驗算器只能算數值：這裡確認端點 −3 真的代得進去（值 0），以及區間內一點的值；集合本身驗不了。"
+    },
+    {
+      "title": "對數裡是二次式",
+      "prompt": "f(x) = ln(4 − x²) 的定義域",
+      "problemId": "si-int-011",
+      "steps": [
+        "對數裡要是正的：4 − x² > 0。",
+        "移項：x² < 4。",
+        "x² < 4 的意思是 x 跟 0 的距離小於 2：−2 < x < 2。不是只有 x < 2（x = −3 時 x² = 9，不行）。",
+        "端點不含：x = ±2 時 4 − x² = 0，ln 0 沒有定義。"
+      ],
+      "answer": "(−2, 2)",
+      "claim": "SUB(4-x^2, 2) == 0 ;; SUB(4-x^2, -2) == 0 ;; SUB(4-x^2, 1.9) > 0 ;; SUB(4-x^2, 2.1) < 0",
+      "claimNote": "驗算器只能算數值：這裡確認 ±2 是 4 − x² 的零點，以及 2 兩側的正負；區間本身驗不了。"
+    },
+    {
+      "title": "配方找值域",
+      "prompt": "f(x) = x² − 4x + 5 的值域",
+      "steps": [
+        "配方：x² − 4x + 5 = (x² − 4x + 4) + 1 = (x − 2)² + 1。",
+        "(x − 2)² ≥ 0，所以 f(x) ≥ 1；x = 2 時剛好是 1。",
+        "每個 y ≥ 1 都拿得到：解 (x − 2)² + 1 = y，得 x = 2 + √(y − 1)。",
+        "值域是 [1, ∞)。"
+      ],
+      "answer": "[1, ∞)",
+      "claim": "x^2-4x+5 == (x-2)^2+1 ;; SUB(x^2-4x+5, 2) == 1 ;; SUB(x^2-4x+5, 2+sqrt(x-1)) == x"
+    }
+  ],
+  "pitfalls": [
+    "1/√(x − 2) 寫成 x ≥ 2：x = 2 時分母是 0。",
+    "對數裡寫成 ≥ 0：ln 0 沒有定義。",
+    "√(x² − 1) 只寫 x ≥ 1，漏了 x ≤ −1。",
+    "先約分再找定義域，把原本分母為 0 的點放了回去。",
+    "值域只說「不會低於多少」，沒確認每個值都拿得到。"
+  ],
+  "checks": [
+    {
+      "ask": "g(x) = 1/(x + 2) 的定義域？",
+      "options": [
+        { "label": "x > −2", "why": "負的 x 也放得進去，例如 g(−5) = −1/3。只有讓分母變 0 的 −2 不行。" },
+        { "label": "除了 −2 以外的所有實數", "correct": true },
+        { "label": "所有實數", "why": "x = −2 時分母是 0，1/0 沒有意義。" }
+      ]
+    },
+    {
+      "ask": "√(x² − 1) 的定義域？",
+      "options": [
+        { "label": "(−∞, −1] ∪ [1, ∞)", "correct": true },
+        { "label": "[1, ∞)", "why": "漏了負的那一邊：x = −2 時 x² − 1 = 3 ≥ 0，放得進去。" },
+        { "label": "(−1, 1)", "why": "這一段正好是 x² − 1 < 0 的範圍，方向弄反了。" }
+      ]
+    },
+    {
+      "ask": "1/√(x − 2) 的定義域？",
+      "options": [
+        { "label": "[2, ∞)", "why": "x = 2 時分母是 √0 = 0，不能放。" },
+        { "label": "(−∞, 2)", "why": "根號裡要非負；x < 2 時 x − 2 是負的。" },
+        { "label": "(2, ∞)", "correct": true }
+      ]
+    },
+    {
+      "ask": "f(x) = (x² − 1)/(x − 1) 的定義域？",
+      "options": [
+        { "label": "所有實數", "why": "約成 x + 1 是在 x ≠ 1 的前提下做的；原式在 x = 1 分母是 0。" },
+        { "label": "x ≠ 1", "correct": true },
+        { "label": "x ≠ 1 而且 x ≠ −1", "why": "只有分母會出事。x = −1 時分子是 0、分母是 −2，值是 0，沒問題。" }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": ["domain", "radical", "log", "rational-function"],
+    "fine": ["domain-denominator", "domain-even-root", "domain-log", "domain-combined", "range-basic"]
+  },
+  "practice": [
+    { "id": "si-int-003", "core": true, "trains": "domain-denominator" },
+    { "id": "si-int-002", "core": true, "trains": "domain-even-root" },
+    { "id": "si-int-001", "core": true, "trains": "domain-log" },
+    { "id": "si-int-013", "core": true, "trains": "domain-combined" },
+    { "id": "si-int-015", "trains": "domain-denominator" },
+    { "id": "si-int-012", "trains": "domain-even-root" },
+    { "id": "si-int-014", "challenge": true, "trains": "domain-combined", "note": "挑戰：ln(ln x) 要兩層都成立：x > 0，而且 ln x > 0。" }
+  ],
+  "gaps": [
+    { "tag": "range-basic", "count": 3, "note": "R1–R2 單變數值域（配方、x²、√x 的值域）；題庫只有一題多變數值域" },
+    { "tag": "domain-combined", "count": 1, "note": "R1：√x/(x − 4) 這種根號加分母、端點要分開判斷的題" }
+  ]
+}

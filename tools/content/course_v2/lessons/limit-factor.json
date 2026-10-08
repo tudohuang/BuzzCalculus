@@ -1,0 +1,150 @@
+{
+  "id": "limit-factor",
+  "title": "0/0：因式分解",
+  "readMinutes": 8,
+  "totalMinutes": 30,
+  "prerequisites": ["limit-laws-direct", "polynomial-rational"],
+  "next": ["limit-rationalize"],
+  "related": ["infinite-limits"],
+  "objectives": [
+    "知道代入得 0/0 的有理函數，分子分母一定有共同因式 (x − a)。",
+    "會因式分解、約掉 (x − a)、再代入；約完還是 0/0 就再約一次。",
+    "說得出為什麼可以約：極限只看 x ≠ a 的地方。"
+  ],
+  "visual": null,
+  "concept": [
+    {
+      "heading": "① 0/0 是一個訊號",
+      "body": [
+        "lim_{x→2} (x² − 4)/(x − 2)：代入得 0/0。0/0 不是一個數，它不是答案，也不代表極限不存在。",
+        "對多項式來說，它在告訴你一件具體的事：分子分母在 x = 2 都是 0，由因式定理（〈多項式與有理函數〉），兩者都有 (x − 2) 這個因式。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 約掉造成 0 的因式",
+      "body": [
+        "x² − 4 = (x − 2)(x + 2)。x 靠近 2 但不等於 2，所以 x − 2 ≠ 0，可以約：(x² − 4)/(x − 2) = x + 2（x ≠ 2）。",
+        "為什麼約完的極限一樣：兩個函數只在 x = 2 這一點不同（一個沒定義、一個是 4），而極限完全不看那一點。所以 lim_{x→2} (x² − 4)/(x − 2) = lim_{x→2} (x + 2) = 4。"
+      ],
+      "tex": ["\\lim_{x\\to2}\\frac{x^2-4}{x-2}=\\lim_{x\\to2}\\frac{(x-2)(x+2)}{x-2}=\\lim_{x\\to2}(x+2)=4"],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 常用的分解",
+      "body": [
+        "平方差 a² − b² = (a − b)(a + b)；立方差 a³ − b³ = (a − b)(a² + ab + b²)；二次式用十字交乘。",
+        "看不出來時，已知 x = a 是根，就用長除法或比較係數把 (x − a) 除出來。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 約完還沒完",
+      "body": [
+        "約一次之後再代入。還是 0/0：分子分母還有 (x − a)，再約一次（重根）。",
+        "分母變成非 0：直接代，得到答案。",
+        "分母還是 0、分子不是 0：k/0 型，極限是 ±∞ 或左右不同號而不存在（〈無窮極限與垂直漸近線〉）。"
+      ],
+      "collapsible": false
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "二次式",
+      "prompt": "lim_{x→3} (x² − x − 6)/(x − 3)",
+      "problemId": "fd-lim-003",
+      "steps": [
+        "代 x = 3：9 − 3 − 6 = 0，分母 0，是 0/0。所以分子有 (x − 3) 這個因式。",
+        "十字交乘：x² − x − 6 = (x − 3)(x + 2)。",
+        "x ≠ 3，約掉 x − 3，剩 x + 2。",
+        "代 x = 3：5。"
+      ],
+      "answer": "5",
+      "claim": "x^2-x-6 == (x-3)(x+2) ;; LIM((x^2-x-6)/(x-3), 3) == 5"
+    },
+    {
+      "title": "立方差與平方差",
+      "prompt": "lim_{x→1} (x³ − 1)/(x² − 1)",
+      "problemId": "lec-01-q1b",
+      "steps": [
+        "代 x = 1：0/0。",
+        "分子立方差：x³ − 1 = (x − 1)(x² + x + 1)。分母平方差：x² − 1 = (x − 1)(x + 1)。",
+        "約掉 x − 1：(x² + x + 1)/(x + 1)。",
+        "代 x = 1：3/2。"
+      ],
+      "answer": "3/2",
+      "claim": "x^3-1 == (x-1)(x^2+x+1) ;; LIM((x^3-1)/(x^2-1), 1) == 3/2"
+    },
+    {
+      "title": "要約兩次",
+      "prompt": "lim_{x→1} (x³ − 3x + 2)/(x² − 2x + 1)",
+      "steps": [
+        "代 x = 1：分子 1 − 3 + 2 = 0，分母 1 − 2 + 1 = 0。",
+        "分子除以 (x − 1)：x³ − 3x + 2 = (x − 1)(x² + x − 2)。x² + x − 2 在 1 也是 0，再拆：(x − 1)(x + 2)。所以分子 = (x − 1)²(x + 2)。",
+        "分母 = (x − 1)²。",
+        "約掉 (x − 1)²：剩 x + 2，代 x = 1 得 3。只約一次會得到 (x − 1)(x + 2)/(x − 1)²，代入仍是 0/0。"
+      ],
+      "answer": "3",
+      "claim": "x^3-3x+2 == (x-1)^2(x+2) ;; LIM((x^3-3x+2)/(x^2-2x+1), 1) == 3"
+    }
+  ],
+  "pitfalls": [
+    "把 0/0 當成 0 或 1。",
+    "立方差中間項的號寫錯：x³ − 8 = (x − 2)(x² + 2x + 4)，第二個因式全是加號。",
+    "約分之後又代回原式，再得到一次 0/0。",
+    "約一次還是 0/0 就說極限不存在。",
+    "分解號錯：x² − x − 6 寫成 (x + 3)(x − 2)。展開檢查一次就抓得到。"
+  ],
+  "checks": [
+    {
+      "ask": "lim_{x→4} (x² − 16)/(x − 4) 是？",
+      "options": [
+        { "label": "0", "why": "代入得 0/0 不是答案。約掉 x − 4 後是 x + 4，代 4 得 8。" },
+        { "label": "4", "why": "約完剩 x + 4，不是 x；代 4 得 8。" },
+        { "label": "8", "correct": true }
+      ]
+    },
+    {
+      "ask": "x³ − 8 的因式分解是？",
+      "options": [
+        { "label": "(x − 2)(x² + 2x + 4)", "correct": true },
+        { "label": "(x − 2)(x² − 2x + 4)", "why": "立方差 a³ − b³ 的第二個因式全是加號；中間是 −2x 的是立方和 x³ + 8 的分解。" },
+        { "label": "(x − 2)(x² + 4)", "why": "展開是 x³ − 2x² + 4x − 8，多了 −2x² + 4x。" }
+      ]
+    },
+    {
+      "ask": "lim_{x→2} (x³ − 8)/(x − 2) 是？",
+      "options": [
+        { "label": "4", "why": "約完是 x² + 2x + 4，代 2 是 4 + 4 + 4 = 12。" },
+        { "label": "12", "correct": true },
+        { "label": "0", "why": "0/0 不是 0。" }
+      ]
+    },
+    {
+      "ask": "lim_{x→−1} (x² − 1)/(x² + 2x + 1) 是？",
+      "options": [
+        { "label": "1", "why": "分子 (x − 1)(x + 1)、分母 (x + 1)²，約完是 (x − 1)/(x + 1)，不是 1。" },
+        { "label": "0", "why": "約完分子 → −2、分母 → 0，是 k/0 型，不是 0。" },
+        { "label": "不存在", "correct": true }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": ["factoring"],
+    "fine": ["factor-difference-squares", "factor-trinomial", "factor-cubic-difference", "factor-repeated-root", "factor-after-cancel-check"]
+  },
+  "practice": [
+    { "id": "cx-lim-002", "core": true, "trains": "factor-difference-squares" },
+    { "id": "fd-lim-004", "core": true, "trains": "factor-difference-squares" },
+    { "id": "lim-003", "core": true, "trains": "factor-difference-squares" },
+    { "id": "cx-lim-009", "core": true, "trains": "factor-cubic-difference" },
+    { "id": "tmpl-lim-factor-002", "trains": "factor-difference-squares" },
+    { "id": "tb-lh-003", "challenge": true, "trains": "factor-cubic-difference", "note": "挑戰：x⁵ − 1 = (x − 1)(x⁴ + x³ + x² + x + 1)，跟立方差同一個道理。" },
+    { "id": "lx-con-003", "challenge": true, "trains": "factor-after-cancel-check", "note": "挑戰：要有洞，分子在 x = 3 也得是 0。" }
+  ],
+  "gaps": [
+    { "tag": "factor-trinomial", "count": 2, "note": "R1：二次式十字交乘後約分（範例 1 用掉了 fd-lim-003）" },
+    { "tag": "factor-repeated-root", "count": 2, "note": "R2：要約兩次的重根題" },
+    { "tag": "factor-after-cancel-check", "count": 1, "note": "R2：約完變 k/0、極限不存在的題" }
+  ]
+}

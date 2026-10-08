@@ -1,0 +1,152 @@
+{
+  "id": "total-differential",
+  "title": "全微分",
+  "readMinutes": 9,
+  "totalMinutes": 30,
+  "prerequisites": ["partial-derivatives", "differentials-error"],
+  "next": ["multivariable-linearization"],
+  "related": ["tangent-plane", "path-test"],
+  "objectives": [
+    "寫出 df = f_x dx + f_y dy，說得出每一項是哪個變數造成的變化。",
+    "用全微分估計 Δf，以及量測誤差造成的最大誤差。",
+    "知道「偏導數存在」不保證可微；偏導數在附近連續才保證。"
+  ],
+  "visual": "曲面 z = x²y 在 (2, 1) 附近，從底下的點 (2, 1) 畫一個小箭頭 (dx, dy)。箭頭的 x 分量造成的高度變化 f_x dx 與 y 分量造成的 f_y dy 用兩段不同顏色的線疊起來，總長就是 df；旁邊同時畫曲面上真正的高度差 Δf。把箭頭縮短，兩者的差距縮得比箭頭本身快得多。",
+  "concept": [
+    {
+      "heading": "① 兩個變數同時動一點點",
+      "body": [
+        "單變數時，x 動 dx，f 大約變 f′(x) dx（〈微分與誤差估計〉）。現在 f(x, y) 有兩個輸入，x 動 dx、y 也動 dy，f 變多少？",
+        "人話：x 的變動貢獻 f_x dx，y 的變動貢獻 f_y dy，兩份加起來："
+      ],
+      "tex": ["df = f_x\\,dx + f_y\\,dy"],
+      "collapsible": false
+    },
+    {
+      "heading": "② 精確的 Δf 與線性的 df",
+      "body": [
+        "真正的變化是 Δf = f(a + dx, b + dy) − f(a, b)。df 只是它的線性部分，丟掉的是 dx²、dx·dy 這類更小的量。dx、dy 越小，df 越準。",
+        "例：f = xy，從 (3, 2) 走到 (3.1, 2.1)。df = y dx + x dy = 2(0.1) + 3(0.1) = 0.5；真正的 Δf = 3.1 × 2.1 − 6 = 0.51。差的 0.01 正是 dx·dy。",
+        "圖像：df 是沿著〈切平面〉走的高度差，Δf 是沿著曲面走的高度差。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 誤差估計：最壞情況取絕對值",
+      "body": [
+        "量測時只知道誤差的上限 |dx| ≤ 0.01，不知道正負。最壞情況是每一項都往同一邊加：|df| ≤ |f_x||dx| + |f_y||dy|。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 直覺，不是證明：為什麼可以把兩份加起來",
+      "body": [
+        "想像先動 x、再動 y：第一段 f 約變 f_x dx，第二段約變 f_y dy。這個說法漏了一件事：第二段是在 (a + dx, b) 量斜率，不是在 (a, b)。要讓這個差距可以忽略，需要比「偏導數存在」更強的條件。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "可微的正式條件",
+      "body": [
+        "f 在 (a, b) 可微，意思是 f(a + h, b + k) = f(a, b) + f_x h + f_y k + ε·√(h² + k²)，其中 (h, k) → (0, 0) 時 ε → 0。只有可微，df 才是 Δf 的好近似。",
+        "偏導數存在不夠：f = xy/(x² + y²)、f(0, 0) = 0。沿兩軸 f 都是 0，所以 f_x(0, 0) = f_y(0, 0) = 0；但沿 y = x 時 f = 1/2，f 在原點連第一步「連續」都沒有（〈路徑測試〉），更不可微。",
+        "常用的充分條件：f_x、f_y 在 (a, b) 附近存在而且連續，則 f 在 (a, b) 可微。"
+      ],
+      "collapsible": true
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "用全微分估計變化",
+      "prompt": "f(x, y) = x²y，在 (2, 1)，dx = 0.01、dy = −0.02，估計 Δf。",
+      "problemId": "der-041",
+      "steps": [
+        "偏導數：f_x = 2xy，f_y = x²。在 (2, 1)：f_x = 4，f_y = 4。",
+        "df = 4(0.01) + 4(−0.02) = 0.04 − 0.08 = −0.04。",
+        "對照：真正的 Δf = (2.01)²(0.98) − 4 ≈ −0.0407，跟 −0.04 很接近。"
+      ],
+      "answer": "Δf ≈ −0.04",
+      "claim": "D(x^2*y, 2, x) == 4*y ;; D(x^2*y, 1, y) == x^2 ;; 4*0.01 + 4*(-0.02) == -0.04 ;; 2.01^2*0.98 - 4 == -0.040702"
+    },
+    {
+      "title": "量測誤差：圓柱體積",
+      "prompt": "圓柱半徑 r = 3 cm、高 h = 10 cm，量測誤差分別至多 0.01 cm 與 0.02 cm。估計 V = πr²h 的最大誤差。",
+      "problemId": "lec-17-q1c",
+      "steps": [
+        "V_r = 2πrh = 60π，V_h = πr² = 9π。",
+        "最壞情況兩項同號：|dV| ≤ 60π(0.01) + 9π(0.02) = 0.6π + 0.18π = 0.78π。",
+        "0.78π ≈ 2.45 cm³。半徑的誤差雖然只有 0.01，但乘上 60π 之後是主要來源。"
+      ],
+      "answer": "0.78π ≈ 2.45 cm³",
+      "claim": "D(pi*x^2*10, 3) == 60*pi ;; D(pi*9*x, 10) == 9*pi ;; 60*pi*0.01 + 9*pi*0.02 == 0.78*pi"
+    },
+    {
+      "title": "寫出 df",
+      "prompt": "f(x, y) = e^{xy}，寫出 df。",
+      "problemId": "der-044",
+      "steps": [
+        "對 x 偏微分，y 當常數：f_x = y e^{xy}。",
+        "對 y 偏微分，x 當常數：f_y = x e^{xy}。",
+        "df = y e^{xy} dx + x e^{xy} dy。"
+      ],
+      "answer": "df = y e^{xy} dx + x e^{xy} dy",
+      "claim": "D(e^(x*y), , x) == y*e^(x*y) ;; D(e^(x*y), , y) == x*e^(x*y)"
+    }
+  ],
+  "pitfalls": [
+    "把 df 寫成 f_x + f_y，忘了乘 dx、dy。",
+    "誤差估計時讓兩項互相抵消；只知道上限時要取絕對值相加。",
+    "把 df 當成精確的 Δf；它只是線性部分。",
+    "以為偏導數存在就可微。"
+  ],
+  "checks": [
+    {
+      "ask": "f(x, y) = x² + 3y，df 是？",
+      "options": [
+        { "label": "2x dx + 3 dy", "correct": true },
+        { "label": "2x + 3", "why": "那是兩個偏導數相加，沒有乘上各自的變動量 dx、dy。" },
+        { "label": "2x dx", "why": "y 也在動，f_y dy = 3 dy 不能漏。" }
+      ]
+    },
+    {
+      "ask": "f = xy，從 (3, 2) 到 (3.1, 2.1)，df 是？",
+      "options": [
+        { "label": "0.5", "correct": true },
+        { "label": "0.51", "why": "那是精確的 Δf；df 只取線性部分 y dx + x dy，少了 dx·dy = 0.01。" },
+        { "label": "0.01", "why": "那正好是 df 丟掉的 dx·dy，不是 df 本身。" }
+      ]
+    },
+    {
+      "ask": "V = πr²h，r 的相對誤差 1%、h 的相對誤差 2%。V 的相對誤差大約至多？",
+      "options": [
+        { "label": "4%", "correct": true },
+        { "label": "3%", "why": "r 是平方：dV/V = 2 dr/r + dh/h，r 的 1% 要算兩次。" },
+        { "label": "2%", "why": "誤差會累加，不是取最大的那一個。" }
+      ]
+    },
+    {
+      "ask": "f_x(a, b)、f_y(a, b) 都存在，f 在 (a, b) 一定可微嗎？",
+      "options": [
+        { "label": "不一定；偏導數在附近連續才保證可微", "correct": true },
+        { "label": "一定", "why": "xy/(x² + y²) 在原點兩個偏導數都是 0，卻連連續都不是。" },
+        { "label": "一定不可微", "why": "大多數常見函數偏導數存在而且可微，例如多項式。" }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": ["total-differential", "linearization", "multivariable"],
+    "fine": ["total-differential-formula", "total-differential-estimate", "total-differential-error-bound", "differentiability-condition"]
+  },
+  "practice": [
+    { "id": "der-044", "core": true, "trains": "total-differential-formula" },
+    { "id": "der-041", "core": true, "trains": "total-differential-estimate" },
+    { "id": "der-042", "core": true, "trains": "total-differential-estimate" },
+    { "id": "der-043", "core": true, "trains": "total-differential-estimate" },
+    { "id": "lec-17-q1c", "core": true, "trains": "total-differential-error-bound" },
+    { "id": "der-045", "trains": "total-differential-formula" }
+  ],
+  "gaps": [
+    { "tag": "differentiability-condition", "count": 2, "note": "R3：判斷偏導數存在但不可微（xy/(x² + y²) 型）的觀念題。" },
+    { "tag": "total-differential-error-bound", "count": 2, "note": "R2–R3：相對誤差 dV/V = 2 dr/r + dh/h 這類百分比估計。" }
+  ]
+}

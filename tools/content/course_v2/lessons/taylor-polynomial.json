@@ -1,0 +1,241 @@
+{
+  "id": "taylor-polynomial",
+  "title": "Taylor 多項式",
+  "readMinutes": 9,
+  "totalMinutes": 35,
+  "prerequisites": [
+    "linear-approximation",
+    "higher-derivatives"
+  ],
+  "next": [
+    "taylor-series"
+  ],
+  "related": [
+    "power-series",
+    "maclaurin-series",
+    "taylor-error"
+  ],
+  "objectives": [
+    "說出 Taylor 多項式的想法：在 a 點與 f 有相同的值、一階、二階……到 n 階導數。",
+    "推出並使用係數公式 f⁽ᵏ⁾(a)/k!。",
+    "寫出中心不在 0 的 Taylor 多項式，並用它估計函數值。"
+  ],
+  "visual": "y = cos x 的圖形上，依序疊上 T₀ = 1、T₂ = 1 − x²/2、T₄、T₆ ……。每加一階，多項式貼住曲線的範圍就往兩側延伸一段；在離 0 較遠的地方，多項式仍然甩開曲線。滑桿切換中心 a，所有多項式改成貼著 a 附近。",
+  "concept": [
+    {
+      "heading": "① 從切線再往前一步",
+      "body": [
+        "〈線性近似〉用切線 f(a) + f′(a)(x − a) 近似 f：它跟 f 在 a 點的值一樣、斜率一樣。但切線不會彎，離 a 遠一點就差很多。",
+        "想法：用二次多項式，讓它在 a 點的值、斜率、彎曲程度（二階導數）都跟 f 一樣；再不夠，就用三次、四次……。對準的導數越多，貼合得越好。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 係數怎麼來",
+      "body": [
+        "設 T(x) = c₀ + c₁(x − a) + c₂(x − a)² + … + cₙ(x − a)ⁿ。把它微分 k 次再代 x = a：比 k 次低的項都微成 0，比 k 次高的項代 a 都是 0，只剩 (x − a)ᵏ 那項微分 k 次得 k! · cₖ。",
+        "要 T⁽ᵏ⁾(a) = f⁽ᵏ⁾(a)，就得 k! · cₖ = f⁽ᵏ⁾(a)，也就是 cₖ = f⁽ᵏ⁾(a)/k!。這樣得到的多項式叫 n 階 Taylor 多項式："
+      ],
+      "tex": [
+        "T_n(x)=\\sum_{k=0}^{n}\\frac{f^{(k)}(a)}{k!}(x-a)^k=f(a)+f'(a)(x-a)+\\frac{f''(a)}{2!}(x-a)^2+\\cdots"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 幾個要點",
+      "body": [
+        "T₁ 就是切線。中心 a = 0 時特別常用，叫 Maclaurin 多項式（〈Maclaurin 級數〉）。",
+        "係數是常數：先求出 f⁽ᵏ⁾(x)，再代 a。",
+        "n 階 Taylor 多項式的次數最多是 n；某些導數在 a 是 0 時，那一項就不見了（例如 cos x 只有偶次項）。",
+        "它在 a 附近很準，但離 a 越遠通常越差。準到什麼程度，要等〈Taylor 誤差〉。"
+      ],
+      "collapsible": false
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "eˣ 在 0",
+      "prompt": "求 eˣ 在 x = 0 的三階 Taylor 多項式 T₃，並計算 T₃(1)。",
+      "problemId": "tr-val-001",
+      "steps": [
+        "eˣ 的每一階導數都是 eˣ，在 0 的值都是 1。",
+        "T₃(x) = 1 + x + x²/2! + x³/3! = 1 + x + x²/2 + x³/6。",
+        "T₃(1) = 1 + 1 + 1/2 + 1/6 = 8/3 ≈ 2.667，而 e ≈ 2.718。"
+      ],
+      "answer": "T₃(1) = 8/3",
+      "claim": "SUB(1+x+x^2/2+x^3/6, 1) == 8/3"
+    },
+    {
+      "title": "中心不在 0",
+      "prompt": "求 f(x) = √x 在 a = 4 的二階 Taylor 多項式，並估計 √4.1。",
+      "problemId": "lec-15-q1b",
+      "steps": [
+        "f(4) = 2。f′(x) = 1/(2√x)，f′(4) = 1/4。f″(x) = −1/(4x^{3/2})，f″(4) = −1/(4 · 8) = −1/32。",
+        "T₂(x) = 2 + (1/4)(x − 4) + (−1/32)/2! · (x − 4)² = 2 + (x − 4)/4 − (x − 4)²/64。",
+        "x = 4.1，x − 4 = 0.1：T₂ = 2 + 0.025 − 0.01/64 = 2.02484375。",
+        "真正的 √4.1 ≈ 2.0248457，只差約 2 × 10⁻⁶。"
+      ],
+      "answer": "T₂(4.1) = 2.02484375",
+      "claim": "D(sqrt(x), 4) == 1/4 ;; D2(sqrt(x), 4) == -1/32 ;; SUB(2+(x-4)/4-(x-4)^2/64, 4.1) == 2.02484375"
+    },
+    {
+      "title": "只有偶次項",
+      "prompt": "求 cos x 在 0 的四階 Taylor 多項式，並計算 T₄(1/2)。",
+      "problemId": "tr-val-003",
+      "steps": [
+        "導數循環：cos、−sin、−cos、sin、cos。在 0 的值：1、0、−1、0、1。",
+        "T₄(x) = 1 + 0 · x − x²/2! + 0 · x³ + x⁴/4! = 1 − x²/2 + x⁴/24。",
+        "T₄(1/2) = 1 − 1/8 + 1/384 = 337/384 ≈ 0.87760，cos(1/2) ≈ 0.87758。"
+      ],
+      "answer": "337/384",
+      "claim": "D2(cos(x), 0) == -1 ;; SUB(1-x^2/2+x^4/24, 1/2) == 337/384"
+    }
+  ],
+  "pitfalls": [
+    "係數忘了除以 k!。",
+    "係數寫成 f⁽ᵏ⁾(x)，沒有代 a。",
+    "中心是 a 卻寫成 xᵏ 而不是 (x − a)ᵏ。",
+    "漏了常數項 f(a)。"
+  ],
+  "checks": [
+    {
+      "ask": "Tₙ(x) 裡 (x − a)ᵏ 的係數是？",
+      "options": [
+        {
+          "label": "f⁽ᵏ⁾(a)/k!",
+          "correct": true
+        },
+        {
+          "label": "f⁽ᵏ⁾(a)",
+          "why": "(x − a)ᵏ 微分 k 次會冒出 k!，要除掉它，T⁽ᵏ⁾(a) 才會等於 f⁽ᵏ⁾(a)。"
+        },
+        {
+          "label": "f⁽ᵏ⁾(x)/k!",
+          "why": "係數要是常數；f⁽ᵏ⁾ 要在中心 a 取值。"
+        }
+      ]
+    },
+    {
+      "ask": "eˣ 在 0 的二階 Taylor 多項式是？",
+      "options": [
+        {
+          "label": "1 + x + x²/2",
+          "correct": true
+        },
+        {
+          "label": "1 + x + x²",
+          "why": "二次項要除以 2! = 2。"
+        },
+        {
+          "label": "x + x²/2",
+          "why": "漏了常數項 f(0) = e⁰ = 1。"
+        }
+      ]
+    },
+    {
+      "ask": "一階 Taylor 多項式 T₁ 是？",
+      "options": [
+        {
+          "label": "f 在 a 的切線",
+          "correct": true
+        },
+        {
+          "label": "通過 (a, f(a)) 與 (b, f(b)) 的割線",
+          "why": "T₁ 只用 a 點的資訊：值與導數；它就是切線 f(a) + f′(a)(x − a)。"
+        },
+        {
+          "label": "常數 f(a)",
+          "why": "那是 T₀；T₁ 多了一次項 f′(a)(x − a)。"
+        }
+      ]
+    },
+    {
+      "ask": "sin x 在 0 的三階 Taylor 多項式是？",
+      "options": [
+        {
+          "label": "x − x³/6",
+          "correct": true
+        },
+        {
+          "label": "x − x³/3",
+          "why": "三次項的係數是 f‴(0)/3! = −1/6，不是除以 3。"
+        },
+        {
+          "label": "1 − x²/2",
+          "why": "這是 cos x 的二階多項式；sin 0 = 0，所以沒有常數項。"
+        }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": [
+      "taylor-polynomial",
+      "taylor"
+    ],
+    "fine": [
+      "taylor-poly-coefficients",
+      "taylor-poly-center-a",
+      "taylor-poly-evaluate"
+    ]
+  },
+  "practice": [
+    {
+      "id": "tr-val-001",
+      "core": true,
+      "trains": "taylor-poly-evaluate"
+    },
+    {
+      "id": "tr-val-002",
+      "core": true,
+      "trains": "taylor-poly-evaluate"
+    },
+    {
+      "id": "lec-15-m4",
+      "core": true,
+      "trains": "taylor-poly-coefficients"
+    },
+    {
+      "id": "lec-15-q1a",
+      "core": true,
+      "trains": "taylor-poly-center-a"
+    },
+    {
+      "id": "lec-15-q1b",
+      "core": true,
+      "trains": "taylor-poly-center-a"
+    },
+    {
+      "id": "tr-val-003",
+      "trains": "taylor-poly-evaluate"
+    },
+    {
+      "id": "tr-val-004",
+      "trains": "taylor-poly-evaluate"
+    },
+    {
+      "id": "tr-val-005",
+      "trains": "taylor-poly-coefficients"
+    },
+    {
+      "id": "lec-15-m1",
+      "trains": "taylor-poly-coefficients"
+    },
+    {
+      "id": "gap-ser-taylor-002",
+      "trains": "taylor-poly-coefficients"
+    },
+    {
+      "id": "tr-val-007",
+      "challenge": true,
+      "trains": "taylor-poly-coefficients",
+      "note": "挑戰：e^{−x²} 直接微分很累；先把 eᵘ 的多項式中的 u 換成 −x²，再只留到四次。"
+    }
+  ],
+  "gaps": [
+    {
+      "tag": "taylor-poly-center-a",
+      "count": 3,
+      "note": "R2–R3：中心不在 0 的 Taylor 多項式（如 ln x 在 a = 1、1/x 在 a = 2、sin x 在 a = π/6），題庫只有 √x 在 4 一組。"
+    }
+  ]
+}

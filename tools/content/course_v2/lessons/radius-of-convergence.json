@@ -1,0 +1,272 @@
+{
+  "id": "radius-of-convergence",
+  "title": "收斂半徑",
+  "readMinutes": 9,
+  "totalMinutes": 35,
+  "prerequisites": [
+    "power-series",
+    "ratio-test",
+    "root-test"
+  ],
+  "next": [
+    "interval-of-convergence"
+  ],
+  "related": [
+    "sequence-limit"
+  ],
+  "objectives": [
+    "說出冪級數收斂範圍的三種可能：只有中心（R = 0）、全部實數（R = ∞）、或以中心為圓心半徑 R 的區間。",
+    "用比值（或根值）判別對整個項做計算，求出 R。",
+    "處理只有偶次方的級數，以及 R = 0、R = ∞ 的情況。"
+  ],
+  "visual": "x 軸上以中心 a 為圓心畫一段可伸縮的區間。對 Σ xⁿ/(n·3ⁿ)，取不同的 x 點擊：|x| < 3 的點亮綠色並顯示部分和收斂，|x| > 3 的點亮紅色、部分和爆掉，正好落在 ±3 的兩個端點標成問號：收斂半徑只負責內部和外部，端點留給下一課。",
+  "concept": [
+    {
+      "heading": "① 三種可能，沒有第四種",
+      "body": [
+        "冪級數 Σ cₙ(x − a)ⁿ 的收斂範圍只有三種樣子：",
+        "R = 0：只在 x = a 收斂。R = ∞：所有實數都絕對收斂。0 < R < ∞：|x − a| < R 時絕對收斂，|x − a| > R 時發散；|x − a| = R 的兩個端點，定理什麼都不說，要各自檢查（〈收斂區間〉）。",
+        "這個 R 叫收斂半徑。收斂範圍不會是兩段分開的區間，也不會只在中心的一側。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 怎麼算：對整個項用比值判別",
+      "body": [
+        "把 x 當成固定的數，對 Σ |cₙ(x − a)ⁿ| 用〈比值判別〉。",
+        "若 |cₙ₊₁/cₙ| → L，比值的極限是 L|x − a|。要它 < 1，得 |x − a| < 1/L，所以 R = 1/L。L = 0 時 R = ∞；L = ∞ 時 R = 0。",
+        "係數是「某某的 n 次方」時，改用〈根值判別〉：|cₙ|^{1/n} → L，一樣 R = 1/L。"
+      ],
+      "tex": [
+        "\\left|\\frac{c_{n+1}(x-a)^{n+1}}{c_n (x-a)^{n}}\\right| \\to L\\,\\lvert x-a\\rvert<1 \\iff \\lvert x-a\\rvert<\\frac{1}{L}"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 兩個常見的細節",
+      "body": [
+        "多項式因子不影響 R：Σ n⁵xⁿ、Σ xⁿ/n² 的 R 都是 1，因為 (n + 1)⁵/n⁵ → 1（或 n^{1/n} → 1）。真正決定 R 的是指數型的部分（3ⁿ、n! 之類）。",
+        "只有偶次方（例如 Σ x²ⁿ/9ⁿ）時，不要套 cₙ₊₁/cₙ：奇數次的係數是 0，比值沒有意義。直接對整個項算比值：|x²ⁿ⁺²/9ⁿ⁺¹| ÷ |x²ⁿ/9ⁿ| = x²/9 < 1，得 |x| < 3。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 為什麼只有三種",
+      "body": [
+        "關鍵引理：若級數在某個 x₀ ≠ a 收斂，則所有 |x − a| < |x₀ − a| 的 x 都絕對收斂。理由：收斂表示各項 cₙ(x₀ − a)ⁿ → 0，所以有界，|cₙ(x₀ − a)ⁿ| ≤ M。於是 |cₙ(x − a)ⁿ| ≤ M · rⁿ，其中 r = |x − a|/|x₀ − a| < 1，跟幾何級數比較即得。收斂的點會把整個更靠近中心的範圍「拉進來」，取這些 |x₀ − a| 的最小上界就是 R。"
+      ],
+      "collapsible": true
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "標準題",
+      "prompt": "求 Σ_{n=1}^∞ xⁿ/(n · 3ⁿ) 的收斂半徑。",
+      "problemId": "cx-smid-007",
+      "steps": [
+        "整個項的比值：|xⁿ⁺¹/((n + 1)3ⁿ⁺¹)| ÷ |xⁿ/(n · 3ⁿ)| = (n/(n + 1)) · |x|/3。",
+        "n → ∞：→ |x|/3。要 |x|/3 < 1，得 |x| < 3。",
+        "R = 3。分母的 n 不影響半徑，決定的是 3ⁿ。"
+      ],
+      "answer": "R = 3",
+      "claim": "LIM((x/(x+1))/3, inf) == 1/3"
+    },
+    {
+      "title": "兩個極端",
+      "prompt": "求 Σ n! xⁿ 與 Σ xⁿ/n! 的收斂半徑。",
+      "problemId": "lec-14-m2",
+      "steps": [
+        "Σ n! xⁿ：比值 (n + 1)! |x|ⁿ⁺¹/(n! |x|ⁿ) = (n + 1)|x|。只要 x ≠ 0 就 → ∞ > 1，發散。R = 0。",
+        "Σ xⁿ/n!：比值 |x|/(n + 1)。不管 x 是多少都 → 0 < 1，收斂。R = ∞。",
+        "階乘在分子還是分母，決定了半徑是 0 還是 ∞。"
+      ],
+      "answer": "R = 0；R = ∞",
+      "claim": "LIM(1/(x+1), inf) == 0"
+    },
+    {
+      "title": "階乘的比值",
+      "prompt": "求 Σ_{n=0}^∞ ((2n)!/(n!)²) xⁿ 的收斂半徑。",
+      "problemId": "rel-hard-ser-001",
+      "steps": [
+        "cₙ₊₁/cₙ = ((2n + 2)!/((n + 1)!)²) · ((n!)²/(2n)!) = (2n + 2)(2n + 1)/(n + 1)²。",
+        "→ 4（分子分母都是二次，領導係數 4 與 1）。",
+        "R = 1/4。"
+      ],
+      "answer": "R = 1/4",
+      "claim": "LIM((2x+2)*(2x+1)/(x+1)^2, inf) == 4"
+    }
+  ],
+  "pitfalls": [
+    "把 R 寫成 L 而不是 1/L。",
+    "只有偶次方時還用 cₙ₊₁/cₙ。",
+    "以為多項式因子（n、n²）會改變 R。",
+    "以為 |x − a| = R 的端點也由比值判別決定。"
+  ],
+  "checks": [
+    {
+      "ask": "Σ n xⁿ/5ⁿ 的收斂半徑是？",
+      "options": [
+        {
+          "label": "5",
+          "correct": true
+        },
+        {
+          "label": "1/5",
+          "why": "比值 → |x|/5，要 < 1 得 |x| < 5。L = 1/5 是比值的係數，R 是它的倒數。"
+        },
+        {
+          "label": "1",
+          "why": "n 這個多項式因子不影響 R，但 5ⁿ 會。"
+        }
+      ]
+    },
+    {
+      "ask": "Σ x²ⁿ/(n² 9ⁿ) 的收斂半徑是？",
+      "options": [
+        {
+          "label": "3",
+          "correct": true
+        },
+        {
+          "label": "9",
+          "why": "每一項是 (x²)ⁿ，比值 → x²/9，條件是 x² < 9，也就是 |x| < 3。"
+        },
+        {
+          "label": "1/9",
+          "why": "R 是 x 能走多遠；x²/9 < 1 給的是 |x| < 3。"
+        }
+      ]
+    },
+    {
+      "ask": "某冪級數 Σ cₙxⁿ 的收斂半徑 R = 2。在 x = 3？",
+      "options": [
+        {
+          "label": "發散",
+          "correct": true
+        },
+        {
+          "label": "收斂",
+          "why": "|x| > R 時一定發散，這是定理的一部分。"
+        },
+        {
+          "label": "要另外檢查",
+          "why": "需要另外檢查的只有 |x| = R 的兩個端點；x = 3 在外面，一定發散。"
+        }
+      ]
+    },
+    {
+      "ask": "Σ 3ⁿ xⁿ/n² 的收斂半徑是？",
+      "options": [
+        {
+          "label": "1/3",
+          "correct": true
+        },
+        {
+          "label": "3",
+          "why": "3ⁿ 在係數裡（分子），比值 → 3|x|，要 < 1 得 |x| < 1/3。"
+        },
+        {
+          "label": "1",
+          "why": "n² 不影響，但 3ⁿ 會讓半徑縮成 1/3。"
+        }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": [
+      "radius",
+      "power-series",
+      "ratio-test",
+      "root-test"
+    ],
+    "fine": [
+      "radius-ratio",
+      "radius-root",
+      "radius-extreme-cases",
+      "radius-even-powers"
+    ]
+  },
+  "practice": [
+    {
+      "id": "lec-14-m1",
+      "core": true,
+      "trains": "radius-ratio"
+    },
+    {
+      "id": "rel-basic-022",
+      "core": true,
+      "trains": "radius-ratio"
+    },
+    {
+      "id": "cx-smid-007",
+      "core": true,
+      "trains": "radius-ratio"
+    },
+    {
+      "id": "exam-ser-001",
+      "core": true,
+      "trains": "radius-ratio"
+    },
+    {
+      "id": "lec-14-m2",
+      "core": true,
+      "trains": "radius-extreme-cases"
+    },
+    {
+      "id": "lec-14-m3",
+      "core": true,
+      "trains": "radius-extreme-cases"
+    },
+    {
+      "id": "ser-039",
+      "trains": "radius-ratio"
+    },
+    {
+      "id": "uni-ser-019",
+      "trains": "radius-ratio"
+    },
+    {
+      "id": "uni-ser-014",
+      "trains": "radius-ratio"
+    },
+    {
+      "id": "ser-030",
+      "trains": "radius-ratio"
+    },
+    {
+      "id": "gap-ser-root-001",
+      "trains": "radius-root"
+    },
+    {
+      "id": "gap-ser-root-002",
+      "trains": "radius-root"
+    },
+    {
+      "id": "cx-smid-006",
+      "trains": "radius-ratio"
+    },
+    {
+      "id": "rel-hard-ser-001",
+      "trains": "radius-ratio"
+    },
+    {
+      "id": "rel-hard-ser-012",
+      "challenge": true,
+      "trains": "radius-ratio",
+      "note": "挑戰：係數 nⁿ/n!，比值化成 (1 + 1/n)ⁿ → e，R = 1/e。"
+    },
+    {
+      "id": "an-ls-004",
+      "challenge": true,
+      "trains": "radius-root",
+      "note": "挑戰：係數奇偶交錯，比值沒有極限；要用根值的上極限，取比較大的那個。"
+    }
+  ],
+  "gaps": [
+    {
+      "tag": "radius-even-powers",
+      "count": 2,
+      "note": "R2–R3：只有偶次方或奇次方的冪級數求 R（如 Σ x²ⁿ/4ⁿ、Σ (−1)ⁿx^{2n+1}/(2n + 1)），題庫只出現在收斂區間題裡。"
+    }
+  ]
+}

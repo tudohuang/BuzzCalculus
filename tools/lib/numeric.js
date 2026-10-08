@@ -472,6 +472,24 @@ function limit(f, target, options = {}) {
     if (spread > 1e-3 * Math.abs(median)) {
       return { value: Number.NaN, error: spread, reason: "不同取樣深度的外插不一致" };
     }
+    // 外插值不能落在序列「已經走過」的那一側。
+    // lim_{x→∞} 0.99^x 換成 t = 1/x → 0⁺ 之後，取樣序列先慢慢從 0.99 往下爬、
+    // 最後幾點已經是 e^{−180} 等級，但各窗格的外插一致地給出 1 —— 一個很穩、很錯的值。
+    // 尾端單調、而且真的在收斂（間距一路縮小）時，真正的極限一定在最後一點的前方（或就是它）；
+    // 落在後方代表外插被前段帶跑了。
+    // 間距在變大的尾端不套用：那是浮點抵消造成的漂移（burst-boss3-lim-007 的尾端一路往下滑過真正的極限
+    // 0.152778，外插值反而是對的），這種情況交給上面的雜訊截斷與窗格一致性處理。
+    const tail = clean.slice(-4);
+    const steps = tail.slice(1).map((v, i) => v - tail[i]);
+    const shrinking = steps.length >= 3 && steps.slice(1).every((s, i) => Math.abs(s) < Math.abs(steps[i]));
+    if (shrinking && (steps.every((s) => s > 0) || steps.every((s) => s < 0))) {
+      const direction = Math.sign(steps[steps.length - 1]);
+      const last = tail[tail.length - 1];
+      const slack = Math.abs(steps[steps.length - 1]) + 1e-6 * Math.max(1, Math.abs(last));
+      if ((median - last) * direction < -slack) {
+        return { value: Number.NaN, error: Infinity, reason: "外插值落在序列已經走過的一側（序列還沒收斂完就外插）" };
+      }
+    }
     return { value: median, error: spread };
   };
 

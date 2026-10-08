@@ -1,0 +1,165 @@
+{
+  "id": "ftc-part1",
+  "title": "微積分基本定理 I",
+  "readMinutes": 11,
+  "totalMinutes": 40,
+  "prerequisites": ["definite-signed-area", "integral-properties", "derivative-definition", "chain-rule"],
+  "next": ["ftc-part2"],
+  "related": ["u-sub-basic", "first-derivative-test", "extreme-value-theorem"],
+  "objectives": [
+    "讀得懂累積函數 A(x) = ∫ₐˣ f(t) dt：上限是變數，A(x) 是從 a 到 x 的有號面積。",
+    "會用 A′(x) = f(x)，以及上限是 g(x) 時的連鎖律版本。",
+    "從 f 的圖形判斷累積函數在哪裡遞增、在哪裡有極值。"
+  ],
+  "visual": "上半張圖畫 f(t)，從 t = a 到 t = x 的區域塗色（上方藍、下方紅）。拖動 x，塗色區域跟著伸縮。下半張圖同步畫出 A(x) = 塗色區域的有號面積，並在目前的 x 畫出 A 的切線，標出切線斜率。拖到任何位置，切線斜率都等於上半張圖在那裡的高度 f(x)；f 穿過 0 的地方，A 剛好走到山頂或谷底。",
+  "concept": [
+    {
+      "heading": "① 讓上限動起來",
+      "body": [
+        "固定下限 a，把上限換成變數 x：A(x) = ∫ₐˣ f(t) dt。每給一個 x，A(x) 就是從 a 到 x 的有號面積，所以 A 是 x 的函數，叫做累積函數。",
+        "積分變數改叫 t，只是為了不跟上限 x 撞名；t 積完就不見了，答案只跟 x 有關。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② A 變化得多快？",
+      "body": [
+        "x 往右走一小步 h，面積多了一條細長條：寬 h，高大約是 f(x)。所以 A(x + h) − A(x) ≈ f(x) · h。",
+        "兩邊除以 h，讓 h → 0，左邊正是〈導數定義〉。得到 A′(x) = f(x)：面積函數的導數，就是被積函數在上限的值。",
+        "這是直覺，不是證明：它假設那條細長條「差不多是矩形」，這需要 f 在 x 附近不亂跳，也就是 f 連續。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 定理",
+      "body": [
+        "f 在 [a, b] 上連續，A(x) = ∫ₐˣ f(t) dt，則 A 在 [a, b] 上可微（端點取單邊導數），而且 A′(x) = f(x)。",
+        "一個重要的推論：每個連續函數都有反導函數。例如 e^{t²} 沒有初等反導函數，但 ∫₀ˣ e^{t²} dt 就是它的一個反導函數（〈換元：基礎〉提過）。"
+      ],
+      "tex": ["\\frac{d}{dx}\\int_a^x f(t)\\,dt=f(x)"],
+      "collapsible": false
+    },
+    {
+      "heading": "嚴格證明",
+      "body": [
+        "取 h > 0（h < 0 同理）。由區間相接，A(x + h) − A(x) = ∫ₓ^{x+h} f(t) dt。",
+        "f 在 [x, x + h] 上連續，由〈極值定理〉取得最小值 m_h 與最大值 M_h。由〈積分性質〉的估計，m_h · h ≤ ∫ₓ^{x+h} f(t) dt ≤ M_h · h，除以 h：m_h ≤ (A(x + h) − A(x))/h ≤ M_h。",
+        "m_h = f(c_h)、M_h = f(d_h)，其中 c_h、d_h 都在 [x, x + h] 裡。h → 0⁺ 時 c_h、d_h 被夾向 x，由 f 在 x 連續，m_h、M_h 都 → f(x)。由夾擠，右導數是 f(x)；h < 0 的情況同理得左導數也是 f(x)，所以 A′(x) = f(x)。"
+      ],
+      "collapsible": true
+    },
+    {
+      "heading": "④ 上限是 g(x)：再乘 g′(x)",
+      "body": [
+        "∫ₐ^{g(x)} f(t) dt 是 A(g(x))，A 套著 g。由〈連鎖律 I：兩層〉，導數是 A′(g(x)) · g′(x) = f(g(x)) · g′(x)。",
+        "下限是 x 時，先對調上下限：∫ₓᵇ f(t) dt = −∫ᵦˣ f(t) dt，導數是 −f(x)。上下限都是變數，就從中間切開成兩段。"
+      ],
+      "tex": ["\\frac{d}{dx}\\int_a^{g(x)} f(t)\\,dt=f(g(x))\\,g'(x)"],
+      "collapsible": false
+    },
+    {
+      "heading": "⑤ 看 f 的圖，就知道 A 的形狀",
+      "body": [
+        "A′ = f，所以 f > 0 的地方 A 遞增，f < 0 的地方 A 遞減；f 由正變負的地方 A 有極大，由負變正的地方 A 有極小（〈一階導數判別〉）。"
+      ],
+      "collapsible": false
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "直接用",
+      "prompt": "F(x) = ∫₀ˣ cos(t²) dt，求 F′(x)。",
+      "steps": [
+        "下限是常數 0，上限就是 x，被積函數 cos(t²) 連續。",
+        "由基本定理 I，把 t 換成 x：F′(x) = cos(x²)。",
+        "不需要（也找不到）cos(t²) 的初等反導函數。"
+      ],
+      "answer": "F′(x) = cos(x²)",
+      "claim": "D(INT(cos(t^2),0,x,t)) == cos(x^2)"
+    },
+    {
+      "title": "上限是 x³",
+      "prompt": "求 d/dx ∫₁^{x³} ln t dt（x > 0）。",
+      "steps": [
+        "上限 g(x) = x³，g′(x) = 3x²。",
+        "被積函數代入上限：ln(x³) = 3 ln x。",
+        "相乘：3 ln x · 3x² = 9x² ln x。"
+      ],
+      "answer": "9x² ln x",
+      "claim": "D(INT(ln(t),1,x^3,t)) == 9*x^2*ln(x)"
+    },
+    {
+      "title": "從被積函數讀出極值",
+      "prompt": "g(x) = ∫₀ˣ (t − 1)(t − 4) dt。g 在哪裡有極大、極小？反曲點在哪？",
+      "steps": [
+        "g′(x) = (x − 1)(x − 4)，零點 x = 1、4。",
+        "x < 1 時 g′ > 0，1 < x < 4 時 g′ < 0，x > 4 時 g′ > 0。",
+        "g′ 在 x = 1 由正變負：極大；在 x = 4 由負變正：極小。",
+        "g″(x) = (x − 1)(x − 4) 的導數 = 2x − 5，在 x = 5/2 變號：反曲點 x = 5/2。"
+      ],
+      "answer": "極大 x = 1，極小 x = 4，反曲點 x = 5/2",
+      "claim": "D(INT((t-1)*(t-4),0,x,t)) == (x-1)*(x-4) ;; D2(INT((t-1)*(t-4),0,x,t)) == 2*x-5"
+    }
+  ],
+  "pitfalls": [
+    "上限是 x² 卻只寫 f(x²)，漏乘 2x。",
+    "把被積函數再微分一次：d/dx ∫ₐˣ t³ dt 寫成 3x²。",
+    "下限是 x 時忘了負號。",
+    "以為 A′(x) = f(x) − f(a)。下限是常數，對 x 微分時不會留下任何東西。",
+    "把 g′(x) = f(x) = 0 的點直接當極值，沒有檢查 f 有沒有變號。"
+  ],
+  "checks": [
+    {
+      "ask": "A(x) = ∫₂ˣ t³ dt。A′(x) 是？",
+      "options": [
+        { "label": "x³", "correct": true },
+        { "label": "3x²", "why": "你把被積函數又微分了一次。A′ 就是被積函數本身，在 x 取值。" },
+        { "label": "x⁴/4 − 4", "why": "那是 A(x) 本身（算出來的面積函數），還沒微分。" }
+      ]
+    },
+    {
+      "ask": "d/dx ∫₀^{x²} cos t dt 是？",
+      "options": [
+        { "label": "2x cos(x²)", "correct": true },
+        { "label": "cos(x²)", "why": "上限是 x²，不是 x，連鎖律還要乘 (x²)′ = 2x。" },
+        { "label": "cos x", "why": "被積函數要代入上限 x²，不是 x。" }
+      ]
+    },
+    {
+      "ask": "d/dx ∫ₓ⁵ f(t) dt 是（f 連續）？",
+      "options": [
+        { "label": "−f(x)", "correct": true },
+        { "label": "f(x)", "why": "x 在下限。先對調：∫ₓ⁵ f = −∫₅ˣ f，所以多一個負號。" },
+        { "label": "f(5) − f(x)", "why": "f(5) 是常數，對 x 微分不會出現；你把基本定理 II 的「上減下」套到這裡了。" }
+      ]
+    },
+    {
+      "ask": "g(x) = ∫₀ˣ f(t) dt。f 在 (0, 3) 上為正、在 (3, 5) 上為負。g 在 x = 3：",
+      "options": [
+        { "label": "有極大值", "correct": true },
+        { "label": "有極小值", "why": "g′ = f 在 3 由正變負，g 先升後降，是山頂不是谷底。" },
+        { "label": "g(3) = 0", "why": "f(3) = 0 表示 g′(3) = 0。g(3) 本身是 0 到 3 的有號面積，f 在那段為正，所以 g(3) > 0。" }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": ["ftc", "moving-limits", "accumulation", "chain-rule"],
+    "fine": ["ftc1-accumulation", "ftc1-direct", "ftc1-chain", "ftc1-two-limits", "ftc1-graph"]
+  },
+  "practice": [
+    { "id": "db-ftc-001", "core": true, "trains": "ftc1-direct" },
+    { "id": "lec-06-q2a", "core": true, "trains": "ftc1-direct" },
+    { "id": "lec-06-m1", "core": true, "trains": "ftc1-chain" },
+    { "id": "db-ftc-002", "core": true, "trains": "ftc1-chain" },
+    { "id": "lec-06-q2b", "core": true, "trains": "ftc1-two-limits" },
+    { "id": "ig-tap-001", "core": true, "trains": "ftc1-graph" },
+    { "id": "lec-06-q2c", "core": true, "trains": "ftc1-accumulation", "note": "兩邊對 x 微分，左邊就剩 f(x)。" },
+    { "id": "db-ftc-004", "trains": "ftc1-chain" },
+    { "id": "db-ftc-003", "trains": "ftc1-two-limits" },
+    { "id": "ig-tap-004", "trains": "ftc1-graph" },
+    { "id": "wg-acc-003", "trains": "ftc1-graph" },
+    { "id": "lec-06-q2d", "challenge": true, "trains": "ftc1-direct", "note": "挑戰：0/0 型，用 L'Hôpital 時分子的導數靠基本定理 I。" },
+    { "id": "db-ftc-006", "challenge": true, "trains": "ftc1-accumulation", "note": "挑戰：x 也出現在被積函數裡，要先把 x 提到積分外面再微分。" }
+  ],
+  "gaps": []
+}

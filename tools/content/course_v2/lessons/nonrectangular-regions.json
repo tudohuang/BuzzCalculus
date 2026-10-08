@@ -1,0 +1,154 @@
+{
+  "id": "nonrectangular-regions",
+  "title": "非矩形區域",
+  "readMinutes": 10,
+  "totalMinutes": 40,
+  "prerequisites": ["iterated-integral", "area-between-curves"],
+  "next": ["change-order"],
+  "related": ["area-dy", "double-integral"],
+  "objectives": [
+    "畫出區域，判斷用鉛直線掃（先 dy）還是水平線掃（先 dx）比較順。",
+    "寫出內層上下限是曲線、外層上下限是常數的累次積分。",
+    "知道一種寫法要切成好幾塊時，換另一種寫法可能只要一塊。"
+  ],
+  "visual": "平面上一塊由兩條曲線圍成的區域。一條鉛直線從左掃到右，每個位置都標出它「進入」區域的下界曲線與「離開」的上界曲線，線段長度隨 x 變化。切換成水平線由下往上掃，標出左界與右界；當某條界線中途換了曲線，那一段會閃爍，提示這種寫法要切塊。",
+  "concept": [
+    {
+      "heading": "① 矩形不夠用",
+      "body": [
+        "實際的區域常是兩條曲線夾出來的，例如 y = x² 與 y = x 之間。這時不能再寫 ∫_a^b ∫_c^d，因為 y 的範圍會隨 x 改變。",
+        "想法不變：還是由內往外的累次積分。差別只在內層的上下限不再是固定的數，而是曲線；整個課的功夫，都花在把這兩條曲線找對。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 鉛直線掃描（先 dy 後 dx）",
+      "body": [
+        "固定一個 x，畫一條鉛直線穿過區域。它從下界曲線 y = g₁(x) 進入、從上界曲線 y = g₂(x) 離開。這兩條曲線就是內層的上下限。再看 x 從哪裡掃到哪裡，那是外層的上下限 a、b。",
+        "例：y = x² 與 y = x 之間。x = 0.5 的鉛直線從 y = 0.25 進、從 y = 0.5 出；一般的 x 從 y = x² 進、從 y = x 出，而 x 從 0 掃到 1。",
+        "這種區域 D = {a ≤ x ≤ b, g₁(x) ≤ y ≤ g₂(x)} 有時叫做第一型區域。"
+      ],
+      "tex": ["\\iint_D f\\,dA=\\int_a^b\\!\\int_{g_1(x)}^{g_2(x)} f(x,y)\\,dy\\,dx"],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 水平線掃描（先 dx 後 dy）",
+      "body": [
+        "反過來，固定 y 畫水平線，從左界 x = h₁(y) 進、右界 x = h₂(y) 出，y 從 c 掃到 d。這是第二型區域。左右界要寫成「x = y 的函數」，常常要先把曲線方程式解成 x。"
+      ],
+      "tex": ["\\iint_D f\\,dA=\\int_c^d\\!\\int_{h_1(y)}^{h_2(y)} f(x,y)\\,dx\\,dy"],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 四個步驟",
+      "body": [
+        "1. 畫圖，找出邊界曲線的交點。",
+        "2. 選掃描方向：掃過去的每一條線，都要從「同一條」曲線進、從「同一條」曲線出。中途換曲線，就要切塊，或改用另一個方向。",
+        "3. 寫限：內層是曲線（可以含外層變數），外層一定是常數。",
+        "4. 由內往外積。最後的答案是一個數，不能含 x 或 y。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "⑤ 定義上發生了什麼（給想知道的人）",
+      "body": [
+        "把 f 在 D 外面補成 0，得到一個定義在大矩形 R 上的函數 F，定義 ∬_D f dA = ∬_R F dA。F 在 D 的邊界上可能跳躍，但邊界是有限條連續曲線時，這個積分仍然存在，而且 Fubini 照樣能用：對固定的 x，F 只在 g₁(x) 到 g₂(x) 之間不是 0，內層積分自然變成 ∫_{g₁(x)}^{g₂(x)}。"
+      ],
+      "collapsible": true
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "兩條曲線之間（鉛直線）",
+      "prompt": "∬_D xy dA，D 是 y = x² 與 y = x 圍成的區域。",
+      "steps": [
+        "交點：x² = x，得 x = 0、x = 1。在 0 < x < 1 時 x² < x，所以 y = x 在上、y = x² 在下。",
+        "鉛直線從 y = x² 進、從 y = x 出：∫_0^1 ∫_{x²}^{x} xy dy dx。",
+        "內層：x · [y²/2]_{x²}^{x} = x(x² − x⁴)/2 = (x³ − x⁵)/2。",
+        "外層：(1/2)(1/4 − 1/6) = (1/2)(1/12) = 1/24。"
+      ],
+      "answer": "1/24",
+      "claim": "INT(INT(x*y,x^2,x,y),0,1,x) == 1/24"
+    },
+    {
+      "title": "鉛直線要切塊，水平線一塊就好",
+      "prompt": "∬_D y dA，D 是 x = y² 與 x = y + 2 圍成的區域。",
+      "steps": [
+        "交點：y² = y + 2，即 (y − 2)(y + 1) = 0，y = −1 或 2，對應點 (1, −1)、(4, 2)。",
+        "用鉛直線：x 在 0 到 1 時，下界是拋物線的下半支 y = −√x；x 在 1 到 4 時，下界換成直線 y = x − 2。下界中途換曲線，要切兩塊。",
+        "改用水平線：每條水平線都從拋物線 x = y² 進、從直線 x = y + 2 出，y 從 −1 到 2。一塊就好：∫_{−1}^{2} ∫_{y²}^{y+2} y dx dy。",
+        "內層：y(y + 2 − y²) = y² + 2y − y³。",
+        "外層：[y³/3 + y² − y⁴/4]_{−1}^{2} = (8/3 + 4 − 4) − (−1/3 + 1 − 1/4) = 8/3 − 5/12 = 9/4。"
+      ],
+      "answer": "9/4",
+      "claim": "INT(INT(y,y^2,y+2,x),-1,2,y) == 9/4"
+    },
+    {
+      "title": "同一個三角形，兩種寫法",
+      "prompt": "∬_T y dA，T 是頂點 (0, 0)、(2, 0)、(2, 1) 的三角形。",
+      "steps": [
+        "斜邊過 (0, 0) 與 (2, 1)：y = x/2，也就是 x = 2y。",
+        "鉛直線：x 從 0 到 2，y 從 0 到 x/2。∫_0^2 ∫_0^{x/2} y dy dx = ∫_0^2 x²/8 dx = 8/24 = 1/3。",
+        "水平線：y 從 0 到 1，x 從斜邊 2y 到右邊 x = 2。∫_0^1 ∫_{2y}^{2} y dx dy = ∫_0^1 y(2 − 2y) dy = 1 − 2/3 = 1/3。"
+      ],
+      "answer": "1/3",
+      "claim": "INT(INT(y,0,x/2,y),0,2,x) == 1/3 ;; INT(INT(y,2*y,2,x),0,1,y) == 1/3"
+    }
+  ],
+  "pitfalls": [
+    "沒畫圖就寫上下限，上下界放反（0 < x < 1 時 x² 比 x 小）。",
+    "外層上下限寫成含變數的式子，算完答案還留著 x 或 y。",
+    "先 dx 時忘了把邊界曲線解成 x = h(y)。",
+    "掃描線中途換了邊界曲線卻沒切塊。"
+  ],
+  "checks": [
+    {
+      "ask": "D 由 y = x² 與 y = x 圍成。用鉛直線掃，內層 y 的範圍是？",
+      "options": [
+        { "label": "x² ≤ y ≤ x", "correct": true },
+        { "label": "x ≤ y ≤ x²", "why": "0 < x < 1 時 x² 比 x 小，例如 x = 0.5 時 x² = 0.25。下界是 x²。" },
+        { "label": "0 ≤ y ≤ 1", "why": "那是整塊區域 y 的總範圍。內層要寫「這一條鉛直線」上的範圍，會隨 x 改變。" }
+      ]
+    },
+    {
+      "ask": "下面哪一個寫法一定有問題？",
+      "options": [
+        { "label": "∫_0^x ∫_0^1 f dy dx", "correct": true },
+        { "label": "∫_0^1 ∫_x^1 f dy dx", "why": "這是合法的：外層是常數 0 到 1，內層隨 x 變。" },
+        { "label": "∫_0^1 ∫_{y²}^{y} f dx dy", "why": "這是合法的水平線寫法：0 ≤ y ≤ 1 時 y² ≤ y。" }
+      ]
+    },
+    {
+      "ask": "∫_0^1 ∫_0^x 2y dy dx 是？",
+      "options": [
+        { "label": "1/3", "correct": true },
+        { "label": "1", "why": "那是把內層上限當成 1。內層是 ∫_0^x 2y dy = x²，再積得 1/3。" },
+        { "label": "x²", "why": "那是內層的結果，還要對 x 從 0 積到 1。" }
+      ]
+    },
+    {
+      "ask": "∫_0^1 ∫_0^x 1 dy dx 代表哪塊區域的面積？",
+      "options": [
+        { "label": "頂點 (0, 0)、(1, 0)、(1, 1) 的三角形", "correct": true },
+        { "label": "頂點 (0, 0)、(0, 1)、(1, 1) 的三角形", "why": "那塊是 y 從 x 到 1，在 y = x 上方。這裡 y 從 0 到 x，在 y = x 下方。" },
+        { "label": "單位正方形", "why": "內層 y 只到 x，不是到 1，所以只有正方形的一半。" }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": ["double-integral", "region", "triangle"],
+    "fine": ["region-type-one", "region-type-two", "region-bounds-from-sketch"]
+  },
+  "practice": [
+    { "id": "int-023", "core": true, "trains": "region-type-one" },
+    { "id": "int-024", "core": true, "trains": "region-type-one" },
+    { "id": "exam-multi-006", "core": true, "trains": "region-type-one" },
+    { "id": "int-036", "core": true, "trains": "region-type-two" },
+    { "id": "depth-int-022", "core": true, "trains": "region-type-two" },
+    { "id": "int-034", "trains": "region-bounds-from-sketch", "note": "先畫出區域：它是四分之一圓。" },
+    { "id": "rel-hard-mv-001", "trains": "region-bounds-from-sketch" }
+  ],
+  "gaps": [
+    { "tag": "region-bounds-from-sketch", "count": 3, "note": "R3：題目只給圍成區域的曲線（不給上下限），要自己找交點、選方向。" }
+  ]
+}

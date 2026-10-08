@@ -1,0 +1,141 @@
+{
+  "id": "limit-one-sided",
+  "title": "左極限與右極限",
+  "readMinutes": 7,
+  "totalMinutes": 25,
+  "prerequisites": ["limit-intro", "piecewise-function"],
+  "next": ["limit-existence"],
+  "related": ["infinite-limits"],
+  "objectives": [
+    "看懂 x → a⁻ 與 x → a⁺：只從一邊靠近 a。",
+    "會算分段函數、絕對值、取整函數在分界點的左右極限。",
+    "知道函數只在一側有定義時，只能談那一側的極限。"
+  ],
+  "visual": "一個在 x = 2 跳開的分段函數：左段靠近高度 2，右段從高度 4 開始。左右各一個點沿曲線滑向 x = 2，各自顯示目前的 x 與 f(x)。左邊的讀數往 2 擠，右邊往 4 擠；f(2) 那個實心點另外標示，跟兩個讀數都分開看。",
+  "concept": [
+    {
+      "heading": "① 只從一邊靠近",
+      "body": [
+        "lim_{x→a⁻} f(x) = L：x 從 a 的左邊（x < a）靠近 a 時，f(x) 靠近 L，叫左極限。lim_{x→a⁺} 是從右邊（x > a），叫右極限。",
+        "上標的 − 與 + 表示方向，不是負號：x → 3⁻ 是「比 3 小一點點的地方」，跟 −3 無關。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 為什麼需要它：兩邊可能去不同地方",
+      "body": [
+        "f(x) = x（x < 2），x + 2（x ≥ 2）。x 從左邊靠近 2 時用第一段，高度靠近 2；從右邊靠近時用第二段，高度靠近 4。",
+        "一個「兩邊一起看」的極限沒辦法描述這件事，拆成左、右各自說就清楚了：左極限 2，右極限 4。f(2) = 4 是第三件事，跟左極限無關。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 算法：在那一側用那一側的式子",
+      "body": [
+        "左極限只看 x < a 的部分，所以分段函數要用 x < a 那一段；絕對值要先依正負拆開。例：x > 0 時 |x|/x = x/x = 1，x < 0 時 |x|/x = −x/x = −1，所以 0 的右極限是 1、左極限是 −1。",
+        "取整函數 ⌊x⌋ 是「不超過 x 的最大整數」：⌊1.7⌋ = 1，⌊2⌋ = 2，⌊−0.5⌋ = −1。x 在 [1, 2) 裡 ⌊x⌋ = 1，所以 lim_{x→2⁻} ⌊x⌋ = 1，而 lim_{x→2⁺} ⌊x⌋ = 2。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 只有一側有定義",
+      "body": [
+        "√x 在 x < 0 沒有定義，在 0 只能談右極限：lim_{x→0⁺} √x = 0。√(x − 3) 在 3 也一樣。",
+        "單側極限也可以「跑到無窮」：x → 0⁺ 時 1/x 越來越大，x → 0⁻ 時越來越負。這種情況在〈無窮極限與垂直漸近線〉處理。"
+      ],
+      "collapsible": false
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "絕對值除以自己",
+      "prompt": "求 lim_{x→0⁻} |x|/x 與 lim_{x→0⁺} |x|/x",
+      "steps": [
+        "右邊 x > 0：|x| = x，|x|/x = 1，所以右極限是 1。",
+        "左邊 x < 0：|x| = −x，|x|/x = −x/x = −1，所以左極限是 −1。",
+        "x = 0 本身沒有定義，但這不影響左右極限。"
+      ],
+      "answer": "左極限 −1，右極限 1",
+      "claim": "LIM(abs(x)/x, 0-) == -1 ;; LIM(abs(x)/x, 0+) == 1"
+    },
+    {
+      "title": "分段函數的分界點",
+      "prompt": "f(x) = x² + 1（x < 1），2x + 3（x ≥ 1）。求 lim_{x→1⁻} f(x)、lim_{x→1⁺} f(x)、f(1)。",
+      "steps": [
+        "左極限：x < 1 用 x² + 1。x 靠近 1 時靠近 1 + 1 = 2。",
+        "右極限：x > 1 用 2x + 3。x 靠近 1 時靠近 2 + 3 = 5。",
+        "f(1)：1 屬於 x ≥ 1 那段，f(1) = 5。剛好跟右極限一樣，跟左極限不一樣。"
+      ],
+      "answer": "左極限 2，右極限 5，f(1) = 5",
+      "claim": "LIM(x^2+1, 1-) == 2 ;; LIM(2x+3, 1+) == 5 ;; SUB(2x+3, 1) == 5"
+    },
+    {
+      "title": "取整函數",
+      "prompt": "求 lim_{x→2⁻} ⌊x⌋ 與 lim_{x→2⁺} ⌊x⌋",
+      "problemId": "lm-fl-003",
+      "steps": [
+        "x 在 2 的左邊、靠近 2，例如 1.9、1.99、1.999：都在 [1, 2) 裡，⌊x⌋ = 1。",
+        "所以 lim_{x→2⁻} ⌊x⌋ = 1。",
+        "x 在 2 的右邊、靠近 2，例如 2.01、2.001：都在 [2, 3) 裡，⌊x⌋ = 2，右極限是 2。"
+      ],
+      "answer": "左極限 1，右極限 2",
+      "claim": null,
+      "claimNote": "驗算器的記法沒有取整函數，算不了 ⌊x⌋。答案與題庫 lm-fl-003（已通過獨立驗算）的左極限一致。"
+    }
+  ],
+  "pitfalls": [
+    "算 x → 2⁻ 卻用了 x ≥ 2 那一段的式子。",
+    "把左極限或右極限當成 f(a)。",
+    "把 x → 3⁻ 讀成 x → −3。",
+    "絕對值沒依正負拆開，就直接約掉。"
+  ],
+  "checks": [
+    {
+      "ask": "f(x) = x（x < 2），x + 2（x ≥ 2）。lim_{x→2⁺} f(x) 是？",
+      "options": [
+        { "label": "2", "why": "那是左極限。右極限要用 x ≥ 2 那段：x + 2 → 4。" },
+        { "label": "不存在", "why": "題目只問右邊，右邊穩穩靠近 4，右極限存在。" },
+        { "label": "4", "correct": true }
+      ]
+    },
+    {
+      "ask": "x → 3⁻ 的意思是？",
+      "options": [
+        { "label": "x 從比 3 小的那邊靠近 3", "correct": true },
+        { "label": "x 靠近 −3", "why": "上標的 − 表示方向，不是負號。" },
+        { "label": "x 從比 3 大的那邊靠近 3", "why": "那是 x → 3⁺。" }
+      ]
+    },
+    {
+      "ask": "lim_{x→0⁻} |x|/x 是？",
+      "options": [
+        { "label": "1", "why": "x < 0 時 |x| = −x，比值是 −1；1 是右極限。" },
+        { "label": "−1", "correct": true },
+        { "label": "0", "why": "0/0 不是 0；而且這裡是先化簡成 −1 再取極限。" }
+      ]
+    },
+    {
+      "ask": "lim_{x→2⁻} ⌊x⌋ 是？",
+      "options": [
+        { "label": "2", "why": "⌊2⌋ = 2 是函數值；在 2 的左邊（例如 1.99）⌊x⌋ = 1。" },
+        { "label": "1.99", "why": "⌊x⌋ 永遠是整數。" },
+        { "label": "1", "correct": true }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": ["one-sided", "one-sided-limit", "floor", "graph-reading"],
+    "fine": ["one-sided-notation", "one-sided-piecewise", "one-sided-abs", "one-sided-floor", "one-sided-domain-edge"]
+  },
+  "practice": [
+    { "id": "gx-019", "core": true, "trains": "one-sided-piecewise" },
+    { "id": "gx-020", "core": true, "trains": "one-sided-piecewise" },
+    { "id": "gp-012", "core": true, "trains": "one-sided-piecewise" },
+    { "id": "lm-os-001", "challenge": true, "trains": "one-sided-domain-edge", "note": "挑戰：x → 0⁺ 時 −1/x 往 −∞，e 的很負次方往 0 靠。" }
+  ],
+  "gaps": [
+    { "tag": "one-sided-abs", "count": 2, "note": "R1：|x − a|/(x − a) 型的左右極限" },
+    { "tag": "one-sided-piecewise", "count": 2, "note": "R1：給式子（不是圖）的分段函數左右極限" },
+    { "tag": "one-sided-domain-edge", "count": 1, "note": "R1：√(x − a) 在 a⁺ 的極限" }
+  ]
+}

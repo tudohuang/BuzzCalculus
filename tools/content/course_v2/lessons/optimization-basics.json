@@ -1,0 +1,250 @@
+{
+  "id": "optimization-basics",
+  "title": "最佳化基本模型",
+  "readMinutes": 10,
+  "totalMinutes": 40,
+  "prerequisites": [
+    "critical-points",
+    "first-derivative-test"
+  ],
+  "next": [
+    "optimization-geometry"
+  ],
+  "related": [
+    "extreme-value-theorem"
+  ],
+  "objectives": [
+    "把文字題寫成一個變數的目標函數，並寫出它的定義域。",
+    "範圍是閉區間時，把臨界點和端點一起比較。",
+    "範圍是開區間或無界時，用 f′ 的正負說明唯一的臨界點就是絕對極值。"
+  ],
+  "visual": null,
+  "concept": [
+    {
+      "heading": "① 最佳化要的是「絕對」最大、最小",
+      "body": [
+        "〈一階導數判別〉找的是局部的山頂、谷底：比附近都高或都低。最佳化問的是整個範圍裡最高、最低的那一個，也就是絕對最大值、絕對最小值。",
+        "局部的山頂不一定是最高點：f(x) = x³ − 3x 在 x = −1 有局部極大 2，可是在 [−2, 3] 上，x = 3 的值 18 比它高得多。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "② 範圍是閉區間：臨界點加端點，全部比",
+      "body": [
+        "前面學臨界點時已經有這個做法：f 在 [a, b] 連續，絕對最大、最小值一定存在（〈極值定理〉），而且只會出現在內部的臨界點或端點。全部代進去比就好，不必判斷誰是山頂。",
+        "文字題的範圍常常就是閉區間：長度至少是 0，最多用完全部材料。端點代表「極端的做法」（例如圍出寬度 0 的長方形），值往往是 0，但仍要算進來比。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 不是閉區間：用 f′ 的正負說話",
+      "body": [
+        "區間是開的或無界（例如 x > 0），最大最小值不保證存在，也沒有端點可以比。這時常用的論證是：f 在區間上只有一個臨界點 c，而且 f′ 在 c 左邊 < 0、右邊 > 0。那麼 f 在 c 左邊一路下降、右邊一路上升，f(c) 就是整個區間的絕對最小值（反過來就是最大值）。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "④ 文字題的四步",
+      "body": [
+        "1. 決定要最大或最小的量（目標），以及可以調整的量。2. 用題目的限制條件，把目標寫成只有一個變數的函數。3. 寫出這個變數合理的範圍（長度 ≥ 0、不能超過材料）。4. 用 ② 或 ③ 求極值，最後回答題目問的東西，附單位。"
+      ],
+      "collapsible": false
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "閉區間的文字題：靠牆圍籬",
+      "prompt": "用 100 公尺圍籬沿一道直牆圍出長方形（牆那一側不用圍）。最大面積是多少？",
+      "problemId": "dd-opt-001",
+      "steps": [
+        "目標：面積 A。可調的量：垂直於牆的兩邊各長 x，平行於牆的一邊就是 100 − 2x。",
+        "A(x) = x(100 − 2x)。範圍：x ≥ 0 且 100 − 2x ≥ 0，所以 0 ≤ x ≤ 50。這是閉區間。",
+        "A′(x) = 100 − 4x = 0，得 x = 25。候選值：A(0) = 0、A(25) = 25 · 50 = 1250、A(50) = 0。",
+        "最大面積 1250 平方公尺：垂直牆的兩邊各 25 公尺、平行牆的一邊 50 公尺。"
+      ],
+      "answer": "1250 平方公尺",
+      "claim": "D(x*(100-2x), 25) == 0 ;; SUB(x*(100-2x), 25) == 1250"
+    },
+    {
+      "title": "開區間：唯一的臨界點",
+      "prompt": "求 f(x) = x + 4/x 在 x > 0 的最小值。",
+      "problemId": "app-007",
+      "steps": [
+        "f′(x) = 1 − 4/x² = (x² − 4)/x²。在 x > 0 上，f′ = 0 只有 x = 2。",
+        "0 < x < 2 時 x² < 4，f′ < 0，f 遞減；x > 2 時 f′ > 0，f 遞增。",
+        "先降後升，x = 2 是整個 (0, ∞) 上的最低點：f(2) = 2 + 2 = 4。"
+      ],
+      "answer": "4",
+      "note": "沒有最大值：x → 0⁺ 或 x → ∞ 時 f(x) 都 → ∞。",
+      "claim": "D(x+4/x, 2) == 0 ;; SUB(x+4/x, 2) == 4"
+    },
+    {
+      "title": "利潤最大",
+      "prompt": "收益 R(q) = 100q − 0.5q²，成本 C(q) = 20q + 500（q 是產量，q ≥ 0）。最大利潤是多少？",
+      "problemId": "dd-mar-003",
+      "steps": [
+        "目標：利潤 P = R − C = 100q − 0.5q² − 20q − 500 = 80q − 0.5q² − 500，範圍 q ≥ 0（沒有上限，不是閉區間）。",
+        "P′(q) = 80 − q = 0，得 q = 80。",
+        "0 ≤ q < 80 時 P′ > 0、q > 80 時 P′ < 0：先升後降，q = 80 是 [0, ∞) 上的最高點。",
+        "P(80) = 6400 − 3200 − 500 = 2700。"
+      ],
+      "answer": "2700（產量 80）",
+      "claim": "D(80x-0.5x^2-500, 80) == 0 ;; SUB(80x-0.5x^2-500, 80) == 2700"
+    }
+  ],
+  "pitfalls": [
+    "閉區間只看臨界點，忘了算端點。",
+    "把局部極大值當成絕對最大值。",
+    "開區間上找到 f′ = 0 就宣布是最小值，沒有說明為什麼。",
+    "文字題沒有寫變數的範圍，或保留兩個變數就開始微分。",
+    "答非所問：題目問最大利潤，只回答 q = 80。"
+  ],
+  "checks": [
+    {
+      "ask": "周長 40 的長方形，一邊長 x。面積函數與 x 的範圍是？",
+      "options": [
+        {
+          "label": "A = x(20 − x)，0 ≤ x ≤ 20",
+          "correct": true
+        },
+        {
+          "label": "A = x(40 − x)，0 ≤ x ≤ 40",
+          "why": "周長 40 是兩個長加兩個寬，長加寬只有 20，所以另一邊是 20 − x。"
+        },
+        {
+          "label": "A = x(20 − x)，x 是任何實數",
+          "why": "x 是長度，要 ≥ 0；另一邊 20 − x 也要 ≥ 0，所以 x ≤ 20。"
+        }
+      ]
+    },
+    {
+      "ask": "利潤 P(q) = 80q − 0.5q² − 500（q ≥ 0）。產量多少時利潤最大？",
+      "options": [
+        {
+          "label": "80",
+          "correct": true
+        },
+        {
+          "label": "160",
+          "why": "160 是 80q − 0.5q² = 0 的解，那是收益扣變動成本剛好歸零的地方。要解 P′(q) = 80 − q = 0。"
+        },
+        {
+          "label": "2700",
+          "why": "2700 是最大利潤本身，題目問的是產量 q。"
+        }
+      ]
+    },
+    {
+      "ask": "兩個正數相乘是 16，和最小是多少？",
+      "options": [
+        {
+          "label": "8",
+          "correct": true
+        },
+        {
+          "label": "4",
+          "why": "4 是其中一個數 x，題目問的是和 S = x + 16/x 在 x = 4 的值 8。"
+        },
+        {
+          "label": "17",
+          "why": "1 × 16 是一組可能，但不是最小。S′ = 1 − 16/x² = 0 給 x = 4，S = 8。"
+        }
+      ]
+    },
+    {
+      "ask": "f 在 (0, ∞) 上只有一個臨界點 x = 2，f′ 在它左邊負、右邊正。f(2) 是？",
+      "options": [
+        {
+          "label": "f 在 (0, ∞) 上的絕對最小值",
+          "correct": true
+        },
+        {
+          "label": "只是局部極小值，不能說是絕對最小",
+          "why": "左邊整段遞減、右邊整段遞增，區間裡沒有任何一點比 f(2) 低，所以是絕對最小。"
+        },
+        {
+          "label": "f 在 (0, ∞) 上的絕對最大值",
+          "why": "先降後升是谷底，不是山頂。"
+        }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": [
+      "optimization",
+      "extrema"
+    ],
+    "fine": [
+      "optimization-closed-interval",
+      "optimization-single-critical-point",
+      "optimization-model-setup",
+      "optimization-domain"
+    ]
+  },
+  "practice": [
+    {
+      "id": "app-007",
+      "core": true,
+      "trains": "optimization-single-critical-point"
+    },
+    {
+      "id": "db-ext-005",
+      "trains": "optimization-single-critical-point"
+    },
+    {
+      "id": "db-opt-001",
+      "core": true,
+      "trains": "optimization-model-setup"
+    },
+    {
+      "id": "tb-opt-002",
+      "core": true,
+      "trains": "optimization-model-setup"
+    },
+    {
+      "id": "dd-opt-001",
+      "core": true,
+      "trains": "optimization-closed-interval"
+    },
+    {
+      "id": "dd-kin-002",
+      "core": true,
+      "trains": "optimization-model-setup"
+    },
+    {
+      "id": "dd-mar-003",
+      "core": true,
+      "trains": "optimization-model-setup"
+    },
+    {
+      "id": "dd-opt-008",
+      "core": true,
+      "trains": "optimization-model-setup"
+    },
+    {
+      "id": "dd-mar-004",
+      "trains": "optimization-single-critical-point"
+    },
+    {
+      "id": "dd-opt-014",
+      "trains": "optimization-single-critical-point"
+    },
+    {
+      "id": "dx-eco-004",
+      "trains": "optimization-model-setup"
+    },
+    {
+      "id": "dx-bio-001",
+      "challenge": true,
+      "trains": "optimization-single-critical-point",
+      "note": "挑戰：兩個指數相減，令 C′ = 0 後取 ln 解 t。"
+    }
+  ],
+  "gaps": [
+    {
+      "tag": "optimization-domain",
+      "count": 2,
+      "note": "臨界點落在範圍外、答案在端點的文字題，R2–R3。"
+    }
+  ]
+}

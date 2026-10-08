@@ -1,0 +1,137 @@
+{
+  "id": "trig-sub-x2-minus-a2",
+  "title": "√(x² − a²)",
+  "readMinutes": 9,
+  "totalMinutes": 35,
+  "prerequisites": ["trig-sub-x2-plus-a2"],
+  "next": ["integration-strategy"],
+  "related": ["trig-sub-a2-minus-x2"],
+  "objectives": [
+    "看到 √(x² − a²) 且換元配不起來時，會令 x = a sec θ（x ≥ a 時 θ ∈ [0, π/2)）。",
+    "會用「斜邊 x、鄰邊 a、對邊 √(x² − a²)」的三角形換回 x。",
+    "對三種根號，一眼選對代換：a² − x²、x² + a²、x² − a²。"
+  ],
+  "visual": null,
+  "concept": [
+    {
+      "heading": "① 需要的恆等式：sec² θ − 1 = tan² θ",
+      "body": [
+        "令 x = a sec θ，則 x² − a² = a² sec² θ − a² = a² tan² θ。",
+        "√(x² − a²) 只在 |x| ≥ a 有定義。本課先處理 x ≥ a：取 θ ∈ [0, π/2)，這段上 sec θ 從 1 增加到 ∞，每個 x ≥ a 恰好對應一個 θ；而且 tan θ ≥ 0，所以 √(x² − a²) = a tan θ。",
+        "x ≤ −a 的情況，先令 x = −t，化成 t ≥ a 再做，可以避開正負號的麻煩。",
+        "dx = a sec θ tan θ dθ。"
+      ],
+      "tex": ["x=a\\sec\\theta,\\quad dx=a\\sec\\theta\\tan\\theta\\,d\\theta,\\quad \\sqrt{x^2-a^2}=a\\tan\\theta\\quad\\left(0\\le\\theta<\\tfrac\\pi2\\right)"],
+      "collapsible": false
+    },
+    {
+      "heading": "② 換回 x 的三角形",
+      "body": [
+        "sec θ = x/a，也就是 cos θ = a/x：斜邊 x、鄰邊 a、對邊 √(x² − a²)。",
+        "tan θ = √(x² − a²)/a，sin θ = √(x² − a²)/x，θ = arccos(a/x)。"
+      ],
+      "collapsible": false
+    },
+    {
+      "heading": "③ 三種根號，三種代換",
+      "body": [
+        "a² − x²（減掉 x²）：x = a sin θ，用 1 − sin² = cos²。",
+        "x² + a²（加號）：x = a tan θ，用 1 + tan² = sec²。",
+        "x² − a²（x² 在前）：x = a sec θ，用 sec² − 1 = tan²。",
+        "記法：把根號裡的式子看成「哪一條畢氏恆等式」，就知道 x 要換成什麼。三種都先檢查外面有沒有 x 可以直接 u 換元。"
+      ],
+      "collapsible": false
+    }
+  ],
+  "workedExamples": [
+    {
+      "title": "化成 tan² θ",
+      "prompt": "∫ √(x² − 4)/x dx（x > 2）",
+      "steps": [
+        "令 x = 2 sec θ，dx = 2 sec θ tan θ dθ，√(x² − 4) = 2 tan θ。",
+        "∫ (2 tan θ)/(2 sec θ) · 2 sec θ tan θ dθ = ∫ 2 tan² θ dθ = ∫ 2(sec² θ − 1) dθ = 2 tan θ − 2θ。",
+        "三角形：tan θ = √(x² − 4)/2；θ = arccos(2/x)。",
+        "答案：√(x² − 4) − 2 arccos(2/x) + C。"
+      ],
+      "answer": "√(x² − 4) − 2 arccos(2/x) + C",
+      "claim": "D(sqrt(x^2-4)-2*acos(2/x), 2.5) == sqrt(2.5^2-4)/2.5 ;; D(sqrt(x^2-4)-2*acos(2/x), 3) == sqrt(5)/3 ;; D(sqrt(x^2-4)-2*acos(2/x), 6) == sqrt(32)/6",
+      "note": "定義域是 x > 2，所以在三個點檢查導數。"
+    },
+    {
+      "title": "又是 ∫ sec θ",
+      "prompt": "∫ 1/√(x² − 9) dx（x > 3）",
+      "steps": [
+        "令 x = 3 sec θ，dx = 3 sec θ tan θ dθ，√(x² − 9) = 3 tan θ。",
+        "∫ (3 sec θ tan θ)/(3 tan θ) dθ = ∫ sec θ dθ = ln|sec θ + tan θ| + C。",
+        "sec θ = x/3，tan θ = √(x² − 9)/3：ln|(x + √(x² − 9))/3| = ln(x + √(x² − 9)) − ln 3。",
+        "答案：ln(x + √(x² − 9)) + C（−ln 3 併進 C）。"
+      ],
+      "answer": "ln(x + √(x² − 9)) + C",
+      "claim": "D(ln(x+sqrt(x^2-9)), 3.5) == 1/sqrt(3.5^2-9) ;; D(ln(x+sqrt(x^2-9)), 4) == 1/sqrt(7) ;; D(ln(x+sqrt(x^2-9)), 5) == 1/4"
+    },
+    {
+      "title": "定積分",
+      "prompt": "∫_{√2}^{2} 1/(x√(x² − 1)) dx",
+      "steps": [
+        "令 x = sec θ，dx = sec θ tan θ dθ，√(x² − 1) = tan θ。",
+        "上下限：sec θ = √2 → θ = π/4；sec θ = 2 → θ = π/3。",
+        "∫_{π/4}^{π/3} (sec θ tan θ)/(sec θ tan θ) dθ = ∫_{π/4}^{π/3} dθ = π/3 − π/4 = π/12。"
+      ],
+      "answer": "π/12",
+      "claim": "INT(1/(x*sqrt(x^2-1)),sqrt(2),2) == pi/12"
+    }
+  ],
+  "pitfalls": [
+    "三種代換混用：x² − a² 用了 sin 或 tan。",
+    "dx 漏了 tan θ：(a sec θ)′ = a sec θ tan θ。",
+    "三角形邊放錯：sec θ = x/a 是「斜邊 x、鄰邊 a」。",
+    "上下限換 θ 時，sec θ = 2 解成 θ = π/6（那是 sin θ = 1/2）。"
+  ],
+  "checks": [
+    {
+      "ask": "∫ √(x² − 25) dx 應該令？",
+      "options": [
+        { "label": "x = 5 sec θ", "correct": true },
+        { "label": "x = 5 sin θ", "why": "25 sin² θ − 25 = −25 cos² θ，是負的，開不了根號。sin 是給 a² − x² 用的。" },
+        { "label": "x = 5 tan θ", "why": "25 tan² θ − 25 不是完全平方。tan 是給加號 x² + a² 用的。" }
+      ]
+    },
+    {
+      "ask": "x = 5 sec θ，θ ∈ [0, π/2)。√(x² − 25) 等於？",
+      "options": [
+        { "label": "5 tan θ", "correct": true },
+        { "label": "5 sec θ − 5", "why": "根號不能拆減法：25 sec² θ − 25 = 25 tan² θ，再開根號。" },
+        { "label": "−5 tan θ", "why": "θ ∈ [0, π/2) 時 tan θ ≥ 0，開根號取非負的那個。" }
+      ]
+    },
+    {
+      "ask": "∫ 1/(x² + 9)^{3/2} dx 應該令？",
+      "options": [
+        { "label": "x = 3 tan θ", "correct": true },
+        { "label": "x = 3 sec θ", "why": "sec 是給 x² − a² 用的。這裡是加號。" },
+        { "label": "x = 3 sin θ", "why": "sin 是給 a² − x² 用的。9 sin² θ + 9 不是完全平方。" }
+      ]
+    },
+    {
+      "ask": "sec θ = x/2。tan θ 是？",
+      "options": [
+        { "label": "√(x² − 4)/2", "correct": true },
+        { "label": "x/2", "why": "那是 sec θ。tan θ 是對邊 √(x² − 4) 除以鄰邊 2。" },
+        { "label": "2/x", "why": "那是 cos θ = 1/sec θ。" }
+      ]
+    }
+  ],
+  "skillTags": {
+    "coarse": ["trig-substitution", "radical", "inverse-trig"],
+    "fine": ["trig-sub-sec", "trig-sub-sec-triangle", "trig-sub-sec-bounds", "trig-sub-which"]
+  },
+  "practice": [
+    { "id": "int-050", "core": true, "trains": "trig-sub-sec-bounds" },
+    { "id": "hc-rad-001", "core": true, "trains": "trig-sub-sec-triangle" },
+    { "id": "hc-rad-005", "core": true, "trains": "trig-sub-sec-bounds" }
+  ],
+  "gaps": [
+    { "tag": "trig-sub-sec", "count": 3, "note": "x = a sec θ 的不定積分，例如 ∫ √(x² − 9)/x dx、∫ dx/√(x² − 4)、∫ x³/√(x² − 1) dx 的比較（最後一題 u 換元更快），R3–R4。" },
+    { "tag": "trig-sub-which", "count": 3, "note": "三種根號混在一起、只問用哪一種代換的辨識題，R2。" }
+  ]
+}
