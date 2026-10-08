@@ -307,6 +307,11 @@ for (const L of lessons) {
   checkFigures(id, L);
 
   const text = allText(L);
+  // 正文裡的行內數學寫成 $…$（KaTeX）：$ 要成對、每一段都要渲染得過
+  if (((text.match(/(?<!\\)\$/g) || []).length) % 2) err(id, "正文的 $ 不成對（行內數學要寫成 $…$）");
+  for (const m of text.matchAll(/(?<!\\)\$([^$]+?)(?<!\\)\$/g)) {
+    try { katex.renderToString(m[1], { throwOnError: true }); } catch (e) { err(id, `行內數學 KaTeX 渲染失敗：$${m[1]}$（${e.message.slice(0, 60)}）`); }
+  }
   if (SCHOOL.test(text)) err(id, `出現學校名稱或 Putnam：${text.match(SCHOOL)[0]}`);
   const simp = text.match(SIMPLIFIED);
   if (simp) err(id, `出現簡體字「${simp[0]}」`);
