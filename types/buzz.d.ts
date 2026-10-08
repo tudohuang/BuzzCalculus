@@ -82,6 +82,8 @@ interface BuzzRecords {
   proofLangLessons: Record<string, string>;
   proofs: Record<string, BuzzProofProgress>;
   course: Record<string, BuzzCourseProgress>;
+  /** 新版課程（中文介面）的進度，key 是大綱的穩定 id；推薦題對錯看 problemStats，不另外記 */
+  courseV2: Record<string, BuzzCourseV2Progress>;
   courseGraduation: BuzzCourseGraduation | null;
   settings: BuzzSettings;
   streakShields: number;
@@ -233,6 +235,15 @@ interface BuzzCourseGraduation {
   attempts: number;
 }
 
+/** 完成＝doneAt（小測第一次就選對 ≥ 3 題的那一刻）；熟練／全破由 problemStats 現算，不存 */
+interface BuzzCourseV2Progress {
+  openedAt?: string;
+  quizBest?: number;
+  quizAt?: string;
+  doneAt?: string;
+  practicedAt?: string;
+}
+
 interface BuzzCourseProgress {
   openedAt?: string;
   checksPassed?: boolean;
@@ -356,7 +367,11 @@ interface Window {
   BUZZ_PROBLEMS: BuzzProblem[];
   BUZZ_PROOFS: BuzzProof[];
   BUZZ_COURSE: BuzzCourseLesson[];
-  BuzzCourseUI: { create(deps: { escapeHtml: (s: unknown) => string; escapeAttr: (s: unknown) => string; icon: (name: string) => string; referenceAnswerHTML: (problem: BuzzProblem) => string }): any };
+  BuzzCourseUI: { create(deps: { escapeHtml: (s: unknown) => string; escapeAttr: (s: unknown) => string; icon: (name: string) => string; referenceAnswerHTML: (problem: BuzzProblem) => string; loadRecords: () => BuzzRecords; saveRecords: (records: BuzzRecords) => void; ensureLazy: (group: string) => Promise<void>; startQuiz: (pool: BuzzProblem[], options?: any) => void; render: () => void; go: (view: string) => void }): any };
+  /** 新版課程的畫面（data-lazy="course"，只有中文介面會載） */
+  BuzzCourseV2UI?: { create(deps: any): any };
+  BUZZ_COURSE_V2?: { stages: { n: number; title: string; branch?: boolean; chapters: { code: string; title: string; lessons: { id: string; title: string; read?: number; total?: number; practice?: string; worked?: string }[] }[] }[] };
+  BUZZ_COURSE_V2_LESSONS?: Record<string, any>;
   /** src/share_cards.js：題目圖形的 SVG 渲染器（從 app.js 搬出去） */
   BuzzGraphRender: { graphCurveFn(expr: string): ((x: number) => number) | null; renderProblemGraph(problem: any, opts: any, escapeAttr: (s: unknown) => string): string; renderMiniGraph(expr: string, windowSpec: number[], domainSpec?: number[]): string; svgGraphContext(svg: Element): any; graphProblemFn(problem: any): ((x: number) => number) | null; renderMasteryRadar(axes: any[], helpers: { escapeHtml: (s: unknown) => string; escapeAttr: (s: unknown) => string }): string; renderActivityHeatmap(records: any, deps: Record<string, any>): string; renderSpeedQuadrant(profile: any, helpers: { escapeHtml: (s: unknown) => string }): string; renderSkillTable(profile: any, helpers: { escapeHtml: (s: unknown) => string }): string };
   /** src/share_cards.js：考卷證明題的作答畫面（判分在 app.js 呼叫檢查器） */

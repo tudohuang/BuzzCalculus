@@ -100,6 +100,8 @@ const APP_SHELL = [
   "./src/proof_lang_content.js",
   "./src/proof_lab_ui.js",
   "./src/course.js",
+  "./src/course_v2/outline.js",
+  "./src/course_v2_ui.js",
   "./src/share_cards.js",
   "./src/kernel/ability.js",
   "./src/kernel/planner.js",
@@ -113,6 +115,10 @@ const LANG_ONLY = [
   "./src/kernel/i18n_problems_en.js",
   "./src/kernel/i18n_text_en.js"
 ];
+
+// 新版課程的課文（src/course_v2/stage-*.js，合計約 1.8MB）也不進 install 預快取：英文介面用不到，
+// 中文介面也只有打開課程的人才需要。課程表第一次打開時 course_v2_ui.js 會在閒置時把每個 Stage 抓一遍，
+// 經過下面的 fetch handler 存進快取 —— 打開過一次課程表，整套課離線都能讀。
 
 // 新版本要等使用者同意才生效。
 //

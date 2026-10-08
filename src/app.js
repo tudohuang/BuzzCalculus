@@ -1503,7 +1503,7 @@
               </nav>
               <div class="sidebar-resources">
                 <span class="nav-section-label">${t("學習工具")}</span>
-                <button class="sidebar-link ${/^course/.test(view) ? "is-active" : ""}" data-action="open-course" title="${t("入門課程")}">${icon("book-open")}<span>${t("入門課程")}</span></button>
+                <button class="sidebar-link ${/^course/.test(view) ? "is-active" : ""}" data-action="open-course" title="${t("課程")}">${icon("book-open")}<span>${t("課程")}</span></button>
                 ${navGate.mistakes ? `<button class="sidebar-link ${view === "mistakes" ? "is-active" : ""}" data-action="open-mistakes" title="${t("錯題本")}">${icon("refresh")}<span>${t("錯題本")}</span></button>` : ""}
                 ${navGate.history ? `<button class="sidebar-link ${view === "history" ? "is-active" : ""}" data-action="open-history" title="${t("練習紀錄")}">${icon("history")}<span>${t("練習紀錄")}</span></button>` : ""}
                 ${navGate.proofs ? `<button class="sidebar-link ${/^proof/.test(view) ? "is-active" : ""}" data-action="open-proofs" title="${t("證明訓練")}">${icon("file-pen-line")}<span>${t("證明訓練")}</span></button>` : ""}
@@ -3783,7 +3783,7 @@
             </details>
 
             <nav class="home-more-links" aria-label="${t("其他頁面")}">
-              <button data-action="open-course">${icon("book-open")}${t("入門課程")}</button>
+              <button data-action="open-course">${icon("book-open")}${t("課程")}</button>
               <button data-action="open-library">${icon("search")}${t("題庫")}</button>
               ${panelGate.proofs ? `<button data-action="open-proofs">${icon("file-pen-line")}${t("證明題庫")}</button>` : ""}
               ${panelGate.full ? `<button data-action="open-boss-lab">${icon("trophy")}${t("Boss 專區")}</button>
@@ -5048,52 +5048,10 @@
 
   const plUI = window.BuzzProofLabUI.create({ escapeHtml, escapeAttr, icon, proofs });
 
-  // ── 從零開始：給還沒學過微積分的人的入門課（內容與畫面都在 course.js）──
-  // 這裡只有狀態：現在哪一課、逐步示範揭到第幾步、小測選了什麼。
-  const courseUI = window.BuzzCourseUI.create({ escapeHtml, escapeAttr, icon, referenceAnswerHTML });
-  let courseState = { lessonId: "", revealed: 0, picks: {} };
-
+  // ── 課程（內容、畫面、狀態都在 course.js：中文介面是新版課程，英文介面是舊的 25 課）──
+  const courseUI = window.BuzzCourseUI.create({ escapeHtml, escapeAttr, icon, referenceAnswerHTML, loadRecords, saveRecords, ensureLazy, startQuiz, render, go: (next) => { view = next; render(); window.scrollTo(0, 0); } });
   const renderCourse = () => courseUI.renderIndex(loadRecords());
-  const renderCourseLesson = () => {
-    const item = courseUI.lesson(courseState.lessonId);
-    return (item && courseUI.renderLesson(item, loadRecords(), courseState)) || renderCourse();
-  };
-
-  function openCourseLesson(id) {
-    const item = courseUI.lesson(id);
-    if (!item) { view = "course"; render(); return; }
-    saveRecords(courseUI.markOpened(loadRecords(), id));
-    courseState = { lessonId: id, revealed: 0, picks: {} };
-    view = "course-lesson";
-    render();
-    window.scrollTo(0, 0);
-  }
-
-  // 小測：選了就記；三題都對才算過。選錯不扣什麼，畫面會說為什麼錯，可以再選。
-  function pickCourseOption(checkIndex, optionIndex) {
-    const item = courseUI.lesson(courseState.lessonId);
-    if (!item) return;
-    courseState.picks = { ...courseState.picks, [checkIndex]: optionIndex };
-    if (courseUI.allChecksRight(item, courseState.picks)) saveRecords(courseUI.markChecksPassed(loadRecords(), item.id));
-    render();
-  }
-
-  // 導引練習：那三題、不倒數、可看提示、進錯題本（練習本來就會）。結束時 finishQuiz 會記回課程。
-  function startCoursePractice(id) {
-    const pool = courseUI.practicePool(id);
-    if (pool.length) startQuiz(pool, { modeKey: "practice", practice: true, noTimer: true, answerMode: "choice", courseLessonId: id });
-  }
-
-  // 每課結尾的延伸挑戰：一題 R2，練習模式、不倒數；不記回課程（那是練習題的事）
-  function startCourseExtension(id) {
-    const pool = courseUI.extensionPool(id);
-    if (pool.length) startQuiz(pool, { modeKey: "practice", practice: true, noTimer: true, answerMode: "choice", courseExtension: true });
-  }
-
-  function startCourseGraduation() {
-    const pool = courseUI.graduationSet(Date.now());
-    if (pool.length >= 4) startQuiz(pool, { modeKey: "practice", practice: true, noTimer: true, answerMode: "choice", courseGraduation: true });
-  }
+  const renderCourseLesson = () => courseUI.renderCurrent(loadRecords());
 
   const proofLangSpec = (id) => plUI.spec(id);
   const proofLangLessons = () => plUI.lessons();
@@ -8312,27 +8270,7 @@
       view = "proofs";
       render();
     }
-    if (action === "open-course") {
-      view = "course";
-      render();
-      window.scrollTo(0, 0);
-    }
-    if (action === "open-course-lesson") openCourseLesson(actionNode.dataset.lessonId || "");
-    if (action === "course-step") {
-      courseState.revealed = (courseState.revealed || 0) + 1;
-      courseState.lastGuess = undefined;
-      render();
-    }
-    if (action === "course-guess") {
-      // 猜過就揭：對錯都往下走，只是留一句話
-      courseState.lastGuess = actionNode.dataset.ok === "1";
-      courseState.revealed = (courseState.revealed || 0) + 1;
-      render();
-    }
-    if (action === "course-extension") startCourseExtension(actionNode.dataset.lessonId || courseState.lessonId);
-    if (action === "course-pick") pickCourseOption(Number(actionNode.dataset.check), Number(actionNode.dataset.option));
-    if (action === "course-practice") startCoursePractice(actionNode.dataset.lessonId || courseState.lessonId);
-    if (action === "course-graduation") startCourseGraduation();
+    if (/^(open-)?course/.test(action)) courseUI.act(action, actionNode.dataset);
     if (action === "pl-open-problem") openProofWrite(actionNode.dataset.proofLangId || "");
     if (action === "open-proof-problem") openProofProblem(actionNode.dataset.proofKey || "");
     if (action === "proof-random") openRandomProof();
@@ -13586,6 +13524,7 @@
     next.examSetupDismissed = Boolean(next.examSetupDismissed);
     next.proofLang = next.proofLang && typeof next.proofLang === "object" ? next.proofLang : {};
     next.course = next.course && typeof next.course === "object" ? next.course : {};
+    next.courseV2 = next.courseV2 && typeof next.courseV2 === "object" ? next.courseV2 : {};
     next.courseGraduation = next.courseGraduation && typeof next.courseGraduation === "object" ? next.courseGraduation : null;
     next.proofLangLessons = next.proofLangLessons && typeof next.proofLangLessons === "object" ? next.proofLangLessons : {};
     next.onboardingContext = typeof next.onboardingContext === "string" ? next.onboardingContext : "";

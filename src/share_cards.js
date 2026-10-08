@@ -1560,7 +1560,7 @@
         id: "library",
         targets: ['.nav-button[data-action="open-library"]', '[data-action="open-library"]'],
         title: t("題庫可以自己挑題"),
-        body: t("搜技巧、搜題號都可以，找到的題目可以直接開一局。入門課程與證明訓練也在這一區。")
+        body: t("搜技巧、搜題號都可以，找到的題目可以直接開一局。課程與證明訓練也在這一區。")
       },
       {
         id: "insights",

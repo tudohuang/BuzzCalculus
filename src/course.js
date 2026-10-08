@@ -1,5 +1,8 @@
 // 從零開始：給還沒學過微積分的人的入門課（十六課），加九課進階技巧（題庫 R5–R6 的招式）。
 //
+// 2026-10：中文介面換成新版課程（317 課，tools/content/course_v2/ → src/course_v2/，畫面在 src/course_v2_ui.js）。
+// 這 25 課現在只給英文介面用（它們有英文、新版還沒翻）；切換在檔案最下面的 create()。
+//
 // 這個站原本是「把學過的微積分練成直覺」——只有題目，沒有一段教「極限是什麼」的內容。
 // 完全初學者打開就被 1994 題淹死。這些課補的是那一層。兩種課：
 //   - 計算課：白話概念（幾段，帶一兩個公式）→ 一題逐步示範（用題庫裡驗算過的 R1 題，
@@ -1115,7 +1118,7 @@
   const isCore = (item) => CORE_UNITS.includes(item.unit);
   const UNIT_LABEL = Object.fromEntries(UNITS);
 
-  function create(deps) {
+  function createLegacy(deps) {
     const { escapeHtml, escapeAttr, icon, referenceAnswerHTML } = deps;
 
     const lessons = () => (Array.isArray(window.BUZZ_COURSE) ? window.BUZZ_COURSE : []);
@@ -1255,7 +1258,7 @@
                 <p>${escapeHtml(tx(item.goal))}</p>
               </div>
               <div class="action-row">
-                <button class="button secondary" data-action="open-course">${icon("list")}${t("課程表")}</button>
+                <button class="button secondary" data-action="open-course">${icon("list-checks")}${t("課程表")}</button>
               </div>
             </div>
             <nav class="pl-lesson-nav" aria-label="${t("課程")}">
@@ -1376,7 +1379,7 @@
         return `
           <div class="action-row">
             <button class="button" data-action="open-course-lesson" data-lesson-id="${escapeAttr(lessonId)}">${icon("book-open")}${t("回到{name}", { name: item ? escapeHtml(lessonNo(item)) : t("課程") })}</button>
-            ${next ? `<button class="button secondary" data-action="open-course-lesson" data-lesson-id="${escapeAttr(next.id)}">${icon("chevron-right")}${t("下一課")}</button>` : `<button class="button secondary" data-action="open-course">${icon("list")}${t("課程表")}</button>`}
+            ${next ? `<button class="button secondary" data-action="open-course-lesson" data-lesson-id="${escapeAttr(next.id)}">${icon("chevron-right")}${t("下一課")}</button>` : `<button class="button secondary" data-action="open-course">${icon("list-checks")}${t("課程表")}</button>`}
             <button class="button ghost" data-action="open-mistakes">${icon("book")}${t("錯題本")}</button>
           </div>
         `;
@@ -1399,7 +1402,7 @@
             <div class="today-card-head"><p class="section-label">${icon("book-open")}${t("從零開始 · {n} 課都完成了", { n: summary.total })}</p><span>${t("約 10 分鐘")}</span></div>
             <h2>${grad ? t("畢業關再考一次（上次 {correct} / {total}）", { correct: grad.correct, total: grad.total }) : t("畢業關：10 題，8 題過關")}</h2>
             <p>${t("只出課裡教過的東西，不倒數。過了就去主線第 1 關——頭三局也只出你學過的題。")}</p>
-            <div class="action-row"><button class="button home-primary" data-action="course-graduation">${icon("play")}${grad ? t("再考一次") : t("開始畢業關")}</button><button class="button secondary" data-action="open-course">${icon("list")}${t("課程表")}</button></div>
+            <div class="action-row"><button class="button home-primary" data-action="course-graduation">${icon("play")}${grad ? t("再考一次") : t("開始畢業關")}</button><button class="button secondary" data-action="open-course">${icon("list-checks")}${t("課程表")}</button></div>
           </section>`;
       }
       const item = summary.next;
@@ -1415,7 +1418,7 @@
           <p>${escapeHtml(tx(item.goal))}</p>
           <div class="action-row">
             <button class="button home-primary" data-action="open-course-lesson" data-lesson-id="${escapeAttr(item.id)}">${icon("play")}${started ? t("繼續這一課") : t("開始")}</button>
-            <button class="button secondary" data-action="open-course">${icon("list")}${t("課程表")}</button>
+            <button class="button secondary" data-action="open-course">${icon("list-checks")}${t("課程表")}</button>
           </div>
           <p class="panel-note">${isTheory(item) ? t("理論課：白話概念 → 一段逐步推導 → 小測。") : t("白話概念 → 一題逐步示範 → 小測 → 3 題不倒數的練習。")}${t("{n} 課上完考畢業關，再走主線。", { n: summary.total })}</p>
         </section>`;
@@ -1457,8 +1460,9 @@
     }
 
     // 畢業關的 10 題：4 極限、3 微分、3 積分，先用課裡沒出過的題，種子決定順序
-    function graduationSet(seed) {
-      const used = new Set(lessons().flatMap((item) => item.practice.concat(item.worked && item.worked.problemId ? [item.worked.problemId] : [])));
+    // （used：新版課程傳自己的推薦題；沒傳就用這 25 課的）
+    function graduationSet(seed, usedIds) {
+      const used = usedIds || new Set(lessons().flatMap((item) => item.practice.concat(item.worked && item.worked.problemId ? [item.worked.problemId] : [])));
       const hash = (text) => { let h = 2166136261; for (const ch of `${seed}:${text}`) { h ^= ch.charCodeAt(0); h = Math.imul(h, 16777619) >>> 0; } return h; };
       const quota = { limits: 4, derivatives: 3, integrals: 3 };
       const pool = bridgePool();
@@ -1489,7 +1493,7 @@
         <div class="action-row">
           ${passed
             ? `<button class="button" data-action="open-train">${icon("target")}${t("去走主線第 1 關")}</button>
-               <button class="button secondary" data-action="open-course">${icon("list")}${t("課程表")}</button>`
+               <button class="button secondary" data-action="open-course">${icon("list-checks")}${t("課程表")}</button>`
             : `<button class="button" data-action="open-course">${icon("book-open")}${t("回課程表看那幾課")}</button>
                <button class="button secondary" data-action="course-graduation">${icon("refresh")}${t("再考一次")}</button>`}
           <button class="button ghost" data-action="open-mistakes">${icon("book")}${t("錯題本")}</button>
@@ -1576,7 +1580,126 @@
       return [pool[(number(item) * 7) % pool.length]];
     };
 
-    return { lessons, lesson, isTheory, problemLesson, progress, renderIndex, renderLesson, renderFirstSteps, renderResultsActions, renderFeedbackLink, renderHomeCard, inBridge, bridgePool, uncoveredTags: UNCOVERED_TAGS, protectPool, graduationSet, graduationVerdict, graduation, graduated, renderGraduationActions, renderGraduationCard, markOpened, markChecksPassed, recordPractice, recordGraduation, allChecksRight, practicePool, extensionPool, gentleTrim };
+    /* ── 狀態與動作（2026-10 從 app.js 搬來：app.js 撞預算，而且狀態本來就該跟畫面住一起）──
+       state：現在哪一課、逐步示範揭到第幾步、小測選了什麼、上一次猜對沒。
+       deps.go(view) 換頁並捲回頂端；deps.render() 同頁重繪；deps.startQuiz 開一局。 */
+    let state = { lessonId: "", revealed: 0, picks: {} };
+    const renderCurrent = (records) => {
+      const item = lesson(state.lessonId);
+      return (item && renderLesson(item, records, state)) || renderIndex(records);
+    };
+    const QUIZ = { modeKey: "practice", practice: true, noTimer: true, answerMode: "choice" };
+    function act(action, data) {
+      const id = data.lessonId || state.lessonId;
+      if (action === "open-course") return deps.go("course");
+      if (action === "open-course-lesson") {
+        if (!lesson(id)) return deps.go("course");
+        deps.saveRecords(markOpened(deps.loadRecords(), id));
+        state = { lessonId: id, revealed: 0, picks: {} };
+        return deps.go("course-lesson");
+      }
+      // 猜過就揭：對錯都往下走，只是留一句話；「直接看」不留話
+      if (action === "course-step" || action === "course-guess") {
+        state.lastGuess = action === "course-guess" ? data.ok === "1" : undefined;
+        state.revealed = (state.revealed || 0) + 1;
+        return deps.render();
+      }
+      // 小測：選了就記；全部都對才算過。選錯不扣什麼，畫面會說為什麼錯，可以再選。
+      if (action === "course-pick") {
+        const item = lesson(state.lessonId);
+        if (!item) return;
+        state.picks = { ...state.picks, [Number(data.check)]: Number(data.option) };
+        if (allChecksRight(item, state.picks)) deps.saveRecords(markChecksPassed(deps.loadRecords(), item.id));
+        return deps.render();
+      }
+      // 導引練習：那三題、不倒數、可看提示；結束時 finishQuiz 會記回課程。延伸挑戰：一題 R2，不記回課程。
+      const pool = action === "course-practice" ? practicePool(id) : action === "course-extension" ? extensionPool(id) : action === "course-graduation" ? graduationSet(Date.now()) : [];
+      if (action === "course-practice" && pool.length) deps.startQuiz(pool, { ...QUIZ, courseLessonId: id });
+      if (action === "course-extension" && pool.length) deps.startQuiz(pool, { ...QUIZ, courseExtension: true });
+      if (action === "course-graduation" && pool.length >= 4) deps.startQuiz(pool, { ...QUIZ, courseGraduation: true });
+    }
+
+    return { lessons, lesson, isTheory, problemLesson, progress, renderIndex, renderLesson, renderCurrent, act, renderFirstSteps, renderResultsActions, renderFeedbackLink, renderHomeCard, inBridge, bridgePool, uncoveredTags: UNCOVERED_TAGS, protectPool, graduationSet, graduationVerdict, graduation, graduated, renderGraduationActions, renderGraduationCard, markOpened, markChecksPassed, recordPractice, recordGraduation, allChecksRight, practicePool, extensionPool, gentleTrim };
+  }
+
+  /* ── 新版課程（中文介面）的外殼 ──
+     畫面與課文都是延後載入的（index.html 的 data-lazy="course"：src/course_v2_ui.js ＋ src/course_v2/outline.js；
+     課文按 Stage 分檔，由 course_v2_ui.js 自己抓）。這層只負責：還沒載到時給一個載入中的殼、載完重繪、
+     跟舊課共用的東西（畢業關、橋池、新手保護期）照樣交給舊的那一份。對 app.js 來說兩種課的介面一模一樣。 */
+  function createV2Shell(deps, legacy) {
+    let ui = null;
+    let pending = null;
+    let failed = false;
+    let queued = null;
+    function load() {
+      if (ui || pending || failed) return;
+      const ready = () => {
+        if (!window.BuzzCourseV2UI || !window.BUZZ_COURSE_V2) throw new Error("course v2 missing");
+        ui = window.BuzzCourseV2UI.create({ ...deps, legacy });
+      };
+      try {
+        pending = Promise.resolve(deps.ensureLazy("course")).then(ready).then(() => {
+          pending = null;
+          const next = queued;
+          queued = null;
+          if (next) ui.act(next[0], next[1]);
+          else deps.render();
+        }, () => { pending = null; failed = true; deps.render(); });
+      } catch (_error) {
+        pending = null;
+        failed = true;
+      }
+    }
+    const current = () => { if (!ui) load(); return ui; };
+    const waiting = () => {
+      current();
+      return `
+        <main class="screen lazy-loading" aria-busy="${failed ? "false" : "true"}">
+          <section class="panel page-panel course-index">
+            <p class="section-label">${t("課程")}</p>
+            <p class="panel-note">${failed ? t("課程載不進來 —— 檢查一下網路再試一次。") : t("載入課程…")}</p>
+            ${failed ? `<div class="action-row"><button class="button" data-action="open-course">${icon("refresh")}${t("再試一次")}</button></div>` : ""}
+          </section>
+        </main>`;
+    };
+    const homeFallback = () => `
+      <section class="today-card course-home-card">
+        <div class="today-card-head"><p class="section-label">${icon("book-open")}${t("課程")}</p></div>
+        <div class="action-row"><button class="button home-primary" data-action="open-course">${icon("list-checks")}${t("課程表")}</button></div>
+      </section>`;
+    const now = () => new Date().toISOString();
+    return {
+      ...legacy,
+      renderIndex: (records) => (current() ? ui.renderIndex(records) : waiting()),
+      renderCurrent: (records) => (current() ? ui.renderLesson(records) : waiting()),
+      renderHomeCard: (records) => (current() ? ui.renderHomeCard(records) : homeFallback()),
+      renderFirstSteps: (records) => (current() ? ui.renderFirstSteps(records) : ""),
+      // 回饋與結算：只在課程已經載過時才講「這題是哪一課教的」——不為了一行字去抓整份大綱
+      renderFeedbackLink: (problemId) => (ui ? ui.renderFeedbackLink(problemId) : ""),
+      renderResultsActions: (lessonId) => (ui ? ui.renderResultsActions(lessonId) : `<div class="action-row"><button class="button" data-action="open-course">${icon("list-checks")}${t("課程表")}</button></div>`),
+      // 新版的進度在 records.courseV2；推薦題對不對直接看 problemStats，這裡只記練過的時間
+      recordPractice: (records, id) => {
+        records.courseV2 = records.courseV2 || {};
+        records.courseV2[id] = { ...(records.courseV2[id] || {}), practicedAt: now() };
+        return records;
+      },
+      extensionPool: () => [],
+      act(action, data) {
+        if (ui) return ui.act(action, data);
+        // 還沒載到（或上次載失敗）：先去課程頁的載入殼，載完再把這個動作做完（例如打開某一課）
+        if (action !== "open-course") queued = [action, { ...data }];
+        failed = false;
+        load();
+        return deps.go("course");
+      }
+    };
+  }
+
+  // 英文介面：舊的 25 課（已翻譯）；中文介面：新版課程。語言在載入時就定案（見 i18n.js），所以這裡判斷一次就好。
+  function create(deps) {
+    const legacy = createLegacy(deps);
+    const english = typeof window !== "undefined" && window.BuzzI18n && window.BuzzI18n.lang === "en";
+    return english ? legacy : createV2Shell(deps, legacy);
   }
 
   window.BuzzCourseUI = { create };
