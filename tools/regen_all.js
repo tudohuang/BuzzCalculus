@@ -30,7 +30,9 @@ const STEPS = [
   ["每日一題釘選", "node tools/pin_daily_one.js"],
   ["驗算側表", "node tools/verify_answers.js"],
   ["對外數字", "node tools/validate_public_claims.js --update"],
-  ["英文句型表", "node tools/build_i18n_text.js"]
+  ["英文句型表", "node tools/build_i18n_text.js"],
+  // 新版課程：tools/content/course_v2/ → src/course_v2/（大綱＋每個 Stage 的課文）。改了課文或大綱忘記打包，--check 會紅。
+  ["新版課程", "node tools/build_course_v2.js"]
 ];
 
 for (const [label, command] of STEPS) {
@@ -47,6 +49,7 @@ if (checkMode) {
     "src/kernel/skill_tags.js",
     "src/kernel/verified_answers.js",
     "src/kernel/i18n_text_en.js",
+    "src/course_v2",
     "reports/answer-verification.json",
     "README.md",
     "about.html"
