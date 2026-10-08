@@ -1525,11 +1525,19 @@
         const have = new Set(base.map((problem) => problem.id));
         base = base.concat(problems().filter((problem) => topics.includes(problem.topic) && problem.difficulty === 1 && problem.answerKind !== "text" && !have.has(problem.id)).slice(0, GENTLE_FIRST_COUNT - base.length));
       }
-      return base
+      const ordered = base
         .map((problem, index) => ({ problem, index }))
         .sort((a, b) => (rank(a.problem) - rank(b.problem)) || (a.index - b.index))
         .map((entry) => entry.problem)
         .slice(0, GENTLE_FIRST_COUNT);
+      // 第一題一定要是 R1。配方照日期抽，有些日子抽到的極限／微分裡剛好一題 R1 都沒有，
+      // 排序之後第一題就變成 R2 —— 對第一次來的人，這正是新手保護要擋掉的那一題。
+      if (ordered.length && rank(ordered[0]) > 1) {
+        const have = new Set(ordered.map((problem) => problem.id));
+        const starter = problems().find((problem) => (!topics || topics.includes(problem.topic)) && rank(problem) === 1 && problem.answerKind !== "text" && !have.has(problem.id));
+        if (starter) return [starter, ...ordered].slice(0, GENTLE_FIRST_COUNT);
+      }
+      return ordered;
     }
 
     /* ── 紀錄的變更：純函式，改完回傳同一個 records，app.js 負責 load / save ── */
