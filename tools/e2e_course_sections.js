@@ -8,6 +8,8 @@
 //   整課點完（不碰任何聲音的路）就到結算：「你現在會：」＋學習目標、這一課的 XP（數字直接是總數）、下一課、在地圖上看；
 //   在地圖上看：地圖打開、那一課亮一下（環），然後自己消失；每日任務「讀一節課」1/1、連勝 1 天；
 //   「全文」切回整頁、而且記住（重開還是全文）、再切回分節；390 寬不溢出、按鈕 ≥ 40px；桌機本文欄置中；console 沒有錯誤。
+//   旁白：按播放之前沒有任何 /media/narration/ 請求；按了只抓這一句、預載下一句；念完自己出下一句、圖跟著動；念到最後一句停在動作前；
+//   下一節接著念；暫停不再往下、繼續接著；語速設到 playbackRate（換句之後還在）；字幕是亮著那一句的 say；重開這一課就停；載不到留一行字、點的照樣做完。
 //
 // 用法：node tools/e2e_course_sections.js
 //       node tools/e2e_course_sections.js --screenshots   另存截圖到 docs/report/course-review/screens/sections/（不進版控）
@@ -28,6 +30,14 @@ const lessonOf = (id) => JSON.parse(fs.readFileSync(path.join(LESSON_DIR, `${id}
 const FIRST = lessonOf("function-intro");
 const SECOND = lessonOf("domain-range");
 const WIDGET = lessonOf("riemann-sum-intuition");
+// 旁白：/media/narration/ 的請求一律由這支測試自己回（CDP Fetch 攔下來），不靠 Release —— 上傳之前 CI 也測得到。
+// 回的是合成的無聲 mp3（MPEG-2 Layer III、24kHz、48kbps，一格 144 bytes = 24ms），長度由測試控制；mode = "fail" 時回 404。
+const { mp3Ms } = require("./build_narration.js");
+const silentMp3 = (ms) => {
+  const frame = Buffer.alloc(144);
+  frame.set([0xff, 0xf3, 0x64, 0xc0]);
+  return Buffer.concat(Array.from({ length: Math.ceil(ms / 24) }, () => frame));
+};
 const correctOf = (item) => item.options.findIndex((o) => o.correct);
 const wrongOf = (item) => item.options.findIndex((o) => !o.correct);
 
@@ -139,7 +149,18 @@ async function run() {
     return sec.check !== undefined ? "check" : sec.predict ? "predict" : "drag";
   };
 
+  const narr = { mode: "fake", ms: 600, urls: [] };
+  chrome.on("Fetch.requestPaused", (p) => {
+    narr.urls.push(p.request.url.replace(/^.*\/media\/narration\//, ""));
+    const body = narr.mode === "fail" ? null : silentMp3(narr.ms);
+    chrome.send("Fetch.fulfillRequest", body
+      ? { requestId: p.requestId, responseCode: 200, responseHeaders: [{ name: "Content-Type", value: "audio/mpeg" }, { name: "Cache-Control", value: "no-store" }], body: body.toString("base64") }
+      : { requestId: p.requestId, responseCode: 404, responseHeaders: [{ name: "Content-Type", value: "text/plain" }], body: Buffer.from("404").toString("base64") }).catch(() => {});
+  });
+  await chrome.send("Fetch.enable", { patterns: [{ urlPattern: "*/media/narration/*", requestStage: "Request" }] });
+
   try {
+    check("測試用的無聲 mp3 長度數得對（600ms → 25 格）", mp3Ms(silentMp3(600)) === 600);
     await chrome.send("Emulation.setDeviceMetricsOverride", PHONE);
     await chrome.send("Emulation.setTouchEmulationEnabled", { enabled: true, maxTouchPoints: 5 });
     await chrome.navigate(`${server.url}/index.html`);
@@ -301,6 +322,72 @@ async function run() {
     await finishSection(WIDGET);
     const dragDone = await evaluate(`return { done: document.querySelector('[data-cv2s-act="drag"]').classList.contains("is-done"), dot: document.querySelectorAll(".cv2s-dot")[${dragSi}].classList.contains("is-done"), xp: window.__s.rec().xp || 0 };`);
     check("拖進範圍：動作完成、這一節打勾、+5 XP", dragDone.done && dragDone.dot && dragDone.xp === xpBefore + 5, JSON.stringify(dragDone));
+
+    /* ── 旁白：按了「播放」才有聲音；念完自己出下一句、圖跟著動；暫停、語速、字幕；載不到退回點的 ── */
+    const V = WIDGET.sections;
+    check("到這裡都沒按播放：沒有任何 /media/narration/ 請求", narr.urls.length === 0, narr.urls.slice(0, 3).join(","));
+    check(`旁白：打開 ${WIDGET.id}`, await openLesson(WIDGET.id));
+    await tap(".cv2s-dot:nth-child(1)");
+    await waitFor(`window.__s.si() === 0 && window.__s.beats() === 1`);
+    await sleep(1000); // 第一句的圖動完
+    const v0 = await evaluate(`return { play: window.__s.text("[data-cv2s-play]"), rate: window.__s.text("[data-cv2s-rate]"), subs: window.__s.text("[data-cv2s-subs]"), fig: window.__s.fig(${V[0].beats[1].fig.use}).dataset.value };`);
+    check("每一節都有「播放」、語速、字幕（預設不播）", v0.play === "播放" && v0.rate === "1×" && v0.subs === "字幕", JSON.stringify(v0));
+    check("打開課、出第一句：還是沒有旁白請求", narr.urls.length === 0);
+    narr.ms = 1500;
+    await tap("[data-cv2s-play]");
+    check("按了播放：抓第一句的錄音", await waitFor(`window.BuzzCourseSections.voice().src.includes("/0-0-")`, 3000) && narr.urls.some((u) => u.startsWith(`${WIDGET.id}/0-0-`)), narr.urls.join(","));
+    check("只預載下一句（沒有一次抓整節）", narr.urls.every((u) => /\/0-[01]-/.test(`/${u.split("/")[1]}`)), narr.urls.join(","));
+    check("念完自己出下一句（沒有點）", await waitFor(`window.__s.beats() === 2`, 6000), String(await evaluate(`return window.__s.beats();`)));
+    check(`圖跟著那一句動到 ${V[0].beats[1].fig.to}`, await waitFor(`window.__s.fig(${V[0].beats[1].fig.use}).dataset.value === "${V[0].beats[1].fig.to}"`, 3000), `${v0.fig} → ${await evaluate(`return window.__s.fig(${V[0].beats[1].fig.use}).dataset.value;`)}`);
+    check("一路念到這一節最後一句，停在動作前", await waitFor(`window.__s.beats() === ${V[0].beats.length} && window.BuzzCourseSections.voice().wait && document.querySelector("[data-cv2s-act]")`, 12000), JSON.stringify(await evaluate(`return window.BuzzCourseSections.voice();`)));
+    await sleep(900);
+    check("停在動作前：沒有自己換節", (await evaluate(`return window.__s.si();`)) === 0);
+    await shot("phone-light-voice-wait");
+    // 做完動作、按「下一節」：接著念（每句 1.5 秒，留時間按暫停）
+    await finishSection(WIDGET);
+    await tap("[data-cv2s-next]");
+    check("下一節：播放開著就從第一句接著念", await waitFor(`window.__s.si() === 1 && window.BuzzCourseSections.voice().src.includes("/1-0-")`, 4000), JSON.stringify(await evaluate(`return window.BuzzCourseSections.voice();`)));
+    await tap("[data-cv2s-play]");
+    const paused = await evaluate(`return { v: window.BuzzCourseSections.voice(), beats: window.__s.beats(), label: window.__s.text("[data-cv2s-play]") };`);
+    await sleep(2200);
+    const still2 = await evaluate(`return window.__s.beats();`);
+    check("暫停：不再自己往下", paused.v.paused && still2 === paused.beats && paused.label === "繼續", `${paused.beats} → ${still2} · ${paused.label}`);
+    await tap("[data-cv2s-play]");
+    check("繼續：接著往下", await waitFor(`window.__s.beats() > ${paused.beats}`, 6000) && (await evaluate(`return !window.BuzzCourseSections.voice().paused;`)));
+    // 語速：1× → 1.25× → 1.5× → 1×，真的設到 playbackRate、記在設定裡
+    await tap("[data-cv2s-rate]");
+    const r1 = await evaluate(`return { label: window.__s.text("[data-cv2s-rate]"), rate: window.BuzzCourseSections.voice().rate, saved: (window.__s.rec().settings || {}).narrRate };`);
+    check("語速 1.25×：playbackRate 跟著變、記住", r1.label === "1.25×" && r1.rate === 1.25 && r1.saved === 1.25, JSON.stringify(r1));
+    // 下一句也用同一個語速（換 src 會重設 playbackRate）
+    check("下一句換了錄音，語速還是 1.25×", await waitFor(`window.__s.beats() === ${V[1].beats.length} || window.BuzzCourseSections.voice().bi >= 2`, 6000) && (await evaluate(`return window.BuzzCourseSections.voice().rate;`)) === 1.25);
+    await tap("[data-cv2s-rate]");
+    await tap("[data-cv2s-rate]");
+    check("再按兩下回到 1×", (await evaluate(`return window.__s.text("[data-cv2s-rate]") + "|" + window.BuzzCourseSections.voice().rate;`)) === "1×|1");
+    // 字幕：亮著的那一句底下出現它的 say
+    await tap("[data-cv2s-subs]");
+    const sub = await evaluate(`const now = document.querySelector("[data-cv2s] .cv2s-beat.is-now"); return { bi: Number(now.dataset.beat), say: window.__s.text("[data-cv2s] .cv2s-beat.is-now [data-cv2s-say]"), n: document.querySelectorAll("[data-cv2s-say]").length, saved: (window.__s.rec().settings || {}).narrSubs, overflow: window.__s.overflow(), small: window.__s.small() };`);
+    check("字幕：亮著那一句的旁白文字（只有一行）", sub.n === 1 && sub.say === V[1].beats[sub.bi].say && sub.saved === true, sub.say.slice(0, 24));
+    check("播放列＋字幕：390 寬不溢出、按鈕 ≥ 40px", sub.overflow <= 1 && !sub.small.length, JSON.stringify(sub.small));
+    await shot("phone-light-voice-subs");
+    await tap("[data-cv2s-play]"); // 先停下來（停在動作前就是關掉；還在念就是暫停），免得重繪中按偏
+    await tap("[data-cv2s-subs]");
+    check("字幕關掉", await waitFor(`document.querySelectorAll("[data-cv2s-say]").length === 0 && (window.__s.rec().settings || {}).narrSubs === false`, 3000), JSON.stringify(await evaluate(`return { n: document.querySelectorAll("[data-cv2s-say]").length, v: window.BuzzCourseSections.voice() };`)));
+    // 載不到（沒有 media/、離線）：一行字、播放關掉，點的照樣做完這一節
+    narr.mode = "fail";
+    const failSi = 2;
+    await evaluate(`window.__s.open("${WIDGET.id}"); return 1;`);
+    check("重新打開這一課：旁白停掉", await waitFor(`window.__s.root() && !window.BuzzCourseSections.voice().on`, 4000), JSON.stringify(await evaluate(`return window.BuzzCourseSections.voice();`)));
+    await tap(`.cv2s-dot:nth-child(${failSi + 1})`);
+    await waitFor(`window.__s.si() === ${failSi}`);
+    await tap("[data-cv2s-play]");
+    const off = await waitFor(`document.querySelector("[data-cv2s-voice-off]") && !window.BuzzCourseSections.voice().on`, 5000);
+    const offView = await evaluate(`return { line: window.__s.text("[data-cv2s-voice-off]"), play: window.__s.text("[data-cv2s-play]") };`);
+    check("載不到：只留一行字、播放鍵回到「播放」", off && offView.play === "播放" && offView.line.length > 0 && offView.line.length <= 20, JSON.stringify(offView));
+    await finishSection(WIDGET);
+    check("載不到之後，用點的照樣做完這一節", await waitFor(`document.querySelectorAll(".cv2s-dot")[${failSi}].classList.contains("is-done")`, 3000));
+    narr.mode = "fake";
+    await tap("[data-cv2s-next]");
+    check("換節：不會自己開始念", (await evaluate(`return !window.BuzzCourseSections.voice().on;`)));
 
     /* ── 深色 ── */
     await evaluate(`document.documentElement.dataset.theme = "dark"; return 1;`);
