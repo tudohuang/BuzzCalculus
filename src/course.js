@@ -1635,6 +1635,7 @@
      課文按 Stage 分檔，由 course_v2_ui.js 自己抓）。這層只負責：還沒載到時給一個載入中的殼、載完重繪、
      跟舊課共用的東西（畢業關、橋池、新手保護期）照樣交給舊的那一份。對 app.js 來說兩種課的介面一模一樣。 */
   function createV2Shell(deps, legacy) {
+    const { icon } = deps;
     let ui = null;
     let pending = null;
     let failed = false;
