@@ -11,7 +11,7 @@
 //   範例一步一步揭；常見錯誤是短句清單；小測選錯才顯示那個選項的理由；挑戰題另外標；
 //   通過三層 —— 完成（小測第一次就選對 ≥ 3 題）／熟練（核心推薦題全對）／全破（含挑戰全對）—— 不鎖課；
 //   閱讀時間與完成時間分開；課號照大綱順序算，正文的〈課名〉連到那一課；visual（給作者的文字規格）不顯示，
-//   畫面上的圖是 figures（畫法在這支最後的 BuzzCourseFigures），放在 after 指定的觀念段落之後。
+//   畫面上的圖是 figures（畫法在 course_figures.js 的 BuzzCourseFigures，data-lazy="figures"），放在 after 指定的觀念段落之後。
 //
 // 版面（書本式單欄，細節見 STYLE 與 renderLesson）：觀念①要在手機第一屏；手機黏位置條、≥ 960px 換左側目錄。
 // 有 sections 的課預設一節一屏（course_sections.js），全文就是這一頁。
@@ -93,6 +93,22 @@
 .cv2-prereq { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 6px; margin: 0; }
 .cv2-link { display: inline-block; margin: -9px 0; padding: 9px 1px; border: 0; background: none; color: var(--blue); font: inherit; line-height: inherit; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; cursor: pointer; }
 .cv2-maplink { margin: -9px 0 -9px auto; color: var(--muted); font-size: 0.84rem; }
+/* 分節模式的頁首：課名下面一列裝下時間、層級、先修（收起）、分節／全文 —— 手機上第一句在第一屏的上半 */
+.cv2-lesson .cv2-head.is-compact { display: block; margin: 0; }
+.cv2-titlerow { display: flex; align-items: center; gap: 6px; }
+.cv2-titlerow .cv2-back { justify-content: center; width: 40px; height: 40px; margin: 0 0 0 -10px; padding: 0; font-size: 1.5rem; }
+.cv2-lesson .cv2-head.is-compact h2 { flex: 1; min-width: 0; font-size: 1.15rem; line-height: 1.3; }
+.cv2-head.is-compact .cv2-seg button { min-width: 48px; padding: 0 12px; }
+.cv2-head.is-compact .cv2-meta { margin: 0; gap: 0 10px; font-size: 0.8rem; }
+.cv2-head.is-compact .cv2-meta .section-label { margin: 0; font-size: inherit; }
+.cv2-head.is-compact .cv2-meta > * + *::before { content: "·"; margin-right: 10px; color: var(--line-strong); }
+.cv2-head.is-compact .cv2-meta > .cv2-tier::before, .cv2-head.is-compact .cv2-meta > .cv2-pre::before { content: none; }
+.cv2-pre > summary { display: inline-flex; align-items: center; gap: 2px; margin: -9px 0; padding: 9px 2px; color: var(--blue); font-weight: 700; cursor: pointer; list-style: none; }
+.cv2-pre > summary::-webkit-details-marker { display: none; }
+.cv2-pre > summary svg { width: 14px; height: 14px; transition: transform 0.15s ease; }
+.cv2-pre[open] > summary svg { transform: rotate(180deg); }
+.cv2-pre[open] { order: 9; flex-basis: 100%; }
+.cv2-pre .cv2-prereq { padding: 0 0 6px; }
 .cv2-goals > summary { display: inline-flex; align-items: center; gap: 6px; min-height: 40px; color: var(--muted); font-weight: 700; cursor: pointer; list-style: none; }
 .cv2-goals > summary svg, .cv2-fold > summary svg { flex: none; width: 16px; height: 16px; transition: transform 0.15s ease; }
 .cv2-goals[open] > summary svg, .cv2-fold[open] > summary svg { transform: rotate(90deg); }
@@ -198,6 +214,7 @@
 @media (min-width: 768px) {
   .cv2-lesson { font-size: 1.0625rem; }
   .cv2-lesson .cv2-head h2 { font-size: 2rem; }
+  .cv2-lesson .cv2-head.is-compact h2 { font-size: 1.6rem; }
 }
 /* 桌機／平板橫放：左邊是這一課的目錄（黏著、點了跳過去、目前段落亮起），位置條收起來 */
 @media (min-width: 960px) {
@@ -294,25 +311,35 @@
       saveRecords(records);
     }
 
-    /* ── 課文載入（按 Stage）── */
-    const stageState = {};
-    function loadStage(n) {
-      if (stageState[n] === "loading" || stageState[n] === "ready") return;
-      stageState[n] = "loading";
+    /* ── 課文載入（按章：src/course_v2/ch-<章>.js；檔名規則跟 tools/build_course_v2.js 的 chapterFile 一樣）── */
+    const chapterFile = (code) => `src/course_v2/ch-${String(code).toLowerCase().replace(/[^a-z0-9]+/g, "-")}.js`;
+    const chapterState = {};
+    function loadChapter(chapter) {
+      const src = chapterFile(chapter.code);
+      if (chapterState[src] === "loading" || chapterState[src] === "ready") return;
+      chapterState[src] = "loading";
       const script = document.createElement("script");
-      script.src = `src/course_v2/stage-${n}.js`;
-      script.onload = () => { stageState[n] = "ready"; render(); };
-      script.onerror = () => { stageState[n] = "failed"; script.remove(); render(); };
+      script.src = src;
+      script.onload = () => { chapterState[src] = "ready"; render(); };
+      script.onerror = () => { chapterState[src] = "failed"; script.remove(); render(); };
       document.head.appendChild(script);
     }
-    // 離線：課程表打開過一次，就在閒下來的時候把每個 Stage 的課文抓一遍（sw.js 的 fetch handler 會順手快取）。
-    // 只有已經有 service worker 在管的頁面才做，不然抓了也存不起來。
+    // 圖（figures、widget）的畫法在 course_figures.js（data-lazy="figures"）：有圖的課才抓（分節的句子帶 fig 也是指到這一課的圖）
+    let figuresFail = false;
+    let figuresLoading = false;
+    const needsFigures = (data) => Boolean(data && data.figures && data.figures.length && !window.BuzzCourseFigures);
+    // 離線：課程表打開過一次，就在閒下來的時候把每一章的課文抓一遍（sw.js 的 fetch handler 會順手快取）。
+    // 不進 install 預快取（APP_SHELL）：合計約 2MB（分節推完約 3.5MB），英文介面與不開課程的人都用不到。
+    // 只有已經有 service worker 在管的頁面才做，不然抓了也存不起來；省流量模式（Save-Data）或 2G 不抓，打開的那一章照樣會被快取。
     let prefetched = false;
     function prefetchAll() {
       if (prefetched || typeof navigator === "undefined" || !navigator.serviceWorker || !navigator.serviceWorker.controller || typeof fetch !== "function") return;
+      const net = navigator.connection || {};
+      if (net.saveData || /2g/.test(net.effectiveType || "")) return;
       prefetched = true;
       const idle = window.requestIdleCallback || ((fn) => window.setTimeout(fn, 1500));
-      idle(() => outline.stages.reduce((chain, stage) => chain.then(() => fetch(`src/course_v2/stage-${stage.n}.js`).catch(() => null)), Promise.resolve()));
+      const files = [...new Set(order.filter((m) => m.available).map((m) => chapterFile(m.chapter.code)))];
+      idle(() => files.reduce((chain, src) => chain.then(() => (chapterState[src] === "ready" ? null : fetch(src).catch(() => null))), Promise.resolve()));
     }
 
     /* ── 文字：行內數學 $…$ ＋ 跳脫 ＋ 上下標 ＋〈課名〉變成連到那一課的連結 ──
@@ -614,24 +641,45 @@
       const tier = tierOf(records, m);
       // 分節（lesson.sections）：畫面在 course_sections.js（data-lazy="sections"）；選了全文就照舊
       const secMode = data && data.sections && !secFail && (records.settings || {}).courseView !== "full";
+      const seg = data && data.sections ? `<div class="cv2-seg" role="group" aria-label="閱讀方式">${[["sec", "分節"], ["full", "全文"]].map(([k, n]) => `<button type="button" data-action="course-s-mode" data-mode="${k}" aria-pressed="${(k === "sec") === Boolean(secMode)}">${n}</button>`).join("")}</div>` : "";
+      const kicker = `<p class="cv2-kicker"><button type="button" class="cv2-back" data-action="open-course"><span aria-hidden="true">‹</span>課程表</button><span class="cv2-sep" aria-hidden="true">/</span><span class="section-label">${m.no} · ${escapeHtml(m.stage.title)}${m.stage.branch ? "（支線）" : ""}</span></p>`;
+      const mapLink = `<button type="button" class="cv2-link cv2-maplink" data-action="course-map-focus" data-lesson-id="${escapeAttr(m.id)}">在地圖上看</button>`;
       // 標題區要小：課號 · Stage、課名、閱讀／完成時間一行；先修一行、「學完你會」收成一行 —— 觀念①要在手機第一屏
-      const head = `
+      // 分節模式更緊（第一句要在手機第一屏的上半）：時間、層級、先修、分節／全文擠成一列；先修收成「先修 n」，點了才展開那幾課與「在地圖上看」
+      // 第一列：返回（‹）、課名、分節／全文；第二列：課號 · Stage、時間、層級、先修 n（點了展開那幾課與「在地圖上看」）
+      const head = secMode ? `
+        <header class="page-head cv2-head is-compact">
+          <div class="cv2-titlerow">
+            <button type="button" class="cv2-back" data-action="open-course" aria-label="回課程表" title="課程表"><span aria-hidden="true">‹</span></button>
+            <h2>${escapeHtml(m.title)}</h2>
+            ${seg}
+          </div>
+          <div class="cv2-meta"><span class="section-label">${m.no} · ${escapeHtml(m.stage.title)}${m.stage.branch ? "（支線）" : ""}</span><span>閱讀 ${m.read} 分</span><span>完成 ${m.total} 分</span>${tierPill(tier)}${data.prerequisites.length
+            ? `<details class="cv2-pre" data-keep="cv2-pre-${escapeAttr(m.id)}"><summary>先修 ${data.prerequisites.length}${icon("chevron-down")}</summary><p class="cv2-prereq">${data.prerequisites.map(lessonLink).join("")}${mapLink}</p></details>`
+            : ""}</div>
+        </header>` : `
         <header class="page-head cv2-head">
           <div>
-            <p class="cv2-kicker"><button type="button" class="cv2-back" data-action="open-course"><span aria-hidden="true">‹</span>課程表</button><span class="cv2-sep" aria-hidden="true">/</span><span class="section-label">${m.no} · ${escapeHtml(m.stage.title)}${m.stage.branch ? "（支線）" : ""}</span></p>
+            ${kicker}
             <h2>${escapeHtml(m.title)}</h2>
             <p class="cv2-meta"><span>閱讀 ${m.read} 分</span><span>完成 ${m.total} 分</span>${tierPill(tier)}</p>
           </div>
-          ${data && data.sections ? `<div class="cv2-seg" role="group" aria-label="閱讀方式">${[["sec", "分節"], ["full", "全文"]].map(([k, n]) => `<button type="button" data-action="course-s-mode" data-mode="${k}" aria-pressed="${(k === "sec") === Boolean(secMode)}">${n}</button>`).join("")}</div>` : ""}
+          ${seg}
         </header>`;
-      if (secMode) {
+      const src = chapterFile(m.chapter.code);
+      // 圖的畫法還沒到：先抓，到了再畫
+      if (data && needsFigures(data) && !figuresFail && !figuresLoading) {
+        figuresLoading = true;
+        Promise.resolve(deps.ensureLazy("figures")).then(() => { figuresLoading = false; render(); }, () => { figuresLoading = false; figuresFail = true; render(); });
+      }
+      if (secMode && !needsFigures(data)) {
         if (window.BuzzCourseSections) return window.BuzzCourseSections.render(secApi(records, head));
         sec(render);
         return `<main class="screen lazy-loading" aria-busy="true"><div class="cv2-layout"><section class="course-lesson cv2-lesson">${head}</section></div></main>`;
       }
-      if (!data) {
-        if (stageState[m.stage.n] !== "failed") loadStage(m.stage.n);
-        const failed = stageState[m.stage.n] === "failed";
+      if (!data || needsFigures(data)) {
+        if (!data && chapterState[src] !== "failed") loadChapter(m.chapter);
+        const failed = chapterState[src] === "failed" || (data && figuresFail);
         return `
           <main class="screen ${failed ? "" : "lazy-loading"}" aria-busy="${failed ? "false" : "true"}">
             <div class="cv2-layout"><section class="course-lesson cv2-lesson">${head}
@@ -894,12 +942,13 @@
         state = { lessonId: id, steps: {}, picks: {}, figs: {}, recorded: false };
         reading.group = "concept";
         reading.mark = "c0";
-        if (!lessonData(id)) loadStage(m.stage.n);
+        if (!lessonData(id)) loadChapter(m.chapter);
         return go("course-lesson");
       }
       if (action === "course-retry") {
         const m = meta[state.lessonId];
-        if (m) { delete stageState[m.stage.n]; loadStage(m.stage.n); }
+        figuresFail = false;
+        if (m) { delete chapterState[chapterFile(m.chapter.code)]; if (!lessonData(m.id)) loadChapter(m.chapter); }
         return render();
       }
       if (/^course-s-/.test(action)) return sec(() => window.BuzzCourseSections.act(secApi(loadRecords()), action, data));
@@ -962,258 +1011,4 @@
   }
 
   window.BuzzCourseV2UI = { create };
-})();
-
-/* ── 課程的圖（lesson.figures）──
-   一張圖是靜態的 graph（照題目附圖的格式，交給 BuzzGraphRender.renderProblemGraph 畫），
-   或一個 widget：一根滑桿、決定性的、不動滑桿時也是一張有意義的靜態圖。
-   widget 只是「滑桿值 → graph 規格＋一行讀數」的純函式，畫圖一律走同一支 renderProblemGraph
-   （ε-δ 那種借 BuzzEpsilonGame.draw）；validate_course_v2 也用這裡的 build 驗每一張圖。
-
-   種類（參數見 tools/content/course_v2/SCHEMA.md）：
-     secant-tangent  割線轉成切線（滑 h）          riemann        矩形和（滑 n）
-     taylor          Taylor 多項式（滑階數）       epsilon-delta  ε 帶與 δ 帶（滑 ε 或 δ）
-     family          帶參數的曲線族（滑參數）       accumulation   面積函數 A(x) 與它的切線（滑 x）
-     zoom            放大／拉遠鏡頭（滑倍率）       approach       兩點從左右滑向 a（滑「多靠近」） */
-(function () {
-  "use strict";
-
-  const render = () => window.BuzzGraphRender;
-  const compile = (expr) => render().graphCurveFn(expr);
-  const SUBS = "₀₁₂₃₄₅₆₇₈₉";
-  const sub = (n) => String(n).split("").map((d) => SUBS[Number(d)] || d).join("");
-  const num = (v, digits) => {
-    if (!Number.isFinite(v)) return "—";
-    const text = Math.abs(v) >= 1e5 ? v.toExponential(2) : v.toFixed(digits === undefined ? (Math.abs(v) >= 1000 ? 1 : 3) : digits);
-    return text.replace(/^-/, "−");
-  };
-  // f：字串，或分段 [{ expr, domain:[a,b] }]（跳躍、分段定義）
-  function fnOf(f) {
-    if (typeof f === "string") return compile(f);
-    if (!Array.isArray(f) || !f.length) return null;
-    const pieces = f.map((p) => ({ fn: compile(p.expr), a: Number(p.domain[0]), b: Number(p.domain[1]) }));
-    if (pieces.some((p) => !p.fn)) return null;
-    return (x) => { const p = pieces.find((q) => x >= q.a && x <= q.b); return p ? p.fn(x) : NaN; };
-  }
-  const curvesOf = (f, extra) => (typeof f === "string" ? [{ expr: f, ...extra }] : (f || []).map((p) => ({ expr: p.expr, domain: p.domain, ...extra })));
-  // 數值積分（Simpson）：讀數與 A(x) 用；a > b 時帶負號
-  function integrate(f, a, b, n) {
-    if (a === b) return 0;
-    const m = 2 * Math.ceil((n || 400) / 2);
-    const h = (b - a) / m;
-    let s = f(a) + f(b);
-    for (let i = 1; i < m; i += 1) s += (i % 2 ? 4 : 2) * f(a + i * h);
-    return (s * h) / 3;
-  }
-  const line = (m, x0, y0) => `(${y0})+(${m})*(x-(${x0}))`;
-  const merge = (graph, extra) => {
-    if (!extra) return graph;
-    ["curves", "points", "labels", "dashed", "fills", "arrows", "polylines"].forEach((key) => {
-      if (Array.isArray(extra[key])) graph[key] = (graph[key] || []).concat(extra[key]);
-    });
-    return graph;
-  };
-  const base = (w) => ({ window: w.window.slice(), ...(w.equal ? { equal: true } : {}) });
-
-  const WIDGETS = {
-    "secant-tangent": {
-      slider: (w) => ({ name: "h", min: w.h[0], max: w.h[1], step: (w.h[1] - w.h[0]) / 200, value: w.h[1] }),
-      build(w, h) {
-        const f = fnOf(w.f);
-        const a = Number(w.a);
-        const fa = f(a);
-        const slope = (f(a + 1e-5) - f(a - 1e-5)) / 2e-5;
-        const tiny = Math.abs(h) < 1e-9;
-        const m = tiny ? slope : (f(a + h) - fa) / h;
-        const graph = base(w);
-        graph.curves = curvesOf(w.f, { color: "blue" }).concat(
-          w.tangent === false ? [] : [{ expr: line(slope, a, fa), color: "muted", dashed: true, width: 1.6 }],
-          [{ expr: line(m, a, fa), color: "red", width: 1.8 }]);
-        graph.points = [{ x: a, y: fa, color: "ink" }].concat(tiny ? [] : [{ x: a + h, y: f(a + h), color: "red" }]);
-        graph.labels = [{ x: a, y: fa, text: "P", anchor: "end", dx: -6, dy: -6 }].concat(tiny ? [] : [{ x: a + h, y: f(a + h), text: "Q", dx: 8, dy: 4 }]);
-        return { graphs: [merge(graph, w.extra)], readout: `h = ${num(h, 2)} · 割線斜率 ${tiny ? "—" : num(m, 3)}${w.tangent === false ? "" : ` · 切線斜率 ${num(slope, 3)}`}` };
-      }
-    },
-    riemann: {
-      slider: (w) => ({ name: "n", min: w.n[0], max: w.n[1], step: 1, value: Math.min(w.n[1], Math.max(w.n[0], 4)) }),
-      build(w, value) {
-        const f = fnOf(w.f);
-        const a = Number(w.a);
-        const b = Number(w.b);
-        const n = Math.max(1, Math.round(value));
-        const dx = (b - a) / n;
-        const shift = w.rule === "right" ? 1 : w.rule === "mid" ? 0.5 : 0;
-        const graph = base(w);
-        let sum = 0;
-        graph.fills = [];
-        for (let i = 0; i < n; i += 1) {
-          const x0 = a + i * dx;
-          const y = f(x0 + shift * dx);
-          sum += y * dx;
-          graph.fills.push({ pts: [[x0, 0], [x0, y], [x0 + dx, y], [x0 + dx, 0]], color: y >= 0 ? "blue" : "red", opacity: 0.2, stroke: y >= 0 ? "blue" : "red" });
-        }
-        graph.curves = curvesOf(w.f, { color: "ink", width: 2 });
-        const exact = integrate(f, a, b, 2000);
-        return { graphs: [merge(graph, w.extra)], readout: `n = ${n} · 矩形和 ${num(sum)} · 積分 ${num(exact)}` };
-      }
-    },
-    taylor: {
-      slider: (w) => ({ name: "n", min: w.order[0], max: w.order[1], step: 1, value: Math.min(w.order[1], w.order[0] + 1) }),
-      // 多項式：Σ c_k (x − center)^k，係數由作者給（驗證器拿數值導數對過）
-      poly(w, n) {
-        const c = Number(w.center);
-        return w.coeffs.slice(0, n + 1).map((k, i) => `(${compile(String(k))(0)})*(x-(${c}))^${i}`).join("+") || "0";
-      },
-      build(w, value) {
-        const n = Math.round(value);
-        const graph = base(w);
-        graph.curves = curvesOf(w.f, { color: "blue", width: 2.6 }).concat([{ expr: WIDGETS.taylor.poly(w, n), color: "red", width: 2 }]);
-        graph.points = [{ x: Number(w.center), y: fnOf(w.f)(Number(w.center)), color: "ink" }];
-        let readout = `紅線 T${sub(n)}（n = ${n}）`;
-        if (w.probe !== undefined) {
-          const x = Number(w.probe);
-          readout += ` · x = ${num(x, 1)}：T${sub(n)} ${num(compile(WIDGETS.taylor.poly(w, n))(x), 4)}，f ${num(fnOf(w.f)(x), 4)}`;
-        }
-        return { graphs: [merge(graph, w.extra)], readout };
-      }
-    },
-    "epsilon-delta": {
-      slider: (w) => ({ name: w.drive === "delta" ? "δ" : "ε", min: w.range[0], max: w.range[1], step: (w.range[1] - w.range[0]) / 200, value: w.range[1] }),
-      spec: (w) => ({ f: w.f, at: w.at, limit: w.limit, hole: Boolean(w.hole), maxDelta: (w.window[1] - w.window[0]) / 2 }),
-      build(w, value) {
-        const game = window.BuzzEpsilonGame;
-        const spec = WIDGETS["epsilon-delta"].spec(w);
-        const eps = w.drive === "delta" ? Number(w.eps) : value;
-        const delta = w.drive === "delta" ? value : game.maxDelta(spec, eps) * 0.9;
-        const drawn = game.draw(spec, delta, eps, w.window);
-        const readout = w.drive === "delta"
-          ? `ε = ${num(eps, 2)} · δ = ${num(delta, 3)} · ${drawn.probe.ok ? "整段在綠帶裡" : "有一段跑出綠帶"}`
-          : `ε = ${num(eps, 3)} → δ = ${num(delta, 4)} 就夠`;
-        return { svg: drawn, readout };
-      }
-    },
-    family: {
-      slider: (w) => ({ name: w.param || "a", min: w.range[0], max: w.range[1], step: w.step || (w.range[1] - w.range[0]) / 100, value: w.value !== undefined ? w.value : w.range[0] }),
-      expr: (w, v) => String(w.f).replace(new RegExp(`\\b${w.param || "a"}\\b`, "g"), `(${v})`),
-      build(w, value) {
-        const fam = WIDGETS.family;
-        const graph = base(w);
-        graph.curves = (w.trail || []).map((v) => ({ expr: fam.expr(w, v), color: "muted", width: 1.2 }))
-          .concat([{ expr: fam.expr(w, value), color: "blue", width: 2.6 }]);
-        let readout = `${w.param || "a"} = ${num(value, 2)}`;
-        if (Array.isArray(w.area)) {
-          const f = compile(fam.expr(w, value));
-          const [a, b] = w.area.map(Number);
-          graph.fills = [{ expr: fam.expr(w, value), from: Math.max(a, w.window[0]), to: Math.min(b, w.window[1]), color: "blue", opacity: 0.2 }];
-          readout += ` · 面積 ${num(integrate(f, a, b, 4000))}`;
-        }
-        return { graphs: [merge(graph, w.extra)], readout };
-      }
-    },
-    accumulation: {
-      slider: (w) => ({ name: "x", min: w.range[0], max: w.range[1], step: (w.range[1] - w.range[0]) / 200, value: w.value !== undefined ? w.value : w.range[1] }),
-      build(w, x) {
-        const f = fnOf(w.f);
-        const a = Number(w.a);
-        const A = (t) => integrate(f, a, t, 200);
-        const top = base(w);
-        const pos = `((${w.f})+abs(${w.f}))/2`;
-        const neg = `((${w.f})-abs(${w.f}))/2`;
-        top.fills = [{ expr: pos, from: a, to: x, color: "blue", opacity: 0.25 }, { expr: neg, from: a, to: x, color: "red", opacity: 0.25 }];
-        top.curves = curvesOf(w.f, { color: "ink", width: 2 });
-        top.points = [{ x, y: f(x), color: "blue" }];
-        top.labels = [{ x: w.window[0], y: w.window[3], text: " f", color: "muted" }];
-        const [lo, hi] = [w.window[0], w.window[1]];
-        const pts = [];
-        for (let i = 0; i <= 120; i += 1) { const t = lo + ((hi - lo) * i) / 120; pts.push([t, A(t)]); }
-        const Ax = A(x);
-        const bottom = { window: (w.windowA || w.window).slice() };
-        bottom.curves = [{ pts, color: "green", width: 2.2 }, { expr: line(f(x), x, Ax), color: "muted", dashed: true, width: 1.4 }];
-        bottom.points = [{ x, y: Ax, color: "green" }];
-        bottom.labels = [{ x: bottom.window[0], y: bottom.window[3], text: " A", color: "muted" }];
-        return { graphs: [merge(top, w.extra), bottom], readout: `x = ${num(x, 2)} · A(x) ${num(Ax)} · 切線斜率 = f(x) = ${num(f(x))}` };
-      }
-    },
-    zoom: {
-      slider: (w) => ({ name: w.out ? "拉遠" : "放大", min: 0, max: w.levels, step: w.levels / 120, value: 0 }),
-      build(w, v) {
-        const k = Math.pow(10, w.out ? v : -v);
-        const [cx, cy] = w.center.map(Number);
-        const [x0, x1, y0, y1] = w.window.map(Number);
-        // axes "x"：只縮放 x；yPower 2：y 用倍率的平方縮（x² 這類曲線放大後形狀不變，看得出「一路被夾著」）
-        const ky = w.axes === "x" ? 1 : Math.pow(k, w.yPower || 1);
-        const graph = { window: [cx + (x0 - cx) * k, cx + (x1 - cx) * k, cy + (y0 - cy) * ky, cy + (y1 - cy) * ky] };
-        graph.curves = w.curves.map((c) => ({ ...c, steps: c.steps || 600 }));
-        if (w.point !== false) graph.points = [{ x: cx, y: cy, color: "ink" }];
-        const merged = merge(graph, w.extra);
-        const factor = Math.pow(10, v);
-        const digits = Math.min(6, Math.max(0, Math.ceil(-Math.log10(graph.window[1] - graph.window[0])) + 1));
-        return { graphs: [merged], readout: `${w.out ? "拉遠" : "放大"} ×${factor >= 10 ? Math.round(factor).toLocaleString("en-US") : num(factor, 1)} · x 從 ${num(graph.window[0], digits)} 到 ${num(graph.window[1], digits)}` };
-      }
-    },
-    approach: {
-      slider: () => ({ name: "靠近", min: 0, max: 1, step: 0.01, value: 0 }),
-      build(w, s) {
-        const f = fnOf(w.f);
-        const a = Number(w.a);
-        const [dmin, dmax] = w.range.map(Number);
-        const d = dmax * Math.pow(dmin / dmax, s);
-        const digits = Math.min(6, Math.max(2, Math.ceil(-Math.log10(d)) + 1));
-        const graph = base(w);
-        graph.curves = curvesOf(w.f, { color: "blue" });
-        graph.dashed = [[[a, w.window[2]], [a, w.window[3]]]];
-        graph.points = [];
-        const sides = w.side === "left" ? [-1] : w.side === "right" ? [1] : [-1, 1];
-        const read = sides.map((side) => {
-          const x = a + side * d;
-          const y = f(x);
-          if (Number.isFinite(y) && y >= w.window[2] && y <= w.window[3]) {
-            graph.points.push({ x, y, color: side < 0 ? "violet" : "green" });
-            graph.arrows = (graph.arrows || []).concat([{ from: [x + side * (w.window[1] - w.window[0]) * 0.08, y], to: [x, y], color: side < 0 ? "violet" : "green" }]);
-          }
-          return `f(${num(x, digits)}) = ${num(y, 3)}`;
-        });
-        return { graphs: [merge(graph, w.extra)], readout: read.join(" · ") };
-      }
-    }
-  };
-
-  const sliderOf = (fig) => {
-    const w = fig.widget;
-    const s = WIDGETS[w.type].slider(w);
-    // 作者可以指定不動滑桿時的那一格（要是一張有意義的靜態圖）
-    if (w.value !== undefined) s.value = Number(w.value);
-    return s;
-  };
-
-  // 滑桿值 → { plot: HTML, readout }
-  function view(fig, value, escapeAttr) {
-    if (fig.graph) return { plot: render().renderProblemGraph({ graph: fig.graph }, { label: fig.caption }, escapeAttr), readout: "" };
-    const built = WIDGETS[fig.widget.type].build(fig.widget, value);
-    if (built.svg) {
-      return {
-        plot: `<div class="problem-graph"><svg class="cv2-eps" viewBox="0 0 ${built.svg.width} ${built.svg.height}" role="img" aria-label="${escapeAttr(fig.caption)}">${built.svg.svg}</svg></div>`,
-        readout: built.readout
-      };
-    }
-    return { plot: built.graphs.map((graph) => render().renderProblemGraph({ graph }, { label: fig.caption }, escapeAttr)).join(""), readout: built.readout };
-  }
-
-  function renderFigure(fig, index, value, escapeAttr, escapeHtml) {
-    if (!fig.widget) {
-      return `<figure class="cv2-figure" data-cv2-fig="${index}"><div data-cv2-plot>${view(fig, 0, escapeAttr).plot}</div><figcaption>${escapeHtml(fig.caption)}</figcaption></figure>`;
-    }
-    const s = sliderOf(fig);
-    const v = value === undefined ? s.value : value;
-    const shown = view(fig, v, escapeAttr);
-    return `
-      <figure class="cv2-figure is-widget" data-cv2-fig="${index}">
-        <div data-cv2-plot>${shown.plot}</div>
-        <p class="cv2-readout" data-cv2-readout aria-live="polite">${escapeHtml(shown.readout)}</p>
-        <label class="cv2-slider"><span>${escapeHtml(s.name)}</span><input type="range" data-cv2-slider="${index}" min="${s.min}" max="${s.max}" step="${s.step}" value="${v}" aria-label="${escapeAttr(`${s.name}：${fig.caption}`)}"></label>
-        <figcaption>${escapeHtml(fig.caption)}</figcaption>
-      </figure>`;
-  }
-
-  window.BuzzCourseFigures = { WIDGETS, fnOf, integrate, sliderOf, view, renderFigure };
 })();

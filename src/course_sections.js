@@ -23,8 +23,9 @@
   const TIER_XP = [0, 20, 30, 50];
 
   const STYLE = `
-.cv2-lesson.cv2s { margin: 0 auto; }
-.cv2s-dots { display: flex; flex-wrap: wrap; gap: 2px; margin: 12px 0 4px -7px; padding: 0; list-style: none; }
+/* 手機：頁首往上收（第一句在第一屏的上半）；桌機在最後一行改回來 */
+.cv2-lesson.cv2s { margin: -20px auto 0; }
+.cv2s-dots { display: flex; flex-wrap: wrap; gap: 2px; margin: 0 0 2px -7px; padding: 0; list-style: none; }
 .cv2s-dot { display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px; padding: 0; border: 0; background: none; cursor: pointer; }
 .cv2s-dot i { display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; border-radius: 50%; box-shadow: inset 0 0 0 1.5px var(--line-strong); color: var(--muted); font-size: 0.74rem; font-style: normal; font-weight: 800; font-variant-numeric: tabular-nums; }
 .cv2s-dot.is-done i { background: var(--green); box-shadow: none; color: #fff; }
@@ -32,8 +33,8 @@
 .cv2s-dot.is-done.is-now i { box-shadow: 0 0 0 2px var(--paper), 0 0 0 4px var(--gold); }
 .cv2s-dot i svg { width: 14px; height: 14px; }
 .cv2s-sec { display: block; margin: 6px 0 0; }
-.cv2s-sec > h3 { margin: 0 0 14px; font-size: 1.3rem; line-height: 1.4; letter-spacing: -0.01em; }
-.cv2s-sec > h3 small { display: block; margin: 0 0 2px; color: var(--muted); font-size: 0.78rem; font-weight: 700; letter-spacing: 0.04em; font-variant-numeric: tabular-nums; }
+.cv2s-sec > h3 { margin: 0 0 6px; font-size: 1.2rem; line-height: 1.4; letter-spacing: -0.01em; }
+.cv2s-sec > h3 small { margin: 0 8px 0 0; color: var(--muted); font-size: 0.78rem; font-weight: 700; letter-spacing: 0.04em; font-variant-numeric: tabular-nums; }
 .cv2s .cv2-figure { margin: 2px auto 16px; }
 .cv2s .cv2-figure figcaption { display: none; }
 /* 手機：有圖的那一節，圖黏在頂列下面 —— 句子往下長的時候，圖一直看得到、跟著句子動 */
@@ -172,16 +173,16 @@
     window.requestAnimationFrame(frame);
   }
 
-  /* ── 旁白（可選，按了「播放」才有）──
-     每一句的錄音：media/narration/<課>/<節>-<句>-<au>.mp3（tools/build_narration.js 產生、部署時從 Release 抓）。
-     播放中：念完一句自己出下一句（圖跟著動，走跟點一下同一條路），念到這一節的最後一句停在動作前；
-     做完按「下一節」接著念。只有一個 <audio>（iOS 要在使用者點的那一下解鎖，之後換 src 才能自己接著播），
-     另一個只拿來預載下一句。載不到 → 留一行字、關掉播放，點的照常。設定記在 records.settings：narrRate、narrSubs。 */
+  /* ── 旁白（按了「播放」才有）：一課一支 <大綱的 narration 前綴><課>-<voice>.mp3，每一句 t = [起, 訖] 毫秒（build_narration.js）。
+     preload="none"，按了才抓、之後靠 Range 串流。念完一句自己出下一句（下一句接在後面，不跳）；這一節最後一句停在動作前。
+     只有一個 <audio>（iOS 在點的那一下解鎖）。訖點用計時器看（timeupdate 太粗）。出錯先重載一次（簽名網址過期），再錯 → 一行字、點的照常。 */
   const RATES = [1, 1.25, 1.5];
-  const voice = { on: false, paused: false, wait: false, err: false, id: "", si: -1, bi: -1, el: null, pre: null, timer: 0, state: null };
-  const clipOf = (api, si, bi) => {
+  const voice = { on: false, paused: false, wait: false, err: false, id: "", si: -1, bi: -1, el: null, timer: 0, state: null, start: 0, end: 0, retries: 0 };
+  const segOf = (api, si, bi) => {
     const b = api.data.sections[si] && api.data.sections[si].beats[bi];
-    return b && b.au ? `media/narration/${api.m.id}/${si}-${bi}-${b.au}.mp3` : "";
+    if (!b || !Array.isArray(b.t) || !api.data.voice) return null;
+    const base = (window.BUZZ_COURSE_V2 && window.BUZZ_COURSE_V2.narration) || "media/narration/";
+    return { url: `${base}${api.m.id}-${api.data.voice}.mp3`, start: Number(b.t[0]), end: Number(b.t[1]) };
   };
   const voiced = (data) => data.sections.some((s) => s.beats.some((b) => b.say));
   const voicePrefs = (records) => {
@@ -189,9 +190,20 @@
     return { rate: RATES.includes(Number(s.narrRate)) ? Number(s.narrRate) : 1, subs: Boolean(s.narrSubs) };
   };
   const alive = () => Boolean(last && voice.id === last.m.id && typeof document !== "undefined" && document.querySelector("[data-cv2s]"));
+  const nowMs = () => (voice.el ? voice.el.currentTime * 1000 : 0);
+  function audio() {
+    if (!voice.el) { voice.el = new Audio(); voice.el.preload = "none"; }
+    const el = voice.el;
+    el.onended = () => { if (voice.end) advance(); };
+    el.onerror = retry;
+    el.onplaying = () => { voice.retries = 0; arm(); };
+    el.ontimeupdate = () => { if (!alive()) halt(); };
+    return el;
+  }
   function hush() {
     window.clearTimeout(voice.timer);
-    if (voice.el) { voice.el.onended = null; voice.el.onerror = null; voice.el.pause(); }
+    voice.end = 0;
+    if (voice.el) voice.el.pause();
   }
   function halt() {
     hush();
@@ -200,40 +212,58 @@
     voice.wait = false;
     voice.bi = -1;
   }
+  // 看訖點：還沒跳到起點（seek 中）就再等；到了就往下一句
+  function arm() {
+    window.clearTimeout(voice.timer);
+    const el = voice.el;
+    if (!voice.on || voice.paused || voice.wait || !el || !voice.end) return;
+    if (!alive()) { halt(); return; }
+    const t = nowMs();
+    if (!el.seeking && t >= voice.start - 60 && t >= voice.end - 15) { advance(); return; }
+    const left = el.seeking || t < voice.start - 60 ? 250 : (voice.end - t) / (el.playbackRate || 1);
+    voice.timer = window.setTimeout(arm, Math.max(15, Math.min(left - 10, 500)));
+  }
+  function seek(el, ms) {
+    const go = () => { if (Math.abs(el.currentTime * 1000 - ms) > 30) el.currentTime = ms / 1000; };
+    if (el.readyState >= 1) { go(); return; }
+    // 還沒有 metadata：先記著（Chrome 會當成起播位置），metadata 到了再確認一次
+    try { el.currentTime = ms / 1000; } catch (_e) { /* 舊 Safari：等 metadata */ }
+    el.addEventListener("loadedmetadata", () => { if (voice.on && voice.start === ms) go(); }, { once: true });
+  }
+  function play(el) {
+    const p = el.play();
+    if (p && p.catch) p.catch((e) => { if (!e || e.name !== "AbortError") fail(); });
+  }
   // 念目前亮著的那一句（這一節出到的最後一句）
   function speak(api) {
     const sec = api.state.sec;
     const s = api.data.sections[sec.si];
-    hush();
-    if (!s) { voice.wait = true; return; }
+    window.clearTimeout(voice.timer);
+    if (!s) { hush(); voice.wait = true; return; }
     const bi = Math.min(s.beats.length, sec.shown[sec.si] || 1) - 1;
     Object.assign(voice, { id: api.m.id, si: sec.si, bi, wait: false, paused: false });
-    const url = clipOf(api, sec.si, bi);
-    if (!url) {
+    const seg = segOf(api, sec.si, bi);
+    if (!seg) {
       // 有字沒錄音（字改過還沒重錄）：停一下再往下
+      hush();
       voice.timer = window.setTimeout(advance, Math.max(1500, String(s.beats[bi].say || "").length * 220));
       return;
     }
-    const el = voice.el || (voice.el = new Audio());
-    el.onended = advance;
-    el.onerror = fail;
-    el.ontimeupdate = () => { if (!alive()) halt(); };
-    el.src = url;
+    const el = audio();
+    const same = el.getAttribute("src") === seg.url;
+    // 自己念完上一句、下一句就接在後面：不跳，直接念下去（沒有斷點）
+    const flowing = same && !el.paused && !el.seeking && Math.abs(nowMs() - seg.start) < 250;
+    Object.assign(voice, { start: seg.start, end: seg.end });
+    if (!same) { el.src = seg.url; voice.retries = 0; }
     // 換 src 會把 playbackRate 重設成 defaultPlaybackRate：兩個都設
     el.defaultPlaybackRate = el.playbackRate = voicePrefs(api.deps.loadRecords()).rate;
-    const p = el.play();
-    if (p && p.catch) p.catch((e) => { if (!e || e.name !== "AbortError") fail(); });
-    // 只預載下一句
-    const next = clipOf(api, sec.si, bi + 1);
-    if (next) {
-      voice.pre = voice.pre || new Audio();
-      voice.pre.preload = "auto";
-      if (voice.pre.getAttribute("src") !== next) voice.pre.src = next;
-    }
+    if (!flowing) seek(el, seg.start);
+    if (el.paused) play(el);
+    arm();
   }
   function advance() {
     const api = last;
-    if (!voice.on || voice.paused || !alive()) { if (!alive()) halt(); return; }
+    if (!voice.on || voice.paused || voice.wait || !alive()) { if (!alive()) halt(); return; }
     const sec = api.state.sec;
     const s = api.data.sections[sec.si];
     const shown = (s && sec.shown[sec.si]) || 1;
@@ -248,6 +278,19 @@
       voice.wait = true;
       updateDock();
     }
+  }
+  // 播到一半出錯（網路斷一下、Release 的簽名網址過期）：重新載一次、從這一句的起點接；再錯才算載不到
+  function retry() {
+    const el = voice.el;
+    if (!voice.on || !el || !el.getAttribute("src")) return;
+    if (voice.retries >= 1 || !voice.end) { fail(); return; }
+    voice.retries += 1;
+    const url = el.getAttribute("src");
+    el.removeAttribute("src");
+    el.load();
+    el.src = url;
+    seek(el, voice.start);
+    if (!voice.paused) play(el);
   }
   function fail() {
     if (!voice.on) return;
@@ -366,14 +409,12 @@
       if (voice.on && !voice.paused) {
         // 暫停；停在動作前的時候再按一次就是關掉
         if (voice.wait) halt();
-        else { voice.paused = true; hush(); }
-      } else if (voice.on && voice.paused && voice.el && voice.el.getAttribute("src") && voice.si === api.state.sec.si && voice.bi === Math.min(api.data.sections[voice.si].beats.length, api.state.sec.shown[voice.si] || 1) - 1) {
+        else { voice.paused = true; window.clearTimeout(voice.timer); if (voice.el) voice.el.pause(); }
+      } else if (voice.on && voice.paused && voice.el && voice.end && voice.el.getAttribute("src") && voice.si === api.state.sec.si && voice.bi === Math.min(api.data.sections[voice.si].beats.length, api.state.sec.shown[voice.si] || 1) - 1) {
         // 暫停的那一句接著念
         voice.paused = false;
-        voice.el.onended = advance;
-        voice.el.onerror = fail;
-        const p = voice.el.play();
-        if (p && p.catch) p.catch((e) => { if (!e || e.name !== "AbortError") fail(); });
+        play(audio());
+        arm();
       } else {
         voice.on = true;
         speak(api);
@@ -555,7 +596,13 @@
   function render(api) {
     injectStyle();
     // 換一課、或重新打開（course_v2_ui 換了一份 state）：旁白停掉
-    if (voice.state !== api.state) { halt(); voice.err = false; voice.state = api.state; }
+    // 錄音也放掉（下次按播放重新抓：串流網址可能過期、網路可能換了）
+    if (voice.state !== api.state) {
+      halt();
+      if (voice.el && voice.el.getAttribute("src")) { voice.el.removeAttribute("src"); voice.el.load(); }
+      voice.err = false;
+      voice.state = api.state;
+    }
     last = api;
     const { m, data, records, head, deps } = api;
     const { escapeAttr, icon } = deps;
@@ -567,15 +614,12 @@
       <nav class="cv2s-dots" aria-label="這一課的節">
         ${data.sections.map((s, i) => `<button type="button" class="cv2s-dot ${doneSet.has(i) ? "is-done" : ""} ${sec.si === i ? "is-now" : ""}" data-action="course-s-go" data-to="${i}" aria-label="${escapeAttr(`第 ${i + 1} 節：${s.title.replace(/\$/g, "")}${doneSet.has(i) ? "（做完了）" : ""}`)}" ${sec.si === i ? `aria-current="step"` : ""}><i>${doneSet.has(i) ? icon("check") : i + 1}</i></button>`).join("")}
       </nav>`;
-    // 先修一行（跟全文同一行：〈課名〉連過去、「在地圖上看」）
-    const pre = data.prerequisites.length ? `<div class="cv2-intro"><p class="cv2-prereq"><span>先修</span>${data.prerequisites.map(api.lessonLink).join("")}<button type="button" class="cv2-link cv2-maplink" data-action="course-map-focus" data-lesson-id="${escapeAttr(m.id)}">在地圖上看</button></p></div>` : "";
     const body = sec.si >= n ? finishView(api, e) : sectionView(api, sec.si);
     if (typeof queueMicrotask === "function") queueMicrotask(() => afterRender(api)); else window.setTimeout(() => afterRender(api), 0);
     return `
       <main class="screen">
         <section class="course-lesson cv2-lesson cv2s" data-cv2s="${sec.si}">
           ${head}
-          ${pre}
           ${dots}
           ${body}
         </section>
@@ -724,5 +768,5 @@
   }
 
   // voice()：給 E2E 看旁白的狀態（<audio> 不在 DOM 裡）
-  window.BuzzCourseSections = { render, act, voice: () => ({ on: voice.on, paused: voice.paused, wait: voice.wait, err: voice.err, si: voice.si, bi: voice.bi, rate: voice.el ? voice.el.playbackRate : 0, src: voice.el ? voice.el.getAttribute("src") || "" : "" }) };
+  window.BuzzCourseSections = { render, act, voice: () => ({ on: voice.on, paused: voice.paused, wait: voice.wait, err: voice.err, si: voice.si, bi: voice.bi, rate: voice.el ? voice.el.playbackRate : 0, src: voice.el ? voice.el.getAttribute("src") || "" : "", preload: voice.el ? voice.el.preload : "", beat: voice.bi >= 0 ? `${voice.si}-${voice.bi}` : "", at: Math.round(nowMs()), start: voice.start, end: voice.end }) };
 })();

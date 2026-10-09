@@ -134,23 +134,34 @@ if (fs.existsSync(path.join(root, "assets/vendor/katex/fonts"))) {
 }
 
 /* ── 6. 新版課程離線 ─────────────────────────────────────────
-   大綱＋畫面要在 install 預快取（離線也開得了課程表）；課文按 Stage 分檔、不預快取，
-   靠課程表第一次打開時 course_v2_ui.js 的 prefetchAll 抓一遍、fetch handler 存起來。
-   所以要擋的是：大綱列了某個 Stage、但那個 Stage 的課文檔不存在（prefetch 跟打開課都會 404）。 */
-["src/course_v2/outline.js", "src/course_v2_ui.js", "src/course_v2/map.js", "src/course_map.js"].forEach((file) => {
-  if (!cached.has(file)) fail(`sw.js 沒有預快取 ${file} —— 離線時課程表打不開`);
+   規則（2026-10-09 起課文按章分檔）：
+   - 畫面這幾支要在 install 預快取（離線也開得了課程表、畫得出圖）：大綱、畫面、圖、地圖、影片與分節的播放器 —— 都是小檔。
+   - 課文 src/course_v2/ch-<章>.js（74 支、合計約 2MB，分節推完約 3.5MB）**不准**進 APP_SHELL：每個裝了 PWA 的人都先下載
+     幾 MB 課文不划算（英文介面根本用不到）。改成用到才快取：打開一課抓那一章、課程表第一次打開時 prefetchAll 在閒置時抓每一章，
+     經過 fetch handler 存起來 —— 打開過一次課程表，整套課離線都能讀。
+   所以要擋的是：大綱有某一章（而且有寫好的課）、但那一章的檔不存在（prefetch 跟打開課都會 404）；APP_SHELL 偷偷列了課文；
+   prefetchAll 不見了。 */
+["src/course_v2/outline.js", "src/course_v2_ui.js", "src/course_figures.js", "src/course_v2/map.js", "src/course_map.js", "src/course_video.js", "src/course_sections.js"].forEach((file) => {
+  if (!cached.has(file)) fail(`sw.js 沒有預快取 ${file} —— 離線時課程打不開`);
 });
+[...cached].filter((file) => /^src\/course_v2\/(ch|stage)-/.test(file)).forEach((file) => fail(`sw.js 預快取了課文 ${file} —— 課文用到才快取，不進 APP_SHELL`));
 const outlinePath = path.join(root, "src/course_v2/outline.js");
 if (fs.existsSync(outlinePath)) {
   const sandbox = { window: {} };
   require("vm").runInNewContext(fs.readFileSync(outlinePath, "utf8"), sandbox);
   const stages = ((sandbox.window.BUZZ_COURSE_V2 || {}).stages) || [];
   if (!stages.length) fail("src/course_v2/outline.js 讀不到任何 Stage");
-  stages.forEach((stage) => {
-    if (!fs.existsSync(path.join(root, `src/course_v2/stage-${stage.n}.js`))) fail(`大綱有 Stage ${stage.n}，但 src/course_v2/stage-${stage.n}.js 不存在`);
-  });
+  // 檔名規則跟 tools/build_course_v2.js、src/course_v2_ui.js 的 chapterFile 一樣
+  const chapterFile = (code) => `src/course_v2/ch-${String(code).toLowerCase().replace(/[^a-z0-9]+/g, "-")}.js`;
+  let chapters = 0;
+  stages.forEach((stage) => stage.chapters.forEach((chapter) => {
+    if (!chapter.lessons.some((l) => typeof l.read === "number")) return;
+    chapters += 1;
+    if (!fs.existsSync(path.join(root, chapterFile(chapter.code)))) fail(`大綱有 ${chapter.code} 章（有寫好的課），但 ${chapterFile(chapter.code)} 不存在`);
+  }));
+  if (!chapters) fail("大綱裡沒有任何一章有寫好的課");
   const ui = fs.existsSync(path.join(root, "src/course_v2_ui.js")) ? fs.readFileSync(path.join(root, "src/course_v2_ui.js"), "utf8") : "";
-  if (!/function prefetchAll/.test(ui) || !/src\/course_v2\/stage-\$\{/.test(ui)) fail("course_v2_ui.js 沒有在課程表打開時預抓各 Stage 的課文 —— 沒打開過的 Stage 離線讀不到");
+  if (!/function prefetchAll/.test(ui) || !/src\/course_v2\/ch-\$\{/.test(ui)) fail("course_v2_ui.js 沒有在課程表打開時預抓各章的課文 —— 沒打開過的章離線讀不到");
 } else {
   fail("缺少 src/course_v2/outline.js（跑 node tools/build_course_v2.js）");
 }
@@ -163,6 +174,10 @@ if (fs.existsSync(outlinePath)) {
 const fetchHandler = sw.slice(sw.indexOf('addEventListener("fetch"'));
 if (!/headers\.has\("range"\)/.test(fetchHandler) || !/\\\/media\\\//.test(fetchHandler)) {
   fail("sw.js 的 fetch handler 沒有略過 /media/ 與 Range 請求 —— 影片會被塞進 Cache Storage");
+}
+// 旁白可以設成從 GitHub Release 跨網域串流（路徑裡沒有 /media/）：<audio>／<video> 的請求要靠 destination 略過
+if (!/destination/.test(fetchHandler) || !/"audio"/.test(fetchHandler)) {
+  fail("sw.js 的 fetch handler 沒有略過 <audio> 的請求（request.destination）—— 跨網域串流的旁白會被塞進 Cache Storage");
 }
 
 /* ── 報告 ─────────────────────────────────────────────────── */

@@ -8,8 +8,10 @@
 //   整課點完（不碰任何聲音的路）就到結算：「你現在會：」＋學習目標、這一課的 XP（數字直接是總數）、下一課、在地圖上看；
 //   在地圖上看：地圖打開、那一課亮一下（環），然後自己消失；每日任務「讀一節課」1/1、連勝 1 天；
 //   「全文」切回整頁、而且記住（重開還是全文）、再切回分節；390 寬不溢出、按鈕 ≥ 40px；桌機本文欄置中；console 沒有錯誤。
-//   旁白：按播放之前沒有任何 /media/narration/ 請求；按了只抓這一句、預載下一句；念完自己出下一句、圖跟著動；念到最後一句停在動作前；
-//   下一節接著念；暫停不再往下、繼續接著；語速設到 playbackRate（換句之後還在）；字幕是亮著那一句的 say；重開這一課就停；載不到留一行字、點的照樣做完。
+//   頁首：手機第一句的頂端 ≤ 220px、返回／課名／分節全文同一列、先修收成「先修 n」點了才展開。
+//   旁白（一課一支 mp3、每一句 t = [起, 訖]）：按播放之前沒有任何 /media/narration/ 請求；按了只抓這一課那一支（preload=none、Range 串流）；
+//   第二句接著第一句的訖點念；串流設定（Release 網址）照樣播；念完自己出下一句、圖跟著動；念到最後一句停在動作前；
+//   下一節接著念；暫停不再往下、繼續接著；語速設到 playbackRate（換句之後還在）；字幕是亮著那一句的 say；重開這一課就停；載不到（先重試一次）留一行字、點的照樣做完。
 //
 // 用法：node tools/e2e_course_sections.js
 //       node tools/e2e_course_sections.js --screenshots   另存截圖到 docs/report/course-review/screens/sections/（不進版控）
@@ -151,15 +153,34 @@ async function run() {
     return sec.check !== undefined ? "check" : sec.predict ? "predict" : "drag";
   };
 
-  const narr = { mode: "fake", ms: 600, urls: [] };
+  // 一課一支：回的檔長 narr.total 毫秒（retime 把每一句的 t 改成一句 narr.ms、首尾相接），照 Range 回 206（跟 Vercel／Release 一樣）。
+  // 同網域（media/narration/）與 Release 串流（…/releases/download/<tag>/narration.<課>-<f>.mp3）兩種網址都攔。
+  const narr = { mode: "fake", ms: 600, total: 600, urls: [], ranges: [] };
   chrome.on("Fetch.requestPaused", (p) => {
-    narr.urls.push(p.request.url.replace(/^.*\/media\/narration\//, ""));
-    const body = narr.mode === "fail" ? null : silentMp3(narr.ms);
-    chrome.send("Fetch.fulfillRequest", body
-      ? { requestId: p.requestId, responseCode: 200, responseHeaders: [{ name: "Content-Type", value: "audio/mpeg" }, { name: "Cache-Control", value: "no-store" }], body: body.toString("base64") }
-      : { requestId: p.requestId, responseCode: 404, responseHeaders: [{ name: "Content-Type", value: "text/plain" }], body: Buffer.from("404").toString("base64") }).catch(() => {});
+    narr.urls.push(p.request.url.replace(/^.*\/media\/narration\//, "").replace(/^.*\/releases\/download\/[^/]+\/narration\./, ""));
+    const range = Object.entries(p.request.headers || {}).find(([k]) => k.toLowerCase() === "range");
+    narr.ranges.push(range ? range[1] : "");
+    if (narr.mode === "fail") {
+      chrome.send("Fetch.fulfillRequest", { requestId: p.requestId, responseCode: 404, responseHeaders: [{ name: "Content-Type", value: "text/plain" }], body: Buffer.from("404").toString("base64") }).catch(() => {});
+      return;
+    }
+    const whole = silentMp3(narr.total);
+    const m = range && /bytes=(\d+)-(\d*)/.exec(range[1]);
+    const from = m ? Math.min(Number(m[1]), whole.length - 1) : 0;
+    const to = m && m[2] ? Math.min(Number(m[2]), whole.length - 1) : whole.length - 1;
+    const body = whole.subarray(from, to + 1);
+    const headers = [{ name: "Content-Type", value: "audio/mpeg" }, { name: "Cache-Control", value: "no-store" }, { name: "Accept-Ranges", value: "bytes" }, { name: "Content-Length", value: String(body.length) }];
+    if (m) headers.push({ name: "Content-Range", value: `bytes ${from}-${to}/${whole.length}` });
+    chrome.send("Fetch.fulfillRequest", { requestId: p.requestId, responseCode: m ? 206 : 200, responseHeaders: headers, body: body.toString("base64") }).catch(() => {});
   });
-  await chrome.send("Fetch.enable", { patterns: [{ urlPattern: "*/media/narration/*", requestStage: "Request" }] });
+  await chrome.send("Fetch.enable", { patterns: [{ urlPattern: "*/media/narration/*", requestStage: "Request" }, { urlPattern: "*/releases/download/*/narration.*", requestStage: "Request" }] });
+  // 這一課的旁白改成測試控制的長度：每一句 ms 毫秒、首尾相接（跟 build_narration 接出來的一樣），錄音檔名換成 name（Chrome 的媒體快取以網址為準：要測「載不到」得換一個沒抓過的網址）
+  const retime = async (id, ms, name = "e2etest0") => {
+    narr.ms = ms;
+    narr.total = await evaluate(`const L = window.BUZZ_COURSE_V2_LESSONS[${JSON.stringify(id)}]; let at = 0; L.voice = ${JSON.stringify(name)};
+      L.sections.forEach((s) => s.beats.forEach((b) => { if (b.say) { b.t = [at, at + ${ms}]; at += ${ms}; } else delete b.t; })); return at;`);
+    return narr.total;
+  };
 
   try {
     check("測試用的無聲 mp3 長度數得對（600ms → 25 格）", mp3Ms(silentMp3(600)) === 600);
@@ -185,6 +206,10 @@ async function run() {
     check("頁首「分節／全文」切換，分節按下", first.seg === "分節:true,全文:false", first.seg);
     check("打開有分節的課才抓 course_sections.js", first.files === 1);
     check("一開始只有第一句、還沒有動作", first.beats === 1 && !first.action);
+    // 手機第一屏：頁首擠成兩列（返回・課名・分節／全文；課號・時間・先修 n），第一句的頂端在 220px 以內
+    const firstTop = await evaluate(`scrollTo(0, 0); const b = document.querySelector("[data-cv2s] .cv2s-beat").getBoundingClientRect(); const seg = document.querySelector('[data-action="course-s-mode"]').getBoundingClientRect(); const h2 = document.querySelector(".cv2-lesson h2").getBoundingClientRect(); return { beat: Math.round(b.top), segRow: Math.abs(seg.top + seg.height / 2 - (h2.top + h2.height / 2)) < 4 && Math.abs(document.querySelector(".cv2-back").getBoundingClientRect().top - seg.top) < 4, h2: Math.round(h2.bottom) };`);
+    check("手機：第一句的頂端 ≤ 220px（頁首不佔掉第一屏）", firstTop.beat <= 220, JSON.stringify(firstTop));
+    check("手機：返回、課名、分節／全文在同一列", firstTop.segRow, JSON.stringify(firstTop));
 
     // 下一句：按鈕、點句子那一塊、→ 鍵
     await tap("[data-cv2s-next]");
@@ -277,6 +302,13 @@ async function run() {
     /* ── 第二課：全文切換、記住 ── */
     check(`打開 ${SECOND.id}`, await openLesson(SECOND.id));
     await waitFor(`window.__s.root()`);
+    // 先修收成「先修 n」：第一屏不佔一列；點了才展開那幾課與「在地圖上看」（沒有少東西）
+    const pre0 = await evaluate(`scrollTo(0, 0); const d = document.querySelector(".cv2-pre"); return { summary: window.__s.text(".cv2-pre > summary"), open: d ? d.open : null, beat: Math.round(document.querySelector("[data-cv2s] .cv2s-beat").getBoundingClientRect().top) };`);
+    check(`先修收起來：「先修 ${SECOND.prerequisites.length}」、第一句頂端 ≤ 220px`, pre0.summary === `先修 ${SECOND.prerequisites.length}` && pre0.open === false && pre0.beat <= 220, JSON.stringify(pre0));
+    await tap(".cv2-pre > summary");
+    const pre1 = await evaluate(`const d = document.querySelector(".cv2-pre"); const links = [...d.querySelectorAll('[data-action="open-course-lesson"]')].filter((n) => window.__s.visible(n)).map((n) => n.dataset.lessonId); const map = d.querySelector('[data-action="course-map-focus"]'); return { open: d.open, links, map: Boolean(map && window.__s.visible(map)), overflow: window.__s.overflow() };`);
+    check("點「先修」：展開先修的課與「在地圖上看」、不溢出", pre1.open && pre1.links.join() === SECOND.prerequisites.join() && pre1.map && pre1.overflow <= 1, JSON.stringify(pre1));
+    await tap(".cv2-pre > summary");
     await tap('[data-action="course-s-mode"][data-mode="full"]');
     const full = await evaluate(`return { page: Boolean(document.querySelector("[data-course-concept]")), root: Boolean(window.__s.root()), pref: (window.__s.rec().settings || {}).courseView, seg: [...document.querySelectorAll('[data-action="course-s-mode"]')].map((b) => b.getAttribute("aria-pressed")).join() };`);
     check("「全文」：整頁回來", full.page && !full.root && full.seg === "false,true", JSON.stringify(full));
@@ -335,12 +367,17 @@ async function run() {
     const v0 = await evaluate(`return { play: window.__s.text("[data-cv2s-play]"), rate: window.__s.text("[data-cv2s-rate]"), subs: window.__s.text("[data-cv2s-subs]"), fig: window.__s.fig(${V[0].beats[1].fig.use}).dataset.value };`);
     check("每一節都有「播放」、語速、字幕（預設不播）", v0.play === "播放" && v0.rate === "1×" && v0.subs === "字幕", JSON.stringify(v0));
     check("打開課、出第一句：還是沒有旁白請求", narr.urls.length === 0);
-    narr.ms = 1500;
+    const total = await retime(WIDGET.id, 1500);
+    const lessonMp3 = `${WIDGET.id}-e2etest0.mp3`;
     await tap("[data-cv2s-play]");
-    check("按了播放：抓第一句的錄音", await waitFor(`window.BuzzCourseSections.voice().src.includes("/0-0-")`, 3000) && narr.urls.some((u) => u.startsWith(`${WIDGET.id}/0-0-`)), narr.urls.join(","));
+    check("按了播放：抓這一課那一支錄音、從第一句的起點念", await waitFor(`window.BuzzCourseSections.voice().beat === "0-0" && window.BuzzCourseSections.voice().src.endsWith(${JSON.stringify(lessonMp3)})`, 3000) && narr.urls.includes(lessonMp3), `${narr.urls.join(",")} · ${JSON.stringify(await evaluate(`return window.BuzzCourseSections.voice();`))}`);
     await evaluate(`window.__pb = document.querySelector("[data-cv2s-play]"); window.__pr = window.__s.rect(window.__pb); return 1;`);
-    check("只預載下一句（沒有一次抓整節）", narr.urls.every((u) => /\/0-[01]-/.test(`/${u.split("/")[1]}`)), narr.urls.join(","));
+    const first0 = await evaluate(`return window.BuzzCourseSections.voice();`);
+    check("只抓這一課那一支（一課一支，沒有別的檔）、<audio> 是 preload=none", narr.urls.every((u) => u === lessonMp3) && first0.preload === "none", `${narr.urls.join(",")} · preload ${first0.preload}`);
+    check("用 Range 串流（不是一次整支下載）", narr.ranges.some((r) => /^bytes=/.test(r)), `${narr.ranges.join(",")} · 整支 ${total} ms`);
     check("念完自己出下一句（沒有點）", await waitFor(`window.__s.beats() === 2`, 6000), String(await evaluate(`return window.__s.beats();`)));
+    const flow = await evaluate(`return window.BuzzCourseSections.voice();`);
+    check("第二句接著第一句的訖點念（同一支檔、不跳回開頭）", flow.beat === "0-1" && flow.start === 1500 && flow.at >= 1400 && flow.at <= flow.end + 100, JSON.stringify(flow));
     check(`圖跟著那一句動到 ${V[0].beats[1].fig.to}`, await waitFor(`window.__s.fig(${V[0].beats[1].fig.use}).dataset.value === "${V[0].beats[1].fig.to}"`, 3000), `${v0.fig} → ${await evaluate(`return window.__s.fig(${V[0].beats[1].fig.use}).dataset.value;`)}`);
     check("一路念到這一節最後一句，停在動作前", await waitFor(`window.__s.beats() === ${V[0].beats.length} && window.BuzzCourseSections.voice().wait && document.querySelector("[data-cv2s-act]")`, 12000), JSON.stringify(await evaluate(`return window.BuzzCourseSections.voice();`)));
     const same = await evaluate(`const b = document.querySelector("[data-cv2s-play]"); return { same: b === window.__pb, before: window.__pr, after: window.__s.rect(b), label: window.__s.text("[data-cv2s-play]"), inApp: Boolean(b.closest("#app")) };`);
@@ -353,7 +390,7 @@ async function run() {
     // 做完動作、按「下一節」：接著念（每句 1.5 秒，留時間按暫停）
     await finishSection(WIDGET);
     await tap("[data-cv2s-next]");
-    check("下一節：播放開著就從第一句接著念", await waitFor(`window.__s.si() === 1 && window.BuzzCourseSections.voice().src.includes("/1-0-")`, 4000), JSON.stringify(await evaluate(`return window.BuzzCourseSections.voice();`)));
+    check("下一節：播放開著就從第一句接著念", await waitFor(`window.__s.si() === 1 && window.BuzzCourseSections.voice().beat === "1-0" && Math.abs(window.BuzzCourseSections.voice().start - ${V[0].beats.length * 1500}) < 1`, 4000), JSON.stringify(await evaluate(`return window.BuzzCourseSections.voice();`)));
     const mid = await evaluate(`const v = window.BuzzCourseSections.voice(); return v.on && !v.paused && !v.wait;`);
     await tap("[data-cv2s-play]");
     const paused = await evaluate(`return { v: window.BuzzCourseSections.voice(), beats: window.__s.beats(), label: window.__s.text("[data-cv2s-play]") };`);
@@ -387,17 +424,31 @@ async function run() {
     await tap("[data-cv2s-play]"); // 先停下來（停在動作前就是關掉；還在念就是暫停），免得重繪中按偏
     await tap("[data-cv2s-subs]");
     check("字幕關掉", await waitFor(`document.querySelectorAll("[data-cv2s-say]").length === 0 && (window.__s.rec().settings || {}).narrSubs === false`, 3000), JSON.stringify(await evaluate(`return { n: document.querySelectorAll("[data-cv2s-say]").length, v: window.BuzzCourseSections.voice() };`)));
+    // 串流設定（media/manifest.json 的 stream → 大綱的 narration 是 Release 的下載網址）：跨網域照樣播、自己往下
+    await evaluate(`window.__base = window.BUZZ_COURSE_V2.narration; window.BUZZ_COURSE_V2.narration = "https://github.com/tudohuang/BuzzCalculus/releases/download/media-test/narration."; return 1;`);
+    await evaluate(`window.__s.open("${WIDGET.id}"); return 1;`);
+    await waitFor(`window.__s.root()`);
+    await retime(WIDGET.id, 800, "e2estrm0");
+    await tap(".cv2s-dot:nth-child(1)");
+    await waitFor(`window.__s.si() === 0`);
+    await tap("[data-cv2s-play]");
+    const streamOk = await waitFor(`window.__s.beats() >= 2 && window.BuzzCourseSections.voice().src.startsWith("https://github.com/")`, 6000);
+    check("串流設定：從 Release 的網址抓（跨網域）、念完自己往下", streamOk && narr.urls.includes(`${WIDGET.id}-e2estrm0.mp3`), JSON.stringify(await evaluate(`return window.BuzzCourseSections.voice();`)));
+    await tap("[data-cv2s-play]");
+    await evaluate(`window.BUZZ_COURSE_V2.narration = window.__base; return 1;`);
     // 載不到（沒有 media/、離線）：一行字、播放關掉，點的照樣做完這一節
     narr.mode = "fail";
     const failSi = 2;
     await evaluate(`window.__s.open("${WIDGET.id}"); return 1;`);
     check("重新打開這一課：旁白停掉", await waitFor(`window.__s.root() && !window.BuzzCourseSections.voice().on`, 4000), JSON.stringify(await evaluate(`return window.BuzzCourseSections.voice();`)));
+    await retime(WIDGET.id, 1500, "e2efail0");
     await tap(`.cv2s-dot:nth-child(${failSi + 1})`);
     await waitFor(`window.__s.si() === ${failSi}`);
     await tap("[data-cv2s-play]");
     const off = await waitFor(`document.querySelector("[data-cv2s-voice-off]") && !window.BuzzCourseSections.voice().on`, 5000);
-    const offView = await evaluate(`return { line: window.__s.text("[data-cv2s-voice-off]"), play: window.__s.text("[data-cv2s-play]") };`);
-    check("載不到：只留一行字、播放鍵回到「播放」", off && offView.play === "播放" && offView.line.length > 0 && offView.line.length <= 20, JSON.stringify(offView));
+    const offView = await evaluate(`const off = document.querySelector("[data-cv2s-voice-off]"); return { line: off && !off.hidden ? window.__s.text("[data-cv2s-voice-off]") : "", play: window.__s.text("[data-cv2s-play]"), tried: ${JSON.stringify("")} };`);
+    offView.tried = narr.urls.filter((u) => /e2efail0/.test(u)).length;
+    check("載不到：只留一行字、播放鍵回到「播放」（先重試一次才放棄）", off && offView.play === "播放" && offView.line.length > 0 && offView.line.length <= 20 && offView.tried >= 2, JSON.stringify(offView));
     await finishSection(WIDGET);
     check("載不到之後，用點的照樣做完這一節", await waitFor(`document.querySelectorAll(".cv2s-dot")[${failSi}].classList.contains("is-done")`, 3000));
     narr.mode = "fake";

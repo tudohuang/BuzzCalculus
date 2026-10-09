@@ -3,8 +3,9 @@
 // 產物（都是延後載入，不在首屏）：
 //   src/course_v2/outline.js     大綱：13 個 Stage → 章 → 課（id、課名、閱讀／完成分鐘、推薦題號）。
 //                                課程表、首頁主卡、「這題是哪一課教的」只需要這一支。
-//   src/course_v2/stage-<n>.js   該 Stage 每一課的內文（觀念、範例、常見錯誤、小測、推薦題）。
-//                                打開某一課時才抓那一個 Stage。
+//   src/course_v2/ch-<章>.js     該章每一課的內文（觀念、範例、常見錯誤、小測、推薦題、圖、分節與旁白的起訖）。
+//                                打開某一課時才抓那一章。按章不按 Stage：分節推到全部的課之後，最大的 Stage 會超過 600KB，
+//                                最大的一章約 100KB（validate_performance_budget 管最大的那一章）。
 //   src/course_v2/map.js         課程地圖的版面（每一課、章、Stage 的座標與三層的邊；tools/lib/course_map_layout.js 算的）。
 //                                執行時不排版，打開地圖才抓（index.html 的 data-lazy="map"）。
 //
@@ -69,10 +70,20 @@ files.forEach((name) => {
   lessons[lesson.id] = lesson;
 });
 
-// 旁白錄音的索引（tools/build_narration.js 產生；檔案本身在 Release）
-const NARRATION = path.join(SOURCE, "narration.json");
-const narration = fs.existsSync(NARRATION) ? JSON.parse(fs.readFileSync(NARRATION, "utf8")) : { clips: {} };
-const { hashOf: narrationHash, VOICE: narrationVoice, RATE: narrationRate } = require("./build_narration.js");
+// 旁白錄音的索引（tools/build_narration.js 產生；一課一支 mp3，檔案本身在 Release）
+const { voiceOf, readIndex: readNarration } = require("./build_narration.js");
+const narration = readNarration();
+// 錄音從哪裡播：media/manifest.json 裡放旁白的那個 Release 標了 stream: true → 直接從 GitHub Release 的下載網址串流
+// （部署不帶旁白）；沒標 → 部署時 fetch_media.js 抓進同網域的 /media/narration/。檔名都是 <課>-<f>.mp3。
+const MANIFEST = path.join(ROOT, "media", "manifest.json");
+const manifest = fs.existsSync(MANIFEST) ? JSON.parse(fs.readFileSync(MANIFEST, "utf8")) : {};
+const narrationAsset = (manifest.assets || []).find((a) => /^narration\//.test(a.name));
+const narrationTag = narrationAsset ? narrationAsset.tag || manifest.tag : "";
+const narrationBase = narrationTag && ((manifest.releases || {})[narrationTag] || {}).stream
+  ? `https://github.com/${manifest.repo}/releases/download/${narrationTag}/narration.`
+  : "media/narration/";
+// 章 → 檔名：章碼小寫、非英數換成 -（9A.1 → ch-9a-1.js）。src/course_v2_ui.js 的 chapterFile 是同一條規則
+const chapterFile = (code) => `ch-${String(code).toLowerCase().replace(/[^a-z0-9]+/g, "-")}.js`;
 
 const nonEmpty = (list) => (Array.isArray(list) ? list.filter((item) => item !== null && item !== undefined && item !== "") : []);
 
@@ -104,14 +115,18 @@ function shipLesson(lesson) {
     // 影片：只出貨短名與顯示要用的欄位；網址（主題、解析度）在畫面那邊組
     ...(lesson.video ? { video: { id: lesson.video.id, after: lesson.video.after === undefined ? 0 : lesson.video.after, duration: lesson.video.duration, caption: lesson.video.caption } } : {}),
     // 分節：原樣出貨（規格見 SCHEMA.md；畫面在 src/course_sections.js，有分節的課才抓）。
-    // 有旁白錄音的句子多帶 au（檔名裡的 hash8）與 ms（長度）；字改過、還沒重錄的句子不帶（播放時那一句只停一下）
-    ...(Array.isArray(lesson.sections) && lesson.sections.length ? { sections: lesson.sections.map((sec, si) => ({
-      ...sec,
-      beats: sec.beats.map((b, bi) => {
-        const clip = b.say ? narration.clips[`${lesson.id}/${si}-${bi}`] : null;
-        return clip && clip.h === narrationHash(narrationVoice, narrationRate, b.say.trim()) ? { ...b, au: clip.h, ms: clip.ms } : b;
-      })
-    })) } : {}),
+    // 有旁白錄音的課多帶 voice（這一課那一支 mp3 檔名裡的 f8），句子多帶 t（在那一支裡的 [起, 訖] 毫秒）；
+    // 字改過、還沒重錄的句子不帶 t（播放時那一句只停一下）
+    ...(Array.isArray(lesson.sections) && lesson.sections.length ? (() => {
+      const voice = voiceOf(narration, lesson);
+      return {
+        ...(voice ? { voice: voice.f } : {}),
+        sections: lesson.sections.map((sec, si) => ({
+          ...sec,
+          beats: sec.beats.map((b, bi) => (voice && voice.beats[`${si}-${bi}`] ? { ...b, t: voice.beats[`${si}-${bi}`] } : b))
+        }))
+      };
+    })() : {}),
     checks: (lesson.checks || []).map((check) => ({
       ask: check.ask,
       options: check.options.map((option) => (option.correct ? { label: option.label, correct: true } : { label: option.label, why: option.why || "" }))
@@ -127,6 +142,8 @@ function shipLesson(lesson) {
 
 // 大綱裡每一課：寫好的課帶分鐘數與推薦題（課程表算進度、回饋找「哪一課教的」都要）
 const outline = {
+  // 旁白錄音的網址前綴：播放器抓 <前綴><課>-<voice>.mp3
+  narration: narrationBase,
   stages: stages.map((s) => ({
     n: s.n,
     title: s.title,
@@ -161,11 +178,14 @@ const { stats: mapStats, ...mapData } = mapLayout;
 if (!checkMode) console.log(`課程地圖：${mapStats.stageLayers} 層 Stage、整張 ${mapData.size.join(" × ")}、先修邊加權長度 ${mapStats.cost}`);
 outputs["map.js"] = `${HEADER}window.BUZZ_COURSE_MAP = ${JSON.stringify(mapData)};
 `;
-stages.forEach((s) => {
-  const inStage = {};
-  s.chapters.forEach((c) => c.lessons.forEach((l) => { if (lessons[l.id]) inStage[l.id] = shipLesson(lessons[l.id]); }));
-  outputs[`stage-${s.n}.js`] = `${HEADER}window.BUZZ_COURSE_V2_LESSONS = Object.assign(window.BUZZ_COURSE_V2_LESSONS || {}, ${JSON.stringify(inStage)});\n`;
-});
+stages.forEach((s) => s.chapters.forEach((c) => {
+  const inChapter = {};
+  c.lessons.forEach((l) => { if (lessons[l.id]) inChapter[l.id] = shipLesson(lessons[l.id]); });
+  if (!Object.keys(inChapter).length) return;
+  const name = chapterFile(c.code);
+  if (outputs[name]) throw new Error(`兩章的檔名撞在一起：${name}`);
+  outputs[name] = `${HEADER}window.BUZZ_COURSE_V2_LESSONS = Object.assign(window.BUZZ_COURSE_V2_LESSONS || {}, ${JSON.stringify(inChapter)});\n`;
+}));
 
 const written = Object.keys(lessons).length;
 if (checkMode) {
@@ -185,6 +205,8 @@ if (checkMode) {
   fs.mkdirSync(OUT, { recursive: true });
   fs.readdirSync(OUT).filter((name) => !outputs[name]).forEach((name) => fs.unlinkSync(path.join(OUT, name)));
   Object.entries(outputs).forEach(([name, text]) => fs.writeFileSync(path.join(OUT, name), text));
-  const sizes = Object.entries(outputs).map(([name, text]) => `${name} ${Math.round(Buffer.byteLength(text) / 1024)}KB`);
+  const chapters = Object.entries(outputs).filter(([name]) => /^ch-/.test(name)).map(([name, text]) => [name, Buffer.byteLength(text)]).sort((a, b) => b[1] - a[1]);
+  const sizes = Object.entries(outputs).filter(([name]) => !/^ch-/.test(name)).map(([name, text]) => `${name} ${Math.round(Buffer.byteLength(text) / 1024)}KB`)
+    .concat(`${chapters.length} 章（最大 ${chapters[0][0]} ${Math.round(chapters[0][1] / 1024)}KB、合計 ${Math.round(chapters.reduce((n, c) => n + c[1], 0) / 1024)}KB）`);
   console.log(`course v2：${written} / ${outlineIds.length} 課 → src/course_v2/（${sizes.join("、")}）`);
 }

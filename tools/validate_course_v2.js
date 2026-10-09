@@ -76,7 +76,9 @@ const cjkLen = (s) => String(s || "")
   .replace(/(?<!\\)\$([^$]+?)(?<!\\)\$/g, (_m, body) => body.replace(/\\[a-zA-Z]+/g, "x").replace(/[{}^_\\]/g, ""))
   .replace(/\s/g, "").length;
 
-const wanted = process.argv.slice(2);
+// --require-sections：每一課都要有 sections（全部的課分節完才在 CI 打開；現在只是可以手動跑）
+const requireSections = process.argv.includes("--require-sections");
+const wanted = process.argv.slice(2).filter((a) => !a.startsWith("--"));
 const files = fs.existsSync(LESSON_DIR) ? fs.readdirSync(LESSON_DIR).filter((f) => f.endsWith(".json")) : [];
 const lessons = [];
 for (const file of files) {
@@ -180,42 +182,106 @@ function checkVideo(id, L) {
 // 一節 = 幾句（beat：畫面上的短字＋一句白話，可以把圖的滑桿帶到某一格）＋結尾一個動作（小測／先猜／拖圖）。
 // 內容跟課文同一份：小測每一題恰好落在一節（分節讀完＝小測做完，「完成」才拿得到）；
 // 節裡寫的每一個數字都要在課文、圖的參數或這一節的滑桿值裡出現過（分節是換切法，不是新內容）。
-const numbersIn = (s) => (String(s || "").replace(/\\[a-zA-Z]+/g, " ").match(/\d+(?:\.\d+)?/g) || []).map(Number);
+// TeX 的單一數字簡寫：\frac12、\tfrac12、\dfrac12 是 1/2（不是 12）；\frac1x 的分子是 1。先拆開再拿掉其他指令。
+const numbersIn = (s) => (String(s || "")
+  .replace(/\\[dt]?frac\s*(\d)\s*(\d)/g, " $1 $2 ")
+  .replace(/\\[dt]?frac\s*(\d)/g, " $1 ")
+  .replace(/\\[a-zA-Z]+/g, " ").match(/\d+(?:\.\d+)?/g) || []).map(Number);
 
 // ── 旁白（beat.say）：念出來的話，念法寫成中文，所以數字也要從中文數字讀回來才比得了 ──
-// 「三分之十四」→ 3、14；「二點零一」→ 2.01；「十六」→ 16；「負二」→ 2（正負號跟 numbersIn 一樣不看）。
-// 不是數字的詞先拿掉（「十分」「萬一」…），免得被讀成數字。
+// 「三分之十四」→ 3、14；「二點零一」→ 2.01；「十六」→ 16；「八萬八千二百」→ 88200；「負二」→ 2（正負號跟 numbersIn 一樣不看）。
+// 「百分之五」→ 5 或 0.05（課文裡有哪一個都算）。
+// 不是數字的詞先拿掉（「萬一」「一下子」「三角形」「一定」…），免得被讀成數字：
+//   「十分」看上下文：「十分接近」「十分重要」（很）才拿掉；「十分之…」是分母十、「一百八十分之…」「三十分」前面接著數字，都是數字。
+//   「一點」後面不是數字（「一點也不」「近一點」）才拿掉；「一點五」是 1.5。
+//   「第一」「一個」「一路」照舊讀成 1（是不是真的數字分不出來，寧可多擋）。
 const CN_DIGIT = { 零: 0, 〇: 0, 一: 1, 二: 2, 兩: 2, 三: 3, 四: 4, 五: 5, 六: 6, 七: 7, 八: 8, 九: 9 };
 const CN_UNIT = { 十: 10, 百: 100, 千: 1000 };
+const CN_BIG = { 萬: 1e4, 億: 1e8 };
+const CN_NUM = "零〇一二兩三四五六七八九十百千萬億";
 function cnInt(s) {
   if (!s) return 0;
   let total = 0;
+  let section = 0;
   let digit = 0;
   for (const c of s) {
     if (c in CN_DIGIT) digit = CN_DIGIT[c];
-    else { total += (digit || 1) * CN_UNIT[c]; digit = 0; }
+    else if (c in CN_UNIT) { section += (digit || 1) * CN_UNIT[c]; digit = 0; }
+    else { total += (section + digit || 1) * CN_BIG[c]; section = 0; digit = 0; }
   }
-  return total + digit;
+  return total + section + digit;
 }
-const spokenNumbers = (s) => {
-  const text = String(s || "").replace(/十分|萬一|一下子|千萬|一模一樣/g, " ");
-  const out = numbersIn(text);
-  for (const m of text.matchAll(/[零〇一二兩三四五六七八九十百千]+(?:點[零〇一二三四五六七八九]+)?/g)) {
-    const [whole, frac] = m[0].split("點");
-    // 沒有十百千的一串（「負三一路」的「三一」）是相鄰的兩個字，不是 31：一個字一個數；小數只看最後一個字
-    const digits = /[十百千]/.test(whole) ? [cnInt(whole)] : [...whole].map((c) => CN_DIGIT[c]);
-    if (frac) digits.push(Number(`${digits.pop()}.${[...frac].map((c) => CN_DIGIT[c]).join("")}`));
-    out.push(...digits);
-  }
-  return out;
+// 一串中文數字（可以帶「點」）→ 讀出來的數
+function cnRead(token) {
+  const [whole, frac] = token.split("點");
+  // 沒有十百千萬億的一串（「負三一路」的「三一」）是相鄰的兩個字，不是 31：一個字一個數；小數只看最後一個字
+  const digits = /[十百千萬億]/.test(whole) ? [cnInt(whole)] : [...whole].map((c) => CN_DIGIT[c]);
+  if (frac) digits.push(Number(`${digits.pop()}.${[...frac].map((c) => CN_DIGIT[c]).join("")}`));
+  return digits;
+}
+// → 每一個念到的數一格：[數]，或「百分之 N」的 [N, N/100]（課文裡有其中一個就算）
+const spokenItems = (s) => {
+  const items = [];
+  const text = String(s || "")
+    .replace(new RegExp(`百分之([${CN_NUM}]+(?:點[零〇一二三四五六七八九]+)?)`, "g"), (_m, n) => { cnRead(n).forEach((v) => items.push([v, Number((v / 100).toPrecision(12))])); return " "; })
+    .replace(new RegExp(`(^|[^${CN_NUM}])十分(?!之)`, "g"), "$1 ")
+    .replace(/一點(?![零〇一二三四五六七八九])/g, " ")
+    .replace(/萬一|一下子|千萬|一模一樣|三角(?:形|函數)?|一些|一樣|一直|一定|統一|唯一|一起|一般|一致|一旦|一切/g, " ");
+  numbersIn(text).forEach((n) => items.push([n]));
+  for (const m of text.matchAll(new RegExp(`[${CN_NUM}]+(?:點[零〇一二三四五六七八九]+)?`, "g"))) cnRead(m[0]).forEach((v) => items.push([v]));
+  return items;
 };
+// 自測：讀數規則改壞了（例如又把「十分」整個刪掉）就在這裡紅，不等某一課的稿碰到。[數] 或 [數, 另一種讀法]
+[
+  ["一百八十分之 pi", [[180]]],
+  ["十分之零點零五", [[10], [0.05]]],
+  ["三分之十四", [[3], [14]]],
+  ["十分接近", []],
+  ["這裡十分重要", []],
+  ["三十分", [[30]]],
+  ["二點零一", [[2.01]]],
+  ["一點五倍", [[1.5]]],
+  ["一點也不難，再近一點", []],
+  ["負三一路往上", [[3], [1]]],
+  ["八萬八千二百", [[88200]]],
+  ["三億零五萬", [[300050000]]],
+  ["一萬", [[10000]]],
+  ["百分之一", [[1, 0.01]]],
+  ["誤差百分之零點五", [[0.5, 0.005]]],
+  ["三角形面積", []],
+  ["三角函數的週期", []],
+  ["用三角代換", []],
+  ["一定會收斂，一樣的道理", []],
+  ["唯一的解", []],
+  ["第一步", [[1]]],
+  ["三個三角形", [[3]]]
+].forEach(([said, want]) => {
+  const key = (list) => list.map((alts) => alts.join("|")).sort().join(", ");
+  const got = key(spokenItems(said));
+  if (got !== key(want)) errors.push(`自測：「${said}」讀成 [${got}]，應該是 [${key(want)}]`);
+});
+[
+  ["$\\tfrac12$", [1, 2]],
+  ["$\\dfrac12 + \\frac{3}{4}$", [1, 2, 3, 4]],
+  ["$\\frac1x$", [1]],
+  ["$x^{12}$", [12]],
+  ["$\\sqrt2$", [2]]
+].forEach(([text, want]) => {
+  const got = numbersIn(text).sort((a, b) => a - b).join();
+  if (got !== want.slice().sort((a, b) => a - b).join()) errors.push(`自測：${text} 讀成 [${got}]，應該是 [${want.join(", ")}]`);
+});
 // 念的稿：不准有 LaTeX 與會被念錯的符號（分數、次方、不等號、括號…都寫成中文：三分之十四、x 平方、大於等於）
 const SAY_BAD = /[$\\^_{}\/=<>≤≥≠→←∞×÷·√∫∑ΔδεπθΣ+*|()（）\[\]［］]/;
 const SAY_MAX = 56; // 字數上限：約 12 秒（實測台灣中文神經語音一秒四字多，含停頓）
 const SAY_MAX_MS = 12500;
 const NARRATION_INDEX = path.join(DIR, "narration.json");
-const narration = fs.existsSync(NARRATION_INDEX) ? JSON.parse(fs.readFileSync(NARRATION_INDEX, "utf8")) : null;
-const { hashOf: narrationHash, VOICE: NARRATION_VOICE, RATE: NARRATION_RATE } = require("./build_narration.js");
+const { hashOf: narrationHash, VOICE: NARRATION_VOICE, RATE: NARRATION_RATE, readIndex: readNarration } = require("./build_narration.js");
+// 一課一支（narration.json 的 lessons.<課>.beats.<節-句> = { h, t: [起, 訖] }）
+const narration = fs.existsSync(NARRATION_INDEX) ? readNarration() : null;
+const clipOf = (id, key) => {
+  const got = narration && narration.lessons[id] && narration.lessons[id].beats[key];
+  return got ? { h: got.h, ms: got.t[1] - got.t[0] } : null;
+};
 let sayMissing = 0;
 function checkSections(id, L) {
   const S = L.sections;
@@ -275,7 +341,7 @@ function checkSections(id, L) {
           if (cjkLen(say) > SAY_MAX) err(id, `${at} 的 say ${cjkLen(say)} 字（≤ ${SAY_MAX}，約 12 秒）`);
           if (say === (b.note || "").trim() || b.show.some((line) => line.replace(/\$/g, "") === say)) err(id, `${at} 的 say 照念畫面上的字：要講解畫面，不是重念`);
           spoken.push(say);
-          const clip = narration && narration.clips[`${id}/${si}-${bi}`];
+          const clip = clipOf(id, `${si}-${bi}`);
           if (!clip || clip.h !== narrationHash(NARRATION_VOICE, NARRATION_RATE, say)) sayMissing += 1;
           else if (clip.ms > SAY_MAX_MS) warn(id, `${at} 的旁白 ${(clip.ms / 1000).toFixed(1)} 秒（建議 ≤ 12）`);
         }
@@ -316,7 +382,7 @@ function checkSections(id, L) {
     else if (shown > 150) warn(id, `${where} 畫面上的字 ${shown} 字（建議 ≤ 150）`);
     const fresh = [...new Set(texts.flatMap(numbersIn))].filter((n) => !local.has(n));
     if (fresh.length) err(id, `${where} 出現課文裡沒有的數字：${fresh.join("、")}（分節不寫新內容）`);
-    const said = [...new Set(spoken.flatMap(spokenNumbers))].filter((n) => !local.has(n));
+    const said = [...new Set(spoken.flatMap(spokenItems).filter((alts) => !alts.some((n) => local.has(n))).map((alts) => alts[0]))];
     if (said.length) err(id, `${where} 的旁白念了課文裡沒有的數字：${said.join("、")}（中文數字也算）`);
     parts.push(...texts);
   });
@@ -510,6 +576,34 @@ for (const L of lessons) {
 const all = Object.keys(outline).length;
 const written = files.length;
 console.log(`新版課程：大綱 ${all} 課，已寫 ${written} 課${wanted.length ? `（這次驗 ${lessons.length} 課）` : ""}`);
+// ── 整套課的分節與旁白覆蓋率（每次都印；--require-sections 時沒分節的課算錯）──
+{
+  const rows = {};
+  let secN = 0;
+  let sayN = 0;
+  let voicedN = 0;
+  let beatN = 0;
+  lessons.forEach((L) => {
+    const st = outline[L.id] ? outline[L.id].stage : "?";
+    const row = (rows[st] = rows[st] || { all: 0, sec: 0, say: 0, voiced: 0 });
+    row.all += 1;
+    if (!Array.isArray(L.sections) || !L.sections.length) {
+      if (requireSections) err(L.id, "還沒有 sections（--require-sections）");
+      return;
+    }
+    const beats = [];
+    L.sections.forEach((sec, si) => (sec.beats || []).forEach((b, bi) => beats.push({ b, key: `${si}-${bi}` })));
+    row.sec += 1;
+    secN += 1;
+    beatN += beats.length;
+    const said = beats.filter(({ b }) => typeof b.say === "string" && b.say.trim());
+    if (said.length && said.length === beats.length) { row.say += 1; sayN += 1; }
+    if (said.length && said.every(({ b, key }) => { const c = clipOf(L.id, key); return c && c.h === narrationHash(NARRATION_VOICE, NARRATION_RATE, b.say.trim()); })) { row.voiced += 1; voicedN += 1; }
+  });
+  const pct = (n) => (lessons.length ? `${Math.round((n / lessons.length) * 100)}%` : "—");
+  console.log(`分節覆蓋：${secN} / ${lessons.length} 課有 sections（${pct(secN)}，${beatN} 句）、${sayN} 課每句都有 say（${pct(sayN)}）、${voicedN} 課錄好旁白（${pct(voicedN)}）`);
+  console.log(`  每個 Stage（分節／say／錄好 ／ 課數）：${Object.keys(rows).sort((a, b) => Number(a) - Number(b)).map((st) => `S${st} ${rows[st].sec}/${rows[st].say}/${rows[st].voiced}／${rows[st].all}`).join("  ")}`);
+}
 // 字改了、旁白還沒重錄：不擋（播放時那一句沒有聲音，分節照常點），但要看得到
 if (sayMissing) warnings.push(`旁白：${sayMissing} 句的 say 沒有對得上的錄音（node tools/build_narration.js）`);
 if (warnings.length) {
