@@ -6,7 +6,8 @@
 // 而不是上線一支壞掉的影片。
 //
 // 清單可以跨好幾個 Release（make_media_manifest.js）：檔案的 tag 沒寫就是清單最上面的 tag；
-// 附件名 = 路徑的 / 換成 .（旁白在 media/narration/<課>/ 底下，附件名不能有斜線）。
+// 附件名 = 路徑的 / 換成 .（旁白是 media/narration/<課>-<f8>.mp3，附件名不能有斜線）。
+// releases 底下標 stream 的 Release：不抓（播放器直接從 Release 串流；make_media_manifest.js --stream）。
 // releases 底下標 optional 的 Release（旁白）：整個還沒上傳（每個檔都 404／本機一個都沒有）→ 印警告、不讓部署失敗
 // （播放器載不到旁白時自己退回點的）；只缺一部分、或雜湊不符 → 照樣失敗。
 //
@@ -57,25 +58,36 @@ function download(url, dest, redirects = 0) {
   let bad = false;
   for (const tag of tags) {
     const assets = manifest.assets.filter((a) => tagOf(a) === tag);
-    const optional = Boolean(((manifest.releases || {})[tag] || {}).optional);
+    const release = (manifest.releases || {})[tag] || {};
+    const optional = Boolean(release.optional);
+    // stream：播放器直接從 Release 的下載網址串流（make_media_manifest.js --stream），部署不帶這些檔
+    if (release.stream) {
+      console.log(`${tag}：${assets.length} 個檔案標 stream —— 播放器直接從 Release 串流，部署不抓`);
+      continue;
+    }
     let fetched = 0;
     let kept = 0;
     const missing = []; // 本機沒有／Release 上 404
     const failures = []; // 雜湊不符、其他錯誤
-    for (const asset of assets) {
-      const dest = path.join(DIR, ...asset.name.split("/"));
-      if (fs.existsSync(dest) && sha256(dest) === asset.sha256) { kept += 1; continue; }
-      if (checkOnly) { (fs.existsSync(dest) ? failures : missing).push(`${asset.name}：${fs.existsSync(dest) ? "雜湊不符" : "本機沒有"}`); continue; }
-      try {
-        fs.mkdirSync(path.dirname(dest), { recursive: true });
-        await download(urlOf(asset), dest);
-        const got = sha256(dest);
-        if (got !== asset.sha256) { fs.rmSync(dest, { force: true }); failures.push(`${asset.name}：雜湊不符（${got.slice(0, 12)}…）`); continue; }
-        fetched += 1;
-      } catch (error) {
-        (error.status === 404 ? missing : failures).push(`${asset.name}：${error.message}`);
+    // 同時抓 4 個（旁白一課一支，全部約 317 支、250MB）
+    const queue = assets.slice();
+    const worker = async () => {
+      for (let asset = queue.shift(); asset; asset = queue.shift()) {
+        const dest = path.join(DIR, ...asset.name.split("/"));
+        if (fs.existsSync(dest) && sha256(dest) === asset.sha256) { kept += 1; continue; }
+        if (checkOnly) { (fs.existsSync(dest) ? failures : missing).push(`${asset.name}：${fs.existsSync(dest) ? "雜湊不符" : "本機沒有"}`); continue; }
+        try {
+          fs.mkdirSync(path.dirname(dest), { recursive: true });
+          await download(urlOf(asset), dest);
+          const got = sha256(dest);
+          if (got !== asset.sha256) { fs.rmSync(dest, { force: true }); failures.push(`${asset.name}：雜湊不符（${got.slice(0, 12)}…）`); continue; }
+          fetched += 1;
+        } catch (error) {
+          (error.status === 404 ? missing : failures).push(`${asset.name}：${error.message}`);
+        }
       }
-    }
+    };
+    await Promise.all([worker(), worker(), worker(), worker()]);
     console.log(`${tag}：${assets.length} 個檔案，新抓 ${fetched}、已有 ${kept}${missing.length ? `、缺 ${missing.length}` : ""}`);
     // 標 optional 的 Release 整個還沒上傳：只警告
     if (optional && !failures.length && !kept && !fetched && missing.length === assets.length) {

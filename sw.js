@@ -1,4 +1,4 @@
-const CACHE_NAME = "buzzcalculus-v1.2.1-2026-09-30-steps";
+const CACHE_NAME = "buzzcalculus-v1.2.1-2026-10-09-chapters";
 const CACHE_PREFIX = "buzzcalculus-";
 const APP_SHELL = [
   "./privacy.html",
@@ -102,6 +102,7 @@ const APP_SHELL = [
   "./src/course.js",
   "./src/course_v2/outline.js",
   "./src/course_v2_ui.js",
+  "./src/course_figures.js",
   "./src/course_v2/map.js",
   "./src/course_map.js",
   "./src/course_video.js",
@@ -120,9 +121,11 @@ const LANG_ONLY = [
   "./src/kernel/i18n_text_en.js"
 ];
 
-// 新版課程的課文（src/course_v2/stage-*.js，合計約 1.8MB）也不進 install 預快取：英文介面用不到，
-// 中文介面也只有打開課程的人才需要。課程表第一次打開時 course_v2_ui.js 會在閒置時把每個 Stage 抓一遍，
-// 經過下面的 fetch handler 存進快取 —— 打開過一次課程表，整套課離線都能讀。
+// 新版課程的課文按章分檔（src/course_v2/ch-*.js，74 支，合計約 2MB；分節推到全部的課之後約 3.5MB）不進 install 預快取：
+// 英文介面用不到，中文介面也只有打開課程的人才需要 —— 每個裝了 PWA 的人都先下載 3.5MB 不划算。
+// 改成「用到才快取」：打開一課抓那一章（經過下面的 fetch handler 存進快取）；課程表第一次打開時 course_v2_ui.js
+// 在閒置時把每一章抓一遍（省流量模式、2G 不抓）—— 打開過一次課程表，整套課離線都能讀。
+// 規則由 tools/validate_offline_assets.js 守：APP_SHELL 不准列 ch-*.js、大綱的每一章都要有檔、prefetchAll 要在。
 
 // 新版本要等使用者同意才生效。
 //
@@ -156,7 +159,9 @@ self.addEventListener("fetch", (event) => {
   // 課程影片（/media/ 底下的 mp4 與預覽圖）與任何 Range 請求：完全不經過這裡，交給瀏覽器與 HTTP 快取。
   // <video> 會送 Range、回 206，cache.put 收不了；而且每看一支就把 0.5–1MB 塞進 Cache Storage、換版又整包重下。
   // 影片也不在 APP_SHELL —— 離線時課文照讀，影片那一格只留說明（course_video.js）。
-  if (event.request.headers.has("range") || /\/media\//.test(new URL(event.request.url).pathname)) return;
+  // 旁白可以設成直接從 GitHub Release 串流（跨網域，media/manifest.json 的 stream）：<audio>／<video> 的請求一律不經過這裡。
+  const kind = event.request.destination;
+  if (event.request.headers.has("range") || kind === "audio" || kind === "video" || /\/media\//.test(new URL(event.request.url).pathname)) return;
   const networkRequest = event.request.url.startsWith(self.location.origin)
     ? new Request(event.request, { cache: "reload" })
     : event.request;

@@ -112,13 +112,16 @@ $\frac{14}{3}$ → 三分之十四、$\ge$ → 大於等於、$f(2)$ → f 在�
 **念了課文裡沒有的數字**（中文數字讀回來比：「三分之十四」→ 3、14，「二點零一」→ 2.01，「十六」→ 16）、一課只有一部分的句子有 say（要嘛整課都有，要嘛都沒有）。
 錄音超過 12.5 秒、或 say 改了還沒重錄，只警告。
 
-錄音：`node tools/build_narration.js`（Azure 語音合成，聲音在檔頭一處設定，預設 zh-TW-HsiaoChenNeural）→ 每一句一支
-`media/narration/<課>/<節>-<句>-<hash8>.mp3`（hash 涵蓋聲音、語速與 say：字沒改就不重錄）。索引 `tools/content/course_v2/narration.json`（進 git：hash、毫秒數、大小、sha256），
-`build_course_v2.js` 照它在出貨的 beat 加上 `au`（hash8）與 `ms`；字改了還沒重錄的句子不帶，播放時那一句只停一下。
-錄音檔不進 git：`node tools/make_media_manifest.js --narration media-v2` 列進 `media/manifest.json`（Release media-v2），部署時 `tools/fetch_media.js` 抓。
+錄音：`node tools/build_narration.js`（Azure 語音合成，聲音在檔頭一處設定，預設 zh-TW-HsiaoChenNeural）先把每一句合成到
+`media/narration-cache/<hash8>.mp3`（hash 涵蓋聲音、語速與 say：字沒改就不重錄；中斷了再跑一次從缺的接著做），再把一課的句子照順序接成**一課一支**
+`media/narration/<課>-<f8>.mp3`（f8 是內容的 sha256 前 8 碼）。一個 GitHub Release 最多 1000 個附件，逐句（約 5,500 支）放不下，一課一支是 317 支。
+索引 `tools/content/course_v2/narration.json`（進 git：每一課的 f8、長度、大小、sha256，每一句的 hash 與 `t` = 在那一支裡的 [起, 訖] 毫秒），
+`build_course_v2.js` 照它在出貨的課加上 `voice`（f8）、每一句加上 `t`；字改了還沒重錄的句子不帶 `t`，播放時那一句只停一下。
+錄音檔不進 git：`node tools/make_media_manifest.js --narration <tag>` 列進 `media/manifest.json`，部署時 `tools/fetch_media.js` 抓；
+加 `--stream` 則部署不抓、播放器直接從 Release 的下載網址串流（大綱的 `narration` 前綴，build_course_v2 照清單寫）。
 
 畫面：每一節的按鈕列有「播放」、語速（1× → 1.25× → 1.5×，記在 `records.settings.narrRate`）、「字幕」（亮著那一句底下出現 say，記在 `records.settings.narrSubs`）。
-不會自己播；按了播放才抓錄音（一次只預載下一句）。念完一句自己出下一句（圖跟著動），念到這一節最後一句停在動作前；做完按「下一節」接著念。
+不會自己播；按了播放才抓這一課那一支（`preload="none"`，之後靠 Range 只抓播到的那一段）。念完一句自己出下一句（圖跟著動；下一句就接在後面，不跳），念到這一節最後一句停在動作前；做完按「下一節」接著念。
 播放中點「下一句」＝跳到下一句念。錄音載不到（本機沒有 media/、離線、Release 還沒上傳）→ 留一行字、播放關掉，點的照常。
 
 ## 圖（figures，可選，每課最多 4 張）

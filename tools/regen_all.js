@@ -31,7 +31,7 @@ const STEPS = [
   ["驗算側表", "node tools/verify_answers.js"],
   ["對外數字", "node tools/validate_public_claims.js --update"],
   ["英文句型表", "node tools/build_i18n_text.js"],
-  // 新版課程：tools/content/course_v2/ → src/course_v2/（大綱＋每個 Stage 的課文）。改了課文或大綱忘記打包，--check 會紅。
+  // 新版課程：tools/content/course_v2/ → src/course_v2/（大綱＋每一章的課文）。改了課文或大綱忘記打包，--check 會紅。
   ["新版課程", "node tools/build_course_v2.js"]
 ];
 

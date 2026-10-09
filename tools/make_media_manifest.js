@@ -1,15 +1,19 @@
 // 產生 media/manifest.json（部署要抓的大檔清單：檔名、大小、sha256、在哪一個 Release），並印出上傳 Release 的指令。
 // 大檔本身不進 git，進 git 的只有這份清單；部署時 tools/fetch_media.js 照它從 Release 抓、逐一驗雜湊。
 //
-// 清單可以跨好幾個 Release：每個檔案的 tag 沒寫就是最上面的 tag（課程影片，media-v1）。
-//   影片   manim/out/ 的 1080p、720p、預覽圖                                → media/<名字>
-//   旁白   tools/content/course_v2/narration.json ＋ media/narration/ 的 mp3  → media/narration/<課>/<節>-<句>-<hash8>.mp3
+// 清單可以跨好幾個 Release：每個檔案的 tag 沒寫就是最上面的 tag（課程影片）。
+//   影片   manim/out/ 的 1080p、720p、預覽圖                                     → media/<名字>
+//   旁白   tools/content/course_v2/narration.json ＋ media/narration/ 的一課一支  → media/narration/<課>-<f8>.mp3
 // Release 的附件名稱不能有斜線：附件名 = 路徑的 / 換成 .（fetch_media.js 用同一條規則換回來）。
+// 一個 Release 最多 1000 個附件：旁白一課一支（317 課 = 317 支），逐句（約 5,500 支）放不下。
 // releases 底下標 optional 的 Release：整個還沒上傳（每個檔都 404）時部署照常、只印警告（旁白載不到時播放器自己退回點的）；
 // 上傳了一部分、或雜湊不符，一樣讓部署失敗。
+// 標 stream 的 Release（--stream）：部署不抓；播放器直接從 GitHub Release 的下載網址串流（build_course_v2.js 照這個標記
+// 把大綱的 narration 前綴換成 https://github.com/<repo>/releases/download/<tag>/narration.）。改了要重跑 build_course_v2.js。
 //
-// 用法：node tools/make_media_manifest.js <tag>               重列課程影片（例：media-v1），其他 Release 的檔案原樣保留
-//       node tools/make_media_manifest.js --narration <tag>   重列旁白（例：media-v2），檔案複製到 tmp/release-<tag>/ 準備上傳
+// 用法：node tools/make_media_manifest.js <tag>                        重列課程影片（例：media-v3），其他 Release 的檔案原樣保留
+//       node tools/make_media_manifest.js --narration <tag> [--stream]  重列旁白（例：media-v4），檔案複製到 tmp/release-<tag>/ 準備上傳；
+//                                                                       同一個 tag 上次列過、這次不在的檔，印出刪附件的指令
 "use strict";
 
 const fs = require("fs");
@@ -19,9 +23,10 @@ const crypto = require("crypto");
 const ROOT = path.join(__dirname, "..");
 const MANIFEST = path.join(ROOT, "media", "manifest.json");
 const narrationMode = process.argv.includes("--narration");
+const streamMode = process.argv.includes("--stream");
 const tag = process.argv.slice(2).find((a) => !a.startsWith("--"));
 if (!tag) {
-  console.error("用法：node tools/make_media_manifest.js <tag>  或  --narration <tag>");
+  console.error("用法：node tools/make_media_manifest.js <tag>  或  --narration <tag> [--stream]");
   process.exit(1);
 }
 
@@ -31,24 +36,41 @@ const releaseName = (name) => name.replace(/\//g, ".");
 const entry = (name, buf, assetTag) => ({ name, bytes: buf.length, sha256: crypto.createHash("sha256").update(buf).digest("hex"), ...(assetTag ? { tag: assetTag } : {}) });
 
 let manifest;
-let upload; // [本機檔案, 附件名]
+let upload; // 上傳指令的檔案參數
+let stale = []; // 同一個 tag 上次有、這次沒有的附件名
+let fresh = 0; // 同一個 tag 上次沒列（或內容不同）的檔：補傳只要這些
 if (narrationMode) {
   const index = JSON.parse(fs.readFileSync(path.join(ROOT, "tools", "content", "course_v2", "narration.json"), "utf8"));
-  const assets = Object.entries(index.clips).map(([key, clip]) => {
-    const [lesson, beat] = key.split("/");
-    const name = `narration/${lesson}/${beat}-${clip.h}.mp3`;
+  if (!index.lessons) throw new Error("narration.json 還是舊格式（一句一支）：先跑 node tools/build_narration.js");
+  const assets = Object.entries(index.lessons).sort(([a], [b]) => a.localeCompare(b)).map(([id, lesson]) => {
+    const name = `narration/${id}-${lesson.f}.mp3`;
     const file = path.join(ROOT, "media", name);
     if (!fs.existsSync(file)) throw new Error(`${name} 不在本機（先跑 node tools/build_narration.js）`);
     const a = entry(name, fs.readFileSync(file), tag);
-    if (a.sha256 !== clip.sha256) throw new Error(`${name} 跟 narration.json 的雜湊不符（重跑 node tools/build_narration.js）`);
+    if (a.sha256 !== lesson.sha256) throw new Error(`${name} 跟 narration.json 的雜湊不符（重跑 node tools/build_narration.js）`);
     return a;
   });
+  if (assets.length > 1000) throw new Error(`旁白 ${assets.length} 支，超過一個 Release 1000 個附件的上限`);
+  const want = new Set(assets.map((a) => a.name));
+  stale = old.assets.filter((a) => /^narration\//.test(a.name) && tagOf(a) === tag && !want.has(a.name)).map((a) => releaseName(a.name));
   const keep = old.assets.filter((a) => !/^narration\//.test(a.name));
-  manifest = { ...old, releases: { ...(old.releases || {}), [tag]: { optional: true } }, assets: keep.concat(assets) };
+  // 舊的旁白 Release（別的 tag）從 releases 拿掉：清單不再列它的檔
+  const releases = Object.fromEntries(Object.entries(old.releases || {}).filter(([t]) => keep.some((a) => tagOf(a) === t)));
+  releases[tag] = { optional: true, ...(streamMode ? { stream: true } : {}) };
+  manifest = { ...old, releases, assets: keep.concat(assets) };
   const stage = path.join(ROOT, "tmp", `release-${tag}`);
   fs.rmSync(stage, { recursive: true, force: true });
   fs.mkdirSync(stage, { recursive: true });
   assets.forEach((a) => fs.copyFileSync(path.join(ROOT, "media", a.name), path.join(stage, releaseName(a.name))));
+  // 補傳只要新的（這個 tag 上次沒列、或內容不同）：另外放 tmp/release-<tag>-new/
+  const listed = new Set(old.assets.filter((a) => tagOf(a) === tag).map((a) => `${a.name}|${a.sha256}`));
+  const newDir = path.join(ROOT, "tmp", `release-${tag}-new`);
+  fs.rmSync(newDir, { recursive: true, force: true });
+  fs.mkdirSync(newDir, { recursive: true });
+  assets.filter((a) => !listed.has(`${a.name}|${a.sha256}`)).forEach((a) => {
+    fresh += 1;
+    fs.copyFileSync(path.join(ROOT, "media", a.name), path.join(newDir, releaseName(a.name)));
+  });
   upload = [`tmp/release-${tag}/*.mp3`];
 } else {
   // 只收上線要用的：每支影片的 1080p、720p 與預覽圖（淺色、深色各一套）
@@ -63,7 +85,7 @@ if (narrationMode) {
 }
 
 // 欄位順序固定（diff 好讀）
-const ordered = { repo: manifest.repo, tag: manifest.tag, ...(manifest.releases ? { releases: manifest.releases } : {}), videos: manifest.videos, assets: manifest.assets };
+const ordered = { repo: manifest.repo, tag: manifest.tag, ...(manifest.releases && Object.keys(manifest.releases).length ? { releases: manifest.releases } : {}), videos: manifest.videos, assets: manifest.assets };
 fs.mkdirSync(path.dirname(MANIFEST), { recursive: true });
 fs.writeFileSync(MANIFEST, JSON.stringify(ordered, null, 2) + "\n");
 
@@ -71,5 +93,11 @@ const mine = manifest.assets.filter((a) => tagOf(a) === tag);
 const total = mine.reduce((sum, a) => sum + a.bytes, 0);
 console.log(`media/manifest.json：${tag} ${mine.length} 個檔案、${(total / 1048576).toFixed(2)} MB（全部 ${manifest.assets.length} 個）`);
 const title = narrationMode ? `課程旁白 ${tag}` : `課程影片 ${tag}`;
-const notes = narrationMode ? "分節模式的旁白（Azure 語音合成）。附件名是路徑的 / 換成 .；由 tools/fetch_media.js 在部署時抓取。" : "課程概念動畫（Manim）。由 tools/fetch_media.js 在部署時抓取。";
-console.log(`\n上傳（gh）：\ngh release create ${tag} --title "${title}" --notes "${notes}" ${upload.join(" ")}`);
+const notes = narrationMode ? "分節模式的旁白（Azure 語音合成），一課一支 mp3。附件名是路徑的 / 換成 .；由 tools/fetch_media.js 在部署時抓取。" : "課程概念動畫（Manim）。由 tools/fetch_media.js 在部署時抓取。";
+console.log(`\n第一次（Release 還不存在）：\ngh release create ${tag} --title "${title}" --notes "${notes}" ${upload.join(" ")}`);
+if (narrationMode) {
+  if (fresh) console.log(`\n已經有這個 Release（只補新的、改過的 ${fresh} 支）：\ngh release upload ${tag} --clobber tmp/release-${tag}-new/*.mp3`);
+  else console.log("\n跟這個 tag 上次列的一樣：不用補傳。");
+  if (stale.length) console.log(`\n這次不再列的舊附件（${stale.length} 個，刪掉免得堆到 1000 個上限）：\n${stale.map((n) => `gh release delete-asset ${tag} ${n} -y`).join("\n")}`);
+  if (streamMode) console.log("\n--stream：部署不抓旁白、播放器直接從 Release 串流。接著跑 node tools/build_course_v2.js（大綱的 narration 前綴會換掉）。");
+}

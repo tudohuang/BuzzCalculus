@@ -94,9 +94,14 @@ const BUDGETS = {
   // 2026-10-09 調高 36 → 44KB：旁白播放（播放／暫停、語速、字幕、念完自己出下一句、載不到退回點的）約 9KB，
   // 只有打開有分節的課才付；錄音本身（/media/narration/*.mp3）不在預算裡：按了播放才載、不進 Service Worker 快取。
   "延後載入：課程分節": { pattern: /^$/, budget: 44 * 1024, lazy: "sections" },
-  // 課文按 Stage 分檔（tools/build_course_v2.js 產生），打開某一課只抓那一個 Stage —— 使用者等的是「一個 Stage」，
-  // 所以上限管最大的那一支（現況 Stage 12 分析入門 351KB）。撞頂該做的是把那個 Stage 按章再拆，不是調數字。
-  "延後載入：課文（最大的 Stage）": { pattern: /^src\/course_v2\/stage-\d+\.js$/, budget: 450 * 1024, maxFile: true }
+  // 2026-10-09 新增：課程的圖（course_figures.js，約 15KB，figures 與 8 種 widget 的畫法）。從 course_v2_ui.js 搬出來：
+  // 課程組到了 140 / 140KB，而沒有圖的課、只看課程表的人都不用它。有圖或有分節的課打開時才抓。上限留約五成。
+  "延後載入：課程的圖": { pattern: /^$/, budget: 24 * 1024, lazy: "figures" },
+  // 2026-10-09 課文改成按章分檔（原本按 Stage：Stage 12 已經 398 / 450KB，分節推到全部的課之後每課多 4–5KB，
+  // 最大的 Stage 會到 600KB 以上）。打開某一課只抓那一章 —— 使用者等的是「一章」，所以上限管最大的那一支。
+  // 改的時候：最大的一章是 11D（Gamma 與 Beta，9 課）58KB；每課加上分節與旁白起訖約 +5KB → 約 105KB。上限 160KB。
+  // 撞頂該做的是把那一章拆小（大綱的章本來就該 ≤ 8 課），不是調數字。
+  "延後載入：課文（最大的一章）": { pattern: /^src\/course_v2\/ch-[a-z0-9-]+\.js$/, budget: 160 * 1024, maxFile: true }
 };
 
 const html = fs.readFileSync(path.join(ROOT, "index.html"), "utf8");

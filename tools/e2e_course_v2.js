@@ -157,8 +157,9 @@ async function run() {
 
     /* ── 1. 首屏不抓課程；「我還沒學過」直接進課程表 ── */
     await chrome.navigate(`${server.url}/index.html`);
-    // 舊版課程的進度（舊 id）先種進去：新版不能因此壞掉，也不能把它刪掉
-    await evaluate(`localStorage.clear(); localStorage.setItem("${RECORDS_KEY}", JSON.stringify({ course: { "fn-what-is-a-function": { openedAt: "2026-09-20T00:00:00.000Z", checksPassed: true, doneAt: "2026-09-20T00:00:00.000Z" } } })); return 1;`);
+    // 舊版課程的進度（舊 id）先種進去：新版不能因此壞掉，也不能把它刪掉。
+    // 這支測的是整頁（全文）：選好「全文」—— 分節推到全部的課之後，樣本課預設會是一節一屏（那一條路由 e2e_course_sections 走）
+    await evaluate(`localStorage.clear(); localStorage.setItem("${RECORDS_KEY}", JSON.stringify({ settings: { courseView: "full" }, course: { "fn-what-is-a-function": { openedAt: "2026-09-20T00:00:00.000Z", checksPassed: true, doneAt: "2026-09-20T00:00:00.000Z" } } })); return 1;`);
     await chrome.navigate(`${server.url}/index.html`);
     await sleep(500);
     const boot = await evaluate(`return { files: window.__c.courseFiles(), outline: Boolean(window.BUZZ_COURSE_V2) };`);
@@ -185,7 +186,7 @@ async function run() {
     check("還沒寫的課顯示「尚未開放」，數量對得上大綱", index.soon === MISSING, `${index.soon} / ${MISSING}`);
     check("主按鈕指向第一課 0.1", /^開始：0\.1 /.test(index.primary), index.primary);
     check("畢業關不鎖", index.grad);
-    check("打開課程表只抓大綱與畫面，還沒抓任何 Stage 的課文", index.files.includes("course_v2/outline.js") && !index.files.some((f) => /stage-/.test(f)), index.files.join(","));
+    check("打開課程表只抓大綱與畫面，還沒抓任何一章的課文", index.files.includes("course_v2/outline.js") && !index.files.some((f) => /course_v2\/ch-/.test(f)), index.files.join(","));
     check("課程表沒有橫向溢出", index.overflow <= 1, `${index.overflow}px`);
     check("課程表的觸控目標都 ≥ 40px", !index.small.length, JSON.stringify(index.small.slice(0, 4)));
     const flat = await evaluate(`return { framed: window.__c.nestedFrames(".cv2-index .cv2-stages"), chapterBoxes: document.querySelectorAll(".cv2-index details details").length };`);
@@ -230,7 +231,8 @@ async function run() {
     check("推薦題：核心題有 ★、挑戰題另外一區", page.core === lesson.practice.filter((p) => p.core).length && page.challengeHead, `★ ${page.core}`);
     check("正文的〈課名〉是連到那一課的連結", page.links >= 1, String(page.links));
     check("visual（動態圖規格）不給學生看", !lesson.visual || !page.bodyText.includes(String(lesson.visual).slice(0, 18)));
-    check(`只抓了這一課的 Stage（stage-${SAMPLE.stage.n}.js）`, page.files.filter((f) => /stage-/.test(f)).join(",") === `course_v2/stage-${SAMPLE.stage.n}.js`, page.files.join(","));
+    const chapterJs = `course_v2/ch-${SAMPLE.chapter.code.toLowerCase().replace(/[^a-z0-9]+/g, "-")}.js`;
+    check(`只抓了這一課那一章（${chapterJs}）`, page.files.filter((f) => /course_v2\/ch-/.test(f)).join(",") === chapterJs, page.files.join(","));
     // 書本式版面：觀念①在手機第一屏就讀得到；範例的題目不是另一張卡；整課沒有框中框
     const book = await evaluate(`
       const c0 = document.querySelector('[data-cv2-mark="c0"]');
