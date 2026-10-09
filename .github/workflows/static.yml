@@ -87,6 +87,11 @@ jobs:
         # 新版課程在手機寬度走一次：首屏不抓課程檔、課程表只開目前的 Stage、範例一步一步揭、
         # 證明預設收起點了才開、小測選錯理由才出現且沒被浮層蓋住、推薦題開一局回得來；英文介面仍是舊課、沒有中文。
         run: node tools/e2e_course_v2.js
+      - name: E2E course map
+        # 課程地圖（清單／地圖切換）：切到地圖才抓那兩支檔、拉遠 13 個 Stage、捏合／滾輪／點兩下縮放、
+        # 點一課亮起整串先修（數量跟 DAG 一樣）、「開始這課」「在地圖上看」、方向鍵與 Enter、深色、reduced-motion，
+        # 外加拖 60 格量 rAF 間隔與地圖自己每格的繪製時間（canvas 上的東西字串比對測不到）。
+        run: node tools/e2e_course_map.js
       - name: E2E interactive graphs
         # 點位題與切線題的作答動作發生在 SVG 上，字串比對測不到：
         # 事件沒綁、座標換算 y 軸沒翻、touch-action 沒設（手機上一拖變捲頁）
