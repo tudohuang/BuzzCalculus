@@ -5,6 +5,8 @@
 //                                課程表、首頁主卡、「這題是哪一課教的」只需要這一支。
 //   src/course_v2/stage-<n>.js   該 Stage 每一課的內文（觀念、範例、常見錯誤、小測、推薦題）。
 //                                打開某一課時才抓那一個 Stage。
+//   src/course_v2/map.js         課程地圖的版面（每一課、章、Stage 的座標與三層的邊；tools/lib/course_map_layout.js 算的）。
+//                                執行時不排版，打開地圖才抓（index.html 的 data-lazy="map"）。
 //
 // 課號不存：畫面照大綱順序算（Stage 編號 ＋ 在 Stage 裡的第幾課）。資料之間一律用穩定 id。
 // 大綱有、但 lessons/ 還沒有檔的課照樣列進大綱（沒有分鐘數），畫面顯示「尚未開放」。
@@ -17,6 +19,7 @@
 
 const fs = require("fs");
 const path = require("path");
+const { layoutCourseMap } = require("./lib/course_map_layout.js");
 
 const ROOT = path.join(__dirname, "..");
 const SOURCE = path.join(ROOT, "tools", "content", "course_v2");
@@ -136,6 +139,12 @@ const HEADER = "// 產生檔：node tools/build_course_v2.js（來源 tools/cont
 const outputs = {
   "outline.js": `${HEADER}window.BUZZ_COURSE_V2 = ${JSON.stringify(outline)};\n`
 };
+// 地圖：課的索引跟大綱順序一樣（畫面那邊照大綱攤平就對得上）
+const mapLayout = layoutCourseMap(outline, lessons);
+const { stats: mapStats, ...mapData } = mapLayout;
+if (!checkMode) console.log(`課程地圖：${mapStats.stageLayers} 層 Stage、整張 ${mapData.size.join(" × ")}、先修邊加權長度 ${mapStats.cost}`);
+outputs["map.js"] = `${HEADER}window.BUZZ_COURSE_MAP = ${JSON.stringify(mapData)};
+`;
 stages.forEach((s) => {
   const inStage = {};
   s.chapters.forEach((c) => c.lessons.forEach((l) => { if (lessons[l.id]) inStage[l.id] = shipLesson(lessons[l.id]); }));
