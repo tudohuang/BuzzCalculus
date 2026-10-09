@@ -68,7 +68,12 @@
 .cv2-seg { display: inline-flex; flex: none; padding: 3px; border-radius: 999px; background: color-mix(in srgb, var(--ink) 7%, transparent); }
 .cv2-seg button { min-width: 52px; min-height: 40px; padding: 0 14px; border: 0; border-radius: 999px; background: none; color: var(--muted); font: inherit; font-size: 0.86rem; font-weight: 700; cursor: pointer; }
 .cv2-seg button[aria-pressed="true"] { background: var(--panel); color: var(--ink); box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12); }
-.cv2-map { position: relative; width: 100%; height: 70vh; min-height: 360px; }
+.cv2-map { width: 100%; min-height: 360px; }
+.cv2-viewbar .cmap-lit { display: block; color: var(--muted); font-size: 0.9rem; font-variant-numeric: tabular-nums; }
+.cv2-viewbar .cmap-lit strong { color: var(--ink); font-size: 1.2rem; }
+.cv2-goal { display: flex; flex-wrap: wrap; align-items: center; gap: 2px 10px; margin: 8px 0 0; color: var(--muted); font-size: 0.86rem; font-variant-numeric: tabular-nums; }
+.cv2-goal b { color: var(--violet); }
+.cv2-goal .button { min-height: 40px; margin-left: auto; }
 .cv2-index.is-map { max-width: none; }
 .cv2-index.is-map .page-head .action-row { display: none; }
 
@@ -476,10 +481,11 @@
               </div>
             </div>
             <div class="cv2-viewbar">
-              <div class="course-progress"><strong>${done}<small> / ${mainPath.length} 課 · 主線</small></strong><i style="--pct:${pct}%"></i></div>
+              ${indexView === "map" ? litLine(records) : `<div class="course-progress"><strong>${done}<small> / ${mainPath.length} 課 · 主線</small></strong><i style="--pct:${pct}%"></i></div>`}
               <div class="cv2-seg" role="group" aria-label="檢視">${[["list", "清單"], ["map", "地圖"]].map(([key, name]) => `<button type="button" data-action="course-view" data-mode="${key}" aria-pressed="${indexView === key}">${name}</button>`).join("")}</div>
             </div>
             ${indexView === "map" ? `<div class="cv2-map" data-cv2-map><p class="panel-note">載入地圖…</p></div>` : `
+            ${goalLine(records)}
             <div class="cv2-stages">${stages}</div>
             ${renderGraduationCard(records)}`}
           </section>
@@ -492,21 +498,56 @@
     let indexView = "list";
     let mapFocus = "";
     let mapLit = "";
+    // 地圖的偏好（目標一課、篩選）存在 records.courseMap：跟著紀錄走（同步、匯出），不另外開 localStorage 的鍵
+    const mapPrefs = (records) => records.courseMap || {};
     function mapOptions(records) {
       const next = nextLesson(records);
+      const prefs = mapPrefs(records);
+      const graph = window.BuzzSkillGraph;
       return {
         lessons: order.map((m) => ({
           id: m.id, no: m.no, title: m.title, stageTitle: m.stage.title, branch: Boolean(m.stage.branch),
-          read: m.read, total: m.total, available: m.available, tier: tierOf(records, m), opened: Boolean(entryOf(records, m.id).openedAt)
+          read: m.read, total: m.total, available: m.available, tier: tierOf(records, m), opened: Boolean(entryOf(records, m.id).openedAt),
+          practice: m.practice.filter((p) => problem(p.id))
         })),
         stages: outline.stages,
         next: next ? order.indexOf(next) : -1,
+        // 「該練」用的：紀錄本身、能力模型（app 的 abilityProfile，有快取）、題目 → 技巧
+        records,
+        profile: deps.abilityProfile ? deps.abilityProfile(records) : null,
+        skillsOf: (id) => (graph && problem(id) ? graph.skillsForProblem(problem(id)) || [] : []),
+        now: Date.now(),
+        goal: meta[prefs.goal] ? prefs.goal : "",
+        filter: ["ready", "practice"].includes(prefs.filter) ? prefs.filter : "all",
+        quiet: deps.focusModeOn ? deps.focusModeOn() : false,
         focusId: mapFocus,
         litId: mapLit,
         escapeHtml,
         escapeAttr,
         open: (id) => act("open-course-lesson", { lessonId: id })
       };
+    }
+    // 地圖檢視的進度（取代主線進度條）：點亮 = 完成的課（含支線），熟練有才寫。數字直接寫，不跑動畫
+    function litLine(records) {
+      const lit = order.filter((m) => isDone(records, m)).length;
+      const good = order.filter((m) => tierOf(records, m) >= 2).length;
+      return `<p class="course-progress cmap-lit" data-cv2-lit>已點亮 <strong>${lit}</strong> / ${order.length}${good ? ` · 熟練 ${good}` : ""}</p>`;
+    }
+    // 課程表（清單）上的目標：一行字＋「照順序學」。先修的圖在地圖那一組（data-lazy="map"），
+    // 只有設了目標的人才為這一行去抓它（設目標本來就是在地圖上設的，通常已經在快取裡）
+    let goalLoad = false;
+    function goalLine(records) {
+      const m = meta[mapPrefs(records).goal];
+      if (!m) return "";
+      if (!window.BuzzCourseMap || !window.BUZZ_COURSE_MAP) {
+        if (!goalLoad) { goalLoad = true; Promise.resolve(deps.ensureLazy("map")).then(() => render(), () => {}); }
+        return "";
+      }
+      const g = window.BuzzCourseMap.goal(order.map((x) => isDone(records, x)), order.indexOf(m), order.map((x) => x.total));
+      if (!g) return "";
+      return `<p class="cv2-goal" data-cv2-goal>目標 <b>${escapeHtml(label(m))}</b>${g.missing
+        ? `<span>還差 ${g.missing} 課 · 約 ${g.minutes} 分鐘</span><button type="button" class="button secondary" data-action="open-course-lesson" data-lesson-id="${escapeAttr(order[g.first].id)}">照順序學</button>`
+        : `<span>完成了</span><button type="button" class="button ghost" data-action="course-goal" data-lesson-id="">清除目標</button>`}</p>`;
     }
     function setupMap() {
       const el = typeof document !== "undefined" && document.querySelector("[data-cv2-map]");
@@ -928,6 +969,17 @@
       if (action === "course-view") {
         indexView = data.mode === "map" ? "map" : "list";
         return render();
+      }
+      if (action === "course-map-filter" || action === "course-goal") {
+        const records = loadRecords();
+        records.courseMap = { ...mapPrefs(records), ...(action === "course-goal" ? { goal: meta[data.lessonId] ? data.lessonId : "" } : { filter: data.mode || "all" }) };
+        saveRecords(records);
+        return render();
+      }
+      if (action === "course-lesson-practice") {
+        const pool = String(data.ids || "").split(" ").map(problem).filter(Boolean);
+        if (pool.length) startQuiz(pool, { ...QUIZ, courseLessonId: meta[id] ? id : undefined });
+        return;
       }
       if (action === "course-map-focus") {
         indexView = "map";

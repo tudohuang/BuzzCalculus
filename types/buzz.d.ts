@@ -87,6 +87,8 @@ interface BuzzRecords {
   /** 讀完一節課（分節模式）的日子：本地日期 → 節數；連勝與「讀一節課」任務都看它 */
   courseReadDays: Record<string, number>;
   courseGraduation: BuzzCourseGraduation | null;
+  /** 課程地圖的偏好：目標一課（大綱 id）、篩選（all / ready / practice） */
+  courseMap?: { goal?: string; filter?: string };
   settings: BuzzSettings;
   streakShields: number;
   topicStats: Record<string, unknown>;
@@ -375,7 +377,7 @@ interface Window {
   BUZZ_PROBLEMS: BuzzProblem[];
   BUZZ_PROOFS: BuzzProof[];
   BUZZ_COURSE: BuzzCourseLesson[];
-  BuzzCourseUI: { create(deps: { escapeHtml: (s: unknown) => string; escapeAttr: (s: unknown) => string; icon: (name: string) => string; referenceAnswerHTML: (problem: BuzzProblem) => string; loadRecords: () => BuzzRecords; saveRecords: (records: BuzzRecords) => void; ensureLazy: (group: string) => Promise<void>; startQuiz: (pool: BuzzProblem[], options?: any) => void; render: () => void; go: (view: string) => void; noteCourseRead?: (records: BuzzRecords) => BuzzRecords; focusModeOn?: () => boolean; xpLevel?: (xp: unknown) => { level: number; into: number; span: number }; streakDays?: (records: BuzzRecords) => number }): any };
+  BuzzCourseUI: { create(deps: { escapeHtml: (s: unknown) => string; escapeAttr: (s: unknown) => string; icon: (name: string) => string; referenceAnswerHTML: (problem: BuzzProblem) => string; loadRecords: () => BuzzRecords; saveRecords: (records: BuzzRecords) => void; ensureLazy: (group: string) => Promise<void>; startQuiz: (pool: BuzzProblem[], options?: any) => void; render: () => void; go: (view: string) => void; noteCourseRead?: (records: BuzzRecords) => BuzzRecords; focusModeOn?: () => boolean; abilityProfile?: (records: BuzzRecords) => any; xpLevel?: (xp: unknown) => { level: number; into: number; span: number }; streakDays?: (records: BuzzRecords) => number }): any };
   /** 分節模式（data-lazy="sections"，只有打開有分節的課才載） */
   BuzzCourseSections?: { render(api: any): string; act(api: any, action: string, data: any): void };
   /** 新版課程的畫面（data-lazy="course"，只有中文介面會載） */
