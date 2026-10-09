@@ -137,7 +137,7 @@ if (fs.existsSync(path.join(root, "assets/vendor/katex/fonts"))) {
    大綱＋畫面要在 install 預快取（離線也開得了課程表）；課文按 Stage 分檔、不預快取，
    靠課程表第一次打開時 course_v2_ui.js 的 prefetchAll 抓一遍、fetch handler 存起來。
    所以要擋的是：大綱列了某個 Stage、但那個 Stage 的課文檔不存在（prefetch 跟打開課都會 404）。 */
-["src/course_v2/outline.js", "src/course_v2_ui.js"].forEach((file) => {
+["src/course_v2/outline.js", "src/course_v2_ui.js", "src/course_v2/map.js", "src/course_map.js"].forEach((file) => {
   if (!cached.has(file)) fail(`sw.js 沒有預快取 ${file} —— 離線時課程表打不開`);
 });
 const outlinePath = path.join(root, "src/course_v2/outline.js");

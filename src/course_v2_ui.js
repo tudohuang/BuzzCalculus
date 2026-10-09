@@ -67,6 +67,15 @@
 .cv2-tier { padding: 2px 8px; border-radius: 999px; font-size: 0.74rem; font-style: normal; font-weight: 700; white-space: nowrap; background: color-mix(in srgb, var(--green) 12%, var(--panel)); color: var(--green); }
 .cv2-tier.t2 { background: color-mix(in srgb, var(--blue) 12%, var(--panel)); color: var(--blue); }
 .cv2-tier.t3 { background: color-mix(in srgb, var(--gold) 18%, var(--panel)); color: var(--gold-dark); }
+/* 清單／地圖切換：跟進度條同一列（地圖的樣式在 course_map.js，打開地圖才載） */
+.cv2-viewbar { display: flex; align-items: center; gap: 14px; }
+.cv2-viewbar .course-progress { flex: 1; min-width: 0; margin: 0; }
+.cv2-seg { display: inline-flex; flex: none; padding: 3px; border-radius: 999px; background: color-mix(in srgb, var(--ink) 7%, transparent); }
+.cv2-seg button { min-width: 52px; min-height: 40px; padding: 0 14px; border: 0; border-radius: 999px; background: none; color: var(--muted); font: inherit; font-size: 0.86rem; font-weight: 700; cursor: pointer; }
+.cv2-seg button[aria-pressed="true"] { background: var(--panel); color: var(--ink); box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12); }
+.cv2-map { position: relative; width: 100%; height: 70vh; min-height: 360px; }
+.cv2-index.is-map { max-width: none; }
+.cv2-index.is-map .page-head .action-row { display: none; }
 
 /* ── 單課：書本式單欄。只有範例與可折疊段落有淡底＋左邊線，其他靠標題與留白分段 ── */
 .cv2-layout { display: grid; grid-template-columns: minmax(0, 1fr); }
@@ -88,6 +97,7 @@
 .cv2-intro { display: grid; gap: 0; margin: 8px 0 0; color: var(--muted); font-size: 0.9rem; }
 .cv2-prereq { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 6px; margin: 0; }
 .cv2-link { display: inline-block; margin: -9px 0; padding: 9px 1px; border: 0; background: none; color: var(--blue); font: inherit; line-height: inherit; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; cursor: pointer; }
+.cv2-maplink { margin: -9px 0 -9px auto; color: var(--muted); font-size: 0.84rem; }
 .cv2-goals > summary { display: inline-flex; align-items: center; gap: 6px; min-height: 40px; color: var(--muted); font-weight: 700; cursor: pointer; list-style: none; }
 .cv2-goals > summary svg, .cv2-fold > summary svg { flex: none; width: 16px; height: 16px; transition: transform 0.15s ease; }
 .cv2-goals[open] > summary svg, .cv2-fold[open] > summary svg { transform: rotate(90deg); }
@@ -387,6 +397,9 @@
     /* ── 課程表 ── */
     function renderIndex(records) {
       prefetchAll();
+      if (indexView === "map") {
+        if (typeof queueMicrotask === "function") queueMicrotask(setupMap); else window.setTimeout(setupMap, 0);
+      }
       const next = nextLesson(records);
       const done = mainPath.filter((m) => isDone(records, m)).length;
       const pct = mainPath.length ? Math.round((done / mainPath.length) * 100) : 0;
@@ -428,7 +441,7 @@
       }).join("");
       return `
         <main class="screen">
-          <section class="course-index cv2-index">
+          <section class="course-index cv2-index ${indexView === "map" ? "is-map" : ""}">
             <div class="page-head">
               <div>
                 <p class="section-label">課程</p>
@@ -438,11 +451,48 @@
                 ${next ? `<button class="button home-primary" data-action="open-course-lesson" data-lesson-id="${escapeAttr(next.id)}">${icon("play")}${done || entryOf(records, next.id).openedAt ? "繼續" : "開始"}：${escapeHtml(label(next))}</button>` : ""}
               </div>
             </div>
-            <div class="course-progress"><strong>${done}<small> / ${mainPath.length} 課 · 主線</small></strong><i style="--pct:${pct}%"></i></div>
+            <div class="cv2-viewbar">
+              <div class="course-progress"><strong>${done}<small> / ${mainPath.length} 課 · 主線</small></strong><i style="--pct:${pct}%"></i></div>
+              <div class="cv2-seg" role="group" aria-label="檢視">${[["list", "清單"], ["map", "地圖"]].map(([key, name]) => `<button type="button" data-action="course-view" data-mode="${key}" aria-pressed="${indexView === key}">${name}</button>`).join("")}</div>
+            </div>
+            ${indexView === "map" ? `<div class="cv2-map" data-cv2-map><p class="panel-note">載入地圖…</p></div>` : `
             <div class="cv2-stages">${stages}</div>
-            ${renderGraduationCard(records)}
+            ${renderGraduationCard(records)}`}
           </section>
         </main>`;
+    }
+
+    /* ── 課程地圖（清單／地圖切換的「地圖」）──
+       畫法與版面在 course_map.js ＋ course_v2/map.js（data-lazy="map"，第一次切到地圖才抓）。
+       app 整頁重繪會換掉容器，所以每次畫完課程表就重新掛上去；相機與選取由地圖自己留著。 */
+    let indexView = "list";
+    let mapFocus = "";
+    function mapOptions(records) {
+      const next = nextLesson(records);
+      return {
+        lessons: order.map((m) => ({
+          id: m.id, no: m.no, title: m.title, stageTitle: m.stage.title, branch: Boolean(m.stage.branch),
+          read: m.read, total: m.total, available: m.available, tier: tierOf(records, m), opened: Boolean(entryOf(records, m.id).openedAt)
+        })),
+        stages: outline.stages,
+        next: next ? order.indexOf(next) : -1,
+        focusId: mapFocus,
+        escapeHtml,
+        escapeAttr,
+        open: (id) => act("open-course-lesson", { lessonId: id })
+      };
+    }
+    function setupMap() {
+      const el = typeof document !== "undefined" && document.querySelector("[data-cv2-map]");
+      if (!el) return;
+      const mount = () => {
+        if (!el.isConnected) return;
+        if (window.BuzzCourseMap.attach(el, mapOptions(loadRecords()))) mapFocus = "";
+      };
+      if (window.BuzzCourseMap && window.BUZZ_COURSE_MAP) return mount();
+      Promise.resolve(deps.ensureLazy("map")).then(mount, () => {
+        if (el.isConnected) el.innerHTML = `<p class="panel-note">地圖載不進來 —— 檢查一下網路再試一次。</p>`;
+      });
     }
 
     // 畢業關（跟舊課共用題目與判定，見 course.js 的橋池）：新版不鎖，課程表最底下隨時可以考
@@ -682,7 +732,7 @@
             <section class="course-lesson cv2-lesson" data-cv2-reading>
               ${head}
               <div class="cv2-intro">
-                ${data.prerequisites.length ? `<p class="cv2-prereq"><span>先修</span>${data.prerequisites.map(lessonLink).join("")}</p>` : ""}
+                ${data.prerequisites.length ? `<p class="cv2-prereq"><span>先修</span>${data.prerequisites.map(lessonLink).join("")}<button type="button" class="cv2-link cv2-maplink" data-action="course-map-focus" data-lesson-id="${escapeAttr(m.id)}">在地圖上看</button></p>` : ""}
                 ${data.objectives.length ? `
                 <details class="cv2-goals" data-keep="cv2-goals-${escapeAttr(m.id)}">
                   <summary>${icon("chevron-right")}學完你會<small>${data.objectives.length} 項</small></summary>
@@ -813,6 +863,15 @@
     function act(action, data) {
       const id = data.lessonId || state.lessonId;
       if (action === "open-course") return go("course");
+      if (action === "course-view") {
+        indexView = data.mode === "map" ? "map" : "list";
+        return render();
+      }
+      if (action === "course-map-focus") {
+        indexView = "map";
+        mapFocus = meta[id] ? id : "";
+        return go("course");
+      }
       if (action === "open-course-lesson") {
         const m = meta[id];
         if (!m || !m.available) return go("course");
