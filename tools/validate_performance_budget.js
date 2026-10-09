@@ -91,7 +91,9 @@ const BUDGETS = {
   // 2026-10-09 新增：分節模式（course_sections.js，約 25KB）。只有打開「有分節的課」才抓；課程組只剩幾百位元組，
   // 而沒有分節的課（目前 313 / 317 課）一個位元組都不該為它付。上限留約四成；分節推到全部的課之後再撞頂，
   // 該做的是把結算畫面拆出去，不是調數字。
-  "延後載入：課程分節": { pattern: /^$/, budget: 36 * 1024, lazy: "sections" },
+  // 2026-10-09 調高 36 → 44KB：旁白播放（播放／暫停、語速、字幕、念完自己出下一句、載不到退回點的）約 9KB，
+  // 只有打開有分節的課才付；錄音本身（/media/narration/*.mp3）不在預算裡：按了播放才載、不進 Service Worker 快取。
+  "延後載入：課程分節": { pattern: /^$/, budget: 44 * 1024, lazy: "sections" },
   // 課文按 Stage 分檔（tools/build_course_v2.js 產生），打開某一課只抓那一個 Stage —— 使用者等的是「一個 Stage」，
   // 所以上限管最大的那一支（現況 Stage 12 分析入門 351KB）。撞頂該做的是把那個 Stage 按章再拆，不是調數字。
   "延後載入：課文（最大的 Stage）": { pattern: /^src\/course_v2\/stage-\d+\.js$/, budget: 450 * 1024, maxFile: true }
