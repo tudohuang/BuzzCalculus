@@ -28,8 +28,19 @@ declare -A SCENES=(
   [taylor]="s03_taylor.py:TaylorExp"
   [epsilon-delta]="s04_epsilon_delta.py:EpsilonDelta"
   [chain-rule]="s05_chain_rule.py:ChainRule"
+  [one-sided-limit]="s06_one_sided_limit.py:OneSidedLimit"
+  [secant-tangent]="s07_secant_tangent.py:SecantToTangent"
+  [product-rule]="s08_product_rule.py:ProductRule"
+  [linear-approx]="s09_linear_approx.py:LinearApprox"
+  [mean-value]="s10_mean_value.py:MeanValue"
+  [related-rates]="s11_related_rates.py:LadderRates"
+  [box-optimization]="s12_box_optimization.py:BoxOptimization"
+  [volume-disk]="s13_volume_disk.py:VolumeDisk"
+  [geometric-series]="s14_geometric_series.py:GeometricSeries"
+  [polar-area]="s15_polar_area.py:PolarArea"
 )
-ORDER=(riemann ftc taylor epsilon-delta chain-rule)
+ORDER=(riemann ftc taylor epsilon-delta chain-rule one-sided-limit secant-tangent product-rule
+       linear-approx mean-value related-rates box-optimization volume-disk geometric-series polar-area)
 
 if [[ ! -x "$MANIM" ]]; then
   echo "找不到 $MANIM；先照 manim/README.md 建 venv。" >&2

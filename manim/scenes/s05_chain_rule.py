@@ -81,9 +81,13 @@ class ChainRule(BuzzScene):
         self.say(TM(r"$y=\sin(x^2)$：先平方，再取 $\sin$", size=CAP_TM))
         self.wait(0.8)
 
-        # 在 x = 1 的值
+        # 在 x = 1 的值：一律排在機器框的下緣再往下 0.4，數字再寬也碰不到框
+        value_top = mg[0].get_bottom()[1] - 0.4
+
         def under(mob, tex, color=INK, size=38):
-            return M(tex, size=size, color=color).next_to(mob, DOWN, buff=0.45)
+            lbl = M(tex, size=size, color=color)
+            lbl.move_to([mob.get_x(), 0, 0]).align_to([0, value_top, 0], UP)
+            return lbl
 
         v0 = VGroup(
             under(vx, r"1"),
@@ -101,6 +105,9 @@ class ChainRule(BuzzScene):
         )
         for mob in (v0[2], dvals[2]):   # 右邊不要貼出畫面
             mob.shift(LEFT * max(0, mob.get_right()[0] - 6.7))
+        # 自我檢查：數值標籤的頂端離機器框至少 0.3
+        for mob in [*v0, *dvals]:
+            assert mob.get_top()[1] <= mg[0].get_bottom()[1] - 0.3
         gain_g = M(rf"\times g'(1) = \times 2", size=32, color=GREEN).next_to(mg, UP, buff=0.22)
         gain_f = M(rf"\times f'(1) = \times\cos 1 \approx \times {s(math.cos(1), 4)}", size=30,
                    color=VIOLET).next_to(mf, UP, buff=0.22)
@@ -119,7 +126,7 @@ class ChainRule(BuzzScene):
         self.wait(1.8)
 
         # 表格：Δx 變小，三個比值收斂
-        self.say("Δx 越小，每台機器的倍數越接近它的導數，總倍數＝兩個倍數相乘")
+        self.say("Δx 越小，倍數越接近導數；總倍數＝兩個倍數相乘")
         header = [M(r"\Delta x", size=32), M(r"\dfrac{\Delta u}{\Delta x}", size=32, color=GREEN),
                   M(r"\dfrac{\Delta y}{\Delta u}", size=32, color=VIOLET),
                   M(r"\dfrac{\Delta y}{\Delta x}", size=32, color=RED)]

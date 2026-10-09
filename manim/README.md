@@ -1,19 +1,29 @@
 # BuzzCalculus 概念動畫（Manim）
 
 自成一包的 Manim Community Edition 專案，用來做「最核心概念」的短動畫（大多數概念用站內的互動圖，這裡只做 15–20 支影片）。
-**整個 `manim/` 刪掉不影響網站**；網站目前沒有引用任何一支影片（怎麼接上去見 [INTEGRATION.md](INTEGRATION.md)）。
+**整個 `manim/` 刪掉不影響網站**：網站只認 `media/manifest.json` 與課程資料裡的 `video` 欄位（怎麼接見 [INTEGRATION.md](INTEGRATION.md)）。
 
-## 目前的試做（pilot）5 支
+## 目前 15 支
 
 | 短名 | 檔案 | 概念 | 對應課 |
 |---|---|---|---|
-| `riemann` | `scenes/s01_riemann.py` | 黎曼和 → 定積分：x²+1 在 [0,2]，n = 4, 8, 16, 64，左右和夾向 14/3 | `riemann-sum-intuition` |
+| `riemann` | `scenes/s01_riemann.py` | 黎曼和 → 定積分：x²+1 在 [0,2]，n = 4 → 8 → 16 → 32 → 64（每次對半切），左右和夾向 14/3 | `riemann-sum-intuition` |
 | `ftc` | `scenes/s02_ftc.py` | 微積分基本定理：累積面積 A(x) 的斜率＝f(x) 的高度 | `ftc-part1` |
 | `taylor` | `scenes/s03_taylor.py` | eˣ 的 Taylor 多項式 T₁…T₇，誤差 < 0.1 的範圍越來越寬 | `taylor-polynomial` |
 | `epsilon-delta` | `scenes/s04_epsilon_delta.py` | x² 在 2：δ = min(1, ε/5)，為什麼要和 1 取 min | `epsilon-delta-quadratic` |
 | `chain-rule` | `scenes/s05_chain_rule.py` | sin(x²) 兩台機器，小變化的倍數相乘 | `chain-rule` |
+| `one-sided-limit` | `scenes/s06_one_sided_limit.py` | 分段函數在 x = 2 斷開：左右兩點各自滑過去，讀數往 2 與 4 擠 | `limit-one-sided` |
+| `secant-tangent` | `scenes/s07_secant_tangent.py` | y = x²，Q 從兩邊滑向 P(1, 1)，割線斜率 2.1、2.01、1.99、1.9 → 2 | `secant-to-tangent` |
+| `product-rule` | `scenes/s08_product_rule.py` | x·eˣ 的長方形長大：三塊多出來的面積各除以 h | `product-rule` |
+| `linear-approx` | `scenes/s09_linear_approx.py` | 往 (4, 2) 放大，√x 和切線分不開；h ÷ 10 時差距 ÷ 100 | `linear-approximation` |
+| `mean-value` | `scenes/s10_mean_value.py` | x³ 在 [0, 3]：割線平行往下推，切到的地方 c = √3 | `mean-value-theorem` |
+| `related-rates` | `scenes/s11_related_rates.py` | 5 公尺梯子，梯腳每秒 1 公尺（畫面上真的 1 秒 1 公尺），dy/dt 越來越大 | `related-rates` |
+| `box-optimization` | `scenes/s12_box_optimization.py` | 12 × 12 紙板摺盒子，紙板、盒子、V(x) 一起動，x = 2 時 V = 128 | `optimization-geometry` |
+| `volume-disk` | `scenes/s13_volume_disk.py` | √x 繞 x 軸：圓盤滑過去，再一片片疊起來，7π → 31π/4 → 8π | `volume-disk` |
+| `geometric-series` | `scenes/s14_geometric_series.py` | r = 1/2 填長方形；r = −1/2 左右跳到 2/3；r = 3/2 發散、公式給 −2 | `geometric-series` |
+| `polar-area` | `scenes/s15_polar_area.py` | 心臟線：射線轉一圈，24 片扇形加起來＝3π/2 | `polar-area` |
 
-每支 23–30 秒、無聲、字幕燒在畫面上（繁中）。淺色（網站紙色）與深色兩版。
+每支 20–35 秒、無聲、字幕燒在畫面上（繁中）。淺色（網站紙色）與深色兩版。對應的觀念段落、片長、說明見 [INTEGRATION.md](INTEGRATION.md) 的表。
 
 ## 環境（WSL Ubuntu 22.04）
 
@@ -50,6 +60,11 @@ QUICK=1 wsl -e bash manim/render.sh taylor    # 480p15 草稿，看排版用，�
 **渲染完一定要看過**：`wsl -e bash manim/frames.sh manim/out/riemann-light-1080p.mp4 12` 會抽 12 格拼成 `out/frames/*-sheet.png`。
 
 ## 寫新場景的規則
+
+- 先讀目標課的 JSON（`tools/content/course_v2/lessons/<id>.json`）：函數、記號、例子的數字照課文（課文的範例就是最好的素材）。
+- 字幕一行、左右各留 0.6（`caption()` 會 assert，太長直接失敗）；字幕約 26 個中文字以內。分數在字幕裡寫 `1/2`，不要 `\tfrac`（手機上太小）。
+- 標籤一律放在圖形外面、離線條至少 0.15；會動的標籤用 `always_redraw` 或 `stick()`，而且等圖形長好才 FadeIn（FadeIn 期間 updater 不跑，標籤會停在舊位置）。
+- 不要瞬移：要換位置就淡出、改值、淡入，或另外用一個 ValueTracker。
 
 - 色票、字型、字幕都從 `scenes/buzz_style.py` 拿，不要在場景裡寫死顏色（深色版才會對）。
 - 字幕用 `self.say("…")`；字幕裡有數學就用 `self.say(TM(r"… $x^2$ …", size=CAP_TM))`。

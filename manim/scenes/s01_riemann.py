@@ -1,4 +1,8 @@
-"""黎曼和 → 定積分：f(x) = x² + 1 在 [0, 2]，n = 4, 8, 16, 64，左右和夾向 14/3。"""
+"""黎曼和 → 定積分：f(x) = x² + 1 在 [0, 2]，n = 4 → 8 → 16 → 32 → 64（每次對半切），左右和夾向 14/3。
+
+每一步把每個長方形剛好切成兩半（Transform 會把第 i 塊對到新的第 2i、2i+1 塊），
+所以細分看起來是連續的，不會從 16 塊直接跳到 64 塊。
+"""
 
 from fractions import Fraction
 
@@ -13,7 +17,9 @@ A, B = 0, 2
 # 不透明的淡色填色：藍疊在金上不會混成灰色
 LEFT_FILL = interpolate_color(ManimColor(BLUE), ManimColor(PAPER), 0.55)
 RIGHT_FILL = interpolate_color(ManimColor(GOLD), ManimColor(PAPER), 0.55)
-NS = [4, 8, 16, 64]
+NS = [4, 8, 16, 32, 64]
+# 線寬隨 n 慢慢變細，不要在某一步突然換
+STROKE = {4: 2.0, 8: 1.8, 16: 1.4, 32: 1.0, 64: 0.7}
 EXACT = Fraction(14, 3)
 
 
@@ -86,13 +92,19 @@ class RiemannToIntegral(BuzzScene):
             hi_dot = Dot(q, radius=0.07, color=GOLD_DARK)
             return VGroup(bar, lo_dot, hi_dot)
 
-        def rects(n, side):
+        def rects(n, side, heights_from=None):
+            """heights_from = 上一層的 n：切成 n 塊，但高度沿用上一層（每塊對半切、還沒長高）。"""
             h = (B - A) / n
             out = VGroup()
-            sw = 2 if n <= 16 else 0.8
+            sw = STROKE[n]
             for i in range(n):
                 x0, x1 = A + i * h, A + (i + 1) * h
-                y = f(x0) if side == "left" else f(x1)
+                if heights_from is None:
+                    y = f(x0) if side == "left" else f(x1)
+                else:
+                    ph = (B - A) / heights_from
+                    j = i * heights_from // n          # 這一塊屬於上一層的第 j 塊
+                    y = f(A + j * ph) if side == "left" else f(A + (j + 1) * ph)
                 r = Polygon(
                     ax.c2p(x0, 0), ax.c2p(x1, 0), ax.c2p(x1, y), ax.c2p(x0, y),
                     stroke_color=INK if side == "left" else GOLD_DARK,
@@ -125,16 +137,21 @@ class RiemannToIntegral(BuzzScene):
         self.wait(1.4)
 
         self.say("n 加倍：兩者的差 R − L = 8 / n 一路變小")
-        for n in NS[1:]:
+        for prev_n, n in zip(NS, NS[1:]):
+            # 先把每塊對半切（畫面上只多一條分隔線），再讓新的那一半長到新的高度
+            split_left, split_right = rects(n, "left", prev_n), rects(n, "right", prev_n)
+            self.remove(left, right)
+            self.add(split_left, split_right)
+            left, right = split_left, split_right
             new_left, new_right = rects(n, "left"), rects(n, "right")
             new_board, new_br = readout(n), bracket(n)
             self.play(
                 Transform(left, new_left), Transform(right, new_right),
                 FadeOut(board), FadeIn(new_board), Transform(br, new_br),
-                run_time=1.4,
+                run_time=1.3,
             )
             board = new_board
-            self.wait(1.3 if n < 64 else 1.8)
+            self.wait(1.1 if n < 64 else 1.8)
 
         self.say("n → ∞ 時兩邊夾到同一個數，這個數就是定積分")
         line1 = M(r"\int_0^2 (x^2+1)\,dx", r"=", r"\lim_{n\to\infty} L_n", size=42)
