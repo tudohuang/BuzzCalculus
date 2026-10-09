@@ -100,6 +100,8 @@ def caption(text, size=CAPTION_SIZE):
         body = T(text, size=size)
     else:
         body = text
+    # 字幕只能一行，而且左右各留至少 0.6 的邊（手機上貼邊的字很難讀）
+    assert body.width <= config.frame_width - 1.2, f"字幕太長（{body.width:.2f}）：{text}"
     bg = Rectangle(
         width=config.frame_width,
         height=body.height + 0.42,
@@ -153,6 +155,22 @@ class BuzzScene(Scene):
             self.play(FadeOut(self._cap), run_time=run_time * 0.4)
         self.play(FadeIn(new), run_time=run_time * 0.6)
         self._cap = new
+
+
+def live(getter, places=3, size=38, color=None):
+    """會跟著 ValueTracker 更新的數字（DecimalNumber + updater）。"""
+    from manim import DecimalNumber
+
+    d = DecimalNumber(getter(), num_decimal_places=places, font_size=size, color=color or INK)
+    d.add_updater(lambda m: m.set_value(getter()))
+    return d
+
+
+def stick(mob, anchor, direction, buff=0.15):
+    """讓 mob 一直黏在 anchor 的某一側（數字位數改變時不會壓到標籤）。"""
+    mob.next_to(anchor, direction, buff=buff)
+    mob.add_updater(lambda m: m.next_to(anchor, direction, buff=buff))
+    return mob
 
 
 def fmt(x, places=4):

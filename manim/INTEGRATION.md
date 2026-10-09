@@ -1,6 +1,31 @@
-# 影片怎麼接進課程（提案，尚未實作）
+# 影片怎麼接進課程
 
-這份只是提案：網站（`src/`、`index.html`、`sw.js`、課程資料）目前完全沒動。
+試做的 5 支已經接上（課程資料的 `video` 欄位、`media/manifest.json`、`tools/fetch_media.js`）。下面第 0 節是全部 15 支的接線表；第 1–5 節是當初的設計說明，留著當規格。
+
+## 0. 接線表（15 支）
+
+| 影片 id | 課 id | after（觀念段，0 起算） | 片長（秒，無條件捨去） | caption | 狀態 |
+|---|---|---|---|---|---|
+| `riemann` | `riemann-sum-intuition` | 4 | 29 | n 加倍，左和與右和夾向 14/3 | 已接；這次重做（4→8→16→32→64），片長 27 → 29，manifest 的大小／sha256 要更新 |
+| `ftc` | `ftc-part1` | 1 | 26 | 累積面積 A(x) 的斜率，就是 f(x) 的高度 | 已接，沒動 |
+| `taylor` | `taylor-polynomial` | 1 | 28 | eˣ 的 T₁ 到 T₇：誤差 < 0.1 的範圍越來越寬 | 已接，沒動 |
+| `epsilon-delta` | `epsilon-delta-quadratic` | 2 | 27 | x² 在 2：δ = min(1, ε/5)，為什麼要跟 1 取 min | 已接，沒動 |
+| `chain-rule` | `chain-rule` | 1 | 23 | sin(x²)：兩台機器，小變化的倍數相乘 | 已接；這次修標籤貼框，片長不變，manifest 的大小／sha256 要更新 |
+| `one-sided-limit` | `limit-one-sided` | 1 | 30 | 左邊往高度 2 擠、右邊往 4 擠，f(2) 另外看 | 新 |
+| `secant-tangent` | `secant-to-tangent` | 1 | 27 | Q 從兩邊滑向 P，割線斜率都往 2 擠 | 新 |
+| `product-rule` | `product-rule` | 1 | 24 | 長方形長大多出三塊，角落那塊除以 h 趨近 0 | 新 |
+| `linear-approx` | `linear-approximation` | 0 | 26 | 往 (4, 2) 放大，√x 和切線分不開 | 新 |
+| `mean-value` | `mean-value-theorem` | 0 | 22 | 割線平行往下推，切到 x³ 的地方就是 c = √3 | 新 |
+| `related-rates` | `related-rates` | 3 | 24 | 梯腳等速往外，頂端越接近地面滑得越快 | 新 |
+| `box-optimization` | `optimization-geometry` | 0 | 25 | 剪掉的角 x 從小到大，體積在 x = 2 最大 | 新 |
+| `volume-disk` | `volume-disk` | 1 | 25 | 圓盤一片片疊起來，體積夾向 8π | 新 |
+| `geometric-series` | `geometric-series` | 2 | 31 | 公比 1/2、−1/2 收斂，3/2 發散 | 新 |
+| `polar-area` | `polar-area` | 0 | 23 | 細扇形一片片加起來，心臟線面積 3π/2 | 新 |
+
+- 片長是 `ffprobe` 量 `<id>-light-1080p.mp4` 的長度取整（深色版一樣長）。
+- after 指的是影片畫的那一段觀念：例如 `related-rates` 是觀念 ④「一定要先微分、再代數字」（梯子題）、`geometric-series` 是觀念 ③「收斂的條件」。同一段已有 figure 的（`linear-approx`、`polar-area`、`secant-tangent`、`one-sided-limit`）照 SCHEMA 排在圖後面。
+- 新的 10 支要進 `media/manifest.json` 的 `videos`／`assets`（各 6 個檔：light/dark × 1080p/720p/poster），並上傳到 Release；這裡沒有動 manifest、課程資料、Release。
+- 函數、記號、例子與答案取自該課的觀念段與範例；畫面上每一個數字都在場景開頭用 assert 獨立驗算過（不拿要講的定理去算）。
 
 ## 1. 課程資料加一個欄位
 
