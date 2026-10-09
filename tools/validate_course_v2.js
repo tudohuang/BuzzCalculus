@@ -71,7 +71,10 @@ const errors = [];
 const warnings = [];
 const err = (id, msg) => errors.push(`${id}: ${msg}`);
 const warn = (id, msg) => warnings.push(`${id}: ${msg}`);
-const cjkLen = (s) => String(s || "").replace(/\s/g, "").length;
+// 長度算的是「畫面上看到的字」：$…$ 裡的 LaTeX 原始碼（\frac{…}{…}、\sqrt、上下標記號）不算，只算剩下的符號
+const cjkLen = (s) => String(s || "")
+  .replace(/(?<!\\)\$([^$]+?)(?<!\\)\$/g, (_m, body) => body.replace(/\\[a-zA-Z]+/g, "x").replace(/[{}^_\\]/g, ""))
+  .replace(/\s/g, "").length;
 
 const wanted = process.argv.slice(2);
 const files = fs.existsSync(LESSON_DIR) ? fs.readdirSync(LESSON_DIR).filter((f) => f.endsWith(".json")) : [];

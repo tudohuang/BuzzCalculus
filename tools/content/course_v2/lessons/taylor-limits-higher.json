@@ -8,136 +8,136 @@
   "related": ["big-o-little-o", "lhopital"],
   "objectives": [
     "看分母（或分子第一個不會消掉的項）決定每個函數要展到第幾階。",
-    "會做合成與相除的展開：e^{sin x}、ln(cos x)、tan x = sin x/cos x。",
-    "x → ∞ 的題先令 t = 1/x 換成 t → 0⁺；1^∞ 型先取對數再展開。"
+    "會做合成與相除的展開：$e^{\\sin x}$、$\\ln(\\cos x)$、$\\tan x=\\frac{\\sin x}{\\cos x}$。",
+    "$x\\to\\infty$ 的題先令 $t=\\frac{1}{x}$ 換成 $t\\to 0^+$；$1^\\infty$ 型先取對數再展開。"
   ],
   "visual": null,
   "concept": [
     {
       "heading": "① 這一課多了什麼",
       "body": [
-        "〈用 Taylor 求極限〉處理的是一個函數展開、減掉前幾項的題。真正難的題有三種變化：函數套函數（e^{sin x}）、相乘相除（tan x、1/sin² x）、變數跑到 ∞。這三種都還是同一個想法：把每一塊寫成多項式加上「更小的東西」，消掉之後看第一個留下來的項。",
-        "記號：o(xⁿ) 代表「除以 xⁿ 之後 → 0 的東西」，例如 x⁵ = o(x⁴)。它的運算規則在〈Big-O 與 little-o〉會正式整理，這一課先當成「後面還有項，但不影響答案」的記號。"
+        "〈用 Taylor 求極限〉處理的是一個函數展開、減掉前幾項的題。真正難的題有三種變化：函數套函數（$e^{\\sin x}$）、相乘相除（$\\tan x$、$\\frac{1}{\\sin^2 x}$）、變數跑到 $\\infty$。這三種都還是同一個想法：把每一塊寫成多項式加上「更小的東西」，消掉之後看第一個留下來的項。",
+        "記號：$o(x^n)$ 代表「除以 $x^n$ 之後 $\\to 0$ 的東西」，例如 $x^5=o(x^4)$。它的運算規則在〈Big-O 與 little-o〉會正式整理，這一課先當成「後面還有項，但不影響答案」的記號。"
       ],
       "collapsible": false
     },
     {
       "heading": "② 展到第幾階：算總次數",
       "body": [
-        "分母是 x⁴，分子就要算到 x⁴ 那一項為止。每一塊要展到多少，看它乘上別的因子之後會不會落在 x⁴ 以內。例如 sin² x 要到 x⁴，因為 sin x 從 x 開始，sin x 只要展到 x³：(x − x³/6)² = x² − x⁴/3 + …，x³ 那項乘上 x 剛好到 x⁴。",
-        "展少了：留下來的全被 o(…) 吃掉，看起來像 0/0，什麼都看不到。展多了：不會錯，只是白算。"
+        "分母是 $x^4$，分子就要算到 $x^4$ 那一項為止。每一塊要展到多少，看它乘上別的因子之後會不會落在 $x^4$ 以內。例如 $\\sin^2 x$ 要到 $x^4$，因為 $\\sin x$ 從 $x$ 開始，$\\sin x$ 只要展到 $x^3$：$\\left(x-\\frac{x^3}{6}\\right)^2=x^2-\\frac{x^4}{3}+\\dots$，$x^3$ 那項乘上 $x$ 剛好到 $x^4$。",
+        "展少了：留下來的全被 $o(\\dots)$ 吃掉，看起來像 $\\frac{0}{0}$，什麼都看不到。展多了：不會錯，只是白算。"
       ],
       "collapsible": false
     },
     {
       "heading": "③ 合成：把內層展開代進外層",
       "body": [
-        "e^{sin x}：先寫 u = sin x = x − x³/6 + …，u 從 x 開始，所以 uᵏ 從 xᵏ 開始。要到 x⁴，外層 eᵘ = 1 + u + u²/2 + u³/6 + u⁴/24 就夠，再把 u、u²、u³、u⁴ 各自展到 x⁴，合併同次項。",
-        "前提是內層 → 0（這裡 sin x → 0），外層才能用在 0 附近的展開。ln(cos x) 也一樣：cos x − 1 = −x²/2 + … → 0，套 ln(1 + u) = u − u²/2 + …。"
+        "$e^{\\sin x}$：先寫 $u=\\sin x=x-\\frac{x^3}{6}+\\dots$，$u$ 從 $x$ 開始，所以 $u^k$ 從 $x^k$ 開始。要到 $x^4$，外層 $e^u=1+u+\\frac{u^2}{2}+\\frac{u^3}{6}+\\frac{u^4}{24}$ 就夠，再把 $u$、$u^2$、$u^3$、$u^4$ 各自展到 $x^4$，合併同次項。",
+        "前提是內層 $\\to 0$（這裡 $\\sin x\\to 0$），外層才能用在 $0$ 附近的展開。$\\ln(\\cos x)$ 也一樣：$\\cos x-1=-\\frac{x^2}{2}+\\dots\\to 0$，套 $\\ln(1+u)=u-\\frac{u^2}{2}+\\dots$。"
       ],
       "collapsible": false
     },
     {
-      "heading": "④ 相除：1/(1 − w) 是幾何級數",
+      "heading": "④ 相除：$\\frac{1}{1-w}$ 是幾何級數",
       "body": [
-        "分母展開後長成 1 − w（w → 0）時，用 1/(1 − w) = 1 + w + w² + …。例如 1/cos x = 1/(1 − x²/2 + x⁴/24 − …) = 1 + x²/2 + 5x⁴/24 + …，再乘上 sin x 就得到 tan x = x + x³/3 + 2x⁵/15 + …。"
+        "分母展開後長成 $1-w$（$w\\to 0$）時，用 $\\frac{1}{1-w}=1+w+w^2+\\dots$。例如 $\\frac{1}{\\cos x}=\\frac{1}{1-x^2/2+x^4/24-\\dots}=1+\\frac{x^2}{2}+\\frac{5x^4}{24}+\\dots$，再乘上 $\\sin x$ 就得到 $\\tan x=x+\\frac{x^3}{3}+\\frac{2x^5}{15}+\\dots$。"
       ],
       "collapsible": false
     },
     {
-      "heading": "⑤ x → ∞ 與 1^∞",
+      "heading": "⑤ $x\\to\\infty$ 與 $1^\\infty$",
       "body": [
-        "x → ∞：令 t = 1/x，t → 0⁺，就回到 0 附近的展開。1^∞（例如 (cos x)^{1/x²}）：寫成 exp( ln(cos x)/x² )，只展開指數裡的部分；指數的極限是 L，原極限就是 e^L（exp 連續）。"
+        "$x\\to\\infty$：令 $t=\\frac{1}{x}$，$t\\to 0^+$，就回到 $0$ 附近的展開。$1^\\infty$（例如 $(\\cos x)^{1/x^2}$）：寫成 $\\exp\\left(\\frac{\\ln(\\cos x)}{x^2}\\right)$，只展開指數裡的部分；指數的極限是 $L$，原極限就是 $e^L$（$\\exp$ 連續）。"
       ],
       "collapsible": false
     },
     {
       "heading": "為什麼可以這樣代：Peano 餘項",
       "body": [
-        "若 f 在 0 有 n 階導數，Taylor 定理給 f(x) = Σ_{k≤n} f⁽ᵏ⁾(0)xᵏ/k! + o(xⁿ)（Peano 形式的餘項）。合成時，若 u(x) → 0 而且 |u(x)| ≤ C|x|（u 至少一階小），則 o(uⁿ) = o(xⁿ)：除以 xⁿ 寫成 (o(uⁿ)/uⁿ)·(u/x)ⁿ，前者 → 0、後者有界。這就是「內層代進外層、截到同一階」合法的原因。"
+        "若 $f$ 在 $0$ 有 $n$ 階導數，Taylor 定理給 $f(x)=\\sum_{k\\le n}\\frac{f^{(k)}(0)x^k}{k!}+o(x^n)$（Peano 形式的餘項）。合成時，若 $u(x)\\to 0$ 而且 $|u(x)|\\le C|x|$（$u$ 至少一階小），則 $o(u^n)=o(x^n)$：除以 $x^n$ 寫成 $\\frac{o(u^n)}{u^n}\\cdot\\left(\\frac{u}{x}\\right)^n$，前者 $\\to 0$、後者有界。這就是「內層代進外層、截到同一階」合法的原因。"
       ],
       "collapsible": true
     }
   ],
   "workedExamples": [
     {
-      "title": "合成：e^{sin x} 要到 x⁴",
-      "prompt": "lim_{x→0} (e^{sin x} − 1 − x − x²/2)/x⁴",
+      "title": "合成：$e^{\\sin x}$ 要到 $x^4$",
+      "prompt": "$\\lim_{x\\to 0}\\frac{e^{\\sin x}-1-x-x^2/2}{x^4}$",
       "problemId": "burst-boss-lim-004",
       "steps": [
-        "分母 x⁴，所以 e^{sin x} 要展到 x⁴。令 u = sin x = x − x³/6 + o(x⁴)（sin x 沒有 x⁴ 項，下一項是 x⁵）。",
-        "各次方展到 x⁴：u² = x² − x⁴/3 + o(x⁴)，u³ = x³ + o(x⁴)，u⁴ = x⁴ + o(x⁴)。",
-        "代進 eᵘ = 1 + u + u²/2 + u³/6 + u⁴/24 + o(u⁴)：1 + (x − x³/6) + (x²/2 − x⁴/6) + x³/6 + x⁴/24 + o(x⁴)。",
-        "合併：x³ 項 −1/6 + 1/6 = 0；x⁴ 項 −1/6 + 1/24 = −1/8。所以 e^{sin x} = 1 + x + x²/2 − x⁴/8 + o(x⁴)。",
-        "分子 = −x⁴/8 + o(x⁴)，除以 x⁴ → −1/8。"
+        "分母 $x^4$，所以 $e^{\\sin x}$ 要展到 $x^4$。令 $u=\\sin x=x-\\frac{x^3}{6}+o(x^4)$（$\\sin x$ 沒有 $x^4$ 項，下一項是 $x^5$）。",
+        "各次方展到 $x^4$：$u^2=x^2-\\frac{x^4}{3}+o(x^4)$，$u^3=x^3+o(x^4)$，$u^4=x^4+o(x^4)$。",
+        "代進 $e^u=1+u+\\frac{u^2}{2}+\\frac{u^3}{6}+\\frac{u^4}{24}+o(u^4)$：$1+\\left(x-\\frac{x^3}{6}\\right)+\\left(\\frac{x^2}{2}-\\frac{x^4}{6}\\right)+\\frac{x^3}{6}+\\frac{x^4}{24}+o(x^4)$。",
+        "合併：$x^3$ 項 $-\\frac{1}{6}+\\frac{1}{6}=0$；$x^4$ 項 $-\\frac{1}{6}+\\frac{1}{24}=-\\frac{1}{8}$。所以 $e^{\\sin x}=1+x+\\frac{x^2}{2}-\\frac{x^4}{8}+o(x^4)$。",
+        "分子 $=-\\frac{x^4}{8}+o(x^4)$，除以 $x^4$ $\\to-\\frac{1}{8}$。"
       ],
-      "answer": "−1/8",
+      "answer": "$-\\frac{1}{8}$",
       "claim": "LIM((e^(sin(x))-1-x-x^2/2)/x^4, 0) == -1/8"
     },
     {
-      "title": "相減再通分：1/x² − 1/sin² x",
-      "prompt": "lim_{x→0} (1/x² − 1/sin² x)",
+      "title": "相減再通分：$\\frac{1}{x^2}-\\frac{1}{\\sin^2 x}$",
+      "prompt": "$\\lim_{x\\to 0}\\left(\\frac{1}{x^2}-\\frac{1}{\\sin^2 x}\\right)$",
       "problemId": "fd-limx-607",
       "steps": [
-        "∞ − ∞，先通分：(sin² x − x²)/(x² sin² x)。",
-        "分母：sin² x = x² + o(x²)，所以分母 = x⁴ + o(x⁴)，是 x⁴ 階。分子也要算到 x⁴。",
-        "sin x = x − x³/6 + o(x³)，平方：sin² x = x² − x⁴/3 + o(x⁴)（交叉項 2 · x · (−x³/6) = −x⁴/3）。",
-        "分子 = −x⁴/3 + o(x⁴)，比值 → −1/3。"
+        "$\\infty-\\infty$，先通分：$\\frac{\\sin^2 x-x^2}{x^2\\sin^2 x}$。",
+        "分母：$\\sin^2 x=x^2+o(x^2)$，所以分母 $=x^4+o(x^4)$，是 $x^4$ 階。分子也要算到 $x^4$。",
+        "$\\sin x=x-\\frac{x^3}{6}+o(x^3)$，平方：$\\sin^2 x=x^2-\\frac{x^4}{3}+o(x^4)$（交叉項 $2\\cdot x\\cdot\\left(-\\frac{x^3}{6}\\right)=-\\frac{x^4}{3}$）。",
+        "分子 $=-\\frac{x^4}{3}+o(x^4)$，比值 $\\to-\\frac{1}{3}$。"
       ],
-      "answer": "−1/3",
+      "answer": "$-\\frac{1}{3}$",
       "claim": "LIM(1/x^2-1/sin(x)^2, 0) == -1/3 ;; LIM((sin(x)^2-x^2)/x^4, 0) == -1/3"
     },
     {
-      "title": "x → ∞：先換成 t = 1/x",
-      "prompt": "lim_{x→∞} x² ( ln(1 + 1/x) − 1/(x + 1) )",
+      "title": "$x\\to\\infty$：先換成 $t=\\frac{1}{x}$",
+      "prompt": "$\\lim_{x\\to\\infty}x^2\\left(\\ln\\left(1+\\frac{1}{x}\\right)-\\frac{1}{x+1}\\right)$",
       "problemId": "depth-lim-006",
       "steps": [
-        "令 t = 1/x，t → 0⁺。x² = 1/t²，1/(x + 1) = t/(1 + t)。",
-        "前面有 1/t²，括號裡要展到 t²（多寫一項 t³ 方便看）：ln(1 + t) = t − t²/2 + t³/3 + o(t³)；t/(1 + t) = t(1 − t + t² + o(t²)) = t − t² + t³ + o(t³)。",
-        "相減：(−1/2 + 1)t² + (1/3 − 1)t³ + o(t³) = t²/2 − (2/3)t³ + o(t³)。",
-        "乘上 1/t²：1/2 − (2/3)t + o(t) → 1/2。"
+        "令 $t=\\frac{1}{x}$，$t\\to 0^+$。$x^2=\\frac{1}{t^2}$，$\\frac{1}{x+1}=\\frac{t}{1+t}$。",
+        "前面有 $\\frac{1}{t^2}$，括號裡要展到 $t^2$（多寫一項 $t^3$ 方便看）：$\\ln(1+t)=t-\\frac{t^2}{2}+\\frac{t^3}{3}+o(t^3)$；$\\frac{t}{1+t}=t(1-t+t^2+o(t^2))=t-t^2+t^3+o(t^3)$。",
+        "相減：$\\left(-\\frac{1}{2}+1\\right)t^2+\\left(\\frac{1}{3}-1\\right)t^3+o(t^3)=\\frac{t^2}{2}-\\frac{2}{3}t^3+o(t^3)$。",
+        "乘上 $\\frac{1}{t^2}$：$\\frac{1}{2}-\\frac{2}{3}t+o(t)\\to\\frac{1}{2}$。"
       ],
-      "answer": "1/2",
+      "answer": "$\\frac{1}{2}$",
       "claim": "LIM(x^2*(ln(1+1/x)-1/(x+1)), inf) == 1/2"
     }
   ],
   "pitfalls": [
-    "內層沒有 → 0 就套外層的 0 附近展開，例如把 e^{1 + x} 當成 1 + (1 + x) + …。",
-    "合成時 u² 只寫 x²，漏了交叉項（sin² x 的 −x⁴/3）。",
-    "分母只看「寫出來的」x²，沒發現 sin² x 讓分母其實是 x⁴ 階。",
-    "1^∞ 直接答 1；要先取對數，指數的極限才是答案的關鍵。"
+    "內層沒有 $\\to 0$ 就套外層的 $0$ 附近展開，例如把 $e^{1+x}$ 當成 $1+(1+x)+\\dots$。",
+    "合成時 $u^2$ 只寫 $x^2$，漏了交叉項（$\\sin^2 x$ 的 $-\\frac{x^4}{3}$）。",
+    "分母只看「寫出來的」$x^2$，沒發現 $\\sin^2 x$ 讓分母其實是 $x^4$ 階。",
+    "$1^\\infty$ 直接答 $1$；要先取對數，指數的極限才是答案的關鍵。"
   ],
   "checks": [
     {
-      "ask": "求 lim_{x→0} (sin² x − x²)/x⁴ 時，sin x 至少要展到哪一項？",
+      "ask": "求 $\\lim_{x\\to 0}\\frac{\\sin^2 x-x^2}{x^4}$ 時，$\\sin x$ 至少要展到哪一項？",
       "options": [
-        { "label": "到 x³ 項", "correct": true },
-        { "label": "只要 x 一項", "why": "sin² x 會變成 x²，跟 −x² 消光，分子剩 o(x²)，除以 x⁴ 什麼都看不出來。" },
-        { "label": "到 x² 項就夠，因為平方之後是 x⁴", "why": "sin x 沒有 x² 項，截到 x² 等於只留 x；x⁴ 的係數來自 x · (−x³/6) 的交叉項。" }
+        { "label": "到 $x^3$ 項", "correct": true },
+        { "label": "只要 $x$ 一項", "why": "$\\sin^2 x$ 會變成 $x^2$，跟 $-x^2$ 消光，分子剩 $o(x^2)$，除以 $x^4$ 什麼都看不出來。" },
+        { "label": "到 $x^2$ 項就夠，因為平方之後是 $x^4$", "why": "$\\sin x$ 沒有 $x^2$ 項，截到 $x^2$ 等於只留 $x$；$x^4$ 的係數來自 $x\\cdot\\left(-\\frac{x^3}{6}\\right)$ 的交叉項。" }
       ]
     },
     {
-      "ask": "lim_{x→0} (tan x − sin x)/x³ 是？",
+      "ask": "$\\lim_{x\\to 0}\\frac{\\tan x-\\sin x}{x^3}$ 是？",
       "options": [
-        { "label": "1/2", "correct": true },
-        { "label": "0", "why": "只展到一階，tan x 和 sin x 都是 x，看起來抵銷了；三階是 x³/3 − (−x³/6) = x³/2。" },
-        { "label": "1/6", "why": "漏了 tan x 的 x³/3，只剩 sin x 那邊的 x³/6。" }
+        { "label": "$\\frac{1}{2}$", "correct": true },
+        { "label": "$0$", "why": "只展到一階，$\\tan x$ 和 $\\sin x$ 都是 $x$，看起來抵銷了；三階是 $\\frac{x^3}{3}-\\left(-\\frac{x^3}{6}\\right)=\\frac{x^3}{2}$。" },
+        { "label": "$\\frac{1}{6}$", "why": "漏了 $\\tan x$ 的 $\\frac{x^3}{3}$，只剩 $\\sin x$ 那邊的 $\\frac{x^3}{6}$。" }
       ]
     },
     {
-      "ask": "ln(cos x) 展開的第一個非零項是？",
+      "ask": "$\\ln(\\cos x)$ 展開的第一個非零項是？",
       "options": [
-        { "label": "−x²/2", "correct": true },
-        { "label": "1 − x²/2", "why": "那是 cos x 本身。ln(1 + u) 的 u = cos x − 1 = −x²/2 + …，ln 之後第一項就是 u。" },
-        { "label": "x²/2", "why": "符號反了：cos x < 1，ln(cos x) < 0。" }
+        { "label": "$-\\frac{x^2}{2}$", "correct": true },
+        { "label": "$1-\\frac{x^2}{2}$", "why": "那是 $\\cos x$ 本身。$\\ln(1+u)$ 的 $u=\\cos x-1=-\\frac{x^2}{2}+\\dots$，$\\ln$ 之後第一項就是 $u$。" },
+        { "label": "$\\frac{x^2}{2}$", "why": "符號反了：$\\cos x<1$，$\\ln(\\cos x)<0$。" }
       ]
     },
     {
-      "ask": "lim_{x→0} (cos x)^{1/x²} 是？",
+      "ask": "$\\lim_{x\\to 0}(\\cos x)^{1/x^2}$ 是？",
       "options": [
-        { "label": "e^{−1/2}", "correct": true },
-        { "label": "1", "why": "1^∞ 是不定型。取對數得 ln(cos x)/x² → −1/2，答案是 e^{−1/2}。" },
-        { "label": "e^{1/2}", "why": "ln(cos x) ≈ −x²/2 是負的，指數的極限是 −1/2。" }
+        { "label": "$e^{-1/2}$", "correct": true },
+        { "label": "$1$", "why": "$1^\\infty$ 是不定型。取對數得 $\\frac{\\ln(\\cos x)}{x^2}\\to-\\frac{1}{2}$，答案是 $e^{-1/2}$。" },
+        { "label": "$e^{1/2}$", "why": "$\\ln(\\cos x)\\approx-\\frac{x^2}{2}$ 是負的，指數的極限是 $-\\frac{1}{2}$。" }
       ]
     }
   ],
@@ -156,7 +156,7 @@
     { "id": "burst-boss-lim-005", "trains": "taylor-composite" },
     { "id": "fd-limx-603", "trains": "taylor-one-inf-power" },
     { "id": "lx-hard-002", "trains": "taylor-order-choice" },
-    { "id": "world-099", "challenge": true, "trains": "taylor-composite", "note": "挑戰：tan(sin x) 與 sin(tan x) 前五階完全相同，要展到 x⁷。" }
+    { "id": "world-099", "challenge": true, "trains": "taylor-composite", "note": "挑戰：$\\tan(\\sin x)$ 與 $\\sin(\\tan x)$ 前五階完全相同，要展到 $x^7$。" }
   ],
   "gaps": []
 }

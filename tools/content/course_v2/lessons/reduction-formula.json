@@ -7,8 +7,8 @@
   "next": ["wallis-integral"],
   "related": ["gamma-definition"],
   "objectives": [
-    "把一整族積分 Iₙ 寫成 n 的函數，用分部積分（或恆等式）建立 Iₙ 與 Iₙ₋₁、Iₙ₋₂ 的關係。",
-    "從起點一路代回去求出 I₃、I₄，並且知道步長 2 時要準備兩個起點。",
+    "把一整族積分 $I_n$ 寫成 $n$ 的函數，用分部積分（或恆等式）建立 $I_n$ 與 $I_{n-1}$、$I_{n-2}$ 的關係。",
+    "從起點一路代回去求出 $I_3$、$I_4$，並且知道步長 2 時要準備兩個起點。",
     "處理瑕積分的遞迴時，確認邊界項真的是 0。"
   ],
   "visual": null,
@@ -16,16 +16,16 @@
     {
       "heading": "① 不要每一題都重做一次分部積分",
       "body": [
-        "∫₀¹ x³ eˣ dx 要分部積分三次，∫₀¹ x¹⁰ eˣ dx 要十次。其實每一次做的事都一樣：把 x 的次數降一。與其一次一次做，不如把 n 當成變數，做一次分部積分就得到一條「降一階」的規則，之後只要代數字。"
+        "$\\int_0^1x^3e^x\\,dx$ 要分部積分三次，$\\int_0^1x^{10}e^x\\,dx$ 要十次。其實每一次做的事都一樣：把 $x$ 的次數降一。與其一次一次做，不如把 $n$ 當成變數，做一次分部積分就得到一條「降一階」的規則，之後只要代數字。"
       ],
       "collapsible": false
     },
     {
       "heading": "② 建立遞迴：分部積分讓次數下降",
       "body": [
-        "令 Jₙ = ∫₀¹ xⁿ eˣ dx（n ≥ 1）。取 u = xⁿ（微分後次數降一）、dv = eˣ dx：",
-        "Jₙ = [xⁿ eˣ]₀¹ − n ∫₀¹ x^{n−1} eˣ dx = e − n Jₙ₋₁。",
-        "再算起點 J₀ = ∫₀¹ eˣ dx = e − 1，就能一路往上推。u 的選擇原則跟〈分部積分推導〉一樣：讓「麻煩的那一塊」微分之後變簡單。"
+        "令 $J_n=\\int_0^1x^ne^x\\,dx$（$n\\ge 1$）。取 $u=x^n$（微分後次數降一）、$dv=e^x\\,dx$：",
+        "$J_n=\\left[x^ne^x\\right]_0^1-n\\int_0^1x^{n-1}e^x\\,dx=e-nJ_{n-1}$。",
+        "再算起點 $J_0=\\int_0^1e^x\\,dx=e-1$，就能一路往上推。$u$ 的選擇原則跟〈分部積分推導〉一樣：讓「麻煩的那一塊」微分之後變簡單。"
       ],
       "tex": ["J_n=e-n\\,J_{n-1},\\qquad J_0=e-1"],
       "collapsible": false
@@ -33,95 +33,95 @@
     {
       "heading": "③ 不一定要分部積分：恆等式也能降次",
       "body": [
-        "Tₙ = ∫₀^{π/4} tanⁿ x dx：把 tan² x 換成 sec² x − 1，tanⁿ x = tan^{n−2} x sec² x − tan^{n−2} x。前一項令 u = tan x、du = sec² x dx，積出 1/(n − 1)。所以 Tₙ = 1/(n − 1) − Tₙ₋₂（n ≥ 2）。",
-        "步長是 2：偶數一路降到 T₀ = π/4，奇數降到 T₁ = (ln 2)/2。兩個起點都要先算好。"
+        "$T_n=\\int_0^{\\pi/4}\\tan^n x\\,dx$：把 $\\tan^2 x$ 換成 $\\sec^2 x-1$，$\\tan^n x=\\tan^{n-2}x\\sec^2 x-\\tan^{n-2}x$。前一項令 $u=\\tan x$、$du=\\sec^2 x\\,dx$，積出 $\\frac{1}{n-1}$。所以 $T_n=\\frac{1}{n-1}-T_{n-2}$（$n\\ge 2$）。",
+        "步長是 2：偶數一路降到 $T_0=\\frac{\\pi}{4}$，奇數降到 $T_1=\\frac{\\ln 2}{2}$。兩個起點都要先算好。"
       ],
       "collapsible": false
     },
     {
       "heading": "④ 瑕積分的遞迴：邊界項要用極限確認",
       "body": [
-        "Lₙ = ∫₀¹ (ln x)ⁿ dx 在 x = 0 是瑕點。取 u = (ln x)ⁿ、dv = dx：Lₙ = [x (ln x)ⁿ]₀¹ − n Lₙ₋₁。邊界項在 x = 1 是 0，在 x → 0⁺ 是 lim x (ln x)ⁿ = 0（對數 ≪ 冪次），所以 Lₙ = −n Lₙ₋₁，L₀ = 1，得 Lₙ = (−1)ⁿ n!。",
-        "同樣的想法用在 ∫₀^∞ xⁿ e^{−x} dx 就得到〈Gamma 函數：定義與遞迴〉的 Γ(n + 1) = nΓ(n)。"
+        "$L_n=\\int_0^1(\\ln x)^n\\,dx$ 在 $x=0$ 是瑕點。取 $u=(\\ln x)^n$、$dv=dx$：$L_n=\\left[x(\\ln x)^n\\right]_0^1-nL_{n-1}$。邊界項在 $x=1$ 是 $0$，在 $x\\to 0^+$ 是 $\\lim x(\\ln x)^n=0$（對數 $\\ll$ 冪次），所以 $L_n=-nL_{n-1}$，$L_0=1$，得 $L_n=(-1)^nn!$。",
+        "同樣的想法用在 $\\int_0^{\\infty}x^ne^{-x}\\,dx$ 就得到〈Gamma 函數：定義與遞迴〉的 $\\Gamma(n+1)=n\\Gamma(n)$。"
       ],
       "collapsible": false
     }
   ],
   "workedExamples": [
     {
-      "title": "∫₀¹ x³ eˣ dx",
-      "prompt": "用 Jₙ = e − n Jₙ₋₁ 求 J₃ = ∫₀¹ x³ eˣ dx。",
+      "title": "$\\int_0^1x^3e^x\\,dx$",
+      "prompt": "用 $J_n=e-nJ_{n-1}$ 求 $J_3=\\int_0^1x^3e^x\\,dx$。",
       "steps": [
-        "起點 J₀ = e − 1。",
-        "J₁ = e − 1 · J₀ = e − (e − 1) = 1。",
-        "J₂ = e − 2J₁ = e − 2。",
-        "J₃ = e − 3J₂ = e − 3(e − 2) = 6 − 2e ≈ 0.5634。"
+        "起點 $J_0=e-1$。",
+        "$J_1=e-1\\cdot J_0=e-(e-1)=1$。",
+        "$J_2=e-2J_1=e-2$。",
+        "$J_3=e-3J_2=e-3(e-2)=6-2e\\approx 0.5634$。"
       ],
-      "answer": "6 − 2e",
+      "answer": "$6-2e$",
       "claim": "INT(x^3*e^x, 0, 1) == 6-2*e ;; INT(x^2*e^x, 0, 1) == e-2 ;; INT(x*e^x, 0, 1) == 1"
     },
     {
       "title": "瑕積分的遞迴",
-      "prompt": "∫₀¹ (ln x)³ dx",
+      "prompt": "$\\int_0^1(\\ln x)^3\\,dx$",
       "problemId": "world-079",
       "steps": [
-        "Lₙ = −n Lₙ₋₁（邊界項 x (ln x)ⁿ 在 0⁺ 的極限是 0），L₀ = ∫₀¹ 1 dx = 1。",
-        "L₁ = −1，L₂ = −2 · (−1) = 2，L₃ = −3 · 2 = −6。",
-        "符號檢查：0 < x < 1 時 ln x < 0，(ln x)³ < 0，積分是負的，合理。"
+        "$L_n=-nL_{n-1}$（邊界項 $x(\\ln x)^n$ 在 $0^+$ 的極限是 $0$），$L_0=\\int_0^1 1\\,dx=1$。",
+        "$L_1=-1$，$L_2=-2\\cdot(-1)=2$，$L_3=-3\\cdot 2=-6$。",
+        "符號檢查：$0<x<1$ 時 $\\ln x<0$，$(\\ln x)^3<0$，積分是負的，合理。"
       ],
-      "answer": "−6",
+      "answer": "$-6$",
       "claim": "INT(ln(x)^3, 0, 1) == -6 ;; INT(ln(x)^2, 0, 1) == 2"
     },
     {
       "title": "步長 2 的遞迴",
-      "prompt": "∫₀^{π/4} tan⁴ x dx",
+      "prompt": "$\\int_0^{\\pi/4}\\tan^4 x\\,dx$",
       "steps": [
-        "Tₙ = 1/(n − 1) − Tₙ₋₂，n = 4 是偶數，要用 T₀ = ∫₀^{π/4} 1 dx = π/4。",
-        "T₂ = 1/1 − T₀ = 1 − π/4。",
-        "T₄ = 1/3 − T₂ = 1/3 − 1 + π/4 = π/4 − 2/3 ≈ 0.1187。",
+        "$T_n=\\frac{1}{n-1}-T_{n-2}$，$n=4$ 是偶數，要用 $T_0=\\int_0^{\\pi/4}1\\,dx=\\frac{\\pi}{4}$。",
+        "$T_2=\\frac{1}{1}-T_0=1-\\frac{\\pi}{4}$。",
+        "$T_4=\\frac{1}{3}-T_2=\\frac{1}{3}-1+\\frac{\\pi}{4}=\\frac{\\pi}{4}-\\frac{2}{3}\\approx 0.1187$。",
         "符號檢查：被積函數非負，答案是正的。"
       ],
-      "answer": "π/4 − 2/3",
+      "answer": "$\\frac{\\pi}{4}-\\frac{2}{3}$",
       "claim": "INT(tan(x)^4, 0, pi/4) == pi/4-2/3 ;; INT(tan(x)^2, 0, pi/4) == 1-pi/4"
     }
   ],
   "pitfalls": [
-    "u 選錯（u = eˣ），次數不降反升。",
+    "$u$ 選錯（$u=e^x$），次數不降反升。",
     "步長 2 的遞迴只準備一個起點，奇數項接不下去。",
-    "遞迴的係數符號弄錯：Jₙ = e − nJₙ₋₁ 是減號，連續代入時正負交錯。",
+    "遞迴的係數符號弄錯：$J_n=e-nJ_{n-1}$ 是減號，連續代入時正負交錯。",
     "瑕積分的邊界項直接寫 0，沒有用極限確認。"
   ],
   "checks": [
     {
-      "ask": "要替 ∫ xⁿ eˣ dx 建立降次的遞迴，u 應該選？",
+      "ask": "要替 $\\int x^ne^x\\,dx$ 建立降次的遞迴，$u$ 應該選？",
       "options": [
-        { "label": "u = xⁿ", "correct": true },
-        { "label": "u = eˣ", "why": "那樣 dv = xⁿ dx，v = x^{n+1}/(n + 1)，次數反而升高。" },
-        { "label": "u = xⁿ eˣ", "why": "dv 只剩 dx，v = x，積分變得更複雜，次數也沒有下降。" }
+        { "label": "$u=x^n$", "correct": true },
+        { "label": "$u=e^x$", "why": "那樣 $dv=x^n\\,dx$，$v=\\frac{x^{n+1}}{n+1}$，次數反而升高。" },
+        { "label": "$u=x^ne^x$", "why": "$dv$ 只剩 $dx$，$v=x$，積分變得更複雜，次數也沒有下降。" }
       ]
     },
     {
-      "ask": "Lₙ = ∫₀¹ (ln x)ⁿ dx 滿足 Lₙ = −n Lₙ₋₁，L₀ = 1。L₂ 是？",
+      "ask": "$L_n=\\int_0^1(\\ln x)^n\\,dx$ 滿足 $L_n=-nL_{n-1}$，$L_0=1$。$L_2$ 是？",
       "options": [
-        { "label": "2", "correct": true },
-        { "label": "−2", "why": "L₁ = −1，L₂ = −2 · (−1) = 2，負負得正。(ln x)² ≥ 0，積分也該是正的。" },
-        { "label": "1/2", "why": "遞迴是乘以 −n，不是除以 n。" }
+        { "label": "$2$", "correct": true },
+        { "label": "$-2$", "why": "$L_1=-1$，$L_2=-2\\cdot(-1)=2$，負負得正。$(\\ln x)^2\\ge 0$，積分也該是正的。" },
+        { "label": "$\\frac{1}{2}$", "why": "遞迴是乘以 $-n$，不是除以 $n$。" }
       ]
     },
     {
-      "ask": "Tₙ = ∫₀^{π/4} tanⁿ x dx 滿足 Tₙ + Tₙ₋₂ = 1/(n − 1)。T₂ 是？",
+      "ask": "$T_n=\\int_0^{\\pi/4}\\tan^n x\\,dx$ 滿足 $T_n+T_{n-2}=\\frac{1}{n-1}$。$T_2$ 是？",
       "options": [
-        { "label": "1 − π/4", "correct": true },
-        { "label": "π/4 − 1", "why": "這是負數，但 tan² x ≥ 0，積分不可能是負的。T₂ = 1 − T₀ = 1 − π/4。" },
-        { "label": "1", "why": "漏了減掉 T₀ = π/4。" }
+        { "label": "$1-\\frac{\\pi}{4}$", "correct": true },
+        { "label": "$\\frac{\\pi}{4}-1$", "why": "這是負數，但 $\\tan^2 x\\ge 0$，積分不可能是負的。$T_2=1-T_0=1-\\frac{\\pi}{4}$。" },
+        { "label": "$1$", "why": "漏了減掉 $T_0=\\frac{\\pi}{4}$。" }
       ]
     },
     {
-      "ask": "用 Tₙ 的遞迴求 T₅，需要先知道哪一個？",
+      "ask": "用 $T_n$ 的遞迴求 $T_5$，需要先知道哪一個？",
       "options": [
-        { "label": "T₁ = (ln 2)/2", "correct": true },
-        { "label": "T₀ = π/4", "why": "步長是 2，奇數項 5 → 3 → 1，會停在 T₁，不會碰到 T₀。" },
-        { "label": "T₄", "why": "遞迴連的是 Tₙ 與 Tₙ₋₂，T₅ 跟 T₃ 有關，跟 T₄ 無關。" }
+        { "label": "$T_1=\\frac{\\ln 2}{2}$", "correct": true },
+        { "label": "$T_0=\\frac{\\pi}{4}$", "why": "步長是 2，奇數項 $5\\to 3\\to 1$，會停在 $T_1$，不會碰到 $T_0$。" },
+        { "label": "$T_4$", "why": "遞迴連的是 $T_n$ 與 $T_{n-2}$，$T_5$ 跟 $T_3$ 有關，跟 $T_4$ 無關。" }
       ]
     }
   ],
@@ -140,7 +140,7 @@
     { "id": "burst-rec-007", "trains": "reduction-ibp-setup" },
     { "id": "burst-rec-008", "trains": "reduction-ibp-setup" },
     { "id": "burst-boss-int-011", "trains": "reduction-log-power" },
-    { "id": "dm-seq-009", "challenge": true, "trains": "reduction-trig-identity", "note": "挑戰：建立 Tₙ + Tₙ₋₂ = 1/(n − 1)，再用 Tₙ 遞減夾出 n Tₙ → 1/2。" }
+    { "id": "dm-seq-009", "challenge": true, "trains": "reduction-trig-identity", "note": "挑戰：建立 $T_n+T_{n-2}=\\frac{1}{n-1}$，再用 $T_n$ 遞減夾出 $nT_n\\to\\frac{1}{2}$。" }
   ],
   "gaps": [
     { "tag": "reduction-trig-identity", "count": 2, "note": "∫ tanⁿ、∫ secⁿ 用恆等式降次的求值題（例如 ∫₀^{π/4} tan⁴ x dx），R3。" },

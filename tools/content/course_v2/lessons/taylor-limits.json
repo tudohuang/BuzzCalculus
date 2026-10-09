@@ -7,41 +7,41 @@
   "next": ["parametric-curves"],
   "related": ["lhopital", "taylor-limits-higher", "big-o-little-o"],
   "objectives": [
-    "把 x → 0 的 0/0 極限裡每個函數換成「Maclaurin 多項式 + o(xⁿ)」，消去之後讀出第一個留下的項。",
+    "把 $x\\to 0$ 的 $\\frac{0}{0}$ 極限裡每個函數換成「Maclaurin 多項式 $+\\,o(x^n)$」，消去之後讀出第一個留下的項。",
     "看分母的次方決定分子要展到第幾階。",
-    "會用 o(xⁿ) 的三條基本規則，並知道這樣做為什麼合法。"
+    "會用 $o(x^n)$ 的三條基本規則，並知道這樣做為什麼合法。"
   ],
   "visual": "畫出 (x − sin x)/x³ 在 x = ±0.5 附近的圖形，0 處是個洞。旁邊把 sin x 依序換成 x、x − x³/6、x − x³/6 + x⁵/120：只換到 x 時，分子變成 0，什麼都讀不出；換到 x³ 那一項，分子立刻變成 x³/6，曲線的洞被補在高度 1/6。",
   "concept": [
     {
       "heading": "① 想法：在 0 附近，函數就是多項式",
       "body": [
-        "x 很靠近 0 時，sin x = x − x³/6 + （比 x³ 更小的東西）。把極限裡的每個函數都換成這種「多項式 + 更小的東西」，0/0 的分子分母會消掉一大片，第一個留下來的項就決定了極限。",
-        "例：(x − sin x)/x³ 的分子 = x − (x − x³/6 + …) = x³/6 + …，除以 x³ 得 1/6 + （→ 0 的東西），極限是 1/6。用〈L'Hôpital 法則〉要連續微分三次。"
+        "$x$ 很靠近 0 時，$\\sin x=x-\\frac{x^3}{6}+$（比 $x^3$ 更小的東西）。把極限裡的每個函數都換成這種「多項式 + 更小的東西」，$\\frac{0}{0}$ 的分子分母會消掉一大片，第一個留下來的項就決定了極限。",
+        "例：$\\frac{x-\\sin x}{x^3}$ 的分子 $=x-\\left(x-\\frac{x^3}{6}+\\cdots\\right)=\\frac{x^3}{6}+\\cdots$，除以 $x^3$ 得 $\\frac{1}{6}+$（$\\to 0$ 的東西），極限是 $\\frac{1}{6}$。用〈L'Hôpital 法則〉要連續微分三次。"
       ],
       "collapsible": false
     },
     {
-      "heading": "② 記號 o(xⁿ)",
+      "heading": "② 記號 $o(x^n)$",
       "body": [
-        "o(xⁿ) 代表「除以 xⁿ 之後 → 0 的東西」（x → 0）。例如 x³ 是 o(x²)，因為 x³/x² = x → 0。三條夠用的規則：",
-        "o(xⁿ) ± o(xⁿ) 還是 o(xⁿ)；xᵏ · o(xⁿ) = o(x^{n+k})；比 n 高次的 xᵐ（m > n）都是 o(xⁿ)。",
-        "寫法：sin x = x − x³/6 + o(x³)，eˣ = 1 + x + x²/2 + o(x²)。更完整的規則在〈Big-O 與 little-o〉。"
+        "$o(x^n)$ 代表「除以 $x^n$ 之後 $\\to 0$ 的東西」（$x\\to 0$）。例如 $x^3$ 是 $o(x^2)$，因為 $\\frac{x^3}{x^2}=x\\to 0$。三條夠用的規則：",
+        "$o(x^n)\\pm o(x^n)$ 還是 $o(x^n)$；$x^k\\cdot o(x^n)=o(x^{n+k})$；比 $n$ 高次的 $x^m$（$m>n$）都是 $o(x^n)$。",
+        "寫法：$\\sin x=x-\\frac{x^3}{6}+o(x^3)$，$e^x=1+x+\\frac{x^2}{2}+o(x^2)$。更完整的規則在〈Big-O 與 little-o〉。"
       ],
       "collapsible": false
     },
     {
       "heading": "③ 要展到第幾階",
       "body": [
-        "分母是 xᵏ，分子就要展到 xᵏ 那一項。展得不夠，分子會只剩 o(…)，看起來像 0/0，什麼都看不出來；展得太多不會錯，只是白算。",
-        "分母也是函數時（例如 1 − cos x），兩邊都展開到各自第一個不為 0 的項。"
+        "分母是 $x^k$，分子就要展到 $x^k$ 那一項。展得不夠，分子會只剩 $o(\\ldots)$，看起來像 $\\frac{0}{0}$，什麼都看不出來；展得太多不會錯，只是白算。",
+        "分母也是函數時（例如 $1-\\cos x$），兩邊都展開到各自第一個不為 0 的項。"
       ],
       "collapsible": false
     },
     {
       "heading": "④ 為什麼可以這樣換",
       "body": [
-        "〈Taylor 誤差〉說 f(x) = Tₙ(x) + Rₙ(x)，Rₙ(x) = f⁽ⁿ⁺¹⁾(c)xⁿ⁺¹/(n + 1)!。只要 f⁽ⁿ⁺¹⁾ 在 0 附近連續（五個基本函數都是），它在 0 附近就有界，所以 |Rₙ(x)| ≤ M|x|ⁿ⁺¹，Rₙ(x)/xⁿ → 0，也就是 Rₙ(x) = o(xⁿ)。這正是「多項式 + o(xⁿ)」的意思，不是近似，是等式。"
+        "〈Taylor 誤差〉說 $f(x)=T_n(x)+R_n(x)$，$R_n(x)=\\frac{f^{(n+1)}(c)x^{n+1}}{(n+1)!}$。只要 $f^{(n+1)}$ 在 0 附近連續（五個基本函數都是），它在 0 附近就有界，所以 $|R_n(x)|\\le M|x|^{n+1}$，$\\frac{R_n(x)}{x^n}\\to 0$，也就是 $R_n(x)=o(x^n)$。這正是「多項式 $+\\,o(x^n)$」的意思，不是近似，是等式。"
       ],
       "collapsible": false
     }
@@ -49,77 +49,77 @@
   "workedExamples": [
     {
       "title": "展開一個函數",
-      "prompt": "lim_{x→0} (x − sin x)/x³",
+      "prompt": "$\\lim_{x\\to 0}\\frac{x-\\sin x}{x^3}$",
       "steps": [
-        "分母 x³，sin x 展到 x³：sin x = x − x³/6 + o(x³)。",
-        "分子 x − sin x = x³/6 + o(x³)。",
-        "(x³/6 + o(x³))/x³ = 1/6 + o(x³)/x³ → 1/6。"
+        "分母 $x^3$，$\\sin x$ 展到 $x^3$：$\\sin x=x-\\frac{x^3}{6}+o(x^3)$。",
+        "分子 $x-\\sin x=\\frac{x^3}{6}+o(x^3)$。",
+        "$\\frac{x^3/6+o(x^3)}{x^3}=\\frac{1}{6}+\\frac{o(x^3)}{x^3}\\to\\frac{1}{6}$。"
       ],
-      "answer": "1/6",
+      "answer": "$\\frac{1}{6}$",
       "claim": "LIM((x-sin(x))/x^3, 0) == 1/6"
     },
     {
       "title": "分子分母都展開",
-      "prompt": "lim_{x→0} (eˣ − 1 − x)/(1 − cos x)",
+      "prompt": "$\\lim_{x\\to 0}\\frac{e^x-1-x}{1-\\cos x}$",
       "problemId": "uni-lim-012",
       "steps": [
-        "分子：eˣ = 1 + x + x²/2 + o(x²)，所以 eˣ − 1 − x = x²/2 + o(x²)。",
-        "分母：cos x = 1 − x²/2 + o(x²)，所以 1 − cos x = x²/2 + o(x²)。",
-        "分子分母同除以 x²：(1/2 + o(1))/(1/2 + o(1)) → 1。（o(1) 就是 o(x⁰)：趨近 0 的東西。）"
+        "分子：$e^x=1+x+\\frac{x^2}{2}+o(x^2)$，所以 $e^x-1-x=\\frac{x^2}{2}+o(x^2)$。",
+        "分母：$\\cos x=1-\\frac{x^2}{2}+o(x^2)$，所以 $1-\\cos x=\\frac{x^2}{2}+o(x^2)$。",
+        "分子分母同除以 $x^2$：$\\frac{1/2+o(1)}{1/2+o(1)}\\to 1$。（$o(1)$ 就是 $o(x^0)$：趨近 0 的東西。）"
       ],
       "answer": "1",
       "claim": "LIM((e^x-1-x)/(1-cos(x)), 0) == 1"
     },
     {
       "title": "代換後再展開",
-      "prompt": "lim_{x→0} (e^{x²} − cos x)/x²",
+      "prompt": "$\\lim_{x\\to 0}\\frac{e^{x^2}-\\cos x}{x^2}$",
       "problemId": "uni-lim-003",
       "steps": [
-        "e^{x²}：把 eᵘ = 1 + u + o(u) 的 u 換成 x²，得 1 + x² + o(x²)。",
-        "cos x = 1 − x²/2 + o(x²)。",
-        "分子 = (1 + x²) − (1 − x²/2) + o(x²) = (3/2)x² + o(x²)。除以 x²，極限 3/2。"
+        "$e^{x^2}$：把 $e^u=1+u+o(u)$ 的 $u$ 換成 $x^2$，得 $1+x^2+o(x^2)$。",
+        "$\\cos x=1-\\frac{x^2}{2}+o(x^2)$。",
+        "分子 $=(1+x^2)-\\left(1-\\frac{x^2}{2}\\right)+o(x^2)=\\frac{3}{2}x^2+o(x^2)$。除以 $x^2$，極限 $\\frac{3}{2}$。"
       ],
-      "answer": "3/2",
+      "answer": "$\\frac{3}{2}$",
       "claim": "LIM((e^(x^2)-cos(x))/x^2, 0) == 3/2"
     }
   ],
   "pitfalls": [
-    "展得不夠深，分子只剩 o(…)，就誤判極限是 0。",
-    "係數忘了除以階乘：eˣ 的 x² 項是 x²/2。",
-    "o(x²) − o(x²) 寫成 0：兩個未知的小量相減還是 o(x²)，不是 0。",
-    "x → ∞ 或 x → a ≠ 0 時直接套 0 附近的展開（要先換變數）。"
+    "展得不夠深，分子只剩 $o(\\ldots)$，就誤判極限是 0。",
+    "係數忘了除以階乘：$e^x$ 的 $x^2$ 項是 $\\frac{x^2}{2}$。",
+    "$o(x^2)-o(x^2)$ 寫成 0：兩個未知的小量相減還是 $o(x^2)$，不是 0。",
+    "$x\\to\\infty$ 或 $x\\to a\\ne 0$ 時直接套 0 附近的展開（要先換變數）。"
   ],
   "checks": [
     {
-      "ask": "lim_{x→0} (ln(1 + x) − x)/x² = ？",
+      "ask": "$\\lim_{x\\to 0}\\frac{\\ln(1+x)-x}{x^2}=$？",
       "options": [
-        { "label": "−1/2", "correct": true },
-        { "label": "1/2", "why": "ln(1 + x) = x − x²/2 + …，x² 項是負的。" },
-        { "label": "0", "why": "只展到 x + o(x) 的話，分子是 o(x)，跟 x² 比讀不出東西；要展到 x²。" }
+        { "label": "$-\\frac{1}{2}$", "correct": true },
+        { "label": "$\\frac{1}{2}$", "why": "$\\ln(1+x)=x-\\frac{x^2}{2}+\\cdots$，$x^2$ 項是負的。" },
+        { "label": "0", "why": "只展到 $x+o(x)$ 的話，分子是 $o(x)$，跟 $x^2$ 比讀不出東西；要展到 $x^2$。" }
       ]
     },
     {
-      "ask": "求 lim_{x→0} (sin x − x + x³/6)/x⁵，sin x 至少要展到？",
+      "ask": "求 $\\lim_{x\\to 0}\\frac{\\sin x-x+x^3/6}{x^5}$，$\\sin x$ 至少要展到？",
       "options": [
-        { "label": "x⁵ 項", "correct": true },
-        { "label": "x³ 項", "why": "到 x³ 時分子全部消掉，只剩 o(x³)，除以 x⁵ 無法判斷。" },
-        { "label": "x⁷ 項", "why": "不會錯，但 x⁷ 項除以 x⁵ → 0，對答案沒有貢獻，是多餘的。" }
+        { "label": "$x^5$ 項", "correct": true },
+        { "label": "$x^3$ 項", "why": "到 $x^3$ 時分子全部消掉，只剩 $o(x^3)$，除以 $x^5$ 無法判斷。" },
+        { "label": "$x^7$ 項", "why": "不會錯，但 $x^7$ 項除以 $x^5\\to 0$，對答案沒有貢獻，是多餘的。" }
       ]
     },
     {
-      "ask": "x → 0 時，下列哪個是 o(x²)？",
+      "ask": "$x\\to 0$ 時，下列哪個是 $o(x^2)$？",
       "options": [
-        { "label": "x³", "correct": true },
-        { "label": "x²", "why": "x²/x² = 1，不趨近 0。" },
-        { "label": "5x", "why": "5x/x² = 5/x → ∞；5x 比 x² 大得多。" }
+        { "label": "$x^3$", "correct": true },
+        { "label": "$x^2$", "why": "$\\frac{x^2}{x^2}=1$，不趨近 0。" },
+        { "label": "$5x$", "why": "$\\frac{5x}{x^2}=\\frac{5}{x}\\to\\infty$；$5x$ 比 $x^2$ 大得多。" }
       ]
     },
     {
-      "ask": "lim_{x→0} (eˣ − 1 − x)/x² = ？",
+      "ask": "$\\lim_{x\\to 0}\\frac{e^x-1-x}{x^2}=$？",
       "options": [
-        { "label": "1/2", "correct": true },
-        { "label": "1", "why": "eˣ 的 x² 係數是 1/2!，不是 1。" },
-        { "label": "0", "why": "eˣ 只展到 1 + x 會看不到 x² 項；展到 x² 才有 x²/2。" }
+        { "label": "$\\frac{1}{2}$", "correct": true },
+        { "label": "1", "why": "$e^x$ 的 $x^2$ 係數是 $\\frac{1}{2!}$，不是 1。" },
+        { "label": "0", "why": "$e^x$ 只展到 $1+x$ 會看不到 $x^2$ 項；展到 $x^2$ 才有 $\\frac{x^2}{2}$。" }
       ]
     }
   ],
@@ -142,7 +142,7 @@
     { "id": "depth-lim-009", "trains": "taylor-limit-expand-order" },
     { "id": "uni-lim-007", "trains": "taylor-limit-expand-order" },
     { "id": "burst-boss-lim-002", "trains": "taylor-limit-little-o" },
-    { "id": "uni-lim-010", "challenge": true, "trains": "taylor-limit-expand-order", "note": "挑戰：arctan x 與 arcsin x 的一次項相同，要各展到 x³：x − x³/3 與 x + x³/6。" }
+    { "id": "uni-lim-010", "challenge": true, "trains": "taylor-limit-expand-order", "note": "挑戰：$\\arctan x$ 與 $\\arcsin x$ 的一次項相同，要各展到 $x^3$：$x-\\frac{x^3}{3}$ 與 $x+\\frac{x^3}{6}$。" }
   ],
   "gaps": []
 }
