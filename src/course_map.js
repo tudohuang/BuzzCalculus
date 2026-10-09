@@ -195,6 +195,10 @@
   let hlDesc = null;
   let hlRel = null;
   let tiers = null; // Uint8Array：0 還沒、1 完成、2 熟練、3 全破
+  // 剛做完的那一課亮一下（從分節的結算按「在地圖上看」進來）：一圈金色的環往外擴、淡掉，只播一次。
+  // reduced-motion：不動，環直接畫著，時間到拿掉。
+  let lit = null; // { i, t0 }
+  const LIT_MS = 1600;
   let nodePaths = null; // [還沒, 完成, 熟練環, 全破環, 下一課]
   let labels = null; // 課的字：{ no, title, noW }
   let stageLabel = null;
@@ -359,11 +363,13 @@
     if (Math.min(2, window.devicePixelRatio || 1) !== dpr && measure()) dirty = true;
     if (anim.on) stepAnim(now);
     if (inertia.on) stepInertia(now);
-    if (dirty || anim.on || inertia.on) {
+    if (lit && now - lit.t0 > LIT_MS) { lit = null; dirty = true; if (host) delete host.dataset.lit; }
+    const glow = Boolean(lit) && !reduced();
+    if (dirty || anim.on || inertia.on || glow) {
       dirty = false;
       draw();
     }
-    if (anim.on || inertia.on) frame = window.requestAnimationFrame(tick);
+    if (anim.on || inertia.on || glow) frame = window.requestAnimationFrame(tick);
     else publish();
   }
 
@@ -680,6 +686,22 @@
       }
     }
     stats.visibleChapters = visibleChapters;
+    if (lit) {
+      const p = Math.min(1, (performance.now() - lit.t0) / LIT_MS);
+      const still = reduced();
+      const grow = still ? 4 : 4 + 22 * p;
+      const w = m.NW * s;
+      const h = m.NH * s;
+      ctx.globalAlpha = still ? 1 : 1 - p * p;
+      ctx.lineWidth = still ? 3 : 3 + 2 * (1 - p);
+      ctx.strokeStyle = pal.gold;
+      ctx.beginPath();
+      const x = m.lx[lit.i] * s + cam.tx - w / 2 - grow;
+      const y = m.ly[lit.i] * s + cam.ty - h / 2 - grow;
+      if (typeof ctx.roundRect === "function") ctx.roundRect(x, y, w + 2 * grow, h + 2 * grow, h / 2 + grow);
+      else ctx.rect(x, y, w + 2 * grow, h + 2 * grow);
+      ctx.stroke();
+    }
     ctx.globalAlpha = 1;
     lastDrawMs = performance.now() - t0;
   }
@@ -1246,6 +1268,15 @@
         canvas.focus({ preventScroll: true });
       }
     }
+    if (options.litId) {
+      const i = opts.lessons.findIndex((L) => L.id === options.litId);
+      if (i >= 0) {
+        lit = { i, t0: performance.now() };
+        host.dataset.lit = options.litId;
+        // reduced-motion 時沒有一直在畫的格子：時間到要自己叫一格把環拿掉
+        window.setTimeout(() => request(), LIT_MS + 50);
+      }
+    }
     request();
     return true;
   }
@@ -1265,6 +1296,7 @@
       ancestors: ancCount,
       descendants: descCount,
       animating: anim.on || inertia.on,
+      lit: lit ? opts.lessons[lit.i].id : "",
       draws: drawCount,
       lastDrawMs
     };

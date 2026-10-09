@@ -84,6 +84,8 @@ interface BuzzRecords {
   course: Record<string, BuzzCourseProgress>;
   /** 新版課程（中文介面）的進度，key 是大綱的穩定 id；推薦題對錯看 problemStats，不另外記 */
   courseV2: Record<string, BuzzCourseV2Progress>;
+  /** 讀完一節課（分節模式）的日子：本地日期 → 節數；連勝與「讀一節課」任務都看它 */
+  courseReadDays: Record<string, number>;
   courseGraduation: BuzzCourseGraduation | null;
   settings: BuzzSettings;
   streakShields: number;
@@ -242,6 +244,12 @@ interface BuzzCourseV2Progress {
   quizAt?: string;
   doneAt?: string;
   practicedAt?: string;
+  /** 分節模式：讀到第幾節（下次從那裡接）、做完的節、分節裡小測選過的選項、這一課拿到的 XP、三層加成發到哪一層 */
+  secAt?: number;
+  secDone?: number[];
+  picks?: Record<string, number[]>;
+  xp?: number;
+  tierXp?: number;
 }
 
 interface BuzzCourseProgress {
@@ -367,7 +375,9 @@ interface Window {
   BUZZ_PROBLEMS: BuzzProblem[];
   BUZZ_PROOFS: BuzzProof[];
   BUZZ_COURSE: BuzzCourseLesson[];
-  BuzzCourseUI: { create(deps: { escapeHtml: (s: unknown) => string; escapeAttr: (s: unknown) => string; icon: (name: string) => string; referenceAnswerHTML: (problem: BuzzProblem) => string; loadRecords: () => BuzzRecords; saveRecords: (records: BuzzRecords) => void; ensureLazy: (group: string) => Promise<void>; startQuiz: (pool: BuzzProblem[], options?: any) => void; render: () => void; go: (view: string) => void }): any };
+  BuzzCourseUI: { create(deps: { escapeHtml: (s: unknown) => string; escapeAttr: (s: unknown) => string; icon: (name: string) => string; referenceAnswerHTML: (problem: BuzzProblem) => string; loadRecords: () => BuzzRecords; saveRecords: (records: BuzzRecords) => void; ensureLazy: (group: string) => Promise<void>; startQuiz: (pool: BuzzProblem[], options?: any) => void; render: () => void; go: (view: string) => void; noteCourseRead?: (records: BuzzRecords) => BuzzRecords; focusModeOn?: () => boolean; xpLevel?: (xp: unknown) => { level: number; into: number; span: number }; streakDays?: (records: BuzzRecords) => number }): any };
+  /** 分節模式（data-lazy="sections"，只有打開有分節的課才載） */
+  BuzzCourseSections?: { render(api: any): string; act(api: any, action: string, data: any): void };
   /** 新版課程的畫面（data-lazy="course"，只有中文介面會載） */
   BuzzCourseV2UI?: { create(deps: any): any };
   BUZZ_COURSE_V2?: { stages: { n: number; title: string; branch?: boolean; chapters: { code: string; title: string; lessons: { id: string; title: string; read?: number; total?: number; practice?: string; worked?: string }[] }[] }[] };
