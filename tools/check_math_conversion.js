@@ -22,7 +22,10 @@ const SUPER = { "⁰": "0", "¹": "1", "²": "2", "³": "3", "⁴": "4", "⁵": 
 const CJK = /[㐀-鿿　-〿！-｠「」『』〈〉]/g;
 
 const cjkSeq = (text) => (String(text).match(CJK) || []).join("");
-const digitsOld = (text) => String(text).replace(/[⁰¹²³⁴⁵⁶⁷⁸⁹₀₁₂₃₄₅₆₇₈₉]/g, (c) => SUPER[c]).replace(/[^0-9]/g, "");
+// ∛ 與 ∜ 在 KaTeX 只能寫成 \sqrt[3]{…}、\sqrt[4]{…}，會多出一個數字 —— 舊版也把它們算成 3、4
+// ½ 這類分數字元轉成 \frac{1}{2} 之後是 1、2 兩個數字
+const VULGAR = { "½": "12", "⅓": "13", "⅔": "23", "¼": "14", "¾": "34", "⅕": "15", "⅙": "16", "⅛": "18" };
+const digitsOld = (text) => String(text).replace(/[½⅓⅔¼¾⅕⅙⅛]/g, (c) => VULGAR[c]).replace(/∛/g, "3").replace(/∜/g, "4").replace(/[⁰¹²³⁴⁵⁶⁷⁸⁹₀₁₂₃₄₅₆₇₈₉]/g, (c) => SUPER[c]).replace(/[^0-9]/g, "");
 const digitsNew = (text) => String(text)
   .replace(/\\[a-zA-Z]+/g, " ")          // \frac、\sqrt、\to … 不含數字
   .replace(/[⁰¹²³⁴⁵⁶⁷⁸⁹₀₁₂₃₄₅₆₇₈₉]/g, (c) => SUPER[c])

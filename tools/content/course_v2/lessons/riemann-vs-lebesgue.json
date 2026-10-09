@@ -8,25 +8,25 @@
   "related": ["upper-lower-sums", "improper-singular", "dirichlet-integral"],
   "objectives": [
     "說得出兩種積分切的方向不同：Riemann 切定義域，Lebesgue 按函數值分類。",
-    "會用分層公式 ∫f = ∫₀^∞ μ({f > t}) dt 從「值」的方向算積分。",
-    "知道兩者的關係：有界 Riemann 可積 ⇒ Lebesgue 可積且值相同；並各舉一個只有一邊成立的例子。"
+    "會用分層公式 $\\int f=\\int_0^\\infty\\mu(\\{f>t\\})\\,dt$ 從「值」的方向算積分。",
+    "知道兩者的關係：有界 Riemann 可積 $\\Rightarrow$ Lebesgue 可積且值相同；並各舉一個只有一邊成立的例子。"
   ],
   "visual": "同一條曲線 y = x² 在 [0, 1] 上畫兩次。左圖把 x 軸切成直條（Riemann）；右圖把 y 軸切成水平帶，每一條帶子在 x 軸上「投影」出 {x² > t} 這段，長度 1 − √t 即時顯示。兩邊的切數用同一個滑桿加大，面積讀數都往 1/3 收斂。",
   "concept": [
     {
       "heading": "① 兩種數錢的方法",
       "body": [
-        "Riemann：把 x 軸切成小段，每段問「這裡多高」，高 × 寬相加。像是照撿起來的順序一張一張數鈔票。",
-        "Lebesgue：把 y 軸切成小段，每段問「函數值落在這段的點，佔了多大的集合」，值 × 測度相加。像是先把鈔票按面額分堆，再數每堆幾張。",
-        "分堆的好處：不管點在 x 軸上排得多亂（例如有理點與無理點交錯），只要量得出每一堆的大小就能算。"
+        "Riemann：把 $x$ 軸切成小段，每段問「這裡多高」，高 $\\times$ 寬相加。像是照撿起來的順序一張一張數鈔票。",
+        "Lebesgue：把 $y$ 軸切成小段，每段問「函數值落在這段的點，佔了多大的集合」，值 $\\times$ 測度相加。像是先把鈔票按面額分堆，再數每堆幾張。",
+        "分堆的好處：不管點在 $x$ 軸上排得多亂（例如有理點與無理點交錯），只要量得出每一堆的大小就能算。"
       ],
       "collapsible": false
     },
     {
       "heading": "② 分層公式",
       "body": [
-        "把「按值分類」推到極限，就得到非負可測 f 的分層公式（f 在高度 t 以上的部分，佔多大的集合，再對 t 積）：",
-        "直覺，不是證明：f(x) = ∫₀^∞ χ_{{f(x) > t}} dt，對 x 積分再交換次序。交換次序要用測度的 Fubini–Tonelli 定理，不在這條支線裡證。"
+        "把「按值分類」推到極限，就得到非負可測 $f$ 的分層公式（$f$ 在高度 $t$ 以上的部分，佔多大的集合，再對 $t$ 積）：",
+        "直覺，不是證明：$f(x)=\\int_0^\\infty\\chi_{\\{f(x)>t\\}}\\,dt$，對 $x$ 積分再交換次序。交換次序要用測度的 Fubini–Tonelli 定理，不在這條支線裡證。"
       ],
       "tex": ["\\int_X f\\,d\\mu=\\int_0^{\\infty}\\mu\\big(\\{x: f(x)>t\\}\\big)\\,dt\\qquad(f\\ge 0)"],
       "collapsible": false
@@ -34,62 +34,62 @@
     {
       "heading": "③ 兩者一致的地方",
       "body": [
-        "定理：f 在 [a, b] 上有界且 Riemann 可積，則 f Lebesgue 可積，而且兩個積分相等。所以前面所有算過的定積分，在 Lebesgue 理論裡值都不變。"
+        "定理：$f$ 在 $[a,b]$ 上有界且 Riemann 可積，則 $f$ Lebesgue 可積，而且兩個積分相等。所以前面所有算過的定積分，在 Lebesgue 理論裡值都不變。"
       ],
       "collapsible": false
     },
     {
-      "heading": "證明：Riemann 可積 ⇒ Lebesgue 可積且值相同",
+      "heading": "證明：Riemann 可積 $\\Rightarrow$ Lebesgue 可積且值相同",
       "body": [
-        "設 |f| ≤ M。取分割 Pₙ 使 U(f, Pₙ) − L(f, Pₙ) < 1/n；把 Pₙ 換成 P₁ ∪ ⋯ ∪ Pₙ（加細只會讓差變小），使它們一層比一層細。",
-        "在 Pₙ 的每段 (x_{i−1}, x_i] 上令 φₙ = 該閉區間上 f 的下確界、ψₙ = 上確界。這是簡單函數，φₙ ≤ f ≤ ψₙ 在 (a, b] 上成立，∫φₙ = L(f, Pₙ)、∫ψₙ = U(f, Pₙ)。分割加細時下確界只會變大、上確界只會變小，所以 φₙ 遞增、ψₙ 遞減。",
-        "令 g = lim φₙ、h = lim ψₙ，都是可測函數且 g ≤ f ≤ h。對遞增的非負函數 φₙ + M 與 M − ψₙ 用〈單調收斂定理（測度版）〉：∫g = lim L(f, Pₙ)、∫h = lim U(f, Pₙ)，兩者都等於 Riemann 積分 I（因為 L ≤ I ≤ U 且差 < 1/n）。",
-        "於是 h − g ≥ 0 且 ∫(h − g) = 0，所以 h = g a.e.，夾在中間的 f 也 = g a.e.。Lebesgue 測度是完備的（零測集的子集可測），所以 f 可測，∫f = ∫g = I。"
+        "設 $|f|\\le M$。取分割 $P_n$ 使 $U(f,P_n)-L(f,P_n)<\\frac{1}{n}$；把 $P_n$ 換成 $P_1\\cup\\cdots\\cup P_n$（加細只會讓差變小），使它們一層比一層細。",
+        "在 $P_n$ 的每段 $(x_{i-1},x_i]$ 上令 $\\varphi_n=$ 該閉區間上 $f$ 的下確界、$\\psi_n=$ 上確界。這是簡單函數，$\\varphi_n\\le f\\le\\psi_n$ 在 $(a,b]$ 上成立，$\\int\\varphi_n=L(f,P_n)$、$\\int\\psi_n=U(f,P_n)$。分割加細時下確界只會變大、上確界只會變小，所以 $\\varphi_n$ 遞增、$\\psi_n$ 遞減。",
+        "令 $g=\\lim\\varphi_n$、$h=\\lim\\psi_n$，都是可測函數且 $g\\le f\\le h$。對遞增的非負函數 $\\varphi_n+M$ 與 $M-\\psi_n$ 用〈單調收斂定理（測度版）〉：$\\int g=\\lim L(f,P_n)$、$\\int h=\\lim U(f,P_n)$，兩者都等於 Riemann 積分 $I$（因為 $L\\le I\\le U$ 且差 $<\\frac{1}{n}$）。",
+        "於是 $h-g\\ge0$ 且 $\\int(h-g)=0$，所以 $h=g$ a.e.，夾在中間的 $f$ 也 $=g$ a.e.。Lebesgue 測度是完備的（零測集的子集可測），所以 $f$ 可測，$\\int f=\\int g=I$。"
       ],
       "collapsible": true
     },
     {
       "heading": "④ 只有一邊成立的地方",
       "body": [
-        "Lebesgue 有、Riemann 沒有：Dirichlet 函數 χ_{ℚ∩[0,1]}，Lebesgue 積分是 0。更糟的是，把有理數排成 q₁, q₂, …，fₙ = χ_{{q₁,…,qₙ}} 每個都 Riemann 可積（積分 0）、而且遞增，極限卻是 Dirichlet 函數。Riemann 可積函數的遞增極限不一定 Riemann 可積；Lebesgue 這邊有單調收斂定理保證極限仍可積。",
-        "Riemann 有、Lebesgue 沒有：瑕積分 ∫₀^∞ sin x / x dx 收斂，但 ∫|sin x|/x = ∞，不是 Lebesgue 可積。對非負函數則不會發生：非負的瑕積分收斂時，兩者相等（範例 3）。"
+        "Lebesgue 有、Riemann 沒有：Dirichlet 函數 $\\chi_{\\mathbb{Q}\\cap[0,1]}$，Lebesgue 積分是 0。更糟的是，把有理數排成 $q_1,q_2,\\dots$，$f_n=\\chi_{\\{q_1,\\dots,q_n\\}}$ 每個都 Riemann 可積（積分 0）、而且遞增，極限卻是 Dirichlet 函數。Riemann 可積函數的遞增極限不一定 Riemann 可積；Lebesgue 這邊有單調收斂定理保證極限仍可積。",
+        "Riemann 有、Lebesgue 沒有：瑕積分 $\\int_0^\\infty\\frac{\\sin x}{x}\\,dx$ 收斂，但 $\\int\\frac{|\\sin x|}{x}=\\infty$，不是 Lebesgue 可積。對非負函數則不會發生：非負的瑕積分收斂時，兩者相等（範例 3）。"
       ],
       "collapsible": false
     }
   ],
   "workedExamples": [
     {
-      "title": "用分層公式算 ∫₀¹ x² dx",
-      "prompt": "f(x) = x² 在 [0, 1] 上。用 ∫f = ∫₀^∞ m({f > t}) dt 計算。",
+      "title": "用分層公式算 $\\int_0^1 x^2\\,dx$",
+      "prompt": "$f(x)=x^2$ 在 $[0,1]$ 上。用 $\\int f=\\int_0^\\infty m(\\{f>t\\})\\,dt$ 計算。",
       "steps": [
-        "0 ≤ t < 1 時，{x ∈ [0, 1] : x² > t} = (√t, 1]，長度 1 − √t。",
-        "t ≥ 1 時集合是空的，長度 0。",
-        "∫f = ∫₀¹ (1 − √t) dt = 1 − 2/3 = 1/3，跟直條切法一樣。"
+        "$0\\le t<1$ 時，$\\{x\\in[0,1]:x^2>t\\}=(\\sqrt{t},1]$，長度 $1-\\sqrt{t}$。",
+        "$t\\ge1$ 時集合是空的，長度 0。",
+        "$\\int f=\\int_0^1(1-\\sqrt{t})\\,dt=1-\\frac{2}{3}=\\frac{1}{3}$，跟直條切法一樣。"
       ],
-      "answer": "1/3",
+      "answer": "$\\frac{1}{3}$",
       "claim": "INT(1-sqrt(t), 0, 1) == INT(x^2, 0, 1) ;; INT(1-sqrt(t), 0, 1) == 1/3"
     },
     {
       "title": "整數值函數：一層一層數",
-      "prompt": "求 ∫_{[0,2]} ⌊x²⌋ dm。",
+      "prompt": "求 $\\int_{[0,2]}\\lfloor x^2\\rfloor\\,dm$。",
       "problemId": "lb-sim-005",
       "steps": [
-        "⌊x²⌋ 在 [0, 2] 上取值 0, 1, 2, 3（x = 2 時是 4，單點測度 0）。整數值的分層公式寫成 ∫f = Σ_{k≥1} m({f ≥ k})。",
-        "{⌊x²⌋ ≥ 1} = [1, 2]，長度 1；{⌊x²⌋ ≥ 2} = [√2, 2]，長度 2 − √2；{⌊x²⌋ ≥ 3} = [√3, 2]，長度 2 − √3；{⌊x²⌋ ≥ 4} = {2}，長度 0。",
-        "相加：1 + (2 − √2) + (2 − √3) = 5 − √2 − √3 ≈ 1.8537。"
+        "$\\lfloor x^2\\rfloor$ 在 $[0,2]$ 上取值 0, 1, 2, 3（$x=2$ 時是 4，單點測度 0）。整數值的分層公式寫成 $\\int f=\\sum_{k\\ge1} m(\\{f\\ge k\\})$。",
+        "$\\{\\lfloor x^2\\rfloor\\ge1\\}=[1,2]$，長度 1；$\\{\\lfloor x^2\\rfloor\\ge2\\}=[\\sqrt{2},2]$，長度 $2-\\sqrt{2}$；$\\{\\lfloor x^2\\rfloor\\ge3\\}=[\\sqrt{3},2]$，長度 $2-\\sqrt{3}$；$\\{\\lfloor x^2\\rfloor\\ge4\\}=\\{2\\}$，長度 0。",
+        "相加：$1+(2-\\sqrt{2})+(2-\\sqrt{3})=5-\\sqrt{2}-\\sqrt{3}\\approx1.8537$。"
       ],
-      "answer": "5 − √2 − √3",
-      "note": "按 x 軸切也行：0·1 + 1·(√2 − 1) + 2·(√3 − √2) + 3·(2 − √3)，化簡結果相同。",
+      "answer": "$5-\\sqrt{2}-\\sqrt{3}$",
+      "note": "按 $x$ 軸切也行：$0\\cdot1+1\\cdot(\\sqrt{2}-1)+2\\cdot(\\sqrt{3}-\\sqrt{2})+3\\cdot(2-\\sqrt{3})$，化簡結果相同。",
       "claim": "(2-1)+(2-sqrt(2))+(2-sqrt(3)) == 5-sqrt(2)-sqrt(3) ;; 1*(sqrt(2)-1)+2*(sqrt(3)-sqrt(2))+3*(2-sqrt(3)) == 5-sqrt(2)-sqrt(3)"
     },
     {
       "title": "非負的瑕積分",
-      "prompt": "f(x) = 1/√x 在 (0, 1] 上。說明 Lebesgue 積分等於瑕積分 2。",
+      "prompt": "$f(x)=\\frac{1}{\\sqrt{x}}$ 在 $(0,1]$ 上。說明 Lebesgue 積分等於瑕積分 2。",
       "problemId": "lb-lp-004",
       "steps": [
-        "令 fₙ = f · χ_{[1/n, 1]}。在 [1/n, 1] 上 f 連續有界，所以 ∫fₙ 等於 Riemann 積分 ∫_{1/n}^1 x^{−1/2} dx = 2 − 2/√n。",
-        "fₙ ≥ 0、對 n 遞增，而且對每個 x ∈ (0, 1]，n 夠大時 fₙ(x) = f(x)。",
-        "由〈單調收斂定理（測度版）〉，∫f = lim ∫fₙ = lim (2 − 2/√n) = 2。這個極限正是瑕積分的定義，所以兩者相等。"
+        "令 $f_n=f\\cdot\\chi_{[1/n,1]}$。在 $[\\frac{1}{n},1]$ 上 $f$ 連續有界，所以 $\\int f_n$ 等於 Riemann 積分 $\\int_{1/n}^1 x^{-1/2}\\,dx=2-\\frac{2}{\\sqrt{n}}$。",
+        "$f_n\\ge0$、對 $n$ 遞增，而且對每個 $x\\in(0,1]$，$n$ 夠大時 $f_n(x)=f(x)$。",
+        "由〈單調收斂定理（測度版）〉，$\\int f=\\lim\\int f_n=\\lim(2-\\frac{2}{\\sqrt{n}})=2$。這個極限正是瑕積分的定義，所以兩者相等。"
       ],
       "answer": "2",
       "claim": "INT(x^(-1/2), 1/n, 1) == 2 - 2/sqrt(n) ;; INT(x^(-1/2), 0, 1) == 2"
@@ -97,8 +97,8 @@
   ],
   "pitfalls": [
     "以為 Lebesgue 積分會算出跟 Riemann 不一樣的值。兩者都存在時一定相等。",
-    "以為 Lebesgue 積分包含所有瑕積分。有號、靠抵銷收斂的瑕積分（sin x / x）不在 L¹ 裡。",
-    "用分層公式時 t 只積到 1。t 要積到 f 的最大值（或 ∞），超過之後集合才是空的。",
+    "以為 Lebesgue 積分包含所有瑕積分。有號、靠抵銷收斂的瑕積分（$\\frac{\\sin x}{x}$）不在 $L^1$ 裡。",
+    "用分層公式時 $t$ 只積到 1。$t$ 要積到 $f$ 的最大值（或 $\\infty$），超過之後集合才是空的。",
     "以為 Riemann 可積函數的遞增極限一定 Riemann 可積。有理數逐一加進來的例子給出 Dirichlet 函數。"
   ],
   "checks": [
@@ -106,31 +106,31 @@
       "ask": "Lebesgue 積分的「分堆」是按什麼分？",
       "options": [
         { "label": "按函數值落在哪一段，再量那些點構成的集合", "correct": true },
-        { "label": "按 x 軸上的小區間，再看每段多高", "why": "那是 Riemann 的切法。Lebesgue 切的是 y 軸。" },
+        { "label": "按 $x$ 軸上的小區間，再看每段多高", "why": "那是 Riemann 的切法。Lebesgue 切的是 $y$ 軸。" },
         { "label": "按函數連續或不連續的點分兩堆", "why": "連續性只出現在 Riemann 可積的判準裡；Lebesgue 的分類依據是函數值。" }
       ]
     },
     {
-      "ask": "f(x) = 2x 在 [0, 1]。用分層公式 ∫₀^∞ m({f > t}) dt，結果是？",
+      "ask": "$f(x)=2x$ 在 $[0,1]$。用分層公式 $\\int_0^\\infty m(\\{f>t\\})\\,dt$，結果是？",
       "options": [
         { "label": "1", "correct": true },
-        { "label": "3/4", "why": "你只把 t 積到 1。f 最大值是 2，t ∈ [0, 2] 時 m({2x > t}) = 1 − t/2，∫₀² (1 − t/2) dt = 1。" },
-        { "label": "2", "why": "你把 m({f > t}) 都當成 1。高度 t 越高，{2x > t} = (t/2, 1] 越短。" }
+        { "label": "$\\frac{3}{4}$", "why": "你只把 $t$ 積到 1。$f$ 最大值是 2，$t\\in[0,2]$ 時 $m(\\{2x>t\\})=1-\\frac{t}{2}$，$\\int_0^2(1-\\frac{t}{2})\\,dt=1$。" },
+        { "label": "2", "why": "你把 $m(\\{f>t\\})$ 都當成 1。高度 $t$ 越高，$\\{2x>t\\}=(\\frac{t}{2},1]$ 越短。" }
       ]
     },
     {
-      "ask": "f 在 [a, b] 上有界且 Riemann 可積。下列何者正確？",
+      "ask": "$f$ 在 $[a,b]$ 上有界且 Riemann 可積。下列何者正確？",
       "options": [
-        { "label": "f Lebesgue 可積，而且兩個積分相等", "correct": true },
-        { "label": "f Lebesgue 可積，但值可能不同", "why": "Lebesgue 積分被下和與上和夾住，跟 Riemann 積分是同一個數。" },
-        { "label": "f 不一定可測，所以 Lebesgue 積分不一定有定義", "why": "f 與某個可測函數幾乎處處相等，而 Lebesgue 測度完備，所以 f 可測。" }
+        { "label": "$f$ Lebesgue 可積，而且兩個積分相等", "correct": true },
+        { "label": "$f$ Lebesgue 可積，但值可能不同", "why": "Lebesgue 積分被下和與上和夾住，跟 Riemann 積分是同一個數。" },
+        { "label": "$f$ 不一定可測，所以 Lebesgue 積分不一定有定義", "why": "$f$ 與某個可測函數幾乎處處相等，而 Lebesgue 測度完備，所以 $f$ 可測。" }
       ]
     },
     {
-      "ask": "∫₀^∞ sin x / x dx 屬於哪一種？",
+      "ask": "$\\int_0^\\infty\\frac{\\sin x}{x}\\,dx$ 屬於哪一種？",
       "options": [
         { "label": "瑕積分收斂，但不是 Lebesgue 可積", "correct": true },
-        { "label": "兩種意義下都收斂，值都是 π/2", "why": "Lebesgue 可積要 ∫|f| < ∞，而 ∫|sin x|/x 像調和級數一樣發散。" },
+        { "label": "兩種意義下都收斂，值都是 $\\frac{\\pi}{2}$", "why": "Lebesgue 可積要 $\\int|f|<\\infty$，而 $\\int\\frac{|\\sin x|}{x}$ 像調和級數一樣發散。" },
         { "label": "Lebesgue 可積，但瑕積分發散", "why": "方向反了：抵銷讓瑕積分收斂，絕對值卻發散。" }
       ]
     }
@@ -145,7 +145,7 @@
     { "id": "lb-cmp-002", "core": true, "trains": "rl-improper-vs-lebesgue" },
     { "id": "lb-lp-004", "core": true, "trains": "rl-improper-vs-lebesgue" },
     { "id": "lb-lp-006", "trains": "rl-improper-vs-lebesgue" },
-    { "id": "lb-sim-006", "challenge": true, "trains": "rl-layer-cake", "note": "挑戰：{⌊1/x⌋ ≥ k} = [1/5, 1/k]，用分層一層一層加。" }
+    { "id": "lb-sim-006", "challenge": true, "trains": "rl-layer-cake", "note": "挑戰：$\\{\\lfloor\\frac{1}{x}\\rfloor\\ge k\\}=[\\frac{1}{5},\\frac{1}{k}]$，用分層一層一層加。" }
   ],
   "gaps": [
     { "tag": "rl-layer-cake", "count": 3, "note": "給連續函數用 ∫₀^∞ m({f > t}) dt 計算（例如 e^{−x} 在 [0, ∞)、√x 在 [0, 4]）。" },

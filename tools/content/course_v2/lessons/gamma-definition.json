@@ -7,9 +7,9 @@
   "next": ["gamma-recurrence-apps", "gamma-half"],
   "related": [],
   "objectives": [
-    "寫得出 Γ(s) 的積分定義，說得出這個積分什麼時候收斂。",
-    "用分部積分推出 Γ(s + 1) = sΓ(s)，以及 Γ(n + 1) = n!。",
-    "把 ∫₀^∞ xᵏ e^{−x} dx 這類積分直接讀成 Gamma 函數的值。"
+    "寫得出 $\\Gamma(s)$ 的積分定義，說得出這個積分什麼時候收斂。",
+    "用分部積分推出 $\\Gamma(s+1)=s\\Gamma(s)$，以及 $\\Gamma(n+1)=n!$。",
+    "把 $\\int_0^{\\infty}x^ke^{-x}\\,dx$ 這類積分直接讀成 Gamma 函數的值。"
   ],
   "visual": "畫出 y = x^{s−1} e^{−x}，s 用滑桿從 1 拉到 5，曲線底下的面積即時顯示：s = 1, 2, 3, 4, 5 時面積是 1, 1, 2, 6, 24。第二張圖畫 Γ(s) 本身，在 s = 1, 2, 3, 4, 5 標出 0!, 1!, 2!, 3!, 4!：一條平滑曲線穿過所有階乘。",
   "figures": [
@@ -19,8 +19,8 @@
     {
       "heading": "① 為什麼要學它：一整族積分其實是同一個函數",
       "body": [
-        "前面分部積分時會反覆遇到 ∫₀^∞ x e^{−x} dx、∫₀^∞ x² e^{−x} dx、∫₀^∞ x³ e^{−x} dx……每一個都要分部積分好幾次。",
-        "Gamma 函數把這一整族積分統一成一個函數。之後看到這種形狀，就不用再算，直接讀值。而它在整數點剛好是階乘，等於把 n! 延伸成一條平滑曲線。"
+        "前面分部積分時會反覆遇到 $\\int_0^{\\infty}xe^{-x}\\,dx$、$\\int_0^{\\infty}x^2e^{-x}\\,dx$、$\\int_0^{\\infty}x^3e^{-x}\\,dx$……每一個都要分部積分好幾次。",
+        "Gamma 函數把這一整族積分統一成一個函數。之後看到這種形狀，就不用再算，直接讀值。而它在整數點剛好是階乘，等於把 $n!$ 延伸成一條平滑曲線。"
       ],
       "tex": ["\\Gamma(s)=\\int_0^{\\infty}x^{s-1}e^{-x}\\,dx"],
       "collapsible": false
@@ -29,31 +29,31 @@
       "heading": "② 這個積分什麼時候收斂",
       "body": [
         "這是兩端都要檢查的瑕積分：",
-        "x → ∞：e^{−x} 衰減得比任何 x 的次方增長都快，尾巴收斂。",
-        "x → 0⁺：e^{−x} → 1，被積函數像 x^{s−1}。由 p 判別，∫₀¹ x^{s−1} dx 收斂若且唯若 s − 1 > −1，也就是 s > 0。",
-        "所以：此積分表示式在 s > 0 時收斂。"
+        "$x\\to\\infty$：$e^{-x}$ 衰減得比任何 $x$ 的次方增長都快，尾巴收斂。",
+        "$x\\to 0^+$：$e^{-x}\\to 1$，被積函數像 $x^{s-1}$。由 $p$ 判別，$\\int_0^1x^{s-1}\\,dx$ 收斂若且唯若 $s-1>-1$，也就是 $s>0$。",
+        "所以：此積分表示式在 $s>0$ 時收斂。"
       ],
       "collapsible": false
     },
     {
-      "heading": "預告：s ≤ 0 呢？",
+      "heading": "預告：$s\\le 0$ 呢？",
       "body": [
-        "積分在 s ≤ 0 發散，但 Gamma 函數可以用別的方法延伸到負的非整數（例如用遞迴 Γ(s) = Γ(s + 1)/s 往左推）。這叫解析延拓。在 0、−1、−2、……仍然沒有定義。"
+        "積分在 $s\\le 0$ 發散，但 Gamma 函數可以用別的方法延伸到負的非整數（例如用遞迴 $\\Gamma(s)=\\frac{\\Gamma(s+1)}{s}$ 往左推）。這叫解析延拓。在 $0$、$-1$、$-2$、……仍然沒有定義。"
       ],
       "collapsible": true
     },
     {
-      "heading": "③ 第一個值：Γ(1) = 1",
+      "heading": "③ 第一個值：$\\Gamma(1)=1$",
       "body": [
-        "s = 1 時 x⁰ = 1，Γ(1) = ∫₀^∞ e^{−x} dx = 1。"
+        "$s=1$ 時 $x^0=1$，$\\Gamma(1)=\\int_0^{\\infty}e^{-x}\\,dx=1$。"
       ],
       "collapsible": false
     },
     {
-      "heading": "④ 遞迴：Γ(s + 1) = sΓ(s)",
+      "heading": "④ 遞迴：$\\Gamma(s+1)=s\\Gamma(s)$",
       "body": [
-        "對 Γ(s + 1) = ∫₀^∞ xˢ e^{−x} dx 做分部積分，令 u = xˢ、dv = e^{−x} dx。",
-        "邊界項：x → ∞ 時 e^{−x} 贏過 xˢ，趨近 0；x = 0 時 xˢ = 0（s > 0）。所以邊界項是 0，剩下 Γ(s + 1) = sΓ(s)。"
+        "對 $\\Gamma(s+1)=\\int_0^{\\infty}x^se^{-x}\\,dx$ 做分部積分，令 $u=x^s$、$dv=e^{-x}\\,dx$。",
+        "邊界項：$x\\to\\infty$ 時 $e^{-x}$ 贏過 $x^s$，趨近 $0$；$x=0$ 時 $x^s=0$（$s>0$）。所以邊界項是 $0$，剩下 $\\Gamma(s+1)=s\\Gamma(s)$。"
       ],
       "tex": ["\\Gamma(s+1)=\\Bigl[-x^{s}e^{-x}\\Bigr]_0^{\\infty}+s\\int_0^{\\infty}x^{s-1}e^{-x}\\,dx=s\\,\\Gamma(s)"],
       "collapsible": false
@@ -61,15 +61,15 @@
     {
       "heading": "⑤ 在整數點就是階乘",
       "body": [
-        "從 Γ(1) = 1 開始：Γ(2) = 1，Γ(3) = 2，Γ(4) = 6，……一般地 Γ(n + 1) = n!。",
-        "注意差一：Γ(n) = (n − 1)!，不是 n!。"
+        "從 $\\Gamma(1)=1$ 開始：$\\Gamma(2)=1$，$\\Gamma(3)=2$，$\\Gamma(4)=6$，……一般地 $\\Gamma(n+1)=n!$。",
+        "注意差一：$\\Gamma(n)=(n-1)!$，不是 $n!$。"
       ],
       "collapsible": false
     },
     {
-      "heading": "⑥ 讀積分：看到 xᵏ e^{−x} 就是 Gamma",
+      "heading": "⑥ 讀積分：看到 $x^ke^{-x}$ 就是 Gamma",
       "body": [
-        "∫₀^∞ xᵏ e^{−x} dx = Γ(k + 1)。指數裡有常數 a > 0 時，換元 u = ax，得到下面的公式。"
+        "$\\int_0^{\\infty}x^ke^{-x}\\,dx=\\Gamma(k+1)$。指數裡有常數 $a>0$ 時，換元 $u=ax$，得到下面的公式。"
       ],
       "tex": ["\\int_0^{\\infty}x^{k}e^{-ax}\\,dx=\\frac{\\Gamma(k+1)}{a^{k+1}}"],
       "collapsible": false
@@ -78,88 +78,88 @@
   "workedExamples": [
     {
       "title": "直接讀成 Gamma",
-      "prompt": "∫₀^∞ x² e^{−x} dx",
+      "prompt": "$\\int_0^{\\infty}x^2e^{-x}\\,dx$",
       "problemId": "mob-gamma-006",
       "steps": [
-        "形狀是 xᵏ e^{−x}，k = 2，所以是 Γ(3)。",
-        "Γ(3) = 2! = 2。"
+        "形狀是 $x^ke^{-x}$，$k=2$，所以是 $\\Gamma(3)$。",
+        "$\\Gamma(3)=2!=2$。"
       ],
-      "answer": "2",
-      "note": "分部積分兩次也會得到 2，但要寫半頁。",
+      "answer": "$2$",
+      "note": "分部積分兩次也會得到 $2$，但要寫半頁。",
       "claim": "INT(x^2*e^(-x), 0, inf) == 2"
     },
     {
       "title": "整數點的值",
-      "prompt": "Γ(6) 與 Γ(4)",
+      "prompt": "$\\Gamma(6)$ 與 $\\Gamma(4)$",
       "steps": [
-        "Γ(n + 1) = n!，所以 Γ(6) = 5! = 120。",
-        "Γ(4) = 3! = 6。"
+        "$\\Gamma(n+1)=n!$，所以 $\\Gamma(6)=5!=120$。",
+        "$\\Gamma(4)=3!=6$。"
       ],
-      "answer": "Γ(6) = 120，Γ(4) = 6",
-      "note": "不要寫成 Γ(6) = 6! = 720，那是差一的錯。",
+      "answer": "$\\Gamma(6)=120$，$\\Gamma(4)=6$",
+      "note": "不要寫成 $\\Gamma(6)=6!=720$，那是差一的錯。",
       "claim": "INT(x^5*e^(-x), 0, inf) == 120 ;; INT(x^3*e^(-x), 0, inf) == 6"
     },
     {
       "title": "指數裡有常數",
-      "prompt": "∫₀^∞ x⁴ e^{−3x} dx",
+      "prompt": "$\\int_0^{\\infty}x^4e^{-3x}\\,dx$",
       "problemId": "burst-int-001",
       "steps": [
-        "令 u = 3x，x = u/3，dx = du/3。x⁴ = u⁴/3⁴。",
-        "積分變成 (1/3⁵) ∫₀^∞ u⁴ e^{−u} du = Γ(5)/3⁵。",
-        "Γ(5) = 4! = 24，3⁵ = 243，答案是 24/243 = 8/81。"
+        "令 $u=3x$，$x=\\frac{u}{3}$，$dx=\\frac{du}{3}$。$x^4=\\frac{u^4}{3^4}$。",
+        "積分變成 $\\frac{1}{3^5}\\int_0^{\\infty}u^4e^{-u}\\,du=\\frac{\\Gamma(5)}{3^5}$。",
+        "$\\Gamma(5)=4!=24$，$3^5=243$，答案是 $\\frac{24}{243}=\\frac{8}{81}$。"
       ],
-      "answer": "8/81",
+      "answer": "$\\frac{8}{81}$",
       "claim": "INT(x^4*e^(-3x), 0, inf) == 8/81"
     },
     {
       "title": "先換元才看得出來",
-      "prompt": "∫₀^∞ x³ e^{−x²} dx",
+      "prompt": "$\\int_0^{\\infty}x^3e^{-x^2}\\,dx$",
       "problemId": "depth-int-026",
       "steps": [
-        "指數是 −x²，不是標準形狀。令 u = x²，du = 2x dx。",
-        "把 x³ dx 拆成 x² · x dx = u · (du/2)。",
-        "積分變成 (1/2) ∫₀^∞ u e^{−u} du = (1/2) Γ(2) = 1/2。"
+        "指數是 $-x^2$，不是標準形狀。令 $u=x^2$，$du=2x\\,dx$。",
+        "把 $x^3\\,dx$ 拆成 $x^2\\cdot x\\,dx=u\\cdot\\frac{du}{2}$。",
+        "積分變成 $\\frac{1}{2}\\int_0^{\\infty}ue^{-u}\\,du=\\frac{1}{2}\\Gamma(2)=\\frac{1}{2}$。"
       ],
-      "answer": "1/2",
+      "answer": "$\\frac{1}{2}$",
       "claim": "INT(x^3*e^(-x^2), 0, inf) == 1/2"
     }
   ],
   "pitfalls": [
-    "差一：Γ(n) 寫成 n!。",
-    "換元時漏了 du 的係數，或 a^{k+1} 寫成 aᵏ。",
-    "以為 Γ(0) = 0! = 1。Γ(0) 的積分在 x → 0 發散，Γ 在 0 沒有定義。"
+    "差一：$\\Gamma(n)$ 寫成 $n!$。",
+    "換元時漏了 $du$ 的係數，或 $a^{k+1}$ 寫成 $a^k$。",
+    "以為 $\\Gamma(0)=0!=1$。$\\Gamma(0)$ 的積分在 $x\\to 0$ 發散，$\\Gamma$ 在 $0$ 沒有定義。"
   ],
   "checks": [
     {
-      "ask": "Γ(5) 是多少？",
+      "ask": "$\\Gamma(5)$ 是多少？",
       "options": [
-        { "label": "24", "correct": true },
-        { "label": "120", "why": "那是 5! = Γ(6)。Γ(5) = 4! = 24。" },
-        { "label": "5", "why": "Γ 不是把參數直接拿出來，是階乘。" }
+        { "label": "$24$", "correct": true },
+        { "label": "$120$", "why": "那是 $5!=\\Gamma(6)$。$\\Gamma(5)=4!=24$。" },
+        { "label": "$5$", "why": "$\\Gamma$ 不是把參數直接拿出來，是階乘。" }
       ]
     },
     {
-      "ask": "∫₀^∞ x³ e^{−x} dx 是？",
+      "ask": "$\\int_0^{\\infty}x^3e^{-x}\\,dx$ 是？",
       "options": [
-        { "label": "6", "correct": true },
-        { "label": "24", "why": "x³ 對應 Γ(4) = 3! = 6，不是 4!。" },
-        { "label": "3", "why": "那只是指數，還要做階乘。" }
+        { "label": "$6$", "correct": true },
+        { "label": "$24$", "why": "$x^3$ 對應 $\\Gamma(4)=3!=6$，不是 $4!$。" },
+        { "label": "$3$", "why": "那只是指數，還要做階乘。" }
       ]
     },
     {
-      "ask": "積分 ∫₀^∞ x^{s−1} e^{−x} dx 為什麼要 s > 0 才收斂？",
+      "ask": "積分 $\\int_0^{\\infty}x^{s-1}e^{-x}\\,dx$ 為什麼要 $s>0$ 才收斂？",
       "options": [
-        { "label": "x → 0 時被積函數像 x^{s−1}，s ≤ 0 時那一端發散", "correct": true },
-        { "label": "因為 e^{−x} 在 s ≤ 0 時不收斂", "why": "e^{−x} 跟 s 無關，問題出在 x → 0 那一端。" },
+        { "label": "$x\\to 0$ 時被積函數像 $x^{s-1}$，$s\\le 0$ 時那一端發散", "correct": true },
+        { "label": "因為 $e^{-x}$ 在 $s\\le 0$ 時不收斂", "why": "$e^{-x}$ 跟 $s$ 無關，問題出在 $x\\to 0$ 那一端。" },
         { "label": "因為負數沒有階乘", "why": "這是結果不是原因；限制來自積分收斂。" }
       ]
     },
     {
-      "ask": "Γ(s + 1) = sΓ(s) 是用什麼推出來的？",
+      "ask": "$\\Gamma(s+1)=s\\Gamma(s)$ 是用什麼推出來的？",
       "options": [
         { "label": "分部積分，而且邊界項是 0", "correct": true },
-        { "label": "換元 u = x + 1", "why": "遞迴來自分部積分，不是平移。" },
-        { "label": "定義直接代入", "why": "定義裡沒有 s 這個係數，要靠分部積分「生出來」。" }
+        { "label": "換元 $u=x+1$", "why": "遞迴來自分部積分，不是平移。" },
+        { "label": "定義直接代入", "why": "定義裡沒有 $s$ 這個係數，要靠分部積分「生出來」。" }
       ]
     }
   ],
@@ -175,7 +175,7 @@
     { "id": "depth-int-026", "core": true, "trains": "gamma-substitution" },
     { "id": "int-040", "core": true, "trains": "gamma-read-integral" },
     { "id": "rel-adv-011", "trains": "gamma-scaling" },
-    { "id": "world-079", "challenge": true, "trains": "gamma-substitution", "note": "挑戰：令 x = e^{−t}，看出是 −Γ(4)。" }
+    { "id": "world-079", "challenge": true, "trains": "gamma-substitution", "note": "挑戰：令 $x=e^{-t}$，看出是 $-\\Gamma(4)$。" }
   ],
   "gaps": [
     { "tag": "gamma-scaling", "count": 1, "note": "指數裡有常數 a 的 R3 題只有 rel-adv-011 一題，再補 1 題（例如 ∫₀^∞ x² e^{−2x} dx）。" },

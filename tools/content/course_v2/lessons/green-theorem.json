@@ -7,7 +7,7 @@
   "next": ["parametric-surfaces"],
   "related": ["curl", "stokes-theorem", "divergence", "polar-double-integral"],
   "objectives": [
-    "寫出 Green 定理並說出所有條件：簡單封閉、分段光滑、正向（逆時針）、P、Q 在包含整塊區域的開集上偏導連續。",
+    "寫出 Green 定理並說出所有條件：簡單封閉、分段光滑、正向（逆時針）、$P$、$Q$ 在包含整塊區域的開集上偏導連續。",
     "用它把封閉曲線上的線積分換成二重積分（或反過來），包括用線積分算面積。",
     "處理順時針、以及區域裡有奇異點的情況。"
   ],
@@ -16,16 +16,16 @@
     {
       "heading": "① 直觀：小漩渦加起來",
       "body": [
-        "把 D 切成很多小方格。在每個小方格的邊界上逆時針繞一圈，算 F = ⟨P, Q⟩ 的功（環流）。可以算出，小方格的環流約等於 (Q_x − P_y) × 小方格面積；Q_x − P_y 量的是那一點附近的場「轉了多少」。",
-        "把所有小方格的環流加起來：相鄰兩格共用的邊，一格往這邊走、另一格往那邊走，互相抵消。最後只剩最外圍的邊界。於是：外圍一圈的環流 = 所有小漩渦的總和。",
-        "這是直觀，不是證明：它沒交代「小方格的環流約等於 (Q_x − P_y) × 面積」的誤差，也沒處理彎曲的邊界。"
+        "把 $D$ 切成很多小方格。在每個小方格的邊界上逆時針繞一圈，算 $\\mathbf F=\\langle P,Q\\rangle$ 的功（環流）。可以算出，小方格的環流約等於 $(Q_x-P_y)\\times{}$ 小方格面積；$Q_x-P_y$ 量的是那一點附近的場「轉了多少」。",
+        "把所有小方格的環流加起來：相鄰兩格共用的邊，一格往這邊走、另一格往那邊走，互相抵消。最後只剩最外圍的邊界。於是：外圍一圈的環流 $={}$ 所有小漩渦的總和。",
+        "這是直觀，不是證明：它沒交代「小方格的環流約等於 $(Q_x-P_y)\\times{}$ 面積」的誤差，也沒處理彎曲的邊界。"
       ],
       "collapsible": false
     },
     {
       "heading": "② 定理",
       "body": [
-        "條件：C 是分段光滑的簡單封閉曲線（自己不相交），圍出區域 D；C 取正向，也就是沿著 C 走時 D 在左手邊（對一般的外圍邊界就是逆時針）；P、Q 的一階偏導在一個包含 D（連同邊界）的開集上連續。那麼"
+        "條件：$C$ 是分段光滑的簡單封閉曲線（自己不相交），圍出區域 $D$；$C$ 取正向，也就是沿著 $C$ 走時 $D$ 在左手邊（對一般的外圍邊界就是逆時針）；$P$、$Q$ 的一階偏導在一個包含 $D$（連同邊界）的開集上連續。那麼"
       ],
       "tex": ["\\oint_C P\\,dx+Q\\,dy=\\iint_D\\left(\\frac{\\partial Q}{\\partial x}-\\frac{\\partial P}{\\partial y}\\right)dA"],
       "collapsible": false
@@ -33,19 +33,19 @@
     {
       "heading": "③ 怎麼用",
       "body": [
-        "線積分很難、Q_x − P_y 很簡單時：換成二重積分。常見情形是 P、Q 裡有 e^{sin x}、√(y⁴ + 1) 這種東西，偏微分之後卻消失。",
+        "線積分很難、$Q_x-P_y$ 很簡單時：換成二重積分。常見情形是 $P$、$Q$ 裡有 $e^{\\sin x}$、$\\sqrt{y^4+1}$ 這種東西，偏微分之後卻消失。",
         "順時針：先照逆時針算，再加負號。",
-        "算面積：挑 Q_x − P_y = 1 的 P、Q，例如 ∮ x dy、−∮ y dx 或 ½∮ (x dy − y dx)，三個都等於 D 的面積。",
-        "跟〈保守場〉的關係：在單連通區域上 Q_x − P_y = 0，任何封閉曲線的環流都是 0。"
+        "算面積：挑 $Q_x-P_y=1$ 的 $P$、$Q$，例如 $\\oint x\\,dy$、$-\\oint y\\,dx$ 或 $\\frac{1}{2}\\oint(x\\,dy-y\\,dx)$，三個都等於 $D$ 的面積。",
+        "跟〈保守場〉的關係：在單連通區域上 $Q_x-P_y=0$，任何封閉曲線的環流都是 $0$。"
       ],
       "collapsible": false
     },
     {
       "heading": "④ 證明的骨架與兩個延伸（給想知道的人）",
       "body": [
-        "D 同時是鉛直線型與水平線型區域時，把定理拆成兩半證明：−∬ P_y dA = ∮ P dx 與 ∬ Q_x dA = ∮ Q dy。以前者為例，D = {a ≤ x ≤ b, g₁(x) ≤ y ≤ g₂(x)}，內層 ∫ P_y dy = P(x, g₂(x)) − P(x, g₁(x))，再比對下緣（向右走）與上緣（向左走）兩段的 ∮ P dx，左右兩條鉛直邊上 dx = 0。一般區域切成這種小塊，共用邊抵消。",
-        "有洞的區域：邊界包含外圈（逆時針）與內圈（順時針），D 仍然在左手邊，定理照樣成立。",
-        "通量形式：外法向量 n，∮_C F · n ds = ∬_D (P_x + Q_y) dA。這是〈散度〉在平面上的版本。"
+        "$D$ 同時是鉛直線型與水平線型區域時，把定理拆成兩半證明：$-\\iint P_y\\,dA=\\oint P\\,dx$ 與 $\\iint Q_x\\,dA=\\oint Q\\,dy$。以前者為例，$D=\\{a\\le x\\le b,\\ g_1(x)\\le y\\le g_2(x)\\}$，內層 $\\int P_y\\,dy=P(x,g_2(x))-P(x,g_1(x))$，再比對下緣（向右走）與上緣（向左走）兩段的 $\\oint P\\,dx$，左右兩條鉛直邊上 $dx=0$。一般區域切成這種小塊，共用邊抵消。",
+        "有洞的區域：邊界包含外圈（逆時針）與內圈（順時針），$D$ 仍然在左手邊，定理照樣成立。",
+        "通量形式：外法向量 $\\mathbf n$，$\\oint_C\\mathbf F\\cdot\\mathbf n\\,ds=\\iint_D(P_x+Q_y)\\,dA$。這是〈散度〉在平面上的版本。"
       ],
       "collapsible": true
     }
@@ -53,77 +53,77 @@
   "workedExamples": [
     {
       "title": "三角形：兩邊都算一次",
-      "prompt": "∮_C x⁴ dx + xy dy，C 是頂點 (0, 0)、(1, 0)、(0, 1) 的三角形，逆時針。",
+      "prompt": "$\\oint_C x^4\\,dx+xy\\,dy$，$C$ 是頂點 $(0,0)$、$(1,0)$、$(0,1)$ 的三角形，逆時針。",
       "steps": [
-        "P = x⁴、Q = xy。Q_x − P_y = y − 0 = y。",
-        "∬_D y dA = ∫_0^1 ∫_0^{1−x} y dy dx = ∫_0^1 (1 − x)²/2 dx = 1/6。",
-        "驗算，三條邊直接算：(0, 0) → (1, 0) 上 y = 0，只剩 ∫_0^1 x⁴ dx = 1/5。(1, 0) → (0, 1) 用 r = ⟨1 − t, t⟩：∫_0^1 [−(1 − t)⁴ + (1 − t)t] dt = −1/5 + 1/6。(0, 1) → (0, 0) 上 x = 0，被積函數為 0。",
-        "合計 1/5 − 1/5 + 1/6 = 1/6。一樣。"
+        "$P=x^4$、$Q=xy$。$Q_x-P_y=y-0=y$。",
+        "$\\iint_D y\\,dA=\\int_0^1\\int_0^{1-x}y\\,dy\\,dx=\\int_0^1\\frac{(1-x)^2}{2}\\,dx=\\frac{1}{6}$。",
+        "驗算，三條邊直接算：$(0,0)\\to(1,0)$ 上 $y=0$，只剩 $\\int_0^1 x^4\\,dx=\\frac{1}{5}$。$(1,0)\\to(0,1)$ 用 $\\mathbf r=\\langle 1-t,t\\rangle$：$\\int_0^1\\left[-(1-t)^4+(1-t)t\\right]dt=-\\frac{1}{5}+\\frac{1}{6}$。$(0,1)\\to(0,0)$ 上 $x=0$，被積函數為 $0$。",
+        "合計 $\\frac{1}{5}-\\frac{1}{5}+\\frac{1}{6}=\\frac{1}{6}$。一樣。"
       ],
-      "answer": "1/6",
+      "answer": "$\\frac{1}{6}$",
       "claim": "INT(INT(y,0,1-x,y),0,1,x) == 1/6 ;; INT(x^4,0,1) + INT(-(1-t)^4+(1-t)*t,0,1,t) == 1/6"
     },
     {
       "title": "線積分很醜，二重積分很乾淨",
-      "prompt": "∮_C (3y − e^{sin x}) dx + (7x + √(y⁴ + 1)) dy，C 是圓 x² + y² = 9，逆時針。",
+      "prompt": "$\\oint_C(3y-e^{\\sin x})\\,dx+(7x+\\sqrt{y^4+1})\\,dy$，$C$ 是圓 $x^2+y^2=9$，逆時針。",
       "steps": [
-        "直接參數化會遇到 e^{sin(3 cos t)}，積不出來。",
-        "Q_x − P_y = 7 − 3 = 4。e^{sin x} 對 y 偏微分是 0，√(y⁴ + 1) 對 x 偏微分也是 0。",
-        "P、Q 在整個平面偏導連續，條件成立。∬_D 4 dA = 4 × (圓面積 9π) = 36π。"
+        "直接參數化會遇到 $e^{\\sin(3\\cos t)}$，積不出來。",
+        "$Q_x-P_y=7-3=4$。$e^{\\sin x}$ 對 $y$ 偏微分是 $0$，$\\sqrt{y^4+1}$ 對 $x$ 偏微分也是 $0$。",
+        "$P$、$Q$ 在整個平面偏導連續，條件成立。$\\iint_D 4\\,dA=4\\times($圓面積 $9\\pi)=36\\pi$。"
       ],
-      "answer": "36π",
+      "answer": "$36\\pi$",
       "claim": "INT((3*3*sin(t)-e^(sin(3*cos(t))))*(-3*sin(t)) + (7*3*cos(t)+sqrt((3*sin(t))^4+1))*(3*cos(t)),0,2*pi,t) == 36*pi",
       "note": "claim 是沿圓直接數值積分，用來確認 Green 的答案。"
     },
     {
       "title": "順時針",
-      "prompt": "∮_C y dx − x dy，C 是單位圓，順時針。",
+      "prompt": "$\\oint_C y\\,dx-x\\,dy$，$C$ 是單位圓，順時針。",
       "steps": [
-        "先當逆時針算：P = y、Q = −x，Q_x − P_y = −1 − 1 = −2，∬ (−2) dA = −2π。",
-        "順時針是反方向，加負號：2π。",
-        "驗算：順時針 r(t) = ⟨cos t, −sin t⟩，y dx − x dy = (−sin t)(−sin t) dt − cos t (−cos t) dt = dt，∫_0^{2π} dt = 2π。"
+        "先當逆時針算：$P=y$、$Q=-x$，$Q_x-P_y=-1-1=-2$，$\\iint(-2)\\,dA=-2\\pi$。",
+        "順時針是反方向，加負號：$2\\pi$。",
+        "驗算：順時針 $\\mathbf r(t)=\\langle\\cos t,-\\sin t\\rangle$，$y\\,dx-x\\,dy=(-\\sin t)(-\\sin t)\\,dt-\\cos t\\,(-\\cos t)\\,dt=dt$，$\\int_0^{2\\pi}dt=2\\pi$。"
       ],
-      "answer": "2π",
+      "answer": "$2\\pi$",
       "claim": "INT((-sin(t))*(-sin(t)) - cos(t)*(-cos(t)),0,2*pi,t) == 2*pi"
     }
   ],
   "pitfalls": [
-    "算成 P_y − Q_x 或 Q_x + P_y：是 Q 對 x 減 P 對 y。",
+    "算成 $P_y-Q_x$ 或 $Q_x+P_y$：是 $Q$ 對 $x$ 減 $P$ 對 $y$。",
     "曲線是順時針卻沒有加負號。",
     "曲線沒有封閉（例如只有半圓）就直接用 Green；要先補一段封閉，再扣掉補的那段。",
-    "區域裡有 P、Q 沒定義的點（像原點）還照用。"
+    "區域裡有 $P$、$Q$ 沒定義的點（像原點）還照用。"
   ],
   "checks": [
     {
       "ask": "Green 定理裡的「正向」是指？",
       "options": [
-        { "label": "沿著 C 走時，D 在左手邊（外圍邊界就是逆時針）", "correct": true },
-        { "label": "一律順時針", "why": "方向反了。順時針走時 D 在右手邊，答案會差一個負號。" },
-        { "label": "從 x 最小的點開始走", "why": "從哪裡開始走不影響封閉曲線的積分，重要的是繞的方向。" }
+        { "label": "沿著 $C$ 走時，$D$ 在左手邊（外圍邊界就是逆時針）", "correct": true },
+        { "label": "一律順時針", "why": "方向反了。順時針走時 $D$ 在右手邊，答案會差一個負號。" },
+        { "label": "從 $x$ 最小的點開始走", "why": "從哪裡開始走不影響封閉曲線的積分，重要的是繞的方向。" }
       ]
     },
     {
-      "ask": "C 是簡單封閉曲線、逆時針，∮_C x dy 等於？",
+      "ask": "$C$ 是簡單封閉曲線、逆時針，$\\oint_C x\\,dy$ 等於？",
       "options": [
-        { "label": "C 圍住的面積", "correct": true },
-        { "label": "0", "why": "P = 0、Q = x，Q_x − P_y = 1，不是 0。" },
-        { "label": "面積的 2 倍", "why": "½∮ (x dy − y dx) 才需要乘 ½；∮ x dy 本身的 Q_x − P_y 就是 1。" }
+        { "label": "$C$ 圍住的面積", "correct": true },
+        { "label": "$0$", "why": "$P=0$、$Q=x$，$Q_x-P_y=1$，不是 $0$。" },
+        { "label": "面積的 $2$ 倍", "why": "$\\frac{1}{2}\\oint(x\\,dy-y\\,dx)$ 才需要乘 $\\frac{1}{2}$；$\\oint x\\,dy$ 本身的 $Q_x-P_y$ 就是 $1$。" }
       ]
     },
     {
-      "ask": "∮_C y dx + x dy，C 是單位圓逆時針，是？",
+      "ask": "$\\oint_C y\\,dx+x\\,dy$，$C$ 是單位圓逆時針，是？",
       "options": [
-        { "label": "0", "correct": true },
-        { "label": "2π", "why": "Q_x − P_y = 1 − 1 = 0。算成 Q_x + P_y 才會得到 2 × 面積。" },
-        { "label": "−2π", "why": "y dx + x dy = d(xy) 是全微分，任何封閉曲線上都是 0。" }
+        { "label": "$0$", "correct": true },
+        { "label": "$2\\pi$", "why": "$Q_x-P_y=1-1=0$。算成 $Q_x+P_y$ 才會得到 $2\\times{}$ 面積。" },
+        { "label": "$-2\\pi$", "why": "$y\\,dx+x\\,dy=d(xy)$ 是全微分，任何封閉曲線上都是 $0$。" }
       ]
     },
     {
-      "ask": "∮_C (−y dx + x dy)/(x² + y²)，C 是單位圓。可以用 Green 定理說它等於 0 嗎？",
+      "ask": "$\\oint_C\\frac{-y\\,dx+x\\,dy}{x^2+y^2}$，$C$ 是單位圓。可以用 Green 定理說它等於 $0$ 嗎？",
       "options": [
-        { "label": "不行：原點在 D 裡，P、Q 在那裡沒有定義，條件不成立（實際值是 2π）", "correct": true },
-        { "label": "可以，因為 Q_x − P_y = 0", "why": "Q_x − P_y = 0 只在原點以外成立；Green 要求偏導在整個 D 上連續，原點不行。" },
-        { "label": "可以，答案是 2 倍面積 2π", "why": "數字碰巧對，理由錯：Q_x − P_y 不是 2。這題不能用 Green，要直接參數化。" }
+        { "label": "不行：原點在 $D$ 裡，$P$、$Q$ 在那裡沒有定義，條件不成立（實際值是 $2\\pi$）", "correct": true },
+        { "label": "可以，因為 $Q_x-P_y=0$", "why": "$Q_x-P_y=0$ 只在原點以外成立；Green 要求偏導在整個 $D$ 上連續，原點不行。" },
+        { "label": "可以，答案是 $2$ 倍面積 $2\\pi$", "why": "數字碰巧對，理由錯：$Q_x-P_y$ 不是 $2$。這題不能用 Green，要直接參數化。" }
       ]
     }
   ],
@@ -144,8 +144,8 @@
     { "id": "vc-green-003", "trains": "green-circulation-form" },
     { "id": "vc-green-005", "trains": "green-circulation-form", "note": "二重積分用極座標。" },
     { "id": "vc-green-008", "trains": "green-circulation-form" },
-    { "id": "vc-green-007", "challenge": true, "trains": "green-circulation-form", "note": "挑戰：e^{x²}、ln(1 + y²) 在偏微分時消失。" },
-    { "id": "vc-flux-001", "challenge": true, "trains": "green-circulation-form", "note": "挑戰：通量形式 ∮ F · n ds = ∬ (P_x + Q_y) dA（見可展開段落）。" }
+    { "id": "vc-green-007", "challenge": true, "trains": "green-circulation-form", "note": "挑戰：$e^{x^2}$、$\\ln(1+y^2)$ 在偏微分時消失。" },
+    { "id": "vc-flux-001", "challenge": true, "trains": "green-circulation-form", "note": "挑戰：通量形式 $\\oint\\mathbf F\\cdot\\mathbf n\\,ds=\\iint(P_x+Q_y)\\,dA$（見可展開段落）。" }
   ],
   "gaps": [
     { "tag": "green-orientation-hypotheses", "count": 3, "note": "R4：順時針曲線、有洞的區域（外圈逆時針、內圈順時針）、區域內有奇異點而不能直接用的題。" }
