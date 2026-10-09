@@ -66,6 +66,8 @@ const HELPERS = `
     today() { const d = new Date(); return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0"); },
     files() { return performance.getEntriesByType("resource").map((e) => e.name).filter((n) => /course_sections\\.js/.test(n)).length; },
     overflow() { const d = document.documentElement; return d.scrollWidth - d.clientWidth; },
+    rect(el) { const r = el.getBoundingClientRect(); return [r.left, r.top, r.width, r.height].map((v) => Math.round(v * 10) / 10).join(","); },
+    dockSmall() { return [...document.querySelectorAll(".cv2s-dock button")].map((n) => { const r = n.getBoundingClientRect(); return Math.round(Math.min(r.width, r.height)); }).filter((s) => s < 40); },
     small() { return [...document.querySelectorAll("[data-cv2s] button")].filter((n) => window.__s.visible(n) && !n.classList.contains("cv2-link")).map((n) => { const r = n.getBoundingClientRect(); return { side: Math.round(Math.min(r.width, r.height)), label: (n.textContent || n.getAttribute("aria-label") || "").trim().slice(0, 12) }; }).filter((x) => x.side < 40); },
     fig(k) { return document.querySelector('[data-cv2s] [data-cv2-fig="' + k + '"]'); },
     // 點一下之後 1.2 秒內 widget 經過的每一個值（看「平滑地動」與 reduced-motion 的「直接跳」）
@@ -336,10 +338,15 @@ async function run() {
     narr.ms = 1500;
     await tap("[data-cv2s-play]");
     check("按了播放：抓第一句的錄音", await waitFor(`window.BuzzCourseSections.voice().src.includes("/0-0-")`, 3000) && narr.urls.some((u) => u.startsWith(`${WIDGET.id}/0-0-`)), narr.urls.join(","));
+    await evaluate(`window.__pb = document.querySelector("[data-cv2s-play]"); window.__pr = window.__s.rect(window.__pb); return 1;`);
     check("只預載下一句（沒有一次抓整節）", narr.urls.every((u) => /\/0-[01]-/.test(`/${u.split("/")[1]}`)), narr.urls.join(","));
     check("念完自己出下一句（沒有點）", await waitFor(`window.__s.beats() === 2`, 6000), String(await evaluate(`return window.__s.beats();`)));
     check(`圖跟著那一句動到 ${V[0].beats[1].fig.to}`, await waitFor(`window.__s.fig(${V[0].beats[1].fig.use}).dataset.value === "${V[0].beats[1].fig.to}"`, 3000), `${v0.fig} → ${await evaluate(`return window.__s.fig(${V[0].beats[1].fig.use}).dataset.value;`)}`);
     check("一路念到這一節最後一句，停在動作前", await waitFor(`window.__s.beats() === ${V[0].beats.length} && window.BuzzCourseSections.voice().wait && document.querySelector("[data-cv2s-act]")`, 12000), JSON.stringify(await evaluate(`return window.BuzzCourseSections.voice();`)));
+    const same = await evaluate(`const b = document.querySelector("[data-cv2s-play]"); return { same: b === window.__pb, before: window.__pr, after: window.__s.rect(b), label: window.__s.text("[data-cv2s-play]"), inApp: Boolean(b.closest("#app")) };`);
+    check("自己往下兩句：「暫停」還是同一顆按鈕、位置大小沒動", same.same && same.before === same.after && same.label === "暫停", JSON.stringify(same));
+    const dockPos = await evaluate(`const d = document.querySelector(".cv2s-dock").getBoundingClientRect(); const nav = document.querySelector(".topbar-nav").getBoundingClientRect(); return { bottom: Math.round(d.bottom), nav: Math.round(nav.top), small: window.__s.dockSmall(), overflow: window.__s.overflow() };`);
+    check("手機：播放列停在底部分頁列上面、按鈕 ≥ 40px、不溢出", dockPos.bottom <= dockPos.nav && dockPos.nav - dockPos.bottom <= 16 && !dockPos.small.length && dockPos.overflow <= 1, JSON.stringify(dockPos));
     await sleep(900);
     check("停在動作前：沒有自己換節", (await evaluate(`return window.__s.si();`)) === 0);
     await shot("phone-light-voice-wait");
@@ -347,13 +354,21 @@ async function run() {
     await finishSection(WIDGET);
     await tap("[data-cv2s-next]");
     check("下一節：播放開著就從第一句接著念", await waitFor(`window.__s.si() === 1 && window.BuzzCourseSections.voice().src.includes("/1-0-")`, 4000), JSON.stringify(await evaluate(`return window.BuzzCourseSections.voice();`)));
+    const mid = await evaluate(`const v = window.BuzzCourseSections.voice(); return v.on && !v.paused && !v.wait;`);
     await tap("[data-cv2s-play]");
     const paused = await evaluate(`return { v: window.BuzzCourseSections.voice(), beats: window.__s.beats(), label: window.__s.text("[data-cv2s-play]") };`);
     await sleep(2200);
     const still2 = await evaluate(`return window.__s.beats();`);
-    check("暫停：不再自己往下", paused.v.paused && still2 === paused.beats && paused.label === "繼續", `${paused.beats} → ${still2} · ${paused.label}`);
-    await tap("[data-cv2s-play]");
+    check("念到一半用真的觸控點「暫停」：不再自己往下", mid && paused.v.paused && still2 === paused.beats && paused.label === "繼續", `${paused.beats} → ${still2} · ${paused.label}`);
+    // 鍵盤：焦點在播放鍵上按 Enter 繼續 —— 焦點留在同一顆按鈕上，自己往下一句之後也還在
+    await evaluate(`window.__pb = document.querySelector("[data-cv2s-play]"); window.__pb.focus(); return 1;`);
+    await chrome.send("Input.dispatchKeyEvent", { type: "keyDown", key: "Enter", code: "Enter", windowsVirtualKeyCode: 13, text: "\r" });
+    await chrome.send("Input.dispatchKeyEvent", { type: "keyUp", key: "Enter", code: "Enter", windowsVirtualKeyCode: 13 });
+    await sleep(200);
+    const kb = await evaluate(`return { focus: document.activeElement === window.__pb, same: document.querySelector("[data-cv2s-play]") === window.__pb, label: window.__s.text("[data-cv2s-play]"), paused: window.BuzzCourseSections.voice().paused };`);
+    check("鍵盤 Enter 繼續：焦點還在同一顆按鈕上", kb.focus && kb.same && !kb.paused && kb.label === "暫停", JSON.stringify(kb));
     check("繼續：接著往下", await waitFor(`window.__s.beats() > ${paused.beats}`, 6000) && (await evaluate(`return !window.BuzzCourseSections.voice().paused;`)));
+    check("自己往下一句之後，焦點還在播放鍵上", await evaluate(`return document.activeElement === window.__pb && document.querySelector("[data-cv2s-play]") === window.__pb;`));
     // 語速：1× → 1.25× → 1.5× → 1×，真的設到 playbackRate、記在設定裡
     await tap("[data-cv2s-rate]");
     const r1 = await evaluate(`return { label: window.__s.text("[data-cv2s-rate]"), rate: window.BuzzCourseSections.voice().rate, saved: (window.__s.rec().settings || {}).narrRate };`);
@@ -367,7 +382,7 @@ async function run() {
     await tap("[data-cv2s-subs]");
     const sub = await evaluate(`const now = document.querySelector("[data-cv2s] .cv2s-beat.is-now"); return { bi: Number(now.dataset.beat), say: window.__s.text("[data-cv2s] .cv2s-beat.is-now [data-cv2s-say]"), n: document.querySelectorAll("[data-cv2s-say]").length, saved: (window.__s.rec().settings || {}).narrSubs, overflow: window.__s.overflow(), small: window.__s.small() };`);
     check("字幕：亮著那一句的旁白文字（只有一行）", sub.n === 1 && sub.say === V[1].beats[sub.bi].say && sub.saved === true, sub.say.slice(0, 24));
-    check("播放列＋字幕：390 寬不溢出、按鈕 ≥ 40px", sub.overflow <= 1 && !sub.small.length, JSON.stringify(sub.small));
+    check("播放列＋字幕：390 寬不溢出、按鈕 ≥ 40px", sub.overflow <= 1 && !sub.small.length && !(await evaluate(`return window.__s.dockSmall().length;`)), JSON.stringify(sub.small));
     await shot("phone-light-voice-subs");
     await tap("[data-cv2s-play]"); // 先停下來（停在動作前就是關掉；還在念就是暫停），免得重繪中按偏
     await tap("[data-cv2s-subs]");

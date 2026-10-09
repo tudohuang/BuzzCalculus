@@ -74,11 +74,15 @@
 .cv2s-finish .action-row { display: flex; flex-wrap: wrap; gap: 8px; }
 .cv2s-finish .action-row .button { max-width: 100%; }
 .cv2s-say { margin: 6px 0 0; padding: 6px 10px; border-radius: 8px; background: color-mix(in srgb, var(--ink) 6%, var(--paper)); color: var(--ink); font-size: 0.92rem; line-height: 1.7; }
-.cv2s-voice { display: inline-flex; flex-wrap: wrap; gap: 4px; margin-left: auto; }
-.cv2s-voice button { display: inline-flex; align-items: center; justify-content: center; gap: 4px; min-width: 40px; min-height: 40px; padding: 0 10px; border: 1px solid var(--line); border-radius: 999px; background: var(--paper); color: var(--ink); font: inherit; font-size: 0.86rem; font-weight: 700; font-variant-numeric: tabular-nums; cursor: pointer; }
+.cv2s.has-dock { padding-bottom: 72px; }
+.cv2s-dock { position: fixed; z-index: 30; left: 50%; bottom: 16px; display: grid; justify-items: center; gap: 4px; transform: translateX(-50%); pointer-events: none; }
+.cv2s-dock > * { pointer-events: auto; }
+.cv2s-voice { display: inline-flex; gap: 4px; padding: 4px; border: 1px solid var(--line); border-radius: 999px; background: var(--paper); box-shadow: 0 6px 18px rgb(0 0 0 / 0.12); }
+.cv2s-voice button { display: inline-flex; align-items: center; justify-content: center; gap: 4px; min-width: 44px; min-height: 40px; padding: 0 12px; border: 1px solid transparent; border-radius: 999px; background: var(--paper); color: var(--ink); font: inherit; font-size: 0.86rem; font-weight: 700; font-variant-numeric: tabular-nums; cursor: pointer; }
 .cv2s-voice button[aria-pressed="true"] { border-color: var(--gold); background: color-mix(in srgb, var(--gold) 14%, var(--paper)); }
 .cv2s-voice svg { width: 16px; height: 16px; }
-.cv2s-voice-off { width: 100%; margin: 0; color: var(--muted); font-size: 0.84rem; }
+.cv2s-voice-off { margin: 0; padding: 2px 10px; border-radius: 999px; background: var(--paper); color: var(--muted); font-size: 0.84rem; white-space: nowrap; }
+.cv2s-voice-off[hidden] { display: none; }
 @media (prefers-reduced-motion: reduce) { .cv2s-beat.is-new { animation: none; } }
 @media (min-width: 960px) { .cv2-lesson.cv2s { margin: 0 auto; } }
 `;
@@ -236,32 +240,114 @@
     if (s && shown < s.beats.length) {
       sec.shown[sec.si] = shown + 1;
       reveal(api, sec.si, shown);
-      sec.bar = true;
-      api.deps.render();
+      patch(api);
       speak(api);
     } else {
       // 這一節念完：停在動作前（做完按「下一節」再接著念）
       hush();
       voice.wait = true;
-      api.deps.render();
+      updateDock();
     }
   }
   function fail() {
     if (!voice.on) return;
     halt();
     voice.err = true;
-    if (last && alive()) last.deps.render();
+    updateDock();
   }
-  function voiceBar(api) {
-    if (!voiced(api.data)) return "";
-    const { rate, subs } = voicePrefs(api.records);
+
+  /* 播放鍵、語速、字幕放在 body 底下的一條「dock」（position: fixed）：整頁重繪、一句一句長出來、捲動都不會動到它，
+     按鈕一直是同一顆（鍵盤焦點留著）。手機停在底部分頁列上面，桌機停在本文欄底部置中。
+     不是 #app 裡的東西：點擊自己接（app.js 的委派只看 #app），離開分節畫面（#app 換掉）就拿掉。 */
+  let dock = null;
+  let watcher = null;
+  let pointerDown = false;
+  let pending = null; // 手指按著時不捲：放開再捲
+  const PAUSE_SVG = `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg>`;
+  const PLAY_SVG = `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 4.5v15a1 1 0 0 0 1.5.86l12-7.5a1 1 0 0 0 0-1.72l-12-7.5A1 1 0 0 0 7 4.5z"/></svg>`;
+  function removeDock() {
+    if (watcher) { watcher.disconnect(); watcher = null; }
+    if (dock) { dock.remove(); dock = null; }
+  }
+  function ensureDock(api) {
+    if (!voiced(api.data)) { removeDock(); return; }
+    if (!dock) {
+      dock = document.createElement("div");
+      dock.className = "cv2s-dock";
+      dock.setAttribute("role", "group");
+      dock.setAttribute("aria-label", "旁白");
+      dock.innerHTML = `<p class="cv2s-voice-off" data-cv2s-voice-off hidden>旁白載不到，用點的繼續。</p><span class="cv2s-voice"><button type="button" data-cv2s-play></button><button type="button" data-cv2s-rate></button><button type="button" data-cv2s-subs>字幕</button></span>`;
+      dock.addEventListener("click", (event) => {
+        const b = event.target && event.target.closest && event.target.closest("button");
+        if (!b || !last || !last.state.sec) return;
+        voiceAct(last, b.hasAttribute("data-cv2s-play") ? "course-s-play" : b.hasAttribute("data-cv2s-rate") ? "course-s-rate" : "course-s-subs");
+      });
+      document.body.appendChild(dock);
+      // 換到別的畫面（課程表、全文、結算…）：停掉、拿掉
+      watcher = new MutationObserver(() => {
+        if (!document.querySelector("[data-cv2s] .cv2s-sec:not(.cv2s-finish)")) { halt(); removeDock(); }
+      });
+      watcher.observe(document.getElementById("app") || document.body, { childList: true, subtree: true });
+    }
+    placeDock();
+    updateDock();
+  }
+  function placeDock() {
+    const root = dock && document.querySelector("[data-cv2s]");
+    if (!root) return;
+    const nav = document.querySelector(".topbar-nav");
+    const fixedNav = nav && getComputedStyle(nav).position === "fixed";
+    const r = root.getBoundingClientRect();
+    dock.style.bottom = `${fixedNav ? Math.round(window.innerHeight - nav.getBoundingClientRect().top + 8) : 16}px`;
+    dock.style.left = `${Math.round(r.left + r.width / 2)}px`;
+    root.classList.add("has-dock");
+  }
+  function updateDock() {
+    if (!dock || !last) return;
+    const { rate, subs } = voicePrefs(last.records);
     const playing = voice.on && !voice.paused;
-    const pause = `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg>`;
-    return `<span class="cv2s-voice">
-        <button type="button" data-action="course-s-play" data-cv2s-play aria-pressed="${playing}">${playing ? `${pause}暫停` : `${api.deps.icon("play")}${voice.on ? "繼續" : "播放"}`}</button>
-        <button type="button" data-action="course-s-rate" data-cv2s-rate aria-label="語速 ${rate} 倍">${rate}×</button>
-        <button type="button" data-action="course-s-subs" data-cv2s-subs aria-pressed="${subs}">字幕</button>
-      </span>${voice.err ? `<p class="cv2s-voice-off" data-cv2s-voice-off>旁白載不到，用點的繼續。</p>` : ""}`;
+    const play = dock.querySelector("[data-cv2s-play]");
+    const label = playing ? "暫停" : voice.on ? "繼續" : "播放";
+    if (play.dataset.state !== label) { play.innerHTML = `${playing ? PAUSE_SVG : PLAY_SVG}${label}`; play.dataset.state = label; }
+    play.setAttribute("aria-pressed", String(playing));
+    const r = dock.querySelector("[data-cv2s-rate]");
+    r.textContent = `${rate}×`;
+    r.setAttribute("aria-label", `語速 ${rate} 倍`);
+    dock.querySelector("[data-cv2s-subs]").setAttribute("aria-pressed", String(subs));
+    dock.querySelector("[data-cv2s-voice-off]").hidden = !voice.err;
+  }
+  // 只換這一節會變的那幾塊（句子、影片、動作、下一句那一列），不整頁重繪；圖原地動
+  function patch(api) {
+    const art = document.querySelector("[data-cv2s] .cv2s-sec:not(.cv2s-finish)");
+    if (!art || !art.querySelector(".cv2s-beats") || typeof document.createElement("template").content === "undefined") { api.deps.render(); return; }
+    const tpl = document.createElement("template");
+    tpl.innerHTML = sectionView(api, api.state.sec.si);
+    const fresh = tpl.content.querySelector(".cv2s-sec");
+    art.querySelector(".cv2s-beats").replaceWith(fresh.querySelector(".cv2s-beats"));
+    art.querySelectorAll(":scope > [data-cv2-video], :scope > [data-cv2s-act]").forEach((n) => n.remove());
+    const bar = art.querySelector(".cv2s-bar");
+    fresh.querySelectorAll(":scope > [data-cv2-video], :scope > [data-cv2s-act]").forEach((n) => art.insertBefore(n, bar));
+    bar.replaceWith(fresh.querySelector(".cv2s-bar"));
+    if (window.lucide) window.lucide.createIcons({ attrs: { class: "icon", "aria-hidden": "true" } });
+    const sec = api.state.sec;
+    if (sec.anim) {
+      const { k, from, to } = sec.anim;
+      sec.anim = null;
+      const node = art.querySelector(`[data-cv2-fig="${k}"]`);
+      const fig = (api.data.figures || [])[k];
+      if (node && fig) animate(node, fig, from, to, api.deps.escapeAttr);
+    }
+    sec.fresh = -1;
+    mountVideo(api, art);
+    show(art.querySelector(".cv2s-beat.is-now"));
+  }
+  // 新的一句在畫面下面：只捲到剛好看得到它（停在 dock 上面）；手指按著的時候先不捲
+  function show(el) {
+    if (!el) return;
+    if (pointerDown) { pending = el; return; }
+    const limit = dock ? dock.getBoundingClientRect().top - 8 : window.innerHeight;
+    const over = el.getBoundingClientRect().bottom - limit;
+    if (over > 0) window.scrollBy({ top: over, behavior: reduced() ? "auto" : "smooth" });
   }
   // 換節之後：播放開著（沒暫停）就從這一節的第一句接著念；這一節已經整節出完過就停在動作前
   function resume(api) {
@@ -270,7 +356,8 @@
     const sec = api.state.sec;
     const s = api.data.sections[sec.si];
     if (s && (sec.shown[sec.si] || 1) === 1) speak(api);
-    else { voice.wait = true; api.deps.render(); }
+    else voice.wait = true;
+    updateDock();
   }
   function voiceAct(api, action) {
     const { deps } = api;
@@ -291,7 +378,8 @@
         voice.on = true;
         speak(api);
       }
-      return deps.render();
+      updateDock();
+      return;
     }
     const records = deps.loadRecords();
     records.settings = records.settings || {};
@@ -302,10 +390,14 @@
     }
     if (action === "course-s-subs") records.settings.narrSubs = !voicePrefs(records).subs;
     deps.saveRecords(records);
-    deps.render();
+    // 之後的重繪（patch）照新的設定畫：手上這兩份 api 的 records 一起換
+    if (last) last.records = { ...last.records, settings: { ...records.settings } };
+    api.records = { ...api.records, settings: { ...records.settings } };
+    updateDock();
+    if (action === "course-s-subs") patch(api);
   }
-  // iOS：<audio> 要在點下去的那一下（同步）先 load 過，之後換 src 才能自己接著播
   if (typeof document !== "undefined" && document.addEventListener) {
+    // iOS：<audio> 要在點下去的那一下（同步）先 load 過，之後換 src 才能自己接著播
     document.addEventListener("click", (event) => {
       const t = event.target;
       if (!t || !t.closest || !t.closest("[data-cv2s-play]") || voice.el) return;
@@ -313,6 +405,11 @@
       voice.el.preload = "none";
       try { voice.el.load(); } catch (_e) { /* 舊瀏覽器 */ }
     }, true);
+    document.addEventListener("pointerdown", () => { pointerDown = true; }, true);
+    const up = () => { pointerDown = false; if (pending) { const el = pending; pending = null; if (el.isConnected) show(el); } };
+    document.addEventListener("pointerup", up, true);
+    document.addEventListener("pointercancel", up, true);
+    window.addEventListener("resize", () => { if (dock) placeDock(); });
   }
 
   /* ── 紀錄 ── */
@@ -422,7 +519,7 @@
         <ol class="cv2s-beats" data-action="course-s-next" data-how="tap" aria-live="polite">${beats}</ol>
         ${video}
         ${action}
-        <div class="cv2s-bar">${bar}${voiceBar(api)}</div>
+        <div class="cv2s-bar">${bar}</div>
       </article>`;
   }
 
@@ -505,16 +602,20 @@
       if (r.width >= document.documentElement.clientWidth - 1 && r.top <= 0.5) top = Math.round(r.bottom);
     }
     root.style.setProperty("--cv2s-top", `${top}px`);
+    if (sec.si < api.data.sections.length) ensureDock(api); else { halt(); removeDock(); }
     if (sec.top) { sec.top = false; window.scrollTo(0, 0); }
     else if (sec.bar) {
-      // 新的一句或動作出現在下面：把「下一句／下一節」那一列帶進畫面，停在手機底部分頁列的上面
+      // 新的一句或動作出現在下面：把「下一句／下一節」那一列帶進畫面，停在手機底部分頁列（與旁白的 dock）上面
       const bar = root.querySelector(".cv2s-bar");
       const nav = document.querySelector(".topbar-nav");
-      const navTop = nav && getComputedStyle(nav).position === "fixed" ? nav.getBoundingClientRect().top : window.innerHeight;
+      const navTop = dock ? dock.getBoundingClientRect().top - 4 : nav && getComputedStyle(nav).position === "fixed" ? nav.getBoundingClientRect().top : window.innerHeight;
       const over = bar ? bar.getBoundingClientRect().bottom + 12 - navTop : 0;
       if (over > 0) window.scrollBy({ top: over, behavior: reduced() ? "auto" : "smooth" });
     }
     sec.bar = false;
+    mountVideo(api, root);
+  }
+  function mountVideo(api, root) {
     if (root.querySelector("[data-cv2-video]")) {
       Promise.resolve().then(() => api.deps.ensureLazy("video")).then(() => window.BuzzCourseVideo.mount(document), () => document.querySelectorAll(".cv2-video").forEach((node) => node.classList.add("is-off")));
     }
@@ -546,10 +647,16 @@
       if (shown < s.beats.length) {
         sec.shown[sec.si] = shown + 1;
         reveal(api, sec.si, shown);
+        // 播放中點「下一句」＝跳到下一句念（暫停中就只換句，繼續時從這一句念）；播放開著就原地長，不整頁重繪
+        if (voice.on) {
+          patch(api);
+          hush();
+          if (!voice.paused) speak(api); else voice.bi = -1;
+          updateDock();
+          return;
+        }
         sec.bar = true;
         deps.render();
-        // 播放中點「下一句」＝跳到下一句念（暫停中就只換句，繼續時從這一句念）
-        if (voice.on) { hush(); if (!voice.paused) speak(api); else voice.bi = -1; }
         return;
       }
       // 點句子那一塊只出下一句；換節要按鈕（或 →），免得手滑跳走
