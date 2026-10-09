@@ -313,12 +313,15 @@
       <nav class="cv2s-dots" aria-label="這一課的節">
         ${data.sections.map((s, i) => `<button type="button" class="cv2s-dot ${doneSet.has(i) ? "is-done" : ""} ${sec.si === i ? "is-now" : ""}" data-action="course-s-go" data-to="${i}" aria-label="${escapeAttr(`第 ${i + 1} 節：${s.title.replace(/\$/g, "")}${doneSet.has(i) ? "（做完了）" : ""}`)}" ${sec.si === i ? `aria-current="step"` : ""}><i>${doneSet.has(i) ? icon("check") : i + 1}</i></button>`).join("")}
       </nav>`;
+    // 先修一行（跟全文同一行：〈課名〉連過去、「在地圖上看」）
+    const pre = data.prerequisites.length ? `<div class="cv2-intro"><p class="cv2-prereq"><span>先修</span>${data.prerequisites.map(api.lessonLink).join("")}<button type="button" class="cv2-link cv2-maplink" data-action="course-map-focus" data-lesson-id="${escapeAttr(m.id)}">在地圖上看</button></p></div>` : "";
     const body = sec.si >= n ? finishView(api, e) : sectionView(api, sec.si);
     if (typeof queueMicrotask === "function") queueMicrotask(() => afterRender(api)); else window.setTimeout(() => afterRender(api), 0);
     return `
       <main class="screen">
         <section class="course-lesson cv2-lesson cv2s" data-cv2s="${sec.si}">
           ${head}
+          ${pre}
           ${dots}
           ${body}
         </section>
