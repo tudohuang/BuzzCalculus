@@ -4,6 +4,8 @@
 // review 的顯示規則每一條都在這裡變成看得見的斷言：觀念預設顯示、collapsible 預設收起、範例一步一步揭、
 // 錯誤選項的理由選了才出現、挑戰題另外標、閱讀／完成時間分開、三層通過不鎖課、visual 規格不給學生看。
 // 圖（figures）：靜態圖畫得出曲線、widget 的滑桿真的改圖而且整頁重繪後停在原處、390 寬不溢出、亮暗兩色對比夠。
+// 書本式版面：課程表與單課都沒有框中框、觀念①在手機第一屏、位置條（觀念─範例─小測─練習）跟著捲動亮、
+// 桌機 1280 有黏著的目錄而本文維持閱讀寬度；行內數學 $…$ 畫成 KaTeX（用測試複本，不等課文轉換）。
 // 另外釘住交付方式：首屏不抓任何課程檔、打開課程才抓大綱、打開一課只抓那一個 Stage。
 //
 // 用法：node tools/e2e_course_v2.js
@@ -64,7 +66,9 @@ const figureLesson = (pred) => {
 };
 const STATIC_FIG = figureLesson((f) => Boolean(f.graph));
 const WIDGET_FIG = figureLesson((f) => Boolean(f.widget));
-const TOTAL = OUTLINE.stages.reduce((n, s) => n + s.chapters.reduce((m, c) => m + c.lessons.length, 0), 0);
+// 比對課文只看漢字：$…$ 畫成 KaTeX 之後 innerText 會多出 MathML 的字；數學本身由「行內數學」那一段檢查
+const han = (text) => (String(text || "").replace(/\$[^$]*\$/g, "").match(/[一-鿿]/g) || []).join("");
+const TOTAL =OUTLINE.stages.reduce((n, s) => n + s.chapters.reduce((m, c) => m + c.lessons.length, 0), 0);
 const MISSING = OUTLINE.stages.reduce((n, s) => n + s.chapters.reduce((m, c) => m + c.lessons.filter((l) => typeof l.read !== "number").length, 0), 0);
 
 const HELPERS = `
@@ -99,6 +103,22 @@ const HELPERS = `
         .filter((n) => window.__c.visible(n) && !n.closest("[hidden]"))
         .map((n) => { const r = n.getBoundingClientRect(); return { side: Math.round(Math.min(r.width, r.height)), label: (n.textContent || "").trim().slice(0, 14) }; })
         .filter((x) => x.side < 40);
+    },
+    // 「框」：有底色、或至少兩邊有邊線的元素（按鈕、輸入、圖、KaTeX、小標籤除外）。回傳被包在另一個框裡的框 —— 書本式版面不准有框中框
+    nestedFrames(rootSel) {
+      const root = document.querySelector(rootSel);
+      if (!root) return ["沒有 " + rootSel];
+      const skip = "button, input, label, summary, svg, i, em, kbd, .katex, .katex *, .cv2-figure, .cv2-figure *, .cv2-strip, .cv2-strip *, .cv2-quiz-result, .cv2-quiz-result *, .cv2-tier, .math-inline, .math-inline *, .course-step-no";
+      const clear = (c) => !c || c === "transparent" || /rgba\\([^)]*,\\s*0\\)$/.test(c) || /\\/\\s*0\\)$/.test(c);
+      const framed = (el) => {
+        if (el.matches(skip) || !window.__c.visible(el)) return false;
+        const s = getComputedStyle(el);
+        const sides = ["Top", "Right", "Bottom", "Left"].filter((k) => parseFloat(s["border" + k + "Width"]) >= 1 && s["border" + k + "Style"] !== "none" && !clear(s["border" + k + "Color"])).length;
+        return !clear(s.backgroundColor) || sides >= 2;
+      };
+      const frames = [...root.querySelectorAll("*")].filter(framed);
+      return frames.filter((el) => frames.some((outer) => outer !== el && outer.contains(el)))
+        .map((el) => (el.className || el.tagName) + "：" + (el.innerText || "").trim().slice(0, 12));
     },
     courseFiles() { return performance.getEntriesByType("resource").map((e) => e.name).filter((n) => /course_v2/.test(n)).map((n) => n.replace(/^.*\\/src\\//, "")); }
   };
@@ -168,12 +188,13 @@ async function run() {
     check("打開課程表只抓大綱與畫面，還沒抓任何 Stage 的課文", index.files.includes("course_v2/outline.js") && !index.files.some((f) => /stage-/.test(f)), index.files.join(","));
     check("課程表沒有橫向溢出", index.overflow <= 1, `${index.overflow}px`);
     check("課程表的觸控目標都 ≥ 40px", !index.small.length, JSON.stringify(index.small.slice(0, 4)));
+    const flat = await evaluate(`return { framed: window.__c.nestedFrames(".cv2-index .cv2-stages"), chapterBoxes: document.querySelectorAll(".cv2-index details details").length };`);
+    check("課程表是平的：Stage 裡沒有框中框、章不再是可折疊的盒子", !flat.framed.length && !flat.chapterBoxes, JSON.stringify(flat.framed.slice(0, 3)));
     await shot("01-index");
 
     /* ── 2. 從課程表點進樣本課（展開它的 Stage 與章）── */
     const stageKey = `cv2-stage-${SAMPLE.stage.n}`;
     await click(`details[data-keep="${stageKey}"] > summary`, 300);
-    await click(`details[data-keep="cv2-ch-${SAMPLE.chapter.code}"] > summary`, 300);
     check(`點得到 ${lesson.id}（${lesson.title}）`, await click(`.cv2-row[data-lesson-id="${lesson.id}"]`, 300));
     check("課文載進來", await waitFor('document.querySelector(".cv2-lesson [data-course-concept]")'));
     await sleep(300);
@@ -210,6 +231,34 @@ async function run() {
     check("正文的〈課名〉是連到那一課的連結", page.links >= 1, String(page.links));
     check("visual（動態圖規格）不給學生看", !lesson.visual || !page.bodyText.includes(String(lesson.visual).slice(0, 18)));
     check(`只抓了這一課的 Stage（stage-${SAMPLE.stage.n}.js）`, page.files.filter((f) => /stage-/.test(f)).join(",") === `course_v2/stage-${SAMPLE.stage.n}.js`, page.files.join(","));
+    // 書本式版面：觀念①在手機第一屏就讀得到；範例的題目不是另一張卡；整課沒有框中框
+    const book = await evaluate(`
+      const c0 = document.querySelector('[data-cv2-mark="c0"]');
+      const head = c0 && (c0.querySelector("h3") || c0.querySelector("summary"));
+      const firstP = c0 && c0.querySelector("p");
+      const tab = document.querySelector(".topbar-nav");
+      const floor = Math.min(window.innerHeight, tab && tab.getBoundingClientRect().height ? tab.getBoundingClientRect().top : window.innerHeight);
+      const prompt = document.querySelector(".cv2-example .cv2-prompt");
+      const ps = prompt ? getComputedStyle(prompt) : null;
+      const blocks = [...document.querySelectorAll(".cv2-lesson .course-block")].map((n) => getComputedStyle(n));
+      return {
+        scrollY: window.scrollY, headBottom: head ? Math.round(head.getBoundingClientRect().bottom) : -1,
+        pTop: firstP ? Math.round(firstP.getBoundingClientRect().top) : -1, floor: Math.round(floor), seen: window.__c.unobstructed(head),
+        promptBox: ps ? { border: ps.borderTopWidth + " " + ps.borderLeftWidth, bg: ps.backgroundColor, pad: ps.paddingLeft } : null,
+        blockFrames: blocks.filter((s) => parseFloat(s.borderTopWidth) > 0 || parseFloat(s.paddingLeft) > 0).length,
+        nested: window.__c.nestedFrames(".cv2-lesson"),
+        strip: [...document.querySelectorAll(".cv2-strip button")].map((b) => b.textContent.trim()).join("─"),
+        stripOn: window.__c.text(".cv2-strip button.is-on"),
+        goalsClosed: Boolean(document.querySelector(".cv2-goals")) && !document.querySelector(".cv2-goals").open,
+        back: Boolean(document.querySelector('.cv2-head [data-action="open-course"]:not(.button)'))
+      };`);
+    check("觀念①的標題在手機第一屏（390×844）、沒被蓋住", book.scrollY === 0 && book.headBottom > 0 && book.headBottom <= book.floor && book.seen, `標題底 ${book.headBottom} / 可見到 ${book.floor}`);
+    check("觀念①的第一段也從第一屏開始", book.pTop > 0 && book.pTop < book.floor - 30, `${book.pTop}px`);
+    check("範例的題目不是另一張卡（沒有邊框、沒有底色、沒有內距）", book.promptBox && /^0px 0px$/.test(book.promptBox.border) && /rgba\(0, 0, 0, 0\)|transparent/.test(book.promptBox.bg) && book.promptBox.pad === "0px", JSON.stringify(book.promptBox));
+    check("段落（觀念／範例／小測／練習）不套框", book.blockFrames === 0, `${book.blockFrames} 個有框`);
+    check("整課沒有框中框", !book.nested.length, book.nested.slice(0, 4).join(" | "));
+    check("位置條：觀念 ─ 範例 ─ 小測 ─ 練習，一開始亮在觀念", book.strip === "觀念─範例─小測─練習" && book.stripOn === "觀念", `${book.strip} · 亮 ${book.stripOn}`);
+    check("「學完你會」收成一行、課程表是小連結不是大按鈕", book.goalsClosed && book.back);
     await shot("02-lesson-top");
 
     /* ── 3. 範例一步一步揭 ── */
@@ -227,7 +276,7 @@ async function run() {
     await shot("03-example-mid-reveal");
     for (let i = 2; i < lesson.workedExamples[0].steps.length; i += 1) await click('[data-action="course-step"][data-ex="0"]', 250);
     const answer = await evaluate(`return window.__c.text('.cv2-example[data-course-example="0"] .course-answer');`);
-    check("揭完出現答案", answer.includes(lesson.workedExamples[0].answer.slice(0, 6)), answer);
+    check("揭完出現答案", answer.length > 3 && han(answer).includes(han(lesson.workedExamples[0].answer).slice(0, 4)), answer);
 
     /* ── 4. 展開收合的證明 ── */
     const foldIndex = lesson.concept.findIndex((p) => p.collapsible);
@@ -252,15 +301,32 @@ async function run() {
       const box = document.querySelectorAll("[data-course-checks] .course-check")[0];
       const why = box.querySelector(".course-check-why");
       return { wrong: box.classList.contains("is-wrong"), why: why ? why.innerText : "", seen: window.__c.unobstructed(why),
-        other: ${otherWrong >= 0 ? `box.innerText.includes(${JSON.stringify(String((c0.options[otherWrong] || {}).why || "").slice(0, 12))})` : "false"},
+        box: box.innerText,
         foldStillOpen: document.querySelector('details[data-keep="${foldKey}"]').open };`);
-    check("選錯：標紅、出現這個選項的理由", wrongPick.wrong && wrongPick.why.includes(String(c0.options[wrong].why).slice(0, 10)), wrongPick.why.slice(0, 40));
+    check("選錯：標紅、出現這個選項的理由", wrongPick.wrong && han(wrongPick.why).includes(han(c0.options[wrong].why).slice(0, 8)), han(wrongPick.why).slice(0, 30));
+    wrongPick.other = otherWrong >= 0 && han(c0.options[otherWrong].why).length >= 4 && han(wrongPick.box).includes(han(c0.options[otherWrong].why).slice(0, 8));
     check("理由在畫面上、沒被底部分頁列或浮條蓋住", wrongPick.seen);
     check("沒選的錯誤選項，理由不出現", !wrongPick.other);
     check("重繪之後展開過的段落還開著", wrongPick.foldStillOpen);
     await evaluate(`document.querySelectorAll("[data-course-checks] .course-check")[0].scrollIntoView({ block: "start" }); window.scrollBy(0, -70); return 1;`);
     await sleep(150);
     await shot("05-quiz-wrong-why");
+    // 位置條：捲到小測就亮「小測」；它貼在頂列下面、不蓋住頂列也不蓋住理由
+    const stripOnQuiz = await waitFor(`window.__c.text(".cv2-strip button.is-on") === "小測"`, 4000);
+    const stripBox = await evaluate(`
+      const s = document.querySelector(".cv2-strip").getBoundingClientRect();
+      const bar = document.querySelector(".topbar").getBoundingClientRect();
+      const why = document.querySelector("[data-course-checks] .course-check-why").getBoundingClientRect();
+      return { top: Math.round(s.top), bottom: Math.round(s.bottom), bar: Math.round(bar.bottom), why: Math.round(why.top), on: window.__c.text(".cv2-strip button.is-on"), read: getComputedStyle(document.querySelector(".cv2-lesson")).getPropertyValue("--cv2-read").trim() };`);
+    check("捲到小測：位置條亮在「小測」", stripOnQuiz, stripBox.on);
+    check("位置條黏在頂列正下方、在理由上面", Math.abs(stripBox.top - stripBox.bar) <= 1 && stripBox.why >= stripBox.bottom, JSON.stringify(stripBox));
+    check("位置條下面的閱讀進度跟著走", parseFloat(stripBox.read) > 30, stripBox.read);
+    await click('.cv2-strip [data-cv2-jump="practice"]', 900);
+    const jumped = await evaluate(`const r = document.querySelector("[data-course-practice]").getBoundingClientRect(); const s = document.querySelector(".cv2-strip").getBoundingClientRect(); return { top: Math.round(r.top), strip: Math.round(s.bottom), on: window.__c.text(".cv2-strip button.is-on"), bottom: window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4, vh: window.innerHeight };`);
+    // 推薦題在最底下時捲不到頂：那就要捲到底、而且整段在畫面裡
+    check("點位置條的「練習」：跳到推薦題，標題停在位置條下面", jumped.top >= jumped.strip - 1 && (jumped.top < jumped.strip + 80 || (jumped.bottom && jumped.top < jumped.vh / 2)) && jumped.on === "練習", JSON.stringify(jumped));
+    await evaluate(`document.querySelectorAll("[data-course-checks] .course-check")[0].scrollIntoView({ block: "center" }); return 1;`);
+    await sleep(200);
     await click(`[data-action="course-pick"][data-check="0"][data-option="${right}"]`, 400);
     check("再選對：綠、選項鎖住", await evaluate(`const box = document.querySelectorAll("[data-course-checks] .course-check")[0]; return box.classList.contains("is-right") && [...box.querySelectorAll(".course-option")].every((b) => b.disabled);`));
     for (let ci = 1; ci < lesson.checks.length; ci += 1) {
@@ -382,6 +448,86 @@ async function run() {
       await shot("09-figure-widget-dark");
       await evaluate(`document.documentElement.dataset.theme = ${JSON.stringify(theme)}; return 1;`);
     }
+
+    /* ── 7¾. 行內數學 $…$：拿樣本課做一份測試用的複本（不依賴課文轉換的進度），塞回頁面的課文表再打開 ── */
+    const FIX_BODY = "行內數學 $\\frac{1}{2}+x^2$，接著是文字；壞掉的式子 $\\notacommand{x}$ 不會讓頁面掛掉；錢號 \\$5 照印、x_0 照舊。";
+    const FIX_OPTION = "$\\sqrt{2}$";
+    const openById = async (id, title) => {
+      await evaluate(`const b = document.createElement("button"); b.dataset.action = "open-course-lesson"; b.dataset.lessonId = ${JSON.stringify(id)}; document.querySelector("#app").appendChild(b); b.click(); return 1;`);
+      return waitFor(`document.querySelector(".cv2-lesson h2") && document.querySelector(".cv2-lesson h2").textContent === ${JSON.stringify(title)} && document.querySelector(".cv2-lesson [data-course-concept]")`);
+    };
+    await evaluate(`
+      const table = window.BUZZ_COURSE_V2_LESSONS;
+      window.__orig = table[${JSON.stringify(lesson.id)}];
+      const copy = JSON.parse(JSON.stringify(window.__orig));
+      copy.concept[0].body = [${JSON.stringify(FIX_BODY)}].concat(copy.concept[0].body);
+      copy.checks[0].options[0].label = ${JSON.stringify(FIX_OPTION)};
+      table[${JSON.stringify(lesson.id)}] = copy;
+      return 1;`);
+    check("打開塞了 $…$ 的測試複本", await openById(lesson.id, lesson.title));
+    await sleep(300);
+    const math = await evaluate(`
+      const p = document.querySelector('[data-cv2-mark="c0"] p');
+      const frac = p.querySelector(".cv2-math .katex");
+      const lh = parseFloat(getComputedStyle(p).lineHeight);
+      return {
+        katex: p.querySelectorAll(".cv2-math .katex").length,
+        // 壞的那段：KaTeX 把不認得的指令畫成紅字（或整段 .katex-error），後面的文字照樣在
+        bad: [...p.querySelectorAll(".cv2-math")].some((n) => /notacommand/.test(n.textContent) && (n.querySelector(".katex-error") || [...n.querySelectorAll("*")].some((c) => c.style && /#cc0000|rgb\\(204, 0, 0\\)/i.test(c.style.color)))),
+        after: p.innerText.includes("不會讓頁面掛掉"),
+        text: p.innerText.replace(/\\s+/g, " "),
+        raw: (() => { const c = p.cloneNode(true); c.querySelectorAll(".cv2-math").forEach((n) => n.remove()); return /\\$\\\\|\\\\frac/.test(c.textContent); })(),
+        glue: Boolean(p.querySelector(".cv2-glue .katex")) && p.querySelector(".cv2-glue").textContent.trim().endsWith("，"),
+        sub: Boolean(p.querySelector("sub")),
+        fracH: frac ? Math.round(frac.getBoundingClientRect().height) : 0, lh: Math.round(lh),
+        option: Boolean(document.querySelector('[data-action="course-pick"][data-check="0"][data-option="0"] .katex')),
+        overflow: window.__c.overflow()
+      };`);
+    check("$…$ 畫成 KaTeX（.katex）、原始的 \\frac 不外露", math.katex >= 1 && !math.raw, `${math.katex} 段 KaTeX`);
+    check("壞掉的式子只變成一段紅字，後面的文字照常出現", math.bad && math.after);
+    check("$ 以外照舊：跳脫的 \\$ 印成 $、x_0 還是下標", math.text.includes("錢號 $5 照印") && math.sub, math.text.slice(0, 80));
+    check("式子後面的全形逗號黏在式子上（不會被擠到下一行開頭）", math.glue);
+    check("行內分數不把行距撐開（高度 ≤ 行高）", math.fracH > 0 && math.fracH <= math.lh + 2, `分數 ${math.fracH}px · 行高 ${math.lh}px`);
+    check("小測選項裡的 $…$ 也畫成 KaTeX", math.option);
+    check("有行內數學也沒有橫向溢出", math.overflow <= 1, `${math.overflow}px`);
+    await evaluate(`window.BUZZ_COURSE_V2_LESSONS[${JSON.stringify(lesson.id)}] = window.__orig; return 1;`);
+
+    /* ── 7⅞. 桌機 1280：左邊有這一課的目錄（黏著、點了跳、目前段落亮），本文維持閱讀寬度；位置條收起 ── */
+    await chrome.send("Emulation.setTouchEmulationEnabled", { enabled: false });
+    await chrome.send("Emulation.setDeviceMetricsOverride", { width: 1280, height: 800, deviceScaleFactor: 1, mobile: false });
+    await sleep(300);
+    check("桌機打開樣本課", await openById(lesson.id, lesson.title));
+    await sleep(300);
+    const desk = await evaluate(`
+      const toc = document.querySelector(".cv2-toc");
+      const body = document.querySelector(".cv2-lesson").getBoundingClientRect();
+      return { toc: window.__c.visible(toc), items: toc ? toc.querySelectorAll("[data-cv2-jump]").length : 0, tocRight: toc ? Math.round(toc.getBoundingClientRect().right) : 0,
+        strip: window.__c.visible(document.querySelector(".cv2-strip")), width: Math.round(body.width), left: Math.round(body.left),
+        fontPx: parseFloat(getComputedStyle(document.querySelector('[data-cv2-mark="c0"] p')).fontSize), on: window.__c.text(".cv2-toc .is-on"), onKey: (document.querySelector(".cv2-toc .is-on") || { dataset: {} }).dataset.cv2Jump,
+        nested: window.__c.nestedFrames(".cv2-lesson"), overflow: window.__c.overflow() };`);
+    const tocCount = lesson.concept.length + (lesson.workedExamples.length ? 1 : 0) + 2;
+    check("桌機：左側目錄（觀念每一節＋範例／小測／練習），位置條收起", desk.toc && desk.items === tocCount && !desk.strip, `${desk.items} / ${tocCount} 項`);
+    check("桌機：本文在目錄右邊、維持閱讀寬度（約 38–42 個中文字）", desk.left >= desk.tocRight && desk.width / desk.fontPx >= 36 && desk.width / desk.fontPx <= 42.5, `${desk.width}px ÷ ${desk.fontPx}px = ${(desk.width / desk.fontPx).toFixed(1)} 字`);
+    check("桌機：一開始目錄亮在觀念第一節", desk.onKey === "c0", desk.on);
+    check("桌機：沒有框中框、沒有橫向溢出", !desk.nested.length && desk.overflow <= 1, desk.nested.slice(0, 3).join(" | "));
+    await click('.cv2-toc [data-cv2-jump="checks"]', 1000);
+    const tocJump = await evaluate(`
+      const r = document.querySelector("[data-course-checks]").getBoundingClientRect();
+      const toc = document.querySelector(".cv2-toc").getBoundingClientRect();
+      return { top: Math.round(r.top), on: window.__c.text(".cv2-toc .is-on"), tocTop: Math.round(toc.top), tocSeen: window.__c.visible(document.querySelector(".cv2-toc")), y: Math.round(window.scrollY) };`);
+    check("桌機：點目錄的「小測」跳到小測、目錄亮「小測」", tocJump.y > 0 && tocJump.top >= 0 && tocJump.top < 120 && tocJump.on === "小測", JSON.stringify(tocJump));
+    check("桌機：捲下去目錄還黏在畫面上", tocJump.tocSeen && tocJump.tocTop >= 0 && tocJump.tocTop < 120, `${tocJump.tocTop}px`);
+    if (WIDGET_FIG) {
+      check("桌機打開有 widget 的課", await openById(WIDGET_FIG.lesson.id, WIDGET_FIG.lesson.title));
+      const fig = await evaluate(`
+        const f = document.querySelector('[data-cv2-fig="${WIDGET_FIG.k}"]').getBoundingClientRect();
+        const col = document.querySelector(".cv2-lesson").getBoundingClientRect();
+        return { w: Math.round(f.width), center: Math.round(Math.abs((f.left + f.right) / 2 - (col.left + col.right) / 2)) };`);
+      check("桌機：圖最寬 560px、在本文欄置中", fig.w <= 561 && fig.w >= 400 && fig.center <= 2, JSON.stringify(fig));
+    }
+    await shot("10-desktop-toc");
+    await chrome.send("Emulation.setDeviceMetricsOverride", VIEWPORT);
+    await chrome.send("Emulation.setTouchEmulationEnabled", { enabled: true, maxTouchPoints: 5 });
 
     const errors = chrome.pageErrors.slice();
     check("沒有頁面錯誤", !errors.length, errors.slice(0, 2).join(" | "));

@@ -13,6 +13,11 @@
 //   閱讀時間與完成時間分開；課號照大綱順序算，正文的〈課名〉連到那一課；visual（給作者的文字規格）不顯示，
 //   畫面上的圖是 figures（畫法在這支最後的 BuzzCourseFigures），放在 after 指定的觀念段落之後。
 //
+// 版面（2026-10 書本式）：單欄、不套框中框 —— 段落靠標題與留白分開，只有範例與可折疊段落有淡底＋左邊線；
+//   本文寬 40em（約 40 個中文字）；標題區只有課號 · Stage、課名、閱讀／完成時間、先修一行、「學完你會」收成一行，
+//   觀念①要在手機第一屏。手機上方黏一條位置條（觀念 ─ 範例 ─ 小測 ─ 練習），≥ 960px 換成左側黏著的目錄；
+//   兩者都由 setupReading（IntersectionObserver ＋ 捲動）亮目前段落。行內數學寫 $…$，用 KaTeX 畫（見 withMath）。
+//
 // 狀態：哪一課、每題範例揭到第幾步、小測每題依序選過哪些。收合段落用 <details data-keep>，
 // app.js 重繪時會把開合接回去（captureViewState），所以不用記在這裡。
 // 進度存 records.courseV2[id] = { openedAt, quizBest, quizAt, doneAt, practicedAt }；
@@ -25,84 +30,183 @@
   const PASS = 3;
 
   const STYLE = `
+/* ── 課程表：Stage 是有標題的段落、章是小標、課是一列清單；不套框 ── */
+.cv2-index { display: grid; gap: 18px; width: 100%; max-width: 760px; margin: 0 auto; }
 .cv2-index .course-progress { margin: 2px 0 4px; }
-.cv2-stages { display: grid; gap: 8px; }
-.cv2-stage, .cv2-chapter { border: 1px solid var(--line); border-radius: 14px; background: var(--panel); }
-.cv2-stage > summary, .cv2-chapter > summary { display: flex; align-items: center; gap: 10px; min-height: 52px; padding: 8px 14px; cursor: pointer; list-style: none; }
-.cv2-stage > summary::-webkit-details-marker, .cv2-chapter > summary::-webkit-details-marker, .cv2-fold > summary::-webkit-details-marker { display: none; }
-.cv2-stage > summary strong { flex: 1; min-width: 0; font-size: 1rem; }
-.cv2-stage-no { display: inline-flex; flex: none; align-items: center; justify-content: center; width: 30px; height: 30px; border-radius: 50%; background: var(--surface); color: var(--muted); font-weight: 800; font-size: 0.86rem; }
+.cv2-stages { display: grid; border-top: 1px solid var(--line); }
+.cv2-stage { border-bottom: 1px solid var(--line); }
+.cv2-stage > summary { display: grid; grid-template-columns: auto minmax(0, 1fr) auto auto; align-items: center; column-gap: 12px; row-gap: 6px; min-height: 56px; padding: 10px 2px; cursor: pointer; list-style: none; }
+.cv2-stage > summary::-webkit-details-marker, .cv2-fold > summary::-webkit-details-marker, .cv2-goals > summary::-webkit-details-marker { display: none; }
+.cv2-stage > summary > svg { color: var(--muted); transition: transform 0.15s ease; }
+.cv2-stage[open] > summary > svg { transform: rotate(90deg); }
+.cv2-stage-name { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; min-width: 0; }
+.cv2-stage-name strong { font-size: 1.04rem; }
+.cv2-stage-no { display: inline-flex; flex: none; align-items: center; justify-content: center; width: 30px; height: 30px; border-radius: 50%; background: var(--surface); color: var(--muted); font-weight: 800; font-size: 0.86rem; font-variant-numeric: tabular-nums; }
 .cv2-stage.is-done .cv2-stage-no { background: var(--green); color: #fff; }
-.cv2-branch { padding: 2px 8px; border-radius: 999px; background: color-mix(in srgb, var(--violet) 12%, var(--panel)); color: var(--violet); font-size: 0.74rem; font-style: normal; font-weight: 700; }
+.cv2-branch { padding: 1px 8px; border-radius: 999px; background: color-mix(in srgb, var(--violet) 12%, var(--panel)); color: var(--violet); font-size: 0.72rem; font-style: normal; font-weight: 700; }
 .cv2-count { flex: none; color: var(--muted); font-size: 0.8rem; font-variant-numeric: tabular-nums; }
-.cv2-bar { position: relative; flex: none; width: 52px; height: 5px; border-radius: 999px; background: var(--line); overflow: hidden; }
+.cv2-bar { grid-column: 2 / -1; position: relative; height: 3px; border-radius: 999px; background: var(--line); overflow: hidden; }
 .cv2-bar::after { content: ""; position: absolute; inset: 0 auto 0 0; width: var(--pct, 0%); background: var(--green); }
-.cv2-stage-body { display: grid; gap: 6px; padding: 0 10px 10px; }
-.cv2-chapter { border-radius: 12px; background: var(--surface); }
-.cv2-chapter > summary { min-height: 46px; font-weight: 700; font-size: 0.92rem; }
-.cv2-chapter > summary span { flex: 1; min-width: 0; }
-.cv2-rows { display: grid; gap: 4px; margin: 0; padding: 0 6px 8px; list-style: none; }
-.cv2-row { display: grid; grid-template-columns: 3em minmax(0, 1fr) auto; align-items: center; gap: 8px; width: 100%; min-height: 44px; padding: 6px 10px; border: 1px solid transparent; border-radius: 10px; background: var(--panel); color: var(--ink); font: inherit; text-align: left; cursor: pointer; }
-.cv2-row:hover { border-color: var(--gold); }
-.cv2-row.is-next { border-color: var(--gold); }
-.cv2-row.is-soon { cursor: default; background: transparent; color: var(--muted); }
+.cv2-stage-body { display: grid; gap: 14px; padding: 2px 0 18px 42px; }
+.cv2-chapter-label { display: flex; align-items: baseline; gap: 8px; margin: 0 0 2px; color: var(--muted); font-size: 0.76rem; font-weight: 800; letter-spacing: 0.06em; }
+.cv2-chapter-label small { font-weight: 600; font-variant-numeric: tabular-nums; letter-spacing: 0; }
+.cv2-rows { display: grid; margin: 0; padding: 0; list-style: none; }
+.cv2-row { display: grid; grid-template-columns: 2.4em minmax(0, 1fr) auto 10px; align-items: center; gap: 10px; width: 100%; min-height: 44px; padding: 6px 8px; border: 0; border-radius: 8px; background: transparent; color: var(--ink); font: inherit; text-align: left; cursor: pointer; }
+.cv2-row:hover { background: color-mix(in srgb, var(--ink) 5%, transparent); }
+.cv2-row.is-next { background: color-mix(in srgb, var(--gold) 12%, transparent); box-shadow: inset 3px 0 0 var(--gold); }
+.cv2-row.is-soon { cursor: default; color: var(--muted); }
+.cv2-row.is-soon:hover { background: transparent; }
 .cv2-row-no { color: var(--muted); font-size: 0.8rem; font-weight: 700; font-variant-numeric: tabular-nums; }
-.cv2-row strong { font-size: 0.94rem; font-weight: 600; overflow-wrap: anywhere; }
-.cv2-row small { color: var(--muted); font-size: 0.76rem; white-space: nowrap; }
+.cv2-row strong { font-size: 0.95rem; font-weight: 600; overflow-wrap: anywhere; }
+.cv2-row.is-soon strong { font-weight: 500; }
+.cv2-row small { color: var(--muted); font-size: 0.76rem; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.cv2-dot { width: 8px; height: 8px; border-radius: 50%; background: transparent; box-shadow: inset 0 0 0 1.5px var(--line-strong); }
+.cv2-dot.t1 { background: var(--green); box-shadow: none; }
+.cv2-dot.t2 { background: var(--blue); box-shadow: none; }
+.cv2-dot.t3 { background: var(--gold); box-shadow: none; }
 .cv2-tier { padding: 2px 8px; border-radius: 999px; font-size: 0.74rem; font-style: normal; font-weight: 700; white-space: nowrap; background: color-mix(in srgb, var(--green) 12%, var(--panel)); color: var(--green); }
 .cv2-tier.t2 { background: color-mix(in srgb, var(--blue) 12%, var(--panel)); color: var(--blue); }
 .cv2-tier.t3 { background: color-mix(in srgb, var(--gold) 18%, var(--panel)); color: var(--gold-dark); }
-.cv2-lesson { gap: 14px; }
+
+/* ── 單課：書本式單欄。只有範例與可折疊段落有淡底＋左邊線，其他靠標題與留白分段 ── */
+.cv2-layout { display: grid; grid-template-columns: minmax(0, 1fr); }
+.cv2-layout > * { min-width: 0; }
+.cv2-toc { display: none; }
+.cv2-lesson { --cv2-top: 0px; --cv2-strip: 0px; display: block; width: 100%; max-width: 40em; margin: 0 auto; padding: 0; border: 0; background: none; color: var(--ink); font-size: 1rem; }
 .cv2-lesson sub, .cv2-lesson sup { font-size: 0.72em; line-height: 0; }
-.cv2-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; margin: 6px 0 0; color: var(--muted); font-size: 0.86rem; }
-.cv2-prereq { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 6px; margin: 0; color: var(--muted); font-size: 0.88rem; }
+.cv2-lesson p, .cv2-lesson li { line-height: 1.85; overflow-wrap: anywhere; }
+.cv2-lesson .cv2-head { display: block; margin: 0 0 6px; }
+.cv2-kicker { display: flex; flex-wrap: wrap; align-items: center; gap: 2px 8px; margin: 0 0 4px; }
+.cv2-kicker .section-label { margin: 0; letter-spacing: 0.06em; }
+.cv2-back { display: inline-flex; align-items: center; gap: 2px; min-height: 40px; margin: -8px 0 -8px -6px; padding: 0 6px; border: 0; border-radius: 8px; background: none; color: var(--blue); font: inherit; font-size: 0.82rem; font-weight: 700; cursor: pointer; }
+.cv2-back:hover { background: color-mix(in srgb, var(--blue) 8%, transparent); }
+.cv2-back span { font-size: 1.2em; line-height: 1; }
+.cv2-kicker .cv2-sep { color: var(--line-strong); }
+.cv2-lesson .cv2-head h2 { margin: 0; font-size: 1.6rem; line-height: 1.35; letter-spacing: -0.02em; text-wrap: balance; }
+.cv2-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 12px; margin: 6px 0 0; color: var(--muted); font-size: 0.86rem; font-variant-numeric: tabular-nums; }
+.cv2-meta > span + span::before { content: "·"; margin-right: 12px; color: var(--line-strong); }
+.cv2-intro { display: grid; gap: 0; margin: 8px 0 0; color: var(--muted); font-size: 0.9rem; }
+.cv2-prereq { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 6px; margin: 0; }
 .cv2-link { display: inline-block; margin: -9px 0; padding: 9px 1px; border: 0; background: none; color: var(--blue); font: inherit; line-height: inherit; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; cursor: pointer; }
-.cv2-list { display: grid; gap: 6px; margin: 0; padding-left: 1.2em; line-height: 1.65; }
-.cv2-part { display: grid; grid-template-columns: minmax(0, 1fr); gap: 8px; }
-.cv2-part > * { min-width: 0; }
-.cv2-part h3 { margin: 4px 0 0; font-size: 1rem; }
-.cv2-part p, .cv2-example p { margin: 0; line-height: 1.75; overflow-wrap: anywhere; }
-.cv2-fold { border: 1px dashed var(--line-strong); border-radius: 12px; }
-.cv2-fold > summary { display: flex; align-items: center; gap: 8px; min-height: 46px; padding: 6px 12px; color: var(--ink); font-weight: 700; cursor: pointer; list-style: none; }
-.cv2-fold > summary svg { flex: none; transition: transform 0.15s ease; }
-.cv2-fold[open] > summary svg { transform: rotate(90deg); }
+.cv2-goals > summary { display: inline-flex; align-items: center; gap: 6px; min-height: 40px; color: var(--muted); font-weight: 700; cursor: pointer; list-style: none; }
+.cv2-goals > summary svg, .cv2-fold > summary svg { flex: none; width: 16px; height: 16px; transition: transform 0.15s ease; }
+.cv2-goals[open] > summary svg, .cv2-fold[open] > summary svg { transform: rotate(90deg); }
+.cv2-goals > summary small { font-weight: 600; }
+.cv2-goals .cv2-list { margin: 0 0 6px; color: var(--ink); }
+.cv2-list { display: grid; gap: 4px; margin: 0; padding-left: 1.3em; }
+
+/* 位置條：觀念 ─ 範例 ─ 小測 ─ 練習。貼在頂列下面；z-index 比頂列（20）與底部分頁列（30）低 */
+.cv2-strip { position: sticky; top: var(--cv2-top); z-index: 4; display: grid; grid-auto-columns: minmax(0, 1fr); grid-auto-flow: column; margin: 10px 0 22px; padding: 0; border-bottom: 1px solid var(--line); background: var(--paper); }
+.cv2-strip button { position: relative; min-height: 42px; padding: 0 4px; border: 0; background: none; color: var(--muted); font: inherit; font-size: 0.84rem; font-weight: 700; cursor: pointer; }
+.cv2-strip button + button::before { content: ""; position: absolute; left: -6px; top: 50%; width: 12px; height: 1px; background: var(--line-strong); }
+.cv2-strip button.is-on { color: var(--ink); }
+.cv2-strip button.is-on::after { content: ""; position: absolute; left: 22%; right: 22%; bottom: -1px; height: 2px; border-radius: 2px; background: var(--gold); }
+.cv2-strip .cv2-read { position: absolute; left: 0; bottom: -1px; height: 1px; width: var(--cv2-read, 0%); background: color-mix(in srgb, var(--gold) 70%, var(--line)); pointer-events: none; }
+.cv2-lesson [data-cv2-mark] { scroll-margin-top: calc(var(--cv2-top) + var(--cv2-strip) + 14px); }
+
+.cv2-sec { display: block; margin: 0; padding: 0; border: 0; border-radius: 0; background: none; }
+.cv2-sec + .cv2-sec { margin-top: 40px; padding-top: 4px; }
+.cv2-sec-title { display: flex; align-items: baseline; gap: 10px; margin: 0 0 14px; font-size: 1.24rem; line-height: 1.4; letter-spacing: -0.01em; }
+.cv2-sec-title small { color: var(--muted); font-size: 0.8rem; font-weight: 600; letter-spacing: 0; }
+.cv2-part { display: block; }
+.cv2-part + .cv2-part, .cv2-part + .cv2-fold, .cv2-fold + .cv2-part, .cv2-fold + .cv2-fold { margin-top: 28px; }
+.cv2-part h3 { margin: 0 0 8px; font-size: 1.1rem; line-height: 1.5; }
+.cv2-part p { margin: 0; }
+.cv2-part p + p, .cv2-part p + .course-concept-math, .cv2-part .course-concept-math + p { margin-top: 12px; }
+.cv2-lesson .course-concept-math { margin: 12px 0; padding: 4px 0; border-radius: 0; background: none; overflow-x: auto; }
+.cv2-math .katex { font-size: 1.08em; }
+.cv2-glue { white-space: nowrap; }
+.cv2-math .katex-display { margin: 0; }
+
+.cv2-fold { margin: 0; border-left: 3px solid color-mix(in srgb, var(--blue) 45%, var(--line)); border-radius: 0 10px 10px 0; background: color-mix(in srgb, var(--blue) 5%, var(--paper)); }
+.cv2-fold > summary { display: flex; align-items: center; gap: 8px; min-height: 46px; padding: 6px 14px; color: var(--ink); font-weight: 700; cursor: pointer; list-style: none; }
+.cv2-fold > summary > span { flex: 1; min-width: 0; line-height: 1.5; }
 .cv2-fold > summary em::after { content: "展開"; }
 .cv2-fold[open] > summary em::after { content: "收起"; }
-.cv2-fold > summary em { margin-left: auto; color: var(--muted); font-size: 0.76rem; font-style: normal; font-weight: 600; }
-.cv2-fold > .cv2-part { padding: 0 12px 12px; }
-.cv2-example { display: grid; grid-template-columns: minmax(0, 1fr); gap: 10px; padding: 12px 14px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); }
-.cv2-example > * { min-width: 0; }
-.cv2-example-title { margin: 0; font-weight: 700; }
-.cv2-prompt { padding: 8px 12px; border-radius: 10px; background: var(--panel); font-weight: 600; }
-.cv2-example .course-step-no { flex: none; }
-.cv2-note { color: var(--muted); font-size: 0.88rem; }
-.cv2-quiz-result { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; padding: 10px 14px; border-radius: 12px; background: var(--surface); }
-.cv2-quiz-result.is-pass { background: color-mix(in srgb, var(--green) 9%, var(--panel)); color: var(--green); }
-.cv2-quiz-result strong { font-size: 1.1rem; font-variant-numeric: tabular-nums; }
+.cv2-fold > summary em { flex: none; color: var(--muted); font-size: 0.76rem; font-style: normal; font-weight: 600; }
+.cv2-fold > .cv2-part { padding: 0 16px 14px; }
+
+.cv2-example { display: block; margin: 0; padding: 14px 16px 16px; border-left: 3px solid var(--gold); border-radius: 0 10px 10px 0; background: color-mix(in srgb, var(--gold) 7%, var(--paper)); }
+.cv2-example + .cv2-example { margin-top: 18px; }
+.cv2-example-title { margin: 0 0 4px; font-size: 0.84rem; font-weight: 700; color: var(--gold-dark); }
+.cv2-example-title span { color: var(--ink); }
+.cv2-prompt { margin: 0; padding: 0; border: 0; background: none; font-weight: 600; }
+.cv2-lesson .course-steps { display: grid; gap: 8px; margin: 12px 0 0; padding: 0; list-style: none; }
+.cv2-lesson .course-step { grid-template-columns: 22px minmax(0, 1fr); gap: 10px; }
+.cv2-lesson .course-step > div { min-width: 0; }
+.cv2-lesson .course-step-no { width: 22px; height: 22px; margin-top: 5px; background: none; box-shadow: inset 0 0 0 1.5px var(--gold); color: var(--gold-dark); font-size: 0.74rem; }
+.cv2-lesson .course-step p { line-height: 1.85; }
+.cv2-reveal { display: inline-flex; align-items: center; gap: 6px; min-height: 40px; margin-top: 10px; padding: 0 14px 0 10px; border: 1px solid color-mix(in srgb, var(--gold) 45%, var(--line)); border-radius: 999px; background: var(--paper); color: var(--ink); font: inherit; font-size: 0.88rem; font-weight: 700; cursor: pointer; }
+.cv2-reveal:hover { border-color: var(--gold); }
+.cv2-reveal svg { width: 16px; height: 16px; }
+.cv2-reveal small { color: var(--muted); font-size: 0.76rem; font-variant-numeric: tabular-nums; }
+.cv2-lesson .course-answer { display: flex; align-items: baseline; gap: 6px; margin: 12px 0 0; padding: 0; border-radius: 0; background: none; color: var(--green); font-weight: 700; line-height: 1.7; }
+.cv2-lesson .course-answer svg { flex: none; align-self: center; }
+.cv2-note { margin: 6px 0 0; color: var(--muted); font-size: 0.9rem; }
+
+.cv2-lesson .course-check { display: block; padding: 2px 0 2px 14px; border: 0; border-left: 3px solid transparent; border-radius: 0; background: none; }
+.cv2-lesson .course-check + .course-check { margin-top: 26px; }
+.cv2-lesson .course-check.is-wrong { border-left-color: color-mix(in srgb, var(--red) 55%, transparent); }
+.cv2-lesson .course-check.is-right { border-left-color: color-mix(in srgb, var(--green) 60%, transparent); }
+.cv2-lesson .course-check-ask { margin: 0 0 10px; font-weight: 600; }
+.cv2-lesson .course-check-options { display: grid; gap: 8px; }
+.cv2-lesson .course-option { min-height: 44px; padding: 8px 14px; border: 1px solid var(--line-strong); border-radius: 10px; background: transparent; line-height: 1.6; overflow-wrap: anywhere; }
+.cv2-lesson .course-option:hover:not(:disabled) { border-color: var(--gold); }
+.cv2-lesson .course-option.is-correct { border-color: var(--green); background: color-mix(in srgb, var(--green) 9%, transparent); }
+.cv2-lesson .course-option.is-picked { border-color: var(--red); background: color-mix(in srgb, var(--red) 7%, transparent); }
 .course-option:disabled { cursor: default; }
-.cv2-tiers { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; margin: 0; padding: 0; list-style: none; }
-.cv2-tiers li { display: grid; gap: 2px; padding: 8px 10px; border: 1px solid var(--line); border-radius: 10px; color: var(--muted); font-size: 0.78rem; }
-.cv2-tiers li strong { color: var(--ink); font-size: 0.9rem; }
-.cv2-tiers li.is-on { border-color: color-mix(in srgb, var(--green) 45%, var(--line)); background: color-mix(in srgb, var(--green) 8%, var(--panel)); }
-.cv2-practice { display: grid; gap: 6px; margin: 0; padding: 0; list-style: none; }
-.cv2-practice li { display: grid; grid-template-columns: 1.6em minmax(0, 1fr); align-items: start; gap: 8px; padding: 8px 10px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); }
+.cv2-lesson .course-check-why { margin: 10px 0 0; font-size: 0.92rem; line-height: 1.75; }
+.cv2-quiz-result { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; margin: 22px 0 0; padding: 10px 14px; border-radius: 10px; background: color-mix(in srgb, var(--ink) 5%, transparent); }
+.cv2-quiz-result.is-pass { background: color-mix(in srgb, var(--green) 10%, transparent); color: var(--green); }
+.cv2-quiz-result strong { font-size: 1.1rem; font-variant-numeric: tabular-nums; }
+
+.cv2-tiers { display: flex; flex-wrap: wrap; gap: 4px 0; margin: 0 0 12px; padding: 0; list-style: none; color: var(--muted); font-size: 0.84rem; }
+.cv2-tiers li { display: inline-flex; align-items: baseline; gap: 6px; line-height: 1.6; }
+.cv2-tiers li + li::before { content: "›"; margin: 0 10px; color: var(--line-strong); }
+.cv2-tiers li strong { color: var(--ink); font-size: 0.88rem; }
+.cv2-tiers li.is-on strong { color: var(--green); }
+.cv2-practice { display: grid; margin: 0 0 12px; padding: 0; list-style: none; border-top: 1px solid var(--line); }
+.cv2-practice li { display: grid; grid-template-columns: 1.6em minmax(0, 1fr); align-items: start; gap: 8px; padding: 10px 2px; border-bottom: 1px solid var(--line); }
 .cv2-practice li > * { min-width: 0; }
-.cv2-practice .math-inline { overflow-x: auto; max-height: 7.5em; overflow-y: hidden; }
-.cv2-mark { color: var(--muted); font-weight: 800; text-align: center; }
+.cv2-practice .math-inline { display: block; overflow-x: auto; max-height: 7.5em; overflow-y: hidden; }
+.cv2-mark { color: var(--muted); font-weight: 800; text-align: center; line-height: 1.85; }
 .cv2-mark.is-core { color: var(--gold-dark); }
 .cv2-practice li.is-solved .cv2-mark { color: var(--green); }
-.cv2-subhead { display: flex; align-items: center; gap: 8px; margin: 4px 0 0; }
-.cv2-nav { display: flex; flex-wrap: wrap; gap: 8px; justify-content: space-between; }
+.cv2-subhead { margin: 18px 0 8px; font-size: 1rem; }
+.cv2-lesson .action-row { margin: 0; }
+.cv2-nav { display: flex; flex-wrap: wrap; gap: 8px; justify-content: space-between; margin: 44px 0 0; padding-top: 18px; border-top: 1px solid var(--line); }
 .cv2-nav .button { max-width: 100%; }
-.cv2-figure { display: grid; justify-items: center; gap: 6px; margin: 4px 0; }
+
+/* 圖：手機滿欄寬、桌機最寬 560px 置中 */
+.cv2-figure { display: grid; justify-items: center; gap: 6px; width: 100%; max-width: 560px; margin: 20px auto; }
 .cv2-figure > * { min-width: 0; max-width: 100%; }
 .cv2-figure [data-cv2-plot] { display: grid; gap: 8px; width: 100%; }
-.cv2-figure .problem-graph svg { width: min(400px, 100%); }
-.cv2-figure figcaption { color: var(--muted); font-size: 0.86rem; line-height: 1.5; text-align: center; }
+.cv2-figure .problem-graph svg { width: 100%; }
+.cv2-figure figcaption { color: var(--muted); font-size: 0.86rem; line-height: 1.6; text-align: center; }
 .cv2-readout { margin: 0; color: var(--ink); font-size: 0.86rem; font-variant-numeric: tabular-nums; text-align: center; overflow-wrap: anywhere; }
-.cv2-slider { display: flex; align-items: center; gap: 10px; width: min(400px, 100%); }
+.cv2-slider { display: flex; align-items: center; gap: 10px; width: 100%; }
 .cv2-slider span { flex: none; color: var(--muted); font-size: 0.82rem; font-weight: 700; }
 .cv2-slider input { flex: 1; min-width: 0; height: 40px; margin: 0; accent-color: var(--blue); touch-action: pan-y; }
+
+@media (min-width: 768px) {
+  .cv2-lesson { font-size: 1.0625rem; }
+  .cv2-lesson .cv2-head h2 { font-size: 2rem; }
+}
+/* 桌機／平板橫放：左邊是這一課的目錄（黏著、點了跳過去、目前段落亮起），位置條收起來 */
+@media (min-width: 960px) {
+  .cv2-layout { grid-template-columns: 188px minmax(0, 40em); justify-content: center; column-gap: clamp(28px, 4vw, 56px); }
+  .cv2-lesson { margin: 0; }
+  .cv2-strip { display: none; }
+  .cv2-intro { margin-bottom: 30px; }
+  .cv2-toc { display: block; position: sticky; top: 28px; align-self: start; max-height: calc(100vh - 56px); overflow-y: auto; padding-top: 6px; }
+  .cv2-toc p { margin: 0 0 8px; padding-left: 12px; color: var(--muted); font-size: 0.72rem; font-weight: 800; letter-spacing: 0.08em; }
+  .cv2-toc ol { display: grid; margin: 0; padding: 0; list-style: none; border-left: 1px solid var(--line); }
+  .cv2-toc button { display: block; width: 100%; min-height: 40px; margin-left: -1px; padding: 6px 8px 6px 12px; border: 0; border-left: 2px solid transparent; background: none; color: var(--muted); font: inherit; font-size: 0.84rem; line-height: 1.45; text-align: left; cursor: pointer; }
+  .cv2-toc button:hover { color: var(--ink); }
+  .cv2-toc button.is-fold { font-style: italic; }
+  .cv2-toc button.is-group { margin-top: 10px; font-weight: 700; }
+  .cv2-toc button.is-on { border-left-color: var(--gold); color: var(--ink); font-weight: 700; }
+}
 `;
 
   function injectStyle() {
@@ -204,9 +308,11 @@
       idle(() => outline.stages.reduce((chain, stage) => chain.then(() => fetch(`src/course_v2/stage-${stage.n}.js`).catch(() => null)), Promise.resolve()));
     }
 
-    /* ── 文字：跳脫 ＋ 上下標 ＋〈課名〉變成連到那一課的連結 ──
-       課文的數學是 Unicode 純文字，上下標照作者的寫法：lim_{x→0}、Σ_{n=1}^∞、e^{x²}、a_n、x_0。
-       畫成 <sub>/<sup>，不然手機上滿版的 lim_{x→a} 很難讀。只認大括號一層、或底線／次方後面單一個字元。 */
+    /* ── 文字：行內數學 $…$ ＋ 跳脫 ＋ 上下標 ＋〈課名〉變成連到那一課的連結 ──
+       行內數學寫成 $…$（KaTeX，跟題目同一份 assets/vendor/katex）：先切出來交給 KaTeX，
+       throwOnError:false —— 一段寫壞的式子只會變成紅字，不會讓整頁畫不出來。\$ 是字面上的錢號。
+       $…$ 以外還是 Unicode 純文字（轉換期間兩種寫法並存），上下標照作者的寫法：lim_{x→0}、Σ_{n=1}^∞、a_n。
+       畫成 <sub>/<sup>，只認大括號一層、或底線／次方後面單一個字元；這一層碰不到 $…$ 裡面。 */
     const SCRIPT_CHAR = "[A-Za-z0-9α-ωΑ-Ω∞πθφ+\\-−′]";
     const SUB_SUP = [
       [/_\{([^{}]*)\}/g, "<sub>$1</sub>"],
@@ -214,18 +320,64 @@
       [new RegExp(`_(${SCRIPT_CHAR})`, "g"), "<sub>$1</sub>"],
       [new RegExp(`\\^(${SCRIPT_CHAR})`, "g"), "<sup>$1</sup>"]
     ];
-    const fmt = (text) => SUB_SUP.reduce((out, [pattern, html]) => out.replace(pattern, html), escapeHtml(String(text || "")));
+    // 切段：偶數格是文字、奇數格是數學。不用 lookbehind 正規式 —— iOS 16.4 以前的 Safari 一看到就整支檔解析失敗。
+    // 落單的 $（沒有成對）當成文字。
+    function splitMath(text) {
+      const parts = [];
+      let buf = "";
+      let open = -1;
+      for (let i = 0; i < text.length; i += 1) {
+        const ch = text[i];
+        if (ch === "$" && text[i - 1] !== "\\") {
+          if (open < 0) { parts.push(buf); buf = ""; open = i; } else { parts.push(buf); buf = ""; open = -1; }
+          continue;
+        }
+        buf += ch;
+      }
+      if (open >= 0) parts[parts.length - 1] += `$${buf}`;
+      else parts.push(buf);
+      return parts;
+    }
+    const mathCache = new Map();
+    function inlineMath(tex) {
+      if (mathCache.has(tex)) return mathCache.get(tex);
+      let html = "";
+      if (window.katex) {
+        try {
+          html = window.katex.renderToString(tex, { displayMode: false, throwOnError: false, strict: "ignore", output: "htmlAndMathml" });
+        } catch (_error) {
+          html = "";
+        }
+      }
+      const out = `<span class="cv2-math">${html || (window.BuzzTexLite ? window.BuzzTexLite.renderLiteTex(tex, false) : escapeHtml(tex))}</span>`;
+      if (html) mathCache.set(tex, out);
+      return out;
+    }
+    const plain = (text) => SUB_SUP.reduce((out, [pattern, html]) => out.replace(pattern, html), escapeHtml(String(text).replace(/\\\$/g, "$")));
+    // 把文字切成「數學」與「文字」兩種段，文字段再交給 each 處理
+    // 式子後面緊跟的全形標點黏在式子上（不然「，」會被擠到下一行開頭）；只黏短式子，長式子要留著能斷行
+    const GLUE = /^[，。、；：！？）」』]/;
+    const withMath = (text, each) => {
+      const parts = splitMath(String(text || ""));
+      return parts.map((part, i) => {
+        if (!(i % 2)) return each(i > 0 && parts[i - 1].length <= 40 && GLUE.test(part) && parts[i - 1].trim() ? part.slice(1) : part);
+        if (!part.trim()) return "";
+        const next = parts[i + 1] || "";
+        return part.length <= 40 && GLUE.test(next) ? `<span class="cv2-glue">${inlineMath(part)}${escapeHtml(next[0])}</span>` : inlineMath(part);
+      }).join("");
+    };
+    const fmt = (text) => withMath(text, plain);
     function rich(text, context) {
-      return String(text || "").split(/(〈[^〈〉]+〉)/).map((part) => {
+      return withMath(text, (chunk) => chunk.split(/(〈[^〈〉]+〉)/).map((part) => {
         const hit = /^〈([^〈〉]+)〉$/.exec(part);
-        if (!hit) return fmt(part);
+        if (!hit) return plain(part);
         const ids = (titleIds[hit[1]] || []).filter((id) => meta[id].available);
         // 同名的課（例如一維與二維的「臨界點」）：先找這一課的先修／相關／下一課裡的那一個
         const near = context ? [...(context.related || []), ...(context.prerequisites || []), ...(context.next || [])] : [];
         const id = ids.find((x) => near.includes(x)) || ids[0];
         if (!id || (context && id === context.id)) return escapeHtml(part);
         return `<button type="button" class="cv2-link" data-action="open-course-lesson" data-lesson-id="${escapeAttr(id)}">${escapeHtml(part)}</button>`;
-      }).join("");
+      }).join(""));
     }
     const lessonLink = (id) => (meta[id] ? (meta[id].available
       ? `<button type="button" class="cv2-link" data-action="open-course-lesson" data-lesson-id="${escapeAttr(id)}">〈${escapeHtml(meta[id].title)}〉</button>`
@@ -239,13 +391,15 @@
       const done = mainPath.filter((m) => isDone(records, m)).length;
       const pct = mainPath.length ? Math.round((done / mainPath.length) * 100) : 0;
       const openStage = next ? next.stage : null;
+      // 一課一列：課號 · 課名 · 分鐘 · 狀態點（完成綠／熟練藍／全破金；字給螢幕閱讀器與測試）
       const row = (m) => {
         if (!m.available) {
-          return `<li><span class="cv2-row is-soon"><span class="cv2-row-no">${m.no}</span><strong>${escapeHtml(m.title)}</strong><small>尚未開放</small></span></li>`;
+          return `<li><span class="cv2-row is-soon"><span class="cv2-row-no">${m.no}</span><strong>${escapeHtml(m.title)}</strong><small>尚未開放</small><i></i></span></li>`;
         }
         const tier = tierOf(records, m);
-        return `<li><button type="button" class="cv2-row ${next === m ? "is-next" : ""} ${tier ? "is-done" : ""}" data-action="open-course-lesson" data-lesson-id="${escapeAttr(m.id)}"><span class="cv2-row-no">${m.no}</span><strong>${escapeHtml(m.title)}</strong>${tier ? tierPill(tier) : `<small>${m.read} 分</small>`}</button></li>`;
+        return `<li><button type="button" class="cv2-row ${next === m ? "is-next" : ""} ${tier ? "is-done" : ""}" data-action="open-course-lesson" data-lesson-id="${escapeAttr(m.id)}"><span class="cv2-row-no">${m.no}</span><strong>${escapeHtml(m.title)}</strong><small>${m.read} 分</small><i class="cv2-dot ${tier ? `t${tier}` : ""}" title="${tier ? TIER_NAMES[tier] : "還沒完成"}">${tier ? `<span class="sr-only">${TIER_NAMES[tier]}</span>` : ""}</i></button></li>`;
       };
+      // Stage 是有標題的段落（細進度條），章是小標，課是平的清單；只有目前的 Stage 展開
       const stages = outline.stages.map((stage) => {
         const inStage = order.filter((m) => m.stage === stage);
         const ready = inStage.filter((m) => m.available);
@@ -254,20 +408,19 @@
         const chapters = stage.chapters.map((chapter) => {
           const rows = order.filter((m) => m.chapter === chapter);
           const chapterDone = rows.filter((m) => m.available && isDone(records, m)).length;
-          const open = next && next.chapter === chapter;
           return `
-            <details class="cv2-chapter" data-keep="cv2-ch-${escapeAttr(chapter.code)}" ${open ? "open" : ""}>
-              <summary><span>${escapeHtml(chapter.title)}</span><small class="cv2-count">${chapterDone} / ${rows.length}</small></summary>
+            <section class="cv2-chapter">
+              <p class="cv2-chapter-label">${escapeHtml(chapter.title)}<small>${chapterDone} / ${rows.length}</small></p>
               <ol class="cv2-rows">${rows.map(row).join("")}</ol>
-            </details>`;
+            </section>`;
         }).join("");
         return `
           <details class="cv2-stage ${ready.length && stageDone === ready.length ? "is-done" : ""}" data-keep="cv2-stage-${stage.n}" ${openStage === stage ? "open" : ""}>
             <summary>
               <span class="cv2-stage-no">${stage.n}</span>
-              <strong>${escapeHtml(stage.title)}</strong>
-              ${stage.branch ? `<em class="cv2-branch">支線</em>` : ""}
+              <span class="cv2-stage-name"><strong>${escapeHtml(stage.title)}</strong>${stage.branch ? `<em class="cv2-branch">支線</em>` : ""}</span>
               <small class="cv2-count">${stageDone} / ${inStage.length}</small>
+              ${icon("chevron-right")}
               <i class="cv2-bar" style="--pct:${stagePct}%"></i>
             </summary>
             <div class="cv2-stage-body">${chapters}</div>
@@ -275,7 +428,7 @@
       }).join("");
       return `
         <main class="screen">
-          <section class="panel page-panel course-index cv2-index">
+          <section class="course-index cv2-index">
             <div class="page-head">
               <div>
                 <p class="section-label">課程</p>
@@ -323,36 +476,115 @@
       });
     }
 
+    /* ── 讀到哪裡：位置條（手機）與目錄（桌機）──
+       每一個段落（觀念的每一小節、範例、小測、練習）掛 data-cv2-mark 與 data-cv2-group。
+       IntersectionObserver 看段落跨過「頂列＋位置條下面一點」那條線；捲動另外更新位置條下面的閱讀進度。
+       整頁重繪（innerHTML 換掉）之後 render 完的那個 microtask 重新接上；離開這一課就自己拆掉。 */
+    const reading = { io: null, onScroll: null, frame: 0, group: "concept", mark: "c0" };
+    function teardownReading() {
+      if (reading.io) reading.io.disconnect();
+      if (reading.frame) window.cancelAnimationFrame(reading.frame);
+      reading.frame = 0;
+      if (reading.onScroll) window.removeEventListener("scroll", reading.onScroll);
+      reading.io = null;
+      reading.onScroll = null;
+    }
+    function setupReading() {
+      teardownReading();
+      const root = typeof document !== "undefined" && document.querySelector(".cv2-lesson[data-cv2-reading]");
+      reading.root = root || null;
+      if (!root) return;
+      // 手機的頂列是 sticky、橫跨整個寬度：位置條要貼在它下面。桌機的頂列是左側欄，不佔上方。
+      const bar = document.querySelector(".topbar");
+      let top = 0;
+      if (bar) {
+        const r = bar.getBoundingClientRect();
+        if (r.width >= document.documentElement.clientWidth - 1 && r.top <= 0.5) top = Math.round(r.bottom);
+      }
+      root.style.setProperty("--cv2-top", `${top}px`);
+      const strip = root.querySelector(".cv2-strip");
+      const stripH = strip && strip.offsetParent ? strip.offsetHeight : 0;
+      root.style.setProperty("--cv2-strip", `${stripH}px`);
+      const targets = [...root.querySelectorAll("[data-cv2-mark]")];
+      if (!targets.length) return;
+      const update = () => {
+        reading.frame = 0;
+        // 舊頁面排進來的那一格：整頁已經換掉，新的那一份會自己接手，這裡什麼都不拆
+        if (!root.isConnected) { if (reading.root === root) teardownReading(); return; }
+        const line = top + stripH + Math.min(140, window.innerHeight * 0.22);
+        let current = targets[0];
+        for (const t of targets) {
+          if (t.getBoundingClientRect().top <= line) current = t;
+          else break;
+        }
+        const doc = document.documentElement;
+        if (window.scrollY > 0 && window.innerHeight + window.scrollY >= doc.scrollHeight - 4) current = targets[targets.length - 1];
+        reading.mark = current.dataset.cv2Mark;
+        reading.group = current.dataset.cv2Group;
+        (root.closest(".cv2-layout") || root).querySelectorAll("[data-cv2-jump]").forEach((b) => {
+          const on = b.dataset.cv2Jump === (b.closest(".cv2-strip") ? reading.group : reading.mark);
+          b.classList.toggle("is-on", on);
+          if (on) b.setAttribute("aria-current", "location"); else b.removeAttribute("aria-current");
+        });
+        const box = root.getBoundingClientRect();
+        const span = Math.max(1, box.height - window.innerHeight + line);
+        root.style.setProperty("--cv2-read", `${Math.round(Math.min(1, Math.max(0, (line - box.top) / span)) * 1000) / 10}%`);
+      };
+      const schedule = () => { if (!reading.frame) reading.frame = window.requestAnimationFrame(update); };
+      if (typeof IntersectionObserver === "function") {
+        reading.io = new IntersectionObserver(schedule, { rootMargin: `-${top + stripH}px 0px -60% 0px`, threshold: [0, 1] });
+        targets.forEach((t) => reading.io.observe(t));
+      }
+      reading.onScroll = schedule;
+      window.addEventListener("scroll", schedule, { passive: true });
+      update();
+    }
+    // 點位置條或目錄：捲到那一段（scroll-margin-top 讓標題停在位置條下面，不被蓋住）
+    if (typeof document !== "undefined" && document.addEventListener) {
+      document.addEventListener("click", (event) => {
+        const button = event.target && event.target.closest ? event.target.closest("[data-cv2-jump]") : null;
+        if (!button) return;
+        const root = button.closest(".cv2-layout");
+        const key = button.dataset.cv2Jump;
+        const target = root && (root.querySelector(`[data-cv2-mark="${key}"]`) || root.querySelector(`[data-cv2-group="${key}"]`));
+        if (!target) return;
+        event.preventDefault();
+        const still = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        target.scrollIntoView({ behavior: still ? "auto" : "smooth", block: "start" });
+      });
+    }
+
     function renderLesson(records) {
       const m = meta[state.lessonId];
       if (!m || !m.available) return renderIndex(records);
       const data = lessonData(m.id);
       const entry = entryOf(records, m.id);
       const tier = tierOf(records, m);
+      // 標題區要小：課號 · Stage、課名、閱讀／完成時間一行；先修一行、「學完你會」收成一行 —— 觀念①要在手機第一屏
       const head = `
-        <div class="page-head">
+        <header class="page-head cv2-head">
           <div>
-            <p class="section-label">${m.no} · ${escapeHtml(m.stage.title)}${m.stage.branch ? "（支線）" : ""}</p>
+            <p class="cv2-kicker"><button type="button" class="cv2-back" data-action="open-course"><span aria-hidden="true">‹</span>課程表</button><span class="cv2-sep" aria-hidden="true">/</span><span class="section-label">${m.no} · ${escapeHtml(m.stage.title)}${m.stage.branch ? "（支線）" : ""}</span></p>
             <h2>${escapeHtml(m.title)}</h2>
             <p class="cv2-meta"><span>閱讀 ${m.read} 分</span><span>完成 ${m.total} 分</span>${tierPill(tier)}</p>
           </div>
-          <div class="action-row"><button class="button secondary" data-action="open-course">${icon("list-checks")}課程表</button></div>
-        </div>`;
+        </header>`;
       if (!data) {
         if (stageState[m.stage.n] !== "failed") loadStage(m.stage.n);
         const failed = stageState[m.stage.n] === "failed";
         return `
           <main class="screen ${failed ? "" : "lazy-loading"}" aria-busy="${failed ? "false" : "true"}">
-            <section class="panel page-panel course-lesson cv2-lesson">${head}
+            <div class="cv2-layout"><section class="course-lesson cv2-lesson">${head}
               <p class="panel-note">${failed ? "課文載不進來 —— 檢查一下網路再試一次。" : "載入課文…"}</p>
               ${failed ? `<div class="action-row"><button class="button" data-action="course-retry">${icon("refresh")}再試一次</button></div>` : ""}
-            </section>
+            </section></div>
           </main>`;
       }
       const prev = neighbour(m, -1);
       const next = neighbour(m, 1);
       const para = (text) => `<p>${rich(text, data)}</p>`;
       const tex = (list) => (list || []).map((line) => `<div class="math-block course-concept-math" data-tex="${escapeAttr(line)}"></div>`).join("");
+      const mark = (key, group) => `data-cv2-mark="${key}" data-cv2-group="${group}"`;
 
       // 圖：after = 觀念段落的索引（預設 0，第一段之後）或 "examples"（範例區的最後）
       const Figures = window.BuzzCourseFigures;
@@ -361,9 +593,9 @@
         .map(({ fig, k }) => Figures.renderFigure(fig, k, state.figs[k], escapeAttr, escapeHtml)).join("");
       const concept = data.concept.map((part, i) => {
         const body = `${part.body.map(para).join("")}${tex(part.tex)}${figuresAt(i)}`;
-        if (!part.collapsible) return `<div class="cv2-part">${part.heading ? `<h3>${fmt(part.heading)}</h3>` : ""}${body}</div>`;
+        if (!part.collapsible) return `<div class="cv2-part" ${mark(`c${i}`, "concept")}>${part.heading ? `<h3>${fmt(part.heading)}</h3>` : ""}${body}</div>`;
         return `
-          <details class="cv2-fold" data-keep="cv2-${escapeAttr(m.id)}-${i}">
+          <details class="cv2-fold" data-keep="cv2-${escapeAttr(m.id)}-${i}" ${mark(`c${i}`, "concept")}>
             <summary>${icon("chevron-right")}<span>${fmt(part.heading || "展開")}</span><em></em></summary>
             <div class="cv2-part">${body}</div>
           </details>`;
@@ -375,12 +607,12 @@
           <li class="course-step"><span class="course-step-no">${k + 1}</span><div><p>${rich(step, data)}</p></div></li>`).join("");
         return `
           <article class="cv2-example" data-course-example="${i}">
-            <p class="cv2-example-title">範例 ${i + 1}${ex.title ? ` · ${fmt(ex.title)}` : ""}</p>
+            <p class="cv2-example-title">範例 ${i + 1}${ex.title ? ` · <span>${fmt(ex.title)}</span>` : ""}</p>
             <p class="cv2-prompt">${rich(ex.prompt, data)}</p>
             ${shown ? `<ol class="course-steps">${steps}</ol>` : ""}
             ${shown < ex.steps.length
-              ? `<div class="action-row"><button class="button secondary" data-action="course-step" data-ex="${i}">${icon("chevron-down")}${shown ? "下一步" : "看第一步"}<small>${shown} / ${ex.steps.length}</small></button></div>`
-              : `<p class="course-answer">${icon("check")}答案：${fmt(ex.answer)}</p>${ex.note ? `<p class="cv2-note">${rich(ex.note, data)}</p>` : ""}`}
+              ? `<button type="button" class="cv2-reveal" data-action="course-step" data-ex="${i}">${icon("chevron-down")}${shown ? "下一步" : "看第一步"}<small>${shown} / ${ex.steps.length}</small></button>`
+              : `<p class="course-answer">${icon("check")}<span>答案：${fmt(ex.answer)}</span></p>${ex.note ? `<p class="cv2-note">${rich(ex.note, data)}</p>` : ""}`}
           </article>`;
       }).join("");
 
@@ -422,59 +654,85 @@
         ["全破", challengeItems.length ? "含挑戰全對" : "全部全對"]
       ];
 
+      // 位置條（手機）四格、目錄（桌機）逐節；兩者都只是捲到那裡，不改狀態
+      const groups = [["concept", "觀念"], ...(examples ? [["worked", "範例"]] : []), ["checks", "小測"], ["practice", "練習"]];
+      const strip = `
+        <nav class="cv2-strip" aria-label="這一課的段落">
+          ${groups.map(([key, name]) => `<button type="button" data-cv2-jump="${key}" class="${reading.group === key ? "is-on" : ""}">${name}</button>`).join("")}
+          <i class="cv2-read" aria-hidden="true"></i>
+        </nav>`;
+      const tocItems = [
+        ...data.concept.map((part, i) => [`c${i}`, part.heading ? fmt(part.heading) : `觀念 ${i + 1}`, part.collapsible ? "is-fold" : ""]),
+        ...(examples ? [["worked", "範例", "is-group"]] : []),
+        ["checks", "小測", "is-group"],
+        ["practice", "練習", "is-group"]
+      ];
+      const toc = `
+        <nav class="cv2-toc" aria-label="這一課的目錄">
+          <p>${m.no} · 目錄</p>
+          <ol>${tocItems.map(([key, text, cls]) => `<li><button type="button" data-cv2-jump="${key}" class="${cls} ${reading.mark === key ? "is-on" : ""}">${text}</button></li>`).join("")}</ol>
+        </nav>`;
+      if (typeof queueMicrotask === "function") queueMicrotask(setupReading);
+      else window.setTimeout(setupReading, 0);
+
       return `
         <main class="screen">
-          <section class="panel page-panel course-lesson cv2-lesson">
-            ${head}
-            ${data.prerequisites.length ? `<p class="cv2-prereq"><span>先修</span>${data.prerequisites.map(lessonLink).join("")}</p>` : ""}
-            ${data.objectives.length ? `
-            <section class="course-block">
-              <p class="section-label">學完你會</p>
-              <ul class="cv2-list">${data.objectives.map((line) => `<li>${rich(line, data)}</li>`).join("")}</ul>
-            </section>` : ""}
+          <div class="cv2-layout">
+            ${toc}
+            <section class="course-lesson cv2-lesson" data-cv2-reading>
+              ${head}
+              <div class="cv2-intro">
+                ${data.prerequisites.length ? `<p class="cv2-prereq"><span>先修</span>${data.prerequisites.map(lessonLink).join("")}</p>` : ""}
+                ${data.objectives.length ? `
+                <details class="cv2-goals" data-keep="cv2-goals-${escapeAttr(m.id)}">
+                  <summary>${icon("chevron-right")}學完你會<small>${data.objectives.length} 項</small></summary>
+                  <ul class="cv2-list">${data.objectives.map((line) => `<li>${rich(line, data)}</li>`).join("")}</ul>
+                </details>` : ""}
+              </div>
+              ${strip}
 
-            <section class="course-block" data-course-concept>
-              <p class="section-label">觀念</p>
-              ${concept}
+              <section class="course-block cv2-sec" data-course-concept aria-label="觀念">
+                ${concept}
+              </section>
+
+              ${examples ? `
+              <section class="course-block cv2-sec" data-course-worked ${mark("worked", "worked")}>
+                <h3 class="cv2-sec-title">範例<small>一步一步揭</small></h3>
+                ${examples}
+                ${figuresAt("examples")}
+              </section>` : ""}
+
+              ${data.pitfalls.length ? `
+              <section class="course-block cv2-sec" data-course-pitfalls>
+                <h3 class="cv2-sec-title">常見錯誤</h3>
+                <ul class="cv2-list">${data.pitfalls.map((line) => `<li>${rich(line, data)}</li>`).join("")}</ul>
+              </section>` : ""}
+
+              <section class="course-block cv2-sec" data-course-checks ${mark("checks", "checks")}>
+                <h3 class="cv2-sec-title">小測${entry.quizBest !== undefined ? `<small>最好 ${entry.quizBest} / ${data.checks.length}</small>` : ""}</h3>
+                ${checks}
+                ${quizResult}
+              </section>
+
+              <section class="course-block cv2-sec" data-course-practice ${mark("practice", "practice")}>
+                <h3 class="cv2-sec-title">推薦題</h3>
+                <ol class="cv2-tiers">${tiers.map(([name, rule], i) => `<li class="${tier > i ? "is-on" : ""}"><strong>${tier > i ? "✔ " : ""}${name}</strong><span>${rule}</span></li>`).join("")}</ol>
+                ${mainItems.length ? `
+                  <ul class="cv2-practice">${mainItems.map(practiceRow).join("")}</ul>
+                  <div class="action-row"><button class="button home-primary" data-action="course-practice" data-set="main">${icon("play")}練推薦題 · ${mainItems.length} 題</button></div>` : ""}
+                ${challengeItems.length ? `
+                  <h4 class="cv2-subhead section-label">挑戰</h4>
+                  <ul class="cv2-practice">${challengeItems.map(practiceRow).join("")}</ul>
+                  <div class="action-row"><button class="button secondary" data-action="course-practice" data-set="challenge">${icon("zap")}挑戰 · ${challengeItems.length} 題</button></div>` : ""}
+                ${items.length ? "" : `<p class="panel-note">這一課沒有推薦題；小測完成就是全破。</p>`}
+              </section>
+
+              <nav class="cv2-nav" aria-label="上一課與下一課">
+                ${prev ? `<button class="button ghost" data-action="open-course-lesson" data-lesson-id="${escapeAttr(prev.id)}">上一課 ${escapeHtml(prev.no)}</button>` : "<span></span>"}
+                ${next ? `<button class="button ${tier ? "home-primary" : "secondary"}" data-action="open-course-lesson" data-lesson-id="${escapeAttr(next.id)}">下一課：${escapeHtml(label(next))}${icon("chevron-right")}</button>` : ""}
+              </nav>
             </section>
-
-            ${examples ? `
-            <section class="course-block" data-course-worked>
-              <p class="section-label">範例 · 一步一步揭</p>
-              ${examples}
-              ${figuresAt("examples")}
-            </section>` : ""}
-
-            ${data.pitfalls.length ? `
-            <section class="course-block" data-course-pitfalls>
-              <p class="section-label">常見錯誤</p>
-              <ul class="cv2-list">${data.pitfalls.map((line) => `<li>${rich(line, data)}</li>`).join("")}</ul>
-            </section>` : ""}
-
-            <section class="course-block" data-course-checks>
-              <p class="section-label">小測${entry.quizBest !== undefined ? ` · 最好 ${entry.quizBest} / ${data.checks.length}` : ""}</p>
-              ${checks}
-              ${quizResult}
-            </section>
-
-            <section class="course-block" data-course-practice>
-              <p class="section-label">推薦題</p>
-              <ol class="cv2-tiers">${tiers.map(([name, rule], i) => `<li class="${tier > i ? "is-on" : ""}"><strong>${tier > i ? "✔ " : ""}${name}</strong><span>${rule}</span></li>`).join("")}</ol>
-              ${mainItems.length ? `
-                <ul class="cv2-practice">${mainItems.map(practiceRow).join("")}</ul>
-                <div class="action-row"><button class="button home-primary" data-action="course-practice" data-set="main">${icon("play")}練推薦題 · ${mainItems.length} 題</button></div>` : ""}
-              ${challengeItems.length ? `
-                <p class="section-label cv2-subhead">挑戰</p>
-                <ul class="cv2-practice">${challengeItems.map(practiceRow).join("")}</ul>
-                <div class="action-row"><button class="button secondary" data-action="course-practice" data-set="challenge">${icon("zap")}挑戰 · ${challengeItems.length} 題</button></div>` : ""}
-              ${items.length ? "" : `<p class="panel-note">這一課沒有推薦題；小測完成就是全破。</p>`}
-            </section>
-
-            <nav class="cv2-nav" aria-label="上一課與下一課">
-              ${prev ? `<button class="button ghost" data-action="open-course-lesson" data-lesson-id="${escapeAttr(prev.id)}">上一課 ${escapeHtml(prev.no)}</button>` : "<span></span>"}
-              ${next ? `<button class="button ${tier ? "home-primary" : "secondary"}" data-action="open-course-lesson" data-lesson-id="${escapeAttr(next.id)}">下一課：${escapeHtml(label(next))}${icon("chevron-right")}</button>` : ""}
-            </nav>
-          </section>
+          </div>
         </main>`;
     }
 
@@ -560,6 +818,8 @@
         if (!m || !m.available) return go("course");
         update(id, (entry) => ({ ...entry, openedAt: entry.openedAt || new Date().toISOString() }));
         state = { lessonId: id, steps: {}, picks: {}, figs: {}, recorded: false };
+        reading.group = "concept";
+        reading.mark = "c0";
         if (!lessonData(id)) loadStage(m.stage.n);
         return go("course-lesson");
       }
