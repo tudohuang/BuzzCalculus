@@ -192,6 +192,8 @@
 .cv2-figure > * { min-width: 0; max-width: 100%; }
 .cv2-figure [data-cv2-plot] { display: grid; gap: 8px; width: 100%; }
 .cv2-figure .problem-graph svg { width: 100%; }
+.cv2-video.is-off .cv2-video-box { display: none; }
+.cv2-video-box { width: 100%; aspect-ratio: 16 / 9; border-radius: 10px; background: color-mix(in srgb, var(--ink) 6%, var(--paper)); }
 .cv2-figure figcaption { color: var(--muted); font-size: 0.86rem; line-height: 1.6; text-align: center; }
 .cv2-readout { margin: 0; color: var(--ink); font-size: 0.86rem; font-variant-numeric: tabular-nums; text-align: center; overflow-wrap: anywhere; }
 .cv2-slider { display: flex; align-items: center; gap: 10px; width: 100%; }
@@ -639,8 +641,12 @@
       // 圖：after = 觀念段落的索引（預設 0，第一段之後）或 "examples"（範例區的最後）
       const Figures = window.BuzzCourseFigures;
       const figures = (data.figures || []).map((fig, k) => ({ fig, k, after: fig.after === undefined ? 0 : fig.after }));
+      // 影片（每課最多一支）排在同一段的圖後面；這裡只放 16:9 佔位，預覽圖與播放由 course_video.js（data-lazy="video"）接手
+      const v = data.video;
       const figuresAt = (slot) => figures.filter((f) => f.after === slot)
-        .map(({ fig, k }) => Figures.renderFigure(fig, k, state.figs[k], escapeAttr, escapeHtml)).join("");
+        .map(({ fig, k }) => Figures.renderFigure(fig, k, state.figs[k], escapeAttr, escapeHtml)).join("")
+        + (v && v.after === slot ? `<figure class="cv2-figure cv2-video" data-cv2-video="${escapeAttr(v.id)}" data-duration="${v.duration}"><div class="cv2-video-box"></div><figcaption>${escapeHtml(v.caption)}</figcaption></figure>` : "");
+      if (v) Promise.resolve().then(() => deps.ensureLazy("video")).then(() => window.BuzzCourseVideo.mount(document), () => document.querySelectorAll(".cv2-video").forEach((n) => n.classList.add("is-off")));
       const concept = data.concept.map((part, i) => {
         const body = `${part.body.map(para).join("")}${tex(part.tex)}${figuresAt(i)}`;
         if (!part.collapsible) return `<div class="cv2-part" ${mark(`c${i}`, "concept")}>${part.heading ? `<h3>${fmt(part.heading)}</h3>` : ""}${body}</div>`;

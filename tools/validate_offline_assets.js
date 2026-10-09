@@ -155,6 +155,16 @@ if (fs.existsSync(outlinePath)) {
   fail("缺少 src/course_v2/outline.js（跑 node tools/build_course_v2.js）");
 }
 
+/* ── 7. 課程影片不進 Service Worker ─────────────────────────────
+   影片（/media/*.mp4、預覽圖）是部署時抓進來的大檔：不預快取（APP_SHELL 不准有 media/），
+   fetch handler 也要整個略過 /media/ 與 Range 請求 —— <video> 的 206 回應 cache.put 收不了，
+   而且每看一支就把 0.5–1MB 塞進 Cache Storage。離線時課文照讀，影片那一格只留一行說明。 */
+[...cached].filter((file) => /^media\//.test(file)).forEach((file) => fail(`sw.js 預快取了影片檔 ${file} —— 影片不該進 APP_SHELL`));
+const fetchHandler = sw.slice(sw.indexOf('addEventListener("fetch"'));
+if (!/headers\.has\("range"\)/.test(fetchHandler) || !/\\\/media\\\//.test(fetchHandler)) {
+  fail("sw.js 的 fetch handler 沒有略過 /media/ 與 Range 請求 —— 影片會被塞進 Cache Storage");
+}
+
 /* ── 報告 ─────────────────────────────────────────────────── */
 
 function dirSize(dir) {

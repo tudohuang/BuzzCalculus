@@ -104,6 +104,7 @@ const APP_SHELL = [
   "./src/course_v2_ui.js",
   "./src/course_v2/map.js",
   "./src/course_map.js",
+  "./src/course_video.js",
   "./src/share_cards.js",
   "./src/kernel/ability.js",
   "./src/kernel/planner.js",
@@ -151,6 +152,10 @@ self.addEventListener("activate", (event) => {
 
 self.addEventListener("fetch", (event) => {
   if (event.request.method !== "GET") return;
+  // 課程影片（/media/ 底下的 mp4 與預覽圖）與任何 Range 請求：完全不經過這裡，交給瀏覽器與 HTTP 快取。
+  // <video> 會送 Range、回 206，cache.put 收不了；而且每看一支就把 0.5–1MB 塞進 Cache Storage、換版又整包重下。
+  // 影片也不在 APP_SHELL —— 離線時課文照讀，影片那一格只留說明（course_video.js）。
+  if (event.request.headers.has("range") || /\/media\//.test(new URL(event.request.url).pathname)) return;
   const networkRequest = event.request.url.startsWith(self.location.origin)
     ? new Request(event.request, { cache: "reload" })
     : event.request;
