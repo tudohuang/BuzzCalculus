@@ -133,6 +133,81 @@
       ]
     }
   ],
+  "sections": [
+    {
+      "title": "三件事要換",
+      "beats": [
+        { "show": ["$x=g(u)$，$dx=g'(u)\\,du$"], "note": "一維換元：上下限跟著換。",
+          "say": "一維換元的時候，x 換成 g u，d x 換成 g prime u 乘 d u，上下限也跟著換。" },
+        { "show": ["區域、被積函數、面積元素"],
+          "say": "二維也一樣，三件事都要換：區域、被積函數，還有一小塊面積。" },
+        { "show": ["$du\\,dv$ 的小方格 → 面積約 $|J|\\,du\\,dv$"], "note": "前兩課已經準備好了。",
+          "say": "u v 平面上一個小方格，送到 x y 平面後，面積被放大 Jacobian 的絕對值倍。" }
+      ],
+      "predict": {
+        "ask": "$dA$ 要換成？",
+        "options": [
+          { "label": "$\\left|\\frac{\\partial(x,y)}{\\partial(u,v)}\\right|du\\,dv$", "correct": true },
+          { "label": "$du\\,dv$", "why": "這等於假設面積沒有被放大；要乘上每個小方格的放大倍率 $|J|$。" },
+          { "label": "$\\left|\\frac{\\partial(u,v)}{\\partial(x,y)}\\right|du\\,dv$", "why": "方向反了，差一個倒數。放大倍率是從 $(u,v)$ 到 $(x,y)$ 的。" }
+        ]
+      }
+    },
+    {
+      "title": "公式",
+      "beats": [
+        { "show": ["$\\iint_R f\\,dA$", "$=\\iint_S f(x(u,v),y(u,v))\\,|J|\\,du\\,dv$"], "note": "$S$ 是同一塊區域在 $uv$ 平面的樣子。",
+          "say": "右邊三個部分：S 是同一塊區域在 u v 平面的樣子；f 裡的 x、y 全部換掉；再乘放大倍率。" },
+        { "show": ["$|J|$ 取絕對值"], "note": "面積不能是負的。",
+          "say": "倍率取絕對值，因為面積不會是負的。" },
+        { "show": ["極座標：$|J|=r$"],
+          "say": "極座標就是 Jacobian 等於 r 的情形，前面早就用過了。" }
+      ],
+      "check": 3
+    },
+    {
+      "title": "怎麼選 $u$、$v$",
+      "beats": [
+        { "show": ["$x-2y=0,4$；$3x-y=1,8$ 圍成 $R$"], "note": "線索一：區域的邊界。",
+          "say": "最常見的線索是邊界。這塊斜斜的四邊形，由兩組平行線圍成。" },
+        { "show": ["$u=x-2y$、$v=3x-y$：$S=[0,4]\\times[1,8]$"],
+          "say": "讓兩組線的左邊當新變數，四條邊就變成 u 等於常數、v 等於常數，新區域是矩形。" },
+        { "show": ["線索二：被積函數裡一直出現的組合"], "note": "例如 $x+y$、$x-y$。",
+          "say": "第二個線索是被積函數：裡面一直出現同樣的組合，就讓它們當新變數。" }
+      ],
+      "check": 1
+    },
+    {
+      "title": "斜的平行四邊形",
+      "beats": [
+        { "show": ["$\\iint_R\\frac{x-2y}{3x-y}\\,dA$"], "note": "被積函數是 $\\frac{u}{v}$。",
+          "say": "回到這塊四邊形，被積函數正好是 u 除以 v。" },
+        { "show": ["$\\frac{\\partial(u,v)}{\\partial(x,y)}=1\\cdot(-1)-(-2)\\cdot3=5$"],
+          "say": "題目給的是 u、v 用 x、y 表示，所以先算反方向的 Jacobian，得五。" },
+        { "show": ["$|J|=\\frac{1}{5}$"], "note": "取倒數，〈Jacobian 行列式〉。",
+          "say": "要的方向取倒數：五分之一。" },
+        { "show": ["$\\frac{1}{5}\\cdot\\int_0^4 u\\,du\\cdot\\int_1^8\\frac{dv}{v}=\\frac{1}{5}\\cdot8\\cdot\\ln 8$"], "note": "$=\\frac{24\\ln 2}{5}$",
+          "say": "新區域是矩形、被積函數可分離，拆成兩個一維積分相乘。" }
+      ],
+      "check": 0
+    },
+    {
+      "title": "新區域不是矩形",
+      "beats": [
+        { "show": ["$\\iint_R\\cos\\left(\\frac{x-y}{x+y}\\right)dA$"], "note": "$R$：頂點 $(1,0)$、$(2,0)$、$(0,2)$、$(0,1)$ 的梯形。",
+          "say": "被積函數裡有 x 減 y、x 加 y，就讓它們當 u、v。倍率是二分之一。" },
+        { "show": ["$y=0\\to u=v$；$x=0\\to u=-v$"], "note": "$x+y=1,2\\to v=1,2$。",
+          "say": "四條邊逐一換：兩條斜邊變成 v 等於一、二；兩條座標軸變成 u 等於正負 v。" },
+        { "show": ["$S$：$1\\le v\\le 2$、$-v\\le u\\le v$"],
+          "say": "新區域不是矩形，但內層上下限很好寫。" },
+        { "show": ["內層 $v\\sin 1$，外層 $\\frac{3}{2}\\sin 1$"],
+          "say": "內層對 u 積，得 v 乘 sine 一；外層再積，二分之三 sine 一。" },
+        { "show": ["條件：內部一對一、$J\\ne 0$"], "note": "邊界上壞掉沒關係，邊界面積是 $0$。",
+          "say": "公式成立的條件：變換在內部一對一，Jacobian 不為零。只在邊界上壞掉沒關係。" }
+      ],
+      "check": 2
+    }
+  ],
   "skillTags": {
     "coarse": ["change-of-variables", "jacobian"],
     "fine": ["cov-choose-uv", "cov-map-region", "cov-apply-abs-jacobian"]

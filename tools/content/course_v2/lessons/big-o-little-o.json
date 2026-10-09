@@ -140,6 +140,98 @@
       ]
     }
   ],
+  "sections": [
+    {
+      "title": "替剩下的記帳",
+      "beats": [
+        { "show": ["$\\sin x=x-\\frac{x^3}{6}+\\dots$", "那個 $\\dots$ 有多小？"],
+          "say": "Taylor 展開最後那串點點點到底多小？乘一乘、代進別的函數之後，會不會長大到影響答案？" },
+        { "show": ["$f=o(g)$：$\\frac{f}{g}\\to 0$"], "note": "$f$ 比 $g$ 小得多。",
+          "say": "小 o 的意思是 f 除以 g 趨近零，也就是 f 比 g 小得多。" },
+        { "show": ["$f=O(g)$：$|f|\\le C|g|$"], "note": "在 $a$ 附近，差一個常數倍。",
+          "say": "大 O 是說，在那一點附近，f 的大小最多是 g 的常數倍，最多跟 g 一樣大。" },
+        { "show": ["$x\\to 0$：$x^3=o(x^2)$", "$x\\to\\infty$：$x^2=o(x^3)$"], "note": "方向一定要寫。",
+          "say": "x 趨近零的時候，次方越高越小；趨近無限大就反過來。所以一定要寫 x 往哪裡跑。" }
+      ],
+      "check": 0
+    },
+    {
+      "title": "等號只能往右讀",
+      "beats": [
+        { "show": ["$o(x^2)$ 是一整類函數"], "note": "不是一個數。",
+          "say": "小 o x 平方代表的是某一個除以 x 平方會趨近零的函數，是一整類，不是一個固定的東西。" },
+        { "show": ["$x^3=o(x^2)$ 對", "$o(x^2)=x^3$ 沒有意義"],
+          "say": "所以這個等號只能從左讀到右：x 三次方屬於這一類，倒過來寫就沒有意義。" },
+        { "show": ["兩個 $o(x^2)$ 不一定是同一個"],
+          "say": "式子裡出現兩次小 o x 平方，它們不一定是同一個函數，相減不會剛好抵銷。" }
+      ],
+      "check": 1
+    },
+    {
+      "title": "運算規則",
+      "beats": [
+        { "show": ["$o(x^m)+o(x^n)=o(x^{\\min(m,n)})$"], "note": "相加取低階；常數倍不變。",
+          "say": "x 趨近零時，相加取比較低的那一階，乘上常數也不變。" },
+        { "show": ["$x^m\\cdot o(x^n)=o(x^{m+n})$"], "note": "相乘：次數相加。",
+          "say": "相乘的時候，次數相加。兩個小 o 相乘也一樣是次數相加。" },
+        { "show": ["$\\frac{o(x^n)}{x^m}=o(x^{n-m})$"], "note": "相除：次數相減。",
+          "say": "相除就是次數相減。大 O 的規則一模一樣。" },
+        { "show": ["$O(x^{n+1})$ 比 $o(x^n)$ 精確"],
+          "say": "對照一下：小 o x 的 n 次方只說比它小，大 O x 的 n 加一次方說最多跟它一樣大，資訊更精確。" }
+      ],
+      "check": 2
+    },
+    {
+      "title": "相乘時記帳",
+      "beats": [
+        { "show": ["$e^x\\sin x$ 展到 $x^3$"], "note": "$\\sin x$ 從 $x$ 開始，$e^x$ 展到 $x^2$ 就夠。",
+          "say": "把 e 的 x 次方乘 sine x 展到三次方。sine x 從 x 開始，所以 e 的 x 次方只要展到平方。" },
+        { "show": ["$1\\cdot\\left(x-\\frac{x^3}{6}\\right)+x\\cdot x+\\frac{x^2}{2}\\cdot x$"],
+          "say": "逐項相乘，只留三次方以內的：一乘 sine 的兩項，x 乘 x，二分之一 x 平方乘 x。" },
+        { "show": ["誤差合起來是 $o(x^3)$"], "note": "例：$o(x^2)\\cdot x=o(x^3)$。",
+          "say": "誤差也要記帳：小 o x 平方乘 x 是小 o x 三次方，x 的四次方也屬於它。全部合起來還是小 o x 三次方。" }
+      ],
+      "predict": {
+        "ask": "$x^3$ 的係數是？",
+        "options": [
+          { "label": "$\\frac{1}{3}$", "correct": true },
+          { "label": "$\\frac{1}{2}$", "why": "只算了 $\\frac{x^2}{2}\\cdot x$，漏了 $\\sin x$ 自己的 $-\\frac{x^3}{6}$。" },
+          { "label": "$-\\frac{1}{6}$", "why": "只看了 $\\sin x$ 的三次項；$e^x$ 的 $\\frac{x^2}{2}$ 乘上 $x$ 也是三次。" }
+        ]
+      }
+    },
+    {
+      "title": "$x\\to\\infty$ 的階梯",
+      "beats": [
+        { "show": ["對數 $\\ll$ 冪次 $\\ll$ 指數"], "note": "$p>0$、$a>0$、$b>1$。",
+          "say": "x 趨近無限大，對數比任何正冪次慢，冪次又比任何指數慢。" },
+        { "show": ["$(\\ln x)^p=o(x^a)$，$x^a=o(b^x)$"],
+          "say": "寫成小 o：自然對數的 p 次方比 x 的 a 次方小得多，x 的 a 次方又比 b 的 x 次方小得多。" },
+        { "show": ["$\\frac{x^3+\\ln x}{2x+\\sqrt{x}}=\\frac{x^2}{2}-\\frac{x^{3/2}}{4}+O(x)$"], "note": "$\\frac{\\ln x}{x^3}=o\\left(\\frac{1}{x}\\right)$，靠的就是這張表。",
+          "say": "這張表拿來找主項：這個分式的主項是二分之一 x 平方，下一項是負四分之一 x 的二分之三次方。" }
+      ],
+      "check": 3
+    },
+    {
+      "title": "離 $e$ 多遠",
+      "beats": [
+        { "show": ["$\\left(1+\\frac{1}{n}\\right)^n=\\exp\\left(n\\ln\\left(1+\\frac{1}{n}\\right)\\right)$"],
+          "say": "一加 n 分之一的 n 次方會趨近 e，可是離 e 多遠？先寫成指數。" },
+        { "show": ["$n\\ln\\left(1+\\frac{1}{n}\\right)=1-\\frac{1}{2n}+O\\left(\\frac{1}{n^2}\\right)$"], "note": "$t=\\frac{1}{n}$，$\\ln(1+t)=t-\\frac{t^2}{2}+O(t^3)$。",
+          "say": "令 t 等於 n 分之一，展開自然對數再乘 n，得到一減二 n 分之一，再加大 O 的誤差。" },
+        { "show": ["$e^h=1+h+O(h^2)$"], "note": "$h=-\\frac{1}{2n}+O\\left(\\frac{1}{n^2}\\right)\\to 0$。",
+          "say": "e 的一加 h 次方是 e 乘 e 的 h 次方，h 趨近零，就再展開一次。" }
+      ],
+      "predict": {
+        "ask": "$\\lim n\\left(\\left(1+\\frac{1}{n}\\right)^n-e\\right)$ 是？",
+        "options": [
+          { "label": "$-\\frac{e}{2}$", "correct": true },
+          { "label": "$0$", "why": "只知道 $\\left(1+\\frac{1}{n}\\right)^n\\to e$；差是 $-\\frac{e}{2n}$，乘上 $n$ 不是 $0$。" },
+          { "label": "$-\\frac{1}{2}$", "why": "忘了前面的 $e$：$\\exp(1+h)=e\\cdot e^h$，差是 $e\\cdot\\left(-\\frac{1}{2n}\\right)$。" }
+        ]
+      }
+    }
+  ],
   "skillTags": {
     "coarse": ["asymptotics", "asymptotic-expansion", "taylor"],
     "fine": ["little-o-arithmetic", "big-o-bound", "o-expansion-at-infinity", "growth-ladder"]

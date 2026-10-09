@@ -124,6 +124,98 @@
       ]
     }
   ],
+  "sections": [
+    {
+      "title": "五個定理排一排",
+      "beats": [
+        { "show": ["$\\int_a^b F'(x)\\,dx=F(b)-F(a)$"], "note": "線段上積 $F'$，等於兩端點的差。",
+          "say": "第一個是老朋友：線段上積導數，等於兩個端點的差。" },
+        { "show": ["$\\int_C\\nabla f\\cdot d\\mathbf r=f(B)-f(A)$"],
+          "say": "第二個：曲線上積梯度，等於起點、終點的差。" },
+        { "show": ["$\\iint_D(Q_x-P_y)\\,dA=\\oint_{\\partial D}P\\,dx+Q\\,dy$"], "note": "Green。",
+          "say": "第三個 Green：平面區域上積小漩渦，等於邊界上的環流。" },
+        { "show": ["$\\iint_S(\\nabla\\times\\mathbf F)\\cdot d\\mathbf S=\\oint_{\\partial S}\\mathbf F\\cdot d\\mathbf r$"], "note": "Stokes。",
+          "say": "第四個 Stokes：曲面上積旋度的通量，等於邊界曲線上的環流。" },
+        { "show": ["$\\iiint_E\\nabla\\cdot\\mathbf F\\,dV=\\iint_{\\partial E}\\mathbf F\\cdot d\\mathbf S$"], "note": "散度定理。",
+          "say": "最後一個是散度定理：立體裡積散度，等於邊界曲面上的通量。" }
+      ],
+      "predict": {
+        "ask": "散度定理裡，立體 $E$ 的邊界 $\\partial E$ 是？",
+        "options": [
+          { "label": "一張封閉曲面", "correct": true },
+          { "label": "一條封閉曲線", "why": "曲線是曲面的邊界；三維立體的邊界低一維，是曲面。" },
+          { "label": "兩個點", "why": "兩個點是線段的邊界，那是微積分基本定理。" }
+        ]
+      }
+    },
+    {
+      "title": "共同的樣子",
+      "beats": [
+        { "show": ["左邊：區域上積某種「導數」"], "note": "$F'$、$\\nabla$、平面旋度、旋度、散度。",
+          "say": "每一行的左邊，都是在一個區域上，積某一種導數。" },
+        { "show": ["右邊：邊界上積「原來的東西」"], "note": "$k$ 維區域，邊界是 $k-1$ 維。",
+          "say": "右邊，都是在那個區域的邊界上，積原來的東西。邊界永遠比區域少一維。" },
+        { "show": ["切小塊、共用邊界抵消、只剩最外圍"],
+          "say": "理由每次都一樣：切成小塊，每塊的導數乘大小約等於它邊界上的量；共用的邊界互相抵消，只剩最外圍。" }
+      ],
+      "check": 3
+    },
+    {
+      "title": "方向就是正負號",
+      "beats": [
+        { "show": ["線段：終點記 $+$、起點記 $-$"], "note": "所以是 $F(b)-F(a)$。",
+          "say": "每個定理都要求邊界的方向跟區域配好。最簡單的線段：終點帶正號，起點帶負號。" },
+        { "show": ["Green 逆時針、Stokes 右手定則、散度定理朝外"],
+          "say": "Green 的邊界逆時針，區域在左手邊；Stokes 用右手定則；散度定理一律朝外。" },
+        { "show": ["方向配錯：差一個負號"],
+          "say": "方向配錯，就差一個負號。" }
+      ],
+      "check": 2
+    },
+    {
+      "title": "邊界的邊界是空的",
+      "beats": [
+        { "show": ["封閉曲線沒有端點，封閉曲面沒有邊界曲線"],
+          "say": "封閉曲線沒有端點，封閉曲面也沒有邊界曲線。這件幾何事實對應兩個恆等式。" },
+        { "show": ["$\\nabla\\times(\\nabla f)=\\mathbf 0$"], "note": "保守場繞一圈：沒有端點，給 $0$。",
+          "say": "保守場繞封閉曲線一圈，沒有端點，給零。用 Stokes 看，旋度也只能是零。" },
+        { "show": ["$\\nabla\\cdot(\\nabla\\times\\mathbf F)=0$"], "note": "旋度場穿過封閉曲面：沒有邊界曲線，給 $0$。",
+          "say": "旋度場穿過封閉曲面，沒有邊界曲線，Stokes 給零；用散度定理看，旋度的散度也只能是零。" }
+      ],
+      "check": 0
+    },
+    {
+      "title": "同一個數，三種算法",
+      "beats": [
+        { "show": ["$\\mathbf F=\\langle -y,x,0\\rangle$，單位圓逆時針"], "note": "線積分直接算：$2\\pi$。",
+          "say": "旋轉場沿單位圓繞一圈，直接算線積分是二 pi。" },
+        { "show": ["$\\nabla\\times\\mathbf F=\\langle 0,0,2\\rangle$，平圓盤：$2\\times\\pi=2\\pi$"],
+          "say": "用 Stokes 換成平的圓盤：旋度是零、零、二，乘圓盤面積 pi，也是二 pi。" },
+        { "show": ["換成上半球面、法向量朝上"], "note": "邊界一樣是單位圓。",
+          "say": "如果換成上半球面呢？邊界一樣是那個單位圓，方向也配好了。" }
+      ],
+      "predict": {
+        "ask": "上半球面上旋度的通量是？",
+        "options": [
+          { "label": "$2\\pi$", "correct": true },
+          { "label": "$4\\pi$", "why": "半球面積比圓盤大，但旋度的通量只看邊界與方向，跟換哪一張曲面無關。" },
+          { "label": "$0$", "why": "只有封閉曲面的旋度通量才是 $0$；上半球面有邊界。" }
+        ]
+      }
+    },
+    {
+      "title": "該用哪一個",
+      "beats": [
+        { "show": ["$\\oint_C(e^x+y)\\,dx+3x\\,dy$，正方形 $[0,2]^2$"], "note": "平面封閉曲線 → Green：$2\\times4=8$。",
+          "say": "平面上的封閉曲線，用 Green：Q 下標 x 減 P 下標 y 是二，乘面積四，得八。" },
+        { "show": ["$\\int_C\\nabla(xyz)\\cdot d\\mathbf r$，$(0,0,0)\\to(1,2,3)$"], "note": "梯度場 → 線積分基本定理：$6$。",
+          "say": "梯度場的線積分，代端點：x y z 在點一、二、三是六，在原點是零。" },
+        { "show": ["$\\langle x,y,z\\rangle$ 穿出單位球面"], "note": "封閉曲面通量 → 散度定理：$3\\times\\frac{4\\pi}{3}=4\\pi$。",
+          "say": "封閉曲面的通量，用散度定理：散度三，乘單位球體積，得四 pi。" }
+      ],
+      "check": 1
+    }
+  ],
   "skillTags": {
     "coarse": ["vector-calculus", "green-theorem", "stokes-theorem", "divergence-theorem"],
     "fine": ["theorem-recognition", "boundary-orientation-match"]

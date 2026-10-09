@@ -128,6 +128,79 @@
       ]
     }
   ],
+  "sections": [
+    {
+      "title": "小段路程是斜邊",
+      "beats": [
+        { "show": ["$\\Delta t$ 內：橫走 $x'\\Delta t$，直走 $y'\\Delta t$"],
+          "say": "很短的時間 delta t 裡，點往 x 方向走了 x prime 乘 delta t，往 y 方向走了 y prime 乘 delta t。" },
+        { "show": ["$\\sqrt{x'^2 + y'^2}\\,\\Delta t$"], "note": "這一小段幾乎是直的，用畢氏定理。",
+          "say": "這一小段幾乎是直的，所以長度是斜邊：兩個方向平方相加再開根號，乘上 delta t。" },
+        { "show": ["$L = \\int_a^b \\sqrt{x'^2 + y'^2}\\,dt$"], "note": "直覺，不是證明；完整條件在全文。",
+          "say": "每一小段加起來，讓 delta t 趨近零，就變成積分。這是直覺，嚴格的條件放在全文。" }
+      ],
+      "check": 3
+    },
+    {
+      "title": "被積函數是速率",
+      "beats": [
+        { "show": ["$(x', y')$ 是速度，$\\sqrt{x'^2 + y'^2}$ 是速率"], "note": "路程 = 速率對時間積分。",
+          "say": "x prime、y prime 合起來是速度向量，根號那一串是它的長度，也就是速率。路程就是速率對時間積分。" },
+        { "show": ["$x = 3\\cos t$，$y = 3\\sin t$"], "note": "$0 \\le t \\le \\frac{\\pi}{2}$。",
+          "say": "例如半徑三的圓，t 從零走到二分之 pi，是四分之一圈。" },
+        { "show": ["$9\\sin^2 t + 9\\cos^2 t = 9$，速率 3"],
+          "say": "兩個速度平方相加，九 sine 平方加九 cosine 平方等於九，速率一直是三。" },
+        { "show": ["$L = \\int_0^{\\pi/2} 3\\,dt = \\frac{3\\pi}{2}$"], "note": "半徑 3 的圓周長 $6\\pi$，四分之一正好。",
+          "say": "速率三乘上時間二分之 pi，得二分之三 pi。周長六 pi 的四分之一，對得上。" }
+      ],
+      "check": 0
+    },
+    {
+      "title": "開根號要絕對值",
+      "beats": [
+        { "show": ["$\\sqrt{A^2} = |A|$"], "note": "根號裡常湊成完全平方，開出來先看正負。",
+          "say": "能算的弧長題，根號裡幾乎都湊成完全平方。開根號出來是絕對值，不是它自己。" },
+        { "show": ["$x = t^2$，$y = t^3$", "$x'^2 + y'^2 = t^2(4 + 9t^2)$"],
+          "say": "x 是 t 平方，y 是 t 三次方。速度平方和是四 t 平方加九 t 四次方，提出 t 平方。" },
+        { "show": ["$|t|\\sqrt{4 + 9t^2}$"], "note": "$-1 \\le t \\le 1$ 時直接拿掉絕對值，會積出 0。",
+          "say": "開出來是絕對值 t 乘根號。t 在零到一，可以拿掉絕對值；如果範圍跨過零，就要拆開。" },
+        { "show": ["$L = \\int_0^1 t\\sqrt{4 + 9t^2}\\,dt$"], "note": "令 $u = 4 + 9t^2$，$du = 18t\\,dt$。",
+          "say": "在零到一上積分，令 u 是四加九 t 平方。換元之後，上下限也要跟著換。" }
+      ],
+      "predict": {
+        "ask": "換成 $u$ 之後，積分從哪裡到哪裡？",
+        "options": [
+          { "label": "$u$ 從 4 到 13", "correct": true },
+          { "label": "$u$ 從 0 到 1", "why": "0 到 1 是 $t$ 的範圍；換元後要代進 $u = 4 + 9t^2$：$t = 0$ 得 4，$t = 1$ 得 13。" },
+          { "label": "$u$ 從 4 到 9", "why": "$t = 1$ 代進去是 $4 + 9 = 13$，不是只取 9。" }
+        ]
+      }
+    },
+    {
+      "title": "擺線一拱",
+      "beats": [
+        { "show": ["$x' = 1 - \\cos t$，$y' = \\sin t$"], "note": "擺線 $x = t - \\sin t$、$y = 1 - \\cos t$，$0 \\le t \\le 2\\pi$。",
+          "say": "擺線的一拱，t 從零到二 pi。先把兩個速度寫出來。" },
+        { "show": ["$x'^2 + y'^2 = 2 - 2\\cos t$"],
+          "say": "平方展開，cosine 平方加 sine 平方合成一，整理成二減二 cosine t。" },
+        { "show": ["$= 4\\sin^2\\frac{t}{2}$"], "note": "半角公式 $1 - \\cos t = 2\\sin^2\\frac{t}{2}$。",
+          "say": "用半角公式湊成完全平方：四乘 sine 二分之 t 的平方。開根號時，別忘了絕對值。" }
+      ],
+      "check": 1
+    },
+    {
+      "title": "量的是走過的距離",
+      "beats": [
+        { "show": ["擺線一拱：$L = 8$"], "note": "$\\int_0^{2\\pi} 2\\sin\\frac{t}{2}\\,dt$。",
+          "say": "接上一節，二 sine 二分之 t 從零積到二 pi，擺線一拱的長度剛好是八。" },
+        { "show": ["$x = \\cos 2t$，$y = \\sin 2t$：速率 2"], "note": "$0 \\le t \\le 2\\pi$，積分得 $4\\pi$。",
+          "say": "再看 cosine 二 t、sine 二 t，速率是二，從零積到二 pi，得到四 pi。" },
+        { "show": ["單位圓周長是 $2\\pi$"],
+          "say": "可是單位圓的周長是二 pi。多出來的那一份是哪裡來的？" }
+      ],
+      "check": 2
+    }
+  ],
   "skillTags": {
     "coarse": ["parametric", "arc-length"],
     "fine": ["parametric-speed", "parametric-arc-length-integral", "arc-length-sqrt-simplify", "parametric-arc-length-overlap"]

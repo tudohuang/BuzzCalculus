@@ -139,6 +139,79 @@
       ]
     }
   ],
+  "sections": [
+    {
+      "title": "兩條路受影響",
+      "beats": [
+        { "show": ["$z=f(x,y)$，位置 $(x(t),y(t))$"], "note": "溫度隨位置變，位置隨時間變。",
+          "say": "溫度隨位置改變，你沿一條路走，位置又隨時間改變。溫度隨時間變多快？" },
+        { "show": ["$dx=x'\\,dt$，$dy=y'\\,dt$"],
+          "say": "時間動一點點，x 跟著動 x prime 乘 d t，y 也跟著動 y prime 乘 d t。" },
+        { "show": ["$\\frac{dz}{dt}=f_x\\frac{dx}{dt}+f_y\\frac{dy}{dt}$"], "note": "放進全微分 $dz=f_x\\,dx+f_y\\,dy$。",
+          "say": "把這兩個變動放進全微分，再除以 d t：每個偏導數乘上它自己那個變數的變化率，加起來。" }
+      ],
+      "check": 0
+    },
+    {
+      "title": "一個參數",
+      "beats": [
+        { "show": ["$z=x^2y$，$x=t^2$，$y=e^t$"],
+          "say": "算一題。外層對 x、y 的偏導數，和內層對 t 的導數，分開算。" },
+        { "show": ["$z_x=2xy$，$z_y=x^2$；$x'=2t$，$y'=e^t$"],
+          "say": "外層兩個偏導數是二 x y 和 x 平方；內層導數是二 t 和 e 的 t 次方。" },
+        { "show": ["$\\frac{dz}{dt}=2xy\\cdot2t+x^2\\cdot e^t$"],
+          "say": "配對相乘再相加。這時候還混著 x、y、t，最後要全部換回 t。" },
+        { "show": ["$=4t^3e^t+t^4e^t$"], "note": "直接代 $z=t^4e^t$ 微分：一樣。",
+          "say": "換回 t 得到這個。驗算：直接把 z 寫成 t 四次方乘 e 的 t 次方，用乘法法則，答案相同。" }
+      ],
+      "check": 1
+    },
+    {
+      "title": "樹狀圖",
+      "beats": [
+        { "show": ["$z\\to x\\to t$ 與 $z\\to y\\to t$"], "note": "每條路的導數相乘，再把路加起來。",
+          "say": "畫一棵樹：z 在上面，下一層是 x 和 y，最底下是 t。從 z 走到 t 有兩條路，每條路上的導數乘起來，再加。" },
+        { "show": ["$\\frac{\\partial z}{\\partial s}=f_x\\frac{\\partial x}{\\partial s}+f_y\\frac{\\partial y}{\\partial s}$"], "note": "$x$、$y$ 都是 $s$、$t$ 的函數時。",
+          "say": "如果 x、y 都由 s 和 t 決定，最底層就有兩個點。對 s 微分，只走通到 s 的路。" },
+        { "show": ["條件：$f$ 可微"], "note": "只有偏導數存在不夠。證明在全文。",
+          "say": "這裡用到全微分是好近似，所以 f 要可微。常見的多項式、指數、三角函數組合都沒問題。" }
+      ],
+      "check": 2
+    },
+    {
+      "title": "在一點求值",
+      "beats": [
+        { "show": ["$z=x^2y+y^3$，$x=st$，$y=s+t$"], "note": "求 $s=1$、$t=2$ 時的 $\\frac{\\partial z}{\\partial s}$。",
+          "say": "要某一點的值，先把這一點的 x、y 算出來：x 是一乘二等於二，y 是一加二等於三。" },
+        { "show": ["$z_x=2xy=12$，$z_y=x^2+3y^2=31$"],
+          "say": "外層的偏導數直接代 x 等於二、y 等於三，得十二和三十一。" },
+        { "show": ["$\\frac{\\partial x}{\\partial s}=t=2$，$\\frac{\\partial y}{\\partial s}=1$"],
+          "say": "內層對 s 微分：s t 對 s 是 t，等於二；s 加 t 對 s 是一。" }
+      ],
+      "predict": {
+        "ask": "$\\frac{\\partial z}{\\partial s}$ 是？",
+        "options": [
+          { "label": "$55$", "correct": true },
+          { "label": "$12+31$", "why": "漏了內層導數：每條路要乘上 $\\frac{\\partial x}{\\partial s}=2$、$\\frac{\\partial y}{\\partial s}=1$。" },
+          { "label": "$12\\cdot2+31\\cdot2$", "why": "$y=s+t$ 對 $s$ 微分是 $1$，不是 $t$。" }
+        ]
+      }
+    },
+    {
+      "title": "隱函數的公式",
+      "beats": [
+        { "show": ["$F(x,y(x))=0$ 對 $x$ 微分"], "note": "$F_x\\cdot1+F_y\\cdot y'=0$。",
+          "say": "曲線上 y 是 x 的函數。把整個式子對 x 微分，用連鎖律：x 那條路乘一，y 那條路乘 y prime。" },
+        { "show": ["$\\frac{dy}{dx}=-\\frac{F_x}{F_y}$"], "note": "$F_y\\ne 0$ 時。",
+          "say": "移項就得到公式，前面有一個負號，別漏。" },
+        { "show": ["$x^3+y^3=6xy$：$\\frac{dy}{dx}=\\frac{2y-x^2}{y^2-2x}$"],
+          "say": "例如這條曲線，F 對 x、對 y 各微一次，代進公式整理。" },
+        { "show": ["$(3,3)$：$\\frac{6-9}{9-6}=-1$"],
+          "say": "點三、三在曲線上，代進去，切線斜率是負一。" }
+      ],
+      "check": 3
+    }
+  ],
   "skillTags": {
     "coarse": ["chain-rule", "multivariable", "partial-derivative"],
     "fine": ["mv-chain-one-parameter", "mv-chain-two-parameters", "mv-chain-implicit"]

@@ -128,6 +128,75 @@
       ]
     }
   ],
+  "sections": [
+    {
+      "title": "換一組配對",
+      "beats": [
+        { "show": ["$(\\tan x)'=\\sec^2 x$", "$(\\sec x)'=\\sec x\\tan x$"],
+          "say": "上一課靠 sine 和 cosine 互為導數。這一課換一組：tangent 和 secant 的導數。" },
+        { "show": ["$\\tan^2 x=\\sec^2 x-1$"], "note": "$\\sin^2+\\cos^2=1$ 兩邊除以 $\\cos^2 x$。",
+          "say": "恆等式也換一條：tangent 平方等於 secant 平方減一，從 sine 平方加 cosine 平方等於一來的。" },
+        { "show": ["留一組當 $du$，其餘換成同一種"],
+          "say": "策略跟上一課一樣：留一組當 du，其他的用恆等式換成同一種函數。" }
+      ],
+      "check": 0
+    },
+    {
+      "title": "$\\sec$ 偶次方",
+      "beats": [
+        { "show": ["留 $\\sec^2 x$，$u=\\tan x$"], "note": "剩下的用 $\\sec^2 x=1+\\tan^2 x$ 換掉。",
+          "say": "secant 是偶次方：留一個 secant 平方當 du，令 u 等於 tangent x，剩下的換成 tangent。" },
+        { "show": ["$\\int\\tan^2 x\\sec^4 x\\,dx$"], "note": "$\\tan^2 x\\sec^2 x\\cdot\\sec^2 x$。",
+          "say": "試一題：secant 四次方，拆一個平方出來當 du，另一個平方換成一加 tangent 平方。" },
+        { "show": ["$\\int u^2(1+u^2)\\,du$"],
+          "say": "整個變成 u 的多項式，一項一項積。" }
+      ],
+      "predict": {
+        "ask": "換回 $x$，答案是？",
+        "options": [
+          { "label": "$\\frac{\\tan^3 x}{3}+\\frac{\\tan^5 x}{5}+C$", "correct": true },
+          { "label": "$\\frac{\\tan^3 x}{3}+C$", "why": "另一個 $\\sec^2 x$ 換成 $1+\\tan^2 x$ 之後還在，乘開有兩項。" },
+          { "label": "$\\frac{\\sec^3 x}{3}+\\frac{\\sec^5 x}{5}+C$", "why": "$u=\\tan x$，換回的是 $\\tan x$，不是 $\\sec x$。" }
+        ]
+      }
+    },
+    {
+      "title": "$\\tan$ 奇次方",
+      "beats": [
+        { "show": ["留 $\\sec x\\tan x$，$u=\\sec x$"], "note": "剩下的 $\\tan$ 用 $\\tan^2 x=\\sec^2 x-1$ 換掉。",
+          "say": "tangent 是奇次方、又有 secant：留一組 secant 乘 tangent 當 du，令 u 等於 secant x。" },
+        { "show": ["$\\int\\tan^3 x\\sec x\\,dx=\\int(u^2-1)\\,du$"],
+          "say": "tangent 三次方留一個，剩下的平方換成 secant 平方減一，就是 u 平方減一。" },
+        { "show": ["$=\\frac{\\sec^3 x}{3}-\\sec x+C$"], "note": "兩個條件都符合時，任選一種。",
+          "say": "積完換回 secant x。如果兩種條件都符合，任選一種都行。" }
+      ],
+      "check": 1
+    },
+    {
+      "title": "$\\int\\tan x\\,dx$",
+      "beats": [
+        { "show": ["$\\int\\tan x\\,dx=\\int\\frac{\\sin x}{\\cos x}\\,dx$"], "note": "令 $u=\\cos x$，$du=-\\sin x\\,dx$。",
+          "say": "單獨一個 tangent，寫成 sine 除以 cosine，令 u 等於分母 cosine x。" },
+        { "show": ["$=\\ln|\\sec x|+C$"], "note": "負號拿進去，$\\cos$ 變 $\\sec$。",
+          "say": "分子是分母導數的負號，積出負的自然對數。負號拿進去，就變成 secant。" },
+        { "show": ["$\\tan$ 偶、$\\sec$ 奇：兩招都用不上"], "note": "例如 $\\sec^3 x$：要分部，常常是循環型。",
+          "say": "還有一種情況兩招都不能用：tangent 偶次方、secant 奇次方，這要靠分部積分。" }
+      ],
+      "check": 3
+    },
+    {
+      "title": "$\\int\\sec x\\,dx$",
+      "beats": [
+        { "show": ["乘上 $\\frac{\\sec x+\\tan x}{\\sec x+\\tan x}$"], "note": "值不變。",
+          "say": "secant 的積分不好猜。技巧是乘上一個等於一的分式，分子分母都是 secant 加 tangent。" },
+        { "show": ["$\\sec x=\\frac{\\sec^2 x+\\sec x\\tan x}{\\sec x+\\tan x}$"], "note": "分母的導數正好是分子。",
+          "say": "乘開以後，分母 secant 加 tangent 的導數，剛好就是分子，變成分子是分母導數的形狀。" },
+        { "show": ["事後看出來的技巧"], "note": "記住結果，會微分檢查就好。",
+          "say": "這一步是事後才看出來的，不用自己想到。記住結果，會微分檢查就好。" }
+      ],
+      "check": 2
+    }
+  ],
   "skillTags": {
     "coarse": ["trig-integral", "trig-power", "substitution"],
     "fine": ["tan-sec-even-sec", "tan-sec-odd-tan", "tan-sec-identity", "tan-sec-basic"]

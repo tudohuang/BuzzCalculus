@@ -47,6 +47,78 @@
       "collapsible": true
     }
   ],
+  "sections": [
+    {
+      "title": "兩個方向",
+      "beats": [
+        {"show":["$f=u+iv$ 在 $z_0$ 可微"],"note":"每個方向的差商都趨近同一個數。","say":"f 可微，代表 h 從哪個方向來，差商都趨近同一個數。挑兩個最簡單的方向來比。"},
+        {"show":["沿實軸 $h=t$：$\\frac{\\partial f}{\\partial x}=u_x+i\\,v_x$"],"say":"第一個方向：h 沿實軸，差商就是對 x 的偏導數，u x 加 i v x。"},
+        {"show":["沿虛軸 $h=it$：$\\frac{1}{i}(u_y+i\\,v_y)$"],"note":"分母多了一個 $i$。","say":"第二個方向：h 沿虛軸，是對 y 的偏導數，可是分母多了一個 i，要除掉。"}
+      ],
+      "predict": {
+        "ask": "$\\frac{1}{i}(u_y+i\\,v_y)$ 化簡是？",
+        "options": [
+          {"label":"$v_y-i\\,u_y$","correct":true},
+          {"label":"$u_y+i\\,v_y$","why":"還要除以 $i$；$\\frac{1}{i}=-i$。"},
+          {"label":"$-v_y+i\\,u_y$","why":"$\\frac{1}{i}=-i$：$-i\\cdot u_y=-iu_y$，$-i\\cdot iv_y=v_y$，所以是 $v_y-iu_y$。"}
+        ]
+      }
+    },
+    {
+      "title": "兩個式子",
+      "beats": [
+        {"show":["$u_x+i\\,v_x=v_y-i\\,u_y$"],"note":"兩者都等於 $f'(z_0)$。","say":"兩個方向的答案都是 f prime，所以相等。實部和實部比，虛部和虛部比。"},
+        {"show":["$u_x=v_y,\\qquad u_y=-v_x$"],"say":"實部：u x 等於 v y。虛部：v x 等於負 u y，也就是 u y 等於負 v x。注意負號。"},
+        {"show":["$f'(z_0)=u_x+i\\,v_x$"],"note":"用 $z^2$ 檢查：$u_x=2x=v_y$。","say":"導數就用沿實軸那個：u x 加 i v x。拿 z 平方檢查，u x 和 v y 都是二 x。"}
+      ],
+      "check": 0
+    },
+    {
+      "title": "必要與充分",
+      "beats": [
+        {"show":["可微 $\\Rightarrow$ CR 成立"],"note":"CR 不成立，就一定不可微。","say":"可微一定滿足 CR。反過來用：CR 不成立，就一定不可微。"},
+        {"show":["$\\bar{z}=x-iy$：$u_x=1$、$v_y=-1$"],"say":"例如 z 共軛：u x 是一，v y 是負一，不相等，處處不可微。"},
+        {"show":["偏導數連續 $+$ CR $\\Rightarrow$ 可微"],"note":"只有 CR 還不夠。","say":"可是只有 CR 成立還不夠，有反例。常用的充分條件：偏導數連續，再加上 CR。"},
+        {"show":["$x^2+i\\,y^2$：$2x=2y$"],"note":"只在直線 $y=x$ 上可微。","say":"例如 x 平方加 i y 平方：第一條要二 x 等於二 y，所以只在直線 y 等於 x 上可微。"}
+      ],
+      "check": 1
+    },
+    {
+      "title": "$e^z$ 處處可微",
+      "beats": [
+        {"show":["$u=e^x\\cos y$、$v=e^x\\sin y$"],"say":"用 CR 檢查 e 的 z 次方：實部 e 的 x 次方乘 cosine y，虛部乘 sine y。"},
+        {"show":["$u_x=v_y=e^x\\cos y$","$u_y=-v_x=-e^x\\sin y$"],"say":"兩條方程都成立，而且這些偏導數處處連續，所以處處可微。"},
+        {"show":["$f'=u_x+i\\,v_x=e^z$"],"say":"導數是 u x 加 i v x，正好又是 e 的 z 次方，跟實數一樣。"}
+      ],
+      "check": 2
+    },
+    {
+      "title": "調和函數",
+      "beats": [
+        {"show":["$u_{xx}=v_{yx}$、$u_{yy}=-v_{xy}$"],"say":"把 CR 再微分一次：u x x 等於 v y x，u y y 等於負 v x y。"},
+        {"show":["$u_{xx}+u_{yy}=0$"],"note":"混合偏導數相等，相加抵銷。","say":"混合偏導數相等，兩式相加就抵銷，得到 u 的拉普拉斯是零。u 是調和函數，v 也是。"},
+        {"show":["給調和的 $u$，用 CR 解出 $v$"],"note":"$v$ 叫共軛調和函數。","say":"反過來，給一個調和的 u，可以用 CR 解出 v，湊成一個全純函數。"}
+      ],
+      "check": 3
+    },
+    {
+      "title": "求共軛調和函數",
+      "beats": [
+        {"show":["$u=x^3-3xy^2$"],"note":"$u_{xx}=6x$，$u_{yy}=-6x$，調和。","say":"u 等於 x 三次方減三 x y 平方。先檢查：二階偏導數六 x 和負六 x，加起來是零。"},
+        {"show":["$v_y=u_x=3x^2-3y^2$"],"say":"用第一條 CR：v y 等於 u x。對 y 積分。"},
+        {"show":["$v=3x^2y-y^3+g(x)$"],"note":"積分常數是 $x$ 的函數。","say":"對 y 積分時，積分常數可以是任何 x 的函數，所以寫 g 的 x，不是常數。"},
+        {"show":["$v_x=6xy+g'(x)=-u_y=6xy$"],"say":"再用第二條 CR：v x 要等於負 u y，也就是六 x y。比一比 g prime。"}
+      ],
+      "predict": {
+        "ask": "所以 $v$ 是？",
+        "options": [
+          {"label":"$3x^2y-y^3+C$，$u+iv=z^3+iC$","correct":true},
+          {"label":"$3x^2y-y^3+g(x)$，$g$ 任意","why":"第二條 CR 給出 $g'(x)=0$，$g$ 只能是常數。"},
+          {"label":"$3x^2y$","why":"對 $y$ 積分 $3x^2-3y^2$ 還有 $-y^3$；常數 $C$ 也可以留著。"}
+        ]
+      }
+    }
+  ],
   "workedExamples": [
     {
       "title": "$e^z$ 處處可微",

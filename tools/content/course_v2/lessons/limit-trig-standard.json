@@ -140,6 +140,91 @@
       ]
     }
   ],
+  "sections": [
+    {
+      "title": "代不進去，看表格",
+      "beats": [
+        { "show": ["$\\lim_{x\\to0} \\sin x / x$：代入得 $\\frac{0}{0}$"], "note": "$\\sin x$ 不是多項式，因式分解用不上。",
+          "say": "sine x 除以 x，x 趨近零。代進去是零分之零，而 sine 不是多項式，之前的化簡都用不上。" },
+        { "show": ["$x = 0.1$：$\\approx 0.998334$", "$x = 0.01$：$\\approx 0.99998333$"],
+          "say": "那就先看數字。x 取零點一，比值約零點九九八三三四；x 取零點零一，比值約零點九九九九八三三三。" },
+        { "show": ["$x = 0.001$：$\\approx 0.9999998$"], "note": "它往 1 靠。",
+          "say": "x 再縮到零點零零一，比值幾乎就是一。表格很清楚：它往一靠。" }
+      ],
+      "predict": {
+        "ask": "$x = -0.1$ 時，$\\sin x / x$ 約是？",
+        "options": [
+          { "label": "$0.998334$", "correct": true },
+          { "label": "$-0.998334$", "why": "$\\sin(-x) = -\\sin x$，分母也變號，負負得正：$\\sin x / x$ 是偶函數。" },
+          { "label": "$-0.1$", "why": "那是 $x$ 本身；$\\sin x$ 幾乎等於 $x$，所以比值靠近 1，不是靠近 $x$。" }
+        ]
+      }
+    },
+    {
+      "title": "放大看 $\\sin x$",
+      "beats": [
+        { "show": ["$x$ 很小時 $\\sin x$ 幾乎就是 $x$"], "note": "單位圓上：弧長 $x$ 和高度 $\\sin x$ 幾乎一樣長。", "fig": { "use": 0, "to": 0 },
+          "say": "看圖，藍色是 sine x，紅色虛線是 y 等於 x。在原點附近，兩條線靠得很近。" },
+        { "show": ["往原點放大"], "fig": { "use": 0, "to": 1 },
+          "say": "往原點放大，兩條線越來越分不開。比值往一靠，就是因為這兩個幾乎一樣長。" },
+        { "show": ["直覺，不是證明"], "note": "比值為什麼剛好趨近 1，要用面積夾出來；完整證明在全文。",
+          "say": "不過這只是直覺。幾乎一樣到底多接近，要用三塊面積把它夾住，完整證明在全文。" },
+        { "show": ["$x$ 一定要用弧度"], "note": "用角度：$\\sin(1^\\circ) \\approx 0.017452$，比值變成 $\\frac{\\pi}{180}$。",
+          "say": "還有，x 一定要用弧度。用角度的話，sine 一度約零點零一七四五二，比值就不會趨近一了。" }
+      ],
+      "drag": { "use": 0, "ask": "自己放大到最底，看 $\\sin x$ 和 $y = x$ 分不分得開", "range": [1.8, 2] }
+    },
+    {
+      "title": "配係數",
+      "beats": [
+        { "show": ["$\\lim_{x\\to0} \\frac{\\sin(5x)}{3x}$"], "note": "分母要跟 $\\sin$ 裡面一樣。",
+          "say": "sine 五 x 除以三 x。標準極限要求分母跟 sine 裡面一模一樣，這裡裡面是五 x，分母卻是三 x。" },
+        { "show": ["$= \\left(\\frac{5}{3}\\right) \\cdot \\frac{\\sin(5x)}{5x}$"],
+          "say": "那就把分母配成五 x，多出來的三分之五放到前面。" },
+        { "show": ["$5x \\to 0$，所以 $\\frac{\\sin(5x)}{5x} \\to 1$"], "note": "答案 $\\frac{5}{3}$。",
+          "say": "x 趨近零時五 x 也趨近零，那一塊趨近一，答案就是三分之五。" },
+        { "show": ["$\\frac{\\sin(ax)}{bx} \\to \\frac{a}{b}$"],
+          "say": "一般來說，sine a x 除以 b x，極限就是 b 分之 a。" }
+      ],
+      "check": 0
+    },
+    {
+      "title": "$\\tan$ 也能配",
+      "beats": [
+        { "show": ["$\\tan x / x = (\\sin x / x) \\cdot \\frac{1}{\\cos x}$"], "note": "$\\to 1 \\cdot 1 = 1$",
+          "say": "tangent 是 sine 除以 cosine。拆開來兩塊都趨近一，所以 tangent x 除以 x 也趨近一。" },
+        { "show": ["$\\frac{\\tan(2x)}{\\sin(3x)}$：拆成三塊"], "note": "$[\\frac{\\tan(2x)}{2x}] \\cdot [\\frac{3x}{\\sin(3x)}] \\cdot \\frac{2x}{3x}$",
+          "say": "tangent 二 x 除以 sine 三 x：tangent 配二 x，sine 配三 x，剩下二 x 比三 x。" },
+        { "show": ["$1 \\cdot 1 \\cdot \\frac{2}{3} = \\frac{2}{3}$"],
+          "say": "前兩塊都趨近一，最後一塊 x 約掉是三分之二，相乘就是三分之二。" }
+      ],
+      "check": 3
+    },
+    {
+      "title": "$1 - \\cos x$ 那一個",
+      "beats": [
+        { "show": ["同乘 $1 + \\cos x$"], "note": "$x$ 靠近 0 時它靠近 2，不是 0。",
+          "say": "第二個標準極限：一減 cosine x 除以 x 平方。分子分母同乘一加 cosine x，它靠近二，不會變成零。" },
+        { "show": ["$(1 - \\cos x)(1 + \\cos x) = \\sin^2x$"],
+          "say": "分子變成一減 cosine 平方，也就是 sine 平方 x。" },
+        { "show": ["$(\\sin x / x)^2 \\cdot \\frac{1}{1 + \\cos x}$"], "note": "$\\to 1^2 \\cdot \\frac{1}{2} = \\frac{1}{2}$",
+          "say": "整理成 sine x 除以 x 的平方，再乘一加 cosine x 分之一。前面趨近一，後面趨近二分之一。" }
+      ],
+      "check": 2
+    },
+    {
+      "title": "配平方，只在 0",
+      "beats": [
+        { "show": ["$\\frac{1 - \\cos 4x}{x^2}$：$u = 4x$"], "note": "分母要配成 $(4x)^2 = 16x^2$。",
+          "say": "一減 cosine 四 x 除以 x 平方。裡面是四 x，分母要配成四 x 的平方，是十六 x 平方，不是四 x 平方。" },
+        { "show": ["$16 \\cdot \\frac{1 - \\cos 4x}{(4x)^2} \\to 16 \\cdot \\frac{1}{2} = 8$"],
+          "say": "多出來的十六放前面，後面那一塊趨近二分之一，答案是八。" },
+        { "show": ["標準極限只在 $x \\to 0$"], "note": "$x$ 跑到別的地方，就不是 $\\frac{0}{0}$ 了。",
+          "say": "最後提醒：這兩個標準極限都是 x 趨近零才成立。x 跑去別的地方，要重新想。" }
+      ],
+      "check": 1
+    }
+  ],
   "skillTags": {
     "coarse": ["trig-limit", "standard-limit"],
     "fine": ["trig-limit-sinx-over-x", "trig-limit-rescale", "trig-limit-tan", "trig-limit-one-minus-cos"]

@@ -161,6 +161,77 @@
       ]
     }
   ],
+  "sections": [
+    {
+      "title": "草稿與正式證明",
+      "beats": [
+        { "show": ["草稿：從 $|a_n-L|<\\varepsilon$ 往回推"], "note": "看 $n$ 要多大才夠，得到 $N$ 的公式。",
+          "say": "epsilon N 證明要兩張紙。草稿紙上，從想要的結果往回推，看 n 要多大才夠。" },
+        { "show": ["正式：給定 $\\varepsilon>0$，取 $N=\\dots$", "則 $n\\ge N$ 時 $|a_n-L|<\\varepsilon$"],
+          "say": "正式證明反過來寫：先給定 epsilon，再取 N，然後證 n 大於等於 N 時距離小於 epsilon。" },
+        { "show": ["草稿的倒推不必寫"], "note": "但正式證明的每個不等號都要站得住。",
+          "say": "讀的人只看正式證明。草稿怎麼想到的不用交，但正式那一張每一步都要對。" }
+      ],
+      "check": 0
+    },
+    {
+      "title": "$\\frac{1}{n}\\to0$",
+      "beats": [
+        { "show": ["草稿：$\\frac{1}{n}<\\varepsilon$ ⇔ $n>\\frac{1}{\\varepsilon}$"],
+          "say": "最基本的一題：n 分之一趨近零。草稿上，要 n 分之一小於 epsilon，只要 n 大於 epsilon 分之一。" },
+        { "show": ["正式證明：給定 $\\varepsilon>0$"],
+          "say": "現在寫正式的。第一句給定 epsilon。第二句要取 N，該怎麼寫？" }
+      ],
+      "predict": {
+        "ask": "第二句：取哪個 $N$？",
+        "options": [
+          { "label": "由阿基米德性質，取自然數 $N>\\frac{1}{\\varepsilon}$", "correct": true },
+          { "label": "取 $N=\\frac{1}{\\varepsilon}$", "why": "$\\frac{1}{\\varepsilon}$ 不一定是整數；而且剛好相等時只得到 $\\frac{1}{n}\\le\\varepsilon$，不是嚴格小於。" },
+          { "label": "取 $N>\\varepsilon$", "why": "$\\varepsilon$ 很小時，$N$ 也可以很小，$\\frac{1}{N}$ 根本不會小於 $\\varepsilon$。要的是 $\\frac{1}{\\varepsilon}$。" }
+        ]
+      }
+    },
+    {
+      "title": "放大成好算的",
+      "beats": [
+        { "show": ["$n\\ge N>\\frac{1}{\\varepsilon}$ ⇒ $\\frac{1}{n}<\\varepsilon$"],
+          "say": "取好 N 之後，n 大於等於 N，又大於 epsilon 分之一，所以 n 分之一小於 epsilon，證完。" },
+        { "show": ["$|a_n-L|\\le b_n$，而 $b_n<\\varepsilon$ 好解"], "note": "不用解得剛剛好。",
+          "say": "距離常常是麻煩的分式。不必硬解，先放大成一個簡單的上界，讓上界小於 epsilon 就好。" },
+        { "show": ["$\\frac{3n^2+1}{n^2+n}\\to3$", "$|a_n-3|=\\frac{3n-1}{n^2+n}$"],
+          "say": "例子：分子三 n 平方加一，分母 n 平方加 n，往三收斂。跟三的距離化簡完是這個分式。" },
+        { "show": ["分子放大、分母縮小"], "note": "把減掉的正數丟掉、把加上的正數丟掉。",
+          "say": "放大的招式：分子把減掉的一丟掉，變大；分母把加上的 n 丟掉，變小。整個分式就變大了。" }
+      ],
+      "check": 1
+    },
+    {
+      "title": "$N$ 要是自然數",
+      "beats": [
+        { "show": ["$|a_n-3|<\\frac{3n}{n^2}=\\frac{3}{n}$"],
+          "say": "放大之後是 n 分之三，要它小於 epsilon，n 大於 epsilon 分之三就夠。" },
+        { "show": ["取自然數 $N>\\frac{3}{\\varepsilon}$"], "note": "$\\frac{3}{\\varepsilon}$ 不一定是整數。",
+          "say": "epsilon 分之三不一定是整數，所以寫：由阿基米德性質，取一個比它大的自然數 N。" },
+        { "show": ["$\\varepsilon=10^{-3}$：放大法 $N=3001$", "最小可用的 $N=2999$"],
+          "say": "誤差十的負三次方，放大法給三千零一，最小可用的是兩千九百九十九。兩個都對，只是多走兩步。" },
+        { "show": ["$N$ 只能依賴 $\\varepsilon$"], "note": "不能依賴之後才挑的 $n$。",
+          "say": "還有一條：N 的公式只能用 epsilon 和題目給的常數，不能用到後來才挑的 n。" }
+      ],
+      "check": 3
+    },
+    {
+      "title": "先有理化再放大",
+      "beats": [
+        { "show": ["$\\sqrt{n+1}-\\sqrt{n}=\\frac{1}{\\sqrt{n+1}+\\sqrt{n}}$"], "note": "乘共軛，這個量是正的。",
+          "say": "根號 n 加一減根號 n，乘共軛，變成一個分子是一的分式，而且是正的。" },
+        { "show": ["分母 $>2\\sqrt{n}$ ⇒ 距離 $<\\frac{1}{2\\sqrt{n}}$"],
+          "say": "分母兩個根號裡，大的那個換成小的，分母變小，分式變大，上界是二倍根號 n 分之一。" },
+        { "show": ["取自然數 $N>\\frac{1}{4\\varepsilon^2}$"], "note": "例：$\\varepsilon=0.001$ 時 $N=250001$。",
+          "say": "要這個上界小於 epsilon，n 要大於四倍 epsilon 平方分之一。取比它大的自然數就好。" }
+      ],
+      "check": 2
+    }
+  ],
   "skillTags": {
     "coarse": [
       "epsilon-delta",

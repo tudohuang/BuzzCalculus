@@ -125,6 +125,73 @@
       ]
     }
   ],
+  "sections": [
+    {
+      "title": "整數乘出 $\\pi$",
+      "beats": [
+        { "show": ["$\\frac{2\\cdot 2}{1\\cdot 3}\\cdot\\frac{4\\cdot 4}{3\\cdot 5}\\cdot\\frac{6\\cdot 6}{5\\cdot 7}\\cdots$"], "note": "偶數平方，除以左右兩個奇數。",
+          "say": "把每個偶數平方，除以它左右兩個奇數，一直乘下去。" },
+        { "show": ["$=\\frac{\\pi}{2}$"],
+          "say": "這個只用整數的乘積，會收斂到二分之 pi。" },
+        { "show": ["$\\frac{(2k)^2}{(2k-1)(2k+1)}=\\frac{4k^2}{4k^2-1}$"], "note": "每個因子都比 $1$ 大一點點。",
+          "say": "每個因子是四 k 平方除以四 k 平方減一，都比一大一點點，乘起來剛好停在二分之 pi。" }
+      ],
+      "check": 0
+    },
+    {
+      "title": "倒過來寫",
+      "beats": [
+        { "show": ["$1-\\frac{1}{4k^2}=\\frac{(2k-1)(2k+1)}{(2k)^2}$"], "note": "正好是 Wallis 因子的倒數。",
+          "say": "一減四 k 平方分之一，通分之後剛好是 Wallis 因子上下顛倒。" },
+        { "show": ["$\\prod_{k=1}^{\\infty}\\left(1-\\frac{1}{4k^2}\\right)=\\frac{2}{\\pi}$"], "note": "每個因子都小於 $1$，乘積小於 $1$。",
+          "say": "部分乘積互為倒數，所以這個乘積趨近 pi 分之二。每個因子小於一，答案也小於一，合理。" }
+      ],
+      "check": 2
+    },
+    {
+      "title": "關鍵：$W_n$ 遞減",
+      "beats": [
+        { "show": ["$W_{2m+1}\\le W_{2m}\\le W_{2m-1}$"], "note": "$0\\le\\sin x\\le 1$，次方越高越小。",
+          "say": "證明靠上一課的 Wallis 積分。sine 在零和一之間，次方越高越小，所以 W n 遞減。" },
+        { "show": ["$1\\le\\frac{W_{2m}}{W_{2m+1}}\\le\\frac{2m+1}{2m}$"], "note": "全部除以 $W_{2m+1}$，右邊用遞迴。",
+          "say": "全部除以 W 二 m 加一。右邊用遞迴算出來是二 m 分之二 m 加一，它趨近一。" },
+        { "show": ["夾擠：$\\frac{W_{2m}}{W_{2m+1}}\\to 1$"], "note": "把兩個 Wallis 的值代進去，就是 $\\frac{\\pi}{2}$ 乘上部分乘積的倒數。",
+          "say": "夾擠定理說中間的比值趨近一。把兩個 Wallis 的值代進去整理，就得到二分之 pi 等於那個乘積。" }
+      ],
+      "check": 1
+    },
+    {
+      "title": "一個不變量",
+      "beats": [
+        { "show": ["$nW_nW_{n-1}=(n-1)W_{n-1}W_{n-2}$"], "note": "遞迴兩邊乘 $nW_{n-1}$。",
+          "say": "把遞迴兩邊都乘上 n 乘 W n 減一，左右變成同一個樣子，只是 n 往下退一格。" },
+        { "show": ["$=1\\cdot W_1W_0=\\frac{\\pi}{2}$"], "note": "這個量不隨 $n$ 改變。",
+          "say": "所以這個量不管 n 是多少都一樣，一路退到 n 等於一，就是 W 一乘 W 零，二分之 pi。" },
+        { "show": ["$W_n\\sim\\sqrt{\\frac{\\pi}{2n}}$"], "note": "配合 $W_n\\sim W_{n-1}$。",
+          "say": "再配合相鄰兩項等價，W n 平方等價於二 n 分之 pi，開根號就得到 W n 的大小。" }
+      ],
+      "check": 3
+    },
+    {
+      "title": "很慢，但很有用",
+      "beats": [
+        { "show": ["$P_1=\\frac{4}{3}\\approx 1.3333$"], "note": "跟 $\\frac{\\pi}{2}\\approx 1.5708$ 比。",
+          "say": "實際乘乘看。第一個因子是三分之四，大約一點三三三三，離一點五七零八還很遠。" },
+        { "show": ["$P_{10}\\approx 1.5339$"], "note": "相對誤差約 $\\frac{1}{4m}$，$m=10$ 時 $\\frac{1}{40}$。",
+          "say": "乘到第十個，還差百分之二點四左右。拿它算 pi 並不實際。" },
+        { "show": ["用途：定出常數"], "note": "$\\binom{2n}{n}$、Stirling 的 $\\sqrt{2\\pi}$、$\\Gamma\\left(\\frac{1}{2}\\right)$。",
+          "say": "它真正的用途是當橋樑：中央二項式係數、Stirling 公式的根號二 pi，都靠它定出常數。" }
+      ],
+      "predict": {
+        "ask": "$P_2$（前兩個因子相乘）是？",
+        "options": [
+          { "label": "$\\frac{64}{45}$", "correct": true },
+          { "label": "$\\frac{4}{3}$", "why": "那是 $P_1$；還要乘第二個因子 $\\frac{16}{15}$。" },
+          { "label": "$\\frac{16}{15}$", "why": "那只是第二個因子 $\\frac{4\\cdot 4}{3\\cdot 5}$，要乘上 $\\frac{4}{3}$。" }
+        ]
+      }
+    }
+  ],
   "skillTags": {
     "coarse": ["wallis", "infinite-product", "central-binomial"],
     "fine": ["wallis-product-value", "wallis-squeeze-proof", "wallis-invariant", "wallis-central-binomial"]

@@ -121,6 +121,92 @@
       ]
     }
   ],
+  "sections": [
+    {
+      "title": "$x^2$ 在前用 $\\sec$",
+      "beats": [
+        { "show": ["$\\sec^2\\theta-1=\\tan^2\\theta$"],
+          "say": "根號裡是 x 平方減 a 平方，要找一條平方減一的恆等式：secant 平方減一等於 tangent 平方。" },
+        { "show": ["令 $x=a\\sec\\theta$"],
+          "say": "所以令 x 等於 a 乘 secant theta，係數一樣是 a。" },
+        { "show": ["$x^2-a^2=a^2\\sec^2\\theta-a^2=a^2\\tan^2\\theta$"],
+          "say": "代進去，a 平方提出來，剩下 tangent 平方，完全平方。" }
+      ],
+      "check": 0
+    },
+    {
+      "title": "根號消失",
+      "beats": [
+        { "show": ["$x\\ge a$：取 $\\theta\\in[0,\\frac{\\pi}{2})$"], "note": "每個 $x\\ge a$ 恰好對應一個 $\\theta$。",
+          "say": "根號只在 x 的絕對值大於等於 a 時有定義。先看 x 大於等於 a，theta 取零到二分之 pi。" },
+        { "show": ["$\\tan\\theta\\ge 0$：$\\sqrt{x^2-a^2}=a\\tan\\theta$"],
+          "say": "這一段 tangent 不是負的，根號開出來就是 a tangent theta。" },
+        { "show": ["$dx=a\\sec\\theta\\tan\\theta\\,d\\theta$"], "note": "$x\\le -a$ 時，先令 $x=-t$ 再做。",
+          "say": "dx 是 a secant 乘 tangent d theta。x 是負的那一側，先令 x 等於負 t，避開正負號的麻煩。" }
+      ],
+      "check": 1
+    },
+    {
+      "title": "換回 $x$ 的三角形",
+      "beats": [
+        { "show": ["$\\sec\\theta=\\frac{x}{a}$：斜邊 $x$、鄰邊 $a$"], "note": "也就是 $\\cos\\theta=\\frac{a}{x}$。",
+          "say": "secant 是 a 分之 x，倒過來 cosine 是 x 分之 a：斜邊 x，鄰邊 a。" },
+        { "show": ["對邊 $\\sqrt{x^2-a^2}$"],
+          "say": "畢氏定理，對邊是根號 x 平方減 a 平方。" },
+        { "show": ["$\\tan\\theta=\\frac{\\sqrt{x^2-a^2}}{a}$，$\\theta=\\arccos\\frac{a}{x}$"],
+          "say": "tangent 是對邊比鄰邊；theta 本身用 arccosine 寫回來。" }
+      ],
+      "check": 3
+    },
+    {
+      "title": "化成 $\\tan^2\\theta$",
+      "beats": [
+        { "show": ["$\\int\\frac{\\sqrt{x^2-4}}{x}\\,dx$：$x=2\\sec\\theta$"], "note": "$x>2$。",
+          "say": "根號 x 平方減四除以 x，x 大於二。令 x 等於二 secant theta。" },
+        { "show": ["$=\\int 2\\tan^2\\theta\\,d\\theta$"], "note": "$\\frac{2\\tan\\theta}{2\\sec\\theta}\\cdot 2\\sec\\theta\\tan\\theta$。",
+          "say": "根號是二 tangent，dx 是二 secant tangent，secant 約掉，剩二倍 tangent 平方。" },
+        { "show": ["$=\\int 2(\\sec^2\\theta-1)\\,d\\theta=2\\tan\\theta-2\\theta$"],
+          "say": "tangent 平方換成 secant 平方減一，兩項都會積。" }
+      ],
+      "predict": {
+        "ask": "換回 $x$ 是？",
+        "options": [
+          { "label": "$\\sqrt{x^2-4}-2\\arccos\\frac{2}{x}+C$", "correct": true },
+          { "label": "$\\sqrt{x^2-4}-2\\arccos\\frac{x}{2}+C$", "why": "$\\cos\\theta=\\frac{2}{x}$；$\\frac{x}{2}$ 是 $\\sec\\theta$。" },
+          { "label": "$2\\sqrt{x^2-4}-2\\arccos\\frac{2}{x}+C$", "why": "$\\tan\\theta=\\frac{\\sqrt{x^2-4}}{2}$，所以 $2\\tan\\theta=\\sqrt{x^2-4}$。" }
+        ]
+      }
+    },
+    {
+      "title": "三種根號",
+      "beats": [
+        { "show": ["$a^2-x^2$：$x=a\\sin\\theta$"], "note": "$1-\\sin^2=\\cos^2$。",
+          "say": "整理三種：a 平方減 x 平方，用 sine。" },
+        { "show": ["$x^2+a^2$：$x=a\\tan\\theta$"], "note": "$1+\\tan^2=\\sec^2$。",
+          "say": "x 平方加 a 平方，用 tangent。" },
+        { "show": ["$x^2-a^2$：$x=a\\sec\\theta$"], "note": "看根號像哪一條畢氏恆等式。",
+          "say": "x 平方減 a 平方，用 secant。都先檢查外面有沒有 x 可以直接換元。" }
+      ],
+      "check": 2
+    },
+    {
+      "title": "定積分",
+      "beats": [
+        { "show": ["$\\int_{\\sqrt{2}}^{2}\\frac{1}{x\\sqrt{x^2-1}}\\,dx$：$x=\\sec\\theta$"],
+          "say": "最後一題：x 乘根號 x 平方減一分之一，從根號二積到二。令 x 等於 secant theta。" },
+        { "show": ["被積函數變成 $1$"], "note": "$\\frac{\\sec\\theta\\tan\\theta}{\\sec\\theta\\tan\\theta}=1$。",
+          "say": "分子分母都是 secant 乘 tangent，約掉剩一，只要把上下限換對。" }
+      ],
+      "predict": {
+        "ask": "$\\theta$ 的上下限與答案？",
+        "options": [
+          { "label": "$\\frac{\\pi}{4}$ 到 $\\frac{\\pi}{3}$，答案 $\\frac{\\pi}{12}$", "correct": true },
+          { "label": "$\\frac{\\pi}{4}$ 到 $\\frac{\\pi}{6}$", "why": "$\\sec\\theta=2$ 是 $\\cos\\theta=\\frac{1}{2}$，$\\theta=\\frac{\\pi}{3}$；$\\frac{\\pi}{6}$ 是 $\\sin\\theta=\\frac{1}{2}$。" },
+          { "label": "$\\sqrt{2}$ 到 $2$，答案 $2-\\sqrt{2}$", "why": "換成 $\\theta$ 之後，上下限也要換成 $\\theta$ 的值。" }
+        ]
+      }
+    }
+  ],
   "skillTags": {
     "coarse": ["trig-substitution", "radical", "inverse-trig"],
     "fine": ["trig-sub-sec", "trig-sub-sec-triangle", "trig-sub-sec-bounds", "trig-sub-which"]

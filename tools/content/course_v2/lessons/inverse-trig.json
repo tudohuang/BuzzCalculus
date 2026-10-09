@@ -125,6 +125,92 @@
       ]
     }
   ],
+  "sections": [
+    {
+      "title": "先剪成一對一",
+      "beats": [
+        { "show": ["$\\sin\\frac{\\pi}{6} = \\sin\\frac{5\\pi}{6} = \\frac{1}{2}$"], "note": "$\\sin$ 不是一對一。",
+          "say": "sine 不是一對一：六分之 pi 和六分之五 pi，sine 都是二分之一。哪個角的 sine 是二分之一？答案有無限多個。" },
+        { "show": ["只留 $[-\\frac{\\pi}{2}, \\frac{\\pi}{2}]$"], "note": "從 $-1$ 一路增加到 1，每個值剛好一次。",
+          "say": "所以先剪一段：只留負二分之 pi 到二分之 pi。在這段裡 sine 從負一爬到一，每個值只碰到一次。" },
+        { "show": ["$\\arcsin x$：這段裡 $\\sin$ 等於 $x$ 的角"], "note": "也寫成 $\\sin^{-1} x$。",
+          "say": "剪好之後就倒得回去，這個反函數叫 arcsine：在這一段裡，sine 等於 x 的那一個角。" }
+      ],
+      "predict": {
+        "ask": "$\\arcsin\\left(\\frac{1}{2}\\right)$ 是？",
+        "options": [
+          { "label": "$\\frac{\\pi}{6}$", "correct": true },
+          { "label": "$\\frac{5\\pi}{6}$", "why": "$\\sin\\left(\\frac{5\\pi}{6}\\right)$ 也是 $\\frac{1}{2}$，但 $\\frac{5\\pi}{6}$ 不在 $[-\\frac{\\pi}{2}, \\frac{\\pi}{2}]$。" },
+          { "label": "2", "why": "那是 $\\frac{1}{2}$ 的倒數；$\\arcsin$ 回傳的是一個角。" }
+        ]
+      }
+    },
+    {
+      "title": "三個反三角函數",
+      "beats": [
+        { "show": ["$\\arcsin$：$[-1, 1] \\to [-\\frac{\\pi}{2}, \\frac{\\pi}{2}]$"],
+          "say": "arcsine 只吃負一到一，因為 sine 的值不會超出這個範圍；吐出來的角在負二分之 pi 到二分之 pi。" },
+        { "show": ["$\\arccos$：$[-1, 1] \\to [0, \\pi]$"], "note": "$\\cos$ 剪在 $[0, \\pi]$。",
+          "say": "cosine 剪的段不一樣，剪在零到 pi，因為 cosine 在這段一路往下走。所以 arccosine 的值在零到 pi。" },
+        { "show": ["$\\arctan$：全體實數 $\\to (-\\frac{\\pi}{2}, \\frac{\\pi}{2})$"], "note": "兩條水平漸近線 $y = \\pm\\frac{\\pi}{2}$。",
+          "say": "arctangent 什麼數都吃，值在負二分之 pi 到二分之 pi 之間，兩端碰不到，所以有兩條水平漸近線。" }
+      ],
+      "check": 0
+    },
+    {
+      "title": "答案要落在值域",
+      "beats": [
+        { "show": ["$\\arcsin\\left(-\\frac{1}{2}\\right) = -\\frac{\\pi}{6}$"], "note": "不是 $\\frac{7\\pi}{6}$：不在值域裡。",
+          "say": "六分之七 pi 的 sine 也是負二分之一，但它不在 arcsine 的值域。值域裡的是負六分之 pi。" },
+        { "show": ["$\\arccos\\left(-\\frac{1}{2}\\right) = \\pi - \\frac{\\pi}{3} = \\frac{2\\pi}{3}$"], "note": "參考角 $\\frac{\\pi}{3}$，$\\cos$ 為負在第二象限。",
+          "say": "arccosine 的值在零到 pi。參考角三分之 pi，cosine 是負的，要在第二象限，所以是三分之二 pi。" },
+        { "show": ["$\\arctan(\\sqrt{3}) = \\frac{\\pi}{3}$"],
+          "say": "arctangent 根號三：tangent 是根號三的角，在值域裡的是三分之 pi。" }
+      ],
+      "check": 1
+    },
+    {
+      "title": "兩個方向不一樣",
+      "beats": [
+        { "show": ["$\\sin(\\arcsin x) = x$"], "note": "$[-1, 1]$ 裡每個 $x$ 都成立。",
+          "say": "先找角、再取 sine，一定回到原來的數，只要 x 在負一到一之間。" },
+        { "show": ["$\\arcsin(\\sin x) = x$ 只在 $[-\\frac{\\pi}{2}, \\frac{\\pi}{2}]$"],
+          "say": "反過來就不一定。arcsine 永遠只回傳那一段裡的角，x 不在那一段，就回不去。" },
+        { "show": ["$\\arcsin(\\sin\\frac{5\\pi}{6}) = \\arcsin\\frac{1}{2} = \\frac{\\pi}{6}$"],
+          "say": "六分之五 pi 不在那一段，不能直接抵消。先算裡面，sine 是二分之一，再取 arcsine，得到六分之 pi。" }
+      ],
+      "check": 2
+    },
+    {
+      "title": "記號",
+      "beats": [
+        { "show": ["$\\sin^{-1} x = \\arcsin x$"], "note": "不是 $\\frac{1}{\\sin x}$，那是 $\\csc x$。",
+          "say": "sine 右上角寫負一，是反函數的意思，不是倒數。sine 的倒數另外有名字，叫 cosecant。" },
+        { "show": ["但 $\\sin^2x = (\\sin x)^2$"], "note": "歷史留下的不一致，看到要分清楚。",
+          "say": "麻煩的是，右上角寫二又是平方。這是歷史留下來的不一致，只能看到時分清楚。" }
+      ],
+      "check": 3
+    },
+    {
+      "title": "$\\cos(\\arcsin x)$",
+      "beats": [
+        { "show": ["令 $\\theta = \\arcsin x$：$\\sin \\theta = x$"], "note": "$\\theta \\in [-\\frac{\\pi}{2}, \\frac{\\pi}{2}]$。",
+          "say": "把 cosine 套 arcsine 寫成 x 的式子。先給裡面那個角一個名字 theta，它的 sine 是 x。" },
+        { "show": ["$\\cos^2\\theta = 1 - x^2$"],
+          "say": "用 sine 平方加 cosine 平方等於一，cosine 平方就是一減 x 平方。" },
+        { "show": ["$\\theta$ 在 $[-\\frac{\\pi}{2}, \\frac{\\pi}{2}]$：$\\cos \\theta \\ge 0$"],
+          "say": "開根號要決定正負號。theta 在負二分之 pi 到二分之 pi，這段 cosine 不會是負的。" }
+      ],
+      "predict": {
+        "ask": "$\\cos(\\arcsin x)$ 是？",
+        "options": [
+          { "label": "$\\sqrt{1 - x^2}$", "correct": true },
+          { "label": "$\\pm\\sqrt{1 - x^2}$", "why": "$\\theta$ 在 $[-\\frac{\\pi}{2}, \\frac{\\pi}{2}]$，$\\cos \\theta \\ge 0$，只取正號。" },
+          { "label": "$1 - x^2$", "why": "那是 $\\cos^2\\theta$，還要開根號。" }
+        ]
+      }
+    }
+  ],
   "skillTags": {
     "coarse": ["inverse-trig"],
     "fine": ["inverse-trig-values", "inverse-trig-range", "inverse-trig-cancel", "inverse-trig-compose"]

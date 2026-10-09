@@ -130,6 +130,77 @@
       ]
     }
   ],
+  "sections": [
+    {
+      "title": "無限長的面積",
+      "beats": [
+        { "show": ["$\\int_1^{\\infty}\\frac{dx}{x^2}$"], "note": "$y=\\frac{1}{x^2}$ 從 $1$ 到無窮遠底下的面積。",
+          "say": "x 平方分之一從一一路到無窮遠，底下的面積是多少？區間無限長，可是曲線降得很快。" },
+        { "show": ["不能把 $\\infty$ 代進反導函數"], "note": "無限大不是一個數。",
+          "say": "面積可能是有限的數，但我們不能把無限大直接代進反導函數，要用極限來定義。" },
+        { "show": ["$\\int_a^{\\infty}f\\,dx=\\lim_{t\\to\\infty}\\int_a^t f\\,dx$"], "note": "先積到 $t$，再讓 $t\\to\\infty$。",
+          "say": "做法是先積到一個有限的 t，再讓 t 趨近無限大。" },
+        { "show": ["極限是有限數：收斂", "$\\pm\\infty$ 或不存在：發散"],
+          "say": "極限存在而且是有限的數，就叫收斂；跑到無限大或者不存在，就叫發散。" }
+      ],
+      "check": 3
+    },
+    {
+      "title": "收斂：$\\frac{1}{x^2}$",
+      "beats": [
+        { "show": ["$\\int_1^t x^{-2}\\,dx=\\left[-\\frac{1}{x}\\right]_1^t$"],
+          "say": "照定義來：x 的負二次方從一積到 t，反導函數是負 x 分之一。" },
+        { "show": ["$=1-\\frac{1}{t}$"],
+          "say": "代進去，得到一減 t 分之一。" },
+        { "show": ["$t\\to\\infty$：$\\to 1$"], "note": "收斂，值是 $1$。",
+          "say": "t 趨近無限大，t 分之一趨近零，所以積分收斂，面積剛好是一。" }
+      ],
+      "check": 0
+    },
+    {
+      "title": "發散：$\\frac{1}{x}$",
+      "beats": [
+        { "show": ["$\\int_1^t\\frac{dx}{x}=\\ln t$"],
+          "say": "換成 x 分之一，從一積到 t，得到自然對數 t。" },
+        { "show": ["$t\\to\\infty$：$\\ln t\\to\\infty$"], "note": "發散。",
+          "say": "t 趨近無限大，自然對數 t 也趨近無限大，面積沒有上限，發散。" },
+        { "show": ["$f\\to 0$ 不是收斂的保證"], "note": "兩條曲線都 $\\to 0$，$\\frac{1}{x}$ 降得不夠快。",
+          "say": "兩條曲線都趨近零，差別在降得夠不夠快。所以被積函數趨近零，不代表積分收斂。" }
+      ],
+      "check": 2
+    },
+    {
+      "title": "分部積分",
+      "beats": [
+        { "show": ["$\\int_1^{\\infty}\\frac{\\ln x}{x^2}\\,dx$"], "note": "$u=\\ln x$，$dv=x^{-2}\\,dx$。",
+          "say": "分部積分：u 取自然對數 x，dv 取 x 的負二次方。" },
+        { "show": ["$\\int\\frac{\\ln x}{x^2}\\,dx=-\\frac{\\ln x}{x}-\\frac{1}{x}+C$"],
+          "say": "v 是負 x 分之一，算完反導函數是負 x 分之自然對數 x，再減 x 分之一。" },
+        { "show": ["從 $1$ 積到 $t$：$1-\\frac{\\ln t+1}{t}$"], "note": "邊界項要取極限，不是代 $\\infty$。",
+          "say": "從一積到 t，整理成一減 t 分之自然對數 t 加一。邊界項要取極限。" }
+      ],
+      "predict": {
+        "ask": "$t\\to\\infty$ 時 $\\frac{\\ln t+1}{t}$ 趨近？",
+        "options": [
+          { "label": "$0$，積分值是 $1$", "correct": true },
+          { "label": "$\\infty$，積分發散", "why": "分子 $\\ln t$ 也 $\\to\\infty$，但對數 $\\ll$ 冪次；L'Hôpital：$\\frac{1/t}{1}\\to 0$。" },
+          { "label": "$1$，積分值是 $0$", "why": "$\\frac{\\infty}{\\infty}$ 不等於 $1$；用 L'Hôpital 得 $\\frac{1/t}{1}\\to 0$。" }
+        ]
+      }
+    },
+    {
+      "title": "兩端都無窮",
+      "beats": [
+        { "show": ["$\\int_{-\\infty}^{\\infty}=\\int_{-\\infty}^c+\\int_c^{\\infty}$"], "note": "兩半都要收斂才算收斂。",
+          "say": "兩端都是無限大，就任選一點切開，兩半各自取極限，兩半都收斂才算收斂。" },
+        { "show": ["$\\int_{-\\infty}^{\\infty}\\frac{dx}{1+x^2}=\\frac{\\pi}{2}+\\frac{\\pi}{2}=\\pi$"], "note": "在 $0$ 切開，兩半都是 $\\arctan$ 的極限。",
+          "say": "例如一加 x 平方分之一，在零切開，左右兩半各收斂到二分之 pi，總和是 pi。" },
+        { "show": ["不能用 $\\lim_{t\\to\\infty}\\int_{-t}^t$"], "note": "$\\int_{-t}^t x\\,dx=0$，但 $\\int_0^{\\infty}x\\,dx$ 發散。",
+          "say": "不能左右對稱一起取極限。那樣兩個無限大會互相抵銷，把發散的積分算成零。" }
+      ],
+      "check": 1
+    }
+  ],
   "skillTags": {
     "coarse": ["improper-integral"],
     "fine": ["improper-infinite-limit-definition", "improper-infinite-ibp", "improper-two-sided-split", "improper-divergence-detect"]

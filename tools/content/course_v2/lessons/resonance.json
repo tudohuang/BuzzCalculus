@@ -130,6 +130,81 @@
       ]
     }
   ],
+  "sections": [
+    {
+      "title": "節奏剛好對上",
+      "beats": [
+        { "show": ["推鞦韆：盪回來時推一把"], "note": "鞦韆越盪越高。",
+          "say": "推鞦韆的人，每次都在鞦韆盪回來時推一把，鞦韆就越盪越高。" },
+        { "show": ["外力頻率 = 自然頻率：共振"],
+          "say": "推的節奏剛好等於系統自己的頻率，這叫共振。" },
+        { "show": ["$x''+\\omega_0^2x=F_0\\cos\\omega_0t$"], "note": "沒有阻尼。",
+          "say": "數學上就是：沒有阻尼，外力的頻率剛好是 omega 零。" },
+        { "show": ["$a\\cos\\omega_0t+b\\sin\\omega_0t$ 是齊次解"], "note": "代入左邊只得到 0。",
+          "say": "上一課的猜法在這裡失效：它本身就是齊次解，代進左邊只得到零。" }
+      ],
+      "check": 0
+    },
+    {
+      "title": "乘上 $t$",
+      "beats": [
+        { "show": ["$y''+y=\\cos x$"], "note": "$\\cos x$ 是齊次解。",
+          "say": "看一題：右邊的 cosine x 剛好是齊次解。" },
+        { "show": ["猜 $y_p=x(A\\cos x+B\\sin x)$"], "note": "$\\cos$、$\\sin$ 兩個都要乘。",
+          "say": "照修正規則，乘上一個 x。cosine 和 sine 兩個都要乘。" },
+        { "show": ["$y_p''+y_p=-2A\\sin x+2B\\cos x$"],
+          "say": "微分兩次再加回 y p，帶 x 的項全部消掉，只剩這兩項。要等於 cosine x。" }
+      ],
+      "predict": {
+        "ask": "$-2A\\sin x+2B\\cos x=\\cos x$，所以 $y_p$ 是？",
+        "options": [
+          { "label": "$\\frac{x\\sin x}{2}$", "correct": true },
+          { "label": "$\\frac{x\\cos x}{2}$", "why": "$\\sin x$ 的係數 $-2A=0$，所以 $A=0$；留下來的是 $B$，乘的是 $\\sin x$。" },
+          { "label": "$2x\\sin x$", "why": "$2B=1$ 給 $B=\\frac{1}{2}$，不是 2。" }
+        ]
+      }
+    },
+    {
+      "title": "振幅線性長大",
+      "beats": [
+        { "show": ["$x_p=\\frac{F_0}{2\\omega_0}\\,t\\sin\\omega_0t$"],
+          "say": "一般的共振解：前面多了一個 t。" },
+        { "show": ["振幅 $\\frac{F_0t}{2\\omega_0}$，沒有上限"],
+          "say": "這個 t 讓振幅跟著時間直直往上長，沒有上限。" },
+        { "show": ["理想模型"], "note": "真實系統：阻尼起作用、彈簧失效，或結構損壞。",
+          "say": "這是沒有阻尼的理想模型。真的系統在變成無限大之前，阻尼就會起作用，或是東西壞掉。" }
+      ],
+      "check": 1
+    },
+    {
+      "title": "有阻尼：峰值有限",
+      "beats": [
+        { "show": ["$A(\\omega)=\\frac{F_0}{\\sqrt{(\\omega_0^2-\\omega^2)^2+(2\\gamma\\omega)^2}}$"], "note": "$\\gamma>0$ 時分母永遠不為 0。",
+          "say": "有阻尼的時候，振幅公式的分母多了一項，永遠不會是零，所以振幅有限。" },
+        { "show": ["$\\omega_0=1$、$\\gamma=0.1$、$F_0=1$"],
+          "say": "例如自然頻率一，阻尼零點一，外力大小一。" },
+        { "show": ["$\\omega=0$：$A=1$"], "note": "靜態推。",
+          "say": "外力頻率是零，就是靜態地推，振幅是一。" },
+        { "show": ["$\\omega=1$：$A=\\frac{1}{0.2}=5$"], "note": "阻尼越小，放大越多。",
+          "say": "照著節奏推，分母剩二乘零點一，振幅變五，放大五倍。阻尼越小，放大越多。" }
+      ],
+      "check": 2
+    },
+    {
+      "title": "峰在哪裡",
+      "beats": [
+        { "show": ["$\\omega_r=\\sqrt{\\omega_0^2-2\\gamma^2}$"], "note": "$\\gamma<\\frac{\\omega_0}{\\sqrt2}$ 才有峰。",
+          "say": "把分母對 omega 平方微分，峰在根號 omega 零平方減二 gamma 平方。" },
+        { "show": ["$x''+6x'+25x=\\cos\\omega t$"], "note": "$\\gamma=3$，$\\omega_0=5$。",
+          "say": "這一題 gamma 是三，omega 零是五。三比五除以根號二還小，有峰。" },
+        { "show": ["$\\omega_r=\\sqrt{25-2\\cdot9}=\\sqrt7$"], "note": "最大振幅 $\\frac{1}{24}$。",
+          "say": "峰在根號七，大約二點六五。代回去，分母是二十四，最大振幅二十四分之一。" },
+        { "show": ["不在 $\\omega_0=5$，也不在 $\\omega_d=4$"],
+          "say": "注意，峰不在自然頻率五，也不在阻尼振動的頻率四。" }
+      ],
+      "check": 3
+    }
+  ],
   "skillTags": {
     "coarse": ["ode", "second-order", "resonance", "undetermined-coefficients"],
     "fine": ["resonance-modification", "resonance-growth", "resonance-peak-frequency", "resonance-damped-amplitude"]

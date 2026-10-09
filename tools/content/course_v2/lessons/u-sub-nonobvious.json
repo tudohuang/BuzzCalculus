@@ -128,6 +128,75 @@
       ]
     }
   ],
+  "sections": [
+    {
+      "title": "剩下的 $x$ 反解",
+      "beats": [
+        { "show": ["$\\int x\\sqrt{x+1}\\,dx$：$u=x+1$"], "note": "$du=dx$。根號換好了，外面還有一個 $x$。",
+          "say": "令 u 等於 x 加一，du 就是 dx。根號換好了，可是外面還剩一個 x，du 吃不掉它。" },
+        { "show": ["$u=x+1$ 也代表 $x=u-1$"], "note": "換 $x$ 的方法，多了一種「反解」。",
+          "say": "不要放棄：u 等於 x 加一，反過來就是 x 等於 u 減一。把剩下的 x 也換掉。" },
+        { "show": ["$\\int(u-1)\\sqrt{u}\\,du=\\int(u^{3/2}-u^{1/2})\\,du$"], "note": "換回 $x$：$\\frac{2}{5}(x+1)^{5/2}-\\frac{2}{3}(x+1)^{3/2}+C$。",
+          "say": "現在只剩 u，乘開變成兩個冪次，一項一項積，最後把 u 換回 x 加一。" }
+      ],
+      "check": 0
+    },
+    {
+      "title": "令 $u$ 等於根號",
+      "beats": [
+        { "show": ["$\\int\\frac{\\sqrt{x}}{1+x}\\,dx$"], "note": "找不到哪一層的導數在場。",
+          "say": "這一題找不到哪一層的導數在場。卡住的原因，就是根號本身。" },
+        { "show": ["令 $u=\\sqrt{x}$：$x=u^2$"],
+          "say": "那就直接令 u 等於根號 x，反過來 x 等於 u 平方。" },
+        { "show": ["$dx=2u\\,du$"], "note": "$dx$ 也要換，不能只換根號。",
+          "say": "dx 也要跟著換：x 等於 u 平方，微分得 dx 等於二 u du。" }
+      ],
+      "check": 1
+    },
+    {
+      "title": "變成有理函數",
+      "beats": [
+        { "show": ["$\\int\\frac{u}{1+u^2}\\cdot 2u\\,du=\\int\\frac{2u^2}{1+u^2}\\,du$"], "note": "根號整個消失了。",
+          "say": "全部換掉，根號整個消失，剩下一個有理函數。" },
+        { "show": ["$\\frac{2u^2}{1+u^2}=2-\\frac{2}{1+u^2}$"], "note": "分子寫成 $2(1+u^2)-2$。",
+          "say": "分子湊出分母：二 u 平方寫成二倍一加 u 平方再減二，拆成兩項。" },
+        { "show": ["積分：$2u-2\\arctan u+C$"],
+          "say": "第一項積出二 u，第二項是 arctangent。" }
+      ],
+      "predict": {
+        "ask": "換回 $x$ 是？",
+        "options": [
+          { "label": "$2\\sqrt{x}-2\\arctan\\sqrt{x}+C$", "correct": true },
+          { "label": "$2x-2\\arctan x+C$", "why": "$u=\\sqrt{x}$，換回時是 $\\sqrt{x}$，不是 $x$。" },
+          { "label": "$2u-2\\arctan u+C$", "why": "答案要用 $x$ 寫：把 $u$ 換回 $\\sqrt{x}$。" }
+        ]
+      }
+    },
+    {
+      "title": "先變形，$u$ 才出現",
+      "beats": [
+        { "show": ["$\\int\\frac{dx}{1+e^x}$"], "note": "$u=1+e^x$ 時 $du=e^x\\,dx$，分子是 $1$，配不起來。",
+          "say": "這一題直接令 u 等於一加 e 的 x 次方，du 需要 e 的 x 次方，分子卻只有一。" },
+        { "show": ["同乘 $e^{-x}$：$\\frac{e^{-x}}{e^{-x}+1}$"], "note": "分子是分母的導數乘上 $-1$。",
+          "say": "先變形：分子分母同乘 e 的負 x 次方，分子就變成分母的導數，只差一個負號。" },
+        { "show": ["或拆項：$1-\\frac{e^x}{1+e^x}$"], "note": "答案 $x-\\ln(1+e^x)+C$。",
+          "say": "另一種：分子拆成一加 e 的 x 次方減 e 的 x 次方，第二項就是分子是分母的導數。" }
+      ],
+      "check": 2
+    },
+    {
+      "title": "什麼時候想到",
+      "beats": [
+        { "show": ["剩下 $x$ → 反解 $x$", "根號裡是一次式 → $u$ 等於根號"],
+          "say": "整理一下：換完剩下 x，就反解 x。根號卡住、根號裡是一次式，就令 u 等於根號。" },
+        { "show": ["$e^x$ 在分母、分子是常數", "→ 同乘 $e^{-x}$ 或拆項"],
+          "say": "e 的 x 次方在分母、分子是常數，就同乘 e 的負 x 次方，或者拆項。" },
+        { "show": ["定積分：上下限也換成 $u$ 的值"], "note": "反解時一樣。",
+          "say": "用在定積分時別忘了：換成 u 之後，上下限也要換成 u 的值。" }
+      ],
+      "check": 3
+    }
+  ],
   "skillTags": {
     "coarse": ["substitution", "u-sub", "radical", "exponential"],
     "fine": ["u-sub-back-substitute", "u-sub-root-substitution", "u-sub-rewrite-first"]

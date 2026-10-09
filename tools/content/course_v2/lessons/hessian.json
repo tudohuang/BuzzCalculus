@@ -134,6 +134,73 @@
       ]
     }
   ],
+  "sections": [
+    {
+      "title": "排成一個矩陣",
+      "beats": [
+        { "show": ["$\\begin{pmatrix}f_{xx}&f_{xy}\\\\f_{yx}&f_{yy}\\end{pmatrix}$"], "note": "四個二階偏導數排成 $2\\times2$ 矩陣 $H$。",
+          "say": "四個二階偏導數，排成兩列兩行的矩陣，叫 Hessian。" },
+        { "show": ["$D=\\det H=f_{xx}f_{yy}-f_{xy}^2$"],
+          "say": "它的行列式記成 D：對角相乘，減掉混合偏導的平方。" },
+        { "show": ["$f=x^3+y^3-3xy$ 在 $(1,1)$"], "note": "$f_{xx}=6x$，$f_{yy}=6y$，$f_{xy}=-3$。",
+          "say": "算一個：二階偏導數算完，要記得代入那一點，不是停在一般的 x、y。" },
+        { "show": ["$H=\\begin{bmatrix}6&-3\\\\-3&6\\end{bmatrix}$", "$D=36-9=27$"],
+          "say": "代點一、一，對角是六和六，混合是負三。六乘六減負三的平方，二十七。" }
+      ],
+      "check": 0
+    },
+    {
+      "title": "右上等於左下",
+      "beats": [
+        { "show": ["$f_{xy}=f_{yx}$：〈Clairaut 定理〉"], "note": "混合偏導在附近都存在、連續時。",
+          "say": "為什麼右上角等於左下角？靠的是 Clairaut 定理，條件是混合偏導在附近連續。" },
+        { "show": ["Hessian 是對稱矩陣"], "note": "$D$ 才能寫成 $f_{xx}f_{yy}-f_{xy}^2$。",
+          "say": "多項式、指數、三角函數的組合都滿足條件，所以 Hessian 是對稱的，D 的公式才能這樣寫。" }
+      ],
+      "check": 1
+    },
+    {
+      "title": "臨界點附近像二次式",
+      "beats": [
+        { "show": ["臨界點：$\\nabla f=\\mathbf 0$，一階項消失"], "note": "直覺，不是證明。",
+          "say": "在臨界點，梯度是零，一階的變化消失了，剩下的主要是二階項。" },
+        { "show": ["$\\Delta f\\approx\\frac{1}{2}(Ah^2+2Bhk+Ck^2)$"], "note": "$A=f_{xx}$、$B=f_{xy}$、$C=f_{yy}$。",
+          "say": "往旁邊走 h、k，函數的變化大約是一個二次式的一半。注意 h k 那一項的係數是二 B。" },
+        { "show": ["$A\\Bigl(h+\\frac{B}{A}k\\Bigr)^2+\\frac{AC-B^2}{A}k^2$"], "note": "設 $A\\ne 0$，配方。",
+          "say": "把這個二次式配方，會冒出 A C 減 B 平方，正是 Hessian 的行列式。" }
+      ],
+      "check": 2
+    },
+    {
+      "title": "$D$ 決定形狀",
+      "beats": [
+        { "show": ["$D>0$：碗（$A>0$）或倒碗（$A<0$）"], "note": "兩項同號，跟 $A$ 同號。",
+          "say": "D 大於零，配方後的兩項同號：A 正就是碗，A 負就是倒過來的碗。" },
+        { "show": ["$D<0$：馬鞍"], "note": "有的方向往上、有的方向往下。",
+          "say": "D 小於零，兩項異號，有的方向往上、有的往下，是馬鞍。" },
+        { "show": ["$f=e^{xy}$ 在 $(0,0)$：$f_{xx}=f_{yy}=0$，$f_{xy}=1$"], "note": "$D=0\\cdot0-1^2=-1$。",
+          "say": "例如 e 的 x y 次方在原點：對角都是零，混合是一，D 是負一。二次式是二 h k，同號正、異號負，馬鞍。" }
+      ],
+      "check": 3
+    },
+    {
+      "title": "$D=0$：看不出來",
+      "beats": [
+        { "show": ["$f=x^4+y^2$ 在 $(0,0)$"], "note": "$f_{xx}=12x^2=0$，$f_{yy}=2$，$f_{xy}=0$。",
+          "say": "最後一種情況。這個函數在原點，f 下標 x x 是零，所以 D 等於零。" },
+        { "show": ["二次近似：$k^2$，完全沒有 $h$"],
+          "say": "二次近似只剩 k 平方，完全沒有 h。沿 x 方向會怎樣，二次式說不出來。" }
+      ],
+      "predict": {
+        "ask": "沿 $x$ 方向的行為，由什麼決定？",
+        "options": [
+          { "label": "被丟掉的高階項 $x^4$", "correct": true },
+          { "label": "二次式，沿 $x$ 方向是平的", "why": "二次式在那個方向是 $0$，只代表它看不出來；真正的 $f$ 沿 $x$ 軸是 $x^4$，不是平的。" },
+          { "label": "$D=0$ 就是鞍點", "why": "$D=0$ 什麼都不能下結論；鞍點對應的是 $D<0$。" }
+        ]
+      }
+    }
+  ],
   "skillTags": {
     "coarse": ["hessian", "second-derivative", "multivariable"],
     "fine": ["hessian-matrix", "hessian-determinant", "hessian-quadratic-form"]

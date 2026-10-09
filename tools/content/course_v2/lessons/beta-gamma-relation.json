@@ -132,6 +132,73 @@
       ]
     }
   ],
+  "sections": [
+    {
+      "title": "公式",
+      "beats": [
+        { "show": ["$\\mathrm{B}(p,q)=\\frac{\\Gamma(p)\\,\\Gamma(q)}{\\Gamma(p+q)}$"],
+          "say": "Beta 可以完全用 Gamma 表示：上面兩個 Gamma 相乘，下面是 Gamma p 加 q。" },
+        { "show": ["整數時：$\\frac{(m-1)!(n-1)!}{(m+n-1)!}$"], "note": "因為 $\\Gamma(m)=(m-1)!$。",
+          "say": "整數的時候，Gamma m 就是 m 減一的階乘，正好回到上一課的公式。" },
+        { "show": ["是三個 Gamma，不是兩個"], "note": "分母 $\\Gamma(p+q)$ 最容易漏掉。",
+          "say": "最容易漏的是分母。Beta 是三個 Gamma 的組合，不是兩個相乘就好。" }
+      ],
+      "check": 0
+    },
+    {
+      "title": "非整數也能算",
+      "beats": [
+        { "show": ["$\\mathrm{B}\\left(\\frac{1}{2},\\frac{1}{2}\\right)=\\frac{\\Gamma(1/2)^2}{\\Gamma(1)}$"], "note": "分母 $\\Gamma(1)=1$。",
+          "say": "有了這條公式，非整數的 Beta 也能算。Beta 二分之一、二分之一，是 Gamma 二分之一的平方。" },
+        { "show": ["直接積：$\\int_0^1\\frac{dx}{\\sqrt{x(1-x)}}=\\pi$"], "note": "令 $x=\\sin^2\\theta$，變成 $\\int_0^{\\pi/2}2\\,d\\theta$。",
+          "say": "另一方面直接積：令 x 等於 sine 平方 theta，積分變成二從零積到二分之 pi，就是 pi。" },
+        { "show": ["$\\Gamma\\left(\\frac{1}{2}\\right)^2=\\pi$"], "note": "跟極座標的算法同一個答案。",
+          "say": "兩邊一比，Gamma 二分之一的平方就是 pi，又證了一次它等於根號 pi。" }
+      ],
+      "check": 1
+    },
+    {
+      "title": "為什麼成立",
+      "beats": [
+        { "show": ["$\\Gamma(p)\\Gamma(q)$", "$=\\iint x^{p-1}y^{q-1}e^{-(x+y)}\\,dx\\,dy$"], "note": "第一象限上的二重積分。",
+          "say": "把兩個 Gamma 相乘，寫成第一象限上的二重積分。指數只跟 x 加 y 有關。" },
+        { "show": ["$u=x+y$，$v=\\frac{x}{x+y}$"], "note": "$x=uv$，$y=u(1-v)$；$u\\in[0,\\infty)$，$v\\in[0,1]$。",
+          "say": "所以換兩個新變數：u 是總和，v 是 x 佔的比例。u 從零到無限大，v 從零到一，剛好蓋滿第一象限。" },
+        { "show": ["只有 $u$ 的部分 × 只有 $v$ 的部分"], "note": "$u$ 那邊是 $\\Gamma(p+q)$，$v$ 那邊是 $\\mathrm{B}(p,q)$。",
+          "say": "代進去再乘上 Jacobian，被積函數拆成只有 u 乘只有 v，分開算：一邊是 Gamma p 加 q，一邊是 Beta。" }
+      ],
+      "check": 3
+    },
+    {
+      "title": "半圓的面積",
+      "beats": [
+        { "show": ["$\\int_0^1\\sqrt{x(1-x)}\\,dx$"], "note": "$x^{1/2}(1-x)^{1/2}$，次方加 $1$。",
+          "say": "根號 x 乘一減 x，是 x 和一減 x 都開根號，次方各加一，是 Beta 二分之三、二分之三。" },
+        { "show": ["$\\frac{\\Gamma(3/2)^2}{\\Gamma(3)}$"], "note": "$\\Gamma\\left(\\frac{3}{2}\\right)=\\frac{\\sqrt{\\pi}}{2}$，$\\Gamma(3)=2$。",
+          "say": "用公式：Gamma 二分之三的平方，除以 Gamma 三。Gamma 二分之三是二分之根號 pi。" }
+      ],
+      "predict": {
+        "ask": "答案是？",
+        "options": [
+          { "label": "$\\frac{\\pi}{8}$：半徑 $\\frac{1}{2}$ 的半圓", "correct": true },
+          { "label": "$\\frac{\\pi}{4}$", "why": "那是分子 $\\left(\\frac{\\sqrt{\\pi}}{2}\\right)^2$；還要除以 $\\Gamma(3)=2$。" },
+          { "label": "$\\frac{\\pi}{2}$", "why": "把 $\\Gamma\\left(\\frac{3}{2}\\right)$ 用成 $\\sqrt{\\pi}$；那是 $\\Gamma\\left(\\frac{1}{2}\\right)$。" }
+        ]
+      }
+    },
+    {
+      "title": "一端無界也行",
+      "beats": [
+        { "show": ["$\\int_0^1 x^{-1/2}(1-x)^{3/2}\\,dx$"], "note": "$p=\\frac{1}{2}$，$q=\\frac{5}{2}$，都 $>0$，收斂。",
+          "say": "x 的負二分之一次方在零衝到無限大，但 p 是二分之一、q 是二分之五，都大於零，收斂。" },
+        { "show": ["$\\frac{\\Gamma(1/2)\\Gamma(5/2)}{\\Gamma(3)}=\\frac{3\\pi}{8}$"],
+          "say": "根號 pi 乘四分之三根號 pi，再除以二，得八分之三 pi。" },
+        { "show": ["$\\int_0^{\\infty}\\frac{\\sqrt{x}}{(1+x)^3}\\,dx=\\mathrm{B}\\left(\\frac{3}{2},\\frac{3}{2}\\right)$"], "note": "$p=\\frac{3}{2}$；$p+q=3$，$q=\\frac{3}{2}$。",
+          "say": "零到無限大的形式也一樣：分母的三次方是 p 加 q，減掉 p 才是 q。答案又是八分之 pi。" }
+      ],
+      "check": 2
+    }
+  ],
   "skillTags": {
     "coarse": ["beta-function", "gamma-function", "special-functions"],
     "fine": ["beta-gamma-formula", "beta-gamma-half-values", "beta-gamma-infinite-form", "beta-gamma-proof"]

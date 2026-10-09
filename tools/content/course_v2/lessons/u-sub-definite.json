@@ -131,6 +131,88 @@
       ]
     }
   ],
+  "sections": [
+    {
+      "title": "兩條路",
+      "beats": [
+        { "show": ["甲：換元、積完、換回 $x$", "再代原來的上下限"],
+          "say": "定積分遇到換元，有兩條路。第一條：先當不定積分做，換回 x，再代原來的上下限。" },
+        { "show": ["乙：上下限也換成 $u$ 的值"], "note": "$x=a$ 時 $u=g(a)$；不必換回 $x$。",
+          "say": "第二條：換元的同時，上下限也換成 u 的值，積完直接代，不用換回 x，通常比較快。" },
+        { "show": ["$\\int_a^b f(g(x))\\,g'(x)\\,dx$", "$=\\int_{g(a)}^{g(b)} f(u)\\,du$"],
+          "say": "寫成公式就是這樣：x 從 a 到 b，u 就從 g 在 a 的值，走到 g 在 b 的值。" }
+      ],
+      "check": 3
+    },
+    {
+      "title": "上下限跟著換",
+      "beats": [
+        { "show": ["$\\int_0^1\\frac{2x}{(1+x^2)^3}\\,dx$"], "note": "令 $u=1+x^2$，$du=2x\\,dx$。",
+          "say": "試一題。分母裡一加 x 平方的導數二 x 在分子，令 u 等於一加 x 平方。" },
+        { "show": ["$x=0\\to u=1$；$x=1\\to u=2$"],
+          "say": "上下限跟著換：x 是零時 u 是一，x 是一時 u 是二。" }
+      ],
+      "check": 0
+    },
+    {
+      "title": "直接代 $u$ 的上下限",
+      "beats": [
+        { "show": ["$\\int_1^2 u^{-3}\\,du$"], "note": "不必換回 $x$。",
+          "say": "整個積分變成 u 的負三次方，從一積到二。" },
+        { "show": ["區間變了，有號面積沒變"], "note": "區間拉伸或壓縮，高度乘上 $g'$，剛好抵銷。",
+          "say": "幾何上，換元把區間拉長或壓扁，高度也跟著乘上 g prime 的變化，面積剛好不變。" },
+        { "show": ["反導函數：$-\\frac{1}{2u^2}$"],
+          "say": "負三次方的反導函數是負二 u 平方分之一，接下來代上下限。" }
+      ],
+      "predict": {
+        "ask": "結果是？",
+        "options": [
+          { "label": "$\\left[-\\frac{1}{2u^2}\\right]_1^2=\\frac{3}{8}$", "correct": true },
+          { "label": "$\\left[-\\frac{1}{2u^2}\\right]_0^1$", "why": "換成 $u$ 了，上下限要用 $u$ 的值 $1$ 到 $2$，不是 $x$ 的 $0$ 到 $1$。" },
+          { "label": "$-\\frac{1}{8}$", "why": "只代了上限，還要減掉下限的 $-\\frac{1}{2}$：$-\\frac{1}{8}+\\frac{1}{2}=\\frac{3}{8}$。" }
+        ]
+      }
+    },
+    {
+      "title": "上下限顛倒",
+      "beats": [
+        { "show": ["$\\int_0^{\\pi/2}\\sin x\\cos^2 x\\,dx$：$u=\\cos x$"], "note": "$du=-\\sin x\\,dx$，$\\sin x\\,dx=-du$。",
+          "say": "這一題令 u 等於 cosine x。du 有負號，所以 sine x dx 等於負 du。" },
+        { "show": ["$x=0\\to u=1$；$x=\\frac{\\pi}{2}\\to u=0$"], "note": "下限比上限大，完全合法，照寫。",
+          "say": "上下限：x 是零時 u 是一，x 是二分之 pi 時 u 是零。下限比上限大，沒關係，照寫。" },
+        { "show": ["$\\int_1^0 u^2\\,(-du)$"], "note": "兩個負號都要記帳。",
+          "say": "現在有兩個負號：一個是上下限反著走，一個是負 du。兩個都要算，不能只處理一個。" }
+      ],
+      "check": 1
+    },
+    {
+      "title": "不要混用",
+      "beats": [
+        { "show": ["上下限跟著變數走"], "note": "$u$ 的式子代 $u$ 的上下限；換回 $x$ 就代 $x$ 的。",
+          "say": "最常見的錯，是 u 的式子卻代 x 的上下限。換了變數，上下限就跟著那個變數走。" },
+        { "show": ["$g$ 不必一對一"], "note": "只要 $g'$ 連續、$f$ 連續。",
+          "say": "還有一個誤會：換元不需要 g 是一對一，只要 g prime 和 f 連續就好。理由在全文。" }
+      ],
+      "check": 2
+    },
+    {
+      "title": "$u$ 是 $\\ln x$",
+      "beats": [
+        { "show": ["$\\int_e^{e^2}\\frac{1}{x\\ln x}\\,dx$"], "note": "令 $u=\\ln x$，$du=\\frac{dx}{x}$。",
+          "say": "最後一題：x 乘自然對數 x 分之一。令 u 等於自然對數 x，du 是 x 分之 dx。" },
+        { "show": ["$x=e\\to u=1$；$x=e^2\\to u=2$"],
+          "say": "上下限：x 是 e 時 u 是一，x 是 e 平方時 u 是二。積分變成 u 分之 du。" }
+      ],
+      "predict": {
+        "ask": "答案是？",
+        "options": [
+          { "label": "$\\left[\\ln u\\right]_1^2=\\ln 2$", "correct": true },
+          { "label": "$\\left[\\ln u\\right]_e^{e^2}=1$", "why": "這是混用：$u$ 的式子要代 $u$ 的上下限 $1$、$2$，不是 $x$ 的 $e$、$e^2$。" },
+          { "label": "$\\left[\\frac{u^2}{2}\\right]_1^2$", "why": "那是 $\\int u\\,du$；這裡 $u$ 在分母，是 $\\int\\frac{du}{u}$。" }
+        ]
+      }
+    }
+  ],
   "skillTags": {
     "coarse": ["substitution", "u-sub", "definite-integral"],
     "fine": ["u-sub-def-change-bounds", "u-sub-def-reversed-bounds", "u-sub-def-no-mixing"]

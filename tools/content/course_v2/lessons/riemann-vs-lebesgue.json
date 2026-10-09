@@ -57,6 +57,94 @@
       "collapsible": false
     }
   ],
+  "sections": [
+    {
+      "title": "兩種數錢的方法",
+      "beats": [
+        { "show": ["Riemann：切 $x$ 軸，高 $\\times$ 寬"],
+          "say": "Riemann 把 x 軸切成小段，每段問這裡多高，高乘寬相加。像照撿起來的順序一張一張數鈔票。" },
+        { "show": ["Lebesgue：切 $y$ 軸，值 $\\times$ 測度"],
+          "say": "Lebesgue 把 y 軸切成小段，問函數值落在這段的點佔多大的集合。像先按面額分堆，再數每堆幾張。" },
+        { "show": ["點排得再亂，量得出每堆就能算"], "note": "例如有理點與無理點交錯。",
+          "say": "分堆的好處是：點在 x 軸上排得再亂都沒關係，只要每一堆量得出大小就能算。" }
+      ],
+      "check": 0
+    },
+    {
+      "title": "分層公式",
+      "beats": [
+        { "show": ["$\\int_X f\\,d\\mu=\\int_0^{\\infty}\\mu(\\{f>t\\})\\,dt$"], "note": "$f\\ge0$。",
+          "say": "把按值分堆推到極限：高度 t 以上的部分佔多大的集合，再對 t 積分。這叫分層公式。" },
+        { "show": ["$f(x)=x^2$ 在 $[0,1]$：$\\{x^2>t\\}=(\\sqrt{t},1]$"], "note": "長度 $1-\\sqrt{t}$，$0\\le t<1$。",
+          "say": "試 x 平方在零到一：高度 t 以上的點，是根號 t 到一，長度一減根號 t。" },
+        { "show": ["$\\int_0^1(1-\\sqrt{t})\\,dt=1-\\frac{2}{3}=\\frac{1}{3}$"], "note": "$t\\ge1$ 時集合是空的。",
+          "say": "t 大於等於一時集合是空的。積分一減根號 t，從零到一，得三分之一，跟直條切法一樣。" }
+      ],
+      "check": 1
+    },
+    {
+      "title": "一層一層數",
+      "beats": [
+        { "show": ["$\\int_{[0,2]}\\lfloor x^2\\rfloor\\,dm$"], "note": "取值 0, 1, 2, 3（$x=2$ 單點不算）。",
+          "say": "x 平方的地板函數，在零到二。它只取整數值零、一、二、三。" },
+        { "show": ["$\\int f=\\sum_{k\\ge1} m(\\{f\\ge k\\})$"],
+          "say": "整數值函數的分層公式：第 k 層，就是函數值至少 k 的地方有多長，一層一層加。" },
+        { "show": ["$\\ge1$：$[1,2]$；$\\ge2$：$[\\sqrt{2},2]$；$\\ge3$：$[\\sqrt{3},2]$"],
+          "say": "至少一是一到二；至少二是根號二到二；至少三是根號三到二。" }
+      ],
+      "predict": {
+        "ask": "加起來是？",
+        "options": [
+          { "label": "$5-\\sqrt{2}-\\sqrt{3}\\approx1.8537$", "correct": true },
+          { "label": "$3-\\sqrt{2}-\\sqrt{3}$", "why": "三層長度是 1、$2-\\sqrt{2}$、$2-\\sqrt{3}$，常數加起來是 5。" },
+          { "label": "$1$", "why": "那只是第一層 $[1,2]$ 的長度；第二、三層也要加。" }
+        ]
+      }
+    },
+    {
+      "title": "兩者一致",
+      "beats": [
+        { "show": ["Riemann 可積 $\\Rightarrow$ Lebesgue 可積，值相等"], "note": "$f$ 在 $[a,b]$ 上有界。",
+          "say": "定理：有界閉區間上 Riemann 可積的函數，也 Lebesgue 可積，而且兩個積分相等。" },
+        { "show": ["$\\varphi_n\\le f\\le\\psi_n$：下和、上和"], "note": "簡單函數夾住 $f$。",
+          "say": "想法是：下和、上和本身就是兩個簡單函數的積分，它們把 f 夾住，又夾到同一個數。完整證明在全文。" },
+        { "show": ["算過的定積分，值都不變"],
+          "say": "所以之前算過的定積分，換到 Lebesgue 理論裡，值一個都不會變。" }
+      ],
+      "check": 2
+    },
+    {
+      "title": "只有一邊有",
+      "beats": [
+        { "show": ["Dirichlet：Lebesgue 積分是 0"],
+          "say": "Lebesgue 有、Riemann 沒有：Dirichlet 函數的 Lebesgue 積分是零。" },
+        { "show": ["$f_n=\\chi_{\\{q_1,\\dots,q_n\\}}$ 遞增到 Dirichlet"], "note": "每個 $f_n$ 都 Riemann 可積。",
+          "say": "有理數一個一個加進來，每一步都 Riemann 可積，遞增的極限卻不是。Lebesgue 有單調收斂定理撐著。" },
+        { "show": ["$\\int_0^\\infty\\frac{\\sin x}{x}\\,dx$"],
+          "say": "反過來，有沒有 Riemann 那邊有、Lebesgue 沒有的？想想 sine x 除以 x。" }
+      ],
+      "check": 3
+    },
+    {
+      "title": "非負的瑕積分",
+      "beats": [
+        { "show": ["$f(x)=\\frac{1}{\\sqrt{x}}$ 在 $(0,1]$"], "note": "非負，就不會出事。",
+          "say": "非負的瑕積分就不會出事。看一除以根號 x，在零到一。" },
+        { "show": ["$f_n=f\\cdot\\chi_{[1/n,1]}$"], "note": "遞增，每點最後等於 $f$。",
+          "say": "把靠近零的部分先砍掉，只留 n 分之一到一。這串函數遞增，每一點最後都等於 f。" },
+        { "show": ["$\\int f_n=2-\\frac{2}{\\sqrt{n}}$"],
+          "say": "砍掉之後是連續有界，積分是二減根號 n 分之二。再用單調收斂定理取極限。" }
+      ],
+      "predict": {
+        "ask": "$\\int f\\,dm$ 是？",
+        "options": [
+          { "label": "2，正是瑕積分的值", "correct": true },
+          { "label": "$\\infty$，因為 $f$ 無界", "why": "無界不代表積分無限；$\\lim(2-\\frac{2}{\\sqrt{n}})=2$。" },
+          { "label": "沒有定義，Lebesgue 積分不處理瑕積分", "why": "非負的瑕積分收斂時，兩者相等；這裡用單調收斂定理得到 2。" }
+        ]
+      }
+    }
+  ],
   "workedExamples": [
     {
       "title": "用分層公式算 $\\int_0^1 x^2\\,dx$",

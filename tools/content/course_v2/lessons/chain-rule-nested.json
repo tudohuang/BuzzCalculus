@@ -137,6 +137,81 @@
       ]
     }
   ],
+  "sections": [
+    {
+      "title": "三層就乘三個",
+      "beats": [
+        { "show": ["$y = e^{\\sin(x^2)}$"], "note": "最外 $e^u$，中間 $u = \\sin v$，最裡 $v = x^2$。",
+          "say": "e 的 sine x 平方次方有三層：最外面是 e 的 u 次方，中間是 sine，最裡面是 x 平方。" },
+        { "show": ["$\\frac{dy}{dx}=\\frac{dy}{du}\\cdot\\frac{du}{dv}\\cdot\\frac{dv}{dx}$"],
+          "say": "多層就是連鎖律重複用：每一層的變化倍數，一路乘下去。" },
+        { "show": ["$v$ 動 $2x$ 倍，$u$ 動 $\\cos v$ 倍","$y$ 動 $e^u$ 倍"],
+          "say": "x 動一點點，v 動二 x 倍；v 動一點點，u 動 cosine v 倍；u 動一點點，y 動 e 的 u 次方倍。" }
+      ],
+      "predict": {
+        "ask": "$\\frac{d}{dx} e^{\\sin(x^2)}$ 是？",
+        "options": [
+          { "label": "$2x \\cos(x^2) e^{\\sin(x^2)}$", "correct": true },
+          { "label": "$\\cos(x^2) e^{\\sin(x^2)}$", "why": "漏了最裡層：$x^2$ 的導數 $2x$ 也要乘上去。" },
+          { "label": "$\\cos(2x) e^{\\sin(x^2)}$", "why": "微分中間層時把裡面也改掉了。$\\cos$ 裡面要原封不動是 $x^2$，$2x$ 乘在外面。" }
+        ]
+      }
+    },
+    {
+      "title": "剝洋蔥",
+      "beats": [
+        { "show": ["由外往內，一層一個因子"], "note": "每一層的導數，裡面整包原封不動。",
+          "say": "從最外層開始剝：寫下這一層的導數，它裡面的整包不要動，然後往裡一層，重複。" },
+        { "show": ["剝到剩下單純的 $x$ 為止"], "note": "有幾層就有幾個因子相乘。",
+          "say": "一直剝到只剩單純的 x。有幾層，就有幾個因子相乘。" },
+        { "show": ["最常漏：最裡面那一層"], "note": "尤其是 $2x$、3 這種小東西。",
+          "say": "最常漏掉的是最裡面那一層，像二 x、三這種小小的係數。" }
+      ],
+      "check": 0
+    },
+    {
+      "title": "數層數",
+      "beats": [
+        { "show": ["$\\sin^3(2x) = (\\sin(2x))^3$"], "note": "先乘 2、再取 $\\sin$、最後三次方。",
+          "say": "sine 三次方二 x，照計算順序：先乘二，再取 sine，最後三次方，所以是三層。" },
+        { "show": ["最外 $u^3$：$3 \\sin^2(2x)$"],
+          "say": "最外層三次方，微分是三乘 sine 二 x 的平方，裡面不動。" },
+        { "show": ["中間 $\\sin v$：$\\cos(2x)$","最裡 $2x$：2"],
+          "say": "中間的 sine 微分成 cosine 二 x；最裡面的二 x 微分是二。" },
+        { "show": ["$6 \\sin^2(2x) \\cos(2x)$"], "note": "$3 \\cdot 2 = 6$",
+          "say": "三個相乘，三乘二是六。數成兩層的人，就會漏掉這個二。" }
+      ],
+      "check": 1
+    },
+    {
+      "title": "根號裡還有根號",
+      "beats": [
+        { "show": ["$\\sqrt{1 + \\sqrt{x}}$"], "note": "先開 $\\sqrt{x}$、再加 1、最後開根號。",
+          "say": "根號一加根號 x：先算根號 x，再加一，最後開根號。最外層是根號。" },
+        { "show": ["外層：$\\frac{1}{2\\sqrt{1 + \\sqrt{x}}}$"],
+          "say": "外層根號 u 的導數，是二倍根號 u 分之一，u 原封不動是一加根號 x。" },
+        { "show": ["裡層：$(\\sqrt{x})' = \\frac{1}{2\\sqrt{x}}$"], "note": "加的 1 微分是 0。",
+          "say": "裡層一加根號 x：一微分是零，根號 x 微分是二倍根號 x 分之一。" },
+        { "show": ["$\\frac{1}{4\\sqrt{x} \\sqrt{1 + \\sqrt{x}}}$"],
+          "say": "兩個相乘，分母的二乘二變成四。" }
+      ],
+      "check": 3
+    },
+    {
+      "title": "外面是乘法",
+      "beats": [
+        { "show": ["$x^2 \\sin(3x)$"], "note": "最後一步是「乘」，先用乘法法則。",
+          "say": "x 平方乘 sine 三 x，最後一步是相乘，所以第一步用乘法法則，不是連鎖律。" },
+        { "show": ["$(x^2)' \\sin(3x) + x^2 (\\sin(3x))'$"],
+          "say": "前面的導數乘後面，加上前面乘後面的導數。" },
+        { "show": ["$(\\sin(3x))' = \\cos(3x) \\cdot 3$"], "note": "第二項裡面才用連鎖律。",
+          "say": "sine 三 x 是合成，這裡才用連鎖律：cosine 三 x 乘三。" },
+        { "show": ["$2x \\sin(3x) + 3x^2 \\cos(3x)$"],
+          "say": "合起來就是答案。原則：最後一步做什麼運算，第一步就用那條法則。" }
+      ],
+      "check": 2
+    }
+  ],
   "skillTags": {
     "coarse": ["chain-rule"],
     "fine": ["chain-nested-three-layers", "chain-nested-power-of-trig", "chain-nested-with-product", "chain-nested-radical"]

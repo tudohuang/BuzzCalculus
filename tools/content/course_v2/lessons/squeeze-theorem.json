@@ -140,6 +140,85 @@
       ]
     }
   ],
+  "sections": [
+    {
+      "title": "被夾住，沒地方去",
+      "beats": [
+        { "show": ["$g(x) \\le f(x) \\le h(x)$"], "note": "在 $a$ 附近成立，$a$ 本身可以除外。",
+          "say": "夾擠定理：在 a 附近，f 被夾在 g 和 h 中間，g 在下面，h 在上面。" },
+        { "show": ["$\\lim g = \\lim h = L$ → $\\lim f = L$"],
+          "say": "如果上下兩條在 a 都往同一個數 L 擠，中間的 f 沒有別的地方可去，極限也只好是 L。" },
+        { "show": ["也保證了極限存在"], "note": "完整證明在全文。",
+          "say": "注意它說的不只是極限等於 L，還保證了這個極限存在。用 epsilon delta 的證明在全文。" }
+      ],
+      "check": 0
+    },
+    {
+      "title": "為什麼需要它",
+      "beats": [
+        { "show": ["$\\lim_{x\\to0} x^2 \\sin\\left(\\frac{1}{x}\\right)$"], "note": "$\\sin\\left(\\frac{1}{x}\\right)$ 在 0 振盪，沒有極限：不能拆開。", "fig": { "use": 0, "to": 0 },
+          "say": "看這一個：sine x 分之一在零附近一直亂跳，沒有極限，所以不能用乘積定律拆成兩個極限相乘。" },
+        { "show": ["$-x^2 \\le x^2 \\sin\\left(\\frac{1}{x}\\right) \\le x^2$"], "note": "$\\sin$ 在 $-1$ 與 1 之間，乘上 $x^2 \\ge 0$。",
+          "say": "但它再怎麼跳，大小都在負一和一之間。乘上 x 平方，就被夾在綠色的負 x 平方和 x 平方中間。" },
+        { "show": ["兩邊都 $\\to 0$，中間只好也 $\\to 0$"], "fig": { "use": 0, "to": 1 },
+          "say": "往原點放大，藍色曲線一直被兩條綠線關在裡面，而綠線在原點擠成一點，所以極限是零。" }
+      ],
+      "drag": { "use": 0, "ask": "自己放大到最底，看藍色曲線有沒有跑出綠線", "range": [1.8, 2] }
+    },
+    {
+      "title": "有界 $\\times$ 趨近 0",
+      "beats": [
+        { "show": ["$|f(x)| \\le |g(x)|$，$g(x) \\to 0$ → $f(x) \\to 0$"], "note": "用絕對值寫，不會搞錯不等式的方向。",
+          "say": "最常見的樣子：f 的絕對值被 g 的絕對值壓住，g 又趨近零，f 就趨近零。用絕對值寫最安全。" },
+        { "show": ["$\\lim_{x\\to0} x^2 \\cos\\left(\\frac{5}{x}\\right)$"],
+          "say": "例如 x 平方乘 cosine x 分之五。cosine 那塊振盪沒有極限，不能拆。" },
+        { "show": ["$|x^2 \\cos\\left(\\frac{5}{x}\\right)| \\le x^2 \\to 0$"], "note": "由夾擠定理，極限是 0。",
+          "say": "但 cosine 的絕對值不超過一，整個的絕對值就不超過 x 平方，而 x 平方趨近零。答案是零。" }
+      ],
+      "check": 1
+    },
+    {
+      "title": "極限不是 0 也能夾",
+      "beats": [
+        { "show": ["$\\lim_{x\\to\\infty} \\frac{2x + 3 \\sin x}{x + 5}$"],
+          "say": "夾擠不只能證明極限是零。看這一個，x 趨近無限大。" },
+        { "show": ["$2x - 3 \\le 2x + 3 \\sin x \\le 2x + 3$"], "note": "$-1 \\le \\sin x \\le 1$。",
+          "say": "sine x 在負一和一之間，所以分子被夾在二 x 減三和二 x 加三之間。" },
+        { "show": ["$\\frac{2x - 3}{x + 5} \\le$ 原式 $\\le \\frac{2x + 3}{x + 5}$"], "note": "$x + 5 > 0$，除過去不等號不變。",
+          "say": "x 加五是正的，除過去不等號方向不變。上下兩邊都是同次有理函數，都趨近一分之二，也就是二。" }
+      ],
+      "check": 2
+    },
+    {
+      "title": "$x \\to \\infty$ 也能用",
+      "beats": [
+        { "show": ["$-\\frac{1}{x} \\le \\sin x / x \\le \\frac{1}{x}$"], "note": "$x > 0$ 時。",
+          "say": "x 趨近無限大也能夾。x 是正的時候，sine x 除以 x 被夾在負 x 分之一和 x 分之一中間。" },
+        { "show": ["兩邊 $\\to 0$：$\\lim_{x\\to\\infty} \\sin x / x = 0$"],
+          "say": "兩邊都趨近零，所以極限是零。它不是一，一是 x 趨近零的那個標準極限。" }
+      ],
+      "check": 3
+    },
+    {
+      "title": "取整函數",
+      "beats": [
+        { "show": ["$x - 1 < \\lfloor x\\rfloor \\le x$"], "note": "對所有 $x$ 成立，夾取整函數最好用。",
+          "say": "取整函數最好用的不等式：它比 x 減一大，又不超過 x。" },
+        { "show": ["$\\lim_{x\\to\\infty} \\lfloor x\\rfloor/x$"], "note": "$x > 0$ 時同除以 $x$。",
+          "say": "求取整 x 除以 x 的極限。x 是正的，整條不等式同除以 x，不等號方向不變。" },
+        { "show": ["$\\frac{x - 1}{x} < \\lfloor x\\rfloor/x \\le 1$"],
+          "say": "右邊是常數一。左邊是 x 減一除以 x，想想它趨近多少。" }
+      ],
+      "predict": {
+        "ask": "$\\lim_{x\\to\\infty} \\lfloor x\\rfloor/x$ 是？",
+        "options": [
+          { "label": "1", "correct": true },
+          { "label": "0", "why": "$\\frac{x - 1}{x} = 1 - \\frac{1}{x} \\to 1$，右邊是常數 1；上下都往 1 擠。" },
+          { "label": "不存在", "why": "取整函數會跳，但被夾在兩個都 $\\to 1$ 的式子中間，極限存在。" }
+        ]
+      }
+    }
+  ],
   "skillTags": {
     "coarse": ["squeeze", "oscillation", "floor"],
     "fine": ["squeeze-bounded-times-zero", "squeeze-at-infinity", "squeeze-floor", "squeeze-write-proof"]

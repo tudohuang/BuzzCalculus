@@ -149,6 +149,100 @@
       ]
     }
   ],
+  "sections": [
+    {
+      "title": "從圖看斜率",
+      "beats": [
+        { "show": ["$x = 0$：斜率 1"], "note": "$\\sin x$ 以斜率 1 往上爬。",
+          "say": "看 sine 的圖。在 x 等於零，曲線以斜率一往上爬。" },
+        { "show": ["$x = \\frac{\\pi}{2}$：山頂，斜率 0"],
+          "say": "到二分之 pi 是山頂，切線是平的，斜率零。" },
+        { "show": ["$x = \\frac{3\\pi}{2}$：谷底，斜率 0"], "note": "中間 $x = \\pi$ 往下穿過 $x$ 軸。",
+          "say": "接著往下穿過 x 軸，到二分之三 pi 是谷底，斜率又是零。" },
+        { "show": ["斜率：1、0、$-1$、0……"], "note": "直覺，不是證明：只抽樣幾個點。",
+          "say": "這串斜率正好是 cosine 在這些點的值。不過這只是抽幾個點看，完整證明在全文。" }
+      ],
+      "predict": {
+        "ask": "$\\sin x$ 在 $x = \\pi$ 的切線斜率是？",
+        "options": [
+          { "label": "$-1$", "correct": true },
+          { "label": "0", "why": "0 是 $\\sin \\pi$，是高度。曲線在那裡往下穿過 $x$ 軸，斜率 $\\cos \\pi = -1$。" },
+          { "label": "1", "why": "斜率 1 是 $x = 0$ 往上爬的時候；$x = \\pi$ 是往下穿過。" }
+        ]
+      }
+    },
+    {
+      "title": "$\\sin$ 與 $\\cos$",
+      "beats": [
+        { "show": ["$(\\sin x)'=\\cos x$"],
+          "say": "所以 sine 的導數是 cosine。" },
+        { "show": ["$(\\cos x)'=-\\sin x$"], "note": "負號不能漏。",
+          "say": "cosine 的導數是負 sine，這個負號最常被漏掉。" },
+        { "show": ["$\\frac{d}{dx} (\\sin x + \\cos x)$"], "note": "加減逐項微分。",
+          "say": "試一個：sine 加 cosine，加減可以一項一項微。" },
+        { "show": ["$= \\cos x - \\sin x$"],
+          "say": "sine 變 cosine，cosine 變負 sine，合起來 cosine 減 sine。" }
+      ],
+      "check": 0
+    },
+    {
+      "title": "六個公式",
+      "beats": [
+        { "show": ["$(\\tan x)'=\\sec^2 x$","$(\\sec x)'=\\sec x\\tan x$"],
+          "say": "sine、tangent、secant 的導數前面都是正的。tangent 微成 secant 平方。" },
+        { "show": ["$(\\cot x)'=-\\csc^2 x$","$(\\csc x)'=-\\csc x\\cot x$"], "note": "co 開頭的三個，前面都有負號。",
+          "say": "co 開頭的三個，答案把每個字換成 co 版本，前面再加負號。" },
+        { "show": ["$f(x) = 2 \\sec x + \\cot x$"], "note": "$f' = 2 \\sec x \\tan x - \\csc^2 x$",
+          "say": "例如二 secant 加 cotangent，導數是二 secant tangent 減 cosecant 平方。" },
+        { "show": ["$f'\\left(\\frac{\\pi}{3}\\right) = 4\\sqrt{3} - \\frac{4}{3}$"], "note": "$\\sec = 2$，$\\tan = \\sqrt{3}$，$\\csc^2 = \\frac{4}{3}$。",
+          "say": "在三分之 pi，secant 是二、tangent 是根號三、cosecant 平方是三分之四，代進去就好。" }
+      ],
+      "check": 1
+    },
+    {
+      "title": "$\\tan x$ 的切線",
+      "beats": [
+        { "show": ["$y = \\tan x$ 在 $x = \\frac{\\pi}{4}$"], "note": "$(\\tan x)' = \\sec^2 x = \\frac{1}{\\cos^2 x}$",
+          "say": "求 tangent 在四分之 pi 的切線。導數是 secant 平方，也就是一除以 cosine 平方。" },
+        { "show": ["$\\cos^2\\left(\\frac{\\pi}{4}\\right) = \\frac{1}{2}$"], "note": "$\\cos\\left(\\frac{\\pi}{4}\\right) = \\frac{\\sqrt{2}}{2}$",
+          "say": "cosine 四分之 pi 是二分之根號二，平方是二分之一。" },
+        { "show": ["切點 $(\\frac{\\pi}{4}, 1)$"],
+          "say": "tangent 四分之 pi 等於一，所以切點是四分之 pi、一。" }
+      ],
+      "predict": {
+        "ask": "切線斜率是多少？",
+        "options": [
+          { "label": "2", "correct": true },
+          { "label": "$\\frac{1}{2}$", "why": "$\\frac{1}{2}$ 是 $\\cos^2$，斜率是它的倒數 $\\sec^2 = 2$。" },
+          { "label": "1", "why": "1 是 $\\tan\\left(\\frac{\\pi}{4}\\right)$，是切點高度，不是斜率。" }
+        ]
+      }
+    },
+    {
+      "title": "只在弧度下成立",
+      "beats": [
+        { "show": ["切線：$y = 2x + 1 - \\frac{\\pi}{2}$"], "note": "$y - 1 = 2(x - \\frac{\\pi}{4})$",
+          "say": "上一題斜率二，用點斜式整理，切線是 y 等於二 x 加一減二分之 pi。這裡的 x 都是弧度。" },
+        { "show": ["關鍵：$\\lim_{h\\to0} \\frac{\\sin h}{h} = 1$"], "note": "這個極限只在弧度下是 1。",
+          "say": "這些公式的證明都靠 sine h 除以 h 趨近一，而它只在 h 用弧度量的時候成立。" },
+        { "show": ["用度：多一個因子 $\\frac{\\pi}{180}$"],
+          "say": "如果 x 用度，導數會多乘一個 pi 除以一百八十。所以微積分裡的三角函數一律用弧度。" }
+      ],
+      "check": 3
+    },
+    {
+      "title": "公式本身就是極限",
+      "beats": [
+        { "show": ["$\\lim_{h\\to0} \\frac{\\sin(\\frac{\\pi}{6} + h) - \\frac{1}{2}}{h}$"], "note": "看起來很難算。",
+          "say": "這個極限看起來很難。先別硬算，看看二分之一是什麼。" },
+        { "show": ["$\\frac{1}{2} = \\sin\\left(\\frac{\\pi}{6}\\right)$"], "note": "這是 $\\sin x$ 在 $\\frac{\\pi}{6}$ 的導數定義。",
+          "say": "二分之一就是 sine 六分之 pi，所以這整個是 sine 在六分之 pi 的導數。" },
+        { "show": ["$= \\cos\\left(\\frac{\\pi}{6}\\right) = \\frac{\\sqrt{3}}{2}$"],
+          "say": "導數是 cosine，代六分之 pi，得到二分之根號三。認出導數定義，就不用硬算。" }
+      ],
+      "check": 2
+    }
+  ],
   "skillTags": {
     "coarse": ["trig", "basic-derivative"],
     "fine": ["trig-deriv-sin-cos", "trig-deriv-tan-sec", "trig-deriv-recognize-limit", "trig-deriv-tangent-slope"]

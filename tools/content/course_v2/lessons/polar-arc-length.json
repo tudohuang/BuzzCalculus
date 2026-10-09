@@ -118,6 +118,75 @@
       ]
     }
   ],
+  "sections": [
+    {
+      "title": "從參數式來",
+      "beats": [
+        { "show": ["$x = r\\cos\\theta$，$y = r\\sin\\theta$"], "note": "以 $\\theta$ 為參數。",
+          "say": "極座標曲線，就是以 theta 為參數的參數曲線。所以弧長直接用參數式的速率。" },
+        { "show": ["$(x')^2 + (y')^2$：交叉項互相抵消"], "note": "再用 $\\cos^2 + \\sin^2 = 1$。",
+          "say": "x prime 平方和 y prime 平方展開相加，正負兩個交叉項抵消，cosine 平方加 sine 平方變成一。" },
+        { "show": ["$L = \\int_\\alpha^\\beta \\sqrt{r^2 + \\left(\\frac{dr}{d\\theta}\\right)^2}\\,d\\theta$"],
+          "say": "最後只剩 r 平方加 r prime 平方。這不是新公式，考試忘了，也能當場推回來。" }
+      ],
+      "check": 0
+    },
+    {
+      "title": "兩個方向的位移",
+      "beats": [
+        { "show": ["沿半徑往外 $dr$", "繞原點轉 $r\\,d\\theta$"],
+          "say": "幾何上看，theta 多轉一點點，點同時往外走 dr，又繞著原點轉了一段 r 乘 d theta 的圓弧。" },
+        { "show": ["小段弧長 $\\sqrt{dr^2 + (r\\,d\\theta)^2}$"], "note": "直覺，不是證明。",
+          "say": "這兩個方向互相垂直，小段弧長就是斜邊。這是直覺，上一節的計算才是推導。" },
+        { "show": ["$r = a$：$L = \\int a\\,d\\theta$"], "note": "就是圓弧長「半徑 × 角度」。",
+          "say": "檢查一個特例：r 是常數 a，r prime 是零，弧長就是半徑乘角度，跟圓弧長一樣。" }
+      ],
+      "check": 1
+    },
+    {
+      "title": "先拿圓檢查",
+      "beats": [
+        { "show": ["$r = 2\\cos\\theta$，$0 \\le \\theta \\le \\pi$"],
+          "say": "r 等於二 cosine theta 是半徑一的圓，theta 從零到 pi 就畫完了。" },
+        { "show": ["$r^2 + r'^2 = 4\\cos^2\\theta + 4\\sin^2\\theta = 4$"],
+          "say": "r prime 是負二 sine theta。平方相加，提出四，剩 cosine 平方加 sine 平方，等於四。" },
+        { "show": ["$L = \\int_0^\\pi 2\\,d\\theta = 2\\pi$"], "note": "半徑 1 的圓周長，對得上。",
+          "say": "開根號是二，從零積到 pi，得到二 pi，正好是半徑一的圓周長。" }
+      ],
+      "check": 3
+    },
+    {
+      "title": "心臟線：絕對值",
+      "beats": [
+        { "show": ["$r = 1 + \\cos\\theta$：$r^2 + r'^2 = 2 + 2\\cos\\theta$"],
+          "say": "換心臟線。r prime 是負 sine theta，平方相加，整理成二加二 cosine theta。" },
+        { "show": ["$= 4\\cos^2\\frac{\\theta}{2}$ → $2\\left|\\cos\\frac{\\theta}{2}\\right|$"], "note": "半角公式 $1 + \\cos\\theta = 2\\cos^2\\frac{\\theta}{2}$。",
+          "say": "用半角公式湊成完全平方，開根號出來是二乘絕對值 cosine 二分之 theta。" },
+        { "show": ["$\\theta > \\pi$ 時 $\\cos\\frac{\\theta}{2} < 0$"], "note": "絕對值不能直接拿掉。",
+          "say": "theta 超過 pi 之後，二分之 theta 超過二分之 pi，cosine 變成負的，絕對值不能直接丟。" }
+      ],
+      "check": 2
+    },
+    {
+      "title": "對稱與螺線",
+      "beats": [
+        { "show": ["上半部乘 2：$2\\int_0^\\pi 2\\cos\\frac{\\theta}{2}\\,d\\theta = 8$"], "note": "對 $x$ 軸對稱，避開變號的那一段。",
+          "say": "心臟線對 x 軸對稱，只算上半部，零到 pi 沒有變號，再乘二，全長是八。" },
+        { "show": ["$r = e^\\theta$，$\\theta$ 從 0 到 1"], "note": "$r^2 + r'^2 = 2e^{2\\theta}$。",
+          "say": "再看對數螺線，r 是 e 的 theta 次方。r prime 跟 r 一樣，平方相加是二倍的 e 的二 theta 次方。" },
+        { "show": ["$\\sqrt{2e^{2\\theta}} = \\sqrt{2}\\,e^\\theta$"], "note": "$e^\\theta > 0$，不用絕對值。",
+          "say": "開根號是根號二乘 e 的 theta 次方。它一定是正的，不用絕對值。接著從零積到一。" }
+      ],
+      "predict": {
+        "ask": "$\\sqrt{2}\\int_0^1 e^\\theta\\,d\\theta$ 是？",
+        "options": [
+          { "label": "$\\sqrt{2}(e - 1)$", "correct": true },
+          { "label": "$e - 1$", "why": "前面的 $\\sqrt{2}$ 不見了：它是從 $\\sqrt{2e^{2\\theta}}$ 開出來的。" },
+          { "label": "$\\sqrt{2}\\,e$", "why": "下限 $e^0 = 1$ 也要減掉：$e^1 - e^0 = e - 1$。" }
+        ]
+      }
+    }
+  ],
   "skillTags": {
     "coarse": ["polar", "arc-length"],
     "fine": ["polar-arc-length-formula", "polar-arc-length-abs", "polar-arc-length-range"]

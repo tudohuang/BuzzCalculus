@@ -124,6 +124,79 @@
       ]
     }
   ],
+  "sections": [
+    {
+      "title": "連接詞的否定",
+      "beats": [
+        { "show": ["否定要一路推進去"], "note": "推到最裡面，變成可以檢查的不等式。",
+          "say": "在一整句定義前面加一個不，沒辦法拿來做事。否定要一路推進去，推到最裡面的條件。" },
+        { "show": ["$\\neg(P\\land Q)\\equiv\\neg P\\lor\\neg Q$"], "note": "既…又…不成立：至少有一個不成立。",
+          "say": "且的否定是或：兩個同時成立這件事不對，表示至少有一個不成立。" },
+        { "show": ["$\\neg(P\\lor Q)\\equiv\\neg P\\land\\neg Q$"], "note": "…或…不成立：兩個都不成立。",
+          "say": "或的否定是且：連一個都沒成立，就是兩個都不成立。" },
+        { "show": ["$\\neg(P\\Rightarrow Q)\\equiv P\\land\\neg Q$"], "note": "否定裡沒有箭頭。",
+          "say": "若 P 則 Q 只在 P 真、Q 假時為假，所以它的否定就是：P 成立，但 Q 不成立。" }
+      ],
+      "check": 1
+    },
+    {
+      "title": "量詞的否定",
+      "beats": [
+        { "show": ["$\\neg(\\forall x,P(x))\\equiv\\exists x,\\neg P(x)$"], "note": "不是每個都成立：有一個不成立，也就是反例。",
+          "say": "對所有的否定是存在：不是每一個都成立，就是有一個不成立，那一個就是反例。" },
+        { "show": ["$\\neg(\\exists x,P(x))\\equiv\\forall x,\\neg P(x)$"],
+          "say": "存在的否定是對所有：找不到任何一個成立，就是每一個都不成立。" },
+        { "show": ["多層量詞：照順序一個一個翻"], "note": "最後的條件也要否定。",
+          "say": "好幾層量詞，就從左到右一個一個翻：對所有換存在、存在換對所有，最後的條件再否定。" }
+      ],
+      "check": 0
+    },
+    {
+      "title": "否定收斂",
+      "beats": [
+        { "show": ["$\\forall\\varepsilon>0\\ \\exists N\\ \\forall n\\ge N,|a_n-L|<\\varepsilon$"], "note": "$a_n$ 收斂到 $L$。",
+          "say": "這是收斂的定義，疊了好幾層量詞。把它整句否定，看會變成什麼。" },
+        { "show": ["$\\exists\\varepsilon>0\\ \\forall N\\ \\exists n\\ge N,|a_n-L|\\ge\\varepsilon$"], "note": "範圍 $\\varepsilon>0$、$n\\ge N$ 不動。",
+          "say": "量詞全部翻過來，小於變成大於等於。epsilon 大於零、n 大於等於 N 這些範圍不動。" },
+        { "show": ["有一個固定的誤差 $\\varepsilon$", "後面總還有某一項差至少 $\\varepsilon$"],
+          "say": "翻成人話：有一個固定的誤差，不管起點 N 推得多遠，後面總還有某一項跟 L 差至少這麼多。" }
+      ],
+      "check": 2
+    },
+    {
+      "title": "$(-1)^n$ 不收斂到 1",
+      "beats": [
+        { "show": ["要證：$\\exists\\varepsilon>0\\ \\forall N\\ \\exists n\\ge N,|a_n-1|\\ge\\varepsilon$"],
+          "say": "a n 是負一的 n 次方，要證它不收斂到一。照上一節的否定形式，一層一層做。" },
+        { "show": ["取 $\\varepsilon=1$"], "note": "存在：挑一個就好。",
+          "say": "最外層是存在 epsilon，由我們挑，而且挑一個就夠。取 epsilon 等於一。" },
+        { "show": ["任意給定 $N$"],
+          "say": "接著對所有 N：N 是別人給的，不能挑。我們要在 N 後面找一項，離一夠遠。" }
+      ],
+      "predict": {
+        "ask": "$n$ 要取什麼？",
+        "options": [
+          { "label": "$n=2N+1$", "correct": true },
+          { "label": "$n=2N$", "why": "偶數項 $a_n=1$，$|a_n-1|=0$，不會 $\\ge1$。要挑奇數項。" },
+          { "label": "$n=N$", "why": "$N$ 是別人給的，可能是偶數，那一項剛好等於 1。" }
+        ]
+      }
+    },
+    {
+      "title": "範圍不動",
+      "beats": [
+        { "show": ["$n=2N+1$：$|a_n-1|=|-1-1|=2\\ge1$"], "note": "每個 $N$ 都找得到，證畢。",
+          "say": "奇數項是負一，跟一差二，大於等於一。每個 N 都找得到這樣的 n，證完了。" },
+        { "show": ["有界：$\\exists M\\ \\forall x,|f(x)|\\le M$", "無界：$\\forall M\\ \\exists x,|f(x)|>M$"],
+          "say": "再翻一個：有界的否定。存在換對所有、對所有換存在，小於等於換成大於。" },
+        { "show": ["$f(x)=x$：取 $x=|M|+1$"], "note": "$|f(x)|=|M|+1>|M|\\ge M$。",
+          "say": "f 在 x 等於 x：不管給哪個 M，取 M 的絕對值加一，就超過 M 了，所以無界。" },
+        { "show": ["$\\varepsilon>0$ 不會變成 $\\varepsilon\\le0$", "$<$ 的否定是 $\\ge$"],
+          "say": "兩個常見的錯：把變數範圍也否定了；把小於否定成大於，漏掉相等的情況。" }
+      ],
+      "check": 3
+    }
+  ],
   "skillTags": {
     "coarse": ["proof"],
     "fine": ["negation-connectives", "negation-nested-quantifiers", "negation-use-to-disprove"]

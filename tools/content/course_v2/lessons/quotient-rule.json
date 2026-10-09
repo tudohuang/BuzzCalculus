@@ -191,6 +191,90 @@
       ]
     }
   ],
+  "sections": [
+    {
+      "title": "相除的公式",
+      "beats": [
+        { "show": ["$\\frac{x^2}{x} = x$，導數是 1"], "note": "各自微分再相除：$\\frac{2x}{1} = 2x$，不一樣。",
+          "say": "x 平方除以 x 就是 x，導數是一。可是各自微分再相除會得到二 x，對不上。" },
+        { "show": ["$\\left(\\frac{f}{g}\\right)'=\\frac{f'g-fg'}{g^2}$"], "note": "這裡 $g(x) \\ne 0$。",
+          "say": "所以相除要有自己的規則：分母乘分子的導數，減掉分子乘分母的導數，再除以分母的平方。" },
+        { "show": ["中間是減號，順序不能換"], "note": "$f'$ 那一項在前；換了差一個負號。",
+          "say": "跟乘法法則最大的不同是中間是減號。分子的導數那一項要放前面，換了順序答案就差一個負號。" }
+      ],
+      "check": 1
+    },
+    {
+      "title": "最基本的一題",
+      "beats": [
+        { "show": ["$\\frac{d}{dx} \\frac{x}{x + 1}$"], "note": "$f = x$、$g = x + 1$，$f' = 1$、$g' = 1$。",
+          "say": "先把分子分母叫出來：f 是 x，g 是 x 加一，兩個的導數都是一。" },
+        { "show": ["$f'g - fg' = 1 \\cdot (x + 1) - x \\cdot 1 = 1$"],
+          "say": "分子：一乘 x 加一，減掉 x 乘一，x 消掉，剩下一。" },
+        { "show": ["$\\frac{1}{(x + 1)^2}$"], "note": "除以 $g^2 = (x + 1)^2$。",
+          "say": "最後除以分母的平方，x 加一的平方。分母別忘了平方。" }
+      ],
+      "check": 0
+    },
+    {
+      "title": "括號要整個減",
+      "beats": [
+        { "show": ["$\\frac{d}{dx} \\frac{x^2 + 1}{x - 1}$"], "note": "$f' = 2x$、$g' = 1$。",
+          "say": "分子分母都是多項式：f 是 x 平方加一，g 是 x 減一，導數分別是二 x 和一。" },
+        { "show": ["$f'g = 2x^2 - 2x$","$fg' = x^2 + 1$"],
+          "say": "f prime 乘 g 展開是二 x 平方減二 x；f 乘 g prime 就是 x 平方加一。" }
+      ],
+      "predict": {
+        "ask": "$f'g - fg'$ 是？",
+        "options": [
+          { "label": "$x^2 - 2x - 1$", "correct": true },
+          { "label": "$x^2 - 2x + 1$", "why": "減 $x^2 + 1$ 時沒加括號，只減了 $x^2$，最後一項的正負號錯。" },
+          { "label": "$3x^2 - 2x + 1$", "why": "中間的減號寫成了加號。除法法則是 $f'g - fg'$。" }
+        ]
+      }
+    },
+    {
+      "title": "對數在分子",
+      "beats": [
+        { "show": ["$\\frac{d}{dx} \\frac{\\ln x}{x}$"], "note": "$f' = \\frac{1}{x}$、$g' = 1$。",
+          "say": "f 是自然對數 x，導數 x 分之一；g 是 x，導數是一。" },
+        { "show": ["$\\frac{1}{x} \\cdot x - \\ln x \\cdot 1 = 1 - \\ln x$"],
+          "say": "分子：x 分之一乘 x 是一，減掉自然對數 x 乘一，得到一減自然對數 x。" },
+        { "show": ["$\\frac{1 - \\ln x}{x^2}$"], "note": "$x = e$ 時導數是 0。",
+          "say": "再除以 x 平方。順便看到：x 等於 e 的時候分子是零，之後會知道那是最大的地方。" }
+      ],
+      "check": 3
+    },
+    {
+      "title": "$\\tan x$ 的導數",
+      "beats": [
+        { "show": ["$\\tan x = \\frac{\\sin x}{\\cos x}$"], "note": "$f' = \\cos x$、$g' = -\\sin x$。",
+          "say": "tangent 就是 sine 除以 cosine。sine 的導數是 cosine，cosine 的導數是負 sine。" },
+        { "show": ["$\\frac{\\cos x \\cdot \\cos x - \\sin x \\cdot (-\\sin x)}{\\cos^2 x}$"],
+          "say": "套公式：cosine 乘 cosine，減掉 sine 乘負 sine，整個除以 cosine 平方。" }
+      ],
+      "predict": {
+        "ask": "化簡之後，$(\\tan x)'$ 是？",
+        "options": [
+          { "label": "$\\sec^2 x$", "correct": true },
+          { "label": "$\\frac{\\cos^2 x - \\sin^2 x}{\\cos^2 x}$", "why": "減掉 $\\sin x \\cdot (-\\sin x)$ 是加上 $\\sin^2 x$；分子 $\\cos^2 x + \\sin^2 x = 1$。" },
+          { "label": "$-\\sec^2 x$", "why": "分子順序寫反成 $fg' - f'g$，差一個負號。" }
+        ]
+      }
+    },
+    {
+      "title": "先看能不能不用",
+      "beats": [
+        { "show": ["分母是常數"], "note": "$\\frac{x^3 + 4x}{2}$ 的導數 $\\frac{1}{2}(3x^2 + 4)$。",
+          "say": "分母是常數，就當成二分之一乘分子，直接微分就好。" },
+        { "show": ["分子是常數"], "note": "$\\frac{3}{x^2} = 3x^{-2}$，導數 $-6x^{-3}$。",
+          "say": "分子是常數，改寫成負次方，用冪次法則：三 x 的負二次方，導數負六 x 的負三次方。" },
+        { "show": ["能約分就先約"], "note": "$\\frac{x^2 + x}{x} = x + 1$，導數 1。",
+          "say": "能約分就先約，x 平方加 x 除以 x 是 x 加一，導數一。硬套公式也會對，只是容易出錯。" }
+      ],
+      "check": 2
+    }
+  ],
   "skillTags": {
     "coarse": [
       "quotient-rule"

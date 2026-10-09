@@ -163,6 +163,91 @@
       ]
     }
   ],
+  "sections": [
+    {
+      "title": "一整族積分",
+      "beats": [
+        { "show": ["$\\int_0^{\\infty}xe^{-x}\\,dx$、$\\int_0^{\\infty}x^2e^{-x}\\,dx$、…"], "note": "每一個都要分部積分好幾次。",
+          "say": "x 乘 e 的負 x 次方、x 平方乘 e 的負 x 次方，這一整族積分，每一個都要分部積分好幾次。" },
+        { "show": ["$\\Gamma(s)=\\int_0^{\\infty}x^{s-1}e^{-x}\\,dx$"], "note": "把它們統一成一個函數。",
+          "say": "Gamma 函數把這一整族統一成一個函數。看到這種形狀，就不用再算，直接讀值。" },
+        { "show": ["$s=2$：$\\int_0^{\\infty}xe^{-x}\\,dx$"], "fig": { "use": 0, "to": 2 },
+          "say": "看圖：s 等於二，曲線是 x 乘 e 的負 x 次方，塗色的面積就是 Gamma 在二的值。" },
+        { "show": ["$s=3$：$\\int_0^{\\infty}x^2e^{-x}\\,dx$"], "fig": { "use": 0, "to": 3 },
+          "say": "s 調到三，曲線換成 x 平方乘 e 的負 x 次方，面積跟著變。" }
+      ],
+      "drag": { "use": 0, "ask": "自己把 $s$ 拉回 $1$ 附近，看曲線變成 $e^{-x}$", "range": [1, 1.05] }
+    },
+    {
+      "title": "什麼時候收斂",
+      "beats": [
+        { "show": ["$x\\to\\infty$：$e^{-x}$ 贏"], "note": "指數衰減比任何次方增長都快。",
+          "say": "兩端都要檢查。無限遠那端，e 的負 x 次方衰減得比任何次方都快，尾巴一定收斂。" },
+        { "show": ["$x\\to 0^+$：像 $x^{s-1}$"], "note": "$e^{-x}\\to 1$。",
+          "say": "零那端，e 的負 x 次方趨近一，被積函數就像 x 的 s 減一次方。" },
+        { "show": ["$p$ 判別：$s-1>-1$，即 $s>0$"], "note": "此積分表示式在 $s>0$ 時收斂。",
+          "say": "用 p 判別，s 減一要大於負一，也就是 s 大於零，這個積分才收斂。" }
+      ],
+      "check": 2
+    },
+    {
+      "title": "起點與遞迴",
+      "beats": [
+        { "show": ["$\\Gamma(1)=\\int_0^{\\infty}e^{-x}\\,dx=1$"], "fig": { "use": 0, "to": 1 },
+          "say": "s 等於一，x 的零次方是一，只剩 e 的負 x 次方，面積剛好是一。" },
+        { "show": ["$\\Gamma(s+1)$：$u=x^s$，$dv=e^{-x}\\,dx$"],
+          "say": "遞迴從分部積分來：u 取 x 的 s 次方，dv 取 e 的負 x 次方 dx。" },
+        { "show": ["邊界項 $\\left[-x^se^{-x}\\right]_0^{\\infty}=0$"], "note": "$\\infty$ 端 $e^{-x}$ 贏；$0$ 端 $x^s=0$。",
+          "say": "邊界項兩端都是零：無限遠那邊指數贏，零那邊 x 的 s 次方是零。" },
+        { "show": ["$\\Gamma(s+1)=s\\Gamma(s)$"],
+          "say": "剩下 s 乘 Gamma s。這個係數 s 是分部積分生出來的。" }
+      ],
+      "check": 3
+    },
+    {
+      "title": "整數點是階乘",
+      "beats": [
+        { "show": ["$\\Gamma(2)=1$，$\\Gamma(3)=2$"], "fig": { "use": 0, "to": 3 },
+          "say": "從 Gamma 一等於一往上推：Gamma 二是一乘一，Gamma 三是二乘一，等於二。" },
+        { "show": ["$\\Gamma(4)=6$"], "fig": { "use": 0, "to": 4 },
+          "say": "s 拉到四，面積是六，就是三的階乘。" },
+        { "show": ["$\\Gamma(n+1)=n!$"], "note": "差一：$\\Gamma(n)=(n-1)!$，不是 $n!$。",
+          "say": "一般來說 Gamma n 加一是 n 階乘。小心差一：Gamma 六是一百二十，不是七百二十。" }
+      ],
+      "check": 0
+    },
+    {
+      "title": "讀積分",
+      "beats": [
+        { "show": ["$\\int_0^{\\infty}x^ke^{-x}\\,dx=\\Gamma(k+1)$"],
+          "say": "看到 x 的 k 次方乘 e 的負 x 次方，就是 Gamma k 加一。" },
+        { "show": ["$\\int_0^{\\infty}x^2e^{-x}\\,dx=\\Gamma(3)=2$"], "note": "分部積分兩次也會得到 $2$，但要寫半頁。",
+          "say": "x 平方那一題，k 是二，直接讀成 Gamma 三，等於二。" },
+        { "show": ["$\\int_0^{\\infty}x^ke^{-ax}\\,dx=\\frac{\\Gamma(k+1)}{a^{k+1}}$"], "note": "換元 $u=ax$。",
+          "say": "指數裡有常數 a，令 u 等於 a x，多出 a 的 k 加一次方在分母。" },
+        { "show": ["$\\int_0^{\\infty}x^4e^{-3x}\\,dx=\\frac{24}{243}=\\frac{8}{81}$"],
+          "say": "例如 x 四次方乘 e 的負三 x 次方：Gamma 五是二十四，除以三的五次方，得八十一分之八。" }
+      ],
+      "check": 1
+    },
+    {
+      "title": "先換元",
+      "beats": [
+        { "show": ["$\\int_0^{\\infty}x^3e^{-x^2}\\,dx$"], "note": "指數是 $-x^2$，不是標準形狀。",
+          "say": "這一題指數是負 x 平方，不是標準形狀，要先換元。" },
+        { "show": ["$u=x^2$，$du=2x\\,dx$"], "note": "$x^3\\,dx=x^2\\cdot x\\,dx=u\\cdot\\frac{du}{2}$",
+          "say": "令 u 等於 x 平方。把 x 三次方 dx 拆成 x 平方乘 x dx，就是 u 乘二分之 du。" }
+      ],
+      "predict": {
+        "ask": "積分變成？",
+        "options": [
+          { "label": "$\\frac{1}{2}\\Gamma(2)=\\frac{1}{2}$", "correct": true },
+          { "label": "$\\Gamma(2)=1$", "why": "漏了 $du=2x\\,dx$ 留下的 $\\frac{1}{2}$。" },
+          { "label": "$\\frac{1}{2}\\Gamma(4)=3$", "why": "換元後被積函數是 $ue^{-u}$，是 $\\Gamma(2)$；$x^3$ 已經拆成 $u$ 和 $x\\,dx$。" }
+        ]
+      }
+    }
+  ],
   "skillTags": {
     "coarse": ["gamma-function", "special-functions", "improper-integral"],
     "fine": ["gamma-read-integral", "gamma-integer-value", "gamma-off-by-one", "gamma-scaling", "gamma-substitution", "gamma-convergence"]

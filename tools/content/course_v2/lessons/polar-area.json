@@ -125,6 +125,78 @@
       ]
     }
   ],
+  "sections": [
+    {
+      "title": "切成扇形",
+      "beats": [
+        { "show": ["直角：鉛直長條", "極座標：從原點出發的細扇形"],
+          "say": "直角座標給的是每個 x 的高度，所以切長條。極座標給的是每個方向的距離，自然的切法是細扇形。" },
+        { "show": ["扇形面積 $\\pi r^2 \\cdot \\frac{\\Delta\\theta}{2\\pi} = \\frac{1}{2}r^2\\Delta\\theta$"],
+          "say": "半徑 r、角度 delta theta 的扇形，是整個圓乘上它佔的比例，化簡成二分之一 r 平方 delta theta。" },
+        { "show": ["$A = \\int_\\alpha^\\beta \\frac{1}{2}r(\\theta)^2\\,d\\theta$"], "note": "小角度內 $r$ 幾乎不變。",
+          "say": "角度很小時，r 幾乎不變，那一小塊就像扇形。一片片加起來取極限，就是這個積分。" }
+      ],
+      "check": 0,
+      "video": true
+    },
+    {
+      "title": "心臟線的面積",
+      "beats": [
+        { "show": ["$r = 1 + \\cos\\theta$，$\\theta$ 從 0 到 $2\\pi$"], "note": "剛好畫一圈，$r \\ge 0$，沒有重疊。",
+          "say": "心臟線一加 cosine theta，theta 從零轉到二 pi 剛好畫一圈，r 不會是負的，沒有重疊。" },
+        { "show": ["$r^2 = 1 + 2\\cos\\theta + \\cos^2\\theta$"],
+          "say": "先把 r 平方展開，成三項。" },
+        { "show": ["逐項積：$2\\pi$、$0$、$\\pi$"],
+          "say": "從零積到二 pi：一積出二 pi，二 cosine theta 積一整圈是零，cosine 平方積出 pi。" }
+      ],
+      "predict": {
+        "ask": "心臟線圍成的面積是？",
+        "options": [
+          { "label": "$\\frac{3\\pi}{2}$", "correct": true },
+          { "label": "$3\\pi$", "why": "$2\\pi + 0 + \\pi = 3\\pi$ 之後忘了乘前面的 $\\frac{1}{2}$。" },
+          { "label": "$\\frac{\\pi}{2}$", "why": "漏了 $\\int_0^{2\\pi} 1\\,d\\theta = 2\\pi$ 那一項：$\\frac{1}{2}(2\\pi + 0 + \\pi) = \\frac{3\\pi}{2}$。" }
+        ]
+      }
+    },
+    {
+      "title": "剛好掃一次",
+      "beats": [
+        { "show": ["轉多了算兩次，轉少了會漏"],
+          "say": "公式量的是射線從起點轉到終點掃過的面積。轉多了，同一塊被算兩次；轉少了，會漏掉。" },
+        { "show": ["$r = 2\\cos\\theta$：$-\\frac{\\pi}{2}$ 到 $\\frac{\\pi}{2}$"], "note": "半徑 1 的圓，面積 $\\pi$。",
+          "say": "r 等於二 cosine theta 是半徑一的圓。theta 從負二分之 pi 到二分之 pi，r 不是負的，剛好畫完一圈。" },
+        { "show": ["$\\frac{1}{2}\\int_{-\\pi/2}^{\\pi/2} 4\\cos^2\\theta\\,d\\theta = \\pi$"],
+          "say": "照公式積分，得到 pi，跟圓面積對得上。那如果偷懶，一律從零積到二 pi 呢？" }
+      ],
+      "check": 2
+    },
+    {
+      "title": "一片花瓣",
+      "beats": [
+        { "show": ["找 $r = 0$ 的角度"], "note": "通常是一片花瓣或一個圈的起點和終點。",
+          "say": "怎麼找上下限？先畫圖，找 r 等於零的角度，那通常就是一片花瓣的起點和終點。" },
+        { "show": ["$r = \\cos 2\\theta$：$-\\frac{\\pi}{4}$ 到 $\\frac{\\pi}{4}$"], "note": "指向右邊的那一片。",
+          "say": "四葉玫瑰 cosine 二 theta，在負四分之 pi 和四分之 pi 都是零，中間正好是右邊那片花瓣。" },
+        { "show": ["$\\frac{1}{2}\\int_{-\\pi/4}^{\\pi/4} \\cos^2 2\\theta\\,d\\theta$"], "note": "$r$ 是負的也沒關係，$r^2$ 一定是正的。",
+          "say": "一片花瓣的面積，就是二分之一乘 r 平方，從負四分之 pi 積到四分之 pi。" }
+      ],
+      "check": 1
+    },
+    {
+      "title": "兩條曲線之間",
+      "beats": [
+        { "show": ["$\\frac{1}{2}\\int (R^2 - r^2)\\,d\\theta$"], "note": "大扇形減小扇形：平方相減，不是相減再平方。",
+          "say": "外面那條是大 R，裡面那條是小 r。兩條之間就是大扇形減小扇形，先平方再相減。" },
+        { "show": ["圓 $r = 3\\cos\\theta$ 內、心臟線 $r = 1 + \\cos\\theta$ 外"],
+          "say": "例如在圓三 cosine theta 裡面、心臟線外面的區域。角度範圍要從交點來。" },
+        { "show": ["$3\\cos\\theta = 1 + \\cos\\theta$：$\\theta = \\pm\\frac{\\pi}{3}$"], "note": "算出來面積是 $\\pi$。",
+          "say": "兩條相等，cosine theta 是二分之一，交在正負三分之 pi。中間圓在外面，積出來面積剛好是 pi。" },
+        { "show": ["在原點的交點，解方程式找不到"], "note": "要另外畫圖確認。",
+          "say": "還有一個陷阱：兩條曲線可能在不同角度到達原點，這種交點解方程式找不到，一定要畫圖。" }
+      ],
+      "check": 3
+    }
+  ],
   "skillTags": {
     "coarse": ["polar", "polar-area", "area"],
     "fine": ["polar-area-formula", "polar-area-limits", "polar-area-petal", "polar-area-between"]

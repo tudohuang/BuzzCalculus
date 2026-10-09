@@ -125,6 +125,75 @@
       ]
     }
   ],
+  "sections": [
+    {
+      "title": "定義與算法",
+      "beats": [
+        { "show": ["$\\det\\begin{pmatrix}x_u&x_v\\\\y_u&y_v\\end{pmatrix}$", "$=x_uy_v-x_vy_u$"], "note": "第一列是 $x$ 的偏導，第二列是 $y$ 的偏導。",
+          "say": "四個偏導數排成矩陣：第一列是 x 對 u、對 v，第二列是 y 對 u、對 v。行列式就是 Jacobian。" },
+        { "show": ["$|J|$：放大倍率；正負號：有沒有翻面"],
+          "say": "上一課看過：它的絕對值是小方格的放大倍率，正負號表示有沒有翻面。" },
+        { "show": ["$x=2u+v$、$y=u-v$"], "note": "$x_u=2$、$x_v=1$、$y_u=1$、$y_v=-1$。",
+          "say": "照步驟：先寫出四個偏導數。" },
+        { "show": ["$J=2\\cdot(-1)-1\\cdot1=-3$"], "note": "放大 $3$ 倍，而且翻面。",
+          "say": "主對角相乘，減掉反對角相乘，得負三：面積放大三倍，而且翻面。" }
+      ],
+      "check": 0
+    },
+    {
+      "title": "答案通常還有變數",
+      "beats": [
+        { "show": ["$x=u^2-v^2$、$y=2uv$"],
+          "say": "非線性的變換，Jacobian 通常還是 u、v 的函數。" },
+        { "show": ["$x_u=2u$，$x_v=-2v$；$y_u=2v$，$y_v=2u$"],
+          "say": "四個偏導數寫出來。" },
+        { "show": ["$2u\\cdot2u-(-2v)(2v)=4(u^2+v^2)$"], "note": "交叉相乘要相減，不是相加。",
+          "say": "交叉相乘相減。減掉一個負的，變成加，得四乘 u 平方加 v 平方。" }
+      ],
+      "check": 2
+    },
+    {
+      "title": "反方向：取倒數",
+      "beats": [
+        { "show": ["題目給 $u=u(x,y)$、$v=v(x,y)$"], "note": "要的卻是 $\\frac{\\partial(x,y)}{\\partial(u,v)}$。",
+          "say": "很多題目從區域的邊界讀出 u、v 是 x、y 的函數，要的卻是反方向的 Jacobian。" },
+        { "show": ["$\\frac{\\partial(x,y)}{\\partial(u,v)}=\\frac{1}{\\partial(u,v)/\\partial(x,y)}$"], "note": "條件：$J\\ne 0$。",
+          "say": "不必先解出 x、y，直接算反方向再取倒數。" },
+        { "show": ["放大 $k$ 倍，反過來縮成 $\\frac{1}{k}$"], "note": "正式理由：兩個 Jacobian 矩陣相乘是單位矩陣。",
+          "say": "直觀上：去程把面積放大 k 倍，回程就縮小成 k 分之一。" }
+      ],
+      "check": 1
+    },
+    {
+      "title": "解不出來也沒關係",
+      "beats": [
+        { "show": ["$u=xy$、$v=\\frac{y}{x}$（$x,y>0$）"],
+          "say": "這一題要解出 x、y 很麻煩，直接算反方向。" },
+        { "show": ["$\\frac{\\partial(u,v)}{\\partial(x,y)}=\\frac{y}{x}+\\frac{y}{x}=\\frac{2y}{x}$"],
+          "say": "u、v 對 x、y 的偏導數交叉相乘相減，得到二 y 除以 x。" }
+      ],
+      "predict": {
+        "ask": "$\\frac{\\partial(x,y)}{\\partial(u,v)}$ 是？",
+        "options": [
+          { "label": "$\\frac{1}{2v}$", "correct": true },
+          { "label": "$2v$", "why": "$\\frac{2y}{x}=2v$ 是 $\\frac{\\partial(u,v)}{\\partial(x,y)}$；要的是反方向，取倒數。" },
+          { "label": "$\\frac{x}{2y}$", "why": "倒數對了，但答案要用 $u$、$v$ 寫：$\\frac{y}{x}=v$，所以是 $\\frac{1}{2v}$。" }
+        ]
+      }
+    },
+    {
+      "title": "三個變數",
+      "beats": [
+        { "show": ["$\\frac{\\partial(x,y,z)}{\\partial(u,v,w)}$：$3\\times3$ 行列式"], "note": "$|J|$ 是小方塊的體積放大倍率。",
+          "say": "三個變數時，Jacobian 是三乘三的行列式，絕對值是小方塊的體積放大倍率。" },
+        { "show": ["柱座標：$r$；球座標：$\\rho^2\\sin\\varphi$"],
+          "say": "以後一直會用到兩個：柱座標的是 r，球座標的是 rho 平方乘 sine phi。" },
+        { "show": ["換變數：用 $|J|$，不是 $J$"],
+          "say": "最後提醒：換變數的時候乘的是絕對值，因為面積和體積不會是負的。" }
+      ],
+      "check": 3
+    }
+  ],
   "skillTags": {
     "coarse": ["jacobian", "jacobian-chain"],
     "fine": ["jacobian-2x2-compute", "jacobian-inverse-reciprocal", "jacobian-3x3"]

@@ -106,6 +106,75 @@
       ]
     }
   ],
+  "sections": [
+    {
+      "title": "每秒流過多少",
+      "beats": [
+        { "show": ["水速 $\\mathbf F$，小網面積 $\\Delta S$，單位法向量 $\\mathbf n$"],
+          "say": "水以速度 F 流動，放一小片網子。每秒有多少水穿過網子？" },
+        { "show": ["斜柱體：底面積 $\\times$ 垂直高度 $=(\\mathbf F\\cdot\\mathbf n)\\,\\Delta S$"],
+          "say": "一秒內穿過的水，是以網子為底、沿水流斜著拉出去的柱體。體積是底面積乘垂直的高度。" },
+        { "show": ["垂直：最多；相切：$0$；$\\mathbf F\\cdot\\mathbf n<0$：反向穿過"],
+          "say": "水流跟網子垂直時流過最多；跟網子平行，一滴都不穿過；點積是負的，就是往反方向穿。" },
+        { "show": ["$\\iint_S\\mathbf F\\cdot d\\mathbf S=\\iint_S\\mathbf F\\cdot\\mathbf n\\,dS$"],
+          "say": "加起來取極限，就是通量。" }
+      ],
+      "check": 1
+    },
+    {
+      "title": "先選方向",
+      "beats": [
+        { "show": ["曲面有兩面：$\\mathbf n$ 指向哪一面？"], "note": "要在整片曲面上連續地選：可定向曲面。",
+          "say": "曲面有兩面，法向量可以指向任何一面。算之前一定要先選好，而且整片要選得連續。" },
+        { "show": ["換另一面：$\\mathbf n$ 變號，通量變號"], "note": "跟〈曲面積分〉$\\iint f\\,dS$ 最大的不同。",
+          "say": "換成另一面，法向量變號，通量也跟著變號。這是它跟上一課最大的不同。" }
+      ],
+      "check": 0
+    },
+    {
+      "title": "怎麼算",
+      "beats": [
+        { "show": ["$\\mathbf n\\,dS=(\\mathbf r_u\\times\\mathbf r_v)\\,dA$"], "note": "長度消掉，不用開根號。",
+          "say": "外積本身就是法向量乘放大倍率。單位化再乘長度，長度剛好消掉，不用開根號。" },
+        { "show": ["$\\iint_D\\mathbf F(\\mathbf r(u,v))\\cdot(\\mathbf r_u\\times\\mathbf r_v)\\,dA$"], "note": "指向不是你選的那一面，就整個加負號。",
+          "say": "場代進曲面上的點，跟外積做點積。外積指錯面的話，整個加負號。" },
+        { "show": ["$z=g$、朝上：$\\iint_D(-Pg_x-Qg_y+R)\\,dA$"], "note": "$\\langle -g_x,-g_y,1\\rangle$ 的 $z$ 分量是正的。",
+          "say": "函數圖形、法向量朝上，外積是負 g 下標 x、負 g 下標 y、一，點積展開就是這個式子。" }
+      ],
+      "check": 2
+    },
+    {
+      "title": "向外穿過球面",
+      "beats": [
+        { "show": ["封閉曲面：慣例取朝外"],
+          "say": "封閉曲面，像球面或立方體表面，沒特別說明時，法向量取朝外。" },
+        { "show": ["$\\mathbf F=\\langle x,y,z\\rangle$，半徑 $2$ 的球面"], "note": "朝外：$\\mathbf n=\\frac{\\langle x,y,z\\rangle}{2}$。",
+          "say": "發散場穿過半徑二的球面。球面上朝外的單位法向量，就是位置除以二。" },
+        { "show": ["$\\mathbf F\\cdot\\mathbf n=\\frac{4}{2}=2$", "通量 $2\\times4\\pi\\cdot2^2=32\\pi$"],
+          "say": "點積是四除以二，處處等於二。再乘上球面積，四 pi 乘二的平方，通量三十二 pi。" }
+      ],
+      "check": 3
+    },
+    {
+      "title": "穿過碗，朝上",
+      "beats": [
+        { "show": ["$\\mathbf F=\\langle y,x,z\\rangle$，$z=1-x^2-y^2$（$z\\ge 0$）"], "note": "$g_x=-2x$、$g_y=-2y$。",
+          "say": "穿過一個倒扣的碗，法向量朝上，用函數圖形的公式。" },
+        { "show": ["$-Pg_x-Qg_y+R=4xy+1-x^2-y^2$"], "note": "$z$ 要代成 $g$。",
+          "say": "代進去，z 要換成一減 x 平方減 y 平方。" },
+        { "show": ["極座標：$4r^2\\cos\\theta\\sin\\theta$ 一整圈積分是 $0$"],
+          "say": "換極座標，四 x y 那一項對 theta 繞一圈剛好是零。" }
+      ],
+      "predict": {
+        "ask": "通量是？",
+        "options": [
+          { "label": "$\\frac{\\pi}{2}$", "correct": true },
+          { "label": "$0$", "why": "只有 $4xy$ 那一項積成 $0$；$1-r^2$ 那一項給 $2\\pi\\cdot\\frac{1}{4}$。" },
+          { "label": "$\\pi$", "why": "漏了 $dA$ 的 $r$：$\\int_0^1(1-r^2)\\,r\\,dr=\\frac{1}{4}$，乘 $2\\pi$ 是 $\\frac{\\pi}{2}$。" }
+        ]
+      }
+    }
+  ],
   "skillTags": {
     "coarse": ["flux", "surface-integral", "vector-calculus"],
     "fine": ["flux-orientation", "flux-param-normal", "flux-graph-upward"]

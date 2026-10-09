@@ -125,6 +125,94 @@
       ]
     }
   ],
+  "sections": [
+    {
+      "title": "小方塊加起來",
+      "beats": [
+        { "show": ["每個小方塊淨流出 $\\approx(\\nabla\\cdot\\mathbf F)\\times$ 體積"], "note": "〈散度〉。",
+          "say": "散度那一課說：每個小方塊的淨流出，大約是散度乘體積。" },
+        { "show": ["立體 $E$ 切成小方塊，全部加起來"],
+          "say": "把整塊立體切成小方塊，每一塊的淨流出全部加起來。" },
+        { "show": ["相鄰兩塊共用一個面"], "note": "從左塊流出的，正好流進右塊。",
+          "say": "注意相鄰兩塊共用的面：從左塊流出去的，正好流進右塊。" }
+      ],
+      "predict": {
+        "ask": "全部加起來，剩下什麼？",
+        "options": [
+          { "label": "最外層表面的總流出", "correct": true },
+          { "label": "什麼都不剩，是 $0$", "why": "只有內部共用的面抵消；最外層的面沒有鄰居，流出的量留下來。" },
+          { "label": "每個面都算兩次", "why": "共用面上一塊算流出、一塊算流入，一正一負抵消，不是加倍。" }
+        ]
+      }
+    },
+    {
+      "title": "散度定理",
+      "beats": [
+        { "show": ["$\\iint_S\\mathbf F\\cdot d\\mathbf S=\\iiint_E\\nabla\\cdot\\mathbf F\\,dV$"], "note": "也叫 Gauss 定理。",
+          "say": "表面的總流出，等於裡面所有小源的總和。這就是散度定理。" },
+        { "show": ["$S$ 是 $E$ 的封閉邊界，法向量朝外"],
+          "say": "條件：立體有界，邊界是封閉曲面，法向量一律朝外。" },
+        { "show": ["$\\mathbf F$ 在包含 $E$ 的開集上偏導連續"],
+          "say": "還有，場的偏導數在整塊立體連同表面上都要連續。這一條後面會出事。" }
+      ],
+      "check": 0
+    },
+    {
+      "title": "散度是常數",
+      "beats": [
+        { "show": ["$\\mathbf F=\\langle z,y,x\\rangle$ 穿出單位球面"],
+          "say": "這個場穿出單位球面的通量。直接算要參數化球面。" },
+        { "show": ["$\\nabla\\cdot\\mathbf F=0+1+0=1$"],
+          "say": "改算散度：P 是 z，對 x 微分是零；Q 對 y 是一；R 是 x，對 z 是零。散度是一。" },
+        { "show": ["通量 $=\\iiint 1\\,dV=\\frac{4\\pi}{3}$"], "note": "就是單位球的體積。",
+          "say": "散度是一，三重積分就是球的體積，三分之四 pi。" }
+      ],
+      "check": 1
+    },
+    {
+      "title": "避開難算的分量",
+      "beats": [
+        { "show": ["$\\mathbf F=\\langle xy,\\ y^2+e^{xz^2},\\ \\sin(xy)\\rangle$"], "note": "表面有四片，直接算很難。",
+          "say": "這個場有 e 的 x z 平方次方、sine x y，四片表面一片一片算會很痛苦。" },
+        { "show": ["$e^{xz^2}$ 不含 $y$，$\\sin(xy)$ 不含 $z$"],
+          "say": "可是散度只要 Q 對 y、R 對 z 微分，醜的部分剛好都不含那個變數。" }
+      ],
+      "predict": {
+        "ask": "$\\nabla\\cdot\\mathbf F$ 是？",
+        "options": [
+          { "label": "$3y$", "correct": true },
+          { "label": "$y$", "why": "漏了 $Q_y$：$y^2$ 對 $y$ 微分是 $2y$，$y+2y=3y$。" },
+          { "label": "$y+2y+x\\cos(xy)$", "why": "$R$ 要對 $z$ 微分，$\\sin(xy)$ 不含 $z$，得 $0$。" }
+        ]
+      }
+    },
+    {
+      "title": "補蓋子",
+      "beats": [
+        { "show": ["碗面 $z=1-x^2-y^2$（$z\\ge 0$）不封閉"], "note": "$\\mathbf F=\\langle y,x,z\\rangle$，朝上。",
+          "say": "碗面沒有底，不是封閉曲面，不能直接用。" },
+        { "show": ["補底部圓盤 $S_0$，朝外 = 朝下"],
+          "say": "先補一片蓋子：底部的圓盤。它也要朝外，在底部就是朝下。" },
+        { "show": ["總通量 $=\\iiint 1\\,dV=\\frac{\\pi}{2}$；底部通量 $0$"],
+          "say": "封閉之後，散度是一，總通量是碗下的體積二分之 pi；底部 z 是零，通量是零。" },
+        { "show": ["碗面 $=\\frac{\\pi}{2}-0=\\frac{\\pi}{2}$"], "note": "跟〈通量〉直接算的一樣。",
+          "say": "扣掉蓋子，碗面的通量是二分之 pi，跟上一課直接算的一樣。" }
+      ],
+      "check": 2
+    },
+    {
+      "title": "條件壞掉：點源",
+      "beats": [
+        { "show": ["$\\mathbf F=\\frac{\\langle x,y,z\\rangle}{\\rho^3}$：原點以外 $\\nabla\\cdot\\mathbf F=0$"],
+          "say": "點電荷的場，原點以外散度處處是零。" },
+        { "show": ["穿出球面：$\\frac{1}{\\rho^2}\\times4\\pi\\rho^2=4\\pi$"], "note": "以原點為中心，任何半徑都一樣。",
+          "say": "可是穿出以原點為中心的球面，點積是 rho 平方分之一，乘上球面積，通量是四 pi，不是零。" },
+        { "show": ["原點沒有定義：源全部擠在那一點"], "note": "不包含原點的封閉曲面：通量是 $0$。",
+          "say": "不矛盾：場在原點沒有定義，條件不成立，源全部擠在原點。這就是 Gauss 定律。" }
+      ],
+      "check": 3
+    }
+  ],
   "skillTags": {
     "coarse": ["divergence-theorem", "flux", "vector-calculus"],
     "fine": ["divergence-theorem-closed", "divergence-theorem-add-lid", "divergence-theorem-hypotheses"]

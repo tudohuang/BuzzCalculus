@@ -118,6 +118,77 @@
       ]
     }
   ],
+  "sections": [
+    {
+      "title": "令 $u=ax$",
+      "beats": [
+        { "show": ["$\\int_0^{\\infty}x^{s-1}e^{-ax}\\,dx$"], "note": "指數裡有係數 $a>0$。",
+          "say": "指數裡多了一個係數 a，令 u 等於 a x，把它變回標準的 Gamma。" },
+        { "show": ["$x=\\frac{u}{a}$，$dx=\\frac{du}{a}$"],
+          "say": "x 是 a 分之 u，dx 是 a 分之 du，兩個地方都會吐出 a。" },
+        { "show": ["$x^{s-1}\\,dx=\\frac{u^{s-1}\\,du}{a^s}$"], "note": "$a^{-(s-1)}$ 再乘 $a^{-1}$。",
+          "say": "x 的 s 減一次方給出 a 的負 s 加一次方，dx 再給一個 a 分之一，合起來是 a 的 s 次方分之一。" },
+        { "show": ["$=\\frac{\\Gamma(s)}{a^s}$"], "note": "$s>0$，$a>0$。",
+          "say": "所以答案是 Gamma s 除以 a 的 s 次方。" }
+      ],
+      "check": 2
+    },
+    {
+      "title": "讀出 $s$ 和 $a$",
+      "beats": [
+        { "show": ["$\\int_0^{\\infty}x^{3/2}e^{-4x}\\,dx$"], "note": "$x^{3/2}=x^{s-1}$，所以 $s=\\frac{5}{2}$；$a=4$。",
+          "say": "先讀參數：x 的二分之三次方是 x 的 s 減一次方，所以 s 是二分之五，不是二分之三；a 是四。" },
+        { "show": ["$\\frac{\\Gamma(5/2)}{4^{5/2}}$"], "note": "$\\Gamma\\left(\\frac{5}{2}\\right)=\\frac{3\\sqrt{\\pi}}{4}$，$4^{5/2}=32$。",
+          "say": "Gamma 二分之五是四分之三根號 pi，四的二分之五次方是根號四的五次方，三十二。" },
+        { "show": ["$=\\frac{3\\sqrt{\\pi}}{128}\\approx 0.0415$"],
+          "say": "相除得一百二十八分之三根號 pi。" }
+      ],
+      "check": 0
+    },
+    {
+      "title": "量綱檢查",
+      "beats": [
+        { "show": ["$x$ 是秒，$a$ 就是 1/秒"], "note": "指數 $ax$ 必須是純數。",
+          "say": "假設 x 的單位是秒，指數 a x 必須是純數，所以 a 的單位是每秒。" },
+        { "show": ["答案 = 純數 $\\times\\,a^{-s}$"], "note": "$\\int x^{s-1}\\,dx$ 的單位是 秒ˢ。",
+          "say": "積分的單位是秒的 s 次方，所以答案一定長成純數乘 a 的負 s 次方。" },
+        { "show": ["寫出 $a^{-(s-1)}$：$dx$ 換錯了"],
+          "say": "寫出 a 的負 s 加一次方，量綱就對不上，一定是 dx 那一個 a 分之一漏了。" },
+        { "show": ["$a\\le 0$：積分發散"], "note": "$e^{-ax}$ 不衰減。",
+          "say": "還有，a 小於等於零時，e 的負 a x 次方不會衰減，積分發散，公式不能用。" }
+      ],
+      "check": 3
+    },
+    {
+      "title": "指數是 $x^p$",
+      "beats": [
+        { "show": ["$\\int_0^{\\infty}x^{s-1}e^{-ax^p}\\,dx$"], "note": "令 $u=ax^p$，$p>0$。",
+          "say": "指數裡是 x 的 p 次方，就令 u 等於 a 乘 x 的 p 次方。" },
+        { "show": ["$=\\frac{\\Gamma(s/p)}{p\\,a^{s/p}}$"], "note": "$p=1$ 回到上面；$p=2$ 是上一課的公式。",
+          "say": "合併 u 的次方之後，答案是 Gamma p 分之 s，除以 p，再除以 a 的 p 分之 s 次方。" },
+        { "show": ["$\\int_0^{\\infty}e^{-x^3}\\,dx=\\frac{\\Gamma(1/3)}{3}$"], "note": "$=\\Gamma\\left(\\frac{4}{3}\\right)\\approx 0.8930$",
+          "say": "例如 e 的負 x 三次方：s 是一，p 是三，得三分之一乘 Gamma 三分之一，用遞迴就是 Gamma 三分之四。" }
+      ],
+      "check": 1
+    },
+    {
+      "title": "$x^2$ 加係數",
+      "beats": [
+        { "show": ["$\\int_0^{\\infty}x^4e^{-2x^2}\\,dx$"], "note": "$p=2$，$a=2$。",
+          "say": "最後一題：x 四次方乘 e 的負二 x 平方次方，p 是二，a 是二。" },
+        { "show": ["$\\frac{\\Gamma(5/2)}{2\\cdot 2^{5/2}}=\\frac{3\\sqrt{\\pi}}{32\\sqrt{2}}$"], "note": "$2^{5/2}=4\\sqrt{2}$",
+          "say": "代進公式：Gamma 二分之五除以二，再除以二的二分之五次方，約零點一一七五。" }
+      ],
+      "predict": {
+        "ask": "這一題的 $s$ 是多少？",
+        "options": [
+          { "label": "$5$", "correct": true },
+          { "label": "$4$", "why": "$x^4$ 是 $x^{s-1}$，所以 $s-1=4$，$s=5$。" },
+          { "label": "$\\frac{5}{2}$", "why": "$\\frac{5}{2}$ 是 $\\frac{s}{p}$，是 $\\Gamma$ 裡面的參數；$s$ 本身是 $5$。" }
+        ]
+      }
+    }
+  ],
   "skillTags": {
     "coarse": ["gamma-function", "special-functions", "improper-integral"],
     "fine": ["gamma-scaled-linear", "gamma-scaled-power", "gamma-scaled-general", "gamma-scaled-parameter"]

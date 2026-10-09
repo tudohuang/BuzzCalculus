@@ -129,6 +129,90 @@
       ]
     }
   ],
+  "sections": [
+    {
+      "title": "跟指數一樣",
+      "beats": [
+        { "show": ["多項式當 $u$，$\\sin$、$\\cos$ 當 $dv$"], "note": "積分只是在 $\\sin$、$\\cos$ 之間輪流。",
+          "say": "策略跟多項式乘指數一樣：多項式當 u，一路降到零；sine、cosine 當 dv，積分只是輪流換。" },
+        { "show": ["$x^n$ 一樣做 $n$ 次"], "note": "表格法一樣好用。",
+          "say": "x 的 n 次方一樣要做 n 次，表格法一樣好用。" },
+        { "show": ["$\\int x\\sin x\\,dx$：$u=x$，$v=-\\cos x$"],
+          "say": "先試一次方：x 乘 sine x。u 是 x，sine 積分是負 cosine，負號別丟。" }
+      ],
+      "check": 1
+    },
+    {
+      "title": "右欄的循環",
+      "beats": [
+        { "show": ["$\\sin x\\to-\\cos x\\to-\\sin x\\to\\cos x$"], "note": "再積一次回到 $\\sin x$：四步一圈。",
+          "say": "sine 一直積分：負 cosine、負 sine、cosine，再積一次就回到 sine，四步一圈。" },
+        { "show": ["右欄自己的負號", "＋ 表格斜乘的 $+$、$-$"], "note": "兩組正負號是兩件事，都要算。",
+          "say": "注意這是右欄自己的正負號，跟表格斜乘的一正一負是兩件事，兩組都要算。" },
+        { "show": ["右欄每格寫完整，含負號"], "note": "斜乘時再套 $+$、$-$、$+$。",
+          "say": "最穩的做法：右欄每一格連負號一起寫完整，斜乘的時候再套正負交錯。" }
+      ],
+      "check": 0
+    },
+    {
+      "title": "表格法算一題",
+      "beats": [
+        { "show": ["$\\int x^2\\sin x\\,dx$"], "note": "左欄：$x^2$、$2x$、$2$、$0$。",
+          "say": "x 平方乘 sine x。左欄一直微分：x 平方、二 x、二、零。" },
+        { "show": ["右欄：$\\sin x$、$-\\cos x$、$-\\sin x$、$\\cos x$"],
+          "say": "右欄照循環寫，每一格的負號都寫出來。" },
+        { "show": ["$+x^2(-\\cos x)-2x(-\\sin x)+2\\cos x$"], "note": "斜乘，套 $+$、$-$、$+$。",
+          "say": "斜著乘，再套正、負、正。這時每一項有兩組符號疊在一起。" }
+      ],
+      "predict": {
+        "ask": "整理之後是？",
+        "options": [
+          { "label": "$-x^2\\cos x+2x\\sin x+2\\cos x+C$", "correct": true },
+          { "label": "$-x^2\\cos x-2x\\sin x+2\\cos x+C$", "why": "$-2x\\cdot(-\\sin x)$：表格的負號碰上右欄的負號，變正。" },
+          { "label": "$x^2\\cos x+2x\\sin x+2\\cos x+C$", "why": "第一項 $x^2\\cdot(-\\cos x)$ 帶著右欄的負號。" }
+        ]
+      }
+    },
+    {
+      "title": "裡面是 $ax$",
+      "beats": [
+        { "show": ["$\\sin 2x\\to-\\frac{\\cos 2x}{2}\\to-\\frac{\\sin 2x}{4}$"], "note": "每往下一格多除一個 $a$。",
+          "say": "裡面是二 x 的時候，右欄每往下一格，除了循環，還要多除一個二。" },
+        { "show": ["$x\\sin x\\cos x=\\frac{x}{2}\\sin 2x$"], "note": "三角部分是乘積：先用倍角整理成單一個。",
+          "say": "三角部分是乘積的話，右欄不好積。先用倍角公式整理成單一個 sine 二 x，再照做。" },
+        { "show": ["三角當 $u$、多項式當 $dv$：不行"], "note": "多項式積分會升次，越做越長。",
+          "say": "反過來挑是行不通的：多項式拿去積分會升次，越做越長。" }
+      ],
+      "check": 3
+    },
+    {
+      "title": "定積分的邊界項",
+      "beats": [
+        { "show": ["上下限常是 $0$、$\\frac{\\pi}{2}$、$\\pi$"],
+          "say": "這類定積分的上下限，常常是零、二分之 pi、pi。" },
+        { "show": ["$\\sin(n\\pi)=0$"], "note": "很多項代進去直接消失，先劃掉。",
+          "say": "n 是整數時，sine n pi 一定是零。代進去會是零的項，先劃掉再算，比較不會錯。" }
+      ],
+      "check": 2
+    },
+    {
+      "title": "代 $\\pi$ 減代 $0$",
+      "beats": [
+        { "show": ["$\\int_0^\\pi x^2\\cos x\\,dx$"],
+          "say": "最後一題：x 平方乘 cosine x，從零積到 pi。" },
+        { "show": ["反導函數：$x^2\\sin x+2x\\cos x-2\\sin x$"], "note": "代 $0$ 全部是 $0$。",
+          "say": "表格得到這三項。代零的時候每一項都是零，只要算代 pi。" }
+      ],
+      "predict": {
+        "ask": "答案是？",
+        "options": [
+          { "label": "$2\\pi\\cdot(-1)=-2\\pi$", "correct": true },
+          { "label": "$2\\pi$", "why": "$\\cos\\pi=-1$，不是 $1$。" },
+          { "label": "$0$", "why": "$\\sin\\pi=0$ 讓兩項消失，但 $2x\\cos x$ 代 $\\pi$ 是 $2\\pi\\cdot(-1)$。" }
+        ]
+      }
+    }
+  ],
   "skillTags": {
     "coarse": ["integration-by-parts", "ibp", "multi-ibp", "trig"],
     "fine": ["ibp-poly-trig-repeat", "ibp-trig-integration-signs", "ibp-poly-trig-definite"]

@@ -126,6 +126,75 @@
       ]
     }
   ],
+  "sections": [
+    {
+      "title": "變成鐘形曲線",
+      "beats": [
+        { "show": ["$\\Gamma\\left(\\frac{1}{2}\\right)=\\int_0^{\\infty}x^{-1/2}e^{-x}\\,dx$"],
+          "say": "Gamma 在二分之一的值，是 x 的負二分之一次方乘 e 的負 x 次方，從零積到無限大。" },
+        { "show": ["令 $x=u^2$，$dx=2u\\,du$"], "note": "$u\\ge 0$，$x^{-1/2}=\\frac{1}{u}$。",
+          "say": "令 x 等於 u 平方，dx 是二 u du，x 的負二分之一次方變成 u 分之一。" }
+      ],
+      "predict": {
+        "ask": "$\\Gamma\\left(\\frac{1}{2}\\right)$ 變成？",
+        "options": [
+          { "label": "$2\\int_0^{\\infty}e^{-u^2}\\,du$", "correct": true },
+          { "label": "$\\int_0^{\\infty}e^{-u^2}\\,du$", "why": "$\\frac{1}{u}$ 和 $2u$ 的 $u$ 約掉了，但 $2$ 還在。" },
+          { "label": "$\\int_0^{\\infty}\\frac{1}{u}e^{-u^2}\\,du$", "why": "漏了 $dx=2u\\,du$；換元時 $dx$ 也要換。" }
+        ]
+      }
+    },
+    {
+      "title": "算它的平方",
+      "beats": [
+        { "show": ["$e^{-u^2}$：寫不成初等函數的組合"], "note": "鐘形曲線底下的面積，要換個方法。",
+          "say": "問題變成鐘形曲線底下的面積。它的反導函數寫不成常見的初等函數，直接積算不動。" },
+        { "show": ["$I^2=\\int_0^{\\infty}\\int_0^{\\infty}e^{-(x^2+y^2)}\\,dx\\,dy$"], "note": "$I=\\int_0^{\\infty}e^{-x^2}\\,dx$",
+          "say": "一維算不動，就算它的平方：兩個一樣的積分相乘，寫成第一象限上的二重積分。" },
+        { "show": ["換極座標：$dx\\,dy=r\\,dr\\,d\\theta$"], "note": "$0\\le\\theta\\le\\frac{\\pi}{2}$，$0\\le r<\\infty$。",
+          "say": "被積函數只跟 x 平方加 y 平方有關，也就是 r 平方，所以換極座標，面積元素多一個 r。" },
+        { "show": ["$\\int_0^{\\infty}e^{-r^2}r\\,dr=\\frac{1}{2}$"], "note": "令 $u=r^2$，一行積完。",
+          "say": "多出來的 r 是關鍵：令 u 等於 r 平方，一行就積出二分之一。完整的極限論證在全文。" }
+      ],
+      "check": 2
+    },
+    {
+      "title": "結果",
+      "beats": [
+        { "show": ["$I^2=\\frac{\\pi}{2}\\cdot\\frac{1}{2}=\\frac{\\pi}{4}$"], "note": "外層乘上 $\\theta$ 的範圍 $\\frac{\\pi}{2}$。",
+          "say": "內層是二分之一，外層乘上角度的範圍二分之 pi，I 平方等於四分之 pi。" },
+        { "show": ["$I=\\frac{\\sqrt{\\pi}}{2}$"], "note": "取正根：被積函數為正。",
+          "say": "被積函數是正的，取正根，I 是二分之根號 pi。" },
+        { "show": ["$\\Gamma\\left(\\frac{1}{2}\\right)=2I=\\sqrt{\\pi}\\approx 1.7725$"],
+          "say": "Gamma 二分之一是兩倍的 I，就是根號 pi。一個沒有圓的積分冒出 pi，因為平方之後有旋轉對稱。" }
+      ],
+      "check": 0
+    },
+    {
+      "title": "整條實數線",
+      "beats": [
+        { "show": ["$\\int_{-\\infty}^{\\infty}e^{-x^2}\\,dx=\\sqrt{\\pi}$"], "note": "偶函數，是 $\\int_0^{\\infty}$ 的兩倍。",
+          "say": "鐘形曲線左右對稱，整條實數線的面積是兩倍的 I，也是根號 pi。" },
+        { "show": ["$\\int_{-\\infty}^{\\infty}e^{-x^2/2}\\,dx=\\sqrt{2\\pi}$"],
+          "say": "指數換成負二分之 x 平方，整條線的面積是根號二 pi。" },
+        { "show": ["常態分布前面的 $\\frac{1}{\\sqrt{2\\pi}}$"], "note": "讓總面積等於 $1$。",
+          "say": "這就是常態分布的密度前面為什麼有根號二 pi 分之一：讓總面積剛好是一。" }
+      ],
+      "check": 1
+    },
+    {
+      "title": "指數有係數",
+      "beats": [
+        { "show": ["$\\int_0^{\\infty}e^{-3x^2}\\,dx$"], "note": "令 $u=\\sqrt{3}\\,x$，$dx=\\frac{du}{\\sqrt{3}}$。",
+          "say": "指數前面有係數三，令 u 等於根號三 x，dx 就是根號三分之 du。" },
+        { "show": ["$=\\frac{1}{\\sqrt{3}}\\cdot\\frac{\\sqrt{\\pi}}{2}$"],
+          "say": "剩下的是標準的鐘形積分二分之根號 pi，前面多一個根號三分之一。" },
+        { "show": ["$\\int_0^{\\infty}e^{-ax^2}\\,dx=\\frac{1}{2}\\sqrt{\\frac{\\pi}{a}}$"], "note": "$a>0$；$a=3$ 時約 $0.5117$。",
+          "say": "一般公式：係數 a 讓曲線變窄，面積是二分之一乘根號 a 分之 pi。" }
+      ],
+      "check": 3
+    }
+  ],
   "skillTags": {
     "coarse": ["gamma-function", "gaussian", "special-functions"],
     "fine": ["gamma-half-value", "gamma-half-gaussian-link", "gaussian-polar-trick", "gaussian-scaling"]

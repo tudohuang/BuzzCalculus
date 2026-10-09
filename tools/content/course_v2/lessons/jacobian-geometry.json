@@ -120,6 +120,77 @@
       ]
     }
   ],
+  "sections": [
+    {
+      "title": "線性變換放大面積",
+      "beats": [
+        { "show": ["$T(u,v)=(au+bv,\\ cu+dv)$"],
+          "say": "先看最簡單的變換：x、y 都是 u、v 的一次式。" },
+        { "show": ["$(1,0)\\to(a,c)$，$(0,1)\\to(b,d)$"], "note": "單位正方形變成平行四邊形。",
+          "say": "單位正方形的兩條邊被送到這兩個向量，正方形就變成以它們為邊的平行四邊形。" },
+        { "show": ["面積放大倍率 $|ad-bc|$"], "note": "處處一樣。",
+          "say": "平行四邊形的面積是 a d 減 b c 的絕對值。每一塊面積都被放大這麼多倍，到處一樣。" },
+        { "show": ["$T(u,v)=(2u+v,\\ u+3v)$"],
+          "say": "試一個：a 是二、b 是一、c 是一、d 是三。" }
+      ],
+      "predict": {
+        "ask": "單位正方形的像面積是？",
+        "options": [
+          { "label": "$5$", "correct": true },
+          { "label": "$7$", "why": "交叉項要相減：$2\\cdot3-1\\cdot1=5$，不是相加。" },
+          { "label": "$6$", "why": "只乘了主對角 $2\\cdot3$，還要減掉反對角 $1\\cdot1$。" }
+        ]
+      }
+    },
+    {
+      "title": "正負號：翻面",
+      "beats": [
+        { "show": ["$(u,v)\\mapsto(v,u)$：行列式 $-1$"],
+          "say": "a d 減 b c 可能是負的。例如把 u、v 對調，行列式是負一。" },
+        { "show": ["負號 = 翻面"], "note": "逆時針變順時針；面積取絕對值。",
+          "say": "負號的意思是圖形被翻面，逆時針變成順時針。面積本身不會是負的，所以倍率取絕對值。" }
+      ],
+      "check": 0
+    },
+    {
+      "title": "彎的變換",
+      "beats": [
+        { "show": ["$x=x(u,v)$、$y=y(u,v)$"], "note": "方格被扭成彎的。",
+          "say": "一般的變換會把方格扭彎。但放大到夠小的一格，它看起來幾乎是線性的。" },
+        { "show": ["走 $\\Delta u$：移動 $(x_u,y_u)\\Delta u$", "走 $\\Delta v$：移動 $(x_v,y_v)\\Delta v$"],
+          "say": "從一點往 u 方向走一小步，像點大約沿偏導數向量移動；往 v 方向也一樣。" },
+        { "show": ["$\\frac{\\partial(x,y)}{\\partial(u,v)}=x_uy_v-x_vy_u$"], "note": "小方格面積約放大 $|x_uy_v-x_vy_u|$ 倍。",
+          "say": "小方格變成以這兩個向量為邊的近似平行四邊形。倍率就是這個行列式，叫 Jacobian。" },
+        { "show": ["倍率隨點改變"], "note": "直觀，不是證明。",
+          "say": "跟線性變換不同，它每一點各有各的倍率：有的地方放大，有的地方縮小。" }
+      ],
+      "check": 1
+    },
+    {
+      "title": "回頭看極座標",
+      "beats": [
+        { "show": ["$x_r=\\cos\\theta$，$x_\\theta=-r\\sin\\theta$", "$y_r=\\sin\\theta$，$y_\\theta=r\\cos\\theta$"],
+          "say": "拿極座標來算。四個偏導數寫出來。" },
+        { "show": ["$r(\\cos^2\\theta+\\sin^2\\theta)=r$"],
+          "say": "交叉相乘相減，cosine 平方加 sine 平方是一，剩下 r。" },
+        { "show": ["$dA=r\\,dr\\,d\\theta$ 的那個 $r$"], "note": "$r=2$ 附近：面積約 $2\\,\\Delta r\\,\\Delta\\theta$。",
+          "say": "這正是極座標積分裡那個 r：在半徑二的地方，小矩形被放大兩倍。" }
+      ],
+      "check": 2
+    },
+    {
+      "title": "把圓拉成橢圓",
+      "beats": [
+        { "show": ["$x=3u$、$y=2v$"], "note": "單位圓盤 → $\\frac{x^2}{9}+\\frac{y^2}{4}\\le 1$。",
+          "say": "u 方向拉長三倍、v 方向拉長兩倍，單位圓盤被拉成半軸三、二的橢圓。" },
+        { "show": ["Jacobian $=3\\cdot2-0\\cdot0=6$"], "note": "面積倍率是相乘，不是相加。",
+          "say": "倍率是三乘二，等於六，到處一樣。注意是相乘，不是相加。" },
+        { "show": ["橢圓面積 $6\\pi$"],
+          "say": "圓盤面積 pi，放大六倍，橢圓面積就是六 pi。" }
+      ],
+      "check": 3
+    }
+  ],
   "skillTags": {
     "coarse": ["jacobian", "change-of-variables", "area"],
     "fine": ["jacobian-area-scale", "jacobian-linear-parallelogram", "jacobian-polar-r"]

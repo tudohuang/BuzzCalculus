@@ -127,6 +127,79 @@
       ]
     }
   ],
+  "sections": [
+    {
+      "title": "公式在說什麼",
+      "beats": [
+        { "show": ["$n!\\sim\\sqrt{2\\pi n}\\left(\\frac{n}{e}\\right)^n$"], "note": "$n\\to\\infty$ 時，兩者的比值 $\\to 1$。",
+          "say": "Stirling 公式說：n 很大的時候，n 階乘和右邊這一串的比值趨近一。" },
+        { "show": ["$n=10$：比值約 $1.0084$"], "note": "$10!=3{,}628{,}800$，右邊約 $3{,}598{,}696$。",
+          "say": "拿 n 等於十試試：比值大約一點零零八四，相對誤差非常小。" },
+        { "show": ["但差約 $30{,}104$"], "note": "而且 $n$ 越大，差越大。",
+          "say": "可是兩者的絕對差很大，而且 n 越大差越大。小的是相對誤差，不是絕對誤差。" },
+        { "show": ["只能用在看比值的地方"], "note": "乘、除、開 $n$ 次方。",
+          "say": "所以 Stirling 只能用在乘、除、開 n 次方這種看比值的地方，不能拿來算差。" }
+      ],
+      "check": 0
+    },
+    {
+      "title": "從哪裡來（直覺）",
+      "beats": [
+        { "show": ["$\\ln n!=\\ln 1+\\ln 2+\\dots+\\ln n$"], "note": "取對數，乘積變成和。",
+          "say": "先取自然對數，乘積就變成相加：自然對數曲線在一、二、一直到 n 的高度加起來。" },
+        { "show": ["$\\int_1^n\\ln x\\,dx=n\\ln n-n+1$"], "note": "這個和很像這個積分。",
+          "say": "這一排高度相加，很像自然對數從一積到 n，積出來是 n 自然對數 n 減 n 加一。" },
+        { "show": ["$\\ln n!\\approx n\\ln n-n$"], "note": "取指數：$n!\\approx\\left(\\frac{n}{e}\\right)^n$ 這個量級。",
+          "say": "所以自然對數 n 階乘大約是 n 自然對數 n 減 n，取指數，就是 e 分之 n 的 n 次方這個量級。" },
+        { "show": ["梯形法修正：多出 $\\frac{1}{2}\\ln n$"], "note": "就是 $\\sqrt{n}$ 這個因子。",
+          "say": "再用梯形法把端點各算一半，多出二分之一自然對數 n，就是根號 n。常數根號二 pi 這個直覺算不出來，完整證明在全文。" }
+      ],
+      "check": 2
+    },
+    {
+      "title": "開 $n$ 次方",
+      "beats": [
+        { "show": ["先把階乘換掉，再化簡"], "note": "$\\sim$ 在乘積與商裡可以替換。",
+          "say": "用法很固定：每個 n 階乘換成 Stirling 那一串，再把 e 的次方、n 的次方各自合併。" },
+        { "show": ["$(n!)^{1/n}\\sim(2\\pi n)^{1/(2n)}\\cdot\\frac{n}{e}$"],
+          "say": "開 n 次方：根號二 pi n 變成二 pi n 的二 n 分之一次方，e 分之 n 的 n 次方變成 e 分之 n。" },
+        { "show": ["$(2\\pi n)^{1/(2n)}\\to 1$"], "note": "$\\frac{\\ln(2\\pi n)}{2n}\\to 0$：對數 $\\ll$ 冪次。",
+          "say": "前面那個因子取對數，是對數除以冪次，趨近零，所以它趨近一，可以丟掉。" }
+      ],
+      "check": 1
+    },
+    {
+      "title": "中央二項式係數",
+      "beats": [
+        { "show": ["$\\binom{2n}{n}=\\frac{(2n)!}{(n!)^2}$"], "note": "分母的 $n!$ 有兩個，兩個都要換。",
+          "say": "二 n 取 n 是二 n 階乘除以 n 階乘的平方。分母有兩個 n 階乘，兩個都要換。" },
+        { "show": ["分子 $\\sqrt{4\\pi n}\\left(\\frac{2n}{e}\\right)^{2n}$", "分母 $2\\pi n\\left(\\frac{n}{e}\\right)^{2n}$"],
+          "say": "分子把 n 換成二 n；分母是 Stirling 的平方，根號部分平方變成二 pi n。" },
+        { "show": ["根號部分：$\\frac{\\sqrt{4\\pi n}}{2\\pi n}=\\frac{1}{\\sqrt{\\pi n}}$"],
+          "say": "先算根號部分：根號四 pi n 除以二 pi n，等於根號 pi n 分之一。" }
+      ],
+      "predict": {
+        "ask": "次方部分 $\\frac{(2n/e)^{2n}}{(n/e)^{2n}}$ 是？",
+        "options": [
+          { "label": "$4^n$", "correct": true },
+          { "label": "$2^n$", "why": "底數相除得 $2$，但指數是 $2n$：$2^{2n}=4^n$。" },
+          { "label": "$\\frac{4^n}{e^n}$", "why": "$e$ 的次方上下都是 $2n$，整個約掉了。" }
+        ]
+      }
+    },
+    {
+      "title": "合起來",
+      "beats": [
+        { "show": ["$\\binom{2n}{n}\\sim\\frac{4^n}{\\sqrt{\\pi n}}$"],
+          "say": "兩部分乘起來，二 n 取 n 等價於四的 n 次方除以根號 pi n。" },
+        { "show": ["$\\sqrt{n}\\cdot\\frac{\\binom{2n}{n}}{4^n}\\to\\frac{1}{\\sqrt{\\pi}}$"],
+          "say": "所以乘上根號 n 再除以四的 n 次方，極限是根號 pi 分之一。" },
+        { "show": ["漏了 $\\sqrt{2\\pi n}$，比值會錯"], "note": "開 $n$ 次方時沒差，算比值時差一個 $\\sqrt{n}$ 的倍數。",
+          "say": "常見的錯：只寫 e 分之 n 的 n 次方。開 n 次方時沒差，算這種比值時答案就差了根號 n 的倍數。" }
+      ],
+      "check": 3
+    }
+  ],
   "skillTags": {
     "coarse": ["stirling", "asymptotics", "central-binomial"],
     "fine": ["stirling-ratio", "stirling-nth-root", "stirling-central-binomial", "stirling-log-factorial"]

@@ -137,6 +137,81 @@
       ]
     }
   ],
+  "sections": [
+    {
+      "title": "從等高線倒推",
+      "beats": [
+        { "show": ["$F(x,y(x))=C$ 一直成立"], "note": "本課選修。",
+          "say": "假設 y 讓 F 一直等於同一個常數，也就是 y 沿著 F 的一條等高線走。" },
+        { "show": ["$F_x\\,dx+F_y\\,dy=0$"], "note": "對 $x$ 微分：〈隱函數微分〉。",
+          "say": "對 x 微分，用隱函數微分，得到 F 對 x 的偏導乘 d x，加 F 對 y 的偏導乘 d y，等於零。" },
+        { "show": ["$M\\,dx+N\\,dy=0$，$M=F_x$、$N=F_y$"], "note": "這樣的方程叫正合。",
+          "say": "倒過來看：如果方程的 M 和 N 剛好是某個 F 的兩個偏導，就叫正合。" },
+        { "show": ["解：$F(x,y)=C$"], "note": "一整族等高線。",
+          "say": "那解就是 F 的一整族等高線。每一個常數 C 給一條，解法變成找 F。" }
+      ],
+      "check": 3
+    },
+    {
+      "title": "比對交叉偏導",
+      "beats": [
+        { "show": ["$M_y=F_{xy}=F_{yx}=N_x$"], "note": "〈Clairaut 定理〉：二階偏導連續時可交換。",
+          "say": "如果 F 存在，M 對 y 偏微分和 N 對 x 偏微分，都是 F 的混合偏導，一定相等。" },
+        { "show": ["正合 ⇔ $\\frac{\\partial M}{\\partial y}=\\frac{\\partial N}{\\partial x}$"], "note": "反方向要連續、區域沒有破洞。",
+          "say": "反過來也成立，只要 M、N 連續，區域沒有破洞。條件的細節在全文。" },
+        { "show": ["比 $M_y$ 和 $N_x$，不是 $M_x$ 和 $N_y$"],
+          "say": "注意是交叉比：M 對 y，N 對 x。比錯就會判錯。" }
+      ],
+      "check": 1
+    },
+    {
+      "title": "找 $F$",
+      "beats": [
+        { "show": ["$(2xy+3)\\,dx+(x^2-1)\\,dy=0$"], "note": "$M_y=2x$，$N_x=2x$，正合。",
+          "say": "先判斷：M 對 y 偏微分是二 x，N 對 x 偏微分也是二 x，正合。" },
+        { "show": ["$F=\\int M\\,dx=x^2y+3x+g(y)$"], "note": "對 $x$ 積分時 $y$ 當常數。",
+          "say": "M 對 x 積分，y 當常數。所以積分常數可以是任何只含 y 的函數 g。" },
+        { "show": ["$F_y=x^2+g'(y)=x^2-1$"],
+          "say": "再對 y 偏微分，令它等於 N，x 平方消掉，g prime 只剩 y 的事。" }
+      ],
+      "predict": {
+        "ask": "$g'(y)=-1$。所以解是？",
+        "options": [
+          { "label": "$x^2y+3x-y=C$", "correct": true },
+          { "label": "$x^2y+3x-y=0$", "why": "解是一整族等高線 $F=C$，不是只有 $C=0$ 那一條。" },
+          { "label": "$x^2y+3x+x^2-y=C$", "why": "$x^2$ 已經在 $F_y$ 裡配好了；$g(y)$ 只補 $-y$，不要重複加。" }
+        ]
+      }
+    },
+    {
+      "title": "積分常數是 $g(y)$",
+      "beats": [
+        { "show": ["$(e^x\\sin y+2x)\\,dx+e^x\\cos y\\,dy=0$"], "note": "$M_y=N_x=e^x\\cos y$，正合。",
+          "say": "再一題：M 對 y、N 對 x 偏微分，都是 e 的 x 次方乘 cosine y，正合。" },
+        { "show": ["$F=e^x\\sin y+x^2+g(y)$"],
+          "say": "M 對 x 積分。e 的 x 次方 sine y 積回自己，二 x 積成 x 平方。" },
+        { "show": ["$F_y=e^x\\cos y+g'(y)$，$g'=0$"],
+          "say": "對 y 偏微分已經等於 N，所以 g prime 是零，g 只是常數。" },
+        { "show": ["$y(0)=\\frac{\\pi}{2}$：$e^x\\sin y+x^2=1$"],
+          "say": "代初始條件，e 的零次方乘 sine 二分之 pi，是一，所以常數是一。" }
+      ],
+      "check": 2
+    },
+    {
+      "title": "先問三個問題",
+      "beats": [
+        { "show": ["$g(x)h(y)$？→〈分離變數〉"],
+          "say": "拿到一階方程，先問：能拆成 x 的函數乘 y 的函數嗎？能就分離變數。" },
+        { "show": ["$y'+P(x)y=Q(x)$？→〈積分因子〉"],
+          "say": "能整理成一階線性嗎？能就乘積分因子。" },
+        { "show": ["$M_y=N_x$？→ 找 $F$"],
+          "say": "寫成 M d x 加 N d y 之後，交叉偏導相等嗎？相等就找 F。" },
+        { "show": ["$xy'+y=x^2$：$M=y-x^2$，$N=x$"], "note": "$M_y=1=N_x$：線性方程也可以是正合。",
+          "say": "同一題可以有好幾條路。這個線性方程寫成這樣，交叉偏導都是一，也是正合。" }
+      ],
+      "check": 0
+    }
+  ],
   "skillTags": {
     "coarse": ["ode", "exact-form"],
     "fine": ["exact-test", "exact-find-potential", "exact-implicit-solution"]

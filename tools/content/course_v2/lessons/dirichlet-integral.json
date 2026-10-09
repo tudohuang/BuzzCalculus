@@ -49,6 +49,75 @@
       "collapsible": false
     }
   ],
+  "sections": [
+    {
+      "title": "先加阻尼",
+      "beats": [
+        {"show":["$\\int_0^{\\infty}\\frac{\\sin x}{x}\\,dx=\\frac{\\pi}{2}$"],"note":"收斂，但不絕對收斂。","say":"目標是這個積分。它收斂，可是不絕對收斂；sine x 除以 x 也沒有初等反導函數。"},
+        {"show":["$I(a)=\\int_0^{\\infty}\\frac{e^{-ax}\\sin x}{x}\\,dx$"],"note":"$a>0$：一切都絕對收斂。","say":"辦法是先乘上 e 的負 a x 次方當阻尼。a 大於零時一切絕對收斂，交換微分積分沒問題。"},
+        {"show":["$I'(a)=-\\frac{1}{1+a^2}$"],"note":"$a\\to\\infty$ 時 $I\\to 0$。","say":"對 a 微分，分母的 x 消掉，得到負的一加 a 平方分之一。a 趨近無限大時 I 趨近零。"}
+      ],
+      "predict": {
+        "ask": "積回去並定常數，$I(a)$ 是？",
+        "options": [
+          {"label":"$\\frac{\\pi}{2}-\\arctan a$","correct":true},
+          {"label":"$-\\arctan a$","why":"還有常數：$a\\to\\infty$ 時 $I\\to 0$，而 $\\arctan a\\to\\frac{\\pi}{2}$，所以 $C=\\frac{\\pi}{2}$。"},
+          {"label":"$\\arctan a$","why":"$I'(a)$ 是負的，積回去是 $-\\arctan a+C$。"}
+        ]
+      }
+    },
+    {
+      "title": "再拿掉阻尼",
+      "beats": [
+        {"show":["要的是 $I(0)$"],"say":"可是我們要的是 a 等於零，也就是沒有阻尼的那一個。"},
+        {"show":["$\\lim_{a\\to 0^+}\\left(\\frac{\\pi}{2}-\\arctan a\\right)=\\frac{\\pi}{2}$"],"note":"前提：$I$ 在 $a=0$ 右連續。","say":"如果 I 在零右連續，讓 a 從右邊趨近零，答案就是二分之派。"},
+        {"show":["$\\frac{|\\sin x|}{x}$ 不可積"],"note":"找不到控制函數，要另一個論證。","say":"但這一步不能用控制函數：最好的控制函數是 sine x 絕對值除以 x，它不可積。完整證明在全文。"}
+      ],
+      "check": 2
+    },
+    {
+      "title": "縮放",
+      "beats": [
+        {"show":["$\\int_0^{\\infty}\\frac{\\sin 3x}{x}\\,dx$"],"say":"有了一個值，可以變出很多個。先看 sine 三 x 除以 x。"},
+        {"show":["令 $u=3x$：$\\frac{\\sin 3x}{x}\\,dx=\\frac{\\sin u}{u}\\,du$"],"say":"令 u 等於三 x。dx 除以 x 換元後還是 du 除以 u，三被吸收掉了。"},
+        {"show":["$=\\frac{\\pi}{2}$"],"note":"係數 $3$ 不影響答案。","say":"所以答案還是二分之派。係數再大都一樣，不會變成三倍。"}
+      ],
+      "check": 0
+    },
+    {
+      "title": "變號與積化和差",
+      "beats": [
+        {"show":["$\\int_0^{\\infty}\\frac{\\sin(bx)}{x}\\,dx=\\frac{\\pi}{2}\\cdot\\operatorname{sgn}b$"],"note":"$b<0$ 時 $\\sin$ 變號。","say":"b 是負的時候，sine 整個變號，答案變成負二分之派。合起來寫成二分之派乘 b 的正負號。"},
+        {"show":["$\\sin x\\cos x=\\frac{\\sin 2x}{2}$"],"say":"再看 sine x 乘 cosine x，用倍角公式變成二分之一乘 sine 二 x。"},
+        {"show":["$\\frac{1}{2}\\cdot\\frac{\\pi}{2}=\\frac{\\pi}{4}$"],"say":"sine 二 x 那部分縮放後是二分之派，乘二分之一，得四分之派。"}
+      ],
+      "check": 1
+    },
+    {
+      "title": "整條線",
+      "beats": [
+        {"show":["$\\frac{\\sin x}{x}$ 是偶函數"],"note":"奇函數除以奇函數。","say":"sine x 是奇函數，x 也是奇函數，相除是偶函數，左右兩半一樣大，不會抵銷。"},
+        {"show":["左右各 $\\frac{\\pi}{2}$"],"say":"所以從負無限大積到無限大，就是兩個二分之派加起來。"}
+      ],
+      "check": 3
+    },
+    {
+      "title": "分部降分母",
+      "beats": [
+        {"show":["$\\int_0^{\\infty}\\frac{\\sin^2 x}{x^2}\\,dx$"],"note":"分母是 $x^2$：分部一次降成 $x$。","say":"分母是 x 平方的，分部積分一次，把分母降成 x，就回到 Dirichlet 積分。"},
+        {"show":["$u=\\sin^2 x$，$v=-\\frac{1}{x}$"],"note":"$du=\\sin 2x\\,dx$","say":"u 取 sine 平方 x，微分是 sine 二 x；dv 取 x 平方分之 dx，積出負 x 分之一。"},
+        {"show":["邊界項 $\\left[-\\frac{\\sin^2 x}{x}\\right]_0^{\\infty}=0$"],"note":"$x\\to 0^+$ 時 $\\frac{\\sin^2 x}{x}\\sim x$。","say":"邊界項兩端都要檢查：無限大那端不超過 x 分之一，零那端像 x，都趨近零。"}
+      ],
+      "predict": {
+        "ask": "剩下 $\\int_0^{\\infty}\\frac{\\sin 2x}{x}\\,dx$。原積分是？",
+        "options": [
+          {"label":"$\\frac{\\pi}{2}$","correct":true},
+          {"label":"$\\pi$","why":"縮放不改變值：$\\int_0^{\\infty}\\frac{\\sin 2x}{x}\\,dx=\\frac{\\pi}{2}$，係數 $2$ 被吸收。"},
+          {"label":"$\\frac{\\pi}{4}$","why":"這裡沒有 $\\frac{1}{2}$：$du=\\sin 2x\\,dx$，剩下的積分直接是 $\\frac{\\pi}{2}$。"}
+        ]
+      }
+    }
+  ],
   "workedExamples": [
     {
       "title": "Feynman 法的兩步",

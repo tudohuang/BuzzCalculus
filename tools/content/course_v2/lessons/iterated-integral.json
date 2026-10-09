@@ -138,6 +138,79 @@
       ]
     }
   ],
+  "sections": [
+    {
+      "title": "先算截面",
+      "beats": [
+        { "show": ["在固定的 $x$ 切一刀"], "note": "$R=[a,b]\\times[c,d]$，$f\\ge 0$。",
+          "say": "拿一片垂直於 x 軸的平面，在某個固定的 x 把立體切開，切口是一塊平面圖形。" },
+        { "show": ["$A(x)=\\int_c^d f(x,y)\\,dy$"],
+          "say": "切口的面積，就是沿 y 方向對高度積分。" },
+        { "show": ["體積 $=\\int_a^b A(x)\\,dx$"], "note": "跟〈圓盤法〉一樣：截面積沿軸積起來。",
+          "say": "再把每一片截面積沿 x 方向積起來，就是體積。圓盤法早就這樣做過了。" }
+      ],
+      "predict": {
+        "ask": "$A(x)$ 是什麼的面積？",
+        "options": [
+          { "label": "在固定 $x$ 切下去的截面", "correct": true },
+          { "label": "底面 $R$", "why": "$R$ 的面積是 $(b-a)(d-c)$，跟 $f$ 無關；$A(x)$ 是對高度 $f$ 積分得到的切口面積。" },
+          { "label": "曲面 $z=f(x,y)$ 本身", "why": "$A(x)$ 只是一個 $x$ 位置的切口；曲面本身的面積要另外算。" }
+        ]
+      }
+    },
+    {
+      "title": "由內往外",
+      "beats": [
+        { "show": ["$\\int_a^b\\!\\left[\\int_c^d f(x,y)\\,dy\\right]dx$"], "note": "內層 $dy$ 配 $c$、$d$；外層 $dx$ 配 $a$、$b$。",
+          "say": "兩步寫在一起就是累次積分。裡面的 d y 配裡面的上下限，外面的 d x 配外面的。" },
+        { "show": ["算內層時，$x$ 是常數"], "note": "跟偏導數把其他變數當常數一樣。",
+          "say": "先算裡面。對 y 積分時，x 就像一個固定的數。" },
+        { "show": ["$\\int_0^2 xy\\,dy=x\\cdot\\left[\\frac{y^2}{2}\\right]_0^2=2x$"], "note": "代完上下限，$y$ 要完全消失。",
+          "say": "例如 x y 對 y 從零積到二：x 提出去，y 平方除以二代上下限，得二 x。結果裡不能再有 y。" }
+      ],
+      "check": 0
+    },
+    {
+      "title": "兩種次序",
+      "beats": [
+        { "show": ["$\\iint_R(x+2y)\\,dA$，$R=[0,2]\\times[1,3]$"],
+          "say": "算一題，兩種次序都做一次。" },
+        { "show": ["先 $dy$：$(3x+9)-(x+1)=2x+8$"], "note": "反導函數 $xy+y^2$。",
+          "say": "先對 y：反導函數 x y 加 y 平方，代三減代一，剩二 x 加八。" },
+        { "show": ["$\\int_0^2(2x+8)\\,dx=4+16=20$"],
+          "say": "再對 x 從零積到二，得二十。" },
+        { "show": ["先 $dx$：$\\int_1^3(2+4y)\\,dy=24-4=20$"], "note": "兩個次序一樣。",
+          "say": "換成先對 x，內層是二加四 y，外層積完也是二十。" }
+      ],
+      "check": 1
+    },
+    {
+      "title": "Fubini：挑好算的",
+      "beats": [
+        { "show": ["$\\int_a^b\\!\\int_c^d f\\,dy\\,dx=\\int_c^d\\!\\int_a^b f\\,dx\\,dy$"], "note": "$f$ 在矩形 $R$ 上連續時。",
+          "say": "Fubini 定理說：函數在矩形上連續，兩種次序相等。一個次序難積，就換另一個。" },
+        { "show": ["$\\iint_R y\\,e^{xy}\\,dA$，$R=[0,1]\\times[0,1]$"], "note": "先 $dy$ 要分部積分。",
+          "say": "這一題先對 y 要分部積分，後面還很醜。" },
+        { "show": ["先 $dx$：$\\int_0^1 y\\,e^{xy}\\,dx=e^y-1$"], "note": "$e^{xy}$ 對 $x$ 微分正好是 $y\\,e^{xy}$。",
+          "say": "改成先對 x：y 是常數，e 的 x y 次方對 x 微分正好是 y 乘它，一步就積完。" },
+        { "show": ["$\\int_0^1(e^y-1)\\,dy=e-2$"],
+          "say": "外層再積一次，答案是 e 減二。" }
+      ],
+      "check": 2
+    },
+    {
+      "title": "可分離：拆成兩個",
+      "beats": [
+        { "show": ["$\\iint_R g(x)h(y)\\,dA=\\int_a^b g\\,dx\\cdot\\int_c^d h\\,dy$"], "note": "只在矩形上成立。",
+          "say": "被積函數是 x 的函數乘 y 的函數，區域又是矩形，內層的積分是一個數，可以提出去，變成兩個一維積分相乘。" },
+        { "show": ["$\\iint_R y^2\\cos x\\,dA$，$R=\\left[0,\\frac{\\pi}{2}\\right]\\times[0,3]$"],
+          "say": "例如 y 平方乘 cosine x，在這個矩形上。" },
+        { "show": ["$\\int_0^{\\pi/2}\\cos x\\,dx=1$，$\\int_0^3 y^2\\,dy=9$"], "note": "相乘得 $9$。",
+          "say": "兩個一維積分分別是一和九，相乘得九。" }
+      ],
+      "check": 3
+    }
+  ],
   "skillTags": {
     "coarse": ["iterated-integral", "double-integral", "separable"],
     "fine": ["iterated-inner-constant", "iterated-fubini-order", "iterated-separable"]

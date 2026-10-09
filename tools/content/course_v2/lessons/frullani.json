@@ -49,6 +49,79 @@
       "collapsible": true
     }
   ],
+  "sections": [
+    {
+      "title": "公式",
+      "beats": [
+        {"show":["$\\frac{f(ax)-f(bx)}{x}$，從 $0$ 積到 $\\infty$"],"note":"同一個函數、不同縮放的兩個版本相減。","say":"同一個函數，一個縮放 a 倍、一個縮放 b 倍，相減再除以 x，從零積到無限大。"},
+        {"show":["$=\\bigl(f(0)-f(\\infty)\\bigr)\\ln\\frac{b}{a}$"],"say":"答案只看 f 在兩端的值：f 在零減 f 在無限大，乘上自然對數 a 分之 b。"},
+        {"show":["$f$ 在 $[0,\\infty)$ 連續","$f(\\infty)$ 存在（有限），$a$、$b>0$"],"say":"條件是 f 從零到無限大都連續，在無限大的極限存在而且有限，a、b 都是正的。"},
+        {"show":["$f$ 遞減、$b>a$：兩邊都是正的"],"note":"符號檢查，一致。","say":"檢查符號：f 遞減又 b 大於 a，被積函數是正的；公式算出來也是正的，對得上。"}
+      ],
+      "check": 1
+    },
+    {
+      "title": "中間抵銷",
+      "beats": [
+        {"show":["先積 $[\\varepsilon,R]$"],"note":"兩項各自換元：$u=ax$、$u=bx$。","say":"為什麼成立？先只積一小段到一大段，第一項令 u 等於 a x，第二項令 u 等於 b x。"},
+        {"show":["$\\frac{dx}{x}=\\frac{du}{u}$"],"say":"關鍵是 dx 除以 x 換元之後還是 du 除以 u，所以兩項變成同一個被積函數，只差積分範圍。"},
+        {"show":["$\\int_{a\\varepsilon}^{aR}\\frac{f(u)}{u}\\,du-\\int_{b\\varepsilon}^{bR}\\frac{f(u)}{u}\\,du$"],"say":"兩段範圍大部分重疊，重疊的地方互相抵銷。"},
+        {"show":["只剩 $\\int_{a\\varepsilon}^{b\\varepsilon}$ 和 $\\int_{aR}^{bR}$"],"note":"靠近 $0$ 一小段、靠近 $\\infty$ 一小段。","say":"最後只剩兩小段：一段貼著零，一段在很遠的地方。"}
+      ],
+      "predict": {
+        "ask": "$\\varepsilon\\to 0$，$\\int_{a\\varepsilon}^{b\\varepsilon}\\frac{f(u)}{u}\\,du$ 趨近？",
+        "options": [
+          {"label":"$f(0)\\ln\\frac{b}{a}$","correct":true},
+          {"label":"$0$","why":"區間變短，但 $\\int_{a\\varepsilon}^{b\\varepsilon}\\frac{du}{u}=\\ln\\frac{b}{a}$ 不變；$f(u)\\approx f(0)$。"},
+          {"label":"$f(0)$","why":"$f(u)\\approx f(0)$ 提出來之後，還要乘上 $\\int_{a\\varepsilon}^{b\\varepsilon}\\frac{du}{u}=\\ln\\frac{b}{a}$。"}
+        ]
+      }
+    },
+    {
+      "title": "指數",
+      "beats": [
+        {"show":["靠近 $\\infty$ 那段 $\\to f(\\infty)\\ln\\frac{b}{a}$"],"note":"相減就是公式；嚴格版在全文。","say":"遠的那一段同理，f 差不多是 f 在無限大的值。兩段相減就是公式，嚴格版在全文。"},
+        {"show":["$\\int_0^{\\infty}\\frac{e^{-2x}-e^{-5x}}{x}\\,dx$"],"note":"$f(t)=e^{-t}$，$a=2$，$b=5$。","say":"實際用一次：f 是 e 的負 t 次方，a 是二，b 是五。"},
+        {"show":["$f(0)=1$，$f(\\infty)=0$"],"say":"e 的零次方是一，在無限大趨近零。兩端的值都有了。"},
+        {"show":["$(1-0)\\ln\\frac{5}{2}\\approx 0.916$"],"say":"一減零，乘上自然對數二分之五，大約零點九一六。"}
+      ],
+      "check": 0
+    },
+    {
+      "title": "兩端都要代",
+      "beats": [
+        {"show":["$\\int_0^{\\infty}\\frac{\\arctan 5x-\\arctan 2x}{x}\\,dx$"],"note":"$f(ax)-f(bx)$：$a=5$、$b=2$。","say":"換成 arctan。注意前面那項是 a，所以這題 a 是五、b 是二，順序不要搞反。"},
+        {"show":["$f(0)=0$，$f(\\infty)=\\frac{\\pi}{2}$"],"say":"這次 f 在零是零，在無限大是二分之派。兩端都要代，不能只代零。"},
+        {"show":["$\\left(0-\\frac{\\pi}{2}\\right)\\ln\\frac{2}{5}=\\frac{\\pi}{2}\\ln\\frac{5}{2}$"],"note":"約 $1.439$；$\\arctan$ 遞增，答案為正。","say":"兩個負號相乘變正，答案是二分之派乘自然對數二分之五，大約一點四三九。"}
+      ],
+      "check": 3
+    },
+    {
+      "title": "振盪版",
+      "beats": [
+        {"show":["$\\cos$ 在 $\\infty$ 沒有極限"],"say":"cosine 在無限大一直振盪，沒有極限，標準版的條件不成立。"},
+        {"show":["$\\int_A^{\\infty}\\frac{\\cos u}{u}\\,du$ 收斂"],"note":"遠端那段 $\\int_{aR}^{bR}\\frac{\\cos u}{u}\\,du\\to 0$。","say":"可是 cosine u 除以 u 的瑕積分收斂，遠的那一小段會趨近零。"},
+        {"show":["把 $f(\\infty)$ 當 $0$"],"note":"$\\int_0^{\\infty}\\frac{\\cos ax-\\cos bx}{x}\\,dx=\\ln\\frac{b}{a}$","say":"所以公式照用，只要把 f 在無限大當成零。cosine 在零是一，答案就是自然對數 a 分之 b。"}
+      ],
+      "check": 2
+    },
+    {
+      "title": "積化和差",
+      "beats": [
+        {"show":["$\\int_0^{\\infty}\\frac{\\sin 3x\\sin 8x}{x}\\,dx$"],"say":"兩個 sine 相乘，看起來不是 Frullani 的樣子。"},
+        {"show":["$\\sin 3x\\sin 8x=\\frac{\\cos 5x-\\cos 11x}{2}$"],"note":"積化和差。","say":"用積化和差，變成二分之一乘 cosine 五 x 減 cosine 十一 x。"},
+        {"show":["振盪版：$a=5$、$b=11$"],"say":"這就是振盪版，a 是五，b 是十一。別忘了前面還有二分之一。"}
+      ],
+      "predict": {
+        "ask": "$\\int_0^{\\infty}\\frac{\\sin 3x\\sin 8x}{x}\\,dx$ 是？",
+        "options": [
+          {"label":"$\\frac{1}{2}\\ln\\frac{11}{5}\\approx 0.394$","correct":true},
+          {"label":"$\\ln\\frac{11}{5}$","why":"積化和差有 $\\frac{1}{2}$，要乘上去。"},
+          {"label":"$\\frac{1}{2}\\ln\\frac{5}{11}$","why":"$a=5$、$b=11$，公式是 $\\ln\\frac{b}{a}=\\ln\\frac{11}{5}$；順序反了。"}
+        ]
+      }
+    }
+  ],
   "workedExamples": [
     {
       "title": "指數",

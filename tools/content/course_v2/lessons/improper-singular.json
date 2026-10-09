@@ -123,6 +123,73 @@
       ]
     }
   ],
+  "sections": [
+    {
+      "title": "衝到無窮高",
+      "beats": [
+        { "show": ["$\\int_0^1\\frac{dx}{\\sqrt{x}}$"], "note": "$x\\to 0^+$ 時 $\\frac{1}{\\sqrt{x}}\\to\\infty$。",
+          "say": "這次區間有限，可是根號 x 分之一在零的右邊衝到無限大，底下是一根無限高的尖刺。" },
+        { "show": ["$\\int_a^b f\\,dx=\\lim_{s\\to a^+}\\int_s^b f\\,dx$"], "note": "先避開瑕點，再取極限。",
+          "say": "處理方法跟無窮區間一樣：從瑕點旁邊的 s 積起，再讓 s 靠近瑕點。" },
+        { "show": ["$\\int_s^1\\frac{dx}{\\sqrt{x}}=2-2\\sqrt{s}\\to 2$"], "note": "收斂。",
+          "say": "根號 x 分之一從 s 積到一，是二減二根號 s。s 趨近零，極限是二，收斂。" },
+        { "show": ["$\\int_s^1\\frac{dx}{x}=-\\ln s\\to\\infty$"], "note": "發散。",
+          "say": "換成 x 分之一，積出來是負的自然對數 s，s 趨近零時衝到無限大，發散。" }
+      ],
+      "check": 0
+    },
+    {
+      "title": "瑕點在中間",
+      "beats": [
+        { "show": ["$\\int_{-1}^1\\frac{dx}{x^2}=\\left[-\\frac{1}{x}\\right]_{-1}^1=-2$？"], "note": "正函數積出負數，顯然不對。",
+          "say": "x 平方分之一從負一積到一，直接代反導函數得到負二。正的函數積出負數，一定哪裡錯了。" },
+        { "show": ["基本定理要求 $f$ 在整個區間連續"], "note": "$\\frac{1}{x^2}$ 在 $0$ 無界。",
+          "say": "微積分基本定理要求函數在整個區間連續，可是零在區間中間，函數在那裡無界。" },
+        { "show": ["切開：$\\int_{-1}^0+\\int_0^1$"], "note": "$\\int_s^1\\frac{dx}{x^2}=\\frac{1}{s}-1\\to\\infty$",
+          "say": "正確做法是在零切開。右半從 s 積到一，是 s 分之一減一，衝到無限大，所以整個發散。" }
+      ],
+      "check": 1
+    },
+    {
+      "title": "好幾個問題點",
+      "beats": [
+        { "show": ["$\\int_0^{\\infty}\\frac{dx}{\\sqrt{x}(1+x)}$"], "note": "$x=0$ 無界，上限又是 $\\infty$。",
+          "say": "這一題兩頭都有問題：零的地方函數無界，上面又是無限長的區間。" },
+        { "show": ["在 $1$ 切開：$\\int_0^1+\\int_1^{\\infty}$"], "note": "每一段只處理一個問題。",
+          "say": "在中間隨便找一點，例如一，切開。每一段只留一個問題點，兩段都收斂才算收斂。" }
+      ],
+      "check": 3
+    },
+    {
+      "title": "換元算出來",
+      "beats": [
+        { "show": ["$u=\\sqrt{x}$，$x=u^2$，$dx=2u\\,du$"], "note": "$x$ 從 $0$ 到 $\\infty$，$u$ 也是。",
+          "say": "令 u 等於根號 x，dx 就是二 u du。x 從零到無限大，u 也從零到無限大。" },
+        { "show": ["$\\frac{2u\\,du}{u(1+u^2)}$"],
+          "say": "代進去，根號 x 變成 u，分子分母都有一個 u。" }
+      ],
+      "predict": {
+        "ask": "約掉之後，積分變成？",
+        "options": [
+          { "label": "$\\int_0^{\\infty}\\frac{2\\,du}{1+u^2}=\\pi$", "correct": true },
+          { "label": "$\\int_0^{\\infty}\\frac{du}{1+u^2}=\\frac{\\pi}{2}$", "why": "漏了 $dx=2u\\,du$ 裡的 $2$。" },
+          { "label": "$\\int_0^{\\infty}\\frac{2u\\,du}{1+u^2}$，發散", "why": "分母的 $\\sqrt{x}$ 也換成了 $u$，要跟分子的 $u$ 約掉。" }
+        ]
+      }
+    },
+    {
+      "title": "假的瑕點",
+      "beats": [
+        { "show": ["$\\frac{\\sin x}{x}$ 在 $x=0$ 沒定義"], "note": "但 $x\\to 0$ 時 $\\frac{\\sin x}{x}\\to 1$。",
+          "say": "sine x 除以 x 在零沒有定義，可是它在零附近趨近一，一點都不大。" },
+        { "show": ["補上 $f(0)=1$ 就連續"], "note": "可去不連續，見〈不連續的種類〉。",
+          "say": "補上零的函數值等於一，它就是連續函數。這種可去的點不是瑕點。" },
+        { "show": ["$\\int_0^1\\frac{\\sin x}{x}\\,dx$ 是普通的定積分"],
+          "say": "所以 sine x 除以 x 從零積到一，是一個普通的定積分，不必取極限，也不會發散。" }
+      ],
+      "check": 2
+    }
+  ],
   "skillTags": {
     "coarse": ["improper-integral"],
     "fine": ["improper-singular-endpoint", "improper-singular-interior", "improper-log-endpoint", "improper-mixed-split"]

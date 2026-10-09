@@ -125,6 +125,73 @@
       ]
     }
   ],
+  "sections": [
+    {
+      "title": "遞迴不只用在整數",
+      "beats": [
+        { "show": ["$\\Gamma(s+1)=s\\Gamma(s)$，所有 $s>0$"],
+          "say": "Gamma 的遞迴對所有大於零的 s 都成立，不只整數。" },
+        { "show": ["$\\Gamma(s+n)=(s+n-1)\\cdots(s+1)\\,s\\,\\Gamma(s)$"], "note": "連用 $n$ 次。",
+          "say": "連續用 n 次，Gamma s 加 n 就是一串因子乘上 Gamma s。乘的是 s，不是 s 加一。" },
+        { "show": ["$\\frac{\\Gamma(7/2)}{\\Gamma(3/2)}=\\frac{5}{2}\\cdot\\frac{3}{2}=\\frac{15}{4}$"], "note": "不需要知道 $\\Gamma\\left(\\frac{3}{2}\\right)$ 是多少。",
+          "say": "所以 Gamma 的比值永遠化成乘法：二分之七往下推兩步，乘二分之五、二分之三，得四分之十五。" }
+      ],
+      "check": 0
+    },
+    {
+      "title": "不知道值也能比",
+      "beats": [
+        { "show": ["$\\Gamma\\left(\\frac{10}{3}\\right)$ 寫成 $\\Gamma\\left(\\frac{1}{3}\\right)$ 的倍數"], "note": "$\\frac{10}{3}=\\frac{1}{3}+3$",
+          "say": "三分之十比三分之一多三，所以連用三次遞迴。" },
+        { "show": ["$\\frac{7}{3}\\cdot\\frac{4}{3}\\cdot\\frac{1}{3}\\,\\Gamma\\left(\\frac{1}{3}\\right)$"],
+          "say": "往下推：先乘三分之七，再乘三分之四，最後乘三分之一。" }
+      ],
+      "predict": {
+        "ask": "$\\Gamma\\left(\\frac{10}{3}\\right)$ 是 $\\Gamma\\left(\\frac{1}{3}\\right)$ 的幾倍？",
+        "options": [
+          { "label": "$\\frac{28}{27}$", "correct": true },
+          { "label": "$\\frac{28}{9}$", "why": "少乘了最後一個 $\\frac{1}{3}$：$\\Gamma\\left(\\frac{4}{3}\\right)=\\frac{1}{3}\\Gamma\\left(\\frac{1}{3}\\right)$。" },
+          { "label": "$\\frac{10}{3}\\cdot\\frac{7}{3}\\cdot\\frac{4}{3}$", "why": "乘的是 $s$ 不是 $s+1$：$\\Gamma\\left(\\frac{10}{3}\\right)=\\frac{7}{3}\\Gamma\\left(\\frac{7}{3}\\right)$。" }
+        ]
+      }
+    },
+    {
+      "title": "對數次方",
+      "beats": [
+        { "show": ["$\\int_0^1x^m(\\ln x)^n\\,dx$"], "note": "看起來跟 Gamma 無關。",
+          "say": "x 的 m 次方乘自然對數 x 的 n 次方，從零積到一，看起來跟 Gamma 沒關係。" },
+        { "show": ["令 $x=e^{-t}$：$\\ln x=-t$"], "note": "$dx=-e^{-t}\\,dt$；$x:0\\to 1$ 對應 $t:\\infty\\to 0$。",
+          "say": "令 x 等於 e 的負 t 次方，自然對數就變成負 t。x 從零到一，t 從無限大回到零。" },
+        { "show": ["$x^m\\,dx=-e^{-(m+1)t}\\,dt$"], "note": "$dx$ 帶來的 $e^{-t}$ 讓指數多一個 $1$。",
+          "say": "注意 dx 也帶著一個 e 的負 t 次方，所以指數是 m 加一，不是 m。上下限翻回來吃掉負號。" }
+      ],
+      "check": 3
+    },
+    {
+      "title": "算一題",
+      "beats": [
+        { "show": ["$\\int_0^1x^3(\\ln x)^2\\,dx=\\int_0^{\\infty}t^2e^{-4t}\\,dt$"], "note": "$m=3$，指數是 $m+1=4$。",
+          "say": "x 三次方乘自然對數平方：換元之後，指數是三加一等於四。" },
+        { "show": ["$=\\frac{\\Gamma(3)}{4^3}=\\frac{2}{64}=\\frac{1}{32}$"],
+          "say": "用指數有常數的公式：Gamma 三是二，除以四的三次方，得三十二分之一。" },
+        { "show": ["$\\frac{(-1)^n\\,n!}{(m+1)^{n+1}}$"], "note": "$n$ 是奇數時答案是負的。",
+          "say": "一般公式是這樣。n 是偶數，答案是正的；n 是奇數，自然對數的奇次方是負的，答案帶負號。" }
+      ],
+      "check": 1
+    },
+    {
+      "title": "往左推",
+      "beats": [
+        { "show": ["$\\Gamma(s)=\\frac{\\Gamma(s+1)}{s}$"], "note": "$-1<s<0$ 時右邊有意義。",
+          "say": "積分只在 s 大於零收斂。把遞迴倒過來寫，s 在負一和零之間，右邊還是有意義。" },
+        { "show": ["$-1<s<0$：$\\Gamma(s)<0$"], "note": "$\\Gamma(s+1)>0$，$s<0$。",
+          "say": "分子是正的，分母 s 是負的，所以這一段 Gamma 是負的。再往左一段又變正，交替變號。" },
+        { "show": ["$s=0,-1,-2,\\dots$ 沒有定義"], "note": "要除以 $0$，函數值往 $\\pm\\infty$ 衝。",
+          "say": "可是在零、負一、負二這些點要除以零，Gamma 沒有定義，函數值往正負無限大衝。" }
+      ],
+      "check": 2
+    }
+  ],
   "skillTags": {
     "coarse": ["gamma-function", "special-functions", "parameter-integral"],
     "fine": ["gamma-shift-ratio", "gamma-log-substitution", "gamma-left-extension", "gamma-rising-product"]

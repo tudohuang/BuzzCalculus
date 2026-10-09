@@ -132,6 +132,79 @@
       ]
     }
   ],
+  "sections": [
+    {
+      "title": "乘法法則倒過來",
+      "beats": [
+        { "show": ["$(uv)'=u'v+uv'$"],
+          "say": "先回想乘法法則：u 乘 v 的導數，是 u prime 乘 v，加上 u 乘 v prime。" },
+        { "show": ["$\\int uv'\\,dx=uv-\\int vu'\\,dx$"], "note": "移項，兩邊積分。",
+          "say": "把 u 乘 v prime 移到一邊，兩邊積分。乘積的導數積回來，就是 u 乘 v 本身。" },
+        { "show": ["$\\int u\\,dv=uv-\\int v\\,du$"], "note": "換元是連鎖律倒過來，這是乘法法則倒過來。",
+          "say": "用 du、dv 的寫法縮成一行，這就是分部積分。" }
+      ],
+      "check": 1
+    },
+    {
+      "title": "它做了什麼交換",
+      "beats": [
+        { "show": ["拆兩塊：$u$，和連同 $dx$ 的 $dv$"],
+          "say": "把被積函數拆成兩塊：一塊叫 u，另一塊連同 dx 叫 dv。" },
+        { "show": ["$\\int u\\,dv$ 換成 $\\int v\\,du$"], "note": "$u$ 被微分一次，$dv$ 被積分一次。",
+          "say": "公式把原來的積分換成另一個：u 被微分了一次，dv 被積分了一次。" },
+        { "show": ["$u$：微分變簡單", "$dv$：積得出來、不變複雜"], "note": "$x\\to 1$、$\\ln x\\to\\frac{1}{x}$；$e^x$、$\\sin x$。",
+          "say": "所以 u 要挑微分後變簡單的，像 x 變一；dv 要挑積得出來、積完不變複雜的，像 e 的 x 次方。" }
+      ],
+      "check": 0
+    },
+    {
+      "title": "多項式乘指數",
+      "beats": [
+        { "show": ["$\\int xe^{-x}\\,dx$：$u=x$，$dv=e^{-x}\\,dx$"],
+          "say": "試一題：x 乘 e 的負 x 次方。x 微分變一，當 u；指數積得出來，當 dv。" },
+        { "show": ["$du=dx$，$v=-e^{-x}$"],
+          "say": "u 微分得 dx；e 的負 x 次方積分，記得多一個負號。" },
+        { "show": ["$=-xe^{-x}+\\int e^{-x}\\,dx$"], "note": "公式的減號碰上 $v$ 的負號，變成加。",
+          "say": "代進公式。u 乘 v 是負 x e 的負 x 次方；減掉的積分裡有負號，負負得正。" },
+        { "show": ["$=-xe^{-x}-e^{-x}+C$"], "note": "微分檢查，回到 $xe^{-x}$。",
+          "say": "剩下的直接積，再加 C。微分回去檢查，剛好是 x 乘 e 的負 x 次方。" }
+      ],
+      "check": 2
+    },
+    {
+      "title": "挑錯會怎樣",
+      "beats": [
+        { "show": ["$\\int xe^x\\,dx$ 挑 $u=e^x$，$dv=x\\,dx$"], "note": "得 $\\frac{x^2}{2}e^x-\\int\\frac{x^2}{2}e^x\\,dx$。",
+          "say": "如果反過來挑，讓 x 去積分，新的積分次方升高，比原來更難。這時換挑法，不是公式錯了。" },
+        { "show": ["對數、反三角、代數、三角、指數"], "note": "越前面越適合當 $u$。是經驗，不是定理。",
+          "say": "挑 u 有個常用口訣，就在畫面上：越前面越適合當 u，對數最優先，指數排最後。偶爾有例外。" },
+        { "show": ["$\\int x\\sin 2x\\,dx$：$u=x$，$v=-\\frac{1}{2}\\cos 2x$"],
+          "say": "照口訣試一題：x 乘 sine 二 x。x 是代數，當 u；sine 二 x 積分是負二分之一 cosine 二 x。" }
+      ],
+      "predict": {
+        "ask": "代進公式，下一步是？",
+        "options": [
+          { "label": "$-\\frac{x}{2}\\cos 2x+\\frac{1}{2}\\int\\cos 2x\\,dx$", "correct": true },
+          { "label": "$-\\frac{x}{2}\\cos 2x-\\frac{1}{2}\\int\\cos 2x\\,dx$", "why": "$-\\int\\left(-\\frac{1}{2}\\cos 2x\\right)dx$：兩個負號變正。" },
+          { "label": "$-\\frac{x}{2}\\cos 2x+\\frac{1}{2}\\int x\\cos 2x\\,dx$", "why": "$du=dx$，新積分裡不會再有 $x$。" }
+        ]
+      }
+    },
+    {
+      "title": "定積分版本",
+      "beats": [
+        { "show": ["$\\int_a^b u\\,dv=\\Big[uv\\Big]_a^b-\\int_a^b v\\,du$"], "note": "$uv$ 那一項也要代上下限。",
+          "say": "定積分版本：上下限照原來的 x 走，u 乘 v 那一項直接代，剩下的積分也帶著同樣上下限。" },
+        { "show": ["$\\int_0^\\pi x\\cos x\\,dx=[x\\sin x]_0^\\pi-\\int_0^\\pi\\sin x\\,dx$"],
+          "say": "例如 x 乘 cosine x 從零到 pi。u 是 x，v 是 sine x。" },
+        { "show": ["$=0-2=-2$"], "note": "$x\\cos x$ 後半段為負，那塊比較大。",
+          "say": "第一項代進去是零，sine 從零積到 pi 是二，答案負二。負的，因為後半段在下方的那塊比較大。" },
+        { "show": ["算 $v$ 時不用加 $C$"], "note": "最後的答案才加 $+C$。",
+          "say": "最後一個小問題：算 v 的時候為什麼沒有加常數？" }
+      ],
+      "check": 3
+    }
+  ],
   "skillTags": {
     "coarse": ["integration-by-parts", "ibp"],
     "fine": ["ibp-formula", "ibp-choose-u", "ibp-definite", "ibp-no-constant-v"]

@@ -165,6 +165,73 @@
       ]
     }
   ],
+  "sections": [
+    {
+      "title": "搬到 $\\left[0,\\frac{\\pi}{2}\\right]$",
+      "beats": [
+        { "show": ["令 $x=\\sin^2\\theta$"], "note": "$1-x=\\cos^2\\theta$；$x:0\\to 1$ 對應 $\\theta:0\\to\\frac{\\pi}{2}$。",
+          "say": "在 Beta 的積分裡令 x 等於 sine 平方 theta，一減 x 就是 cosine 平方，區間變成零到二分之 pi。" },
+        { "show": ["$x^{p-1}=\\sin^{2p-2}\\theta$，$(1-x)^{q-1}=\\cos^{2q-2}\\theta$"],
+          "say": "x 的 p 減一次方變成 sine 的二 p 減二次方，cosine 那邊也一樣。" },
+        { "show": ["$dx=2\\sin\\theta\\cos\\theta\\,d\\theta$"],
+          "say": "dx 也要換：它帶來一個二，還有一個 sine、一個 cosine。" }
+      ],
+      "predict": {
+        "ask": "全部乘起來，$\\sin\\theta$ 的次方是？",
+        "options": [
+          { "label": "$2p-1$", "correct": true },
+          { "label": "$2p-2$", "why": "忘了 $dx$ 帶來的那一個 $\\sin\\theta$，次方要再加 $1$。" },
+          { "label": "$p-1$", "why": "$x=\\sin^2\\theta$，所以 $x^{p-1}$ 是 $\\sin^{2p-2}\\theta$，次方要乘 $2$。" }
+        ]
+      }
+    },
+    {
+      "title": "加 1 再除以 2",
+      "beats": [
+        { "show": ["$\\int_0^{\\pi/2}\\sin^{2p-1}\\theta\\cos^{2q-1}\\theta\\,d\\theta$", "$=\\frac{1}{2}\\mathrm{B}(p,q)$"], "note": "$dx$ 的 $2$ 移到另一邊，變成 $\\frac{1}{2}$。",
+          "say": "dx 帶來的二移到另一邊，三角形式的積分就是 Beta 的一半。" },
+        { "show": ["$\\sin^m\\theta\\cos^n\\theta$：$p=\\frac{m+1}{2}$，$q=\\frac{n+1}{2}$"],
+          "say": "實際用的時候，題目是 sine 的 m 次方乘 cosine 的 n 次方，次方先加一，再除以二。" },
+        { "show": ["條件：$m>-1$，$n>-1$"], "note": "分數次方、負的次方都可以。",
+          "say": "條件是 m、n 都大於負一，對應 p、q 大於零。分數次方、甚至負的次方都能用。" }
+      ],
+      "check": 1
+    },
+    {
+      "title": "有奇數次方",
+      "beats": [
+        { "show": ["$\\int_0^{\\pi/2}\\sin^5\\theta\\cos^3\\theta\\,d\\theta$"], "note": "$m=5$，$n=3$：$p=3$，$q=2$。",
+          "say": "sine 五次方乘 cosine 三次方：五加一除以二是三，三加一除以二是二。" },
+        { "show": ["$\\frac{1}{2}\\mathrm{B}(3,2)=\\frac{1}{2}\\cdot\\frac{2!\\,1!}{4!}=\\frac{1}{24}$"],
+          "say": "Beta 三、二是二十四分之二，也就是十二分之一，再乘二分之一，得二十四分之一。" }
+      ],
+      "check": 0
+    },
+    {
+      "title": "從奇偶看答案",
+      "beats": [
+        { "show": ["$\\int_0^{\\pi/2}\\sin^4\\theta\\cos^2\\theta\\,d\\theta$"], "note": "$p=\\frac{5}{2}$，$q=\\frac{3}{2}$。",
+          "say": "換成兩個都是偶數：sine 四次方乘 cosine 平方，p 是二分之五，q 是二分之三。" },
+        { "show": ["$\\frac{1}{2}\\cdot\\frac{\\Gamma(5/2)\\Gamma(3/2)}{\\Gamma(4)}=\\frac{\\pi}{32}$"], "note": "跟 Wallis 的 $W_4-W_6$ 一樣。",
+          "say": "兩個半整數各帶一個根號 pi，分母 Gamma 四是六，答案三十二分之 pi，跟 Wallis 算的一樣。" },
+        { "show": ["都偶數：帶 $\\pi$", "有奇數：有理數"],
+          "say": "規律是：兩個都偶數，答案帶 pi；只要有一個奇數，根號 pi 會上下約掉，答案是有理數。" }
+      ],
+      "check": 3
+    },
+    {
+      "title": "分數次方",
+      "beats": [
+        { "show": ["$\\sqrt{\\tan\\theta}=\\sin^{1/2}\\theta\\cos^{-1/2}\\theta$"], "note": "$n=-\\frac{1}{2}>-1$，收斂。",
+          "say": "根號 tangent 寫成 sine 的二分之一次方乘 cosine 的負二分之一次方。負二分之一大於負一，收斂。" },
+        { "show": ["$=\\frac{1}{2}\\mathrm{B}\\left(\\frac{3}{4},\\frac{1}{4}\\right)$"], "note": "$p=\\frac{3}{4}$，$q=\\frac{1}{4}$。",
+          "say": "次方加一再除以二：p 是四分之三，q 是四分之一。" },
+        { "show": ["$\\int_0^{\\pi/2}\\sqrt{\\tan\\theta}\\,d\\theta=\\frac{\\pi}{\\sqrt{2}}$"], "note": "用反射公式 $\\Gamma\\left(\\frac{1}{4}\\right)\\Gamma\\left(\\frac{3}{4}\\right)=\\pi\\sqrt{2}$。",
+          "say": "再借反射公式，答案是根號二分之 pi，大約二點二二一。" }
+      ],
+      "check": 2
+    }
+  ],
   "skillTags": {
     "coarse": [
       "beta-function",

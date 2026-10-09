@@ -128,6 +128,79 @@
       ]
     }
   ],
+  "sections": [
+    {
+      "title": "兩條公式都不能套",
+      "beats": [
+        { "show": ["$(x^n)' = n x^{n-1}$：指數要是常數"],
+          "say": "冪次法則只管指數是常數的情況，像 x 的五次方。" },
+        { "show": ["$(a^x)' = a^x \\ln a$：底要是常數"],
+          "say": "a 的 x 次方那條公式，反過來要底是常數。" },
+        { "show": ["$x^x$：底和指數都在變"], "note": "兩條都不適用。",
+          "say": "x 的 x 次方，底在變、指數也在變，兩條公式都不能直接套。" }
+      ],
+      "check": 2
+    },
+    {
+      "title": "取 $\\ln$，拉下指數",
+      "beats": [
+        { "show": ["$y = x^x$，$\\ln y = x \\ln x$"], "note": "$x > 0$。指數變成乘法了。",
+          "say": "兩邊取自然對數，指數就被拉下來，變成 x 乘自然對數 x，只剩乘法。" },
+        { "show": ["左邊：$(\\ln y)' = \\frac{y'}{y}$"], "note": "$\\ln$ 套在 $y(x)$ 外面：連鎖律。",
+          "say": "兩邊對 x 微分。左邊自然對數套在 y 外面，連鎖律給 y 分之 y prime，別漏了 y prime。" },
+        { "show": ["右邊：$\\ln x + 1$"], "note": "乘法法則：$1 \\cdot \\ln x + x \\cdot \\frac{1}{x}$。",
+          "say": "右邊用乘法法則：一乘自然對數 x，加 x 乘 x 分之一，得到自然對數 x 加一。" },
+        { "show": ["$y' = x^x(\\ln x + 1)$"], "note": "最後乘回 $y$。",
+          "say": "算到 y 分之 y prime 還沒完，兩邊乘回 y，才是答案。" }
+      ],
+      "check": 0
+    },
+    {
+      "title": "另一種寫法",
+      "beats": [
+        { "show": ["$x^x = e^{x \\ln x}$"], "note": "因為 $e^{\\ln x} = x$。",
+          "say": "也可以把 x 的 x 次方寫成 e 的 x 自然對數 x 次方，因為 e 的自然對數 x 次方就是 x。" },
+        { "show": ["$e^{x \\ln x} \\cdot (\\ln x + 1)$"], "note": "直接用連鎖律，答案一樣。",
+          "say": "直接用連鎖律：外層不動，乘上指數的導數，得到一樣的答案。兩種挑順手的用。" },
+        { "show": ["$x = 1$：$1^1 \\cdot (0 + 1) = 1$"],
+          "say": "代 x 等於一：一的一次方是一，自然對數一是零，所以導數是一。" },
+        { "show": ["= 底在變 ＋ 指數在變"], "note": "$x^x$ 加上 $x^x \\ln x$。直覺，不是證明。",
+          "say": "有趣的是，答案剛好是兩個硬套的錯誤答案相加：底在變的貢獻，加上指數在變的貢獻。" }
+      ],
+      "check": 3
+    },
+    {
+      "title": "指數是三角函數",
+      "beats": [
+        { "show": ["$y = x^{\\sin x}$，$\\ln y = \\sin x \\cdot \\ln x$"],
+          "say": "x 的 sine x 次方，一樣取自然對數，把 sine x 拉下來。" },
+        { "show": ["$\\frac{y'}{y} = \\cos x \\ln x + \\frac{\\sin x}{x}$"], "note": "右邊用乘法法則。",
+          "say": "右邊是乘積：cosine x 乘自然對數 x，加上 sine x 乘 x 分之一。" },
+        { "show": ["$y' = x^{\\sin x}(\\cos x \\ln x + \\frac{\\sin x}{x})$"],
+          "say": "最後一樣乘回 y，也就是原本的 x 的 sine x 次方。" }
+      ],
+      "check": 1
+    },
+    {
+      "title": "很多因式相乘除",
+      "beats": [
+        { "show": ["$y = x^2 \\frac{\\sqrt{x + 1}}{(x - 1)^3}$"], "note": "$x > 1$，每個因式都是正的。",
+          "say": "第二種用途：很多因式乘乘除除，用乘法、除法法則會很長。" },
+        { "show": ["$\\ln y = 2 \\ln x + \\frac{1}{2} \\ln(x + 1) - 3 \\ln(x - 1)$"],
+          "say": "取自然對數，乘除變加減，次方變係數：根號是二分之一，分母的三次方變成減三倍。" },
+        { "show": ["$y$ 可能是負的：取 $\\ln|y|$"], "note": "$(\\ln|u|)' = \\frac{u'}{u}$ 一樣成立。",
+          "say": "自然對數只吃正數。y 可能是負的時候，改取絕對值，微分出來的式子一樣。" }
+      ],
+      "predict": {
+        "ask": "逐項微分，$-3 \\ln(x - 1)$ 那一項變成？",
+        "options": [
+          { "label": "$-\\frac{3}{x - 1}$", "correct": true },
+          { "label": "$-\\frac{3}{x}$", "why": "把 $\\ln(x - 1)$ 拆成 $\\ln x - \\ln 1$ 了。$\\ln$ 只把乘除變加減，不拆加減。" },
+          { "label": "$-\\frac{3}{(x - 1)^3}$", "why": "三次方已經被 $\\ln$ 拉成係數 3 了，分母只剩 $x - 1$。" }
+        ]
+      }
+    }
+  ],
   "skillTags": {
     "coarse": ["log-differentiation", "logarithmic-differentiation"],
     "fine": ["logdiff-variable-exponent", "logdiff-multiply-back", "logdiff-product-quotient", "logdiff-at-point"]

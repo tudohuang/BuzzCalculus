@@ -139,6 +139,85 @@
       ]
     }
   ],
+  "sections": [
+    {
+      "title": "湊成乘積的導數",
+      "beats": [
+        { "show": ["$y'+P(x)y=Q(x)$"], "note": "左邊有 $y'$ 也有 $y$，沒辦法直接積分。",
+          "say": "左邊同時有 y prime 和 y，沒辦法直接積分。可是它長得很像乘法法則。" },
+        { "show": ["$(\\mu y)'=\\mu y'+\\mu'y$"],
+          "say": "乘法法則：mu 乘 y 的導數，是 mu 乘 y prime，加上 mu prime 乘 y。" },
+        { "show": ["兩邊乘 $\\mu$：$\\mu y'+\\mu Py=\\mu Q$"], "note": "要左邊剛好是 $(\\mu y)'$。",
+          "say": "把整條方程乘上一個待定的 mu。只要 mu prime 等於 P 乘 mu，左邊就是乘積的導數。" },
+        { "show": ["$\\mu=e^{\\int P\\,dx}$"], "note": "$\\mu'=P\\mu$ 是可分離的。",
+          "say": "mu prime 等於 P mu 是可分離方程，一個解是 e 的 P 積分次方。這就是積分因子。" }
+      ],
+      "check": 2
+    },
+    {
+      "title": "四個步驟",
+      "beats": [
+        { "show": ["$y'+y=x$：$P=1$，$\\mu=e^x$"], "note": "取一個反導函數就好，不用加常數。",
+          "say": "第一步化成標準形，讀出 P 是一。第二步算 mu，e 的 x 次方，不用加常數。" },
+        { "show": ["$(e^xy)'=xe^x$"],
+          "say": "第三步兩邊乘 mu，左邊收成 e 的 x 次方乘 y 的導數。" },
+        { "show": ["$e^xy=(x-1)e^x+C$"], "note": "右邊用分部積分。",
+          "say": "第四步積分。右邊分部積分，常數 C 在這裡加上去，還沒除以 mu。" },
+        { "show": ["$y=x-1+Ce^{-x}$"], "note": "$C$ 也要除以 $e^x$。",
+          "say": "最後整條除以 e 的 x 次方。C 也要被除，變成 C e 的負 x 次方，不是單獨一個 C。" },
+        { "show": ["$y(0)=1$：$C=2$"],
+          "say": "代 y 在零是一，負一加 C 等於一，C 是二。" }
+      ],
+      "check": 3
+    },
+    {
+      "title": "$P$ 是負的",
+      "beats": [
+        { "show": ["$y'-y=e^x$：$P=-1$"],
+          "say": "這一題減 y，P 是負一。正負號讀錯，整題就錯。" },
+        { "show": ["$\\mu=e^{-x}$（不是 $e^x$）"],
+          "say": "所以積分因子是 e 的負 x 次方。" },
+        { "show": ["$(e^{-x}y)'=e^{-x}\\cdot e^x=1$"],
+          "say": "乘上去，右邊 e 的負 x 乘 e 的 x 變成一，好積。" },
+        { "show": ["$y=(x+C)e^x$，$y(0)=0$：$y=xe^x$"],
+          "say": "積分得 x 加 C，再乘回 e 的 x 次方。代初始條件，C 是零。" }
+      ],
+      "check": 0
+    },
+    {
+      "title": "$\\mu$ 是 $x$ 的時候",
+      "beats": [
+        { "show": ["$P=\\frac{1}{x}$：$\\mu=e^{\\ln x}=x$"], "note": "$x>0$。",
+          "say": "P 是 x 分之一，積分是自然對數 x。e 的自然對數 x 次方，就是 x 本身。" },
+        { "show": ["$x\\left(y'+\\frac{y}{x}\\right)=xy'+y=(xy)'$"], "note": "正是乘法法則。",
+          "say": "乘 x 的效果很直觀：x y prime 加 y，正好是 x 乘 y 的導數。" },
+        { "show": ["$(xy)'=\\frac{1}{x}$", "$xy=\\ln x+C$"], "note": "右邊是 $y'+\\frac{y}{x}=\\frac{1}{x^2}$。",
+          "say": "右邊 x 乘 x 平方分之一，剩 x 分之一，積分是自然對數 x 加 C。" },
+        { "show": ["$y(1)=0$：$C=0$，$y=\\frac{\\ln x}{x}$"],
+          "say": "代 x 等於一、y 等於零，自然對數一是零，C 也是零。" }
+      ],
+      "check": 1
+    },
+    {
+      "title": "做完代回去",
+      "beats": [
+        { "show": ["算 $y'$，加 $P(x)y$，是不是 $Q(x)$？"], "note": "再看初始條件。",
+          "say": "這一型做完一定能檢查：算 y prime，加上 P 乘 y，看看是不是等於 Q。" },
+        { "show": ["$\\mu$ 用成 $e^{-\\int P\\,dx}$"], "note": "代回去會多出一項，馬上看得出來。",
+          "say": "最常見的錯是指數正負號弄反。這時代回去會多出一項，一眼就抓得到。" },
+        { "show": ["檢查 $y=xe^x$：$y'-y=$？"],
+          "say": "來檢查剛剛的 x e 的 x 次方。先用乘法法則算導數，再減掉 y。" }
+      ],
+      "predict": {
+        "ask": "$y=xe^x$，$y'-y$ 等於？",
+        "options": [
+          { "label": "$e^x$", "correct": true },
+          { "label": "$0$", "why": "$y'=e^x+xe^x$，乘法法則多出的 $e^x$ 不會被減掉。" },
+          { "label": "$xe^x$", "why": "$y'$ 不是 $2xe^x$；乘法法則給 $e^x+xe^x$，減 $xe^x$ 剩 $e^x$。" }
+        ]
+      }
+    }
+  ],
   "skillTags": {
     "coarse": ["ode", "integrating-factor", "linear-first-order"],
     "fine": ["integrating-factor-compute", "integrating-factor-product-form", "integrating-factor-constant-placement", "integrating-factor-ivp"]
