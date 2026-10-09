@@ -176,6 +176,104 @@ function checkVideo(id, L) {
   if (extra.length) err(id, `video 多了不認得的欄位：${extra.join("、")}`);
 }
 
+// ── 分節（lesson.sections，可選）──
+// 一節 = 幾句（beat：畫面上的短字＋一句白話，可以把圖的滑桿帶到某一格）＋結尾一個動作（小測／先猜／拖圖）。
+// 內容跟課文同一份：小測每一題恰好落在一節（分節讀完＝小測做完，「完成」才拿得到）；
+// 節裡寫的每一個數字都要在課文、圖的參數或這一節的滑桿值裡出現過（分節是換切法，不是新內容）。
+const numbersIn = (s) => (String(s || "").replace(/\\[a-zA-Z]+/g, " ").match(/\d+(?:\.\d+)?/g) || []).map(Number);
+function checkSections(id, L) {
+  const S = L.sections;
+  if (S === undefined) return "";
+  if (!Array.isArray(S)) { err(id, "sections 要是陣列"); return ""; }
+  if (S.length < 4 || S.length > 6) err(id, `sections 要 4–6 節，現在 ${S.length}`);
+  const figs = L.figures || [];
+  const widget = (k) => Number.isInteger(k) && figs[k] && figs[k].widget ? figs[k] : null;
+  const inRange = (fig, v) => { const s = Figures.sliderOf(fig); return Number.isFinite(v) && v >= s.min - 1e-9 && v <= s.max + 1e-9; };
+  const known = new Set(numbersIn(allText(L)));
+  figs.forEach((f) => numbersIn(JSON.stringify(f.widget || {})).forEach((n) => known.add(n)));
+  const usedChecks = [];
+  const parts = [];
+  S.forEach((sec, si) => {
+    const where = `第 ${si + 1} 節`;
+    const extra = Object.keys(sec || {}).filter((k) => !["title", "beats", "check", "predict", "drag", "video"].includes(k));
+    if (extra.length) err(id, `${where} 多了不認得的欄位：${extra.join("、")}`);
+    if (typeof sec.title !== "string" || !sec.title.trim()) err(id, `${where} 沒有 title`);
+    else if (cjkLen(sec.title) > 12) err(id, `${where} 的 title ${cjkLen(sec.title)} 字（≤ 12）`);
+    const beats = Array.isArray(sec.beats) ? sec.beats : [];
+    if (beats.length < 2 || beats.length > 6) err(id, `${where} 要 2–6 句（beats），現在 ${beats.length}`);
+    const local = new Set(known);
+    let shown = cjkLen(sec.title);
+    const texts = [sec.title];
+    beats.forEach((b, bi) => {
+      const at = `${where}第 ${bi + 1} 句`;
+      const bad = Object.keys(b || {}).filter((k) => !["show", "note", "fig"].includes(k));
+      if (bad.length) err(id, `${at} 多了不認得的欄位：${bad.join("、")}`);
+      if (!Array.isArray(b.show) || !b.show.length || b.show.length > 2) err(id, `${at} 的 show 要 1–2 行`);
+      (b.show || []).forEach((line) => {
+        if (typeof line !== "string" || !line.trim()) err(id, `${at} 的 show 有空行`);
+        else if (cjkLen(line) > 30) err(id, `${at} 的 show「${line}」${cjkLen(line)} 字（一行 ≤ 30）`);
+        shown += cjkLen(line);
+        texts.push(line);
+      });
+      if (b.note !== undefined) {
+        if (typeof b.note !== "string" || !b.note.trim()) err(id, `${at} 的 note 是空的`);
+        else if (cjkLen(b.note) > 40) err(id, `${at} 的 note ${cjkLen(b.note)} 字（一句 ≤ 40）`);
+        shown += cjkLen(b.note);
+        texts.push(b.note);
+      }
+      if (b.fig !== undefined) {
+        const fig = b.fig && widget(b.fig.use);
+        if (!fig) err(id, `${at} 的 fig.use 要指到一張 widget 圖（figures 的索引）`);
+        else if (!inRange(fig, b.fig.to)) err(id, `${at} 的 fig.to = ${b.fig.to} 不在滑桿範圍`);
+        else local.add(Number(b.fig.to));
+        const odd = Object.keys(b.fig || {}).filter((k) => !["use", "to"].includes(k));
+        if (odd.length) err(id, `${at} 的 fig 多了：${odd.join("、")}`);
+      }
+    });
+    const acts = ["check", "predict", "drag"].filter((k) => sec[k] !== undefined);
+    if (acts.length !== 1) err(id, `${where} 結尾要恰好一個動作（check／predict／drag），現在 ${acts.length ? acts.join("、") : "沒有"}`);
+    if (sec.check !== undefined) {
+      if (!(Number.isInteger(sec.check) && L.checks && L.checks[sec.check])) err(id, `${where} 的 check 要是小測的索引（0–${(L.checks || []).length - 1}）`);
+      else usedChecks.push(sec.check);
+    }
+    if (sec.predict !== undefined) {
+      const p = sec.predict || {};
+      const opts = Array.isArray(p.options) ? p.options : [];
+      if (typeof p.ask !== "string" || !p.ask.trim()) err(id, `${where} 的 predict 沒有 ask`);
+      if (opts.length !== 3) err(id, `${where} 的 predict 要 3 個選項`);
+      if (opts.filter((o) => o.correct === true).length !== 1) err(id, `${where} 的 predict 正解要恰好一個`);
+      opts.filter((o) => !o.correct).forEach((o) => { if (!o.why) err(id, `${where} 的 predict 選項「${o.label}」沒有 why`); });
+      texts.push(p.ask || "", ...opts.flatMap((o) => [o.label, o.why || ""]));
+    }
+    if (sec.drag !== undefined) {
+      const d = sec.drag || {};
+      const fig = widget(d.use);
+      if (!fig) err(id, `${where} 的 drag.use 要指到一張 widget 圖`);
+      else if (!(isRange(d.range) && inRange(fig, d.range[0]) && inRange(fig, d.range[1]))) err(id, `${where} 的 drag.range 要是滑桿範圍裡的 [lo, hi]`);
+      else {
+        // 進到動作時圖停在最後一句帶到的那一格（沒有就是預設值）；已經在目標裡就不算一個動作
+        const last = beats.filter((b) => b.fig && b.fig.use === d.use).pop();
+        const start = last ? Number(last.fig.to) : Figures.sliderOf(fig).value;
+        if (start >= d.range[0] && start <= d.range[1]) err(id, `${where} 的 drag 一開始（${start}）就在目標範圍裡`);
+        d.range.forEach((n) => local.add(Number(n)));
+      }
+      if (typeof d.ask !== "string" || !d.ask.trim()) err(id, `${where} 的 drag 沒有 ask`);
+      texts.push(d.ask || "");
+    }
+    if (sec.video !== undefined && !(sec.video === true && L.video)) err(id, `${where} 的 video 只能寫 true，而且這一課要有 video`);
+    if (shown > 220) err(id, `${where} 畫面上的字 ${shown} 字（一節 ≤ 220；建議 ≤ 150）`);
+    else if (shown > 150) warn(id, `${where} 畫面上的字 ${shown} 字（建議 ≤ 150）`);
+    const fresh = [...new Set(texts.flatMap(numbersIn))].filter((n) => !local.has(n));
+    if (fresh.length) err(id, `${where} 出現課文裡沒有的數字：${fresh.join("、")}（分節不寫新內容）`);
+    parts.push(...texts);
+  });
+  const want = (L.checks || []).map((_c, i) => i);
+  const missing = want.filter((i) => !usedChecks.includes(i));
+  const twice = usedChecks.filter((c, i) => usedChecks.indexOf(c) !== i);
+  if (missing.length || twice.length) err(id, `小測每一題要恰好落在一節（分節讀完＝小測做完）：${missing.length ? `沒放 Q${missing.map((i) => i + 1).join("、Q")}` : ""}${twice.length ? ` 重複 Q${twice.map((i) => i + 1).join("、Q")}` : ""}`);
+  return parts.join("\n");
+}
+
 function checkFigures(id, L) {
   const F = L.figures;
   if (F === undefined) return;
@@ -328,8 +426,10 @@ for (const L of lessons) {
 
   checkFigures(id, L);
   checkVideo(id, L);
+  // 分節的字一樣要過 KaTeX、學校名稱、簡體字、〈課名〉；但不算進整課長度（同一份內容換切法）
+  const sectionText = checkSections(id, L);
 
-  const text = allText(L);
+  const text = allText(L) + (sectionText ? `\n${sectionText}` : "");
   // 正文裡的行內數學寫成 $…$（KaTeX）：$ 要成對、每一段都要渲染得過
   if (((text.match(/(?<!\\)\$/g) || []).length) % 2) err(id, "正文的 $ 不成對（行內數學要寫成 $…$）");
   for (const m of text.matchAll(/(?<!\\)\$([^$]+?)(?<!\\)\$/g)) {
@@ -346,7 +446,7 @@ for (const L of lessons) {
     if (!refs) err(id, `〈${m[1]}〉不是大綱裡的課名`);
     else if (!refs.some((ref) => listed.includes(ref))) err(id, `提到〈${m[1]}〉但 ${refs.join(" 或 ")} 不在 prerequisites／next／related`);
   }
-  const total = cjkLen(text);
+  const total = cjkLen(allText(L));
   if (total < 1500 || total > 3600) warn(id, `整課 ${total} 字（建議 2,000–2,800）`);
 }
 
