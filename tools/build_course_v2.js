@@ -96,6 +96,8 @@ function shipLesson(lesson) {
     pitfalls: nonEmpty(lesson.pitfalls),
     // 圖：原樣出貨（規格見 SCHEMA.md；畫法在 course_v2_ui.js 的 BuzzCourseFigures）
     ...(Array.isArray(lesson.figures) && lesson.figures.length ? { figures: lesson.figures } : {}),
+    // 影片：只出貨短名與顯示要用的欄位；網址（主題、解析度）在畫面那邊組
+    ...(lesson.video ? { video: { id: lesson.video.id, after: lesson.video.after === undefined ? 0 : lesson.video.after, duration: lesson.video.duration, caption: lesson.video.caption } } : {}),
     checks: (lesson.checks || []).map((check) => ({
       ask: check.ask,
       options: check.options.map((option) => (option.correct ? { label: option.label, correct: true } : { label: option.label, why: option.why || "" }))
