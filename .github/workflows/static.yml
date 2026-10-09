@@ -92,6 +92,13 @@ jobs:
         # 點一課亮起整串先修（數量跟 DAG 一樣）、「開始這課」「在地圖上看」、方向鍵與 Enter、深色、reduced-motion，
         # 外加拖 60 格量 rAF 間隔與地圖自己每格的繪製時間（canvas 上的東西字串比對測不到）。
         run: node tools/e2e_course_map.js
+      - name: E2E course video
+        # 課程影片：有影片的課先只有預覽圖（loading=lazy）、點了才建 <video>、點之前沒有 mp4 請求；
+        # 片源跟主題與寬度走、整頁重繪後同一支影片接著播、Service Worker 不攔 /media/、Cache Storage 沒有影片、載不到只留一行說明。
+        # 影片不在 git：先照 media/manifest.json 從 Release 抓下來（逐檔驗 sha256），跟 Vercel 部署時同一支工具。
+        run: |
+          node tools/fetch_media.js
+          node tools/e2e_course_video.js
       - name: E2E interactive graphs
         # 點位題與切線題的作答動作發生在 SVG 上，字串比對測不到：
         # 事件沒綁、座標換算 y 軸沒翻、touch-action 沒設（手機上一拖變捲頁）
