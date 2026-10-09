@@ -358,6 +358,12 @@ async function run() {
 
     // ── 第一課（0.1）：觀念 → 範例 → 小測；小測第一次就選對 ≥ 3 題＝完成，下一課按鈕變主按鈕 ──
     await click('.cv2-index .page-head [data-action="open-course-lesson"]', 300);
+    // 第一課有分節，預設一節一屏（那一條路由 e2e_course_sections 走）；這裡走整頁：切到「全文」
+    for (const deadline = Date.now() + 8000; Date.now() < deadline; await chrome.sleep(120)) {
+      if (await evaluate(`return Boolean(document.querySelector("[data-cv2s]") || document.querySelector(".cv2-lesson [data-course-checks]"));`)) break;
+    }
+    check("第一課預設是分節（一節一屏）", await evaluate(`return Boolean(document.querySelector("[data-cv2s]"));`));
+    await click('[data-action="course-s-mode"][data-mode="full"]', 300);
     for (const deadline = Date.now() + 8000; Date.now() < deadline; await chrome.sleep(120)) {
       if (await evaluate(`return Boolean(document.querySelector(".cv2-lesson [data-course-checks]"));`)) break;
     }
