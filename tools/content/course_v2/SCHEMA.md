@@ -83,7 +83,8 @@ Manim 做的概念動畫（來源 `manim/scenes/`，部署時由 `tools/fetch_me
     "beats": [                                    // 2–6 句，點一下（或 → / 空白鍵）出現下一句
       { "show": ["$\\Delta x=\\frac{b-a}{n}$"],     // 畫面上的重點：1–2 行，一行 ≤ 30 字（只放式子與關鍵句）
         "note": "例：$[0,2]$ 切 4 等分。",            // 可選：一句白話，≤ 40 字
-        "fig": { "use": 0, "to": 4 } }             // 可選：這一句把 figures[0]（要是 widget）的滑桿帶到 4（平滑地動；reduced-motion 直接跳）
+        "fig": { "use": 0, "to": 4 },              // 可選：這一句把 figures[0]（要是 widget）的滑桿帶到 4（平滑地動；reduced-motion 直接跳）
+        "say": "把區間切成 n 等分，每一條寬是 b 減 a 再除以 n。零到二切四等分，每一條寬二分之一。" }  // 可選：旁白（見下）
     ],
     // 結尾恰好一個動作：
     "check": 1,                                   // 小測的索引（lesson.checks[1]）—— 當下對錯、選錯看 why、可以重選；或
@@ -100,6 +101,25 @@ fig／drag 指到的不是 widget 或值超出滑桿、動作不是恰好一個�
 畫面在 `src/course_sections.js`（index.html 的 `data-lazy="sections"`，打開有分節的課才抓）。進度記在 `records.courseV2[id]`：
 `secAt`（讀到第幾節，下次從那裡接）、`secDone`（做完的節）、`picks`（分節裡小測選過的選項，跨天也算得到「完成」）、`xp`（這一課拿到的 XP）、`tierXp`（三層加成已經發到哪一層）。
 一節第一次做完 +5 XP；完成／熟練／全破各一次 +20／+30／+50；讀完一節記進 `records.courseReadDays`（那一天算有學：連勝、每日任務「讀一節課」）。
+
+### 旁白（beat.say，可選）
+
+`say` 是**念出來的話**，跟著畫面上的 `show` 一起出現：講解畫面（「看圖：函數往上爬…」），不是把 show／note 照念一遍。
+口語的台灣華語，1–3 短句，約 12 秒以內。念法全部寫成中文：符號念出來（sin → sine、δ → delta、$f'$ → f prime、$x^2$ → x 平方、
+$\frac{14}{3}$ → 三分之十四、$\ge$ → 大於等於、$f(2)$ → f 在二的值），不寫 LaTeX。數字跟課文同一份：念到的每一個數都要在課文、圖的參數或這一節的滑桿值裡。
+
+驗證器會擋：say 是空的、超過 56 字、有 `$`、反斜線或會被念錯的符號（`/ ^ _ = < > ( ) + * √ ∞ …`）、跟 show／note 一字不差、
+**念了課文裡沒有的數字**（中文數字讀回來比：「三分之十四」→ 3、14，「二點零一」→ 2.01，「十六」→ 16）、一課只有一部分的句子有 say（要嘛整課都有，要嘛都沒有）。
+錄音超過 12.5 秒、或 say 改了還沒重錄，只警告。
+
+錄音：`node tools/build_narration.js`（Azure 語音合成，聲音在檔頭一處設定，預設 zh-TW-HsiaoChenNeural）→ 每一句一支
+`media/narration/<課>/<節>-<句>-<hash8>.mp3`（hash 涵蓋聲音、語速與 say：字沒改就不重錄）。索引 `tools/content/course_v2/narration.json`（進 git：hash、毫秒數、大小、sha256），
+`build_course_v2.js` 照它在出貨的 beat 加上 `au`（hash8）與 `ms`；字改了還沒重錄的句子不帶，播放時那一句只停一下。
+錄音檔不進 git：`node tools/make_media_manifest.js --narration media-v2` 列進 `media/manifest.json`（Release media-v2），部署時 `tools/fetch_media.js` 抓。
+
+畫面：每一節的按鈕列有「播放」、語速（1× → 1.25× → 1.5×，記在 `records.settings.narrRate`）、「字幕」（亮著那一句底下出現 say，記在 `records.settings.narrSubs`）。
+不會自己播；按了播放才抓錄音（一次只預載下一句）。念完一句自己出下一句（圖跟著動），念到這一節最後一句停在動作前；做完按「下一節」接著念。
+播放中點「下一句」＝跳到下一句念。錄音載不到（本機沒有 media/、離線、Release 還沒上傳）→ 留一行字、播放關掉，點的照常。
 
 ## 圖（figures，可選，每課最多 4 張）
 

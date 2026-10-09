@@ -69,6 +69,11 @@ files.forEach((name) => {
   lessons[lesson.id] = lesson;
 });
 
+// 旁白錄音的索引（tools/build_narration.js 產生；檔案本身在 Release）
+const NARRATION = path.join(SOURCE, "narration.json");
+const narration = fs.existsSync(NARRATION) ? JSON.parse(fs.readFileSync(NARRATION, "utf8")) : { clips: {} };
+const { hashOf: narrationHash, VOICE: narrationVoice, RATE: narrationRate } = require("./build_narration.js");
+
 const nonEmpty = (list) => (Array.isArray(list) ? list.filter((item) => item !== null && item !== undefined && item !== "") : []);
 
 // 出貨的單課：只留畫面要用的欄位
@@ -98,8 +103,15 @@ function shipLesson(lesson) {
     ...(Array.isArray(lesson.figures) && lesson.figures.length ? { figures: lesson.figures } : {}),
     // 影片：只出貨短名與顯示要用的欄位；網址（主題、解析度）在畫面那邊組
     ...(lesson.video ? { video: { id: lesson.video.id, after: lesson.video.after === undefined ? 0 : lesson.video.after, duration: lesson.video.duration, caption: lesson.video.caption } } : {}),
-    // 分節：原樣出貨（規格見 SCHEMA.md；畫面在 src/course_sections.js，有分節的課才抓）
-    ...(Array.isArray(lesson.sections) && lesson.sections.length ? { sections: lesson.sections } : {}),
+    // 分節：原樣出貨（規格見 SCHEMA.md；畫面在 src/course_sections.js，有分節的課才抓）。
+    // 有旁白錄音的句子多帶 au（檔名裡的 hash8）與 ms（長度）；字改過、還沒重錄的句子不帶（播放時那一句只停一下）
+    ...(Array.isArray(lesson.sections) && lesson.sections.length ? { sections: lesson.sections.map((sec, si) => ({
+      ...sec,
+      beats: sec.beats.map((b, bi) => {
+        const clip = b.say ? narration.clips[`${lesson.id}/${si}-${bi}`] : null;
+        return clip && clip.h === narrationHash(narrationVoice, narrationRate, b.say.trim()) ? { ...b, au: clip.h, ms: clip.ms } : b;
+      })
+    })) } : {}),
     checks: (lesson.checks || []).map((check) => ({
       ask: check.ask,
       options: check.options.map((option) => (option.correct ? { label: option.label, correct: true } : { label: option.label, why: option.why || "" }))

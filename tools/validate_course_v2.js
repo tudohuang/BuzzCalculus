@@ -181,6 +181,42 @@ function checkVideo(id, L) {
 // 內容跟課文同一份：小測每一題恰好落在一節（分節讀完＝小測做完，「完成」才拿得到）；
 // 節裡寫的每一個數字都要在課文、圖的參數或這一節的滑桿值裡出現過（分節是換切法，不是新內容）。
 const numbersIn = (s) => (String(s || "").replace(/\\[a-zA-Z]+/g, " ").match(/\d+(?:\.\d+)?/g) || []).map(Number);
+
+// ── 旁白（beat.say）：念出來的話，念法寫成中文，所以數字也要從中文數字讀回來才比得了 ──
+// 「三分之十四」→ 3、14；「二點零一」→ 2.01；「十六」→ 16；「負二」→ 2（正負號跟 numbersIn 一樣不看）。
+// 不是數字的詞先拿掉（「十分」「萬一」…），免得被讀成數字。
+const CN_DIGIT = { 零: 0, 〇: 0, 一: 1, 二: 2, 兩: 2, 三: 3, 四: 4, 五: 5, 六: 6, 七: 7, 八: 8, 九: 9 };
+const CN_UNIT = { 十: 10, 百: 100, 千: 1000 };
+function cnInt(s) {
+  if (!s) return 0;
+  let total = 0;
+  let digit = 0;
+  for (const c of s) {
+    if (c in CN_DIGIT) digit = CN_DIGIT[c];
+    else { total += (digit || 1) * CN_UNIT[c]; digit = 0; }
+  }
+  return total + digit;
+}
+const spokenNumbers = (s) => {
+  const text = String(s || "").replace(/十分|萬一|一下子|千萬|一模一樣/g, " ");
+  const out = numbersIn(text);
+  for (const m of text.matchAll(/[零〇一二兩三四五六七八九十百千]+(?:點[零〇一二三四五六七八九]+)?/g)) {
+    const [whole, frac] = m[0].split("點");
+    // 沒有十百千的一串（「負三一路」的「三一」）是相鄰的兩個字，不是 31：一個字一個數；小數只看最後一個字
+    const digits = /[十百千]/.test(whole) ? [cnInt(whole)] : [...whole].map((c) => CN_DIGIT[c]);
+    if (frac) digits.push(Number(`${digits.pop()}.${[...frac].map((c) => CN_DIGIT[c]).join("")}`));
+    out.push(...digits);
+  }
+  return out;
+};
+// 念的稿：不准有 LaTeX 與會被念錯的符號（分數、次方、不等號、括號…都寫成中文：三分之十四、x 平方、大於等於）
+const SAY_BAD = /[$\\^_{}\/=<>≤≥≠→←∞×÷·√∫∑ΔδεπθΣ+*|()（）\[\]［］]/;
+const SAY_MAX = 56; // 字數上限：約 12 秒（實測台灣中文神經語音一秒四字多，含停頓）
+const SAY_MAX_MS = 12500;
+const NARRATION_INDEX = path.join(DIR, "narration.json");
+const narration = fs.existsSync(NARRATION_INDEX) ? JSON.parse(fs.readFileSync(NARRATION_INDEX, "utf8")) : null;
+const { hashOf: narrationHash, VOICE: NARRATION_VOICE, RATE: NARRATION_RATE } = require("./build_narration.js");
+let sayMissing = 0;
 function checkSections(id, L) {
   const S = L.sections;
   if (S === undefined) return "";
@@ -204,9 +240,10 @@ function checkSections(id, L) {
     const local = new Set(known);
     let shown = cjkLen(sec.title);
     const texts = [sec.title];
+    const spoken = [];
     beats.forEach((b, bi) => {
       const at = `${where}第 ${bi + 1} 句`;
-      const bad = Object.keys(b || {}).filter((k) => !["show", "note", "fig"].includes(k));
+      const bad = Object.keys(b || {}).filter((k) => !["show", "note", "fig", "say"].includes(k));
       if (bad.length) err(id, `${at} 多了不認得的欄位：${bad.join("、")}`);
       if (!Array.isArray(b.show) || !b.show.length || b.show.length > 2) err(id, `${at} 的 show 要 1–2 行`);
       (b.show || []).forEach((line) => {
@@ -228,6 +265,20 @@ function checkSections(id, L) {
         else local.add(Number(b.fig.to));
         const odd = Object.keys(b.fig || {}).filter((k) => !["use", "to"].includes(k));
         if (odd.length) err(id, `${at} 的 fig 多了：${odd.join("、")}`);
+      }
+      if (b.say !== undefined) {
+        const say = typeof b.say === "string" ? b.say.trim() : "";
+        if (!say) err(id, `${at} 的 say 是空的`);
+        else {
+          const sym = say.match(SAY_BAD);
+          if (sym) err(id, `${at} 的 say 有「${sym[0]}」：念的稿不寫 LaTeX 與符號（分數、次方、不等號寫成中文）`);
+          if (cjkLen(say) > SAY_MAX) err(id, `${at} 的 say ${cjkLen(say)} 字（≤ ${SAY_MAX}，約 12 秒）`);
+          if (say === (b.note || "").trim() || b.show.some((line) => line.replace(/\$/g, "") === say)) err(id, `${at} 的 say 照念畫面上的字：要講解畫面，不是重念`);
+          spoken.push(say);
+          const clip = narration && narration.clips[`${id}/${si}-${bi}`];
+          if (!clip || clip.h !== narrationHash(NARRATION_VOICE, NARRATION_RATE, say)) sayMissing += 1;
+          else if (clip.ms > SAY_MAX_MS) warn(id, `${at} 的旁白 ${(clip.ms / 1000).toFixed(1)} 秒（建議 ≤ 12）`);
+        }
       }
     });
     const acts = ["check", "predict", "drag"].filter((k) => sec[k] !== undefined);
@@ -265,8 +316,14 @@ function checkSections(id, L) {
     else if (shown > 150) warn(id, `${where} 畫面上的字 ${shown} 字（建議 ≤ 150）`);
     const fresh = [...new Set(texts.flatMap(numbersIn))].filter((n) => !local.has(n));
     if (fresh.length) err(id, `${where} 出現課文裡沒有的數字：${fresh.join("、")}（分節不寫新內容）`);
+    const said = [...new Set(spoken.flatMap(spokenNumbers))].filter((n) => !local.has(n));
+    if (said.length) err(id, `${where} 的旁白念了課文裡沒有的數字：${said.join("、")}（中文數字也算）`);
     parts.push(...texts);
   });
+  // 旁白要嘛整課都有、要嘛都沒有：「播放」一路念下去，不會念到一半沒聲音
+  const allBeats = S.flatMap((sec) => (sec && Array.isArray(sec.beats) ? sec.beats : []));
+  const withSay = allBeats.filter((b) => b && b.say !== undefined).length;
+  if (withSay && withSay !== allBeats.length) err(id, `say 要每一句都有（現在 ${withSay} / ${allBeats.length} 句）`);
   const want = (L.checks || []).map((_c, i) => i);
   const missing = want.filter((i) => !usedChecks.includes(i));
   const twice = usedChecks.filter((c, i) => usedChecks.indexOf(c) !== i);
@@ -453,6 +510,8 @@ for (const L of lessons) {
 const all = Object.keys(outline).length;
 const written = files.length;
 console.log(`新版課程：大綱 ${all} 課，已寫 ${written} 課${wanted.length ? `（這次驗 ${lessons.length} 課）` : ""}`);
+// 字改了、旁白還沒重錄：不擋（播放時那一句沒有聲音，分節照常點），但要看得到
+if (sayMissing) warnings.push(`旁白：${sayMissing} 句的 say 沒有對得上的錄音（node tools/build_narration.js）`);
 if (warnings.length) {
   console.log(`\n警告 ${warnings.length}：`);
   warnings.slice(0, 80).forEach((w) => console.log("  " + w));
