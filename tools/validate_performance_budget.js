@@ -85,6 +85,9 @@ const BUDGETS = {
   // 而只看清單的人一個位元組都不該為地圖付。版面在 build 時算好（map.js 約 16KB），畫法 course_map.js 約 40KB。
   // 上限留約五成；再撞頂該做的是把座標壓成整數陣列以外的格式（例如差分），不是調數字。
   "延後載入：課程地圖": { pattern: /^$/, budget: 90 * 1024, lazy: "map" },
+  // 2026-10-09 新增：課程影片的播放器（course_video.js，約 6KB）。只有有影片的課才抓；課程組只剩 1KB 多，塞不下。
+  // 影片本身（/media/*.mp4）不在預算裡：點了才載、不進 Service Worker 快取。
+  "延後載入：課程影片": { pattern: /^$/, budget: 16 * 1024, lazy: "video" },
   // 課文按 Stage 分檔（tools/build_course_v2.js 產生），打開某一課只抓那一個 Stage —— 使用者等的是「一個 Stage」，
   // 所以上限管最大的那一支（現況 Stage 12 分析入門 351KB）。撞頂該做的是把那個 Stage 按章再拆，不是調數字。
   "延後載入：課文（最大的 Stage）": { pattern: /^src\/course_v2\/stage-\d+\.js$/, budget: 450 * 1024, maxFile: true }
