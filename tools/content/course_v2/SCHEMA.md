@@ -57,6 +57,21 @@
 }
 ```
 
+## 影片（video，可選，每課最多 1 支）
+
+Manim 做的概念動畫（來源 `manim/scenes/`，部署時由 `tools/fetch_media.js` 抓進站上的 `/media/`，清單是 `media/manifest.json`）。
+課文裡只寫短名，網址在執行時組：`/media/<id>-<light|dark>-<720p|1080p>.mp4`（視窗 < 900px 用 720p）與 `…-poster.jpg`。
+頁面上先只放預覽圖＋播放鍵，點了才建 `<video>`；不自動播放。
+
+```jsonc
+"video": {
+  "id": "riemann",                        // media/manifest.json 的 videos 裡要有
+  "after": 4,                             // 跟 figures 的 after 同義：放在第幾段觀念之後（同一段有圖時排在圖後面）；"examples" = 範例區最後
+  "duration": 27,                         // 秒（> 0，取整數秒、無條件捨去，跟播放器顯示的一樣），顯示在播放鍵旁
+  "caption": "n 加倍，左和與右和夾向 14/3" // 純文字一行（≤ 40 字），不寫 $…$
+}
+```
+
 ## 圖（figures，可選，每課最多 4 張）
 
 `visual` 是給作者的文字規格；真正上畫面的是 `figures`。一張圖要嘛是靜態的 `graph`，要嘛是一個 `widget`（一根滑桿）。

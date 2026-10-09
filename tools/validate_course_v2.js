@@ -96,6 +96,7 @@ const allText = (lesson) => {
   parts.push(...(lesson.pitfalls || []));
   (lesson.checks || []).forEach((c) => { parts.push(c.ask); (c.options || []).forEach((o) => parts.push(o.label, o.why || "")); });
   (lesson.practice || []).forEach((p) => parts.push(p.note || ""));
+  if (lesson.video) parts.push(lesson.video.caption || "");
   (lesson.figures || []).forEach((f) => parts.push(f.caption || "", ...((f.graph && f.graph.labels) || []).map((l) => l.text || "")));
   return parts.filter(Boolean).join("\n");
 };
@@ -157,6 +158,24 @@ const WIDGET_NEEDS = {
   zoom: ["curves", "center", "levels", "window"],
   approach: ["f", "a", "range", "window"]
 };
+// ── 影片（lesson.video）──
+// 短名要在 media/manifest.json 的 videos 裡（部署時 tools/fetch_media.js 照那份清單抓檔），after 跟 figures 同義。
+const MEDIA_MANIFEST = path.join(ROOT, "media", "manifest.json");
+const mediaVideos = fs.existsSync(MEDIA_MANIFEST) ? new Set(JSON.parse(fs.readFileSync(MEDIA_MANIFEST, "utf8")).videos || []) : new Set();
+function checkVideo(id, L) {
+  const v = L.video;
+  if (v === undefined) return;
+  if (!v || typeof v !== "object" || Array.isArray(v)) { err(id, "video 要是一個物件（每課最多一支）"); return; }
+  if (!mediaVideos.has(v.id)) err(id, `video 的 id「${v.id}」不在 media/manifest.json 的 videos（${[...mediaVideos].join("、")}）`);
+  if (v.after !== undefined && v.after !== "examples" && !(Number.isInteger(v.after) && v.after >= 0 && v.after < (L.concept || []).length)) err(id, `video 的 after 要是觀念段落的索引（0–${(L.concept || []).length - 1}）或 "examples"`);
+  if (!(typeof v.duration === "number" && v.duration > 0)) err(id, "video 的 duration 要是正的秒數");
+  if (typeof v.caption !== "string" || !v.caption.trim()) err(id, "video 沒有 caption");
+  else if (cjkLen(v.caption) > 40) err(id, `video 的 caption ${cjkLen(v.caption)} 字，一行寫得完才算（≤ 40）`);
+  else if (/\$/.test(v.caption)) err(id, "video 的 caption 是純文字，不寫 $…$");
+  const extra = Object.keys(v).filter((k) => !["id", "after", "duration", "caption"].includes(k));
+  if (extra.length) err(id, `video 多了不認得的欄位：${extra.join("、")}`);
+}
+
 function checkFigures(id, L) {
   const F = L.figures;
   if (F === undefined) return;
@@ -308,6 +327,7 @@ for (const L of lessons) {
   (L.gaps || []).forEach((g, i) => { if (!g.tag || !(g.count > 0)) err(id, `gaps[${i}] 要有 tag 與 count`); });
 
   checkFigures(id, L);
+  checkVideo(id, L);
 
   const text = allText(L);
   // 正文裡的行內數學寫成 $…$（KaTeX）：$ 要成對、每一段都要渲染得過
