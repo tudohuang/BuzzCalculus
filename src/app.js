@@ -5054,7 +5054,7 @@
   const plUI = window.BuzzProofLabUI.create({ escapeHtml, escapeAttr, icon, proofs });
 
   // ── 課程（內容、畫面、狀態都在 course.js：中文介面是新版課程，英文介面是舊的 25 課）──
-  const courseUI = window.BuzzCourseUI.create({ escapeHtml, escapeAttr, icon, referenceAnswerHTML, loadRecords, saveRecords, ensureLazy, startQuiz, render, go: (next) => { view = next; render(); window.scrollTo(0, 0); }, noteCourseRead, focusModeOn, xpLevel: xpLevelInfo, streakDays: (r) => practiceStreakInfo(r, activityCounts(r)).streak });
+  const courseUI = window.BuzzCourseUI.create({ escapeHtml, escapeAttr, icon, referenceAnswerHTML, loadRecords, saveRecords, ensureLazy, startQuiz, render, go: (next) => { view = next; render(); window.scrollTo(0, 0); }, noteCourseRead, focusModeOn, abilityProfile, xpLevel: xpLevelInfo, streakDays: (r) => practiceStreakInfo(r, activityCounts(r)).streak });
   const renderCourse = () => courseUI.renderIndex(loadRecords());
   const renderCourseLesson = () => courseUI.renderCurrent(loadRecords());
 

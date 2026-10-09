@@ -479,7 +479,7 @@
     const out = {};
 
     // 偏好類：新的覆蓋舊的，但舊的有、新的沒有時仍然保留
-    ["settings", "plan", "placement", "onboardingLevel", "onboardingSeen", "planReportSeen", "schema"].forEach((key) => {
+    ["settings", "plan", "placement", "onboardingLevel", "onboardingSeen", "planReportSeen", "schema", "courseMap"].forEach((key) => {
       out[key] = newer[key] !== undefined && newer[key] !== null ? newer[key] : older[key];
     });
     out.updatedAt = newer.updatedAt || older.updatedAt || "";

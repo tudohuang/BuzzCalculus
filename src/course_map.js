@@ -31,10 +31,31 @@
   const STAGE_OUT = [0.2, 0.3];
   const LESSON_IN = [0.45, 0.6];
   const STYLE = `
-.cv2-map { overflow: hidden; border: 1px solid var(--line); border-radius: 14px; background: var(--paper); -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
+.cv2-map { display: flex; flex-direction: column; gap: 8px; }
+.cmap-stage { position: relative; overflow: hidden; border: 1px solid var(--line); border-radius: 14px; background: var(--paper); -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
+.cmap-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; }
+.cmap-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.cmap-chips button, .cmap-todo button { min-height: 40px; border: 1px solid var(--line); background: var(--panel); color: var(--ink); font: inherit; font-weight: 700; cursor: pointer; }
+.cmap-chips button { padding: 0 12px; border-radius: 999px; font-size: 0.86rem; font-variant-numeric: tabular-nums; }
+.cmap-chips button[aria-pressed="true"] { border-color: var(--ink); background: var(--ink); color: var(--panel); }
+.cmap-dot { display: inline-block; width: 7px; height: 7px; margin-right: 5px; border-radius: 50%; background: var(--blue); vertical-align: 1px; }
+.cmap-dot.is-red { background: var(--red); }
+.cmap-goal { flex-basis: 100%; display: grid; grid-template-columns: minmax(0, 1fr) auto auto; align-items: center; gap: 0 6px; margin: 0; padding: 4px 4px 4px 12px; border: 1px solid color-mix(in srgb, var(--violet) 50%, var(--line)); border-radius: 12px; font-size: 0.86rem; }
+.cmap-goal b { color: var(--violet); }
+.cmap-goal small { display: inline-block; color: var(--muted); font-size: inherit; font-variant-numeric: tabular-nums; }
+.cmap-goal .button { min-height: 40px; }
+.cmap-todo { display: grid; gap: 6px; margin: 0; padding: 0; list-style: none; }
+.cmap-todo button { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 0 10px; width: 100%; padding: 6px 12px; border-radius: 12px; text-align: left; }
+.cmap-todo strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 0.9rem; }
+.cmap-todo small { grid-column: 1; color: var(--red); font-size: 0.8rem; }
+.cmap-todo em { grid-column: 2; grid-row: 1 / span 2; padding: 4px 10px; border-radius: 999px; background: var(--ink); color: var(--panel); font-size: 0.82rem; font-style: normal; white-space: nowrap; }
+.cmap-empty { margin: 0; color: var(--muted); font-size: 0.86rem; }
+.cmap-why { margin: 0 0 6px; color: var(--red); font-size: 0.86rem; font-weight: 700; }
+.cmap-tag { padding: 1px 8px; border-radius: 999px; background: color-mix(in srgb, var(--blue) 12%, var(--panel)); color: var(--blue); font-weight: 700; }
+.cmap-tag.is-goal { background: color-mix(in srgb, var(--violet) 12%, var(--panel)); color: var(--violet); }
 .cmap-canvas { display: block; width: 100%; height: 100%; touch-action: none; outline: none; cursor: grab; }
 .cmap-canvas:active { cursor: grabbing; }
-.cv2-map.is-kbd .cmap-canvas:focus { outline: 2px solid var(--blue); outline-offset: -2px; }
+.cmap-stage.is-kbd .cmap-canvas:focus { outline: 2px solid var(--blue); outline-offset: -2px; }
 .cmap-zoom { position: absolute; top: 10px; right: 10px; display: grid; gap: 6px; }
 .cmap-zoom button { width: 40px; height: 40px; border: 1px solid var(--line); border-radius: 12px; background: var(--panel); color: var(--ink); font: inherit; font-size: 1.2rem; font-weight: 700; line-height: 1; cursor: pointer; }
 .cmap-card { position: absolute; left: 10px; right: 10px; bottom: 10px; max-width: 400px; padding: 12px 14px 14px; border: 1px solid var(--line); border-radius: 14px; background: var(--panel); box-shadow: var(--shadow); }
@@ -195,11 +216,20 @@
   let hlDesc = null;
   let hlRel = null;
   let tiers = null; // Uint8Array：0 還沒、1 完成、2 熟練、3 全破
+  // 每一課的樣式（打開時與紀錄變了才算一次，畫的時候只讀這兩個 typed array）：
+  //   sty  0 還遠（先修沒齊、淡的）、1 可以學（先修都完成了）、2 完成（亮的）
+  //   emph 1 照目前的篩選是「要看的」、0 被篩掉（淡掉）
+  let sty = null;
+  let emph = null;
+  let D = null; // derive() 的結果：點亮數、可以學、目標、該練
+  let stageEl = null;
+  let pending = { focus: "", say: "" }; // 整頁重繪之後要把焦點還給誰、要念什麼（篩選、目標）
   // 剛做完的那一課亮一下（從分節的結算按「在地圖上看」進來）：一圈金色的環往外擴、淡掉，只播一次。
+  // 那一課剛好把整章（或整個 Stage）做完：章框（Stage 框）也跟著亮一次。
   // reduced-motion：不動，環直接畫著，時間到拿掉。
-  let lit = null; // { i, t0 }
+  let lit = null; // { i, t0, ci, si }
   const LIT_MS = 1600;
-  let nodePaths = null; // [還沒, 完成, 熟練環, 全破環, 下一課]
+  let N = null; // 膠囊與各種環的 Path2D（buildNodes）
   let labels = null; // 課的字：{ no, title, noW }
   let stageLabel = null;
   let chapterLabel = null;
@@ -236,6 +266,7 @@
     const blue = tok("--blue");
     const gold = tok("--gold");
     const violet = tok("--violet");
+    const red = tok("--red");
     const dark = document.documentElement.dataset.theme === "dark";
     pal = {
       dark,
@@ -255,6 +286,12 @@
       chapterStroke: rgb(line),
       nodeFill: rgb(panel),
       nodeStroke: rgb(strong),
+      // 還遠的課：底色幾乎跟紙一樣、框淡；字用 --muted（對這個底色仍 ≥ 4.5，e2e 量）
+      farFill: mix(paper, panel, 0.5),
+      farStroke: mix(line, strong, 0.45),
+      farBlob: mix(paper, line, 0.75),
+      doneBlob: mix(panel, green, dark ? 0.45 : 0.4),
+      red: rgb(red),
       doneFill: mix(panel, green, dark ? 0.3 : 0.16),
       doneStroke: rgb(green),
       green: rgb(green),
@@ -433,7 +470,13 @@
     ctx.setLineDash(m.dashFor(s));
     ctx.stroke(m.pathStageBranch);
     ctx.setLineDash(m.noDash);
-    // 章框
+    // 整個 Stage 都完成：金框（專注模式不畫，見 buildNodes）
+    if (N.stageGold) {
+      ctx.lineWidth = 3 / s;
+      ctx.strokeStyle = pal.gold;
+      ctx.stroke(N.stageGold);
+    }
+    // 章框＋章的進度條（框頂、章名底下的一條細線）
     if (aNodes > 0.01) {
       ctx.globalAlpha = aNodes;
       ctx.fillStyle = pal.chapterFill;
@@ -441,6 +484,10 @@
       ctx.strokeStyle = pal.chapterStroke;
       ctx.lineWidth = 1 / s;
       ctx.stroke(m.pathChapters);
+      ctx.fillStyle = pal.line;
+      ctx.fill(N.chTrack);
+      ctx.fillStyle = pal.green;
+      ctx.fill(N.chBar);
     }
 
     // 邊：Stage 層 → 章層 → 課層，各自淡入淡出
@@ -478,48 +525,84 @@
         ctx.setLineDash(m.noDash);
       }
     }
+    // 目標那一串（還沒完成的先修 → 目標）的邊：章那一層就看得到
+    const aGoal = Math.max(aNodes * 0.7, aLesson);
+    if (!dim && N.goalEdges && aGoal > 0.01) {
+      ctx.globalAlpha = aGoal * 0.7;
+      ctx.lineWidth = 1.5 / s;
+      ctx.strokeStyle = pal.violet;
+      ctx.stroke(N.goalEdges);
+    }
 
-    // 課的膠囊
+    // 課的膠囊：三種樣式（還遠／可以學／完成）× 兩層（被篩掉的淡、要看的亮）
     if (aNodes > 0.01) {
       const base = aNodes * (0.55 + 0.45 * aLesson);
-      ctx.globalAlpha = base * (dim ? 0.3 : 1);
-      ctx.lineWidth = 1.2 / s;
-      ctx.fillStyle = aLesson > 0.5 ? pal.nodeFill : pal.line;
-      ctx.fill(nodePaths[0]);
-      ctx.fillStyle = pal.doneFill;
-      ctx.fill(nodePaths[1]);
-      ctx.globalAlpha = base * (dim ? 0.3 : 1) * aLesson;
-      ctx.strokeStyle = pal.nodeStroke;
-      ctx.stroke(nodePaths[0]);
-      ctx.strokeStyle = pal.doneStroke;
-      ctx.stroke(nodePaths[1]);
-      ctx.globalAlpha = base * (dim ? 0.3 : 1);
-      ctx.lineWidth = 2 / s;
-      ctx.strokeStyle = pal.blue;
-      ctx.stroke(nodePaths[2]);
-      ctx.strokeStyle = pal.gold;
-      ctx.stroke(nodePaths[3]);
-      if (!dim && nodePaths[4]) { ctx.lineWidth = 2.4 / s; ctx.strokeStyle = pal.gold; ctx.stroke(nodePaths[4]); }
-      if (dim) {
-        // 亮起來的那一串再畫一次（實心、不淡）
-        ctx.globalAlpha = base;
+      const near = aLesson > 0.5;
+      for (let layer = 0; layer < 2; layer += 1) {
+        if (!layer && !N.anyDim) continue;
+        const la = base * (dim ? 0.3 : 1) * (layer ? 1 : 0.3);
+        const F = N.fill[layer];
+        ctx.globalAlpha = la;
         ctx.lineWidth = 1.2 / s;
-        ctx.fillStyle = pal.nodeFill;
-        ctx.fill(m.hlNodes[0]);
+        ctx.fillStyle = near ? pal.farFill : pal.farBlob;
+        ctx.fill(F[0]);
+        ctx.fillStyle = near ? pal.nodeFill : pal.strong;
+        ctx.fill(F[1]);
+        ctx.fillStyle = near ? pal.doneFill : pal.doneBlob;
+        ctx.fill(F[2]);
+        ctx.globalAlpha = la * aLesson;
+        ctx.strokeStyle = pal.farStroke;
+        ctx.stroke(F[0]);
         ctx.strokeStyle = pal.nodeStroke;
-        ctx.stroke(m.hlNodes[0]);
-        ctx.fillStyle = pal.doneFill;
-        ctx.fill(m.hlNodes[1]);
+        ctx.stroke(F[1]);
         ctx.strokeStyle = pal.doneStroke;
-        ctx.stroke(m.hlNodes[1]);
+        ctx.stroke(F[2]);
+        ctx.globalAlpha = la;
         ctx.lineWidth = 2 / s;
         ctx.strokeStyle = pal.blue;
-        ctx.stroke(m.hlNodes[2]);
+        ctx.stroke(N.ring2[layer]);
         ctx.strokeStyle = pal.gold;
-        ctx.stroke(m.hlNodes[3]);
+        ctx.stroke(N.ring3[layer]);
+      }
+      if (!dim) {
+        ctx.globalAlpha = base * aLesson;
+        ctx.fillStyle = pal.blue;
+        ctx.fill(N.dots);
+        ctx.globalAlpha = base;
+        ctx.lineWidth = 1.6 / s;
+        ctx.strokeStyle = pal.violet;
+        ctx.stroke(N.goal);
+        ctx.lineWidth = 3 / s;
+        ctx.stroke(N.goalHead);
+        ctx.lineWidth = 2.4 / s;
+        ctx.strokeStyle = pal.red;
+        ctx.stroke(N.red);
+        if (N.next) { ctx.strokeStyle = pal.gold; ctx.stroke(N.next); }
+      } else {
+        // 亮起來的那一串再畫一次（實心、不淡）
+        const hl = m.hlNodes;
+        ctx.globalAlpha = base;
+        ctx.lineWidth = 1.2 / s;
+        ctx.fillStyle = pal.farFill;
+        ctx.fill(hl[0]);
+        ctx.strokeStyle = pal.farStroke;
+        ctx.stroke(hl[0]);
+        ctx.fillStyle = pal.nodeFill;
+        ctx.fill(hl[1]);
+        ctx.strokeStyle = pal.nodeStroke;
+        ctx.stroke(hl[1]);
+        ctx.fillStyle = pal.doneFill;
+        ctx.fill(hl[2]);
+        ctx.strokeStyle = pal.doneStroke;
+        ctx.stroke(hl[2]);
+        ctx.lineWidth = 2 / s;
+        ctx.strokeStyle = pal.blue;
+        ctx.stroke(hl[3]);
+        ctx.strokeStyle = pal.gold;
+        ctx.stroke(hl[4]);
         ctx.lineWidth = 3 / s;
         ctx.strokeStyle = pal.ink;
-        ctx.stroke(m.hlNodes[4]);
+        ctx.stroke(hl[5]);
       }
     }
 
@@ -547,12 +630,12 @@
           const y = m.ly[i];
           if (x + hw < wx0 || x - hw > wx1 || y + 20 < wy0 || y - 20 > wy1) continue;
           const L = lab[i];
-          ctx.globalAlpha = alpha;
+          ctx.globalAlpha = emph[i] || dim ? alpha : alpha * 0.4;
           ctx.font = F_LESSON_NO;
           ctx.fillStyle = pal.muted;
           ctx.fillText(L.no, x - hw + 12, y + 0.5);
           ctx.font = F_LESSON;
-          ctx.fillStyle = pal.ink;
+          ctx.fillStyle = sty[i] ? pal.ink : pal.muted;
           ctx.fillText(L.title, x - hw + 12 + L.noW + 5, y + 0.5);
           labelled += 1;
         }
@@ -700,6 +783,16 @@
       const y = m.ly[lit.i] * s + cam.ty - h / 2 - grow;
       if (typeof ctx.roundRect === "function") ctx.roundRect(x, y, w + 2 * grow, h + 2 * grow, h / 2 + grow);
       else ctx.rect(x, y, w + 2 * grow, h + 2 * grow);
+      // 這一課把整章／整個 Stage 做完了：框也亮一次（同一圈金色、同一個節奏）
+      for (let k = 0; k < 2; k += 1) {
+        const b = k ? (lit.si >= 0 ? m.stageBoxes[lit.si] : null) : (lit.ci >= 0 ? m.chapterBoxes[lit.ci] : null);
+        if (!b) continue;
+        const g = grow * 0.6;
+        const bx = b[0] * s + cam.tx - g;
+        const by = b[1] * s + cam.ty - g;
+        if (typeof ctx.roundRect === "function") ctx.roundRect(bx, by, b[2] * s + 2 * g, b[3] * s + 2 * g, 12 + g);
+        else ctx.rect(bx, by, b[2] * s + 2 * g, b[3] * s + 2 * g);
+      }
       ctx.stroke();
     }
     ctx.globalAlpha = 1;
@@ -724,7 +817,7 @@
     hlAnc = new Path2D();
     hlDesc = new Path2D();
     hlRel = new Path2D();
-    const hl = [new Path2D(), new Path2D(), new Path2D(), new Path2D(), new Path2D()];
+    const hl = [new Path2D(), new Path2D(), new Path2D(), new Path2D(), new Path2D(), new Path2D()];
     G.hlNodes = hl;
     if (i < 0) { renderCard(); request(); return; }
     // 祖先：往先修走到底
@@ -757,11 +850,10 @@
     const hh = G.NH / 2;
     for (let v = 0; v < G.n; v += 1) {
       if (!mark[v]) continue;
-      const path = tiers[v] ? hl[1] : hl[0];
-      roundRect(path, G.lx[v] - hw, G.ly[v] - hh, G.NW, G.NH, hh);
+      roundRect(hl[sty[v]], G.lx[v] - hw, G.ly[v] - hh, G.NW, G.NH, hh);
       // 亮起來的課只留熟練／全破的環（跟平常同一套顏色）；選中的那一課另外一圈深色
-      if (tiers[v] >= 2) roundRect(hl[tiers[v] === 2 ? 2 : 3], G.lx[v] - hw - 3.5, G.ly[v] - hh - 3.5, G.NW + 7, G.NH + 7, hh + 3.5);
-      if (mark[v] === 3) roundRect(hl[4], G.lx[v] - hw - 5, G.ly[v] - hh - 5, G.NW + 10, G.NH + 10, hh + 5);
+      if (tiers[v] >= 2) roundRect(hl[tiers[v] === 2 ? 3 : 4], G.lx[v] - hw - 3.5, G.ly[v] - hh - 3.5, G.NW + 7, G.NH + 7, hh + 3.5);
+      if (mark[v] === 3) roundRect(hl[5], G.lx[v] - hw - 5, G.ly[v] - hh - 5, G.NW + 10, G.NH + 10, hh + 5);
     }
     renderCard();
     announce(i);
@@ -777,28 +869,46 @@
     if (!L.available) return "尚未開放";
     return ["", "完成", "熟練", "全破"][tiers[i]] || (L.opened ? "讀過" : "還沒開始");
   }
+  // 一課除了狀態以外的事：可以學、該練的理由、在不在目標那一串上（小卡、念出來、隱藏清單共用這一份）
+  function tagsOf(i) {
+    const out = [];
+    if (sty[i] === 1) out.push("可以學");
+    if (D.goal && D.goal.i === i) out.push(tiers[i] ? "目標（已完成）" : "目標");
+    else if (D.goalMark[i]) out.push("目標要先學");
+    return out;
+  }
   function renderCard() {
     if (!card) return;
     if (sel < 0) { card.hidden = true; card.innerHTML = ""; return; }
     const L = opts.lessons[sel];
     const esc = opts.escapeHtml;
+    const attr = opts.escapeAttr;
     const minutes = L.available ? `<span>閱讀 ${L.read} 分</span><span>完成 ${L.total} 分</span>` : "";
+    const ids = D.ids[sel];
+    const why = D.why[sel];
+    const isGoal = D.goal && D.goal.i === sel;
     card.innerHTML = `
       <p class="cmap-card-kicker">${esc(L.no)} · ${esc(L.stageTitle)}${L.branch ? "（支線）" : ""}</p>
       <h3>${esc(L.title)}</h3>
-      <p class="cmap-card-meta">${minutes}<span class="cmap-tier t${tiers[sel]}">${statusText(sel)}</span></p>
+      <p class="cmap-card-meta">${minutes}<span class="cmap-tier t${tiers[sel]}">${statusText(sel)}</span>${tagsOf(sel).map((x) => `<span class="cmap-tag${x === "可以學" ? "" : " is-goal"}">${x}</span>`).join("")}</p>
       <p class="cmap-card-meta"><span><i class="cmap-key is-anc"></i>先修 ${ancCount} 課</span><span><i class="cmap-key is-desc"></i>後續 ${descCount} 課</span></p>
+      ${why ? `<p class="cmap-why">${esc(why)}</p>` : ""}
       <div class="cmap-card-actions">
-        ${L.available ? `<button type="button" class="button home-primary" data-action="open-course-lesson" data-lesson-id="${opts.escapeAttr(L.id)}">開始這課</button>` : ""}
+        ${ids ? `<button type="button" class="button ${why ? "home-primary" : "secondary"}" data-action="course-lesson-practice" data-lesson-id="${attr(L.id)}" data-ids="${attr(ids.join(" "))}">練這課 ${ids.length} 題</button>` : ""}
+        ${L.available ? `<button type="button" class="button ${why ? "secondary" : "home-primary"}" data-action="open-course-lesson" data-lesson-id="${attr(L.id)}">${tiers[sel] ? "打開這課" : "開始這課"}</button>` : ""}
         ${ancCount ? `<button type="button" class="button secondary" data-cmap="prereq">看先修</button>` : ""}
+        ${isGoal ? `<button type="button" class="button ghost" data-action="course-goal" data-lesson-id="">清除目標</button>` : !tiers[sel] && L.available ? `<button type="button" class="button ghost" data-action="course-goal" data-lesson-id="${attr(L.id)}">設為目標</button>` : ""}
         <button type="button" class="button ghost cmap-close" data-cmap="close" aria-label="關閉">×</button>
       </div>`;
     card.hidden = false;
   }
+  function detail(i) {
+    return [statusText(i), ...tagsOf(i), D.why[i]].filter(Boolean).join("，");
+  }
   function announce(i) {
     if (!live || i < 0) return;
     const L = opts.lessons[i];
-    live.textContent = `${L.no} ${L.title}，${statusText(i)}，先修 ${ancCount} 課、後續 ${descCount} 課`;
+    live.textContent = `${L.no} ${L.title}，${detail(i)}，先修 ${ancCount} 課、後續 ${descCount} 課`;
   }
   function showPrereqs() {
     if (sel < 0) return;
@@ -885,7 +995,7 @@
   }
   function onDown(e) {
     if (e.button !== undefined && e.button > 0 && e.pointerType === "mouse") return;
-    host.classList.remove("is-kbd");
+    stageEl.classList.remove("is-kbd");
     canvas.focus({ preventScroll: true });
     try { canvas.setPointerCapture(e.pointerId); } catch (_error) { /* 合成事件沒有 capture */ }
     const [x, y] = local(e);
@@ -1025,7 +1135,7 @@
   }
   function onKey(e) {
     if (e.target !== canvas) return;
-    host.classList.add("is-kbd");
+    stageEl.classList.add("is-kbd");
     const k = e.key;
     let next = -2;
     if (k === "ArrowRight" || k === "ArrowLeft" || k === "ArrowUp" || k === "ArrowDown") {
@@ -1063,14 +1173,17 @@
 
   /* ── 尺寸與主題 ── */
   function measure() {
-    const r = host.getBoundingClientRect();
-    // 地圖高度：視窗剩下的高度（扣掉手機底部分頁列），不讓整頁需要捲才看得到地圖的下緣
+    const r = stageEl.getBoundingClientRect();
+    // 地圖高度：視窗剩下的高度（扣掉手機底部分頁列），不讓整頁需要捲才看得到地圖的下緣；
+    // 「該練」的清單在地圖底下，也要在第一屏裡（地圖讓出它的高度，最矮 300）
     const nav = document.querySelector(".topbar-nav");
     const navTop = nav && nav.getBoundingClientRect().height && getComputedStyle(nav).position === "fixed" ? nav.getBoundingClientRect().top : window.innerHeight;
-    const want = Math.max(360, Math.round(Math.min(navTop, window.innerHeight) - Math.max(0, r.top) - 12));
-    if (Math.abs(host.offsetHeight - want) > 2) host.style.height = `${want}px`;
-    const w = Math.max(1, Math.round(host.clientWidth));
-    const h = Math.max(1, Math.round(host.clientHeight));
+    const list = host.querySelector(".cmap-list");
+    const below = list ? list.offsetHeight + 8 : 0;
+    const want = Math.max(below ? 300 : 360, Math.round(Math.min(navTop, window.innerHeight) - Math.max(0, r.top) - 12 - below));
+    if (Math.abs(stageEl.offsetHeight - want) > 2) stageEl.style.height = `${want}px`;
+    const w = Math.max(1, Math.round(stageEl.clientWidth));
+    const h = Math.max(1, Math.round(stageEl.clientHeight));
     dpr = Math.min(2, window.devicePixelRatio || 1);
     if (w === vw && h === vh && canvas.width === Math.round(w * dpr)) return false;
     // 保持畫面中心那一點不動
@@ -1104,51 +1217,176 @@
       }
       return { no: L.no, title, noW: noW[i] };
     });
-    const d = G.data;
-    const stageDone = d.stages.map(() => 0);
-    const stageTotal = d.stages.map(() => 0);
-    const chDone = d.chapters.map(() => 0);
-    const chTotal = d.chapters.map(() => 0);
-    opts.lessons.forEach((L, i) => {
-      const ci = G.chapterOf[i];
-      const si = G.stageOfChapter[ci];
-      stageTotal[si] += 1;
-      chTotal[ci] += 1;
-      if (tiers[i]) { stageDone[si] += 1; chDone[ci] += 1; }
-    });
     stageLabel = opts.stages.map((st, si) => {
-      const tail = `${st.branch ? "支線 · " : ""}${stageDone[si]}/${stageTotal[si]}`;
+      const tail = `${st.branch ? "支線 · " : ""}${D.stDone[si]}/${D.stTotal[si]}`;
       c.font = F_STAGE_NO;
       const nW = c.measureText(String(st.n)).width;
       c.font = F_LABEL;
       const titleW = c.measureText(st.title).width;
       c.font = F_SMALL;
       const tailW = c.measureText(tail).width;
-      return { n: String(st.n), title: st.title, tail, nW, titleW, w: nW + titleW + tailW + 12, branch: Boolean(st.branch), done: stageTotal[si] > 0 && stageDone[si] === stageTotal[si] };
+      return { n: String(st.n), title: st.title, tail, nW, titleW, w: nW + titleW + tailW + 12, branch: Boolean(st.branch), done: D.stComplete[si] };
     });
     const chapters = opts.stages.flatMap((st) => st.chapters);
     chapterLabel = chapters.map((ch, ci) => {
       c.font = F_LABEL;
       const w = c.measureText(ch.title).width;
       const codeW = c.measureText(ch.code).width;
-      return { title: ch.title, code: ch.code, full: `${ch.code} ${ch.title}`, w, codeW, done: chDone[ci], total: chTotal[ci], count: `${chDone[ci]}/${chTotal[ci]}` };
+      return { title: ch.title, code: ch.code, full: `${ch.code} ${ch.title}`, w, codeW, done: D.chDone[ci], total: D.chTotal[ci], count: `${D.chDone[ci]}/${D.chTotal[ci]}` };
     });
+  }
+
+  /* ── 這個人走到哪：點亮、可以學、目標、該練（打開地圖與紀錄變了才算一次，畫的時候不算）──
+     「該練」只從既有的紀錄推，不另外記東西。門檻跟 planner／首頁同一套說法，改的時候兩邊一起看：
+       錯題     推薦題還在 records.mistakes 裡（答錯進錯題本，連對才清掉）              →「上次錯 n 題」
+       該複習   這課的主要技巧（≥ 一半的推薦題都掛著的技巧）被能力模型判成該回溫：跟首頁「技巧回溫」
+                （app.js skillRefreshDue）同一條 —— 量過、精熟度 ≥ 45、dueAt 已過、最後一次碰在 7 天以前 →「n 天沒碰，該複習」
+       常錯     推薦題累計作答 ≥ 3 次、答對率 < 60%                                      →「答對 x%」
+                或主要技巧量過、精熟度 < 65（planner classify 的 weak，SOLID = 65）       →「〈技巧〉還不穩」
+       還沒熟練 完成了、核心題還沒全對（課程表的「熟練」差在哪）                        →「核心題還差 n 題」
+     一課只給一個理由（上面的順序就是優先序，也是「該練」清單的排序）。只看完成的課：還沒上的課該做的是「上」，不是「練」。
+     「練這課」的題：還在錯題本的（到期的先）＋ 還沒答對過的非挑戰題；都沒有（只是該回溫）就整組非挑戰題再做一次。 */
+  const DAY = 86400000;
+  function goalPlan(g, isDone, minutesOf) {
+    const n = G.n;
+    const miss = new Uint8Array(n);
+    const seen = new Uint8Array(n);
+    const stack = [g];
+    if (!isDone(g)) miss[g] = 1;
+    while (stack.length) {
+      G.preds[stack.pop()].forEach((p) => { if (!seen[p]) { seen[p] = 1; if (!isDone(p)) miss[p] = 1; stack.push(p); } });
+    }
+    // 拓撲順序（同時可以學的照大綱順序）：每次拿大綱裡最前面、先修都不缺的那一課
+    const order = [];
+    const left = miss.slice();
+    let minutes = 0;
+    for (let guard = 0; guard < n; guard += 1) {
+      let pick = -1;
+      for (let v = 0; v < n && pick < 0; v += 1) if (left[v] && G.preds[v].every((p) => !left[p])) pick = v;
+      if (pick < 0) break;
+      left[pick] = 0;
+      order.push(pick);
+      minutes += Number(minutesOf(pick)) || 0;
+    }
+    return { i: g, missing: order, minutes, first: order.length ? order[0] : -1, mark: miss };
+  }
+  function derive(o) {
+    const n = G.n;
+    const rec = o.records || {};
+    const stats = rec.problemStats || {};
+    const mistakes = rec.mistakes || {};
+    const skills = (o.profile && o.profile.skills) || {};
+    const now = o.now || Date.now();
+    const d = G.data;
+    const out = {
+      lit: 0, mastered: 0, ready: 0, why: Array(n).fill(""), ids: Array(n).fill(null), practice: [], goal: null, goalMark: new Uint8Array(n),
+      chDone: d.chapters.map(() => 0), chTotal: d.chapters.map(() => 0), stDone: d.stages.map(() => 0), stTotal: d.stages.map(() => 0)
+    };
+    sty = new Uint8Array(n);
+    emph = new Uint8Array(n);
+    for (let i = 0; i < n; i += 1) {
+      const ci = G.chapterOf[i];
+      const si = G.stageOfChapter[ci];
+      out.chTotal[ci] += 1;
+      out.stTotal[si] += 1;
+      if (tiers[i]) {
+        sty[i] = 2;
+        out.lit += 1;
+        out.chDone[ci] += 1;
+        out.stDone[si] += 1;
+        if (tiers[i] >= 2) out.mastered += 1;
+      } else if (o.lessons[i].available && G.preds[i].every((p) => tiers[p])) {
+        sty[i] = 1;
+        out.ready += 1;
+      }
+    }
+    out.chComplete = out.chDone.map((x, ci) => x > 0 && x === out.chTotal[ci]);
+    out.stComplete = out.stDone.map((x, si) => x > 0 && x === out.stTotal[si]);
+    for (let i = 0; i < n; i += 1) {
+      const P = o.lessons[i].practice || [];
+      if (!tiers[i] || !P.length) continue;
+      const solved = (id) => Boolean(stats[id] && stats[id].correct > 0);
+      const wrong = [];
+      const fresh = [];
+      const easy = [];
+      const hits = {};
+      let tot = 0;
+      let cor = 0;
+      P.forEach((p) => {
+        const st = stats[p.id];
+        const mk = mistakes[p.id];
+        if (mk) wrong.push([p.id, mk.srs && Number.isFinite(Number(mk.srs.dueAt)) ? Number(mk.srs.dueAt) : 0]);
+        if (st) { tot += Number(st.total) || 0; cor += Number(st.correct) || 0; }
+        if (p.kind !== "challenge") { easy.push(p.id); if (!mk && !solved(p.id)) fresh.push(p.id); }
+        (o.skillsOf ? o.skillsOf(p.id) : []).forEach((sid) => { hits[sid] = (hits[sid] || 0) + 1; });
+      });
+      const core = P.some((p) => p.kind === "core") ? P.filter((p) => p.kind === "core") : P.filter((p) => p.kind !== "challenge");
+      let refresh = null;
+      let weak = null;
+      Object.keys(hits).forEach((sid) => {
+        const e = skills[sid];
+        if (hits[sid] * 2 < P.length || !e || !e.measured || e.mastery === null || e.mastery === undefined || e.subject === "science") return;
+        if (e.mastery >= 45 && e.dueAt && e.dueAt <= now && e.lastAt && now - e.lastAt >= 7 * DAY && (!refresh || e.lastAt < refresh.lastAt)) refresh = e;
+        if (e.mastery < 65 && (!weak || e.mastery < weak.mastery)) weak = e;
+      });
+      wrong.sort((a, b) => a[1] - b[1]);
+      const ids = wrong.map((w) => w[0]).concat(fresh);
+      out.ids[i] = (ids.length ? ids : easy.length ? easy : P.map((p) => p.id)).slice(0, 10);
+      let why = "";
+      let score = 0;
+      if (wrong.length) { why = `上次錯 ${wrong.length} 題`; score = 400 + wrong.length; }
+      else if (refresh) { const days = Math.floor((now - refresh.lastAt) / DAY); why = `${days} 天沒碰，該複習`; score = 300 + Math.min(99, days) / 100; }
+      else if (tot >= 3 && cor / tot < 0.6) { why = `答對 ${Math.round((100 * cor) / tot)}%`; score = 201 - cor / tot; }
+      else if (weak) { why = `「${weak.label || weak.id}」還不穩`; score = 100 + (65 - weak.mastery) / 100; }
+      else if (tiers[i] === 1) { why = `核心題還差 ${core.filter((p) => !solved(p.id)).length} 題`; score = 1; }
+      if (!why) continue;
+      out.why[i] = why;
+      out.practice.push({ i, why, score });
+    }
+    out.practice.sort((a, b) => b.score - a.score || a.i - b.i);
+    const gi = o.goal ? o.lessons.findIndex((L) => L.id === o.goal) : -1;
+    if (gi >= 0) {
+      out.goal = goalPlan(gi, (v) => tiers[v] > 0, (v) => o.lessons[v].total);
+      out.goalMark = out.goal.mark;
+    }
+    const f = o.filter;
+    for (let i = 0; i < n; i += 1) emph[i] = f === "ready" ? (sty[i] === 1 ? 1 : 0) : f === "practice" ? (out.why[i] ? 1 : 0) : 1;
+    return out;
   }
 
   function buildNodes() {
     const hw = G.NW / 2;
     const hh = G.NH / 2;
-    nodePaths = [new Path2D(), new Path2D(), new Path2D(), new Path2D(), null];
+    const P = () => new Path2D();
+    N = { fill: [[P(), P(), P()], [P(), P(), P()]], ring2: [P(), P()], ring3: [P(), P()], dots: P(), goal: P(), goalHead: P(), red: P(), next: null, goalEdges: null, stageGold: null, chTrack: P(), chBar: P(), anyDim: false };
+    const ring = (path, i, off) => roundRect(path, G.lx[i] - hw - off, G.ly[i] - hh - off, G.NW + 2 * off, G.NH + 2 * off, hh + off);
     for (let i = 0; i < G.n; i += 1) {
       const t = tiers[i];
-      roundRect(nodePaths[t ? 1 : 0], G.lx[i] - hw, G.ly[i] - hh, G.NW, G.NH, hh);
-      if (t >= 2) roundRect(nodePaths[t === 2 ? 2 : 3], G.lx[i] - hw - 3.5, G.ly[i] - hh - 3.5, G.NW + 7, G.NH + 7, hh + 3.5);
+      const layer = emph[i];
+      if (!layer) N.anyDim = true;
+      roundRect(N.fill[layer][sty[i]], G.lx[i] - hw, G.ly[i] - hh, G.NW, G.NH, hh);
+      if (t >= 2) ring(t === 2 ? N.ring2[layer] : N.ring3[layer], i, 3.5);
+      // 可以學：膠囊右端一個小點（課名截字時右邊留了 12px，點放得下、不壓字）
+      if (sty[i] === 1 && layer) { N.dots.moveTo(G.lx[i] + hw - 5, G.ly[i]); N.dots.arc(G.lx[i] + hw - 8, G.ly[i], 3, 0, Math.PI * 2); }
+      if (D.goal && D.goal.i === i) ring(N.goalHead, i, 6);
+      else if (D.goalMark[i]) ring(N.goal, i, 3.5);
+      if (opts.filter === "practice" && D.why[i]) ring(N.red, i, 3.5);
     }
-    if (opts.next >= 0) {
-      nodePaths[4] = new Path2D();
-      const i = opts.next;
-      roundRect(nodePaths[4], G.lx[i] - hw - 3.5, G.ly[i] - hh - 3.5, G.NW + 7, G.NH + 7, hh + 3.5);
+    if (opts.next >= 0) { N.next = P(); ring(N.next, opts.next, 3.5); }
+    if (D.goal) {
+      const pre = G.data.pre;
+      N.goalEdges = P();
+      for (let k = 0; k < pre.length; k += 2) if (D.goalMark[pre[k]] && (D.goalMark[pre[k + 1]] || pre[k + 1] === D.goal.i)) edgePath(N.goalEdges, G, pre[k], pre[k + 1]);
     }
+    // 整個 Stage 完成的金框是獎勵：專注模式（不顯示連勝／成就）照樣算、不畫
+    if (!opts.quiet && D.stComplete.some(Boolean)) {
+      N.stageGold = P();
+      G.stageBoxes.forEach((b, si) => { if (D.stComplete[si]) roundRect(N.stageGold, b[0], b[1], b[2], b[3], 22); });
+    }
+    G.chapterBoxes.forEach((b, ci) => {
+      N.chTrack.rect(b[0] + 10, b[1] + 27, b[2] - 20, 3.5);
+      if (D.chDone[ci]) N.chBar.rect(b[0] + 10, b[1] + 27, ((b[2] - 20) * D.chDone[ci]) / D.chTotal[ci], 3.5);
+    });
     G.pathStageMain = new Path2D();
     G.pathStageBranch = new Path2D();
     G.stageBoxes.forEach((b, si) => roundRect(opts.stages[si].branch ? G.pathStageBranch : G.pathStageMain, b[0], b[1], b[2], b[3], 22));
@@ -1156,17 +1394,51 @@
     G.chapterBoxes.forEach((b) => roundRect(G.pathChapters, b[0], b[1], b[2], b[3], 12));
   }
 
-  // 螢幕閱讀器用的清單：Stage → 章 → 課（狀態、先修）。看不見、也不是按鈕（打開課用地圖的 Enter 或清單檢視）
+  // 螢幕閱讀器用的清單：Stage → 章 → 課（狀態、可以學、該練的理由、目標、先修）。看不見、也不是按鈕
+  //（打開課用地圖的 Enter 或清單檢視）。跟小卡、方向鍵念出來的是同一份字（detail）。
   function srList() {
     const esc = opts.escapeHtml;
     let i = 0;
-    const items = opts.stages.map((st) => `<li>${esc(`${st.n} ${st.title}${st.branch ? "（支線）" : ""}`)}<ol>${st.chapters.map((ch) => `<li>${esc(ch.title)}<ol>${ch.lessons.map(() => {
-      const L = opts.lessons[i];
-      const pre = G.preds[i].map((p) => opts.lessons[p].no).join("、");
-      i += 1;
-      return `<li>${esc(`${L.no} ${L.title}，${statusText(i - 1)}${pre ? `，先修 ${pre}` : ""}`)}</li>`;
-    }).join("")}</ol></li>`).join("")}</ol></li>`).join("");
+    let ci = -1;
+    const items = opts.stages.map((st, si) => `<li>${esc(`${st.n} ${st.title}${st.branch ? "（支線）" : ""}，${D.stDone[si]}/${D.stTotal[si]}`)}<ol>${st.chapters.map((ch) => {
+      ci += 1;
+      return `<li>${esc(`${ch.title}，${D.chDone[ci]}/${D.chTotal[ci]}`)}<ol>${ch.lessons.map(() => {
+        const L = opts.lessons[i];
+        const pre = G.preds[i].map((p) => opts.lessons[p].no).join("、");
+        i += 1;
+        return `<li>${esc(`${L.no} ${L.title}，${detail(i - 1)}${pre ? `，先修 ${pre}` : ""}`)}</li>`;
+      }).join("")}</ol></li>`;
+    }).join("")}</ol></li>`).join("");
     return `<div class="sr-only"><ol aria-label="課程地圖（清單）">${items}</ol></div>`;
+  }
+
+  // 地圖上面那一列（點亮幾課、篩選）、目標那一列、「該練」的清單（地圖底下，一點就練）
+  function chrome() {
+    const esc = opts.escapeHtml;
+    const attr = opts.escapeAttr;
+    const f = opts.filter;
+    const name = (i) => `${opts.lessons[i].no} ${opts.lessons[i].title}`;
+    const chip = (key, label, count, dot) => `<button type="button" data-action="course-map-filter" data-mode="${key}" aria-pressed="${f === key}">${dot ? `<i class="cmap-dot${dot}"></i>` : ""}${label}${count ? ` ${count}` : ""}</button>`;
+    const g = D.goal;
+    const goal = g ? `<p class="cmap-goal"><span>目標 <b>${esc(name(g.i))}</b> ${g.missing.length
+      ? `<small title="每課「完成」分鐘數加總">還差 ${g.missing.length} 課 · 約 ${g.minutes} 分鐘</small></span><button type="button" class="button secondary" data-action="open-course-lesson" data-lesson-id="${attr(opts.lessons[g.first].id)}">照順序學</button>`
+      : "<small>完成了</small></span>"}<button type="button" class="button ghost" data-action="course-goal" data-lesson-id="" aria-label="清除目標" title="清除目標">×</button></p>` : "";
+    const top = D.practice.slice(0, 5);
+    const list = f !== "practice" ? "" : `<div class="cmap-list">${top.length ? `<ol class="cmap-todo">${top.map(({ i, why }) => `<li><button type="button" data-action="course-lesson-practice" data-lesson-id="${attr(opts.lessons[i].id)}" data-ids="${attr(D.ids[i].join(" "))}"><strong>${esc(name(i))}</strong><small>${esc(why)}</small><em>練 ${D.ids[i].length} 題</em></button></li>`).join("")}</ol>` : `<p class="cmap-empty">現在沒有該練的課</p>`}</div>`;
+    return {
+      bar: `<div class="cmap-bar"><div class="cmap-chips" role="group" aria-label="篩選">${chip("all", "全部", 0, "")}${chip("ready", "可以學", D.ready, " ")}${chip("practice", "該練", D.practice.length, " is-red")}</div>${goal}</div>`,
+      list
+    };
+  }
+  function sayFor(what) {
+    if (what === "filter") {
+      const f = opts.filter;
+      if (f === "ready") return `可以學 ${D.ready} 課`;
+      if (f === "practice") return D.practice.length ? `該練 ${D.practice.length} 課：${D.practice.slice(0, 3).map((p) => `${opts.lessons[p.i].title}，${p.why}`).join("；")}` : "現在沒有該練的課";
+      return `全部 ${G.n} 課，已點亮 ${D.lit} 課`;
+    }
+    if (what === "goal") return D.goal ? `目標 ${opts.lessons[D.goal.i].title}，還差 ${D.goal.missing.length} 課，約 ${D.goal.minutes} 分鐘` : "已清除目標";
+    return "";
   }
 
   function teardown() {
@@ -1179,10 +1451,28 @@
     pointers.clear();
     gesture = null;
     host = null;
+    stageEl = null;
     canvas = null;
     ctx = null;
     card = null;
     live = null;
+  }
+
+  function ensureModel() {
+    if (G) return;
+    G = buildModel(window.BUZZ_COURSE_MAP);
+    G.noDash = [];
+    const dashes = new Map();
+    G.dashFor = (s) => {
+      // 虛線的長度跟著縮放換算（只有幾種倍率會出現，算過的留著，不在每格產生新陣列）
+      const key = Math.round(Math.log(s) * 8);
+      if (!dashes.has(key)) { const u = 1 / Math.exp(key / 8); dashes.set(key, [6 * u, 5 * u]); }
+      return dashes.get(key);
+    };
+    G.stageEdgeWidths = [1.2, 2, 3.2];
+    G.chapterEdgeWidths = [1, 1.6, 2.4];
+    buildGeometry(G);
+    mark = new Uint8Array(G.n);
   }
 
   /* ── 對外：掛到一個容器上（app 整頁重繪會換掉容器，所以每次重繪後重掛；相機與選取留著）── */
@@ -1191,31 +1481,23 @@
     if (!target || !data) return false;
     if (host && host !== target) teardown();
     opts = options;
-    if (!G) {
-      G = buildModel(data);
-      G.noDash = [];
-      const dashes = new Map();
-      G.dashFor = (s) => {
-        // 虛線的長度跟著縮放換算（只有幾種倍率會出現，算過的留著，不在每格產生新陣列）
-        const key = Math.round(Math.log(s) * 8);
-        if (!dashes.has(key)) { const u = 1 / Math.exp(key / 8); dashes.set(key, [6 * u, 5 * u]); }
-        return dashes.get(key);
-      };
-      G.stageEdgeWidths = [1.2, 2, 3.2];
-      G.chapterEdgeWidths = [1, 1.6, 2.4];
-      buildGeometry(G);
-      mark = new Uint8Array(G.n);
-    }
+    ensureModel();
     if (opts.lessons.length !== G.n) return false;
     tiers = Uint8Array.from(opts.lessons.map((L) => L.tier || 0));
+    D = derive(opts);
     host = target;
     injectStyle();
-    host.innerHTML = `
-      <canvas class="cmap-canvas" tabindex="0" role="application" aria-roledescription="課程地圖" aria-label="課程地圖：方向鍵在相連的課之間移動，Enter 打開"></canvas>
-      <div class="cmap-zoom" aria-hidden="true"><button type="button" data-cmap="in" tabindex="-1">+</button><button type="button" data-cmap="out" tabindex="-1">−</button></div>
-      <div class="cmap-card" hidden></div>
+    const ui = chrome();
+    host.innerHTML = `${ui.bar}
+      <div class="cmap-stage">
+        <canvas class="cmap-canvas" tabindex="0" role="application" aria-roledescription="課程地圖" aria-label="課程地圖：方向鍵在相連的課之間移動，Enter 打開"></canvas>
+        <div class="cmap-zoom" aria-hidden="true"><button type="button" data-cmap="in" tabindex="-1">+</button><button type="button" data-cmap="out" tabindex="-1">−</button></div>
+        <div class="cmap-card" hidden></div>
+      </div>
+      ${ui.list}
       <p class="sr-only" aria-live="polite"></p>
       ${srList()}`;
+    stageEl = host.querySelector(".cmap-stage");
     canvas = host.querySelector("canvas");
     card = host.querySelector(".cmap-card");
     live = host.querySelector("[aria-live]");
@@ -1225,14 +1507,21 @@
     buildNodes();
     measure();
     if (!placed) {
-      // 第一次打開：整張圖放得下就看整張；窄螢幕（手機）看整張字會擠成一團，改成「高度放滿」——
-      // 還在 Stage 那一層、字讀得到，左右滑看其他 Stage；從目前要上的那一課所在的 Stage 開始
       placed = true;
-      cam.s = Math.max(fitScale(), Math.min(0.19, (vh - 40) / (H() + 80)));
-      const at = opts.next >= 0 ? opts.next : 0;
-      const b = G.stageBoxes[G.stageOfChapter[G.chapterOf[at]]];
-      cam.tx = vw / 2 - (b[0] + b[2] / 2) * cam.s;
-      cam.ty = vh / 2 - (H() / 2) * cam.s;
+      if (D.lit && opts.next >= 0) {
+        // 有進度：直接停在下一課（課那一層，看得到它前後的課）
+        cam.s = 0.8;
+        cam.tx = vw / 2 - G.lx[opts.next] * cam.s;
+        cam.ty = vh / 2 - G.ly[opts.next] * cam.s;
+      } else {
+        // 新的人：整張圖放得下就看整張；窄螢幕（手機）看整張字會擠成一團，改成「高度放滿」——
+        // 還在 Stage 那一層、字讀得到，左右滑看其他 Stage；從目前要上的那一課所在的 Stage 開始
+        cam.s = Math.max(fitScale(), Math.min(0.19, (vh - 40) / (H() + 80)));
+        const at = opts.next >= 0 ? opts.next : 0;
+        const b = G.stageBoxes[G.stageOfChapter[G.chapterOf[at]]];
+        cam.tx = vw / 2 - (b[0] + b[2] / 2) * cam.s;
+        cam.ty = vh / 2 - (H() / 2) * cam.s;
+      }
       clampCam();
     }
     clampCam();
@@ -1246,6 +1535,12 @@
     canvas.addEventListener("keydown", onKey);
     canvas.addEventListener("contextmenu", (e) => e.preventDefault());
     host.addEventListener("click", (e) => {
+      // 篩選與目標會讓整頁重繪：記下焦點在哪、要念什麼，重掛之後還回去（這個 listener 比 app 的先跑）
+      const act = e.target && e.target.closest ? e.target.closest("[data-action]") : null;
+      // 換篩選：選取收起來（被篩掉的那一課留著小卡只會擋路）
+      if (act && act.dataset.action === "course-map-filter") sel = -1;
+      if (act && act.dataset.action === "course-map-filter") pending = { focus: `[data-action="course-map-filter"][data-mode="${act.dataset.mode}"]`, say: "filter" };
+      if (act && act.dataset.action === "course-goal") pending = { focus: act.closest(".cmap-card") ? '.cmap-card [data-action="course-goal"]' : ".cmap-canvas", say: "goal" };
       const b = e.target && e.target.closest ? e.target.closest("[data-cmap]") : null;
       if (!b) return;
       const what = b.dataset.cmap;
@@ -1271,14 +1566,60 @@
     if (options.litId) {
       const i = opts.lessons.findIndex((L) => L.id === options.litId);
       if (i >= 0) {
-        lit = { i, t0: performance.now() };
+        const ci = G.chapterOf[i];
+        const si = G.stageOfChapter[ci];
+        // 整章／整個 Stage 剛好被這一課做完：框也亮一次（專注模式不放這個獎勵，照樣念出來）
+        lit = { i, t0: performance.now(), ci: D.chComplete[ci] && !opts.quiet ? ci : -1, si: D.stComplete[si] && !opts.quiet ? si : -1 };
         host.dataset.lit = options.litId;
+        host.dataset.litBox = `${D.chComplete[ci] ? "chapter" : ""}${D.stComplete[si] ? " stage" : ""}`.trim();
+        if (D.chComplete[ci]) {
+          const whole = `${chapterLabel[ci].title} 整章完成${D.stComplete[si] ? `，${opts.stages[si].title} 整個 Stage 完成` : ""}`;
+          window.setTimeout(() => { if (live) live.textContent = whole; }, 80);
+        }
         // reduced-motion 時沒有一直在畫的格子：時間到要自己叫一格把環拿掉
         window.setTimeout(() => request(), LIT_MS + 50);
       }
     }
+    if (pending.focus || pending.say) {
+      const p = pending;
+      pending = { focus: "", say: "" };
+      const el = p.focus && host.querySelector(p.focus);
+      if (el) el.focus({ preventScroll: true });
+      // 新掛上去的 aria-live 要等一下再寫，螢幕閱讀器才會念
+      if (p.say) window.setTimeout(() => { if (live) live.textContent = sayFor(p.say); }, 80);
+    }
     request();
     return true;
+  }
+
+  // 課程表（清單）上的目標那一行：不開地圖也算得出「還差幾課」（先修的圖在 map.js 裡）
+  function goal(done, gi, minutes) {
+    if (!window.BUZZ_COURSE_MAP) return null;
+    ensureModel();
+    if (gi < 0 || gi >= G.n) return null;
+    const g = goalPlan(gi, (v) => Boolean(done[v]), (v) => minutes[v]);
+    return { missing: g.missing.length, minutes: g.minutes, first: g.first };
+  }
+
+  // 測試用：每一課現在算成什麼（點亮、可以學、目標、該練），跟畫面上的是同一份
+  function state() {
+    if (!D || !opts) return null;
+    const id = (i) => opts.lessons[i].id;
+    const all = (pred) => opts.lessons.map((_L, i) => i).filter(pred).map(id);
+    return {
+      filter: opts.filter || "all",
+      lit: D.lit,
+      mastered: D.mastered,
+      ready: all((i) => sty[i] === 1),
+      next: opts.next >= 0 ? id(opts.next) : "",
+      goal: D.goal ? { id: id(D.goal.i), missing: D.goal.missing.map(id), minutes: D.goal.minutes, first: D.goal.first >= 0 ? id(D.goal.first) : "" } : null,
+      practice: D.practice.map((p) => ({ id: id(p.i), why: p.why, ids: D.ids[p.i] })),
+      chapters: D.chDone.map((x, ci) => [x, D.chTotal[ci]]),
+      stages: D.stDone.map((x, si) => [x, D.stTotal[si]]),
+      gold: D.stComplete.map((x, si) => (x && N && N.stageGold ? si : -1)).filter((si) => si >= 0),
+      dimmed: emph ? emph.length - emph.reduce((a, b) => a + b, 0) : 0,
+      colors: pal ? { far: [pal.muted, pal.farFill], ready: [pal.ink, pal.nodeFill], done: [pal.ink, pal.doneFill] } : null
+    };
   }
 
   // 測試用：課在畫面上的位置（client 座標）、目前的狀態
@@ -1321,5 +1662,5 @@
     request();
   }
 
-  window.BuzzCourseMap = { attach, debug, project, look };
+  window.BuzzCourseMap = { attach, debug, project, look, goal, state };
 })();
