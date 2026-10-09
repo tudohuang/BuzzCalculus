@@ -125,6 +125,77 @@
       ]
     }
   ],
+  "sections": [
+    {
+      "title": "做一次就夠",
+      "beats": [
+        { "show": ["$\\int_0^1x^{10}e^x\\,dx$：分部積分十次？"], "note": "每一次做的事都一樣：$x$ 的次數降一。",
+          "say": "x 十次方乘 e 的 x 次方，要分部積分十次。可是每一次做的事都一樣，就是把次數降一。" },
+        { "show": ["把 $n$ 當成變數，做一次"], "note": "得到一條「降一階」的規則。",
+          "say": "那就把 n 當成變數，只做一次分部積分，得到一條降一階的規則，之後只要代數字。" },
+        { "show": ["$J_n=\\int_0^1x^ne^x\\,dx$，$u=x^n$"], "note": "$u$ 微分後次數降一。",
+          "say": "令 J n 是這個積分。u 取 x 的 n 次方，因為它微分之後次數會降一。" },
+        { "show": ["$J_n=e-nJ_{n-1}$，$J_0=e-1$"], "note": "邊界項 $\\left[x^ne^x\\right]_0^1=e$。",
+          "say": "邊界項是 e，剩下的積分剛好是 n 乘 J n 減一。再算好起點 J 零，就能一路往上推。" }
+      ],
+      "check": 0
+    },
+    {
+      "title": "一路往上推",
+      "beats": [
+        { "show": ["$J_1=e-1\\cdot J_0=1$"],
+          "say": "從 J 零等於 e 減一開始，J 一是 e 減掉它，剛好是一。" },
+        { "show": ["$J_2=e-2J_1=e-2$"],
+          "say": "J 二是 e 減二倍的 J 一，等於 e 減二。" }
+      ],
+      "predict": {
+        "ask": "$J_3=e-3J_2$ 是？",
+        "options": [
+          { "label": "$6-2e$", "correct": true },
+          { "label": "$4e-6$", "why": "遞迴是減號：$e-3(e-2)=e-3e+6$，不是 $e+3(e-2)$。" },
+          { "label": "$e-2$", "why": "那是 $J_2$，還要再推一步。" }
+        ]
+      }
+    },
+    {
+      "title": "恆等式也能降次",
+      "beats": [
+        { "show": ["$T_n=\\int_0^{\\pi/4}\\tan^n x\\,dx$"], "note": "不一定要分部積分。",
+          "say": "降次不一定要靠分部積分。看 tangent 的 n 次方，從零積到四分之 pi。" },
+        { "show": ["$\\tan^2 x=\\sec^2 x-1$"], "note": "$\\tan^n x=\\tan^{n-2}x\\sec^2 x-\\tan^{n-2}x$",
+          "say": "把 tangent 平方換成 secant 平方減一，拆成兩項。" },
+        { "show": ["$T_n=\\frac{1}{n-1}-T_{n-2}$（$n\\ge 2$）"], "note": "前一項令 $u=\\tan x$，積出 $\\frac{1}{n-1}$。",
+          "say": "前一項令 u 等於 tangent x，剛好積出 n 減一分之一；後一項就是 T n 減二。" }
+      ],
+      "check": 2
+    },
+    {
+      "title": "步長是 2",
+      "beats": [
+        { "show": ["偶數 → $T_0=\\frac{\\pi}{4}$", "奇數 → $T_1=\\frac{\\ln 2}{2}$"], "note": "兩個起點都要先算好。",
+          "say": "這條遞迴一次跳兩格。偶數一路降到 T 零，奇數降到 T 一，兩個起點都要準備好。" },
+        { "show": ["$T_2=1-\\frac{\\pi}{4}$"],
+          "say": "算 tangent 四次方：先從 T 零推到 T 二，是一減四分之 pi。" },
+        { "show": ["$T_4=\\frac{1}{3}-T_2=\\frac{\\pi}{4}-\\frac{2}{3}$"], "note": "$\\approx 0.1187$，正的，合理。",
+          "say": "再推一步，T 四是三分之一減 T 二，等於四分之 pi 減三分之二，是正數，合理。" }
+      ],
+      "check": 3
+    },
+    {
+      "title": "瑕積分的遞迴",
+      "beats": [
+        { "show": ["$L_n=\\int_0^1(\\ln x)^n\\,dx$"], "note": "$x=0$ 是瑕點。",
+          "say": "自然對數 x 的 n 次方，從零積到一，在零是瑕點。" },
+        { "show": ["$L_n=\\left[x(\\ln x)^n\\right]_0^1-nL_{n-1}$"], "note": "$u=(\\ln x)^n$，$dv=dx$。",
+          "say": "u 取自然對數 x 的 n 次方，dv 取 dx，分部積分。" },
+        { "show": ["$x\\to 0^+$：$x(\\ln x)^n\\to 0$"], "note": "對數 $\\ll$ 冪次，要用極限確認。",
+          "say": "邊界項在零那端不能直接代，要取極限：對數比冪次慢，所以趨近零。" },
+        { "show": ["$L_n=-nL_{n-1}$，$L_0=1$"], "note": "$L_n=(-1)^nn!$；同樣的想法給出 $\\Gamma(n+1)=n\\Gamma(n)$。",
+          "say": "所以 L n 等於負 n 乘 L n 減一，起點是一。Gamma 函數的遞迴也是這樣來的。" }
+      ],
+      "check": 1
+    }
+  ],
   "skillTags": {
     "coarse": ["recurrence-formula", "reduction-formula", "integration-by-parts"],
     "fine": ["reduction-ibp-setup", "reduction-iterate-base", "reduction-trig-identity", "reduction-log-power"]

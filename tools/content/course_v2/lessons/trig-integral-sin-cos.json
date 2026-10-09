@@ -122,6 +122,90 @@
       ]
     }
   ],
+  "sections": [
+    {
+      "title": "看奇偶，留一個",
+      "beats": [
+        { "show": ["$\\int\\sin^m x\\cos^n x\\,dx$：看 $m$、$n$ 的奇偶"], "note": "有奇數：留一個；都偶數：半角降次。",
+          "say": "sine 幾次方乘 cosine 幾次方，做法只看兩個次方是奇數還是偶數。" },
+        { "show": ["$\\sin$ 奇次方：留一個 $\\sin x$ 當 $du$"], "note": "$u=\\cos x$，$du=-\\sin x\\,dx$。",
+          "say": "如果 sine 是奇次方，拿一個 sine x 出來跟 dx 配成 du，令 u 等於 cosine x。" },
+        { "show": ["剩下偶次方：$\\sin^2 x=1-\\cos^2 x$"], "note": "整個變成 $u=\\cos x$ 的多項式。",
+          "say": "剩下的 sine 是偶次方，用 sine 平方等於一減 cosine 平方，全部換成 cosine。" },
+        { "show": ["為什麼要奇：剩偶次方才不會冒出根號"],
+          "say": "為什麼要奇數？留走一個之後剩偶次方，才能整個寫成平方的幾次方，不會冒出根號。" }
+      ],
+      "check": 0
+    },
+    {
+      "title": "$\\sin^3 x$",
+      "beats": [
+        { "show": ["$\\sin^3 x=(1-\\cos^2 x)\\sin x$"], "note": "留一個 $\\sin x$。",
+          "say": "sine 三次方，留一個 sine x，剩下的 sine 平方換成一減 cosine 平方。" },
+        { "show": ["$u=\\cos x$：$\\int(1-u^2)(-du)$"], "note": "$\\sin x\\,dx=-du$。",
+          "say": "令 u 等於 cosine x，sine x dx 是負 du，負號要帶著。" }
+      ],
+      "predict": {
+        "ask": "答案是？",
+        "options": [
+          { "label": "$-\\cos x+\\frac{\\cos^3 x}{3}+C$", "correct": true },
+          { "label": "$\\cos x-\\frac{\\cos^3 x}{3}+C$", "why": "漏了 $du=-\\sin x\\,dx$ 的負號，整個差一個負號。" },
+          { "label": "$\\frac{\\sin^4 x}{4}+C$", "why": "要積成 $\\frac{u^4}{4}$，旁邊得有 $du=\\cos x\\,dx$，這裡沒有。" }
+        ]
+      }
+    },
+    {
+      "title": "$\\cos$ 是奇次方",
+      "beats": [
+        { "show": ["$\\int\\sin^2 x\\cos^3 x\\,dx$：留一個 $\\cos x$"], "note": "反過來：$u=\\sin x$。",
+          "say": "cosine 是奇次方就反過來：留一個 cosine x，令 u 等於 sine x。" },
+        { "show": ["$\\sin^2 x(1-\\sin^2 x)\\cos x$"], "note": "$\\cos^2 x=1-\\sin^2 x$。",
+          "say": "剩下的 cosine 平方換成一減 sine 平方，整個只剩 u 的多項式。" },
+        { "show": ["$\\frac{\\sin^3 x}{3}-\\frac{\\sin^5 x}{5}+C$"], "note": "兩個都奇數時，任選一個留。",
+          "say": "u 平方乘一減 u 平方，一項一項積，再換回 sine x。" }
+      ],
+      "check": 3
+    },
+    {
+      "title": "都是偶次方",
+      "beats": [
+        { "show": ["$\\sin^2x=\\frac{1-\\cos 2x}{2}$", "$\\cos^2x=\\frac{1+\\cos 2x}{2}$"], "note": "平方換成一次的 $\\cos 2x$，次方減半。",
+          "say": "沒有奇次方可以留，就用半角公式：平方變成一次的 cosine 二 x，次方減半。" },
+        { "show": ["$\\sin x\\cos x=\\frac{\\sin 2x}{2}$"], "note": "降完還有平方，就再做一次。",
+          "say": "sine 乘 cosine 也可以寫成二分之 sine 二 x。降完如果還有平方，就再降一次。" }
+      ],
+      "check": 1
+    },
+    {
+      "title": "$\\cos^4 x$：降兩次",
+      "beats": [
+        { "show": ["$\\cos^4 x=\\left(\\frac{1+\\cos 2x}{2}\\right)^2$"], "note": "$=\\frac{1+2\\cos 2x+\\cos^2 2x}{4}$。",
+          "say": "cosine 四次方，先把 cosine 平方換掉，平方展開。" },
+        { "show": ["$\\cos^2 2x=\\frac{1+\\cos 4x}{2}$"], "note": "還有平方，再降一次。",
+          "say": "裡面還有 cosine 二 x 的平方，再用一次半角，變成 cosine 四 x。" },
+        { "show": ["$=\\frac{3}{8}+\\frac{1}{2}\\cos 2x+\\frac{1}{8}\\cos 4x$"],
+          "say": "整理好，全部都是一次的，可以一項一項積了。" }
+      ],
+      "predict": {
+        "ask": "逐項積分是？",
+        "options": [
+          { "label": "$\\frac{3x}{8}+\\frac{1}{4}\\sin 2x+\\frac{1}{32}\\sin 4x+C$", "correct": true },
+          { "label": "$\\frac{3x}{8}+\\frac{1}{2}\\sin 2x+\\frac{1}{8}\\sin 4x+C$", "why": "$\\int\\cos 2x\\,dx=\\frac{1}{2}\\sin 2x$：裡面的 $2$、$4$ 要除掉。" },
+          { "label": "$\\frac{3}{8}+\\frac{1}{4}\\sin 2x+\\frac{1}{32}\\sin 4x+C$", "why": "常數 $\\frac{3}{8}$ 的積分是 $\\frac{3x}{8}$。" }
+        ]
+      }
+    },
+    {
+      "title": "常用的定積分",
+      "beats": [
+        { "show": ["$[0,\\frac{\\pi}{2}]$ 上 $\\sin^2 x$、$\\cos^2 x$ 一樣大"], "note": "$x$ 換成 $\\frac{\\pi}{2}-x$ 就互換。",
+          "say": "在零到二分之 pi 上，sine 平方和 cosine 平方的圖左右對稱，兩個積分一樣大。" },
+        { "show": ["加起來：$\\int_0^{\\pi/2}1\\,dx=\\frac{\\pi}{2}$"],
+          "say": "兩個加起來是一，積分就是區間長度二分之 pi。" }
+      ],
+      "check": 2
+    }
+  ],
   "skillTags": {
     "coarse": ["trig-power", "trig-integral", "half-angle", "substitution"],
     "fine": ["trig-odd-power-peel", "trig-even-half-angle", "trig-pythagorean-convert", "trig-sincos-definite"]

@@ -127,6 +127,77 @@
       ]
     }
   ],
+  "sections": [
+    {
+      "title": "再微分一次",
+      "beats": [
+        { "show": ["$f_x(x,y)$ 也是函數"], "note": "可以再對 $x$ 或對 $y$ 偏微分。",
+          "say": "偏導數算出來還是 x、y 的函數，所以可以再微分一次，對 x 或對 y 都行。" },
+        { "show": ["$f_{xx}$、$f_{xy}$、$f_{yx}$、$f_{yy}$"],
+          "say": "兩個一階偏導數，各自再對兩個變數微分，一共四個二階偏導數。" },
+        { "show": ["$f=x^3y^2+e^{2x}$", "$f_x=3x^2y^2+2e^{2x}$"],
+          "say": "例如這個函數，先對 x：x 三次方變三 x 平方，e 的二 x 次方微分要乘二。" }
+      ],
+      "predict": {
+        "ask": "$f_{xx}$ 是？",
+        "options": [
+          { "label": "$6xy^2+4e^{2x}$", "correct": true },
+          { "label": "$6xy^2+2e^{2x}$", "why": "$2e^{2x}$ 再對 $x$ 微分，連鎖律又乘一次 $2$，得 $4e^{2x}$。" },
+          { "label": "$(3x^2y^2+2e^{2x})^2$", "why": "$f_{xx}$ 是把 $f_x$ 再微分一次，不是平方。" }
+        ]
+      }
+    },
+    {
+      "title": "混合偏導",
+      "beats": [
+        { "show": ["$f_{xy}$：$f_x$ 對 $y$ 微分 $=6x^2y$"], "note": "$2e^{2x}$ 對 $y$ 是常數。",
+          "say": "把一階的 f 下標 x 對 y 微分：x 當常數，y 平方變二 y；e 的二 x 次方不含 y，消失。" },
+        { "show": ["$f_y=2x^3y$ → $f_{yx}=6x^2y$"],
+          "say": "反過來，先對 y 再對 x，也得到六 x 平方 y。" },
+        { "show": ["$f_{xy}=f_{yx}$"], "note": "是個好的檢查；$f_{yy}=2x^3$。",
+          "say": "兩種順序一樣，這是很好的驗算。最後一個，f 下標 y y，是二 x 三次方。" }
+      ],
+      "check": 0
+    },
+    {
+      "title": "記號的順序",
+      "beats": [
+        { "show": ["$f_{xy}=(f_x)_y$"], "note": "下標從左讀到右：先 $x$ 後 $y$。",
+          "say": "下標的寫法從左往右讀：先對 x，再對 y。" },
+        { "show": ["$\\frac{\\partial^2 f}{\\partial y\\partial x}=\\frac{\\partial}{\\partial y}\\left(\\frac{\\partial f}{\\partial x}\\right)$"], "note": "分式從右讀到左：最靠近 $f$ 的先做。",
+          "say": "分式寫法反過來，從右往左讀：最靠近 f 的 partial x 先做，所以也是先 x 後 y。" },
+        { "show": ["字母排列相反，意思一樣"],
+          "say": "兩種記號字母的順序剛好相反，意思卻相同。看到題目，先確定是哪一種寫法。" }
+      ],
+      "check": 1
+    },
+    {
+      "title": "要用乘法法則",
+      "beats": [
+        { "show": ["$\\frac{\\partial^2}{\\partial x\\partial y}e^{xy}$：先 $y$ 後 $x$"],
+          "say": "分式寫法，從右往左讀：先對 y，再對 x。" },
+        { "show": ["$\\frac{\\partial}{\\partial y}e^{xy}=x\\,e^{xy}$"],
+          "say": "對 y 微分，連鎖律帶出一個 x。" },
+        { "show": ["$e^{xy}+x\\cdot y\\,e^{xy}=e^{xy}(1+xy)$"], "note": "$x$ 和 $e^{xy}$ 都含 $x$。",
+          "say": "再對 x 微分時要小心：前面的 x 和後面的 e 的 x y 次方都含 x，要用乘法法則。" }
+      ],
+      "check": 2
+    },
+    {
+      "title": "圖上的意思",
+      "beats": [
+        { "show": ["$f_{xx}>0$：沿 $x$ 方向往上彎"], "note": "$f_{xx}$ 是 $x$ 方向切片的凹向。",
+          "say": "f 下標 x x 是沿 x 方向那條切片的二階導數，也就是它往哪邊彎。" },
+        { "show": ["$f_{xy}$：曲面扭的程度"], "note": "往 $y$ 挪一點，$x$ 方向的斜率變多少。",
+          "say": "混合偏導看的是：往 y 方向挪一點，x 方向的斜率變了多少，描述曲面扭的程度。" },
+        { "show": ["$\\Delta f=f_{xx}+f_{yy}$"], "note": "$\\Delta f=0$ 的函數叫調和函數。",
+          "say": "物理上常見的組合：兩個純二階偏導相加，叫 Laplacian。等於零的函數叫調和函數。" },
+        { "show": ["$\\ln(x^2+y^2)$：分子 $2(y^2-x^2)+2(x^2-y^2)=0$"], "note": "原點以外。",
+          "say": "例如 x 平方加 y 平方的自然對數，兩個二階偏導數的分子剛好互相抵銷，是調和函數。" }
+      ],
+      "check": 3
+    }
+  ],
   "skillTags": {
     "coarse": ["mixed-partial", "second-derivative", "laplacian", "multivariable"],
     "fine": ["second-partial-pure", "second-partial-mixed", "second-partial-notation-order", "laplacian-compute"]

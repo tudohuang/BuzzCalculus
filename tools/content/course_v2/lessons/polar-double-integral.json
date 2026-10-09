@@ -136,6 +136,75 @@
       ]
     }
   ],
+  "sections": [
+    {
+      "title": "圓形區域換座標",
+      "beats": [
+        { "show": ["$\\int_{-1}^{1}\\int_{-\\sqrt{1-x^2}}^{\\sqrt{1-x^2}}\\dots\\,dy\\,dx$"], "note": "單位圓盤用直角座標寫。",
+          "say": "單位圓盤用直角座標寫，上下限都帶根號；被積函數要是也有 x 平方加 y 平方，就更難積。" },
+        { "show": ["$0\\le r\\le 1$、$0\\le\\theta\\le 2\\pi$"], "note": "在極座標裡像一個矩形。",
+          "say": "換成極座標，同一塊圓盤只是 r 從零到一、theta 繞一圈，像一個矩形。" },
+        { "show": ["$x=r\\cos\\theta$，$y=r\\sin\\theta$，$x^2+y^2=r^2$"],
+          "say": "換的規則：x 是 r cosine theta，y 是 r sine theta，x 平方加 y 平方就是 r 平方。" }
+      ],
+      "check": 1
+    },
+    {
+      "title": "為什麼多一個 $r$",
+      "beats": [
+        { "show": ["極座標矩形：徑向寬 $\\Delta r$，張開 $\\Delta\\theta$"],
+          "say": "用同心圓和放射線把區域切開，每一小塊叫極座標矩形。" },
+        { "show": ["一邊 $\\Delta r$，一邊弧長 $r\\Delta\\theta$"], "note": "面積 $\\approx r\\,\\Delta r\\,\\Delta\\theta$。",
+          "say": "它差不多是一個長方形：一邊是 delta r，另一邊是半徑 r 的圓上的一段弧，長 r 乘 delta theta。" },
+        { "show": ["$dA=r\\,dr\\,d\\theta$"], "note": "離原點越遠，同樣的 $\\Delta\\theta$ 張出越大的塊。",
+          "say": "同樣的角度，離原點越遠，弧越長、小塊越大。這個 r 就是放大倍率。這其實是精確的，看全文。" }
+      ],
+      "check": 0
+    },
+    {
+      "title": "公式與三步",
+      "beats": [
+        { "show": ["$\\iint_D f\\,dA$", "$=\\int_\\alpha^\\beta\\!\\int_{r_1(\\theta)}^{r_2(\\theta)} f\\,r\\,dr\\,d\\theta$"],
+          "say": "公式：外層是 theta，從 alpha 到 beta；內層是 r，可以隨 theta 變。" },
+        { "show": ["① 畫區域，寫 $\\theta$、$r$ 的範圍"], "note": "例：$x^2+y^2\\le 9$ 是 $r\\le 3$，不是 $r\\le 9$。",
+          "say": "第一步畫區域。小心，x 平方加 y 平方小於等於九，是 r 小於等於三。" },
+        { "show": ["② 被積函數換掉  ③ 補上 $r$"],
+          "say": "第二步把 x、y 全部換掉，一個都不留。第三步，補上那個 r，這是最常漏掉的。" }
+      ],
+      "check": 2
+    },
+    {
+      "title": "拋物面下的體積",
+      "beats": [
+        { "show": ["$z=1-x^2-y^2$ 與 $xy$ 平面圍成的立體"], "note": "$z\\ge 0$：單位圓盤。",
+          "say": "拋物面在 x y 平面上方的部分，影子是單位圓盤。" },
+        { "show": ["$\\int_0^{2\\pi}\\int_0^1(1-r^2)\\,r\\,dr\\,d\\theta$"], "note": "高度 $1-r^2$。",
+          "say": "高度換成一減 r 平方，再乘上 d A 的那個 r。" },
+        { "show": ["內層 $\\frac{1}{2}-\\frac{1}{4}=\\frac{1}{4}$，外層 $\\times2\\pi$：$\\frac{\\pi}{2}$"],
+          "say": "內層得四分之一，外層 theta 繞一圈乘二 pi，體積是二分之 pi。" }
+      ],
+      "check": 3
+    },
+    {
+      "title": "多出來的 $r$ 幫了忙",
+      "beats": [
+        { "show": ["$\\iint_D e^{-(x^2+y^2)}\\,dA$，$D$ 是單位圓盤"], "note": "直角座標：$e^{-x^2}$ 沒有初等反導函數。",
+          "say": "這一題用直角座標做不動，因為 e 的負 x 平方次方沒有初等反導函數。" },
+        { "show": ["$\\int_0^{2\\pi}\\int_0^1 e^{-r^2}\\,r\\,dr\\,d\\theta$"],
+          "say": "換成極座標，多出來的 r 剛好配上 r 平方，可以換元。" },
+        { "show": ["$u=r^2$：$\\int_0^1 e^{-r^2}r\\,dr=\\frac{1}{2}(1-e^{-1})$"],
+          "say": "令 u 等於 r 平方，內層得到二分之一乘上一減 e 的負一次方。" }
+      ],
+      "predict": {
+        "ask": "整個積分是？",
+        "options": [
+          { "label": "$\\pi\\left(1-\\frac{1}{e}\\right)$", "correct": true },
+          { "label": "$\\frac{1}{2}\\left(1-\\frac{1}{e}\\right)$", "why": "那只是內層；外層對 $\\theta$ 從 $0$ 積到 $2\\pi$，還要乘 $2\\pi$。" },
+          { "label": "$2\\pi\\left(1-\\frac{1}{e}\\right)$", "why": "內層有 $\\frac{1}{2}$（$du=2r\\,dr$），乘 $2\\pi$ 之後是 $\\pi$。" }
+        ]
+      }
+    }
+  ],
   "skillTags": {
     "coarse": ["polar", "polar-coordinates", "double-integral"],
     "fine": ["polar-area-element", "polar-region-bounds", "polar-integrand-convert"]

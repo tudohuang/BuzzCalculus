@@ -132,6 +132,90 @@
       ]
     }
   ],
+  "sections": [
+    {
+      "title": "每次降一次方",
+      "beats": [
+        { "show": ["$\\int(\\ln x)^2\\,dx$：$u=(\\ln x)^2$，$dv=dx$"],
+          "say": "自然對數 x 的平方。跟上一課一樣，整個當 u，dv 是看不見的 dx。" },
+        { "show": ["$du=\\frac{2\\ln x}{x}\\,dx$，$v=x$"], "note": "連鎖律的 $\\frac{1}{x}$ 別漏。",
+          "say": "u 微分要用連鎖律：先掉下一個二，再乘上 x 分之一。" },
+        { "show": ["$=x(\\ln x)^2-2\\int\\ln x\\,dx$"], "note": "次方從 $2$ 降到 $1$。",
+          "say": "x 跟 x 分之一約掉，新積分只剩二倍自然對數 x，次方從二降到一。這個上一課做過。" }
+      ],
+      "predict": {
+        "ask": "代入 $\\int\\ln x\\,dx=x\\ln x-x$，答案是？",
+        "options": [
+          { "label": "$x(\\ln x)^2-2x\\ln x+2x+C$", "correct": true },
+          { "label": "$x(\\ln x)^2-2x\\ln x-2x+C$", "why": "$-2(x\\ln x-x)$：減號要分配進去，$-x$ 變成 $+2x$。" },
+          { "label": "$x(\\ln x)^2-x\\ln x+x+C$", "why": "漏了係數 $2$：是 $-2\\int\\ln x\\,dx$。" }
+        ]
+      }
+    },
+    {
+      "title": "遞迴公式",
+      "beats": [
+        { "show": ["$\\int(\\ln x)^n\\,dx=x(\\ln x)^n-n\\int(\\ln x)^{n-1}\\,dx$"],
+          "say": "一般來說，自然對數 x 的 n 次方，分部一次就變成 n 減一次方。" },
+        { "show": ["用小一號的自己表示自己"], "note": "這叫遞迴公式；每做一次，次方降一。",
+          "say": "用小一號的自己表示自己，這種式子叫遞迴公式。每做一次降一次，最後一定會停。" }
+      ],
+      "check": 2
+    },
+    {
+      "title": "做兩次，原題又出現",
+      "beats": [
+        { "show": ["$\\int e^x\\sin x\\,dx$"], "note": "$e^x$ 微分、積分都還是 $e^x$。",
+          "say": "換一種：e 的 x 次方乘 sine x。不管誰當 u，e 的 x 次方怎麼做都還是自己。" },
+        { "show": ["做兩次，原積分帶著負號再出現"], "note": "$\\sin$ 變 $\\cos$，再變回 $\\sin$。",
+          "say": "sine 變 cosine，再變回 sine。做兩次之後，原來的積分會帶著負號再出現一次。" },
+        { "show": ["兩次要選同一邊當 $u$"], "note": "第二次換邊，等於把第一次拆回去：$I=I$。",
+          "say": "關鍵是兩次要選同一邊。第二次如果換邊，就是把第一次原封不動拆回去，什麼也沒得到。" }
+      ],
+      "check": 0
+    },
+    {
+      "title": "解出 $I$",
+      "beats": [
+        { "show": ["$I=e^x\\sin x-\\int e^x\\cos x\\,dx$"], "note": "第一次：$u=\\sin x$，$dv=e^x\\,dx$。",
+          "say": "把原積分叫 I。第一次讓 sine 當 u，剩下 e 的 x 次方乘 cosine。" },
+        { "show": ["$\\int e^x\\cos x\\,dx=e^x\\cos x+I$"], "note": "第二次：三角還是當 $u$。",
+          "say": "第二次讓 cosine 當 u。cosine 微分是負 sine，負負得正，原來的 I 出現了。" },
+        { "show": ["$I=e^x\\sin x-e^x\\cos x-I$"],
+          "say": "代回去，等號兩邊都有 I。這不是白做，這是一個方程式。" },
+        { "show": ["$2I=e^x(\\sin x-\\cos x)$"], "note": "除以 $2$，再補 $+C$。",
+          "say": "右邊的負 I 移到左邊變成二 I，再除以二，就解出來了。" }
+      ],
+      "check": 1
+    },
+    {
+      "title": "為什麼合法",
+      "beats": [
+        { "show": ["兩邊的 $I$ 是同一個反導函數"], "note": "等號成立到差一個常數。",
+          "say": "兩邊的 I 指的是同一個反導函數，移項、除以二都只是代數。" },
+        { "show": ["最後補 $+C$，再微分檢查"],
+          "say": "最後補上 C，再微分檢查一次，確實回到被積函數。" }
+      ],
+      "check": 3
+    },
+    {
+      "title": "循環型的定積分",
+      "beats": [
+        { "show": ["$\\int_0^\\pi e^x\\sin x\\,dx$"], "note": "反導函數 $\\frac{e^x(\\sin x-\\cos x)}{2}$。",
+          "say": "最後用剛剛的反導函數算定積分，從零到 pi。" },
+        { "show": ["代 $\\pi$：$\\frac{e^\\pi}{2}$；代 $0$：$-\\frac{1}{2}$"], "note": "$\\cos\\pi=-1$，$\\cos 0=1$。",
+          "say": "代 pi，sine 是零、cosine 是負一，得二分之 e 的 pi 次方。代零，得負二分之一。" }
+      ],
+      "predict": {
+        "ask": "答案是？",
+        "options": [
+          { "label": "$\\frac{e^\\pi+1}{2}\\approx 12.07$", "correct": true },
+          { "label": "$\\frac{e^\\pi-1}{2}$", "why": "減掉的是 $-\\frac{1}{2}$，負負得正：$\\frac{e^\\pi}{2}+\\frac{1}{2}$。" },
+          { "label": "$\\frac{e^\\pi}{2}$", "why": "代 $0$ 不是 $0$：$\\cos 0=1$，那一項是 $-\\frac{1}{2}$。" }
+        ]
+      }
+    }
+  ],
   "skillTags": {
     "coarse": ["integration-by-parts", "ibp", "multi-ibp", "exponential", "trig", "log"],
     "fine": ["ibp-repeat-log", "ibp-cyclic-exp-trig", "ibp-cyclic-solve", "ibp-cyclic-consistent-choice"]

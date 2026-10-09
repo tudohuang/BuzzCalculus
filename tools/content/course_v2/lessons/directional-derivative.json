@@ -139,6 +139,94 @@
       ]
     }
   ],
+  "sections": [
+    {
+      "title": "面朝某方向的坡度",
+      "beats": [
+        { "show": ["往東北走，變化率是多少？"],
+          "say": "偏導數只管往東和往北。往東北走呢？" },
+        { "show": ["站在山坡上，面朝 $\\mathbf u$ 的坡度"], "note": "面朝不同方向，坡度不同。",
+          "say": "想像站在山坡上，面朝某個方向，腳下的坡度就是方向導數。轉個方向，坡度就變。" },
+        { "show": ["沿 $\\mathbf u$ 走 $h$：變化 $\\div h$，$h\\to0$"], "note": "$\\mathbf u$ 是單位向量；極限式在全文。",
+          "say": "定義：沿著單位向量 u 走一段距離 h，函數的變化除以 h，再讓 h 趨近零。" },
+        { "show": ["$x$ 走 $hu_1$，$y$ 走 $hu_2$"], "note": "變化約 $f_x\\cdot hu_1+f_y\\cdot hu_2$。",
+          "say": "走這一段，x 方向實際走了 h 乘 u 一，y 方向走了 h 乘 u 二，各自帶來偏導數乘距離的變化。" },
+        { "show": ["$D_{\\mathbf u}f=\\nabla f\\cdot\\mathbf u=f_xu_1+f_yu_2$"], "note": "$f$ 可微時成立；推導在全文。",
+          "say": "加起來除以 h，正好是梯度跟 u 的內積。" }
+      ],
+      "predict": {
+        "ask": "$\\mathbf u=(0,1)$ 時，$D_{\\mathbf u}f$ 是？",
+        "options": [
+          { "label": "$f_y$", "correct": true },
+          { "label": "$f_x$", "why": "$\\nabla f\\cdot(0,1)=f_x\\cdot0+f_y\\cdot1$，留下的是 $f_y$。" },
+          { "label": "$\\nabla f$", "why": "方向導數是內積，是一個數，不是向量。" }
+        ]
+      }
+    },
+    {
+      "title": "先單位化",
+      "beats": [
+        { "show": ["$\\mathbf u$ 的長度必須是 $1$"], "note": "定義裡 $h$ 是走過的距離。",
+          "say": "定義裡的 h 是真的走過的距離，所以 u 的長度一定要是一。" },
+        { "show": ["$(3,4)$ → $\\left(\\frac{3}{5},\\frac{4}{5}\\right)$"], "note": "不單位化，答案會被放大成 5 倍。",
+          "say": "題目給方向三、四，要先除以長度五。不除的話，答案會被放大五倍。" },
+        { "show": ["$f=x^2+y^2$，$\\nabla f(1,2)=(2,4)$"],
+          "say": "例如 x 平方加 y 平方在點一、二，梯度是二、四。" },
+        { "show": ["$2\\cdot\\frac{3}{5}+4\\cdot\\frac{4}{5}=\\frac{22}{5}$"],
+          "say": "跟單位向量內積：五分之六加五分之十六，等於五分之二十二。" }
+      ],
+      "check": 0
+    },
+    {
+      "title": "指向另一點",
+      "beats": [
+        { "show": ["$f=\\ln(x^2+y^2)$，在 $(1,1)$ 指向 $(2,3)$"],
+          "say": "從點一、一，面朝點二、三。方向不是二、三本身，而是兩點相減。" },
+        { "show": ["$(2,3)-(1,1)=(1,2)$", "$\\mathbf u=\\left(\\frac{1}{\\sqrt5},\\frac{2}{\\sqrt5}\\right)$"],
+          "say": "相減得一、二，長度根號五，除掉它就是單位向量。" },
+        { "show": ["$\\nabla f=\\left(\\frac{2x}{x^2+y^2},\\frac{2y}{x^2+y^2}\\right)=(1,1)$"], "note": "在 $(1,1)$。",
+          "say": "梯度代點一、一，剛好是一、一。" }
+      ],
+      "predict": {
+        "ask": "$D_{\\mathbf u}f$ 是？",
+        "options": [
+          { "label": "$\\frac{3}{\\sqrt5}$", "correct": true },
+          { "label": "$3$", "why": "用了 $(1,2)$ 本身，沒有除以長度 $\\sqrt5$。" },
+          { "label": "$5$", "why": "用了 $(2,3)$ 本身當方向。方向是 $Q-P=(1,2)$，還要單位化。" }
+        ]
+      }
+    },
+    {
+      "title": "上升最快",
+      "beats": [
+        { "show": ["$\\nabla f\\cdot\\mathbf u=|\\nabla f|\\cos\\theta$"], "note": "$\\theta$ 是 $\\mathbf u$ 與 $\\nabla f$ 的夾角；$|\\mathbf u|=1$。",
+          "say": "內積可以寫成長度乘長度乘夾角的 cosine。u 的長度是一，剩下梯度的長度乘 cosine theta。" },
+        { "show": ["$\\theta=0$：最大，值是 $|\\nabla f|$"], "note": "$\\mathbf u$ 沿 $\\nabla f$ 的方向。",
+          "say": "cosine 最大是一，在夾角零的時候：面朝梯度，坡最陡，坡度就是梯度的長度。" }
+      ],
+      "check": 3
+    },
+    {
+      "title": "下降最快",
+      "beats": [
+        { "show": ["$\\theta=\\pi$：最小，值是 $-|\\nabla f|$"], "note": "$\\mathbf u$ 沿 $-\\nabla f$。",
+          "say": "夾角 pi，cosine 是負一：背對梯度走，下降得最快。" },
+        { "show": ["$\\nabla T(2,1)=(-4,-4)$，沿 $(3,4)$：$-\\frac{28}{5}$"], "note": "$T=100-x^2-2y^2$；負值：溫度下降。",
+          "say": "方向導數是負的，就是往那裡走在下坡。溫度的例子沿三、四的方向是負五分之二十八，溫度在降。" }
+      ],
+      "check": 1
+    },
+    {
+      "title": "坡度是零的方向",
+      "beats": [
+        { "show": ["$\\theta=\\frac{\\pi}{2}$：$D_{\\mathbf u}f=0$"],
+          "say": "夾角是直角，cosine 是零，往這個方向走，第一階高度不變。" },
+        { "show": ["就是等高線的切線方向"], "note": "這就證明了〈梯度〉的三個性質。",
+          "say": "高度不變的方向，正是沿著等高線。梯度垂直於等高線，現在有證明了。" }
+      ],
+      "check": 2
+    }
+  ],
   "skillTags": {
     "coarse": ["directional-derivative", "gradient", "multivariable"],
     "fine": ["directional-derivative-compute", "directional-unit-vector", "directional-max-min"]

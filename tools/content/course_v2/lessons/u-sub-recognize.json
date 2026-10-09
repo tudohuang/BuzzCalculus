@@ -129,6 +129,90 @@
       ]
     }
   ],
+  "sections": [
+    {
+      "title": "先看外層",
+      "beats": [
+        { "show": ["① 外層像表上的哪一條？", "② 裡層的導數在不在場？"], "note": "差常數倍可以。",
+          "say": "真正做題時，難的是看出 u 是誰。先看外層像積分表的哪一條，再檢查裡層的導數在不在。" },
+        { "show": ["$\\frac{u'}{u}\\to\\ln|u|$"], "note": "分子是分母的導數。",
+          "say": "第一種形狀：分子剛好是分母的導數，積出來是自然對數絕對值 u。" },
+        { "show": ["$\\int\\frac{2x+3}{x^2+3x+5}\\,dx=\\ln(x^2+3x+5)+C$"], "note": "判別式 $9-20<0$，分母永遠是正的。",
+          "say": "例如分母 x 平方加三 x 加五，導數二 x 加三正好是分子。分母永遠是正的，絕對值可以拿掉。" }
+      ],
+      "check": 0
+    },
+    {
+      "title": "次方與指數",
+      "beats": [
+        { "show": ["$u'\\cdot u^n\\to\\frac{u^{n+1}}{n+1}$"], "note": "例：$\\sin^5 x\\cos x$、$\\frac{(\\ln x)^2}{x}$。",
+          "say": "第二種：某個東西的次方，乘上它的導數。像 sine 五次方乘 cosine，u 就是 sine x。" },
+        { "show": ["$u'\\cdot e^u\\to e^u$"], "note": "例：$xe^{x^2}$、$\\cos x\\,e^{\\sin x}$。",
+          "say": "第三種：指數上面的東西，它的導數在外面。e 的 sine x 次方乘 cosine x，u 就是 sine x。" }
+      ],
+      "check": 3
+    },
+    {
+      "title": "arctan 與根號",
+      "beats": [
+        { "show": ["$\\frac{u'}{1+u^2}\\to\\arctan u$"], "note": "分母是 $1$ 加某個東西的平方。",
+          "say": "第四種：分母是一加某個東西的平方，分子是那個東西的導數，積出 arctangent。" },
+        { "show": ["$\\frac{u'}{\\sqrt{u}}\\to 2\\sqrt{u}$"], "note": "根號裡那個東西的導數在分子。",
+          "say": "第五種：根號裡的東西，它的導數在分子，積出二倍根號 u。導數差一個負號也要帶著。" }
+      ],
+      "check": 1
+    },
+    {
+      "title": "看出是 arctan",
+      "beats": [
+        { "show": ["$\\int\\frac{x}{x^4+1}\\,dx$"],
+          "say": "這一題乍看不像任何一條。先看分母。" },
+        { "show": ["$x^4+1=1+(x^2)^2$：$u=x^2$"], "note": "形狀是 $1+u^2$。",
+          "say": "x 四次方是 x 平方的平方，所以分母是一加 u 平方，u 等於 x 平方。" },
+        { "show": ["$du=2x\\,dx$，$x\\,dx=\\frac{du}{2}$"],
+          "say": "du 是二 x dx，分子的 x dx 就是二分之一 du，只差常數，配得起來。" }
+      ],
+      "predict": {
+        "ask": "答案是？",
+        "options": [
+          { "label": "$\\frac{1}{2}\\arctan(x^2)+C$", "correct": true },
+          { "label": "$\\arctan(x^2)+C$", "why": "漏了 $x\\,dx=\\frac{du}{2}$ 的 $\\frac{1}{2}$。" },
+          { "label": "$\\frac{1}{4}\\ln(x^4+1)+C$", "why": "$\\ln$ 那條要分子是分母的導數 $4x^3$；這裡分子只有 $x$。" }
+        ]
+      }
+    },
+    {
+      "title": "長得像但不是",
+      "beats": [
+        { "show": ["$\\frac{1}{1+x^2}\\to\\arctan x$"], "note": "分子是 $1$。$\\ln$ 那條需要分子是 $2x$。",
+          "say": "分子是一，是 arctangent x。要積出自然對數，分子得是分母的導數二 x。" },
+        { "show": ["$\\frac{x}{1+x^2}\\to\\frac{1}{2}\\ln(1+x^2)$"], "note": "分子是 $x$：這是 $\\frac{u'}{u}$。",
+          "say": "分子換成 x，就變成分子是分母的導數，差一個二，答案是二分之一自然對數。" },
+        { "show": ["每次都寫出 $u$ 和 $du$ 核對"], "note": "不要只憑形狀。",
+          "say": "兩個只差一點點，答案完全不同。所以每次都把 u 和 du 寫出來核對。" }
+      ],
+      "predict": {
+        "ask": "$\\frac{x}{1+x^2}$ 硬套 $\\arctan$ 那條，$u=x^2$，分母應該是？",
+        "options": [
+          { "label": "$1+x^4$，所以套不上", "correct": true },
+          { "label": "$1+x^2$，剛好套上", "why": "$1+u^2$ 的 $u=x^2$，$u^2$ 是 $x^4$，不是 $x^2$。" },
+          { "label": "$1+2x$", "why": "$2x$ 是 $u'$，該出現在分子，不在分母。" }
+        ]
+      }
+    },
+    {
+      "title": "$u$ 不只一種選法",
+      "beats": [
+        { "show": ["$\\int\\sin x\\cos x\\,dx$"],
+          "say": "最後一題，sine 乘 cosine，兩個都是對方的導數，u 選哪個都行。" },
+        { "show": ["$u=\\sin x$：$\\frac{\\sin^2 x}{2}+C$"],
+          "say": "選 u 等於 sine x，du 是 cosine x dx，積出二分之 sine 平方。" },
+        { "show": ["$u=\\cos x$：$-\\frac{\\cos^2 x}{2}+C$"], "note": "$du=-\\sin x\\,dx$，負號帶著。",
+          "say": "選 u 等於 cosine x，du 有負號，積出負的二分之 cosine 平方。兩個答案長得不一樣。" }
+      ],
+      "check": 2
+    }
+  ],
   "skillTags": {
     "coarse": ["substitution", "u-sub", "log", "inverse-trig", "radical"],
     "fine": ["u-sub-log-derivative", "u-sub-power-of-u", "u-sub-exp-form", "u-sub-arctan-form", "u-sub-root-form", "u-sub-choice-constant"]

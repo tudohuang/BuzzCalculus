@@ -40,6 +40,76 @@
       "collapsible": false
     }
   ],
+  "sections": [
+    {
+      "title": "唯一留下來的係數",
+      "beats": [
+        {"show":["$f=\\sum a_n(z-z_0)^n$，$0<|z-z_0|<r$"],"note":"孤立奇異點的 Laurent 級數。","say":"z 零是孤立奇異點，f 在它周圍的去心圓盤上有 Laurent 級數。"},
+        {"show":["$\\operatorname{Res}_{z_0}f=a_{-1}$"],"say":"留數的定義很簡單：就是負一次方那一項的係數。"},
+        {"show":["$\\operatorname{Res}_{z_0}f=\\frac{1}{2\\pi i}\\oint f\\,dz$"],"note":"繞一小圈，其他項都積成 $0$。","say":"名字的由來：繞 z 零一小圈積分，其他項都積成零，只留下二派 i 乘這個係數。"}
+      ],
+      "check": 2
+    },
+    {
+      "title": "簡單極點",
+      "beats": [
+        {"show":["$f=\\frac{a_{-1}}{z-z_0}+a_0+\\cdots$"],"note":"1 階極點。","say":"簡單極點，也就是一階極點：主要部分只有負一次方那一項。"},
+        {"show":["$\\operatorname{Res}=\\lim_{z\\to z_0}(z-z_0)f(z)$"],"say":"乘上 z 減 z 零，把那一項變成常數，其他項都趨近零，取極限就拿到留數。"},
+        {"show":["$f=\\frac{g}{h}$：$\\operatorname{Res}=\\frac{g(z_0)}{h'(z_0)}$"],"note":"$g(z_0)\\ne 0$，$h$ 在 $z_0$ 是 1 階零點。","say":"更常用的：分母在 z 零是一階零點，留數就是 g 在 z 零的值除以 h prime。不用因式分解。"}
+      ],
+      "check": 0
+    },
+    {
+      "title": "兩個簡單極點",
+      "beats": [
+        {"show":["$\\operatorname{Res}_{z=i}\\frac{1}{z^2+1}=\\frac{1}{2i}=-\\frac{i}{2}$"],"note":"$h'=2z$。","say":"z 平方加一分之一在 i：h prime 是二 z，代 i 得二 i，留數是二 i 分之一。"},
+        {"show":["檢查：$\\pi=2\\pi i\\cdot\\frac{1}{2i}$"],"note":"Cauchy 積分公式算過 $\\pi$。","say":"對照上一章：繞 i 一圈的積分是派，剛好等於二派 i 乘這個留數。"},
+        {"show":["$\\cot z=\\frac{\\cos z}{\\sin z}$ 在 $0$"],"note":"$\\sin 0=0$，$\\cos 0=1\\ne 0$。","say":"再看 cotangent 在零：分母 sine z 在零是一階零點，因為它的導數 cosine 零是一。"}
+      ],
+      "predict": {
+        "ask": "$\\operatorname{Res}_{z=0}\\cot z$ 是？",
+        "options": [
+          {"label":"$1$","correct":true},
+          {"label":"$0$","why":"$\\frac{g(0)}{h'(0)}=\\frac{\\cos 0}{\\cos 0}=1$；檢查 $z\\cot z\\to 1$。"},
+          {"label":"不存在","why":"簡單極點一定有留數：$\\frac{\\cos 0}{\\cos 0}=1$。"}
+        ]
+      }
+    },
+    {
+      "title": "$m$ 階極點",
+      "beats": [
+        {"show":["$\\operatorname{Res}=\\frac{1}{(m-1)!}\\lim\\frac{d^{\\,m-1}}{dz^{\\,m-1}}$","$\\Bigl[(z-z_0)^{m}f(z)\\Bigr]$"],"note":"$a_{-1}$ 是第 $m-1$ 個 Taylor 係數。","say":"m 階極點：乘上 m 次方變全純，留數是它的第 m 減一個 Taylor 係數，所以微 m 減一次。"},
+        {"show":["$\\operatorname{Res}_{z=1}\\frac{e^z}{(z-1)^2}$"],"note":"2 階極點，$(z-1)^2f=e^z$。","say":"例如 e 的 z 次方除以 z 減一的平方：在一是二階極點，乘上平方剩下 e 的 z 次方。"},
+        {"show":["$m=2$：微分一次，在 $z=1$ 取值"],"say":"m 等於二，所以微分一次、除以一階乘，再代 z 等於一。"}
+      ],
+      "predict": {
+        "ask": "留數是？",
+        "options": [
+          {"label":"$e$","correct":true},
+          {"label":"不存在：$\\lim\\frac{e^z}{z-1}$ 發散","why":"那是用了簡單極點的公式；這是 2 階極點，要乘 $(z-1)^2$ 再微分一次。"},
+          {"label":"$\\frac{e}{2}$","why":"前面是 $\\frac{1}{(m-1)!}=\\frac{1}{1!}=1$，不是 $\\frac{1}{2}$。"}
+        ]
+      }
+    },
+    {
+      "title": "直接讀 Laurent 係數",
+      "beats": [
+        {"show":["$\\operatorname{Res}_{z=0}\\frac{e^z}{z^4}$"],"note":"$m=4$，要微三次。","say":"m 大的時候微分很累。e 的 z 次方除以 z 四次方，用公式要微三次。"},
+        {"show":["$z^{-4}\\left(1+z+\\frac{z^2}{2}+\\frac{z^3}{6}+\\cdots\\right)$"],"say":"直接展開比較快：除以 z 四次方，負一次方來自 z 三次方那一項。"},
+        {"show":["$\\operatorname{Res}=\\frac{1}{6}$"],"say":"所以留數就是 e 的 z 次方的三次項係數，三階乘分之一，六分之一。"}
+      ],
+      "check": 3
+    },
+    {
+      "title": "留數可以是 0",
+      "beats": [
+        {"show":["可去奇異點：留數 $0$"],"note":"沒有負次方。","say":"可去奇異點沒有負次方，留數當然是零。"},
+        {"show":["$\\frac{1}{z^2}$：二階極點，留數 $0$"],"note":"只有 $z^{-2}$ 一項。","say":"可是極點的留數也可能是零：z 平方分之一只有負二次方，負一次方的係數是零。"},
+        {"show":["分母為 $0$ $\\ne$ 留數不為 $0$"],"say":"所以別看到分母是零，就以為留數一定不是零。展開來看負一次方那一項。"}
+      ],
+      "check": 1
+    }
+  ],
   "workedExamples": [
     {
       "title": "簡單極點",

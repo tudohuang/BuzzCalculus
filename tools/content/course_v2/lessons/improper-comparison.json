@@ -132,6 +132,77 @@
       ]
     }
   ],
+  "sections": [
+    {
+      "title": "拿已知的來壓",
+      "beats": [
+        { "show": ["$\\int_1^{\\infty}\\frac{dx}{x^3+x+1}$"], "note": "反導函數很難寫，但只問收不收斂。",
+          "say": "這個積分的反導函數很難寫。可是我們只想知道收不收斂，不一定要算出值。" },
+        { "show": ["$0<\\frac{1}{x^3+x+1}<\\frac{1}{x^3}$"], "note": "$x\\ge 1$ 時分母 $>x^3$。",
+          "say": "x 大於等於一的時候，分母比 x 三次方大，所以整個函數被 x 三次方分之一壓在底下。" },
+        { "show": ["$\\int_1^{\\infty}\\frac{dx}{x^3}=\\frac{1}{2}$，收斂"], "note": "所以原積分收斂，值 $<\\frac{1}{2}$。",
+          "say": "x 三次方分之一的面積是二分之一，有限。被它壓住的面積也有限，所以收斂。" },
+        { "show": ["$0\\le f\\le g$：$g$ 收斂 ⇒ $f$ 收斂", "$f$ 發散 ⇒ $g$ 發散"],
+          "say": "這就是直接比較：大的收斂，小的就收斂；小的發散，大的就發散。反方向什麼都說不出來。" }
+      ],
+      "check": 0
+    },
+    {
+      "title": "壓住發散的",
+      "beats": [
+        { "show": ["$\\int_1^{\\infty}\\frac{2+\\cos x}{x}\\,dx$"], "note": "$\\cos x\\ge-1$，所以 $2+\\cos x\\ge 1$。",
+          "say": "這一題分子會晃動，但 cosine 最小是負一，所以二加 cosine x 至少是一。" },
+        { "show": ["$\\frac{2+\\cos x}{x}\\ge\\frac{1}{x}>0$"], "note": "$\\int_1^{\\infty}\\frac{dx}{x}$ 發散。",
+          "say": "被積函數壓在 x 分之一的上面，而 x 分之一的面積發散，所以原積分也發散。" },
+        { "show": ["兩個函數都要非負"], "note": "$-x\\le\\frac{1}{x^2}$，但 $\\int_1^{\\infty}(-x)\\,dx$ 發散。",
+          "say": "注意，這套推理要兩個函數都不是負的。負 x 比 x 平方分之一小，它的積分卻發散到負無限大。" }
+      ],
+      "check": 3
+    },
+    {
+      "title": "極限比較",
+      "beats": [
+        { "show": ["$\\frac{f}{g}\\to L$，$0<L<\\infty$"], "note": "$f$、$g>0$。",
+          "say": "不想找不等式時，用極限比較：兩個正函數的比值趨近一個正的有限數 L。" },
+        { "show": ["兩個積分同時收斂或同時發散"], "note": "$f\\sim L\\cdot g$，主項決定命運。",
+          "say": "這時兩個積分同生共死，一起收斂或一起發散。換句話說，主項決定命運。" },
+        { "show": ["$\\frac{x+1}{x^3+2}\\sim\\frac{1}{x^2}$：收斂"], "note": "$\\frac{x}{x^2+1}\\sim\\frac{1}{x}$：發散。",
+          "say": "做法是找主項。x 加一除以 x 三次方加二，主項是 x 平方分之一，收斂；x 除以 x 平方加一，主項是 x 分之一，發散。" }
+      ],
+      "check": 1
+    },
+    {
+      "title": "兩個問題點",
+      "beats": [
+        { "show": ["$\\int_0^{\\infty}\\frac{dx}{\\sqrt{x}(1+x)}$"], "note": "在 $1$ 切開，被積函數處處為正。",
+          "say": "這一題零和無限遠都有問題。在一切開，兩段各用一次極限比較。" },
+        { "show": ["$x\\to 0^+$：$\\sim\\frac{1}{x^{1/2}}$"], "note": "$1+x\\to 1$，$p=\\frac{1}{2}<1$，收斂。",
+          "say": "x 靠近零，一加 x 趨近一，主項是根號 x 分之一。p 是二分之一，小於一，這段收斂。" }
+      ],
+      "predict": {
+        "ask": "$x\\to\\infty$ 時，被積函數的主項是？",
+        "options": [
+          { "label": "$\\frac{1}{x^{3/2}}$，收斂", "correct": true },
+          { "label": "$\\frac{1}{x}$，發散", "why": "只把 $1+x$ 換成 $x$，忘了分母還有 $\\sqrt{x}$：$\\sqrt{x}\\cdot x=x^{3/2}$。" },
+          { "label": "$\\frac{1}{x^{1/2}}$，發散", "why": "那是 $x\\to 0^+$ 的主項；$x\\to\\infty$ 時 $1+x\\sim x$ 不能丟。" }
+        ]
+      }
+    },
+    {
+      "title": "常用的比較對象",
+      "beats": [
+        { "show": ["指數衰減比任何冪次快"], "note": "$x$ 夠大時 $x^ne^{-x}\\le\\frac{C}{x^2}$。",
+          "say": "無限遠那端，除了 x 的 p 次方分之一，還有指數：指數衰減比任何冪次都快。" },
+        { "show": ["$x\\ge 1$：$e^{-x^2}\\le e^{-x}$"], "note": "所以 $\\int_0^{\\infty}e^{-x^2}\\,dx$ 收斂。",
+          "say": "例如 x 大於等於一時，e 的負 x 平方次方比 e 的負 x 次方還小，所以它的積分收斂。" },
+        { "show": ["會變號：看 $|f|$"], "note": "$\\int|f|$ 收斂 ⇒ $\\int f$ 收斂。",
+          "say": "函數會變號就不能直接比，但可以先取絕對值。絕對值的積分收斂，原積分就收斂。" },
+        { "show": ["$\\left|\\frac{\\sin x}{x^2}\\right|\\le\\frac{1}{x^2}$"],
+          "say": "例如 sine x 除以 x 平方，取絕對值之後被 x 平方分之一壓住，所以收斂。" }
+      ],
+      "check": 2
+    }
+  ],
   "skillTags": {
     "coarse": ["improper-integral", "comparison-test"],
     "fine": ["improper-direct-comparison", "improper-limit-comparison", "improper-dominant-term", "improper-absolute-convergence"]

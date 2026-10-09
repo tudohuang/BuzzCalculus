@@ -159,6 +159,75 @@
       ]
     }
   ],
+  "sections": [
+    {
+      "title": "斜率放大誤差",
+      "beats": [
+        { "show": ["$f(x)=mx+b$，$L=ma+b$"],
+          "say": "先處理最簡單的函數：直線。在 a 的極限就是 m 乘 a 加 b。" },
+        { "show": ["$|f(x)-L|=|m||x-a|$"], "note": "$x$ 偏一點，$f(x)$ 偏那一點的 $|m|$ 倍。",
+          "say": "直接相減，剛好提出 m。x 偏離 a 一點點，函數值就偏離那一點點的 m 的絕對值倍。" },
+        { "show": ["取 $\\delta=\\varepsilon/|m|$"], "note": "$m\\ne0$；剛好是最大可用的 $\\delta$。",
+          "say": "要誤差小於 epsilon，x 的距離就除以斜率的絕對值。陡的直線，delta 要更窄。" }
+      ],
+      "check": 0
+    },
+    {
+      "title": "正式證明四句",
+      "beats": [
+        { "show": ["草稿：倒推 $|x-a|$ 要多小"], "note": "正式證明只寫正向的四句。",
+          "say": "草稿紙上從結論倒推，算出 delta。但交出去的正式證明，只寫正向的四句話。" },
+        { "show": ["(1) 給定 $\\varepsilon>0$　(2) 取 $\\delta=\\dots$", "(3) 設 $0<|x-a|<\\delta$　(4) 則 …"],
+          "say": "給定 epsilon；取 delta；設 x 在垂直帶裡；最後一條鏈，從距離一路推到小於 epsilon。" },
+        { "show": ["$\\lim_{x\\to2}(3x-1)=5$：取 $\\delta=\\frac{\\varepsilon}{3}$"],
+          "say": "例子：三 x 減一在二的極限是五。草稿上距離是三倍的 x 減二，所以 delta 取三分之 epsilon。" },
+        { "show": ["$|(3x-1)-5|=3|x-2|<3\\delta=\\varepsilon$"],
+          "say": "第四句就是這條鏈：距離等於三倍的 x 減二，小於三倍 delta，剛好是 epsilon。" }
+      ],
+      "check": 1
+    },
+    {
+      "title": "斜率為負",
+      "beats": [
+        { "show": ["$\\lim_{x\\to1}(4-5x)=-1$"],
+          "say": "斜率是負的會怎樣？四減五 x 在一的極限是負一。" },
+        { "show": ["$|(4-5x)-(-1)|=|5-5x|=5|x-1|$"], "note": "斜率 $-5$，取絕對值 5。",
+          "say": "距離化簡是五倍的 x 減一。斜率負五，但距離只看絕對值五。" }
+      ],
+      "predict": {
+        "ask": "$\\delta$ 取什麼？",
+        "options": [
+          { "label": "$\\frac{\\varepsilon}{5}$", "correct": true },
+          { "label": "$\\frac{\\varepsilon}{-5}$", "why": "那是負數，不是合法的 $\\delta$；要除以斜率的絕對值。" },
+          { "label": "$5\\varepsilon$", "why": "乘錯方向了：陡的直線需要更窄的 $\\delta$，所以是除以 5。" }
+        ]
+      }
+    },
+    {
+      "title": "最大的 $\\delta$",
+      "beats": [
+        { "show": ["$\\varepsilon=0.1$：$\\delta=0.02$"], "note": "$x=1.0201$ 時誤差 $0.1005>0.1$。",
+          "say": "誤差零點一，delta 是零點零二。再大一點點就不行，一點零二零一已經跑出去了。" },
+        { "show": ["$3x-1$，$\\varepsilon=0.06$：$\\delta=0.02$"], "note": "$x=2\\pm0.0199$：誤差 $0.0597<0.06$。",
+          "say": "回到三 x 減一，誤差零點零六，delta 是零點零二。帶子邊緣的點，誤差零點零五九七，合格。" },
+        { "show": ["定義要的是帶子裡每一個 $x$"], "note": "只檢查一個點不夠。",
+          "say": "判斷某個 delta 行不行，不能只挑一個點試，要帶子裡每一個 x 都合格。" }
+      ],
+      "check": 3
+    },
+    {
+      "title": "兩個特殊情形",
+      "beats": [
+        { "show": ["$m=0$：$|f(x)-L|=0<\\varepsilon$"], "note": "任何 $\\delta>0$ 都可以，例如 $\\delta=1$。",
+          "say": "斜率是零，函數是常數，誤差永遠是零。這時任何正的 delta 都行，公式不能用，會除以零。" },
+        { "show": ["$\\frac{x^2-1}{x-1}=x+1$（$x\\ne1$）"], "note": "定義只看 $0<|x-1|<\\delta$ 的 $x$。",
+          "say": "還有化簡後是直線的：x 平方減一除以 x 減一。定義只看 x 不等於一的點，所以可以先約分。" },
+        { "show": ["$|\\frac{x^2-1}{x-1}-2|=|x-1|$：$\\delta=\\varepsilon$"],
+          "say": "約完是 x 加一，跟二的距離就是 x 減一的絕對值，delta 取 epsilon 就好。" }
+      ],
+      "check": 2
+    }
+  ],
   "skillTags": {
     "coarse": [
       "epsilon-delta",

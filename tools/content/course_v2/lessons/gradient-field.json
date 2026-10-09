@@ -123,6 +123,73 @@
       ]
     }
   ],
+  "sections": [
+    {
+      "title": "梯度就是向量場",
+      "beats": [
+        { "show": ["每一點：$\\nabla f=\\langle f_x,f_y\\rangle$"],
+          "say": "函數在每一點都有一個梯度。每一點配一個向量，這本身就是一個向量場，叫梯度場。" },
+        { "show": ["$f=x^2+y^2$：$\\nabla f=\\langle 2x,2y\\rangle$"], "note": "上一課的發散場放大 $2$ 倍。",
+          "say": "例如 x 平方加 y 平方，梯度場是二 x、二 y，就是上一課的發散場放大兩倍。" },
+        { "show": ["三變數：$\\nabla f=\\langle f_x,f_y,f_z\\rangle$"], "note": "箭頭垂直於等值面 $f=c$。",
+          "say": "三個變數也一樣，是空間中的向量場，箭頭垂直於等值面。" }
+      ],
+      "check": 0
+    },
+    {
+      "title": "垂直於等高線",
+      "beats": [
+        { "show": ["垂直於等高線、指向上坡"], "note": "等高線越密，箭頭越長。",
+          "say": "把函數當地形高度，梯度的箭頭垂直穿過等高線，往高處指；坡越陡，箭頭越長。" },
+        { "show": ["$\\nabla f(1,2)=\\langle 2,4\\rangle$"], "note": "等高線是圓 $x^2+y^2=5$。",
+          "say": "驗證一下。在點一、二，梯度是二、四；經過這一點的等高線是一個圓。" },
+        { "show": ["切線方向 $\\langle -2,1\\rangle$：$\\langle 2,4\\rangle\\cdot\\langle -2,1\\rangle=0$"],
+          "say": "圓的切線方向可以取負二、一。點積是零，垂直；而且梯度指向圓外，也就是函數變大的方向。" }
+      ],
+      "check": 1
+    },
+    {
+      "title": "算一個梯度場",
+      "beats": [
+        { "show": ["$f(x,y)=x^2y+y^3$"],
+          "say": "算一個：第一個分量對 x 偏微分，y 當常數；第二個分量對 y 偏微分，x 當常數。" },
+        { "show": ["$f_x=2xy$"],
+          "say": "對 x：x 平方 y 變二 x y，y 三次方是常數，消失。" }
+      ],
+      "predict": {
+        "ask": "$\\nabla f$ 是？",
+        "options": [
+          { "label": "$\\langle 2xy,\\ x^2+3y^2\\rangle$", "correct": true },
+          { "label": "$\\langle x^2+3y^2,\\ 2xy\\rangle$", "why": "分量放反了：第一個是 $f_x$。" },
+          { "label": "$\\langle 2xy,\\ 3y^2\\rangle$", "why": "對 $y$ 偏微分時 $x^2y$ 也要算，得 $x^2$。" }
+        ]
+      }
+    },
+    {
+      "title": "反過來問",
+      "beats": [
+        { "show": ["$\\mathbf F=\\nabla f$：$f$ 叫位勢函數"], "note": "物理書常寫 $\\mathbf F=-\\nabla U$，只差 $f=-U$。",
+          "say": "反過來問：給一個場，它是不是某個函數的梯度？是的話，那個函數叫位勢函數。" },
+        { "show": ["$P=f_x$、$Q=f_y$ ⟹ $P_y=f_{xy}$、$Q_x=f_{yx}$"],
+          "say": "如果是，P 對 y 微分就是 f x y，Q 對 x 微分就是 f y x。" },
+        { "show": ["Clairaut：$P_y=Q_x$"], "note": "$f$ 的二階偏導連續時。",
+          "say": "二階偏導連續時，兩個混合偏導相等，所以交叉偏導一定相等。" }
+      ],
+      "check": 3
+    },
+    {
+      "title": "不可能是梯度場",
+      "beats": [
+        { "show": ["$\\mathbf F=\\langle y,-x\\rangle$：$P_y=1$，$Q_x=-1$"],
+          "say": "拿這個場檢查：交叉偏導一個是一、一個是負一。" },
+        { "show": ["$P_y\\ne Q_x$ ⟹ 一定不是梯度場"], "note": "它是順時針繞圈的旋轉場。",
+          "say": "不相等，就一定不是梯度場。它是一個順時針繞圈的旋轉場。" },
+        { "show": ["$P_y=Q_x$ 還不夠"], "note": "還要看定義域有沒有洞：〈保守場〉。",
+          "say": "反過來，交叉偏導相等還不能保證，要看定義域有沒有洞，那是後面保守場的事。" }
+      ],
+      "check": 2
+    }
+  ],
   "skillTags": {
     "coarse": ["vector-calculus", "conservative-field", "nabla"],
     "fine": ["gradient-field-compute", "gradient-field-level-curves", "gradient-field-cross-partials"]

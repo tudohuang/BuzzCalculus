@@ -126,6 +126,90 @@
       ]
     }
   ],
+  "sections": [
+    {
+      "title": "遞迴從哪裡來",
+      "beats": [
+        { "show": ["$W_n=\\int_0^{\\pi/2}\\sin^n x\\,dx$"], "note": "拆成 $\\sin^{n-1}x\\cdot\\sin x$。",
+          "say": "Wallis 積分是 sine 的 n 次方從零積到二分之 pi。先拆出一個 sine x 來做分部積分。" },
+        { "show": ["$u=\\sin^{n-1}x$，$dv=\\sin x\\,dx$"], "note": "邊界項：兩端一個 $\\cos=0$、一個 $\\sin=0$。",
+          "say": "u 取 sine 的 n 減一次方，v 是負 cosine x。邊界項在兩端剛好都是零。" },
+        { "show": ["$(n-1)\\int_0^{\\pi/2}\\sin^{n-2}x\\cos^2 x\\,dx$"], "note": "$\\cos^2 x=1-\\sin^2 x$",
+          "say": "剩下的積分裡有 cosine 平方，換成一減 sine 平方，就拆回兩個 Wallis 積分。" },
+        { "show": ["$W_n=(n-1)(W_{n-2}-W_n)$"], "note": "$W_n$ 出現在兩邊。",
+          "say": "W n 出現在等號兩邊，跟循環積分一樣，移項就解出來。" }
+      ],
+      "predict": {
+        "ask": "移項之後，$W_n$ 是？",
+        "options": [
+          { "label": "$\\frac{n-1}{n}W_{n-2}$", "correct": true },
+          { "label": "$\\frac{n}{n-1}W_{n-2}$", "why": "分子分母顛倒了；$\\sin^n$ 隨 $n$ 變小，$W_n$ 應該越來越小。" },
+          { "label": "$(n-1)W_{n-2}$", "why": "忘了右邊還有 $-(n-1)W_n$；移到左邊是 $nW_n$。" }
+        ]
+      }
+    },
+    {
+      "title": "奇偶決定 $\\pi$",
+      "beats": [
+        { "show": ["$W_0=\\frac{\\pi}{2}$，$W_1=1$"], "note": "遞迴一次跳兩格，要兩個起點。",
+          "say": "遞迴一次跳兩格，所以有兩個起點：W 零是二分之 pi，W 一是一。" },
+        { "show": ["$W_6=\\frac{5}{6}\\cdot\\frac{3}{4}\\cdot\\frac{1}{2}\\cdot\\frac{\\pi}{2}=\\frac{5\\pi}{32}$"],
+          "say": "偶數，例如六：六分之五、四分之三、二分之一一路乘下去，最後乘二分之 pi，得三十二分之五 pi。" },
+        { "show": ["$W_7=\\frac{6}{7}\\cdot\\frac{4}{5}\\cdot\\frac{2}{3}\\cdot 1=\\frac{16}{35}$"], "note": "奇數最後乘 $W_1=1$：沒有 $\\pi$。",
+          "say": "奇數，例如七：乘到三分之二，最後乘的是一，所以答案三十五分之十六，裡面沒有 pi。" }
+      ],
+      "check": 0
+    },
+    {
+      "title": "換成 $\\cos$",
+      "beats": [
+        { "show": ["令 $x=\\frac{\\pi}{2}-t$"], "note": "$\\sin$ 變 $\\cos$，區間 $\\left[0,\\frac{\\pi}{2}\\right]$ 不變。",
+          "say": "令 x 等於二分之 pi 減 t。sine 變成 cosine，而零到二分之 pi 這段區間剛好對調，還是自己。" },
+        { "show": ["$\\int_0^{\\pi/2}\\cos^n x\\,dx=W_n$"],
+          "say": "所以 cosine 的 n 次方在同一段上積分，答案跟 sine 一模一樣。不是函數相等，是整段的積分相等。" }
+      ],
+      "check": 3
+    },
+    {
+      "title": "區間 $[0,\\pi]$",
+      "beats": [
+        { "show": ["$\\int_0^\\pi\\sin^n x\\,dx=2W_n$"], "note": "$\\sin^n$ 對 $x=\\frac{\\pi}{2}$ 對稱。",
+          "say": "區間拉長到零到 pi，sine 的 n 次方左右對稱，所以是兩倍的 W n。" },
+        { "show": ["$\\int_0^\\pi\\cos^4 x\\,dx=2W_4$"], "note": "偶數次方：$\\cos(\\pi-x)^4=\\cos^4 x$。",
+          "say": "cosine 四次方也是左右對稱，因為偶數次方把負號吃掉了。" },
+        { "show": ["$2\\cdot\\frac{3\\pi}{16}=\\frac{3\\pi}{8}$"], "note": "$W_4=\\frac{3}{4}\\cdot\\frac{1}{2}\\cdot\\frac{\\pi}{2}$",
+          "say": "W 四是十六分之三 pi，乘二得八分之三 pi。在半段上，答案就是十六分之三 pi。" }
+      ],
+      "check": 1
+    },
+    {
+      "title": "奇數次方抵銷",
+      "beats": [
+        { "show": ["$\\cos(\\pi-x)=-\\cos x$"],
+          "say": "cosine 不一樣：pi 減 x 的 cosine 是負的 cosine x，後半段跟前半段差一個負號。" },
+        { "show": ["$n$ 奇數：前後兩半抵銷"], "note": "例：$\\int_0^\\pi\\cos^3 x\\,dx=0$",
+          "say": "奇數次方保留這個負號，前半正、後半負，大小一樣，加起來是零。" }
+      ],
+      "check": 2
+    },
+    {
+      "title": "乘積",
+      "beats": [
+        { "show": ["$\\int_0^{\\pi/2}\\sin^4 x\\cos^2 x\\,dx$"], "note": "$\\cos^2 x=1-\\sin^2 x$",
+          "say": "sine 四次方乘 cosine 平方：把偶數次方的 cosine 換成一減 sine 平方。" },
+        { "show": ["$=W_4-W_6$"], "note": "$W_4=\\frac{3\\pi}{16}$，$W_6=\\frac{5\\pi}{32}$。",
+          "say": "變成兩個 Wallis 積分相減：W 四減 W 六。" }
+      ],
+      "predict": {
+        "ask": "$W_4-W_6$ 是？",
+        "options": [
+          { "label": "$\\frac{\\pi}{32}$", "correct": true },
+          { "label": "$\\frac{2\\pi}{16}$", "why": "分母不同不能直接相減；先通分 $\\frac{6\\pi}{32}-\\frac{5\\pi}{32}$。" },
+          { "label": "$-\\frac{\\pi}{32}$", "why": "減反了：$W_4=\\frac{6\\pi}{32}$ 比 $W_6=\\frac{5\\pi}{32}$ 大；被積函數非負，答案是正的。" }
+        ]
+      }
+    }
+  ],
   "skillTags": {
     "coarse": ["wallis", "trig-power", "recurrence-formula"],
     "fine": ["wallis-recursion", "wallis-even-odd", "wallis-symmetry-range", "wallis-mixed-even-powers"]

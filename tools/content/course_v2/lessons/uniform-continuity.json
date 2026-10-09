@@ -130,6 +130,77 @@
       ]
     }
   ],
+  "sections": [
+    {
+      "title": "$\\delta$ 看位置",
+      "beats": [
+        { "show": ["$\\frac{1}{x}$ 在 $(0,1]$ 每一點都連續"],
+          "say": "x 分之一在零到一，每一點都連續。可是每一點能用的 delta 一樣大嗎？" },
+        { "show": ["在 $a$：$\\delta=\\frac{\\varepsilon a^2}{2}$"], "note": "$\\varepsilon\\le1$ 時可用。",
+          "say": "在 a 這一點，delta 可以取 epsilon 乘 a 平方再除以二。裡面有 a：位置不同，delta 不同。" },
+        { "show": ["$\\varepsilon=0.5$，$a=0.5$：$\\delta=\\frac{1}{16}$"],
+          "say": "誤差零點五，在零點五這一點，delta 是十六分之一。如果點移到零點零一呢？" }
+      ],
+      "predict": {
+        "ask": "$a=0.01$ 時 $\\delta$ 是？",
+        "options": [
+          { "label": "$\\frac{1}{40000}$", "correct": true },
+          { "label": "$\\frac{1}{16}$", "why": "$\\frac{1}{16}$ 是 $a=0.5$ 的；$a$ 越靠近 0，曲線越陡，$\\delta$ 要小得多。" },
+          { "label": "跟 $a=0.5$ 一樣", "why": "$\\delta=\\frac{\\varepsilon a^2}{2}$ 跟著 $a^2$ 變；$a$ 從 0.5 變成 0.01，$\\delta$ 小了很多倍。" }
+        ]
+      }
+    },
+    {
+      "title": "全區通用的 $\\delta$",
+      "beats": [
+        { "show": ["沒有一個 $\\delta$ 對每個 $a$ 都有效"],
+          "say": "越靠近零，delta 就得越小，所有點一起看，找不到一個大家都能用的 delta。" },
+        { "show": ["$\\forall\\varepsilon\\ \\exists\\delta\\ \\forall x,y:$", "$|x-y|<\\delta\\Rightarrow|f(x)-f(y)|<\\varepsilon$"],
+          "say": "一致連續問的就是：有沒有一個全區通用的 delta？任意兩點只要夠近，函數值就夠近。" },
+        { "show": ["連續：$\\forall a\\ \\forall\\varepsilon\\ \\exists\\delta$"], "note": "$\\delta$ 在 $a$ 之後選，可以看位置。",
+          "say": "跟連續並排比：連續是先給點，再選 delta，delta 可以看位置；一致連續的 delta 在點出場前就選好。" },
+        { "show": ["一致連續 ⇒ 連續"], "note": "反過來不對。",
+          "say": "所以一致連續一定連續，反過來不對，x 分之一就是例子。" }
+      ],
+      "check": 0
+    },
+    {
+      "title": "怎麼證「不是」",
+      "beats": [
+        { "show": ["找兩串點：$|x_n-y_n|\\to0$", "但 $|f(x_n)-f(y_n)|\\ge\\varepsilon$"],
+          "say": "要證不是一致連續，實用的做法：找兩串點，彼此越靠越近，函數值卻一直差至少 epsilon。" },
+        { "show": ["$x_n=\\frac{1}{n}$，$y_n=\\frac{1}{n+1}$"], "note": "$|x_n-y_n|=\\frac{1}{n(n+1)}\\to0$。",
+          "say": "x 分之一：取 n 分之一和 n 加一分之一，兩點的距離趨近零。函數值差多少？" },
+        { "show": ["給定 $\\delta$：取 $n$ 讓距離 $<\\delta$"], "note": "這一對就是壞點。",
+          "say": "不管對方給多小的 delta，n 取夠大，這一對點就夠近，函數值卻差很多，就是壞點。" }
+      ],
+      "check": 1
+    },
+    {
+      "title": "$\\sqrt{x}$ 是一致連續",
+      "beats": [
+        { "show": ["$|\\sqrt{x}-\\sqrt{y}|\\le\\sqrt{|x-y|}$"], "note": "兩邊非負，平方比較。",
+          "say": "定義域無界的也可能一致連續。根號 x 有個關鍵不等式：根號的差，不超過差的根號。" },
+        { "show": ["取 $\\delta=\\varepsilon^2$"], "note": "$\\delta$ 只依賴 $\\varepsilon$。",
+          "say": "所以 delta 取 epsilon 平方：兩點距離小於它，根號的差就小於 epsilon，跟位置無關。" },
+        { "show": ["在 0 附近不是 Lipschitz"], "note": "斜率無界，仍然一致連續。",
+          "say": "根號 x 在零附近非常陡，斜率沒有上限，可是照樣一致連續。陡不一定壞事。" }
+      ],
+      "check": 2
+    },
+    {
+      "title": "$x^2$ 在 $\\mathbb{R}$ 上",
+      "beats": [
+        { "show": ["$x_n=n+\\frac{1}{n}$，$y_n=n$"], "note": "$|x_n-y_n|=\\frac{1}{n}\\to0$。",
+          "say": "x 平方越往外越陡，壞點住在很遠的地方。取 n 加 n 分之一和 n，兩點越來越近。" },
+        { "show": ["$x_n^2-y_n^2=2+\\frac{1}{n^2}>2$"], "note": "取 $\\varepsilon=2$：不一致連續。",
+          "say": "函數值的差卻是二加 n 平方分之一，永遠超過二。所以 x 平方在整條實數線上不一致連續。" },
+        { "show": ["$[-R,R]$ 上：$|x^2-y^2|\\le2R|x-y|$"], "note": "Lipschitz，所以一致連續。",
+          "say": "但限制在有界區間上，差不超過常數倍的距離，delta 取 epsilon 除以那個常數，就一致連續了。" }
+      ],
+      "check": 3
+    }
+  ],
   "skillTags": {
     "coarse": ["uniform-continuity", "lipschitz"],
     "fine": ["unifcont-quantifier-order", "unifcont-two-sequences", "unifcont-delta-independent", "unifcont-lipschitz"]

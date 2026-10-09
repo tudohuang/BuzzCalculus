@@ -52,6 +52,78 @@
       "collapsible": true
     }
   ],
+  "sections": [
+    {
+      "title": "補一段，變封閉",
+      "beats": [
+        {"show":["$\\int_{-\\infty}^{\\infty}f(x)\\,dx$"],"note":"實數線不是封閉曲線。","say":"實數線上的積分不是繞一圈，不能直接用留數定理。那就補一段，讓它封閉。"},
+        {"show":["$\\int_{-R}^{R}+\\int_{C_R}=2\\pi i\\sum\\operatorname{Res}$"],"note":"$C_R$：半徑 $R$ 的上半圓。","say":"從負 R 走到 R，再沿上半圓繞回來，圍成半圓形區域，積分等於二派 i 乘圍住的留數和。"},
+        {"show":["證明 $\\int_{C_R}\\to 0$"],"say":"如果 R 趨近無限大時，半圓那段趨近零，剩下的就是整條實數線的積分。"}
+      ],
+      "predict": {
+        "ask": "最後要算哪些極點的留數？",
+        "options": [
+          {"label":"上半平面的極點","correct":true},
+          {"label":"所有極點","why":"半圓形區域只圍住上半平面；下半平面的極點在曲線外，不算。"},
+          {"label":"實數線上的極點","why":"這裡要求 $f$ 在實數線上沒有極點；被圍住的是上半平面的那些。"}
+        ]
+      }
+    },
+    {
+      "title": "半圓為什麼趨近 0",
+      "beats": [
+        {"show":["$f=\\frac{p}{q}$，$\\deg q\\ge\\deg p+2$"],"note":"$q$ 沒有實根。","say":"有理函數，分母沒有實根，而且分母比分子至少高兩次方。"},
+        {"show":["$|f(z)|\\le\\frac{C}{R^2}$，半圓長 $\\pi R$"],"say":"R 很大時，f 的長度大約是 R 平方分之一那麼小，半圓長度只有派 R。"},
+        {"show":["$\\left|\\int_{C_R}f\\,dz\\right|\\le\\frac{\\pi C}{R}\\to 0$"],"note":"ML 不等式；只高 1 次時不成立。","say":"用 ML 不等式相乘，只剩 R 分之一，趨近零。只高一次的話這個論證就不行。"}
+      ],
+      "check": 0
+    },
+    {
+      "title": "$\\frac{1}{1+x^4}$",
+      "beats": [
+        {"show":["上半平面：$e^{i\\pi/4}$、$e^{3i\\pi/4}$"],"note":"分母高 4 次，半圓 $\\to 0$。","say":"一加 z 四次方的四個根平均分在單位圓上，上半平面有兩個：四分之派和四分之三派方向。"},
+        {"show":["$\\operatorname{Res}=\\frac{1}{4z_0^3}=-\\frac{z_0}{4}$"],"note":"$z_0^4=-1$。","say":"用 g 除以 h prime 得四 z 零三次方分之一；因為 z 零四次方是負一，化成負四分之 z 零。"},
+        {"show":["留數和 $=-\\frac{i\\sqrt{2}}{4}$"],"note":"實部 $\\pm\\frac{\\sqrt{2}}{2}$ 抵銷。","say":"兩個根的實部正負抵銷，虛部各是二分之根號二，留數和是負四分之根號二 i。"},
+        {"show":["$2\\pi i\\cdot\\left(-\\frac{i\\sqrt{2}}{4}\\right)=\\frac{\\pi}{\\sqrt{2}}\\approx 2.221$"],"say":"乘二派 i，i 乘 i 是負一，負負得正，答案根號二分之派，大約二點二二一。"}
+      ],
+      "check": 1
+    },
+    {
+      "title": "三角積分：$z=e^{i\\theta}$",
+      "beats": [
+        {"show":["$\\int_0^{2\\pi}R(\\cos\\theta,\\sin\\theta)\\,d\\theta$"],"note":"$\\theta$ 走一圈，$z=e^{i\\theta}$ 走一圈單位圓。","say":"另一型：cosine、sine 的有理式，從零積到二派。theta 走一圈，e 的 i theta 次方就繞單位圓一圈。"},
+        {"show":["$\\cos\\theta=\\frac{z+1/z}{2}$，$\\sin\\theta=\\frac{z-1/z}{2i}$"],"say":"用 Euler 公式把 cosine、sine 換成 z 和 z 分之一。"},
+        {"show":["只算單位圓內部的留數"],"say":"還要把 d theta 換成 dz 的式子，就變成單位圓上的圍道積分，只算圓裡面的留數。"}
+      ],
+      "check": 3
+    },
+    {
+      "title": "算一個三角積分",
+      "beats": [
+        {"show":["$\\int_0^{2\\pi}\\frac{d\\theta}{2+\\cos\\theta}$"],"note":"被積式變成 $\\frac{2\\,dz}{i(z^2+4z+1)}$。","say":"二加 cosine theta 分之一。代換之後整理，分母是 z 平方加四 z 加一。"},
+        {"show":["根 $-2\\pm\\sqrt{3}$"],"note":"$|-2+\\sqrt{3}|\\approx 0.268$ 在內，$-2-\\sqrt{3}$ 在外。","say":"兩個根是負二加減根號三。負二加根號三大約零點二六八，在圓內；另一個在外面。"},
+        {"show":["$\\operatorname{Res}=\\frac{2}{i\\cdot 2\\sqrt{3}}=\\frac{1}{i\\sqrt{3}}$"],"say":"在圓內那個根算留數：分母微分是二 z 加四，代進去是二根號三。"}
+      ],
+      "predict": {
+        "ask": "積分是？",
+        "options": [
+          {"label":"$\\frac{2\\pi}{\\sqrt{3}}\\approx 3.628$","correct":true},
+          {"label":"$\\frac{1}{i\\sqrt{3}}$","why":"那是留數；積分要乘 $2\\pi i$：$2\\pi i\\cdot\\frac{1}{i\\sqrt{3}}=\\frac{2\\pi}{\\sqrt{3}}$。"},
+          {"label":"$0$","why":"$-2-\\sqrt{3}$ 在圓外，不能拿來抵銷；只算圓內的那一個。"}
+        ]
+      }
+    },
+    {
+      "title": "乘上 $\\cos kx$",
+      "beats": [
+        {"show":["不能直接用 $\\cos kz$"],"note":"$\\cos(iy)=\\cosh y$，上半平面爆掉。","say":"乘上 cosine k x 的積分，不能直接把 cosine 搬到複數：它在上半平面會爆掉。"},
+        {"show":["改積 $f(z)e^{ikz}$，取實部"],"note":"$k>0$：$|e^{ikz}|\\le 1$ 在上半平面。","say":"改積 e 的 i k z 次方，最後取實部。k 大於零時它在上半平面長度不超過一，所以往上接。"},
+        {"show":["Jordan 引理：只要 $f\\to 0$"],"note":"次數只差 1 也能處理。","say":"Jordan 引理保證：只要 f 趨近零，半圓那段就趨近零，次數只差一也可以。"},
+        {"show":["$\\frac{\\cos x}{1+x^2}$：$\\operatorname{Res}_i=\\frac{e^{-1}}{2i}$"],"say":"例如 cosine x 除以一加 x 平方：上半平面只有 i，e 的 i 乘 i 次方是 e 的負一次方。"}
+      ],
+      "check": 2
+    }
+  ],
   "workedExamples": [
     {
       "title": "有理函數：$\\frac{1}{1+x^4}$",

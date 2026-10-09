@@ -120,6 +120,96 @@
       ]
     }
   ],
+  "sections": [
+    {
+      "title": "多遠、多斜、轉多少",
+      "beats": [
+        { "show": ["$\\rho$：到原點的距離"],
+          "say": "球座標用三個數描述一點。第一個 rho，是點到原點的距離。" },
+        { "show": ["$\\varphi$：從 $z$ 軸正向往下量的角"], "note": "$0$ 是北極方向，$\\frac{\\pi}{2}$ 是 $xy$ 平面，$\\pi$ 是南極方向。",
+          "say": "第二個 phi，從 z 軸正向往下量：零是正上方，二分之 pi 是水平，pi 是正下方。" },
+        { "show": ["$\\theta$：繞 $z$ 軸轉的角"], "note": "有些物理書把 $\\theta$、$\\varphi$ 對調。",
+          "say": "第三個 theta，跟柱座標一樣，繞 z 軸轉的角。有些物理書把兩個角的名字對調，要小心。" },
+        { "show": ["$z=\\rho\\cos\\varphi$，$x^2+y^2+z^2=\\rho^2$"],
+          "say": "高度是 rho 乘 cosine phi；三個座標平方相加，就是 rho 平方。" }
+      ],
+      "check": 2
+    },
+    {
+      "title": "小塊的三條邊",
+      "beats": [
+        { "show": ["沿半徑：$\\Delta\\rho$"],
+          "say": "一小塊的三條邊。沿半徑方向走，長度就是 delta rho。" },
+        { "show": ["沿經線：$\\rho\\Delta\\varphi$"], "note": "半徑 $\\rho$ 的大圓。",
+          "say": "沿經線往南走，是半徑 rho 的大圓上一段弧，長 rho 乘 delta phi。" },
+        { "show": ["沿緯線：$\\rho\\sin\\varphi\\,\\Delta\\theta$"], "note": "緯線圓的半徑是點到 $z$ 軸的距離 $\\rho\\sin\\varphi$。",
+          "say": "沿緯線繞，緯線圈的半徑是點到 z 軸的距離，rho 乘 sine phi，靠近兩極就變小。" },
+        { "show": ["$dV=\\rho^2\\sin\\varphi\\,d\\rho\\,d\\varphi\\,d\\theta$"], "note": "三邊互相垂直；Jacobian 也確實是 $\\rho^2\\sin\\varphi$。",
+          "say": "三條邊互相垂直，近似長方體，三邊相乘就是體積元素。" }
+      ],
+      "check": 0
+    },
+    {
+      "title": "常見曲面",
+      "beats": [
+        { "show": ["球面 $x^2+y^2+z^2=a^2\\to\\rho=a$"],
+          "say": "以原點為中心的球面，就是 rho 等於常數。" },
+        { "show": ["$xy$ 平面 $\\to\\varphi=\\frac{\\pi}{2}$"], "note": "上半空間 $z\\ge 0$：$0\\le\\varphi\\le\\frac{\\pi}{2}$。",
+          "say": "x y 平面是 phi 等於二分之 pi；上半空間是 phi 從零到二分之 pi。" },
+        { "show": ["$\\varphi=$ 常數：一個圓錐面"],
+          "say": "跟 z 軸夾固定角度的所有點，排成一個圓錐面。所以圓錐是固定 phi，不是固定 theta。" }
+      ],
+      "check": 1
+    },
+    {
+      "title": "球的體積",
+      "beats": [
+        { "show": ["$x^2+y^2+z^2\\le 9$：$0\\le\\rho\\le 3$"], "note": "$0\\le\\varphi\\le\\pi$、$0\\le\\theta\\le 2\\pi$。",
+          "say": "半徑三的球：rho 從零到三，phi 從零到 pi，theta 繞一圈。三層都是常數，可以分開積。" },
+        { "show": ["$\\int_0^3\\rho^2\\,d\\rho=9$，$\\int_0^\\pi\\sin\\varphi\\,d\\varphi=2$"],
+          "say": "rho 平方積出九，sine phi 從零積到 pi 是二。" },
+        { "show": ["$9\\cdot2\\cdot2\\pi=36\\pi$"], "note": "跟 $\\frac{4}{3}\\pi\\cdot27$ 一致。",
+          "say": "再乘 theta 的二 pi，得三十六 pi，跟球體積公式一樣。" }
+      ],
+      "check": 3
+    },
+    {
+      "title": "冰淇淋筒",
+      "beats": [
+        { "show": ["圓錐 $z=\\sqrt{x^2+y^2}$ 上方、單位球內"],
+          "say": "圓錐上方、單位球裡面，形狀像冰淇淋筒。" },
+        { "show": ["圓錐 $\\to\\varphi=\\frac{\\pi}{4}$"], "note": "跟 $z$ 軸夾 $45^\\circ$。",
+          "say": "這個圓錐跟 z 軸夾四十五度。圓錐上方，就是比它更靠近 z 軸。" }
+      ],
+      "predict": {
+        "ask": "$\\varphi$ 的範圍是？",
+        "options": [
+          { "label": "$0\\le\\varphi\\le\\frac{\\pi}{4}$", "correct": true },
+          { "label": "$\\frac{\\pi}{4}\\le\\varphi\\le\\pi$", "why": "那是圓錐下方（離 $z$ 軸更遠）；上方是 $\\varphi$ 比 $\\frac{\\pi}{4}$ 小。" },
+          { "label": "$0\\le\\varphi\\le\\frac{\\pi}{2}$", "why": "那是整個上半球；圓錐把 $\\varphi$ 限制在 $\\frac{\\pi}{4}$ 以內。" }
+        ]
+      }
+    },
+    {
+      "title": "$\\rho^2$ 幫了忙",
+      "beats": [
+        { "show": ["冰淇淋筒：", "$2\\pi\\cdot\\frac{1}{3}\\cdot\\left(1-\\frac{\\sqrt2}{2}\\right)=\\frac{\\pi(2-\\sqrt2)}{3}$"],
+          "say": "冰淇淋筒積完：rho 給三分之一，phi 給一減二分之根號二，再乘二 pi。" },
+        { "show": ["$\\iiint_B e^{(x^2+y^2+z^2)^{3/2}}\\,dV$，$B$ 是單位球"], "note": "$(x^2+y^2+z^2)^{3/2}=\\rho^3$。",
+          "say": "再看這一題：被積函數只跟距離有關，變成 e 的 rho 三次方。" },
+        { "show": ["$\\int_0^1 e^{\\rho^3}\\rho^2\\,d\\rho=\\frac{e-1}{3}$"], "note": "$u=\\rho^3$：$dV$ 裡的 $\\rho^2$ 剛好配成換元。",
+          "say": "體積元素裡的 rho 平方，剛好配上 rho 三次方的換元，內層得三分之 e 減一。" }
+      ],
+      "predict": {
+        "ask": "整個積分是？",
+        "options": [
+          { "label": "$\\frac{4\\pi(e-1)}{3}$", "correct": true },
+          { "label": "$\\frac{2\\pi(e-1)}{3}$", "why": "漏了 $\\int_0^\\pi\\sin\\varphi\\,d\\varphi=2$ 這個因子。" },
+          { "label": "$\\frac{e-1}{3}$", "why": "那只是 $\\rho$ 那一層；還要乘 $\\varphi$ 的 $2$ 和 $\\theta$ 的 $2\\pi$。" }
+        ]
+      }
+    }
+  ],
   "skillTags": {
     "coarse": ["spherical", "spherical-coordinates", "triple-integral"],
     "fine": ["spherical-volume-element", "spherical-cone-bounds", "spherical-radial-integrand"]

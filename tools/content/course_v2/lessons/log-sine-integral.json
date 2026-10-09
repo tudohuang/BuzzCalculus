@@ -47,6 +47,76 @@
       "collapsible": true
     }
   ],
+  "sections": [
+    {
+      "title": "先確認收斂",
+      "beats": [
+        {"show":["$I=\\int_0^{\\pi/2}\\ln(\\sin x)\\,dx$"],"note":"$x\\to 0^+$ 時 $\\ln(\\sin x)\\to-\\infty$。","say":"x 趨近零，sine x 趨近零，自然對數往負無限大衝，所以這是一個瑕積分。"},
+        {"show":["$\\sin x\\sim x$","$\\ln\\frac{\\sin x}{x}\\to 0$"],"say":"x 很小時 sine x 跟 x 差不多，兩個對數的差趨近零，行為跟自然對數 x 一樣。"},
+        {"show":["$\\int_0^1\\ln x\\,dx=-1$ 收斂"],"note":"所以 $I$ 收斂，是一個負數。","say":"自然對數 x 從零積到一是負一，收斂。所以 I 也收斂，而且是負的。"}
+      ],
+      "check": 2
+    },
+    {
+      "title": "sin 換成 cos",
+      "beats": [
+        {"show":["令 $x=\\frac{\\pi}{2}-t$"],"note":"$\\sin$ 變 $\\cos$，區間不變。","say":"第一個對稱：x 換成二分之派減 t，sine 變成 cosine，區間還是零到二分之派。"},
+        {"show":["$\\int_0^{\\pi/2}\\ln(\\cos x)\\,dx=I$"],"say":"所以自然對數 cosine 的積分，跟原來的 I 一樣大。圖上兩條曲線左右對稱。"},
+        {"show":["$2I=\\int_0^{\\pi/2}\\ln(\\sin x\\cos x)\\,dx$"],"note":"兩個加起來，對數相加變相乘。","say":"兩個加起來得到兩倍的 I，對數相加變成 sine 乘 cosine 的對數。"}
+      ],
+      "check": 3
+    },
+    {
+      "title": "等於自己的一部分",
+      "beats": [
+        {"show":["$2I=\\int_0^{\\pi/2}\\ln(\\sin 2x)\\,dx-\\frac{\\pi}{2}\\ln 2$"],"say":"sine 乘 cosine 是二分之一 sine 二 x，減掉的自然對數二積過區間，得二分之派乘自然對數二。"},
+        {"show":["$u=2x$：$\\frac{1}{2}\\int_0^{\\pi}\\ln(\\sin u)\\,du$"],"note":"區間變成 $[0,\\pi]$，前面多 $\\frac{1}{2}$。","say":"剩下那項令 u 等於二 x：區間變成零到派，前面多一個二分之一。"},
+        {"show":["$\\sin u$ 對 $u=\\frac{\\pi}{2}$ 對稱"],"note":"$\\int_0^{\\pi}\\ln(\\sin u)\\,du=2I$","say":"第二個對稱：sine 在零到派，對二分之派左右對稱，所以零到派的積分是兩倍的 I。"}
+      ],
+      "predict": {
+        "ask": "$\\frac{1}{2}\\int_0^{\\pi}\\ln(\\sin u)\\,du$ 等於？",
+        "options": [
+          {"label":"$I$","correct":true},
+          {"label":"$\\frac{I}{2}$","why":"$[0,\\pi]$ 上的積分是 $2I$，乘 $\\frac{1}{2}$ 是 $I$。"},
+          {"label":"$2I$","why":"別漏了換元 $u=2x$ 帶出來的 $\\frac{1}{2}$。"}
+        ]
+      }
+    },
+    {
+      "title": "移項",
+      "beats": [
+        {"show":["$2I=I-\\frac{\\pi}{2}\\ln 2$"],"say":"合起來：兩倍的 I 等於 I 減二分之派乘自然對數二。I 出現在等號兩邊。"},
+        {"show":["$I=-\\frac{\\pi}{2}\\ln 2\\approx-1.0888$"],"say":"移項就解出來：負二分之派乘自然對數二，大約負一點零八八八。"},
+        {"show":["移項前要知道 $I$ 有限"],"note":"所以一開始先證收斂。","say":"這一步要先知道 I 是一個有限的數；發散的話這樣移項會得到荒謬的結論。"}
+      ],
+      "check": 0
+    },
+    {
+      "title": "sin 與 cos 一樣大",
+      "beats": [
+        {"show":["$\\int_0^{\\pi/2}\\ln(\\sin x)\\,dx=\\int_0^{\\pi/2}\\ln(\\cos x)\\,dx$"],"say":"記住結論：零到二分之派，自然對數 sine 跟自然對數 cosine 的積分一樣大。"},
+        {"show":["$=-\\frac{\\pi}{2}\\ln 2$"],"note":"兩條曲線左右對稱。","say":"都等於負二分之派乘自然對數二。用這個對稱，相關的積分常常一眼看出來。"}
+      ],
+      "check": 1
+    },
+    {
+      "title": "化成 log-sine",
+      "beats": [
+        {"show":["$\\int_0^1\\frac{\\ln x}{\\sqrt{1-x^2}}\\,dx$"],"note":"令 $x=\\sin\\theta$，$\\sqrt{1-x^2}=\\cos\\theta$。","say":"這個積分令 x 等於 sine theta，根號裡變成 cosine theta，正好跟 dx 的 cosine 約掉。"},
+        {"show":["$=\\int_0^{\\pi/2}\\ln(\\sin\\theta)\\,d\\theta$"],"say":"x 從零到一，theta 從零到二分之派，剛好就是 log-sine 積分。"},
+        {"show":["$\\int_0^{\\pi/2}x\\cot x\\,dx$"],"note":"$u=x$，$v=\\ln(\\sin x)$。","say":"再看 x 乘 cotangent x：分部積分，cotangent 的反導函數正是自然對數 sine x。"},
+        {"show":["邊界項 $\\left[x\\ln(\\sin x)\\right]_0^{\\pi/2}=0$"],"note":"$x\\to 0^+$：$x\\ln x\\to 0$。","say":"邊界項在二分之派是自然對數一等於零，在零那端像 x 乘自然對數 x，也趨近零。"}
+      ],
+      "predict": {
+        "ask": "$\\int_0^{\\pi/2}x\\cot x\\,dx$ 是？",
+        "options": [
+          {"label":"$\\frac{\\pi}{2}\\ln 2\\approx 1.0888$","correct":true},
+          {"label":"$-\\frac{\\pi}{2}\\ln 2$","why":"分部積分剩下的是 $-\\int\\ln(\\sin x)\\,dx$，負負得正。"},
+          {"label":"$0$","why":"邊界項是 $0$，但還剩 $-\\int_0^{\\pi/2}\\ln(\\sin x)\\,dx$。"}
+        ]
+      }
+    }
+  ],
   "workedExamples": [
     {
       "title": "完整推導",

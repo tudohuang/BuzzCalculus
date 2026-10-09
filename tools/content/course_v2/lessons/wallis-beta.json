@@ -122,6 +122,73 @@
       ]
     }
   ],
+  "sections": [
+    {
+      "title": "Wallis 是特例",
+      "beats": [
+        { "show": ["$\\int_0^{\\pi/2}\\sin^m\\theta\\cos^n\\theta\\,d\\theta=\\frac{1}{2}\\mathrm{B}(p,q)$"], "note": "$p=\\frac{m+1}{2}$，$q=\\frac{n+1}{2}$。",
+          "say": "上一課的三角形式：sine 的 m 次方乘 cosine 的 n 次方，是二分之一乘 Beta。" },
+        { "show": ["Wallis：$\\cos$ 的次方是 $0$"], "note": "所以 $q=\\frac{0+1}{2}=\\frac{1}{2}$，不是 $0$。",
+          "say": "Wallis 積分只有 sine，cosine 的次方是零。零加一除以二，q 是二分之一。" },
+        { "show": ["$W_n=\\frac{\\sqrt{\\pi}\\;\\Gamma\\left(\\frac{n+1}{2}\\right)}{2\\,\\Gamma\\left(\\frac{n}{2}+1\\right)}$"], "note": "分母參數是 $p+q=\\frac{n}{2}+1$。",
+          "say": "換成 Gamma：Gamma 二分之一是根號 pi，分母的參數是 p 加 q，也就是二分之 n 加一。" }
+      ],
+      "check": 0
+    },
+    {
+      "title": "用 Gamma 算 $W_7$",
+      "beats": [
+        { "show": ["$W_7=\\frac{\\Gamma(4)\\Gamma(1/2)}{2\\Gamma(9/2)}$"], "note": "$\\Gamma(4)=6$。",
+          "say": "七加一除以二是四，所以分子是 Gamma 四乘根號 pi，分母是二乘 Gamma 二分之九。" },
+        { "show": ["$\\Gamma\\left(\\frac{9}{2}\\right)=\\frac{105\\sqrt{\\pi}}{16}$"], "note": "$\\frac{7}{2}\\cdot\\frac{5}{2}\\cdot\\frac{3}{2}\\cdot\\frac{1}{2}\\sqrt{\\pi}$",
+          "say": "Gamma 二分之九往下拆四次，得十六分之一百零五根號 pi。" },
+        { "show": ["$W_7=\\frac{6\\cdot 16}{210}=\\frac{16}{35}$"], "note": "跟遞迴 $\\frac{6}{7}\\cdot\\frac{4}{5}\\cdot\\frac{2}{3}$ 一致。",
+          "say": "根號 pi 上下約掉，得三十五分之十六，跟分部積分的遞迴答案一樣。" }
+      ],
+      "check": 1
+    },
+    {
+      "title": "遞迴是影子",
+      "beats": [
+        { "show": ["$n\\to n-2$：Gamma 參數各少 $1$"],
+          "say": "把 n 換成 n 減二，分子分母的 Gamma 參數各少一。" },
+        { "show": ["$\\Gamma(s)=(s-1)\\Gamma(s-1)$"], "note": "分子多出 $\\frac{n-1}{2}$，分母多出 $\\frac{n}{2}$。",
+          "say": "用 Gamma 的遞迴各拆一層：分子多出二分之 n 減一，分母多出二分之 n。" }
+      ],
+      "predict": {
+        "ask": "$\\frac{W_n}{W_{n-2}}$ 化簡後是？",
+        "options": [
+          { "label": "$\\frac{n-1}{n}$", "correct": true },
+          { "label": "$\\frac{n}{n-1}$", "why": "上下顛倒了；$\\frac{n-1}{2}$ 在分子，$\\frac{n}{2}$ 在分母。" },
+          { "label": "$\\frac{n-1}{2}$", "why": "那只是分子多出的因子；還要除以分母多出的 $\\frac{n}{2}$。" }
+        ]
+      }
+    },
+    {
+      "title": "非整數次方",
+      "beats": [
+        { "show": ["$\\int_0^{\\pi/2}\\sqrt{\\sin x}\\,dx$"], "note": "遞迴降不到 $W_0$ 或 $W_1$。",
+          "say": "sine 的二分之一次方，用減二的遞迴永遠降不到 W 零或 W 一。" },
+        { "show": ["$=\\frac{\\Gamma(3/4)\\Gamma(1/2)}{2\\Gamma(5/4)}\\approx 1.1981$"], "note": "$n=\\frac{1}{2}$。",
+          "say": "可是 Gamma 公式對任何大於負一的 n 都成立，答案寫成 Gamma 值，大約一點一九八一。" },
+        { "show": ["沒有更簡單的閉式，但不是不能算"],
+          "say": "它沒有更簡單的閉式，可是有精確的 Gamma 形式，不是不能算。" }
+      ],
+      "check": 3
+    },
+    {
+      "title": "閉合與大 $n$",
+      "beats": [
+        { "show": ["$n=0$：$\\frac{\\pi}{2}=\\frac{\\Gamma(1/2)^2}{2}$"], "note": "$\\Gamma\\left(\\frac{1}{2}\\right)^2=\\pi$ 的第三種證明。",
+          "say": "代 n 等於零：W 零是二分之 pi，公式給 Gamma 二分之一的平方除以二。又證了一次它的平方是 pi。" },
+        { "show": ["$W_n\\sim\\sqrt{\\frac{\\pi}{2n}}$"], "note": "由 $\\frac{\\Gamma(x+1/2)}{\\Gamma(x+1)}\\sim x^{-1/2}$。",
+          "say": "n 很大時，兩個 Gamma 的比值像 x 的負二分之一次方，所以 W n 等價於根號二 n 分之 pi。" },
+        { "show": ["$W_{100}$：估 $0.12533$，精確 $0.12502$"], "note": "相對誤差約 $\\frac{1}{4n}$。",
+          "say": "例如 n 等於一百，估計零點一二五三三，精確值零點一二五零二，已經很接近。" }
+      ],
+      "check": 2
+    }
+  ],
   "skillTags": {
     "coarse": ["wallis", "beta-function", "gamma-function"],
     "fine": ["wallis-as-beta", "wallis-gamma-closed-form", "wallis-noninteger-power", "wallis-asymptotic"]

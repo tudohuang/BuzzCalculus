@@ -128,6 +128,70 @@
       ]
     }
   ],
+  "sections": [
+    {
+      "title": "一場挑戰",
+      "beats": [
+        { "show": ["對方給誤差 $\\varepsilon>0$"],
+          "say": "x 夠靠近 a，f 就能要多靠近 L 就多靠近。把這句話變成一場挑戰：對方先出一個誤差 epsilon。" },
+        { "show": ["你回答距離 $\\delta>0$"], "note": "只要 $0<|x-a|<\\delta$，就有 $|f(x)-L|<\\varepsilon$。",
+          "say": "你要回答一個距離 delta，保證 x 離 a 不到 delta，f 在 x 的值就離 L 不到 epsilon。" },
+        { "show": ["$\\forall\\varepsilon>0\\ \\exists\\delta>0\\ \\forall x:$", "$0<|x-a|<\\delta\\Rightarrow|f(x)-L|<\\varepsilon$"],
+          "say": "每一個 epsilon 你都接得住，極限才是 L。跟數列的 epsilon N 是同一個架構，只是 n 夠大換成 x 夠近。" },
+        { "show": ["$\\delta$ 寫在 $\\varepsilon$ 後面"], "note": "可以依賴 $\\varepsilon$ 與 $a$，不能依賴 $x$。",
+          "say": "delta 寫在 epsilon 後面，可以跟著 epsilon 變。但 delta 要在 x 出場之前就決定好。" }
+      ],
+      "check": 0
+    },
+    {
+      "title": "不看 $x=a$",
+      "beats": [
+        { "show": ["$0<|x-a|$：$x\\ne a$"], "note": "$f(a)$ 是多少、有沒有定義，都無關。",
+          "say": "條件裡的零小於，意思是 x 不等於 a。極限完全不看 a 這一點本身。" },
+        { "show": ["一個 $\\delta$ 可用，更小的也可用"],
+          "say": "還有，一個 delta 可以用，任何更小的正數也可以用。所以不必找最大的。" }
+      ],
+      "check": 1
+    },
+    {
+      "title": "直線：除以斜率",
+      "beats": [
+        { "show": ["$f(x)=3x+1$，$a=2$，$L=7$，$\\varepsilon=0.06$"],
+          "say": "先練一條直線：三 x 加一，在二附近，極限七，對方出零點零六。" },
+        { "show": ["$|f(x)-7|=|3x-6|=3|x-2|$"],
+          "say": "距離化簡成三倍的 x 減二的絕對值。斜率三會把誤差放大三倍。" },
+        { "show": ["$3|x-2|<0.06$ ⇔ $|x-2|<0.02$"], "note": "$x=2.021$ 就超出：最大的 $\\delta=0.02$。",
+          "say": "所以 x 只能離二不到零點零二。再大一點，像二點零二一，就跑出去了。" }
+      ],
+      "check": 2
+    },
+    {
+      "title": "兩條帶子",
+      "beats": [
+        { "show": ["水平帶 $|f(x)-L|<\\varepsilon$", "垂直帶 $0<|x-a|<\\delta$"], "fig": { "use": 0, "to": 0.8 },
+          "say": "看圖。綠色的水平帶是誤差 epsilon，垂直帶是 delta。垂直帶裡的曲線，要全部落在水平帶裡。" },
+        { "show": ["$f(x)=\\frac{1}{x}$，$a=2$，$\\varepsilon=0.1$"], "note": "$\\frac{5}{3}<x<\\frac{5}{2}$ 才在帶裡。",
+          "say": "x 分之一在二，極限二分之一，誤差零點一。解出來 x 要在三分之五到二分之五之間。" },
+        { "show": ["左邊離 2 有 $\\frac{1}{3}$，右邊 $\\frac{1}{2}$"], "note": "不以 2 為中心。", "fig": { "use": 0, "to": 0.5 },
+          "say": "這段不對稱：左邊只到三分之一，右邊有二分之一。delta 拉到二分之一，左邊的曲線就跑出帶子了。" },
+        { "show": ["取近的那一側：$\\delta=\\frac{1}{3}$"],
+          "say": "垂直帶左右一樣寬，所以 delta 只能取比較近的那一側，三分之一。" }
+      ],
+      "drag": { "use": 0, "ask": "自己把 $\\delta$ 拖到 $\\frac{1}{3}$ 以下，讓那段曲線整段在綠帶裡", "range": [0.02, 0.33] }
+    },
+    {
+      "title": "極限不是 $L$",
+      "beats": [
+        { "show": ["$\\exists\\varepsilon>0\\ \\forall\\delta>0\\ \\exists x$"], "note": "$0<|x-a|<\\delta$，卻 $|f(x)-L|\\ge\\varepsilon$。",
+          "say": "量詞翻過來：有一個誤差，不管垂直帶多窄，帶子裡總有點跑出水平帶。" },
+        { "show": ["$H(x)=0$（$x<0$）、$1$（$x\\ge0$）"], "note": "取 $\\varepsilon=\\frac{1}{2}$。",
+          "say": "跳躍函數：零的左邊是零，右邊是一。不管 L 是多少，誤差取二分之一。" },
+        { "show": ["$x_1=-\\frac{\\delta}{2}$，$x_2=\\frac{\\delta}{2}$"], "note": "函數值 0 和 1，差 1，帶寬裝不下。",
+          "say": "任何 delta，左右各取一點，函數值一個零一個一。寬度一的開帶子裝不下兩者，總有一個跑出去。" }
+      ],
+      "check": 3
+    }
+  ],
   "skillTags": {
     "coarse": ["epsilon-delta", "epsilon-game", "continuity"],
     "fine": ["epsdelta-quantifier-order", "epsdelta-max-delta", "epsdelta-asymmetric-side", "epsdelta-negation"]

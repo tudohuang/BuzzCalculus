@@ -121,6 +121,78 @@
       ]
     }
   ],
+  "sections": [
+    {
+      "title": "直線的招式不夠",
+      "beats": [
+        { "show": ["$\\lim_{x\\to3}x^2=9$"],
+          "say": "換成拋物線：x 平方在三的極限是九。照直線的做法，先把距離分解。" },
+        { "show": ["$|x^2-9|=|x-3|\\cdot|x+3|$"], "note": "$|x+3|$ 跟著 $x$ 變，不是常數。",
+          "say": "分解成 x 減三乘 x 加三。直線的時候第二個因子是常數斜率，可以除過去；這裡它會跟著 x 變。" }
+      ],
+      "predict": {
+        "ask": "取 $\\delta=\\frac{\\varepsilon}{|x+3|}$ 可以嗎？",
+        "options": [
+          { "label": "不行：$\\delta$ 依賴 $x$", "correct": true },
+          { "label": "可以，代進去剛好是 $\\varepsilon$", "why": "代得進去不代表合法：$\\delta$ 要在 $x$ 出場前決定，裡面不能有 $x$。" },
+          { "label": "可以，只要 $x\\ne-3$", "why": "問題不在分母是不是 0，而是 $\\delta$ 依賴 $x$，違反定義的量詞順序。" }
+        ]
+      }
+    },
+    {
+      "title": "先關起來",
+      "beats": [
+        { "show": ["只看 $|x-3|<1$：$2<x<4$"], "note": "直覺：把 $x$ 關在小範圍，斜率就有上限。",
+          "say": "辦法是先把 x 關起來：只看離三不到一的 x，也就是二到四之間。" },
+        { "show": ["$5<x+3<7$，所以 $|x+3|<7$"],
+          "say": "在這個範圍裡，x 加三夾在五和七之間，有一個固定的上限七。問題又變回直線。" },
+        { "show": ["$|x^2-9|<7|x-3|$", "再要 $|x-3|<\\frac{\\varepsilon}{7}$"],
+          "say": "距離小於七倍的 x 減三。要它小於 epsilon，x 減三再小於七分之 epsilon 就夠。" },
+        { "show": ["$\\delta=\\min(1,\\frac{\\varepsilon}{7})$"], "note": "兩個條件同時成立。",
+          "say": "兩個條件要同時成立，delta 就取兩者裡比較小的。一不是神奇數字，換成別的，七也跟著變。" }
+      ],
+      "check": 0
+    },
+    {
+      "title": "少了那個 1",
+      "beats": [
+        { "show": ["只寫 $\\delta=\\frac{\\varepsilon}{7}$？"], "note": "$\\varepsilon$ 小的時候碰巧沒事。",
+          "say": "如果只寫七分之 epsilon，epsilon 小的時候碰巧沒事。可是 epsilon 大，就出事了。" },
+        { "show": ["$\\varepsilon=100$：$\\delta\\approx14.3$"], "note": "$x=17$ 被放進來，$|17^2-9|=280>100$。",
+          "say": "epsilon 一百，delta 大約十四點三，十七也被放進來，誤差是兩百八十，遠超過一百。" },
+        { "show": ["$|x+3|<7$ 要靠 $|x-3|<1$ 撐著"],
+          "say": "上限七只在 x 離三不到一的時候成立，delta 必須保證這件事，所以要跟一取比較小的。" }
+      ],
+      "video": true,
+      "check": 1
+    },
+    {
+      "title": "完整證明",
+      "beats": [
+        { "show": ["給定 $\\varepsilon>0$，取 $\\delta=\\min(1,\\frac{\\varepsilon}{7})$"],
+          "say": "正式寫一次。給定 epsilon，取 delta 等於一和七分之 epsilon 比較小的那個。" },
+        { "show": ["$\\delta\\le1$ ⇒ $0<x+3<7$"],
+          "say": "設 x 在垂直帶裡。delta 不超過一，所以 x 在二到四之間，x 加三小於七。" },
+        { "show": ["$|x^2-9|<\\frac{\\varepsilon}{7}\\cdot7=\\varepsilon$"],
+          "say": "delta 也不超過七分之 epsilon，兩個因子各自有上限，乘起來就小於 epsilon。" },
+        { "show": ["真正最大的 $\\delta=\\sqrt{9.1}-3\\approx0.01662$"], "note": "我們的 $\\delta$ 比較保守，但合法。",
+          "say": "誤差零點一的時候，真正最大的 delta 大約零點零一六六二，我們取的比它小，保守但合法。" }
+      ],
+      "check": 2
+    },
+    {
+      "title": "同一招再用",
+      "beats": [
+        { "show": ["三次也一樣：$x^3-1=(x-1)(x^2+x+1)$"], "note": "$0<x<2$ ⇒ $x^2+x+1<7$，$\\delta=\\min(1,\\frac{\\varepsilon}{7})$。",
+          "say": "先看三次：x 三次方減一，分解後另一個因子，在零到二之間小於七。永遠是先關起來，再除。" },
+        { "show": ["$x^2+x-2=(x-1)(x+2)$"], "note": "證 $\\lim_{x\\to1}(x^2+x)=2$。",
+          "say": "再用一次：x 平方加 x 在一的極限是二。分解成 x 減一乘 x 加二。" },
+        { "show": ["關起來：$|x-1|<1$ ⇒ $0<x<2$"],
+          "say": "把 x 關在離一不到一的範圍，也就是零到二之間。x 加二的上限是多少？" }
+      ],
+      "check": 3
+    }
+  ],
   "skillTags": {
     "coarse": ["epsilon-delta", "epsilon-game", "written-proof"],
     "fine": ["epsdelta-factor-bound", "epsdelta-min-delta", "epsdelta-restrict-neighborhood", "epsdelta-polynomial"]

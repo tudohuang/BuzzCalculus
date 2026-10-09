@@ -134,6 +134,79 @@
       ]
     }
   ],
+  "sections": [
+    {
+      "title": "比較判別失靈",
+      "beats": [
+        { "show": ["$\\int_0^{\\infty}\\frac{\\sin x}{x}\\,dx$"], "note": "$0$ 附近 $\\frac{\\sin x}{x}\\to 1$，麻煩在 $\\infty$ 那端。",
+          "say": "sine x 除以 x，在零附近趨近一，沒有問題。麻煩在無限遠那一端。" },
+        { "show": ["$\\left|\\frac{\\sin x}{x}\\right|\\le\\frac{1}{x}$"], "note": "可是 $\\int_1^{\\infty}\\frac{dx}{x}$ 發散。",
+          "say": "想用比較判別：它被 x 分之一壓住。可是 x 分之一的積分發散，被發散的壓住，說不出結論。" },
+        { "show": ["一正一負、越來越小的拱"], "note": "第 $k$ 個拱約 $\\pm\\frac{2}{(k+1/2)\\pi}$。",
+          "say": "換個角度看圖：它是一串拱，一個在上、一個在下，面積正負交替，而且越來越小。" },
+        { "show": ["像 $1-\\frac{1}{2}+\\frac{1}{3}-\\dots$"], "note": "直覺，不是證明。",
+          "say": "這就像交錯級數，所以有理由相信它收斂。不過這只是直覺，嚴格的論證要靠分部積分。" }
+      ],
+      "predict": {
+        "ask": "只靠 $\\left|\\frac{\\sin x}{x}\\right|\\le\\frac{1}{x}$ 能推出什麼？",
+        "options": [
+          { "label": "沒有結論", "correct": true },
+          { "label": "收斂", "why": "要被收斂的壓住才行；$\\int_1^{\\infty}\\frac{dx}{x}$ 發散。" },
+          { "label": "發散", "why": "比發散的小，不代表發散；而且 $\\frac{\\sin x}{x}$ 會變號，本來就不能直接比較。" }
+        ]
+      }
+    },
+    {
+      "title": "分部積分",
+      "beats": [
+        { "show": ["$u=\\frac{1}{x}$，$dv=\\sin x\\,dx$"], "note": "$du=-\\frac{dx}{x^2}$，$v=-\\cos x$。",
+          "say": "分部積分：u 取 x 分之一，dv 取 sine x dx，v 是負 cosine x。" },
+        { "show": ["$\\cos 1-\\frac{\\cos t}{t}-\\int_1^t\\frac{\\cos x}{x^2}\\,dx$"], "note": "這是 $\\int_1^t\\frac{\\sin x}{x}\\,dx$。",
+          "say": "從一積到 t，變成三項：cosine 一，減 t 分之 cosine t，再減一個新的積分。" },
+        { "show": ["$\\left|\\frac{\\cos t}{t}\\right|\\le\\frac{1}{t}\\to 0$"],
+          "say": "邊界項被 t 分之一壓著，趨近零。" },
+        { "show": ["衰減從 $\\frac{1}{x}$ 變成 $\\frac{1}{x^2}$"], "note": "剩下的積分被 $\\frac{1}{x^2}$ 壓住。",
+          "say": "關鍵在這裡：分部積分把分母從 x 變成 x 平方，剩下的積分降得夠快了。" }
+      ],
+      "check": 2
+    },
+    {
+      "title": "絕對值版發散",
+      "beats": [
+        { "show": ["$\\int_\\pi^{\\infty}\\frac{|\\sin x|}{x}\\,dx$"], "note": "拿掉正負號，還收斂嗎？",
+          "say": "那加上絕對值呢？所有的拱都翻到上面，不再互相抵銷。" },
+        { "show": ["每一段 $\\ge\\frac{2}{(k+1)\\pi}$"], "note": "$|\\sin x|$ 在長度 $\\pi$ 的區間上積分是 $2$。",
+          "say": "在第 k 段上，x 最多是 k 加一倍的 pi，絕對值 sine 在一段上積出二，所以這段至少這麼大。" },
+        { "show": ["$\\ge\\frac{2}{\\pi}\\left(\\frac{1}{2}+\\frac{1}{3}+\\dots+\\frac{1}{N+1}\\right)$"], "note": "調和級數，$\\to\\infty$。",
+          "say": "加起來是調和級數的部分和，會衝到無限大。所以絕對值版本發散。" }
+      ],
+      "check": 0
+    },
+    {
+      "title": "條件收斂",
+      "beats": [
+        { "show": ["$\\int f$ 收斂，$\\int|f|$ 發散"], "note": "跟 $\\sum\\frac{(-1)^n}{n}$ 同一類。",
+          "say": "積分收斂、絕對值的積分卻發散，這叫條件收斂，跟交錯調和級數同一類。" },
+        { "show": ["靠正負抵銷才收斂"], "note": "不能拆成正部與負部分開算。",
+          "say": "它是靠正負面積互相抵銷才收斂的，所以不能把正的、負的拆開各自算。" },
+        { "show": ["$\\int_0^{\\infty}\\frac{\\sin x}{x}\\,dx=\\frac{\\pi}{2}$"], "note": "在〈Dirichlet 積分〉裡算。",
+          "say": "它的值是二分之 pi，算法留到 Dirichlet 積分那一課。" }
+      ],
+      "check": 1
+    },
+    {
+      "title": "不趨近零也收斂",
+      "beats": [
+        { "show": ["$\\int_0^{\\infty}\\sin(x^2)\\,dx$"], "note": "$\\sin(x^2)$ 不 $\\to 0$，但振盪越來越快。",
+          "say": "sine x 平方在負一和一之間晃，不趨近零，可是晃得越來越快，正負抵銷得越來越好。" },
+        { "show": ["$u=x^2$：$\\int_0^{\\infty}\\frac{\\sin u}{2\\sqrt{u}}\\,du$"],
+          "say": "令 u 等於 x 平方，變成 sine u 除以二根號 u，跟剛才那一題同一個樣子，分部積分就收斂。" },
+        { "show": ["$\\int_1^{\\infty}\\frac{\\sin x}{x^p}\\,dx$：$p>0$ 收斂"], "note": "$p>1$ 絕對收斂，$0<p\\le 1$ 條件收斂。",
+          "say": "一般來說，sine x 除以 x 的 p 次方，p 大於零就收斂；p 大於一才是絕對收斂。" }
+      ],
+      "check": 3
+    }
+  ],
   "skillTags": {
     "coarse": ["improper-integral", "convergence-test"],
     "fine": ["conditional-ibp-boundary", "conditional-not-absolute", "conditional-dirichlet-test", "conditional-vs-absolute-classify"]

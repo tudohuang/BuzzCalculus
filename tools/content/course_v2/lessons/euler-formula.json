@@ -52,6 +52,78 @@
       "collapsible": true
     }
   ],
+  "sections": [
+    {
+      "title": "$e$ 的虛數次方",
+      "beats": [
+        {"show":["$e^{i}$ 是什麼意思？"],"note":"不能用「乘幾次」來理解。","say":"e 的三次方是三個 e 相乘，e 的二分之一次方是開根號。可是 e 的 i 次方，乘幾次？說不通。"},
+        {"show":["$e^z=1+z+\\frac{z^2}{2!}+\\frac{z^3}{3!}+\\cdots$"],"note":"用級數來定義。","say":"所以改用級數來定義：把 z 代進 e 的 x 次方那條熟悉的級數，對任何複數都照樣算。"},
+        {"show":["$z$ 是實數時就是原來的 $e^x$"],"say":"這個定義跟舊的不衝突：z 是實數的時候，它就是原來的 e 的 x 次方。"}
+      ],
+      "predict": {
+        "ask": "這個級數的收斂半徑是？",
+        "options": [
+          {"label":"$\\infty$：對所有複數都有定義","correct":true},
+          {"label":"$1$","why":"比值判別：相鄰兩項的比是 $\\frac{|z|}{n+1}\\to 0$，不管 $|z|$ 多大都收斂。"},
+          {"label":"只在實數收斂","why":"比值判別對複數一樣用：$\\frac{|z|}{n+1}\\to 0$，所有複數都收斂。"}
+        ]
+      }
+    },
+    {
+      "title": "代入 $i\\theta$",
+      "beats": [
+        {"show":["$i^0=1$、$i^1=i$、$i^2=-1$、$i^3=-i$"],"say":"代入 i theta。i 的次方四個一循環，所以每一項的係數照一、i、負一、負 i 輪流。"},
+        {"show":["$1+i\\theta-\\frac{\\theta^2}{2!}-\\frac{i\\theta^3}{3!}+\\frac{\\theta^4}{4!}+\\cdots$"],"say":"寫出來，有的項帶 i、有的不帶，正負號兩個兩個換。"},
+        {"show":["沒有 $i$：$1-\\frac{\\theta^2}{2!}+\\cdots=\\cos\\theta$","有 $i$：$\\theta-\\frac{\\theta^3}{3!}+\\cdots=\\sin\\theta$"],"note":"絕對收斂，重新分組合法。","say":"不帶 i 的收在一起，正好是 cosine 的級數；帶 i 的收在一起，正好是 sine 的級數。"},
+        {"show":["$e^{i\\theta}=\\cos\\theta+i\\sin\\theta$"],"note":"點在單位圓上，角度是 $\\theta$。","say":"這就是 Euler 公式。cosine 和 sine 是單位圓上角度 theta 那一點的座標。"}
+      ],
+      "check": 3
+    },
+    {
+      "title": "立刻得到的東西",
+      "beats": [
+        {"show":["$z=re^{i\\theta}$"],"say":"極式可以寫得更短：長度 r 乘上 e 的 i theta 次方。"},
+        {"show":["$e^{i\\alpha}e^{i\\beta}=e^{i(\\alpha+\\beta)}$"],"note":"角度相加變成指數律。","say":"上一課的乘法規則，角度相加，現在就是指數律，指數相加。"},
+        {"show":["$e^{i\\pi}=-1$"],"say":"theta 取派，單位圓上轉半圈到負一，所以 e 的 i 派次方等於負一。"}
+      ],
+      "check": 0
+    },
+    {
+      "title": "cos 與 sin 的指數式",
+      "beats": [
+        {"show":["$e^{-i\\theta}=\\cos\\theta-i\\sin\\theta$"],"say":"把 theta 換成負 theta：cosine 不變，sine 變號。"},
+        {"show":["$\\sin\\theta=\\frac{e^{i\\theta}-e^{-i\\theta}}{2i}$"],"note":"分母有 $i$，別漏掉。","say":"兩式相減，cosine 消掉，剩兩倍的 i sine，所以 sine 要除以二 i。"},
+        {"show":["三角恆等式 → 指數的代數"],"note":"例如 $\\sin^3\\theta=\\frac{3\\sin\\theta-\\sin 3\\theta}{4}$。","say":"這樣三角恆等式就變成指數的代數。例如 sine 三次方，直接展開三次方就證出來。"}
+      ],
+      "check": 1
+    },
+    {
+      "title": "先算複數，再取實部",
+      "beats": [
+        {"show":["$e^{2x}\\cos 3x=\\operatorname{Re}e^{(2+3i)x}$"],"say":"算 e 的二 x 乘 cosine 三 x 的積分。它是 e 的二加三 i 乘 x 次方的實部。"},
+        {"show":["$\\int e^{(2+3i)x}\\,dx=\\frac{e^{(2+3i)x}}{2+3i}$"],"note":"$\\frac{d}{dx}e^{cx}=ce^{cx}$ 對複數 $c$ 也成立。","say":"指數函數的積分照舊，除以係數二加三 i 就好，不用分部積分繞兩圈。"},
+        {"show":["$\\frac{1}{2+3i}=\\frac{2-3i}{13}$"],"note":"取實部之前先化好分母。","say":"取實部之前，先把分母化成實數：同乘共軛，分母變十三。"},
+        {"show":["$\\frac{e^{2x}(2\\cos 3x+3\\sin 3x)}{13}+C$"],"say":"跟 e 的二 x 乘 cosine 加 i sine 相乘，取實部，就是答案。微分可以檢查回去。"}
+      ],
+      "check": 2
+    },
+    {
+      "title": "高階導數",
+      "beats": [
+        {"show":["$\\frac{d^4}{dx^4}(e^x\\cos x)$ 在 $x=0$"],"say":"同一招算高階導數：e 的 x 次方乘 cosine x，微分四次，在零的值。"},
+        {"show":["$\\operatorname{Re}\\left[(1+i)^ne^{(1+i)x}\\right]$"],"say":"它是 e 的一加 i 乘 x 次方的實部，每微分一次就乘一個一加 i。"},
+        {"show":["$(1+i)^n=2^{n/2}e^{in\\pi/4}$"],"note":"$1+i=\\sqrt{2}\\,e^{i\\pi/4}$","say":"一加 i 的長度是根號二，角度四分之派。n 次方就是長度乘 n 次，角度轉 n 次。"}
+      ],
+      "predict": {
+        "ask": "$n=4$、$x=0$，值是？",
+        "options": [
+          {"label":"$-4$","correct":true},
+          {"label":"$4$","why":"$2^{4/2}=4$，但角度 $4\\cdot\\frac{\\pi}{4}=\\pi$，$\\cos\\pi=-1$。"},
+          {"label":"$1$","why":"那是沒微分的 $e^0\\cos 0$。微分四次：$2^{4/2}\\cos\\pi=-4$。"}
+        ]
+      }
+    }
+  ],
   "workedExamples": [
     {
       "title": "取實部算積分",

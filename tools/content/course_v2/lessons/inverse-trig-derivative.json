@@ -133,6 +133,96 @@
       ]
     }
   ],
+  "sections": [
+    {
+      "title": "鏡射：斜率變倒數",
+      "beats": [
+        { "show": ["$f$ 上的 $(a, b)$ ↔ $f^{-1}$ 上的 $(b, a)$"], "note": "兩個圖形對 $y = x$ 對稱。",
+          "say": "f 和它的反函數，圖形對 y 等於 x 這條線對稱：點 a、b 會換成點 b、a。" },
+        { "show": ["斜率 $m$ 變成 $\\frac{1}{m}$"], "note": "上升除以前進，變成前進除以上升。",
+          "say": "鏡射把橫的方向和直的方向對調，上升除以前進變成前進除以上升，斜率變成倒數。" },
+        { "show": ["$(f^{-1})'(b)=\\frac{1}{f'(a)}$，$f(a)=b$"], "note": "要 $f'(a) \\ne 0$。",
+          "say": "所以反函數在 b 的導數，是 f 在 a 的導數的倒數。f prime 在 a 是零的話，倒數就不存在。" },
+        { "show": ["$f(f^{-1}(x)) = x$ 兩邊微分"], "note": "連鎖律：$f'(f^{-1}(x)) \\cdot (f^{-1})'(x) = 1$。",
+          "say": "公式也可以這樣得到：f 套在反函數外面等於 x，兩邊微分，左邊用連鎖律，再除過去。" }
+      ],
+      "predict": {
+        "ask": "$f$ 在 $(a, b)$ 的切線斜率是 3。$f^{-1}$ 在 $(b, a)$ 的切線斜率是？",
+        "options": [
+          { "label": "$\\frac{1}{3}$", "correct": true },
+          { "label": "3", "why": "鏡射把前進和上升對調，斜率要取倒數。" },
+          { "label": "$-3$", "why": "對 $y = x$ 鏡射不是翻正負號；遞增的 $f$，反函數也遞增。" }
+        ]
+      }
+    },
+    {
+      "title": "不解反函數也能算",
+      "beats": [
+        { "show": ["$f(x) = x^3 + x$，求 $(f^{-1})'(2)$"], "note": "$f'(x) = 3x^2 + 1 > 0$，有反函數。",
+          "say": "x 三次方加 x，導數三 x 平方加一永遠大於零，嚴格遞增，所以有反函數。" },
+        { "show": ["先找 $a$：$f(a) = 2$"], "note": "試 $a = 1$：$1 + 1 = 2$。",
+          "say": "關鍵：二是反函數的輸入。先找 f 的哪個輸入會得到二，試一，一加一是二，所以 a 是一。" },
+        { "show": ["$f'(1) = 3 + 1 = 4$"],
+          "say": "接著算 f 在一的導數，三加一是四。剩下的就是取倒數。" }
+      ],
+      "check": 0
+    },
+    {
+      "title": "$\\arcsin$ 的導數",
+      "beats": [
+        { "show": ["$y = \\arcsin x$：$\\sin y = x$"], "note": "$y$ 在 $[-\\frac{\\pi}{2}, \\frac{\\pi}{2}]$。",
+          "say": "y 等於 arcsine x，意思是 sine y 等於 x，而且 y 在負二分之 pi 到二分之 pi 之間。" },
+        { "show": ["$\\cos y \\cdot y' = 1$"], "note": "隱函數微分。",
+          "say": "對 x 做隱函數微分：cosine y 乘 y prime 等於一，所以 y prime 是 cosine y 分之一。" },
+        { "show": ["$\\cos y = \\pm\\sqrt{1 - x^2}$，取正號"],
+          "say": "把 cosine y 換回 x：是正負根號一減 x 平方。y 的範圍裡 cosine 不是負的，所以取正號。" },
+        { "show": ["$(\\arcsin x)'=\\frac{1}{\\sqrt{1-x^2}}$"], "note": "只在 $-1 < x < 1$ 存在。",
+          "say": "x 等於正負一時分母是零，所以導數只在負一到一之間存在。" }
+      ],
+      "check": 3
+    },
+    {
+      "title": "$\\arctan$ 與 $\\arccos$",
+      "beats": [
+        { "show": ["$y = \\arctan x$：$\\tan y = x$"], "note": "$\\sec^2 y \\cdot y' = 1$",
+          "say": "arctangent 一樣：tangent y 等於 x，微分得 secant 平方 y 乘 y prime 等於一。" },
+        { "show": ["$y' = \\frac{1}{1 + \\tan^2 y} = \\frac{1}{1 + x^2}$"], "note": "對所有 $x$ 成立。",
+          "say": "secant 平方等於一加 tangent 平方，tangent y 就是 x，得到一加 x 平方分之一。" },
+        { "show": ["$(\\arccos x)'=-\\frac{1}{\\sqrt{1-x^2}}$"], "note": "$\\arccos x = \\frac{\\pi}{2} - \\arcsin x$",
+          "say": "arccosine 是二分之 pi 減 arcsine，所以導數就是 arcsine 的導數多一個負號。" }
+      ],
+      "check": 1
+    },
+    {
+      "title": "$\\arcsin$ 套連鎖律",
+      "beats": [
+        { "show": ["$\\frac{d}{dx} \\arcsin\\left(\\frac{x}{4}\\right)$"], "note": "裡層 $u = \\frac{x}{4}$，導數 $\\frac{1}{4}$。",
+          "say": "arcsine 四分之 x：外層 arcsine，裡層四分之 x，導數四分之一。" },
+        { "show": ["$\\left(\\frac{1}{4}\\right) \\cdot \\frac{1}{\\sqrt{1 - \\frac{x^2}{16}}}$"],
+          "say": "外層導數裡的 u 換成四分之 x，平方之後是十六分之 x 平方，再乘四分之一。" },
+        { "show": ["$\\frac{1}{\\sqrt{16 - x^2}}$"], "note": "$\\sqrt{1 - \\frac{x^2}{16}} = \\frac{\\sqrt{16 - x^2}}{4}$",
+          "say": "根號裡通分，拉出一個四分之一，跟前面的四分之一約掉，乾乾淨淨。" }
+      ],
+      "check": 2
+    },
+    {
+      "title": "$\\arctan$ 套連鎖律",
+      "beats": [
+        { "show": ["$\\frac{d}{dx} \\arctan(x^2)$"], "note": "外層 $\\frac{1}{1 + u^2}$，裡層 $u = x^2$。",
+          "say": "arctangent x 平方：外層 arctangent，裡層是 x 平方。" },
+        { "show": ["$\\frac{1}{1 + (x^2)^2} \\cdot 2x$"],
+          "say": "外層導數的 u 換成 x 平方，再乘裡層的導數二 x。" }
+      ],
+      "predict": {
+        "ask": "整理之後是？",
+        "options": [
+          { "label": "$\\frac{2x}{1 + x^4}$", "correct": true },
+          { "label": "$\\frac{2x}{1 + x^2}$", "why": "把 $(x^2)^2$ 寫成了 $x^2$；平方再平方是 $x^4$。" },
+          { "label": "$\\frac{1}{1 + x^4}$", "why": "忘了連鎖律，沒有乘裡層 $x^2$ 的導數 $2x$。" }
+        ]
+      }
+    }
+  ],
   "skillTags": {
     "coarse": ["inverse-function", "inverse-trig"],
     "fine": ["invtrig-deriv-inverse-function", "invtrig-deriv-arcsin", "invtrig-deriv-arctan", "invtrig-deriv-chain", "invtrig-deriv-arccos"]

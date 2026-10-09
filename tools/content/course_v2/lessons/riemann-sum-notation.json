@@ -135,6 +135,90 @@
       ]
     }
   ],
+  "sections": [
+    {
+      "title": "$\\sum$：把加法寫短",
+      "beats": [
+        { "show": ["$\\sum_{i=1}^{n} a_i=a_1+a_2+\\dots+a_n$"], "note": "$i$ 是編號，從下面的數跑到上面的數。",
+          "say": "一長串加法太長，用 sigma 寫短。i 是編號，從底下的一開始，一路跑到上面的 n。" },
+        { "show": ["$\\sum c\\cdot a_i=c\\sum a_i$", "$\\sum(a_i+b_i)=\\sum a_i+\\sum b_i$"],
+          "say": "每一項都乘的常數可以提到外面；兩串加在一起的，也可以拆成兩個 sigma。" },
+        { "show": ["$\\sum_{i=1}^{4} i^2$"], "note": "$i$ 從 $1$ 跑到 $4$，每一項都平方。",
+          "say": "試一個：i 從一跑到四，每一項是 i 平方，全部加起來。" }
+      ],
+      "check": 0
+    },
+    {
+      "title": "右端點和寫成一行",
+      "beats": [
+        { "show": ["$\\Delta x=\\frac{b-a}{n}$，$x_i=a+i\\Delta x$"], "note": "$i=0$ 時是 $a$，$i=n$ 時是 $b$。",
+          "say": "切成 n 等分，每一步寬 delta x。第 i 個分點，就是從 a 出發走 i 步。" },
+        { "show": ["$R_n=\\sum_{i=1}^{n} f(a+i\\Delta x)\\Delta x$"], "note": "左端點和取第 $0$ 到第 $n-1$ 個。",
+          "say": "右端點和取第一到第 n 個分點，高乘寬再加起來，一行就寫完了。" }
+      ],
+      "check": 1
+    },
+    {
+      "title": "定積分的定義",
+      "beats": [
+        { "show": ["$\\int_a^b f(x)\\,dx=\\lim_{n\\to\\infty}\\sum_{i=1}^{n} f(x_i)\\,\\Delta x$"], "note": "對連續函數，這個極限存在。",
+          "say": "n 趨近無限大時，這個和的極限，就定義成定積分。" },
+        { "show": ["拉長的 S 是 Sum，$\\Delta x$ 變成 $dx$"],
+          "say": "記號就是從這裡來的：積分號是拉長的 S，代表加總；delta x 變得無限小，寫成 dx。" },
+        { "show": ["$\\int_1^3 x^2\\,dx$：$\\Delta x=\\frac{2}{n}$，$x_i=1+\\frac{2i}{n}$"],
+          "say": "例如 x 平方從一到三。區間長度二，所以寬是 n 分之二，分點從一出發。" },
+        { "show": ["$n=4$：右端點 $1.5$、$2$、$2.5$、$3$"], "note": "高 $2.25$、$4$、$6.25$、$9$，和 $21.5$。",
+          "say": "先拿 n 等於四算一次。四個右端點平方，高的總和是二十一點五。" }
+      ],
+      "predict": {
+        "ask": "$R_4$ 是？",
+        "options": [
+          { "label": "$21.5\\times\\frac{1}{2}=10.75$", "correct": true },
+          { "label": "$21.5$", "why": "那只是高的總和，還要乘寬 $\\Delta x=\\frac{1}{2}$。" },
+          { "label": "$(1+2.25+4+6.25)\\times\\frac{1}{2}$", "why": "那是左端點 $1$、$1.5$、$2$、$2.5$。右端點是 $1.5$ 到 $3$。" }
+        ]
+      }
+    },
+    {
+      "title": "反過來讀",
+      "beats": [
+        { "show": ["找三件事：$\\Delta x$、$x_i$、$f$"], "note": "$\\Delta x$ 決定區間長度，$x_i$ 決定起點。",
+          "say": "考試常反過來，給一個極限的和，要你認出是哪個積分。找三件事：寬、分點、函數。" },
+        { "show": ["$\\sum_{k=1}^{n}\\frac{1}{n}f\\left(\\frac{k}{n}\\right)\\to\\int_0^1 f(x)\\,dx$"], "note": "$\\frac{k}{n}$ 從 $\\frac{1}{n}$ 跑到 $1$。",
+          "say": "最常見的樣子：n 分之一是寬，n 分之 k 從很靠近零跑到一，所以區間是零到一。" }
+      ],
+      "check": 2
+    },
+    {
+      "title": "兩種讀法都對",
+      "beats": [
+        { "show": ["$\\lim\\sum_{k=1}^{n}\\frac{3}{n}\\sqrt{1+\\frac{3k}{n}}$"], "note": "$\\Delta x=\\frac{3}{n}$：區間長度 $3$。",
+          "say": "這一個，寬是 n 分之三，所以區間長度是三。起點要看根號裡怎麼讀。" },
+        { "show": ["$x_k=1+\\frac{3k}{n}$ → $\\int_1^4\\sqrt{x}\\,dx$"],
+          "say": "讀法一：分點是一加 n 分之三 k，從一跑到四，函數是根號 x。" },
+        { "show": ["$x_k=\\frac{3k}{n}$ → $\\int_0^3\\sqrt{1+x}\\,dx$"], "note": "同一塊面積左右平移，值相同。",
+          "say": "讀法二：分點是 n 分之三 k，從零跑到三，函數是根號一加 x。兩個都對。" }
+      ],
+      "check": 3
+    },
+    {
+      "title": "先湊出 $\\frac{1}{n}$",
+      "beats": [
+        { "show": ["$\\lim\\sum_{k=1}^{n}\\frac{1}{n+k}$"], "note": "和式裡看不到 $\\frac{1}{n}$。",
+          "say": "這一題找不到 n 分之一當寬，那就自己湊出來。" },
+        { "show": ["$\\frac{1}{n+k}=\\frac{1}{n}\\cdot\\frac{1}{1+k/n}$"], "note": "把 $n$ 從分母提出來。",
+          "say": "把分母的 n 提出來，前面就有了 n 分之一，後面剩下一加 n 分之 k 分之一。" }
+      ],
+      "predict": {
+        "ask": "所以極限是？",
+        "options": [
+          { "label": "$\\int_0^1\\frac{1}{1+x}\\,dx$", "correct": true },
+          { "label": "$\\int_0^n\\frac{1}{1+x}\\,dx$", "why": "$\\frac{k}{n}$ 只從 $\\frac{1}{n}$ 跑到 $1$，上下限裡不會有 $n$。" },
+          { "label": "$\\int_0^1\\frac{1}{x}\\,dx$", "why": "$\\frac{k}{n}$ 換成 $x$，$\\frac{1}{1+k/n}$ 變成 $\\frac{1}{1+x}$，那個 $1$ 還在。" }
+        ]
+      }
+    }
+  ],
   "skillTags": {
     "coarse": ["riemann-sum"],
     "fine": ["riemann-sigma", "riemann-notation-write", "riemann-limit-definition", "riemann-notation-identify"]

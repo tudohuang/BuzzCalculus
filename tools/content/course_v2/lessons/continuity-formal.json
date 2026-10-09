@@ -128,6 +128,77 @@
       ]
     }
   ],
+  "sections": [
+    {
+      "title": "不用極限的說法",
+      "beats": [
+        { "show": ["連續：$\\lim_{x\\to a}f(x)=f(a)$"], "note": "靠近 $a$ 時，函數值靠近 $f(a)$。",
+          "say": "以前說連續，是靠近 a 的時候，函數值靠近 a 這一點自己的值。把靠近換成 epsilon 和 delta。" },
+        { "show": ["$\\forall\\varepsilon>0\\ \\exists\\delta>0\\ \\forall x\\in D:$", "$|x-a|<\\delta\\Rightarrow|f(x)-f(a)|<\\varepsilon$"],
+          "say": "對方出誤差 epsilon，你回答 delta：離 a 不到 delta 的 x，函數值都離 f 在 a 的值不到 epsilon。" },
+        { "show": ["目標值是 $f(a)$；不用排除 $x=a$"], "note": "$x=a$ 時差是 0，自動成立。",
+          "say": "跟極限比有兩個差別：目標就是 f 在 a 的值；而且不必排除 x 等於 a，那一點的差是零，自動成立。" },
+        { "show": ["$\\delta$ 可以依賴 $\\varepsilon$ 和 $a$"], "note": "這一點在〈一致連續〉會變成關鍵。",
+          "say": "delta 可以跟著 epsilon 變，也可以跟著 a 變。後面這一點，到一致連續會變成關鍵。" }
+      ],
+      "check": 0
+    },
+    {
+      "title": "線性：除以斜率",
+      "beats": [
+        { "show": ["$f(x)=3x-1$ 在 $a=2$"], "note": "$f(2)=5$。",
+          "say": "證三 x 減一在二連續。f 在二的值是五。" },
+        { "show": ["$|f(x)-5|=3|x-2|$"],
+          "say": "化簡距離，是三倍的 x 減二。要它小於 epsilon，x 減二小於三分之 epsilon 就夠。" },
+        { "show": ["取 $\\delta=\\frac{\\varepsilon}{3}$"], "note": "$|f(x)-5|=3|x-2|<3\\delta=\\varepsilon$。",
+          "say": "所以 delta 取三分之 epsilon。驗證：距離小於三倍 delta，剛好等於 epsilon。" }
+      ],
+      "check": 1
+    },
+    {
+      "title": "二次：先壓住",
+      "beats": [
+        { "show": ["$f(x)=x^2$ 在 $a=3$"], "note": "$|x^2-9|=|x-3|\\cdot|x+3|$。",
+          "say": "x 平方在三：距離分解成 x 減三乘 x 加三，第二個因子會隨 x 變，先把它壓住。" },
+        { "show": ["先要求 $\\delta\\le1$：$2<x<4$"], "note": "所以 $|x+3|<7$。",
+          "say": "先要求 delta 不超過一，x 就在二到四之間，x 加三小於七。" },
+        { "show": ["$\\delta=\\min(1,\\frac{\\varepsilon}{7})$"],
+          "say": "距離小於七倍的 x 減三，再要求 x 減三小於七分之 epsilon。兩個要求取比較小的。" }
+      ],
+      "check": 2
+    },
+    {
+      "title": "代一個 $\\varepsilon$",
+      "beats": [
+        { "show": ["$\\varepsilon=0.25$"],
+          "say": "代一個數：對方出零點二五。" },
+        { "show": ["$\\frac{\\varepsilon}{7}\\approx0.0357<1$"],
+          "say": "七分之零點二五大約零點零三五七，比一小。那 delta 是多少？" }
+      ],
+      "predict": {
+        "ask": "$\\delta=\\min(1,\\frac{\\varepsilon}{7})$ 是？",
+        "options": [
+          { "label": "$\\frac{1}{28}\\approx0.0357$", "correct": true },
+          { "label": "$1$", "why": "$\\min$ 取比較小的那個；$\\frac{0.25}{7}$ 比 1 小。" },
+          { "label": "$\\frac{0.25}{6}$", "why": "你用了 $x=3$ 時的 $|x+3|=6$；$x$ 可以到 4，上界要用 7。" }
+        ]
+      }
+    },
+    {
+      "title": "不連續寫成什麼",
+      "beats": [
+        { "show": ["$\\exists\\varepsilon>0\\ \\forall\\delta>0\\ \\exists x\\in D$"], "note": "$|x-a|<\\delta$ 但 $|f(x)-f(a)|\\ge\\varepsilon$。",
+          "say": "把定義整句否定：有一個固定的誤差，不管 x 限制得多靠近 a，總有點偏離超過它。" },
+        { "show": ["$H(x)=0$（$x<0$）、$1$（$x\\ge0$）"], "note": "取 $\\varepsilon=\\frac{1}{2}$。",
+          "say": "階梯函數在零：左邊是零，右邊和零本身是一。誤差取二分之一。" },
+        { "show": ["任何 $\\delta$：取 $x=-\\frac{\\delta}{2}$"], "note": "$|H(x)-H(0)|=1\\ge\\frac{1}{2}$。",
+          "say": "不管 delta 多小，取左邊二分之 delta 那一點，函數值是零，跟一差一。每個 delta 都失敗。" },
+        { "show": ["$\\varepsilon$ 要挑小的"], "note": "$\\varepsilon>1$ 時每個 $\\delta$ 都行。",
+          "say": "誤差要挑小的：取大於一，每個 delta 都行，就證不出來了。" }
+      ],
+      "check": 3
+    }
+  ],
   "skillTags": {
     "coarse": ["continuity", "epsilon-delta", "epsilon-game"],
     "fine": ["continuity-formal-find-delta", "continuity-formal-bound-factor", "continuity-formal-negation", "continuity-formal-quantifier-order"]

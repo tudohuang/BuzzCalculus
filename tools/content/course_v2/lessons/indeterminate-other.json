@@ -161,6 +161,102 @@
       ]
     }
   ],
+  "sections": [
+    {
+      "title": "為什麼叫不定",
+      "beats": [
+        { "show": ["$x\\to 0^+$：$x\\to 0$，$\\frac{1}{x}\\to\\infty$"],
+          "say": "x 從右邊趨近零：x 本身趨近零，x 分之一趨近無限大。把它們乘起來會怎樣？" },
+        { "show": ["$x\\cdot\\frac{1}{x}=1$","$x^2\\cdot\\frac{1}{x}\\to 0$，$x\\cdot\\frac{1}{x^2}\\to\\infty$"],
+          "say": "三個都是零乘無限大，答案卻分別是一、零、無限大。" },
+        { "show": ["$0\\cdot\\infty$ 不是一個數"], "note": "一個往 $0$ 拉、一個往 $\\infty$ 拉，看誰跑得快。",
+          "say": "一個往零拉，一個往無限大拉，誰贏要看誰跑得快。所以只看型態決定不了，要算。" },
+        { "show": ["$\\infty-\\infty$、$1^\\infty$、$0^0$、$\\infty^0$"], "note": "也一樣，要算。",
+          "say": "無限大減無限大、一的無限大次方、零的零次方、無限大的零次方，也都一樣。" }
+      ],
+      "check": 0
+    },
+    {
+      "title": "翻到分母",
+      "beats": [
+        { "show": ["$f\\cdot g=\\frac{f}{1/g}$"], "note": "$0\\cdot\\infty$ 變成 $\\frac{0}{0}$ 或 $\\frac{\\infty}{\\infty}$。",
+          "say": "零乘無限大的辦法：把其中一個翻到分母，變成分式，就可以用羅必達法則。" },
+        { "show": ["$\\ln x$ 留在分子"], "note": "它的導數 $\\frac{1}{x}$ 很簡單。",
+          "say": "翻哪一個？翻完之後要好微分的。自然對數的導數很簡單，留在上面，把多項式那邊翻下去。" },
+        { "show": ["$x\\ln x=\\frac{\\ln x}{1/x}$"], "note": "$x\\to 0^+$：是 $\\frac{\\infty}{\\infty}$。",
+          "say": "x 乘自然對數 x，把 x 翻下去，變成自然對數 x 除以 x 分之一，無限大比無限大。" },
+        { "show": ["$\\frac{1/x}{-1/x^2}$"], "note": "分子微分 $\\frac{1}{x}$，分母微分 $-\\frac{1}{x^2}$。",
+          "say": "上下各自微分：上面變 x 分之一，下面變負的 x 平方分之一。" }
+      ],
+      "predict": {
+        "ask": "$x\\to 0^+$ 時，$\\frac{1/x}{-1/x^2}$ 趨近？",
+        "options": [
+          { "label": "$0$", "correct": true },
+          { "label": "$\\infty$", "why": "除以 $-\\frac{1}{x^2}$ 等於乘 $-x^2$：$\\frac{1}{x}\\cdot(-x^2)=-x\\to 0$。" },
+          { "label": "$-\\infty$", "why": "那是分子 $\\ln x$ 原本的去向。微分完要化簡：$\\frac{1}{x}\\cdot(-x^2)=-x\\to 0$。" }
+        ]
+      }
+    },
+    {
+      "title": "指數型：先取 $\\ln$",
+      "beats": [
+        { "show": ["$\\ln y=g(x)\\cdot\\ln f(x)$"], "note": "$y=f(x)^{g(x)}$，$f>0$。",
+          "say": "一的無限大次方、零的零次方、無限大的零次方，都先取自然對數，把指數拉下來變成乘法。" },
+        { "show": ["三種都變成 $0\\cdot\\infty$"],
+          "say": "拉下來之後三種都變成零乘無限大，就用剛剛翻到分母的方法算。" },
+        { "show": ["$\\lim y=e^{\\lim \\ln y}$"], "note": "算出 $L$ 之後，答案是 $e^L$。",
+          "say": "算出自然對數 y 的極限 L 之後，答案是 e 的 L 次方。最後這一步最容易忘。" },
+        { "show": ["$x^x$：$\\ln y=x\\ln x\\to 0$"], "note": "$x\\to 0^+$，是 $0^0$。",
+          "say": "例：x 的 x 次方，零的零次方。取自然對數是 x 乘自然對數 x，剛剛算過，趨近零。" }
+      ],
+      "check": 2
+    },
+    {
+      "title": "一的無限大次方",
+      "beats": [
+        { "show": ["$\\lim_{x\\to\\infty}\\left(1+\\frac{2}{x}\\right)^{3x}$"], "note": "底數 $\\to 1$、指數 $\\to\\infty$。",
+          "say": "一加 x 分之二的三 x 次方，底數靠近一，指數衝向無限大。" },
+        { "show": ["$\\ln y=\\frac{3\\ln(1+2/x)}{1/x}$"], "note": "取 $\\ln$，再把 $x$ 翻下去：$\\frac{0}{0}$。",
+          "say": "取自然對數，是無限大乘零。把三 x 的 x 翻下去，變成零比零。" },
+        { "show": ["$\\frac{6}{1+2/x}\\to 6$"], "note": "連鎖律：$\\frac{2}{x}$ 的導數是 $-\\frac{2}{x^2}$。",
+          "say": "上下微分，負的 x 平方分之一約掉，剩六除以一加 x 分之二，趨近六。" },
+        { "show": ["$y\\to e^6$"], "note": "也就是 $\\left(e^2\\right)^3$。",
+          "say": "別忘了取 e 回來：答案是 e 的六次方。跟 e 型極限算的一樣，e 平方的三次方。" }
+      ],
+      "check": 1
+    },
+    {
+      "title": "無限大減無限大",
+      "beats": [
+        { "show": ["先合成一個分式"], "note": "通分，或乘共軛。",
+          "say": "無限大減無限大，目標是合成一個分式：分式就通分，有平方根就乘共軛。" },
+        { "show": ["$\\frac{1}{x}-\\frac{1}{e^x-1}=\\frac{e^x-1-x}{x(e^x-1)}$"],
+          "say": "例：x 分之一減 e 的 x 次方減一分之一。通分之後，代零，上下都是零。" },
+        { "show": ["一次：$\\frac{e^x-1}{(e^x-1)+xe^x}$"], "note": "分母用乘法法則。代 $0$ 還是 $\\frac{0}{0}$。",
+          "say": "用一次羅必達，分母是乘積要用乘法法則。代零還是零比零，再用一次。" }
+      ],
+      "predict": {
+        "ask": "再微分一次，代 $x=0$ 得？",
+        "options": [
+          { "label": "$\\frac{1}{2}$", "correct": true },
+          { "label": "$1$", "why": "分母 $(e^x-1)+xe^x$ 的兩項都要微：$e^x$ 加上 $e^x+xe^x$，是 $2e^x+xe^x$，代 $0$ 是 $2$。" },
+          { "label": "$0$", "why": "你可能沒通分就說 $\\infty-\\infty=0$。它不是 $0$，要先合成一個分式再算。" }
+        ]
+      }
+    },
+    {
+      "title": "長得像但不是",
+      "beats": [
+        { "show": ["$\\infty+\\infty=\\infty$","$\\infty\\cdot\\infty=\\infty$"],
+          "say": "有些長得像，但不是不定型：兩個都往無限大跑，加起來或乘起來，只會更大。" },
+        { "show": ["$0^\\infty$ 是 $0$"], "note": "底數 $\\to 0^+$、指數 $\\to+\\infty$。",
+          "say": "底數趨近零、指數趨近無限大：越小的正數乘越多次，只會越小，所以是零。" },
+        { "show": ["直接下結論，不必算"],
+          "say": "這些兩股力量往同一個方向拉，沒有拉扯，可以直接下結論。" }
+      ],
+      "check": 3
+    }
+  ],
   "skillTags": {
     "coarse": ["lhopital", "exponential-limit", "log-limit"],
     "fine": ["indeterminate-zero-times-inf", "indeterminate-inf-minus-inf", "indeterminate-one-pow-inf", "indeterminate-zero-pow-zero", "indeterminate-inf-pow-zero", "indeterminate-take-log"]

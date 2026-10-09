@@ -126,6 +126,85 @@
       ]
     }
   ],
+  "sections": [
+    {
+      "title": "猜不到的時候",
+      "beats": [
+        { "show": ["$y''+y=\\sec x$"], "note": "$\\sec x$ 微分：$\\sec x\\tan x$、$\\sec x\\tan^2x$……",
+          "say": "右邊是 secant x。它越微分越長，永遠回不到有限幾項的家族，待定係數猜不出來。" },
+        { "show": ["$y_h=C_1\\cos x+C_2\\sin x$"],
+          "say": "齊次解是 C 一 cosine x 加 C 二 sine x。" },
+        { "show": ["常數換成函數：$y_p=u_1y_1+u_2y_2$"], "note": "參數被允許隨 $x$ 變化。",
+          "say": "想法是：把兩個常數換成會隨 x 變的函數 u 一、u 二。這就是參數變異這個名字。" },
+        { "show": ["常數：左邊只能得到 0"], "note": "讓它們會動，左邊才有機會等於 $g$。",
+          "say": "常數的時候左邊只會是零。讓它們動起來，左邊才有機會等於右邊的 g。" }
+      ],
+      "check": 2
+    },
+    {
+      "title": "公式",
+      "beats": [
+        { "show": ["先化成 $y''+p(x)y'+q(x)y=g(x)$"], "note": "$2y''+\\dots$ 要先全部除以 2。",
+          "say": "套公式前，y 雙撇的係數一定要是一。前面有二，就整條先除以二。" },
+        { "show": ["$W=y_1y_2'-y_1'y_2$"], "note": "$y_1$、$y_2$ 是兩個獨立的齊次解。",
+          "say": "再算兩個齊次解的 Wronskian。" },
+        { "show": ["$u_1'=-\\frac{y_2\\,g}{W}$，$u_2'=\\frac{y_1\\,g}{W}$"], "note": "$u_1'$ 前面有負號。",
+          "say": "u 一 prime 是負的 y 二乘 g 除以 W，u 二 prime 是 y 一乘 g 除以 W。積分得到 u。" },
+        { "show": ["不限常係數"], "note": "$p$、$q$、$g$ 連續，已知兩個齊次解就行。",
+          "say": "只要係數連續、手上有兩個獨立的齊次解，就能用，不限常係數。代價是兩個積分。" }
+      ],
+      "check": 0
+    },
+    {
+      "title": "公式從哪裡來",
+      "beats": [
+        { "show": ["兩個未知函數，只有一個方程"],
+          "say": "u 一、u 二兩個未知函數，卻只被一條方程限制，所以可以自己再加一個條件。" },
+        { "show": ["規定 $u_1'y_1+u_2'y_2=0$"], "note": "這樣 $y_p'$ 裡沒有 $u'$。",
+          "say": "我們選一個方便的：讓這一塊是零。這樣再微分一次，也不會出現 u 雙撇。" },
+        { "show": ["$u_1'y_1'+u_2'y_2'=g$"], "note": "代入方程，其他項全部消掉。",
+          "say": "代進方程，因為 y 一、y 二是齊次解，其他項都消掉，只剩這一條。兩條聯立解出公式。" }
+      ],
+      "check": 3
+    },
+    {
+      "title": "$\\sec x$",
+      "beats": [
+        { "show": ["$y_1=\\cos x$、$y_2=\\sin x$"], "note": "區間 $-\\frac{\\pi}{2}<x<\\frac{\\pi}{2}$，$g$ 連續。",
+          "say": "回到 secant x。已經是標準形，在這個區間 secant 是連續的。" },
+        { "show": ["$W=\\cos x\\cdot\\cos x-(-\\sin x)\\cdot\\sin x=1$"],
+          "say": "Wronskian：cosine 平方加 sine 平方，就是一。" },
+        { "show": ["$u_1'=-\\tan x$，$u_1=\\ln(\\cos x)$"], "note": "區間上 $\\cos x>0$，不用絕對值。",
+          "say": "u 一 prime 是負 sine 乘 secant，是負 tangent，積分得自然對數 cosine x。" },
+        { "show": ["$u_2'=1$，$u_2=x$"],
+          "say": "u 二 prime 是 cosine 乘 secant，剛好是一，積分是 x。" },
+        { "show": ["$y_p=\\cos x\\ln(\\cos x)+x\\sin x$"], "note": "積分不用加常數。",
+          "say": "乘回去就是特解。積分不用加常數，加了只是多出齊次解。" }
+      ],
+      "check": 1
+    },
+    {
+      "title": "重根的齊次解",
+      "beats": [
+        { "show": ["$y''-2y'+y=\\frac{e^x}{x}$"], "note": "$y_1=e^x$、$y_2=xe^x$，$W=e^{2x}$。",
+          "say": "重根一，兩個齊次解是 e 的 x 次方和 x e 的 x 次方，W 是 e 的二 x 次方。" },
+        { "show": ["$u_1'=-1$，$u_1=-x$"],
+          "say": "u 一 prime：x e 的 x 乘上 x 分之 e 的 x，再除以 W，剩負一。" },
+        { "show": ["$u_2'=\\frac{1}{x}$，$u_2=\\ln x$"], "note": "$x>0$。",
+          "say": "u 二 prime 是 x 分之一，積分是自然對數 x。" },
+        { "show": ["$y_p=-xe^x+xe^x\\ln x$"],
+          "say": "乘回去得到兩項。其中一項看起來很眼熟。" }
+      ],
+      "predict": {
+        "ask": "特解可以簡化成？",
+        "options": [
+          { "label": "$xe^x\\ln x$", "correct": true },
+          { "label": "$-xe^x$", "why": "$-xe^x$ 是齊次解，代進左邊是 0；真正對上 $\\frac{e^x}{x}$ 的是 $xe^x\\ln x$。" },
+          { "label": "不能簡化", "why": "$-xe^x$ 和齊次解 $y_2=xe^x$ 重複，可以丟掉，通解裡本來就有。" }
+        ]
+      }
+    }
+  ],
   "skillTags": {
     "coarse": ["ode", "second-order", "wronskian", "convolution"],
     "fine": ["vop-standard-form", "vop-wronskian", "vop-formula", "vop-when-to-use"]

@@ -125,6 +125,92 @@
       ]
     }
   ],
+  "sections": [
+    {
+      "title": "微分搬進積分號",
+      "beats": [
+        { "show": ["$I(a)=\\int_c^d f(x,a)\\,dx$"], "note": "$I$ 的變化率是什麼？",
+          "say": "參數積分 I 是 a 的函數。a 動一點點，I 會怎麼變？" },
+        { "show": ["每一條 $x$ 的變化率加起來"], "note": "直覺：$\\frac{\\partial f}{\\partial a}$ 積起來。",
+          "say": "直覺上，每一個 x 那裡，f 對 a 的變化率加起來，就是 I 的變化率。" },
+        { "show": ["$I'(a)=\\int_c^d\\frac{\\partial f}{\\partial a}\\,dx$"], "note": "微分與積分交換，需要條件。",
+          "say": "寫成式子：先對 a 偏微分，再對 x 積分。這叫微分與積分交換，不是永遠成立。" }
+      ],
+      "check": 2
+    },
+    {
+      "title": "交換的條件",
+      "beats": [
+        { "show": ["$f$ 與 $\\frac{\\partial f}{\\partial a}$ 在閉矩形上連續"], "note": "區間有限時的充分條件。",
+          "say": "區間有限的時候，充分條件是：f 和它對 a 的偏導數，都在閉矩形上連續。" },
+        { "show": ["瑕積分：$\\left|\\frac{\\partial f}{\\partial a}\\right|\\le g(x)$"], "note": "$g$ 不依賴 $a$，而且 $\\int g$ 收斂。",
+          "say": "區間無限或端點無界時，要找一個不依賴 a、可積的函數 g，把偏導數壓住。" },
+        { "show": ["反例：$\\int_0^{\\infty}\\frac{\\sin(ax)}{x}\\,dx$"], "note": "硬搬進去得到不收斂的 $\\int_0^{\\infty}\\cos(ax)\\,dx$。",
+          "say": "壓不住就會出錯：sine a x 除以 x 是常數，導數是零，硬搬進去卻得到一個不收斂的積分。" }
+      ],
+      "check": 1
+    },
+    {
+      "title": "微分生出新公式",
+      "beats": [
+        { "show": ["$\\int_0^1 x^a\\,dx=\\frac{1}{a+1}$"], "note": "兩邊都對 $a$ 微分。",
+          "say": "從一條已知的公式出發：x 的 a 次方從零積到一，等於 a 加一分之一。兩邊都對 a 微分。" },
+        { "show": ["$\\frac{\\partial(x^a)}{\\partial a}=x^a\\ln x$"], "note": "$a\\ge a_0>-1$ 時被 $x^{a_0}|\\ln x|$ 控制。",
+          "say": "x 的 a 次方對 a 微分，多出自然對數 x。它被可積的函數壓住，可以交換。" },
+        { "show": ["$\\int_0^1 x^a\\ln x\\,dx=-\\frac{1}{(a+1)^2}$"],
+          "say": "右邊 a 加一分之一微分，得負的 a 加一平方分之一。一個新公式就這樣生出來。" }
+      ],
+      "check": 3
+    },
+    {
+      "title": "上下限也會動",
+      "beats": [
+        { "show": ["$\\frac{d}{da}\\int_{u(a)}^{v(a)}f(x,a)\\,dx$"], "note": "面積的變化有三個來源。",
+          "say": "上下限也跟著 a 動的時候，面積的變化有三個來源。" },
+        { "show": ["$f(v,a)\\,v'(a)-f(u,a)\\,u'(a)$"], "note": "右邊界移動、左邊界移動。",
+          "say": "右邊界移動，加上 f 在上限的值乘 v prime；左邊界移動，減掉 f 在下限的值乘 u prime。" },
+        { "show": ["$+\\int_{u(a)}^{v(a)}\\frac{\\partial f}{\\partial a}\\,dx$"], "note": "曲線本身移動。",
+          "say": "第三項是曲線本身在動，就是剛才的偏導數積分。f 不含 a 時，只剩前兩項，就是基本定理加連鎖律。" }
+      ],
+      "check": 0
+    },
+    {
+      "title": "只有上下限在動",
+      "beats": [
+        { "show": ["$\\frac{d}{dx}\\int_x^{2x}\\frac{\\sin t}{t}\\,dt$"], "note": "被積函數不含 $x$：第三項是 $0$。",
+          "say": "這一題被積函數不含 x，只有上下限在動，第三項是零。" },
+        { "show": ["上限 $v=2x$，$v'=2$；下限 $u=x$，$u'=1$"],
+          "say": "上限是二 x，導數是二；下限是 x，導數是一。" }
+      ],
+      "predict": {
+        "ask": "答案是？",
+        "options": [
+          { "label": "$\\frac{\\sin 2x-\\sin x}{x}$", "correct": true },
+          { "label": "$\\frac{\\sin 2x}{2x}-\\frac{\\sin x}{x}$", "why": "上限那一項要乘 $v'=2$：$\\frac{\\sin 2x}{2x}\\cdot 2=\\frac{\\sin 2x}{x}$。" },
+          { "label": "$\\frac{\\sin 2x+\\sin x}{x}$", "why": "下限那一項是減號：$-f(u)\\,u'$。" }
+        ]
+      }
+    },
+    {
+      "title": "三項都有",
+      "beats": [
+        { "show": ["$F(x)=\\int_0^x e^{x-t}\\sin t\\,dt$"], "note": "上限和被積函數都含 $x$。",
+          "say": "這一題上限是 x，被積函數裡也有 x，要分開算。" },
+        { "show": ["上限項：$e^0\\sin x=\\sin x$"], "note": "下限 $0$ 不動。",
+          "say": "上限項：t 代 x，e 的零次方是一，得 sine x。下限不動，沒有貢獻。" },
+        { "show": ["$\\frac{\\partial(e^{x-t}\\sin t)}{\\partial x}=e^{x-t}\\sin t$"], "note": "積起來正好是 $F(x)$。",
+          "say": "被積函數對 x 偏微分，還是它自己，積起來正好是 F。" }
+      ],
+      "predict": {
+        "ask": "$F'(x)$ 是？",
+        "options": [
+          { "label": "$\\sin x+F(x)$", "correct": true },
+          { "label": "$\\sin x$", "why": "只用了基本定理，漏了被積函數本身含 $x$ 的那一項。" },
+          { "label": "$F(x)$", "why": "漏了上限移動的那一項 $f(x,x)\\cdot 1=\\sin x$。" }
+        ]
+      }
+    }
+  ],
   "skillTags": {
     "coarse": ["parameter-integral", "fundamental-theorem", "moving-limits"],
     "fine": ["leibniz-moving-limits", "leibniz-under-integral", "leibniz-full-three-terms", "leibniz-generate-formula"]
