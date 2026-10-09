@@ -3338,7 +3338,11 @@
       { icon: "zap", label: t("賺 60 XP"), progress: Math.min(xpToday, 60), target: 60 },
       { icon: "star", label: t("一局全對（5 題以上）"), progress: perfectRun ? 1 : 0, target: 1 }
     ].map((quest) => ({ ...quest, done: quest.progress >= quest.target }));
-    return { quests, allDone: quests.every((quest) => quest.done), today };
+    const allDone = quests.every((quest) => quest.done);
+    // 讀一節課（分節模式，只有中文介面有）：自己一條，不影響全清加成 —— 只練題的人照舊拿得到
+    const read = Number((records.courseReadDays || {})[today]) || 0;
+    if (!(window.BuzzI18n && window.BuzzI18n.lang === "en")) quests.push({ icon: "book-open", label: t("讀一節課"), progress: Math.min(read, 1), target: 1, done: read > 0 });
+    return { quests, allDone, today };
   }
 
   const QUEST_BONUS_XP = 50;
@@ -3368,6 +3372,7 @@
 
   function renderHomeStreakCard(records) {
     const counts = activityCounts(records);
+    const read = records.courseReadDays || {};
     const streakInfo = practiceStreakInfo(records, counts);
     const cells = [];
     const cursor = new Date();
@@ -3377,7 +3382,7 @@
       const key = localDateKey(cursor);
       const count = counts[key] || 0;
       const shielded = streakInfo.usedDates.has(key);
-      cells.push(`<i class="heatmap-cell ${shielded ? "is-shielded" : ""}" data-level="${activityLevel(count)}" title="${escapeAttr(`${t("{key} · {count} 題", { key, count })}${shielded ? t(" · 盾牌保護") : ""}`)}"></i>`);
+      cells.push(`<i class="heatmap-cell ${shielded ? "is-shielded" : ""}" data-level="${activityLevel(count) || (read[key] ? 1 : 0)}" title="${escapeAttr(`${t("{key} · {count} 題", { key, count })}${shielded ? t(" · 盾牌保護") : ""}`)}"></i>`);
       cursor.setDate(cursor.getDate() + 1);
     }
     return `
@@ -3392,7 +3397,7 @@
           })()}
           ${(() => {
             // 連勝倒數：今天還沒練，就說清楚還剩幾小時。盾牌是保底，不是理由。
-            const todayCount = counts[localDateKey(new Date())] || 0;
+            const todayCount = counts[localDateKey(new Date())] || read[localDateKey(new Date())] || 0;
             if (!streakInfo.streak || todayCount) return "";
             const end = new Date();
             end.setHours(24, 0, 0, 0);
@@ -5049,7 +5054,7 @@
   const plUI = window.BuzzProofLabUI.create({ escapeHtml, escapeAttr, icon, proofs });
 
   // ── 課程（內容、畫面、狀態都在 course.js：中文介面是新版課程，英文介面是舊的 25 課）──
-  const courseUI = window.BuzzCourseUI.create({ escapeHtml, escapeAttr, icon, referenceAnswerHTML, loadRecords, saveRecords, ensureLazy, startQuiz, render, go: (next) => { view = next; render(); window.scrollTo(0, 0); } });
+  const courseUI = window.BuzzCourseUI.create({ escapeHtml, escapeAttr, icon, referenceAnswerHTML, loadRecords, saveRecords, ensureLazy, startQuiz, render, go: (next) => { view = next; render(); window.scrollTo(0, 0); }, noteCourseRead, focusModeOn, xpLevel: xpLevelInfo, streakDays: (r) => practiceStreakInfo(r, activityCounts(r)).streak });
   const renderCourse = () => courseUI.renderIndex(loadRecords());
   const renderCourseLesson = () => courseUI.renderCurrent(loadRecords());
 
@@ -13525,6 +13530,8 @@
     next.proofLang = next.proofLang && typeof next.proofLang === "object" ? next.proofLang : {};
     next.course = next.course && typeof next.course === "object" ? next.course : {};
     next.courseV2 = next.courseV2 && typeof next.courseV2 === "object" ? next.courseV2 : {};
+    // 讀完一節課（分節模式）的日子：本地日期 → 節數。連勝與「讀一節課」任務都看它（見 noteCourseRead）
+    next.courseReadDays = next.courseReadDays && typeof next.courseReadDays === "object" ? next.courseReadDays : {};
     next.courseGraduation = next.courseGraduation && typeof next.courseGraduation === "object" ? next.courseGraduation : null;
     next.proofLangLessons = next.proofLangLessons && typeof next.proofLangLessons === "object" ? next.proofLangLessons : {};
     next.onboardingContext = typeof next.onboardingContext === "string" ? next.onboardingContext : "";
@@ -14013,7 +14020,18 @@
 
   // 連勝 + 連勝保護：每「日曆週」一面盾牌，剛好漏練一天且該週盾牌沒用過
   // 就自動補上（消耗後記進 records.streakShields，匯出匯入都會帶著走）。
+  // 讀完一節課：那一天算有學（連勝照算）。只記日期與節數，最多留 400 天。
+  function noteCourseRead(records) {
+    const days = (records.courseReadDays = records.courseReadDays || {});
+    const key = localDateKey(new Date());
+    days[key] = (Number(days[key]) || 0) + 1;
+    Object.keys(days).sort().slice(0, -400).forEach((k) => delete days[k]);
+    return records;
+  }
+
   function practiceStreakInfo(records, counts) {
+    // 練了題或讀完一節課的日子都算有學
+    counts = { ...(records.courseReadDays || {}), ...counts };
     const shields = records.streakShields || {};
     const cursor = new Date();
     cursor.setHours(12, 0, 0, 0);

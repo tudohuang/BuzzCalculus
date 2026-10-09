@@ -630,6 +630,7 @@
     "答對 {goal} 題": "Get {goal} right",
     "賺 60 XP": "Earn 60 XP",
     "一局全對（5 題以上）": "A perfect session (5+ problems)",
+    "讀一節課": "Read one lesson section",
     "今日任務": "Today's quests",
     "全部完成，+{QUEST_BONUS_XP} XP 已入帳": "All done, +{QUEST_BONUS_XP} XP banked",
     "{key} · {count} 題": "{key} · {count} problems",

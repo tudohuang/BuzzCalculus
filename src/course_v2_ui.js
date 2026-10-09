@@ -13,15 +13,10 @@
 //   閱讀時間與完成時間分開；課號照大綱順序算，正文的〈課名〉連到那一課；visual（給作者的文字規格）不顯示，
 //   畫面上的圖是 figures（畫法在這支最後的 BuzzCourseFigures），放在 after 指定的觀念段落之後。
 //
-// 版面（2026-10 書本式）：單欄、不套框中框 —— 段落靠標題與留白分開，只有範例與可折疊段落有淡底＋左邊線；
-//   本文寬 40em（約 40 個中文字）；標題區只有課號 · Stage、課名、閱讀／完成時間、先修一行、「學完你會」收成一行，
-//   觀念①要在手機第一屏。手機上方黏一條位置條（觀念 ─ 範例 ─ 小測 ─ 練習），≥ 960px 換成左側黏著的目錄；
-//   兩者都由 setupReading（IntersectionObserver ＋ 捲動）亮目前段落。行內數學寫 $…$，用 KaTeX 畫（見 withMath）。
-//
-// 狀態：哪一課、每題範例揭到第幾步、小測每題依序選過哪些。收合段落用 <details data-keep>，
-// app.js 重繪時會把開合接回去（captureViewState），所以不用記在這裡。
-// 進度存 records.courseV2[id] = { openedAt, quizBest, quizAt, doneAt, practicedAt }；
-// 推薦題對不對不另外記，直接看 records.problemStats（任何模式答對過都算）。
+// 版面（書本式單欄，細節見 STYLE 與 renderLesson）：觀念①要在手機第一屏；手機黏位置條、≥ 960px 換左側目錄。
+// 有 sections 的課預設一節一屏（course_sections.js），全文就是這一頁。
+// 狀態：哪一課、範例揭到第幾步、小測選過哪些；收合段落用 <details data-keep>（app.js 重繪時接回）。
+// 進度存 records.courseV2[id]；推薦題對錯直接看 records.problemStats。
 
 (function () {
   "use strict";
@@ -469,6 +464,7 @@
        app 整頁重繪會換掉容器，所以每次畫完課程表就重新掛上去；相機與選取由地圖自己留著。 */
     let indexView = "list";
     let mapFocus = "";
+    let mapLit = "";
     function mapOptions(records) {
       const next = nextLesson(records);
       return {
@@ -479,6 +475,7 @@
         stages: outline.stages,
         next: next ? order.indexOf(next) : -1,
         focusId: mapFocus,
+        litId: mapLit,
         escapeHtml,
         escapeAttr,
         open: (id) => act("open-course-lesson", { lessonId: id })
@@ -489,7 +486,7 @@
       if (!el) return;
       const mount = () => {
         if (!el.isConnected) return;
-        if (window.BuzzCourseMap.attach(el, mapOptions(loadRecords()))) mapFocus = "";
+        if (window.BuzzCourseMap.attach(el, mapOptions(loadRecords()))) mapFocus = mapLit = "";
       };
       if (window.BuzzCourseMap && window.BUZZ_COURSE_MAP) return mount();
       Promise.resolve(deps.ensureLazy("map")).then(mount, () => {
@@ -508,6 +505,9 @@
 
     /* ── 單課 ── */
     let state = { lessonId: "", steps: {}, picks: {}, figs: {}, recorded: false };
+    let secFail = false;
+    const sec = (fn) => Promise.resolve(deps.ensureLazy("sections")).then(fn, () => { secFail = true; render(); });
+    const secApi = (records, head) => { const m = meta[state.lessonId]; return { m, data: lessonData(m.id), records, head, state, fmt, rich, update, tierOf: (r) => tierOf(r, m), next: neighbour(m, 1), label, deps, act }; };
 
     // 圖的滑桿：只換那一張圖（不整頁重繪 —— 拖動時每一格都重繪整課太貴）；值記在 state.figs，
     // 之後別的動作重繪時圖停在原地。委派在 document 上，app.js 重繪換掉 DOM 也不用重綁。
@@ -612,6 +612,8 @@
       const data = lessonData(m.id);
       const entry = entryOf(records, m.id);
       const tier = tierOf(records, m);
+      // 分節（lesson.sections）：畫面在 course_sections.js（data-lazy="sections"）；選了全文就照舊
+      const secMode = data && data.sections && !secFail && (records.settings || {}).courseView !== "full";
       // 標題區要小：課號 · Stage、課名、閱讀／完成時間一行；先修一行、「學完你會」收成一行 —— 觀念①要在手機第一屏
       const head = `
         <header class="page-head cv2-head">
@@ -620,7 +622,13 @@
             <h2>${escapeHtml(m.title)}</h2>
             <p class="cv2-meta"><span>閱讀 ${m.read} 分</span><span>完成 ${m.total} 分</span>${tierPill(tier)}</p>
           </div>
+          ${data && data.sections ? `<div class="cv2-seg" role="group" aria-label="閱讀方式">${[["sec", "分節"], ["full", "全文"]].map(([k, n]) => `<button type="button" data-action="course-s-mode" data-mode="${k}" aria-pressed="${(k === "sec") === Boolean(secMode)}">${n}</button>`).join("")}</div>` : ""}
         </header>`;
+      if (secMode) {
+        if (window.BuzzCourseSections) return window.BuzzCourseSections.render(secApi(records, head));
+        sec(render);
+        return `<main class="screen lazy-loading" aria-busy="true"><div class="cv2-layout"><section class="course-lesson cv2-lesson">${head}</section></div></main>`;
+      }
       if (!data) {
         if (stageState[m.stage.n] !== "failed") loadStage(m.stage.n);
         const failed = stageState[m.stage.n] === "failed";
@@ -876,6 +884,7 @@
       if (action === "course-map-focus") {
         indexView = "map";
         mapFocus = meta[id] ? id : "";
+        mapLit = data.lit ? mapFocus : "";
         return go("course");
       }
       if (action === "open-course-lesson") {
@@ -893,6 +902,7 @@
         if (m) { delete stageState[m.stage.n]; loadStage(m.stage.n); }
         return render();
       }
+      if (/^course-s-/.test(action)) return sec(() => window.BuzzCourseSections.act(secApi(loadRecords()), action, data));
       const lesson = lessonData(state.lessonId);
       if (action === "course-step" && lesson) {
         const ex = Number(data.ex);
@@ -922,6 +932,7 @@
       }
       if (action === "course-quiz-reset") {
         state = { ...state, picks: {}, recorded: false };
+        update(state.lessonId, (e) => ({ ...e, picks: {} }));
         return render();
       }
       if (action === "course-practice" && lesson) {

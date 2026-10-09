@@ -88,6 +88,10 @@ const BUDGETS = {
   // 2026-10-09 新增：課程影片的播放器（course_video.js，約 6KB）。只有有影片的課才抓；課程組只剩 1KB 多，塞不下。
   // 影片本身（/media/*.mp4）不在預算裡：點了才載、不進 Service Worker 快取。
   "延後載入：課程影片": { pattern: /^$/, budget: 16 * 1024, lazy: "video" },
+  // 2026-10-09 新增：分節模式（course_sections.js，約 25KB）。只有打開「有分節的課」才抓；課程組只剩幾百位元組，
+  // 而沒有分節的課（目前 313 / 317 課）一個位元組都不該為它付。上限留約四成；分節推到全部的課之後再撞頂，
+  // 該做的是把結算畫面拆出去，不是調數字。
+  "延後載入：課程分節": { pattern: /^$/, budget: 36 * 1024, lazy: "sections" },
   // 課文按 Stage 分檔（tools/build_course_v2.js 產生），打開某一課只抓那一個 Stage —— 使用者等的是「一個 Stage」，
   // 所以上限管最大的那一支（現況 Stage 12 分析入門 351KB）。撞頂該做的是把那個 Stage 按章再拆，不是調數字。
   "延後載入：課文（最大的 Stage）": { pattern: /^src\/course_v2\/stage-\d+\.js$/, budget: 450 * 1024, maxFile: true }
