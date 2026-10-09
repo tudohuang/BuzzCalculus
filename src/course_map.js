@@ -1,0 +1,1293 @@
+// ── 課程地圖（中文介面，新版課程的「地圖」檢視）──
+//
+// 版面在 build 時就算好了（tools/lib/course_map_layout.js → src/course_v2/map.js 的 window.BUZZ_COURSE_MAP），
+// 這支只負責畫跟操作：執行時不排版、不跑力導向模擬。兩支都是 index.html 的 type="text/lazy" data-lazy="map"，
+// 打開地圖才抓。英文介面不載新版課程，所以字直接寫中文（validate_i18n 不掃這支）。
+//
+// 畫法：一張 canvas（DPR 感知、最多 2×），整張圖一個相機變換（screen = world × s + t）。
+//   靜態幾何（317 課的膠囊、770 條先修邊、章與 Stage 的框、三層彙總邊）在第一次打開時做成 Path2D，
+//   之後每一格只是 setTransform ＋ stroke/fill 這些 Path2D ＋ 畫看得到的字 —— 每格不配置新物件。
+//   閒著不畫：只有相機在動（拖、慣性、飛行動畫）或狀態變了才排一格 requestAnimationFrame。
+// 語意縮放：拉遠是 13 個 Stage（＋Stage 之間的相依），中間是章，拉近才是一課一課（課號 · 課名、狀態）。
+//   三層用縮放倍率淡入淡出（不是一下子換掉）。
+// 操作：pointer events —— 一指拖曳（放開有慣性）、兩指捏合（以兩指中點為中心）、滾輪／觸控板（以游標為中心）、
+//   點兩下放大；點一課 → 它的全部先修（祖先）與後續（子孫）亮起、其他變淡，下面出小卡。
+//   canvas 是 touch-action:none（只有地圖本身不捲頁）；滾輪只在地圖上 preventDefault。
+//   鍵盤：地圖本身可以 focus，←→ 在先修／後續之間走、↑↓ 在同一章上下走、Enter 打開、Esc 取消、+/- 縮放。
+//   螢幕閱讀器：旁邊有一份看不見的清單（course_v2_ui.js 畫），焦點移動也會念出來（aria-live）。
+// prefers-reduced-motion：相機直接跳到位，不飛、不滑。
+(function () {
+  "use strict";
+
+  const FONT = 'Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", "PingFang TC", "Microsoft JhengHei", "Noto Sans TC", sans-serif';
+  const F_LESSON_NO = `700 12px ${FONT}`;
+  const F_LESSON = `600 13px ${FONT}`;
+  const F_CHAPTER_W = `700 12px ${FONT}`;
+  const F_LABEL = `700 13px ${FONT}`;
+  const F_SMALL = `600 11px ${FONT}`;
+  const F_STAGE_NO = `800 12px ${FONT}`;
+  const MAX_SCALE = 2.4;
+  // 三層的淡入淡出區間（倍率）
+  const STAGE_OUT = [0.2, 0.3];
+  const LESSON_IN = [0.45, 0.6];
+  const STYLE = `
+.cv2-map { overflow: hidden; border: 1px solid var(--line); border-radius: 14px; background: var(--paper); -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
+.cmap-canvas { display: block; width: 100%; height: 100%; touch-action: none; outline: none; cursor: grab; }
+.cmap-canvas:active { cursor: grabbing; }
+.cv2-map.is-kbd .cmap-canvas:focus { outline: 2px solid var(--blue); outline-offset: -2px; }
+.cmap-zoom { position: absolute; top: 10px; right: 10px; display: grid; gap: 6px; }
+.cmap-zoom button { width: 40px; height: 40px; border: 1px solid var(--line); border-radius: 12px; background: var(--panel); color: var(--ink); font: inherit; font-size: 1.2rem; font-weight: 700; line-height: 1; cursor: pointer; }
+.cmap-card { position: absolute; left: 10px; right: 10px; bottom: 10px; max-width: 400px; padding: 12px 14px 14px; border: 1px solid var(--line); border-radius: 14px; background: var(--panel); box-shadow: var(--shadow); }
+.cmap-card[hidden] { display: none; }
+.cmap-card-kicker { margin: 0 44px 2px 0; color: var(--muted); font-size: 0.78rem; font-weight: 700; }
+.cmap-card h3 { margin: 0 44px 6px 0; font-size: 1.12rem; line-height: 1.4; }
+.cmap-card-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 2px 12px; margin: 0 0 6px; color: var(--muted); font-size: 0.84rem; font-variant-numeric: tabular-nums; }
+.cmap-key { display: inline-block; width: 8px; height: 8px; margin-right: 6px; border-radius: 50%; background: var(--gold); }
+.cmap-key.is-desc { background: var(--blue); }
+.cmap-tier { padding: 1px 8px; border-radius: 999px; background: color-mix(in srgb, var(--ink) 7%, transparent); color: var(--muted); font-weight: 700; }
+.cmap-tier.t1 { background: color-mix(in srgb, var(--green) 14%, var(--panel)); color: var(--green); }
+.cmap-tier.t2 { background: color-mix(in srgb, var(--blue) 14%, var(--panel)); color: var(--blue); }
+.cmap-tier.t3 { background: color-mix(in srgb, var(--gold) 20%, var(--panel)); color: var(--gold-dark); }
+.cmap-card-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+.cmap-card-actions .button { min-height: 40px; }
+.cmap-card .cmap-close { position: absolute; top: 6px; right: 6px; width: 40px; min-width: 40px; height: 40px; padding: 0; font-size: 1.3rem; }
+`;
+  function injectStyle() {
+    if (document.getElementById("cmap-style")) return;
+    const node = document.createElement("style");
+    node.id = "cmap-style";
+    node.textContent = STYLE;
+    document.head.appendChild(node);
+  }
+  const smooth = (a, b, v) => { const t = Math.min(1, Math.max(0, (v - a) / (b - a))); return t * t * (3 - 2 * t); };
+  const easeOut = (t) => 1 - Math.pow(1 - t, 3);
+
+  /* ── 靜態模型：第一次打開時從 BUZZ_COURSE_MAP 建一次 ── */
+  let G = null;
+  function buildModel(data) {
+    const n = data.lessons.length / 2;
+    const [NW, NH] = data.node;
+    const lx = new Float32Array(n);
+    const ly = new Float32Array(n);
+    for (let i = 0; i < n; i += 1) { lx[i] = data.lessons[2 * i]; ly[i] = data.lessons[2 * i + 1]; }
+    const preds = Array.from({ length: n }, () => []);
+    const succs = Array.from({ length: n }, () => []);
+    for (let k = 0; k < data.pre.length; k += 2) { preds[data.pre[k + 1]].push(data.pre[k]); succs[data.pre[k]].push(data.pre[k + 1]); }
+    const rel = Array.from({ length: n }, () => []);
+    for (let k = 0; k < data.rel.length; k += 2) { rel[data.rel[k]].push(data.rel[k + 1]); rel[data.rel[k + 1]].push(data.rel[k]); }
+    return { data, n, NW, NH, lx, ly, preds, succs, rel, chapterOf: new Int16Array(n) };
+  }
+
+  // 先修邊的形狀：從來源膠囊的右邊出、到目標膠囊的左邊進；同一章裡相鄰的是一小段直線，同一章隔行的是左側的弧
+  function edgePath(path, m, a, b) {
+    const hw = m.NW / 2;
+    const hh = m.NH / 2;
+    const ax = m.lx[a];
+    const ay = m.ly[a];
+    const bx = m.lx[b];
+    const by = m.ly[b];
+    if (Math.abs(ax - bx) < 1) {
+      if (by > ay && by - ay < m.NH * 1.6) { path.moveTo(ax, ay + hh); path.lineTo(bx, by - hh); return; }
+      const off = 16 + Math.min(40, Math.abs(by - ay) * 0.08);
+      path.moveTo(ax - hw, ay);
+      path.bezierCurveTo(ax - hw - off, ay, bx - hw - off, by, bx - hw, by);
+      return;
+    }
+    const x1 = ax + hw;
+    const x2 = bx - hw;
+    if (x2 < x1 + 24) {
+      // 目標在左邊（Stage 裡換列的章、逆大綱順序的少數幾條）：從兩課的左緣繞，不畫橫跨的 S 形大圈
+      const off = 40 + Math.min(120, Math.abs(by - ay) * 0.15);
+      path.moveTo(ax - hw, ay);
+      path.bezierCurveTo(ax - hw - off, ay, bx - hw - off, by, bx - hw, by);
+      return;
+    }
+    const dx = Math.max(60, Math.abs(x2 - x1) * 0.5);
+    path.moveTo(x1, ay);
+    path.bezierCurveTo(x1 + dx, ay, x2 - dx, by, x2, by);
+  }
+  // Stage 層：中心到中心（拉遠時標籤就在框的中心附近）
+  function centerEdge(path, A, B) {
+    const x1 = A[0] + A[2] / 2;
+    const y1 = A[1] + A[3] / 2;
+    const x2 = B[0] + B[2] / 2;
+    const y2 = B[1] + B[3] / 2;
+    const dx = Math.max(80, Math.abs(x2 - x1) * 0.5);
+    path.moveTo(x1, y1);
+    path.bezierCurveTo(x1 + dx, y1, x2 - dx, y2, x2, y2);
+  }
+  function boxEdge(path, A, B) {
+    // A、B：[x, y, w, h]；右邊中點 → 左邊中點
+    const x1 = A[0] + A[2];
+    const y1 = A[1] + A[3] / 2;
+    const x2 = B[0];
+    const y2 = B[1] + B[3] / 2;
+    if (x2 < x1 + 24) {
+      const off = 60 + Math.min(160, Math.abs(y2 - y1) * 0.2);
+      path.moveTo(A[0], y1);
+      path.bezierCurveTo(A[0] - off, y1, x2 - off, y2, x2, y2);
+      return;
+    }
+    const dx = Math.max(80, Math.abs(x2 - x1) * 0.5);
+    path.moveTo(x1, y1);
+    path.bezierCurveTo(x1 + dx, y1, x2 - dx, y2, x2, y2);
+  }
+  function roundRect(path, x, y, w, h, r) {
+    if (typeof path.roundRect === "function") { path.roundRect(x, y, w, h, r); return; }
+    path.moveTo(x + r, y);
+    path.arcTo(x + w, y, x + w, y + h, r);
+    path.arcTo(x + w, y + h, x, y + h, r);
+    path.arcTo(x, y + h, x, y, r);
+    path.arcTo(x, y, x + w, y, r);
+    path.closePath();
+  }
+
+  function buildGeometry(m) {
+    const d = m.data;
+    const stageBox = (si) => [d.stages[si][0], d.stages[si][1], d.stages[si][2], d.stages[si][3]];
+    const chapterBox = (ci) => [d.chapters[ci][1], d.chapters[ci][2], d.chapters[ci][3], d.chapters[ci][4]];
+    m.stageBoxes = d.stages.map((_s, si) => stageBox(si));
+    m.chapterBoxes = d.chapters.map((_c, ci) => chapterBox(ci));
+    m.stageOfChapter = d.chapters.map((c) => c[0]);
+    // 課 → 章（用位置：課的中心落在哪個章框裡；章框不重疊）
+    for (let i = 0; i < m.n; i += 1) {
+      for (let ci = 0; ci < m.chapterBoxes.length; ci += 1) {
+        const b = m.chapterBoxes[ci];
+        if (m.lx[i] > b[0] && m.lx[i] < b[0] + b[2] && m.ly[i] > b[1] && m.ly[i] < b[1] + b[3]) { m.chapterOf[i] = ci; break; }
+      }
+    }
+    m.allEdges = new Path2D();
+    d.pre.forEach((_v, k) => { if (k % 2 === 0) edgePath(m.allEdges, m, d.pre[k], d.pre[k + 1]); });
+    const buckets = (flat, boxes, limits, shape) => {
+      const paths = limits.map(() => new Path2D());
+      for (let k = 0; k < flat.length; k += 3) {
+        const w = flat[k + 2];
+        const slot = limits.findIndex((lim) => w <= lim);
+        shape(paths[slot < 0 ? limits.length - 1 : slot], boxes[flat[k]], boxes[flat[k + 1]]);
+      }
+      return paths;
+    };
+    m.stageEdgePaths = buckets(d.stageEdges, m.stageBoxes, [2, 8, Infinity], centerEdge);
+    m.chapterEdgePaths = buckets(d.chapterEdges, m.chapterBoxes, [1, 3, Infinity], boxEdge);
+  }
+
+  /* ── 執行期狀態（跨重繪保留：相機、選取）── */
+  const cam = { s: 0.1, tx: 0, ty: 0 };
+  const anim = { on: false, t0: 0, dur: 0, fs: 0, fcx: 0, fcy: 0, ts: 0, tcx: 0, tcy: 0, ax: 0, ay: 0 };
+  const inertia = { on: false, vx: 0, vy: 0, last: 0 };
+  let host = null;
+  let canvas = null;
+  let ctx = null;
+  let card = null;
+  let live = null;
+  let opts = null;
+  let vw = 0;
+  let vh = 0;
+  let dpr = 1;
+  let frame = 0;
+  let dirty = false;
+  let placed = false;
+  let sel = -1;
+  let mark = null; // Uint8Array：1 祖先、2 子孫、3 自己
+  let ancCount = 0;
+  let descCount = 0;
+  let hlAnc = null; // Path2D：祖先那一串的邊
+  let hlDesc = null;
+  let hlRel = null;
+  let tiers = null; // Uint8Array：0 還沒、1 完成、2 熟練、3 全破
+  let nodePaths = null; // [還沒, 完成, 熟練環, 全破環, 下一課]
+  let labels = null; // 課的字：{ no, title, noW }
+  let stageLabel = null;
+  let chapterLabel = null;
+  let pal = null;
+  let ro = null;
+  let mo = null;
+  let drawCount = 0;
+  let lastDrawMs = 0;
+  const reduced = () => Boolean(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+
+  /* ── 顏色：讀網站的 token（亮／暗兩套），變主題時重讀 ── */
+  function parseColor(text) {
+    const s = String(text || "").trim();
+    let m = /^#([0-9a-f]{6})$/i.exec(s);
+    if (m) return [parseInt(m[1].slice(0, 2), 16), parseInt(m[1].slice(2, 4), 16), parseInt(m[1].slice(4, 6), 16)];
+    m = /^#([0-9a-f]{3})$/i.exec(s);
+    if (m) return m[1].split("").map((c) => parseInt(c + c, 16));
+    m = /rgba?\(([^)]+)\)/.exec(s);
+    if (m) return m[1].split(/[ ,/]+/).slice(0, 3).map(Number);
+    return [128, 128, 128];
+  }
+  const mix = (a, b, t) => `rgb(${Math.round(a[0] * (1 - t) + b[0] * t)}, ${Math.round(a[1] * (1 - t) + b[1] * t)}, ${Math.round(a[2] * (1 - t) + b[2] * t)})`;
+  const rgb = (c) => `rgb(${c[0]}, ${c[1]}, ${c[2]})`;
+  function readPalette() {
+    const cs = getComputedStyle(document.documentElement);
+    const tok = (name) => parseColor(cs.getPropertyValue(name));
+    const paper = tok("--paper");
+    const panel = tok("--panel");
+    const ink = tok("--ink");
+    const muted = tok("--muted");
+    const line = tok("--line");
+    const strong = tok("--line-strong");
+    const green = tok("--green");
+    const blue = tok("--blue");
+    const gold = tok("--gold");
+    const violet = tok("--violet");
+    const dark = document.documentElement.dataset.theme === "dark";
+    pal = {
+      dark,
+      paper: rgb(paper),
+      panel: rgb(panel),
+      ink: rgb(ink),
+      muted: rgb(muted),
+      line: rgb(line),
+      strong: rgb(strong),
+      edge: mix(paper, muted, dark ? 0.42 : 0.38),
+      edgeHeavy: mix(paper, muted, dark ? 0.62 : 0.55),
+      stageFill: mix(paper, ink, dark ? 0.045 : 0.035),
+      stageStroke: mix(paper, strong, 0.7),
+      branchFill: mix(paper, violet, dark ? 0.1 : 0.07),
+      branchStroke: mix(paper, violet, 0.45),
+      chapterFill: mix(paper, panel, 0.8),
+      chapterStroke: rgb(line),
+      nodeFill: rgb(panel),
+      nodeStroke: rgb(strong),
+      doneFill: mix(panel, green, dark ? 0.3 : 0.16),
+      doneStroke: rgb(green),
+      green: rgb(green),
+      blue: rgb(blue),
+      gold: rgb(gold),
+      violet: rgb(violet),
+      anc: rgb(gold),
+      desc: rgb(blue),
+      plate: mix(paper, panel, 0.6)
+    };
+  }
+
+  /* ── 相機 ── */
+  const W = () => G.data.size[0];
+  const H = () => G.data.size[1];
+  function fitScale() { return Math.min(vw / (W() + 80), vh / (H() + 80)); }
+  function minScale() { return Math.min(fitScale() * 0.9, 0.08); }
+  function clampCam() {
+    cam.s = Math.min(MAX_SCALE, Math.max(minScale(), cam.s));
+    // 圖的邊緣外最多露出 PAD 像素的空白；整張圖比畫面小的那一軸就置中
+    const PAD = 56;
+    const fit = (size, view, t) => {
+      const span = size * cam.s;
+      if (span + 2 * PAD <= view) return (view - span) / 2;
+      return Math.min(PAD, Math.max(view - span - PAD, t));
+    };
+    cam.tx = fit(W(), vw, cam.tx);
+    cam.ty = fit(H(), vh, cam.ty);
+  }
+  function zoomAt(px, py, factor) {
+    const wx = (px - cam.tx) / cam.s;
+    const wy = (py - cam.ty) / cam.s;
+    cam.s = Math.min(MAX_SCALE, Math.max(minScale(), cam.s * factor));
+    cam.tx = px - wx * cam.s;
+    cam.ty = py - wy * cam.s;
+    clampCam();
+  }
+  // 飛到：世界座標 (cx, cy) 放在畫面 (ax, ay)、倍率 s
+  function flyTo(cx, cy, s, ax, ay) {
+    s = Math.min(MAX_SCALE, Math.max(minScale(), s));
+    ax = ax === undefined ? vw / 2 : ax;
+    ay = ay === undefined ? vh / 2 : ay;
+    inertia.on = false;
+    if (reduced() || !placed) {
+      cam.s = s;
+      cam.tx = ax - cx * s;
+      cam.ty = ay - cy * s;
+      clampCam();
+      anim.on = false;
+      request();
+      return;
+    }
+    anim.fs = cam.s;
+    anim.fcx = (anim.ax = ax, (ax - cam.tx) / cam.s);
+    anim.fcy = (anim.ay = ay, (ay - cam.ty) / cam.s);
+    anim.ts = s;
+    anim.tcx = cx;
+    anim.tcy = cy;
+    anim.t0 = performance.now();
+    // 距離越遠飛越久，但不超過 0.6 秒
+    const span = Math.abs(Math.log(s / cam.s)) + Math.hypot(cx - anim.fcx, cy - anim.fcy) * Math.min(s, cam.s) / Math.max(vw, 1);
+    anim.dur = Math.min(600, 260 + span * 120);
+    anim.on = true;
+    request();
+  }
+  function flyToBox(x, y, w, h, maxS, ay) {
+    const pad = 48;
+    const usableH = ay === undefined ? vh : ay * 2;
+    const s = Math.min(maxS || 1, (vw - pad) / Math.max(w, 1), (usableH - pad) / Math.max(h, 1));
+    flyTo(x + w / 2, y + h / 2, s, vw / 2, ay);
+  }
+  function stepAnim(now) {
+    const t = Math.min(1, (now - anim.t0) / anim.dur);
+    const e = easeOut(t);
+    // 倍率在對數上內插、中心點線性內插：看起來是同一個速度在推近
+    const s = Math.exp(Math.log(anim.fs) + (Math.log(anim.ts) - Math.log(anim.fs)) * e);
+    const cx = anim.fcx + (anim.tcx - anim.fcx) * e;
+    const cy = anim.fcy + (anim.tcy - anim.fcy) * e;
+    cam.s = s;
+    cam.tx = anim.ax - cx * s;
+    cam.ty = anim.ay - cy * s;
+    if (t >= 1) { anim.on = false; clampCam(); }
+  }
+  function stepInertia(now) {
+    const dt = Math.min(48, now - inertia.last);
+    inertia.last = now;
+    cam.tx += inertia.vx * dt;
+    cam.ty += inertia.vy * dt;
+    const decay = Math.exp(-dt / 325);
+    inertia.vx *= decay;
+    inertia.vy *= decay;
+    const before = cam.tx + cam.ty;
+    clampCam();
+    if (Math.hypot(inertia.vx, inertia.vy) < 0.02 || Math.abs(cam.tx + cam.ty - before) > 0.5) inertia.on = false;
+  }
+
+  /* ── 排一格 ── */
+  function request() {
+    dirty = true;
+    if (!frame) frame = window.requestAnimationFrame(tick);
+  }
+  function tick(now) {
+    frame = 0;
+    if (!host || !host.isConnected) { teardown(); return; }
+    // 換螢幕／縮放瀏覽器會改 DPR，ResizeObserver 不一定叫：每格順手比一下（只是讀一個數字）
+    if (Math.min(2, window.devicePixelRatio || 1) !== dpr && measure()) dirty = true;
+    if (anim.on) stepAnim(now);
+    if (inertia.on) stepInertia(now);
+    if (dirty || anim.on || inertia.on) {
+      dirty = false;
+      draw();
+    }
+    if (anim.on || inertia.on) frame = window.requestAnimationFrame(tick);
+    else publish();
+  }
+
+  /* ── 畫 ── */
+  // 字的碰撞：這一格已經放了哪些字（預先配置好的陣列，不在每格產生新物件）
+  const boxes = new Float32Array(4 * 400);
+  let nBoxes = 0;
+  function freeSpot(x, y, w, h) {
+    for (let k = 0; k < nBoxes; k += 1) {
+      const o = 4 * k;
+      if (x < boxes[o] + boxes[o + 2] && x + w > boxes[o] && y < boxes[o + 1] + boxes[o + 3] && y + h > boxes[o + 1]) return false;
+    }
+    return true;
+  }
+  function take(x, y, w, h) {
+    if (nBoxes >= 400) return;
+    const o = 4 * nBoxes;
+    boxes[o] = x; boxes[o + 1] = y; boxes[o + 2] = w; boxes[o + 3] = h;
+    nBoxes += 1;
+  }
+  function plate(x, y, w, h, r) {
+    ctx.beginPath();
+    if (typeof ctx.roundRect === "function") ctx.roundRect(x, y, w, h, r);
+    else ctx.rect(x, y, w, h);
+    ctx.fill();
+  }
+
+  const stats = { level: "stage", visibleLessons: 0, labelledLessons: 0, visibleStages: 0, visibleChapters: 0 };
+  function draw() {
+    const t0 = performance.now();
+    drawCount += 1;
+    const s = cam.s;
+    const m = G;
+    const aStage = 1 - smooth(STAGE_OUT[0], STAGE_OUT[1], s);
+    const aLesson = smooth(LESSON_IN[0], LESSON_IN[1], s);
+    const aChapter = (1 - aStage) * (1 - aLesson);
+    const aNodes = smooth(0.2, 0.32, s); // 膠囊（不帶字）從章那一層就開始淡入：拉近時不會突然冒出來
+    stats.level = aStage >= 0.5 ? "stage" : aLesson >= 0.5 ? "lesson" : "chapter";
+    const dim = sel >= 0;
+
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.globalAlpha = 1;
+    ctx.fillStyle = pal.paper;
+    ctx.fillRect(0, 0, vw, vh);
+    // 世界座標
+    ctx.setTransform(dpr * s, 0, 0, dpr * s, dpr * cam.tx, dpr * cam.ty);
+    const wx0 = -cam.tx / s;
+    const wy0 = -cam.ty / s;
+    const wx1 = (vw - cam.tx) / s;
+    const wy1 = (vh - cam.ty) / s;
+
+    // Stage 框
+    ctx.lineWidth = 1 / s;
+    ctx.fillStyle = pal.stageFill;
+    ctx.fill(m.pathStageMain);
+    ctx.strokeStyle = pal.stageStroke;
+    ctx.stroke(m.pathStageMain);
+    ctx.fillStyle = pal.branchFill;
+    ctx.fill(m.pathStageBranch);
+    ctx.strokeStyle = pal.branchStroke;
+    ctx.setLineDash(m.dashFor(s));
+    ctx.stroke(m.pathStageBranch);
+    ctx.setLineDash(m.noDash);
+    // 章框
+    if (aNodes > 0.01) {
+      ctx.globalAlpha = aNodes;
+      ctx.fillStyle = pal.chapterFill;
+      ctx.fill(m.pathChapters);
+      ctx.strokeStyle = pal.chapterStroke;
+      ctx.lineWidth = 1 / s;
+      ctx.stroke(m.pathChapters);
+    }
+
+    // 邊：Stage 層 → 章層 → 課層，各自淡入淡出
+    if (aStage > 0.01) {
+      ctx.globalAlpha = aStage;
+      ctx.strokeStyle = pal.edgeHeavy;
+      const widths = m.stageEdgeWidths;
+      for (let k = 0; k < 3; k += 1) { ctx.lineWidth = widths[k] / s; ctx.stroke(m.stageEdgePaths[k]); }
+    }
+    if (aChapter > 0.01 && !dim) {
+      ctx.globalAlpha = aChapter * 0.32;
+      ctx.strokeStyle = pal.edgeHeavy;
+      const widths = m.chapterEdgeWidths;
+      for (let k = 0; k < 3; k += 1) { ctx.lineWidth = widths[k] / s; ctx.stroke(m.chapterEdgePaths[k]); }
+    }
+    const aEdges = dim ? Math.max(aNodes, aLesson) : aLesson;
+    if (aEdges > 0.01) {
+      ctx.globalAlpha = aEdges * (dim ? 0.16 : 0.45);
+      ctx.strokeStyle = pal.edge;
+      ctx.lineWidth = 1 / s;
+      ctx.stroke(m.allEdges);
+      if (dim) {
+        ctx.globalAlpha = aEdges * 0.75;
+        ctx.lineWidth = 1.5 / s;
+        ctx.strokeStyle = pal.desc;
+        ctx.stroke(hlDesc);
+        ctx.globalAlpha = aEdges;
+        ctx.lineWidth = 2.4 / s;
+        ctx.strokeStyle = pal.anc;
+        ctx.stroke(hlAnc);
+        ctx.strokeStyle = pal.violet;
+        ctx.lineWidth = 1.4 / s;
+        ctx.setLineDash(m.dashFor(s));
+        ctx.stroke(hlRel);
+        ctx.setLineDash(m.noDash);
+      }
+    }
+
+    // 課的膠囊
+    if (aNodes > 0.01) {
+      const base = aNodes * (0.55 + 0.45 * aLesson);
+      ctx.globalAlpha = base * (dim ? 0.3 : 1);
+      ctx.lineWidth = 1.2 / s;
+      ctx.fillStyle = aLesson > 0.5 ? pal.nodeFill : pal.line;
+      ctx.fill(nodePaths[0]);
+      ctx.fillStyle = pal.doneFill;
+      ctx.fill(nodePaths[1]);
+      ctx.globalAlpha = base * (dim ? 0.3 : 1) * aLesson;
+      ctx.strokeStyle = pal.nodeStroke;
+      ctx.stroke(nodePaths[0]);
+      ctx.strokeStyle = pal.doneStroke;
+      ctx.stroke(nodePaths[1]);
+      ctx.globalAlpha = base * (dim ? 0.3 : 1);
+      ctx.lineWidth = 2 / s;
+      ctx.strokeStyle = pal.blue;
+      ctx.stroke(nodePaths[2]);
+      ctx.strokeStyle = pal.gold;
+      ctx.stroke(nodePaths[3]);
+      if (!dim && nodePaths[4]) { ctx.lineWidth = 2.4 / s; ctx.strokeStyle = pal.gold; ctx.stroke(nodePaths[4]); }
+      if (dim) {
+        // 亮起來的那一串再畫一次（實心、不淡）
+        ctx.globalAlpha = base;
+        ctx.lineWidth = 1.2 / s;
+        ctx.fillStyle = pal.nodeFill;
+        ctx.fill(m.hlNodes[0]);
+        ctx.strokeStyle = pal.nodeStroke;
+        ctx.stroke(m.hlNodes[0]);
+        ctx.fillStyle = pal.doneFill;
+        ctx.fill(m.hlNodes[1]);
+        ctx.strokeStyle = pal.doneStroke;
+        ctx.stroke(m.hlNodes[1]);
+        ctx.lineWidth = 2 / s;
+        ctx.strokeStyle = pal.blue;
+        ctx.stroke(m.hlNodes[2]);
+        ctx.strokeStyle = pal.gold;
+        ctx.stroke(m.hlNodes[3]);
+        ctx.lineWidth = 3 / s;
+        ctx.strokeStyle = pal.ink;
+        ctx.stroke(m.hlNodes[4]);
+      }
+    }
+
+    // 課的字（世界座標，跟著縮放；太小就不畫）
+    let visibleLessons = 0;
+    let labelled = 0;
+    const hw = m.NW / 2;
+    for (let i = 0; i < m.n; i += 1) {
+      const x = m.lx[i];
+      const y = m.ly[i];
+      if (x + hw < wx0 || x - hw > wx1 || y + 20 < wy0 || y - 20 > wy1) continue;
+      visibleLessons += 1;
+    }
+    if (aLesson > 0.01 && s * 13 >= 6) {
+      ctx.textBaseline = "middle";
+      ctx.textAlign = "left";
+      const lab = labels;
+      for (let pass = 0; pass < 2; pass += 1) {
+        // 第一輪畫淡的、第二輪畫亮起來的（有選取時）
+        if (pass === 1 && !dim) break;
+        const alpha = aLesson * (dim && pass === 0 ? 0.35 : 1);
+        for (let i = 0; i < m.n; i += 1) {
+          if (dim && (pass === 0) === (mark[i] > 0)) continue;
+          const x = m.lx[i];
+          const y = m.ly[i];
+          if (x + hw < wx0 || x - hw > wx1 || y + 20 < wy0 || y - 20 > wy1) continue;
+          const L = lab[i];
+          ctx.globalAlpha = alpha;
+          ctx.font = F_LESSON_NO;
+          ctx.fillStyle = pal.muted;
+          ctx.fillText(L.no, x - hw + 12, y + 0.5);
+          ctx.font = F_LESSON;
+          ctx.fillStyle = pal.ink;
+          ctx.fillText(L.title, x - hw + 12 + L.noW + 5, y + 0.5);
+          labelled += 1;
+        }
+      }
+      // 章名（課這一層：寫在章框的頂端，世界座標）
+      ctx.globalAlpha = aLesson * (dim ? 0.5 : 1);
+      ctx.font = F_CHAPTER_W;
+      ctx.fillStyle = pal.muted;
+      for (let ci = 0; ci < m.chapterBoxes.length; ci += 1) {
+        const b = m.chapterBoxes[ci];
+        if (b[0] > wx1 || b[0] + b[2] < wx0 || b[1] > wy1 || b[1] + 40 < wy0) continue;
+        ctx.fillText(chapterLabel[ci].full, b[0] + 10, b[1] + 17);
+      }
+    }
+    stats.visibleLessons = visibleLessons;
+    stats.labelledLessons = labelled;
+
+    // 螢幕座標的字：Stage 標籤（拉遠是置中的大標，拉近變成黏在框左上角的小標）、章標籤（章這一層）
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    nBoxes = 0;
+    ctx.textBaseline = "middle";
+    let visibleStages = 0;
+    for (let si = 0; si < m.stageBoxes.length; si += 1) {
+      const b = m.stageBoxes[si];
+      const x0 = b[0] * s + cam.tx;
+      const y0 = b[1] * s + cam.ty;
+      const bw = b[2] * s;
+      const bh = b[3] * s;
+      if (x0 > vw || x0 + bw < 0 || y0 > vh || y0 + bh < 0) continue;
+      visibleStages += 1;
+      const L = stageLabel[si];
+      if (aStage > 0.01) {
+        // 拉遠的標籤：圓圈裡是 Stage 編號，旁邊是名字與進度。依序試框的中間、上緣、下緣；
+        // 名字放不下就只放圓圈；圓圈也放不下就不放（框還在）。字之間不會疊。
+        ctx.globalAlpha = aStage;
+        const cx = x0 + bw / 2;
+        const full = L.w + 34;
+        const tall = bh > 76;
+        let cy = -1;
+        let wide = false;
+        for (let k = 0; k < 6 && cy < 0; k += 1) {
+          const y = k % 3 === 0 ? y0 + bh / 2 : k % 3 === 1 ? (tall ? y0 + 20 : -99) : (tall ? y0 + bh - 20 : -99);
+          if (y < -50) continue;
+          const w = k < 3 ? full : 28;
+          if (freeSpot(cx - w / 2, y - 15, w, 30)) { cy = y; wide = k < 3; take(cx - w / 2, y - 15, w, 30); }
+        }
+        if (cy >= 0) {
+          const left = wide ? cx - full / 2 : cx - 14;
+          ctx.strokeStyle = L.branch ? pal.violet : pal.strong;
+          ctx.lineWidth = 1.5;
+          if (wide) {
+            ctx.fillStyle = pal.plate;
+            plate(left, cy - 15, full, 30, 15);
+            ctx.stroke();
+          }
+          ctx.beginPath();
+          ctx.arc(left + 14, cy, 11.5, 0, Math.PI * 2);
+          ctx.fillStyle = L.done ? pal.green : pal.panel;
+          ctx.fill();
+          ctx.stroke();
+          ctx.textAlign = "center";
+          ctx.font = F_STAGE_NO;
+          ctx.fillStyle = L.done ? pal.panel : pal.ink;
+          ctx.fillText(L.n, left + 14, cy + 0.5);
+          if (wide) {
+            ctx.textAlign = "left";
+            ctx.font = F_LABEL;
+            ctx.fillStyle = pal.ink;
+            ctx.fillText(L.title, left + 31, cy + 0.5);
+            ctx.font = F_SMALL;
+            ctx.fillStyle = L.branch ? pal.violet : pal.muted;
+            ctx.fillText(L.tail, left + 31 + L.titleW + 6, cy + 0.5);
+          }
+        }
+      }
+      if (aStage < 0.99) {
+        // 黏著的小標：框的左上角，框的左邊捲出畫面時黏在畫面左邊
+        ctx.globalAlpha = (1 - aStage) * (dim ? 0.6 : 1);
+        const w = L.w + 30;
+        const lx = Math.min(Math.max(x0 + 10, 8), x0 + bw - w - 8);
+        const ly = Math.min(Math.max(y0 + 10, 8), y0 + bh - 34);
+        if (lx >= x0 - 1 && ly >= y0 - 1) {
+          ctx.fillStyle = pal.plate;
+          plate(lx, ly, w, 24, 12);
+          ctx.textAlign = "left";
+          ctx.font = F_STAGE_NO;
+          ctx.fillStyle = L.branch ? pal.violet : pal.muted;
+          ctx.fillText(L.n, lx + 9, ly + 12.5);
+          ctx.font = F_LABEL;
+          ctx.fillStyle = pal.ink;
+          ctx.fillText(L.title, lx + 15 + L.nW, ly + 12.5);
+          ctx.font = F_SMALL;
+          ctx.fillStyle = L.branch ? pal.violet : pal.muted;
+          ctx.fillText(L.tail, lx + 15 + L.nW + L.titleW + 6, ly + 12.5);
+          take(lx, ly, w, 24);
+        }
+      }
+    }
+    stats.visibleStages = visibleStages;
+    let visibleChapters = 0;
+    if (aChapter > 0.01) {
+      ctx.globalAlpha = aChapter * (dim ? 0.55 : 1);
+      ctx.textAlign = "center";
+      const pitch = (m.NW + 68) * s;
+      for (let ci = 0; ci < m.chapterBoxes.length; ci += 1) {
+        const b = m.chapterBoxes[ci];
+        const x0 = b[0] * s + cam.tx;
+        const y0 = b[1] * s + cam.ty;
+        const bw = b[2] * s;
+        const bh = b[3] * s;
+        if (x0 > vw || x0 + bw < 0 || y0 > vh || y0 + bh < 0) continue;
+        visibleChapters += 1;
+        const L = chapterLabel[ci];
+        const cx = x0 + bw / 2;
+        const cy = Math.min(Math.max(y0 + 22, 50), y0 + bh - 20);
+        const useFull = L.w + 16 <= pitch;
+        const w = (useFull ? L.w : L.codeW) + 16;
+        if (!freeSpot(cx - w / 2, cy - 18, w, 36)) continue;
+        take(cx - w / 2, cy - 18, w, 36);
+        ctx.fillStyle = pal.panel;
+        plate(cx - w / 2, cy - 18, w, 36, 8);
+        ctx.strokeStyle = pal.line;
+        ctx.lineWidth = 1;
+        ctx.stroke();
+        ctx.font = F_LABEL;
+        ctx.fillStyle = pal.ink;
+        ctx.fillText(useFull ? L.title : L.code, cx, cy - 6);
+        ctx.font = F_SMALL;
+        ctx.fillStyle = L.done === L.total ? pal.green : pal.muted;
+        ctx.fillText(L.count, cx, cy + 9);
+      }
+    }
+    stats.visibleChapters = visibleChapters;
+    ctx.globalAlpha = 1;
+    lastDrawMs = performance.now() - t0;
+  }
+
+  // 給測試與無障礙：目前在哪一層、相機、選了誰（寫在 host 的 data-*，閒下來才寫，不在每格碰 DOM）
+  function publish() {
+    if (!host) return;
+    host.dataset.level = stats.level;
+    host.dataset.scale = cam.s.toFixed(3);
+    host.dataset.transform = `${cam.s.toFixed(4)},${cam.tx.toFixed(1)},${cam.ty.toFixed(1)}`;
+    host.dataset.selected = sel >= 0 ? opts.lessons[sel].id : "";
+  }
+
+  /* ── 選取：祖先與子孫 ── */
+  function select(i, how) {
+    sel = i;
+    mark.fill(0);
+    ancCount = 0;
+    descCount = 0;
+    hlAnc = new Path2D();
+    hlDesc = new Path2D();
+    hlRel = new Path2D();
+    const hl = [new Path2D(), new Path2D(), new Path2D(), new Path2D(), new Path2D()];
+    G.hlNodes = hl;
+    if (i < 0) { renderCard(); request(); return; }
+    // 祖先：往先修走到底
+    const stackA = [i];
+    while (stackA.length) {
+      const v = stackA.pop();
+      G.preds[v].forEach((p) => { if (!(mark[p] & 1)) { mark[p] |= 1; ancCount += 1; stackA.push(p); } });
+    }
+    const stackD = [i];
+    while (stackD.length) {
+      const v = stackD.pop();
+      G.succs[v].forEach((c) => { if (!(mark[c] & 2)) { mark[c] |= 2; descCount += 1; stackD.push(c); } });
+    }
+    mark[i] = 3;
+    const d = G.data;
+    for (let k = 0; k < d.pre.length; k += 2) {
+      const a = d.pre[k];
+      const b = d.pre[k + 1];
+      if ((mark[a] & 1) && (b === i || (mark[b] & 1) && mark[b] !== 3)) edgePath(hlAnc, G, a, b);
+      else if ((mark[b] & 2) && (a === i || (mark[a] & 2) && mark[a] !== 3)) edgePath(hlDesc, G, a, b);
+    }
+    G.rel[i].forEach((r) => {
+      const ax = G.lx[i];
+      const bx = G.lx[r];
+      hlRel.moveTo(ax, G.ly[i]);
+      hlRel.bezierCurveTo((ax + bx) / 2, G.ly[i] - 60, (ax + bx) / 2, G.ly[r] - 60, bx, G.ly[r]);
+      mark[r] = mark[r] || 4;
+    });
+    const hw = G.NW / 2;
+    const hh = G.NH / 2;
+    for (let v = 0; v < G.n; v += 1) {
+      if (!mark[v]) continue;
+      const path = tiers[v] ? hl[1] : hl[0];
+      roundRect(path, G.lx[v] - hw, G.ly[v] - hh, G.NW, G.NH, hh);
+      // 亮起來的課只留熟練／全破的環（跟平常同一套顏色）；選中的那一課另外一圈深色
+      if (tiers[v] >= 2) roundRect(hl[tiers[v] === 2 ? 2 : 3], G.lx[v] - hw - 3.5, G.ly[v] - hh - 3.5, G.NW + 7, G.NH + 7, hh + 3.5);
+      if (mark[v] === 3) roundRect(hl[4], G.lx[v] - hw - 5, G.ly[v] - hh - 5, G.NW + 10, G.NH + 10, hh + 5);
+    }
+    renderCard();
+    announce(i);
+    if (how === "key" || how === "focus") {
+      const ay = card && !card.hidden ? Math.max(120, (vh - card.offsetHeight) / 2) : vh / 2;
+      flyTo(G.lx[i], G.ly[i], Math.max(cam.s, 0.95), vw / 2, ay);
+    }
+    request();
+  }
+
+  function statusText(i) {
+    const L = opts.lessons[i];
+    if (!L.available) return "尚未開放";
+    return ["", "完成", "熟練", "全破"][tiers[i]] || (L.opened ? "讀過" : "還沒開始");
+  }
+  function renderCard() {
+    if (!card) return;
+    if (sel < 0) { card.hidden = true; card.innerHTML = ""; return; }
+    const L = opts.lessons[sel];
+    const esc = opts.escapeHtml;
+    const minutes = L.available ? `<span>閱讀 ${L.read} 分</span><span>完成 ${L.total} 分</span>` : "";
+    card.innerHTML = `
+      <p class="cmap-card-kicker">${esc(L.no)} · ${esc(L.stageTitle)}${L.branch ? "（支線）" : ""}</p>
+      <h3>${esc(L.title)}</h3>
+      <p class="cmap-card-meta">${minutes}<span class="cmap-tier t${tiers[sel]}">${statusText(sel)}</span></p>
+      <p class="cmap-card-meta"><span><i class="cmap-key is-anc"></i>先修 ${ancCount} 課</span><span><i class="cmap-key is-desc"></i>後續 ${descCount} 課</span></p>
+      <div class="cmap-card-actions">
+        ${L.available ? `<button type="button" class="button home-primary" data-action="open-course-lesson" data-lesson-id="${opts.escapeAttr(L.id)}">開始這課</button>` : ""}
+        ${ancCount ? `<button type="button" class="button secondary" data-cmap="prereq">看先修</button>` : ""}
+        <button type="button" class="button ghost cmap-close" data-cmap="close" aria-label="關閉">×</button>
+      </div>`;
+    card.hidden = false;
+  }
+  function announce(i) {
+    if (!live || i < 0) return;
+    const L = opts.lessons[i];
+    live.textContent = `${L.no} ${L.title}，${statusText(i)}，先修 ${ancCount} 課、後續 ${descCount} 課`;
+  }
+  function showPrereqs() {
+    if (sel < 0) return;
+    let x0 = G.lx[sel];
+    let x1 = x0;
+    let y0 = G.ly[sel];
+    let y1 = y0;
+    for (let v = 0; v < G.n; v += 1) {
+      if (!(mark[v] & 1) && v !== sel) continue;
+      x0 = Math.min(x0, G.lx[v]); x1 = Math.max(x1, G.lx[v]);
+      y0 = Math.min(y0, G.ly[v]); y1 = Math.max(y1, G.ly[v]);
+    }
+    const ay = card && !card.hidden ? Math.max(100, (vh - card.offsetHeight - 12) / 2) : vh / 2;
+    // 整串先修放進畫面；但不拉遠到 Stage 那一層（那裡看不到亮起來的課）——放不下就讓選中的那一課留在畫面右側
+    const w = x1 - x0 + G.NW + 48;
+    const h = y1 - y0 + G.NH * 2 + 48;
+    const sc = Math.max(0.34, Math.min(1, (vw - 24) / w, (ay * 2 - 24) / h));
+    const half = (vw / 2 - 24) / sc;
+    const cx = Math.max((x0 + x1) / 2, G.lx[sel] + G.NW / 2 - half);
+    flyTo(cx, (y0 + y1) / 2, sc, vw / 2, ay);
+  }
+
+  /* ── 點到誰 ── */
+  function hitLesson(px, py) {
+    const wx = (px - cam.tx) / cam.s;
+    const wy = (py - cam.ty) / cam.s;
+    const slop = 6 / cam.s;
+    const hw = G.NW / 2 + slop;
+    const hh = G.NH / 2 + slop;
+    for (let i = 0; i < G.n; i += 1) if (Math.abs(G.lx[i] - wx) <= hw && Math.abs(G.ly[i] - wy) <= hh) return i;
+    return -1;
+  }
+  function hitBox(list, px, py) {
+    const wx = (px - cam.tx) / cam.s;
+    const wy = (py - cam.ty) / cam.s;
+    for (let k = 0; k < list.length; k += 1) {
+      const b = list[k];
+      if (wx >= b[0] && wx <= b[0] + b[2] && wy >= b[1] && wy <= b[1] + b[3]) return k;
+    }
+    return -1;
+  }
+  function tap(px, py) {
+    const level = stats.level;
+    if (level === "stage") {
+      const si = hitBox(G.stageBoxes, px, py);
+      if (si >= 0) { const b = G.stageBoxes[si]; flyToBox(b[0], b[1], b[2], b[3], 0.42); return; }
+      select(-1);
+      return;
+    }
+    const i = cam.s >= 0.3 ? hitLesson(px, py) : -1;
+    if (level === "chapter" && i < 0) {
+      const ci = hitBox(G.chapterBoxes, px, py);
+      if (ci >= 0) { const b = G.chapterBoxes[ci]; flyToBox(b[0] - 40, b[1], b[2] + 80, b[3], 1); return; }
+    }
+    if (i >= 0 && level !== "lesson") {
+      select(i);
+      flyTo(G.lx[i], G.ly[i], 1, vw / 2, card && !card.hidden ? Math.max(120, (vh - card.offsetHeight) / 2) : vh / 2);
+      return;
+    }
+    select(i === sel ? -1 : i);
+  }
+
+  /* ── 指標：拖、慣性、捏、點、點兩下 ── */
+  const pointers = new Map();
+  const trail = new Float64Array(3 * 6); // 最近 6 個取樣（x, y, t）算放手時的速度
+  let trailN = 0;
+  let gesture = null; // { kind: "pan" | "pinch", ... }
+  let downAt = { x: 0, y: 0, t: 0, moved: false, multi: false };
+  let lastTap = { x: -99, y: -99, t: 0 };
+  function local(e) {
+    const r = canvas.getBoundingClientRect();
+    return [e.clientX - r.left, e.clientY - r.top];
+  }
+  function pushTrail(x, y, t) {
+    const k = trailN % 6;
+    trail[3 * k] = x; trail[3 * k + 1] = y; trail[3 * k + 2] = t;
+    trailN += 1;
+  }
+  function startPinch() {
+    const [a, b] = [...pointers.values()];
+    const mx = (a.x + b.x) / 2;
+    const my = (a.y + b.y) / 2;
+    gesture = { kind: "pinch", d0: Math.max(10, Math.hypot(a.x - b.x, a.y - b.y)), s0: cam.s, wx: (mx - cam.tx) / cam.s, wy: (my - cam.ty) / cam.s };
+  }
+  function onDown(e) {
+    if (e.button !== undefined && e.button > 0 && e.pointerType === "mouse") return;
+    host.classList.remove("is-kbd");
+    canvas.focus({ preventScroll: true });
+    try { canvas.setPointerCapture(e.pointerId); } catch (_error) { /* 合成事件沒有 capture */ }
+    const [x, y] = local(e);
+    pointers.set(e.pointerId, { x, y });
+    anim.on = false;
+    inertia.on = false;
+    if (pointers.size === 1) {
+      gesture = { kind: "pan", lx: x, ly: y };
+      downAt = { x, y, t: performance.now(), moved: false, multi: false };
+      trailN = 0;
+      pushTrail(x, y, performance.now());
+    } else if (pointers.size === 2) {
+      downAt.multi = true;
+      startPinch();
+    }
+  }
+  function onMove(e) {
+    const p = pointers.get(e.pointerId);
+    if (!p) return;
+    const list = typeof e.getCoalescedEvents === "function" ? e.getCoalescedEvents() : null;
+    const last = list && list.length ? list[list.length - 1] : e;
+    const r = canvas.getBoundingClientRect();
+    p.x = last.clientX - r.left;
+    p.y = last.clientY - r.top;
+    if (!gesture) return;
+    if (gesture.kind === "pan" && pointers.size === 1) {
+      const dx = p.x - gesture.lx;
+      const dy = p.y - gesture.ly;
+      if (!downAt.moved && Math.hypot(p.x - downAt.x, p.y - downAt.y) < (e.pointerType === "mouse" ? 4 : 9)) return;
+      downAt.moved = true;
+      gesture.lx = p.x;
+      gesture.ly = p.y;
+      cam.tx += dx;
+      cam.ty += dy;
+      clampCam();
+      pushTrail(p.x, p.y, e.timeStamp || performance.now());
+      request();
+    } else if (gesture.kind === "pinch" && pointers.size >= 2) {
+      const [a, b] = pointers.values();
+      const mx = (a.x + b.x) / 2;
+      const my = (a.y + b.y) / 2;
+      const dist = Math.max(10, Math.hypot(a.x - b.x, a.y - b.y));
+      cam.s = Math.min(MAX_SCALE, Math.max(minScale(), gesture.s0 * dist / gesture.d0));
+      cam.tx = mx - gesture.wx * cam.s;
+      cam.ty = my - gesture.wy * cam.s;
+      clampCam();
+      downAt.moved = true;
+      request();
+    }
+  }
+  function onUp(e) {
+    if (!pointers.has(e.pointerId)) return;
+    pointers.delete(e.pointerId);
+    const [x, y] = local(e);
+    if (pointers.size === 1) {
+      // 捏完剩一指：接著拖，不跳
+      const rest = pointers.values().next().value;
+      gesture = { kind: "pan", lx: rest.x, ly: rest.y };
+      trailN = 0;
+      return;
+    }
+    if (pointers.size) return;
+    const was = gesture;
+    gesture = null;
+    if (e.type === "pointercancel") return;
+    const now = performance.now();
+    if (!downAt.moved && !downAt.multi && now - downAt.t < 600) {
+      // 點兩下（300ms 內、附近）：放大兩倍；點一下：選課／飛進 Stage 或章
+      if (now - lastTap.t < 320 && Math.hypot(x - lastTap.x, y - lastTap.y) < 30) {
+        lastTap.t = 0;
+        const factor = 2.2;
+        flyTo((x - cam.tx) / cam.s, (y - cam.ty) / cam.s, cam.s * factor, x, y);
+        return;
+      }
+      lastTap = { x, y, t: now };
+      tap(x, y);
+      return;
+    }
+    if (was && was.kind === "pan" && downAt.moved && !reduced() && trailN >= 2) {
+      // 放手的速度：最近 100ms 內的取樣
+      const newest = (trailN - 1) % 6;
+      const tN = trail[3 * newest + 2];
+      let oldest = newest;
+      for (let k = 1; k < Math.min(trailN, 6); k += 1) {
+        const idx = (newest - k + 6) % 6;
+        if (tN - trail[3 * idx + 2] > 100) break;
+        oldest = idx;
+      }
+      const dt = tN - trail[3 * oldest + 2];
+      if (dt > 8 && performance.now() - tN < 80) {
+        inertia.vx = (trail[3 * newest] - trail[3 * oldest]) / dt;
+        inertia.vy = (trail[3 * newest + 1] - trail[3 * oldest + 1]) / dt;
+        if (Math.hypot(inertia.vx, inertia.vy) > 0.12) {
+          inertia.on = true;
+          inertia.last = performance.now();
+          request();
+        }
+      }
+    }
+    publish();
+  }
+  function onWheel(e) {
+    e.preventDefault();
+    anim.on = false;
+    inertia.on = false;
+    const [x, y] = local(e);
+    const unit = e.deltaMode === 1 ? 16 : e.deltaMode === 2 ? vh : 1;
+    const dx = e.deltaX * unit;
+    const dy = e.deltaY * unit;
+    // 觸控板捏合（ctrlKey）與一般滑鼠滾輪 → 縮放；觸控板兩指滑動（有 deltaX 或小而不整的 deltaY）→ 平移
+    const mouseWheel = e.deltaMode !== 0 || (dx === 0 && Math.abs(dy) >= 40 && Number.isInteger(dy));
+    if (e.ctrlKey || mouseWheel) zoomAt(x, y, Math.exp(-dy * (e.ctrlKey ? 0.01 : 0.0018)));
+    else { cam.tx -= dx; cam.ty -= dy; clampCam(); }
+    request();
+  }
+
+  /* ── 鍵盤 ── */
+  function nearestBy(list, from) {
+    let best = -1;
+    let bestD = Infinity;
+    list.forEach((v) => {
+      const dd = Math.abs(G.ly[v] - G.ly[from]) + Math.abs(G.lx[v] - G.lx[from]) * 0.2;
+      if (dd < bestD) { bestD = dd; best = v; }
+    });
+    return best;
+  }
+  function centerLesson() {
+    let best = 0;
+    let bestD = Infinity;
+    const cx = (vw / 2 - cam.tx) / cam.s;
+    const cy = (vh / 2 - cam.ty) / cam.s;
+    for (let i = 0; i < G.n; i += 1) {
+      const dd = Math.hypot(G.lx[i] - cx, G.ly[i] - cy);
+      if (dd < bestD) { bestD = dd; best = i; }
+    }
+    return best;
+  }
+  function onKey(e) {
+    if (e.target !== canvas) return;
+    host.classList.add("is-kbd");
+    const k = e.key;
+    let next = -2;
+    if (k === "ArrowRight" || k === "ArrowLeft" || k === "ArrowUp" || k === "ArrowDown") {
+      e.preventDefault();
+      if (sel < 0) next = opts.next >= 0 && stats.level === "stage" ? opts.next : centerLesson();
+      else if (k === "ArrowRight") next = nearestBy(G.succs[sel], sel);
+      else if (k === "ArrowLeft") next = nearestBy(G.preds[sel], sel);
+      else {
+        // 同一章上下；到章的頭尾就找同一欄最近的那一課
+        const dir = k === "ArrowDown" ? 1 : -1;
+        let best = -1;
+        let bestD = Infinity;
+        for (let v = 0; v < G.n; v += 1) {
+          if (Math.abs(G.lx[v] - G.lx[sel]) > 1) continue;
+          const dy = (G.ly[v] - G.ly[sel]) * dir;
+          if (dy > 0 && dy < bestD) { bestD = dy; best = v; }
+        }
+        next = best;
+      }
+      if (next >= 0) select(next, "key");
+      return;
+    }
+    if (k === "Enter" && sel >= 0) {
+      e.preventDefault();
+      if (opts.lessons[sel].available) opts.open(opts.lessons[sel].id);
+      return;
+    }
+    if (k === "Escape" && sel >= 0) { e.preventDefault(); select(-1); return; }
+    if (k === "+" || k === "=" || k === "-" || k === "_") {
+      e.preventDefault();
+      const f = k === "+" || k === "=" ? 1.6 : 1 / 1.6;
+      flyTo((vw / 2 - cam.tx) / cam.s, (vh / 2 - cam.ty) / cam.s, cam.s * f);
+    }
+  }
+
+  /* ── 尺寸與主題 ── */
+  function measure() {
+    const r = host.getBoundingClientRect();
+    // 地圖高度：視窗剩下的高度（扣掉手機底部分頁列），不讓整頁需要捲才看得到地圖的下緣
+    const nav = document.querySelector(".topbar-nav");
+    const navTop = nav && nav.getBoundingClientRect().height && getComputedStyle(nav).position === "fixed" ? nav.getBoundingClientRect().top : window.innerHeight;
+    const want = Math.max(360, Math.round(Math.min(navTop, window.innerHeight) - Math.max(0, r.top) - 12));
+    if (Math.abs(host.offsetHeight - want) > 2) host.style.height = `${want}px`;
+    const w = Math.max(1, Math.round(host.clientWidth));
+    const h = Math.max(1, Math.round(host.clientHeight));
+    dpr = Math.min(2, window.devicePixelRatio || 1);
+    if (w === vw && h === vh && canvas.width === Math.round(w * dpr)) return false;
+    // 保持畫面中心那一點不動
+    const cx = vw ? (vw / 2 - cam.tx) / cam.s : 0;
+    const cy = vh ? (vh / 2 - cam.ty) / cam.s : 0;
+    const had = vw > 0;
+    vw = w;
+    vh = h;
+    canvas.width = Math.round(w * dpr);
+    canvas.height = Math.round(h * dpr);
+    if (had && placed) { cam.tx = vw / 2 - cx * cam.s; cam.ty = vh / 2 - cy * cam.s; clampCam(); }
+    return true;
+  }
+
+  function buildLabels() {
+    const c = ctx;
+    c.font = F_LESSON_NO;
+    const noW = opts.lessons.map((L) => c.measureText(L.no).width);
+    c.font = F_LESSON;
+    labels = opts.lessons.map((L, i) => {
+      const room = G.NW - 24 - noW[i] - 5;
+      let title = L.title;
+      if (c.measureText(title).width > room) {
+        let lo = 0;
+        let hi = title.length;
+        while (lo < hi) {
+          const mid = Math.ceil((lo + hi) / 2);
+          if (c.measureText(`${title.slice(0, mid)}…`).width <= room) lo = mid; else hi = mid - 1;
+        }
+        title = `${title.slice(0, lo).trimEnd()}…`;
+      }
+      return { no: L.no, title, noW: noW[i] };
+    });
+    const d = G.data;
+    const stageDone = d.stages.map(() => 0);
+    const stageTotal = d.stages.map(() => 0);
+    const chDone = d.chapters.map(() => 0);
+    const chTotal = d.chapters.map(() => 0);
+    opts.lessons.forEach((L, i) => {
+      const ci = G.chapterOf[i];
+      const si = G.stageOfChapter[ci];
+      stageTotal[si] += 1;
+      chTotal[ci] += 1;
+      if (tiers[i]) { stageDone[si] += 1; chDone[ci] += 1; }
+    });
+    stageLabel = opts.stages.map((st, si) => {
+      const tail = `${st.branch ? "支線 · " : ""}${stageDone[si]}/${stageTotal[si]}`;
+      c.font = F_STAGE_NO;
+      const nW = c.measureText(String(st.n)).width;
+      c.font = F_LABEL;
+      const titleW = c.measureText(st.title).width;
+      c.font = F_SMALL;
+      const tailW = c.measureText(tail).width;
+      return { n: String(st.n), title: st.title, tail, nW, titleW, w: nW + titleW + tailW + 12, branch: Boolean(st.branch), done: stageTotal[si] > 0 && stageDone[si] === stageTotal[si] };
+    });
+    const chapters = opts.stages.flatMap((st) => st.chapters);
+    chapterLabel = chapters.map((ch, ci) => {
+      c.font = F_LABEL;
+      const w = c.measureText(ch.title).width;
+      const codeW = c.measureText(ch.code).width;
+      return { title: ch.title, code: ch.code, full: `${ch.code} ${ch.title}`, w, codeW, done: chDone[ci], total: chTotal[ci], count: `${chDone[ci]}/${chTotal[ci]}` };
+    });
+  }
+
+  function buildNodes() {
+    const hw = G.NW / 2;
+    const hh = G.NH / 2;
+    nodePaths = [new Path2D(), new Path2D(), new Path2D(), new Path2D(), null];
+    for (let i = 0; i < G.n; i += 1) {
+      const t = tiers[i];
+      roundRect(nodePaths[t ? 1 : 0], G.lx[i] - hw, G.ly[i] - hh, G.NW, G.NH, hh);
+      if (t >= 2) roundRect(nodePaths[t === 2 ? 2 : 3], G.lx[i] - hw - 3.5, G.ly[i] - hh - 3.5, G.NW + 7, G.NH + 7, hh + 3.5);
+    }
+    if (opts.next >= 0) {
+      nodePaths[4] = new Path2D();
+      const i = opts.next;
+      roundRect(nodePaths[4], G.lx[i] - hw - 3.5, G.ly[i] - hh - 3.5, G.NW + 7, G.NH + 7, hh + 3.5);
+    }
+    G.pathStageMain = new Path2D();
+    G.pathStageBranch = new Path2D();
+    G.stageBoxes.forEach((b, si) => roundRect(opts.stages[si].branch ? G.pathStageBranch : G.pathStageMain, b[0], b[1], b[2], b[3], 22));
+    G.pathChapters = new Path2D();
+    G.chapterBoxes.forEach((b) => roundRect(G.pathChapters, b[0], b[1], b[2], b[3], 12));
+  }
+
+  // 螢幕閱讀器用的清單：Stage → 章 → 課（狀態、先修）。看不見、也不是按鈕（打開課用地圖的 Enter 或清單檢視）
+  function srList() {
+    const esc = opts.escapeHtml;
+    let i = 0;
+    const items = opts.stages.map((st) => `<li>${esc(`${st.n} ${st.title}${st.branch ? "（支線）" : ""}`)}<ol>${st.chapters.map((ch) => `<li>${esc(ch.title)}<ol>${ch.lessons.map(() => {
+      const L = opts.lessons[i];
+      const pre = G.preds[i].map((p) => opts.lessons[p].no).join("、");
+      i += 1;
+      return `<li>${esc(`${L.no} ${L.title}，${statusText(i - 1)}${pre ? `，先修 ${pre}` : ""}`)}</li>`;
+    }).join("")}</ol></li>`).join("")}</ol></li>`).join("");
+    return `<div class="sr-only"><ol aria-label="課程地圖（清單）">${items}</ol></div>`;
+  }
+
+  function teardown() {
+    if (frame) window.cancelAnimationFrame(frame);
+    frame = 0;
+    if (ro) ro.disconnect();
+    if (mo) mo.disconnect();
+    ro = null;
+    mo = null;
+    pointers.clear();
+    gesture = null;
+    host = null;
+    canvas = null;
+    ctx = null;
+    card = null;
+    live = null;
+  }
+
+  /* ── 對外：掛到一個容器上（app 整頁重繪會換掉容器，所以每次重繪後重掛；相機與選取留著）── */
+  function attach(target, options) {
+    const data = window.BUZZ_COURSE_MAP;
+    if (!target || !data) return false;
+    if (host && host !== target) teardown();
+    opts = options;
+    if (!G) {
+      G = buildModel(data);
+      G.noDash = [];
+      const dashes = new Map();
+      G.dashFor = (s) => {
+        // 虛線的長度跟著縮放換算（只有幾種倍率會出現，算過的留著，不在每格產生新陣列）
+        const key = Math.round(Math.log(s) * 8);
+        if (!dashes.has(key)) { const u = 1 / Math.exp(key / 8); dashes.set(key, [6 * u, 5 * u]); }
+        return dashes.get(key);
+      };
+      G.stageEdgeWidths = [1.2, 2, 3.2];
+      G.chapterEdgeWidths = [1, 1.6, 2.4];
+      buildGeometry(G);
+      mark = new Uint8Array(G.n);
+    }
+    if (opts.lessons.length !== G.n) return false;
+    tiers = Uint8Array.from(opts.lessons.map((L) => L.tier || 0));
+    host = target;
+    injectStyle();
+    host.innerHTML = `
+      <canvas class="cmap-canvas" tabindex="0" role="application" aria-roledescription="課程地圖" aria-label="課程地圖：方向鍵在相連的課之間移動，Enter 打開"></canvas>
+      <div class="cmap-zoom" aria-hidden="true"><button type="button" data-cmap="in" tabindex="-1">+</button><button type="button" data-cmap="out" tabindex="-1">−</button></div>
+      <div class="cmap-card" hidden></div>
+      <p class="sr-only" aria-live="polite"></p>
+      ${srList()}`;
+    canvas = host.querySelector("canvas");
+    card = host.querySelector(".cmap-card");
+    live = host.querySelector("[aria-live]");
+    ctx = canvas.getContext("2d", { alpha: false });
+    readPalette();
+    buildLabels();
+    buildNodes();
+    measure();
+    if (!placed) {
+      // 第一次打開：整張圖放得下就看整張；窄螢幕（手機）看整張字會擠成一團，改成「高度放滿」——
+      // 還在 Stage 那一層、字讀得到，左右滑看其他 Stage；從目前要上的那一課所在的 Stage 開始
+      placed = true;
+      cam.s = Math.max(fitScale(), Math.min(0.19, (vh - 40) / (H() + 80)));
+      const at = opts.next >= 0 ? opts.next : 0;
+      const b = G.stageBoxes[G.stageOfChapter[G.chapterOf[at]]];
+      cam.tx = vw / 2 - (b[0] + b[2] / 2) * cam.s;
+      cam.ty = vh / 2 - (H() / 2) * cam.s;
+      clampCam();
+    }
+    clampCam();
+    // 選取接回來（重繪前選了誰，回來還是它）
+    if (sel >= 0) select(sel); else select(-1);
+    canvas.addEventListener("pointerdown", onDown);
+    canvas.addEventListener("pointermove", onMove);
+    canvas.addEventListener("pointerup", onUp);
+    canvas.addEventListener("pointercancel", onUp);
+    canvas.addEventListener("wheel", onWheel, { passive: false });
+    canvas.addEventListener("keydown", onKey);
+    canvas.addEventListener("contextmenu", (e) => e.preventDefault());
+    host.addEventListener("click", (e) => {
+      const b = e.target && e.target.closest ? e.target.closest("[data-cmap]") : null;
+      if (!b) return;
+      const what = b.dataset.cmap;
+      if (what === "close") { select(-1); canvas.focus({ preventScroll: true }); }
+      if (what === "prereq") showPrereqs();
+      if (what === "in" || what === "out") flyTo((vw / 2 - cam.tx) / cam.s, (vh / 2 - cam.ty) / cam.s, cam.s * (what === "in" ? 1.8 : 1 / 1.8));
+    });
+    if (typeof ResizeObserver === "function") {
+      ro = new ResizeObserver(() => { if (host && measure()) request(); });
+      ro.observe(host);
+    }
+    mo = new MutationObserver(() => { readPalette(); request(); });
+    mo.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+    if (options.focusId) {
+      const i = opts.lessons.findIndex((L) => L.id === options.focusId);
+      if (i >= 0) {
+        // 從一課的「在地圖上看」進來：先停在拉遠一點的地方，再飛進那一課
+        if (!reduced()) { cam.s = Math.max(fitScale(), 0.3); cam.tx = vw / 2 - G.lx[i] * cam.s; cam.ty = vh / 2 - G.ly[i] * cam.s; clampCam(); }
+        select(i, "focus");
+        canvas.focus({ preventScroll: true });
+      }
+    }
+    request();
+    return true;
+  }
+
+  // 測試用：課在畫面上的位置（client 座標）、目前的狀態
+  function debug() {
+    return {
+      level: stats.level,
+      scale: cam.s,
+      tx: cam.tx,
+      ty: cam.ty,
+      visibleStages: stats.visibleStages,
+      visibleChapters: stats.visibleChapters,
+      visibleLessons: stats.visibleLessons,
+      labelledLessons: stats.labelledLessons,
+      selected: sel >= 0 && opts ? opts.lessons[sel].id : "",
+      ancestors: ancCount,
+      descendants: descCount,
+      animating: anim.on || inertia.on,
+      draws: drawCount,
+      lastDrawMs
+    };
+  }
+  function project(id) {
+    if (!G || !canvas || !opts) return null;
+    const i = opts.lessons.findIndex((L) => L.id === id);
+    if (i < 0) return null;
+    const r = canvas.getBoundingClientRect();
+    return { x: r.left + G.lx[i] * cam.s + cam.tx, y: r.top + G.ly[i] * cam.s + cam.ty };
+  }
+
+  // 截圖與測試用：把相機直接放到某個倍率、某個世界座標（不經過手勢）
+  function look(scale, wx, wy) {
+    if (!G || !canvas) return;
+    anim.on = false;
+    inertia.on = false;
+    cam.s = scale === "fit" ? fitScale() : scale;
+    cam.tx = vw / 2 - (wx === undefined ? W() / 2 : wx) * cam.s;
+    cam.ty = vh / 2 - (wy === undefined ? H() / 2 : wy) * cam.s;
+    clampCam();
+    request();
+  }
+
+  window.BuzzCourseMap = { attach, debug, project, look };
+})();

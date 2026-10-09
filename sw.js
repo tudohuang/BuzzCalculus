@@ -102,6 +102,8 @@ const APP_SHELL = [
   "./src/course.js",
   "./src/course_v2/outline.js",
   "./src/course_v2_ui.js",
+  "./src/course_v2/map.js",
+  "./src/course_map.js",
   "./src/share_cards.js",
   "./src/kernel/ability.js",
   "./src/kernel/planner.js",
