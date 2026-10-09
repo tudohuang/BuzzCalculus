@@ -80,6 +80,11 @@ async function run() {
   });
   const openLesson = async (id) => {
     await evaluate(`window.__v.open(${JSON.stringify(id)}); return 1;`);
+    // 有分節的課預設一節一屏（e2e_course_sections 管）；這裡測的是整頁裡的影片：切到「全文」（會記住，之後的課都是全文）
+    await waitFor(`document.querySelector("[data-cv2s]") || document.querySelector(".cv2-lesson [data-course-concept]")`);
+    if (await evaluate(`return Boolean(document.querySelector("[data-cv2s]"));`)) {
+      await evaluate(`document.querySelector('[data-action="course-s-mode"][data-mode="full"]').click(); return 1;`);
+    }
     return waitFor(`document.querySelector(".cv2-lesson [data-course-concept]") && document.querySelector(".cv2-lesson h2").textContent.trim() === ${JSON.stringify(lessonOf(id).title)}`);
   };
 
