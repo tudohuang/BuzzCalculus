@@ -19,6 +19,7 @@ const staticServer = require("./lib/static_server.js");
 
 const ROOT = path.join(__dirname, "..");
 const SHOTS = process.argv.includes("--screenshots") ? path.join(ROOT, "docs", "report", "course-review", "screens", "map") : "";
+const SHOTS2 = SHOTS ? path.join(ROOT, "docs", "report", "course-review", "screens", "map-meaning") : "";
 const PHONE = { width: 390, height: 844, deviceScaleFactor: 2, mobile: true };
 const DESKTOP = { width: 1280, height: 800, deviceScaleFactor: 1, mobile: false };
 
@@ -57,6 +58,12 @@ function closure(id, edges) {
 const SAMPLE = OUTLINE.stages[2].chapters.flatMap((c) => c.lessons).map((l) => l.id).find((id) => closure(id, PRE).size >= 8 && PRE[id].length);
 const FOCUS = OUTLINE.stages[4].chapters[1].lessons[0].id;
 const titleOf = (id) => OUTLINE.stages.flatMap((s) => s.chapters.flatMap((c) => c.lessons)).find((l) => l.id === id).title;
+const same = (a, b) => a.length === b.length && [...a].sort().join() === [...b].sort().join();
+const LESSONS = OUTLINE.stages.flatMap((s) => s.chapters.flatMap((c) => c.lessons.map((l) => ({
+  ...l, stage: s.n, chapter: c.code,
+  practice: String(l.practice || "").split(" ").filter(Boolean).map((t) => ({ id: t.replace(/[*!]$/, ""), kind: t.endsWith("*") ? "core" : t.endsWith("!") ? "challenge" : "" }))
+}))));
+const BY_ID = Object.fromEntries(LESSONS.map((l) => [l.id, l]));
 
 const HELPERS = `
   window.__m = {
@@ -101,6 +108,14 @@ async function run() {
     const { data } = await chrome.send("Page.captureScreenshot", { format: "png" });
     fs.writeFileSync(path.join(SHOTS, `${name}.png`), Buffer.from(data, "base64"));
   };
+  const shot2 = async (name) => {
+    if (!SHOTS) return;
+    fs.mkdirSync(SHOTS2, { recursive: true });
+    await chrome.evaluate("window.scrollTo(0, 0); return 1;");
+    await sleep(80);
+    const { data } = await chrome.send("Page.captureScreenshot", { format: "png" });
+    fs.writeFileSync(path.join(SHOTS2, `${name}.png`), Buffer.from(data, "base64"));
+  };
   const touch = (type, points) => chrome.send("Input.dispatchTouchEvent", { type, touchPoints: points.map(([x, y], id) => ({ x, y, id })) });
   const tapAt = async (x, y) => { await touch("touchStart", [[x, y]]); await touch("touchEnd", []); await sleep(120); };
   const openCourse = async () => {
@@ -135,6 +150,23 @@ async function run() {
     check(`螢幕閱讀器有一份看不見的清單（${IDS.length} 課）`, opened.sr === IDS.length, String(opened.sr));
     check("地圖整個在第一屏、沒被底部分頁列蓋住", await evaluate(`const r = window.__m.canvasRect(); const nav = document.querySelector(".topbar-nav"); const floor = nav ? nav.getBoundingClientRect().top : innerHeight; return r.y > 0 && r.y + r.h <= floor + 1 && r.h >= 360;`));
     await shot("phone-light-stages-start");
+    await shot2("phone-light-new-user");
+
+    // 新的人：一課都沒完成。點亮 0、可以學 = 沒有先修的課（從課程資料自己算）、「該練」是一行字
+    const fresh = await evaluate(`return { lit: window.__m.text("[data-cv2-lit]"), st: window.BuzzCourseMap.state(), chips: window.__m.text(".cmap-chips") };`);
+    const roots = IDS.filter((id) => !PRE[id].length);
+    check(`新的人：「已點亮 0 / ${IDS.length}」、沒有熟練`, fresh.lit === `已點亮 0 / ${IDS.length}` && fresh.st.lit === 0 && fresh.st.mastered === 0, fresh.lit);
+    check(`新的人：可以學 = 沒有先修的課（${roots.join("、")}）、也是金框的下一課`, same(fresh.st.ready, roots) && roots.includes(fresh.st.next), fresh.st.ready.join(","));
+    check("新的人：篩選列只在有數字時寫數字（全部／可以學 n／該練）", fresh.chips === `全部 可以學 ${roots.length} 該練`, fresh.chips);
+    await evaluate(`window.__m.click('[data-action="course-map-filter"][data-mode="practice"]'); return 1;`);
+    await waitFor('document.querySelector(".cmap-empty")');
+    await sleep(200);
+    const empty = await evaluate(`return { text: window.__m.text(".cmap-list"), live: window.__m.text('.cv2-map [aria-live]'), focus: document.activeElement && document.activeElement.dataset.mode, overflow: window.__m.overflow() };`);
+    check("新的人按「該練」：一行字、念出來、焦點留在那顆 chip、不溢出", empty.text === "現在沒有該練的課" && empty.live === "現在沒有該練的課" && empty.focus === "practice" && empty.overflow <= 1, JSON.stringify(empty));
+    await shot2("phone-light-new-user-practice");
+    await evaluate(`window.__m.click('[data-action="course-map-filter"][data-mode="all"]'); return 1;`);
+    await waitFor('!document.querySelector(".cmap-list") && window.__m.dbg() && window.__m.dbg().draws > 0');
+    await settled();
 
     // 拉遠到底：13 個 Stage 都在畫面裡
     for (let k = 0; k < 4; k += 1) { await evaluate(`window.__m.click('[data-cmap="out"]'); return 1;`); await settled(); }
@@ -419,6 +451,207 @@ async function run() {
     await evaluate(`window.BuzzCourseMap.look("fit"); return 1;`);
     await settled();
     await shot("desktop-dark-stages");
+    await evaluate(`document.documentElement.dataset.theme = "light"; return 1;`);
+
+    /* ── 有進度的人：種一份紀錄，地圖算出來的東西跟這裡從課程資料自己算的一樣 ── */
+    await chrome.send("Emulation.setDeviceMetricsOverride", PHONE);
+    await chrome.send("Emulation.setTouchEmulationEnabled", { enabled: true, maxTouchPoints: 5 });
+    const bank = new Set(await evaluate(`return (window.BUZZ_PROBLEMS || []).map((p) => p.id);`));
+    const P = (l) => l.practice.filter((p) => bank.has(p.id));
+    const AT = "2026-10-01T00:00:00.000Z";
+    const doneIds = LESSONS.filter((l) => l.stage === 0).map((l) => l.id).concat(LESSONS.filter((l) => l.stage === 1).slice(0, 5).map((l) => l.id));
+    const DONE = new Set(doneIds);
+    const withP = doneIds.filter((id) => P(BY_ID[id]).length);
+    const [MASTER_A, MASTER_B, WRONG_L, LOW_L] = [withP[0], withP[1], withP[3], withP[5]];
+    const problemStats = {};
+    const mistakes = {};
+    [MASTER_A, MASTER_B].forEach((id) => P(BY_ID[id]).forEach((p) => { problemStats[p.id] = { correct: 1, wrong: 0, total: 1, lastAnsweredAt: AT }; }));
+    const wrongPid = P(BY_ID[WRONG_L]).find((p) => !problemStats[p.id]).id;
+    problemStats[wrongPid] = { correct: 0, wrong: 2, total: 2, lastAnsweredAt: AT };
+    mistakes[wrongPid] = { problemId: wrongPid, wrongCount: 2, lastWrongAt: AT, srs: { interval: 0, dueAt: Date.parse(AT) } };
+    const lowPid = P(BY_ID[LOW_L]).find((p) => !problemStats[p.id]).id;
+    problemStats[lowPid] = { correct: 1, wrong: 3, total: 4, lastAnsweredAt: AT };
+    const GOAL = OUTLINE.stages[3].chapters[1].lessons[1].id;
+    const seed = { onboardingSeen: true, onboardingLevel: "standard", tours: { home: 1, quiz: 1 }, courseV2: Object.fromEntries(doneIds.map((id) => [id, { openedAt: AT, doneAt: AT }])), problemStats, mistakes, courseMap: { goal: GOAL } };
+    // 期望值：照 course_v2_ui 的 tierOf 規則、DAG 從 lessons/*.json 的 prerequisites 算
+    const solved = (id) => Boolean(problemStats[id] && problemStats[id].correct > 0);
+    const tierOf = (id) => {
+      if (!DONE.has(id)) return 0;
+      const all = P(BY_ID[id]);
+      if (!all.length) return 1;
+      const core = all.some((p) => p.kind === "core") ? all.filter((p) => p.kind === "core") : all.filter((p) => p.kind !== "challenge");
+      if (!core.every((p) => solved(p.id))) return 1;
+      return all.every((p) => solved(p.id)) ? 3 : 2;
+    };
+    const expLit = DONE.size;
+    const expMastered = IDS.filter((id) => tierOf(id) >= 2).length;
+    const expReady = IDS.filter((id) => !DONE.has(id) && PRE[id].every((p) => DONE.has(p)));
+    const goalSet = [...closure(GOAL, PRE), GOAL].filter((id) => !DONE.has(id));
+    const goalMinutes = goalSet.reduce((sum, id) => sum + BY_ID[id].total, 0);
+    const goalFirst = IDS.find((id) => goalSet.includes(id) && PRE[id].every((p) => !goalSet.includes(p)));
+    const expPractice = IDS.filter((id) => DONE.has(id) && P(BY_ID[id]).length).map((id) => {
+      const ps = P(BY_ID[id]);
+      const wrong = ps.filter((p) => mistakes[p.id]).length;
+      const tot = ps.reduce((s, p) => s + (problemStats[p.id] ? problemStats[p.id].total : 0), 0);
+      const cor = ps.reduce((s, p) => s + (problemStats[p.id] ? problemStats[p.id].correct : 0), 0);
+      const core = ps.some((p) => p.kind === "core") ? ps.filter((p) => p.kind === "core") : ps.filter((p) => p.kind !== "challenge");
+      if (wrong) return { id, why: `上次錯 ${wrong} 題`, rank: 3 };
+      if (tot >= 3 && cor / tot < 0.6) return { id, why: `答對 ${Math.round((100 * cor) / tot)}%`, rank: 2 };
+      if (tierOf(id) === 1) return { id, why: `核心題還差 ${core.filter((p) => !solved(p.id)).length} 題`, rank: 1 };
+      return null;
+    }).filter(Boolean).sort((a, b) => b.rank - a.rank || IDS.indexOf(a.id) - IDS.indexOf(b.id));
+
+    await chrome.navigate(`${server.url}/index.html`);
+    await evaluate(`localStorage.clear(); localStorage.setItem("buzzcalculus.records.v1", ${JSON.stringify(JSON.stringify(seed))}); return 1;`);
+    await chrome.navigate(`${server.url}/index.html`);
+    await sleep(400);
+    await openCourse();
+    await evaluate(`window.__m.click('[data-action="course-view"][data-mode="map"]'); return 1;`);
+    check("有進度：地圖打開", await waitFor('window.BuzzCourseMap && document.querySelector(".cmap-canvas") && window.__m.dbg().draws > 0 && window.BuzzCourseMap.state().lit > 0'));
+    await settled();
+    const mp = await evaluate(`const s = window.BuzzCourseMap.state(); const p = window.BuzzCourseMap.project(s.next); const r = window.__m.canvasRect(); return { s, line: window.__m.text("[data-cv2-lit]"), chips: window.__m.text(".cmap-chips"), goal: window.__m.text(".cmap-goal"), d: window.__m.dbg(), inView: p.x > r.x && p.x < r.x + r.w && p.y > r.y && p.y < r.y + r.h, overflow: window.__m.overflow(), small: window.__m.smallTargets() };`);
+    check(`點亮數 = 完成的課（${expLit}）、熟練數 = 核心題全對的完成課（${expMastered}）`, mp.s.lit === expLit && mp.s.mastered === expMastered && mp.line === `已點亮 ${expLit} / ${IDS.length} · 熟練 ${expMastered}`, mp.line);
+    const s0Chapters = OUTLINE.stages[0].chapters.length;
+    check("Stage 0 每一章都是 n/n、整個 Stage 0 是金框（只有它）", mp.s.chapters.slice(0, s0Chapters).every(([d, t]) => d === t && t > 0) && mp.s.stages[0][0] === mp.s.stages[0][1] && same(mp.s.gold.map(String), ["0"]), JSON.stringify(mp.s.gold));
+    check(`Stage 1 的進度是 5/${LESSONS.filter((l) => l.stage === 1).length}`, mp.s.stages[1][0] === 5 && mp.s.stages[1][1] === LESSONS.filter((l) => l.stage === 1).length, JSON.stringify(mp.s.stages[1]));
+    check(`可以學 = 先修都完成、自己還沒完成的課（DAG 算出 ${expReady.length} 課）`, same(mp.s.ready, expReady), `${mp.s.ready.length}：${mp.s.ready.slice(0, 4).join(",")}`);
+    check("有進度就停在下一課（課那一層、金框那一課在畫面裡）", mp.d.level === "lesson" && mp.inView, `${mp.d.level} · ${mp.s.next}`);
+    check(`目標：缺的先修閉包（${goalSet.length} 課）、分鐘加總 ${goalMinutes}`, mp.s.goal && same(mp.s.goal.missing, goalSet) && mp.s.goal.minutes === goalMinutes && mp.goal.includes(`還差 ${goalSet.length} 課 · 約 ${goalMinutes} 分鐘`), mp.goal);
+    check(`目標的順序是拓撲序、同時可以學的照大綱（第一課 ${goalFirst}）`, mp.s.goal.first === goalFirst && mp.s.goal.missing.every((id, k) => PRE[id].every((p) => !goalSet.includes(p) || mp.s.goal.missing.indexOf(p) < k)), mp.s.goal.first);
+    check("該練：理由與排序跟紀錄算出來的一樣", JSON.stringify(mp.s.practice.map((p) => [p.id, p.why])) === JSON.stringify(expPractice.map((p) => [p.id, p.why])), JSON.stringify(mp.s.practice.slice(0, 4).map((p) => [p.id, p.why])));
+    check("篩選列的數字跟算出來的一樣", mp.chips === `全部 可以學 ${expReady.length} 該練 ${expPractice.length}`, mp.chips);
+    check("有進度的地圖 390 寬不溢出、觸控目標 ≥ 40px", mp.overflow <= 1 && !mp.small.length, JSON.stringify(mp.small.slice(0, 3)));
+    const sr = await evaluate(`const li = [...document.querySelectorAll(".cv2-map .sr-only li li li")].map((n) => n.textContent); return li;`);
+    const srOf = (id) => sr[IDS.indexOf(id)] || "";
+    check("隱藏清單跟畫面同一份：該練的理由、可以學、目標", srOf(WRONG_L).includes("上次錯 1 題") && srOf(expReady[0]).includes("可以學") && srOf(GOAL).includes("目標") && srOf(goalFirst).includes("目標要先學"), `${srOf(WRONG_L)} | ${srOf(GOAL)}`);
+    const colors = await evaluate(`const c = window.BuzzCourseMap.state().colors; return [window.__m.contrast(c.far[0], c.far[1]), window.__m.contrast(c.ready[0], c.ready[1]), window.__m.contrast(c.done[0], c.done[1])];`);
+    check("淺色：還遠／可以學／完成的課名對膠囊底色都 ≥ 4.5", colors.every((x) => x >= 4.5), colors.map((x) => x.toFixed(1)).join(" / "));
+    await shot2("phone-light-mid-progress");
+    await evaluate(`window.BuzzCourseMap.look(0.36, 1100, 1250); return 1;`);
+    await settled();
+    await shot2("phone-light-goal-chapters");
+
+    // 「照順序學」打開目標路上的第一課
+    await evaluate(`window.__m.click('.cmap-goal [data-action="open-course-lesson"]'); return 1;`);
+    check(`「照順序學」打開 ${goalFirst}`, await waitFor(`document.querySelector(".cv2-lesson h2") && document.querySelector(".cv2-lesson h2").textContent.trim() === ${JSON.stringify(titleOf(goalFirst))}`), titleOf(goalFirst));
+    // 課程表（清單）也有目標那一行
+    await openCourse();
+    await evaluate(`window.__m.click('[data-action="course-view"][data-mode="list"]'); return 1;`);
+    check("課程表（清單）上也有目標那一行", await waitFor(`document.querySelector("[data-cv2-goal]") && window.__m.text("[data-cv2-goal]").includes("還差 ${goalSet.length} 課")`), await evaluate(`return window.__m.text("[data-cv2-goal]");`));
+    await evaluate(`window.__m.click('[data-action="course-view"][data-mode="map"]'); return 1;`);
+    await waitFor('document.querySelector(".cmap-canvas") && window.__m.dbg().draws > 0');
+    await settled();
+
+    // 「該練」：其他的變淡、底下列前幾名、念出來、記得
+    await evaluate(`window.__m.click('[data-action="course-map-filter"][data-mode="practice"]'); return 1;`);
+    await waitFor('document.querySelector(".cmap-todo")');
+    await sleep(200);
+    const pr = await evaluate(`return { items: [...document.querySelectorAll(".cmap-todo button")].map((b) => ({ id: b.dataset.lessonId, ids: b.dataset.ids.split(" "), text: (b.innerText || "").replace(/\\s+/g, " ").trim() })), live: window.__m.text('.cv2-map [aria-live]'), s: window.BuzzCourseMap.state(), focus: document.activeElement && document.activeElement.dataset.mode, overflow: window.__m.overflow(), small: window.__m.smallTargets(), canvas: window.__m.canvasRect(), first: document.querySelector(".cmap-todo li").getBoundingClientRect().top };`);
+    const top5 = expPractice.slice(0, 5);
+    check(`「該練」底下列前 ${top5.length} 名（≤ 5），每一列是課、理由、題數`, pr.items.length === top5.length && pr.items.every((it, k) => it.id === top5[k].id && it.text.includes(top5[k].why) && it.text.includes(`練 ${it.ids.length} 題`)), pr.items.map((it) => it.text).slice(0, 2).join(" | "));
+    check("「該練」：只有該練的課是亮的（其他淡掉）", pr.s.dimmed === IDS.length - expPractice.length, `${pr.s.dimmed} 課淡掉`);
+    check("「該練」：念出來（aria-live）、焦點留在 chip", pr.live.startsWith(`該練 ${expPractice.length} 課`) && pr.focus === "practice", pr.live.slice(0, 40));
+    check("「該練」：清單第一列在第一屏、地圖讓出高度、不溢出", pr.first < 844 - 60 && pr.canvas.h >= 296 && pr.overflow <= 1 && !pr.small.length, `清單 y=${Math.round(pr.first)} · 地圖 ${Math.round(pr.canvas.h)}px`);
+    const wrongItem = pr.items.find((it) => it.id === WRONG_L);
+    check("錯題那一課：練的題先放錯題、再放還沒答對的", wrongItem && wrongItem.ids[0] === wrongPid && wrongItem.ids.every((id) => P(BY_ID[WRONG_L]).some((p) => p.id === id)), wrongItem ? wrongItem.ids.join(",") : "");
+    await shot2("phone-light-practice");
+    // 小卡也說為什麼、有「練這課 n 題」
+    await evaluate(`const m = window.BUZZ_COURSE_MAP; const i = ${JSON.stringify(IDS)}.indexOf(${JSON.stringify(WRONG_L)}); window.BuzzCourseMap.look(0.9, m.lessons[2 * i], m.lessons[2 * i + 1] + 60); return 1;`);
+    await settled();
+    const atW = await evaluate(`return window.BuzzCourseMap.project(${JSON.stringify(WRONG_L)});`);
+    await tapAt(atW.x, atW.y);
+    await settled();
+    const wcard = await evaluate(`return { text: window.__m.text(".cmap-card"), btn: (document.querySelector('.cmap-card [data-action="course-lesson-practice"]') || {}).textContent || "" };`);
+    check("小卡：一行理由＋「練這課 n 題」", wcard.text.includes("上次錯 1 題") && wcard.btn === `練這課 ${wrongItem.ids.length} 題`, `${wcard.btn} · ${wcard.text.slice(0, 50)}`);
+    await shot2("phone-light-practice-card");
+    // 練這課：開一局，第一題就是這一課的錯題
+    await evaluate(`window.__m.click('.cmap-card [data-action="course-lesson-practice"]'); return 1;`);
+    check("「練這課」進到作答畫面", await waitFor('document.querySelector("[data-action=choose-answer], .prompt[data-tex]")'));
+    const q = await evaluate(`const tex = (document.querySelector(".prompt[data-tex]") || {}).dataset?.tex || ""; const p = (window.BUZZ_PROBLEMS || []).find((x) => x.prompt === tex); return p ? p.id : "";`);
+    check("「練這課」開的是這一課的題（錯題排在最前面）", wrongItem.ids.includes(q), q);
+    // 篩選記得：重新整理、回到地圖還是「該練」
+    await evaluate(`localStorage.removeItem("buzzcalculus.session.active"); return 1;`);
+    await chrome.navigate(`${server.url}/index.html`);
+    await sleep(400);
+    await openCourse();
+    await evaluate(`window.__m.click('[data-action="course-view"][data-mode="map"]'); return 1;`);
+    await waitFor('document.querySelector(".cmap-canvas") && window.__m.dbg().draws > 0');
+    check("篩選記得（重新整理之後還是「該練」）", await evaluate(`return document.querySelector('[data-action="course-map-filter"][data-mode="practice"]').getAttribute("aria-pressed") === "true" && window.BuzzCourseMap.state().filter === "practice";`));
+    await evaluate(`window.__m.click('[data-action="course-map-filter"][data-mode="ready"]'); return 1;`);
+    await waitFor('window.BuzzCourseMap.state().filter === "ready"');
+    await sleep(200);
+    const rd = await evaluate(`return { s: window.BuzzCourseMap.state(), live: window.__m.text('.cv2-map [aria-live]') };`);
+    check("「可以學」：只有可以學的課是亮的、念出課數", rd.s.dimmed === IDS.length - expReady.length && rd.live === `可以學 ${expReady.length} 課`, rd.live);
+    await evaluate(`window.__m.click('[data-action="course-map-filter"][data-mode="all"]'); return 1;`);
+    await waitFor('window.BuzzCourseMap.state().filter === "all"');
+    await settled();
+
+    // 從小卡設目標、清掉
+    const NEWGOAL = OUTLINE.stages[2].chapters[0].lessons[2].id;
+    await evaluate(`const m = window.BUZZ_COURSE_MAP; const i = ${JSON.stringify(IDS)}.indexOf(${JSON.stringify(NEWGOAL)}); window.BuzzCourseMap.look(0.9, m.lessons[2 * i], m.lessons[2 * i + 1] + 60); return 1;`);
+    await settled();
+    const atG = await evaluate(`return window.BuzzCourseMap.project(${JSON.stringify(NEWGOAL)});`);
+    await tapAt(atG.x, atG.y);
+    await settled();
+    await evaluate(`window.__m.click('.cmap-card [data-action="course-goal"]'); return 1;`);
+    await waitFor(`window.BuzzCourseMap.state().goal && window.BuzzCourseMap.state().goal.id === ${JSON.stringify(NEWGOAL)}`);
+    await sleep(200);
+    const ng = await evaluate(`return { s: window.BuzzCourseMap.state(), card: window.__m.text(".cmap-card"), live: window.__m.text('.cv2-map [aria-live]'), rec: JSON.parse(localStorage.getItem("buzzcalculus.records.v1")).courseMap };`);
+    const ngSet = [...closure(NEWGOAL, PRE), NEWGOAL].filter((id) => !DONE.has(id));
+    check("小卡「設為目標」：目標換成這一課、紀錄裡只有一個目標、缺的課數對", ng.rec.goal === NEWGOAL && same(ng.s.goal.missing, ngSet) && ng.card.includes("清除目標") && ng.live.includes(`還差 ${ngSet.length} 課`), ng.live);
+    await shot2("phone-light-goal-set");
+    await evaluate(`window.__m.click('.cmap-goal [data-action="course-goal"]'); return 1;`);
+    await waitFor("!window.BuzzCourseMap.state().goal");
+    check("目標列的 × 清除目標", await evaluate(`return !document.querySelector(".cmap-goal") && !JSON.parse(localStorage.getItem("buzzcalculus.records.v1")).courseMap.goal;`));
+
+    // 剛好做完整章／整個 Stage 的那一課：章框與 Stage 框也亮一次
+    const lastS0 = LESSONS.filter((l) => l.stage === 0).pop().id;
+    await evaluate(`const b = document.createElement("button"); b.dataset.action = "course-map-focus"; b.dataset.lessonId = ${JSON.stringify(lastS0)}; b.dataset.lit = "1"; document.querySelector("#app").appendChild(b); b.click(); return 1;`);
+    await waitFor(`document.querySelector(".cv2-map[data-lit]")`);
+    const litBox = await evaluate(`return { box: document.querySelector(".cv2-map").dataset.litBox, lit: window.__m.dbg().lit };`);
+    check("做完整章＋整個 Stage 的那一課回地圖：課、章框、Stage 框都亮一次", litBox.lit === lastS0 && litBox.box === "chapter stage", JSON.stringify(litBox));
+    await settled();
+    await sleep(1700);
+
+    // 有進度的地圖照樣省：拖曳每格繪製 p95 < 8ms、閒著不畫
+    const hiMid = await evaluate(dragProbe);
+    console.log(`  ·    幀時間（有進度＋目標、DPR 2、拖 60 格）：地圖每格繪製 p95 ${hiMid.drawP95.toFixed(1)}ms、最久 ${hiMid.maxDraw.toFixed(1)}ms；畫了 ${hiMid.drawn} 格`);
+    check("有進度：拖曳時每格都重畫、每格繪製 p95 < 8ms", hiMid.drawn >= 55 && hiMid.drawP95 < 8, `${hiMid.drawP95.toFixed(1)}ms`);
+    await settled();
+    const idle2 = await evaluate(`const a = window.BuzzCourseMap.debug().draws; await new Promise((r) => setTimeout(r, 500)); return window.BuzzCourseMap.debug().draws - a;`);
+    check("有進度：閒著不重畫（0.5 秒內 0 格）", idle2 === 0, `${idle2} 格`);
+
+    // 深色：同一份紀錄，對比照樣夠
+    await evaluate(`document.documentElement.dataset.theme = "dark"; return 1;`);
+    await sleep(200);
+    const dcol = await evaluate(`const c = window.BuzzCourseMap.state().colors; return [window.__m.contrast(c.far[0], c.far[1]), window.__m.contrast(c.ready[0], c.ready[1]), window.__m.contrast(c.done[0], c.done[1])];`);
+    check("深色：還遠／可以學／完成的課名對膠囊底色都 ≥ 4.5", dcol.every((x) => x >= 4.5), dcol.map((x) => x.toFixed(1)).join(" / "));
+    if (SHOTS) {
+      await evaluate(`const s = window.BuzzCourseMap.state(); const m = window.BUZZ_COURSE_MAP; const i = ${JSON.stringify(IDS)}.indexOf(s.next); window.BuzzCourseMap.look(0.8, m.lessons[2 * i], m.lessons[2 * i + 1]); return 1;`);
+      await settled();
+      await shot2("phone-dark-mid-progress");
+      await evaluate(`window.__m.click('[data-action="course-map-filter"][data-mode="practice"]'); return 1;`);
+      await waitFor('document.querySelector(".cmap-todo")');
+      await settled();
+      await shot2("phone-dark-practice");
+      await evaluate(`window.BuzzCourseMap.look(0.19); return 1;`);
+      await settled();
+      await shot2("phone-dark-stages");
+      await chrome.send("Emulation.setTouchEmulationEnabled", { enabled: false });
+      await chrome.send("Emulation.setDeviceMetricsOverride", DESKTOP);
+      await sleep(300);
+      await evaluate(`window.BuzzCourseMap.look("fit"); return 1;`);
+      await settled();
+      await shot2("desktop-dark-practice-fit");
+      await evaluate(`document.documentElement.dataset.theme = "light"; window.__m.click('[data-action="course-map-filter"][data-mode="all"]'); return 1;`);
+      await waitFor('window.BuzzCourseMap.state().filter === "all"');
+      await evaluate(`window.BuzzCourseMap.look("fit"); return 1;`);
+      await settled();
+      await shot2("desktop-light-mid-progress-fit");
+      await evaluate(`const s = window.BuzzCourseMap.state(); const m = window.BUZZ_COURSE_MAP; const i = ${JSON.stringify(IDS)}.indexOf(s.next); window.BuzzCourseMap.look(0.8, m.lessons[2 * i] + 200, m.lessons[2 * i + 1]); return 1;`);
+      await settled();
+      await shot2("desktop-light-mid-progress");
+    }
     await evaluate(`document.documentElement.dataset.theme = "light"; return 1;`);
 
     const errors = chrome.pageErrors.concat(chrome.consoleMessages.filter((m) => m.type === "error").map((m) => m.text));
