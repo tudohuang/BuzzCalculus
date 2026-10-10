@@ -248,6 +248,9 @@ function lessonsWithSay() {
     const L = JSON.parse(fs.readFileSync(path.join(LESSONS, name), "utf8"));
     const beats = [];
     (L.sections || []).forEach((sec, si) => (sec.beats || []).forEach((b, bi) => {
+      // 證明節的句子可以帶問句（why.say，key 是「節-句q」）：照播放的順序接在這一句的 say 前面（先問、答了才講）
+      const q = b.why && typeof b.why.say === "string" ? b.why.say.trim() : "";
+      if (q) beats.push({ key: `${si}-${bi}q`, say: q, h: hashOf(VOICE, RATE, q) });
       if (typeof b.say === "string" && b.say.trim()) beats.push({ key: `${si}-${bi}`, say: b.say.trim(), h: hashOf(VOICE, RATE, b.say.trim()) });
     }));
     if (beats.length) out.push({ id: L.id, beats });
@@ -271,6 +274,8 @@ function voiceOf(index, lesson) {
   (lesson.sections || []).forEach((sec, si) => (sec.beats || []).forEach((b, bi) => {
     const got = entry.beats[`${si}-${bi}`];
     if (got && typeof b.say === "string" && got.h === hashOf(VOICE, RATE, b.say.trim())) beats[`${si}-${bi}`] = got.t;
+    const q = entry.beats[`${si}-${bi}q`];
+    if (q && b.why && typeof b.why.say === "string" && q.h === hashOf(VOICE, RATE, b.why.say.trim())) beats[`${si}-${bi}q`] = q.t;
   }));
   return Object.keys(beats).length ? { f: entry.f, beats } : null;
 }

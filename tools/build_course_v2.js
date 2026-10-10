@@ -123,7 +123,11 @@ function shipLesson(lesson) {
         ...(voice ? { voice: voice.f } : {}),
         sections: lesson.sections.map((sec, si) => ({
           ...sec,
-          beats: sec.beats.map((b, bi) => (voice && voice.beats[`${si}-${bi}`] ? { ...b, t: voice.beats[`${si}-${bi}`] } : b))
+          beats: sec.beats.map((b, bi) => {
+            const t = voice && voice.beats[`${si}-${bi}`];
+            const q = voice && b.why && voice.beats[`${si}-${bi}q`]; // 證明節的問句：why.t
+            return { ...b, ...(t ? { t } : {}), ...(q ? { why: { ...b.why, t: q } } : {}) };
+          })
         }))
       };
     })() : {}),

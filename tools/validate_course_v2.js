@@ -287,7 +287,9 @@ function checkSections(id, L) {
   const S = L.sections;
   if (S === undefined) return "";
   if (!Array.isArray(S)) { err(id, "sections 要是陣列"); return ""; }
-  if (S.length < 4 || S.length > 6) err(id, `sections 要 4–6 節，現在 ${S.length}`);
+  // 有證明節的課可以多一節（證明另外拆成一節，原本的切法不用硬擠）
+  const maxSec = S.some((sec) => sec && sec.proof) ? 7 : 6;
+  if (S.length < 4 || S.length > maxSec) err(id, `sections 要 4–${maxSec} 節，現在 ${S.length}`);
   const figs = L.figures || [];
   const widget = (k) => Number.isInteger(k) && figs[k] && figs[k].widget ? figs[k] : null;
   const inRange = (fig, v) => { const s = Figures.sliderOf(fig); return Number.isFinite(v) && v >= s.min - 1e-9 && v <= s.max + 1e-9; };
@@ -297,7 +299,7 @@ function checkSections(id, L) {
   const parts = [];
   S.forEach((sec, si) => {
     const where = `第 ${si + 1} 節`;
-    const extra = Object.keys(sec || {}).filter((k) => !["title", "beats", "check", "predict", "drag", "video"].includes(k));
+    const extra = Object.keys(sec || {}).filter((k) => !["title", "beats", "check", "predict", "drag", "video", "proof", "of", "skeleton", "order", "where"].includes(k));
     if (extra.length) err(id, `${where} 多了不認得的欄位：${extra.join("、")}`);
     if (typeof sec.title !== "string" || !sec.title.trim()) err(id, `${where} 沒有 title`);
     else if (cjkLen(sec.title) > 12) err(id, `${where} 的 title ${cjkLen(sec.title)} 字（≤ 12）`);
@@ -305,11 +307,14 @@ function checkSections(id, L) {
     if (beats.length < 2 || beats.length > 6) err(id, `${where} 要 2–6 句（beats），現在 ${beats.length}`);
     const local = new Set(known);
     let shown = cjkLen(sec.title);
+    let peak = 0; // 證明節：句子出到一半、底下掛著「為什麼」的那一刻，畫面上的字也算
     const texts = [sec.title];
     const spoken = [];
+    if (sec.proof !== undefined) checkProof(id, L, sec, where, texts);
+    else ["of", "skeleton", "order", "where"].filter((k) => sec[k] !== undefined).forEach((k) => err(id, `${where} 的 ${k} 只能用在證明節（proof: true）`));
     beats.forEach((b, bi) => {
       const at = `${where}第 ${bi + 1} 句`;
-      const bad = Object.keys(b || {}).filter((k) => !["show", "note", "fig", "say"].includes(k));
+      const bad = Object.keys(b || {}).filter((k) => !["show", "note", "fig", "say", "why"].includes(k));
       if (bad.length) err(id, `${at} 多了不認得的欄位：${bad.join("、")}`);
       if (!Array.isArray(b.show) || !b.show.length || b.show.length > 2) err(id, `${at} 的 show 要 1–2 行`);
       (b.show || []).forEach((line) => {
@@ -346,9 +351,35 @@ function checkSections(id, L) {
           else if (clip.ms > SAY_MAX_MS) warn(id, `${at} 的旁白 ${(clip.ms / 1000).toFixed(1)} 秒（建議 ≤ 12）`);
         }
       }
+      if (b.why !== undefined) {
+        if (!sec.proof) err(id, `${at} 的 why 只能用在證明節（proof: true）`);
+        if (bi === 0 && sec.proof) err(id, `${at}：證明節的第一句是策略，不問為什麼`);
+        if (typeof b.note !== "string" || !b.note.trim()) err(id, `${at} 有 why 就要有 note（答了才出現的理由）`);
+        const card = checkWhy(id, at, b, texts);
+        peak = Math.max(peak, shown + card);
+        if (b.why && b.why.say !== undefined) {
+          const q = typeof b.why.say === "string" ? b.why.say.trim() : "";
+          if (!q) err(id, `${at} 的 why.say 是空的`);
+          else {
+            const sym = q.match(SAY_BAD);
+            if (sym) err(id, `${at} 的 why.say 有「${sym[0]}」：念的稿不寫 LaTeX 與符號`);
+            if (cjkLen(q) > SAY_MAX) err(id, `${at} 的 why.say ${cjkLen(q)} 字（≤ ${SAY_MAX}）`);
+            if (q === (b.say || "").trim()) err(id, `${at} 的 why.say 跟 say 一樣：問句念問題，say 是答了之後的講解`);
+            spoken.push(q);
+            const clip = clipOf(id, `${si}-${bi}q`);
+            if (!clip || clip.h !== narrationHash(NARRATION_VOICE, NARRATION_RATE, q)) sayMissing += 1;
+            else if (clip.ms > SAY_MAX_MS) warn(id, `${at} 的問句旁白 ${(clip.ms / 1000).toFixed(1)} 秒（建議 ≤ 12）`);
+          }
+        }
+      }
     });
-    const acts = ["check", "predict", "drag"].filter((k) => sec[k] !== undefined);
-    if (acts.length !== 1) err(id, `${where} 結尾要恰好一個動作（check／predict／drag），現在 ${acts.length ? acts.join("、") : "沒有"}`);
+    if (sec.proof) {
+      const asks = beats.filter((b) => b && b.why !== undefined).length;
+      if (asks > Math.floor(beats.length / 2)) err(id, `${where} 有 ${asks} 句問為什麼（${beats.length} 句裡最多 ${Math.floor(beats.length / 2)}：大約兩三句一問，問太多就變成考試）`);
+      if (beats.length < 3) err(id, `${where}：證明節至少 3 句（策略一句＋至少兩步）`);
+    }
+    const acts = ["check", "predict", "drag", "order", "where"].filter((k) => sec[k] !== undefined);
+    if (acts.length !== 1) err(id, `${where} 結尾要恰好一個動作（check／predict／drag${sec.proof ? "／order／where" : ""}），現在 ${acts.length ? acts.join("、") : "沒有"}`);
     if (sec.check !== undefined) {
       if (!(Number.isInteger(sec.check) && L.checks && L.checks[sec.check])) err(id, `${where} 的 check 要是小測的索引（0–${(L.checks || []).length - 1}）`);
       else usedChecks.push(sec.check);
@@ -378,6 +409,7 @@ function checkSections(id, L) {
       texts.push(d.ask || "");
     }
     if (sec.video !== undefined && !(sec.video === true && L.video)) err(id, `${where} 的 video 只能寫 true，而且這一課要有 video`);
+    shown = Math.max(shown, peak);
     if (shown > 220) err(id, `${where} 畫面上的字 ${shown} 字（一節 ≤ 220；建議 ≤ 150）`);
     else if (shown > 150) warn(id, `${where} 畫面上的字 ${shown} 字（建議 ≤ 150）`);
     const fresh = [...new Set(texts.flatMap(numbersIn))].filter((n) => !local.has(n));
@@ -390,11 +422,166 @@ function checkSections(id, L) {
   const allBeats = S.flatMap((sec) => (sec && Array.isArray(sec.beats) ? sec.beats : []));
   const withSay = allBeats.filter((b) => b && b.say !== undefined).length;
   if (withSay && withSay !== allBeats.length) err(id, `say 要每一句都有（現在 ${withSay} / ${allBeats.length} 句）`);
+  // 問句也一樣：有旁白的課，每一個 why 都要有 why.say（念到問句停下來等答）；沒旁白的課不寫
+  const whys = allBeats.filter((b) => b && b.why);
+  const whySaid = whys.filter((b) => b.why.say !== undefined).length;
+  if (withSay && whySaid !== whys.length) err(id, `有旁白的課每一個 why 都要有 why.say（現在 ${whySaid} / ${whys.length}）`);
+  if (!withSay && whySaid) err(id, "沒有旁白的課不寫 why.say");
   const want = (L.checks || []).map((_c, i) => i);
   const missing = want.filter((i) => !usedChecks.includes(i));
   const twice = usedChecks.filter((c, i) => usedChecks.indexOf(c) !== i);
   if (missing.length || twice.length) err(id, `小測每一題要恰好落在一節（分節讀完＝小測做完）：${missing.length ? `沒放 Q${missing.map((i) => i + 1).join("、Q")}` : ""}${twice.length ? ` 重複 Q${twice.map((i) => i + 1).join("、Q")}` : ""}`);
   return parts.join("\n");
+}
+
+// ── 證明節（sections[].proof = true）──
+// 把全文裡一段可折疊的證明（of = 觀念段落的索引）或一題寫成證明的範例（of = "ex<N>"）一步一句地走；
+// 第一句是策略（skeleton：用哪一種骨架）；句子可以帶 why（「這一步為什麼成立？」三選一，答了才出 note）；
+// 結尾的動作可以是 order（把 3–5 步排回順序）或 where（「〈假設〉用在哪一步？」），也可以是一般的 check／predict。
+const SKELETONS = ["直接", "反證", "歸納", "ε-δ", "夾擠", "構造", "分情況"];
+const TRIVIAL = /^(對|錯|是|否|以上皆是|以上皆非|都對|都不對|不知道)$/;
+function checkOptions(id, at, opts, { n, labelKey = "label" } = {}) {
+  // 選項要有內容：數量對、恰好一個正解、錯的都有 why、標籤不重複、不是「對／錯／以上皆是」這種空話、錯的 why 不能抄來抄去
+  if (!Array.isArray(opts)) { err(id, `${at} 的選項要是陣列`); return []; }
+  if (n && opts.length !== n) err(id, `${at} 要 ${n} 個選項，現在 ${opts.length}`);
+  if (opts.filter((o) => o && o.correct === true).length !== 1) err(id, `${at} 正解要恰好一個`);
+  const labels = opts.map((o) => String((o && o[labelKey]) || "").trim());
+  labels.forEach((l) => {
+    if (!l) err(id, `${at} 有空的選項`);
+    else if (TRIVIAL.test(l.replace(/\$/g, ""))) err(id, `${at} 的選項「${l}」是空話：寫出具體的理由或步驟`);
+    else if (cjkLen(l) > 40) err(id, `${at} 的選項「${l}」${cjkLen(l)} 字（≤ 40）`);
+  });
+  if (new Set(labels).size !== labels.length) err(id, `${at} 有重複的選項`);
+  const whys = opts.filter((o) => o && !o.correct).map((o) => String(o.why || "").trim());
+  whys.forEach((w, k) => { if (!w) err(id, `${at} 的錯誤選項「${opts.filter((o) => o && !o.correct)[k][labelKey]}」沒有 why（說你是怎麼錯到這裡的）`); });
+  if (whys.filter(Boolean).length !== new Set(whys.filter(Boolean)).size) err(id, `${at} 的錯誤選項 why 一模一樣：每一個都要說它自己是怎麼錯的`);
+  return labels;
+}
+// 句子的 why → 回傳「問著的時候」畫面上多出來的字（問句＋三個選項）
+function checkWhy(id, at, b, texts) {
+  const w = b.why;
+  if (!w || typeof w !== "object" || Array.isArray(w)) { err(id, `${at} 的 why 要是物件 { options, say? }`); return 0; }
+  const odd = Object.keys(w).filter((k) => !["ask", "options", "say"].includes(k));
+  if (odd.length) err(id, `${at} 的 why 多了：${odd.join("、")}`);
+  const labels = checkOptions(id, `${at} 的 why`, w.options, { n: 3 });
+  const ask = w.ask === undefined ? "這一步為什麼成立？" : String(w.ask);
+  if (!ask.trim()) err(id, `${at} 的 why.ask 是空的`);
+  texts.push(ask, ...(w.options || []).flatMap((o) => [o.label || "", o.why || ""]));
+  return cjkLen(ask) + labels.reduce((n, l) => n + cjkLen(l), 0);
+}
+function checkProof(id, L, sec, where, texts) {
+  if (sec.proof !== true) { err(id, `${where} 的 proof 只能寫 true`); return; }
+  // of：證明的出處 —— 全文裡可折疊的那一段，或寫成證明的範例
+  const of = sec.of;
+  if (Number.isInteger(of)) {
+    const c = (L.concept || [])[of];
+    if (!c) err(id, `${where} 的 of = ${of} 不是觀念段落的索引`);
+    else if (c.collapsible !== true) err(id, `${where} 的 of 指到「${c.heading}」，但它不是可折疊的證明段落`);
+  } else if (typeof of === "string" && /^ex\d+$/.test(of)) {
+    const ex = (L.workedExamples || [])[Number(of.slice(2))];
+    if (!ex) err(id, `${where} 的 of = "${of}" 沒有這一題範例`);
+    else if (!/證明|證/.test(`${ex.title}${ex.prompt}`)) err(id, `${where} 的 of 指到範例「${ex.title}」，但它不是證明`);
+  } else err(id, `${where} 要有 of：可折疊證明段落的索引（數字），或範例 "ex<N>"`);
+  if (!SKELETONS.includes(sec.skeleton)) err(id, `${where} 的 skeleton 要是 ${SKELETONS.join("／")} 之一`);
+  if (sec.order !== undefined) {
+    const o = sec.order || {};
+    const odd = Object.keys(o).filter((k) => !["ask", "steps"].includes(k));
+    if (odd.length) err(id, `${where} 的 order 多了：${odd.join("、")}`);
+    const steps = Array.isArray(o.steps) ? o.steps : [];
+    if (steps.length < 3 || steps.length > 5) err(id, `${where} 的 order 要 3–5 步，現在 ${steps.length}`);
+    const labels = steps.map((s) => String((s && s.label) || "").trim());
+    if (labels.some((l) => !l)) err(id, `${where} 的 order 有空的步驟`);
+    if (new Set(labels).size !== labels.length) err(id, `${where} 的 order 有重複的步驟（排不出唯一的順序）`);
+    labels.forEach((l) => { if (cjkLen(l) > 40) err(id, `${where} 的 order 步驟「${l}」${cjkLen(l)} 字（≤ 40）`); });
+    // 第 2 步起每一步都要說「要先有什麼」：點太早的時候給看
+    steps.forEach((s, k) => { if (k > 0 && !(s && typeof s.why === "string" && s.why.trim())) err(id, `${where} 的 order 第 ${k + 1} 步沒有 why（點太早時說要先有什麼）`); });
+    if (o.ask !== undefined && !String(o.ask).trim()) err(id, `${where} 的 order.ask 是空的`);
+    texts.push(o.ask || "", ...steps.flatMap((s) => [(s && s.label) || "", (s && s.why) || ""]));
+  }
+  if (sec.where !== undefined) {
+    const w = sec.where || {};
+    const odd = Object.keys(w).filter((k) => !["ask", "steps"].includes(k));
+    if (odd.length) err(id, `${where} 的 where 多了：${odd.join("、")}`);
+    if (typeof w.ask !== "string" || !w.ask.trim()) err(id, `${where} 的 where 沒有 ask（「〈假設〉用在哪一步？」）`);
+    const steps = Array.isArray(w.steps) ? w.steps : [];
+    if (steps.length < 3) err(id, `${where} 的 where 至少 3 步，現在 ${steps.length}`);
+    checkOptions(id, `${where} 的 where`, steps);
+    texts.push(w.ask || "", ...steps.flatMap((s) => [(s && s.label) || "", (s && s.why) || ""]));
+  }
+}
+// 自測：一課合格的假課（四節：三節先猜＋一節證明），一次弄壞一個地方，要紅在那裡；合格的那一份要零錯誤。
+// 證明節的規則改壞了（例如 why 不再要三個選項）就在這裡紅，不等某一課的稿碰到。
+{
+  const opt = (label, correct) => (correct ? { label, correct: true } : { label, why: `${label}是怎麼錯的` });
+  const predictSec = (title) => ({ title, beats: [{ show: ["甲"] }, { show: ["乙"] }], predict: { ask: "猜？", options: [opt("甲", true), opt("乙"), opt("丙")] } });
+  const good = () => ({
+    id: "selftest-proof",
+    title: "自測",
+    objectives: [],
+    concept: [{ heading: "定理", body: ["一個定理"] }, { heading: "證明", body: ["一步一步"], collapsible: true }],
+    workedExamples: [{ title: "證明一件事", prompt: "證明它", steps: ["步"], answer: "得證" }],
+    checks: [],
+    sections: [predictSec("一"), predictSec("二"), predictSec("三"), {
+      title: "證明", proof: true, of: 1, skeleton: "反證",
+      beats: [
+        { show: ["策略"] },
+        { show: ["第一步"], note: "因為前提", why: { options: [opt("因為前提", true), opt("因為結論"), opt("因為圖")] } },
+        { show: ["第二步"] },
+        { show: ["第三步"] }
+      ],
+      order: { steps: [{ label: "甲步" }, { label: "乙步", why: "要先有甲步" }, { label: "丙步", why: "要先有乙步" }] }
+    }]
+  });
+  const proofOf = (L) => L.sections[3];
+  const voice = (L) => L.sections.forEach((s, i) => s.beats.forEach((b, k) => { b.say = `講解${["甲", "乙", "丙", "丁", "戊"][i]}節的${["甲", "乙", "丙", "丁"][k]}`; }));
+  const cases = [
+    ["合格", () => {}, null],
+    ["of 指到不可折疊的段落", (L) => { proofOf(L).of = 0; }, /不是可折疊的證明段落/],
+    ["沒有 of", (L) => { delete proofOf(L).of; }, /要有 of/],
+    ["of 指到範例（合格）", (L) => { proofOf(L).of = "ex0"; }, null],
+    ["of 指到不存在的範例", (L) => { proofOf(L).of = "ex5"; }, /沒有這一題範例/],
+    ["skeleton 亂寫", (L) => { proofOf(L).skeleton = "魔法"; }, /skeleton/],
+    ["why 只有兩個選項", (L) => { proofOf(L).beats[1].why.options.pop(); }, /要 3 個選項/],
+    ["why 兩個正解", (L) => { proofOf(L).beats[1].why.options[1] = { label: "因為結論", correct: true }; }, /正解要恰好一個/],
+    ["why 錯的選項沒有 why", (L) => { delete proofOf(L).beats[1].why.options[2].why; }, /沒有 why/],
+    ["why 的選項是空話", (L) => { proofOf(L).beats[1].why.options[2].label = "以上皆是"; }, /空話/],
+    ["why 的錯誤理由抄同一句", (L) => { proofOf(L).beats[1].why.options[1].why = "一樣"; proofOf(L).beats[1].why.options[2].why = "一樣"; }, /一模一樣/],
+    ["有 why 卻沒有 note", (L) => { delete proofOf(L).beats[1].note; }, /有 why 就要有 note/],
+    ["第一句（策略）問為什麼", (L) => { proofOf(L).beats[0].note = "策略"; proofOf(L).beats[0].why = proofOf(L).beats[1].why; }, /第一句是策略/],
+    ["問太多次", (L) => { const w = proofOf(L).beats[1].why; [2, 3].forEach((k) => { proofOf(L).beats[k].note = "因為"; proofOf(L).beats[k].why = w; }); }, /最多 2/],
+    ["一般的節用 why", (L) => { L.sections[0].beats[1].note = "因為"; L.sections[0].beats[1].why = proofOf(L).beats[1].why; }, /只能用在證明節/],
+    ["一般的節用 order", (L) => { L.sections[0].order = proofOf(L).order; delete L.sections[0].predict; }, /只能用在證明節/],
+    ["order 只有兩步", (L) => { proofOf(L).order.steps.pop(); }, /order 要 3–5 步/],
+    ["order 有六步", (L) => { const s = proofOf(L).order.steps; ["丁步", "戊步", "己步"].forEach((l) => s.push({ label: l, why: "先" })); }, /order 要 3–5 步/],
+    ["order 有重複的步驟", (L) => { proofOf(L).order.steps[2].label = "乙步"; }, /重複的步驟/],
+    ["order 的後面幾步沒說要先有什麼", (L) => { delete proofOf(L).order.steps[2].why; }, /第 3 步沒有 why/],
+    ["where 只有兩步", (L) => { delete proofOf(L).order; proofOf(L).where = { ask: "前提用在哪一步？", steps: [opt("甲步", true), opt("乙步")] }; }, /至少 3 步/],
+    ["where 沒有正解", (L) => { delete proofOf(L).order; proofOf(L).where = { ask: "前提用在哪一步？", steps: [opt("甲步"), opt("乙步"), opt("丙步")] }; }, /正解要恰好一個/],
+    ["where 合格", (L) => { delete proofOf(L).order; proofOf(L).where = { ask: "前提用在哪一步？", steps: [opt("甲步", true), opt("乙步"), opt("丙步")] }; }, null],
+    ["order 跟 where 都有", (L) => { proofOf(L).where = { ask: "前提用在哪一步？", steps: [opt("甲步", true), opt("乙步"), opt("丙步")] }; }, /恰好一個動作/],
+    ["證明節寫了課文沒有的數字", (L) => { proofOf(L).beats[2].show = ["第 42 步"]; }, /沒有的數字：42/],
+    ["why 的選項寫了課文沒有的數字", (L) => { proofOf(L).beats[1].why.options[2].label = "因為 77"; }, /沒有的數字：77/],
+    ["有旁白的課 why 沒有 why.say", (L) => { voice(L); }, /why\.say/],
+    ["why.say 跟 say 一樣", (L) => { voice(L); proofOf(L).beats[1].why.say = proofOf(L).beats[1].say; }, /跟 say 一樣/],
+    ["why.say 念了課文沒有的數字", (L) => { voice(L); proofOf(L).beats[1].why.say = "想想看九十九"; }, /念了課文裡沒有的數字/],
+    ["有旁白的課（合格）", (L) => { voice(L); proofOf(L).beats[1].why.say = "停下來想想為什麼"; }, null],
+    ["證明節的節數可以到 7", (L) => { L.sections.splice(0, 0, predictSec("五"), predictSec("六"), predictSec("七")); }, null],
+    ["沒有證明節的課最多 6 節", (L) => { L.sections.splice(0, 0, predictSec("五"), predictSec("六"), predictSec("七"), predictSec("八")); L.sections.pop(); }, /4–6 節/],
+    ["why 掛著的時候畫面太滿", (L) => { const long = "很長的一句理由寫得非常非常非常非常非常非常非常非常非常非常非常非常長"; proofOf(L).beats[1].why.options = [opt(`${long}甲`, true), opt(`${long}乙`), opt(`${long}丙`)]; proofOf(L).beats[0].show = [`${long}`, `${long}`]; proofOf(L).beats[1].show = [`${long}`, `${long}`]; }, /畫面上的字/]
+  ];
+  const keepMissing = sayMissing;
+  const keepWarn = warnings.length;
+  cases.forEach(([name, mutate, want]) => {
+    const L = good();
+    mutate(L);
+    const before = errors.length;
+    checkSections(L.id, L);
+    const got = errors.splice(before);
+    if (!want && got.length) errors.push(`自測（證明節）「${name}」應該合格，卻報了：${got[0]}`);
+    if (want && !got.some((e) => want.test(e))) errors.push(`自測（證明節）「${name}」應該報 ${want}，實際：${got.length ? got.join(" | ") : "沒有錯誤"}`);
+  });
+  sayMissing = keepMissing;
+  warnings.splice(keepWarn);
 }
 
 function checkFigures(id, L) {
@@ -592,10 +779,13 @@ console.log(`新版課程：大綱 ${all} 課，已寫 ${written} 課${wanted.le
       return;
     }
     const beats = [];
-    L.sections.forEach((sec, si) => (sec.beats || []).forEach((b, bi) => beats.push({ b, key: `${si}-${bi}` })));
+    L.sections.forEach((sec, si) => (sec.beats || []).forEach((b, bi) => {
+      if (b.why && b.why.say !== undefined) beats.push({ b: b.why, key: `${si}-${bi}q` }); // 問句：在這一句之前念
+      beats.push({ b, key: `${si}-${bi}` });
+    }));
     row.sec += 1;
     secN += 1;
-    beatN += beats.length;
+    beatN += beats.filter(({ key }) => !key.endsWith("q")).length;
     const said = beats.filter(({ b }) => typeof b.say === "string" && b.say.trim());
     if (said.length && said.length === beats.length) { row.say += 1; sayN += 1; }
     if (said.length && said.every(({ b, key }) => { const c = clipOf(L.id, key); return c && c.h === narrationHash(NARRATION_VOICE, NARRATION_RATE, b.say.trim()); })) { row.voiced += 1; voicedN += 1; }
