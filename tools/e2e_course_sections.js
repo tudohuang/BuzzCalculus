@@ -14,6 +14,9 @@
 //   下一節接著念；暫停不再往下、繼續接著；語速設到 playbackRate（換句之後還在）；字幕是亮著那一句的 say；重開這一課就停；載不到（先重試一次）留一行字、點的照樣做完。
 //   跟著念（390／360／430 寬、DPR 3、字幕、1.5×）：每一句都在 dock 上面、不被黏著的圖蓋住；dock 底 = 分頁列頂 − 8；視窗變矮照樣；
 //   自己往上捲不被拉回、下一句才帶回；念完動作在 dock 上面、捲到底「下一節」清得開。
+//   證明節（course_proof.js，有證明節的課才抓）：why 擋在白話前面（點句子、→ 都不跳過）、選錯看理由留在原地、選對出白話與「下一句」、直接看；
+//   order 洗過（固定洗牌、不是排好的）、點錯搖一下說要先有什麼、Enter 排完、念位置；where 選錯／選對；XP 一次；旁白念問句停下來等、答了接著念；
+//   390／360 寬不溢出、按鈕 ≥ 40px、問題卡與動作在 dock 上面。截圖（--screenshots）另存 screens/proof-sections/。
 //
 // 用法：node tools/e2e_course_sections.js
 //       node tools/e2e_course_sections.js --screenshots   另存截圖到 docs/report/course-review/screens/sections/（不進版控）
@@ -37,6 +40,11 @@ const WIDGET = lessonOf("riemann-sum-intuition");
 // 跟著念：有黏著的圖（兩張）、影片、小測、句子長的那一節
 const FOLLOW = lessonOf("ftc-part1");
 const FOLLOW_SI = 1;
+// 證明節（src/course_proof.js）：why＋order（ε-δ）、why＋where（控制收斂、Rolle）
+const PROOF_ORDER = lessonOf("epsilon-delta-quadratic");
+const PROOF_WHERE = lessonOf("dominated-convergence");
+const PROOF_ROLLE = lessonOf("rolle-theorem");
+const PSHOTS = SHOTS ? path.join(ROOT, "docs", "report", "course-review", "screens", "proof-sections") : "";
 // 旁白：/media/narration/ 的請求一律由這支測試自己回（CDP Fetch 攔下來），不靠 Release —— 上傳之前 CI 也測得到。
 // 回的是合成的無聲 mp3（MPEG-2 Layer III、24kHz、48kbps，一格 144 bytes = 24ms），長度由測試控制；mode = "fail" 時回 404。
 const { mp3Ms } = require("./build_narration.js");
@@ -71,7 +79,7 @@ const HELPERS = `
     beats() { return document.querySelectorAll("[data-cv2s] .cv2s-beat").length; },
     rec() { try { return JSON.parse(localStorage.getItem("buzzcalculus.records.v1") || "{}"); } catch (e) { return {}; } },
     today() { const d = new Date(); return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0"); },
-    files() { return performance.getEntriesByType("resource").map((e) => e.name).filter((n) => /course_sections\\.js/.test(n)).length; },
+    files(re) { return performance.getEntriesByType("resource").map((e) => e.name).filter((n) => (re || /course_sections\\.js/).test(n)).length; },
     overflow() { const d = document.documentElement; return d.scrollWidth - d.clientWidth; },
     rect(el) { const r = el.getBoundingClientRect(); return [r.left, r.top, r.width, r.height].map((v) => Math.round(v * 10) / 10).join(","); },
     dockSmall() { return [...document.querySelectorAll(".cv2s-dock button")].map((n) => { const r = n.getBoundingClientRect(); return Math.round(Math.min(r.width, r.height)); }).filter((s) => s < 40); },
@@ -147,15 +155,34 @@ async function run() {
   const finishSection = async (lesson) => {
     const si = await evaluate(`return window.__s.si();`);
     const sec = lesson.sections[si];
-    for (let k = 0; k < sec.beats.length && (await evaluate(`return window.__s.beats();`)) < sec.beats.length; k += 1) await tap('[data-cv2s-next]');
+    // 證明節：句子問「為什麼」時選正解（還沒答就沒有「下一句」）
+    const answerWhy = async () => {
+      const bi = await evaluate(`const c = document.querySelector('[data-cv2s-act="why"] [data-action="course-s-why"]:not([disabled])'); return c ? Number(c.dataset.beat) : -1;`);
+      if (bi >= 0) await tap(`[data-action="course-s-why"][data-beat="${bi}"][data-option="${correctOf(sec.beats[bi].why)}"]`);
+    };
+    for (let k = 0; k < 2 * sec.beats.length + 2; k += 1) {
+      await answerWhy();
+      if ((await evaluate(`return window.__s.beats();`)) >= sec.beats.length) break;
+      await tap('[data-cv2s-next]');
+    }
+    await answerWhy();
     if (sec.check !== undefined) await tap(`[data-action="course-s-pick"][data-kind="check"][data-option="${correctOf(lesson.checks[sec.check])}"]`);
     if (sec.predict) await tap(`[data-action="course-s-pick"][data-kind="predict"][data-option="0"]`);
+    if (sec.order) for (let j = 0; j < sec.order.steps.length; j += 1) await tap(`[data-action="course-s-ord"][data-step="${j}"]`);
+    if (sec.where) await tap(`[data-action="course-s-whr"][data-option="${correctOf({ options: sec.where.steps })}"]`);
     if (sec.drag) {
       const v = (sec.drag.range[0] + sec.drag.range[1]) / 2;
       await evaluate(`const i = window.__s.fig(${sec.drag.use}).querySelector("input"); i.value = "${v}"; i.dispatchEvent(new Event("input", { bubbles: true })); i.dispatchEvent(new Event("change", { bubbles: true })); return 1;`);
       await sleep(200);
     }
-    return sec.check !== undefined ? "check" : sec.predict ? "predict" : "drag";
+    return sec.check !== undefined ? "check" : sec.predict ? "predict" : sec.order ? "order" : sec.where ? "where" : "drag";
+  };
+  const pshot = async (name) => {
+    if (!PSHOTS) return;
+    fs.mkdirSync(PSHOTS, { recursive: true });
+    await sleep(400);
+    const { data } = await chrome.send("Page.captureScreenshot", { format: "png" });
+    fs.writeFileSync(path.join(PSHOTS, `${name}.png`), Buffer.from(data, "base64"));
   };
 
   // 一課一支：回的檔長 narr.total 毫秒（retime 把每一句的 t 改成一句 narr.ms、首尾相接），照 Range 回 206（跟 Vercel／Release 一樣）。
@@ -183,7 +210,7 @@ async function run() {
   const retime = async (id, ms, name = "e2etest0") => {
     narr.ms = ms;
     narr.total = await evaluate(`const L = window.BUZZ_COURSE_V2_LESSONS[${JSON.stringify(id)}]; let at = 0; L.voice = ${JSON.stringify(name)};
-      L.sections.forEach((s) => s.beats.forEach((b) => { if (b.say) { b.t = [at, at + ${ms}]; at += ${ms}; } else delete b.t; })); return at;`);
+      L.sections.forEach((s) => s.beats.forEach((b) => { if (b.why && b.why.say) { b.why.t = [at, at + ${ms}]; at += ${ms}; } if (b.say) { b.t = [at, at + ${ms}]; at += ${ms}; } else delete b.t; })); return at;`);
     return narr.total;
   };
 
@@ -525,6 +552,191 @@ async function run() {
     }
     await evaluate(`const r = window.__s.rec(); r.settings = { ...(r.settings || {}), narrSubs: false, narrRate: 1 }; localStorage.setItem("buzzcalculus.records.v1", JSON.stringify(r)); return 1;`);
     await chrome.send("Emulation.setDeviceMetricsOverride", PHONE);
+
+    /* ── 證明節（course_proof.js）：why 擋在白話前面、直接看、排順序（洗過、點錯有說明、鍵盤）、用在哪一步、XP 一次、旁白停在問句 ── */
+    const PR = PROOF_ORDER;
+    const prSi = PR.sections.findIndex((s) => s.proof);
+    const prSec = PR.sections[prSi];
+    const why1 = prSec.beats.findIndex((b) => b.why);
+    const why2 = prSec.beats.findIndex((b, k) => k > why1 && b.why);
+    // 句子點到動作前（why 選正解）
+    const toAction = async (sec) => {
+      for (let k = 0; k < 2 * sec.beats.length + 2; k += 1) {
+        const bi = await evaluate(`const c = document.querySelector('[data-cv2s-act="why"] [data-action="course-s-why"]:not([disabled])'); return c ? Number(c.dataset.beat) : -1;`);
+        if (bi >= 0) await tap(`[data-action="course-s-why"][data-beat="${bi}"][data-option="${correctOf(sec.beats[bi].why)}"]`);
+        if (await evaluate(`return Boolean(document.querySelector('[data-cv2s-act="where"], [data-cv2s-act="order"]'));`)) break;
+        await tap("[data-cv2s-next]");
+      }
+    };
+    check("沒有證明節的課都沒抓 course_proof.js", (await evaluate(`return window.__s.files(/course_proof\\.js/);`)) === 0);
+    check(`證明節：打開 ${PR.id}`, await openLesson(PR.id));
+    check("有證明節的課才抓 course_proof.js（只一次）", await waitFor(`window.BuzzCourseProof && window.__s.root()`, 6000) && (await evaluate(`return window.__s.files(/course_proof\\.js/);`)) === 1);
+    await tap(`.cv2s-dot:nth-child(${prSi + 1})`);
+    await waitFor(`window.__s.si() === ${prSi}`);
+    const head0 = await evaluate(`return { tag: window.__s.text("[data-cv2s] .cv2s-sec h3 .cv2p-tag"), beats: window.__s.beats() };`);
+    check(`證明節的節名旁邊標「證明 · ${prSec.skeleton}」，第一句是策略`, head0.tag === `證明 · ${prSec.skeleton}` && head0.beats === 1, JSON.stringify(head0));
+    for (let k = 1; k <= why1; k += 1) await tap("[data-cv2s-next]");
+    const ask0 = await evaluate(`const now = document.querySelector("[data-cv2s] .cv2s-beat.is-now"); const card = document.querySelector('[data-cv2s-act="why"]');
+      return { bi: Number(now.dataset.beat), note: Boolean(now.querySelector(".cv2s-note")), card: Boolean(card), opts: document.querySelectorAll('[data-cv2s-act="why"] [data-action="course-s-why"]').length,
+        next: Boolean(document.querySelector("[data-cv2s-next]")), see: window.__s.text('[data-cv2s-act="why"] [data-action="course-s-see"]'), role: card && card.getAttribute("role") + "|" + card.getAttribute("aria-label") };`);
+    check("why：句子出來時先問「為什麼」，白話（note）還沒出現", ask0.bi === why1 && ask0.card && !ask0.note && ask0.opts === 3, JSON.stringify(ask0));
+    check("why：還沒答就沒有「下一句」，但有「直接看」", !ask0.next && ask0.see === "直接看", JSON.stringify(ask0));
+    check("why：問題卡是一個有名字的 group（螢幕閱讀器）", ask0.role === "group|這一步為什麼成立", ask0.role);
+    await tap(".cv2s-beats");
+    await key("ArrowRight", "ArrowRight", 39);
+    check("why：問著的時候點句子、→ 鍵都不會跳過", (await evaluate(`return window.__s.beats();`)) === why1 + 1);
+    const pw1 = prSec.beats[why1].why;
+    await tap(`[data-action="course-s-why"][data-beat="${why1}"][data-option="${wrongOf(pw1)}"]`);
+    const ask1 = await evaluate(`return { why: window.__s.text('[data-cv2s-act="why"] .course-check-why'), note: Boolean(document.querySelector("[data-cv2s] .cv2s-beat.is-now .cv2s-note")), next: Boolean(document.querySelector("[data-cv2s-next]")), left: document.querySelectorAll('[data-cv2s-act="why"] [data-action="course-s-why"]:not([disabled])').length };`);
+    check("why 選錯：看到那個選項的理由、還在原地（白話沒出、沒有下一句、可以再選）", ask1.why.includes(pw1.options[wrongOf(pw1)].why.replace(/\$[^$]*\$/g, "").slice(0, 4)) && !ask1.note && !ask1.next && ask1.left === 2, JSON.stringify(ask1));
+    await pshot("phone-light-why-wrong");
+    await tap(`[data-action="course-s-why"][data-beat="${why1}"][data-option="${correctOf(pw1)}"]`);
+    const ask2 = await evaluate(`return { note: window.__s.text("[data-cv2s] .cv2s-beat.is-now .cv2s-note"), ok: /對了/.test(window.__s.text('[data-cv2s-act="why"]')), next: Boolean(document.querySelector("[data-cv2s-next]")), focus: Boolean(document.activeElement && document.activeElement.matches("[data-cv2s-next]")) };`);
+    check("why 選對：白話出現、打勾、「下一句」回來", ask2.note.length > 0 && ask2.ok && ask2.next, JSON.stringify(ask2));
+    check("why 選對：焦點移到「下一句」（鍵盤可以接著走）", ask2.focus);
+    for (let k = why1 + 1; k <= why2; k += 1) await tap("[data-cv2s-next]");
+    check("第二個 why 出現", await waitFor(`document.querySelector('[data-cv2s-act="why"] [data-action="course-s-see"]') && !document.querySelector("[data-cv2s] .cv2s-beat.is-now .cv2s-note")`, 3000));
+    const askGeo = await evaluate(`await new Promise((r) => setTimeout(r, 900)); const a = document.querySelector('[data-cv2s-act="why"]').getBoundingClientRect(); const d = document.querySelector(".cv2s-dock").getBoundingClientRect(); return { bottom: Math.round(a.bottom), dock: Math.round(d.top), overflow: window.__s.overflow(), small: window.__s.small() };`);
+    check("why：問題卡自己捲進畫面、在播放列上面", askGeo.bottom <= askGeo.dock - 7, JSON.stringify(askGeo));
+    check("why：390 寬不溢出、選項與「直接看」都 ≥ 40px", askGeo.overflow <= 1 && !askGeo.small.length, JSON.stringify(askGeo.small));
+    await pshot("phone-light-why");
+    await tap(`[data-action="course-s-see"][data-beat="${why2}"]`);
+    const seeIt = await evaluate(`return { note: window.__s.text("[data-cv2s] .cv2s-beat.is-now .cv2s-note"), ans: window.__s.text('.cv2p-whyline') + window.__s.text('[data-cv2s-act="why"] .course-check-why'), last: window.__s.beats() };`);
+    check("直接看：白話出現、寫出答案", seeIt.note.length > 0 && /答案是/.test(seeIt.ans), JSON.stringify(seeIt));
+    for (let k = seeIt.last; k < prSec.beats.length; k += 1) await tap("[data-cv2s-next]");
+    // 排順序
+    const ord0 = await evaluate(`return { act: Boolean(document.querySelector('[data-cv2s-act="order"]')), steps: [...document.querySelectorAll('[data-action="course-s-ord"]')].map((b) => Number(b.dataset.step)), slots: document.querySelectorAll(".cv2p-built li.is-slot").length, labels: [...document.querySelectorAll('[data-action="course-s-ord"]')].map((b) => b.getAttribute("aria-label")) };`);
+    const ordN = prSec.order.steps.length;
+    check(`order：${ordN} 步、洗過（不是排好的順序）`, ord0.act && ord0.steps.length === ordN && ord0.steps.join() !== [...Array(ordN).keys()].join() && ord0.slots === ordN, ord0.steps.join());
+    check("order：洗出來的順序跟 course_proof.js 的固定洗牌一樣（同一課同一節每次一樣）", (await evaluate(`return window.BuzzCourseProof.shuffle(${ordN}, "${PR.id}#${prSi}").join();`)) === ord0.steps.join());
+    check("order：每一顆的名字說它會放在第幾步（螢幕閱讀器）", ord0.labels.every((l) => /放在第 1 步$/.test(l)), ord0.labels[0]);
+    const xpOrd = await evaluate(`return window.__s.rec().xp || 0;`);
+    const early = ord0.steps.find((j) => j !== 0);
+    await tap(`[data-action="course-s-ord"][data-step="${early}"]`);
+    const ordBad = await evaluate(`return { shake: Boolean(document.querySelector('[data-action="course-s-ord"][data-step="${early}"].is-shake')), live: window.__s.text("[data-cv2p-live]"), sr: [...document.querySelectorAll('[data-cv2s-act="order"] .sr-only[aria-live]')].map((x) => x.textContent).join(), built: document.querySelectorAll(".cv2p-built li:not(.is-slot)").length };`);
+    check("order 點錯：那一顆搖一下、說要先有什麼、什麼都沒排上去", ordBad.shake && ordBad.live.startsWith("還不行") && ordBad.built === 0 && /還不行/.test(ordBad.sr), JSON.stringify(ordBad));
+    await tap(`[data-action="course-s-ord"][data-step="0"]`);
+    const ordOne = await evaluate(`const first = document.querySelector('[data-action="course-s-ord"]'); return { built: document.querySelectorAll(".cv2p-built li:not(.is-slot)").length, sr: [...document.querySelectorAll('[data-cv2s-act="order"] .sr-only[aria-live]')].map((x) => x.textContent).join(), left: document.querySelectorAll('[data-action="course-s-ord"]').length, focus: Boolean(document.activeElement && document.activeElement.matches('.cv2p-left [data-action="course-s-ord"]')), label: first ? first.getAttribute("aria-label") : "" };`);
+    check("order 點對第一步：排上去、念「第 1 步」、焦點留在剩下的步驟上", ordOne.built === 1 && /^第 1 步/.test(ordOne.sr) && ordOne.left === ordN - 1 && ordOne.focus && /放在第 2 步$/.test(ordOne.label), JSON.stringify(ordOne));
+    await sleep(300);
+    const ordGeo = await evaluate(`return { overflow: window.__s.overflow(), small: window.__s.small() };`);
+    check("order：390 寬不溢出、步驟按鈕 ≥ 40px", ordGeo.overflow <= 1 && !ordGeo.small.length, JSON.stringify(ordGeo));
+    await pshot("phone-light-order-mid");
+    // 鍵盤：剩下的每一步拿到焦點、按 Enter
+    for (let j = 1; j < ordN; j += 1) {
+      await evaluate(`document.querySelector('[data-action="course-s-ord"][data-step="${j}"]').focus(); return 1;`);
+      await chrome.send("Input.dispatchKeyEvent", { type: "keyDown", key: "Enter", code: "Enter", windowsVirtualKeyCode: 13, text: "\r" });
+      await chrome.send("Input.dispatchKeyEvent", { type: "keyUp", key: "Enter", code: "Enter", windowsVirtualKeyCode: 13 });
+      await sleep(200);
+    }
+    const ordDone = await evaluate(`const r = window.__s.rec(); return { done: /順序對了/.test(window.__s.text('[data-cv2s-act="order"]')), built: document.querySelectorAll(".cv2p-built li:not(.is-slot)").length, dot: document.querySelectorAll(".cv2s-dot")[${prSi}].classList.contains("is-done"), xp: r.xp || 0, chip: window.__s.text(".cv2s-xp"), sr: [...document.querySelectorAll('[data-cv2s-act="order"] .sr-only[aria-live]')].map((x) => x.textContent).join() };`);
+    check("order 用鍵盤（Enter）排完：順序對了、這一節打勾、+5 XP（點錯不扣也不加）", ordDone.done && ordDone.built === ordN && ordDone.dot && ordDone.xp === xpOrd + 5 && ordDone.chip === "+5 XP" && /排好了/.test(ordDone.sr), JSON.stringify(ordDone));
+    await pshot("phone-light-order-done");
+    // 重做這一節：XP 不再加
+    check(`再打開 ${PR.id}`, await openLesson(PR.id));
+    await tap(`.cv2s-dot:nth-child(${prSi + 1})`);
+    await waitFor(`window.__s.si() === ${prSi}`);
+    await finishSection(PR);
+    const again2 = await evaluate(`return { xp: window.__s.rec().xp || 0, done: /順序對了/.test(window.__s.text('[data-cv2s-act="order"]')) };`);
+    check("證明節重做一次：XP 不再加", again2.done && again2.xp === xpOrd + 5, JSON.stringify(again2));
+
+    // 用在哪一步
+    const PW = PROOF_WHERE;
+    const pwSi = PW.sections.findIndex((s) => s.where);
+    const pwSec = PW.sections[pwSi];
+    check(`where：打開 ${PW.id}`, await openLesson(PW.id));
+    await tap(`.cv2s-dot:nth-child(${pwSi + 1})`);
+    await waitFor(`window.__s.si() === ${pwSi}`);
+    await toAction(pwSec);
+    const whereSteps = pwSec.where.steps;
+    const wr0 = await evaluate(`return { act: Boolean(document.querySelector('[data-cv2s-act="where"]')), n: document.querySelectorAll('[data-action="course-s-whr"]').length, labels: [...document.querySelectorAll('[data-action="course-s-whr"]')].map((b) => b.getAttribute("aria-label")), xp: window.__s.rec().xp || 0 };`);
+    check(`where：證明的 ${whereSteps.length} 步照順序列出來，名字是「第 n 步：…」`, wr0.act && wr0.n === whereSteps.length && wr0.labels.every((l, k) => l.startsWith(`第 ${k + 1} 步：`)), JSON.stringify(wr0.labels));
+    const wrongStep = whereSteps.findIndex((x) => !x.correct);
+    await tap(`[data-action="course-s-whr"][data-option="${wrongStep}"]`);
+    const wr1 = await evaluate(`return { why: window.__s.text('[data-cv2s-act="where"] .course-check-why'), xp: window.__s.rec().xp || 0, picked: Boolean(document.querySelector('[data-action="course-s-whr"][data-option="${wrongStep}"].is-picked')) };`);
+    check("where 選錯：那一步標起來、說它其實只用到什麼、沒給 XP", wr1.picked && wr1.why.startsWith(`第 ${wrongStep + 1} 步`) && wr1.xp === wr0.xp, JSON.stringify(wr1));
+    await pshot("phone-light-where-wrong");
+    await tap(`[data-action="course-s-whr"][data-option="${whereSteps.findIndex((x) => x.correct)}"]`);
+    const wr2 = await evaluate(`await new Promise((r) => setTimeout(r, 900)); const b = document.querySelector("[data-cv2s-next]").getBoundingClientRect(); const d = document.querySelector(".cv2s-dock").getBoundingClientRect();
+      return { ok: /對了/.test(window.__s.text('[data-cv2s-act="where"]')), xp: window.__s.rec().xp || 0, dot: document.querySelectorAll(".cv2s-dot")[${pwSi}].classList.contains("is-done"), bar: Math.round(b.bottom), dock: Math.round(d.top), overflow: window.__s.overflow(), small: window.__s.small() };`);
+    check("where 選對：打勾、這一節做完、+5 XP", wr2.ok && wr2.dot && wr2.xp === wr0.xp + 5, JSON.stringify(wr2));
+    check("where：「完成這一課」在播放列上面、390 寬不溢出、按鈕 ≥ 40px", wr2.bar <= wr2.dock - 7 && wr2.overflow <= 1 && !wr2.small.length, JSON.stringify(wr2));
+    await pshot("phone-light-where");
+
+    // 旁白：念到有 why 的那一句先念問句、停下來等答（不往下）；答了接著念這一句的 say、再往下
+    const RL = PROOF_ROLLE;
+    const rSi = RL.sections.findIndex((s) => s.proof);
+    const rSec = RL.sections[rSi];
+    const rWhy = rSec.beats.findIndex((b) => b.why);
+    await evaluate(`const r = window.__s.rec(); r.settings = { ...(r.settings || {}), narrSubs: true }; localStorage.setItem("buzzcalculus.records.v1", JSON.stringify(r)); return 1;`);
+    check(`旁白＋why：打開 ${RL.id}（字幕開）`, await openLesson(RL.id));
+    await retime(RL.id, 900, "e2eproof");
+    await tap(`.cv2s-dot:nth-child(${rSi + 1})`);
+    await waitFor(`window.__s.si() === ${rSi}`);
+    await tap("[data-cv2s-play]");
+    const qWait = await waitFor(`window.__s.beats() === ${rWhy + 1} && window.BuzzCourseSections.voice().wait && document.querySelector('[data-cv2s-act="why"]')`, 8000);
+    const q0 = await evaluate(`return { v: window.BuzzCourseSections.voice(), note: Boolean(document.querySelector("[data-cv2s] .cv2s-beat.is-now .cv2s-note")), sub: window.__s.text("[data-cv2s] .cv2s-beat.is-now [data-cv2s-say]") };`);
+    check("旁白：念到有 why 的句子，先念問句、念完停下來等（不往下、白話不出）", qWait && q0.v.on && !q0.note && q0.v.beat === `${rSi}-${rWhy}`, JSON.stringify(q0));
+    check("旁白停在問句：字幕是問句（why.say）", q0.sub === rSec.beats[rWhy].why.say, q0.sub);
+    await sleep(1500);
+    check("停在問句：1.5 秒後還是同一句", (await evaluate(`return window.__s.beats();`)) === rWhy + 1);
+    const geoQ = await evaluate(`const a = document.querySelector('[data-cv2s-act="why"]').getBoundingClientRect(); const d = document.querySelector(".cv2s-dock").getBoundingClientRect(); return { bottom: Math.round(a.bottom), top: Math.round(a.top), dock: Math.round(d.top), ih: innerHeight };`);
+    check("旁白停在問句：問題卡在播放列上面（沒被擋住）", geoQ.bottom <= geoQ.dock - 7, JSON.stringify(geoQ));
+    await pshot("phone-light-why-voice");
+    await tap(`[data-action="course-s-why"][data-beat="${rWhy}"][data-option="${correctOf(rSec.beats[rWhy].why)}"]`);
+    const q1 = await evaluate(`return { v: window.BuzzCourseSections.voice(), sub: window.__s.text("[data-cv2s] .cv2s-beat.is-now [data-cv2s-say]"), note: Boolean(document.querySelector("[data-cv2s] .cv2s-beat.is-now .cv2s-note")) };`);
+    check("答了：接著念這一句的 say、字幕換成 say、白話出現", q1.v.on && !q1.v.wait && q1.v.beat === `${rSi}-${rWhy}` && q1.sub === rSec.beats[rWhy].say && q1.note, JSON.stringify(q1));
+    await pshot("phone-light-proof-subs");
+    check("念完 say 自己往下一句", await waitFor(`window.__s.beats() >= ${rWhy + 2}`, 5000));
+    await tap("[data-cv2s-play]");
+    await evaluate(`const r = window.__s.rec(); r.settings = { ...(r.settings || {}), narrSubs: false }; localStorage.setItem("buzzcalculus.records.v1", JSON.stringify(r)); return 1;`);
+
+    // 360 寬：why 與 where 放得下
+    await chrome.send("Emulation.setDeviceMetricsOverride", { width: 360, height: 740, deviceScaleFactor: 3, mobile: true });
+    check(`360 寬：打開 ${RL.id}`, await openLesson(RL.id));
+    await tap(`.cv2s-dot:nth-child(${rSi + 1})`);
+    await waitFor(`window.__s.si() === ${rSi}`);
+    for (let k = 1; k <= rWhy; k += 1) await tap("[data-cv2s-next]");
+    const g360 = await evaluate(`await new Promise((r) => setTimeout(r, 900)); const a = document.querySelector('[data-cv2s-act="why"]').getBoundingClientRect(); const d = document.querySelector(".cv2s-dock").getBoundingClientRect(); return { overflow: window.__s.overflow(), small: window.__s.small(), bottom: Math.round(a.bottom), dock: Math.round(d.top) };`);
+    check("360 寬：why 不溢出、按鈕 ≥ 40px、在播放列上面", g360.overflow <= 1 && !g360.small.length && g360.bottom <= g360.dock - 7, JSON.stringify(g360));
+    await finishSection(RL);
+    const w360 = await evaluate(`await new Promise((r) => setTimeout(r, 700)); return { done: /對了/.test(window.__s.text('[data-cv2s-act="where"]')), overflow: window.__s.overflow(), small: window.__s.small() };`);
+    check("360 寬：where 做完、不溢出、按鈕 ≥ 40px", w360.done && w360.overflow <= 1 && !w360.small.length, JSON.stringify(w360));
+    await chrome.send("Emulation.setDeviceMetricsOverride", PHONE);
+
+    // 深色截圖：why、order 排到一半、where、證明句＋字幕（念著）
+    if (PSHOTS) {
+      await evaluate(`document.documentElement.dataset.theme = "dark"; return 1;`);
+      await openLesson(PR.id);
+      await tap(`.cv2s-dot:nth-child(${prSi + 1})`);
+      await waitFor(`window.__s.si() === ${prSi}`);
+      for (let k = 1; k <= why1; k += 1) await tap("[data-cv2s-next]");
+      await pshot("phone-dark-why");
+      await toAction(prSec);
+      await tap(`[data-action="course-s-ord"][data-step="${early}"]`);
+      await tap(`[data-action="course-s-ord"][data-step="0"]`);
+      await tap(`[data-action="course-s-ord"][data-step="1"]`);
+      await pshot("phone-dark-order-mid");
+      await openLesson(PW.id);
+      await tap(`.cv2s-dot:nth-child(${pwSi + 1})`);
+      await waitFor(`window.__s.si() === ${pwSi}`);
+      await toAction(pwSec);
+      await tap(`[data-action="course-s-whr"][data-option="${wrongStep}"]`);
+      await pshot("phone-dark-where");
+      await evaluate(`const r = window.__s.rec(); r.settings = { ...(r.settings || {}), narrSubs: true }; localStorage.setItem("buzzcalculus.records.v1", JSON.stringify(r)); return 1;`);
+      await openLesson(RL.id);
+      await retime(RL.id, 2500, "e2eprdk");
+      await tap(`.cv2s-dot:nth-child(${rSi + 1})`);
+      await waitFor(`window.__s.si() === ${rSi}`);
+      await tap("[data-cv2s-play]");
+      await waitFor(`window.__s.beats() === ${rWhy + 1} && window.BuzzCourseSections.voice().wait`, 9000);
+      await pshot("phone-dark-why-voice");
+      await tap(`[data-action="course-s-why"][data-beat="${rWhy}"][data-option="${correctOf(rSec.beats[rWhy].why)}"]`);
+      await sleep(500);
+      await pshot("phone-dark-proof-subs");
+      await tap("[data-cv2s-play]");
+      await evaluate(`const r = window.__s.rec(); r.settings = { ...(r.settings || {}), narrSubs: false }; localStorage.setItem("buzzcalculus.records.v1", JSON.stringify(r)); document.documentElement.dataset.theme = "light"; return 1;`);
+    }
 
     /* ── 深色 ── */
     await evaluate(`document.documentElement.dataset.theme = "dark"; return 1;`);
