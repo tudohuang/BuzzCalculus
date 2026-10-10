@@ -1,15 +1,5 @@
-// ── 新版課程的「分節」模式（lesson.sections；格式見 tools/content/course_v2/SCHEMA.md）──
-//
-// index.html 上是 type="text/lazy" data-lazy="sections"：只有打開「有分節的課」才由 course_v2_ui.js 抓這一支。
-// 中文介面專用（英文介面用舊課），字直接寫中文。
-//
-// 一節一屏：節的進度點＋這一節的句子（beat），點一下（按鈕、句子、→、空白鍵）出下一句，帶 fig 的句子讓圖平滑地動。
-// 句子出完是動作：小測、先猜、或拖滑桿進範圍；「下一節」一直都在。最後是結算（學習目標、XP、下一課、在地圖上看）。
-//
-// 紀錄（records.courseV2[id]）：secAt 讀到第幾節、secDone 做完的節、picks 小測選過的（四節做完＝小測做完，「完成」照全文算）、
-// xp、tierXp 加成發到哪一層。一節第一次做完 +5 XP；也記進 courseReadDays（連勝、每日任務）。專注模式不顯示連勝。
-//
-// 這一支只管畫面與動作；小測的記分（第一次就對才算）沿用 course_v2_ui.js 的 course-pick，圖沿用 BuzzCourseFigures。
+// ── 新版課程的「分節」模式：一節一屏、點一下出下一句、結尾一個動作、旁白（規格與紀錄欄位見 tools/content/course_v2/SCHEMA.md）──
+// data-lazy="sections"：打開有分節的課才抓；中文介面專用。小測記分沿用 course_v2_ui.js 的 course-pick，圖沿用 BuzzCourseFigures。
 
 (function () {
   "use strict";
@@ -18,7 +8,7 @@
   const TIER_XP = [0, 20, 30, 50];
 
   const STYLE = `
-/* 手機：頁首往上收（第一句在第一屏的上半）；桌機在最後一行改回來 */
+/* 手機：頁首往上收（桌機在最後一行改回來） */
 .cv2-lesson.cv2s { margin: -20px auto 0; }
 .cv2s-dots { display: flex; flex-wrap: wrap; gap: 2px; margin: 0 0 2px -7px; padding: 0; list-style: none; }
 .cv2s-dot { display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px; padding: 0; border: 0; background: none; cursor: pointer; }
@@ -32,7 +22,7 @@
 .cv2s-sec > h3 small { margin: 0 8px 0 0; color: var(--muted); font-size: 0.78rem; font-weight: 700; letter-spacing: 0.04em; font-variant-numeric: tabular-nums; }
 .cv2s .cv2-figure { margin: 2px auto 16px; }
 .cv2s .cv2-figure figcaption { display: none; }
-/* 手機：有圖的那一節，圖黏在頂列下面 —— 句子往下長的時候，圖一直看得到、跟著句子動 */
+/* 手機：圖黏在頂列下面，句子往下長時一直看得到 */
 @media (max-width: 959px) {
   .cv2s-sec .cv2-figure.is-widget { position: sticky; top: var(--cv2s-top, 0px); z-index: 3; gap: 2px; margin: 0 auto 12px; padding: 4px 0 6px; background: var(--paper); border-bottom: 1px solid var(--line); }
   .cv2s-sec .cv2-figure.is-widget [data-cv2-plot] { max-width: 290px; margin: 0 auto; }
@@ -60,16 +50,6 @@
 .cv2s-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin: 24px 0 0; padding-top: 16px; border-top: 1px solid var(--line); }
 .cv2s-bar .button { max-width: 100%; }
 .cv2s-bar .button small { margin-left: 4px; opacity: 0.75; font-variant-numeric: tabular-nums; }
-.cv2s-goals { display: grid; gap: 8px; margin: 0 0 18px; padding: 0; list-style: none; }
-.cv2s-goals li { display: grid; grid-template-columns: 22px minmax(0, 1fr); gap: 8px; line-height: 1.75; }
-.cv2s-goals li > * { min-width: 0; overflow-wrap: anywhere; }
-.cv2s-goals svg { width: 18px; height: 18px; margin-top: 5px; color: var(--green); }
-.cv2s-goals li.is-todo svg { color: var(--line-strong); }
-.cv2s-stats { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 16px; margin: 0 0 18px; color: var(--muted); font-size: 0.9rem; font-variant-numeric: tabular-nums; }
-.cv2s-stats strong { color: var(--ink); font-size: 1.5rem; }
-.cv2s-todo { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; margin: 0 0 16px; color: var(--muted); font-size: 0.9rem; }
-.cv2s-finish .action-row { display: flex; flex-wrap: wrap; gap: 8px; }
-.cv2s-finish .action-row .button { max-width: 100%; }
 .cv2s-say { margin: 6px 0 0; padding: 6px 10px; border-radius: 8px; background: color-mix(in srgb, var(--ink) 6%, var(--paper)); color: var(--ink); font-size: 0.92rem; line-height: 1.7; }
 .cv2s.has-dock { padding-bottom: var(--cv2s-room, 72px); }
 .cv2s-dock { position: fixed; z-index: 30; left: 0; right: 0; bottom: calc(var(--cv2s-nav, 8px) + 8px); display: flex; flex-direction: column; align-items: center; gap: 4px; pointer-events: none; }
@@ -95,16 +75,22 @@
   const reduced = () => Boolean(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
   const entryOf = (records, id) => ((records.courseV2 || {})[id]) || {};
   const Figures = () => window.BuzzCourseFigures;
+  // 證明節的互動在 src/course_proof.js（data-lazy="secproof"）
+  const PF = () => window.BuzzCourseProof;
+  let pfail = false;
+  let ffail = false;
+  // 第 bi 句的「為什麼」還沒答：note 不出、不給下一句、旁白念完問句就停
+  const asking = (api, si, bi) => { const b = api.data.sections[si].beats[bi]; return Boolean(b && b.why && PF() && !(api.state.sec.why[`${si}-${bi}`] || {}).open); };
   let last = null; // 最近一次畫的那一課（拖滑桿的 change 事件要用）
 
-  /* ── 這一次打開的狀態：放在 course_v2_ui 的 state 上（換一課時整個 state 換掉，自然重來）── */
+  /* ── 這一次打開的狀態：掛在 course_v2_ui 的 state 上（換一課自然重來）── */
   function visitOf(api) {
     const st = api.state;
     if (st.sec) return st.sec;
     const n = api.data.sections.length;
     const e = entryOf(api.records, api.m.id);
-    st.sec = { si: Math.min(Math.max(0, Number(e.secAt) || 0), n - 1), shown: {}, pred: {}, dragOk: {}, done: {}, gain: {}, anim: null, fresh: -1, top: false, bar: false };
-    // 分節裡選過的小測接回來：跨天讀完也算得到「完成」（全頁「重做小測」會清掉）
+    st.sec = { si: Math.min(Math.max(0, Number(e.secAt) || 0), n - 1), shown: {}, pred: {}, dragOk: {}, why: {}, done: {}, gain: {}, anim: null, fresh: -1, top: false, bar: false };
+    // 分節裡選過的小測接回來：跨天讀完也算「完成」
     const saved = e.picks || {};
     Object.keys(saved).forEach((ci) => {
       if (Array.isArray(saved[ci]) && saved[ci].length && !(st.picks[ci] || []).length) st.picks = { ...st.picks, [ci]: saved[ci].slice() };
@@ -169,15 +155,17 @@
     window.requestAnimationFrame(frame);
   }
 
-  /* ── 旁白：一課一支 <narration 前綴><課>-<voice>.mp3，每一句 t = [起, 訖] 毫秒（build_narration.js）；preload="none"、Range 串流。
-     念完自己出下一句，最後一句停在動作前。一個 <audio>（iOS 點的那一下解鎖）；訖點用計時器看；出錯重載一次，再錯留一行字。 */
+  /* ── 旁白：一課一支 mp3，每一句 t = [起, 訖] 毫秒（build_narration.js）；preload=none、Range 串流。
+     一個 <audio>（iOS 點的那一下解鎖）；訖點用計時器看；出錯重載一次，再錯留一行字。 */
   const RATES = [1, 1.25, 1.5];
-  const voice = { on: false, paused: false, wait: false, err: false, id: "", si: -1, bi: -1, el: null, timer: 0, state: null, start: 0, end: 0, retries: 0 };
-  const segOf = (api, si, bi) => {
+  const voice = { on: false, paused: false, wait: false, ask: false, err: false, id: "", si: -1, bi: -1, el: null, timer: 0, state: null, start: 0, end: 0, retries: 0 };
+  // q：念這一句的問句（why.t；答了才念 t）
+  const segOf = (api, si, bi, q) => {
     const b = api.data.sections[si] && api.data.sections[si].beats[bi];
-    if (!b || !Array.isArray(b.t) || !api.data.voice) return null;
+    const t = b && (q ? b.why.t : b.t);
+    if (!Array.isArray(t) || !api.data.voice) return null;
     const base = (window.BUZZ_COURSE_V2 && window.BUZZ_COURSE_V2.narration) || "media/narration/";
-    return { url: `${base}${api.m.id}-${api.data.voice}.mp3`, start: Number(b.t[0]), end: Number(b.t[1]) };
+    return { url: `${base}${api.m.id}-${api.data.voice}.mp3`, start: Number(t[0]), end: Number(t[1]) };
   };
   const voiced = (data) => data.sections.some((s) => s.beats.some((b) => b.say));
   const voicePrefs = (records) => {
@@ -204,7 +192,7 @@
     hush();
     voice.on = false;
     voice.paused = false;
-    voice.wait = false;
+    voice.wait = voice.ask = false;
     voice.bi = -1;
   }
   // 看訖點：還沒跳到起點（seek 中）就再等；到了就往下一句
@@ -236,17 +224,18 @@
     window.clearTimeout(voice.timer);
     if (!s) { hush(); voice.wait = true; return; }
     const bi = Math.min(s.beats.length, sec.shown[sec.si] || 1) - 1;
-    Object.assign(voice, { id: api.m.id, si: sec.si, bi, wait: false, paused: false });
-    const seg = segOf(api, sec.si, bi);
+    const q = asking(api, sec.si, bi);
+    Object.assign(voice, { id: api.m.id, si: sec.si, bi, wait: false, paused: false, ask: q });
+    const seg = segOf(api, sec.si, bi, q);
     if (!seg) {
       // 有字沒錄音（字改過還沒重錄）：停一下再往下
       hush();
-      voice.timer = window.setTimeout(advance, Math.max(1500, String(s.beats[bi].say || "").length * 220));
+      voice.timer = window.setTimeout(advance, Math.max(1500, String((q ? s.beats[bi].why : s.beats[bi]).say || "").length * 220));
       return;
     }
     const el = audio();
     const same = el.getAttribute("src") === seg.url;
-    // 自己念完上一句、下一句就接在後面：不跳，直接念下去（沒有斷點）
+    // 自己念完上一句、下一句接在後面：不跳
     const flowing = same && !el.paused && !el.seeking && Math.abs(nowMs() - seg.start) < 250;
     Object.assign(voice, { start: seg.start, end: seg.end });
     if (!same) { el.src = seg.url; voice.retries = 0; }
@@ -262,6 +251,15 @@
     const sec = api.state.sec;
     const s = api.data.sections[sec.si];
     const shown = (s && sec.shown[sec.si]) || 1;
+    // 問句念完：還沒答就等（答了 act 接著念 say）
+    if (voice.ask) {
+      voice.ask = false;
+      if (!asking(api, sec.si, voice.bi)) return speak(api);
+      hush();
+      voice.wait = true;
+      updateDock();
+      return show("act");
+    }
     if (s && shown < s.beats.length) {
       sec.shown[sec.si] = shown + 1;
       reveal(api, sec.si, shown);
@@ -369,7 +367,7 @@
     dock.querySelector("[data-cv2s-subs]").setAttribute("aria-pressed", String(subs));
     dock.querySelector("[data-cv2s-voice-off]").hidden = !voice.err;
   }
-  // 只換這一節會變的那幾塊（句子、影片、動作、下一句那一列），不整頁重繪；圖原地動
+  // 只換這一節會變的那幾塊，不整頁重繪；圖原地動
   function patch(api) {
     const art = document.querySelector("[data-cv2s] .cv2s-sec:not(.cv2s-finish)");
     if (!art || !art.querySelector(".cv2s-beats") || typeof document.createElement("template").content === "undefined") { api.deps.render(); return; }
@@ -412,7 +410,7 @@
       const top = (parseFloat(root.style.getPropertyValue("--cv2s-top")) || 0) + (fig && getComputedStyle(fig).position === "sticky" ? fig.offsetHeight : 0) + 8;
       const bottom = (dock ? dock.getBoundingClientRect().top : window.innerHeight - navH) - 8;
       const a = el.getBoundingClientRect();
-      const z = (root.querySelector(".cv2s-bar") || el).getBoundingClientRect();
+      const z = (root.querySelector(".cv2s-bar:not(:empty)") || root.querySelector("[data-cv2s-act]") || el).getBoundingClientRect();
       const d = z.bottom > bottom ? Math.min(z.bottom - bottom, a.top - top) : Math.min(0, a.top - top);
       if (Math.abs(d) >= 1) window.scrollTo({ top: window.scrollY + d, behavior: reduced() ? "auto" : "smooth" });
     };
@@ -467,7 +465,7 @@
     if (action === "course-s-subs") patch(api);
   }
   if (typeof document !== "undefined" && document.addEventListener) {
-    // iOS：<audio> 要在點下去的那一下（同步）先 load 過，之後換 src 才能自己接著播
+    // iOS：<audio> 要在點下去那一下先 load 過，之後換 src 才能自己播
     document.addEventListener("click", (event) => {
       const t = event.target;
       if (!t || !t.closest || !t.closest("[data-cv2s-play]") || voice.el) return;
@@ -557,7 +555,10 @@
     const s = data.sections[si];
     const n = data.sections.length;
     const shown = Math.min(s.beats.length, sec.shown[si] || 1);
-    const all = shown >= s.beats.length;
+    const P = PF();
+    const cur = s.beats[shown - 1];
+    const pend = asking(api, si, shown - 1);
+    const all = shown >= s.beats.length && !pend;
     const subs = voicePrefs(api.records).subs;
     // 這一節用到的圖；正在動畫的那一張先畫在起點
     const used = [...new Set(s.beats.map((b) => (b.fig ? b.fig.use : null)).concat(s.drag ? [s.drag.use] : []).filter((k) => k !== null))];
@@ -570,8 +571,8 @@
     const beats = s.beats.slice(0, shown).map((b, bi) => `
       <li class="cv2s-beat ${bi === shown - 1 ? "is-now" : ""} ${bi === sec.fresh ? "is-new" : ""}" data-beat="${bi}">
         ${b.show.map((line) => `<p class="cv2s-show">${fmt(line)}</p>`).join("")}
-        ${b.note ? `<p class="cv2s-note">${rich(b.note, data)}</p>` : ""}
-        ${subs && b.say && bi === shown - 1 ? `<p class="cv2s-say" data-cv2s-say>${escapeHtml(b.say)}</p>` : ""}
+        ${b.note && !asking(api, si, bi) ? `<p class="cv2s-note">${rich(b.note, data)}</p>` : ""}
+        ${subs && b.say && bi === shown - 1 ? `<p class="cv2s-say" data-cv2s-say>${escapeHtml(pend ? b.why.say : b.say)}</p>` : ""}
       </li>`).join("");
     const v = data.video;
     const video = all && s.video && v ? `<figure class="cv2-figure cv2-video" data-cv2-video="${escapeAttr(v.id)}" data-duration="${v.duration}"><div class="cv2-video-box"></div><figcaption>${escapeHtml(v.caption)}</figcaption></figure>` : "";
@@ -581,15 +582,17 @@
     if (all && s.drag) {
       action = `<div class="cv2s-act cv2s-drag ${sec.dragOk[si] ? "is-done" : ""}" data-cv2s-act="drag">${icon(sec.dragOk[si] ? "check" : "target")}<span>${rich(s.drag.ask, data)}</span></div>`;
     }
+    if (P && !all && cur.why) action = P.why(api, si, shown - 1);
+    if (P && all && (s.order || s.where)) action = P.view(api, si);
     const ok = all && resolved(api, si);
     const gain = sec.gain[si] ? `<span class="cv2s-xp">+${sec.gain[si]} XP</span>` : "";
     const lastOne = si === n - 1;
-    const bar = all
+    const bar = pend ? "" : all
       ? `<button type="button" class="button ${ok ? "home-primary" : "ghost"}" data-action="course-s-next" data-cv2s-next>${lastOne ? "完成這一課" : "下一節"}${icon("chevron-right")}</button>${gain}`
       : `<button type="button" class="button home-primary" data-action="course-s-next" data-cv2s-next>下一句<small>${shown} / ${s.beats.length}</small></button>`;
     return `
       <article class="cv2s-sec" aria-label="第 ${si + 1} 節">
-        <h3><small>${si + 1} / ${n}</small>${fmt(s.title)}</h3>
+        <h3><small>${si + 1} / ${n}</small>${fmt(s.title)}${P && s.proof ? P.tag(api, s) : ""}</h3>
         ${figs}
         <ol class="cv2s-beats" data-action="course-s-next" data-how="tap" aria-live="polite">${beats}</ol>
         ${video}
@@ -598,39 +601,10 @@
       </article>`;
   }
 
-  function finishView(api, e) {
-    const { m, data, records, rich, deps } = api;
-    const { escapeAttr, escapeHtml, icon } = deps;
-    const n = data.sections.length;
-    const doneSet = new Set(e.secDone || []);
-    const todo = data.sections.map((_s, i) => i).filter((i) => !doneSet.has(i));
-    const level = deps.xpLevel ? deps.xpLevel(records.xp) : null;
-    const quiet = deps.focusModeOn ? deps.focusModeOn() : false;
-    const streak = !quiet && deps.streakDays ? deps.streakDays(records) : 0;
-    const bank = new Set((window.BUZZ_PROBLEMS || []).map((p) => p.id));
-    const practice = (data.practice || []).filter((p) => !p.challenge && bank.has(p.id)).length;
-    return `
-      <article class="cv2s-sec cv2s-finish" data-cv2s-finish>
-        <h3><small>${n} / ${n}</small>你現在會：</h3>
-        <ul class="cv2s-goals">${data.objectives.map((line) => `<li class="${todo.length ? "is-todo" : ""}">${icon("check")}<span>${rich(line, data)}</span></li>`).join("")}</ul>
-        ${todo.length ? `<p class="cv2s-todo"><span>還沒做完</span>${todo.map((i) => `<button type="button" class="cv2-link" data-action="course-s-go" data-to="${i}">第 ${i + 1} 節</button>`).join("")}</p>` : ""}
-        <p class="cv2s-stats" data-cv2s-stats>
-          <span><strong>+${Number(e.xp) || 0}</strong> XP</span>
-          ${level ? `<span>Lv.${level.level} · ${level.into}/${level.span}</span>` : ""}
-          ${streak ? `<span>${icon("flame")}連勝 ${streak} 天</span>` : ""}
-        </p>
-        <div class="action-row">
-          ${api.next ? `<button type="button" class="button home-primary" data-action="open-course-lesson" data-lesson-id="${escapeAttr(api.next.id)}">下一課：${escapeHtml(api.label(api.next))}${icon("chevron-right")}</button>` : `<button type="button" class="button home-primary" data-action="open-course">課程表</button>`}
-          <button type="button" class="button secondary" data-action="course-map-focus" data-lesson-id="${escapeAttr(m.id)}" data-lit="1">在地圖上看</button>
-          ${practice ? `<button type="button" class="button ghost" data-action="course-practice" data-set="main">${icon("play")}練推薦題 · ${practice} 題</button>` : ""}
-        </div>
-      </article>`;
-  }
-
   function render(api) {
     injectStyle();
     // 換一課、或重新打開（course_v2_ui 換了一份 state）：旁白停掉
-    // 錄音也放掉（下次按播放重新抓：串流網址可能過期、網路可能換了）
+    // 錄音也放掉（串流網址可能過期）
     if (voice.state !== api.state) {
       halt();
       if (voice.el && voice.el.getAttribute("src")) { voice.el.removeAttribute("src"); voice.el.load(); }
@@ -640,6 +614,11 @@
     last = api;
     const { m, data, records, head, deps } = api;
     const { escapeAttr, icon } = deps;
+    // 有證明節先抓 course_proof.js（抓不到：照一般的節畫）
+    if (!PF() && !pfail && data.sections.some((s) => s.proof)) {
+      Promise.resolve(deps.ensureLazy("secproof")).then(deps.render, () => { pfail = true; deps.render(); });
+      return `<main class="screen lazy-loading" aria-busy="true"><section class="course-lesson cv2-lesson cv2s">${head}</section></main>`;
+    }
     const sec = visitOf(api);
     const e = entryOf(records, m.id);
     const doneSet = new Set((e.secDone || []).concat(Object.keys(sec.done).map(Number)));
@@ -648,7 +627,10 @@
       <nav class="cv2s-dots" aria-label="這一課的節">
         ${data.sections.map((s, i) => `<button type="button" class="cv2s-dot ${doneSet.has(i) ? "is-done" : ""} ${sec.si === i ? "is-now" : ""}" data-action="course-s-go" data-to="${i}" aria-label="${escapeAttr(`第 ${i + 1} 節：${s.title.replace(/\$/g, "")}${doneSet.has(i) ? "（做完了）" : ""}`)}" ${sec.si === i ? `aria-current="step"` : ""}><i>${doneSet.has(i) ? icon("check") : i + 1}</i></button>`).join("")}
       </nav>`;
-    const body = sec.si >= n ? finishView(api, e) : sectionView(api, sec.si);
+    // 結算畫面在 src/course_finish.js（data-lazy="secfinish"）：讀到最後一節就先抓
+    const F = window.BuzzCourseFinish;
+    if (sec.si >= n - 1 && !F && !ffail) Promise.resolve(deps.ensureLazy("secfinish")).then(() => { if (api.state.sec.si >= n) deps.render(); }, () => { ffail = true; if (api.state.sec.si >= n) deps.render(); });
+    const body = sec.si < n ? sectionView(api, sec.si) : F ? F.view(api, e) : `<article class="cv2s-sec cv2s-finish" aria-busy="${!ffail}"><p class="panel-note">${ffail ? "結算載不到 —— 檢查一下網路。" : "…"}</p><button type="button" class="button" data-action="open-course">課程表</button></article>`;
     if (typeof queueMicrotask === "function") queueMicrotask(() => afterRender(api)); else window.setTimeout(() => afterRender(api), 0);
     return `
       <main class="screen">
@@ -715,14 +697,23 @@
     const S = api.data.sections;
     if (/^course-s-(play|rate|subs)$/.test(action)) return voiceAct(api, action);
     if (action === "course-s-go") { enter(api, data.to); deps.render(); return resume(api); }
+    // 證明節：3 = 為什麼答了（播放開著就接著念）、2 = 動作做完
+    if (/^course-s-(why|see|ord|whr)$/.test(action)) {
+      const r = PF() ? PF().act(api, action, data) : 0;
+      if (r === 2) { sec.dragOk[sec.si] = true; complete(api, sec.si); }
+      if (r === 3 && voice.on) { patch(api); if (!voice.paused && voice.wait) speak(api); return updateDock(); }
+      sec.bar = r === 3 || "act";
+      return r && deps.render();
+    }
     if (action === "course-s-next") {
       if (sec.si >= S.length) return;
       const s = S[sec.si];
       const shown = sec.shown[sec.si] || 1;
+      if (asking(api, sec.si, shown - 1)) return;
       if (shown < s.beats.length) {
         sec.shown[sec.si] = shown + 1;
         reveal(api, sec.si, shown);
-        // 播放中點「下一句」＝跳到下一句念（暫停中就只換句，繼續時從這一句念）；播放開著就原地長，不整頁重繪
+        // 播放中點「下一句」＝跳到下一句念（暫停中只換句）；原地長，不整頁重繪
         if (voice.on) {
           patch(api);
           hush();
@@ -760,7 +751,7 @@
         api.update(api.m.id, (e) => ({ ...e, picks: { ...(e.picks || {}), [ci]: picks.concat(oi) } }));
         if (check.options[oi].correct) complete(api, si);
         sec.bar = "act";
-        // 記分（第一次就對才算、四題都選過就結算「完成」）照全文的 course-pick；它會重繪
+        // 記分照全文的 course-pick（第一次就對才算）；它會重繪
         api.act("course-pick", { check: ci, option: oi });
         settle(api);
         return deps.render();
@@ -769,7 +760,7 @@
   }
 
   // 拖滑桿進範圍：放開時（change）判定
-  // → / 空白鍵：下一句（焦點在輸入框、滑桿上不搶；空白鍵在按鈕上照按鈕自己的意思）
+  // → / 空白鍵：下一句（輸入框、滑桿上不搶；空白鍵在按鈕上照按鈕的意思）
   if (typeof document !== "undefined" && document.addEventListener) {
     document.addEventListener("change", (event) => {
       const input = event.target;

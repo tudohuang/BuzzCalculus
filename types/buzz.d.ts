@@ -380,6 +380,8 @@ interface Window {
   BuzzCourseUI: { create(deps: { escapeHtml: (s: unknown) => string; escapeAttr: (s: unknown) => string; icon: (name: string) => string; referenceAnswerHTML: (problem: BuzzProblem) => string; loadRecords: () => BuzzRecords; saveRecords: (records: BuzzRecords) => void; ensureLazy: (group: string) => Promise<void>; startQuiz: (pool: BuzzProblem[], options?: any) => void; render: () => void; go: (view: string) => void; noteCourseRead?: (records: BuzzRecords) => BuzzRecords; focusModeOn?: () => boolean; abilityProfile?: (records: BuzzRecords) => any; xpLevel?: (xp: unknown) => { level: number; into: number; span: number }; streakDays?: (records: BuzzRecords) => number }): any };
   /** 分節模式（data-lazy="sections"，只有打開有分節的課才載） */
   BuzzCourseSections?: { render(api: any): string; act(api: any, action: string, data: any): void };
+  BuzzCourseFinish?: { view(api: any, entry: any): string };
+  BuzzCourseProof?: { tag(api: any, section: any): string; why(api: any, si: number, bi: number): string; view(api: any, si: number): string; act(api: any, action: string, data: any): number; shuffle(n: number, seed: string): number[] };
   /** 新版課程的畫面（data-lazy="course"，只有中文介面會載） */
   BuzzCourseV2UI?: { create(deps: any): any };
   BUZZ_COURSE_V2?: { stages: { n: number; title: string; branch?: boolean; chapters: { code: string; title: string; lessons: { id: string; title: string; read?: number; total?: number; practice?: string; worked?: string }[] }[] }[] };
