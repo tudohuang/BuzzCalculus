@@ -72,9 +72,56 @@
         { "show": ["Heine–Cantor：$\\exists\\delta\\ \\forall x,y$"], "note": "同一個 $\\delta$ 管整個區間。",
           "say": "工具一是 Heine Cantor：閉區間上連續就一致連續，同一個 delta 管住整個區間。" },
         { "show": ["極值定理：$M_i=f(u_i)$、$m_i=f(v_i)$"], "note": "也保證 $f$ 有界。",
-          "say": "工具二是極值定理：每一段都取得到最大最小值，也保證函數有界。完整證明在全文。" }
+          "say": "工具二是極值定理：每一段都取得到最大最小值，也保證函數有界。證明在下一節。" }
       ],
       "check": 0
+    },
+    {
+      "title": "證明：一刀切到底",
+      "proof": true,
+      "of": 2,
+      "skeleton": "ε-δ",
+      "beats": [
+        { "show": ["一個通用的 $\\delta$ 切出分割，每段起伏都小"],
+          "say": "策略：用一致連續拿到一個通用的 delta，照它切分割，讓每一段的起伏都小，再加起來。" },
+        { "show": ["Heine–Cantor：$|x-y|<\\delta$", "$\\Rightarrow|f(x)-f(y)|<\\frac{\\varepsilon}{b-a}$"], "note": "同一個 $\\delta$ 管整個區間。",
+          "say": "Heine Cantor 給一個 delta：距離小於它的兩點，函數值差小於 b 減 a 分之 epsilon。" },
+        { "show": ["取分割 $P$，$\\|P\\|<\\delta$"], "note": "例如等長分割，$n>\\frac{b-a}{\\delta}$。",
+          "say": "照這個 delta 切：每一段都比 delta 短，例如切成夠多的等長小段。" },
+        { "show": ["第 $i$ 段：$M_i=f(u_i)$、$m_i=f(v_i)$"], "note": "極值定理。",
+          "why": {
+            "ask": "為什麼 $M_i$ 是某一點的函數值？",
+            "say": "每一段的最高，為什麼是某一點真的取到的值？",
+            "options": [
+              { "label": "$f$ 在閉的小段上連續，極值定理", "correct": true },
+              { "label": "$M_i$ 是上確界，一定取得到", "why": "上確界不一定取得到：$x$ 在 $(0,1)$ 的上確界 1 就取不到。要閉區間上連續才保證。" },
+              { "label": "Heine–Cantor 保證的", "why": "Heine–Cantor 只給一個通用的 $\\delta$，不管最大值取不取得到；那是極值定理的事。" }
+            ]
+          },
+          "say": "每一段是閉的，f 在上面連續，極值定理說最高和最低都取得到，在 u i 和 v i。" },
+        { "show": ["$|u_i-v_i|<\\delta$ ⇒ $M_i-m_i<\\frac{\\varepsilon}{b-a}$"], "note": "兩點在同一段裡。",
+          "why": {
+            "ask": "為什麼 $|u_i-v_i|<\\delta$？",
+            "say": "最高點和最低點，為什麼距離小於 delta？",
+            "options": [
+              { "label": "兩點在同一段裡，距離不超過段寬", "correct": true },
+              { "label": "最大、最小值點本來就靠得很近", "why": "它們可以在這一段的兩端；近，是因為整段寬度小於 $\\delta$。" },
+              { "label": "$\\delta$ 是對 $u_i$ 這一點找的", "why": "$\\delta$ 是 Heine–Cantor 給的，對整個區間通用，不是對某一點找的。" }
+            ]
+          },
+          "say": "兩點都在同一段裡，距離不超過段寬，小於 delta，所以這一段的起伏小於 b 減 a 分之 epsilon。" },
+        { "show": ["$U-L<\\frac{\\varepsilon}{b-a}\\sum\\Delta x_i=\\varepsilon$"], "note": "由可積判準，$f$ 可積。",
+          "say": "每一段的起伏乘寬度加起來，寬度總和是 b 減 a，剛好得到 epsilon。由可積判準，f 可積。" }
+      ],
+      "order": {
+        "ask": "把證明排回順序：依序點每一步",
+        "steps": [
+          { "label": "給定 $\\varepsilon$，由 Heine–Cantor 取 $\\delta$" },
+          { "label": "取分割 $P$，$\\|P\\|<\\delta$", "why": "要先有 $\\delta$，才知道要切多細。" },
+          { "label": "每段 $M_i-m_i<\\frac{\\varepsilon}{b-a}$", "why": "要先切好分割，才有「每一段」。" },
+          { "label": "$U-L<\\varepsilon$，可積", "why": "要先知道每一段的起伏都小，才能加起來。" }
+        ]
+      }
     },
     {
       "title": "$x^2$：切幾段",

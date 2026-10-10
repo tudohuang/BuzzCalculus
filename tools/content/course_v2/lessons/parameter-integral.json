@@ -155,9 +155,41 @@
         { "show": ["$\\lim_{a\\to a_0}\\int f\\,dx=\\int f(x,a_0)\\,dx$"], "note": "$I(a)$ 連續 = 極限可以搬進積分號。",
           "say": "這時 I 對 a 連續，也就是說，極限可以搬進積分號裡面。" },
         { "show": ["只看「每個 $a$ 對 $x$ 連續」不夠"],
-          "say": "只知道每個固定的 a，f 對 x 連續，是不夠的。要兩個變數一起連續，完整證明在全文。" }
+          "say": "只知道每個固定的 a，f 對 x 連續，是不夠的。要兩個變數一起連續，證明在下一節。" }
       ],
       "check": 1
+    },
+    {
+      "title": "證明：同一個 $\\delta$",
+      "proof": true, "of": 3, "skeleton": "ε-δ",
+      "beats": [
+        { "show": ["一致連續給同一個 $\\delta$，再積分"],
+          "say": "策略：epsilon delta。先用一致連續拿到一個對所有 x 都有效的 delta，再把差積分起來。" },
+        { "show": ["閉矩形上連續 ⇒ 一致連續"], "note": "給 $\\varepsilon>0$，存在 $\\delta$。",
+          "say": "f 在閉矩形上兩變數一起連續，所以一致連續：給 epsilon，就有一個 delta。" },
+        { "show": ["$|a-a_0|<\\delta$ ⇒ 對所有 $x\\in[c,d]$", "$|f(x,a)-f(x,a_0)|<\\varepsilon$"], "note": "同一個 $\\delta$ 對所有 $x$ 都有效。",
+          "why": {
+            "ask": "為什麼同一個 $\\delta$ 對所有 $x$ 都有效？",
+            "say": "這個 delta 為什麼不管 x 在哪裡都管用？",
+            "options": [
+              { "label": "一致連續：$\\delta$ 不依賴點", "correct": true },
+              { "label": "每個 $x$ 各取一個 $\\delta$，再取最小的", "why": "$x$ 有無限多個，最小的可能不存在、下確界可能是零；共同的 $\\delta$ 要靠一致連續。" },
+              { "label": "$\\delta$ 本來就只跟 $\\varepsilon$ 有關", "why": "一般的連續，$\\delta$ 會隨點改變；不依賴點，正是一致連續多給的。" }
+            ]
+          },
+          "say": "這正是一致連續給的：delta 只看 epsilon，不看點，所以整段 x 一起管住。" },
+        { "show": ["$|I(a)-I(a_0)|$", "$\\le\\int_c^d|f(x,a)-f(x,a_0)|\\,dx<\\varepsilon(d-c)$"], "note": "$\\varepsilon$ 任意，所以 $I$ 在 $a_0$ 連續。",
+          "say": "積分的差不超過差的絕對值的積分，每一點都小於 epsilon，乘上區間長度 d 減 c。" }
+      ],
+      "where": {
+        "ask": "「閉矩形」用在哪一步？",
+        "steps": [
+          { "label": "連續 ⇒ 一致連續", "correct": true },
+          { "label": "對所有 $x$：$|f(x,a)-f(x,a_0)|<\\varepsilon$", "why": "這只是把一致連續的定義寫出來。" },
+          { "label": "$|I(a)-I(a_0)|\\le\\int_c^d|f(x,a)-f(x,a_0)|\\,dx$", "why": "積分的絕對值不等式，任何可積函數都成立。" },
+          { "label": "$<\\varepsilon(d-c)$", "why": "只用到被積函數處處小於 $\\varepsilon$，再乘區間長度。" }
+        ]
+      }
     },
     {
       "title": "把極限搬進去",

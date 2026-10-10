@@ -220,14 +220,37 @@
       "check": 3
     },
     {
-      "title": "先有理化再放大",
+      "title": "證明：先有理化再放大",
+      "proof": true, "of": "ex2", "skeleton": "ε-δ",
       "beats": [
+        { "show": ["$\\sqrt{n+1}-\\sqrt{n}\\to0$：有理化、放大、取 $N$"],
+          "say": "策略：先乘共軛把差變成分式，再放大成好解的上界，最後照草稿取 N。" },
         { "show": ["$\\sqrt{n+1}-\\sqrt{n}=\\frac{1}{\\sqrt{n+1}+\\sqrt{n}}$"], "note": "乘共軛，這個量是正的。",
           "say": "根號 n 加一減根號 n，乘共軛，變成一個分子是一的分式，而且是正的。" },
-        { "show": ["分母 $>2\\sqrt{n}$ ⇒ 距離 $<\\frac{1}{2\\sqrt{n}}$"],
+        { "show": ["分母 $>2\\sqrt{n}$ ⇒ 距離 $<\\frac{1}{2\\sqrt{n}}$"], "note": "$\\sqrt{n+1}>\\sqrt{n}$，分母變小、分式變大。",
+          "why": {
+            "ask": "為什麼分母 $>2\\sqrt{n}$？",
+            "say": "放大這一步：分母為什麼大於二倍根號 n？",
+            "options": [
+              { "label": "$\\sqrt{n+1}>\\sqrt{n}$，大的換成小的", "correct": true },
+              { "label": "$\\sqrt{n+1}\\approx\\sqrt{n}$，分母約 $2\\sqrt{n}$", "why": "約等於不能當不等式用；要知道方向，分母變小、分式變大，才是上界。" },
+              { "label": "$\\sqrt{n+1}=\\sqrt{n}+1$", "why": "根號不能這樣拆：$\\sqrt{n+1}$ 其實比 $\\sqrt{n}+1$ 小。" }
+            ]
+          },
           "say": "分母兩個根號裡，大的那個換成小的，分母變小，分式變大，上界是二倍根號 n 分之一。" },
-        { "show": ["取自然數 $N>\\frac{1}{4\\varepsilon^2}$"], "note": "例：$\\varepsilon=0.001$ 時 $N=250001$。",
-          "say": "要這個上界小於 epsilon，n 要大於四倍 epsilon 平方分之一。取比它大的自然數就好。" }
+        { "show": ["給定 $\\varepsilon>0$，取自然數 $N>\\frac{1}{4\\varepsilon^2}$"], "note": "例：$\\varepsilon=0.001$ 時 $N=250001$。",
+          "say": "正式證明：給定 epsilon，取一個大於四倍 epsilon 平方分之一的自然數 N。" },
+        { "show": ["$n\\ge N$：$|\\sqrt{n+1}-\\sqrt{n}|<\\frac{1}{2\\sqrt{n}}\\le\\frac{1}{2\\sqrt{N}}<\\varepsilon$"], "note": "$4\\varepsilon^2N>1$，開根號得 $2\\sqrt{N}\\varepsilon>1$。",
+          "why": {
+            "ask": "為什麼 $\\frac{1}{2\\sqrt{N}}<\\varepsilon$？",
+            "say": "最後一個不等號：二倍根號 N 分之一，為什麼小於 epsilon？",
+            "options": [
+              { "label": "$N>\\frac{1}{4\\varepsilon^2}$，乘開再開根號", "correct": true },
+              { "label": "$N$ 很大，所以分式很小", "why": "很小不夠：要小於這一個 $\\varepsilon$，靠的是 $N$ 照 $\\varepsilon$ 取。" },
+              { "label": "$\\frac{1}{2\\sqrt{n}}\\to0$", "why": "這是要證的事換個說法；這裡要的是一個對這個 $N$ 成立的不等式。" }
+            ]
+          },
+          "say": "N 大於四倍 epsilon 平方分之一，乘開再開根號，二倍根號 N 乘 epsilon 大於一。證完。" }
       ],
       "check": 2
     }

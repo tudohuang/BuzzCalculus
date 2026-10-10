@@ -190,6 +190,40 @@
           { "label": "$\\frac{16}{15}$", "why": "那只是第二個因子 $\\frac{4\\cdot 4}{3\\cdot 5}$，要乘上 $\\frac{4}{3}$。" }
         ]
       }
+    },
+    {
+      "title": "證明：中央二項式係數",
+      "proof": true, "of": "ex2", "skeleton": "直接",
+      "beats": [
+        { "show": ["$\\frac{\\binom{2n}{n}}{4^n}$ 寫成 $W_{2n}$，再估 $W_{2n}$"], "note": "不用 Stirling，只用不變量。",
+          "say": "策略：先把中央二項式係數除以四的 n 次方，寫成 Wallis 積分，再用不變量估它的大小。" },
+        { "show": ["$\\frac{\\binom{2n}{n}}{4^n}=\\frac{2}{\\pi}W_{2n}$"], "note": "分子分母同乘 $2\\cdot 4\\cdots(2n)$。",
+          "why": {
+            "ask": "為什麼它會是 $W_{2n}$ 的倍數？",
+            "say": "中央二項式係數，怎麼會跟 W 二 n 扯上關係？",
+            "options": [
+              { "label": "$W_{2n}$ 公式裡那串分數，就是 $\\frac{(2n)!}{(2^nn!)^2}$", "correct": true },
+              { "label": "$\\binom{2n}{n}\\le 4^n$", "why": "那只說比值不超過 $1$，說不出它等於什麼。" },
+              { "label": "Stirling 公式", "why": "這個證明正是要繞開 Stirling；用到的只是 $W_{2n}$ 的公式。" }
+            ]
+          },
+          "say": "W 二 n 是一串奇數除以偶數，再乘二分之 pi。分子分母同乘偶數的乘積，就變成中央二項式係數除以四的 n 次方。" },
+        { "show": ["$2nW_{2n}W_{2n-1}=\\frac{\\pi}{2}$"], "note": "不變量 $nW_nW_{n-1}=\\frac{\\pi}{2}$，$n$ 換成 $2n$。",
+          "say": "不變量對每個 n 都成立，把 n 換成二 n。" },
+        { "show": ["$W_{2n}\\sim W_{2n-1}$ ⇒ $W_{2n}^2\\sim\\frac{\\pi}{4n}$"], "note": "$W_n$ 遞減，相鄰兩項的比值夾到 $1$。",
+          "say": "W n 遞減，相鄰兩項的比值被夾到一，乘積就可以換成平方：W 二 n 平方等價於四 n 分之 pi。" },
+        { "show": ["$W_{2n}\\sim\\frac{1}{2}\\sqrt{\\frac{\\pi}{n}}$", "代回：$\\frac{\\binom{2n}{n}}{4^n}\\sim\\frac{1}{\\sqrt{\\pi n}}$"], "note": "$\\frac{2}{\\pi}\\cdot\\frac{1}{2}\\sqrt{\\frac{\\pi}{n}}=\\frac{1}{\\sqrt{\\pi n}}$。",
+          "say": "開根號，再代回去：pi 分之二乘二分之一根號 n 分之 pi，就是根號 pi n 分之一。" }
+      ],
+      "where": {
+        "ask": "「$W_n$ 遞減」用在哪一步？",
+        "steps": [
+          { "label": "$\\frac{\\binom{2n}{n}}{4^n}=\\frac{2}{\\pi}W_{2n}$", "why": "這只用到 $W_{2n}$ 的公式，分子分母同乘偶數。" },
+          { "label": "$2nW_{2n}W_{2n-1}=\\frac{\\pi}{2}$", "why": "不變量來自遞迴 $W_n=\\frac{n-1}{n}W_{n-2}$，不必遞減。" },
+          { "label": "$W_{2n}\\sim W_{2n-1}$，乘積換成平方", "correct": true },
+          { "label": "代回得 $\\frac{1}{\\sqrt{\\pi n}}$", "why": "代回只是代數：$\\frac{2}{\\pi}\\cdot\\frac{1}{2}\\sqrt{\\frac{\\pi}{n}}$。" }
+        ]
+      }
     }
   ],
   "skillTags": {

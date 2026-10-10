@@ -486,6 +486,9 @@ async function run() {
     narr.mode = "fake";
     await tap("[data-cv2s-next]");
     check("換節：不會自己開始念", (await evaluate(`return !window.BuzzCourseSections.voice().on;`)));
+    // 到這裡只打開過沒有證明節的課（FOLLOW 之後的課可能有證明節，所以在這裡量）
+    check("前面這幾課都沒有證明節（測試前提）", [FIRST, SECOND, WIDGET].every((l) => !l.sections.some((s) => s.proof)));
+    check("沒有證明節的課都沒抓 course_proof.js", (await evaluate(`return window.__s.files(/course_proof\\.js/);`)) === 0);
 
     /* ── 跟著念：dock 不擋字（三種手機、字幕開、1.5×、網址列伸縮、自己往上捲）──
        每次自己往下一句之後量：亮著那一句的底 ≤ dock 頂 − 8（放不下時至少頂端在黏著的圖／頂列下面），
@@ -568,7 +571,6 @@ async function run() {
         await tap("[data-cv2s-next]");
       }
     };
-    check("沒有證明節的課都沒抓 course_proof.js", (await evaluate(`return window.__s.files(/course_proof\\.js/);`)) === 0);
     check(`證明節：打開 ${PR.id}`, await openLesson(PR.id));
     check("有證明節的課才抓 course_proof.js（只一次）", await waitFor(`window.BuzzCourseProof && window.__s.root()`, 6000) && (await evaluate(`return window.__s.files(/course_proof\\.js/);`)) === 1);
     await tap(`.cv2s-dot:nth-child(${prSi + 1})`);

@@ -84,11 +84,56 @@
         { "show": ["$f_n$ 都連續、一致收斂到 $f$", "$\\Rightarrow f$ 連續"],
           "say": "定理：每個 f n 都連續，又一致收斂到 f，那 f 也連續。" },
         { "show": ["$\\frac{\\varepsilon}{3}+\\frac{\\varepsilon}{3}+\\frac{\\varepsilon}{3}=\\varepsilon$"], "note": "固定一個 $f_N$，誤差拆成三段。",
-          "say": "證明的點子是拿一個固定的 f N 當跳板，把誤差拆成三段，每段小於三分之 epsilon。完整證明在全文。" },
+          "say": "證明的點子是拿一個固定的 f N 當跳板，把誤差拆成三段，每段小於三分之 epsilon。證明在下一節。" },
         { "show": ["只有逐點：沒有固定的 $f_N$ 可用"],
           "say": "一致性就用在這裡：N 不能隨 x 變，才有一個固定的 f N 可以拿來找 delta。" }
       ],
       "check": 2
+    },
+    {
+      "title": "證明：拆成三段",
+      "proof": true,
+      "of": 3,
+      "skeleton": "ε-δ",
+      "beats": [
+        { "show": ["固定一個 $f_N$ 當跳板，誤差拆三段"],
+          "say": "策略：epsilon 三分法。固定一個 f N 當跳板，把 f 在 x 跟 f 在 a 的差拆成三段。" },
+        { "show": ["取 $N$：$|f_N(x)-f(x)|<\\frac{\\varepsilon}{3}$，$\\forall x\\in D$"], "note": "一致：同一個 $N$。",
+          "say": "先用一致收斂取一個 N，讓 f N 跟 f 的距離，在每一個 x 都小於三分之 epsilon。" },
+        { "show": ["$f_N$ 在 $a$ 連續：取 $\\delta$"], "note": "$|x-a|<\\delta$ ⇒ $|f_N(x)-f_N(a)|<\\frac{\\varepsilon}{3}$。",
+          "why": {
+            "ask": "為什麼 $\\delta$ 要在 $N$ 之後才找？",
+            "say": "delta 為什麼要等 N 選好才找？",
+            "options": [
+              { "label": "$\\delta$ 是從 $f_N$ 的連續找的，要先固定 $f_N$", "correct": true },
+              { "label": "$\\delta$ 只跟 $\\varepsilon$ 有關，先找後找都一樣", "why": "這個 $\\delta$ 是 $f_N$ 在 $a$ 連續給的；換一個 $N$，可能就要換一個 $\\delta$。" },
+              { "label": "要等 $f$ 連續才能找 $\\delta$", "why": "$f$ 連續正是要證的結論；這裡能用的只有 $f_N$ 連續。" }
+            ]
+          },
+          "say": "這個 delta 是 f N 在 a 連續給的，所以要先把 f N 固定下來，才找得到它。" },
+        { "show": ["$|f(x)-f(a)|\\le|f(x)-f_N(x)|$", "$+|f_N(x)-f_N(a)|+|f_N(a)-f(a)|$"],
+          "say": "三角不等式：中間插進 f N 在 x 跟 f N 在 a，拆成三段。" },
+        { "show": ["$<\\frac{\\varepsilon}{3}+\\frac{\\varepsilon}{3}+\\frac{\\varepsilon}{3}=\\varepsilon$"], "note": "第一、三段靠 $N$，中間靠 $\\delta$。",
+          "why": {
+            "ask": "第一段為什麼也 $<\\frac{\\varepsilon}{3}$？",
+            "say": "第一段是在 x 量的。它為什麼也小於三分之 epsilon？",
+            "options": [
+              { "label": "$N$ 對每一個 $x$ 都有效，包括這個 $x$", "correct": true },
+              { "label": "$x$ 離 $a$ 很近，跟第三段差不多", "why": "近不代表誤差一樣小；第一段是在 $x$ 量的，靠的是同一個 $N$ 對所有 $x$ 都成立。" },
+              { "label": "$f_N$ 在 $a$ 連續", "why": "連續管的是中間那段 $f_N(x)$ 與 $f_N(a)$；第一段比的是 $f$ 跟 $f_N$。" }
+            ]
+          },
+          "say": "N 是一致收斂給的，對每一個 x 都有效，所以第一段也小於三分之 epsilon。三段加起來小於 epsilon。" }
+      ],
+      "order": {
+        "ask": "把證明排回順序：依序點每一步",
+        "steps": [
+          { "label": "固定 $a$ 與 $\\varepsilon>0$" },
+          { "label": "由一致收斂取 $N$", "why": "要先有 $\\varepsilon$，才知道 $N$ 要讓誤差小於多少。" },
+          { "label": "由 $f_N$ 在 $a$ 連續取 $\\delta$", "why": "$\\delta$ 是 $f_N$ 給的：要先固定 $N$。" },
+          { "label": "$|x-a|<\\delta$ 時三段相加 $<\\varepsilon$", "why": "要先有 $\\delta$，才知道哪些 $x$ 算數。" }
+        ]
+      }
     },
     {
       "title": "極限連續也不保證",

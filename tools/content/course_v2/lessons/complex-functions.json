@@ -102,6 +102,48 @@
       "check": 1
     },
     {
+      "title": "證明：cos 沒有界",
+      "proof": true, "of": 3, "skeleton": "直接",
+      "beats": [
+        {"show":["用 Euler 公式定義 $\\cos z$，代入 $z=iy$"],
+          "say":"策略：先用 Euler 公式把 cosine 推廣到複數，再往虛軸上走，看它會長到多大。"},
+        {"show":["$\\cos z=\\frac{e^{iz}+e^{-iz}}{2}$"],"note":"$z$ 是實數時，就是原來的 $\\cos$。",
+          "say":"cosine z 定義成 e 的 i z 次方加 e 的負 i z 次方，再除以二。z 是實數時，就是原來的 cosine。"},
+        {"show":["$\\cos(iy)=\\frac{e^{-y}+e^{y}}{2}=\\cosh y$"],"note":"$i\\cdot iy=-y$：指數變成實數。",
+          "why": {
+            "ask": "指數為什麼變成實數？",
+            "say": "代入 i y 之後，指數裡的 i 為什麼不見了？",
+            "options": [
+              {"label":"$i\\cdot iy=-y$，$-i\\cdot iy=y$","correct":true},
+              {"label":"$|e^{iy}|=1$","why":"那是 $e^{iy}$ 的長度；這裡的指數是 $i\\cdot iy$，不是 $iy$。"},
+              {"label":"$\\cos$ 是偶函數","why":"偶函數只說 $\\cos(-z)=\\cos z$；讓指數變實數的是 $i^2=-1$。"}
+            ]
+          },
+          "say":"i 乘 i y 是負 y，負 i 乘 i y 是 y，指數都變成實數。cosine i y 就是 cosh y。"},
+        {"show":["$y\\to\\infty$：$\\cosh y\\to\\infty$"],"note":"$e^{-y}>0$，所以 $\\cosh y>\\frac{e^{y}}{2}$。",
+          "why": {
+            "ask": "為什麼沒有界？",
+            "say": "y 越來越大的時候，cosh y 為什麼停不下來？",
+            "options": [
+              {"label":"$\\cosh y>\\frac{e^{y}}{2}$，而 $e^{y}$ 沒有上限","correct":true},
+              {"label":"兩項 $e^{-y}$、$e^{y}$ 會互相抵消","why":"兩項都是正的，相加只會更大，不會抵消。"},
+              {"label":"$\\cos$ 有週期，所以有界","why":"週期 $2\\pi$ 是沿實軸方向；沿虛軸走沒有週期，$e^{y}$ 一路長大。"}
+            ]
+          },
+          "say":"e 的負 y 次方是正的，所以 cosh y 大於二分之 e 的 y 次方，而它沒有上限。"},
+        {"show":["$|\\cos(x+iy)|^2=\\cos^2 x+\\sinh^2 y$"],"note":"$|\\cos x|\\le 1$ 在複數上不成立。",
+          "say":"一般的點也一樣：長度平方是 cosine 平方加 sinh 平方。實數時的小於等於一，在複數上不成立。"}
+      ],
+      "predict": {
+        "ask": "$\\sin z=\\frac{e^{iz}-e^{-iz}}{2i}$。$\\sin(iy)$ 呢？",
+        "options": [
+          {"label":"$\\frac{e^{-y}-e^{y}}{2i}$，$y\\to\\infty$ 時也無界","correct":true},
+          {"label":"有界，因為 $|\\sin|\\le 1$","why":"$|\\sin x|\\le 1$ 只對實數成立；代入 $iy$，$e^{y}$ 一樣會長大。"},
+          {"label":"$0$，兩項抵消","why":"$e^{-y}$ 和 $e^{y}$ 只在 $y=0$ 時相等；$y$ 變大，差也跟著變大。"}
+        ]
+      }
+    },
+    {
       "title": "對數有無窮多個值",
       "beats": [
         {"show":["$e^w=z$ 的解不只一個"],"note":"因為 $e^z$ 有週期 $2\\pi i$。","say":"反過來解 e 的 w 次方等於 z。因為有週期，解一個就有一整串。"},

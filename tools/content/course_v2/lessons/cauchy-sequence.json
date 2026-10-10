@@ -198,12 +198,55 @@
       "beats": [
         { "show": ["收斂 ⇒ Cauchy"], "note": "都靠近 $L$ 的兩項，彼此也靠近。",
           "say": "收斂的數列一定是 Cauchy：兩項都離 L 不到二分之 epsilon，彼此就差不到 epsilon。" },
-        { "show": ["Cauchy ⇒ 收斂：要完備性"], "note": "完整證明在全文。",
-          "say": "反過來，Cauchy 推得出收斂，靠的是實數的完備性。" },
+        { "show": ["Cauchy ⇒ 收斂：要完備性"], "note": "證明在下一節。",
+          "say": "反過來，Cauchy 推得出收斂，靠的是實數的完備性，下一節證明。" },
         { "show": ["在 $\\mathbb{Q}$ 裡：1, 1.4, 1.41, 1.414, …"], "note": "項擠在一起，要去的 $\\sqrt{2}$ 卻不在 $\\mathbb{Q}$ 裡。",
           "say": "在有理數裡就不成立：根號二的小數截斷，項越擠越緊，但有理數裡沒有它要去的那一點。" }
       ],
       "check": 2
+    },
+    {
+      "title": "證明：Cauchy ⇒ 收斂",
+      "proof": true, "of": 4, "skeleton": "構造",
+      "beats": [
+        { "show": ["先有界，抓收斂子數列，再把整條拉過去"],
+          "say": "策略：不知道極限在哪，就先造一個。先證有界，抓出收斂的子數列，再把整條數列拉過去。" },
+        { "show": ["Cauchy ⇒ 有界"], "note": "$\\varepsilon=1$，再跟前面有限多項取最大。",
+          "say": "先證有界：epsilon 取一，第 N 項以後都離 a N 不到一；前面只有有限多項，取最大值。" },
+        { "show": ["有子數列 $a_{n_k}\\to L$"], "note": "Bolzano–Weierstrass。",
+          "why": {
+            "ask": "$L$ 從哪裡來？",
+            "say": "極限 L 是從哪裡冒出來的？",
+            "options": [
+              { "label": "有界，由 Bolzano–Weierstrass 抽出來", "correct": true },
+              { "label": "Cauchy 的定義直接給出 $L$", "why": "Cauchy 的定義只講項跟項的距離，沒提極限；$L$ 要靠定理抓出來。" },
+              { "label": "取 $L=\\lim a_n$", "why": "$a_n$ 收斂正是要證的，還不能用。" }
+            ]
+          },
+          "say": "數列有界，Bolzano Weierstrass 定理說它有收斂的子數列，極限叫 L。完備性就用在這裡。" },
+        { "show": ["$m,n\\ge N$：$|a_m-a_n|<\\frac{\\varepsilon}{2}$", "取 $k$：$n_k\\ge N$、$|a_{n_k}-L|<\\frac{\\varepsilon}{2}$"],
+          "say": "給定 epsilon，用 Cauchy 取 N；再取 k 夠大，讓 n k 至少是 N，子數列那一項也離 L 夠近。" },
+        { "show": ["$|a_n-L|\\le|a_n-a_{n_k}|+|a_{n_k}-L|<\\varepsilon$"], "note": "$n\\ge N$；兩段各 $<\\frac{\\varepsilon}{2}$。",
+          "why": {
+            "ask": "為什麼 $|a_n-a_{n_k}|<\\frac{\\varepsilon}{2}$？",
+            "say": "第一段，a n 和子數列那一項為什麼很近？",
+            "options": [
+              { "label": "$n$ 和 $n_k$ 都 $\\ge N$，用 Cauchy 條件", "correct": true },
+              { "label": "子數列的項都跟 $a_n$ 很接近", "why": "子數列的項可以離某一項很遠；要靠兩個足標都 $\\ge N$ 的 Cauchy 條件。" },
+              { "label": "$a_{n_k}\\to L$，$a_n$ 也 $\\to L$", "why": "$a_n\\to L$ 正是要證的，不能先用。" }
+            ]
+          },
+          "say": "n 和 n k 都至少是 N，Cauchy 條件說兩項很近；再加上子數列離 L 的距離，小於 epsilon。" }
+      ],
+      "where": {
+        "ask": "完備性用在哪一步？",
+        "steps": [
+          { "label": "Cauchy ⇒ 有界", "why": "這只用到 $\\varepsilon=1$ 和有限多項取最大值。" },
+          { "label": "抽出收斂子數列 $a_{n_k}\\to L$", "correct": true },
+          { "label": "取 $N$ 和 $k$", "why": "這只用到 Cauchy 的定義和子數列收斂的定義。" },
+          { "label": "三角不等式：$|a_n-L|<\\varepsilon$", "why": "這只是三角不等式，把兩段誤差加起來。" }
+        ]
+      }
     },
     {
       "title": "不知道極限也能證",

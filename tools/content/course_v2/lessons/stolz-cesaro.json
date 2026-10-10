@@ -168,6 +168,49 @@
       }
     },
     {
+      "title": "證明：夾住再相加",
+      "proof": true, "of": 4, "skeleton": "ε-δ",
+      "beats": [
+        { "show": ["每段夾住 → 相加 → 除以 $b_n$"],
+          "say": "策略：epsilon N。先把每一小段的差分夾在 L 左右，加起來消掉中間，再除以 b n。" },
+        { "show": ["$n\\ge N$：差分比在 $(L-\\varepsilon,L+\\varepsilon)$"], "note": "給 $\\varepsilon>0$，取 $N$。",
+          "say": "給一個 epsilon，因為差分比趨近 L，可以取 N，從 N 以後差分比都在 L 加減 epsilon 之內。" },
+        { "show": ["$(L-\\varepsilon)(b_{k+1}-b_k)<a_{k+1}-a_k$", "$\\quad<(L+\\varepsilon)(b_{k+1}-b_k)$"], "note": "$b_{k+1}-b_k>0$。",
+          "why": {
+            "ask": "為什麼乘上去不等號不變向？",
+            "say": "把分母的差分乘過去，不等號為什麼不會翻過來？",
+            "options": [
+              { "label": "$b_n$ 嚴格遞增，$b_{k+1}-b_k>0$", "correct": true },
+              { "label": "$b_n\\to\\infty$", "why": "趨近無限大不保證每一段都往上；不變向靠的是嚴格遞增。" },
+              { "label": "$a_{k+1}-a_k>0$", "why": "分子沒有任何要求；乘的是分母的差分，它的正負看 $b_n$ 遞增。" }
+            ]
+          },
+          "say": "b n 嚴格遞增，分母的差分是正的，乘過去不等號方向不變。" },
+        { "show": ["對 $k=N,\\dots,n-1$ 相加：", "$(L-\\varepsilon)(b_n-b_N)<a_n-a_N<\\cdots$"], "note": "中間全部消掉。",
+          "say": "從 N 加到 n 減一，中間一加一減全部消掉，只剩頭尾。" },
+        { "show": ["除以 $b_n$：$\\frac{a_N}{b_n}$、$\\frac{b_N}{b_n}\\to0$"], "note": "$\\frac{a_n}{b_n}$ 最後落在 $[L-\\varepsilon,L+\\varepsilon]$。",
+          "why": {
+            "ask": "為什麼 $\\frac{a_N}{b_n}\\to0$？",
+            "say": "a 下標大寫 N 除以 b n，為什麼趨近零？",
+            "options": [
+              { "label": "$N$ 固定，$a_N$ 是一個數，$b_n\\to\\infty$", "correct": true },
+              { "label": "$a_N$ 很小", "why": "$a_N$ 可以很大；它是固定的數，被趨近無限大的 $b_n$ 一除就趨近零。" },
+              { "label": "因為 $\\frac{a_n}{b_n}\\to L$", "why": "那是要證的結論，還不能拿來用。" }
+            ]
+          },
+          "say": "N 固定，a N 和 b N 都是固定的數，b n 趨近無限大，一除就趨近零。epsilon 任意，得證。" }
+      ],
+      "order": {
+        "ask": "把證明排回順序：依序點每一步",
+        "steps": [
+          { "label": "給 $\\varepsilon$，取 $N$" },
+          { "label": "乘上 $b_{k+1}-b_k>0$", "why": "要先有 $N$，才知道從哪裡開始差分比夾在 $L$ 左右。" },
+          { "label": "對 $k=N,\\dots,n-1$ 相加", "why": "要先把每一段寫成夾住的不等式，相加才會消。" },
+          { "label": "除以 $b_n$，讓 $n\\to\\infty$", "why": "要先消成 $a_n-a_N$ 與 $b_n-b_N$，除下去才出現 $\\frac{a_n}{b_n}$。" }
+        ]
+      }
+    },
+    {
       "title": "和除以某個東西",
       "beats": [
         { "show": ["$a_n=x_1+\\dots+x_n$ ⇒ $a_{n+1}-a_n=x_{n+1}$"], "note": "整個和只剩最後一項。",

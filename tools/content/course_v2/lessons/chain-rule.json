@@ -195,7 +195,7 @@
       "beats": [
         { "show": ["$\\frac{d}{dx}f(g(x))=f'(g(x))\\cdot g'(x)$"],
           "say": "寫成公式：外層的導數，裡面整包原封不動，再乘上裡層的導數。" },
-        { "show": ["$\\frac{dy}{dx}=\\frac{dy}{du}\\cdot\\frac{du}{dx}$"], "note": "這是直覺；完整證明在全文。",
+        { "show": ["$\\frac{dy}{dx}=\\frac{dy}{du}\\cdot\\frac{du}{dx}$"], "note": "這是直覺；證明在最後一節。",
           "say": "也可以寫成 d y d u 乘 d u d x。看起來像約分，但那只是直覺，不是證明。" }
       ],
       "check": 0
@@ -239,6 +239,51 @@
           "say": "先求導數再代點：x 等於一，根號四是二，所以答案是四分之三。" }
       ],
       "check": 3
+    },
+    {
+      "title": "證明：不除以 $\\Delta u$",
+      "proof": true, "of": 5, "skeleton": "構造",
+      "beats": [
+        { "show": ["造一個 $\\varphi$，不必除以 $\\Delta u$"],
+          "say": "策略：直覺版要除以 delta u，可是 delta u 可能一再等於零。改造一個輔助函數 phi，根本不除。" },
+        { "show": ["$\\varphi(k)=\\frac{f(a+k)-f(a)}{k}$，$\\varphi(0)=f'(a)$"], "note": "$a=g(x)$；$\\varphi(k)\\to f'(a)=\\varphi(0)$。",
+          "why": {
+            "ask": "為什麼 $\\varphi$ 在 $0$ 連續？",
+            "say": "phi 在零補上 f prime a。這樣補，為什麼 phi 在零連續？",
+            "options": [
+              { "label": "$f$ 在 $a$ 可微，$\\varphi(k)\\to f'(a)$", "correct": true },
+              { "label": "$g$ 在 $x$ 可微", "why": "拿錯函數了：$\\varphi$ 只跟 $f$ 有關，要的是 $f$ 在 $a$ 可微。" },
+              { "label": "$\\varphi$ 是分式，分式都連續", "why": "分式在 $k=0$ 沒有定義；$\\varphi(0)$ 是補上的值，補得剛好靠的是可微。" }
+            ]
+          },
+          "say": "f 在 a 可微，k 趨近零時 phi of k 趨近 f prime a，正好是補上的值，所以 phi 在零連續。" },
+        { "show": ["$f(a+k)-f(a)=\\varphi(k)\\cdot k$（含 $k=0$）"],
+          "say": "k 不是零，這就是 phi 的定義；k 是零，兩邊都是零。這條式子沒有除法，k 等於零也不怕。" },
+        { "show": ["取 $k=g(x+h)-g(x)$，除以 $h$：", "$\\varphi(k)\\cdot\\frac{g(x+h)-g(x)}{h}$"],
+          "say": "取 k 等於 g 的變化量，左邊就是合成函數的變化。除以 h，右邊是 phi of k 乘 g 的差商。" },
+        { "show": ["$h\\to0$：$k\\to0$，$\\varphi(k)\\to f'(g(x))$"], "note": "$g$ 連續，$k\\to0$；$\\varphi$ 在 $0$ 連續。",
+          "why": {
+            "ask": "某些 $h$ 讓 $k=0$，為什麼沒關係？",
+            "say": "有些 h 會讓 k 剛好是零。為什麼這次沒關係？",
+            "options": [
+              { "label": "$\\varphi$ 在 $0$ 有定義，而且連續", "correct": true },
+              { "label": "$h$ 夠小時 $k$ 就不會是 $0$", "why": "不一定：$g(x)=x^2\\sin\\left(\\frac{1}{x}\\right)$ 的 $k$ 一再等於 0，所以才要 $\\varphi$。" },
+              { "label": "那種 $h$ 只有幾個，略過就好", "why": "可以有無限多個，要多靠近 0 都有；靠的是 $\\varphi(0)$ 補得剛好。" }
+            ]
+          },
+          "say": "g 連續，k 趨近零；phi 在零有定義又連續，k 剛好是零也照樣趨近 f prime 在 g x 的值。" },
+        { "show": ["相乘：$f'(g(x))\\cdot g'(x)$"],
+          "say": "第二個因子是 g 的差商，趨近 g prime x。兩個相乘，就是連鎖律。證完。" }
+      ],
+      "where": {
+        "ask": "「$f$ 在 $a$ 可微」用在哪一步？",
+        "steps": [
+          { "label": "$\\varphi$ 在 $0$ 連續", "correct": true },
+          { "label": "$f(a+k)-f(a)=\\varphi(k)\\cdot k$", "why": "這只用到 $\\varphi$ 的定義；$k=0$ 時兩邊都是 0。" },
+          { "label": "$h\\to0$ 時 $k\\to0$", "why": "這靠的是 $g$ 在 $x$ 連續（$g$ 可微）。" },
+          { "label": "$\\frac{g(x+h)-g(x)}{h}\\to g'(x)$", "why": "這是 $g$ 在 $x$ 可微。" }
+        ]
+      }
     }
   ],
   "skillTags": {

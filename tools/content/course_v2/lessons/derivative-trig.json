@@ -160,7 +160,7 @@
         { "show": ["$x = \\frac{3\\pi}{2}$：谷底，斜率 0"], "note": "中間 $x = \\pi$ 往下穿過 $x$ 軸。",
           "say": "接著往下穿過 x 軸，到二分之三 pi 是谷底，斜率又是零。" },
         { "show": ["斜率：1、0、$-1$、0……"], "note": "直覺，不是證明：只抽樣幾個點。",
-          "say": "這串斜率正好是 cosine 在這些點的值。不過這只是抽幾個點看，完整證明在全文。" }
+          "say": "這串斜率正好是 cosine 在這些點的值。不過這只是抽幾個點看，證明在後面那節。" }
       ],
       "predict": {
         "ask": "$\\sin x$ 在 $x = \\pi$ 的切線斜率是？",
@@ -184,6 +184,48 @@
           "say": "sine 變 cosine，cosine 變負 sine，合起來 cosine 減 sine。" }
       ],
       "check": 0
+    },
+    {
+      "title": "證明：和角拆開",
+      "proof": true, "of": 4, "skeleton": "直接",
+      "beats": [
+        { "show": ["和角公式拆開，交給兩個標準極限"], "note": "$\\frac{\\sin h}{h}\\to1$，$\\frac{1-\\cos h}{h^2}\\to\\frac{1}{2}$。",
+          "say": "策略：用和角公式把 sine x 加 h 拆開，差商就變成兩個標準極限的組合。" },
+        { "show": ["$\\frac{\\cos h-1}{h}=-\\frac{1-\\cos h}{h^2}\\cdot h\\to0$"], "note": "$-\\frac{1}{2}\\cdot0=0$。",
+          "why": {
+            "ask": "為什麼它趨近 $0$？",
+            "say": "先準備一塊：cosine h 減一再除以 h，為什麼趨近零？",
+            "options": [
+              { "label": "$\\frac{1-\\cos h}{h^2}\\to\\frac{1}{2}$，再乘一個 $h\\to0$", "correct": true },
+              { "label": "代 $h=0$：$\\cos0-1=0$", "why": "分母也是 0，是 $\\frac{0}{0}$；要先湊成標準極限的樣子。" },
+              { "label": "$\\cos h\\le1$，所以分子很小", "why": "分子小、分母也小，比值不一定小；要靠 $\\frac{1-\\cos h}{h^2}\\to\\frac{1}{2}$ 量出它多小。" }
+            ]
+          },
+          "say": "把它寫成負的 h 平方分之一減 cosine h，再乘 h。前面趨近二分之一，後面趨近零，乘起來是零。" },
+        { "show": ["$\\frac{\\sin(x+h)-\\sin x}{h}$", "$=\\sin x\\cdot\\frac{\\cos h-1}{h}+\\cos x\\cdot\\frac{\\sin h}{h}$"], "note": "$\\sin(x+h)=\\sin x\\cos h+\\cos x\\sin h$。",
+          "say": "和角公式展開，減掉 sine x，再照 cosine h 減一和 sine h 分組，差商就拆成兩塊。" },
+        { "show": ["$h\\to0$：$\\sin x\\cdot0+\\cos x\\cdot1=\\cos x$"], "note": "$x$ 固定，$\\sin x$、$\\cos x$ 只是常數。",
+          "why": {
+            "ask": "為什麼可以兩塊分開取極限？",
+            "say": "兩塊為什麼可以各自取極限，再加起來？",
+            "options": [
+              { "label": "$\\sin x$、$\\cos x$ 是常數，兩塊的極限都存在", "correct": true },
+              { "label": "因為 $\\sin$、$\\cos$ 都連續", "why": "這裡在動的是 $h$，不是 $x$；$\\sin x$、$\\cos x$ 根本不動，只是常數。" },
+              { "label": "代 $h=0$ 就好", "why": "代進去兩塊都是 $\\frac{0}{0}$；要用兩個標準極限，不能直接代。" }
+            ]
+          },
+          "say": "x 固定，sine x 和 cosine x 只是常數。兩塊的極限是零和一，加起來就是 cosine x。" },
+        { "show": ["同理 $(\\cos x)'=-\\sin x$"], "note": "$\\cos(x+h)=\\cos x\\cos h-\\sin x\\sin h$。",
+          "say": "cosine 一樣做：它的和角公式中間是減號，所以最後得到負 sine x。" }
+      ],
+      "where": {
+        "ask": "「$\\frac{\\sin h}{h}\\to1$」用在哪一步？",
+        "steps": [
+          { "label": "$\\frac{\\cos h-1}{h}\\to0$", "why": "這一步用的是另一個極限：$\\frac{1-\\cos h}{h^2}\\to\\frac{1}{2}$。" },
+          { "label": "和角公式拆成兩塊", "why": "這只是三角恆等式，還沒取極限。" },
+          { "label": "$h\\to0$：得到 $\\cos x$", "correct": true }
+        ]
+      }
     },
     {
       "title": "六個公式",

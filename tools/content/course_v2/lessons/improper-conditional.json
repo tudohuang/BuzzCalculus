@@ -205,6 +205,49 @@
           "say": "一般來說，sine x 除以 x 的 p 次方，p 大於零就收斂；p 大於一才是絕對收斂。" }
       ],
       "check": 3
+    },
+    {
+      "title": "證明：一般判別法",
+      "proof": true, "of": 4, "skeleton": "直接",
+      "beats": [
+        { "show": ["分部積分：把 $g$ 積成有界的 $G$"], "note": "$f\\downarrow0$、$f'$ 連續、$|G|\\le M$。",
+          "say": "策略：跟 sine x 除以 x 同一招。分部積分，把 g 積成有界的 G，衰減交給 f prime。" },
+        { "show": ["$\\int_a^t fg=\\big[fG\\big]_a^t-\\int_a^t f'G$"], "note": "$G(t)=\\int_a^t g$，$G'=g$。",
+          "say": "G 的導數是 g。從 a 積到 t，分部積分變成邊界項，減掉 f prime 乘 G 的積分。" },
+        { "show": ["$|f(t)G(t)|\\le M|f(t)|\\to0$"], "note": "$G$ 有界，$f(t)\\to0$。",
+          "why": {
+            "ask": "為什麼邊界項 $\\to0$？",
+            "say": "先看邊界項。它為什麼會趨近零？",
+            "options": [
+              { "label": "$|G|\\le M$，而且 $f(t)\\to0$", "correct": true },
+              { "label": "$G(t)\\to0$", "why": "$G$ 只是有界，不必趨近 $0$：$g=\\sin x$ 時 $G$ 一直振盪。" },
+              { "label": "$f$ 遞減，所以 $fG$ 也遞減", "why": "$G$ 會正負振盪，乘起來不會單調；要的是 $f\\to0$ 乘上有界的 $G$。" }
+            ]
+          },
+          "say": "G 被 M 壓住，f 又趨近零，乘起來趨近零。在 a 那一端 G 是零，邊界項只剩這一個。" },
+        { "show": ["$|f'G|\\le M|f'|=-Mf'$"], "note": "$f$ 遞減，$f'\\le0$。",
+          "why": {
+            "ask": "為什麼 $M|f'|=-Mf'$？",
+            "say": "絕對值為什麼可以拿掉，換成負號？",
+            "options": [
+              { "label": "$f$ 遞減，所以 $f'\\le0$", "correct": true },
+              { "label": "$|G|\\le M$", "why": "那是前半個不等號的理由；拿掉 $f'$ 的絕對值，要看 $f'$ 的正負號。" },
+              { "label": "$f\\to0$，所以 $f'\\to0$", "why": "趨近 $0$ 不決定正負號；去掉絕對值靠的是 $f'\\le0$。" }
+            ]
+          },
+          "say": "f 遞減，f prime 小於等於零，它的絕對值就是負 f prime。" },
+        { "show": ["$\\int_a^{\\infty}(-Mf')=Mf(a)$ 有限"], "note": "$\\int f'G$ 絕對收斂，原積分收斂。",
+          "say": "負 M f prime 從 a 積到無限大，等於 M 乘 f 在 a 的值，是有限的。兩項都有極限，原積分收斂。" }
+      ],
+      "where": {
+        "ask": "「$f$ 遞減」用在哪一步？",
+        "steps": [
+          { "label": "分部積分：$\\int fg=[fG]-\\int f'G$", "why": "分部積分只要 $f'$ 連續、$G'=g$。" },
+          { "label": "邊界項 $f(t)G(t)\\to0$", "why": "這一步只用到 $f(t)\\to0$ 和 $|G|\\le M$。" },
+          { "label": "$|f'G|\\le M|f'|=-Mf'$", "correct": true },
+          { "label": "$\\int_a^{\\infty}(-Mf')=Mf(a)$", "why": "這只是微積分基本定理，再加上 $f(t)\\to0$。" }
+        ]
+      }
     }
   ],
   "skillTags": {
