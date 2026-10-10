@@ -141,7 +141,7 @@ if (fs.existsSync(path.join(root, "assets/vendor/katex/fonts"))) {
      經過 fetch handler 存起來 —— 打開過一次課程表，整套課離線都能讀。
    所以要擋的是：大綱有某一章（而且有寫好的課）、但那一章的檔不存在（prefetch 跟打開課都會 404）；APP_SHELL 偷偷列了課文；
    prefetchAll 不見了。 */
-["src/course_v2/outline.js", "src/course_v2_ui.js", "src/course_figures.js", "src/course_v2/map.js", "src/course_map.js", "src/course_video.js", "src/course_sections.js"].forEach((file) => {
+["src/course_v2/outline.js", "src/course_v2_ui.js", "src/course_figures.js", "src/course_v2/map.js", "src/course_map.js", "src/course_video.js", "src/course_sections.js", "src/course_finish.js", "src/course_proof.js"].forEach((file) => {
   if (!cached.has(file)) fail(`sw.js 沒有預快取 ${file} —— 離線時課程打不開`);
 });
 [...cached].filter((file) => /^src\/course_v2\/(ch|stage)-/.test(file)).forEach((file) => fail(`sw.js 預快取了課文 ${file} —— 課文用到才快取，不進 APP_SHELL`));
