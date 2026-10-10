@@ -69,7 +69,7 @@
         { "show": ["$\\int_X \\liminf_{n\\to\\infty} f_n\\,d\\mu\\ \\le\\ \\liminf_{n\\to\\infty}\\int_X f_n\\,d\\mu$"], "note": "$f_n\\ge0$ 可測。",
           "say": "Fatou 引理：非負可測函數列，下極限的積分，不超過積分的下極限。" },
         { "show": ["極限的積分比較小"], "note": "用 $\\liminf$：不必收斂。",
-          "say": "記法：極限的積分是比較小的那邊，因為面積只會漏掉。用下極限，是因為不必收斂。完整證明在全文。" }
+          "say": "記法：極限的積分是比較小的那邊，因為面積只會漏掉。用下極限，是因為不必收斂。證明在最後那節。" }
       ],
       "check": 0
     },
@@ -146,6 +146,49 @@
           "say": "硬套就得到零小於等於負一，矛盾。負的面積漏掉，方向整個反過來。" }
       ],
       "check": 3
+    },
+    {
+      "title": "證明：用單調收斂",
+      "proof": true, "of": 2, "skeleton": "構造",
+      "beats": [
+        { "show": ["造遞增的 $g_k$，再用單調收斂定理"],
+          "say": "策略：f n 不遞增，那就自己造一串遞增的函數，夾在 f n 底下，再借單調收斂定理。" },
+        { "show": ["$g_k=\\inf_{n\\ge k}f_n$：可測、非負、遞增"], "note": "$k$ 越大，取下確界的範圍越小。",
+          "why": {
+            "ask": "為什麼 $g_1\\le g_2\\le\\cdots$？",
+            "say": "g k 為什麼一個比一個大？",
+            "options": [
+              { "label": "範圍越小，下確界只會越大", "correct": true },
+              { "label": "$f_n$ 遞增", "why": "$f_n$ 不必遞增，那正是 Fatou 要處理的情形；遞增的是 $g_k$，靠的是取下確界的範圍在縮小。" },
+              { "label": "$g_k$ 收斂到 $\\liminf f_n$", "why": "收斂不代表遞增；倒過來，$g_k$ 是因為遞增才有極限。" }
+            ]
+          },
+          "say": "g k 是第 k 項以後的下確界。k 變大，範圍少了前面幾項，下確界只會變大，所以遞增。" },
+        { "show": ["$\\lim g_k=\\liminf f_n$"], "note": "這就是 $\\liminf$ 的定義。",
+          "say": "而 g k 的極限，正是 f n 的下極限，這是定義。" },
+        { "show": ["$n\\ge k$：$g_k\\le f_n$", "所以 $\\int g_k\\le\\inf_{n\\ge k}\\int f_n$"], "note": "對每個 $n\\ge k$ 都成立，取下確界。",
+          "why": {
+            "ask": "為什麼 $\\int g_k\\le\\inf_{n\\ge k}\\int f_n$？",
+            "say": "右邊為什麼可以取下確界？",
+            "options": [
+              { "label": "對每個 $n\\ge k$ 都有 $\\int g_k\\le\\int f_n$，它是一個下界", "correct": true },
+              { "label": "積分和下確界可以交換", "why": "不能交換，只有一個方向；這裡只是說 $\\int g_k$ 是 $\\int f_n$ 的一個下界。" },
+              { "label": "$g_k=f_k$", "why": "$g_k$ 是第 $k$ 項以後的下確界，通常比 $f_k$ 小，不相等。" }
+            ]
+          },
+          "say": "g k 不超過第 k 項以後的每一個 f n，積分也一樣。左邊是所有這些積分的一個下界，所以不超過下確界。" },
+        { "show": ["$\\int\\liminf f_n=\\lim\\int g_k\\le\\liminf\\int f_n$"], "note": "單調收斂定理用在 $g_k$。",
+          "say": "g k 非負遞增，用單調收斂定理，極限搬進積分。兩邊取極限，右邊正是積分的下極限。" }
+      ],
+      "where": {
+        "ask": "下面幾步裡，哪一步要靠 $f_n\\ge0$？",
+        "steps": [
+          { "label": "$g_k$ 遞增", "why": "這只用到取下確界的範圍在縮小，正負都成立。" },
+          { "label": "$\\lim g_k=\\liminf f_n$", "why": "這只是下極限的定義。" },
+          { "label": "$\\int g_k\\le\\inf_{n\\ge k}\\int f_n$", "why": "這只用到積分的單調性。" },
+          { "label": "$\\int\\liminf f_n=\\lim\\int g_k$", "correct": true }
+        ]
+      }
     }
   ],
   "workedExamples": [

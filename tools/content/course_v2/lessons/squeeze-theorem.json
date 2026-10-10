@@ -148,8 +148,8 @@
           "say": "夾擠定理：在 a 附近，f 被夾在 g 和 h 中間，g 在下面，h 在上面。" },
         { "show": ["$\\lim g = \\lim h = L$ → $\\lim f = L$"],
           "say": "如果上下兩條在 a 都往同一個數 L 擠，中間的 f 沒有別的地方可去，極限也只好是 L。" },
-        { "show": ["也保證了極限存在"], "note": "完整證明在全文。",
-          "say": "注意它說的不只是極限等於 L，還保證了這個極限存在。用 epsilon delta 的證明在全文。" }
+        { "show": ["也保證了極限存在"], "note": "證明在最後一節。",
+          "say": "注意它說的不只是極限等於 L，還保證了這個極限存在。用 epsilon delta 的證明放在最後一節。" }
       ],
       "check": 0
     },
@@ -215,6 +215,49 @@
           { "label": "1", "correct": true },
           { "label": "0", "why": "$\\frac{x - 1}{x} = 1 - \\frac{1}{x} \\to 1$，右邊是常數 1；上下都往 1 擠。" },
           { "label": "不存在", "why": "取整函數會跳，但被夾在兩個都 $\\to 1$ 的式子中間，極限存在。" }
+        ]
+      }
+    },
+    {
+      "title": "證明：取最小的 $\\delta$",
+      "proof": true, "of": 4, "skeleton": "ε-δ",
+      "beats": [
+        { "show": ["三個條件各交一個 $\\delta$，取最小的"],
+          "say": "策略：別人先給 epsilon，三個條件各交出一個 delta，取最小的那個，f 就被夾進 L 左右 epsilon 以內。" },
+        { "show": ["$g\\to L$：有 $\\delta_1$ 使 $L-\\varepsilon<g(x)$", "$h\\to L$：有 $\\delta_2$ 使 $h(x)<L+\\varepsilon$"],
+          "say": "g 趨近 L，給一個 delta 一，讓 g 大於 L 減 epsilon；h 趨近 L，給 delta 二，讓 h 小於 L 加 epsilon。" },
+        { "show": ["$g\\le f\\le h$ 在 $0<|x-a|<\\delta_3$ 成立"],
+          "say": "第三個範圍 delta 三：夾住只要在 a 附近成立，在這裡面，f 真的被 g 和 h 夾住。" },
+        { "show": ["取 $\\delta=\\min(\\delta_1,\\delta_2,\\delta_3)$"], "note": "三個範圍都包含它，三件事一起成立。",
+          "why": {
+            "ask": "為什麼要取最小的？",
+            "say": "delta 為什麼要取三個裡面最小的那個？",
+            "options": [
+              { "label": "要三個條件同時成立", "correct": true },
+              { "label": "取 $\\delta_1$ 就夠了，$g$ 已經 $\\to L$", "why": "$\\delta_1$ 只管 $g$；$h$ 的上界和夾住本身，可能要更小的範圍。" },
+              { "label": "$\\delta$ 越小，$\\varepsilon$ 就越小", "why": "$\\varepsilon$ 是別人先給的，不跟著 $\\delta$ 變；取最小是為了三個範圍都管得到。" }
+            ]
+          },
+          "say": "x 要同時落在三個範圍裡，三件事才一起成立。最小的那個 delta，三個範圍都包含它。" },
+        { "show": ["$L-\\varepsilon<g(x)\\le f(x)\\le h(x)<L+\\varepsilon$"], "note": "即 $|f(x)-L|<\\varepsilon$，正是極限的定義。",
+          "why": {
+            "ask": "為什麼 $f(x)$ 被夾在這裡？",
+            "say": "x 離 a 不到 delta 時，f 在 x 的值為什麼離 L 不到 epsilon？",
+            "options": [
+              { "label": "下界來自 $g$、上界來自 $h$，中間靠 $g\\le f\\le h$", "correct": true },
+              { "label": "$f(x)$ 本身就趨近 $L$", "why": "那正是要證的結論，不能拿來當理由。" },
+              { "label": "$g(x)$ 和 $h(x)$ 都等於 $L$", "why": "它們只是趨近 $L$，不一定等於；用的是它們離 $L$ 不到 $\\varepsilon$。" }
+            ]
+          },
+          "say": "左端靠 g 的極限，右端靠 h 的極限，中間靠夾住，整串連起來，f 離 L 不到 epsilon。證完。" }
+      ],
+      "order": {
+        "ask": "把證明排回順序：依序點每一步",
+        "steps": [
+          { "label": "給定 $\\varepsilon>0$" },
+          { "label": "由 $g$、$h$ 的極限取 $\\delta_1$、$\\delta_2$", "why": "要先有 $\\varepsilon$，才知道 $\\delta_1$、$\\delta_2$ 要多小。" },
+          { "label": "取 $\\delta=\\min(\\delta_1,\\delta_2,\\delta_3)$", "why": "要先有三個 $\\delta$，才能取最小的。" },
+          { "label": "設 $0<|x-a|<\\delta$，串起來得 $|f(x)-L|<\\varepsilon$", "why": "$x$ 要在 $\\delta$ 決定之後才出場。" }
         ]
       }
     }

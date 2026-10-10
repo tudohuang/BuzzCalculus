@@ -173,10 +173,52 @@
           "say": "畫一棵樹：z 在上面，下一層是 x 和 y，最底下是 t。從 z 走到 t 有兩條路，每條路上的導數乘起來，再加。" },
         { "show": ["$\\frac{\\partial z}{\\partial s}=f_x\\frac{\\partial x}{\\partial s}+f_y\\frac{\\partial y}{\\partial s}$"], "note": "$x$、$y$ 都是 $s$、$t$ 的函數時。",
           "say": "如果 x、y 都由 s 和 t 決定，最底層就有兩個點。對 s 微分，只走通到 s 的路。" },
-        { "show": ["條件：$f$ 可微"], "note": "只有偏導數存在不夠。證明在全文。",
+        { "show": ["條件：$f$ 可微"], "note": "只有偏導數存在不夠。證明在下一節。",
           "say": "這裡用到全微分是好近似，所以 f 要可微。常見的多項式、指數、三角函數組合都沒問題。" }
       ],
       "check": 2
+    },
+    {
+      "title": "證明：誤差項消失",
+      "proof": true, "of": 3, "skeleton": "直接",
+      "beats": [
+        { "show": ["全微分加誤差項，除以 $\\Delta t$，誤差 $\\to0$"],
+          "say": "策略：直接證。把可微寫成全微分加一個誤差項，兩邊除以 delta t，再證明誤差那一項趨近零。" },
+        { "show": ["$\\Delta z=f_x\\Delta x+f_y\\Delta y$", "$\\quad+\\varepsilon\\cdot\\sqrt{\\Delta x^2+\\Delta y^2}$"], "note": "$(\\Delta x,\\Delta y)\\to(0,0)$ 時 $\\varepsilon\\to0$。",
+          "say": "f 可微：變動等於全微分，加上 epsilon 乘位移長度，位移趨近零時 epsilon 也趨近零。" },
+        { "show": ["$\\frac{\\Delta z}{\\Delta t}=f_x\\frac{\\Delta x}{\\Delta t}+f_y\\frac{\\Delta y}{\\Delta t}\\pm\\varepsilon\\cdot\\sqrt{\\cdots}$"],          "say": "兩邊除以 delta t，除進根號裡，變成兩個變化率的平方和。" },
+        { "show": ["$\\Delta t\\to0$：$\\Delta x$、$\\Delta y\\to0$，所以 $\\varepsilon\\to0$"], "note": "$x$、$y$ 可微所以連續。",
+          "why": {
+            "ask": "為什麼 $\\varepsilon\\to0$？",
+            "say": "delta t 趨近零，epsilon 為什麼也趨近零？",
+            "options": [
+              { "label": "$x$、$y$ 連續，$\\Delta x$、$\\Delta y\\to0$", "correct": true },
+              { "label": "$\\Delta t\\to0$，$\\varepsilon$ 就直接 $\\to0$", "why": "$\\varepsilon$ 是跟著 $(\\Delta x,\\Delta y)$ 走的；要先確定它們也趨近零。" },
+              { "label": "$f$ 的偏導數連續", "why": "這個證明沒用到偏導數連續；這裡靠的是內層 $x$、$y$ 連續。" }
+            ]
+          },
+          "say": "x、y 可微所以連續，delta x、delta y 跟著趨近零，於是 epsilon 也趨近零。" },
+        { "show": ["根號 $\\to\\sqrt{x'^2+y'^2}$，最後一項 $\\to0$", "$\\frac{dz}{dt}=f_x\\,x'+f_y\\,y'$"], "note": "有限數乘趨近零的數。",
+          "why": {
+            "ask": "為什麼最後一項 $\\to0$？",
+            "say": "最後那一項為什麼會消失？",
+            "options": [
+              { "label": "$\\varepsilon\\to0$，根號趨近有限數", "correct": true },
+              { "label": "$\\varepsilon\\to0$ 就夠，乘什麼都 $\\to0$", "why": "根號那一項要是跑到無限大，乘積不一定趨近零；要它趨近有限數。" },
+              { "label": "根號那一項 $\\to0$", "why": "它趨近 $\\sqrt{x'^2+y'^2}$，一般不是零；趨近零的是 $\\varepsilon$。" }
+            ]
+          },
+          "say": "根號趨近 x prime 和 y prime 的平方和開根號，是有限數，乘上趨近零的 epsilon 就消失，剩下連鎖律。" }
+      ],
+      "where": {
+        "ask": "「$f$ 可微」用在哪一步？",
+        "steps": [
+          { "label": "寫成全微分加誤差項 $\\varepsilon\\cdot\\sqrt{\\cdots}$", "correct": true },
+          { "label": "兩邊除以 $\\Delta t$", "why": "這只是代數，任何等式都能兩邊除。" },
+          { "label": "$\\Delta x$、$\\Delta y\\to0$", "why": "這只用到 $x$、$y$ 可微所以連續，跟 $f$ 無關。" },
+          { "label": "根號 $\\to\\sqrt{x'^2+y'^2}$", "why": "這只用到 $x$、$y$ 對 $t$ 可微。" }
+        ]
+      }
     },
     {
       "title": "在一點求值",

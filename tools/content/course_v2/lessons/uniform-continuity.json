@@ -44,7 +44,7 @@
     {
       "heading": "④ 怎麼證「是」：Lipschitz",
       "body": [
-        "若存在 $K$ 使 $|f(x)-f(y)|\\le K|x-y|$ 對所有 $x$、$y\\in D$ 成立（Lipschitz 條件），取 $\\delta=\\frac{\\varepsilon}{K}$ 就對所有點有效。可微時由均值定理，$K$ 可以取 $\\sup|f'|$。但 Lipschitz 只是充分條件：$\\sqrt{x}$ 在 $[0,\\infty)$ 上不是 Lipschitz（在 0 附近斜率無界），仍然一致連續（範例 1）。"
+        "若存在 $K$ 使 $|f(x)-f(y)|\\le K|x-y|$ 對所有 $x$、$y\\in D$ 成立（Lipschitz 條件），取 $\\delta=\\frac{\\varepsilon}{K}$ 就對所有點有效（$K=0$ 時 $f$ 是常數，任何 $\\delta$ 都行；所以可以設 $K>0$）。可微時由均值定理，$K$ 可以取 $\\sup|f'|$。但 Lipschitz 只是充分條件：$\\sqrt{x}$ 在 $[0,\\infty)$ 上不是 Lipschitz（在 0 附近斜率無界），仍然一致連續（範例 1）。"
       ],
       "collapsible": true
     }
@@ -175,6 +175,47 @@
           "say": "不管對方給多小的 delta，n 取夠大，這一對點就夠近，函數值卻差很多，就是壞點。" }
       ],
       "check": 1
+    },
+    {
+      "title": "證明：Lipschitz",
+      "proof": true, "of": 3, "skeleton": "直接",
+      "beats": [
+        { "show": ["斜率有上限 $K$ ⇒ 一個 $\\delta$ 全區通用"],
+          "say": "策略：怎麼證是一致連續？斜率要是有上限，delta 就取 epsilon 除以那個上限，跟位置無關。" },
+        { "show": ["$|f(x)-f(y)|\\le K|x-y|$，對所有 $x,y\\in D$"], "note": "可微時由均值定理，$K=\\sup|f'|$。",
+          "why": {
+            "ask": "可微時，為什麼 $K$ 可以取 $\\sup|f'|$？",
+            "say": "可微的時候，上限 K 為什麼可以取導數絕對值的上確界？",
+            "options": [
+              { "label": "均值定理：$f(x)-f(y)=f'(c)(x-y)$", "correct": true },
+              { "label": "$f'$ 就是斜率，斜率就是 $K$", "why": "$f'$ 每一點不同；把差寫成 $f'$ 乘距離要靠均值定理，再取所有點的上限。" },
+              { "label": "因為 $f'$ 連續", "why": "不需要 $f'$ 連續；均值定理只要可微。" }
+            ]
+          },
+          "say": "均值定理：兩點函數值的差，等於中間某點的導數乘距離。導數的絕對值不超過上確界，就是 K。" },
+        { "show": ["給定 $\\varepsilon>0$，取 $\\delta=\\frac{\\varepsilon}{K}$"], "note": "只用到 $\\varepsilon$ 和 $K$，不看點。",
+          "say": "給定 epsilon，delta 取 epsilon 除以 K。這個數只看 epsilon 和 K，還沒有任何點出場。" },
+        { "show": ["$|x-y|<\\delta$ ⇒ $|f(x)-f(y)|\\le K|x-y|<\\varepsilon$"], "note": "$K$ 對所有點都成立。",
+          "why": {
+            "ask": "為什麼這個 $\\delta$ 對所有點都有效？",
+            "say": "為什麼這一個 delta，對定義域裡每一對點都有效？",
+            "options": [
+              { "label": "$K$ 對所有 $x,y$ 都成立，$\\delta$ 不看位置", "correct": true },
+              { "label": "$f$ 在每一點都連續", "why": "連續的 $\\delta$ 可以看位置：$\\frac{1}{x}$ 在 $(0,1]$ 每一點都連續，卻不一致連續。" },
+              { "label": "$D$ 是有界區間", "why": "沒用到有界：直線在整條實數線上也一樣，斜率的上限才是關鍵。" }
+            ]
+          },
+          "say": "任兩點距離小於 delta，差就不超過 K 倍距離，小於 K 乘 delta，也就是 epsilon。K 對每一對點都成立。" }
+      ],
+      "order": {
+        "ask": "把證明排回順序：依序點每一步",
+        "steps": [
+          { "label": "有 $K$：$|f(x)-f(y)|\\le K|x-y|$" },
+          { "label": "給定 $\\varepsilon$，取 $\\delta=\\frac{\\varepsilon}{K}$", "why": "要先有 $K$，才能取 $\\frac{\\varepsilon}{K}$。" },
+          { "label": "任取 $x,y$，$|x-y|<\\delta$", "why": "點要在 $\\delta$ 決定之後才出場：這正是一致連續和連續的差別。" },
+          { "label": "$|f(x)-f(y)|<K\\delta=\\varepsilon$", "why": "要先有 $|x-y|<\\delta$，才能乘上 $K$。" }
+        ]
+      }
     },
     {
       "title": "$\\sqrt{x}$ 是一致連續",

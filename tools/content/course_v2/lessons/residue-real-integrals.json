@@ -122,6 +122,49 @@
         {"show":["$\\frac{\\cos x}{1+x^2}$：$\\operatorname{Res}_i=\\frac{e^{-1}}{2i}$"],"say":"例如 cosine x 除以一加 x 平方：上半平面只有 i，e 的 i 乘 i 次方是 e 的負一次方。"}
       ],
       "check": 2
+    },
+    {
+      "title": "證明：Jordan 引理",
+      "proof": true, "of": 4, "skeleton": "直接",
+      "beats": [
+        {"show":["參數化半圓，把 $e^{-kR\\sin t}$ 留在積分裡"],"note":"再用 $\\sin t\\ge\\frac{2t}{\\pi}$ 壓下去。",
+          "say":"策略：把半圓參數化，指數那一項不要直接估成一，留在積分裡，再用一個 sine 的下界把它壓下去。"},
+        {"show":["$z=Re^{it}$：$|e^{ikz}|=e^{-kR\\sin t}$，$|dz|=R\\,dt$"],"note":"$ikz$ 的實部是 $-kR\\sin t$。",
+          "why": {
+            "ask": "為什麼 $|e^{ikz}|=e^{-kR\\sin t}$？",
+            "say": "e 的 i k z 次方，長度為什麼是 e 的負 k R sine t 次方？",
+            "options": [
+              {"label":"長度只看指數的實部，$\\operatorname{Re}(ikz)=-kR\\sin t$","correct":true},
+              {"label":"$|e^{i\\theta}|=1$，所以長度是 $1$","why":"$z$ 是複數，$ikz$ 不是純虛數：它有實部 $-kR\\sin t$。"},
+              {"label":"$|e^{ikz}|=e^{k|z|}$","why":"長度看的是指數的實部，不是 $k|z|$；在上半平面它是負的，所以會衰減。"}
+            ]
+          },
+          "say":"z 等於 R e 的 i t 次方，i k z 的實部是負 k R sine t。長度只看實部，所以是這個指數。"},
+        {"show":["$\\le M_RR\\int_0^{\\pi}e^{-kR\\sin t}\\,dt$","$=2M_RR\\int_0^{\\pi/2}e^{-kR\\sin t}\\,dt$"],"note":"$\\sin t$ 對 $t=\\frac{\\pi}{2}$ 對稱。",
+          "say":"f 的長度不超過 M R，乘上 R d t 積分。sine 對二分之派對稱，所以只算一半再乘二。"},
+        {"show":["$[0,\\frac{\\pi}{2}]$ 上 $\\sin t\\ge\\frac{2t}{\\pi}$"],"note":"凹函數在弦的上方。",
+          "why": {
+            "ask": "為什麼 $\\sin t\\ge\\frac{2t}{\\pi}$？",
+            "say": "要把指數壓下去，需要 sine t 的下界。這個下界為什麼成立？",
+            "options": [
+              {"label":"$\\sin$ 在 $[0,\\frac{\\pi}{2}]$ 是凹的，圖形在弦的上方","correct":true},
+              {"label":"$\\sin t\\le t$","why":"方向反了；這裡要的是 $\\sin t$ 的下界，才能把 $e^{-kR\\sin t}$ 往上估。"},
+              {"label":"$\\sin t\\ge 0$ 就夠了","why":"只用 $\\sin t\\ge 0$，指數只能估成 $1$，得到 $\\pi M_RR$，$R$ 消不掉。"}
+            ]
+          },
+          "say":"sine 在零到二分之派是凹的，圖形在連接兩端的弦上方，弦就是 y 等於派分之二 t。"},
+        {"show":["$<2M_RR\\cdot\\frac{\\pi}{2kR}=\\frac{\\pi M_R}{k}\\to 0$"],"note":"指數積分給出 $\\frac{1}{R}$，消掉前面的 $R$。",
+          "say":"換成 e 的負二 k R t 除以派，積分小於二 k R 分之派，R 消掉，剩派 M R 除以 k，趨近零。"}
+      ],
+      "where": {
+        "ask": "「$M_R\\to 0$」用在哪一步？",
+        "steps": [
+          {"label":"參數化：$|e^{ikz}|=e^{-kR\\sin t}$","why":"這一步只用到半圓的參數式和指數的長度。"},
+          {"label":"對稱：$\\int_0^{\\pi}=2\\int_0^{\\pi/2}$","why":"這只用到 $\\sin(\\pi-t)=\\sin t$。"},
+          {"label":"$\\sin t\\ge\\frac{2t}{\\pi}$，估出 $\\frac{\\pi M_R}{k}$","why":"這一步只用到 $\\sin$ 的凹性；$M_R$ 多大，上界 $\\frac{\\pi M_R}{k}$ 都成立。"},
+          {"label":"$\\frac{\\pi M_R}{k}\\to 0$","correct":true}
+        ]
+      }
     }
   ],
   "workedExamples": [

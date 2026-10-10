@@ -180,14 +180,37 @@
       }
     },
     {
-      "title": "關在離 0 遠的地方",
+      "title": "證明：關在離 0 遠處",
+      "proof": true, "of": "ex0", "skeleton": "ε-δ",
       "beats": [
-        { "show": ["限制 $|x-2|<1$：$1<x<3$"], "note": "$|x|>1$，所以 $\\frac{1}{2|x|}<\\frac{1}{2}$。",
-          "say": "把 x 關在離二不到一的地方，一到三之間。x 的絕對值大於一，因子就小於二分之一。" },
-        { "show": ["$|\\frac{1}{x}-\\frac{1}{2}|<\\frac{|x-2|}{2}$", "再要 $|x-2|<2\\varepsilon$"],
-          "say": "距離小於 x 減二的一半。要它小於 epsilon，x 減二再小於二倍 epsilon 就好。" },
-        { "show": ["$\\delta=\\min(1,2\\varepsilon)$"], "note": "$\\varepsilon=0.1$：$\\delta=0.2$；最大的是 $\\frac{1}{3}$。",
-          "say": "兩個條件取比較小的。誤差零點一的時候 delta 是零點二，比最大的三分之一保守，但合法。" }
+        { "show": ["先把 $x$ 關在離 0 遠的地方，再除"],
+          "say": "策略：先把 x 關在離零夠遠的地方，讓分母有下界，因子就有上限，再除過去。" },
+        { "show": ["給定 $\\varepsilon>0$，取 $\\delta=\\min(1,2\\varepsilon)$"],
+          "say": "正式寫。給定 epsilon，delta 取一和二倍 epsilon 裡比較小的那個。" },
+        { "show": ["設 $0<|x-2|<\\delta$：$\\delta\\le1$ ⇒ $1<x<3$", "$|x|>1$，所以 $\\frac{1}{2|x|}<\\frac{1}{2}$"], "note": "$\\min$ 裡的 1 讓分母有下界。",
+          "why": {
+            "ask": "為什麼 $\\frac{1}{2|x|}<\\frac{1}{2}$？",
+            "say": "因子為什麼小於二分之一？先想一想再選。",
+            "options": [
+              { "label": "$\\delta\\le1$ 把 $x$ 關在 $(1,3)$，$|x|>1$", "correct": true },
+              { "label": "$x$ 在 2 附近，因子大約 $\\frac{1}{4}$", "why": "只看了中心點；$x$ 可以靠近 1，要用整個範圍裡 $|x|$ 的下界。" },
+              { "label": "$\\varepsilon$ 很小，$x$ 離 2 很近", "why": "$\\varepsilon$ 可以很大；把 $x$ 關住的是 $\\min$ 裡的 1。" }
+            ]
+          },
+          "say": "delta 不超過一，x 在一到三之間，絕對值大於一，因子就小於二分之一。" },
+        { "show": ["$\\delta\\le2\\varepsilon$ ⇒ $|x-2|<2\\varepsilon$", "$|\\frac{1}{x}-\\frac{1}{2}|=\\frac{|x-2|}{2|x|}<2\\varepsilon\\cdot\\frac{1}{2}=\\varepsilon$"], "note": "兩個非負因子各自有上限。",
+          "why": {
+            "ask": "為什麼乘起來 $<\\varepsilon$？",
+            "say": "兩個因子乘起來，為什麼小於 epsilon？",
+            "options": [
+              { "label": "$|x-2|<2\\varepsilon$ 且 $\\frac{1}{2|x|}<\\frac{1}{2}$", "correct": true },
+              { "label": "$\\delta\\le1$ 就夠了", "why": "那只管住分母；$|x-2|<2\\varepsilon$ 要靠 $\\min$ 裡的 $2\\varepsilon$。" },
+              { "label": "只要 $|x-2|<2\\varepsilon$", "why": "只管一個因子不夠：另一個因子也要有上限 $\\frac{1}{2}$，乘積才壓得住。" }
+            ]
+          },
+          "say": "delta 不超過二倍 epsilon。因子一個小於二倍 epsilon，一個小於二分之一，相乘小於 epsilon。" },
+        { "show": ["$\\varepsilon=0.1$：$\\delta=0.2$"], "note": "最大的是 $\\frac{1}{3}$：保守但合法。",
+          "say": "誤差零點一的時候 delta 是零點二，比最大的三分之一保守，但合法。" }
       ],
       "check": 0
     },

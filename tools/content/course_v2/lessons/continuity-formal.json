@@ -65,7 +65,7 @@
       "steps": [
         "$|x^2-9|=|x-3|\\cdot|x+3|$。$|x+3|$ 會隨 $x$ 變，先把它壓住。",
         "先要求 $\\delta\\le1$。則 $|x-3|<1$ 推出 $2<x<4$，所以 $|x+3|<7$。",
-        "這時 $|x^2-9|<7|x-3|$。要它 $<\\varepsilon$，只要 $|x-3|<\\frac{\\varepsilon}{7}$。",
+        "這時 $|x^2-9|\\le7|x-3|$（$x=3$ 時兩邊都是 0）。要它 $<\\varepsilon$，只要 $|x-3|<\\frac{\\varepsilon}{7}$。",
         "兩個要求同時滿足：$\\delta=\\min(1,\\frac{\\varepsilon}{7})$。驗證：$|x-3|<\\delta\\Rightarrow|x+3|<7$ 且 $|x^2-9|<7\\delta\\le\\varepsilon$。",
         "$\\varepsilon=0.25$：$\\frac{\\varepsilon}{7}\\approx0.0357<1$，所以 $\\delta=\\frac{0.25}{7}\\approx0.0357$。"
       ],
@@ -156,14 +156,37 @@
       "check": 1
     },
     {
-      "title": "二次：先壓住",
+      "title": "證明：二次先壓住",
+      "proof": true, "of": "ex1", "skeleton": "ε-δ",
       "beats": [
-        { "show": ["$f(x)=x^2$ 在 $a=3$"], "note": "$|x^2-9|=|x-3|\\cdot|x+3|$。",
-          "say": "x 平方在三：距離分解成 x 減三乘 x 加三，第二個因子會隨 x 變，先把它壓住。" },
+        { "show": ["$f(x)=x^2$ 在 $a=3$：先壓住 $|x+3|$"], "note": "$|x^2-9|=|x-3|\\cdot|x+3|$。",
+          "say": "策略：x 平方在三，距離分解成 x 減三乘 x 加三。第二個因子會變，先壓成常數，再除。" },
         { "show": ["先要求 $\\delta\\le1$：$2<x<4$"], "note": "所以 $|x+3|<7$。",
+          "why": {
+            "ask": "為什麼 $|x+3|<7$？",
+            "say": "x 加三的絕對值，為什麼小於七？",
+            "options": [
+              { "label": "$x<4$，$x+3$ 不到 7", "correct": true },
+              { "label": "$x=3$ 時 $|x+3|=6<7$", "why": "只看了中心點；$x$ 可以跑到 4 附近，要用整個範圍裡的最大值。" },
+              { "label": "$\\varepsilon$ 很小，$x$ 離 3 很近", "why": "$\\varepsilon$ 可以很大；把 $x$ 關在 $(2,4)$ 的是 $\\delta\\le1$。" }
+            ]
+          },
           "say": "先要求 delta 不超過一，x 就在二到四之間，x 加三小於七。" },
-        { "show": ["$\\delta=\\min(1,\\frac{\\varepsilon}{7})$"],
-          "say": "距離小於七倍的 x 減三，再要求 x 減三小於七分之 epsilon。兩個要求取比較小的。" }
+        { "show": ["$|x^2-9|\\le7|x-3|$", "再要 $|x-3|<\\frac{\\varepsilon}{7}$"],
+          "say": "距離不超過七倍的 x 減三。要它小於 epsilon，x 減三再小於七分之 epsilon 就夠。" },
+        { "show": ["$\\delta=\\min(1,\\frac{\\varepsilon}{7})$"], "note": "兩個要求同時滿足。",
+          "say": "兩個要求都要成立，delta 取一和七分之 epsilon 裡比較小的。" },
+        { "show": ["$|x-3|<\\delta$ ⇒ $|x^2-9|\\le7|x-3|<7\\delta\\le\\varepsilon$"], "note": "$\\delta\\le\\frac{\\varepsilon}{7}$。",
+          "why": {
+            "ask": "為什麼 $7\\delta\\le\\varepsilon$？",
+            "say": "驗證的最後一步：七倍 delta 為什麼不超過 epsilon？",
+            "options": [
+              { "label": "$\\min$ 不超過 $\\frac{\\varepsilon}{7}$", "correct": true },
+              { "label": "$\\delta\\le1$，所以 $7\\delta\\le7$", "why": "那只給 $7\\delta\\le7$；$\\varepsilon$ 比 7 小的時候不夠。" },
+              { "label": "$\\varepsilon=0.25$ 時算過成立", "why": "一個 $\\varepsilon$ 不算；定義要每一個 $\\varepsilon$ 都成立。" }
+            ]
+          },
+          "say": "delta 取的是比較小的那個，不超過七分之 epsilon，所以七倍 delta 不超過 epsilon。證完。" }
       ],
       "check": 2
     },

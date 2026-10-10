@@ -110,6 +110,54 @@
       "check": 3
     },
     {
+      "title": "證明：Dini 定理",
+      "proof": true,
+      "of": 4,
+      "skeleton": "反證",
+      "beats": [
+        { "show": ["$g_n=f_n-f$：連續、$\\ge0$、遞減 $\\to0$"], "note": "不妨設 $f_n$ 遞減。",
+          "say": "策略：反證。看差 g n，它連續、非負、對 n 遞減而且趨近零。假設不一致，推出矛盾。" },
+        { "show": ["每個 $n$ 取 $x_n$：$g_n(x_n)\\ge\\varepsilon_0$"], "note": "$\\|g_n\\|_\\infty$ 遞減；極值定理取得到。",
+          "why": {
+            "ask": "為什麼每個 $n$ 都 $\\ge\\varepsilon_0$，不只某些 $n$？",
+            "say": "不一致，為什麼每一個 n 的最大誤差都至少 epsilon 零？",
+            "options": [
+              { "label": "$\\|g_n\\|_\\infty$ 對 $n$ 遞減，不趨近 0 就停在上面", "correct": true },
+              { "label": "不一致收斂，就是每個 $n$ 都有壞點", "why": "否定一致只給出無限多個 $n$ 誤差大；要每一個 $n$ 都大，靠的是 $\\|g_n\\|_\\infty$ 遞減。" },
+              { "label": "因為 $g_n\\ge0$", "why": "非負只說不會跑到負的；讓它一直停在 $\\varepsilon_0$ 以上的是遞減。" }
+            ]
+          },
+          "say": "最大誤差對 n 遞減，不趨近零，就一直停在某個 epsilon 零以上；極值定理給出取到最大的點。" },
+        { "show": ["子數列 $x_{n_k}\\to x^*\\in[a,b]$"], "note": "Bolzano–Weierstrass；區間是閉的。",
+          "say": "這串點在有界閉區間裡，挑出收斂的子數列，極限 x 星還在區間裡。" },
+        { "show": ["固定 $m$，$n_k\\ge m$ 時", "$g_m(x_{n_k})\\ge g_{n_k}(x_{n_k})\\ge\\varepsilon_0$"], "note": "同一點上，$g_n$ 對 $n$ 遞減。",
+          "why": {
+            "ask": "為什麼 $g_m(x_{n_k})\\ge g_{n_k}(x_{n_k})$？",
+            "say": "固定一個 m。在同一點，g m 為什麼不小於 g n k？",
+            "options": [
+              { "label": "$m\\le n_k$，而每一點上 $g_n$ 對 $n$ 遞減", "correct": true },
+              { "label": "$g_m$ 連續", "why": "連續要等下一步取極限才用；比較同一點、不同的 $n$，靠的是單調。" },
+              { "label": "$x_{n_k}$ 是 $g_m$ 的最大值點", "why": "$x_{n_k}$ 是 $g_{n_k}$ 取到大值的點，跟 $g_m$ 的最大值無關；這裡比的是同一點、不同的 $n$。" }
+            ]
+          },
+          "say": "m 不超過 n k，在同一點上 g 對 n 遞減，所以 g m 更大，也至少 epsilon 零。" },
+        { "show": ["$k\\to\\infty$：$g_m(x^*)\\ge\\varepsilon_0$"], "note": "$g_m$ 連續。",
+          "say": "讓 k 趨近無限大，g m 連續，不等式留到極限點：g m 在 x 星至少 epsilon 零。" },
+        { "show": ["每個 $m$ 都成立：與 $g_m(x^*)\\to0$ 矛盾"],
+          "say": "這對每一個 m 都成立，可是 g m 在 x 星應該趨近零，矛盾。所以一致收斂。" }
+      ],
+      "order": {
+        "ask": "把證明排回順序：依序點每一步",
+        "steps": [
+          { "label": "反設：$\\|g_n\\|_\\infty\\ge\\varepsilon_0$ 對所有 $n$" },
+          { "label": "取 $x_n$ 使 $g_n(x_n)\\ge\\varepsilon_0$", "why": "要先有 $\\varepsilon_0$，才知道要找多大的值。" },
+          { "label": "子數列 $x_{n_k}\\to x^*$", "why": "要先有 $(x_n)$ 這串點，才能挑子數列。" },
+          { "label": "固定 $m$，取極限：$g_m(x^*)\\ge\\varepsilon_0$", "why": "要先有極限點 $x^*$，才能在那裡取極限。" },
+          { "label": "與 $g_m(x^*)\\to0$ 矛盾", "why": "要先知道每一個 $m$ 都有 $g_m(x^*)\\ge\\varepsilon_0$，才矛盾。" }
+        ]
+      }
+    },
+    {
       "title": "用 Dini 證一致",
       "beats": [
         { "show": ["$f_n(x)=(1+\\frac{x}{n})^n\\to e^x$，$[0,1]$"],

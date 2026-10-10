@@ -45,7 +45,7 @@
         "單調：$B=A\\cup(B\\setminus A)$ 不相交，$\\mu(B)=\\mu(A)+\\mu(B\\setminus A)\\ge\\mu(A)$。",
         "次可加：令 $B_1=A_1$、$B_n=A_n\\setminus(A_1\\cup\\cdots\\cup A_{n-1})$。$B_n$ 兩兩不相交、$B_n\\subseteq A_n$、$\\bigcup B_n=\\bigcup A_n$。所以 $\\mu(\\bigcup A_n)=\\sum\\mu(B_n)\\le\\sum\\mu(A_n)$。",
         "由下連續：$A_0=\\emptyset$，$B_n=A_n\\setminus A_{n-1}$ 兩兩不相交，$B_1\\cup\\cdots\\cup B_n=A_n$。$\\mu(\\bigcup A_n)=\\sum\\mu(B_k)=\\lim_n\\sum_{k\\le n}\\mu(B_k)=\\lim\\mu(A_n)$。",
-        "由上連續：$C_n=A_1\\setminus A_n$ 遞增，$\\bigcup C_n=A_1\\setminus\\bigcap A_n$。由下連續，$\\mu(A_1)-\\mu(\\bigcap A_n)=\\lim(\\mu(A_1)-\\mu(A_n))$。因為 $\\mu(A_1)<\\infty$，兩邊都可以把 $\\mu(A_1)$ 減掉，得 $\\mu(\\bigcap A_n)=\\lim\\mu(A_n)$。若 $\\mu(A_1)=\\infty$，「$\\infty-\\infty$」使這一步失效。"
+        "由上連續：$C_n=A_1\\setminus A_n$ 遞增，$\\bigcup C_n=A_1\\setminus\\bigcap A_n$。由下連續，$\\mu(A_1\\setminus\\bigcap A_n)=\\lim\\mu(A_1\\setminus A_n)$。因為 $\\mu(A_1)<\\infty$，對 $E\\subseteq A_1$ 有 $\\mu(A_1\\setminus E)=\\mu(A_1)-\\mu(E)$，所以 $\\mu(A_1)-\\mu(\\bigcap A_n)=\\lim(\\mu(A_1)-\\mu(A_n))$，兩邊把 $\\mu(A_1)$ 減掉，得 $\\mu(\\bigcap A_n)=\\lim\\mu(A_n)$。若 $\\mu(A_1)=\\infty$，「$\\infty-\\infty$」使這一步失效。"
       ],
       "collapsible": true
     }
@@ -99,7 +99,7 @@
         { "show": ["$\\mu(\\bigcup A_n)\\le\\sum\\mu(A_n)$"], "note": "有重疊時只有 $\\le$。",
           "say": "次可加：有重疊時，聯集的測度不超過各自相加，重疊的部分不能算兩次。" },
         { "show": ["遞增：$\\mu(\\bigcup A_n)=\\lim\\mu(A_n)$"],
-          "say": "由下連續：一串越來越大的集合，聯集的測度就是測度的極限。完整證明在全文。" },
+          "say": "由下連續：一串越來越大的集合，聯集的測度就是測度的極限。為什麼，最後那節一步一步證。" },
         { "show": ["$A_n=[0,1-\\frac{1}{n}]$，$m(A_n)=1-\\frac{1}{n}$"], "note": "$\\bigcup A_n=[0,1)$。",
           "say": "例子：零到一減 n 分之一，長度一減 n 分之一。它們的聯集是零到一，不含一。" }
       ],
@@ -123,6 +123,51 @@
           "say": "可是 n 到無限大，每個長度都是無限大，交集卻是空集合。無限大減無限大，這一步就壞了。" }
       ],
       "check": 2
+    },
+    {
+      "title": "證明：由下與由上連續",
+      "proof": true, "of": 3, "skeleton": "構造",
+      "beats": [
+        { "show": ["切成環；遞減的取補集"],
+          "say": "策略：測度只會加不相交的東西。遞增的集合切成一圈一圈的環；遞減的，拿第一個去減，變成遞增。" },
+        { "show": ["$B_n=A_n\\setminus A_{n-1}$，$A_0=\\emptyset$", "兩兩不相交，前 $n$ 個拼成 $A_n$"],
+          "say": "第 n 個環是 A n 減掉 A n 減一。環跟環不重疊，前 n 個環拼起來剛好是 A n。" },
+        { "show": ["$\\mu(\\bigcup A_n)=\\sum\\mu(B_k)=\\lim\\mu(A_n)$"], "note": "可數可加；級數是部分和的極限。",
+          "why": {
+            "ask": "為什麼 $\\sum\\mu(B_k)=\\lim\\mu(A_n)$？",
+            "say": "環的測度加起來，為什麼就是 A n 測度的極限？",
+            "options": [
+              { "label": "級數是部分和的極限，前 $n$ 項和是 $\\mu(A_n)$", "correct": true },
+              { "label": "$A_n$ 越來越大，所以極限就是聯集", "why": "這正是要證的結論，不能拿來當理由；要靠可數可加把聯集拆成環。" },
+              { "label": "單調：$\\mu(A_n)\\le\\mu(\\bigcup A_n)$", "why": "單調只給一個方向的 $\\le$；等號要靠把聯集拆成不相交的環再相加。" }
+            ]
+          },
+          "say": "聯集是所有環的不相交聯集，用可數可加。級數就是部分和的極限，而前 n 個環的測度和正是 A n 的測度。" },
+        { "show": ["$C_n=A_1\\setminus A_n$ 遞增", "$\\bigcup C_n=A_1\\setminus\\bigcap A_n$"],
+          "say": "換遞減的情形。拿 A 一減掉 A n，挖掉的越來越多，所以 C n 遞增，聯集是 A 一減掉交集。" },
+        { "show": ["$\\mu(A_1)-\\mu(\\bigcap A_n)=\\lim(\\mu(A_1)-\\mu(A_n))$"],
+          "say": "對 C n 用剛證好的由下連續，兩邊都寫成 A 一的測度減掉一塊。" },
+        { "show": ["消去 $\\mu(A_1)$：$\\mu(\\bigcap A_n)=\\lim\\mu(A_n)$"], "note": "$\\mu(A_1)=\\infty$ 時這裡是 $\\infty-\\infty$。",
+          "why": {
+            "ask": "為什麼可以兩邊減掉 $\\mu(A_1)$？",
+            "say": "兩邊都有 A 一的測度。可以直接減掉嗎？靠的是什麼？",
+            "options": [
+              { "label": "$\\mu(A_1)<\\infty$，是有限數", "correct": true },
+              { "label": "兩邊有同一項，本來就能消", "why": "同一項不一定能消：$E_n=[n,\\infty)$ 時兩邊都是 $\\infty$，$\\infty-\\infty$ 推不出東西。" },
+              { "label": "因為 $A_n$ 遞減", "why": "遞減只是讓 $C_n$ 遞增；能不能減掉，看的是 $\\mu(A_1)$ 是不是有限數。" }
+            ]
+          },
+          "say": "因為 A 一的測度有限，才能兩邊減掉，得到交集的測度等於極限。這就是那個條件的工作。" }
+      ],
+      "where": {
+        "ask": "下面幾步裡，哪一步要靠 $\\mu(A_1)<\\infty$？",
+        "steps": [
+          { "label": "$B_n=A_n\\setminus A_{n-1}$ 兩兩不相交", "why": "這只是集合的運算，跟測度無關。" },
+          { "label": "$\\sum\\mu(B_k)=\\lim\\mu(A_n)$", "why": "這只用到可數可加；測度是 $\\infty$ 也成立。" },
+          { "label": "$C_n=A_1\\setminus A_n$ 遞增", "why": "這只用到 $A_n$ 遞減，是集合的事。" },
+          { "label": "兩邊消去 $\\mu(A_1)$", "correct": true }
+        ]
+      }
     }
   ],
   "workedExamples": [

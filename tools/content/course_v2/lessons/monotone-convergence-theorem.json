@@ -68,7 +68,7 @@
         { "show": ["$\\lim_{n\\to\\infty}\\int_X f_n\\,d\\mu=\\int_X \\lim_{n\\to\\infty} f_n\\,d\\mu$"],
           "say": "這就是單調收斂定理。兩邊都可以是無限大，不需要一致收斂。" },
         { "show": ["$f=\\sup f_n$，可測"],
-          "say": "極限函數是上確界，可測函數列的上確界可測，所以右邊有意義。完整證明在全文。" }
+          "say": "極限函數是上確界，可測函數列的上確界可測，所以右邊有意義。為什麼能換，最後那節一步一步證。" }
       ],
       "check": 0
     },
@@ -126,6 +126,51 @@
           "say": "補救：只要第一項可積，減掉它就變成非負遞增，定理照樣能用。" }
       ],
       "check": 2
+    },
+    {
+      "title": "證明：讓 $f_n$ 追上",
+      "proof": true, "of": 2, "skeleton": "構造",
+      "beats": [
+        { "show": ["$\\le$ 直接；$\\ge$ 造 $E_n$，讓 $f_n$ 追上 $c\\varphi$"],
+          "say": "策略：兩個方向。小於等於很直接；大於等於，要造一串集合，看 f n 什麼時候追上 f 底下的簡單函數。" },
+        { "show": ["$\\int f_n$ 遞增、$\\le\\int f$：$L\\le\\int f$"], "note": "$f_n\\le f_{n+1}\\le f$，積分單調。",
+          "say": "f n 一個比一個大，又都不超過 f，所以積分遞增、有上界，極限 L 存在，不超過 f 的積分。" },
+        { "show": ["取 $0\\le\\varphi\\le f$、$0<c<1$", "$E_n=\\{f_n\\ge c\\varphi\\}$ 遞增"],
+          "say": "反方向。取 f 底下的簡單函數 phi，和一個小於一的正數 c。E n 是 f n 追上 c 倍 phi 的點，f n 遞增，所以 E n 遞增。" },
+        { "show": ["$\\bigcup E_n=X$"], "note": "$\\varphi(x)>0$ 時 $f(x)>c\\varphi(x)$，$f_n(x)$ 追得上。",
+          "why": {
+            "ask": "為什麼 $\\bigcup E_n=X$？",
+            "say": "每一個點，為什麼遲早會進到某個 E n？",
+            "options": [
+              { "label": "$f(x)>c\\varphi(x)$ 嚴格大，$f_n(x)$ 某一項起超過", "correct": true },
+              { "label": "$f_n\\to f\\ge\\varphi$，總有一項 $f_n\\ge\\varphi$", "why": "極限大於等於 $\\varphi$，不代表某一項就大於等於：$f_n$ 可能一直差一點。所以才乘 $c<1$ 留空隙。" },
+              { "label": "$E_n$ 遞增，聯集就是全部", "why": "遞增的集合聯集不一定是全部；要逐點看，每個 $x$ 什麼時候進來。" }
+            ]
+          },
+          "say": "phi 是零的點一開始就在。phi 大於零的點，f 嚴格大於 c 倍 phi，而 f n 遞增趨近 f，某一項起就超過。" },
+        { "show": ["$\\int f_n\\ge c\\sum a_k\\mu(A_k\\cap E_n)\\to c\\int\\varphi$"], "note": "由下連續：$A_k\\cap E_n$ 遞增到 $A_k$。",
+          "why": {
+            "ask": "為什麼 $\\mu(A_k\\cap E_n)\\to\\mu(A_k)$？",
+            "say": "A k 交 E n 的測度，為什麼趨近 A k 的測度？",
+            "options": [
+              { "label": "測度由下連續：$A_k\\cap E_n$ 遞增到 $A_k$", "correct": true },
+              { "label": "用單調收斂定理", "why": "這正是要證的定理，不能拿來用；這裡只用到測度本身的由下連續。" },
+              { "label": "$\\mu(A_k\\cap E_n)\\le\\mu(A_k)$", "why": "單調只給 $\\le$，證不出極限；要靠集合遞增、聯集是 $A_k$。" }
+            ]
+          },
+          "say": "在 E n 上 f n 至少是 c 倍 phi，積分至少是那個和。A k 交 E n 遞增到 A k，由下連續，極限是 c 倍 phi 的積分。" },
+        { "show": ["$c\\to1$、對 $\\varphi$ 取上確界：$L\\ge\\int f$"],
+          "say": "c 可以任意接近一，得到 L 至少是 phi 的積分；再對所有 phi 取上確界，就是 f 的積分。" }
+      ],
+      "order": {
+        "ask": "把大於等於那一半排回順序：依序點每一步",
+        "steps": [
+          { "label": "取 $\\varphi$、$c$，令 $E_n=\\{f_n\\ge c\\varphi\\}$" },
+          { "label": "$\\bigcup E_n=X$", "why": "要先有 $E_n$，才談得上它們的聯集。" },
+          { "label": "$L\\ge c\\int\\varphi$", "why": "取極限要用 $A_k\\cap E_n$ 遞增到 $A_k$，那要先知道 $\\bigcup E_n=X$。" },
+          { "label": "$c\\to1$、取上確界：$L\\ge\\int f$", "why": "要先對每個 $c$、每個 $\\varphi$ 有 $L\\ge c\\int\\varphi$，才能讓 $c\\to1$ 再取上確界。" }
+        ]
+      }
     }
   ],
   "workedExamples": [

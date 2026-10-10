@@ -159,9 +159,52 @@
         { "show": ["(ii′) $\\forall\\varepsilon>0\\ \\exists x\\in S,\\ x>s-\\varepsilon$"],
           "say": "實際用的是等價的版本：對每一個 epsilon，都找得到集合裡的 x，比 s 減 epsilon 還大。" },
         { "show": ["$s$ 往下退一點點，就不再是上界"], "note": "先給 $\\varepsilon$，再找 $x$。",
-          "say": "翻成人話：s 往下退任何一點點，就有元素穿過去。順序是先給 epsilon，再找 x。完整證明在全文。" }
+          "say": "翻成人話：s 往下退任何一點點，就有元素穿過去。先給 epsilon，再找 x。兩者等價，下一節證明。" }
       ],
       "check": 1
+    },
+    {
+      "title": "證明：兩個版本等價",
+      "proof": true, "of": 3, "skeleton": "反證",
+      "beats": [
+        { "show": ["(ii) ⇒ (ii′) 直接證；(ii′) ⇒ (ii) 反證"], "note": "兩個方向都假設 (i)：$s$ 是上界。",
+          "say": "策略：兩個方向分開證。從二推二撇直接證；從二撇推二用反證，假設有比 s 小的上界。" },
+        { "show": ["$s-\\varepsilon<s$，所以 $s-\\varepsilon$ 不是上界"], "note": "否則由 (ii)，$s\\le s-\\varepsilon$。",
+          "why": {
+            "ask": "為什麼 $s-\\varepsilon$ 不是上界？",
+            "say": "給定 epsilon。s 減 epsilon 為什麼不可能是上界？",
+            "options": [
+              { "label": "由 (ii)，上界都 $\\ge s$，而 $s-\\varepsilon<s$", "correct": true },
+              { "label": "$s-\\varepsilon$ 在 $S$ 裡", "why": "$s-\\varepsilon$ 不一定在 $S$ 裡；它不是上界，是因為它比 $s$ 小。" },
+              { "label": "$\\varepsilon$ 很小", "why": "$\\varepsilon$ 多大都對；關鍵是 $s-\\varepsilon<s$，而每個上界都 $\\ge s$。" }
+            ]
+          },
+          "say": "第二條說每個上界都不比 s 小。s 減 epsilon 比 s 小，所以它不是上界。" },
+        { "show": ["不是上界：有 $x\\in S$，$x>s-\\varepsilon$"], "note": "這正是 (ii′)。",
+          "say": "不是上界的意思，就是集合裡有某個 x 穿過它，比 s 減 epsilon 大。這就是二撇。" },
+        { "show": ["反過來：設上界 $b<s$，取 $\\varepsilon=s-b>0$"], "note": "讓 $s-\\varepsilon$ 剛好等於 $b$。",
+          "why": {
+            "ask": "為什麼取 $\\varepsilon=s-b$？",
+            "say": "反方向：假設有上界 b 比 s 小。epsilon 為什麼要取 s 減 b？",
+            "options": [
+              { "label": "讓 $s-\\varepsilon$ 剛好等於 $b$", "correct": true },
+              { "label": "$\\varepsilon$ 越小越好", "why": "越小不一定有用；要剛好讓 $s-\\varepsilon=b$，穿過去的 $x$ 才會比 $b$ 大。" },
+              { "label": "任何 $\\varepsilon>0$ 都可以", "why": "隨便取只得到 $x>s-\\varepsilon$，不一定 $>b$；取 $s-b$ 才剛好碰到 $b$。" }
+            ]
+          },
+          "say": "取 epsilon 等於 s 減 b，它是正的，而且 s 減 epsilon 剛好是 b。" },
+        { "show": ["由 (ii′)：有 $x\\in S$，$x>b$", "與 $b$ 是上界矛盾，所以 $s\\le b$"],
+          "say": "二撇給出集合裡的 x 比 b 大，跟 b 是上界矛盾。所以每個上界都不比 s 小，這就是第二條。" }
+      ],
+      "order": {
+        "ask": "把 (ii′) ⇒ (ii) 排回順序：依序點每一步",
+        "steps": [
+          { "label": "設 $b$ 是上界，反設 $b<s$" },
+          { "label": "取 $\\varepsilon=s-b>0$", "why": "要先有 $b$，而且知道 $b<s$，才取得出正的 $\\varepsilon$。" },
+          { "label": "由 (ii′)，有 $x\\in S$，$x>s-\\varepsilon=b$", "why": "(ii′) 要先給定 $\\varepsilon$ 才能用。" },
+          { "label": "與 $b$ 是上界矛盾，所以 $s\\le b$", "why": "要先找到穿過 $b$ 的 $x$，才有矛盾。" }
+        ]
+      }
     },
     {
       "title": "證 $\\sup S=1$",

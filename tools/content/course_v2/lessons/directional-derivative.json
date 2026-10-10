@@ -151,7 +151,7 @@
           "say": "定義：沿著單位向量 u 走一段距離 h，函數的變化除以 h，再讓 h 趨近零。" },
         { "show": ["$x$ 走 $hu_1$，$y$ 走 $hu_2$"], "note": "變化約 $f_x\\cdot hu_1+f_y\\cdot hu_2$。",
           "say": "走這一段，x 方向實際走了 h 乘 u 一，y 方向走了 h 乘 u 二，各自帶來偏導數乘距離的變化。" },
-        { "show": ["$D_{\\mathbf u}f=\\nabla f\\cdot\\mathbf u=f_xu_1+f_yu_2$"], "note": "$f$ 可微時成立；推導在全文。",
+        { "show": ["$D_{\\mathbf u}f=\\nabla f\\cdot\\mathbf u=f_xu_1+f_yu_2$"], "note": "$f$ 可微時成立；推導在下一節。",
           "say": "加起來除以 h，正好是梯度跟 u 的內積。" }
       ],
       "predict": {
@@ -160,6 +160,37 @@
           { "label": "$f_y$", "correct": true },
           { "label": "$f_x$", "why": "$\\nabla f\\cdot(0,1)=f_x\\cdot0+f_y\\cdot1$，留下的是 $f_y$。" },
           { "label": "$\\nabla f$", "why": "方向導數是內積，是一個數，不是向量。" }
+        ]
+      }
+    },
+    {
+      "title": "證明：沿直線走",
+      "proof": true, "of": 2, "skeleton": "直接",
+      "beats": [
+        { "show": ["沿直線走，變成一個變數的 $g$"],
+          "say": "策略：直接證。把沿著 u 走的那條直線，看成只有一個變數的函數 g，再用連鎖律微分。" },
+        { "show": ["$g(h)=f(a+hu_1,b+hu_2)$", "$D_{\\mathbf u}f(a,b)=g'(0)$"], "note": "兩邊是同一個差商的極限。",
+          "why": {
+            "ask": "為什麼 $D_{\\mathbf u}f(a,b)=g'(0)$？",
+            "say": "方向導數為什麼正好是 g prime 在零的值？",
+            "options": [
+              { "label": "兩邊寫出來是同一個差商的極限", "correct": true },
+              { "label": "$g$ 是 $f$ 沿 $x$ 軸的截痕", "why": "$g$ 沿的是 $\\mathbf u$ 的方向；沿 $x$ 軸只是 $\\mathbf u=(1,0)$ 的特例。" },
+              { "label": "因為 $f$ 可微", "why": "這一步只是定義：兩邊的差商一模一樣，不必可微。" }
+            ]
+          },
+          "say": "g 在 h 減 g 在零，就是 f 沿 u 走 h 的變化；除以 h 取極限，兩邊一模一樣。" },
+        { "show": ["$g'(h)=f_x\\cdot u_1+f_y\\cdot u_2$"], "note": "〈多變數連鎖律〉：$x=a+hu_1$ 對 $h$ 的導數是 $u_1$。",
+          "say": "用多變數連鎖律：x 對 h 的導數是 u 一，y 對 h 的導數是 u 二，各自乘上偏導數。" },
+        { "show": ["代 $h=0$：$D_{\\mathbf u}f(a,b)=\\nabla f(a,b)\\cdot\\mathbf u$"], "note": "偏導數在 $(a,b)$ 取值。",
+          "say": "h 等於零就在點 a b，偏導數在 a b 取值，加起來正好是梯度跟 u 的內積。" }
+      ],
+      "where": {
+        "ask": "「$f$ 可微」用在哪一步？",
+        "steps": [
+          { "label": "令 $g(h)$，$D_{\\mathbf u}f(a,b)=g'(0)$", "why": "這只用到方向導數的定義。" },
+          { "label": "連鎖律：$g'(h)=f_x\\cdot u_1+f_y\\cdot u_2$", "correct": true },
+          { "label": "代 $h=0$，寫成內積", "why": "這只是代值，再把兩項認成內積。" }
         ]
       }
     },

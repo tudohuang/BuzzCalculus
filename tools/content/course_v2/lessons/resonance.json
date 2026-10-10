@@ -177,6 +177,49 @@
       "check": 1
     },
     {
+      "title": "推導：取極限",
+      "proof": true, "of": 3, "skeleton": "直接",
+      "beats": [
+        { "show": ["從非共振的解出發，讓 $\\omega\\to\\omega_0$"],
+          "say": "策略：從非共振的解出發，固定 t，讓外力頻率趨近 omega 零，看極限是不是共振解。" },
+        { "show": ["$x=\\frac{F_0(\\cos\\omega t-\\cos\\omega_0t)}{\\omega_0^2-\\omega^2}$"], "note": "$\\omega\\ne\\omega_0$，從靜止開始。",
+          "say": "頻率不相等、從靜止開始，解是兩個 cosine 相減，除以兩個頻率平方的差。" },
+        { "show": ["固定 $t$，$\\omega\\to\\omega_0$：分子、分母都 $\\to0$"],
+          "say": "固定 t，頻率越來越接近，分子分母一起趨近零，直接代進去沒有意義。" },
+        { "show": ["對 $\\omega$ 用 L'Hôpital", "$\\to\\frac{F_0t\\sin\\omega_0t}{2\\omega_0}$"], "note": "分子微出 $-F_0t\\sin\\omega t$，分母微出 $-2\\omega$。",
+          "why": {
+            "ask": "L'Hôpital 要對誰微分？",
+            "say": "這裡用羅必達，分子分母要對哪一個變數微分？",
+            "options": [
+              { "label": "對 $\\omega$：趨近的是 $\\omega$，$t$ 固定", "correct": true },
+              { "label": "對 $t$：解是 $t$ 的函數", "why": "解是 $t$ 的函數沒錯，可是這裡 $t$ 固定不動；趨近的是 $\\omega$，就對 $\\omega$ 微分。" },
+              { "label": "分子分母各自對自己的變數", "why": "L'Hôpital 要分子分母對同一個趨近的變數微分，這裡是 $\\omega$。" }
+            ]
+          },
+          "say": "對 omega 微分：分子帶出 t 乘 sine，分母是負二 omega，負號消掉，代 omega 零。" },
+        { "show": ["正好是共振解"], "note": "兩個答案一致；「解的極限還是解」要另外證明。",
+          "why": {
+            "ask": "這樣就證明了共振解嗎？",
+            "say": "極限正好是共振解。這樣算證明了嗎？",
+            "options": [
+              { "label": "還不算：「解的極限還是解」要另外證明", "correct": true },
+              { "label": "算，極限算對就證完了", "why": "極限只說兩個式子一致；它是不是方程式的解，要直接代入才確定。" },
+              { "label": "不算，因為 L'Hôpital 不能用", "why": "L'Hôpital 在這裡用得沒問題，分子分母都趨近零、對 $\\omega$ 可微；缺的是另一件事。" }
+            ]
+          },
+          "say": "這說明兩個答案一致，是很好的直覺；但解的極限還是不是解，要另外證明，直接代入才是證明。" }
+      ],
+      "order": {
+        "ask": "把推導排回順序：依序點每一步",
+        "steps": [
+          { "label": "寫出非共振的解" },
+          { "label": "固定 $t$，$\\omega\\to\\omega_0$：分子、分母都 $\\to0$", "why": "要先有解的式子，才能取極限。" },
+          { "label": "對 $\\omega$ 用 L'Hôpital", "why": "要先確認分子分母都趨近零，才能用 L'Hôpital。" },
+          { "label": "得到 $\\frac{F_0t\\sin\\omega_0t}{2\\omega_0}$", "why": "要先把分子分母對 $\\omega$ 微分，再代 $\\omega_0$。" }
+        ]
+      }
+    },
+    {
       "title": "有阻尼：峰值有限",
       "beats": [
         { "show": ["$A(\\omega)=\\frac{F_0}{\\sqrt{(\\omega_0^2-\\omega^2)^2+(2\\gamma\\omega)^2}}$"], "note": "$\\gamma>0$ 時分母永遠不為 0。",

@@ -74,9 +74,55 @@
         { "show": ["$\\forall\\varepsilon>0\\ \\exists P:\\ U(f,P)-L(f,P)<\\varepsilon$"],
           "say": "可積判準：不管給多小的 epsilon，都找得到一個分割，讓上和減下和小於 epsilon。" },
         { "show": ["先給 $\\varepsilon$，再找 $P$"], "note": "$\\varepsilon$ 越小，$P$ 通常要越細。",
-          "say": "順序很重要：先有 epsilon，再找分割。epsilon 越小，分割通常要切得越細。完整證明在全文。" }
+          "say": "順序很重要：先有 epsilon，再找分割。epsilon 越小，分割通常要切得越細。證明在下一節。" }
       ],
       "check": 0
+    },
+    {
+      "title": "證明：可積判準",
+      "proof": true,
+      "of": 2,
+      "skeleton": "ε-δ",
+      "beats": [
+        { "show": ["反方向：夾住；正方向：共同加細"],
+          "say": "策略：兩個方向。反方向，上下積分被夾在中間；正方向，各找一個分割，再取共同加細。" },
+        { "show": ["$(\\Leftarrow)$ $L(f,P)\\le$ 下積分 $\\le$ 上積分 $\\le U(f,P)$"],
+          "say": "先證反方向。任何分割的下和，不超過下積分；上積分，不超過任何上和。" },
+        { "show": ["$0\\le$ 上積分 − 下積分 $<\\varepsilon$"], "note": "非負，又小於每個正數，只能是 0。",
+          "why": {
+            "ask": "為什麼上下積分只能相等？",
+            "say": "差夾在零和 epsilon 之間。為什麼它只能是零？",
+            "options": [
+              { "label": "差非負，又小於每一個 $\\varepsilon>0$", "correct": true },
+              { "label": "$\\varepsilon$ 很小，差就約等於 0", "why": "約等於不夠：差如果是某個正數，取 $\\varepsilon$ 等於它就破功。要對每一個 $\\varepsilon$ 都成立，才只能是 0。" },
+              { "label": "上積分本來就等於下積分", "why": "那正是要證的結論，不能先拿來用。" }
+            ]
+          },
+          "say": "差是非負的，又小於每一個正的 epsilon，只能是零。所以可積。" },
+        { "show": ["$(\\Rightarrow)$ 取 $P_1$：$U(f,P_1)<I+\\frac{\\varepsilon}{2}$"], "note": "$I$ 是上和的下確界。",
+          "why": {
+            "ask": "為什麼找得到 $P_1$？",
+            "say": "正方向：上和小於 I 加二分之 epsilon 的分割，為什麼找得到？",
+            "options": [
+              { "label": "$I$ 是下確界，$I+\\frac{\\varepsilon}{2}$ 就不是下界", "correct": true },
+              { "label": "切得夠細，上和就接近 $I$", "why": "「夠細就接近」還沒證；這裡只用到下確界的定義：比它大一點就不再是下界。" },
+              { "label": "$f$ 有界，上和是有限數", "why": "有界只讓上和有定義；找得到這麼小的上和，靠的是 $I$ 是上和的下確界。" }
+            ]
+          },
+          "say": "I 是所有上和的下確界，比它大一點就不是下界了，所以有一個分割的上和比它小。" },
+        { "show": ["取 $P_2$：$L(f,P_2)>I-\\frac{\\varepsilon}{2}$"], "note": "同理：$I$ 是下和的上確界。",
+          "say": "同樣的道理，I 也是下和的上確界，找得到一個分割，下和大於 I 減二分之 epsilon。" },
+        { "show": ["$P=P_1\\cup P_2$：$U-L<\\varepsilon$"], "note": "加細引理：上和只降、下和只升。",
+          "say": "兩個分割合起來。加細之後上和只降、下和只升，差小於兩個二分之 epsilon 相加。" }
+      ],
+      "where": {
+        "ask": "正方向裡，加細引理用在哪一步？",
+        "steps": [
+          { "label": "取 $P_1$：$U(f,P_1)<I+\\frac{\\varepsilon}{2}$", "why": "這只用到 $I$ 是上和的下確界。" },
+          { "label": "取 $P_2$：$L(f,P_2)>I-\\frac{\\varepsilon}{2}$", "why": "這只用到 $I$ 是下和的上確界。" },
+          { "label": "$P=P_1\\cup P_2$：$U-L<\\varepsilon$", "correct": true }
+        ]
+      }
     },
     {
       "title": "單調函數一定可積",
