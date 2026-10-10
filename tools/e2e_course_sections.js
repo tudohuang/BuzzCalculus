@@ -12,6 +12,8 @@
 //   旁白（一課一支 mp3、每一句 t = [起, 訖]）：按播放之前沒有任何 /media/narration/ 請求；按了只抓這一課那一支（preload=none、Range 串流）；
 //   第二句接著第一句的訖點念；串流設定（Release 網址）照樣播；念完自己出下一句、圖跟著動；念到最後一句停在動作前；
 //   下一節接著念；暫停不再往下、繼續接著；語速設到 playbackRate（換句之後還在）；字幕是亮著那一句的 say；重開這一課就停；載不到（先重試一次）留一行字、點的照樣做完。
+//   跟著念（390／360／430 寬、DPR 3、字幕、1.5×）：每一句都在 dock 上面、不被黏著的圖蓋住；dock 底 = 分頁列頂 − 8；視窗變矮照樣；
+//   自己往上捲不被拉回、下一句才帶回；念完動作在 dock 上面、捲到底「下一節」清得開。
 //
 // 用法：node tools/e2e_course_sections.js
 //       node tools/e2e_course_sections.js --screenshots   另存截圖到 docs/report/course-review/screens/sections/（不進版控）
@@ -32,6 +34,9 @@ const lessonOf = (id) => JSON.parse(fs.readFileSync(path.join(LESSON_DIR, `${id}
 const FIRST = lessonOf("function-intro");
 const SECOND = lessonOf("domain-range");
 const WIDGET = lessonOf("riemann-sum-intuition");
+// 跟著念：有黏著的圖（兩張）、影片、小測、句子長的那一節
+const FOLLOW = lessonOf("ftc-part1");
+const FOLLOW_SI = 1;
 // 旁白：/media/narration/ 的請求一律由這支測試自己回（CDP Fetch 攔下來），不靠 Release —— 上傳之前 CI 也測得到。
 // 回的是合成的無聲 mp3（MPEG-2 Layer III、24kHz、48kbps，一格 144 bytes = 24ms），長度由測試控制；mode = "fail" 時回 404。
 const { mp3Ms } = require("./build_narration.js");
@@ -239,8 +244,8 @@ async function run() {
     check("今天記一節（連勝、每日任務用）", right.day === 1, String(right.day));
     check("做完之後「下一節」是主按鈕", right.primary);
     await sleep(700);
-    const reach = await evaluate(`const b = document.querySelector("[data-cv2s-next]").getBoundingClientRect(); const nav = document.querySelector(".topbar-nav"); const limit = nav && getComputedStyle(nav).position === "fixed" ? nav.getBoundingClientRect().top : innerHeight; const hit = document.elementFromPoint(b.left + 20, b.top + b.height / 2); return { bottom: Math.round(b.bottom), limit: Math.round(limit), mine: Boolean(hit && hit.closest("[data-cv2s-next]")) };`);
-    check("「下一節」自己捲進畫面、沒被底部分頁列蓋住", reach.bottom <= reach.limit && reach.mine, JSON.stringify(reach));
+    const reach = await evaluate(`const b = document.querySelector("[data-cv2s-next]").getBoundingClientRect(); const dock = document.querySelector(".cv2s-dock"); const limit = dock.getBoundingClientRect().top - 8; const hit = document.elementFromPoint(b.left + 20, b.top + b.height / 2); return { bottom: Math.round(b.bottom), limit: Math.round(limit), mine: Boolean(hit && hit.closest("[data-cv2s-next]")) };`);
+    check("「下一節」自己捲進畫面、停在播放列上面（沒被蓋住）", reach.bottom <= reach.limit && reach.mine, JSON.stringify(reach));
     const geo = await evaluate(`return { overflow: window.__s.overflow(), small: window.__s.small() };`);
     check("390 寬沒有橫向溢出", geo.overflow <= 1, `${geo.overflow}px`);
     check("分節裡的按鈕都 ≥ 40px", !geo.small.length, JSON.stringify(geo.small.slice(0, 4)));
@@ -382,8 +387,8 @@ async function run() {
     check("一路念到這一節最後一句，停在動作前", await waitFor(`window.__s.beats() === ${V[0].beats.length} && window.BuzzCourseSections.voice().wait && document.querySelector("[data-cv2s-act]")`, 12000), JSON.stringify(await evaluate(`return window.BuzzCourseSections.voice();`)));
     const same = await evaluate(`const b = document.querySelector("[data-cv2s-play]"); return { same: b === window.__pb, before: window.__pr, after: window.__s.rect(b), label: window.__s.text("[data-cv2s-play]"), inApp: Boolean(b.closest("#app")) };`);
     check("自己往下兩句：「暫停」還是同一顆按鈕、位置大小沒動", same.same && same.before === same.after && same.label === "暫停", JSON.stringify(same));
-    const dockPos = await evaluate(`const d = document.querySelector(".cv2s-dock").getBoundingClientRect(); const nav = document.querySelector(".topbar-nav").getBoundingClientRect(); return { bottom: Math.round(d.bottom), nav: Math.round(nav.top), small: window.__s.dockSmall(), overflow: window.__s.overflow() };`);
-    check("手機：播放列停在底部分頁列上面、按鈕 ≥ 40px、不溢出", dockPos.bottom <= dockPos.nav && dockPos.nav - dockPos.bottom <= 16 && !dockPos.small.length && dockPos.overflow <= 1, JSON.stringify(dockPos));
+    const dockPos = await evaluate(`const d = document.querySelector(".cv2s-dock").getBoundingClientRect(); const nav = document.querySelector(".topbar-nav").getBoundingClientRect(); return { bottom: Math.round(d.bottom), nav: Math.round(nav.top), gap: nav.top - d.bottom, small: window.__s.dockSmall(), overflow: window.__s.overflow() };`);
+    check("手機：播放列停在底部分頁列上面 8px、按鈕 ≥ 40px、不溢出", Math.abs(dockPos.gap - 8) <= 1 && !dockPos.small.length && dockPos.overflow <= 1, JSON.stringify(dockPos));
     await sleep(900);
     check("停在動作前：沒有自己換節", (await evaluate(`return window.__s.si();`)) === 0);
     await shot("phone-light-voice-wait");
@@ -454,6 +459,72 @@ async function run() {
     narr.mode = "fake";
     await tap("[data-cv2s-next]");
     check("換節：不會自己開始念", (await evaluate(`return !window.BuzzCourseSections.voice().on;`)));
+
+    /* ── 跟著念：dock 不擋字（三種手機、字幕開、1.5×、網址列伸縮、自己往上捲）──
+       每次自己往下一句之後量：亮著那一句的底 ≤ dock 頂 − 8（放不下時至少頂端在黏著的圖／頂列下面），
+       dock 底 = 分頁列頂 − 8；念完停在動作前：整個動作到「下一節」都在 dock 上面。 */
+    for (const vp of [{ width: 390, height: 844, shrink: 90 }, { width: 360, height: 740 }, { width: 430, height: 932, wheel: true }]) {
+      const tag = `${vp.width}×${vp.height}`;
+      await chrome.send("Emulation.setDeviceMetricsOverride", { width: vp.width, height: vp.height, deviceScaleFactor: 3, mobile: true });
+      await evaluate(`const r = window.__s.rec(); r.settings = { ...(r.settings || {}), narrSubs: true, narrRate: 1.5 }; localStorage.setItem("buzzcalculus.records.v1", JSON.stringify(r)); return 1;`);
+      check(`${tag}：打開 ${FOLLOW.id}`, await openLesson(FOLLOW.id));
+      await retime(FOLLOW.id, 1800, `e2ef${vp.width}`);
+      await tap(`.cv2s-dot:nth-child(${FOLLOW_SI + 1})`);
+      await waitFor(`window.__s.si() === ${FOLLOW_SI}`);
+      await evaluate(`scrollTo(0, 0); window.__m = () => {
+        const q = (s) => document.querySelector(s), R = (el) => el && el.getBoundingClientRect();
+        const dock = R(q(".cv2s-dock")), nav = R(q(".topbar-nav")), now = R(q("[data-cv2s] .cv2s-beat.is-now")), act = R(q("[data-cv2s] [data-cv2s-act]")), bar = R(q("[data-cv2s] .cv2s-bar"));
+        const figEl = q("[data-cv2s] .cv2-figure.is-widget"), sticky = figEl && getComputedStyle(figEl).position === "sticky";
+        const top = sticky ? figEl.getBoundingClientRect().bottom : q(".topbar").getBoundingClientRect().bottom;
+        const v = window.BuzzCourseSections.voice(), lim = dock.top - 8;
+        return { beat: v.beat, wait: v.wait, ih: innerHeight, y: Math.round(scrollY), gap: Math.round((nav.top - dock.bottom) * 10) / 10, top: Math.round(top), lim: Math.round(lim),
+          now: [Math.round(now.top), Math.round(now.bottom)], act: act ? [Math.round(act.top), Math.round(act.bottom)] : null, bar: Math.round(bar.bottom),
+          dockH: Math.round(dock.height), btnH: Math.max(...[...document.querySelectorAll(".cv2s-dock button")].map((b) => Math.round(b.getBoundingClientRect().height))) };
+      };
+      window.__log = []; window.__seen = ""; clearInterval(window.__tick);
+      window.__tick = setInterval(() => { const v = window.BuzzCourseSections.voice(); const k = v.beat + (v.wait ? "w" : ""); if (v.on && k !== window.__seen) { window.__seen = k; setTimeout(() => window.__log.push(window.__m()), 900); } }, 40);
+      return 1;`);
+      await tap("[data-cv2s-play]");
+      check(`${tag}：按播放、1.5× 念`, await waitFor(`window.BuzzCourseSections.voice().on && window.BuzzCourseSections.voice().rate === 1.5`, 3000));
+      if (vp.shrink) {
+        // 網址列收起來／伸出來：視窗高度在念到一半時變（Chrome 會發 resize；iOS 不保證，dock 的位置不靠它）
+        await waitFor(`window.__log.length >= 1`, 4000);
+        await chrome.send("Emulation.setDeviceMetricsOverride", { width: vp.width, height: vp.height - vp.shrink, deviceScaleFactor: 3, mobile: true });
+      }
+      let away = null;
+      if (vp.wheel) {
+        // 念到一半自己往上捲：這一句不被拉回去；下一句才帶回來
+        await waitFor(`window.__log.length >= 2`, 6000);
+        const y0 = await evaluate(`return Math.round(scrollY);`);
+        await chrome.send("Input.dispatchMouseEvent", { type: "mouseWheel", x: 200, y: 300, deltaX: 0, deltaY: -240 });
+        await sleep(450);
+        away = await evaluate(`return { y: Math.round(scrollY), beat: window.BuzzCourseSections.voice().beat };`);
+        away.y0 = y0;
+      }
+      check(`${tag}：念到最後一句停在動作前`, await waitFor(`window.BuzzCourseSections.voice().wait && document.querySelector("[data-cv2s-act]")`, 15000));
+      await sleep(1300);
+      const log = await evaluate(`clearInterval(window.__tick); return window.__log.concat([window.__m()]);`);
+      const beats = log.filter((m) => !m.wait);
+      const end = log[log.length - 1];
+      const fits = (m) => m.now[1] - m.now[0] <= m.lim - m.top;
+      const bad = beats.filter((m) => (fits(m) ? m.now[1] > m.lim + 1 || m.now[0] < m.top - 1 : m.now[0] < m.top - 1 || m.now[0] > m.lim));
+      check(`${tag}：每一句自己出來後都在 dock 上面、沒被頂列／黏著的圖蓋住（${beats.length} 次）`, beats.length >= FOLLOW.sections[FOLLOW_SI].beats.length && !bad.length, JSON.stringify(bad[0] || beats[beats.length - 1]));
+      check(`${tag}：dock 底 = 分頁列頂 − 8（每一次）`, log.every((m) => Math.abs(m.gap - 8) <= 1), log.map((m) => m.gap).join(","));
+      check(`${tag}：dock 的按鈕一行（不被擠成兩行）`, log.every((m) => m.btnH <= 44 && m.dockH <= 52), `${end.btnH} · ${end.dockH}`);
+      if (vp.shrink) check(`${tag}：視窗變矮之後還是一樣（innerHeight ${vp.height} → ${vp.height - vp.shrink}）`, log.some((m) => m.ih === vp.height - vp.shrink) && log.some((m) => m.ih === vp.height), log.map((m) => m.ih).join(","));
+      // 動作放得下就整個在 dock 上面；連「下一節」都放得下就一起（放不下的那一列靠捲到底，下面量）
+      check(`${tag}：念完：動作整個在 dock 上面（連「下一節」放得下就一起）`, end.act && end.act[0] >= end.top - 1 && (end.act[1] - end.act[0] > end.lim - end.top || end.act[1] <= end.lim + 1) && (end.bar - end.act[0] > end.lim - end.top || end.bar <= end.lim + 1), JSON.stringify(end));
+      if (away) {
+        const after = log.filter((m) => m.beat > away.beat && !m.wait);
+        check(`${tag}：念到一半自己往上捲：這一句不拉回去、下一句才帶回來`, away.y < away.y0 - 100 && after.length > 0 && after.every((m) => m.now[1] <= m.lim + 1), `${away.y0} → ${away.y} · ${JSON.stringify(after[0] || {})}`);
+      }
+      const bottom = await evaluate(`scrollTo(0, 1e6); await new Promise((r) => setTimeout(r, 200)); return window.__m();`);
+      check(`${tag}：捲到底，「下一節」清得開 dock`, bottom.bar <= bottom.lim + 1, JSON.stringify(bottom));
+      await shot(`phone-follow-${vp.width}`);
+      await tap("[data-cv2s-play]");
+    }
+    await evaluate(`const r = window.__s.rec(); r.settings = { ...(r.settings || {}), narrSubs: false, narrRate: 1 }; localStorage.setItem("buzzcalculus.records.v1", JSON.stringify(r)); return 1;`);
+    await chrome.send("Emulation.setDeviceMetricsOverride", PHONE);
 
     /* ── 深色 ── */
     await evaluate(`document.documentElement.dataset.theme = "dark"; return 1;`);

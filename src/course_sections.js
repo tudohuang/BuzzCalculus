@@ -3,16 +3,11 @@
 // index.html 上是 type="text/lazy" data-lazy="sections"：只有打開「有分節的課」才由 course_v2_ui.js 抓這一支。
 // 中文介面專用（英文介面用舊課），字直接寫中文。
 //
-// 一節一屏：上面是節的進度點（做完打勾），下面是這一節的句子（beat）——點一下（「下一句」、點句子那一塊、→ 或空白鍵）
-// 出現下一句；句子帶 fig 時，圖的滑桿平滑地動到那一格（prefers-reduced-motion 直接跳）。句子都出來之後是結尾的動作：
-// 小測（當下對錯、選錯看理由、可以重選）、先猜（選了就揭曉）、或自己拖滑桿進範圍。動作不擋路：「下一節」一直都在。
-// 最後一節之後是結算：「你現在會：」＋這一課的學習目標、這一課拿到的 XP、下一課、在地圖上看（那一課亮一下）。
+// 一節一屏：節的進度點＋這一節的句子（beat），點一下（按鈕、句子、→、空白鍵）出下一句，帶 fig 的句子讓圖平滑地動。
+// 句子出完是動作：小測、先猜、或拖滑桿進範圍；「下一節」一直都在。最後是結算（學習目標、XP、下一課、在地圖上看）。
 //
-// 紀錄（records.courseV2[id]）：secAt 讀到第幾節（下次從那裡接）、secDone 做完的節、picks 分節裡小測選過的選項
-// （跨天也接得回來 —— 小測每一題都落在某一節，四節做完就是小測做完，「完成」照全文的規則算）、xp 這一課拿到的 XP、
-// tierXp 三層加成發到哪一層。一節第一次做完 +5 XP（重讀不再加）；完成／熟練／全破各一次加成。
-// 做完一節也記進 records.courseReadDays（app.js 的 noteCourseRead）：那一天算有學（連勝、每日任務「讀一節課」）。
-// 專注模式（收起連勝與成就）：照算，結算畫面不顯示連勝。
+// 紀錄（records.courseV2[id]）：secAt 讀到第幾節、secDone 做完的節、picks 小測選過的（四節做完＝小測做完，「完成」照全文算）、
+// xp、tierXp 加成發到哪一層。一節第一次做完 +5 XP；也記進 courseReadDays（連勝、每日任務）。專注模式不顯示連勝。
 //
 // 這一支只管畫面與動作；小測的記分（第一次就對才算）沿用 course_v2_ui.js 的 course-pick，圖沿用 BuzzCourseFigures。
 
@@ -42,6 +37,7 @@
   .cv2s-sec .cv2-figure.is-widget { position: sticky; top: var(--cv2s-top, 0px); z-index: 3; gap: 2px; margin: 0 auto 12px; padding: 4px 0 6px; background: var(--paper); border-bottom: 1px solid var(--line); }
   .cv2s-sec .cv2-figure.is-widget [data-cv2-plot] { max-width: 290px; margin: 0 auto; }
   .cv2s-sec .cv2-figure.is-widget .cv2-slider input { height: 36px; }
+  .cv2s-sec .cv2-figure.is-widget.is-loose { position: static; }
 }
 .cv2s-beats { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; cursor: pointer; -webkit-tap-highlight-color: transparent; }
 .cv2s-beat { padding: 10px 14px; border-left: 3px solid var(--line); border-radius: 0 10px 10px 0; }
@@ -75,11 +71,11 @@
 .cv2s-finish .action-row { display: flex; flex-wrap: wrap; gap: 8px; }
 .cv2s-finish .action-row .button { max-width: 100%; }
 .cv2s-say { margin: 6px 0 0; padding: 6px 10px; border-radius: 8px; background: color-mix(in srgb, var(--ink) 6%, var(--paper)); color: var(--ink); font-size: 0.92rem; line-height: 1.7; }
-.cv2s.has-dock { padding-bottom: 72px; }
-.cv2s-dock { position: fixed; z-index: 30; left: 50%; bottom: 16px; display: grid; justify-items: center; gap: 4px; transform: translateX(-50%); pointer-events: none; }
+.cv2s.has-dock { padding-bottom: var(--cv2s-room, 72px); }
+.cv2s-dock { position: fixed; z-index: 30; left: 0; right: 0; bottom: calc(var(--cv2s-nav, 8px) + 8px); display: flex; flex-direction: column; align-items: center; gap: 4px; pointer-events: none; }
 .cv2s-dock > * { pointer-events: auto; }
 .cv2s-voice { display: inline-flex; gap: 4px; padding: 4px; border: 1px solid var(--line); border-radius: 999px; background: var(--paper); box-shadow: 0 6px 18px rgb(0 0 0 / 0.12); }
-.cv2s-voice button { display: inline-flex; align-items: center; justify-content: center; gap: 4px; min-width: 44px; min-height: 40px; padding: 0 12px; border: 1px solid transparent; border-radius: 999px; background: var(--paper); color: var(--ink); font: inherit; font-size: 0.86rem; font-weight: 700; font-variant-numeric: tabular-nums; cursor: pointer; }
+.cv2s-voice button { display: inline-flex; white-space: nowrap; align-items: center; justify-content: center; gap: 4px; min-width: 44px; min-height: 40px; padding: 0 12px; border: 1px solid transparent; border-radius: 999px; background: var(--paper); color: var(--ink); font: inherit; font-size: 0.86rem; font-weight: 700; font-variant-numeric: tabular-nums; cursor: pointer; }
 .cv2s-voice button[aria-pressed="true"] { border-color: var(--gold); background: color-mix(in srgb, var(--gold) 14%, var(--paper)); }
 .cv2s-voice svg { width: 16px; height: 16px; }
 .cv2s-voice-off { margin: 0; padding: 2px 10px; border-radius: 999px; background: var(--paper); color: var(--muted); font-size: 0.84rem; white-space: nowrap; }
@@ -119,7 +115,7 @@
     return st.sec;
   }
 
-  // 出現第 bi 句：句子帶 fig 就把圖從現在的值動到 fig.to（畫完那一格之後才動，見 afterRender）
+  // 出現第 bi 句：帶 fig 就把圖動到 fig.to（見 afterRender）
   function reveal(api, si, bi) {
     const sec = api.state.sec;
     const beat = api.data.sections[si].beats[bi];
@@ -173,9 +169,8 @@
     window.requestAnimationFrame(frame);
   }
 
-  /* ── 旁白（按了「播放」才有）：一課一支 <大綱的 narration 前綴><課>-<voice>.mp3，每一句 t = [起, 訖] 毫秒（build_narration.js）。
-     preload="none"，按了才抓、之後靠 Range 串流。念完一句自己出下一句（下一句接在後面，不跳）；這一節最後一句停在動作前。
-     只有一個 <audio>（iOS 在點的那一下解鎖）。訖點用計時器看（timeupdate 太粗）。出錯先重載一次（簽名網址過期），再錯 → 一行字、點的照常。 */
+  /* ── 旁白：一課一支 <narration 前綴><課>-<voice>.mp3，每一句 t = [起, 訖] 毫秒（build_narration.js）；preload="none"、Range 串流。
+     念完自己出下一句，最後一句停在動作前。一個 <audio>（iOS 點的那一下解鎖）；訖點用計時器看；出錯重載一次，再錯留一行字。 */
   const RATES = [1, 1.25, 1.5];
   const voice = { on: false, paused: false, wait: false, err: false, id: "", si: -1, bi: -1, el: null, timer: 0, state: null, start: 0, end: 0, retries: 0 };
   const segOf = (api, si, bi) => {
@@ -226,7 +221,7 @@
   function seek(el, ms) {
     const go = () => { if (Math.abs(el.currentTime * 1000 - ms) > 30) el.currentTime = ms / 1000; };
     if (el.readyState >= 1) { go(); return; }
-    // 還沒有 metadata：先記著（Chrome 會當成起播位置），metadata 到了再確認一次
+    // 還沒有 metadata：先記著，到了再確認一次
     try { el.currentTime = ms / 1000; } catch (_e) { /* 舊 Safari：等 metadata */ }
     el.addEventListener("loadedmetadata", () => { if (voice.on && voice.start === ms) go(); }, { once: true });
   }
@@ -277,9 +272,10 @@
       hush();
       voice.wait = true;
       updateDock();
+      show("act");
     }
   }
-  // 播到一半出錯（網路斷一下、Release 的簽名網址過期）：重新載一次、從這一句的起點接；再錯才算載不到
+  // 播到一半出錯：重載一次、從這一句的起點接；再錯才算載不到
   function retry() {
     const el = voice.el;
     if (!voice.on || !el || !el.getAttribute("src")) return;
@@ -299,18 +295,20 @@
     updateDock();
   }
 
-  /* 播放鍵、語速、字幕放在 body 底下的一條「dock」（position: fixed）：整頁重繪、一句一句長出來、捲動都不會動到它，
-     按鈕一直是同一顆（鍵盤焦點留著）。手機停在底部分頁列上面，桌機停在本文欄底部置中。
-     不是 #app 裡的東西：點擊自己接（app.js 的委派只看 #app），離開分節畫面（#app 換掉）就拿掉。 */
+  /* 播放、語速、字幕在 body 底下的「dock」（fixed）：重繪、捲動都不動到它，按鈕一直是同一顆（焦點留著）。
+     不在 #app 裡：點擊自己接，離開分節畫面就拿掉。 */
   let dock = null;
   let watcher = null;
   let pointerDown = false;
   let pending = null; // 手指按著時不捲：放開再捲
   const PAUSE_SVG = `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg>`;
   const PLAY_SVG = `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 4.5v15a1 1 0 0 0 1.5.86l12-7.5a1 1 0 0 0 0-1.72l-12-7.5A1 1 0 0 0 7 4.5z"/></svg>`;
+  let navH = 0;
+  let ro = null;
   function removeDock() {
     if (watcher) { watcher.disconnect(); watcher = null; }
-    if (dock) { dock.remove(); dock = null; }
+    if (ro) { ro.disconnect(); ro = null; }
+    if (dock) { dock.remove(); dock = null; document.documentElement.style.scrollPaddingBottom = ""; }
   }
   function ensureDock(api) {
     if (!voiced(api.data)) { removeDock(); return; }
@@ -335,15 +333,27 @@
     placeDock();
     updateDock();
   }
+  /* bottom = 分頁列高 + 8（CSS 錨定，不隨 iOS 網址列伸縮）；左右貼本文欄（置中＋translate 會把按鈕擠成兩行）。
+     節底與 scroll-padding 留 dock 高 + 16：捲到底一定清得開；dock 長高再算。 */
+  function measureNav() {
+    const nav = document.querySelector(".topbar-nav");
+    navH = nav && getComputedStyle(nav).position === "fixed" ? nav.getBoundingClientRect().height : 0;
+    return nav;
+  }
   function placeDock() {
     const root = dock && document.querySelector("[data-cv2s]");
     if (!root) return;
-    const nav = document.querySelector(".topbar-nav");
-    const fixedNav = nav && getComputedStyle(nav).position === "fixed";
+    const nav = measureNav();
     const r = root.getBoundingClientRect();
-    dock.style.bottom = `${fixedNav ? Math.round(window.innerHeight - nav.getBoundingClientRect().top + 8) : 16}px`;
-    dock.style.left = `${Math.round(r.left + r.width / 2)}px`;
+    const de = document.documentElement;
+    const room = dock.offsetHeight + 16;
+    dock.style.setProperty("--cv2s-nav", `${navH || 8}px`);
+    dock.style.left = `${Math.max(0, r.left)}px`;
+    dock.style.right = `${Math.max(0, de.clientWidth - r.right)}px`;
+    root.style.setProperty("--cv2s-room", `${room}px`);
+    de.style.scrollPaddingBottom = `${navH + room}px`;
     root.classList.add("has-dock");
+    if (!ro && window.ResizeObserver) { ro = new ResizeObserver(() => placeDock()); ro.observe(dock); if (nav) ro.observe(nav); }
   }
   function updateDock() {
     if (!dock || !last) return;
@@ -382,17 +392,35 @@
     }
     sec.fresh = -1;
     mountVideo(api, art);
-    show(art.querySelector(".cv2s-beat.is-now"));
+    show();
   }
-  // 新的一句在畫面下面：只捲到剛好看得到它（停在 dock 上面）；手指按著的時候先不捲
-  function show(el) {
+  /* 把亮著那一句（或動作）到「下一句」那一列捲進「頂列＋黏著的圖」與 dock 之間，放不下就保住它的頂。
+     手指按著／剛自己捲過先不捲；長高（字型、字幕）再對一次，但使用者自己捲過就等下一句。 */
+  let userAt = 0;
+  let grow = null;
+  function show(anchor) {
+    const root = document.querySelector("[data-cv2s]");
+    const el = root && root.querySelector(anchor === "act" ? "[data-cv2s-act]" : ".cv2s-beat.is-now");
+    if (grow) { grow.disconnect(); grow = null; }
     if (!el) return;
-    if (pointerDown) { pending = el; return; }
-    const limit = dock ? dock.getBoundingClientRect().top - 8 : window.innerHeight;
-    const over = el.getBoundingClientRect().bottom - limit;
-    if (over > 0) window.scrollBy({ top: over, behavior: reduced() ? "auto" : "smooth" });
+    const t0 = Date.now();
+    const go = () => {
+      if (!el.isConnected || userAt > t0) return;
+      if (pointerDown) { pending = go; return; }
+      if (Date.now() - userAt < 700) { window.setTimeout(go, 750); return; }
+      const fig = root.querySelector(".cv2-figure.is-widget");
+      const top = (parseFloat(root.style.getPropertyValue("--cv2s-top")) || 0) + (fig && getComputedStyle(fig).position === "sticky" ? fig.offsetHeight : 0) + 8;
+      const bottom = (dock ? dock.getBoundingClientRect().top : window.innerHeight - navH) - 8;
+      const a = el.getBoundingClientRect();
+      const z = (root.querySelector(".cv2s-bar") || el).getBoundingClientRect();
+      const d = z.bottom > bottom ? Math.min(z.bottom - bottom, a.top - top) : Math.min(0, a.top - top);
+      if (Math.abs(d) >= 1) window.scrollTo({ top: window.scrollY + d, behavior: reduced() ? "auto" : "smooth" });
+    };
+    go();
+    window.setTimeout(go, 350); // 進場動畫（往上 6px）結束後再對一次
+    if (window.ResizeObserver) { grow = new ResizeObserver(go); grow.observe(el); }
   }
-  // 換節之後：播放開著（沒暫停）就從這一節的第一句接著念；這一節已經整節出完過就停在動作前
+  // 換節：播放開著就從第一句接著念；整節出完過就停在動作前
   function resume(api) {
     if (!voice.on || voice.paused) return;
     hush();
@@ -419,6 +447,7 @@
         voice.on = true;
         speak(api);
       }
+      if (voice.on && !voice.paused) show();
       updateDock();
       return;
     }
@@ -431,7 +460,7 @@
     }
     if (action === "course-s-subs") records.settings.narrSubs = !voicePrefs(records).subs;
     deps.saveRecords(records);
-    // 之後的重繪（patch）照新的設定畫：手上這兩份 api 的 records 一起換
+    // 之後的重繪照新的設定畫
     if (last) last.records = { ...last.records, settings: { ...records.settings } };
     api.records = { ...api.records, settings: { ...records.settings } };
     updateDock();
@@ -447,10 +476,15 @@
       try { voice.el.load(); } catch (_e) { /* 舊瀏覽器 */ }
     }, true);
     document.addEventListener("pointerdown", () => { pointerDown = true; }, true);
-    const up = () => { pointerDown = false; if (pending) { const el = pending; pending = null; if (el.isConnected) show(el); } };
+    const up = () => { pointerDown = false; if (pending) { const go = pending; pending = null; go(); } };
     document.addEventListener("pointerup", up, true);
     document.addEventListener("pointercancel", up, true);
     window.addEventListener("resize", () => { if (dock) placeDock(); });
+    // 自己捲（滾輪、手指拖、鍵盤）：跟著念的捲動讓路
+    const mine = () => { userAt = Date.now(); };
+    window.addEventListener("wheel", mine, { passive: true });
+    window.addEventListener("touchmove", mine, { passive: true });
+    document.addEventListener("keydown", (e) => { if (/^(Page|Arrow(Up|Down)|Home|End)/.test(e.key)) mine(); });
   }
 
   /* ── 紀錄 ── */
@@ -473,7 +507,7 @@
     if (deps.noteCourseRead) deps.noteCourseRead(records);
     deps.saveRecords(records);
   }
-  // 三層加成：完成／熟練／全破各發一次（熟練、全破靠推薦題，練完回來打開這一課時補發）
+  // 三層加成：完成／熟練／全破各發一次（練完回來打開時補發）
   function settle(api) {
     const { deps } = api;
     const records = deps.loadRecords();
@@ -525,7 +559,7 @@
     const shown = Math.min(s.beats.length, sec.shown[si] || 1);
     const all = shown >= s.beats.length;
     const subs = voicePrefs(api.records).subs;
-    // 這一節用到的圖：句子的 fig.use 與 drag.use；正在動畫的那一張先畫在起點
+    // 這一節用到的圖；正在動畫的那一張先畫在起點
     const used = [...new Set(s.beats.map((b) => (b.fig ? b.fig.use : null)).concat(s.drag ? [s.drag.use] : []).filter((k) => k !== null))];
     const figs = used.map((k) => {
       const fig = (data.figures || [])[k];
@@ -638,7 +672,7 @@
       if (node && fig) animate(node, fig, from, to, api.deps.escapeAttr);
     }
     sec.fresh = -1;
-    // 手機的頂列是 sticky、橫跨整個寬度：黏著的圖要停在它下面（桌機的頂列是左側欄，不佔上方）
+    // 手機的頂列 sticky、橫跨整個寬度：黏著的圖停在它下面
     const topbar = document.querySelector(".topbar");
     let top = 0;
     if (topbar) {
@@ -646,16 +680,13 @@
       if (r.width >= document.documentElement.clientWidth - 1 && r.top <= 0.5) top = Math.round(r.bottom);
     }
     root.style.setProperty("--cv2s-top", `${top}px`);
+    measureNav();
     if (sec.si < api.data.sections.length) ensureDock(api); else { halt(); removeDock(); }
-    if (sec.top) { sec.top = false; window.scrollTo(0, 0); }
-    else if (sec.bar) {
-      // 新的一句或動作出現在下面：把「下一句／下一節」那一列帶進畫面，停在手機底部分頁列（與旁白的 dock）上面
-      const bar = root.querySelector(".cv2s-bar");
-      const nav = document.querySelector(".topbar-nav");
-      const navTop = dock ? dock.getBoundingClientRect().top - 4 : nav && getComputedStyle(nav).position === "fixed" ? nav.getBoundingClientRect().top : window.innerHeight;
-      const over = bar ? bar.getBoundingClientRect().bottom + 12 - navTop : 0;
-      if (over > 0) window.scrollBy({ top: over, behavior: reduced() ? "auto" : "smooth" });
-    }
+    // 黏著的圖太高（留給字的不到 220px）就不黏
+    root.querySelectorAll(".cv2-figure.is-widget").forEach((f) => f.classList.toggle("is-loose", f.offsetHeight > window.innerHeight - top - navH - (dock ? dock.offsetHeight + 16 : 0) - 220));
+    if (sec.top) window.scrollTo(0, 0);
+    if ((sec.top || sec.bar) && sec.si < api.data.sections.length) show(sec.bar);
+    sec.top = false;
     sec.bar = false;
     mountVideo(api, root);
   }
@@ -717,7 +748,7 @@
         if (sec.pred[si] !== undefined) return;
         sec.pred[si] = Number(data.option);
         complete(api, si);
-        sec.bar = true;
+        sec.bar = "act";
         return deps.render();
       }
       if (data.kind === "check" && s.check !== undefined) {
@@ -728,7 +759,7 @@
         if (!check || !check.options[oi] || picks.includes(oi) || picks.some((x) => check.options[x].correct)) return;
         api.update(api.m.id, (e) => ({ ...e, picks: { ...(e.picks || {}), [ci]: picks.concat(oi) } }));
         if (check.options[oi].correct) complete(api, si);
-        sec.bar = true;
+        sec.bar = "act";
         // 記分（第一次就對才算、四題都選過就結算「完成」）照全文的 course-pick；它會重繪
         api.act("course-pick", { check: ci, option: oi });
         settle(api);
@@ -737,7 +768,7 @@
     }
   }
 
-  // 拖滑桿進範圍（drag 動作）：放開時（change）判定；拖動中的每一格由 course_v2_ui 的 input 委派畫圖
+  // 拖滑桿進範圍：放開時（change）判定
   // → / 空白鍵：下一句（焦點在輸入框、滑桿上不搶；空白鍵在按鈕上照按鈕自己的意思）
   if (typeof document !== "undefined" && document.addEventListener) {
     document.addEventListener("change", (event) => {
@@ -751,7 +782,7 @@
       if (!(value >= s.drag.range[0] - 1e-9 && value <= s.drag.range[1] + 1e-9)) return;
       sec.dragOk[sec.si] = true;
       complete(api, sec.si);
-      sec.bar = true;
+      sec.bar = "act";
       api.deps.render();
     });
     document.addEventListener("keydown", (event) => {
