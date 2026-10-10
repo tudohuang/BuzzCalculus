@@ -168,13 +168,54 @@
     },
     {
       "title": "完整證明",
+      "proof": true, "of": "ex0", "skeleton": "ε-δ",
       "beats": [
-        { "show": ["給定 $\\varepsilon>0$，取 $\\delta=\\min(1,\\frac{\\varepsilon}{7})$"],
+        { "show": ["先給 $\\varepsilon$，再交出 $\\delta$"], "note": "$\\delta$ 只能看 $\\varepsilon$，不能看 $x$。",
+          "say": "策略：別人先給 epsilon，我們交出 delta，delta 裡不能有 x。招式是先把 x 關起來，再除。" },
+        { "show": ["給定 $\\varepsilon>0$，取 $\\delta=\\min(1,\\frac{\\varepsilon}{7})>0$"],
           "say": "正式寫一次。給定 epsilon，取 delta 等於一和七分之 epsilon 比較小的那個。" },
-        { "show": ["$\\delta\\le1$ ⇒ $0<x+3<7$"],
-          "say": "設 x 在垂直帶裡。delta 不超過一，所以 x 在二到四之間，x 加三小於七。" },
-        { "show": ["$|x^2-9|<\\frac{\\varepsilon}{7}\\cdot7=\\varepsilon$"],
-          "say": "delta 也不超過七分之 epsilon，兩個因子各自有上限，乘起來就小於 epsilon。" },
+        { "show": ["設 $0<|x-3|<\\delta$"],
+          "say": "現在才讓 x 出場：設 x 跟三的距離大於零、小於 delta。" },
+        { "show": ["$\\delta\\le1$ ⇒ $2<x<4$ ⇒ $0<x+3<7$"], "note": "$\\min$ 裡的 1 把 $x$ 關在 $(2,4)$。",
+          "why": {
+            "ask": "為什麼 $x+3<7$？",
+            "say": "x 加三為什麼小於七？先想一想再選。",
+            "options": [
+              { "label": "$\\delta\\le1$，$x$ 被關在 $(2,4)$ 裡", "correct": true },
+              { "label": "$x=3$ 時 $x+3=6<7$", "why": "只看了中心點。$x$ 可以跑到 4 附近，要用整個範圍裡 $x+3$ 的最大值。" },
+              { "label": "$\\varepsilon$ 很小，$x$ 離 3 很近", "why": "$\\varepsilon$ 可以很大（$\\varepsilon=100$ 時 $\\frac{\\varepsilon}{7}\\approx14.3$）；把 $x$ 關住的是 $\\min$ 裡的 1。" }
+            ]
+          },
+          "say": "delta 不超過一，x 就被關在二到四之間，x 加三小於七。這就是那個一的工作。" },
+        { "show": ["$\\delta\\le\\frac{\\varepsilon}{7}$ ⇒ $|x-3|<\\frac{\\varepsilon}{7}$"],
+          "say": "delta 也不超過七分之 epsilon，所以 x 減三的絕對值小於七分之 epsilon。" },
+        { "show": ["$|x^2-9|=|x-3||x+3|<\\frac{\\varepsilon}{7}\\cdot7=\\varepsilon$"], "note": "兩個非負數各自嚴格小於 $\\frac{\\varepsilon}{7}$ 與 7。",
+          "why": {
+            "ask": "為什麼乘起來 $<\\varepsilon$？",
+            "say": "兩個因子乘起來，為什麼一定小於 epsilon？",
+            "options": [
+              { "label": "兩個非負因子各自小於 $\\frac{\\varepsilon}{7}$ 與 7", "correct": true },
+              { "label": "$|x-3|<\\frac{\\varepsilon}{7}$ 就夠了", "why": "只管一個因子不夠：另一個因子 $|x+3|$ 也要有上限 7，乘積才壓得住。" },
+              { "label": "$x$ 在 3 附近，$|x+3|$ 大約是 6", "why": "大約不夠：證明要的是範圍裡每一個 $x$ 都成立的上限，那是 7，不是 6。" }
+            ]
+          },
+          "say": "兩個因子都非負，一個小於七分之 epsilon，一個小於七，乘起來就小於 epsilon。證完。" }
+      ],
+      "order": {
+        "ask": "把證明排回順序：依序點每一步",
+        "steps": [
+          { "label": "給定 $\\varepsilon>0$，取 $\\delta=\\min(1,\\frac{\\varepsilon}{7})$" },
+          { "label": "設 $0<|x-3|<\\delta$", "why": "$x$ 要在 $\\delta$ 決定之後才出場：先取 $\\delta$，再設 $x$。" },
+          { "label": "$\\delta\\le1$，所以 $0<x+3<7$", "why": "要先有 $x$（設好 $0<|x-3|<\\delta$），才談得上 $x+3$ 的範圍。" },
+          { "label": "$|x^2-9|<\\frac{\\varepsilon}{7}\\cdot7=\\varepsilon$", "why": "乘起來之前，要先有兩個因子各自的上限：$|x+3|<7$ 與 $|x-3|<\\frac{\\varepsilon}{7}$。" }
+        ]
+      }
+    },
+    {
+      "title": "保守但合法",
+      "beats": [
+        { "show": ["代數字：$\\varepsilon=0.1$"], "note": "$\\min$ 取兩個裡比較小的那個。",
+          "say": "代個數字看看：誤差給零點一。delta 是一和七分之零點一裡，比較小的那個。" },
         { "show": ["真正最大的 $\\delta=\\sqrt{9.1}-3\\approx0.01662$"], "note": "我們的 $\\delta$ 比較保守，但合法。",
           "say": "誤差零點一的時候，真正最大的 delta 大約零點零一六六二，我們取的比它小，保守但合法。" }
       ],

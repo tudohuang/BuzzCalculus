@@ -60,7 +60,7 @@
         { "show": ["推不遠，也擠不高"], "note": "$g$ 的尾巴、小集合上的面積都很小。",
           "say": "面積推不到無窮遠，因為 g 的尾巴面積很小；也擠不成無限高的尖峰。漏不掉，等號就回來了。" },
         { "show": ["$\\lim_{n\\to\\infty}\\int_X f_n\\,d\\mu=\\int_X f\\,d\\mu$"], "note": "$f_n\\to f$ a.e.；一個 $g$ 管住所有 $n$。",
-          "say": "這就是控制收斂定理：幾乎處處收斂，加一個可積的屋頂，就能交換。完整證明在全文。" }
+          "say": "這就是控制收斂定理：幾乎處處收斂，加一個可積的屋頂，就能交換。為什麼成立，最後那節逐步證明。" }
       ],
       "check": 0
     },
@@ -118,6 +118,51 @@
           "say": "x 分之一在零到一的積分是無限大，找不到屋頂。結論也真的失敗：二分之一不等於零。" }
       ],
       "check": 2
+    },
+    {
+      "title": "證明：用 Fatou",
+      "proof": true, "of": 2, "skeleton": "構造",
+      "beats": [
+        { "show": ["對 $h_n=2g-|f_n-f|$ 用 Fatou"],
+          "say": "策略：Fatou 只給小於等於。把要證趨近零的東西放在負號後面，不等式的方向就對了。" },
+        { "show": ["$|f|\\le g$ a.e.，所以 $f$ 可積"],
+          "say": "先處理 f：每個 f n 都被 g 壓住，取極限之後 f 也被 g 壓住，所以 f 可積。" },
+        { "show": ["$h_n=2g-|f_n-f|\\ge0$ a.e.", "$h_n\\to2g$ a.e."], "note": "$|f_n-f|\\le|f_n|+|f|\\le2g$。",
+          "why": {
+            "ask": "為什麼 $h_n\\ge0$？",
+            "say": "等等：Fatou 要非負。h n 為什麼不會是負的？選出理由。",
+            "options": [
+              { "label": "三角不等式，再用 $|f_n|\\le g$、$|f|\\le g$", "correct": true },
+              { "label": "$f_n\\to f$，所以 $|f_n-f|$ 很小", "why": "收斂只說 $n$ 夠大時才小；這裡每一個 $n$ 都要 $h_n\\ge0$，靠的是 $f_n$ 與 $f$ 都被 $g$ 壓住。" },
+              { "label": "$g\\ge0$，所以 $2g$ 一定比較大", "why": "$g$ 非負不夠：要大過 $|f_n-f|$，得把 $|f_n|\\le g$ 與 $|f|\\le g$ 兩個上界加起來。" }
+            ]
+          },
+          "say": "三角不等式：f n 減 f 的絕對值，不超過兩者絕對值相加，也就是兩倍的 g。又因為 f n 趨近 f，h n 趨近兩倍的 g。" },
+        { "show": ["$\\int2g\\le\\liminf\\int h_n$", "$=\\int2g-\\limsup\\int|f_n-f|$"], "note": "Fatou；再用 $\\liminf(c-a_n)=c-\\limsup a_n$。",
+          "say": "對 h n 用 Fatou：兩倍 g 的積分，不超過 h n 積分的下極限，也就是兩倍 g 的積分減掉上極限。" },
+        { "show": ["消去 $\\int2g$：$\\limsup\\int|f_n-f|\\le0$"], "note": "$\\int g=\\infty$ 時這裡是 $\\infty-\\infty$。",
+          "why": {
+            "ask": "為什麼可以兩邊消去 $\\int2g$？",
+            "say": "兩邊都有兩倍 g 的積分。可以直接消掉嗎？靠的是什麼？",
+            "options": [
+              { "label": "$\\int g<\\infty$，$\\int2g$ 是有限數", "correct": true },
+              { "label": "兩邊有同一項，本來就能消", "why": "同一項不一定能消：$\\int g=\\infty$ 時兩邊都是 $\\infty$，$\\infty-\\infty$ 沒有意義，什麼也推不出來。" },
+              { "label": "因為 $\\int|f_n-f|\\ge0$", "why": "非負是下一步才用（把上極限夾到 $0$）；能不能消去，看的是 $\\int2g$ 是不是有限數。" }
+            ]
+          },
+          "say": "因為 g 可積，兩倍 g 的積分是有限數，才能兩邊消掉，得到上極限不超過零。" },
+        { "show": ["$|\\int f_n-\\int f|\\le\\int|f_n-f|\\to0$"],
+          "say": "絕對值的積分非負、上極限又不超過零，所以趨近零；差的積分被它壓住，極限搬進積分了。" }
+      ],
+      "where": {
+        "ask": "下面幾步裡，哪一步要靠 $\\int g<\\infty$？",
+        "steps": [
+          { "label": "$|f_n-f|\\le2g$，所以 $h_n\\ge0$", "why": "這只用到 $|f_n|\\le g$、$|f|\\le g$ 逐點的大小；$\\int g$ 是不是有限都成立。" },
+          { "label": "$h_n\\to2g$ a.e.", "why": "這只用到 $f_n\\to f$ a.e.，跟積分無關。" },
+          { "label": "Fatou：$\\int2g\\le\\liminf\\int h_n$", "why": "Fatou 引理對非負可測函數都成立，積分是 $\\infty$ 也可以。" },
+          { "label": "兩邊消去 $\\int2g$", "correct": true }
+        ]
+      }
     }
   ],
   "workedExamples": [
