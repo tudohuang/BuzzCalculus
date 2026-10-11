@@ -333,18 +333,31 @@
     let figuresFail = false;
     let figuresLoading = false;
     const needsFigures = (data) => Boolean(data && data.figures && data.figures.length && !window.BuzzCourseFigures);
-    // 離線：課程表打開過一次，就在閒下來的時候把每一章的課文抓一遍（sw.js 的 fetch handler 會順手快取）。
-    // 不進 install 預快取（APP_SHELL）：合計約 2MB（分節推完約 3.5MB），英文介面與不開課程的人都用不到。
-    // 只有已經有 service worker 在管的頁面才做，不然抓了也存不起來；省流量模式（Save-Data）或 2G 不抓，打開的那一章照樣會被快取。
-    let prefetched = false;
-    function prefetchAll() {
-      if (prefetched || typeof navigator === "undefined" || !navigator.serviceWorker || !navigator.serviceWorker.controller || typeof fetch !== "function") return;
-      const net = navigator.connection || {};
-      if (net.saveData || /2g/.test(net.effectiveType || "")) return;
-      prefetched = true;
+    // 離線：打開過的課離線也讀得到 —— 打開一課就抓那一章（經過 sw.js 存進快取，cache-first）；分節的結算畫面（secfinish）平常讀到
+    // 最後一節才載，這裡在閒置時先抓一次（只抓不執行）讓它也進快取。閒下來時再抓「下一課」那一章（跟這一章不同才抓；
+    // 省流量模式 Save-Data 或 2G 不抓）。不再整套預抓：舊版打開課程表就把 74 章全抓一遍（約 3.6MB、brotli 約 1MB），大多沒人讀。
+    // 只有已經有 service worker 在管的頁面才做，不然抓了也存不起來。規則由 tools/validate_offline_assets.js 守。
+    const swControlled = () => typeof navigator !== "undefined" && Boolean(navigator.serviceWorker && navigator.serviceWorker.controller) && typeof fetch === "function";
+    const leanNet = () => { const net = (typeof navigator !== "undefined" && navigator.connection) || {}; return Boolean(net.saveData || /2g/.test(net.effectiveType || "")); };
+    const lazySrcs = (group) => [...document.querySelectorAll(`script[type="text/lazy"][data-lazy="${group}"]`)].map((n) => n.getAttribute("src"));
+    const warmed = new Set();
+    function warm(src) {
+      if (!src || warmed.has(src)) return;
+      warmed.add(src);
+      fetch(src).catch(() => warmed.delete(src));
+    }
+    let prefetchedFor = "";
+    function prefetchNext(m, data) {
+      if (prefetchedFor === m.id || !swControlled()) return;
+      prefetchedFor = m.id;
       const idle = window.requestIdleCallback || ((fn) => window.setTimeout(fn, 1500));
-      const files = [...new Set(order.filter((m) => m.available).map((m) => chapterFile(m.chapter.code)))];
-      idle(() => files.reduce((chain, src) => chain.then(() => (chapterState[src] === "ready" ? null : fetch(src).catch(() => null))), Promise.resolve()));
+      idle(() => {
+        if (data && data.sections && !window.BuzzCourseFinish) lazySrcs("secfinish").forEach(warm);
+        const next = neighbour(m, 1);
+        if (!next || leanNet()) return;
+        const src = chapterFile(next.chapter.code);
+        if (src !== chapterFile(m.chapter.code) && chapterState[src] !== "ready") warm(src);
+      });
     }
 
     /* ── 文字：行內數學 $…$ ＋ 跳脫 ＋ 上下標 ＋〈課名〉變成連到那一課的連結 ──
@@ -425,7 +438,6 @@
 
     /* ── 課程表 ── */
     function renderIndex(records) {
-      prefetchAll();
       if (indexView === "map") {
         if (typeof queueMicrotask === "function") queueMicrotask(setupMap); else window.setTimeout(setupMap, 0);
       }
@@ -678,6 +690,7 @@
       const m = meta[state.lessonId];
       if (!m || !m.available) return renderIndex(records);
       const data = lessonData(m.id);
+      if (data) prefetchNext(m, data);
       const entry = entryOf(records, m.id);
       const tier = tierOf(records, m);
       // 分節（lesson.sections）：畫面在 course_sections.js（data-lazy="sections"）；選了全文就照舊

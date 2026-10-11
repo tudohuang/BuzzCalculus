@@ -32,7 +32,9 @@ const STEPS = [
   ["對外數字", "node tools/validate_public_claims.js --update"],
   ["英文句型表", "node tools/build_i18n_text.js"],
   // 新版課程：tools/content/course_v2/ → src/course_v2/（大綱＋每一章的課文）。改了課文或大綱忘記打包，--check 會紅。
-  ["新版課程", "node tools/build_course_v2.js"]
+  ["新版課程", "node tools/build_course_v2.js"],
+  // sw.js 的 APP_SHELL／REVISIONS（每一支檔的內容雜湊）：一定排最後 —— 上面任何一支改了檔，雜湊都要跟著換
+  ["Service Worker 快取表", "node tools/build_sw_revisions.js"]
 ];
 
 for (const [label, command] of STEPS) {
@@ -52,7 +54,8 @@ if (checkMode) {
     "src/course_v2",
     "reports/answer-verification.json",
     "README.md",
-    "about.html"
+    "about.html",
+    "sw.js"
   ];
   const dirty = execSync(`git status --porcelain -- ${GENERATED.join(" ")}`, { cwd: root })
     .toString().trim();

@@ -119,32 +119,57 @@ if (missingIcons.length) {
 }
 const unusedIcons = [...shipped].filter((name) => !used.has(name)).sort();
 
-/* ── 5. sw.js 要把 vendor 全部預快取 ──────────────────────── */
+/* ── 5. Service Worker：預快取只放核心、其他用到才快取 ─────────────
+   2026-10 流量瘦身（tools/measure_transfer.js 量）。對外的離線承諾（guide.html）跟著改成：
+   「題庫練習裝完就離線可用；課程、證明、說明頁 —— 打開過的離線也能看」。這一節守的是那句話真的成立：
+   - APP_SHELL（安裝時預快取）＝ 離線練題的核心：index.html、CSS、index.html 裡每一支 defer 的 script、vendor、常用字型。
+     少一支，離線開站就缺東西。
+   - APP_SHELL 不准有 lazy 群組、課文、說明頁：那些用到才快取（每個新訪客少下載、少幾十個請求）。
+   - 用到才快取的前提：REVISIONS 要列到它（不在表上的路徑 sw.js 不管、不會存）。lazy 的每一支、每一章課文、說明頁、每一個字型都要在。
+   - APP_SHELL／REVISIONS 是 tools/build_sw_revisions.js 產生的，要跟磁碟上的檔同步（內容雜湊對得上，搬舊快取才不會搬錯）。
+   - fetch handler 是 cache-first、用過的存起來；安裝時看 Save-Data／2G；第一次安裝用 force-cache（不重抓頁面剛抓過的）。 */
 
 const sw = fs.readFileSync(path.join(root, "sw.js"), "utf8");
-const cached = new Set([...sw.matchAll(/"\.\/([^"]+)"/g)].map((m) => m[1]));
-required.forEach((file) => {
-  if (!cached.has(file)) fail(`sw.js 沒有預快取 ${file} —— 離線時會失效`);
+const shellBlock = (sw.match(/const APP_SHELL = \[([\s\S]*?)\];/) || [])[1] || "";
+const cached = new Set([...shellBlock.matchAll(/"\.\/([^"]+)"/g)].map((m) => m[1]));
+const revBlock = (sw.match(/const REVISIONS = \{([\s\S]*?)\};/) || [])[1] || "";
+const revisioned = new Set([...revBlock.matchAll(/"\.\/([^"]+)":/g)].map((m) => m[1]));
+if (!cached.size) fail("sw.js 找不到 APP_SHELL");
+if (!revisioned.size) fail("sw.js 找不到 REVISIONS");
+const indexHtml = fs.readFileSync(path.join(root, "index.html"), "utf8");
+const deferScripts = [...indexHtml.matchAll(/<script\s+defer\s+src="([^"]+)"/g)].map((m) => m[1]);
+const stylesheets = [...indexHtml.matchAll(/<link[^>]+rel="stylesheet"[^>]+href="([^"]+)"/g)].map((m) => m[1]).filter((u) => !/^https?:/.test(u));
+const lazySrcs = [...indexHtml.matchAll(/<script type="text\/lazy" data-lazy="([^"]+)" src="([^"]+)"/g)].map((m) => ({ group: m[1], src: m[2] }));
+["index.html", "manifest.webmanifest", "assets/icon.svg", ...required, ...stylesheets, ...deferScripts].forEach((file) => {
+  if (!cached.has(file)) fail(`sw.js 沒有預快取 ${file} —— 離線開站會缺它（題庫練習的離線承諾不成立）`);
 });
+lazySrcs.filter((l) => l.group !== "steps").forEach(({ group, src }) => {
+  if (cached.has(src)) fail(`APP_SHELL 預快取了 lazy 群組（${group}）的 ${src} —— 用到才快取，不進安裝時的預快取`);
+});
+[...cached].filter((file) => /^src\/course_v2\/(ch|stage)-|\.html$/.test(file) && file !== "index.html").forEach((file) => fail(`APP_SHELL 預快取了 ${file} —— 課文與說明頁用到才快取`));
+const runtimeNeeded = [...lazySrcs.map((l) => l.src), "about.html", "guide.html", "privacy.html", "terms.html"];
 if (fs.existsSync(path.join(root, "assets/vendor/katex/fonts"))) {
-  fs.readdirSync(path.join(root, "assets/vendor/katex/fonts")).forEach((file) => {
-    const rel = `assets/vendor/katex/fonts/${file}`;
-    if (!cached.has(rel)) fail(`sw.js 沒有預快取字型 ${file}`);
-  });
+  fs.readdirSync(path.join(root, "assets/vendor/katex/fonts")).forEach((file) => runtimeNeeded.push(`assets/vendor/katex/fonts/${file}`));
 }
+runtimeNeeded.forEach((file) => {
+  if (!revisioned.has(file)) fail(`sw.js 的 REVISIONS 沒有 ${file} —— 用過之後離線還是讀不到（sw.js 不管不在表上的路徑）`);
+});
+try {
+  if (!require("./build_sw_revisions.js").check()) fail("sw.js 的 APP_SHELL／REVISIONS 跟磁碟上的檔不同步：跑 node tools/build_sw_revisions.js");
+} catch (error) {
+  fail(`sw.js 的產生區：${error.message}`);
+}
+const fetchHandler = sw.slice(sw.indexOf('addEventListener("fetch"'));
+const installHandler = sw.slice(sw.indexOf('addEventListener("install"'), sw.indexOf('addEventListener("message"'));
+if (/cache:\s*"reload"/.test(fetchHandler)) fail("sw.js 的 fetch handler 用了 cache:\"reload\" —— 每次開站整站重抓（舊版的流量大戶）");
+if (!/cache\.match\(/.test(fetchHandler) || !/cache\.put\(|stamp\(/.test(fetchHandler)) fail("sw.js 的 fetch handler 不是 cache-first、或用過的不存 —— 「打開過的離線也能看」不成立");
+if (!/lean\(\)/.test(installHandler) || !/saveData/.test(sw)) fail("sw.js 安裝時沒有看省流量模式（Save-Data／2G）");
+if (!/force-cache/.test(installHandler)) fail("sw.js 第一次安裝沒有用 force-cache —— 頁面剛抓過的檔會再打一次伺服器");
 
 /* ── 6. 新版課程離線 ─────────────────────────────────────────
-   規則（2026-10-09 起課文按章分檔）：
-   - 畫面這幾支要在 install 預快取（離線也開得了課程表、畫得出圖）：大綱、畫面、圖、地圖、影片與分節的播放器 —— 都是小檔。
-   - 課文 src/course_v2/ch-<章>.js（74 支、合計約 2MB，分節推完約 3.5MB）**不准**進 APP_SHELL：每個裝了 PWA 的人都先下載
-     幾 MB 課文不划算（英文介面根本用不到）。改成用到才快取：打開一課抓那一章、課程表第一次打開時 prefetchAll 在閒置時抓每一章，
-     經過 fetch handler 存起來 —— 打開過一次課程表，整套課離線都能讀。
-   所以要擋的是：大綱有某一章（而且有寫好的課）、但那一章的檔不存在（prefetch 跟打開課都會 404）；APP_SHELL 偷偷列了課文；
-   prefetchAll 不見了。 */
-["src/course_v2/outline.js", "src/course_v2_ui.js", "src/course_figures.js", "src/course_v2/map.js", "src/course_map.js", "src/course_video.js", "src/course_sections.js", "src/course_finish.js", "src/course_proof.js"].forEach((file) => {
-  if (!cached.has(file)) fail(`sw.js 沒有預快取 ${file} —— 離線時課程打不開`);
-});
-[...cached].filter((file) => /^src\/course_v2\/(ch|stage)-/.test(file)).forEach((file) => fail(`sw.js 預快取了課文 ${file} —— 課文用到才快取，不進 APP_SHELL`));
+   課文 src/course_v2/ch-<章>.js（74 支、約 3.6MB）不進 APP_SHELL，也不再整套預抓（舊版 prefetchAll：打開課程表就全抓）。
+   打開一課抓那一章（sw.js 存起來）；閒置時抓下一課那一章（不同章才抓、省流量不抓）；分節的結算畫面先抓進快取。
+   要擋的：大綱有某一章（有寫好的課）但檔不存在；有人把 prefetchAll 加回來；下一課預抓不見了。 */
 const outlinePath = path.join(root, "src/course_v2/outline.js");
 if (fs.existsSync(outlinePath)) {
   const sandbox = { window: {} };
@@ -157,21 +182,29 @@ if (fs.existsSync(outlinePath)) {
   stages.forEach((stage) => stage.chapters.forEach((chapter) => {
     if (!chapter.lessons.some((l) => typeof l.read === "number")) return;
     chapters += 1;
-    if (!fs.existsSync(path.join(root, chapterFile(chapter.code)))) fail(`大綱有 ${chapter.code} 章（有寫好的課），但 ${chapterFile(chapter.code)} 不存在`);
+    const file = chapterFile(chapter.code);
+    if (!fs.existsSync(path.join(root, file))) fail(`大綱有 ${chapter.code} 章（有寫好的課），但 ${file} 不存在`);
+    else if (!revisioned.has(file)) fail(`sw.js 的 REVISIONS 沒有 ${file} —— 讀過的那一章離線讀不到`);
   }));
   if (!chapters) fail("大綱裡沒有任何一章有寫好的課");
   const ui = fs.existsSync(path.join(root, "src/course_v2_ui.js")) ? fs.readFileSync(path.join(root, "src/course_v2_ui.js"), "utf8") : "";
-  if (!/function prefetchAll/.test(ui) || !/src\/course_v2\/ch-\$\{/.test(ui)) fail("course_v2_ui.js 沒有在課程表打開時預抓各章的課文 —— 沒打開過的章離線讀不到");
+  if (/function prefetchAll/.test(ui)) fail("course_v2_ui.js 又有 prefetchAll —— 打開課程表就抓全部 74 章（約 1MB brotli／人），流量的大洞");
+  if (!/function prefetchNext/.test(ui) || !/neighbour\(m, 1\)/.test(ui) || !/saveData/.test(ui)) fail("course_v2_ui.js 沒有「閒置時抓下一課那一章（省流量不抓）」");
+  if (!/lazySrcs\("secfinish"\)/.test(ui)) fail("course_v2_ui.js 沒有先把分節的結算畫面抓進快取 —— 讀過一半的課離線讀到最後一節會載不到結算");
 } else {
   fail("缺少 src/course_v2/outline.js（跑 node tools/build_course_v2.js）");
 }
+
+/* ── 6b. 對外的離線說法跟實際一致 ────────────────────────────── */
+const guide = fs.readFileSync(path.join(root, "guide.html"), "utf8");
+if (/整站離線可用|whole site works offline/.test(guide)) fail("guide.html 還寫「整站離線可用」—— 課程、證明、說明頁是打開過才離線可用");
+if (!/打開過的.{0,20}離線/.test(guide) || !/opened.{0,40}offline/i.test(guide)) fail("guide.html 沒有說「打開過的課程／頁面離線也能看」（中英都要）");
 
 /* ── 7. 課程影片不進 Service Worker ─────────────────────────────
    影片（/media/*.mp4、預覽圖）是部署時抓進來的大檔：不預快取（APP_SHELL 不准有 media/），
    fetch handler 也要整個略過 /media/ 與 Range 請求 —— <video> 的 206 回應 cache.put 收不了，
    而且每看一支就把 0.5–1MB 塞進 Cache Storage。離線時課文照讀，影片那一格只留一行說明。 */
 [...cached].filter((file) => /^media\//.test(file)).forEach((file) => fail(`sw.js 預快取了影片檔 ${file} —— 影片不該進 APP_SHELL`));
-const fetchHandler = sw.slice(sw.indexOf('addEventListener("fetch"'));
 if (!/headers\.has\("range"\)/.test(fetchHandler) || !/\\\/media\\\//.test(fetchHandler)) {
   fail("sw.js 的 fetch handler 沒有略過 /media/ 與 Range 請求 —— 影片會被塞進 Cache Storage");
 }

@@ -9829,7 +9829,10 @@
 
   function setupPwa() {
     if (window.navigator && "serviceWorker" in window.navigator) {
-      window.addEventListener("load", () => {
+      // 註冊（＝安裝時的預快取）等頁面載完、再等瀏覽器閒下來：不跟第一次畫面搶頻寬與 CPU。
+      // 預快取本身也瘦了：只放離線練題要的核心，其他用到才快取（sw.js）。
+      const whenIdle = (fn) => (window.requestIdleCallback ? window.requestIdleCallback(fn, { timeout: 5000 }) : window.setTimeout(fn, 2000));
+      window.addEventListener("load", () => whenIdle(() => {
         window.navigator.serviceWorker.register("./sw.js").then((registration) => {
           if (!registration) return;
           // 已經有一個裝好在等的版本（上次沒按更新就關掉分頁）
@@ -9852,7 +9855,7 @@
           reloading = true;
           window.location.reload();
         });
-      });
+      }));
     }
     window.addEventListener("beforeinstallprompt", (event) => {
       event.preventDefault();
