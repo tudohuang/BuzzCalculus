@@ -29,8 +29,11 @@ const TYPES = {
 function start(root, port) {
   const resolvedRoot = path.resolve(root);
   const missing = [];
+  // 每一個打到伺服器的請求（含 Service Worker 送的）：e2e_transfer 用它數「第一次造訪抓了什麼、課程表有沒有整套預抓」
+  const requests = [];
 
   const server = http.createServer((req, res) => {
+    requests.push(String(req.url));
     let rel = decodeURIComponent(String(req.url).split("?")[0]);
     if (rel === "/") rel = "/index.html";
     const file = path.join(resolvedRoot, rel);
@@ -59,6 +62,7 @@ function start(root, port) {
       resolve({
         url: `http://127.0.0.1:${server.address().port}`,
         missing,
+        requests,
         // Chrome 的 keep-alive 連線會讓 server.close 等到天荒地老（E2E 斷言失敗之後整支卡住、
         // 真正的錯誤訊息印不出來）。先把連線全部切掉再關。
         stop: () => new Promise((done) => {
