@@ -30,8 +30,11 @@
 
   const theme = () => (document.documentElement.dataset.theme === "dark" ? "dark" : "light");
   const quality = () => ((window.innerWidth || document.documentElement.clientWidth) < 900 ? "720p" : "1080p");
-  const posterUrl = (id) => `media/${id}-${theme()}-poster.jpg`;
-  const videoUrl = (id) => `media/${id}-${theme()}-${quality()}.mp4`;
+  // ?v=<版本>：大綱的 videoRev（build_course_v2.js 從 media/manifest.json 的雜湊算）。影片換檔就換網址，
+  // 所以 vercel.json 對帶 ?v= 的 /media/ 回 immutable —— 看過的影片回訪零請求，換了檔也不會拿到舊的。
+  const rev = (id) => { const r = ((window.BUZZ_COURSE_V2 || {}).videoRev || {})[id]; return r ? `?v=${r}` : ""; };
+  const posterUrl = (id) => `media/${id}-${theme()}-poster.jpg${rev(id)}`;
+  const videoUrl = (id) => `media/${id}-${theme()}-${quality()}.mp4${rev(id)}`;
   const clock = (sec) => `${Math.floor(sec / 60)}:${String(Math.round(sec % 60)).padStart(2, "0")}`;
 
   function injectStyle() {

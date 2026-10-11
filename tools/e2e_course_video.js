@@ -128,7 +128,7 @@ async function run() {
       const part = fig.closest("[data-cv2-mark]");
       return {
         place: part ? part.dataset.cv2Mark : "",
-        src: img.getAttribute("src"), lazy: img.getAttribute("loading"),
+        src: img.getAttribute("src").replace(/\\?v=[0-9a-f]+$/, ""), rev: /\\?v=[0-9a-f]{8}$/.test(img.getAttribute("src")), lazy: img.getAttribute("loading"),
         videos: document.querySelectorAll("video").length,
         mp4: window.__v.media().filter((n) => /\\.mp4/.test(n)),
         player: window.__v.player(),
@@ -141,6 +141,7 @@ async function run() {
     const want = SAMPLE.video;
     check(`影片放在觀念 ${want.after + 1} 後面（after = ${want.after}）`, before.place === `c${want.after}`, before.place);
     check("預覽圖是淺色主題的那一張、loading=lazy", before.src === `media/${want.id}-light-poster.jpg` && before.lazy === "lazy", before.src);
+    check("預覽圖網址帶版本（?v=，大綱的 videoRev）：換檔就換網址，vercel.json 才能回 immutable", before.rev);
     check("點之前：沒有 <video>、沒有任何 mp4 請求", before.videos === 0 && !before.mp4.length, before.mp4.join(","));
     check("播放器（course_video.js）這時才抓", before.player);
     check(`片長 ${Math.floor(want.duration / 60)}:${String(want.duration % 60).padStart(2, "0")} 與說明一行`, before.time === `0:${String(want.duration).padStart(2, "0")}` && before.caption === want.caption, `${before.time} · ${before.caption}`);
@@ -151,20 +152,21 @@ async function run() {
 
     // 深色：預覽圖換成 -dark
     await evaluate(`document.documentElement.dataset.theme = "dark"; return 1;`);
-    check("切深色：預覽圖換成深色那一張", await waitFor(`window.__v.fig().querySelector("img").getAttribute("src") === "media/${want.id}-dark-poster.jpg" && window.__v.fig().querySelector("img").complete && window.__v.fig().querySelector("img").naturalWidth > 0`));
+    check("切深色：預覽圖換成深色那一張", await waitFor(`window.__v.fig().querySelector("img").getAttribute("src").replace(/\\?v=[0-9a-f]+$/, "") === "media/${want.id}-dark-poster.jpg" && window.__v.fig().querySelector("img").complete && window.__v.fig().querySelector("img").naturalWidth > 0`));
     await evaluate(`window.__v.fig().scrollIntoView({ block: "center" }); return 1;`);
     await sleep(200);
     await shot("phone-dark-poster");
     await evaluate(`document.documentElement.dataset.theme = "light"; return 1;`);
-    await waitFor(`window.__v.fig().querySelector("img").getAttribute("src") === "media/${want.id}-light-poster.jpg"`);
+    await waitFor(`window.__v.fig().querySelector("img").getAttribute("src").replace(/\\?v=[0-9a-f]+$/, "") === "media/${want.id}-light-poster.jpg"`);
 
     // 點了才建 <video>
     const p = await evaluate(`const r = window.__v.fig().querySelector(".cv2-video-poster").getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2 };`);
     await chrome.send("Input.dispatchTouchEvent", { type: "touchStart", touchPoints: [{ x: p.x, y: p.y }] });
     await chrome.send("Input.dispatchTouchEvent", { type: "touchEnd", touchPoints: [] });
     check("點了：建出 <video>", await waitFor(`document.querySelector("[data-cv2-video] video")`));
-    const vid = await evaluate(`const v = document.querySelector("[data-cv2-video] video"); return { src: v.getAttribute("src"), preload: v.getAttribute("preload") || v.preload, controls: v.controls, inline: v.hasAttribute("playsinline"), autoplay: v.autoplay, poster: v.getAttribute("poster") };`);
+    const vid = await evaluate(`const v = document.querySelector("[data-cv2-video] video"); return { src: v.getAttribute("src").replace(/\\?v=[0-9a-f]+$/, ""), rev: /\\?v=[0-9a-f]{8}$/.test(v.getAttribute("src")), preload: v.getAttribute("preload") || v.preload, controls: v.controls, inline: v.hasAttribute("playsinline"), autoplay: v.autoplay, poster: v.getAttribute("poster") };`);
     check("片源：淺色、手機 720p", vid.src === `media/${want.id}-light-720p.mp4`, vid.src);
+    check("片源網址帶版本（?v=）", vid.rev);
     check("<video>：controls、playsinline、preload=none、沒有 autoplay 屬性", vid.controls && vid.inline && vid.preload === "none" && !vid.autoplay, JSON.stringify(vid));
     check("點了之後才開始抓 mp4", await waitFor(`window.__v.media().some((n) => /${want.id}-light-720p\\.mp4/.test(n))`, 6000));
     check("影片真的在播", await waitFor(`(() => { const v = document.querySelector("[data-cv2-video] video"); return v && !v.paused && v.currentTime > 0.2; })()`, 8000));
@@ -203,7 +205,7 @@ async function run() {
     // 手機那一段點開的影片接回來了：先停掉，切主題時它要換成「深色 ＋ 現在寬度（1080p）」的片源
     await evaluate(`const v = document.querySelector("[data-cv2-video] video"); if (v) v.pause(); return 1;`);
     await evaluate(`document.documentElement.dataset.theme = "dark"; return 1;`);
-    check("桌機：停著的影片切深色 → 片源換成深色 1080p", await waitFor(`(() => { const v = document.querySelector("[data-cv2-video] video"); return v && v.getAttribute("src") === "media/${want.id}-dark-1080p.mp4"; })()`, 4000));
+    check("桌機：停著的影片切深色 → 片源換成深色 1080p", await waitFor(`(() => { const v = document.querySelector("[data-cv2-video] video"); return v && v.getAttribute("src").replace(/\\?v=[0-9a-f]+$/, "") === "media/${want.id}-dark-1080p.mp4"; })()`, 4000));
     await evaluate(`document.documentElement.dataset.theme = "light"; return 1;`);
     await shot("desktop-light-video");
 
