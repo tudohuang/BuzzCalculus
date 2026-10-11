@@ -82,6 +82,12 @@ const narrationTag = narrationAsset ? narrationAsset.tag || manifest.tag : "";
 const narrationBase = narrationTag && ((manifest.releases || {})[narrationTag] || {}).stream
   ? `https://github.com/${manifest.repo}/releases/download/${narrationTag}/narration.`
   : "media/narration/";
+// 影片的版本：每支影片（淺色／深色 × 720p／1080p／預覽圖）的 sha256 合起來取 8 碼，播放器接在網址後面（?v=）。
+// 影片檔名沒有雜湊，同名換檔時靠它換網址 —— 所以 vercel.json 才能對帶 ?v= 的 /media/ 回 immutable（一年）。
+const videoRev = Object.fromEntries((manifest.videos || []).map((id) => {
+  const parts = (manifest.assets || []).filter((a) => new RegExp(`^${id}-(light|dark)-`).test(a.name)).map((a) => a.sha256).sort();
+  return [id, require("crypto").createHash("sha256").update(parts.join("|")).digest("hex").slice(0, 8)];
+}).filter(([, rev]) => rev));
 // 章 → 檔名：章碼小寫、非英數換成 -（9A.1 → ch-9a-1.js）。src/course_v2_ui.js 的 chapterFile 是同一條規則
 const chapterFile = (code) => `ch-${String(code).toLowerCase().replace(/[^a-z0-9]+/g, "-")}.js`;
 
@@ -148,6 +154,7 @@ function shipLesson(lesson) {
 const outline = {
   // 旁白錄音的網址前綴：播放器抓 <前綴><課>-<voice>.mp3
   narration: narrationBase,
+  videoRev,
   stages: stages.map((s) => ({
     n: s.n,
     title: s.title,
