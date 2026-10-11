@@ -223,7 +223,7 @@ const REVISIONS = {
   "./src/course_v2/ch-9b-5.js": "3417d4e979",
   "./src/course_v2/ch-9b-6.js": "27b5ec564f",
   "./src/course_v2/map.js": "d562d34fa8",
-  "./src/course_v2/outline.js": "a2b6847413",
+  "./src/course_v2/outline.js": "841fa41a13",
   "./src/course_v2_ui.js": "dc8375cff6",
   "./src/course_video.js": "18cfde7727",
   "./src/custom_problems.js": "53e402064b",

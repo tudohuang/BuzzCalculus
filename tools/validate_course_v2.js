@@ -760,6 +760,92 @@ for (const L of lessons) {
   if (total < 1500 || total > 3600) warn(id, `整課 ${total} 字（建議 2,000–2,800）`);
 }
 
+// ── 章首魔王題（bosses.json）──
+// 一章一題：章的第一課先秀出來（「這章學完你就會」），payoff 那一課讀完才解得開。要公平也要真的難：
+//   題目在題庫、通過獨立驗算；題目的每一個技巧（BuzzSkillGraph.skillsForProblem）在 payoff 那一課以前都教過
+//   （粗 tag → 技巧，照大綱順序第一次出現的課）；至少一個技巧是這一章才第一次教（不然章首就解得開，不是魔王）；
+//   payoff 在這一章裡（預設最後一課）；鉤子一行 ≤ 30 字、不寫 $…$，裡面的數字都要在題目裡出現（不能用鉤子洩題或編數字）；
+//   note（解開之後那一行）≤ 40 字。
+// --boss-candidates：每一章照同一套規則（payoff = 最後一課、R4 以上、不是這一章的範例）數得出幾題候選。
+const BOSS_FILE = path.join(DIR, "bosses.json");
+{
+  const graph = global.window.BuzzSkillGraph;
+  const order = Object.keys(outline);
+  const chapterIds = {};
+  order.forEach((id) => (chapterIds[outline[id].chapter] = chapterIds[outline[id].chapter] || []).push(id));
+  const lessonFile = (id) => path.join(LESSON_DIR, `${id}.json`);
+  const readLesson = (id) => (fs.existsSync(lessonFile(id)) ? JSON.parse(fs.readFileSync(lessonFile(id), "utf8")) : null);
+  // 每個技巧第一次被教的課（大綱順序的索引）
+  const firstTaught = {};
+  order.forEach((id, i) => {
+    const L = readLesson(id);
+    ((L && L.skillTags && L.skillTags.coarse) || []).forEach((t) => (graph.tagToSkills(t) || []).forEach((s) => { if (!(s in firstTaught)) firstTaught[s] = i; }));
+  });
+  const DIGITS = { "⁰": "0", "¹": "1", "²": "2", "³": "3", "⁴": "4", "⁵": "5", "⁶": "6", "⁷": "7", "⁸": "8", "⁹": "9" };
+  const numbersOf = (s) => (String(s).replace(/[⁰¹²³⁴⁵⁶⁷⁸⁹]/g, (c) => DIGITS[c]).match(/\d+/g) || []);
+  // 公平與夠難：回傳不合格的理由（空陣列 = 合格）
+  function fairness(code, prob, payoffId) {
+    const why = [];
+    const skills = graph.skillsForProblem(prob) || [];
+    const start = order.indexOf(chapterIds[code][0]);
+    const pay = order.indexOf(payoffId);
+    if (!skills.length) why.push("題目對不到任何技巧");
+    skills.forEach((s) => {
+      if (!(s in firstTaught)) why.push(`技巧 ${s} 整套課都沒教`);
+      else if (firstTaught[s] > pay) why.push(`技巧 ${s} 要到〈${outline[order[firstTaught[s]]].title}〉才教（在 payoff 之後）`);
+    });
+    if (skills.length && !skills.some((s) => firstTaught[s] >= start && firstTaught[s] <= pay)) why.push("沒有一個技巧是這一章才教的 —— 章首就解得開，不是魔王");
+    return why;
+  }
+  let bosses = {};
+  if (fs.existsSync(BOSS_FILE)) {
+    try { bosses = JSON.parse(fs.readFileSync(BOSS_FILE, "utf8")); } catch (e) { err("bosses.json", `JSON 壞掉：${e.message}`); }
+  }
+  Object.entries(bosses).forEach(([code, b]) => {
+    const at = `bosses.json ${code}`;
+    if (!chapterIds[code]) { err(at, "章碼不在大綱"); return; }
+    const payoff = b.payoff || chapterIds[code][chapterIds[code].length - 1];
+    if (!chapterIds[code].includes(payoff)) err(at, `payoff「${payoff}」不是這一章的課`);
+    else if (!fs.existsSync(lessonFile(payoff))) err(at, `payoff「${payoff}」還沒寫`);
+    const prob = byId[b.problemId];
+    if (!prob) { err(at, `題目 ${b.problemId} 不在題庫`); return; }
+    if (!isVerified(b.problemId)) err(at, `題目 ${b.problemId} 未通過獨立驗算`);
+    if (["proof", "text", "sketch", "graph"].includes(prob.answerKind)) err(at, `題目 ${b.problemId} 是 ${prob.answerKind} 題，魔王題要能自動判對錯`);
+    if (chapterIds[code].includes(payoff)) fairness(code, prob, payoff).forEach((w) => err(at, w));
+    const hook = String(b.hook || "");
+    if (!hook.trim()) err(at, "沒有 hook");
+    if (cjkLen(hook) > 30) err(at, `hook ${cjkLen(hook)} 字（≤ 30）`);
+    if (/\$/.test(hook)) err(at, "hook 不寫 $…$（課程表那一行是純文字）");
+    const promptNums = new Set(numbersOf(prob.prompt));
+    numbersOf(hook).forEach((n) => { if (!promptNums.has(n)) err(at, `hook 的數字 ${n} 不在題目裡`); });
+    if (b.note && cjkLen(b.note) > 40) err(at, `note ${cjkLen(b.note)} 字（≤ 40）`);
+    [hook, b.note || ""].forEach((s) => {
+      if (SCHOOL.test(s)) err(at, `出現學校名稱或 Putnam：${s.match(SCHOOL)[0]}`);
+      if (SIMPLIFIED.test(s)) err(at, `出現簡體字「${s.match(SIMPLIFIED)[0]}」`);
+    });
+    // 範例就是這一題 = 課文直接把答案講完了
+    chapterIds[code].forEach((id) => {
+      const L = readLesson(id);
+      if (L && (L.workedExamples || []).some((w) => w.problemId === b.problemId)) err(at, `題目 ${b.problemId} 是〈${outline[id].title}〉的範例 —— 魔王題要學生自己解`);
+    });
+  });
+  console.log(`章首魔王題：${Object.keys(bosses).length} 章（${Object.keys(bosses).join("、") || "無"}）`);
+  if (process.argv.includes("--boss-candidates")) {
+    let withAny = 0;
+    Object.keys(chapterIds).forEach((code) => {
+      const ids = chapterIds[code];
+      const payoff = ids[ids.length - 1];
+      if (!fs.existsSync(lessonFile(payoff))) return;
+      const worked = new Set(ids.flatMap((id) => ((readLesson(id) || {}).workedExamples || []).map((w) => w.problemId)).filter(Boolean));
+      const hits = problems.filter((p) => Number(p.rank || 0) >= 4 && isVerified(p.id) && !worked.has(p.id)
+        && !["proof", "text", "sketch", "graph"].includes(p.answerKind) && !fairness(code, p, payoff).length);
+      if (hits.length) withAny += 1;
+      console.log(`  ${code.padEnd(5)} ${String(hits.length).padStart(4)} 題  ${hits.slice(0, 4).map((p) => `${p.id}(R${p.rank})`).join(" ")}`);
+    });
+    console.log(`  有候選的章：${withAny} / ${Object.keys(chapterIds).length}`);
+  }
+}
+
 const all = Object.keys(outline).length;
 const written = files.length;
 console.log(`新版課程：大綱 ${all} 課，已寫 ${written} 課${wanted.length ? `（這次驗 ${lessons.length} 課）` : ""}`);

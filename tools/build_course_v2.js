@@ -179,6 +179,18 @@ const outline = {
   }))
 };
 
+// 章首魔王題（bosses.json；規則與驗證在 validate_course_v2.js）：章碼 → 題號 p、鉤子 h、payoff 那一課 at（預設這一章最後一課）、
+// 解開之後那一行 n。跟著大綱出貨（課程表那一行、章首的卡都要），一章不到 150 bytes；題目本身已經在題庫裡。
+const BOSS_FILE = path.join(SOURCE, "bosses.json");
+if (fs.existsSync(BOSS_FILE)) {
+  const chapters = stages.flatMap((s) => s.chapters);
+  outline.bosses = Object.fromEntries(Object.entries(JSON.parse(fs.readFileSync(BOSS_FILE, "utf8"))).map(([code, b]) => {
+    const ch = chapters.find((c) => c.code === code);
+    if (!ch) throw new Error(`bosses.json：章「${code}」不在 OUTLINE.md`);
+    return [code, { p: b.problemId, h: b.hook, at: b.payoff || ch.lessons[ch.lessons.length - 1].id, ...(b.note ? { n: b.note } : {}) }];
+  }));
+}
+
 const HEADER = "// 產生檔：node tools/build_course_v2.js（來源 tools/content/course_v2/）。不要手改。\n";
 const outputs = {
   "outline.js": `${HEADER}window.BUZZ_COURSE_V2 = ${JSON.stringify(outline)};\n`
