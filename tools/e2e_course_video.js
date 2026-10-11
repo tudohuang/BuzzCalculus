@@ -179,7 +179,8 @@ async function run() {
 
     // Service Worker 沒有攔 /media/
     const caches = await evaluate(`const names = await caches.keys(); const all = []; for (const n of names) { const c = await caches.open(n); (await c.keys()).forEach((r) => all.push(r.url)); } return all.filter((u) => /\\/media\\//.test(u));`);
-    const mp4 = mediaResponses.filter((r) => /\.mp4$/.test(r.url));
+    // 片源網址後面接 ?v=<內容雜湊>（快取標頭用），所以不能只認結尾的 .mp4
+    const mp4 = mediaResponses.filter((r) => /\.mp4(\?|$)/.test(r.url));
     check("mp4 的回應不是從 Service Worker 來的", mp4.length > 0 && mp4.every((r) => !r.sw), JSON.stringify(mp4.slice(0, 3)));
     check("Cache Storage 裡沒有任何 /media/ 的檔", !caches.length, caches.slice(0, 3).join(","));
 
