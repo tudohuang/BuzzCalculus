@@ -4,16 +4,19 @@
 // 一課一支是 317 支。播放器拿每一句的起訖毫秒數（t）在同一支檔裡跳（Range 串流，不用整支下載）。
 //
 // 產物：
-//   media/narration-cache/<hash8>.mp3          逐句的原始合成檔（不進 git；media/ 整個忽略）。增量與續跑都靠它：
+//   media/narration-cache/<格式>/<hash8>.mp3   逐句的原始合成檔（不進 git；media/ 整個忽略）。增量與續跑都靠它：
 //                                              hash8 = sha1(聲音|語速|say) 的前 8 碼，字沒改就不重合成、不花額度。
+//                                              按輸出格式分資料夾（FORMAT_DIR）：換格式＝換資料夾，舊格式的檔不會被混進來接。
 //   media/narration/<lessonId>-<f8>.mp3        一課一支（不進 git）：照節、句的順序把逐句檔的音框接起來。
 //                                              f8 = 這一支內容的 sha256 前 8 碼 —— 任何一句改了，檔名就換（舊檔不會被快取蓋住）。
 //                                              上傳到 Release（make_media_manifest.js --narration），部署時 fetch_media.js 抓。
 //   tools/content/course_v2/narration.json     進 git：每一課的 f、總長、大小、sha256，與每一句的 h（hash8）和 t（[起, 訖] 毫秒）。
 //                                              build_course_v2.js 照它把 voice（f）與 t 併進出貨的課；hash 對不上（字改了沒重錄）的句子不帶 t。
 //
-// 接法：Azure 的輸出是固定位元率（audio-24khz-48kbitrate-mono-mp3 = MPEG-2 Layer III、24 kHz、48 kbps、單聲道），
-// 每一格 576 個取樣 = 24 ms、144 bytes。接檔只在音框邊界接（去掉 ID3 與 Xing/Info 標頭框），所以每一句的起點都是 24 ms 的整數倍，
+// 接法：Azure 的輸出是固定位元率（audio-16khz-32kbitrate-mono-mp3 = MPEG-2 Layer III、16 kHz、32 kbps、單聲道），
+// 每一格 576 個取樣 = 36 ms、144 bytes（格長與毫秒一律從每一格的標頭算，不寫死；舊的 24 kHz／48 kbps 是 24 ms 一格）。
+// 2026-10 從 24 kHz／48 kbps 降到 16 kHz／32 kbps：旁白是單人講話，16 kHz 取樣（頻寬 8 kHz）聽得清楚，檔案小三分之一（流量）。
+// 接檔只在音框邊界接（去掉 ID3 與 Xing/Info 標頭框），所以每一句的起點都是一格（36 ms）的整數倍，
 // 而且一課那一支的第 k 句就是逐句檔原封不動的位元組 —— --verify 直接比對位元組，再用 ffprobe（WSL 也可以）量總長。
 // 每一支逐句檔的格式（版本、取樣率、位元率、聲道）都要一樣，不一樣就不接（報錯）。
 //
@@ -41,13 +44,16 @@ const ROOT = path.join(__dirname, "..");
 const LESSONS = path.join(ROOT, "tools", "content", "course_v2", "lessons");
 const INDEX = path.join(ROOT, "tools", "content", "course_v2", "narration.json");
 const OUT = path.join(ROOT, "media", "narration");
-const CACHE = path.join(ROOT, "media", "narration-cache");
+const FORMAT_DIR = "16k32";
+const CACHE = path.join(ROOT, "media", "narration-cache", FORMAT_DIR);
 const SAMPLES = path.join(ROOT, "docs", "report", "course-review", "voice-samples");
 
 // ── 聲音：只在這裡改（改了 hash 全部換掉，整批重合成）──
 const VOICE = "zh-TW-HsiaoChenNeural";
 const RATE = "+0%"; // SSML prosody rate；播放器另外有 1×／1.25×／1.5×
-const FORMAT = "audio-24khz-48kbitrate-mono-mp3";
+const FORMAT = "audio-16khz-32kbitrate-mono-mp3";
+// 每一支逐句檔的音框都要是這個格式（MPEG 版本/取樣率/kbps/聲道模式；2 = MPEG-2、3 = 單聲道）：Azure 哪天回了別的格式，不接、重合成
+const EXPECT_SIG = "2/16000/32/3";
 const SAMPLE_VOICES = ["zh-TW-HsiaoChenNeural", "zh-TW-HsiaoYuNeural", "zh-TW-YunJheNeural"];
 const SAMPLE_TEXT = [
   "放二進去，二的平方加一，出來是五。",
@@ -220,6 +226,7 @@ function audioOf(buf) {
   if (!frames.length) throw new Error("不是 mp3（數不到音框）");
   const sig = frames[0].sig;
   if (frames.some((f) => f.sig !== sig)) throw new Error("同一支檔裡音框格式不一致（不是固定位元率？）");
+  if (sig !== EXPECT_SIG) throw new Error(`音框格式是 ${sig}，要的是 ${EXPECT_SIG}（${FORMAT}）`);
   return { data: Buffer.concat(frames.map((f) => buf.subarray(f.at, f.at + f.len))), samples: frames.reduce((s, f) => s + f.samples, 0), rate: frames[0].rate, sig };
 }
 // 一課的逐句檔（照順序）→ 一支 mp3 ＋ 每一句的 [起, 訖] 毫秒
@@ -443,7 +450,7 @@ function check({ verify = false } = {}) {
     const buf = fs.readFileSync(file);
     if (sha256(buf) !== e.sha256) { bad.push(`${L.id}：檔案雜湊不符`); return; }
     if (!verify) return;
-    // 每一句的起訖：起點是 24ms 整數倍的音框邊界；那一段位元組就是逐句檔（快取有的話）
+    // 每一句的起訖：起點是一格（從標頭算：16 kHz 是 36 ms）整數倍的音框邊界；那一段位元組就是逐句檔（快取有的話）
     const frames = framesOf(buf);
     const per = frames.length ? (frames[0].samples / frames[0].rate) * 1000 : 0;
     const total = Math.round(frames.length * per);
