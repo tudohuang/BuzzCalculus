@@ -230,6 +230,24 @@ widget（每一種都有 `window`；`value` 可選 = 不動滑桿時的那一格
 
 通過條件不寫在課裡，全站統一：完成＝小測答對 ≥ 3；熟練＝core 題全對；全破＝全部 practice 全對。不鎖課。
 
+## 章首魔王題（bosses.json，可選，一章一題）
+
+章的第一課先秀一題「現在還解不開」的題（「這章學完你就會 · 還差 n 課」），payoff 那一課讀完就解得開。不鎖課、不倒數。
+
+```jsonc
+"2D": {                                     // 章碼（OUTLINE.md 的 ###）
+  "problemId": "dd-log-010",                // 題庫題，要通過獨立驗算、能自動判對錯
+  "hook": "x 的 x 的 x 次方，微分得出來嗎？",   // 一行 ≤ 30 字、好奇的問句；純文字（不寫 $…$）；數字都要在題目裡
+  "payoff": "logarithmic-differentiation",  // 可選：讀完哪一課就解得開（預設這一章最後一課）
+  "note": "對數微分用兩次：…"                 // 可選：解開之後那一行 —— 這一章的哪個想法破了它（≤ 40 字）
+}
+```
+
+驗證器（validate_course_v2.js）擋：題目不在題庫或未驗算、payoff 不在這一章、題目的技巧（skillsForProblem）有哪個到 payoff 都還沒教（不公平）、
+沒有一個技巧是這一章才教的（章首就解得開，不是魔王）、題目是這一章的範例、hook 太長或有不在題目裡的數字。
+`node tools/validate_course_v2.js --boss-candidates` 照同一套規則列出每一章的候選（R4 以上、payoff = 最後一課）。
+畫面在 `src/course_boss.js`（data-lazy="boss"，打開有魔王題那一章的課才抓）；解開記在 `records.courseV2Boss[章碼] = { solvedAt }`。
+
 ## 機器驗算（claim）
 
 每題範例盡量帶一條 `claim`，驗證器會實際算。寫法跟答案欄一樣（`3x^2`、`sqrt(x)`、`ln(x)`、`e^x`、`pi`、`x^(1/3)` 代替 cbrt），另外有：
