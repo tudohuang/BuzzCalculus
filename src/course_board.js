@@ -380,6 +380,7 @@
     const next = A ? M.states[g] : prev;
     const e = ease(q);
     const hideIn = new Set(); // 變形中、還沒落地的項
+    const at = {}; // 每一項現在的位置（「錯」的記號跟著它搬）
     const flyNow = A && (A.a.do === "write" || A.a.do === "transform") ? L.fly[M.items.find((it) => it.born === g && it.kind === "line")?.n] || [] : [];
     Object.values(L.fly).forEach((fs) => fs.forEach((f) => setS(f.el, "opacity", "0")));
     M.items.forEach((it) => {
@@ -408,6 +409,7 @@
         p = L.pos[g - 1][n];
         op = 1 - ease(cl(q / (A.a.do === "transform" ? 0.4 : 1)));
       }
+      at[n] = p;
       setS(el, "visibility", "visible");
       setS(el, "transform", tr(p));
       setS(el, "opacity", op >= 1 ? "" : op.toFixed(3));
@@ -422,7 +424,12 @@
         if (v.pp !== pp) { v.pp = pp; window.BuzzBoardPlot.apply(v, pp); }
       }
     });
-    if (B.lastEl) setS(B.lastEl, "top", `${Math.max(0, ...next.map((n) => L.pos[g < M.acts.length ? g : g - 1][n][1]))}px`);
+    if (B.lastEl && next.length) {
+      const P = L.pos[g < M.acts.length ? g : g - 1];
+      const low = next.reduce((x, n) => (P[n][1] > P[x][1] ? n : x), next[0]);
+      setS(B.lastEl, "top", `${P[low][1]}px`);
+      setS(B.lastEl, "height", `${Math.max(1, V[low].h)}px`);
+    }
     // 飛：從舊的位置（與大小）滑到新的位置；落地前新的那一份藏著，變形時舊的那一份一開始就交給複製
     Object.values(L.fly).forEach((fs) => fs.forEach((f) => { setS(f.tEl, "opacity", ""); if (f.moved) setS(f.sEl, "opacity", ""); }));
     flyNow.forEach((f) => {
@@ -454,11 +461,16 @@
       if (beat >= an.dieBeat) alive = Math.min(alive, beat === an.dieBeat ? 1 - ease(entry) : 0);
       if (pr <= 0 || alive <= 0) { setS(s.g, "opacity", "0"); if (s.lab) setS(s.lab, "opacity", "0"); if (s.term) setS(s.term, "color", ""); return; }
       setS(s.g, "opacity", alive >= 1 ? "" : alive.toFixed(3));
+      const n0 = an.refs[0][0];
+      const o0 = L.pos[an.g][n0];
+      const dx = an.wrong && at[n0] ? at[n0][0] - o0[0] : 0;
+      const dy = an.wrong && at[n0] ? at[n0][1] - o0[1] : 0;
+      setS(s.g, "transform", dx || dy ? `translate(${dx.toFixed(2)}px,${dy.toFixed(2)}px)` : "");
       if (an.kind === "mark") { if (s.paths[0]) s.paths[0].style.strokeDashoffset = (1 - ease(cl(pr / 0.8))).toFixed(4); } else { s.paths[0].style.strokeDashoffset = (1 - ease(cl(pr / 0.75))).toFixed(4); s.paths[1].style.strokeDashoffset = (1 - cl((pr - 0.72) / 0.2)).toFixed(4); }
       if (s.lab) {
         const lo = cl((pr - 0.5) / 0.4) * alive;
         setS(s.lab, "opacity", lo.toFixed(3));
-        setS(s.lab, "transform", `translateY(${((1 - cl((pr - 0.5) / 0.4)) * 4).toFixed(2)}px)`);
+        setS(s.lab, "transform", `translate(${dx.toFixed(2)}px,${(dy + (1 - cl((pr - 0.5) / 0.4)) * 4).toFixed(2)}px)`);
       }
       if (s.term && !hideIn.has(s.term)) {
         const k = Math.round(cl(pr / 0.4) * alive * 20) * 5;
@@ -586,7 +598,7 @@
   }
   // 給 E2E 與 tools/lint_board_layout.js：狀態、停在某一步、直接畫某個游標
   const debug = {
-    model: () => (B && B.M && B.L ? { acts: B.M.acts.map((x) => ({ g: x.g, b: x.b, k: x.k, do: x.a.do, clip: x.clip, why: x.why })), anns: B.M.anns.map((x) => ({ g: x.g, b: x.b, do: x.a.do, refs: x.refs, dieG: x.dieG === Infinity ? -1 : x.dieG })), H: B.L.H, w: B.w, sch: B.sch } : null),
+    model: () => (B && B.M && B.L ? { acts: B.M.acts.map((x) => ({ g: x.g, b: x.b, k: x.k, do: x.a.do, clip: x.clip, why: x.why })), anns: B.M.anns.map((x) => ({ g: x.g, b: x.b, do: x.a.do, refs: x.refs, wrong: x.wrong, dieG: x.dieG === Infinity ? -1 : x.dieG })), H: B.L.H, w: B.w, sch: B.sch } : null),
     show(g, q, beat, entry) {
       if (!B || !B.M) return false;
       const A = B.M.acts[g];
