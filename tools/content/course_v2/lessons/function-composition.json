@@ -121,13 +121,31 @@
       "title": "從裡到外",
       "beats": [
         { "show": ["$(f\\circ g)(x) = f(g(x))$"], "note": "讀作「$f$ 合成 $g$」。",
-          "say": "合成就是把一台機器的輸出，直接餵給另一台。順序從裡到外：先算 g，再把結果整個放進 f。" },
+          "say": "合成就是把一台機器的輸出，直接餵給另一台。順序從裡到外：先算 g，再把結果整個放進 f。",
+          "board": [
+            { "do": "write", "line": "$(f\\circ g)(x) = {{f:f}}({{g:g(x)}})$", "tint": { "f": "violet", "g": "blue" }, "on": "合成就是" },
+            { "do": "underline", "term": "g", "color": "blue", "label": "先算", "on": "先算 g" },
+            { "do": "focus", "term": "f", "color": "violet", "label": "再放進 f", "on": "再把結果" }
+          ] },
         { "show": ["$f(x) = \\sqrt{x}$，$g(x) = x^2 + 1$"],
-          "say": "f 是根號 x，g 是 x 平方加一。" },
+          "say": "f 是根號 x，g 是 x 平方加一。",
+          "board": [
+            { "do": "write", "line": "${{f:f}}(x) = \\sqrt{x}$，$g(x) = x^2 + 1$" }
+          ] },
         { "show": ["$f(g(x)) = \\sqrt{x^2 + 1}$"],
-          "say": "f 合成 g：先算 g，得到 x 平方加一，再整個開根號。" },
+          "say": "f 合成 g：先算 g，得到 x 平方加一，再整個開根號。",
+          "board": [
+            { "do": "write", "line": "${{f:f}}({{g:g(x)}}) = \\sqrt{{{i:x^2 + 1}}}$", "tint": { "i": "blue" } },
+            { "do": "underline", "term": "i", "color": "blue", "label": "整個開根號", "on": "得到" }
+          ] },
         { "show": ["$g(f(x)) = (\\sqrt{x})^2 + 1$"], "note": "$x = 2$ 時一個是 $\\sqrt{5}$，一個是 3。",
-          "say": "反過來先開根號，再平方加一。代二進去，一個是根號五，一個是三，順序不能交換。" }
+          "say": "反過來先開根號，再平方加一。代二進去，一個是根號五，一個是三，順序不能交換。",
+          "board": [
+            { "do": "keep", "n": 2 },
+            { "do": "write", "line": "$g(f(x)) = (\\sqrt{x})^2 + 1$", "on": "反過來" },
+            { "do": "write", "line": "$x = 2$：$\\sqrt{5}{{n:\\ne}}3$", "on": "代二進去" },
+            { "do": "focus", "term": "n", "label": "不能交換", "on": "順序不能" }
+          ] }
       ],
       "check": 2
     },
@@ -180,11 +198,22 @@
       "title": "化簡了，關卡還在",
       "beats": [
         { "show": ["$f(x) = \\sqrt{x}$，$g(x) = 1 - x^2$"],
-          "say": "換一組：f 是根號 x，g 是一減 x 平方。看 g 合成 f 的定義域。" },
+          "say": "換一組：f 是根號 x，g 是一減 x 平方。看 g 合成 f 的定義域。",
+          "board": [
+            { "do": "write", "line": "$f(x) = \\sqrt{x}$，$g(x) = 1 - x^2$" }
+          ] },
         { "show": ["$g(f(x)) = 1 - (\\sqrt{x})^2$"], "note": "$x$ 要先過 $\\sqrt{}$ 這一關。",
-          "say": "先算 f，所以 x 第一關要過根號，必須大於等於零。" },
+          "say": "先算 f，所以 x 第一關要過根號，必須大於等於零。",
+          "board": [
+            { "do": "write", "line": "$g(f(x)) = 1 - ({{q:\\sqrt{x}}})^2$", "on": "先算 f" },
+            { "do": "underline", "term": "q", "label": "第一關", "on": "第一關" }
+          ] },
         { "show": ["$x \\ge 0$ 時 $= 1 - x$"],
-          "say": "過了關，根號 x 的平方就是 x，化簡成一減 x。這個式子看起來每個實數都能代。" }
+          "say": "過了關，根號 x 的平方就是 x，化簡成一減 x。這個式子看起來每個實數都能代。",
+          "board": [
+            { "do": "write", "line": "$x \\ge 0$ 時 $= {{s:1 - x}}$", "on": "化簡成" },
+            { "do": "underline", "term": "s", "label": "關卡還在", "on": "看起來" }
+          ] }
       ],
       "predict": {
         "ask": "$g(f(x))$ 的定義域是？",

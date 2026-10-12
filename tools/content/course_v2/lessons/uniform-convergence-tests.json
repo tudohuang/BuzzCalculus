@@ -71,15 +71,37 @@
       "title": "估出來",
       "beats": [
         { "show": ["找與 $x$ 無關的 $a_n\\to0$", "$|f_n(x)-f(x)|\\le a_n$"],
-          "say": "不必算到精確，只要找到一個跟 x 無關、又趨近零的上界就夠了。" },
+          "say": "不必算到精確，只要找到一個跟 x 無關、又趨近零的上界就夠了。",
+          "board": [
+            { "do": "write", "line": "$|f_n(x)-f(x)|\\le {{a:a_n}}$", "tint": {"a": "blue"} },
+            { "do": "write", "line": "${{a:a_n}}$：跟 $x$ 無關、$\\to 0$", "on": "跟 x 無關" }
+          ] },
         { "show": ["$\\left|\\frac{\\sin(nx)}{n}\\right|\\le\\frac{1}{n}$"],
-          "say": "最簡單的例子：sine n x 除以 n，絕對值不會超過 n 分之一，不管 x 是多少。" },
+          "say": "最簡單的例子：sine n x 除以 n，絕對值不會超過 n 分之一，不管 x 是多少。",
+          "board": [
+            { "do": "write", "line": "$\\left|\\frac{\\sin(nx)}{n}\\right|\\le\\,{{b:\\frac{1}{n}}}$", "tint": {"b": "blue"},"on": "sine n x" },
+            { "do": "box", "term": "b", "label": "沒有 x", "on": "不管 x" }
+          ] },
         { "show": ["$f_n(x)=\\frac{x}{1+nx^2}$，逐點 $\\to0$"],
-          "say": "再看 x 除以一加 n x 平方。x 不是零時分母往無限大跑，逐點極限是零。" },
+          "say": "再看 x 除以一加 n x 平方。x 不是零時分母往無限大跑，逐點極限是零。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "$f_n(x)=\\frac{x}{{{d:1+nx^2}}}$，逐點 $\\to0$", "on": "再看" },
+            { "do": "underline", "term": "d", "label": "→ ∞", "on": "分母往無限大" }
+          ] },
         { "show": ["$1+nx^2\\ge2\\sqrt{n}|x|$"], "note": "由 $(\\sqrt{n}|x|-1)^2\\ge0$。",
-          "say": "用一個平方大於等於零的小技巧，分母至少是二倍根號 n 乘 x 的絕對值。" },
+          "say": "用一個平方大於等於零的小技巧，分母至少是二倍根號 n 乘 x 的絕對值。",
+          "board": [
+            { "do": "write", "line": "$(\\sqrt{n}|x|-1)^2\\ge0$", "on": "平方大於等於零" },
+            { "do": "write", "line": "$\\Rightarrow\\ {{d:1+nx^2}}\\ge2\\sqrt{n}|x|$", "on": "分母至少" }
+          ] },
         { "show": ["$|f_n(x)|\\le\\frac{1}{2\\sqrt{n}}$"], "note": "跟 $x$ 無關，在整條實數線上一致收斂。",
-          "say": "x 約掉了，上界是二倍根號 n 分之一，跟 x 無關又趨近零，所以一致收斂。" }
+          "say": "x 約掉了，上界是二倍根號 n 分之一，跟 x 無關又趨近零，所以一致收斂。",
+          "board": [
+            { "do": "write", "line": "$|f_n(x)|\\le\\frac{{{xa:|x|}}}{2\\sqrt{n}\\,{{xb:|x|}}}$" },
+            { "do": "transform", "line": "$|f_n(x)|\\le\\,{{bd:\\frac{1}{2\\sqrt{n}}}}$", "tint": {"bd": "blue"},"on": "上界是" },
+            { "do": "box", "term": "bd", "color": "green", "label": "跟 x 無關", "on": "跟 x 無關" }
+          ] }
       ],
       "check": 1
     },
@@ -116,7 +138,11 @@
       "skeleton": "反證",
       "beats": [
         { "show": ["$g_n=f_n-f$：連續、$\\ge0$、遞減 $\\to0$"], "note": "不妨設 $f_n$ 遞減。",
-          "say": "策略：反證。看差 g n，它連續、非負、對 n 遞減而且趨近零。假設不一致，推出矛盾。" },
+          "say": "策略：反證。看差 g n，它連續、非負、對 n 遞減而且趨近零。假設不一致，推出矛盾。",
+          "board": [
+            { "do": "write", "line": "${{g:g_n}}=f_n-f$：連續、$\\ge0$、遞減 $\\to0$", "tint": {"g": "blue"} },
+            { "do": "write", "line": "反設：不一致", "on": "假設不一致" }
+          ] },
         { "show": ["每個 $n$ 取 $x_n$：$g_n(x_n)\\ge\\varepsilon_0$"], "note": "$\\|g_n\\|_\\infty$ 遞減；極值定理取得到。",
           "why": {
             "ask": "為什麼每個 $n$ 都 $\\ge\\varepsilon_0$，不只某些 $n$？",
@@ -127,9 +153,17 @@
               { "label": "因為 $g_n\\ge0$", "why": "非負只說不會跑到負的；讓它一直停在 $\\varepsilon_0$ 以上的是遞減。" }
             ]
           },
-          "say": "最大誤差對 n 遞減，不趨近零，就一直停在某個 epsilon 零以上；極值定理給出取到最大的點。" },
+          "say": "最大誤差對 n 遞減，不趨近零，就一直停在某個 epsilon 零以上；極值定理給出取到最大的點。",
+          "board": [
+            { "do": "write", "line": "每個 $n$ 取 $x_n$：${{gx:g_n(x_n)}}\\ge\\varepsilon_0$", "on": "每一個 n" },
+            { "do": "underline", "term": "gx", "label": "最大誤差遞減", "why": true,"on": "最大誤差對 n 遞減" }
+          ] },
         { "show": ["子數列 $x_{n_k}\\to x^*\\in[a,b]$"], "note": "Bolzano–Weierstrass；區間是閉的。",
-          "say": "這串點在有界閉區間裡，挑出收斂的子數列，極限 x 星還在區間裡。" },
+          "say": "這串點在有界閉區間裡，挑出收斂的子數列，極限 x 星還在區間裡。",
+          "board": [
+            { "do": "write", "line": "子數列 $x_{n_k}\\to x^*\\in{{ab:[a,b]}}$" },
+            { "do": "underline", "term": "ab", "label": "閉的", "on": "還在區間裡" }
+          ] },
         { "show": ["固定 $m$，$n_k\\ge m$ 時", "$g_m(x_{n_k})\\ge g_{n_k}(x_{n_k})\\ge\\varepsilon_0$"], "note": "同一點上，$g_n$ 對 $n$ 遞減。",
           "why": {
             "ask": "為什麼 $g_m(x_{n_k})\\ge g_{n_k}(x_{n_k})$？",
@@ -140,11 +174,26 @@
               { "label": "$x_{n_k}$ 是 $g_m$ 的最大值點", "why": "$x_{n_k}$ 是 $g_{n_k}$ 取到大值的點，跟 $g_m$ 的最大值無關；這裡比的是同一點、不同的 $n$。" }
             ]
           },
-          "say": "m 不超過 n k，在同一點上 g 對 n 遞減，所以 g m 更大，也至少 epsilon 零。" },
+          "say": "m 不超過 n k，在同一點上 g 對 n 遞減，所以 g m 更大，也至少 epsilon 零。",
+          "board": [
+            { "do": "keep", "n": 2 },
+            { "do": "write", "line": "固定 $m$，$n_k\\ge m$ 時", "on": "固定一個 m" },
+            { "do": "write", "line": "$g_m(x_{n_k}){{ge:\\ge}}g_{n_k}(x_{n_k})\\ge\\varepsilon_0$", "on": "在同一點" },
+            { "do": "focus", "term": "ge", "label": "g 對 n 遞減", "why": true,"on": "g 對 n 遞減" }
+          ] },
         { "show": ["$k\\to\\infty$：$g_m(x^*)\\ge\\varepsilon_0$"], "note": "$g_m$ 連續。",
-          "say": "讓 k 趨近無限大，g m 連續，不等式留到極限點：g m 在 x 星至少 epsilon 零。" },
+          "say": "讓 k 趨近無限大，g m 連續，不等式留到極限點：g m 在 x 星至少 epsilon 零。",
+          "board": [
+            { "do": "keep", "n": 1 },
+            { "do": "write", "line": "$k\\to\\infty$：${{gs:g_m(x^*)}}\\ge\\varepsilon_0$", "on": "讓 k" },
+            { "do": "underline", "term": "gs", "label": "連續", "on": "g m 連續" }
+          ] },
         { "show": ["每個 $m$ 都成立：與 $g_m(x^*)\\to0$ 矛盾"],
-          "say": "這對每一個 m 都成立，可是 g m 在 x 星應該趨近零，矛盾。所以一致收斂。" }
+          "say": "這對每一個 m 都成立，可是 g m 在 x 星應該趨近零，矛盾。所以一致收斂。",
+          "board": [
+            { "do": "write", "line": "每個 $m$ 都成立：與 ${{gs:g_m(x^*)}}\\to0$ 矛盾" },
+            { "do": "write", "line": "⇒ 一致收斂", "color": "green", "on": "矛盾" }
+          ] }
       ],
       "order": {
         "ask": "把證明排回順序：依序點每一步",
@@ -161,11 +210,23 @@
       "title": "用 Dini 證一致",
       "beats": [
         { "show": ["$f_n(x)=(1+\\frac{x}{n})^n\\to e^x$，$[0,1]$"],
-          "say": "一加 n 分之 x 的 n 次方，在零到一收斂到 e 的 x 次方。是一致的嗎？" },
+          "say": "一加 n 分之 x 的 n 次方，在零到一收斂到 e 的 x 次方。是一致的嗎？",
+          "board": [
+            { "do": "write", "line": "$f_n(x)=\\left(1+\\frac{x}{n}\\right)^n\\to e^x$，$[0,1]$" }
+          ] },
         { "show": ["$f_n(x)\\le f_{n+1}(x)$"], "note": "對 1 與 $n$ 個 $(1+\\frac{x}{n})$ 用算幾不等式。",
-          "say": "用算幾不等式，可以證明它對 n 遞增。區間有界閉、函數都連續，Dini 說：一致收斂。" },
+          "say": "用算幾不等式，可以證明它對 n 遞增。區間有界閉、函數都連續，Dini 說：一致收斂。",
+          "board": [
+            { "do": "write", "line": "${{mono:f_n(x)\\le f_{n+1}(x)}}$", "on": "用算幾" },
+            { "do": "underline", "term": "mono", "label": "對 n 遞增", "on": "對 n 遞增" },
+            { "do": "write", "line": "Dini ⇒ 一致收斂", "color": "green", "on": "Dini 說" }
+          ] },
         { "show": ["$h(x)=e^x-(1+\\frac{x}{n})^n$，$h'\\ge0$"], "note": "Dini 不給速度，誤差自己算。",
-          "say": "可是 Dini 不告訴你誤差多大。看誤差函數 h，它的導數大於等於零，所以誤差一路往右變大。" }
+          "say": "可是 Dini 不告訴你誤差多大。看誤差函數 h，它的導數大於等於零，所以誤差一路往右變大。",
+          "board": [
+            { "do": "write", "line": "$h(x)=e^x-\\left(1+\\frac{x}{n}\\right)^n$，${{hp:h'\\ge0}}$", "on": "看誤差函數" },
+            { "do": "underline", "term": "hp", "label": "往右變大", "on": "導數大於" }
+          ] }
       ],
       "predict": {
         "ask": "$n=10$ 時 $\\|e^x-f_{10}\\|_\\infty$ 是？",

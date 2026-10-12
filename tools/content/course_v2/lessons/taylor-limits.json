@@ -128,11 +128,24 @@
       "title": "換成多項式",
       "beats": [
         { "show": ["$\\sin x=x-\\frac{x^3}{6}+$（更小的東西）"], "note": "$x$ 很靠近 0 時。",
-          "say": "x 很靠近零的時候，sine x 就是 x 減六分之 x 立方，再加上比 x 立方還小的東西。" },
+          "say": "x 很靠近零的時候，sine x 就是 x 減六分之 x 立方，再加上比 x 立方還小的東西。",
+          "board": [
+            { "do": "write", "line": "$\\sin x={{p:{{x2:x}}-\\frac{x^3}{6}}}+$（更小的東西）", "tint": { "p": "blue" } },
+            { "do": "underline", "term": "p", "color": "blue", "label": "多項式", "on": "x 減六分之" }
+          ] },
         { "show": ["$\\lim_{x\\to 0}\\frac{x-\\sin x}{x^3}$"], "note": "$\\frac{0}{0}$：把 $\\sin x$ 換成展開式。",
-          "say": "這個極限是零比零。不微分，直接把 sine x 換成它的展開式，看分子剩下什麼。" },
+          "say": "這個極限是零比零。不微分，直接把 sine x 換成它的展開式，看分子剩下什麼。",
+          "board": [
+            { "do": "write", "line": "$\\lim_{x\\to 0}\\frac{x-{{s:\\sin x}}}{x^3}$" },
+            { "do": "focus", "term": "s", "label": "換成展開式", "on": "直接把" }
+          ] },
         { "show": ["$x-\\left(x-\\frac{x^3}{6}+\\cdots\\right)$"],
-          "say": "x 減掉一整包展開式。x 跟 x 先消掉，剩下的第一項會決定極限。猜猜看是什麼。" }
+          "say": "x 減掉一整包展開式。x 跟 x 先消掉，剩下的第一項會決定極限。猜猜看是什麼。",
+          "board": [
+            { "do": "write", "line": "${{x1:x}}-\\left({{p:{{x2:x}}-\\frac{x^3}{6}}}+\\cdots\\right)$" },
+            { "do": "focus", "term": "x1", "on": "x 跟 x" },
+            { "do": "focus", "term": "x2", "label": "先消掉", "on": "先消掉" }
+          ] }
       ],
       "predict": {
         "ask": "分子 $x-\\sin x$ 展開後的第一項是？",
@@ -173,13 +186,29 @@
       "title": "分子分母都展開",
       "beats": [
         { "show": ["$\\frac{e^x-1-x}{1-\\cos x}$"], "note": "分母也是函數：兩邊各展到第一個不為 0 的項。",
-          "say": "這一次分母也是函數。分子分母都展開，各展到第一個不是零的那一項。" },
+          "say": "這一次分母也是函數。分子分母都展開，各展到第一個不是零的那一項。",
+          "board": [
+            { "do": "write", "line": "$\\frac{{{n:e^x-1-x}}}{{{d:1-\\cos x}}}$", "tint": { "n": "blue", "d": "violet" } },
+            { "do": "focus", "term": "d", "color": "violet", "label": "也是函數", "on": "分母也是" }
+          ] },
         { "show": ["$e^x-1-x=\\frac{x^2}{2}+o(x^2)$"],
-          "say": "e 的 x 次方是一加 x 加二分之 x 平方，減掉一和 x，剩二分之 x 平方。" },
+          "say": "e 的 x 次方是一加 x 加二分之 x 平方，減掉一和 x，剩二分之 x 平方。",
+          "board": [
+            { "do": "write", "line": "$e^x=1+x+\\frac{x^2}{2}+\\cdots$" },
+            { "do": "write", "line": "${{n:e^x-1-x}}=\\frac{x^2}{2}+o(x^2)$", "on": "減掉一和" }
+          ] },
         { "show": ["$1-\\cos x=\\frac{x^2}{2}+o(x^2)$"],
-          "say": "cosine x 是一減二分之 x 平方，一減掉它，也剩二分之 x 平方。" },
+          "say": "cosine x 是一減二分之 x 平方，一減掉它，也剩二分之 x 平方。",
+          "board": [
+            { "do": "write", "line": "${{d:1-\\cos x}}=\\frac{x^2}{2}+o(x^2)$" }
+          ] },
         { "show": ["$\\frac{1/2+o(1)}{1/2+o(1)}\\to 1$"], "note": "$o(1)$：趨近 0 的東西。",
-          "say": "上下同除以 x 平方，都是二分之一加上趨近零的東西，極限是一。" }
+          "say": "上下同除以 x 平方，都是二分之一加上趨近零的東西，極限是一。",
+          "board": [
+            { "do": "keep", "n": 2 },
+            { "do": "write", "line": "$\\frac{{{n2:1/2+o(1)}}}{{{d2:1/2+o(1)}}}\\to {{r:1}}$", "tint": { "n2": "blue", "d2": "violet" }, "on": "上下同除" },
+            { "do": "box", "term": "r", "color": "green", "on": "極限是一" }
+          ] }
       ],
       "check": 3
     },
@@ -187,13 +216,30 @@
       "title": "代換後再展開",
       "beats": [
         { "show": ["$e^{x^2}=1+x^2+o(x^2)$"], "note": "$e^u=1+u+o(u)$，$u$ 換成 $x^2$。",
-          "say": "e 的 x 平方次方不用重新微分：把 e 的 u 次方的展開，u 換成 x 平方就好。" },
+          "say": "e 的 x 平方次方不用重新微分：把 e 的 u 次方的展開，u 換成 x 平方就好。",
+          "board": [
+            { "do": "write", "line": "$e^u=1+u+o(u)$" },
+            { "do": "transform", "line": "$e^{x^2}=1+x^2+o(x^2)$", "on": "u 換成" }
+          ] },
         { "show": ["分子 $=\\frac{3}{2}x^2+o(x^2)$"], "note": "$(1+x^2)-\\left(1-\\frac{x^2}{2}\\right)$",
-          "say": "減掉 cosine x 的展開，一跟一消掉，x 平方加二分之 x 平方，是二分之三 x 平方。" },
+          "say": "減掉 cosine x 的展開，一跟一消掉，x 平方加二分之 x 平方，是二分之三 x 平方。",
+          "board": [
+            { "do": "write", "line": "$\\cos x=1-\\frac{x^2}{2}+o(x^2)$" },
+            { "do": "write", "line": "$e^{x^2}-\\cos x=\\frac{3}{2}x^2+o(x^2)$", "on": "是二分之三" }
+          ] },
         { "show": ["$\\lim_{x\\to 0}\\frac{e^{x^2}-\\cos x}{x^2}=\\frac{3}{2}$"],
-          "say": "除以 x 平方，極限是二分之三。" },
+          "say": "除以 x 平方，極限是二分之三。",
+          "board": [
+            { "do": "write", "line": "$\\lim_{x\\to 0}\\frac{e^{x^2}-\\cos x}{x^2}={{r:\\frac{3}{2}}}$" },
+            { "do": "box", "term": "r", "color": "green", "on": "極限是" }
+          ] },
         { "show": ["$R_n(x)=o(x^n)$：是等式，不是近似"], "note": "根據〈Taylor 誤差〉。",
-          "say": "為什麼可以這樣換？泰勒誤差告訴我們，餘項就是小 o x 的 n 次方，所以這是等式。" }
+          "say": "為什麼可以這樣換？泰勒誤差告訴我們，餘項就是小 o x 的 n 次方，所以這是等式。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "${{rn:R_n(x)=o(x^n)}}$", "on": "泰勒誤差" },
+            { "do": "box", "term": "rn", "color": "green", "label": "是等式", "on": "所以這是" }
+          ] }
       ],
       "check": 0
     }

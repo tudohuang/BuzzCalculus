@@ -24,7 +24,10 @@ const ROOT = path.join(__dirname, "..");
 const PHONE = { width: 390, height: 844, deviceScaleFactor: 3, mobile: true };
 const LESSON_DIR = path.join(ROOT, "tools", "content", "course_v2", "lessons");
 const lessonOf = (id) => JSON.parse(fs.readFileSync(path.join(LESSON_DIR, `${id}.json`), "utf8"));
-const PLAIN = lessonOf("function-intro");
+// 沒有黑板的課：黑板會一批批鋪開，寫死一課遲早會被鋪到 —— 照檔名順序挑第一課整課都沒有 board 的
+const PLAIN = fs.readdirSync(LESSON_DIR).filter((f) => f.endsWith(".json")).sort()
+  .map((f) => lessonOf(f.replace(/\.json$/, "")))
+  .find((L) => (L.sections || []).length && !L.sections.some((s) => s.beats.some((b) => b.board)));
 const CHAIN = lessonOf("chain-rule");
 const FTC = lessonOf("ftc-part1");
 const DCT = lessonOf("dominated-convergence");
@@ -327,6 +330,11 @@ async function run() {
     /* ── 版面：三課每一節每一步，360 淺／深（四種寬度全跑在 lint_board_layout.js） ── */
     const lint = await lintLessons(chrome, server.url, PILOTS, { viewports: VIEWPORTS.filter((v) => v.name === "360") });
     check(`版面 lint（360 × 淺／深，${lint.states} 個狀態）：不疊、不出板、字 ≥ 16px、對比夠、板不太高`, !lint.problems.length && lint.states > 300, lint.problems.slice(0, 3).join("；"));
+    // 有魔王題的章（6E）裡有黑板的課：魔王卡的樣式先注入時，黑板的樣式不能因此被跳過（以前兩邊用同一個 style id，黑板整個沒樣式）
+    const BOSS_BOARD = lessonOf("power-series-calculus");
+    const bossLint = await lintLessons(chrome, server.url, [BOSS_BOARD], { viewports: VIEWPORTS.filter((v) => v.name === "390") });
+    check(`魔王章裡的黑板照樣有樣式（${BOSS_BOARD.id}，${bossLint.states} 個狀態）`, !bossLint.problems.length && bossLint.states > 0, bossLint.problems.slice(0, 3).join("；"));
+    check("魔王卡與黑板的樣式節點不同 id", (await evaluate(`return Boolean(document.getElementById("cvb-style")) && Boolean(document.getElementById("cvboss-style"));`)), "兩個 style 節點應該同時存在");
     await chrome.send("Emulation.setDeviceMetricsOverride", PHONE);
     // lint 自己要抓得到：把一個標籤搬到字上、把一行搬出板外
     await openLesson(CHAIN.id);

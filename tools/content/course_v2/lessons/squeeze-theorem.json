@@ -169,11 +169,26 @@
       "title": "有界 $\\times$ 趨近 0",
       "beats": [
         { "show": ["$|f(x)| \\le |g(x)|$，$g(x) \\to 0$ → $f(x) \\to 0$"], "note": "用絕對值寫，不會搞錯不等式的方向。",
-          "say": "最常見的樣子：f 的絕對值被 g 的絕對值壓住，g 又趨近零，f 就趨近零。用絕對值寫最安全。" },
+          "say": "最常見的樣子：f 的絕對值被 g 的絕對值壓住，g 又趨近零，f 就趨近零。用絕對值寫最安全。",
+          "board": [
+            { "do": "write", "line": "$|f(x)|\\le|{{g:g(x)}}|$", "tint": {"g": "blue"} },
+            { "do": "write", "line": "${{g:g(x)}}\\to 0\\ \\Longrightarrow\\ {{r:f(x)\\to 0}}$", "on": "g 又趨近零" },
+            { "do": "box", "term": "r", "color": "green", "on": "f 就趨近零" }
+          ] },
         { "show": ["$\\lim_{x\\to0} x^2 \\cos\\left(\\frac{5}{x}\\right)$"],
-          "say": "例如 x 平方乘 cosine x 分之五。cosine 那塊振盪沒有極限，不能拆。" },
+          "say": "例如 x 平方乘 cosine x 分之五。cosine 那塊振盪沒有極限，不能拆。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "$\\lim_{x\\to0} {{z:x^2}}{{c:\\cos\\left(\\frac{5}{x}\\right)}}$", "tint": {"z": "blue", "c": "violet"},"on": "例如" },
+            { "do": "underline", "term": "c", "label": "振盪，不能拆", "on": "cosine 那塊" }
+          ] },
         { "show": ["$|x^2 \\cos\\left(\\frac{5}{x}\\right)| \\le x^2 \\to 0$"], "note": "由夾擠定理，極限是 0。",
-          "say": "但 cosine 的絕對值不超過一，整個的絕對值就不超過 x 平方，而 x 平方趨近零。答案是零。" }
+          "say": "但 cosine 的絕對值不超過一，整個的絕對值就不超過 x 平方，而 x 平方趨近零。答案是零。",
+          "board": [
+            { "do": "write", "line": "$\\left|{{c:\\cos\\left(\\frac{5}{x}\\right)}}\\right|\\le 1$", "on": "cosine 的絕對值" },
+            { "do": "write", "line": "$\\left|{{z:x^2}}{{c:\\cos\\left(\\frac{5}{x}\\right)}}\\right|\\le {{b:x^2}}\\to\\,{{a:0}}$", "tint": {"b": "blue"},"on": "整個的絕對值" },
+            { "do": "box", "term": "a", "color": "green", "on": "而 x 平方趨近零" }
+          ] }
       ],
       "check": 1
     },
@@ -181,11 +196,24 @@
       "title": "極限不是 0 也能夾",
       "beats": [
         { "show": ["$\\lim_{x\\to\\infty} \\frac{2x + 3 \\sin x}{x + 5}$"],
-          "say": "夾擠不只能證明極限是零。看這一個，x 趨近無限大。" },
+          "say": "夾擠不只能證明極限是零。看這一個，x 趨近無限大。",
+          "board": [
+            { "do": "write", "line": "$\\lim_{x\\to\\infty} \\frac{{{n:2x + 3 \\sin x}}}{x + 5}$", "on": "看這一個" }
+          ] },
         { "show": ["$2x - 3 \\le 2x + 3 \\sin x \\le 2x + 3$"], "note": "$-1 \\le \\sin x \\le 1$。",
-          "say": "sine x 在負一和一之間，所以分子被夾在二 x 減三和二 x 加三之間。" },
+          "say": "sine x 在負一和一之間，所以分子被夾在二 x 減三和二 x 加三之間。",
+          "board": [
+            { "do": "write", "line": "$-1\\le{{s:\\sin x}}\\le 1$", "tint": {"s": "violet"} },
+            { "do": "write", "line": "${{lo:2x - 3}} \\le {{n:2x + 3 \\sin x}} \\le {{hi:2x + 3}}$", "on": "分子被夾" },
+            { "do": "underline", "term": "n", "label": "分子", "on": "二 x 減三" }
+          ] },
         { "show": ["$\\frac{2x - 3}{x + 5} \\le$ 原式 $\\le \\frac{2x + 3}{x + 5}$"], "note": "$x + 5 > 0$，除過去不等號不變。",
-          "say": "x 加五是正的，除過去不等號方向不變。上下兩邊都是同次有理函數，都趨近一分之二，也就是二。" }
+          "say": "x 加五是正的，除過去不等號方向不變。上下兩邊都是同次有理函數，都趨近一分之二，也就是二。",
+          "board": [
+            { "do": "transform", "line": "$\\frac{{{lo:2x - 3}}}{x + 5} \\le$ 原式 $\\le \\frac{{{hi:2x + 3}}}{x + 5}$", "on": "除過去" },
+            { "do": "write", "line": "兩邊都 $\\to \\frac{2}{1} =\\,{{t:2}}$", "on": "上下兩邊" },
+            { "do": "box", "term": "t", "color": "green", "on": "一分之二" }
+          ] }
       ],
       "check": 2
     },
@@ -223,11 +251,24 @@
       "proof": true, "of": 4, "skeleton": "ε-δ",
       "beats": [
         { "show": ["三個條件各交一個 $\\delta$，取最小的"],
-          "say": "策略：別人先給 epsilon，三個條件各交出一個 delta，取最小的那個，f 就被夾進 L 左右 epsilon 以內。" },
+          "say": "策略：別人先給 epsilon，三個條件各交出一個 delta，取最小的那個，f 就被夾進 L 左右 epsilon 以內。",
+          "board": [
+            { "do": "write", "line": "給 $\\varepsilon$：三個條件各交一個 $\\delta$", "on": "別人先給" },
+            { "do": "write", "line": "目標：$|{{f:f(x)}}-L|<\\varepsilon$", "on": "f 就被夾進" }
+          ] },
         { "show": ["$g\\to L$：有 $\\delta_1$ 使 $L-\\varepsilon<g(x)$", "$h\\to L$：有 $\\delta_2$ 使 $h(x)<L+\\varepsilon$"],
-          "say": "g 趨近 L，給一個 delta 一，讓 g 大於 L 減 epsilon；h 趨近 L，給 delta 二，讓 h 小於 L 加 epsilon。" },
+          "say": "g 趨近 L，給一個 delta 一，讓 g 大於 L 減 epsilon；h 趨近 L，給 delta 二，讓 h 小於 L 加 epsilon。",
+          "board": [
+            { "do": "keep", "n": 1 },
+            { "do": "write", "line": "$\\delta_1$：$L-\\varepsilon<{{g:g(x)}}$", "tint": {"g": "blue"},"on": "給一個" },
+            { "do": "write", "line": "$\\delta_2$：${{h:h(x)}}<L+\\varepsilon$", "tint": {"h": "violet"},"on": "給 delta 二" }
+          ] },
         { "show": ["$g\\le f\\le h$ 在 $0<|x-a|<\\delta_3$ 成立"],
-          "say": "第三個範圍 delta 三：夾住只要在 a 附近成立，在這裡面，f 真的被 g 和 h 夾住。" },
+          "say": "第三個範圍 delta 三：夾住只要在 a 附近成立，在這裡面，f 真的被 g 和 h 夾住。",
+          "board": [
+            { "do": "write", "line": "$\\delta_3$：${{g:g(x)}}\\le {{f:f(x)}}\\le {{h:h(x)}}$", "on": "第三個範圍" },
+            { "do": "focus", "term": "f", "on": "f 真的被" }
+          ] },
         { "show": ["取 $\\delta=\\min(\\delta_1,\\delta_2,\\delta_3)$"], "note": "三個範圍都包含它，三件事一起成立。",
           "why": {
             "ask": "為什麼要取最小的？",
@@ -238,7 +279,12 @@
               { "label": "$\\delta$ 越小，$\\varepsilon$ 就越小", "why": "$\\varepsilon$ 是別人先給的，不跟著 $\\delta$ 變；取最小是為了三個範圍都管得到。" }
             ]
           },
-          "say": "x 要同時落在三個範圍裡，三件事才一起成立。最小的那個 delta，三個範圍都包含它。" },
+          "say": "x 要同時落在三個範圍裡，三件事才一起成立。最小的那個 delta，三個範圍都包含它。",
+          "board": [
+            { "do": "keep", "n": 3 },
+            { "do": "write", "line": "取 $\\;{{m:\\delta=\\min(\\delta_1,\\delta_2,\\delta_3)}}$", "on": "最小的" },
+            { "do": "box", "term": "m", "color": "green", "label": "三個範圍都包含", "why": true,"on": "三個範圍都包含" }
+          ] },
         { "show": ["$L-\\varepsilon<g(x)\\le f(x)\\le h(x)<L+\\varepsilon$"], "note": "即 $|f(x)-L|<\\varepsilon$，正是極限的定義。",
           "why": {
             "ask": "為什麼 $f(x)$ 被夾在這裡？",
@@ -249,7 +295,14 @@
               { "label": "$g(x)$ 和 $h(x)$ 都等於 $L$", "why": "它們只是趨近 $L$，不一定等於；用的是它們離 $L$ 不到 $\\varepsilon$。" }
             ]
           },
-          "say": "左端靠 g 的極限，右端靠 h 的極限，中間靠夾住，整串連起來，f 離 L 不到 epsilon。證完。" }
+          "say": "左端靠 g 的極限，右端靠 h 的極限，中間靠夾住，整串連起來，f 離 L 不到 epsilon。證完。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "${{lg:L-\\varepsilon<{{g:g(x)}}}}\\le {{f:f(x)}}\\le{{rh:{{h:h(x)}}<L+\\varepsilon}}$", "on": "x 離 a" },
+            { "do": "write", "line": "即 $|f(x)-L|<\\varepsilon$", "color": "green", "on": "為什麼離" },
+            { "do": "underline", "term": "lg", "color": "blue", "why": true,"on": "左端" },
+            { "do": "underline", "term": "rh", "color": "violet", "why": true,"on": "右端" }
+          ] }
       ],
       "order": {
         "ask": "把證明排回順序：依序點每一步",

@@ -162,11 +162,27 @@
       "title": "公式",
       "beats": [
         { "show": ["$(\\ln x)'=\\frac1x\\quad(x>0)$"], "note": "證明在下一節。",
-          "say": "自然對數 x 的導數是 x 分之一。自然對數只在 x 大於零有定義，公式也是。" },
+          "say": "自然對數 x 的導數是 x 分之一。自然對數只在 x 大於零有定義，公式也是。",
+          "board": [
+            { "do": "write", "line": "$(\\ln x)' = {{r:\\frac{1}{x}}}\\quad{{d:(x>0)}}$" },
+            { "do": "circle", "term": "r", "on": "x 分之一" },
+            { "do": "underline", "term": "d", "label": "定義域", "on": "只在 x" }
+          ] },
         { "show": ["$x = 1$：斜率 1","$x = 100$：斜率 0.01"], "note": "一直往上，但越爬越慢。",
-          "say": "x 等於一，斜率一；x 等於一百，斜率只剩零點零一。它一直往上，但越爬越慢。" },
+          "say": "x 等於一，斜率一；x 等於一百，斜率只剩零點零一。它一直往上，但越爬越慢。",
+          "board": [
+            { "do": "write", "line": "$x = 1$：斜率 $1$" },
+            { "do": "write", "line": "$x = 100$：斜率 ${{s:0.01}}$", "on": "x 等於一百" },
+            { "do": "focus", "term": "s", "label": "越爬越慢", "on": "一直往上" }
+          ] },
         { "show": ["$(\\log_a x)'=\\frac{1}{x\\ln a}$"], "note": "換底：$\\log_a x = \\ln x / \\ln a$。",
-          "say": "其他底數先換底：除以自然對數 a，那是常數，所以導數多除一個自然對數 a。" }
+          "say": "其他底數先換底：除以自然對數 a，那是常數，所以導數多除一個自然對數 a。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "$\\log_a x = \\frac{\\ln x}{{{la:\\ln a}}}$", "tint": { "la": "violet" }, "on": "換底" },
+            { "do": "underline", "term": "la", "color": "violet", "on": "那是常數" },
+            { "do": "write", "line": "$(\\log_a x)' = \\frac{1}{x\\,{{la:\\ln a}}}$", "on": "所以導數" }
+          ] }
       ],
       "check": 2
     },
@@ -175,11 +191,27 @@
       "proof": true, "of": 4, "skeleton": "構造",
       "beats": [
         { "show": ["相減變相除，湊出 $\\frac{\\ln(1+u)}{u}$"], "note": "先固定 $x>0$，從定義出發。",
-          "say": "策略：從定義出發，對數相減變成相除，再湊出對數的標準極限。先固定 x 大於零。" },
+          "say": "策略：從定義出發，對數相減變成相除，再湊出對數的標準極限。先固定 x 大於零。",
+          "board": [
+            { "do": "write", "line": "相減變相除，湊出 ${{lq:\\frac{\\ln(1+u)}{u}}}$", "on": "對數相減" },
+            { "do": "underline", "term": "lq", "label": "標準極限", "on": "標準極限" },
+            { "do": "write", "line": "先固定 $x>0$", "on": "先固定" }
+          ] },
         { "show": ["$\\frac{\\ln(x+h)-\\ln x}{h}=\\frac{\\ln(1+\\frac{h}{x})}{h}$"],
-          "say": "兩個自然對數相減，變成 x 加 h 除以 x 的自然對數，也就是一加 x 分之 h。" },
+          "say": "兩個自然對數相減，變成 x 加 h 除以 x 的自然對數，也就是一加 x 分之 h。",
+          "board": [
+            { "do": "keep", "n": 1 },
+            { "do": "write", "line": "差商 $= \\frac{\\ln(x+h)-\\ln x}{h}$", "on": "兩個自然對數相減" },
+            { "do": "transform", "line": "差商 $= \\frac{\\ln\\frac{x+h}{x}}{h}$", "on": "變成" },
+            { "do": "transform", "line": "差商 $= \\frac{\\ln(1+{{q:\\frac{h}{x}}})}{h}$", "on": "也就是" }
+          ] },
         { "show": ["令 $u=\\frac{h}{x}$：差商 $=\\frac{1}{x}\\cdot\\frac{\\ln(1+u)}{u}$"],
-          "say": "令 u 等於 x 分之 h，h 不是零時 u 也不是零。分母的 h 換成 x 乘 u，x 分之一提到前面。" },
+          "say": "令 u 等於 x 分之 h，h 不是零時 u 也不是零。分母的 h 換成 x 乘 u，x 分之一提到前面。",
+          "board": [
+            { "do": "write", "line": "令 ${{u:u}}={{q:\\frac{h}{x}}}$，$h\\ne0 \\Rightarrow u\\ne0$", "tint": { "u": "blue" } },
+            { "do": "write", "line": "差商 $= \\frac{\\ln(1+u)}{{{xu:x\\,u}}}$", "on": "分母的 h" },
+            { "do": "transform", "line": "差商 $= {{ix:\\frac{1}{x}}}\\cdot{{lq:\\frac{\\ln(1+u)}{u}}}$", "tint": { "ix": "violet" }, "on": "x 分之一" }
+          ] },
         { "show": ["$h\\to0$：極限 $=\\frac{1}{x}$"], "note": "$u\\to0$ 時 $\\frac{\\ln(1+u)}{u}\\to1$。",
           "why": {
             "ask": "為什麼極限是 $\\frac{1}{x}$？",
@@ -190,7 +222,13 @@
               { "label": "鏡子裡的斜率倒過來", "why": "那是第一節的直覺，先假設了 $\\ln x$ 可微；這裡是從定義直接算。" }
             ]
           },
-          "say": "x 固定，x 分之一是常數；u 趨近零，後面那塊是對數的標準極限，趨近一。所以是 x 分之一。" },
+          "say": "x 固定，x 分之一是常數；u 趨近零，後面那塊是對數的標準極限，趨近一。所以是 x 分之一。",
+          "board": [
+            { "do": "keep", "n": 1 },
+            { "do": "write", "line": "$h\\to0$：極限 $=\\frac{1}{x}$", "on": "整個差商" },
+            { "do": "focus", "term": "ix", "color": "violet", "why": true, "label": "常數", "on": "是常數" },
+            { "do": "underline", "term": "lq", "why": true, "label": "趨近 1", "on": "標準極限" }
+          ] },
         { "show": ["$x<0$：記 $v=-x>0$", "差商 $\\to-\\frac{1}{v}=\\frac{1}{x}$"], "note": "$\\ln$ 在 $v$ 的差商，步長是 $-h$。",
           "why": {
             "ask": "前面為什麼多一個負號？",
@@ -201,7 +239,13 @@
               { "label": "$\\ln$ 在負數那邊遞減", "why": "$\\ln$ 在負數沒有定義；那邊遞減的是 $\\ln|x|$，正是要算的東西。" }
             ]
           },
-          "say": "絕對值 x 等於負 x，記作 v。x 往右走 h，v 就往左走 h，步長是負 h，所以多一個負號，負 v 分之一就是 x 分之一。" }
+          "say": "絕對值 x 等於負 x，記作 v。x 往右走 h，v 就往左走 h，步長是負 h，所以多一個負號，負 v 分之一就是 x 分之一。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "$x<0$：記 $v=-x>0$", "on": "負數那一半" },
+            { "do": "write", "line": "差商 $\\to {{m:-}}\\frac{1}{v}=\\frac{1}{x}$", "on": "前面為什麼" },
+            { "do": "focus", "term": "m", "why": true, "label": "步長 −h", "on": "步長是負 h" }
+          ] }
       ],
       "order": {
         "ask": "把證明排回順序：依序點每一步",
@@ -236,13 +280,31 @@
       "title": "次方拉到前面",
       "beats": [
         { "show": ["$\\ln(x^3) = 3 \\ln x$"], "note": "對數律：次方變乘法。",
-          "say": "對數律可以把次方變成乘法：自然對數 x 三次方，等於三倍自然對數 x。" },
+          "say": "對數律可以把次方變成乘法：自然對數 x 三次方，等於三倍自然對數 x。",
+          "board": [
+            { "do": "write", "line": "$\\ln(x^{{{n:3}}})$", "tint": { "n": "violet" }, "on": "自然對數 x 三次方" },
+            { "do": "transform", "line": "$\\ln(x^3) = {{n:3}}\\,\\ln x$", "on": "等於三倍" }
+          ] },
         { "show": ["導數 $\\frac{3}{x}$"],
-          "say": "三留著，自然對數 x 微成 x 分之一，得 x 分之三。" },
+          "say": "三留著，自然對數 x 微成 x 分之一，得 x 分之三。",
+          "board": [
+            { "do": "write", "line": "導數 $= {{n:3}}\\cdot{{d:\\frac{1}{x}}}$" },
+            { "do": "underline", "term": "d", "label": "微成 1/x", "on": "微成" },
+            { "do": "transform", "line": "導數 $= \\frac{{{n:3}}}{x}$", "color": "green", "on": "得 x" }
+          ] },
         { "show": ["$\\log_2(x^3) = 3 \\log_2 x$"], "note": "$x > 0$。",
-          "say": "換底數二也一樣：先把三拉到前面。" },
+          "say": "換底數二也一樣：先把三拉到前面。",
+          "board": [
+            { "do": "write", "line": "$\\log_2(x^{{{n:3}}})$", "on": "換底數二" },
+            { "do": "transform", "line": "$\\log_2(x^3) = {{n:3}}\\,\\log_2 x$", "on": "先把三" }
+          ] },
         { "show": ["$y' = \\frac{3}{x \\ln 2}$"],
-          "say": "以二為底的對數 x，導數是一除以 x 乘自然對數二；前面再乘三就好。" }
+          "say": "以二為底的對數 x，導數是一除以 x 乘自然對數二；前面再乘三就好。",
+          "board": [
+            { "do": "keep", "n": 1 },
+            { "do": "write", "line": "$(\\log_2 x)' = \\frac{1}{x\\ln 2}$", "on": "以二為底" },
+            { "do": "write", "line": "$y' = \\frac{{{n:3}}}{x \\ln 2}$", "color": "green", "on": "前面再乘三" }
+          ] }
       ],
       "check": 0
     },

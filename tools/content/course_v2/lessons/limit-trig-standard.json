@@ -145,11 +145,24 @@
       "title": "代不進去，看表格",
       "beats": [
         { "show": ["$\\lim_{x\\to0} \\sin x / x$：代入得 $\\frac{0}{0}$"], "note": "$\\sin x$ 不是多項式，因式分解用不上。",
-          "say": "sine x 除以 x，x 趨近零。代進去是零分之零，而 sine 不是多項式，之前的化簡都用不上。" },
+          "say": "sine x 除以 x，x 趨近零。代進去是零分之零，而 sine 不是多項式，之前的化簡都用不上。",
+          "board": [
+            { "do": "write", "line": "${{l:\\lim_{x\\to0}\\frac{{{s:\\sin x}}}{x}}}$" },
+            { "do": "transform", "line": "${{l:\\lim_{x\\to0}\\frac{{{s:\\sin x}}}{x}}}$：代入得 ${{z:\\frac{0}{0}}}$", "on": "代進去" },
+            { "do": "focus", "term": "s", "label": "不是多項式", "on": "不是多項式" }
+          ] },
         { "show": ["$x = 0.1$：$\\approx 0.998334$", "$x = 0.01$：$\\approx 0.99998333$"],
-          "say": "那就先看數字。x 取零點一，比值約零點九九八三三四；x 取零點零一，比值約零點九九九九八三三三。" },
+          "say": "那就先看數字。x 取零點一，比值約零點九九八三三四；x 取零點零一，比值約零點九九九九八三三三。",
+          "board": [
+            { "do": "write", "line": "$x = 0.1$：$\\approx 0.998334$", "on": "x 取零點一" },
+            { "do": "write", "line": "$x = 0.01$：$\\approx 0.99998333$", "on": "x 取零點零一" }
+          ] },
         { "show": ["$x = 0.001$：$\\approx 0.9999998$"], "note": "它往 1 靠。",
-          "say": "x 再縮到零點零零一，比值幾乎就是一。表格很清楚：它往一靠。" }
+          "say": "x 再縮到零點零零一，比值幾乎就是一。表格很清楚：它往一靠。",
+          "board": [
+            { "do": "write", "line": "$x = 0.001$：$\\approx {{v:0.9999998}}$" },
+            { "do": "underline", "term": "v", "label": "往 1 靠", "on": "幾乎就是" }
+          ] }
       ],
       "predict": {
         "ask": "$x = -0.1$ 時，$\\sin x / x$ 約是？",
@@ -179,7 +192,11 @@
       "proof": true, "of": 2, "skeleton": "夾擠",
       "beats": [
         { "show": ["用三塊面積把 $\\frac{\\sin x}{x}$ 夾住"], "note": "先看 $x>0$ 這一邊，最後交給〈夾擠定理〉。",
-          "say": "策略：在單位圓上用三塊面積把 sine x 除以 x 夾住，再交給夾擠定理。先看 x 大於零那一邊。" },
+          "say": "策略：在單位圓上用三塊面積把 sine x 除以 x 夾住，再交給夾擠定理。先看 x 大於零那一邊。",
+          "board": [
+            { "do": "plot", "graph": { "window": [-0.15, 1.25, -0.15, 1], "equal": true, "ticks": false, "fills": [{ "pts": [[1, 0.8423], [0.7648, 0.6442], [0.808, 0.5891], [0.8473, 0.5312], [0.8823, 0.4706], [0.9131, 0.4078], [0.9394, 0.3429], [0.9611, 0.2764], [0.978, 0.2085], [0.9902, 0.1395], [0.9976, 0.0699], [1, 0]], "color": "violet", "opacity": 0.3 }, { "pts": [[1, 0], [0.9976, 0.0699], [0.9902, 0.1395], [0.978, 0.2085], [0.9611, 0.2764], [0.9394, 0.3429], [0.9131, 0.4078], [0.8823, 0.4706], [0.8473, 0.5312], [0.808, 0.5891], [0.7648, 0.6442]], "color": "gold", "opacity": 0.45 }, { "pts": [[0, 0], [1, 0], [0.7648, 0.6442]], "color": "blue", "opacity": 0.25 }], "curves": [{ "param": { "x": "cos(t)", "y": "sin(t)", "t": [0, 1.5708] }, "color": "muted", "width": 1.4 }, { "pts": [[0, 0], [1, 0.8423]], "color": "ink", "width": 1.2 }, { "pts": [[1, 0], [1, 0.8423]], "color": "ink", "width": 1.2 }, { "pts": [[0.7648, 0.6442], [0.7648, 0]], "color": "ink", "width": 1.2, "dashed": true }], "points": [{ "x": 0.7648, "y": 0.6442, "color": "ink" }, { "x": 1, "y": 0.8423, "color": "ink" }], "labels": [{ "x": 1.03, "y": 0.86, "text": "tan x", "color": "violet" }, { "x": 0.79, "y": 0.25, "text": "sin x", "color": "blue" }, { "x": 0.17, "y": 0.04, "text": "x" }] } },
+            { "do": "write", "line": "用三塊面積把 $\\frac{\\sin x}{x}$ 夾住", "on": "三塊面積" }
+          ] },
         { "show": ["$0<x<\\frac{\\pi}{2}$：$\\sin x<x<\\tan x$"], "note": "面積 $\\frac{1}{2}\\sin x$、$\\frac{1}{2}x$、$\\frac{1}{2}\\tan x$ 一塊包住一塊。",
           "why": {
             "ask": "為什麼 $\\sin x<x<\\tan x$？",
@@ -190,9 +207,19 @@
               { "label": "表格裡的比值都比 $1$ 小", "why": "表格只驗了幾個點；證明要每一個 $0<x<\\frac{\\pi}{2}$ 都成立。" }
             ]
           },
-          "say": "小三角形包在扇形裡，扇形又包在大三角形裡，面積一塊比一塊大，消掉二分之一就是這串不等式。" },
+          "say": "小三角形包在扇形裡，扇形又包在大三角形裡，面積一塊比一塊大，消掉二分之一就是這串不等式。",
+          "board": [
+            { "do": "transform", "line": "$0<x<\\frac{\\pi}{2}$：$\\sin x<x<\\tan x$", "on": "第一步" },
+            { "do": "write", "line": "$\\frac{1}{2}\\sin x<\\frac{1}{2}x<\\frac{1}{2}\\tan x$", "why": true, "on": "面積一塊比一塊大" }
+          ] },
         { "show": ["除以 $\\sin x$ 再取倒數：", "$\\cos x<\\frac{\\sin x}{x}<1$"], "note": "$\\sin x>0$，除了方向不變；取倒數整串翻過來。",
-          "say": "全部除以正的 sine x，方向不變；再取倒數，整串不等號翻過來，比值就被夾在 cosine x 和一中間。" },
+          "say": "全部除以正的 sine x，方向不變；再取倒數，整串不等號翻過來，比值就被夾在 cosine x 和一中間。",
+          "board": [
+            { "do": "keep", "n": 2 },
+            { "do": "transform", "line": "$1<\\frac{x}{\\sin x}<\\frac{1}{\\cos x}$", "on": "全部除以" },
+            { "do": "write", "line": "${{lo:\\cos x}}<{{q:\\frac{\\sin x}{x}}}<{{hi:1}}$", "tint": { "lo": "blue", "hi": "blue", "q": "violet" }, "on": "再取倒數" },
+            { "do": "underline", "term": "q", "color": "violet", "label": "被夾住", "on": "比值就被夾在" }
+          ] },
         { "show": ["$x\\to0^+$：$\\cos x\\to1$ ⇒ 右極限 $=1$"], "note": "下界 $\\cos x$ 和上界 $1$ 都往 $1$ 靠。",
           "why": {
             "ask": "為什麼右極限是 $1$？",
@@ -203,9 +230,21 @@
               { "label": "$\\frac{\\sin x}{x}>\\cos x$，而 $\\cos x\\to1$", "why": "只有下界不夠：上界 $1$ 也要壓著，兩邊都往 $1$ 靠才夾得住。" }
             ]
           },
-          "say": "比值被夾在 cosine x 和一中間。cosine 連續，往一靠；兩邊都往一靠，夾擠定理說右極限是一。" },
+          "say": "比值被夾在 cosine x 和一中間。cosine 連續，往一靠；兩邊都往一靠，夾擠定理說右極限是一。",
+          "board": [
+            { "do": "keep", "n": 1 },
+            { "do": "write", "line": "$x\\to0^+$：右極限 $=1$", "on": "x 從右邊" },
+            { "do": "write", "line": "下界 ${{lo:\\cos x}}\\to 1$，上界 ${{hi:1}}$", "why": true, "on": "cosine 連續" },
+            { "do": "underline", "term": "lo", "color": "blue", "why": true, "on": "兩邊都往一靠" }
+          ] },
         { "show": ["$\\frac{\\sin x}{x}$ 是偶函數 ⇒ 左極限也是 $1$"],
-          "say": "左邊不用重做：sine x 除以 x 是偶函數，左右兩邊一模一樣，左極限也是一。證完。" }
+          "say": "左邊不用重做：sine x 除以 x 是偶函數，左右兩邊一模一樣，左極限也是一。證完。",
+          "board": [
+            { "do": "keep", "n": 2 },
+            { "do": "write", "line": "$\\frac{\\sin x}{x}$ 是偶函數 ⇒ 左極限也是 $1$", "on": "sine x 除以 x" },
+            { "do": "write", "line": "${{r:\\lim_{x\\to0}\\frac{\\sin x}{x}=1}}$", "on": "一模一樣" },
+            { "do": "box", "term": "r", "color": "green", "on": "左極限也是" }
+          ] }
       ],
       "where": {
         "ask": "「$x$ 用弧度」用在哪一步？",
@@ -221,13 +260,33 @@
       "title": "配係數",
       "beats": [
         { "show": ["$\\lim_{x\\to0} \\frac{\\sin(5x)}{3x}$"], "note": "分母要跟 $\\sin$ 裡面一樣。",
-          "say": "sine 五 x 除以三 x。標準極限要求分母跟 sine 裡面一模一樣，這裡裡面是五 x，分母卻是三 x。" },
+          "say": "sine 五 x 除以三 x。標準極限要求分母跟 sine 裡面一模一樣，這裡裡面是五 x，分母卻是三 x。",
+          "board": [
+            { "do": "write", "line": "$\\lim_{x\\to0}\\frac{\\sin({{i:5x}})}{{{d:3x}}}$", "tint": { "i": "blue", "d": "violet" } },
+            { "do": "underline", "term": "i", "color": "blue", "label": "裡面", "on": "裡面是五 x" },
+            { "do": "underline", "term": "d", "color": "violet", "label": "分母", "on": "分母卻是" }
+          ] },
         { "show": ["$= \\left(\\frac{5}{3}\\right) \\cdot \\frac{\\sin(5x)}{5x}$"],
-          "say": "那就把分母配成五 x，多出來的三分之五放到前面。" },
+          "say": "那就把分母配成五 x，多出來的三分之五放到前面。",
+          "board": [
+            { "do": "write", "line": "$= \\;\\;{{k:\\frac{5}{3}}}\\;\\;\\cdot\\; {{f:\\frac{\\sin({{i:5x}})}{{{e:5x}}}}}$", "tint": { "e": "blue" }, "on": "把分母" },
+            { "do": "underline", "term": "e", "color": "blue", "label": "配成 5x", "on": "配成五 x" },
+            { "do": "circle", "term": "k", "label": "多出來的", "on": "多出來的" }
+          ] },
         { "show": ["$5x \\to 0$，所以 $\\frac{\\sin(5x)}{5x} \\to 1$"], "note": "答案 $\\frac{5}{3}$。",
-          "say": "x 趨近零時五 x 也趨近零，那一塊趨近一，答案就是三分之五。" },
+          "say": "x 趨近零時五 x 也趨近零，那一塊趨近一，答案就是三分之五。",
+          "board": [
+            { "do": "write", "line": "$5x \\to 0$，所以 ${{f:\\frac{\\sin({{i:5x}})}{{{e:5x}}}}}\\to 1$", "on": "五 x 也趨近零" },
+            { "do": "write", "line": "$= \\frac{5}{3}\\cdot 1 = \\;\\;{{r:\\frac{5}{3}}}$", "on": "那一塊趨近一" },
+            { "do": "box", "term": "r", "color": "green", "on": "答案就是" }
+          ] },
         { "show": ["$\\frac{\\sin(ax)}{bx} \\to \\frac{a}{b}$"],
-          "say": "一般來說，sine a x 除以 b x，極限就是 b 分之 a。" }
+          "say": "一般來說，sine a x 除以 b x，極限就是 b 分之 a。",
+          "board": [
+            { "do": "keep", "n": 1 },
+            { "do": "write", "line": "$\\frac{\\sin({{a:a}}x)}{{{b:b}}x} \\to \\;\\;{{g:\\frac{a}{b}}}$", "tint": { "a": "blue", "b": "violet" }, "on": "一般來說" },
+            { "do": "box", "term": "g", "color": "green", "on": "極限就是" }
+          ] }
       ],
       "check": 0
     },

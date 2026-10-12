@@ -130,11 +130,23 @@
       "title": "先剪成一對一",
       "beats": [
         { "show": ["$\\sin\\frac{\\pi}{6} = \\sin\\frac{5\\pi}{6} = \\frac{1}{2}$"], "note": "$\\sin$ 不是一對一。",
-          "say": "sine 不是一對一：六分之 pi 和六分之五 pi，sine 都是二分之一。哪個角的 sine 是二分之一？答案有無限多個。" },
+          "say": "sine 不是一對一：六分之 pi 和六分之五 pi，sine 都是二分之一。哪個角的 sine 是二分之一？答案有無限多個。",
+          "board": [
+            { "do": "plot", "graph": {"window": [-2.4,3.6,-1.4,1.4],"curves": [{"expr": "sin(x)", "color": "blue"}],"dashed": [[[-2.4,0.5],[3.6,0.5]]],"points": [{"x": 0.5236,"y": 0.5},{"x": 2.618,"y": 0.5}],"labels": [{"x": 0.5236,"y": 0.78,"text": "π/6", "anchor": "middle"},{"x": 2.618,"y": 0.78,"text": "5π/6", "anchor": "middle"}]} },
+            { "do": "write", "line": "$\\sin\\frac{\\pi}{6} = \\sin\\frac{5\\pi}{6} = \\frac{1}{2}$", "on": "六分之 pi" }
+          ] },
         { "show": ["只留 $[-\\frac{\\pi}{2}, \\frac{\\pi}{2}]$"], "note": "從 $-1$ 一路增加到 1，每個值剛好一次。",
-          "say": "所以先剪一段：只留負二分之 pi 到二分之 pi。在這段裡 sine 從負一爬到一，每個值只碰到一次。" },
+          "say": "所以先剪一段：只留負二分之 pi 到二分之 pi。在這段裡 sine 從負一爬到一，每個值只碰到一次。",
+          "board": [
+            { "do": "clear" },
+            { "do": "plot", "graph": {"window": [-2.4,3.6,-1.4,1.4],"curves": [{"expr": "sin(x)", "color": "muted"},{"expr": "sin(x)", "domain": [-1.5708,1.5708],"color": "blue", "width": 3}],"dashed": [[[-1.5708,-1.4],[-1.5708,1.4]],[[1.5708,-1.4],[1.5708,1.4]]],"labels": [{"x": -1.68,"y": -1.22,"text": "−π/2", "anchor": "end"},{"x": 1.68,"y": 1.22,"text": "π/2", "anchor": "start"}]},"on": "先剪一段" },
+            { "do": "write", "line": "只留 ${{seg:\\left[-\\frac{\\pi}{2}, \\frac{\\pi}{2}\\right]}}$", "tint": {"seg": "blue"},"on": "只留" }
+          ] },
         { "show": ["$\\arcsin x$：這段裡 $\\sin$ 等於 $x$ 的角"], "note": "也寫成 $\\sin^{-1} x$。",
-          "say": "剪好之後就倒得回去，這個反函數叫 arcsine：在這一段裡，sine 等於 x 的那一個角。" }
+          "say": "剪好之後就倒得回去，這個反函數叫 arcsine：在這一段裡，sine 等於 x 的那一個角。",
+          "board": [
+            { "do": "write", "line": "$\\arcsin x$：這段裡 $\\sin$ 等於 $x$ 的角", "on": "反函數叫" }
+          ] }
       ],
       "predict": {
         "ask": "$\\arcsin\\left(\\frac{1}{2}\\right)$ 是？",
@@ -161,11 +173,26 @@
       "title": "答案要落在值域",
       "beats": [
         { "show": ["$\\arcsin\\left(-\\frac{1}{2}\\right) = -\\frac{\\pi}{6}$"], "note": "不是 $\\frac{7\\pi}{6}$：不在值域裡。",
-          "say": "六分之七 pi 的 sine 也是負二分之一，但它不在 arcsine 的值域。值域裡的是負六分之 pi。" },
+          "say": "六分之七 pi 的 sine 也是負二分之一，但它不在 arcsine 的值域。值域裡的是負六分之 pi。",
+          "board": [
+            { "do": "write", "line": "$\\arcsin\\left(-\\frac{1}{2}\\right) = {{w:\\frac{7\\pi}{6}}}$", "on": "六分之七" },
+            { "do": "strike", "term": "w", "label": "不在值域", "on": "不在" },
+            { "do": "write", "line": "$\\arcsin\\left(-\\frac{1}{2}\\right) = \\,{{a:-\\frac{\\pi}{6}}}$", "on": "值域裡的是" },
+            { "do": "box", "term": "a", "color": "green", "on": "負六分之" }
+          ] },
         { "show": ["$\\arccos\\left(-\\frac{1}{2}\\right) = \\pi - \\frac{\\pi}{3} = \\frac{2\\pi}{3}$"], "note": "參考角 $\\frac{\\pi}{3}$，$\\cos$ 為負在第二象限。",
-          "say": "arccosine 的值在零到 pi。參考角三分之 pi，cosine 是負的，要在第二象限，所以是三分之二 pi。" },
+          "say": "arccosine 的值在零到 pi。參考角三分之 pi，cosine 是負的，要在第二象限，所以是三分之二 pi。",
+          "board": [
+            { "do": "write", "line": "$\\arccos\\left(-\\frac{1}{2}\\right) = \\pi - {{p:\\frac{\\pi}{3}}} = \\,{{b:\\frac{2\\pi}{3}}}$" },
+            { "do": "underline", "term": "p", "label": "參考角", "on": "參考角" },
+            { "do": "box", "term": "b", "color": "green", "on": "所以是" }
+          ] },
         { "show": ["$\\arctan(\\sqrt{3}) = \\frac{\\pi}{3}$"],
-          "say": "arctangent 根號三：tangent 是根號三的角，在值域裡的是三分之 pi。" }
+          "say": "arctangent 根號三：tangent 是根號三的角，在值域裡的是三分之 pi。",
+          "board": [
+            { "do": "write", "line": "$\\arctan(\\sqrt{3}) = \\,{{c:\\frac{\\pi}{3}}}$" },
+            { "do": "box", "term": "c", "color": "green", "on": "在值域裡" }
+          ] }
       ],
       "check": 1
     },
@@ -173,11 +200,27 @@
       "title": "兩個方向不一樣",
       "beats": [
         { "show": ["$\\sin(\\arcsin x) = x$"], "note": "$[-1, 1]$ 裡每個 $x$ 都成立。",
-          "say": "先找角、再取 sine，一定回到原來的數，只要 x 在負一到一之間。" },
+          "say": "先找角、再取 sine，一定回到原來的數，只要 x 在負一到一之間。",
+          "board": [
+            { "do": "write", "line": "${{o:\\sin}}({{i:\\arcsin x}}) = x$", "tint": {"i": "blue"} },
+            { "do": "focus", "term": "o", "on": "再取 sine" },
+            { "do": "write", "line": "只要 $x \\in [-1, 1]$", "on": "只要" }
+          ] },
         { "show": ["$\\arcsin(\\sin x) = x$ 只在 $[-\\frac{\\pi}{2}, \\frac{\\pi}{2}]$"],
-          "say": "反過來就不一定。arcsine 永遠只回傳那一段裡的角，x 不在那一段，就回不去。" },
+          "say": "反過來就不一定。arcsine 永遠只回傳那一段裡的角，x 不在那一段，就回不去。",
+          "board": [
+            { "do": "write", "line": "$\\arcsin(\\sin x) = x$ 只在 ${{seg:\\left[-\\frac{\\pi}{2}, \\frac{\\pi}{2}\\right]}}$", "on": "反過來" },
+            { "do": "underline", "term": "seg", "label": "那一段", "on": "那一段裡" }
+          ] },
         { "show": ["$\\arcsin(\\sin\\frac{5\\pi}{6}) = \\arcsin\\frac{1}{2} = \\frac{\\pi}{6}$"],
-          "say": "六分之五 pi 不在那一段，不能直接抵消。先算裡面，sine 是二分之一，再取 arcsine，得到六分之 pi。" }
+          "say": "六分之五 pi 不在那一段，不能直接抵消。先算裡面，sine 是二分之一，再取 arcsine，得到六分之 pi。",
+          "board": [
+            { "do": "keep", "n": 1 },
+            { "do": "write", "line": "$\\arcsin\\left(\\sin\\frac{5\\pi}{6}\\right) = {{w:\\frac{5\\pi}{6}}}$", "on": "六分之五" },
+            { "do": "strike", "term": "w", "on": "不能直接抵消" },
+            { "do": "write", "line": "$= \\arcsin\\frac{1}{2} = \\,{{a:\\frac{\\pi}{6}}}$", "on": "先算裡面" },
+            { "do": "box", "term": "a", "color": "green", "on": "得到" }
+          ] }
       ],
       "check": 2
     },

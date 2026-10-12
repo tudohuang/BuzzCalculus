@@ -154,13 +154,29 @@
       "title": "從圖看斜率",
       "beats": [
         { "show": ["$x = 0$：斜率 1"], "note": "$\\sin x$ 以斜率 1 往上爬。",
-          "say": "看 sine 的圖。在 x 等於零，曲線以斜率一往上爬。" },
+          "say": "看 sine 的圖。在 x 等於零，曲線以斜率一往上爬。",
+          "board": [
+            { "do": "plot", "graph": { "window": [-0.6, 5.4, -1.5, 1.5], "curves": [{ "expr": "sin(x)", "color": "blue" }], "dashed": [[[-0.6, -0.6], [1.35, 1.35]], [[0.75, 1], [2.4, 1]], [[3.9, -1], [5.4, -1]]], "points": [{ "x": 0, "y": 0 }, { "x": 1.5708, "y": 1 }, { "x": 4.7124, "y": -1 }] } },
+            { "do": "write", "line": "斜率：${{a:1}}$", "on": "曲線以" }
+          ] },
         { "show": ["$x = \\frac{\\pi}{2}$：山頂，斜率 0"],
-          "say": "到二分之 pi 是山頂，切線是平的，斜率零。" },
+          "say": "到二分之 pi 是山頂，切線是平的，斜率零。",
+          "board": [
+            { "do": "transform", "line": "斜率：${{a:1}}$、${{b:0}}$", "on": "山頂" },
+            { "do": "focus", "term": "b", "label": "平的", "on": "切線是平的" }
+          ] },
         { "show": ["$x = \\frac{3\\pi}{2}$：谷底，斜率 0"], "note": "中間 $x = \\pi$ 往下穿過 $x$ 軸。",
-          "say": "接著往下穿過 x 軸，到二分之三 pi 是谷底，斜率又是零。" },
+          "say": "接著往下穿過 x 軸，到二分之三 pi 是谷底，斜率又是零。",
+          "board": [
+            { "do": "transform", "line": "斜率：${{a:1}}$、${{b:0}}$、？、${{c:0}}$", "on": "谷底" },
+            { "do": "focus", "term": "c", "on": "斜率又是" }
+          ] },
         { "show": ["斜率：1、0、$-1$、0……"], "note": "直覺，不是證明：只抽樣幾個點。",
-          "say": "這串斜率正好是 cosine 在這些點的值。不過這只是抽幾個點看，證明在後面那節。" }
+          "say": "這串斜率正好是 cosine 在這些點的值。不過這只是抽幾個點看，證明在後面那節。",
+          "board": [
+            { "do": "write", "line": "正好是 ${{k:\\cos x}}$ 在這些點的值", "on": "正好是" },
+            { "do": "underline", "term": "k", "label": "只抽幾個點", "on": "只是抽幾個點" }
+          ] }
       ],
       "predict": {
         "ask": "$\\sin x$ 在 $x = \\pi$ 的切線斜率是？",
@@ -190,7 +206,11 @@
       "proof": true, "of": 4, "skeleton": "直接",
       "beats": [
         { "show": ["和角公式拆開，交給兩個標準極限"], "note": "$\\frac{\\sin h}{h}\\to1$，$\\frac{1-\\cos h}{h^2}\\to\\frac{1}{2}$。",
-          "say": "策略：用和角公式把 sine x 加 h 拆開，差商就變成兩個標準極限的組合。" },
+          "say": "策略：用和角公式把 sine x 加 h 拆開，差商就變成兩個標準極限的組合。",
+          "board": [
+            { "do": "write", "line": "$\\sin(x+h)=\\sin x\\cos h+\\cos x\\sin h$" },
+            { "do": "write", "line": "$\\frac{\\sin h}{h}\\to1,\\quad\\frac{1-\\cos h}{h^2}\\to\\frac{1}{2}$", "on": "兩個標準極限" }
+          ] },
         { "show": ["$\\frac{\\cos h-1}{h}=-\\frac{1-\\cos h}{h^2}\\cdot h\\to0$"], "note": "$-\\frac{1}{2}\\cdot0=0$。",
           "why": {
             "ask": "為什麼它趨近 $0$？",
@@ -201,9 +221,21 @@
               { "label": "$\\cos h\\le1$，所以分子很小", "why": "分子小、分母也小，比值不一定小；要靠 $\\frac{1-\\cos h}{h^2}\\to\\frac{1}{2}$ 量出它多小。" }
             ]
           },
-          "say": "把它寫成負的 h 平方分之一減 cosine h，再乘 h。前面趨近二分之一，後面趨近零，乘起來是零。" },
+          "say": "把它寫成負的 h 平方分之一減 cosine h，再乘 h。前面趨近二分之一，後面趨近零，乘起來是零。",
+          "board": [
+            { "do": "write", "line": "${{p:\\frac{\\cos h-1}{h}}}\\to0$" },
+            { "do": "transform", "line": "${{p:\\frac{\\cos h-1}{h}}}=-{{a:\\frac{1-\\cos h}{h^2}}}\\cdot{{b:h}}\\to0$", "why": true, "on": "把它寫成" },
+            { "do": "underline", "term": "a", "label": "→ 1/2", "why": true, "on": "前面趨近" },
+            { "do": "focus", "term": "b", "label": "→ 0", "why": true, "on": "後面趨近零" }
+          ] },
         { "show": ["$\\frac{\\sin(x+h)-\\sin x}{h}$", "$=\\sin x\\cdot\\frac{\\cos h-1}{h}+\\cos x\\cdot\\frac{\\sin h}{h}$"], "note": "$\\sin(x+h)=\\sin x\\cos h+\\cos x\\sin h$。",
-          "say": "和角公式展開，減掉 sine x，再照 cosine h 減一和 sine h 分組，差商就拆成兩塊。" },
+          "say": "和角公式展開，減掉 sine x，再照 cosine h 減一和 sine h 分組，差商就拆成兩塊。",
+          "board": [
+            { "do": "keep", "n": 1 },
+            { "do": "write", "line": "$\\frac{\\sin(x+h)-\\sin x}{h}$", "on": "和角公式展開" },
+            { "do": "write", "line": "$={{sx:\\sin x}}\\cdot{{p:\\frac{\\cos h-1}{h}}}+{{cx:\\cos x}}\\cdot{{q:\\frac{\\sin h}{h}}}$", "on": "再照" },
+            { "do": "underline", "term": "q", "on": "和 sine h" }
+          ] },
         { "show": ["$h\\to0$：$\\sin x\\cdot0+\\cos x\\cdot1=\\cos x$"], "note": "$x$ 固定，$\\sin x$、$\\cos x$ 只是常數。",
           "why": {
             "ask": "為什麼可以兩塊分開取極限？",
@@ -214,9 +246,21 @@
               { "label": "代 $h=0$ 就好", "why": "代進去兩塊都是 $\\frac{0}{0}$；要用兩個標準極限，不能直接代。" }
             ]
           },
-          "say": "x 固定，sine x 和 cosine x 只是常數。兩塊的極限是零和一，加起來就是 cosine x。" },
+          "say": "x 固定，sine x 和 cosine x 只是常數。兩塊的極限是零和一，加起來就是 cosine x。",
+          "board": [
+            { "do": "write", "line": "$h\\to0$：$\\sin x\\cdot0+\\cos x\\cdot1={{r:\\cos x}}$" },
+            { "do": "underline", "term": "sx", "label": "常數", "why": true, "on": "sine x 和" },
+            { "do": "underline", "term": "cx", "why": true, "on": "cosine x#1" },
+            { "do": "box", "term": "r", "color": "green", "why": true, "on": "加起來" }
+          ] },
         { "show": ["同理 $(\\cos x)'=-\\sin x$"], "note": "$\\cos(x+h)=\\cos x\\cos h-\\sin x\\sin h$。",
-          "say": "cosine 一樣做：它的和角公式中間是減號，所以最後得到負 sine x。" }
+          "say": "cosine 一樣做：它的和角公式中間是減號，所以最後得到負 sine x。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "$\\cos(x+h)=\\cos x\\cos h{{m:-\\sin x\\sin h}}$", "on": "和角公式" },
+            { "do": "focus", "term": "m", "label": "減號", "on": "中間是減號" },
+            { "do": "write", "line": "$(\\cos x)'=-\\sin x$", "color": "green", "on": "所以最後" }
+          ] }
       ],
       "where": {
         "ask": "「$\\frac{\\sin h}{h}\\to1$」用在哪一步？",
@@ -231,13 +275,33 @@
       "title": "六個公式",
       "beats": [
         { "show": ["$(\\tan x)'=\\sec^2 x$","$(\\sec x)'=\\sec x\\tan x$"],
-          "say": "sine、tangent、secant 的導數前面都是正的。tangent 微成 secant 平方。" },
+          "say": "sine、tangent、secant 的導數前面都是正的。tangent 微成 secant 平方。",
+          "board": [
+            { "do": "write", "line": "$(\\tan x)'={{t:\\sec^2 x}}$" },
+            { "do": "write", "line": "$(\\sec x)'=\\sec x\\tan x$", "on": "secant 的導數" },
+            { "do": "box", "term": "t", "on": "微成" }
+          ] },
         { "show": ["$(\\cot x)'=-\\csc^2 x$","$(\\csc x)'=-\\csc x\\cot x$"], "note": "co 開頭的三個，前面都有負號。",
-          "say": "co 開頭的三個，答案把每個字換成 co 版本，前面再加負號。" },
+          "say": "co 開頭的三個，答案把每個字換成 co 版本，前面再加負號。",
+          "board": [
+            { "do": "write", "line": "$(\\cot x)'={{m:-\\csc^2 x}}$" },
+            { "do": "write", "line": "$(\\csc x)'={{n:-\\csc x\\cot x}}$", "on": "答案把" },
+            { "do": "focus", "term": "m", "on": "co 版本" },
+            { "do": "focus", "term": "n", "label": "前面加負號", "on": "前面再" }
+          ] },
         { "show": ["$f(x) = 2 \\sec x + \\cot x$"], "note": "$f' = 2 \\sec x \\tan x - \\csc^2 x$",
-          "say": "例如二 secant 加 cotangent，導數是二 secant tangent 減 cosecant 平方。" },
+          "say": "例如二 secant 加 cotangent，導數是二 secant tangent 減 cosecant 平方。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "$f(x)=2\\sec x+\\cot x$", "on": "例如" },
+            { "do": "write", "line": "$f'(x)=2\\sec x\\tan x-\\csc^2 x$", "on": "導數是" }
+          ] },
         { "show": ["$f'\\left(\\frac{\\pi}{3}\\right) = 4\\sqrt{3} - \\frac{4}{3}$"], "note": "$\\sec = 2$，$\\tan = \\sqrt{3}$，$\\csc^2 = \\frac{4}{3}$。",
-          "say": "在三分之 pi，secant 是二、tangent 是根號三、cosecant 平方是三分之四，代進去就好。" }
+          "say": "在三分之 pi，secant 是二、tangent 是根號三、cosecant 平方是三分之四，代進去就好。",
+          "board": [
+            { "do": "write", "line": "$\\sec=2,\\quad\\tan=\\sqrt{3},\\quad\\csc^2=\\frac{4}{3}$" },
+            { "do": "write", "line": "$f'\\left(\\frac{\\pi}{3}\\right)=4\\sqrt{3}-\\frac{4}{3}$", "color": "green", "on": "代進去" }
+          ] }
       ],
       "check": 1
     },
