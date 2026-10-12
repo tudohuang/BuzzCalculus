@@ -111,6 +111,7 @@ function create({ katex, board, cjkLen, checkGraph, layout }) {
   function checkSection(sec, where, err, narrated) {
     const texts = [];
     let lines = []; // [{ ids: [...], plot: bool }]
+    const wrong = []; // [{ id, line }]：標成錯的項與它所在的那一行（同一個物件）
     const has = (id) => lines.some((l) => l.terms.some(([k]) => k === id));
     // 板上已經有的 id：新的一行（或變形）會把那個元素搬過來／複製一份飛過來，所以內容要一模一樣
     const same = (at, terms, skip) => terms.forEach(([id, body]) => {
@@ -182,9 +183,15 @@ function create({ katex, board, cjkLen, checkGraph, layout }) {
           const terms = checkLine(err, at, a.line);
           if (typeof a.line === "string") texts.push(plain(a.line));
           if (terms) same(at, terms, -1);
+          // 劃掉（或紅色記號）標成「錯」的項：那一行還在板上時，不能在別的行（或變形後的同一行）沒標記地再出現
+          if (terms) wrong.filter((x) => lines.includes(x.line)).forEach((x) => { if (terms.some(([k]) => k === x.id)) err(`${at}：{{${x.id}:…}} 已經被標成錯的（劃掉／紅色），不能再寫進${a.do === "transform" && lines[eq] === x.line ? "變形後的這一行" : "別的行"}（會變成一個沒標記的錯式子）；先 clear／keep 擦掉，或換一個 id 寫對的式子`); });
           if (terms && a.do === "write") lines.push({ terms, plot: false });
           else if (terms && eq >= 0) lines[eq] = { terms, plot: false };
-        } else if (["circle", "underline", "box", "strike", "focus"].includes(a.do)) need(a.term, "term");
+        } else if (["circle", "underline", "box", "strike", "focus"].includes(a.do)) {
+          need(a.term, "term");
+          // 「錯」的記號跟著那一行活（畫面上下一句不會收掉）：記下來，之後這個項不能沒標記地出現
+          if ((a.do === "strike" || a.color === "red") && has(a.term)) wrong.push({ id: a.term, line: [...lines].reverse().find((l) => l.terms.some(([k]) => k === a.term)) });
+        }
         else if (a.do === "arrow") {
           need(a.from, "from");
           need(a.to, "to");
@@ -266,7 +273,10 @@ function create({ katex, board, cjkLen, checkGraph, layout }) {
       ["有旁白沒錨", [{ say: "外層，裡層。", board: [w("$a$"), w("$b$")] }], /要寫 on/, true],
       ["問著的動作錨在 say", [{ say: "裡層。", why: { say: "為什麼？" }, board: [w("$a$"), { ...w("$b$"), on: "裡層" }] }], /問句/, true],
       ["tint 的 id 不在這一行", [{ board: [{ ...w("${{a:x}}$"), tint: { b: "blue" } }] }], /tint\.b/],
-      ["tint 顏色", [{ board: [{ ...w("${{a:x}}$"), tint: { a: "pink" } }] }], /tint\.a/]
+      ["tint 顏色", [{ board: [{ ...w("${{a:x}}$"), tint: { a: "pink" } }] }], /tint\.a/],
+      ["劃掉的項又被寫進別的行", [{ board: [w("${{w:x}}$"), { do: "strike", term: "w" }] }, { board: [w("$y={{w:x}}$")] }], /標成錯的/],
+      ["劃掉的那一行變形之後還留著那一項", [{ board: [w("${{w:x}}$"), { do: "strike", term: "w" }, { do: "transform", line: "${{w:x}}+1$" }] }], /標成錯的/],
+      ["紅色記號標的項又被寫進別的行", [{ board: [w("${{w:x}}$"), { do: "circle", term: "w", color: "red" }, w("$z={{w:x}}$")] }], /標成錯的/]
     ].forEach(([name, beats, want, narrated]) => {
       const got = run(beats, narrated);
       if (!got.some((m) => want.test(m))) fails.push(`自測：「${name}」沒有被擋（${got.join("；") || "零錯誤"}）`);
