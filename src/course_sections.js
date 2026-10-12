@@ -78,6 +78,9 @@
   // 證明節的互動在 src/course_proof.js（data-lazy="secproof"）
   const PF = () => window.BuzzCourseProof;
   let pfail = false;
+  // 自己算（sections[].solve）在 src/course_solve.js（data-lazy="secsolve"）
+  const SV = () => window.BuzzCourseSolve;
+  let sfail = false;
   let ffail = false;
   // 第 bi 句的「為什麼」還沒答：note 不出、不給下一句、旁白念完問句就停
   const asking = (api, si, bi) => { const b = api.data.sections[si].beats[bi]; return Boolean(b && b.why && PF() && !(api.state.sec.why[`${si}-${bi}`] || {}).open); };
@@ -527,6 +530,7 @@
   function resolved(api, si) {
     const s = api.data.sections[si];
     const sec = api.state.sec;
+    if (s.solve) return Boolean(SV() && SV().resolved(api, si));
     if (s.check !== undefined) return (api.state.picks[s.check] || []).some((oi) => api.data.checks[s.check].options[oi].correct);
     if (s.predict) return sec.pred[si] !== undefined;
     return Boolean(sec.dragOk[si]);
@@ -585,6 +589,7 @@
     if (all && s.drag) {
       action = `<div class="cv2s-act cv2s-drag ${sec.dragOk[si] ? "is-done" : ""}" data-cv2s-act="drag">${icon(sec.dragOk[si] ? "check" : "target")}<span>${rich(s.drag.ask, data)}</span></div>`;
     }
+    if (all && s.solve && SV()) action = SV().view(api, si);
     if (P && !all && cur.why) action = P.why(api, si, shown - 1);
     if (P && all && (s.order || s.where)) action = P.view(api, si);
     const ok = all && resolved(api, si);
@@ -620,6 +625,10 @@
     // 有證明節先抓 course_proof.js（抓不到：照一般的節畫）
     if (!PF() && !pfail && data.sections.some((s) => s.proof)) {
       Promise.resolve(deps.ensureLazy("secproof")).then(deps.render, () => { pfail = true; deps.render(); });
+      return `<main class="screen lazy-loading" aria-busy="true"><section class="course-lesson cv2-lesson cv2s">${head}</section></main>`;
+    }
+    if (!SV() && !sfail && data.sections.some((s) => s.solve)) {
+      Promise.resolve(deps.ensureLazy("secsolve")).then(deps.render, () => { sfail = true; deps.render(); });
       return `<main class="screen lazy-loading" aria-busy="true"><section class="course-lesson cv2-lesson cv2s">${head}</section></main>`;
     }
     const sec = visitOf(api);
@@ -707,6 +716,12 @@
       if (r === 2) { sec.dragOk[sec.si] = true; complete(api, sec.si); }
       if (r === 3 && voice.on) { patch(api); if (!voice.paused && voice.wait) speak(api); return updateDock(); }
       sec.bar = r === 3 || "act";
+      return r && deps.render();
+    }
+    if (/^course-s-(solve|reveal)$/.test(action)) {
+      const r = SV() ? SV().act(api, action) : 0;
+      if (r === 2) { complete(api, sec.si); settle(api); }
+      sec.bar = "act";
       return r && deps.render();
     }
     if (action === "course-s-next") {

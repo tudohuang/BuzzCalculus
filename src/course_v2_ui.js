@@ -717,7 +717,11 @@
       });
     }
 
+    // 回溫的畫面：course_solve.js
+    const solve = (fn) => Promise.resolve(deps.ensureLazy("secsolve")).then(fn, () => 0);
+    const rvKit = (records) => ({ ...kit(), records, state, fmt, rich, lessonData, loadChapter, render });
     function renderLesson(records) {
+      if (state.rv) return window.BuzzCourseSolve ? window.BuzzCourseSolve.page(rvKit(records)) : (solve(render), "<main class=screen></main>");
       const m = meta[state.lessonId];
       if (!m || !m.available) return renderIndex(records);
       const data = lessonData(m.id);
@@ -1058,6 +1062,8 @@
         if (m) { delete chapterState[chapterFile(m.chapter.code)]; if (!lessonData(m.id)) loadChapter(m.chapter); }
         return render();
       }
+      if (action === "course-rv") { state = { lessonId: "", rv: data.lessonId || 1, picks: {} }; return go("course-lesson"); }
+      if (/^course-rv-/.test(action)) return solve(() => window.BuzzCourseSolve.rv(rvKit(loadRecords()), action, data));
       if (/^course-s-/.test(action)) return sec(() => window.BuzzCourseSections.act(secApi(loadRecords()), action, data));
       const lesson = lessonData(state.lessonId);
       if (action === "course-step" && lesson) {
@@ -1071,16 +1077,16 @@
         const check = lesson.checks[ci];
         if (!check || !check.options[oi]) return;
         const picks = state.picks[ci] || [];
-        if (picks.some((x) => check.options[x].correct) || picks.includes(oi)) return;
+        if (picks.some((x) => (check.options[x] || {}).correct) || picks.includes(oi)) return;
         state.picks = { ...state.picks, [ci]: picks.concat(oi) };
-        // 每一題都選過（第一次的選擇定了）就記分；同一輪只記一次，重做小測再記
+        // 每一題都選過就記分（同一輪只記一次）；第一次完成順便排進回溫
         if (!state.recorded && lesson.checks.every((_c, k) => (state.picks[k] || []).length)) {
           state.recorded = true;
           const score = quizScore(lesson);
           let first = false;
           update(state.lessonId, (entry) => {
             first = score >= PASS && !entry.doneAt;
-            return { ...entry, quizBest: Math.max(score, Number(entry.quizBest || 0)), quizAt: new Date().toISOString(), ...(first ? { doneAt: new Date().toISOString() } : {}) };
+            return { ...entry, quizBest: Math.max(score, Number(entry.quizBest || 0)), quizAt: new Date().toISOString(), ...(first ? { doneAt: new Date().toISOString(), ...deps.review.plan(meta[state.lessonId], lesson) } : {}) };
           });
           // 第一次完成才記（重讀、重做小測不再記）
           if (first) track("course_lesson_complete", { lesson: state.lessonId, tier: tierOf(loadRecords(), meta[state.lessonId]) });
