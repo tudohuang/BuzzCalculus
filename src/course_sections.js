@@ -410,7 +410,7 @@
     const go = () => {
       if (!el.isConnected || userAt > t0) return;
       if (pointerDown) { pending = go; return; }
-      if (Date.now() - userAt < 700) { window.setTimeout(go, 750); return; }
+      if (Date.now() - userAt < 700) { window.setTimeout(go, 720 - (Date.now() - userAt)); return; }
       const fig = root.querySelector(".cv2-figure.is-widget");
       const top = (parseFloat(root.style.getPropertyValue("--cv2s-top")) || 0) + (fig && getComputedStyle(fig).position === "sticky" ? fig.offsetHeight : 0) + 8;
       const bottom = (dock ? dock.getBoundingClientRect().top : window.innerHeight - navH) - 8;
@@ -425,7 +425,8 @@
     };
     go();
     window.setTimeout(go, 350); // 進場動畫（往上 6px）結束後再對一次
-    if (window.ResizeObserver) { grow = new ResizeObserver(go); grow.observe(el); }
+    // 黑板在句子上面長高（寫上一行、標籤撐開）也會把句子往下推：一起看
+    if (window.ResizeObserver) { grow = new ResizeObserver(go); grow.observe(el); const bd = root.querySelector(".cvb"); if (bd) grow.observe(bd); }
   }
   // 換節：播放開著就從第一句接著念；整節出完過就停在動作前
   function resume(api) {

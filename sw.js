@@ -148,7 +148,7 @@ const REVISIONS = {
   "./src/course_finish.js": "f6c4984493",
   "./src/course_map.js": "bce3788a8b",
   "./src/course_proof.js": "d728d59494",
-  "./src/course_sections.js": "025595fbaf",
+  "./src/course_sections.js": "e15f6349b3",
   "./src/course_v2/ch-0a.js": "0e0dc69882",
   "./src/course_v2/ch-0b.js": "90e6b51f57",
   "./src/course_v2/ch-0c.js": "54a9a69a5d",
