@@ -115,9 +115,10 @@ jobs:
         # 解開記一次 XP、地圖皇冠；課程的分析事件開著每次完成記一次、關掉連 gtag.js 都不抓（GA 請求由測試攔下來，不會真的送出去）。
         run: node tools/e2e_course_boss.js
       - name: E2E course board
-        # 分節的黑板（beat.board，course_board.js）：沒有黑板的課不抓、畫面照舊；寫到一半跟畫完不一樣、變形時對得上的項是同一個元素（===）、
-        # 畫完的字跟目標式子一樣、粉筆記號畫在那一項上、下一句＝上一句畫完、reduced-motion 直接到位、why: true 答了才畫、
-        # 旁白念著時跟著錄音走、暫停就停；螢幕閱讀器拿到的字 = show；390／360 每一句不溢出；深淺色對比；寫到一半沒有版面重排。
+        # 分節的黑板 v2（course_board.js＋course_board_layout.js）：沒有黑板的課一個黑板的檔都不抓、有圖的節才抓 plot；
+        # 動作在念到那個詞時才開始（虛擬時鐘與假的旁白時鐘都量）、1× 與 1.5× 開始在錄音的同一點、暫停不動、往回拖會倒回去、卡住最多估 100ms；
+        # 真的 <audio> 1.5× 時黑板的時間 = currentTime；變形完的字 = 目標式子；why: true 答了才畫；reduced-motion 直接到位；
+        # 三課每一步在 360 淺／深量版面（不疊、不出板、字 ≥ 16px、對比）而且 lint 抓得到故意弄的重疊；螢幕閱讀器拿到的字 = show；幀時間。
         run: node tools/e2e_course_board.js
       - name: E2E course solve-it-yourself and next-day review
         # 自己算（分節結尾的打字作答）：手機上是輸入框＋數學鍵盤（手指點得到、打得進去）、打錯說錯在哪而且不擋路、錯兩次攤開解法、

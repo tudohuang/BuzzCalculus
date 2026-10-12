@@ -1,27 +1,26 @@
-// 分節的黑板（beat.board，src/course_board.js）在真的 Chrome 裡走一次：手機 390×844、DPR 3（觸控）。
+// 分節的黑板 v2（beat.board，src/course_board.js＋course_board_layout.js）在真的 Chrome 裡走一次：手機 390×844、DPR 3（觸控）。
 //
 // 斷言都是看得到、量得到的東西：
-//   沒有黑板的課：畫面照舊（show 看得到）、不抓 course_board.js；有黑板的課才抓，而且只抓一次；
-//   寫：畫到一半有的字還沒出來（跟畫完不一樣）、畫完全部出來；變形：對得上 id 的項是「同一個元素」搬過去（=== 比對）、
-//   中途有 transform、畫完那一行的 KaTeX 字跟目標式子一模一樣；前幾行的項飛過來（中途有複製的那一份、畫完收掉）；
-//   粉筆記號畫在指定的那一項上（框住那一項的矩形）；「下一句」＝上一句直接畫完；reduced-motion 直接到位；
-//   證明節：why: true 的動作問著的時候不畫、答了才畫；旁白（測試自己回的無聲 mp3）念著時黑板跟著錄音走、
-//   暫停就停（進度與畫面都不動）、繼續接著走；螢幕閱讀器：黑板 aria-hidden，show 還在（藏起來的字跟 show 一樣）；
-//   390／360 寬三課每一句都不溢出（板上每一行在板裡、頁面沒有橫向捲動）；深色是黑板、淺色是淺色板，字與粉筆色對比 ≥ 4.5；
-//   幀時間：DPR 3 與 DPR 1 的 rAF 間隔、黑板自己每格的工作時間、動畫中的版面重排次數（只在動作開始時量）。console 沒有錯誤。
+//   載入：沒有黑板的課畫面照舊、一個黑板的檔都不抓；有黑板的課才抓（各一次），有 plot 的節才抓 course_board_plot.js；
+//   時間（虛擬時鐘，沒開旁白）：圈在「念到那個詞」的時候才開始（字數 × 每字毫秒），點一下＝這一句畫完；
+//   時間（假的旁白時鐘，直接換 BuzzCourseSections.voice()）：錨點之前一格沒開始、之後一格開始了；1× 與 1.5× 開始的錄音時間一樣；
+//     暫停時進度與畫面都不動；往回拖會倒回去（記號沒了）、往後拖直接畫完；卡住（currentTime 不動）最多往前估 100ms；
+//   真的 <audio>（測試回的無聲 mp3）1.5× 播：黑板的時間跟 currentTime 差不到 80ms；
+//   變形：畫完那一行的 KaTeX 字跟目標式子一樣、飛的複製收掉；「為什麼」：問著不畫答案、答了才畫；reduced-motion 直接畫好；
+//   版面：三課每一節每一步在 360（淺／深）量過不疊、不出板、字夠大、對比夠（tools/lib/board_lint.js，同 lint_board_layout.js）；
+//     而且 lint 自己會抓到故意弄出來的重疊；螢幕閱讀器拿到的字 = show；幀時間；流量（黑板幾個位元組、只在有黑板的課付）。console 沒有錯誤。
 //
 // 用法：node tools/e2e_course_board.js
-//       node tools/e2e_course_board.js --screenshots   另存三課的手機截圖（動畫中段與結尾）到 docs/report/course-review/screens/board/（不進版控）
-
 "use strict";
 
 const fs = require("fs");
 const path = require("path");
 const { launch, ciFail } = require("./lib/cdp.js");
 const staticServer = require("./lib/static_server.js");
+const { lintLessons, VIEWPORTS, pageHelpers } = require("./lib/board_lint.js");
+const { charOf } = require("./lib/course_board_check.js");
 
 const ROOT = path.join(__dirname, "..");
-const SHOTS = process.argv.includes("--screenshots") ? path.join(ROOT, "docs", "report", "course-review", "screens", "board") : "";
 const PHONE = { width: 390, height: 844, deviceScaleFactor: 3, mobile: true };
 const LESSON_DIR = path.join(ROOT, "tools", "content", "course_v2", "lessons");
 const lessonOf = (id) => JSON.parse(fs.readFileSync(path.join(LESSON_DIR, `${id}.json`), "utf8"));
@@ -30,12 +29,16 @@ const CHAIN = lessonOf("chain-rule");
 const FTC = lessonOf("ftc-part1");
 const DCT = lessonOf("dominated-convergence");
 const PILOTS = [CHAIN, FTC, DCT];
-// 連鎖律「外層是次方」：寫 → 變形（4 從指數搬到前面）→ 寫＋圈 → 飛過來再變形
-const CH_SI = 3;
-const CH_T = CHAIN.sections[CH_SI].beats[1].board[0];
-// 控制收斂的證明節：第 5 句（消去 ∫2g）問著的時候只畫結果，答了才圈 ∫2g、劃掉 ∞−∞
-const DCT_SI = DCT.sections.findIndex((s) => s.proof);
-const DCT_BI = DCT.sections[DCT_SI].beats.findIndex((b) => b.why && (b.board || []).some((a) => a.why && a.do === "strike"));
+// 連鎖律「公式」那一節第一句：寫一行，再在念到「外層的導數」「整包」「裡層的導數」時框、底線、圈
+const F_SI = CHAIN.sections.findIndex((s) => s.beats[0].board && s.beats[0].board.some((a) => a.on === "外層的導數"));
+const F_B = CHAIN.sections[F_SI].beats[0];
+const F_K = F_B.board.findIndex((a) => a.on === "外層的導數");
+// 「外層是次方」那一節第二句：變形（4 從指數搬到前面）
+const T_SI = CHAIN.sections.findIndex((s) => s.beats.some((b) => (b.board || []).some((a) => a.do === "transform" && /\{\{n:4\}\}\\,/.test(a.line))));
+const T_BI = CHAIN.sections[T_SI].beats.findIndex((b) => (b.board || []).some((a) => a.do === "transform"));
+// 控制收斂的證明節：有 why: true 的那一句
+const P_SI = DCT.sections.findIndex((s) => s.proof);
+const P_BI = DCT.sections[P_SI].beats.findIndex((b) => b.why && (b.board || []).some((a) => a.why));
 const { mp3Ms } = require("./build_narration.js");
 const silentMp3 = (ms) => {
   const frame = Buffer.alloc(144);
@@ -58,26 +61,25 @@ function check(name, ok, detail = "") {
 
 const HELPERS = `
   window.__b = {
-    open(id) { const b = document.createElement("button"); b.dataset.action = "open-course-lesson"; b.dataset.lessonId = id; document.querySelector("#app").appendChild(b); b.click(); return 1; },
+    open(id) { const b = document.createElement("button"); b.dataset.action = "open-course-lesson"; b.dataset.lessonId = id; document.querySelector("#app").appendChild(b); b.click(); b.remove(); return 1; },
     si() { const r = document.querySelector("[data-cv2s]"); return r ? Number(r.dataset.cv2s) : -1; },
     beats() { return document.querySelectorAll("[data-cv2s] .cv2s-beat").length; },
     st() { return window.BuzzBoard && window.BuzzBoard.state(); },
+    model() { return window.BuzzBoard && window.BuzzBoard.debug.model(); },
     board() { return document.querySelector("[data-cv2s] .cvb"); },
     files(re) { return performance.getEntriesByType("resource").map((e) => e.name).filter((n) => re.test(n)).length; },
+    bytes(re) { return performance.getEntriesByType("resource").filter((e) => re.test(e.name)).reduce((s, e) => s + (e.encodedBodySize || e.transferSize || 0), 0); },
     overflow() { const d = document.documentElement; return d.scrollWidth - d.clientWidth; },
-    // 還沒寫出來（inline opacity < 1）的單位數；變形中的元素數；飛行中的複製
-    pending() { const c = window.__b.board(); return c ? [...c.querySelectorAll(".katex-html span, .cvb-c")].filter((n) => n.style.opacity !== "" && Number(n.style.opacity) < 0.99).length : -1; },
-    moving() { const c = window.__b.board(); return c ? [...c.querySelectorAll("[style*='transform']")].filter((n) => !n.classList.contains("cvb-tip") && /translate/.test(n.style.transform)).length : -1; },
-    flying() { const c = window.__b.board(); return c ? c.querySelectorAll(".cvb-f").length : -1; },
-    strokes() { const c = window.__b.board(); return c ? [...c.querySelectorAll(".cvb-a path")].map((p) => Number(p.style.strokeDashoffset || 0)) : []; },
-    // 某一行 KaTeX 看得到的字（不含粉筆標籤）
-    lineText(k) { const l = window.__b.board().querySelectorAll(".cvb-l")[k]; return l ? [...l.querySelectorAll(".cvb-e > .katex .katex-html, .cvb-e > .cvb-c")].map((n) => n.textContent).join("").replace(/\\s+/g, "") : ""; },
+    // 某一項（data-n）的 KaTeX 看得到的字
+    itemText(n) { const el = window.__b.board().querySelector('.cvb-i[data-n="' + n + '"]'); return el ? [...el.querySelectorAll(".katex-html, .cvb-x")].map((x) => x.textContent).join("").replace(/\\s+/g, "") : ""; },
     texText(line) {
       const d = document.createElement("div");
-      d.innerHTML = String(line).split(/(?<!\\\\)\\$/).map((p, i) => (i % 2 ? window.katex.renderToString("\\\\displaystyle " + window.BuzzBoard.tex(p), window.BuzzBoard.KOPT) : p)).join("");
+      d.innerHTML = String(line).split(/(?<!\\\\)\\$/).map((p, i) => (i % 2 ? window.katex.renderToString("\\\\displaystyle " + window.BuzzBoard.tex(p), window.BuzzBoard.KOPT) : p.trim())).join("");
       return [...d.childNodes].map((n) => (n.querySelector ? (n.querySelector(".katex-html") || n).textContent : n.textContent)).join("").replace(/\\s+/g, "");
     },
-    // 螢幕閱讀器拿到的字：藏起來的 show，KaTeX 換回 $TeX$
+    // 記號 a 畫了多少（stroke-dashoffset：1 = 沒畫、0 = 畫完）與透明度
+    mark(a) { const g = window.__b.board().querySelector('.cvb-ink g[data-a="' + a + '"]'); if (!g) return null; const p = g.querySelector("path"); return { off: p ? Number(p.style.strokeDashoffset) : -1, op: g.style.opacity === "" ? 1 : Number(g.style.opacity) }; },
+    flying() { const c = window.__b.board(); return c ? [...c.querySelectorAll(".cvb-f")].filter((n) => n.style.opacity === "1").length : -1; },
     srText(li) {
       return [...li.querySelectorAll(".cv2s-show")].map((p) => {
         const c = p.cloneNode(true);
@@ -86,17 +88,15 @@ const HELPERS = `
       });
     },
     srHidden(p) { const r = p.getBoundingClientRect(); const cs = getComputedStyle(p); return r.width <= 1 && r.height <= 1 && cs.display !== "none" && cs.visibility !== "hidden" && !p.closest("[aria-hidden='true']"); },
-    rect(el) { const r = el.getBoundingClientRect(); return { l: r.left, t: r.top, r: r.right, b: r.bottom, w: r.width, h: r.height }; },
-    async settle(ms) { const t0 = performance.now(); while (window.__b.st() && window.__b.st().running && performance.now() - t0 < (ms || 8000)) await new Promise((r) => setTimeout(r, 50)); return !window.__b.st() || !window.__b.st().running; },
-    lum(c) { const m = String(c).match(/[\\d.]+/g).map(Number); const f = (v) => { v /= 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); }; return 0.2126 * f(m[0]) + 0.7152 * f(m[1]) + 0.0722 * f(m[2]); },
-    contrast(a, b) { const x = window.__b.lum(a); const y = window.__b.lum(b); return (Math.max(x, y) + 0.05) / (Math.min(x, y) + 0.05); },
-    // 自訂屬性（#rrggbb）→ rgb() 字串
-    varRgb(el, name) { const p = document.createElement("i"); p.style.color = getComputedStyle(el).getPropertyValue(name).trim(); el.appendChild(p); const c = getComputedStyle(p).color; p.remove(); return c; }
+    async settle(ms) { const t0 = performance.now(); while (window.__b.st() && window.__b.st().running && performance.now() - t0 < (ms || 15000)) await new Promise((r) => setTimeout(r, 50)); return !window.__b.st() || !window.__b.st().running; },
+    // 假的旁白：BuzzCourseSections.voice() 換成 window.__fake（測完放回去）
+    fake(v) { const S = window.BuzzCourseSections; if (!S.__voice) S.__voice = S.voice; window.__fake = v; S.voice = () => window.__fake || {}; window.BuzzBoard.debug.tick(); return window.__b.st(); },
+    unfake() { const S = window.BuzzCourseSections; if (S.__voice) { S.voice = S.__voice; delete S.__voice; } window.__fake = null; return 1; }
   };
 `;
 
 async function run() {
-  console.log("E2E 課程黑板");
+  console.log("E2E 課程黑板 v2");
   const server = await staticServer.start(ROOT, 0);
   const chrome = await launch();
   const evaluate = (code) => chrome.evaluate(`${HELPERS}\n${code}`);
@@ -110,13 +110,6 @@ async function run() {
   const errors = [];
   chrome.on("Runtime.exceptionThrown", (p) => errors.push((p.exceptionDetails.exception && p.exceptionDetails.exception.description) || p.exceptionDetails.text));
   chrome.on("Runtime.consoleAPICalled", (p) => { if (p.type === "error") errors.push(p.args.map((a) => a.value || a.description || "").join(" ")); });
-  const shot = async (name) => {
-    if (!SHOTS) return;
-    fs.mkdirSync(SHOTS, { recursive: true });
-    const { data } = await chrome.send("Page.captureScreenshot", { format: "png" });
-    fs.writeFileSync(path.join(SHOTS, `${name}.png`), Buffer.from(data, "base64"));
-  };
-  // 真的點（觸控）：捲到看得到、點中間
   const tap = async (selector) => {
     const p = await evaluate(`const el = [...document.querySelectorAll(${JSON.stringify(selector)})].find((n) => { const r = n.getBoundingClientRect(); return r.width > 0 && r.height > 0; }); if (!el) return null; const r0 = el.getBoundingClientRect(); if (r0.top < 70 || r0.bottom > innerHeight - 150) el.scrollIntoView({ block: "center" }); const r = el.getBoundingClientRect(); return { x: r.left + Math.min(r.width / 2, 60), y: r.top + Math.min(r.height / 2, 40) };`);
     if (!p) return false;
@@ -126,26 +119,21 @@ async function run() {
   };
   const next = () => evaluate(`const n = document.querySelector("[data-cv2s-next]"); if (n) n.click(); return Boolean(n);`);
   const see = () => evaluate(`const s = document.querySelector('[data-action="course-s-see"]'); if (s) s.click(); return Boolean(s);`);
-  // 出到第 k 句：問著「為什麼」就先直接看，等「下一句」出來再按
-  const retries = [];
   const advance = async (k) => {
-    // app.js 的 render 排在下一格（rAF）：按了要等畫出來，不然會按到舊的那一顆、或連按兩下跳過一句
     for (let i = 0; i < 4 && (await evaluate(`return window.__b.beats();`)) < k; i += 1) {
       if (await see()) await waitFor(`!document.querySelector('[data-action="course-s-see"]') && document.querySelector("[data-cv2s-next]")`, 2000);
-      const n = await next();
+      await next();
       if (await waitFor(`window.__b.beats() >= ${k}`, 2500)) break;
-      retries.push(`${k}:${i}:${n}`);
     }
     return (await evaluate(`return window.__b.beats();`)) === k;
   };
-  const go = async (si) => { await evaluate(`document.querySelector('[data-action="course-s-go"][data-to="${si}"]').click(); return 1;`); return waitFor(`window.__b.si() === ${si} && window.__b.board()`); };
+  const go = async (si, id) => { await evaluate(`document.querySelector('[data-action="course-s-go"][data-to="${si}"]').click(); return 1;`); return waitFor(`window.__b.si() === ${si} && window.__b.st() && window.__b.st().key === ${JSON.stringify(`${id}:${si}`)}`); };
   const openLesson = async (id) => {
     await evaluate(`window.__b.open(${JSON.stringify(id)}); return 1;`);
     return waitFor(`document.querySelector(".cv2-lesson h2") && document.querySelector(".cv2-lesson h2").textContent.trim() === ${JSON.stringify(lessonOf(id).title)} && document.querySelector("[data-cv2s] .cv2s-sec")`);
   };
   const motion = (on) => chrome.send("Emulation.setEmulatedMedia", { features: [{ name: "prefers-reduced-motion", value: on ? "" : "reduce" }] });
-
-  // 旁白：/media/narration/ 由測試自己回（無聲 mp3，長度由測試控制、照 Range 回 206），跟 e2e_course_sections 同一招
+  // 旁白：/media/narration/ 由測試自己回（無聲 mp3，照 Range 回 206），跟 e2e_course_sections 同一招
   const narr = { total: 600 };
   chrome.on("Fetch.requestPaused", (p) => {
     const range = Object.entries(p.request.headers || {}).find(([k]) => k.toLowerCase() === "range");
@@ -159,15 +147,15 @@ async function run() {
     chrome.send("Fetch.fulfillRequest", { requestId: p.requestId, responseCode: m ? 206 : 200, responseHeaders: headers, body: body.toString("base64") }).catch(() => {});
   });
   await chrome.send("Fetch.enable", { patterns: [{ urlPattern: "*/media/narration/*", requestStage: "Request" }, { urlPattern: "*/releases/download/*/narration.*", requestStage: "Request" }] });
-  const retime = async (id, ms, name) => {
-    narr.total = await evaluate(`const L = window.BUZZ_COURSE_V2_LESSONS[${JSON.stringify(id)}]; let at = 0; L.voice = ${JSON.stringify(name)};
-      L.sections.forEach((s) => s.beats.forEach((b) => { if (b.why && b.why.say) { b.why.t = [at, at + ${ms}]; at += ${ms}; } if (b.say) { b.t = [at, at + ${ms}]; at += ${ms}; } else delete b.t; })); return at;`);
-  };
 
   try {
     check("測試用的無聲 mp3 長度數得對", mp3Ms(silentMp3(600)) === 600);
-    check(`三課每一句都帶 board（${PILOTS.map((L) => L.id).join("、")}）`, PILOTS.every((L) => L.sections.every((s) => s.beats.every((b) => Array.isArray(b.board) && b.board.length))));
-    check("沒有黑板的對照課真的沒有 board", PLAIN.sections.every((s) => s.beats.every((b) => !b.board)));
+    check("三課每一句都帶 board", PILOTS.every((L) => L.sections.every((s) => s.beats.every((b) => Array.isArray(b.board) && b.board.length))));
+    check("三課有旁白的動作都錨在念到的詞上（每一段第一個以外都有 on）", PILOTS.every((L) => L.sections.every((s) => s.beats.every((b) => {
+      const n = { q: 0, s: 0 };
+      return b.board.every((a) => { const c = b.why && !a.why ? "q" : "s"; n[c] += 1; return n[c] === 1 || typeof a.on === "string"; });
+    }))));
+    check(`找得到要測的句子（公式第 ${F_SI + 1} 節、變形第 ${T_SI + 1} 節、證明節第 ${P_SI + 1} 節）`, F_SI >= 0 && F_K > 0 && T_SI >= 0 && T_BI > 0 && P_SI >= 0 && P_BI > 0);
     await chrome.send("Emulation.setDeviceMetricsOverride", PHONE);
     await chrome.send("Emulation.setTouchEmulationEnabled", { enabled: true, maxTouchPoints: 5 });
     await chrome.send("Performance.enable");
@@ -177,233 +165,187 @@ async function run() {
     await evaluate(`const b = document.querySelector('[data-action="set-onboarding-context"][data-context="newbie"]'); if (b) b.click(); return 1;`);
     check("新手進課程表", await waitFor('document.querySelector(".cv2-index")'));
 
-    /* ── 沒有黑板的課：畫面照舊、不抓黑板 ── */
+    /* ── 載入：沒有黑板的課不抓；有黑板才抓；有圖才抓圖 ── */
     check(`打開 ${PLAIN.id}（沒有 board）`, await openLesson(PLAIN.id));
     await next();
     await sleep(300);
-    const plain = await evaluate(`return { board: Boolean(document.querySelector(".cvb, [data-cvb-slot]")), files: window.__b.files(/course_board\\.js/), sr: document.querySelectorAll(".cvb-sr").length,
+    const plain = await evaluate(`return { board: Boolean(document.querySelector(".cvb, [data-cvb-slot]")), files: window.__b.files(/course_board/), sr: document.querySelectorAll(".cvb-sr").length,
       shows: [...document.querySelectorAll("[data-cv2s] .cv2s-show")].map((p) => p.getBoundingClientRect().height > 10).every(Boolean) };`);
     check("沒有黑板的課：沒有黑板、show 照樣看得到、沒有 cvb-sr", !plain.board && plain.shows && plain.sr === 0, JSON.stringify(plain));
-    check("沒有黑板的課不抓 course_board.js", plain.files === 0, String(plain.files));
-
-    /* ── 連鎖律：抓黑板、寫、變形、圈、飛過來 ── */
+    check("沒有黑板的課：一個黑板的檔都不抓（course_board*.js）", plain.files === 0, String(plain.files));
     check(`打開 ${CHAIN.id}`, await openLesson(CHAIN.id));
-    check("有黑板的課才抓 course_board.js，而且只抓一次", await waitFor(`window.__b.board() && window.__b.files(/course_board\\.js/) === 1`), String(await evaluate(`return window.__b.files(/course_board\\.js/);`)));
+    check("有黑板的課：course_board_layout.js、course_board.js 各抓一次，沒有 plot 的課不抓 course_board_plot.js", await waitFor(`window.__b.board() && window.__b.files(/course_board_layout\\.js/) === 1 && window.__b.files(/course_board\\.js/) === 1`) && (await evaluate(`return window.__b.files(/course_board_plot\\.js/);`)) === 0, String(await evaluate(`return [window.__b.files(/course_board_layout/), window.__b.files(/course_board\\.js/), window.__b.files(/course_board_plot/)].join(",");`)));
     const a11y = await evaluate(`const c = window.__b.board(); const li = document.querySelector("[data-cv2s] .cv2s-beat"); return { hidden: c.getAttribute("aria-hidden"), sr: li.querySelectorAll(".cv2s-show.cvb-sr").length, live: document.querySelector(".cv2s-beats").getAttribute("aria-live"), inSlot: Boolean(c.closest("[data-cvb-slot]")) };`);
     check("黑板 aria-hidden、句子的 show 還在（藏起來給螢幕閱讀器）、aria-live 照舊", a11y.hidden === "true" && a11y.sr === CHAIN.sections[0].beats[0].show.length && a11y.live === "polite" && a11y.inSlot, JSON.stringify(a11y));
+    const h0 = await evaluate(`return window.__b.board().getBoundingClientRect().height;`);
     await evaluate(`return window.__b.settle();`);
-    check(`到「${CHAIN.sections[CH_SI].title}」那一節`, await go(CH_SI));
-    // 回到沒看過的節：第一句是新出來的 → 會動；畫到一半
-    const w0 = await evaluate(`return { st: window.__b.st(), pending: window.__b.pending() };`);
-    await sleep(350);
-    const w1 = await evaluate(`return { st: window.__b.st(), pending: window.__b.pending(), text: window.__b.lineText(0) };`);
-    await shot("chain-rule-write-mid");
+    await advance(2);
     await evaluate(`return window.__b.settle();`);
-    const w2 = await evaluate(`return { st: window.__b.st(), pending: window.__b.pending(), text: window.__b.lineText(0), strokes: window.__b.strokes() };`);
-    const want0 = await evaluate(`return window.__b.texText(${JSON.stringify(CHAIN.sections[CH_SI].beats[0].board[0].line)});`);
-    check("寫：畫到一半還有字沒出來（跟畫完不一樣）", (w0.st.running || w1.st.running) && Math.max(w0.pending, w1.pending) > 0, `${JSON.stringify(w0)} ${JSON.stringify(w1)}`);
-    check("寫：畫完全部出來、字跟 board 寫的式子一樣、粉筆記號都畫完", !w2.st.running && w2.pending === 0 && w2.text === want0 && w2.strokes.length === 2 && w2.strokes.every((v) => v === 0), JSON.stringify({ w2, want0 }));
-    await shot("chain-rule-write-end");
+    const h1 = await evaluate(`return window.__b.board().getBoundingClientRect().height;`);
+    check("一節的板高一開始就定好：寫上第二句之後板不長高（下面的句子不被推動）", Math.abs(h1 - h0) < 0.5 && h0 > 60, `${h0} → ${h1}`);
 
-    // 變形：4 從指數搬到前面、(x²+1) 搬過去 —— 同一個元素
-    await evaluate(`window.__n = window.__b.board().querySelector(".cvb-t-n"); window.__i = window.__b.board().querySelector(".cvb-t-i"); return 1;`);
+    /* ── 虛擬時鐘（沒開旁白）：圈在念到那個詞的時候才開始 ── */
+    check(`到「${CHAIN.sections[F_SI].title}」那一節（新出來的句子會動）`, await go(F_SI, CHAIN.id));
+    const g0 = await evaluate(`const m = window.__b.model(); return m.acts.findIndex((x) => x.b === 0 && x.k === ${F_K});`);
+    const vt = await evaluate(`const out = []; const t0 = performance.now(); while (performance.now() - t0 < 2600) { const s = window.__b.st(); out.push([performance.now() - t0, s.g, s.q, s.mode]); await new Promise((r) => requestAnimationFrame(r)); }
+      const hit = out.find((x) => x[1] > ${g0} || (x[1] === ${g0} && x[2] > 0)); return { at: hit ? hit[0] : -1, mode: out[2] && out[2][3], before: out.filter((x) => x[0] < 300).every((x) => x[1] <= ${g0}) };`);
+    const want = charOf(F_B.board[F_K].on, F_B.say) * 170;
+    check(`虛擬時鐘：框「${F_B.board[F_K].on}」在 say 的第 ${charOf(F_B.board[F_K].on, F_B.say)} 個字（≈ ${want}ms）才開始，不是平均分掉`, vt.mode === "virtual" && vt.before && Math.abs(vt.at - want) < 180, JSON.stringify({ ...vt, want }));
     await tap(".cvb");
-    await sleep(380);
-    const t1 = await evaluate(`return { st: window.__b.st(), moving: window.__b.moving(), nIn: Boolean(window.__n.closest(".cvb-o")), tf: window.__n.style.transform };`);
-    await shot("chain-rule-transform-mid");
-    await evaluate(`return window.__b.settle();`);
-    const t2 = await evaluate(`const c = window.__b.board(); return { same: c.querySelector(".cvb-t-n") === window.__n && c.querySelector(".cvb-t-i") === window.__i, lines: c.querySelectorAll(".cvb-l").length, text: window.__b.lineText(0), tf: window.__n.style.transform, ghosts: c.querySelectorAll(".cvb-o").length };`);
-    const wantT = await evaluate(`return window.__b.texText(${JSON.stringify(CH_T.line)});`);
-    check("點黑板＝下一句；變形中：配對的項在新的一行裡、正在移動（transform）", t1.st.at === 1 && t1.nIn && /translate/.test(t1.tf) && t1.moving >= 2, JSON.stringify(t1));
-    check("變形完：4 與 (x²+1) 是同一個元素搬過去（===）、沒有殘影、transform 清掉", t2.same && t2.ghosts === 0 && t2.tf === "" && t2.lines === 1, JSON.stringify(t2));
-    check("變形完：那一行的字跟目標式子一模一樣", t2.text === wantT, `${t2.text} vs ${wantT}`);
-    // 粉筆記號畫在那一項上
-    const mk = await evaluate(`const c = window.__b.board(); const svg = [...c.querySelectorAll(".cvb-a")].pop(); const t = c.querySelector(".cvb-t-i"); return { s: window.__b.rect(svg), t: window.__b.rect(t), kind: ${JSON.stringify(CHAIN.sections[CH_SI].beats[1].board[1].do)} };`);
-    check("底線框住指定的那一項（橫向涵蓋、貼在它上下）", mk.s.l <= mk.t.l + 1 && mk.s.r >= mk.t.r - 1 && mk.s.t <= mk.t.b && mk.s.b >= mk.t.t, JSON.stringify(mk));
+    await waitFor(`window.__b.st().at === 1`, 2000);
+    const t1 = await evaluate(`const m = window.__b.model(); const last0 = m.anns.filter((a) => a.b === 0).map((a) => m.anns.indexOf(a)); return { st: window.__b.st(), first1: m.acts.findIndex((x) => x.b === 1), marks: last0.map((a) => window.__b.mark(a)) };`);
+    check("點黑板＝下一句：上一句直接畫完（游標跳到下一句的第一個動作），上一句的記號畫完了（下一句開始時淡出）", t1.st.at === 1 && t1.st.g >= t1.first1 && t1.marks.every((m) => m && m.off === 0), JSON.stringify(t1));
 
-    // 下一句＝上一句直接畫完（寫＋圈畫到一半就按）
-    await next();
-    await waitFor(`window.__b.st().at === 2`, 1500);
-    await sleep(120);
-    const n1 = await evaluate(`return { st: window.__b.st(), pending: window.__b.pending() };`);
-    await next();
-    await waitFor(`window.__b.st().at === 3`, 1500);
-    const n2 = await evaluate(`const c = window.__b.board(); const l2 = c.querySelectorAll(".cvb-l")[1]; return { st: window.__b.st(), done2: l2 ? [...l2.querySelectorAll(".katex-html span")].every((n) => n.style.opacity === "") : false, circle: l2 ? [...l2.querySelectorAll(".cvb-a path")].map((p) => p.style.strokeDashoffset) : [], flying: window.__b.flying() };`);
-    check("畫到一半按「下一句」：上一句直接畫完（字全出來、圈畫完）、下一句接著畫", n1.st.running && n1.st.at === 2 && n2.st.at === 3 && n2.done2 && n2.circle.length === 1 && Number(n2.circle[0]) === 0, JSON.stringify({ n1, n2 }));
-    await sleep(250);
-    const f1 = await evaluate(`return { flying: window.__b.flying(), st: window.__b.st() };`);
-    await shot("chain-rule-fly-mid");
+    /* ── 假的旁白時鐘：時間 = currentTime ── */
     await evaluate(`return window.__b.settle();`);
-    const f2 = await evaluate(`return { flying: window.__b.flying(), text: window.__b.lineText(2) };`);
-    const wantF = await evaluate(`return window.__b.texText(${JSON.stringify(CHAIN.sections[CH_SI].beats[3].board[1].line)});`);
-    check("前幾行的項飛過來：中途有複製的那一份、畫完收掉，最後一行變成目標式子", (n2.flying > 0 || f1.flying > 0) && f2.flying === 0 && f2.text === wantF, JSON.stringify({ n2: n2.flying, f1, f2, wantF }));
-    await shot("chain-rule-section-end");
-
-    /* ── reduced-motion：直接到位 ── */
-    await motion(false);
-    check("reduced-motion：到下一節", await go(CH_SI + 1));
-    const rm0 = await evaluate(`return { st: window.__b.st(), pending: window.__b.pending() };`);
-    await next();
-    await waitFor(`window.__b.st().at === 1`, 1500);
-    const rm1 = await evaluate(`return { st: window.__b.st(), pending: window.__b.pending(), strokes: window.__b.strokes(), raf: 0 };`);
-    check("reduced-motion：第一句與「下一句」都直接畫好（沒有動畫、沒有沒出來的字）", !rm0.st.running && rm0.pending === 0 && !rm1.st.running && rm1.st.at === 1 && rm1.pending === 0 && rm1.strokes.every((v) => v === 0), JSON.stringify({ rm0, rm1 }));
-    await motion(true);
-
-    /* ── 證明節：why: true 的動作答了才畫 ── */
-    check(`打開 ${DCT.id}`, await openLesson(DCT.id));
-    check(`到證明節（第 ${DCT_SI + 1} 節）`, await go(DCT_SI));
-    for (let k = 1; k <= DCT_BI; k += 1) {
-      await evaluate(`return window.__b.settle();`);
-      await advance(k + 1);
-    }
-    await evaluate(`return window.__b.settle();`);
-    const before = DCT.sections[DCT_SI].beats[DCT_BI].board.findIndex((a) => a.why);
-    const q0 = await evaluate(`return { st: window.__b.st(), asking: Boolean(document.querySelector('[data-cv2s-act="why"]')), strikes: window.__b.board().querySelectorAll(".cvb-a").length };`);
-    check("問「為什麼」的時候：只畫到答案之前（why: true 的還沒畫）", q0.asking && q0.st.at === DCT_BI && q0.st.n === before && !q0.st.running, JSON.stringify(q0));
-    await shot("dominated-convergence-why-asking");
-    await see();
-    await sleep(300);
-    const q1 = await evaluate(`return { st: window.__b.st() };`);
-    await evaluate(`return window.__b.settle();`);
-    const q2 = await evaluate(`const c = window.__b.board(); return { st: window.__b.st(), marks: c.querySelectorAll(".cvb-a").length, strike: Boolean([...c.querySelectorAll(".cvb-a")].find((s) => /kr/.test(s.getAttribute("class")))), text: window.__b.lineText(c.querySelectorAll(".cvb-l").length - 1) };`);
-    check("答了（直接看）：接著畫答案（圈 ∫2g、寫 ∞−∞、打叉）", q1.st.running && q2.st.n === DCT.sections[DCT_SI].beats[DCT_BI].board.length && q2.marks === 2 && q2.strike && /∞−∞/.test(q2.text), JSON.stringify({ q1, q2 }));
-    await shot("dominated-convergence-why-answered");
-
-    /* ── 旁白：黑板跟著錄音走，暫停就停 ── */
-    check(`旁白：重開 ${CHAIN.id}`, await openLesson(CHAIN.id));
-    check("到第一節", await go(0));
-    await evaluate(`return window.__b.settle();`);
-    await retime(CHAIN.id, 2600, "e2eboard");
-    await tap("[data-cv2s-play]");
-    check("按播放：念完第一句自己出第二句，黑板跟著那一句的錄音畫", await waitFor(`window.__b.st().at === 1 && window.__b.st().running && window.BuzzCourseSections.voice().beat === "0-1"`, 6000), JSON.stringify(await evaluate(`return { st: window.__b.st(), v: window.BuzzCourseSections.voice() };`)));
-    await sleep(500);
-    const v1 = await evaluate(`const v = window.BuzzCourseSections.voice(); return { p: window.__b.st().p, at: v.at, start: v.start, end: v.end };`);
-    const expect = (v1.at - v1.start) / ((v1.end - v1.start) * 0.9);
-    check("黑板的進度 ≈ 錄音念到的位置（這一句的 90% 畫完）", Math.abs(v1.p - expect) < 0.15 && v1.p > 0.05 && v1.p < 0.95, JSON.stringify({ ...v1, expect: Math.round(expect * 100) / 100 }));
-    await tap("[data-cv2s-play]");
-    await sleep(150);
-    const p1 = await evaluate(`return { st: window.__b.st(), html: window.__b.board().innerHTML.length + ":" + window.__b.pending() + ":" + window.__b.strokes().join(","), v: window.BuzzCourseSections.voice().paused };`);
-    await sleep(900);
-    const p2 = await evaluate(`return { st: window.__b.st(), html: window.__b.board().innerHTML.length + ":" + window.__b.pending() + ":" + window.__b.strokes().join(",") };`);
-    check("暫停：黑板停住（進度與畫面 0.9 秒都不動）", p1.v && p1.st.running && p1.st.p === p2.st.p && p1.html === p2.html, JSON.stringify({ p1, p2 }));
-    await tap("[data-cv2s-play]");
+    check("重開、回到「公式」那一節的第一句", await openLesson(CHAIN.id) && await go(F_SI, CHAIN.id) && (await evaluate(`return window.__b.st().at;`)) === 0);
+    const ff = await evaluate(`const L = window.BUZZ_COURSE_V2_LESSONS[${JSON.stringify(CHAIN.id)}]; const b = L.sections[${F_SI}].beats[0]; return { t: b.t, ms: b.board[${F_K}].ms, voice: L.voice };`);
+    check("出貨的課帶著錄音的時間：t 與錨點的 ms（narration.json 的逐字時間點）", Array.isArray(ff.t) && typeof ff.ms === "number" && ff.ms > 200 && ff.ms < ff.t[1] - ff.t[0], JSON.stringify(ff));
+    const key = `${F_SI}-0`;
+    const V = (at, extra = "") => `{ on: true, paused: false, beat: ${JSON.stringify(key)}, at: ${at}, start: ${ff.t[0]}, end: ${ff.t[1]}, rate: 1 ${extra} }`;
+    const s1 = await evaluate(`return window.__b.fake(${V(ff.t[0] + ff.ms - 70)});`);
+    const s2 = await evaluate(`window.__b.fake(${V(ff.t[0] + ff.ms + 120)}); return window.__b.st();`);
+    check("錨點前 70ms：框還沒開始；錨點後 120ms：框開始了", s1.mode === "audio" && (s1.g < g0 || (s1.g === g0 && s1.q === 0)) && s2.g === g0 && s2.q > 0 && s2.q < 1, JSON.stringify({ s1, s2 }));
+    // 1× 與 1.5×：同一段錄音時間、不同的牆上時間，框開始的錄音時間一樣
+    const startAt = async (rate) => evaluate(`const t0 = performance.now(); const from = ${ff.t[0] + ff.ms - 400}; let hit = -1;
+      while (performance.now() - t0 < 1400) { const at = Math.round(from + (performance.now() - t0) * ${rate}); window.__fake = { on: true, paused: false, beat: ${JSON.stringify(key)}, at, start: ${ff.t[0]}, end: ${ff.t[1]}, rate: ${rate} };
+        await new Promise((r) => requestAnimationFrame(r)); const s = window.__b.st(); if (hit < 0 && s.g === ${g0} && s.q > 0) hit = at - ${ff.t[0]}; if (hit < 0 && s.g > ${g0}) hit = -2; }
+      return hit;`);
+    const r1 = await startAt(1);
+    const r15 = await startAt(1.5);
+    check("1× 與 1.5×：框在錄音的同一個時間點開始（差 < 60ms，都在錨點上）", r1 > 0 && r15 > 0 && Math.abs(r1 - r15) < 60 && Math.abs(r1 - ff.ms) < 60, JSON.stringify({ r1, r15, ms: ff.ms }));
+    // 暫停
+    await evaluate(`window.__b.fake(${V(ff.t[0] + ff.ms + 150, ", paused: true")}); return 1;`);
+    const pz1 = await evaluate(`return { st: window.__b.st(), m: window.__b.mark(${await evaluate(`const m = window.__b.model(); return m.anns.findIndex((a) => a.g === ${g0});`)}) };`);
     await sleep(700);
-    const p3 = await evaluate(`return window.__b.st();`);
-    check("繼續：接著畫", p3.p > p2.st.p || (!p3.running && p3.at >= 1), JSON.stringify(p3));
+    const pz2 = await evaluate(`return { st: window.__b.st(), m: window.__b.mark(${await evaluate(`const m = window.__b.model(); return m.anns.findIndex((a) => a.g === ${g0});`)}) };`);
+    check("暫停：0.7 秒裡進度、時間與畫面都不動", pz1.st.q === pz2.st.q && pz1.st.tau === pz2.st.tau && pz1.m.off === pz2.m.off && pz1.m.off < 1, JSON.stringify({ pz1, pz2 }));
+    // 往回拖、往後拖
+    const ai = await evaluate(`const m = window.__b.model(); return m.anns.findIndex((a) => a.g === ${g0});`);
+    const back = await evaluate(`window.__b.fake(${V(ff.t[0] + 100)}); return { st: window.__b.st(), m: window.__b.mark(${ai}) };`);
+    check("往回拖到這一句開頭：框倒回去（沒畫、看不到）", back.st.g < g0 && (back.m.off === 1 || back.m.op === 0), JSON.stringify(back));
+    const fwd = await evaluate(`window.__b.fake(${V(ff.t[1] - 5)}); return { st: window.__b.st(), m: window.__b.mark(${ai}) };`);
+    const nActs = F_B.board.length;
+    check("往後拖到這一句結尾：全部畫完", fwd.st.g >= nActs && fwd.m.off === 0, JSON.stringify(fwd));
+    // 卡住：currentTime 不動、沒暫停 → 最多往前估 100ms
+    await evaluate(`window.__b.fake(${V(ff.t[0] + 1000)}); return 1;`);
+    await sleep(900);
+    const stall = await evaluate(`window.BuzzBoard.debug.tick(); return window.__b.st();`);
+    check("網路卡住（currentTime 900ms 不動）：黑板最多往前估 100ms，不會自己跑掉", stall.tau >= 1000 && stall.tau <= 1101, JSON.stringify(stall));
+    await evaluate(`return window.__b.unfake();`);
+
+    /* ── 真的 <audio>：1.5× 播，黑板的時間跟 currentTime 走 ── */
+    check(`旁白：重開 ${CHAIN.id}`, await openLesson(CHAIN.id));
+    check("到「公式」那一節", await go(F_SI, CHAIN.id));
+    narr.total = await evaluate(`const L = window.BUZZ_COURSE_V2_LESSONS[${JSON.stringify(CHAIN.id)}]; let at = 0; L.voice = "e2eboard";
+      L.sections.forEach((s) => s.beats.forEach((b) => { if (b.why && b.why.say) { b.why.t = [at, at + 4000]; at += 4000; } if (b.say) { b.t = [at, at + 4000]; at += 4000; } else delete b.t; })); return at;`);
+    await evaluate(`window.BuzzBoard.debug.rebuild(); const r = window.BUZZ_COURSE_V2_LESSONS; const rec = JSON.parse(localStorage.getItem("buzzcalculus.records.v1")); return 1;`);
+    await tap("[data-cv2s-rate]");
+    await tap("[data-cv2s-rate]");
+    await tap("[data-cv2s-play]");
+    const live = await waitFor(`window.BuzzCourseSections.voice().on && window.BuzzCourseSections.voice().beat === ${JSON.stringify(`${F_SI}-0`)} && window.BuzzCourseSections.voice().at > window.BuzzCourseSections.voice().start + 300 && window.__b.st().mode === "audio"`, 6000);
+    const drift = await evaluate(`const out = []; for (let i = 0; i < 45; i += 1) { await new Promise((r) => requestAnimationFrame(r)); const v = window.BuzzCourseSections.voice(); const s = window.__b.st(); if (s.mode === "audio" && v.beat === ${JSON.stringify(`${F_SI}-0`)}) out.push([v.at - v.start, s.tau, v.rate]); }
+      return { n: out.length, max: Math.max(...out.map((x) => Math.abs(x[0] - x[1]))), rate: out.length ? out[0][2] : 0 };`);
+    check("真的 <audio> 1.5×：黑板的時間 = currentTime（45 格裡最多差 < 80ms）", live && drift.n > 30 && drift.rate === 1.5 && drift.max < 80, JSON.stringify(drift));
     await tap("[data-cv2s-play]");
     await sleep(200);
+    await tap("[data-cv2s-rate]");
+    await sleep(100);
 
-    /* ── 螢幕閱讀器的字、寬度：三課每一節每一句（reduced-motion 直接到位，量的是結尾） ── */
+    /* ── 變形：對得上的項滑過去，畫完那一行跟目標式子一樣 ── */
+    check(`到「${CHAIN.sections[T_SI].title}」那一節`, await go(T_SI, CHAIN.id));
+    await evaluate(`return window.__b.settle();`);
+    for (let k = 1; k <= T_BI; k += 1) { await advance(k + 1); }
+    const tf = CHAIN.sections[T_SI].beats[T_BI].board.find((a) => a.do === "transform");
+    const tfG = await evaluate(`const m = window.__b.model(); return m.acts.findIndex((x) => x.b === ${T_BI} && x.do === "transform");`);
+    const mid = await evaluate(`await window.__b.settle(4000); return 1;`) && await evaluate(`window.BuzzBoard.debug.show(${tfG}, 0.4); return { flying: window.__b.flying() };`);
+    const endT = await evaluate(`window.BuzzBoard.debug.show(${tfG + 1}, 0); const n = [...window.__b.board().querySelectorAll(".cvb-i")].filter((e) => e.style.visibility === "visible").map((e) => e.dataset.n); return { flying: window.__b.flying(), texts: n.map((x) => window.__b.itemText(x)) };`);
+    await evaluate(`window.BuzzBoard.debug.release(); return 1;`);
+    const wantT = await evaluate(`return window.__b.texText(${JSON.stringify(tf.line)});`);
+    check("變形中：對得上的項是複製在飛（4 從指數搬到前面）", mid.flying >= 1, JSON.stringify(mid));
+    check("變形完：飛的複製收掉、板上那一行的字跟目標式子一模一樣", endT.flying === 0 && endT.texts.includes(wantT), JSON.stringify({ endT, wantT }));
+
+    /* ── 證明節：why: true 答了才畫；有 plot 的節才抓 plot ── */
+    check(`打開 ${DCT.id}`, await openLesson(DCT.id));
+    check("有 plot 的課：course_board_plot.js 只在有圖的節才抓（第一節沒有圖還沒抓）", (await evaluate(`return window.__b.files(/course_board_plot\\.js/);`)) === (DCT.sections[0].beats.some((b) => b.board.some((a) => a.do === "plot")) ? 1 : 0));
+    const plotSi = DCT.sections.findIndex((s) => s.beats.some((b) => b.board.some((a) => a.do === "plot")));
+    check("到有圖的那一節", await go(plotSi, DCT.id));
+    check("有圖的節：course_board_plot.js 抓了一次", await waitFor(`window.__b.files(/course_board_plot\\.js/) === 1 && window.__b.model()`, 6000));
+    check(`到證明節（第 ${P_SI + 1} 節）`, await go(P_SI, DCT.id));
+    for (let k = 1; k <= P_BI; k += 1) { await evaluate(`return window.__b.settle();`); await advance(k + 1); }
+    await evaluate(`return window.__b.settle(6000);`);
+    const whyG = await evaluate(`const m = window.__b.model(); return m.acts.findIndex((x) => x.b === ${P_BI} && x.why);`);
+    const q0 = await evaluate(`return { st: window.__b.st(), asking: Boolean(document.querySelector('[data-cv2s-act="why"]')) };`);
+    check("問「為什麼」的時候：游標停在第一個 why: true 的動作前（答案沒畫）", q0.asking && q0.st.at === P_BI && q0.st.g === whyG && q0.st.q === 0 && !q0.st.running, JSON.stringify(q0));
+    await see();
+    await sleep(250);
+    const q1 = await evaluate(`return window.__b.st();`);
+    await evaluate(`return window.__b.settle();`);
+    const q2 = await evaluate(`return window.__b.st();`);
+    const nP = DCT.sections[P_SI].beats[P_BI].board.length;
+    const pFirst = await evaluate(`return window.__b.model().acts.findIndex((x) => x.b === ${P_BI});`);
+    check("答了（直接看）：接著畫答案、畫完", q1.running && q2.g >= pFirst + nP && !q2.running, JSON.stringify({ q1, q2 }));
+
+    /* ── reduced-motion：直接畫好 ── */
     await motion(false);
-    for (const width of [390, 360]) {
-      await chrome.send("Emulation.setDeviceMetricsOverride", { ...PHONE, width });
-      for (const L of PILOTS) {
-        check(`${width}：打開 ${L.id}`, await openLesson(L.id));
-        const bad = [];
-        const srBad = [];
-        for (let si = 0; si < L.sections.length; si += 1) {
-          await go(si);
-          for (let bi = 0; bi < L.sections[si].beats.length; bi += 1) {
-            if (bi) await advance(bi + 1);
-            await see();
-            const m = await evaluate(`const c = window.__b.board(); const r = c.getBoundingClientRect(); const out = [...c.querySelectorAll(".cvb-e, .cvb-p svg")].map((e) => e.getBoundingClientRect()).filter((e) => e.left < r.left - 1 || e.right > r.right + 1).length;
-              return { out, page: window.__b.overflow(), board: r.right <= innerWidth + 0.5 && r.left >= -0.5, lines: c.querySelectorAll(".cvb-l").length };`);
-            if (m.out || m.page > 1 || !m.board) bad.push(`${si}-${bi} ${JSON.stringify(m)}`);
-          }
-          const sr = await evaluate(`return [...document.querySelectorAll("[data-cv2s] .cv2s-beat")].map((li) => ({ text: window.__b.srText(li), hidden: [...li.querySelectorAll(".cv2s-show")].every((p) => p.classList.contains("cvb-sr") && window.__b.srHidden(p)) }));`);
-          L.sections[si].beats.forEach((b, bi) => {
-            const got = (sr[bi] || { text: [] }).text.map((s) => s.replace(/\s+/g, ""));
-            const want = b.show.map((s) => s.replace(/\\\$/g, "$").replace(/\s+/g, ""));
-            if (!sr[bi] || !sr[bi].hidden || got.join("|") !== want.join("|")) srBad.push(`${si}-${bi}: ${got.join("|")} ≠ ${want.join("|")}`);
-          });
-        }
-        check(`${width}：${L.id} 每一句黑板的每一行都在板裡、頁面不橫向溢出`, !bad.length, bad.slice(0, 3).join("；"));
-        check(`${width}：${L.id} 螢幕閱讀器拿到的字 = show（藏起來、不在 aria-hidden 裡）`, !srBad.length, srBad.slice(0, 2).join("；"));
-      }
-    }
-    await chrome.send("Emulation.setDeviceMetricsOverride", PHONE);
+    check("reduced-motion：到下一節", await go(P_SI - 1, DCT.id));
+    const rm = await evaluate(`return window.__b.st();`);
+    await next();
+    await waitFor(`window.__b.st().at === 1`, 1500);
+    const rm1 = await evaluate(`return window.__b.st();`);
+    check("reduced-motion：第一句與「下一句」都直接畫好（沒有動畫）", rm.mode === "done" && !rm.running && rm1.mode === "done" && !rm1.running && rm1.at === 1, JSON.stringify({ rm, rm1 }));
 
-    /* ── 深色／淺色 ── */
-    const theme = async (name) => evaluate(`document.documentElement.dataset.theme = ${JSON.stringify(name)}; const c = window.__b.board(); const cs = getComputedStyle(c);
-      const bg = window.__b.varRgb(c, "--kb"); const ink = cs.color;
-      return { bg, img: cs.backgroundImage !== "none", ink, text: window.__b.contrast(ink, bg), chalk: ["--kg", "--kr", "--kc", "--kn"].map((k) => Math.round(window.__b.contrast(window.__b.varRgb(c, k), bg) * 100) / 100), dark: window.__b.lum(bg) < 0.1 };`);
-    const light = await theme("light");
-    await shot("theme-light");
-    const dark = await theme("dark");
-    await shot("theme-dark");
-    check("淺色：淺色板、字與粉筆色對比 ≥ 4.5", !light.dark && light.text >= 4.5 && light.chalk.every((c) => c >= 4.5), JSON.stringify(light));
-    check("深色：深綠的黑板、字與粉筆色對比 ≥ 4.5", dark.dark && dark.img && dark.text >= 4.5 && dark.chalk.every((c) => c >= 4.5) && dark.bg !== light.bg, JSON.stringify(dark));
-    await evaluate(`document.documentElement.dataset.theme = "light"; return 1;`);
+    /* ── 螢幕閱讀器的字：三課每一節每一句 ── */
+    for (const L of PILOTS) {
+      check(`打開 ${L.id}`, await openLesson(L.id));
+      const srBad = [];
+      for (let si = 0; si < L.sections.length; si += 1) {
+        await go(si, L.id);
+        for (let bi = 1; bi < L.sections[si].beats.length; bi += 1) await advance(bi + 1);
+        await see();
+        const sr = await evaluate(`return [...document.querySelectorAll("[data-cv2s] .cv2s-beat")].map((li) => ({ text: window.__b.srText(li), hidden: [...li.querySelectorAll(".cv2s-show")].every((p) => p.classList.contains("cvb-sr") && window.__b.srHidden(p)) }));`);
+        L.sections[si].beats.forEach((b, bi) => {
+          const got = (sr[bi] || { text: [] }).text.map((s) => s.replace(/\s+/g, ""));
+          const want2 = b.show.map((s) => s.replace(/\\\$/g, "$").replace(/\s+/g, ""));
+          if (!sr[bi] || !sr[bi].hidden || got.join("|") !== want2.join("|")) srBad.push(`${si}-${bi}: ${got.join("|")} ≠ ${want2.join("|")}`);
+        });
+      }
+      check(`${L.id}：螢幕閱讀器拿到的字 = show（藏起來、不在 aria-hidden 裡）`, !srBad.length, srBad.slice(0, 2).join("；"));
+    }
     await motion(true);
 
-    /* ── 幀時間：rAF 間隔、黑板自己每格的工作、動畫中的版面重排 ── */
-    // 包住 requestAnimationFrame：量每一個 callback 跑多久（黑板的 frame 在裡面）
-    await evaluate(`if (!window.__rafWrapped) { const orig = window.requestAnimationFrame.bind(window); window.__work = []; window.requestAnimationFrame = (cb) => orig((ts) => { const t0 = performance.now(); cb(ts); window.__work.push(performance.now() - t0); }); window.__rafWrapped = true; } return 1;`);
-    const measure = async (label, dpr) => {
-      await chrome.send("Emulation.setDeviceMetricsOverride", { ...PHONE, deviceScaleFactor: dpr });
-      check(`${label}：打開 ${DCT.id}`, await openLesson(DCT.id));
-      await go(0);
-      await evaluate(`return window.__b.settle();`);
-      const m0 = await chrome.send("Performance.getMetrics");
-      await evaluate(`window.__work = []; window.__gaps = []; let last = 0; const rec = (ts) => { if (last) window.__gaps.push(ts - last); last = ts; if (window.__recOn) requestAnimationFrame(rec); }; window.__recOn = true; requestAnimationFrame(rec); return 1;`);
-      let mid = null;
-      for (let k = 1; k < DCT.sections[0].beats.length; k += 1) {
-        await next();
-        await waitFor(`window.__b.st().at === ${k}`, 1500);
-        // 只有一個「寫」的那一句：寫到一半的兩個時間點之間（約 25 格），版面重排的次數
-        if (DCT.sections[0].beats[k].board.length === 1) {
-          await sleep(250);
-          const a = await chrome.send("Performance.getMetrics");
-          const fa = await evaluate(`return window.__gaps.length;`);
-          await sleep(450);
-          const b = await chrome.send("Performance.getMetrics");
-          const fb = await evaluate(`return { n: window.__gaps.length, running: window.__b.st().running };`);
-          const lc = (m) => (m.metrics.find((x) => x.name === "LayoutCount") || {}).value || 0;
-          mid = { layouts: lc(b) - lc(a), frames: fb.n - fa, running: fb.running };
-        }
-        await evaluate(`return window.__b.settle();`);
-      }
-      const out = await evaluate(`window.__recOn = false; const s = (a) => a.slice().sort((x, y) => x - y); const q = (a, p) => { const b = s(a); return b.length ? b[Math.min(b.length - 1, Math.floor(p * b.length))] : 0; };
-        return { frames: window.__gaps.length, median: q(window.__gaps, 0.5), p95: q(window.__gaps, 0.95), work95: q(window.__work, 0.95), workMax: Math.max(0, ...window.__work) };`);
-      const m1 = await chrome.send("Performance.getMetrics");
-      const metric = (m, name) => (m.metrics.find((x) => x.name === name) || {}).value || 0;
-      out.layouts = metric(m1, "LayoutCount") - metric(m0, "LayoutCount");
-      out.mid = mid;
-      out.styles = metric(m1, "RecalcStyleCount") - metric(m0, "RecalcStyleCount");
-      return out;
-    };
-    const hi = await measure("DPR 3", 3);
-    console.log(`  ·    幀時間（手機 390、DPR 3、控制收斂第一節 ${DCT.sections[0].beats.length - 1} 句：擦、畫圖、寫、底線）：rAF 中位數 ${hi.median.toFixed(1)}ms、p95 ${hi.p95.toFixed(1)}ms；rAF callback 每格 p95 ${hi.work95.toFixed(2)}ms、最久 ${hi.workMax.toFixed(1)}ms；${hi.frames} 格裡版面重排 ${hi.layouts} 次`);
-    check("DPR 3：黑板每格的工作 p95 < 4ms", hi.frames > 30 && hi.work95 < 4, `${hi.work95.toFixed(2)}ms`);
-    check("DPR 3：寫到一半的那一段（約 25 格）沒有版面重排（只在動作開始時量位置）", hi.mid && hi.mid.running && hi.mid.frames >= 15 && hi.mid.layouts <= 1, JSON.stringify(hi.mid));
-    const lo = await measure("DPR 1", 1);
-    console.log(`  ·    幀時間（手機 390、DPR 1）：rAF 中位數 ${lo.median.toFixed(1)}ms、p95 ${lo.p95.toFixed(1)}ms；rAF callback 每格 p95 ${lo.work95.toFixed(2)}ms；${lo.frames} 格裡版面重排 ${lo.layouts} 次`);
-    check("DPR 1：rAF 間隔中位數 < 20ms（60fps 量級）", lo.frames > 30 && lo.median < 20, `${lo.median.toFixed(1)}ms`);
+    /* ── 版面：三課每一節每一步，360 淺／深（四種寬度全跑在 lint_board_layout.js） ── */
+    const lint = await lintLessons(chrome, server.url, PILOTS, { viewports: VIEWPORTS.filter((v) => v.name === "360") });
+    check(`版面 lint（360 × 淺／深，${lint.states} 個狀態）：不疊、不出板、字 ≥ 16px、對比夠、板不太高`, !lint.problems.length && lint.states > 300, lint.problems.slice(0, 3).join("；"));
     await chrome.send("Emulation.setDeviceMetricsOverride", PHONE);
+    // lint 自己要抓得到：把一個標籤搬到字上、把一行搬出板外
+    await openLesson(CHAIN.id);
+    await go(F_SI, CHAIN.id);
+    await evaluate(`(${pageHelpers.toString()})(16, 13, 0.75); return 1;`);
+    const neg = await evaluate(`await document.fonts.ready; const m = window.__b.model(); window.BuzzBoard.debug.show(m.acts.filter((x) => x.b === 0).length, 0, 0, 1);
+      const c = window.__b.board(); const lab = c.querySelector(".cvb-lab[data-a]"); const leaf = c.querySelector(".cvb-i .katex-html .mord"); const lr = leaf.getBoundingClientRect(); const cr = c.getBoundingClientRect();
+      lab.style.left = (lr.left - cr.left) + "px"; lab.style.top = (lr.top - cr.top) + "px"; lab.style.transform = "none";
+      const a = window.__bl.measure("負向").problems;
+      const it = c.querySelector(".cvb-i"); it.style.transform = "translate(" + (cr.width - 20) + "px,10px)";
+      const b = window.__bl.measure("負向").problems; window.BuzzBoard.debug.release(); window.BuzzBoard.debug.rebuild(); return { a, b };`);
+    check("lint 抓得到：標籤搬到字上 → 「壓到」；一行搬出板外 → 「跑出黑板」", neg.a.some((p) => /壓到/.test(p)) && neg.b.some((p) => /跑出黑板/.test(p)), JSON.stringify({ a: neg.a.slice(0, 2), b: neg.b.slice(0, 2) }));
 
-    /* ── 截圖：三課每一節的動畫中段與結尾（--screenshots） ── */
-    if (SHOTS) {
-      for (const [L, dark2] of [[CHAIN, false], [FTC, false], [DCT, true]]) {
-        await evaluate(`document.documentElement.dataset.theme = ${JSON.stringify(dark2 ? "dark" : "light")}; return 1;`);
-        await openLesson(L.id);
-        for (let si = 0; si < L.sections.length; si += 1) {
-          await go(si);
-          for (let bi = 0; bi < L.sections[si].beats.length; bi += 1) {
-            if (bi) await advance(bi + 1);
-            await sleep(420);
-            if (bi === L.sections[si].beats.length - 1) await shot(`${L.id}-${si + 1}-mid`);
-            await evaluate(`return window.__b.settle();`);
-          }
-          await see();
-          await evaluate(`return window.__b.settle();`);
-          await evaluate(`window.__b.board().scrollIntoView({ block: "start" }); scrollBy(0, -80); return 1;`);
-          await sleep(150);
-          await shot(`${L.id}-${si + 1}-end`);
-        }
-      }
-    }
+    /* ── 幀時間：動畫中每格的工作 ── */
+    await evaluate(`if (!window.__rafWrapped) { const orig = window.requestAnimationFrame.bind(window); window.__work = []; window.requestAnimationFrame = (cb) => orig((ts) => { const t0 = performance.now(); cb(ts); window.__work.push(performance.now() - t0); }); window.__rafWrapped = true; } return 1;`);
+    check(`到「${CHAIN.sections[T_SI].title}」那一節（量幀時間）`, await go(T_SI, CHAIN.id));
+    await evaluate(`window.__work = []; return 1;`);
+    for (let k = 1; k < CHAIN.sections[T_SI].beats.length; k += 1) { await sleep(700); await next(); await waitFor(`window.__b.st().at === ${k}`, 1500); }
+    await evaluate(`return window.__b.settle();`);
+    const work = await evaluate(`const a = window.__work.slice().sort((x, y) => x - y); return { n: a.length, p95: a[Math.floor(a.length * 0.95)] || 0, max: a[a.length - 1] || 0 };`);
+    console.log(`  ·    幀時間（DPR 3，「外層是次方」整節：寫、變形、飛、圈、框）：rAF callback ${work.n} 格，p95 ${work.p95.toFixed(2)}ms、最久 ${work.max.toFixed(1)}ms`);
+    check("黑板每格的工作 p95 < 4ms（版面只在換節時排，動畫中只改 transform／opacity／mask／dashoffset）", work.n > 40 && work.p95 < 4, `${work.p95.toFixed(2)}ms`);
 
-    if (retries.length) console.log(`  ·    出下一句要按第二次的地方：${retries.join(" ")}`);
+    /* ── 流量：黑板的檔多大、只有有黑板的課付 ── */
+    const bytes = await evaluate(`return { board: window.__b.bytes(/course_board(_layout)?\\.js/), plot: window.__b.bytes(/course_board_plot\\.js/) };`);
+    const size = (f) => fs.statSync(path.join(ROOT, f)).size;
+    console.log(`  ·    流量：黑板 ${size("src/course_board.js") + size("src/course_board_layout.js")} 位元組（原始）、圖 ${size("src/course_board_plot.js")} 位元組；這次抓到的（未壓縮的測試伺服器）${JSON.stringify(bytes)}`);
+    check("流量：有黑板的課才付黑板的檔（上面「沒有黑板的課不抓」）；黑板＋圖 < 60KB 原始", size("src/course_board.js") + size("src/course_board_layout.js") + size("src/course_board_plot.js") < 60 * 1024);
+
     const errs = errors.filter((e) => !/favicon|net::ERR|Failed to load resource/.test(e));
     check("console 沒有錯誤", !errs.length, errs.slice(0, 3).join(" | "));
   } finally {
