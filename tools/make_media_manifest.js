@@ -14,6 +14,9 @@
 // 用法：node tools/make_media_manifest.js <tag>                        重列課程影片（例：media-v3），其他 Release 的檔案原樣保留
 //       node tools/make_media_manifest.js --narration <tag> [--stream]  重列旁白（例：media-v4），檔案複製到 tmp/release-<tag>/ 準備上傳；
 //                                                                       同一個 tag 上次列過、這次不在的檔，印出刪附件的指令
+//       node tools/make_media_manifest.js --narration <tag> --add [--plan]  只把「換了的」（清單上還沒有的）列進新的 tag，
+//                                                                       其他課照舊指著原本的 Release（不用整批重傳 317 支）。
+//                                                                       --plan：只準備 tmp/release-<tag>/ 與印指令，不改清單（先上傳、再改清單）
 "use strict";
 
 const fs = require("fs");
@@ -24,6 +27,8 @@ const ROOT = path.join(__dirname, "..");
 const MANIFEST = path.join(ROOT, "media", "manifest.json");
 const narrationMode = process.argv.includes("--narration");
 const streamMode = process.argv.includes("--stream");
+const addMode = process.argv.includes("--add");
+const planMode = process.argv.includes("--plan");
 const tag = process.argv.slice(2).find((a) => !a.startsWith("--"));
 if (!tag) {
   console.error("用法：node tools/make_media_manifest.js <tag>  或  --narration <tag> [--stream]");
@@ -48,26 +53,32 @@ if (narrationMode) {
     if (!fs.existsSync(file)) throw new Error(`${name} 不在本機（先跑 node tools/build_narration.js）`);
     const a = entry(name, fs.readFileSync(file), tag);
     if (a.sha256 !== lesson.sha256) throw new Error(`${name} 跟 narration.json 的雜湊不符（重跑 node tools/build_narration.js）`);
-    return a;
+    // --add：清單上已經有（同名同內容）的照舊，指著原本的 Release
+    const had = addMode && old.assets.find((x) => x.name === name && x.sha256 === a.sha256);
+    return had || a;
   });
   if (assets.length > 1000) throw new Error(`旁白 ${assets.length} 支，超過一個 Release 1000 個附件的上限`);
   const want = new Set(assets.map((a) => a.name));
-  stale = old.assets.filter((a) => /^narration\//.test(a.name) && tagOf(a) === tag && !want.has(a.name)).map((a) => releaseName(a.name));
+  const mineNew = assets.filter((a) => tagOf(a) === tag);
+  stale = addMode ? [] : old.assets.filter((a) => /^narration\//.test(a.name) && tagOf(a) === tag && !want.has(a.name)).map((a) => releaseName(a.name));
   const keep = old.assets.filter((a) => !/^narration\//.test(a.name));
   // 舊的旁白 Release（別的 tag）從 releases 拿掉：清單不再列它的檔
   const releases = Object.fromEntries(Object.entries(old.releases || {}).filter(([t]) => keep.some((a) => tagOf(a) === t)));
-  releases[tag] = { optional: true, ...(streamMode ? { stream: true } : {}) };
+  // 舊的旁白 Release 還有檔被指著的，留著（--add）
+  assets.forEach((a) => { const t = tagOf(a); if (t !== tag && old.releases && old.releases[t]) releases[t] = old.releases[t]; });
+  if (!addMode || mineNew.length) releases[tag] = { optional: true, ...(streamMode ? { stream: true } : {}) };
   manifest = { ...old, releases, assets: keep.concat(assets) };
   const stage = path.join(ROOT, "tmp", `release-${tag}`);
   fs.rmSync(stage, { recursive: true, force: true });
   fs.mkdirSync(stage, { recursive: true });
-  assets.forEach((a) => fs.copyFileSync(path.join(ROOT, "media", a.name), path.join(stage, releaseName(a.name))));
+  (addMode ? mineNew : assets).forEach((a) => fs.copyFileSync(path.join(ROOT, "media", a.name), path.join(stage, releaseName(a.name))));
+  if (addMode) console.log(`--add：${mineNew.length} 支換了的列進 ${tag}（${mineNew.map((a) => a.name.replace(/^narration\//, "")).join("、")}），其他 ${assets.length - mineNew.length} 支照舊`);
   // 補傳只要新的（這個 tag 上次沒列、或內容不同）：另外放 tmp/release-<tag>-new/
   const listed = new Set(old.assets.filter((a) => tagOf(a) === tag).map((a) => `${a.name}|${a.sha256}`));
   const newDir = path.join(ROOT, "tmp", `release-${tag}-new`);
   fs.rmSync(newDir, { recursive: true, force: true });
   fs.mkdirSync(newDir, { recursive: true });
-  assets.filter((a) => !listed.has(`${a.name}|${a.sha256}`)).forEach((a) => {
+  (addMode ? mineNew : assets).filter((a) => !listed.has(`${a.name}|${a.sha256}`)).forEach((a) => {
     fresh += 1;
     fs.copyFileSync(path.join(ROOT, "media", a.name), path.join(newDir, releaseName(a.name)));
   });
@@ -87,7 +98,8 @@ if (narrationMode) {
 // 欄位順序固定（diff 好讀）
 const ordered = { repo: manifest.repo, tag: manifest.tag, ...(manifest.releases && Object.keys(manifest.releases).length ? { releases: manifest.releases } : {}), videos: manifest.videos, assets: manifest.assets };
 fs.mkdirSync(path.dirname(MANIFEST), { recursive: true });
-fs.writeFileSync(MANIFEST, JSON.stringify(ordered, null, 2) + "\n");
+if (planMode) console.log("--plan：清單沒改（上傳完再不加 --plan 跑一次）");
+else fs.writeFileSync(MANIFEST, JSON.stringify(ordered, null, 2) + "\n");
 
 const mine = manifest.assets.filter((a) => tagOf(a) === tag);
 const total = mine.reduce((sum, a) => sum + a.bytes, 0);

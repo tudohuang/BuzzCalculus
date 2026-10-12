@@ -27,6 +27,16 @@
 // 401／403 直接停（金鑰或區域錯了，重試只會一直被拒）。逐句檔一完成就寫進快取（先寫 .part 再改名），中斷之後再跑一次就從缺的接著做。
 // 有句子合成失敗：其他課照樣接好、寫索引（那幾課留著上一版的檔與索引），最後 exit 1。
 //
+// 逐字時間點（黑板 v2）：有黑板（beat.board）的句子改用 Azure Speech SDK 合成（tools/package.json；cd tools && npm install），
+// 同一次合成拿到音訊與每一個詞被念到的毫秒（WordBoundary）。存在快取旁邊的 <hash8>.words.json，索引的那一句多一個
+// "w": [[say 裡的字元位置, 從這一句開頭算的毫秒], …]。build_course_v2.js 用它把 board 動作的 on（念到哪個詞）換成毫秒。
+// SDK 的音訊跟 REST 不是位元組一樣（同一段字、兩次合成也不一樣，但詞的時間點一樣）：有黑板的課整支 mp3 會換掉（f8 換），要上傳新的 Release。
+//
+// 上傳之前不能讓網站指到還不存在的檔：一課的 mp3 換了，而舊的那一支有列在 media/manifest.json（已經上傳），
+// 索引就把舊的留在那一課的 "prev"（f、t）。build_course_v2.js 只出貨清單上有的那一支：新的還沒上傳就出貨舊的（黑板的時間點
+// 照每一句的長度比例換算，差不到一格音框）。新的上傳、跑過 make_media_manifest.js --narration <tag> --add 之後，下一次 build 自動換成新的，
+// 再跑一次 build_narration.js 就把 prev 清掉。
+//
 // 用法：node tools/build_narration.js               合成缺的、接成一課一支、寫 narration.json（需要金鑰；全都有了就不碰網路）
 //       node tools/build_narration.js --dry-run     不連網：列出要合成幾句、多少字（估額度），不動任何檔
 //       node tools/build_narration.js --check       不連網：每一句 say 都有對得上的錄音、每一課的檔在本機且雜湊正確
@@ -178,6 +188,59 @@ async function synth(text, voice = VOICE, rate = RATE) {
   throw new Error(`語音合成失敗：重試 ${MAX_ATTEMPTS} 次（最後 ${last}）`);
 }
 
+/* ── 逐字時間點：Azure Speech SDK（tools/package.json 的開發依賴；REST 不回 WordBoundary）──
+   同一段 SSML、同一個輸出格式，SDK 一邊回音訊、一邊回每一個詞的 audioOffset（100ns 為單位，從這一句的開頭算）。
+   textOffset 是在 SSML 字串裡的位置：減掉 say 在 SSML 裡的起點、再把跳脫字元（&amp; 之類）換回 say 的字元位置。
+   回傳 { audio, words: [[字元位置, 毫秒], …] }（只收 Word，不收標點與句子）。 */
+let SDK = null;
+function sdk() {
+  if (SDK) return SDK;
+  try { SDK = require(path.join(__dirname, "node_modules", "microsoft-cognitiveservices-speech-sdk")); } catch (_e) {
+    throw new Fatal("逐字時間點要 Azure Speech SDK：cd tools && npm install（只裝在 tools/，不進部署）");
+  }
+  return SDK;
+}
+// 跳脫後的位置 → 原字串的位置
+function unescapeMap(text) {
+  const map = [];
+  [...String(text)].forEach((ch, i) => { const e = escapeXml(ch); for (let k = 0; k < e.length; k += 1) map.push(i); });
+  map.push([...String(text)].length);
+  return map;
+}
+async function synthWords(text, voice = VOICE, rate = RATE) {
+  const S = sdk();
+  const { key, region } = await credentials();
+  const body = escapeXml(text);
+  const head = `<speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis" xml:lang="zh-TW"><voice name="${voice}"><prosody rate="${rate}">`;
+  const ssml = `${head}${body}</prosody></voice></speak>`;
+  const map = unescapeMap(text);
+  let last = "";
+  for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt += 1) {
+    const cfg = S.SpeechConfig.fromSubscription(key, region);
+    cfg.speechSynthesisOutputFormat = S.SpeechSynthesisOutputFormat.Audio16Khz32KBitRateMonoMp3;
+    cfg.setProperty("SpeechServiceResponse_RequestWordBoundary", "true");
+    const synthz = new S.SpeechSynthesizer(cfg, null);
+    const words = [];
+    synthz.wordBoundary = (_s, e) => {
+      if (e.boundaryType !== undefined && String(e.boundaryType) !== "WordBoundary" && e.boundaryType !== S.SpeechSynthesisBoundaryType.Word) return;
+      const at = e.textOffset - head.length;
+      if (at < 0 || at >= map.length) return;
+      words.push([map[at], Math.round(e.audioOffset / 10000)]);
+    };
+    const res = await new Promise((resolve) => {
+      synthz.speakSsmlAsync(ssml, (r) => { synthz.close(); resolve(r); }, (err) => { synthz.close(); resolve({ errorDetails: String(err) }); });
+    });
+    if (res && res.reason === S.ResultReason.SynthesizingAudioCompleted && res.audioData && res.audioData.byteLength > 1000) {
+      words.sort((a, b) => a[0] - b[0]);
+      return { audio: Buffer.from(res.audioData), words: words.filter((w, i) => !i || w[0] !== words[i - 1][0]) };
+    }
+    last = redact((res && res.errorDetails) || "沒有音訊");
+    if (/401|403|Unauthorized|Forbidden|authentication/i.test(last)) throw new Fatal(`語音服務拒絕：金鑰或區域不對（${last.slice(0, 80)}）`);
+    await sleep(Math.min(60000, 1000 * 2 ** attempt) + Math.floor(Math.random() * 500));
+  }
+  throw new Error(`語音合成（SDK）失敗：重試 ${MAX_ATTEMPTS} 次（最後 ${last.slice(0, 120)}）`);
+}
+
 /* ── mp3 音框（MPEG-1/2/2.5 Layer III；跳過 ID3 與 Xing/Info 標頭框）── */
 const BITRATES = {
   1: [0, 32, 40, 48, 56, 64, 80, 96, 112, 128, 160, 192, 224, 256, 320],
@@ -256,15 +319,24 @@ function lessonsWithSay() {
     const beats = [];
     (L.sections || []).forEach((sec, si) => (sec.beats || []).forEach((b, bi) => {
       // 證明節的句子可以帶問句（why.say，key 是「節-句q」）：照播放的順序接在這一句的 say 前面（先問、答了才講）
+      // 有黑板的句子要逐字時間點（問句也要：問著的時候黑板照問句的詞走）
+      const words = Array.isArray(b.board) && b.board.length > 0;
       const q = b.why && typeof b.why.say === "string" ? b.why.say.trim() : "";
-      if (q) beats.push({ key: `${si}-${bi}q`, say: q, h: hashOf(VOICE, RATE, q) });
-      if (typeof b.say === "string" && b.say.trim()) beats.push({ key: `${si}-${bi}`, say: b.say.trim(), h: hashOf(VOICE, RATE, b.say.trim()) });
+      if (q) beats.push({ key: `${si}-${bi}q`, say: q, h: hashOf(VOICE, RATE, q), words });
+      if (typeof b.say === "string" && b.say.trim()) beats.push({ key: `${si}-${bi}`, say: b.say.trim(), h: hashOf(VOICE, RATE, b.say.trim()), words });
     }));
     if (beats.length) out.push({ id: L.id, beats });
   });
   return out;
 }
 const cacheOf = (h) => path.join(CACHE, `${h}.mp3`);
+const wordsOf = (h) => path.join(CACHE, `${h}.words.json`);
+const readWords = (h) => { try { return JSON.parse(fs.readFileSync(wordsOf(h), "utf8")); } catch (_e) { return null; } };
+// 已經上傳（列在 media/manifest.json）的旁白檔名
+function publishedNames() {
+  try { return new Set(JSON.parse(fs.readFileSync(path.join(ROOT, "media", "manifest.json"), "utf8")).assets.map((a) => a.name)); } catch (_e) { return new Set(); }
+}
+const isPublished = (pub, id, f) => pub.has(`narration/${id}-${f}.mp3`);
 const lessonFile = (id, f) => path.join(OUT, `${id}-${f}.mp3`);
 const emptyIndex = () => ({ voice: VOICE, rate: RATE, format: FORMAT, layout: "lesson", lessons: {} });
 function readIndex() {
@@ -274,17 +346,28 @@ function readIndex() {
   return index.lessons ? index : emptyIndex();
 }
 // 出貨用：這一課的錄音（f）與每一句的 t；字改過（hash 對不上）的句子不給 t。build_course_v2 與 validate_course_v2 共用。
-function voiceOf(index, lesson) {
-  const entry = index && index.lessons && index.lessons[lesson.id];
+function voiceOf(index, lesson, pub) {
+  let entry = index && index.lessons && index.lessons[lesson.id];
   if (!entry) return null;
+  // 新的那一支還沒上傳（清單上沒有）、舊的有：出貨舊的。詞的時間點照每一句的長度比例換到舊的錄音上
+  if (pub && entry.prev && !isPublished(pub, lesson.id, entry.f) && isPublished(pub, lesson.id, entry.prev.f)) {
+    const cur = entry;
+    entry = { ...entry.prev, beats: Object.fromEntries(Object.entries(entry.prev.beats).map(([k, b]) => {
+      const n = cur.beats[k];
+      if (!n || !n.w || n.h !== b.h) return [k, b];
+      const r = (b.t[1] - b.t[0]) / (n.t[1] - n.t[0]);
+      return [k, { ...b, w: n.w.map(([c, ms]) => [c, Math.round(ms * r)]) }];
+    })) };
+  }
   const beats = {};
+  const words = {};
   (lesson.sections || []).forEach((sec, si) => (sec.beats || []).forEach((b, bi) => {
     const got = entry.beats[`${si}-${bi}`];
-    if (got && typeof b.say === "string" && got.h === hashOf(VOICE, RATE, b.say.trim())) beats[`${si}-${bi}`] = got.t;
+    if (got && typeof b.say === "string" && got.h === hashOf(VOICE, RATE, b.say.trim())) { beats[`${si}-${bi}`] = got.t; if (got.w) words[`${si}-${bi}`] = got.w; }
     const q = entry.beats[`${si}-${bi}q`];
-    if (q && b.why && typeof b.why.say === "string" && q.h === hashOf(VOICE, RATE, b.why.say.trim())) beats[`${si}-${bi}q`] = q.t;
+    if (q && b.why && typeof b.why.say === "string" && q.h === hashOf(VOICE, RATE, b.why.say.trim())) { beats[`${si}-${bi}q`] = q.t; if (q.w) words[`${si}-${bi}q`] = q.w; }
   }));
-  return Object.keys(beats).length ? { f: entry.f, beats } : null;
+  return Object.keys(beats).length ? { f: entry.f, beats, words } : null;
 }
 
 // 舊版（一句一支：media/narration/<課>/<節>-<句>-<hash8>.mp3）留在本機的檔：搬進快取，不用重合成
@@ -330,7 +413,8 @@ function writeIndex(index) {
   const rows = ids.map((id) => {
     const e = index.lessons[id];
     const beats = Object.entries(e.beats).map(([k, b]) => `        ${JSON.stringify(k)}: ${JSON.stringify(b)}`).join(",\n");
-    return `    ${JSON.stringify(id)}: {\n      "f": ${JSON.stringify(e.f)}, "ms": ${e.ms}, "bytes": ${e.bytes}, "sha256": ${JSON.stringify(e.sha256)},\n      "beats": {\n${beats}\n      }\n    }`;
+    const prev = e.prev ? `,\n      "prev": ${JSON.stringify(e.prev)}` : "";
+    return `    ${JSON.stringify(id)}: {\n      "f": ${JSON.stringify(e.f)}, "ms": ${e.ms}, "bytes": ${e.bytes}, "sha256": ${JSON.stringify(e.sha256)},\n      "beats": {\n${beats}\n      }${prev}\n    }`;
   });
   fs.writeFileSync(INDEX, `{\n  "voice": ${JSON.stringify(VOICE)},\n  "rate": ${JSON.stringify(RATE)},\n  "format": ${JSON.stringify(FORMAT)},\n  "layout": "lesson",\n  "lessons": {\n${rows.join(",\n")}\n  }\n}\n`);
 }
@@ -341,9 +425,13 @@ async function build({ dryRun = false, pruneCache = false } = {}) {
   if (adopted) console.log(`舊版逐句檔搬進快取：${adopted} 支`);
   const say = new Map();
   lessons.forEach((L) => L.beats.forEach((b) => say.set(b.h, b.say)));
-  const missing = [...say.keys()].filter((h) => !cached(h));
+  const needWords = new Set();
+  lessons.forEach((L) => L.beats.forEach((b) => { if (b.words) needWords.add(b.h); }));
+  // 缺錄音的，或要逐字時間點卻還沒有的（舊的 REST 錄音要用 SDK 重錄一次，整句換掉）
+  const missing = [...say.keys()].filter((h) => !cached(h) || (needWords.has(h) && !readWords(h)));
   const chars = missing.reduce((n, h) => n + say.get(h).length, 0);
-  console.log(`旁白：${lessons.length} 課、${lessons.reduce((n, L) => n + L.beats.length, 0)} 句（不重複 ${say.size}），要合成 ${missing.length} 句、${chars} 字（${VOICE}，同時 ${CONCURRENCY} 個）`);
+  const viaSdk = missing.filter((h) => needWords.has(h)).length;
+  console.log(`旁白：${lessons.length} 課、${lessons.reduce((n, L) => n + L.beats.length, 0)} 句（不重複 ${say.size}），要合成 ${missing.length} 句、${chars} 字（其中要逐字時間點的 ${viaSdk} 句走 SDK；${VOICE}，同時 ${CONCURRENCY} 個）`);
   if (dryRun) return;
 
   const failed = new Map();
@@ -353,10 +441,16 @@ async function build({ dryRun = false, pruneCache = false } = {}) {
     try {
       await pool(missing, CONCURRENCY, async (h) => {
         try {
-          const buf = await synth(say.get(h));
+          let buf;
+          let words = null;
+          if (needWords.has(h)) ({ audio: buf, words } = await synthWords(say.get(h)));
+          else buf = await synth(say.get(h));
           audioOf(buf);
           fs.writeFileSync(`${cacheOf(h)}.part`, buf);
           fs.renameSync(`${cacheOf(h)}.part`, cacheOf(h));
+          // 錄音與時間點是同一次合成：先寫錄音、再寫時間點（只有錄音沒有時間點 = 下次重錄）
+          if (words) fs.writeFileSync(wordsOf(h), JSON.stringify(words));
+          else fs.rmSync(wordsOf(h), { force: true });
           made += 1;
           if (made % 25 === 0 || made === missing.length) process.stdout.write(`  合成 ${made} / ${missing.length}\n`);
         } catch (error) {
@@ -374,6 +468,8 @@ async function build({ dryRun = false, pruneCache = false } = {}) {
   // 接成一課一支：句子都有錄音的課才接；缺句子的課留著上一版（播放器只會播 hash 對得上的句子）
   const old = readIndex();
   const index = emptyIndex();
+  const pub = publishedNames();
+  const changed = [];
   let packed = 0;
   let kept = 0;
   const partial = [];
@@ -393,11 +489,14 @@ async function build({ dryRun = false, pruneCache = false } = {}) {
       fs.writeFileSync(`${file}.part`, buf);
       fs.renameSync(`${file}.part`, file);
     }
-    if (prev && prev.sha256 === sum) kept += 1; else packed += 1;
-    index.lessons[L.id] = { f, ms, bytes: buf.length, sha256: sum, beats: Object.fromEntries(L.beats.map((b, k) => [b.key, { h: b.h, t: spans[k] }])) };
+    if (prev && prev.sha256 === sum) kept += 1; else { packed += 1; changed.push(path.relative(ROOT, file).replace(/\\/g, "/")); }
+    index.lessons[L.id] = { f, ms, bytes: buf.length, sha256: sum, beats: Object.fromEntries(L.beats.map((b, k) => { const w = readWords(b.h); return [b.key, { h: b.h, t: spans[k], ...(w ? { w } : {}) }]; })) };
+    // 換了一支、而上傳過的是舊的：舊的留在 prev（新的上傳、清單換過之前，網站照舊用舊的）
+    const live = prev && (isPublished(pub, L.id, prev.f) ? prev : prev.prev && isPublished(pub, L.id, prev.prev.f) ? prev.prev : null);
+    if (live && live.f !== f && !isPublished(pub, L.id, f)) index.lessons[L.id].prev = { f: live.f, ms: live.ms, bytes: live.bytes, sha256: live.sha256, beats: Object.fromEntries(Object.entries(live.beats).map(([k, b]) => [k, { h: b.h, t: b.t }])) };
   }
   // 本機留著的舊檔（字改過、句子刪了、舊的逐句資料夾）清掉：免得被列進 Release
-  const want = new Set(Object.entries(index.lessons).map(([id, e]) => path.basename(lessonFile(id, e.f))));
+  const want = new Set(Object.entries(index.lessons).flatMap(([id, e]) => [path.basename(lessonFile(id, e.f))].concat(e.prev ? [path.basename(lessonFile(id, e.prev.f))] : [])));
   if (fs.existsSync(OUT)) {
     for (const name of fs.readdirSync(OUT)) {
       const full = path.join(OUT, name);
@@ -407,11 +506,16 @@ async function build({ dryRun = false, pruneCache = false } = {}) {
   }
   if (pruneCache && fs.existsSync(CACHE)) {
     let n = 0;
-    for (const name of fs.readdirSync(CACHE)) if (!say.has(name.replace(/\.mp3(\.part)?$/, ""))) { fs.rmSync(path.join(CACHE, name)); n += 1; }
+    for (const name of fs.readdirSync(CACHE)) if (!say.has(name.replace(/\.(mp3|words\.json)(\.part)?$/, ""))) { fs.rmSync(path.join(CACHE, name)); n += 1; }
     console.log(`快取清掉 ${n} 支沒在用的逐句檔`);
   }
   writeIndex(index);
   summary(index);
+  if (changed.length) {
+    console.log(`換了的檔（要上傳）：\n${changed.map((x) => "  " + x).join("\n")}`);
+    const waiting = Object.entries(index.lessons).filter(([, e]) => e.prev).map(([id]) => id);
+    if (waiting.length) console.log(`  ${waiting.length} 課在新檔上傳之前照舊用已上傳的那一支（prev）：${waiting.join("、")}\n  上傳：node tools/make_media_manifest.js --narration <新 tag> --add，照它印的 gh 指令上傳，再 node tools/build_course_v2.js`);
+  }
   console.log(`一課一支：新接 ${packed}、沒變 ${kept}${partial.length ? `、缺句子沒接 ${partial.length}（${partial.slice(0, 5).join("、")}${partial.length > 5 ? "…" : ""}）` : ""}`);
   if (failed.size) {
     [...failed.entries()].slice(0, 10).forEach(([h, msg]) => console.error(`  ${say.get(h).slice(0, 16)}…：${msg}`));
@@ -498,7 +602,7 @@ async function samples() {
   }
 }
 
-module.exports = { hashOf, mp3Ms, framesOf, pack, voiceOf, readIndex, VOICE, RATE };
+module.exports = { hashOf, mp3Ms, framesOf, pack, voiceOf, readIndex, synthWords, audioOf, cacheOf, VOICE, RATE };
 
 if (require.main === module) {
   const argv = process.argv;
