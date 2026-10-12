@@ -200,6 +200,13 @@ GitHub Pages 保持不變，API 走另一個網域，CORS 白名單。
 | `install_pwa` | 安裝 | — |
 | `perf_render` | 效能取樣（1%） | `view, ms` |
 | `return_d1` / `return_d7` | 回訪（用 `lastPlayed` 判定） | `days_since` |
+| `course_section_complete` | 課程第一次讀完一節（重讀不記） | `lesson, section, mode`（mode = tap / voice） |
+| `course_lesson_complete` | 課程第一次完成一課（小測第一次 ≥ 3 題對） | `lesson, tier` |
+| `course_boss_view` | 章的第一課秀出章首魔王題（每打開一次記一次） | `chapter` |
+| `course_boss_solve` | 解開章首魔王題（只記第一次） | `chapter, before_payoff` |
+
+課程的事件寫在延後載入的課程檔裡，一律呼叫 app.js 交過去的 `deps.track`（就是 `trackEvent`），關掉分析一樣擋得住；
+`tools/validate_analytics.js` 連同 `src/course*.js` 一起掃，課程檔直接碰 `gtag`／`dataLayer` 會擋。
 
 **紀律**：新增任何事件必須先寫進這張表。`trackEvent()` 加上白名單檢查，
 不在表上的事件名在 dev 模式 console.warn。避免半年後事件表變成垃圾場。

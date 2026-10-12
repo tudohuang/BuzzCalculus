@@ -16,6 +16,10 @@ const path = require("path");
 
 const root = path.join(__dirname, "..");
 const app = fs.readFileSync(path.join(root, "src", "app.js"), "utf8");
+// 課程（延後載入的那幾支）不能直接碰 gtag：一律呼叫 app.js 給的 deps.track（就是 trackEvent，所以關掉分析一樣擋得住）。
+// 這幾支裡的 track("…") 跟 app.js 的 trackEvent("…") 一起掃。
+const COURSE_FILES = ["src/course.js", "src/course_v2_ui.js", "src/course_sections.js", "src/course_finish.js", "src/course_boss.js"];
+const course = COURSE_FILES.map((rel) => [rel, fs.readFileSync(path.join(root, rel), "utf8")]);
 const failures = [];
 function fail(message) {
   failures.push(message);
@@ -41,6 +45,11 @@ const called = new Map();
 [...app.matchAll(/trackEvent\("([a-z_][a-z0-9_]*)"/g)].forEach((m) => {
   called.set(m[1], (called.get(m[1]) || 0) + 1);
 });
+course.forEach(([rel, source]) => {
+  if (/\bgtag\b|dataLayer/.test(source)) fail(`${rel} 直接碰了 gtag／dataLayer —— 課程的事件要走 deps.track（trackEvent），關掉分析才擋得住`);
+  [...source.matchAll(/\btrack\("([a-z_][a-z0-9_]*)"/g)].forEach((m) => called.set(m[1], (called.get(m[1]) || 0) + 1));
+});
+if (!/\btrack: trackEvent\b/.test(app)) fail("app.js 沒有把 trackEvent 當成 track 交給課程（courseUI 的 deps）");
 
 const unlisted = [...called.keys()].filter((name) => !declared.has(name)).sort();
 if (unlisted.length) {
@@ -73,23 +82,25 @@ const FORBIDDEN = [
 ];
 
 let scanned = 0;
-let cursor = 0;
-while (true) {
-  const at = app.indexOf("trackEvent(", cursor);
-  if (at < 0) break;
-  cursor = at + 11;
-  // 粗略取到該呼叫的結尾（下一個 "});" 或 ");"）
-  const tail = app.slice(at, at + 900);
-  const end = tail.search(/\n\s*\}\);|\);/);
-  const block = end > 0 ? tail.slice(0, end) : tail;
-  const name = (block.match(/trackEvent\("([a-z_]+)"/) || [])[1] || "?";
-  scanned += 1;
-  FORBIDDEN.forEach(([label, pattern]) => {
-    if (pattern.test(block)) {
-      fail(`${name} 疑似上報了${label} —— 分析事件不得帶使用者輸入的內容`);
-    }
-  });
-}
+[[app, "trackEvent("], ...course.map(([, source]) => [source, 'track("'])].forEach(([source, needle]) => {
+  let cursor = 0;
+  while (true) {
+    const at = source.indexOf(needle, cursor);
+    if (at < 0) break;
+    cursor = at + needle.length;
+    // 粗略取到該呼叫的結尾（下一個 "});" 或 ");"）
+    const tail = source.slice(at, at + 900);
+    const end = tail.search(/\n\s*\}\);|\);/);
+    const block = end > 0 ? tail.slice(0, end) : tail;
+    const name = (block.match(/track(?:Event)?\("([a-z_]+)"/) || [])[1] || "?";
+    scanned += 1;
+    FORBIDDEN.forEach(([label, pattern]) => {
+      if (pattern.test(block)) {
+        fail(`${name} 疑似上報了${label} —— 分析事件不得帶使用者輸入的內容`);
+      }
+    });
+  }
+});
 
 /* ── 5. spec 06.5 點名的核心指標必須有在收 ────────────────── */
 
