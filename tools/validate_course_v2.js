@@ -150,6 +150,15 @@ function checkGraph(id, where, graph, opts) {
   (graph.points || []).forEach((p, i) => { if (!Number.isFinite(Number(p.x)) || !Number.isFinite(Number(p.y))) err(id, `${where} 點 ${i + 1} 座標不是數字`); });
   (graph.labels || []).forEach((l, i) => { if (typeof l.text !== "string" || !Number.isFinite(Number(l.x)) || !Number.isFinite(Number(l.y))) err(id, `${where} 標籤 ${i + 1} 要有 text、x、y`); });
 }
+// ── 黑板（sections[].beats[].board）：規則在 tools/lib/course_board_check.js（跟畫面同一支 {{id:…}} 轉換與 KaTeX 選項）──
+const boardCheck = require("./lib/course_board_check.js").create({
+  katex,
+  board: global.window.BuzzBoard,
+  cjkLen,
+  // 黑板上的圖跟 figures 的 graph 同一套檢查；錯誤轉給黑板那一句
+  checkGraph: (where, graph, e) => { const before = errors.length; checkGraph("", where, graph); errors.splice(before).forEach((m) => e(m.replace(/^: /, ""))); }
+});
+boardCheck.selfTest().forEach((m) => errors.push(m));
 const WIDGET_NEEDS = {
   "secant-tangent": ["f", "a", "h", "window"],
   riemann: ["f", "a", "b", "n", "window"],
@@ -314,7 +323,7 @@ function checkSections(id, L) {
     else ["of", "skeleton", "order", "where"].filter((k) => sec[k] !== undefined).forEach((k) => err(id, `${where} 的 ${k} 只能用在證明節（proof: true）`));
     beats.forEach((b, bi) => {
       const at = `${where}第 ${bi + 1} 句`;
-      const bad = Object.keys(b || {}).filter((k) => !["show", "note", "fig", "say", "why"].includes(k));
+      const bad = Object.keys(b || {}).filter((k) => !["show", "note", "fig", "say", "why", "board"].includes(k));
       if (bad.length) err(id, `${at} 多了不認得的欄位：${bad.join("、")}`);
       if (!Array.isArray(b.show) || !b.show.length || b.show.length > 2) err(id, `${at} 的 show 要 1–2 行`);
       (b.show || []).forEach((line) => {
@@ -373,6 +382,8 @@ function checkSections(id, L) {
         }
       }
     });
+    // 黑板的字跟 show 一樣守數字規則（push 進 texts）；格式、項的 id、KaTeX、長度在 course_board_check.js
+    texts.push(...boardCheck.checkSection(sec, where, (m) => err(id, m)));
     if (sec.proof) {
       const asks = beats.filter((b) => b && b.why !== undefined).length;
       if (asks > Math.floor(beats.length / 2)) err(id, `${where} 有 ${asks} 句問為什麼（${beats.length} 句裡最多 ${Math.floor(beats.length / 2)}：大約兩三句一問，問太多就變成考試）`);
