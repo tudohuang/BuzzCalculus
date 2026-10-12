@@ -108,9 +108,10 @@
     return s;
   }
   function write(s, q) {
+    // 停在 0.999 不到 1：opacity 跨過 1 會讓 inline 的 span 進出自己的圖層，Chrome 就重排一次（畫完 unwrite 才清掉）
     s.ls.forEach((n, i) => {
-      const v = cl((q * 1.2 - s.xs[i]) / 0.2);
-      if (v !== s.v[i] && (Math.abs(v - s.v[i]) > 0.04 || v % 1 === 0)) { s.v[i] = v; n.style.opacity = v; }
+      const v = Math.min(0.999, cl((q * 1.2 - s.xs[i]) / 0.2));
+      if (v !== s.v[i] && (Math.abs(v - s.v[i]) > 0.04 || v === 0.999 || v === 0)) { s.v[i] = v; n.style.opacity = v; }
     });
     s.tip.style.transform = `translateX(${f2(Math.min(1, q * 1.2) * s.w)}px)`;
     s.tip.style.opacity = q > 0 && q < 0.84 ? 0.75 : 0;
