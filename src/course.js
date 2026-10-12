@@ -1627,7 +1627,37 @@
       if (action === "course-graduation" && pool.length >= 4) deps.startQuiz(pool, { ...QUIZ, courseGraduation: true });
     }
 
-    return { lessons, lesson, isTheory, problemLesson, progress, renderIndex, renderLesson, renderCurrent, act, renderFirstSteps, renderResultsActions, renderFeedbackLink, renderHomeCard, inBridge, bridgePool, uncoveredTags: UNCOVERED_TAGS, protectPool, graduationSet, graduationVerdict, graduation, graduated, renderGraduationActions, renderGraduationCard, markOpened, markChecksPassed, recordPractice, recordGraduation, allChecksRight, practicePool, extensionPool, gentleTrim };
+    return { lessons, lesson, isTheory, problemLesson, progress, renderIndex, renderLesson, renderCurrent, act, renderFirstSteps, renderResultsActions, renderFeedbackLink, renderHomeCard, renderReviewCard: () => "", inBridge, bridgePool, uncoveredTags: UNCOVERED_TAGS, protectPool, graduationSet, graduationVerdict, graduation, graduated, renderGraduationActions, renderGraduationCard, markOpened, markChecksPassed, recordPractice, recordGraduation, allChecksRight, practicePool, extensionPool, gentleTrim };
+  }
+
+  /* ── 課程回溫：讀完一課，隔天回來自己算（排程是 kernel/planner.js 的 courseReview*，這裡只接上紀錄與首頁那張卡；
+     一輪回溫的畫面在 src/course_solve.js）── */
+  function reviewKit(deps) {
+    let bank = null;
+    const problemOf = (id) => { if (!bank) bank = new Map((window.BUZZ_PROBLEMS || []).map((p) => [p.id, p])); return bank.get(id) || null; };
+    const P = () => window.BuzzPlanner || {};
+    const plan = (m, data) => (P().courseReviewPlan ? P().courseReviewPlan(m, data, problemOf) : {});
+    const due = (records) => (P().courseReviewDue ? P().courseReviewDue(records, { problemOf, gentle: Boolean(deps.gentleStartActive && deps.gentleStartActive(records)) }) : null);
+    // 地圖的「該練」：今天這一輪出得到的課 → 題數與理由
+    function dueMap(records) {
+      const out = {};
+      const d = due(records);
+      if (d) d.lessons.forEach((r, k) => { out[r.id] = { n: r.items.length, why: r.why, k }; });
+      return out;
+    }
+    function card(records) {
+      const d = due(records);
+      if (!d) return "";
+      return `
+        <div class="retention-card srs-card is-due" data-course-review>
+          <div class="retention-copy">
+            <p class="section-label">${t("課程回溫")}</p>
+            <strong>${deps.escapeHtml(d.reason)}</strong>
+          </div>
+          <button class="button" data-action="course-rv">${deps.icon("pen")}${t("自己算 {n} 題", { n: d.n })}</button>
+        </div>`;
+    }
+    return { plan, due, dueMap, card, next: (...a) => P().courseReviewNext(...a), gaps: P().COURSE_REVIEW_GAPS || [] };
   }
 
   /* ── 新版課程（中文介面）的外殼 ──
@@ -1643,11 +1673,13 @@
     // 最近一局魔王題剛解開（結算頁秀「+30 XP」用；只在這一頁的記憶體，重新整理就不秀）
     let lastBoss = null;
     const BOSS_XP = 30;
+    // 地圖（course_map.js）與回溫畫面（course_solve.js）從 window.BuzzCourseReview 拿（課程組的預算滿了，不從那裡轉）
+    const review = (window.BuzzCourseReview = reviewKit(deps));
     function load() {
       if (ui || pending || failed) return;
       const ready = () => {
         if (!window.BuzzCourseV2UI || !window.BUZZ_COURSE_V2) throw new Error("course v2 missing");
-        ui = window.BuzzCourseV2UI.create({ ...deps, legacy, bossRun: () => lastBoss });
+        ui = window.BuzzCourseV2UI.create({ ...deps, legacy, review, bossRun: () => lastBoss });
       };
       try {
         pending = Promise.resolve(deps.ensureLazy("course")).then(ready).then(() => {
@@ -1685,6 +1717,8 @@
       renderIndex: (records) => (current() ? ui.renderIndex(records) : waiting()),
       renderCurrent: (records) => (current() ? ui.renderLesson(records) : waiting()),
       renderHomeCard: (records) => (current() ? ui.renderHomeCard(records) : homeFallback()),
+      // 首頁的「課程回溫」卡：只看紀錄（課名存在紀錄裡），不為了這張卡去抓課程組
+      renderReviewCard: (records) => review.card(records),
       renderFirstSteps: (records) => (current() ? ui.renderFirstSteps(records) : ""),
       // 回饋與結算：只在課程已經載過時才講「這題是哪一課教的」——不為了一行字去抓整份大綱
       renderFeedbackLink: (problemId) => (ui ? ui.renderFeedbackLink(problemId) : ""),

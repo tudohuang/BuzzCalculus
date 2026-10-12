@@ -39,6 +39,8 @@
     const practice = (data.practice || []).filter((p) => !p.challenge && bank.has(p.id)).length;
     // 章首魔王題（course_boss.js 畫）：離魔王題還差 n 課，或「現在解得開了」—— 那時主按鈕讓給解題，下一課降成次要
     const boss = api.boss ? api.boss.finish : null;
+    // 自己算（course_solve.js）：這一課的自己算第一次就打對幾題
+    const solved = window.BuzzCourseSolve ? window.BuzzCourseSolve.stat(data, e) : null;
     return `
       <article class="cv2s-sec cv2s-finish" data-cv2s-finish>
         <h3><small>${n} / ${n}</small>你現在會：</h3>
@@ -48,6 +50,8 @@
           <span><strong>+${Number(e.xp) || 0}</strong> XP</span>
           ${level ? `<span>Lv.${level.level} · ${level.into}/${level.span}</span>` : ""}
           ${streak ? `<span>${icon("flame")}連勝 ${streak} 天</span>` : ""}
+          ${solved ? `<span data-cs-stat>自己算：首次答對 ${solved.first} / ${solved.total}</span>` : ""}
+          ${Array.isArray(e.rvItems) && e.rvItems.length && !e.rvLast && e.rvAt && new Date(e.rvAt).toDateString() === new Date().toDateString() ? `<span data-cs-tomorrow>明天回溫 ${e.rvItems.length} 題</span>` : ""}
         </p>
         ${boss ? boss.html : ""}
         <div class="action-row">

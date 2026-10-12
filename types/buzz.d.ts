@@ -252,6 +252,15 @@ interface BuzzCourseV2Progress {
   picks?: Record<string, number[]>;
   xp?: number;
   tierXp?: number;
+  /** 分節的自己算：節 → first（第一次就對）／later（錯過才對）／shown（看了解法）／tried（錯了、還沒對） */
+  solve?: Record<string, "first" | "later" | "shown" | "tried">;
+  /** 課程回溫（kernel/planner.js courseReview*）：上次排定／回溫的時間、走到第幾格、課名、題目（s<節> 或題號）、上次回溫的時間與題數 */
+  rvAt?: string;
+  rvStep?: number;
+  rvT?: string;
+  rvItems?: string[];
+  rvLast?: string;
+  rvDid?: number;
 }
 
 interface BuzzCourseProgress {
@@ -377,7 +386,7 @@ interface Window {
   BUZZ_PROBLEMS: BuzzProblem[];
   BUZZ_PROOFS: BuzzProof[];
   BUZZ_COURSE: BuzzCourseLesson[];
-  BuzzCourseUI: { create(deps: { escapeHtml: (s: unknown) => string; escapeAttr: (s: unknown) => string; icon: (name: string) => string; referenceAnswerHTML: (problem: BuzzProblem) => string; loadRecords: () => BuzzRecords; saveRecords: (records: BuzzRecords) => void; ensureLazy: (group: string) => Promise<void>; startQuiz: (pool: BuzzProblem[], options?: any) => void; render: () => void; go: (view: string) => void; noteCourseRead?: (records: BuzzRecords) => BuzzRecords; focusModeOn?: () => boolean; abilityProfile?: (records: BuzzRecords) => any; xpLevel?: (xp: unknown) => { level: number; into: number; span: number }; streakDays?: (records: BuzzRecords) => number; track?: (name: string, params?: Record<string, unknown>) => void }): any };
+  BuzzCourseUI: { create(deps: { escapeHtml: (s: unknown) => string; escapeAttr: (s: unknown) => string; icon: (name: string) => string; referenceAnswerHTML: (problem: BuzzProblem) => string; loadRecords: () => BuzzRecords; saveRecords: (records: BuzzRecords) => void; ensureLazy: (group: string) => Promise<void>; startQuiz: (pool: BuzzProblem[], options?: any) => void; render: () => void; go: (view: string) => void; noteCourseRead?: (records: BuzzRecords) => BuzzRecords; focusModeOn?: () => boolean; abilityProfile?: (records: BuzzRecords) => any; xpLevel?: (xp: unknown) => { level: number; into: number; span: number }; streakDays?: (records: BuzzRecords) => number; track?: (name: string, params?: Record<string, unknown>) => void; /** 課程的「自己算」與回溫（course_solve.js）借作答頁的判分、預覽、鍵盤與作答紀錄 */ checkAnswer?: (problem: any, input: string) => { correct: boolean; message?: string }; answerToTex?: (value: string, problem?: any) => string; updateAnswerRecords?: (records: BuzzRecords, answer: any, finishedAt: string, context?: any) => void; webworkKeys?: (problem: any) => { digits: { label: string; insert: string }[]; rest: { label: string; insert: string }[] }; gentleStartActive?: (records: BuzzRecords) => boolean }): any };
   /** 分節模式（data-lazy="sections"，只有打開有分節的課才載） */
   BuzzCourseSections?: { render(api: any): string; act(api: any, action: string, data: any): void };
   BuzzCourseFinish?: { view(api: any, entry: any): string };

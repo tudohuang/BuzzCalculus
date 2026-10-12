@@ -39,6 +39,8 @@ const bankTags = new Set(problems.flatMap((p) => p.tags || []));
 const verified = global.window.BuzzVerifiedAnswers;
 const isVerified = (id) => Boolean(verified && verified.has && verified.has(id));
 const { checkClaim, claimsOf } = require("./lib/step_claims.js");
+// 分節的「自己算」（sections[].solve）：tools/lib/course_solve_check.js
+const { checkSolve, selfTest: solveSelfTest } = require("./lib/course_solve_check.js");
 const katex = require(path.join(ROOT, "assets", "vendor", "katex", "katex.min.js"));
 
 const SCHOOL = /\b(MIT|Berkeley|Princeton|Oxford|Cambridge|Harvard|Stanford|Caltech|Putnam|Todai|ETH|IMO|IMC)\b|東大|台大|臺大|清大|交大|(?<!變)成大(?!於)|普林斯頓|哈佛|劍橋|牛津/;
@@ -279,6 +281,8 @@ const spokenItems = (s) => {
   const got = numbersIn(text).sort((a, b) => a - b).join();
   if (got !== want.slice().sort((a, b) => a - b).join()) errors.push(`自測：${text} 讀成 [${got}]，應該是 [${want.join(", ")}]`);
 });
+// 自己算（solve）的每一條規則都要真的會紅（反向案例）
+solveSelfTest({ api, byId, isVerified, numbersIn, cjkLen, sampleId: "fd-lim-003" }).forEach((e) => errors.push(e));
 // 念的稿：不准有 LaTeX 與會被念錯的符號（分數、次方、不等號、括號…都寫成中文：三分之十四、x 平方、大於等於）
 const SAY_BAD = /[$\\^_{}\/=<>≤≥≠→←∞×÷·√∫∑ΔδεπθΣ+*|()（）\[\]［］]/;
 const SAY_MAX = 56; // 字數上限：約 12 秒（實測台灣中文神經語音一秒四字多，含停頓）
@@ -308,7 +312,7 @@ function checkSections(id, L) {
   const parts = [];
   S.forEach((sec, si) => {
     const where = `第 ${si + 1} 節`;
-    const extra = Object.keys(sec || {}).filter((k) => !["title", "beats", "check", "predict", "drag", "video", "proof", "of", "skeleton", "order", "where"].includes(k));
+    const extra = Object.keys(sec || {}).filter((k) => !["title", "beats", "check", "predict", "drag", "video", "proof", "of", "skeleton", "order", "where", "solve"].includes(k));
     if (extra.length) err(id, `${where} 多了不認得的欄位：${extra.join("、")}`);
     if (typeof sec.title !== "string" || !sec.title.trim()) err(id, `${where} 沒有 title`);
     else if (cjkLen(sec.title) > 12) err(id, `${where} 的 title ${cjkLen(sec.title)} 字（≤ 12）`);
@@ -389,8 +393,8 @@ function checkSections(id, L) {
       if (asks > Math.floor(beats.length / 2)) err(id, `${where} 有 ${asks} 句問為什麼（${beats.length} 句裡最多 ${Math.floor(beats.length / 2)}：大約兩三句一問，問太多就變成考試）`);
       if (beats.length < 3) err(id, `${where}：證明節至少 3 句（策略一句＋至少兩步）`);
     }
-    const acts = ["check", "predict", "drag", "order", "where"].filter((k) => sec[k] !== undefined);
-    if (acts.length !== 1) err(id, `${where} 結尾要恰好一個動作（check／predict／drag${sec.proof ? "／order／where" : ""}），現在 ${acts.length ? acts.join("、") : "沒有"}`);
+    const acts = ["check", "predict", "drag", "order", "where", "solve"].filter((k) => sec[k] !== undefined);
+    if (acts.length !== 1) err(id, `${where} 結尾要恰好一個動作（check／predict／drag／solve${sec.proof ? "／order／where" : ""}），現在 ${acts.length ? acts.join("、") : "沒有"}`);
     if (sec.check !== undefined) {
       if (!(Number.isInteger(sec.check) && L.checks && L.checks[sec.check])) err(id, `${where} 的 check 要是小測的索引（0–${(L.checks || []).length - 1}）`);
       else usedChecks.push(sec.check);
@@ -418,6 +422,12 @@ function checkSections(id, L) {
       }
       if (typeof d.ask !== "string" || !d.ask.trim()) err(id, `${where} 的 drag 沒有 ask`);
       texts.push(d.ask || "");
+    }
+    if (sec.solve !== undefined) {
+      const r = checkSolve({ v: sec.solve, L, where, err: (m) => err(id, m), api, byId, isVerified, numbersIn, cjkLen });
+      if (r.check >= 0) usedChecks.push(r.check);
+      r.numbers.forEach((n) => local.add(n));
+      texts.push(...r.texts);
     }
     if (sec.video !== undefined && !(sec.video === true && L.video)) err(id, `${where} 的 video 只能寫 true，而且這一課要有 video`);
     shown = Math.max(shown, peak);

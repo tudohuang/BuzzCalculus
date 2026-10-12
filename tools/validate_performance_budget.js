@@ -99,12 +99,19 @@ const BUDGETS = {
   // 只有打開有分節的課才付；錄音本身（/media/narration/*.mp3）不在預算裡：按了播放才載、不進 Service Worker 快取。
   // 2026-10-10 加了證明節的掛鉤（「為什麼」擋住下一句、問句的旁白、證明節的動作轉給 course_proof.js）約 1.5KB，
   // 照上面那條把結算畫面拆成 course_finish.js（約 4KB）：上限不動。
-  "延後載入：課程分節": { pattern: /^$/, budget: 44 * 1024, lazy: "sections" },
+  // 2026-10-12 調高 44 → 46KB：黑板（board）與自己算（solve）兩個平行做的功能合併後各留了一組掛鉤
+  // （載入各自的 lazy 群組、把 show 換成黑板、solve 動作轉給 course_solve.js、捲動對位），合起來 44.5KB。
+  // 引擎本體都在自己的群組（course_board.js、course_solve.js），這裡只有掛鉤。下一次再撞頂：把旁白播放（約 9KB）拆成自己一支，不是再調數字。
+  "延後載入：課程分節": { pattern: /^$/, budget: 46 * 1024, lazy: "sections" },
   // 2026-10-10 新增：分節的結算畫面（course_finish.js，約 4KB）。讀到一課的最後一節才抓（點「完成這一課」時通常已經到了）。
   "延後載入：分節結算": { pattern: /^$/, budget: 8 * 1024, lazy: "secfinish" },
   // 2026-10-10 新增：證明節（sections[].proof）的互動 course_proof.js —— 句子的「這一步為什麼成立？」、把證明排回順序、
   // 「這個假設用在哪一步？」。只有有證明節的課才抓（其他課一個位元組都不付）；不塞進分節那一組（它只剩 2KB）。上限留約四成。
   "延後載入：證明節": { pattern: /^$/, budget: 16 * 1024, lazy: "secproof" },
+  // 2026-10-12 新增：自己算（sections[].solve：分節結尾的打字作答，判分借 app.js 的 checkAnswer）與課程回溫（隔天一輪自己算）
+  // course_solve.js 約 26KB（約四成是中文註解）。只有打開「有自己算的課」或點了回溫才抓；分節組只剩 1KB、課程組只剩十幾個位元組，都塞不下。
+  // 排程（今天該回溫什麼）是 kernel/planner.js 的純函式，首頁那張卡在 course.js（不能為了一行字去抓課程組）。上限留約一成五。
+  "延後載入：自己算與回溫": { pattern: /^$/, budget: 30 * 1024, lazy: "secsolve" },
   // 2026-10-11 新增：章首魔王題（course_boss.js，約 8KB）—— 章的第一課那張卡、讀完的「離魔王題還差 n 課」、payoff 的「現在解得開了」、解完的結算。
   // 只有打開「有魔王題那一章」的課才抓（試行 3 章；其他章、只看課程表的人一個位元組都不付）。課程組只剩 1KB，塞不下（課程組裡只留課程表那一行與「還差 n 課」的算法）。上限留約兩成。
   "延後載入：章首魔王題": { pattern: /^$/, budget: 10 * 1024, lazy: "boss" },

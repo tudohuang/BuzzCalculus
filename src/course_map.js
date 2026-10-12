@@ -1328,8 +1328,13 @@
     }
     out.chComplete = out.chDone.map((x, ci) => x > 0 && x === out.chTotal[ci]);
     out.stComplete = out.stDone.map((x, si) => x > 0 && x === out.stTotal[si]);
+    // 課程回溫（course.js 的 BuzzCourseReview）：今天這一輪出得到的課排最前面，「練這課」改成「自己算」那一輪
+    const R = window.BuzzCourseReview;
+    const rv = (R && o.records && R.dueMap(o.records)) || {};
     for (let i = 0; i < n; i += 1) {
       const P = o.lessons[i].practice || [];
+      const due = tiers[i] && rv[o.lessons[i].id];
+      if (due) { out.why[i] = due.why; out.ids[i] = []; out.practice.push({ i, why: due.why, score: 500 - due.k / 100, rv: due.n }); continue; }
       if (!tiers[i] || !P.length) continue;
       const solved = (id) => Boolean(stats[id] && stats[id].correct > 0);
       const wrong = [];
@@ -1450,7 +1455,7 @@
       ? `<small title="每課「完成」分鐘數加總">還差 ${g.missing.length} 課 · 約 ${g.minutes} 分鐘</small></span><button type="button" class="button secondary" data-action="open-course-lesson" data-lesson-id="${attr(opts.lessons[g.first].id)}">照順序學</button>`
       : "<small>完成了</small></span>"}<button type="button" class="button ghost" data-action="course-goal" data-lesson-id="" aria-label="清除目標" title="清除目標">×</button></p>` : "";
     const top = D.practice.slice(0, 5);
-    const list = f !== "practice" ? "" : `<div class="cmap-list">${top.length ? `<ol class="cmap-todo">${top.map(({ i, why }) => `<li><button type="button" data-action="course-lesson-practice" data-lesson-id="${attr(opts.lessons[i].id)}" data-ids="${attr(D.ids[i].join(" "))}"><strong>${esc(name(i))}</strong><small>${esc(why)}</small><em>練 ${D.ids[i].length} 題</em></button></li>`).join("")}</ol>` : `<p class="cmap-empty">現在沒有該練的課</p>`}</div>`;
+    const list = f !== "practice" ? "" : `<div class="cmap-list">${top.length ? `<ol class="cmap-todo">${top.map(({ i, why, rv }) => `<li><button type="button" data-action="${rv ? "course-rv" : "course-lesson-practice"}" data-lesson-id="${attr(opts.lessons[i].id)}" data-ids="${attr(D.ids[i].join(" "))}"><strong>${esc(name(i))}</strong><small>${esc(why)}</small><em>${rv ? `自己算 ${rv} 題` : `練 ${D.ids[i].length} 題`}</em></button></li>`).join("")}</ol>` : `<p class="cmap-empty">現在沒有該練的課</p>`}</div>`;
     return {
       bar: `<div class="cmap-bar"><div class="cmap-chips" role="group" aria-label="篩選">${chip("all", "全部", 0, "")}${chip("ready", "可以學", D.ready, " ")}${chip("practice", "該練", D.practice.length, " is-red")}</div>${goal}</div>`,
       list
