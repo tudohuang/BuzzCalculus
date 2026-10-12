@@ -118,7 +118,13 @@ const BUDGETS = {
   // 2026-10-12 新增：分節的黑板（course_board.js：寫上去、變形、粉筆記號、畫曲線，連同自己的樣式）。只有句子帶 board 的課才抓，
   // 其他課一個位元組都不付；不塞進分節那一組（它只剩 1KB）。上線時約 21KB（brotli 約 7.5KB；其中樣式 2KB、中文註解 2KB）。
   // 再撞頂該做的是把 plot（畫曲線，只有少數句子用）拆成自己一支，不是調數字。
-  "延後載入：課程黑板": { pattern: /^$/, budget: 24 * 1024, lazy: "board" },
+  // 2026-10-12 調高 24 → 54KB（黑板 v2）：v1 是「照順序把東西疊上去」，結果東西會疊在一起、時間也對不上旁白。
+  // v2 多了一整個排版模型（course_board_layout.js 約 18KB：切式子、換行、= 對齊、整節的狀態、標籤避讓、箭頭繞字、時間表）
+  // 與跟錄音時鐘走的畫面（course_board.js 約 34KB，其中約五分之一是中文註解與樣式）。brotli 之後約 18KB，只有有黑板的課才付。
+  // 照上一條把 plot（畫曲線）拆成自己一組（boardplot，見下面）。再撞頂：把 debug／lint 用的掛鉤搬去 tools 注入，不是再調數字。
+  "延後載入：課程黑板": { pattern: /^$/, budget: 54 * 1024, lazy: "board" },
+  // 2026-10-12 新增：黑板上的圖（course_board_plot.js，約 2KB）。只有節裡有 plot 的才由 course_board.js 抓。
+  "延後載入：黑板的圖": { pattern: /^$/, budget: 4 * 1024, lazy: "boardplot" },
   // 2026-10-09 新增：課程的圖（course_figures.js，約 15KB，figures 與 8 種 widget 的畫法）。從 course_v2_ui.js 搬出來：
   // 課程組到了 140 / 140KB，而沒有圖的課、只看課程表的人都不用它。有圖或有分節的課打開時才抓。上限留約五成。
   "延後載入：課程的圖": { pattern: /^$/, budget: 24 * 1024, lazy: "figures" },
