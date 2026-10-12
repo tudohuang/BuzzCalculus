@@ -72,7 +72,7 @@
       "steps": [
         "$f(x)=\\frac{1}{x\\ln x}$ 在 $[2,\\infty)$：連續；$x\\ln x>0$，所以 $f>0$；$x$ 與 $\\ln x$ 都遞增，分母遞增，$f$ 遞減。條件成立。",
         "令 $u=\\ln x$（〈定積分換元〉）：$\\int_2^M\\frac{dx}{x\\ln x}=\\ln(\\ln M)-\\ln(\\ln 2)$。",
-        "$M\\to\\infty$ 時 $\\ln(\\ln M)\\to\\infty$（很慢：$M=10^6$ 時才約 2.99），積分發散，所以級數發散。"
+        "$M\\to\\infty$ 時 $\\ln(\\ln M)\\to\\infty$（很慢：$M=10^6$ 時這個積分才約 2.99），積分發散，所以級數發散。"
       ],
       "answer": "發散",
       "claim": "D(ln(ln(x))) == 1/(x*ln(x)) ;; INT(1/(x*ln(x)), 2, 10^6) == ln(ln(10^6)) - ln(ln(2))"
@@ -213,7 +213,10 @@
       "proof": true, "of": 4, "skeleton": "直接",
       "beats": [
         { "show": ["一段一段夾，再加起來"],
-          "say": "策略：每一段積分夾在相鄰兩項之間，加起來，部分和就被積分從上下夾住。" },
+          "say": "策略：每一段積分夾在相鄰兩項之間，加起來，部分和就被積分從上下夾住。",
+          "board": [
+            { "do": "write", "line": "一段一段夾，再加起來", "on": "每一段" }
+          ] },
         { "show": ["$a_{k+1}\\le\\int_k^{k+1}f\\le a_k$"], "note": "遞減：$f(k+1)\\le f(x)\\le f(k)$，再積分。",
           "why": {
             "ask": "為什麼 $\\int_k^{k+1}f$ 夾在 $a_{k+1}$、$a_k$ 之間？",
@@ -224,9 +227,19 @@
               { "label": "$f>0$", "why": "為正只說積分是正的，說不出它跟 $a_k$、$a_{k+1}$ 誰大。" }
             ]
           },
-          "say": "f 遞減，在 k 到 k 加一上，左端最高、右端最低。積分這一段，就夾在兩項中間。" },
+          "say": "f 遞減，在 k 到 k 加一上，左端最高、右端最低。積分這一段，就夾在兩項中間。",
+          "board": [
+            { "do": "write", "line": "$a_{k+1}\\le\\int_k^{k+1}f\\le a_k$", "on": "一段的積分" },
+            { "do": "plot", "graph": { "window": [0.6, 5.4, 0, 1.3], "curves": [{ "expr": "1/x", "domain": [0.8, 5.4], "color": "blue" }], "fills": [{ "expr": "1/x", "from": 2, "to": 3, "color": "gold", "opacity": 0.3 }], "dashed": [[[2, 0.5], [3, 0.5]], [[2, 0.3333], [3, 0.3333]]], "points": [{ "x": 2, "y": 0.5 }, { "x": 3, "y": 0.3333 }], "labels": [{ "x": 3.15, "y": 0.6, "text": "左端最高", "anchor": "start" }, { "x": 3.1, "y": 0.12, "text": "右端最低", "anchor": "start" }] }, "why": true, "on": "左端最高" }
+          ] },
         { "show": ["$\\sum_{k=N+1}^{M}a_k\\le\\int_N^M f\\le\\sum_{k=N}^{M-1}a_k$"], "note": "從 $k=N$ 加到 $M-1$。",
-          "say": "從 N 加到 M 減一。左邊是少了第一項的部分和，右邊是少了最後一項的部分和。" },
+          "say": "從 N 加到 M 減一。左邊是少了第一項的部分和，右邊是少了最後一項的部分和。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "${{ls:\\sum_{k=N+1}^{M}a_k}}\\le\\int_N^M f\\le{{rs:\\sum_{k=N}^{M-1}a_k}}$", "on": "從 N 加到" },
+            { "do": "underline", "term": "ls", "label": "少了第一項", "on": "左邊是" },
+            { "do": "underline", "term": "rs", "label": "少了最後一項", "on": "右邊是" }
+          ] },
         { "show": ["積分收斂 ⇒ 部分和有上界 ⇒ 收斂"], "note": "$f>0$，部分和遞增；〈單調收斂定理〉。",
           "why": {
             "ask": "為什麼部分和有上界就收斂？",
@@ -237,9 +250,17 @@
               { "label": "有上界的數列都收斂", "why": "只有界不夠，還要單調；這裡是 $f>0$ 讓部分和一路遞增。" }
             ]
           },
-          "say": "f 是正的，部分和一路遞增。積分有限，部分和就有上界，單調又有界，級數收斂。" },
+          "say": "f 是正的，部分和一路遞增。積分有限，部分和就有上界，單調又有界，級數收斂。",
+          "board": [
+            { "do": "write", "line": "積分有限 ⇒ 部分和有上界", "on": "部分和有上界" },
+            { "do": "write", "line": "$f>0$：部分和遞增 ⇒ 單調有界，收斂", "why": true, "on": "f 是正的" }
+          ] },
         { "show": ["積分發散 ⇒ 部分和 $\\to\\infty$"], "note": "右式：部分和 $\\ge\\int_N^M f\\to\\infty$。",
-          "say": "反過來，積分衝向無限大，右邊的部分和比它還大，也衝向無限大，級數發散。" }
+          "say": "反過來，積分衝向無限大，右邊的部分和比它還大，也衝向無限大，級數發散。",
+          "board": [
+            { "do": "write", "line": "積分 $\\to\\infty$ ⇒ 部分和 $\\to\\infty$", "on": "反過來" },
+            { "do": "underline", "term": "rs", "label": "比積分還大", "on": "比它還大" }
+          ] }
       ],
       "where": {
         "ask": "「$f$ 遞減」用在哪一步？",
@@ -255,11 +276,26 @@
       "title": "$\\sum\\frac{1}{n\\ln n}$",
       "beats": [
         { "show": ["$\\sum_{n=2}^\\infty\\frac{1}{n\\ln n}$"], "note": "$f(x)=\\frac{1}{x\\ln x}$：連續、為正、遞減。",
-          "say": "先檢查條件：分母 x 乘自然對數 x 在二以後是正的，而且一路變大，所以 f 遞減。" },
+          "say": "先檢查條件：分母 x 乘自然對數 x 在二以後是正的，而且一路變大，所以 f 遞減。",
+          "board": [
+            { "do": "write", "line": "$\\sum_{n=2}^\\infty\\frac{1}{n\\ln n}$" },
+            { "do": "write", "line": "$f(x)=\\frac{1}{{{den:x\\ln x}}}$", "on": "分母" },
+            { "do": "underline", "term": "den", "label": "一路變大", "on": "一路變大" }
+          ] },
         { "show": ["令 $u=\\ln x$", "$\\int_2^M\\frac{dx}{x\\ln x}=\\ln(\\ln M)-\\ln(\\ln 2)$"],
-          "say": "令 u 等於自然對數 x，x 分之一 dx 剛好是 du，積出來是自然對數的自然對數。" },
-        { "show": ["$M\\to\\infty$：$\\ln(\\ln M)\\to\\infty$"], "note": "很慢：$M=10^6$ 時才約 2.99。",
-          "say": "它長得非常慢，M 到十的六次方才大約二點九九，但終究沒有上限。積分發散，級數發散。" }
+          "say": "令 u 等於自然對數 x，x 分之一 dx 剛好是 du，積出來是自然對數的自然對數。",
+          "board": [
+            { "do": "write", "line": "令 ${{u:u=\\ln x}}$，$\\frac{dx}{x}=du$", "tint": { "u": "blue" } },
+            { "do": "write", "line": "$\\int_2^M\\frac{dx}{x\\ln x}={{g:\\ln(\\ln M)}}-\\ln(\\ln 2)$", "on": "積出來" }
+          ] },
+        { "show": ["$M\\to\\infty$：$\\ln(\\ln M)\\to\\infty$"], "note": "很慢：$M=10^6$ 時積分才約 2.99。",
+          "say": "它長得非常慢，M 到十的六次方，積分才大約二點九九，但終究沒有上限。積分發散，級數發散。",
+          "board": [
+            { "do": "keep", "n": 1 },
+            { "do": "write", "line": "$M\\to\\infty$：${{g:\\ln(\\ln M)}}\\to\\infty$", "on": "它長得" },
+            { "do": "underline", "term": "g", "label": "非常慢", "on": "非常慢" },
+            { "do": "write", "line": "積分發散 ⇒ 級數發散", "on": "積分發散" }
+          ] }
       ],
       "check": 1
     },
@@ -286,13 +322,33 @@
       "title": "估尾巴",
       "beats": [
         { "show": ["$R_N=\\sum_{n=N+1}^\\infty a_n$"], "note": "用 $s_N$ 近似 $S$ 的誤差。",
-          "say": "用前 N 項的部分和近似整個和，誤差就是後面的尾巴。同一張長條圖可以估它。" },
+          "say": "用前 N 項的部分和近似整個和，誤差就是後面的尾巴。同一張長條圖可以估它。",
+          "board": [
+            { "do": "write", "line": "$R_N={{t:\\sum_{n=N+1}^\\infty a_n}}$" },
+            { "do": "underline", "term": "t", "label": "尾巴", "on": "尾巴" }
+          ] },
         { "show": ["$\\int_{N+1}^{\\infty} f\\,dx\\le R_N\\le\\int_{N}^{\\infty} f\\,dx$"], "note": "上界從 $N$ 起，下界從 $N+1$ 起。",
-          "say": "尾巴夾在兩個積分中間：上界從 N 開始積，下界從 N 加一開始積。差一要記清楚。" },
+          "say": "尾巴夾在兩個積分中間：上界從 N 開始積，下界從 N 加一開始積。差一要記清楚。",
+          "board": [
+            { "do": "write", "line": "$\\int_{{{lo:N+1}}}^{\\infty} f\\,dx\\le R_N\\le\\int_{{{hi:N}}}^{\\infty} f\\,dx$", "tint": { "lo": "blue", "hi": "violet" } },
+            { "do": "focus", "term": "hi", "color": "violet", "label": "上界", "on": "上界從" },
+            { "do": "focus", "term": "lo", "color": "blue", "label": "下界", "on": "下界從" }
+          ] },
         { "show": ["$R_n\\le\\int_n^\\infty x^{-3}\\,dx=\\frac{1}{2n^2}$"], "note": "$\\sum\\frac{1}{k^3}$，要誤差 $\\le 0.005$。",
-          "say": "例：k 三次方分之一，要誤差不超過零點零零五。上界是二 n 平方分之一。" },
+          "say": "例：k 三次方分之一，要誤差不超過零點零零五。上界是二 n 平方分之一。",
+          "board": [
+            { "do": "keep", "n": 1 },
+            { "do": "write", "line": "$\\sum\\frac{1}{k^3}$，誤差 $\\le 0.005$", "on": "k 三次方" },
+            { "do": "write", "line": "$R_n\\le\\int_n^\\infty x^{-3}\\,dx=\\frac{1}{2n^2}$", "on": "上界是" }
+          ] },
         { "show": ["$n^2\\ge 100$，$n\\ge 10$"], "note": "實際的尾巴約 0.0045。",
-          "say": "解出 n 平方大於等於一百，所以取十項就夠。實際的尾巴大約零點零零四五。" }
+          "say": "解出 n 平方大於等於一百，所以取十項就夠。實際的尾巴大約零點零零四五。",
+          "board": [
+            { "do": "keep", "n": 2 },
+            { "do": "write", "line": "$\\frac{1}{2n^2}\\le 0.005$ ⇒ $n^2\\ge 100$", "on": "解出" },
+            { "do": "write", "line": "${{r:n\\ge 10}}$：前 $10$ 項就夠", "on": "所以取" },
+            { "do": "box", "term": "r", "color": "green", "on": "十項就夠" }
+          ] }
       ],
       "check": 3
     }

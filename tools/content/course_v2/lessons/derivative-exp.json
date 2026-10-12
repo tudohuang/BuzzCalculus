@@ -139,13 +139,30 @@
       "title": "斜率跟高度成正比",
       "beats": [
         { "show": ["$a^{x+h} = a^x \\cdot a^h$"], "note": "用定義算 $f(x) = a^x$（$a > 0$）。",
-          "say": "用定義算 a 的 x 次方。a 的 x 加 h 次方，可以拆成 a 的 x 次方乘 a 的 h 次方。" },
+          "say": "用定義算 a 的 x 次方。a 的 x 加 h 次方，可以拆成 a 的 x 次方乘 a 的 h 次方。",
+          "board": [
+            { "do": "write", "line": "$a^{x+h}$", "on": "a 的 x 加 h" },
+            { "do": "transform", "line": "$a^{x+h} = {{ax:a^x}} \\cdot a^h$", "tint": { "ax": "violet" }, "on": "拆成" }
+          ] },
         { "show": ["差商 $= a^x \\cdot \\frac{a^h - 1}{h}$"],
-          "say": "所以差商是 a 的 x 次方，乘上 a 的 h 次方減一再除以 h。" },
+          "say": "所以差商是 a 的 x 次方，乘上 a 的 h 次方減一再除以 h。",
+          "board": [
+            { "do": "write", "line": "$\\frac{a^{x+h}-a^x}{h} = {{ax:a^x}} \\cdot {{q:\\frac{a^h - 1}{h}}}$", "tint": { "q": "blue" }, "on": "差商" },
+            { "do": "underline", "term": "q", "color": "blue", "on": "a 的 h 次方減一" }
+          ] },
         { "show": ["$(a^x)' = a^x \\cdot k$"], "note": "$k$ 只跟底數 $a$ 有關，跟 $x$ 無關。",
-          "say": "前面那個跟 h 無關，可以提出來；後面取極限得到一個常數 k，只看底數 a。" },
+          "say": "前面那個跟 h 無關，可以提出來；後面取極限得到一個常數 k，只看底數 a。",
+          "board": [
+            { "do": "underline", "term": "ax", "color": "violet", "label": "跟 h 無關", "on": "前面那個" },
+            { "do": "write", "line": "$(a^x)' = {{ax:a^x}} \\cdot {{k:k}}$", "tint": { "k": "blue" }, "on": "取極限" },
+            { "do": "focus", "term": "k", "color": "blue", "label": "只看底數 a", "on": "常數 k" }
+          ] },
         { "show": ["斜率 $\\div$ 高度處處相同"], "note": "曲線越高，斜率越大。",
-          "say": "意思是：曲線越高就越陡，而且斜率除以高度，在每一點都是同一個 k。" }
+          "say": "意思是：曲線越高就越陡，而且斜率除以高度，在每一點都是同一個 k。",
+          "board": [
+            { "do": "write", "line": "斜率 $\\div$ 高度 $= {{k:k}}$，處處相同", "on": "斜率除以" },
+            { "do": "focus", "term": "k", "color": "blue", "on": "每一點" }
+          ] }
       ],
       "predict": {
         "ask": "$(a^x)' = a^x \\cdot k$。$k$ 在圖上是什麼？",
@@ -184,13 +201,29 @@
       "title": "一般底數",
       "beats": [
         { "show": ["$(a^x)'=a^x\\ln a$"], "note": "$k = \\ln a$，證明在下一節。",
-          "say": "一般的底數 a，那個常數 k 就是自然對數 a。" },
+          "say": "一般的底數 a，那個常數 k 就是自然對數 a。",
+          "board": [
+            { "do": "write", "line": "$(a^x)' = a^x \\cdot {{k:k}}$", "tint": { "k": "blue" } },
+            { "do": "transform", "line": "$(a^x)' = a^x\\,{{l:\\ln a}}$", "tint": { "l": "blue" }, "on": "就是自然對數" }
+          ] },
         { "show": ["$\\ln 2 \\approx 0.6932$"],
-          "say": "對照一下：剛才底數二估出來的零點六九三二，正好是自然對數二。" },
+          "say": "對照一下：剛才底數二估出來的零點六九三二，正好是自然對數二。",
+          "board": [
+            { "do": "write", "line": "底數 2：$k \\approx {{v:0.6932}}$", "on": "底數二" },
+            { "do": "transform", "line": "${{t:\\ln 2}} \\approx {{v:0.6932}}$", "on": "正好是" }
+          ] },
         { "show": ["$0 < a < 1$：$\\ln a < 0$"], "note": "斜率是負的，$a^x$ 遞減。",
-          "say": "底數在零到一之間，自然對數 a 是負的，所以斜率是負的，圖形往下走。" },
+          "say": "底數在零到一之間，自然對數 a 是負的，所以斜率是負的，圖形往下走。",
+          "board": [
+            { "do": "transform", "line": "$0 < a < 1$：${{l:\\ln a}} < 0$", "on": "底數在" },
+            { "do": "write", "line": "斜率 $< 0$，$a^x$ 遞減", "on": "所以斜率" }
+          ] },
         { "show": ["$a = 1$：$1 \\cdot \\ln 1 = 0$"], "note": "$1^x$ 是常數，也對。",
-          "say": "底數是一的時候，一的 x 次方是常數，公式給零，也對得上。" }
+          "say": "底數是一的時候，一的 x 次方是常數，公式給零，也對得上。",
+          "board": [
+            { "do": "transform", "line": "$a = 1$：$1 \\cdot \\ln 1 = {{z:0}}$", "on": "底數是一" },
+            { "do": "focus", "term": "z", "color": "green", "label": "也對", "on": "公式給零" }
+          ] }
       ],
       "check": 2
     },
@@ -199,7 +232,12 @@
       "proof": true, "of": 4, "skeleton": "構造",
       "beats": [
         { "show": ["換底成 $e$，湊出 $\\frac{e^u-1}{u}$"], "note": "$a=1$ 時兩邊都是 $0$；以下設 $a\\ne1$。",
-          "say": "策略：把 a 的 h 次方換成 e 的次方，湊出指數的標準極限。a 等於一時兩邊都是零，先排除。" },
+          "say": "策略：把 a 的 h 次方換成 e 的次方，湊出指數的標準極限。a 等於一時兩邊都是零，先排除。",
+          "board": [
+            { "do": "write", "line": "要證：$\\frac{a^h-1}{h}\\to\\ln a$" },
+            { "do": "write", "line": "換底成 $e$，湊出 ${{eu:\\frac{e^u-1}{u}}}$", "tint": { "eu": "blue" }, "on": "換成 e" },
+            { "do": "write", "line": "設 $a\\ne1$（$a=1$ 兩邊都是 $0$）", "on": "a 等於一" }
+          ] },
         { "show": ["$a^h=e^{h\\ln a}$，令 $u=h\\ln a$"], "note": "$a\\ne1$ 時 $\\ln a\\ne0$，所以 $h\\ne0$ 時 $u\\ne0$。",
           "why": {
             "ask": "為什麼 $h\\ne0$ 時 $u\\ne0$？",
@@ -210,9 +248,20 @@
               { "label": "$e$ 的次方永遠是正的", "why": "那說的是 $e^u>0$，跟 $u$ 本身是不是 0 無關。" }
             ]
           },
-          "say": "u 是 h 乘自然對數 a。a 不等於一，自然對數 a 不是零，所以 h 不是零，u 也不是零。" },
+          "say": "u 是 h 乘自然對數 a。a 不等於一，自然對數 a 不是零，所以 h 不是零，u 也不是零。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "$a^h=e^{h\\ln a}$，令 $u=h\\,{{la:\\ln a}}$", "on": "等一下" },
+            { "do": "write", "line": "$h\\ne0$ ⇒ $u\\ne0$", "on": "h 不是零" },
+            { "do": "underline", "term": "la", "why": true, "label": "不是 0", "on": "自然對數 a 不是零" }
+          ] },
         { "show": ["$\\frac{a^h-1}{h}=\\ln a\\cdot\\frac{e^u-1}{u}$"], "note": "$h=\\frac{u}{\\ln a}$，換掉分母。",
-          "say": "分母的 h 換成 u 除以自然對數 a，自然對數 a 翻到上面，就湊出 e 的 u 次方減一再除以 u。" },
+          "say": "分母的 h 換成 u 除以自然對數 a，自然對數 a 翻到上面，就湊出 e 的 u 次方減一再除以 u。",
+          "board": [
+            { "do": "write", "line": "$\\frac{a^h-1}{h}={{la:\\ln a}}\\cdot{{eu:\\frac{e^u-1}{u}}}$", "on": "分母的 h" },
+            { "do": "focus", "term": "la", "label": "翻到上面", "on": "翻到上面" },
+            { "do": "underline", "term": "eu", "color": "blue", "label": "標準極限", "on": "就湊出" }
+          ] },
         { "show": ["$u\\to0$：$\\frac{e^u-1}{u}\\to1$", "所以極限是 $\\ln a$"], "note": "$h\\to0$ 時 $u\\to0$，而且 $u\\ne0$。",
           "why": {
             "ask": "為什麼可以改成讓 $u\\to0$？",
@@ -223,7 +272,14 @@
               { "label": "$e^u-1$ 在 $u=0$ 是 $0$", "why": "那只說分子趨近 0，還是 $\\frac{0}{0}$；真正用的是標準極限 $\\frac{e^u-1}{u}\\to1$。" }
             ]
           },
-          "say": "h 趨近零，u 也趨近零，而且不會剛好是零，所以可以用標準極限：那一塊趨近一，剩下自然對數 a。" }
+          "say": "h 趨近零，u 也趨近零，而且不會剛好是零，所以可以用標準極限：那一塊趨近一，剩下自然對數 a。",
+          "board": [
+            { "do": "keep", "n": 1 },
+            { "do": "write", "line": "$u\\to0$：${{eu:\\frac{e^u-1}{u}}}\\to1$", "on": "改看 u" },
+            { "do": "write", "line": "$h\\to0$ ⇒ $u\\to0$，且 $u\\ne0$", "why": true, "on": "h 趨近零" },
+            { "do": "write", "line": "所以極限 $= {{r:\\ln a}}$", "why": true, "on": "那一塊" },
+            { "do": "box", "term": "r", "color": "green", "why": true, "on": "剩下自然" }
+          ] }
       ],
       "where": {
         "ask": "「$a\\ne1$」用在哪一步？",

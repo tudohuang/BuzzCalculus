@@ -25,10 +25,11 @@
 .cvb-card.is-pay .cvb-meta .button { margin-left: 0; }
 `;
 
+  // 樣式節點的 id 不能跟黑板（course_board.js 的 cvb-style）撞名：撞了的話先載的那一支會讓另一支以為樣式已經在、整個沒樣式
   function injectStyle() {
-    if (typeof document === "undefined" || !document.head || document.getElementById("cvb-style")) return;
+    if (typeof document === "undefined" || !document.head || document.getElementById("cvboss-style")) return;
     const node = document.createElement("style");
-    node.id = "cvb-style";
+    node.id = "cvboss-style";
     node.textContent = STYLE;
     document.head.appendChild(node);
   }

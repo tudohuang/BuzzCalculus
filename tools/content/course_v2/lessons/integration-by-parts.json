@@ -137,11 +137,24 @@
       "title": "乘法法則倒過來",
       "beats": [
         { "show": ["$(uv)'=u'v+uv'$"],
-          "say": "先回想乘法法則：u 乘 v 的導數，是 u prime 乘 v，加上 u 乘 v prime。" },
+          "say": "先回想乘法法則：u 乘 v 的導數，是 u prime 乘 v，加上 u 乘 v prime。",
+          "board": [
+            { "do": "write", "line": "$(uv)' = {{a:u'v}} + {{b:uv'}}$" },
+            { "do": "focus", "term": "b", "on": "u 乘 v prime" }
+          ] },
         { "show": ["$\\int uv'\\,dx=uv-\\int vu'\\,dx$"], "note": "移項，兩邊積分。",
-          "say": "把 u 乘 v prime 移到一邊，兩邊積分。乘積的導數積回來，就是 u 乘 v 本身。" },
+          "say": "把 u 乘 v prime 移到一邊，兩邊積分。乘積的導數積回來，就是 u 乘 v 本身。",
+          "board": [
+            { "do": "write", "line": "${{b:uv'}} = (uv)' - {{a:u'v}}$", "on": "移到一邊" },
+            { "do": "write", "line": "$\\int {{b:uv'}}\\,dx = {{p:uv}} - \\int vu'\\,dx$", "on": "兩邊積分" },
+            { "do": "underline", "term": "p", "label": "積回來", "on": "積回來" }
+          ] },
         { "show": ["$\\int u\\,dv=uv-\\int v\\,du$"], "note": "換元是連鎖律倒過來，這是乘法法則倒過來。",
-          "say": "用 du、dv 的寫法縮成一行，這就是分部積分。" }
+          "say": "用 du、dv 的寫法縮成一行，這就是分部積分。",
+          "board": [
+            { "do": "write", "line": "${{r:\\int u\\,dv = uv - \\int v\\,du}}$", "on": "縮成一行" },
+            { "do": "box", "term": "r", "color": "green", "label": "分部積分", "on": "這就是" }
+          ] }
       ],
       "check": 1
     },
@@ -161,13 +174,31 @@
       "title": "多項式乘指數",
       "beats": [
         { "show": ["$\\int xe^{-x}\\,dx$：$u=x$，$dv=e^{-x}\\,dx$"],
-          "say": "試一題：x 乘 e 的負 x 次方。x 微分變一，當 u；指數積得出來，當 dv。" },
+          "say": "試一題：x 乘 e 的負 x 次方。x 微分變一，當 u；指數積得出來，當 dv。",
+          "board": [
+            { "do": "write", "line": "$\\int {{u:x}}\\,{{dv:e^{-x}\\,dx}}$", "tint": { "u": "blue", "dv": "violet" } },
+            { "do": "focus", "term": "u", "color": "blue", "label": "當 u", "on": "x 微分" },
+            { "do": "underline", "term": "dv", "color": "violet", "label": "當 dv", "on": "指數積" }
+          ] },
         { "show": ["$du=dx$，$v=-e^{-x}$"],
-          "say": "u 微分得 dx；e 的負 x 次方積分，記得多一個負號。" },
+          "say": "u 微分得 dx；e 的負 x 次方積分，記得多一個負號。",
+          "board": [
+            { "do": "write", "line": "$du = dx$，$v = {{v:-e^{-x}}}$", "tint": { "v": "violet" } },
+            { "do": "underline", "term": "v", "color": "violet", "label": "多一個負號", "on": "記得多" }
+          ] },
         { "show": ["$=-xe^{-x}+\\int e^{-x}\\,dx$"], "note": "公式的減號碰上 $v$ 的負號，變成加。",
-          "say": "代進公式。u 乘 v 是負 x e 的負 x 次方；減掉的積分裡有負號，負負得正。" },
+          "say": "代進公式。u 乘 v 是負 x e 的負 x 次方；減掉的積分裡有負號，負負得正。",
+          "board": [
+            { "do": "write", "line": "$= x({{v:-e^{-x}}}) - \\int (-e^{-x})\\,dx$" },
+            { "do": "transform", "line": "$= -xe^{-x} {{s:+}} \\int e^{-x}\\,dx$", "on": "減掉的" },
+            { "do": "focus", "term": "s", "label": "負負得正", "on": "有負號" }
+          ] },
         { "show": ["$=-xe^{-x}-e^{-x}+C$"], "note": "微分檢查，回到 $xe^{-x}$。",
-          "say": "剩下的直接積，再加 C。微分回去檢查，剛好是 x 乘 e 的負 x 次方。" }
+          "say": "剩下的直接積，再加 C。微分回去檢查，剛好是 x 乘 e 的負 x 次方。",
+          "board": [
+            { "do": "write", "line": "$= {{r:-xe^{-x} - e^{-x} + C}}$" },
+            { "do": "box", "term": "r", "color": "green", "label": "微分回去檢查", "on": "微分回去" }
+          ] }
       ],
       "check": 2
     },
@@ -194,13 +225,33 @@
       "title": "定積分版本",
       "beats": [
         { "show": ["$\\int_a^b u\\,dv=\\Big[uv\\Big]_a^b-\\int_a^b v\\,du$"], "note": "$uv$ 那一項也要代上下限。",
-          "say": "定積分版本：上下限照原來的 x 走，u 乘 v 那一項直接代，剩下的積分也帶著同樣上下限。" },
+          "say": "定積分版本：上下限照原來的 x 走，u 乘 v 那一項直接代，剩下的積分也帶著同樣上下限。",
+          "board": [
+            { "do": "write", "line": "$\\int_a^b u\\,dv = {{e:\\Big[uv\\Big]_a^b}} - \\int_a^b v\\,du$" },
+            { "do": "underline", "term": "e", "label": "也要代上下限", "on": "直接代" }
+          ] },
         { "show": ["$\\int_0^\\pi x\\cos x\\,dx=[x\\sin x]_0^\\pi-\\int_0^\\pi\\sin x\\,dx$"],
-          "say": "例如 x 乘 cosine x 從零到 pi。u 是 x，v 是 sine x。" },
+          "say": "例如 x 乘 cosine x 從零到 pi。u 是 x，v 是 sine x。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "$\\int_0^\\pi x\\cos x\\,dx$", "on": "例如" },
+            { "do": "write", "line": "$u = x$，${{v:v = \\sin x}}$", "on": "u 是 x" }
+          ] },
         { "show": ["$=0-2=-2$"], "note": "$x\\cos x$ 後半段為負，那塊比較大。",
-          "say": "第一項代進去是零，sine 從零積到 pi 是二，答案負二。負的，因為後半段在下方的那塊比較大。" },
+          "say": "第一項代進去是零，sine 從零積到 pi 是二，答案負二。負的，因為後半段在下方的那塊比較大。",
+          "board": [
+            { "do": "write", "line": "$= {{b:[x\\sin x]_0^\\pi}} - \\int_0^\\pi\\sin x\\,dx$" },
+            { "do": "focus", "term": "b", "label": "代進去是零", "on": "代進去是零" },
+            { "do": "write", "line": "$= 0 - 2 = {{r:-2}}$", "on": "答案負二" },
+            { "do": "box", "term": "r", "color": "green", "label": "後半段比較大", "on": "負的，因為" }
+          ] },
         { "show": ["算 $v$ 時不用加 $C$"], "note": "最後的答案才加 $+C$。",
-          "say": "最後一個小問題：算 v 的時候為什麼沒有加常數？" }
+          "say": "最後一個小問題：算 v 的時候為什麼沒有加常數？",
+          "board": [
+            { "do": "keep", "n": 3 },
+            { "do": "focus", "term": "v", "on": "算 v" },
+            { "do": "write", "line": "算 $v$ 時，為什麼不加常數？", "on": "為什麼" }
+          ] }
       ],
       "check": 3
     }

@@ -140,11 +140,26 @@
       "title": "$\\sum$：把加法寫短",
       "beats": [
         { "show": ["$\\sum_{i=1}^{n} a_i=a_1+a_2+\\dots+a_n$"], "note": "$i$ 是編號，從下面的數跑到上面的數。",
-          "say": "一長串加法太長，用 sigma 寫短。i 是編號，從底下的一開始，一路跑到上面的 n。" },
+          "say": "一長串加法太長，用 sigma 寫短。i 是編號，從底下的一開始，一路跑到上面的 n。",
+          "board": [
+            { "do": "write", "line": "${{s:a_1+a_2+\\dots+a_n}}$" },
+            { "do": "transform", "line": "$\\sum_{i={{lo:1}}}^{{{hi:n}}} a_i={{s:a_1+a_2+\\dots+a_n}}$", "on": "用 sigma" },
+            { "do": "focus", "term": "lo", "on": "底下的一" },
+            { "do": "focus", "term": "hi", "on": "一路跑到" }
+          ] },
         { "show": ["$\\sum c\\cdot a_i=c\\sum a_i$", "$\\sum(a_i+b_i)=\\sum a_i+\\sum b_i$"],
-          "say": "每一項都乘的常數可以提到外面；兩串加在一起的，也可以拆成兩個 sigma。" },
+          "say": "每一項都乘的常數可以提到外面；兩串加在一起的，也可以拆成兩個 sigma。",
+          "board": [
+            { "do": "write", "line": "$\\sum c\\cdot a_i=c\\sum a_i$" },
+            { "do": "write", "line": "$\\sum(a_i+b_i)=\\sum a_i+\\sum b_i$", "on": "兩串" }
+          ] },
         { "show": ["$\\sum_{i=1}^{4} i^2$"], "note": "$i$ 從 $1$ 跑到 $4$，每一項都平方。",
-          "say": "試一個：i 從一跑到四，每一項是 i 平方，全部加起來。" }
+          "say": "試一個：i 從一跑到四，每一項是 i 平方，全部加起來。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "$\\sum_{i=1}^{4} {{sq:i^2}}$", "on": "試一個" },
+            { "do": "focus", "term": "sq", "on": "每一項是" }
+          ] }
       ],
       "check": 0
     },
@@ -162,13 +177,31 @@
       "title": "定積分的定義",
       "beats": [
         { "show": ["$\\int_a^b f(x)\\,dx=\\lim_{n\\to\\infty}\\sum_{i=1}^{n} f(x_i)\\,\\Delta x$"], "note": "對連續函數，這個極限存在。",
-          "say": "n 趨近無限大時，這個和的極限，就定義成定積分。" },
+          "say": "n 趨近無限大時，這個和的極限，就定義成定積分。",
+          "board": [
+            { "do": "write", "line": "$\\lim_{n\\to\\infty}\\sum_{i=1}^{n} f(x_i)\\,{{dx:\\Delta x}}$", "tint": { "dx": "blue" } },
+            { "do": "transform", "line": "${{ig:\\int_a^b}} f(x)\\,{{d2:dx}}=\\lim_{n\\to\\infty}{{sm:\\sum_{i=1}^{n}}} f(x_i)\\,{{dx:\\Delta x}}$", "tint": { "d2": "blue" }, "on": "定義成" }
+          ] },
         { "show": ["拉長的 S 是 Sum，$\\Delta x$ 變成 $dx$"],
-          "say": "記號就是從這裡來的：積分號是拉長的 S，代表加總；delta x 變得無限小，寫成 dx。" },
+          "say": "記號就是從這裡來的：積分號是拉長的 S，代表加總；delta x 變得無限小，寫成 dx。",
+          "board": [
+            { "do": "underline", "term": "ig", "label": "拉長的 S", "on": "積分號是" },
+            { "do": "focus", "term": "d2", "color": "blue", "label": "無限小的 Δx", "on": "delta x 變得" }
+          ] },
         { "show": ["$\\int_1^3 x^2\\,dx$：$\\Delta x=\\frac{2}{n}$，$x_i=1+\\frac{2i}{n}$"],
-          "say": "例如 x 平方從一到三。區間長度二，所以寬是 n 分之二，分點從一出發。" },
+          "say": "例如 x 平方從一到三。區間長度二，所以寬是 n 分之二，分點從一出發。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "$\\int_1^3 x^2\\,dx$", "on": "例如" },
+            { "do": "write", "line": "${{w:\\Delta x=\\frac{2}{n}}}$，$x_i={{st:1}}+\\frac{2i}{n}$", "tint": { "w": "blue" }, "on": "所以寬是" },
+            { "do": "focus", "term": "st", "label": "起點", "on": "分點從一" }
+          ] },
         { "show": ["$n=4$：右端點 $1.5$、$2$、$2.5$、$3$"], "note": "高 $2.25$、$4$、$6.25$、$9$，和 $21.5$。",
-          "say": "先拿 n 等於四算一次。四個右端點平方，高的總和是二十一點五。" }
+          "say": "先拿 n 等於四算一次。四個右端點平方，高的總和是二十一點五。",
+          "board": [
+            { "do": "write", "line": "$n=4$：右端點 $1.5$、$2$、$2.5$、$3$" },
+            { "do": "write", "line": "高：$2.25+4+6.25+9=21.5$", "on": "四個右端點平方" }
+          ] }
       ],
       "predict": {
         "ask": "$R_4$ 是？",
@@ -193,11 +226,24 @@
       "title": "兩種讀法都對",
       "beats": [
         { "show": ["$\\lim\\sum_{k=1}^{n}\\frac{3}{n}\\sqrt{1+\\frac{3k}{n}}$"], "note": "$\\Delta x=\\frac{3}{n}$：區間長度 $3$。",
-          "say": "這一個，寬是 n 分之三，所以區間長度是三。起點要看根號裡怎麼讀。" },
+          "say": "這一個，寬是 n 分之三，所以區間長度是三。起點要看根號裡怎麼讀。",
+          "board": [
+            { "do": "write", "line": "$\\lim\\sum_{k=1}^{n}{{w:\\frac{3}{n}}}\\sqrt{{{in:1+\\frac{3k}{n}}}}$", "tint": { "w": "blue" } },
+            { "do": "underline", "term": "w", "color": "blue", "label": "區間長度 3", "on": "寬是" },
+            { "do": "underline", "term": "in", "label": "怎麼讀", "on": "根號裡" }
+          ] },
         { "show": ["$x_k=1+\\frac{3k}{n}$ → $\\int_1^4\\sqrt{x}\\,dx$"],
-          "say": "讀法一：分點是一加 n 分之三 k，從一跑到四，函數是根號 x。" },
+          "say": "讀法一：分點是一加 n 分之三 k，從一跑到四，函數是根號 x。",
+          "board": [
+            { "do": "write", "line": "讀法一：$x_k={{in:1+\\frac{3k}{n}}}$" },
+            { "do": "transform", "line": "讀法一：$x_k={{in:1+\\frac{3k}{n}}}$ → $\\int_1^4\\sqrt{x}\\,dx$", "on": "從一跑到四" }
+          ] },
         { "show": ["$x_k=\\frac{3k}{n}$ → $\\int_0^3\\sqrt{1+x}\\,dx$"], "note": "同一塊面積左右平移，值相同。",
-          "say": "讀法二：分點是 n 分之三 k，從零跑到三，函數是根號一加 x。兩個都對。" }
+          "say": "讀法二：分點是 n 分之三 k，從零跑到三，函數是根號一加 x。兩個都對。",
+          "board": [
+            { "do": "write", "line": "讀法二：$x_k=\\frac{3k}{n}$" },
+            { "do": "transform", "line": "讀法二：$x_k=\\frac{3k}{n}$ → $\\int_0^3\\sqrt{1+x}\\,dx$", "on": "從零跑到三" }
+          ] }
       ],
       "check": 3
     },

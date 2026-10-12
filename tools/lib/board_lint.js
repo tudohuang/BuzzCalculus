@@ -176,7 +176,8 @@ async function lintLessons(chrome, baseUrl, lessons, { viewports = VIEWPORTS, th
       if (!(await waitFor(`document.querySelector("[data-cv2s] .cv2s-sec")`))) { problems.push(`${vp.name} ${L.id}：打不開這一課`); continue; }
       for (let si = 0; si < L.sections.length; si += 1) {
         if (!L.sections[si].beats.some((b) => b.board)) continue;
-        await evaluate(`window.__nav.go(${si}); return 1;`);
+        // 節的按鈕可能還沒畫出來（剛打開課、上一節還在重繪）：等到點得到為止，不是只點一次
+        await waitFor(`window.__nav.go(${si})`, 5000);
         if (!(await waitFor(`window.__nav.si() === ${si} && window.BuzzBoard && window.BuzzBoard.debug.model() && window.BuzzBoard.state() && window.BuzzBoard.state().key === ${JSON.stringify(`${L.id}:${si}`)}`, 10000))) { problems.push(`${vp.name} ${L.id} 第 ${si + 1} 節：黑板沒出來`); continue; }
         // 字型（KaTeX）載完才量：載完會自己重排一次
         await evaluate(`await document.fonts.ready; await new Promise((r) => setTimeout(r, 80)); return 1;`);
