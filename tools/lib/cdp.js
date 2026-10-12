@@ -73,6 +73,8 @@ async function waitForEndpoint(port, timeoutMs) {
   throw new Error(`Chrome 的除錯埠 ${port} 在 ${timeoutMs}ms 內沒有回應`);
 }
 
+const GA_HOSTS = ["*.google-analytics.com", "*.googletagmanager.com", "*.analytics.google.com", "google-analytics.com", "googletagmanager.com"];
+
 async function launch(options = {}) {
   const chromePath = findChrome();
   if (!chromePath) {
@@ -100,7 +102,10 @@ async function launch(options = {}) {
     // 所以把瀏覽器釘在 zh-TW（開發機的 Windows 常常是 en-US，沒釘住九支 E2E 會整批變英文）。
     "--lang=zh-TW",
     "--accept-lang=zh-TW,zh",
-    "--window-size=1280,900"
+    "--window-size=1280,900",
+    // 分析事件絕不能從測試送進正式的 GA（真的使用者數據會被 E2E 灌水）：GA 的網域在 DNS 層就解析不到。
+    // 要驗「有去抓 gtag.js」的測試用 Fetch 攔截，攔截發生在 DNS 之前，照樣看得到請求。
+    `--host-resolver-rules=${GA_HOSTS.map((h) => `MAP ${h} ~NOTFOUND`).join(", ")}`
   ];
 
   // CI 的容器環境需要這兩個旗標：沙箱在容器裡常常起不來，
@@ -125,6 +130,7 @@ async function launch(options = {}) {
   const consoleMessages = [];
   const pageErrors = [];
   const failedRequests = [];
+  const requestUrls = new Map();
   // 事件訂閱：錄影工具要收 Page.screencastFrame 這種持續來的事件。
   const listeners = new Map();
   function on(method, handler) {
@@ -167,8 +173,15 @@ async function launch(options = {}) {
       const details = message.params.exceptionDetails || {};
       pageErrors.push(details.exception ? (details.exception.description || details.text) : details.text);
     }
+    if (message.method === "Network.requestWillBeSent") {
+      requestUrls.set(message.params.requestId, message.params.request.url);
+    }
     if (message.method === "Network.loadingFailed") {
-      failedRequests.push(message.params.errorText + " " + (message.params.type || ""));
+      // GA 在上面被故意擋掉：它載不到是預期的，不算頁面壞掉
+      const url = requestUrls.get(message.params.requestId) || "";
+      if (!GA_HOSTS.some((h) => url.includes(h.replace("*.", "")))) {
+        failedRequests.push(message.params.errorText + " " + (message.params.type || ""));
+      }
     }
   });
 

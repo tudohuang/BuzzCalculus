@@ -512,6 +512,11 @@
     out.courseV2 = mergeCourse(left.courseV2, right.courseV2);
     // 章首魔王題（章碼 → { solvedAt }）：解開了就是解開了，時間取早的
     out.courseV2Boss = mergeCourse(left.courseV2Boss, right.courseV2Boss);
+    // 讀課的日子（日期 → 那天讀完幾節）：算連勝用，兩台裝置同一天各讀了一些時取多的那邊，日子只增不減
+    out.courseReadDays = Object.assign({}, left.courseReadDays || {});
+    Object.keys(right.courseReadDays || {}).forEach((day) => {
+      out.courseReadDays[day] = Math.max(Number(out.courseReadDays[day]) || 0, Number(right.courseReadDays[day]) || 0);
+    });
     // 畢業關：過了就是過了（passed 只增不減），其餘取新的那一份
     const gradOld = older.courseGraduation;
     const gradNew = newer.courseGraduation;
