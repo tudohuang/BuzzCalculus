@@ -244,7 +244,7 @@ const REVISIONS = {
   "./src/kernel/planner.js": "6b93e59a61",
   "./src/kernel/proof_lang.js": "dcfe4981bf",
   "./src/kernel/proof_surface.js": "300a62039f",
-  "./src/kernel/records_v2.js": "3fca56d724",
+  "./src/kernel/records_v2.js": "4e65f349f8",
   "./src/kernel/rubric.js": "8a008b443f",
   "./src/kernel/rubric_reviewed.js": "838e52b722",
   "./src/kernel/session.js": "19d842a952",
