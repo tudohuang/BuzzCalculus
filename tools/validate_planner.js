@@ -373,6 +373,44 @@ if (demoFill.meta.fallbacks.length) console.log(`  降級          ${session.exp
   }
 }
 
+// ── 7. 課程回溫（courseReview*）：隔天到期、間隔變長、每天的額度、新手保護期、理由一行 ──
+{
+  const local = (y, mo, d, h) => new Date(y, mo - 1, d, h === undefined ? 10 : h).getTime();
+  const fake = { a: { answerKind: "numeric", rank: 1 }, b: { answerKind: "expression", rank: 4 }, c: { answerKind: "text", rank: 1 } };
+  const problemOf = (id) => fake[id] || null;
+  const lesson = { title: "連鎖律 I：兩層", practice: [{ id: "a", kind: "core" }, { id: "b", kind: "core" }, { id: "c", kind: "core" }, { id: "z", kind: "" }] };
+  const data = { sections: [{}, { solve: { problemId: "a" } }, {}] };
+  const plan = planner.courseReviewPlan(lesson, data, problemOf, local(2026, 10, 12, 23));
+  check("回溫：排進的是自己算＋能打答案的核心題（自己算用掉的題號不重複、選擇題型 text 不排）", JSON.stringify(plan.rvItems) === JSON.stringify(["s1", "b"]), JSON.stringify(plan));
+  check("回溫：沒有自己算、也沒有能打答案的核心題就不排", !Object.keys(planner.courseReviewPlan({ title: "x", practice: [{ id: "c", kind: "core" }] }, {}, problemOf)).length);
+  const book = { courseV2: { chain: plan } };
+  check("回溫：當天（23:59）還不到期", planner.courseReviewDue(book, { now: local(2026, 10, 12, 23) + 59 * 60000, problemOf }) === null);
+  const next = planner.courseReviewDue(book, { now: local(2026, 10, 13, 0) + 60000, problemOf });
+  check("回溫：過了午夜就到期（隔天，不是滿 24 小時）、理由一行", next && next.n === 2 && next.reason === "昨天讀的〈連鎖律 I：兩層〉，來回溫 2 題", next && next.reason);
+  check("回溫：新手保護期不出 R2 以上的推薦題", planner.courseReviewDue(book, { now: local(2026, 10, 13), problemOf, gentle: true }).n === 1);
+  const right = planner.courseReviewNext(plan, true, 2, local(2026, 10, 13, 9));
+  check("回溫：全部第一次就對 → 下一次 3 天後", right.rvStep === 1 && planner.courseReviewDue({ courseV2: { chain: right } }, { now: local(2026, 10, 15), problemOf }) === null && planner.courseReviewDue({ courseV2: { chain: right } }, { now: local(2026, 10, 16), problemOf }).reason === "3 天前回溫過的〈連鎖律 I：兩層〉，來回溫 2 題");
+  const wrong = planner.courseReviewNext({ ...right, rvStep: 3 }, false, 2, local(2026, 10, 20));
+  check("回溫：有一題不是第一次就對 → 回到隔天", wrong.rvStep === 0 && planner.courseReviewDue({ courseV2: { chain: wrong } }, { now: local(2026, 10, 21), problemOf }) !== null);
+  const done = { ...right, rvStep: planner.COURSE_REVIEW_GAPS.length };
+  check("回溫：間隔走完就不再出現", planner.courseReviewDue({ courseV2: { chain: done } }, { now: local(2027, 10, 1), problemOf }) === null);
+  const gaps = planner.COURSE_REVIEW_GAPS;
+  check("回溫：間隔越來越長、第一次是隔天", gaps[0] === 1 && gaps.every((g, i) => !i || g > gaps[i - 1]), gaps.join(","));
+  // 額度：三課各 3 題 → 第一輪只拿得到不超過 5 題（整課整課拿）；今天做完 3 題之後只剩 2 題
+  const many = { courseV2: {} };
+  ["x", "y", "w"].forEach((id, i) => { many.courseV2[id] = { rvAt: new Date(local(2026, 10, 1 + i)).toISOString(), rvStep: 0, rvT: id, rvItems: ["s0", "s1", "s2"] }; });
+  const first = planner.courseReviewDue(many, { now: local(2026, 10, 20), problemOf });
+  check("回溫：一天最多 5 題、先到期的先出、不把一課拆開（除非是第一課）", first.n <= planner.COURSE_REVIEW_CAP && first.lessons[0].id === "x" && first.lessons.every((L) => L.items.length === 3), JSON.stringify(first.lessons.map((L) => [L.id, L.items.length])));
+  many.courseV2.x = planner.courseReviewNext(many.courseV2.x, true, 3, local(2026, 10, 20, 8));
+  const after = planner.courseReviewDue(many, { now: local(2026, 10, 20, 12), problemOf });
+  check("回溫：今天做過的題算進額度（做完 3 題只剩 2 題）", after && after.n === 2, after && after.n);
+  many.courseV2.y = planner.courseReviewNext(many.courseV2.y, false, 2, local(2026, 10, 20, 13));
+  check("回溫：額度用完就沒有了（不洗版）", planner.courseReviewDue(many, { now: local(2026, 10, 20, 18), problemOf }) === null);
+  const two = planner.courseReviewDue({ courseV2: { p: { rvAt: new Date(local(2026, 10, 10)).toISOString(), rvStep: 0, rvT: "甲", rvItems: ["s0"] }, q: { rvAt: new Date(local(2026, 10, 11)).toISOString(), rvStep: 0, rvT: "乙", rvItems: ["s0"] } } }, { now: local(2026, 10, 14), problemOf });
+  check("回溫：兩課的理由「4 天前讀的〈甲〉等 2 課，來回溫 2 題」", two.reason === "4 天前讀的〈甲〉等 2 課，來回溫 2 題" && two.lessons.every((L) => L.why && !/undefined|NaN/.test(L.why)), two.reason);
+  console.log(`  課程回溫      間隔 ${gaps.join("／")} 天、一天 ${planner.COURSE_REVIEW_CAP} 題：「${next.reason}」`);
+}
+
 if (failures.length) {
   console.error("");
   console.error(`planner 驗證失敗（${failures.length}）：`);
