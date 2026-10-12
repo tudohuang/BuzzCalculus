@@ -51,7 +51,8 @@ function pageHelpers(MIN_LINE, MIN_LABEL, T) {
   const contrast = (a, b) => { const x = lum(a); const y = lum(b); return (Math.max(x, y) + 0.05) / (Math.min(x, y) + 0.05); };
   window.__bl = {
     board: () => document.querySelector("[data-cv2s] .cvb"),
-    measure(tag) {
+    // cur：已經做完幾個動作（lint 停在第 cur 個動作之前）；給了才檢查「錯的記號一直在」
+    measure(tag, cur) {
       const c = window.__bl.board();
       const P = [];
       const add = (m) => { if (!P.includes(m)) P.push(m); };
@@ -129,6 +130,16 @@ function pageHelpers(MIN_LINE, MIN_LABEL, T) {
         if (!within(x.b, inner, 0.5)) add(`${tag}：標籤「${x.l.textContent}」跑出黑板`);
       });
       allLeaves.forEach((x) => { if (!within(x.b, inner, 0.5)) add(`${tag}：第 ${x.it} 項的「${x.n.textContent.slice(0, 6)}」跑出黑板`); });
+      // 錯的式子不能沒標記地留在板上：標成錯的項（劃掉、紅色記號）只要它那一行看得到，記號就要看得到、而且畫完
+      if (cur !== undefined) model.anns.forEach((an, a) => {
+        if (!an.wrong || an.g >= cur || (an.dieG >= 0 && an.dieG < cur)) return;
+        const it = items.find((x) => x.n === an.refs[0][0]);
+        if (!it || it.op < 0.5) return;
+        const g = svg && svg.querySelector(`g[data-a="${a}"]`);
+        const p = g && g.querySelector("path");
+        const ok = g && eff(g, c) > 0.5 && (!p || Number(p.style.strokeDashoffset || 0) < 0.05);
+        if (!ok) add(`${tag}：第 ${an.refs[0][0]} 項的「${an.refs[0][1]}」被標成錯的（${an.do}），這一行還在板上，記號卻不見了`);
+      });
       const H = B[3] - B[1];
       if (H > innerHeight * 0.55) add(`${tag}：黑板 ${Math.round(H)}px 高，超過畫面高度的 55%（${Math.round(innerHeight * 0.55)}px）：先 clear／keep`);
       const d = document.documentElement;
@@ -176,7 +187,7 @@ async function lintLessons(chrome, baseUrl, lessons, { viewports = VIEWPORTS, th
             const A = model.acts[g];
             const tag = `${vp.name}/${theme} ${L.id} 第 ${si + 1} 節第 ${A.b + 1} 句動作 ${A.k + 1}（${A.do}）`;
             await evaluate(`window.BuzzBoard.debug.show(${g + 1}, 0, ${A.b}, 1); return 1;`);
-            const r = await evaluate(`return window.__bl.measure(${JSON.stringify(tag)});`);
+            const r = await evaluate(`return window.__bl.measure(${JSON.stringify(tag)}, ${g + 1});`);
             states += 1;
             problems.push(...r.problems);
             const last = g + 1 === model.acts.length || model.acts[g + 1].b !== A.b;

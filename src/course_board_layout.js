@@ -118,7 +118,9 @@
       } else {
         const refs = a.do === "arrow" ? [a.from, a.to] : [a.term];
         const rs = refs.map((id) => [holder(id), id]);
-        if (rs.every((r) => r[0])) anns.push({ g, a, b: bi, kind: a.do === "arrow" ? "arrow" : "mark", refs: rs.map(([it, id]) => [it.n, id]), dieG: Infinity, dieBeat: bi + 1 });
+        // 「錯」的記號（劃掉、紅色）跟著那一行活：那一行還在板上，它就一直在（不能讓一個錯的式子沒標記地留著）
+        const wrong = a.do === "strike" || a.color === "red";
+        if (rs.every((r) => r[0])) anns.push({ g, a, b: bi, kind: a.do === "arrow" ? "arrow" : "mark", refs: rs.map(([it, id]) => [it.n, id]), dieG: Infinity, dieBeat: wrong ? Infinity : bi + 1, wrong });
       }
       states.push(cur);
     }));
@@ -169,10 +171,11 @@
     model.anns.forEach((an) => {
       an.dieG = Infinity;
       for (let g = an.g + 1; g < model.acts.length; g += 1) {
-        const moved = an.refs.some(([n]) => { const p = pos[g][n]; const q = pos[an.g][n]; return !p || p[0] !== q[0] || p[1] !== q[1]; });
-        if (moved) { an.dieG = g; break; }
+        // 一般的記號：那一行動了就收；「錯」的記號跟著那一行搬，那一行不在了（擦掉、被變形換掉）才收
+        const gone = an.refs.some(([n]) => { const p = pos[g][n]; const q = pos[an.g][n]; return !p || (!an.wrong && (p[0] !== q[0] || p[1] !== q[1])); });
+        if (gone) { an.dieG = g; break; }
       }
-      const lastInBeat = model.acts.filter((x) => x.b === an.b).pop().g;
+      const lastInBeat = an.wrong ? model.acts.length - 1 : model.acts.filter((x) => x.b === an.b).pop().g;
       an.last = Math.min(lastInBeat, an.dieG - 1);
     });
   }
