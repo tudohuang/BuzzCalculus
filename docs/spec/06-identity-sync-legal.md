@@ -204,6 +204,7 @@ GitHub Pages 保持不變，API 走另一個網域，CORS 白名單。
 | `course_lesson_complete` | 課程第一次完成一課（小測第一次 ≥ 3 題對） | `lesson, tier` |
 | `course_boss_view` | 章的第一課秀出章首魔王題（每打開一次記一次） | `chapter` |
 | `course_boss_solve` | 解開章首魔王題（只記第一次） | `chapter, before_payoff` |
+| `course_solve` | 課程的「自己算」第一次作答（分節裡每一題只記第一次；隔天的課程回溫每一題記一次） | `lesson, first_try, review`（不帶打的答案） |
 
 課程的事件寫在延後載入的課程檔裡，一律呼叫 app.js 交過去的 `deps.track`（就是 `trackEvent`），關掉分析一樣擋得住；
 `tools/validate_analytics.js` 連同 `src/course*.js` 一起掃，課程檔直接碰 `gtag`／`dataLayer` 會擋。
