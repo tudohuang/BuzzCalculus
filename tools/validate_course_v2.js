@@ -156,6 +156,7 @@ function checkGraph(id, where, graph, opts) {
 const boardCheck = require("./lib/course_board_check.js").create({
   katex,
   board: global.window.BuzzBoard,
+  layout: global.window.BuzzBoardLayout,
   cjkLen,
   // 黑板上的圖跟 figures 的 graph 同一套檢查；錯誤轉給黑板那一句
   checkGraph: (where, graph, e) => { const before = errors.length; checkGraph("", where, graph); errors.splice(before).forEach((m) => e(m.replace(/^: /, ""))); }
@@ -387,7 +388,7 @@ function checkSections(id, L) {
       }
     });
     // 黑板的字跟 show 一樣守數字規則（push 進 texts）；格式、項的 id、KaTeX、長度在 course_board_check.js
-    texts.push(...boardCheck.checkSection(sec, where, (m) => err(id, m)));
+    texts.push(...boardCheck.checkSection(sec, where, (m) => err(id, m), L.sections.some((s2) => (s2.beats || []).some((b2) => b2 && b2.say))));
     if (sec.proof) {
       const asks = beats.filter((b) => b && b.why !== undefined).length;
       if (asks > Math.floor(beats.length / 2)) err(id, `${where} 有 ${asks} 句問為什麼（${beats.length} 句裡最多 ${Math.floor(beats.length / 2)}：大約兩三句一問，問太多就變成考試）`);

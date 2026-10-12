@@ -4,19 +4,20 @@
 "use strict";
 
 const TYPES = {
-  write: ["line", "color"],
-  transform: ["line", "color"],
+  write: ["line", "color", "tint"],
+  transform: ["line", "color", "tint"],
   circle: ["term", "color", "label"],
   underline: ["term", "color", "label"],
   box: ["term", "color", "label"],
   strike: ["term", "color", "label"],
+  focus: ["term", "color", "label"],
   arrow: ["from", "to", "color", "label"],
   plot: ["graph"],
   clear: [],
   keep: ["n"]
 };
-const COLORS = ["gold", "red", "blue", "green"];
-const MAX_ACTIONS = 4; // 一句最多幾個動作
+const COLORS = ["gold", "red", "blue", "green", "violet"];
+const MAX_ACTIONS = 5; // 一句最多幾個動作
 const MAX_LINES = 4; // 板上同時最多幾行（一張圖算 2 行）
 const LINE_MAX = 32; // 一行看得到的字（TeX 原始碼不算）
 const LABEL_MAX = 8;
@@ -56,7 +57,28 @@ function termsIn(src) {
   return out;
 }
 
-function create({ katex, board, cjkLen, checkGraph }) {
+// on：「字」或「字#2」（第 2 次出現）→ 在 say 裡的字元位置（以字元算，不是 UTF-16）；找不到 -1。src/course_board_layout.js 的 charOf 同一條規則
+function charOf(on, say) {
+  const m = /^(.*?)(?:#(\d+))?$/.exec(String(on));
+  let at = -1;
+  for (let k = 0; k < (Number(m[2]) || 1); k += 1) { at = String(say).indexOf(m[1], at + 1); if (at < 0) return -1; }
+  return [...String(say).slice(0, at)].length;
+}
+const occurrences = (word, say) => { let n = 0; for (let at = String(say).indexOf(word); at >= 0; at = String(say).indexOf(word, at + 1)) n += 1; return n; };
+// 那個詞被念到的毫秒：逐字時間點 w = [[字元位置, 毫秒], …]（build_narration.js）；落在一個詞的中間就照字數內插
+function anchorMs(on, say, w) {
+  const c = charOf(on, say);
+  if (c < 0 || !Array.isArray(w) || !w.length) return null;
+  let k = -1;
+  w.forEach(([wc], i) => { if (wc <= c) k = i; });
+  if (k < 0) return w[0][1];
+  const [c0, m0] = w[k];
+  const nx = w[k + 1];
+  if (c === c0 || !nx) return m0;
+  return Math.round(m0 + ((c - c0) / (nx[0] - c0)) * (nx[1] - m0));
+}
+
+function create({ katex, board, cjkLen, checkGraph, layout }) {
   // 拿掉 {{id:…}} 的標記，剩下畫面上的數學（數字規則、一般的 KaTeX 檢查用這個）
   const plain = (line) => board.tex(String(line)).replace(/\\htmlClass\{cvb-t-[a-z0-9]+\}/g, "");
   const idsIn = (line) => [...String(line).matchAll(ID)].map((m) => m[1]);
@@ -85,7 +107,8 @@ function create({ katex, board, cjkLen, checkGraph }) {
   }
 
   // 一節：照順序走每一句的動作；回傳要算進數字規則的字（標記拿掉）
-  function checkSection(sec, where, err) {
+  // narrated：這一課有旁白（say）→ 動作要錨在念到的詞上
+  function checkSection(sec, where, err, narrated) {
     const texts = [];
     let lines = []; // [{ ids: [...], plot: bool }]
     const has = (id) => lines.some((l) => l.terms.some(([k]) => k === id));
@@ -101,10 +124,12 @@ function create({ katex, board, cjkLen, checkGraph }) {
       if (b.board.length > MAX_ACTIONS) err(`${at0} 有 ${b.board.length} 個動作（一句 ≤ ${MAX_ACTIONS}）`);
       let lastAt = -1;
       let held = false;
+      const lastOn = {};
+      const clipCount = {};
       b.board.forEach((a, k) => {
         const at = `${at0}[${k}]`;
         if (!a || typeof a !== "object" || !TYPES[a.do]) { err(`${at} 的 do 要是 ${Object.keys(TYPES).join("／")}`); return; }
-        const odd = Object.keys(a).filter((key) => key !== "do" && key !== "at" && key !== "why" && !TYPES[a.do].includes(key));
+        const odd = Object.keys(a).filter((key) => key !== "do" && key !== "at" && key !== "on" && key !== "why" && !TYPES[a.do].includes(key));
         if (odd.length) err(`${at}（${a.do}）多了不認得的欄位：${odd.join("、")}`);
         if (a.at !== undefined) {
           if (typeof a.at !== "number" || !(a.at >= 0 && a.at < 1)) err(`${at} 的 at 要是 0 到 1 之間（不含 1）的數`);
@@ -118,6 +143,30 @@ function create({ katex, board, cjkLen, checkGraph }) {
           held = true;
         } else if (held) err(`${at}：why: true 的動作要放在最後（答了才畫的接在後面）`);
         if (a.color !== undefined && !COLORS.includes(a.color)) err(`${at} 的 color 要是 ${COLORS.join("／")}`);
+        // on：這個動作在念到哪個詞時開始。問著「為什麼」時（有 why 的句子、不是 why: true 的動作）念的是問句 why.say
+        const clip = b.why && !a.why ? "q" : "s";
+        const say = String((clip === "q" ? b.why && b.why.say : b.say) || "");
+        if (a.on !== undefined) {
+          if (a.at !== undefined) err(`${at}：on 跟 at 只能寫一個`);
+          const word = String(a.on).replace(/#\d+$/, "");
+          if (typeof a.on !== "string" || !word.trim()) err(`${at} 的 on 要是 say 裡的一小段字`);
+          else if (!say) err(`${at} 的 on：這一句沒有${clip === "q" ? "問句的旁白（why.say）" : " say"}`);
+          else if (charOf(a.on, say) < 0) err(`${at} 的 on「${a.on}」不在${clip === "q" ? "問句（why.say）" : " say"}裡：「${say}」`);
+          else if (!/#\d+$/.test(a.on) && occurrences(word, say) > 1) err(`${at} 的 on「${a.on}」在${clip === "q" ? "問句" : " say"}裡出現 ${occurrences(word, say)} 次：寫「${word}#2」指定第幾次`);
+          else {
+            const c = charOf(a.on, say);
+            if (c <= (lastOn[clip] === undefined ? -1 : lastOn[clip])) err(`${at} 的 on「${a.on}」要在前一個動作的 on 之後（照念的順序）`);
+            lastOn[clip] = c;
+          }
+        } else if (narrated && (clipCount[clip] || 0) > 0 && a.at === undefined) err(`${at}（${a.do}）：有旁白的課，每一段第一個以外的動作要寫 on（念到哪個詞開始）`);
+        clipCount[clip] = (clipCount[clip] || 0) + 1;
+        if (a.tint !== undefined) {
+          if (!a.tint || typeof a.tint !== "object" || Array.isArray(a.tint)) err(`${at} 的 tint 要是 { id: 顏色 }`);
+          else Object.entries(a.tint).forEach(([id, col]) => {
+            if (!COLORS.includes(col)) err(`${at} 的 tint.${id} 要是 ${COLORS.join("／")}`);
+            if (typeof a.line === "string" && !idsIn(a.line).includes(id)) err(`${at} 的 tint.${id}：這一行沒有 {{${id}:…}}`);
+          });
+        }
         if (a.label !== undefined) {
           if (typeof a.label !== "string" || !a.label.trim() || /\$/.test(a.label)) err(`${at} 的 label 要是一小段純文字（不寫 $）`);
           else if (cjkLen(a.label) > LABEL_MAX) err(`${at} 的 label「${a.label}」超過 ${LABEL_MAX} 字`);
@@ -135,7 +184,7 @@ function create({ katex, board, cjkLen, checkGraph }) {
           if (terms) same(at, terms, -1);
           if (terms && a.do === "write") lines.push({ terms, plot: false });
           else if (terms && eq >= 0) lines[eq] = { terms, plot: false };
-        } else if (["circle", "underline", "box", "strike"].includes(a.do)) need(a.term, "term");
+        } else if (["circle", "underline", "box", "strike", "focus"].includes(a.do)) need(a.term, "term");
         else if (a.do === "arrow") {
           need(a.from, "from");
           need(a.to, "to");
@@ -165,7 +214,7 @@ function create({ katex, board, cjkLen, checkGraph }) {
   // 自測：每一條壞的都要被擋、好的那一條要零錯誤（規則改壞了在這裡就紅，不等某一課碰到）
   function selfTest() {
     const fails = [];
-    const run = (beats) => { const got = []; checkSection({ beats }, "自測", (m) => got.push(m)); return got; };
+    const run = (beats, narrated) => { const got = []; checkSection({ beats }, "自測", (m) => got.push(m), narrated); return got; };
     const w = (line) => ({ do: "write", line });
     const good = run([
       { board: [w("$\\frac{d}{dx}{{o:(x^2+1)}}^{{{n:4}}}$"), { do: "circle", term: "o", label: "外層" }] },
@@ -175,6 +224,12 @@ function create({ katex, board, cjkLen, checkGraph }) {
       { why: {}, board: [w("$a$"), { ...w("$b$"), why: true }] }
     ]);
     if (good.length) fails.push(`自測：好的黑板被擋了：${good[0]}`);
+    const said = run([
+      { say: "外層微分，裡層原封不動，外層再乘。", board: [{ ...w("$\\frac{d}{dx}{{o:(x^2+1)}}^{{{n:4}}}$"), tint: { o: "blue", n: "violet" } }, { do: "circle", term: "o", on: "裡層" }, { do: "focus", term: "n", on: "外層#2" }] },
+      { say: "先問。", why: { say: "為什麼可以？" }, board: [{ do: "clear" }, { ...w("$b$"), on: "可以" }, { ...w("$c$"), why: true }, { ...w("$d$"), why: true, on: "問" }] }
+    ], true);
+    if (said.length) fails.push(`自測：好的旁白錨點被擋了：${said[0]}`);
+    if (anchorMs("外層", "外層微分", [[0, 50], [2, 400]]) !== 50 || anchorMs("層", "外層微分", [[0, 50], [2, 400]]) !== 225 || charOf("層#2", "外層裡層") !== 3) fails.push("自測：anchorMs／charOf 算錯");
     const plot = { do: "plot", graph: { window: [0, 1, 0, 1], curves: [{ expr: "x" }] } };
     [
       ["不認得的動作", [{ board: [{ do: "fade", line: "$x$" }] }], /do 要是/],
@@ -186,7 +241,7 @@ function create({ katex, board, cjkLen, checkGraph }) {
       ["{{ 被單一個 } 收掉", [{ board: [w("${{a:x+1}$")] }], /沒收好/],
       ["{{ 到最後都沒收", [{ board: [w("${{a:x+1$")] }], /沒收好|KaTeX/],
       ["{{ 寫在 $ 外面", [{ board: [w("{{a:x}} 是 $x$")] }], /要寫在/],
-      ["太多動作", [{ board: [w("$a$"), w("$b$"), { do: "keep", n: 1 }, w("$c$"), w("$d$")] }], /一句 ≤ 4/],
+      ["太多動作", [{ board: [w("$a$"), w("$b$"), { do: "keep", n: 1 }, w("$c$"), w("$d$"), { do: "keep", n: 1 }] }], /一句 ≤ 5/],
       ["板上太多行", [{ board: [w("$a$"), w("$b$"), w("$c$")] }, { board: [w("$d$"), w("$e$")] }], /最多 4/],
       ["一行太長", [{ board: [w("這一行寫得實在太長了".repeat(4))] }], /超過 32 字/],
       ["at 倒退", [{ board: [{ ...w("$a$"), at: 0.5 }, { ...w("$b$"), at: 0.2 }] }], /要比前面的動作大/],
@@ -203,15 +258,52 @@ function create({ katex, board, cjkLen, checkGraph }) {
       ["變形時同一個 id 不同內容", [{ board: [w("${{a:x+1}}$"), { do: "transform", line: "${{a:x+2}}$" }] }], /內容不一樣/],
       ["why: true 用在沒有 why 的句子", [{ board: [{ ...w("$a$"), why: true }] }], /只能用在有/],
       ["why: true 不在最後", [{ why: {}, board: [{ ...w("$a$"), why: true }, w("$b$")] }], /要放在最後/],
-      ["空的 board", [{ board: [] }], /非空/]
-    ].forEach(([name, beats, want]) => {
-      const got = run(beats);
+      ["空的 board", [{ board: [] }], /非空/],
+      ["on 不在 say 裡", [{ say: "外層微分。", board: [w("$a$"), { ...w("$b$"), on: "裡層" }] }], /不在/, true],
+      ["on 出現兩次沒寫 #n", [{ say: "外層，外層。", board: [w("$a$"), { ...w("$b$"), on: "外層" }] }], /出現 2 次/, true],
+      ["on 倒退", [{ say: "外層，裡層。", board: [{ ...w("$a$"), on: "裡層" }, { ...w("$b$"), on: "外層" }] }], /之後/, true],
+      ["on 跟 at 都寫", [{ say: "外層。", board: [{ ...w("$a$"), on: "外層", at: 0.2 }] }], /只能寫一個/, true],
+      ["有旁白沒錨", [{ say: "外層，裡層。", board: [w("$a$"), w("$b$")] }], /要寫 on/, true],
+      ["問著的動作錨在 say", [{ say: "裡層。", why: { say: "為什麼？" }, board: [w("$a$"), { ...w("$b$"), on: "裡層" }] }], /問句/, true],
+      ["tint 的 id 不在這一行", [{ board: [{ ...w("${{a:x}}$"), tint: { b: "blue" } }] }], /tint\.b/],
+      ["tint 顏色", [{ board: [{ ...w("${{a:x}}$"), tint: { a: "pink" } }] }], /tint\.a/]
+    ].forEach(([name, beats, want, narrated]) => {
+      const got = run(beats, narrated);
       if (!got.some((m) => want.test(m))) fails.push(`自測：「${name}」沒有被擋（${got.join("；") || "零錯誤"}）`);
     });
+    if (layout) fails.push(...layoutSelfTest(layout));
     return fails;
+  }
+
+  // 畫面的排版純函式（src/course_board_layout.js）：切式子、換行、時間表、記號的壽命、標籤避讓。改壞了這裡先紅（畫面要到 lint 才看得到）
+  function layoutSelfTest(LY) {
+    const f = [];
+    const eq = (name, got, want) => { if (JSON.stringify(got) !== JSON.stringify(want)) f.push(`自測（排版）：${name}：${JSON.stringify(got)}，要 ${JSON.stringify(want)}`); };
+    eq("最外層的 = 切開", LY.relSplit("\\frac{d}{dx}f(g(x))=f'(g(x))\\cdot g'(x)").length, 2);
+    eq("下標裡的 \\to 不切", LY.relSplit("\\lim_{h\\to0}\\frac{A}{h}=f(x)").length, 2);
+    eq("\\left( … \\right) 裡的 = 不切", LY.relSplit("\\left(a=b\\right)'=c").length, 2);
+    eq("\\le 與 \\left 分得開", LY.relSplit("0\\le f_n\\le\\frac{1}{2}").length, 3);
+    const u = LY.units("取 $k=g(x+h)-g(x)$，除以 $h$");
+    eq("字＋式子：在 = 前、中文標點後可以換行", u.units.length, 3);
+    eq("有中文的行不對齊", u.align, -1);
+    eq("純式子對齊到第一個關係符號", LY.units("$y=f(u)$").align, 1);
+    eq("⇒ 開頭的行不對齊", LY.units("$\\Rightarrow0\\le f_n$").align, -1);
+    const k = LY.compose([100, 100, 100], 250, 0.84, 1);
+    eq("太寬：換行、接續的那一列對齊到 = 底下", [k.rows, k.ind, k.s], [[[0, 1], [2]], [0, 100], 1]);
+    eq("只寬一點：縮（≥ 0.9）不換行", LY.compose([100, 120], 210, 0.84, 1).rows.length, 1);
+    const sc = LY.schedule([{ do: "write", line: "$a$" }, { do: "circle" }, { do: "circle" }], 3000, (a) => (a.do === "write" ? null : a === undefined ? null : 1000));
+    eq("時間表：錨點擠在一起 → 後一個往後推 160ms、前一個縮短", sc.map((x) => x[0]), [0, 1000, 1160]);
+    eq("時間表：最後一個在這一段結束前做完", sc[2][0] + sc[2][1] <= 2940, true);
+    eq("charOf：#2 是第二次出現", LY.charOf("層#2", "外層裡層"), charOf("層#2", "外層裡層"));
+    const M = LY.compile([{ board: [{ do: "write", line: "${{a:x}}$" }, { do: "circle", term: "a" }] }, { board: [{ do: "transform", line: "${{a:x}}+1$" }] }]);
+    eq("compile：變形取代同一個位置、同 id 的項飛過去", [M.states.map((s) => s.length), M.items[1].fly], [[1, 1, 1], [["a", 0]]]);
+    eq("compile：記號只活到下一句", M.anns[0].dieBeat, 1);
+    const lab = LY.placeLabel(20, 10, [50, 0, 60, 10], [0, 0, 100, 10], "below", [[30, 14, 80, 30]], [0, 0, 200, 100]);
+    eq("標籤：正下方有字就換位置（不碰任何障礙）", lab && !LY.hit(lab, [30, 14, 80, 30], 2), true);
+    return f;
   }
 
   return { checkSection, selfTest, plain };
 }
 
-module.exports = { create, tagsClosed, termsIn, TYPES, MAX_ACTIONS, MAX_LINES, LINE_MAX };
+module.exports = { create, tagsClosed, termsIn, charOf, anchorMs, TYPES, MAX_ACTIONS, MAX_LINES, LINE_MAX, COLORS };

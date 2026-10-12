@@ -79,6 +79,9 @@ const MANIFEST = path.join(ROOT, "media", "manifest.json");
 const manifest = fs.existsSync(MANIFEST) ? JSON.parse(fs.readFileSync(MANIFEST, "utf8")) : {};
 const narrationAsset = (manifest.assets || []).find((a) => /^narration\//.test(a.name));
 const narrationTag = narrationAsset ? narrationAsset.tag || manifest.tag : "";
+// 只出貨已經上傳（列在清單上）的那一支；新的還沒上傳就用 narration.json 留著的 prev（見 build_narration.js 檔頭）
+const published = new Set((manifest.assets || []).map((a) => a.name));
+const { anchorMs } = require("./lib/course_board_check.js");
 const narrationBase = narrationTag && ((manifest.releases || {})[narrationTag] || {}).stream
   ? `https://github.com/${manifest.repo}/releases/download/${narrationTag}/narration.`
   : "media/narration/";
@@ -124,7 +127,7 @@ function shipLesson(lesson) {
     // 有旁白錄音的課多帶 voice（這一課那一支 mp3 檔名裡的 f8），句子多帶 t（在那一支裡的 [起, 訖] 毫秒）；
     // 字改過、還沒重錄的句子不帶 t（播放時那一句只停一下）
     ...(Array.isArray(lesson.sections) && lesson.sections.length ? (() => {
-      const voice = voiceOf(narration, lesson);
+      const voice = voiceOf(narration, lesson, published);
       return {
         ...(voice ? { voice: voice.f } : {}),
         sections: lesson.sections.map((sec, si) => ({
@@ -132,7 +135,14 @@ function shipLesson(lesson) {
           beats: sec.beats.map((b, bi) => {
             const t = voice && voice.beats[`${si}-${bi}`];
             const q = voice && b.why && voice.beats[`${si}-${bi}q`]; // 證明節的問句：why.t
-            return { ...b, ...(t ? { t } : {}), ...(q ? { why: { ...b.why, t: q } } : {}) };
+            // 黑板：on（念到哪個詞）→ ms（從那一段錄音的開頭算）；問著的時候（不是 why: true 的動作）照問句的錄音
+            const board = Array.isArray(b.board) && voice ? b.board.map((a) => {
+              const key = b.why && !a.why ? `${si}-${bi}q` : `${si}-${bi}`;
+              const w = voice.words && voice.words[key];
+              const ms = a.on && w ? anchorMs(a.on, key.endsWith("q") ? b.why.say : b.say, w) : null;
+              return ms === null ? a : { ...a, ms };
+            }) : b.board;
+            return { ...b, ...(board ? { board } : {}), ...(t ? { t } : {}), ...(q ? { why: { ...b.why, t: q } } : {}) };
           })
         }))
       };
