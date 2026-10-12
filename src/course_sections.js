@@ -412,6 +412,9 @@
     const t0 = Date.now();
     const go = () => {
       if (!el.isConnected || userAt > t0) return;
+      // 正在輸入框裡打字（自己算的數學鍵盤）：預覽長高不准捲，不然下一顆鍵就點偏
+      const ae = document.activeElement;
+      if (ae && root.contains(ae) && /^(INPUT|TEXTAREA)$/.test(ae.tagName)) return;
       if (pointerDown) { pending = go; return; }
       if (Date.now() - userAt < 700) { window.setTimeout(go, 720 - (Date.now() - userAt)); return; }
       const fig = root.querySelector(".cv2-figure.is-widget");
