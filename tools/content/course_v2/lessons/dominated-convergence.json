@@ -54,13 +54,32 @@
       "title": "蓋一個屋頂",
       "beats": [
         { "show": ["單調：要遞增；Fatou：只給 $\\le$"], "note": "面積會推到無窮遠、或擠進尖峰。",
-          "say": "單調收斂定理要遞增，Fatou 只給小於等於，因為面積可能推到無窮遠，或擠進尖峰漏掉。" },
+          "say": "單調收斂定理要遞增，Fatou 只給小於等於，因為面積可能推到無窮遠，或擠進尖峰漏掉。",
+          "board": [
+            { "do": "write", "line": "單調：要遞增" },
+            { "do": "write", "line": "Fatou：只給 ${{le:\\le}}$" },
+            { "do": "circle", "term": "le" }
+          ] },
         { "show": ["所有 $|f_n|\\le g$，$\\int g<\\infty$"],
-          "say": "如果有一個固定的屋頂 g，所有 f n 的絕對值都待在它底下，而且屋頂底下面積有限呢？" },
+          "say": "如果有一個固定的屋頂 g，所有 f n 的絕對值都待在它底下，而且屋頂底下面積有限呢？",
+          "board": [
+            { "do": "clear" },
+            { "do": "plot", "graph": {"window": [0,4,0,2.2],"curves": [{"expr": "2/(1+x^2)", "color": "gold", "width": 3},{"expr": "exp(-2*x)", "color": "blue"},{"expr": "x*exp(-x)", "color": "green"}],"fills": [{"expr": "2/(1+x^2)", "from": 0,"to": 4,"color": "gold", "opacity": 0.18}],"labels": [{"x": 0.55,"y": 1.85,"text": "g", "anchor": "start"}]} },
+            { "do": "write", "line": "所有 $|f_n|\\le g$，${{i:\\int g<\\infty}}$" },
+            { "do": "underline", "term": "i", "label": "面積有限" }
+          ] },
         { "show": ["推不遠，也擠不高"], "note": "$g$ 的尾巴、小集合上的面積都很小。",
-          "say": "面積推不到無窮遠，因為 g 的尾巴面積很小；也擠不成無限高的尖峰。漏不掉，等號就回來了。" },
+          "say": "面積推不到無窮遠，因為 g 的尾巴面積很小；也擠不成無限高的尖峰。漏不掉，等號就回來了。",
+          "board": [
+            { "do": "write", "line": "推不遠，也擠不高" }
+          ] },
         { "show": ["$\\lim_{n\\to\\infty}\\int_X f_n\\,d\\mu=\\int_X f\\,d\\mu$"], "note": "$f_n\\to f$ a.e.；一個 $g$ 管住所有 $n$。",
-          "say": "這就是控制收斂定理：幾乎處處收斂，加一個可積的屋頂，就能交換。為什麼成立，最後那節逐步證明。" }
+          "say": "這就是控制收斂定理：幾乎處處收斂，加一個可積的屋頂，就能交換。為什麼成立，最後那節逐步證明。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "$\\lim_{n\\to\\infty}\\int_X f_n\\,d\\mu={{r:\\int_X f\\,d\\mu}}$" },
+            { "do": "box", "term": "r", "color": "green", "label": "極限搬進積分" }
+          ] }
       ],
       "check": 0
     },
@@ -68,11 +87,25 @@
       "title": "常數屋頂",
       "beats": [
         { "show": ["$f_n(x)=\\frac{nx}{1+n^2x^2}$ 在 $[0,1]$"], "note": "逐點極限 0。",
-          "say": "n x 除以一加 n 平方 x 平方，在零到一。固定 x，它被 n x 分之一壓住，逐點極限是零。" },
+          "say": "n x 除以一加 n 平方 x 平方，在零到一。固定 x，它被 n x 分之一壓住，逐點極限是零。",
+          "board": [
+            { "do": "write", "line": "$f_n(x)=\\frac{nx}{1+n^2x^2}$ 在 $[0,1]$" },
+            { "do": "write", "line": "$n\\to\\infty$：$f_n(x)\\to0$" }
+          ] },
         { "show": ["$1+(nx)^2\\ge2nx\\Rightarrow0\\le f_n\\le\\frac{1}{2}$"],
-          "say": "屋頂：一加 n x 平方至少是二 n x，所以每一個都不超過二分之一。" },
+          "say": "屋頂：一加 n x 平方至少是二 n x，所以每一個都不超過二分之一。",
+          "board": [
+            { "do": "write", "line": "$1+(nx)^2\\ge2nx$" },
+            { "do": "write", "line": "$\\Rightarrow0\\le f_n\\le{{h:\\frac{1}{2}}}$" },
+            { "do": "circle", "term": "h" }
+          ] },
         { "show": ["$g=\\frac{1}{2}$ 在 $[0,1]$ 上可積"], "note": "不是一致收斂：$f_n(\\frac{1}{n})=\\frac{1}{2}$。",
-          "say": "常數二分之一在零到一上可積，當屋頂剛好。注意它不是一致收斂，Riemann 那套用不上。" }
+          "say": "常數二分之一在零到一上可積，當屋頂剛好。注意它不是一致收斂，Riemann 那套用不上。",
+          "board": [
+            { "do": "keep", "n": 1 },
+            { "do": "write", "line": "${{g:g}}={{h:\\frac{1}{2}}}$ 在 $[0,1]$ 上可積" },
+            { "do": "box", "term": "g", "label": "屋頂" }
+          ] }
       ],
       "check": 1
     },
@@ -80,11 +113,24 @@
       "title": "有界收斂定理",
       "beats": [
         { "show": ["$\\mu(X)<\\infty$、$|f_n|\\le M$：取 $g=M$"],
-          "say": "特例：空間的測度有限，函數又都被同一個常數 M 壓住，就拿 M 當屋頂。" },
+          "say": "特例：空間的測度有限，函數又都被同一個常數 M 壓住，就拿 M 當屋頂。",
+          "board": [
+            { "do": "write", "line": "$\\mu(X)<\\infty$、$|f_n|\\le {{m:M}}$" },
+            { "do": "write", "line": "取 ${{g:g}}={{m:M}}$" },
+            { "do": "box", "term": "g", "label": "屋頂" }
+          ] },
         { "show": ["逐點（甚至 a.e.）收斂就好"],
-          "say": "這比 Riemann 要的一致收斂寬鬆得多，幾乎處處收斂就夠了。" },
+          "say": "這比 Riemann 要的一致收斂寬鬆得多，幾乎處處收斂就夠了。",
+          "board": [
+            { "do": "write", "line": "逐點（甚至 a.e.）收斂就好" }
+          ] },
         { "show": ["無窮區間：常數不可積"], "note": "反例 $\\chi_{[n,n+1]}$。",
-          "say": "可是在無窮長的區間上，常數的積分是無限大，不能當屋頂。滑走的方磚就是反例。" }
+          "say": "可是在無窮長的區間上，常數的積分是無限大，不能當屋頂。滑走的方磚就是反例。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "無窮區間：常數不可積", "color": "red" },
+            { "do": "write", "line": "反例 $\\chi_{[n,n+1]}$" }
+          ] }
       ],
       "check": 3
     },
@@ -92,11 +138,25 @@
       "title": "屋頂要自己找",
       "beats": [
         { "show": ["$f_n(x)=(1+\\frac{x}{n})^{-n}\\to e^{-x}$，$[0,\\infty)$"],
-          "say": "一加 n 分之 x 的負 n 次方，在零到無限大，逐點收斂到 e 的負 x 次方。" },
+          "say": "一加 n 分之 x 的負 n 次方，在零到無限大，逐點收斂到 e 的負 x 次方。",
+          "board": [
+            { "do": "write", "line": "$f_n(x)=(1+\\frac{x}{n})^{-n}\\to e^{-x}$" },
+            { "do": "write", "line": "在 $[0,\\infty)$" }
+          ] },
         { "show": ["$(1+\\frac{x}{n})^n\\ge(1+\\frac{x}{2})^2$"], "note": "$n\\ge2$，二項展開每一項都非負。",
-          "say": "n 大於等於二時，二項展開每一項都非負，丟掉後面的項，可以證明它至少是一加二分之 x 的平方。" },
+          "say": "n 大於等於二時，二項展開每一項都非負，丟掉後面的項，可以證明它至少是一加二分之 x 的平方。",
+          "board": [
+            { "do": "write", "line": "$(1+\\frac{x}{n})^n\\ge{{g:(1+\\frac{x}{2})^2}}$" },
+            { "do": "underline", "term": "g", "label": "n ≥ 2" }
+          ] },
         { "show": ["$g=(1+\\frac{x}{2})^{-2}$，$\\int_0^\\infty g=2$"],
-          "say": "所以屋頂取一加二分之 x 的負二次方，從零積到無限大是二，可積。" }
+          "say": "所以屋頂取一加二分之 x 的負二次方，從零積到無限大是二，可積。",
+          "board": [
+            { "do": "clear" },
+            { "do": "plot", "graph": {"window": [0,6,0,1.1],"curves": [{"expr": "(1+x/2)^(-2)", "color": "gold", "width": 3},{"expr": "exp(-x)", "color": "blue"}],"fills": [{"expr": "(1+x/2)^(-2)", "from": 0,"to": 6,"color": "gold", "opacity": 0.18}],"labels": [{"x": 1.2,"y": 0.62,"text": "g", "anchor": "start"}]} },
+            { "do": "write", "line": "$g=(1+\\frac{x}{2})^{-2}$，$\\int_0^\\infty g={{t:2}}$" },
+            { "do": "circle", "term": "t", "label": "可積" }
+          ] }
       ],
       "predict": {
         "ask": "$\\lim\\int_0^\\infty(1+\\frac{x}{n})^{-n}\\,dx$ 是？",
@@ -111,11 +171,23 @@
       "title": "找不到屋頂",
       "beats": [
         { "show": ["屋頂一定 $\\ge\\sup_n|f_n|$"], "note": "$\\sup_n|f_n|$ 不可積：沒有屋頂可用。",
-          "say": "能當屋頂的函數，一定不低於所有 f n 的上確界。所以就看這個上確界可不可積。" },
+          "say": "能當屋頂的函數，一定不低於所有 f n 的上確界。所以就看這個上確界可不可積。",
+          "board": [
+            { "do": "write", "line": "屋頂一定 $\\ge{{s:\\sup_n|f_n|}}$" },
+            { "do": "circle", "term": "s" }
+          ] },
         { "show": ["$f_n(x)=n x e^{-nx^2}$：$\\sup_n f_n(x)\\ge\\frac{e^{-2}}{x}$"],
-          "say": "n x 乘 e 的負 n x 平方，取 n 大約 x 平方分之一，可以證明上確界至少是 e 的負二次方除以 x。" },
+          "say": "n x 乘 e 的負 n x 平方，取 n 大約 x 平方分之一，可以證明上確界至少是 e 的負二次方除以 x。",
+          "board": [
+            { "do": "write", "line": "$f_n(x)=n x e^{-nx^2}$" },
+            { "do": "write", "line": "$\\sup_n f_n(x)\\ge{{b:\\frac{e^{-2}}{x}}}$" }
+          ] },
         { "show": ["$\\int_0^1(\\frac{1}{x})\\,dx=\\infty$"], "note": "結論也真的失敗：$\\frac{1}{2}\\ne0$。",
-          "say": "x 分之一在零到一的積分是無限大，找不到屋頂。結論也真的失敗：二分之一不等於零。" }
+          "say": "x 分之一在零到一的積分是無限大，找不到屋頂。結論也真的失敗：二分之一不等於零。",
+          "board": [
+            { "do": "write", "line": "$\\int_0^1(\\frac{1}{x})\\,dx={{i:\\infty}}$" },
+            { "do": "circle", "term": "i", "color": "red", "label": "沒有屋頂" }
+          ] }
       ],
       "check": 2
     },
@@ -124,9 +196,16 @@
       "proof": true, "of": 2, "skeleton": "構造",
       "beats": [
         { "show": ["對 $h_n=2g-|f_n-f|$ 用 Fatou"],
-          "say": "策略：Fatou 只給小於等於。把要證趨近零的東西放在負號後面，不等式的方向就對了。" },
+          "say": "策略：Fatou 只給小於等於。把要證趨近零的東西放在負號後面，不等式的方向就對了。",
+          "board": [
+            { "do": "write", "line": "對 ${{h:h_n}}=2g-{{d:|f_n-f|}}$ 用 Fatou" },
+            { "do": "underline", "term": "d", "label": "要證它→0" }
+          ] },
         { "show": ["$|f|\\le g$ a.e.，所以 $f$ 可積"],
-          "say": "先處理 f：每個 f n 都被 g 壓住，取極限之後 f 也被 g 壓住，所以 f 可積。" },
+          "say": "先處理 f：每個 f n 都被 g 壓住，取極限之後 f 也被 g 壓住，所以 f 可積。",
+          "board": [
+            { "do": "write", "line": "$|f|\\le g$ a.e.，所以 $f$ 可積" }
+          ] },
         { "show": ["$h_n=2g-|f_n-f|\\ge0$ a.e.", "$h_n\\to2g$ a.e."], "note": "$|f_n-f|\\le|f_n|+|f|\\le2g$。",
           "why": {
             "ask": "為什麼 $h_n\\ge0$？",
@@ -137,9 +216,20 @@
               { "label": "$g\\ge0$，所以 $2g$ 一定比較大", "why": "$g$ 非負不夠：要大過 $|f_n-f|$，得把 $|f_n|\\le g$ 與 $|f|\\le g$ 兩個上界加起來。" }
             ]
           },
-          "say": "三角不等式：f n 減 f 的絕對值，不超過兩者絕對值相加，也就是兩倍的 g。又因為 f n 趨近 f，h n 趨近兩倍的 g。" },
+          "say": "三角不等式：f n 減 f 的絕對值，不超過兩者絕對值相加，也就是兩倍的 g。又因為 f n 趨近 f，h n 趨近兩倍的 g。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "$h_n=2g-|f_n-f|{{z:\\ge0}}$ a.e." },
+            { "do": "write", "line": "$h_n\\to2g$ a.e." },
+            { "do": "write", "line": "$|f_n-f|\\le|f_n|+|f|\\le2g$", "color": "gold", "why": true }
+          ] },
         { "show": ["$\\int2g\\le\\liminf\\int h_n$", "$=\\int2g-\\limsup\\int|f_n-f|$"], "note": "Fatou；再用 $\\liminf(c-a_n)=c-\\limsup a_n$。",
-          "say": "對 h n 用 Fatou：兩倍 g 的積分，不超過 h n 積分的下極限，也就是兩倍 g 的積分減掉上極限。" },
+          "say": "對 h n 用 Fatou：兩倍 g 的積分，不超過 h n 積分的下極限，也就是兩倍 g 的積分減掉上極限。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "$\\int2g\\le\\liminf\\int h_n$" },
+            { "do": "write", "line": "$={{b:\\int2g}}-{{l:\\limsup\\int|f_n-f|}}$" }
+          ] },
         { "show": ["消去 $\\int2g$：$\\limsup\\int|f_n-f|\\le0$"], "note": "$\\int g=\\infty$ 時這裡是 $\\infty-\\infty$。",
           "why": {
             "ask": "為什麼可以兩邊消去 $\\int2g$？",
@@ -150,9 +240,20 @@
               { "label": "因為 $\\int|f_n-f|\\ge0$", "why": "非負是下一步才用（把上極限夾到 $0$）；能不能消去，看的是 $\\int2g$ 是不是有限數。" }
             ]
           },
-          "say": "因為 g 可積，兩倍 g 的積分是有限數，才能兩邊消掉，得到上極限不超過零。" },
+          "say": "因為 g 可積，兩倍 g 的積分是有限數，才能兩邊消掉，得到上極限不超過零。",
+          "board": [
+            { "do": "write", "line": "消去 $\\int2g$：$\\limsup\\int|f_n-f|\\le0$", "color": "gold" },
+            { "do": "circle", "term": "b", "label": "要 ∫g<∞", "why": true },
+            { "do": "write", "line": "$\\int g=\\infty$ 時：${{x:\\infty-\\infty}}$", "why": true },
+            { "do": "strike", "term": "x", "why": true }
+          ] },
         { "show": ["$|\\int f_n-\\int f|\\le\\int|f_n-f|\\to0$"],
-          "say": "絕對值的積分非負、上極限又不超過零，所以趨近零；差的積分被它壓住，極限搬進積分了。" }
+          "say": "絕對值的積分非負、上極限又不超過零，所以趨近零；差的積分被它壓住，極限搬進積分了。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "${{q:|\\int f_n-\\int f|}}\\le\\int|f_n-f|\\to0$" },
+            { "do": "box", "term": "q", "color": "green", "label": "證完" }
+          ] }
       ],
       "where": {
         "ask": "下面幾步裡，哪一步要靠 $\\int g<\\infty$？",

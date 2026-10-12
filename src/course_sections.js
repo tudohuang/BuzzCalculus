@@ -78,6 +78,10 @@
   // 證明節的互動在 src/course_proof.js（data-lazy="secproof"）
   const PF = () => window.BuzzCourseProof;
   let pfail = false;
+  // 黑板（beat.board）在 src/course_board.js（data-lazy="board"）：有黑板的課才抓；抓不到就照 show 的字
+  const BD = () => window.BuzzBoard;
+  let bfail = false;
+  const boarded = (s) => s.beats.some((b) => b.board);
   let ffail = false;
   // 第 bi 句的「為什麼」還沒答：note 不出、不給下一句、旁白念完問句就停
   const asking = (api, si, bi) => { const b = api.data.sections[si].beats[bi]; return Boolean(b && b.why && PF() && !(api.state.sec.why[`${si}-${bi}`] || {}).open); };
@@ -388,6 +392,7 @@
       const fig = (api.data.figures || [])[k];
       if (node && fig) animate(node, fig, from, to, api.deps.escapeAttr);
     }
+    if (BD()) BD().sync(api, art);
     sec.fresh = -1;
     mountVideo(api, art);
     show();
@@ -405,18 +410,23 @@
     const go = () => {
       if (!el.isConnected || userAt > t0) return;
       if (pointerDown) { pending = go; return; }
-      if (Date.now() - userAt < 700) { window.setTimeout(go, 750); return; }
+      if (Date.now() - userAt < 700) { window.setTimeout(go, 720 - (Date.now() - userAt)); return; }
       const fig = root.querySelector(".cv2-figure.is-widget");
       const top = (parseFloat(root.style.getPropertyValue("--cv2s-top")) || 0) + (fig && getComputedStyle(fig).position === "sticky" ? fig.offsetHeight : 0) + 8;
       const bottom = (dock ? dock.getBoundingClientRect().top : window.innerHeight - navH) - 8;
       const a = el.getBoundingClientRect();
       const z = (root.querySelector(".cv2s-bar:not(:empty)") || root.querySelector("[data-cv2s-act]") || el).getBoundingClientRect();
-      const d = z.bottom > bottom ? Math.min(z.bottom - bottom, a.top - top) : Math.min(0, a.top - top);
+      // 黑板最下面那一行（剛寫的）也要看得到：連同這一句放得下才算
+      const bl = anchor !== "act" && root.querySelector(".cvb-l:last-child");
+      const lt = bl ? bl.getBoundingClientRect().top : a.top;
+      const at = a.bottom - lt <= bottom - top ? Math.min(a.top, lt) : a.top;
+      const d = z.bottom > bottom ? Math.min(z.bottom - bottom, at - top) : Math.min(0, at - top);
       if (Math.abs(d) >= 1) window.scrollTo({ top: window.scrollY + d, behavior: reduced() ? "auto" : "smooth" });
     };
     go();
     window.setTimeout(go, 350); // 進場動畫（往上 6px）結束後再對一次
-    if (window.ResizeObserver) { grow = new ResizeObserver(go); grow.observe(el); }
+    // 黑板在句子上面長高（寫上一行、標籤撐開）也會把句子往下推：一起看
+    if (window.ResizeObserver) { grow = new ResizeObserver(go); grow.observe(el); const bd = root.querySelector(".cvb"); if (bd) grow.observe(bd); }
   }
   // 換節：播放開著就從第一句接著念；整節出完過就停在動作前
   function resume(api) {
@@ -571,12 +581,19 @@
       const value = sec.anim && sec.anim.k === k ? sec.anim.from : st.figs[k];
       return Figures().renderFigure(fig, k, value, escapeAttr, escapeHtml);
     }).join("");
-    const beats = s.beats.slice(0, shown).map((b, bi) => `
-      <li class="cv2s-beat ${bi === shown - 1 ? "is-now" : ""} ${bi === sec.fresh ? "is-new" : ""}" data-beat="${bi}">
-        ${b.show.map((line) => `<p class="cv2s-show">${fmt(line)}</p>`).join("")}
-        ${b.note && !asking(api, si, bi) ? `<p class="cv2s-note">${rich(b.note, data)}</p>` : ""}
-        ${subs && b.say && bi === shown - 1 ? `<p class="cv2s-say" data-cv2s-say>${escapeHtml(pend ? b.why.say : b.say)}</p>` : ""}
-      </li>`).join("");
+    // 有黑板的句子：show 留給螢幕閱讀器（cvb-sr），畫面上是黑板；沒有 note 也沒有字幕的那一句收成 0 高
+    const bd = BD() && boarded(s);
+    const beats = s.beats.slice(0, shown).map((b, bi) => {
+      const note = b.note && !asking(api, si, bi) ? `<p class="cv2s-note">${rich(b.note, data)}</p>` : "";
+      const sub = subs && b.say && bi === shown - 1 ? `<p class="cv2s-say" data-cv2s-say>${escapeHtml(pend ? b.why.say : b.say)}</p>` : "";
+      const sr = bd && b.board;
+      return `
+      <li class="cv2s-beat ${bi === shown - 1 ? "is-now" : ""} ${bi === sec.fresh ? "is-new" : ""} ${sr && !note && !sub ? "cvb-bare" : ""}" data-beat="${bi}">
+        ${b.show.map((line) => `<p class="cv2s-show${sr ? " cvb-sr" : ""}">${fmt(line)}</p>`).join("")}
+        ${note}
+        ${sub}
+      </li>`;
+    }).join("");
     const v = data.video;
     const video = all && s.video && v ? `<figure class="cv2-figure cv2-video" data-cv2-video="${escapeAttr(v.id)}" data-duration="${v.duration}"><div class="cv2-video-box"></div><figcaption>${escapeHtml(v.caption)}</figcaption></figure>` : "";
     let action = "";
@@ -597,6 +614,7 @@
       <article class="cv2s-sec" aria-label="第 ${si + 1} 節">
         <h3><small>${si + 1} / ${n}</small>${fmt(s.title)}${P && s.proof ? P.tag(api, s) : ""}</h3>
         ${figs}
+        ${bd ? `<div class="cvb-slot" data-cvb-slot data-action="course-s-next" data-how="tap"></div>` : ""}
         <ol class="cv2s-beats" data-action="course-s-next" data-how="tap" aria-live="polite">${beats}</ol>
         ${video}
         ${action}
@@ -617,9 +635,10 @@
     last = api;
     const { m, data, records, head, deps } = api;
     const { escapeAttr, icon } = deps;
-    // 有證明節先抓 course_proof.js（抓不到：照一般的節畫）
-    if (!PF() && !pfail && data.sections.some((s) => s.proof)) {
-      Promise.resolve(deps.ensureLazy("secproof")).then(deps.render, () => { pfail = true; deps.render(); });
+    // 有證明節先抓 course_proof.js、有黑板先抓 course_board.js（抓不到：照一般的節畫）
+    const need = !PF() && !pfail && data.sections.some((s) => s.proof) ? "secproof" : !BD() && !bfail && data.sections.some(boarded) ? "board" : "";
+    if (need) {
+      Promise.resolve(deps.ensureLazy(need)).then(deps.render, () => { if (need === "board") bfail = true; else pfail = true; deps.render(); });
       return `<main class="screen lazy-loading" aria-busy="true"><section class="course-lesson cv2-lesson cv2s">${head}</section></main>`;
     }
     const sec = visitOf(api);
@@ -657,6 +676,7 @@
       const fig = (api.data.figures || [])[k];
       if (node && fig) animate(node, fig, from, to, api.deps.escapeAttr);
     }
+    if (BD()) BD().sync(api, root);
     sec.fresh = -1;
     // 手機的頂列 sticky、橫跨整個寬度：黏著的圖停在它下面
     const topbar = document.querySelector(".topbar");
