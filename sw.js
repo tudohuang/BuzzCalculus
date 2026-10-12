@@ -143,7 +143,7 @@ const REVISIONS = {
   "./src/app.js": "349a432eff",
   "./src/board_store.js": "228a8b7886",
   "./src/course.js": "8944e3c475",
-  "./src/course_board.js": "31ced08f47",
+  "./src/course_board.js": "af8cf95f88",
   "./src/course_board_layout.js": "0dadd8a383",
   "./src/course_board_plot.js": "25bed23bd6",
   "./src/course_boss.js": "ba97f029a4",

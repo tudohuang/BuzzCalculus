@@ -178,7 +178,8 @@
           if (vx && b[3] <= box[1] + 0.5) gaps[1] = Math.min(gaps[1], box[1] - b[3]);
           if (vx && b[1] >= box[3] - 0.5) gaps[3] = Math.min(gaps[3], b[1] - box[3]);
         });
-        v.terms[id] = { el: t, box, row: row < 0 ? 0 : row, gaps, leaves: mine };
+        // er：那一項自己的框（飛的複製對的是它：複製出來的結構一樣、框也一樣，墨水框在不同的上下文裡會差一點）
+        v.terms[id] = { el: t, box, er: rel(R(t), o), row: row < 0 ? 0 : row, gaps, leaves: mine };
       });
       const al = v.u.align;
       v.alignable = al >= 0 && !v.wrapped;
@@ -217,6 +218,10 @@
       return { g, paths: [...g.children], lab: ga.lab ? l : null, term: term && term.el, col };
     });
     const fly = flights(M, V, st.pos, c);
+    // 給分節的捲動對位（course_sections.js 找 .cvb-l:last-child）：一個看不見的點，放在現在最下面那一行的頂
+    B.lastEl = mk("div", "cvb-l");
+    B.lastEl.style.cssText = "position:absolute;left:0;top:0;width:1px;height:1px";
+    c.appendChild(B.lastEl);
     B.M = M;
     B.V = V;
     B.L = { pos: st.pos, sv, fly, H };
@@ -312,11 +317,10 @@
         el.appendChild(cp);
         el.style.opacity = "0";
         c.appendChild(el);
-        const o = R(el);
-        const own = union(leavesOf(el).map((n) => rel(inkOf(n), o))) || [0, 0, o.width, o.height];
+        const own = rel(R(cp), R(el));
         const g = it.born;
         const srcPos = pos[g - 1] && pos[g - 1][f.src];
-        return { el, own, a: srcPos ? shift(f.s.box, srcPos) : null, z: shift(f.t.box, pos[g][it.n]), tEl: f.t.el, sEl: f.s.el, moved: it.from && f.src === it.from.n };
+        return { el, own, a: srcPos ? shift(f.s.er, srcPos) : null, z: shift(f.t.er, pos[g][it.n]), tEl: f.t.el, sEl: f.s.el, moved: it.from && f.src === it.from.n };
       }).filter((f) => f.a);
     });
     return out;
@@ -418,6 +422,7 @@
         if (v.pp !== pp) { v.pp = pp; window.BuzzBoardPlot.apply(v, pp); }
       }
     });
+    if (B.lastEl) setS(B.lastEl, "top", `${Math.max(0, ...next.map((n) => L.pos[g < M.acts.length ? g : g - 1][n][1]))}px`);
     // 飛：從舊的位置（與大小）滑到新的位置；落地前新的那一份藏著，變形時舊的那一份一開始就交給複製
     Object.values(L.fly).forEach((fs) => fs.forEach((f) => { setS(f.tEl, "opacity", ""); if (f.moved) setS(f.sEl, "opacity", ""); }));
     flyNow.forEach((f) => {
