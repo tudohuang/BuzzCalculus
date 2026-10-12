@@ -102,7 +102,11 @@ const BUDGETS = {
   // 2026-10-12 調高 44 → 46KB：黑板（board）與自己算（solve）兩個平行做的功能合併後各留了一組掛鉤
   // （載入各自的 lazy 群組、把 show 換成黑板、solve 動作轉給 course_solve.js、捲動對位），合起來 44.5KB。
   // 引擎本體都在自己的群組（course_board.js、course_solve.js），這裡只有掛鉤。下一次再撞頂：把旁白播放（約 9KB）拆成自己一支，不是再調數字。
+  // 2026-10-13 照上一行說的做：旁白播放（dock、播放／暫停、語速、字幕、念完自己出下一句）搬去 course_narration.js（narration 組），
+  // 分節這一組 45 → 32KB；空出來的地方給「為什麼／動作出現時黑板最後一行跟問題都要看得到」的捲動對位。上限不動。
   "延後載入：課程分節": { pattern: /^$/, budget: 46 * 1024, lazy: "sections" },
+  // 2026-10-13 新增：分節的旁白播放（course_narration.js，約 16KB）。有 say 的課才抓；行為跟搬出來之前一模一樣（e2e_course_sections 的旁白那一段）。上限留約兩成五。
+  "延後載入：分節旁白": { pattern: /^$/, budget: 20 * 1024, lazy: "narration" },
   // 2026-10-10 新增：分節的結算畫面（course_finish.js，約 4KB）。讀到一課的最後一節才抓（點「完成這一課」時通常已經到了）。
   "延後載入：分節結算": { pattern: /^$/, budget: 8 * 1024, lazy: "secfinish" },
   // 2026-10-10 新增：證明節（sections[].proof）的互動 course_proof.js —— 句子的「這一步為什麼成立？」、把證明排回順序、

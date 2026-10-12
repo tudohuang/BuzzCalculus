@@ -280,6 +280,13 @@ async function run() {
     const whyG = await evaluate(`const m = window.__b.model(); return m.acts.findIndex((x) => x.b === ${P_BI} && x.why);`);
     const q0 = await evaluate(`return { st: window.__b.st(), asking: Boolean(document.querySelector('[data-cv2s-act="why"]')) };`);
     check("問「為什麼」的時候：游標停在第一個 why: true 的動作前（答案沒畫）", q0.asking && q0.st.at === P_BI && q0.st.g === whyG && q0.st.q === 0 && !q0.st.running, JSON.stringify(q0));
+    // 問題出現在黑板底下：黑板最後一行跟問題都要看得到（放不下時先顧問題、最後一行至少露出下緣）
+    await sleep(1200);
+    const vis = await evaluate(`const top = (document.querySelector(".topbar") || { getBoundingClientRect: () => ({ bottom: 0 }) }).getBoundingClientRect().bottom; const dock = document.querySelector(".cv2s-dock .cv2s-voice"); const bot = dock ? dock.getBoundingClientRect().top : innerHeight;
+      const q = document.querySelector('[data-cv2s-act="why"]').getBoundingClientRect(); const l = window.__b.board().querySelector(".cvb-l:last-child").getBoundingClientRect();
+      return { top: Math.round(top), bot: Math.round(bot), q: [Math.round(q.top), Math.round(q.bottom)], l: [Math.round(l.top), Math.round(l.bottom)] };`);
+    const fits = vis.q[1] - vis.l[0] <= vis.bot - vis.top;
+    check(`問「為什麼」時：${fits ? "黑板最後一行與問題都在畫面裡" : "問題整個在畫面裡、黑板最後一行露出下緣"}`, vis.q[0] >= vis.top - 1 && vis.q[1] <= vis.bot + 1 && (fits ? vis.l[0] >= vis.top - 1 : vis.l[1] > vis.top + 4), JSON.stringify(vis));
     await see();
     await sleep(250);
     const q1 = await evaluate(`return window.__b.st();`);
@@ -332,6 +339,20 @@ async function run() {
       const it = c.querySelector(".cvb-i"); it.style.transform = "translate(" + (cr.width - 20) + "px,10px)";
       const b = window.__bl.measure("負向").problems; window.BuzzBoard.debug.release(); window.BuzzBoard.debug.rebuild(); return { a, b };`);
     check("lint 抓得到：標籤搬到字上 → 「壓到」；一行搬出板外 → 「跑出黑板」", neg.a.some((p) => /壓到/.test(p)) && neg.b.some((p) => /跑出黑板/.test(p)), JSON.stringify({ a: neg.a.slice(0, 2), b: neg.b.slice(0, 2) }));
+
+    /* ── 錯的式子不能沒標記地留著：劃掉的記號跟著那一行活過下一句；lint 抓得到記號不見 ── */
+    const W_SI = CHAIN.sections.findIndex((s) => s.beats.length > 1 && (s.beats[0].board || []).some((a) => a.do === "strike"));
+    check(`到第一個有「劃掉」的節（第 ${W_SI + 1} 節）`, W_SI >= 0 && await go(W_SI, CHAIN.id));
+    await evaluate(`return window.__b.settle();`);
+    await advance(2);
+    await evaluate(`return window.__b.settle();`);
+    const ws = await evaluate(`const m = window.__b.model(); const a = m.anns.findIndex((x) => x.wrong && x.b === 0); return { a, st: window.__b.st(), mark: window.__b.mark(a) };`);
+    check("劃掉（錯）的記號到下一句還在（別的記號下一句就收）：那一行沒有變成沒標記的錯式子", ws.a >= 0 && ws.st.at === 1 && ws.mark && ws.mark.off === 0 && ws.mark.op === 1, JSON.stringify(ws));
+    await evaluate(`(${pageHelpers.toString()})(16, 13, 0.75); return 1;`);
+    const wneg = await evaluate(`const m = window.__b.model(); const a = m.anns.findIndex((x) => x.wrong && x.b === 0); const n = m.acts.length; window.BuzzBoard.debug.show(n, 0, 1, 1);
+      const ok = window.__bl.measure("錯", n).problems; window.__b.board().querySelector('.cvb-ink g[data-a="' + a + '"]').style.opacity = "0";
+      const bad = window.__bl.measure("錯", n).problems; window.BuzzBoard.debug.release(); return { ok, bad };`);
+    check("lint：錯的記號在 → 沒問題；把它藏起來 → 「記號卻不見了」", !wneg.ok.length && wneg.bad.some((p) => /記號卻不見了/.test(p)), JSON.stringify(wneg));
 
     /* ── 幀時間：動畫中每格的工作 ── */
     await evaluate(`if (!window.__rafWrapped) { const orig = window.requestAnimationFrame.bind(window); window.__work = []; window.requestAnimationFrame = (cb) => orig((ts) => { const t0 = performance.now(); cb(ts); window.__work.push(performance.now() - t0); }); window.__rafWrapped = true; } return 1;`);

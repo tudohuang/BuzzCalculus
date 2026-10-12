@@ -259,7 +259,8 @@ async function run() {
     check("點句子那一塊出第三句", (await evaluate(`return window.__s.beats();`)) === 3);
     await key("ArrowRight", "ArrowRight", 39);
     const s1 = FIRST.sections[0];
-    check("→ 鍵出下一句", (await evaluate(`return window.__s.beats();`)) === 4);
+    // 重畫排在下一格（rAF）：輪詢等，不靠固定的等待
+    check("→ 鍵出下一句", await waitFor(`window.__s.beats() === 4`, 3000));
     const midBeat = await evaluate(`const now = document.querySelector("[data-cv2s] .cv2s-beat.is-now"); return { last: now && now.dataset.beat, note: window.__s.text("[data-cv2s] .cv2s-beat.is-now .cv2s-note"), act: Boolean(document.querySelector('[data-cv2s-act="check"]')), bar: window.__s.text("[data-cv2s-next]") };`);
     check("最新那一句亮著、白話那一句在畫面上", midBeat.last === String(s1.beats.length - 1) && midBeat.note.length > 0, JSON.stringify(midBeat));
     check("句子都出來之後才有結尾的小測，按鈕變「下一節」", midBeat.act && /下一節/.test(midBeat.bar), midBeat.bar);
@@ -774,6 +775,7 @@ async function run() {
     await tap(".cv2s-dot:nth-child(1)");
     await waitFor(`window.__s.si() === 0`);
     await key("ArrowRight", "ArrowRight", 39);
+    await waitFor(`window.__s.beats() === 2`, 3000);
     const desk = await evaluate(`const col = window.__s.root().getBoundingClientRect(); const main = document.querySelector("main.screen").getBoundingClientRect(); return { w: Math.round(col.width), center: Math.abs((col.left + col.right) / 2 - (main.left + main.right) / 2), overflow: window.__s.overflow(), beats: window.__s.beats() };`);
     check("桌機：分節欄最寬 40em、在內容區置中", desk.w <= 720 && desk.center < 2, `${desk.w}px · 偏 ${desk.center.toFixed(1)}px`);
     check("桌機：→ 鍵出下一句", desk.beats === 2, String(desk.beats));
