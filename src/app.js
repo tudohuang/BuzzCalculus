@@ -1052,6 +1052,7 @@
     course_lesson_complete: t("課程第一次完成一課（課 id、層級）"),
     course_boss_view: t("看到章首魔王題（章碼）"),
     course_boss_solve: t("解開章首魔王題（章碼、是不是讀到 payoff 之前）"),
+    course_solve: t("課程自己算（課 id、第一次就對、是不是隔天回溫）"),
     // 計畫
     // 內容
     report_submit: t("回報題目"),
@@ -3090,7 +3091,7 @@
     // start-srs-review，而「錯題到期」四個字在一頁裡出現五次。
     const srsCard = "";
     const retestCard = renderHomePathRetestCard(records);
-    const refreshCard = renderHomeSkillRefreshCard(records);
+    const refreshCard = renderHomeSkillRefreshCard(records) + courseUI.renderReviewCard(records);
     // 連勝卡與任務卡要等到真的有東西可看。練完第一局就看到
     // 「連勝 0 天 · 盾牌可用 · Lv.1 0/100 XP · 分享成就卡」，那是四格空白 ——
     // 跟頂部那排 0 是同一個病：遊戲化的外殼跑在進度前面。
@@ -5058,7 +5059,7 @@
   const plUI = window.BuzzProofLabUI.create({ escapeHtml, escapeAttr, icon, proofs });
 
   // ── 課程（內容、畫面、狀態都在 course.js：中文介面是新版課程，英文介面是舊的 25 課）──
-  const courseUI = window.BuzzCourseUI.create({ escapeHtml, escapeAttr, icon, referenceAnswerHTML, loadRecords, saveRecords, ensureLazy, startQuiz, render, go: (next) => { view = next; render(); window.scrollTo(0, 0); }, noteCourseRead, focusModeOn, abilityProfile, track: trackEvent, xpLevel: xpLevelInfo, streakDays: (r) => practiceStreakInfo(r, activityCounts(r)).streak });
+  const courseUI = window.BuzzCourseUI.create({ escapeHtml, escapeAttr, icon, referenceAnswerHTML, loadRecords, saveRecords, ensureLazy, startQuiz, render, go: (next) => { view = next; render(); window.scrollTo(0, 0); }, noteCourseRead, focusModeOn, abilityProfile, checkAnswer, answerToTex, updateAnswerRecords, webworkKeys, gentleStartActive, track: trackEvent, xpLevel: xpLevelInfo, streakDays: (r) => practiceStreakInfo(r, activityCounts(r)).streak });
   const renderCourse = () => courseUI.renderIndex(loadRecords());
   const renderCourseLesson = () => courseUI.renderCurrent(loadRecords());
 

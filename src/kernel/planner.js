@@ -649,3 +649,82 @@
   if (typeof module !== "undefined" && module.exports) Object.assign(module.exports, extra);
   if (typeof window !== "undefined" && window.BuzzPlanner) Object.assign(window.BuzzPlanner, extra);
 })();
+
+
+// ── 課程回溫（新版課程）：讀完一課，隔天回來自己算 ────────────────
+// 完成一課（小測第一次 ≥ 3 題對）的那一刻排進來：這一課的「自己算」（分節的 solve，key = s<節>）
+// ＋核心推薦題裡能自己打答案的（numeric／expression／antiderivative），一課最多 3 題。
+// 第一次在隔天到期，之後 3、7、16、35 天（一輪全部第一次就對才往後推；有一題不是就回到隔天）。
+// 紀錄是 records.courseV2[課] 的平面欄位（records_v2 逐欄合併）：rvAt（上次排定／回溫）、rvStep、rvT（課名：首頁不用抓大綱
+// 就寫得出理由）、rvItems、rvLast／rvDid（上次回溫的時間與題數：一天最多 5 題，新手保護期 3 題，不洗版）。
+// 純函式；日期照本地日（「隔天」是過了午夜，不是滿 24 小時）。畫面：首頁卡在 course.js、一輪回溫在 course_solve.js、地圖的「該練」在 course_map.js。
+(function () {
+  "use strict";
+  const t = typeof globalThis.t === "function" ? globalThis.t : (text, vars) => (vars ? String(text).replace(/\{(\w+)(?:\|[^}]*)?\}/g, (m, k) => (k in vars ? String(vars[k]) : m)) : text);
+  const RV_GAPS = [1, 3, 7, 16, 35];
+  const RV_CAP = 5;
+  const RV_GENTLE_CAP = 3;
+  const RV_PER_LESSON = 3;
+  const RV_KINDS = ["numeric", "expression", "antiderivative"];
+  const dayAt = (time, add) => { const d = new Date(time); return new Date(d.getFullYear(), d.getMonth(), d.getDate() + (add || 0)).getTime(); };
+  // 排進回溫的那幾題（完成一課的那一刻）：m = 大綱的那一課（title、practice: [{ id, kind }]）、data = 課文、problemOf = 題號 → 題目
+  function courseReviewPlan(m, data, problemOf, now) {
+    const items = [];
+    const taken = new Set();
+    ((data && data.sections) || []).forEach((s, si) => { if (s && s.solve) { items.push(`s${si}`); if (s.solve.problemId) taken.add(s.solve.problemId); } });
+    ((m && m.practice) || []).forEach((p) => {
+      const q = p.kind === "core" && !taken.has(p.id) && problemOf(p.id);
+      if (q && RV_KINDS.includes(q.answerKind)) items.push(p.id);
+    });
+    if (!items.length) return {};
+    return { rvAt: new Date(now || Date.now()).toISOString(), rvStep: 0, rvT: m.title, rvItems: items.slice(0, RV_PER_LESSON) };
+  }
+  // 今天該回溫的課：照到期日排、整課整課拿，加起來不超過今天剩下的額度；沒有就 null。
+  // opts：now、gentle（新手保護期：額度 3、推薦題只出 R2 以內；課裡的自己算照出）、problemOf
+  function courseReviewDue(records, opts) {
+    const o = opts || {};
+    const today = dayAt(o.now || Date.now());
+    const problemOf = o.problemOf || (() => null);
+    const fits = (key) => {
+      if (/^s\d+$/.test(key)) return true;
+      const p = problemOf(key);
+      return Boolean(p && RV_KINDS.includes(p.answerKind) && (!o.gentle || Number(p.rank || p.difficulty) <= 2));
+    };
+    const book = (records && records.courseV2) || {};
+    let room = o.gentle ? RV_GENTLE_CAP : RV_CAP;
+    Object.keys(book).forEach((id) => { const e = book[id]; if (e && e.rvLast && dayAt(e.rvLast) === today) room -= Number(e.rvDid) || 0; });
+    const rows = Object.keys(book).map((id) => {
+      const e = book[id] || {};
+      const step = Number(e.rvStep) || 0;
+      if (!e.rvAt || !Array.isArray(e.rvItems) || step >= RV_GAPS.length) return null;
+      const due = dayAt(e.rvAt, RV_GAPS[step]);
+      return due > today ? null : { id, t: String(e.rvT || id), step, at: e.rvAt, due, items: e.rvItems.filter(fits), when: "", why: "" };
+    }).filter((r) => r && r.items.length).sort((a, b) => a.due - b.due || (a.id < b.id ? -1 : 1));
+    const lessons = [];
+    let n = 0;
+    for (const r of rows) {
+      if (n >= room) break;
+      const take = r.items.slice(0, room - n);
+      if (take.length < r.items.length && lessons.length) break;
+      lessons.push({ ...r, items: take });
+      n += take.length;
+    }
+    if (!lessons.length) return null;
+    // 理由一行：「昨天讀的〈連鎖律〉，來回溫 2 題」（隔了幾天、是不是已經回溫過）；地圖的「該練」用 why
+    lessons.forEach((r) => {
+      const days = Math.round((today - dayAt(r.at)) / 86400000);
+      r.when = r.step ? t("{n} 天前回溫過的〈{title}〉", { n: days, title: r.t }) : days <= 1 ? t("昨天讀的〈{title}〉", { title: r.t }) : t("{n} 天前讀的〈{title}〉", { n: days, title: r.t });
+      r.why = r.step ? t("{n} 天前回溫過，該再算一次", { n: days }) : days <= 1 ? t("昨天讀完，該回溫") : t("{n} 天前讀完，該回溫", { n: days });
+    });
+    const more = lessons.length > 1 ? t("等 {n} 課", { n: lessons.length }) : "";
+    return { lessons, n, reason: `${lessons[0].when}${more}${t("，來回溫 {n} 題", { n })}` };
+  }
+  // 回溫完一輪：這一課全部第一次就對 → 往後推一格；有一題不是 → 明天再一次。did = 這一輪出了這一課幾題（算進今天的額度）
+  function courseReviewNext(entry, allFirst, did, now) {
+    const at = new Date(now || Date.now()).toISOString();
+    return { ...entry, rvAt: at, rvStep: allFirst ? (Number(entry.rvStep) || 0) + 1 : 0, rvLast: at, rvDid: did };
+  }
+  const extra = { COURSE_REVIEW_GAPS: RV_GAPS, COURSE_REVIEW_CAP: RV_CAP, courseReviewPlan, courseReviewDue, courseReviewNext };
+  if (typeof module !== "undefined" && module.exports) Object.assign(module.exports, extra);
+  if (typeof window !== "undefined" && window.BuzzPlanner) Object.assign(window.BuzzPlanner, extra);
+})();

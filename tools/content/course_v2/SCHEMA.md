@@ -89,7 +89,8 @@ Manim 做的概念動畫（來源 `manim/scenes/`，部署時由 `tools/fetch_me
     // 結尾恰好一個動作：
     "check": 1,                                   // 小測的索引（lesson.checks[1]）—— 當下對錯、選錯看 why、可以重選；或
     "predict": { "ask": "下一步是？", "options": [ { "label": "…", "correct": true }, { "label": "…", "why": "…" }, { "label": "…", "why": "…" } ] },  // 先猜再看：3 個選項；或
-    "drag": { "use": 0, "ask": "把 n 拉到 40 以上", "range": [40, 50] },  // 自己拖滑桿進範圍（一開始不能已經在範圍裡）
+    "drag": { "use": 0, "ask": "把 n 拉到 40 以上", "range": [40, 50] },  // 自己拖滑桿進範圍（一開始不能已經在範圍裡）；或
+    "solve": { "check": 1, "answer": "…", "claim": "… == ANS" },           // 自己算：不給選項、自己打答案（見下「自己算」）
     "video": true }                               // 可選：這一節放這一課的影片（lesson.video）
 ]
 ```
@@ -101,6 +102,44 @@ fig／drag 指到的不是 widget 或值超出滑桿、動作不是恰好一個�
 畫面在 `src/course_sections.js`（index.html 的 `data-lazy="sections"`，打開有分節的課才抓；結算畫面在 `src/course_finish.js`，`data-lazy="secfinish"`，讀到最後一節才抓）。進度記在 `records.courseV2[id]`：
 `secAt`（讀到第幾節，下次從那裡接）、`secDone`（做完的節）、`picks`（分節裡小測選過的選項，跨天也算得到「完成」）、`xp`（這一課拿到的 XP）、`tierXp`（三層加成已經發到哪一層）。
 一節第一次做完 +5 XP；完成／熟練／全破各一次 +20／+30／+50；讀完一節記進 `records.courseReadDays`（那一天算有學：連勝、每日任務「讀一節課」）。
+
+### 自己算（solve，可選）
+
+選擇題只考「認得出來」。`solve` 是一節結尾的另一種動作：**不給選項，自己打答案**（跟作答頁同一套輸入：數學鍵盤、即時預覽、
+同一支判分器 `checkAnswer` —— 數值等價、式子多點代入、反導函數差一個常數都算對）。完成一課時這一課的自己算會排進隔天的課程回溫（見下）。
+
+```jsonc
+// 兩種寫法。一、代一題小測：那一節原本是 "check": 1，換成打字（小測照樣算分：第一次就打對＝第一次就選對）
+"solve": {
+  "check": 1,                                  // 小測的索引；問句就是那一題的 ask（不用再寫 ask）
+  "kind": "expression",                        // numeric／expression／antiderivative（題庫題看那一題的 answerKind，不用寫）
+  "answer": "6x^2(x^3+1)",                     // 判分器的寫法（跟答案欄一樣）；要等於那一題小測的正解
+  "claim": "D((x^3+1)^2) == ANS",              // 機器驗算（step_claims 語法，ANS = 這一題的答案）；不是題庫題就一定要有
+  "hint": "外層 $u^2$ 微完，還要乘裡層的導數。",  // 可選：答錯一次之後出現的一行（≤ 40 字）
+  "steps": ["外層 $u^2$：$2(x^3 + 1)$", "…"],   // 可選：短的解法（1–5 句，每句 ≤ 60 字）；錯兩次或按「看解法」才出現，最後一行是答案
+  "wrong": [                                   // 可選：預料中的錯答案 → 打成這樣時說的那一句（≤ 60 字；判分器自己的診斷「像是漏負號」照常有）
+    { "answer": "2(x^3+1)", "why": "只做了外層，還要乘裡層 $x^3 + 1$ 的導數 $3x^2$。" } ] }
+// 二、換掉一個 predict（或寫在新的一節）：ask 要寫完整（隔天的回溫只看得到這一句，不看前面的句子）
+"solve": { "ask": "$\\int x^2\\sqrt{1+x^3}\\,dx$ 是？（$+C$ 可以省略）", "problemId": "int-042", "answer": "(2/9)(1+x^3)^(3/2)", … }
+```
+
+- `problemId`：題目就是題庫題時填（要通過獨立驗算）。判分用那一題本身，第一次作答照一般作答記進作答統計與錯題本。
+- 答錯：先看 `wrong` 有沒有打中，沒有就用判分器的診斷；答錯一次出 `hint`，錯兩次自動攤開 `steps`。不擋路：「下一節」一直在。
+- 打對 = 這一節做完（+5 XP，只發一次）。紀錄在 `records.courseV2[課].solve[節]`：`first`（第一次就對）／`later`（錯過才對）／`shown`（看了解法）／`tried`（錯了還沒對）；
+  結算畫面寫「自己算：首次答對 n / m」。分析事件 `course_solve {lesson, first_try, review}`（每一題只記第一次作答）。
+- 畫面在 `src/course_solve.js`（`data-lazy="secsolve"`，有自己算的課才抓）。
+
+驗證器（tools/lib/course_solve_check.js）擋：欄位不認得、題型不收、題庫題不存在或沒通過獨立驗算、
+**answer 被網站的判分器判錯**（格式寫錯；例：判分器讀不懂 `8pi/3`，要寫 `8*pi/3`）、不是題庫題卻沒有 claim、claim 沒用到 ANS 或算出來不成立、
+代小測時 answer 跟那一題的正解不一樣（LaTeX 讀回來在取樣點上比）、`wrong` 裡的答案其實會被判對或判分器讀不懂、字數超過；
+ask／hint／steps／wrong 的 KaTeX、數字規則（題庫題的題幹與解說裡的數字也算）跟其他字一樣驗。小測照樣要每一題恰好落在一節（代小測的 solve 算那一題）。
+
+### 課程回溫（隔天自己算）
+
+完成一課（小測第一次 ≥ 3 題對）的那一刻，這一課的自己算（`s<節>`）＋核心推薦題裡能打答案的（numeric／expression／antiderivative）排進回溫，一課最多 3 題：
+隔天（過了午夜）到期，之後 3、7、16、35 天；一輪全部第一次就對才往後推，有一題不是就回到隔天。一天最多 5 題（新手保護期 3 題、推薦題只出 R2 以內）。
+首頁「課程回溫」卡寫一行理由（「昨天讀的〈連鎖律 I：兩層〉，來回溫 2 題」），地圖的「該練」把那幾課排最前面；回溫一題一屏、全部打字。
+排程是 `src/kernel/planner.js` 的 `courseReviewPlan／courseReviewDue／courseReviewNext`（validate_planner 釘住），紀錄是 `records.courseV2[課]` 的 `rvAt／rvStep／rvT／rvItems／rvLast／rvDid`。
 
 ### 旁白（beat.say，可選）
 
