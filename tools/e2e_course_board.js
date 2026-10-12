@@ -267,7 +267,10 @@ async function run() {
 
     /* ── 證明節：why: true 答了才畫；有 plot 的節才抓 plot ── */
     check(`打開 ${DCT.id}`, await openLesson(DCT.id));
-    check("有 plot 的課：course_board_plot.js 只在有圖的節才抓（第一節沒有圖還沒抓）", (await evaluate(`return window.__b.files(/course_board_plot\\.js/);`)) === (DCT.sections[0].beats.some((b) => b.board.some((a) => a.do === "plot")) ? 1 : 0));
+    const first = DCT.sections[0].beats.some((b) => b.board.some((a) => a.do === "plot")) ? 1 : 0;
+    // 抓 plot 是排版時才開始的（非同步）：等一下
+    await waitFor(`window.__b.model() && window.__b.files(/course_board_plot\\.js/) === ${first}`, 6000);
+    check(`有 plot 的課：course_board_plot.js 只在有圖的節才抓（第一節${first ? "有圖：抓一次" : "沒有圖：還沒抓"}）`, (await evaluate(`return window.__b.files(/course_board_plot\\.js/);`)) === first);
     const plotSi = DCT.sections.findIndex((s) => s.beats.some((b) => b.board.some((a) => a.do === "plot")));
     check("到有圖的那一節", await go(plotSi, DCT.id));
     check("有圖的節：course_board_plot.js 抓了一次", await waitFor(`window.__b.files(/course_board_plot\\.js/) === 1 && window.__b.model()`, 6000));

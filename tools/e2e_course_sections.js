@@ -131,6 +131,15 @@ async function run() {
     p = await evaluate(`const el = ${find}; if (!el) return null; el.scrollIntoView({ block: "center" }); const r = el.getBoundingClientRect(); return { x: r.left + Math.min(r.width / 2, 60), y: r.top + r.height / 2 };`);
     if (!p) return false;
     await sleep(60);
+    // scrollIntoView 之後，分節自己的捲動對位（動作列要整個看得到）可能過一兩百毫秒又把頁面平滑地帶走；
+    // 觸控點在捲動中會被當成滑動、不出 click。要連續三次（約 300ms）位置都不動才點（黑板 v2 的板高一節固定、頁面比較長，常碰到）
+    for (let k = 0, still = 0; k < 30 && still < 3; k += 1) {
+      await sleep(100);
+      const q = await evaluate(`const el = ${find}; if (!el) return null; const r = el.getBoundingClientRect(); return { x: r.left + Math.min(r.width / 2, 60), y: r.top + r.height / 2 };`);
+      if (!q) return false;
+      still = Math.abs(q.y - p.y) < 0.5 ? still + 1 : 0;
+      p = q;
+    }
     if (touch) {
       await chrome.send("Input.dispatchTouchEvent", { type: "touchStart", touchPoints: [{ x: p.x, y: p.y }] });
       await chrome.send("Input.dispatchTouchEvent", { type: "touchEnd", touchPoints: [] });
