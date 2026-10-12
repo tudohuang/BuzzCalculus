@@ -389,6 +389,16 @@ console.log(`  滿載效能        profile() ${perfMs.toFixed(1)}ms，測得出 
 console.log(`  分層效益        history 截斷後仍保住 ${deepProfile.coverage.attempts} 筆（只讀 history 只剩 ${shallowProfile.coverage.attempts} 筆）`);
 console.log(`  合併            ${aCount} + ${bCount} -> ${merged.attemptLog.length} 筆，交換律與冪等已驗`);
 
+// 讀課的日子跨裝置合併：日子只增不減、同一天取多的（以前整欄被丟掉，換裝置同步後讀課連勝會斷）
+{
+  const readA = { courseReadDays: { "2026-10-10": 2, "2026-10-11": 1 } };
+  const readB = { courseReadDays: { "2026-10-11": 3, "2026-10-12": 1 } };
+  const days = store.merge(readA, readB).courseReadDays || {};
+  check("合併保留讀課的日子（聯集、同日取大）", days["2026-10-10"] === 2 && days["2026-10-11"] === 3 && days["2026-10-12"] === 1, JSON.stringify(days));
+  const back = store.merge(readB, readA).courseReadDays || {};
+  check("讀課的日子合併有交換律", JSON.stringify(Object.keys(back).sort().map((d) => [d, back[d]])) === JSON.stringify(Object.keys(days).sort().map((d) => [d, days[d]])));
+}
+
 if (failures.length) {
   console.error("");
   console.error(`records v2 驗證失敗（${failures.length}）：`);
