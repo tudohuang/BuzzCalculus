@@ -377,7 +377,7 @@ interface Window {
   BUZZ_PROBLEMS: BuzzProblem[];
   BUZZ_PROOFS: BuzzProof[];
   BUZZ_COURSE: BuzzCourseLesson[];
-  BuzzCourseUI: { create(deps: { escapeHtml: (s: unknown) => string; escapeAttr: (s: unknown) => string; icon: (name: string) => string; referenceAnswerHTML: (problem: BuzzProblem) => string; loadRecords: () => BuzzRecords; saveRecords: (records: BuzzRecords) => void; ensureLazy: (group: string) => Promise<void>; startQuiz: (pool: BuzzProblem[], options?: any) => void; render: () => void; go: (view: string) => void; noteCourseRead?: (records: BuzzRecords) => BuzzRecords; focusModeOn?: () => boolean; abilityProfile?: (records: BuzzRecords) => any; xpLevel?: (xp: unknown) => { level: number; into: number; span: number }; streakDays?: (records: BuzzRecords) => number }): any };
+  BuzzCourseUI: { create(deps: { escapeHtml: (s: unknown) => string; escapeAttr: (s: unknown) => string; icon: (name: string) => string; referenceAnswerHTML: (problem: BuzzProblem) => string; loadRecords: () => BuzzRecords; saveRecords: (records: BuzzRecords) => void; ensureLazy: (group: string) => Promise<void>; startQuiz: (pool: BuzzProblem[], options?: any) => void; render: () => void; go: (view: string) => void; noteCourseRead?: (records: BuzzRecords) => BuzzRecords; focusModeOn?: () => boolean; abilityProfile?: (records: BuzzRecords) => any; xpLevel?: (xp: unknown) => { level: number; into: number; span: number }; streakDays?: (records: BuzzRecords) => number; track?: (name: string, params?: Record<string, unknown>) => void }): any };
   /** 分節模式（data-lazy="sections"，只有打開有分節的課才載） */
   BuzzCourseSections?: { render(api: any): string; act(api: any, action: string, data: any): void };
   BuzzCourseFinish?: { view(api: any, entry: any): string };

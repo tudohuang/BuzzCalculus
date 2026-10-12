@@ -51,6 +51,7 @@
 .cmap-todo em { grid-column: 2; grid-row: 1 / span 2; padding: 4px 10px; border-radius: 999px; background: var(--ink); color: var(--panel); font-size: 0.82rem; font-style: normal; white-space: nowrap; }
 .cmap-empty { margin: 0; color: var(--muted); font-size: 0.86rem; }
 .cmap-why { margin: 0 0 6px; color: var(--red); font-size: 0.86rem; font-weight: 700; }
+.cmap-boss { margin: 0 0 6px; color: var(--violet); font-size: 0.86rem; font-weight: 700; overflow-wrap: anywhere; }
 .cmap-tag { padding: 1px 8px; border-radius: 999px; background: color-mix(in srgb, var(--blue) 12%, var(--panel)); color: var(--blue); font-weight: 700; }
 .cmap-tag.is-goal { background: color-mix(in srgb, var(--violet) 12%, var(--panel)); color: var(--violet); }
 .cmap-canvas { display: block; width: 100%; height: 100%; touch-action: none; outline: none; cursor: grab; }
@@ -648,6 +649,7 @@
         const b = m.chapterBoxes[ci];
         if (b[0] > wx1 || b[0] + b[2] < wx0 || b[1] > wy1 || b[1] + 40 < wy0) continue;
         ctx.fillText(chapterLabel[ci].full, b[0] + 10, b[1] + 17);
+        if (chapterLabel[ci].crown) { crown(b[0] + 15 + chapterLabel[ci].fullW, b[1] + 17, 10); ctx.fillStyle = pal.muted; }
       }
     }
     stats.visibleLessons = visibleLessons;
@@ -752,7 +754,7 @@
         const cx = x0 + bw / 2;
         const cy = Math.min(Math.max(y0 + 22, 50), y0 + bh - 20);
         const useFull = L.w + 16 <= pitch;
-        const w = (useFull ? L.w : L.codeW) + 16;
+        const w = Math.max((useFull ? L.w : L.codeW) + 16, L.crown ? L.countW + 48 : 0);
         if (!freeSpot(cx - w / 2, cy - 18, w, 36)) continue;
         take(cx - w / 2, cy - 18, w, 36);
         ctx.fillStyle = pal.panel;
@@ -766,6 +768,7 @@
         ctx.font = F_SMALL;
         ctx.fillStyle = L.done === L.total ? pal.green : pal.muted;
         ctx.fillText(L.count, cx, cy + 9);
+        if (L.crown) crown(cx - L.countW / 2 - 16, cy + 9, 10);
       }
     }
     stats.visibleChapters = visibleChapters;
@@ -864,6 +867,22 @@
     request();
   }
 
+  // 皇冠（x 左緣、y 垂直中心、h 高）：解開章首魔王題的章
+  function crown(x, y, h) {
+    const w = h * 1.3;
+    ctx.beginPath();
+    ctx.moveTo(x, y + h / 2);
+    ctx.lineTo(x, y - h * 0.3);
+    ctx.lineTo(x + w * 0.27, y + h * 0.05);
+    ctx.lineTo(x + w / 2, y - h / 2);
+    ctx.lineTo(x + w * 0.73, y + h * 0.05);
+    ctx.lineTo(x + w, y - h * 0.3);
+    ctx.lineTo(x + w, y + h / 2);
+    ctx.closePath();
+    ctx.fillStyle = pal.gold;
+    ctx.fill();
+  }
+
   function statusText(i) {
     const L = opts.lessons[i];
     if (!L.available) return "尚未開放";
@@ -893,6 +912,7 @@
       <p class="cmap-card-meta">${minutes}<span class="cmap-tier t${tiers[sel]}">${statusText(sel)}</span>${tagsOf(sel).map((x) => `<span class="cmap-tag${x === "可以學" ? "" : " is-goal"}">${x}</span>`).join("")}</p>
       <p class="cmap-card-meta"><span><i class="cmap-key is-anc"></i>先修 ${ancCount} 課</span><span><i class="cmap-key is-desc"></i>後續 ${descCount} 課</span></p>
       ${why ? `<p class="cmap-why">${esc(why)}</p>` : ""}
+      ${L.boss ? `<p class="cmap-boss">${esc(L.boss)}</p>` : ""}
       <div class="cmap-card-actions">
         ${ids ? `<button type="button" class="button ${why ? "home-primary" : "secondary"}" data-action="course-lesson-practice" data-lesson-id="${attr(L.id)}" data-ids="${attr(ids.join(" "))}">練這課 ${ids.length} 題</button>` : ""}
         ${L.available ? `<button type="button" class="button ${why ? "secondary" : "home-primary"}" data-action="open-course-lesson" data-lesson-id="${attr(L.id)}">${tiers[sel] ? "打開這課" : "開始這課"}</button>` : ""}
@@ -1232,7 +1252,13 @@
       c.font = F_LABEL;
       const w = c.measureText(ch.title).width;
       const codeW = c.measureText(ch.code).width;
-      return { title: ch.title, code: ch.code, full: `${ch.code} ${ch.title}`, w, codeW, done: D.chDone[ci], total: D.chTotal[ci], count: `${D.chDone[ci]}/${D.chTotal[ci]}` };
+      const count = `${D.chDone[ci]}/${D.chTotal[ci]}`;
+      // 解開章首魔王題的章（course_v2_ui 給的 crowns；專注模式是空的）：章名旁一頂皇冠。寬度在這裡量好，畫的時候不量
+      const crowned = Boolean(opts.crowns && opts.crowns.has(ch.code));
+      c.font = F_SMALL;
+      const countW = c.measureText(count).width;
+      c.font = F_CHAPTER_W;
+      return { title: ch.title, code: ch.code, full: `${ch.code} ${ch.title}`, w, codeW, done: D.chDone[ci], total: D.chTotal[ci], count, crown: crowned, countW, fullW: crowned ? c.measureText(`${ch.code} ${ch.title}`).width : 0 };
     });
   }
 
@@ -1616,6 +1642,7 @@
       practice: D.practice.map((p) => ({ id: id(p.i), why: p.why, ids: D.ids[p.i] })),
       chapters: D.chDone.map((x, ci) => [x, D.chTotal[ci]]),
       stages: D.stDone.map((x, si) => [x, D.stTotal[si]]),
+      crowns: chapterLabel ? chapterLabel.filter((L) => L.crown).map((L) => L.code) : [],
       gold: D.stComplete.map((x, si) => (x && N && N.stageGold ? si : -1)).filter((si) => si >= 0),
       dimmed: emph ? emph.length - emph.reduce((a, b) => a + b, 0) : 0,
       colors: pal ? { far: [pal.muted, pal.farFill], ready: [pal.ink, pal.nodeFill], done: [pal.ink, pal.doneFill] } : null

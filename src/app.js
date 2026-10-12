@@ -1048,6 +1048,10 @@
     mistake_cleared: t("錯題被清掉"),
     // 主線
     unit_chest_open: t("開啟單元寶箱（只記第幾單元）"),
+    course_section_complete: t("課程讀完一節（課 id、第幾節、點的或聽的）"),
+    course_lesson_complete: t("課程第一次完成一課（課 id、層級）"),
+    course_boss_view: t("看到章首魔王題（章碼）"),
+    course_boss_solve: t("解開章首魔王題（章碼、是不是讀到 payoff 之前）"),
     // 計畫
     // 內容
     report_submit: t("回報題目"),
@@ -5054,7 +5058,7 @@
   const plUI = window.BuzzProofLabUI.create({ escapeHtml, escapeAttr, icon, proofs });
 
   // ── 課程（內容、畫面、狀態都在 course.js：中文介面是新版課程，英文介面是舊的 25 課）──
-  const courseUI = window.BuzzCourseUI.create({ escapeHtml, escapeAttr, icon, referenceAnswerHTML, loadRecords, saveRecords, ensureLazy, startQuiz, render, go: (next) => { view = next; render(); window.scrollTo(0, 0); }, noteCourseRead, focusModeOn, abilityProfile, xpLevel: xpLevelInfo, streakDays: (r) => practiceStreakInfo(r, activityCounts(r)).streak });
+  const courseUI = window.BuzzCourseUI.create({ escapeHtml, escapeAttr, icon, referenceAnswerHTML, loadRecords, saveRecords, ensureLazy, startQuiz, render, go: (next) => { view = next; render(); window.scrollTo(0, 0); }, noteCourseRead, focusModeOn, abilityProfile, track: trackEvent, xpLevel: xpLevelInfo, streakDays: (r) => practiceStreakInfo(r, activityCounts(r)).streak });
   const renderCourse = () => courseUI.renderIndex(loadRecords());
   const renderCourseLesson = () => courseUI.renderCurrent(loadRecords());
 
@@ -13612,8 +13616,8 @@
     // 所以「這一局補完最後一條任務」也算得到。
     currentQuiz.questBonus = 0;
 
-    // 定位是診斷：答錯／沒學過都不進錯題本，不然第一份「複習」是一堆沒學過的東西。
-    const answerContext = { mistakesMode: currentQuiz.mode === "mistakes", diagnostic: Boolean(currentQuiz.placement) };
+    // 定位是診斷：答錯／沒學過都不進錯題本，不然第一份「複習」是一堆沒學過的東西。章首魔王題的「先試試看」（boss-try:）也是。
+    const answerContext = { mistakesMode: currentQuiz.mode === "mistakes", diagnostic: Boolean(currentQuiz.placement) || /^boss-try:/.test(currentQuiz.courseLessonId || "") };
     currentQuiz.answers.forEach((answer) => updateAnswerRecords(records, answer, finishedAt, answerContext));
     currentQuiz.mistakesCleared = currentQuiz.answers.filter((answer) => beforeMistakes.has(answer.problem.id) && !records.mistakes[answer.problem.id]).length;
 

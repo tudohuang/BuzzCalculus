@@ -46,6 +46,10 @@
 .cv2-chapter-label { display: flex; align-items: baseline; gap: 8px; margin: 0 0 2px; color: var(--muted); font-size: 0.76rem; font-weight: 800; letter-spacing: 0.06em; }
 .cv2-chapter-label small { font-weight: 600; font-variant-numeric: tabular-nums; letter-spacing: 0; }
 .cv2-rows { display: grid; margin: 0; padding: 0; list-style: none; }
+.cv2-boss { display: flex; align-items: center; gap: 6px; width: 100%; min-height: 40px; margin: 0 0 2px; padding: 4px 8px; border: 0; border-radius: 8px; background: color-mix(in srgb, var(--violet) 7%, transparent); color: var(--ink); font: inherit; font-size: 0.86rem; text-align: left; cursor: pointer; }
+.cv2-boss svg { flex: none; width: 16px; height: 16px; color: var(--violet); }
+.cv2-boss span { flex: 1; min-width: 0; overflow-wrap: anywhere; }
+.cv2-boss small { flex: none; color: var(--violet); font-weight: 700; font-variant-numeric: tabular-nums; }
 .cv2-row { display: grid; grid-template-columns: 2.4em minmax(0, 1fr) auto 10px; align-items: center; gap: 10px; width: 100%; min-height: 44px; padding: 6px 8px; border: 0; border-radius: 8px; background: transparent; color: var(--ink); font: inherit; text-align: left; cursor: pointer; }
 .cv2-row:hover { background: color-mix(in srgb, var(--ink) 5%, transparent); }
 .cv2-row.is-next { background: color-mix(in srgb, var(--gold) 12%, transparent); box-shadow: inset 3px 0 0 var(--gold); }
@@ -276,6 +280,22 @@
         if (m.available) practice.concat(m.worked.map((id) => ({ id }))).forEach((p) => { if (!problemLesson[p.id]) problemLesson[p.id] = m.id; });
       }));
     });
+    // 章首魔王題（outline.bosses）：章 → rows = 第一課到 payoff；還差 n 課 = rows 裡沒完成的。其餘在 course_boss.js
+    const bossBy = {};
+    outline.stages.forEach((s) => s.chapters.forEach((c) => {
+      const b = (outline.bosses || {})[c.code];
+      if (!b || !meta[b.at]) return;
+      const rows = order.filter((x) => x.chapter === c);
+      bossBy[c.code] = c.boss = { ...b, code: c.code, rows: rows.slice(0, rows.indexOf(meta[b.at]) + 1) };
+    }));
+    const bossSolved = (records, code) => (records.courseV2Boss || {})[code];
+    const bossLeft = (records, B, except) => B.rows.filter((x) => x !== except && !isDone(records, x)).length;
+    const track = (name, params) => deps.track && deps.track(name, params);
+    // course_boss.js 還沒載到：先不畫，載到了重繪
+    let bossLoad = 0;
+    const bossUI = () => window.BuzzCourseBoss || (bossLoad++ || Promise.resolve(deps.ensureLazy("boss")).then(() => render(), () => {}), null);
+    const kit = () => ({ bossBy, bossSolved, bossLeft, isDone, meta, neighbour, label, problem, deps, track, loadRecords });
+    const bossView = (records, m) => (m.chapter.boss && bossUI() ? bossUI().view(kit(), records, m, state) : null);
     const live = order.filter((m) => m.available);
     const mainPath = live.filter((m) => !m.stage.branch);
     const usedProblems = new Set(Object.keys(problemLesson));
@@ -436,6 +456,14 @@
       : `<span>〈${escapeHtml(meta[id].title)}〉</span>`) : "");
     const tierPill = (tier) => (tier ? `<em class="cv2-tier t${tier}">${TIER_NAMES[tier]}</em>` : "");
 
+    // 課程表的章名下一行；點了打開這一章還沒完成的第一課（解開了：第一課）
+    function bossLine(records, B) {
+      const done = bossSolved(records, B.code);
+      const n = bossLeft(records, B);
+      const to = (!done && B.rows.find((x) => !isDone(records, x))) || B.rows[0];
+      return `<button type="button" class="cv2-boss" data-action="open-course-lesson" data-lesson-id="${escapeAttr(to.id)}" data-cv2-boss="${escapeAttr(B.code)}">${icon("trophy")}<span>${escapeHtml(B.h)}</span><small>${done ? "已解開" : n ? `還差 ${n} 課` : "解得開了"}</small></button>`;
+    }
+
     /* ── 課程表 ── */
     function renderIndex(records) {
       if (indexView === "map") {
@@ -465,6 +493,7 @@
           return `
             <section class="cv2-chapter">
               <p class="cv2-chapter-label">${escapeHtml(chapter.title)}<small>${chapterDone} / ${rows.length}</small></p>
+              ${chapter.boss ? bossLine(records, chapter.boss) : ""}
               <ol class="cv2-rows">${rows.map(row).join("")}</ol>
             </section>`;
         }).join("");
@@ -520,9 +549,11 @@
         lessons: order.map((m) => ({
           id: m.id, no: m.no, title: m.title, stageTitle: m.stage.title, branch: Boolean(m.stage.branch),
           read: m.read, total: m.total, available: m.available, tier: tierOf(records, m), opened: Boolean(entryOf(records, m.id).openedAt),
+          boss: m.chapter.boss && m.chapter.boss.at === m.id ? (bossSolved(records, m.chapter.boss.code) ? "魔王題已解開" : `讀完就解得開魔王題：${m.chapter.boss.h}`) : "",
           practice: m.practice.filter((p) => problem(p.id))
         })),
         stages: outline.stages,
+        crowns: new Set(deps.focusModeOn && deps.focusModeOn() ? [] : Object.keys(records.courseV2Boss || {})),
         next: next ? order.indexOf(next) : -1,
         // 「該練」用的：紀錄本身、能力模型（app 的 abilityProfile，有快取）、題目 → 技巧
         records,
@@ -587,7 +618,7 @@
     let state = { lessonId: "", steps: {}, picks: {}, figs: {}, recorded: false };
     let secFail = false;
     const sec = (fn) => Promise.resolve(deps.ensureLazy("sections")).then(fn, () => { secFail = true; render(); });
-    const secApi = (records, head) => { const m = meta[state.lessonId]; return { m, data: lessonData(m.id), records, head, state, fmt, rich, update, tierOf: (r) => tierOf(r, m), next: neighbour(m, 1), label, lessonLink, deps, act }; };
+    const secApi = (records, head) => { const m = meta[state.lessonId]; return { m, data: lessonData(m.id), records, head, state, fmt, rich, update, tierOf: (r) => tierOf(r, m), next: neighbour(m, 1), label, lessonLink, deps, act, boss: bossView(records, m) }; };
 
     // 圖的滑桿：只換那一張圖（不整頁重繪 —— 拖動時每一格都重繪整課太貴）；值記在 state.figs，
     // 之後別的動作重繪時圖停在原地。委派在 document 上，app.js 重繪換掉 DOM 也不用重綁。
@@ -744,6 +775,7 @@
       }
       const prev = neighbour(m, -1);
       const next = neighbour(m, 1);
+      const boss = bossView(records, m);
       const para = (text) => `<p>${rich(text, data)}</p>`;
       const tex = (list) => (list || []).map((line) => `<div class="math-block course-concept-math" data-tex="${escapeAttr(line)}"></div>`).join("");
       const mark = (key, group) => `data-cv2-mark="${key}" data-cv2-group="${group}"`;
@@ -855,6 +887,7 @@
                   <ul class="cv2-list">${data.objectives.map((line) => `<li>${rich(line, data)}</li>`).join("")}</ul>
                 </details>` : ""}
               </div>
+              ${boss ? boss.card() : ""}
               ${strip}
 
               <section class="course-block cv2-sec" data-course-concept aria-label="觀念">
@@ -893,6 +926,7 @@
                 ${items.length ? "" : `<p class="panel-note">這一課沒有推薦題；小測完成就是全破。</p>`}
               </section>
 
+              ${boss && tier ? boss.finish.html : ""}
               <nav class="cv2-nav" aria-label="上一課與下一課">
                 ${prev ? `<button class="button ghost" data-action="open-course-lesson" data-lesson-id="${escapeAttr(prev.id)}">上一課 ${escapeHtml(prev.no)}</button>` : "<span></span>"}
                 ${next ? `<button class="button ${tier ? "home-primary" : "secondary"}" data-action="open-course-lesson" data-lesson-id="${escapeAttr(next.id)}">下一課：${escapeHtml(label(next))}${icon("chevron-right")}</button>` : ""}
@@ -964,6 +998,7 @@
     }
 
     function renderResultsActions(lessonId) {
+      if (/^boss/.test(lessonId)) return bossUI() ? bossUI().results(kit(), lessonId) : "";
       const m = meta[lessonId];
       const next = m ? neighbour(m, 1) : null;
       return `
@@ -988,6 +1023,13 @@
         records.courseMap = { ...mapPrefs(records), ...(action === "course-goal" ? { goal: meta[data.lessonId] ? data.lessonId : "" } : { filter: data.mode || "all" }) };
         saveRecords(records);
         return render();
+      }
+      // 魔王題：一題的一局；payoff 還沒讀到（data-try）是 boss-try:，答錯不進錯題本
+      if (action === "course-boss") {
+        const B = bossBy[data.code];
+        const p = B && problem(B.p);
+        if (p) startQuiz([p], { ...QUIZ, courseLessonId: `${data.try ? "boss-try" : "boss"}:${B.code}` });
+        return;
       }
       if (action === "course-lesson-practice") {
         const pool = String(data.ids || "").split(" ").map(problem).filter(Boolean);
@@ -1035,12 +1077,13 @@
         if (!state.recorded && lesson.checks.every((_c, k) => (state.picks[k] || []).length)) {
           state.recorded = true;
           const score = quizScore(lesson);
-          update(state.lessonId, (entry) => ({
-            ...entry,
-            quizBest: Math.max(score, Number(entry.quizBest || 0)),
-            quizAt: new Date().toISOString(),
-            ...(score >= PASS && !entry.doneAt ? { doneAt: new Date().toISOString() } : {})
-          }));
+          let first = false;
+          update(state.lessonId, (entry) => {
+            first = score >= PASS && !entry.doneAt;
+            return { ...entry, quizBest: Math.max(score, Number(entry.quizBest || 0)), quizAt: new Date().toISOString(), ...(first ? { doneAt: new Date().toISOString() } : {}) };
+          });
+          // 第一次完成才記（重讀、重做小測不再記）
+          if (first) track("course_lesson_complete", { lesson: state.lessonId, tier: tierOf(loadRecords(), meta[state.lessonId]) });
         }
         return render();
       }

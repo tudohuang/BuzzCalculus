@@ -495,7 +495,8 @@
     records.courseV2 = records.courseV2 || {};
     const e = { ...(records.courseV2[api.m.id] || {}) };
     const list = Array.isArray(e.secDone) ? e.secDone.slice() : [];
-    if (!list.includes(si)) {
+    const fresh = !list.includes(si);
+    if (fresh) {
       e.secDone = list.concat(si).sort((a, b) => a - b);
       e.xp = (Number(e.xp) || 0) + SECTION_XP;
       records.xp = (Number(records.xp) || 0) + SECTION_XP;
@@ -504,6 +505,8 @@
     records.courseV2[api.m.id] = e;
     if (deps.noteCourseRead) deps.noteCourseRead(records);
     deps.saveRecords(records);
+    // 第一次做完這一節才記（重讀不記）；mode：旁白開著是 voice
+    if (fresh && deps.track) deps.track("course_section_complete", { lesson: api.m.id, section: si, mode: voice.on ? "voice" : "tap" });
   }
   // 三層加成：完成／熟練／全破各發一次（練完回來打開時補發）
   function settle(api) {
@@ -637,6 +640,7 @@
         <section class="course-lesson cv2-lesson cv2s" data-cv2s="${sec.si}">
           ${head}
           ${dots}
+          ${sec.si === 0 && api.boss ? api.boss.card() : ""}
           ${body}
         </section>
       </main>`;

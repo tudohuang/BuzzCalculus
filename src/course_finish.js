@@ -37,6 +37,8 @@
     const streak = !quiet && deps.streakDays ? deps.streakDays(records) : 0;
     const bank = new Set((window.BUZZ_PROBLEMS || []).map((p) => p.id));
     const practice = (data.practice || []).filter((p) => !p.challenge && bank.has(p.id)).length;
+    // 章首魔王題（course_boss.js 畫）：離魔王題還差 n 課，或「現在解得開了」—— 那時主按鈕讓給解題，下一課降成次要
+    const boss = api.boss ? api.boss.finish : null;
     return `
       <article class="cv2s-sec cv2s-finish" data-cv2s-finish>
         <h3><small>${n} / ${n}</small>你現在會：</h3>
@@ -47,8 +49,9 @@
           ${level ? `<span>Lv.${level.level} · ${level.into}/${level.span}</span>` : ""}
           ${streak ? `<span>${icon("flame")}連勝 ${streak} 天</span>` : ""}
         </p>
+        ${boss ? boss.html : ""}
         <div class="action-row">
-          ${api.next ? `<button type="button" class="button home-primary" data-action="open-course-lesson" data-lesson-id="${escapeAttr(api.next.id)}">下一課：${escapeHtml(api.label(api.next))}${icon("chevron-right")}</button>` : `<button type="button" class="button home-primary" data-action="open-course">課程表</button>`}
+          ${api.next ? `<button type="button" class="button ${boss && boss.pay ? "secondary" : "home-primary"}" data-action="open-course-lesson" data-lesson-id="${escapeAttr(api.next.id)}">下一課：${escapeHtml(api.label(api.next))}${icon("chevron-right")}</button>` : `<button type="button" class="button home-primary" data-action="open-course">課程表</button>`}
           <button type="button" class="button secondary" data-action="course-map-focus" data-lesson-id="${escapeAttr(m.id)}" data-lit="1">在地圖上看</button>
           ${practice ? `<button type="button" class="button ghost" data-action="course-practice" data-set="main">${icon("play")}練推薦題 · ${practice} 題</button>` : ""}
         </div>
