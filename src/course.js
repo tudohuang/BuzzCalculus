@@ -1640,11 +1640,14 @@
     let pending = null;
     let failed = false;
     let queued = null;
+    // 最近一局魔王題剛解開（結算頁秀「+30 XP」用；只在這一頁的記憶體，重新整理就不秀）
+    let lastBoss = null;
+    const BOSS_XP = 30;
     function load() {
       if (ui || pending || failed) return;
       const ready = () => {
         if (!window.BuzzCourseV2UI || !window.BUZZ_COURSE_V2) throw new Error("course v2 missing");
-        ui = window.BuzzCourseV2UI.create({ ...deps, legacy });
+        ui = window.BuzzCourseV2UI.create({ ...deps, legacy, bossRun: () => lastBoss });
       };
       try {
         pending = Promise.resolve(deps.ensureLazy("course")).then(ready).then(() => {
@@ -1687,7 +1690,21 @@
       renderFeedbackLink: (problemId) => (ui ? ui.renderFeedbackLink(problemId) : ""),
       renderResultsActions: (lessonId) => (ui ? ui.renderResultsActions(lessonId) : `<div class="action-row"><button class="button" data-action="open-course">${icon("list-checks")}${t("課程表")}</button></div>`),
       // 新版的進度在 records.courseV2；推薦題對不對直接看 problemStats，這裡只記練過的時間
-      recordPractice: (records, id) => {
+      recordPractice: (records, id, correct, total) => {
+        // 章首魔王題那一局（course_v2_ui 的 course-boss）：boss:<章>／boss-try:<章>（payoff 還沒讀到就先試）。
+        // 答對記 records.courseV2Boss[章] = { solvedAt }，XP 加成只發一次。寫在外殼：重新整理後接續的那一局，畫面可能還沒載到也記得到
+        const boss = /^boss(-try)?:(.+)$/.exec(id);
+        if (boss) {
+          lastBoss = null;
+          const book = (records.courseV2Boss = records.courseV2Boss || {});
+          if (total && correct >= total && !book[boss[2]]) {
+            book[boss[2]] = { solvedAt: now() };
+            records.xp = (Number(records.xp) || 0) + BOSS_XP;
+            lastBoss = { code: boss[2], bonus: BOSS_XP };
+            if (deps.track) deps.track("course_boss_solve", { chapter: boss[2], before_payoff: Boolean(boss[1]) });
+          }
+          return records;
+        }
         records.courseV2 = records.courseV2 || {};
         records.courseV2[id] = { ...(records.courseV2[id] || {}), practicedAt: now() };
         return records;

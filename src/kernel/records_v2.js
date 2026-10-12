@@ -310,7 +310,7 @@
 
   // 課程進度（records.course 舊 25 課、records.courseV2 新版課程）：同一課逐欄合併。
   // 第一次打開／第一次完成取早的、最近一次練習取晚的、分數取高的 —— 換台裝置不會把完成的課變回沒完成。
-  const EARLIEST = ["openedAt", "doneAt"];
+  const EARLIEST = ["openedAt", "doneAt", "solvedAt"];
   function mergeCourse(a, b) {
     const out = Object.assign({}, a || {});
     Object.keys(b || {}).forEach((id) => {
@@ -510,6 +510,8 @@
 
     out.course = mergeCourse(left.course, right.course);
     out.courseV2 = mergeCourse(left.courseV2, right.courseV2);
+    // 章首魔王題（章碼 → { solvedAt }）：解開了就是解開了，時間取早的
+    out.courseV2Boss = mergeCourse(left.courseV2Boss, right.courseV2Boss);
     // 畢業關：過了就是過了（passed 只增不減），其餘取新的那一份
     const gradOld = older.courseGraduation;
     const gradNew = newer.courseGraduation;
