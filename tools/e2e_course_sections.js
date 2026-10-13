@@ -8,7 +8,7 @@
 //   整課點完（不碰任何聲音的路）就到結算：「你現在會：」＋學習目標、這一課的 XP（數字直接是總數）、下一課、在地圖上看；
 //   在地圖上看：地圖打開、那一課亮一下（環），然後自己消失；每日任務「讀一節課」1/1、連勝 1 天；
 //   「全文」切回整頁、而且記住（重開還是全文）、再切回分節；390 寬不溢出、按鈕 ≥ 40px；桌機本文欄置中；console 沒有錯誤。
-//   頁首：手機第一句的頂端 ≤ 220px、返回／課名／分節全文同一列、先修收成「先修 n」點了才展開。
+//   頁首：手機第一句（有黑板就是黑板）的頂端 ≤ 220px、第一句的白話在第一屏、返回／課名／分節全文同一列、先修收成「先修 n」點了才展開。
 //   旁白（一課一支 mp3、每一句 t = [起, 訖]）：按播放之前沒有任何 /media/narration/ 請求；按了只抓這一課那一支（preload=none、Range 串流）；
 //   第二句接著第一句的訖點念；串流設定（Release 網址）照樣播；念完自己出下一句、圖跟著動；念到最後一句停在動作前；
 //   下一節接著念；暫停不再往下、繼續接著；語速設到 playbackRate（換句之後還在）；字幕是亮著那一句的 say；重開這一課就停；載不到（先重試一次）留一行字、點的照樣做完。
@@ -84,12 +84,22 @@ const HELPERS = `
     rect(el) { const r = el.getBoundingClientRect(); return [r.left, r.top, r.width, r.height].map((v) => Math.round(v * 10) / 10).join(","); },
     dockSmall() { return [...document.querySelectorAll(".cv2s-dock button")].map((n) => { const r = n.getBoundingClientRect(); return Math.round(Math.min(r.width, r.height)); }).filter((s) => s < 40); },
     small() { return [...document.querySelectorAll("[data-cv2s] button")].filter((n) => window.__s.visible(n) && !n.classList.contains("cv2-link")).map((n) => { const r = n.getBoundingClientRect(); return { side: Math.round(Math.min(r.width, r.height)), label: (n.textContent || n.getAttribute("aria-label") || "").trim().slice(0, 12) }; }).filter((x) => x.side < 40); },
+    // 第一屏上第一塊教的東西：有黑板的節是黑板（句子的 show 這時只給螢幕閱讀器、畫面上是黑板），沒有就是第一句
+    lead() { const sec = document.querySelector("[data-cv2s] .cv2s-sec"); const bd = sec && sec.querySelector(".cvb"); const b = sec && sec.querySelector(".cv2s-beat"); const t = (bd && window.__s.visible(bd) ? bd : b).getBoundingClientRect(); const r = b.getBoundingClientRect(); return { top: Math.round(t.top), board: Boolean(bd), beatBottom: Math.round(r.bottom), ih: innerHeight }; },
     fig(k) { return document.querySelector('[data-cv2s] [data-cv2-fig="' + k + '"]'); },
-    // 點一下之後 1.2 秒內 widget 經過的每一個值（看「平滑地動」與 reduced-motion 的「直接跳」）
+    // widget 經過的每一個值（看「平滑地動」與 reduced-motion 的「直接跳」）：從第一次變值起看 1.2 秒。
+    // 不從「開始看」起算：tap() 要先等捲動停穩，慢機器（BUZZ_E2E_SLOW）上點下去之前就可能過了 1.2 秒。看完 __watched = true
     watch(k) {
       window.__vals = [];
+      window.__watched = false;
       const t0 = performance.now();
-      const step = () => { const f = window.__s.fig(k); if (f && f.dataset.value !== undefined && window.__vals[window.__vals.length - 1] !== f.dataset.value) window.__vals.push(f.dataset.value); if (performance.now() - t0 < 1200) requestAnimationFrame(step); };
+      let t1 = 0;
+      const step = () => {
+        const f = window.__s.fig(k);
+        if (f && f.dataset.value !== undefined && window.__vals[window.__vals.length - 1] !== f.dataset.value) { window.__vals.push(f.dataset.value); if (window.__vals.length === 2) t1 = performance.now(); }
+        const now = performance.now();
+        if (t1 ? now - t1 < 1200 : now - t0 < 30000) requestAnimationFrame(step); else window.__watched = true;
+      };
       requestAnimationFrame(step);
       return 1;
     }
@@ -248,8 +258,10 @@ async function run() {
     check("打開有分節的課才抓 course_sections.js", first.files === 1);
     check("一開始只有第一句、還沒有動作", first.beats === 1 && !first.action);
     // 手機第一屏：頁首擠成兩列（返回・課名・分節／全文；課號・時間・先修 n），第一句的頂端在 220px 以內
-    const firstTop = await evaluate(`scrollTo(0, 0); const b = document.querySelector("[data-cv2s] .cv2s-beat").getBoundingClientRect(); const seg = document.querySelector('[data-action="course-s-mode"]').getBoundingClientRect(); const h2 = document.querySelector(".cv2-lesson h2").getBoundingClientRect(); return { beat: Math.round(b.top), segRow: Math.abs(seg.top + seg.height / 2 - (h2.top + h2.height / 2)) < 4 && Math.abs(document.querySelector(".cv2-back").getBoundingClientRect().top - seg.top) < 4, h2: Math.round(h2.bottom) };`);
-    check("手機：第一句的頂端 ≤ 220px（頁首不佔掉第一屏）", firstTop.beat <= 220, JSON.stringify(firstTop));
+    const firstTop = await evaluate(`scrollTo(0, 0); const L = window.__s.lead(); const seg = document.querySelector('[data-action="course-s-mode"]').getBoundingClientRect(); const h2 = document.querySelector(".cv2-lesson h2").getBoundingClientRect(); return { beat: L.top, board: L.board, beatBottom: L.beatBottom, ih: L.ih, segRow: Math.abs(seg.top + seg.height / 2 - (h2.top + h2.height / 2)) < 4 && Math.abs(document.querySelector(".cv2-back").getBoundingClientRect().top - seg.top) < 4, h2: Math.round(h2.bottom) };`);
+    check("手機：第一句（有黑板就是黑板）的頂端 ≤ 220px（頁首不佔掉第一屏）", firstTop.beat <= 220, JSON.stringify(firstTop));
+    // 黑板一節的高度先排好（之後的句子不把下面推走），第一句的白話仍要在第一屏、不被 dock／分頁列蓋住
+    check("手機：第一句的白話也在第一屏（黑板沒把它推到外面）", firstTop.beatBottom <= firstTop.ih - 140, JSON.stringify(firstTop));
     check("手機：返回、課名、分節／全文在同一列", firstTop.segRow, JSON.stringify(firstTop));
 
     // 下一句：按鈕、點句子那一塊、→ 鍵
@@ -345,7 +357,7 @@ async function run() {
     check(`打開 ${SECOND.id}`, await openLesson(SECOND.id));
     await waitFor(`window.__s.root()`);
     // 先修收成「先修 n」：第一屏不佔一列；點了才展開那幾課與「在地圖上看」（沒有少東西）
-    const pre0 = await evaluate(`scrollTo(0, 0); const d = document.querySelector(".cv2-pre"); return { summary: window.__s.text(".cv2-pre > summary"), open: d ? d.open : null, beat: Math.round(document.querySelector("[data-cv2s] .cv2s-beat").getBoundingClientRect().top) };`);
+    const pre0 = await evaluate(`scrollTo(0, 0); const d = document.querySelector(".cv2-pre"); return { summary: window.__s.text(".cv2-pre > summary"), open: d ? d.open : null, beat: window.__s.lead().top };`);
     check(`先修收起來：「先修 ${SECOND.prerequisites.length}」、第一句頂端 ≤ 220px`, pre0.summary === `先修 ${SECOND.prerequisites.length}` && pre0.open === false && pre0.beat <= 220, JSON.stringify(pre0));
     await tap(".cv2-pre > summary");
     const pre1 = await evaluate(`const d = document.querySelector(".cv2-pre"); const links = [...d.querySelectorAll('[data-action="open-course-lesson"]')].filter((n) => window.__s.visible(n)).map((n) => n.dataset.lessonId); const map = d.querySelector('[data-action="course-map-focus"]'); return { open: d.open, links, map: Boolean(map && window.__s.visible(map)), overflow: window.__s.overflow() };`);
@@ -367,7 +379,7 @@ async function run() {
     const w1 = WIDGET.sections[0].beats[1].fig;
     await evaluate(`window.__s.watch(${w1.use}); return 1;`);
     await tap("[data-cv2s-next]");
-    await sleep(1300);
+    await waitFor(`window.__watched`, 40000);
     const vals = await evaluate(`return window.__vals;`);
     check(`下一句：n 從 ${w0.to} 平滑地動到 ${w1.to}（中間有過渡值）`, vals[vals.length - 1] === String(w1.to) && vals.length >= 3, vals.join("→"));
     const slider = await evaluate(`const f = window.__s.fig(${w1.use}); return { input: f.querySelector("input").value, readout: f.querySelector("[data-cv2-readout]").textContent };`);
@@ -383,7 +395,7 @@ async function run() {
     await sleep(200);
     await evaluate(`window.__s.watch(${d1.use}); return 1;`);
     await tap("[data-cv2s-next]");
-    await sleep(1300);
+    await waitFor(`window.__watched`, 40000);
     const still = (await evaluate(`return window.__vals;`)).filter((v, i) => !(i === 0 && v === String(d0.to)));
     check(`reduced-motion：直接跳到 ${d1.to}，沒有過渡值`, still.length === 1 && still[0] === String(d1.to), `${d0.to} → ${still.join("→")}`);
     await chrome.send("Emulation.setEmulatedMedia", { features: [] });
@@ -508,7 +520,8 @@ async function run() {
       await chrome.send("Emulation.setDeviceMetricsOverride", { width: vp.width, height: vp.height, deviceScaleFactor: 3, mobile: true });
       await evaluate(`const r = window.__s.rec(); r.settings = { ...(r.settings || {}), narrSubs: true, narrRate: 1.5 }; localStorage.setItem("buzzcalculus.records.v1", JSON.stringify(r)); return 1;`);
       check(`${tag}：打開 ${FOLLOW.id}`, await openLesson(FOLLOW.id));
-      await retime(FOLLOW.id, 1800, `e2ef${vp.width}`);
+      // 自己往上捲的那一種把一句拉長（1.5× 念 2 秒）：捲動要在同一句裡做完、量完，慢機器上 1.2 秒一句不夠
+      await retime(FOLLOW.id, vp.wheel ? 3000 : 1800, `e2ef${vp.width}`);
       await tap(`.cv2s-dot:nth-child(${FOLLOW_SI + 1})`);
       await waitFor(`window.__s.si() === ${FOLLOW_SI}`);
       await evaluate(`scrollTo(0, 0); window.__m = () => {
@@ -533,13 +546,15 @@ async function run() {
       }
       let away = null;
       if (vp.wheel) {
-        // 念到一半自己往上捲：這一句不被拉回去；下一句才帶回來
-        await waitFor(`window.__log.length >= 2`, 6000);
-        const y0 = await evaluate(`return Math.round(scrollY);`);
+        // 念到一半自己往上捲：這一句不被拉回去；下一句才帶回來。
+        // 在頁面裡記「這一句還在念的時候」捲到的最高處與最後的位置（不靠固定的等待：慢機器上下一句可能已經開始、合理地把頁面帶回去）
+        await waitFor(`window.__log.length >= 2`, 9000);
+        await evaluate(`const v = window.BuzzCourseSections.voice(); const y0 = Math.round(scrollY); window.__away = { beat: v.beat, y0, min: y0, last: y0 };
+          window.__awayOn = () => { const a = window.__away; if (window.BuzzCourseSections.voice().beat !== a.beat) return; a.last = Math.round(scrollY); a.min = Math.min(a.min, a.last); };
+          addEventListener("scroll", window.__awayOn, { passive: true }); return 1;`);
         await chrome.send("Input.dispatchMouseEvent", { type: "mouseWheel", x: 200, y: 300, deltaX: 0, deltaY: -240 });
-        await sleep(450);
-        away = await evaluate(`return { y: Math.round(scrollY), beat: window.BuzzCourseSections.voice().beat };`);
-        away.y0 = y0;
+        await waitFor(`window.BuzzCourseSections.voice().beat !== window.__away.beat || window.BuzzCourseSections.voice().wait`, 15000);
+        away = await evaluate(`removeEventListener("scroll", window.__awayOn); return { ...window.__away, y: window.__away.last };`);
       }
       check(`${tag}：念到最後一句停在動作前`, await waitFor(`window.BuzzCourseSections.voice().wait && document.querySelector("[data-cv2s-act]")`, 15000));
       await sleep(1300);
@@ -556,7 +571,7 @@ async function run() {
       check(`${tag}：念完：動作整個在 dock 上面（連「下一節」放得下就一起）`, end.act && end.act[0] >= end.top - 1 && (end.act[1] - end.act[0] > end.lim - end.top || end.act[1] <= end.lim + 1) && (end.bar - end.act[0] > end.lim - end.top || end.bar <= end.lim + 1), JSON.stringify(end));
       if (away) {
         const after = log.filter((m) => m.beat > away.beat && !m.wait);
-        check(`${tag}：念到一半自己往上捲：這一句不拉回去、下一句才帶回來`, away.y < away.y0 - 100 && after.length > 0 && after.every((m) => m.now[1] <= m.lim + 1), `${away.y0} → ${away.y} · ${JSON.stringify(after[0] || {})}`);
+        check(`${tag}：念到一半自己往上捲：這一句不拉回去、下一句才帶回來`, away.min < away.y0 - 100 && away.y < away.y0 - 100 && after.length > 0 && after.every((m) => m.now[1] <= m.lim + 1), `${away.y0} → ${away.min} → ${away.y} · ${JSON.stringify(after[0] || {})}`);
       }
       const bottom = await evaluate(`scrollTo(0, 1e6); await new Promise((r) => setTimeout(r, 200)); return window.__m();`);
       check(`${tag}：捲到底，「下一節」清得開 dock`, bottom.bar <= bottom.lim + 1, JSON.stringify(bottom));
