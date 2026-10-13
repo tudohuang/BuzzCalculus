@@ -73,6 +73,7 @@ const errors = [];
 const warnings = [];
 const err = (id, msg) => errors.push(`${id}: ${msg}`);
 const warn = (id, msg) => warnings.push(`${id}: ${msg}`);
+const leaks = []; // 答案先講了：另外整批列（混在一般警告裡會被 80 條的上限截掉）
 // 長度算的是「畫面上看到的字」：$…$ 裡的 LaTeX 原始碼（\frac{…}{…}、\sqrt、上下標記號）不算，只算剩下的符號
 const cjkLen = (s) => String(s || "")
   .replace(/(?<!\\)\$([^$]+?)(?<!\\)\$/g, (_m, body) => body.replace(/\\[a-zA-Z]+/g, "x").replace(/[{}^_\\]/g, ""))
@@ -297,6 +298,40 @@ const clipOf = (id, key) => {
   return got ? { h: got.h, ms: got.t[1] - got.t[0] } : null;
 };
 let sayMissing = 0;
+// 答案先講了：結尾的小測正解（去掉 $ 與空白）原封不動出現在緊鄰的前一句（show／note／say／黑板），
+// 或先猜（predict）的正解出現在同一節更早的任何一句 —— 問題就什麼都沒考。只警告：有時候前一句是教、題目是往前一步（人判斷）。
+const leakNorm = (s) => String(s || "").replace(/\{\{[a-z][a-z0-9]*:/g, "").replace(/[\s$]|\\[,;!:]|\\left|\\right|\\displaystyle|\\dfrac/g, (m) => (m === "\\dfrac" ? "\\frac" : "")).replace(/−/g, "-").replace(/′/g, "'");
+// text：畫面上的字（show／note／黑板）；said：旁白。短的正解（一個數、兩三個字）到處都是，
+// 只算畫面上「＝ 它」「→ 它」「：它」「是它」這種把它當結果寫出來的；長的原封不動出現就算（旁白也算）
+function leakIn(label, text, said = "") {
+  const k = leakNorm(label);
+  if (!k) return false;
+  const t = leakNorm(text);
+  // 長的：後面不能還接著同一個式子（「\frac{1}{2}\Gamma(3)」裡的 \frac{1}{2} 只是係數）
+  const whole = (s) => { for (let i = s.indexOf(k); i >= 0; i = s.indexOf(k, i + 1)) if (!/[\w(^_{\\]/.test(s[i + k.length] || "")) return true; return false; };
+  if (k.length > 3) return whole(t) || whole(leakNorm(said));
+  for (let i = t.indexOf(k); i >= 0; i = t.indexOf(k, i + 1)) {
+    if (/(=|\\to|→|：|是|\\approx)$/.test(t.slice(Math.max(0, i - 8), i)) && !/[\w.^_]/.test(t[i + k.length] || "")) return true;
+  }
+  return false;
+}
+function leakWarn(id, L, sec, where) {
+  const beats = Array.isArray(sec.beats) ? sec.beats : [];
+  const leaksIn = (label, b) => leakIn(label, [...(b.show || []), b.note || "", ...(b.board || []).map((a) => a.line || "")].join("\n"), b.say || "");
+  const qi = sec.check !== undefined ? sec.check : sec.solve && Number.isInteger(sec.solve.check) ? sec.solve.check : -1;
+  const q = qi >= 0 && L.checks ? L.checks[qi] : null;
+  const good = (o) => ((o && o.options) || []).find((x) => x && x.correct);
+  if (q && beats.length) {
+    const c = good(q);
+    if (c && leaksIn(c.label, beats[beats.length - 1])) leaks.push(`${id}: ${where}：小測 Q${qi + 1} 的正解「${c.label}」就寫在前一句（答案先講了：改成要往前一步，或把那一句挪到題目之後）`);
+  }
+  if (sec.predict) {
+    const c = good(sec.predict);
+    const bi = c ? beats.findIndex((b) => leaksIn(c.label, b)) : -1;
+    if (bi >= 0) leaks.push(`${id}: ${where}：先猜的正解「${c.label}」第 ${bi + 1} 句就出現了（先猜要在看到答案之前）`);
+  }
+}
+
 function checkSections(id, L) {
   const S = L.sections;
   if (S === undefined) return "";
@@ -430,6 +465,7 @@ function checkSections(id, L) {
       r.numbers.forEach((n) => local.add(n));
       texts.push(...r.texts);
     }
+    leakWarn(id, L, sec, where);
     if (sec.video !== undefined && !(sec.video === true && L.video)) err(id, `${where} 的 video 只能寫 true，而且這一課要有 video`);
     shown = Math.max(shown, peak);
     if (shown > 220) err(id, `${where} 畫面上的字 ${shown} 字（一節 ≤ 220；建議 ≤ 150）`);
@@ -593,6 +629,7 @@ function checkProof(id, L, sec, where, texts) {
   ];
   const keepMissing = sayMissing;
   const keepWarn = warnings.length;
+  const keepLeak = leaks.length;
   cases.forEach(([name, mutate, want]) => {
     const L = good();
     mutate(L);
@@ -604,6 +641,10 @@ function checkProof(id, L, sec, where, texts) {
   });
   sayMissing = keepMissing;
   warnings.splice(keepWarn);
+  leaks.splice(keepLeak);
+  // 答案先講了：正反案例（短的數字要整個符號吻合）
+  [["$x^3=o(x^2)$", "$x\\to 0$：$x^3 = o(x^2)$", true], ["$2$", "$\\lim_{x\\to1} g(x) = {{l:2}}$", true], ["$2$", "$x^2+12$", false], ["$-1$", "$z=−1$ 或 $z=3$", true], ["$-1$", "$z=-12$", false], ["0", "從 $0$ 到 $1$", false],["$\\frac{1}{2\\sqrt{n}}$", "$\\le\\dfrac{1}{2\\sqrt{n}}$", true]]
+    .forEach(([label, text, want]) => { if (leakIn(label, text) !== want) errors.push(`自測（答案先講了）「${label}」在「${text}」裡應該${want ? "" : "不"}算出現`); });
 }
 
 function checkFigures(id, L) {
@@ -941,6 +982,10 @@ console.log(`新版課程：大綱 ${all} 課，已寫 ${written} 課${wanted.le
 }
 // 字改了、旁白還沒重錄：不擋（播放時那一句沒有聲音，分節照常點），但要看得到
 if (sayMissing) warnings.push(`旁白：${sayMissing} 句的 say 沒有對得上的錄音（node tools/build_narration.js）`);
+if (leaks.length) {
+  console.log(`\n警告（答案先講了）${leaks.length}：`);
+  leaks.forEach((w) => console.log("  " + w));
+}
 if (warnings.length) {
   console.log(`\n警告 ${warnings.length}：`);
   warnings.slice(0, 80).forEach((w) => console.log("  " + w));
