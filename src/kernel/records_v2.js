@@ -311,6 +311,8 @@
   // 課程進度（records.course 舊 25 課、records.courseV2 新版課程）：同一課逐欄合併。
   // 第一次打開／第一次完成取早的、最近一次練習取晚的、分數取高的 —— 換台裝置不會把完成的課變回沒完成。
   const EARLIEST = ["openedAt", "doneAt", "solvedAt"];
+  // 一課裡的子結構：讀完的節（secDone）取聯集；自己算（solve，節 → 狀態）每一節取比較好的那個
+  const SOLVE_ORDER = { first: 4, later: 3, shown: 2, tried: 1 };
   function mergeCourse(a, b) {
     const out = Object.assign({}, a || {});
     Object.keys(b || {}).forEach((id) => {
@@ -323,7 +325,12 @@
         const x = mine[key];
         const y = theirs[key];
         if (x === undefined || y === undefined) return;
-        if (typeof x === "number" && typeof y === "number") merged[key] = Math.max(x, y);
+        if (key === "secDone" && Array.isArray(x) && Array.isArray(y)) merged[key] = [...new Set(x.concat(y))].sort((p, q) => p - q);
+        else if (key === "solve" && x && y && typeof x === "object" && typeof y === "object") {
+          const best = Object.assign({}, x, y);
+          Object.keys(x).forEach((k) => { if ((SOLVE_ORDER[x[k]] || 0) > (SOLVE_ORDER[best[k]] || 0)) best[k] = x[k]; });
+          merged[key] = best;
+        } else if (typeof x === "number" && typeof y === "number") merged[key] = Math.max(x, y);
         else if (typeof x === "boolean" || typeof y === "boolean") merged[key] = Boolean(x || y);
         else if (typeof x === "string" && typeof y === "string" && /At$/.test(key)) {
           merged[key] = EARLIEST.includes(key) === (x < y) ? x : y;
@@ -479,7 +486,7 @@
     const out = {};
 
     // 偏好類：新的覆蓋舊的，但舊的有、新的沒有時仍然保留
-    ["settings", "plan", "placement", "onboardingLevel", "onboardingSeen", "planReportSeen", "schema", "courseMap"].forEach((key) => {
+    ["settings", "plan", "placement", "onboardingLevel", "onboardingSeen", "planReportSeen", "schema", "courseMap", "pathRetest", "onboardingContext"].forEach((key) => {
       out[key] = newer[key] !== undefined && newer[key] !== null ? newer[key] : older[key];
     });
     out.updatedAt = newer.updatedAt || older.updatedAt || "";
@@ -526,6 +533,9 @@
 
     out.mistakes = mergeMistakes(left.mistakes, right.mistakes);
     out.proofs = mergeProofs(left.proofs, right.proofs);
+    // 白話證明（題 → 草稿／提交／solvedAt）與證明課（課 → 完成時間）：跟課程同一套逐欄規則（解開的時間取早的）
+    out.proofLang = mergeCourse(left.proofLang, right.proofLang);
+    out.proofLangLessons = mergeCourse(left.proofLangLessons, right.proofLangLessons);
 
     // 序列：聯集後排序截斷
     out.history = mergeById(left.history, right.history, "id", "finishedAt").slice(-60);
@@ -536,6 +546,34 @@
     // 計數器從合併後的資料重算
     out.topicStats = mergeUnion(left.topicStats, right.topicStats);
     recount(out, opts.problemTopics || null);
+    // 每題對錯：重算的不能比任一邊原本的少 —— attemptLog 有上限，更早的只留在 problemStats；
+    // 課程的熟練／全破看「推薦題做對過」，少了等於把人家的層級降回去
+    [left.problemStats, right.problemStats].forEach((side) => {
+      Object.keys(side || {}).forEach((id) => {
+        const had = side[id];
+        if (!had || typeof had !== "object") return;
+        const now = (out.problemStats = out.problemStats || {})[id] || { correct: 0, wrong: 0, total: 0 };
+        out.problemStats[id] = Object.assign({}, had, now, {
+          correct: Math.max(Number(now.correct) || 0, Number(had.correct) || 0),
+          wrong: Math.max(Number(now.wrong) || 0, Number(had.wrong) || 0),
+          total: Math.max(Number(now.total) || 0, Number(had.total) || 0)
+        });
+      });
+    });
+
+    // 上面沒點名的欄位（xp、導覽、解鎖、寶箱、之後新增的功能…）不能因為合併就消失：
+    // 數字取大、布林取或、兩邊都是物件就逐 key 聯集（同 key 取新的），其餘取新的
+    new Set(Object.keys(left).concat(Object.keys(right))).forEach((key) => {
+      if (key === "cache" || Object.prototype.hasOwnProperty.call(out, key)) return;
+      const x = left[key];
+      const y = right[key];
+      if (x === undefined || x === null) { out[key] = y; return; }
+      if (y === undefined || y === null) { out[key] = x; return; }
+      if (typeof x === "number" && typeof y === "number") out[key] = Math.max(x, y);
+      else if (typeof x === "boolean" || typeof y === "boolean") out[key] = Boolean(x || y);
+      else if (typeof x === "object" && typeof y === "object" && !Array.isArray(x) && !Array.isArray(y)) out[key] = Object.assign({}, x, y);
+      else out[key] = y;
+    });
 
     // cache 是純推導結果，合併時直接丟掉重算
     delete out.cache;
