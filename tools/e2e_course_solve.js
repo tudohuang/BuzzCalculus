@@ -99,10 +99,16 @@ async function run() {
   };
   // 真的用手指點（觸控事件 → 合成的 click）
   const tap = async (sel) => {
-    const p = await evaluate(`return window.__b.center(${JSON.stringify(sel)});`);
-    if (!p) return false;
-    await sleep(60);
-    const q = await evaluate(`return window.__b.center(${JSON.stringify(sel)});`);
+    // 人是看著鍵點的：頁面還在滑（出完句子時分節會把動作捲進畫面）就等它停，連三次（約 100ms × 3）位置都一樣才點
+    let q = await evaluate(`return window.__b.center(${JSON.stringify(sel)});`);
+    if (!q) return false;
+    for (let k = 0, still = 0; k < 40 && still < 3; k += 1) {
+      await sleep(35);
+      const r = await evaluate(`return window.__b.center(${JSON.stringify(sel)});`);
+      if (!r) return false;
+      still = Math.abs(r.y - q.y) < 0.5 && Math.abs(r.x - q.x) < 0.5 ? still + 1 : 0;
+      q = r;
+    }
     await chrome.send("Input.dispatchTouchEvent", { type: "touchStart", touchPoints: [{ x: q.x, y: q.y }] });
     await chrome.send("Input.dispatchTouchEvent", { type: "touchEnd", touchPoints: [] });
     await sleep(80);
