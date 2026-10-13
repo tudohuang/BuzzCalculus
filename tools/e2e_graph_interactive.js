@@ -221,7 +221,7 @@ async function run() {
       await new Promise(r=>setTimeout(r, 400 * (window.__slow || 1)));
       document.querySelector('[data-action="submit-sketch"]').click();
       let text = "";
-      for (const end = Date.now() + 4000; Date.now() < end; await new Promise(r=>setTimeout(r, 60))) { const f = document.querySelector(".feedback"); if (f) { text = f.innerText; break; } }
+      for (const end = Date.now() + 4000; Date.now() < end; await new Promise(r=>setTimeout(r, 30))) { const f = document.querySelector(".feedback"); if (f) { text = f.innerText; break; } }
       return { ok:true, wrong: /應該遞增|應該遞減/.test(text), feedback: text.replace(/\\s+/g, " ").slice(0, 120) };
     `);
     check("上下翻轉的圖判錯，而且說出哪一段增減錯了（不是選擇題的誘答理由）", flipped.ok && flipped.wrong, flipped.feedback || flipped.why);
@@ -282,7 +282,8 @@ async function run() {
         slider.dispatchEvent(new Event("input", { bubbles: true }));
         await new Promise(r=>setTimeout(r, 300 * (window.__slow || 1)));
         document.querySelector('[data-action="epsilon-submit"]').click();
-        await new Promise(r=>setTimeout(r, 600 * (window.__slow || 1)));
+        // 最後一關交出去就是答對：答對 950ms 後自動前進（這裡是一題的局 → 直接結算），回饋要馬上讀，不能先睡
+        if (i < problem.epsilon.levels.length - 1) await new Promise(r=>setTimeout(r, 600 * (window.__slow || 1)));
       }
       let text = "";
       for (const end = Date.now() + 4000; Date.now() < end; await new Promise(r=>setTimeout(r, 60))) { const f = document.querySelector(".feedback"); if (f) { text = f.innerText; break; } }
