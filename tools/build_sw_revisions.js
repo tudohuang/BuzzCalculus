@@ -34,14 +34,7 @@ const CORE_LAZY = ["steps", "pwa"];
 // 讀檔：預設讀磁碟；E2E（tools/e2e_update.js）傳入覆寫，產生「改了一支檔之後」的 sw.js 而不動到磁碟
 const diskRead = (rel) => fs.readFileSync(path.join(ROOT, rel));
 // 內容雜湊：sw.js 在執行期用 crypto.subtle 算一樣的東西（sha256 的前 10 個 hex）
-// 雜湊的是「git 裡、部署出去的那份」：版控裡全是 LF，但 Windows 開發機的工作目錄有些檔是早年 autocrlf 簽出的 CRLF，
-// git 不認為有改、雜湊卻不同 → 本機產生的 sw.js 跟 CI／Vercel 對不上（regen_all --check 在 CI 一直紅）。
-// 文字檔（不含 NUL）先把 CRLF 換成 LF 再算，跟伺服器送出去的位元組一致；二進位檔照原樣。
-const hashOf = (buf) => {
-  const text = !buf.includes(0) && buf.includes(13);
-  const bytes = text ? Buffer.from(buf.toString("latin1").replace(/\r\n/g, "\n"), "latin1") : buf;
-  return crypto.createHash("sha256").update(bytes).digest("hex").slice(0, 10);
-};
+const hashOf = (buf) => crypto.createHash("sha256").update(buf).digest("hex").slice(0, 10);
 
 // 版本：APP_VERSION（人訂的 vX.Y.Z）與 BUILD_DATE（tools/stamp_build.js 蓋的）從 app.js 讀；
 // id ＝ 整張 REVISIONS 的雜湊 —— 不用任何人記得去改，任何一支檔變了它就變，快取名跟著變。
