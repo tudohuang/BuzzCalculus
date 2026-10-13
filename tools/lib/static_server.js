@@ -26,7 +26,9 @@ const TYPES = {
   ".mp3": "audio/mpeg"
 };
 
-function start(root, port) {
+// options.overrides：Map("/路徑" → 內容)。有的話先回它、不讀磁碟 —— e2e_update 用它「部署新版」（改一支檔＋新的 sw.js）而不動到工作區。
+function start(root, port, options = {}) {
+  const overrides = options.overrides || new Map();
   const resolvedRoot = path.resolve(root);
   const missing = [];
   // 每一個打到伺服器的請求（含 Service Worker 送的）：e2e_transfer 用它數「第一次造訪抓了什麼、課程表有沒有整套預抓」
@@ -41,7 +43,7 @@ function start(root, port) {
       res.writeHead(403).end("forbidden");
       return;
     }
-    fs.readFile(file, (err, data) => {
+    const send = (err, data) => {
       if (err) {
         // 記下來：E2E 結束時要斷言「沒有任何 404」。
         // 少一個 vendor 檔案，畫面上可能只是圖示變空白，不會有任何錯誤訊息。
@@ -53,7 +55,9 @@ function start(root, port) {
         "content-type": TYPES[path.extname(file).toLowerCase()] || "application/octet-stream",
         "cache-control": "no-store"
       }).end(data);
-    });
+    };
+    if (overrides.has(rel)) send(null, Buffer.from(overrides.get(rel)));
+    else fs.readFile(file, send);
   });
 
   return new Promise((resolve, reject) => {
@@ -63,6 +67,7 @@ function start(root, port) {
         url: `http://127.0.0.1:${server.address().port}`,
         missing,
         requests,
+        overrides,
         // Chrome 的 keep-alive 連線會讓 server.close 等到天荒地老（E2E 斷言失敗之後整支卡住、
         // 真正的錯誤訊息印不出來）。先把連線全部切掉再關。
         stop: () => new Promise((done) => {
