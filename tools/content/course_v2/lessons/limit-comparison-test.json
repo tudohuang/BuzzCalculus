@@ -154,9 +154,16 @@
       "proof": true, "of": 4, "skeleton": "ε-δ",
       "beats": [
         { "show": ["把 $a_n$ 夾在兩個 $b_n$ 的倍數之間"],
-          "say": "策略：n 夠大以後，把 a n 夾在兩個 b n 的倍數之間，再兩邊各用一次比較判別。" },
+          "say": "策略：n 夠大以後，把 a n 夾在兩個 b n 的倍數之間，再兩邊各用一次比較判別。",
+          "board": [
+            { "do": "write", "line": "把 ${{a:a_n}}$ 夾在兩個 $b_n$ 的倍數之間", "tint": { "a": "violet" } }
+          ] },
         { "show": ["取 $\\varepsilon=\\frac{c}{2}$：$n\\ge N$ 時", "$\\left|\\frac{a_n}{b_n}-c\\right|<\\frac{c}{2}$"], "note": "比值的極限是 $c$。",
-          "say": "取 epsilon 等於二分之 c。比值趨近 c，所以 n 夠大以後，比值離 c 不到二分之 c。" },
+          "say": "取 epsilon 等於二分之 c。比值趨近 c，所以 n 夠大以後，比值離 c 不到二分之 c。",
+          "board": [
+            { "do": "write", "line": "取 $\\varepsilon=\\frac{c}{2}$：$n\\ge N$ 時", "on": "取 epsilon" },
+            { "do": "write", "line": "$\\left|\\frac{a_n}{b_n}-c\\right|<\\frac{c}{2}$", "on": "比值離 c" }
+          ] },
         { "show": ["$\\frac{c}{2}b_n<a_n<\\frac{3c}{2}b_n$"], "note": "拆開絕對值，再乘上 $b_n>0$。",
           "why": {
             "ask": "乘上 $b_n$，不等號為什麼不用變號？",
@@ -167,9 +174,20 @@
               { "label": "$a_n>0$", "why": "$a_n$ 是被夾的那個；乘的是 $b_n$，要看 $b_n$ 的正負。" }
             ]
           },
-          "say": "拆開絕對值，比值夾在二分之 c 和二分之三 c 之間；b n 是正的，乘上去方向不變。" },
+          "say": "拆開絕對值，比值夾在二分之 c 和二分之三 c 之間；b n 是正的，乘上去方向不變。",
+          "board": [
+            { "do": "keep", "n": 2 },
+            { "do": "write", "line": "${{l:\\frac{c}{2}{{bl:b_n}}}}<{{a:a_n}}<{{r:\\frac{3c}{2}{{br:b_n}}}}$", "on": "兩邊乘上" },
+            { "do": "underline", "term": "bl", "why": true, "on": "b n 是正的" },
+            { "do": "underline", "term": "br", "label": "正的，不變號", "why": true, "on": "乘上去" }
+          ] },
         { "show": ["$\\sum b_n$ 收斂 ⇒ $\\sum\\frac{3c}{2}b_n$ 收斂", "⇒ $\\sum a_n$ 收斂"], "note": "右半邊，加上〈比較判別〉。",
-          "say": "右半邊：b 的級數收斂，乘一個倍數還是收斂；a n 比它小，由比較判別也收斂。" },
+          "say": "右半邊：b 的級數收斂，乘一個倍數還是收斂；a n 比它小，由比較判別也收斂。",
+          "board": [
+            { "do": "keep", "n": 1 },
+            { "do": "underline", "term": "r", "on": "右半邊" },
+            { "do": "write", "line": "$\\sum b_n$ 收斂 ⇒ $\\sum{{a:a_n}}$ 收斂", "on": "b 的級數收斂" }
+          ] },
         { "show": ["$\\sum b_n$ 發散 ⇒ $\\sum\\frac{c}{2}b_n$ 發散", "⇒ $\\sum a_n$ 發散"], "note": "$c>0$，所以 $\\frac{c}{2}>0$。",
           "why": {
             "ask": "為什麼 $\\sum\\frac{c}{2}b_n$ 也發散？",
@@ -180,7 +198,12 @@
               { "label": "$\\frac{c}{2}b_n<a_n$", "why": "那是下一個箭頭的理由；這一步只問乘上倍數之後還發不發散。" }
             ]
           },
-          "say": "左半邊：c 是正的，二分之 c 也是正的，倍數不改變發散；a n 比它大，也發散。" }
+          "say": "左半邊：c 是正的，二分之 c 也是正的，倍數不改變發散；a n 比它大，也發散。",
+          "board": [
+            { "do": "write", "line": "$\\sum b_n$ 發散 ⇒ $\\sum{{a:a_n}}$ 發散", "on": "乘上二分之 c" },
+            { "do": "underline", "term": "l", "why": true, "on": "左半邊" },
+            { "do": "write", "line": "$c>0$ ⇒ $\\frac{c}{2}>0$", "why": true, "on": "c 是正的" }
+          ] }
       ],
       "order": { "ask": "把證明排回順序：依序點每一步",
         "steps": [
@@ -206,11 +229,23 @@
       "title": "像 $\\frac{1}{n^2}$",
       "beats": [
         { "show": ["$\\sum_{n=1}^\\infty\\frac{n+1}{n^3-n+5}$"], "note": "分母 $=n(n^2-1)+5>0$，各項為正。",
-          "say": "回到開頭那一題。先確認各項是正的：分母寫成 n 乘 n 平方減一，再加五，大於零。" },
+          "say": "回到開頭那一題。先確認各項是正的：分母寫成 n 乘 n 平方減一，再加五，大於零。",
+          "board": [
+            { "do": "write", "line": "$\\sum_{n=1}^\\infty\\frac{n+1}{n^3-n+5}$" },
+            { "do": "write", "line": "分母 $=n(n^2-1)+5>0$", "on": "分母寫成" }
+          ] },
         { "show": ["主要項 $\\frac{n}{n^3}=\\frac{1}{n^2}$"],
-          "say": "分子留 n，分母留 n 三次方，主要部分是 n 平方分之一，就拿它當 b n。" },
+          "say": "分子留 n，分母留 n 三次方，主要部分是 n 平方分之一，就拿它當 b n。",
+          "board": [
+            { "do": "write", "line": "主要項 $\\frac{n}{n^3}=\\frac{1}{n^2}$", "on": "分子留 n" },
+            { "do": "transform", "line": "主要項 $\\frac{n}{n^3}=\\frac{1}{n^2}={{b:b_n}}$", "on": "就拿它當" }
+          ] },
         { "show": ["$\\frac{a_n}{b_n}=\\frac{n^3+n^2}{n^3-n+5}$"],
-          "say": "乘上 n 平方，比值變成這個有理式。n 很大的時候，它趨近多少？" }
+          "say": "乘上 n 平方，比值變成這個有理式。n 很大的時候，它趨近多少？",
+          "board": [
+            { "do": "write", "line": "$\\frac{a_n}{{{b:b_n}}}=\\frac{n^3+n^2}{n^3-n+5}$", "on": "比值變成" },
+            { "do": "transform", "line": "$\\frac{a_n}{{{b:b_n}}}=\\frac{n^3+n^2}{n^3-n+5}\\to\\ ?$", "on": "n 很大的時候" }
+          ] }
       ],
       "predict": {
         "ask": "這個比值的極限，與結論是？",
@@ -225,13 +260,29 @@
       "title": "小量代換",
       "beats": [
         { "show": ["$\\sum_{n=1}^\\infty\\sin\\frac{1}{n}$"], "note": "$0<\\frac{1}{n}\\le 1<\\pi$，所以各項為正。",
-          "say": "n 分之一在零和一之間，比 pi 小，所以 sine n 分之一是正的，可以用。" },
+          "say": "n 分之一在零和一之間，比 pi 小，所以 sine n 分之一是正的，可以用。",
+          "board": [
+            { "do": "write", "line": "$\\sum_{n=1}^\\infty\\sin\\frac{1}{n}$" },
+            { "do": "write", "line": "$0<\\frac{1}{n}\\le 1<\\pi$ ⇒ 各項為正", "on": "比 pi 小" }
+          ] },
         { "show": ["$t=\\frac{1}{n}\\to 0^+$：$\\frac{\\sin t}{t}\\to 1$"],
-          "say": "跟 n 分之一比。令 t 等於 n 分之一，比值就是 sine t 除以 t，趨近一。" },
+          "say": "跟 n 分之一比。令 t 等於 n 分之一，比值就是 sine t 除以 t，趨近一。",
+          "board": [
+            { "do": "write", "line": "${{t:t=\\frac{1}{n}}}\\to 0^+$", "on": "令 t" },
+            { "do": "transform", "line": "${{t:t=\\frac{1}{n}}}\\to 0^+$：$\\frac{\\sin t}{t}\\to 1$", "on": "比值就是" }
+          ] },
         { "show": ["$\\sum\\frac{1}{n}$ 發散 ⇒ 發散"], "note": "各項 $\\to 0$，發散判別在這裡沒有結論。",
-          "say": "調和級數發散，所以它也發散。注意每一項都趨近零，發散判別在這裡幫不上忙。" },
+          "say": "調和級數發散，所以它也發散。注意每一項都趨近零，發散判別在這裡幫不上忙。",
+          "board": [
+            { "do": "write", "line": "$\\sum\\frac{1}{n}$ 發散 ⇒ $\\sum\\sin\\frac{1}{n}$ 發散", "color": "green" }
+          ] },
         { "show": ["$1-\\cos\\frac{1}{n}$ 和 $\\frac{1}{2n^2}$ 的比值 $\\to 1$"],
-          "say": "另一個常用的小量代換：一減 cosine n 分之一，跟二 n 平方分之一，比值也趨近一。" }
+          "say": "另一個常用的小量代換：一減 cosine n 分之一，跟二 n 平方分之一，比值也趨近一。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "$1-\\cos\\frac{1}{n}$ 和 $\\frac{1}{2n^2}$", "on": "一減 cosine" },
+            { "do": "write", "line": "比值 $\\to 1$", "on": "比值也" }
+          ] }
       ],
       "check": 2
     },

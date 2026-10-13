@@ -172,8 +172,10 @@ async function lintLessons(chrome, baseUrl, lessons, { viewports = VIEWPORTS, th
     await waitFor('document.querySelector(".cv2-index")');
     await evaluate(`${NAV} (${pageHelpers.toString()})(${MIN_LINE_PX}, ${MIN_LABEL_PX}, ${TOL}); return 1;`);
     for (const L of lessons) {
-      await evaluate(`window.__nav.open(${JSON.stringify(L.id)}); return 1;`);
-      if (!(await waitFor(`document.querySelector("[data-cv2s] .cv2s-sec")`))) { problems.push(`${vp.name} ${L.id}：打不開這一課`); continue; }
+      // 多課連跑時上一課的分節畫面還在：先在舊的根上做記號，等到換成「沒有記號的新根」才算打開了，
+      // 不然 go() 會點到上一課的節按鈕，這一課的第一個有黑板的節就報「黑板沒出來」（以前的隨機誤報）
+      await evaluate(`const old = document.querySelector("[data-cv2s]"); if (old) old.dataset.lintOld = "1"; window.__nav.open(${JSON.stringify(L.id)}); return 1;`);
+      if (!(await waitFor(`document.querySelector("[data-cv2s]:not([data-lint-old]) .cv2s-sec")`))) { problems.push(`${vp.name} ${L.id}：打不開這一課`); continue; }
       for (let si = 0; si < L.sections.length; si += 1) {
         if (!L.sections[si].beats.some((b) => b.board)) continue;
         // 節的按鈕可能還沒畫出來（剛打開課、上一節還在重繪）：等到點得到為止，不是只點一次

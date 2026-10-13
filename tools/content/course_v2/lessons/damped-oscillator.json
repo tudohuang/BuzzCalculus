@@ -122,13 +122,31 @@
       "title": "加上阻力",
       "beats": [
         { "show": ["阻力 $-cx'$，$c>0$"], "note": "跟速度方向相反、大小約與速度成正比。",
-          "say": "木塊在空氣或液體裡動，會受到阻力。方向跟速度相反，大小約跟速度成正比。" },
+          "say": "木塊在空氣或液體裡動，會受到阻力。方向跟速度相反，大小約跟速度成正比。",
+          "board": [
+            { "do": "write", "line": "阻力 ${{d:-cx'}}$，$c > 0$", "tint": { "d": "violet" }, "on": "受到阻力" },
+            { "do": "underline", "term": "d", "label": "跟速度相反", "on": "方向跟速度" }
+          ] },
         { "show": ["$mx''=-kx-cx'$"],
-          "say": "牛頓第二定律多了這一項：彈簧的力，加上阻力。" },
+          "say": "牛頓第二定律多了這一項：彈簧的力，加上阻力。",
+          "board": [
+            { "do": "write", "line": "$mx'' = {{s:-kx}}{{d:-cx'}}$", "tint": { "s": "blue" }, "on": "牛頓" },
+            { "do": "focus", "term": "s", "label": "彈簧", "on": "彈簧的力" }
+          ] },
         { "show": ["$x''+2\\gamma x'+\\omega_0^2x=0$"], "note": "$2\\gamma=\\frac{c}{m}$、$\\omega_0^2=\\frac{k}{m}$。",
-          "say": "除以 m，x prime 的係數記成二 gamma，x 的係數一樣是 omega 零平方。" },
+          "say": "除以 m，x prime 的係數記成二 gamma，x 的係數一樣是 omega 零平方。",
+          "board": [
+            { "do": "transform", "line": "$x'' + {{g:2\\gamma}}\\,x' + {{w:\\omega_0^2}}\\,x = 0$", "on": "除以 m" },
+            { "do": "focus", "term": "g", "label": "c/m", "on": "記成二 gamma" },
+            { "do": "focus", "term": "w", "label": "k/m", "on": "omega 零平方" }
+          ] },
         { "show": ["$x''+2x'+5x=0$"],
-          "say": "看一個例子：x prime 的係數是二，x 的係數是五。gamma 是多少？" }
+          "say": "看一個例子：x prime 的係數是二，x 的係數是五。gamma 是多少？",
+          "board": [
+            { "do": "keep", "n": 1 },
+            { "do": "write", "line": "$x'' + {{g2:2}}\\,x' + 5x = 0$", "on": "看一個例子" },
+            { "do": "focus", "term": "g2", "on": "係數是二" }
+          ] }
       ],
       "predict": {
         "ask": "$x''+2x'+5x=0$ 的 $\\gamma$ 是？",
@@ -143,13 +161,26 @@
       "title": "三種行為",
       "beats": [
         { "show": ["$r=-\\gamma\\pm\\sqrt{\\gamma^2-\\omega_0^2}$"], "note": "比較 $\\gamma$ 與 $\\omega_0$。",
-          "say": "特徵根是負 gamma 加減根號 gamma 平方減 omega 零平方。關鍵是比 gamma 和 omega 零。" },
+          "say": "特徵根是負 gamma 加減根號 gamma 平方減 omega 零平方。關鍵是比 gamma 和 omega 零。",
+          "board": [
+            { "do": "write", "line": "$r = -\\gamma \\pm \\sqrt{{{q:\\gamma^2 - \\omega_0^2}}}$" },
+            { "do": "focus", "term": "q", "label": "比 γ 和 ω₀", "on": "關鍵是比" }
+          ] },
         { "show": ["欠阻尼 $\\gamma<\\omega_0$：振盪＋衰減"], "note": "$\\omega_d=\\sqrt{\\omega_0^2-\\gamma^2}<\\omega_0$。",
-          "say": "gamma 比較小，根號裡是負的，複數根：一邊振一邊衰減，而且振得比原本慢。" },
+          "say": "gamma 比較小，根號裡是負的，複數根：一邊振一邊衰減，而且振得比原本慢。",
+          "board": [
+            { "do": "write", "line": "欠阻尼 $\\gamma < \\omega_0$：振盪＋衰減", "on": "gamma 比較小" }
+          ] },
         { "show": ["臨界阻尼 $\\gamma=\\omega_0$：$(C_1+C_2t)e^{-\\gamma t}$"],
-          "say": "剛好相等，是重根，不振盪。" },
+          "say": "剛好相等，是重根，不振盪。",
+          "board": [
+            { "do": "write", "line": "臨界 $\\gamma = \\omega_0$：$(C_1+C_2t)e^{-\\gamma t}$" }
+          ] },
         { "show": ["過阻尼 $\\gamma>\\omega_0$：兩個負實根"], "note": "不振盪，慢慢回到平衡。",
-          "say": "gamma 比較大，兩個負實根，也不振盪，只是慢慢爬回平衡點。" }
+          "say": "gamma 比較大，兩個負實根，也不振盪，只是慢慢爬回平衡點。",
+          "board": [
+            { "do": "write", "line": "過阻尼 $\\gamma > \\omega_0$：兩個負實根" }
+          ] }
       ],
       "check": 0
     },
@@ -157,13 +188,31 @@
       "title": "欠阻尼",
       "beats": [
         { "show": ["$\\gamma=1$，$\\omega_0=\\sqrt5\\approx2.24$"], "note": "$\\gamma<\\omega_0$，欠阻尼。",
-          "say": "回到剛剛那一題。gamma 是一，omega 零是根號五，大約二點二四。一比較小，欠阻尼。" },
+          "say": "回到剛剛那一題。gamma 是一，omega 零是根號五，大約二點二四。一比較小，欠阻尼。",
+          "board": [
+            { "do": "write", "line": "$x'' + 2x' + 5x = 0$" },
+            { "do": "write", "line": "$\\gamma = 1$，$\\omega_0 = \\sqrt{5} \\approx 2.24$", "on": "gamma 是一" },
+            { "do": "write", "line": "$\\gamma < \\omega_0$：欠阻尼", "on": "一比較小" }
+          ] },
         { "show": ["$\\omega_d=\\sqrt{5-1}=2$"],
-          "say": "振盪的角頻率是根號五減一，等於二。" },
+          "say": "振盪的角頻率是根號五減一，等於二。",
+          "board": [
+            { "do": "write", "line": "$\\omega_d = \\sqrt{5 - 1} = 2$" }
+          ] },
         { "show": ["$x(0)=1$，$x'(0)=-1$：$x=e^{-t}\\cos 2t$"],
-          "say": "代初始條件，C 一是一，C 二是零。" },
+          "say": "代初始條件，C 一是一，C 二是零。",
+          "board": [
+            { "do": "keep", "n": 1 },
+            { "do": "write", "line": "$x(0) = 1$，$x'(0) = -1$", "on": "代初始條件" },
+            { "do": "write", "line": "$x = {{e:e^{-t}}}{{c:\\cos 2t}}$", "tint": { "e": "violet", "c": "blue" }, "on": "C 一是一" }
+          ] },
         { "show": ["振幅照 $e^{-t}$ 縮小"], "note": "大約每 $\\pi$ 秒完成一次完整振動。",
-          "say": "包絡線是 e 的負 t 次方。cosine 二 t 只管振盪快慢，大約每 pi 秒振一次。" }
+          "say": "包絡線是 e 的負 t 次方。cosine 二 t 只管振盪快慢，大約每 pi 秒振一次。",
+          "board": [
+            { "do": "keep", "n": 1 },
+            { "do": "plot", "graph": { "window": [0, 3.6, -1.1, 1.1], "curves": [{ "expr": "exp(-x)", "domain": [0, 3.6], "color": "violet" }, { "expr": "-exp(-x)", "domain": [0, 3.6], "color": "violet" }, { "expr": "exp(-x)*cos(2*x)", "domain": [0, 3.6], "color": "blue", "steps": 400 }] }, "on": "包絡線" },
+            { "do": "underline", "term": "c", "label": "每 π 秒一次", "on": "cosine 二 t" }
+          ] }
       ],
       "check": 3
     },

@@ -133,13 +133,28 @@
       "title": "一場挑戰",
       "beats": [
         { "show": ["對方給誤差 $\\varepsilon>0$"],
-          "say": "x 夠靠近 a，f 就能要多靠近 L 就多靠近。把這句話變成一場挑戰：對方先出一個誤差 epsilon。" },
+          "say": "x 夠靠近 a，f 就能要多靠近 L 就多靠近。把這句話變成一場挑戰：對方先出一個誤差 epsilon。",
+          "board": [
+            { "do": "write", "line": "對方給誤差 ${{e:\\varepsilon}}>0$", "tint": { "e": "blue" }, "on": "對方先出" }
+          ] },
         { "show": ["你回答距離 $\\delta>0$"], "note": "只要 $0<|x-a|<\\delta$，就有 $|f(x)-L|<\\varepsilon$。",
-          "say": "你要回答一個距離 delta，保證 x 離 a 不到 delta，f 在 x 的值就離 L 不到 epsilon。" },
+          "say": "你要回答一個距離 delta，保證 x 離 a 不到 delta，f 在 x 的值就離 L 不到 epsilon。",
+          "board": [
+            { "do": "write", "line": "你回答距離 ${{d:\\delta}}>0$", "tint": { "d": "violet" } },
+            { "do": "focus", "term": "d", "color": "violet", "label": "保證", "on": "保證" }
+          ] },
         { "show": ["$\\forall\\varepsilon>0\\ \\exists\\delta>0\\ \\forall x:$", "$0<|x-a|<\\delta\\Rightarrow|f(x)-L|<\\varepsilon$"],
-          "say": "每一個 epsilon 你都接得住，極限才是 L。跟數列的 epsilon N 是同一個架構，只是 n 夠大換成 x 夠近。" },
+          "say": "每一個 epsilon 你都接得住，極限才是 L。跟數列的 epsilon N 是同一個架構，只是 n 夠大換成 x 夠近。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "$\\forall{{qe:\\varepsilon}}>0\\ \\exists{{qd:\\delta}}>0\\ \\forall x:$", "tint": { "qe": "blue", "qd": "violet" }, "on": "每一個 epsilon" },
+            { "do": "write", "line": "$0<|x-a|<{{d:\\delta}}\\Rightarrow|f(x)-L|<{{e:\\varepsilon}}$", "on": "接得住" }
+          ] },
         { "show": ["$\\delta$ 寫在 $\\varepsilon$ 後面"], "note": "可以依賴 $\\varepsilon$ 與 $a$，不能依賴 $x$。",
-          "say": "delta 寫在 epsilon 後面，可以跟著 epsilon 變。但 delta 要在 x 出場之前就決定好。" }
+          "say": "delta 寫在 epsilon 後面，可以跟著 epsilon 變。但 delta 要在 x 出場之前就決定好。",
+          "board": [
+            { "do": "underline", "term": "qd", "color": "violet", "label": "跟著 ε 變", "on": "可以跟著" }
+          ] }
       ],
       "check": 0
     },
@@ -157,11 +172,24 @@
       "title": "直線：除以斜率",
       "beats": [
         { "show": ["$f(x)=3x+1$，$a=2$，$L=7$，$\\varepsilon=0.06$"],
-          "say": "先練一條直線：三 x 加一，在二附近，極限七，對方出零點零六。" },
+          "say": "先練一條直線：三 x 加一，在二附近，極限七，對方出零點零六。",
+          "board": [
+            { "do": "write", "line": "$f(x)=3x+1$，$a=2$，$L=7$，$\\varepsilon=0.06$", "on": "三 x 加一" }
+          ] },
         { "show": ["$|f(x)-7|=|3x-6|=3|x-2|$"],
-          "say": "距離化簡成三倍的 x 減二的絕對值。斜率三會把誤差放大三倍。" },
+          "say": "距離化簡成三倍的 x 減二的絕對值。斜率三會把誤差放大三倍。",
+          "board": [
+            { "do": "write", "line": "$|f(x)-7|=|3x-6|={{t:3}}|x-2|$" },
+            { "do": "focus", "term": "t", "label": "放大三倍", "on": "斜率三" }
+          ] },
         { "show": ["$3|x-2|<0.06$ ⇔ $|x-2|<0.02$"], "note": "$x=2.021$ 就超出：最大的 $\\delta=0.02$。",
-          "say": "所以 x 只能離二不到零點零二。再大一點，像二點零二一，就跑出去了。" }
+          "say": "所以 x 只能離二不到零點零二。再大一點，像二點零二一，就跑出去了。",
+          "board": [
+            { "do": "write", "line": "${{t:3}}|x-2|<0.06$ ⇔ $|x-2|<{{dd:0.02}}$" },
+            { "do": "underline", "term": "dd", "color": "green", "on": "零點零二" },
+            { "do": "write", "line": "$x={{w:2.021}}$：跑出去", "on": "像二點零二一" },
+            { "do": "focus", "term": "w", "color": "red", "on": "就跑出去" }
+          ] }
       ],
       "check": 2
     },
@@ -184,9 +212,18 @@
       "proof": true, "of": "ex2", "skeleton": "反證",
       "beats": [
         { "show": ["$\\exists\\varepsilon>0\\ \\forall\\delta>0\\ \\exists x$"], "note": "$0<|x-a|<\\delta$，卻 $|f(x)-L|\\ge\\varepsilon$。",
-          "say": "策略：量詞翻過來。有一個誤差，不管垂直帶多窄，帶子裡總有點跑出水平帶。" },
+          "say": "策略：量詞翻過來。有一個誤差，不管垂直帶多窄，帶子裡總有點跑出水平帶。",
+          "board": [
+            { "do": "write", "line": "$\\exists\\varepsilon>0\\ \\forall\\delta>0\\ \\exists x$" },
+            { "do": "write", "line": "$0<|x-a|<\\delta$，卻 $|f(x)-L|\\ge\\varepsilon$", "on": "帶子裡總有點" }
+          ] },
         { "show": ["$H(x)=0$（$x<0$）、$1$（$x\\ge0$）", "任一 $L$，取 $\\varepsilon=\\frac{1}{2}$"],
-          "say": "跳躍函數：零的左邊是零，右邊是一。固定任何一個 L，誤差取二分之一。" },
+          "say": "跳躍函數：零的左邊是零，右邊是一。固定任何一個 L，誤差取二分之一。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "$H(x)=0$（$x<0$）、$1$（$x\\ge0$）", "on": "跳躍函數" },
+            { "do": "write", "line": "任一 $L$，取 ${{eh:\\varepsilon=\\frac{1}{2}}}$", "on": "固定任何" }
+          ] },
         { "show": ["任何 $\\delta$：$x_1=-\\frac{\\delta}{2}$，$x_2=\\frac{\\delta}{2}$"], "note": "都滿足 $0<|x|<\\delta$；函數值 0 和 1。",
           "why": {
             "ask": "為什麼取這兩點？",
@@ -197,7 +234,11 @@
               { "label": "取 $x=\\delta$ 也一樣", "why": "$|x|<\\delta$ 是嚴格的，$x=\\delta$ 不在垂直帶裡。" }
             ]
           },
-          "say": "左右各取二分之 delta，兩點都在垂直帶裡，又不是零本身。函數值一個零，一個一。" },
+          "say": "左右各取二分之 delta，兩點都在垂直帶裡，又不是零本身。函數值一個零，一個一。",
+          "board": [
+            { "do": "write", "line": "任何 $\\delta$：$x_1=-\\frac{\\delta}{2}$，$x_2=\\frac{\\delta}{2}$", "on": "我們取這兩點" },
+            { "do": "write", "line": "$H(x_1)=0$，$H(x_2)=1$", "why": true, "on": "函數值一個零" }
+          ] },
         { "show": ["$1=|H(x_2)-H(x_1)|$", "$\\le|H(x_2)-L|+|L-H(x_1)|$"], "note": "兩段都 $<\\frac{1}{2}$ 會得到 $1<1$，矛盾。",
           "why": {
             "ask": "為什麼至少一點跑出去？",
@@ -208,9 +249,20 @@
               { "label": "對方給的 $\\delta$ 太大", "why": "$\\delta$ 多小都一樣：每一個 $\\delta$ 都取得到這兩點。" }
             ]
           },
-          "say": "三角不等式：兩個函數值差一，不超過兩段距離的和。兩段都小於二分之一，就得一小於一。" },
+          "say": "三角不等式：兩個函數值差一，不超過兩段距離的和。兩段都小於二分之一，就得一小於一。",
+          "board": [
+            { "do": "keep", "n": 1 },
+            { "do": "write", "line": "$1=|H(x_2)-H(x_1)|$", "on": "至少有一個" },
+            { "do": "write", "line": "$\\le|H(x_2)-L|+|L-H(x_1)|$", "on": "跑出水平帶" },
+            { "do": "write", "line": "兩段都 $<\\frac{1}{2}$ ⇒ $1<1$，矛盾", "why": true, "on": "兩段都小於" }
+          ] },
         { "show": ["存在 $\\varepsilon=\\frac{1}{2}$，每個 $\\delta$ 都有壞點"], "note": "$L$ 任意：極限不存在。",
-          "say": "這正是否定句：存在一個誤差，每個 delta 都有跑出去的點。L 是任意的，所以極限不存在。" }
+          "say": "這正是否定句：存在一個誤差，每個 delta 都有跑出去的點。L 是任意的，所以極限不存在。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "存在 $\\varepsilon=\\frac{1}{2}$，每個 $\\delta$ 都有壞點", "on": "存在一個誤差" },
+            { "do": "write", "line": "$L$ 任意 ⇒ 極限不存在", "color": "green", "on": "L 是任意的" }
+          ] }
       ],
       "check": 3
     }

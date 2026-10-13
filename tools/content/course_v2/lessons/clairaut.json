@@ -143,11 +143,23 @@
       "title": "順序好像不重要",
       "beats": [
         { "show": ["$f=x^3y+e^{xy^2}$"],
-          "say": "上一課的例子，兩種順序都得到一樣的答案。再拿一個比較複雜的試試。" },
+          "say": "上一課的例子，兩種順序都得到一樣的答案。再拿一個比較複雜的試試。",
+          "board": [
+            { "do": "write", "line": "$f=x^3y+{{b:e^{xy^2}}}$", "on": "再拿一個" },
+            { "do": "underline", "term": "b", "label": "比較複雜", "on": "比較複雜" }
+          ] },
         { "show": ["$f_{xy}=3x^2+2y\\,e^{xy^2}+2xy^3e^{xy^2}$"], "note": "先對 $x$，再對 $y$（要用乘法法則）。",
-          "say": "先對 x 再對 y，中間要用乘法法則，最後整理成三項。" },
+          "say": "先對 x 再對 y，中間要用乘法法則，最後整理成三項。",
+          "board": [
+            { "do": "write", "line": "${{xy:f_{xy}}}={{r:3x^2+2y\\,e^{xy^2}+2xy^3e^{xy^2}}}$", "tint": { "xy": "blue" } },
+            { "do": "underline", "term": "r", "label": "三項", "on": "整理成" }
+          ] },
         { "show": ["$f_{yx}=3x^2+2y\\,e^{xy^2}+2xy^3e^{xy^2}$"], "note": "先對 $y$，再對 $x$：一模一樣。",
-          "say": "換成先對 y 再對 x，過程完全不同，結果卻是同樣三項。" }
+          "say": "換成先對 y 再對 x，過程完全不同，結果卻是同樣三項。",
+          "board": [
+            { "do": "write", "line": "${{yx:f_{yx}}}={{r:3x^2+2y\\,e^{xy^2}+2xy^3e^{xy^2}}}$", "tint": { "yx": "violet" }, "on": "過程完全不同" },
+            { "do": "underline", "term": "r", "color": "green", "label": "一模一樣", "on": "結果卻是" }
+          ] }
       ],
       "predict": {
         "ask": "$f_{xy}$ 和 $f_{yx}$ 總是相等嗎？",
@@ -187,9 +199,18 @@
       "proof": true, "of": 4, "skeleton": "直接",
       "beats": [
         { "show": ["同一個 $\\Delta$ 算兩次，再縮到一點"],
-          "say": "策略：直接證。小矩形四個角的組合，用兩種分組各算一次，再讓矩形縮到那一點。" },
+          "say": "策略：直接證。小矩形四個角的組合，用兩種分組各算一次，再讓矩形縮到那一點。",
+          "board": [
+            { "do": "write", "line": "${{d:\\Delta}}$ ＝ 小矩形四個角的組合", "on": "小矩形" },
+            { "do": "write", "line": "兩種分組各算一次，再縮到一點", "on": "用兩種分組" }
+          ] },
         { "show": ["$g(x)=f(x,b+k)-f(x,b)$", "$\\Delta=g(a+h)-g(a)$"], "note": "$\\Delta$ 是小矩形四個角的組合。",
-          "say": "令 g 是上下兩條邊的差，那四個角的組合，就是 g 在 a 加 h 減 g 在 a。" },
+          "say": "令 g 是上下兩條邊的差，那四個角的組合，就是 g 在 a 加 h 減 g 在 a。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "$g(x)=f(x,b+k)-f(x,b)$", "on": "令 g" },
+            { "do": "write", "line": "${{d:\\Delta}}=g(a+h)-g(a)$", "on": "那四個角" }
+          ] },
         { "show": ["$\\Delta=hk\\cdot f_{xy}(\\xi,\\eta)$"], "note": "〈均值定理〉兩次：先對 $g$，再對 $f_x$ 的 $y$。",
           "why": {
             "ask": "為什麼 $\\Delta=hk\\cdot f_{xy}(\\xi,\\eta)$？",
@@ -200,11 +221,25 @@
               { "label": "用 Clairaut 定理換順序", "why": "這正是要證的事，還不能拿來用。" }
             ]
           },
-          "say": "g 用一次均值定理得 h 乘 f x 的差，這個差對 y 再用一次，就是 h k 乘 f x y，取在矩形裡某一點。" },
+          "say": "g 用一次均值定理得 h 乘 f x 的差，這個差對 y 再用一次，就是 h k 乘 f x y，取在矩形裡某一點。",
+          "board": [
+            { "do": "write", "line": "${{d:\\Delta}}=hk\\cdot {{p:f_{xy}(\\xi,\\eta)}}$", "tint": { "p": "blue" }, "on": "h k 乘" },
+            { "do": "underline", "term": "p", "label": "均值定理兩次", "why": true, "on": "再用一次" }
+          ] },
         { "show": ["換一種分組：$\\Delta=hk\\cdot f_{yx}(\\xi',\\eta')$"], "note": "先看 $y$ 方向的差分。",
-          "say": "改成先看 y 方向的差分，同樣用兩次均值定理，得到 h k 乘 f y x，在另一個點。" },
+          "say": "改成先看 y 方向的差分，同樣用兩次均值定理，得到 h k 乘 f y x，在另一個點。",
+          "board": [
+            { "do": "keep", "n": 1 },
+            { "do": "write", "line": "${{d:\\Delta}}=hk\\cdot {{q:f_{yx}(\\xi',\\eta')}}$", "tint": { "q": "violet" }, "on": "同樣用兩次" },
+            { "do": "underline", "term": "q", "label": "另一個點", "on": "f y x" }
+          ] },
         { "show": ["$h$、$k\\to0$：$f_{xy}(a,b)=f_{yx}(a,b)$"], "note": "兩點都 $\\to(a,b)$，兩邊取極限。",
-          "say": "消掉 h k，兩個混合偏導在兩個點相等。矩形縮到 a b，兩點都跑向 a b，取極限就相等。" }
+          "say": "消掉 h k，兩個混合偏導在兩個點相等。矩形縮到 a b，兩點都跑向 a b，取極限就相等。",
+          "board": [
+            { "do": "write", "line": "${{p:f_{xy}(\\xi,\\eta)}}={{q:f_{yx}(\\xi',\\eta')}}$", "on": "消掉" },
+            { "do": "transform", "line": "⇒ ${{r:f_{xy}(a,b)=f_{yx}(a,b)}}$", "on": "兩點都跑向" },
+            { "do": "box", "term": "r", "color": "green", "on": "取極限" }
+          ] }
       ],
       "where": {
         "ask": "「混合偏導在 $(a,b)$ 連續」用在哪一步？",
@@ -220,11 +255,25 @@
       "title": "挑好算的順序",
       "beats": [
         { "show": ["$f=x^2y+e^{\\sin y}\\ln(1+y^2)$，求 $f_{yx}$"],
-          "say": "照字面要先對 y 微分，後面那一項又是 e 的 sine y 次方、又是自然對數，很麻煩。" },
+          "say": "照字面要先對 y 微分，後面那一項又是 e 的 sine y 次方、又是自然對數，很麻煩。",
+          "board": [
+            { "do": "write", "line": "$f=x^2y+{{b:e^{\\sin y}\\ln(1+y^2)}}$，求 $f_{yx}$" },
+            { "do": "underline", "term": "b", "label": "很麻煩", "on": "後面那一項" }
+          ] },
         { "show": ["初等函數：$f_{yx}=f_{xy}$"],
-          "say": "可是它由初等函數組成，條件成立，順序可以換：改成先對 x。" },
+          "say": "可是它由初等函數組成，條件成立，順序可以換：改成先對 x。",
+          "board": [
+            { "do": "write", "line": "初等函數：${{s:f_{yx}=f_{xy}}}$", "on": "初等函數" },
+            { "do": "focus", "term": "s", "label": "順序可以換", "on": "順序可以換" }
+          ] },
         { "show": ["$f_x=2xy$，$f_{xy}=2x$"], "note": "後面那項不含 $x$，直接消失。",
-          "say": "後面那一項根本不含 x，一微就消失。剩下二 x y，再對 y 微分，得二 x。" }
+          "say": "後面那一項根本不含 x，一微就消失。剩下二 x y，再對 y 微分，得二 x。",
+          "board": [
+            { "do": "focus", "term": "b", "label": "不含 x", "on": "後面那一項" },
+            { "do": "write", "line": "$f_x={{k:2xy}}$", "on": "一微就消失" },
+            { "do": "transform", "line": "$f_x=2xy$，$f_{xy}={{r:2x}}$", "on": "再對 y" },
+            { "do": "focus", "term": "r", "color": "green", "on": "微分" }
+          ] }
       ],
       "check": 2
     },

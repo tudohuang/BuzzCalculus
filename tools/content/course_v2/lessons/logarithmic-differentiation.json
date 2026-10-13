@@ -145,13 +145,31 @@
       "title": "取 $\\ln$，拉下指數",
       "beats": [
         { "show": ["$y = x^x$，$\\ln y = x \\ln x$"], "note": "$x > 0$。指數變成乘法了。",
-          "say": "兩邊取自然對數，指數就被拉下來，變成 x 乘自然對數 x，只剩乘法。" },
+          "say": "兩邊取自然對數，指數就被拉下來，變成 x 乘自然對數 x，只剩乘法。",
+          "board": [
+            { "do": "write", "line": "$y=x^{{{e:x}}}$", "tint": { "e": "blue" } },
+            { "do": "write", "line": "$\\ln y={{e:x}}\\ln x$", "on": "指數就被" },
+            { "do": "underline", "term": "e", "color": "blue", "label": "拉下來了", "on": "只剩乘法" }
+          ] },
         { "show": ["左邊：$(\\ln y)' = \\frac{y'}{y}$"], "note": "$\\ln$ 套在 $y(x)$ 外面：連鎖律。",
-          "say": "兩邊對 x 微分。左邊自然對數套在 y 外面，連鎖律給 y 分之 y prime，別漏了 y prime。" },
+          "say": "兩邊對 x 微分。左邊自然對數套在 y 外面，連鎖律給 y 分之 y prime，別漏了 y prime。",
+          "board": [
+            { "do": "write", "line": "左邊：$(\\ln y)'={{l:\\frac{y'}{y}}}$", "on": "兩邊對 x" },
+            { "do": "focus", "term": "l", "label": "連鎖律", "on": "連鎖律" }
+          ] },
         { "show": ["右邊：$\\ln x + 1$"], "note": "乘法法則：$1 \\cdot \\ln x + x \\cdot \\frac{1}{x}$。",
-          "say": "右邊用乘法法則：一乘自然對數 x，加 x 乘 x 分之一，得到自然對數 x 加一。" },
+          "say": "右邊用乘法法則：一乘自然對數 x，加 x 乘 x 分之一，得到自然對數 x 加一。",
+          "board": [
+            { "do": "write", "line": "右邊：$1\\cdot\\ln x+x\\cdot\\frac{1}{x}$" },
+            { "do": "transform", "line": "右邊：$\\ln x+1$", "on": "得到" }
+          ] },
         { "show": ["$y' = x^x(\\ln x + 1)$"], "note": "最後乘回 $y$。",
-          "say": "算到 y 分之 y prime 還沒完，兩邊乘回 y，才是答案。" }
+          "say": "算到 y 分之 y prime 還沒完，兩邊乘回 y，才是答案。",
+          "board": [
+            { "do": "keep", "n": 2 },
+            { "do": "write", "line": "$y'={{yy:x^x}}(\\ln x+1)$", "color": "green", "on": "還沒完" },
+            { "do": "underline", "term": "yy", "label": "乘回 y", "on": "乘回 y" }
+          ] }
       ],
       "check": 0
     },
@@ -173,11 +191,24 @@
       "title": "指數是三角函數",
       "beats": [
         { "show": ["$y = x^{\\sin x}$，$\\ln y = \\sin x \\cdot \\ln x$"],
-          "say": "x 的 sine x 次方，一樣取自然對數，把 sine x 拉下來。" },
+          "say": "x 的 sine x 次方，一樣取自然對數，把 sine x 拉下來。",
+          "board": [
+            { "do": "write", "line": "$y=x^{{{e:\\sin x}}}$", "tint": { "e": "blue" } },
+            { "do": "write", "line": "$\\ln y={{e:\\sin x}}\\cdot\\ln x$", "on": "拉下來" }
+          ] },
         { "show": ["$\\frac{y'}{y} = \\cos x \\ln x + \\frac{\\sin x}{x}$"], "note": "右邊用乘法法則。",
-          "say": "右邊是乘積：cosine x 乘自然對數 x，加上 sine x 乘 x 分之一。" },
+          "say": "右邊是乘積：cosine x 乘自然對數 x，加上 sine x 乘 x 分之一。",
+          "board": [
+            { "do": "write", "line": "$\\frac{y'}{y}={{a:\\cos x\\ln x}}+{{b:\\frac{\\sin x}{x}}}$" },
+            { "do": "underline", "term": "a", "on": "cosine x 乘" },
+            { "do": "underline", "term": "b", "on": "加上" }
+          ] },
         { "show": ["$y' = x^{\\sin x}(\\cos x \\ln x + \\frac{\\sin x}{x})$"],
-          "say": "最後一樣乘回 y，也就是原本的 x 的 sine x 次方。" }
+          "say": "最後一樣乘回 y，也就是原本的 x 的 sine x 次方。",
+          "board": [
+            { "do": "write", "line": "$y'={{y:x^{\\sin x}}}\\left(\\cos x\\ln x+\\frac{\\sin x}{x}\\right)$", "color": "green" },
+            { "do": "underline", "term": "y", "label": "原本的 y", "on": "原本的" }
+          ] }
       ],
       "check": 1
     },

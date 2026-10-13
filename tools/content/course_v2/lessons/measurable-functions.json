@@ -68,13 +68,28 @@
       "title": "算出水平截集",
       "beats": [
         { "show": ["$f(x)=x^2$"],
-          "say": "拿 x 平方來算，看水平線上方的部分投影到 x 軸是什麼。" },
+          "say": "拿 x 平方來算，看水平線上方的部分投影到 x 軸是什麼。",
+          "board": [
+            { "do": "plot", "graph": { "ticks": false, "window": [-3.4,3.4,-1.1,6.2], "curves": [{"expr":"x^2","color":"blue"}], "dashed": [[[-3.4,4],[3.4,4]]], "arrows": [{"from":[2,0],"to":[3.3,0],"color":"green"},{"from":[-2,0],"to":[-3.3,0],"color":"green"}], "points": [{"x":2,"y":0,"open":true},{"x":-2,"y":0,"open":true}], "labels": [{"x":2,"y":-0.75,"text":"2","anchor":"middle"},{"x":-2,"y":-0.75,"text":"-2","anchor":"middle"},{"x":-3.2,"y":4.5,"text":"y = 4","anchor":"start"},{"x":2.6,"y":5.4,"text":"y = x²","anchor":"start"}] } }
+          ] },
         { "show": ["$\\{x^2>4\\}=(-\\infty,-2)\\cup(2,\\infty)$"], "note": "$x^2>4\\iff|x|>2$。",
-          "say": "x 平方大於四，就是 x 的絕對值大於二，兩條射線。" },
+          "say": "x 平方大於四，就是 x 的絕對值大於二，兩條射線。",
+          "board": [
+            { "do": "write", "line": "$\\{x^2>4\\}={{r:(-\\infty,-2)\\cup(2,\\infty)}}$" },
+            { "do": "underline", "term": "r", "color": "green", "label": "兩條射線", "on": "絕對值大於二" }
+          ] },
         { "show": ["$\\{x^2>0\\}=\\mathbb{R}\\setminus\\{0\\}$"],
-          "say": "x 平方大於零，除了零以外都對。" },
+          "say": "x 平方大於零，除了零以外都對。",
+          "board": [
+            { "do": "transform", "line": "$\\{x^2>0\\}={{z:\\mathbb{R}\\setminus\\{0\\}}}$" },
+            { "do": "focus", "term": "z", "color": "green", "label": "除了零", "on": "除了零" }
+          ] },
         { "show": ["$a\\ge0$：$(-\\infty,-\\sqrt{a})\\cup(\\sqrt{a},\\infty)$"], "note": "都是開集，所以可測。",
-          "say": "一般 a 大於等於零時，是兩條開射線，都是開集，所以 x 平方可測。那 a 是負的呢？" }
+          "say": "一般 a 大於等於零時，是兩條開射線，都是開集，所以 x 平方可測。那 a 是負的呢？",
+          "board": [
+            { "do": "transform", "line": "$a\\ge0$：$\\{x^2>a\\}={{g:(-\\infty,-\\sqrt{a})\\cup(\\sqrt{a},\\infty)}}$", "on": "一般 a" },
+            { "do": "underline", "term": "g", "label": "開集，可測", "on": "都是開集" }
+          ] }
       ],
       "check": 3
     },
@@ -115,11 +130,22 @@
       "title": "正部",
       "beats": [
         { "show": ["$f^+=\\max(f,0)$"], "note": "$f$ 可測 $\\Rightarrow f^+$ 可測。",
-          "say": "函數的正部，是 f 跟零取較大的。積分時要把 f 拆成正部減負部。" },
+          "say": "函數的正部，是 f 跟零取較大的。積分時要把 f 拆成正部減負部。",
+          "board": [
+            { "do": "write", "line": "${{p:f^+}}=\\max(f,0)$", "tint": { "p": "blue" } },
+            { "do": "transform", "line": "${{p:f^+}}=\\max(f,0)$，$f=f^+-f^-$", "on": "拆成" }
+          ] },
         { "show": ["$f=\\sin x$，$[0,2\\pi]$"],
-          "say": "拿 sine x 在零到二 pi 看。" },
+          "say": "拿 sine x 在零到二 pi 看。",
+          "board": [
+            { "do": "plot", "graph": { "ticks": false, "window": [-0.4,6.8,-1.35,1.45], "curves": [{"expr":"sin(x)","domain":[0,6.2832],"color":"muted","dashed":true},{"expr":"sin(x)","domain":[0,3.1416],"color":"blue","width":3},{"expr":"0","domain":[3.1416,6.2832],"color":"blue","width":3}], "labels": [{"x":3.1416,"y":-0.3,"text":"π","anchor":"middle"},{"x":6.2832,"y":-0.3,"text":"2π","anchor":"end"},{"x":1.7,"y":1.15,"text":"f⁺","anchor":"start"},{"x":4.9,"y":-0.75,"text":"sin x","anchor":"start"}] }, "on": "sine x" }
+          ] },
         { "show": ["$a\\ge0$：$f^+>a\\iff f>a$"],
-          "say": "a 大於等於零時，正部大於 a，跟 f 本身大於 a 是同一件事。" }
+          "say": "a 大於等於零時，正部大於 a，跟 f 本身大於 a 是同一件事。",
+          "board": [
+            { "do": "write", "line": "$a\\ge0$：${{p:f^+}}>a \\iff {{q:f>a}}$" },
+            { "do": "underline", "term": "q", "label": "同一件事", "on": "f 本身" }
+          ] }
       ],
       "predict": {
         "ask": "$\\{f^+>\\frac{1}{2}\\}$ 的長度是？",
@@ -147,7 +173,11 @@
       "proof": true, "of": 3, "skeleton": "直接",
       "beats": [
         { "show": ["把 $\\{f+g>a\\}$ 寫成可數聯集"],
-          "say": "策略：可測集對可數聯集、交集封閉。只要把 f 加 g 大於 a 的點，寫成可數多個可測集拼起來就好。" },
+          "say": "策略：可測集對可數聯集、交集封閉。只要把 f 加 g 大於 a 的點，寫成可數多個可測集拼起來就好。",
+          "board": [
+            { "do": "write", "line": "可測集：對可數聯集、交集封閉" },
+            { "do": "write", "line": "$\\{f+g>a\\}$ ＝ 可數多個可測集拼起來", "on": "只要把" }
+          ] },
         { "show": ["$f(x)+g(x)>a\\iff$ 有 $q\\in\\mathbb{Q}$", "使 $f(x)>q>a-g(x)$"], "note": "兩個實數之間塞得進有理數。",
           "why": {
             "ask": "為什麼一定找得到這樣的 $q$？",
@@ -158,11 +188,28 @@
               { "label": "把 $a$ 平分給 $f$、$g$ 兩邊", "why": "和大於 $a$ 不代表兩個各自大過一半：一個很大、一個很小也可以。要的是在中間塞一個有理數。" }
             ]
           },
-          "say": "f 在 x 的值大於 a 減 g 在 x 的值，兩個實數之間一定有有理數，叫它 q。反過來有這樣的 q，相加就大於 a。" },
+          "say": "f 在 x 的值大於 a 減 g 在 x 的值，兩個實數之間一定有有理數，叫它 q。反過來有這樣的 q，相加就大於 a。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "${{fx:f(x)}}>{{ag:a-g(x)}}$", "tint": { "fx": "blue", "ag": "violet" }, "on": "f 在 x 的值" },
+            { "do": "transform", "line": "${{fx:f(x)}}>{{q:q}}>{{ag:a-g(x)}}$", "on": "中間一定有" },
+            { "do": "focus", "term": "q", "label": "有理數稠密", "why": true, "on": "一定有有理數" }
+          ] },
         { "show": ["$\\{f+g>a\\}=\\bigcup_{q\\in\\mathbb{Q}}(\\{f>q\\}\\cap\\{g>a-q\\})$"], "note": "每一塊可測，$\\mathbb{Q}$ 可數。",
-          "say": "所以這個集合是對每個有理數 q 取兩個可測集的交集，再聯集起來。有理數可數，聯集可測。" },
+          "say": "所以這個集合是對每個有理數 q 取兩個可測集的交集，再聯集起來。有理數可數，聯集可測。",
+          "board": [
+            { "do": "write", "line": "$\\{f+g>a\\}={{u:\\bigcup_{q\\in\\mathbb{Q}}}}({{fq:\\{f>q\\}}}\\cap{{gq:\\{g>a-q\\}}})$", "tint": { "fq": "blue", "gq": "violet" } },
+            { "do": "underline", "term": "fq", "color": "blue", "on": "兩個可測集" },
+            { "do": "underline", "term": "gq", "color": "violet", "on": "的交集" },
+            { "do": "focus", "term": "u", "on": "再聯集起來" }
+          ] },
         { "show": ["$f^2$：$a<0$ 時是 $X$", "$a\\ge0$ 時 $\\{f>\\sqrt{a}\\}\\cup\\{f<-\\sqrt{a}\\}$"],
-          "say": "再看平方。a 是負的，整個空間都大於 a；a 大於等於零，就是 f 大於根號 a 或小於負根號 a，兩塊都可測。" },
+          "say": "再看平方。a 是負的，整個空間都大於 a；a 大於等於零，就是 f 大於根號 a 或小於負根號 a，兩塊都可測。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "$\\{f^2>a\\}$：$a<0$ 時是 $X$", "on": "a 是負的" },
+            { "do": "write", "line": "$a\\ge0$：$\\{f>\\sqrt{a}\\}\\cup\\{f<-\\sqrt{a}\\}$", "on": "a 大於等於零" }
+          ] },
         { "show": ["$fg=\\frac{(f+g)^2-(f-g)^2}{4}$"], "note": "加法、平方都已經可測。",
           "why": {
             "ask": "為什麼 $fg$ 可測？",
@@ -173,7 +220,11 @@
               { "label": "$\\{fg>a\\}=\\{f>a\\}\\cap\\{g>a\\}$", "why": "乘積大於 $a$ 不需要兩個都大於 $a$：一個很大、一個比較小也可以，這個等式不對。" }
             ]
           },
-          "say": "乘積寫成和的平方減差的平方，再除以四。和、差、平方剛剛都證過可測，所以乘積也可測。" }
+          "say": "乘積寫成和的平方減差的平方，再除以四。和、差、平方剛剛都證過可測，所以乘積也可測。",
+          "board": [
+            { "do": "write", "line": "$fg=\\frac{{{n:(f+g)^2-(f-g)^2}}}{4}$" },
+            { "do": "focus", "term": "n", "label": "都已證可測", "why": true, "on": "和、差、平方" }
+          ] }
       ],
       "where": {
         "ask": "下面幾步裡，哪一步要靠 $\\mathbb{Q}$ 可數？",

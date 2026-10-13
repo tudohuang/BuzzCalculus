@@ -144,9 +144,19 @@
       "proof": true, "of": 3, "skeleton": "直接",
       "beats": [
         { "show": ["部分和遞增，只要證有上界"],
-          "say": "策略：各項都不是負的，部分和只會往上走，剩下只要證明它有上界。" },
+          "say": "策略：各項都不是負的，部分和只會往上走，剩下只要證明它有上界。",
+          "board": [
+            { "do": "write", "line": "部分和遞增", "on": "部分和只會" },
+            { "do": "transform", "line": "部分和遞增，只要證有上界", "on": "只要證明" }
+          ] },
         { "show": ["$s_n=\\sum_{k\\le n}a_k$ 遞增"], "note": "$a_n\\ge 0$。",
-          "say": "a n 大於等於零，每多加一項，部分和都不會變小，所以 s n 遞增。" },
+          "say": "a n 大於等於零，每多加一項，部分和都不會變小，所以 s n 遞增。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "$s_n=\\sum_{k\\le n}a_k$", "on": "a n 大於" },
+            { "do": "write", "line": "$s_{n+1}=s_n+{{a:a_{n+1}}}\\ge s_n$", "on": "每多加一項" },
+            { "do": "focus", "term": "a", "label": "不是負的", "on": "都不會變小" }
+          ] },
         { "show": ["$s_n\\le\\sum_{k\\le n}b_k\\le B$"], "note": "$a_k\\le b_k$；$b_k\\ge 0$，再加下去只會更大。",
           "why": {
             "ask": "為什麼 $\\sum_{k\\le n}b_k\\le B$？",
@@ -157,9 +167,17 @@
               { "label": "$a_k\\le b_k$", "why": "那是前一個不等號 $s_n\\le\\sum b_k$ 的理由；這一個比的是 $b$ 自己的部分和與總和。" }
             ]
           },
-          "say": "每一項 a 都不超過 b。b 的項都不是負的，它的部分和不會超過總和 B，所以 s n 有上界。" },
+          "say": "每一項 a 都不超過 b。b 的項都不是負的，它的部分和不會超過總和 B，所以 s n 有上界。",
+          "board": [
+            { "do": "write", "line": "$s_n\\le{{pb:\\sum_{k\\le n}b_k}}\\le B$", "tint": { "pb": "violet" } },
+            { "do": "underline", "term": "pb", "color": "violet", "label": "再加只會更大", "why": true, "on": "b 的項" }
+          ] },
         { "show": ["單調有界 ⇒ $\\sum a_n$ 收斂"], "note": "〈單調收斂定理〉。",
-          "say": "遞增又有上界，由單調收斂定理，小的那個級數收斂。" },
+          "say": "遞增又有上界，由單調收斂定理，小的那個級數收斂。",
+          "board": [
+            { "do": "write", "line": "單調有界 ⇒ ${{c:\\sum a_n}}$ 收斂", "on": "遞增又有上界" },
+            { "do": "box", "term": "c", "color": "green", "on": "小的那個" }
+          ] },
         { "show": ["發散那一句：逆否命題"], "note": "若 $\\sum b_n$ 收斂，$\\sum a_n$ 就收斂，矛盾。",
           "why": {
             "ask": "「小的發散 ⇒ 大的發散」為什麼不用另外證？",
@@ -170,7 +188,12 @@
               { "label": "$a_n$ 不 $\\to 0$", "why": "小的發散不代表各項不趨近零，調和級數就是；這裡靠的是邏輯。" }
             ]
           },
-          "say": "大的如果收斂，第一句就說小的也收斂，跟小的發散矛盾。所以大的一定發散。" }
+          "say": "大的如果收斂，第一句就說小的也收斂，跟小的發散矛盾。所以大的一定發散。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "${{sa:\\sum a_n}}$ 發散 ⇒ ${{sb:\\sum b_n}}$ 發散", "tint": { "sb": "violet" }, "on": "小的發散" },
+            { "do": "write", "line": "若 $\\sum b_n$ 收斂 ⇒ $\\sum a_n$ 收斂，矛盾", "why": true, "on": "大的如果收斂" }
+          ] }
       ],
       "where": {
         "ask": "「$a_n\\ge 0$」用在哪一步？",
@@ -205,11 +228,24 @@
       "title": "壓掉對數",
       "beats": [
         { "show": ["$\\sum_{n=1}^\\infty\\frac{\\ln n}{n^3}$"], "note": "$\\ln n$ 長得比 $n$ 慢。",
-          "say": "自然對數 n 長得比 n 慢，猜它比 n 平方分之一還小，收斂。" },
+          "say": "自然對數 n 長得比 n 慢，猜它比 n 平方分之一還小，收斂。",
+          "board": [
+            { "do": "write", "line": "$\\sum_{n=1}^\\infty\\frac{{{l:\\ln n}}}{n^3}$" },
+            { "do": "underline", "term": "l", "label": "長得比 n 慢", "on": "長得比" }
+          ] },
         { "show": ["$0\\le\\frac{\\ln n}{n^3}<\\frac{n}{n^3}=\\frac{1}{n^2}$"], "note": "$n\\ge 1$ 時 $0\\le\\ln n<n$。",
-          "say": "把分子的自然對數 n 換成比它大的 n，約掉一個 n，剩 n 平方分之一。" },
+          "say": "把分子的自然對數 n 換成比它大的 n，約掉一個 n，剩 n 平方分之一。",
+          "board": [
+            { "do": "write", "line": "$0\\le\\frac{{{l:\\ln n}}}{n^3}<\\frac{{{nn:n}}}{n^3}$" },
+            { "do": "focus", "term": "nn", "label": "比它大", "on": "比它大的" },
+            { "do": "transform", "line": "$0\\le\\frac{{{l:\\ln n}}}{n^3}<\\frac{{{nn:n}}}{n^3}=\\frac{1}{n^2}$", "on": "約掉" }
+          ] },
         { "show": ["$p=2$ 的 $p$ 級數收斂"],
-          "say": "n 平方分之一是 p 等於二的 p 級數，收斂。比它小的原級數也收斂。" }
+          "say": "n 平方分之一是 p 等於二的 p 級數，收斂。比它小的原級數也收斂。",
+          "board": [
+            { "do": "write", "line": "$p=2$ 的 $p$ 級數收斂" },
+            { "do": "write", "line": "⇒ 原級數收斂", "color": "green", "on": "比它小的" }
+          ] }
       ],
       "check": 1
     },
@@ -217,11 +253,23 @@
       "title": "從下面比",
       "beats": [
         { "show": ["$\\sum_{n=3}^\\infty\\frac{\\ln n}{n}$"], "note": "$\\ln n$ 會長大，猜它比 $\\frac{1}{n}$ 大。",
-          "say": "這次自然對數 n 在分子會一直長大，猜它比 n 分之一還大，發散。" },
+          "say": "這次自然對數 n 在分子會一直長大，猜它比 n 分之一還大，發散。",
+          "board": [
+            { "do": "write", "line": "$\\sum_{n=3}^\\infty\\frac{{{l:\\ln n}}}{n}$" },
+            { "do": "underline", "term": "l", "label": "一直長大", "on": "在分子會" }
+          ] },
         { "show": ["$n\\ge 3$：$\\ln n\\ge\\ln 3>1$"],
-          "say": "n 從三開始，自然對數三已經大於一，所以每一項都比 n 分之一大。" },
+          "say": "n 從三開始，自然對數三已經大於一，所以每一項都比 n 分之一大。",
+          "board": [
+            { "do": "write", "line": "$n\\ge 3$：$\\ln n\\ge\\ln 3>{{one:1}}$" },
+            { "do": "focus", "term": "one", "on": "大於一" }
+          ] },
         { "show": ["$\\frac{\\ln n}{n}>\\frac{1}{n}$，$\\sum\\frac{1}{n}$ 發散"], "note": "比發散的大，也發散。",
-          "say": "調和級數發散，比它大的也被拖著發散。要證發散，就從下面比。" }
+          "say": "調和級數發散，比它大的也被拖著發散。要證發散，就從下面比。",
+          "board": [
+            { "do": "write", "line": "$\\frac{\\ln n}{n}>\\frac{1}{n}$，${{h:\\sum\\frac{1}{n}}}$ 發散" },
+            { "do": "write", "line": "⇒ $\\sum\\frac{\\ln n}{n}$ 發散", "color": "green", "on": "比它大的" }
+          ] }
       ],
       "check": 3
     },

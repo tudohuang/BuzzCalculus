@@ -194,7 +194,10 @@
       "proof": true, "of": 2, "skeleton": "構造",
       "beats": [
         { "show": ["造一個反導函數 $A$，再跟 $F$ 比"],
-          "say": "策略：先造出一個反導函數，就是累積函數 A，再跟隨便哪一個反導函數 F 比較。" },
+          "say": "策略：先造出一個反導函數，就是累積函數 A，再跟隨便哪一個反導函數 F 比較。",
+          "board": [
+            { "do": "write", "line": "造反導函數 ${{a:A}}$，再跟 ${{bf:F}}$ 比", "tint": { "a": "violet", "bf": "blue" } }
+          ] },
         { "show": ["$A(x)=\\int_a^x f(t)\\,dt$，$A'=f$"], "note": "〈微積分基本定理 I〉，要 $f$ 連續。",
           "why": {
             "ask": "為什麼 $A'=f$？",
@@ -205,7 +208,12 @@
               { "label": "$A$ 就是 $F$", "why": "這時還不知道 $A$ 和 $F$ 的關係；要先有 $A'=f$ 才比得了。" }
             ]
           },
-          "say": "f 連續，由基本定理第一部分，對上限微分就得到 f，所以 A 是一個反導函數。" },
+          "say": "f 連續，由基本定理第一部分，對上限微分就得到 f，所以 A 是一個反導函數。",
+          "board": [
+            { "do": "write", "line": "${{a:A}}(x)=\\int_a^x f(t)\\,dt$，${{d:A'=f}}$", "on": "累積函數" },
+            { "do": "underline", "term": "d", "on": "為什麼" },
+            { "do": "write", "line": "$f$ 連續 ⇒ 基本定理 I", "why": true, "on": "f 連續" }
+          ] },
         { "show": ["$F=A+C$"], "note": "區間上導數相同，就只差一個常數。",
           "why": {
             "ask": "為什麼 $F$ 和 $A$ 只差常數？",
@@ -216,9 +224,19 @@
               { "label": "定積分不寫 $+C$", "why": "那是這個定理的後果，不是理由；這一步靠的是〈反導函數〉那一課的定理。" }
             ]
           },
-          "say": "F 和 A 的導數都是 f。在區間上導數相同，就只差一個常數，所以 F 是 A 加 C。" },
+          "say": "F 和 A 的導數都是 f。在區間上導數相同，就只差一個常數，所以 F 是 A 加 C。",
+          "board": [
+            { "do": "write", "line": "${{bf:F}}={{a:A}}+{{c:C}}$", "on": "F 和 A" },
+            { "do": "underline", "term": "c", "label": "導數相同", "why": true, "on": "在區間上" }
+          ] },
         { "show": ["$F(b)-F(a)=A(b)-A(a)$", "$=\\int_a^b f(x)\\,dx-0$"], "note": "$C$ 相減消掉；$A(a)=\\int_a^a f=0$。",
-          "say": "相減時 C 消掉。A 在 a 是從 a 積到 a，等於零；A 在 b 就是定積分。得證。" }
+          "say": "相減時 C 消掉。A 在 a 是從 a 積到 a，等於零；A 在 b 就是定積分。得證。",
+          "board": [
+            { "do": "keep", "n": 1 },
+            { "do": "write", "line": "${{bf:F}}(b)-F(a)={{a:A}}(b)-A(a)$", "on": "相減時" },
+            { "do": "write", "line": "$=\\int_a^b f(x)\\,dx-{{z:0}}$", "on": "A 在 a" },
+            { "do": "underline", "term": "z", "label": "A(a) = 0", "on": "等於零" }
+          ] }
       ],
       "where": {
         "ask": "「$f$ 連續」用在哪一步？",
@@ -234,11 +252,22 @@
       "title": "仍是有號面積",
       "beats": [
         { "show": ["$\\int_0^\\pi\\sin x\\,dx=-\\cos\\pi+\\cos 0=2$"],
-          "say": "sine 的反導函數是負 cosine。從零到 pi，代進去是一加一，等於二。" },
+          "say": "sine 的反導函數是負 cosine。從零到 pi，代進去是一加一，等於二。",
+          "board": [
+            { "do": "write", "line": "$\\int_0^\\pi\\sin x\\,dx=-\\cos\\pi+\\cos 0=2$" }
+          ] },
         { "show": ["$\\int_0^{2\\pi}\\sin x\\,dx=-1+1=0$"], "note": "上方一塊、下方一塊抵消。",
-          "say": "積到二 pi，答案變成零：後半段在 x 軸下方，跟前半段抵消了。" },
+          "say": "積到二 pi，答案變成零：後半段在 x 軸下方，跟前半段抵消了。",
+          "board": [
+            { "do": "write", "line": "$\\int_0^{2\\pi}\\sin x\\,dx=-1+1=0$", "on": "積到二 pi" },
+            { "do": "plot", "graph": { "window": [-0.3, 6.6, -1.3, 1.3], "curves": [{ "expr": "sin(x)", "domain": [0, 6.2832], "color": "ink" }], "fills": [{ "expr": "sin(x)", "from": 0, "to": 3.1416, "color": "green", "opacity": 0.3 }, { "expr": "sin(x)", "from": 3.1416, "to": 6.2832, "color": "red", "opacity": 0.3 }], "labels": [{ "x": 1.5708, "y": 0.35, "text": "+2", "anchor": "middle" }, { "x": 4.7124, "y": -0.45, "text": "−2", "anchor": "middle" }] }, "on": "後半段" }
+          ] },
         { "show": ["$\\int_0^{2\\pi}|\\sin x|\\,dx=2+2=4$"], "note": "要面積：在零點切開，每段取絕對值。",
-          "say": "要面積，就在零點切開，下方那一塊翻成正的，兩塊各二，加起來是四。" }
+          "say": "要面積，就在零點切開，下方那一塊翻成正的，兩塊各二，加起來是四。",
+          "board": [
+            { "do": "keep", "n": 2 },
+            { "do": "write", "line": "$\\int_0^{2\\pi}|\\sin x|\\,dx=2+2=4$", "on": "要面積" }
+          ] }
       ],
       "check": 1
     },

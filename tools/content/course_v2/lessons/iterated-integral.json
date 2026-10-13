@@ -174,13 +174,29 @@
       "title": "兩種次序",
       "beats": [
         { "show": ["$\\iint_R(x+2y)\\,dA$，$R=[0,2]\\times[1,3]$"],
-          "say": "算一題，兩種次序都做一次。" },
+          "say": "算一題，兩種次序都做一次。",
+          "board": [
+            { "do": "write", "line": "$\\iint_R(x+2y)\\,dA$，$R=[0,2]\\times[1,3]$" }
+          ] },
         { "show": ["先 $dy$：$(3x+9)-(x+1)=2x+8$"], "note": "反導函數 $xy+y^2$。",
-          "say": "先對 y：反導函數 x y 加 y 平方，代三減代一，剩二 x 加八。" },
+          "say": "先對 y：反導函數 x y 加 y 平方，代三減代一，剩二 x 加八。",
+          "board": [
+            { "do": "write", "line": "先 ${{dy:dy}}$：$\\big[xy+y^2\\big]_1^3$", "tint": { "dy": "blue" }, "on": "反導函數" },
+            { "do": "transform", "line": "先 ${{dy:dy}}$：$(3x+9)-(x+1)={{i:2x+8}}$", "on": "代三" },
+            { "do": "underline", "term": "i", "label": "沒有 y 了", "on": "剩二" }
+          ] },
         { "show": ["$\\int_0^2(2x+8)\\,dx=4+16=20$"],
-          "say": "再對 x 從零積到二，得二十。" },
+          "say": "再對 x 從零積到二，得二十。",
+          "board": [
+            { "do": "write", "line": "$\\int_0^2({{i:2x+8}})\\,dx=4+16={{a:20}}$", "on": "再對 x" }
+          ] },
         { "show": ["先 $dx$：$\\int_1^3(2+4y)\\,dy=24-4=20$"], "note": "兩個次序一樣。",
-          "say": "換成先對 x，內層是二加四 y，外層積完也是二十。" }
+          "say": "換成先對 x，內層是二加四 y，外層積完也是二十。",
+          "board": [
+            { "do": "write", "line": "先 ${{dx:dx}}$：$\\int_1^3({{j:2+4y}})\\,dy=24-4={{b:20}}$", "tint": { "dx": "violet" } },
+            { "do": "underline", "term": "j", "label": "內層", "on": "內層是" },
+            { "do": "box", "term": "b", "color": "green", "label": "一樣", "on": "也是" }
+          ] }
       ],
       "check": 1
     },
@@ -188,13 +204,31 @@
       "title": "Fubini：挑好算的",
       "beats": [
         { "show": ["$\\int_a^b\\!\\int_c^d f\\,dy\\,dx=\\int_c^d\\!\\int_a^b f\\,dx\\,dy$"], "note": "$f$ 在矩形 $R$ 上連續時。",
-          "say": "Fubini 定理說：函數在矩形上連續，兩種次序相等。一個次序難積，就換另一個。" },
+          "say": "Fubini 定理說：函數在矩形上連續，兩種次序相等。一個次序難積，就換另一個。",
+          "board": [
+            { "do": "write", "line": "$f$ 在矩形 $R$ 上連續：" },
+            { "do": "write", "line": "${{p:\\int_a^b\\!\\int_c^d f\\,dy\\,dx}}={{q:\\int_c^d\\!\\int_a^b f\\,dx\\,dy}}$", "tint": { "p": "blue", "q": "violet" }, "on": "兩種次序" }
+          ] },
         { "show": ["$\\iint_R y\\,e^{xy}\\,dA$，$R=[0,1]\\times[0,1]$"], "note": "先 $dy$ 要分部積分。",
-          "say": "這一題先對 y 要分部積分，後面還很醜。" },
+          "say": "這一題先對 y 要分部積分，後面還很醜。",
+          "board": [
+            { "do": "keep", "n": 1 },
+            { "do": "write", "line": "$\\iint_R y\\,e^{xy}\\,dA$，$R=[0,1]\\times[0,1]$", "on": "這一題" },
+            { "do": "write", "line": "先 ${{dy:dy}}$：要分部積分", "tint": { "dy": "blue" }, "on": "先對 y" }
+          ] },
         { "show": ["先 $dx$：$\\int_0^1 y\\,e^{xy}\\,dx=e^y-1$"], "note": "$e^{xy}$ 對 $x$ 微分正好是 $y\\,e^{xy}$。",
-          "say": "改成先對 x：y 是常數，e 的 x y 次方對 x 微分正好是 y 乘它，一步就積完。" },
+          "say": "改成先對 x：y 是常數，e 的 x y 次方對 x 微分正好是 y 乘它，一步就積完。",
+          "board": [
+            { "do": "write", "line": "先 ${{dx:dx}}$：$\\int_0^1 {{ye:y\\,e^{xy}}}\\,dx=e^y-1$", "tint": { "dx": "violet" } },
+            { "do": "underline", "term": "ye", "label": "正好是導數", "on": "正好是" }
+          ] },
         { "show": ["$\\int_0^1(e^y-1)\\,dy=e-2$"],
-          "say": "外層再積一次，答案是 e 減二。" }
+          "say": "外層再積一次，答案是 e 減二。",
+          "board": [
+            { "do": "keep", "n": 1 },
+            { "do": "write", "line": "$\\int_0^1(e^y-1)\\,dy={{a:e-2}}$", "on": "外層" },
+            { "do": "box", "term": "a", "color": "green", "on": "答案是" }
+          ] }
       ],
       "check": 2
     },
@@ -202,11 +236,24 @@
       "title": "可分離：拆成兩個",
       "beats": [
         { "show": ["$\\iint_R g(x)h(y)\\,dA=\\int_a^b g\\,dx\\cdot\\int_c^d h\\,dy$"], "note": "只在矩形上成立。",
-          "say": "被積函數是 x 的函數乘 y 的函數，區域又是矩形，內層的積分是一個數，可以提出去，變成兩個一維積分相乘。" },
+          "say": "被積函數是 x 的函數乘 y 的函數，區域又是矩形，內層的積分是一個數，可以提出去，變成兩個一維積分相乘。",
+          "board": [
+            { "do": "write", "line": "$\\iint_R {{g:g(x)}}\\,{{h:h(y)}}\\,dA$", "tint": { "g": "blue", "h": "violet" } },
+            { "do": "write", "line": "$=\\int_a^b {{g:g(x)}}\\,dx\\cdot{{ih:\\int_c^d {{h:h(y)}}\\,dy}}$", "on": "內層的積分" },
+            { "do": "underline", "term": "ih", "label": "是一個數", "on": "可以提出去" }
+          ] },
         { "show": ["$\\iint_R y^2\\cos x\\,dA$，$R=\\left[0,\\frac{\\pi}{2}\\right]\\times[0,3]$"],
-          "say": "例如 y 平方乘 cosine x，在這個矩形上。" },
+          "say": "例如 y 平方乘 cosine x，在這個矩形上。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "$\\iint_R {{hy:y^2}}{{gx:\\cos x}}\\,dA$，$R=\\left[0,\\frac{\\pi}{2}\\right]\\times[0,3]$", "tint": { "gx": "blue", "hy": "violet" }, "on": "y 平方" }
+          ] },
         { "show": ["$\\int_0^{\\pi/2}\\cos x\\,dx=1$，$\\int_0^3 y^2\\,dy=9$"], "note": "相乘得 $9$。",
-          "say": "兩個一維積分分別是一和九，相乘得九。" }
+          "say": "兩個一維積分分別是一和九，相乘得九。",
+          "board": [
+            { "do": "write", "line": "$\\int_0^{\\pi/2}{{gx:\\cos x}}\\,dx=1$，$\\int_0^3 {{hy:y^2}}\\,dy=9$" },
+            { "do": "write", "line": "相乘：$1\\cdot 9=9$", "color": "green", "on": "相乘" }
+          ] }
       ],
       "check": 3
     }

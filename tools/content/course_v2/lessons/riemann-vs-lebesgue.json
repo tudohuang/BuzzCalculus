@@ -74,11 +74,24 @@
       "title": "分層公式",
       "beats": [
         { "show": ["$\\int_X f\\,d\\mu=\\int_0^{\\infty}\\mu(\\{f>t\\})\\,dt$"], "note": "$f\\ge0$。",
-          "say": "把按值分堆推到極限：高度 t 以上的部分佔多大的集合，再對 t 積分。這叫分層公式。" },
+          "say": "把按值分堆推到極限：高度 t 以上的部分佔多大的集合，再對 t 積分。這叫分層公式。",
+          "board": [
+            { "do": "write", "line": "$\\int_X f\\,d\\mu=\\int_0^{\\infty}{{lv:\\mu(\\{f>t\\})}}\\,dt$" },
+            { "do": "underline", "term": "lv", "label": "高度 t 以上", "on": "高度 t 以上" }
+          ] },
         { "show": ["$f(x)=x^2$ 在 $[0,1]$：$\\{x^2>t\\}=(\\sqrt{t},1]$"], "note": "長度 $1-\\sqrt{t}$，$0\\le t<1$。",
-          "say": "試 x 平方在零到一：高度 t 以上的點，是根號 t 到一，長度一減根號 t。" },
+          "say": "試 x 平方在零到一：高度 t 以上的點，是根號 t 到一，長度一減根號 t。",
+          "board": [
+            { "do": "clear" },
+            { "do": "plot", "on": "試 x 平方", "graph": { "window": [-0.05,1.15,-0.2,1.1], "ticks": false, "curves": [{"expr":"x^2","domain":[0,1],"color":"blue"},{"expr":"0","domain":[0.6,1],"color":"violet","width":4}], "dashed": [[[0,0.36],[1.08,0.36]],[[0.6,0],[0.6,0.36]]], "labels": [{"x":1.1,"y":0.36,"text":"t","anchor":"start"},{"x":0.6,"y":-0.12,"text":"√t","anchor":"middle"}] } },
+            { "do": "write", "line": "$\\{x^2>t\\}=(\\sqrt{t},1]$，長度 ${{len:1-\\sqrt{t}}}$", "tint": { "len": "violet" }, "on": "是根號 t" }
+          ] },
         { "show": ["$\\int_0^1(1-\\sqrt{t})\\,dt=1-\\frac{2}{3}=\\frac{1}{3}$"], "note": "$t\\ge1$ 時集合是空的。",
-          "say": "t 大於等於一時集合是空的。積分一減根號 t，從零到一，得三分之一，跟直條切法一樣。" }
+          "say": "t 大於等於一時集合是空的。積分一減根號 t，從零到一，得三分之一，跟直條切法一樣。",
+          "board": [
+            { "do": "write", "line": "$\\int_0^1({{len:1-\\sqrt{t}}})\\,dt=1-\\frac{2}{3}=\\;{{r:\\frac{1}{3}}}$", "on": "積分一減" },
+            { "do": "box", "term": "r", "color": "green", "on": "得三分之一" }
+          ] }
       ],
       "check": 1
     },
@@ -118,9 +131,19 @@
       "proof": true, "of": 3, "skeleton": "夾擠",
       "beats": [
         { "show": ["下和、上和各是一個簡單函數的積分", "把 $f$ 夾住，再夾到同一個數"],
-          "say": "策略：夾擠。下和、上和本身就是簡單函數的積分。讓它們一層比一層細，從兩邊把 f 夾住。" },
+          "say": "策略：夾擠。下和、上和本身就是簡單函數的積分。讓它們一層比一層細，從兩邊把 f 夾住。",
+          "board": [
+            { "do": "write", "line": "下和 $=\\int{{ph:\\varphi}}$，上和 $=\\int{{ps:\\psi}}$", "tint": { "ph": "blue", "ps": "violet" }, "on": "本身就是" },
+            { "do": "write", "line": "${{ph:\\varphi}}\\le f\\le{{ps:\\psi}}$", "on": "從兩邊" }
+          ] },
         { "show": ["取 $P_n$：$U-L<\\frac{1}{n}$，一層比一層細"], "note": "換成 $P_1\\cup\\cdots\\cup P_n$；加細只會讓差變小。",
-          "say": "f 被 M 壓住。取分割讓上和減下和小於 n 分之一，再把前面的分割全部聯集進來，一層比一層細。" },
+          "say": "f 被 M 壓住。取分割讓上和減下和小於 n 分之一，再把前面的分割全部聯集進來，一層比一層細。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "$|f|\\le M$", "on": "f 被 M" },
+            { "do": "write", "line": "取 $P_n$：$U-L<\\frac{1}{n}$", "on": "取分割" },
+            { "do": "write", "line": "換成 $P_1\\cup\\cdots\\cup P_n$", "on": "聯集進來" }
+          ] },
         { "show": ["$\\varphi_n\\le f\\le\\psi_n$，$\\varphi_n$ 遞增、$\\psi_n$ 遞減"], "note": "加細時下確界只會變大、上確界只會變小。",
           "why": {
             "ask": "為什麼 $\\varphi_n$ 遞增？",
@@ -131,7 +154,13 @@
               { "label": "$f$ 遞增", "why": "$f$ 不必單調；遞增說的是同一點、$n$ 變大時 $\\varphi_n$ 的值，看的是分割。" }
             ]
           },
-          "say": "每段取下確界得 phi n，取上確界得 psi n，積分正好是下和與上和。段切細了，下確界只會變大，所以遞增。" },
+          "say": "每段取下確界得 phi n，取上確界得 psi n，積分正好是下和與上和。段切細了，下確界只會變大，所以遞增。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "${{pn:\\varphi_n}}\\le f\\le{{sn:\\psi_n}}$", "tint": { "pn": "blue", "sn": "violet" }, "on": "下確界的" },
+            { "do": "write", "line": "${{pn:\\varphi_n}}$ 遞增、${{sn:\\psi_n}}$ 遞減", "on": "一層比一層高" },
+            { "do": "underline", "term": "pn", "label": "下確界變大", "why": true, "on": "下確界只會變大" }
+          ] },
         { "show": ["$g=\\lim\\varphi_n$、$h=\\lim\\psi_n$：$\\int g=\\int h=I$"], "note": "單調收斂定理；$L\\le I\\le U$ 且差 $<\\frac{1}{n}$。",
           "why": {
             "ask": "為什麼 $\\int g=I$？",
@@ -142,11 +171,29 @@
               { "label": "極限和積分本來就能交換", "why": "極限和積分不一定能交換；這裡能交換，是因為 $\\varphi_n+M$ 非負遞增。" }
             ]
           },
-          "say": "phi n 加 M 非負又遞增，用單調收斂定理，g 的積分是下和的極限。下和、上和都夾著 I，差小於 n 分之一，所以都是 I。" },
+          "say": "phi n 加 M 非負又遞增，用單調收斂定理，g 的積分是下和的極限。下和、上和都夾著 I，差小於 n 分之一，所以都是 I。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "${{g:g}}=\\lim\\varphi_n$，${{h:h}}=\\lim\\psi_n$", "tint": { "g": "blue", "h": "violet" }, "on": "phi n 的極限" },
+            { "do": "write", "line": "${{gi:\\int g}}=\\int h=I$", "on": "積分為什麼" },
+            { "do": "underline", "term": "gi", "label": "單調收斂", "why": true, "on": "用單調收斂" },
+            { "do": "write", "line": "$L\\le I\\le U$，差 $<\\frac{1}{n}$", "why": true, "on": "都夾著" }
+          ] },
         { "show": ["$h-g\\ge0$、$\\int(h-g)=0$ ⇒ $h=g$ a.e."],
-          "say": "h 減 g 非負，積分是零，所以 h 幾乎處處等於 g。" },
+          "say": "h 減 g 非負，積分是零，所以 h 幾乎處處等於 g。",
+          "board": [
+            { "do": "keep", "n": 2 },
+            { "do": "write", "line": "${{h:h}}-{{g:g}}\\ge 0$，$\\int(h-g)=0$", "on": "h 減 g" },
+            { "do": "write", "line": "⇒ $h=g$ a.e.", "on": "所以 h" }
+          ] },
         { "show": ["$g\\le f\\le h$：$f=g$ a.e.，$\\int f=I$"], "note": "Lebesgue 測度完備，所以 $f$ 可測。",
-          "say": "f 夾在 g 和 h 中間，也幾乎處處等於 g。測度完備，f 可測，積分就是 I。" }
+          "say": "f 夾在 g 和 h 中間，也幾乎處處等於 g。測度完備，f 可測，積分就是 I。",
+          "board": [
+            { "do": "keep", "n": 1 },
+            { "do": "write", "line": "${{g:g}}\\le f\\le {{h:h}}$：$f=g$ a.e.", "on": "f 夾在" },
+            { "do": "write", "line": "$f$ 可測，${{fi:\\int f=I}}$", "on": "測度完備" },
+            { "do": "box", "term": "fi", "color": "green", "on": "積分就是" }
+          ] }
       ],
       "where": {
         "ask": "下面幾步裡，哪一步用到 Lebesgue 測度完備？",
@@ -174,11 +221,22 @@
       "title": "非負的瑕積分",
       "beats": [
         { "show": ["$f(x)=\\frac{1}{\\sqrt{x}}$ 在 $(0,1]$"], "note": "非負，就不會出事。",
-          "say": "非負的瑕積分就不會出事。看一除以根號 x，在零到一。" },
+          "say": "非負的瑕積分就不會出事。看一除以根號 x，在零到一。",
+          "board": [
+            { "do": "write", "line": "$f(x)=\\frac{1}{\\sqrt{x}}$ 在 $(0,1]$", "on": "看一除以" }
+          ] },
         { "show": ["$f_n=f\\cdot\\chi_{[1/n,1]}$"], "note": "遞增，每點最後等於 $f$。",
-          "say": "把靠近零的部分先砍掉，只留 n 分之一到一。這串函數遞增，每一點最後都等於 f。" },
+          "say": "把靠近零的部分先砍掉，只留 n 分之一到一。這串函數遞增，每一點最後都等於 f。",
+          "board": [
+            { "do": "plot", "on": "砍掉", "graph": { "window": [-0.05,1.1,-0.6,4.3], "ticks": false, "curves": [{"expr":"1/sqrt(x)","domain":[0.06,1],"color":"blue"}], "fills": [{"expr":"1/sqrt(x)","from":0.25,"to":1,"color":"violet"}], "dashed": [[[0.25,0],[0.25,2]]], "labels": [{"x":0.25,"y":-0.35,"text":"1/n","anchor":"middle"}] } },
+            { "do": "write", "line": "${{fn:f_n=f\\cdot\\chi_{[1/n,1]}}}$", "tint": { "fn": "violet" }, "on": "只留" },
+            { "do": "underline", "term": "fn", "label": "遞增", "on": "這串函數" }
+          ] },
         { "show": ["$\\int f_n=2-\\frac{2}{\\sqrt{n}}$"],
-          "say": "砍掉之後是連續有界，積分是二減根號 n 分之二。再用單調收斂定理取極限。" }
+          "say": "砍掉之後是連續有界，積分是二減根號 n 分之二。再用單調收斂定理取極限。",
+          "board": [
+            { "do": "transform", "line": "$\\int f_n=2-\\frac{2}{\\sqrt{n}}$", "on": "積分是" }
+          ] }
       ],
       "predict": {
         "ask": "$\\int f\\,dm$ 是？",

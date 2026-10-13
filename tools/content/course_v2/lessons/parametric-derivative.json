@@ -200,11 +200,23 @@
       "title": "直接套公式",
       "beats": [
         { "show": ["$x = t^2$，$y = t^3$，在 $t = 1$"],
-          "say": "練一題：x 是 t 平方，y 是 t 三次方，求 t 等於一的地方的斜率。" },
+          "say": "練一題：x 是 t 平方，y 是 t 三次方，求 t 等於一的地方的斜率。",
+          "board": [
+            { "do": "write", "line": "$x = t^2$，$y = t^3$，在 $t = 1$" }
+          ] },
         { "show": ["$\\frac{dx}{dt} = 2t$，$\\frac{dy}{dt} = 3t^2$"],
-          "say": "先各自微分：x 對 t 微分是二 t，y 對 t 微分是三 t 平方。" },
+          "say": "先各自微分：x 對 t 微分是二 t，y 對 t 微分是三 t 平方。",
+          "board": [
+            { "do": "write", "line": "$\\frac{dx}{dt} = {{dx:2t}}$", "tint": { "dx": "blue" }, "on": "x 對 t" },
+            { "do": "write", "line": "$\\frac{dy}{dt} = {{dy:3t^2}}$", "tint": { "dy": "violet" }, "on": "y 對 t" }
+          ] },
         { "show": ["$\\frac{dy}{dx} = \\frac{3t^2}{2t} = \\frac{3t}{2}$"], "note": "$t \\ne 0$。",
-          "say": "y 的速度除以 x 的速度，約掉一個 t，得到二分之三 t。接著代 t 等於一。" }
+          "say": "y 的速度除以 x 的速度，約掉一個 t，得到二分之三 t。接著代 t 等於一。",
+          "board": [
+            { "do": "write", "line": "$\\frac{dy}{dx} = \\frac{{{dy:3t^2}}}{{{dx:2t}}}$", "on": "y 的速度" },
+            { "do": "transform", "line": "$\\frac{dy}{dx} = \\frac{{{dy:3t^2}}}{{{dx:2t}}} = {{r:\\frac{3t}{2}}}$", "on": "約掉" },
+            { "do": "underline", "term": "r", "label": "代 t = 1", "on": "接著代" }
+          ] }
       ],
       "predict": {
         "ask": "$t = 1$ 處的 $\\frac{dy}{dx}$ 是？",
@@ -219,13 +231,29 @@
       "title": "擺線的切線",
       "beats": [
         { "show": ["$x = t - \\sin t$，$y = 1 - \\cos t$"], "note": "在 $t = \\frac{\\pi}{2}$。",
-          "say": "換擺線：x 是 t 減 sine t，y 是一減 cosine t，求 t 等於二分之 pi 的切線。" },
+          "say": "換擺線：x 是 t 減 sine t，y 是一減 cosine t，求 t 等於二分之 pi 的切線。",
+          "board": [
+            { "do": "write", "line": "$x = t - \\sin t$，$y = 1 - \\cos t$" },
+            { "do": "write", "line": "切線在 $t = \\frac{\\pi}{2}$", "on": "求 t 等於" }
+          ] },
         { "show": ["切點 $\\left(\\frac{\\pi}{2} - 1,\\ 1\\right)$"],
-          "say": "先找切點：sine 二分之 pi 是一，cosine 是零，所以 x 是二分之 pi 減一，y 是一。" },
+          "say": "先找切點：sine 二分之 pi 是一，cosine 是零，所以 x 是二分之 pi 減一，y 是一。",
+          "board": [
+            { "do": "write", "line": "切點 $\\left(\\frac{\\pi}{2} - 1,\\ 1\\right)$", "on": "所以 x 是" }
+          ] },
         { "show": ["$\\frac{dx}{dt} = 1 - \\cos t$，$\\frac{dy}{dt} = \\sin t$"], "note": "在 $\\frac{\\pi}{2}$ 都是 1，斜率 1。",
-          "say": "兩個速度在二分之 pi 都是一，相除得斜率一。" },
+          "say": "兩個速度在二分之 pi 都是一，相除得斜率一。",
+          "board": [
+            { "do": "write", "line": "$\\frac{dy}{dx} = \\frac{{{dy:\\sin t}}}{{{dx:1 - \\cos t}}}$", "tint": { "dx": "blue", "dy": "violet" } },
+            { "do": "transform", "line": "$\\frac{dy}{dx} = \\frac{{{dy:\\sin t}}}{{{dx:1 - \\cos t}}} = \\frac{1}{1} = 1$", "on": "都是一" }
+          ] },
         { "show": ["$y = x + 2 - \\frac{\\pi}{2}$"],
-          "say": "用點斜式，y 減一等於 x 減切點的 x，整理成 y 等於 x 加二減二分之 pi。" }
+          "say": "用點斜式，y 減一等於 x 減切點的 x，整理成 y 等於 x 加二減二分之 pi。",
+          "board": [
+            { "do": "keep", "n": 2 },
+            { "do": "write", "line": "$y - 1 = x - \\left(\\frac{\\pi}{2} - 1\\right)$", "on": "用點斜式" },
+            { "do": "write", "line": "$y = x + 2 - \\frac{\\pi}{2}$", "color": "green", "on": "整理成" }
+          ] }
       ],
       "check": 2
     },
@@ -233,13 +261,32 @@
       "title": "水平與鉛直切線",
       "beats": [
         { "show": ["水平：$\\frac{dy}{dt} = 0$，$\\frac{dx}{dt} \\ne 0$"], "note": "斜率 0。",
-          "say": "y 不動、x 在動，點那一瞬間在水平移動，所以是水平切線。" },
+          "say": "y 不動、x 在動，點那一瞬間在水平移動，所以是水平切線。",
+          "board": [
+            { "do": "write", "line": "水平：${{dy:\\frac{dy}{dt}}} = 0$，${{dx:\\frac{dx}{dt}}} \\ne 0$", "tint": { "dx": "blue", "dy": "violet" } },
+            { "do": "underline", "term": "dy", "on": "y 不動" },
+            { "do": "underline", "term": "dx", "on": "x 在動" }
+          ] },
         { "show": ["鉛直：$\\frac{dx}{dt} = 0$，$\\frac{dy}{dt} \\ne 0$"], "note": "點只上下動，斜率不存在。",
-          "say": "反過來，x 不動、y 在動，點只上下走，切線是鉛直的，斜率不存在。" },
+          "say": "反過來，x 不動、y 在動，點只上下走，切線是鉛直的，斜率不存在。",
+          "board": [
+            { "do": "write", "line": "鉛直：${{dx:\\frac{dx}{dt}}} = 0$，${{dy:\\frac{dy}{dt}}} \\ne 0$" },
+            { "do": "underline", "term": "dx", "on": "x 不動" }
+          ] },
         { "show": ["$x = t^2$，$y = t^3 - 3t$"], "note": "水平：$t = \\pm 1$，點 $(1, -2)$、$(1, 2)$。",
-          "say": "例如 x 是 t 平方，y 是 t 三次方減三 t。三 t 平方減三等於零，t 是正負一，得到兩條水平切線。" },
+          "say": "例如 x 是 t 平方，y 是 t 三次方減三 t。三 t 平方減三等於零，t 是正負一，得到兩條水平切線。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "$x = t^2$，$y = t^3 - 3t$", "on": "x 是" },
+            { "do": "write", "line": "水平：${{dy:\\frac{dy}{dt}}} = 3t^2 - 3 = 0$，$t = \\pm 1$", "on": "三 t 平方" }
+          ] },
         { "show": ["鉛直：$2t = 0$，點 $(0, 0)$"], "note": "此時 $\\frac{dy}{dt} = -3 \\ne 0$。",
-          "say": "鉛直切線要 x 的速度二 t 等於零，t 是零；這時 y 的速度是負三，不是零，所以成立。" }
+          "say": "鉛直切線要 x 的速度二 t 等於零，t 是零；這時 y 的速度是負三，不是零，所以成立。",
+          "board": [
+            { "do": "write", "line": "鉛直：${{dx:\\frac{dx}{dt}}} = 2t = 0$，$t = 0$" },
+            { "do": "write", "line": "此時 ${{dy:\\frac{dy}{dt}}} = {{n:-3 \\ne 0}}$", "on": "這時 y 的速度" },
+            { "do": "underline", "term": "n", "label": "成立", "on": "不是零" }
+          ] }
       ],
       "check": 1
     },

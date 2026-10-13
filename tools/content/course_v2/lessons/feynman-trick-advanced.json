@@ -69,19 +69,37 @@
     {
       "title": "微分方程型",
       "beats": [
-        {"show":["$I(t)=\\int_0^{\\infty}e^{-x^2}\\cos(2tx)\\,dx$"],"say":"看這個積分：e 的負 x 平方乘 cosine 二 t x。參數 t 放在 cosine 裡面。"},
-        {"show":["$I'(t)=-\\int_0^{\\infty}2xe^{-x^2}\\sin(2tx)\\,dx$"],"say":"對 t 微分，cosine 變成負 sine，還多生出一個二 x。這個積分沒辦法直接算出閉式。"},
-        {"show":["$\\left|\\frac{\\partial f}{\\partial t}\\right|\\le 2xe^{-x^2}$"],"note":"右邊在 $[0,\\infty)$ 可積。","say":"先確認能不能交換：偏導數的絕對值不超過二 x 乘 e 的負 x 平方，這個可積，所以可以。"}
+        {"show":["$I(t)=\\int_0^{\\infty}e^{-x^2}\\cos(2tx)\\,dx$"],"say":"看這個積分：e 的負 x 平方乘 cosine 二 t x。參數 t 放在 cosine 裡面。","board":[
+          {"do":"write","line":"$I(t)=\\int_0^{\\infty}e^{-x^2}{{c:\\cos(2tx)}}\\,dx$","tint":{"c":"blue"}},
+          {"do":"underline","term":"c","color":"blue","label":"參數在這裡","on":"參數 t"}]},
+        {"show":["$I'(t)=-\\int_0^{\\infty}2xe^{-x^2}\\sin(2tx)\\,dx$"],"say":"對 t 微分，cosine 變成負 sine，還多生出一個二 x。這個積分沒辦法直接算出閉式。","board":[
+          {"do":"write","line":"$I'(t)=-\\int_0^{\\infty}{{tx:2x}}\\,e^{-x^2}{{sn:\\sin(2tx)}}\\,dx$","tint":{"sn":"blue"}},
+          {"do":"underline","term":"sn","color":"blue","on":"變成負"},
+          {"do":"underline","term":"tx","label":"多生出來","on":"還多生出"}]},
+        {"show":["$\\left|\\frac{\\partial f}{\\partial t}\\right|\\le 2xe^{-x^2}$"],"note":"右邊在 $[0,\\infty)$ 可積。","say":"先確認能不能交換：偏導數的絕對值不超過二 x 乘 e 的負 x 平方，這個可積，所以可以。","board":[
+          {"do":"write","line":"$\\left|\\frac{\\partial f}{\\partial t}\\right|\\le{{dom:2xe^{-x^2}}}$","on":"偏導數的"},
+          {"do":"underline","term":"dom","on":"二 x 乘"}]}
       ],
       "check": 3
     },
     {
       "title": "分部積分變回 $I$",
       "beats": [
-        {"show":["$u=\\sin(2tx)$，$v=-e^{-x^2}$"],"note":"$dv=2xe^{-x^2}\\,dx$","say":"分部積分：u 取 sine 二 t x，二 x 乘 e 的負 x 平方剛好積成負的 e 的負 x 平方。"},
-        {"show":["邊界項 $=0$，剩 $2tI(t)$"],"say":"邊界項在零和無限大都是零。剩下的積分，正好是二 t 乘上原來的 I。"},
-        {"show":["$I'(t)=-2tI(t)$"],"say":"所以 I prime 等於負二 t 乘 I。I 的導數用 I 自己表示，這是一個微分方程。"},
-        {"show":["$\\frac{dI}{I}=-2t\\,dt$"],"note":"分離變數；初值 $I(0)=\\frac{\\sqrt{\\pi}}{2}$。","say":"分離變數：I 移到左邊，t 留在右邊，兩邊積分。初值是 t 等於零的高斯積分，二分之根號派。"}
+        {"show":["$u=\\sin(2tx)$，$v=-e^{-x^2}$"],"note":"$dv=2xe^{-x^2}\\,dx$","say":"分部積分：u 取 sine 二 t x，二 x 乘 e 的負 x 平方剛好積成負的 e 的負 x 平方。","board":[
+          {"do":"write","line":"$u=\\sin(2tx)$","on":"u 取"},
+          {"do":"write","line":"$dv=2xe^{-x^2}\\,dx$","on":"二 x 乘"},
+          {"do":"transform","line":"$v=-e^{-x^2}$","on":"剛好積成"}]},
+        {"show":["邊界項 $=0$，剩 $2tI(t)$"],"say":"邊界項在零和無限大都是零。剩下的積分，正好是二 t 乘上原來的 I。","board":[
+          {"do":"write","line":"$\\Big[-e^{-x^2}\\sin(2tx)\\Big]_0^{\\infty}={{z:0}}$"},
+          {"do":"write","line":"剩 ${{rest:2t\\,I(t)}}$","on":"剩下的積分"},
+          {"do":"underline","term":"rest","label":"原來的 I","on":"原來的"}]},
+        {"show":["$I'(t)=-2tI(t)$"],"say":"所以 I prime 等於負二 t 乘 I。I 的導數用 I 自己表示，這是一個微分方程。","board":[
+          {"do":"keep","n":1},
+          {"do":"write","line":"${{de:I'(t)=-{{rest:2t\\,I(t)}}}}$","on":"所以 I prime"},
+          {"do":"box","term":"de","label":"微分方程","on":"這是一個"}]},
+        {"show":["$\\frac{dI}{I}=-2t\\,dt$"],"note":"分離變數；初值 $I(0)=\\frac{\\sqrt{\\pi}}{2}$。","say":"分離變數：I 移到左邊，t 留在右邊，兩邊積分。初值是 t 等於零的高斯積分，二分之根號派。","board":[
+          {"do":"write","line":"$\\frac{dI}{I}=-2t\\,dt$","on":"分離變數"},
+          {"do":"write","line":"$I(0)=\\frac{\\sqrt{\\pi}}{2}$","on":"初值是"}]}
       ],
       "check": 0
     },
@@ -112,10 +130,23 @@
     {
       "title": "原積分又出現",
       "beats": [
-        {"show":["$I(a)=\\pi\\ln\\frac{1+\\sqrt{1+a}}{2}$"],"say":"接上一題：換元後積出自然對數 w 加一，答案是派乘自然對數，二分之一加根號一加 a。"},
-        {"show":["$I(a)=\\int_0^1\\frac{\\ln(1+ax)}{1+x^2}\\,dx$"],"note":"$I(0)=0$，原題是 $I(1)$。","say":"最後一型。參數放在對數裡，a 等於零時積分是零，原題是 I 在一的值。"},
-        {"show":["$I'(a)=\\frac{1}{1+a^2}\\left[\\frac{\\ln 2}{2}+\\frac{a\\pi}{4}\\right.$","$\\left.-\\ln(1+a)\\right]$"],"note":"部分分式之後積分。","say":"微分後用部分分式拆開再積。注意最後一項是負的自然對數一加 a。"},
-        {"show":["$I(1)=\\frac{\\pi\\ln 2}{4}-\\int_0^1\\frac{\\ln(1+a)}{1+a^2}\\,da$"],"say":"從零積到一，前兩項合起來是四分之派乘自然對數二。最後那個積分，不就是 I 在一的值本身嗎？"}
+        {"show":["$I(a)=\\pi\\ln\\frac{1+\\sqrt{1+a}}{2}$"],"say":"接上一題：換元後積出自然對數 w 加一，答案是派乘自然對數，二分之一加根號一加 a。","board":[
+          {"do":"write","line":"$I(a)=\\;{{ans:\\pi\\ln\\frac{1+\\sqrt{1+a}}{2}}}$","on":"換元後"},
+          {"do":"box","term":"ans","color":"green","on":"答案是"}]},
+        {"show":["$I(a)=\\int_0^1\\frac{\\ln(1+ax)}{1+x^2}\\,dx$"],"note":"$I(0)=0$，原題是 $I(1)$。","say":"最後一型。參數放在對數裡，a 等於零時積分是零，原題是 I 在一的值。","board":[
+          {"do":"clear"},
+          {"do":"write","line":"$I(a)=\\int_0^1\\frac{\\ln(1+{{a:a}}x)}{1+x^2}\\,dx$","tint":{"a":"blue"},"on":"最後一型"},
+          {"do":"focus","term":"a","color":"blue","on":"參數放在"},
+          {"do":"write","line":"$I(0)=0$，原題是 ${{i1:I(1)}}$","tint":{"i1":"violet"},"on":"a 等於零"}]},
+        {"show":["$I'(a)=\\frac{1}{1+a^2}\\left[\\frac{\\ln 2}{2}+\\frac{a\\pi}{4}\\right.$","$\\left.-\\ln(1+a)\\right]$"],"note":"部分分式之後積分。","say":"微分後用部分分式拆開再積。注意最後一項是負的自然對數一加 a。","board":[
+          {"do":"write","line":"$I'(a)=\\frac{1}{1+a^2}\\Big[\\frac{\\ln 2}{2}+\\frac{a\\pi}{4}$","on":"微分後"},
+          {"do":"write","line":"$\\qquad{{neg:-\\ln(1+a)}}\\Big]$","on":"部分分式"},
+          {"do":"underline","term":"neg","label":"負的","on":"最後一項"}]},
+        {"show":["$I(1)=\\frac{\\pi\\ln 2}{4}-\\int_0^1\\frac{\\ln(1+a)}{1+a^2}\\,da$"],"say":"從零積到一，前兩項合起來是四分之派乘自然對數二。最後那個積分，不就是 I 在一的值本身嗎？","board":[
+          {"do":"keep","n":2},
+          {"do":"write","line":"${{i1:I(1)}}={{pl:\\frac{\\pi\\ln 2}{4}}}-{{ii:\\int_0^1\\frac{\\ln(1+a)}{1+a^2}\\,da}}$","on":"從零積到一"},
+          {"do":"focus","term":"pl","on":"前兩項"},
+          {"do":"underline","term":"ii","color":"violet","label":"就是 I(1)","on":"最後那個積分"}]}
       ],
       "check": 2
     }
