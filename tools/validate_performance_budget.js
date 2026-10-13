@@ -69,6 +69,9 @@ const BUDGETS = {
   // 2026-10-13 新增：更新檢查與版本（src/kernel/app_update.js，從 app.js 搬出 setupPwa／更新橫幅並加上回到前景的檢查、版本列）。
   // 跟 steps 一樣是開站閒下來就載（註冊 Service Worker 本來就在那個時間點），不佔 script 標籤上限。
   "延後載入：更新與版本": { pattern: /^$/, budget: 14 * 1024, lazy: "pwa" },
+  // 2026-10-13 新增：量測漏斗與回訪（src/kernel/metrics.js，約 8KB、一半是中文註解）。只有分析開著才在開站時載（跟 gtag.js 同一道閘），
+  // 不佔 script 標籤上限（已 67／67）、也不佔 app.js 的位元組（app.js 只留兩處掛鉤）。上限留約五成。
+  "延後載入：量測": { pattern: /^$/, budget: 12 * 1024, lazy: "metrics" },
   // 2026-09-30 拆成兩類：兩組是各自載入的（進證明頁才抓 proof 那三支；英文介面才抓 i18n 那一支），
   // 合在一起算等於讓英文側表跟證明引擎搶同一個額度 —— 載入的那一刻，使用者等的只是其中一組。
   // 拆開時的量：證明組 290KB（proof_lang 167 ＋ proof_surface 44 ＋ 內容 79；內容多了 20 講的 10 題證明小題 +10KB），
