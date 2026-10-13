@@ -195,6 +195,7 @@ async function run() {
 
     const views = [
       ["今天", '[data-action="home"]'],
+      ["課程", '.nav-button[data-action="open-course"]'],
       ["訓練", '[data-action="open-train"]'],
       ["數據", '[data-action="open-insights"]'],
       ["題庫", '[data-action="open-library"]'],
@@ -228,6 +229,33 @@ async function run() {
           : `${taps.total} 個可點元素都 ≥ ${MIN_TAP}px`
       );
     }
+
+    /* ── 2b. 底部分頁列在 360px 寬：六格（今天／課程／訓練／數據／題庫／設定）都按得到、字沒被切 ── */
+    // 課程 2026-10 升成主分頁（以前只在桌機側欄，手機點不到課程）。六格在 360 寬每格約 54px。
+    await chrome.send("Emulation.setDeviceMetricsOverride", { width: 360, height: 740, deviceScaleFactor: 3, mobile: true });
+    await chrome.send("Emulation.setTouchEmulationEnabled", { enabled: true, maxTouchPoints: 5 });
+    await chrome.evaluate(`document.querySelector('[data-action="home"]').click(); await new Promise((r) => setTimeout(r, 600 * (window.__slow || 1))); return 1;`);
+    const tabs = await chrome.evaluate(`
+      const nav = document.querySelector(".topbar-nav");
+      const items = [...document.querySelectorAll(".topbar-nav .nav-button")].map((b) => {
+        const r = b.getBoundingClientRect();
+        const span = b.querySelector("span");
+        return { label: span ? span.textContent.trim() : "", w: Math.round(r.width), h: Math.round(r.height), cut: span ? span.scrollWidth > span.clientWidth + 1 || span.getBoundingClientRect().right > r.right + 1 : true };
+      });
+      return { items, bottom: nav ? Math.round(nav.getBoundingClientRect().bottom) : -1, vh: innerHeight, overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth };
+    `);
+    check("360px：分頁列六格依序是 今天／課程／訓練／數據／題庫／設定", tabs.items.map((t) => t.label).join("／") === "今天／課程／訓練／數據／題庫／設定", tabs.items.map((t) => t.label).join("／"));
+    check("360px：每一格都 ≥ 44×44", tabs.items.every((t) => t.w >= 44 && t.h >= 44), tabs.items.map((t) => `${t.label} ${t.w}×${t.h}`).join("、"));
+    check("360px：分頁標籤沒被切掉", tabs.items.every((t) => !t.cut), tabs.items.filter((t) => t.cut).map((t) => t.label).join("、"));
+    check("360px：分頁列貼底、不溢出", Math.abs(tabs.bottom - tabs.vh) <= 2 && tabs.overflow <= 1, `bottom ${tabs.bottom}/${tabs.vh} · overflow ${tabs.overflow}`);
+    await chrome.evaluate(`document.querySelector('.nav-button[data-action="open-course"]').click(); return 1;`);
+    const courseTab = await chrome.evaluate(`
+      for (let i = 0; i < 40 && !document.querySelector(".cv2-index, .course-index:not(.lazy-loading)"); i += 1) await new Promise((r) => setTimeout(r, 100));
+      return { list: Boolean(document.querySelector(".cv2-index")), active: (document.querySelector('.nav-button[aria-current="page"]') || {}).textContent || "" };
+    `);
+    check("360px：按「課程」分頁打開課程表，分頁亮在課程", courseTab.list && /課程/.test(courseTab.active), JSON.stringify(courseTab));
+    await chrome.send("Emulation.setDeviceMetricsOverride", VIEWPORT);
+    await chrome.send("Emulation.setTouchEmulationEnabled", { enabled: true, maxTouchPoints: 5 });
 
     /* ── 3. 作答畫面：最重要的那一頁 ── */
     const quiz = await chrome.evaluate(`

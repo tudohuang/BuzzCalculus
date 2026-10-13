@@ -158,6 +158,20 @@ async function run() {
       check("導覽卡整張在視窗內（手機也不會被切掉）", tourFirst.inView, "");
       check("導覽期間點不到背後的按鈕", tourFirst.blocked, "");
       check("焦點在導覽卡上（鍵盤族不會迷路）", tourFirst.focused, "");
+      // 導覽屬於首頁：換到別頁就收起來（以前跟著人到別頁、指著空白），回首頁從同一步接著講
+      const paused = await chrome.evaluate(`
+        document.querySelector('.nav-button[data-action="open-train"]').click();
+        await new Promise((r) => setTimeout(r, 600 * (window.__slow || 1)));
+        const root = document.querySelector(".tour-root");
+        const away = { onTrain: Boolean(document.querySelector('.nav-button.is-active[data-action="open-train"]')), shown: Boolean(root && !root.hidden && root.getClientRects().length) };
+        document.querySelector('.nav-button[data-action="home"]').click();
+        await new Promise((r) => setTimeout(r, 700 * (window.__slow || 1)));
+        const back = document.querySelector(".tour-root");
+        const hole = document.querySelector("[data-tour-hole]");
+        return { away, back: Boolean(back && !back.hidden && back.getClientRects().length), count: back ? back.querySelector("[data-tour-count]").textContent : "", anchored: Boolean(hole && hole.style.display !== "none") };
+      `);
+      check("換到別頁導覽就收起來（不跟著到別頁指著空白）", paused.away.onTrain && !paused.away.shown, JSON.stringify(paused.away));
+      check("回到首頁導覽從同一步接著講、框住真的元件", paused.back && paused.count === tourFirst.count && paused.anchored, JSON.stringify(paused));
       const walk = await chrome.evaluate(`
         const seen = [];
         for (let i = 0; i < 8; i += 1) {
@@ -373,9 +387,10 @@ async function run() {
     const firstPicks = await evaluate(`return window.BUZZ_COURSE_V2_LESSONS["function-intro"].checks.map((c) => c.options.findIndex((o) => o.correct));`);
     for (let ci = 0; ci < firstPicks.length; ci += 1) await click(`[data-action="course-pick"][data-check="${ci}"][data-option="${firstPicks[ci]}"]`, 300);
     const firstDone = await evaluate(`return { result: window.__b.text("[data-course-quiz-result]"), tier: window.__b.text(".cv2-lesson .cv2-meta .cv2-tier"), next: window.__b.text('.cv2-nav .home-primary[data-action="open-course-lesson"]') };`);
-    check("小測全對：標成完成、「下一課」變主按鈕", /完成/.test(firstDone.result) && firstDone.tier === "完成" && /下一課：0\.2/.test(firstDone.next), `${firstDone.result} · ${firstDone.next}`);
+    // 函數是什麼沒有推薦題：小測完成就是全破
+    check("小測全對：完成（沒有推薦題，標成全破）、「下一課」變主按鈕", /完成/.test(firstDone.result) && firstDone.tier === "全破" && /下一課：0\.2/.test(firstDone.next), `${firstDone.result} · ${firstDone.tier} · ${firstDone.next}`);
     await click('[data-action="open-course"]', 600);
-    check("課程表上第一課標完成", await evaluate(`const row = document.querySelector('.cv2-row[data-lesson-id="function-intro"]'); return Boolean(row && /完成/.test(row.innerText));`));
+    check("課程表上第一課標全破（沒有推薦題）", await evaluate(`const row = document.querySelector('.cv2-row[data-lesson-id="function-intro"]'); return Boolean(row && /全破/.test(row.innerText));`));
 
     // ── 極限的第一課（1.1）：範例一步一步揭、選錯說為什麼、推薦題開一局 ──
     await evaluate(`const d = document.querySelector('details[data-keep="cv2-stage-1"]'); d.open = true; [...d.querySelectorAll("details")].forEach((c) => { c.open = true; }); return 1;`);

@@ -440,9 +440,10 @@ interface Window {
   /** src/share_cards.js：新手導覽（coach marks）。DOM 在 document.body，render 之後要 refresh() */
   BuzzTour: {
     steps(name: string): Array<{ id: string; title: string; body: string; targets?: string[]; view?: string; pad?: number; required?: boolean }>;
-    start(name: string, steps: Array<{ id: string; title: string; body: string; targets?: string[]; view?: string; pad?: number; required?: boolean }>, deps: { goto?: (view: string) => void; track?: (payload: Record<string, unknown>) => void }, onDone?: (reason: string, name: string) => void): boolean;
+    start(name: string, steps: Array<{ id: string; title: string; body: string; targets?: string[]; view?: string; pad?: number; required?: boolean }>, deps: { view?: () => string; goto?: (view: string) => void; track?: (payload: Record<string, unknown>) => void }, onDone?: (reason: string, name: string) => void): boolean;
     stop(): void;
     running(): boolean;
+    paused(): boolean;
     refresh(): void;
   };
 

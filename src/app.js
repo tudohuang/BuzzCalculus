@@ -958,6 +958,7 @@
     const steps = window.BuzzTour.steps(name);
     if (!steps.length) return false;
     return window.BuzzTour.start(name, steps, {
+      view: () => view,
       goto: (target) => {
         if (view === target) return;
         view = target;
@@ -965,7 +966,8 @@
       },
       track: (payload) => trackEvent("tour_step", payload)
     }, (reason) => {
-      markTourSeen(name);
+      // restart：暫停中（人換到別頁）被另一段導覽接手 —— 沒看完，下次回到那一頁再從頭帶
+      if (reason !== "restart") markTourSeen(name);
       trackEvent("tour_done", { tour: name, reason });
       render();
     });
@@ -1304,6 +1306,8 @@
         appNoticeView = null;
       }
       if (lastRenderedView === "library" && view !== "library") librarySearch = "";
+      // 一課打開時推了一格 history（瀏覽器上一頁 → 課程表）；走別的路離開就收回，不然留一次按了沒反應的上一頁
+      if (lastRenderedView === "course-lesson" && view !== "course-lesson" && courseUI && courseUI.leftLesson) courseUI.leftLesson();
       lastRenderedView = view;
       // 作答中把 html 標起來：CSS 用它關掉下拉重新整理（見 html.in-quiz）
       if (document.documentElement && document.documentElement.classList) document.documentElement.classList.toggle("in-quiz", view === "quiz");
@@ -1478,8 +1482,10 @@
   }
 
   // App shell。桌面是固定側欄、手機是底部分頁列 —— 同一份 markup，
-  // 兩種排法全靠 CSS。導覽（五個主分頁）與工具（安裝、主題）分開放：
-  // 底部分頁列只該有分頁，工具擠進去會把最常按的五顆鍵擠到 40px 以下。
+  // 兩種排法全靠 CSS。導覽（六個主分頁）與工具（安裝、主題）分開放：
+  // 底部分頁列只該有分頁，工具擠進去會把最常按的鍵擠到 44px 以下。
+  // 課程 2026-10 從側欄的「學習工具」升成主分頁：手機沒有側欄，以前手機根本點不到課程。
+  // 六格在 360px 寬每格 ≈ 54px（兩個字的標籤 ≈ 21px），不用拿掉任何一格。
   // 版本字串從 header 拿掉了 —— 成熟軟體的 chrome 不放建置資訊，
   // 要查的人在設定頁最底下找得到。
   function renderTopbar() {
@@ -1487,7 +1493,7 @@
     const navGate = featureGate(loadRecords());
     const themeIcon = selectedTheme === "dark" ? "sun" : "moon";
     const themeLabel = selectedTheme === "dark" ? t("亮色") : t("深色");
-    const parentView = { "path-intro": "train", mistakes: "train", history: "insights", results: "insights", proofs: "library", creator: "library", "proof-write": "library", "proof-tutorial": "library", "proof-view": "library", course: "home", "course-lesson": "home" }[view] || view;
+    const parentView = { "path-intro": "train", mistakes: "train", history: "insights", results: "insights", proofs: "library", creator: "library", "proof-write": "library", "proof-tutorial": "library", "proof-view": "library", course: "course", "course-lesson": "course" }[view] || view;
     const navItem = (v, action, label, iconName) =>
       `<button class="nav-button ${parentView === v ? "is-active" : ""}" data-action="${action}" aria-label="${label}" title="${label}" ${parentView === v ? 'aria-current="page"' : ""}>${icon(iconName)}<span>${label}</span></button>`;
     return `
@@ -1504,6 +1510,7 @@
               <span class="nav-section-label">${t("學習空間")}</span>
               <nav class="topbar-nav" aria-label="${t("主要導覽")}">
                 ${navItem("home", "home", t("今天"), "home")}
+                ${navItem("course", "open-course", t("課程"), "book-open")}
                 ${navItem("train", "open-train", t("訓練"), "target")}
                 ${navItem("insights", "open-insights", t("數據"), "activity")}
                 ${navItem("library", "open-library", t("題庫"), "search")}
@@ -1511,7 +1518,6 @@
               </nav>
               <div class="sidebar-resources">
                 <span class="nav-section-label">${t("學習工具")}</span>
-                <button class="sidebar-link ${/^course/.test(view) ? "is-active" : ""}" data-action="open-course" title="${t("課程")}">${icon("book-open")}<span>${t("課程")}</span></button>
                 ${navGate.mistakes ? `<button class="sidebar-link ${view === "mistakes" ? "is-active" : ""}" data-action="open-mistakes" title="${t("錯題本")}">${icon("refresh")}<span>${t("錯題本")}</span></button>` : ""}
                 ${navGate.history ? `<button class="sidebar-link ${view === "history" ? "is-active" : ""}" data-action="open-history" title="${t("練習紀錄")}">${icon("history")}<span>${t("練習紀錄")}</span></button>` : ""}
                 ${navGate.proofs ? `<button class="sidebar-link ${/^proof/.test(view) ? "is-active" : ""}" data-action="open-proofs" title="${t("證明訓練")}">${icon("file-pen-line")}<span>${t("證明訓練")}</span></button>` : ""}
@@ -1528,7 +1534,7 @@
 
   function renderWorkspaceBar() {
     if (view === "quiz") return "";
-    const labels = { home: t("今日概覽"), train: t("訓練中心"), insights: t("學習數據"), library: t("探索題庫"), settings: t("偏好與設定"), mistakes: t("錯題本"), history: t("練習紀錄"), proofs: t("證明訓練"), "proof-write": t("證明題"), "proof-tutorial": t("白話證明教學"), "proof-view": t("證明題"), course: t("入門九課"), "course-lesson": t("入門九課"), creator: t("出題工作坊"), results: t("訓練回顧"), "path-intro": t("學習路線") };
+    const labels = { home: t("今日概覽"), train: t("訓練中心"), insights: t("學習數據"), library: t("探索題庫"), settings: t("偏好與設定"), mistakes: t("錯題本"), history: t("練習紀錄"), proofs: t("證明訓練"), "proof-write": t("證明題"), "proof-tutorial": t("白話證明教學"), "proof-view": t("證明題"), course: t("課程"), "course-lesson": t("課程"), creator: t("出題工作坊"), results: t("訓練回顧"), "path-intro": t("學習路線") };
     return `
       <div class="workspace-bar">
         <div class="workspace-breadcrumb"><span>${t("我的學習空間")}</span>${icon("chevron-right")}<strong>${labels[view] || t("今日概覽")}</strong></div>
