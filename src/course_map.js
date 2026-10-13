@@ -902,7 +902,7 @@
     const L = opts.lessons[sel];
     const esc = opts.escapeHtml;
     const attr = opts.escapeAttr;
-    const minutes = L.available ? `<span>閱讀 ${L.read} 分</span><span>完成 ${L.total} 分</span>` : "";
+    const minutes = L.available ? `<span>閱讀 ${L.read} 分</span><span>全程 ${L.total} 分</span>` : "";
     const ids = D.ids[sel];
     const why = D.why[sel];
     const isGoal = D.goal && D.goal.i === sel;
@@ -1558,6 +1558,13 @@
     clampCam();
     // 選取接回來（重繪前選了誰，回來還是它）
     if (sel >= 0) select(sel); else select(-1);
+    // 從一課回來：選那一課（相機不動；不在畫面裡才飛過去）
+    const back = options.selectId ? opts.lessons.findIndex((L) => L.id === options.selectId) : -1;
+    if (back >= 0 && back !== sel) {
+      const x = G.lx[back] * cam.s + cam.tx;
+      const y = G.ly[back] * cam.s + cam.ty;
+      select(back, x < 0 || y < 0 || x > vw || y > vh ? "focus" : "");
+    }
     canvas.addEventListener("pointerdown", onDown);
     canvas.addEventListener("pointermove", onMove);
     canvas.addEventListener("pointerup", onUp);

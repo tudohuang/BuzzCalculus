@@ -64,6 +64,12 @@ const figureLesson = (pred) => {
   }
   return null;
 };
+// 樣本課在大綱上的核心題數（題庫裡有的；畫面的分母照這個算）
+const SAMPLE_CORE = (() => {
+  if (!SAMPLE) return 0;
+  const entry = SAMPLE.chapter.lessons.find((l) => l.id === SAMPLE.lesson.id) || {};
+  return String(entry.practice || "").split(" ").filter((t) => t.endsWith("*")).length;
+})();
 const STATIC_FIG = figureLesson((f) => Boolean(f.graph));
 const WIDGET_FIG = figureLesson((f) => Boolean(f.widget));
 // 比對課文只看漢字：$…$ 畫成 KaTeX 之後 innerText 會多出 MathML 的字；數學本身由「行內數學」那一段檢查
@@ -191,6 +197,9 @@ async function run() {
     check("課程表的觸控目標都 ≥ 40px", !index.small.length, JSON.stringify(index.small.slice(0, 4)));
     const flat = await evaluate(`return { framed: window.__c.nestedFrames(".cv2-index .cv2-stages"), chapterBoxes: document.querySelectorAll(".cv2-index details details").length };`);
     check("課程表是平的：Stage 裡沒有框中框、章不再是可折疊的盒子", !flat.framed.length && !flat.chapterBoxes, JSON.stringify(flat.framed.slice(0, 3)));
+    // 層級點的圖例：一行，三個顏色各寫它要什麼
+    const legend = await evaluate(`const el = document.querySelector("[data-cv2-legend]"); return { seen: window.__c.visible(el), dots: el ? [...el.querySelectorAll(".cv2-dot")].map((d) => d.className.replace("cv2-dot", "").trim()).join(",") : "", text: window.__c.text("[data-cv2-legend]") };`);
+    check("課程表有層級點的圖例（完成／熟練／全破各要什麼）", legend.seen && legend.dots === "t1,t2,t3" && /完成：小測首次就對 3 題/.test(legend.text) && /熟練：核心題全對/.test(legend.text) && /全破：含挑戰全對/.test(legend.text), legend.text);
     await shot("01-index");
 
     /* ── 2. 從課程表點進樣本課（展開它的 Stage 與章）── */
@@ -217,12 +226,16 @@ async function run() {
         challengeHead: [...document.querySelectorAll("[data-course-practice] .section-label")].some((n) => /挑戰/.test(n.textContent)),
         core: document.querySelectorAll("[data-course-practice] .cv2-mark.is-core").length,
         links: document.querySelectorAll('.cv2-lesson .cv2-link[data-action="open-course-lesson"]').length,
+        rule: window.__c.text("[data-cv2-rule]"),
         bodyText: document.querySelector(".cv2-lesson").innerText,
         files: window.__c.courseFiles()
       };`);
     const n = `${SAMPLE.stage.n}.${SAMPLE.stage.chapters.flatMap((c) => c.lessons).findIndex((l) => l.id === lesson.id) + 1}`;
     check("標題與課號（照大綱順序算）", page.title === lesson.title && page.label.startsWith(`${n} ·`), `${page.label} · ${page.title}`);
-    check("閱讀時間與完成時間分開寫", page.meta.includes(`閱讀 ${lesson.readMinutes} 分`) && page.meta.includes(`完成 ${lesson.totalMinutes} 分`), page.meta);
+    check("閱讀時間與完成時間分開寫", page.meta.includes(`閱讀 ${lesson.readMinutes} 分`) && page.meta.includes(`全程 ${lesson.totalMinutes} 分`), page.meta);
+    // 完成條件寫成這個人自己的數字：還沒做小測 → 完成 0/3、熟練 0/核心題數
+    const coreN = SAMPLE_CORE;
+    check("標題下寫著還差多少：完成 小測首次就對 0/3 · 熟練 核心題 0/n", page.rule === `完成 小測首次就對 0/3 熟練 核心題 0/${coreN}`, page.rule);
     check("觀念預設顯示", page.conceptParas >= 2, `${page.conceptParas} 段`);
     check("可折疊段落（定理條件／證明／預告）預設收起", page.folds === lesson.concept.filter((p) => p.collapsible).length && page.foldsClosed, `${page.folds} 段`);
     check("範例的步驟先藏著", page.examples === lesson.workedExamples.length && page.steps === 0, `${page.examples} 題範例、${page.steps} 步`);
@@ -330,6 +343,7 @@ async function run() {
     await evaluate(`document.querySelectorAll("[data-course-checks] .course-check")[0].scrollIntoView({ block: "center" }); return 1;`);
     await sleep(200);
     await click(`[data-action="course-pick"][data-check="0"][data-option="${right}"]`, 400);
+    check("第一題第一次選錯：完成那一格仍是 0/3（第一次就對才算）", /完成 小測首次就對 0\/3/.test(await evaluate(`return window.__c.text("[data-cv2-rule]");`)));
     check("再選對：綠、選項鎖住", await evaluate(`const box = document.querySelectorAll("[data-course-checks] .course-check")[0]; return box.classList.contains("is-right") && [...box.querySelectorAll(".course-option")].every((b) => b.disabled);`));
     for (let ci = 1; ci < lesson.checks.length; ci += 1) {
       await click(`[data-action="course-pick"][data-check="${ci}"][data-option="${lesson.checks[ci].options.findIndex((o) => o.correct)}"]`, 300);
@@ -339,6 +353,9 @@ async function run() {
     check(`第一次選錯的那題不算分：${expect} / ${lesson.checks.length}、算完成`, quiz.result.startsWith(`${expect} / ${lesson.checks.length}`) && /完成/.test(quiz.result), quiz.result);
     check("小測結果在畫面上", quiz.seen);
     check("標題旁出現「完成」", quiz.tier === "完成", quiz.tier);
+    const ruleAfter = await evaluate(`return { rule: window.__c.text("[data-cv2-rule]"), tiers: window.__c.text("[data-course-practice] .cv2-tiers") };`);
+    check("完成之後：標題下改寫熟練與全破還差多少", new RegExp(`^熟練 核心題 0/${SAMPLE_CORE} 全破 含挑戰 0/\\d+$`).test(ruleAfter.rule), ruleAfter.rule);
+    check("推薦題上方的三層也寫數字（✔ 完成、★ 題 0/n、含挑戰 0/n）", /✔ 完成/.test(ruleAfter.tiers) && /★ 題 0\/\d+/.test(ruleAfter.tiers) && /含挑戰 0\/\d+/.test(ruleAfter.tiers), ruleAfter.tiers);
     const saved = (await records()).courseV2 || {};
     check("進度存在 records.courseV2（穩定 id）", Boolean(saved[lesson.id] && saved[lesson.id].doneAt && saved[lesson.id].quizBest === expect), JSON.stringify(saved[lesson.id] || {}));
     await evaluate(`document.querySelector("[data-course-quiz-result]").scrollIntoView({ block: "start" }); window.scrollBy(0, -90); return 1;`);
@@ -528,6 +545,54 @@ async function run() {
       check("桌機：圖最寬 560px、在本文欄置中", fig.w <= 561 && fig.w >= 400 && fig.center <= 2, JSON.stringify(fig));
     }
     await shot("10-desktop-toc");
+    await chrome.send("Emulation.setDeviceMetricsOverride", VIEWPORT);
+    await chrome.send("Emulation.setTouchEmulationEnabled", { enabled: true, maxTouchPoints: 5 });
+
+    /* ── 7⅞⅞. 回課程表接回原處：‹ 課程表、瀏覽器上一頁、桌機側欄；那一列停在同一個 y、亮著、拿到焦點 ── */
+    await click(".cv2-back", 300);
+    check("‹ 課程表回到課程表", await waitFor('document.querySelector(".cv2-index .cv2-row")'));
+    await sleep(300);
+    const backRow = async (id) => evaluate(`const row = document.querySelector('.cv2-row[data-lesson-id="${id}"]'); return row ? { top: Math.round(row.getBoundingClientRect().top), y: Math.round(scrollY), left: row.classList.contains("is-left"), focus: document.activeElement === row, seen: window.__c.visible(row) } : null;`);
+    const pickRow = async () => evaluate(`
+      const det = document.querySelector('details[data-keep="cv2-stage-${SAMPLE.stage.n}"]'); det.open = true;
+      const rows = [...det.querySelectorAll(".cv2-row:not(.is-soon)")];
+      const row = rows[Math.min(rows.length - 1, 6)];
+      row.scrollIntoView({ block: "start" }); window.scrollBy(0, -430);
+      await new Promise((r) => setTimeout(r, 200));
+      return { id: row.dataset.lessonId, title: row.querySelector("strong").textContent, top: Math.round(row.getBoundingClientRect().top), y: Math.round(scrollY) };`);
+    const target = await pickRow();
+    check("挑一列捲到畫面中段", target.y > 300 && target.top > 300, JSON.stringify(target));
+    await evaluate(`document.querySelector('.cv2-row[data-lesson-id="${target.id}"]').click(); return 1;`); // 不先捲到中間：量的就是點下去那一刻的位置
+    await waitFor(`document.querySelector(".cv2-lesson h2") && document.querySelector(".cv2-lesson h2").textContent === ${JSON.stringify(target.title)}`);
+    await sleep(500);
+    await click(".cv2-back", 300);
+    await waitFor('document.querySelector(".cv2-index .cv2-row")');
+    await sleep(400);
+    let came = await backRow(target.id);
+    check("‹ 課程表：剛離開的那一列停在原來的高度（±4px），不是回到頂端", came && Math.abs(came.top - target.top) <= 4 && came.y > 300, JSON.stringify({ before: target, after: came }));
+    check("剛離開的那一列亮著、拿到焦點", came && came.left && came.focus, JSON.stringify(came));
+    await shot("11-back-to-index");
+    await evaluate(`document.querySelector('.cv2-row[data-lesson-id="${target.id}"]').click(); return 1;`); // 不先捲到中間：量的就是點下去那一刻的位置
+    await waitFor('document.querySelector(".cv2-lesson h2")');
+    await sleep(500);
+    await evaluate(`history.back(); return 1;`);
+    check("瀏覽器上一頁：從一課回到課程表（不是離開網站）", await waitFor('document.querySelector(".cv2-index .cv2-row")'));
+    await sleep(400);
+    came = await backRow(target.id);
+    check("瀏覽器上一頁：那一列也停在原來的高度", came && Math.abs(came.top - target.top) <= 4 && came.left, JSON.stringify(came));
+    // 桌機：側欄的「課程」
+    await chrome.send("Emulation.setTouchEmulationEnabled", { enabled: false });
+    await chrome.send("Emulation.setDeviceMetricsOverride", { width: 1280, height: 800, deviceScaleFactor: 1, mobile: false });
+    await sleep(400);
+    const deskTarget = await pickRow();
+    await evaluate(`document.querySelector('.cv2-row[data-lesson-id="${deskTarget.id}"]').click(); return 1;`);
+    await waitFor('document.querySelector(".cv2-lesson h2")');
+    await sleep(500);
+    await click('.sidebar-link[data-action="open-course"]', 300);
+    await waitFor('document.querySelector(".cv2-index .cv2-row")');
+    await sleep(400);
+    came = await backRow(deskTarget.id);
+    check("桌機側欄的「課程」：那一列停在原來的高度", came && Math.abs(came.top - deskTarget.top) <= 4 && came.left, JSON.stringify({ before: deskTarget, after: came }));
     await chrome.send("Emulation.setDeviceMetricsOverride", VIEWPORT);
     await chrome.send("Emulation.setTouchEmulationEnabled", { enabled: true, maxTouchPoints: 5 });
 

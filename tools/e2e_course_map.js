@@ -272,8 +272,29 @@ async function run() {
     if ((await dbg()).selected !== SAMPLE) await tapAt(at3.x, at3.y);
     await settled();
     check("樣本課選中、小卡在", (await dbg()).selected === SAMPLE && (await evaluate(`return !document.querySelector(".cmap-card").hidden;`)), (await dbg()).selected);
+    const cam0 = await dbg();
     await evaluate(`window.__m.click('.cmap-card [data-action="open-course-lesson"]'); return 1;`);
     check("「開始這課」打開的就是那一課", await waitFor(`document.querySelector(".cv2-lesson h2") && document.querySelector(".cv2-lesson h2").textContent.trim() === ${JSON.stringify(titleOf(SAMPLE))}`), titleOf(SAMPLE));
+    // 回課程表（‹）：地圖的相機不動、還選著那一課
+    const openLesson = async (id) => {
+      await evaluate(`const b = document.createElement("button"); b.dataset.action = "open-course-lesson"; b.dataset.lessonId = ${JSON.stringify(id)}; document.querySelector("#app").appendChild(b); b.click(); return 1;`);
+      return waitFor(`document.querySelector(".cv2-lesson h2") && document.querySelector(".cv2-lesson h2").textContent.trim() === ${JSON.stringify(titleOf(id))}`);
+    };
+    const backToMap = async () => {
+      await evaluate(`window.__m.click(".cv2-back"); return 1;`);
+      await waitFor('document.querySelector(".cmap-canvas") && window.__m.dbg() && window.__m.dbg().draws > 0');
+      await settled();
+      return dbg();
+    };
+    let returned = await backToMap();
+    check("‹ 回到地圖：相機沒動、還選著剛離開的那一課", returned.selected === SAMPLE && Math.abs(returned.tx - cam0.tx) < 1 && Math.abs(returned.ty - cam0.ty) < 1 && Math.abs(returned.scale - cam0.scale) < 1e-3, `${returned.selected} · ${JSON.stringify([cam0.tx, cam0.ty, cam0.scale])} → ${JSON.stringify([returned.tx, returned.ty, returned.scale])}`);
+    // 從這一課連著讀到下一課再回來：選的是下一課（剛離開的那一課）
+    const NEXT_ID = OUTLINE.stages.flatMap((st) => st.chapters.flatMap((c) => c.lessons)).filter((l) => typeof l.read === "number").map((l) => l.id).find((id, k, all) => all[k - 1] === SAMPLE);
+    check("打開樣本課", await openLesson(SAMPLE));
+    check("連著打開下一課", await openLesson(NEXT_ID));
+    returned = await backToMap();
+    check("回到地圖：選的是剛離開的那一課（下一課）", returned.selected === NEXT_ID, `${returned.selected} / ${NEXT_ID}`);
+    check("再打開樣本課", await openLesson(SAMPLE));
 
     // 一課頁面的「在地圖上看」
     const link = await evaluate(`const b = document.querySelector('.cv2-prereq [data-action="course-map-focus"]'); return b ? { text: b.textContent.trim(), id: b.dataset.lessonId, side: Math.round(Math.min(b.getBoundingClientRect().width, b.getBoundingClientRect().height)) } : null;`);
