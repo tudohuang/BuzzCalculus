@@ -395,7 +395,7 @@ node tools/smoke_app_render.js
 Current version:
 
 ```text
-v1.2.1
+v1.3.0
 ```
 
 Current target:

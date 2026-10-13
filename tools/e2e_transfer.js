@@ -73,7 +73,8 @@ async function run() {
     check("Service Worker 裝好、接手這一頁", await waitFor("navigator.serviceWorker && navigator.serviceWorker.controller", 20000));
     await sleep(800);
     const first = paths();
-    const lazyHit = LAZY.filter((l) => l.group !== "steps" && first.includes(`/${l.src}`)).map((l) => `${l.group}:${l.src}`);
+    // steps（逐步解答）與 pwa（更新與版本）是開站閒下來就載的，不算
+    const lazyHit = LAZY.filter((l) => !require("./build_sw_revisions.js").CORE_LAZY.includes(l.group) && first.includes(`/${l.src}`)).map((l) => `${l.group}:${l.src}`);
     check("第一次造訪：沒有抓任何課文", !first.some((p) => /\/src\/course_v2\//.test(p)), first.filter((p) => /course_v2/.test(p)).join(","));
     check("第一次造訪：沒有抓任何 lazy 群組（課程、證明、地圖、分節、英文側表…）", !lazyHit.length, lazyHit.join(","));
     check("第一次造訪：沒有抓說明頁", !first.some((p) => /\/(about|guide|privacy|terms)\.html$/.test(p)), first.filter((p) => /\.html$/.test(p)).join(","));

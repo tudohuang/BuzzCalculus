@@ -34,6 +34,7 @@
       <p>全部在你自己的瀏覽器裡，我們拿不到。</p>
 
       <p>發現題目錯了，用題目右上角的「回報」。</p>
+      <p class="legal-updated" data-app-version="版本" hidden></p>
     </main>
     <main class="legal-page" data-page-lang="en" lang="en" data-title="About · BuzzCalculus" hidden>
       <p class="legal-back"><a href="index.html">← Back to BuzzCalculus</a></p>
@@ -59,6 +60,7 @@
       <p>It all stays in your own browser. We can't see it.</p>
 
       <p>Found a wrong problem? Use "Report" at the top right of the problem.</p>
+      <p class="legal-updated" data-app-version="Version" hidden></p>
     </main>
     <script>
       // 英文介面看英文版：語言判定跟 src/kernel/i18n.js 一樣（設定 settings.lang → 沒設定看瀏覽器，中文任何地區 → zh）
@@ -69,6 +71,18 @@
         if (lang !== "en") return;
         document.documentElement.lang = "en";
         document.querySelectorAll("[data-page-lang]").forEach(function (el) { el.hidden = el.getAttribute("data-page-lang") !== "en"; if (!el.hidden && el.getAttribute("data-title")) document.title = el.getAttribute("data-title"); });
+      })();
+      // 版本：問接手這一頁的 Service Worker（跟 app 設定頁同一個來源：sw.js 的 BUILD）。沒有 Service Worker 就不顯示。
+      (function () {
+        var sw = navigator.serviceWorker && navigator.serviceWorker.controller;
+        if (!sw || typeof MessageChannel === "undefined") return;
+        var channel = new MessageChannel();
+        channel.port1.onmessage = function (event) {
+          var b = event.data && event.data.build;
+          if (!b) return;
+          document.querySelectorAll("[data-app-version]").forEach(function (el) { el.textContent = el.getAttribute("data-app-version") + " " + b.version + " · " + b.id + " · " + b.date; el.hidden = false; });
+        };
+        sw.postMessage({ type: "VERSION" }, [channel.port2]);
       })();
     </script>
   </body>

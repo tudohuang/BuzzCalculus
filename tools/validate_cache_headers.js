@@ -19,7 +19,8 @@ const failures = [];
 const fail = (m) => failures.push(m);
 
 const config = JSON.parse(read("vercel.json"));
-if (config.buildCommand !== "node tools/fetch_media.js") fail(`vercel.json 的 buildCommand 變了（${config.buildCommand}）`);
+// stamp_build：部署時蓋建置日期、重產 sw.js（BUILD／快取名），見 tools/validate_version.js
+if (config.buildCommand !== "node tools/stamp_build.js && node tools/fetch_media.js") fail(`vercel.json 的 buildCommand 變了（${config.buildCommand}）`);
 const rules = config.headers || [];
 if (!rules.length) fail("vercel.json 沒有 headers");
 

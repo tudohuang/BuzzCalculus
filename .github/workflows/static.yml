@@ -158,7 +158,9 @@ jobs:
           node tools/verify_lean_proofs.js
       - name: Assemble site
         # Deploy only the app shell — keep reports, tools and LaTeX sources off the public site.
+        # stamp_build：蓋建置日期、重產 sw.js 的 BUILD／快取名（跟 vercel.json 的 buildCommand 一樣，部署出去的版本號一定是新的）
         run: |
+          node tools/stamp_build.js
           mkdir -p _site
           cp index.html styles.css sw.js manifest.webmanifest _site/
           cp privacy.html terms.html about.html guide.html _site/

@@ -29,16 +29,32 @@ const CORE_FONTS = ["AMS-Regular", "Main-Bold", "Main-Italic", "Main-Regular", "
   .map((n) => `assets/vendor/katex/fonts/KaTeX_${n}.woff2`);
 const PAGES = ["about.html", "guide.html", "privacy.html", "terms.html"];
 const VOLATILE = new Set(["src/kernel/daily_one_history.js"]);
+// 每次開站都會載的 lazy 群組：進 APP_SHELL（離線也要有）。steps＝逐步解答側表；pwa＝更新檢查與版本（src/kernel/app_update.js）。
+const CORE_LAZY = ["steps", "pwa"];
+// 讀檔：預設讀磁碟；E2E（tools/e2e_update.js）傳入覆寫，產生「改了一支檔之後」的 sw.js 而不動到磁碟
+const diskRead = (rel) => fs.readFileSync(path.join(ROOT, rel));
 // 內容雜湊：sw.js 在執行期用 crypto.subtle 算一樣的東西（sha256 的前 10 個 hex）
-const revOf = (rel) => crypto.createHash("sha256").update(fs.readFileSync(path.join(ROOT, rel))).digest("hex").slice(0, 10);
+const hashOf = (buf) => crypto.createHash("sha256").update(buf).digest("hex").slice(0, 10);
 
-function tables() {
-  const html = fs.readFileSync(path.join(ROOT, "index.html"), "utf8");
+// 版本：APP_VERSION（人訂的 vX.Y.Z）與 BUILD_DATE（tools/stamp_build.js 蓋的）從 app.js 讀；
+// id ＝ 整張 REVISIONS 的雜湊 —— 不用任何人記得去改，任何一支檔變了它就變，快取名跟著變。
+function buildInfo(revisions, read = diskRead) {
+  const app = String(read("src/app.js"));
+  const version = (app.match(/const APP_VERSION = "([^"]+)"/) || [])[1];
+  const date = (app.match(/const BUILD_DATE = "([^"]+)"/) || [])[1];
+  if (!version || !date) throw new Error("src/app.js 裡找不到 APP_VERSION 或 BUILD_DATE");
+  const id = crypto.createHash("sha256").update(JSON.stringify(revisions)).digest("hex").slice(0, 8);
+  return { version, id, date };
+}
+
+function tables(read = diskRead) {
+  const revOf = (rel) => hashOf(read(rel));
+  const html = String(read("index.html"));
   const local = (u) => !/^(https?:)?\/\//.test(u);
   const stylesheets = [...html.matchAll(/<link[^>]+rel="stylesheet"[^>]+href="([^"]+)"/g)].map((m) => m[1]).filter(local);
   const deferScripts = [...html.matchAll(/<script\s+defer\s+src="([^"]+)"/g)].map((m) => m[1]).filter(local);
   const lazy = [...html.matchAll(/<script type="text\/lazy" data-lazy="([^"]+)" src="([^"]+)"/g)].map((m) => ({ group: m[1], src: m[2] }));
-  const steps = lazy.filter((l) => l.group === "steps").map((l) => l.src);
+  const steps = lazy.filter((l) => CORE_LAZY.includes(l.group)).map((l) => l.src);
   const core = [...new Set(["index.html", ...stylesheets, "manifest.webmanifest", "assets/icon.svg", ...deferScripts, ...steps, ...CORE_FONTS])];
   const fontsDir = path.join(ROOT, "assets/vendor/katex/fonts");
   const fonts = fs.readdirSync(fontsDir).filter((n) => n.endsWith(".woff2")).map((n) => `assets/vendor/katex/fonts/${n}`);
@@ -47,12 +63,15 @@ function tables() {
   const missing = all.filter((rel) => !fs.existsSync(path.join(ROOT, rel)));
   if (missing.length) throw new Error(`index.html／sw.js 指到不存在的檔：${missing.join(", ")}`);
   const revisions = Object.fromEntries(all.map((rel) => [`./${rel}`, VOLATILE.has(rel) ? "" : revOf(rel)]));
-  return { core: core.map((rel) => `./${rel}`), revisions };
+  return { core: core.map((rel) => `./${rel}`), revisions, build: buildInfo(revisions, read) };
 }
 
-function render({ core, revisions }) {
+function render({ core, revisions, build }) {
   return [
     START,
+    "// 這一版：設定頁顯示「版本 v… · id · 日期」；id 是下面 REVISIONS 的雜湊，快取名跟著它變（每次部署內容有變就一定是新快取）。",
+    `const BUILD = ${JSON.stringify(build)};`,
+    `const CACHE_NAME = ${JSON.stringify(`buzzcalculus-${build.version}-${build.id}`)};`,
     "// 安裝時預快取的核心（離線也能練題）。其他檔用到才快取 —— 見 REVISIONS。",
     "const APP_SHELL = [",
     core.map((k) => `  ${JSON.stringify(k)}`).join(",\n"),
@@ -78,7 +97,13 @@ function check() {
   return generated(source).block === want;
 }
 
-module.exports = { tables, check, CORE_FONTS };
+// 整支 sw.js 的內容（read 可以覆寫某幾支檔）
+function swSource(read = diskRead) {
+  const { before, after } = generated(fs.readFileSync(SW, "utf8"));
+  return before + render(tables(read)) + after;
+}
+
+module.exports = { tables, check, swSource, CORE_FONTS, CORE_LAZY };
 
 if (require.main === module) {
   try {
@@ -89,11 +114,9 @@ if (require.main === module) {
       }
       console.log("sw revisions OK");
     } else {
-      const source = fs.readFileSync(SW, "utf8");
       const t = tables();
-      const { before, after } = generated(source);
-      fs.writeFileSync(SW, before + render(t) + after);
-      console.log(`sw.js：APP_SHELL ${t.core.length} 支、REVISIONS ${Object.keys(t.revisions).length} 支`);
+      fs.writeFileSync(SW, swSource());
+      console.log(`sw.js：APP_SHELL ${t.core.length} 支、REVISIONS ${Object.keys(t.revisions).length} 支、版本 ${t.build.version} · ${t.build.id} · ${t.build.date}`);
     }
   } catch (error) {
     console.error(error.message);
