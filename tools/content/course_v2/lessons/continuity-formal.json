@@ -133,13 +133,29 @@
       "title": "不用極限的說法",
       "beats": [
         { "show": ["連續：$\\lim_{x\\to a}f(x)=f(a)$"], "note": "靠近 $a$ 時，函數值靠近 $f(a)$。",
-          "say": "以前說連續，是靠近 a 的時候，函數值靠近 a 這一點自己的值。把靠近換成 epsilon 和 delta。" },
+          "say": "以前說連續，是靠近 a 的時候，函數值靠近 a 這一點自己的值。把靠近換成 epsilon 和 delta。",
+          "board": [
+            { "do": "write", "line": "$\\lim_{x\\to a} f(x) = f(a)$", "on": "以前說" }
+          ] },
         { "show": ["$\\forall\\varepsilon>0\\ \\exists\\delta>0\\ \\forall x\\in D:$", "$|x-a|<\\delta\\Rightarrow|f(x)-f(a)|<\\varepsilon$"],
-          "say": "對方出誤差 epsilon，你回答 delta：離 a 不到 delta 的 x，函數值都離 f 在 a 的值不到 epsilon。" },
+          "say": "對方出誤差 epsilon，你回答 delta：離 a 不到 delta 的 x，函數值都離 f 在 a 的值不到 epsilon。",
+          "board": [
+            { "do": "write", "line": "$\\forall{{e:\\varepsilon}}>0\\ \\exists{{d:\\delta}}>0\\ \\forall x\\in D:$", "tint": { "e": "blue", "d": "violet" }, "on": "對方出" },
+            { "do": "write", "line": "${{xa:|x-a|<{{d:\\delta}}}} \\Rightarrow |f(x)-{{fa:f(a)}}|<{{e:\\varepsilon}}$", "on": "離 a 不到" }
+          ] },
         { "show": ["目標值是 $f(a)$；不用排除 $x=a$"], "note": "$x=a$ 時差是 0，自動成立。",
-          "say": "跟極限比有兩個差別：目標就是 f 在 a 的值；而且不必排除 x 等於 a，那一點的差是零，自動成立。" },
+          "say": "跟極限比有兩個差別：目標就是 f 在 a 的值；而且不必排除 x 等於 a，那一點的差是零，自動成立。",
+          "board": [
+            { "do": "focus", "term": "fa", "label": "目標", "on": "目標就是" },
+            { "do": "underline", "term": "xa", "label": "不排除 x=a", "on": "不必排除" }
+          ] },
         { "show": ["$\\delta$ 可以依賴 $\\varepsilon$ 和 $a$"], "note": "這一點在〈一致連續〉會變成關鍵。",
-          "say": "delta 可以跟著 epsilon 變，也可以跟著 a 變。後面這一點，到一致連續會變成關鍵。" }
+          "say": "delta 可以跟著 epsilon 變，也可以跟著 a 變。後面這一點，到一致連續會變成關鍵。",
+          "board": [
+            { "do": "keep", "n": 2 },
+            { "do": "write", "line": "${{d:\\delta}}$ 可以依賴 ${{e:\\varepsilon}}$ 和 ${{aa:a}}$", "on": "跟著 epsilon" },
+            { "do": "focus", "term": "aa", "label": "之後的關鍵", "on": "跟著 a" }
+          ] }
       ],
       "check": 0
     },
@@ -160,7 +176,11 @@
       "proof": true, "of": "ex1", "skeleton": "ε-δ",
       "beats": [
         { "show": ["$f(x)=x^2$ 在 $a=3$：先壓住 $|x+3|$"], "note": "$|x^2-9|=|x-3|\\cdot|x+3|$。",
-          "say": "策略：x 平方在三，距離分解成 x 減三乘 x 加三。第二個因子會變，先壓成常數，再除。" },
+          "say": "策略：x 平方在三，距離分解成 x 減三乘 x 加三。第二個因子會變，先壓成常數，再除。",
+          "board": [
+            { "do": "write", "line": "$|x^2 - 9| = |x-3|\\cdot{{k:|x+3|}}$", "tint": { "k": "violet" }, "on": "距離分解" },
+            { "do": "underline", "term": "k", "label": "先壓成常數", "on": "第二個因子" }
+          ] },
         { "show": ["先要求 $\\delta\\le1$：$2<x<4$"], "note": "所以 $|x+3|<7$。",
           "why": {
             "ask": "為什麼 $|x+3|<7$？",
@@ -171,11 +191,24 @@
               { "label": "$\\varepsilon$ 很小，$x$ 離 3 很近", "why": "$\\varepsilon$ 可以很大；把 $x$ 關在 $(2,4)$ 的是 $\\delta\\le1$。" }
             ]
           },
-          "say": "先要求 delta 不超過一，x 就在二到四之間，x 加三小於七。" },
+          "say": "先要求 delta 不超過一，x 就在二到四之間，x 加三小於七。",
+          "board": [
+            { "do": "write", "line": "${{k:|x+3|}} < 7$", "on": "為什麼小於七" },
+            { "do": "transform", "line": "$\\delta \\le 1$ ⇒ $2 < x < 4$ ⇒ ${{k:|x+3|}} < 7$", "why": true, "on": "先要求" }
+          ] },
         { "show": ["$|x^2-9|\\le7|x-3|$", "再要 $|x-3|<\\frac{\\varepsilon}{7}$"],
-          "say": "距離不超過七倍的 x 減三。要它小於 epsilon，x 減三再小於七分之 epsilon 就夠。" },
+          "say": "距離不超過七倍的 x 減三。要它小於 epsilon，x 減三再小於七分之 epsilon 就夠。",
+          "board": [
+            { "do": "write", "line": "$|x^2 - 9| \\le 7|x-3|$" },
+            { "do": "write", "line": "再要 $|x-3| < \\frac{\\varepsilon}{7}$", "on": "x 減三再" }
+          ] },
         { "show": ["$\\delta=\\min(1,\\frac{\\varepsilon}{7})$"], "note": "兩個要求同時滿足。",
-          "say": "兩個要求都要成立，delta 取一和七分之 epsilon 裡比較小的。" },
+          "say": "兩個要求都要成立，delta 取一和七分之 epsilon 裡比較小的。",
+          "board": [
+            { "do": "keep", "n": 2 },
+            { "do": "write", "line": "${{dl:\\delta = \\min(1, \\tfrac{\\varepsilon}{7})}}$", "on": "delta 取" },
+            { "do": "box", "term": "dl", "color": "green", "on": "七分之" }
+          ] },
         { "show": ["$|x-3|<\\delta$ ⇒ $|x^2-9|\\le7|x-3|<7\\delta\\le\\varepsilon$"], "note": "$\\delta\\le\\frac{\\varepsilon}{7}$。",
           "why": {
             "ask": "為什麼 $7\\delta\\le\\varepsilon$？",
@@ -186,7 +219,11 @@
               { "label": "$\\varepsilon=0.25$ 時算過成立", "why": "一個 $\\varepsilon$ 不算；定義要每一個 $\\varepsilon$ 都成立。" }
             ]
           },
-          "say": "delta 取的是比較小的那個，不超過七分之 epsilon，所以七倍 delta 不超過 epsilon。證完。" }
+          "say": "delta 取的是比較小的那個，不超過七分之 epsilon，所以七倍 delta 不超過 epsilon。證完。",
+          "board": [
+            { "do": "write", "line": "$|x^2-9| \\le 7|x-3| < {{sd:7\\delta}} \\le \\varepsilon$", "on": "七倍 delta" },
+            { "do": "underline", "term": "dl", "label": "不超過 ε/7", "why": true, "on": "不超過七分之" }
+          ] }
       ],
       "check": 2
     },
@@ -211,13 +248,32 @@
       "title": "不連續寫成什麼",
       "beats": [
         { "show": ["$\\exists\\varepsilon>0\\ \\forall\\delta>0\\ \\exists x\\in D$"], "note": "$|x-a|<\\delta$ 但 $|f(x)-f(a)|\\ge\\varepsilon$。",
-          "say": "把定義整句否定：有一個固定的誤差，不管 x 限制得多靠近 a，總有點偏離超過它。" },
+          "say": "把定義整句否定：有一個固定的誤差，不管 x 限制得多靠近 a，總有點偏離超過它。",
+          "board": [
+            { "do": "write", "line": "${{q1:\\exists{{e:\\varepsilon}}>0}}\\ {{q2:\\forall{{d:\\delta}}>0}}\\ {{q3:\\exists x\\in D}}$", "tint": { "e": "blue", "d": "violet" }, "on": "整句否定" },
+            { "do": "focus", "term": "q1", "on": "固定的誤差" },
+            { "do": "focus", "term": "q2", "on": "不管 x" },
+            { "do": "write", "line": "$|x-a|<{{d:\\delta}}$ 但 $|f(x)-f(a)|\\ge{{e:\\varepsilon}}$", "on": "總有點" }
+          ] },
         { "show": ["$H(x)=0$（$x<0$）、$1$（$x\\ge0$）"], "note": "取 $\\varepsilon=\\frac{1}{2}$。",
-          "say": "階梯函數在零：左邊是零，右邊和零本身是一。誤差取二分之一。" },
+          "say": "階梯函數在零：左邊是零，右邊和零本身是一。誤差取二分之一。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "$H(x) = 0$（$x<0$）、$1$（$x\\ge 0$）", "on": "階梯函數" },
+            { "do": "write", "line": "取 ${{e:\\varepsilon}} = \\frac{1}{2}$", "on": "誤差取" }
+          ] },
         { "show": ["任何 $\\delta$：取 $x=-\\frac{\\delta}{2}$"], "note": "$|H(x)-H(0)|=1\\ge\\frac{1}{2}$。",
-          "say": "不管 delta 多小，取左邊二分之 delta 那一點，函數值是零，跟一差一。每個 delta 都失敗。" },
+          "say": "不管 delta 多小，取左邊二分之 delta 那一點，函數值是零，跟一差一。每個 delta 都失敗。",
+          "board": [
+            { "do": "write", "line": "$x = -\\frac{{{d:\\delta}}}{2}$：$|H(x)-H(0)| = {{g:1 \\ge \\frac{1}{2}}}$", "on": "取左邊" },
+            { "do": "underline", "term": "g", "label": "每個都失敗", "on": "跟一差一" }
+          ] },
         { "show": ["$\\varepsilon$ 要挑小的"], "note": "$\\varepsilon>1$ 時每個 $\\delta$ 都行。",
-          "say": "誤差要挑小的：取大於一，每個 delta 都行，就證不出來了。" }
+          "say": "誤差要挑小的：取大於一，每個 delta 都行，就證不出來了。",
+          "board": [
+            { "do": "write", "line": "${{w:{{e:\\varepsilon}} > 1}}$：每個 ${{d:\\delta}}$ 都行", "on": "取大於一" },
+            { "do": "strike", "term": "w", "label": "證不出來", "on": "每個 delta" }
+          ] }
       ],
       "check": 3
     }

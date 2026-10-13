@@ -89,13 +89,31 @@
       "title": "一定撐得滿",
       "beats": [
         { "show": ["值域 $[0,n)$ 切成長 $2^{-n}$ 的小段"],
-          "say": "怎麼塞才夠滿？把值域零到 n 切成長二的負 n 次方的小段。" },
+          "say": "怎麼塞才夠滿？把值域零到 n 切成長二的負 n 次方的小段。",
+          "board": [
+            { "do": "write", "line": "值域 $[0,n)$ 切成長 ${{l:2^{-n}}}$ 的小段", "tint": { "l": "violet" }, "on": "把值域" }
+          ] },
         { "show": ["$f(x)$ 壓到所在段的下端；$f\\ge n$ 壓成 $n$"],
-          "say": "f 在 x 的值落在哪一段，就壓到那一段的下端；大於等於 n 的地方壓成 n。這就是 phi n。" },
+          "say": "f 在 x 的值落在哪一段，就壓到那一段的下端；大於等於 n 的地方壓成 n。這就是 phi n。",
+          "board": [
+            { "do": "write", "line": "${{fx:f(x)}}$ 壓到所在段的下端", "tint": { "fx": "blue" } },
+            { "do": "write", "line": "${{fx:f(x)}}\\ge n$ 壓成 $n$", "on": "大於等於 n" }
+          ] },
         { "show": ["$0\\le\\varphi_1\\le\\varphi_2\\le\\cdots\\le f$，$\\varphi_n\\to f$"], "note": "誤差 $<2^{-n}$。",
-          "say": "這串簡單函數一路遞增，每一點都收斂到 f，誤差小於二的負 n 次方。為什麼，下一節一步一步證。" },
+          "say": "這串簡單函數一路遞增，每一點都收斂到 f，誤差小於二的負 n 次方。為什麼，下一節一步一步證。",
+          "board": [
+            { "do": "keep", "n": 2 },
+            { "do": "write", "line": "$0\\le\\varphi_1\\le\\varphi_2\\le\\cdots\\le f$，$\\varphi_n\\to f$", "on": "這串" },
+            { "do": "write", "line": "誤差 $<{{l:2^{-n}}}$", "on": "誤差小於" }
+          ] },
         { "show": ["$f(x)=x$：$\\varphi_3(0.7)=\\frac{5}{8}$"], "note": "$0.7\\cdot8=5.6$，在 $[\\frac{5}{8},\\frac{6}{8})$。",
-          "say": "例如 f 等於 x，n 等於三，段長八分之一。零點七乘八是五點六，壓到下端八分之五。" }
+          "say": "例如 f 等於 x，n 等於三，段長八分之一。零點七乘八是五點六，壓到下端八分之五。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "$f(x)=x$，$n=3$：段長 $\\frac{1}{8}$", "on": "例如" },
+            { "do": "write", "line": "$0.7\\cdot8=5.6$ ⇒ $\\varphi_3(0.7)=\\ {{r:\\frac{5}{8}}}$", "on": "零點七乘八" },
+            { "do": "box", "term": "r", "color": "green", "on": "壓到下端" }
+          ] }
       ],
       "check": 0
     },
@@ -104,9 +122,16 @@
       "proof": true, "of": 3, "skeleton": "分情況",
       "beats": [
         { "show": ["逐項驗：可測、遞增、收斂"],
-          "say": "策略：phi n 已經造好了，三件事一件一件驗。遞增要分 f 在 x 的值落在哪裡來看。" },
+          "say": "策略：phi n 已經造好了，三件事一件一件驗。遞增要分 f 在 x 的值落在哪裡來看。",
+          "board": [
+            { "do": "write", "line": "逐項驗：可測、遞增、收斂" }
+          ] },
         { "show": ["$\\{\\frac{k-1}{2^n}\\le f<\\frac{k}{2^n}\\}$、$\\{f\\ge n\\}$ 可測"], "note": "$f$ 可測。",
-          "say": "每一段的原像是 f 大於等於下端、交上 f 小於上端，都可測，而且互不相交，所以 phi n 是簡單函數。" },
+          "say": "每一段的原像是 f 大於等於下端、交上 f 小於上端，都可測，而且互不相交，所以 phi n 是簡單函數。",
+          "board": [
+            { "do": "write", "line": "$\\{\\frac{k-1}{2^n}\\le f<\\frac{k}{2^n}\\}$、$\\{f\\ge n\\}$ 可測", "on": "每一段的原像" },
+            { "do": "write", "line": "⇒ $\\varphi_n$ 是簡單函數", "on": "所以 phi n" }
+          ] },
         { "show": ["$f(x)<n$：那一段切成兩半", "$\\varphi_{n+1}(x)\\ge\\varphi_n(x)$"], "note": "$\\frac{2k-2}{2^{n+1}}=\\frac{k-1}{2^n}$：下端不變。",
           "why": {
             "ask": "為什麼 $\\varphi_{n+1}(x)\\ge\\varphi_n(x)$？",
@@ -117,9 +142,18 @@
               { "label": "$\\varphi_{n+1}$ 的值可以到 $n+1$，比較大", "why": "上限比較高，不代表在這一點比較大；要看 $x$ 那一段切開後落在哪一半。" }
             ]
           },
-          "say": "下一層把這一段切成兩半。落在下半段，壓到的下端跟原來一樣；落在上半段，還更高。" },
+          "say": "下一層把這一段切成兩半。落在下半段，壓到的下端跟原來一樣；落在上半段，還更高。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "$f(x)<n$：那一段切成兩半", "on": "下一層" },
+            { "do": "write", "line": "$\\varphi_{n+1}(x)\\ge\\varphi_n(x)$", "on": "為什麼不會" },
+            { "do": "write", "line": "$\\frac{2k-2}{2^{n+1}}=\\frac{k-1}{2^n}$：下端不變", "why": true, "on": "壓到的下端" }
+          ] },
         { "show": ["$f(x)\\ge n$：$\\varphi_{n+1}(x)\\ge n=\\varphi_n(x)$"],
-          "say": "f 在 x 的值大於等於 n 時，這一層壓成 n；下一層不是落在 n 以上某一段，就是壓成 n 加一，都不會比較小。" },
+          "say": "f 在 x 的值大於等於 n 時，這一層壓成 n；下一層不是落在 n 以上某一段，就是壓成 n 加一，都不會比較小。",
+          "board": [
+            { "do": "write", "line": "$f(x)\\ge n$：$\\varphi_{n+1}(x)\\ge n=\\varphi_n(x)$" }
+          ] },
         { "show": ["$n>f(x)$：$0\\le f(x)-\\varphi_n(x)<2^{-n}$"], "note": "$f(x)$ 和 $\\varphi_n(x)$ 在同一段。",
           "why": {
             "ask": "為什麼誤差小於 $2^{-n}$？",
@@ -130,9 +164,18 @@
               { "label": "$n$ 夠大時 $\\varphi_n(x)=f(x)$", "why": "壓到下端通常差一點，不會剛好相等；差距被段長壓住，才趨近零。" }
             ]
           },
-          "say": "n 比 f 在 x 的值大，x 就不會被壓成 n，而是壓到所在那段的下端。兩個在同一段，差距小於段長。" },
+          "say": "n 比 f 在 x 的值大，x 就不會被壓成 n，而是壓到所在那段的下端。兩個在同一段，差距小於段長。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "$n>f(x)$：$0\\le f(x)-\\varphi_n(x)<{{e:2^{-n}}}$", "on": "n 比 f" },
+            { "do": "write", "line": "$f(x)$、$\\varphi_n(x)$ 在同一段", "why": true, "on": "兩個在同一段" },
+            { "do": "underline", "term": "e", "label": "段長", "why": true, "on": "差距" }
+          ] },
         { "show": ["$f(x)=\\infty$：$\\varphi_n(x)=n\\to\\infty$"],
-          "say": "f 在 x 是無限大的點，每一層都壓成 n，n 趨近無限大，也收斂。" }
+          "say": "f 在 x 是無限大的點，每一層都壓成 n，n 趨近無限大，也收斂。",
+          "board": [
+            { "do": "write", "line": "$f(x)=\\infty$：$\\varphi_n(x)=n\\to\\infty$" }
+          ] }
       ],
       "where": {
         "ask": "下面幾步裡，哪一步用到 $f$ 可測？",
@@ -179,11 +222,22 @@
       "title": "加法性還欠著",
       "beats": [
         { "show": ["$\\int(f+g)\\overset{?}{=}\\int f+\\int g$"],
-          "say": "最後一件事：兩個非負函數相加，積分會不會相加？從定義直接證，並不容易。" },
+          "say": "最後一件事：兩個非負函數相加，積分會不會相加？從定義直接證，並不容易。",
+          "board": [
+            { "do": "write", "line": "$\\int(f+g)\\overset{?}{=}\\int f+\\int g$" }
+          ] },
         { "show": ["$\\varphi\\le f$、$\\psi\\le g\\Rightarrow\\varphi+\\psi\\le f+g$"],
-          "say": "f 底下塞一個、g 底下塞一個，加起來就塞在 f 加 g 底下。這給出其中一個方向。" },
+          "say": "f 底下塞一個、g 底下塞一個，加起來就塞在 f 加 g 底下。這給出其中一個方向。",
+          "board": [
+            { "do": "write", "line": "${{p:\\varphi}}\\le f$、${{q:\\psi}}\\le g$", "tint": { "p": "blue", "q": "violet" } },
+            { "do": "write", "line": "$\\Rightarrow\\varphi+\\psi\\le f+g$", "on": "加起來" }
+          ] },
         { "show": ["另一半要 $\\int\\varphi_n\\to\\int f$"], "note": "要靠單調收斂定理。",
-          "say": "另一個方向，要知道逼近序列的積分真的收斂到 f 的積分，那是單調收斂定理的工作。" }
+          "say": "另一個方向，要知道逼近序列的積分真的收斂到 f 的積分，那是單調收斂定理的工作。",
+          "board": [
+            { "do": "write", "line": "另一半要 ${{m:\\int\\varphi_n\\to\\int f}}$", "on": "另一個方向" },
+            { "do": "underline", "term": "m", "label": "單調收斂定理", "on": "單調收斂" }
+          ] }
       ],
       "check": 3
     }

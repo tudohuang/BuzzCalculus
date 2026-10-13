@@ -180,13 +180,35 @@
       "title": "每一項乘 $r$",
       "beats": [
         { "show": ["$a+ar+ar^2+ar^3+\\cdots$"], "note": "$a$ 是首項，$r$ 是公比。",
-          "say": "幾何級數：每一項都是前一項乘同一個數 r，叫公比。第一項 a 叫首項。" },
+          "say": "幾何級數：每一項都是前一項乘同一個數 r，叫公比。第一項 a 叫首項。",
+          "board": [
+            { "do": "write", "line": "${{a:a}} + a{{r:r}} + ar^2 + ar^3 + \\cdots$" },
+            { "do": "focus", "term": "r", "label": "公比", "on": "叫公比" },
+            { "do": "focus", "term": "a", "label": "首項", "on": "叫首項" }
+          ] },
         { "show": ["$s_n=a+ar+\\cdots+ar^{n-1}$", "$rs_n=ar+ar^2+\\cdots+ar^n$"],
-          "say": "前 n 項的和整個乘 r，每一項往後挪一格。兩行對齊，中間幾乎一模一樣。" },
+          "say": "前 n 項的和整個乘 r，每一項往後挪一格。兩行對齊，中間幾乎一模一樣。",
+          "board": [
+            { "do": "write", "line": "$s_n = a + {{m:ar + \\cdots + ar^{n-1}}}$" },
+            { "do": "write", "line": "$rs_n = {{m:ar + \\cdots + ar^{n-1}}} + ar^n$", "on": "整個乘" },
+            { "do": "focus", "term": "m", "label": "一模一樣", "on": "中間幾乎" }
+          ] },
         { "show": ["$s_n-rs_n=a-ar^n$"], "note": "中間全部消掉。",
-          "say": "兩式相減，中間全部消掉，只剩頭一項 a，和尾巴的 a 乘 r 的 n 次方。" },
+          "say": "兩式相減，中間全部消掉，只剩頭一項 a，和尾巴的 a 乘 r 的 n 次方。",
+          "board": [
+            { "do": "write", "line": "$s_n - rs_n = {{h:a}} - {{t:ar^n}}$" },
+            { "do": "focus", "term": "h", "label": "頭", "on": "頭一項" },
+            { "do": "focus", "term": "t", "label": "尾巴", "on": "尾巴" }
+          ] },
         { "show": ["$s_n=\\frac{a(1-r^n)}{1-r}$"], "note": "$r\\ne 1$；$r=1$ 時 $s_n=na$。",
-          "say": "r 不等於一的時候，兩邊除以一減 r，就是部分和公式。r 等於一，每一項都是 a，和是 n a。" }
+          "say": "r 不等於一的時候，兩邊除以一減 r，就是部分和公式。r 等於一，每一項都是 a，和是 n a。",
+          "board": [
+            { "do": "keep", "n": 1 },
+            { "do": "transform", "line": "$s_n(1-r) = a(1-r^n)$", "on": "不等於一" },
+            { "do": "write", "line": "${{f:s_n = \\frac{a(1-r^n)}{1-r}}}$", "on": "兩邊除以" },
+            { "do": "box", "term": "f", "color": "green", "on": "部分和公式" },
+            { "do": "write", "line": "$r = 1$：$s_n = na$", "on": "每一項都是" }
+          ] }
       ],
       "check": 3
     },
@@ -231,11 +253,25 @@
       "title": "拆成兩個",
       "beats": [
         { "show": ["$\\sum_{n=1}^{\\infty}\\frac{3^n+2^n}{6^n}$"],
-          "say": "分子兩項，分母六的 n 次方。先拆開來，各自是幾何級數。" },
+          "say": "分子兩項，分母六的 n 次方。先拆開來，各自是幾何級數。",
+          "board": [
+            { "do": "write", "line": "$\\sum_{n=1}^{\\infty}\\frac{{{p:3^n}} + {{q:2^n}}}{6^n}$", "tint": { "p": "blue", "q": "violet" } }
+          ] },
         { "show": ["$\\left(\\frac{1}{2}\\right)^n+\\left(\\frac{1}{3}\\right)^n$"], "note": "兩個都 $|r|<1$，各自收斂，可以分開加。",
-          "say": "三的 n 次方除以六的 n 次方是二分之一的 n 次方，另一個是三分之一的 n 次方。" },
+          "say": "三的 n 次方除以六的 n 次方是二分之一的 n 次方，另一個是三分之一的 n 次方。",
+          "board": [
+            { "do": "write", "line": "$\\frac{{{p:3^n}}}{6^n} = {{u:\\left(\\frac{1}{2}\\right)^n}}$", "tint": { "u": "blue" } },
+            { "do": "write", "line": "$\\frac{{{q:2^n}}}{6^n} = {{v:\\left(\\frac{1}{3}\\right)^n}}$", "tint": { "v": "violet" }, "on": "另一個" }
+          ] },
         { "show": ["$\\frac{1/2}{1-1/2}=1$"], "note": "從 $n=1$ 開始，首項 $\\frac{1}{2}$。",
-          "say": "第一個從 n 等於一開始，首項二分之一，和是一。第二個呢？" }
+          "say": "第一個從 n 等於一開始，首項二分之一，和是一。第二個呢？",
+          "board": [
+            { "do": "keep", "n": 2 },
+            { "do": "write", "line": "$\\sum_{n=1}^{\\infty}{{u:\\left(\\frac{1}{2}\\right)^n}} = \\frac{{{f:1/2}}}{1-1/2}$", "on": "第一個" },
+            { "do": "underline", "term": "f", "label": "首項", "on": "首項" },
+            { "do": "transform", "line": "$\\sum_{n=1}^{\\infty}{{u:\\left(\\frac{1}{2}\\right)^n}} = \\frac{{{f:1/2}}}{1-1/2} = 1$", "on": "和是一" },
+            { "do": "focus", "term": "v", "on": "第二個" }
+          ] }
       ],
       "predict": {
         "ask": "$\\sum_{n=1}^{\\infty}\\left(\\frac{1}{3}\\right)^n$ 是？所以總和是？",
@@ -250,11 +286,24 @@
       "title": "公比裡有 $x$",
       "beats": [
         { "show": ["$\\sum_{n=0}^{\\infty}\\frac{(x-1)^n}{2^n}$"], "note": "首項 1，公比 $r=\\frac{x-1}{2}$。",
-          "say": "公比裡有 x：首項是一，公比是 x 減一除以二。哪些 x 會收斂？" },
+          "say": "公比裡有 x：首項是一，公比是 x 減一除以二。哪些 x 會收斂？",
+          "board": [
+            { "do": "write", "line": "$\\sum_{n=0}^{\\infty}\\frac{(x-1)^n}{2^n}$" },
+            { "do": "write", "line": "首項 $1$，公比 $r = {{r:\\frac{x-1}{2}}}$", "tint": { "r": "blue" }, "on": "首項是一" }
+          ] },
         { "show": ["$\\left|\\frac{x-1}{2}\\right|<1\\iff|x-1|<2$"],
-          "say": "條件還是公比的絕對值小於一，也就是 x 減一的絕對值小於二。" },
+          "say": "條件還是公比的絕對值小於一，也就是 x 減一的絕對值小於二。",
+          "board": [
+            { "do": "write", "line": "$\\left|{{r:\\frac{x-1}{2}}}\\right| < 1$", "on": "絕對值小於一" },
+            { "do": "transform", "line": "$|x-1| < 2$", "on": "也就是" }
+          ] },
         { "show": ["和 $=\\frac{1}{1-(x-1)/2}=\\frac{2}{3-x}$"], "note": "和是 $x$ 的函數：〈冪級數〉的起點。",
-          "say": "收斂時和是三減 x 分之二。這是第一個和會隨 x 變的級數，冪級數就從這裡出發。" }
+          "say": "收斂時和是三減 x 分之二。這是第一個和會隨 x 變的級數，冪級數就從這裡出發。",
+          "board": [
+            { "do": "write", "line": "和 $= \\frac{1}{1-{{r:\\frac{x-1}{2}}}}$" },
+            { "do": "transform", "line": "和 $= {{z:\\frac{2}{3-x}}}$", "on": "三減 x" },
+            { "do": "underline", "term": "z", "color": "green", "label": "隨 x 變", "on": "隨 x 變" }
+          ] }
       ],
       "predict": {
         "ask": "$|x-1|<2$ 是哪個範圍？",

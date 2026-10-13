@@ -201,13 +201,32 @@
       "title": "指數型：先取 $\\ln$",
       "beats": [
         { "show": ["$\\ln y=g(x)\\cdot\\ln f(x)$"], "note": "$y=f(x)^{g(x)}$，$f>0$。",
-          "say": "一的無限大次方、零的零次方、無限大的零次方，都先取自然對數，把指數拉下來變成乘法。" },
+          "say": "一的無限大次方、零的零次方、無限大的零次方，都先取自然對數，把指數拉下來變成乘法。",
+          "board": [
+            { "do": "write", "line": "$y = f(x)^{{{g:g(x)}}}$", "tint": { "g": "blue" } },
+            { "do": "write", "line": "$\\ln y = {{p:{{g:g(x)}}\\cdot\\ln f(x)}}$", "on": "先取自然對數" },
+            { "do": "focus", "term": "g", "label": "拉下來", "on": "指數拉下來" }
+          ] },
         { "show": ["三種都變成 $0\\cdot\\infty$"],
-          "say": "拉下來之後三種都變成零乘無限大，就用剛剛翻到分母的方法算。" },
+          "say": "拉下來之後三種都變成零乘無限大，就用剛剛翻到分母的方法算。",
+          "board": [
+            { "do": "underline", "term": "p", "label": "都是 0·∞", "on": "三種都變成" }
+          ] },
         { "show": ["$\\lim y=e^{\\lim \\ln y}$"], "note": "算出 $L$ 之後，答案是 $e^L$。",
-          "say": "算出自然對數 y 的極限 L 之後，答案是 e 的 L 次方。最後這一步最容易忘。" },
+          "say": "算出自然對數 y 的極限 L 之後，答案是 e 的 L 次方。最後這一步最容易忘。",
+          "board": [
+            { "do": "write", "line": "$\\lim \\ln y = {{l:L}}$", "tint": { "l": "violet" } },
+            { "do": "write", "line": "⇒ ${{r:\\lim y = e^{{{l:L}}}}}$", "on": "答案是" },
+            { "do": "box", "term": "r", "color": "green", "label": "最容易忘", "on": "最後這一步" }
+          ] },
         { "show": ["$x^x$：$\\ln y=x\\ln x\\to 0$"], "note": "$x\\to 0^+$，是 $0^0$。",
-          "say": "例：x 的 x 次方，零的零次方。取自然對數是 x 乘自然對數 x，剛剛算過，趨近零。" }
+          "say": "例：x 的 x 次方，零的零次方。取自然對數是 x 乘自然對數 x，剛剛算過，趨近零。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "$y = x^x$（$x \\to 0^+$）：$0^0$ 型", "on": "x 的 x 次方" },
+            { "do": "write", "line": "$\\ln y = {{xl:x\\ln x}} \\to 0$", "on": "取自然對數" },
+            { "do": "underline", "term": "xl", "label": "剛剛算過", "on": "剛剛算過" }
+          ] }
       ],
       "check": 2
     },
@@ -215,13 +234,29 @@
       "title": "一的無限大次方",
       "beats": [
         { "show": ["$\\lim_{x\\to\\infty}\\left(1+\\frac{2}{x}\\right)^{3x}$"], "note": "底數 $\\to 1$、指數 $\\to\\infty$。",
-          "say": "一加 x 分之二的三 x 次方，底數靠近一，指數衝向無限大。" },
+          "say": "一加 x 分之二的三 x 次方，底數靠近一，指數衝向無限大。",
+          "board": [
+            { "do": "write", "line": "$\\lim_{x\\to\\infty}\\left({{b:1+\\frac{2}{x}}}\\right)^{{{e:3x}}}$", "tint": { "b": "blue", "e": "violet" } },
+            { "do": "underline", "term": "b", "label": "靠近 1", "on": "底數靠近一" },
+            { "do": "focus", "term": "e", "label": "衝向 ∞", "on": "指數衝向" }
+          ] },
         { "show": ["$\\ln y=\\frac{3\\ln(1+2/x)}{1/x}$"], "note": "取 $\\ln$，再把 $x$ 翻下去：$\\frac{0}{0}$。",
-          "say": "取自然對數，是無限大乘零。把三 x 的 x 翻下去，變成零比零。" },
+          "say": "取自然對數，是無限大乘零。把三 x 的 x 翻下去，變成零比零。",
+          "board": [
+            { "do": "write", "line": "$\\ln y = {{e:3x}}\\,\\ln\\left({{b:1+\\frac{2}{x}}}\\right)$" },
+            { "do": "transform", "line": "$\\ln y = \\frac{3\\ln\\left({{b:1+\\frac{2}{x}}}\\right)}{1/x}$", "on": "翻下去" }
+          ] },
         { "show": ["$\\frac{6}{1+2/x}\\to 6$"], "note": "連鎖律：$\\frac{2}{x}$ 的導數是 $-\\frac{2}{x^2}$。",
-          "say": "上下微分，負的 x 平方分之一約掉，剩六除以一加 x 分之二，趨近六。" },
+          "say": "上下微分，負的 x 平方分之一約掉，剩六除以一加 x 分之二，趨近六。",
+          "board": [
+            { "do": "write", "line": "L'Hôpital：$\\frac{6}{{{b:1+\\frac{2}{x}}}} \\to 6$", "on": "剩六" }
+          ] },
         { "show": ["$y\\to e^6$"], "note": "也就是 $\\left(e^2\\right)^3$。",
-          "say": "別忘了取 e 回來：答案是 e 的六次方。跟 e 型極限算的一樣，e 平方的三次方。" }
+          "say": "別忘了取 e 回來：答案是 e 的六次方。跟 e 型極限算的一樣，e 平方的三次方。",
+          "board": [
+            { "do": "write", "line": "$y \\to e^6$", "color": "green", "on": "取 e 回來" },
+            { "do": "transform", "line": "$y \\to e^6 = (e^2)^3$", "color": "green", "on": "e 平方" }
+          ] }
       ],
       "check": 1
     },

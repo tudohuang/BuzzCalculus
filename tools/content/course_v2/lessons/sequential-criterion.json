@@ -161,7 +161,10 @@
       "skeleton": "反證",
       "beats": [
         { "show": ["逆否：設不連續，造一串壞數列"],
-          "say": "策略：反方向走逆否。假設 f 在 a 不連續，就造出一串趨近 a 的壞數列。" },
+          "say": "策略：反方向走逆否。假設 f 在 a 不連續，就造出一串趨近 a 的壞數列。",
+          "board": [
+            { "do": "write", "line": "逆否：設不連續 ⇒ 造一串壞數列", "on": "反方向走逆否" }
+          ] },
         { "show": ["存在 $\\varepsilon_0>0$：每個 $\\delta>0$ 都有壞點"], "note": "壞點：$|x-a|<\\delta$ 但 $|f(x)-f(a)|\\ge\\varepsilon_0$。",
           "why": {
             "ask": "「不連續」為什麼寫成這樣？",
@@ -172,9 +175,18 @@
               { "label": "有一個 $\\delta$，裡面每一點都是壞點", "why": "否定之後 $\\delta$ 變成「每個」：每個 $\\delta$ 裡至少有一個壞點，不是整段都壞。" }
             ]
           },
-          "say": "把連續的定義整句否定：有一個 epsilon 零，不管 delta 多小，裡面都有壞點。" },
+          "say": "把連續的定義整句否定：有一個 epsilon 零，不管 delta 多小，裡面都有壞點。",
+          "board": [
+            { "do": "write", "line": "存在 ${{e:\\varepsilon_0}}>0$：每個 $\\delta>0$ 都有壞點", "tint": { "e": "blue" } },
+            { "do": "underline", "term": "e", "color": "blue", "label": "整句否定", "why": true, "on": "整句否定" }
+          ] },
         { "show": ["$\\delta=\\frac{1}{n}$：取壞點 $x_n\\in D$"], "note": "$|x_n-a|<\\frac{1}{n}$，$|f(x_n)-f(a)|\\ge\\varepsilon_0$。",
-          "say": "對每個 n，delta 取 n 分之一，挑一個壞點，叫 x n，排成一串。" },
+          "say": "對每個 n，delta 取 n 分之一，挑一個壞點，叫 x n，排成一串。",
+          "board": [
+            { "do": "keep", "n": 1 },
+            { "do": "write", "line": "$\\delta=\\frac{1}{n}$：取壞點 ${{x:x_n}}$", "tint": { "x": "violet" }, "on": "delta 取" },
+            { "do": "write", "line": "${{dist:|x_n-a|<\\frac{1}{n}}}$，${{bad:|f(x_n)-f(a)|\\ge\\varepsilon_0}}$", "on": "排成一串" }
+          ] },
         { "show": ["$x_n\\to a$"], "note": "$|x_n-a|<\\frac{1}{n}$，而 $\\frac{1}{n}\\to0$。",
           "why": {
             "ask": "為什麼 $x_n\\to a$？",
@@ -185,9 +197,18 @@
               { "label": "因為 $f(x_n)$ 不趨近 $f(a)$", "why": "那是函數值的事，是下一步；$x_n$ 會不會趨近 $a$，只看它跟 $a$ 的距離。" }
             ]
           },
-          "say": "每一項離 a 都不到 n 分之一，n 分之一趨近零，所以 x n 趨近 a。" },
+          "say": "每一項離 a 都不到 n 分之一，n 分之一趨近零，所以 x n 趨近 a。",
+          "board": [
+            { "do": "write", "line": "${{x:x_n}}\\to a$" },
+            { "do": "underline", "term": "dist", "label": "被 1/n 壓住", "why": true, "on": "不到 n 分之一" }
+          ] },
         { "show": ["$|f(x_n)-f(a)|\\ge\\varepsilon_0$ 永遠成立"], "note": "$f(x_n)\\not\\to f(a)$：數列判準不成立。",
-          "say": "可是函數值跟 f 在 a 的值永遠差至少 epsilon 零，不會趨近。判準失敗，逆否證完。" }
+          "say": "可是函數值跟 f 在 a 的值永遠差至少 epsilon 零，不會趨近。判準失敗，逆否證完。",
+          "board": [
+            { "do": "keep", "n": 2 },
+            { "do": "underline", "term": "bad", "label": "永遠成立", "on": "永遠差" },
+            { "do": "write", "line": "$f(x_n)\\not\\to f(a)$：判準不成立", "color": "green", "on": "判準失敗" }
+          ] }
       ],
       "order": {
         "ask": "把證明排回順序：依序點每一步",
@@ -203,13 +224,30 @@
       "title": "$\\sin(\\frac{1}{x})$ 在 0",
       "beats": [
         { "show": ["$f(x)=\\sin(\\frac{1}{x})$，$f(0)=0$"],
-          "say": "sine x 分之一，在零補成零。它在零連續嗎？用數列找一串壞點。" },
+          "say": "sine x 分之一，在零補成零。它在零連續嗎？用數列找一串壞點。",
+          "board": [
+            { "do": "write", "line": "$f(x)=\\sin(\\frac{1}{x})$，$f(0)=0$" },
+            { "do": "write", "line": "在 $0$ 連續嗎？", "on": "它在零連續嗎" }
+          ] },
         { "show": ["$x_n=\\frac{1}{2\\pi n+\\frac{\\pi}{2}}\\to0$"], "note": "讓 $\\sin(\\frac{1}{x})=1$ 的點。",
-          "say": "挑讓 sine 剛好等於一的點：x 分之一等於二 pi n 加二分之 pi。這串點趨近零。" },
+          "say": "挑讓 sine 剛好等於一的點：x 分之一等於二 pi n 加二分之 pi。這串點趨近零。",
+          "board": [
+            { "do": "write", "line": "${{xn:x_n}}=\\frac{1}{2\\pi n+\\frac{\\pi}{2}}\\to0$", "tint": { "xn": "blue" }, "on": "x 分之一等於" }
+          ] },
         { "show": ["$f(x_n)=1\\to1\\ne0$"], "note": "不連續。",
-          "say": "函數值每一項都是一，趨近一，不是零。一串壞數列就夠，不連續。" },
+          "say": "函數值每一項都是一，趨近一，不是零。一串壞數列就夠，不連續。",
+          "board": [
+            { "do": "write", "line": "$f({{xn:x_n}})={{one:1}}\\to1\\ne0$" },
+            { "do": "focus", "term": "one", "color": "green", "label": "不是零", "on": "不是零" }
+          ] },
         { "show": ["$y_n=\\frac{1}{2\\pi n+\\frac{3\\pi}{2}}$：$f(y_n)=-1$"], "note": "兩串趨近不同的數：補什麼值都不行。",
-          "say": "再一串讓 sine 等於負一。兩串的函數值去不同的地方，所以在零補什麼值都不連續。" }
+          "say": "再一串讓 sine 等於負一。兩串的函數值去不同的地方，所以在零補什麼值都不連續。",
+          "board": [
+            { "do": "keep", "n": 2 },
+            { "do": "write", "line": "${{yn:y_n}}=\\frac{1}{2\\pi n+\\frac{3\\pi}{2}}$：$f(y_n)={{m1:-1}}$", "tint": { "yn": "violet" }, "on": "再一串" },
+            { "do": "focus", "term": "m1", "on": "去不同的地方" },
+            { "do": "write", "line": "補什麼值都不連續", "color": "green", "on": "所以在零補" }
+          ] }
       ],
       "check": 1
     },
@@ -217,11 +255,23 @@
       "title": "只在一點連續",
       "beats": [
         { "show": ["$f(x)=x$（有理）、$0$（無理）"],
-          "say": "一個怪函數：有理數送到自己，無理數送到零。它在哪些點連續？" },
+          "say": "一個怪函數：有理數送到自己，無理數送到零。它在哪些點連續？",
+          "board": [
+            { "do": "write", "line": "$f(x)=x$（有理）、$0$（無理）" }
+          ] },
         { "show": ["在 0：$|f(x)|\\le|x|$，取 $\\delta=\\varepsilon$"], "note": "連續的點用 $\\varepsilon$-$\\delta$。",
-          "say": "在零：函數值的絕對值不超過 x 的絕對值，delta 取 epsilon 就好，所以在零連續。" },
+          "say": "在零：函數值的絕對值不超過 x 的絕對值，delta 取 epsilon 就好，所以在零連續。",
+          "board": [
+            { "do": "write", "line": "在 $0$：$|f(x)|\\le|x|$，取 ${{d:\\delta=\\varepsilon}}$" },
+            { "do": "focus", "term": "d", "color": "green", "label": "在 0 連續", "on": "所以在零" }
+          ] },
         { "show": ["在 $a\\ne0$：有理數列 $q_n\\to a$、無理數列 $r_n\\to a$"], "note": "兩種數都在實數中稠密。",
-          "say": "在其他點，用數列。有理數和無理數都很密，各取一串趨近 a。函數值各自往哪裡去？" }
+          "say": "在其他點，用數列。有理數和無理數都很密，各取一串趨近 a。函數值各自往哪裡去？",
+          "board": [
+            { "do": "write", "line": "在 $a\\ne0$：${{q:q_n}}\\to a$、${{r:r_n}}\\to a$", "tint": { "q": "blue", "r": "violet" }, "on": "在其他點" },
+            { "do": "focus", "term": "q", "color": "blue", "label": "有理", "on": "有理數和" },
+            { "do": "focus", "term": "r", "color": "violet", "label": "無理", "on": "無理數都" }
+          ] }
       ],
       "predict": {
         "ask": "$f(q_n)$ 與 $f(r_n)$ 各趨近？",

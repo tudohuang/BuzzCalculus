@@ -146,13 +146,28 @@
       "title": "從哪裡來（直覺）",
       "beats": [
         { "show": ["$\\ln n!=\\ln 1+\\ln 2+\\dots+\\ln n$"], "note": "取對數，乘積變成和。",
-          "say": "先取自然對數，乘積就變成相加：自然對數曲線在一、二、一直到 n 的高度加起來。" },
+          "say": "先取自然對數，乘積就變成相加：自然對數曲線在一、二、一直到 n 的高度加起來。",
+          "board": [
+            { "do": "write", "line": "$\\ln n!=\\ln 1+\\ln 2+\\dots+\\ln n$" },
+            { "do": "plot", "graph": { "window": [0, 6.6, -0.35, 2.1], "curves": [{ "expr": "log(x)", "domain": [0.75, 6.5], "color": "blue" }], "dashed": [[[2, 0], [2, 0.6931471805599453]], [[3, 0], [3, 1.0986122886681096]], [[4, 0], [4, 1.3862943611198906]], [[5, 0], [5, 1.6094379124341003]], [[6, 0], [6, 1.791759469228055]]], "points": [{ "x": 1, "y": 0, "color": "violet" }, { "x": 2, "y": 0.6931471805599453, "color": "violet" }, { "x": 3, "y": 1.0986122886681096, "color": "violet" }, { "x": 4, "y": 1.3862943611198906, "color": "violet" }, { "x": 5, "y": 1.6094379124341003, "color": "violet" }, { "x": 6, "y": 1.791759469228055, "color": "violet" }] }, "on": "高度加起來" }
+          ] },
         { "show": ["$\\int_1^n\\ln x\\,dx=n\\ln n-n+1$"], "note": "這個和很像這個積分。",
-          "say": "這一排高度相加，很像自然對數從一積到 n，積出來是 n 自然對數 n 減 n 加一。" },
+          "say": "這一排高度相加，很像自然對數從一積到 n，積出來是 n 自然對數 n 減 n 加一。",
+          "board": [
+            { "do": "write", "line": "$\\int_1^n\\ln x\\,dx=n\\ln n-n+1$", "on": "很像" }
+          ] },
         { "show": ["$\\ln n!\\approx n\\ln n-n$"], "note": "取指數：$n!\\approx\\left(\\frac{n}{e}\\right)^n$ 這個量級。",
-          "say": "所以自然對數 n 階乘大約是 n 自然對數 n 減 n，取指數，就是 e 分之 n 的 n 次方這個量級。" },
+          "say": "所以自然對數 n 階乘大約是 n 自然對數 n 減 n，取指數，就是 e 分之 n 的 n 次方這個量級。",
+          "board": [
+            { "do": "keep", "n": 1 },
+            { "do": "write", "line": "$\\ln n!\\approx n\\ln n-n$", "on": "所以自然對數" },
+            { "do": "write", "line": "取指數：$n!\\approx\\left(\\frac{n}{e}\\right)^n$ 這個量級", "on": "取指數" }
+          ] },
         { "show": ["梯形法修正：多出 $\\frac{1}{2}\\ln n$"], "note": "就是 $\\sqrt{n}$ 這個因子。",
-          "say": "再用梯形法把端點各算一半，多出二分之一自然對數 n，就是根號 n。常數根號二 pi 這個直覺算不出來，證明在下一節。" }
+          "say": "再用梯形法把端點各算一半，多出二分之一自然對數 n，就是根號 n。常數根號二 pi 這個直覺算不出來，證明在下一節。",
+          "board": [
+            { "do": "write", "line": "梯形法：多出 $\\frac{1}{2}\\ln n$ ⇒ $\\sqrt{n}$", "on": "梯形法" }
+          ] }
       ],
       "check": 2
     },
@@ -161,11 +176,21 @@
       "proof": true, "of": 3, "skeleton": "直接",
       "beats": [
         { "show": ["先證 $d_n$ 收斂，再用 Wallis 定常數"],
-          "say": "策略：直接證，分兩段。先證明一個差值數列收斂到某個常數，再用 Wallis 乘積把常數算出來。" },
+          "say": "策略：直接證，分兩段。先證明一個差值數列收斂到某個常數，再用 Wallis 乘積把常數算出來。",
+          "board": [
+            { "do": "write", "line": "先證 ${{d:d_n}}$ 收斂，再用 Wallis 定常數", "tint": { "d": "blue" } }
+          ] },
         { "show": ["$d_n=\\ln n!-\\left(n+\\frac{1}{2}\\right)\\ln n+n$"], "note": "要證它收斂到某個常數 $C$。",
-          "say": "d n 是自然對數 n 階乘，減掉 n 加二分之一乘自然對數 n，再加 n，就是直覺那一串的誤差。" },
+          "say": "d n 是自然對數 n 階乘，減掉 n 加二分之一乘自然對數 n，再加 n，就是直覺那一串的誤差。",
+          "board": [
+            { "do": "write", "line": "${{d:d_n}}=\\ln n!-\\left(n+\\frac{1}{2}\\right)\\ln n+n$" }
+          ] },
         { "show": ["$d_n-d_{n+1}=O\\left(\\frac{1}{n^2}\\right)$"], "note": "梯形法估 $\\int_k^{k+1}\\ln x\\,dx$ 的誤差。",
-          "say": "相鄰兩項的差，就是梯形法估自然對數積分的誤差，大小跟 n 平方分之一同級。" },
+          "say": "相鄰兩項的差，就是梯形法估自然對數積分的誤差，大小跟 n 平方分之一同級。",
+          "board": [
+            { "do": "write", "line": "${{df:{{d:d_n}}-d_{n+1}}}=O\\left(\\frac{1}{n^2}\\right)$" },
+            { "do": "underline", "term": "df", "label": "梯形法誤差", "on": "梯形法" }
+          ] },
         { "show": ["$\\sum\\frac{1}{n^2}$ 收斂 ⇒ $d_n\\to C$"], "note": "相鄰差的總和收斂，$d_n$ 就收斂。",
           "why": {
             "ask": "為什麼 $d_n$ 收斂？",
@@ -176,7 +201,12 @@
               { "label": "$d_n$ 一直變小", "why": "我們只估了差的大小，沒管正負；靠的是差的級數絕對收斂。" }
             ]
           },
-          "say": "d n 等於第一項減掉前面所有相鄰差的和；差被 n 平方分之一壓住，總和收斂，d n 就收斂。" },
+          "say": "d n 等於第一項減掉前面所有相鄰差的和；差被 n 平方分之一壓住，總和收斂，d n 就收斂。",
+          "board": [
+            { "do": "keep", "n": 2 },
+            { "do": "write", "line": "${{d:d_n}}\\to C$", "on": "憑什麼" },
+            { "do": "write", "line": "$\\sum\\frac{1}{n^2}$ 收斂 ⇒ 相鄰差的總和收斂", "why": true, "on": "差被" }
+          ] },
         { "show": ["$n!\\sim e^C\\sqrt{n}\\left(\\frac{n}{e}\\right)^n$，$e^C=\\sqrt{2\\pi}$"], "note": "代進〈Wallis 乘積〉那個比值，解出 $e^C$。",
           "why": {
             "ask": "$e^C$ 怎麼定出來？",
@@ -187,7 +217,13 @@
               { "label": "就是 $d_1$", "why": "$d_1$ 只是第一項；$C$ 是極限，要另一個已知的極限才解得出來。" }
             ]
           },
-          "say": "取指數得到 n 階乘的形狀。把它代進 Wallis 乘積那個比值，二分之 pi 就解出 e 的 C 次方是根號二 pi。" }
+          "say": "取指數得到 n 階乘的形狀。把它代進 Wallis 乘積那個比值，二分之 pi 就解出 e 的 C 次方是根號二 pi。",
+          "board": [
+            { "do": "keep", "n": 2 },
+            { "do": "write", "line": "$n!\\sim e^C\\sqrt{n}\\left(\\frac{n}{e}\\right)^n$", "on": "常數 C" },
+            { "do": "write", "line": "Wallis：$\\ {{c:e^C=\\sqrt{2\\pi}}}$", "why": true, "on": "Wallis" },
+            { "do": "box", "term": "c", "color": "green", "why": true, "on": "解出" }
+          ] }
       ],
       "order": {
         "ask": "把證明排回順序：依序點每一步",
@@ -215,11 +251,22 @@
       "title": "中央二項式係數",
       "beats": [
         { "show": ["$\\binom{2n}{n}=\\frac{(2n)!}{(n!)^2}$"], "note": "分母的 $n!$ 有兩個，兩個都要換。",
-          "say": "二 n 取 n 是二 n 階乘除以 n 階乘的平方。分母有兩個 n 階乘，兩個都要換。" },
+          "say": "二 n 取 n 是二 n 階乘除以 n 階乘的平方。分母有兩個 n 階乘，兩個都要換。",
+          "board": [
+            { "do": "write", "line": "$\\binom{2n}{n}=\\frac{(2n)!}{ {{dd:(n!)^2}} }$" },
+            { "do": "underline", "term": "dd", "label": "兩個都要換", "on": "兩個 n 階乘" }
+          ] },
         { "show": ["分子 $\\sqrt{4\\pi n}\\left(\\frac{2n}{e}\\right)^{2n}$", "分母 $2\\pi n\\left(\\frac{n}{e}\\right)^{2n}$"],
-          "say": "分子把 n 換成二 n；分母是 Stirling 的平方，根號部分平方變成二 pi n。" },
+          "say": "分子把 n 換成二 n；分母是 Stirling 的平方，根號部分平方變成二 pi n。",
+          "board": [
+            { "do": "write", "line": "分子 ${{r1:\\sqrt{4\\pi n}}}\\left(\\frac{2n}{e}\\right)^{2n}$", "tint": { "r1": "blue" }, "on": "分子" },
+            { "do": "write", "line": "分母 ${{r2:2\\pi n}}\\left(\\frac{n}{e}\\right)^{2n}$", "tint": { "r2": "violet" }, "on": "分母是" }
+          ] },
         { "show": ["根號部分：$\\frac{\\sqrt{4\\pi n}}{2\\pi n}=\\frac{1}{\\sqrt{\\pi n}}$"],
-          "say": "先算根號部分：根號四 pi n 除以二 pi n，等於根號 pi n 分之一。" }
+          "say": "先算根號部分：根號四 pi n 除以二 pi n，等於根號 pi n 分之一。",
+          "board": [
+            { "do": "write", "line": "根號部分：$\\frac{ {{r1:\\sqrt{4\\pi n}}} }{ {{r2:2\\pi n}} }=\\frac{1}{\\sqrt{\\pi n}}$" }
+          ] }
       ],
       "predict": {
         "ask": "次方部分 $\\frac{(2n/e)^{2n}}{(n/e)^{2n}}$ 是？",

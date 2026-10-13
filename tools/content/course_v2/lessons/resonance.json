@@ -181,11 +181,21 @@
       "proof": true, "of": 3, "skeleton": "直接",
       "beats": [
         { "show": ["從非共振的解出發，讓 $\\omega\\to\\omega_0$"],
-          "say": "策略：從非共振的解出發，固定 t，讓外力頻率趨近 omega 零，看極限是不是共振解。" },
+          "say": "策略：從非共振的解出發，固定 t，讓外力頻率趨近 omega 零，看極限是不是共振解。",
+          "board": [
+            { "do": "write", "line": "非共振的解：固定 $t$，令 $\\omega \\to \\omega_0$", "on": "從非共振" }
+          ] },
         { "show": ["$x=\\frac{F_0(\\cos\\omega t-\\cos\\omega_0t)}{\\omega_0^2-\\omega^2}$"], "note": "$\\omega\\ne\\omega_0$，從靜止開始。",
-          "say": "頻率不相等、從靜止開始，解是兩個 cosine 相減，除以兩個頻率平方的差。" },
+          "say": "頻率不相等、從靜止開始，解是兩個 cosine 相減，除以兩個頻率平方的差。",
+          "board": [
+            { "do": "write", "line": "$x = \\frac{{{nu:F_0(\\cos\\omega t-\\cos\\omega_0 t)}}}{{{de:\\omega_0^2-\\omega^2}}}$", "tint": { "nu": "blue", "de": "violet" }, "on": "解是" }
+          ] },
         { "show": ["固定 $t$，$\\omega\\to\\omega_0$：分子、分母都 $\\to0$"],
-          "say": "固定 t，頻率越來越接近，分子分母一起趨近零，直接代進去沒有意義。" },
+          "say": "固定 t，頻率越來越接近，分子分母一起趨近零，直接代進去沒有意義。",
+          "board": [
+            { "do": "write", "line": "$\\omega \\to \\omega_0$：$\\frac{{{nu:F_0(\\cos\\omega t-\\cos\\omega_0 t)}}}{{{de:\\omega_0^2-\\omega^2}}} \\to {{z:\\frac{0}{0}}}$", "on": "頻率越來越" },
+            { "do": "box", "term": "z", "label": "不能直接代", "on": "直接代進去" }
+          ] },
         { "show": ["對 $\\omega$ 用 L'Hôpital", "$\\to\\frac{F_0t\\sin\\omega_0t}{2\\omega_0}$"], "note": "分子微出 $-F_0t\\sin\\omega t$，分母微出 $-2\\omega$。",
           "why": {
             "ask": "L'Hôpital 要對誰微分？",
@@ -196,7 +206,13 @@
               { "label": "分子分母各自對自己的變數", "why": "L'Hôpital 要分子分母對同一個趨近的變數微分，這裡是 $\\omega$。" }
             ]
           },
-          "say": "對 omega 微分：分子帶出 t 乘 sine，分母是負二 omega，負號消掉，代 omega 零。" },
+          "say": "對 omega 微分：分子帶出 t 乘 sine，分母是負二 omega，負號消掉，代 omega 零。",
+          "board": [
+            { "do": "keep", "n": 1 },
+            { "do": "write", "line": "用 L'Hôpital：對誰微分？", "on": "羅必達" },
+            { "do": "transform", "line": "對 $\\omega$ 微分：$\\frac{{{dn:-F_0t\\sin\\omega t}}}{{{dd:-2\\omega}}}$", "tint": { "dn": "blue", "dd": "violet" }, "why": true, "on": "對 omega 微分" },
+            { "do": "write", "line": "$\\to {{r:\\frac{F_0 t\\sin\\omega_0 t}{2\\omega_0}}}$", "why": true, "on": "負號消掉" }
+          ] },
         { "show": ["正好是共振解"], "note": "兩個答案一致；「解的極限還是解」要另外證明。",
           "why": {
             "ask": "這樣就證明了共振解嗎？",
@@ -207,7 +223,11 @@
               { "label": "不算，因為 L'Hôpital 不能用", "why": "L'Hôpital 在這裡用得沒問題，分子分母都趨近零、對 $\\omega$ 可微；缺的是另一件事。" }
             ]
           },
-          "say": "這說明兩個答案一致，是很好的直覺；但解的極限還是不是解，要另外證明，直接代入才是證明。" }
+          "say": "這說明兩個答案一致，是很好的直覺；但解的極限還是不是解，要另外證明，直接代入才是證明。",
+          "board": [
+            { "do": "box", "term": "r", "on": "正好是" },
+            { "do": "write", "line": "直覺，不是證明：直接代入才算", "color": "red", "why": true, "on": "很好的直覺" }
+          ] }
       ],
       "order": {
         "ask": "把推導排回順序：依序點每一步",
@@ -223,13 +243,29 @@
       "title": "有阻尼：峰值有限",
       "beats": [
         { "show": ["$A(\\omega)=\\frac{F_0}{\\sqrt{(\\omega_0^2-\\omega^2)^2+(2\\gamma\\omega)^2}}$"], "note": "$\\gamma>0$ 時分母永遠不為 0。",
-          "say": "有阻尼的時候，振幅公式的分母多了一項，永遠不會是零，所以振幅有限。" },
+          "say": "有阻尼的時候，振幅公式的分母多了一項，永遠不會是零，所以振幅有限。",
+          "board": [
+            { "do": "write", "line": "$A(\\omega) = \\frac{F_0}{\\sqrt{(\\omega_0^2-\\omega^2)^2 + {{g:(2\\gamma\\omega)^2}}}}$", "tint": { "g": "violet" } },
+            { "do": "underline", "term": "g", "label": "不會是零", "on": "多了一項" }
+          ] },
         { "show": ["$\\omega_0=1$、$\\gamma=0.1$、$F_0=1$"],
-          "say": "例如自然頻率一，阻尼零點一，外力大小一。" },
+          "say": "例如自然頻率一，阻尼零點一，外力大小一。",
+          "board": [
+            { "do": "write", "line": "$\\omega_0 = 1$，${{ga:\\gamma = 0.1}}$，$F_0 = 1$", "tint": { "ga": "violet" } }
+          ] },
         { "show": ["$\\omega=0$：$A=1$"], "note": "靜態推。",
-          "say": "外力頻率是零，就是靜態地推，振幅是一。" },
+          "say": "外力頻率是零，就是靜態地推，振幅是一。",
+          "board": [
+            { "do": "write", "line": "${{st:\\omega = 0}}$：$A = \\frac{1}{\\sqrt{1^2}} = 1$" },
+            { "do": "underline", "term": "st", "label": "靜態推", "on": "靜態地推" }
+          ] },
         { "show": ["$\\omega=1$：$A=\\frac{1}{0.2}=5$"], "note": "阻尼越小，放大越多。",
-          "say": "照著節奏推，分母剩二乘零點一，振幅變五，放大五倍。阻尼越小，放大越多。" }
+          "say": "照著節奏推，分母剩二乘零點一，振幅變五，放大五倍。阻尼越小，放大越多。",
+          "board": [
+            { "do": "write", "line": "$\\omega = 1$：$A = \\frac{1}{\\sqrt{0 + {{g2:(2\\cdot 0.1\\cdot 1)^2}}}}$", "tint": { "g2": "violet" }, "on": "分母剩" },
+            { "do": "transform", "line": "$\\omega = 1$：${{f:A = \\frac{1}{0.2} = 5}}$", "on": "振幅變五" },
+            { "do": "underline", "term": "f", "color": "green", "label": "放大五倍", "on": "放大五倍" }
+          ] }
       ],
       "check": 2
     },
@@ -237,13 +273,33 @@
       "title": "峰在哪裡",
       "beats": [
         { "show": ["$\\omega_r=\\sqrt{\\omega_0^2-2\\gamma^2}$"], "note": "$\\gamma<\\frac{\\omega_0}{\\sqrt2}$ 才有峰。",
-          "say": "把分母對 omega 平方微分，峰在根號 omega 零平方減二 gamma 平方。" },
+          "say": "把分母對 omega 平方微分，峰在根號 omega 零平方減二 gamma 平方。",
+          "board": [
+            { "do": "write", "line": "$u = \\omega^2$：$-2(\\omega_0^2-u) + 4\\gamma^2 = 0$" },
+            { "do": "write", "line": "${{wr:\\omega_r = \\sqrt{\\omega_0^2-2\\gamma^2}}}$", "tint": { "wr": "blue" }, "on": "峰在根號" }
+          ] },
         { "show": ["$x''+6x'+25x=\\cos\\omega t$"], "note": "$\\gamma=3$，$\\omega_0=5$。",
-          "say": "這一題 gamma 是三，omega 零是五。三比五除以根號二還小，有峰。" },
+          "say": "這一題 gamma 是三，omega 零是五。三比五除以根號二還小，有峰。",
+          "board": [
+            { "do": "keep", "n": 1 },
+            { "do": "write", "line": "$x'' + 6x' + 25x = \\cos\\omega t$", "on": "這一題" },
+            { "do": "write", "line": "${{ga:\\gamma = 3}}$，$\\omega_0 = 5$", "on": "gamma 是三" },
+            { "do": "underline", "term": "ga", "label": "有峰", "on": "還小" }
+          ] },
         { "show": ["$\\omega_r=\\sqrt{25-2\\cdot9}=\\sqrt7$"], "note": "最大振幅 $\\frac{1}{24}$。",
-          "say": "峰在根號七，大約二點六五。代回去，分母是二十四，最大振幅二十四分之一。" },
+          "say": "峰在根號七，大約二點六五。代回去，分母是二十四，最大振幅二十四分之一。",
+          "board": [
+            { "do": "keep", "n": 1 },
+            { "do": "write", "line": "${{w7:\\omega_r = \\sqrt{25-2\\cdot 9} = \\sqrt{7}}} \\approx 2.65$", "tint": { "w7": "blue" }, "on": "峰在根號七" },
+            { "do": "write", "line": "分母 $24$ ⇒ 最大振幅 $\\frac{1}{24}$", "color": "green", "on": "分母是" }
+          ] },
         { "show": ["不在 $\\omega_0=5$，也不在 $\\omega_d=4$"],
-          "say": "注意，峰不在自然頻率五，也不在阻尼振動的頻率四。" }
+          "say": "注意，峰不在自然頻率五，也不在阻尼振動的頻率四。",
+          "board": [
+            { "do": "write", "line": "峰不在 ${{a:\\omega_0 = 5}}$，也不在 ${{b:\\omega_d = 4}}$" },
+            { "do": "focus", "term": "a", "on": "自然頻率" },
+            { "do": "focus", "term": "b", "on": "阻尼振動" }
+          ] }
       ],
       "check": 3
     }

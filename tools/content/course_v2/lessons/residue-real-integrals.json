@@ -72,19 +72,37 @@
     {
       "title": "半圓為什麼趨近 0",
       "beats": [
-        {"show":["$f=\\frac{p}{q}$，$\\deg q\\ge\\deg p+2$"],"note":"$q$ 沒有實根。","say":"有理函數，分母沒有實根，而且分母比分子至少高兩次方。"},
-        {"show":["$|f(z)|\\le\\frac{C}{R^2}$，半圓長 $\\pi R$"],"say":"R 很大時，f 的長度大約是 R 平方分之一那麼小，半圓長度只有派 R。"},
-        {"show":["$\\left|\\int_{C_R}f\\,dz\\right|\\le\\frac{\\pi C}{R}\\to 0$"],"note":"ML 不等式；只高 1 次時不成立。","say":"用 ML 不等式相乘，只剩 R 分之一，趨近零。只高一次的話這個論證就不行。"}
+        {"show":["$f=\\frac{p}{q}$，$\\deg q\\ge\\deg p+2$"],"note":"$q$ 沒有實根。","say":"有理函數，分母沒有實根，而且分母比分子至少高兩次方。","board":[
+          {"do":"write","line":"$f=\\frac{p}{{{q:q}}}$，${{dg:\\deg q\\ge\\deg p+2}}$"},
+          {"do":"underline","term":"q","label":"沒有實根","on":"沒有實根"},
+          {"do":"underline","term":"dg","on":"至少高兩"}]},
+        {"show":["$|f(z)|\\le\\frac{C}{R^2}$，半圓長 $\\pi R$"],"say":"R 很大時，f 的長度大約是 R 平方分之一那麼小，半圓長度只有派 R。","board":[
+          {"do":"write","line":"$|f(z)|\\le{{m:\\frac{C}{R^2}}}$","tint":{"m":"blue"},"on":"f 的長度"},
+          {"do":"write","line":"半圓長 ${{l:\\pi R}}$","tint":{"l":"violet"},"on":"半圓長度"}]},
+        {"show":["$\\left|\\int_{C_R}f\\,dz\\right|\\le\\frac{\\pi C}{R}\\to 0$"],"note":"ML 不等式；只高 1 次時不成立。","say":"用 ML 不等式相乘，只剩 R 分之一，趨近零。只高一次的話這個論證就不行。","board":[
+          {"do":"keep","n":2},
+          {"do":"write","line":"$\\left|\\int_{C_R}f\\,dz\\right|\\le{{m:\\frac{C}{R^2}}}\\cdot{{l:\\pi R}}$","on":"ML 不等式"},
+          {"do":"transform","line":"$\\left|\\int_{C_R}f\\,dz\\right|\\le{{res:\\frac{\\pi C}{R}\\to 0}}$","on":"只剩"},
+          {"do":"write","line":"只高 $1$ 次：這個論證不行","color":"red","on":"只高一次"}]}
       ],
       "check": 0
     },
     {
       "title": "$\\frac{1}{1+x^4}$",
       "beats": [
-        {"show":["上半平面：$e^{i\\pi/4}$、$e^{3i\\pi/4}$"],"note":"分母高 4 次，半圓 $\\to 0$。","say":"一加 z 四次方的四個根平均分在單位圓上，上半平面有兩個：四分之派和四分之三派方向。"},
-        {"show":["$\\operatorname{Res}=\\frac{1}{4z_0^3}=-\\frac{z_0}{4}$"],"note":"$z_0^4=-1$。","say":"用 g 除以 h prime 得四 z 零三次方分之一；因為 z 零四次方是負一，化成負四分之 z 零。"},
-        {"show":["留數和 $=-\\frac{i\\sqrt{2}}{4}$"],"note":"實部 $\\pm\\frac{\\sqrt{2}}{2}$ 抵銷。","say":"兩個根的實部正負抵銷，虛部各是二分之根號二，留數和是負四分之根號二 i。"},
-        {"show":["$2\\pi i\\cdot\\left(-\\frac{i\\sqrt{2}}{4}\\right)=\\frac{\\pi}{\\sqrt{2}}\\approx 2.221$"],"say":"乘二派 i，i 乘 i 是負一，負負得正，答案根號二分之派，大約二點二二一。"}
+        {"show":["上半平面：$e^{i\\pi/4}$、$e^{3i\\pi/4}$"],"note":"分母高 4 次，半圓 $\\to 0$。","say":"一加 z 四次方的四個根平均分在單位圓上，上半平面有兩個：四分之派和四分之三派方向。","board":[
+          {"do":"plot","graph":{"window":[-1.7,1.7,-1.25,1.25],"equal":true,"ticks":false,"curves":[{"param":{"x":"cos(t)","y":"sin(t)","t":[0,6.2832]},"color":"muted"}],"fills":[{"pts":[[-1.7,0],[1.7,0],[1.7,1.25],[-1.7,1.25]],"color":"blue"}],"points":[{"x":0.7071,"y":0.7071},{"x":-0.7071,"y":0.7071},{"x":0.7071,"y":-0.7071,"open":true},{"x":-0.7071,"y":-0.7071,"open":true}],"labels":[{"x":0.85,"y":0.95,"text":"π/4","anchor":"start"},{"x":-0.85,"y":0.95,"text":"3π/4","anchor":"end"}]}},
+          {"do":"write","line":"上半平面：${{z1:e^{i\\pi/4}}}$、${{z2:e^{3i\\pi/4}}}$","on":"上半平面"}]},
+        {"show":["$\\operatorname{Res}=\\frac{1}{4z_0^3}=-\\frac{z_0}{4}$"],"note":"$z_0^4=-1$。","say":"用 g 除以 h prime 得四 z 零三次方分之一；因為 z 零四次方是負一，化成負四分之 z 零。","board":[
+          {"do":"write","line":"$\\operatorname{Res}={{a:\\frac{1}{4z_0^3}}}$","on":"用 g 除以"},
+          {"do":"underline","term":"a","label":"z₀⁴ = −1","on":"因為 z 零"},
+          {"do":"transform","line":"$\\operatorname{Res}={{a:\\frac{1}{4z_0^3}}}={{b:-\\frac{z_0}{4}}}$","on":"化成"}]},
+        {"show":["留數和 $=-\\frac{i\\sqrt{2}}{4}$"],"note":"實部 $\\pm\\frac{\\sqrt{2}}{2}$ 抵銷。","say":"兩個根的實部正負抵銷，虛部各是二分之根號二，留數和是負四分之根號二 i。","board":[
+          {"do":"transform","line":"留數和 $={{s:-\\frac{i\\sqrt{2}}{4}}}$","on":"實部"},
+          {"do":"underline","term":"s","on":"留數和是"}]},
+        {"show":["$2\\pi i\\cdot\\left(-\\frac{i\\sqrt{2}}{4}\\right)=\\frac{\\pi}{\\sqrt{2}}\\approx 2.221$"],"say":"乘二派 i，i 乘 i 是負一，負負得正，答案根號二分之派，大約二點二二一。","board":[
+          {"do":"transform","line":"$2\\pi i\\cdot\\left({{s:-\\frac{i\\sqrt{2}}{4}}}\\right)=\\;{{r:\\frac{\\pi}{\\sqrt{2}}}}\\;\\approx 2.221$"},
+          {"do":"box","term":"r","color":"green","on":"答案根號"}]}
       ],
       "check": 1
     },
@@ -128,7 +146,9 @@
       "proof": true, "of": 4, "skeleton": "直接",
       "beats": [
         {"show":["參數化半圓，把 $e^{-kR\\sin t}$ 留在積分裡"],"note":"再用 $\\sin t\\ge\\frac{2t}{\\pi}$ 壓下去。",
-          "say":"策略：把半圓參數化，指數那一項不要直接估成一，留在積分裡，再用一個 sine 的下界把它壓下去。"},
+          "say":"策略：把半圓參數化，指數那一項不要直接估成一，留在積分裡，再用一個 sine 的下界把它壓下去。","board":[
+            {"do":"write","line":"把 ${{ex:e^{-kR\\sin t}}}$ 留在積分裡","tint":{"ex":"blue"},"on":"指數那一項"},
+            {"do":"write","line":"用 $\\sin t$ 的下界壓下去","on":"再用一個"}]},
         {"show":["$z=Re^{it}$：$|e^{ikz}|=e^{-kR\\sin t}$，$|dz|=R\\,dt$"],"note":"$ikz$ 的實部是 $-kR\\sin t$。",
           "why": {
             "ask": "為什麼 $|e^{ikz}|=e^{-kR\\sin t}$？",
@@ -139,9 +159,16 @@
               {"label":"$|e^{ikz}|=e^{k|z|}$","why":"長度看的是指數的實部，不是 $k|z|$；在上半平面它是負的，所以會衰減。"}
             ]
           },
-          "say":"z 等於 R e 的 i t 次方，i k z 的實部是負 k R sine t。長度只看實部，所以是這個指數。"},
+          "say":"z 等於 R e 的 i t 次方，i k z 的實部是負 k R sine t。長度只看實部，所以是這個指數。","board":[
+            {"do":"clear"},
+            {"do":"write","line":"$z=Re^{it}$","on":"e 的 i k z"},
+            {"do":"write","line":"$|e^{ikz}|={{ex:e^{-kR\\sin t}}}$，$|dz|=R\\,dt$","on":"長度為什麼"},
+            {"do":"write","line":"$\\operatorname{Re}(ikz)=-kR\\sin t$","why":true,"on":"i k z 的實部"}]},
         {"show":["$\\le M_RR\\int_0^{\\pi}e^{-kR\\sin t}\\,dt$","$=2M_RR\\int_0^{\\pi/2}e^{-kR\\sin t}\\,dt$"],"note":"$\\sin t$ 對 $t=\\frac{\\pi}{2}$ 對稱。",
-          "say":"f 的長度不超過 M R，乘上 R d t 積分。sine 對二分之派對稱，所以只算一半再乘二。"},
+          "say":"f 的長度不超過 M R，乘上 R d t 積分。sine 對二分之派對稱，所以只算一半再乘二。","board":[
+            {"do":"clear"},
+            {"do":"write","line":"$\\le M_RR\\int_0^{\\pi}{{ex:e^{-kR\\sin t}}}\\,dt$","on":"f 的長度"},
+            {"do":"write","line":"$=2M_RR\\int_0^{\\pi/2}{{ex:e^{-kR\\sin t}}}\\,dt$","on":"只算一半"}]},
         {"show":["$[0,\\frac{\\pi}{2}]$ 上 $\\sin t\\ge\\frac{2t}{\\pi}$"],"note":"凹函數在弦的上方。",
           "why": {
             "ask": "為什麼 $\\sin t\\ge\\frac{2t}{\\pi}$？",
@@ -152,9 +179,16 @@
               {"label":"$\\sin t\\ge 0$ 就夠了","why":"只用 $\\sin t\\ge 0$，指數只能估成 $1$，得到 $\\pi M_RR$，$R$ 消不掉。"}
             ]
           },
-          "say":"sine 在零到二分之派是凹的，圖形在連接兩端的弦上方，弦就是 y 等於派分之二 t。"},
+          "say":"sine 在零到二分之派是凹的，圖形在連接兩端的弦上方，弦就是 y 等於派分之二 t。","board":[
+            {"do":"clear"},
+            {"do":"write","line":"$[0,\\frac{\\pi}{2}]$ 上 ${{lb:\\sin t\\ge\\frac{2t}{\\pi}}}$","on":"下界#1"},
+            {"do":"plot","why":true,"on":"是凹的","graph":{"window":[-0.08,1.75,-0.12,1.15],"ticks":false,"curves":[{"expr":"sin(x)","domain":[0,1.5708],"color":"blue"},{"expr":"2*x/PI","domain":[0,1.5708],"color":"violet"}],"labels":[{"x":0.55,"y":0.75,"text":"sin t","anchor":"end"},{"x":0.95,"y":0.42,"text":"2t/π","anchor":"start"}]}}]},
         {"show":["$<2M_RR\\cdot\\frac{\\pi}{2kR}=\\frac{\\pi M_R}{k}\\to 0$"],"note":"指數積分給出 $\\frac{1}{R}$，消掉前面的 $R$。",
-          "say":"換成 e 的負二 k R t 除以派，積分小於二 k R 分之派，R 消掉，剩派 M R 除以 k，趨近零。"}
+          "say":"換成 e 的負二 k R t 除以派，積分小於二 k R 分之派，R 消掉，剩派 M R 除以 k，趨近零。","board":[
+            {"do":"clear"},
+            {"do":"write","line":"$\\le 2M_RR\\int_0^{\\pi/2}e^{-2kRt/\\pi}\\,dt$","on":"換成"},
+            {"do":"write","line":"$<2M_RR\\cdot\\frac{\\pi}{2kR}=\\;{{fin:\\frac{\\pi M_R}{k}\\to 0}}$","on":"積分小於"},
+            {"do":"box","term":"fin","color":"green","on":"剩派"}]}
       ],
       "where": {
         "ask": "「$M_R\\to 0$」用在哪一步？",

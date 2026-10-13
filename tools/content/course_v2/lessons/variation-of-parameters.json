@@ -131,13 +131,27 @@
       "title": "猜不到的時候",
       "beats": [
         { "show": ["$y''+y=\\sec x$"], "note": "$\\sec x$ 微分：$\\sec x\\tan x$、$\\sec x\\tan^2x$……",
-          "say": "右邊是 secant x。它越微分越長，永遠回不到有限幾項的家族，待定係數猜不出來。" },
+          "say": "右邊是 secant x。它越微分越長，永遠回不到有限幾項的家族，待定係數猜不出來。",
+          "board": [
+            { "do": "write", "line": "$y''+y={{g:\\sec x}}$", "tint": { "g": "violet" } },
+            { "do": "underline", "term": "g", "label": "越微分越長", "on": "越微分" }
+          ] },
         { "show": ["$y_h=C_1\\cos x+C_2\\sin x$"],
-          "say": "齊次解是 C 一 cosine x 加 C 二 sine x。" },
+          "say": "齊次解是 C 一 cosine x 加 C 二 sine x。",
+          "board": [
+            { "do": "write", "line": "$y_h={{c1:C_1}}\\cos x+{{c2:C_2}}\\sin x$", "tint": { "c1": "blue", "c2": "blue" } }
+          ] },
         { "show": ["常數換成函數：$y_p=u_1y_1+u_2y_2$"], "note": "參數被允許隨 $x$ 變化。",
-          "say": "想法是：把兩個常數換成會隨 x 變的函數 u 一、u 二。這就是參數變異這個名字。" },
+          "say": "想法是：把兩個常數換成會隨 x 變的函數 u 一、u 二。這就是參數變異這個名字。",
+          "board": [
+            { "do": "transform", "line": "$y_p={{u1:u_1(x)}}\\cos x+{{u2:u_2(x)}}\\sin x$", "tint": { "u1": "blue", "u2": "blue" }, "on": "換成" }
+          ] },
         { "show": ["常數：左邊只能得到 0"], "note": "讓它們會動，左邊才有機會等於 $g$。",
-          "say": "常數的時候左邊只會是零。讓它們動起來，左邊才有機會等於右邊的 g。" }
+          "say": "常數的時候左邊只會是零。讓它們動起來，左邊才有機會等於右邊的 g。",
+          "board": [
+            { "do": "write", "line": "常數 ⇒ 左邊只能得到 $0$" },
+            { "do": "focus", "term": "g", "on": "左邊才有機會" }
+          ] }
       ],
       "check": 2
     },
@@ -171,15 +185,33 @@
       "title": "$\\sec x$",
       "beats": [
         { "show": ["$y_1=\\cos x$、$y_2=\\sin x$"], "note": "區間 $-\\frac{\\pi}{2}<x<\\frac{\\pi}{2}$，$g$ 連續。",
-          "say": "回到 secant x。已經是標準形，在這個區間 secant 是連續的。" },
+          "say": "回到 secant x。已經是標準形，在這個區間 secant 是連續的。",
+          "board": [
+            { "do": "write", "line": "$y_1=\\cos x$、$y_2=\\sin x$" },
+            { "do": "write", "line": "$-\\frac{\\pi}{2}<x<\\frac{\\pi}{2}$：$\\sec x$ 連續", "on": "在這個區間" }
+          ] },
         { "show": ["$W=\\cos x\\cdot\\cos x-(-\\sin x)\\cdot\\sin x=1$"],
-          "say": "Wronskian：cosine 平方加 sine 平方，就是一。" },
+          "say": "Wronskian：cosine 平方加 sine 平方，就是一。",
+          "board": [
+            { "do": "write", "line": "$W=\\cos^2x+\\sin^2x=1$" }
+          ] },
         { "show": ["$u_1'=-\\tan x$，$u_1=\\ln(\\cos x)$"], "note": "區間上 $\\cos x>0$，不用絕對值。",
-          "say": "u 一 prime 是負 sine 乘 secant，是負 tangent，積分得自然對數 cosine x。" },
+          "say": "u 一 prime 是負 sine 乘 secant，是負 tangent，積分得自然對數 cosine x。",
+          "board": [
+            { "do": "keep", "n": 1 },
+            { "do": "write", "line": "$u_1'=-\\sin x\\sec x=-\\tan x$", "on": "u 一 prime" },
+            { "do": "transform", "line": "$u_1'=-\\tan x$，$u_1={{l:\\ln(\\cos x)}}$", "on": "積分得" }
+          ] },
         { "show": ["$u_2'=1$，$u_2=x$"],
-          "say": "u 二 prime 是 cosine 乘 secant，剛好是一，積分是 x。" },
+          "say": "u 二 prime 是 cosine 乘 secant，剛好是一，積分是 x。",
+          "board": [
+            { "do": "write", "line": "$u_2'=\\cos x\\sec x=1$，$u_2=x$" }
+          ] },
         { "show": ["$y_p=\\cos x\\ln(\\cos x)+x\\sin x$"], "note": "積分不用加常數。",
-          "say": "乘回去就是特解。積分不用加常數，加了只是多出齊次解。" }
+          "say": "乘回去就是特解。積分不用加常數，加了只是多出齊次解。",
+          "board": [
+            { "do": "write", "line": "$y_p=\\cos x\\,{{l:\\ln(\\cos x)}}+x\\sin x$", "color": "green" }
+          ] }
       ],
       "check": 1
     },
@@ -187,13 +219,28 @@
       "title": "重根的齊次解",
       "beats": [
         { "show": ["$y''-2y'+y=\\frac{e^x}{x}$"], "note": "$y_1=e^x$、$y_2=xe^x$，$W=e^{2x}$。",
-          "say": "重根一，兩個齊次解是 e 的 x 次方和 x e 的 x 次方，W 是 e 的二 x 次方。" },
+          "say": "重根一，兩個齊次解是 e 的 x 次方和 x e 的 x 次方，W 是 e 的二 x 次方。",
+          "board": [
+            { "do": "write", "line": "$y''-2y'+y=\\frac{e^x}{x}$" },
+            { "do": "write", "line": "$y_1=e^x$、$y_2=xe^x$、$W=e^{2x}$", "on": "兩個齊次解" }
+          ] },
         { "show": ["$u_1'=-1$，$u_1=-x$"],
-          "say": "u 一 prime：x e 的 x 乘上 x 分之 e 的 x，再除以 W，剩負一。" },
+          "say": "u 一 prime：x e 的 x 乘上 x 分之 e 的 x，再除以 W，剩負一。",
+          "board": [
+            { "do": "write", "line": "$u_1'=-\\frac{xe^x\\cdot\\frac{e^x}{x}}{e^{2x}}$" },
+            { "do": "transform", "line": "$u_1'=-1$，$u_1=-x$", "on": "剩負一" }
+          ] },
         { "show": ["$u_2'=\\frac{1}{x}$，$u_2=\\ln x$"], "note": "$x>0$。",
-          "say": "u 二 prime 是 x 分之一，積分是自然對數 x。" },
+          "say": "u 二 prime 是 x 分之一，積分是自然對數 x。",
+          "board": [
+            { "do": "write", "line": "$u_2'=\\frac{1}{x}$，$u_2=\\ln x$" }
+          ] },
         { "show": ["$y_p=-xe^x+xe^x\\ln x$"],
-          "say": "乘回去得到兩項。其中一項看起來很眼熟。" }
+          "say": "乘回去得到兩項。其中一項看起來很眼熟。",
+          "board": [
+            { "do": "keep", "n": 2 },
+            { "do": "write", "line": "$y_p=-xe^x+xe^x\\ln x$", "on": "乘回去" }
+          ] }
       ],
       "predict": {
         "ask": "特解可以簡化成？",

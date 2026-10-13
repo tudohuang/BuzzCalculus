@@ -302,13 +302,30 @@
       "title": "用錯和打不開",
       "beats": [
         { "show": ["$\\lim_{x\\to 0}\\frac{x+1}{x+2}=\\frac{1}{2}$"], "note": "不是不定型，直接代入。",
-          "say": "x 加一除以 x 加二，x 趨近零。上面是一，下面是二，不是不定型，答案是二分之一。" },
+          "say": "x 加一除以 x 加二，x 趨近零。上面是一，下面是二，不是不定型，答案是二分之一。",
+          "board": [
+            { "do": "write", "line": "$\\lim_{x\\to 0}{{fr:\\frac{x+1}{x+2}}}=\\frac{1}{2}$" },
+            { "do": "underline", "term": "fr", "label": "不是 0/0", "on": "不是不定型" }
+          ] },
         { "show": ["硬用：$\\frac{1}{1}=1$"], "note": "錯的。",
-          "say": "沒檢查就硬微分，上下都變成一，得到一，是錯的。" },
+          "say": "沒檢查就硬微分，上下都變成一，得到一，是錯的。",
+          "board": [
+            { "do": "write", "line": "硬用：${{w:\\frac{1}{1}=1}}$" },
+            { "do": "strike", "term": "w", "on": "得到一" }
+          ] },
         { "show": ["$\\lim_{x\\to\\infty}\\frac{x+\\sin x}{x}$"], "note": "同除以 $x$：$1+\\frac{\\sin x}{x}\\to 1$。",
-          "say": "另一種情況：x 加 sine x 除以 x。同除以 x，sine x 除以 x 趨近零，極限是一。" },
+          "say": "另一種情況：x 加 sine x 除以 x。同除以 x，sine x 除以 x 趨近零，極限是一。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "$\\lim_{x\\to\\infty}\\frac{x+\\sin x}{x}$", "on": "x 加 sine" },
+            { "do": "write", "line": "$=\\lim_{x\\to\\infty}(1+\\frac{\\sin x}{x})=1$", "on": "同除以" }
+          ] },
         { "show": ["L'Hôpital：$\\frac{1+\\cos x}{1}$ 一直晃"], "note": "在 $0$ 到 $2$ 之間，沒有極限。",
-          "say": "用羅必達會得到一加 cosine x，在零和二之間一直晃。這不是說原極限不存在，只是要換方法。" }
+          "say": "用羅必達會得到一加 cosine x，在零和二之間一直晃。這不是說原極限不存在，只是要換方法。",
+          "board": [
+            { "do": "write", "line": "L'Hôpital：$\\frac{ {{cs:1+\\cos x}} }{1}$ 一直晃" },
+            { "do": "focus", "term": "cs", "label": "0 到 2 之間", "on": "在零和二" }
+          ] }
       ],
       "check": 3
     },
@@ -317,7 +334,10 @@
       "proof": true, "of": 4, "skeleton": "構造",
       "beats": [
         { "show": ["補端點 → Rolle → 取極限"], "note": "只證 $x\\to a^+$ 的 $\\frac{0}{0}$。",
-          "say": "策略：只證零比零、從右邊逼近。補好端點，用 Rolle 定理把比值換成導數的比，再取極限。" },
+          "say": "策略：只證零比零、從右邊逼近。補好端點，用 Rolle 定理把比值換成導數的比，再取極限。",
+          "board": [
+            { "do": "write", "line": "補端點 → Rolle → 取極限" }
+          ] },
         { "show": ["定 $f(a)=g(a)=0$"], "note": "改完 $f$、$g$ 在 $a$ 右連續。",
           "why": {
             "ask": "為什麼可以把 $f(a)$、$g(a)$ 改成 $0$？",
@@ -328,11 +348,26 @@
               { "label": "$f$、$g$ 在 $a$ 可微", "why": "可微只假設在 $(a,a+\\delta)$；$a$ 這一點可以沒有定義。" }
             ]
           },
-          "say": "把 f 和 g 在 a 的值都定成零。極限不看那一點，改了不影響，而且這樣在 a 右連續。" },
+          "say": "把 f 和 g 在 a 的值都定成零。極限不看那一點，改了不影響，而且這樣在 a 右連續。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "定 $f(a)=g(a)=0$", "on": "第一步" },
+            { "do": "write", "line": "極限不看那一點；改完在 $a$ 右連續", "why": true, "on": "極限不看" }
+          ] },
         { "show": ["$g(x)\\ne0$"], "note": "否則 Rolle 給出 $g'=0$ 的點。",
-          "say": "g 在 x 不會是零：不然兩端都是零，Rolle 定理給出導數是零的點，跟假設矛盾。" },
+          "say": "g 在 x 不會是零：不然兩端都是零，Rolle 定理給出導數是零的點，跟假設矛盾。",
+          "board": [
+            { "do": "write", "line": "${{gx:g(x)\\ne0}}$" },
+            { "do": "underline", "term": "gx", "label": "否則套 Rolle", "on": "不然兩端" }
+          ] },
         { "show": ["$h(t)=f(t)g(x)-g(t)f(x)$", "$\\frac{f(x)}{g(x)}=\\frac{f'(c)}{g'(c)}$，$a<c<x$"], "note": "$h(a)=h(x)=0$，用 Rolle。",
-          "say": "固定 x 造 h，兩端都是零。Rolle 定理給出 c，同除之後，比值就換成導數的比。" },
+          "say": "固定 x 造 h，兩端都是零。Rolle 定理給出 c，同除之後，比值就換成導數的比。",
+          "board": [
+            { "do": "keep", "n": 1 },
+            { "do": "write", "line": "${{h:h(t)}}=f(t)g(x)-g(t)f(x)$", "on": "固定 x" },
+            { "do": "underline", "term": "h", "label": "兩端都是 0", "on": "兩端都是零" },
+            { "do": "write", "line": "$\\frac{f(x)}{g(x)}=\\frac{f'(c)}{g'(c)}$，${{c:a<c<x}}$", "tint": { "c": "violet" }, "on": "同除之後" }
+          ] },
         { "show": ["$x\\to a^+$ ⇒ $c\\to a^+$", "所以 $\\frac{f(x)}{g(x)}\\to L$"], "note": "$x<a+\\eta$ 就有 $c<a+\\eta$。",
           "why": {
             "ask": "為什麼導數比也 $\\to L$？",
@@ -343,7 +378,13 @@
               { "label": "$f'$、$g'$ 在 $a$ 連續", "why": "定理沒假設導數連續，只假設 $\\frac{f'}{g'}$ 有極限 $L$。" }
             ]
           },
-          "say": "c 夾在 a 和 x 中間。x 擠向 a，c 也被擠過去，導數的比靠近 L，原來的比值也一樣。" }
+          "say": "c 夾在 a 和 x 中間。x 擠向 a，c 也被擠過去，導數的比靠近 L，原來的比值也一樣。",
+          "board": [
+            { "do": "keep", "n": 1 },
+            { "do": "write", "line": "$x\\to a^+$ ⇒ $c\\to a^+$", "on": "c 會跟著" },
+            { "do": "underline", "term": "c", "label": "夾在中間", "why": true, "on": "夾在" },
+            { "do": "write", "line": "所以 $\\frac{f(x)}{g(x)}\\to L$", "color": "green", "why": true, "on": "原來的" }
+          ] }
       ],
       "order": { "ask": "把證明排回順序：依序點每一步",
         "steps": [

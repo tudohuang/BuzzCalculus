@@ -76,10 +76,19 @@
     {
       "title": "必要與充分",
       "beats": [
-        {"show":["可微 $\\Rightarrow$ CR 成立"],"note":"CR 不成立，就一定不可微。","say":"可微一定滿足 CR。反過來用：CR 不成立，就一定不可微。"},
-        {"show":["$\\bar{z}=x-iy$：$u_x=1$、$v_y=-1$"],"say":"例如 z 共軛：u x 是一，v y 是負一，不相等，處處不可微。"},
-        {"show":["偏導數連續 $+$ CR $\\Rightarrow$ 可微"],"note":"只有 CR 還不夠。","say":"可是只有 CR 成立還不夠，有反例。常用的充分條件：偏導數連續，再加上 CR。"},
-        {"show":["$x^2+i\\,y^2$：$2x=2y$"],"note":"只在直線 $y=x$ 上可微。","say":"例如 x 平方加 i y 平方：第一條要二 x 等於二 y，所以只在直線 y 等於 x 上可微。"}
+        {"show":["可微 $\\Rightarrow$ CR 成立"],"note":"CR 不成立，就一定不可微。","say":"可微一定滿足 CR。反過來用：CR 不成立，就一定不可微。","board":[
+          {"do":"write","line":"可微 $\\Rightarrow$ CR 成立"},
+          {"do":"write","line":"CR 不成立 $\\Rightarrow$ 不可微","on":"反過來用"}]},
+        {"show":["$\\bar{z}=x-iy$：$u_x=1$、$v_y=-1$"],"say":"例如 z 共軛：u x 是一，v y 是負一，不相等，處處不可微。","board":[
+          {"do":"write","line":"$\\bar{z}=x-iy$：$u_x=1$、$v_y=-1$","on":"z 共軛"},
+          {"do":"write","line":"$1\\ne-1$ ⇒ 處處不可微","on":"不相等"}]},
+        {"show":["偏導數連續 $+$ CR $\\Rightarrow$ 可微"],"note":"只有 CR 還不夠。","say":"可是只有 CR 成立還不夠，有反例。常用的充分條件：偏導數連續，再加上 CR。","board":[
+          {"do":"clear"},
+          {"do":"write","line":"只有 CR：還不夠","on":"只有 CR"},
+          {"do":"write","line":"偏導數連續 $+$ CR $\\Rightarrow$ 可微","color":"green","on":"偏導數連續"}]},
+        {"show":["$x^2+i\\,y^2$：$2x=2y$"],"note":"只在直線 $y=x$ 上可微。","say":"例如 x 平方加 i y 平方：第一條要二 x 等於二 y，所以只在直線 y 等於 x 上可微。","board":[
+          {"do":"write","line":"$x^2+i\\,y^2$：${{e:2x=2y}}$"},
+          {"do":"write","line":"只在直線 $y=x$ 上可微","on":"所以只在"}]}
       ],
       "check": 1
     },
@@ -88,7 +97,8 @@
       "proof": true, "of": 3, "skeleton": "直接",
       "beats": [
         {"show":["先線性近似，再用 CR 湊成一個複數乘 $h$"],
-          "say":"策略：u 和 v 各自先做線性近似，再用 CR 把兩個近似湊成一個複數乘上 h，差商就出來了。"},
+          "say":"策略：u 和 v 各自先做線性近似，再用 CR 把兩個近似湊成一個複數乘上 h，差商就出來了。","board":[
+          {"do":"write","line":"先線性近似，再用 CR 湊成一個複數乘 $h$"}]},
         {"show":["$\\Delta u=u_xa+u_yb+o(|h|)$","$\\Delta v=v_xa+v_yb+o(|h|)$"],"note":"$h=a+ib$；偏導數連續 ⇒ 在 $\\mathbb{R}^2$ 可微。",
           "why": {
             "ask": "為什麼能這樣線性近似？",
@@ -99,9 +109,16 @@
               {"label":"CR 成立","why":"CR 只是偏導數之間的等式，給不出誤差是 $o(|h|)$；CR 下一步才用。"}
             ]
           },
-          "say":"偏導數在附近連續，u 和 v 就在平面的意義下可微：變化量是線性部分，加上比 h 小得多的誤差。"},
+          "say":"偏導數在附近連續，u 和 v 就在平面的意義下可微：變化量是線性部分，加上比 h 小得多的誤差。","board":[
+          {"do":"clear"},
+          {"do":"write","line":"$\\Delta u=u_xa+{{uy:u_y}}b+o(|h|)$","on":"u 和 v 的變化量"},
+          {"do":"write","line":"$\\Delta v=v_xa+{{vy:v_y}}b+o(|h|)$","on":"線性部分"},
+          {"do":"write","line":"$h=a+ib$；偏導數連續 ⇒ 在 $\\mathbb{R}^2$ 可微","why":true,"on":"偏導數在附近連續"}]},
         {"show":["$\\Delta u+i\\Delta v=(u_x+i\\,v_x)(a+ib)+o(|h|)$"],"note":"代入 $u_y=-v_x$、$v_y=u_x$。",
-          "say":"把 CR 代進去：u y 換成負 v x，v y 換成 u x，整理後正好是 u x 加 i v x，乘上 a 加 i b。"},
+          "say":"把 CR 代進去：u y 換成負 v x，v y 換成 u x，整理後正好是 u x 加 i v x，乘上 a 加 i b。","board":[
+          {"do":"focus","term":"uy","on":"u y 換成"},
+          {"do":"focus","term":"vy","on":"v y 換成"},
+          {"do":"write","line":"$\\Delta u+i\\Delta v=(u_x+i\\,v_x)(a+ib)+o(|h|)$","on":"整理後"}]},
         {"show":["除以 $h$：差商 $\\to u_x+i\\,v_x$"],"note":"$\\frac{|o(|h|)|}{|h|}\\to 0$。",
           "why": {
             "ask": "誤差除以 $h$ 為什麼 $\\to 0$？",
@@ -112,7 +129,10 @@
               {"label":"$h$ 是複數，可以直接約掉","why":"約得掉的是 $(a+ib)$ 那一項；誤差不是 $h$ 的倍數，要用 $o(|h|)$ 的定義。"}
             ]
           },
-          "say":"o of h 的意思就是：誤差除以 h 的長度趨近零。所以差商趨近 u x 加 i v x，f 可微。"}
+          "say":"o of h 的意思就是：誤差除以 h 的長度趨近零。所以差商趨近 u x 加 i v x，f 可微。","board":[
+          {"do":"keep","n":1},
+          {"do":"write","line":"除以 $h$：差商 $\\to u_x+i\\,v_x$","on":"最後除以"},
+          {"do":"write","line":"$\\frac{|o(|h|)|}{|h|}\\to 0$","why":true,"on":"誤差除以"}]}
       ],
       "where": {
         "ask": "CR 方程用在哪一步？",
@@ -144,10 +164,18 @@
     {
       "title": "求共軛調和函數",
       "beats": [
-        {"show":["$u=x^3-3xy^2$"],"note":"$u_{xx}=6x$，$u_{yy}=-6x$，調和。","say":"u 等於 x 三次方減三 x y 平方。先檢查：二階偏導數六 x 和負六 x，加起來是零。"},
-        {"show":["$v_y=u_x=3x^2-3y^2$"],"say":"用第一條 CR：v y 等於 u x。對 y 積分。"},
-        {"show":["$v=3x^2y-y^3+g(x)$"],"note":"積分常數是 $x$ 的函數。","say":"對 y 積分時，積分常數可以是任何 x 的函數，所以寫 g 的 x，不是常數。"},
-        {"show":["$v_x=6xy+g'(x)=-u_y=6xy$"],"say":"再用第二條 CR：v x 要等於負 u y，也就是六 x y。比一比 g prime。"}
+        {"show":["$u=x^3-3xy^2$"],"note":"$u_{xx}=6x$，$u_{yy}=-6x$，調和。","say":"u 等於 x 三次方減三 x y 平方。先檢查：二階偏導數六 x 和負六 x，加起來是零。","board":[
+          {"do":"write","line":"$u=x^3-3xy^2$"},
+          {"do":"write","line":"$u_{xx}+u_{yy}=6x-6x=0$","on":"二階偏導數"}]},
+        {"show":["$v_y=u_x=3x^2-3y^2$"],"say":"用第一條 CR：v y 等於 u x。對 y 積分。","board":[
+          {"do":"write","line":"${{vy:v_y}}=u_x=3x^2-3y^2$","tint":{"vy":"blue"}}]},
+        {"show":["$v=3x^2y-y^3+g(x)$"],"note":"積分常數是 $x$ 的函數。","say":"對 y 積分時，積分常數可以是任何 x 的函數，所以寫 g 的 x，不是常數。","board":[
+          {"do":"write","line":"$v=3x^2y-y^3+{{g:g(x)}}$","tint":{"g":"violet"}},
+          {"do":"underline","term":"g","label":"不是常數","on":"所以寫"}]},
+        {"show":["$v_x=6xy+g'(x)=-u_y=6xy$"],"say":"再用第二條 CR：v x 要等於負 u y，也就是六 x y。比一比 g prime。","board":[
+          {"do":"keep","n":2},
+          {"do":"write","line":"$v_x=6xy+{{gp:g'(x)}}=-u_y=6xy$","tint":{"gp":"violet"},"on":"第二條"},
+          {"do":"focus","term":"gp","on":"比一比"}]}
       ],
       "predict": {
         "ask": "所以 $v$ 是？",

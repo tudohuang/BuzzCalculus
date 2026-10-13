@@ -83,11 +83,22 @@
       "skeleton": "ε-δ",
       "beats": [
         { "show": ["一個通用的 $\\delta$ 切出分割，每段起伏都小"],
-          "say": "策略：用一致連續拿到一個通用的 delta，照它切分割，讓每一段的起伏都小，再加起來。" },
+          "say": "策略：用一致連續拿到一個通用的 delta，照它切分割，讓每一段的起伏都小，再加起來。",
+          "board": [
+            { "do": "write", "line": "一個通用的 $\\delta$ → 切分割 → 每段起伏都小" }
+          ] },
         { "show": ["Heine–Cantor：$|x-y|<\\delta$", "$\\Rightarrow|f(x)-f(y)|<\\frac{\\varepsilon}{b-a}$"], "note": "同一個 $\\delta$ 管整個區間。",
-          "say": "Heine Cantor 給一個 delta：距離小於它的兩點，函數值差小於 b 減 a 分之 epsilon。" },
+          "say": "Heine Cantor 給一個 delta：距離小於它的兩點，函數值差小於 b 減 a 分之 epsilon。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "$|x-y|<{{d:\\delta}}$ ⇒ $|f(x)-f(y)|<{{e:\\frac{\\varepsilon}{b-a}}}$", "tint": { "d": "blue", "e": "violet" }, "on": "Heine" },
+            { "do": "underline", "term": "d", "label": "管整個區間", "on": "給一個" }
+          ] },
         { "show": ["取分割 $P$，$\\|P\\|<\\delta$"], "note": "例如等長分割，$n>\\frac{b-a}{\\delta}$。",
-          "say": "照這個 delta 切：每一段都比 delta 短，例如切成夠多的等長小段。" },
+          "say": "照這個 delta 切：每一段都比 delta 短，例如切成夠多的等長小段。",
+          "board": [
+            { "do": "write", "line": "取分割 $P$，$\\|P\\|<{{d:\\delta}}$" }
+          ] },
         { "show": ["第 $i$ 段：$M_i=f(u_i)$、$m_i=f(v_i)$"], "note": "極值定理。",
           "why": {
             "ask": "為什麼 $M_i$ 是某一點的函數值？",
@@ -98,7 +109,11 @@
               { "label": "Heine–Cantor 保證的", "why": "Heine–Cantor 只給一個通用的 $\\delta$，不管最大值取不取得到；那是極值定理的事。" }
             ]
           },
-          "say": "每一段是閉的，f 在上面連續，極值定理說最高和最低都取得到，在 u i 和 v i。" },
+          "say": "每一段是閉的，f 在上面連續，極值定理說最高和最低都取得到，在 u i 和 v i。",
+          "board": [
+            { "do": "write", "line": "第 $i$ 段：${{mi:M_i=f(u_i)}}$、$m_i=f(v_i)$", "on": "最高" },
+            { "do": "underline", "term": "mi", "label": "極值定理", "why": true, "on": "極值定理" }
+          ] },
         { "show": ["$|u_i-v_i|<\\delta$ ⇒ $M_i-m_i<\\frac{\\varepsilon}{b-a}$"], "note": "兩點在同一段裡。",
           "why": {
             "ask": "為什麼 $|u_i-v_i|<\\delta$？",
@@ -109,9 +124,19 @@
               { "label": "$\\delta$ 是對 $u_i$ 這一點找的", "why": "$\\delta$ 是 Heine–Cantor 給的，對整個區間通用，不是對某一點找的。" }
             ]
           },
-          "say": "兩點都在同一段裡，距離不超過段寬，小於 delta，所以這一段的起伏小於 b 減 a 分之 epsilon。" },
+          "say": "兩點都在同一段裡，距離不超過段寬，小於 delta，所以這一段的起伏小於 b 減 a 分之 epsilon。",
+          "board": [
+            { "do": "write", "line": "${{uv:|u_i-v_i|<{{d:\\delta}}}}$ ⇒ $M_i-m_i<{{e:\\frac{\\varepsilon}{b-a}}}$", "on": "距離小於" },
+            { "do": "underline", "term": "uv", "label": "同一段裡", "why": true, "on": "同一段裡" }
+          ] },
         { "show": ["$U-L<\\frac{\\varepsilon}{b-a}\\sum\\Delta x_i=\\varepsilon$"], "note": "由可積判準，$f$ 可積。",
-          "say": "每一段的起伏乘寬度加起來，寬度總和是 b 減 a，剛好得到 epsilon。由可積判準，f 可積。" }
+          "say": "每一段的起伏乘寬度加起來，寬度總和是 b 減 a，剛好得到 epsilon。由可積判準，f 可積。",
+          "board": [
+            { "do": "keep", "n": 2 },
+            { "do": "write", "line": "$U-L<{{e:\\frac{\\varepsilon}{b-a}}}{{sw:\\sum\\Delta x_i}}=\\varepsilon$", "on": "加起來" },
+            { "do": "underline", "term": "sw", "label": "寬度總和", "on": "寬度總和" },
+            { "do": "write", "line": "由可積判準 ⇒ $f$ 可積", "color": "green", "on": "由可積判準" }
+          ] }
       ],
       "order": {
         "ask": "把證明排回順序：依序點每一步",
@@ -127,11 +152,22 @@
       "title": "$x^2$：切幾段",
       "beats": [
         { "show": ["$|x^2-y^2|\\le2|x-y|$"], "note": "$x,y\\in[0,1]$。",
-          "say": "x 平方在零到一，x 平方減 y 平方的絕對值，不超過二倍的 x 減 y。" },
+          "say": "x 平方在零到一，x 平方減 y 平方的絕對值，不超過二倍的 x 減 y。",
+          "board": [
+            { "do": "write", "line": "$x,y\\in[0,1]$" },
+            { "do": "write", "line": "$|x^2-y^2|={{s:|x+y|}}\\,|x-y|\\le2|x-y|$", "on": "x 平方減" },
+            { "do": "underline", "term": "s", "label": "不超過 2", "on": "不超過二倍" }
+          ] },
         { "show": ["要差 $<0.01$：取 $\\delta=0.005$"],
-          "say": "要讓函數值的差小於零點零一，取 delta 零點零零五就夠。" },
+          "say": "要讓函數值的差小於零點零一，取 delta 零點零零五就夠。",
+          "board": [
+            { "do": "write", "line": "要差 $<0.01$：取 $\\delta=0.005$" }
+          ] },
         { "show": ["$\\frac{1}{n}<0.005$，$n>200$"],
-          "say": "等長分割的寬度 n 分之一要小於 delta，所以 n 要大於二百。" }
+          "say": "等長分割的寬度 n 分之一要小於 delta，所以 n 要大於二百。",
+          "board": [
+            { "do": "write", "line": "$\\frac{1}{n}<0.005$ ⇒ $n>200$" }
+          ] }
       ],
       "check": 3
     },
@@ -139,11 +175,24 @@
       "title": "保證夠，不是最少",
       "beats": [
         { "show": ["$x^2$ 遞增：$U-L=\\frac{1}{n}$，$n=101$ 就夠"],
-          "say": "可是 x 平方遞增，直接算上和減下和是 n 分之一，一百零一段就夠了。" },
-        { "show": ["$\\sqrt{x}$ 在 $[0,1]$：$\\sqrt{x}-\\sqrt{y}\\le\\sqrt{x-y}$"], "note": "導數在 0 附近無界。",
-          "say": "再看根號 x。它在零附近導數無界，但還是有一個估計：根號差不超過差的根號。" },
+          "say": "可是 x 平方遞增，直接算上和減下和是 n 分之一，一百零一段就夠了。",
+          "board": [
+            { "do": "write", "line": "$x^2$ 遞增：$U-L=\\frac{1}{n}$" },
+            { "do": "write", "line": "$n={{n:101}}$ 就夠", "on": "一百零一段" }
+          ] },
+        { "show": ["$\\sqrt{x}$ 在 $[0,1]$：$|\\sqrt{x}-\\sqrt{y}|\\le\\sqrt{|x-y|}$"], "note": "導數在 0 附近無界。",
+          "say": "再看根號 x。它在零附近導數無界，但還是有一個估計：根號差不超過差的根號。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "$\\sqrt{x}$ 在 $[0,1]$：導數在 $0$ 附近無界", "on": "再看根號" },
+            { "do": "write", "line": "$|\\sqrt{x}-\\sqrt{y}|\\le\\sqrt{|x-y|}$", "on": "根號差" }
+          ] },
         { "show": ["$|x-y|<\\delta\\Rightarrow|\\sqrt{x}-\\sqrt{y}|<\\sqrt{\\delta}$"],
-          "say": "所以 x 和 y 的距離小於 delta 時，根號值的差小於根號 delta。" }
+          "say": "所以 x 和 y 的距離小於 delta 時，根號值的差小於根號 delta。",
+          "board": [
+            { "do": "write", "line": "$|x-y|<\\delta$ ⇒ $|\\sqrt{x}-\\sqrt{y}|<{{sd:\\sqrt{\\delta}}}$" },
+            { "do": "underline", "term": "sd", "on": "小於根號" }
+          ] }
       ],
       "predict": {
         "ask": "$\\varepsilon=0.01$，$\\delta$ 取多少？",

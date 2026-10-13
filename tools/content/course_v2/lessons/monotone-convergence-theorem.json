@@ -62,13 +62,30 @@
       "title": "一個比一個大就能換",
       "beats": [
         { "show": ["一致收斂：條件太強"], "note": "$x^{1/n}$ 不一致收斂，面積卻收斂到 1。",
-          "say": "Riemann 那邊，極限搬進積分要一致收斂，條件很強，很多明明沒問題的例子都卡住。" },
+          "say": "Riemann 那邊，極限搬進積分要一致收斂，條件很強，很多明明沒問題的例子都卡住。",
+          "board": [
+            { "do": "write", "line": "Riemann：要一致收斂（條件太強）" }
+          ] },
         { "show": ["$0\\le f_1\\le f_2\\le\\cdots$，$f=\\lim f_n$"], "note": "$f_n$ 可測；極限可以是 $\\infty$。",
-          "say": "Lebesgue 的第一個回答：函數非負、而且一個比一個大，就可以交換。極限是無限大也沒關係。" },
+          "say": "Lebesgue 的第一個回答：函數非負、而且一個比一個大，就可以交換。極限是無限大也沒關係。",
+          "board": [
+            { "do": "write", "line": "${{nn:0\\le}} {{inc:f_1\\le f_2\\le\\cdots}}$，$f=\\lim f_n$", "on": "Lebesgue" },
+            { "do": "underline", "term": "nn", "on": "非負" },
+            { "do": "underline", "term": "inc", "on": "一個比一個大" }
+          ] },
         { "show": ["$\\lim_{n\\to\\infty}\\int_X f_n\\,d\\mu=\\int_X \\lim_{n\\to\\infty} f_n\\,d\\mu$"],
-          "say": "這就是單調收斂定理。兩邊都可以是無限大，不需要一致收斂。" },
+          "say": "這就是單調收斂定理。兩邊都可以是無限大，不需要一致收斂。",
+          "board": [
+            { "do": "write", "line": "${{th:\\lim_{n\\to\\infty}\\int_X f_n\\,d\\mu=\\int_X \\lim_{n\\to\\infty} f_n\\,d\\mu}}$" },
+            { "do": "box", "term": "th", "color": "green", "on": "單調收斂定理" }
+          ] },
         { "show": ["$f=\\sup f_n$，可測"],
-          "say": "極限函數是上確界，可測函數列的上確界可測，所以右邊有意義。為什麼能換，最後那節一步一步證。" }
+          "say": "極限函數是上確界，可測函數列的上確界可測，所以右邊有意義。為什麼能換，最後那節一步一步證。",
+          "board": [
+            { "do": "keep", "n": 2 },
+            { "do": "write", "line": "$f={{s:\\sup f_n}}$：可測", "on": "極限函數是" },
+            { "do": "underline", "term": "s", "on": "上確界可測" }
+          ] }
       ],
       "check": 0
     },
@@ -76,11 +93,22 @@
       "title": "$x^{1/n}$",
       "beats": [
         { "show": ["$x^{1/n}\\le x^{1/(n+1)}$ 在 $[0,1]$"], "note": "$x=0.5$：0.5, 0.7071, 0.7937, …",
-          "say": "x 的 n 分之一次方，在零到一上非負、遞增。例如零點五，開越多次方根越往上爬。" },
+          "say": "x 的 n 分之一次方，在零到一上非負、遞增。例如零點五，開越多次方根越往上爬。",
+          "board": [
+            { "do": "write", "line": "${{p:x^{1/n}}}\\le x^{1/(n+1)}$ 在 $[0,1]$", "tint": { "p": "blue" } },
+            { "do": "plot", "graph": { "window": [0, 1.05, 0, 1.08], "curves": [{ "expr": "x", "domain": [0, 1], "color": "blue" }, { "expr": "sqrt(x)", "domain": [0, 1], "color": "blue" }, { "expr": "x^(1/3)", "domain": [0, 1], "color": "blue" }, { "expr": "sqrt(sqrt(sqrt(x)))", "domain": [0, 1], "color": "blue" }], "points": [{ "x": 0.5, "y": 0.5 }, { "x": 0.5, "y": 0.7071 }, { "x": 0.5, "y": 0.7937 }] }, "on": "開越多次方根" }
+          ] },
         { "show": ["極限 $f=\\chi_{(0,1]}$"], "note": "$x=0$ 恆為 0。",
-          "say": "x 大於零時趨近一，x 等於零時一直是零。極限只跟常數一差一個點。" },
+          "say": "x 大於零時趨近一，x 等於零時一直是零。極限只跟常數一差一個點。",
+          "board": [
+            { "do": "transform", "line": "${{p:x^{1/n}}}\\to {{f:\\chi_{(0,1]}}}$" },
+            { "do": "underline", "term": "f", "label": "差一個點", "on": "極限只跟" }
+          ] },
         { "show": ["核對：$\\int_0^1 x^{1/n}\\,dx=\\frac{n}{n+1}$"],
-          "say": "直接算也行，積分是 n 加一分之 n。看看定理給的答案對不對得上。" }
+          "say": "直接算也行，積分是 n 加一分之 n。看看定理給的答案對不對得上。",
+          "board": [
+            { "do": "write", "line": "$\\int_0^1 {{p:x^{1/n}}}\\,dx=\\frac{n}{n+1}$" }
+          ] }
       ],
       "check": 1
     },
@@ -132,11 +160,25 @@
       "proof": true, "of": 2, "skeleton": "構造",
       "beats": [
         { "show": ["$\\le$ 直接；$\\ge$ 造 $E_n$，讓 $f_n$ 追上 $c\\varphi$"],
-          "say": "策略：兩個方向。小於等於很直接；大於等於，要造一串集合，看 f n 什麼時候追上 f 底下的簡單函數。" },
+          "say": "策略：兩個方向。小於等於很直接；大於等於，要造一串集合，看 f n 什麼時候追上 f 底下的簡單函數。",
+          "board": [
+            { "do": "write", "line": "$\\le$：直接", "on": "小於等於" },
+            { "do": "write", "line": "$\\ge$：造 $E_n$，讓 $f_n$ 追上 $c{{p:\\varphi}}$", "tint": { "p": "blue" }, "on": "大於等於" }
+          ] },
         { "show": ["$\\int f_n$ 遞增、$\\le\\int f$：$L\\le\\int f$"], "note": "$f_n\\le f_{n+1}\\le f$，積分單調。",
-          "say": "f n 一個比一個大，又都不超過 f，所以積分遞增、有上界，極限 L 存在，不超過 f 的積分。" },
+          "say": "f n 一個比一個大，又都不超過 f，所以積分遞增、有上界，極限 L 存在，不超過 f 的積分。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "$\\int f_n$ 遞增、$\\le\\int f$", "on": "所以積分" },
+            { "do": "write", "line": "⇒ ${{lim:L}}\\le\\int f$", "tint": { "lim": "violet" }, "on": "極限 L" }
+          ] },
         { "show": ["取 $0\\le\\varphi\\le f$、$0<c<1$", "$E_n=\\{f_n\\ge c\\varphi\\}$ 遞增"],
-          "say": "反方向。取 f 底下的簡單函數 phi，和一個小於一的正數 c。E n 是 f n 追上 c 倍 phi 的點，f n 遞增，所以 E n 遞增。" },
+          "say": "反方向。取 f 底下的簡單函數 phi，和一個小於一的正數 c。E n 是 f n 追上 c 倍 phi 的點，f n 遞增，所以 E n 遞增。",
+          "board": [
+            { "do": "keep", "n": 1 },
+            { "do": "write", "line": "取 $0\\le{{p:\\varphi}}\\le f$、$0<c<1$", "on": "取 f 底下" },
+            { "do": "write", "line": "$E_n=\\{f_n\\ge c{{p:\\varphi}}\\}$ 遞增", "on": "E n 是" }
+          ] },
         { "show": ["$\\bigcup E_n=X$"], "note": "$\\varphi(x)>0$ 時 $f(x)>c\\varphi(x)$，$f_n(x)$ 追得上。",
           "why": {
             "ask": "為什麼 $\\bigcup E_n=X$？",
@@ -147,7 +189,12 @@
               { "label": "$E_n$ 遞增，聯集就是全部", "why": "遞增的集合聯集不一定是全部；要逐點看，每個 $x$ 什麼時候進來。" }
             ]
           },
-          "say": "phi 是零的點一開始就在。phi 大於零的點，f 嚴格大於 c 倍 phi，而 f n 遞增趨近 f，某一項起就超過。" },
+          "say": "phi 是零的點一開始就在。phi 大於零的點，f 嚴格大於 c 倍 phi，而 f n 遞增趨近 f，某一項起就超過。",
+          "board": [
+            { "do": "keep", "n": 2 },
+            { "do": "write", "line": "$\\bigcup E_n=X$", "on": "遲早" },
+            { "do": "write", "line": "${{p:\\varphi}}(x)>0$ ⇒ $f(x)>c\\varphi(x)$", "why": true, "on": "phi 大於零的點" }
+          ] },
         { "show": ["$\\int f_n\\ge c\\sum a_k\\mu(A_k\\cap E_n)\\to c\\int\\varphi$"], "note": "由下連續：$A_k\\cap E_n$ 遞增到 $A_k$。",
           "why": {
             "ask": "為什麼 $\\mu(A_k\\cap E_n)\\to\\mu(A_k)$？",
@@ -158,9 +205,21 @@
               { "label": "$\\mu(A_k\\cap E_n)\\le\\mu(A_k)$", "why": "單調只給 $\\le$，證不出極限；要靠集合遞增、聯集是 $A_k$。" }
             ]
           },
-          "say": "在 E n 上 f n 至少是 c 倍 phi，積分至少是那個和。A k 交 E n 遞增到 A k，由下連續，極限是 c 倍 phi 的積分。" },
+          "say": "在 E n 上 f n 至少是 c 倍 phi，積分至少是那個和。A k 交 E n 遞增到 A k，由下連續，極限是 c 倍 phi 的積分。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "$\\int f_n\\ge c\\sum a_k\\,\\mu({{a:A_k\\cap E_n}})$", "on": "A k 交 E n 的測度" },
+            { "do": "write", "line": "$\\to c\\int{{p:\\varphi}}$", "on": "趨近 A k" },
+            { "do": "write", "line": "${{a:A_k\\cap E_n}}\\nearrow A_k$：由下連續", "why": true, "on": "由下連續" }
+          ] },
         { "show": ["$c\\to1$、對 $\\varphi$ 取上確界：$L\\ge\\int f$"],
-          "say": "c 可以任意接近一，得到 L 至少是 phi 的積分；再對所有 phi 取上確界，就是 f 的積分。" }
+          "say": "c 可以任意接近一，得到 L 至少是 phi 的積分；再對所有 phi 取上確界，就是 f 的積分。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "${{lim:L}}\\ge {{c:c}}\\int{{p:\\varphi}}$", "on": "c 可以" },
+            { "do": "transform", "line": "${{lim:L}}\\ge\\int{{p:\\varphi}}$", "on": "得到 L" },
+            { "do": "write", "line": "對所有 $\\varphi$ 取上確界：$L\\ge\\int f$", "color": "green", "on": "對所有 phi" }
+          ] }
       ],
       "order": {
         "ask": "把大於等於那一半排回順序：依序點每一步",
