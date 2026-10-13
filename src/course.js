@@ -1720,6 +1720,8 @@
       // 首頁的「課程回溫」卡：只看紀錄（課名存在紀錄裡），不為了這張卡去抓課程組
       renderReviewCard: (records) => review.card(records),
       renderFirstSteps: (records) => (current() ? ui.renderFirstSteps(records) : ""),
+      // 離開一課（換到別的畫面）：收回打開時推的那一格 history（見 course_v2_ui 的 leftLesson）
+      leftLesson: () => { if (ui && ui.leftLesson) ui.leftLesson(); },
       // 回饋與結算：只在課程已經載過時才講「這題是哪一課教的」——不為了一行字去抓整份大綱
       renderFeedbackLink: (problemId) => (ui ? ui.renderFeedbackLink(problemId) : ""),
       renderResultsActions: (lessonId) => (ui ? ui.renderResultsActions(lessonId) : `<div class="action-row"><button class="button" data-action="open-course">${icon("list-checks")}${t("課程表")}</button></div>`),

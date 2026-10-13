@@ -868,6 +868,43 @@ const BOSS_FILE = path.join(DIR, "bosses.json");
   }
 }
 
+// ── 推薦題的核心／挑戰標記：大綱（outline.js 的 practice 字串，尾巴 * = core、! = challenge）與課文（ch-*.js 的 practice[]）要一致 ──
+// 層級（course_v2_ui 的 tierOf：完成／熟練／全破、地圖、課程表）讀大綱的標記；課文頁與結算的推薦題清單讀課文的 core/challenge。
+// 兩份都是 build_course_v2.js 從同一個來源產生的：真相是 tools/content/course_v2/lessons/<id>.json 的 practice[]。
+// 一題同時標 core 與 challenge 在大綱只寫得出 *（熟練要它、課文卻把它列在挑戰）—— 來源就不准這樣標。
+{
+  const vm = require("vm");
+  const OUT = path.join(ROOT, "src", "course_v2");
+  const box = { window: {} };
+  vm.createContext(box);
+  if (fs.existsSync(OUT)) {
+    fs.readdirSync(OUT).filter((name) => name === "outline.js" || /^ch-/.test(name)).sort()
+      .forEach((name) => vm.runInContext(fs.readFileSync(path.join(OUT, name), "utf8"), box, { filename: name }));
+  }
+  const shippedOutline = box.window.BUZZ_COURSE_V2;
+  const shippedLessons = box.window.BUZZ_COURSE_V2_LESSONS || {};
+  const mark = (p) => p.id + (p.core ? "*" : p.challenge ? "!" : "");
+  const inOutline = {};
+  if (shippedOutline) shippedOutline.stages.forEach((s) => s.chapters.forEach((c) => c.lessons.forEach((l) => { inOutline[l.id] = l; })));
+  let compared = 0;
+  files.forEach((file) => {
+    const id = file.replace(/\.json$/, "");
+    const L = JSON.parse(fs.readFileSync(path.join(LESSON_DIR, file), "utf8"));
+    const source = (L.practice || []);
+    source.filter((p) => p.core && p.challenge).forEach((p) => err(id, `推薦題 ${p.id} 同時標了 core 與 challenge（只能二選一）`));
+    const want = source.map(mark).join(" ");
+    const o = inOutline[id];
+    const shipped = shippedLessons[id];
+    if (!o || !shipped) { err(id, "src/course_v2 裡找不到這一課（跑 node tools/build_course_v2.js）"); return; }
+    compared += 1;
+    if (String(o.practice || "") !== want) err(id, `大綱的推薦題標記「${o.practice || ""}」跟課文來源「${want}」不一致（跑 node tools/build_course_v2.js）`);
+    const got = (shipped.practice || []).map(mark).join(" ");
+    if (got !== want) err(id, `課文 ch-*.js 的推薦題標記「${got}」跟來源「${want}」不一致（跑 node tools/build_course_v2.js）`);
+  });
+  const none = files.map((f) => f.replace(/\.json$/, "")).filter((id) => inOutline[id] && !String(inOutline[id].practice || "").trim());
+  console.log(`推薦題標記：大綱與課文 ${compared} 課一致比對；沒有推薦題（小測完成就是全破）${none.length} 課`);
+}
+
 const all = Object.keys(outline).length;
 const written = files.length;
 console.log(`新版課程：大綱 ${all} 課，已寫 ${written} 課${wanted.length ? `（這次驗 ${lessons.length} 課）` : ""}`);
