@@ -4063,6 +4063,7 @@
         <div class="mini-stats">
           <div><span>${t("練過幾局")}</span><strong>${(records.attempts || 0) + (records.practiceRuns || 0)}</strong></div>
           <div><span>${t("錯題本")}</span><strong>${Object.keys(records.mistakes || {}).length}</strong></div>
+          <div><span>${t("課程完成")}</span><strong>${lessonsDone(records)}</strong></div>
           <div title="${t("逐題明細只保留最近 {HISTORY_LIMIT} 局；更早的局數仍然算在「練過幾局」裡", { HISTORY_LIMIT })}"><span>${t("保留明細")}</span><strong>${(records.history || []).length}<small> / ${HISTORY_LIMIT}</small></strong></div>
         </div>
         <p class="panel-note">${t("匯入是")}<strong>${t("合併")}</strong>${t("不是覆蓋 —— 兩台裝置各自練過的都會留下來。")}</p>
@@ -9914,16 +9915,19 @@
       backupRecords(current, true);
       saveRecords(mergedRecords);
       const afterCount = (mergedRecords.attemptLog || []).length;
+      const courseBefore = lessonsDone(current);
+      const courseAfter = lessonsDone(mergedRecords);
       trackEvent("import_records", {
         history_count: (mergedRecords.history || []).length,
         mistake_count: Object.keys(mergedRecords.mistakes || {}).length,
         merged: afterCount > beforeCount
       });
-      showAppNotice(
-        afterCount > beforeCount
-          ? `${t("已合併：作答紀錄從 {beforeCount} 筆增加到 {afterCount} 筆。", { beforeCount, afterCount })}`
-          : t("已匯入。這份檔案沒有帶來新的作答紀錄。")
-      );
+      // 只練課程的人沒有作答紀錄：課程完成的課數也要講，不然看起來像「什麼都沒匯進來」
+      const said = [
+        afterCount > beforeCount ? t("已合併：作答紀錄從 {beforeCount} 筆增加到 {afterCount} 筆。", { beforeCount, afterCount }) : "",
+        courseAfter > courseBefore ? t("課程完成從 {courseBefore} 課增加到 {courseAfter} 課。", { courseBefore, courseAfter }) : ""
+      ].filter(Boolean);
+      showAppNotice(said.length ? said.join(" ") : t("已匯入。這份檔案沒有帶來新的作答紀錄。"));
       render();
     });
     reader.readAsText(file);
@@ -9936,8 +9940,14 @@
   const BACKUP_KEEP = 3;
   const BACKUP_INTERVAL_MS = 24 * 3600 * 1000;
 
+  // 新版課程（courseV2）與舊 25 課（course）完成的課數：資料卡、匯入的通知、自動備份都看它
+  function lessonsDone(records) {
+    return [records.courseV2, records.course].reduce((n, book) => n + Object.values(book || {}).filter((e) => e && e.doneAt).length, 0);
+  }
+
   function backupRecords(records, force) {
-    if (!records || !(records.totalAnswered || 0)) return;
+    // 只上課程、還沒練過題的人也有進度要保（以前只看作答數 → 他們永遠沒有自動備份）
+    if (!records || !((records.totalAnswered || 0) || lessonsDone(records) || Object.keys(records.courseV2 || {}).length)) return;
     try {
       const keys = Object.keys(localStorage)
         .filter((key) => key.startsWith(BACKUP_PREFIX))

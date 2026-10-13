@@ -399,6 +399,57 @@ console.log(`  合併            ${aCount} + ${bCount} -> ${merged.attemptLog.le
   check("讀課的日子合併有交換律", JSON.stringify(Object.keys(back).sort().map((d) => [d, back[d]])) === JSON.stringify(Object.keys(days).sort().map((d) => [d, days[d]])));
 }
 
+// 匯入＝merge(這台, 檔案)。換一台空的裝置匯入，課程與其他進度一個欄位都不能少
+// （以前 merge 只留點名過的欄位：xp、白話證明、證明課、導覽、解鎖…整欄消失；沒有 attemptLog 的 problemStats 也消失 → 熟練／全破掉回完成）
+{
+  const rich = {
+    updatedAt: "2026-10-12T08:00:00.000Z",
+    xp: 345,
+    courseV2: {
+      "limit-intro": { openedAt: "2026-10-01T00:00:00.000Z", doneAt: "2026-10-01T00:10:00.000Z", quizBest: 3, quizAt: "2026-10-01T00:09:00.000Z", picks: { 0: [1], 1: [0, 2] }, secAt: 4, secDone: [0, 1, 2, 3, 4], xp: 45, tierXp: 2, solve: { 3: "first", 5: "later" }, rvAt: "2026-10-03T00:00:00.000Z", rvStep: 1, rvItems: ["a", "b"] },
+      "limit-laws": { openedAt: "2026-10-02T00:00:00.000Z", secAt: 2, secDone: [0, 1] }
+    },
+    courseV2Boss: { "1A": { solvedAt: "2026-10-02T00:00:00.000Z" } },
+    courseReadDays: { "2026-10-01": 5, "2026-10-02": 2 },
+    courseMap: { goal: "derivative-def", filter: "ready" },
+    courseGraduation: { correct: 8, total: 10, passed: true },
+    course: { "fn-what-is-a-function": { openedAt: "2026-09-20T00:00:00.000Z", doneAt: "2026-09-20T00:00:00.000Z" } },
+    problemStats: { "lim-001": { correct: 1, wrong: 0, total: 1 }, "lim-002": { correct: 2, wrong: 1, total: 3 } },
+    proofLang: { "pl-1": { text: "任取 ε > 0。", solvedAt: "2026-10-05T00:00:00.000Z", updatedAt: "2026-10-05T00:00:00.000Z", submissions: [{ verdict: "verified" }] } },
+    proofLangLessons: { "plesson-1": "2026-10-05T00:00:00.000Z" },
+    settings: { courseView: "full", narrRate: 1.25, narrSubs: true, theme: "light" },
+    tours: { home: 1, quiz: 1 },
+    unlocked: { proofs: true },
+    unitChests: { 0: "2026-10-01T00:00:00.000Z" },
+    questBonusDates: { "2026-10-01": true },
+    backupNoticeSeen: true
+  };
+  const fresh = store.merge({}, JSON.parse(JSON.stringify(rich)));
+  const lost = Object.keys(rich).filter((key) => key !== "updatedAt" && JSON.stringify(fresh[key]) !== JSON.stringify(rich[key]));
+  check("空裝置匯入：每一個欄位原封不動（課程、地圖偏好、讀課日、魔王題、xp、白話證明、證明課、導覽…）", !lost.length, lost.map((key) => `${key}=${JSON.stringify(fresh[key])}`).join(" "));
+  const back = store.merge(JSON.parse(JSON.stringify(rich)), {});
+  check("反過來（檔案是空的）也不丟", Object.keys(rich).every((key) => key === "updatedAt" || JSON.stringify(back[key]) === JSON.stringify(rich[key])));
+
+  // 兩台各讀了一部分：讀完的節取聯集、自己算取比較好的、做對過的題不能變少、xp 取大
+  const other = {
+    updatedAt: "2026-10-13T08:00:00.000Z",
+    xp: 120,
+    courseV2: { "limit-intro": { openedAt: "2026-10-04T00:00:00.000Z", secDone: [5, 6], solve: { 3: "tried", 6: "first" }, secAt: 6 } },
+    problemStats: { "lim-001": { correct: 0, wrong: 2, total: 2 } }
+  };
+  const both = store.merge(JSON.parse(JSON.stringify(rich)), other);
+  const flip = store.merge(other, JSON.parse(JSON.stringify(rich)));
+  const lesson = both.courseV2["limit-intro"] || {};
+  check("兩台合併：讀完的節取聯集", JSON.stringify(lesson.secDone) === "[0,1,2,3,4,5,6]", JSON.stringify(lesson.secDone));
+  check("兩台合併：自己算每一節取比較好的狀態", (lesson.solve || {})[3] === "first" && (lesson.solve || {})[5] === "later" && (lesson.solve || {})[6] === "first", JSON.stringify(lesson.solve));
+  check("兩台合併：完成時間與第一次打開取早的", lesson.doneAt === rich.courseV2["limit-intro"].doneAt && lesson.openedAt === rich.courseV2["limit-intro"].openedAt);
+  const ps = both.problemStats || {};
+  check("兩台合併：做對過的題不變少（沒有 attemptLog 也一樣）", (ps["lim-001"] || {}).correct === 1 && (ps["lim-001"] || {}).wrong === 2 && (ps["lim-002"] || {}).correct === 2, JSON.stringify(ps));
+  check("兩台合併：xp 取大", both.xp === 345, String(both.xp));
+  check("課程欄位的合併有交換律", JSON.stringify(both.courseV2) === JSON.stringify(flip.courseV2) && JSON.stringify(both.problemStats) === JSON.stringify(flip.problemStats) && both.xp === flip.xp);
+  check("課程欄位的合併冪等", JSON.stringify(store.merge(both, both).courseV2) === JSON.stringify(both.courseV2));
+}
+
 if (failures.length) {
   console.error("");
   console.error(`records v2 驗證失敗（${failures.length}）：`);
