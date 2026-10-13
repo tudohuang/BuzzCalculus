@@ -141,11 +141,23 @@
       "title": "什麼時候收斂",
       "beats": [
         { "show": ["$x\\to 0^+$：像 $x^{p-1}$，要 $p>0$"],
-          "say": "兩個端點都可能是瑕點。靠近零，被積函數像 x 的 p 減一次方，p 判別要 p 大於零。" },
+          "say": "兩個端點都可能是瑕點。靠近零，被積函數像 x 的 p 減一次方，p 判別要 p 大於零。",
+          "board": [
+            { "do": "write", "line": "$\\int_0^1 {{xp:x^{p-1}}}{{xq:(1-x)^{q-1}}}\\,dx$", "tint": { "xp": "blue", "xq": "violet" } },
+            { "do": "write", "line": "$x\\to 0^+$：像 ${{xp:x^{p-1}}}$", "on": "靠近零" },
+            { "do": "transform", "line": "$x\\to 0^+$：像 ${{xp:x^{p-1}}}$，要 $p>0$", "on": "p 判別" }
+          ] },
         { "show": ["$x\\to 1^-$：像 $(1-x)^{q-1}$，要 $q>0$"],
-          "say": "靠近一，像一減 x 的 q 減一次方，要 q 大於零。兩端分開檢查。" },
+          "say": "靠近一，像一減 x 的 q 減一次方，要 q 大於零。兩端分開檢查。",
+          "board": [
+            { "do": "write", "line": "$x\\to 1^-$：像 ${{xq:(1-x)^{q-1}}}$", "on": "靠近一" },
+            { "do": "transform", "line": "$x\\to 1^-$：像 ${{xq:(1-x)^{q-1}}}$，要 $q>0$", "on": "要 q" }
+          ] },
         { "show": ["$p>0$ 且 $q>0$ 時收斂"], "note": "小於 $1$ 也可以，只要大於 $0$。",
-          "say": "所以 p、q 都大於零就收斂。p 小於一只是端點衝到無限大，面積仍然有限。" }
+          "say": "所以 p、q 都大於零就收斂。p 小於一只是端點衝到無限大，面積仍然有限。",
+          "board": [
+            { "do": "write", "line": "$p>0$ 且 $q>0$ 時收斂", "color": "green", "on": "所以" }
+          ] }
       ],
       "check": 1
     },
@@ -163,11 +175,24 @@
       "title": "整數點",
       "beats": [
         { "show": ["$\\mathrm{B}(p,q+1)=\\frac{q}{p}\\mathrm{B}(p+1,q)$"], "note": "分部積分：$u=(1-x)^q$，邊界項是 $0$。",
-          "say": "分部積分一次，把一減 x 的次數搬一個給 x，前面多出 p 分之 q。" },
+          "say": "分部積分一次，把一減 x 的次數搬一個給 x，前面多出 p 分之 q。",
+          "board": [
+            { "do": "write", "line": "$\\mathrm{B}(p,{{q1:q+1}})={{fr:\\frac{q}{p}}}\\mathrm{B}({{p1:p+1}},q)$", "tint": { "q1": "violet", "p1": "blue" } },
+            { "do": "arrow", "from": "q1", "to": "p1", "label": "搬一個", "on": "搬一個" },
+            { "do": "focus", "term": "fr", "label": "多出來", "on": "前面多出" }
+          ] },
         { "show": ["$\\mathrm{B}(p,1)=\\int_0^1x^{p-1}\\,dx=\\frac{1}{p}$"],
-          "say": "一直搬到一減 x 的次數變零，剩下 x 的 p 減一次方，積分是 p 分之一。" },
+          "say": "一直搬到一減 x 的次數變零，剩下 x 的 p 減一次方，積分是 p 分之一。",
+          "board": [
+            { "do": "write", "line": "$\\mathrm{B}(p,{{one:1}})=\\int_0^1x^{p-1}\\,dx=\\frac{1}{p}$", "tint": { "one": "violet" }, "on": "一直搬到" },
+            { "do": "focus", "term": "one", "color": "violet", "label": "次數變零", "on": "次數變零" }
+          ] },
         { "show": ["$\\mathrm{B}(m,n)=\\frac{(m-1)!\\,(n-1)!}{(m+n-1)!}$"], "note": "$m$、$n$ 為正整數。",
-          "say": "整理起來，整數點的公式是兩個階乘相乘，除以 m 加 n 減一的階乘。" }
+          "say": "整理起來，整數點的公式是兩個階乘相乘，除以 m 加 n 減一的階乘。",
+          "board": [
+            { "do": "write", "line": "${{bm:\\mathrm{B}(m,n)=\\frac{(m-1)!\\,(n-1)!}{(m+n-1)!}}}$", "on": "整理起來" },
+            { "do": "box", "term": "bm", "color": "green", "on": "兩個階乘" }
+          ] }
       ],
       "check": 2
     },
@@ -192,11 +217,27 @@
       "title": "兩種變形",
       "beats": [
         { "show": ["$\\int_0^ax^{p-1}(a-x)^{q-1}\\,dx$", "$=a^{p+q-1}\\mathrm{B}(p,q)$"], "note": "令 $x=at$。",
-          "say": "區間是零到 a，令 x 等於 a t，多出 a 的 p 加 q 減一次方。" },
+          "say": "區間是零到 a，令 x 等於 a t，多出 a 的 p 加 q 減一次方。",
+          "board": [
+            { "do": "write", "line": "$\\int_0^a x^{p-1}(a-x)^{q-1}\\,dx$" },
+            { "do": "write", "line": "$= {{ap:a^{p+q-1}}}\\mathrm{B}(p,q)$", "on": "令 x 等於" },
+            { "do": "focus", "term": "ap", "label": "多出來", "on": "多出" }
+          ] },
         { "show": ["$\\int_0^2x^2(2-x)^3\\,dx=2^6\\,\\mathrm{B}(3,4)$", "$=\\frac{16}{15}$"],
-          "say": "例如零到二：二的六次方乘 Beta 三、四，六十四乘六十分之一，得十五分之十六。" },
+          "say": "例如零到二：二的六次方乘 Beta 三、四，六十四乘六十分之一，得十五分之十六。",
+          "board": [
+            { "do": "write", "line": "$\\int_0^2x^2(2-x)^3\\,dx=2^6\\,\\mathrm{B}(3,4)$", "on": "例如" },
+            { "do": "write", "line": "$=64\\cdot\\frac{1}{60}={{r:\\frac{16}{15}}}$", "on": "六十四乘" },
+            { "do": "box", "term": "r", "color": "green", "on": "得十五" }
+          ] },
         { "show": ["$\\mathrm{B}(p,q)=\\int_0^{\\infty}\\frac{t^{p-1}}{(1+t)^{p+q}}\\,dt$"], "note": "令 $x=\\frac{t}{1+t}$。",
-          "say": "令 x 等於一加 t 分之 t，Beta 也能寫成零到無限大的積分，分母是一加 t 的 p 加 q 次方。" }
+          "say": "令 x 等於一加 t 分之 t，Beta 也能寫成零到無限大的積分，分母是一加 t 的 p 加 q 次方。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "令 $x=\\frac{t}{1+t}$", "on": "令 x" },
+            { "do": "write", "line": "$\\mathrm{B}(p,q)=\\int_0^{\\infty}\\frac{t^{p-1}}{(1+t)^{ {{pq:p+q}}}}\\,dt$", "on": "Beta 也能" },
+            { "do": "focus", "term": "pq", "on": "分母是" }
+          ] }
       ],
       "predict": {
         "ask": "$\\int_0^{\\infty}\\frac{t}{(1+t)^5}\\,dt$ 是哪個 Beta？",

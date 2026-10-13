@@ -60,18 +60,46 @@
     {
       "title": "sin 換成 cos",
       "beats": [
-        {"show":["令 $x=\\frac{\\pi}{2}-t$"],"note":"$\\sin$ 變 $\\cos$，區間不變。","say":"第一個對稱：x 換成二分之派減 t，sine 變成 cosine，區間還是零到二分之派。"},
-        {"show":["$\\int_0^{\\pi/2}\\ln(\\cos x)\\,dx=I$"],"say":"所以自然對數 cosine 的積分，跟原來的 I 一樣大。圖上兩條曲線左右對稱。"},
-        {"show":["$2I=\\int_0^{\\pi/2}\\ln(\\sin x\\cos x)\\,dx$"],"note":"兩個加起來，對數相加變相乘。","say":"兩個加起來得到兩倍的 I，對數相加變成 sine 乘 cosine 的對數。"}
+        {"show":["令 $x=\\frac{\\pi}{2}-t$"],"note":"$\\sin$ 變 $\\cos$，區間不變。","say":"第一個對稱：x 換成二分之派減 t，sine 變成 cosine，區間還是零到二分之派。",
+          "board": [
+            { "do": "write", "line": "令 $x=\\frac{\\pi}{2}-t$" },
+            { "do": "write", "line": "${{s:\\sin x}}\\to{{c:\\cos t}}$，區間不變", "tint": { "s": "blue", "c": "violet" }, "on": "sine 變成" }
+          ]},
+        {"show":["$\\int_0^{\\pi/2}\\ln(\\cos x)\\,dx=I$"],"say":"所以自然對數 cosine 的積分，跟原來的 I 一樣大。圖上兩條曲線左右對稱。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "$\\int_0^{\\pi/2}\\ln({{c2:\\cos x}})\\,dx={{i:I}}$", "tint": { "c2": "violet" }, "on": "自然對數" },
+            { "do": "focus", "term": "i", "on": "原來的 I" },
+            { "do": "plot", "graph": {"window":[-0.08,1.65,-3.2,0.45],"curves":[{"expr":"log(sin(x))","domain":[0.04,1.5708],"color":"blue"},{"expr":"log(cos(x))","domain":[0,1.5308],"color":"violet"}],"dashed":[[[0.7854,-3.1],[0.7854,0.3]]],"ticks":false}, "on": "圖上" }
+          ]},
+        {"show":["$2I=\\int_0^{\\pi/2}\\ln(\\sin x\\cos x)\\,dx$"],"note":"兩個加起來，對數相加變相乘。","say":"兩個加起來得到兩倍的 I，對數相加變成 sine 乘 cosine 的對數。",
+          "board": [
+            { "do": "write", "line": "$2I=\\int_0^{\\pi/2}\\ln({{p:\\sin x\\cos x}})\\,dx$", "on": "兩倍的 I" },
+            { "do": "underline", "term": "p", "on": "sine 乘" }
+          ]}
       ],
       "check": 3
     },
     {
       "title": "等於自己的一部分",
       "beats": [
-        {"show":["$2I=\\int_0^{\\pi/2}\\ln(\\sin 2x)\\,dx-\\frac{\\pi}{2}\\ln 2$"],"say":"sine 乘 cosine 是二分之一 sine 二 x，減掉的自然對數二積過區間，得二分之派乘自然對數二。"},
-        {"show":["$u=2x$：$\\frac{1}{2}\\int_0^{\\pi}\\ln(\\sin u)\\,du$"],"note":"區間變成 $[0,\\pi]$，前面多 $\\frac{1}{2}$。","say":"剩下那項令 u 等於二 x：區間變成零到派，前面多一個二分之一。"},
-        {"show":["$\\sin u$ 對 $u=\\frac{\\pi}{2}$ 對稱"],"note":"$\\int_0^{\\pi}\\ln(\\sin u)\\,du=2I$","say":"第二個對稱：sine 在零到派，對二分之派左右對稱，所以零到派的積分是兩倍的 I。"}
+        {"show":["$2I=\\int_0^{\\pi/2}\\ln(\\sin 2x)\\,dx-\\frac{\\pi}{2}\\ln 2$"],"say":"sine 乘 cosine 是二分之一 sine 二 x，減掉的自然對數二積過區間，得二分之派乘自然對數二。",
+          "board": [
+            { "do": "write", "line": "$\\sin x\\cos x=\\frac{1}{2}\\sin 2x$" },
+            { "do": "write", "line": "$2I=\\int_0^{\\pi/2}\\ln({{s2:\\sin 2x}})\\,dx-{{l2:\\frac{\\pi}{2}\\ln 2}}$", "on": "減掉" },
+            { "do": "underline", "term": "l2", "on": "二分之派乘" }
+          ]},
+        {"show":["$u=2x$：$\\frac{1}{2}\\int_0^{\\pi}\\ln(\\sin u)\\,du$"],"note":"區間變成 $[0,\\pi]$，前面多 $\\frac{1}{2}$。","say":"剩下那項令 u 等於二 x：區間變成零到派，前面多一個二分之一。",
+          "board": [
+            { "do": "write", "line": "$u=2x$：${{h:\\frac{1}{2}}}\\int_0^{ {{pi:\\pi}} }\\ln(\\sin u)\\,du$", "on": "u 等於" },
+            { "do": "focus", "term": "pi", "on": "零到派" },
+            { "do": "focus", "term": "h", "on": "前面" }
+          ]},
+        {"show":["$\\sin u$ 對 $u=\\frac{\\pi}{2}$ 對稱"],"note":"$\\int_0^{\\pi}\\ln(\\sin u)\\,du=2I$","say":"第二個對稱：sine 在零到派，對二分之派左右對稱，所以零到派的積分是兩倍的 I。",
+          "board": [
+            { "do": "keep", "n": 2 },
+            { "do": "plot", "graph": {"window":[-0.12,3.26,-3.2,0.5],"curves":[{"expr":"log(sin(x))","domain":[0.04,3.1016],"color":"ink"}],"fills":[{"expr":"log(sin(x))","from":0.04,"to":1.5708,"color":"blue"},{"expr":"log(sin(x))","from":1.5708,"to":3.1016,"color":"violet"}],"dashed":[[[1.5708,-3.1],[1.5708,0.35]]],"ticks":false}, "on": "對二分之派" }
+          ]}
       ],
       "predict": {
         "ask": "$\\frac{1}{2}\\int_0^{\\pi}\\ln(\\sin u)\\,du$ 等於？",

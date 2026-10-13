@@ -51,10 +51,25 @@
     {
       "title": "長度和角度",
       "beats": [
-        {"show":["$r=\\sqrt{a^2+b^2}=|z|$"],"say":"點 a 逗號 b 也可以用極座標描述：先量它到原點有多遠，就是 z 的絕對值 r。"},
-        {"show":["$\\theta=\\arg z$"],"note":"從正實軸逆時針量到它的角。","say":"再量角度：從正實軸逆時針轉到這個點，轉了多少，叫做輻角。"},
-        {"show":["$z=r(\\cos\\theta+i\\sin\\theta)$"],"say":"有了長度和角度，z 就寫成 r 乘上 cosine theta 加 i sine theta，這叫極式。"},
-        {"show":["主值 $\\operatorname{Arg}z\\in(-\\pi,\\pi]$"],"note":"加 $2\\pi$ 的整數倍是同一個點；$z=0$ 沒有輻角。","say":"輻角不唯一，多轉一整圈還是同一個點，所以常取主值，在負派到派之間。"}
+        {"show":["$r=\\sqrt{a^2+b^2}=|z|$"],"say":"點 a 逗號 b 也可以用極座標描述：先量它到原點有多遠，就是 z 的絕對值 r。",
+          "board": [
+            { "do": "plot", "graph": { "window": [-0.6,4.6,-0.4,2.5], "equal": true, "ticks": false, "curves": [{ "expr": "2*x/3", "domain": [0,3], "color": "blue" }], "dashed": [[[3,0],[3,2]]], "points": [{ "x": 3, "y": 2}], "labels": [{ "x": 3.12, "y": 2.25, "text": "(a, b)", "anchor": "start" },{ "x": 1.35, "y": 1.25, "text": "r", "anchor": "end" }]} },
+            { "do": "write", "line": "${{r:r}}=\\sqrt{a^2+b^2}=|z|$", "tint": { "r": "blue" }, "on": "到原點" }
+          ]},
+        {"show":["$\\theta=\\arg z$"],"note":"從正實軸逆時針量到它的角。","say":"再量角度：從正實軸逆時針轉到這個點，轉了多少，叫做輻角。",
+          "board": [
+            { "do": "transform", "line": "${{r:r}}=|z|$，${{t:\\theta}}=\\arg z$", "tint": { "t": "violet" } },
+            { "do": "focus", "term": "t", "label": "輻角", "on": "逆時針" }
+          ]},
+        {"show":["$z=r(\\cos\\theta+i\\sin\\theta)$"],"say":"有了長度和角度，z 就寫成 r 乘上 cosine theta 加 i sine theta，這叫極式。",
+          "board": [
+            { "do": "transform", "line": "$z={{r:r}}(\\cos{{t:\\theta}}+i\\sin\\theta)$", "on": "z 就寫成" }
+          ]},
+        {"show":["主值 $\\operatorname{Arg}z\\in(-\\pi,\\pi]$"],"note":"加 $2\\pi$ 的整數倍是同一個點；$z=0$ 沒有輻角。","say":"輻角不唯一，多轉一整圈還是同一個點，所以常取主值，在負派到派之間。",
+          "board": [
+            { "do": "focus", "term": "t", "label": "加 2π 同一點", "on": "多轉一整圈" },
+            { "do": "write", "line": "主值 $\\operatorname{Arg}z\\in(-\\pi,\\pi]$", "on": "所以" }
+          ]}
       ],
       "predict": {
         "ask": "$1+i$ 的長度與輻角是？",
@@ -68,10 +83,28 @@
     {
       "title": "角度要看象限",
       "beats": [
-        {"show":["$\\tan\\theta=\\frac{b}{a}$ 只決定到差 $\\pi$"],"note":"$-1+\\sqrt{3}\\,i$ 與 $1-\\sqrt{3}\\,i$ 都是 $-\\sqrt{3}$。","say":"小心：a 分之 b 只決定角度到差一個派。對面的兩個點，比值一模一樣。"},
-        {"show":["$-1+\\sqrt{3}\\,i$：$r=2$"],"note":"點在第二象限。","say":"例如負一加根號三 i，長度是根號四等於二，點在第二象限。"},
-        {"show":["$\\arctan\\frac{\\sqrt{3}}{-1}=-\\frac{\\pi}{3}$：第四象限，不對"],"say":"arctan 只給負二分之派到二分之派，算出負三分之派，落在第四象限，方向反了。"},
-        {"show":["加 $\\pi$：$\\theta=\\frac{2\\pi}{3}$"],"note":"先畫點、看象限，再找角度。","say":"要加一個派，得到三分之二派。最可靠的做法：先畫點，看象限，再找角度。"}
+        {"show":["$\\tan\\theta=\\frac{b}{a}$ 只決定到差 $\\pi$"],"note":"$-1+\\sqrt{3}\\,i$ 與 $1-\\sqrt{3}\\,i$ 都是 $-\\sqrt{3}$。","say":"小心：a 分之 b 只決定角度到差一個派。對面的兩個點，比值一模一樣。",
+          "board": [
+            { "do": "write", "line": "$\\tan\\theta=\\frac{b}{a}$ 只決定到差 ${{p:\\pi}}$" },
+            { "do": "focus", "term": "p", "on": "差一個派" },
+            { "do": "write", "line": "$-1+\\sqrt{3}\\,i$、$1-\\sqrt{3}\\,i$：$\\frac{b}{a}={{q:-\\sqrt{3}}}$", "on": "對面的兩個點" },
+            { "do": "focus", "term": "q", "on": "一模一樣" }
+          ]},
+        {"show":["$-1+\\sqrt{3}\\,i$：$r=2$"],"note":"點在第二象限。","say":"例如負一加根號三 i，長度是根號四等於二，點在第二象限。",
+          "board": [
+            { "do": "clear" },
+            { "do": "plot", "graph": { "window": [-3.4,3.4,-2,2], "equal": true, "ticks": false, "curves": [{ "expr": "-sqrt(3)*x", "domain": [-1,0], "color": "blue" }], "dashed": [[[0,0],[1,-1.7321]]], "points": [{ "x": -1, "y": 1.7321},{ "x": 1, "y": -1.7321}], "labels": [{ "x": -1.15, "y": 1.75, "text": "−1+√3 i", "anchor": "end" },{ "x": 1.15, "y": -1.75, "text": "1−√3 i", "anchor": "start" },{ "x": -0.7, "y": 0.5, "text": "r = 2", "anchor": "end" }]}, "on": "例如" }
+          ]},
+        {"show":["$\\arctan\\frac{\\sqrt{3}}{-1}=-\\frac{\\pi}{3}$：第四象限，不對"],"say":"arctan 只給負二分之派到二分之派，算出負三分之派，落在第四象限，方向反了。",
+          "board": [
+            { "do": "write", "line": "$\\arctan\\frac{\\sqrt{3}}{-1}={{w:-\\frac{\\pi}{3}}}$" },
+            { "do": "circle", "term": "w", "color": "red", "on": "落在第四象限" }
+          ]},
+        {"show":["加 $\\pi$：$\\theta=\\frac{2\\pi}{3}$"],"note":"先畫點、看象限，再找角度。","say":"要加一個派，得到三分之二派。最可靠的做法：先畫點，看象限，再找角度。",
+          "board": [
+            { "do": "write", "line": "加 $\\pi$：$\\theta={{a:\\frac{2\\pi}{3}}}$" },
+            { "do": "box", "term": "a", "color": "green", "on": "三分之二派" }
+          ]}
       ],
       "check": 0
     },
@@ -96,10 +129,26 @@
     {
       "title": "$n$ 次方根",
       "beats": [
-        {"show":["$w^n=r(\\cos\\theta+i\\sin\\theta)$"],"say":"反過來解 w 的 n 次方等於一個複數，長度和角度分開來解。"},
-        {"show":["$|w|=r^{1/n}$"],"say":"長度：w 的長度的 n 次方要等於 r，所以是 r 開 n 次方根。"},
-        {"show":["$\\varphi=\\frac{\\theta+2\\pi k}{n}$"],"note":"$k=0,1,\\dots,n-1$","say":"角度：n 倍的角度可以是 theta 再加好幾圈，所以先加二派 k 再除以 n。"},
-        {"show":["正 $n$ 邊形的頂點"],"note":"$k=n$ 又回到 $k=0$ 的根。","say":"k 取 n 個值，得到 n 個不同的根，排成圓上正 n 邊形的頂點。"}
+        {"show":["$w^n=r(\\cos\\theta+i\\sin\\theta)$"],"say":"反過來解 w 的 n 次方等於一個複數，長度和角度分開來解。",
+          "board": [
+            { "do": "write", "line": "$w^n={{r:r}}(\\cos{{t:\\theta}}+i\\sin\\theta)$", "tint": { "r": "blue", "t": "violet" } }
+          ]},
+        {"show":["$|w|=r^{1/n}$"],"say":"長度：w 的長度的 n 次方要等於 r，所以是 r 開 n 次方根。",
+          "board": [
+            { "do": "write", "line": "$|w|={{l:r^{1/n}}}$" },
+            { "do": "underline", "term": "l", "on": "所以是" }
+          ]},
+        {"show":["$\\varphi=\\frac{\\theta+2\\pi k}{n}$"],"note":"$k=0,1,\\dots,n-1$","say":"角度：n 倍的角度可以是 theta 再加好幾圈，所以先加二派 k 再除以 n。",
+          "board": [
+            { "do": "write", "line": "$\\varphi=\\frac{ {{t:\\theta}}+{{k:2\\pi k}}}{n}$" },
+            { "do": "underline", "term": "k", "label": "加好幾圈", "on": "好幾圈" }
+          ]},
+        {"show":["正 $n$ 邊形的頂點"],"note":"$k=n$ 又回到 $k=0$ 的根。","say":"k 取 n 個值，得到 n 個不同的根，排成圓上正 n 邊形的頂點。",
+          "board": [
+            { "do": "keep", "n": 1 },
+            { "do": "write", "line": "$k=0,1,\\dots,n-1$：$n$ 個根", "on": "k 取" },
+            { "do": "plot", "graph": { "window": [-2.1,2.1,-1.15,1.15], "equal": true, "ticks": false, "curves": [{ "param": { "x": "cos(t)", "y": "sin(t)", "t": [0,6.2832]}, "color": "muted" }], "fills": [{ "pts": [[0.9553,0.2955],[0.0142,0.9999],[-0.9466,0.3225],[-0.5992,-0.8006],[0.5763,-0.8173]], "color": "violet" }], "points": [{ "x": 0.9553, "y": 0.2955},{ "x": 0.0142, "y": 0.9999},{ "x": -0.9466, "y": 0.3225},{ "x": -0.5992, "y": -0.8006},{ "x": 0.5763, "y": -0.8173}]}, "on": "正 n 邊形" }
+          ]}
       ],
       "check": 3
     },

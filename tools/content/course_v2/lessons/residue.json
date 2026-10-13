@@ -44,27 +44,51 @@
     {
       "title": "唯一留下來的係數",
       "beats": [
-        {"show":["$f=\\sum a_n(z-z_0)^n$，$0<|z-z_0|<r$"],"note":"孤立奇異點的 Laurent 級數。","say":"z 零是孤立奇異點，f 在它周圍的去心圓盤上有 Laurent 級數。"},
-        {"show":["$\\operatorname{Res}_{z_0}f=a_{-1}$"],"say":"留數的定義很簡單：就是負一次方那一項的係數。"},
-        {"show":["$\\operatorname{Res}_{z_0}f=\\frac{1}{2\\pi i}\\oint f\\,dz$"],"note":"繞一小圈，其他項都積成 $0$。","say":"名字的由來：繞 z 零一小圈積分，其他項都積成零，只留下二派 i 乘這個係數。"}
+        {"show":["$f=\\sum a_n(z-z_0)^n$，$0<|z-z_0|<r$"],"note":"孤立奇異點的 Laurent 級數。","say":"z 零是孤立奇異點，f 在它周圍的去心圓盤上有 Laurent 級數。","board":[
+          {"do":"write","line":"$f=\\sum a_n(z-z_0)^n$，${{disk:0<|z-z_0|<r}}$"},
+          {"do":"underline","term":"disk","on":"去心圓盤"}]},
+        {"show":["$\\operatorname{Res}_{z_0}f=a_{-1}$"],"say":"留數的定義很簡單：就是負一次方那一項的係數。","board":[
+          {"do":"write","line":"$f=\\cdots+\\frac{a_{-2}}{(z-z_0)^2}+{{am:\\frac{a_{-1}}{z-z_0}}}+a_0+\\cdots$"},
+          {"do":"underline","term":"am","on":"負一次方"},
+          {"do":"write","line":"$\\operatorname{Res}_{z_0}f={{c:a_{-1}}}$","on":"係數"}]},
+        {"show":["$\\operatorname{Res}_{z_0}f=\\frac{1}{2\\pi i}\\oint f\\,dz$"],"note":"繞一小圈，其他項都積成 $0$。","say":"名字的由來：繞 z 零一小圈積分，其他項都積成零，只留下二派 i 乘這個係數。","board":[
+          {"do":"keep","n":1},
+          {"do":"write","line":"$\\oint f\\,dz=2\\pi i\\cdot{{c:a_{-1}}}$","on":"繞 z 零"},
+          {"do":"focus","term":"c","on":"二派 i 乘"}]}
       ],
       "check": 2
     },
     {
       "title": "簡單極點",
       "beats": [
-        {"show":["$f=\\frac{a_{-1}}{z-z_0}+a_0+\\cdots$"],"note":"1 階極點。","say":"簡單極點，也就是一階極點：主要部分只有負一次方那一項。"},
-        {"show":["$\\operatorname{Res}=\\lim_{z\\to z_0}(z-z_0)f(z)$"],"say":"乘上 z 減 z 零，把那一項變成常數，其他項都趨近零，取極限就拿到留數。"},
-        {"show":["$f=\\frac{g}{h}$：$\\operatorname{Res}=\\frac{g(z_0)}{h'(z_0)}$"],"note":"$g(z_0)\\ne 0$，$h$ 在 $z_0$ 是 1 階零點。","say":"更常用的：分母在 z 零是一階零點，留數就是 g 在 z 零的值除以 h prime。不用因式分解。"}
+        {"show":["$f=\\frac{a_{-1}}{z-z_0}+a_0+\\cdots$"],"note":"1 階極點。","say":"簡單極點，也就是一階極點：主要部分只有負一次方那一項。","board":[
+          {"do":"write","line":"$f={{pp:\\frac{a_{-1}}{z-z_0}}}+a_0+\\cdots$"},
+          {"do":"underline","term":"pp","on":"只有負一次方"}]},
+        {"show":["$\\operatorname{Res}=\\lim_{z\\to z_0}(z-z_0)f(z)$"],"say":"乘上 z 減 z 零，把那一項變成常數，其他項都趨近零，取極限就拿到留數。","board":[
+          {"do":"write","line":"$(z-z_0)f=a_{-1}+{{rest:a_0(z-z_0)+\\cdots}}$","on":"乘上"},
+          {"do":"underline","term":"rest","label":"→ 0","on":"其他項"},
+          {"do":"write","line":"$\\operatorname{Res}=\\lim_{z\\to z_0}(z-z_0)f(z)$","on":"取極限"}]},
+        {"show":["$f=\\frac{g}{h}$：$\\operatorname{Res}=\\frac{g(z_0)}{h'(z_0)}$"],"note":"$g(z_0)\\ne 0$，$h$ 在 $z_0$ 是 1 階零點。","say":"更常用的：分母在 z 零是一階零點，留數就是 g 在 z 零的值除以 h prime。不用因式分解。","board":[
+          {"do":"keep","n":1},
+          {"do":"write","line":"$f=\\frac{g}{h}$：$\\operatorname{Res}=\\frac{g(z_0)}{{{hp:h'(z_0)}}}$","on":"更常用的"},
+          {"do":"focus","term":"hp","on":"h prime"}]}
       ],
       "check": 0
     },
     {
       "title": "兩個簡單極點",
       "beats": [
-        {"show":["$\\operatorname{Res}_{z=i}\\frac{1}{z^2+1}=\\frac{1}{2i}=-\\frac{i}{2}$"],"note":"$h'=2z$。","say":"z 平方加一分之一在 i：h prime 是二 z，代 i 得二 i，留數是二 i 分之一。"},
-        {"show":["檢查：$\\pi=2\\pi i\\cdot\\frac{1}{2i}$"],"note":"Cauchy 積分公式算過 $\\pi$。","say":"對照上一章：繞 i 一圈的積分是派，剛好等於二派 i 乘這個留數。"},
-        {"show":["$\\cot z=\\frac{\\cos z}{\\sin z}$ 在 $0$"],"note":"$\\sin 0=0$，$\\cos 0=1\\ne 0$。","say":"再看 cotangent 在零：分母 sine z 在零是一階零點，因為它的導數 cosine 零是一。"}
+        {"show":["$\\operatorname{Res}_{z=i}\\frac{1}{z^2+1}=\\frac{1}{2i}=-\\frac{i}{2}$"],"note":"$h'=2z$。","say":"z 平方加一分之一在 i：h prime 是二 z，代 i 得二 i，留數是二 i 分之一。","board":[
+          {"do":"write","line":"$\\frac{1}{z^2+1}$ 在 $i$：$h'={{hp:2z}}$"},
+          {"do":"write","line":"$\\operatorname{Res}=\\frac{1}{{{hi:2i}}}=-\\frac{i}{2}$","on":"代 i"},
+          {"do":"focus","term":"hi","on":"得二 i"}]},
+        {"show":["檢查：$\\pi=2\\pi i\\cdot\\frac{1}{2i}$"],"note":"Cauchy 積分公式算過 $\\pi$。","say":"對照上一章：繞 i 一圈的積分是派，剛好等於二派 i 乘這個留數。","board":[
+          {"do":"write","line":"檢查：$\\pi=2\\pi i\\cdot\\frac{1}{2i}$"}]},
+        {"show":["$\\cot z=\\frac{\\cos z}{\\sin z}$ 在 $0$"],"note":"$\\sin 0=0$，$\\cos 0=1\\ne 0$。","say":"再看 cotangent 在零：分母 sine z 在零是一階零點，因為它的導數 cosine 零是一。","board":[
+          {"do":"clear"},
+          {"do":"write","line":"$\\cot z=\\frac{\\cos z}{{{s:\\sin z}}}$","on":"cotangent"},
+          {"do":"write","line":"$\\sin 0=0$，${{c:\\cos 0=1}}\\ne 0$","on":"一階零點"},
+          {"do":"focus","term":"c","on":"導數"}]}
       ],
       "predict": {
         "ask": "$\\operatorname{Res}_{z=0}\\cot z$ 是？",

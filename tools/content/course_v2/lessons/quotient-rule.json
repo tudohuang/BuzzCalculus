@@ -279,7 +279,11 @@
       "proof": true, "of": 4, "skeleton": "直接",
       "beats": [
         { "show": ["先通分，分子加減 $f(x)g(x)$"],
-          "say": "策略：f、g 在 x 可微，g 在 x 不是零。先通分，再像乘法法則一樣，分子加一項減一項。" },
+          "say": "策略：f、g 在 x 可微，g 在 x 不是零。先通分，再像乘法法則一樣，分子加一項減一項。",
+          "board": [
+            { "do": "write", "line": "$f,g$ 在 $x$ 可微，$g(x)\\ne0$" },
+            { "do": "write", "line": "先通分，分子加減 $f(x)g(x)$", "on": "先通分" }
+          ] },
         { "show": ["$h$ 夠小時 $g(x+h)\\ne0$"], "note": "$g$ 可微所以連續，$x$ 附近不會是 $0$。",
           "why": {
             "ask": "為什麼 $g(x+h)$ 不是 $0$？",
@@ -290,11 +294,27 @@
               { "label": "分母本來就不能是 $0$", "why": "那是要求，不是理由；要說明它真的不是 0，靠的是 $g$ 連續。" }
             ]
           },
-          "say": "g 在 x 可微，所以連續；g 在 x 不是零，h 夠小時 g 在 x 加 h 也不是零，才能放在分母。" },
+          "say": "g 在 x 可微，所以連續；g 在 x 不是零，h 夠小時 g 在 x 加 h 也不是零，才能放在分母。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "$h$ 夠小時 ${{gh:g(x+h)\\ne0}}$", "on": "要除以" },
+            { "do": "underline", "term": "gh", "label": "g 連續", "why": true, "on": "所以連續" }
+          ] },
         { "show": ["分子：$f(x+h)g(x)-f(x)g(x+h)$", "分母：$g(x+h)g(x)$"],
-          "say": "兩個分式通分，分母是兩個 g 相乘，分子是交叉相乘再相減。" },
+          "say": "兩個分式通分，分母是兩個 g 相乘，分子是交叉相乘再相減。",
+          "board": [
+            { "do": "write", "line": "$\\dfrac{ {{num:f(x+h)g(x)-f(x)g(x+h)}} }{ {{den:g(x+h)g(x)}} }$", "on": "通分" },
+            { "do": "underline", "term": "den", "on": "分母是" },
+            { "do": "underline", "term": "num", "on": "分子是" }
+          ] },
         { "show": ["分子 $=[f(x+h)-f(x)]g(x)$", "$\\ -f(x)[g(x+h)-g(x)]$"],
-          "say": "分子加一個 f 在 x 乘 g 在 x，再減一個，重新分組，就出現 f 的變化和 g 的變化。" },
+          "say": "分子加一個 f 在 x 乘 g 在 x，再減一個，重新分組，就出現 f 的變化和 g 的變化。",
+          "board": [
+            { "do": "write", "line": "分子 $={{df:[f(x+h)-f(x)]}}\\,g(x)$", "tint": { "df": "blue" }, "on": "重新分組" },
+            { "do": "write", "line": "$\\quad-f(x)\\,{{dg:[g(x+h)-g(x)]}}$", "tint": { "dg": "violet" }, "on": "就出現" },
+            { "do": "focus", "term": "df", "on": "f 的變化" },
+            { "do": "focus", "term": "dg", "on": "g 的變化" }
+          ] },
         { "show": ["除以 $h$，$h\\to0$：", "$\\frac{f'(x)g(x)-f(x)g'(x)}{g(x)^2}$"], "note": "分母 $g(x+h)g(x)\\to g(x)^2$。",
           "why": {
             "ask": "分母為什麼趨近 $g(x)^2$？",
@@ -305,7 +325,12 @@
               { "label": "分母跟 $h$ 無關", "why": "分母裡有 $g(x+h)$，會跟著 $h$ 變；它趨近 $g(x)$ 靠的是 $g$ 連續。" }
             ]
           },
-          "say": "分子的兩個差商趨近 f prime 和 g prime；分母靠 g 連續，趨近 g 在 x 的平方。證完。" }
+          "say": "分子的兩個差商趨近 f prime 和 g prime；分母靠 g 連續，趨近 g 在 x 的平方。證完。",
+          "board": [
+            { "do": "keep", "n": 2 },
+            { "do": "write", "line": "$\\dfrac{ {{fp:f'(x)}}g(x)-f(x){{gp:g'(x)}} }{ {{g2:g(x)^2}} }$", "tint": { "fp": "blue", "gp": "violet" }, "on": "分母裡有" },
+            { "do": "underline", "term": "g2", "label": "g 連續", "why": true, "on": "分母靠" }
+          ] }
       ],
       "order": {
         "ask": "把證明排回順序：依序點每一步",

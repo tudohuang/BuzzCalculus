@@ -152,11 +152,23 @@
       "title": "關鍵：$W_n$ 遞減",
       "beats": [
         { "show": ["$W_{2m+1}\\le W_{2m}\\le W_{2m-1}$"], "note": "$0\\le\\sin x\\le 1$，次方越高越小。",
-          "say": "證明靠上一課的 Wallis 積分。sine 在零和一之間，次方越高越小，所以 W n 遞減。" },
+          "say": "證明靠上一課的 Wallis 積分。sine 在零和一之間，次方越高越小，所以 W n 遞減。",
+          "board": [
+            { "do": "write", "line": "${{s:0\\le\\sin x\\le 1}}$：次方越高越小" },
+            { "do": "focus", "term": "s", "on": "sine 在零" },
+            { "do": "write", "line": "$W_{2m+1}\\le {{w0:W_{2m}}}\\le W_{2m-1}$", "tint": { "w0": "violet" }, "on": "所以 W n" }
+          ] },
         { "show": ["$1\\le\\frac{W_{2m}}{W_{2m+1}}\\le\\frac{2m+1}{2m}$"], "note": "全部除以 $W_{2m+1}$，右邊用遞迴。",
-          "say": "全部除以 W 二 m 加一。右邊用遞迴算出來是二 m 分之二 m 加一，它趨近一。" },
+          "say": "全部除以 W 二 m 加一。右邊用遞迴算出來是二 m 分之二 m 加一，它趨近一。",
+          "board": [
+            { "do": "write", "line": "$1\\le\\dfrac{{{w0:W_{2m}}}}{W_{2m+1}}\\le{{rt:\\dfrac{2m+1}{2m}}}$", "on": "全部除以" },
+            { "do": "underline", "term": "rt", "label": "→ 1", "on": "遞迴算出來" }
+          ] },
         { "show": ["夾擠：$\\frac{W_{2m}}{W_{2m+1}}\\to 1$"], "note": "把兩個 Wallis 的值代進去，就是 $\\frac{\\pi}{2}$ 乘上部分乘積的倒數。",
-          "say": "夾擠定理說中間的比值趨近一。把兩個 Wallis 的值代進去整理，就得到二分之 pi 等於那個乘積。" }
+          "say": "夾擠定理說中間的比值趨近一。把兩個 Wallis 的值代進去整理，就得到二分之 pi 等於那個乘積。",
+          "board": [
+            { "do": "write", "line": "夾擠：$\\dfrac{{{w0:W_{2m}}}}{W_{2m+1}}\\to 1$", "color": "green", "on": "夾擠定理" }
+          ] }
       ],
       "check": 1
     },
@@ -196,7 +208,10 @@
       "proof": true, "of": "ex2", "skeleton": "直接",
       "beats": [
         { "show": ["$\\frac{\\binom{2n}{n}}{4^n}$ 寫成 $W_{2n}$，再估 $W_{2n}$"], "note": "不用 Stirling，只用不變量。",
-          "say": "策略：先把中央二項式係數除以四的 n 次方，寫成 Wallis 積分，再用不變量估它的大小。" },
+          "say": "策略：先把中央二項式係數除以四的 n 次方，寫成 Wallis 積分，再用不變量估它的大小。",
+          "board": [
+            { "do": "write", "line": "$\\frac{\\binom{2n}{n}}{4^n}$ → 寫成 ${{w:W_{2n}}}$ → 估大小", "tint": { "w": "violet" } }
+          ] },
         { "show": ["$\\frac{\\binom{2n}{n}}{4^n}=\\frac{2}{\\pi}W_{2n}$"], "note": "分子分母同乘 $2\\cdot 4\\cdots(2n)$。",
           "why": {
             "ask": "為什麼它會是 $W_{2n}$ 的倍數？",
@@ -207,13 +222,29 @@
               { "label": "Stirling 公式", "why": "這個證明正是要繞開 Stirling；用到的只是 $W_{2n}$ 的公式。" }
             ]
           },
-          "say": "W 二 n 是一串奇數除以偶數，再乘二分之 pi。分子分母同乘偶數的乘積，就變成中央二項式係數除以四的 n 次方。" },
+          "say": "W 二 n 是一串奇數除以偶數，再乘二分之 pi。分子分母同乘偶數的乘積，就變成中央二項式係數除以四的 n 次方。",
+          "board": [
+            { "do": "write", "line": "$\\dfrac{\\binom{2n}{n}}{4^n}=\\dfrac{2}{\\pi}{{w:W_{2n}}}$" },
+            { "do": "write", "line": "${{w:W_{2n}}}=\\dfrac{1\\cdot3\\cdots(2n-1)}{2\\cdot4\\cdots(2n)}\\cdot\\dfrac{\\pi}{2}$", "why": true, "on": "一串奇數" }
+          ] },
         { "show": ["$2nW_{2n}W_{2n-1}=\\frac{\\pi}{2}$"], "note": "不變量 $nW_nW_{n-1}=\\frac{\\pi}{2}$，$n$ 換成 $2n$。",
-          "say": "不變量對每個 n 都成立，把 n 換成二 n。" },
+          "say": "不變量對每個 n 都成立，把 n 換成二 n。",
+          "board": [
+            { "do": "write", "line": "$2n\\,{{w:W_{2n}}}\\,{{v:W_{2n-1}}}=\\frac{\\pi}{2}$", "tint": { "v": "blue" } }
+          ] },
         { "show": ["$W_{2n}\\sim W_{2n-1}$ ⇒ $W_{2n}^2\\sim\\frac{\\pi}{4n}$"], "note": "$W_n$ 遞減，相鄰兩項的比值夾到 $1$。",
-          "say": "W n 遞減，相鄰兩項的比值被夾到一，乘積就可以換成平方：W 二 n 平方等價於四 n 分之 pi。" },
+          "say": "W n 遞減，相鄰兩項的比值被夾到一，乘積就可以換成平方：W 二 n 平方等價於四 n 分之 pi。",
+          "board": [
+            { "do": "keep", "n": 1 },
+            { "do": "write", "line": "${{w:W_{2n}}}\\sim {{v:W_{2n-1}}}$ ⇒ $W_{2n}^2\\sim\\frac{\\pi}{4n}$", "on": "比值" }
+          ] },
         { "show": ["$W_{2n}\\sim\\frac{1}{2}\\sqrt{\\frac{\\pi}{n}}$", "代回：$\\frac{\\binom{2n}{n}}{4^n}\\sim\\frac{1}{\\sqrt{\\pi n}}$"], "note": "$\\frac{2}{\\pi}\\cdot\\frac{1}{2}\\sqrt{\\frac{\\pi}{n}}=\\frac{1}{\\sqrt{\\pi n}}$。",
-          "say": "開根號，再代回去：pi 分之二乘二分之一根號 n 分之 pi，就是根號 pi n 分之一。" }
+          "say": "開根號，再代回去：pi 分之二乘二分之一根號 n 分之 pi，就是根號 pi n 分之一。",
+          "board": [
+            { "do": "write", "line": "${{w:W_{2n}}}\\sim\\frac{1}{2}\\sqrt{\\frac{\\pi}{n}}$" },
+            { "do": "write", "line": "$\\dfrac{\\binom{2n}{n}}{4^n}\\sim{{r:\\dfrac{1}{\\sqrt{\\pi n}}}}$", "on": "再代回去" },
+            { "do": "box", "term": "r", "color": "green", "on": "就是根號" }
+          ] }
       ],
       "where": {
         "ask": "「$W_n$ 遞減」用在哪一步？",

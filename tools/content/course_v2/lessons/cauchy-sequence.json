@@ -210,9 +210,17 @@
       "proof": true, "of": 4, "skeleton": "構造",
       "beats": [
         { "show": ["先有界，抓收斂子數列，再把整條拉過去"],
-          "say": "策略：不知道極限在哪，就先造一個。先證有界，抓出收斂的子數列，再把整條數列拉過去。" },
+          "say": "策略：不知道極限在哪，就先造一個。先證有界，抓出收斂的子數列，再把整條數列拉過去。",
+          "board": [
+            { "do": "write", "line": "有界 → 收斂子數列 → 整條收斂", "on": "先證有界" }
+          ] },
         { "show": ["Cauchy ⇒ 有界"], "note": "$\\varepsilon=1$，再跟前面有限多項取最大。",
-          "say": "先證有界：epsilon 取一，第 N 項以後都離 a N 不到一；前面只有有限多項，取最大值。" },
+          "say": "先證有界：epsilon 取一，第 N 項以後都離 a N 不到一；前面只有有限多項，取最大值。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "$\\varepsilon=1$：$n\\ge N\\Rightarrow|a_n-a_N|<1$", "on": "epsilon 取一" },
+            { "do": "write", "line": "$|a_n|\\le\\max(|a_1|,\\dots,|a_N|+1)$", "on": "前面只有" }
+          ] },
         { "show": ["有子數列 $a_{n_k}\\to L$"], "note": "Bolzano–Weierstrass。",
           "why": {
             "ask": "$L$ 從哪裡來？",
@@ -223,9 +231,18 @@
               { "label": "取 $L=\\lim a_n$", "why": "$a_n$ 收斂正是要證的，還不能用。" }
             ]
           },
-          "say": "數列有界，Bolzano Weierstrass 定理說它有收斂的子數列，極限叫 L。完備性就用在這裡。" },
+          "say": "數列有界，Bolzano Weierstrass 定理說它有收斂的子數列，極限叫 L。完備性就用在這裡。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "有子數列 ${{s:a_{n_k}\\to L}}$", "tint": { "s": "violet" }, "on": "極限 L" },
+            { "do": "underline", "term": "s", "label": "B–W 定理", "why": true, "on": "Bolzano" }
+          ] },
         { "show": ["$m,n\\ge N$：$|a_m-a_n|<\\frac{\\varepsilon}{2}$", "取 $k$：$n_k\\ge N$、$|a_{n_k}-L|<\\frac{\\varepsilon}{2}$"],
-          "say": "給定 epsilon，用 Cauchy 取 N；再取 k 夠大，讓 n k 至少是 N，子數列那一項也離 L 夠近。" },
+          "say": "給定 epsilon，用 Cauchy 取 N；再取 k 夠大，讓 n k 至少是 N，子數列那一項也離 L 夠近。",
+          "board": [
+            { "do": "write", "line": "$m,n\\ge N$：${{c:|a_m-a_n|}}<\\frac{\\varepsilon}{2}$", "tint": { "c": "blue" }, "on": "用 Cauchy 取 N" },
+            { "do": "write", "line": "$n_k\\ge N$ 且 ${{d:|a_{n_k}-L|}}<\\frac{\\varepsilon}{2}$", "tint": { "d": "violet" }, "on": "再取 k" }
+          ] },
         { "show": ["$|a_n-L|\\le|a_n-a_{n_k}|+|a_{n_k}-L|<\\varepsilon$"], "note": "$n\\ge N$；兩段各 $<\\frac{\\varepsilon}{2}$。",
           "why": {
             "ask": "為什麼 $|a_n-a_{n_k}|<\\frac{\\varepsilon}{2}$？",
@@ -236,7 +253,13 @@
               { "label": "$a_{n_k}\\to L$，$a_n$ 也 $\\to L$", "why": "$a_n\\to L$ 正是要證的，不能先用。" }
             ]
           },
-          "say": "n 和 n k 都至少是 N，Cauchy 條件說兩項很近；再加上子數列離 L 的距離，小於 epsilon。" }
+          "say": "n 和 n k 都至少是 N，Cauchy 條件說兩項很近；再加上子數列離 L 的距離，小於 epsilon。",
+          "board": [
+            { "do": "keep", "n": 2 },
+            { "do": "write", "line": "$|a_n-L|\\le{{e:|a_n-a_{n_k}|}}+{{d:|a_{n_k}-L|}}<\\varepsilon$", "tint": { "e": "blue" }, "on": "第一段" },
+            { "do": "focus", "term": "e", "on": "a n 和子數列" },
+            { "do": "underline", "term": "c", "why": true, "on": "Cauchy 條件" }
+          ] }
       ],
       "where": {
         "ask": "完備性用在哪一步？",
@@ -252,13 +275,31 @@
       "title": "不知道極限也能證",
       "beats": [
         { "show": ["$s_n=\\sum_{k=1}^{n}\\frac{1}{k^2}$，設 $m>n$"],
-          "say": "回到一開始的部分和。設 m 大於 n，看 s m 減 s n，也就是從 n 加一加到 m 的那一段。" },
+          "say": "回到一開始的部分和。設 m 大於 n，看 s m 減 s n，也就是從 n 加一加到 m 的那一段。",
+          "board": [
+            { "do": "write", "line": "$s_m-s_n={{seg:\\sum_{k=n+1}^{m}\\frac{1}{k^2}}}$（$m>n$）", "on": "設 m" },
+            { "do": "underline", "term": "seg", "on": "從 n 加一" }
+          ] },
         { "show": ["$\\frac{1}{k^2}<\\frac{1}{k-1}-\\frac{1}{k}$"], "note": "$k\\ge2$。",
-          "say": "每一項 k 平方分之一，放大成 k 減一分之一減 k 分之一，這樣就能望遠鏡相消。" },
+          "say": "每一項 k 平方分之一，放大成 k 減一分之一減 k 分之一，這樣就能望遠鏡相消。",
+          "board": [
+            { "do": "write", "line": "$\\frac{1}{k^2}<{{t:\\frac{1}{k-1}-\\frac{1}{k}}}$" },
+            { "do": "underline", "term": "t", "label": "望遠鏡", "on": "放大成" }
+          ] },
         { "show": ["$s_m-s_n<\\frac{1}{n}-\\frac{1}{m}<\\frac{1}{n}$"],
-          "say": "中間全部消掉，只剩 n 分之一減 m 分之一，比 n 分之一小。" },
+          "say": "中間全部消掉，只剩 n 分之一減 m 分之一，比 n 分之一小。",
+          "board": [
+            { "do": "write", "line": "$s_m-s_n<{{r:\\frac{1}{n}-\\frac{1}{m}}}<{{b:\\frac{1}{n}}}$", "on": "中間全部" },
+            { "do": "underline", "term": "r", "on": "只剩" },
+            { "do": "focus", "term": "b", "on": "比 n" }
+          ] },
         { "show": ["取 $N>\\frac{1}{\\varepsilon}$：是 Cauchy"], "note": "$\\varepsilon=0.01$ 取 $N=101$。",
-          "say": "所以 N 取比 epsilon 分之一大就行。我們證了收斂，卻完全沒用到極限值是多少。" }
+          "say": "所以 N 取比 epsilon 分之一大就行。我們證了收斂，卻完全沒用到極限值是多少。",
+          "board": [
+            { "do": "keep", "n": 1 },
+            { "do": "write", "line": "取 ${{nn:N>\\frac{1}{\\varepsilon}}}$ ⇒ 是 Cauchy", "on": "所以 N" },
+            { "do": "box", "term": "nn", "color": "green", "label": "沒用到極限", "on": "我們證了收斂" }
+          ] }
       ],
       "check": 3
     },
@@ -266,11 +307,25 @@
       "title": "相鄰差不夠",
       "beats": [
         { "show": ["$H_n=1+\\frac{1}{2}+\\dots+\\frac{1}{n}$"], "note": "相鄰差 $\\frac{1}{n+1}\\to0$。",
-          "say": "調和數列，相鄰兩項只差 n 加一分之一，趨近零。看起來擠在一起了？" },
+          "say": "調和數列，相鄰兩項只差 n 加一分之一，趨近零。看起來擠在一起了？",
+          "board": [
+            { "do": "write", "line": "$H_n=1+\\frac{1}{2}+\\dots+\\frac{1}{n}$" },
+            { "do": "write", "line": "相鄰差 ${{a:\\frac{1}{n+1}}}\\to0$", "on": "相鄰兩項" }
+          ] },
         { "show": ["$H_{2n}-H_n$：$n$ 項，每項 $\\ge\\frac{1}{2n}$"], "note": "所以 $H_{2n}-H_n\\ge\\frac{1}{2}$。",
-          "say": "隔遠一點看：從 n 跳到二 n，中間 n 項，每一項至少二 n 分之一，加起來至少二分之一。" },
+          "say": "隔遠一點看：從 n 跳到二 n，中間 n 項，每一項至少二 n 分之一，加起來至少二分之一。",
+          "board": [
+            { "do": "write", "line": "$H_{2n}-H_n={{s:\\frac{1}{n+1}+\\dots+\\frac{1}{2n}}}$", "on": "從 n 跳到" },
+            { "do": "underline", "term": "s", "on": "中間 n 項" },
+            { "do": "write", "line": "$\\ge n\\cdot\\frac{1}{2n}={{h:\\frac{1}{2}}}$", "on": "每一項至少" }
+          ] },
         { "show": ["取 $\\varepsilon=\\frac{1}{2}$：不是 Cauchy"], "note": "所以 $H_n$ 發散。",
-          "say": "不管 N 多大，N 和二 N 這兩項永遠差至少二分之一。不是 Cauchy，所以發散。" }
+          "say": "不管 N 多大，N 和二 N 這兩項永遠差至少二分之一。不是 Cauchy，所以發散。",
+          "board": [
+            { "do": "keep", "n": 2 },
+            { "do": "focus", "term": "h", "on": "至少二分之一" },
+            { "do": "write", "line": "$\\varepsilon=\\frac{1}{2}$：不是 Cauchy ⇒ 發散", "color": "green", "on": "不是 Cauchy" }
+          ] }
       ],
       "check": 1
     },

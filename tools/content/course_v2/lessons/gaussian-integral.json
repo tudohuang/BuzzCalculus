@@ -62,10 +62,19 @@
     {
       "title": "標準形",
       "beats": [
-        {"show":["$\\int_{-\\infty}^{\\infty}e^{-x^2}\\,dx=\\sqrt{\\pi}$"],"note":"用極座標算出來的。","say":"起點是這一個：e 的負 x 平方，整條實數線積起來是根號派，以前用極座標算過。"},
-        {"show":["令 $u=\\sqrt{a}\\,x$"],"say":"前面多一個係數 a，就令 u 等於根號 a 乘 x，把鐘形縮放回標準形。"},
-        {"show":["$\\int_{-\\infty}^{\\infty}e^{-a x^{2}}\\,dx=\\sqrt{\\frac{\\pi}{a}}$"],"note":"$a>0$；$a$ 越大，鐘越窄，面積越小。","say":"結果是根號 a 分之派。a 在分母：a 越大，鐘越窄越尖，面積越小。"},
-        {"show":["只有特殊區間有漂亮的值"],"note":"反導函數不是常見初等函數的有限組合。","say":"e 的負 x 平方有反導函數，但寫不成常見函數，所以只有整條線或半條線才有漂亮的值。"}
+        {"show":["$\\int_{-\\infty}^{\\infty}e^{-x^2}\\,dx=\\sqrt{\\pi}$"],"note":"用極座標算出來的。","say":"起點是這一個：e 的負 x 平方，整條實數線積起來是根號派，以前用極座標算過。","board":[
+          {"do":"write","line":"$\\int_{-\\infty}^{\\infty}e^{-x^2}\\,dx={{s:\\sqrt{\\pi}}}$"},
+          {"do":"underline","term":"s","on":"根號派"}]},
+        {"show":["令 $u=\\sqrt{a}\\,x$"],"say":"前面多一個係數 a，就令 u 等於根號 a 乘 x，把鐘形縮放回標準形。","board":[
+          {"do":"write","line":"令 ${{u:u=\\sqrt{a}\\,x}}$","on":"令 u","tint":{"u":"blue"}},
+          {"do":"underline","term":"u","on":"縮放回","label":"縮放"}]},
+        {"show":["$\\int_{-\\infty}^{\\infty}e^{-a x^{2}}\\,dx=\\sqrt{\\frac{\\pi}{a}}$"],"note":"$a>0$；$a$ 越大，鐘越窄，面積越小。","say":"結果是根號 a 分之派。a 在分母：a 越大，鐘越窄越尖，面積越小。","board":[
+          {"do":"clear"},
+          {"do":"write","line":"$\\int_{-\\infty}^{\\infty}e^{-a x^{2}}\\,dx=\\sqrt{\\frac{\\pi}{{{a:a}}}}$","on":"結果是"},
+          {"do":"focus","term":"a","on":"a 在分母"},
+          {"do":"plot","graph":{"window":[-3,3,-0.15,1.15],"curves":[{"expr":"exp(-(x^2))","color":"blue"},{"expr":"exp(-3*(x^2))","color":"gold"}],"labels":[{"x":0,"y":0.3,"text":"a 越大","anchor":"middle"}],"ticks":false},"on":"鐘越窄"}]},
+        {"show":["只有特殊區間有漂亮的值"],"note":"反導函數不是常見初等函數的有限組合。","say":"e 的負 x 平方有反導函數，但寫不成常見函數，所以只有整條線或半條線才有漂亮的值。","board":[
+          {"do":"write","line":"只有整條線、半條線有漂亮的值","on":"所以只有"}]}
       ],
       "check": 0
     },
@@ -97,9 +106,16 @@
     {
       "title": "動差：對 $a$ 微分",
       "beats": [
-        {"show":["$J(a)=\\int_{-\\infty}^{\\infty}e^{-ax^2}\\,dx=\\sqrt{\\pi}\\,a^{-1/2}$"],"say":"想算 x 平方乘鐘形的積分，就把標準形看成 a 的函數，叫它 J。"},
-        {"show":["$\\frac{\\partial}{\\partial a}e^{-ax^2}=-x^2e^{-ax^2}$"],"say":"對 a 微分，被積函數多出一個負 x 平方，要的 x 平方就出現了。"},
-        {"show":["$\\int x^2e^{-ax^2}\\,dx=-J'(a)$"],"note":"別漏了負號。","say":"所以 x 平方的動差是負的 J prime。可是微分能搬進積分號嗎？理由是什麼？"}
+        {"show":["$J(a)=\\int_{-\\infty}^{\\infty}e^{-ax^2}\\,dx=\\sqrt{\\pi}\\,a^{-1/2}$"],"say":"想算 x 平方乘鐘形的積分，就把標準形看成 a 的函數，叫它 J。","board":[
+          {"do":"write","line":"目標：$\\int x^2e^{-ax^2}\\,dx$"},
+          {"do":"write","line":"${{j:J(a)}}=\\int_{-\\infty}^{\\infty}e^{-ax^2}\\,dx=\\sqrt{\\pi}\\,a^{-1/2}$","on":"看成 a","tint":{"j":"violet"}}]},
+        {"show":["$\\frac{\\partial}{\\partial a}e^{-ax^2}=-x^2e^{-ax^2}$"],"say":"對 a 微分，被積函數多出一個負 x 平方，要的 x 平方就出現了。","board":[
+          {"do":"write","line":"$\\frac{\\partial}{\\partial a}e^{-ax^2}={{m:-x^2}}e^{-ax^2}$","on":"對 a 微分"},
+          {"do":"underline","term":"m","on":"多出"}]},
+        {"show":["$\\int x^2e^{-ax^2}\\,dx=-J'(a)$"],"note":"別漏了負號。","say":"所以 x 平方的動差是負的 J prime。可是微分能搬進積分號嗎？理由是什麼？","board":[
+          {"do":"keep","n":2},
+          {"do":"write","line":"$\\int x^2e^{-ax^2}\\,dx={{r:-{{jj:J}}'(a)}}$","on":"所以","tint":{"jj":"violet"}},
+          {"do":"box","term":"r","on":"負的 J","label":"別漏負號"}]}
       ],
       "check": 3
     },
@@ -131,16 +147,27 @@
       "title": "證明：變異數是 1",
       "proof": true, "of": "ex2", "skeleton": "直接",
       "beats": [
-        {"show":["$\\frac{1}{\\sqrt{2\\pi}}\\int_{-\\infty}^{\\infty}x^2e^{-x^2/2}\\,dx=1$"],"note":"策略：套二次動差公式，取 $a=\\frac{1}{2}$。","say":"要證常態分布的變異數是一。策略：不用重新積分，套二次動差的公式，這裡 a 是二分之一。"},
+        {"show":["$\\frac{1}{\\sqrt{2\\pi}}\\int_{-\\infty}^{\\infty}x^2e^{-x^2/2}\\,dx=1$"],"note":"策略：套二次動差公式，取 $a=\\frac{1}{2}$。","say":"要證常態分布的變異數是一。策略：不用重新積分，套二次動差的公式，這裡 a 是二分之一。","board":[
+          {"do":"write","line":"$\\frac{1}{\\sqrt{2\\pi}}\\int_{-\\infty}^{\\infty}x^2e^{-x^2/2}\\,dx=1$"},
+          {"do":"write","line":"套二次動差公式，${{a:a=\\frac{1}{2}}}$","on":"套二次動差","tint":{"a":"blue"}}]},
         {"show":["$\\int x^2e^{-ax^2}\\,dx=\\frac{\\sqrt{\\pi}}{2}a^{-3/2}$"],"note":"$-J'(a)$；$a\\ge a_0>0$ 時被 $x^2e^{-a_0x^2}$ 壓住。",
           "why":{"ask":"為什麼可以把微分搬進積分號？","say":"這個公式來自對 a 微分。微分為什麼可以搬進積分號裡？",
             "options":[
               {"label":"$a\\ge a_0>0$ 時有可積的控制函數 $x^2e^{-a_0x^2}$","correct":true},
               {"label":"$e^{-ax^2}$ 有初等反導函數","why":"沒有；正因為積不出來，才繞道對 $a$ 微分。"},
               {"label":"$x^2e^{-ax^2}$ 是偶函數","why":"偶函數只讓整條線是半條線的兩倍；搬微分進積分號，要的是控制函數。"}]},
-          "say":"a 大於等於某個正數時，被積函數被一個可積的函數壓住，Leibniz 法則成立，二次動差就是負的 J prime。"},
-        {"show":["$a=\\frac{1}{2}$：$\\frac{\\sqrt{\\pi}}{2}\\cdot 2^{3/2}=\\sqrt{2\\pi}$"],"note":"$\\frac{\\sqrt{\\pi}}{2}\\cdot2\\sqrt{2}=\\sqrt{\\pi}\\cdot\\sqrt{2}$。","say":"二分之根號派乘二的二分之三次方，等於根號二派。"},
-        {"show":["除以 $\\sqrt{2\\pi}$ 得 $1$"],"say":"除掉前面的根號二派，剛好是一：標準常態分布的變異數是一。"}
+          "say":"a 大於等於某個正數時，被積函數被一個可積的函數壓住，Leibniz 法則成立，二次動差就是負的 J prime。","board":[
+          {"do":"write","line":"$\\int x^2e^{-ax^2}\\,dx=\\frac{\\sqrt{\\pi}}{2}a^{-3/2}$","on":"這個公式"},
+          {"do":"write","line":"${{b:x^2e^{-ax^2}\\le x^2e^{-a_0x^2}}}$","on":"被一個可積","why":true},
+          {"do":"underline","term":"b","on":"Leibniz","label":"可積","why":true}]},
+        {"show":["$a=\\frac{1}{2}$：$\\frac{\\sqrt{\\pi}}{2}\\cdot 2^{3/2}=\\sqrt{2\\pi}$"],"note":"$\\frac{\\sqrt{\\pi}}{2}\\cdot2\\sqrt{2}=\\sqrt{\\pi}\\cdot\\sqrt{2}$。","say":"二分之根號派乘二的二分之三次方，等於根號二派。","board":[
+          {"do":"clear"},
+          {"do":"write","line":"${{a:a=\\frac{1}{2}}}$：$\\frac{\\sqrt{\\pi}}{2}\\cdot {{t:2^{3/2}}}={{v:\\sqrt{2\\pi}}}$","on":"二分之根號派"},
+          {"do":"focus","term":"t","on":"二的二分之三"},
+          {"do":"underline","term":"v","on":"等於"}]},
+        {"show":["除以 $\\sqrt{2\\pi}$ 得 $1$"],"say":"除掉前面的根號二派，剛好是一：標準常態分布的變異數是一。","board":[
+          {"do":"write","line":"$\\frac{{{v:\\sqrt{2\\pi}}}}{\\sqrt{2\\pi}}={{one:1}}$"},
+          {"do":"box","term":"one","on":"剛好是一","color":"green","label":"變異數"}]}
       ],
       "predict": {
         "ask": "同樣的算法，總機率 $\\frac{1}{\\sqrt{2\\pi}}\\int_{-\\infty}^{\\infty}e^{-x^2/2}\\,dx$ 是？",

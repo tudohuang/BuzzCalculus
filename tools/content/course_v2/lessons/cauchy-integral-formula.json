@@ -78,10 +78,27 @@
     {
       "title": "分母要先拆出 $f$",
       "beats": [
-        {"show":["$\\oint_{|z-i|=1}\\frac{dz}{z^2+1}$"],"note":"近似誤差用 ML 估計，嚴格版在全文。","say":"剛才的近似可以用 ML 不等式變嚴格。現在看這題：沿以 i 為圓心、半徑一的圓。"},
-        {"show":["$z^2+1=(z-i)(z+i)$"],"note":"$-i$ 距離圓心 $2$，在圓外。","say":"分母拆成 z 減 i 乘 z 加 i。圓只包住 i；負 i 離圓心二，在外面。"},
-        {"show":["$f(z)=\\frac{1}{z+i}$，$z_0=i$"],"say":"在圓外的因子留在 f 裡：f 是 z 加 i 分之一，在圓裡全純。"},
-        {"show":["$2\\pi i\\,f(i)=\\frac{2\\pi i}{2i}=\\pi$"],"say":"答案二派 i 乘 f 在 i 的值，二 i 分之二派 i，等於派。"}
+        {"show":["$\\oint_{|z-i|=1}\\frac{dz}{z^2+1}$"],"note":"近似誤差用 ML 估計，嚴格版在全文。","say":"剛才的近似可以用 ML 不等式變嚴格。現在看這題：沿以 i 為圓心、半徑一的圓。",
+          "board": [
+            { "do": "write", "line": "$\\oint_{|z-i|=1}\\frac{dz}{z^2+1}$", "on": "現在看這題" },
+            { "do": "plot", "graph": {"window":[-3,3,-1.45,2.25],"equal":true,"curves":[{"param":{"x":"cos(t)","y":"1+sin(t)","t":[0,6.2832]},"color":"blue"}],"points":[{"x":0,"y":1},{"x":0,"y":-1}],"labels":[{"x":0.18,"y":1.05,"text":"i","anchor":"start"},{"x":0.18,"y":-1.05,"text":"−i","anchor":"start"}],"ticks":false}, "on": "圓心" }
+          ]},
+        {"show":["$z^2+1=(z-i)(z+i)$"],"note":"$-i$ 距離圓心 $2$，在圓外。","say":"分母拆成 z 減 i 乘 z 加 i。圓只包住 i；負 i 離圓心二，在外面。",
+          "board": [
+            { "do": "write", "line": "$z^2+1=({{a:z-i}})({{b:z+i}})$", "tint": { "a": "blue", "b": "violet" } },
+            { "do": "focus", "term": "a", "label": "圓裡", "on": "只包住" },
+            { "do": "focus", "term": "b", "label": "在外面", "on": "負 i" }
+          ]},
+        {"show":["$f(z)=\\frac{1}{z+i}$，$z_0=i$"],"say":"在圓外的因子留在 f 裡：f 是 z 加 i 分之一，在圓裡全純。",
+          "board": [
+            { "do": "transform", "line": "$f(z)=\\dfrac{1}{ {{b:z+i}} }$，$z_0=i$" },
+            { "do": "underline", "term": "b", "color": "violet", "label": "留在 f 裡", "on": "留在 f 裡" }
+          ]},
+        {"show":["$2\\pi i\\,f(i)=\\frac{2\\pi i}{2i}=\\pi$"],"say":"答案二派 i 乘 f 在 i 的值，二 i 分之二派 i，等於派。",
+          "board": [
+            { "do": "transform", "line": "$2\\pi i\\,f(i)=\\dfrac{2\\pi i}{2i}=\\,{{r:\\pi}}$" },
+            { "do": "box", "term": "r", "color": "green", "on": "二 i 分之" }
+          ]}
       ],
       "check": 2
     },
@@ -123,7 +140,11 @@
       "proof": true, "of": 3, "skeleton": "直接",
       "beats": [
         {"show":["用導數版估 $|f'(z_0)|$，圓越畫越大"],"note":"$f$ 是整函數，$|f|\\le M$。",
-          "say":"策略：有界的整函數一定是常數。用導數版的公式估 f prime，再把圓越畫越大，逼它變成零。"},
+          "say":"策略：有界的整函數一定是常數。用導數版的公式估 f prime，再把圓越畫越大，逼它變成零。",
+          "board": [
+            { "do": "write", "line": "$|f|\\le M$ 的整函數 ⇒ 常數" },
+            { "do": "write", "line": "估 $|f'(z_0)|$，圓越畫越大", "on": "用導數版" }
+          ]},
         {"show":["$|f'(z_0)|\\le\\frac{1}{2\\pi}\\cdot\\frac{M}{R^2}\\cdot(2\\pi R)$"],"note":"$n=1$ 的公式＋ML 不等式。",
           "why": {
             "ask": "$\\frac{M}{R^2}$ 從哪來？",
@@ -134,7 +155,14 @@
               {"label":"ML 不等式的 L 是 $R^2$","why":"L 是圓周長 $2\\pi R$；$R^2$ 來自分母 $(z-z_0)^{2}$。"}
             ]
           },
-          "say":"n 等於一的公式，分母是 z 減 z 零的平方。圓上分子不超過 M、分母是 R 平方，再乘上周長二派 R。"},
+          "say":"n 等於一的公式，分母是 z 減 z 零的平方。圓上分子不超過 M、分母是 R 平方，再乘上周長二派 R。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "$|f'(z_0)|\\le\\frac{1}{2\\pi}\\cdot{{m:\\frac{M}{R^2}}}\\cdot{{l:(2\\pi R)}}$", "on": "中間那個" },
+            { "do": "focus", "term": "m", "on": "R 平方分之" },
+            { "do": "underline", "term": "m", "label": "圓上 |f|≤M", "why": true, "on": "分子不超過" },
+            { "do": "focus", "term": "l", "why": true, "on": "周長" }
+          ]},
         {"show":["$=\\frac{M}{R}\\to 0$（$R\\to\\infty$）"],"note":"整函數：圓可以畫任意大，$M$ 不變。",
           "why": {
             "ask": "為什麼可以讓 $R\\to\\infty$？",
@@ -145,11 +173,24 @@
               {"label":"$z_0$ 固定，公式只看 $z_0$","why":"公式要 $f$ 在整個圓上與內部全純，不只在 $z_0$。"}
             ]
           },
-          "say":"f 在整個平面全純，圓多大都能用公式；M 又固定不動，所以 R 分之 M 趨近零。"},
+          "say":"f 在整個平面全純，圓多大都能用公式；M 又固定不動，所以 R 分之 M 趨近零。",
+          "board": [
+            { "do": "write", "line": "$=\\frac{M}{R}\\to 0\\quad({{ri:R\\to\\infty}})$", "on": "一直畫大" },
+            { "do": "focus", "term": "ri", "label": "整函數", "why": true, "on": "整個平面全純" }
+          ]},
         {"show":["$f'(z_0)=0$，$z_0$ 任意 ⇒ $f$ 是常數"],
-          "say":"左邊跟 R 無關，只能是零。z 零是任意一點，所以 f prime 處處是零，f 是常數。"},
+          "say":"左邊跟 R 無關，只能是零。z 零是任意一點，所以 f prime 處處是零，f 是常數。",
+          "board": [
+            { "do": "write", "line": "${{z:f'(z_0)=0}}$，$z_0$ 任意 ⇒ $f$ 是常數", "on": "只能是零" },
+            { "do": "underline", "term": "z", "on": "任意一點" }
+          ]},
         {"show":["$p$ 沒有根 ⇒ $\\frac{1}{p}$ 是有界整函數","⇒ 常數，矛盾"],"note":"$|z|\\to\\infty$ 時 $\\left|\\frac{1}{p}\\right|\\to 0$。",
-          "say":"代數基本定理：非常數多項式沒有根的話，p 分之一是整函數；遠處趨近零，近處連續，所以有界，只能是常數，矛盾。"}
+          "say":"代數基本定理：非常數多項式沒有根的話，p 分之一是整函數；遠處趨近零，近處連續，所以有界，只能是常數，矛盾。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "$p$ 沒有根 ⇒ ${{q:\\frac{1}{p}}}$ 是有界整函數", "on": "沒有根" },
+            { "do": "write", "line": "⇒ 常數，矛盾", "on": "只能是常數" }
+          ]}
       ],
       "order": {
         "ask": "把 Liouville 的證明排回順序：依序點每一步",

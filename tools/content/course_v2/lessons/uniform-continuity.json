@@ -168,11 +168,24 @@
       "title": "怎麼證「不是」",
       "beats": [
         { "show": ["找兩串點：$|x_n-y_n|\\to0$", "但 $|f(x_n)-f(y_n)|\\ge\\varepsilon$"],
-          "say": "要證不是一致連續，實用的做法：找兩串點，彼此越靠越近，函數值卻一直差至少 epsilon。" },
+          "say": "要證不是一致連續，實用的做法：找兩串點，彼此越靠越近，函數值卻一直差至少 epsilon。",
+          "board": [
+            { "do": "write", "line": "找兩串點：${{d:|x_n-y_n|}}\\to0$", "tint": { "d": "blue" }, "on": "找兩串點" },
+            { "do": "write", "line": "但 ${{fd:|f(x_n)-f(y_n)|}}\\ge\\varepsilon$", "tint": { "fd": "violet" }, "on": "函數值卻" }
+          ] },
         { "show": ["$x_n=\\frac{1}{n}$，$y_n=\\frac{1}{n+1}$"], "note": "$|x_n-y_n|=\\frac{1}{n(n+1)}\\to0$。",
-          "say": "x 分之一：取 n 分之一和 n 加一分之一，兩點的距離趨近零。函數值差多少？" },
+          "say": "x 分之一：取 n 分之一和 n 加一分之一，兩點的距離趨近零。函數值差多少？",
+          "board": [
+            { "do": "write", "line": "$f(x)=\\frac{1}{x}$：$x_n=\\frac{1}{n}$，$y_n=\\frac{1}{n+1}$" },
+            { "do": "write", "line": "${{d:|x_n-y_n|}}=\\frac{1}{n(n+1)}\\to0$", "tint": { "d": "blue" }, "on": "兩點的距離" }
+          ] },
         { "show": ["給定 $\\delta$：取 $n$ 讓距離 $<\\delta$"], "note": "這一對就是壞點。",
-          "say": "不管對方給多小的 delta，n 取夠大，這一對點就夠近，函數值卻差很多，就是壞點。" }
+          "say": "不管對方給多小的 delta，n 取夠大，這一對點就夠近，函數值卻差很多，就是壞點。",
+          "board": [
+            { "do": "keep", "n": 1 },
+            { "do": "write", "line": "給定 $\\delta$：取 $n$ 讓距離 $<\\delta$", "on": "n 取夠大" },
+            { "do": "write", "line": "函數值卻差很多 ⇒ 壞點", "on": "函數值卻" }
+          ] }
       ],
       "check": 1
     },
@@ -181,7 +194,11 @@
       "proof": true, "of": 3, "skeleton": "直接",
       "beats": [
         { "show": ["斜率有上限 $K$ ⇒ 一個 $\\delta$ 全區通用"],
-          "say": "策略：怎麼證是一致連續？斜率要是有上限，delta 就取 epsilon 除以那個上限，跟位置無關。" },
+          "say": "策略：怎麼證是一致連續？斜率要是有上限，delta 就取 epsilon 除以那個上限，跟位置無關。",
+          "board": [
+            { "do": "write", "line": "斜率有上限 ${{k:K}}$ ⇒ 一個 $\\delta$ 全區通用", "tint": { "k": "violet" } },
+            { "do": "write", "line": "$\\delta=\\frac{\\varepsilon}{K}$，跟位置無關", "on": "delta 就取" }
+          ] },
         { "show": ["$|f(x)-f(y)|\\le K|x-y|$，對所有 $x,y\\in D$"], "note": "可微時由均值定理，$K=\\sup|f'|$。",
           "why": {
             "ask": "可微時，為什麼 $K$ 可以取 $\\sup|f'|$？",
@@ -192,9 +209,20 @@
               { "label": "因為 $f'$ 連續", "why": "不需要 $f'$ 連續；均值定理只要可微。" }
             ]
           },
-          "say": "均值定理：兩點函數值的差，等於中間某點的導數乘距離。導數的絕對值不超過上確界，就是 K。" },
+          "say": "均值定理：兩點函數值的差，等於中間某點的導數乘距離。導數的絕對值不超過上確界，就是 K。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "$|f(x)-f(y)|\\le {{k:K}}|x-y|$", "tint": { "k": "violet" }, "on": "上限 K" },
+            { "do": "write", "line": "${{k:K}}=\\sup|f'|$", "tint": { "k": "violet" }, "on": "導數絕對值" },
+            { "do": "write", "line": "均值定理：$f(x)-f(y)=f'(c)(x-y)$", "why": true, "on": "均值定理" }
+          ] },
         { "show": ["給定 $\\varepsilon>0$，取 $\\delta=\\frac{\\varepsilon}{K}$"], "note": "只用到 $\\varepsilon$ 和 $K$，不看點。",
-          "say": "給定 epsilon，delta 取 epsilon 除以 K。這個數只看 epsilon 和 K，還沒有任何點出場。" },
+          "say": "給定 epsilon，delta 取 epsilon 除以 K。這個數只看 epsilon 和 K，還沒有任何點出場。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "給定 $\\varepsilon>0$，取 ${{dl:\\delta=\\frac{\\varepsilon}{K}}}$", "on": "給定 epsilon" },
+            { "do": "underline", "term": "dl", "label": "不看點", "on": "還沒有任何點" }
+          ] },
         { "show": ["$|x-y|<\\delta$ ⇒ $|f(x)-f(y)|\\le K|x-y|<\\varepsilon$"], "note": "$K$ 對所有點都成立。",
           "why": {
             "ask": "為什麼這個 $\\delta$ 對所有點都有效？",
@@ -205,7 +233,12 @@
               { "label": "$D$ 是有界區間", "why": "沒用到有界：直線在整條實數線上也一樣，斜率的上限才是關鍵。" }
             ]
           },
-          "say": "任兩點距離小於 delta，差就不超過 K 倍距離，小於 K 乘 delta，也就是 epsilon。K 對每一對點都成立。" }
+          "say": "任兩點距離小於 delta，差就不超過 K 倍距離，小於 K 乘 delta，也就是 epsilon。K 對每一對點都成立。",
+          "board": [
+            { "do": "write", "line": "任兩點 $|x-y|<\\delta$" },
+            { "do": "write", "line": "$|f(x)-f(y)|\\le {{k:K}}|x-y|<K\\delta=\\varepsilon$", "tint": { "k": "violet" }, "on": "每一對點" },
+            { "do": "underline", "term": "k", "color": "violet", "label": "對所有點", "why": true, "on": "K 對每一對點" }
+          ] }
       ],
       "order": {
         "ask": "把證明排回順序：依序點每一步",
@@ -233,11 +266,26 @@
       "title": "$x^2$ 在 $\\mathbb{R}$ 上",
       "beats": [
         { "show": ["$x_n=n+\\frac{1}{n}$，$y_n=n$"], "note": "$|x_n-y_n|=\\frac{1}{n}\\to0$。",
-          "say": "x 平方越往外越陡，壞點住在很遠的地方。取 n 加 n 分之一和 n，兩點越來越近。" },
+          "say": "x 平方越往外越陡，壞點住在很遠的地方。取 n 加 n 分之一和 n，兩點越來越近。",
+          "board": [
+            { "do": "write", "line": "$x_n=n+\\frac{1}{n}$，$y_n=n$", "on": "取 n 加" },
+            { "do": "write", "line": "${{d:|x_n-y_n|}}=\\frac{1}{n}\\to0$", "tint": { "d": "blue" }, "on": "兩點越來越近" }
+          ] },
         { "show": ["$x_n^2-y_n^2=2+\\frac{1}{n^2}>2$"], "note": "取 $\\varepsilon=2$：不一致連續。",
-          "say": "函數值的差卻是二加 n 平方分之一，永遠超過二。所以 x 平方在整條實數線上不一致連續。" },
+          "say": "函數值的差卻是二加 n 平方分之一，永遠超過二。所以 x 平方在整條實數線上不一致連續。",
+          "board": [
+            { "do": "write", "line": "${{fd:x_n^2-y_n^2}}=2+\\frac{1}{n^2}{{g:>2}}$", "tint": { "fd": "violet" } },
+            { "do": "focus", "term": "g", "on": "永遠超過" },
+            { "do": "write", "line": "取 $\\varepsilon=2$：不一致連續", "on": "所以 x 平方" }
+          ] },
         { "show": ["$[-R,R]$ 上：$|x^2-y^2|\\le2R|x-y|$"], "note": "Lipschitz，所以一致連續。",
-          "say": "但限制在有界區間上，差不超過常數倍的距離，delta 取 epsilon 除以那個常數，就一致連續了。" }
+          "say": "但限制在有界區間上，差不超過常數倍的距離，delta 取 epsilon 除以那個常數，就一致連續了。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "$[-R,R]$ 上：$|x^2-y^2|\\le {{c:2R}}|x-y|$", "on": "限制在" },
+            { "do": "focus", "term": "c", "label": "常數", "on": "常數倍" },
+            { "do": "write", "line": "$\\delta=\\frac{\\varepsilon}{2R}$ ⇒ 一致連續", "color": "green", "on": "delta 取" }
+          ] }
       ],
       "check": 3
     }

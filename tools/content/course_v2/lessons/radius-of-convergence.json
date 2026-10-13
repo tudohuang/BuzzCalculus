@@ -177,13 +177,29 @@
       "title": "三種可能",
       "beats": [
         { "show": ["$R=0$：只在 $x=a$ 收斂"],
-          "say": "冪級數收斂的地方只有三種樣子。第一種最窄：只在中心 a 收斂，其他地方全部發散。" },
+          "say": "冪級數收斂的地方只有三種樣子。第一種最窄：只在中心 a 收斂，其他地方全部發散。",
+          "board": [
+            { "do": "write", "line": "${{r0:R=0}}$：只在 $x=a$ 收斂" },
+            { "do": "focus", "term": "r0", "on": "最窄" }
+          ] },
         { "show": ["$R=\\infty$：所有實數都絕對收斂"],
-          "say": "第二種最寬：不管 x 是多少，都絕對收斂。" },
+          "say": "第二種最寬：不管 x 是多少，都絕對收斂。",
+          "board": [
+            { "do": "write", "line": "${{ri:R=\\infty}}$：所有實數都絕對收斂" },
+            { "do": "focus", "term": "ri", "on": "最寬" }
+          ] },
         { "show": ["$|x-a|<R$ 收斂，$|x-a|>R$ 發散"], "note": "這個 $R$ 叫收斂半徑。",
-          "say": "第三種：離中心不到 R 就絕對收斂，超過 R 就發散。R 叫做收斂半徑。" },
+          "say": "第三種：離中心不到 R 就絕對收斂，超過 R 就發散。R 叫做收斂半徑。",
+          "board": [
+            { "do": "write", "line": "$|x-a|<{{rr:R}}$ 收斂，$|x-a|>R$ 發散" },
+            { "do": "underline", "term": "rr", "label": "收斂半徑", "on": "R 叫做" }
+          ] },
         { "show": ["$|x-a|=R$：兩個端點另外查"], "note": "定理在端點什麼都不說，看〈收斂區間〉。",
-          "say": "剛好距離 R 的兩個端點，定理什麼都不說，要各自檢查。不會有兩段分開的區間。" }
+          "say": "剛好距離 R 的兩個端點，定理什麼都不說，要各自檢查。不會有兩段分開的區間。",
+          "board": [
+            { "do": "keep", "n": 1 },
+            { "do": "plot", "graph": { "window": [0.4,5.6,-1,1], "ticks": false, "curves": [{ "expr": "0", "domain": [2,4], "color": "green" },{ "expr": "0", "domain": [0.5,2], "color": "red" },{ "expr": "0", "domain": [4,5.5], "color": "red" }], "points": [{ "x": 3, "y": 0},{ "x": 2, "y": 0, "open": true},{ "x": 4, "y": 0, "open": true}], "labels": [{ "x": 2, "y": -0.6, "text": "a−R", "anchor": "middle" },{ "x": 3, "y": -0.6, "text": "a", "anchor": "middle" },{ "x": 4, "y": -0.6, "text": "a+R", "anchor": "middle" },{ "x": 2, "y": 0.4, "text": "?", "anchor": "middle" },{ "x": 4, "y": 0.4, "text": "?", "anchor": "middle" }]}, "on": "兩個端點" }
+          ] }
       ],
       "check": 2
     },
@@ -191,13 +207,33 @@
       "title": "對整個項用比值",
       "beats": [
         { "show": ["$\\left|\\frac{c_{n+1}}{c_n}\\right|\\to L$ ⇒ 比值 $\\to L|x-a|$"], "note": "把 $x$ 當成固定的數，用〈比值判別〉。",
-          "say": "把 x 當成固定的數，整個項做比值判別。係數的比值趨近 L，整個比值就趨近 L 乘 x 減 a 的絕對值。" },
+          "say": "把 x 當成固定的數，整個項做比值判別。係數的比值趨近 L，整個比值就趨近 L 乘 x 減 a 的絕對值。",
+          "board": [
+            { "do": "write", "line": "${{c:\\left|\\frac{c_{n+1}}{c_n}\\right|}}\\to L$ ⇒ 比值 ${{lx:\\to L|x-a|}}$" },
+            { "do": "underline", "term": "c", "on": "係數的比值" },
+            { "do": "underline", "term": "lx", "on": "整個比值就" }
+          ] },
         { "show": ["$L|x-a|<1$ ⇔ $|x-a|<\\frac{1}{L}$", "$R=\\frac{1}{L}$"],
-          "say": "要它小於一，x 離中心就要小於 L 分之一。所以半徑是 L 的倒數，不是 L 本身。" },
+          "say": "要它小於一，x 離中心就要小於 L 分之一。所以半徑是 L 的倒數，不是 L 本身。",
+          "board": [
+            { "do": "write", "line": "$L|x-a|<1$ ⇔ $|x-a|<\\frac{1}{L}$", "on": "要它小於一" },
+            { "do": "write", "line": "$R={{r:\\frac{1}{L}}}$", "on": "所以半徑" },
+            { "do": "box", "term": "r", "color": "green", "label": "倒數", "on": "L 的倒數" }
+          ] },
         { "show": ["$\\sum\\frac{x^n}{n\\cdot 3^n}$：比值 $\\frac{n}{n+1}\\cdot\\frac{|x|}{3}$"],
-          "say": "例子：x 的 n 次方除以 n 乘三的 n 次方。整個項相除，得到 n 加一分之 n，乘上三分之 x 的絕對值。" },
+          "say": "例子：x 的 n 次方除以 n 乘三的 n 次方。整個項相除，得到 n 加一分之 n，乘上三分之 x 的絕對值。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "$\\sum\\frac{x^n}{n\\cdot 3^n}$", "on": "例子" },
+            { "do": "write", "line": "比值 ${{a:\\frac{n}{n+1}}}\\cdot{{b:\\frac{|x|}{3}}}$", "on": "整個項相除" }
+          ] },
         { "show": ["$\\to\\frac{|x|}{3}<1$，$R=3$"], "note": "分母的 $n$ 不影響半徑，決定的是 $3^n$。",
-          "say": "n 加一分之 n 趨近一，剩下三分之 x 的絕對值小於一，所以半徑是三。" }
+          "say": "n 加一分之 n 趨近一，剩下三分之 x 的絕對值小於一，所以半徑是三。",
+          "board": [
+            { "do": "focus", "term": "a", "label": "→ 1", "on": "趨近一" },
+            { "do": "write", "line": "$\\to{{b:\\frac{|x|}{3}}}<1$，${{res:R=3}}$", "on": "剩下" },
+            { "do": "box", "term": "res", "color": "green", "on": "所以半徑" }
+          ] }
       ],
       "check": 0
     },

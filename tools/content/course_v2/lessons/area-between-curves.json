@@ -194,11 +194,26 @@
       "title": "兩條拋物線",
       "beats": [
         { "show": ["$y=x^2$ 與 $y=2x-x^2$"], "note": "$2x^2-2x=0$：交點 $x=0$、$1$。",
-          "say": "x 平方和二 x 減 x 平方。解交點：移項得二 x 乘 x 減一等於零，x 是零或一。" },
+          "say": "x 平方和二 x 減 x 平方。解交點：移項得二 x 乘 x 減一等於零，x 是零或一。",
+          "board": [
+            { "do": "write", "line": "$y={{lo:x^2}}$ 與 $y={{up:2x-x^2}}$", "tint": {"lo": "blue", "up": "violet"} },
+            { "do": "write", "line": "$2x(x-1)=0$：${{xs:x=0}}$、$1$", "on": "移項" },
+            { "do": "underline", "term": "xs", "on": "x 是零" }
+          ] },
         { "show": ["代 $x=\\frac{1}{2}$：$\\frac{3}{4}>\\frac{1}{4}$"], "note": "$2x-x^2$ 在上面。",
-          "say": "中間代二分之一，二 x 減 x 平方是四分之三，比四分之一大，它在上面。" },
+          "say": "中間代二分之一，二 x 減 x 平方是四分之三，比四分之一大，它在上面。",
+          "board": [
+            { "do": "clear" },
+            { "do": "plot", "graph": {"window": [-0.35,1.35,-0.2,1.25],"ticks": false,"labels": [{"x": 1.04,"y": -0.12,"text": "1", "anchor": "middle"},{"x": 0.5,"y": -0.12,"text": "1/2", "anchor": "middle"}],"curves": [{"expr": "x^2", "domain": [-0.3,1.1],"color": "blue"},{"expr": "2*x-x^2", "domain": [-0.1,1.3],"color": "violet"}],"fills": [{"expr": "2*x-x^2", "expr2": "x^2", "from": 0,"to": 1,"color": "gold", "opacity": 0.25}],"points": [{"x": 0.5,"y": 0.75,"color": "violet"},{"x": 0.5,"y": 0.25,"color": "blue"}],"dashed": [[[0.5,0],[0.5,0.75]]]},"on": "中間代" },
+            { "do": "write", "line": "$x=\\frac{1}{2}$：${{a3:\\frac{3}{4}}}>{{a1:\\frac{1}{4}}}$", "on": "四分之三", "tint": {"a3": "violet", "a1": "blue"} },
+            { "do": "focus", "term": "a3", "on": "它在上面", "label": "在上面" }
+          ] },
         { "show": ["$\\int_0^1(2x-2x^2)\\,dx=1-\\frac{2}{3}=\\frac{1}{3}$"],
-          "say": "上減下是二 x 減二 x 平方，積分得三分之一。" }
+          "say": "上減下是二 x 減二 x 平方，積分得三分之一。",
+          "board": [
+            { "do": "transform", "line": "$\\int_0^1(2x-2x^2)\\,dx=1-\\frac{2}{3}={{v:\\frac{1}{3}}}$", "on": "上減下" },
+            { "do": "box", "term": "v", "on": "積分得", "color": "green" }
+          ] }
       ],
       "solve": {
         "check": 0, "problemId": "lec-09-m1", "answer": "1/6", "claim": "INT(x-x^2, 0, 1) == ANS",
@@ -213,11 +228,24 @@
       "title": "一邊是直線",
       "beats": [
         { "show": ["$y=e^x$、$y=1$、$x=1$"],
-          "say": "e 的 x 次方、水平線 y 等於一，和直線 x 等於一，圍出一塊。" },
+          "say": "e 的 x 次方、水平線 y 等於一，和直線 x 等於一，圍出一塊。",
+          "board": [
+            { "do": "write", "line": "$y={{ex:e^x}}$、$y={{one:1}}$、$x=1$", "tint": {"ex": "blue", "one": "violet"} },
+            { "do": "plot", "graph": {"window": [-0.4,1.4,-0.2,3],"ticks": false,"labels": [{"x": 1.04,"y": -0.12,"text": "1", "anchor": "start"},{"x": -0.06,"y": 1.12,"text": "1", "anchor": "end"}],"curves": [{"expr": "exp(x)", "domain": [-0.4,1.1],"color": "blue"},{"expr": "1", "domain": [-0.4,1.4],"color": "violet"}],"fills": [{"expr": "exp(x)", "expr2": "1", "from": 0,"to": 1,"color": "gold", "opacity": 0.25}],"dashed": [[[1,-0.2],[1,3]]]},"on": "圍出一塊" }
+          ] },
         { "show": ["左：$e^x=1$，$x=0$；右：$x=1$"], "note": "兩種邊界來源都要檢查。",
-          "say": "左邊界是兩條曲線的交點，x 等於零；右邊界是題目給的直線。" },
+          "say": "左邊界是兩條曲線的交點，x 等於零；右邊界是題目給的直線。",
+          "board": [
+            { "do": "transform", "line": "左：${{l:x=0}}$（交點）；右：${{rt:x=1}}$", "on": "左邊界" },
+            { "do": "focus", "term": "l", "on": "交點" },
+            { "do": "focus", "term": "rt", "on": "題目給的" }
+          ] },
         { "show": ["$e^{1/2}\\approx 1.65>1$"], "note": "$e^x$ 在上面。",
-          "say": "代二分之一，e 的二分之一次方大約一點六五，比一大，e 的 x 次方在上面。" }
+          "say": "代二分之一，e 的二分之一次方大約一點六五，比一大，e 的 x 次方在上面。",
+          "board": [
+            { "do": "write", "line": "${{eh:e^{1/2}}}\\approx 1.65>1$", "on": "代二分之一", "tint": {"eh": "blue"} },
+            { "do": "underline", "term": "eh", "on": "e 的 x 次方在", "label": "在上面" }
+          ] }
       ],
       "predict": {
         "ask": "面積是？",

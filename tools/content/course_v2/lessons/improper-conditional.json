@@ -139,13 +139,28 @@
       "title": "比較判別失靈",
       "beats": [
         { "show": ["$\\int_0^{\\infty}\\frac{\\sin x}{x}\\,dx$"], "note": "$0$ 附近 $\\frac{\\sin x}{x}\\to 1$，麻煩在 $\\infty$ 那端。",
-          "say": "sine x 除以 x，在零附近趨近一，沒有問題。麻煩在無限遠那一端。" },
+          "say": "sine x 除以 x，在零附近趨近一，沒有問題。麻煩在無限遠那一端。",
+          "board": [
+            { "do": "write", "line": "$\\int_0^{\\infty}\\frac{\\sin x}{x}\\,dx$" },
+            { "do": "write", "line": "麻煩在 ${{inf:\\infty}}$ 那一端", "on": "麻煩在" }
+          ] },
         { "show": ["$\\left|\\frac{\\sin x}{x}\\right|\\le\\frac{1}{x}$"], "note": "可是 $\\int_1^{\\infty}\\frac{dx}{x}$ 發散。",
-          "say": "想用比較判別：它被 x 分之一壓住。可是 x 分之一的積分發散，被發散的壓住，說不出結論。" },
+          "say": "想用比較判別：它被 x 分之一壓住。可是 x 分之一的積分發散，被發散的壓住，說不出結論。",
+          "board": [
+            { "do": "write", "line": "$\\left|\\frac{\\sin x}{x}\\right|\\le{{b:\\frac{1}{x}}}$", "on": "比較判別" },
+            { "do": "underline", "term": "b", "label": "積分發散", "on": "x 分之一的積分" }
+          ] },
         { "show": ["一正一負、越來越小的拱"], "note": "第 $k$ 個拱約 $\\pm\\frac{2}{(k+1/2)\\pi}$。",
-          "say": "換個角度看圖：它是一串拱，一個在上、一個在下，面積正負交替，而且越來越小。" },
+          "say": "換個角度看圖：它是一串拱，一個在上、一個在下，面積正負交替，而且越來越小。",
+          "board": [
+            { "do": "clear" },
+            { "do": "plot", "graph": {"window":[-0.6,19.5,-0.3,1.05],"ticks":false,"curves":[{"expr":"sin(x)/x","domain":[0.001,18.85],"color":"ink"}],"fills":[{"expr":"sin(x)/x","from":0.001,"to":3.141592653589793,"color":"blue"},{"expr":"sin(x)/x","from":3.141592653589793,"to":6.283185307179586,"color":"violet"},{"expr":"sin(x)/x","from":6.283185307179586,"to":9.42477796076938,"color":"blue"},{"expr":"sin(x)/x","from":9.42477796076938,"to":12.566370614359172,"color":"violet"},{"expr":"sin(x)/x","from":12.566370614359172,"to":15.707963267948966,"color":"blue"},{"expr":"sin(x)/x","from":15.707963267948966,"to":18.84955592153876,"color":"violet"}]}, "on": "一串拱" }
+          ] },
         { "show": ["像 $1-\\frac{1}{2}+\\frac{1}{3}-\\dots$"], "note": "直覺，不是證明。",
-          "say": "這就像交錯級數，所以有理由相信它收斂。不過這只是直覺，嚴格的論證要靠分部積分。" }
+          "say": "這就像交錯級數，所以有理由相信它收斂。不過這只是直覺，嚴格的論證要靠分部積分。",
+          "board": [
+            { "do": "write", "line": "像 $1-\\frac{1}{2}+\\frac{1}{3}-\\dots$", "on": "交錯級數" }
+          ] }
       ],
       "predict": {
         "ask": "只靠 $\\left|\\frac{\\sin x}{x}\\right|\\le\\frac{1}{x}$ 能推出什麼？",
@@ -160,13 +175,32 @@
       "title": "分部積分",
       "beats": [
         { "show": ["$u=\\frac{1}{x}$，$dv=\\sin x\\,dx$"], "note": "$du=-\\frac{dx}{x^2}$，$v=-\\cos x$。",
-          "say": "分部積分：u 取 x 分之一，dv 取 sine x dx，v 是負 cosine x。" },
+          "say": "分部積分：u 取 x 分之一，dv 取 sine x dx，v 是負 cosine x。",
+          "board": [
+            { "do": "write", "line": "${{u:u=\\frac{1}{x}}}$，${{dv:dv=\\sin x\\,dx}}$" },
+            { "do": "write", "line": "$du=-\\frac{dx}{x^2}$，$v=-\\cos x$", "on": "v 是負" }
+          ] },
         { "show": ["$\\cos 1-\\frac{\\cos t}{t}-\\int_1^t\\frac{\\cos x}{x^2}\\,dx$"], "note": "這是 $\\int_1^t\\frac{\\sin x}{x}\\,dx$。",
-          "say": "從一積到 t，變成三項：cosine 一，減 t 分之 cosine t，再減一個新的積分。" },
+          "say": "從一積到 t，變成三項：cosine 一，減 t 分之 cosine t，再減一個新的積分。",
+          "board": [
+            { "do": "write", "line": "$\\int_1^t\\frac{\\sin x}{x}\\,dx$" },
+            { "do": "write", "line": "$=\\cos 1{{bd:-\\frac{\\cos t}{t}}}{{nw:-\\int_1^t\\frac{\\cos x}{x^2}\\,dx}}$", "on": "變成三項" },
+            { "do": "focus", "term": "bd", "on": "減 t 分之" },
+            { "do": "underline", "term": "nw", "label": "新的積分", "on": "新的積分" }
+          ] },
         { "show": ["$\\left|\\frac{\\cos t}{t}\\right|\\le\\frac{1}{t}\\to 0$"],
-          "say": "邊界項被 t 分之一壓著，趨近零。" },
+          "say": "邊界項被 t 分之一壓著，趨近零。",
+          "board": [
+            { "do": "keep", "n": 2 },
+            { "do": "write", "line": "$\\left|\\frac{\\cos t}{t}\\right|\\le\\frac{1}{t}\\to{{z:0}}$", "on": "邊界項" },
+            { "do": "focus", "term": "z", "on": "趨近零" }
+          ] },
         { "show": ["衰減從 $\\frac{1}{x}$ 變成 $\\frac{1}{x^2}$"], "note": "剩下的積分被 $\\frac{1}{x^2}$ 壓住。",
-          "say": "關鍵在這裡：分部積分把分母從 x 變成 x 平方，剩下的積分降得夠快了。" }
+          "say": "關鍵在這裡：分部積分把分母從 x 變成 x 平方，剩下的積分降得夠快了。",
+          "board": [
+            { "do": "write", "line": "衰減：$\\frac{1}{x}\\to{{sq:\\frac{1}{x^2}}}$", "on": "關鍵" },
+            { "do": "focus", "term": "nw", "on": "剩下的積分" }
+          ] }
       ],
       "check": 2
     },
@@ -211,9 +245,18 @@
       "proof": true, "of": 4, "skeleton": "直接",
       "beats": [
         { "show": ["分部積分：把 $g$ 積成有界的 $G$"], "note": "$f\\downarrow0$、$f'$ 連續、$|G|\\le M$。",
-          "say": "策略：跟 sine x 除以 x 同一招。分部積分，把 g 積成有界的 G，衰減交給 f prime。" },
+          "say": "策略：跟 sine x 除以 x 同一招。分部積分，把 g 積成有界的 G，衰減交給 f prime。",
+          "board": [
+            { "do": "write", "line": "把 $g$ 積成有界的 ${{gg:G}}$", "tint": {"gg":"blue"} },
+            { "do": "write", "line": "$f\\downarrow0$，$|{{gg:G}}|\\le M$", "on": "衰減交給" }
+          ] },
         { "show": ["$\\int_a^t fg=\\big[fG\\big]_a^t-\\int_a^t f'G$"], "note": "$G(t)=\\int_a^t g$，$G'=g$。",
-          "say": "G 的導數是 g。從 a 積到 t，分部積分變成邊界項，減掉 f prime 乘 G 的積分。" },
+          "say": "G 的導數是 g。從 a 積到 t，分部積分變成邊界項，減掉 f prime 乘 G 的積分。",
+          "board": [
+            { "do": "write", "line": "$\\int_a^t fg={{bd:\\big[f{{gg:G}}\\big]_a^t}}-{{in:\\int_a^t f'G}}$" },
+            { "do": "underline", "term": "bd", "label": "邊界項", "on": "邊界項" },
+            { "do": "underline", "term": "in", "on": "減掉" }
+          ] },
         { "show": ["$|f(t)G(t)|\\le M|f(t)|\\to0$"], "note": "$G$ 有界，$f(t)\\to0$。",
           "why": {
             "ask": "為什麼邊界項 $\\to0$？",
@@ -224,7 +267,12 @@
               { "label": "$f$ 遞減，所以 $fG$ 也遞減", "why": "$G$ 會正負振盪，乘起來不會單調；要的是 $f\\to0$ 乘上有界的 $G$。" }
             ]
           },
-          "say": "G 被 M 壓住，f 又趨近零，乘起來趨近零。在 a 那一端 G 是零，邊界項只剩這一個。" },
+          "say": "G 被 M 壓住，f 又趨近零，乘起來趨近零。在 a 那一端 G 是零，邊界項只剩這一個。",
+          "board": [
+            { "do": "keep", "n": 1 },
+            { "do": "focus", "term": "bd", "on": "邊界項" },
+            { "do": "write", "line": "$|f(t)G(t)|\\le M|f(t)|\\to0$", "why": true, "on": "G 被 M 壓住" }
+          ] },
         { "show": ["$|f'G|\\le M|f'|=-Mf'$"], "note": "$f$ 遞減，$f'\\le0$。",
           "why": {
             "ask": "為什麼 $M|f'|=-Mf'$？",
@@ -235,9 +283,18 @@
               { "label": "$f\\to0$，所以 $f'\\to0$", "why": "趨近 $0$ 不決定正負號；去掉絕對值靠的是 $f'\\le0$。" }
             ]
           },
-          "say": "f 遞減，f prime 小於等於零，它的絕對值就是負 f prime。" },
+          "say": "f 遞減，f prime 小於等於零，它的絕對值就是負 f prime。",
+          "board": [
+            { "do": "write", "line": "$|f'G|\\le M|f'|={{n:-Mf'}}$" },
+            { "do": "write", "line": "$f$ 遞減：$f'\\le0$", "why": true, "on": "f 遞減" }
+          ] },
         { "show": ["$\\int_a^{\\infty}(-Mf')=Mf(a)$ 有限"], "note": "$\\int f'G$ 絕對收斂，原積分收斂。",
-          "say": "負 M f prime 從 a 積到無限大，等於 M 乘 f 在 a 的值，是有限的。兩項都有極限，原積分收斂。" }
+          "say": "負 M f prime 從 a 積到無限大，等於 M 乘 f 在 a 的值，是有限的。兩項都有極限，原積分收斂。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "$\\int_a^{\\infty}(-Mf')=Mf(a)$ 有限", "on": "負 M f prime" },
+            { "do": "write", "line": "兩項都有極限：原積分收斂", "color": "green", "on": "兩項都有極限" }
+          ] }
       ],
       "where": {
         "ask": "「$f$ 遞減」用在哪一步？",

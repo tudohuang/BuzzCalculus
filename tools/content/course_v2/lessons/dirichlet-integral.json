@@ -53,9 +53,21 @@
     {
       "title": "先加阻尼",
       "beats": [
-        {"show":["$\\int_0^{\\infty}\\frac{\\sin x}{x}\\,dx=\\frac{\\pi}{2}$"],"note":"收斂，但不絕對收斂。","say":"目標是這個積分。它收斂，可是不絕對收斂；sine x 除以 x 也沒有初等反導函數。"},
-        {"show":["$I(a)=\\int_0^{\\infty}\\frac{e^{-ax}\\sin x}{x}\\,dx$"],"note":"$a>0$：一切都絕對收斂。","say":"辦法是先乘上 e 的負 a x 次方當阻尼。a 大於零時一切絕對收斂，交換微分積分沒問題。"},
-        {"show":["$I'(a)=-\\frac{1}{1+a^2}$"],"note":"$a\\to\\infty$ 時 $I\\to 0$。","say":"對 a 微分，分母的 x 消掉，得到負的一加 a 平方分之一。a 趨近無限大時 I 趨近零。"}
+        {"show":["$\\int_0^{\\infty}\\frac{\\sin x}{x}\\,dx=\\frac{\\pi}{2}$"],"note":"收斂，但不絕對收斂。","say":"目標是這個積分。它收斂，可是不絕對收斂；sine x 除以 x 也沒有初等反導函數。",
+          "board": [
+            { "do": "write", "line": "$\\int_0^{\\infty}{{f:\\frac{\\sin x}{x}}}\\,dx=\\frac{\\pi}{2}$" },
+            { "do": "underline", "term": "f", "label": "沒有初等反導函數", "on": "sine x 除以 x" }
+          ]},
+        {"show":["$I(a)=\\int_0^{\\infty}\\frac{e^{-ax}\\sin x}{x}\\,dx$"],"note":"$a>0$：一切都絕對收斂。","say":"辦法是先乘上 e 的負 a x 次方當阻尼。a 大於零時一切絕對收斂，交換微分積分沒問題。",
+          "board": [
+            { "do": "write", "line": "$I(a)=\\int_0^{\\infty}{{d:e^{-ax}}}\\,\\frac{\\sin x}{x}\\,dx$", "tint": {"d": "blue"} },
+            { "do": "underline", "term": "d", "color": "blue", "label": "阻尼", "on": "當阻尼" }
+          ]},
+        {"show":["$I'(a)=-\\frac{1}{1+a^2}$"],"note":"$a\\to\\infty$ 時 $I\\to 0$。","say":"對 a 微分，分母的 x 消掉，得到負的一加 a 平方分之一。a 趨近無限大時 I 趨近零。",
+          "board": [
+            { "do": "write", "line": "$I'(a)=-\\frac{1}{1+a^2}$" },
+            { "do": "write", "line": "$a\\to\\infty$ 時 $I\\to0$", "on": "a 趨近無限大" }
+          ]}
       ],
       "predict": {
         "ask": "積回去並定常數，$I(a)$ 是？",
@@ -79,7 +91,12 @@
       "title": "證明：頭尾分開管",
       "proof": true, "of": 2, "skeleton": "ε-δ",
       "beats": [
-        {"show":["切成頭 $[0,A]$ 和尾巴 $[A,\\infty)$"],"say":"策略：epsilon delta。把積分切成頭和尾巴，頭用參數積分的連續性，尾巴用一個跟 a 無關的上界。"},
+        {"show":["切成頭 $[0,A]$ 和尾巴 $[A,\\infty)$"],"say":"策略：epsilon delta。把積分切成頭和尾巴，頭用參數積分的連續性，尾巴用一個跟 a 無關的上界。",
+          "board": [
+            { "do": "write", "line": "$\\int_0^{\\infty}={{h:\\int_0^{A}}}+{{t:\\int_A^{\\infty}}}$", "tint": {"h": "blue", "t": "violet"} },
+            { "do": "underline", "term": "h", "label": "連續性", "on": "頭用" },
+            { "do": "underline", "term": "t", "label": "跟 a 無關", "on": "尾巴用" }
+          ]},
         {"show":["頭：$\\frac{e^{-ax}\\sin x}{x}$ 在 $[0,A]\\times[0,1]$ 連續"],"note":"$x=0$ 處補值；〈參數積分〉：這一段對 $a$ 連續。",
          "why":{"ask":"頭那一段為什麼對 $a$ 連續？","say":"頭那一段，為什麼對 a 連續？",
           "options":[
@@ -87,8 +104,18 @@
             {"label":"對每個固定的 $a$，被積函數對 $x$ 連續","why":"只看固定的 $a$ 不夠；定理要的是兩變數在閉矩形上一起連續。"},
             {"label":"$x=0$ 沒定義，所以不連續","why":"$\\frac{\\sin x}{x}$ 在 $0$ 補值 $1$ 就連續了；補完之後整個閉矩形上都連續。"}
           ]},
-         "say":"在零補上極限值之後，被積函數在閉矩形上兩變數一起連續，參數積分的定理保證頭這段對 a 連續。"},
-        {"show":["尾巴：$g(x)=\\frac{e^{-ax}}{x}$ 遞減到 $0$","$\\left|\\int_A^B\\sin x\\,dx\\right|\\le 2$"],"say":"尾巴：g 遞減到零，sine 從 A 積到任何 B，絕對值都不超過二。"},
+         "say":"在零補上極限值之後，被積函數在閉矩形上兩變數一起連續，參數積分的定理保證頭這段對 a 連續。",
+          "board": [
+            { "do": "write", "line": "頭：$\\frac{e^{-ax}\\sin x}{x}$ 在 ${{rect:[0,A]\\times[0,1]}}$" },
+            { "do": "underline", "term": "rect", "label": "一起連續", "on": "閉矩形", "why": true },
+            { "do": "write", "line": "⇒ 頭對 $a$ 連續", "on": "參數積分的定理", "why": true }
+          ]},
+        {"show":["尾巴：$g(x)=\\frac{e^{-ax}}{x}$ 遞減到 $0$","$\\left|\\int_A^B\\sin x\\,dx\\right|\\le 2$"],"say":"尾巴：g 遞減到零，sine 從 A 積到任何 B，絕對值都不超過二。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "尾巴：$g(x)=\\frac{e^{-ax}}{x}$ 遞減到 $0$", "on": "g 遞減" },
+            { "do": "write", "line": "$\\left|\\int_A^B\\sin x\\,dx\\right|\\le2$", "on": "sine 從 A" }
+          ]},
         {"show":["$\\left|\\int_A^{\\infty}g(x)\\sin x\\,dx\\right|\\le\\frac{2}{A}$"],"note":"分部積分；對所有 $a\\ge 0$ 一致成立。",
          "why":{"ask":"這個上界的關鍵是什麼？","say":"尾巴不超過 A 分之二。這個上界最要緊的地方是什麼？",
           "options":[
@@ -96,8 +123,18 @@
             {"label":"每個 $a$ 的尾巴都趨近 $0$","why":"每個 $a$ 各自趨近零不夠；要一個 $A$ 同時管住所有的 $a$。"},
             {"label":"它來自絕對收斂","why":"$\\int\\frac{|\\sin x|}{x}\\,dx$ 發散；上界靠的是 $\\sin$ 的積分有界加上 $g$ 遞減。"}
           ]},
-         "say":"分部積分得到二乘 g 在 A 的值，不超過 A 分之二，而且不管 a 是多少都成立。"},
-        {"show":["$|I(a)-I(0)|\\le$ 頭的差 $+\\frac{4}{A}$"],"note":"先取 $A$ 讓 $\\frac{4}{A}<\\varepsilon$，再讓 $a\\to 0^+$。","say":"兩條尾巴各不超過 A 分之二。先取 A 夠大，再讓 a 從右邊趨近零，頭的差也小於 epsilon。"}
+         "say":"分部積分得到二乘 g 在 A 的值，不超過 A 分之二，而且不管 a 是多少都成立。",
+          "board": [
+            { "do": "write", "line": "$\\left|\\int_A^{\\infty}g(x)\\sin x\\,dx\\right|\\le{{b:\\frac{2}{A}}}$" },
+            { "do": "underline", "term": "b", "label": "跟 a 無關", "on": "不管 a", "why": true }
+          ]},
+        {"show":["$|I(a)-I(0)|\\le$ 頭的差 $+\\frac{4}{A}$"],"note":"先取 $A$ 讓 $\\frac{4}{A}<\\varepsilon$，再讓 $a\\to 0^+$。","say":"兩條尾巴各不超過 A 分之二。先取 A 夠大，再讓 a 從右邊趨近零，頭的差也小於 epsilon。",
+          "board": [
+            { "do": "keep", "n": 1 },
+            { "do": "write", "line": "$|I(a)-I(0)|\\le$ 頭的差 $+{{f:\\frac{4}{A}}}$", "on": "兩條尾巴" },
+            { "do": "focus", "term": "f", "color": "violet", "on": "不超過" },
+            { "do": "write", "line": "先取 $A$ 大，再讓 $a\\to0^+$", "on": "先取 A" }
+          ]}
       ],
       "order": {
         "ask": "把證明排回順序：依序點每一步",
@@ -121,9 +158,22 @@
     {
       "title": "變號與積化和差",
       "beats": [
-        {"show":["$\\int_0^{\\infty}\\frac{\\sin(bx)}{x}\\,dx=\\frac{\\pi}{2}\\cdot\\operatorname{sgn}b$"],"note":"$b<0$ 時 $\\sin$ 變號。","say":"b 是負的時候，sine 整個變號，答案變成負二分之派。合起來寫成二分之派乘 b 的正負號。"},
-        {"show":["$\\sin x\\cos x=\\frac{\\sin 2x}{2}$"],"say":"再看 sine x 乘 cosine x，用倍角公式變成二分之一乘 sine 二 x。"},
-        {"show":["$\\frac{1}{2}\\cdot\\frac{\\pi}{2}=\\frac{\\pi}{4}$"],"say":"sine 二 x 那部分縮放後是二分之派，乘二分之一，得四分之派。"}
+        {"show":["$\\int_0^{\\infty}\\frac{\\sin(bx)}{x}\\,dx=\\frac{\\pi}{2}\\cdot\\operatorname{sgn}b$"],"note":"$b<0$ 時 $\\sin$ 變號。","say":"b 是負的時候，sine 整個變號，答案變成負二分之派。合起來寫成二分之派乘 b 的正負號。",
+          "board": [
+            { "do": "write", "line": "$\\int_0^{\\infty}\\frac{\\sin(bx)}{x}\\,dx=\\frac{\\pi}{2}\\cdot{{sg:\\operatorname{sgn}b}}$" },
+            { "do": "focus", "term": "sg", "on": "合起來寫成" }
+          ]},
+        {"show":["$\\sin x\\cos x=\\frac{\\sin 2x}{2}$"],"say":"再看 sine x 乘 cosine x，用倍角公式變成二分之一乘 sine 二 x。",
+          "board": [
+            { "do": "write", "line": "$\\sin x\\cos x=\\frac{1}{2}{{s2:\\sin 2x}}$" },
+            { "do": "focus", "term": "s2", "on": "sine 二 x" }
+          ]},
+        {"show":["$\\frac{1}{2}\\cdot\\frac{\\pi}{2}=\\frac{\\pi}{4}$"],"say":"sine 二 x 那部分縮放後是二分之派，乘二分之一，得四分之派。",
+          "board": [
+            { "do": "write", "line": "$\\int_0^{\\infty}\\frac{\\sin x\\cos x}{x}\\,dx=\\frac{1}{2}\\cdot{{sc:\\frac{\\pi}{2}}}={{r:\\frac{\\pi}{4}}}$" },
+            { "do": "underline", "term": "sc", "label": "縮放", "on": "縮放後" },
+            { "do": "box", "term": "r", "color": "green", "on": "得四分之派" }
+          ]}
       ],
       "check": 1
     },

@@ -209,11 +209,23 @@
       "title": "算一個",
       "beats": [
         { "show": ["$y=\\sqrt{x}$，$0\\le x\\le 4$，繞 $x$ 軸"],
-          "say": "根號 x 從零到四，跟 x 軸之間的區域繞 x 軸轉。" },
+          "say": "根號 x 從零到四，跟 x 軸之間的區域繞 x 軸轉。",
+          "board": [
+            { "do": "write", "line": "$y={{f:\\sqrt{x}}}$，$0\\le x\\le4$，繞 $x$ 軸", "tint": {"f": "blue"} },
+            { "do": "plot", "graph": {"window": [-0.3,4.4,-2.3,2.3],"curves": [{"expr": "sqrt(x)", "domain": [0,4],"color": "blue"},{"expr": "-sqrt(x)", "domain": [0,4],"color": "muted", "dashed": true}],"fills": [{"expr": "sqrt(x)", "from": 0,"to": 4,"color": "blue"}],"dashed": [[[2.5,-1.5811],[2.5,1.5811]]],"ticks": false},"on": "跟 x 軸" }
+          ] },
         { "show": ["$A(x)=\\pi(\\sqrt{x})^2=\\pi x$"],
-          "say": "截面是半徑根號 x 的圓，平方之後面積是 pi x。" },
+          "say": "截面是半徑根號 x 的圓，平方之後面積是 pi x。",
+          "board": [
+            { "do": "write", "line": "$A(x)=\\pi({{f:\\sqrt{x}}})^2=\\pi x$", "on": "截面是" },
+            { "do": "focus", "term": "f", "label": "半徑", "on": "半徑根號 x" }
+          ] },
         { "show": ["$V=\\int_0^4\\pi x\\,dx=8\\pi$"],
-          "say": "從零積到四，得到八 pi。" }
+          "say": "從零積到四，得到八 pi。",
+          "board": [
+            { "do": "transform", "line": "$V=\\int_0^4\\pi x\\,dx={{ans:8\\pi}}$" },
+            { "do": "box", "term": "ans", "color": "green", "on": "得到" }
+          ] }
       ],
       "solve": {
         "check": 0, "kind": "numeric", "answer": "8*pi/3", "claim": "INT(pi*x^2, 0, 2) == ANS",
@@ -232,9 +244,17 @@
         { "show": ["半徑：到 $y$ 軸的距離 $x=g(y)$"],
           "say": "半徑一律是到旋轉軸的距離，現在是 x，要寫成 y 的函數。" },
         { "show": ["$y=x^2$，$0\\le y\\le 1$：半徑 $\\sqrt{y}$"], "note": "由 $y=x^2$、$x\\ge 0$ 得 $x=\\sqrt{y}$。",
-          "say": "例如 x 平方和 y 等於一圍出的區域繞 y 軸。高度 y 處的半徑是根號 y。" },
+          "say": "例如 x 平方和 y 等於一圍出的區域繞 y 軸。高度 y 處的半徑是根號 y。",
+          "board": [
+            { "do": "plot", "graph": {"window": [-1.25,1.25,-0.12,1.15],"equal": true,"curves": [{"expr": "x^2", "domain": [0,1],"color": "blue"},{"expr": "x^2", "domain": [-1,0],"color": "muted", "dashed": true},{"expr": "1", "domain": [-1,1],"color": "muted"}],"fills": [{"expr2": "x^2", "expr": "1", "from": 0,"to": 1,"color": "blue"}],"dashed": [[[0,0.5],[0.7071,0.5]]],"points": [{"x": 0.7071,"y": 0.5}],"labels": [{"x": 0.35,"y": 0.56,"text": "√y", "anchor": "middle"}],"ticks": false},"on": "例如" },
+            { "do": "write", "line": "$y=x^2$，$0\\le y\\le1$：半徑 ${{r:\\sqrt{y}}}$", "tint": {"r": "blue"},"on": "高度 y 處" }
+          ] },
         { "show": ["$V=\\int_0^1\\pi y\\,dy=\\frac{\\pi}{2}$"],
-          "say": "平方得 pi y，從零積到一，二分之 pi。" }
+          "say": "平方得 pi y，從零積到一，二分之 pi。",
+          "board": [
+            { "do": "write", "line": "$V=\\int_0^1\\pi y\\,dy={{ans:\\frac{\\pi}{2}}}$" },
+            { "do": "box", "term": "ans", "color": "green", "on": "從零積到一" }
+          ] }
       ],
       "check": 2
     },

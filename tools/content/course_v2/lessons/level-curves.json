@@ -148,11 +148,22 @@
       "title": "碗的等高線",
       "beats": [
         { "show": ["$x^2+y^2=c$，$c>0$：半徑 $\\sqrt c$ 的圓"],
-          "say": "碗形的 x 平方加 y 平方，在高度 c 切下去，切口是半徑根號 c 的圓。" },
+          "say": "碗形的 x 平方加 y 平方，在高度 c 切下去，切口是半徑根號 c 的圓。",
+          "board": [
+            { "do": "write", "line": "$x^2+y^2=c$，$c>0$：半徑 ${{r:\\sqrt c}}$ 的圓" },
+            { "do": "plot", "graph": { "window": [-3,3,-1.9,1.9], "equal": true, "ticks": false, "curves": [{ "param": { "x": "1*cos(t)", "y": "1*sin(t)", "t": [0,6.2832]}, "color": "blue" },{ "param": { "x": "sqrt(2)*cos(t)", "y": "sqrt(2)*sin(t)", "t": [0,6.2832]}, "color": "blue" },{ "param": { "x": "sqrt(3)*cos(t)", "y": "sqrt(3)*sin(t)", "t": [0,6.2832]}, "color": "blue" }]}, "on": "切口是" }
+          ] },
         { "show": ["$c=0$：只有原點"],
-          "say": "高度零剛好是碗底，只切到一個點，就是原點。" },
+          "say": "高度零剛好是碗底，只切到一個點，就是原點。",
+          "board": [
+            { "do": "write", "line": "$c=0$：只有原點", "on": "高度零" }
+          ] },
         { "show": ["$c<0$：沒有點"], "note": "碗的最低點高度是 $0$。",
-          "say": "比碗底還低的水平面，根本碰不到碗，所以這條等高線是空的。" }
+          "say": "比碗底還低的水平面，根本碰不到碗，所以這條等高線是空的。",
+          "board": [
+            { "do": "keep", "n": 2 },
+            { "do": "write", "line": "$c<0$：沒有點", "on": "比碗底" }
+          ] }
       ],
       "check": 1
     },
@@ -160,11 +171,25 @@
       "title": "直線與馬鞍",
       "beats": [
         { "show": ["$2x+y=c$：一族平行直線"], "note": "曲面是平面，到處一樣陡。",
-          "say": "一次函數的等高線是一族平行直線。曲面是平面，哪裡都一樣陡。" },
+          "say": "一次函數的等高線是一族平行直線。曲面是平面，哪裡都一樣陡。",
+          "board": [
+            { "do": "write", "line": "$2x+y=c$：一族平行直線" },
+            { "do": "plot", "graph": { "window": [-2,2,-2,2], "ticks": false, "curves": [{ "expr": "-2*x-2", "domain": [-2,0], "color": "blue" },{ "expr": "-2*x-1", "domain": [-1.5,0.5], "color": "blue" },{ "expr": "-2*x", "domain": [-1,1], "color": "blue" },{ "expr": "1-2*x", "domain": [-0.5,1.5], "color": "blue" },{ "expr": "2-2*x", "domain": [0,2], "color": "blue" }]}, "on": "平行直線" }
+          ] },
         { "show": ["$y-x^2=c$ → $y=x^2+c$"], "note": "$c$ 每差 $1$，拋物線就平移 $1$ 格。",
-          "say": "y 減 x 平方的等高線，是同一條拋物線上下平移，間距固定。" },
+          "say": "y 減 x 平方的等高線，是同一條拋物線上下平移，間距固定。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "$y-x^2=c$ → $y=x^2+c$", "on": "y 減" },
+            { "do": "plot", "graph": { "window": [-2,2,-2.5,3], "ticks": false, "curves": [{ "expr": "x^2-2", "color": "violet" },{ "expr": "x^2-1", "color": "violet" },{ "expr": "x^2", "color": "violet" },{ "expr": "x^2+1", "color": "violet" }]}, "on": "上下平移" }
+          ] },
         { "show": ["$x^2-y^2=c$：雙曲線"], "note": "$c=0$ 是兩條直線 $y=\\pm x$。",
-          "say": "x 平方減 y 平方是馬鞍：沿 x 軸往上、沿 y 軸往下。等高線是雙曲線，高度零是兩條交叉的直線。" }
+          "say": "x 平方減 y 平方是馬鞍：沿 x 軸往上、沿 y 軸往下。等高線是雙曲線，高度零是兩條交叉的直線。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "$x^2-y^2=c$：雙曲線", "on": "x 平方減" },
+            { "do": "plot", "graph": { "window": [-2.6,2.6,-2,2], "ticks": false, "curves": [{ "expr": "sqrt(x^2-1)", "domain": [1,2.6], "color": "blue" },{ "expr": "-sqrt(x^2-1)", "domain": [1,2.6], "color": "blue" },{ "expr": "sqrt(x^2-1)", "domain": [-2.6,-1], "color": "blue" },{ "expr": "-sqrt(x^2-1)", "domain": [-2.6,-1], "color": "blue" },{ "expr": "sqrt(x^2+1)", "color": "violet" },{ "expr": "-sqrt(x^2+1)", "color": "violet" },{ "expr": "x", "color": "gold" },{ "expr": "-x", "color": "gold" }], "labels": [{ "x": 2.1, "y": 0.15, "text": "c > 0", "anchor": "middle" },{ "x": 0, "y": 1.5, "text": "c < 0", "anchor": "middle" }]}, "on": "等高線是雙曲線" }
+          ] }
       ],
       "check": 0
     },

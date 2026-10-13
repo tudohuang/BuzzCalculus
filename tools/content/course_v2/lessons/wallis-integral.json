@@ -131,13 +131,31 @@
       "title": "遞迴從哪裡來",
       "beats": [
         { "show": ["$W_n=\\int_0^{\\pi/2}\\sin^n x\\,dx$"], "note": "拆成 $\\sin^{n-1}x\\cdot\\sin x$。",
-          "say": "Wallis 積分是 sine 的 n 次方從零積到二分之 pi。先拆出一個 sine x 來做分部積分。" },
+          "say": "Wallis 積分是 sine 的 n 次方從零積到二分之 pi。先拆出一個 sine x 來做分部積分。",
+          "board": [
+            { "do": "write", "line": "$W_n=\\int_0^{\\pi/2}\\sin^n x\\,dx$" },
+            { "do": "transform", "line": "$W_n=\\int_0^{\\pi/2}{{u:\\sin^{n-1}x}}\\,{{dv:\\sin x\\,dx}}$", "tint": { "u": "blue", "dv": "violet" }, "on": "先拆出" }
+          ] },
         { "show": ["$u=\\sin^{n-1}x$，$dv=\\sin x\\,dx$"], "note": "邊界項：兩端一個 $\\cos=0$、一個 $\\sin=0$。",
-          "say": "u 取 sine 的 n 減一次方，v 是負 cosine x。邊界項在兩端剛好都是零。" },
+          "say": "u 取 sine 的 n 減一次方，v 是負 cosine x。邊界項在兩端剛好都是零。",
+          "board": [
+            { "do": "write", "line": "$u={{u:\\sin^{n-1}x}}$，$dv={{dv:\\sin x\\,dx}}$" },
+            { "do": "write", "line": "邊界項：兩端都是 $0$", "on": "邊界項" }
+          ] },
         { "show": ["$(n-1)\\int_0^{\\pi/2}\\sin^{n-2}x\\cos^2 x\\,dx$"], "note": "$\\cos^2 x=1-\\sin^2 x$",
-          "say": "剩下的積分裡有 cosine 平方，換成一減 sine 平方，就拆回兩個 Wallis 積分。" },
+          "say": "剩下的積分裡有 cosine 平方，換成一減 sine 平方，就拆回兩個 Wallis 積分。",
+          "board": [
+            { "do": "write", "line": "$(n-1)\\int_0^{\\pi/2}\\sin^{n-2}x\\,{{c:\\cos^2 x}}\\,dx$" },
+            { "do": "underline", "term": "c", "label": "1 − sin²", "on": "換成" }
+          ] },
         { "show": ["$W_n=(n-1)(W_{n-2}-W_n)$"], "note": "$W_n$ 出現在兩邊。",
-          "say": "W n 出現在等號兩邊，跟循環積分一樣，移項就解出來。" }
+          "say": "W n 出現在等號兩邊，跟循環積分一樣，移項就解出來。",
+          "board": [
+            { "do": "keep", "n": 3 },
+            { "do": "write", "line": "${{wl:W_n}}=(n-1)(W_{n-2}-{{wn:W_n}})$", "on": "W n 出現在" },
+            { "do": "focus", "term": "wl", "on": "等號兩邊" },
+            { "do": "focus", "term": "wn", "label": "移項", "on": "跟循環積分" }
+          ] }
       ],
       "predict": {
         "ask": "移項之後，$W_n$ 是？",
@@ -152,11 +170,24 @@
       "title": "奇偶決定 $\\pi$",
       "beats": [
         { "show": ["$W_0=\\frac{\\pi}{2}$，$W_1=1$"], "note": "遞迴一次跳兩格，要兩個起點。",
-          "say": "遞迴一次跳兩格，所以有兩個起點：W 零是二分之 pi，W 一是一。" },
+          "say": "遞迴一次跳兩格，所以有兩個起點：W 零是二分之 pi，W 一是一。",
+          "board": [
+            { "do": "write", "line": "$W_0={{p:\\frac{\\pi}{2}}}$，$W_1={{q:1}}$", "tint": { "p": "blue", "q": "violet" } },
+            { "do": "focus", "term": "p", "label": "偶數的起點", "on": "W 零" },
+            { "do": "focus", "term": "q", "label": "奇數的起點", "on": "W 一" }
+          ] },
         { "show": ["$W_6=\\frac{5}{6}\\cdot\\frac{3}{4}\\cdot\\frac{1}{2}\\cdot\\frac{\\pi}{2}=\\frac{5\\pi}{32}$"],
-          "say": "偶數，例如六：六分之五、四分之三、二分之一一路乘下去，最後乘二分之 pi，得三十二分之五 pi。" },
+          "say": "偶數，例如六：六分之五、四分之三、二分之一一路乘下去，最後乘二分之 pi，得三十二分之五 pi。",
+          "board": [
+            { "do": "write", "line": "$W_6=\\frac{5}{6}\\cdot\\frac{3}{4}\\cdot\\frac{1}{2}\\cdot{{p:\\frac{\\pi}{2}}}={{r6:\\frac{5\\pi}{32}}}$" },
+            { "do": "box", "term": "r6", "color": "green", "on": "得三十二" }
+          ] },
         { "show": ["$W_7=\\frac{6}{7}\\cdot\\frac{4}{5}\\cdot\\frac{2}{3}\\cdot 1=\\frac{16}{35}$"], "note": "奇數最後乘 $W_1=1$：沒有 $\\pi$。",
-          "say": "奇數，例如七：乘到三分之二，最後乘的是一，所以答案三十五分之十六，裡面沒有 pi。" }
+          "say": "奇數，例如七：乘到三分之二，最後乘的是一，所以答案三十五分之十六，裡面沒有 pi。",
+          "board": [
+            { "do": "write", "line": "$W_7=\\frac{6}{7}\\cdot\\frac{4}{5}\\cdot\\frac{2}{3}\\cdot{{q:1}}={{r7:\\frac{16}{35}}}$" },
+            { "do": "box", "term": "r7", "color": "green", "label": "沒有 π", "on": "所以答案" }
+          ] }
       ],
       "check": 0
     },
@@ -174,11 +205,24 @@
       "title": "區間 $[0,\\pi]$",
       "beats": [
         { "show": ["$\\int_0^\\pi\\sin^n x\\,dx=2W_n$"], "note": "$\\sin^n$ 對 $x=\\frac{\\pi}{2}$ 對稱。",
-          "say": "區間拉長到零到 pi，sine 的 n 次方左右對稱，所以是兩倍的 W n。" },
+          "say": "區間拉長到零到 pi，sine 的 n 次方左右對稱，所以是兩倍的 W n。",
+          "board": [
+            { "do": "plot", "graph": { "window": [-0.25,3.4,-0.2,1.2], "ticks": false, "curves": [{ "expr": "sin(x)^4", "domain": [0,3.1416], "color": "ink" }], "fills": [{ "expr": "sin(x)^4", "from": 0, "to": 1.5708, "color": "blue" },{ "expr": "sin(x)^4", "from": 1.5708, "to": 3.1416, "color": "violet" }], "dashed": [[[1.5708,0],[1.5708,1.1]]], "labels": [{ "x": 1.5708, "y": -0.15, "text": "π/2", "anchor": "middle" },{ "x": 3.1416, "y": -0.15, "text": "π", "anchor": "middle" }]} },
+            { "do": "write", "line": "$\\int_0^\\pi\\sin^n x\\,dx={{w:2W_n}}$", "on": "所以是" }
+          ] },
         { "show": ["$\\int_0^\\pi\\cos^4 x\\,dx=2W_4$"], "note": "偶數次方：$\\cos(\\pi-x)^4=\\cos^4 x$。",
-          "say": "cosine 四次方也是左右對稱，因為偶數次方把負號吃掉了。" },
+          "say": "cosine 四次方也是左右對稱，因為偶數次方把負號吃掉了。",
+          "board": [
+            { "do": "write", "line": "$\\int_0^\\pi\\cos^4 x\\,dx={{w4:2W_4}}$" },
+            { "do": "underline", "term": "w4", "label": "也對稱", "on": "左右對稱" }
+          ] },
         { "show": ["$2\\cdot\\frac{3\\pi}{16}=\\frac{3\\pi}{8}$"], "note": "$W_4=\\frac{3}{4}\\cdot\\frac{1}{2}\\cdot\\frac{\\pi}{2}$",
-          "say": "W 四是十六分之三 pi，乘二得八分之三 pi。在半段上，答案就是十六分之三 pi。" }
+          "say": "W 四是十六分之三 pi，乘二得八分之三 pi。在半段上，答案就是十六分之三 pi。",
+          "board": [
+            { "do": "keep", "n": 1 },
+            { "do": "write", "line": "$={{res:\\frac{3\\pi}{8}}}$", "on": "乘二" },
+            { "do": "box", "term": "res", "color": "green", "on": "八分之三" }
+          ] }
       ],
       "check": 1
     },

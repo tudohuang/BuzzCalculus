@@ -162,13 +162,29 @@
       "title": "合成：$e^{\\sin x}$",
       "beats": [
         { "show": ["$u=\\sin x=x-\\frac{x^3}{6}+o(x^4)$"], "note": "$u$ 從 $x$ 開始，$u^k$ 從 $x^k$ 開始。",
-          "say": "函數套函數，先把內層叫做 u。u 等於 sine x，從 x 開始，所以 u 的 k 次方從 x 的 k 次方開始。" },
+          "say": "函數套函數，先把內層叫做 u。u 等於 sine x，從 x 開始，所以 u 的 k 次方從 x 的 k 次方開始。",
+          "board": [
+            { "do": "write", "line": "${{u:u=\\sin x}}={{lead:x}}-\\frac{x^3}{6}+o(x^4)$", "tint": {"u": "blue"} },
+            { "do": "focus", "term": "lead", "on": "從 x 開始" }
+          ] },
         { "show": ["$e^u=1+u+\\frac{u^2}{2}+\\frac{u^3}{6}+\\frac{u^4}{24}$"], "note": "要到 $x^4$，外層展到 $u^4$ 就夠。",
-          "say": "分母是 x 的四次方，外層 e 的 u 次方展到 u 的四次方就夠了。" },
+          "say": "分母是 x 的四次方，外層 e 的 u 次方展到 u 的四次方就夠了。",
+          "board": [
+            { "do": "write", "line": "${{e:e^u}}=1+u+\\frac{u^2}{2}+\\frac{u^3}{6}+{{u4:\\frac{u^4}{24}}}$", "tint": {"e": "violet"} },
+            { "do": "underline", "term": "u4", "label": "到這裡就夠", "on": "展到 u 的四次方" }
+          ] },
         { "show": ["$u^2=x^2-\\frac{x^4}{3}$，$u^3=x^3$，$u^4=x^4$"], "note": "各自展到 $x^4$，後面都是 $o(x^4)$。",
-          "say": "再把 u 平方、u 三次方、u 四次方各自展到 x 的四次方，接著合併同次項。" },
+          "say": "再把 u 平方、u 三次方、u 四次方各自展到 x 的四次方，接著合併同次項。",
+          "board": [
+            { "do": "write", "line": "$u^2=x^2-\\frac{x^4}{3}$，$u^3=x^3$，$u^4=x^4$" }
+          ] },
         { "show": ["$x^3$ 項：$-\\frac{1}{6}+\\frac{1}{6}=0$"],
-          "say": "三次方的項，一個是負六分之一，一個是正六分之一，剛好消掉。" }
+          "say": "三次方的項，一個是負六分之一，一個是正六分之一，剛好消掉。",
+          "board": [
+            { "do": "write", "line": "$x^3$ 項：${{a:-\\frac{1}{6}}}+{{b:\\frac{1}{6}}}=0$" },
+            { "do": "focus", "term": "a", "on": "負六分之一" },
+            { "do": "focus", "term": "b", "on": "正六分之一" }
+          ] }
       ],
       "predict": {
         "ask": "$x^4$ 項的係數合起來是？",
@@ -183,11 +199,24 @@
       "title": "內層要先 $\\to 0$",
       "beats": [
         { "show": ["$e^{\\sin x}=1+x+\\frac{x^2}{2}-\\frac{x^4}{8}+o(x^4)$"], "note": "所以上一題的極限是 $-\\frac{1}{8}$。",
-          "say": "合併完，e 的 sine x 次方展開就出來了。分子剩負八分之一 x 的四次方，極限是負八分之一。" },
+          "say": "合併完，e 的 sine x 次方展開就出來了。分子剩負八分之一 x 的四次方，極限是負八分之一。",
+          "board": [
+            { "do": "write", "line": "$e^{\\sin x}=1+x+\\frac{x^2}{2}{{c:-\\frac{x^4}{8}}}+o(x^4)$" },
+            { "do": "underline", "term": "c", "on": "分子剩" }
+          ] },
         { "show": ["內層 $\\to 0$，外層才能用 $0$ 附近的展開"], "note": "這裡 $\\sin x\\to 0$。",
-          "say": "能這樣代，前提是內層趨近零。像 e 的一加 x 次方，就不能直接套零附近的展開。" },
+          "say": "能這樣代，前提是內層趨近零。像 e 的一加 x 次方，就不能直接套零附近的展開。",
+          "board": [
+            { "do": "write", "line": "內層 $\\to0$，外層才能用 $0$ 附近的展開" },
+            { "do": "write", "line": "${{bad:e^{1+x}}}$：內層 $\\to1$", "on": "像 e 的" },
+            { "do": "strike", "term": "bad", "label": "不能直接套", "on": "就不能" }
+          ] },
         { "show": ["$\\ln(\\cos x)$：$u=\\cos x-1=-\\frac{x^2}{2}+\\dots$"], "note": "套 $\\ln(1+u)=u-\\frac{u^2}{2}+\\dots$",
-          "say": "自然對數 cosine x 也一樣：把 cosine x 減一當成 u，它趨近零，就能套自然對數一加 u 的展開。" }
+          "say": "自然對數 cosine x 也一樣：把 cosine x 減一當成 u，它趨近零，就能套自然對數一加 u 的展開。",
+          "board": [
+            { "do": "write", "line": "$\\ln(\\cos x)$：${{u:u=\\cos x-1}}=-\\frac{x^2}{2}+\\dots$", "tint": {"u": "blue"} },
+            { "do": "underline", "term": "u", "color": "blue", "label": "趨近零", "on": "它趨近零" }
+          ] }
       ],
       "check": 2
     },
@@ -195,11 +224,22 @@
       "title": "相除：幾何級數",
       "beats": [
         { "show": ["$\\frac{1}{1-w}=1+w+w^2+\\dots$"], "note": "分母長成 $1-w$，$w\\to 0$。",
-          "say": "分母展開以後如果長成一減 w，w 趨近零，就用幾何級數把它翻上來。" },
+          "say": "分母展開以後如果長成一減 w，w 趨近零，就用幾何級數把它翻上來。",
+          "board": [
+            { "do": "write", "line": "$\\frac{1}{1-{{w:w}}}=1+w+w^2+\\dots$", "tint": {"w": "blue"} },
+            { "do": "focus", "term": "w", "on": "w 趨近零" }
+          ] },
         { "show": ["$\\frac{1}{\\cos x}=1+\\frac{x^2}{2}+\\frac{5x^4}{24}+\\dots$"],
-          "say": "cosine x 是一減二分之一 x 平方再加一點，倒過來就是一加二分之一 x 平方，再加二十四分之五 x 的四次方。" },
+          "say": "cosine x 是一減二分之一 x 平方再加一點，倒過來就是一加二分之一 x 平方，再加二十四分之五 x 的四次方。",
+          "board": [
+            { "do": "write", "line": "$\\cos x=1-\\frac{x^2}{2}+\\dots$" },
+            { "do": "write", "line": "$\\frac{1}{\\cos x}=1+\\frac{x^2}{2}+\\frac{5x^4}{24}+\\dots$", "on": "倒過來" }
+          ] },
         { "show": ["$\\tan x=x+\\frac{x^3}{3}+\\frac{2x^5}{15}+\\dots$"], "note": "$\\frac{1}{\\cos x}$ 再乘上 $\\sin x$。",
-          "say": "再乘上 sine x，就得到 tangent x 的展開：x 加三分之一 x 的三次方，再往後。" }
+          "say": "再乘上 sine x，就得到 tangent x 的展開：x 加三分之一 x 的三次方，再往後。",
+          "board": [
+            { "do": "write", "line": "$\\tan x=x+\\frac{x^3}{3}+\\frac{2x^5}{15}+\\dots$", "on": "就得到" }
+          ] }
       ],
       "check": 1
     },
