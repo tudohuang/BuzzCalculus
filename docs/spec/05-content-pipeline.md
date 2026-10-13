@@ -529,7 +529,7 @@ quarantine 後：該題退出所有抽題池；已在進行中的 session 保留
 | `validate_app_shell.js` | 既有 → 擴充 | 無 kernel 時仍能 render |
 | `smoke_app_render.js` | 既有 → 擴充 | 每個 view 都能 render |
 | `verify_proof_claims.js` | 既有 | 證明的量化宣稱 |
-| `verify_lean_proofs.js` | 既有 | Lean 編譯 |
+| `verify_lean_proofs.js` | 2026-10-13 移除 | Lean 編譯（拔掉：工具鏈慢、證明題已有數值檢查與證明引擎） |
 | `validate_asset_manifest.js` | **新** | index.html / sw.js / load_problem_sources 三份清單一致 |
 | `verify_answers.js` | **新** | 答案獨立數值驗證 |
 | `validate_origin.js` | **新** | 來源聲明完整、名校詞彙合規 |
