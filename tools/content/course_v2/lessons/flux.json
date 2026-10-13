@@ -111,13 +111,30 @@
       "title": "每秒流過多少",
       "beats": [
         { "show": ["水速 $\\mathbf F$，小網面積 $\\Delta S$，單位法向量 $\\mathbf n$"],
-          "say": "水以速度 F 流動，放一小片網子。每秒有多少水穿過網子？" },
+          "say": "水以速度 F 流動，放一小片網子。每秒有多少水穿過網子？",
+          "board": [
+            { "do": "write", "line": "水速 ${{f:\\mathbf F}}$，網面積 $\\Delta S$，法向量 ${{n:\\mathbf n}}$", "tint": {"f":"blue","n":"violet"} }
+          ] },
         { "show": ["斜柱體：底面積 $\\times$ 垂直高度 $=(\\mathbf F\\cdot\\mathbf n)\\,\\Delta S$"],
-          "say": "一秒內穿過的水，是以網子為底、沿水流斜著拉出去的柱體。體積是底面積乘垂直的高度。" },
+          "say": "一秒內穿過的水，是以網子為底、沿水流斜著拉出去的柱體。體積是底面積乘垂直的高度。",
+          "board": [
+            { "do": "write", "line": "體積 $={{fn:(\\mathbf F\\cdot\\mathbf n)}}\\,\\Delta S$", "on": "體積是" },
+            { "do": "underline", "term": "fn", "label": "垂直高度", "on": "垂直的" }
+          ] },
         { "show": ["垂直：最多；相切：$0$；$\\mathbf F\\cdot\\mathbf n<0$：反向穿過"],
-          "say": "水流跟網子垂直時流過最多；跟網子平行，一滴都不穿過；點積是負的，就是往反方向穿。" },
+          "say": "水流跟網子垂直時流過最多；跟網子平行，一滴都不穿過；點積是負的，就是往反方向穿。",
+          "board": [
+            { "do": "write", "line": "垂直：最多；相切：$0$" },
+            { "do": "write", "line": "${{neg:\\mathbf F\\cdot\\mathbf n<0}}$：反向穿過", "on": "點積是負的" },
+            { "do": "focus", "term": "neg", "on": "反方向" }
+          ] },
         { "show": ["$\\iint_S\\mathbf F\\cdot d\\mathbf S=\\iint_S\\mathbf F\\cdot\\mathbf n\\,dS$"],
-          "say": "加起來取極限，就是通量。" }
+          "say": "加起來取極限，就是通量。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "${{flux:\\iint_S\\mathbf F\\cdot d\\mathbf S}}=\\iint_S\\mathbf F\\cdot\\mathbf n\\,dS$", "on": "加起來" },
+            { "do": "underline", "term": "flux", "color": "green", "label": "通量", "on": "取極限" }
+          ] }
       ],
       "check": 1
     },
@@ -147,11 +164,24 @@
       "title": "向外穿過球面",
       "beats": [
         { "show": ["封閉曲面：慣例取朝外"],
-          "say": "封閉曲面，像球面或立方體表面，沒特別說明時，法向量取朝外。" },
+          "say": "封閉曲面，像球面或立方體表面，沒特別說明時，法向量取朝外。",
+          "board": [
+            { "do": "write", "line": "封閉曲面：$\\mathbf n$ 朝外" }
+          ] },
         { "show": ["$\\mathbf F=\\langle x,y,z\\rangle$，半徑 $2$ 的球面"], "note": "朝外：$\\mathbf n=\\frac{\\langle x,y,z\\rangle}{2}$。",
-          "say": "發散場穿過半徑二的球面。球面上朝外的單位法向量，就是位置除以二。" },
+          "say": "發散場穿過半徑二的球面。球面上朝外的單位法向量，就是位置除以二。",
+          "board": [
+            { "do": "write", "line": "$\\mathbf F=\\langle x,y,z\\rangle$，半徑 $2$ 的球面" },
+            { "do": "write", "line": "$\\mathbf n=\\frac{\\langle x,y,z\\rangle}{2}$", "on": "朝外的單位法向量" }
+          ] },
         { "show": ["$\\mathbf F\\cdot\\mathbf n=\\frac{4}{2}=2$", "通量 $2\\times4\\pi\\cdot2^2=32\\pi$"],
-          "say": "點積是四除以二，處處等於二。再乘上球面積，四 pi 乘二的平方，通量三十二 pi。" }
+          "say": "點積是四除以二，處處等於二。再乘上球面積，四 pi 乘二的平方，通量三十二 pi。",
+          "board": [
+            { "do": "keep", "n": 2 },
+            { "do": "write", "line": "$\\mathbf F\\cdot\\mathbf n=\\frac{4}{2}={{two:2}}$", "on": "點積" },
+            { "do": "write", "line": "通量 $={{two:2}}\\times4\\pi\\cdot2^2={{ans:32\\pi}}$", "on": "再乘上" },
+            { "do": "box", "term": "ans", "color": "green", "on": "通量三十二" }
+          ] }
       ],
       "check": 3
     },

@@ -164,13 +164,27 @@
       "title": "四葉玫瑰",
       "beats": [
         { "show": ["$r = \\cos 2\\theta$"], "note": "$r = 0$：$\\theta = \\frac{\\pi}{4}$、$\\frac{3\\pi}{4}$、$\\frac{5\\pi}{4}$、$\\frac{7\\pi}{4}$。",
-          "say": "r 等於 cosine 二 theta。先找 r 等於零的角度：從四分之 pi 起，每隔二分之 pi 一個，切出四段。" },
+          "say": "r 等於 cosine 二 theta。先找 r 等於零的角度：從四分之 pi 起，每隔二分之 pi 一個，切出四段。",
+          "board": [
+            { "do": "write", "line": "$r=\\cos2\\theta$" },
+            { "do": "plot", "graph": {"window": [-1.75,1.75,-1.08,1.08],"equal": true,"curves": [{"polar": {"r": "cos(2*t)", "t": [-0.7854,0.7854]},"color": "blue"},{"polar": {"r": "cos(2*t)", "t": [0.7854,2.3562]},"color": "violet"},{"polar": {"r": "cos(2*t)", "t": [2.3562,3.927]},"color": "blue"},{"polar": {"r": "cos(2*t)", "t": [3.927,5.4978]},"color": "violet"}],"dashed": [[[-1.05,-1.05],[1.05,1.05]],[[-1.05,1.05],[1.05,-1.05]]],"ticks": false},"on": "先找 r 等於零" }
+          ] },
         { "show": ["$\\theta = 0$：$r = 1$，花瓣指向右"],
-          "say": "負四分之 pi 到四分之 pi 這段，r 不是負的，theta 是零時 r 是一，畫出指向右邊的花瓣。" },
+          "say": "負四分之 pi 到四分之 pi 這段，r 不是負的，theta 是零時 r 是一，畫出指向右邊的花瓣。",
+          "board": [
+            { "do": "write", "line": "$\\theta=0$：${{p:r=1}}$，花瓣指向右", "tint": {"p": "blue"} }
+          ] },
         { "show": ["$\\theta = \\frac{\\pi}{2}$：$r = -1$，點在 $(0, -1)$"], "note": "這片花瓣指向下方。",
-          "say": "下一段 r 是負的。二分之 pi 時 r 是負一，點跑到反方向，所以這片花瓣指向下面。" },
+          "say": "下一段 r 是負的。二分之 pi 時 r 是負一，點跑到反方向，所以這片花瓣指向下面。",
+          "board": [
+            { "do": "transform", "line": "$\\theta=\\frac{\\pi}{2}$：${{n:r=-1}}$，點在 $(0,-1)$", "tint": {"n": "violet"},"on": "二分之 pi 時" },
+            { "do": "underline", "term": "n", "color": "violet", "label": "反方向", "on": "點跑到反方向" }
+          ] },
         { "show": ["$n = 2$ 偶數：$2 \\times 2 = 4$ 片"], "note": "右、下、左、上。",
-          "say": "另外兩段給出左邊和上面的花瓣。n 是二，偶數，花瓣數是二乘二，四片。" }
+          "say": "另外兩段給出左邊和上面的花瓣。n 是二，偶數，花瓣數是二乘二，四片。",
+          "board": [
+            { "do": "transform", "line": "$n=2$ 偶數：$2\\times2=4$ 片", "on": "n 是二" }
+          ] }
       ],
       "check": 1
     },
@@ -190,11 +204,25 @@
       "title": "雙紐線與蝸線",
       "beats": [
         { "show": ["$r^2 = \\cos 2\\theta$"], "note": "只有 $\\cos 2\\theta \\ge 0$ 的角度才有點。",
-          "say": "雙紐線是 r 平方等於 cosine 二 theta。平方不會是負的，所以 cosine 二 theta 是負的方向，根本沒有點。" },
+          "say": "雙紐線是 r 平方等於 cosine 二 theta。平方不會是負的，所以 cosine 二 theta 是負的方向，根本沒有點。",
+          "board": [
+            { "do": "write", "line": "$r^2=\\cos2\\theta$" },
+            { "do": "write", "line": "$\\cos2\\theta<0$：沒有點", "on": "所以 cosine 二 theta" }
+          ] },
         { "show": ["$-\\frac{\\pi}{4} \\le \\theta \\le \\frac{\\pi}{4}$ 與 $\\frac{3\\pi}{4} \\le \\theta \\le \\frac{5\\pi}{4}$"], "note": "畫出橫躺的 8 字。",
-          "say": "有點的只有這兩段角度，一段朝右、一段朝左，合起來是一個橫躺的八字。" },
+          "say": "有點的只有這兩段角度，一段朝右、一段朝左，合起來是一個橫躺的八字。",
+          "board": [
+            { "do": "transform", "line": "$-\\frac{\\pi}{4}\\le\\theta\\le\\frac{\\pi}{4}$ 與 $\\frac{3\\pi}{4}\\le\\theta\\le\\frac{5\\pi}{4}$" },
+            { "do": "plot", "graph": {"window": [-1.15,1.15,-0.5,0.5],"equal": true,"curves": [{"polar": {"r": "sqrt(cos(2*t))", "t": [-0.7853,0.7853]},"color": "blue"},{"polar": {"r": "sqrt(cos(2*t))", "t": [2.3563,3.9269]},"color": "blue"}],"ticks": false},"on": "橫躺的八字" }
+          ] },
         { "show": ["蝸線 $r = 1 + 2\\cos\\theta$"], "note": "$\\cos\\theta < -\\frac{1}{2}$ 時 $r < 0$：形成內圈。",
-          "say": "蝸線一加二 cosine theta，在 cosine 小於負二分之一時 r 變負，點跑到反方向，多出一個內圈。" }
+          "say": "蝸線一加二 cosine theta，在 cosine 小於負二分之一時 r 變負，點跑到反方向，多出一個內圈。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "蝸線 $r=1+2\\cos\\theta$", "on": "蝸線" },
+            { "do": "write", "line": "$\\cos\\theta<-\\frac{1}{2}$ ⇒ ${{neg:r<0}}$", "tint": {"neg": "violet"},"on": "在 cosine 小於" },
+            { "do": "plot", "graph": {"window": [-2.3,4.6,-1.8,1.8],"equal": true,"curves": [{"polar": {"r": "1+2*cos(t)", "t": [-2.0944,2.0944]},"color": "blue"},{"polar": {"r": "1+2*cos(t)", "t": [2.0944,4.1888]},"color": "violet"}],"ticks": false},"on": "多出" }
+          ] }
       ],
       "check": 2
     }

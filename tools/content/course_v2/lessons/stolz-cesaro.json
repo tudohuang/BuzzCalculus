@@ -172,9 +172,17 @@
       "proof": true, "of": 4, "skeleton": "ε-δ",
       "beats": [
         { "show": ["每段夾住 → 相加 → 除以 $b_n$"],
-          "say": "策略：epsilon N。先把每一小段的差分夾在 L 左右，加起來消掉中間，再除以 b n。" },
+          "say": "策略：epsilon N。先把每一小段的差分夾在 L 左右，加起來消掉中間，再除以 b n。",
+          "board": [
+            { "do": "write", "line": "每段夾住", "on": "先把每一小段" },
+            { "do": "transform", "line": "每段夾住 → 相加", "on": "加起來" },
+            { "do": "transform", "line": "每段夾住 → 相加 → 除以 $b_n$", "on": "再除以" }
+          ] },
         { "show": ["$n\\ge N$：差分比在 $(L-\\varepsilon,L+\\varepsilon)$"], "note": "給 $\\varepsilon>0$，取 $N$。",
-          "say": "給一個 epsilon，因為差分比趨近 L，可以取 N，從 N 以後差分比都在 L 加減 epsilon 之內。" },
+          "say": "給一個 epsilon，因為差分比趨近 L，可以取 N，從 N 以後差分比都在 L 加減 epsilon 之內。",
+          "board": [
+            { "do": "write", "line": "$k\\ge N$：$L-\\varepsilon<\\frac{a_{k+1}-a_k}{ {{db:b_{k+1}-b_k}}}<L+\\varepsilon$", "tint": { "db": "violet" }, "on": "可以取 N" }
+          ] },
         { "show": ["$(L-\\varepsilon)(b_{k+1}-b_k)<a_{k+1}-a_k$", "$\\quad<(L+\\varepsilon)(b_{k+1}-b_k)$"], "note": "$b_{k+1}-b_k>0$。",
           "why": {
             "ask": "為什麼乘上去不等號不變向？",
@@ -185,9 +193,20 @@
               { "label": "$a_{k+1}-a_k>0$", "why": "分子沒有任何要求；乘的是分母的差分，它的正負看 $b_n$ 遞增。" }
             ]
           },
-          "say": "b n 嚴格遞增，分母的差分是正的，乘過去不等號方向不變。" },
+          "say": "b n 嚴格遞增，分母的差分是正的，乘過去不等號方向不變。",
+          "board": [
+            { "do": "write", "line": "$(L-\\varepsilon)({{dbb:b_{k+1}-b_k}})<a_{k+1}-a_k$", "tint": { "dbb": "violet" } },
+            { "do": "write", "line": "$<(L+\\varepsilon)(b_{k+1}-b_k)$", "on": "不等號" },
+            { "do": "underline", "term": "dbb", "color": "violet", "label": "是正的", "why": true, "on": "分母的差分" }
+          ] },
         { "show": ["對 $k=N,\\dots,n-1$ 相加：", "$(L-\\varepsilon)(b_n-b_N)<a_n-a_N<\\cdots$"], "note": "中間全部消掉。",
-          "say": "從 N 加到 n 減一，中間一加一減全部消掉，只剩頭尾。" },
+          "say": "從 N 加到 n 減一，中間一加一減全部消掉，只剩頭尾。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "對 $k=N,\\dots,n-1$ 相加：", "on": "從 N 加到" },
+            { "do": "write", "line": "$(L-\\varepsilon)(b_n-b_N)<{{s:a_n-a_N}}<\\cdots$", "on": "中間一加一減" },
+            { "do": "focus", "term": "s", "label": "只剩頭尾", "on": "全部消掉" }
+          ] },
         { "show": ["除以 $b_n$：$\\frac{a_N}{b_n}$、$\\frac{b_N}{b_n}\\to0$"], "note": "$\\frac{a_n}{b_n}$ 最後落在 $[L-\\varepsilon,L+\\varepsilon]$。",
           "why": {
             "ask": "為什麼 $\\frac{a_N}{b_n}\\to0$？",
@@ -198,7 +217,11 @@
               { "label": "因為 $\\frac{a_n}{b_n}\\to L$", "why": "那是要證的結論，還不能拿來用。" }
             ]
           },
-          "say": "N 固定，a N 和 b N 都是固定的數，b n 趨近無限大，一除就趨近零。epsilon 任意，得證。" }
+          "say": "N 固定，a N 和 b N 都是固定的數，b n 趨近無限大，一除就趨近零。epsilon 任意，得證。",
+          "board": [
+            { "do": "write", "line": "除以 $b_n$：${{q1:\\frac{a_N}{b_n}}}$、$\\frac{b_N}{b_n}\\to0$" },
+            { "do": "write", "line": "$N$ 固定，$b_n\\to\\infty$", "color": "green", "why": true, "on": "N 固定" }
+          ] }
       ],
       "order": {
         "ask": "把證明排回順序：依序點每一步",
@@ -214,11 +237,26 @@
       "title": "和除以某個東西",
       "beats": [
         { "show": ["$a_n=x_1+\\dots+x_n$ ⇒ $a_{n+1}-a_n=x_{n+1}$"], "note": "整個和只剩最後一項。",
-          "say": "分子是一個和的時候，差分特別好算：前面全部消掉，只剩最後一項。" },
+          "say": "分子是一個和的時候，差分特別好算：前面全部消掉，只剩最後一項。",
+          "board": [
+            { "do": "write", "line": "$a_n=x_1+\\dots+x_n$" },
+            { "do": "write", "line": "⇒ $a_{n+1}-a_n={{last:x_{n+1}}}$", "on": "差分特別好算" },
+            { "do": "focus", "term": "last", "label": "最後一項", "on": "前面全部" }
+          ] },
         { "show": ["$b_n=n$：$x_n\\to L$ ⇒ $\\frac{x_1+\\dots+x_n}{n}\\to L$"], "note": "Cesàro 平均：平均值跟著數列走。",
-          "say": "分母取 n，差分是一，差分比就是最後一項。數列趨近 L，平均值也趨近 L。" },
+          "say": "分母取 n，差分是一，差分比就是最後一項。數列趨近 L，平均值也趨近 L。",
+          "board": [
+            { "do": "write", "line": "$b_n=n$：差分是 $1$", "on": "分母取 n" },
+            { "do": "write", "line": "$x_n\\to L$ ⇒ $\\frac{x_1+\\dots+x_n}{n}\\to L$", "color": "green", "on": "數列趨近" }
+          ] },
         { "show": ["$\\frac{1+1/2+\\dots+1/n}{\\ln n}\\to 1$"], "note": "分母差分 $\\ln\\left(1+\\frac{1}{n}\\right)\\sim\\frac{1}{n}$。",
-          "say": "分母換成自然對數 n 也行：差分比約是 n 加一分之 n，趨近一。所以調和數等價於自然對數 n。" }
+          "say": "分母換成自然對數 n 也行：差分比約是 n 加一分之 n，趨近一。所以調和數等價於自然對數 n。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "$\\frac{1+1/2+\\dots+1/n}{\\ln n}\\to 1$", "on": "分母換成" },
+            { "do": "write", "line": "差分比 $\\approx\\frac{n}{n+1}\\to1$", "on": "差分比約是" },
+            { "do": "write", "line": "調和數 $\\sim\\ln n$", "on": "所以調和數" }
+          ] }
       ],
       "check": 2
     },

@@ -155,11 +155,24 @@
       "title": "否定收斂",
       "beats": [
         { "show": ["$\\forall\\varepsilon>0\\ \\exists N\\ \\forall n\\ge N,|a_n-L|<\\varepsilon$"], "note": "$a_n$ 收斂到 $L$。",
-          "say": "這是收斂的定義，疊了好幾層量詞。把它整句否定，看會變成什麼。" },
+          "say": "這是收斂的定義，疊了好幾層量詞。把它整句否定，看會變成什麼。",
+          "board": [
+            { "do": "write", "line": "$\\forall{{e:\\varepsilon>0}}\\ \\exists N\\ \\forall{{n:n\\ge N}},\\ |a_n-L|<\\varepsilon$" }
+          ] },
         { "show": ["$\\exists\\varepsilon>0\\ \\forall N\\ \\exists n\\ge N,|a_n-L|\\ge\\varepsilon$"], "note": "範圍 $\\varepsilon>0$、$n\\ge N$ 不動。",
-          "say": "量詞全部翻過來，小於變成大於等於。epsilon 大於零、n 大於等於 N 這些範圍不動。" },
+          "say": "量詞全部翻過來，小於變成大於等於。epsilon 大於零、n 大於等於 N 這些範圍不動。",
+          "board": [
+            { "do": "write", "line": "$\\exists{{e:\\varepsilon>0}}\\ \\forall N\\ \\exists{{n:n\\ge N}},\\ |a_n-L|{{ge:\\ge}}\\varepsilon$", "on": "量詞全部" },
+            { "do": "focus", "term": "ge", "on": "小於變成" },
+            { "do": "underline", "term": "e", "label": "範圍不動", "on": "epsilon 大於零" },
+            { "do": "underline", "term": "n", "on": "n 大於等於 N" }
+          ] },
         { "show": ["有一個固定的誤差 $\\varepsilon$", "後面總還有某一項差至少 $\\varepsilon$"],
-          "say": "翻成人話：有一個固定的誤差，不管起點 N 推得多遠，後面總還有某一項跟 L 差至少這麼多。" }
+          "say": "翻成人話：有一個固定的誤差，不管起點 N 推得多遠，後面總還有某一項跟 L 差至少這麼多。",
+          "board": [
+            { "do": "write", "line": "有一個固定的誤差 $\\varepsilon$", "on": "有一個固定" },
+            { "do": "write", "line": "後面總還有某一項差至少 $\\varepsilon$", "on": "後面總還有" }
+          ] }
       ],
       "check": 2
     },
@@ -168,11 +181,23 @@
       "proof": true, "of": "ex0", "skeleton": "直接",
       "beats": [
         { "show": ["要證：$\\exists\\varepsilon>0\\ \\forall N\\ \\exists n\\ge N,|a_n-1|\\ge\\varepsilon$"], "note": "照否定形式，由外往內一層一層做。",
-          "say": "a n 是負一的 n 次方，要證它不收斂到一。照上一節的否定形式，一層一層做。" },
+          "say": "a n 是負一的 n 次方，要證它不收斂到一。照上一節的否定形式，一層一層做。",
+          "board": [
+            { "do": "write", "line": "$a_n=(-1)^n$，要證：" },
+            { "do": "write", "line": "${{q1:\\exists\\varepsilon>0}}\\ {{q2:\\forall N}}\\ {{q3:\\exists n\\ge N}},\\ |a_n-1|\\ge\\varepsilon$", "on": "照上一節" }
+          ] },
         { "show": ["取 $\\varepsilon=1$"], "note": "存在：挑一個就好。",
-          "say": "最外層是存在 epsilon，由我們挑，而且挑一個就夠。取 epsilon 等於一。" },
+          "say": "最外層是存在 epsilon，由我們挑，而且挑一個就夠。取 epsilon 等於一。",
+          "board": [
+            { "do": "focus", "term": "q1", "on": "最外層" },
+            { "do": "write", "line": "取 ${{e1:\\varepsilon=1}}$", "on": "取 epsilon" }
+          ] },
         { "show": ["任意給定 $N$"],
-          "say": "接著對所有 N：N 是別人給的，不能挑。我們要在 N 後面找一項，離一夠遠。" },
+          "say": "接著對所有 N：N 是別人給的，不能挑。我們要在 N 後面找一項，離一夠遠。",
+          "board": [
+            { "do": "focus", "term": "q2", "on": "對所有 N" },
+            { "do": "transform", "line": "取 ${{e1:\\varepsilon=1}}$；任意給定 $N$", "on": "別人給的" }
+          ] },
         { "show": ["取 $n=2N+1$"], "note": "奇數，而且 $n\\ge N$。",
           "why": {
             "ask": "$n$ 為什麼取 $2N+1$？",
@@ -183,7 +208,12 @@
               { "label": "直接取 $n=N$ 最簡單", "why": "$N$ 是別人給的，可能是偶數，那一項剛好等於 1。" }
             ]
           },
-          "say": "奇數項才是負一。二 N 加一一定是奇數，而且不小於 N，正好落在 N 後面。" },
+          "say": "奇數項才是負一。二 N 加一一定是奇數，而且不小於 N，正好落在 N 後面。",
+          "board": [
+            { "do": "focus", "term": "q3", "on": "N 後面" },
+            { "do": "write", "line": "取 ${{nn:n=2N+1}}$", "on": "n 為什麼" },
+            { "do": "underline", "term": "nn", "label": "奇數，n≥N", "why": true, "on": "奇數項才是" }
+          ] },
         { "show": ["$|a_n-1|=|-1-1|=2\\ge1$"], "note": "每個 $N$ 都找得到，證畢。",
           "why": {
             "ask": "為什麼這樣就證完了？",
@@ -194,7 +224,12 @@
               { "label": "$a_n$ 有無窮多項等於 $-1$", "why": "這是對的直覺，但證明要照否定形式寫：對每個 $N$ 交出 $n\\ge N$。" }
             ]
           },
-          "say": "奇數項是負一，跟一差二，大於等於一。每個 N 都找得到這樣的 n，證完了。" }
+          "say": "奇數項是負一，跟一差二，大於等於一。每個 N 都找得到這樣的 n，證完了。",
+          "board": [
+            { "do": "keep", "n": 1 },
+            { "do": "write", "line": "$|a_n-1|=|-1-1|=2\\ge1$", "on": "跟一差二" },
+            { "do": "write", "line": "每個 $N$ 都找得到這樣的 $n$", "color": "green", "why": true, "on": "每個 N" }
+          ] }
       ],
       "order": {
         "ask": "把證明排回順序：依序點每一步",
@@ -210,11 +245,27 @@
       "title": "範圍不動",
       "beats": [
         { "show": ["有界：$\\exists M\\ \\forall x,|f(x)|\\le M$", "無界：$\\forall M\\ \\exists x,|f(x)|>M$"],
-          "say": "再翻一個：有界的否定。存在換對所有、對所有換存在，小於等於換成大於。" },
+          "say": "再翻一個：有界的否定。存在換對所有、對所有換存在，小於等於換成大於。",
+          "board": [
+            { "do": "write", "line": "有界：$\\exists M\\ \\forall x,\\ |f(x)|\\le M$" },
+            { "do": "write", "line": "無界：$\\forall M\\ \\exists x,\\ |f(x)|{{gt:>}}M$", "on": "有界的否定" },
+            { "do": "focus", "term": "gt", "on": "小於等於" }
+          ] },
         { "show": ["$f(x)=x$：取 $x=|M|+1$"], "note": "$|f(x)|=|M|+1>|M|\\ge M$。",
-          "say": "f 在 x 等於 x：不管給哪個 M，取 M 的絕對值加一，就超過 M 了，所以無界。" },
+          "say": "f 在 x 等於 x：不管給哪個 M，取 M 的絕對值加一，就超過 M 了，所以無界。",
+          "board": [
+            { "do": "write", "line": "$f(x)=x$：取 $x={{x:|M|+1}}$" },
+            { "do": "write", "line": "$|f(x)|=|M|+1>|M|\\ge M$", "on": "就超過" }
+          ] },
         { "show": ["$\\varepsilon>0$ 不會變成 $\\varepsilon\\le0$", "$<$ 的否定是 $\\ge$"],
-          "say": "兩個常見的錯：把變數範圍也否定了；把小於否定成大於，漏掉相等的情況。" }
+          "say": "兩個常見的錯：把變數範圍也否定了；把小於否定成大於，漏掉相等的情況。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "$\\varepsilon>0$ 不會變成 ${{w1:\\varepsilon\\le0}}$", "on": "常見的錯" },
+            { "do": "strike", "term": "w1", "on": "範圍也否定了" },
+            { "do": "write", "line": "$\\lnot(a<b)$ 是 $a\\ge b$，不是 ${{w2:a>b}}$", "on": "把小於" },
+            { "do": "strike", "term": "w2", "on": "漏掉" }
+          ] }
       ],
       "check": 3
     }

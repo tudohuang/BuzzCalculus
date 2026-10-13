@@ -149,11 +149,23 @@
       "title": "收斂：$\\frac{1}{x^2}$",
       "beats": [
         { "show": ["$\\int_1^t x^{-2}\\,dx=\\left[-\\frac{1}{x}\\right]_1^t$"],
-          "say": "照定義來：x 的負二次方從一積到 t，反導函數是負 x 分之一。" },
+          "say": "照定義來：x 的負二次方從一積到 t，反導函數是負 x 分之一。",
+          "board": [
+            { "do": "write", "line": "$\\int_1^{{{t:t}}} x^{-2}\\,dx=\\left[{{ad:-\\frac{1}{x}}}\\right]_1^{t}$", "tint": { "t": "blue" } },
+            { "do": "focus", "term": "ad", "label": "反導函數", "on": "反導函數" }
+          ] },
         { "show": ["$=1-\\frac{1}{t}$"],
-          "say": "代進去，得到一減 t 分之一。" },
+          "say": "代進去，得到一減 t 分之一。",
+          "board": [
+            { "do": "write", "line": "$=1-{{sm:\\frac{1}{t}}}$" }
+          ] },
         { "show": ["$t\\to\\infty$：$\\to 1$"], "note": "收斂，值是 $1$。",
-          "say": "t 趨近無限大，t 分之一趨近零，所以積分收斂，面積剛好是一。" }
+          "say": "t 趨近無限大，t 分之一趨近零，所以積分收斂，面積剛好是一。",
+          "board": [
+            { "do": "focus", "term": "sm", "label": "趨近零", "on": "t 分之一趨近零" },
+            { "do": "write", "line": "$\\to {{one:1}}$", "on": "所以積分收斂" },
+            { "do": "box", "term": "one", "color": "green", "label": "收斂", "on": "面積剛好" }
+          ] }
       ],
       "check": 0
     },
@@ -161,11 +173,23 @@
       "title": "發散：$\\frac{1}{x}$",
       "beats": [
         { "show": ["$\\int_1^t\\frac{dx}{x}=\\ln t$"],
-          "say": "換成 x 分之一，從一積到 t，得到自然對數 t。" },
+          "say": "換成 x 分之一，從一積到 t，得到自然對數 t。",
+          "board": [
+            { "do": "write", "line": "$\\int_1^{{{t:t}}}\\frac{dx}{x}={{ln:\\ln t}}$", "tint": { "t": "blue" }, "on": "換成" }
+          ] },
         { "show": ["$t\\to\\infty$：$\\ln t\\to\\infty$"], "note": "發散。",
-          "say": "t 趨近無限大，自然對數 t 也趨近無限大，面積沒有上限，發散。" },
+          "say": "t 趨近無限大，自然對數 t 也趨近無限大，面積沒有上限，發散。",
+          "board": [
+            { "do": "write", "line": "${{t:t}}\\to\\infty$：${{ln:\\ln t}}\\to\\infty$", "tint": { "t": "blue" } },
+            { "do": "write", "line": "面積沒有上限：發散", "on": "面積沒有上限" }
+          ] },
         { "show": ["$f\\to 0$ 不是收斂的保證"], "note": "兩條曲線都 $\\to 0$，$\\frac{1}{x}$ 降得不夠快。",
-          "say": "兩條曲線都趨近零，差別在降得夠不夠快。所以被積函數趨近零，不代表積分收斂。" }
+          "say": "兩條曲線都趨近零，差別在降得夠不夠快。所以被積函數趨近零，不代表積分收斂。",
+          "board": [
+            { "do": "clear" },
+            { "do": "plot", "graph": { "window": [0, 6.5, -0.15, 1.6], "curves": [{ "expr": "1/x", "domain": [0.65, 6.3], "color": "violet" }, { "expr": "1/x^2", "domain": [0.8, 6.3], "color": "blue" }], "labels": [{ "x": 5.2, "y": 0.38, "text": "1/x", "anchor": "middle" }, { "x": 2.6, "y": 0.06, "text": "1/x²", "anchor": "middle" }], "ticks": false }, "on": "兩條曲線" },
+            { "do": "write", "line": "$f\\to 0$ 不是收斂的保證", "color": "red", "on": "所以被積函數" }
+          ] }
       ],
       "check": 2
     },
@@ -192,11 +216,25 @@
       "title": "兩端都無窮",
       "beats": [
         { "show": ["$\\int_{-\\infty}^{\\infty}=\\int_{-\\infty}^c+\\int_c^{\\infty}$"], "note": "兩半都要收斂才算收斂。",
-          "say": "兩端都是無限大，就任選一點切開，兩半各自取極限，兩半都收斂才算收斂。" },
+          "say": "兩端都是無限大，就任選一點切開，兩半各自取極限，兩半都收斂才算收斂。",
+          "board": [
+            { "do": "write", "line": "$\\int_{-\\infty}^{\\infty}={{lh:\\int_{-\\infty}^c}}+{{rh:\\int_c^{\\infty}}}$", "tint": { "lh": "blue", "rh": "violet" } },
+            { "do": "write", "line": "兩半都收斂才算收斂", "on": "兩半都收斂" }
+          ] },
         { "show": ["$\\int_{-\\infty}^{\\infty}\\frac{dx}{1+x^2}=\\frac{\\pi}{2}+\\frac{\\pi}{2}=\\pi$"], "note": "在 $0$ 切開，兩半都是 $\\arctan$ 的極限。",
-          "say": "例如一加 x 平方分之一，在零切開，左右兩半各收斂到二分之 pi，總和是 pi。" },
+          "say": "例如一加 x 平方分之一，在零切開，左右兩半各收斂到二分之 pi，總和是 pi。",
+          "board": [
+            { "do": "write", "line": "$\\int_{-\\infty}^{\\infty}\\frac{dx}{1+x^2}={{lh2:\\frac{\\pi}{2}}}+{{rh2:\\frac{\\pi}{2}}}=\\pi$", "tint": { "lh2": "blue", "rh2": "violet" }, "on": "例如" },
+            { "do": "focus", "term": "lh2", "color": "blue", "label": "左半", "on": "左右兩半" }
+          ] },
         { "show": ["不能用 $\\lim_{t\\to\\infty}\\int_{-t}^t$"], "note": "$\\int_{-t}^t x\\,dx=0$，但 $\\int_0^{\\infty}x\\,dx$ 發散。",
-          "say": "不能左右對稱一起取極限。那樣兩個無限大會互相抵銷，把發散的積分算成零。" }
+          "say": "不能左右對稱一起取極限。那樣兩個無限大會互相抵銷，把發散的積分算成零。",
+          "board": [
+            { "do": "keep", "n": 1 },
+            { "do": "write", "line": "不能用 ${{bad:\\lim_{t\\to\\infty}\\int_{-t}^t}}$", "on": "不能" },
+            { "do": "strike", "term": "bad", "on": "一起取極限" },
+            { "do": "write", "line": "兩個無限大會互相抵銷", "on": "兩個無限大" }
+          ] }
       ],
       "check": 1
     }

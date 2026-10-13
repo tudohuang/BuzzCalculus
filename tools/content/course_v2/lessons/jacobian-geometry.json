@@ -125,13 +125,29 @@
       "title": "線性變換放大面積",
       "beats": [
         { "show": ["$T(u,v)=(au+bv,\\ cu+dv)$"],
-          "say": "先看最簡單的變換：x、y 都是 u、v 的一次式。" },
+          "say": "先看最簡單的變換：x、y 都是 u、v 的一次式。",
+          "board": [
+            { "do": "write", "line": "$T(u,v)=(au+bv,\\ cu+dv)$" }
+          ] },
         { "show": ["$(1,0)\\to(a,c)$，$(0,1)\\to(b,d)$"], "note": "單位正方形變成平行四邊形。",
-          "say": "單位正方形的兩條邊被送到這兩個向量，正方形就變成以它們為邊的平行四邊形。" },
+          "say": "單位正方形的兩條邊被送到這兩個向量，正方形就變成以它們為邊的平行四邊形。",
+          "board": [
+            { "do": "write", "line": "$(1,0)\\to({{ac:a,c}})$，$(0,1)\\to({{bd:b,d}})$", "tint": {"ac":"blue","bd":"violet"} },
+            { "do": "focus", "term": "ac", "on": "這兩個向量" }
+          ] },
         { "show": ["面積放大倍率 $|ad-bc|$"], "note": "處處一樣。",
-          "say": "平行四邊形的面積是 a d 減 b c 的絕對值。每一塊面積都被放大這麼多倍，到處一樣。" },
+          "say": "平行四邊形的面積是 a d 減 b c 的絕對值。每一塊面積都被放大這麼多倍，到處一樣。",
+          "board": [
+            { "do": "write", "line": "面積放大倍率 ${{det:|ad-bc|}}$", "on": "平行四邊形的面積" },
+            { "do": "underline", "term": "det", "label": "到處一樣", "on": "每一塊" }
+          ] },
         { "show": ["$T(u,v)=(2u+v,\\ u+3v)$"],
-          "say": "試一個：a 是二、b 是一、c 是一、d 是三。" }
+          "say": "試一個：a 是二、b 是一、c 是一、d 是三。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "$T(u,v)=(2u+v,\\ u+3v)$", "on": "試一個" },
+            { "do": "plot", "graph": {"window":[-0.6,4.6,-0.4,4.2],"equal":true,"ticks":false,"fills":[{"pts":[[0,0],[1,0],[1,1],[0,1]],"color":"muted"},{"pts":[[0,0],[2,1],[3,4],[1,3]],"color":"blue"}],"arrows":[{"from":[0,0],"to":[2,1],"color":"blue"},{"from":[0,0],"to":[1,3],"color":"violet"}],"dashed":[[[2,1],[3,4]],[[1,3],[3,4]]]}, "on": "a 是二" }
+          ] }
       ],
       "predict": {
         "ask": "單位正方形的像面積是？",
@@ -170,11 +186,26 @@
       "title": "回頭看極座標",
       "beats": [
         { "show": ["$x_r=\\cos\\theta$，$x_\\theta=-r\\sin\\theta$", "$y_r=\\sin\\theta$，$y_\\theta=r\\cos\\theta$"],
-          "say": "拿極座標來算。四個偏導數寫出來。" },
+          "say": "拿極座標來算。四個偏導數寫出來。",
+          "board": [
+            { "do": "write", "line": "$x_r=\\cos\\theta$，$x_\\theta=-r\\sin\\theta$" },
+            { "do": "write", "line": "$y_r=\\sin\\theta$，$y_\\theta=r\\cos\\theta$", "on": "四個偏導數" }
+          ] },
         { "show": ["$r(\\cos^2\\theta+\\sin^2\\theta)=r$"],
-          "say": "交叉相乘相減，cosine 平方加 sine 平方是一，剩下 r。" },
+          "say": "交叉相乘相減，cosine 平方加 sine 平方是一，剩下 r。",
+          "board": [
+            { "do": "write", "line": "${{j:\\frac{\\partial(x,y)}{\\partial(r,\\theta)}}}=r\\,{{c:(\\cos^2\\theta+\\sin^2\\theta)}}$", "on": "交叉相乘" },
+            { "do": "underline", "term": "c", "label": "是 1", "on": "sine 平方是一" },
+            { "do": "transform", "line": "${{j:\\frac{\\partial(x,y)}{\\partial(r,\\theta)}}}={{rr:r}}$", "on": "剩下" }
+          ] },
         { "show": ["$dA=r\\,dr\\,d\\theta$ 的那個 $r$"], "note": "$r=2$ 附近：面積約 $2\\,\\Delta r\\,\\Delta\\theta$。",
-          "say": "這正是極座標積分裡那個 r：在半徑二的地方，小矩形被放大兩倍。" }
+          "say": "這正是極座標積分裡那個 r：在半徑二的地方，小矩形被放大兩倍。",
+          "board": [
+            { "do": "keep", "n": 1 },
+            { "do": "write", "line": "$dA={{rr:r}}\\,dr\\,d\\theta$", "on": "極座標積分" },
+            { "do": "write", "line": "$r=2$：面積約 ${{two:2}}\\,\\Delta r\\,\\Delta\\theta$", "on": "在半徑二" },
+            { "do": "focus", "term": "two", "on": "放大兩倍" }
+          ] }
       ],
       "check": 2
     },

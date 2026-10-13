@@ -154,11 +154,23 @@
       "title": "微分生出新公式",
       "beats": [
         { "show": ["$\\int_0^1 x^a\\,dx=\\frac{1}{a+1}$"], "note": "兩邊都對 $a$ 微分。",
-          "say": "從一條已知的公式出發：x 的 a 次方從零積到一，等於 a 加一分之一。兩邊都對 a 微分。" },
+          "say": "從一條已知的公式出發：x 的 a 次方從零積到一，等於 a 加一分之一。兩邊都對 a 微分。",
+          "board": [
+            { "do": "write", "line": "$\\int_0^1 x^a\\,dx=\\frac{1}{a+1}$" },
+            { "do": "write", "line": "兩邊都對 $a$ 微分", "on": "兩邊都對" }
+          ] },
         { "show": ["$\\frac{\\partial(x^a)}{\\partial a}=x^a\\ln x$"], "note": "$a\\ge a_0>-1$ 時被 $x^{a_0}|\\ln x|$ 控制。",
-          "say": "x 的 a 次方對 a 微分，多出自然對數 x。它被可積的函數壓住，可以交換。" },
+          "say": "x 的 a 次方對 a 微分，多出自然對數 x。它被可積的函數壓住，可以交換。",
+          "board": [
+            { "do": "write", "line": "$\\frac{\\partial}{\\partial a}x^a=x^a{{ln:\\ln x}}$" },
+            { "do": "focus", "term": "ln", "on": "多出" }
+          ] },
         { "show": ["$\\int_0^1 x^a\\ln x\\,dx=-\\frac{1}{(a+1)^2}$"],
-          "say": "右邊 a 加一分之一微分，得負的 a 加一平方分之一。一個新公式就這樣生出來。" }
+          "say": "右邊 a 加一分之一微分，得負的 a 加一平方分之一。一個新公式就這樣生出來。",
+          "board": [
+            { "do": "write", "line": "$\\int_0^1 x^a\\ln x\\,dx={{n:-\\frac{1}{(a+1)^2}}}$", "on": "右邊" },
+            { "do": "box", "term": "n", "color": "green", "on": "一個新公式" }
+          ] }
       ],
       "check": 3
     },
@@ -166,11 +178,23 @@
       "title": "上下限也會動",
       "beats": [
         { "show": ["$\\frac{d}{da}\\int_{u(a)}^{v(a)}f(x,a)\\,dx$"], "note": "面積的變化有三個來源。",
-          "say": "上下限也跟著 a 動的時候，面積的變化有三個來源。" },
+          "say": "上下限也跟著 a 動的時候，面積的變化有三個來源。",
+          "board": [
+            { "do": "write", "line": "$\\frac{d}{da}\\int_{ {{u:u(a)}} }^{ {{v:v(a)}} }f(x,a)\\,dx$", "tint": {"u":"blue","v":"violet"} }
+          ] },
         { "show": ["$f(v,a)\\,v'(a)-f(u,a)\\,u'(a)$"], "note": "右邊界移動、左邊界移動。",
-          "say": "右邊界移動，加上 f 在上限的值乘 v prime；左邊界移動，減掉 f 在下限的值乘 u prime。" },
+          "say": "右邊界移動，加上 f 在上限的值乘 v prime；左邊界移動，減掉 f 在下限的值乘 u prime。",
+          "board": [
+            { "do": "write", "line": "$={{tv:f(v,a)\\,v'(a)}}-{{tu:f(u,a)\\,u'(a)}}$" },
+            { "do": "underline", "term": "tv", "color": "violet", "label": "右邊界", "on": "右邊界移動" },
+            { "do": "underline", "term": "tu", "color": "blue", "label": "左邊界", "on": "左邊界移動" }
+          ] },
         { "show": ["$+\\int_{u(a)}^{v(a)}\\frac{\\partial f}{\\partial a}\\,dx$"], "note": "曲線本身移動。",
-          "say": "第三項是曲線本身在動，就是剛才的偏導數積分。f 不含 a 時，只剩前兩項，就是基本定理加連鎖律。" }
+          "say": "第三項是曲線本身在動，就是剛才的偏導數積分。f 不含 a 時，只剩前兩項，就是基本定理加連鎖律。",
+          "board": [
+            { "do": "write", "line": "$+\\int_{u(a)}^{v(a)}{{p:\\frac{\\partial f}{\\partial a}}}\\,dx$" },
+            { "do": "underline", "term": "p", "label": "曲線本身", "on": "曲線本身" }
+          ] }
       ],
       "check": 0
     },
@@ -195,11 +219,24 @@
       "title": "三項都有",
       "beats": [
         { "show": ["$F(x)=\\int_0^x e^{x-t}\\sin t\\,dt$"], "note": "上限和被積函數都含 $x$。",
-          "say": "這一題上限是 x，被積函數裡也有 x，要分開算。" },
+          "say": "這一題上限是 x，被積函數裡也有 x，要分開算。",
+          "board": [
+            { "do": "write", "line": "$F(x)=\\int_0^{ {{up:x}} }e^{ {{ix:x}}-t}\\sin t\\,dt$", "tint": {"up":"violet","ix":"blue"} },
+            { "do": "focus", "term": "up", "on": "上限是 x" },
+            { "do": "focus", "term": "ix", "on": "被積函數裡" }
+          ] },
         { "show": ["上限項：$e^0\\sin x=\\sin x$"], "note": "下限 $0$ 不動。",
-          "say": "上限項：t 代 x，e 的零次方是一，得 sine x。下限不動，沒有貢獻。" },
+          "say": "上限項：t 代 x，e 的零次方是一，得 sine x。下限不動，沒有貢獻。",
+          "board": [
+            { "do": "write", "line": "上限項：$e^0\\sin x={{s:\\sin x}}$", "on": "上限項" },
+            { "do": "underline", "term": "s", "color": "violet", "on": "得 sine x" }
+          ] },
         { "show": ["$\\frac{\\partial(e^{x-t}\\sin t)}{\\partial x}=e^{x-t}\\sin t$"], "note": "積起來正好是 $F(x)$。",
-          "say": "被積函數對 x 偏微分，還是它自己，積起來正好是 F。" }
+          "say": "被積函數對 x 偏微分，還是它自己，積起來正好是 F。",
+          "board": [
+            { "do": "write", "line": "$\\frac{\\partial}{\\partial x}(e^{x-t}\\sin t)={{self:e^{x-t}\\sin t}}$" },
+            { "do": "underline", "term": "self", "color": "blue", "label": "它自己", "on": "還是它自己" }
+          ] }
       ],
       "predict": {
         "ask": "$F'(x)$ 是？",

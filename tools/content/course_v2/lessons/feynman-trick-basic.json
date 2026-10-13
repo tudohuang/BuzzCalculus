@@ -53,10 +53,26 @@
     {
       "title": "放進一整族",
       "beats": [
-        {"show":["$\\int_0^1\\frac{x^2-1}{\\ln x}\\,dx$"],"note":"被積函數沒有初等反導函數。","say":"先看這個積分：x 平方減一，除以自然對數 x。直接找反導函數，找不到。"},
-        {"show":["$I(a)=\\int_0^1\\frac{x^a-1}{\\ln x}\\,dx$"],"note":"把 $2$ 換成參數 $a$。","say":"換個想法：把次方的二換成參數 a，原題就變成這一整族積分裡的一個。"},
-        {"show":["$\\frac{\\partial}{\\partial a}(x^a-1)=x^a\\ln x$"],"say":"對 a 微分，x 的 a 次方會生出一個自然對數 x，剛好把分母的自然對數 x 約掉。"},
-        {"show":["$\\int_0^1 x^a\\,dx=\\frac{1}{a+1}$"],"note":"難的積分變簡單，代價是多一個變數。","say":"約掉之後只剩 x 的 a 次方，一行就積完。代價是多了一個變數，最後還要積回來。"}
+        {"show":["$\\int_0^1\\frac{x^2-1}{\\ln x}\\,dx$"],"note":"被積函數沒有初等反導函數。","say":"先看這個積分：x 平方減一，除以自然對數 x。直接找反導函數，找不到。",
+          "board": [
+            { "do": "write", "line": "$\\int_0^1\\frac{x^{ {{n:2}} }-1}{ {{l0:\\ln x}} }\\,dx$" },
+            { "do": "focus", "term": "l0", "on": "除以" }
+          ]},
+        {"show":["$I(a)=\\int_0^1\\frac{x^a-1}{\\ln x}\\,dx$"],"note":"把 $2$ 換成參數 $a$。","say":"換個想法：把次方的二換成參數 a，原題就變成這一整族積分裡的一個。",
+          "board": [
+            { "do": "focus", "term": "n", "color": "blue", "on": "次方的二" },
+            { "do": "write", "line": "$I(a)=\\int_0^1\\frac{x^{ {{a:a}} }-1}{ {{l:\\ln x}} }\\,dx$", "tint": { "a": "blue" }, "on": "參數 a" }
+          ]},
+        {"show":["$\\frac{\\partial}{\\partial a}(x^a-1)=x^a\\ln x$"],"say":"對 a 微分，x 的 a 次方會生出一個自然對數 x，剛好把分母的自然對數 x 約掉。",
+          "board": [
+            { "do": "focus", "term": "a", "on": "對 a 微分" },
+            { "do": "underline", "term": "l", "label": "會被約掉", "on": "分母" }
+          ]},
+        {"show":["$\\int_0^1 x^a\\,dx=\\frac{1}{a+1}$"],"note":"難的積分變簡單，代價是多一個變數。","say":"約掉之後只剩 x 的 a 次方，一行就積完。代價是多了一個變數，最後還要積回來。",
+          "board": [
+            { "do": "write", "line": "$\\int_0^1 x^{ {{a:a}} }\\,dx={{r:\\frac{1}{a+1}}}$", "on": "只剩" },
+            { "do": "underline", "term": "r", "on": "一行" }
+          ]}
       ],
       "predict": {
         "ask": "$\\frac{\\partial}{\\partial a}(x^a-1)$ 是？",
@@ -80,10 +96,29 @@
     {
       "title": "範例：$\\frac{1}{\\ln x}$ 卡住",
       "beats": [
-        {"show":["$I(a)=\\int_0^1\\frac{x^a-1}{\\ln x}\\,dx$","原題是 $I(2)$"],"say":"照五步來。參數放在次方，a 大於等於零，原題是 I 在二的值。"},
-        {"show":["$I'(a)=\\int_0^1 x^a\\,dx=\\frac{1}{a+1}$"],"note":"$a>0$ 時 $x^a\\le 1$，可以交換。","say":"微分後自然對數 x 約掉，I prime 等於 a 加一分之一。x 的 a 次方不超過一，可以交換。"},
-        {"show":["$I(a)=\\ln(a+1)+C$"],"say":"積回去，得到自然對數 a 加一，再加常數 C。"},
-        {"show":["$I(0)=0$，所以 $C=0$","$I(2)=\\ln 3$"],"say":"a 等於零時被積函數是零，所以 I 在零是零，C 等於零。代 a 等於二，答案是自然對數三。"}
+        {"show":["$I(a)=\\int_0^1\\frac{x^a-1}{\\ln x}\\,dx$","原題是 $I(2)$"],"say":"照五步來。參數放在次方，a 大於等於零，原題是 I 在二的值。",
+          "board": [
+            { "do": "write", "line": "$I(a)=\\int_0^1\\frac{x^{ {{a:a}} }-1}{\\ln x}\\,dx$", "tint": { "a": "blue" } },
+            { "do": "focus", "term": "a", "on": "放在次方" },
+            { "do": "write", "line": "原題是 $I(2)$", "on": "原題" }
+          ]},
+        {"show":["$I'(a)=\\int_0^1 x^a\\,dx=\\frac{1}{a+1}$"],"note":"$a>0$ 時 $x^a\\le 1$，可以交換。","say":"微分後自然對數 x 約掉，I prime 等於 a 加一分之一。x 的 a 次方不超過一，可以交換。",
+          "board": [
+            { "do": "write", "line": "$I'(a)=\\int_0^1 x^{ {{a:a}} }\\,dx={{d:\\frac{1}{a+1}}}$", "on": "微分後" },
+            { "do": "underline", "term": "d", "on": "a 加一分之一" }
+          ]},
+        {"show":["$I(a)=\\ln(a+1)+C$"],"say":"積回去，得到自然對數 a 加一，再加常數 C。",
+          "board": [
+            { "do": "write", "line": "$I(a)=\\ln(a+1)+\\,{{c:C}}$", "on": "積回去" },
+            { "do": "circle", "term": "c", "on": "常數 C" }
+          ]},
+        {"show":["$I(0)=0$，所以 $C=0$","$I(2)=\\ln 3$"],"say":"a 等於零時被積函數是零，所以 I 在零是零，C 等於零。代 a 等於二，答案是自然對數三。",
+          "board": [
+            { "do": "keep", "n": 1 },
+            { "do": "write", "line": "$I(0)=0$ ⇒ ${{c0:C=0}}$", "on": "所以" },
+            { "do": "write", "line": "$I(2)=\\,{{ans:\\ln 3}}$", "on": "代 a" },
+            { "do": "box", "term": "ans", "color": "green", "on": "答案是" }
+          ]}
       ],
       "check": 0
     },
@@ -100,9 +135,24 @@
     {
       "title": "範例：$\\frac{1}{x}$ 卡住",
       "beats": [
-        {"show":["$I(a)=\\int_0^{\\infty}\\frac{e^{-ax}\\sin x}{x}\\,dx$"],"note":"$a>0$，原題是 $I(1)$。","say":"這題卡在 x 分之一，所以乘上 e 的負 a x 次方。a 大於零，原題是 I 在一的值。"},
-        {"show":["$I'(a)=-\\int_0^{\\infty}e^{-ax}\\sin x\\,dx$","$=-\\frac{1}{1+a^2}$"],"say":"微分後分母的 x 消掉，剩下負的 e 的負 a x 乘 sine x，積出來是負的一加 a 平方分之一。"},
-        {"show":["$I(a)=-\\arctan a+C$"],"say":"積回去得到負的 arctan a 加 C。接下來要決定 C，用哪個 a 最方便？"}
+        {"show":["$I(a)=\\int_0^{\\infty}\\frac{e^{-ax}\\sin x}{x}\\,dx$"],"note":"$a>0$，原題是 $I(1)$。","say":"這題卡在 x 分之一，所以乘上 e 的負 a x 次方。a 大於零，原題是 I 在一的值。",
+          "board": [
+            { "do": "write", "line": "$I(a)=\\int_0^{\\infty}\\frac{ {{e:e^{-ax}}}\\sin x}{ {{x:x}} }\\,dx$", "tint": { "e": "blue" } },
+            { "do": "focus", "term": "x", "on": "x 分之一" },
+            { "do": "focus", "term": "e", "label": "乘上去", "on": "乘上" },
+            { "do": "write", "line": "原題是 $I(1)$", "on": "原題" }
+          ]},
+        {"show":["$I'(a)=-\\int_0^{\\infty}e^{-ax}\\sin x\\,dx$","$=-\\frac{1}{1+a^2}$"],"say":"微分後分母的 x 消掉，剩下負的 e 的負 a x 乘 sine x，積出來是負的一加 a 平方分之一。",
+          "board": [
+            { "do": "write", "line": "$I'(a)=-\\int_0^{\\infty}{{e:e^{-ax}}}\\sin x\\,dx$", "on": "微分後" },
+            { "do": "write", "line": "$={{d:-\\frac{1}{1+a^2}}}$", "on": "積出來" }
+          ]},
+        {"show":["$I(a)=-\\arctan a+C$"],"say":"積回去得到負的 arctan a 加 C。接下來要決定 C，用哪個 a 最方便？",
+          "board": [
+            { "do": "keep", "n": 2 },
+            { "do": "write", "line": "$I(a)=-\\arctan a+\\,{{c:C}}$", "on": "積回去" },
+            { "do": "circle", "term": "c", "on": "決定 C" }
+          ]}
       ],
       "check": 1
     },

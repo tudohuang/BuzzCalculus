@@ -161,11 +161,25 @@
       "title": "恆等式也能降次",
       "beats": [
         { "show": ["$T_n=\\int_0^{\\pi/4}\\tan^n x\\,dx$"], "note": "不一定要分部積分。",
-          "say": "降次不一定要靠分部積分。看 tangent 的 n 次方，從零積到四分之 pi。" },
+          "say": "降次不一定要靠分部積分。看 tangent 的 n 次方，從零積到四分之 pi。",
+          "board": [
+            { "do": "write", "line": "$T_n=\\int_0^{\\pi/4}{{t:\\tan^n x}}\\,dx$" },
+            { "do": "focus", "term": "t", "on": "tangent 的 n 次方" }
+          ] },
         { "show": ["$\\tan^2 x=\\sec^2 x-1$"], "note": "$\\tan^n x=\\tan^{n-2}x\\sec^2 x-\\tan^{n-2}x$",
-          "say": "把 tangent 平方換成 secant 平方減一，拆成兩項。" },
+          "say": "把 tangent 平方換成 secant 平方減一，拆成兩項。",
+          "board": [
+            { "do": "write", "line": "$\\tan^n x=\\tan^{n-2}x\\,{{s:\\tan^2 x}}$" },
+            { "do": "focus", "term": "s", "on": "tangent 平方" },
+            { "do": "transform", "line": "$\\tan^n x={{a:\\tan^{n-2}x\\sec^2 x}}-{{b:\\tan^{n-2}x}}$", "on": "換成" }
+          ] },
         { "show": ["$T_n=\\frac{1}{n-1}-T_{n-2}$（$n\\ge 2$）"], "note": "前一項令 $u=\\tan x$，積出 $\\frac{1}{n-1}$。",
-          "say": "前一項令 u 等於 tangent x，剛好積出 n 減一分之一；後一項就是 T n 減二。" }
+          "say": "前一項令 u 等於 tangent x，剛好積出 n 減一分之一；後一項就是 T n 減二。",
+          "board": [
+            { "do": "underline", "term": "a", "label": "u=tan x" },
+            { "do": "write", "line": "$T_n={{p:\\frac{1}{n-1}}}$", "on": "剛好積出" },
+            { "do": "transform", "line": "$T_n={{p:\\frac{1}{n-1}}}-{{q:T_{n-2}}}$（$n\\ge 2$）", "on": "後一項" }
+          ] }
       ],
       "check": 2
     },
@@ -173,11 +187,24 @@
       "title": "步長是 2",
       "beats": [
         { "show": ["偶數 → $T_0=\\frac{\\pi}{4}$", "奇數 → $T_1=\\frac{\\ln 2}{2}$"], "note": "兩個起點都要先算好。",
-          "say": "這條遞迴一次跳兩格。偶數一路降到 T 零，奇數降到 T 一，兩個起點都要準備好。" },
+          "say": "這條遞迴一次跳兩格。偶數一路降到 T 零，奇數降到 T 一，兩個起點都要準備好。",
+          "board": [
+            { "do": "write", "line": "$T_n=\\frac{1}{n-1}-{{q:T_{n-2}}}$" },
+            { "do": "underline", "term": "q", "label": "跳兩格", "on": "跳兩格" },
+            { "do": "write", "line": "偶數：$T_0={{v0:\\frac{\\pi}{4}}}$，奇數：$T_1=\\frac{\\ln 2}{2}$", "on": "偶數" }
+          ] },
         { "show": ["$T_2=1-\\frac{\\pi}{4}$"],
-          "say": "算 tangent 四次方：先從 T 零推到 T 二，是一減四分之 pi。" },
+          "say": "算 tangent 四次方：先從 T 零推到 T 二，是一減四分之 pi。",
+          "board": [
+            { "do": "write", "line": "${{t2:T_2}}=1-{{v0:\\frac{\\pi}{4}}}$" },
+            { "do": "focus", "term": "v0", "on": "T 零推到" }
+          ] },
         { "show": ["$T_4=\\frac{1}{3}-T_2=\\frac{\\pi}{4}-\\frac{2}{3}$"], "note": "$\\approx 0.1187$，正的，合理。",
-          "say": "再推一步，T 四是三分之一減 T 二，等於四分之 pi 減三分之二，是正數，合理。" }
+          "say": "再推一步，T 四是三分之一減 T 二，等於四分之 pi 減三分之二，是正數，合理。",
+          "board": [
+            { "do": "write", "line": "$T_4=\\frac{1}{3}-{{t2:T_2}}={{r:\\frac{\\pi}{4}-\\frac{2}{3}}}$" },
+            { "do": "box", "term": "r", "color": "green", "label": "正的", "on": "是正數" }
+          ] }
       ],
       "check": 3
     },
@@ -185,13 +212,31 @@
       "title": "瑕積分的遞迴",
       "beats": [
         { "show": ["$L_n=\\int_0^1(\\ln x)^n\\,dx$"], "note": "$x=0$ 是瑕點。",
-          "say": "自然對數 x 的 n 次方，從零積到一，在零是瑕點。" },
+          "say": "自然對數 x 的 n 次方，從零積到一，在零是瑕點。",
+          "board": [
+            { "do": "write", "line": "$L_n=\\int_{ {{z:0}} }^1(\\ln x)^n\\,dx$" },
+            { "do": "focus", "term": "z", "label": "瑕點", "on": "在零" }
+          ] },
         { "show": ["$L_n=\\left[x(\\ln x)^n\\right]_0^1-nL_{n-1}$"], "note": "$u=(\\ln x)^n$，$dv=dx$。",
-          "say": "u 取自然對數 x 的 n 次方，dv 取 dx，分部積分。" },
+          "say": "u 取自然對數 x 的 n 次方，dv 取 dx，分部積分。",
+          "board": [
+            { "do": "write", "line": "$u=(\\ln x)^n$，$dv=dx$" },
+            { "do": "write", "line": "$L_n={{bd:\\left[x(\\ln x)^n\\right]_0^1}}-nL_{n-1}$", "on": "dv 取" }
+          ] },
         { "show": ["$x\\to 0^+$：$x(\\ln x)^n\\to 0$"], "note": "對數 $\\ll$ 冪次，要用極限確認。",
-          "say": "邊界項在零那端不能直接代，要取極限：對數比冪次慢，所以趨近零。" },
+          "say": "邊界項在零那端不能直接代，要取極限：對數比冪次慢，所以趨近零。",
+          "board": [
+            { "do": "underline", "term": "bd", "label": "取極限", "on": "邊界項" },
+            { "do": "write", "line": "$x\\to 0^+$：$x(\\ln x)^n\\to {{e:0}}$", "on": "要取極限" },
+            { "do": "focus", "term": "e", "on": "對數比冪次" }
+          ] },
         { "show": ["$L_n=-nL_{n-1}$，$L_0=1$"], "note": "$L_n=(-1)^nn!$；同樣的想法給出 $\\Gamma(n+1)=n\\Gamma(n)$。",
-          "say": "所以 L n 等於負 n 乘 L n 減一，起點是一。Gamma 函數的遞迴也是這樣來的。" }
+          "say": "所以 L n 等於負 n 乘 L n 減一，起點是一。Gamma 函數的遞迴也是這樣來的。",
+          "board": [
+            { "do": "keep", "n": 2 },
+            { "do": "write", "line": "${{res:L_n=-nL_{n-1}}}$，$L_0=1$", "on": "所以" },
+            { "do": "box", "term": "res", "color": "green", "on": "負 n 乘" }
+          ] }
       ],
       "check": 1
     }

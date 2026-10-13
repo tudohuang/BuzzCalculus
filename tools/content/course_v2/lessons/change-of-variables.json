@@ -181,13 +181,31 @@
       "title": "斜的平行四邊形",
       "beats": [
         { "show": ["$\\iint_R\\frac{x-2y}{3x-y}\\,dA$"], "note": "被積函數是 $\\frac{u}{v}$。",
-          "say": "回到這塊四邊形，被積函數正好是 u 除以 v。" },
+          "say": "回到這塊四邊形，被積函數正好是 u 除以 v。",
+          "board": [
+            { "do": "write", "line": "$\\iint_R\\dfrac{ {{u:x-2y}} }{ {{v:3x-y}} }\\,dA$", "tint": { "u": "blue", "v": "violet" } },
+            { "do": "focus", "term": "u", "on": "u 除以" },
+            { "do": "focus", "term": "v", "on": "除以 v" }
+          ] },
         { "show": ["$\\frac{\\partial(u,v)}{\\partial(x,y)}=1\\cdot(-1)-(-2)\\cdot3=5$"],
-          "say": "題目給的是 u、v 用 x、y 表示，所以先算反方向的 Jacobian，得五。" },
+          "say": "題目給的是 u、v 用 x、y 表示，所以先算反方向的 Jacobian，得五。",
+          "board": [
+            { "do": "write", "line": "${{jac:\\frac{\\partial(u,v)}{\\partial(x,y)}}}=1\\cdot(-1)-(-2)\\cdot3=5$", "on": "所以" },
+            { "do": "underline", "term": "jac", "label": "反方向", "on": "反方向" }
+          ] },
         { "show": ["$|J|=\\frac{1}{5}$"], "note": "取倒數，〈Jacobian 行列式〉。",
-          "say": "要的方向取倒數：五分之一。" },
+          "say": "要的方向取倒數：五分之一。",
+          "board": [
+            { "do": "write", "line": "$|J|={{inv:\\frac{1}{5}}}$" },
+            { "do": "focus", "term": "inv", "label": "取倒數", "on": "取倒數" }
+          ] },
         { "show": ["$\\frac{1}{5}\\cdot\\int_0^4 u\\,du\\cdot\\int_1^8\\frac{dv}{v}=\\frac{1}{5}\\cdot8\\cdot\\ln 8$"], "note": "$=\\frac{24\\ln 2}{5}$",
-          "say": "新區域是矩形、被積函數可分離，拆成兩個一維積分相乘。" }
+          "say": "新區域是矩形、被積函數可分離，拆成兩個一維積分相乘。",
+          "board": [
+            { "do": "write", "line": "$\\frac{1}{5}\\cdot{{iu:\\int_0^4 u\\,du}}\\cdot{{iv:\\int_1^8\\frac{dv}{v}}}$", "tint": { "iu": "blue", "iv": "violet" }, "on": "拆成" },
+            { "do": "focus", "term": "iu", "on": "兩個一維" },
+            { "do": "focus", "term": "iv", "on": "相乘" }
+          ] }
       ],
       "check": 0
     },
@@ -195,15 +213,37 @@
       "title": "新區域不是矩形",
       "beats": [
         { "show": ["$\\iint_R\\cos\\left(\\frac{x-y}{x+y}\\right)dA$"], "note": "$R$：頂點 $(1,0)$、$(2,0)$、$(0,2)$、$(0,1)$ 的梯形。",
-          "say": "被積函數裡有 x 減 y、x 加 y，就讓它們當 u、v。倍率是二分之一。" },
+          "say": "被積函數裡有 x 減 y、x 加 y，就讓它們當 u、v。倍率是二分之一。",
+          "board": [
+            { "do": "write", "line": "$\\iint_R\\cos\\left(\\dfrac{ {{u:x-y}} }{ {{v:x+y}} }\\right)dA$", "tint": { "u": "blue", "v": "violet" } },
+            { "do": "write", "line": "$u=x-y$，$v=x+y$，倍率 $\\frac{1}{2}$", "on": "就讓" }
+          ] },
         { "show": ["$y=0\\to u=v$；$x=0\\to u=-v$"], "note": "$x+y=1,2\\to v=1,2$。",
-          "say": "四條邊逐一換：兩條斜邊變成 v 等於一、二；兩條座標軸變成 u 等於正負 v。" },
+          "say": "四條邊逐一換：兩條斜邊變成 v 等於一、二；兩條座標軸變成 u 等於正負 v。",
+          "board": [
+            { "do": "write", "line": "斜邊：$x+y=1,2\\to {{v1:v=1,2}}$", "on": "兩條斜邊" },
+            { "do": "write", "line": "軸：$y=0\\to u=v$；$x=0\\to u=-v$", "on": "兩條座標軸" }
+          ] },
         { "show": ["$S$：$1\\le v\\le 2$、$-v\\le u\\le v$"],
-          "say": "新區域不是矩形，但內層上下限很好寫。" },
+          "say": "新區域不是矩形，但內層上下限很好寫。",
+          "board": [
+            { "do": "clear" },
+            { "do": "plot", "graph": {"window":[-2.6,2.6,-0.35,2.4],"equal":true,"curves":[{"pts":[[-1,1],[1,1],[2,2],[-2,2],[-1,1]],"color":"blue"}],"fills":[{"pts":[[-1,1],[1,1],[2,2],[-2,2]],"color":"blue"}],"dashed":[[[0,0],[2.3,2.3]],[[0,0],[-2.3,2.3]]],"labels":[{"x":2.35,"y":1.95,"text":"u=v","anchor":"start"},{"x":-2.35,"y":1.95,"text":"u=−v","anchor":"end"}],"ticks":false}, "on": "新區域" },
+            { "do": "write", "line": "$S$：$1\\le v\\le 2$、${{in:-v\\le u\\le v}}$", "on": "內層" }
+          ] },
         { "show": ["內層 $v\\sin 1$，外層 $\\frac{3}{2}\\sin 1$"],
-          "say": "內層對 u 積，得 v 乘 sine 一；外層再積，二分之三 sine 一。" },
+          "say": "內層對 u 積，得 v 乘 sine 一；外層再積，二分之三 sine 一。",
+          "board": [
+            { "do": "write", "line": "內層 $v\\sin 1$，外層 $\\,{{out:\\frac{3}{2}\\sin 1}}$", "on": "內層" },
+            { "do": "box", "term": "out", "color": "green", "on": "二分之三" }
+          ] },
         { "show": ["條件：內部一對一、$J\\ne 0$"], "note": "邊界上壞掉沒關係，邊界面積是 $0$。",
-          "say": "公式成立的條件：變換在內部一對一，Jacobian 不為零。只在邊界上壞掉沒關係。" }
+          "say": "公式成立的條件：變換在內部一對一，Jacobian 不為零。只在邊界上壞掉沒關係。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "條件：內部一對一、$J\\ne 0$", "on": "條件" },
+            { "do": "write", "line": "邊界上壞掉沒關係", "on": "只在邊界上" }
+          ] }
       ],
       "check": 2
     },

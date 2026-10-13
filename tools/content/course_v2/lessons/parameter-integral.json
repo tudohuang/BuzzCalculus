@@ -139,11 +139,26 @@
       "title": "先問定義域",
       "beats": [
         { "show": ["$\\int x^a\\,dx=\\frac{x^{a+1}}{a+1}$"], "note": "$a\\ne-1$。",
-          "say": "第一個問題是：積分在哪些 a 收斂？先寫出反導函數，a 不等於負一。" },
+          "say": "第一個問題是：積分在哪些 a 收斂？先寫出反導函數，a 不等於負一。",
+          "board": [
+            { "do": "write", "line": "$\\int x^a\\,dx=\\frac{x^{a+1}}{{{d:a+1}}}$", "on": "反導函數" },
+            { "do": "underline", "term": "d", "on": "a 不等於", "label": "a ≠ -1" }
+          ] },
         { "show": ["$a+1>0$：$x^{a+1}\\to 0$，得 $\\frac{1}{a+1}$"], "note": "$a+1\\le 0$：$0$ 那端發散。",
-          "say": "a 加一大於零，x 的 a 加一次方在零趨近零，積分是 a 加一分之一；否則零那端發散。" },
+          "say": "a 加一大於零，x 的 a 加一次方在零趨近零，積分是 a 加一分之一；否則零那端發散。",
+          "board": [
+            { "do": "write", "line": "$a+1>0$：$x^{a+1}\\to 0$，得 $\\frac{1}{a+1}$" },
+            { "do": "write", "line": "$a+1\\le 0$：$0$ 那端發散", "on": "否則" }
+          ] },
         { "show": ["定義域 $a>-1$"], "note": "不能代 $a=-2$ 得到 $-1$。",
-          "say": "所以這個公式只在 a 大於負一有意義。代 a 等於負二得到負一，是把公式用到定義域外了。" }
+          "say": "所以這個公式只在 a 大於負一有意義。代 a 等於負二得到負一，是把公式用到定義域外了。",
+          "board": [
+            { "do": "keep", "n": 2 },
+            { "do": "write", "line": "定義域：${{dom:a>-1}}$", "on": "所以這個公式" },
+            { "do": "box", "term": "dom", "on": "大於負一", "color": "green" },
+            { "do": "write", "line": "$a=-2$ 代進去得 ${{w:-1}}$", "on": "代 a 等於負二" },
+            { "do": "strike", "term": "w", "on": "定義域外", "label": "定義域外" }
+          ] }
       ],
       "check": 0
     },
@@ -164,9 +179,18 @@
       "proof": true, "of": 3, "skeleton": "ε-δ",
       "beats": [
         { "show": ["一致連續給同一個 $\\delta$，再積分"],
-          "say": "策略：epsilon delta。先用一致連續拿到一個對所有 x 都有效的 delta，再把差積分起來。" },
+          "say": "策略：epsilon delta。先用一致連續拿到一個對所有 x 都有效的 delta，再把差積分起來。",
+          "board": [
+            { "do": "write", "line": "一致連續給同一個 $\\delta$", "on": "先用一致連續" },
+            { "do": "write", "line": "再把差積分起來", "on": "再把差" }
+          ] },
         { "show": ["閉矩形上連續 ⇒ 一致連續"], "note": "給 $\\varepsilon>0$，存在 $\\delta$。",
-          "say": "f 在閉矩形上兩變數一起連續，所以一致連續：給 epsilon，就有一個 delta。" },
+          "say": "f 在閉矩形上兩變數一起連續，所以一致連續：給 epsilon，就有一個 delta。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "閉矩形上連續 ⇒ 一致連續", "on": "f 在閉矩形" },
+            { "do": "write", "line": "給 $\\varepsilon>0$，存在 ${{dl:\\delta}}$", "on": "給 epsilon" }
+          ] },
         { "show": ["$|a-a_0|<\\delta$ ⇒ 對所有 $x\\in[c,d]$", "$|f(x,a)-f(x,a_0)|<\\varepsilon$"], "note": "同一個 $\\delta$ 對所有 $x$ 都有效。",
           "why": {
             "ask": "為什麼同一個 $\\delta$ 對所有 $x$ 都有效？",
@@ -177,9 +201,20 @@
               { "label": "$\\delta$ 本來就只跟 $\\varepsilon$ 有關", "why": "一般的連續，$\\delta$ 會隨點改變；不依賴點，正是一致連續多給的。" }
             ]
           },
-          "say": "這正是一致連續給的：delta 只看 epsilon，不看點，所以整段 x 一起管住。" },
+          "say": "這正是一致連續給的：delta 只看 epsilon，不看點，所以整段 x 一起管住。",
+          "board": [
+            { "do": "write", "line": "$|a-a_0|<\\delta$ ⇒ 對所有 $x\\in[c,d]$", "on": "這個 delta" },
+            { "do": "write", "line": "$|f(x,a)-f(x,a_0)|<\\varepsilon$", "on": "不管 x" },
+            { "do": "underline", "term": "dl", "on": "只看 epsilon", "label": "不看點", "why": true }
+          ] },
         { "show": ["$|I(a)-I(a_0)|$", "$\\le\\int_c^d|f(x,a)-f(x,a_0)|\\,dx<\\varepsilon(d-c)$"], "note": "$\\varepsilon$ 任意，所以 $I$ 在 $a_0$ 連續。",
-          "say": "積分的差不超過差的絕對值的積分，每一點都小於 epsilon，乘上區間長度 d 減 c。" }
+          "say": "積分的差不超過差的絕對值的積分，每一點都小於 epsilon，乘上區間長度 d 減 c。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "$|I(a)-I(a_0)|$", "on": "積分的差" },
+            { "do": "write", "line": "$\\le\\int_c^d|f(x,a)-f(x,a_0)|\\,dx<{{e:\\varepsilon(d-c)}}$", "on": "不超過" },
+            { "do": "underline", "term": "e", "on": "乘上區間長度" }
+          ] }
       ],
       "where": {
         "ask": "「閉矩形」用在哪一步？",
@@ -212,13 +247,32 @@
       "title": "無窮區間會出事",
       "beats": [
         { "show": ["$\\int_0^{\\infty}ae^{-ax}\\,dx=1$（$a>0$）"], "note": "令 $u=ax$。",
-          "say": "換成無窮區間：a 乘 e 的負 a x 次方，a 大於零時，令 u 等於 a x，面積都是一。" },
+          "say": "換成無窮區間：a 乘 e 的負 a x 次方，a 大於零時，令 u 等於 a x，面積都是一。",
+          "board": [
+            { "do": "write", "line": "$\\int_0^{\\infty}{{f:ae^{-ax}}}\\,dx=1$（$a>0$）", "tint": {"f": "blue"} },
+            { "do": "underline", "term": "f", "on": "令 u", "label": "令 u=ax" }
+          ] },
         { "show": ["$a=0$：被積函數是 $0$，$I(0)=0$"],
-          "say": "可是 a 等於零時，被積函數整個是零，積分是零。左邊趨近一，那一點卻是零，不連續。" },
+          "say": "可是 a 等於零時，被積函數整個是零，積分是零。左邊趨近一，那一點卻是零，不連續。",
+          "board": [
+            { "do": "write", "line": "$a=0$：被積函數是 $0$，$I(0)={{z:0}}$", "on": "a 等於零" },
+            { "do": "circle", "term": "z", "on": "那一點", "label": "不連續" }
+          ] },
         { "show": ["面積逃到無窮遠"], "note": "$a$ 越小，曲線越扁、拖得越長。",
-          "say": "看圖：a 越小，曲線越扁、拖得越長，面積一被推到越來越遠，最後逃到無窮遠。" },
+          "say": "看圖：a 越小，曲線越扁、拖得越長，面積一被推到越來越遠，最後逃到無窮遠。",
+          "board": [
+            { "do": "keep", "n": 1 },
+            { "do": "plot", "graph": {"window": [-0.3,8,-0.1,1.1],"ticks": false,"curves": [{"expr": "exp(-x)", "domain": [0,8],"color": "blue"},{"expr": "exp(-x/2)/2", "domain": [0,8],"color": "violet"},{"expr": "exp(-x/3)/3", "domain": [0,8],"color": "gold"}],"labels": [{"x": 3.4,"y": 0.32,"text": "a 越小，越扁", "anchor": "start"}]},"on": "看圖" },
+            { "do": "write", "line": "面積逃到無窮遠", "on": "逃到" }
+          ] },
         { "show": ["需要控制：$|f(x,a)|\\le g(x)$"], "note": "$g$ 不依賴 $a$ 而且可積。",
-          "say": "瑕積分要搬極限，需要一個不依賴 a、而且可積的函數把它壓住。這個反例找不到。" }
+          "say": "瑕積分要搬極限，需要一個不依賴 a、而且可積的函數把它壓住。這個反例找不到。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "需要控制：$|f(x,a)|\\le {{g:g(x)}}$", "on": "瑕積分" },
+            { "do": "underline", "term": "g", "on": "不依賴 a", "label": "可積" },
+            { "do": "write", "line": "這個反例：找不到 $g$", "on": "這個反例", "color": "red" }
+          ] }
       ],
       "check": 2
     }
