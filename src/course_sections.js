@@ -241,7 +241,17 @@
     if (window.ResizeObserver) { grow = new ResizeObserver(go); grow.observe(el); const bd = root.querySelector(".cvb"); if (bd) grow.observe(bd); }
   }
   if (typeof document !== "undefined" && document.addEventListener) {
-    document.addEventListener("pointerdown", () => { pointerDown = true; }, true);
+    document.addEventListener("pointerdown", (event) => {
+      pointerDown = true;
+      // 按在「自己算」的輸入區（數學鍵盤、輸入框、送出）：在打字 —— 對位的捲動讓路，正在滑的那一段也停在原地，
+      // 不然手指底下的鍵會換一顆（打 2 進去的是上兩列的 8）
+      const t = event.target;
+      if (t && t.closest && t.closest("[data-cv2s] [data-cs]")) {
+        userAt = Date.now();
+        pending = null;
+        window.scrollTo({ top: window.scrollY, behavior: "instant" });
+      }
+    }, true);
     const up = () => { pointerDown = false; if (pending) { const go = pending; pending = null; go(); } };
     document.addEventListener("pointerup", up, true);
     document.addEventListener("pointercancel", up, true);

@@ -188,17 +188,21 @@ async function launch(options = {}) {
   function send(method, params) {
     const id = nextId++;
     return new Promise((resolve, reject) => {
-      pending.set(id, { resolve, reject });
-      socket.send(JSON.stringify({ id, method, params: params || {} }));
-      setTimeout(() => {
+      // 預設 3 分鐘：E2E 會把「答完整局」這種幾十步的迴圈整段丟進頁面跑，
+      // 在 CI 的慢 runner（或 BUZZ_E2E_CPU_THROTTLE=8）上一段就能超過 30 秒。
+      // 這個逾時只該擋「Chrome 死了」，不該擋「Chrome 很慢」。
+      // 回應到了就清掉計時器、而且 unref：以前每個指令都留一個 3 分鐘的計時器，測試全過之後
+      // node 還要等最後一個計時器到期才結束 —— 每一組 E2E 印完「通過」都白等 3 分鐘（CI log 看得到）。
+      const timer = setTimeout(() => {
         if (pending.has(id)) {
           pending.delete(id);
           reject(new Error(`CDP ${method} 逾時`));
         }
-      // 預設 3 分鐘：E2E 會把「答完整局」這種幾十步的迴圈整段丟進頁面跑，
-      // 在 CI 的慢 runner（或 BUZZ_E2E_CPU_THROTTLE=8）上一段就能超過 30 秒。
-      // 這個逾時只該擋「Chrome 死了」，不該擋「Chrome 很慢」。
       }, options.commandTimeout || 180000);
+      if (typeof timer.unref === "function") timer.unref();
+      const done = (fn) => (value) => { clearTimeout(timer); fn(value); };
+      pending.set(id, { resolve: done(resolve), reject: done(reject) });
+      socket.send(JSON.stringify({ id, method, params: params || {} }));
     });
   }
 
