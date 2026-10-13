@@ -366,7 +366,7 @@
                 ${["none", "attempted", "solved"].map((status) => chip("status", status, STATUS_LABEL[status], countBy("status", status))).join("")}
               </div>
               <details class="lc-more" data-keep="lc-more-filters" ${f.kind !== "all" || f.group !== "all" ? "open" : ""}>
-              <summary>${t("判卷方式")} · ${t("證法與層級")}${f.kind !== "all" || f.group !== "all" ? `<small>${(f.kind !== "all") + (f.group !== "all")}</small>` : ""}</summary>
+              <summary>${t("判卷方式")} · ${t("證法與層級")}${f.kind !== "all" || f.group !== "all" ? `<small>${Number(f.kind !== "all") + Number(f.group !== "all")}</small>` : ""}</summary>
               <div class="lc-chip-row" role="group" aria-label="${t("判卷方式")}">
                 ${chip("kind", "all", t("全部"))}
                 ${chip("kind", "auto", t("白話證明 · 自動判"), countBy("kind", "auto"))}
