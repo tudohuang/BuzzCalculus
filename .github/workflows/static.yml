@@ -138,6 +138,10 @@ jobs:
         # lang=en 之後每一頁看得見的字都不能是中文、題幹要換成英文側表、設定頁切回中文要 reload 回來。
         # validate_i18n 在原始碼層擋漏包的字串；這一步抓的是「字典有、但 render 走了別條路」。
         run: node tools/e2e_i18n.js
+      - name: E2E first minute
+        # 商業手冊附錄 C：全新的人用手機（390×844、觸控、空的儲存空間）跟著主按鈕走，60 秒內找到並答對第一題；
+        # 印出時間、按了幾下、第一題可作答的時間。順便驗量測漏斗（docs/metrics.md）送了什麼、關掉分析時什麼都不載。
+        run: node tools/e2e_first_minute.js
       - name: Verify answers independently
         # 這一步是題庫的品質底線：從題幹推出一條與解題無關的數值路徑，
         # 再跟答案比對。不符必須是零 —— spec 00 說得很直白，
