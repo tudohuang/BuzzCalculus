@@ -29,8 +29,8 @@ const REV_HEADER = "x-buzz-rev";
 
 // ── 產生區：node tools/build_sw_revisions.js（不要手改）──
 // 這一版：設定頁顯示「版本 v… · id · 日期」；id 是下面 REVISIONS 的雜湊，快取名跟著它變（每次部署內容有變就一定是新快取）。
-const BUILD = {"version":"v1.3.0","id":"1d581965","date":"2026-10-13"};
-const CACHE_NAME = "buzzcalculus-v1.3.0-1d581965";
+const BUILD = {"version":"v1.3.0","id":"df07ae03","date":"2026-10-13"};
+const CACHE_NAME = "buzzcalculus-v1.3.0-df07ae03";
 // 安裝時預快取的核心（離線也能練題）。其他檔用到才快取 —— 見 REVISIONS。
 const APP_SHELL = [
   "./index.html",
@@ -124,7 +124,7 @@ const APP_SHELL = [
 const REVISIONS = {
   "./about.html": "0fc0633893",
   "./assets/icon.svg": "e7e0dc9db8",
-  "./assets/vendor/anime.min.js": "455938d7e8",
+  "./assets/vendor/anime.min.js": "5cbda29ea5",
   "./assets/vendor/icons.js": "6c0c67b2d4",
   "./assets/vendor/katex/fonts/KaTeX_AMS-Regular.woff2": "0cdd387c95",
   "./assets/vendor/katex/fonts/KaTeX_Caligraphic-Bold.woff2": "de7701e42c",
@@ -146,14 +146,14 @@ const REVISIONS = {
   "./assets/vendor/katex/fonts/KaTeX_Size3-Regular.woff2": "73d591271b",
   "./assets/vendor/katex/fonts/KaTeX_Size4-Regular.woff2": "a4af7d4144",
   "./assets/vendor/katex/fonts/KaTeX_Typewriter-Regular.woff2": "71d517d678",
-  "./assets/vendor/katex/katex.min.css": "41a33e5fe3",
+  "./assets/vendor/katex/katex.min.css": "06b732aebc",
   "./assets/vendor/katex/katex.min.js": "9f45307c57",
   "./guide.html": "6598935c2f",
   "./index.html": "1187ecb5d0",
   "./manifest.webmanifest": "4f19816c8b",
   "./privacy.html": "e585e4c063",
   "./src/app.js": "e57c5eed8c",
-  "./src/board_store.js": "228a8b7886",
+  "./src/board_store.js": "402a9e9b08",
   "./src/course.js": "8944e3c475",
   "./src/course_board.js": "efbcf4144e",
   "./src/course_board_layout.js": "a1db6f5ee5",
@@ -283,7 +283,7 @@ const REVISIONS = {
   "./src/problem_core_expansion_pack.js": "076d87e9db",
   "./src/problem_curve_worksheet_pack.js": "2443b77120",
   "./src/problem_derivative_depth_pack.js": "3f89f04638",
-  "./src/problem_difficulty_calibration.js": "a9b61da4c1",
+  "./src/problem_difficulty_calibration.js": "f5baa99953",
   "./src/problem_exam_depth_pack.js": "aaebde5331",
   "./src/problem_exam_expansion.js": "09bd194b5e",
   "./src/problem_extensions.js": "7380e569e5",
