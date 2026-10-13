@@ -344,7 +344,8 @@
     const cleaned = String(expr || "");
     if (!/^[0-9x+\-*/().,^\sa-z]*$/i.test(cleaned)) return null;
     try {
-      const body = `"use strict"; const {sin,cos,tan,asin,acos,atan,log,exp,sqrt,abs,pow,sinh,cosh,tanh,PI,E}=Math; return (${cleaned.replace(/\^/g, "**")});`;
+      // 一元負號後面接次方：JS 的 -x**2 是語法錯誤，整條曲線默默不見（exp(-x^2) 踩過好幾次）。開頭或 ( , + - * / 後面的負號改成 -1*；^ 後面的（2^-x）不動。
+      const body = `"use strict"; const {sin,cos,tan,asin,acos,atan,log,exp,sqrt,abs,pow,sinh,cosh,tanh,PI,E}=Math; return (${cleaned.replace(/(^|[(,+\-*/])(\s*)-(?=\s*[0-9a-z.(])/gi, "$1$2-1*").replace(/\^/g, "**")});`;
       const fn = new Function(variable === "t" ? "t" : "x", body);
       // 探針不能只戳 x=1：1/(x−1) 在那裡是 ∞，會被當成壞式子（作圖題實測抓到）。
       // 三個點都是 ±∞ 才算壞。
@@ -1827,7 +1828,8 @@
     const cleaned = String(expr || "");
     if (!/^[0-9x+\-*/().,^\sa-z]*$/i.test(cleaned)) return null;
     try {
-      const body = `"use strict"; const {sin,cos,tan,asin,acos,atan,log,exp,sqrt,abs,pow,sinh,cosh,tanh,PI,E}=Math; return (${cleaned.replace(/\^/g, "**")});`;
+      // 一元負號後面接次方：JS 的 -x**2 是語法錯誤，整條曲線默默不見（exp(-x^2) 踩過好幾次）。開頭或 ( , + - * / 後面的負號改成 -1*；^ 後面的（2^-x）不動。
+      const body = `"use strict"; const {sin,cos,tan,asin,acos,atan,log,exp,sqrt,abs,pow,sinh,cosh,tanh,PI,E}=Math; return (${cleaned.replace(/(^|[(,+\-*/])(\s*)-(?=\s*[0-9a-z.(])/gi, "$1$2-1*").replace(/\^/g, "**")});`;
       return new Function("x", body);
     } catch (_error) { return null; }
   }
