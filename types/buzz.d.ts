@@ -396,6 +396,15 @@ interface Window {
     state(): { registered: boolean; running: BuzzBuild | null; next: BuzzBuild | null; pending: boolean; accepted: boolean; status: string; dismissed: boolean };
     tune: { checkGap: number; resumeGap: number; autoWindow: number; hourly: number };
   };
+  /** src/kernel/metrics.js（data-lazy="metrics"，只有分析開著才載）：漏斗事件、共同欄位、本機回訪訊號（docs/metrics.md） */
+  BuzzMetrics?: {
+    start(deps: { track: (name: string, params?: Record<string, unknown>) => void; events?: Record<string, string>; records?: () => any; view?: () => string }): void;
+    common(params?: Record<string, unknown>): Record<string, unknown>;
+    observe(name: string, params?: Record<string, unknown>): void;
+    EVENTS: Record<string, string>;
+    dayKey(date?: Date): string;
+    daysBetween(fromKey: string, toKey: string): number;
+  };
   BuzzCourseSections?:{ render(api: any): string; act(api: any, action: string, data: any): void };
   BuzzCourseFinish?: { view(api: any, entry: any): string };
   BuzzCourseProof?: { tag(api: any, section: any): string; why(api: any, si: number, bi: number): string; view(api: any, si: number): string; act(api: any, action: string, data: any): number; shuffle(n: number, seed: string): number[] };

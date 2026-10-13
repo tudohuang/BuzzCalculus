@@ -199,12 +199,23 @@ GitHub Pages 保持不變，API 走另一個網域，CORS 白名單。
 | `export_records` / `import_records` | 資料管理 | `size_kb, merged` |
 | `install_pwa` | 安裝 | — |
 | `perf_render` | 效能取樣（1%） | `view, ms` |
-| `return_d1` / `return_d7` | 回訪（用 `lastPlayed` 判定） | `days_since` |
+| `return_visit` | 回訪（距上次練習 `lastPlayed` 幾天；舊的規劃名 return_d1 / return_d7 由下面的 cohort 版取代） | `days_since, bucket`（d1 / d7 / d30 / lapsed） |
 | `course_section_complete` | 課程第一次讀完一節（重讀不記） | `lesson, section, mode`（mode = tap / voice） |
 | `course_lesson_complete` | 課程第一次完成一課（小測第一次 ≥ 3 題對） | `lesson, tier` |
 | `course_boss_view` | 章的第一課秀出章首魔王題（每打開一次記一次） | `chapter` |
 | `course_boss_solve` | 解開章首魔王題（只記第一次） | `chapter, before_payoff` |
 | `course_solve` | 課程的「自己算」第一次作答（分節裡每一題只記第一次；隔天的課程回溫每一題記一次） | `lesson, first_try, review`（不帶打的答案） |
+| `landing_view` | 每次頁面載入一次（漏斗第一步） | `screen, visitor`（new / returning） |
+| `answer_submit` | 按了送出且判完對錯（從 `problem_submit` 推出；不含逾時、跳過、還沒學過） | `problem_id, difficulty, mode, correct, seq` |
+| `answer_correct` | 同上且答對 | `problem_id, difficulty, mode, seq, secs_since_landing` |
+| `second_question_complete` | 同一個分頁 session 答完第二道不同的題（只送一次） | `problem_id, difficulty, mode, secs_since_landing` |
+| `return_d1` / `return_7d` | 本機「第一次見到」之後第 1 天／第 7–13 天第一次打開（各只送一次；上線前的舊使用者不送） | `days_since_first` |
+
+**漏斗（2026-10-13，定義在 [docs/metrics.md](../metrics.md)）**：上面最後五個事件在 `src/kernel/metrics.js`（`data-lazy="metrics"`，
+只有分析開著才載），送出一律走 `trackEvent`。手冊的 `practice_open` 就是 `problem_start`、`lesson_section_complete` 就是
+`course_section_complete`（別名，不重送）。每個事件另帶共同欄位 `subject_id`、`session_id`（sessionStorage 的分頁隨機碼，不是使用者 id），
+有 `rank`／`lesson`／`section` 的再補 `difficulty`／`lesson_id`／`section_id`。舊的 `return_visit`（距上次**練習**幾天）照收，
+它跟 `return_d1`／`return_7d`（距**第一次見到**幾天，cohort 用）是不同的指標。
 
 課程的事件寫在延後載入的課程檔裡，一律呼叫 app.js 交過去的 `deps.track`（就是 `trackEvent`），關掉分析一樣擋得住；
 `tools/validate_analytics.js` 連同 `src/course*.js` 一起掃，課程檔直接碰 `gtag`／`dataLayer` 會擋。

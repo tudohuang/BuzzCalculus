@@ -29,8 +29,9 @@ const CORE_FONTS = ["AMS-Regular", "Main-Bold", "Main-Italic", "Main-Regular", "
   .map((n) => `assets/vendor/katex/fonts/KaTeX_${n}.woff2`);
 const PAGES = ["about.html", "guide.html", "privacy.html", "terms.html"];
 const VOLATILE = new Set(["src/kernel/daily_one_history.js"]);
-// 每次開站都會載的 lazy 群組：進 APP_SHELL（離線也要有）。steps＝逐步解答側表；pwa＝更新檢查與版本（src/kernel/app_update.js）。
-const CORE_LAZY = ["steps", "pwa"];
+// 每次開站都會載的 lazy 群組：進 APP_SHELL（離線也要有）。steps＝逐步解答側表；pwa＝更新檢查與版本（src/kernel/app_update.js）；
+// metrics＝量測漏斗與回訪（src/kernel/metrics.js，只有分析開著才載）。
+const CORE_LAZY = ["steps", "pwa", "metrics"];
 // 讀檔：預設讀磁碟；E2E（tools/e2e_update.js）傳入覆寫，產生「改了一支檔之後」的 sw.js 而不動到磁碟
 const diskRead = (rel) => fs.readFileSync(path.join(ROOT, rel));
 // 內容雜湊：sw.js 在執行期用 crypto.subtle 算一樣的東西（sha256 的前 10 個 hex）

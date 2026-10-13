@@ -106,7 +106,12 @@ if (!/analyticsEnabled\(\)/.test(setupBody)) {
   if (scriptAt >= 0 && guardAt > scriptAt) {
     fail("analyticsEnabled() 的檢查在載入 gtag.js 之後 —— 那時候請求已經發出去了");
   }
+  // 量測漏斗（src/kernel/metrics.js）會在本機記「第一次見到的日期」：關掉分析時連這支都不能載
+  const metricsAt = setupBody.indexOf('ensureLazy("metrics")');
+  if (metricsAt < 0) fail("setupAnalytics 沒有載入量測漏斗（metrics）—— 還是它被搬到別處、繞過了分析開關？");
+  else if (guardAt > metricsAt) fail("量測漏斗（metrics）在 analyticsEnabled() 檢查之前就載了 —— 關掉分析時它還是會在本機記日期");
 }
+if ((app.match(/ensureLazy\("metrics"\)/g) || []).length !== 1) fail("量測漏斗只能從 setupAnalytics 載（分析開關後面）");
 
 /* ── 3b. 錯誤回報不能夾帶內容 ─────────────────────────────── */
 

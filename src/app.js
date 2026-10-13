@@ -842,6 +842,8 @@
     // 關掉的話連 gtag.js 都不要載入 —— 光是載入那支 script 就已經
     // 對 Google 發出請求，帶著 IP 與 User-Agent。只擋事件是不夠的。
     if (!analyticsEnabled()) return;
+    // 漏斗與回訪（docs/metrics.md）：同一道閘，關掉就連檔都不抓
+    ensureLazy("metrics").then(() => window.BuzzMetrics.start({ track: trackEvent, events: ANALYTICS_EVENTS, records: loadRecords, view: () => view })).catch(() => {});
     window.dataLayer = window.dataLayer || [];
     window.gtag = window.gtag || function () {
       window.dataLayer.push(arguments);
@@ -1122,11 +1124,14 @@
     // opt-out 之後只有「重新開啟分析」這個事件本身可以送出去，
     // 否則使用者永遠沒辦法把自己加回來
     if (!analyticsEnabled() && !(name === "analytics_opt_out" && params.state === "on")) return;
+    const M = window.BuzzMetrics;
     window.gtag("event", name, {
       app_version: APP_VERSION,
       build_date: BUILD_DATE,
+      ...(M ? M.common(params) : {}),
       ...params
     });
+    if (M) M.observe(name, params);
   }
 
   // ---- 錯誤回報 ────────────────────────────────────────────
