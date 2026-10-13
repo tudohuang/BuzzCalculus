@@ -610,8 +610,8 @@
     { key: "multivariable", label: t("多變數"), tags: ["multivariable", "double-integral", "triple-integral", "hessian", "jacobian", "jacobian-chain", "lagrange-multiplier", "nabla", "vector-calculus", "total-differential", "total-differential-min", "line-integral", "surface-integral", "green-theorem", "stokes-theorem", "divergence-theorem", "flux", "conservative-field", "directional-derivative"] },
     { key: "special", label: t("特殊函數"), tags: ["beta-function", "gamma-function", "wallis", "bessel", "special-function"] }
   ];
-  const APP_VERSION = "v1.2.1";
-  const BUILD_DATE = "2026-09-01";
+  const APP_VERSION = "v1.3.0";
+  const BUILD_DATE = "2026-10-13";
   const GA_MEASUREMENT_ID = String(window.BUZZ_GA_MEASUREMENT_ID || "").trim();
 
   let view = "home";
@@ -655,8 +655,6 @@
   // 回報草稿：{ problemId, reason }。null 代表沒有開著的回報視窗。
   let reportDraft = null;
   // service worker 裝好但還在等的新版本；null 代表沒有更新。
-  let pendingUpdate = null;
-  let updateAccepted = false;
   // 上一次在這題留下的草稿（從 IndexedDB 非同步拿回來）
   let previousBoard = { problemId: "", entry: null, open: false };
   let syncBusy = false;
@@ -4264,8 +4262,8 @@
             <p class="section-label">${t("關於")}</p>
             <h3>BuzzCalculus</h3>
           </div>
-          <span class="settings-version">${APP_VERSION} · ${BUILD_DATE}</span>
         </div>
+        ${window.BuzzAppUpdate ? window.BuzzAppUpdate.panel() : `<p class="app-version">${t("版本")} ${APP_VERSION} · ${BUILD_DATE}</p>`}
         ${
           // 2026-09-16 使用者：更新紀錄／隱私政策／服務條款／給家教助教的文件先關掉。
           // 隱私與條款的檔案留著（放 GA 得有政策頁可指），只是產品裡不再連；更新紀錄與家教文件連部署都拿掉。
@@ -8536,12 +8534,6 @@
     }
     if (action === "print-mistakes") printMistakes();
     if (action === "toggle-focus-mode") setFocusMode(!focusModeOn());
-    if (action === "apply-update") applyPendingUpdate();
-    if (action === "dismiss-update") {
-      try { sessionStorage.setItem("buzzcalculus.update-dismissed", "1"); } catch (_error) { /* 私密模式 */ }
-      pendingUpdate = null;
-      render();
-    }
     if (action === "cancel-report") {
       reportDraft = null;
       render();
@@ -9833,35 +9825,15 @@
   }
 
   function setupPwa() {
-    if (window.navigator && "serviceWorker" in window.navigator) {
-      // 註冊（＝安裝時的預快取）等頁面載完、再等瀏覽器閒下來：不跟第一次畫面搶頻寬與 CPU。
-      // 預快取本身也瘦了：只放離線練題要的核心，其他用到才快取（sw.js）。
-      const whenIdle = (fn) => (window.requestIdleCallback ? window.requestIdleCallback(fn, { timeout: 5000 }) : window.setTimeout(fn, 2000));
-      window.addEventListener("load", () => whenIdle(() => {
-        window.navigator.serviceWorker.register("./sw.js").then((registration) => {
-          if (!registration) return;
-          // 已經有一個裝好在等的版本（上次沒按更新就關掉分頁）
-          if (registration.waiting) markUpdateReady(registration);
-          registration.addEventListener("updatefound", () => {
-            const installing = registration.installing;
-            if (!installing) return;
-            installing.addEventListener("statechange", () => {
-              // controller 存在代表這是「更新」而不是第一次安裝
-              if (installing.state === "installed" && window.navigator.serviceWorker.controller) {
-                markUpdateReady(registration);
-              }
-            });
-          });
-        }).catch(() => {});
-        // 換手之後才重新載入，這樣拿到的一定是新版
-        let reloading = false;
-        window.navigator.serviceWorker.addEventListener("controllerchange", () => {
-          if (!updateAccepted || reloading) return;
-          reloading = true;
-          window.location.reload();
-        });
-      }));
-    }
+    // 註冊、更新檢查、「有新版本」、版本列在 src/kernel/app_update.js（data-lazy="pwa"）：頁面載完、閒下來才載，不跟第一次畫面搶。
+    // apply-update／dismiss-update／check-update 三個按鈕由它自己接。
+    const whenIdle = (fn) => (window.requestIdleCallback ? window.requestIdleCallback(fn, { timeout: 5000 }) : window.setTimeout(fn, 2000));
+    window.addEventListener("load", () => whenIdle(() => ensureLazy("pwa").then(() => window.BuzzAppUpdate.init({
+      render, icon, track: trackEvent, version: APP_VERSION, date: BUILD_DATE,
+      answering: () => Boolean(quiz && view === "quiz" && !quiz.feedback),
+      // 自動換新版（重新載入）只在這些都不成立時：作答／考卷／出題／寫證明／讀課、紀錄沒存進去
+      busy: () => Boolean((quiz && view === "quiz") || /^(paper|creator|proof-write|course-lesson)$/.test(view) || unsavedRecordsJson !== null)
+    })).catch(() => {})));
     window.addEventListener("beforeinstallprompt", (event) => {
       event.preventDefault();
       deferredInstallPrompt = event;
@@ -9873,34 +9845,9 @@
     });
   }
 
-  // 有新版本可以用了。不自己更新 —— 只是說一聲。
-  function markUpdateReady(registration) {
-    pendingUpdate = registration;
-    render();
-  }
-
-  function applyPendingUpdate() {
-    if (!pendingUpdate || !pendingUpdate.waiting) return;
-    updateAccepted = true;
-    trackEvent("app_update_apply", {});
-    pendingUpdate.waiting.postMessage({ type: "SKIP_WAITING" });
-  }
-
+  // 有新版本：橫幅（作答中不出）由 app_update.js 畫
   function renderUpdateBanner() {
-    if (!pendingUpdate) return "";
-    // 作答中不打擾 —— 新版可以等，這一局不能重來。
-    if (quiz && view === "quiz" && !quiz.feedback) return "";
-    // 按過「稍後」這個工作階段就不再出現。實測它跨頁面陰魂不散，
-    // 手機上正好蓋住題庫任務板與設定的按鈕 —— 提醒一次是服務，
-    // 追著人跑是騷擾。下次重新開站再提醒一次就好。
-    try { if (sessionStorage.getItem("buzzcalculus.update-dismissed")) return ""; } catch (_error) { /* 私密模式 */ }
-    return `
-      <div class="update-banner" role="status">
-        <span>${t("有新版本可以用了。")}</span>
-        <button class="button secondary" data-action="apply-update">${icon("refresh")}${t("重新載入更新")}</button>
-        <button class="icon-button" data-action="dismiss-update" title="${t("稍後再說")}" aria-label="${t("稍後再說")}">${icon("x")}</button>
-      </div>
-    `;
+    return window.BuzzAppUpdate ? window.BuzzAppUpdate.banner() : "";
   }
 
   function installApp() {

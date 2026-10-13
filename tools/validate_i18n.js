@@ -27,6 +27,7 @@ const UI_FILES = [
   "src/kernel/session.js",
   "src/kernel/ability.js",
   "src/kernel/i18n.js",
+  "src/kernel/app_update.js",
   "src/course.js"
 ];
 // 上半是內容、下半是介面的檔：只掃標記之後（上半的課文走 i18n_text_en.js 的句型表，由第 5 段驗）

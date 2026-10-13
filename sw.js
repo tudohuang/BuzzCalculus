@@ -1,4 +1,3 @@
-const CACHE_NAME = "buzzcalculus-v1.2.1-2026-10-11-diet";
 const CACHE_PREFIX = "buzzcalculus-";
 const REV_HEADER = "x-buzz-rev";
 
@@ -16,10 +15,22 @@ const REV_HEADER = "x-buzz-rev";
 // 5. 不經過這裡的：別的網域（GA）、/media/（影片、旁白）、Range、<audio>／<video> 的請求、不在 REVISIONS 的路徑（sw.js 自己）。
 //    <video> 會送 Range、回 206，cache.put 收不了；而且每看一支就把 0.5–1MB 塞進 Cache Storage。離線時影片那一格只留說明。
 //
-// 新版本要等使用者同意才生效：新的 sw 安裝完就停在 waiting，由 app 顯示「有新版本」，使用者按下去才 skipWaiting + reload。
+// 新版本不在作答中途生效：新的 sw 安裝完就停在 waiting，由 app（src/kernel/app_update.js）決定什麼時候換：
+// 使用者按「重新載入更新」；或剛開站／從背景回來超過 10 分鐘、還沒動、沒在作答時自動換。
 // （舊行為是 install 就 skipWaiting 然後強制導航 —— 模擬考考到一半被刷掉。）
+//
+// 6. 版本：BUILD 與 CACHE_NAME 在產生區（tools/build_sw_revisions.js）。BUILD.id 是整張 REVISIONS 的雜湊 —— 任何一支檔變了，
+//    id、快取名、sw.js 的位元組都跟著變，瀏覽器才會裝新版。2026-10 之前快取名是手寫的、好幾次部署都沒改：
+//    新的 sw 打開「同名」的快取，以為每一支都已經在 → 一支都沒重抓 → 按了更新拿到的還是舊檔（主畫面 app「不會更新」的主因）。
+//    現在 carry 只認內容雜湊對得上的，fetch 也不回雜湊對不上的舊回應（有網路的話）。
+//
+// 導覽（index.html）照樣從這一版的快取回，不是 network-first：頁面與 script 一定同一版（新 HTML 配舊 app.js 會壞）。
+// 「新版有沒有到」看的是 sw.js —— 瀏覽器每次導覽都檢查，app 在回到前景、每小時、按「檢查更新」時再呼叫 registration.update()。
 
 // ── 產生區：node tools/build_sw_revisions.js（不要手改）──
+// 這一版：設定頁顯示「版本 v… · id · 日期」；id 是下面 REVISIONS 的雜湊，快取名跟著它變（每次部署內容有變就一定是新快取）。
+const BUILD = {"version":"v1.3.0","id":"1d581965","date":"2026-10-13"};
+const CACHE_NAME = "buzzcalculus-v1.3.0-1d581965";
 // 安裝時預快取的核心（離線也能練題）。其他檔用到才快取 —— 見 REVISIONS。
 const APP_SHELL = [
   "./index.html",
@@ -98,6 +109,7 @@ const APP_SHELL = [
   "./src/kernel/session.js",
   "./src/app.js",
   "./src/problem_solution_steps.js",
+  "./src/kernel/app_update.js",
   "./assets/vendor/katex/fonts/KaTeX_AMS-Regular.woff2",
   "./assets/vendor/katex/fonts/KaTeX_Main-Bold.woff2",
   "./assets/vendor/katex/fonts/KaTeX_Main-Italic.woff2",
@@ -110,7 +122,7 @@ const APP_SHELL = [
 ];
 // Service Worker 管的每一支檔 → 內容的 sha256 前 10 碼（空字串 = 每次安裝都重抓）。不在表上的請求交給瀏覽器。
 const REVISIONS = {
-  "./about.html": "5977ece596",
+  "./about.html": "0fc0633893",
   "./assets/icon.svg": "e7e0dc9db8",
   "./assets/vendor/anime.min.js": "455938d7e8",
   "./assets/vendor/icons.js": "6c0c67b2d4",
@@ -137,10 +149,10 @@ const REVISIONS = {
   "./assets/vendor/katex/katex.min.css": "41a33e5fe3",
   "./assets/vendor/katex/katex.min.js": "9f45307c57",
   "./guide.html": "6598935c2f",
-  "./index.html": "7a409ab575",
+  "./index.html": "1187ecb5d0",
   "./manifest.webmanifest": "4f19816c8b",
   "./privacy.html": "e585e4c063",
-  "./src/app.js": "349a432eff",
+  "./src/app.js": "e57c5eed8c",
   "./src/board_store.js": "228a8b7886",
   "./src/course.js": "8944e3c475",
   "./src/course_board.js": "efbcf4144e",
@@ -235,13 +247,14 @@ const REVISIONS = {
   "./src/custom_problems.js": "53e402064b",
   "./src/kernel/ability.js": "474cbd6dd3",
   "./src/kernel/answer_sampling.js": "4594531923",
+  "./src/kernel/app_update.js": "2b185cd937",
   "./src/kernel/board_render.js": "58c7065027",
   "./src/kernel/canned_hints.js": "9bed49134d",
   "./src/kernel/daily_one_history.js": "",
   "./src/kernel/derived_hints.js": "fda184703e",
   "./src/kernel/equivalence.js": "cce0b64d63",
   "./src/kernel/i18n.js": "f09036465d",
-  "./src/kernel/i18n_en.js": "42c90c89c1",
+  "./src/kernel/i18n_en.js": "d12ecae74e",
   "./src/kernel/i18n_problems_en.js": "034e3da4bf",
   "./src/kernel/i18n_text_en.js": "bd649bbd6e",
   "./src/kernel/ink_read.js": "10f49b9d62",
@@ -352,14 +365,18 @@ async function previous() {
   }
   return out;
 }
-// 雜湊一樣的搬進新快取（零請求）；回傳搬了哪些
+// 這個回應的內容就是這一版要的那一份（空的 revision = 不認，一律重抓）
+const fresh = (key, response) => Boolean(REVISIONS[key]) && Boolean(response) && response.headers.get(REV_HEADER) === REVISIONS[key];
+// 雜湊一樣的搬進新快取（零請求）；回傳「這一版的快取裡已經是對的」有哪些。
+// 這一版的快取裡本來就有、但雜湊對不上的不算（安裝重試、或舊版手寫快取名沒改的時候會碰到）—— 要重抓。
 async function carry(cache, old) {
   const moved = new Set();
-  const have = new Set((await cache.keys()).map((r) => keyOf(r.url)));
+  for (const request of await cache.keys()) {
+    const key = keyOf(request.url);
+    if (key && fresh(key, await cache.match(request))) moved.add(key);
+  }
   await Promise.all([...old].map(async ([key, response]) => {
-    const rev = REVISIONS[key];
-    if (have.has(key)) { moved.add(key); return; }
-    if (!rev || response.headers.get(REV_HEADER) !== rev) return;
+    if (moved.has(key) || !fresh(key, response)) return;
     await cache.put(key, response.clone());
     moved.add(key);
   }));
@@ -393,6 +410,8 @@ self.addEventListener("install", (event) => {
 
 self.addEventListener("message", (event) => {
   if (event.data && event.data.type === "SKIP_WAITING") self.skipWaiting();
+  // 設定頁的「版本」：正在跑的（controller）與等著的（waiting）各問自己的 BUILD
+  if (event.data && event.data.type === "VERSION" && event.ports && event.ports[0]) event.ports[0].postMessage({ build: BUILD });
 });
 
 self.addEventListener("activate", (event) => {
@@ -416,13 +435,15 @@ self.addEventListener("fetch", (event) => {
   event.respondWith((async () => {
     const cache = await caches.open(CACHE_NAME);
     const hit = await cache.match(key);
-    if (hit) return hit;
+    // 雜湊對不上這一版的（舊快取留下的）不直接回：有網路就重抓，離線才拿它頂著
+    if (hit && (!REVISIONS[key] || fresh(key, hit))) return hit;
     try {
       // 沒快取過：上網抓（no-cache：HTTP 快取裡有就送條件請求，沒變是 304），存進這一版的快取
       const response = await fetch(new Request(urlOf(key), { cache: "no-cache", credentials: "same-origin" }));
       if (response.ok) event.waitUntil(stamp(response.clone()).then((stamped) => cache.put(key, stamped)).catch(() => {}));
       return response;
     } catch (error) {
+      if (hit) return hit;
       const any = await caches.match(key);
       if (any) return any;
       throw error;

@@ -5,8 +5,13 @@
 // 使用者第一眼看到的就是標題列上那個日期 —— 一個停在兩個月前的 beta
 // 讀起來像是棄坑的專案，不像正在開發的產品。
 //
-// 這支從 git 拿出當前 commit 的日期蓋進 src/app.js，並同步 sw.js 的快取名
-// （快取名每次部署都必須變，否則使用者拿到的還是舊的 app shell）。
+// 這支從 git 拿出當前 commit 的日期蓋進 src/app.js，再重產 sw.js 的產生區（tools/build_sw_revisions.js）：
+// app.js 變了，它的 revision、BUILD.id（設定頁顯示的版本）、快取名都跟著變。
+//
+// 部署時自動跑：vercel.json 的 buildCommand（與 GitHub Pages 的 Assemble site）先跑這一支 ——
+// 忘了蓋日期、忘了重產 sw.js 的 commit，部署出去的照樣是「日期對、快取表對、快取名是新的」。
+// （2026-10 之前它從來沒被自動跑過：BUILD_DATE 停在 2026-09-01，快取名是手寫的、好幾次部署都沒換。）
+// 沒有 git（部署環境只拿到原始碼）就用今天 —— 那就是建置日期。
 //
 // 用法：
 //   node tools/stamp_build.js           寫入
@@ -29,11 +34,12 @@ function commitDate() {
     // 工作區有未提交的改動時，commit 日期不代表這份程式碼 —— 用今天。
     const dirty = execFileSync("git", ["status", "--porcelain", "src", "styles.css", "sw.js", "index.html"], {
       cwd: root,
-      encoding: "utf8"
+      encoding: "utf8",
+      stdio: ["ignore", "pipe", "ignore"]
     }).trim();
     if (dirty) return today;
     // %cs 是 committer date，格式就是 YYYY-MM-DD，不用自己解析
-    const out = execFileSync("git", ["log", "-1", "--format=%cs"], { cwd: root, encoding: "utf8" });
+    const out = execFileSync("git", ["log", "-1", "--format=%cs"], { cwd: root, encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] });
     const stamp = out.trim();
     if (/^\d{4}-\d{2}-\d{2}$/.test(stamp)) return stamp;
   } catch (_error) {
@@ -52,7 +58,6 @@ if (!versionMatch || !dateMatch) {
   process.exit(1);
 }
 
-const version = versionMatch[1];
 const current = dateMatch[1];
 
 if (checkOnly) {
@@ -65,25 +70,22 @@ if (checkOnly) {
   console.log(`  app.js    ${current}`);
   console.log(`  git       ${stamp}`);
   if (current !== stamp) {
-    console.log(`  提醒      跟 commit 日期不同；部署時 CI 會蓋成 ${stamp}`);
+    console.log(`  提醒      跟 commit 日期不同；部署時（vercel.json 的 buildCommand）會蓋成 ${stamp}`);
   }
   console.log("");
   console.log("stamp OK");
   process.exit(0);
 }
 
-const nextApp = appSource.replace(/const BUILD_DATE = "[^"]+"/, `const BUILD_DATE = "${stamp}"`);
-fs.writeFileSync(appPath, nextApp, "utf8");
+if (current !== stamp) {
+  fs.writeFileSync(appPath, appSource.replace(/const BUILD_DATE = "[^"]+"/, `const BUILD_DATE = "${stamp}"`), "utf8");
+}
 
-// 快取名 = buzzcalculus-<版本>-<日期>。版本沒動但內容動了的時候，
-// 日期就是讓使用者拿到新 app shell 的那個變數。
-const swSource = fs.readFileSync(swPath, "utf8");
-const nextSw = swSource.replace(
-  /const CACHE_NAME = "[^"]+"/,
-  `const CACHE_NAME = "buzzcalculus-${version}-${stamp}"`
-);
-fs.writeFileSync(swPath, nextSw, "utf8");
+// 快取名 = buzzcalculus-<版本>-<內容雜湊>，在 sw.js 的產生區：app.js 可能剛改了，一定要重產
+const { swSource, tables } = require("./build_sw_revisions.js");
+fs.writeFileSync(swPath, swSource());
+const build = tables().build;
 
 console.log(`已蓋上建置日期 ${stamp}`);
 console.log(`  src/app.js  BUILD_DATE = "${stamp}"`);
-console.log(`  sw.js       CACHE_NAME = "buzzcalculus-${version}-${stamp}"`);
+console.log(`  sw.js       BUILD = ${build.version} · ${build.id} · ${build.date}（CACHE_NAME buzzcalculus-${build.version}-${build.id}）`);

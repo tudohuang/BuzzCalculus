@@ -143,7 +143,9 @@ const lazySrcs = [...indexHtml.matchAll(/<script type="text\/lazy" data-lazy="([
 ["index.html", "manifest.webmanifest", "assets/icon.svg", ...required, ...stylesheets, ...deferScripts].forEach((file) => {
   if (!cached.has(file)) fail(`sw.js 沒有預快取 ${file} —— 離線開站會缺它（題庫練習的離線承諾不成立）`);
 });
-lazySrcs.filter((l) => l.group !== "steps").forEach(({ group, src }) => {
+// 例外：每次開站閒下來都會載的群組（steps 逐步解答、pwa 更新與版本）—— build_sw_revisions 的 CORE_LAZY
+const CORE_LAZY = require("./build_sw_revisions.js").CORE_LAZY;
+lazySrcs.filter((l) => !CORE_LAZY.includes(l.group)).forEach(({ group, src }) => {
   if (cached.has(src)) fail(`APP_SHELL 預快取了 lazy 群組（${group}）的 ${src} —— 用到才快取，不進安裝時的預快取`);
 });
 [...cached].filter((file) => /^src\/course_v2\/(ch|stage)-|\.html$/.test(file) && file !== "index.html").forEach((file) => fail(`APP_SHELL 預快取了 ${file} —— 課文與說明頁用到才快取`));

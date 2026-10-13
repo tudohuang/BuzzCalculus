@@ -388,7 +388,15 @@ interface Window {
   BUZZ_COURSE: BuzzCourseLesson[];
   BuzzCourseUI: { create(deps: { escapeHtml: (s: unknown) => string; escapeAttr: (s: unknown) => string; icon: (name: string) => string; referenceAnswerHTML: (problem: BuzzProblem) => string; loadRecords: () => BuzzRecords; saveRecords: (records: BuzzRecords) => void; ensureLazy: (group: string) => Promise<void>; startQuiz: (pool: BuzzProblem[], options?: any) => void; render: () => void; go: (view: string) => void; noteCourseRead?: (records: BuzzRecords) => BuzzRecords; focusModeOn?: () => boolean; abilityProfile?: (records: BuzzRecords) => any; xpLevel?: (xp: unknown) => { level: number; into: number; span: number }; streakDays?: (records: BuzzRecords) => number; track?: (name: string, params?: Record<string, unknown>) => void; /** 課程的「自己算」與回溫（course_solve.js）借作答頁的判分、預覽、鍵盤與作答紀錄 */ checkAnswer?: (problem: any, input: string) => { correct: boolean; message?: string }; answerToTex?: (value: string, problem?: any) => string; updateAnswerRecords?: (records: BuzzRecords, answer: any, finishedAt: string, context?: any) => void; webworkKeys?: (problem: any) => { digits: { label: string; insert: string }[]; rest: { label: string; insert: string }[] }; gentleStartActive?: (records: BuzzRecords) => boolean }): any };
   /** 分節模式（data-lazy="sections"，只有打開有分節的課才載） */
-  BuzzCourseSections?: { render(api: any): string; act(api: any, action: string, data: any): void };
+  /** src/kernel/app_update.js（data-lazy="pwa"）：Service Worker 註冊、更新檢查、「有新版本」橫幅、設定頁的版本列 */
+  BuzzAppUpdate?: {
+    init(deps: { render: () => void; icon: (name: string) => string; track?: (name: string, params?: Record<string, unknown>) => void; version: string; date: string; answering: () => boolean; busy: () => boolean }): void;
+    banner(): string;
+    panel(): string;
+    state(): { registered: boolean; running: BuzzBuild | null; next: BuzzBuild | null; pending: boolean; accepted: boolean; status: string; dismissed: boolean };
+    tune: { checkGap: number; resumeGap: number; autoWindow: number; hourly: number };
+  };
+  BuzzCourseSections?:{ render(api: any): string; act(api: any, action: string, data: any): void };
   BuzzCourseFinish?: { view(api: any, entry: any): string };
   BuzzCourseProof?: { tag(api: any, section: any): string; why(api: any, si: number, bi: number): string; view(api: any, si: number): string; act(api: any, action: string, data: any): number; shuffle(n: number, seed: string): number[] };
   /** 新版課程的畫面（data-lazy="course"，只有中文介面會載） */
@@ -487,3 +495,6 @@ interface Window {
 interface Error {
   unknownSymbol?: string;
 }
+
+/** sw.js 的 BUILD（tools/build_sw_revisions.js 產生）：設定頁的「版本 v… · id · 日期」 */
+interface BuzzBuild { version: string; id: string; date: string }

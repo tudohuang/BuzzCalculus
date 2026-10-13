@@ -18,7 +18,9 @@ const root = path.join(__dirname, "..");
 const app = fs.readFileSync(path.join(root, "src", "app.js"), "utf8");
 // 課程（延後載入的那幾支）不能直接碰 gtag：一律呼叫 app.js 給的 deps.track（就是 trackEvent，所以關掉分析一樣擋得住）。
 // 這幾支裡的 track("…") 跟 app.js 的 trackEvent("…") 一起掃。
-const COURSE_FILES = ["src/course.js", "src/course_v2_ui.js", "src/course_sections.js", "src/course_finish.js", "src/course_boss.js", "src/course_solve.js"];
+const COURSE_FILES = ["src/course.js", "src/course_v2_ui.js", "src/course_sections.js", "src/course_finish.js", "src/course_boss.js", "src/course_solve.js",
+  // 更新與版本（data-lazy="pwa"）：app_update_apply 從這裡送
+  "src/kernel/app_update.js"];
 const course = COURSE_FILES.map((rel) => [rel, fs.readFileSync(path.join(root, rel), "utf8")]);
 const failures = [];
 function fail(message) {
