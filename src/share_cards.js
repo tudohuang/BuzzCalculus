@@ -1446,7 +1446,10 @@
   const t = typeof globalThis.t === "function" ? globalThis.t : (text, vars) => (vars ? String(text).replace(/\{(\w+)(?:\|[^}]*)?\}/g, (m, k) => (k in vars ? String(vars[k]) : m)) : text);
 
   const GUTTER = 12;
-  const state = { steps: [], at: 0, name: "", deps: null, nodes: null, onDone: null, bound: null };
+  // where：導覽屬於哪一個畫面（開始時的 view）。換到別的畫面就暫停（整個藏起來、不吃按鍵），
+  // 回到那個畫面再從同一步接著講 —— 以前它跟著人到別頁，指著空白的地方。
+  const state = { steps: [], at: 0, name: "", deps: null, nodes: null, onDone: null, bound: null, where: null, paused: false };
+  const here = () => (state.deps && state.deps.view ? state.deps.view() : null);
 
   function visible(node) {
     if (!node || !node.getBoundingClientRect) return false;
@@ -1518,7 +1521,7 @@
   function paint() {
     const step = state.steps[state.at];
     const nodes = state.nodes;
-    if (!step || !nodes) return;
+    if (!step || !nodes || state.paused) return;
     const node = anchorOf(step);
     const rect = node ? node.getBoundingClientRect() : null;
     if (rect) {
@@ -1574,6 +1577,8 @@
     state.steps = [];
     state.onDone = null;
     state.name = "";
+    state.where = null;
+    state.paused = false;
     if (done) done(reason, name);
   }
 
@@ -1585,9 +1590,12 @@
     state.steps = usable;
     state.deps = deps || {};
     state.onDone = onDone;
+    state.where = here();
+    state.paused = false;
     state.nodes = build();
     const nodes = state.nodes;
     const onKey = (event) => {
+      if (state.paused) return;
       if (event.key === "Escape") { event.preventDefault(); finish("skip"); return; }
       if (event.key === "ArrowRight" || event.key === "Enter") { event.preventDefault(); step(1); return; }
       if (event.key === "ArrowLeft") { event.preventDefault(); step(-1); return; }
@@ -1630,6 +1638,12 @@
         body: t("今天的訓練已經排好：到期的錯題、你最弱的技巧、一點新東西。按下去就開始，不用自己挑。")
       },
       {
+        id: "course",
+        targets: ['.nav-button[data-action="open-course"]'],
+        title: t("課程從觀念教起"),
+        body: t("一課一個觀念：讀、看範例、做小測，再練推薦題。地圖上看得到每一課接到哪裡。")
+      },
+      {
         id: "train",
         targets: ['.nav-button[data-action="open-train"]', '[data-action="open-train"]'],
         title: t("想練特定的東西就進訓練"),
@@ -1639,7 +1653,7 @@
         id: "library",
         targets: ['.nav-button[data-action="open-library"]', '[data-action="open-library"]'],
         title: t("題庫可以自己挑題"),
-        body: t("搜技巧、搜題號都可以，找到的題目可以直接開一局。課程與證明訓練也在這一區。")
+        body: t("搜技巧、搜題號都可以，找到的題目可以直接開一局。證明訓練也在這一區。")
       },
       {
         id: "insights",
@@ -1680,9 +1694,27 @@
     steps: (name) => (STEPS[name] ? STEPS[name]() : []),
     start,
     stop: () => finish("stop"),
-    running: () => Boolean(state.nodes),
-    // app.js 每次 render 之後呼叫：錨點的元素是新的，位置要重量。
-    refresh: () => { if (state.nodes) paint(); }
+    // 暫停中的不算在跑：別的導覽（例如作答導覽）可以接手，暫停的那一段收掉（reason "restart"，不記成看過）
+    running: () => Boolean(state.nodes) && !state.paused,
+    paused: () => Boolean(state.nodes) && state.paused,
+    // app.js 每次 render 之後呼叫：錨點的元素是新的，位置要重量；畫面換了就暫停、換回來就接著講
+    refresh: () => {
+      if (!state.nodes) return;
+      const away = state.where !== null && here() !== state.where;
+      if (away && !state.paused) {
+        state.paused = true;
+        state.nodes.root.hidden = true;
+        return;
+      }
+      if (away) return;
+      if (state.paused) {
+        state.paused = false;
+        state.nodes.root.hidden = false;
+        show(state.at);
+        return;
+      }
+      paint();
+    }
   };
 })();
 

@@ -395,9 +395,16 @@ async function run() {
     check("練過的時間記回這一課", Boolean(practiced.practicedAt));
     await click(`[data-action="open-course-lesson"][data-lesson-id="${lesson.id}"]`, 500);
     check("回到這一課", await waitFor(`document.querySelector(".cv2-lesson h2") && document.querySelector(".cv2-lesson h2").textContent === ${JSON.stringify(lesson.title)}`));
+    // 練完回來落在推薦題那一段（不是又從觀念①開始捲）
+    await sleep(300);
+    const landed = await evaluate(`const p = document.querySelector('[data-cv2-mark="practice"]'); const r = p ? p.getBoundingClientRect() : null; return { y: Math.round(scrollY), top: r ? Math.round(r.top) : null, vh: innerHeight };`);
+    check("「回到這一課」落在推薦題那一段", landed.y > 0 && landed.top !== null && landed.top >= 0 && landed.top < landed.vh / 2, JSON.stringify(landed));
 
     /* ── 7. 首頁主卡是「上下一課」；舊課的進度沒被動 ── */
+    // 從一課直接按「今天」離開：打開時推的那一格 history 要收回（不然上一頁會空按一次）
+    check("在一課裡：history 有課程那一格", await evaluate(`return Boolean(history.state && history.state.cv2);`));
     await click('[data-action="home"]', 600);
+    check("走別的路離開一課：那一格收回了", await waitFor(`!(history.state && history.state.cv2)`, 3000), JSON.stringify(await evaluate(`return history.state;`)));
     const home = await evaluate(`return window.__c.text(".course-home-card h2");`);
     check("新手首頁主卡是上課（下一課是 0.1）", /^上 0\.1 /.test(home), home);
     const old = (await records()).course || {};
@@ -588,11 +595,11 @@ async function run() {
     await evaluate(`document.querySelector('.cv2-row[data-lesson-id="${deskTarget.id}"]').click(); return 1;`);
     await waitFor('document.querySelector(".cv2-lesson h2")');
     await sleep(500);
-    await click('.sidebar-link[data-action="open-course"]', 300);
+    await click('.nav-button[data-action="open-course"]', 300);
     await waitFor('document.querySelector(".cv2-index .cv2-row")');
     await sleep(400);
     came = await backRow(deskTarget.id);
-    check("桌機側欄的「課程」：那一列停在原來的高度", came && Math.abs(came.top - deskTarget.top) <= 4 && came.left, JSON.stringify({ before: deskTarget, after: came }));
+    check("桌機側欄的「課程」分頁：那一列停在原來的高度", came && Math.abs(came.top - deskTarget.top) <= 4 && came.left, JSON.stringify({ before: deskTarget, after: came }));
     await chrome.send("Emulation.setDeviceMetricsOverride", VIEWPORT);
     await chrome.send("Emulation.setTouchEmulationEnabled", { enabled: true, maxTouchPoints: 5 });
 

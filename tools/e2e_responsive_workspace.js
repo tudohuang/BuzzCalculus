@@ -22,7 +22,7 @@ const sizes = [
   ["phone-landscape", 844, 390, true]
 ];
 const pages = [
-  ["home", "home"], ["train", "open-train"], ["insights", "open-insights"],
+  ["home", "home"], ["course", "open-course"], ["train", "open-train"], ["insights", "open-insights"],
   ["library", "open-library"], ["settings", "open-settings"],
   ["mistakes", "open-mistakes"], ["history", "open-history"],
   ["proofs", "open-proofs"], ["creator", "open-creator"]
@@ -114,7 +114,7 @@ let checked = 0;
         if (errors.length) failures.push(`${device}/${page}: ${errors.join('; ')}`);
         if (["desktop", "ipad-portrait", "phone"].includes(device) && ["home", "train", "library", "settings"].includes(page)) await snapshot(`${device}-${page}`);
       }
-      console.log(`${device}: 9 pages checked`);
+      console.log(`${device}: ${pages.length} pages checked`);
     }
 
     await size(390, 844, true);

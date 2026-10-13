@@ -49,7 +49,7 @@
 | 有作者撰寫 `hints` | 1823 |  |
 | 有 `solutionSteps` | 812 | 結構化步驟；側表 problem_solution_steps.js 的每一步由 validate_solution_steps 數值驗算 |
 | 證明題 | 68 | 含 Lean 寫法 8 則（CI 不再編譯） |
-| `src/app.js` | 15454 行 | 單一 IIFE，拆分進行中 |
+| `src/app.js` | 15460 行 | 單一 IIFE，拆分進行中 |
 | `styles.css` | 12162 行 |  |
 | 題庫檔 `src/problem_*.js` | 38 |  |
 | kernel 模組 `src/kernel/*.js` | 28 | 純函式層 |

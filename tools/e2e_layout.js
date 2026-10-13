@@ -122,7 +122,7 @@ async function run() {
       check(`桌面 ${label}：內容讓出側欄`, g.firstCard && g.topbar && g.firstCard.left >= g.topbar.w,
         g.firstCard ? `卡片 left=${g.firstCard.left}，側欄寬=${g.topbar ? g.topbar.w : "?"}` : "找不到內容卡");
       check(`桌面 ${label}：無橫向溢出`, g.overflowX <= 1, `${g.overflowX}px`);
-      check(`桌面 ${label}：五個導覽鍵都在側欄內`, g.navButtons.length === 5 && g.navButtons.every((b) => b.h >= 36),
+      check(`桌面 ${label}：六個導覽鍵都在側欄內`, g.navButtons.length === 6 && g.navButtons.every((b) => b.h >= 36),
         `${g.navButtons.length} 顆，最矮 ${Math.min(...g.navButtons.map((b) => b.h), 999)}px`);
     }
 
@@ -160,7 +160,7 @@ async function run() {
         g.nav ? `bottom=${g.nav.bottom}/${g.vh} position=${g.nav.position}` : "找不到分頁列");
       check(`手機 ${label}：頂列在最上面`, g.topbar && g.topbar.top === 0 && g.topbar.h < 120,
         g.topbar ? `top=${g.topbar.top} h=${g.topbar.h}` : "找不到頂列");
-      check(`手機 ${label}：分頁列鍵夠大`, g.navButtons.length === 5 && g.navButtons.every((b) => b.h >= 44 && b.w >= 44),
+      check(`手機 ${label}：分頁列鍵夠大`, g.navButtons.length === 6 && g.navButtons.every((b) => b.h >= 44 && b.w >= 44),
         `最小 ${Math.min(...g.navButtons.flatMap((b) => [b.w, b.h]), 999)}px`);
       check(`手機 ${label}：無橫向溢出`, g.overflowX <= 1, `${g.overflowX}px`);
       // 內容底部要墊出分頁列的高度，不然最後一張卡被蓋住
