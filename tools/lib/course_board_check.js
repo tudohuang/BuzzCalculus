@@ -200,7 +200,8 @@ function create({ katex, board, cjkLen, checkGraph, layout }) {
           if (lines.some((l) => l.plot)) err(`${at}：板上已經有一張圖（先 clear／keep）`);
           if (!a.graph || typeof a.graph !== "object") err(`${at}（plot）沒有 graph`);
           else {
-            checkGraph(at, a.graph);
+            // 第三個參數是收錯誤的函式；以前漏傳，圖一有錯驗證器就丟 TypeError「e is not a function」而不是印出哪裡錯
+            checkGraph(at, a.graph, err);
             // 圖的座標（窗、塗色範圍、標籤位置）是畫法不是內容；式子與標籤的字才守數字規則
             const g = a.graph;
             texts.push(...[...(g.curves || []), ...(g.fills || [])].map((c) => [c.expr, c.expr2].filter(Boolean).join(" ")), ...(g.labels || []).map((l) => l.text || ""));
