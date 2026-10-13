@@ -17,7 +17,7 @@
 .cvb-r{white-space:nowrap}.cvb-r+.cvb-r{margin-top:.3em}
 .cvb-u{display:inline-block;white-space:nowrap}.cvb-u.is-rel{padding-left:.2778em}
 .cvb .katex{font-size:1em;line-height:1.3}
-.cvb-x,.cvb-s{white-space:pre;font-size:.95em;letter-spacing:.01em}
+.cvb-x,.cvb-s{white-space:pre;font-size:.95em;letter-spacing:.01em}.cvb-cm{margin-left:.25em;padding-right:.45em}
 .cvb-lab{position:absolute;left:0;top:0;font-size:13.5px;font-weight:650;line-height:1.3;letter-spacing:.02em;white-space:nowrap;opacity:0}
 .cvb-ink{position:absolute;left:0;top:0;overflow:visible;pointer-events:none}
 .cvb-ink path{fill:none;stroke:currentColor;stroke-width:2.1;stroke-linecap:round;stroke-linejoin:round}
@@ -53,7 +53,9 @@
   const KOPT = { throwOnError: false, output: "html", strict: "ignore", trust: (x) => x.command === "\\htmlClass" && /^cvb-t-[a-z][a-z0-9]*$/.test(x.class) };
   // 字的頭尾空白放在 .cvb-x 外面：量墨水的框才不會把空白算進去（記號會以為貼著字）
   const sp = (x) => (x ? `<span class="cvb-s">${x}</span>` : "");
-  const tokHtml = (t) => (t.m ? window.katex.renderToString(`\\displaystyle ${tex(t.s)}`, KOPT) : t.s.replace(/^(\s*)([\s\S]*?)(\s*)$/, (_m, a, b, c) => `${sp(a)}${b ? `<span class="cvb-x">${esc(b)}</span>` : ""}${sp(c)}`));
+  // 「，」：正體字型（正黑、蘋方）把全形逗號擺在字格正中，夾在兩段式子之間像乘號「·」→ 換成貼基線的半形逗號，右邊補回全形的寬
+  const cjk = (b) => b.split(/(，)/).filter(Boolean).map((x) => (x === "，" ? '<span class="cvb-x cvb-cm">,</span>' : `<span class="cvb-x">${esc(x)}</span>`)).join("");
+  const tokHtml = (t) => (t.m ? window.katex.renderToString(`\\displaystyle ${tex(t.s)}`, KOPT) : t.s.replace(/^(\s*)([\s\S]*?)(\s*)$/, (_m, a, b, c) => `${sp(a)}${b ? cjk(b) : ""}${sp(c)}`));
   const mk = (tag, cls, h) => { const n = document.createElement(tag); n.className = cls; if (h) n.innerHTML = h; return n; };
   // 有墨水的最底層：KaTeX 的字、分數線、根號（svg），與一段中文
   const LEAF = ".katex-html span,.cvb-x";

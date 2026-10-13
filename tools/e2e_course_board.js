@@ -327,6 +327,12 @@ async function run() {
     }
     await motion(true);
 
+    /* ── 全形逗號：正體字型把「，」擺在字格正中，夾在兩段式子之間看起來像乘號「·」；板上要換成貼基線的逗號 ── */
+    const CM = (() => { for (const L of fs.readdirSync(LESSON_DIR).filter((f) => f.endsWith(".json")).sort().map((f) => lessonOf(f.replace(/\.json$/, "")))) for (let si = 0; si < (L.sections || []).length; si += 1) if (L.sections[si].beats.some((b) => (b.board || []).some((a) => /\$，\$/.test(a.line || "")))) return { L, si }; return null; })();
+    check(`找得到式子之間夾「，」的黑板（${CM ? `${CM.L.id} 第 ${CM.si + 1} 節` : "沒有"}）`, Boolean(CM) && await openLesson(CM.L.id) && await go(CM.si, CM.L.id) && await waitFor(`window.__b.board() && window.__b.board().querySelector(".cvb-cm")`, 6000));
+    const cm = await evaluate(`const b = window.__b.board(); const cx = document.createElement("canvas").getContext("2d"); const g = (n, t) => { const cs = getComputedStyle(n); cx.font = cs.fontStyle + " " + cs.fontWeight + " " + cs.fontSize + " " + cs.fontFamily; const m = cx.measureText(t); return { up: m.actualBoundingBoxAscent / parseFloat(cs.fontSize), down: m.actualBoundingBoxDescent / parseFloat(cs.fontSize) }; }; const n = b.querySelector(".cvb-cm"); return { raw: [...b.querySelectorAll(".cvb-x")].filter((x) => x.textContent.includes("，")).length, text: n.textContent, ink: g(n, n.textContent), full: g(n, "，") };`);
+    check("黑板上的「，」畫成貼基線的逗號（墨水從基線往下掛、頂不超過 0.3 字高），不是字格正中的小點", cm.raw === 0 && cm.text === "," && cm.ink.down > 0 && cm.ink.up < 0.3, JSON.stringify(cm));
+
     /* ── 版面：三課每一節每一步，360 淺／深（四種寬度全跑在 lint_board_layout.js） ── */
     const lint = await lintLessons(chrome, server.url, PILOTS, { viewports: VIEWPORTS.filter((v) => v.name === "360") });
     check(`版面 lint（360 × 淺／深，${lint.states} 個狀態）：不疊、不出板、字 ≥ 16px、對比夠、板不太高`, !lint.problems.length && lint.states > 300, lint.problems.slice(0, 3).join("；"));
