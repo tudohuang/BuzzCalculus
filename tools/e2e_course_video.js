@@ -112,10 +112,15 @@ async function run() {
     check("沒有影片的課：沒有影片框、沒抓播放器、沒有 /media/ 請求", !(await evaluate(`return Boolean(window.__v.fig()) || window.__v.player() || window.__v.media().length > 0;`)));
 
     /* ── 有影片的課（手機）── */
+    // loading=lazy 不是「畫面外就不載」：Chrome 會先載離畫面 1250–2500px 以內的圖（看連線），課文長短一變、預覽圖落在那一段就照樣載了。
+    // 要確定地測：打開之前在課的頂上墊 8000px（遠超過那一段），預覽圖一定在很遠的畫面外；量完拿掉，再捲過去看它載得出來
+    await evaluate(`const st = document.createElement("style"); st.id = "e2e-far"; st.textContent = ".cv2-lesson::before{content:'';display:block;height:8000px}"; document.head.appendChild(st); return 1;`);
     check(`打開 ${SAMPLE.id}`, await openLesson(SAMPLE.id));
     await waitFor(`window.__v.fig() && window.__v.fig().querySelector(".cv2-video-poster img")`);
-    const lazyFirst = await evaluate(`const img = window.__v.fig().querySelector("img"); return img.getBoundingClientRect().top > innerHeight ? !(img.complete && img.naturalWidth > 0) : null;`);
-    if (lazyFirst !== null) check("預覽圖在畫面外時還沒載（loading=lazy 真的有用）", lazyFirst);
+    await sleep(400);
+    const lazyFirst = await evaluate(`const img = window.__v.fig().querySelector("img"); return { top: Math.round(img.getBoundingClientRect().top), ih: innerHeight, loaded: img.complete && img.naturalWidth > 0, media: window.__v.media().filter((u) => /poster/.test(u)).length };`);
+    check("預覽圖在很遠的畫面外時還沒載（loading=lazy 真的有用）", lazyFirst.top > lazyFirst.ih + 5000 && !lazyFirst.loaded && lazyFirst.media === 0, JSON.stringify(lazyFirst));
+    await evaluate(`document.getElementById("e2e-far").remove(); return 1;`);
     await evaluate(`window.__v.fig().scrollIntoView({ block: "center" }); return 1;`);
     check("捲到那裡：預覽圖出現而且真的載得出來", await waitFor(`window.__v.fig() && window.__v.fig().querySelector(".cv2-video-poster img") && window.__v.fig().querySelector(".cv2-video-poster img").complete && window.__v.fig().querySelector(".cv2-video-poster img").naturalWidth > 0`, 8000));
     const before = await evaluate(`
