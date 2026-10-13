@@ -1,5 +1,6 @@
 # 開發流程：改好推到 dev → 這裡把所有檢查「平行」跑完 → 全過才自動把同一個 commit 快轉到 main。
 # Vercel 只部署 main（vercel.json 關掉 dev 的預覽部署），所以沒過測試的東西不會上線。
+# GitHub Pages 不在這裡部署：github-pages 環境只准 main 分支部署，從 dev 觸發的這條會被擋（2026-10-13 第一次 promote 時失敗）；正式站是 Vercel。
 #
 # 為什麼要這樣：本機記憶體小，瀏覽器測試只能一組一組排，二十幾組要一個多小時、還常被系統砍掉；
 # GitHub 的 runner 一組一台、同時跑，總時間 ≈ 最慢那一組。
@@ -99,36 +100,3 @@ jobs:
         # 只准快轉：main 上有 dev 沒有的 commit（有人直接推了 main）就失敗，要先把 main 合回 dev 再推
         run: git push origin "${GITHUB_SHA}:refs/heads/main"
 
-  pages:
-    name: Deploy GitHub Pages
-    needs: promote
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      pages: write
-      id-token: write
-    concurrency:
-      group: "pages"
-      cancel-in-progress: false
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - uses: actions/checkout@v4
-      - name: Assemble site
-        run: |
-          node tools/stamp_build.js
-          mkdir -p _site
-          cp index.html styles.css sw.js manifest.webmanifest _site/
-          cp privacy.html terms.html about.html guide.html _site/
-          cp -r assets src _site/
-      - uses: actions/configure-pages@v5
-      - uses: actions/upload-pages-artifact@v3
-        with:
-          path: '_site'
-          name: github-pages-${{ github.run_id }}-${{ github.run_attempt }}
-      - name: Deploy
-        id: deployment
-        uses: actions/deploy-pages@v5
-        with:
-          artifact_name: github-pages-${{ github.run_id }}-${{ github.run_attempt }}
