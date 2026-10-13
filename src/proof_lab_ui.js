@@ -242,7 +242,7 @@
         return {
           key: `pf:${proof.id}`, kind: proof.tier === "lean" ? "lean" : "self", id: proof.id, n: auto.length + i + 1, title: proof.title,
           level: levelOf("self", proof.difficulty), difficulty: proof.difficulty,
-          family: "", tier: proof.tier, tags: [TIER_LABEL[proof.tier] || proof.tier].concat(machine ? [t("可機器判")] : []),
+          family: "", tier: proof.tier, tags: [TIER_LABEL[proof.tier] || proof.tier],
           machine: machine ? machine.id : "",
           status: solved ? "solved" : touched ? "attempted" : "none",
           attempts: (entry.orderPassed ? 1 : 0) + (entry.clozePassed ? 1 : 0), solvedAt: "", lastAt: entry.updatedAt || entry.lastViewedAt || "", lastVerdict: entry.status || ""
@@ -365,6 +365,8 @@
                 ${chip("status", "all", t("全部狀態"))}
                 ${["none", "attempted", "solved"].map((status) => chip("status", status, STATUS_LABEL[status], countBy("status", status))).join("")}
               </div>
+              <details class="lc-more" data-keep="lc-more-filters" ${f.kind !== "all" || f.group !== "all" ? "open" : ""}>
+              <summary>${t("判卷方式")} · ${t("證法與層級")}${f.kind !== "all" || f.group !== "all" ? `<small>${(f.kind !== "all") + (f.group !== "all")}</small>` : ""}</summary>
               <div class="lc-chip-row" role="group" aria-label="${t("判卷方式")}">
                 ${chip("kind", "all", t("全部"))}
                 ${chip("kind", "auto", t("白話證明 · 自動判"), countBy("kind", "auto"))}
@@ -376,6 +378,7 @@
                 ${PROOF_LANG_FAMILIES.map(([family, label]) => chip("group", family, label, countBy("group", family))).join("")}
                 ${Object.entries(TIER_LABEL).map(([tier, label]) => chip("group", tier, label, countBy("group", tier))).join("")}
               </div>
+              </details>
             </div>
 
             <div class="lc-table-wrap">
@@ -469,8 +472,6 @@
           ${spec.classic ? `<p class="panel-note lc-classic-link">${t("這是經典證明題的機器判版本：寫完全綠提交，那一題就算解了。")}<button type="button" class="link-button" data-action="open-proof-problem" data-proof-key="pf:${escapeAttr(spec.classic)}">${t("看原題（骨架重排、填空、參考證明）")}</button></p>` : ""}
           <div class="lc-meta">
             <span class="lc-tag">${escapeHtml(FAMILY_LABEL[spec.family] || spec.family)}</span>
-            <span class="lc-tag">R${spec.difficulty}</span>
-            <span class="lc-tag">${t("白話證明 · 自動判")}</span>
           </div>
           <details class="lc-howto">
             <summary>${t("怎麼寫、怎麼判")}</summary>

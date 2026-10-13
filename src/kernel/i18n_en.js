@@ -1921,7 +1921,6 @@
     "未做": "Not started",
     "嘗試中": "Attempting",
     "已解": "Solved",
-    "可機器判": "Machine-checkable",
     "初學路線": "Beginner route",
     "五種證法的骨架，一堂一種；題目全是簡單題": "The skeleton of five proof methods, one per lesson; all easy problems",
     "高手路線": "Advanced route",

@@ -5246,7 +5246,6 @@
       </div>
       <div class="lc-meta">
         <span class="lc-tag">${escapeHtml(PROOF_TIERS[proof.tier] || proof.tier)}</span>
-        <span class="lc-tag">R${proof.difficulty}</span>
       </div>
       <p class="proof-ladder">${proof.tier === "lean" ? t("開 Playground 補完 sorry → 編譯零錯誤＝通過 → 卡了開提示 → 最後對參考解答") : t("先自己寫 → 卡了開提示 → 還卡開關鍵步驟 → 骨架重排／填空機器判 → 最後對參考證明")}</p>
       ${(proof.hints || []).length ? `
@@ -10524,6 +10523,8 @@
     // 定位測驗給寬鬆的時間：它在量「會不會」，不是「快不快」——
     // 一個還在讀題的人被 24 秒催掉，測到的是緊張不是程度。
     if (currentQuiz && currentQuiz.placement) return Math.max(60, base * 2);
+    // 證明題是打字寫證明（issue #3：「用電腦打字要在時限內完成有點難度」）：至少 15 分鐘、壓力模式也不縮。大考整份倒數另算，不走這裡。
+    if (problem.answerKind === "proof") return Math.max(900, base);
     if (!currentQuiz || !currentQuiz.pressureMode) return base;
     const total = currentQuiz.problems.length;
     if (total <= 1) return base;
