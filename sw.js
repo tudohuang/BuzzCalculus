@@ -29,8 +29,8 @@ const REV_HEADER = "x-buzz-rev";
 
 // ── 產生區：node tools/build_sw_revisions.js（不要手改）──
 // 這一版：設定頁顯示「版本 v… · id · 日期」；id 是下面 REVISIONS 的雜湊，快取名跟著它變（每次部署內容有變就一定是新快取）。
-const BUILD = {"version":"v1.3.0","id":"df07ae03","date":"2026-10-13"};
-const CACHE_NAME = "buzzcalculus-v1.3.0-df07ae03";
+const BUILD = {"version":"v1.3.0","id":"c82030d3","date":"2026-10-13"};
+const CACHE_NAME = "buzzcalculus-v1.3.0-c82030d3";
 // 安裝時預快取的核心（離線也能練題）。其他檔用到才快取 —— 見 REVISIONS。
 const APP_SHELL = [
   "./index.html",
@@ -152,7 +152,7 @@ const REVISIONS = {
   "./index.html": "1187ecb5d0",
   "./manifest.webmanifest": "4f19816c8b",
   "./privacy.html": "e585e4c063",
-  "./src/app.js": "e57c5eed8c",
+  "./src/app.js": "7b83302c7a",
   "./src/board_store.js": "402a9e9b08",
   "./src/course.js": "8944e3c475",
   "./src/course_board.js": "efbcf4144e",
@@ -254,7 +254,7 @@ const REVISIONS = {
   "./src/kernel/derived_hints.js": "fda184703e",
   "./src/kernel/equivalence.js": "cce0b64d63",
   "./src/kernel/i18n.js": "f09036465d",
-  "./src/kernel/i18n_en.js": "d12ecae74e",
+  "./src/kernel/i18n_en.js": "ada504a7b2",
   "./src/kernel/i18n_problems_en.js": "034e3da4bf",
   "./src/kernel/i18n_text_en.js": "bd649bbd6e",
   "./src/kernel/ink_read.js": "10f49b9d62",
@@ -311,11 +311,11 @@ const REVISIONS = {
   "./src/problem_vector_calculus_pack.js": "5a37d1ee28",
   "./src/problem_world_universities.js": "47e807a7a7",
   "./src/problems.js": "5d7de826aa",
-  "./src/proof_lab_ui.js": "859697edba",
+  "./src/proof_lab_ui.js": "7e30d11faa",
   "./src/proof_lang_content.js": "2ba5f35870",
   "./src/proofs.js": "6e32ac2cc3",
   "./src/share_cards.js": "3be03e1ea2",
-  "./styles.css": "b962e825a4",
+  "./styles.css": "3b08c96e80",
   "./terms.html": "2432c43e77"
 };
 // ── 產生區結束 ──

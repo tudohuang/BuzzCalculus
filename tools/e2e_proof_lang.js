@@ -65,6 +65,15 @@ async function run() {
     check("兩個題庫都在表裡", entry.rows === entry.banks && entry.auto >= 40 && entry.self >= 40, `${entry.auto} 自動判 + ${entry.self} 自評 = ${entry.rows}`);
     check("進度卡寫著 0 / 總題數", new RegExp(`0\\s*/ ${entry.banks}`).test(entry.progress), entry.progress.replace(/\s+/g, " "));
     check("課程按鈕的課數跟內容一致", new RegExp(`先上 ${entry.lessons} 課`).test(entry.button), entry.button);
+    // 標籤不要多（產品端回報「證明那邊的 tag 不用那麼多」）：每列最多一個標籤；一打開只看到難度與狀態兩排篩選，
+    // 判卷方式與證法收在摺疊裡（打開還是點得到）
+    const tags = await chrome.evaluate(`const rows = [...document.querySelectorAll('tr[data-proof-key]')]; const per = rows.map((r) => r.querySelectorAll('.lc-tag').length);
+      const chips = [...document.querySelectorAll('.lc-filters .lc-chip')].filter((n) => n.checkVisibility({ visibilityProperty: true, contentVisibilityAuto: true }) && n.getClientRects().length).length;
+      const more = document.querySelector('.lc-filters details.lc-more'); const wasOpen = more && more.open; if (more) more.open = true;
+      const after = [...document.querySelectorAll('.lc-filters .lc-chip')].filter((n) => n.checkVisibility({ visibilityProperty: true, contentVisibilityAuto: true }) && n.getClientRects().length).length; if (more) more.open = false;
+      return { max: Math.max(...per), chips, after, closed: Boolean(more) && !wasOpen };`);
+    check("每一列最多 1 個標籤", tags.max <= 1, `最多 ${tags.max}`);
+    check("篩選一打開只有難度、狀態兩排（≤ 8 顆），其餘收在摺疊裡", tags.closed && tags.chips <= 8 && tags.after > tags.chips, `${tags.chips} 顆 → 展開 ${tags.after} 顆`);
     await click('[data-action="proof-filter"][data-filter-key="level"][data-filter-value="hard"]', 500);
     const hard = await chrome.evaluate(`return { rows: document.querySelectorAll('tr[data-proof-key]').length, levels: [...new Set([...document.querySelectorAll('tr[data-proof-key] .lc-level')].map((el) => el.innerText.trim()))] };`);
     check("按「困難」只剩困難題", hard.rows > 0 && hard.rows < entry.rows && hard.levels.join("") === "困難", `${hard.rows} 題 · ${hard.levels.join("/")}`);
