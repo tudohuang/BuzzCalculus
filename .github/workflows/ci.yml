@@ -1,0 +1,150 @@
+# 開發流程：改好推到 dev → 這裡把所有檢查「平行」跑完 → 全過才自動把同一個 commit 快轉到 main。
+# Vercel 只部署 main（vercel.json 關掉 dev 的預覽部署），所以沒過測試的東西不會上線。
+#
+# 為什麼要這樣：本機記憶體小，瀏覽器測試只能一組一組排，二十幾組要一個多小時、還常被系統砍掉；
+# GitHub 的 runner 一組一台、同時跑，總時間 ≈ 最慢那一組。
+# 直接推 main（緊急修正）照樣會跑 static.yml 的完整檢查；promote 用 GITHUB_TOKEN 推 main 不會再觸發它（GitHub 的規則），不會重跑一次。
+name: CI (dev → main)
+
+on:
+  push:
+    branches: ["dev"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# 同一條分支連推兩次：舊的那輪直接取消，只看最新的
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  # E2E 的固定等待乘 3：runner 比開發機慢（見 tools/lib/cdp.js）
+  BUZZ_E2E_SLOW: "3"
+
+jobs:
+  static:
+    name: Static checks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Type check
+        run: npm run typecheck
+      - name: Validators
+        # 清單跟 static.yml 同一份；加新的驗證器兩邊都要加
+        run: >
+          node tools/ci_checks.js
+          "regen_all.js --check"
+          validate_problems.js validate_daily_one.js validate_training_packs.js validate_path_nodes.js
+          validate_answer_checker.js validate_calculus_only.js validate_records_v2.js validate_skill_graph.js
+          validate_ability_model.js validate_planner.js validate_analytics.js validate_offline_assets.js
+          validate_app_shell.js validate_version.js spec_snapshot.js validate_content_metadata.js
+          validate_privacy.js validate_derived_hints.js validate_graph_choices.js validate_worksheets.js
+          validate_katex.js validate_public_claims.js validate_hints.js validate_performance_budget.js
+          validate_proof_lang.js validate_proof_surface.js validate_course.js validate_golden.js validate_verify_paths.js validate_epsilon_game.js validate_solution_steps.js validate_i18n.js smoke_app_render.js verify_proof_claims.js validate_course_v2.js validate_cache_headers.js
+      - name: Verify answers independently
+        run: |
+          node tools/expand_templates.js --check
+          node tools/detect_duplicates.js --ci
+          node tools/verify_answers.js --ci
+
+  e2e:
+    name: E2E ${{ matrix.suite }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        suite:
+          - main_flow
+          - storage
+          - transfer
+          - update
+          - handwriting
+          - mobile
+          - layout
+          - responsive_workspace
+          - proof_lang
+          - beginner
+          - course_v2
+          - course_map
+          - course_video
+          - course_sections
+          - course_boss
+          - course_board
+          - course_solve
+          - graph_interactive
+          - i18n
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fetch media
+        # 影片與旁白不在 git：用到的那幾組先照 media/manifest.json 從 Release 抓（逐檔驗 sha256）
+        if: contains(fromJSON('["course_video","course_sections","course_board"]'), matrix.suite)
+        run: node tools/fetch_media.js
+      - name: Run
+        run: node tools/e2e_${{ matrix.suite }}.js
+
+  lean:
+    name: Lean proofs
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/cache@v4
+        with:
+          path: ~/.elan
+          key: elan-${{ runner.os }}-stable-v1
+      - name: Machine-verify Lean proofs
+        run: |
+          if [ ! -x "$HOME/.elan/bin/lean" ]; then
+            curl -sSf https://elan.lean-lang.org/elan-init.sh | sh -s -- -y --default-toolchain stable
+          fi
+          export PATH="$HOME/.elan/bin:$PATH"
+          node tools/verify_lean_proofs.js
+
+  promote:
+    name: Promote to main
+    needs: [static, e2e, lean]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Fast-forward main to the tested commit
+        # 只准快轉：main 上有 dev 沒有的 commit（有人直接推了 main）就失敗，要先把 main 合回 dev 再推
+        run: git push origin "${GITHUB_SHA}:refs/heads/main"
+
+  pages:
+    name: Deploy GitHub Pages
+    needs: promote
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    concurrency:
+      group: "pages"
+      cancel-in-progress: false
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Assemble site
+        run: |
+          node tools/stamp_build.js
+          mkdir -p _site
+          cp index.html styles.css sw.js manifest.webmanifest _site/
+          cp privacy.html terms.html about.html guide.html _site/
+          cp -r assets src _site/
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: '_site'
+          name: github-pages-${{ github.run_id }}-${{ github.run_attempt }}
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@v5
+        with:
+          artifact_name: github-pages-${{ github.run_id }}-${{ github.run_attempt }}
