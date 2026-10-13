@@ -330,6 +330,9 @@ async function run() {
     check(`XP：每節 5 × ${FIRST.sections.length} ＋ 完成 20 = ${sectionXp + 20}，畫面直接寫總數`, fin.lessonXp === sectionXp + 20 && fin.xp === sectionXp + 20 && fin.stats.includes(`+${sectionXp + 20}`), fin.stats);
     check("結算有「下一課」與「在地圖上看」", /下一課：0\.2/.test(fin.next) && fin.map, fin.next);
     check("結算 390 寬不溢出", fin.overflow <= 1);
+    // function-intro 沒有推薦題：完成就是這一課的全部 —— 結算不再列下一層，標題列也不再寫還差什麼
+    const nextTier = await evaluate(`return { row: Boolean(document.querySelector("[data-cv2s-finish] [data-cv2s-tier]")), rule: window.__s.text("[data-cv2-rule]") };`);
+    check("沒有推薦題的課：完成之後結算與標題列都不再寫「還差」", !nextTier.row && !nextTier.rule, JSON.stringify(nextTier));
     await shot("phone-light-finish");
 
     // 在地圖上看：地圖打開、這一課亮一下，然後自己消失
@@ -371,6 +374,16 @@ async function run() {
     check("重新整理再打開：還是全文", (await openLesson(SECOND.id)) && (await evaluate(`return Boolean(document.querySelector("[data-course-concept]")) && !window.__s.root();`)));
     await tap('[data-action="course-s-mode"][data-mode="sec"]');
     check("切回「分節」", await waitFor(`window.__s.root()`, 4000) && !(await evaluate(`return (window.__s.rec().settings || {}).courseView || "";`)));
+    // 標題列（課號那一列）寫這一課還差多少；跳著讀到結算、小測還沒做：結算寫「完成還差 0/3」，「做小測」帶回第一個有小測的節
+    const secondRule = await evaluate(`return window.__s.text(".cv2-head [data-cv2-rule]");`);
+    check("分節的標題列：完成 小測 0/3 · 熟練 核心題 0/n（數字是自己的）", new RegExp(`^完成 小測 0/3 熟練 核心題 0/${SECOND.practice.filter((p) => p.core).length}$`).test(secondRule), secondRule);
+    await evaluate(`const b = document.createElement("button"); b.dataset.action = "course-s-go"; b.dataset.to = "${SECOND.sections.length}"; document.querySelector("#app main").appendChild(b); b.click(); return 1;`);
+    check("跳到結算", await waitFor(`document.querySelector("[data-cv2s-finish]")`));
+    const notDone = await evaluate(`const row = document.querySelector("[data-cv2s-finish] [data-cv2s-tier]"); return { tier: row ? row.dataset.cv2sTier : "", text: window.__s.text("[data-cv2s-finish] [data-cv2s-tier]") };`);
+    check("還沒完成的結算：寫「完成還差：小測首次就對 0/3」＋「做小測」", notDone.tier === "1" && /^完成還差：小測首次就對 0\/3 做小測$/.test(notDone.text), JSON.stringify(notDone));
+    await tap('[data-cv2s-finish] [data-action="course-s-requiz"]');
+    const firstCheck = SECOND.sections.findIndex((s) => s.check !== undefined);
+    check("「做小測」回到第一個有小測的節", await waitFor(`window.__s.si() === ${firstCheck}`, 4000), String(await evaluate(`return window.__s.si();`)));
 
     /* ── 有 widget 的課：句子帶 fig，圖真的動；拖滑桿進範圍也算一個動作 ── */
     check(`打開 ${WIDGET.id}`, await openLesson(WIDGET.id));

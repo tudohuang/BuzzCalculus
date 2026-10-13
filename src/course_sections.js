@@ -493,6 +493,18 @@
     const sec = visitOf(api);
     const S = api.data.sections;
     if (/^course-s-(play|rate|subs)$/.test(action)) return N() && N().act(api, action);
+    // 結算畫面的「做小測／重做小測」：還有沒作答的小測 → 跳到那一節；全答過了 → 這一輪清掉（第一次就對才算分），從第一個小測重來
+    if (action === "course-s-requiz") {
+      const open = (s) => s.check !== undefined && !(api.state.picks[s.check] || []).length;
+      if (!S.some(open)) {
+        api.state.picks = {};
+        api.state.recorded = false;
+        api.update(api.m.id, (e) => ({ ...e, picks: {} }));
+      }
+      enter(api, Math.max(0, S.findIndex((s) => s.check !== undefined && (open(s) || !S.some(open)))));
+      deps.render();
+      return;
+    }
     if (action === "course-s-go") { enter(api, data.to); deps.render(); return N() && N().resume(api); }
     // 證明節：3 = 為什麼答了（播放開著就接著念）、2 = 動作做完
     if (/^course-s-(why|see|ord|whr)$/.test(action)) {

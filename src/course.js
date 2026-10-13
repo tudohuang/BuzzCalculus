@@ -1682,7 +1682,7 @@
         ui = window.BuzzCourseV2UI.create({ ...deps, legacy, review, bossRun: () => lastBoss });
       };
       try {
-        pending = Promise.resolve(deps.ensureLazy("course")).then(ready).then(() => {
+        pending = Promise.all([deps.ensureLazy("course"), deps.ensureLazy("coursestyle")]).then(ready).then(() => {
           pending = null;
           const next = queued;
           queued = null;

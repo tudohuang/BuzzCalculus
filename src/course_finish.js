@@ -14,6 +14,8 @@
 .cv2s-stats strong { color: var(--ink); font-size: 1.5rem; }
 .cv2s-todo { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; margin: 0 0 16px; color: var(--muted); font-size: 0.9rem; }
 .cv2s-finish .action-row { display: flex; flex-wrap: wrap; gap: 8px; }
+.cv2s-tier { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; margin: 0 0 16px; font-variant-numeric: tabular-nums; }
+.cv2s-tier b { font-size: 1.05rem; }
 .cv2s-finish .action-row .button { max-width: 100%; }
 `;
 
@@ -41,6 +43,14 @@
     const boss = api.boss ? api.boss.finish : null;
     // 自己算（course_solve.js）：這一課的自己算第一次就打對幾題
     const solved = window.BuzzCourseSolve ? window.BuzzCourseSolve.stat(data, e) : null;
+    // 下一層還差什麼、按哪裡做：完成 → 重做小測；熟練 → 練還沒對的核心題；全破 → 練還沒對的（含挑戰）
+    const g = api.progress ? api.progress(records) : null;
+    const left = g && (g.tier === 1 ? g.mid : g.tier === 2 ? g.all : null);
+    const tierRow = !g ? "" : g.tier === 0
+      ? `<p class="cv2s-tier" data-cv2s-tier="1"><span>完成還差：小測首次就對 <b>${g.quiz}/${g.pass}</b></span><button type="button" class="button secondary" data-action="course-s-requiz">${icon("refresh")}${g.tried ? "重做小測" : "做小測"}</button></p>`
+      : left && left.left.length
+        ? `<p class="cv2s-tier" data-cv2s-tier="${g.tier + 1}"><span>${g.tier === 1 ? "熟練" : "全破"}還差：${g.tier === 1 ? g.midName : g.allName} <b>${left.ok}/${left.n}</b></span><button type="button" class="button secondary" data-action="course-lesson-practice" data-lesson-id="${escapeAttr(m.id)}" data-ids="${escapeAttr(left.left.join(" "))}">${icon("play")}練這 ${left.left.length} 題</button></p>`
+        : g.tier === 3 ? `<p class="cv2s-tier" data-cv2s-tier="3"><b>✔ 全破</b></p>` : "";
     return `
       <article class="cv2s-sec cv2s-finish" data-cv2s-finish>
         <h3><small>${n} / ${n}</small>你現在會：</h3>
@@ -53,11 +63,12 @@
           ${solved ? `<span data-cs-stat>自己算：首次答對 ${solved.first} / ${solved.total}</span>` : ""}
           ${Array.isArray(e.rvItems) && e.rvItems.length && !e.rvLast && e.rvAt && new Date(e.rvAt).toDateString() === new Date().toDateString() ? `<span data-cs-tomorrow>明天回溫 ${e.rvItems.length} 題</span>` : ""}
         </p>
+        ${tierRow}
         ${boss ? boss.html : ""}
         <div class="action-row">
           ${api.next ? `<button type="button" class="button ${boss && boss.pay ? "secondary" : "home-primary"}" data-action="open-course-lesson" data-lesson-id="${escapeAttr(api.next.id)}">下一課：${escapeHtml(api.label(api.next))}${icon("chevron-right")}</button>` : `<button type="button" class="button home-primary" data-action="open-course">課程表</button>`}
           <button type="button" class="button secondary" data-action="course-map-focus" data-lesson-id="${escapeAttr(m.id)}" data-lit="1">在地圖上看</button>
-          ${practice ? `<button type="button" class="button ghost" data-action="course-practice" data-set="main">${icon("play")}練推薦題 · ${practice} 題</button>` : ""}
+          ${practice && !(left && left.left.length) ? `<button type="button" class="button ghost" data-action="course-practice" data-set="main">${icon("play")}練推薦題 · ${practice} 題</button>` : ""}
         </div>
       </article>`;
   }
