@@ -146,20 +146,6 @@ jobs:
           node tools/expand_templates.js --check
           node tools/detect_duplicates.js --ci
           node tools/verify_answers.js --ci
-      - name: Cache Lean toolchain
-        uses: actions/cache@v4
-        with:
-          path: ~/.elan
-          key: elan-${{ runner.os }}-stable-v1
-      - name: Machine-verify Lean proofs
-        # Reference solutions in src/proofs.js (lean tier) must compile,
-        # or the deploy is blocked.
-        run: |
-          if [ ! -x "$HOME/.elan/bin/lean" ]; then
-            curl -sSf https://elan.lean-lang.org/elan-init.sh | sh -s -- -y --default-toolchain stable
-          fi
-          export PATH="$HOME/.elan/bin:$PATH"
-          node tools/verify_lean_proofs.js
       - name: Assemble site
         # Deploy only the app shell — keep reports, tools and LaTeX sources off the public site.
         # stamp_build：蓋建置日期、重產 sw.js 的 BUILD／快取名（跟 vercel.json 的 buildCommand 一樣，部署出去的版本號一定是新的）

@@ -48,12 +48,12 @@
 | 有 `solution` | 2817 | 單段文字 |
 | 有作者撰寫 `hints` | 1823 |  |
 | 有 `solutionSteps` | 812 | 結構化步驟；側表 problem_solution_steps.js 的每一步由 validate_solution_steps 數值驗算 |
-| 證明題 | 68 | 含 Lean 機器驗證 8 則 |
+| 證明題 | 68 | 含 Lean 寫法 8 則（CI 不再編譯） |
 | `src/app.js` | 15438 行 | 單一 IIFE，拆分進行中 |
 | `styles.css` | 12155 行 |  |
 | 題庫檔 `src/problem_*.js` | 38 |  |
 | kernel 模組 `src/kernel/*.js` | 27 | 純函式層 |
-| CI 驗證器 `tools/` | 58 支 | validate / verify / smoke / e2e |
+| CI 驗證器 `tools/` | 57 支 | validate / verify / smoke / e2e |
 
 **答案型別分佈**：`numeric` 1846、`expression` 387、`text` 178、`antiderivative` 151、`sketch` 42、`worksheet` 42、`graphtap` 38、`interval` 34、`graph` 26、`proof` 26、`set` 23、`epsilon` 14、`graphslope` 10。
 

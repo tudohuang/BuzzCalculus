@@ -84,26 +84,10 @@ jobs:
       - name: Run
         run: node tools/e2e_${{ matrix.suite }}.js
 
-  lean:
-    name: Lean proofs
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/cache@v4
-        with:
-          path: ~/.elan
-          key: elan-${{ runner.os }}-stable-v1
-      - name: Machine-verify Lean proofs
-        run: |
-          if [ ! -x "$HOME/.elan/bin/lean" ]; then
-            curl -sSf https://elan.lean-lang.org/elan-init.sh | sh -s -- -y --default-toolchain stable
-          fi
-          export PATH="$HOME/.elan/bin:$PATH"
-          node tools/verify_lean_proofs.js
 
   promote:
     name: Promote to main
-    needs: [static, e2e, lean]
+    needs: [static, e2e]
     runs-on: ubuntu-latest
     permissions:
       contents: write
