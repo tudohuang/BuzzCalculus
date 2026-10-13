@@ -87,13 +87,22 @@
     if (st.sec) return st.sec;
     const n = api.data.sections.length;
     const e = entryOf(api.records, api.m.id);
-    st.sec = { si: Math.min(Math.max(0, Number(e.secAt) || 0), n - 1), shown: {}, pred: {}, dragOk: {}, why: {}, done: {}, gain: {}, anim: null, fresh: -1, top: false, bar: false };
+    // 練完推薦題按「回到這一課」（state.land = "practice"）：直接落在結算（推薦題與下一層還差什麼都在那裡），不是從記到的那一節重讀
+    const land = st.land === "practice";
+    delete st.land;
+    st.sec = { si: land ? n : Math.min(Math.max(0, Number(e.secAt) || 0), n - 1), shown: {}, pred: {}, dragOk: {}, why: {}, done: {}, gain: {}, anim: null, fresh: -1, top: false, bar: false };
     // 分節裡選過的小測接回來：跨天讀完也算「完成」
     const saved = e.picks || {};
     Object.keys(saved).forEach((ci) => {
       if (Array.isArray(saved[ci]) && saved[ci].length && !(st.picks[ci] || []).length) st.picks = { ...st.picks, [ci]: saved[ci].slice() };
     });
     if (api.data.checks.every((_c, k) => (st.picks[k] || []).length)) st.recorded = true;
+    if (land) {
+      // 練完回來：這時候補發層級加成（跟走到結算那一刻一樣），畫面讀新的紀錄
+      settle(api);
+      api.records = api.deps.loadRecords();
+      return st.sec;
+    }
     st.sec.shown[st.sec.si] = 1;
     reveal(api, st.sec.si, 0);
     return st.sec;
@@ -415,7 +424,7 @@
       return `<main class="screen lazy-loading" aria-busy="true"><section class="course-lesson cv2-lesson cv2s">${head}</section></main>`;
     }
     const sec = visitOf(api);
-    const e = entryOf(records, m.id);
+    const e = entryOf(api.records, m.id);
     const doneSet = new Set((e.secDone || []).concat(Object.keys(sec.done).map(Number)));
     const n = data.sections.length;
     const dots = `

@@ -9,7 +9,7 @@
 .cv2s-goals li { display: grid; grid-template-columns: 22px minmax(0, 1fr); gap: 8px; line-height: 1.75; }
 .cv2s-goals li > * { min-width: 0; overflow-wrap: anywhere; }
 .cv2s-goals svg { width: 18px; height: 18px; margin-top: 5px; color: var(--green); }
-.cv2s-goals li.is-todo svg { color: var(--line-strong); }
+.cv2s-goals .cv2s-bullet { width: 6px; height: 6px; margin: 12px 0 0 6px; border-radius: 50%; background: var(--muted); }
 .cv2s-stats { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 16px; margin: 0 0 18px; color: var(--muted); font-size: 0.9rem; font-variant-numeric: tabular-nums; }
 .cv2s-stats strong { color: var(--ink); font-size: 1.5rem; }
 .cv2s-todo { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; margin: 0 0 16px; color: var(--muted); font-size: 0.9rem; }
@@ -50,14 +50,18 @@
       ? `<p class="cv2s-tier" data-cv2s-tier="1"><span>完成還差：小測首次就對 <b>${g.quiz}/${g.pass}</b></span><button type="button" class="button secondary" data-action="course-s-requiz">${icon("refresh")}${g.tried ? "重做小測" : "做小測"}</button></p>`
       : left && left.left.length
         ? `<p class="cv2s-tier" data-cv2s-tier="${g.tier + 1}"><span>${g.tier === 1 ? "熟練" : "全破"}還差：${g.tier === 1 ? g.midName : g.allName} <b>${left.ok}/${left.n}</b></span><button type="button" class="button secondary" data-action="course-lesson-practice" data-lesson-id="${escapeAttr(m.id)}" data-ids="${escapeAttr(left.left.join(" "))}">${icon("play")}練這 ${left.left.length} 題</button></p>`
-        : g.tier === 3 ? `<p class="cv2s-tier" data-cv2s-tier="3"><b>✔ 全破</b></p>` : "";
+        : g.tier === 3 ? `<p class="cv2s-tier" data-cv2s-tier="3"><b>✔ 全破</b>${g.none ? "<span>這一課沒有推薦題：小測完成就是全破</span>" : ""}</p>` : "";
+    // 學習目標：節都做完才打勾（「你現在會」）；還有沒做的節就只列出來（中性的點，不放灰色的勾 —— 灰勾讀起來像「做過了」）。
+    // XP 是 0（什麼都還沒做）就不印那一格
+    const allDone = !todo.length;
+    const xp = Number(e.xp) || 0;
     return `
       <article class="cv2s-sec cv2s-finish" data-cv2s-finish>
-        <h3><small>${n} / ${n}</small>你現在會：</h3>
-        <ul class="cv2s-goals">${data.objectives.map((line) => `<li class="${todo.length ? "is-todo" : ""}">${icon("check")}<span>${rich(line, data)}</span></li>`).join("")}</ul>
+        <h3><small>${n} / ${n}</small>${allDone ? "你現在會：" : "這一課要學會："}</h3>
+        <ul class="cv2s-goals ${allDone ? "" : "is-plain"}">${data.objectives.map((line) => `<li class="${allDone ? "" : "is-todo"}">${allDone ? icon("check") : '<i class="cv2s-bullet" aria-hidden="true"></i>'}<span>${rich(line, data)}</span></li>`).join("")}</ul>
         ${todo.length ? `<p class="cv2s-todo"><span>還沒做完</span>${todo.map((i) => `<button type="button" class="cv2-link" data-action="course-s-go" data-to="${i}">第 ${i + 1} 節</button>`).join("")}</p>` : ""}
         <p class="cv2s-stats" data-cv2s-stats>
-          <span><strong>+${Number(e.xp) || 0}</strong> XP</span>
+          ${xp ? `<span><strong>+${xp}</strong> XP</span>` : ""}
           ${level ? `<span>Lv.${level.level} · ${level.into}/${level.span}</span>` : ""}
           ${streak ? `<span>${icon("flame")}連勝 ${streak} 天</span>` : ""}
           ${solved ? `<span data-cs-stat>自己算：首次答對 ${solved.first} / ${solved.total}</span>` : ""}

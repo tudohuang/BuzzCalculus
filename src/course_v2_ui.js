@@ -102,10 +102,12 @@
       return Boolean(stat && stat.correct > 0);
     };
     // 三層是累進的：熟練要先完成、全破要先熟練。沒有核心題的課，熟練跟著「全部推薦題」走。
+    // 沒有推薦題的課（19 課，多半是預備與證明入門）：小測完成就是全破 —— 不然它們永遠卡在完成，
+    // 地圖、課程表、結算、層級 XP 全都跟著這一支，所以三層加成也一次發齊（course_sections.js 的 settle）。
     function tierOf(records, m) {
       if (!entryOf(records, m.id).doneAt) return 0;
       const all = m.practice.filter((p) => problem(p.id));
-      if (!all.length) return 1;
+      if (!all.length) return 3;
       const core = all.filter((p) => p.kind === "core");
       const coreOk = (core.length ? core : all.filter((p) => p.kind !== "challenge")).every((p) => solved(records, p.id));
       if (!coreOk) return 1;
@@ -128,17 +130,18 @@
       const core = all.filter((p) => p.kind === "core");
       const mid = core.length ? core : all.filter((p) => p.kind !== "challenge");
       const tally = (list) => ({ ok: list.filter((p) => solved(records, p.id)).length, n: list.length, left: list.filter((p) => !solved(records, p.id)).map((p) => p.id) });
-      return { tier: tierOf(records, m), pass: PASS, tried: e.quizBest !== undefined, quiz: Math.min(quiz, PASS), mid: tally(mid), all: tally(all), midName: core.length ? "核心題" : "推薦題", allName: all.some((p) => p.kind === "challenge") ? "含挑戰" : "全部" };
+      return { tier: tierOf(records, m), pass: PASS, none: !all.length, tried: e.quizBest !== undefined, quiz: Math.min(quiz, PASS), mid: tally(mid), all: tally(all), midName: core.length ? "核心題" : "推薦題", allName: all.some((p) => p.kind === "challenge") ? "含挑戰" : "全部" };
     }
     // 還沒到的下兩層各差多少（到了的看層級標籤）——「完成 小測首次就對 2/3 · 熟練 核心題 1/4」。
     // 全文：標題下自成一行；分節（inline）：擠進課號那一列、字短一點（第一句要在手機第一屏上半，多一行就掉下去）。
-    // 沒有推薦題的課只有完成；全破了不印
+    // 沒有推薦題的課只有完成（完成就是全破，全文多寫半句）；全破了不印
     function ruleLine(records, m, inline) {
       const g = progressOf(records, m);
+      const title = g.none ? "這一課沒有推薦題：小測完成就是全破" : `完成：小測首次就對 ${PASS} 題 · 熟練：${g.midName}全對 · 全破：${g.allName === "含挑戰" ? "含挑戰全對" : "全部全對"}`;
       const segs = [[1, "完成", inline ? "小測" : "小測首次就對", g.quiz, PASS]].concat(g.all.n ? [[2, "熟練", g.midName, g.mid.ok, g.mid.n], [3, "全破", g.allName, g.all.ok, g.all.n]] : [])
         .filter(([i]) => i > g.tier).slice(0, 2);
       const tag = inline ? "span" : "p";
-      return segs.length ? `<${tag} class="cv2-rule" data-cv2-rule title="完成：小測首次就對 ${PASS} 題 · 熟練：${g.midName}全對 · 全破：${g.allName === "含挑戰" ? "含挑戰全對" : "全部全對"}">${segs.map(([i, name, what, ok, n]) => `<span data-tier="${i}">${name} <b>${what} ${ok}/${n}</b></span>`).join("")}</${tag}>` : "";
+      return segs.length ? `<${tag} class="cv2-rule" data-cv2-rule title="${title}">${segs.map(([i, name, what, ok, n]) => `<span data-tier="${i}">${name} <b>${what} ${ok}/${n}</b></span>`).join("")}${g.none && !inline ? `<span data-tier="3">沒有推薦題：完成就是全破</span>` : ""}</${tag}>` : "";
     }
     const nextLesson = (records) => mainPath.find((m) => !isDone(records, m)) || null;
     function update(id, change) {
@@ -392,8 +395,18 @@
     const inLesson = () => typeof document !== "undefined" && Boolean(document.querySelector("#app .cv2-lesson"));
     const ourEntry = () => Boolean(window.history && window.history.state && window.history.state.cv2);
     let popGuard = 0;
+    // 自己正在退那一格（history.back() 還沒回來）：別再退第二次，不然會連網站一起退掉
+    let backing = false;
     if (typeof window !== "undefined" && window.addEventListener) {
-      window.addEventListener("popstate", () => { popGuard += 1; if (inLesson()) go("course"); });
+      window.addEventListener("popstate", () => { popGuard += 1; backing = false; if (inLesson()) go("course"); });
+    }
+    // 從一課走別的路離開（首頁、分頁列、練推薦題、在地圖上看…）：打開時推的那一格要收回，
+    // 不然它留在最上面，之後按一次上一頁什麼都不會發生（app.js 換畫面時呼叫）。
+    // 收回是 history.back()：popstate 晚一拍才到，那時畫面已經不是一課，上面那支 listener 什麼都不做。
+    function leftLesson() {
+      if (!ourEntry() || backing) return;
+      backing = true;
+      window.history.back();
     }
     // 地圖的偏好（目標一課、篩選）存在 records.courseMap：跟著紀錄走（同步、匯出），不另外開 localStorage 的鍵
     const mapPrefs = (records) => records.courseMap || {};
@@ -500,7 +513,7 @@
        每一個段落（觀念的每一小節、範例、小測、練習）掛 data-cv2-mark 與 data-cv2-group。
        IntersectionObserver 看段落跨過「頂列＋位置條下面一點」那條線；捲動另外更新位置條下面的閱讀進度。
        整頁重繪（innerHTML 換掉）之後 render 完的那個 microtask 重新接上；離開這一課就自己拆掉。 */
-    const reading = { io: null, onScroll: null, frame: 0, group: "concept", mark: "c0" };
+    const reading = { io: null, onScroll: null, frame: 0, group: "concept", mark: "c0", land: "" };
     function teardownReading() {
       if (reading.io) reading.io.disconnect();
       if (reading.frame) window.cancelAnimationFrame(reading.frame);
@@ -527,6 +540,11 @@
       root.style.setProperty("--cv2-strip", `${stripH}px`);
       const targets = [...root.querySelectorAll("[data-cv2-mark]")];
       if (!targets.length) return;
+      // 練完回來：捲到推薦題（課文晚到也等得到 —— 這一支每次全文畫完都會跑）
+      if (reading.land && reading.land === state.lessonId) {
+        const practice = root.querySelector('[data-cv2-mark="practice"]');
+        if (practice) { reading.land = ""; practice.scrollIntoView({ block: "start" }); }
+      }
       const update = () => {
         reading.frame = 0;
         // 舊頁面排進來的那一格：整頁已經換掉，新的那一份會自己接手，這裡什麼都不拆
@@ -778,7 +796,7 @@
 
               <section class="course-block cv2-sec" data-course-practice ${mark("practice", "practice")}>
                 <h3 class="cv2-sec-title">推薦題</h3>
-                <ol class="cv2-tiers">${tiers.map(([name, rule], i) => `<li class="${tier > i ? "is-on" : ""}"><strong>${tier > i ? "✔ " : ""}${name}</strong><span>${rule}</span></li>`).join("")}</ol>
+                ${items.length ? `<ol class="cv2-tiers">${tiers.map(([name, rule], i) => `<li class="${tier > i ? "is-on" : ""}"><strong>${tier > i ? "✔ " : ""}${name}</strong><span>${rule}</span></li>`).join("")}</ol>` : `<p class="panel-note" data-cv2-none>${tier ? "<strong>✔ 全破</strong> · " : ""}這一課沒有推薦題：小測完成就是全破。</p>`}
                 ${mainItems.length ? `
                   <ul class="cv2-practice">${mainItems.map(practiceRow).join("")}</ul>
                   <div class="action-row"><button class="button home-primary" data-action="course-practice" data-set="main">${icon("play")}練推薦題 · ${mainItems.length} 題</button></div>` : ""}
@@ -786,7 +804,6 @@
                   <h4 class="cv2-subhead section-label">挑戰</h4>
                   <ul class="cv2-practice">${challengeItems.map(practiceRow).join("")}</ul>
                   <div class="action-row"><button class="button secondary" data-action="course-practice" data-set="challenge">${icon("zap")}挑戰 · ${challengeItems.length} 題</button></div>` : ""}
-                ${items.length ? "" : `<p class="panel-note">這一課沒有推薦題：小測完成就是全部。</p>`}
               </section>
 
               ${boss && tier ? boss.finish.html : ""}
@@ -866,7 +883,7 @@
       const next = m ? neighbour(m, 1) : null;
       return `${m ? ruleLine(deps.loadRecords(), m) : ""}
         <div class="action-row">
-          <button class="button" data-action="open-course-lesson" data-lesson-id="${escapeAttr(lessonId)}">${icon("book-open")}回到 ${m ? escapeHtml(label(m)) : "課程"}</button>
+          <button class="button" data-action="open-course-lesson" data-lesson-id="${escapeAttr(lessonId)}" data-to="practice">${icon("book-open")}回到 ${m ? escapeHtml(label(m)) : "課程"}</button>
           ${next ? `<button class="button secondary" data-action="open-course-lesson" data-lesson-id="${escapeAttr(next.id)}">${icon("chevron-right")}下一課</button>` : `<button class="button secondary" data-action="open-course">${icon("list-checks")}課程表</button>`}
           <button class="button ghost" data-action="open-mistakes">${icon("book")}錯題本</button>
         </div>`;
@@ -880,8 +897,9 @@
         // 從一課回去：退回打開這一課之前的那一格（瀏覽器的上一頁也就不會停在一課）；popstate 沒來就直接去
         if (ourEntry() && inLesson()) {
           const guard = (popGuard += 1);
+          backing = true;
           window.history.back();
-          window.setTimeout(() => { if (popGuard === guard && inLesson()) go("course"); }, 400);
+          window.setTimeout(() => { if (popGuard === guard && inLesson()) { backing = false; go("course"); } }, 400);
           return;
         }
         return go("course");
@@ -920,9 +938,12 @@
         rememberIndex(id);
         if (!ourEntry() && window.history && window.history.pushState) window.history.pushState({ cv2: 1 }, "");
         update(id, (entry) => ({ ...entry, openedAt: entry.openedAt || new Date().toISOString() }));
-        state = { lessonId: id, steps: {}, picks: {}, figs: {}, recorded: false };
-        reading.group = "concept";
-        reading.mark = "c0";
+        // data-to="practice"（練完推薦題的「回到這一課」）：分節落在結算、全文捲到推薦題
+        const land = data.to === "practice";
+        state = { lessonId: id, steps: {}, picks: {}, figs: {}, recorded: false, ...(land ? { land: "practice" } : {}) };
+        reading.group = land ? "practice" : "concept";
+        reading.mark = land ? "practice" : "c0";
+        reading.land = land ? id : "";
         if (!lessonData(id)) loadChapter(m.chapter);
         return go("course-lesson");
       }
@@ -989,6 +1010,7 @@
       renderResultsActions,
       act,
       // 給測試與工具看的（不是給畫面用的）
+      leftLesson,
       lessonMeta: (id) => meta[id] || null,
       tierOf: (records, id) => (meta[id] ? tierOf(records, meta[id]) : 0)
     };

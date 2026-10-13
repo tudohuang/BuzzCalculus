@@ -499,7 +499,7 @@ async function run() {
     const tierOf = (id) => {
       if (!DONE.has(id)) return 0;
       const all = P(BY_ID[id]);
-      if (!all.length) return 1;
+      if (!all.length) return 3;
       const core = all.some((p) => p.kind === "core") ? all.filter((p) => p.kind === "core") : all.filter((p) => p.kind !== "challenge");
       if (!core.every((p) => solved(p.id))) return 1;
       return all.every((p) => solved(p.id)) ? 3 : 2;
