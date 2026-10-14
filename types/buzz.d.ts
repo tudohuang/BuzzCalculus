@@ -46,6 +46,10 @@ interface BuzzSettings {
   penNib?: string;
   highlightColor?: string;
   boardSurface?: string;
+  /** 分節旁白：語速（1／1.25／1.5）、字幕、聲音（f 女聲預設／m 男聲；src/course_narration.js） */
+  narrRate?: number;
+  narrSubs?: boolean;
+  narrVoice?: "f" | "m";
   [key: string]: unknown;
 }
 

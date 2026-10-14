@@ -501,7 +501,7 @@
     if (!api.data || !api.data.sections) return;
     const sec = visitOf(api);
     const S = api.data.sections;
-    if (/^course-s-(play|rate|subs)$/.test(action)) return N() && N().act(api, action);
+    if (/^course-s-(play|rate|subs|voice)$/.test(action)) return N() && N().act(api, action);
     // 結算畫面的「做小測／重做小測」：還有沒作答的小測 → 跳到那一節；全答過了 → 這一輪清掉（第一次就對才算分），從第一個小測重來
     if (action === "course-s-requiz") {
       const open = (s) => s.check !== undefined && !(api.state.picks[s.check] || []).length;
