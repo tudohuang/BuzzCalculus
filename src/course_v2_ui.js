@@ -891,6 +891,8 @@
 
     /* ── 動作 ── */
     const QUIZ = { modeKey: "practice", practice: true, noTimer: true, answerMode: "choice" };
+    // 課程練習要等先修閘門（kernel/sampler.js，lazy 群組 sampler）載到才開局：先修課還沒到的題不出（app.js startQuiz 篩）
+    const gated = (pool, o) => Promise.resolve(deps.ensureLazy("sampler")).catch(() => {}).then(() => startQuiz(pool, o));
     function act(action, data) {
       const id = data.lessonId || state.lessonId;
       if (action === "open-course") {
@@ -923,7 +925,7 @@
       }
       if (action === "course-lesson-practice") {
         const pool = String(data.ids || "").split(" ").map(problem).filter(Boolean);
-        if (pool.length) startQuiz(pool, { ...QUIZ, courseLessonId: meta[id] ? id : undefined });
+        if (pool.length) gated(pool, { ...QUIZ, courseLessonId: meta[id] ? id : undefined });
         return;
       }
       if (action === "course-map-focus") {
@@ -992,7 +994,7 @@
       if (action === "course-practice" && lesson) {
         const challenge = data.set === "challenge";
         const pool = lesson.practice.filter((p) => Boolean(p.challenge) === challenge).map((p) => problem(p.id)).filter(Boolean);
-        if (pool.length) startQuiz(pool, { ...QUIZ, courseLessonId: state.lessonId });
+        if (pool.length) gated(pool, { ...QUIZ, courseLessonId: state.lessonId });
         return;
       }
       if (action === "course-graduation") {

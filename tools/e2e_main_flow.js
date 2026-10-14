@@ -635,6 +635,20 @@ async function run() {
       return { loaded, count: items.length, first: items.length ? items[0].innerText : "", text: items.map((li) => li.innerText).join(" / ").slice(0, 160) };
     `);
     check("逐步解答側表在頁面閒下來後載入", steps.loaded, steps.why || "");
+
+    /* ── 8.6 兩段式抽題（kernel/sampler.js）：lazy 群組 sampler 開站閒下來就到，抽出來的一局守一局限制 ──
+       沒載到不會報錯（app.js 退回取前 n 題）—— 要抓的就是這種安靜的壞法。 */
+    const sampler = await chrome.evaluate(`
+      for (const end = Date.now() + 8000; !(window.BuzzSampler && window.BuzzProblemProfiles) && Date.now() < end; await new Promise((r) => setTimeout(r, 100)));
+      const S = window.BuzzSampler;
+      if (!S || !window.BuzzProblemProfiles) return { loaded: false };
+      const pool = (window.BUZZ_PROBLEMS || []).filter((p) => p.topic === "limits");
+      const drawn = S.draw(pool, 10, { seed: 11 }).slice(0, 10);
+      const nov = new Set(drawn.map((p) => S.profileOf(p.id).nov));
+      return { loaded: true, n: drawn.length, distinct: nov.size };
+    `);
+    check("抽題側寫在頁面閒下來後載入，一局 10 題沒有同模板", sampler.loaded && sampler.n === 10 && sampler.distinct === 10,
+      sampler.loaded ? `${sampler.n} 題、${sampler.distinct} 個模板` : "window.BuzzSampler 沒有載到");
     check("答錯後打開「完整推導」，看得到一步一步的解答", steps.count >= 3 && /0\/0/.test(steps.first),
       steps.why || `${steps.count} 步：${steps.text}`);
 

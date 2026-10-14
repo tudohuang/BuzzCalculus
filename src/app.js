@@ -9838,7 +9838,7 @@
     // 註冊、更新檢查、「有新版本」、版本列在 src/kernel/app_update.js（data-lazy="pwa"）：頁面載完、閒下來才載，不跟第一次畫面搶。
     // apply-update／dismiss-update／check-update 三個按鈕由它自己接。
     const whenIdle = (fn) => (window.requestIdleCallback ? window.requestIdleCallback(fn, { timeout: 5000 }) : window.setTimeout(fn, 2000));
-    window.addEventListener("load", () => whenIdle(() => ensureLazy("pwa").then(() => window.BuzzAppUpdate.init({
+    window.addEventListener("load", () => whenIdle(() => (ensureLazy("sampler").catch(() => {}), ensureLazy("pwa")).then(() => window.BuzzAppUpdate.init({
       render, icon, track: trackEvent, version: APP_VERSION, date: BUILD_DATE,
       answering: () => Boolean(quiz && view === "quiz" && !quiz.feedback),
       // 自動換新版（重新載入）只在這些都不成立時：作答／考卷／出題／寫證明／讀課、紀錄沒存進去
@@ -10039,10 +10039,14 @@
     const mode = MODES[selectedMode] || MODES.quick;
     let pool = customProblems && customProblems.length ? customProblems : selectProblemPool(mode, selectedTopic);
     // 入門九課的保護期：畢業前與畢業後頭三局只出課裡教過的題（course.js 橋池），不然第一題就塌
+    let bridged = null;
     if (!options.courseLessonId && !options.courseGraduation && !options.courseExtension && !options.placement) {
-      const bridged = courseUI.protectPool(pool, records);
+      bridged = courseUI.protectPool(pool, records);
       if (bridged) pool = bridged;
     }
+    // 先修閘門：kernel/sampler.js
+    const B = window.BuzzSampler;
+    if (B) pool = B.gate(pool, records, { courseLessonId: options.courseLessonId, bridged: Boolean(bridged) });
     if (!pool.length) {
       view = "home";
       showAppNotice(t("目前篩選沒有符合難度的題目。請把難度上限拉高，或換一個題包 / 範圍。"));
@@ -10194,8 +10198,11 @@
       return gentleRamp(selectDailyPool(pool, mode.count, records));
     }
 
-    const seed = mode.daily ? seedFromString(new Date().toISOString().slice(0, 10)) : Date.now();
-    const ordered = mode.daily ? preferFreshProblems(shuffle(pool, seed), records) : adaptiveShuffle(pool, records, seed);
+    // 兩段式抽題：kernel/sampler.js（沒載到就取前 n 題）
+    const seed = Date.now();
+    const S = window.BuzzSampler;
+    let ordered = adaptiveShuffle(pool, records, seed);
+    if (S) ordered = S.draw(ordered, mode.count, { seed, focus: selectedPack !== "all" || mode.pressureMode });
     return gentleRamp(padPool(ordered.slice(0, mode.count), pool, mode.count, { records }));
   }
 
