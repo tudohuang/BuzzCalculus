@@ -176,6 +176,66 @@ const RULES = {
   ]
 };
 
+/* ── 先修課的修正 ────────────────────────────────────────────────
+   粗 tag → 技巧的對應說的是「題目屬於哪一類」，不一定是「要先學過什麼」：∫1/(1+x²) 帶 inverse-trig tag
+   就被對到三角代換、∫₀^{π/2}sin²x 帶 wallis tag 就被對到 Wallis 公式，先修課被推到幾十課之後。
+   這裡列「這個技巧在這種題上不算先修」的規則（只影響 prerequisiteGate，不影響技巧圖、能力模型）。
+   每條都要說得出為什麼；個別題目的例外寫在覆寫檔（prerequisiteGate ＋ why）。
+   [技巧, 什麼時候不算先修, 為什麼] */
+// ∫₀^{π/2} 只有 sin、cos 的具體次方：有一個奇次方（總次方 ≤ 9，換元後展開得動）或都是偶次方且總次方 ≤ 6（半角公式兩三次）
+function plainSinCosHalfPi(s) {
+  const m = /^\\int_\{?0\}?\^\{?(?:\\pi\/2|\\frac\{\\pi\}\{2\})\}?\s*((?:\\(?:sin|cos)(?:\^\{?\d+\}?)?\s*\(?\d*x\)?(?:\^\{?\d+\}?)?\s*)+)\\,d?x$/.exec(s.trim());
+  if (!m) return false;
+  const pows = [...m[1].matchAll(/\\(sin|cos)(?:\^\{?(\d+)\}?)?/g)].map((x) => Number(x[2] || 1));
+  const total = pows.reduce((a, b) => a + b, 0);
+  return pows.some((n) => n % 2 === 1) ? total <= 9 : total <= 6;
+}
+// 能用反覆分部算完的：∫₀¹ xᵐ(ln x)ᵏ、∫₀^∞ xᵐe^{−ax}（指數是一次、xᵐ 是整數次或 n）
+const IBP_LOG = /\\int_\{?0\}?\^\{?1\}?\s*(?:x\^?\{?-?[\d/n]*\}?\s*)?\(?\\ln x\)?(?:\^\{?\d+\}?)?\s*\\,dx/;
+const IBP_EXP = /\\int_\{?0\}?\^\{?\\infty\}?\s*x(?:\^\{?[\dn]+\}?)?\s*e\^\{-\d*x\}\s*\\,dx/;
+const GATE_FIXES = [
+  ["integral.trigsub", (f) => !/\\sqrt|\)\^|\^\{?3\/2|\\frac\{3\}\{2\}/.test(f.s),
+    "沒有根號、分母也不是 (x²+a²) 的次方：∫1/(x²+a²)、配方後的 arctan 是積分表的形，不用三角代換（inverse-trig tag 對過去的）"],
+  ["integral.wallis", (f) => plainSinCosHalfPi(f.s),
+    "具體次方的 ∫₀^{π/2}sinᵐcosⁿ：奇次方換元、偶次方半角公式就算得出來，不需要 Wallis 公式"],
+  ["integral.beta", (f) => plainSinCosHalfPi(f.s),
+    "具體次方的 ∫₀^{π/2}sinᵐcosⁿ：三角積分的技巧就夠，不需要 Beta 函數"],
+  ["integral.dirichlet", (f) => f.tag("frullani", "cosine-integral") || /Dirichlet/.test(f.s),
+    "(cos ax − cos bx)/x 是 Frullani 型；題幹直接給了 Dirichlet 積分的值也不用先學它"],
+  ["integral.frullani", (f) => /\{\\ln x\}/.test(f.s),
+    "∫₀¹(xᵃ − 1)/ln x 是對參數微分（Feynman），frullani tag 對過去的"],
+  ["integral.gamma", (f) => (IBP_LOG.test(f.s) || IBP_EXP.test(f.s)) && !/\\Gamma/.test(f.s),
+    "整數次方的 ∫₀^∞xⁿe^{−ax}、∫₀¹xᵐ(ln x)ᵏ：反覆分部（遞迴公式）就算得出來，不需要 Gamma 函數"],
+  ["integral.parameter", (f) => IBP_LOG.test(f.s) && !PARAM.test(f.s),
+    "∫₀¹xᵐ(ln x)ᵏ 是分部積分，題幹沒有參數函數（parameter-integral tag 對過去的）"],
+  ["integral.trig", (f) => f.tag("substitution", "integration-by-parts", "multi-ibp"),
+    "sec²x tan x、sin⁵x cos x 是 u 代換，x² sin 3x 是分部：三角積分那一課的技巧用不到"],
+  ["limit.asymptotic", (f) => f.tag("rationalize", "trig-limit"),
+    "有理化或三角標準極限就做完；asymptotic／infinity tag 對過去的"],
+  ["limit.taylor", (f) => f.tag("lhopital"),
+    "題目標了 L'Hôpital：用 L'Hôpital 就算得出來，不必先學 Taylor"],
+  ["series.alternating", (f) => f.tag("geometric-series") || (/部分和/.test(f.s) && !/誤差|error|至少/.test(f.s)),
+    "等比級數或只算部分和的值：不用交錯級數審斂法與誤差估計"],
+  ["series.taylor.coeff", (f) => f.tag("geometric-series") && !/泰勒|Taylor|拉格朗日|\(1-\d*x\)\^/.test(f.s),
+    "1/(1 − ax) 的係數就是等比級數展開（沒有提泰勒多項式、也不是平方要逐項微分的）"],
+  ["series.power.radius", (f) => f.tag("geometric-series"),
+    "公比含 x 的等比級數：|公比| < 1 就是收斂範圍，不用收斂半徑那一課"],
+  ["analysis.measure", (f) => f.tag("convergence-theorem") && f.kind === "numeric",
+    "求 lim∫fₙ 的數值：直接算 ∫fₙ 再取極限，不需要測度論"],
+  ["analysis.convergence", (f) => f.tag("convergence-theorem") && f.kind === "numeric",
+    "求 lim∫fₙ 的數值：直接算 ∫fₙ 再取極限，不需要逐點收斂那一課"]
+];
+// 這一題拿來算先修課的技巧（扣掉 GATE_FIXES 命中的）；fixed = [[技巧, 為什麼]]
+function gateSkills(f) {
+  const fixed = [];
+  const skills = [...f.skills].filter((s) => {
+    const hit = GATE_FIXES.find(([skill, when]) => skill === s && when(f));
+    if (hit) fixed.push([s, hit[2]]);
+    return !hit;
+  });
+  return { skills, fixed };
+}
+
 function classifyFamily(f) {
   const rules = RULES[f.p.topic] || [];
   const hits = [];
@@ -336,16 +396,19 @@ function buildProfiles(problems, win, opts = {}) {
     //   沒有這一條的話，117 筆人工挑的推薦題（52 筆核心題）會因為粗 tag 對應的誤差被擋掉
     //   （例如積分表那一課的 ∫1/(1+x²) 被歸成三角代換），熟練永遠拿不到。
     //   純技巧推得的先修課另外存在 meta.rawGates —— 跟課程放的位置對不上的那些是 Phase 3 課程重新對應的待辦。
+    //   GATE_FIXES：tag 對錯技巧的規則修正；覆寫檔的 prerequisiteGate：逐題的人工判斷（rawGates 也照它）。
     const firstUse = uses.length ? Math.min(...uses.map((u) => u.index)) : Infinity;
     const gateIdx = new Set();
     const rawIdx = new Set();
     const untaught = [];
-    [...f.skills].forEach((s) => {
+    const { skills: gSkills, fixed: gateFixed } = gateSkills(f);
+    gSkills.forEach((s) => {
       if (s in firstTaught) { rawIdx.add(firstTaught[s]); gateIdx.add(Math.min(firstTaught[s], firstUse)); } else untaught.push(s);
     });
     if (!gateIdx.size && uses.length) gateIdx.add(firstUse);
     const gates = [...gateIdx].sort((a, b) => a - b).map((i) => course.order[i]);
-    const rawGates = [...rawIdx].sort((a, b) => a - b).map((i) => course.order[i]);
+    const ovGate = overrides[p.id] && overrides[p.id].prerequisiteGate;
+    const rawGates = ovGate ? ovGate.slice() : [...rawIdx].sort((a, b) => a - b).map((i) => course.order[i]);
 
     const roles = new Set();
     uses.forEach((u) => roles.add(u.kind === "core" ? "course_core" : "course_extra"));
@@ -378,7 +441,7 @@ function buildProfiles(problems, win, opts = {}) {
     const ov = overrides[p.id];
     if (ov) Object.keys(ov).forEach((k) => { if (k !== "why" && k in prof) prof[k] = ov[k]; });
     profiles.set(p.id, prof);
-    meta.set(p.id, { confidence: ov && ov.methodFamily ? "manual" : fam.confidence, how: fam.primary.how, why: fam.primary.why, alternatives: fam.alternatives, untaught, rawGates, uses, overridden: Boolean(ov) });
+    meta.set(p.id, { confidence: ov && ov.methodFamily ? "manual" : fam.confidence, how: fam.primary.how, why: fam.primary.why, alternatives: fam.alternatives, untaught, rawGates, gateFixed, uses, overridden: Boolean(ov) });
   });
 
   // defaultWeight：模板飽和 → 反射題 → 上限
@@ -445,4 +508,4 @@ function encodeRuntime(problems, built) {
   };
 }
 
-module.exports = { buildProfiles, encodeRuntime, featuresOf, classifyFamily, structureKey, RULES, OVERRIDES_FILE, loadCourse };
+module.exports = { buildProfiles, encodeRuntime, featuresOf, classifyFamily, structureKey, gateSkills, RULES, GATE_FIXES, OVERRIDES_FILE, loadCourse };
