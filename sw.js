@@ -29,8 +29,8 @@ const REV_HEADER = "x-buzz-rev";
 
 // ── 產生區：node tools/build_sw_revisions.js（不要手改）──
 // 這一版：設定頁顯示「版本 v… · id · 日期」；id 是下面 REVISIONS 的雜湊，快取名跟著它變（每次部署內容有變就一定是新快取）。
-const BUILD = {"version":"v1.3.0","id":"c79f354b","date":"2026-10-13"};
-const CACHE_NAME = "buzzcalculus-v1.3.0-c79f354b";
+const BUILD = {"version":"v1.3.0","id":"ca69bd3c","date":"2026-10-13"};
+const CACHE_NAME = "buzzcalculus-v1.3.0-ca69bd3c";
 // 安裝時預快取的核心（離線也能練題）。其他檔用到才快取 —— 見 REVISIONS。
 const APP_SHELL = [
   "./index.html",
@@ -111,6 +111,8 @@ const APP_SHELL = [
   "./src/problem_solution_steps.js",
   "./src/kernel/app_update.js",
   "./src/kernel/metrics.js",
+  "./src/kernel/problem_profiles.js",
+  "./src/kernel/sampler.js",
   "./assets/vendor/katex/fonts/KaTeX_AMS-Regular.woff2",
   "./assets/vendor/katex/fonts/KaTeX_Main-Bold.woff2",
   "./assets/vendor/katex/fonts/KaTeX_Main-Italic.woff2",
@@ -150,7 +152,7 @@ const REVISIONS = {
   "./assets/vendor/katex/katex.min.css": "06b732aebc",
   "./assets/vendor/katex/katex.min.js": "9f45307c57",
   "./guide.html": "6598935c2f",
-  "./index.html": "994c8d9548",
+  "./index.html": "f8f5b99a70",
   "./manifest.webmanifest": "4f19816c8b",
   "./privacy.html": "904180e9b9",
   "./src/app.js": "c85ec5bf00",
@@ -263,11 +265,13 @@ const REVISIONS = {
   "./src/kernel/metrics.js": "815c8965eb",
   "./src/kernel/origin.js": "038a2b496b",
   "./src/kernel/planner.js": "7de9b92876",
+  "./src/kernel/problem_profiles.js": "788cc5bb00",
   "./src/kernel/proof_lang.js": "dcfe4981bf",
   "./src/kernel/proof_surface.js": "300a62039f",
   "./src/kernel/records_v2.js": "1b0cc9d4a6",
   "./src/kernel/rubric.js": "8a008b443f",
   "./src/kernel/rubric_reviewed.js": "838e52b722",
+  "./src/kernel/sampler.js": "794635d29f",
   "./src/kernel/session.js": "19d842a952",
   "./src/kernel/skill_graph.js": "92b1a4b554",
   "./src/kernel/skill_tags.js": "0453b91ef3",

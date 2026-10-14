@@ -400,6 +400,18 @@ interface Window {
     state(): { registered: boolean; running: BuzzBuild | null; next: BuzzBuild | null; pending: boolean; accepted: boolean; status: string; dismissed: boolean };
     tune: { checkGap: number; resumeGap: number; autoWindow: number; hourly: number };
   };
+  /** src/kernel/sampler.js（data-lazy="sampler"，開站閒下來才載）：兩段式抽題與課程先修閘門（題庫精修提案 v1.0） */
+  BuzzSampler?: {
+    version: number;
+    draw(ordered: BuzzProblem[], n: number, opts?: { seed?: number; focus?: boolean; table?: any }): BuzzProblem[];
+    gate(pool: BuzzProblem[], records: any, o?: { courseLessonId?: string; bridged?: boolean }, raw?: any): BuzzProblem[];
+    clampShares(groups: Map<string, Map<string, number>>, caps: any[]): Map<string, number>;
+    profileOf(id: string, raw?: any): any;
+    table(raw?: any): any;
+    rng(seed: number): () => number;
+  };
+  /** src/kernel/problem_profiles.js（data-lazy="sampler"）：題目側寫的精簡編碼（tools/build_problem_profiles.js 產生） */
+  BuzzProblemProfiles?: any;
   /** src/kernel/metrics.js（data-lazy="metrics"，只有分析開著才載）：漏斗事件、共同欄位、本機回訪訊號（docs/metrics.md） */
   BuzzMetrics?: {
     start(deps: { track: (name: string, params?: Record<string, unknown>) => void; events?: Record<string, string>; records?: () => any; view?: () => string }): void;
