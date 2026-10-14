@@ -810,6 +810,78 @@ summary.issues.sort((a, b) => a[0].localeCompare(b[0])).forEach(([k, n]) => {
 });
 
 // ⑥ 資料字典
+// ⑤ 方法集中度（題庫精修提案 v1.0）：量上線的側表 src/kernel/problem_profiles.js，算法跟 CI 的 report_method_diversity.js 同一支
+{
+  const D = require("./lib/method_diversity.js");
+  const taxonomy = require("./content/method_taxonomy.js");
+  const profiles = D.profilesFromRuntime(win.BuzzProblemProfiles, win.BuzzSampler);
+  const bankT = D.tabulate(D.bankRows(problems, profiles, "bank"));
+  const poolT = D.tabulate(D.bankRows(problems, profiles, "default"));
+  const md = wb.addWorksheet("方法集中度", { views: [{ state: "frozen", ySplit: 3 }] });
+  title(md, "方法集中度（主要家族）：全題庫 vs 預設池", "預設池 = 每題以 defaultWeight 計（兩段式抽題第一段的家族質量）。HHI = Σ份額²×10000（獨佔 = 10000）。上限見 tools/content/method_taxonomy.js。");
+  md.columns = [{ width: 10 }, { width: 6 }, { width: 8 }, { width: 26 }, { width: 10 }, { width: 9 }, { width: 8 }, { width: 26 }, { width: 10 }, { width: 9 }];
+  let r = 3;
+  ["主題", "rank", "題數", "全題庫最大家族", "份額", "HHI", "家族數", "預設池最大家族", "份額", "HHI"].forEach((v, i) => { md.getRow(r).getCell(i + 1).value = v; });
+  headerRow(md, r);
+  r += 1;
+  Object.keys(bankT).sort().forEach((k) => {
+    const b = bankT[k];
+    const d = poolT[k];
+    const row = md.getRow(r);
+    [TOPIC_ZH[b.topic], `R${b.rank}`, b.total, b.top.fam, b.top.share, b.hhi, b.families, d.top.fam, d.top.share, d.hhi].forEach((v, i) => { row.getCell(i + 1).value = v; });
+    row.getCell(5).numFmt = "0.0%"; row.getCell(9).numFmt = "0.0%";
+    if (b.top.share > taxonomy.SOFT_FAMILY_SHARE) row.getCell(5).fill = fill(AMBER);
+    row.getCell(9).fill = fill(d.top.share > taxonomy.SOFT_FAMILY_SHARE ? AMBER : GREEN);
+    r += 1;
+  });
+  md.addConditionalFormatting({ ref: `F4:F${r - 1}`, rules: [{ type: "colorScale", priority: 1, cfvo: [{ type: "min" }, { type: "max" }], color: [{ argb: "FFFFFFFF" }, { argb: "FFF4B183" }] }] });
+  r += 1;
+  // 曝光上限
+  ["上限", "rank", "家族", "上限值", "全題庫", "預設池", "結果"].forEach((v, i) => { md.getRow(r).getCell(i + 1).value = v; });
+  headerRow(md, r);
+  r += 1;
+  const bankCaps = D.capChecks(bankT);
+  D.capChecks(poolT).forEach((c, i) => {
+    const row = md.getRow(r);
+    [c.cap.id, `R${c.rank}`, c.cap.any ? `任一（${c.what}）` : c.what, c.cap.max, bankCaps[i].share, c.share, c.infeasible ? "不可行" : c.ok ? "OK" : "超過"].forEach((v, j) => { row.getCell(j + 1).value = v; });
+    [4, 5, 6].forEach((j) => { row.getCell(j).numFmt = "0.0%"; });
+    row.getCell(7).fill = fill(c.ok ? GREEN : RED);
+    r += 1;
+  });
+  r += 1;
+  // 模板飽和
+  const sat = D.templateSaturation(problems, profiles);
+  ["模板母題（noveltyFamily）", "在哪裡", "題數"].forEach((v, i) => { md.getRow(r).getCell(i + 1).value = v; });
+  headerRow(md, r);
+  r += 1;
+  [["課程核心", sat.core], ["預設池", sat.pool]].forEach(([where, list]) => list.forEach(([nov, n]) => {
+    const row = md.getRow(r);
+    row.getCell(1).value = nov; row.getCell(2).value = where; row.getCell(3).value = n;
+    row.getCell(3).fill = fill(AMBER);
+    r += 1;
+  }));
+
+  // 長表：主題 × rank × 家族
+  const mf = wb.addWorksheet("方法家族分布", { views: [{ state: "frozen", ySplit: 1 }] });
+  mf.columns = [
+    { header: "主題", key: "topic", width: 8 }, { header: "rank", key: "rank", width: 6 }, { header: "家族", key: "fam", width: 28 },
+    { header: "家族（中文）", key: "label", width: 22 }, { header: "題數", key: "n", width: 7 }, { header: "全題庫份額", key: "bank", width: 11 },
+    { header: "預設池份額", key: "pool", width: 11 }, { header: "平均 defaultWeight", key: "w", width: 12 }
+  ];
+  const famIndex = taxonomy.familyIndex();
+  Object.keys(bankT).sort().forEach((k) => {
+    const b = bankT[k];
+    const d = poolT[k];
+    Object.entries(b.fams).sort((x, y) => y[1] - x[1]).forEach(([fam, n]) => {
+      mf.addRow({ topic: TOPIC_ZH[b.topic], rank: `R${b.rank}`, fam, label: (famIndex[`${b.topic}:${fam}`] || {}).label || "", n, bank: b.shares[fam], pool: d.shares[fam] || 0, w: (d.fams[fam] || 0) / n });
+    });
+  });
+  ["bank", "pool"].forEach((key) => { mf.getColumn(key).numFmt = "0.0%"; });
+  mf.getColumn("w").numFmt = "0.00";
+  headerRow(mf, 1);
+  mf.autoFilter = { from: "A1", to: "H1" };
+}
+
 const dd = wb.addWorksheet("資料字典");
 dd.columns = [{ header: "工作表", key: "sheet", width: 10 }, { header: "欄位", key: "col", width: 18 }, { header: "意思", key: "meaning", width: 70 }, { header: "資料來源", key: "src", width: 50 }];
 COLUMNS.forEach(([, header, , meaning, src]) => dd.addRow({ sheet: DETAIL, col: header, meaning, src }));
@@ -819,7 +891,10 @@ COLUMNS.forEach(([, header, , meaning, src]) => dd.addRow({ sheet: DETAIL, col: 
   ["課程覆蓋", "宣告的缺口（gaps）", "寫課的人宣告「這課需要但題庫沒有」的題：tag×數量（說明）。", "lessons/*.json gaps[]"],
   ["課程覆蓋", "沒有推薦題", "這課沒有任何推薦題：小測完成就算全破（validate_course_v2 要求這種課要寫 gaps 或本來就不需要題）。", "lessons/*.json"],
   ["品質待辦", "優先", "P0 答案錯；P1 高曝光（課程、每日一題、章首魔王）題沒有獨立驗算；P2 固定考卷未驗算、課程題缺提示與步驟；P3 一般題缺提示步驟、時限偏短、課程內重複；P4 其他（批次處理即可）。", "本工具規則"],
-  ["品質待辦", "估計工時／題", "粗估單題工時，供排程參考。", "經驗估計"],
+  ["方法集中度", "預設池份額／HHI", "每題以 defaultWeight 計的家族份額（兩段式抽題第一段的質量）；HHI = Σ份額²×10000。上限與軟上限在分類表。", "src/kernel/problem_profiles.js、tools/content/method_taxonomy.js"],
+  ["方法集中度", "模板母題", "noveltyFamily：題幹數字正規化後同結構的一群（含 variantOf／tmpl 家族），以群裡第一題命名；課程核心或預設池超過 5 題標黃。", "tools/lib/problem_profiles.js"],
+  ["方法家族分布", "家族", "每題的主要家族 methodFamily[0]（規則：tag／skill／題幹結構；人工覆寫在 tools/content/problem_profile_overrides.json）。", "tools/lib/problem_profiles.js"],
+  ["品質待辦", "估計工時／題","粗估單題工時，供排程參考。", "經驗估計"],
   ["品質待辦", "處理狀態", "下拉選單，給負責人追蹤用。重跑產生器會清空，請另存。", ""],
   ["（全部）", "成效欄（灰色表頭）", "作答次數、答對率、平均用時、跳過率需要 GA4 的逐題資料，目前留空。取得方式見報告第 6 節；有了 CSV 用 node tools/build_stats_workbook.js --ga 檔名 重產。", "docs/metrics.md、GA4 BigQuery 匯出"]
 ].forEach(([sheet, col, meaning, src]) => dd.addRow({ sheet, col, meaning, src }));
