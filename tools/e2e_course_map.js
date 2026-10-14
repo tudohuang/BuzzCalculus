@@ -483,10 +483,15 @@ async function run() {
     const doneIds = LESSONS.filter((l) => l.stage === 0).map((l) => l.id).concat(LESSONS.filter((l) => l.stage === 1).slice(0, 5).map((l) => l.id));
     const DONE = new Set(doneIds);
     const withP = doneIds.filter((id) => P(BY_ID[id]).length);
-    const [MASTER_A, MASTER_B, WRONG_L, LOW_L] = [withP[0], withP[1], withP[3], withP[5]];
+    const [MASTER_A, MASTER_B] = [withP[0], withP[1]];
     const problemStats = {};
     const mistakes = {};
     [MASTER_A, MASTER_B].forEach((id) => P(BY_ID[id]).forEach((p) => { problemStats[p.id] = { correct: 1, wrong: 0, total: 1, lastAnsweredAt: AT }; }));
+    // 推薦題會在課與課之間共用（題庫精修後更多）：答錯／低正確率的課要挑「還有一題沒被前面兩課種過」的，不能寫死第幾課
+    const freshIn = (id) => P(BY_ID[id]).some((p) => !problemStats[p.id]);
+    const rest = withP.slice(2).filter(freshIn);
+    const WRONG_L = rest[1] || rest[0];
+    const LOW_L = rest.find((id, k) => k > rest.indexOf(WRONG_L) && P(BY_ID[id]).some((p) => !problemStats[p.id] && !P(BY_ID[WRONG_L]).some((q) => q.id === p.id)));
     const wrongPid = P(BY_ID[WRONG_L]).find((p) => !problemStats[p.id]).id;
     problemStats[wrongPid] = { correct: 0, wrong: 2, total: 2, lastAnsweredAt: AT };
     mistakes[wrongPid] = { problemId: wrongPid, wrongCount: 2, lastWrongAt: AT, srs: { interval: 0, dueAt: Date.parse(AT) } };
