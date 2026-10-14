@@ -664,6 +664,17 @@ function ffprobeMs(file) {
   return Number.isFinite(s) ? Math.round(s * 1000) : null;
 }
 
+// 列出這個 Azure 資源能用的聲音（只印聲音名稱與語言，不印金鑰）：--list-voices [關鍵字…]
+async function listVoices(filters) {
+  const { key, region } = await credentials();
+  const res = await request("GET", `https://${region}.tts.speech.microsoft.com/cognitiveservices/voices/list`, { "Ocp-Apim-Subscription-Key": key });
+  if (res.status !== 200) throw new Error(`voices/list HTTP ${res.status}`);
+  const list = JSON.parse(res.body.toString("utf8"));
+  const hit = list.filter((v) => !filters.length || filters.some((q) => JSON.stringify(v).toLowerCase().includes(q.toLowerCase())));
+  hit.forEach((v) => console.log(`${v.ShortName}	${v.Locale}	${v.VoiceType || ""}	${(v.SecondaryLocaleList || []).slice(0, 3).join(",")}`));
+  console.log(`${hit.length} / ${list.length} 個聲音`);
+}
+
 async function samples() {
   fs.mkdirSync(SAMPLES, { recursive: true });
   for (const voice of SAMPLE_VOICES) {
@@ -683,7 +694,7 @@ async function tryLesson(id, voice) {
   for (const text of says) bufs.push(await synth(text, voice, RATE));
   const dir = path.join(SAMPLES, "..", "voice-try");
   fs.mkdirSync(dir, { recursive: true });
-  const file = path.join(dir, `${voice.replace(/^zh-TW-|Neural$/g, "")}-${id}.mp3`);
+  const file = path.join(dir, `${voice.replace(/^zh-TW-|Neural$/g, "").replace(/[^A-Za-z0-9-]+/g, "_")}-${id}.mp3`);
   const all = Buffer.concat(bufs);
   fs.writeFileSync(file, all);
   console.log(`  ${path.relative(ROOT, file)}  ${says.length} 句、${(mp3Ms(all) / 1000).toFixed(1)}s`);
@@ -698,6 +709,7 @@ if (require.main === module) {
   const run = argv.includes("--check") ? Promise.resolve().then(() => check({ voices: voicesArg(argv) }))
     : argv.includes("--verify") ? Promise.resolve().then(() => check({ verify: true, voices: voicesArg(argv) }))
     : argv.includes("--samples") ? samples()
+    : argv.includes("--list-voices") ? listVoices(argv.slice(argv.indexOf("--list-voices") + 1).filter((a) => !a.startsWith("--")))
     : argv.includes("--try") ? (async () => { const skip = argv.includes("--voice") ? argv[argv.indexOf("--voice") + 1] : null; for (const id of argv.slice(argv.indexOf("--try") + 1).filter((a) => !a.startsWith("--") && a !== skip)) await tryLesson(id, tryVoice()); })()
     : Promise.resolve().then(() => build({ dryRun: argv.includes("--dry-run"), pruneCache: argv.includes("--prune-cache"), voices: voicesArg(argv) }));
   run.catch((error) => {
