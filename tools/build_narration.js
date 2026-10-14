@@ -59,7 +59,7 @@ const CACHE = path.join(ROOT, "media", "narration-cache", FORMAT_DIR);
 const SAMPLES = path.join(ROOT, "docs", "report", "course-review", "voice-samples");
 
 // ── 聲音：只在這裡改（改了 hash 全部換掉，整批重合成）──
-const VOICE = "zh-TW-HsiaoChenNeural";
+const VOICE = process.env.BUZZ_TTS_VOICE || "zh-TW-HsiaoChenNeural";
 const RATE = "+0%"; // SSML prosody rate；播放器另外有 1×／1.25×／1.5×
 const FORMAT = "audio-16khz-32kbitrate-mono-mp3";
 // 每一支逐句檔的音框都要是這個格式（MPEG 版本/取樣率/kbps/聲道模式；2 = MPEG-2、3 = 單聲道）：Azure 哪天回了別的格式，不接、重合成
@@ -72,7 +72,12 @@ const SAMPLE_TEXT = [
 const CONCURRENCY = Math.max(1, Math.min(4, Number(process.env.NARRATION_CONCURRENCY) || 4));
 const MAX_ATTEMPTS = 8;
 
-const hashOf = (voice, rate, text) => crypto.createHash("sha1").update(`${voice}|${rate}|${text}`).digest("hex").slice(0, 8);
+// 念之前的清洗：語音引擎會把冒號後面接字母讀成表情（「：P」念成吐舌頭）、把破折號與引號念怪。
+// 冒號／分號換成逗號（一樣是停頓）、破折號與引號換成空白 —— 一個字換一個字，長度不變，逐字時間點與黑板錨點的字位置照舊對得上。
+// 字幕顯示的還是原稿；只有送去念的字被清洗。改這裡要把 SPEAK_VERSION 加一（hash 會換、整批重錄）。
+const SPEAK_VERSION = "s1";
+const speakable = (text) => String(text).replace(/[：:；;]/g, "，").replace(/[–—-「」『』]/g, " ");
+const hashOf = (voice, rate, text) => crypto.createHash("sha1").update(`${voice}|${rate}|${SPEAK_VERSION}|${text}`).digest("hex").slice(0, 8);
 const sha256 = (buf) => crypto.createHash("sha256").update(buf).digest("hex");
 
 /* ── 金鑰：不印、不寫、不回傳到任何訊息 ── */
@@ -161,7 +166,7 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 class Fatal extends Error {}
 async function synth(text, voice = VOICE, rate = RATE) {
   const { key, region } = await credentials();
-  const ssml = `<speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis" xml:lang="zh-TW"><voice name="${voice}"><prosody rate="${rate}">${escapeXml(text)}</prosody></voice></speak>`;
+  const ssml = `<speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis" xml:lang="zh-TW"><voice name="${voice}"><prosody rate="${rate}">${escapeXml(speakable(text))}</prosody></voice></speak>`;
   let last = "";
   for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt += 1) {
     let res = null;
@@ -210,7 +215,7 @@ function unescapeMap(text) {
 async function synthWords(text, voice = VOICE, rate = RATE) {
   const S = sdk();
   const { key, region } = await credentials();
-  const body = escapeXml(text);
+  const body = escapeXml(speakable(text));
   const head = `<speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis" xml:lang="zh-TW"><voice name="${voice}"><prosody rate="${rate}">`;
   const ssml = `${head}${body}</prosody></voice></speak>`;
   const map = unescapeMap(text);
@@ -602,13 +607,29 @@ async function samples() {
   }
 }
 
-module.exports = { hashOf, mp3Ms, framesOf, pack, voiceOf, readIndex, synthWords, audioOf, cacheOf, VOICE, RATE };
+// 試聽一整課：--try <課 id> [--voice zh-TW-YunJheNeural] → docs/report/course-review/voice-try/<聲音>-<課>.mp3（逐句接起來；不動快取、不動 narration.json）
+async function tryLesson(id, voice) {
+  const L = JSON.parse(fs.readFileSync(path.join(ROOT, "tools", "content", "course_v2", "lessons", `${id}.json`), "utf8"));
+  const says = [];
+  (L.sections || []).forEach((s) => s.beats.forEach((b) => { if (b.why && b.why.say) says.push(b.why.say); if (b.say) says.push(b.say); }));
+  const bufs = [];
+  for (const text of says) bufs.push(await synth(text, voice, RATE));
+  const dir = path.join(SAMPLES, "..", "voice-try");
+  fs.mkdirSync(dir, { recursive: true });
+  const file = path.join(dir, `${voice.replace(/^zh-TW-|Neural$/g, "")}-${id}.mp3`);
+  const all = Buffer.concat(bufs);
+  fs.writeFileSync(file, all);
+  console.log(`  ${path.relative(ROOT, file)}  ${says.length} 句、${(mp3Ms(all) / 1000).toFixed(1)}s`);
+}
+
+module.exports = { hashOf, speakable, mp3Ms, framesOf, pack, voiceOf, readIndex, synthWords, audioOf, cacheOf, VOICE, RATE };
 
 if (require.main === module) {
   const argv = process.argv;
   const run = argv.includes("--check") ? Promise.resolve().then(() => check())
     : argv.includes("--verify") ? Promise.resolve().then(() => check({ verify: true }))
     : argv.includes("--samples") ? samples()
+    : argv.includes("--try") ? (async () => { const v = argv[argv.indexOf("--voice") + 1]; const voice = argv.includes("--voice") && v ? v : VOICE; for (const id of argv.slice(argv.indexOf("--try") + 1).filter((a) => !a.startsWith("--") && a !== v)) await tryLesson(id, voice); })()
     : build({ dryRun: argv.includes("--dry-run"), pruneCache: argv.includes("--prune-cache") });
   run.catch((error) => {
     console.error(redact(error && error.message ? error.message : error));
