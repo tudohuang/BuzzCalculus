@@ -50,6 +50,10 @@ const silentMp3 = (ms) => {
   return Buffer.concat(Array.from({ length: Math.ceil(ms / 24) }, () => frame));
 };
 
+// 機器慢多少：CI 的 BUZZ_E2E_SLOW、本機複製 runner 用的 BUZZ_E2E_CPU_THROTTLE。只拿來放寬逾時與幀時間的上限
+const THROTTLE = Math.max(1, Number(process.env.BUZZ_E2E_CPU_THROTTLE || 1) || 1);
+const SLOWER = Math.max(1, Number(process.env.BUZZ_E2E_SLOW || 1) || 1, THROTTLE);
+
 let passed = 0;
 const failures = [];
 function check(name, ok, detail = "") {
@@ -105,8 +109,9 @@ async function run() {
   const chrome = await launch();
   const evaluate = (code) => chrome.evaluate(`${HELPERS}\n${code}`);
   const sleep = (ms) => chrome.sleep(ms);
+  // 等的是「狀態到了」，逾時只是上限：慢的 runner／CPU 降速時放寬（不影響斷言本身）
   const waitFor = async (expr, ms = 8000) => {
-    for (const deadline = Date.now() + ms; Date.now() < deadline; await sleep(60)) {
+    for (const deadline = Date.now() + ms * SLOWER; Date.now() < deadline; await sleep(60)) {
       if (await evaluate(`return Boolean(${expr});`)) return true;
     }
     return false;
@@ -132,9 +137,12 @@ async function run() {
     return (await evaluate(`return window.__b.beats();`)) === k;
   };
   const go = async (si, id) => { await evaluate(`document.querySelector('[data-action="course-s-go"][data-to="${si}"]').click(); return 1;`); return waitFor(`window.__b.si() === ${si} && window.__b.st() && window.__b.st().key === ${JSON.stringify(`${id}:${si}`)}`); };
+  // 重開同一課時標題本來就對：先把舊的畫面與舊的黑板做記號，等到新畫的那一份（新的分節、黑板也換成新的）才算開好 ——
+  // 不然慢的機器上會讀到還沒重畫的舊狀態（以前「重開、回到第一句」讀到 at = 1 就是這個）
   const openLesson = async (id) => {
-    await evaluate(`window.__b.open(${JSON.stringify(id)}); return 1;`);
-    return waitFor(`document.querySelector(".cv2-lesson h2") && document.querySelector(".cv2-lesson h2").textContent.trim() === ${JSON.stringify(lessonOf(id).title)} && document.querySelector("[data-cv2s] .cv2s-sec")`);
+    await evaluate(`document.querySelectorAll("[data-cv2s]").forEach((n) => { n.__old = 1; }); window.__oldBoard = window.__b.board(); window.__b.open(${JSON.stringify(id)}); return 1;`);
+    return waitFor(`document.querySelector(".cv2-lesson h2") && document.querySelector(".cv2-lesson h2").textContent.trim() === ${JSON.stringify(lessonOf(id).title)} && document.querySelector("[data-cv2s] .cv2s-sec") && !document.querySelector("[data-cv2s]").__old
+      && (!document.querySelector("[data-cvb-slot]") || (window.__b.board() && window.__b.board() !== window.__oldBoard && window.__b.board().closest("[data-cvb-slot]") && window.__b.st() && window.__b.st().key.startsWith(${JSON.stringify(`${id}:`)})))`);
   };
   const motion = (on) => chrome.send("Emulation.setEmulatedMedia", { features: [{ name: "prefers-reduced-motion", value: on ? "" : "reduce" }] });
   // 旁白：/media/narration/ 由測試自己回（無聲 mp3，照 Range 回 206），跟 e2e_course_sections 同一招
@@ -191,12 +199,22 @@ async function run() {
     /* ── 虛擬時鐘（沒開旁白）：圈在念到那個詞的時候才開始 ── */
     check(`到「${CHAIN.sections[F_SI].title}」那一節（新出來的句子會動）`, await go(F_SI, CHAIN.id));
     const g0 = await evaluate(`const m = window.__b.model(); return m.acts.findIndex((x) => x.b === 0 && x.k === ${F_K});`);
-    const vt = await evaluate(`const out = []; const t0 = performance.now(); while (performance.now() - t0 < 2600) { const s = window.__b.st(); out.push([performance.now() - t0, s.g, s.q, s.mode]); await new Promise((r) => requestAnimationFrame(r)); }
-      const hit = out.find((x) => x[1] > ${g0} || (x[1] === ${g0} && x[2] > 0)); return { at: hit ? hit[0] : -1, mode: out[2] && out[2][3], before: out.filter((x) => x[0] < 300).every((x) => x[1] <= ${g0}) };`);
+    // 時間用黑板自己的虛擬時鐘量（state().tau），不用牆上時間：以前從「點了那一節」到「開始量」中間的延遲在慢機器上 300ms 起跳，
+    // 量出來的 548ms 其實是虛擬時間的 850ms。先把時鐘撥到錨點前 70ms／後 120ms 各看一次，再撥回 0 讓它照牆上時間自己走、每格記 (tau, 開始了沒)
     const want = charOf(F_B.board[F_K].on, F_B.say) * 170;
-    check(`虛擬時鐘：框「${F_B.board[F_K].on}」在 say 的第 ${charOf(F_B.board[F_K].on, F_B.say)} 個字（≈ ${want}ms）才開始，不是平均分掉`, vt.mode === "virtual" && vt.before && Math.abs(vt.at - want) < 180, JSON.stringify({ ...vt, want }));
+    const vt = await evaluate(`const D = window.BuzzBoard.debug; const on = (s) => s.g > ${g0} || (s.g === ${g0} && s.q > 0);
+      const pre = D.clock(${want - 70}); const post = D.clock(${want + 120}); D.clock(0);
+      const out = []; const t0 = performance.now();
+      while (performance.now() - t0 < 8000 * ${SLOWER}) { await new Promise((r) => requestAnimationFrame(r)); const s = window.__b.st(); out.push([s.tau, on(s) ? 1 : 0, s.mode]); if (s.tau > ${want + 300}) break; }
+      const no = out.filter((x) => !x[1]).map((x) => x[0]); const yes = out.filter((x) => x[1]).map((x) => x[0]);
+      return { pre: [pre.mode, pre.g, pre.q], post: [post.mode, post.g, post.q], preOn: on(pre), postOn: on(post) && post.g === ${g0} && post.q < 1, modes: [...new Set(out.map((x) => x[2]))], n: out.length,
+        lastOff: no.length ? Math.max(...no) : -1, firstOn: yes.length ? Math.min(...yes) : -1, early: yes.filter((t) => t < ${want - 70}).length, late: no.filter((t) => t > ${want + 120}).length, before: out.filter((x) => x[0] < 300).every((x) => !x[1]) && out.some((x) => x[0] < 300) };`);
+    check(`虛擬時鐘：框「${F_B.board[F_K].on}」在 say 的第 ${charOf(F_B.board[F_K].on, F_B.say)} 個字（≈ ${want}ms）才開始，不是平均分掉（錨點前 70ms 沒開始、後 120ms 開始了；自己走的時候也是錨點前沒有、錨點後有）`,
+      vt.pre[0] === "virtual" && !vt.preOn && vt.postOn && vt.modes.join() === "virtual" && vt.before && vt.firstOn > 0 && !vt.early && !vt.late && vt.lastOff < vt.firstOn, JSON.stringify({ ...vt, want }));
     await tap(".cvb");
-    await waitFor(`window.__b.st().at === 1`, 2000);
+    // 點了之後等黑板真的換到下一句、而且畫過一格（state 的 g 是最近一格算的；只等 at === 1 可能還讀到上一句的游標）
+    const first1 = await evaluate(`return window.__b.model().acts.findIndex((x) => x.b === 1);`);
+    await waitFor(`window.__b.st().at === 1 && window.__b.st().g >= ${first1}`, 2000);
     const t1 = await evaluate(`const m = window.__b.model(); const last0 = m.anns.filter((a) => a.b === 0).map((a) => m.anns.indexOf(a)); return { st: window.__b.st(), first1: m.acts.findIndex((x) => x.b === 1), marks: last0.map((a) => window.__b.mark(a)) };`);
     check("點黑板＝下一句：上一句直接畫完（游標跳到下一句的第一個動作），上一句的記號畫完了（下一句開始時淡出）", t1.st.at === 1 && t1.st.g >= t1.first1 && t1.marks.every((m) => m && m.off === 0), JSON.stringify(t1));
 
@@ -212,13 +230,19 @@ async function run() {
     const s2 = await evaluate(`window.__b.fake(${V(ff.t[0] + ff.ms + 120)}); return window.__b.st();`);
     check("錨點前 70ms：框還沒開始；錨點後 120ms：框開始了", s1.mode === "audio" && (s1.g < g0 || (s1.g === g0 && s1.q === 0)) && s2.g === g0 && s2.q > 0 && s2.q < 1, JSON.stringify({ s1, s2 }));
     // 1× 與 1.5×：同一段錄音時間、不同的牆上時間，框開始的錄音時間一樣
-    const startAt = async (rate) => evaluate(`const t0 = performance.now(); const from = ${ff.t[0] + ff.ms - 400}; let hit = -1;
-      while (performance.now() - t0 < 1400) { const at = Math.round(from + (performance.now() - t0) * ${rate}); window.__fake = { on: true, paused: false, beat: ${JSON.stringify(key)}, at, start: ${ff.t[0]}, end: ${ff.t[1]}, rate: ${rate} };
-        await new Promise((r) => requestAnimationFrame(r)); const s = window.__b.st(); if (hit < 0 && s.g === ${g0} && s.q > 0) hit = at - ${ff.t[0]}; if (hit < 0 && s.g > ${g0}) hit = -2; }
-      return hit;`);
+    // 假的錄音照牆上時間 × 速度往前走；每一格設好 currentTime 就叫黑板畫一格（debug.tick），記「錄音時間、開始了沒」。
+    // 判斷只看錄音時間：錨點前 60ms 以前都沒開始、後 60ms 以後都開始了，而且兩種速度「最後沒開始」與「最早開始了」夾出同一個點 ——
+    // 不管一格隔多久（慢機器一格可能 100ms），都不會因為取樣稀而誤判
+    const startAt = async (rate) => evaluate(`const t0 = performance.now(); const from = ${ff.t[0] + ff.ms - 400}; const out = []; let at = from;
+      while (at < from + 800) { const a = Math.round(at); window.__fake = { on: true, paused: false, beat: ${JSON.stringify(key)}, at: a, start: ${ff.t[0]}, end: ${ff.t[1]}, rate: ${rate} };
+        window.BuzzBoard.debug.tick(); const s = window.__b.st(); out.push([a - ${ff.t[0]}, s.g > ${g0} || (s.g === ${g0} && s.q > 0) ? 1 : 0, s.mode]);
+        await new Promise((r) => requestAnimationFrame(r)); at = from + (performance.now() - t0) * ${rate}; }
+      const no = out.filter((x) => !x[1]).map((x) => x[0]); const yes = out.filter((x) => x[1]).map((x) => x[0]);
+      return { n: out.length, modes: [...new Set(out.map((x) => x[2]))].join(), lastOff: no.length ? Math.max(...no) : -1, firstOn: yes.length ? Math.min(...yes) : -1, early: yes.filter((t) => t < ${ff.ms - 60}).length, late: no.filter((t) => t > ${ff.ms + 60}).length };`);
     const r1 = await startAt(1);
     const r15 = await startAt(1.5);
-    check("1× 與 1.5×：框在錄音的同一個時間點開始（差 < 60ms，都在錨點上）", r1 > 0 && r15 > 0 && Math.abs(r1 - r15) < 60 && Math.abs(r1 - ff.ms) < 60, JSON.stringify({ r1, r15, ms: ff.ms }));
+    const okRate = (r) => r.modes === "audio" && r.n > 3 && r.firstOn > 0 && r.lastOff >= 0 && r.lastOff < r.firstOn && !r.early && !r.late;
+    check("1× 與 1.5×：框在錄音的同一個時間點開始（都在錨點 ±60ms 上，兩種速度夾出同一個起點）", okRate(r1) && okRate(r15) && Math.max(r1.lastOff, r15.lastOff) < Math.min(r1.firstOn, r15.firstOn), JSON.stringify({ r1, r15, ms: ff.ms }));
     // 暫停
     await evaluate(`window.__b.fake(${V(ff.t[0] + ff.ms + 150, ", paused: true")}); return 1;`);
     const pz1 = await evaluate(`return { st: window.__b.st(), m: window.__b.mark(${await evaluate(`const m = window.__b.model(); return m.anns.findIndex((a) => a.g === ${g0});`)}) };`);
@@ -304,14 +328,16 @@ async function run() {
     const q0 = await evaluate(`return { st: window.__b.st(), asking: Boolean(document.querySelector('[data-cv2s-act="why"]')) };`);
     check("問「為什麼」的時候：游標停在第一個 why: true 的動作前（答案沒畫）", q0.asking && q0.st.at === P_BI && q0.st.g === whyG && q0.st.q === 0 && !q0.st.running, JSON.stringify(q0));
     // 問題出現在黑板底下：黑板最後一行跟問題都要看得到（放不下時先顧問題、最後一行至少露出下緣）
-    await sleep(1200);
+    // 捲動對位是動畫（而且有 350ms／720ms 之後的第二次對位）：至少等過那兩次，再等捲動停下來（連續 400ms 不動）才量
+    await sleep(800);
+    await evaluate(`let last = -1; let still = 0; const t0 = performance.now(); while (still < 4 && performance.now() - t0 < 6000 * ${SLOWER}) { await new Promise((r) => setTimeout(r, 100)); const y = Math.round(scrollY); still = y === last ? still + 1 : 0; last = y; } return 1;`);
     const vis = await evaluate(`const top = (document.querySelector(".topbar") || { getBoundingClientRect: () => ({ bottom: 0 }) }).getBoundingClientRect().bottom; const dock = document.querySelector(".cv2s-dock .cv2s-voice"); const bot = dock ? dock.getBoundingClientRect().top : innerHeight;
       const q = document.querySelector('[data-cv2s-act="why"]').getBoundingClientRect(); const l = window.__b.board().querySelector(".cvb-l:last-child").getBoundingClientRect();
       return { top: Math.round(top), bot: Math.round(bot), q: [Math.round(q.top), Math.round(q.bottom)], l: [Math.round(l.top), Math.round(l.bottom)] };`);
     const fits = vis.q[1] - vis.l[0] <= vis.bot - vis.top;
     check(`問「為什麼」時：${fits ? "黑板最後一行與問題都在畫面裡" : "問題整個在畫面裡、黑板最後一行露出下緣"}`, vis.q[0] >= vis.top - 1 && vis.q[1] <= vis.bot + 1 && (fits ? vis.l[0] >= vis.top - 1 : vis.l[1] > vis.top + 4), JSON.stringify(vis));
     await see();
-    await sleep(250);
+    await waitFor(`window.__b.st().running && window.__b.st().g >= ${whyG}`, 3000);
     const q1 = await evaluate(`return window.__b.st();`);
     await evaluate(`return window.__b.settle();`);
     const q2 = await evaluate(`return window.__b.st();`);
@@ -322,9 +348,10 @@ async function run() {
     /* ── reduced-motion：直接畫好 ── */
     await motion(false);
     check("reduced-motion：到下一節", await go(P_SI - 1, DCT.id));
+    await waitFor(`window.__b.st() && window.__b.st().mode === "done" && !window.__b.st().running`, 1500);
     const rm = await evaluate(`return window.__b.st();`);
     await next();
-    await waitFor(`window.__b.st().at === 1`, 1500);
+    await waitFor(`window.__b.st().at === 1 && window.__b.st().mode === "done" && !window.__b.st().running`, 1500);
     const rm1 = await evaluate(`return window.__b.st();`);
     check("reduced-motion：第一句與「下一句」都直接畫好（沒有動畫）", rm.mode === "done" && !rm.running && rm1.mode === "done" && !rm1.running && rm1.at === 1, JSON.stringify({ rm, rm1 }));
 
@@ -396,7 +423,9 @@ async function run() {
     await evaluate(`return window.__b.settle();`);
     const work = await evaluate(`const a = window.__work.slice().sort((x, y) => x - y); return { n: a.length, p95: a[Math.floor(a.length * 0.95)] || 0, max: a[a.length - 1] || 0 };`);
     console.log(`  ·    幀時間（DPR 3，「外層是次方」整節：寫、變形、飛、圈、框）：rAF callback ${work.n} 格，p95 ${work.p95.toFixed(2)}ms、最久 ${work.max.toFixed(1)}ms`);
-    check("黑板每格的工作 p95 < 4ms（版面只在換節時排，動畫中只改 transform／opacity／mask／dashoffset）", work.n > 40 && work.p95 < 4, `${work.p95.toFixed(2)}ms`);
+    // 沒降速時照舊 4ms；BUZZ_E2E_CPU_THROTTLE=k 時 Chrome 本來就慢 k 倍，上限跟著乘 k（量的是「每格做多少事」，不是機器多快）
+    const P95 = 4 * THROTTLE;
+    check(`黑板每格的工作 p95 < ${P95}ms${THROTTLE > 1 ? `（CPU 降速 ${THROTTLE}×：4ms × ${THROTTLE}）` : ""}（版面只在換節時排，動畫中只改 transform／opacity／mask／dashoffset）`, work.n > 40 && work.p95 < P95, `${work.p95.toFixed(2)}ms`);
 
     /* ── 流量：黑板的檔多大、只有有黑板的課付 ── */
     const bytes = await evaluate(`return { board: window.__b.bytes(/course_board(_layout)?\\.js/), plot: window.__b.bytes(/course_board_plot\\.js/) };`);

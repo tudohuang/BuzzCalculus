@@ -29,8 +29,8 @@ const REV_HEADER = "x-buzz-rev";
 
 // ── 產生區：node tools/build_sw_revisions.js（不要手改）──
 // 這一版：設定頁顯示「版本 v… · id · 日期」；id 是下面 REVISIONS 的雜湊，快取名跟著它變（每次部署內容有變就一定是新快取）。
-const BUILD = {"version":"v1.3.0","id":"0a5e3faa","date":"2026-10-13"};
-const CACHE_NAME = "buzzcalculus-v1.3.0-0a5e3faa";
+const BUILD = {"version":"v1.3.0","id":"05de7a8b","date":"2026-10-13"};
+const CACHE_NAME = "buzzcalculus-v1.3.0-05de7a8b";
 // 安裝時預快取的核心（離線也能練題）。其他檔用到才快取 —— 見 REVISIONS。
 const APP_SHELL = [
   "./index.html",
@@ -158,7 +158,7 @@ const REVISIONS = {
   "./src/app.js": "142d901294",
   "./src/board_store.js": "402a9e9b08",
   "./src/course.js": "ef1b69719f",
-  "./src/course_board.js": "816d6f9a2e",
+  "./src/course_board.js": "38e5fbfa17",
   "./src/course_board_layout.js": "a1db6f5ee5",
   "./src/course_board_plot.js": "25bed23bd6",
   "./src/course_boss.js": "4785df87a7",
