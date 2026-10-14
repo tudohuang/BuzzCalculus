@@ -54,6 +54,8 @@
     "region", "constraint", "degenerate",
     "cancellation", "repeated-factor", "complete-square", "symmetry",
     "full-expansion", "product", "slope", "speed", "harmonic", "triangle",
+    // complex-numbers：把實函數拆成共軛複數的部分分式再微分（題庫精修 2026-10 的兩題高階導數）—— 用到的是複數的代數，不是複變那一個節點
+    "complex-numbers",
     // 描述題目的性質，不是可以被練起來的技巧：
     //   composition    這題是合成函數（要用的技巧是鏈鎖律，那個有自己的節點）
     //   domain-aware   這題的答案要考慮定義域
@@ -213,7 +215,7 @@
     { id: "integral.kings", label: "King's Property", tier: 3, obscurity: 2, family: "integral", prereq: ["integral.usub"], radarAxis: "improper",
       tags: ["kings-property"] },
     { id: "integral.parameter", label: t("參數微分 / Feynman"), tier: 5, obscurity: 3, family: "integral", prereq: ["integral.improper"], radarAxis: "improper",
-      tags: ["parameter-integral", "feynman"] },
+      tags: ["parameter-integral", "feynman", "leibniz-integral-rule"] },
     { id: "integral.beta", label: t("Beta 函數"), tier: 4, obscurity: 2, family: "integral", prereq: ["integral.improper"], radarAxis: "special",
       tags: ["beta-function"] },
     { id: "integral.gamma", label: t("Gamma 函數"), tier: 4, obscurity: 2, family: "integral", prereq: ["integral.improper"], radarAxis: "special",

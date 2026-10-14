@@ -197,6 +197,17 @@
     "burst-boss2-anti-006": { axes: [2, 1, 2], why: "∫x⁵/(1+x²) dx：多項式除法（三步商）再接 log。" },
     "burst-boss3-anti-006": { axes: [2, 1, 2], why: "∫x⁷/(1+x²) dx：同上，除法更長。" },
     "der-025": { axes: [2, 1, 2], why: "∂/∂x log(x²+y²)：計算是鏈鎖，但「把 y 當常數」的偏微分規則是還沒教就看不懂的符號。" },
+    // 題庫精修 2026-10：新題還沒有 rubric 那一刻，校準會退回標籤地板（wronskian／hessian／multivariable ≥ R4、
+    // partial-fraction ／IBP ≥ R3、limsup …），反推器就把地板當成作者原判。下面九題是作者出題時評的三軸，地板高估了它們。
+    "refine-derivatives-008": { axes: [1, 1, 2], why: "W(cosh x, sinh x) = cosh²x − sinh²x = 1：兩個函數互為導數，2×2 行列式一行就完，再用一次雙曲恆等式。wronskian 標籤的 R4 地板高估了。" },
+    "refine-derivatives-013": { axes: [2, 1, 2], why: "W(eˣcos x, eˣsin x)：微分兩個乘積再算 2×2 行列式，eˣ 的因子提出來剩 cos²+sin²。步驟兩三步、技巧必教。" },
+    "refine-derivatives-014": { axes: [2, 1, 2], why: "x^y 在 (e,1) 的 Hessian：三個二階偏導代點（f_xx 剛好是 0），再算 2×2 行列式。代點計算，不需要辨識結構。" },
+    "refine-derivatives-016": { axes: [1, 2, 2], why: "u = eˣcos y、v = eˣsin y 的 Jacobian：四個偏導直接寫、行列式化成 e^{2x}(cos²+sin²)。要認得這是 e^z 的實虛部才快，但硬算也只有一步。" },
+    "refine-derivatives-019": { axes: [2, 1, 2], why: "xy² = 16 上離原點最近：Lagrange 兩條方程消掉 λ 得 y² = 2x²，代回約束。標準的兩變數一約束題。" },
+    "refine-derivatives-020": { axes: [2, 1, 2], why: "(x²+y²)^{3/2} 在 (3,4) 的 Hessian：r = 5 讓三個二階偏導都是好算的分數，再算 2×2 行列式。" },
+    "refine-series-078": { axes: [1, 2, 1], why: "a_n = ((2+(−1)ⁿ)/5)ⁿ：開 n 次方直接得 3/5 與 1/5 兩個子列，limsup 是 3/5。一步，難在知道「極限不存在時看 limsup」。" },
+    "refine-integrals-038": { axes: [1, 1, 2], why: "選方法：分母 x²+x−2 一眼可分解、分子是一次 —— 部分分式。只問方法不用積完，partial-fraction 的 R3 地板是給要算完的題。" },
+    "refine-integrals-040": { axes: [1, 1, 2], why: "選方法：x·arctan x 是多項式乘超越函數的標準分部積分型。只問方法不用積完，IBP 的 R3 地板是給要算完的題。" },
     "der-033": { axes: [2, 1, 2], why: "∂²/∂x²(x²y+sin x)：同上，偏微分符號本身是門檻。" }
   };
 

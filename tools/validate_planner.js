@@ -141,8 +141,11 @@ Object.keys(scenarios).forEach((name) => {
 const tiny = calculus.filter((p) => p.rank === 1).slice(0, 15);
 const tinyPlan = planner.recipe(scenarios["只練過極限"], "daily15", ctx);
 const tinyFill = session.fill(tinyPlan, { problems: tiny, graph, seed: "tiny" });
-check("題庫極小時仍要抽滿", tinyFill.problems.length === tinyPlan.count,
-  `實際 ${tinyFill.problems.length}`);
+// 「抽滿」跟上面情境的定義一樣看 meta.complete：題數剛好，或為了守時間預算而調整過（R1 的題都很短，
+// session.fill 會往上補到 maxCount）。題數 = 題庫中位時限算出來的，題庫一長（2026-10 精修包 +260 題）目標就從 15 變 13，
+// 而這 15 題 R1 全部抽上去是對的行為 —— 以前寫死「== count」只是剛好碰上。
+check("題庫極小時仍要抽滿", tinyFill.meta.complete && tinyFill.problems.length >= Math.min(tinyPlan.count, tiny.length),
+  `要 ${tinyPlan.count} 實得 ${tinyFill.problems.length}（complete ${tinyFill.meta.complete}）`);
 check("降級必須被記錄下來", tinyFill.meta.fallbacks.length > 0);
 check("降級要能翻成一句人話", Boolean(session.explainFallbacks(tinyFill.meta)));
 check("降級說明不得出現 undefined",
