@@ -350,7 +350,7 @@ const COLUMNS = [
   ["axes", "三軸 S/O/L", 9, "Steps（步數）/ Obscurity（技巧冷門度）/ Load（計算負擔），各 1–3。", "src/kernel/rubric.js"],
   ["reviewed", "三軸人工複核", 8, "「是」＝有人逐題看過並寫了理由；其餘是從舊 rank 反推，未經人工複核。", "src/kernel/rubric_reviewed.js"],
   ["kind", "作答形式", 10, "answerKind 的中文名。", "題目物件 answerKind"],
-  ["time", "時限(秒)", 8, "題目上的時限（已套用 R 的上下限夾擠）。證明題執行時一律至少 900 秒。", "題目物件 timeLimit、src/problem_time_calibration.js"],
+  ["time", "時限(秒)", 8, "題目上的時限（已套用 R 的上下限夾擠）。證明題執行時一律至少 900 秒。", "題目物件 timeLimit、src/problem_difficulty_calibration.js（後段的時限校準）"],
   ["timeFlag", "時限疑慮", 28, "依規則標出可能不合理的時限：同作答形式同 R 中位數的 ≤0.4 倍或 ≥2.5 倍、作業表每格 <35 秒、長題幹 <60 秒等。", "本工具計算"],
   ["prompt", "題目", 50, "題幹原文（LaTeX 原樣），超過 120 字截斷。", "題目物件 prompt"],
   ["answer", "答案", 18, "參考答案（文字題取 canonical）。", "題目物件 answer / canonical"],
