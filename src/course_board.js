@@ -464,6 +464,8 @@
       let alive = 1;
       if (an.dieG <= g) alive = an.dieG === g ? 1 - cl(q / 0.35) : 0;
       if (beat >= an.dieBeat) alive = Math.min(alive, beat === an.dieBeat ? 1 - ease(entry) : 0);
+      // 畫到哪先寫（收掉的也寫）：慢的裝置上新一句的第一格可能晚過淡出的 320ms，上一句沒畫完的記號就會停在半截藏著
+      if (an.kind === "mark") { if (s.paths[0]) s.paths[0].style.strokeDashoffset = (1 - ease(cl(pr / 0.8))).toFixed(4); } else { s.paths[0].style.strokeDashoffset = (1 - ease(cl(pr / 0.75))).toFixed(4); s.paths[1].style.strokeDashoffset = (1 - cl((pr - 0.72) / 0.2)).toFixed(4); }
       if (pr <= 0 || alive <= 0) { setS(s.g, "opacity", "0"); if (s.lab) setS(s.lab, "opacity", "0"); if (s.term) setS(s.term, "color", ""); return; }
       setS(s.g, "opacity", alive >= 1 ? "" : alive.toFixed(3));
       const n0 = an.refs[0][0];
@@ -471,7 +473,6 @@
       const dx = an.wrong && at[n0] ? at[n0][0] - o0[0] : 0;
       const dy = an.wrong && at[n0] ? at[n0][1] - o0[1] : 0;
       setS(s.g, "transform", dx || dy ? `translate(${dx.toFixed(2)}px,${dy.toFixed(2)}px)` : "");
-      if (an.kind === "mark") { if (s.paths[0]) s.paths[0].style.strokeDashoffset = (1 - ease(cl(pr / 0.8))).toFixed(4); } else { s.paths[0].style.strokeDashoffset = (1 - ease(cl(pr / 0.75))).toFixed(4); s.paths[1].style.strokeDashoffset = (1 - cl((pr - 0.72) / 0.2)).toFixed(4); }
       if (s.lab) {
         const lo = cl((pr - 0.5) / 0.4) * alive;
         setS(s.lab, "opacity", lo.toFixed(3));
@@ -617,6 +618,8 @@
       return true;
     },
     tick() { if (B && B.M) { window.cancelAnimationFrame(raf); raf = 0; frame(performance.now()); } },
+    // 虛擬時鐘撥到這一句的第 ms 毫秒（之後照牆上時間繼續走）：E2E 驗「念到那個詞才開始」不必跟機器快慢賽跑
+    clock(ms) { if (!B || !B.M) return null; const t = performance.now() - ms; B.q0 = t; if (B.s0 !== null) B.s0 = t; B.last = ""; debug.tick(); return window.BuzzBoard.state(); },
     release() { if (B) { B.frozen = null; B.last = ""; kick(); } },
     rebuild() { if (B) { build(); B.last = ""; kick(); } }
   };
