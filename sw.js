@@ -29,8 +29,8 @@ const REV_HEADER = "x-buzz-rev";
 
 // ── 產生區：node tools/build_sw_revisions.js（不要手改）──
 // 這一版：設定頁顯示「版本 v… · id · 日期」；id 是下面 REVISIONS 的雜湊，快取名跟著它變（每次部署內容有變就一定是新快取）。
-const BUILD = {"version":"v1.3.0","id":"c548d09d","date":"2026-10-13"};
-const CACHE_NAME = "buzzcalculus-v1.3.0-c548d09d";
+const BUILD = {"version":"v1.3.0","id":"67e06c5d","date":"2026-10-13"};
+const CACHE_NAME = "buzzcalculus-v1.3.0-67e06c5d";
 // 安裝時預快取的核心（離線也能練題）。其他檔用到才快取 —— 見 REVISIONS。
 const APP_SHELL = [
   "./index.html",
@@ -169,9 +169,9 @@ const REVISIONS = {
   "./src/course_proof.js": "d728d59494",
   "./src/course_sections.js": "78d44bcf11",
   "./src/course_solve.js": "6e0f710762",
-  "./src/course_v2/ch-0a.js": "802c9e8caf",
-  "./src/course_v2/ch-0b.js": "480fa34957",
-  "./src/course_v2/ch-0c.js": "b37fb68e77",
+  "./src/course_v2/ch-0a.js": "f837d06a7f",
+  "./src/course_v2/ch-0b.js": "a295dfdf69",
+  "./src/course_v2/ch-0c.js": "2a2dcca647",
   "./src/course_v2/ch-10a.js": "9b2fd20af4",
   "./src/course_v2/ch-10b.js": "8d1fdca390",
   "./src/course_v2/ch-10c.js": "06ce11589b",
@@ -201,7 +201,7 @@ const REVISIONS = {
   "./src/course_v2/ch-1c.js": "4d70ebecb2",
   "./src/course_v2/ch-1d.js": "c5f7c27567",
   "./src/course_v2/ch-1e.js": "ade952e1a0",
-  "./src/course_v2/ch-2a.js": "9f0780e7cf",
+  "./src/course_v2/ch-2a.js": "f6037f3480",
   "./src/course_v2/ch-2b.js": "0037171eb0",
   "./src/course_v2/ch-2c.js": "a901bc889d",
   "./src/course_v2/ch-2d.js": "0d7fe7b6ee",
@@ -221,14 +221,14 @@ const REVISIONS = {
   "./src/course_v2/ch-5b.js": "1130d16294",
   "./src/course_v2/ch-5c.js": "ad80ebd8f1",
   "./src/course_v2/ch-5d.js": "18942cff40",
-  "./src/course_v2/ch-6a.js": "82b9cd7294",
+  "./src/course_v2/ch-6a.js": "c78a7f9470",
   "./src/course_v2/ch-6b.js": "bdf3f131dc",
   "./src/course_v2/ch-6c.js": "2e04de4462",
   "./src/course_v2/ch-6d.js": "63c95f16cd",
   "./src/course_v2/ch-6e.js": "32a5e65a59",
-  "./src/course_v2/ch-6f.js": "daee8c79b3",
+  "./src/course_v2/ch-6f.js": "5e60849fe8",
   "./src/course_v2/ch-7a.js": "e2e6275a0b",
-  "./src/course_v2/ch-7b.js": "3fb501f475",
+  "./src/course_v2/ch-7b.js": "435010b1bf",
   "./src/course_v2/ch-8a.js": "e8944f8ac7",
   "./src/course_v2/ch-8b.js": "8c87c47e09",
   "./src/course_v2/ch-8c.js": "0db6a041c3",
@@ -244,7 +244,7 @@ const REVISIONS = {
   "./src/course_v2/ch-9b-5.js": "a896dcae2b",
   "./src/course_v2/ch-9b-6.js": "188cbf072b",
   "./src/course_v2/map.js": "d562d34fa8",
-  "./src/course_v2/outline.js": "ce43e84e27",
+  "./src/course_v2/outline.js": "af2af1a629",
   "./src/course_v2_style.js": "2c61c5c366",
   "./src/course_v2_ui.js": "6fffc60f3b",
   "./src/course_video.js": "18cfde7727",
@@ -265,7 +265,7 @@ const REVISIONS = {
   "./src/kernel/metrics.js": "815c8965eb",
   "./src/kernel/origin.js": "038a2b496b",
   "./src/kernel/planner.js": "7de9b92876",
-  "./src/kernel/problem_profiles.js": "0945fa5bdd",
+  "./src/kernel/problem_profiles.js": "ac7d2e6a57",
   "./src/kernel/proof_lang.js": "dcfe4981bf",
   "./src/kernel/proof_surface.js": "300a62039f",
   "./src/kernel/records_v2.js": "1b0cc9d4a6",
