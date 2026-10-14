@@ -77,14 +77,19 @@ const narration = readNarration();
 // （部署不帶旁白）；沒標 → 部署時 fetch_media.js 抓進同網域的 /media/narration/。檔名都是 <課>-<f>.mp3。
 const MANIFEST = path.join(ROOT, "media", "manifest.json");
 const manifest = fs.existsSync(MANIFEST) ? JSON.parse(fs.readFileSync(MANIFEST, "utf8")) : {};
-const narrationAsset = (manifest.assets || []).find((a) => /^narration\//.test(a.name));
-const narrationTag = narrationAsset ? narrationAsset.tag || manifest.tag : "";
-// 只出貨已經上傳（列在清單上）的那一支；新的還沒上傳就用 narration.json 留著的 prev（見 build_narration.js 檔頭）
+// 每一個聲音各一個前綴：女聲 narration/、男聲 narration/m/（串流的時候是 Release 附件名的 narration.、narration.m.）
+const narrationBaseOf = (v) => {
+  const dir = v === "f" ? "" : `${v}/`;
+  const asset = (manifest.assets || []).find((a) => a.name.startsWith(`narration/${dir}`) && !a.name.slice(`narration/${dir}`.length).includes("/"));
+  const tag = asset ? asset.tag || manifest.tag : "";
+  return tag && ((manifest.releases || {})[tag] || {}).stream
+    ? `https://github.com/${manifest.repo}/releases/download/${tag}/narration.${dir.replace("/", ".")}`
+    : `media/narration/${dir}`;
+};
+// 只出貨已經上傳（列在清單上）的那一支；新的還沒上傳就用 narration.json 留著的 prev（見 build_narration.js 檔頭）。
+// 男聲沒上傳就不出貨（播放器只有女聲）。
 const published = new Set((manifest.assets || []).map((a) => a.name));
 const { anchorMs } = require("./lib/course_board_check.js");
-const narrationBase = narrationTag && ((manifest.releases || {})[narrationTag] || {}).stream
-  ? `https://github.com/${manifest.repo}/releases/download/${narrationTag}/narration.`
-  : "media/narration/";
 // 影片的版本：每支影片（淺色／深色 × 720p／1080p／預覽圖）的 sha256 合起來取 8 碼，播放器接在網址後面（?v=）。
 // 影片檔名沒有雜湊，同名換檔時靠它換網址 —— 所以 vercel.json 才能對帶 ?v= 的 /media/ 回 immutable（一年）。
 const videoRev = Object.fromEntries((manifest.videos || []).map((id) => {
@@ -124,25 +129,36 @@ function shipLesson(lesson) {
     // 影片：只出貨短名與顯示要用的欄位；網址（主題、解析度）在畫面那邊組
     ...(lesson.video ? { video: { id: lesson.video.id, after: lesson.video.after === undefined ? 0 : lesson.video.after, duration: lesson.video.duration, caption: lesson.video.caption } } : {}),
     // 分節：原樣出貨（規格見 SCHEMA.md；畫面在 src/course_sections.js，有分節的課才抓）。
-    // 有旁白錄音的課多帶 voice（這一課那一支 mp3 檔名裡的 f8），句子多帶 t（在那一支裡的 [起, 訖] 毫秒）；
+    // 有旁白錄音的課多帶 voice（女聲那一支 mp3 檔名裡的 f8），句子多帶 t（在那一支裡的 [起, 訖] 毫秒）；
+    // 男聲（上傳了才帶）同一套換個名字：課的 vm、句子的 tm、問句的 why.tm、黑板動作的 mm（男聲自己的逐字時間點換出來的錨點）。
     // 字改過、還沒重錄的句子不帶 t（播放時那一句只停一下）
     ...(Array.isArray(lesson.sections) && lesson.sections.length ? (() => {
-      const voice = voiceOf(narration, lesson, published);
+      const vs = [["f", voiceOf(narration, lesson, published, "f")], ["m", voiceOf(narration, lesson, published, "m")]].filter(([, x]) => x);
+      const F = { f: { lesson: "voice", t: "t", ms: "ms" }, m: { lesson: "vm", t: "tm", ms: "mm" } };
       return {
-        ...(voice ? { voice: voice.f } : {}),
+        ...Object.fromEntries(vs.map(([v, x]) => [F[v].lesson, x.f])),
         sections: lesson.sections.map((sec, si) => ({
           ...sec,
           beats: sec.beats.map((b, bi) => {
-            const t = voice && voice.beats[`${si}-${bi}`];
-            const q = voice && b.why && voice.beats[`${si}-${bi}q`]; // 證明節的問句：why.t
-            // 黑板：on（念到哪個詞）→ ms（從那一段錄音的開頭算）；問著的時候（不是 why: true 的動作）照問句的錄音
-            const board = Array.isArray(b.board) && voice ? b.board.map((a) => {
-              const key = b.why && !a.why ? `${si}-${bi}q` : `${si}-${bi}`;
-              const w = voice.words && voice.words[key];
-              const ms = a.on && w ? anchorMs(a.on, key.endsWith("q") ? b.why.say : b.say, w) : null;
-              return ms === null ? a : { ...a, ms };
-            }) : b.board;
-            return { ...b, ...(board ? { board } : {}), ...(t ? { t } : {}), ...(q ? { why: { ...b.why, t: q } } : {}) };
+            const out = { ...b };
+            const why = b.why ? { ...b.why } : null;
+            const board = Array.isArray(b.board) ? b.board.map((a) => ({ ...a })) : null;
+            vs.forEach(([v, x]) => {
+              const t = x.beats[`${si}-${bi}`];
+              const q = why && x.beats[`${si}-${bi}q`]; // 證明節的問句：why.t
+              if (t) out[F[v].t] = t;
+              if (q) why[F[v].t] = q;
+              // 黑板：on（念到哪個詞）→ ms（從那一段錄音的開頭算）；問著的時候（不是 why: true 的動作）照問句的錄音
+              if (board) board.forEach((a) => {
+                const key = b.why && !a.why ? `${si}-${bi}q` : `${si}-${bi}`;
+                const w = x.words && x.words[key];
+                const ms = a.on && w ? anchorMs(a.on, key.endsWith("q") ? b.why.say : b.say, w) : null;
+                if (ms !== null) a[F[v].ms] = ms;
+              });
+            });
+            if (board) out.board = board;
+            if (why) out.why = why;
+            return out;
           })
         }))
       };
@@ -162,8 +178,9 @@ function shipLesson(lesson) {
 
 // 大綱裡每一課：寫好的課帶分鐘數與推薦題（課程表算進度、回饋找「哪一課教的」都要）
 const outline = {
-  // 旁白錄音的網址前綴：播放器抓 <前綴><課>-<voice>.mp3
-  narration: narrationBase,
+  // 旁白錄音的網址前綴：播放器抓 <前綴><課>-<voice>.mp3（男聲 <narrationM><課>-<vm>.mp3）
+  narration: narrationBaseOf("f"),
+  narrationM: narrationBaseOf("m"),
   videoRev,
   stages: stages.map((s) => ({
     n: s.n,
