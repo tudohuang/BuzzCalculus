@@ -5,6 +5,7 @@
 //      （tools/content/method_taxonomy.js；家族要屬於題目自己的主題）
 //   2. 課程用到的題（推薦題、範例）都有 prerequisiteGate；先修課都是大綱裡真的課；
 //      推薦題的先修課不能排在它所在的那一課之後（不然課程練習會把自己的推薦題擋掉）
+//      ＋ 第三階段：純技巧推得的先修課（rawGates，含 GATE_FIXES 與覆寫）晚於所在的課 —— 核心題與一般推薦題算錯，挑戰題只計數
 //   3. 人工覆寫：題號存在、欄位合法、每筆都寫了 why
 //   4. 上線的側表 == 現在重新產生的（忘了 regen 在這裡也會紅，不只 regen_all --check）
 // 二、抽題器（第二階段）
@@ -79,6 +80,21 @@ Object.entries(built.course.usage).forEach(([pid, uses]) => {
     if (late.length) fail(`${pid}：在〈${u.lesson}〉當${u.kind}，先修課 ${late.join("、")} 卻排在後面`);
   });
 });
+
+// 純技巧推得的先修課（meta.rawGates，含 GATE_FIXES 與覆寫）晚於用它的課：核心題與一般推薦題不准（要嘛修規則、要嘛移課），
+// 挑戰題可以（挑戰本來就允許碰一點還沒教的東西，例如 ∫₀^∞ 當作 b → ∞ 的極限）—— 只印數量。
+let stretch = 0;
+Object.entries(built.course.usage).forEach(([pid, uses]) => {
+  const m = built.meta.get(pid);
+  if (!m || !m.rawGates.length) return;
+  const late = Math.max(...m.rawGates.map((g) => lessonIdx.get(g)));
+  uses.forEach((u) => {
+    if (u.kind === "worked" || late <= u.index) return;
+    if (u.kind === "challenge") { stretch += 1; return; }
+    fail(`${pid}：在〈${u.lesson}〉當${u.kind === "core" ? "核心" : "一般"}推薦題，但技巧要到〈${built.course.order[late]}〉才教（修 GATE_FIXES／覆寫 prerequisiteGate，或把題移到對的課、改成挑戰）`);
+  });
+});
+console.log(`先修課對照：推薦題的技巧先修課都不晚於所在的課（挑戰題超前 ${stretch} 筆，允許）`);
 
 const overrides = JSON.parse(fs.readFileSync(OVERRIDES_FILE, "utf8")).problems || {};
 Object.entries(overrides).forEach(([id, ov]) => {
