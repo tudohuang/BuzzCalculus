@@ -152,6 +152,18 @@ async function run() {
       still = Math.abs(q.y - p.y) < 0.5 ? still + 1 : 0;
       p = q;
     }
+    // 位置不動不代表點得到：答完 why 之後「下一句」回來的那一刻在 360×740 會落在播放列／分頁列底下（y≈695），
+    // 分節自己的捲動對位稍後才把它帶上來。這時點下去會點到分頁列的「課程」—— 整個離開這一課
+    // （「360 寬：where 做完」本機紅、CI 綠的原因：CI 的 BUZZ_E2E_SLOW 讓前面的等待長到對位已經做完）。
+    // 等狀態：觸控點上的元素要是目標本身（或在它裡面）才點；等不到就再捲一次到中間。
+    const hitExpr = (pt) => `const el = ${find}; if (!el) return null; const h = document.elementFromPoint(${pt.x}, ${pt.y}); return Boolean(h && el.contains(h));`;
+    for (let k = 0; k < 40 && !(await evaluate(hitExpr(p))); k += 1) {
+      await sleep(100);
+      if (k === 15) await evaluate(`const el = ${find}; if (el) el.scrollIntoView({ block: "center" }); return 1;`);
+      const q = await evaluate(`const el = ${find}; if (!el) return null; const r = el.getBoundingClientRect(); return { x: r.left + Math.min(r.width / 2, 60), y: r.top + r.height / 2 };`);
+      if (!q) return false;
+      p = q;
+    }
     if (touch) {
       await chrome.send("Input.dispatchTouchEvent", { type: "touchStart", touchPoints: [{ x: p.x, y: p.y }] });
       await chrome.send("Input.dispatchTouchEvent", { type: "touchEnd", touchPoints: [] });
@@ -187,6 +199,9 @@ async function run() {
       await tap('[data-cv2s-next]');
     }
     await answerWhy();
+    // 動作卡（小測／排順序／用在哪一步）在最後一句出來之後才畫上去：先等它在 —— tap 找不到元素會直接回 false，不會等
+    const actSel = sec.check !== undefined || sec.predict ? '[data-action="course-s-pick"]' : sec.order ? '[data-action="course-s-ord"]' : sec.where ? '[data-action="course-s-whr"]' : null;
+    if (actSel) await waitFor(`[...document.querySelectorAll(${JSON.stringify(actSel)})].some((n) => window.__s.visible(n))`, 5000);
     if (sec.check !== undefined) await tap(`[data-action="course-s-pick"][data-kind="check"][data-option="${correctOf(lesson.checks[sec.check])}"]`);
     if (sec.predict) await tap(`[data-action="course-s-pick"][data-kind="predict"][data-option="0"]`);
     if (sec.order) for (let j = 0; j < sec.order.steps.length; j += 1) await tap(`[data-action="course-s-ord"][data-step="${j}"]`);
@@ -841,7 +856,10 @@ async function run() {
     const g360 = await evaluate(`await new Promise((r) => setTimeout(r, 900)); const a = document.querySelector('[data-cv2s-act="why"]').getBoundingClientRect(); const d = document.querySelector(".cv2s-dock").getBoundingClientRect(); return { overflow: window.__s.overflow(), small: window.__s.small(), bottom: Math.round(a.bottom), dock: Math.round(d.top) };`);
     check("360 寬：why 不溢出、按鈕 ≥ 40px、在播放列上面", g360.overflow <= 1 && !g360.small.length && g360.bottom <= g360.dock - 7, JSON.stringify(g360));
     await finishSection(RL);
-    const w360 = await evaluate(`await new Promise((r) => setTimeout(r, 700)); return { done: /對了/.test(window.__s.text('[data-cv2s-act="where"]')), overflow: window.__s.overflow(), small: window.__s.small() };`);
+    // 等狀態，不等時間：where 卡打勾（「對了」）才量（以前是固定等 700ms）
+    const whereOk = `/對了/.test(window.__s.text('[data-cv2s-act="where"]'))`;
+    await waitFor(whereOk, 5000);
+    const w360 = await evaluate(`return { done: ${whereOk}, overflow: window.__s.overflow(), small: window.__s.small() };`);
     check("360 寬：where 做完、不溢出、按鈕 ≥ 40px", w360.done && w360.overflow <= 1 && !w360.small.length, JSON.stringify(w360));
     await chrome.send("Emulation.setDeviceMetricsOverride", PHONE);
 
