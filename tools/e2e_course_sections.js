@@ -12,6 +12,8 @@
 //   旁白（一課一支 mp3、每一句 t = [起, 訖]）：按播放之前沒有任何 /media/narration/ 請求；按了只抓這一課那一支（preload=none、Range 串流）；
 //   第二句接著第一句的訖點念；串流設定（Release 網址）照樣播；念完自己出下一句、圖跟著動；念到最後一句停在動作前；
 //   下一節接著念；暫停不再往下、繼續接著；語速設到 playbackRate（換句之後還在）；字幕是亮著那一句的 say；重開這一課就停；載不到（先重試一次）留一行字、點的照樣做完。
+//   兩個聲音（女聲預設／男聲）：旁白列上切、只抓選的那一支、念到一半切（同一句、從男聲那一句的起點）、暫停中切不出聲、設定頁同一個值；
+//   這一課沒有男聲 → 女聲＋一行字、沒有切換鈕；男聲 404 → 重試後換女聲接著念＋一行字。
 //   跟著念（390／360／430 寬、DPR 3、字幕、1.5×）：每一句都在 dock 上面、不被黏著的圖蓋住；dock 底 = 分頁列頂 − 8；視窗變矮照樣；
 //   自己往上捲不被拉回、下一句才帶回；念完動作在 dock 上面、捲到底「下一節」清得開。
 //   證明節（course_proof.js，有證明節的課才抓）：why 擋在白話前面（點句子、→ 都不跳過）、選錯看理由留在原地、選對出白話與「下一句」、直接看；
@@ -82,7 +84,7 @@ const HELPERS = `
     files(re) { return performance.getEntriesByType("resource").map((e) => e.name).filter((n) => (re || /course_sections\\.js/).test(n)).length; },
     overflow() { const d = document.documentElement; return d.scrollWidth - d.clientWidth; },
     rect(el) { const r = el.getBoundingClientRect(); return [r.left, r.top, r.width, r.height].map((v) => Math.round(v * 10) / 10).join(","); },
-    dockSmall() { return [...document.querySelectorAll(".cv2s-dock button")].map((n) => { const r = n.getBoundingClientRect(); return Math.round(Math.min(r.width, r.height)); }).filter((s) => s < 40); },
+    dockSmall() { return [...document.querySelectorAll(".cv2s-dock button")].filter((n) => window.__s.visible(n)).map((n) => { const r = n.getBoundingClientRect(); return Math.round(Math.min(r.width, r.height)); }).filter((s) => s < 40); },
     small() { return [...document.querySelectorAll("[data-cv2s] button")].filter((n) => window.__s.visible(n) && !n.classList.contains("cv2-link")).map((n) => { const r = n.getBoundingClientRect(); return { side: Math.round(Math.min(r.width, r.height)), label: (n.textContent || n.getAttribute("aria-label") || "").trim().slice(0, 12) }; }).filter((x) => x.side < 40); },
     // 第一屏上第一塊教的東西：有黑板的節是黑板（句子的 show 這時只給螢幕閱讀器、畫面上是黑板），沒有就是第一句
     lead() { const sec = document.querySelector("[data-cv2s] .cv2s-sec"); const bd = sec && sec.querySelector(".cvb"); const b = sec && sec.querySelector(".cv2s-beat"); const t = (bd && window.__s.visible(bd) ? bd : b).getBoundingClientRect(); const r = b.getBoundingClientRect(); return { top: Math.round(t.top), board: Boolean(bd), beatBottom: Math.round(r.bottom), ih: innerHeight }; },
@@ -206,16 +208,19 @@ async function run() {
 
   // 一課一支：回的檔長 narr.total 毫秒（retime 把每一句的 t 改成一句 narr.ms、首尾相接），照 Range 回 206（跟 Vercel／Release 一樣）。
   // 同網域（media/narration/）與 Release 串流（…/releases/download/<tag>/narration.<課>-<f>.mp3）兩種網址都攔。
-  const narr = { mode: "fake", ms: 600, total: 600, urls: [], ranges: [] };
+  // 男聲（narration/m/…、Release 的 narration.m.…）：記成 m/<課>-<名>.mp3、長度 narr.totalM；failM = 只有男聲回 404
+  const narr = { mode: "fake", failM: false, ms: 600, total: 600, totalM: 600, urls: [], ranges: [] };
   chrome.on("Fetch.requestPaused", (p) => {
-    narr.urls.push(p.request.url.replace(/^.*\/media\/narration\//, "").replace(/^.*\/releases\/download\/[^/]+\/narration\./, ""));
+    const u = p.request.url.replace(/^.*\/media\/narration\//, "").replace(/^.*\/releases\/download\/[^/]+\/narration\.m\./, "m/").replace(/^.*\/releases\/download\/[^/]+\/narration\./, "");
+    const male = u.startsWith("m/");
+    narr.urls.push(u);
     const range = Object.entries(p.request.headers || {}).find(([k]) => k.toLowerCase() === "range");
     narr.ranges.push(range ? range[1] : "");
-    if (narr.mode === "fail") {
+    if (narr.mode === "fail" || (male && narr.failM)) {
       chrome.send("Fetch.fulfillRequest", { requestId: p.requestId, responseCode: 404, responseHeaders: [{ name: "Content-Type", value: "text/plain" }], body: Buffer.from("404").toString("base64") }).catch(() => {});
       return;
     }
-    const whole = silentMp3(narr.total);
+    const whole = silentMp3(male ? narr.totalM : narr.total);
     const m = range && /bytes=(\d+)-(\d*)/.exec(range[1]);
     const from = m ? Math.min(Number(m[1]), whole.length - 1) : 0;
     const to = m && m[2] ? Math.min(Number(m[2]), whole.length - 1) : whole.length - 1;
@@ -226,10 +231,15 @@ async function run() {
   });
   await chrome.send("Fetch.enable", { patterns: [{ urlPattern: "*/media/narration/*", requestStage: "Request" }, { urlPattern: "*/releases/download/*/narration.*", requestStage: "Request" }] });
   // 這一課的旁白改成測試控制的長度：每一句 ms 毫秒、首尾相接（跟 build_narration 接出來的一樣），錄音檔名換成 name（Chrome 的媒體快取以網址為準：要測「載不到」得換一個沒抓過的網址）
-  const retime = async (id, ms, name = "e2etest0") => {
+  // male = { name, ms }：男聲也放一支（vm、tm、why.tm；一句 male.ms）；沒給就把男聲拿掉（這一課只有女聲）
+  const retime = async (id, ms, name = "e2etest0", male = null) => {
     narr.ms = ms;
-    narr.total = await evaluate(`const L = window.BUZZ_COURSE_V2_LESSONS[${JSON.stringify(id)}]; let at = 0; L.voice = ${JSON.stringify(name)};
-      L.sections.forEach((s) => s.beats.forEach((b) => { if (b.why && b.why.say) { b.why.t = [at, at + ${ms}]; at += ${ms}; } if (b.say) { b.t = [at, at + ${ms}]; at += ${ms}; } else delete b.t; })); return at;`);
+    const mm = male ? male.ms : 0;
+    const [f, m] = await evaluate(`const L = window.BUZZ_COURSE_V2_LESSONS[${JSON.stringify(id)}]; let at = 0, am = 0; L.voice = ${JSON.stringify(name)}; ${male ? `L.vm = ${JSON.stringify(male.name)};` : "delete L.vm;"}
+      const put = (o, k) => { o.t = [at, at + ${ms}]; at += ${ms}; if (${mm}) { o.tm = [am, am + ${mm}]; am += ${mm}; } else delete o.tm; };
+      L.sections.forEach((s) => s.beats.forEach((b) => { if (b.why && b.why.say) put(b.why); if (b.say) put(b); else { delete b.t; delete b.tm; } })); return [at, am];`);
+    narr.total = f;
+    narr.totalM = m || 600;
     return narr.total;
   };
 
@@ -497,6 +507,90 @@ async function run() {
     await tap("[data-cv2s-play]"); // 先停下來（停在動作前就是關掉；還在念就是暫停），免得重繪中按偏
     await tap("[data-cv2s-subs]");
     check("字幕關掉", await waitFor(`document.querySelectorAll("[data-cv2s-say]").length === 0 && (window.__s.rec().settings || {}).narrSubs === false`, 3000), JSON.stringify(await evaluate(`return { n: document.querySelectorAll("[data-cv2s-say]").length, v: window.BuzzCourseSections.voice() };`)));
+
+    /* ── 兩個聲音：女聲（預設）／男聲。旁白列上切、只抓選的那一支、念到一半切（同一句換那一支）、暫停中切、
+       記住（設定頁是同一個值）、選的那一個這一課沒有或載不到 → 用另一個並留一行字 ── */
+    const VS = `window.BuzzCourseSections.voice()`;
+    const tOf = (si, bi, k) => evaluate(`const b = window.BUZZ_COURSE_V2_LESSONS[${JSON.stringify(WIDGET.id)}].sections[${si}].beats[${bi}]; return b.${k} ? b.${k}[0] : -1;`);
+    const vbeat = async () => { const v = await evaluate(`return ${VS};`); const [si, bi] = v.beat.split("-").map(Number); return { v, si, bi }; };
+    await evaluate(`window.__s.open("${WIDGET.id}"); return 1;`);
+    await waitFor(`window.__s.root() && !${VS}.on`, 4000);
+    await retime(WIDGET.id, 3000, "e2evf0", { name: "e2evm0", ms: 4000 });
+    await tap(".cv2s-dot:nth-child(1)");
+    await waitFor(`window.__s.si() === 0`);
+    const vx0 = await evaluate(`const b = document.querySelector("[data-cv2s-vox]"); return { shown: window.__s.visible(b), label: window.__s.text("[data-cv2s-vox]"), saved: (window.__s.rec().settings || {}).narrVoice || "", small: window.__s.dockSmall(), overflow: window.__s.overflow(), dockH: Math.round(document.querySelector(".cv2s-dock .cv2s-voice").getBoundingClientRect().height) };`);
+    check("兩個聲音都有的課：旁白列多一顆「女聲」（預設、沒存）、按鈕 ≥ 40px、一行、不溢出", vx0.shown && vx0.label === "女聲" && !vx0.saved && !vx0.small.length && vx0.dockH <= 52 && vx0.overflow <= 1, JSON.stringify(vx0));
+    let u0 = narr.urls.length;
+    await tap("[data-cv2s-play]");
+    await waitFor(`${VS}.on && ${VS}.at > ${VS}.start + 300`, 5000);
+    check("女聲：只抓女聲那一支（沒有男聲 m/ 的請求）", narr.urls.length > u0 && narr.urls.slice(u0).every((u) => u === `${WIDGET.id}-e2evf0.mp3`), narr.urls.slice(u0).join(","));
+    const pre = await vbeat();
+    u0 = narr.urls.length;
+    await tap("[data-cv2s-vox]");
+    await waitFor(`${VS}.v === "m" && ${VS}.src.indexOf("e2evm0") >= 0`, 3000);
+    const sw = await vbeat();
+    const swView = await evaluate(`return { label: window.__s.text("[data-cv2s-vox]"), saved: (window.__s.rec().settings || {}).narrVoice, note: window.__s.visible(document.querySelector("[data-cv2s-voice-off]")) };`);
+    const tmStart = await tOf(sw.si, sw.bi, "tm");
+    check("念到一半切男聲：還在同一句、換成男聲那一支、從那一句男聲的起點念、記住", swView.saved === "m" && swView.label === "男聲" && !swView.note && sw.v.v === "m" && (sw.v.beat === pre.v.beat || sw.si === pre.si) && sw.v.start === tmStart && sw.v.src.endsWith(`m/${WIDGET.id}-e2evm0.mp3`) && narr.urls.slice(u0).every((u) => u === `m/${WIDGET.id}-e2evm0.mp3`), JSON.stringify({ pre: pre.v.beat, sw: sw.v, tmStart, swView, urls: narr.urls.slice(u0) }));
+    check("男聲念完那一句自己往下（下一句接男聲的時間）", await waitFor(`${VS}.beat !== ${JSON.stringify(sw.v.beat)} && ${VS}.v === "m"`, 7000) && (await evaluate(`const v = ${VS}; const [si, bi] = v.beat.split("-").map(Number); const b = window.BUZZ_COURSE_V2_LESSONS[${JSON.stringify(WIDGET.id)}].sections[si].beats[bi]; return v.wait || (b.tm && v.start === b.tm[0]);`)), JSON.stringify(await evaluate(`return ${VS};`)));
+    // 暫停中切回女聲：不自己出聲；按播放用女聲從同一句念
+    await tap("[data-cv2s-play]");
+    const pz = await vbeat();
+    u0 = narr.urls.length;
+    await tap("[data-cv2s-vox]");
+    await sleep(500);
+    const pzv = await evaluate(`return { v: ${VS}, label: window.__s.text("[data-cv2s-vox]"), saved: (window.__s.rec().settings || {}).narrVoice };`);
+    check("暫停中切回女聲：還是暫停、不抓檔、記住", pzv.v.on && (pzv.v.paused || pzv.v.wait) && pzv.label === "女聲" && pzv.saved === "f" && narr.urls.length === u0, JSON.stringify({ pz: pz.v, pzv, urls: narr.urls.slice(u0) }));
+    if (!pz.v.wait) {
+      await tap("[data-cv2s-play]");
+      await waitFor(`${VS}.src.indexOf("e2evf0") >= 0 && !${VS}.paused`, 3000);
+      const back = await vbeat();
+      check("按播放：用女聲從同一句的起點念", back.v.v === "f" && back.v.beat === pz.v.beat && back.v.start === (await tOf(back.si, back.bi, "t")), JSON.stringify({ pz: pz.v.beat, back: back.v }));
+      await tap("[data-cv2s-play]");
+    }
+    // 設定頁：同一個值（旁白聲音 女聲／男聲），在那裡改、回到課裡跟著換
+    await evaluate(`const b = document.createElement("button"); b.dataset.action = "open-settings"; document.querySelector("#app").appendChild(b); b.click(); return 1;`);
+    check("設定頁有「旁白聲音」一列、女聲亮著", await waitFor(`document.querySelector('[data-action="set-narr-voice"][data-voice="f"][aria-pressed="true"]')`, 4000));
+    await evaluate(`document.querySelector('[data-action="set-narr-voice"][data-voice="m"]').click(); return 1;`);
+    check("設定頁點男聲：記住、男聲亮著", await waitFor(`(window.__s.rec().settings || {}).narrVoice === "m" && document.querySelector('[data-action="set-narr-voice"][data-voice="m"][aria-pressed="true"]')`, 3000));
+    check("回到課裡：旁白列顯示男聲", await openLesson(WIDGET.id) && await waitFor(`window.__s.text("[data-cv2s-vox]") === "男聲"`, 3000), await evaluate(`return window.__s.text("[data-cv2s-vox]");`));
+    // 男聲（選的）一開始就只抓男聲那一支
+    await retime(WIDGET.id, 3000, "e2evf3", { name: "e2evm3", ms: 3500 });
+    await tap(".cv2s-dot:nth-child(1)");
+    await waitFor(`window.__s.si() === 0`);
+    u0 = narr.urls.length;
+    await tap("[data-cv2s-play]");
+    await waitFor(`${VS}.on && ${VS}.at > ${VS}.start + 300`, 5000);
+    check("選男聲：只抓男聲那一支", narr.urls.length > u0 && narr.urls.slice(u0).every((u) => u === `m/${WIDGET.id}-e2evm3.mp3`) && (await evaluate(`return ${VS}.v;`)) === "m", narr.urls.slice(u0).join(","));
+    await tap("[data-cv2s-play]");
+    // 這一課沒有男聲（還沒上傳）：用女聲、旁白列沒有切換鈕、留一行字
+    await evaluate(`window.__s.open("${WIDGET.id}"); return 1;`);
+    await waitFor(`window.__s.root() && !${VS}.on`, 4000);
+    await retime(WIDGET.id, 3000, "e2evf1");
+    await tap(".cv2s-dot:nth-child(1)");
+    await waitFor(`window.__s.si() === 0`);
+    u0 = narr.urls.length;
+    await tap("[data-cv2s-play]");
+    const nom = await waitFor(`${VS}.on && ${VS}.v === "f" && ${VS}.src.indexOf("e2evf1") >= 0`, 4000);
+    const nomView = await evaluate(`const off = document.querySelector("[data-cv2s-voice-off]"); return { v: ${VS}, vox: window.__s.visible(document.querySelector("[data-cv2s-vox]")), line: window.__s.visible(off) ? window.__s.text("[data-cv2s-voice-off]") : "" };`);
+    check("這一課沒有男聲：用女聲念、沒有切換鈕、留一行字、不去抓男聲", nom && nomView.v.fb && !nomView.vox && /男聲/.test(nomView.line) && nomView.line.length <= 20 && narr.urls.slice(u0).every((u) => !u.startsWith("m/")), JSON.stringify({ nomView, urls: narr.urls.slice(u0) }));
+    await tap("[data-cv2s-play]");
+    // 男聲的檔載不到（404）：重試之後換女聲、從同一句接著念、留一行字
+    await evaluate(`window.__s.open("${WIDGET.id}"); return 1;`);
+    await waitFor(`window.__s.root() && !${VS}.on`, 4000);
+    narr.failM = true;
+    await retime(WIDGET.id, 3000, "e2evf2", { name: "e2evm2", ms: 3500 });
+    await tap(".cv2s-dot:nth-child(1)");
+    await waitFor(`window.__s.si() === 0`);
+    u0 = narr.urls.length;
+    await tap("[data-cv2s-play]");
+    const fbOk = await waitFor(`${VS}.on && ${VS}.v === "f" && ${VS}.src.indexOf("e2evf2") >= 0 && ${VS}.at > ${VS}.start + 200`, 8000);
+    const fbView = await evaluate(`const off = document.querySelector("[data-cv2s-voice-off]"); return { v: ${VS}, line: window.__s.visible(off) ? window.__s.text("[data-cv2s-voice-off]") : "" };`);
+    check("男聲載不到：換女聲接著念（同一句）、留一行字", fbOk && fbView.v.beat === "0-0" && fbView.v.fb && /男聲/.test(fbView.line) && narr.urls.slice(u0).some((u) => u === `m/${WIDGET.id}-e2evm2.mp3`), JSON.stringify({ fbView, urls: narr.urls.slice(u0) }));
+    await tap("[data-cv2s-play]");
+    narr.failM = false;
+    // 後面的測試用女聲（預設）
+    await evaluate(`const r = window.__s.rec(); r.settings = { ...(r.settings || {}), narrVoice: "f" }; localStorage.setItem("buzzcalculus.records.v1", JSON.stringify(r)); return 1;`);
     // 串流設定（media/manifest.json 的 stream → 大綱的 narration 是 Release 的下載網址）：跨網域照樣播、自己往下
     await evaluate(`window.__base = window.BUZZ_COURSE_V2.narration; window.BUZZ_COURSE_V2.narration = "https://github.com/tudohuang/BuzzCalculus/releases/download/media-test/narration."; return 1;`);
     await evaluate(`window.__s.open("${WIDGET.id}"); return 1;`);
@@ -540,7 +634,8 @@ async function run() {
       await evaluate(`const r = window.__s.rec(); r.settings = { ...(r.settings || {}), narrSubs: true, narrRate: 1.5 }; localStorage.setItem("buzzcalculus.records.v1", JSON.stringify(r)); return 1;`);
       check(`${tag}：打開 ${FOLLOW.id}`, await openLesson(FOLLOW.id));
       // 自己往上捲的那一種把一句拉長（1.5× 念 2 秒）：捲動要在同一句裡做完、量完，慢機器上 1.2 秒一句不夠
-      await retime(FOLLOW.id, vp.wheel ? 3000 : 1800, `e2ef${vp.width}`);
+      // 男聲也放一支：旁白列是上傳之後的樣子（多一顆切換鈕），一樣要一行、不擋字；選的是女聲，男聲那一支不會被抓
+      await retime(FOLLOW.id, vp.wheel ? 3000 : 1800, `e2ef${vp.width}`, { name: `e2efm${vp.width}`, ms: 1800 });
       await tap(`.cv2s-dot:nth-child(${FOLLOW_SI + 1})`);
       await waitFor(`window.__s.si() === ${FOLLOW_SI}`);
       await evaluate(`scrollTo(0, 0); window.__m = () => {

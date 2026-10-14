@@ -5,6 +5,7 @@
 //   時間（虛擬時鐘，沒開旁白）：圈在「念到那個詞」的時候才開始（字數 × 每字毫秒），點一下＝這一句畫完；
 //   時間（假的旁白時鐘，直接換 BuzzCourseSections.voice()）：錨點之前一格沒開始、之後一格開始了；1× 與 1.5× 開始的錄音時間一樣；
 //     暫停時進度與畫面都不動；往回拖會倒回去（記號沒了）、往後拖直接畫完；卡住（currentTime 不動）最多往前估 100ms；
+//     男聲（voice().v = m）用男聲自己的 tm 與錨點 mm：男聲的錨點前沒開始、之後開始，女聲錨點的時間點上還沒開始；換回女聲照女聲的；
 //   真的 <audio>（測試回的無聲 mp3）1.5× 播：黑板的時間跟 currentTime 差不到 80ms；
 //   變形：畫完那一行的 KaTeX 字跟目標式子一樣、飛的複製收掉；「為什麼」：問著不畫答案、答了才畫；reduced-motion 直接畫好；
 //   版面：三課每一節每一步在 360（淺／深）量過不疊、不出板、字夠大、對比夠（tools/lib/board_lint.js，同 lint_board_layout.js）；
@@ -201,7 +202,8 @@ async function run() {
 
     /* ── 假的旁白時鐘：時間 = currentTime ── */
     await evaluate(`return window.__b.settle();`);
-    check("重開、回到「公式」那一節的第一句", await openLesson(CHAIN.id) && await go(F_SI, CHAIN.id) && (await evaluate(`return window.__b.st().at;`)) === 0);
+    const reo = [await openLesson(CHAIN.id), await go(F_SI, CHAIN.id)];
+    check("重開、回到「公式」那一節的第一句", reo[0] && reo[1] && (await evaluate(`return window.__b.st().at;`)) === 0, JSON.stringify({ reo, st: await evaluate(`return { st: window.__b.st(), si: window.__b.si(), dots: document.querySelectorAll("[data-action=\\"course-s-go\\"]").length };`) }));
     const ff = await evaluate(`const L = window.BUZZ_COURSE_V2_LESSONS[${JSON.stringify(CHAIN.id)}]; const b = L.sections[${F_SI}].beats[0]; return { t: b.t, ms: b.board[${F_K}].ms, voice: L.voice };`);
     check("出貨的課帶著錄音的時間：t 與錨點的 ms（narration.json 的逐字時間點）", Array.isArray(ff.t) && typeof ff.ms === "number" && ff.ms > 200 && ff.ms < ff.t[1] - ff.t[0], JSON.stringify(ff));
     const key = `${F_SI}-0`;
@@ -235,6 +237,24 @@ async function run() {
     await sleep(900);
     const stall = await evaluate(`window.BuzzBoard.debug.tick(); return window.__b.st();`);
     check("網路卡住（currentTime 900ms 不動）：黑板最多往前估 100ms，不會自己跑掉", stall.tau >= 1000 && stall.tau <= 1101, JSON.stringify(stall));
+    /* ── 男聲（voice().v === "m"）：時間用男聲自己的 tm、錨點用 mm（男聲的逐字時間點換出來的），不是女聲的 t／ms ──
+       男聲上傳之前課裡沒有 tm／mm：測試自己放一組（男聲那一支的起點不同、句子長 3 秒、錨點比女聲晚 900ms）；上傳之後先驗出貨的那一組。 */
+    const real = await evaluate(`const L = window.BUZZ_COURSE_V2_LESSONS[${JSON.stringify(CHAIN.id)}]; const b = L.sections[${F_SI}].beats[0]; const a = b.board[${F_K}]; return { vm: L.vm || "", tm: b.tm || null, mm: typeof a.mm === "number" ? a.mm : null };`);
+    if (real.vm) check("出貨的課帶著男聲：vm、tm 與錨點的 mm（男聲自己的逐字時間點）", Array.isArray(real.tm) && real.mm > 200 && real.mm < real.tm[1] - real.tm[0], JSON.stringify(real));
+    else console.log("  （男聲還沒上傳：課裡沒有 vm／tm／mm，用測試放的那一組驗）");
+    const M = { start: ff.t[0] + 60000, len: ff.t[1] - ff.t[0] + 3000, mm: ff.ms + 900 };
+    await evaluate(`const L = window.BUZZ_COURSE_V2_LESSONS[${JSON.stringify(CHAIN.id)}]; const b = L.sections[${F_SI}].beats[0]; b.tm = [${M.start}, ${M.start + M.len}]; b.board[${F_K}].mm = ${M.mm}; window.BuzzBoard.debug.rebuild(); return 1;`);
+    const VM = (at) => `{ on: true, paused: false, beat: ${JSON.stringify(key)}, at: ${at}, start: ${M.start}, end: ${M.start + M.len}, rate: 1, v: "m" }`;
+    const m1 = await evaluate(`return window.__b.fake(${VM(M.start + M.mm - 70)});`);
+    const m2 = await evaluate(`window.__b.fake(${VM(M.start + M.mm + 120)}); return window.__b.st();`);
+    // 同一個「從這一句開頭算」的時間，女聲的錨點已經過了、男聲的還沒到：用的是男聲的錨點
+    const m0 = await evaluate(`return window.__b.fake(${VM(M.start + ff.ms + 120)});`);
+    check("男聲：錨點（mm）前 70ms 框還沒開始、後 120ms 開始了；女聲錨點的時間點上還沒開始", m1.mode === "audio" && (m1.g < g0 || (m1.g === g0 && m1.q === 0)) && m2.g === g0 && m2.q > 0 && m2.q < 1 && (m0.g < g0 || (m0.g === g0 && m0.q === 0)), JSON.stringify({ m0, m1, m2 }));
+    const mEnd = await evaluate(`window.__b.fake(${VM(M.start + M.len - 5)}); return window.__b.st();`);
+    check("男聲：拖到男聲那一句的結尾（比女聲長 3 秒）才全部畫完", mEnd.g >= F_B.board.length, JSON.stringify(mEnd));
+    // 換回女聲：同一課、同一組時間表，女聲的錨點照舊
+    const f2 = await evaluate(`window.__b.fake(${V(ff.t[0] + ff.ms + 120)}); return window.__b.st();`);
+    check("換回女聲（v 不是 m）：照女聲的 t／ms，錨點後 120ms 開始了", f2.mode === "audio" && f2.g === g0 && f2.q > 0 && f2.q < 1, JSON.stringify(f2));
     await evaluate(`return window.__b.unfake();`);
 
     /* ── 真的 <audio>：1.5× 播，黑板的時間跟 currentTime 走 ── */

@@ -4185,21 +4185,20 @@
     `;
   }
 
+  // 多選一的一排（亮的那顆是現況）：items = [[值, 字], …]，按鈕帶 data-<key>="值"
+  function pickControl(action, key, current, items, label, cls = "") {
+    return `<div class="segmented compact${cls}" role="radiogroup" aria-label="${label}">${items.map(([v, text]) => `<button class="tag-button ${current === v ? "is-active" : ""}" aria-pressed="${current === v}" data-action="${action}" data-${key}="${v}">${text}</button>`).join("")}</div>`;
+  }
+
   function renderInterfaceSettingsCard(records) {
     const settings = records.settings || {};
-    const penScale = settings.penScale || "standard";
-    const surface = boardSurface();
     const langSetting = LANG_OPTIONS.some((item) => item.key === settings.lang) ? settings.lang : "auto";
     return `
       <section class="study-card interface-card">
         ${renderSettingRow(
           t("介面語言"),
           t("沒設定就跟著瀏覽器。紀錄、錯題本與連結兩種語言共用，換語言會重新載入頁面。"),
-          `<div class="segmented compact lang-row" role="radiogroup" aria-label="${t("介面語言")}">
-            ${LANG_OPTIONS.map(
-              (item) => `<button class="tag-button ${langSetting === item.key ? "is-active" : ""}" aria-pressed="${langSetting === item.key ? "true" : "false"}" data-action="set-lang" data-lang="${item.key}">${item.label}</button>`
-            ).join("")}
-          </div>`
+          pickControl("set-lang", "lang", langSetting, LANG_OPTIONS.map((item) => [item.key, item.label]), t("介面語言"), " lang-row")
         )}
         ${renderSettingRow(
           t("顯示全部功能"),
@@ -4217,21 +4216,19 @@
           onOffControl("set-sound", soundEnabled(), t("答題音效"))
         )}
         ${renderSettingRow(
+          t("旁白聲音"),
+          t("課程分節模式的旁白。旁白列上也能切。"),
+          pickControl("set-narr-voice", "voice", settings.narrVoice === "m" ? "m" : "f", [["f", t("女聲")], ["m", t("男聲")]], t("旁白聲音"))
+        )}
+        ${renderSettingRow(
           t("計算紙筆寬"),
           t("用 Apple Pencil 覺得線太粗或太細，在這裡調。橡皮擦不受影響。"),
-          `<div class="segmented compact pen-scale-row" role="radiogroup" aria-label="${t("筆寬")}">
-            ${PEN_SCALES.map(
-              (item) => `<button class="tag-button ${penScale === item.key ? "is-active" : ""}" aria-pressed="${penScale === item.key ? "true" : "false"}" data-action="set-pen-scale" data-scale="${item.key}">${item.label}</button>`
-            ).join("")}
-          </div>`
+          pickControl("set-pen-scale", "scale", settings.penScale || "standard", PEN_SCALES.map((item) => [item.key, item.label]), t("筆寬"), " pen-scale-row")
         )}
         ${renderSettingRow(
           t("計算紙紙面"),
           t("白紙配深色筆跡，黑板反過來。計算紙的工具列上也能隨手切。"),
-          `<div class="segmented compact" role="radiogroup" aria-label="${t("紙面")}">
-            <button class="tag-button ${surface === "paper" ? "is-active" : ""}" aria-pressed="${surface === "paper" ? "true" : "false"}" data-action="set-board-surface" data-surface="paper">${t("白紙")}</button>
-            <button class="tag-button ${surface === "board" ? "is-active" : ""}" aria-pressed="${surface === "board" ? "true" : "false"}" data-action="set-board-surface" data-surface="board">${t("黑板")}</button>
-          </div>`
+          pickControl("set-board-surface", "surface", boardSurface(), [["paper", t("白紙")], ["board", t("黑板")]], t("紙面"))
         )}
       </section>
     `;
@@ -8502,6 +8499,8 @@
     if (action === "set-lang") setLanguage(actionNode.dataset.lang || "");
     if (action === "set-focus-mode") setFocusMode(Boolean(actionNode.dataset.on));
     if (action === "set-board-surface") { setBoardSurface(actionNode.dataset.surface || "paper"); render(); }
+    // 分節旁白的聲音（course_narration.js 讀；f 女聲預設／m 男聲）
+    if (action === "set-narr-voice") { const next = loadRecords(); next.settings = { ...next.settings, narrVoice: actionNode.dataset.voice === "m" ? "m" : "f" }; saveRecords(next); render(); }
     if (action === "preview-calibration") showCalibrationPreview();
     if (action === "toggle-theme") toggleTheme();
     if (action === "install-app") installApp();

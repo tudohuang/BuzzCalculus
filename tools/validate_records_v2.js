@@ -417,7 +417,7 @@ console.log(`  合併            ${aCount} + ${bCount} -> ${merged.attemptLog.le
     problemStats: { "lim-001": { correct: 1, wrong: 0, total: 1 }, "lim-002": { correct: 2, wrong: 1, total: 3 } },
     proofLang: { "pl-1": { text: "任取 ε > 0。", solvedAt: "2026-10-05T00:00:00.000Z", updatedAt: "2026-10-05T00:00:00.000Z", submissions: [{ verdict: "verified" }] } },
     proofLangLessons: { "plesson-1": "2026-10-05T00:00:00.000Z" },
-    settings: { courseView: "full", narrRate: 1.25, narrSubs: true, theme: "light" },
+    settings: { courseView: "full", narrRate: 1.25, narrSubs: true, narrVoice: "m", theme: "light" },
     tours: { home: 1, quiz: 1 },
     unlocked: { proofs: true },
     unitChests: { 0: "2026-10-01T00:00:00.000Z" },

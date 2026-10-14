@@ -29,8 +29,8 @@ const REV_HEADER = "x-buzz-rev";
 
 // ── 產生區：node tools/build_sw_revisions.js（不要手改）──
 // 這一版：設定頁顯示「版本 v… · id · 日期」；id 是下面 REVISIONS 的雜湊，快取名跟著它變（每次部署內容有變就一定是新快取）。
-const BUILD = {"version":"v1.3.0","id":"ffa6fd28","date":"2026-10-13"};
-const CACHE_NAME = "buzzcalculus-v1.3.0-ffa6fd28";
+const BUILD = {"version":"v1.3.0","id":"c79f354b","date":"2026-10-13"};
+const CACHE_NAME = "buzzcalculus-v1.3.0-c79f354b";
 // 安裝時預快取的核心（離線也能練題）。其他檔用到才快取 —— 見 REVISIONS。
 const APP_SHELL = [
   "./index.html",
@@ -153,19 +153,19 @@ const REVISIONS = {
   "./index.html": "994c8d9548",
   "./manifest.webmanifest": "4f19816c8b",
   "./privacy.html": "904180e9b9",
-  "./src/app.js": "f2d1e36cfe",
+  "./src/app.js": "c85ec5bf00",
   "./src/board_store.js": "402a9e9b08",
   "./src/course.js": "ef1b69719f",
-  "./src/course_board.js": "1d2a3da964",
+  "./src/course_board.js": "816d6f9a2e",
   "./src/course_board_layout.js": "a1db6f5ee5",
   "./src/course_board_plot.js": "25bed23bd6",
   "./src/course_boss.js": "4785df87a7",
   "./src/course_figures.js": "e8d2dde8c0",
   "./src/course_finish.js": "5e706b1b00",
   "./src/course_map.js": "9aba7174de",
-  "./src/course_narration.js": "c84093b51f",
+  "./src/course_narration.js": "e81cf1f99a",
   "./src/course_proof.js": "d728d59494",
-  "./src/course_sections.js": "0796420fe5",
+  "./src/course_sections.js": "78d44bcf11",
   "./src/course_solve.js": "6e0f710762",
   "./src/course_v2/ch-0a.js": "802c9e8caf",
   "./src/course_v2/ch-0b.js": "480fa34957",
@@ -256,7 +256,7 @@ const REVISIONS = {
   "./src/kernel/derived_hints.js": "fda184703e",
   "./src/kernel/equivalence.js": "cce0b64d63",
   "./src/kernel/i18n.js": "f09036465d",
-  "./src/kernel/i18n_en.js": "f316e81853",
+  "./src/kernel/i18n_en.js": "12d70c8059",
   "./src/kernel/i18n_problems_en.js": "034e3da4bf",
   "./src/kernel/i18n_text_en.js": "bd649bbd6e",
   "./src/kernel/ink_read.js": "10f49b9d62",

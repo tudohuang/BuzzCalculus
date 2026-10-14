@@ -328,10 +328,11 @@
     return out;
   }
 
-  /* ── 時間表：每一句的每一段（問句 q、講解 s）在錄音裡與虛擬時間裡各一份 ── */
+  /* ── 時間表：每一句的每一段（問句 q、講解 s）在錄音裡（每一個聲音各一份：女聲 t／ms、男聲 tm／mm）與虛擬時間裡各一份 ── */
+  const TK = { f: ["t", "ms"], m: ["tm", "mm"] };
   function schedules(M) {
     const S = B.sec;
-    const audio = {};
+    const audio = { f: {}, m: {} };
     const virt = {};
     S.beats.forEach((b, bi) => {
       const acts = M.acts.filter((x) => x.b === bi);
@@ -339,14 +340,16 @@
         const list = acts.filter((x) => x.clip === clip);
         if (!list.length) return;
         const say = String((clip === "q" ? b.why && b.why.say : b.say) || "");
-        const t = clip === "q" ? b.why && b.why.t : b.t;
         const n = [...say].length || 20;
         const VT = n * MPC + 400;
         LY.schedule(list.map((x) => x.a), VT, (a) => (a.on ? Math.max(0, LY.charOf(a.on, say)) * MPC : typeof a.at === "number" ? a.at * VT : null)).forEach((s, k) => { virt[list[k].g] = s; });
-        if (Array.isArray(t)) {
+        Object.keys(TK).forEach((v) => {
+          const [tk, mk] = TK[v];
+          const t = clip === "q" ? b.why && b.why[tk] : b[tk];
+          if (!Array.isArray(t)) return;
           const T = t[1] - t[0];
-          LY.schedule(list.map((x) => x.a), T, (a) => (typeof a.ms === "number" ? a.ms : a.on ? (Math.max(0, LY.charOf(a.on, say)) * T) / n : typeof a.at === "number" ? a.at * T : null)).forEach((s, k) => { audio[list[k].g] = s; });
-        }
+          LY.schedule(list.map((x) => x.a), T, (a) => (typeof a[mk] === "number" ? a[mk] : a.on ? (Math.max(0, LY.charOf(a.on, say)) * T) / n : typeof a.at === "number" ? a.at * T : null)).forEach((s, k) => { audio[v][list[k].g] = s; });
+        });
       });
     });
     return { audio, virt };
@@ -499,9 +502,11 @@
     let tau;
     let mode;
     let entry;
-    if (v.on && v.beat === key && v.end > v.start && Array.isArray(b.t)) {
+    const vk = v.v === "m" ? "m" : "f"; // 念的是哪一個聲音：時間與錨點用那一個的
+    const tk = TK[vk][0];
+    if (v.on && v.beat === key && v.end > v.start && Array.isArray(b[tk])) {
       mode = "audio";
-      clip = b.why && b.why.t && v.start === b.why.t[0] ? "q" : "s";
+      clip = b.why && b.why[tk] && v.start === b.why[tk][0] ? "q" : "s";
       const raw = v.at - v.start;
       if (raw !== B.raw) { B.raw = raw; B.rawAt = now; }
       let est = raw + (v.paused ? 0 : Math.min(100, (now - B.rawAt) * (v.rate || 1)));
@@ -525,7 +530,7 @@
     entry = clip === (b.why ? "q" : "s") ? cl(tau / ENTRY) : 1;
     B.clip = clip;
     B.tau = tau;
-    const sch = mode === "audio" ? B.sch.audio : B.sch.virt;
+    const sch = mode === "audio" ? B.sch.audio[vk] : B.sch.virt;
     for (const x of mine) {
       let q;
       if (x.why && !B.open) q = 0;
