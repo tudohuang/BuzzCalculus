@@ -3,9 +3,10 @@
 //
 // 清單可以跨好幾個 Release：每個檔案的 tag 沒寫就是最上面的 tag（課程影片）。
 //   影片   manim/out/ 的 1080p、720p、預覽圖                                     → media/<名字>
-//   旁白   tools/content/course_v2/narration.json ＋ media/narration/ 的一課一支  → media/narration/<課>-<f8>.mp3
+//   旁白   tools/content/course_v2/narration.json ＋ media/narration/ 的一課一支  → media/narration/<課>-<f8>.mp3（女聲）
+//                                                                          media/narration/m/<課>-<f8>.mp3（男聲；附件名 narration.m.<課>-<f8>.mp3）
 // Release 的附件名稱不能有斜線：附件名 = 路徑的 / 換成 .（fetch_media.js 用同一條規則換回來）。
-// 一個 Release 最多 1000 個附件：旁白一課一支（317 課 = 317 支），逐句（約 5,500 支）放不下。
+// 一個 Release 最多 1000 個附件：旁白一課一支（317 課 × 兩個聲音 = 634 支），逐句（約 6,000 支 × 2）放不下。
 // releases 底下標 optional 的 Release：整個還沒上傳（每個檔都 404）時部署照常、只印警告（旁白載不到時播放器自己退回點的）；
 // 上傳了一部分、或雜湊不符，一樣讓部署失敗。
 // 標 stream 的 Release（--stream）：部署不抓；播放器直接從 GitHub Release 的下載網址串流（build_course_v2.js 照這個標記
@@ -45,10 +46,11 @@ let upload; // 上傳指令的檔案參數
 let stale = []; // 同一個 tag 上次有、這次沒有的附件名
 let fresh = 0; // 同一個 tag 上次沒列（或內容不同）的檔：補傳只要這些
 if (narrationMode) {
-  const index = JSON.parse(fs.readFileSync(path.join(ROOT, "tools", "content", "course_v2", "narration.json"), "utf8"));
-  if (!index.lessons) throw new Error("narration.json 還是舊格式（一句一支）：先跑 node tools/build_narration.js");
-  const assets = Object.entries(index.lessons).sort(([a], [b]) => a.localeCompare(b)).map(([id, lesson]) => {
-    const name = `narration/${id}-${lesson.f}.mp3`;
+  // 每一課每一個聲音一支：女聲 narration/<課>-<f8>.mp3、男聲 narration/m/<課>-<f8>.mp3（build_narration.js 的 relName）
+  const { readIndex, relName, VKEYS } = require("./build_narration.js");
+  const index = readIndex();
+  if (!Object.keys(index.lessons).length) throw new Error("narration.json 沒有任何一課（或還是一句一支的舊格式）：先跑 node tools/build_narration.js");
+  const assets = VKEYS.flatMap((v) => Object.entries(index.lessons).filter(([, row]) => row[v]).sort(([a], [b]) => a.localeCompare(b)).map(([id, row]) => [relName(v, id, row[v].f), row[v]])).map(([name, lesson]) => {
     const file = path.join(ROOT, "media", name);
     if (!fs.existsSync(file)) throw new Error(`${name} 不在本機（先跑 node tools/build_narration.js）`);
     const a = entry(name, fs.readFileSync(file), tag);
@@ -105,7 +107,7 @@ const mine = manifest.assets.filter((a) => tagOf(a) === tag);
 const total = mine.reduce((sum, a) => sum + a.bytes, 0);
 console.log(`media/manifest.json：${tag} ${mine.length} 個檔案、${(total / 1048576).toFixed(2)} MB（全部 ${manifest.assets.length} 個）`);
 const title = narrationMode ? `課程旁白 ${tag}` : `課程影片 ${tag}`;
-const notes = narrationMode ? "分節模式的旁白（Azure 語音合成），一課一支 mp3。附件名是路徑的 / 換成 .；由 tools/fetch_media.js 在部署時抓取。" : "課程概念動畫（Manim）。由 tools/fetch_media.js 在部署時抓取。";
+const notes = narrationMode ? "分節模式的旁白（Azure 語音合成），一課一支 mp3；女聲 narration.<課>-<f8>.mp3、男聲 narration.m.<課>-<f8>.mp3。附件名是路徑的 / 換成 .；由 tools/fetch_media.js 在部署時抓取。" : "課程概念動畫（Manim）。由 tools/fetch_media.js 在部署時抓取。";
 console.log(`\n第一次（Release 還不存在）：\ngh release create ${tag} --title "${title}" --notes "${notes}" ${upload.join(" ")}`);
 if (narrationMode) {
   if (fresh) console.log(`\n已經有這個 Release（只補新的、改過的 ${fresh} 支）：\ngh release upload ${tag} --clobber tmp/release-${tag}-new/*.mp3`);

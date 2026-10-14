@@ -30,7 +30,7 @@ const wslPath = (p) => p.replace(/^([A-Za-z]):[\\/]/, (_m, d) => `/mnt/${d.toLow
 async function main() {
   if (!id) { console.error("用法：node tools/record_board_demo.js <課> [--rate 1.5]"); process.exit(1); }
   const L = JSON.parse(fs.readFileSync(path.join(ROOT, "tools", "content", "course_v2", "lessons", `${id}.json`), "utf8"));
-  const N = JSON.parse(fs.readFileSync(path.join(ROOT, "tools", "content", "course_v2", "narration.json"), "utf8")).lessons[id];
+  const N = require("./build_narration.js").readIndex().lessons[id].f; // 女聲（lessons.<課>.<聲音>）
   const mp3 = path.join(ROOT, "media", "narration", `${id}-${N.f}.mp3`);
   if (!fs.existsSync(mp3)) throw new Error(`沒有 ${mp3}（先跑 node tools/build_narration.js）`);
   // 頁面上的課換成「新的那一支」的時間（上傳前出貨的是 prev）：t、why.t、board 的 ms

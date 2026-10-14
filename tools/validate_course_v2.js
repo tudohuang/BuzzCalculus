@@ -290,14 +290,26 @@ const SAY_BAD = /[$\\^_{}\/=<>≤≥≠→←∞×÷·√∫∑ΔδεπθΣ+*|()
 const SAY_MAX = 56; // 字數上限：約 12 秒（實測台灣中文神經語音一秒四字多，含停頓）
 const SAY_MAX_MS = 12500;
 const NARRATION_INDEX = path.join(DIR, "narration.json");
-const { hashOf: narrationHash, VOICE: NARRATION_VOICE, RATE: NARRATION_RATE, readIndex: readNarration } = require("./build_narration.js");
-// 一課一支（narration.json 的 lessons.<課>.beats.<節-句> = { h, t: [起, 訖] }）
+const { hashOf: narrationHash, VOICES: NARRATION_VOICES, VKEYS: NARRATION_VKEYS, RATE: NARRATION_RATE, readIndex: readNarration } = require("./build_narration.js");
+// 一課一支、每個聲音各一支（narration.json 的 lessons.<課>.<聲音>.beats.<節-句> = { h, t: [起, 訖] }）
 const narration = fs.existsSync(NARRATION_INDEX) ? readNarration() : null;
-const clipOf = (id, key) => {
-  const got = narration && narration.lessons[id] && narration.lessons[id].beats[key];
+const clipOf = (id, key, v = "f") => {
+  const got = narration && narration.lessons[id] && narration.lessons[id][v] && narration.lessons[id][v].beats[key];
   return got ? { h: got.h, ms: got.t[1] - got.t[0] } : null;
 };
-let sayMissing = 0;
+// 這一句每一個聲音都錄好了沒（缺的聲音記一筆）；長度看女聲
+const sayMissing = Object.fromEntries(NARRATION_VKEYS.map((v) => [v, 0]));
+const voicedClip = (id, key, text) => {
+  NARRATION_VKEYS.forEach((v) => { const c = clipOf(id, key, v); if (!c || c.h !== narrationHash(NARRATION_VOICES[v], NARRATION_RATE, text)) sayMissing[v] += 1; });
+  const c = clipOf(id, key, "f");
+  return c && c.h === narrationHash(NARRATION_VOICES.f, NARRATION_RATE, text) ? c : null;
+};
+// 念的稿洗過（build_narration.js 的 speakable）之後還像表情符號的 ASCII：「:)」「XD」「:P」「;-)」「^_^」「<3」…（語音引擎會念成表情或怪聲）
+const EMOTICON = /(?:^|[^A-Za-z0-9])(?:[:;=][\-o^']?[)(\]\[DPpOo/\\|*]|[)(][\-^']?[:;=]|XD+|xD+|<3|\^_?\^|T_T|-_-|o_O|O_o)(?![A-Za-z0-9])/;
+const { speakable: narrationSpeakable } = require("./build_narration.js");
+// 自測（正反案例）：清洗之後還在的要抓到（XD、<3、T_T、o_O），冒號類的洗掉了不算；一般的字、數、x star 不能誤抓
+[["好難 XD", true], ["這樣 <3", true], ["T_T 又錯了", true], ["o_O 怎麼會", true], ["你看 :P", false], ["笑 :)", false], ["x star 是極限", false], ["Bolzano–Weierstrass 定理", false], ["log-sine 積分", false], ["三點 XDA 不算", false], ["第 83 題", false]]
+  .forEach(([text, want]) => { if (EMOTICON.test(narrationSpeakable(text)) !== want) errors.push(`自測（表情符號）「${text}」清洗後應該${want ? "" : "不"}算表情`); });
 // 答案先講了：結尾的小測正解（去掉 $ 與空白）原封不動出現在緊鄰的前一句（show／note／say／黑板），
 // 或先猜（predict）的正解出現在同一節更早的任何一句 —— 問題就什麼都沒考。只警告：有時候前一句是教、題目是往前一步（人判斷）。
 const leakNorm = (s) => String(s || "").replace(/\{\{[a-z][a-z0-9]*:/g, "").replace(/[\s$]|\\[,;!:]|\\left|\\right|\\displaystyle|\\dfrac/g, (m) => (m === "\\dfrac" ? "\\frac" : "")).replace(/−/g, "-").replace(/′/g, "'");
@@ -395,9 +407,10 @@ function checkSections(id, L) {
           if (cjkLen(say) > SAY_MAX) err(id, `${at} 的 say ${cjkLen(say)} 字（≤ ${SAY_MAX}，約 12 秒）`);
           if (say === (b.note || "").trim() || b.show.some((line) => line.replace(/\$/g, "") === say)) err(id, `${at} 的 say 照念畫面上的字：要講解畫面，不是重念`);
           spoken.push(say);
-          const clip = clipOf(id, `${si}-${bi}`);
-          if (!clip || clip.h !== narrationHash(NARRATION_VOICE, NARRATION_RATE, say)) sayMissing += 1;
-          else if (clip.ms > SAY_MAX_MS) warn(id, `${at} 的旁白 ${(clip.ms / 1000).toFixed(1)} 秒（建議 ≤ 12）`);
+          const emo = narrationSpeakable(say).match(EMOTICON);
+          if (emo) warn(id, `${at} 的 say 有像表情符號的「${emo[0].trim()}」：語音會念成表情（改寫成字）`);
+          const clip = voicedClip(id, `${si}-${bi}`, say);
+          if (clip && clip.ms > SAY_MAX_MS) warn(id, `${at} 的旁白 ${(clip.ms / 1000).toFixed(1)} 秒（建議 ≤ 12）`);
         }
       }
       if (b.why !== undefined) {
@@ -415,9 +428,10 @@ function checkSections(id, L) {
             if (cjkLen(q) > SAY_MAX) err(id, `${at} 的 why.say ${cjkLen(q)} 字（≤ ${SAY_MAX}）`);
             if (q === (b.say || "").trim()) err(id, `${at} 的 why.say 跟 say 一樣：問句念問題，say 是答了之後的講解`);
             spoken.push(q);
-            const clip = clipOf(id, `${si}-${bi}q`);
-            if (!clip || clip.h !== narrationHash(NARRATION_VOICE, NARRATION_RATE, q)) sayMissing += 1;
-            else if (clip.ms > SAY_MAX_MS) warn(id, `${at} 的問句旁白 ${(clip.ms / 1000).toFixed(1)} 秒（建議 ≤ 12）`);
+            const emo = narrationSpeakable(q).match(EMOTICON);
+            if (emo) warn(id, `${at} 的 why.say 有像表情符號的「${emo[0].trim()}」：語音會念成表情（改寫成字）`);
+            const clip = voicedClip(id, `${si}-${bi}q`, q);
+            if (clip && clip.ms > SAY_MAX_MS) warn(id, `${at} 的問句旁白 ${(clip.ms / 1000).toFixed(1)} 秒（建議 ≤ 12）`);
           }
         }
       }
@@ -627,7 +641,7 @@ function checkProof(id, L, sec, where, texts) {
     ["沒有證明節的課最多 6 節", (L) => { L.sections.splice(0, 0, predictSec("五"), predictSec("六"), predictSec("七"), predictSec("八")); L.sections.pop(); }, /4–6 節/],
     ["why 掛著的時候畫面太滿", (L) => { const long = "很長的一句理由寫得非常非常非常非常非常非常非常非常非常非常非常非常長"; proofOf(L).beats[1].why.options = [opt(`${long}甲`, true), opt(`${long}乙`), opt(`${long}丙`)]; proofOf(L).beats[0].show = [`${long}`, `${long}`]; proofOf(L).beats[1].show = [`${long}`, `${long}`]; }, /畫面上的字/]
   ];
-  const keepMissing = sayMissing;
+  const keepMissing = { ...sayMissing };
   const keepWarn = warnings.length;
   const keepLeak = leaks.length;
   cases.forEach(([name, mutate, want]) => {
@@ -639,7 +653,7 @@ function checkProof(id, L, sec, where, texts) {
     if (!want && got.length) errors.push(`自測（證明節）「${name}」應該合格，卻報了：${got[0]}`);
     if (want && !got.some((e) => want.test(e))) errors.push(`自測（證明節）「${name}」應該報 ${want}，實際：${got.length ? got.join(" | ") : "沒有錯誤"}`);
   });
-  sayMissing = keepMissing;
+  Object.assign(sayMissing, keepMissing);
   warnings.splice(keepWarn);
   leaks.splice(keepLeak);
   // 答案先講了：正反案例（短的數字要整個符號吻合）
@@ -954,11 +968,11 @@ console.log(`新版課程：大綱 ${all} 課，已寫 ${written} 課${wanted.le
   const rows = {};
   let secN = 0;
   let sayN = 0;
-  let voicedN = 0;
+  const voicedN = Object.fromEntries(NARRATION_VKEYS.map((v) => [v, 0]));
   let beatN = 0;
   lessons.forEach((L) => {
     const st = outline[L.id] ? outline[L.id].stage : "?";
-    const row = (rows[st] = rows[st] || { all: 0, sec: 0, say: 0, voiced: 0 });
+    const row = (rows[st] = rows[st] || { all: 0, sec: 0, say: 0, voiced: Object.fromEntries(NARRATION_VKEYS.map((v) => [v, 0])) });
     row.all += 1;
     if (!Array.isArray(L.sections) || !L.sections.length) {
       if (requireSections) err(L.id, "還沒有 sections（--require-sections）");
@@ -974,14 +988,16 @@ console.log(`新版課程：大綱 ${all} 課，已寫 ${written} 課${wanted.le
     beatN += beats.filter(({ key }) => !key.endsWith("q")).length;
     const said = beats.filter(({ b }) => typeof b.say === "string" && b.say.trim());
     if (said.length && said.length === beats.length) { row.say += 1; sayN += 1; }
-    if (said.length && said.every(({ b, key }) => { const c = clipOf(L.id, key); return c && c.h === narrationHash(NARRATION_VOICE, NARRATION_RATE, b.say.trim()); })) { row.voiced += 1; voicedN += 1; }
+    NARRATION_VKEYS.forEach((v) => {
+      if (said.length && said.every(({ b, key }) => { const c = clipOf(L.id, key, v); return c && c.h === narrationHash(NARRATION_VOICES[v], NARRATION_RATE, b.say.trim()); })) { row.voiced[v] += 1; voicedN[v] += 1; }
+    });
   });
   const pct = (n) => (lessons.length ? `${Math.round((n / lessons.length) * 100)}%` : "—");
-  console.log(`分節覆蓋：${secN} / ${lessons.length} 課有 sections（${pct(secN)}，${beatN} 句）、${sayN} 課每句都有 say（${pct(sayN)}）、${voicedN} 課錄好旁白（${pct(voicedN)}）`);
-  console.log(`  每個 Stage（分節／say／錄好 ／ 課數）：${Object.keys(rows).sort((a, b) => Number(a) - Number(b)).map((st) => `S${st} ${rows[st].sec}/${rows[st].say}/${rows[st].voiced}／${rows[st].all}`).join("  ")}`);
+  console.log(`分節覆蓋：${secN} / ${lessons.length} 課有 sections（${pct(secN)}，${beatN} 句）、${sayN} 課每句都有 say（${pct(sayN)}）、錄好旁白 ${NARRATION_VKEYS.map((v) => `${v} ${voicedN[v]} 課（${pct(voicedN[v])}）`).join("、")}`);
+  console.log(`  每個 Stage（分節／say／錄好 ${NARRATION_VKEYS.join("+")}／課數）：${Object.keys(rows).sort((a, b) => Number(a) - Number(b)).map((st) => `S${st} ${rows[st].sec}/${rows[st].say}/${NARRATION_VKEYS.map((v) => rows[st].voiced[v]).join("+")}／${rows[st].all}`).join("  ")}`);
 }
-// 字改了、旁白還沒重錄：不擋（播放時那一句沒有聲音，分節照常點），但要看得到
-if (sayMissing) warnings.push(`旁白：${sayMissing} 句的 say 沒有對得上的錄音（node tools/build_narration.js）`);
+// 字改了、旁白還沒重錄：不擋（播放時那一句沒有聲音，分節照常點），但要看得到；每一個聲音各算
+NARRATION_VKEYS.forEach((v) => { if (sayMissing[v]) warnings.push(`旁白（${v} ${NARRATION_VOICES[v]}）：${sayMissing[v]} 句的 say 沒有對得上的錄音（node tools/build_narration.js）`); });
 if (leaks.length) {
   console.log(`\n警告（答案先講了）${leaks.length}：`);
   leaks.forEach((w) => console.log("  " + w));

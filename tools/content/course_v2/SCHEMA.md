@@ -151,17 +151,19 @@ $\frac{14}{3}$ → 三分之十四、$\ge$ → 大於等於、$f(2)$ → f 在�
 **念了課文裡沒有的數字**（中文數字讀回來比：「三分之十四」→ 3、14，「二點零一」→ 2.01，「十六」→ 16）、一課只有一部分的句子有 say（要嘛整課都有，要嘛都沒有）。
 錄音超過 12.5 秒、或 say 改了還沒重錄，只警告。
 
-錄音：`node tools/build_narration.js`（Azure 語音合成，聲音在檔頭一處設定，預設 zh-TW-HsiaoChenNeural）先把每一句合成到
+錄音：`node tools/build_narration.js`（Azure 語音合成，兩個聲音在檔頭 `VOICES` 一處設定：f 女聲 zh-TW-HsiaoChenNeural、m 男聲 zh-TW-YunJheNeural；
+念之前先清洗 `speakable()`：冒號分號換成逗號、破折號引號換成空白，長度不變、字幕照原稿）先把每一句每一個聲音合成到
 `media/narration-cache/<hash8>.mp3`（hash 涵蓋聲音、語速與 say：字沒改就不重錄；中斷了再跑一次從缺的接著做），再把一課的句子照順序接成**一課一支**
-`media/narration/<課>-<f8>.mp3`（f8 是內容的 sha256 前 8 碼）。一個 GitHub Release 最多 1000 個附件，逐句（約 5,500 支）放不下，一課一支是 317 支。
-索引 `tools/content/course_v2/narration.json`（進 git：每一課的 f8、長度、大小、sha256，每一句的 hash 與 `t` = 在那一支裡的 [起, 訖] 毫秒），
-`build_course_v2.js` 照它在出貨的課加上 `voice`（f8）、每一句加上 `t`；字改了還沒重錄的句子不帶 `t`，播放時那一句只停一下。
+`media/narration/<課>-<f8>.mp3`（女聲）與 `media/narration/m/<課>-<f8>.mp3`（男聲）（f8 是內容的 sha256 前 8 碼）。一個 GitHub Release 最多 1000 個附件，逐句（約 6,000 支 × 2）放不下，一課一支是 317 × 2 = 634 支。
+索引 `tools/content/course_v2/narration.json`（進 git：`lessons.<課>.<f|m>` = 那一個聲音那一支的 f8、長度、大小、sha256，每一句的 hash 與 `t` = 在那一支裡的 [起, 訖] 毫秒），
+`build_course_v2.js` 照它在出貨的課加上 `voice`（女聲 f8）、每一句加上 `t`；男聲上傳了才出貨，同一套換名字：`vm`、`tm`、`why.tm`、黑板動作的 `mm`。字改了還沒重錄的句子不帶 `t`，播放時那一句只停一下。
 有黑板的句子改用 Azure Speech SDK 合成（`cd tools && npm install`），索引多記 `w`：每一個詞在 say 裡的字元位置與被念到的毫秒（給黑板的 `on` 用）。
 一課的 mp3 換了而新的還沒上傳（不在 `media/manifest.json`）時，索引把已上傳的那一支留在 `prev`，出貨照舊用它（見 `build_narration.js` 檔頭）。
 錄音檔不進 git：`node tools/make_media_manifest.js --narration <tag>` 列進 `media/manifest.json`，部署時 `tools/fetch_media.js` 抓；
 加 `--stream` 則部署不抓、播放器直接從 Release 的下載網址串流（大綱的 `narration` 前綴，build_course_v2 照清單寫）。
 
-畫面：每一節的按鈕列有「播放」、語速（1× → 1.25× → 1.5×，記在 `records.settings.narrRate`）、「字幕」（亮著那一句底下出現 say，記在 `records.settings.narrSubs`）。
+畫面：每一節的按鈕列有「播放」、語速（1× → 1.25× → 1.5×，記在 `records.settings.narrRate`）、聲音（這一課兩個都有才出現：女聲／男聲，記在 `records.settings.narrVoice`，設定頁也有同一列）、「字幕」（亮著那一句底下出現 say，記在 `records.settings.narrSubs`）。
+只抓選的那一個聲音的檔；念到一半切換＝這一句用另一個聲音從頭念；選的那一個這一課沒有或載不到 → 用另一個並留一行字，兩個都不行才退回點的。
 不會自己播；按了播放才抓這一課那一支（`preload="none"`，之後靠 Range 只抓播到的那一段）。念完一句自己出下一句（圖跟著動；下一句就接在後面，不跳），念到這一節最後一句停在動作前；做完按「下一節」接著念。
 播放中點「下一句」＝跳到下一句念。錄音載不到（本機沒有 media/、離線、Release 還沒上傳）→ 留一行字、播放關掉，點的照常。
 

@@ -67,13 +67,17 @@ function cacheControl(url) {
 }
 const maxAge = (cc) => { const m = /max-age=(\d+)/.exec(cc); return m ? Number(m[1]) : 0; };
 
-const narration = JSON.parse(read("tools/content/course_v2/narration.json"));
-const sampleNarr = Object.entries(narration.lessons || {})[0];
+const narration = require("./build_narration.js").readIndex(); // lessons.<課>.<聲音>（舊的單一聲音格式也讀成這個形狀）
+// lessons.<課>.<聲音 f／m>（build_narration.js）：兩個聲音各取一支當樣本
+const narrSample = (v) => { const hit = Object.entries(narration.lessons || {}).find(([, row]) => row && row[v]); return hit ? [hit[0], hit[1][v]] : null; };
+const sampleNarr = narrSample("f");
+const sampleNarrM = narrSample("m");
 const manifest = JSON.parse(read("media/manifest.json"));
 const sampleVideo = (manifest.videos || [])[0] || "taylor";
 const CASES = [
   // [網址, 期望, 說明]
   [sampleNarr ? `/media/narration/${sampleNarr[0]}-${sampleNarr[1].f}.mp3` : "/media/narration/x-0123abcd.mp3", "immutable", "內容雜湊命名的旁白"],
+  [sampleNarrM ? `/media/narration/m/${sampleNarrM[0]}-${sampleNarrM[1].f}.mp3` : "/media/narration/m/x-0123abcd.mp3", "immutable", "內容雜湊命名的旁白（男聲）"],
   [`/media/${sampleVideo}-light-720p.mp4?v=0123abcd`, "immutable", "帶版本的影片"],
   [`/media/${sampleVideo}-dark-poster.jpg?v=0123abcd`, "immutable", "帶版本的預覽圖"],
   [`/media/${sampleVideo}-light-720p.mp4`, "short", "不帶版本的影片（舊版播放器）"],
@@ -100,9 +104,9 @@ CASES.forEach(([url, want, label]) => {
 // 長快取的前提
 const builder = read("tools/build_narration.js");
 if (!/`\$\{id\}-\$\{f\}\.mp3`/.test(builder) || !/const f = sum\.slice\(0, 8\)/.test(builder)) fail("build_narration.js 的旁白檔名不再是 <課>-<內容雜湊 8 碼>.mp3 —— /media/narration/ 不能再回 immutable");
-Object.entries(narration.lessons || {}).forEach(([id, e]) => {
-  if (!/^[0-9a-f]{8}$/.test(e.f) || e.sha256.slice(0, 8) !== e.f) fail(`narration.json 的 ${id}：f（${e.f}）不是內容雜湊的前 8 碼`);
-});
+Object.entries(narration.lessons || {}).forEach(([id, row]) => Object.entries(row || {}).forEach(([v, e]) => {
+  if (!/^[0-9a-f]{8}$/.test(e.f) || e.sha256.slice(0, 8) !== e.f) fail(`narration.json 的 ${id}：f（${e.f}）不是內容雜湊的前 8 碼（${v}）`);
+}));
 const video = read("src/course_video.js");
 if (!/videoRev/.test(video) || !/\?v=\$\{r\}/.test(video)) fail("course_video.js 的影片／預覽圖網址沒有接 ?v=<videoRev> —— 帶版本的 immutable 規則用不到，同名換檔也不會換網址");
 const outlineSandbox = { window: {} };

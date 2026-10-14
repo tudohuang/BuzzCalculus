@@ -120,11 +120,12 @@ const scenarios = {};
 }
 // 旁白
 {
-  const index = JSON.parse(read("tools/content/course_v2/narration.json"));
-  const all = Object.values(index.lessons || {});
+  const index = require("./build_narration.js").readIndex();
+  // lessons.<課>.<聲音>：一個人只聽自己選的那一個聲音（女聲預設），量女聲
+  const all = Object.values(index.lessons || {}).map((row) => row.f).filter((e) => e && e.bytes);
   const total = all.reduce((s, e) => s + e.bytes, 0);
   const ms = all.reduce((s, e) => s + e.ms, 0);
-  const one = (index.lessons || {})[sample.id];
+  const one = ((index.lessons || {})[sample.id] || {}).f;
   scenarios["播旁白（整課聽完）"] = { requests: 1, raw: one ? one.bytes : 0, br: one ? one.bytes : 0, note: `${index.format}；${all.length} 支合計 ${(total / 1048576).toFixed(1)} MB、${(ms / 60000).toFixed(0)} 分鐘、平均 ${(total / all.length / 1048576).toFixed(2)} MB／課（Range 串流，請求數 ≥ 1）` };
 }
 // 部署之後回訪（新版 Service Worker 安裝）
