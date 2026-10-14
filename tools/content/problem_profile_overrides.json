@@ -1,0 +1,29 @@
+{
+  "_doc": "題目側寫的人工覆寫（tools/build_problem_profiles.js 讀）。只收高曝光（課程核心、章首魔王、考卷、每日一題、Boss）而規則分錯的題；每筆都要寫 why。覆寫的欄位不再跑規則，其他欄位照規則。複核清單：node tools/build_problem_profiles.js --review → docs/report/stats/profile-review.csv",
+  "problems": {
+    "lec-14-q3b": {
+      "methodFamily": ["series_closed_form", "power_series_radius"],
+      "why": "章首魔王 6E：Σn²/2ⁿ 是從 1/(1−x) 逐項微分兩次再代 x=1/2，考的是求和不是收斂半徑（規則被 power-series tag 帶走）"
+    },
+    "world-060": {
+      "methodFamily": ["zeta_euler"],
+      "why": "Σ(−1)ⁿ/(2n+1)³ = π³/32 是 Dirichlet β(3)，屬 zeta／Euler 和；題目 tag 沒有對到任何級數技巧，規則掉到其餘"
+    },
+    "world-078": {
+      "methodFamily": ["zeta_euler", "series_closed_form"],
+      "why": "Σ(1/2)ⁿ/n² = Li₂(1/2) = π²/12 − (ln 2)²/2，是特殊值求和；規則掉到其餘"
+    },
+    "dm-app-003": {
+      "methodFamily": ["series_expansion_integral", "physical_model_setup"],
+      "why": "∫₀^∞ e^{−t}|sin t|dt：拆成每個週期再加等比級數，方法是展開成級數；情境只是包裝（規則被 story-problem 帶走）"
+    },
+    "burst-int-004": {
+      "methodFamily": ["integration_by_parts"],
+      "why": "∫₀¹x⁵ln x dx 一次分部就完，不是循環分部（tag 有 multi-ibp、parameter-integral 都是誤標）"
+    },
+    "dm-seq-005": {
+      "methodFamily": ["taylor_asymptotic", "sequence_limit"],
+      "why": "sin²(π√(n²+n))：題幹自己寫了 √(n²+n) 的漸近展開，方法是漸近展開不是夾擠（規則被 periodicity tag 帶到夾擠）"
+    }
+  }
+}
