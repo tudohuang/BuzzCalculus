@@ -117,7 +117,8 @@ async function launch(options = {}) {
   args.push("about:blank");
 
   const child = spawn(chromePath, args, { stdio: "ignore" });
-  const wsUrl = await waitForEndpoint(port, options.timeout || 20000);
+  // CI 的 runner 偶爾 20 秒內起不來 Chrome（「除錯埠沒有回應」，跟測試內容無關）：CI 上給 60 秒
+  const wsUrl = await waitForEndpoint(port, options.timeout || (process.env.CI ? 60000 : 20000));
 
   const socket = new WebSocket(wsUrl);
   await new Promise((resolve, reject) => {
