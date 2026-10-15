@@ -1034,3 +1034,432 @@
 
   window.BUZZ_PROBLEMS = (window.BUZZ_PROBLEMS || []).concat(problems);
 })();
+
+/* ═══════════════════════════════════════════════════════════════════
+   經典題型擴充（cl-lim-，2026-10）：50 題短而準的極限反射練習。
+   起因：盤點 3,077 題的極限區，發現幾個「經典題本必練、我們幾乎沒有」的格子 ——
+     無窮小的階與主部（「~ c·x^k，求 k 或 c」）：全庫 1 題
+     等價無窮小替換（含「在加減裡替換會錯」的陷阱）
+     L'Hôpital 失靈：極限存在、但導數比沒有極限：全庫 0 題
+     調參數讓極限成立／讓函數連續
+     間斷點化成一個數：跳躍量、補值、間斷點個數
+     數列：單調有界的遞迴、Stolz、Riemann 和、n 次方根、(1+a/n)^n、含 n 的積分
+   展開（Taylor）只佔 2 題 —— 這一包練的是「認出結構」，不是「展到第幾階」。
+
+   驗算：每題自帶 verify，全部是從題幹出發的獨立數值路徑：
+     階 k 用 ln(f(2x)/f(x))/ln 2 的極限（不需要知道 c）；
+     a+b 型的漸近線用 (f(2x)−f(x))/x 與 2f(x)−f(2x) 分別取 a、b（不需要知道答案）；
+     跳躍量用左右兩個單邊極限相減；遞迴直接迭代；含參數的條件用求根或駐點。
+   ═══════════════════════════════════════════════════════════════════ */
+(function () {
+  "use strict";
+
+  const SOURCE = "Buzz 經典題型擴充 2026-10";
+  const problems = [];
+
+  const add = (id, rank, prompt, answer, verify, tags, hints, solution, timeLimit) => {
+    const allTags = tags.slice();
+    allTags.push(`rank-${rank}`);
+    if (rank >= 5) allTags.push("boss-rank");
+    if (rank <= 2) allTags.push("beginner-friendly");
+    problems.push({
+      id,
+      source: SOURCE,
+      topic: "limits",
+      rank,
+      difficulty: Math.min(4, rank),
+      answerKind: "numeric",
+      prompt,
+      answer,
+      timeLimit: timeLimit || [0, 60, 75, 90, 110, 140, 170][rank],
+      tags: allTags,
+      hints,
+      solution,
+      verify
+    });
+  };
+
+  // 階 k 的驗算：f(2x)/f(x) → 2^k，跟 c 無關
+  const orderOf = (f, f2, dir) => Object.assign(
+    { m: "limit", f: `\\frac{\\ln\\left(\\frac{${f2}}{${f}}\\right)}{\\ln 2}`, at: 0 },
+    dir ? { dir } : {});
+  const lim = (f, at, dir) => Object.assign({ m: "limit", f, at }, dir ? { dir } : {});
+  const jump = (f, at) => ({
+    m: "let",
+    with: { r: { m: "limit", f, at, dir: "+" }, l: { m: "limit", f, at, dir: "-" } },
+    f: "r-l"
+  });
+
+  /* ── A. 無窮小的階與主部（R1–R6）── */
+  add("cl-lim-001", 1,
+    "\\text{當 }x\\to 0\\text{ 時，}\\sqrt{1+x^{2}}-1\\sim c\\,x^{k}\\ (c\\ne 0)\\text{。求 }k",
+    "2", orderOf("\\sqrt{1+x^2}-1", "\\sqrt{1+4x^2}-1"),
+    ["infinitesimal-order", "rationalize"],
+    ["乘上共軛 √(1+x²)+1，分子會變成什麼？", "分母在 x→0 時趨近 2。"],
+    "√(1+x²)−1 = x²/(√(1+x²)+1) ~ x²/2，所以 k = 2（c = 1/2）。");
+
+  add("cl-lim-002", 2,
+    "\\text{當 }x\\to 0\\text{ 時，}\\ln(1+x^{2})+1-\\cos 2x\\sim c\\,x^{2}\\text{。求 }c",
+    "3", lim("\\frac{\\ln(1+x^2)+1-\\cos 2x}{x^2}", 0),
+    ["infinitesimal-order", "log-limit", "trig-limit"],
+    ["兩項各自是 x² 階、而且同號，可以分別換成等價無窮小再相加。", "ln(1+u) ~ u；1−cos u ~ u²/2，這裡 u = 2x。"],
+    "ln(1+x²) ~ x²，1−cos 2x ~ (2x)²/2 = 2x²；兩者同號相加不會相消，c = 1 + 2 = 3。");
+
+  add("cl-lim-003", 3,
+    "\\text{當 }x\\to 0\\text{ 時，}\\sin 2x-2\\sin x\\sim c\\,x^{3}\\text{。求 }c",
+    "-1", lim("\\frac{\\sin 2x-2\\sin x}{x^3}", 0),
+    ["infinitesimal-order", "trig-limit"],
+    ["直接用 sin u ~ u 會得到 2x − 2x = 0 —— 差的主部被消掉了，要先變形。", "sin 2x = 2 sin x cos x，提出 2 sin x。"],
+    "sin 2x − 2 sin x = 2 sin x (cos x − 1) ~ 2x·(−x²/2) = −x³，c = −1。");
+
+  add("cl-lim-004", 3,
+    "\\text{當 }x\\to 0^{+}\\text{ 時，}\\sqrt{x+\\sqrt{x}}\\sim c\\,x^{k}\\text{。求 }k",
+    "1/4", orderOf("\\sqrt{x+\\sqrt{x}}", "\\sqrt{2x+\\sqrt{2x}}", "+"),
+    ["infinitesimal-order", "radical"],
+    ["x 很小時，x 和 √x 哪一個比較大？", "根號裡只留下主導的那一項，再開根號。"],
+    "x→0⁺ 時 √x ≫ x，所以 √(x+√x) = x^{1/4}·√(1+√x) ~ x^{1/4}，k = 1/4。");
+
+  add("cl-lim-005", 4,
+    "\\text{當 }x\\to 0\\text{ 時，}\\sqrt{1+\\tan x}-\\sqrt{1+\\sin x}\\sim c\\,x^{k}\\ (c\\ne 0)\\text{。求 }k",
+    "3", orderOf("\\sqrt{1+\\tan x}-\\sqrt{1+\\sin x}", "\\sqrt{1+\\tan 2x}-\\sqrt{1+\\sin 2x}"),
+    ["infinitesimal-order", "rationalize", "trig-limit"],
+    ["先有理化：分子會變成 tan x − sin x。", "tan x − sin x = tan x (1 − cos x)。"],
+    "差 = (tan x − sin x)/(√(1+tan x)+√(1+sin x))；tan x(1−cos x) ~ x·x²/2，分母 → 2，所以 ~ x³/4，k = 3。");
+
+  add("cl-lim-006", 4,
+    "\\text{當 }x\\to 0\\text{ 時，}1-\\cos x\\cos 2x\\cos 3x\\sim c\\,x^{2}\\text{。求 }c",
+    "7", lim("\\frac{1-\\cos x\\cos 2x\\cos 3x}{x^2}", 0),
+    ["infinitesimal-order", "trig-limit"],
+    ["乘積接近 1 的時候，1 − 乘積 ~ −ln(乘積)。", "ln 把乘積拆成三個 ln cos(mx) 的和，每一個 ~ −(mx)²/2。"],
+    "−ln(cos x cos 2x cos 3x) ~ (1+4+9)x²/2 = 7x²，而 1 − P ~ −ln P，所以 c = 7。");
+
+  add("cl-lim-007", 4,
+    "\\text{當 }x\\to 0\\text{ 時，}e^{\\tan x}-e^{\\sin x}\\sim c\\,x^{3}\\text{。求 }c",
+    "1/2", lim("\\frac{e^{\\tan x}-e^{\\sin x}}{x^3}", 0),
+    ["infinitesimal-order", "exponential-limit"],
+    ["提出 e^{sin x}：剩下 e^{tan x − sin x} − 1。", "e^u − 1 ~ u，u = tan x − sin x 本身是幾階？"],
+    "e^{tan x}−e^{sin x} = e^{sin x}(e^{tan x−sin x}−1) ~ tan x − sin x ~ x³/2，c = 1/2。");
+
+  add("cl-lim-008", 6,
+    "\\text{當 }x\\to 0\\text{ 時，}\\sin(\\sin x)-x\\sqrt[3]{1-x^{2}}\\sim c\\,x^{k}\\ (c\\ne 0)\\text{。求 }k",
+    "5", orderOf("\\sin(\\sin x)-x\\sqrt[3]{1-x^2}", "\\sin(\\sin 2x)-2x\\sqrt[3]{1-4x^2}"),
+    ["infinitesimal-order", "taylor", "composite-taylor"],
+    ["兩項的 x 與 x³ 係數各是多少？先比到 x³ 看會不會消掉。", "x³ 消掉了就要比 x⁵：sin(sin x) 的 x⁵ 係數要把 sin x 的展開代進 sin u 的前三項。"],
+    "sin(sin x) = x − x³/3 + x⁵/10 + …，x(1−x²)^{1/3} = x − x³/3 − x⁵/9 + …；x、x³ 都相消，差 ~ (19/90)x⁵，k = 5。");
+
+  add("cl-lim-009", 5,
+    "\\text{當 }n\\to\\infty\\text{ 時，}e-\\left(1+\\frac{1}{n}\\right)^{n}\\sim\\frac{c}{n}\\text{。求 }c",
+    "exp(1)/2", { m: "seqLimit", f: "n\\left(e-\\left(1+\\frac{1}{n}\\right)^{n}\\right)" },
+    ["infinitesimal-order", "exponential-limit", "asymptotic"],
+    ["寫成 e^{n ln(1+1/n)}，先看指數離 1 差多少。", "n ln(1+1/n) = 1 − 1/(2n) + …；再用 e^{1−u} ≈ e(1−u)。"],
+    "(1+1/n)^n = e·e^{−1/(2n)+O(1/n²)} = e − e/(2n) + …，所以 c = e/2。");
+
+  /* ── B. 等價無窮小替換：乘除可以換，加減小心（R1–R4）── */
+  add("cl-lim-010", 1,
+    "\\lim_{x\\to 0}\\frac{\\arcsin 2x\\cdot\\left(e^{3x}-1\\right)}{\\ln(1+x)\\cdot\\tan 4x}",
+    "3/2", lim("\\frac{\\arcsin 2x\\cdot(e^{3x}-1)}{\\ln(1+x)\\cdot\\tan 4x}", 0),
+    ["equivalent-infinitesimal", "standard-limit"],
+    ["全部是乘除，每個因子都可以換成它的等價無窮小。", "arcsin u ~ u、e^u − 1 ~ u、ln(1+u) ~ u、tan u ~ u。"],
+    "換成 (2x)(3x)/(x·4x) = 6/4 = 3/2。");
+
+  add("cl-lim-011", 2,
+    "\\lim_{x\\to 0}\\frac{\\ln(1+x)+\\ln(1-x)}{x^{2}}",
+    "-1", lim("\\frac{\\ln(1+x)+\\ln(1-x)}{x^2}", 0),
+    ["equivalent-infinitesimal", "log-limit", "trap-drill"],
+    ["把 ln(1+x) 換成 x、ln(1−x) 換成 −x，分子變 0 —— 這不是答案，是主部被消掉了。", "先把兩個 ln 合併成一個。"],
+    "分子 = ln(1−x²) ~ −x²，極限是 −1。（加減裡分別替換會得到錯的 0。）");
+
+  add("cl-lim-012", 3,
+    "\\lim_{x\\to 0}\\frac{\\tan x-\\sin x}{x\\,(1-\\cos 2x)}",
+    "1/4", lim("\\frac{\\tan x-\\sin x}{x(1-\\cos 2x)}", 0),
+    ["equivalent-infinitesimal", "trig-limit", "limit-trap"],
+    ["分子若直接換成 x − x 會得到 0，要先因式分解。", "tan x − sin x = tan x(1 − cos x)；分母 1 − cos 2x 也有等價無窮小。"],
+    "分子 ~ x·x²/2 = x³/2，分母 ~ x·(2x)²/2 = 2x³，極限 1/4。");
+
+  add("cl-lim-013", 4,
+    "\\lim_{x\\to 0}\\frac{\\sqrt{1+2x}-\\sqrt[3]{1+3x}}{x^{2}}",
+    "1/2", lim("\\frac{\\sqrt{1+2x}-\\sqrt[3]{1+3x}}{x^2}", 0),
+    ["equivalent-infinitesimal", "taylor", "limit-trap"],
+    ["兩個根式都 ~ 1 + x，相減只告訴你一次項消掉了。", "(1+u)^a = 1 + a u + a(a−1)u²/2 + …，兩個都展到二次。"],
+    "√(1+2x) = 1 + x − x²/2 + …，∛(1+3x) = 1 + x − x² + …，差 ~ x²/2，極限 1/2。");
+
+  add("cl-lim-014", 4,
+    "\\lim_{x\\to 0}\\frac{\\ln(1+x+x^{2})+\\ln(1-x+x^{2})}{x^{2}}",
+    "1", lim("\\frac{\\ln(1+x+x^2)+\\ln(1-x+x^2)}{x^2}", 0),
+    ["equivalent-infinitesimal", "log-limit", "limit-trap"],
+    ["若分別用 ln(1+u) ~ u，分子會是 (x+x²)+(−x+x²) —— 這樣算出來的數是錯的。", "先合併：(1+x+x²)(1−x+x²) 乘開是什麼？"],
+    "分子 = ln(1+x²+x⁴) ~ x²，極限 1。分別替換得 2 是錯的：ln(1+u) ~ u 的誤差 −u²/2 在這裡跟主部同階。");
+
+  add("cl-lim-015", 3,
+    "\\lim_{x\\to 0}\\frac{\\ln\\cos 3x}{\\sin^{2}2x}",
+    "-9/8", lim("\\frac{\\ln(\\cos 3x)}{(\\sin 2x)^2}", 0),
+    ["equivalent-infinitesimal", "log-limit", "trig-limit"],
+    ["ln cos u = ln(1 + (cos u − 1)) ~ cos u − 1。", "cos u − 1 ~ −u²/2；分母 sin² 2x ~ (2x)²。"],
+    "ln cos 3x ~ −9x²/2，sin² 2x ~ 4x²，極限 −9/8。");
+
+  /* ── C. L'Hôpital 失靈：導數比沒有極限，原極限卻存在（R2–R5）── */
+  add("cl-lim-016", 2,
+    "\\lim_{x\\to+\\infty}\\frac{2x-\\sin x}{3x+\\cos x}",
+    "2/3", lim("\\frac{2x-\\sin x}{3x+\\cos x}", "inf"),
+    ["lhopital", "squeeze", "oscillation"],
+    ["上下分別微分得 (2 − cos x)/(3 − sin x)，這個比值在 x→∞ 時一直擺動 —— 但那只代表 L'Hôpital 不適用。", "分子分母同除以 x，sin x/x 與 cos x/x 都被夾到 0。"],
+    "同除以 x：(2 − sin x/x)/(3 + cos x/x) → 2/3。L'Hôpital 的條件是「導數比有極限」，這裡不成立，不能拿它判定極限不存在。");
+
+  add("cl-lim-017", 2,
+    "\\lim_{x\\to+\\infty}\\frac{\\sqrt{9x^{2}+1}}{\\sqrt{x^{2}+4}}",
+    "3", lim("\\frac{\\sqrt{9x^2+1}}{\\sqrt{x^2+4}}", "inf"),
+    ["lhopital", "rationalize", "infinity-limit"],
+    ["試一次 L'Hôpital：導數比化簡之後，分子分母的根號會交換位置 —— 再用一次又換回來。", "不要繞圈，把 x 從根號裡提出來。"],
+    "√(9x²+1)/√(x²+4) = √(9+1/x²)/√(1+4/x²) → 3。L'Hôpital 在這裡會無限循環。");
+
+  add("cl-lim-018", 4,
+    "\\lim_{x\\to 0}\\frac{x^{2}\\sin\\frac{1}{x}+3x}{\\sin x}",
+    "3", lim("\\frac{x^2\\sin\\frac{1}{x}+3x}{\\sin x}", 0),
+    ["lhopital", "squeeze", "limit-trap"],
+    ["分子的導數是 2x sin(1/x) − cos(1/x) + 3，在 0 附近沒有極限。", "改成分子分母同除以 x：x sin(1/x) 被 |x| 夾住。"],
+    "同除以 x：(x sin(1/x) + 3)/(sin x / x) → (0 + 3)/1 = 3。導數比沒有極限，原極限照樣存在。");
+
+  add("cl-lim-019", 5,
+    "\\lim_{x\\to+\\infty}\\frac{1}{x}\\int_{0}^{x}\\left|\\sin t\\right|\\,dt",
+    // 直接對 x 取樣行不通：|sin t| 有折點，長區間的數值積分不準，而且誤差是 O(1/x) 的擺動、外插不了。
+    // 驗算端改算「一個週期的平均」—— 週期函數的長期平均就是它（夾擠論證是題目本身的內容）。
+    "2/pi", { m: "let", f: "\\frac{I}{\\pi}", with: { I: { m: "integral", f: "\\left|\\sin t\\right|", a: 0, b: "\\pi", v: "t" } } },
+    ["lhopital", "squeeze", "periodicity"],
+    ["L'Hôpital 給 |sin x|/1，沒有極限 —— 但原式有。", "|sin t| 週期是 π，一個週期的積分是多少？", "把 x 夾在 kπ 與 (k+1)π 之間。"],
+    "∫₀^π|sin t|dt = 2。kπ ≤ x < (k+1)π 時積分介於 2k 與 2k+2，除以 x 後兩邊都 → 2/π。");
+
+  /* ── D. 調參數：讓極限成立、讓函數連續（R2–R5）── */
+  add("cl-lim-020", 2,
+    "\\text{已知 }\\lim_{x\\to 1}\\frac{x^{2}+ax+b}{x-1}=3\\text{。求 }b",
+    "-2",
+    { m: "stationary", vars: ["a", "b"], x0: [0, 0], out: "b",
+      f: "(1+a+b)^2+\\left(\\frac{(1.1^2+1.1a+b)-(0.9^2+0.9a+b)}{0.2}-3\\right)^2" },
+    ["piecewise", "factoring", "standard-limit"],
+    ["分母 → 0 而極限有限，分子在 x=1 也必須是 0。", "分子有因式 (x−1)，約掉之後代 x=1。"],
+    "1 + a + b = 0；約分後極限是 2 + a = 3，所以 a = 1、b = −2。");
+
+  add("cl-lim-021", 4,
+    "\\text{已知 }\\lim_{x\\to+\\infty}\\left(\\sqrt{x^{2}-x+1}-a\\,x-b\\right)=0\\text{。求 }a+b",
+    "1/2",
+    { m: "let", f: "a+b", with: {
+      a: { m: "limit", f: "\\frac{\\sqrt{4x^2-2x+1}-\\sqrt{x^2-x+1}}{x}", at: "inf" },
+      b: { m: "limit", f: "2\\sqrt{x^2-x+1}-\\sqrt{4x^2-2x+1}", at: "inf" } } },
+    ["asymptote", "rationalize", "infinity-limit"],
+    ["先除以 x 再取極限，得到 a。", "知道 a 之後，b = lim(√(x²−x+1) − a x)，用共軛有理化。"],
+    "a = lim √(x²−x+1)/x = 1；b = lim(√(x²−x+1) − x) = lim (−x+1)/(√(x²−x+1)+x) = −1/2；a + b = 1/2（斜漸近線 y = x − 1/2）。");
+
+  add("cl-lim-022", 3,
+    "\\text{已知 }\\lim_{x\\to 0}\\frac{a-\\cos b\\,x}{x^{2}}=8\\ (b>0)\\text{。求 }a+b",
+    "5",
+    { m: "let", f: "a+b", with: {
+      a: { m: "value", f: "\\cos 0" },
+      b: { m: "root", f: "\\frac{1-\\cos(10^{-4}x)}{10^{-8}}-8", x0: 3 } } },
+    ["trig-limit", "standard-limit"],
+    ["分母 → 0、極限有限，分子在 x=0 也要 → 0。", "1 − cos u ~ u²/2。"],
+    "a − 1 = 0 → a = 1；(1 − cos bx)/x² → b²/2 = 8 → b = 4；a + b = 5。");
+
+  add("cl-lim-023", 3,
+    "\\text{已知 }\\lim_{x\\to+\\infty}\\left(\\frac{x+a}{x-a}\\right)^{x}=e^{6}\\text{。求 }a",
+    "3", { m: "root", f: "10^{6}\\ln\\frac{10^{6}+x}{10^{6}-x}-6", x0: 1 },
+    ["exponential-limit", "power-exponential"],
+    ["取對數：x ln((x+a)/(x−a))。", "(x+a)/(x−a) = 1 + 2a/(x−a)，再用 ln(1+u) ~ u。"],
+    "x ln(1 + 2a/(x−a)) → 2a，所以 e^{2a} = e⁶，a = 3。");
+
+  add("cl-lim-024", 3,
+    "\\text{設 }f(x)=x+1\\ (x<1)\\text{、}f(x)=a\\,x+b\\ (1\\le x<3)\\text{、}f(x)=x^{2}\\ (x\\ge 3)\\text{。若 }f\\text{ 處處連續，}\\quad\\text{求 }a",
+    "7/2",
+    { m: "stationary", vars: ["a", "b"], x0: [0, 0], out: "a",
+      f: "(a+b-(1+1))^2+(3a+b-3^2)^2" },
+    ["continuity", "piecewise"],
+    ["兩個接點 x=1 與 x=3 各給一條方程。", "x=1：左極限是 2；x=3：右邊的值是 9。"],
+    "a + b = 2、3a + b = 9，相減 2a = 7，a = 7/2（b = −3/2）。");
+
+  add("cl-lim-025", 4,
+    "\\text{設 }f(x)=(1+\\sin 3x)^{\\cot x}\\ (x\\ne 0)\\text{、}f(0)=k\\text{。若 }f\\text{ 在 }x=0\\text{ 連續，求 }k",
+    "exp(3)", lim("(1+\\sin 3x)^{\\frac{\\cos x}{\\sin x}}", 0),
+    ["continuity", "exponential-limit", "power-exponential"],
+    ["1^∞ 型：取對數變成 cot x · ln(1 + sin 3x)。", "ln(1+u) ~ u、cot x ~ 1/x。"],
+    "cot x·ln(1+sin 3x) ~ (1/x)(3x) = 3，極限 e³，所以 k = e³。");
+
+  add("cl-lim-026", 5,
+    "\\text{已知 }\\lim_{x\\to+\\infty}\\left(\\sqrt[3]{x^{3}+a\\,x^{2}+1}-\\sqrt{x^{2}+3x}\\right)=1\\text{。求 }a",
+    "15/2", { m: "root", f: "\\sqrt[3]{10^{21}+x\\cdot 10^{14}+1}-\\sqrt{10^{14}+3\\cdot 10^{7}}-1", x0: 5 },
+    ["asymptotic", "infinity-limit", "radical"],
+    ["兩個根式各減 x：∛(x³+ax²+1) − x 與 √(x²+3x) − x 各趨近多少？", "(1+u)^{1/3} ≈ 1 + u/3、(1+u)^{1/2} ≈ 1 + u/2。"],
+    "∛(x³+ax²+1) = x + a/3 + o(1)，√(x²+3x) = x + 3/2 + o(1)；a/3 − 3/2 = 1，a = 15/2。");
+
+  /* ── E. 間斷點化成一個數（R2–R4）── */
+  add("cl-lim-027", 2,
+    "\\text{設 }f(x)=\\frac{\\left|x^{2}-4\\right|}{x-2}\\text{。求跳躍量 }f(2^{+})-f(2^{-})",
+    "8", jump("\\frac{|x^2-4|}{x-2}", 2),
+    ["one-sided-limit", "continuity", "absolute-value"],
+    ["x 在 2 附近時 x + 2 > 0，所以 |x²−4| = (x+2)|x−2|。", "右邊 |x−2|/(x−2) = 1，左邊 = −1。"],
+    "f(2⁺) = 4、f(2⁻) = −4，跳躍量 8。");
+
+  add("cl-lim-028", 2,
+    "\\text{函數 }f(x)=\\lfloor x^{2}\\rfloor\\text{ 在開區間 }(0,3)\\text{ 內有幾個不連續點？}",
+    "8", { m: "let", f: "p-r", with: {
+      p: { m: "limit", f: "\\lfloor x^2\\rfloor", at: 3, dir: "-" },
+      r: { m: "limit", f: "\\lfloor x^2\\rfloor", at: 0, dir: "+" } } },
+    ["floor", "continuity"],
+    ["⌊u⌋ 只在 u 是整數時跳。x² 在 (0,3) 內會經過哪些整數？", "x² 從 0 遞增到 9（不含端點）。"],
+    "x² 經過 1, 2, …, 8 各一次，每次跳 1：不連續點是 x = √1, √2, …, √8，共 8 個。");
+
+  add("cl-lim-029", 3,
+    "\\text{設 }g(x)=\\frac{2^{1/x}-1}{2^{1/x}+1}\\text{。求跳躍量 }g(0^{+})-g(0^{-})",
+    "2", jump("\\frac{2^{1/x}-1}{2^{1/x}+1}", 0),
+    ["one-sided-limit", "exponential-limit"],
+    ["x→0⁺ 時 1/x → +∞，2^{1/x} → ∞；x→0⁻ 時 2^{1/x} → 0。", "右邊同除以 2^{1/x}。"],
+    "g(0⁺) = 1、g(0⁻) = (0−1)/(0+1) = −1，跳躍量 2：x=0 是跳躍間斷點。");
+
+  add("cl-lim-030", 3,
+    "\\text{函數 }f(x)=\\lfloor x\\rfloor+\\lfloor -x\\rfloor\\text{ 在 }x=2\\text{ 不連續。把 }f(2)\\text{ 改成多少就會連續？}",
+    "-1", lim("\\lfloor x\\rfloor+\\lfloor -x\\rfloor", 2),
+    ["floor", "removable", "continuity"],
+    ["先算 f(2) 本身。", "x 在 2 的附近但不等於 2 時，⌊x⌋ + ⌊−x⌋ 等於多少？左右兩邊分開看。"],
+    "x 不是整數時 ⌊x⌋+⌊−x⌋ = −1，而 f(2) = 2 − 2 = 0。左右極限都是 −1，是可去間斷點，改成 −1 就連續。");
+
+  add("cl-lim-031", 4,
+    "\\text{設 }f(x)=\\lim_{n\\to\\infty}\\frac{x^{2n}-1}{x^{2n}+1}\\text{。求跳躍量 }f(1^{+})-f(1^{-})",
+    "2", { m: "value", f: "\\frac{1.01^{4000}-1}{1.01^{4000}+1}-\\frac{0.99^{4000}-1}{0.99^{4000}+1}" },
+    ["continuity", "one-sided-limit", "sequence"],
+    ["先對每個固定的 x 算出 f(x)：分 |x| < 1、|x| = 1、|x| > 1 三種。", "|x| < 1 時 x^{2n} → 0；|x| > 1 時同除以 x^{2n}。"],
+    "f(x) = −1（|x|<1）、0（|x|=1）、1（|x|>1）。所以 f(1⁺) − f(1⁻) = 1 − (−1) = 2。");
+
+  add("cl-lim-032", 3,
+    "\\text{函數 }f(x)=\\frac{\\sin\\pi x}{x^{2}-1}\\text{ 在 }x=1\\text{ 是可去間斷點。應補 }f(1)\\text{ 為多少？}",
+    "-pi/2", lim("\\frac{\\sin(\\pi x)}{x^2-1}", 1),
+    ["removable", "trig-limit", "continuity"],
+    ["令 t = x − 1，sin(πx) = sin(π + πt) = ?", "分母 x² − 1 = (x−1)(x+1)。"],
+    "sin(πx) = −sin(πt) ~ −πt，分母 ~ 2t，極限 −π/2。");
+
+  add("cl-lim-033", 3,
+    "\\text{設 }f(x)=\\frac{x^{2}-x}{|x|\\,(x^{2}-1)}\\text{。求跳躍量 }f(0^{+})-f(0^{-})",
+    "2", jump("\\frac{x^2-x}{|x|(x^2-1)}", 0),
+    ["one-sided-limit", "continuity", "absolute-value"],
+    ["分子 x(x−1)、分母 |x|(x−1)(x+1)，在 0 附近先約掉 x − 1。", "剩下 (x/|x|)/(x+1)。"],
+    "f(x) = (x/|x|)/(x+1)（x ≠ 1）：f(0⁺) = 1、f(0⁻) = −1，跳躍量 2。");
+
+  /* ── F. 數列：遞迴、Stolz、Riemann 和、n 次方根、含 n 的積分（R2–R6）── */
+  add("cl-lim-034", 2,
+    "\\text{數列 }a_1=1,\\ a_{n+1}=\\frac{4a_n+3}{a_n+2}\\text{。求 }\\lim_{n\\to\\infty}a_n",
+    "3", { m: "recSeq", f: "\\frac{4a+3}{a+2}", g: "a", a0: 1 },
+    ["recursive", "fixed-point", "sequence"],
+    ["先說明數列單調有界（試算前幾項，再用歸納法）。", "極限 L 要滿足 L = (4L+3)/(L+2)，取正的那個根。"],
+    "L² + 2L = 4L + 3 → L² − 2L − 3 = 0 → L = 3 或 −1；各項都正，L = 3。");
+
+  add("cl-lim-035", 3,
+    "\\text{數列 }a_1=0.1,\\ a_{n+1}=a_n\\left(2-3a_n\\right)\\text{。求 }\\lim_{n\\to\\infty}a_n",
+    "1/3", { m: "recSeq", f: "a(2-3a)", g: "a", a0: 0.1 },
+    ["recursive", "fixed-point", "newton"],
+    ["不動點滿足 L = L(2 − 3L)：有兩個解。", "看 1 − 3a_{n+1} 與 1 − 3a_n 的關係：它是平方。"],
+    "1 − 3a_{n+1} = (1 − 3a_n)²，而 1 − 3a_1 = 0.7，所以 1 − 3a_n = 0.7^{2^{n−1}} → 0，a_n → 1/3（這是牛頓法求 1/3 的倒數迭代）。");
+
+  add("cl-lim-036", 5,
+    "\\text{數列 }x_1=0,\\ x_{n+1}=x_n+e^{-x_n}\\text{。求 }\\lim_{n\\to\\infty}\\frac{e^{x_n}}{n}",
+    "1", { m: "recSeq", f: "a+e^{-a}", g: "\\frac{e^{a}}{n}", a0: 0, tol: 1e-4 },
+    ["recursive", "stolz", "asymptotic"],
+    ["令 y_n = e^{x_n}，寫出 y_{n+1} 與 y_n 的關係。", "y_{n+1} − y_n 趨近多少？再用 Stolz。"],
+    "y_{n+1} = y_n e^{1/y_n} = y_n + 1 + O(1/y_n)，y_n → ∞，所以 y_{n+1} − y_n → 1，由 Stolz 得 y_n/n → 1。");
+
+  add("cl-lim-037", 6,
+    "\\text{數列 }x_1=1,\\ x_{n+1}=\\ln(1+x_n)\\text{。求 }\\lim_{n\\to\\infty}n\\,x_n",
+    "2", { m: "recSeq", f: "\\ln(1+a)", g: "n a", a0: 1, tol: 1e-4 },
+    ["recursive", "stolz", "asymptotic"],
+    ["先說明 x_n 遞減趨近 0。", "看 1/x_{n+1} − 1/x_n：用 ln(1+u) = u − u²/2 + …。", "差趨近一個常數之後，用 Stolz 處理 (1/x_n)/n。"],
+    "1/ln(1+x) − 1/x → 1/2（x→0），所以 1/x_{n+1} − 1/x_n → 1/2，由 Stolz 得 1/(n x_n) → 1/2，n x_n → 2。");
+
+  add("cl-lim-038", 5,
+    "\\text{數列 }a_1=1,\\ a_{n+1}=a_n+\\sqrt{a_n}\\text{。求 }\\lim_{n\\to\\infty}\\frac{a_n}{n^{2}}",
+    "1/4", { m: "recSeq", f: "a+\\sqrt{a}", g: "\\frac{a}{n^2}", a0: 1, tol: 1e-4 },
+    ["recursive", "stolz", "asymptotic"],
+    ["改看 b_n = √a_n：b_{n+1} − b_n 趨近多少？", "b_{n+1} = b_n √(1 + 1/b_n)。"],
+    "b_{n+1} − b_n = b_n(√(1+1/b_n) − 1) → 1/2，由 Stolz 得 b_n/n → 1/2，所以 a_n/n² → 1/4。");
+
+  add("cl-lim-039", 3,
+    "\\lim_{n\\to\\infty}\\frac{1+\\sqrt[3]{2}+\\sqrt[3]{3}+\\cdots+\\sqrt[3]{n}}{n\\sqrt[3]{n}}",
+    "3/4", { m: "seqLimit", f: "\\frac{\\sum_{k=1}^{n}\\sqrt[3]{k}}{n\\sqrt[3]{n}}" },
+    ["stolz", "riemann-sum", "sequence"],
+    ["Stolz：分子差是 ∛(n+1)，分母差是 (n+1)^{4/3} − n^{4/3}。", "(n+1)^{4/3} − n^{4/3} ~ (4/3) n^{1/3}。"],
+    "Stolz 得 ∛(n+1)/((n+1)^{4/3} − n^{4/3}) → 1/(4/3) = 3/4（也可看成 ∫₀¹ x^{1/3} dx 的 Riemann 和）。");
+
+  add("cl-lim-040", 3,
+    "\\lim_{n\\to\\infty}\\frac{1^{2}+3^{2}+5^{2}+\\cdots+(2n-1)^{2}}{n^{3}}",
+    "4/3", { m: "seqLimit", f: "\\frac{1}{n^3}\\sum_{k=1}^{n}(2k-1)^2" },
+    ["stolz", "sequence"],
+    ["Stolz：分子差是 (2n+1)²，分母差是 (n+1)³ − n³。", "比較兩者的最高次項。"],
+    "(2n+1)²/((n+1)³ − n³) = (4n²+…)/(3n²+…) → 4/3。");
+
+  add("cl-lim-041", 4,
+    "\\lim_{n\\to\\infty}\\sum_{k=1}^{n}\\frac{1}{\\sqrt{n^{2}+2kn}}",
+    "sqrt(3)-1", { m: "seqLimit", f: "\\sum_{k=1}^{n}\\frac{1}{\\sqrt{n^2+2kn}}" },
+    ["riemann-sum", "sequence"],
+    ["從根號裡提出 n²，湊出 (1/n)·Σ g(k/n)。", "g(x) = 1/√(1+2x)，積分區間 [0,1]。"],
+    "= (1/n)Σ 1/√(1+2k/n) → ∫₀¹ (1+2x)^{−1/2} dx = [√(1+2x)]₀¹ = √3 − 1。");
+
+  add("cl-lim-042", 5,
+    "\\lim_{n\\to\\infty}\\left(\\prod_{k=1}^{n}\\left(2+\\frac{k}{n}\\right)\\right)^{1/n}",
+    "27/(4*exp(1))", { m: "seqLimit", f: "\\exp\\left(\\frac{1}{n}\\sum_{k=1}^{n}\\ln\\left(2+\\frac{k}{n}\\right)\\right)" },
+    ["riemann-sum", "infinite-product", "log-limit"],
+    ["取對數，乘積變成和。", "和是 ∫₀¹ ln(2+x) dx 的 Riemann 和。"],
+    "∫₀¹ ln(2+x) dx = [(2+x)ln(2+x) − (2+x)]₀¹ = 3 ln 3 − 2 ln 2 − 1，所以極限 = e^{3ln3−2ln2−1} = 27/(4e)。");
+
+  add("cl-lim-043", 4,
+    "\\lim_{n\\to\\infty}\\sum_{k=1}^{n}\\frac{k}{n^{2}}\\sin\\frac{k\\pi}{n}",
+    "1/pi", { m: "seqLimit", f: "\\sum_{k=1}^{n}\\frac{k}{n^2}\\sin\\frac{k\\pi}{n}" },
+    ["riemann-sum", "trig-limit"],
+    ["k/n² = (1/n)·(k/n)：這是哪個函數的 Riemann 和？", "∫₀¹ x sin(πx) dx 用分部積分。"],
+    "→ ∫₀¹ x sin πx dx = [−x cos πx/π]₀¹ + ∫₀¹ cos πx/π dx = 1/π + 0 = 1/π。");
+
+  add("cl-lim-044", 2,
+    "\\lim_{n\\to\\infty}\\sqrt[n]{5^{n}+n\\cdot 4^{n}}",
+    "5", { m: "seqLimit", f: "\\exp\\left(\\frac{1}{n}\\ln\\left(5^{n}+n\\cdot 4^{n}\\right)\\right)", n0: 20, levels: 5 },
+    ["nth-root", "squeeze"],
+    ["根號裡最大的那一項是哪一個？", "5ⁿ ≤ 5ⁿ + n·4ⁿ ≤ 2·5ⁿ（n 夠大時），開 n 次方。"],
+    "n·4ⁿ/5ⁿ → 0，所以夾在 5 與 5·2^{1/n} 之間，極限 5。");
+
+  add("cl-lim-045", 3,
+    "\\lim_{n\\to\\infty}\\left(\\frac{n^{2}+3n+1}{n^{2}-n+2}\\right)^{n}",
+    "exp(4)", { m: "seqLimit", f: "\\left(\\frac{n^2+3n+1}{n^2-n+2}\\right)^{n}" },
+    ["exponential-limit", "power-exponential", "sequence"],
+    ["1^∞ 型：底 = 1 + (4n−1)/(n²−n+2)。", "n·(4n−1)/(n²−n+2) 趨近多少？"],
+    "n ln(1 + (4n−1)/(n²−n+2)) ~ n(4n−1)/(n²−n+2) → 4，極限 e⁴。");
+
+  add("cl-lim-046", 5,
+    "\\lim_{n\\to\\infty}\\left(\\frac{\\sqrt[n]{2}+\\sqrt[n]{8}}{2}\\right)^{n}",
+    "4", { m: "seqLimit", f: "\\left(\\frac{2^{1/n}+8^{1/n}}{2}\\right)^{n}" },
+    ["exponential-limit", "power-exponential", "nth-root"],
+    ["a^{1/n} = 1 + (ln a)/n + …，先把底寫成 1 + (?)/n。", "1^∞ 型，取對數。"],
+    "底 = 1 + (ln 2 + ln 8)/(2n) + O(1/n²)，n 次方 → e^{(ln 16)/2} = √16 = 4（兩數的幾何平均）。");
+
+  add("cl-lim-047", 6,
+    "\\lim_{n\\to\\infty}\\sqrt{n}\\int_{0}^{1}\\left(1-x^{2}\\right)^{n}dx",
+    "sqrt(pi)/2", { m: "integralLimit", f: "\\sqrt{n}(1-x^2)^{n}", a: 0, b: 1 },
+    ["asymptotic", "squeeze"],
+    ["(1−x²)ⁿ 只在 x 很小時不可忽略；寬度大約 1/√n。", "(1−x²)ⁿ ≈ e^{−nx²}，再代換 x = t/√n。"],
+    "√n∫₀¹(1−x²)ⁿdx ≈ √n∫₀^∞ e^{−nx²}dx = ∫₀^∞ e^{−t²}dt = √π/2（誤差兩邊都可以夾住）。");
+
+  add("cl-lim-048", 4,
+    "\\lim_{n\\to\\infty}\\int_{0}^{1}\\frac{n\\,x^{n-1}}{2+x}\\,dx",
+    "1/3", { m: "integralLimit", f: "\\frac{n x^{n-1}}{2+x}", a: 0, b: 1 },
+    ["squeeze", "sequence"],
+    ["n x^{n−1} 在 [0,1] 上的積分永遠是 1，而且質量越來越集中在哪一端？", "把 1/(2+x) 和它在那一端的值比較，差用 |x − 1| 控制。"],
+    "∫₀¹ n x^{n−1} dx = 1 且質量集中到 x = 1，所以極限是 1/(2+1) = 1/3。嚴格地：差 = ∫ n x^{n−1}(1/(2+x) − 1/3) dx，|…| ≤ ∫ n x^{n−1}(1−x)/6 dx = 1/(6(n+1)) → 0。");
+
+  add("cl-lim-049", 5,
+    "\\lim_{n\\to\\infty}n\\int_{0}^{1}\\left(\\sqrt[n]{1+x}-1\\right)dx",
+    "2*log(2)-1", { m: "integralLimit", f: "n\\left((1+x)^{1/n}-1\\right)", a: 0, b: 1 },
+    ["exponential-limit", "asymptotic"],
+    ["(1+x)^{1/n} = e^{ln(1+x)/n}，e^u − 1 ~ u。", "n·(那一項) 在 [0,1] 上一致收斂到 ln(1+x)。"],
+    "n((1+x)^{1/n} − 1) → ln(1+x)（一致），所以極限 = ∫₀¹ ln(1+x) dx = 2 ln 2 − 1。");
+
+  /* ── G. 連續複利（R2）── */
+  add("cl-lim-050", 2,
+    "\\text{年利率 }6\\%\\text{、一年複利 }n\\text{ 次時，本金翻倍需要 }T_n=\\frac{\\ln 2}{n\\ln\\left(1+\\frac{0.06}{n}\\right)}\\text{ 年。}\\quad\\text{連續複利（}n\\to\\infty\\text{）時翻倍需要幾年？}",
+    "50*log(2)/3", { m: "limit", f: "\\frac{\\ln 2}{n\\ln(1+\\frac{0.06}{n})}", at: "inf", v: "n" },
+    ["applied-limit", "word-problem", "exponential-limit"],
+    ["n ln(1 + 0.06/n) 在 n→∞ 時趨近多少？", "ln(1+u) ~ u。"],
+    "n ln(1+0.06/n) → 0.06，T → ln 2/0.06 = (50/3) ln 2 ≈ 11.55 年（這就是「72 法則」的連續版：約 69.3/6）。");
+
+  window.BUZZ_PROBLEMS = (window.BUZZ_PROBLEMS || []).concat(problems);
+})();
