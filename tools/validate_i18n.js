@@ -259,7 +259,25 @@ const mathSignature = (tex) => stripText(tex).split("\u0000").map((s) => s.repla
 
 let needed = 0;
 let covered = 0;
+// 英文待上（tools/content/i18n_pending.json）：翻好了先不出貨的題。清單裡的題不准已經在出貨的側表裡（兩邊只能擇一），
+// 翻好的題幹要都在 i18n_pending_prompts.json 裡、而且一樣要過「數學一個字都不准動」那一關 —— 之後併回去才不會出事
+const pending = require("./build_i18n_text.js").pendingIds();
+const pendingPrompts = (() => {
+  const file = path.join(ROOT, "tools", "content", "i18n_pending_prompts.json");
+  return fs.existsSync(file) ? JSON.parse(fs.readFileSync(file, "utf8")) : {};
+})();
+pending.forEach((id) => {
+  if (!problems.some((p) => p.id === id)) fail(`英文待上清單裡的 ${id} 不在題庫裡`);
+  if (problemsTable[id]) fail(`${id} 同時在英文待上清單與出貨的英文側表裡`);
+});
+Object.entries(pendingPrompts).forEach(([id, overlay]) => {
+  const problem = problems.find((p) => p.id === id);
+  if (!problem) { fail(`i18n_pending_prompts.json 的 ${id} 不在題庫裡`); return; }
+  if (!overlay.prompt || CJK.test(overlay.prompt) || mathSignature(overlay.prompt) !== mathSignature(problem.prompt)) fail(`i18n_pending_prompts.json 的 ${id}：題幹缺英文、還有中文，或數學跟中文版不一樣`);
+});
+let pendingCount = 0;
 problems.forEach((problem) => {
+  if (pending.has(problem.id)) { pendingCount += 1; return; }
   const overlay = problemsTable[problem.id];
   const needsPrompt = CJK.test(problem.prompt || "");
   const needsCaption = CJK.test(problem.tableCaption || "");
@@ -404,7 +422,7 @@ bootCases.forEach(([languages, stored, expected]) => {
 });
 
 // ── 結果 ────────────────────────────────────────────────────────
-console.log(`i18n：UI 檔 ${UI_FILES.length} 支、t() key ${usedKeys.size} 個（動態呼叫 ${dynamicCalls} 處）、字典 ${Object.keys(dict).length} 條；題目要翻 ${needed} 題、翻齊 ${covered} 題`);
+console.log(`i18n：UI 檔 ${UI_FILES.length} 支、t() key ${usedKeys.size} 個（動態呼叫 ${dynamicCalls} 處）、字典 ${Object.keys(dict).length} 條；題目要翻 ${needed} 題、翻齊 ${covered} 題、英文待上 ${pendingCount} 題`);
 console.log(`內容句子（${textChecked.size} 句型）：${Object.entries(textByKind).map(([kind, s]) => `${kind} ${s.done}/${s.need}`).join("、")}`);
 if (failures.length) {
   const shown = failures.slice(0, Number(process.env.I18N_SHOW || 60));
