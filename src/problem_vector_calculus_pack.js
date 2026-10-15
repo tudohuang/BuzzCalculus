@@ -363,6 +363,10 @@
     "vc-work-004": { m: "lineIntegral", kind: "work", F: ["y^2", "x^2"], path: { x: "t", y: "t^2", from: 0, to: 1 } },
     "vc-cons-001": { m: "lineIntegral", kind: "work", F: ["2xy+1", "x^2"], path: { x: "t", y: "2t", from: 0, to: 1 } },
     "vc-cons-002": { m: "lineIntegral", kind: "work", F: ["e^x\\sin y", "e^x\\cos y"], path: { x: "0", y: "\\pi t/2", from: 0, to: 1 } },
+    // 求參數：數值旋度當成 a 的函數解零點，再確認每個取樣點都歸零 —— 不碰 ∂P/∂y=∂Q/∂x 的代數
+    "vc-cons-003": { m: "conservativeParam", F: ["a\\,xy", "x^2+2y"], param: "a" },
+    // ∇·(fF)：f 跟 F 逐點相乘後直接數值偏導，不用乘積法則
+    "vc-nab-010": { m: "fieldOp", op: "div", scale: "x", F: ["y", "z", "x"], at: [1, 2, 3] },
     "vc-cons-004": { m: "lineIntegral", kind: "work", F: ["y^2", "2xy+3y^2"], path: { x: "1+t", y: "1+t", from: 0, to: 1 } },
     "vc-green-001": { m: "lineIntegral", kind: "work", F: ["-y", "x"], paths: [
       { x: "2t", y: "0", from: 0, to: 1 },

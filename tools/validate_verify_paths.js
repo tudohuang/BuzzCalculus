@@ -52,7 +52,13 @@ const VALUE_CASES = [
   ["ε-δ（右邊比較窄）", { m: "maxDelta", f: "\\sqrt{x}", at: 4, L: 2, eps: 0.01 }, 0.0399],
   ["Lipschitz 常數 = sup|f′|", { m: "lipschitz", f: "x/(1+x^2)", range: [-50, 50] }, 1],
   ["Lipschitz（端點取到）", { m: "lipschitz", f: "\\sqrt{x}", range: [1, 10000] }, 0.5],
-  ["sup 範數", { m: "extremeOf", f: "5x/(1+25x^2)", kind: "sup", integer: false, range: [0, 1] }, 0.5]
+  ["sup 範數", { m: "extremeOf", f: "5x/(1+25x^2)", kind: "sup", integer: false, range: [0, 1] }, 0.5],
+  ["散度（三維）", { m: "fieldOp", op: "div", F: ["x^2", "y^2", "z^2"], at: [1, 2, 3] }, 12],
+  ["散度（乘上純量場 f）", { m: "fieldOp", op: "div", scale: "y", F: ["x", "x", "z"], at: [2, 5, 1] }, 12],
+  ["旋度（二維純量）", { m: "fieldOp", op: "curl", F: ["-y", "x"], at: [0.3, 0.7] }, 2],
+  ["旋度的長度（三維）", { m: "fieldOp", op: "curl", F: ["-y^2", "x^2", "0"], at: [1, 2, 0] }, 6],
+  ["保守場求參數（二維）", { m: "conservativeParam", F: ["a x y^2", "3x^2y"], param: "a" }, 3],
+  ["保守場求參數（三維）", { m: "conservativeParam", F: ["yz", "a xz", "xy"], param: "a" }, 1]
 ];
 
 VALUE_CASES.forEach(([name, spec, expected]) => {
@@ -126,8 +132,18 @@ const WRONG_CASES = [
   ["ε-N 差一（最常見的錯）", numericProblem("497", { m: "firstIndex", f: "|(2n+1)/(n+3)-2|", below: 0.01 })],
   ["ε-δ 取成大的那一邊", numericProblem("0.5", { m: "maxDelta", f: "1/x", at: 2, L: 0.5, eps: 0.1 })],
   ["ε-δ 直接把 ε 當 δ", numericProblem("0.01", { m: "maxDelta", f: "\\sqrt{x}", at: 4, L: 2, eps: 0.01 })],
-  ["Lipschitz 常數寫成函數的最大值", numericProblem("0.5", { m: "lipschitz", f: "x/(1+x^2)", range: [-50, 50] })]
+  ["Lipschitz 常數寫成函數的最大值", numericProblem("0.5", { m: "lipschitz", f: "x/(1+x^2)", range: [-50, 50] })],
+  ["∇·(fF) 漏掉 ∇f·F 那一項（只算 f∇·F）", numericProblem("0", { m: "fieldOp", op: "div", scale: "x", F: ["y", "z", "x"], at: [1, 2, 3] })],
+  ["旋度的 Q_x − P_y 減反了", numericProblem("-6", { m: "fieldOp", op: "curl", F: ["-y^2", "x^2"], at: [1, 2] })],
+  ["保守場參數：∂P/∂y 少了 y² 微分出來的 2", numericProblem("6", { m: "conservativeParam", F: ["a x y^2", "3x^2y"], param: "a" })]
 ];
+
+// 保守場求參數：沒有任何常數能讓旋度處處為零時要回 NaN（交給上層判 unverified），
+// 不能硬挑一個「最接近」的值當答案。
+{
+  const none = EXPLICIT_METHODS.conservativeParam({ m: "conservativeParam", F: ["y", "a x+x^2"], param: "a" });
+  if (!Number.isNaN(none)) fail(`保守場求參數：⟨y, ax+x²⟩ 沒有解，卻算出 ${none}`);
+}
 
 // 答案是函數（fn）與收斂區間（convergence）：講次隨堂包補的兩條路徑。
 // 答案字串直接給 JS（** 不是 ^ —— ^ 在 JS 是 XOR）。
