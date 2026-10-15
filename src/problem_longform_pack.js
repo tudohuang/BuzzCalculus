@@ -257,7 +257,11 @@
     // e^{-x²} 在 x=20 已是 1e-174，截到 20 沒有損失。
     "dm-int-006": { m: "integral", f: "e^{-x^2}\\cos(2x)", v: "x", a: 0, b: 20 },
     // cos x/(1+x²) 的尾巴 ~1/b：截到 600 誤差 ~2e-3，容差放 5e-3
-    "dm-int-009": { m: "integral", f: "\\frac{\\cos x}{1+x^2}", v: "x", a: 0, b: 600, tol: 5e-3 }
+    "dm-int-009": { m: "integral", f: "\\frac{\\cos x}{1+x^2}", v: "x", a: 0, b: 600, tol: 5e-3 },
+    // 二重積分直接數值積（角落 (1,1) 是對數奇異，自適應積分吃得下），不經過級數展開
+    "dm-int-007": { m: "double", f: "\\frac{1}{1-xy}", u: "x", v: "y", a: 0, b: 1, c: 0, d: 1, tol: 1e-6 },
+    // x e^{x²}F(x)：把 e^{x²} 併進被積函數（e^{x²−t²}）免得溢位，再對 x→∞ 外插
+    "dm-lim-012": { m: "limit", f: "x\\int_x^{\\infty} e^{x^2-t^2}\\,dt", at: "inf" }
   };
   problems.forEach((problem) => {
     if (VERIFY[problem.id]) problem.verify = VERIFY[problem.id];

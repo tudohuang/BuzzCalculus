@@ -126,5 +126,15 @@
     numeric(id, topic, 4, prompt, answer, tags, solution, ["This is intended as a Boss/Boss+ item."], 110, rank);
   });
 
+  // ---- 獨立驗算規格（tools/verify_answers.js 讀）----
+  // 題幹的寫法自動辨識器接不到；這裡把題幹重述成數值路徑（數值偏導、數值積分、
+  // 複數求值、圍道上的梯形法），不重複解題的推導、也不把答案抄一遍。
+  const VERIFY = {
+    "rel-adv-005": { m: "vecField", op: "jacobian", vars: ["x", "y"], F: ["x^2-y^2", "2xy"], at: [1, 2] }
+  };
+  releaseProblems.forEach((problem) => {
+    if (VERIFY[problem.id]) problem.verify = VERIFY[problem.id];
+  });
+
   window.BUZZ_PROBLEMS = (window.BUZZ_PROBLEMS || []).concat(releaseProblems);
 })();

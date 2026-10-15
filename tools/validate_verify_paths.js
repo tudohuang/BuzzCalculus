@@ -161,7 +161,18 @@ const FN_RIGHT = [
   ["反導數（常數差不管）", fnProblem("x**3+x+7", { m: "fn", kind: "antideriv", f: "3x^2+1" }, "antiderivative")],
   ["切線（截距＋斜率兩點定死）", fnProblem("x/4+1", { m: "fn", cases: TANGENT_AT_4 })],
   ["收斂區間（左閉右開）", fnProblem("[-1, 1)", { m: "convergence", f: "\\frac{x^n}{n}", center: 0, from: 1, range: [-100, 100] }, "interval")],
-  ["Maclaurin 係數", fnProblem("-1/4", { m: "derivAt0", coef: true, f: "\\ln(1+x)", n: 4, r: 0.5 }, "numeric")]
+  ["Maclaurin 係數", fnProblem("-1/4", { m: "derivAt0", coef: true, f: "\\ln(1+x)", n: 4, r: 0.5 }, "numeric")],
+  // vecField / complex（2026-10 高曝光題補的兩條路徑）
+  ["散度（答案是 x,y,z 的式子）", fnProblem("y*z", { m: "vecField", op: "div", F: ["xyz", "x^2z", "xy^2"] })],
+  ["旋度 z 分量", fnProblem("y**2-x**2", { m: "vecField", op: "curl", comp: 2, F: ["x^2y", "xy^2", "z"] })],
+  ["連鎖 Jacobian（先合成再微分）", fnProblem("-4*y", { m: "vecField", op: "jacobian", over: ["u", "v"], F: ["u+v", "uv"], inner: ["x+y", "x-y"] })],
+  ["反向變換的 |Jacobian|", fnProblem("1/2", { m: "vecField", op: "jacobian", F: ["x+y", "x-y"], inverse: true, abs: true }, "numeric")],
+  ["Jacobian 在一點", fnProblem("20", { m: "vecField", op: "jacobian", F: ["x^2-y^2", "2xy"], at: [1, 2] }, "numeric")],
+  ["複數實部（答案是 x,y 的式子）", fnProblem("x**3-3*x*y**2", { m: "complex", op: "value", f: "z^3", part: "re" })],
+  ["留數的模（小圓上的圍道積分）", fnProblem("1/2", { m: "complex", op: "contour", f: "1/(z^2+1)", center: "i", radius: 0.5, part: "abs" }, "numeric")],
+  ["極點不在圍道內 → 0", fnProblem("0", { m: "complex", op: "contour", f: "1/(z-1)", center: 0, radius: 0.5, part: "re" }, "numeric")],
+  ["複數導數的實部", fnProblem("-8", { m: "complex", op: "deriv", f: "z^4", at: "1+i", part: "re" }, "numeric")],
+  ["全純映射的實 Jacobian", fnProblem("4*(x**2+y**2)", { m: "complex", op: "jacobian", f: "z^2" })]
 ];
 FN_RIGHT.forEach(([name, problem]) => {
   const result = verifyProblem(problem, { normalizeAnswer: (value) => String(value) });
@@ -175,7 +186,18 @@ WRONG_CASES.push(
   ["切線斜率寫成 f′(x) 在 0 附近的值（½）", fnProblem("x/2+0", { m: "fn", cases: TANGENT_AT_4 })],
   ["收斂區間的端點全開（漏了交錯調和那一端）", fnProblem("(-1, 1)", { m: "convergence", f: "\\frac{x^n}{n}", center: 0, from: 1, range: [-100, 100] }, "interval")],
   ["收斂區間的端點全閉（調和級數那一端其實發散）", fnProblem("[-1, 1]", { m: "convergence", f: "\\frac{x^n}{n}", center: 0, from: 1, range: [-100, 100] }, "interval")],
-  ["把 f⁽⁴⁾(0) 當成 x⁴ 的係數", fnProblem("-6", { m: "derivAt0", coef: true, f: "\\ln(1+x)", n: 4, r: 0.5 }, "numeric")]
+  ["把 f⁽⁴⁾(0) 當成 x⁴ 的係數", fnProblem("-6", { m: "derivAt0", coef: true, f: "\\ln(1+x)", n: 4, r: 0.5 }, "numeric")],
+  ["散度忘了微分（把場的分量直接相乘）", fnProblem("x*y*z", { m: "vecField", op: "div", F: ["xyz", "x^2z", "xy^2"] })],
+  ["旋度分量的正負號反了", fnProblem("x**2-y**2", { m: "vecField", op: "curl", comp: 2, F: ["x^2y", "xy^2", "z"] })],
+  ["連鎖 Jacobian 少乘內層的 −2", fnProblem("2*y", { m: "vecField", op: "jacobian", over: ["u", "v"], F: ["u+v", "uv"], inner: ["x+y", "x-y"] })],
+  ["反向變換的 Jacobian 忘了取倒數", fnProblem("2", { m: "vecField", op: "jacobian", F: ["x+y", "x-y"], inverse: true, abs: true }, "numeric")],
+  ["Jacobian 的交叉項加成減", fnProblem("-12", { m: "vecField", op: "jacobian", F: ["x^2-y^2", "2xy"], at: [1, 2] }, "numeric")],
+  ["複數實部的 i² 沒變號", fnProblem("x**3+3*x*y**2", { m: "complex", op: "value", f: "z^3", part: "re" })],
+  ["留數忘了 1/(2i) 的 2", fnProblem("1", { m: "complex", op: "contour", f: "1/(z^2+1)", center: "i", radius: 0.5, part: "abs" }, "numeric")],
+  ["極點在圍道外卻算成留數", fnProblem("1", { m: "complex", op: "contour", f: "1/(z-1)", center: 0, radius: 0.5, part: "re" }, "numeric")],
+  ["複數導數把 (1+i)³ 算成 2+2i", fnProblem("8", { m: "complex", op: "deriv", f: "z^4", at: "1+i", part: "re" }, "numeric")],
+  ["實 Jacobian 寫成 |f′| 而不是 |f′|²", fnProblem("2*(x**2+y**2)**0.5", { m: "complex", op: "jacobian", f: "z^2" })],
+  ["調和函數的 Laplacian 寫成非零", fnProblem("1", { m: "complex", op: "laplacianRe", f: "z^3" }, "numeric")]
 );
 
 WRONG_CASES.forEach(([name, problem]) => {

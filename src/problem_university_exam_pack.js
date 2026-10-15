@@ -144,5 +144,20 @@
     ["uni-ser-019", "\\text{收斂半徑： }\\sum_{n=1}^{\\infty}\\frac{x^n}{\\sqrt n}", "1", ["power-series", "radius"], "The nth root of 1/sqrt(n) tends to 1."],
   ].forEach(([id, prompt, answer, tags, solution]) => numeric(id, "series", prompt, answer, tags, solution, 210));
 
+  // ---- 獨立驗算規格（tools/verify_answers.js 讀）----
+  // 題幹的寫法自動辨識器接不到；這裡把題幹重述成數值路徑（數值偏導、數值積分、
+  // 複數求值、圍道上的梯形法），不重複解題的推導、也不把答案抄一遍。
+  const VERIFY = {
+    // 極座標曲線寫成參數式 (r cosθ, r sinθ)，兩支數值微分再相除
+    "uni-der-010": { m: "paramSlope", x: "(1+\\cos t)\\cos t", y: "(1+\\cos t)\\sin t", at: "\\pi/2" },
+    "uni-der-015": { m: "vecField", op: "div", F: ["xe^y", "ye^z", "ze^x"] },
+    "uni-der-016": { m: "vecField", op: "curl", comp: 2, F: ["xy", "yz", "zx"] },
+    // 所圍面積 = ∮x dy（逆時針），沿題目給的參數式數值積一圈
+    "uni-int-023": { m: "lineIntegral", kind: "work", F: ["0", "x"], path: { x: "2\\cos t", y: "3\\sin t", from: 0, to: "2\\pi" } }
+  };
+  problems.forEach((problem) => {
+    if (VERIFY[problem.id]) problem.verify = VERIFY[problem.id];
+  });
+
   window.BUZZ_PROBLEMS = (window.BUZZ_PROBLEMS || []).concat(problems);
 })();
