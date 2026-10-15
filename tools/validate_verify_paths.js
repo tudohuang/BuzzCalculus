@@ -61,7 +61,11 @@ const VALUE_CASES = [
   ["保守場求參數（三維）", { m: "conservativeParam", F: ["yz", "a xz", "xy"], param: "a" }, 1],
   ["let：先解 θ 再代回 r", { m: "let", f: "3\\cos t", with: { t: { m: "root", f: "3\\cos x-(1+\\cos x)", x0: 1 } } }, 1.5],
   ["stationary：鞍點的值（梯度下降找不到的那種）", { m: "stationary", vars: ["x", "y"], f: "x^2-2xy+2y", x0: [2, 0.5] }, 1],
-  ["stationary：回傳座標", { m: "stationary", vars: ["x", "y"], f: "x^3+y^3-3xy", x0: [0.8, 1.3], out: "y" }, 1]
+  ["stationary：回傳座標", { m: "stationary", vars: ["x", "y"], f: "x^3+y^3-3xy", x0: [0.8, 1.3], out: "y" }, 1],
+  // 二階 IVP（Euler 方程）：x²y″−2xy′+2y=0、y(1)=1、y′(1)=3 的解是 −x+2x²
+  ["ode2Value：Euler 方程的值", { m: "ode2Value", f: "\\frac{2xp-2y}{x^2}", y0: [1, 1], yp0: 3, at: 2 }, 6],
+  // Euler 數值法：y′=x+y、y(0)=1、h=0.1 走兩步：1 → 1.1 → 1.22（真解是 1.2428）
+  ["odeEuler：走兩步", { m: "odeEuler", f: "x+y", y0: [0, 1], h: 0.1, n: 2 }, 1.22]
 ];
 
 VALUE_CASES.forEach(([name, spec, expected]) => {
@@ -148,7 +152,9 @@ const WRONG_CASES = [
   ["旋度的 Q_x − P_y 減反了", numericProblem("-6", { m: "fieldOp", op: "curl", F: ["-y^2", "x^2"], at: [1, 2] })],
   ["保守場參數：∂P/∂y 少了 y² 微分出來的 2", numericProblem("6", { m: "conservativeParam", F: ["a x y^2", "3x^2y"], param: "a" })],
   ["let：把交點的 θ（π/3）當成 r", numericProblem("1.0471975511965976", { m: "let", f: "3\\cos t", with: { t: { m: "root", f: "3\\cos x-(1+\\cos x)", x0: 1 } } })],
-  ["stationary：鞍點的值寫成角落的值", numericProblem("0", { m: "stationary", vars: ["x", "y"], f: "x^2-2xy+2y", x0: [2, 0.5] })]
+  ["stationary：鞍點的值寫成角落的值", numericProblem("0", { m: "stationary", vars: ["x", "y"], f: "x^2-2xy+2y", x0: [2, 0.5] })],
+  ["ode2Value：特徵根的係數解反（2x−x² 在 2 是 0）", numericProblem("0", { m: "ode2Value", f: "\\frac{2xp-2y}{x^2}", y0: [1, 1], yp0: 3, at: 2 })],
+  ["odeEuler：把 Euler 法的近似值寫成真解 2e^{0.2}−1.2", numericProblem("1.242805516", { m: "odeEuler", f: "x+y", y0: [0, 1], h: 0.1, n: 2 })]
 ];
 
 // 保守場求參數：沒有任何常數能讓旋度處處為零時要回 NaN（交給上層判 unverified），
