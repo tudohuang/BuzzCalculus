@@ -344,17 +344,19 @@ try {
 
 /* ── 三之五、坑：級數求和的 Euler–Maclaurin 尾巴 ─────────────── */
 // 2026-10-15 之前這兩條「安靜地算錯」：只在整數上有意義的項（(1−(−1)ⁿ)/n² 差 5e-3）、
-// 比值貼著 1 的 ln 在遠方相消成 0（Σln((n+1)²/(n(n+2))) 算成 −0.599，真值 ln 2）。現在必須算不出來（NaN），不能給數字；
-// ln(1+極小) 經過 LaTeX 編譯一樣是 log(1+x)，也會相消 —— 同樣必須算不出來。寫法換對（拆成 cos 的級數）就照常算得準。
+// 比值貼著 1 的 ln 在遠方相消成 0（Σln((n+1)²/(n(n+2))) 算成 −0.599，真值 ln 2）。
+// 現在：只在整數上有意義的項必須算不出來（NaN）；相消的 ln 在還量得準的地方截斷、用那裡量到的冪次補尾巴，要算對。
 [
   ["Σ(1−(−1)ⁿ)/n² 必須算不出來", "\\frac{1-(-1)^n}{n^2}"],
-  ["Σln((n+1)²/(n(n+2))) 必須算不出來", "\\ln\\frac{(n+1)^2}{n(n+2)}"],
-  ["Σln(1+1/(n(n+2))) 必須算不出來（log(1+x) 一樣相消）", "\\ln\\left(1+\\frac{1}{n(n+2)}\\right)"]
+  ["Σ|cos n|/n² 必須算不出來（|cos n| 在整數之間不平滑）", "\\frac{|\\cos n|}{n^2}"]
 ].forEach(([name, f]) => {
   const value = EXPLICIT_METHODS.series({ m: "series", f, from: 1 });
   if (Number.isFinite(value)) fail(`${name}，卻算出 ${value}`);
 });
 [
+  ["Σln((n+1)²/(n(n+2))) = ln 2（遠方相消：截斷＋冪次補尾巴）", { m: "series", f: "\\ln\\frac{(n+1)^2}{n(n+2)}", from: 1 }, Math.LN2],
+  ["Σln(1+1/(n(n+2))) = ln 2（log(1+x) 一樣相消）", { m: "series", f: "\\ln\\left(1+\\frac{1}{n(n+2)}\\right)", from: 1 }, Math.LN2],
+  ["Σln(1−1/(4n²)) = ln(2/π)（Wallis）", { m: "series", f: "\\ln\\left(1-\\frac{1}{4n^2}\\right)", from: 1 }, Math.log(2 / Math.PI)],
   ["Σ1/(n(n+2)) = 3/4（正常的單調級數照算）", { m: "series", f: "\\frac{1}{n(n+2)}", from: 1 }, 0.75],
   ["Σsin²n/n² = (π−1)/2（拆成 cos 2n）", { m: "value", f: "\\frac{\\pi^2}{12}-\\frac{1}{2}\\sum_{n=1}^{\\infty}\\frac{\\cos 2n}{n^2}" }, (Math.PI - 1) / 2]
 ].forEach(([name, spec, expected]) => {
