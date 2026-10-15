@@ -1,4 +1,4 @@
-// 分節模式的旁白播放（從 course_sections.js 搬出來；行為不變）：一課一支 mp3、播放／暫停、語速、字幕、念完自己出下一句、
+// 分節模式的旁白播放（從 course_sections.js 搬出來；行為不變）：一課一支 mp3、播放／暫停、語速、句間停頓、字幕、念完自己出下一句、
 // 問句念完停下來等、兩個聲音（女聲／男聲，records.settings.narrVoice；選的那一個沒有就用另一個）、載不到退回點的；按鈕在 body 底下的 dock。data-lazy="narration"：有 say 的課才抓（分節那一組放不下了）。
 // 分節那邊的東西（現在這一課、出下一句、只換句子、捲動對位、問著沒）從 host 拿：course_sections.js 載入後 init 一次。
 (function () {
@@ -18,8 +18,11 @@
   /* ── 旁白：一課一支 mp3，每一句 t = [起, 訖] 毫秒（build_narration.js）；preload=none、Range 串流。
      一個 <audio>（iOS 點的那一下解鎖）；訖點用計時器看；出錯重載一次，再錯留一行字。 */
   const RATES = [1, 1.25, 1.5];
+  // 句與句之間停幾拍（records.settings.narrGap；旁白列上按一下換）：一拍 0.5 秒、語速調快也跟著縮。預設不停 —— 錄音本來就首尾相接
+  const GAPS = [0, 1, 2, 3];
+  const BEAT_MS = 500;
   // v：現在念的聲音（f 女聲／m 男聲）；fb：選的那一個這一課沒有或載不到，先用另一個；bad：這一課載不到的聲音
-  const voice = { on: false, paused: false, wait: false, ask: false, err: false, id: "", si: -1, bi: -1, el: null, timer: 0, state: null, start: 0, end: 0, retries: 0, v: "", fb: false, bad: {} };
+  const voice = { on: false, paused: false, wait: false, ask: false, rest: false, err: false, id: "", si: -1, bi: -1, el: null, timer: 0, state: null, start: 0, end: 0, retries: 0, v: "", fb: false, bad: {} };
   // 兩個聲音的欄位（build_course_v2.js）：課的 voice／vm、句子的 t／tm、大綱的前綴 narration／narrationM
   const K = { f: ["voice", "t", "narration", "media/narration/"], m: ["vm", "tm", "narrationM", "media/narration/m/"] };
   const NAME = { f: "女聲", m: "男聲" };
@@ -44,7 +47,7 @@
   const voiced = (data) => data.sections.some((s) => s.beats.some((b) => b.say));
   const voicePrefs = (records) => {
     const s = records.settings || {};
-    return { rate: RATES.includes(Number(s.narrRate)) ? Number(s.narrRate) : 1, subs: Boolean(s.narrSubs), v: s.narrVoice === "m" ? "m" : "f" };
+    return { rate: RATES.includes(Number(s.narrRate)) ? Number(s.narrRate) : 1, gap: GAPS.includes(Number(s.narrGap)) ? Number(s.narrGap) : 0, subs: Boolean(s.narrSubs), v: s.narrVoice === "m" ? "m" : "f" };
   };
   const alive = () => Boolean(host.last && voice.id === host.last.m.id && typeof document !== "undefined" && document.querySelector("[data-cv2s]"));
   const nowMs = () => (voice.el ? voice.el.currentTime * 1000 : 0);
@@ -60,6 +63,7 @@
   function hush() {
     window.clearTimeout(voice.timer);
     voice.end = 0;
+    voice.rest = false;
     if (voice.el) voice.el.pause();
   }
   function halt() {
@@ -99,7 +103,7 @@
     if (!s) { hush(); voice.wait = true; return; }
     const bi = Math.min(s.beats.length, sec.shown[sec.si] || 1) - 1;
     const q = host.asking(api, sec.si, bi);
-    Object.assign(voice, { id: api.m.id, si: sec.si, bi, wait: false, paused: false, ask: q }, pick(api));
+    Object.assign(voice, { id: api.m.id, si: sec.si, bi, wait: false, paused: false, ask: q, rest: false }, pick(api));
     const seg = segOf(api, sec.si, bi, q, voice.v);
     if (!seg) {
       // 有字沒錄音（字改過還沒重錄）：停一下再往下
@@ -135,6 +139,16 @@
       return host.show("act");
     }
     if (s && shown < s.beats.length) {
+      // 停幾拍再出下一句：錄音先停在這一句的訖點，時間到了（或停頓中暫停又按繼續）才往下
+      const { gap, rate } = voicePrefs(api.deps.loadRecords());
+      if (gap && !voice.rest) {
+        voice.rest = true;
+        window.clearTimeout(voice.timer);
+        if (voice.el) voice.el.pause();
+        voice.timer = window.setTimeout(advance, (gap * BEAT_MS) / rate);
+        return;
+      }
+      voice.rest = false;
       sec.shown[sec.si] = shown + 1;
       host.reveal(api, sec.si, shown);
       host.patch(api);
@@ -195,11 +209,11 @@
       dock.className = "cv2s-dock";
       dock.setAttribute("role", "group");
       dock.setAttribute("aria-label", "旁白");
-      dock.innerHTML = `<p class="cv2s-voice-off" data-cv2s-voice-off hidden>旁白載不到，用點的繼續。</p><span class="cv2s-voice"><button type="button" data-cv2s-play></button><button type="button" data-cv2s-rate></button><button type="button" data-cv2s-vox hidden></button><button type="button" data-cv2s-subs>字幕</button></span>`;
+      dock.innerHTML = `<p class="cv2s-voice-off" data-cv2s-voice-off hidden>旁白載不到，用點的繼續。</p><span class="cv2s-voice"><button type="button" data-cv2s-play></button><button type="button" data-cv2s-rate></button><button type="button" data-cv2s-gap></button><button type="button" data-cv2s-vox hidden></button><button type="button" data-cv2s-subs>字幕</button></span>`;
       dock.addEventListener("click", (event) => {
         const b = event.target && event.target.closest && event.target.closest("button");
         if (!b || !host.last || !host.last.state.sec) return;
-        voiceAct(host.last, b.hasAttribute("data-cv2s-play") ? "course-s-play" : b.hasAttribute("data-cv2s-rate") ? "course-s-rate" : b.hasAttribute("data-cv2s-vox") ? "course-s-voice" : "course-s-subs");
+        voiceAct(host.last, b.hasAttribute("data-cv2s-play") ? "course-s-play" : b.hasAttribute("data-cv2s-rate") ? "course-s-rate" : b.hasAttribute("data-cv2s-gap") ? "course-s-gap" : b.hasAttribute("data-cv2s-vox") ? "course-s-voice" : "course-s-subs");
       });
       document.body.appendChild(dock);
       // 換到別的畫面（課程表、全文、結算…）：停掉、拿掉
@@ -230,7 +244,7 @@
   }
   function updateDock() {
     if (!dock || !host.last) return;
-    const { rate, subs, v } = voicePrefs(host.last.records);
+    const { rate, gap, subs, v } = voicePrefs(host.last.records);
     const playing = voice.on && !voice.paused;
     const play = dock.querySelector("[data-cv2s-play]");
     const label = playing ? "暫停" : voice.on ? "繼續" : "播放";
@@ -239,6 +253,9 @@
     const r = dock.querySelector("[data-cv2s-rate]");
     r.textContent = `${rate}×`;
     r.setAttribute("aria-label", `語速 ${rate} 倍`);
+    const g = dock.querySelector("[data-cv2s-gap]");
+    g.textContent = gap ? `停${gap}拍` : "不停";
+    g.setAttribute("aria-label", gap ? `句與句之間停 ${gap} 拍` : "句與句之間不停");
     dock.querySelector("[data-cv2s-subs]").setAttribute("aria-pressed", String(subs));
     // 聲音：這一課兩個都有才給切（顯示選的那一個）；選的那一個沒有、先用另一個的時候留一行字
     const x = dock.querySelector("[data-cv2s-vox]");
@@ -269,10 +286,10 @@
         if (voice.wait) halt();
         else { voice.paused = true; window.clearTimeout(voice.timer); if (voice.el) voice.el.pause(); }
       } else if (voice.on && voice.paused && voice.el && voice.end && voice.el.getAttribute("src") && voice.si === api.state.sec.si && voice.bi === Math.min(api.data.sections[voice.si].beats.length, api.state.sec.shown[voice.si] || 1) - 1) {
-        // 暫停的那一句接著念
+        // 暫停的那一句接著念；停頓中暫停的就直接出下一句
         voice.paused = false;
-        play(audio());
-        arm();
+        if (voice.rest) advance();
+        else { play(audio()); arm(); }
       } else {
         voice.on = true;
         speak(api);
@@ -288,6 +305,7 @@
       records.settings.narrRate = rate;
       if (voice.el) voice.el.defaultPlaybackRate = voice.el.playbackRate = rate;
     }
+    if (action === "course-s-gap") records.settings.narrGap = GAPS[(GAPS.indexOf(voicePrefs(records).gap) + 1) % GAPS.length];
     if (action === "course-s-subs") records.settings.narrSubs = !voicePrefs(records).subs;
     if (action === "course-s-voice") records.settings.narrVoice = other(voicePrefs(records).v);
     deps.saveRecords(records);
@@ -331,7 +349,7 @@
     dockTop: () => (dock ? dock.getBoundingClientRect().top : null),
     dockH: () => (dock ? dock.offsetHeight : 0),
     // voice()：給 E2E 與黑板看旁白的狀態（<audio> 不在 DOM 裡；黑板的時間 = at − start）
-    status: () => ({ on: voice.on, paused: voice.paused, wait: voice.wait, err: voice.err, si: voice.si, bi: voice.bi, rate: voice.el ? voice.el.playbackRate : 0, src: voice.el ? voice.el.getAttribute("src") || "" : "", preload: voice.el ? voice.el.preload : "", beat: voice.bi >= 0 ? `${voice.si}-${voice.bi}` : "", at: Math.round(nowMs()), start: voice.start, end: voice.end, v: voice.v, fb: voice.fb })
+    status: () => ({ on: voice.on, paused: voice.paused, wait: voice.wait, rest: voice.rest, err: voice.err, si: voice.si, bi: voice.bi, rate: voice.el ? voice.el.playbackRate : 0, src: voice.el ? voice.el.getAttribute("src") || "" : "", preload: voice.el ? voice.el.preload : "", beat: voice.bi >= 0 ? `${voice.si}-${voice.bi}` : "", at: Math.round(nowMs()), start: voice.start, end: voice.end, v: voice.v, fb: voice.fb })
   };
   if (typeof document !== "undefined" && document.addEventListener) {
     // iOS：<audio> 要在點下去那一下先 load 過，之後換 src 才能自己播

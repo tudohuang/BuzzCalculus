@@ -127,7 +127,8 @@ const BUDGETS = {
   "延後載入：課程分節": { pattern: /^$/, budget: 46 * 1024, lazy: "sections" },
   // 2026-10-13 新增：分節的旁白播放（course_narration.js，約 16KB）。有 say 的課才抓；行為跟搬出來之前一模一樣（e2e_course_sections 的旁白那一段）。上限留約兩成五。
   // 2026-10-14 兩個聲音（女聲／男聲：旁白列的切換鈕、念到一半換聲音、選的那一個沒有或載不到用另一個）16 → 18.6KB，上限不動（還剩約 8%）。
-  "延後載入：分節旁白": { pattern: /^$/, budget: 20 * 1024, lazy: "narration" },
+  // 2026-10-15 句間停頓（旁白列「停 n 拍」）18.6 → 20.0KB，只剩 50 bytes：上限 20 → 24KB（跟其他延後載入組一樣留約兩成；這一組不在首屏）。
+  "延後載入：分節旁白": { pattern: /^$/, budget: 24 * 1024, lazy: "narration" },
   // 2026-10-10 新增：分節的結算畫面（course_finish.js，約 4KB）。讀到一課的最後一節才抓（點「完成這一課」時通常已經到了）。
   "延後載入：分節結算": { pattern: /^$/, budget: 8 * 1024, lazy: "secfinish" },
   // 2026-10-10 新增：證明節（sections[].proof）的互動 course_proof.js —— 句子的「這一步為什麼成立？」、把證明排回順序、
