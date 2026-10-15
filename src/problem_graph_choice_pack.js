@@ -375,6 +375,31 @@
     })
   ];
 
+  // ---- 獨立驗算規格（2026-10 高曝光題補驗算）----
+  // 選圖題的答案就是「哪一條曲線」。標為正解的 expr（JS）與題幹的 f（LaTeX）
+  // 是兩個人各自打的字串，打錯一邊，使用者選對反而被判錯 ——
+  // 這裡把題幹的 f 照抄成 LaTeX，由驗算器在取樣點上比對正解曲線。
+  // （answer 與 correct 選項一致、誘答看得出差距，由 validate_graph_choices 把關。）
+  // 每一點兩件事：高度（題幹 f 在該點的值，取極限而不是代公式）與斜率
+  // （題幹 f 的數值導數 vs 正解曲線的數值導數）—— 斜率比對抓得到「形狀對、位置平移」那種打錯。
+  function promptCurve(tex, xs) {
+    const cases = [];
+    xs.forEach((x) => {
+      cases.push({ at: { x }, v: { m: "limit", f: tex, at: x } });
+      cases.push({ at: { x }, d: "x", v: { m: "deriv", f: tex, at: [x] } });
+    });
+    return { m: "fn", vars: ["x"], cases };
+  }
+  const VERIFY = {
+    "gr-004": promptCurve("\\ln x", [0.2, 0.5, 1.3, 2.7, 4.4, 5.9]),
+    "gr-009": promptCurve("\\sin(2x)", [-5.9, -2.3, -0.4, 0.7, 1.9, 4.6]),
+    "gr-010": promptCurve("x+\\frac{1}{x}", [-4.1, -1.3, -0.3, 0.4, 1.7, 3.8]),
+    "gr-012": promptCurve("\\frac{4x}{x^2+4}", [-7.2, -2, -0.6, 0.9, 2, 6.5])
+  };
+  problems.forEach((problem) => {
+    if (VERIFY[problem.id]) problem.verify = VERIFY[problem.id];
+  });
+
   window.BUZZ_GRAPH_CHOICE_PROBLEMS = problems;
   window.BUZZ_PROBLEMS = (window.BUZZ_PROBLEMS || []).concat(problems);
 })();
