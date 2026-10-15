@@ -140,6 +140,12 @@
     "2026-10-07": "lec-09-q4c",
     "2026-10-08": "der-022",
     "2026-10-09": "der-032",
+    "2026-10-10": "mob-gamma-003",
+    "2026-10-11": "lim-012",
+    "2026-10-12": "der-034",
+    "2026-10-13": "lec-18-q2b",
+    "2026-10-14": "exam-multi-003",
+    "2026-10-15": "dd-inv-004",
   };
   if (typeof module !== "undefined" && module.exports) module.exports = { HISTORY };
   if (typeof window !== "undefined") window.BUZZ_DAILY_ONE_HISTORY = HISTORY;
