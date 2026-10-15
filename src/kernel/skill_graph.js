@@ -88,7 +88,7 @@
   const SKILLS = [
     /* ===== 極限 ===== */
     { id: "limit.direct", label: t("基本極限"), tier: 1, obscurity: 1, family: "limit", topics: ["limits"], prereq: [],
-      tags: ["standard-limit", "direct-substitution", "factoring", "rational-limit"] },
+      tags: ["standard-limit", "direct-substitution", "factoring", "rational-limit", "equivalent-infinitesimal"] },
     { id: "limit.rationalize", label: t("有理化"), tier: 2, obscurity: 1, family: "limit", topics: ["limits"], prereq: ["limit.direct"],
       tags: ["rationalize"] },
     { id: "limit.trig", label: t("三角極限"), tier: 2, obscurity: 1, family: "limit", topics: ["limits"], prereq: ["limit.direct"],
@@ -102,7 +102,7 @@
     { id: "limit.asymptotic", label: t("漸近分析"), tier: 4, obscurity: 2, family: "limit", topics: ["limits"], prereq: ["limit.taylor"], radarAxis: "taylor",
       tags: ["asymptotics", "asymptotic", "asymptotic-balance", "asymptotic-expansion",
         "infinity-limit", "infinity", "stirling", "boundary-layer", "stolz",
-        "cesaro", "euler-mascheroni", "nth-root"] },
+        "cesaro", "euler-mascheroni", "nth-root", "infinitesimal-order"] },
     { id: "limit.squeeze", label: t("夾擠與有界"), tier: 2, obscurity: 1, family: "limit", topics: ["limits"], prereq: ["limit.direct"],
       tags: ["squeeze", "dne", "periodicity", "product-limit", "oscillation"] },
     { id: "limit.riemann", label: t("Riemann 和與達布和"), tier: 3, obscurity: 2, family: "limit", prereq: ["limit.direct"],

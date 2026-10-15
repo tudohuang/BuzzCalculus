@@ -6,7 +6,7 @@
 // 為什麼放側表而不是寫進題目物件：題目物件多一個欄位就會改變抽題與 golden 測試的結果。
 // 內容的中繼資料一律走側表，這是專案的既有約定。
 //
-// 產生時的統計：3009 題中 2840 題通過，不符 0 題。
+// 產生時的統計：3059 題中 2890 題通過，不符 0 題。
 
 (function registerVerifiedAnswers() {
   "use strict";
@@ -356,6 +356,56 @@
     "ch-trap-005",
     "ch-trap-007",
     "ch-trap-009",
+    "cl-lim-001",
+    "cl-lim-002",
+    "cl-lim-003",
+    "cl-lim-004",
+    "cl-lim-005",
+    "cl-lim-006",
+    "cl-lim-007",
+    "cl-lim-008",
+    "cl-lim-009",
+    "cl-lim-010",
+    "cl-lim-011",
+    "cl-lim-012",
+    "cl-lim-013",
+    "cl-lim-014",
+    "cl-lim-015",
+    "cl-lim-016",
+    "cl-lim-017",
+    "cl-lim-018",
+    "cl-lim-019",
+    "cl-lim-020",
+    "cl-lim-021",
+    "cl-lim-022",
+    "cl-lim-023",
+    "cl-lim-024",
+    "cl-lim-025",
+    "cl-lim-026",
+    "cl-lim-027",
+    "cl-lim-028",
+    "cl-lim-029",
+    "cl-lim-030",
+    "cl-lim-031",
+    "cl-lim-032",
+    "cl-lim-033",
+    "cl-lim-034",
+    "cl-lim-035",
+    "cl-lim-036",
+    "cl-lim-037",
+    "cl-lim-038",
+    "cl-lim-039",
+    "cl-lim-040",
+    "cl-lim-041",
+    "cl-lim-042",
+    "cl-lim-043",
+    "cl-lim-044",
+    "cl-lim-045",
+    "cl-lim-046",
+    "cl-lim-047",
+    "cl-lim-048",
+    "cl-lim-049",
+    "cl-lim-050",
     "cx-app-001",
     "cx-app-002",
     "cx-app-003",
@@ -2857,6 +2907,6 @@
   window.BuzzVerifiedAnswers = {
     has: function (id) { return Boolean(id && SET[id]); },
     count: IDS.length,
-    total: 3009
+    total: 3059
   };
 })();
