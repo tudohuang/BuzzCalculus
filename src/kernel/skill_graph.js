@@ -191,9 +191,10 @@
     { id: "integral.ode", label: t("微分方程"), tier: 4, obscurity: 2, family: "integral", topics: ["integrals"], prereq: ["integral.ibp"],
       tags: ["ode", "separable", "linear-first-order", "integrating-factor", "second-order", "constant-coefficients",
         // repeated-root 是陷阱標記不是能力座標（NON_SKILL）；newton 屬於數列不動點那一節
-        "undetermined-coefficients", "complex-roots", "resonance", "ivp", "logistic", "blow-up", "exact-form"] },
+        "undetermined-coefficients", "complex-roots", "resonance", "ivp", "logistic", "blow-up", "exact-form",
+        "bernoulli-equation", "homogeneous-ode", "exact-equation", "orthogonal-trajectories", "euler-equation", "euler-method", "numerical-method"] },
     { id: "integral.usub", label: t("u 代換"), tier: 1, obscurity: 1, family: "integral", prereq: [], radarAxis: "substitution",
-      tags: ["substitution", "u-sub"] },
+      tags: ["substitution", "u-sub", "binomial-differential"] },
     { id: "integral.ibp", label: t("分部積分"), tier: 2, obscurity: 1, family: "integral", prereq: ["integral.usub"], radarAxis: "ibp",
       tags: ["integration-by-parts", "ibp"] },
     { id: "integral.ibp.cyclic", label: t("循環分部"), tier: 4, obscurity: 2, family: "integral", prereq: ["integral.ibp"], radarAxis: "ibp",
@@ -201,9 +202,9 @@
     { id: "integral.partialfrac", label: t("部分分式"), tier: 2, obscurity: 1, family: "integral", prereq: ["integral.usub"], radarAxis: "partial_fraction",
       tags: ["partial-fraction", "partial-fractions", "rational-integral"] },
     { id: "integral.trigsub", label: t("三角代換"), tier: 3, obscurity: 2, family: "integral", prereq: ["integral.usub"], radarAxis: "substitution",
-      tags: ["trig-substitution"] },
+      tags: ["trig-substitution", "euler-substitution"] },
     { id: "integral.trig", label: t("三角與雙曲積分"), tier: 2, obscurity: 1, family: "integral", topics: ["integrals"], prereq: ["integral.usub"],
-      tags: ["trig-integral", "trig-power", "hyperbolic"] },
+      tags: ["trig-integral", "trig-power", "hyperbolic", "universal-substitution"] },
     { id: "integral.ftc", label: t("微積分基本定理"), tier: 2, obscurity: 1, family: "integral", prereq: [],
       tags: ["ftc", "fundamental-theorem", "moving-limits"] },
 
@@ -242,9 +243,10 @@
     { id: "integral.area", label: t("面積與極座標"), tier: 3, obscurity: 1, family: "integral", prereq: ["integral.ftc"],
       tags: ["area", "polar-area", "polar", "polar-curve", "between-curves"] },
     { id: "integral.volume", label: t("體積與旋轉體"), tier: 3, obscurity: 1, family: "integral", prereq: ["integral.ftc"],
-      tags: ["solid-of-revolution", "volume", "surface-area", "centroid", "shell-method", "cross-section"] },
+      tags: ["solid-of-revolution", "volume", "surface-area", "centroid", "shell-method", "cross-section", "pappus"] },
     { id: "integral.arclength", label: t("弧長與均值"), tier: 3, obscurity: 1, family: "integral", prereq: ["integral.ftc"],
-      tags: ["arc-length", "average-value", "work-integral", "work"] },
+      tags: ["arc-length", "average-value", "work-integral", "work",
+        "fluid-force", "hooke-law", "moment-of-inertia", "integral-estimate"] },
 
     /* ===== 向量分析 ===== */
     { id: "vector.line", label: t("線積分與保守場"), tier: 3, obscurity: 1, family: "vector", prereq: ["integral.usub"], radarAxis: "multivariable",
