@@ -226,7 +226,39 @@
   const VERIFY = {
     "cx-app-003": { m: "relatedRate", f: "\\frac{4}{3}\\pi r^3", v: "r", at: 2, given: 8 },
     // 「下滑速率」是正的：對 −y 微分
-    "cx-app-004": { m: "differential", f: "-\\sqrt{25-x^2}", a: 3, dx: 1 }
+    "cx-app-004": { m: "differential", f: "-\\sqrt{25-x^2}", a: 3, dx: 1 },
+
+    // ---- 2026-10 高曝光題補驗算：題幹是「…的弧長／平均值／連續求 k」這種句型 ----
+    // 弧長：把曲線寫成參數式走 lineIntegral(ds, f=1)，切向量由數值微分取 ——
+    // 不用 1+y′² 化成完全平方那一步。
+    "cx-arc-002": { m: "lineIntegral", kind: "ds", f: "1", path: { x: "t", y: "\\frac{t^3}{6}+\\frac{1}{2t}", from: 1, to: 2 } },
+    "cx-arc-003": { m: "lineIntegral", kind: "ds", f: "1", path: { x: "3\\cos t", y: "3\\sin t", from: 0, to: "\\frac{\\pi}{2}" } },
+    "cx-arc-004": { m: "lineIntegral", kind: "ds", f: "1", path: { x: "t", y: "\\ln(\\cos t)", from: 0, to: "\\frac{\\pi}{3}" } },
+    "cx-arc-005": { m: "lineIntegral", kind: "ds", f: "1", path: { x: "t", y: "\\cosh t", from: 0, to: 1 } },
+    // 旋轉曲面面積：把旋轉面參數化成 (u, f(u)cos v, f(u)sin v)，|r_u×r_v| 數值取
+    "cx-sa-001": { m: "surfaceScalar", surface: { x: "u", y: "3u\\cos v", z: "3u\\sin v", u: [0, 4], v: [0, "2\\pi"] } },
+    // 半圓用角度參數化（端點 y→0 時 y′ 發散，用 x 當參數會吃掉精度）
+    "cx-sa-002": { m: "surfaceScalar", surface: { x: "2\\cos u", y: "2\\sin u\\cos v", z: "2\\sin u\\sin v", u: [0, "\\pi"], v: [0, "2\\pi"] } },
+    "cx-sa-003": { m: "surfaceScalar", surface: { x: "u", y: "\\frac{u^3}{3}\\cos v", z: "\\frac{u^3}{3}\\sin v", u: [0, 1], v: [0, "2\\pi"] } },
+    // 繞 y 軸：解答用圓盤（對 y 積），這裡改用殼層（對 x 積），高 1 − x²
+    "cx-rev-004": { m: "integral", f: "2\\pi x(1-x^2)", a: 0, b: 1 },
+    // 平均值的定義
+    "cx-avg-001": { m: "value", f: "\\frac{1}{3-0}\\int_0^3 x^2\\,dx" },
+    "cx-avg-003": { m: "value", f: "\\frac{1}{e-1}\\int_1^e \\frac{1}{x}\\,dx" },
+    // 連續：k 就是 x→3 的極限
+    "cx-cont-001": { m: "limit", f: "\\frac{x^2-9}{x-3}", at: 3 },
+    // 分段連續：左段在接點的值 = 右段在接點的值，未知數放 x 讓牛頓法解
+    "cx-cont-002": { m: "root", f: "x\\cdot 2+1-2^2", x0: 0 },
+    "cx-cont-005": { m: "root", f: "1^2+x-(3\\cdot 1-1)", x0: 0 },
+    // 根的個數：在 (0,1) 上切 20000 格數變號次數
+    "cx-cont-004": { m: "value", f: "\\sum_{k=0}^{19999}\\frac{1-\\operatorname{sgn}\\left(\\left(\\left(\\frac{k}{20000}\\right)^3+\\frac{k}{20000}-1\\right)\\left(\\left(\\frac{k+1}{20000}\\right)^3+\\frac{k+1}{20000}-1\\right)\\right)}{2}" },
+    // ∫f′：f′ 用中央差分（步長 10⁻³）取、不手算，再數值積分 —— 不套 f(5) − f(0)
+    "cx-ftc-006": { m: "integral", f: "\\frac{(x+0.001)^2+3(x+0.001)-\\left((x-0.001)^2+3(x-0.001)\\right)}{0.002}", a: 0, b: 5 },
+    // e·n! 的小數部分 = Σ_{k>n} n!/k!（前面的項都是整數，sin(2π·整數) 消掉），
+    // 直接用 e·n! 浮點會失去全部精度。
+    "cx-hl-005": { m: "seqLimit", f: "n\\sin\\left(2\\pi\\sum_{k=n+1}^{n+40}\\prod_{j=n+1}^{k}\\frac{1}{j}\\right)" },
+    // Rolle：在 (0, π) 掃 f′(c) = 平均斜率
+    "cx-mvt-006": { m: "mvtPoint", f: "\\sin x", a: 0, b: "\\pi" }
   };
   problems.forEach((problem) => {
     if (VERIFY[problem.id]) problem.verify = VERIFY[problem.id];
