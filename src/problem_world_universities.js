@@ -141,5 +141,16 @@
   N("world-099", "limits", 6, "\\lim_{x\\to 0}\\frac{\\tan(\\sin x)-\\sin(\\tan x)}{x^7}", "1/30", "競賽", ["taylor"], "Famous degree-7 expansion: 1/30.");
   N("world-100", "integrals", 6, "\\int_0^{\\pi/2}\\frac{x^2}{\\sin^2 x}\\,dx", "pi*log(2)", "亞洲名校", ["fourier"], "∫_0^{π/2} x^2 csc^2 x dx = π log 2.");
 
+  // ---- 獨立驗算規格（tools/verify_answers.js 讀）----
+  // 題幹的寫法自動辨識器接不到；這裡把題幹重述成數值路徑（數值偏導、數值積分、
+  // 複數求值、圍道上的梯形法），不重複解題的推導、也不把答案抄一遍。
+  const VERIFY = {
+    // (2n−1)!!/(2n)!! 照定義寫成連乘積；部分和收斂得慢（~1/√n），交給數列外插
+    "world-048": { m: "seqLimit", f: "\\sum_{k=0}^{n}\\frac{1}{2k+1}\\prod_{j=1}^{k}\\frac{2j-1}{2j}", n0: 100, levels: 6 }
+  };
+  problems.forEach((problem) => {
+    if (VERIFY[problem.id]) problem.verify = VERIFY[problem.id];
+  });
+
   window.BUZZ_PROBLEMS = (window.BUZZ_PROBLEMS || []).concat(problems);
 })();
