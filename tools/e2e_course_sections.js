@@ -523,6 +523,41 @@ async function run() {
     await tap("[data-cv2s-subs]");
     check("字幕關掉", await waitFor(`document.querySelectorAll("[data-cv2s-say]").length === 0 && (window.__s.rec().settings || {}).narrSubs === false`, 3000), JSON.stringify(await evaluate(`return { n: document.querySelectorAll("[data-cv2s-say]").length, v: window.BuzzCourseSections.voice() };`)));
 
+    /* ── 句間停頓：旁白列上「不停 → 停1拍 → 停2拍 → 停3拍」；念完一句先停（錄音停在訖點、下一句還沒出），時間到才出下一句；
+       停頓中按暫停就不往下，按繼續直接出下一句 ── */
+    const VG = `window.BuzzCourseSections.voice()`;
+    await evaluate(`window.__s.open("${WIDGET.id}"); return 1;`);
+    await waitFor(`window.__s.root() && !${VG}.on`, 4000);
+    await retime(WIDGET.id, 600, "e2egap");
+    await tap(".cv2s-dot:nth-child(1)");
+    await waitFor(`window.__s.si() === 0`);
+    check("句間停頓：預設「不停」", (await evaluate(`return window.__s.text("[data-cv2s-gap]");`)) === "不停");
+    await tap("[data-cv2s-gap]");
+    await tap("[data-cv2s-gap]");
+    const g2 = await evaluate(`return { label: window.__s.text("[data-cv2s-gap]"), saved: (window.__s.rec().settings || {}).narrGap, small: window.__s.dockSmall(), overflow: window.__s.overflow() };`);
+    check("按兩下 → 停2拍、記在設定裡；播放列不溢出、按鈕 ≥ 40px", g2.label === "停2拍" && g2.saved === 2 && !g2.small.length && g2.overflow <= 1, JSON.stringify(g2));
+    const gapBeats = await evaluate(`return window.BUZZ_COURSE_V2_LESSONS[${JSON.stringify(WIDGET.id)}].sections[0].beats.length;`);
+    await tap("[data-cv2s-play]");
+    const rest1 = await waitFor(`${VG}.rest && ${VG}.beat === "0-0"`, 5000);
+    const gr0 = await evaluate(`return { v: ${VG}, beats: window.__s.beats() };`);
+    await sleep(400);
+    const gr1 = await evaluate(`return { v: ${VG}, beats: window.__s.beats() };`);
+    check("念完第一句先停：錄音停在訖點、下一句還沒出", rest1 && gr1.v.rest && gr1.beats === gr0.beats && Math.abs(gr1.v.at - gr0.v.at) < 40 && gr1.v.at >= gr0.v.end - 80, JSON.stringify({ gr0: [gr0.beats, gr0.v.at, gr0.v.end], gr1: [gr1.beats, gr1.v.at, gr1.v.rest] }));
+    check("停 2 拍（1 秒）之後出第二句、接著念", await waitFor(`window.__s.beats() === ${gr0.beats + 1} && !${VG}.rest && ${VG}.beat === "0-1"`, 2500), JSON.stringify(await evaluate(`return ${VG};`)));
+    if (gapBeats >= 3) {
+      check("第二句念完又停", await waitFor(`${VG}.rest && ${VG}.beat === "0-1"`, 4000));
+      await tap("[data-cv2s-play]");
+      await sleep(1300);
+      const held = await evaluate(`return { v: ${VG}, beats: window.__s.beats() };`);
+      check("停頓中按暫停：過了停頓的時間也不往下", held.v.paused && held.beats === gr0.beats + 1, JSON.stringify({ beats: held.beats, paused: held.v.paused }));
+      await tap("[data-cv2s-play]");
+      check("再按繼續：直接出第三句", await waitFor(`window.__s.beats() === ${gr0.beats + 2} && ${VG}.beat === "0-2" && !${VG}.paused`, 800), JSON.stringify(await evaluate(`return ${VG};`)));
+    }
+    await tap("[data-cv2s-play]");
+    await tap("[data-cv2s-gap]");
+    await tap("[data-cv2s-gap]");
+    check("再按兩下：停3拍 → 不停", (await evaluate(`return window.__s.text("[data-cv2s-gap]") + "|" + (window.__s.rec().settings || {}).narrGap;`)) === "不停|0");
+
     /* ── 兩個聲音：女聲（預設）／男聲。旁白列上切、只抓選的那一支、念到一半切（同一句換那一支）、暫停中切、
        記住（設定頁是同一個值）、選的那一個這一課沒有或載不到 → 用另一個並留一行字 ── */
     const VS = `window.BuzzCourseSections.voice()`;
