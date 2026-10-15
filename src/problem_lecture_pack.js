@@ -1,4 +1,4 @@
-// 微積分 20 講隨堂測驗（2026-09-30）：由 tools/build_lecture_pack.js 產生，不要手改。
+// 微積分 20 講隨堂測驗（2026-10-15）：由 tools/build_lecture_pack.js 產生，不要手改。
 // 來源：GPA 戰士的 caNN.tex（20 份 60 分鐘卷，每份 5 選擇 + 4 計算題），骨架由 tools/import_lecture_exams.js 拆出，
 // 判分層（answerKind／答案語法／rank／tags／驗算描述子）在 tools/content/lecture_exams_answers.json 手寫。
 // 證明小題：引擎釘得住的做成 answerKind "proof"（指向 src/proof_lang_content.js 的 pl-lec-* spec，照考卷題序排在卷上）；
@@ -97,7 +97,48 @@
         "f(x)=sin(1/x)（x≠0），f(0)=0",
         "f(x)=|x|/x（x≠0），f(0)=0",
         "f(x)=1/x²（x≠0），f(0)=0"
-      ]
+      ],
+      "verify": {
+        "m": "choice",
+        "options": [
+          {
+            "say": "f(x)=x·sin(1/x)（x≠0），f(0)=0",
+            "v": {
+              "m": "limit",
+              "f": "x\\sin(1/x)",
+              "at": 0
+            },
+            "eq": 0
+          },
+          {
+            "say": "f(x)=sin(1/x)（x≠0），f(0)=0",
+            "v": {
+              "m": "limit",
+              "f": "\\sin(1/x)",
+              "at": 0
+            },
+            "eq": 0
+          },
+          {
+            "say": "f(x)=|x|/x（x≠0），f(0)=0",
+            "v": {
+              "m": "limit",
+              "f": "\\frac{|x|}{x}",
+              "at": 0
+            },
+            "eq": 0
+          },
+          {
+            "say": "f(x)=1/x²（x≠0），f(0)=0",
+            "v": {
+              "m": "limit",
+              "f": "\\frac{1}{x^2}",
+              "at": 0
+            },
+            "eq": 0
+          }
+        ]
+      }
     },
     {
       "id": "lec-01-m5",
@@ -126,7 +167,97 @@
         "(-1, 0)",
         "(1, 2)",
         "(2, 3)"
-      ]
+      ],
+      "verify": {
+        "m": "choice",
+        "options": [
+          {
+            "say": "(0, 1)",
+            "all": [
+              {
+                "v": {
+                  "m": "root",
+                  "f": "x^3+x-1",
+                  "x0": -5
+                },
+                "gt": 0
+              },
+              {
+                "v": {
+                  "m": "root",
+                  "f": "x^3+x-1",
+                  "x0": -5
+                },
+                "lt": 1
+              }
+            ]
+          },
+          {
+            "say": "(-1, 0)",
+            "all": [
+              {
+                "v": {
+                  "m": "root",
+                  "f": "x^3+x-1",
+                  "x0": -5
+                },
+                "gt": -1
+              },
+              {
+                "v": {
+                  "m": "root",
+                  "f": "x^3+x-1",
+                  "x0": -5
+                },
+                "lt": 0
+              }
+            ]
+          },
+          {
+            "say": "(1, 2)",
+            "all": [
+              {
+                "v": {
+                  "m": "root",
+                  "f": "x^3+x-1",
+                  "x0": -5
+                },
+                "gt": 1
+              },
+              {
+                "v": {
+                  "m": "root",
+                  "f": "x^3+x-1",
+                  "x0": -5
+                },
+                "lt": 2
+              }
+            ]
+          },
+          {
+            "say": "(2, 3)",
+            "all": [
+              {
+                "v": {
+                  "m": "root",
+                  "f": "x^3+x-1",
+                  "x0": -5
+                },
+                "gt": 2
+              },
+              {
+                "v": {
+                  "m": "root",
+                  "f": "x^3+x-1",
+                  "x0": -5
+                },
+                "lt": 3
+              }
+            ]
+          }
+        ],
+        "note": "數值求出 x³+x−1 的實根，看它落在哪一個選項區間"
+      }
     },
     {
       "id": "lec-01-q1b",
@@ -304,7 +435,19 @@
       "examPoints": 20,
       "examGroup": "lec-01-q3",
       "examTitle": "連續性與中間值定理。",
-      "answer": "1"
+      "answer": "1",
+      "verify": {
+        "m": "let",
+        "f": "1^2+b-3",
+        "with": {
+          "b": {
+            "m": "root",
+            "f": "(2^2+x)-(4\\cdot2-1)",
+            "x0": 0
+          }
+        },
+        "note": "x=2 接點解出 b（數值求根），再由 x=1 接點 a·1+3=1²+b 組出 a"
+      }
     },
     {
       "id": "lec-01-q3b",
@@ -540,7 +683,92 @@
         "可微但不連續",
         "既連續又可微，f′(0)=0",
         "既不連續也不可微"
-      ]
+      ],
+      "verify": {
+        "m": "choice",
+        "options": [
+          {
+            "say": "連續但不可微",
+            "all": [
+              {
+                "v": {
+                  "m": "limit",
+                  "f": "|x|",
+                  "at": 0
+                },
+                "eq": 0
+              },
+              {
+                "v": {
+                  "m": "limit",
+                  "f": "\\frac{|x|-0}{x}",
+                  "at": 0,
+                  "dir": "+"
+                },
+                "ne": {
+                  "m": "limit",
+                  "f": "\\frac{|x|-0}{x}",
+                  "at": 0,
+                  "dir": "-"
+                }
+              }
+            ]
+          },
+          {
+            "say": "可微但不連續",
+            "all": [
+              {
+                "v": {
+                  "m": "limit",
+                  "f": "|x|",
+                  "at": 0
+                },
+                "ne": 0
+              }
+            ]
+          },
+          {
+            "say": "既連續又可微，f′(0)=0",
+            "all": [
+              {
+                "v": {
+                  "m": "limit",
+                  "f": "|x|",
+                  "at": 0
+                },
+                "eq": 0
+              },
+              {
+                "v": {
+                  "m": "limit",
+                  "f": "\\frac{|x|-0}{x}",
+                  "at": 0,
+                  "dir": "+"
+                },
+                "eq": {
+                  "m": "limit",
+                  "f": "\\frac{|x|-0}{x}",
+                  "at": 0,
+                  "dir": "-"
+                }
+              }
+            ]
+          },
+          {
+            "say": "既不連續也不可微",
+            "all": [
+              {
+                "v": {
+                  "m": "limit",
+                  "f": "|x|",
+                  "at": 0
+                },
+                "ne": 0
+              }
+            ]
+          }
+        ]
+      }
     },
     {
       "id": "lec-02-q1b",
@@ -946,7 +1174,120 @@
       "distractors": [
         "存在，等於 0",
         "存在，等於 1"
-      ]
+      ],
+      "verify": {
+        "m": "choice",
+        "options": [
+          {
+            "say": "不存在",
+            "all": [
+              {
+                "v": {
+                  "m": "let",
+                  "f": "|p-q|",
+                  "with": {
+                    "p": {
+                      "m": "deriv",
+                      "f": "x^2\\sin\\frac1x",
+                      "at": [
+                        "\\frac{1}{10\\pi}"
+                      ]
+                    },
+                    "q": {
+                      "m": "deriv",
+                      "f": "x^2\\sin\\frac1x",
+                      "at": [
+                        "\\frac{1}{11\\pi}"
+                      ]
+                    }
+                  }
+                },
+                "gt": 1
+              },
+              {
+                "v": {
+                  "m": "let",
+                  "f": "|p-q|",
+                  "with": {
+                    "p": {
+                      "m": "deriv",
+                      "f": "x^2\\sin\\frac1x",
+                      "at": [
+                        "\\frac{1}{50\\pi}"
+                      ]
+                    },
+                    "q": {
+                      "m": "deriv",
+                      "f": "x^2\\sin\\frac1x",
+                      "at": [
+                        "\\frac{1}{51\\pi}"
+                      ]
+                    }
+                  }
+                },
+                "gt": 1
+              }
+            ]
+          },
+          {
+            "say": "存在，等於 0",
+            "all": [
+              {
+                "v": {
+                  "m": "let",
+                  "f": "|p-q|",
+                  "with": {
+                    "p": {
+                      "m": "deriv",
+                      "f": "x^2\\sin\\frac1x",
+                      "at": [
+                        "\\frac{1}{50\\pi}"
+                      ]
+                    },
+                    "q": {
+                      "m": "deriv",
+                      "f": "x^2\\sin\\frac1x",
+                      "at": [
+                        "\\frac{1}{51\\pi}"
+                      ]
+                    }
+                  }
+                },
+                "lt": 0.5
+              }
+            ]
+          },
+          {
+            "say": "存在，等於 1",
+            "all": [
+              {
+                "v": {
+                  "m": "let",
+                  "f": "|p-q|",
+                  "with": {
+                    "p": {
+                      "m": "deriv",
+                      "f": "x^2\\sin\\frac1x",
+                      "at": [
+                        "\\frac{1}{50\\pi}"
+                      ]
+                    },
+                    "q": {
+                      "m": "deriv",
+                      "f": "x^2\\sin\\frac1x",
+                      "at": [
+                        "\\frac{1}{51\\pi}"
+                      ]
+                    }
+                  }
+                },
+                "lt": 0.5
+              }
+            ]
+          }
+        ],
+        "note": "f′ 用數值微分；在 1/(2kπ) 與 1/((2k+1)π) 兩點差超過 1，k=5 與 k=25 兩個尺度都一樣 → 振盪不收斂"
+      }
     },
     {
       "id": "lec-02-q4a",
@@ -1787,7 +2128,88 @@
         "|x|",
         "x³",
         "1/x"
-      ]
+      ],
+      "verify": {
+        "m": "choice",
+        "options": [
+          {
+            "say": "x²",
+            "all": [
+              {
+                "v": {
+                  "m": "value",
+                  "f": "1^2-(-1)^2"
+                },
+                "eq": 0
+              },
+              {
+                "v": {
+                  "m": "limit",
+                  "f": "\\frac{x^2-0^2}{x}",
+                  "at": 0,
+                  "dir": "+"
+                },
+                "eq": {
+                  "m": "limit",
+                  "f": "\\frac{x^2-0^2}{x}",
+                  "at": 0,
+                  "dir": "-"
+                }
+              }
+            ]
+          },
+          {
+            "say": "|x|",
+            "all": [
+              {
+                "v": {
+                  "m": "value",
+                  "f": "|1|-|-1|"
+                },
+                "eq": 0
+              },
+              {
+                "v": {
+                  "m": "limit",
+                  "f": "\\frac{|x|-0}{x}",
+                  "at": 0,
+                  "dir": "+"
+                },
+                "eq": {
+                  "m": "limit",
+                  "f": "\\frac{|x|-0}{x}",
+                  "at": 0,
+                  "dir": "-"
+                }
+              }
+            ]
+          },
+          {
+            "say": "x³",
+            "all": [
+              {
+                "v": {
+                  "m": "value",
+                  "f": "1^3-(-1)^3"
+                },
+                "eq": 0
+              }
+            ]
+          },
+          {
+            "say": "1/x",
+            "all": [
+              {
+                "v": {
+                  "m": "value",
+                  "f": "\\frac11-\\frac1{-1}"
+                },
+                "eq": 0
+              }
+            ]
+          }
+        ]
+      }
     },
     {
       "id": "lec-04-m3",
@@ -2057,7 +2479,13 @@
       "examPoints": 25,
       "examGroup": "lec-04-q3",
       "examTitle": "曲線描繪。",
-      "answer": "1"
+      "answer": "1",
+      "verify": {
+        "m": "root",
+        "f": "1/\\left(\\frac{x^2}{x-1}\\right)",
+        "x0": 0.8,
+        "note": "垂直漸近線 = 1/f 的零點"
+      }
     },
     {
       "id": "lec-04-q3b",
@@ -2136,7 +2564,82 @@
       "examPoints": 25,
       "examGroup": "lec-04-q3",
       "examTitle": "曲線描繪。",
-      "answer": "(0, 1) U (1, 2)"
+      "answer": "(0, 1) U (1, 2)",
+      "verify": {
+        "m": "choice",
+        "options": [
+          {
+            "say": "(0, 1) U (1, 2)",
+            "all": [
+              {
+                "v": {
+                  "m": "criticalPoint",
+                  "f": "\\frac{x^2}{x-1}",
+                  "x0": -0.5
+                },
+                "eq": 0
+              },
+              {
+                "v": {
+                  "m": "criticalPoint",
+                  "f": "\\frac{x^2}{x-1}",
+                  "x0": 2.5
+                },
+                "eq": 2
+              },
+              {
+                "v": {
+                  "m": "root",
+                  "f": "1/\\left(\\frac{x^2}{x-1}\\right)",
+                  "x0": 0.8
+                },
+                "eq": 1
+              },
+              {
+                "v": {
+                  "m": "deriv",
+                  "f": "\\frac{x^2}{x-1}",
+                  "at": [
+                    -0.5
+                  ]
+                },
+                "gt": 0
+              },
+              {
+                "v": {
+                  "m": "deriv",
+                  "f": "\\frac{x^2}{x-1}",
+                  "at": [
+                    0.5
+                  ]
+                },
+                "lt": 0
+              },
+              {
+                "v": {
+                  "m": "deriv",
+                  "f": "\\frac{x^2}{x-1}",
+                  "at": [
+                    1.5
+                  ]
+                },
+                "lt": 0
+              },
+              {
+                "v": {
+                  "m": "deriv",
+                  "f": "\\frac{x^2}{x-1}",
+                  "at": [
+                    2.5
+                  ]
+                },
+                "gt": 0
+              }
+            ]
+          }
+        ],
+        "note": "set:decreasing 會把 x=1 單點的洞併掉；改驗 f′ 的兩個零點、1/f 的零點、四段 f′ 的正負"
+      }
     },
     {
       "id": "lec-04-q3d",
@@ -2197,7 +2700,13 @@
       "examPoints": 15,
       "examGroup": "lec-04-q4",
       "examTitle": "由導函數的圖形讀出函數的性質。",
-      "answer": "-2"
+      "answer": "-2",
+      "verify": {
+        "m": "root",
+        "f": "(x+2)(x-1)^2",
+        "x0": -3,
+        "note": "f′ 的零點（數值求根，起點在 −2 左側）"
+      }
     },
     {
       "id": "lec-04-q4b",
@@ -2234,7 +2743,69 @@
       "distractors": [
         "是，相對極大",
         "是，相對極小"
-      ]
+      ],
+      "verify": {
+        "m": "choice",
+        "options": [
+          {
+            "say": "不是",
+            "all": [
+              {
+                "v": {
+                  "m": "value",
+                  "f": "(0.9+2)(0.9-1)^2"
+                },
+                "gt": 0
+              },
+              {
+                "v": {
+                  "m": "value",
+                  "f": "(1.1+2)(1.1-1)^2"
+                },
+                "gt": 0
+              }
+            ]
+          },
+          {
+            "say": "是，相對極大",
+            "all": [
+              {
+                "v": {
+                  "m": "value",
+                  "f": "(0.9+2)(0.9-1)^2"
+                },
+                "gt": 0
+              },
+              {
+                "v": {
+                  "m": "value",
+                  "f": "(1.1+2)(1.1-1)^2"
+                },
+                "lt": 0
+              }
+            ]
+          },
+          {
+            "say": "是，相對極小",
+            "all": [
+              {
+                "v": {
+                  "m": "value",
+                  "f": "(0.9+2)(0.9-1)^2"
+                },
+                "lt": 0
+              },
+              {
+                "v": {
+                  "m": "value",
+                  "f": "(1.1+2)(1.1-1)^2"
+                },
+                "gt": 0
+              }
+            ]
+          }
+        ]
+      }
     },
     {
       "id": "lec-04-q4c",
@@ -2607,7 +3178,13 @@
       "examPoints": 20,
       "examGroup": "lec-05-q3",
       "examTitle": "拋物線上最近的點。",
-      "answer": "1/2"
+      "answer": "1/2",
+      "verify": {
+        "m": "root",
+        "f": "(10^{-3})^2+((10^{-3})^2-x)^2-x^2",
+        "x0": 0,
+        "note": "D(t)=t²+(t²−a)² 與 D(0) 在 t=10⁻³ 打平的 a：原點不再是局部最近點的門檻"
+      }
     },
     {
       "id": "lec-05-q4a",
@@ -3887,7 +4464,64 @@
         "-2",
         "0",
         "2"
-      ]
+      ],
+      "verify": {
+        "m": "choice",
+        "options": [
+          {
+            "say": "DNE",
+            "v": {
+              "m": "improperConverges",
+              "f": "\\frac{1}{x^2}",
+              "a": -1,
+              "b": 1,
+              "sing": [
+                0
+              ]
+            },
+            "claim": false
+          },
+          {
+            "say": "-2",
+            "v": {
+              "m": "integral",
+              "f": "\\frac{1}{x^2}",
+              "a": -1,
+              "b": 1,
+              "breaks": [
+                0
+              ]
+            },
+            "eq": -2
+          },
+          {
+            "say": "0",
+            "v": {
+              "m": "integral",
+              "f": "\\frac{1}{x^2}",
+              "a": -1,
+              "b": 1,
+              "breaks": [
+                0
+              ]
+            },
+            "eq": 0
+          },
+          {
+            "say": "2",
+            "v": {
+              "m": "integral",
+              "f": "\\frac{1}{x^2}",
+              "a": -1,
+              "b": 1,
+              "breaks": [
+                0
+              ]
+            },
+            "eq": 2
+          }
+        ]
+      }
     },
     {
       "id": "lec-08-m5",
@@ -3920,7 +4554,52 @@
         "∫ 1/(x²+1) dx（從 1 到 ∞）",
         "∫ sin²x/x² dx（從 1 到 ∞）",
         "∫ e^(−x²) dx（從 1 到 ∞）"
-      ]
+      ],
+      "verify": {
+        "m": "choice",
+        "options": [
+          {
+            "say": "∫ 1/√(x+1) dx（從 1 到 ∞）",
+            "v": {
+              "m": "improperConverges",
+              "f": "\\frac{1}{\\sqrt{x+1}}",
+              "a": 1,
+              "b": "inf"
+            },
+            "claim": false
+          },
+          {
+            "say": "∫ 1/(x²+1) dx（從 1 到 ∞）",
+            "v": {
+              "m": "improperConverges",
+              "f": "\\frac{1}{x^2+1}",
+              "a": 1,
+              "b": "inf"
+            },
+            "claim": false
+          },
+          {
+            "say": "∫ sin²x/x² dx（從 1 到 ∞）",
+            "v": {
+              "m": "improperConverges",
+              "f": "\\frac{\\sin^2 x}{x^2}",
+              "a": 1,
+              "b": "inf"
+            },
+            "claim": false
+          },
+          {
+            "say": "∫ e^(−x²) dx（從 1 到 ∞）",
+            "v": {
+              "m": "improperConverges",
+              "f": "e^{-x^2}",
+              "a": 1,
+              "b": "inf"
+            },
+            "claim": false
+          }
+        ]
+      }
     },
     {
       "id": "lec-08-q1a",
@@ -4133,7 +4812,26 @@
       "examPoints": 20,
       "examGroup": "lec-08-q2",
       "examTitle": "瑕積分的計算。",
-      "answer": "3+3*2^(1/3)"
+      "answer": "3+3*2^(1/3)",
+      "verify": {
+        "m": "let",
+        "f": "p+q",
+        "with": {
+          "p": {
+            "m": "integral",
+            "f": "\\frac{1}{((x-1)^2)^{1/3}}",
+            "a": 0,
+            "b": 1
+          },
+          "q": {
+            "m": "integral",
+            "f": "\\frac{1}{((x-1)^2)^{1/3}}",
+            "a": 1,
+            "b": 3
+          }
+        },
+        "note": "在奇異點 x=1 切成兩段各自數值積分（tanh-sinh 吃端點奇異）"
+      }
     },
     {
       "id": "lec-08-q3a",
@@ -4166,7 +4864,13 @@
         "divergent"
       ],
       "canonical": "發散",
-      "answer": "發散"
+      "answer": "發散",
+      "verify": {
+        "m": "improperConverges",
+        "f": "\\frac{2+\\cos x}{x}",
+        "a": 1,
+        "b": "inf"
+      }
     },
     {
       "id": "lec-08-q3b",
@@ -4199,7 +4903,13 @@
         "convergent"
       ],
       "canonical": "收斂",
-      "answer": "收斂"
+      "answer": "收斂",
+      "verify": {
+        "m": "improperConverges",
+        "f": "\\frac{1}{x^3+x+1}",
+        "a": 1,
+        "b": "inf"
+      }
     },
     {
       "id": "lec-08-q3c",
@@ -4232,7 +4942,16 @@
         "convergent"
       ],
       "canonical": "收斂",
-      "answer": "收斂"
+      "answer": "收斂",
+      "verify": {
+        "m": "improperConverges",
+        "f": "\\frac{e^x}{\\sqrt x}",
+        "a": 0,
+        "b": 1,
+        "sing": [
+          0
+        ]
+      }
     },
     {
       "id": "lec-08-q3d",
@@ -5012,7 +5731,88 @@
         "(√3, 1)",
         "(2, π/3)",
         "(−1, √3)"
-      ]
+      ],
+      "verify": {
+        "m": "choice",
+        "options": [
+          {
+            "say": "(1, √3)",
+            "all": [
+              {
+                "v": {
+                  "m": "value",
+                  "f": "2\\cos\\frac{\\pi}{3}"
+                },
+                "eq": 1
+              },
+              {
+                "v": {
+                  "m": "value",
+                  "f": "2\\sin\\frac{\\pi}{3}"
+                },
+                "eq": "\\sqrt3"
+              }
+            ]
+          },
+          {
+            "say": "(√3, 1)",
+            "all": [
+              {
+                "v": {
+                  "m": "value",
+                  "f": "2\\cos\\frac{\\pi}{3}"
+                },
+                "eq": "\\sqrt3"
+              },
+              {
+                "v": {
+                  "m": "value",
+                  "f": "2\\sin\\frac{\\pi}{3}"
+                },
+                "eq": 1
+              }
+            ]
+          },
+          {
+            "say": "(2, π/3)",
+            "all": [
+              {
+                "v": {
+                  "m": "value",
+                  "f": "2\\cos\\frac{\\pi}{3}"
+                },
+                "eq": 2
+              },
+              {
+                "v": {
+                  "m": "value",
+                  "f": "2\\sin\\frac{\\pi}{3}"
+                },
+                "eq": "\\frac{\\pi}{3}"
+              }
+            ]
+          },
+          {
+            "say": "(−1, √3)",
+            "all": [
+              {
+                "v": {
+                  "m": "value",
+                  "f": "2\\cos\\frac{\\pi}{3}"
+                },
+                "eq": -1
+              },
+              {
+                "v": {
+                  "m": "value",
+                  "f": "2\\sin\\frac{\\pi}{3}"
+                },
+                "eq": "\\sqrt3"
+              }
+            ]
+          }
+        ]
+      }
     },
     {
       "id": "lec-10-m3",
@@ -5044,7 +5844,62 @@
         "以原點為圓心、半徑 2 的圓",
         "以 (0, 1) 為圓心、半徑 1 的圓",
         "心臟線"
-      ]
+      ],
+      "verify": {
+        "m": "choice",
+        "options": [
+          {
+            "say": "以 (1, 0) 為圓心、半徑 1 的圓",
+            "v": {
+              "m": "extremeOf",
+              "integer": false,
+              "v": "x",
+              "kind": "sup",
+              "range": [
+                0,
+                "2\\pi"
+              ],
+              "f": "\\left|((2\\cos x\\cos x)-1)^2+(2\\cos x\\sin x)^2-1\\right|"
+            },
+            "eq": 0
+          },
+          {
+            "say": "以原點為圓心、半徑 2 的圓",
+            "v": {
+              "m": "extremeOf",
+              "integer": false,
+              "v": "x",
+              "kind": "sup",
+              "range": [
+                0,
+                "2\\pi"
+              ],
+              "f": "\\left|(2\\cos x\\cos x)^2+(2\\cos x\\sin x)^2-4\\right|"
+            },
+            "eq": 0
+          },
+          {
+            "say": "以 (0, 1) 為圓心、半徑 1 的圓",
+            "v": {
+              "m": "extremeOf",
+              "integer": false,
+              "v": "x",
+              "kind": "sup",
+              "range": [
+                0,
+                "2\\pi"
+              ],
+              "f": "\\left|(2\\cos x\\cos x)^2+((2\\cos x\\sin x)-1)^2-1\\right|"
+            },
+            "eq": 0
+          },
+          {
+            "say": "心臟線",
+            "unknown": "心臟線是一族曲線，沒有單一條方程式可以代入算殘差"
+          }
+        ],
+        "note": "曲線上的點代入候選圓的方程式，殘差最大值要是 0"
+      }
     },
     {
       "id": "lec-10-m4",
@@ -5311,7 +6166,73 @@
         "圓心 (2, 0)、半徑 2 的圓",
         "圓心原點、半徑 4 的圓",
         "圓心 (0, 4)、半徑 4 的圓"
-      ]
+      ],
+      "verify": {
+        "m": "choice",
+        "options": [
+          {
+            "say": "圓心 (0, 2)、半徑 2 的圓",
+            "v": {
+              "m": "extremeOf",
+              "integer": false,
+              "v": "x",
+              "kind": "sup",
+              "range": [
+                0,
+                "2\\pi"
+              ],
+              "f": "\\left|(4\\sin x\\cos x)^2+((4\\sin x\\sin x)-2)^2-4\\right|"
+            },
+            "eq": 0
+          },
+          {
+            "say": "圓心 (2, 0)、半徑 2 的圓",
+            "v": {
+              "m": "extremeOf",
+              "integer": false,
+              "v": "x",
+              "kind": "sup",
+              "range": [
+                0,
+                "2\\pi"
+              ],
+              "f": "\\left|((4\\sin x\\cos x)-2)^2+(4\\sin x\\sin x)^2-4\\right|"
+            },
+            "eq": 0
+          },
+          {
+            "say": "圓心原點、半徑 4 的圓",
+            "v": {
+              "m": "extremeOf",
+              "integer": false,
+              "v": "x",
+              "kind": "sup",
+              "range": [
+                0,
+                "2\\pi"
+              ],
+              "f": "\\left|(4\\sin x\\cos x)^2+(4\\sin x\\sin x)^2-16\\right|"
+            },
+            "eq": 0
+          },
+          {
+            "say": "圓心 (0, 4)、半徑 4 的圓",
+            "v": {
+              "m": "extremeOf",
+              "integer": false,
+              "v": "x",
+              "kind": "sup",
+              "range": [
+                0,
+                "2\\pi"
+              ],
+              "f": "\\left|(4\\sin x\\cos x)^2+((4\\sin x\\sin x)-4)^2-16\\right|"
+            },
+            "eq": 0
+          }
+        ],
+        "note": "曲線上的點代入候選圓的方程式，殘差最大值要是 0"
+      }
     },
     {
       "id": "lec-10-q2b",
@@ -5337,7 +6258,19 @@
       "examPoints": 20,
       "examGroup": "lec-10-q2",
       "examTitle": "極座標的面積與弧長。",
-      "answer": "3/2"
+      "answer": "3/2",
+      "verify": {
+        "m": "let",
+        "f": "3\\cos t",
+        "with": {
+          "t": {
+            "m": "root",
+            "f": "3\\cos x-(1+\\cos x)",
+            "x0": 1
+          }
+        },
+        "note": "數值解 3cosθ=1+cosθ，再代回 r=3cosθ"
+      }
     },
     {
       "id": "lec-10-q2c",
@@ -5650,7 +6583,102 @@
         "|r| < 1",
         "−1 ≤ r ≤ 1",
         "r ≥ 0"
-      ]
+      ],
+      "verify": {
+        "m": "choice",
+        "options": [
+          {
+            "say": "−1 < r ≤ 1",
+            "all": [
+              {
+                "v": {
+                  "m": "seqLimit",
+                  "f": "1^n"
+                },
+                "eq": 1
+              },
+              {
+                "v": {
+                  "m": "limsup",
+                  "f": "(-1)^n",
+                  "kind": "limsup"
+                },
+                "ne": {
+                  "m": "limsup",
+                  "f": "(-1)^n",
+                  "kind": "liminf"
+                }
+              },
+              {
+                "v": {
+                  "m": "seqLimit",
+                  "f": "(0.5)^n"
+                },
+                "eq": 0
+              },
+              {
+                "v": {
+                  "m": "seqLimit",
+                  "f": "(-0.5)^n"
+                },
+                "eq": 0
+              }
+            ]
+          },
+          {
+            "say": "|r| < 1",
+            "all": [
+              {
+                "v": {
+                  "m": "limsup",
+                  "f": "1^n",
+                  "kind": "limsup"
+                },
+                "ne": {
+                  "m": "limsup",
+                  "f": "1^n",
+                  "kind": "liminf"
+                }
+              }
+            ]
+          },
+          {
+            "say": "−1 ≤ r ≤ 1",
+            "all": [
+              {
+                "v": {
+                  "m": "limsup",
+                  "f": "(-1)^n",
+                  "kind": "limsup"
+                },
+                "eq": {
+                  "m": "limsup",
+                  "f": "(-1)^n",
+                  "kind": "liminf"
+                }
+              }
+            ]
+          },
+          {
+            "say": "r ≥ 0",
+            "all": [
+              {
+                "v": {
+                  "m": "limsup",
+                  "f": "(-0.5)^n",
+                  "kind": "limsup"
+                },
+                "ne": {
+                  "m": "limsup",
+                  "f": "(-0.5)^n",
+                  "kind": "liminf"
+                }
+              }
+            ]
+          }
+        ],
+        "note": "r=1 收斂、r=−1 擺盪、r=±0.5 收斂到 0；誘答各自被一個邊界反例推翻"
+      }
     },
     {
       "id": "lec-11-m3",
@@ -5739,7 +6767,93 @@
         "有界數列必收斂",
         "發散數列必無界",
         "收斂數列必為單調數列"
-      ]
+      ],
+      "verify": {
+        "m": "choice",
+        "options": [
+          {
+            "say": "單調且有界的數列必收斂",
+            "unknown": "單調收斂定理本身，沒有可以代的數；由其餘三個選項被反例推翻得到"
+          },
+          {
+            "say": "有界數列必收斂",
+            "given": [
+              {
+                "v": {
+                  "m": "extremeOf",
+                  "f": "|(-1)^n|",
+                  "kind": "sup"
+                },
+                "le": 1
+              }
+            ],
+            "all": [
+              {
+                "v": {
+                  "m": "limsup",
+                  "f": "(-1)^n",
+                  "kind": "limsup"
+                },
+                "eq": {
+                  "m": "limsup",
+                  "f": "(-1)^n",
+                  "kind": "liminf"
+                }
+              }
+            ]
+          },
+          {
+            "say": "發散數列必無界",
+            "given": [
+              {
+                "v": {
+                  "m": "limsup",
+                  "f": "(-1)^n",
+                  "kind": "limsup"
+                },
+                "ne": {
+                  "m": "limsup",
+                  "f": "(-1)^n",
+                  "kind": "liminf"
+                }
+              }
+            ],
+            "all": [
+              {
+                "v": {
+                  "m": "extremeOf",
+                  "f": "|(-1)^n|",
+                  "kind": "sup"
+                },
+                "gt": 1000000
+              }
+            ]
+          },
+          {
+            "say": "收斂數列必為單調數列",
+            "given": [
+              {
+                "v": {
+                  "m": "limit",
+                  "f": "\\frac1x",
+                  "at": "inf"
+                },
+                "eq": 0
+              }
+            ],
+            "all": [
+              {
+                "v": {
+                  "m": "value",
+                  "f": "\\left(\\frac{(-1)^2}{2}-\\frac{(-1)^1}{1}\\right)\\left(\\frac{(-1)^3}{3}-\\frac{(-1)^2}{2}\\right)"
+                },
+                "ge": 0
+              }
+            ]
+          }
+        ],
+        "note": "答案是定理本身；三個誘答分別被 (−1)ⁿ、(−1)ⁿ、(−1)ⁿ/n（|aₙ|=1/n→0）推翻"
+      }
     },
     {
       "id": "lec-11-q1a",
@@ -5921,7 +7035,67 @@
         "n! ≪ 2ⁿ ≪ nⁿ",
         "2ⁿ ≪ nⁿ ≪ n!",
         "nⁿ ≪ n! ≪ 2ⁿ"
-      ]
+      ],
+      "verify": {
+        "m": "choice",
+        "options": [
+          {
+            "say": "2ⁿ ≪ n! ≪ nⁿ",
+            "all": [
+              {
+                "v": {
+                  "m": "seqLimit",
+                  "f": "\\frac{2^n}{n!}"
+                },
+                "eq": 0
+              },
+              {
+                "v": {
+                  "m": "seqLimit",
+                  "f": "\\frac{n!}{n^n}"
+                },
+                "eq": 0
+              }
+            ]
+          },
+          {
+            "say": "n! ≪ 2ⁿ ≪ nⁿ",
+            "all": [
+              {
+                "v": {
+                  "m": "seqLimit",
+                  "f": "\\frac{2^n}{n!}"
+                },
+                "gt": 0
+              }
+            ]
+          },
+          {
+            "say": "2ⁿ ≪ nⁿ ≪ n!",
+            "all": [
+              {
+                "v": {
+                  "m": "seqLimit",
+                  "f": "\\frac{n!}{n^n}"
+                },
+                "gt": 0
+              }
+            ]
+          },
+          {
+            "say": "nⁿ ≪ n! ≪ 2ⁿ",
+            "all": [
+              {
+                "v": {
+                  "m": "seqLimit",
+                  "f": "\\frac{2^n}{n!}"
+                },
+                "gt": 0
+              }
+            ]
+          }
+        ]
+      }
     },
     {
       "id": "lec-11-q3a",
@@ -6197,7 +7371,85 @@
         "若 lim aₙ = 0，則 Σaₙ 收斂",
         "若 Σaₙ 發散，則 lim aₙ ≠ 0",
         "若 aₙ > 0 且 aₙ 遞減，則 Σaₙ 收斂"
-      ]
+      ],
+      "verify": {
+        "m": "choice",
+        "options": [
+          {
+            "say": "若 Σaₙ 收斂，則 lim aₙ = 0",
+            "unknown": "第 n 項判別本身，沒有可以代的數；由其餘三個選項被調和級數推翻得到"
+          },
+          {
+            "say": "若 lim aₙ = 0，則 Σaₙ 收斂",
+            "given": [
+              {
+                "v": {
+                  "m": "limit",
+                  "f": "\\frac1x",
+                  "at": "inf"
+                },
+                "eq": 0
+              }
+            ],
+            "all": [
+              {
+                "v": {
+                  "m": "seriesConverges",
+                  "f": "\\frac1n",
+                  "from": 1
+                },
+                "claim": true
+              }
+            ]
+          },
+          {
+            "say": "若 Σaₙ 發散，則 lim aₙ ≠ 0",
+            "given": [
+              {
+                "v": {
+                  "m": "seriesConverges",
+                  "f": "\\frac1n",
+                  "from": 1
+                },
+                "claim": false
+              }
+            ],
+            "all": [
+              {
+                "v": {
+                  "m": "limit",
+                  "f": "\\frac1x",
+                  "at": "inf"
+                },
+                "ne": 0
+              }
+            ]
+          },
+          {
+            "say": "若 aₙ > 0 且 aₙ 遞減，則 Σaₙ 收斂",
+            "given": [
+              {
+                "v": {
+                  "m": "value",
+                  "f": "\\frac12-\\frac11"
+                },
+                "lt": 0
+              }
+            ],
+            "all": [
+              {
+                "v": {
+                  "m": "seriesConverges",
+                  "f": "\\frac1n",
+                  "from": 1
+                },
+                "claim": true
+              }
+            ]
+          }
+        ],
+        "note": "答案是定理本身；三個誘答都被調和級數推翻"
+      }
     },
     {
       "id": "lec-12-m4",
@@ -6231,7 +7483,53 @@
         "Σ 1/n^1.1",
         "Σ 1/(2ⁿ+1)",
         "Σ 1/(n²+1)"
-      ]
+      ],
+      "verify": {
+        "m": "choice",
+        "options": [
+          {
+            "say": "Σ n/(n²+1)",
+            "v": {
+              "m": "improperConverges",
+              "f": "\\frac{x}{x^2+1}",
+              "a": 1,
+              "b": "inf"
+            },
+            "claim": false
+          },
+          {
+            "say": "Σ 1/n^1.1",
+            "v": {
+              "m": "improperConverges",
+              "f": "\\frac{1}{x^{1.1}}",
+              "a": 1,
+              "b": "inf"
+            },
+            "claim": false
+          },
+          {
+            "say": "Σ 1/(2ⁿ+1)",
+            "v": {
+              "m": "improperConverges",
+              "f": "\\frac{1}{2^x+1}",
+              "a": 1,
+              "b": "inf"
+            },
+            "claim": false
+          },
+          {
+            "say": "Σ 1/(n²+1)",
+            "v": {
+              "m": "improperConverges",
+              "f": "\\frac{1}{x^2+1}",
+              "a": 1,
+              "b": "inf"
+            },
+            "claim": false
+          }
+        ],
+        "note": "積分判別（通項在 x≥1 是正的遞減函數）；seriesConverges 會把 Σ1/n^1.1 誤判成發散，不用它"
+      }
     },
     {
       "id": "lec-12-m5",
@@ -6264,7 +7562,81 @@
         "p ≥ 1",
         "p > 0",
         "p < 1"
-      ]
+      ],
+      "verify": {
+        "m": "choice",
+        "options": [
+          {
+            "say": "p > 1",
+            "all": [
+              {
+                "v": {
+                  "m": "seriesConverges",
+                  "f": "\\frac{1}{n^2}",
+                  "from": 1
+                },
+                "claim": true
+              },
+              {
+                "v": {
+                  "m": "seriesConverges",
+                  "f": "\\frac{1}{n}",
+                  "from": 1
+                },
+                "claim": false
+              },
+              {
+                "v": {
+                  "m": "seriesConverges",
+                  "f": "\\frac{1}{n^{0.5}}",
+                  "from": 1
+                },
+                "claim": false
+              }
+            ]
+          },
+          {
+            "say": "p ≥ 1",
+            "all": [
+              {
+                "v": {
+                  "m": "seriesConverges",
+                  "f": "\\frac{1}{n}",
+                  "from": 1
+                },
+                "claim": true
+              }
+            ]
+          },
+          {
+            "say": "p > 0",
+            "all": [
+              {
+                "v": {
+                  "m": "seriesConverges",
+                  "f": "\\frac{1}{n^{0.5}}",
+                  "from": 1
+                },
+                "claim": true
+              }
+            ]
+          },
+          {
+            "say": "p < 1",
+            "all": [
+              {
+                "v": {
+                  "m": "seriesConverges",
+                  "f": "\\frac{1}{n^{2}}",
+                  "from": 1
+                },
+                "claim": false
+              }
+            ]
+          }
+        ],
+        "note": "p=2 收斂、p=1 與 p=0.5 發散；誘答各被一個 p 推翻"
+      }
     },
     {
       "id": "lec-12-q1a",
@@ -6858,7 +8230,65 @@
         "絕對收斂",
         "發散",
         "無法判斷"
-      ]
+      ],
+      "verify": {
+        "m": "choice",
+        "options": [
+          {
+            "say": "條件收斂",
+            "all": [
+              {
+                "v": {
+                  "m": "seriesConverges",
+                  "f": "\\frac{(-1)^{n+1}}{n}",
+                  "from": 1
+                },
+                "claim": true
+              },
+              {
+                "v": {
+                  "m": "seriesConverges",
+                  "f": "\\frac{(-1)^{n+1}}{n}",
+                  "from": 1,
+                  "absolute": true
+                },
+                "claim": false
+              }
+            ]
+          },
+          {
+            "say": "絕對收斂",
+            "all": [
+              {
+                "v": {
+                  "m": "seriesConverges",
+                  "f": "\\frac{(-1)^{n+1}}{n}",
+                  "from": 1,
+                  "absolute": true
+                },
+                "claim": true
+              }
+            ]
+          },
+          {
+            "say": "發散",
+            "all": [
+              {
+                "v": {
+                  "m": "seriesConverges",
+                  "f": "\\frac{(-1)^{n+1}}{n}",
+                  "from": 1
+                },
+                "claim": false
+              }
+            ]
+          },
+          {
+            "say": "無法判斷",
+            "unknown": "「無法判斷」是對判別法的評論，不是級數本身的性質"
+          }
+        ]
+      }
     },
     {
       "id": "lec-13-m2",
@@ -6924,7 +8354,115 @@
         "級數必收斂",
         "級數必發散",
         "級數必條件收斂"
-      ]
+      ],
+      "verify": {
+        "m": "choice",
+        "options": [
+          {
+            "say": "無法由此判斷",
+            "all": [
+              {
+                "v": {
+                  "m": "seqLimit",
+                  "f": "\\frac{1/(n+1)}{1/n}"
+                },
+                "eq": 1
+              },
+              {
+                "v": {
+                  "m": "seriesConverges",
+                  "f": "\\frac1n",
+                  "from": 1
+                },
+                "claim": false
+              },
+              {
+                "v": {
+                  "m": "seqLimit",
+                  "f": "\\frac{1/(n+1)^2}{1/n^2}"
+                },
+                "eq": 1
+              },
+              {
+                "v": {
+                  "m": "seriesConverges",
+                  "f": "\\frac1{n^2}",
+                  "from": 1
+                },
+                "claim": true
+              }
+            ]
+          },
+          {
+            "say": "級數必收斂",
+            "given": [
+              {
+                "v": {
+                  "m": "seqLimit",
+                  "f": "\\frac{1/(n+1)}{1/n}"
+                },
+                "eq": 1
+              }
+            ],
+            "all": [
+              {
+                "v": {
+                  "m": "seriesConverges",
+                  "f": "\\frac1n",
+                  "from": 1
+                },
+                "claim": true
+              }
+            ]
+          },
+          {
+            "say": "級數必發散",
+            "given": [
+              {
+                "v": {
+                  "m": "seqLimit",
+                  "f": "\\frac{1/(n+1)^2}{1/n^2}"
+                },
+                "eq": 1
+              }
+            ],
+            "all": [
+              {
+                "v": {
+                  "m": "seriesConverges",
+                  "f": "\\frac1{n^2}",
+                  "from": 1
+                },
+                "claim": false
+              }
+            ]
+          },
+          {
+            "say": "級數必條件收斂",
+            "given": [
+              {
+                "v": {
+                  "m": "seqLimit",
+                  "f": "\\frac{1/(n+1)^2}{1/n^2}"
+                },
+                "eq": 1
+              }
+            ],
+            "all": [
+              {
+                "v": {
+                  "m": "seriesConverges",
+                  "f": "\\frac1{n^2}",
+                  "from": 1,
+                  "absolute": true
+                },
+                "claim": false
+              }
+            ]
+          }
+        ],
+        "note": "Σ1/n 與 Σ1/n² 比值極限都是 1，一個發散一個收斂"
+      }
     },
     {
       "id": "lec-13-m4",
@@ -7422,7 +8960,78 @@
       "examPoints": 20,
       "examGroup": "lec-13-q4",
       "examTitle": "含參數的級數與重排。",
-      "answer": "(0, 1]"
+      "answer": "(0, 1]",
+      "verify": {
+        "m": "choice",
+        "options": [
+          {
+            "say": "(0, 1]",
+            "all": [
+              {
+                "v": {
+                  "m": "seriesConverges",
+                  "f": "\\frac{(-1)^n}{n^{0}}",
+                  "from": 1
+                },
+                "claim": false
+              },
+              {
+                "v": {
+                  "m": "seriesConverges",
+                  "f": "\\frac{(-1)^n}{n^{0.5}}",
+                  "from": 1
+                },
+                "claim": true
+              },
+              {
+                "v": {
+                  "m": "seriesConverges",
+                  "f": "\\frac{(-1)^n}{n^{0.5}}",
+                  "from": 1,
+                  "absolute": true
+                },
+                "claim": false
+              },
+              {
+                "v": {
+                  "m": "seriesConverges",
+                  "f": "\\frac{(-1)^n}{n^{1}}",
+                  "from": 1
+                },
+                "claim": true
+              },
+              {
+                "v": {
+                  "m": "seriesConverges",
+                  "f": "\\frac{(-1)^n}{n^{1}}",
+                  "from": 1,
+                  "absolute": true
+                },
+                "claim": false
+              },
+              {
+                "v": {
+                  "m": "seriesConverges",
+                  "f": "\\frac{(-1)^n}{n^{1.5}}",
+                  "from": 1,
+                  "absolute": true
+                },
+                "claim": true
+              },
+              {
+                "v": {
+                  "m": "seriesConverges",
+                  "f": "\\frac{(-1)^n}{n^{2}}",
+                  "from": 1,
+                  "absolute": true
+                },
+                "claim": true
+              }
+            ]
+          }
+        ],
+        "note": "取樣 p=0, 0.5, 1, 1.5, 2：端點 0 開、1 閉；(1,1.5) 之間沒有取樣（seriesConverges 在 p 接近 1 判不準）"
+      }
     },
     {
       "id": "lec-14-m1",
@@ -7552,7 +9161,96 @@
         "Σ x^(2n)",
         "Σ (−1)ⁿ xⁿ",
         "Σ (−1)ⁿ x^(2n+1)"
-      ]
+      ],
+      "verify": {
+        "m": "choice",
+        "options": [
+          {
+            "say": "Σ (−1)ⁿ x^(2n)",
+            "all": [
+              {
+                "v": {
+                  "m": "series",
+                  "f": "(-1)^n (0.5)^{2n}",
+                  "from": 0
+                },
+                "eq": "\\frac{1}{1+0.5^2}"
+              },
+              {
+                "v": {
+                  "m": "series",
+                  "f": "(-1)^n (0.3)^{2n}",
+                  "from": 0
+                },
+                "eq": "\\frac{1}{1+0.3^2}"
+              }
+            ]
+          },
+          {
+            "say": "Σ x^(2n)",
+            "all": [
+              {
+                "v": {
+                  "m": "series",
+                  "f": "(0.5)^{2n}",
+                  "from": 0
+                },
+                "eq": "\\frac{1}{1+0.5^2}"
+              },
+              {
+                "v": {
+                  "m": "series",
+                  "f": "(0.3)^{2n}",
+                  "from": 0
+                },
+                "eq": "\\frac{1}{1+0.3^2}"
+              }
+            ]
+          },
+          {
+            "say": "Σ (−1)ⁿ xⁿ",
+            "all": [
+              {
+                "v": {
+                  "m": "series",
+                  "f": "(-1)^n (0.5)^{n}",
+                  "from": 0
+                },
+                "eq": "\\frac{1}{1+0.5^2}"
+              },
+              {
+                "v": {
+                  "m": "series",
+                  "f": "(-1)^n (0.3)^{n}",
+                  "from": 0
+                },
+                "eq": "\\frac{1}{1+0.3^2}"
+              }
+            ]
+          },
+          {
+            "say": "Σ (−1)ⁿ x^(2n+1)",
+            "all": [
+              {
+                "v": {
+                  "m": "series",
+                  "f": "(-1)^n (0.5)^{2n+1}",
+                  "from": 0
+                },
+                "eq": "\\frac{1}{1+0.5^2}"
+              },
+              {
+                "v": {
+                  "m": "series",
+                  "f": "(-1)^n (0.3)^{2n+1}",
+                  "from": 0
+                },
+                "eq": "\\frac{1}{1+0.3^2}"
+              }
+            ]
+          }
+        ]
+      }
     },
     {
       "id": "lec-14-m5",
@@ -7766,7 +9464,28 @@
       "examPoints": 20,
       "examGroup": "lec-14-q2",
       "examTitle": "把函數寫成冪級數。",
-      "answer": "2"
+      "answer": "2",
+      "verify": {
+        "m": "let",
+        "f": "\\sqrt{\\left|\\frac{p}{q}\\right|}",
+        "with": {
+          "p": {
+            "m": "derivAt0",
+            "coef": true,
+            "f": "\\frac{x}{4+x^2}",
+            "n": 5,
+            "r": 1
+          },
+          "q": {
+            "m": "derivAt0",
+            "coef": true,
+            "f": "\\frac{x}{4+x^2}",
+            "n": 7,
+            "r": 1
+          }
+        },
+        "note": "R²=|c₅/c₇|，係數由 Chebyshev 取樣算"
+      }
     },
     {
       "id": "lec-14-q2b",
@@ -8730,7 +10449,116 @@
         "x+2y+3z=1",
         "3x+2y+z=6",
         "x+y+z=1"
-      ]
+      ],
+      "verify": {
+        "m": "choice",
+        "options": [
+          {
+            "say": "6x+3y+2z=6",
+            "all": [
+              {
+                "v": {
+                  "m": "value",
+                  "f": "6\\cdot1+3\\cdot0+2\\cdot0"
+                },
+                "eq": 6
+              },
+              {
+                "v": {
+                  "m": "value",
+                  "f": "6\\cdot0+3\\cdot2+2\\cdot0"
+                },
+                "eq": 6
+              },
+              {
+                "v": {
+                  "m": "value",
+                  "f": "6\\cdot0+3\\cdot0+2\\cdot3"
+                },
+                "eq": 6
+              }
+            ]
+          },
+          {
+            "say": "x+2y+3z=1",
+            "all": [
+              {
+                "v": {
+                  "m": "value",
+                  "f": "1\\cdot1+2\\cdot0+3\\cdot0"
+                },
+                "eq": 1
+              },
+              {
+                "v": {
+                  "m": "value",
+                  "f": "1\\cdot0+2\\cdot2+3\\cdot0"
+                },
+                "eq": 1
+              },
+              {
+                "v": {
+                  "m": "value",
+                  "f": "1\\cdot0+2\\cdot0+3\\cdot3"
+                },
+                "eq": 1
+              }
+            ]
+          },
+          {
+            "say": "3x+2y+z=6",
+            "all": [
+              {
+                "v": {
+                  "m": "value",
+                  "f": "3\\cdot1+2\\cdot0+1\\cdot0"
+                },
+                "eq": 6
+              },
+              {
+                "v": {
+                  "m": "value",
+                  "f": "3\\cdot0+2\\cdot2+1\\cdot0"
+                },
+                "eq": 6
+              },
+              {
+                "v": {
+                  "m": "value",
+                  "f": "3\\cdot0+2\\cdot0+1\\cdot3"
+                },
+                "eq": 6
+              }
+            ]
+          },
+          {
+            "say": "x+y+z=1",
+            "all": [
+              {
+                "v": {
+                  "m": "value",
+                  "f": "1\\cdot1+1\\cdot0+1\\cdot0"
+                },
+                "eq": 1
+              },
+              {
+                "v": {
+                  "m": "value",
+                  "f": "1\\cdot0+1\\cdot2+1\\cdot0"
+                },
+                "eq": 1
+              },
+              {
+                "v": {
+                  "m": "value",
+                  "f": "1\\cdot0+1\\cdot0+1\\cdot3"
+                },
+                "eq": 1
+              }
+            ]
+          }
+        ]
+      }
     },
     {
       "id": "lec-16-m4",
@@ -8766,7 +10594,64 @@
         "沿 x 軸趨近得 0，所以極限為 0",
         "沿所有直線 y=mx 趨近都得 0，所以極限為 0",
         "極限為 1/2"
-      ]
+      ],
+      "verify": {
+        "m": "choice",
+        "options": [
+          {
+            "say": "極限不存在",
+            "v": {
+              "m": "limit",
+              "f": "\\frac{x\\cdot0}{x^2+0^2}",
+              "at": 0
+            },
+            "ne": {
+              "m": "limit",
+              "f": "\\frac{x\\cdot x}{x^2+x^2}",
+              "at": 0
+            }
+          },
+          {
+            "say": "沿 x 軸趨近得 0，所以極限為 0",
+            "all": [
+              {
+                "v": {
+                  "m": "limit",
+                  "f": "\\frac{x\\cdot x}{x^2+x^2}",
+                  "at": 0
+                },
+                "eq": 0
+              }
+            ]
+          },
+          {
+            "say": "沿所有直線 y=mx 趨近都得 0，所以極限為 0",
+            "all": [
+              {
+                "v": {
+                  "m": "limit",
+                  "f": "\\frac{x\\cdot x}{x^2+x^2}",
+                  "at": 0
+                },
+                "eq": 0
+              }
+            ]
+          },
+          {
+            "say": "極限為 1/2",
+            "all": [
+              {
+                "v": {
+                  "m": "limit",
+                  "f": "\\frac{x\\cdot0}{x^2+0^2}",
+                  "at": 0
+                },
+                "eq": 0.5
+              }
+            ]
+          }
+        ]
+      }
     },
     {
       "id": "lec-16-m5",
@@ -9046,7 +10931,42 @@
       "examPoints": 20,
       "examGroup": "lec-16-q3",
       "examTitle": "定義域與等高線。",
-      "answer": "[0, 3]"
+      "answer": "[0, 3]",
+      "verify": {
+        "m": "choice",
+        "options": [
+          {
+            "say": "[0, 3]",
+            "all": [
+              {
+                "v": {
+                  "m": "extremum",
+                  "vars": [
+                    "u",
+                    "v"
+                  ],
+                  "f": "\\sqrt{\\left|9-(3\\sin u\\cos v)^2-(3\\sin u\\sin v)^2\\right|}",
+                  "kind": "min"
+                },
+                "eq": 0
+              },
+              {
+                "v": {
+                  "m": "extremum",
+                  "vars": [
+                    "u",
+                    "v"
+                  ],
+                  "f": "\\sqrt{\\left|9-(3\\sin u\\cos v)^2-(3\\sin u\\sin v)^2\\right|}",
+                  "kind": "max"
+                },
+                "eq": 3
+              }
+            ]
+          }
+        ],
+        "note": "閉圓盤參數化後的最小值 0、最大值 3 都取得到；連續函數在連通集上的值域就是 [min,max]"
+      }
     },
     {
       "id": "lec-16-q4a",
@@ -9310,7 +11230,88 @@
         "∇f(P) 垂直於通過 P 的等高線",
         "沿 −∇f(P) 方向 f 下降最快",
         "沿與 ∇f(P) 垂直的單位向量，方向導數為 0"
-      ]
+      ],
+      "verify": {
+        "m": "choice",
+        "pick": "false",
+        "options": [
+          {
+            "say": "沿任意單位向量 u，D_u f(P) ≥ 0",
+            "all": [
+              {
+                "v": {
+                  "m": "deriv",
+                  "vars": [
+                    "t"
+                  ],
+                  "f": "(1-t)^2+3\\cdot2",
+                  "at": [
+                    0
+                  ]
+                },
+                "ge": 0
+              }
+            ]
+          },
+          {
+            "say": "∇f(P) 垂直於通過 P 的等高線",
+            "all": [
+              {
+                "v": {
+                  "m": "let",
+                  "f": "p+q s",
+                  "with": {
+                    "p": {
+                      "m": "deriv",
+                      "vars": [
+                        "x",
+                        "y"
+                      ],
+                      "f": "x^2+3y",
+                      "at": [
+                        1,
+                        2
+                      ],
+                      "wrt": "x"
+                    },
+                    "q": {
+                      "m": "deriv",
+                      "vars": [
+                        "x",
+                        "y"
+                      ],
+                      "f": "x^2+3y",
+                      "at": [
+                        1,
+                        2
+                      ],
+                      "wrt": "y"
+                    },
+                    "s": {
+                      "m": "implicit",
+                      "F": "x^2+3y-7",
+                      "at": [
+                        1,
+                        2
+                      ]
+                    }
+                  }
+                },
+                "eq": 0
+              }
+            ]
+          },
+          {
+            "say": "沿 −∇f(P) 方向 f 下降最快",
+            "unknown": "「最快」要對所有方向取極值，寫不成有限個數值條件"
+          },
+          {
+            "say": "沿與 ∇f(P) 垂直的單位向量，方向導數為 0",
+            "unknown": "要先知道 ∇f 才寫得出垂直方向，條件會變成恆等式"
+          }
+        ],
+        "note": "反例 f=x²+3y 在 (1,2)：沿 (−1,0) 方向導數 −2<0"
+      }
     },
     {
       "id": "lec-17-m5",
@@ -9345,7 +11346,209 @@
         "−f_x r sinθ + f_y r cosθ",
         "f_x + f_y",
         "f_x sinθ + f_y cosθ"
-      ]
+      ],
+      "verify": {
+        "m": "choice",
+        "options": [
+          {
+            "say": "f_x cosθ + f_y sinθ",
+            "all": [
+              {
+                "v": {
+                  "m": "let",
+                  "f": "p\\cos0.7+q\\sin0.7",
+                  "with": {
+                    "p": {
+                      "m": "deriv",
+                      "vars": [
+                        "x",
+                        "y"
+                      ],
+                      "f": "x^2y+e^{y}",
+                      "at": [
+                        "1.3\\cos0.7",
+                        "1.3\\sin0.7"
+                      ],
+                      "wrt": "x"
+                    },
+                    "q": {
+                      "m": "deriv",
+                      "vars": [
+                        "x",
+                        "y"
+                      ],
+                      "f": "x^2y+e^{y}",
+                      "at": [
+                        "1.3\\cos0.7",
+                        "1.3\\sin0.7"
+                      ],
+                      "wrt": "y"
+                    }
+                  }
+                },
+                "eq": {
+                  "m": "deriv",
+                  "vars": [
+                    "r"
+                  ],
+                  "f": "(r\\cos0.7)^2(r\\sin0.7)+e^{r\\sin0.7}",
+                  "at": [
+                    1.3
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "say": "−f_x r sinθ + f_y r cosθ",
+            "all": [
+              {
+                "v": {
+                  "m": "let",
+                  "f": "-p\\cdot1.3\\sin0.7+q\\cdot1.3\\cos0.7",
+                  "with": {
+                    "p": {
+                      "m": "deriv",
+                      "vars": [
+                        "x",
+                        "y"
+                      ],
+                      "f": "x^2y+e^{y}",
+                      "at": [
+                        "1.3\\cos0.7",
+                        "1.3\\sin0.7"
+                      ],
+                      "wrt": "x"
+                    },
+                    "q": {
+                      "m": "deriv",
+                      "vars": [
+                        "x",
+                        "y"
+                      ],
+                      "f": "x^2y+e^{y}",
+                      "at": [
+                        "1.3\\cos0.7",
+                        "1.3\\sin0.7"
+                      ],
+                      "wrt": "y"
+                    }
+                  }
+                },
+                "eq": {
+                  "m": "deriv",
+                  "vars": [
+                    "r"
+                  ],
+                  "f": "(r\\cos0.7)^2(r\\sin0.7)+e^{r\\sin0.7}",
+                  "at": [
+                    1.3
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "say": "f_x + f_y",
+            "all": [
+              {
+                "v": {
+                  "m": "let",
+                  "f": "p+q",
+                  "with": {
+                    "p": {
+                      "m": "deriv",
+                      "vars": [
+                        "x",
+                        "y"
+                      ],
+                      "f": "x^2y+e^{y}",
+                      "at": [
+                        "1.3\\cos0.7",
+                        "1.3\\sin0.7"
+                      ],
+                      "wrt": "x"
+                    },
+                    "q": {
+                      "m": "deriv",
+                      "vars": [
+                        "x",
+                        "y"
+                      ],
+                      "f": "x^2y+e^{y}",
+                      "at": [
+                        "1.3\\cos0.7",
+                        "1.3\\sin0.7"
+                      ],
+                      "wrt": "y"
+                    }
+                  }
+                },
+                "eq": {
+                  "m": "deriv",
+                  "vars": [
+                    "r"
+                  ],
+                  "f": "(r\\cos0.7)^2(r\\sin0.7)+e^{r\\sin0.7}",
+                  "at": [
+                    1.3
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "say": "f_x sinθ + f_y cosθ",
+            "all": [
+              {
+                "v": {
+                  "m": "let",
+                  "f": "p\\sin0.7+q\\cos0.7",
+                  "with": {
+                    "p": {
+                      "m": "deriv",
+                      "vars": [
+                        "x",
+                        "y"
+                      ],
+                      "f": "x^2y+e^{y}",
+                      "at": [
+                        "1.3\\cos0.7",
+                        "1.3\\sin0.7"
+                      ],
+                      "wrt": "x"
+                    },
+                    "q": {
+                      "m": "deriv",
+                      "vars": [
+                        "x",
+                        "y"
+                      ],
+                      "f": "x^2y+e^{y}",
+                      "at": [
+                        "1.3\\cos0.7",
+                        "1.3\\sin0.7"
+                      ],
+                      "wrt": "y"
+                    }
+                  }
+                },
+                "eq": {
+                  "m": "deriv",
+                  "vars": [
+                    "r"
+                  ],
+                  "f": "(r\\cos0.7)^2(r\\sin0.7)+e^{r\\sin0.7}",
+                  "at": [
+                    1.3
+                  ]
+                }
+              }
+            ]
+          }
+        ],
+        "note": "鏈鎖律的實例 f=x²y+e^y 在 (r,θ)=(1.3,0.7)，∂z/∂r 直接對 r 數值微分"
+      }
     },
     {
       "id": "lec-17-q1a",
@@ -9385,7 +11588,189 @@
         "2x+4y−z=2",
         "3x+5y+z=12",
         "x+y−z=−2"
-      ]
+      ],
+      "verify": {
+        "m": "choice",
+        "options": [
+          {
+            "say": "3x+5y−z=4",
+            "all": [
+              {
+                "v": {
+                  "m": "deriv",
+                  "vars": [
+                    "x",
+                    "y"
+                  ],
+                  "f": "x^2+xy+2y^2",
+                  "at": [
+                    1,
+                    1
+                  ],
+                  "wrt": "x"
+                },
+                "eq": 3
+              },
+              {
+                "v": {
+                  "m": "deriv",
+                  "vars": [
+                    "x",
+                    "y"
+                  ],
+                  "f": "x^2+xy+2y^2",
+                  "at": [
+                    1,
+                    1
+                  ],
+                  "wrt": "y"
+                },
+                "eq": 5
+              },
+              {
+                "v": {
+                  "m": "value",
+                  "f": "1^2+1\\cdot1+2\\cdot1^2"
+                },
+                "eq": "3+5-4"
+              }
+            ]
+          },
+          {
+            "say": "2x+4y−z=2",
+            "all": [
+              {
+                "v": {
+                  "m": "deriv",
+                  "vars": [
+                    "x",
+                    "y"
+                  ],
+                  "f": "x^2+xy+2y^2",
+                  "at": [
+                    1,
+                    1
+                  ],
+                  "wrt": "x"
+                },
+                "eq": 2
+              },
+              {
+                "v": {
+                  "m": "deriv",
+                  "vars": [
+                    "x",
+                    "y"
+                  ],
+                  "f": "x^2+xy+2y^2",
+                  "at": [
+                    1,
+                    1
+                  ],
+                  "wrt": "y"
+                },
+                "eq": 4
+              },
+              {
+                "v": {
+                  "m": "value",
+                  "f": "1^2+1\\cdot1+2\\cdot1^2"
+                },
+                "eq": "2+4-2"
+              }
+            ]
+          },
+          {
+            "say": "3x+5y+z=12",
+            "all": [
+              {
+                "v": {
+                  "m": "deriv",
+                  "vars": [
+                    "x",
+                    "y"
+                  ],
+                  "f": "x^2+xy+2y^2",
+                  "at": [
+                    1,
+                    1
+                  ],
+                  "wrt": "x"
+                },
+                "eq": -3
+              },
+              {
+                "v": {
+                  "m": "deriv",
+                  "vars": [
+                    "x",
+                    "y"
+                  ],
+                  "f": "x^2+xy+2y^2",
+                  "at": [
+                    1,
+                    1
+                  ],
+                  "wrt": "y"
+                },
+                "eq": -5
+              },
+              {
+                "v": {
+                  "m": "value",
+                  "f": "1^2+1\\cdot1+2\\cdot1^2"
+                },
+                "eq": "12-3-5"
+              }
+            ]
+          },
+          {
+            "say": "x+y−z=−2",
+            "all": [
+              {
+                "v": {
+                  "m": "deriv",
+                  "vars": [
+                    "x",
+                    "y"
+                  ],
+                  "f": "x^2+xy+2y^2",
+                  "at": [
+                    1,
+                    1
+                  ],
+                  "wrt": "x"
+                },
+                "eq": 1
+              },
+              {
+                "v": {
+                  "m": "deriv",
+                  "vars": [
+                    "x",
+                    "y"
+                  ],
+                  "f": "x^2+xy+2y^2",
+                  "at": [
+                    1,
+                    1
+                  ],
+                  "wrt": "y"
+                },
+                "eq": 1
+              },
+              {
+                "v": {
+                  "m": "value",
+                  "f": "1^2+1\\cdot1+2\\cdot1^2"
+                },
+                "eq": "1+1+2"
+              }
+            ]
+          }
+        ],
+        "note": "平面解成 z 後的斜率 vs f 的數值偏導，加上通過 (1,1,4)"
+      }
     },
     {
       "id": "lec-17-q1b",
@@ -9573,7 +11958,160 @@
         "(4, 4)",
         "(−4, −2)",
         "(−2, −4)"
-      ]
+      ],
+      "verify": {
+        "m": "choice",
+        "options": [
+          {
+            "say": "(−4, −4)",
+            "all": [
+              {
+                "v": {
+                  "m": "deriv",
+                  "vars": [
+                    "x",
+                    "y"
+                  ],
+                  "f": "100-x^2-2y^2",
+                  "at": [
+                    2,
+                    1
+                  ],
+                  "wrt": "x"
+                },
+                "eq": -4
+              },
+              {
+                "v": {
+                  "m": "deriv",
+                  "vars": [
+                    "x",
+                    "y"
+                  ],
+                  "f": "100-x^2-2y^2",
+                  "at": [
+                    2,
+                    1
+                  ],
+                  "wrt": "y"
+                },
+                "eq": -4
+              }
+            ]
+          },
+          {
+            "say": "(4, 4)",
+            "all": [
+              {
+                "v": {
+                  "m": "deriv",
+                  "vars": [
+                    "x",
+                    "y"
+                  ],
+                  "f": "100-x^2-2y^2",
+                  "at": [
+                    2,
+                    1
+                  ],
+                  "wrt": "x"
+                },
+                "eq": 4
+              },
+              {
+                "v": {
+                  "m": "deriv",
+                  "vars": [
+                    "x",
+                    "y"
+                  ],
+                  "f": "100-x^2-2y^2",
+                  "at": [
+                    2,
+                    1
+                  ],
+                  "wrt": "y"
+                },
+                "eq": 4
+              }
+            ]
+          },
+          {
+            "say": "(−4, −2)",
+            "all": [
+              {
+                "v": {
+                  "m": "deriv",
+                  "vars": [
+                    "x",
+                    "y"
+                  ],
+                  "f": "100-x^2-2y^2",
+                  "at": [
+                    2,
+                    1
+                  ],
+                  "wrt": "x"
+                },
+                "eq": -4
+              },
+              {
+                "v": {
+                  "m": "deriv",
+                  "vars": [
+                    "x",
+                    "y"
+                  ],
+                  "f": "100-x^2-2y^2",
+                  "at": [
+                    2,
+                    1
+                  ],
+                  "wrt": "y"
+                },
+                "eq": -2
+              }
+            ]
+          },
+          {
+            "say": "(−2, −4)",
+            "all": [
+              {
+                "v": {
+                  "m": "deriv",
+                  "vars": [
+                    "x",
+                    "y"
+                  ],
+                  "f": "100-x^2-2y^2",
+                  "at": [
+                    2,
+                    1
+                  ],
+                  "wrt": "x"
+                },
+                "eq": -2
+              },
+              {
+                "v": {
+                  "m": "deriv",
+                  "vars": [
+                    "x",
+                    "y"
+                  ],
+                  "f": "100-x^2-2y^2",
+                  "at": [
+                    2,
+                    1
+                  ],
+                  "wrt": "y"
+                },
+                "eq": -4
+              }
+            ]
+          }
+        ]
+      }
     },
     {
       "id": "lec-17-q3b",
@@ -9681,7 +12219,189 @@
         "2x+4y+6z=6",
         "x+2y+3z=1",
         "x+y+z=3"
-      ]
+      ],
+      "verify": {
+        "m": "choice",
+        "options": [
+          {
+            "say": "x+2y+3z=6",
+            "all": [
+              {
+                "v": {
+                  "m": "value",
+                  "f": "1+2+3"
+                },
+                "eq": 6
+              },
+              {
+                "v": {
+                  "m": "deriv",
+                  "vars": [
+                    "x",
+                    "y"
+                  ],
+                  "f": "\\sqrt{\\frac{6-x^2-2y^2}{3}}",
+                  "at": [
+                    1,
+                    1
+                  ],
+                  "wrt": "x"
+                },
+                "eq": "-\\frac{1}{3}"
+              },
+              {
+                "v": {
+                  "m": "deriv",
+                  "vars": [
+                    "x",
+                    "y"
+                  ],
+                  "f": "\\sqrt{\\frac{6-x^2-2y^2}{3}}",
+                  "at": [
+                    1,
+                    1
+                  ],
+                  "wrt": "y"
+                },
+                "eq": "-\\frac{2}{3}"
+              }
+            ]
+          },
+          {
+            "say": "2x+4y+6z=6",
+            "all": [
+              {
+                "v": {
+                  "m": "value",
+                  "f": "2+4+6"
+                },
+                "eq": 6
+              },
+              {
+                "v": {
+                  "m": "deriv",
+                  "vars": [
+                    "x",
+                    "y"
+                  ],
+                  "f": "\\sqrt{\\frac{6-x^2-2y^2}{3}}",
+                  "at": [
+                    1,
+                    1
+                  ],
+                  "wrt": "x"
+                },
+                "eq": "-\\frac{2}{6}"
+              },
+              {
+                "v": {
+                  "m": "deriv",
+                  "vars": [
+                    "x",
+                    "y"
+                  ],
+                  "f": "\\sqrt{\\frac{6-x^2-2y^2}{3}}",
+                  "at": [
+                    1,
+                    1
+                  ],
+                  "wrt": "y"
+                },
+                "eq": "-\\frac{4}{6}"
+              }
+            ]
+          },
+          {
+            "say": "x+2y+3z=1",
+            "all": [
+              {
+                "v": {
+                  "m": "value",
+                  "f": "1+2+3"
+                },
+                "eq": 1
+              },
+              {
+                "v": {
+                  "m": "deriv",
+                  "vars": [
+                    "x",
+                    "y"
+                  ],
+                  "f": "\\sqrt{\\frac{6-x^2-2y^2}{3}}",
+                  "at": [
+                    1,
+                    1
+                  ],
+                  "wrt": "x"
+                },
+                "eq": "-\\frac{1}{3}"
+              },
+              {
+                "v": {
+                  "m": "deriv",
+                  "vars": [
+                    "x",
+                    "y"
+                  ],
+                  "f": "\\sqrt{\\frac{6-x^2-2y^2}{3}}",
+                  "at": [
+                    1,
+                    1
+                  ],
+                  "wrt": "y"
+                },
+                "eq": "-\\frac{2}{3}"
+              }
+            ]
+          },
+          {
+            "say": "x+y+z=3",
+            "all": [
+              {
+                "v": {
+                  "m": "value",
+                  "f": "1+1+1"
+                },
+                "eq": 3
+              },
+              {
+                "v": {
+                  "m": "deriv",
+                  "vars": [
+                    "x",
+                    "y"
+                  ],
+                  "f": "\\sqrt{\\frac{6-x^2-2y^2}{3}}",
+                  "at": [
+                    1,
+                    1
+                  ],
+                  "wrt": "x"
+                },
+                "eq": "-\\frac{1}{1}"
+              },
+              {
+                "v": {
+                  "m": "deriv",
+                  "vars": [
+                    "x",
+                    "y"
+                  ],
+                  "f": "\\sqrt{\\frac{6-x^2-2y^2}{3}}",
+                  "at": [
+                    1,
+                    1
+                  ],
+                  "wrt": "y"
+                },
+                "eq": "-\\frac{1}{1}"
+              }
+            ]
+          }
+        ],
+        "note": "橢球面上半部 z=√((6−x²−2y²)/3) 的數值偏導 vs 平面的 −a/c、−b/c，加上通過 (1,1,1)"
+      }
     },
     {
       "id": "lec-17-q4c",
@@ -9709,7 +12429,34 @@
       "examPoints": 20,
       "examGroup": "lec-17-q4",
       "examTitle": "等值面的切平面。",
-      "answer": "6/sqrt(11)"
+      "answer": "6/sqrt(11)",
+      "verify": {
+        "m": "let",
+        "f": "\\sqrt6\\cos(p)\\cos(q)",
+        "with": {
+          "p": {
+            "m": "extremum",
+            "vars": [
+              "u",
+              "v"
+            ],
+            "f": "\\sqrt6\\cos u\\cos v+\\sqrt3\\cos u\\sin v+\\sqrt2\\sin u",
+            "kind": "max",
+            "arg": 0
+          },
+          "q": {
+            "m": "extremum",
+            "vars": [
+              "u",
+              "v"
+            ],
+            "f": "\\sqrt6\\cos u\\cos v+\\sqrt3\\cos u\\sin v+\\sqrt2\\sin u",
+            "kind": "max",
+            "arg": 1
+          }
+        },
+        "note": "切平面 ∥ x+y+z=0 的點是 x+y+z 在橢球面上的極值點；參數化後找最大值那一點"
+      }
     },
     {
       "id": "lec-18-m1",
@@ -9745,7 +12492,160 @@
         "(−1, 2)",
         "(2, −4)",
         "(0, 0)"
-      ]
+      ],
+      "verify": {
+        "m": "choice",
+        "options": [
+          {
+            "say": "(1, −2)",
+            "all": [
+              {
+                "v": {
+                  "m": "deriv",
+                  "vars": [
+                    "x",
+                    "y"
+                  ],
+                  "f": "x^2+y^2-2x+4y",
+                  "at": [
+                    1,
+                    -2
+                  ],
+                  "wrt": "x"
+                },
+                "eq": 0
+              },
+              {
+                "v": {
+                  "m": "deriv",
+                  "vars": [
+                    "x",
+                    "y"
+                  ],
+                  "f": "x^2+y^2-2x+4y",
+                  "at": [
+                    1,
+                    -2
+                  ],
+                  "wrt": "y"
+                },
+                "eq": 0
+              }
+            ]
+          },
+          {
+            "say": "(−1, 2)",
+            "all": [
+              {
+                "v": {
+                  "m": "deriv",
+                  "vars": [
+                    "x",
+                    "y"
+                  ],
+                  "f": "x^2+y^2-2x+4y",
+                  "at": [
+                    -1,
+                    2
+                  ],
+                  "wrt": "x"
+                },
+                "eq": 0
+              },
+              {
+                "v": {
+                  "m": "deriv",
+                  "vars": [
+                    "x",
+                    "y"
+                  ],
+                  "f": "x^2+y^2-2x+4y",
+                  "at": [
+                    -1,
+                    2
+                  ],
+                  "wrt": "y"
+                },
+                "eq": 0
+              }
+            ]
+          },
+          {
+            "say": "(2, −4)",
+            "all": [
+              {
+                "v": {
+                  "m": "deriv",
+                  "vars": [
+                    "x",
+                    "y"
+                  ],
+                  "f": "x^2+y^2-2x+4y",
+                  "at": [
+                    2,
+                    -4
+                  ],
+                  "wrt": "x"
+                },
+                "eq": 0
+              },
+              {
+                "v": {
+                  "m": "deriv",
+                  "vars": [
+                    "x",
+                    "y"
+                  ],
+                  "f": "x^2+y^2-2x+4y",
+                  "at": [
+                    2,
+                    -4
+                  ],
+                  "wrt": "y"
+                },
+                "eq": 0
+              }
+            ]
+          },
+          {
+            "say": "(0, 0)",
+            "all": [
+              {
+                "v": {
+                  "m": "deriv",
+                  "vars": [
+                    "x",
+                    "y"
+                  ],
+                  "f": "x^2+y^2-2x+4y",
+                  "at": [
+                    0,
+                    0
+                  ],
+                  "wrt": "x"
+                },
+                "eq": 0
+              },
+              {
+                "v": {
+                  "m": "deriv",
+                  "vars": [
+                    "x",
+                    "y"
+                  ],
+                  "f": "x^2+y^2-2x+4y",
+                  "at": [
+                    0,
+                    0
+                  ],
+                  "wrt": "y"
+                },
+                "eq": 0
+              }
+            ]
+          }
+        ]
+      }
     },
     {
       "id": "lec-18-m2",
@@ -9780,7 +12680,64 @@
         "相對極小",
         "相對極大",
         "無法判定"
-      ]
+      ],
+      "verify": {
+        "m": "choice",
+        "options": [
+          {
+            "say": "鞍點",
+            "all": [
+              {
+                "v": {
+                  "m": "value",
+                  "f": "0.1^2-0^2"
+                },
+                "gt": 0,
+                "tol": 1e-9
+              },
+              {
+                "v": {
+                  "m": "value",
+                  "f": "0^2-0.1^2"
+                },
+                "lt": 0,
+                "tol": 1e-9
+              }
+            ]
+          },
+          {
+            "say": "相對極小",
+            "all": [
+              {
+                "v": {
+                  "m": "value",
+                  "f": "0^2-0.1^2"
+                },
+                "ge": 0,
+                "tol": 1e-9
+              }
+            ]
+          },
+          {
+            "say": "相對極大",
+            "all": [
+              {
+                "v": {
+                  "m": "value",
+                  "f": "0.1^2-0^2"
+                },
+                "le": 0,
+                "tol": 1e-9
+              }
+            ]
+          },
+          {
+            "say": "無法判定",
+            "unknown": "「無法判定」是對判別法的評論，實例推翻不了它"
+          }
+        ],
+        "note": "實例 f=x²−y²（f_xx=2, f_yy=−2, f_xy=0）"
+      }
     },
     {
       "id": "lec-18-m3",
@@ -9813,7 +12770,112 @@
         "兩者都是相對極小",
         "兩者都是鞍點",
         "D=0 表示兩者在原點都沒有臨界點"
-      ]
+      ],
+      "verify": {
+        "m": "choice",
+        "options": [
+          {
+            "say": "f 是相對極小，g 是鞍點，可見 D=0 時判別法無法下結論",
+            "all": [
+              {
+                "v": {
+                  "m": "extremum",
+                  "vars": [
+                    "x",
+                    "y"
+                  ],
+                  "f": "x^4+y^4",
+                  "kind": "min"
+                },
+                "eq": 0
+              },
+              {
+                "v": {
+                  "m": "value",
+                  "f": "0.1^4-0^4"
+                },
+                "gt": 0,
+                "tol": 1e-12
+              },
+              {
+                "v": {
+                  "m": "value",
+                  "f": "0^4-0.1^4"
+                },
+                "lt": 0,
+                "tol": 1e-12
+              },
+              {
+                "v": {
+                  "m": "value",
+                  "f": "0.01^4-0^4"
+                },
+                "gt": 0,
+                "tol": 1e-12
+              },
+              {
+                "v": {
+                  "m": "value",
+                  "f": "0^4-0.01^4"
+                },
+                "lt": 0,
+                "tol": 1e-12
+              }
+            ]
+          },
+          {
+            "say": "兩者都是相對極小",
+            "all": [
+              {
+                "v": {
+                  "m": "value",
+                  "f": "0^4-0.1^4"
+                },
+                "ge": 0,
+                "tol": 1e-12
+              }
+            ]
+          },
+          {
+            "say": "兩者都是鞍點",
+            "all": [
+              {
+                "v": {
+                  "m": "extremum",
+                  "vars": [
+                    "x",
+                    "y"
+                  ],
+                  "f": "x^4+y^4",
+                  "kind": "min"
+                },
+                "lt": 0
+              }
+            ]
+          },
+          {
+            "say": "D=0 表示兩者在原點都沒有臨界點",
+            "all": [
+              {
+                "v": {
+                  "m": "deriv",
+                  "vars": [
+                    "x",
+                    "y"
+                  ],
+                  "f": "x^4+y^4",
+                  "at": [
+                    0,
+                    0
+                  ],
+                  "wrt": "x"
+                },
+                "ne": 0
+              }
+            ]
+          }
+        ]
+      }
     },
     {
       "id": "lec-18-m4",
@@ -9883,7 +12945,71 @@
         "D 為整個平面",
         "D 為開圓盤 x²+y²<1",
         "D 為第一象限 x≥0, y≥0"
-      ]
+      ],
+      "verify": {
+        "m": "choice",
+        "options": [
+          {
+            "say": "D 為閉圓盤 x²+y²≤1",
+            "unknown": "極值定理本身；由其餘三個選項被反例推翻得到"
+          },
+          {
+            "say": "D 為整個平面",
+            "all": [
+              {
+                "v": {
+                  "m": "extremeOf",
+                  "integer": false,
+                  "f": "x",
+                  "kind": "sup",
+                  "range": [
+                    -1000000,
+                    1000000
+                  ]
+                },
+                "lt": 100000
+              }
+            ]
+          },
+          {
+            "say": "D 為開圓盤 x²+y²<1",
+            "all": [
+              {
+                "v": {
+                  "m": "extremeOf",
+                  "integer": false,
+                  "f": "\\frac{1}{1-x^2}",
+                  "kind": "sup",
+                  "range": [
+                    "-1+10^{-9}",
+                    "1-10^{-9}"
+                  ]
+                },
+                "lt": 100000
+              }
+            ]
+          },
+          {
+            "say": "D 為第一象限 x≥0, y≥0",
+            "all": [
+              {
+                "v": {
+                  "m": "extremeOf",
+                  "integer": false,
+                  "f": "x",
+                  "kind": "sup",
+                  "range": [
+                    0,
+                    1000000
+                  ]
+                },
+                "lt": 100000
+              }
+            ]
+          }
+        ],
+        "note": "答案是定理本身；誘答被 f=x（無界區域）與 f=1/(1−x²)（開圓盤）推翻"
+      }
     },
     {
       "id": "lec-18-q1a",
@@ -9923,7 +13049,272 @@
         "(0,0) 與 (−1,−1)",
         "只有 (1,1)",
         "(1,1) 與 (−1,1)"
-      ]
+      ],
+      "verify": {
+        "m": "choice",
+        "options": [
+          {
+            "say": "(0,0) 與 (1,1)",
+            "all": [
+              {
+                "v": {
+                  "m": "deriv",
+                  "vars": [
+                    "x",
+                    "y"
+                  ],
+                  "f": "x^3+y^3-3xy",
+                  "at": [
+                    0,
+                    0
+                  ],
+                  "wrt": "x"
+                },
+                "eq": 0
+              },
+              {
+                "v": {
+                  "m": "deriv",
+                  "vars": [
+                    "x",
+                    "y"
+                  ],
+                  "f": "x^3+y^3-3xy",
+                  "at": [
+                    0,
+                    0
+                  ],
+                  "wrt": "y"
+                },
+                "eq": 0
+              },
+              {
+                "v": {
+                  "m": "deriv",
+                  "vars": [
+                    "x",
+                    "y"
+                  ],
+                  "f": "x^3+y^3-3xy",
+                  "at": [
+                    1,
+                    1
+                  ],
+                  "wrt": "x"
+                },
+                "eq": 0
+              },
+              {
+                "v": {
+                  "m": "deriv",
+                  "vars": [
+                    "x",
+                    "y"
+                  ],
+                  "f": "x^3+y^3-3xy",
+                  "at": [
+                    1,
+                    1
+                  ],
+                  "wrt": "y"
+                },
+                "eq": 0
+              }
+            ]
+          },
+          {
+            "say": "(0,0) 與 (−1,−1)",
+            "all": [
+              {
+                "v": {
+                  "m": "deriv",
+                  "vars": [
+                    "x",
+                    "y"
+                  ],
+                  "f": "x^3+y^3-3xy",
+                  "at": [
+                    0,
+                    0
+                  ],
+                  "wrt": "x"
+                },
+                "eq": 0
+              },
+              {
+                "v": {
+                  "m": "deriv",
+                  "vars": [
+                    "x",
+                    "y"
+                  ],
+                  "f": "x^3+y^3-3xy",
+                  "at": [
+                    0,
+                    0
+                  ],
+                  "wrt": "y"
+                },
+                "eq": 0
+              },
+              {
+                "v": {
+                  "m": "deriv",
+                  "vars": [
+                    "x",
+                    "y"
+                  ],
+                  "f": "x^3+y^3-3xy",
+                  "at": [
+                    -1,
+                    -1
+                  ],
+                  "wrt": "x"
+                },
+                "eq": 0
+              },
+              {
+                "v": {
+                  "m": "deriv",
+                  "vars": [
+                    "x",
+                    "y"
+                  ],
+                  "f": "x^3+y^3-3xy",
+                  "at": [
+                    -1,
+                    -1
+                  ],
+                  "wrt": "y"
+                },
+                "eq": 0
+              }
+            ]
+          },
+          {
+            "say": "只有 (1,1)",
+            "all": [
+              {
+                "v": {
+                  "m": "deriv",
+                  "vars": [
+                    "x",
+                    "y"
+                  ],
+                  "f": "x^3+y^3-3xy",
+                  "at": [
+                    1,
+                    1
+                  ],
+                  "wrt": "x"
+                },
+                "eq": 0
+              },
+              {
+                "v": {
+                  "m": "deriv",
+                  "vars": [
+                    "x",
+                    "y"
+                  ],
+                  "f": "x^3+y^3-3xy",
+                  "at": [
+                    1,
+                    1
+                  ],
+                  "wrt": "y"
+                },
+                "eq": 0
+              },
+              {
+                "v": {
+                  "m": "deriv",
+                  "vars": [
+                    "x",
+                    "y"
+                  ],
+                  "f": "x^3+y^3-3xy",
+                  "at": [
+                    0,
+                    0
+                  ],
+                  "wrt": "x"
+                },
+                "ne": 0
+              }
+            ]
+          },
+          {
+            "say": "(1,1) 與 (−1,1)",
+            "all": [
+              {
+                "v": {
+                  "m": "deriv",
+                  "vars": [
+                    "x",
+                    "y"
+                  ],
+                  "f": "x^3+y^3-3xy",
+                  "at": [
+                    1,
+                    1
+                  ],
+                  "wrt": "x"
+                },
+                "eq": 0
+              },
+              {
+                "v": {
+                  "m": "deriv",
+                  "vars": [
+                    "x",
+                    "y"
+                  ],
+                  "f": "x^3+y^3-3xy",
+                  "at": [
+                    1,
+                    1
+                  ],
+                  "wrt": "y"
+                },
+                "eq": 0
+              },
+              {
+                "v": {
+                  "m": "deriv",
+                  "vars": [
+                    "x",
+                    "y"
+                  ],
+                  "f": "x^3+y^3-3xy",
+                  "at": [
+                    -1,
+                    1
+                  ],
+                  "wrt": "x"
+                },
+                "eq": 0
+              },
+              {
+                "v": {
+                  "m": "deriv",
+                  "vars": [
+                    "x",
+                    "y"
+                  ],
+                  "f": "x^3+y^3-3xy",
+                  "at": [
+                    -1,
+                    1
+                  ],
+                  "wrt": "y"
+                },
+                "eq": 0
+              }
+            ]
+          }
+        ]
+      }
     },
     {
       "id": "lec-18-q1b",
@@ -9951,7 +13342,17 @@
       "examPoints": 20,
       "examGroup": "lec-18-q1",
       "examTitle": "相對極值的分類。",
-      "answer": "-1"
+      "answer": "-1",
+      "verify": {
+        "m": "extremum",
+        "vars": [
+          "u",
+          "v"
+        ],
+        "f": "u^6+v^6-3u^2v^2",
+        "kind": "min",
+        "note": "x=u², y=v² 把平面映到第一象限，f 在那裡有下界，最小值即內部的相對極小"
+      }
     },
     {
       "id": "lec-18-q1c",
@@ -9988,7 +13389,40 @@
       "answer": "不是",
       "distractors": [
         "是"
-      ]
+      ],
+      "verify": {
+        "m": "choice",
+        "options": [
+          {
+            "say": "不是",
+            "v": {
+              "m": "extremeOf",
+              "integer": false,
+              "f": "x^3+0^3-3x\\cdot0",
+              "kind": "inf",
+              "range": [
+                -10,
+                10
+              ]
+            },
+            "lt": -1
+          },
+          {
+            "say": "是",
+            "v": {
+              "m": "extremeOf",
+              "integer": false,
+              "f": "x^3+0^3-3x\\cdot0",
+              "kind": "inf",
+              "range": [
+                -10,
+                10
+              ]
+            },
+            "ge": -1
+          }
+        ]
+      }
     },
     {
       "id": "lec-18-q2a",
@@ -10016,7 +13450,20 @@
       "examPoints": 20,
       "examGroup": "lec-18-q2",
       "examTitle": "閉區域上的絕對極值。",
-      "answer": "1"
+      "answer": "1",
+      "verify": {
+        "m": "stationary",
+        "vars": [
+          "x",
+          "y"
+        ],
+        "f": "x^2-2xy+2y",
+        "x0": [
+          2,
+          0.5
+        ],
+        "note": "數值梯度＋Hessian 的牛頓法找駐點（鞍點）"
+      }
     },
     {
       "id": "lec-18-q2b",
@@ -10080,7 +13527,17 @@
       "examPoints": 20,
       "examGroup": "lec-18-q2",
       "examTitle": "閉區域上的絕對極值。",
-      "answer": "9"
+      "answer": "9",
+      "verify": {
+        "m": "extremum",
+        "vars": [
+          "u",
+          "v"
+        ],
+        "kind": "max",
+        "f": "(1.5+1.5\\sin u)^2-2(1.5+1.5\\sin u)(1+\\sin v)+2(1+\\sin v)",
+        "note": "矩形參數化 x=1.5+1.5sin u, y=1+sin v 後找最大值"
+      }
     },
     {
       "id": "lec-18-q3a",
@@ -10142,7 +13599,17 @@
       "examPoints": 20,
       "examGroup": "lec-18-q3",
       "examTitle": "Lagrange 乘子。",
-      "answer": "0"
+      "answer": "0",
+      "verify": {
+        "m": "extremum",
+        "vars": [
+          "u",
+          "v"
+        ],
+        "kind": "min",
+        "f": "(\\sin u\\cos v)^2+2(\\sin u\\sin v)^2",
+        "note": "圓盤參數化 x=sin u cos v, y=sin u sin v 後找最小值"
+      }
     },
     {
       "id": "lec-18-q3c",
@@ -10321,7 +13788,86 @@
         "∫₀¹ ∫_{y²}^y f dx dy",
         "∫₀¹ ∫_x^{x²} f dx dy",
         "∫₀¹ ∫_√y^y f dx dy"
-      ]
+      ],
+      "verify": {
+        "m": "choice",
+        "options": [
+          {
+            "say": "∫₀¹ ∫_y^√y f dx dy",
+            "v": {
+              "m": "double",
+              "f": "e^{x}\\cos y+xy^2",
+              "u": "y",
+              "v": "x",
+              "a": 0,
+              "b": 1,
+              "c": "y",
+              "d": "\\sqrt{y}"
+            },
+            "eq": {
+              "m": "double",
+              "f": "e^{x}\\cos y+xy^2",
+              "u": "x",
+              "v": "y",
+              "a": 0,
+              "b": 1,
+              "c": "x^2",
+              "d": "x"
+            }
+          },
+          {
+            "say": "∫₀¹ ∫_{y²}^y f dx dy",
+            "v": {
+              "m": "double",
+              "f": "e^{x}\\cos y+xy^2",
+              "u": "y",
+              "v": "x",
+              "a": 0,
+              "b": 1,
+              "c": "y^2",
+              "d": "y"
+            },
+            "eq": {
+              "m": "double",
+              "f": "e^{x}\\cos y+xy^2",
+              "u": "x",
+              "v": "y",
+              "a": 0,
+              "b": 1,
+              "c": "x^2",
+              "d": "x"
+            }
+          },
+          {
+            "say": "∫₀¹ ∫_x^{x²} f dx dy",
+            "unknown": "內層對 x 積分、界限卻寫成 x 的式子，這個式子本身沒有意義"
+          },
+          {
+            "say": "∫₀¹ ∫_√y^y f dx dy",
+            "v": {
+              "m": "double",
+              "f": "e^{x}\\cos y+xy^2",
+              "u": "y",
+              "v": "x",
+              "a": 0,
+              "b": 1,
+              "c": "\\sqrt{y}",
+              "d": "y"
+            },
+            "eq": {
+              "m": "double",
+              "f": "e^{x}\\cos y+xy^2",
+              "u": "x",
+              "v": "y",
+              "a": 0,
+              "b": 1,
+              "c": "x^2",
+              "d": "x"
+            }
+          }
+        ],
+        "note": "不對稱的測試函數 e^x cos y+xy²，兩種順序的二重積分要相等"
+      }
     },
     {
       "id": "lec-19-m3",
@@ -10357,7 +13903,105 @@
         "dr dθ",
         "r² dr dθ",
         "r sinθ dr dθ"
-      ]
+      ],
+      "verify": {
+        "m": "choice",
+        "options": [
+          {
+            "say": "r dr dθ",
+            "v": {
+              "m": "double",
+              "f": "r",
+              "u": "t",
+              "v": "r",
+              "a": 0,
+              "b": "2\\pi",
+              "c": 0,
+              "d": 1
+            },
+            "eq": {
+              "m": "double",
+              "f": "1",
+              "u": "x",
+              "v": "y",
+              "a": -1,
+              "b": 1,
+              "c": "-\\sqrt{1-x^2}",
+              "d": "\\sqrt{1-x^2}"
+            }
+          },
+          {
+            "say": "dr dθ",
+            "v": {
+              "m": "double",
+              "f": "1",
+              "u": "t",
+              "v": "r",
+              "a": 0,
+              "b": "2\\pi",
+              "c": 0,
+              "d": 1
+            },
+            "eq": {
+              "m": "double",
+              "f": "1",
+              "u": "x",
+              "v": "y",
+              "a": -1,
+              "b": 1,
+              "c": "-\\sqrt{1-x^2}",
+              "d": "\\sqrt{1-x^2}"
+            }
+          },
+          {
+            "say": "r² dr dθ",
+            "v": {
+              "m": "double",
+              "f": "r^2",
+              "u": "t",
+              "v": "r",
+              "a": 0,
+              "b": "2\\pi",
+              "c": 0,
+              "d": 1
+            },
+            "eq": {
+              "m": "double",
+              "f": "1",
+              "u": "x",
+              "v": "y",
+              "a": -1,
+              "b": 1,
+              "c": "-\\sqrt{1-x^2}",
+              "d": "\\sqrt{1-x^2}"
+            }
+          },
+          {
+            "say": "r sinθ dr dθ",
+            "v": {
+              "m": "double",
+              "f": "r\\sin t",
+              "u": "t",
+              "v": "r",
+              "a": 0,
+              "b": "2\\pi",
+              "c": 0,
+              "d": 1
+            },
+            "eq": {
+              "m": "double",
+              "f": "1",
+              "u": "x",
+              "v": "y",
+              "a": -1,
+              "b": 1,
+              "c": "-\\sqrt{1-x^2}",
+              "d": "\\sqrt{1-x^2}"
+            }
+          }
+        ],
+        "note": "實例：單位圓盤面積（直角座標二重積分）"
+      }
     },
     {
       "id": "lec-19-m4",
@@ -10837,7 +14481,373 @@
         "[−2,2]×[−2,2]",
         "[0,1]×[0,1]",
         "u²+v²≤4"
-      ]
+      ],
+      "verify": {
+        "m": "choice",
+        "options": [
+          {
+            "say": "[0,2]×[0,2]",
+            "all": [
+              {
+                "v": {
+                  "m": "let",
+                  "f": "j A",
+                  "with": {
+                    "j": {
+                      "m": "let",
+                      "f": "|ad-bc|",
+                      "with": {
+                        "a": {
+                          "m": "deriv",
+                          "vars": [
+                            "x",
+                            "y"
+                          ],
+                          "f": "x+y",
+                          "at": [
+                            0.3,
+                            0.2
+                          ],
+                          "wrt": "x"
+                        },
+                        "b": {
+                          "m": "deriv",
+                          "vars": [
+                            "x",
+                            "y"
+                          ],
+                          "f": "x+y",
+                          "at": [
+                            0.3,
+                            0.2
+                          ],
+                          "wrt": "y"
+                        },
+                        "c": {
+                          "m": "deriv",
+                          "vars": [
+                            "x",
+                            "y"
+                          ],
+                          "f": "x-y",
+                          "at": [
+                            0.3,
+                            0.2
+                          ],
+                          "wrt": "x"
+                        },
+                        "d": {
+                          "m": "deriv",
+                          "vars": [
+                            "x",
+                            "y"
+                          ],
+                          "f": "x-y",
+                          "at": [
+                            0.3,
+                            0.2
+                          ],
+                          "wrt": "y"
+                        }
+                      }
+                    },
+                    "A": {
+                      "m": "value",
+                      "f": "\\frac12\\left|0\\cdot1-1\\cdot0+1\\cdot0-2\\cdot1+2\\cdot(-1)-1\\cdot0+1\\cdot0-0\\cdot(-1)\\right|"
+                    }
+                  }
+                },
+                "eq": 4
+              },
+              {
+                "v": {
+                  "m": "value",
+                  "f": "0+0"
+                },
+                "eq": 0
+              },
+              {
+                "v": {
+                  "m": "value",
+                  "f": "0-(0)"
+                },
+                "eq": 0
+              },
+              {
+                "v": {
+                  "m": "value",
+                  "f": "1+1"
+                },
+                "eq": 2
+              },
+              {
+                "v": {
+                  "m": "value",
+                  "f": "1-(1)"
+                },
+                "eq": 0
+              },
+              {
+                "v": {
+                  "m": "value",
+                  "f": "2+0"
+                },
+                "eq": 2
+              },
+              {
+                "v": {
+                  "m": "value",
+                  "f": "2-(0)"
+                },
+                "eq": 2
+              },
+              {
+                "v": {
+                  "m": "value",
+                  "f": "1+-1"
+                },
+                "eq": 0
+              },
+              {
+                "v": {
+                  "m": "value",
+                  "f": "1-(-1)"
+                },
+                "eq": 2
+              }
+            ]
+          },
+          {
+            "say": "[−2,2]×[−2,2]",
+            "all": [
+              {
+                "v": {
+                  "m": "let",
+                  "f": "j A",
+                  "with": {
+                    "j": {
+                      "m": "let",
+                      "f": "|ad-bc|",
+                      "with": {
+                        "a": {
+                          "m": "deriv",
+                          "vars": [
+                            "x",
+                            "y"
+                          ],
+                          "f": "x+y",
+                          "at": [
+                            0.3,
+                            0.2
+                          ],
+                          "wrt": "x"
+                        },
+                        "b": {
+                          "m": "deriv",
+                          "vars": [
+                            "x",
+                            "y"
+                          ],
+                          "f": "x+y",
+                          "at": [
+                            0.3,
+                            0.2
+                          ],
+                          "wrt": "y"
+                        },
+                        "c": {
+                          "m": "deriv",
+                          "vars": [
+                            "x",
+                            "y"
+                          ],
+                          "f": "x-y",
+                          "at": [
+                            0.3,
+                            0.2
+                          ],
+                          "wrt": "x"
+                        },
+                        "d": {
+                          "m": "deriv",
+                          "vars": [
+                            "x",
+                            "y"
+                          ],
+                          "f": "x-y",
+                          "at": [
+                            0.3,
+                            0.2
+                          ],
+                          "wrt": "y"
+                        }
+                      }
+                    },
+                    "A": {
+                      "m": "value",
+                      "f": "\\frac12\\left|0\\cdot1-1\\cdot0+1\\cdot0-2\\cdot1+2\\cdot(-1)-1\\cdot0+1\\cdot0-0\\cdot(-1)\\right|"
+                    }
+                  }
+                },
+                "eq": 16
+              }
+            ]
+          },
+          {
+            "say": "[0,1]×[0,1]",
+            "all": [
+              {
+                "v": {
+                  "m": "let",
+                  "f": "j A",
+                  "with": {
+                    "j": {
+                      "m": "let",
+                      "f": "|ad-bc|",
+                      "with": {
+                        "a": {
+                          "m": "deriv",
+                          "vars": [
+                            "x",
+                            "y"
+                          ],
+                          "f": "x+y",
+                          "at": [
+                            0.3,
+                            0.2
+                          ],
+                          "wrt": "x"
+                        },
+                        "b": {
+                          "m": "deriv",
+                          "vars": [
+                            "x",
+                            "y"
+                          ],
+                          "f": "x+y",
+                          "at": [
+                            0.3,
+                            0.2
+                          ],
+                          "wrt": "y"
+                        },
+                        "c": {
+                          "m": "deriv",
+                          "vars": [
+                            "x",
+                            "y"
+                          ],
+                          "f": "x-y",
+                          "at": [
+                            0.3,
+                            0.2
+                          ],
+                          "wrt": "x"
+                        },
+                        "d": {
+                          "m": "deriv",
+                          "vars": [
+                            "x",
+                            "y"
+                          ],
+                          "f": "x-y",
+                          "at": [
+                            0.3,
+                            0.2
+                          ],
+                          "wrt": "y"
+                        }
+                      }
+                    },
+                    "A": {
+                      "m": "value",
+                      "f": "\\frac12\\left|0\\cdot1-1\\cdot0+1\\cdot0-2\\cdot1+2\\cdot(-1)-1\\cdot0+1\\cdot0-0\\cdot(-1)\\right|"
+                    }
+                  }
+                },
+                "eq": 1
+              }
+            ]
+          },
+          {
+            "say": "u²+v²≤4",
+            "all": [
+              {
+                "v": {
+                  "m": "let",
+                  "f": "j A",
+                  "with": {
+                    "j": {
+                      "m": "let",
+                      "f": "|ad-bc|",
+                      "with": {
+                        "a": {
+                          "m": "deriv",
+                          "vars": [
+                            "x",
+                            "y"
+                          ],
+                          "f": "x+y",
+                          "at": [
+                            0.3,
+                            0.2
+                          ],
+                          "wrt": "x"
+                        },
+                        "b": {
+                          "m": "deriv",
+                          "vars": [
+                            "x",
+                            "y"
+                          ],
+                          "f": "x+y",
+                          "at": [
+                            0.3,
+                            0.2
+                          ],
+                          "wrt": "y"
+                        },
+                        "c": {
+                          "m": "deriv",
+                          "vars": [
+                            "x",
+                            "y"
+                          ],
+                          "f": "x-y",
+                          "at": [
+                            0.3,
+                            0.2
+                          ],
+                          "wrt": "x"
+                        },
+                        "d": {
+                          "m": "deriv",
+                          "vars": [
+                            "x",
+                            "y"
+                          ],
+                          "f": "x-y",
+                          "at": [
+                            0.3,
+                            0.2
+                          ],
+                          "wrt": "y"
+                        }
+                      }
+                    },
+                    "A": {
+                      "m": "value",
+                      "f": "\\frac12\\left|0\\cdot1-1\\cdot0+1\\cdot0-2\\cdot1+2\\cdot(-1)-1\\cdot0+1\\cdot0-0\\cdot(-1)\\right|"
+                    }
+                  }
+                },
+                "eq": "4\\pi"
+              }
+            ]
+          }
+        ],
+        "note": "頂點的像＋像的面積 |J|·area(R)（鞋帶公式）"
+      }
     },
     {
       "id": "lec-19-q4b",
@@ -10864,7 +14874,65 @@
       "examPoints": 20,
       "examGroup": "lec-19-q4",
       "examTitle": "變數變換與 Jacobian。",
-      "answer": "-1/2"
+      "answer": "-1/2",
+      "verify": {
+        "m": "let",
+        "f": "ad-bc",
+        "with": {
+          "a": {
+            "m": "deriv",
+            "vars": [
+              "u",
+              "v"
+            ],
+            "f": "\\frac{u+v}{2}",
+            "at": [
+              0.3,
+              0.7
+            ],
+            "wrt": "u"
+          },
+          "b": {
+            "m": "deriv",
+            "vars": [
+              "u",
+              "v"
+            ],
+            "f": "\\frac{u+v}{2}",
+            "at": [
+              0.3,
+              0.7
+            ],
+            "wrt": "v"
+          },
+          "c": {
+            "m": "deriv",
+            "vars": [
+              "u",
+              "v"
+            ],
+            "f": "\\frac{u-v}{2}",
+            "at": [
+              0.3,
+              0.7
+            ],
+            "wrt": "u"
+          },
+          "d": {
+            "m": "deriv",
+            "vars": [
+              "u",
+              "v"
+            ],
+            "f": "\\frac{u-v}{2}",
+            "at": [
+              0.3,
+              0.7
+            ],
+            "wrt": "v"
+          }
+        }
+      }
     },
     {
       "id": "lec-19-q4c",
@@ -10937,7 +15005,312 @@
         "(−y, x)",
         "(y, −x)",
         "(x²y, x)"
-      ]
+      ],
+      "verify": {
+        "m": "choice",
+        "options": [
+          {
+            "say": "(y, x)",
+            "all": [
+              {
+                "v": {
+                  "m": "let",
+                  "f": "a-b",
+                  "with": {
+                    "a": {
+                      "m": "deriv",
+                      "vars": [
+                        "x",
+                        "y"
+                      ],
+                      "f": "x",
+                      "at": [
+                        0.7,
+                        1.3
+                      ],
+                      "wrt": "x"
+                    },
+                    "b": {
+                      "m": "deriv",
+                      "vars": [
+                        "x",
+                        "y"
+                      ],
+                      "f": "y",
+                      "at": [
+                        0.7,
+                        1.3
+                      ],
+                      "wrt": "y"
+                    }
+                  }
+                },
+                "eq": 0
+              },
+              {
+                "v": {
+                  "m": "let",
+                  "f": "a-b",
+                  "with": {
+                    "a": {
+                      "m": "deriv",
+                      "vars": [
+                        "x",
+                        "y"
+                      ],
+                      "f": "x",
+                      "at": [
+                        -1.1,
+                        0.4
+                      ],
+                      "wrt": "x"
+                    },
+                    "b": {
+                      "m": "deriv",
+                      "vars": [
+                        "x",
+                        "y"
+                      ],
+                      "f": "y",
+                      "at": [
+                        -1.1,
+                        0.4
+                      ],
+                      "wrt": "y"
+                    }
+                  }
+                },
+                "eq": 0
+              }
+            ]
+          },
+          {
+            "say": "(−y, x)",
+            "all": [
+              {
+                "v": {
+                  "m": "let",
+                  "f": "a-b",
+                  "with": {
+                    "a": {
+                      "m": "deriv",
+                      "vars": [
+                        "x",
+                        "y"
+                      ],
+                      "f": "x",
+                      "at": [
+                        0.7,
+                        1.3
+                      ],
+                      "wrt": "x"
+                    },
+                    "b": {
+                      "m": "deriv",
+                      "vars": [
+                        "x",
+                        "y"
+                      ],
+                      "f": "-y",
+                      "at": [
+                        0.7,
+                        1.3
+                      ],
+                      "wrt": "y"
+                    }
+                  }
+                },
+                "eq": 0
+              },
+              {
+                "v": {
+                  "m": "let",
+                  "f": "a-b",
+                  "with": {
+                    "a": {
+                      "m": "deriv",
+                      "vars": [
+                        "x",
+                        "y"
+                      ],
+                      "f": "x",
+                      "at": [
+                        -1.1,
+                        0.4
+                      ],
+                      "wrt": "x"
+                    },
+                    "b": {
+                      "m": "deriv",
+                      "vars": [
+                        "x",
+                        "y"
+                      ],
+                      "f": "-y",
+                      "at": [
+                        -1.1,
+                        0.4
+                      ],
+                      "wrt": "y"
+                    }
+                  }
+                },
+                "eq": 0
+              }
+            ]
+          },
+          {
+            "say": "(y, −x)",
+            "all": [
+              {
+                "v": {
+                  "m": "let",
+                  "f": "a-b",
+                  "with": {
+                    "a": {
+                      "m": "deriv",
+                      "vars": [
+                        "x",
+                        "y"
+                      ],
+                      "f": "-x",
+                      "at": [
+                        0.7,
+                        1.3
+                      ],
+                      "wrt": "x"
+                    },
+                    "b": {
+                      "m": "deriv",
+                      "vars": [
+                        "x",
+                        "y"
+                      ],
+                      "f": "y",
+                      "at": [
+                        0.7,
+                        1.3
+                      ],
+                      "wrt": "y"
+                    }
+                  }
+                },
+                "eq": 0
+              },
+              {
+                "v": {
+                  "m": "let",
+                  "f": "a-b",
+                  "with": {
+                    "a": {
+                      "m": "deriv",
+                      "vars": [
+                        "x",
+                        "y"
+                      ],
+                      "f": "-x",
+                      "at": [
+                        -1.1,
+                        0.4
+                      ],
+                      "wrt": "x"
+                    },
+                    "b": {
+                      "m": "deriv",
+                      "vars": [
+                        "x",
+                        "y"
+                      ],
+                      "f": "y",
+                      "at": [
+                        -1.1,
+                        0.4
+                      ],
+                      "wrt": "y"
+                    }
+                  }
+                },
+                "eq": 0
+              }
+            ]
+          },
+          {
+            "say": "(x²y, x)",
+            "all": [
+              {
+                "v": {
+                  "m": "let",
+                  "f": "a-b",
+                  "with": {
+                    "a": {
+                      "m": "deriv",
+                      "vars": [
+                        "x",
+                        "y"
+                      ],
+                      "f": "x",
+                      "at": [
+                        0.7,
+                        1.3
+                      ],
+                      "wrt": "x"
+                    },
+                    "b": {
+                      "m": "deriv",
+                      "vars": [
+                        "x",
+                        "y"
+                      ],
+                      "f": "x^2y",
+                      "at": [
+                        0.7,
+                        1.3
+                      ],
+                      "wrt": "y"
+                    }
+                  }
+                },
+                "eq": 0
+              },
+              {
+                "v": {
+                  "m": "let",
+                  "f": "a-b",
+                  "with": {
+                    "a": {
+                      "m": "deriv",
+                      "vars": [
+                        "x",
+                        "y"
+                      ],
+                      "f": "x",
+                      "at": [
+                        -1.1,
+                        0.4
+                      ],
+                      "wrt": "x"
+                    },
+                    "b": {
+                      "m": "deriv",
+                      "vars": [
+                        "x",
+                        "y"
+                      ],
+                      "f": "x^2y",
+                      "at": [
+                        -1.1,
+                        0.4
+                      ],
+                      "wrt": "y"
+                    }
+                  }
+                },
+                "eq": 0
+              }
+            ]
+          }
+        ]
+      }
     },
     {
       "id": "lec-20-m2",
@@ -11068,7 +15441,500 @@
         "(0, 0, 0)",
         "(0, 0, 1)",
         "(0, 0, −2)"
-      ]
+      ],
+      "verify": {
+        "m": "choice",
+        "options": [
+          {
+            "say": "(0, 0, 2)",
+            "all": [
+              {
+                "v": {
+                  "m": "let",
+                  "f": "a-b",
+                  "with": {
+                    "a": {
+                      "m": "deriv",
+                      "vars": [
+                        "x",
+                        "y",
+                        "z"
+                      ],
+                      "f": "0",
+                      "at": [
+                        0.7,
+                        0.4,
+                        1.1
+                      ],
+                      "wrt": "y"
+                    },
+                    "b": {
+                      "m": "deriv",
+                      "vars": [
+                        "x",
+                        "y",
+                        "z"
+                      ],
+                      "f": "x",
+                      "at": [
+                        0.7,
+                        0.4,
+                        1.1
+                      ],
+                      "wrt": "z"
+                    }
+                  }
+                },
+                "eq": 0
+              },
+              {
+                "v": {
+                  "m": "let",
+                  "f": "a-b",
+                  "with": {
+                    "a": {
+                      "m": "deriv",
+                      "vars": [
+                        "x",
+                        "y",
+                        "z"
+                      ],
+                      "f": "-y",
+                      "at": [
+                        0.7,
+                        0.4,
+                        1.1
+                      ],
+                      "wrt": "z"
+                    },
+                    "b": {
+                      "m": "deriv",
+                      "vars": [
+                        "x",
+                        "y",
+                        "z"
+                      ],
+                      "f": "0",
+                      "at": [
+                        0.7,
+                        0.4,
+                        1.1
+                      ],
+                      "wrt": "x"
+                    }
+                  }
+                },
+                "eq": 0
+              },
+              {
+                "v": {
+                  "m": "let",
+                  "f": "a-b",
+                  "with": {
+                    "a": {
+                      "m": "deriv",
+                      "vars": [
+                        "x",
+                        "y",
+                        "z"
+                      ],
+                      "f": "x",
+                      "at": [
+                        0.7,
+                        0.4,
+                        1.1
+                      ],
+                      "wrt": "x"
+                    },
+                    "b": {
+                      "m": "deriv",
+                      "vars": [
+                        "x",
+                        "y",
+                        "z"
+                      ],
+                      "f": "-y",
+                      "at": [
+                        0.7,
+                        0.4,
+                        1.1
+                      ],
+                      "wrt": "y"
+                    }
+                  }
+                },
+                "eq": 2
+              }
+            ]
+          },
+          {
+            "say": "(0, 0, 0)",
+            "all": [
+              {
+                "v": {
+                  "m": "let",
+                  "f": "a-b",
+                  "with": {
+                    "a": {
+                      "m": "deriv",
+                      "vars": [
+                        "x",
+                        "y",
+                        "z"
+                      ],
+                      "f": "0",
+                      "at": [
+                        0.7,
+                        0.4,
+                        1.1
+                      ],
+                      "wrt": "y"
+                    },
+                    "b": {
+                      "m": "deriv",
+                      "vars": [
+                        "x",
+                        "y",
+                        "z"
+                      ],
+                      "f": "x",
+                      "at": [
+                        0.7,
+                        0.4,
+                        1.1
+                      ],
+                      "wrt": "z"
+                    }
+                  }
+                },
+                "eq": 0
+              },
+              {
+                "v": {
+                  "m": "let",
+                  "f": "a-b",
+                  "with": {
+                    "a": {
+                      "m": "deriv",
+                      "vars": [
+                        "x",
+                        "y",
+                        "z"
+                      ],
+                      "f": "-y",
+                      "at": [
+                        0.7,
+                        0.4,
+                        1.1
+                      ],
+                      "wrt": "z"
+                    },
+                    "b": {
+                      "m": "deriv",
+                      "vars": [
+                        "x",
+                        "y",
+                        "z"
+                      ],
+                      "f": "0",
+                      "at": [
+                        0.7,
+                        0.4,
+                        1.1
+                      ],
+                      "wrt": "x"
+                    }
+                  }
+                },
+                "eq": 0
+              },
+              {
+                "v": {
+                  "m": "let",
+                  "f": "a-b",
+                  "with": {
+                    "a": {
+                      "m": "deriv",
+                      "vars": [
+                        "x",
+                        "y",
+                        "z"
+                      ],
+                      "f": "x",
+                      "at": [
+                        0.7,
+                        0.4,
+                        1.1
+                      ],
+                      "wrt": "x"
+                    },
+                    "b": {
+                      "m": "deriv",
+                      "vars": [
+                        "x",
+                        "y",
+                        "z"
+                      ],
+                      "f": "-y",
+                      "at": [
+                        0.7,
+                        0.4,
+                        1.1
+                      ],
+                      "wrt": "y"
+                    }
+                  }
+                },
+                "eq": 0
+              }
+            ]
+          },
+          {
+            "say": "(0, 0, 1)",
+            "all": [
+              {
+                "v": {
+                  "m": "let",
+                  "f": "a-b",
+                  "with": {
+                    "a": {
+                      "m": "deriv",
+                      "vars": [
+                        "x",
+                        "y",
+                        "z"
+                      ],
+                      "f": "0",
+                      "at": [
+                        0.7,
+                        0.4,
+                        1.1
+                      ],
+                      "wrt": "y"
+                    },
+                    "b": {
+                      "m": "deriv",
+                      "vars": [
+                        "x",
+                        "y",
+                        "z"
+                      ],
+                      "f": "x",
+                      "at": [
+                        0.7,
+                        0.4,
+                        1.1
+                      ],
+                      "wrt": "z"
+                    }
+                  }
+                },
+                "eq": 0
+              },
+              {
+                "v": {
+                  "m": "let",
+                  "f": "a-b",
+                  "with": {
+                    "a": {
+                      "m": "deriv",
+                      "vars": [
+                        "x",
+                        "y",
+                        "z"
+                      ],
+                      "f": "-y",
+                      "at": [
+                        0.7,
+                        0.4,
+                        1.1
+                      ],
+                      "wrt": "z"
+                    },
+                    "b": {
+                      "m": "deriv",
+                      "vars": [
+                        "x",
+                        "y",
+                        "z"
+                      ],
+                      "f": "0",
+                      "at": [
+                        0.7,
+                        0.4,
+                        1.1
+                      ],
+                      "wrt": "x"
+                    }
+                  }
+                },
+                "eq": 0
+              },
+              {
+                "v": {
+                  "m": "let",
+                  "f": "a-b",
+                  "with": {
+                    "a": {
+                      "m": "deriv",
+                      "vars": [
+                        "x",
+                        "y",
+                        "z"
+                      ],
+                      "f": "x",
+                      "at": [
+                        0.7,
+                        0.4,
+                        1.1
+                      ],
+                      "wrt": "x"
+                    },
+                    "b": {
+                      "m": "deriv",
+                      "vars": [
+                        "x",
+                        "y",
+                        "z"
+                      ],
+                      "f": "-y",
+                      "at": [
+                        0.7,
+                        0.4,
+                        1.1
+                      ],
+                      "wrt": "y"
+                    }
+                  }
+                },
+                "eq": 1
+              }
+            ]
+          },
+          {
+            "say": "(0, 0, −2)",
+            "all": [
+              {
+                "v": {
+                  "m": "let",
+                  "f": "a-b",
+                  "with": {
+                    "a": {
+                      "m": "deriv",
+                      "vars": [
+                        "x",
+                        "y",
+                        "z"
+                      ],
+                      "f": "0",
+                      "at": [
+                        0.7,
+                        0.4,
+                        1.1
+                      ],
+                      "wrt": "y"
+                    },
+                    "b": {
+                      "m": "deriv",
+                      "vars": [
+                        "x",
+                        "y",
+                        "z"
+                      ],
+                      "f": "x",
+                      "at": [
+                        0.7,
+                        0.4,
+                        1.1
+                      ],
+                      "wrt": "z"
+                    }
+                  }
+                },
+                "eq": 0
+              },
+              {
+                "v": {
+                  "m": "let",
+                  "f": "a-b",
+                  "with": {
+                    "a": {
+                      "m": "deriv",
+                      "vars": [
+                        "x",
+                        "y",
+                        "z"
+                      ],
+                      "f": "-y",
+                      "at": [
+                        0.7,
+                        0.4,
+                        1.1
+                      ],
+                      "wrt": "z"
+                    },
+                    "b": {
+                      "m": "deriv",
+                      "vars": [
+                        "x",
+                        "y",
+                        "z"
+                      ],
+                      "f": "0",
+                      "at": [
+                        0.7,
+                        0.4,
+                        1.1
+                      ],
+                      "wrt": "x"
+                    }
+                  }
+                },
+                "eq": 0
+              },
+              {
+                "v": {
+                  "m": "let",
+                  "f": "a-b",
+                  "with": {
+                    "a": {
+                      "m": "deriv",
+                      "vars": [
+                        "x",
+                        "y",
+                        "z"
+                      ],
+                      "f": "x",
+                      "at": [
+                        0.7,
+                        0.4,
+                        1.1
+                      ],
+                      "wrt": "x"
+                    },
+                    "b": {
+                      "m": "deriv",
+                      "vars": [
+                        "x",
+                        "y",
+                        "z"
+                      ],
+                      "f": "-y",
+                      "at": [
+                        0.7,
+                        0.4,
+                        1.1
+                      ],
+                      "wrt": "y"
+                    }
+                  }
+                },
+                "eq": -2
+              }
+            ]
+          }
+        ]
+      }
     },
     {
       "id": "lec-20-m4",
@@ -11104,7 +15970,86 @@
         "∮ x dy",
         "−∮ y dx",
         "½∮ (x dy − y dx)"
-      ]
+      ],
+      "verify": {
+        "m": "choice",
+        "pick": "false",
+        "options": [
+          {
+            "say": "∮ y dx",
+            "v": {
+              "m": "lineIntegral",
+              "kind": "work",
+              "F": [
+                "y",
+                "0"
+              ],
+              "path": {
+                "x": "1+2\\cos t",
+                "y": "0.5+\\sin t",
+                "from": 0,
+                "to": "2\\pi"
+              }
+            },
+            "eq": "2\\pi"
+          },
+          {
+            "say": "∮ x dy",
+            "v": {
+              "m": "lineIntegral",
+              "kind": "work",
+              "F": [
+                "0",
+                "x"
+              ],
+              "path": {
+                "x": "1+2\\cos t",
+                "y": "0.5+\\sin t",
+                "from": 0,
+                "to": "2\\pi"
+              }
+            },
+            "eq": "2\\pi"
+          },
+          {
+            "say": "−∮ y dx",
+            "v": {
+              "m": "lineIntegral",
+              "kind": "work",
+              "F": [
+                "-y",
+                "0"
+              ],
+              "path": {
+                "x": "1+2\\cos t",
+                "y": "0.5+\\sin t",
+                "from": 0,
+                "to": "2\\pi"
+              }
+            },
+            "eq": "2\\pi"
+          },
+          {
+            "say": "½∮ (x dy − y dx)",
+            "v": {
+              "m": "lineIntegral",
+              "kind": "work",
+              "F": [
+                "-\\frac{y}{2}",
+                "\\frac{x}{2}"
+              ],
+              "path": {
+                "x": "1+2\\cos t",
+                "y": "0.5+\\sin t",
+                "from": 0,
+                "to": "2\\pi"
+              }
+            },
+            "eq": "2\\pi"
+          }
+        ],
+        "note": "實例：中心 (1,0.5)、半軸 2 與 1 的橢圓，面積 2π"
+      }
     },
     {
       "id": "lec-20-m5",
@@ -11135,7 +16080,22 @@
         "1",
         "2",
         "-1"
-      ]
+      ],
+      "verify": {
+        "m": "lineIntegral",
+        "kind": "work",
+        "path": {
+          "x": "1+2\\cos t",
+          "y": "0.5+\\sin t",
+          "from": 0,
+          "to": "2\\pi"
+        },
+        "F": [
+          "2xy+e^x\\sin y",
+          "x^2+e^x\\cos y"
+        ],
+        "note": "實例：∇(x²y+eˣsin y) 沿橢圓的線積分"
+      }
     },
     {
       "id": "lec-20-q1a",
