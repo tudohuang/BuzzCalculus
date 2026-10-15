@@ -1017,3 +1017,495 @@
 
   window.BUZZ_PROBLEMS = (window.BUZZ_PROBLEMS || []).concat(problems);
 })();
+/* ═══ 級數經典題型擴充（2026-10）：50 題 ═══
+   盤點級數這一塊時，幾個老派分析課本裡最常見的練習型態幾乎是空的：
+     用級數做近似計算（要幾項、近似值是多少）      2 題
+     用逐項微分／積分求冪級數的和                  8 題
+     一致收斂與 Weierstrass M 判別                 7 題
+     Fourier 級數                                  9 題
+   這一段補的是「短而多」的操練：每一題只練一個判別法或一個技巧，答案是一個數。
+   近似計算問的是「要幾項」或「截斷後的近似值」，驗算端拿真值去量誤差是不是真的小於要求；
+   一致收斂問成 sup 範數或最小的 N；收斂區間是選擇題，每個端點的斂散都由驗算器各自判。
+
+   驗算器的兩個「安靜算錯」在寫這一段時踩到，題目已經繞開（引擎沒有改）：
+     Σ ln((n+1)²/(n(n+2))) 寫成對數的比值時，series 給 −0.599（真值 ln 2）；寫成 ln(1 + 1/(n(n+2))) 就對。
+     通項在奇偶 n 上一個是零一個不是（(1 − (−1)ⁿ)/n²）時，series 的 Euler–Maclaurin 尾巴把它當成光滑函數，
+     差了 5×10⁻³。這種級數一律改寫成只對奇數項求和。 */
+(function () {
+  "use strict";
+
+  const SOURCE = "Buzz 經典題型擴充 2026-10";
+  const problems = [];
+
+  const add = (problem) => {
+    const rank = problem.rank;
+    const tags = [...(problem.tags || []), `rank-${rank}`];
+    if (rank >= 5) tags.push("boss-rank");
+    if (rank === 6) tags.push("boss-plus");
+    const entry = {
+      source: SOURCE,
+      topic: "series",
+      difficulty: Math.min(4, rank),
+      answerKind: problem.answers ? "text" : "numeric",
+      ...problem,
+      tags
+    };
+    if (problem.answers) entry.canonical = problem.answers[0];
+    problems.push(entry);
+  };
+
+  const CONVERGES = ["收斂", "converges", "convergent"];
+  const DIVERGES = ["發散", "diverges", "divergent"];
+
+  // 收斂區間選擇題：每一個選項 = 左右端點各自收不收斂。
+  // 端點的通項由驗算器各自判斂散；選項之間只差在中括號／小括號。
+  const endpointOptions = (left, right, lo, hi) => {
+    const conv = (term, claim) => ({ v: { m: "seriesConverges", f: term, from: 1 }, claim });
+    return [
+      { say: `[${lo},${hi}]`, all: [conv(left, true), conv(right, true)] },
+      { say: `[${lo},${hi})`, all: [conv(left, true), conv(right, false)] },
+      { say: `(${lo},${hi}]`, all: [conv(left, false), conv(right, true)] },
+      { say: `(${lo},${hi})`, all: [conv(left, false), conv(right, false)] }
+    ];
+  };
+  const intervalDistractors = (answer, lo, hi) =>
+    [`[${lo},${hi}]`, `[${lo},${hi})`, `(${lo},${hi}]`, `(${lo},${hi})`].filter((say) => say !== answer);
+
+  /* ── 一、用級數做近似計算（7）───────────────────────────────
+     「要幾項」與「近似值是多少」兩種問法。驗算端不重算作者的截斷：
+     要幾項的題直接量誤差上界何時掉到門檻以下；近似值的題拿真值量誤差。 */
+
+  add({ id: "cl-ser-001", rank: 2,
+    prompt: "\\text{用部分和 }S_N=\\sum_{n=1}^{N}\\frac{(-1)^{n+1}}{n^3}\\text{ 近似整個級數。依交錯級數的誤差估計，要保證誤差小於 }5\\times10^{-4}\\text{，最小的 }N\\text{ 是多少？}",
+    answer: "12", timeLimit: 90,
+    tags: ["alternating-series", "series-estimate", "error-bound"],
+    hints: ["交錯、遞減到 0 的級數，誤差不超過第一個被丟掉的項的絕對值。", "第一個沒加進去的是第 N+1 項：把它的大小跟 5×10⁻⁴ 比。"],
+    solution: "交錯且 1/n³ 遞減到 0，所以 |S − S_N| ≤ 1/(N+1)³。要 1/(N+1)³ < 5×10⁻⁴，即 (N+1)³ > 2000。12³ = 1728 不夠、13³ = 2197 夠，所以 N + 1 = 13，N = 12。",
+    verify: { m: "firstIndex", f: "\\frac{1}{(n+1)^3}", below: 0.0005 } });
+
+  add({ id: "cl-ser-002", rank: 2,
+    prompt: "\\frac{1}{e}=\\sum_{k=0}^{\\infty}\\frac{(-1)^k}{k!}\\text{。用加到 }k=n\\text{ 為止的部分和近似 }\\frac1e\\text{，交錯級數估計要保證誤差小於 }10^{-4}\\text{，最小的 }n\\text{ 是多少？}",
+    answer: "7", timeLimit: 90,
+    tags: ["alternating-series", "series-estimate", "error-bound", "exponential-series"],
+    hints: ["誤差上界是第一個被丟掉的項：k = n+1 那一項。", "把階乘一個一個列出來，看哪一個先超過 10⁴。"],
+    solution: "誤差 ≤ 1/(n+1)!。7! = 5040 < 10⁴，8! = 40320 > 10⁴，所以 n + 1 = 8，n = 7。這時部分和 ≈ 0.367857，而 1/e ≈ 0.367879，實際誤差約 2.2×10⁻⁵ —— 比保證的還好。",
+    verify: { m: "firstIndex", f: "\\frac{1}{(n+1)!}", below: 0.0001 } });
+
+  add({ id: "cl-ser-003", rank: 3,
+    prompt: "\\int_0^{1/2}e^{-x^2}\\,dx=\\sum_{k=0}^{\\infty}\\frac{(-1)^k}{k!\\,(2k+1)\\,2^{2k+1}}\\text{。至少要取前幾個非零項，交錯級數估計才保證誤差小於 }10^{-4}\\text{？}",
+    answer: "4", timeLimit: 150,
+    tags: ["alternating-series", "series-estimate", "series-integral"],
+    hints: ["先確認右邊怎麼來：e^{−x²} 展開成冪級數，逐項從 0 積到 1/2。", "把每一項的大小算出來：k = 2、3、4 那幾項各是多少？"],
+    solution: "e^{−x²} = Σ(−1)ᵏx^{2k}/k!，逐項積分得到右邊的交錯級數。各項大小：k=0 是 1/2；k=1 是 1/24 ≈ 0.0417；k=2 是 1/320 ≈ 0.0031；k=3 是 1/5376 ≈ 1.86×10⁻⁴；k=4 是 1/110592 ≈ 9.0×10⁻⁶。取前三項時誤差上界 1.86×10⁻⁴ 不夠；取前四項（k = 0…3）時上界 9.0×10⁻⁶ < 10⁻⁴。所以要 4 項。",
+    verify: { m: "firstIndex", f: "\\frac{1}{n!\\,(2n+1)\\,2^{2n+1}}", below: 0.0001 } });
+
+  add({ id: "cl-ser-004", rank: 3,
+    prompt: "\\text{把 }\\frac{1}{1+x^4}\\text{ 展成冪級數再逐項積分，用最少的項把 }\\int_0^{1/3}\\frac{dx}{1+x^4}\\text{ 算到誤差小於 }10^{-4}\\text{。近似值是多少？（寫成分數）}",
+    answer: "1/3-1/1215", timeLimit: 150,
+    tags: ["alternating-series", "series-estimate", "series-integral", "geometric-series"],
+    hints: ["1/(1+x⁴) = 1 − x⁴ + x⁸ − ⋯，在 |x| < 1 成立。", "逐項積分後代 x = 1/3，看第三項有多小。"],
+    solution: "∫₀^{1/3} (1 − x⁴ + x⁸ − ⋯) dx = 1/3 − (1/3)⁵/5 + (1/3)⁹/9 − ⋯ = 1/3 − 1/1215 + 1/177147 − ⋯，交錯且遞減。第三項 ≈ 5.6×10⁻⁶ < 10⁻⁴，可以丟；第二項 ≈ 8.2×10⁻⁴ 不能丟。近似值 = 1/3 − 1/1215 = 404/1215 ≈ 0.332510。",
+    verify: { m: "integral", f: "\\frac{1}{1+x^4}", a: 0, b: "1/3", tol: 0.0003 } });
+
+  add({ id: "cl-ser-005", rank: 3,
+    prompt: "\\text{用 }\\sin x\\text{ 的 Maclaurin 級數計算 }\\sin 18^\\circ\\text{，要求誤差小於 }10^{-4}\\text{ 而且項數最少。你得到的近似值是多少？（寫成含 }\\pi\\text{ 的式子）}",
+    answer: "pi/10-pi^3/6000", timeLimit: 150,
+    tags: ["taylor", "series-estimate", "alternating-series"],
+    hints: ["角度先換成弧度：18° 是幾分之 π？", "級數在這個 x 是交錯遞減的：x⁵/5! 有多大？"],
+    solution: "18° = π/10 ≈ 0.31416。sin x = x − x³/6 + x⁵/120 − ⋯ 在 x = π/10 交錯且遞減。x³/6 ≈ 0.00517 不能丟；x⁵/120 ≈ 2.6×10⁻⁵ < 10⁻⁴，可以丟。所以近似值 = π/10 − (π/10)³/6 = π/10 − π³/6000 ≈ 0.308992，跟 sin 18° = (√5 − 1)/4 ≈ 0.309017 差約 2.5×10⁻⁵。",
+    verify: { m: "value", f: "\\sin\\frac{\\pi}{10}", tol: 0.0003 } });
+
+  add({ id: "cl-ser-006", rank: 4,
+    prompt: "\\text{用二項級數 }(1+x)^{1/5}\\text{ 計算 }\\sqrt[5]{33}\\text{，要求誤差小於 }10^{-4}\\text{ 而且項數最少。近似值是多少？（寫成分數）}",
+    answer: "12879/6400", timeLimit: 210,
+    tags: ["binomial-series", "series-estimate"],
+    hints: ["33 = 32 + 1 = 2⁵(1 + 1/32)。把 2 提出根號外。", "(1+x)^{1/5} = 1 + x/5 − (2/25)x² + (6/125)x³ − ⋯；每一項還要乘外面的 2 再看大小。"],
+    solution: "⁵√33 = 2(1 + x)^{1/5}，x = 1/32。乘上 2 之後各項：2、2x/5 = 1/80、2·(2/25)x² = 1/6400 ≈ 1.56×10⁻⁴、2·(6/125)x³ ≈ 2.9×10⁻⁶。從第二項起正負交錯而且遞減，截在 x² 項之後誤差不超過 2.9×10⁻⁶；只截到 x 項的話誤差可達 1.56×10⁻⁴，不夠。近似值 = 2 + 1/80 − 1/6400 = 12879/6400 = 2.01234375（⁵√33 ≈ 2.0123466）。",
+    verify: { m: "value", f: "33^{1/5}", tol: 0.00005 } });
+
+  add({ id: "cl-ser-007", rank: 4,
+    prompt: "\\text{把 }\\frac{\\sin x}{x}\\text{ 的冪級數逐項積分，用最少的項把 }\\int_0^1\\frac{\\sin x}{x}\\,dx\\text{ 算到誤差小於 }10^{-4}\\text{。近似值是多少？（寫成分數）}",
+    answer: "1703/1800", timeLimit: 210,
+    tags: ["series-estimate", "series-integral", "alternating-series"],
+    hints: ["sin x / x = 1 − x²/3! + x⁴/5! − ⋯，從 0 積到 1。", "積完是 Σ (−1)ᵏ/((2k+1)·(2k+1)!)：列出前四項的大小。"],
+    solution: "逐項積分得 1 − 1/18 + 1/600 − 1/35280 + ⋯，交錯且遞減。1/35280 ≈ 2.8×10⁻⁵ < 10⁻⁴，所以取前三項：1 − 1/18 + 1/600 = (1800 − 100 + 3)/1800 = 1703/1800 ≈ 0.946111，真值 ≈ 0.946083。",
+    verify: { m: "integral", f: "\\frac{\\sin x}{x}", a: 0, b: 1, tol: 0.0001 } });
+
+  /* ── 二、逐項微分／積分求和、望遠鏡（9）──────────────────────
+     驗算端直接把級數加起來（Euler–Maclaurin 或直接求和），不經過作者的閉式。 */
+
+  add({ id: "cl-ser-008", rank: 2,
+    prompt: "\\text{求 }\\sum_{n=1}^{\\infty}n\\left(\\frac{2}{5}\\right)^n",
+    answer: "10/9", timeLimit: 90,
+    tags: ["sum-series", "power-series"],
+    hints: ["從 Σ xⁿ = 1/(1−x) 出發，兩邊對 x 微分再乘 x。", "收斂半徑內可以逐項微分；2/5 在半徑內。"],
+    solution: "Σ n xⁿ = x/(1 − x)²（|x| < 1）。x = 2/5：(2/5)/(3/5)² = (2/5)(25/9) = 10/9。",
+    verify: { m: "series", f: "n\\left(\\frac{2}{5}\\right)^n", from: 1 } });
+
+  add({ id: "cl-ser-009", rank: 3,
+    prompt: "\\text{求 }\\sum_{n=1}^{\\infty}\\frac{n^2}{4^n}",
+    answer: "20/27", timeLimit: 150,
+    tags: ["sum-series", "power-series"],
+    hints: ["對 Σ n xⁿ = x/(1−x)² 再微分一次、再乘 x。", "整理後的閉式分母是 (1 − x)³。"],
+    solution: "Σ n² xⁿ = x(1 + x)/(1 − x)³。x = 1/4：(1/4)(5/4)/(27/64) = (5/16)(64/27) = 20/27。",
+    verify: { m: "series", f: "\\frac{n^2}{4^n}", from: 1 } });
+
+  add({ id: "cl-ser-010", rank: 2,
+    prompt: "\\text{求 }\\sum_{n=1}^{\\infty}\\frac{1}{n\\,5^n}",
+    answer: "log(5/4)", timeLimit: 90,
+    tags: ["sum-series", "log-series", "power-series"],
+    hints: ["Σ xⁿ = 1/(1−x) 從 0 逐項積分到 x，會得到什麼？", "−ln(1 − x) = Σ xⁿ/n，|x| < 1。"],
+    solution: "−ln(1 − x) = Σ xⁿ/n。x = 1/5：和 = −ln(4/5) = ln(5/4) ≈ 0.2231。",
+    verify: { m: "series", f: "\\frac{1}{n\\,5^n}", from: 1 } });
+
+  add({ id: "cl-ser-011", rank: 3,
+    prompt: "\\text{求 }\\sum_{n=0}^{\\infty}\\frac{(-1)^n}{(2n+1)\\,3^n}",
+    answer: "pi/(2*sqrt(3))", timeLimit: 150,
+    tags: ["sum-series", "power-series", "alternating-series"],
+    hints: ["arctan x = Σ (−1)ⁿ x^{2n+1}/(2n+1)，|x| ≤ 1。", "3ⁿ = (√3)^{2n}：選 x 讓 x^{2n} = 3⁻ⁿ，再處理多出來的那一個 x。"],
+    solution: "取 x = 1/√3：arctan(1/√3) = Σ(−1)ⁿ(1/√3)^{2n+1}/(2n+1) = (1/√3)·Σ(−1)ⁿ/((2n+1)3ⁿ)。左邊 = π/6，所以所求 = √3·π/6 = π/(2√3) ≈ 0.9069。",
+    verify: { m: "series", f: "\\frac{(-1)^n}{(2n+1)3^n}", from: 0 } });
+
+  add({ id: "cl-ser-012", rank: 3,
+    prompt: "\\text{求 }\\sum_{n=1}^{\\infty}\\ln\\left(1+\\frac{1}{n(n+2)}\\right)",
+    answer: "log(2)", timeLimit: 150,
+    tags: ["telescoping", "log-series"],
+    hints: ["1 + 1/(n(n+2)) 通分之後，分子是一個完全平方。", "把對數拆成兩個「相鄰項的差」：看 ln((n+1)/n) 與 ln((n+2)/(n+1))。"],
+    solution: "1 + 1/(n(n+2)) = (n+1)²/(n(n+2))，所以項 = ln((n+1)/n) − ln((n+2)/(n+1))。令 c_n = ln((n+1)/n)，項 = c_n − c_{n+1}，前 N 項和 = c_1 − c_{N+1} = ln 2 − ln((N+2)/(N+1)) → ln 2。",
+    verify: { m: "series", f: "\\ln\\left(1+\\frac{1}{n(n+2)}\\right)", from: 1 } });
+
+  add({ id: "cl-ser-013", rank: 4,
+    prompt: "\\text{求 }\\sum_{n=1}^{\\infty}\\frac{1}{n(n+1)\\,2^n}",
+    answer: "1-log(2)", timeLimit: 210,
+    tags: ["sum-series", "log-series", "partial-fraction"],
+    hints: ["先把 1/(n(n+1)) 拆成部分分式。", "兩個級數都能寫成 −ln(1−x) 的形式；第二個要先平移指標、乘除一個 x。"],
+    solution: "1/(n(n+1)) = 1/n − 1/(n+1)。Σ xⁿ/n = −ln(1−x)；Σ xⁿ/(n+1) = (1/x)Σ x^{n+1}/(n+1) = (1/x)(−ln(1−x) − x)。x = 1/2：第一個 = ln 2，第二個 = 2(ln 2 − 1/2) = 2 ln 2 − 1。和 = ln 2 − (2 ln 2 − 1) = 1 − ln 2 ≈ 0.3069。",
+    verify: { m: "series", f: "\\frac{1}{n(n+1)2^n}", from: 1 } });
+
+  add({ id: "cl-ser-014", rank: 4,
+    prompt: "\\text{求 }\\sum_{n=0}^{\\infty}\\frac{1}{(2n+1)\\,9^n}",
+    answer: "3*log(2)/2", timeLimit: 210,
+    tags: ["sum-series", "log-series", "power-series"],
+    hints: ["只留奇次方的對數級數：ln((1+x)/(1−x)) = 2Σ x^{2n+1}/(2n+1)。", "9ⁿ = 3^{2n}：x 取多少？多出來的一個 x 要補回去。"],
+    solution: "x = 1/3：Σ (1/3)^{2n+1}/(2n+1) = (1/2)ln((4/3)/(2/3)) = (1/2)ln 2。左邊 = (1/3)Σ 1/((2n+1)9ⁿ)，所以所求 = (3/2)ln 2 ≈ 1.0397。",
+    verify: { m: "series", f: "\\frac{1}{(2n+1)9^n}", from: 0 } });
+
+  add({ id: "cl-ser-015", rank: 5,
+    prompt: "\\text{求 }\\sum_{n=1}^{\\infty}\\frac{n}{(2n+1)!}",
+    answer: "exp(-1)/2", timeLimit: 300,
+    tags: ["sum-series", "exponential-series"],
+    hints: ["把分子 n 寫成 ((2n+1) − 1)/2，拆成兩個級數。", "Σ 1/(2n)! 與 Σ 1/(2n+1)! 分別是 cosh 1 與 sinh 1 少掉開頭的項。"],
+    solution: "n/(2n+1)! = (1/2)[1/(2n)! − 1/(2n+1)!]。n 從 1 起：Σ1/(2n)! = cosh 1 − 1，Σ1/(2n+1)! = sinh 1 − 1。和 = (1/2)[(cosh 1 − 1) − (sinh 1 − 1)] = (cosh 1 − sinh 1)/2 = e⁻¹/2 ≈ 0.1839。",
+    verify: { m: "series", f: "\\frac{n}{(2n+1)!}", from: 1 } });
+
+  add({ id: "cl-ser-016", rank: 6,
+    prompt: "H_n=1+\\frac12+\\cdots+\\frac1n\\text{。求 }\\sum_{n=1}^{\\infty}\\frac{H_n}{n\\,2^n}",
+    answer: "pi^2/12", timeLimit: 480,
+    tags: ["sum-series", "harmonic-number", "generating-function", "dilogarithm"],
+    hints: ["先求生成函數 Σ H_n xⁿ = −ln(1−x)/(1−x)，再除以 x、從 0 積到 1/2。", "1/(t(1−t)) = 1/t + 1/(1−t)：一塊是雙對數 Li₂，另一塊有初等反導數。"],
+    solution: "Σ H_n xⁿ = −ln(1−x)/(1−x)。除以 x 再從 0 積到 x：Σ H_n xⁿ/n = ∫₀ˣ −ln(1−t)/(t(1−t)) dt。拆成 −ln(1−t)/t（積出 Li₂(x)）與 −ln(1−t)/(1−t)（積出 (1/2)ln²(1−x)）。所以 Σ H_n xⁿ/n = Li₂(x) + (1/2)ln²(1−x)。x = 1/2：Li₂(1/2) = π²/12 − (ln 2)²/2，加上 (ln 2)²/2，和 = π²/12 ≈ 0.8225。",
+    verify: { m: "series", f: "\\frac{1}{n\\,2^n}\\sum_{k=1}^{n}\\frac1k", from: 1 } });
+
+  /* ── 三、一致收斂與 M 判別（7）──────────────────────────────
+     一致收斂問成一個數：尾巴的 sup、最小的 N、M_n 本身。
+     「哪一個區間一致收斂」是選擇題，每一個區間都由 sup 範數的走向各自判。 */
+
+  add({ id: "cl-ser-017", rank: 3,
+    prompt: "\\sum_{k=1}^{\\infty}\\frac{\\cos kx}{k^2}\\text{ 在 }\\mathbb{R}\\text{ 上一致收斂。要讓 }\\left|S(x)-S_N(x)\\right|<0.01\\text{ 對所有 }x\\text{ 成立（}S_N\\text{ 是前 }N\\text{ 項部分和），最小的 }N\\text{ 是多少？}",
+    answer: "100", timeLimit: 180,
+    tags: ["uniform-convergence", "series-estimate", "p-series"],
+    hints: ["|尾巴| ≤ Σ_{k>N} 1/k²，而且這個上界在某一個 x 真的取到。", "x = 0 時每個 cos kx 都是 1。尾巴 Σ_{k>N}1/k² 大約是 1/N − 1/(2N²)。"],
+    solution: "|S(x) − S_N(x)| = |Σ_{k>N} cos kx/k²| ≤ Σ_{k>N} 1/k²，在 x = 0 等號成立，所以 sup 就是 Σ_{k>N}1/k²。Euler–Maclaurin：Σ_{k>N}1/k² ≈ 1/N − 1/(2N²) + 1/(6N³)。N = 99：≈ 0.010050 > 0.01；N = 100：≈ 0.009950 < 0.01。最小 N = 100。",
+    verify: { m: "firstIndex", f: "\\frac{\\pi^2}{6}-\\sum_{k=1}^{n}\\frac{1}{k^2}", below: 0.01 } });
+
+  add({ id: "cl-ser-018", rank: 3,
+    prompt: "\\text{用 Weierstrass M 判別法處理 }\\sum_{n=1}^{\\infty}\\frac{x}{n(1+nx^2)}\\text{：令 }M_n=\\sup_{x\\in\\mathbb{R}}\\left|\\frac{x}{n(1+nx^2)}\\right|\\text{。求 }M_4",
+    answer: "1/16", timeLimit: 150,
+    tags: ["uniform-convergence"],
+    hints: ["對 g(x) = x/(1+nx²) 求導，找它在 x > 0 的最大值點。", "別忘了外面還有一個 1/n。"],
+    solution: "g′(x) = (1 − nx²)/(1+nx²)² = 0 ⇒ x = 1/√n，g 的最大值 = (1/√n)/2 = 1/(2√n)。所以 M_n = 1/(2n^{3/2})，Σ M_n 收斂，級數在 ℝ 上一致收斂。n = 4：M_4 = 1/(2·8) = 1/16。",
+    verify: { m: "extremeOf", kind: "sup", integer: false, f: "\\left|\\frac{x}{4(1+4x^2)}\\right|", range: [-10, 10] } });
+
+  add({ id: "cl-ser-019", rank: 5,
+    prompt: "\\sum_{n=1}^{\\infty}xe^{-nx}\\text{ 在 }(0,\\infty)\\text{ 上逐點收斂。令尾巴 }R_5(x)=\\sum_{n=6}^{\\infty}xe^{-nx}\\text{，求 }\\sup_{x>0}R_5(x)",
+    answer: "1", timeLimit: 300,
+    tags: ["uniform-convergence", "geometric-series"],
+    hints: ["尾巴是一個等比級數，先寫成閉式。", "看 x → 0⁺ 時尾巴趨近多少；它在別的地方會比這個值更大嗎？"],
+    solution: "R_5(x) = x e^{−6x}/(1 − e^{−x}) = x e^{−5x}/(eˣ − 1)。x → 0⁺ 時 x/(eˣ − 1) → 1、e^{−5x} → 1，所以 R_5 → 1。又 eˣ − 1 > x、e^{−5x} < 1，所以 R_5(x) < 1：sup = 1 而且取不到。同樣的論證對每一個 N 都給 sup R_N = 1 —— 尾巴的 sup 不趨近 0，所以這個級數在 (0,∞) 上不一致收斂。",
+    verify: { m: "extremeOf", kind: "sup", integer: false, f: "\\frac{x e^{-6x}}{1-e^{-x}}", range: [1e-9, 30] } });
+
+  add({ id: "cl-ser-020", rank: 4,
+    prompt: "\\text{幾何級數 }\\sum_{n=0}^{\\infty}x^n\\text{ 在下列哪一個區間上一致收斂？}",
+    answers: ["[-1/2,1/2]"], distractors: ["(-1,1)", "[0,1)", "[-1,0]"], timeLimit: 150,
+    tags: ["uniform-convergence", "geometric-series"],
+    hints: ["S(x) − S_N(x) = −x^{N+1}/(1−x)：在區間上取它的 sup。", "區間只要碰到或逼近 x = ±1，sup 就不會趨近 0。"],
+    solution: "尾巴的絕對值 = |x|^{N+1}/(1−x)。在 [−1/2, 1/2] 上它 ≤ (1/2)^{N+1}/(1/2) = (1/2)^N → 0，一致收斂（也可以用 M_n = (1/2)ⁿ）。在 (−1,1) 與 [0,1) 上，x → 1⁻ 時尾巴 → ∞，sup = ∞；在 [−1,0] 上，x = −1 時級數本身就發散（部分和在 1 與 0 之間跳），更談不上一致收斂。",
+    verify: { m: "choice", options: [
+      { say: "[-1/2,1/2]", all: [{ v: { m: "uniformConvergence", f: "\\frac{1-x^{n+1}}{1-x}", limit: "\\frac{1}{1-x}", range: [-0.5, 0.5] }, claim: true }] },
+      { say: "(-1,1)", all: [{ v: { m: "uniformConvergence", f: "\\frac{1-x^{n+1}}{1-x}", limit: "\\frac{1}{1-x}", range: [-0.999999, 0.999999] }, claim: true }] },
+      { say: "[0,1)", all: [{ v: { m: "uniformConvergence", f: "\\frac{1-x^{n+1}}{1-x}", limit: "\\frac{1}{1-x}", range: [0, 0.999999] }, claim: true }] },
+      { say: "[-1,0]", all: [{ v: { m: "uniformConvergence", f: "\\frac{1-x^{n+1}}{1-x}", limit: "\\frac{1}{1-x}", range: [-1, 0] }, claim: true }] }
+    ] } });
+
+  add({ id: "cl-ser-021", rank: 5,
+    prompt: "\\ln(1+x)=\\sum_{k=1}^{\\infty}\\frac{(-1)^{k+1}x^k}{k}\\text{ 在 }[0,1]\\text{ 上一致收斂。要讓 }\\sup_{0\\le x\\le 1}\\left|\\ln(1+x)-S_N(x)\\right|<0.01\\text{（}S_N\\text{ 是前 }N\\text{ 項部分和），最小的 }N\\text{ 是多少？}",
+    answer: "50", timeLimit: 300,
+    tags: ["uniform-convergence", "alternating-series", "series-estimate", "log-series"],
+    hints: ["ln(1+x) − S_N(x) = (−1)^N ∫₀ˣ t^N/(1+t) dt：誤差的絕對值隨 x 遞增。", "所以 sup 在 x = 1 取到，問題變成交錯調和級數的部分和離 ln 2 多遠。"],
+    solution: "1/(1+t) = Σ_{k<N}(−t)ᵏ + (−t)^N/(1+t)，積分得 ln(1+x) − S_N(x) = (−1)^N∫₀ˣ t^N/(1+t)dt，絕對值隨 x 遞增，sup 在 x = 1：E_N = ∫₀¹ t^N/(1+t)dt。E_N + E_{N+1} = 1/(N+1) 而 E_N 遞減，所以 E_N 介於 1/(2N+2) 與 1/(2N) 之間，大約是 1/(2N+1)。N = 49：E ≈ 0.01010；N = 50：E ≈ 0.00990。最小 N = 50。",
+    verify: { m: "firstIndex", f: "\\left|\\ln 2-\\sum_{k=1}^{n}\\frac{(-1)^{k+1}}{k}\\right|", below: 0.01 } });
+
+  add({ id: "cl-ser-022", rank: 5,
+    prompt: "\\sum_{n=1}^{\\infty}\\frac{x}{(1+(n-1)x)(1+nx)}\\text{ 在 }\\left[\\frac14,1\\right]\\text{ 上。要讓 }\\left|S(x)-S_N(x)\\right|<0.03\\text{ 對區間上所有 }x\\text{ 成立，最小的 }N\\text{ 是多少？}",
+    answer: "130", timeLimit: 300,
+    tags: ["uniform-convergence", "telescoping"],
+    hints: ["每一項都可以寫成 1/(1+(n−1)x) − 1/(1+nx)。", "求出 S_N(x) 與 S(x) 之後，誤差在區間的哪一端最大？"],
+    solution: "望遠鏡：S_N(x) = 1 − 1/(1+Nx)，x > 0 時 S(x) = 1，誤差 1/(1+Nx) 對 x 遞減，sup 在 x = 1/4：1/(1+N/4)。要 1/(1+N/4) < 0.03 ⇔ 1 + N/4 > 33.33… ⇔ N > 129.33，最小 N = 130。若區間改成 (0,1]，sup 永遠是 1 —— 那就不一致收斂了。",
+    verify: { m: "firstIndex", f: "1-\\sum_{k=1}^{n}\\frac{1/4}{(1+(k-1)/4)(1+k/4)}", below: 0.03 } });
+
+  add({ id: "cl-ser-023", rank: 5,
+    prompt: "\\sum_{n=1}^{\\infty}x^2e^{-nx}\\text{ 在 }[0,\\infty)\\text{ 上是一致收斂嗎？}",
+    answers: ["一致收斂", "uniformly convergent"], distractors: ["不一致收斂", "逐點收斂但不一致", "在 0 附近發散"], timeLimit: 300,
+    tags: ["uniform-convergence"],
+    hints: ["對固定的 n，求 x²e^{−nx} 在 [0,∞) 上的最大值。", "把那個最大值當 M_n，看 Σ M_n 收不收斂。"],
+    solution: "g_n(x) = x²e^{−nx}，g_n′ = x e^{−nx}(2 − nx) = 0 ⇒ x = 2/n，最大值 M_n = 4/(n²e²)。Σ M_n = (4/e²)Σ1/n² < ∞，由 Weierstrass M 判別法一致收斂。對照：Σ x e^{−nx} 的 M_n = 1/(ne)，Σ M_n 發散，而它也確實不一致收斂。",
+    verify: { m: "uniformConvergence", f: "\\frac{x^2e^{-x}(1-e^{-nx})}{1-e^{-x}}", limit: "\\frac{x^2e^{-x}}{1-e^{-x}}", range: [0.000001, 60] } });
+
+  /* ── 四、判別法操練（11）────────────────────────────────────
+     每一題的重點是「該用哪一個判別法」：p 很靠近 1 的比較、比值判別失效時改用 Raabe、
+     凝聚、交錯級數的絕對／條件收斂。避開 ln ln 型的邊界級數 —— 數值上判不出來。 */
+
+  add({ id: "cl-ser-024", rank: 2,
+    prompt: "\\sum_{n=1}^{\\infty}\\frac{1}{n\\sqrt[10]{n}}\\text{ 收斂還是發散？}",
+    answers: CONVERGES, distractors: ["發散", "條件收斂"], timeLimit: 90,
+    tags: ["p-series", "comparison-test"],
+    hints: ["把分母寫成 n 的一個次方。", "p 級數只看 p 是否大於 1，不看 p 離 1 多近。"],
+    solution: "n·n^{1/10} = n^{11/10}，這是 p = 1.1 > 1 的 p 級數，收斂。p 離 1 很近只代表收斂得很慢，不代表發散。",
+    verify: { m: "seriesConverges", f: "\\frac{1}{n\\sqrt[10]{n}}", from: 1 } });
+
+  add({ id: "cl-ser-025", rank: 1,
+    prompt: "a_n=\\frac{2n+1}{n^3+n},\\quad b_n=\\frac{1}{n^2}\\text{。求 }\\lim_{n\\to\\infty}\\frac{a_n}{b_n}",
+    answer: "2", timeLimit: 60,
+    tags: ["comparison-test"],
+    hints: ["a_n/b_n = n²(2n+1)/(n³+n)。", "分子分母都是三次，看最高次項的係數。"],
+    solution: "a_n/b_n = (2n³ + n²)/(n³ + n) → 2。極限是有限的正數，所以 Σa_n 與 Σ1/n² 同斂散 —— 收斂。",
+    verify: { m: "seqLimit", f: "\\frac{(2n+1)/(n^3+n)}{1/n^2}" } });
+
+  add({ id: "cl-ser-026", rank: 2,
+    prompt: "a_n=\\frac{3^n\\,n!}{n^n}\\text{。求比值判別的極限 }\\lim_{n\\to\\infty}\\frac{a_{n+1}}{a_n}",
+    answer: "3*exp(-1)", timeLimit: 120,
+    tags: ["ratio-test"],
+    hints: ["寫出 a_{n+1}/a_n，(n+1)! 與 n! 約掉，3 的次方也約掉。", "剩下的部分會出現 (1 + 1/n)ⁿ。"],
+    solution: "a_{n+1}/a_n = 3(n+1)·nⁿ/(n+1)^{n+1} = 3(n/(n+1))ⁿ = 3/(1+1/n)ⁿ → 3/e ≈ 1.104 > 1，所以 Σa_n 發散。把 3 換成 2，極限 2/e < 1 就收斂 —— 分界正好在 e。",
+    verify: { m: "seqLimit", f: "\\frac{3^{n+1}(n+1)!/(n+1)^{n+1}}{3^n\\,n!/n^n}", n0: 5, levels: 5 } });
+
+  add({ id: "cl-ser-027", rank: 3,
+    prompt: "a_n=\\frac{1}{3^n}\\left(1+\\frac1n\\right)^{n^2}\\text{。求根值判別的極限 }\\lim_{n\\to\\infty}\\sqrt[n]{a_n}",
+    answer: "exp(1)/3", timeLimit: 120,
+    tags: ["root-test"],
+    hints: ["n 次方根會把指數 n² 降成 n。", "剩下的極限是課本上那個定義 e 的極限。"],
+    solution: "ⁿ√a_n = (1 + 1/n)ⁿ/3 → e/3 ≈ 0.906 < 1，所以 Σa_n 收斂。比值判別也行，但要處理 (1 + 1/(n+1))^{(n+1)²}，根值判別乾淨得多。",
+    verify: { m: "seqLimit", f: "\\left(\\frac{(1+1/n)^{n^2}}{3^n}\\right)^{1/n}", n0: 10, levels: 6 } });
+
+  add({ id: "cl-ser-028", rank: 3,
+    prompt: "a_n=\\frac{(2n)!}{4^n(n!)^2}\\text{。比值判別的極限是 }1\\text{，判不出來。求 Raabe 量的極限 }\\lim_{n\\to\\infty}n\\left(\\frac{a_n}{a_{n+1}}-1\\right)",
+    answer: "1/2", timeLimit: 180,
+    tags: ["ratio-test", "central-binomial"],
+    hints: ["a_{n+1}/a_n 化簡之後是一個一次分式。", "Raabe：極限 > 1 收斂、< 1 發散。"],
+    solution: "a_{n+1}/a_n = (2n+1)(2n+2)/(4(n+1)²) = (2n+1)/(2n+2) → 1。a_n/a_{n+1} − 1 = (2n+2)/(2n+1) − 1 = 1/(2n+1)，乘 n → 1/2 < 1，由 Raabe 判別 Σa_n 發散（對照 a_n ~ 1/√(πn)）。",
+    verify: { m: "seqLimit", f: "n\\left(\\frac{\\binom{2n}{n}/4^n}{\\binom{2n+2}{n+1}/4^{n+1}}-1\\right)", n0: 8, levels: 6 } });
+
+  add({ id: "cl-ser-029", rank: 4,
+    prompt: "\\text{正項級數 }\\sum a_n\\text{ 滿足 }\\frac{a_{n+1}}{a_n}=\\frac{3n+4}{3n+9}\\text{。求 }\\lim_{n\\to\\infty}n\\left(\\frac{a_n}{a_{n+1}}-1\\right)",
+    answer: "5/3", timeLimit: 180,
+    tags: ["ratio-test"],
+    hints: ["比值極限是 1，比值判別沒用 —— 改看 a_n/a_{n+1} 比 1 多出多少。", "把 a_n/a_{n+1} − 1 通分，分子會是常數。"],
+    solution: "a_n/a_{n+1} − 1 = (3n+9)/(3n+4) − 1 = 5/(3n+4)，乘 n → 5/3 > 1，Raabe 判別：收斂。Gauss 的看法：a_{n+1}/a_n = 1 − (5/3)/n + O(1/n²)，所以 a_n ~ C·n^{−5/3}，p = 5/3 > 1。",
+    verify: { m: "seqLimit", f: "n\\left(\\frac{3n+9}{3n+4}-1\\right)" } });
+
+  add({ id: "cl-ser-030", rank: 3,
+    prompt: "\\text{對 }a_n=\\frac{\\ln n}{n^2}\\text{ 做 Cauchy 凝聚。求凝聚級數 }\\sum_{k=1}^{\\infty}2^k a_{2^k}\\text{ 的和}",
+    answer: "2*log(2)", timeLimit: 150,
+    tags: ["convergence-test", "sum-series"],
+    hints: ["把 n = 2ᵏ 代進 a_n 再乘 2ᵏ，ln(2ᵏ) = k ln 2。", "化簡後是常數乘上 Σ k/2ᵏ。"],
+    solution: "2ᵏ a_{2ᵏ} = 2ᵏ·k ln 2/4ᵏ = ln 2·k/2ᵏ。Σ k/2ᵏ = (1/2)/(1/2)² = 2，所以凝聚級數 = 2 ln 2 ≈ 1.386，收斂；由凝聚判別 Σ ln n/n² 也收斂。",
+    verify: { m: "series", v: "k", f: "2^k\\cdot\\frac{\\ln(2^k)}{(2^k)^2}", from: 1 } });
+
+  add({ id: "cl-ser-031", rank: 3,
+    prompt: "\\sum_{n=1}^{\\infty}\\frac{(-1)^{n+1}n}{n^2+5}\\text{ 是絕對收斂、條件收斂還是發散？}",
+    answers: ["條件收斂", "conditionally convergent"], distractors: ["絕對收斂", "發散"], timeLimit: 150,
+    tags: ["absolute-conditional", "alternating-series", "comparison-test"],
+    hints: ["先看 Σ|a_n|：n/(n²+5) 跟哪一個熟悉的級數同階？", "再看原級數：交錯，而且 n/(n²+5) 從某一項之後遞減到 0 嗎？"],
+    solution: "|a_n| = n/(n²+5) ~ 1/n，極限比較 ⇒ Σ|a_n| 發散，不是絕對收斂。f(x) = x/(x²+5) 的導數 (5 − x²)/(x²+5)² 在 x > √5 時為負，所以 n ≥ 3 起 |a_n| 遞減到 0，Leibniz 判別 ⇒ 原級數收斂。結論：條件收斂。",
+    verify: { m: "choice", options: [
+      { say: "條件收斂", all: [
+        { v: { m: "seriesConverges", f: "\\frac{(-1)^{n+1}n}{n^2+5}", from: 1 }, claim: true },
+        { v: { m: "seriesConverges", f: "\\frac{(-1)^{n+1}n}{n^2+5}", from: 1, absolute: true }, claim: false }] },
+      { say: "絕對收斂", all: [{ v: { m: "seriesConverges", f: "\\frac{(-1)^{n+1}n}{n^2+5}", from: 1, absolute: true }, claim: true }] },
+      { say: "發散", all: [{ v: { m: "seriesConverges", f: "\\frac{(-1)^{n+1}n}{n^2+5}", from: 1 }, claim: false }] }
+    ] } });
+
+  add({ id: "cl-ser-032", rank: 2,
+    prompt: "\\sum_{n=1}^{\\infty}\\left(e^{1/n}-1\\right)\\text{ 收斂還是發散？}",
+    answers: DIVERGES, distractors: ["收斂", "條件收斂"], timeLimit: 90,
+    tags: ["comparison-test", "term-test"],
+    hints: ["n 很大時 e^{1/n} − 1 跟 1/n 差多少？", "極限比較：(e^{1/n} − 1) 除以 1/n 的極限是多少？"],
+    solution: "(e^{1/n} − 1)/(1/n) → 1（e^u − 1 ~ u），而 Σ 1/n 發散，所以 Σ(e^{1/n} − 1) 也發散。項趨近 0 不代表級數收斂。",
+    verify: { m: "seriesConverges", f: "e^{1/n}-1", from: 1 } });
+
+  add({ id: "cl-ser-033", rank: 5,
+    prompt: "\\sum_{n=2}^{\\infty}\\frac{1}{(\\ln n)^{\\ln n}}\\text{ 收斂還是發散？}",
+    answers: CONVERGES, distractors: ["發散", "條件收斂"], timeLimit: 300,
+    tags: ["comparison-test"],
+    hints: ["把 (ln n)^{ln n} 寫成 n 的某個次方：a^{ln n} = n^{ln a}。", "那個次方會不會遲早超過 2？"],
+    solution: "(ln n)^{ln n} = e^{ln n · ln ln n} = n^{ln ln n}。當 n > e^{e²} ≈ 1618 時 ln ln n > 2，所以 a_n < 1/n²，比較判別：收斂（前面有限多項不影響斂散）。這個級數收斂得很慢：n 要到一千六百多才開始被 1/n² 壓住。",
+    verify: { m: "seriesConverges", f: "\\frac{1}{(\\ln n)^{\\ln n}}", from: 2 } });
+
+  add({ id: "cl-ser-034", rank: 5,
+    prompt: "a_n=\\frac{n^n}{e^n\\,n!}\\text{。比值判別的極限是 }1\\text{。求 }\\lim_{n\\to\\infty}n\\left(\\frac{a_n}{a_{n+1}}-1\\right)",
+    answer: "1/2", timeLimit: 300,
+    tags: ["ratio-test", "stirling"],
+    hints: ["a_n/a_{n+1} 化簡後只剩 e 與 (1 + 1/n)ⁿ。", "n ln(1 + 1/n) 展開到 1/n 那一項。"],
+    solution: "a_{n+1}/a_n = (n+1)^{n+1}/(e(n+1)nⁿ) = (1+1/n)ⁿ/e → 1。n ln(1+1/n) = 1 − 1/(2n) + 1/(3n²) − ⋯，所以 (1+1/n)ⁿ = e(1 − 1/(2n) + O(1/n²))，a_n/a_{n+1} = 1 + 1/(2n) + O(1/n²)。Raabe 量 → 1/2 < 1，Σa_n 發散（Stirling：a_n ~ 1/√(2πn)）。",
+    verify: { m: "seqLimit", f: "n\\left(\\frac{n^n/(e^n\\,n!)}{(n+1)^{n+1}/(e^{n+1}(n+1)!)}-1\\right)", n0: 4, levels: 5 } });
+
+  /* ── 五、收斂半徑、收斂區間與係數（9）───────────────────────── */
+
+  add({ id: "cl-ser-035", rank: 1,
+    prompt: "\\text{求 }\\sum_{n=1}^{\\infty}\\frac{n^2}{7^n}x^n\\text{ 的收斂半徑}",
+    answer: "7", timeLimit: 60,
+    tags: ["radius-of-convergence", "power-series"],
+    hints: ["比值判別：|a_{n+1}/a_n| 的極限。", "n² 那一部分的比值趨近多少？"],
+    solution: "|a_{n+1}/a_n| = ((n+1)/n)²/7 → 1/7，R = 7。多項式因子 n² 不影響半徑。",
+    verify: { m: "seqLimit", f: "\\frac{n^2/7^n}{(n+1)^2/7^{n+1}}", n0: 4, levels: 7 } });
+
+  add({ id: "cl-ser-036", rank: 3,
+    prompt: "\\text{求 }\\sum_{n=0}^{\\infty}\\frac{(n!)^2}{(2n)!}x^n\\text{ 的收斂半徑}",
+    answer: "4", timeLimit: 120,
+    tags: ["radius-of-convergence", "power-series", "ratio-test"],
+    hints: ["算 a_n/a_{n+1}，階乘大量相消。", "(2n+2)!/(2n)! 只剩兩個因子。"],
+    solution: "a_n/a_{n+1} = (2n+2)(2n+1)/(n+1)² = 2(2n+1)/(n+1) → 4，所以 R = 4。",
+    verify: { m: "seqLimit", f: "\\frac{(n!)^2/(2n)!}{((n+1)!)^2/(2n+2)!}", n0: 5, levels: 5 } });
+
+  add({ id: "cl-ser-037", rank: 3,
+    prompt: "\\text{求 }\\sum_{n=1}^{\\infty}\\frac{8^n}{n}x^{3n}\\text{ 的收斂半徑}",
+    answer: "1/2", timeLimit: 120,
+    tags: ["radius-of-convergence", "power-series"],
+    hints: ["這是缺項的冪級數：只有 x^{3n}。直接對整個項用比值判別最安全。", "把 8ⁿ x^{3n} 寫成某個東西的 3n 次方。"],
+    solution: "第 n 項 = (2x)^{3n}/n。比值 |(2x)^{3n+3}/(n+1)| ÷ |(2x)^{3n}/n| → |2x|³，< 1 ⇔ |x| < 1/2，所以 R = 1/2。把係數 8ⁿ 直接開 n 次方得到 8、再說 R = 1/8 是錯的：x 的次方是 3n 不是 n。",
+    verify: { m: "seqLimit", f: "\\left|\\frac{8^n/n}{8^{n+1}/(n+1)}\\right|^{1/3}", n0: 10, levels: 6 } });
+
+  add({ id: "cl-ser-038", rank: 3,
+    prompt: "\\sum_{n=1}^{\\infty}\\frac{(-1)^n(x-4)^n}{n\\,5^n}\\text{ 的收斂區間（含端點判定）是哪一個？}",
+    answers: ["(-1,9]"], distractors: intervalDistractors("(-1,9]", -1, 9), timeLimit: 150,
+    tags: ["interval-of-convergence", "endpoint-analysis", "power-series"],
+    hints: ["先用比值判別求中心與半徑。", "兩個端點代進去各是一個熟悉的級數：一個交錯、一個調和 —— 注意前面的 (−1)ⁿ 會讓哪一端變號。"],
+    solution: "比值 → |x−4|/5，R = 5，中心 4，開區間 (−1, 9)。x = 9：(−1)ⁿ5ⁿ/(n·5ⁿ) = (−1)ⁿ/n，Leibniz 收斂；x = −1：(−1)ⁿ(−5)ⁿ/(n·5ⁿ) = 1/n，調和級數發散。收斂區間 (−1, 9]。",
+    verify: { m: "choice", options: endpointOptions("\\frac{(-1)^n}{n}\\left(\\frac{-1-4}{5}\\right)^n", "\\frac{(-1)^n}{n}\\left(\\frac{9-4}{5}\\right)^n", -1, 9) } });
+
+  add({ id: "cl-ser-039", rank: 4,
+    prompt: "\\sum_{n=1}^{\\infty}\\frac{(2x+1)^n}{n^2}\\text{ 的收斂區間（含端點判定）是哪一個？}",
+    answers: ["[-1,0]"], distractors: intervalDistractors("[-1,0]", -1, 0), timeLimit: 180,
+    tags: ["interval-of-convergence", "endpoint-analysis", "power-series"],
+    hints: ["令 t = 2x + 1，先求 t 的收斂範圍，再換回 x。", "端點 t = ±1 時，取絕對值的級數是哪一個？"],
+    solution: "|t| < 1 收斂、|t| > 1 時項不趨近 0。t = ±1 時 Σ|tⁿ/n²| = Σ1/n² 收斂，兩個端點都絕對收斂。所以 −1 ≤ 2x+1 ≤ 1，即 x ∈ [−1, 0]。",
+    verify: { m: "choice", options: endpointOptions("\\frac{(2(-1)+1)^n}{n^2}", "\\frac{(2\\cdot 0+1)^n}{n^2}", -1, 0) } });
+
+  add({ id: "cl-ser-040", rank: 4,
+    prompt: "\\sum_{n=1}^{\\infty}\\frac{(-1)^n(x+3)^n}{\\sqrt{n}\\,4^n}\\text{ 的收斂區間（含端點判定）是哪一個？}",
+    answers: ["(-7,1]"], distractors: intervalDistractors("(-7,1]", -7, 1), timeLimit: 180,
+    tags: ["interval-of-convergence", "endpoint-analysis", "power-series", "alternating-series"],
+    hints: ["中心是 −3，半徑由 4ⁿ 決定。", "兩個端點一個變成 Σ1/√n、一個變成交錯的 Σ(−1)ⁿ/√n —— 先確認哪一個是哪一個。"],
+    solution: "比值 → |x+3|/4，R = 4，開區間 (−7, 1)。x = 1：(−1)ⁿ4ⁿ/(√n·4ⁿ) = (−1)ⁿ/√n，Leibniz 收斂；x = −7：(−1)ⁿ(−4)ⁿ/(√n·4ⁿ) = 1/√n，p = 1/2 發散。收斂區間 (−7, 1]。",
+    verify: { m: "choice", options: endpointOptions("\\frac{(-1)^n}{\\sqrt n}\\left(\\frac{-7+3}{4}\\right)^n", "\\frac{(-1)^n}{\\sqrt n}\\left(\\frac{1+3}{4}\\right)^n", -7, 1) } });
+
+  // 端點的項 (3n)!/((n!)³27ⁿ) 寫成逐因子乘積的指數：直接寫階乘在 n≈200 就溢位成 ∞/∞。
+  add({ id: "cl-ser-041", rank: 6,
+    prompt: "\\sum_{n=0}^{\\infty}\\frac{(3n)!}{(n!)^3}x^n\\text{ 的收斂區間（含端點判定）是哪一個？}",
+    answers: ["[-1/27,1/27)"], distractors: intervalDistractors("[-1/27,1/27)", "-1/27", "1/27"), timeLimit: 480,
+    tags: ["interval-of-convergence", "endpoint-analysis", "power-series", "stirling"],
+    hints: ["比值 a_{n+1}/a_n = (3n+1)(3n+2)(3n+3)/(n+1)³，極限是多少？", "端點要知道 a_n/27ⁿ 衰減得多快：Gauss 判別或 Stirling 公式。"],
+    solution: "a_{n+1}/a_n = (3n+1)(3n+2)(3n+3)/(n+1)³ → 27，R = 1/27。端點的項 b_n = a_n/27ⁿ：b_{n+1}/b_n = (3n+1)(3n+2)/(9(n+1)²) = 1 − 1/n + O(1/n²)（Gauss 判別的 p = 1，發散那一側）；Stirling 給得更精確：b_n ~ √3/(2πn)。x = 1/27：Σ b_n 與 Σ1/n 同階，發散。x = −1/27：Σ(−1)ⁿb_n，b_{n+1}/b_n < 1 所以 b_n 遞減到 0，Leibniz 收斂。收斂區間 [−1/27, 1/27)。",
+    verify: { m: "choice", options: endpointOptions(
+      "(-1)^n\\exp\\left(\\sum_{k=1}^{n}\\ln\\frac{3k(3k-1)(3k-2)}{27k^3}\\right)",
+      "\\exp\\left(\\sum_{k=1}^{n}\\ln\\frac{3k(3k-1)(3k-2)}{27k^3}\\right)", "-1/27", "1/27") } });
+
+  add({ id: "cl-ser-042", rank: 3,
+    prompt: "\\frac{1}{1-x-2x^2}=\\sum_{n=0}^{\\infty}c_nx^n\\quad\\text{求 }c_6",
+    answer: "43", timeLimit: 150,
+    tags: ["coefficient", "power-series", "partial-fraction"],
+    hints: ["分母因式分解成 (1 − 2x)(1 + x)，做部分分式。", "每一塊都是等比級數，同次的係數相加。"],
+    solution: "1/((1−2x)(1+x)) = (2/3)/(1−2x) + (1/3)/(1+x)，所以 c_n = (2^{n+1} + (−1)ⁿ)/3。c_6 = (128 + 1)/3 = 43。也可以用遞迴 c_n = c_{n−1} + 2c_{n−2}：1, 1, 3, 5, 11, 21, 43。",
+    verify: { m: "let", f: "\\frac{d}{720}", with: { d: { m: "derivAt0", f: "\\frac{1}{1-x-2x^2}", n: 6, r: 0.2 } } } });
+
+  add({ id: "cl-ser-043", rank: 4,
+    prompt: "\\text{求 }e^x\\cos x\\text{ 的 Maclaurin 級數中 }x^5\\text{ 的係數}",
+    answer: "-1/30", timeLimit: 180,
+    tags: ["coefficient", "taylor"],
+    hints: ["e^x cos x 是 e^{(1+i)x} 的實部。", "x⁵ 的係數是 Re((1+i)⁵)/5!；先把 1+i 寫成極式。"],
+    solution: "e^{(1+i)x} = Σ(1+i)ⁿxⁿ/n!，取實部。(1+i)⁵ = (√2)⁵e^{5πi/4} = 4√2·(−√2/2 − i√2/2) = −4 − 4i，實部 −4。係數 = −4/120 = −1/30。",
+    verify: { m: "let", f: "\\frac{d}{120}", with: { d: { m: "derivAt0", f: "e^x\\cos x", n: 5 } } } });
+
+  /* ── 六、Fourier 級數（7）───────────────────────────────────
+     係數由數值積分直接算；跳躍點的值與 Parseval 的和由驗算端把級數加起來。 */
+
+  add({ id: "cl-ser-044", rank: 2,
+    prompt: "f(x)=x^2,\\ -\\pi\\le x\\le\\pi\\text{（以 }2\\pi\\text{ 為週期延拓）。求 Fourier 係數 }a_3=\\frac{1}{\\pi}\\int_{-\\pi}^{\\pi}f(x)\\cos 3x\\,dx",
+    answer: "-4/9", timeLimit: 120,
+    tags: ["fourier"],
+    hints: ["偶函數：a_n = (2/π)∫₀^π x² cos nx dx。", "分部積分兩次，邊界項會出現 cos nπ = (−1)ⁿ。"],
+    solution: "分部積分兩次得 a_n = 4(−1)ⁿ/n²。n = 3：a_3 = −4/9。",
+    verify: { m: "integral", f: "\\frac{1}{\\pi}x^2\\cos 3x", a: "-\\pi", b: "\\pi" } });
+
+  add({ id: "cl-ser-045", rank: 3,
+    prompt: "f(x)=\\left|\\sin x\\right|\\text{。求 Fourier 係數 }a_2=\\frac{1}{\\pi}\\int_{-\\pi}^{\\pi}\\left|\\sin x\\right|\\cos 2x\\,dx",
+    answer: "-4/(3*pi)", timeLimit: 150,
+    tags: ["fourier"],
+    hints: ["偶函數，a_n = (2/π)∫₀^π sin x cos nx dx。", "積化和差：sin x cos nx = [sin((n+1)x) − sin((n−1)x)]/2。"],
+    solution: "(2/π)∫₀^π sin x cos 2x dx = (1/π)∫₀^π (sin 3x − sin x) dx = (1/π)(2/3 − 2) = −4/(3π) ≈ −0.4244。一般地，偶數 n 時 a_n = −4/(π(n² − 1))，奇數 n 時 a_n = 0。",
+    verify: { m: "integral", f: "\\frac{1}{\\pi}\\left|\\sin x\\right|\\cos 2x", a: "-\\pi", b: "\\pi", breaks: [0] } });
+
+  add({ id: "cl-ser-046", rank: 3,
+    prompt: "f(x)=x,\\ 0<x<2\\pi\\text{（以 }2\\pi\\text{ 為週期延拓）。求 }b_4=\\frac{1}{\\pi}\\int_0^{2\\pi}x\\sin 4x\\,dx",
+    answer: "-1/2", timeLimit: 120,
+    tags: ["fourier", "integration-by-parts"],
+    hints: ["分部積分：u = x、dv = sin nx dx。", "積分項 ∫cos nx 在一整個週期上是 0，只剩邊界項。"],
+    solution: "∫₀^{2π} x sin nx dx = [−x cos nx/n]₀^{2π} + (1/n)∫₀^{2π}cos nx dx = −2π/n。b_n = −2/n，b_4 = −1/2。注意區間是 (0, 2π)：同一個 x 放在 (−π, π) 上，b_n 是 2(−1)^{n+1}/n。",
+    verify: { m: "integral", f: "\\frac{1}{\\pi}x\\sin 4x", a: 0, b: "2\\pi" } });
+
+  add({ id: "cl-ser-047", rank: 3,
+    prompt: "f(x)=e^x,\\ -\\pi<x<\\pi\\text{，以 }2\\pi\\text{ 為週期延拓。它的 Fourier 級數在 }x=\\pi\\text{ 收斂到多少？}",
+    answer: "cosh(pi)", timeLimit: 150,
+    tags: ["fourier"],
+    hints: ["延拓之後 x = π 是跳躍點。", "Dirichlet 定理：分段光滑函數的 Fourier 級數在跳躍點收斂到左右極限的平均。"],
+    solution: "延拓後在 x = π，左極限 e^π、右極限 e^{−π}（下一個週期從 −π 開始）。f 分段光滑，Fourier 級數收斂到 (e^π + e^{−π})/2 = cosh π ≈ 11.592。對照：a_n = (−1)ⁿ·2 sinh π/(π(1+n²))，在 x = π 級數是 sinh π/π + Σ 2 sinh π/(π(1+n²))，用 Σ_{n≥1}1/(1+n²) = (π coth π − 1)/2 也得到 cosh π。",
+    verify: { m: "let", f: "\\frac{\\sinh\\pi}{\\pi}+s", with: { s: { m: "series", f: "\\frac{2\\sinh\\pi}{\\pi(1+n^2)}", from: 1 } } } });
+
+  // 驗算：a₀/2 = 1/2 + π/4；在 x = π 只剩 aₙcos nπ = 2/(πn²)（n 奇）。只對奇數項求和 ——
+  // 寫成 (1 − (−1)ⁿ)/(πn²) 的話 series 的尾巴估計會把零項當成光滑函數，安靜地算錯。
+  add({ id: "cl-ser-048", rank: 2,
+    prompt: "f(x)=0\\ (-\\pi<x\\le 0),\\quad f(x)=1+x\\ (0<x<\\pi)\\text{，以 }2\\pi\\text{ 為週期延拓。它的 Fourier 級數在 }x=\\pi\\text{ 收斂到多少？}",
+    answer: "(1+pi)/2", timeLimit: 120,
+    tags: ["fourier", "piecewise"],
+    hints: ["在 x = π，延拓後的函數從哪個值跳到哪個值？", "左邊靠近 π 用 1 + x；越過 π 等於回到 −π 的右側。"],
+    solution: "x → π⁻：f → 1 + π；x → π⁺ 相當於 x → −π⁺，f = 0。f 分段光滑，所以級數收斂到 (1 + π + 0)/2 = (1 + π)/2 ≈ 2.0708。級數在跳躍點的值跟 f(π) 怎麼定義無關。",
+    verify: { m: "let", f: "\\frac12+\\frac{\\pi}{4}+s", with: { s: { m: "series", v: "k", f: "\\frac{2}{\\pi(2k-1)^2}", from: 1 } } } });
+
+  add({ id: "cl-ser-049", rank: 5,
+    prompt: "\\text{對 }f(x)=|x|\\ (-\\pi\\le x\\le\\pi)\\text{ 用 Parseval 等式，求 }\\sum_{k=1}^{\\infty}\\frac{1}{(2k-1)^4}",
+    answer: "pi^4/96", timeLimit: 300,
+    tags: ["fourier", "parseval", "zeta"],
+    hints: ["|x| 的 Fourier 係數：a_0 = π，奇數 n 的 a_n = −4/(πn²)，其餘為 0。", "Parseval：(1/π)∫_{−π}^{π} f² dx = a_0²/2 + Σ(a_n² + b_n²)。"],
+    solution: "(1/π)∫_{−π}^{π} x² dx = 2π²/3。右邊 = π²/2 + (16/π²)Σ_{n 奇}1/n⁴。所以 (16/π²)Σ_{n 奇}1/n⁴ = π²/6，Σ_{n 奇}1/n⁴ = π⁴/96 ≈ 1.0147。再由 Σ_{奇} = (15/16)Σ_{全} 得 Σ1/n⁴ = π⁴/90。",
+    verify: { m: "series", v: "k", f: "\\frac{1}{(2k-1)^4}", from: 1 } });
+
+  add({ id: "cl-ser-050", rank: 6,
+    prompt: "f(x)=x(\\pi-|x|),\\ -\\pi\\le x\\le\\pi\\text{。先求它的 Fourier 正弦係數，再用 Parseval 等式求 }\\sum_{k=1}^{\\infty}\\frac{1}{(2k-1)^6}",
+    answer: "pi^6/960", timeLimit: 480,
+    tags: ["fourier", "parseval", "zeta"],
+    hints: ["f 是奇函數：b_n = (2/π)∫₀^π x(π − x) sin nx dx，分部積分。", "b_n 只在奇數 n 不為零，而且是 1/n³ 的倍數；另外 ∫₀^π x²(π−x)² dx = π⁵/30。"],
+    solution: "∫₀^π x(π − x) sin nx dx = 2(1 − (−1)ⁿ)/n³，所以奇數 n 時 b_n = 8/(πn³)、偶數 n 時為 0。Parseval：(1/π)∫_{−π}^{π} f² dx = (2/π)·π⁵/30 = π⁴/15 = Σ b_n² = (64/π²)Σ_{n 奇}1/n⁶。所以 Σ_{n 奇}1/n⁶ = π⁶/960 ≈ 1.00145。",
+    verify: { m: "series", v: "k", f: "\\frac{1}{(2k-1)^6}", from: 1 } });
+
+  window.BUZZ_PROBLEMS = (window.BUZZ_PROBLEMS || []).concat(problems);
+})();

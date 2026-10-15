@@ -6,7 +6,7 @@
 // 為什麼放側表而不是寫進題目物件：題目物件多一個欄位就會改變抽題與 golden 測試的結果。
 // 內容的中繼資料一律走側表，這是專案的既有約定。
 //
-// 產生時的統計：3059 題中 2890 題通過，不符 0 題。
+// 產生時的統計：3109 題中 2939 題通過，不符 0 題。
 
 (function registerVerifiedAnswers() {
   "use strict";
@@ -406,6 +406,55 @@
     "cl-der-048",
     "cl-der-049",
     "cl-der-050",
+    "cl-ser-001",
+    "cl-ser-002",
+    "cl-ser-003",
+    "cl-ser-004",
+    "cl-ser-005",
+    "cl-ser-006",
+    "cl-ser-007",
+    "cl-ser-008",
+    "cl-ser-009",
+    "cl-ser-010",
+    "cl-ser-011",
+    "cl-ser-013",
+    "cl-ser-014",
+    "cl-ser-015",
+    "cl-ser-016",
+    "cl-ser-017",
+    "cl-ser-018",
+    "cl-ser-019",
+    "cl-ser-020",
+    "cl-ser-021",
+    "cl-ser-022",
+    "cl-ser-023",
+    "cl-ser-024",
+    "cl-ser-025",
+    "cl-ser-026",
+    "cl-ser-027",
+    "cl-ser-028",
+    "cl-ser-029",
+    "cl-ser-030",
+    "cl-ser-031",
+    "cl-ser-032",
+    "cl-ser-033",
+    "cl-ser-034",
+    "cl-ser-035",
+    "cl-ser-036",
+    "cl-ser-037",
+    "cl-ser-038",
+    "cl-ser-039",
+    "cl-ser-040",
+    "cl-ser-041",
+    "cl-ser-042",
+    "cl-ser-043",
+    "cl-ser-044",
+    "cl-ser-045",
+    "cl-ser-046",
+    "cl-ser-047",
+    "cl-ser-048",
+    "cl-ser-049",
+    "cl-ser-050",
     "cx-app-001",
     "cx-app-002",
     "cx-app-003",
@@ -2907,6 +2956,6 @@
   window.BuzzVerifiedAnswers = {
     has: function (id) { return Boolean(id && SET[id]); },
     count: IDS.length,
-    total: 3059
+    total: 3109
   };
 })();
