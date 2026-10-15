@@ -29,8 +29,8 @@ const REV_HEADER = "x-buzz-rev";
 
 // ── 產生區：node tools/build_sw_revisions.js（不要手改）──
 // 這一版：設定頁顯示「版本 v… · id · 日期」；id 是下面 REVISIONS 的雜湊，快取名跟著它變（每次部署內容有變就一定是新快取）。
-const BUILD = {"version":"v1.3.0","id":"396f49e5","date":"2026-10-13"};
-const CACHE_NAME = "buzzcalculus-v1.3.0-396f49e5";
+const BUILD = {"version":"v1.3.0","id":"f0366513","date":"2026-10-13"};
+const CACHE_NAME = "buzzcalculus-v1.3.0-f0366513";
 // 安裝時預快取的核心（離線也能練題）。其他檔用到才快取 —— 見 REVISIONS。
 const APP_SHELL = [
   "./index.html",
@@ -279,16 +279,16 @@ const REVISIONS = {
   "./src/kernel/tag_labels.js": "7ef8f36a3a",
   "./src/kernel/tex_lite.js": "72286278aa",
   "./src/kernel/uid_map.js": "3fc3b751ae",
-  "./src/kernel/verified_answers.js": "575d8e80cc",
+  "./src/kernel/verified_answers.js": "df431c3c14",
   "./src/problem_advanced_analysis.js": "55c5f6e1b9",
   "./src/problem_analysis_pack.js": "d8380dee64",
-  "./src/problem_applied_graph_pack.js": "da4d93e8aa",
+  "./src/problem_applied_graph_pack.js": "764df3d876",
   "./src/problem_authored_hints.js": "be729803e3",
   "./src/problem_authored_solutions.js": "8710b5a8e0",
   "./src/problem_burst_pack.js": "68278e24d7",
   "./src/problem_chain_depth_pack.js": "026c310801",
   "./src/problem_competition_pack.js": "d70b08ffd7",
-  "./src/problem_core_expansion_pack.js": "076d87e9db",
+  "./src/problem_core_expansion_pack.js": "98b0667bed",
   "./src/problem_curve_worksheet_pack.js": "2443b77120",
   "./src/problem_derivative_depth_pack.js": "3f89f04638",
   "./src/problem_difficulty_calibration.js": "b3fa72c496",
@@ -299,7 +299,7 @@ const REVISIONS = {
   "./src/problem_foundations_pack.js": "6ebc1b78c9",
   "./src/problem_gap_pack.js": "b52c878dbc",
   "./src/problem_generated_pack.js": "d53cf6cdcc",
-  "./src/problem_graph_choice_pack.js": "ee707ca74f",
+  "./src/problem_graph_choice_pack.js": "ddad05e163",
   "./src/problem_graph_interactive_pack.js": "b1dabd459e",
   "./src/problem_hard_expansion.js": "19c636d53b",
   "./src/problem_hardcore_50.js": "36b616568c",

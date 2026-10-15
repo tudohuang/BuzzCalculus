@@ -192,5 +192,34 @@
     ["graph-reading", "riemann-sum"], "T = ¼(f(0)+2f(½)+f(1)) = ¼(0+½+1) = 3/8（凹向上 → 高估）。", 90,
     { window: [-0.5, 1.5, -0.5, 1.6], curves: [{ expr: "x*x", domain: [-0.4, 1.25] }], dashed: [[[0, 0], [0.5, 0.25], [1, 1]]], points: [{ x: 0.5, y: 0.25 }, { x: 1, y: 1 }] });
 
+  // ---- 獨立驗算規格（2026-10 高曝光題補驗算）----
+  // 情境題的題幹是一段文字，自動辨識器讀不出結構；這裡把題幹的物理／幾何
+  // 翻成被積函數或微分方程，數值積分／RK4 由驗算器自己跑 —— 不抄解答的代數，
+  // 能換一種列式就換（鏈條用「剩下的重量」、水槽用柱座標體積分、形心用水平切片）。
+  const VERIFY = {
+    // 冷卻：T′ = k(T − 20)，k 只用「10 分鐘後 60°C」這筆資料定，再 RK4 跑到 t = 20
+    "ap-gro-004": { m: "odeValue", f: "\\frac{1}{10}\\ln\\left(\\frac{60-20}{100-20}\\right)(y-20)", y0: [0, 100], at: 20 },
+    // 降到 30°C 的時刻：模型 T(t) 由「4 分鐘後 60°C」定出，牛頓法解 T(t) = 30
+    "ap-gro-005": { m: "root", f: "20+80\\exp\\left(\\frac{x}{4}\\ln\\left(\\frac{60-20}{100-20}\\right)\\right)-30", x0: 5 },
+    // 鹽量 y′ = 流入 4·0.5 − 流出 4·y/100，y(0)=0
+    "ap-mix-002": { m: "odeValue", f: "4\\cdot 0.5-\\frac{4y}{100}", y0: [0, 0], at: 25 },
+    // 圓錐 V = πr²h/3 且 r = h；dh/dt = (dV/dt)/V′(h)
+    "ap-rr-004": { m: "relatedRate", f: "\\frac{1}{3}\\pi h^2\\cdot h", v: "h", at: 3, given: "9\\pi" },
+    // 虎克定律 F = kx，k = 20/0.1
+    "ap-work-001": { m: "integral", f: "\\frac{20}{0.1}x", a: 0, b: 0.2 },
+    "ap-work-002": { m: "integral", f: "200x", a: 0.1, b: 0.3 },
+    // 已拉上 y 公尺時，還垂著的 (10−y) 公尺重 2·10·(10−y) 牛頓
+    "ap-work-003": { m: "integral", v: "y", f: "2\\cdot 10\\cdot(10-y)", a: 0, b: 10 },
+    // 柱座標體積分：高度 z 的水升到頂端 4 −z，dV = 2πr dr dz
+    "ap-work-004": { m: "double", u: "r", v: "z", f: "10^4(4-z)\\cdot 2\\pi r", a: 0, b: 2, c: 0, d: 4 },
+    // 形心定義 x̄ = ∫∫x dA / ∫∫dA（鉛直切片）
+    "ap-cen-001": { m: "value", f: "\\frac{\\int_0^1\\int_0^{x^2}x\\,dy\\,dx}{\\int_0^1\\int_0^{x^2}1\\,dy\\,dx}" },
+    // 上半圓盤 ȳ：水平切片，高度 y 的切片寬 2√(1−y²)
+    "ap-cen-002": { m: "value", f: "\\frac{\\int_0^1 y\\cdot 2\\sqrt{1-y^2}\\,dy}{\\int_0^1 2\\sqrt{1-y^2}\\,dy}" }
+  };
+  problems.forEach((problem) => {
+    if (VERIFY[problem.id]) problem.verify = VERIFY[problem.id];
+  });
+
   window.BUZZ_PROBLEMS = (window.BUZZ_PROBLEMS || []).concat(problems);
 })();
