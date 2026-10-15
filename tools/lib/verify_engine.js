@@ -4868,6 +4868,147 @@ const EXPLICIT_METHODS = {
     } };
   },
 
+  // 向量場與座標變換的「一點上的線性代數」（2026-10 高曝光題補）。
+  //
+  // 散度、旋度分量、Jacobian 行列式：自動辨識器只接 ⟨…⟩ 寫法、而且只接答案是常數的題；
+  // 題幹寫成 (P, Q, R)、答案是 x,y,z 的式子、或是「r=u+v, s=uv, u=x+y…」這種連鎖寫法就接不到。
+  // 驗算端只做數值偏導再組合 —— 不用 det(AB)=det A·det B，也不先化簡。
+  //   { m: "vecField", op: "div" | "curl" | "jacobian", F: [...], vars?: [...],
+  //     comp?: 0|1|2（curl 的第幾個分量，預設 z）,
+  //     inner?: [...], over?: [...]（F 寫在 over 變數上，inner 把 vars 映到 over：先合成再微分）,
+  //     inverse?: true（回 1/det：題目問反向變換的 Jacobian，驗算端只會算正向）, abs?: true,
+  //     at?: [...]（給了回一個數；沒給時答案是函數就逐點比，答案是數就要求在取樣點上是常數） }
+  vecField: (spec) => {
+    const op = spec.op;
+    const vars = spec.vars || (op === "jacobian" ? ["x", "y"] : ["x", "y", "z"]);
+    const over = spec.inner ? (spec.over || ["u", "v", "w"].slice(0, spec.F.length)) : vars;
+    const outer = spec.F.map((tex) => latex.compile(String(tex), over));
+    const inner = spec.inner ? spec.inner.map((tex) => latex.compile(String(tex), vars)) : null;
+    const comps = outer.map((g) => (inner ? (...args) => g(...inner.map((h) => h(...args))) : g));
+    const d = (fn, pt, i) => numeric.partial((...a) => fn(...a), pt, i).value;
+    const evaluate = (pt) => {
+      if (op === "div") {
+        if (comps.length !== vars.length) throw new Error("vecField.div：分量數要等於變數數");
+        return comps.reduce((sum, fn, i) => sum + d(fn, pt, i), 0);
+      }
+      if (op === "curl") {
+        if (comps.length !== 3 || vars.length !== 3) throw new Error("vecField.curl 只接三維場");
+        const k = spec.comp === undefined ? 2 : spec.comp;
+        const [i, j] = [[1, 2], [2, 0], [0, 1]][k];
+        return d(comps[j], pt, i) - d(comps[i], pt, j);
+      }
+      if (op === "jacobian") {
+        if (comps.length !== vars.length) throw new Error("vecField.jacobian：要是方陣");
+        const M = comps.map((fn) => vars.map((_, i) => d(fn, pt, i)));
+        let det;
+        if (M.length === 2) det = M[0][0] * M[1][1] - M[0][1] * M[1][0];
+        else if (M.length === 3) {
+          det = M[0][0] * (M[1][1] * M[2][2] - M[1][2] * M[2][1])
+            - M[0][1] * (M[1][0] * M[2][2] - M[1][2] * M[2][0])
+            + M[0][2] * (M[1][0] * M[2][1] - M[1][1] * M[2][0]);
+        } else throw new Error("vecField.jacobian 只接 2×2、3×3");
+        if (spec.inverse) det = 1 / det;
+        return spec.abs ? Math.abs(det) : det;
+      }
+      throw new Error(`vecField 不認得 op = ${op}`);
+    };
+    const defaultPoints = vars.length === 2
+      ? [[0.7, 0.4], [1.3, -0.6], [-0.8, 1.2], [0.5, 1.7], [1.9, 0.3]]
+      : [[0.7, 0.4, 1.1], [1.3, -0.6, 0.5], [-0.8, 1.2, -0.4], [0.5, 0.9, 1.7], [1.6, 0.3, -1.2]];
+    const points = (spec.pts || defaultPoints).map((p) => p.map(constant));
+    if (spec.at !== undefined) return evaluate(spec.at.map(constant));
+    return { __fnCheck: (compileAnswer) => {
+      const method = "verify:vecField";
+      let answer;
+      try { answer = compileAnswer(vars); } catch (_error) { answer = null; }
+      const constantAnswer = (() => { try { return compileAnswer([])(); } catch (_error) { return Number.NaN; } })();
+      if (Number.isFinite(constantAnswer)) {
+        // 答案是一個數：取樣點上要真的是常數，不然題目少給了點
+        const value = constantOver(evaluate, points, 1e-4);
+        if (!Number.isFinite(value)) return { status: "unverified", reason: `${op} 在取樣點上不是常數，但答案是單一數值` };
+        return compareNumbers(method, constantAnswer, Math.abs(value) < 1e-6 ? 0 : value, spec.tol || 1e-5);
+      }
+      if (!answer) return { status: "error", method, reason: "答案編不起來" };
+      for (const pt of points) {
+        const expected = evaluate(pt);
+        const actual = answer(...pt);
+        if (!Number.isFinite(expected) || !Number.isFinite(actual)) continue;
+        if (Math.abs(actual - expected) > (spec.tol || 1e-5) * Math.max(1, Math.abs(expected))) {
+          return { status: "mismatch", method, detail: `在 (${pt.map(format).join(", ")}) 答案給 ${format(actual)}，數值 ${op} 是 ${format(expected)}`, actual, expected };
+        }
+      }
+      return { status: "ok", method, detail: `答案 ≡ 數值 ${op}（比對 ${points.length} 點）` };
+    } };
+  },
+
+  // 複變（2026-10 高曝光題補）。latex.compile 只有實數，這裡帶一個小小的複數求值器
+  // （語法：數字、i、z、+ − * / ^、括號、exp/sin/cos/log，隱式乘法可）。
+  //   op: "value"        f(at) 的 part；沒給 at 時 z=x+iy，答案是 x,y 的式子逐點比
+  //       "deriv"        f′(at)：複數中央差分（實方向）
+  //       "contour"      (1/2πi)∮_{|z−center|=radius} f dz：圓上梯形法（週期解析函數指數收斂）；
+  //                      留數就是在極點周圍取小圓，Laurent 的 z⁻¹ 係數也是 —— 不展開、不套公式
+  //       "jacobian"     把 f 看成 (x,y)↦(Re f, Im f) 的實映射，數值偏導取行列式
+  //       "laplacianRe"  Δ(Re f) 在取樣點上（要是常數）
+  //   part: "re" | "im" | "abs"（預設 re）
+  complex: (spec) => {
+    const f = compileComplex(String(spec.f));
+    const take = (w) => (spec.part === "im" ? w[1] : spec.part === "abs" ? Math.hypot(w[0], w[1]) : w[0]);
+    const op = spec.op || "value";
+    const point = (tex) => compileComplex(String(tex))([0, 0]);
+    const samples = [[0.7, 0.4], [1.3, -0.6], [-0.8, 1.2], [0.5, 1.7], [1.9, 0.3]];
+    const reAt = (x, y) => f([x, y])[0];
+    const imAt = (x, y) => f([x, y])[1];
+    const d = (fn, x, y, which) => numeric.partial((a, b) => fn(a, b), [x, y], which).value;
+    if (op === "value" && spec.at !== undefined) return take(f(point(spec.at)));
+    if (op === "deriv") {
+      const z0 = point(spec.at);
+      const h = 1e-5;
+      const up = f([z0[0] + h, z0[1]]);
+      const dn = f([z0[0] - h, z0[1]]);
+      return take([(up[0] - dn[0]) / (2 * h), (up[1] - dn[1]) / (2 * h)]);
+    }
+    if (op === "contour") {
+      const c = point(spec.center === undefined ? 0 : spec.center);
+      const R = constant(spec.radius);
+      const N = 4096;
+      let re = 0;
+      let im = 0;
+      for (let k = 0; k < N; k += 1) {
+        const t = (2 * Math.PI * k) / N;
+        const e = [R * Math.cos(t), R * Math.sin(t)];
+        const w = f([c[0] + e[0], c[1] + e[1]]);
+        // f·dz/(2πi) = f · (iRe^{it} dt)/(2πi) = f · Re^{it} · dt/(2π)
+        re += (w[0] * e[0] - w[1] * e[1]) / N;
+        im += (w[0] * e[1] + w[1] * e[0]) / N;
+      }
+      return take([re, im]);
+    }
+    if (op === "laplacianRe") {
+      const h = 1e-3;
+      const lap = ([x, y]) => (reAt(x + h, y) - 2 * reAt(x, y) + reAt(x - h, y)
+        + reAt(x, y + h) - 2 * reAt(x, y) + reAt(x, y - h)) / (h * h);
+      const value = constantOver(lap, samples, 1e-3);
+      if (!Number.isFinite(value)) throw new Error("Δ Re f 在取樣點上不是常數");
+      return Math.abs(value) < 5e-3 ? 0 : value;
+    }
+    const pointwise = op === "jacobian"
+      ? ([x, y]) => d(reAt, x, y, 0) * d(imAt, x, y, 1) - d(reAt, x, y, 1) * d(imAt, x, y, 0)
+      : ([x, y]) => take(f([x, y]));
+    if (op !== "jacobian" && op !== "value") throw new Error(`complex 不認得 op = ${op}`);
+    return { __fnCheck: (compileAnswer) => {
+      const method = "verify:complex";
+      const answer = compileAnswer(["x", "y"]);
+      for (const pt of samples) {
+        const expected = pointwise(pt);
+        const actual = answer(...pt);
+        if (Math.abs(actual - expected) > (spec.tol || 1e-5) * Math.max(1, Math.abs(expected))) {
+          return { status: "mismatch", method, detail: `在 (${pt.map(format).join(", ")}) 答案給 ${format(actual)}，複數求值是 ${format(expected)}`, actual, expected };
+        }
+      }
+      return { status: "ok", method, detail: `答案 ≡ 複數求值（比對 ${samples.length} 點）` };
+    } };
+  },
+
   // 一致收斂（是非題）。算 ‖f_n − g‖ = sup_x |f_n(x) − g(x)|，
   // n 一路變大看它有沒有趨近 0。g 是逐點極限函數，由題目給。
   uniformConvergence: (spec) => {
@@ -4949,6 +5090,92 @@ Object.assign(EXPLICIT_METHODS, {
 function constant(value) {
   if (typeof value === "number") return value;
   return latex.compile(String(value), [])();
+}
+
+// 複數求值器（EXPLICIT_METHODS.complex 用）。複數是 [re, im]。
+// 文法：expr = term (± term)*；term = unary ((*|/|隱式) unary)*；unary = −unary | power；
+// power = atom (^ unary)?；atom = 數字 | i | z | x | y | π(pi) | e | fn(expr) | (expr)。
+// 回傳 (z) => [re, im]；x、y 分別是 z 的實部與虛部（讓題幹寫成 x+iy 的也能直接抄）。
+function compileComplex(source) {
+  const C = {
+    add: (a, b) => [a[0] + b[0], a[1] + b[1]],
+    sub: (a, b) => [a[0] - b[0], a[1] - b[1]],
+    mul: (a, b) => [a[0] * b[0] - a[1] * b[1], a[0] * b[1] + a[1] * b[0]],
+    div: (a, b) => {
+      const n = b[0] * b[0] + b[1] * b[1];
+      return [(a[0] * b[0] + a[1] * b[1]) / n, (a[1] * b[0] - a[0] * b[1]) / n];
+    },
+    exp: (a) => [Math.exp(a[0]) * Math.cos(a[1]), Math.exp(a[0]) * Math.sin(a[1])],
+    log: (a) => [Math.log(Math.hypot(a[0], a[1])), Math.atan2(a[1], a[0])]
+  };
+  C.sin = (a) => [Math.sin(a[0]) * Math.cosh(a[1]), Math.cos(a[0]) * Math.sinh(a[1])];
+  C.cos = (a) => [Math.cos(a[0]) * Math.cosh(a[1]), -Math.sin(a[0]) * Math.sinh(a[1])];
+  C.pow = (a, b) => {
+    if (b[1] === 0 && Number.isInteger(b[0]) && Math.abs(b[0]) <= 64) {
+      let out = [1, 0];
+      for (let k = 0; k < Math.abs(b[0]); k += 1) out = C.mul(out, a);
+      return b[0] < 0 ? C.div([1, 0], out) : out;
+    }
+    return C.exp(C.mul(b, C.log(a)));
+  };
+  const tokens = String(source).replace(/\s+/g, "").match(/exp|log|sin|cos|pi|\d+\.?\d*|\.\d+|[A-Za-z]|[-+*/^()]/g) || [];
+  if (tokens.join("") !== String(source).replace(/\s+/g, "")) throw new Error(`複數式讀不懂：${source}`);
+  let pos = 0;
+  const peek = () => tokens[pos];
+  const next = () => tokens[pos++];
+  const startsAtom = (t) => t !== undefined && (/^[\d.A-Za-z]/.test(t) || t === "(");
+  const parseExpr = () => {
+    let node = parseTerm();
+    while (peek() === "+" || peek() === "-") {
+      const op = next();
+      const left = node;
+      const right = parseTerm();
+      node = op === "+" ? (z) => C.add(left(z), right(z)) : (z) => C.sub(left(z), right(z));
+    }
+    return node;
+  };
+  const parseTerm = () => {
+    let node = parseUnary();
+    while (peek() === "*" || peek() === "/" || startsAtom(peek())) {
+      const op = peek() === "*" || peek() === "/" ? next() : "*";
+      const left = node;
+      const right = parseUnary();
+      node = op === "*" ? (z) => C.mul(left(z), right(z)) : (z) => C.div(left(z), right(z));
+    }
+    return node;
+  };
+  const parseUnary = () => {
+    if (peek() === "-") { next(); const inner = parseUnary(); return (z) => C.sub([0, 0], inner(z)); }
+    if (peek() === "+") { next(); return parseUnary(); }
+    return parsePower();
+  };
+  const parsePower = () => {
+    const base = parseAtom();
+    if (peek() === "^") { next(); const ex = parseUnary(); return (z) => C.pow(base(z), ex(z)); }
+    return base;
+  };
+  const parseAtom = () => {
+    const t = next();
+    if (t === undefined) throw new Error(`複數式提早結束：${source}`);
+    if (t === "(") { const inner = parseExpr(); if (next() !== ")") throw new Error(`括號不成對：${source}`); return inner; }
+    if (/^[\d.]/.test(t)) { const v = Number(t); return () => [v, 0]; }
+    if (t === "i") return () => [0, 1];
+    if (t === "z") return (z) => z;
+    if (t === "x") return (z) => [z[0], 0];
+    if (t === "y") return (z) => [z[1], 0];
+    if (t === "pi") return () => [Math.PI, 0];
+    if (t === "e") return () => [Math.E, 0];
+    if (C[t] && ["exp", "log", "sin", "cos"].includes(t)) {
+      if (next() !== "(") throw new Error(`${t} 後面要接括號：${source}`);
+      const arg = parseExpr();
+      if (next() !== ")") throw new Error(`括號不成對：${source}`);
+      return (z) => C[t](arg(z));
+    }
+    throw new Error(`複數式不認得「${t}」：${source}`);
+  };
+  const tree = parseExpr();
+  if (pos !== tokens.length) throw new Error(`複數式有多餘的部分：${source}`);
+  return tree;
 }
 
 // 在 center 附近把 f 展成單項式係數 c_k = f⁽ᵏ⁾(center)/k!。

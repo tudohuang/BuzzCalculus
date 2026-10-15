@@ -866,5 +866,31 @@
     }
   ];
 
+  // ---- 獨立驗算規格（tools/verify_answers.js 讀）----
+  // 題幹的寫法自動辨識器接不到；這裡把題幹重述成數值路徑（數值偏導、數值積分、
+  // 複數求值、圍道上的梯形法），不重複解題的推導、也不把答案抄一遍。
+  const VERIFY = {
+    // 連鎖的 Jacobian：先把 (u,v) 代進去合成，再對 (x,y) 數值偏導 —— 不用 det 的連鎖律
+    "der-070": { m: "vecField", op: "jacobian", vars: ["x", "y"], over: ["u", "v"], F: ["u+v", "uv"], inner: ["x+y", "x-y"] },
+    "der-071": { m: "vecField", op: "jacobian", vars: ["r", "t"], F: ["r\\cos t", "r\\sin t"] },
+    "der-072": { m: "vecField", op: "jacobian", vars: ["x", "y"], F: ["xy", "x/y"] },
+    "der-074": { m: "vecField", op: "jacobian", vars: ["x", "y"], over: ["u", "v"], F: ["u+v", "u-v"], inner: ["x", "xy"], at: [2, 3] },
+    // 複數：直接用複數算術求值，不展開二項式
+    "der-075": { m: "complex", op: "value", f: "z^3", part: "re" },
+    "der-076": { m: "complex", op: "value", f: "z^3", part: "im" },
+    "der-077": { m: "complex", op: "value", f: "1+i", at: 0, part: "abs" },
+    "der-078": { m: "complex", op: "value", f: "(1+i)^4", at: 0, part: "re" },
+    // 留數／Laurent 係數／圍道積分：都在圓上直接數值積 (1/2πi)∮f dz
+    "der-081": { m: "complex", op: "contour", f: "1/(z^2+1)", center: "i", radius: 0.5, part: "abs" },
+    "der-083": { m: "complex", op: "contour", f: "exp(z)/z^3", center: 0, radius: 1, part: "re" },
+    "der-084": { m: "complex", op: "contour", f: "1/(z-1)", center: 0, radius: 2, part: "re" },
+    "der-085": { m: "complex", op: "deriv", f: "z^4", at: "1+i", part: "re" },
+    "der-086": { m: "complex", op: "jacobian", f: "z^2" },
+    "der-087": { m: "complex", op: "laplacianRe", f: "z^3" }
+  };
+  extraProblems.forEach((problem) => {
+    if (VERIFY[problem.id]) problem.verify = VERIFY[problem.id];
+  });
+
   window.BUZZ_PROBLEMS = (window.BUZZ_PROBLEMS || []).concat(extraProblems);
 })();

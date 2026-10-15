@@ -164,5 +164,16 @@
     ["depth-ser-020", "\\text{radius of convergence of }\\sum_{n=1}^{\\infty}\\frac{2^n}{n^2}(x+1)^n", "1/2", ["power-series", "radius"], "The nth root of 2^n/n^2 is 2.", 5]
   ].forEach(([id, prompt, answer, tags, solution, rank]) => numeric(id, "series", prompt, answer, tags, solution, rank, 230));
 
+  // ---- 獨立驗算規格（tools/verify_answers.js 讀）----
+  // 題幹的寫法自動辨識器接不到；這裡把題幹重述成數值路徑（數值偏導、數值積分、
+  // 複數求值、圍道上的梯形法），不重複解題的推導、也不把答案抄一遍。
+  const VERIFY = {
+    "depth-der-013": { m: "vecField", op: "div", F: ["xyz", "x^2z", "xy^2"] },
+    "depth-der-014": { m: "vecField", op: "curl", comp: 2, F: ["x^2y", "xy^2", "z"] }
+  };
+  problems.forEach((problem) => {
+    if (VERIFY[problem.id]) problem.verify = VERIFY[problem.id];
+  });
+
   window.BUZZ_PROBLEMS = (window.BUZZ_PROBLEMS || []).concat(problems);
 })();

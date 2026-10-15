@@ -753,5 +753,20 @@
     }
   ];
 
+  // ---- 獨立驗算規格（tools/verify_answers.js 讀）----
+  // 題幹的寫法自動辨識器接不到；這裡把題幹重述成數值路徑（數值偏導、數值積分、
+  // 複數求值、圍道上的梯形法），不重複解題的推導、也不把答案抄一遍。
+  const VERIFY = {
+    // 速率是常數，所以 t∈[0,1] 上的弧長就是速率（弧長由數值積分給）
+    "gap-der-param-005": { m: "lineIntegral", kind: "ds", f: "1", path: { x: "3t", y: "4t", from: 0, to: 1 } },
+    // 反向變換的 Jacobian：驗算端只算正向 (x,y)↦(u,v) 的數值行列式再取倒數
+    "gap-int-cov-001": { m: "vecField", op: "jacobian", vars: ["x", "y"], F: ["x+y", "x-y"], inverse: true, abs: true },
+    // 四階多項式由五個點定死；每一點的 T₄(x) 由 Chebyshev 取樣獨立算
+    "gap-ser-taylor-002": { m: "fn", vars: ["x"], cases: [0.3, 0.7, 1.1, -0.6, 1.6].map((x) => ({ at: { x }, v: { m: "taylorValue", f: "\\cos x", n: 4, at: x } })) }
+  };
+  gapProblems.forEach((problem) => {
+    if (VERIFY[problem.id]) problem.verify = VERIFY[problem.id];
+  });
+
   window.BUZZ_PROBLEMS = (window.BUZZ_PROBLEMS || []).concat(gapProblems);
 })();
