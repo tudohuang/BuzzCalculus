@@ -24,6 +24,13 @@ const SOURCE = path.join(ROOT, "tools", "content", "i18n_text_en.json");
 const OUTPUT = path.join(ROOT, "src", "kernel", "i18n_text_en.js");
 const CJK = /[㐀-䶿一-鿿]/;
 
+// 英文待上：題目的英文（題幹、句型）翻好了但先不出貨（延後載入預算放不下）。清單在 tools/content/i18n_pending.json，
+// 翻好的題幹在 tools/content/i18n_pending_prompts.json；validate_i18n 也讀這一支。
+function pendingIds() {
+  const file = path.join(__dirname, "content", "i18n_pending.json");
+  return new Set(fs.existsSync(file) ? JSON.parse(fs.readFileSync(file, "utf8")).ids || [] : []);
+}
+
 // ── 要翻的東西 ─────────────────────────────────────────────────
 // 回傳 [{ kind, where, text, whole }]：whole＝整句翻（LaTeX）
 function collect() {
@@ -34,7 +41,10 @@ function collect() {
   const add = (kind, where, text, whole) => {
     if (typeof text === "string" && CJK.test(text)) units.push({ kind, where, text, whole: Boolean(whole) });
   };
+  // 英文待上的題（tools/content/i18n_pending.json）：句型已經翻好留在來源表，但不出貨、也不算「要翻」
+  const pending = pendingIds();
   problems.forEach((p) => {
+    if (pending.has(p.id)) return;
     add("solution", p.id, p.solutionZh || p.solution);
     (p.solutionStepsZh || p.solutionSteps || []).forEach((step, i) => add("step", `${p.id}#${i}`, step));
     (p.hintsZh || p.hints || []).forEach((hint, i) => {
@@ -145,7 +155,7 @@ ${lines.join(",\n")}
   return { text, collisions, count: used.size };
 }
 
-module.exports = { collect, sourceKey, runtimeKey, checkEntry, loadSource, render, mathSignature, SOURCE, OUTPUT };
+module.exports = { collect, pendingIds, sourceKey, runtimeKey, checkEntry, loadSource, render, mathSignature, SOURCE, OUTPUT };
 
 if (require.main === module) {
   const args = process.argv.slice(2);
