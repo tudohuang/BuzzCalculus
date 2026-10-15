@@ -301,6 +301,29 @@ try {
   fail(`∫dx/(x ln x) 應該判不出來，卻判成 ${claim}`);
 } catch (_error) { /* 判不出來才對 */ }
 
+/* ── 三之四、坑：級數的冪次稍大於 1、與 ln ln n 型 ─────────────── */
+// 2026-10-15 之前 Σ1/n^1.1、Σln n/n^1.1 被判成發散（代換後冪次 (p−1)u−k 在小 u 取最小值），
+// Σ1/(n ln n ln ln n) 被判成收斂（代換後冪次 1+1/ln u 在 u≤16 還在 1.36）。前兩條要判對，第三條必須判不出來。
+[
+  ["Σ1/n^1.1 收斂", "\\frac{1}{n^{1.1}}", true],
+  ["Σln n/n^1.1 收斂", "\\frac{\\ln n}{n^{1.1}}", true],
+  ["Σ1/n^0.99 發散", "\\frac{1}{n^{0.99}}", false],
+  ["Σ1/(n ln n) 發散", "\\frac{1}{n\\ln n}", false]
+].forEach(([name, f, expected]) => {
+  let claim;
+  try {
+    claim = EXPLICIT_METHODS.seriesConverges({ m: "seriesConverges", f, from: 2 }).__claim;
+  } catch (error) {
+    fail(`${name}：判不出來（${error.message}）`);
+    return;
+  }
+  if (claim !== expected) fail(`${name}：判成 ${claim}，應該是 ${expected}`);
+});
+try {
+  const claim = EXPLICIT_METHODS.seriesConverges({ m: "seriesConverges", f: "\\frac{1}{n\\ln n\\ln(\\ln n)}", from: 3 }).__claim;
+  fail(`Σ1/(n ln n ln ln n) 應該判不出來，卻判成 ${claim}`);
+} catch (_error) { /* 判不出來才對 */ }
+
 /* ── 四、坑：spec 裡的小數不能被當成 LaTeX 讀 ───────────────── */
 // String(0.0000001) === "1e-7"，LaTeX 的 e 是尤拉數 —— 少了 constant()
 // 這一行會讀成 1·e−7 = −4.28，掃描下界變負的，ln x 的判定會反過來。
