@@ -31,7 +31,7 @@ const BUDGETS = {
   // 下一次撞頂不該再調數字 —— 該搬的是整頁的 render（首頁、結算、設定）。
   // 2026-09-28 720 → 736：英文版。1,800 個中文字串包成 t("…") 是純語法開銷（+14.6KB），
   // 不是新功能長胖；量出來多少就加多少。功能再撞頂仍然照上一條：搬 render，不調數字。
-  "app.js 主程式": { pattern: /^src\/app\.js$/, budget: 737 * 1024 }, // 2026-10-14 736 → 737KB：旁白只剩一個聲音（女聲 Omni）時設定頁不出「旁白聲音」那一列（看大綱有沒有 narrationM），多 41 bytes；原本只剩 11 bytes
+  "app.js 主程式": { pattern: /^src\/app\.js$/, budget: 736 * 1024 }, // 2026-10-15 設定頁的 render 搬去 settings_page.js，退回 736KB。（2026-10-14 曾經 736 → 737KB：旁白只剩一個聲音（女聲 Omni）時設定頁不出「旁白聲音」那一列（看大綱有沒有 narrationM），多 41 bytes；原本只剩 11 bytes）
   "kernel 產生側表": { pattern: GENERATED_TABLES, budget: 500 * 1024 },
   // 2026-09-28 新增：zh→en 介面字典（i18n_en.js）。每個使用者都會抓（模組初始化期就要有語言），
   // 所以它有自己的上限；題目的英文側表走延後載入，不在這裡。
@@ -72,6 +72,9 @@ const BUDGETS = {
   // 2026-10-13 新增：量測漏斗與回訪（src/kernel/metrics.js，約 8KB、一半是中文註解）。只有分析開著才在開站時載（跟 gtag.js 同一道閘），
   // 不佔 script 標籤上限（已 67／67）、也不佔 app.js 的位元組（app.js 只留兩處掛鉤）。上限留約五成。
   "延後載入：量測": { pattern: /^$/, budget: 12 * 1024, lazy: "metrics" },
+  // 2026-10-15 新增：設定頁的畫面（src/settings_page.js，約 19KB）。app.js 撞到 736KB 上限時照上面的規則搬整頁 render（不調數字）。
+  // 第一次打開設定頁才抓（進 APP_SHELL，離線也有）。上限留約兩成。
+  "延後載入：設定頁": { pattern: /^$/, budget: 24 * 1024, lazy: "settings" },
   // 2026-10-14 新增：題目側寫＋兩段式抽題（題庫精修提案 v1.0）。problem_profiles.js 是產生的側表（每題一列：方法家族、模板母題、
   // 權重、角色、先修課，約 125KB，隨題庫成長）＋ sampler.js 約 11KB 的抽題邏輯。開站閒下來才載（跟 pwa 同一個時間點），
   // 不佔 script 標籤上限（67／67）也不佔 app.js（只留三處掛鉤）。上限留約三成給題庫成長；再撞頂該做的是把列壓成

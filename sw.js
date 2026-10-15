@@ -29,8 +29,8 @@ const REV_HEADER = "x-buzz-rev";
 
 // ── 產生區：node tools/build_sw_revisions.js（不要手改）──
 // 這一版：設定頁顯示「版本 v… · id · 日期」；id 是下面 REVISIONS 的雜湊，快取名跟著它變（每次部署內容有變就一定是新快取）。
-const BUILD = {"version":"v1.3.0","id":"90f15fc7","date":"2026-10-13"};
-const CACHE_NAME = "buzzcalculus-v1.3.0-90f15fc7";
+const BUILD = {"version":"v1.3.0","id":"1e5459e2","date":"2026-10-13"};
+const CACHE_NAME = "buzzcalculus-v1.3.0-1e5459e2";
 // 安裝時預快取的核心（離線也能練題）。其他檔用到才快取 —— 見 REVISIONS。
 const APP_SHELL = [
   "./index.html",
@@ -111,6 +111,7 @@ const APP_SHELL = [
   "./src/problem_solution_steps.js",
   "./src/kernel/app_update.js",
   "./src/kernel/metrics.js",
+  "./src/settings_page.js",
   "./src/kernel/problem_profiles.js",
   "./src/kernel/sampler.js",
   "./assets/vendor/katex/fonts/KaTeX_AMS-Regular.woff2",
@@ -152,10 +153,10 @@ const REVISIONS = {
   "./assets/vendor/katex/katex.min.css": "06b732aebc",
   "./assets/vendor/katex/katex.min.js": "9f45307c57",
   "./guide.html": "6598935c2f",
-  "./index.html": "debae97834",
+  "./index.html": "893d4f1981",
   "./manifest.webmanifest": "4f19816c8b",
   "./privacy.html": "904180e9b9",
-  "./src/app.js": "03009be01b",
+  "./src/app.js": "9243c0242f",
   "./src/board_store.js": "402a9e9b08",
   "./src/course.js": "ef1b69719f",
   "./src/course_board.js": "38e5fbfa17",
@@ -258,7 +259,7 @@ const REVISIONS = {
   "./src/kernel/derived_hints.js": "fda184703e",
   "./src/kernel/equivalence.js": "cce0b64d63",
   "./src/kernel/i18n.js": "f09036465d",
-  "./src/kernel/i18n_en.js": "12d70c8059",
+  "./src/kernel/i18n_en.js": "9af06b59c7",
   "./src/kernel/i18n_problems_en.js": "9356721f6b",
   "./src/kernel/i18n_text_en.js": "73026429ae",
   "./src/kernel/ink_read.js": "10f49b9d62",
@@ -321,6 +322,7 @@ const REVISIONS = {
   "./src/proof_lab_ui.js": "80be80c62d",
   "./src/proof_lang_content.js": "2ba5f35870",
   "./src/proofs.js": "6e32ac2cc3",
+  "./src/settings_page.js": "8dee4b9c9e",
   "./src/share_cards.js": "fd7fd15d0a",
   "./styles.css": "cf8a8867e9",
   "./terms.html": "2432c43e77"

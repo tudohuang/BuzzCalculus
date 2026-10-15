@@ -75,7 +75,8 @@ if (fs.existsSync(cssPath)) {
 /* ── 4. icon shim 必須涵蓋 app.js 用到的每一個圖示 ─────────
    漏一個的話那顆按鈕就變成空白 —— 而且不會有任何錯誤訊息。 */
 
-const app = fs.readFileSync(path.join(root, "src", "app.js"), "utf8");
+// 設定頁的畫面搬去 settings_page.js（延後載入），用的還是 app.js 的 icon()：一起掃
+const app = ["app.js", "settings_page.js"].map((f) => fs.readFileSync(path.join(root, "src", f), "utf8")).join("\n");
 const aliasBlock = (app.match(/function icon\(name\) \{[\s\S]*?const names = \{([\s\S]*?)\};/) || [])[1] || "";
 const alias = {};
 [...aliasBlock.matchAll(/([\w-]+):\s*"([\w-]+)"/g)].forEach((m) => { alias[m[1]] = m[2]; });

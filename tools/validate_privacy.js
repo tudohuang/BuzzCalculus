@@ -61,7 +61,8 @@ if (!terms.includes("privacy.html")) fail("服務條款沒有連到隱私政策"
 // privacy / terms 的檔案與快取留著（放 GA 得有政策頁可指），產品裡只連「關於」；
 // changelog / tutor 連部署都拿掉，app 裡不該再連到。
 const app = read("src/app.js");
-if (!app.includes('href="about.html"')) fail("設定頁沒有連到 about.html");
+// 設定頁的畫面在 settings_page.js（2026-10-15 從 app.js 搬出去）
+if (!read("src/settings_page.js").includes('href="about.html"')) fail("設定頁沒有連到 about.html");
 ["changelog.html", "tutor.html"].forEach((page) => {
   if (app.includes(`href="${page}"`)) fail(`${page} 已經關掉了，app 裡不該再連到它`);
 });
