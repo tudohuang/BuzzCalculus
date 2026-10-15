@@ -324,6 +324,26 @@ try {
   fail(`Σ1/(n ln n ln ln n) 應該判不出來，卻判成 ${claim}`);
 } catch (_error) { /* 判不出來才對 */ }
 
+/* ── 三之五、坑：級數求和的 Euler–Maclaurin 尾巴 ─────────────── */
+// 2026-10-15 之前這兩條「安靜地算錯」：只在整數上有意義的項（(1−(−1)ⁿ)/n² 差 5e-3）、
+// 比值貼著 1 的 ln 在遠方相消成 0（Σln((n+1)²/(n(n+2))) 算成 −0.599，真值 ln 2）。現在必須算不出來（NaN），不能給數字；
+// ln(1+極小) 經過 LaTeX 編譯一樣是 log(1+x)，也會相消 —— 同樣必須算不出來。寫法換對（拆成 cos 的級數）就照常算得準。
+[
+  ["Σ(1−(−1)ⁿ)/n² 必須算不出來", "\\frac{1-(-1)^n}{n^2}"],
+  ["Σln((n+1)²/(n(n+2))) 必須算不出來", "\\ln\\frac{(n+1)^2}{n(n+2)}"],
+  ["Σln(1+1/(n(n+2))) 必須算不出來（log(1+x) 一樣相消）", "\\ln\\left(1+\\frac{1}{n(n+2)}\\right)"]
+].forEach(([name, f]) => {
+  const value = EXPLICIT_METHODS.series({ m: "series", f, from: 1 });
+  if (Number.isFinite(value)) fail(`${name}，卻算出 ${value}`);
+});
+[
+  ["Σ1/(n(n+2)) = 3/4（正常的單調級數照算）", { m: "series", f: "\\frac{1}{n(n+2)}", from: 1 }, 0.75],
+  ["Σsin²n/n² = (π−1)/2（拆成 cos 2n）", { m: "value", f: "\\frac{\\pi^2}{12}-\\frac{1}{2}\\sum_{n=1}^{\\infty}\\frac{\\cos 2n}{n^2}" }, (Math.PI - 1) / 2]
+].forEach(([name, spec, expected]) => {
+  const value = EXPLICIT_METHODS[spec.m](spec);
+  if (!close(value, expected)) fail(`${name}：算出 ${value}，應該是 ${expected}`);
+});
+
 /* ── 四、坑：spec 裡的小數不能被當成 LaTeX 讀 ───────────────── */
 // String(0.0000001) === "1e-7"，LaTeX 的 e 是尤拉數 —— 少了 constant()
 // 這一行會讀成 1·e−7 = −4.28，掃描下界變負的，ln x 的判定會反過來。

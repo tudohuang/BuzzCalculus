@@ -313,9 +313,13 @@ function seriesSum(term, from, options = {}) {
   // ε 演算法在單調序列上又會被捨入誤差吃掉。Euler–Maclaurin 才是對的工具：
   //   Σ_{n≥N} f(n) ≈ ∫_N^∞ f + f(N)/2 − f′(N)/12 + f‴(N)/720
   // 前 N−1 項照實加，尾巴用積分換掉。N=200 時通常能到 1e-12。
+  // 尾巴不可信（eulerMaclaurin 回 rejected）的單調級數：只接受直接加就收斂的；
+  // 加不完的不准交給 ε 外插（它在單調序列上會給一個「看起來合理」的錯數字），回 NaN 讓上層判 unverified。
+  let rejected = "";
   if (!alternates(term, from) && options.eulerMaclaurin !== false) {
     const estimate = eulerMaclaurin(term, from, options);
-    if (estimate) return estimate;
+    if (estimate && !estimate.rejected) return estimate;
+    if (estimate && estimate.rejected) rejected = estimate.rejected;
   }
 
   // 先直接加：夠快收斂的話這樣最準
@@ -337,6 +341,7 @@ function seriesSum(term, from, options = {}) {
     }
   }
 
+  if (rejected) return { value: Number.NaN, error: Infinity, reason: rejected };
   // 加了二十萬項還沒收斂 → 交給 ε 演算法從前 60 個部分和外插
   const accelerated = wynnEpsilon(snapshots);
   if (Number.isFinite(accelerated)) {
@@ -363,6 +368,38 @@ function alternates(term, from) {
 
 function eulerMaclaurin(term, from, options = {}) {
   const cut = options.cut || 200;
+  // Euler–Maclaurin 把尾巴換成 f 在實數上的積分 —— 只有 f 在 [cut, ∞) 是平滑、單調、量得準的時候才對。
+  // 2026-10-15 抓到兩種「安靜地算錯」，回 rejected 讓 seriesSum 改走直接加或判不出來：
+  //   (1−(−1)ⁿ)/n²：整數上一項 0 一項非 0，實數上的 f 根本不是這個數列（差 5e-3）；
+  //   ln((n+1)²/(n(n+2)))：比值貼著 1，n 大到 1e8 以後只剩捨入雜訊，積到無窮把 ln 2 算成 −0.599。
+  const near = [];
+  for (let n = cut; n <= cut + 20; n += 1) near.push(term(n));
+  const sign = Math.sign(near[0]);
+  for (let i = 0; i < near.length; i += 1) {
+    if (!Number.isFinite(near[i]) || near[i] === 0 || Math.sign(near[i]) !== sign) return { rejected: "尾巴的項有 0 或變號，不是平滑函數，Euler–Maclaurin 不適用" };
+    if (i && Math.abs(near[i]) > Math.abs(near[i - 1]) * (1 + 1e-9)) return { rejected: "尾巴的項沒有單調遞減，Euler–Maclaurin 不適用" };
+    const mid = term(cut + i + 0.5);
+    if (i < near.length - 1 && !(Math.abs(mid) <= Math.abs(near[i]) * (1 + 1e-9) && Math.abs(mid) >= Math.abs(near[i + 1]) * (1 - 1e-9))) {
+      return { rejected: "f 在整數之間不是夾在前後兩項之間（只在整數上有意義的項），Euler–Maclaurin 不適用" };
+    }
+  }
+  // 遠方：每十倍取一點，衰減的「冪次」要一路平順（雜訊會讓它亂跳或不再下降）；掉到 0（下溢）就停
+  let prev = Math.abs(near[0]);
+  let lastDrop = null;
+  for (let k = 1; k <= 10; k += 1) {
+    const value = term(cut * 10 ** k);
+    if (value === 0) {
+      // 真的下溢（前一點已經在 1e-300 附近、照衰減速度下一點本來就該是 0）才當作「尾巴沒了」；
+      // 照衰減速度明明還算得出 1e-17 這種數卻變成 0 —— 那是相消，不是下溢
+      if (lastDrop !== null && prev / 10 ** lastDrop > 1e-290) return { rejected: `第 ${cut}·10^${k} 項相消成 0（照衰減應該約 ${(prev / 10 ** lastDrop).toExponential(1)}）` };
+      break;
+    }
+    if (!Number.isFinite(value) || Math.sign(value) !== sign) return { rejected: `第 ${cut}·10^${k} 項的符號或數值不可信（捨入雜訊）` };
+    const drop = Math.log10(prev / Math.abs(value));
+    if (!(drop > 0) || (lastDrop !== null && Math.abs(drop - lastDrop) > 0.5)) return { rejected: `尾巴在 ${cut}·10^${k} 附近衰減不平順（捨入雜訊），積分換不掉` };
+    lastDrop = drop;
+    prev = Math.abs(value);
+  }
   const head = createSum();
   for (let n = from; n < cut; n += 1) {
     const value = term(n);
