@@ -383,22 +383,34 @@ function eulerMaclaurin(term, from, options = {}) {
       return { rejected: "f 在整數之間不是夾在前後兩項之間（只在整數上有意義的項），Euler–Maclaurin 不適用" };
     }
   }
-  // 遠方：每十倍取一點，衰減的「冪次」要一路平順（雜訊會讓它亂跳或不再下降）；掉到 0（下溢）就停
+  // 遠方：每十倍取一點，衰減的「冪次」要一路平順（雜訊會讓它亂跳或不再下降）；掉到 0（下溢）就停。
+  // 遇到雜訊（相消成 0、亂跳、變號）不直接放棄：退回兩個十倍、在那裡還量得準的地方 T 截斷，
+  // [cut, T] 照常積分，T 以後用那裡量到的冪次 p 補 ∫_T^∞ f(T)(T/t)^p dt = f(T)·T/(p−1)。p 不明顯大於 1 才放棄。
+  const drops = [];
   let prev = Math.abs(near[0]);
-  let lastDrop = null;
+  let noisyAt = 0;
+  let why = "";
   for (let k = 1; k <= 10; k += 1) {
     const value = term(cut * 10 ** k);
+    const lastDrop = drops.length ? drops[drops.length - 1] : null;
     if (value === 0) {
-      // 真的下溢（前一點已經在 1e-300 附近、照衰減速度下一點本來就該是 0）才當作「尾巴沒了」；
-      // 照衰減速度明明還算得出 1e-17 這種數卻變成 0 —— 那是相消，不是下溢
-      if (lastDrop !== null && prev / 10 ** lastDrop > 1e-290) return { rejected: `第 ${cut}·10^${k} 項相消成 0（照衰減應該約 ${(prev / 10 ** lastDrop).toExponential(1)}）` };
+      // 真的下溢（照衰減速度下一點本來就該是 0）才當作「尾巴沒了」；照衰減明明還算得出 1e-17 卻變成 0 —— 那是相消
+      if (lastDrop !== null && prev / 10 ** lastDrop > 1e-290) { noisyAt = k; why = `第 ${cut}·10^${k} 項相消成 0`; }
       break;
     }
-    if (!Number.isFinite(value) || Math.sign(value) !== sign) return { rejected: `第 ${cut}·10^${k} 項的符號或數值不可信（捨入雜訊）` };
-    const drop = Math.log10(prev / Math.abs(value));
-    if (!(drop > 0) || (lastDrop !== null && Math.abs(drop - lastDrop) > 0.5)) return { rejected: `尾巴在 ${cut}·10^${k} 附近衰減不平順（捨入雜訊），積分換不掉` };
-    lastDrop = drop;
+    const drop = Number.isFinite(value) && Math.sign(value) === sign ? Math.log10(prev / Math.abs(value)) : Number.NaN;
+    if (!(drop > 0) || (lastDrop !== null && Math.abs(drop - lastDrop) > 0.5)) { noisyAt = k; why = `尾巴在 ${cut}·10^${k} 附近有捨入雜訊`; break; }
+    drops.push(drop);
     prev = Math.abs(value);
+  }
+  let upper = Infinity;
+  let beyond = 0;
+  if (noisyAt) {
+    const k = noisyAt - 2;
+    const p = drops[k - 1];
+    if (k < 1 || !(p > 1.05)) return { rejected: `${why}，而且量得準的範圍裡冪次 p 不明顯大於 1，尾巴補不起來` };
+    upper = cut * 10 ** k;
+    beyond = (term(upper) * upper) / (p - 1);
   }
   const head = createSum();
   for (let n = from; n < cut; n += 1) {
@@ -406,8 +418,9 @@ function eulerMaclaurin(term, from, options = {}) {
     if (!Number.isFinite(value)) return null;
     head.add(value);
   }
-  const tail = integrate(term, cut, Infinity, { tolerance: 1e-13 });
+  const tail = integrate(term, cut, upper, { tolerance: 1e-13 });
   if (!Number.isFinite(tail.value)) return null;
+  tail.value += beyond;
   const first = derivative(term, cut, { h: 0.5 });
   const third = derivative((t) => derivative((u) => derivative(term, u, { h: 0.5 }).value, t, { h: 0.5 }).value, cut, { h: 0.5 });
   const correction = term(cut) / 2 - first.value / 12 + third.value / 720;

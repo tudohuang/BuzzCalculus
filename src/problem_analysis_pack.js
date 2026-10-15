@@ -1172,7 +1172,9 @@
     tags: ["telescoping", "log-series"],
     hints: ["1 + 1/(n(n+2)) 通分之後，分子是一個完全平方。", "把對數拆成兩個「相鄰項的差」：看 ln((n+1)/n) 與 ln((n+2)/(n+1))。"],
     solution: "1 + 1/(n(n+2)) = (n+1)²/(n(n+2))，所以項 = ln((n+1)/n) − ln((n+2)/(n+1))。令 c_n = ln((n+1)/n)，項 = c_n − c_{n+1}，前 N 項和 = c_1 − c_{N+1} = ln 2 − ln((N+2)/(N+1)) → ln 2。",
-    verify: { m: "series", f: "\\ln\\left(1+\\frac{1}{n(n+2)}\\right)", from: 1 } });
+    // 直接當級數加：ln(1+極小) 在遠方相消，Euler–Maclaurin 的尾巴不可信（驗算器會拒絕）。
+    // 改成「部分和的極限」：每個部分和是有限項照實加，再對 N 外插 —— 不用伸縮相消那一步
+    verify: { m: "seqLimit", f: "\\sum_{k=1}^{n}\\ln\\left(1+\\frac{1}{k(k+2)}\\right)" } });
 
   add({ id: "cl-ser-013", rank: 4,
     prompt: "\\text{求 }\\sum_{n=1}^{\\infty}\\frac{1}{n(n+1)\\,2^n}",
