@@ -5318,6 +5318,46 @@ Object.assign(EXPLICIT_METHODS, {
   }
 });
 
+/* ── 實根個數（2026-10 經典題型擴充）──────────────────────────
+   「方程式 e^x = 3x 有幾個實根」：解題者用單調性與極值數，驗算端不碰導數，
+   只在 range 上密掃 f 的變號。f 寫成「左式 − 右式」是題幹的重述。
+   切點（重根）不會變號，掃描會漏數 —— 所以 |f| 在某處掉到幾乎 0 卻沒變號時
+   直接丟錯，判不了就說判不了，不回一個可能少一的數。
+   range 要涵蓋所有的根：那是作者的責任（範圍外 f 的符號要一眼看得出來）。 */
+Object.assign(EXPLICIT_METHODS, {
+  rootCount: (spec) => {
+    const f = latex.compile(spec.f, [spec.v || "x"]);
+    const [a, b] = spec.range.map((value) => constant(value));
+    const steps = spec.steps || 200000;
+    let count = 0;
+    let prev = null;
+    let scale = 0;
+    const samples = [];
+    for (let i = 0; i <= steps; i += 1) {
+      const x = a + ((b - a) * i) / steps;
+      const value = f(x);
+      if (!Number.isFinite(value)) { prev = null; samples.push(null); continue; }
+      scale = Math.max(scale, Math.abs(value));
+      samples.push(value);
+      if (value === 0) { count += 1; prev = null; continue; }
+      if (prev !== null && prev * value < 0) count += 1;
+      prev = value;
+    }
+    // 切點偵測：兩側同號、中間 |f| 是局部極小而且掉到 scale 的 1e-6 以下。
+    // 中間那一點的符號不看 —— 網格剛好踩在切點上時它是 0，捨入時它是極小的反號數
+    // （後者會被上面數成兩次變號），兩種都要擋。
+    const floor = 1e-6 * Math.max(1, scale);
+    for (let i = 1; i < samples.length - 1; i += 1) {
+      const [l, m, r] = [samples[i - 1], samples[i], samples[i + 1]];
+      if (l === null || m === null || r === null) continue;
+      if (l * r > 0 && Math.abs(m) <= Math.abs(l) && Math.abs(m) <= Math.abs(r) && Math.abs(m) < floor) {
+        throw new Error(`在 x≈${format(a + ((b - a) * i) / steps)} 附近 f 幾乎碰到 0 卻不變號（可能是重根），數不準`);
+      }
+    }
+    return count;
+  }
+});
+
 // 窗口 [N, 2N] 的極值當 N 的函數再外插 —— 上／下極限的數值版。
 // spec 裡的數字：已經是數就直接用。
 // 不能一律丟給 latex 編譯器 —— String(0.0000001) 是 "1e-7"，而 LaTeX 裡的 e 是

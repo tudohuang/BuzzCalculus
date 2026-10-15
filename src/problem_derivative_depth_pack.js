@@ -1839,3 +1839,463 @@
 
   window.BUZZ_PROBLEMS = (window.BUZZ_PROBLEMS || []).concat(problems);
 })();
+
+/* ═══════════════════════════════════════════════════════════════════
+   經典題型擴充（cl-der-，2026-10）：微分的幾何應用與短而利的反射練習。
+   盤點 3,077 題時發現幾個課本必教、題庫卻是 0 的區塊：
+   兩曲線的夾角、極座標向徑與切線的夾角、曲率中心（漸屈線）、包絡線、
+   空間曲線的切線與法平面、二元二階泰勒；實根個數、最佳常數、Leibniz 高階導數、
+   柯西均值定理也只有零星幾題。這一段每題只練一個反射。
+
+   驗算：大多寫成 let —— 斜率、偏導、二階導全由數值微分取，外層只做幾何組合
+   （夾角＝兩方向向量的 arccos、曲率中心＝點＋法向位移）。包絡線不解 ∂/∂c=0，
+   直接對參數掃描取極值（包絡線就是族的上／下緣）；實根個數用 rootCount 掃變號。
+   ═══════════════════════════════════════════════════════════════════ */
+(function () {
+  "use strict";
+
+  const SOURCE = "Buzz 經典題型擴充 2026-10";
+  const problems = [];
+
+  function add(problem) {
+    const tags = (problem.tags || []).slice();
+    tags.push(`rank-${problem.rank}`);
+    if (problem.rank >= 5) tags.push("boss-rank");
+    if (problem.rank <= 2) tags.push("beginner-friendly");
+    problems.push({
+      source: SOURCE,
+      topic: "derivatives",
+      difficulty: Math.min(4, problem.rank),
+      answerKind: "numeric",
+      timeLimit: problem.timeLimit || 110,
+      ...problem,
+      tags
+    });
+  }
+
+  // 兩條切線的（銳）夾角：方向向量 (1, a)、(1, b) 的夾角，斜率由數值微分給
+  const acuteAngle = (A, B) => ({ m: "let", f: "\\arccos\\left(\\frac{|1+ab|}{\\sqrt{1+a^2}\\sqrt{1+b^2}}\\right)", with: { a: A, b: B } });
+  // 極座標曲線 r(θ) 在 θ₀：位置向量 (X, Y) 與切向量 (x′(θ), y′(θ)) 的夾角（切向量沿 θ 增加的方向）
+  const radiusTangent = (r, th, X, Y) => ({ m: "let",
+    f: `\\arccos\\left(\\frac{(${X})a+(${Y})b}{\\sqrt{(${X})^2+(${Y})^2}\\sqrt{a^2+b^2}}\\right)`,
+    with: { a: { m: "deriv", f: `(${r})\\cos x`, at: [th] }, b: { m: "deriv", f: `(${r})\\sin x`, at: [th] } } });
+  // y=f(x) 在 x₀ 的曲率中心：點沿法向移動 1/κ
+  const d1 = (f, x0) => ({ m: "deriv", f, at: [x0] });
+  const d2 = (f, x0) => ({ m: "deriv", f, at: [x0], order: 2 });
+  const centreX = (f, x0) => ({ m: "let", f: `${x0}-\\frac{a(1+a^2)}{b}`, with: { a: d1(f, x0), b: d2(f, x0) } });
+  const centreY = (f, x0, y0) => ({ m: "let", f: `${y0}+\\frac{1+a^2}{b}`, with: { a: d1(f, x0), b: d2(f, x0) } });
+  // 三變數在一點的偏導
+  const p3 = (f, at, wrt) => ({ m: "deriv", f, vars: ["x", "y", "z"], at, wrt });
+  // 二元二階泰勒在 (a+h, b+k) 的值：沿 φ(t)=f(a+ht, b+kt) 取 φ(0)+φ′(0)+φ″(0)/2
+  const taylor2 = (phi, f0) => ({ m: "let", f: `${f0}+a+\\frac{b}{2}`, with: { a: d1(phi, 0), b: d2(phi, 0) } });
+
+  /* ── A. 入門反射（R1–R2）── */
+  add({ id: "cl-der-001", rank: 1,
+    prompt: "\\text{用線性近似估計 }\\sqrt[3]{8.12}",
+    answer: "2.01", verify: { m: "linApprox", f: "\\sqrt[3]{x}", a: 8, dx: 0.12 },
+    tags: ["linear-approximation", "linearization"], timeLimit: 70,
+    hints: ["取 f(x)=∛x，基準點 a=8，dx=0.12。", "f′(x)=1/(3x^{2/3})，在 8 是 1/12。"],
+    solution: "∛8.12 ≈ 2 + 0.12/12 = 2.01（真值 2.00997…）。",
+    solutionSteps: ["f(8) = 2，f′(8) = 1/(3·4) = 1/12。", "∛8.12 ≈ 2 + 0.12 × 1/12 = 2.01。"] });
+
+  add({ id: "cl-der-002", rank: 1,
+    prompt: "y=x^{3}\\quad\\text{在 }x=2,\\ dx=0.1\\text{ 時的微分 }dy",
+    answer: "1.2", verify: { m: "differential", f: "x^3", a: 2, dx: 0.1 },
+    tags: ["linear-approximation", "estimate"], timeLimit: 60,
+    hints: ["dy = f′(x)·dx。", "f′(x)=3x²。"],
+    solution: "dy = 3·4·0.1 = 1.2（真正的 Δy = 2.1³ − 8 = 1.261，差的是 dx² 以上的項）。",
+    solutionSteps: ["f′(2) = 3·2² = 12。", "dy = 12 × 0.1 = 1.2。"] });
+
+  add({ id: "cl-der-003", rank: 2,
+    prompt: "\\text{以 }30^{\\circ}\\text{ 為基準，用微分估計 }\\sin 31^{\\circ}",
+    answer: "1/2+sqrt(3)*pi/360", verify: { m: "linApprox", f: "\\sin x", a: "\\pi/6", dx: "\\pi/180" },
+    tags: ["linear-approximation", "trig"], timeLimit: 90,
+    hints: ["角度要先換成弧度：1° = π/180。", "sin(a+dx) ≈ sin a + cos a·dx。"],
+    solution: "sin 31° ≈ 1/2 + (√3/2)(π/180) = 1/2 + √3π/360 ≈ 0.5151（真值 0.51504）。",
+    solutionSteps: ["a = π/6，dx = π/180（弧度）。", "sin a = 1/2，cos a = √3/2。", "sin 31° ≈ 1/2 + (√3/2)(π/180) ≈ 0.5151。"] });
+
+  add({ id: "cl-der-004", rank: 2,
+    prompt: "f(x)=x^{3}-3x\\quad\\text{在 }[0,\\sqrt{3}]\\text{ 上滿足羅爾定理的 }c",
+    answer: "1", verify: { m: "mvtPoint", f: "x^3-3x", a: 0, b: "\\sqrt{3}" },
+    tags: ["mvt"], timeLimit: 70,
+    hints: ["先確認 f(0) = f(√3)。", "解 f′(c)=0，只留在開區間裡的那個。"],
+    solution: "f(0)=f(√3)=0；f′(c)=3c²−3=0 → c=±1，落在 (0,√3) 的是 c=1。",
+    solutionSteps: ["f(0) = 0，f(√3) = 3√3 − 3√3 = 0。", "f′(c) = 3c² − 3 = 0 → c = ±1。", "只有 c = 1 在 (0, √3) 裡。"] });
+
+  add({ id: "cl-der-005", rank: 2,
+    prompt: "y=\\dfrac{2x^{2}+3x-1}{x-1}\\quad\\text{的斜漸近線是 }y=2x+b\\quad\\text{求 }b",
+    answer: "5", verify: { m: "limit", f: "\\frac{2x^2+3x-1}{x-1}-2x", at: "inf" },
+    tags: ["asymptote", "rational-function"], timeLimit: 80,
+    hints: ["b = lim (y − 2x)，x→∞。", "或做長除法：分子除以 x−1。"],
+    solution: "2x²+3x−1 = (x−1)(2x+5) + 4，所以 y = 2x+5 + 4/(x−1)，b = 5。",
+    solutionSteps: ["長除法：2x² + 3x − 1 = (x − 1)(2x + 5) + 4。", "y = 2x + 5 + 4/(x − 1)，最後一項趨近 0。", "b = 5。"] });
+
+  add({ id: "cl-der-006", rank: 2,
+    prompt: "f(x)=xe^{x}\\quad\\text{求 }f^{(10)}(0)",
+    answer: "10", verify: { m: "derivAt0", f: "xe^x", n: 10, r: 6 },
+    tags: ["higher-derivative", "leibniz-rule"], timeLimit: 80,
+    hints: ["Leibniz 公式：x 只能被微分一次，其餘項都是 0。", "(xe^x)^{(n)} = x·e^x + n·e^x。"],
+    solution: "(xeˣ)⁽ⁿ⁾ = (x+n)eˣ，代 x=0、n=10 得 10。",
+    solutionSteps: ["Leibniz：(uv)⁽ⁿ⁾ = Σ C(n,k) u⁽ᵏ⁾ v⁽ⁿ⁻ᵏ⁾，u = x 只有 k ≤ 1 的項。", "(xeˣ)⁽¹⁰⁾ = x eˣ + 10 eˣ。", "x = 0 時得 10。"] });
+
+  add({ id: "cl-der-007", rank: 2,
+    prompt: "x^{3}-3x+1=0\\quad\\text{的實根個數}",
+    answer: "3", verify: { m: "rootCount", f: "x^3-3x+1", range: [-10, 10] },
+    tags: ["monotonicity", "extrema"], timeLimit: 80,
+    hints: ["f′(x)=3x²−3，臨界點 x=±1。", "看極大值與極小值的正負號。"],
+    solution: "f(−1)=3>0、f(1)=−1<0，又 f(−∞)=−∞、f(+∞)=+∞，三段單調區間各穿過 x 軸一次：3 個實根。",
+    solutionSteps: ["f′(x) = 3x² − 3，臨界點 x = ±1。", "極大 f(−1) = 3 > 0，極小 f(1) = −1 < 0。", "三段單調區間各有一根，共 3 個。"] });
+
+  add({ id: "cl-der-008", rank: 2,
+    prompt: "\\text{對數螺線 }r=e^{\\theta}\\quad\\text{在 }\\theta=1\\text{ 處向徑與切線的夾角 }\\psi\\quad\\left(\\tan\\psi=\\dfrac{r}{dr/d\\theta},\\ 0<\\psi<\\pi\\right)",
+    answer: "pi/4", verify: radiusTangent("e^x", 1, "e\\cos 1", "e\\sin 1"),
+    tags: ["polar-curve", "polar-coordinates", "tangent-normal"], timeLimit: 80,
+    hints: ["dr/dθ = e^θ，跟 r 一樣。", "tan ψ 是多少？跟 θ 有沒有關係？"],
+    solution: "tan ψ = e^θ/e^θ = 1，ψ = π/4 —— 而且在每一點都一樣，這正是對數螺線「等角」的意思。",
+    solutionSteps: ["r = e^θ，dr/dθ = e^θ。", "tan ψ = r/(dr/dθ) = 1。", "ψ = π/4。"] });
+
+  add({ id: "cl-der-009", rank: 2,
+    prompt: "\\text{直線 }y=x\\text{ 與拋物線 }y=x^{2}\\text{ 在交點 }(1,1)\\text{ 的夾角（取銳角，弧度）}",
+    answer: "atan(1/3)", verify: acuteAngle(d1("x", 1), d1("x^2", 1)),
+    tags: ["tangent-normal", "applications"], timeLimit: 80,
+    hints: ["曲線的夾角＝兩條切線的夾角。", "tan θ = |m₁ − m₂|/(1 + m₁m₂)。"],
+    solution: "斜率 1 與 2，tan θ = 1/3，θ = arctan(1/3) ≈ 0.322。",
+    solutionSteps: ["在 x = 1：直線斜率 1，拋物線斜率 2。", "tan θ = |2 − 1|/(1 + 2) = 1/3。", "θ = arctan(1/3) ≈ 0.322。"] });
+
+  add({ id: "cl-der-010", rank: 2,
+    prompt: "\\text{拋物線 }y=x^{2}\\text{ 在原點的曲率中心 }(X,Y)\\quad\\text{求 }Y",
+    answer: "1/2", verify: centreY("x^2", 0, 0),
+    tags: ["curvature"], timeLimit: 70,
+    hints: ["曲率中心在法線上、凹的那一側，距離是曲率半徑。", "原點 y′=0、y″=2。"],
+    solution: "R = (1+y′²)^{3/2}/|y″| = 1/2，中心在 (0, 1/2)。",
+    solutionSteps: ["y′(0) = 0，y″(0) = 2。", "Y = y + (1 + y′²)/y″ = 0 + 1/2 = 1/2。"] });
+
+  /* ── B. 幾何應用：夾角、曲率中心、包絡線（R3–R4）── */
+  add({ id: "cl-der-011", rank: 3,
+    prompt: "\\text{曲線 }y=x^{2}\\text{ 與 }x=y^{2}\\text{ 在交點 }(1,1)\\text{ 的夾角（取銳角，弧度）}",
+    answer: "atan(3/4)", verify: acuteAngle(d1("x^2", 1), { m: "implicit", F: "x-y^2", at: [1, 1] }),
+    tags: ["tangent-normal", "implicit-differentiation"], timeLimit: 100,
+    hints: ["x=y² 對 x 微分：1 = 2y·y′。", "兩條切線斜率代進 tan θ = |m₁ − m₂|/(1 + m₁m₂)。"],
+    solution: "斜率 2 與 1/2，tan θ = (3/2)/2 = 3/4，θ = arctan(3/4) ≈ 0.6435。",
+    solutionSteps: ["y = x² 在 (1,1) 斜率 2；x = y² 在 (1,1) 斜率 1/(2y) = 1/2。", "tan θ = |2 − 1/2|/(1 + 1) = 3/4。", "θ = arctan(3/4) ≈ 0.6435。"] });
+
+  add({ id: "cl-der-012", rank: 4,
+    prompt: "\\text{橢球面 }x^{2}+2y^{2}+3z^{2}=6\\text{ 在 }(1,1,1)\\text{ 的法線與平面 }z=0\\text{ 的交點 }x\\text{ 座標}",
+    answer: "2/3", verify: { m: "let", f: "1-\\frac{a}{c}", with: { a: p3("x^2+2y^2+3z^2", [1, 1, 1], "x"), c: p3("x^2+2y^2+3z^2", [1, 1, 1], "z") } },
+    tags: ["multivariable", "tangent-normal", "partial-derivative"], timeLimit: 120,
+    hints: ["法向量是 ∇F。", "法線 (1,1,1) + s∇F，讓 z 分量變 0。"],
+    solution: "∇F = (2, 4, 6) ∥ (1, 2, 3)；z = 1 + 3s = 0 → s = −1/3，x = 1 − 1/3 = 2/3。",
+    solutionSteps: ["∇F = (2x, 4y, 6z) = (2, 4, 6)，方向取 (1, 2, 3)。", "法線：(1 + s, 1 + 2s, 1 + 3s)，z = 0 → s = −1/3。", "x = 1 − 1/3 = 2/3。"] });
+
+  add({ id: "cl-der-013", rank: 4,
+    prompt: "\\text{兩圓 }x^{2}+y^{2}=4\\text{ 與 }(x-2)^{2}+y^{2}=4\\text{ 在交點 }(1,\\sqrt{3})\\text{ 的夾角（取銳角，弧度）}",
+    answer: "pi/3", verify: acuteAngle({ m: "implicit", F: "x^2+y^2-4", at: [1, "\\sqrt{3}"] }, { m: "implicit", F: "(x-2)^2+y^2-4", at: [1, "\\sqrt{3}"] }),
+    tags: ["tangent-normal", "implicit-differentiation"], timeLimit: 110,
+    hints: ["圓的切線垂直半徑 —— 切線的夾角等於兩條半徑的夾角。", "兩條半徑：從 (0,0) 與從 (2,0) 指向交點。"],
+    solution: "半徑向量 (1,√3) 與 (−1,√3)，cos = (−1+3)/4 = 1/2，夾角 π/3。",
+    solutionSteps: ["隱微分：第一圓 y′ = −x/y = −1/√3，第二圓 y′ = −(x − 2)/y = 1/√3。", "tan θ = (2/√3)/(1 − 1/3) = √3。", "θ = π/3。"] });
+
+  add({ id: "cl-der-014", rank: 3,
+    prompt: "\\text{心臟線 }r=1+\\cos\\theta\\quad\\text{在 }\\theta=\\dfrac{\\pi}{2}\\text{ 處向徑與切線的夾角 }\\psi\\quad\\left(\\tan\\psi=\\dfrac{r}{dr/d\\theta},\\ 0<\\psi<\\pi\\right)",
+    answer: "3*pi/4", verify: radiusTangent("1+\\cos x", "\\pi/2", "0", "1"),
+    tags: ["polar-curve", "polar-coordinates", "tangent-normal"], timeLimit: 100,
+    hints: ["dr/dθ = −sin θ。", "tan ψ 是負的時，ψ 落在第二象限。"],
+    solution: "r = 1、dr/dθ = −1，tan ψ = −1，在 (0, π) 裡 ψ = 3π/4。",
+    solutionSteps: ["θ = π/2：r = 1，dr/dθ = −sin(π/2) = −1。", "tan ψ = 1/(−1) = −1。", "0 < ψ < π，所以 ψ = 3π/4。"] });
+
+  add({ id: "cl-der-015", rank: 3,
+    prompt: "f(x)=x^{2}\\sin\\dfrac{1}{x}\\ (x\\neq 0),\\quad f(0)=0.\\quad f'(0)=?",
+    answer: "0", verify: { m: "limit", f: "x\\sin(1/x)", at: 0 },
+    tags: ["differentiability", "derivative-definition"], timeLimit: 90,
+    hints: ["x=0 不能套微分公式 —— 回到定義 [f(h)−f(0)]/h。", "|h sin(1/h)| ≤ |h|。"],
+    solution: "[f(h)−f(0)]/h = h sin(1/h) → 0（夾擠），f′(0)=0。陷阱：x≠0 時 f′(x)=2x sin(1/x) − cos(1/x)，在 0 沒有極限 —— 導數存在但不連續。",
+    solutionSteps: ["差商 [f(h) − f(0)]/h = h sin(1/h)。", "|h sin(1/h)| ≤ |h| → 0。", "f′(0) = 0。"] });
+
+  add({ id: "cl-der-016", rank: 4,
+    prompt: "\\text{曲線 }r=1-\\cos\\theta\\quad\\text{在 }\\theta=\\dfrac{2\\pi}{3}\\text{ 處向徑與切線的夾角 }\\psi\\quad\\left(\\tan\\psi=\\dfrac{r}{dr/d\\theta},\\ 0<\\psi<\\pi\\right)",
+    answer: "pi/3", verify: radiusTangent("1-\\cos x", "2\\pi/3", "\\frac{3}{2}\\cos\\frac{2\\pi}{3}", "\\frac{3}{2}\\sin\\frac{2\\pi}{3}"),
+    tags: ["polar-curve", "polar-coordinates", "tangent-normal"], timeLimit: 110,
+    hints: ["dr/dθ = sin θ。", "(1 − cos θ)/sin θ 可以用半角公式化簡。"],
+    solution: "tan ψ = (1−cos θ)/sin θ = tan(θ/2)，所以 ψ = θ/2 = π/3。",
+    solutionSteps: ["θ = 2π/3：r = 3/2，dr/dθ = sin(2π/3) = √3/2。", "tan ψ = (3/2)/(√3/2) = √3。", "ψ = π/3。"] });
+
+  add({ id: "cl-der-017", rank: 4,
+    prompt: "\\text{拋物線 }y=x^{2}\\text{ 在點 }(1,1)\\text{ 的曲率中心 }(X,Y)\\quad\\text{求 }X",
+    answer: "-4", verify: centreX("x^2", 1),
+    tags: ["curvature"], timeLimit: 120,
+    hints: ["X = x − y′(1+y′²)/y″。", "在 x=1：y′=2，y″=2。"],
+    solution: "X = 1 − 2·5/2 = −4，Y = 1 + 5/2 = 7/2。曲率中心 (−4, 7/2)。",
+    solutionSteps: ["y′(1) = 2，y″(1) = 2。", "X = 1 − 2·(1 + 4)/2 = −4。"] });
+
+  add({ id: "cl-der-018", rank: 4,
+    prompt: "\\text{曲線 }y=e^{x}\\text{ 在點 }(0,1)\\text{ 的曲率中心 }(X,Y)\\quad\\text{求 }Y",
+    answer: "3", verify: centreY("e^x", 0, 1),
+    tags: ["curvature", "exponential"], timeLimit: 110,
+    hints: ["Y = y + (1+y′²)/y″。", "eˣ 的各階導數在 0 都是 1。"],
+    solution: "Y = 1 + 2/1 = 3（X = 0 − 1·2/1 = −2）。曲率中心 (−2, 3)。",
+    solutionSteps: ["y′(0) = 1，y″(0) = 1。", "Y = 1 + (1 + 1)/1 = 3。"] });
+
+  add({ id: "cl-der-019", rank: 3,
+    prompt: "y=c\\,x-c^{2}\\ (c\\in\\mathbb{R})\\quad\\text{這族直線的包絡線在 }x=3\\text{ 處的 }y\\text{ 值}",
+    answer: "9/4", verify: { m: "extremum1d", f: "3c-c^2", v: "c", lo: -10, hi: 10, kind: "max" },
+    tags: ["applications", "extrema"], timeLimit: 100,
+    hints: ["包絡線：同時滿足 F(x,y,c)=0 與 ∂F/∂c=0。", "∂/∂c：x − 2c = 0。"],
+    solution: "c = x/2 代回：y = x²/2 − x²/4 = x²/4，在 x=3 得 9/4。每條直線都是 y=x²/4 的切線。",
+    solutionSteps: ["對 c 偏微分：x − 2c = 0 → c = x/2。", "代回：y = x²/4。", "x = 3：y = 9/4。"] });
+
+  add({ id: "cl-der-020", rank: 4,
+    prompt: "\\dfrac{x}{a}+\\dfrac{y}{1-a}=1\\ (0<a<1)\\quad\\text{這族直線的包絡線在 }x=\\dfrac{1}{9}\\text{ 處的 }y\\text{ 值}",
+    answer: "4/9", verify: { m: "extremum1d", f: "(1-a)\\left(1-\\frac{1}{9a}\\right)", v: "a", lo: "1/9", hi: 1, kind: "max" },
+    tags: ["applications", "extrema"], timeLimit: 130,
+    hints: ["對 a 偏微分：−x/a² + y/(1−a)² = 0。", "把兩個方程式解成 x、y 用 a 表示：x = a²。"],
+    solution: "x = a²、y = (1−a)²，包絡線是 √x + √y = 1。x=1/9 → √y = 2/3，y = 4/9。",
+    solutionSteps: ["∂/∂a：x/a² = y/(1 − a)²，配合原式解出 x = a²，y = (1 − a)²。", "包絡線：√x + √y = 1。", "x = 1/9：√y = 1 − 1/3 = 2/3，y = 4/9。"] });
+
+  add({ id: "cl-der-021", rank: 4,
+    prompt: "(x-c)^{2}+y^{2}=\\dfrac{c^{2}}{2}\\ (c\\in\\mathbb{R})\\quad\\text{這族圓的包絡線是兩條直線 }y=\\pm kx\\ (k>0)\\quad\\text{求 }k",
+    answer: "1", verify: { m: "let", f: "\\sqrt{s}", with: { s: { m: "extremum1d", f: "\\frac{c^2}{2}-(1-c)^2", v: "c", lo: -10, hi: 10, kind: "max" } } },
+    tags: ["applications", "extrema"], timeLimit: 130,
+    hints: ["對 c 偏微分：−2(x−c) = c。", "解出 c 用 x 表示，再代回原式。"],
+    solution: "c = 2x，代回 y² = 2x² − x² = x²，包絡線 y = ±x，k = 1。",
+    solutionSteps: ["∂/∂c：−2(x − c) = c → c = 2x。", "代回：x² + y² = 2x²，y² = x²。", "k = 1。"] });
+
+  /* ── C. 單調性的應用：根的個數、最佳常數（R3–R4）── */
+  add({ id: "cl-der-022", rank: 3,
+    prompt: "e^{x}=3x\\quad\\text{的實根個數}",
+    answer: "2", verify: { m: "rootCount", f: "e^x-3x", range: [-20, 20] },
+    tags: ["monotonicity", "extrema", "exponential"], timeLimit: 100,
+    hints: ["令 g(x)=eˣ − 3x，找它的最小值。", "g′(x)=eˣ − 3 = 0 在 x = ln 3。"],
+    solution: "g 的最小值 g(ln 3) = 3 − 3 ln 3 < 0，兩端趨向 +∞，所以恰有 2 個實根。",
+    solutionSteps: ["g(x) = eˣ − 3x，g′ = eˣ − 3，最小值在 x = ln 3。", "g(ln 3) = 3 − 3 ln 3 ≈ −0.296 < 0。", "g 在 ±∞ 都是 +∞，所以有 2 個根。"] });
+
+  add({ id: "cl-der-023", rank: 4,
+    prompt: "f(x,y,z)=x^{2}y+e^{yz}\\quad\\text{在 }(1,1,0)\\text{ 的方向導數最大值}",
+    answer: "sqrt(6)", verify: { m: "let", f: "\\sqrt{a^2+b^2+c^2}", with: { a: p3("x^2y+e^{yz}", [1, 1, 0], "x"), b: p3("x^2y+e^{yz}", [1, 1, 0], "y"), c: p3("x^2y+e^{yz}", [1, 1, 0], "z") } },
+    tags: ["multivariable", "directional-derivative", "partial-derivative"], timeLimit: 110,
+    hints: ["最大方向導數 = |∇f|，沿著 ∇f 的方向。", "f_z = y·e^{yz}。"],
+    solution: "∇f = (2xy, x² + z e^{yz}, y e^{yz}) = (2, 1, 1)，|∇f| = √6。",
+    solutionSteps: ["f_x = 2xy = 2，f_y = x² + z e^{yz} = 1，f_z = y e^{yz} = 1。", "|∇f| = √(4 + 1 + 1) = √6。"] });
+
+  add({ id: "cl-der-024", rank: 3,
+    prompt: "\\text{使 }e^{x}\\geq kx\\text{ 對所有實數 }x\\text{ 成立的最大常數 }k",
+    answer: "exp(1)", verify: { m: "extremeOf", f: "\\frac{e^x}{x}", kind: "inf", integer: false, range: [0.01, 50] },
+    tags: ["monotonicity", "extrema", "exponential"], timeLimit: 100,
+    hints: ["x ≤ 0 時（k>0）不等式自動成立。", "x > 0 時要 k ≤ eˣ/x 對所有 x>0，找它的最小值。"],
+    solution: "(eˣ/x)′ = eˣ(x−1)/x²，最小值在 x=1，是 e。所以最大的 k = e（y=ex 恰好切 y=eˣ 於 (1,e)）。",
+    solutionSteps: ["x > 0 時需要 k ≤ eˣ/x。", "(eˣ/x)′ = eˣ(x − 1)/x²，最小值在 x = 1。", "最小值 e，所以 k = e。"] });
+
+  add({ id: "cl-der-025", rank: 4,
+    prompt: "\\text{使 }\\ln(1+x)\\geq\\dfrac{kx}{1+x}\\text{ 對所有 }x>0\\text{ 成立的最大常數 }k",
+    answer: "1", verify: { m: "extremeOf", f: "\\frac{(1+x)\\ln(1+x)}{x}", kind: "inf", integer: false, range: ["0.000001", 1000] },
+    tags: ["monotonicity", "log"], timeLimit: 120,
+    hints: ["等價於 k ≤ (1+x)ln(1+x)/x 對所有 x>0。", "看 h(x)=(1+x)ln(1+x) − x 的單調性，以及 x→0⁺ 的極限。"],
+    solution: "h(x) = (1+x)ln(1+x) − x 的導數 ln(1+x) > 0，所以 (1+x)ln(1+x)/x > 1，且 x→0⁺ 時趨近 1。下確界是 1，最大的 k = 1。",
+    solutionSteps: ["需要 k ≤ (1 + x)ln(1 + x)/x，x > 0。", "h(x) = (1 + x)ln(1 + x) − x，h′(x) = ln(1 + x) > 0，h(0) = 0，所以比值大於 1。", "x → 0⁺ 時比值 → 1，所以最大的 k = 1。"] });
+
+  add({ id: "cl-der-026", rank: 4,
+    prompt: "\\text{使 }\\sin x\\geq ax\\text{ 在 }\\left[0,\\dfrac{\\pi}{2}\\right]\\text{ 上成立的最大常數 }a",
+    answer: "2/pi", verify: { m: "extremeOf", f: "\\frac{\\sin x}{x}", kind: "inf", integer: false, range: ["0.000001", "\\pi/2"] },
+    tags: ["monotonicity", "trig"], timeLimit: 120,
+    hints: ["看 g(x) = sin x / x 在 (0, π/2] 上的最小值。", "g′ 的分子是 x cos x − sin x，它的正負號？"],
+    solution: "(x cos x − sin x)′ = −x sin x < 0，所以分子 < 0，sin x/x 遞減，最小值在 π/2：2/π（Jordan 不等式）。",
+    solutionSteps: ["g(x) = sin x/x，g′ = (x cos x − sin x)/x²。", "u = x cos x − sin x，u′ = −x sin x < 0，u(0) = 0，所以 g 遞減。", "最小值 g(π/2) = 2/π，所以 a = 2/π。"] });
+
+  /* ── D. 高階導數與均值定理（R3–R4）── */
+  add({ id: "cl-der-027", rank: 4,
+    prompt: "f(x)=x^{2}e^{2x}\\quad\\text{求 }f^{(10)}(0)",
+    answer: "23040", verify: { m: "derivAt0", f: "x^2e^{2x}", n: 10, r: 3 },
+    tags: ["higher-derivative", "leibniz-rule"], timeLimit: 120,
+    hints: ["Leibniz：x² 微分兩次後就變 0，只剩三項。", "在 x=0 只有「x² 被微分剛好兩次」那一項不是 0。"],
+    solution: "f⁽¹⁰⁾(0) = C(10,2)·2·(e^{2x})⁽⁸⁾(0) = 45·2·2⁸ = 23040。",
+    solutionSteps: ["Leibniz 展開裡，x = 0 時只剩 C(10,2)·(x²)″·(e^{2x})⁽⁸⁾。", "(x²)″ = 2，(e^{2x})⁽⁸⁾(0) = 2⁸ = 256。", "45 × 2 × 256 = 23040。"] });
+
+  add({ id: "cl-der-028", rank: 4,
+    prompt: "f(x)=x^{2}\\sin x\\quad\\text{求 }f^{(9)}(0)",
+    answer: "-72", verify: { m: "derivAt0", f: "x^2\\sin x", n: 9, r: 4 },
+    tags: ["higher-derivative", "leibniz-rule", "trig"], timeLimit: 120,
+    hints: ["Leibniz：在 x=0 只剩 x² 被微分兩次的那一項。", "sin 的 n 階導數 = sin(x + nπ/2)。"],
+    solution: "f⁽⁹⁾(0) = C(9,2)·2·sin⁽⁷⁾(0) = 36·2·(−1) = −72。",
+    solutionSteps: ["x = 0 時只剩 C(9,2)·2·sin⁽⁷⁾(0)。", "sin⁽⁷⁾(0) = sin(7π/2) = −1。", "36 × 2 × (−1) = −72。"] });
+
+  add({ id: "cl-der-029", rank: 3,
+    prompt: "f(x)=x^{2},\\ g(x)=x^{3}\\quad\\text{在 }[1,2]\\text{ 上柯西均值定理 }\\dfrac{f'(c)}{g'(c)}=\\dfrac{f(2)-f(1)}{g(2)-g(1)}\\text{ 的 }c",
+    answer: "14/9", verify: { m: "criticalPoint", f: "7x^2-3x^3", x0: 1.5 },
+    tags: ["mvt"], timeLimit: 110,
+    hints: ["右邊 = 3/7。", "左邊 = 2c/(3c²) = 2/(3c)。"],
+    solution: "2/(3c) = 3/7 → c = 14/9 ≈ 1.556，落在 (1,2)。",
+    solutionSteps: ["(f(2) − f(1))/(g(2) − g(1)) = 3/7。", "f′(c)/g′(c) = 2c/(3c²) = 2/(3c)。", "2/(3c) = 3/7 → c = 14/9。"] });
+
+  add({ id: "cl-der-030", rank: 4,
+    prompt: "f(x)=x+2x^{2}\\sin\\dfrac{1}{x}\\ (x\\neq 0),\\quad f(0)=0.\\quad f'(0)=?",
+    answer: "1", verify: { m: "limit", f: "\\frac{x+2x^2\\sin(1/x)}{x}", at: 0 },
+    tags: ["differentiability", "derivative-definition", "monotonicity"], timeLimit: 110,
+    hints: ["回到定義：[f(h) − f(0)]/h。", "2h sin(1/h) 被 2|h| 夾住。"],
+    solution: "差商 = 1 + 2h sin(1/h) → 1。陷阱：f′(0)=1>0，但 f 在 0 的任何鄰域都不單調 —— x≠0 時 f′(x) = 1 + 4x sin(1/x) − 2cos(1/x) 會變負。",
+    solutionSteps: ["[f(h) − f(0)]/h = 1 + 2h sin(1/h)。", "|2h sin(1/h)| ≤ 2|h| → 0。", "f′(0) = 1。"] });
+
+  add({ id: "cl-der-031", rank: 4,
+    prompt: "f(x)=\\arctan x\\quad\\text{在 }[0,1]\\text{ 上均值定理的 }c",
+    answer: "sqrt(4/pi-1)", verify: { m: "mvtPoint", f: "\\arctan x", a: 0, b: 1 },
+    tags: ["mvt", "inverse-trig"], timeLimit: 110,
+    hints: ["平均斜率 = (arctan 1 − arctan 0)/1。", "f′(c) = 1/(1+c²)。"],
+    solution: "1/(1+c²) = π/4 → c² = 4/π − 1，c = √(4/π − 1) ≈ 0.5227。",
+    solutionSteps: ["平均斜率 = π/4。", "1/(1 + c²) = π/4 → c² = 4/π − 1。", "c = √(4/π − 1) ≈ 0.5227。"] });
+
+  add({ id: "cl-der-032", rank: 3,
+    prompt: "y=\\sqrt{x^{2}+4x}\\quad\\text{在 }x\\to+\\infty\\text{ 的斜漸近線是 }y=x+b\\quad\\text{求 }b",
+    answer: "2", verify: { m: "limit", f: "\\sqrt{x^2+4x}-x", at: "inf" },
+    tags: ["asymptote", "radical"], timeLimit: 90,
+    hints: ["b = lim (√(x²+4x) − x)。", "有理化：乘上 (√(x²+4x) + x)/(√(x²+4x) + x)。"],
+    solution: "√(x²+4x) − x = 4x/(√(x²+4x)+x) → 4/2 = 2。",
+    solutionSteps: ["√(x² + 4x) − x = 4x/(√(x² + 4x) + x)。", "分子分母同除 x：4/(√(1 + 4/x) + 1) → 4/2。", "b = 2。"] });
+
+  add({ id: "cl-der-033", rank: 4,
+    prompt: "y=x\\arctan x\\quad\\text{在 }x\\to+\\infty\\text{ 的斜漸近線是 }y=\\dfrac{\\pi}{2}x+b\\quad\\text{求 }b",
+    answer: "-1", verify: { m: "limit", f: "x\\arctan x-\\frac{\\pi}{2}x", at: "inf" },
+    tags: ["asymptote", "inverse-trig"], timeLimit: 110,
+    hints: ["x>0 時 arctan x = π/2 − arctan(1/x)。", "arctan(1/x) ≈ 1/x。"],
+    solution: "x arctan x − (π/2)x = −x arctan(1/x) → −1。",
+    solutionSteps: ["x arctan x − (π/2)x = −x·arctan(1/x)。", "t = 1/x → 0⁺：−arctan(t)/t → −1。", "b = −1。"] });
+
+  add({ id: "cl-der-034", rank: 4,
+    prompt: "x=e^{t}\\cos t,\\ y=e^{t}\\sin t\\quad\\text{在 }t=0\\text{ 的 }\\dfrac{d^{2}y}{dx^{2}}",
+    answer: "2", verify: { m: "paramSecond", x: "e^t\\cos t", y: "e^t\\sin t", at: 0 },
+    tags: ["parametric-differentiation", "second-derivative"], timeLimit: 130,
+    hints: ["dy/dx = (sin t + cos t)/(cos t − sin t)。", "d²y/dx² = [d/dt (dy/dx)] / (dx/dt)。"],
+    solution: "d/dt(dy/dx) = 2/(cos t − sin t)²，在 t=0 是 2；dx/dt = 1，所以 d²y/dx² = 2。",
+    solutionSteps: ["dx/dt = eᵗ(cos t − sin t)，dy/dt = eᵗ(sin t + cos t)。", "d/dt(dy/dx) = 2/(cos t − sin t)²，t = 0 時是 2。", "除以 dx/dt = 1：d²y/dx² = 2。"] });
+
+  /* ── E. 多變數：泰勒、空間曲線、全微分（R4）── */
+  add({ id: "cl-der-035", rank: 4,
+    prompt: "f(x,y)=e^{x}\\cos y\\quad\\text{在 }(0,0)\\text{ 的二階泰勒多項式 }T_{2}\\quad\\text{求 }T_{2}(0.2,\\,0.4)",
+    answer: "1.14", verify: taylor2("e^{0.2x}\\cos(0.4x)", 1),
+    tags: ["multivariable", "taylor", "partial-derivative"], timeLimit: 130,
+    hints: ["T₂ = f + f_x x + f_y y + ½(f_xx x² + 2f_xy xy + f_yy y²)。", "在原點 f_y = 0、f_xy = 0。"],
+    solution: "T₂ = 1 + x + x²/2 − y²/2，代入得 1 + 0.2 + 0.02 − 0.08 = 1.14（真值 1.1257）。",
+    solutionSteps: ["f = 1，f_x = 1，f_y = 0，f_xx = 1，f_xy = 0，f_yy = −1。", "T₂ = 1 + x + x²/2 − y²/2。", "T₂(0.2, 0.4) = 1 + 0.2 + 0.02 − 0.08 = 1.14。"] });
+
+  add({ id: "cl-der-036", rank: 4,
+    prompt: "\\text{空間曲線 }\\mathbf{r}(t)=(t,\\,t^{2},\\,t^{3})\\text{ 在 }t=1\\text{ 的法平面寫成 }x+2y+3z=D\\quad\\text{求 }D",
+    answer: "6", verify: { m: "let", f: "a\\cdot 1+b\\cdot 1+c\\cdot 1", with: { a: d1("x", 1), b: d1("x^2", 1), c: d1("x^3", 1) } },
+    tags: ["multivariable", "tangent-normal", "parametric"], timeLimit: 110,
+    hints: ["法平面的法向量就是切向量 r′(1)。", "平面過曲線上的點 r(1)。"],
+    solution: "r′(1) = (1,2,3)，過 (1,1,1)：x + 2y + 3z = 1 + 2 + 3 = 6。",
+    solutionSteps: ["r′(t) = (1, 2t, 3t²)，r′(1) = (1, 2, 3)。", "法平面過 r(1) = (1, 1, 1)。", "D = 1 + 2 + 3 = 6。"] });
+
+  add({ id: "cl-der-037", rank: 4,
+    prompt: "\\text{螺旋線 }\\mathbf{r}(t)=(\\cos t,\\,\\sin t,\\,t)\\text{ 在 }t=\\dfrac{\\pi}{2}\\text{ 的切線與平面 }z=0\\text{ 的交點 }x\\text{ 座標}",
+    answer: "pi/2", verify: { m: "let", f: "0-\\frac{\\pi}{2}\\cdot\\frac{a}{c}", with: { a: d1("\\cos x", "\\pi/2"), c: d1("x", "\\pi/2") } },
+    tags: ["multivariable", "tangent-normal", "parametric"], timeLimit: 120,
+    hints: ["切點 r(π/2)，方向 r′(π/2)。", "切線 r(π/2) + s·r′(π/2)，讓 z 分量 = 0。"],
+    solution: "切點 (0,1,π/2)，方向 (−1,0,1)；z = π/2 + s = 0 → s = −π/2，x = π/2。",
+    solutionSteps: ["r(π/2) = (0, 1, π/2)，r′(π/2) = (−1, 0, 1)。", "z 分量：π/2 + s = 0 → s = −π/2。", "x = 0 − s = π/2。"] });
+
+  add({ id: "cl-der-038", rank: 4,
+    prompt: "\\text{用全微分估計 }(1.02)^{3.01}",
+    answer: "1.06", verify: { m: "let", f: "1+d", with: { d: { m: "totalDiff", f: "x^y", at: [1, 3], d: [0.02, 0.01] } } },
+    tags: ["multivariable", "total-differential", "linearization"], timeLimit: 110,
+    hints: ["f(x,y) = x^y，基準點 (1,3)。", "f_x = y x^{y−1}，f_y = x^y ln x。"],
+    solution: "f(1,3)=1，f_x=3，f_y=0：≈ 1 + 3·0.02 + 0·0.01 = 1.06（真值 1.0614）。",
+    solutionSteps: ["f(1, 3) = 1，f_x(1, 3) = 3，f_y(1, 3) = 1·ln 1 = 0。", "df = 3 × 0.02 + 0 × 0.01 = 0.06。", "(1.02)^3.01 ≈ 1 + 0.06 = 1.06。"] });
+
+  /* ── F. 魔王：更深的幾何與多變數（R5–R6）── */
+  add({ id: "cl-der-039", rank: 5,
+    prompt: "\\text{雙紐線 }r^{2}=\\cos 2\\theta\\ (r>0)\\quad\\text{在 }\\theta=\\dfrac{\\pi}{6}\\text{ 處向徑與切線的夾角 }\\psi\\quad\\left(\\tan\\psi=\\dfrac{r}{dr/d\\theta},\\ 0<\\psi<\\pi\\right)",
+    answer: "5*pi/6", verify: radiusTangent("\\sqrt{\\cos 2x}", "\\pi/6", "\\sqrt{1/2}\\cos\\frac{\\pi}{6}", "\\sqrt{1/2}\\sin\\frac{\\pi}{6}"),
+    tags: ["polar-curve", "polar-coordinates", "implicit-differentiation"], timeLimit: 150,
+    hints: ["對 θ 隱微分：2r·r′ = −2 sin 2θ。", "r/r′ = r²/(r r′)，r² 可以直接換成 cos 2θ。"],
+    solution: "tan ψ = r²/(r r′) = cos 2θ/(−sin 2θ) = −cot 2θ = −1/√3，在 (0,π) 裡 ψ = 5π/6。",
+    solutionSteps: ["2r r′ = −2 sin 2θ → r r′ = −sin 2θ。", "tan ψ = r²/(r r′) = −cos 2θ/sin 2θ = −1/√3（θ = π/6）。", "0 < ψ < π，所以 ψ = 5π/6。"] });
+
+  add({ id: "cl-der-040", rank: 5,
+    prompt: "\\text{橢圓 }x=2\\cos t,\\ y=\\sin t\\quad\\text{在 }t=0\\text{（點 }(2,0)\\text{）的曲率中心 }(X,Y)\\quad\\text{求 }X",
+    answer: "3/2", verify: { m: "let", f: "2-\\frac{b(a^2+b^2)}{ad-bc}", with: { a: d1("2\\cos x", 0), b: d1("\\sin x", 0), c: d2("2\\cos x", 0), d: d2("\\sin x", 0) } },
+    tags: ["curvature", "parametric"], timeLimit: 150,
+    hints: ["參數式曲率 κ = |x′y″ − y′x″|/(x′² + y′²)^1.5。", "長軸端點的曲率半徑是 b²/a。"],
+    solution: "x′=0、y′=1、x″=−2、y″=0：κ = 2，R = 1/2；中心往橢圓內側（−x 方向）移 1/2，X = 3/2。",
+    solutionSteps: ["t = 0：x′ = 0，y′ = 1，x″ = −2，y″ = 0。", "κ = |0·0 − 1·(−2)|/1 = 2，R = 1/2。", "中心在 (2 − 1/2, 0)，X = 3/2。"] });
+
+  add({ id: "cl-der-041", rank: 5,
+    prompt: "\\text{從原點以初速 }10\\text{ m/s、各種仰角拋出的質點（}g=10\\text{ m/s}^{2}\\text{，忽略空氣阻力）。所有軌跡的包絡線在水平距離 }6\\text{ m 處的高度（m）}",
+    answer: "3.2", verify: { m: "extremum1d", f: "6u-\\frac{10\\cdot 36(1+u^2)}{200}", v: "u", lo: 0, hi: 20, kind: "max" },
+    tags: ["applications", "extrema", "story-problem"], timeLimit: 170,
+    hints: ["令 u = tan α：y = xu − g x²(1+u²)/(2v₀²)。", "固定 x，對 u 求最大值 —— 那就是包絡線。"],
+    solution: "對 u 微分：x − g x² u/v₀² = 0 → u = v₀²/(gx)。代回得安全拋物線 y = v₀²/(2g) − g x²/(2v₀²) = 5 − x²/20，x=6 時 3.2 m。",
+    solutionSteps: ["y = 6u − 1.8(1 + u²)（x = 6，g = 10，v₀ = 10）。", "dy/du = 6 − 3.6u = 0 → u = 5/3。", "y = 10 − 1.8 − 5 = 3.2。"] });
+
+  add({ id: "cl-der-042", rank: 6,
+    prompt: "\\text{長度 }1\\text{ 的線段兩端分別在正 }x\\text{ 軸與正 }y\\text{ 軸上滑動，線段族 }\\dfrac{x}{\\cos t}+\\dfrac{y}{\\sin t}=1\\ \\left(0<t<\\dfrac{\\pi}{2}\\right)\\text{ 的包絡線在 }x=\\dfrac{1}{8}\\text{ 處的 }y\\text{ 值}",
+    answer: "3*sqrt(3)/8", verify: { m: "extremum1d", f: "\\sin t\\left(1-\\frac{1}{8\\cos t}\\right)", v: "t", lo: 0, hi: 1.4, kind: "max" },
+    tags: ["applications", "extrema", "trig"], timeLimit: 190,
+    hints: ["對 t 偏微分：x sin t/cos² t − y cos t/sin² t = 0。", "跟原式聯立解出 x = cos³ t，y = sin³ t。"],
+    solution: "包絡線是星形線 x^{2/3} + y^{2/3} = 1。x = 1/8 → x^{2/3} = 1/4，y^{2/3} = 3/4，y = (3/4)^{3/2} = 3√3/8 ≈ 0.6495。",
+    solutionSteps: ["聯立原式與 ∂/∂t = 0 得 x = cos³ t，y = sin³ t。", "x = 1/8 → cos t = 1/2，t = π/3。", "y = sin³(π/3) = (√3/2)³ = 3√3/8。"] });
+
+  add({ id: "cl-der-043", rank: 5,
+    prompt: "\\text{使 }\\cos x\\leq 1-kx^{2}\\text{ 在 }\\left[0,\\dfrac{\\pi}{2}\\right]\\text{ 上成立的最大常數 }k",
+    answer: "4/pi^2", verify: { m: "extremeOf", f: "\\frac{1-\\cos x}{x^2}", kind: "inf", integer: false, range: ["0.001", "\\pi/2"] },
+    tags: ["monotonicity", "trig"], timeLimit: 160,
+    hints: ["等價於 k ≤ (1 − cos x)/x² 對 0 < x ≤ π/2。", "1 − cos x = 2 sin²(x/2)，再看 sin u/u 的單調性。"],
+    solution: "(1−cos x)/x² = ½(sin(x/2)/(x/2))²，sin u/u 在 (0, π/4] 遞減，最小值在 x = π/2：(1 − 0)/(π²/4) = 4/π²。",
+    solutionSteps: ["(1 − cos x)/x² = ½·(sin(x/2)/(x/2))²。", "sin u/u 遞減，所以比值在 x = π/2 最小。", "最小值 1/(π²/4) = 4/π² ≈ 0.405。"] });
+
+  add({ id: "cl-der-044", rank: 5,
+    prompt: "f(x,y)=\\sin x\\sin y\\quad\\text{在 }\\left(\\dfrac{\\pi}{4},\\dfrac{\\pi}{4}\\right)\\text{ 的二階泰勒多項式 }T_{2}\\quad\\text{求 }T_{2}\\left(\\dfrac{\\pi}{4}+0.1,\\,\\dfrac{\\pi}{4}-0.1\\right)",
+    answer: "0.49", verify: taylor2("\\sin(\\frac{\\pi}{4}+0.1x)\\sin(\\frac{\\pi}{4}-0.1x)", 0.5),
+    tags: ["multivariable", "taylor", "partial-derivative"], timeLimit: 170,
+    hints: ["在該點 f、f_x、f_y、f_xy 都是 1/2，f_xx = f_yy = −1/2。", "h = 0.1、k = −0.1，一階項互相抵消。"],
+    solution: "T₂ = 1/2 + (h + k)/2 + ½(−h²/2 + hk − k²/2)。h=0.1、k=−0.1：1/2 + 0 + ½(−0.005 − 0.01 − 0.005) = 0.49。",
+    solutionSteps: ["f = 1/2，f_x = f_y = 1/2，f_xx = f_yy = −1/2，f_xy = 1/2。", "一階項 (0.1 − 0.1)/2 = 0。", "二階項 ½(−0.005 − 0.01 − 0.005) = −0.01，T₂ = 0.49。"] });
+
+  add({ id: "cl-der-045", rank: 5,
+    prompt: "f(x,y)=(1+x)^{y}\\quad\\text{在 }(0,0)\\text{ 的二階泰勒多項式中 }xy\\text{ 項的係數}",
+    answer: "1", verify: { m: "let", f: "\\frac{a-b}{4}", with: { a: d2("(1+x)^x", 0), b: d2("(1+x)^{-x}", 0) } },
+    tags: ["multivariable", "taylor", "partial-derivative"], timeLimit: 150,
+    hints: ["寫成 e^{y ln(1+x)}。", "y ln(1+x) 最低次的項是 xy。"],
+    solution: "e^{y ln(1+x)} = 1 + y(x − x²/2 + …) + … ，二次以內只有 1 + xy，係數 1（也就是 f_xy(0,0) = 1）。",
+    solutionSteps: ["(1 + x)^y = e^{y ln(1 + x)}，y ln(1 + x) = xy − x²y/2 + …。", "e^u = 1 + u + u²/2 + …，u 的最低次是二次。", "二次以內 T₂ = 1 + xy，係數 1。"] });
+
+  add({ id: "cl-der-046", rank: 6,
+    prompt: "\\text{球面 }x^{2}+y^{2}+z^{2}=6\\text{ 與平面 }x+y+z=0\\text{ 的交線，在 }(1,-2,1)\\text{ 的切線與平面 }x=0\\text{ 的交點 }z\\text{ 座標}",
+    answer: "2", verify: { m: "let", f: "1-\\frac{aq-bp}{bs-cq}", with: {
+      a: p3("x^2+y^2+z^2", [1, -2, 1], "x"), b: p3("x^2+y^2+z^2", [1, -2, 1], "y"), c: p3("x^2+y^2+z^2", [1, -2, 1], "z"),
+      p: p3("x+y+z", [1, -2, 1], "x"), q: p3("x+y+z", [1, -2, 1], "y"), s: p3("x+y+z", [1, -2, 1], "z") } },
+    tags: ["multivariable", "tangent-normal", "partial-derivative"], timeLimit: 190,
+    hints: ["交線的切向量垂直兩個曲面的法向量。", "切向量 = ∇F × ∇G。"],
+    solution: "∇F = (2,−4,2)，∇G = (1,1,1)，叉積 (−6,0,6) ∥ (−1,0,1)。切線 (1−s, −2, 1+s)，x=0 → s=1，z=2。",
+    solutionSteps: ["∇F = (2, −4, 2)，∇G = (1, 1, 1)。", "∇F × ∇G = (−6, 0, 6)，方向取 (−1, 0, 1)。", "切線 (1 − s, −2, 1 + s)，x = 0 → s = 1，z = 2。"] });
+
+  add({ id: "cl-der-047", rank: 5,
+    prompt: "\\text{曲面 }xyz=1\\text{ 在 }(1,1,1)\\text{ 的切平面與三個座標平面圍成的四面體體積}",
+    answer: "9/2", verify: { m: "let", f: "\\frac{(a+b+c)^3}{6abc}", with: { a: p3("xyz", [1, 1, 1], "x"), b: p3("xyz", [1, 1, 1], "y"), c: p3("xyz", [1, 1, 1], "z") } },
+    tags: ["multivariable", "tangent-normal", "partial-derivative"], timeLimit: 150,
+    hints: ["∇(xyz) = (yz, xz, xy)。", "切平面的三個截距，四面體體積 = 截距乘積 / 6。"],
+    solution: "切平面 x + y + z = 3，截距都是 3，體積 = 27/6 = 9/2。（在 xyz=a³ 的任一點，這個體積都是 9a³/2。）",
+    solutionSteps: ["∇(xyz) 在 (1,1,1) 是 (1, 1, 1)。", "切平面 x + y + z = 3，三個截距都是 3。", "體積 = 3·3·3/6 = 9/2。"] });
+
+  add({ id: "cl-der-048", rank: 5,
+    prompt: "\\text{曲線 }e^{y}+xy=e\\text{ 在點 }(0,1)\\text{ 的 }\\dfrac{d^{2}y}{dx^{2}}",
+    answer: "exp(-2)", verify: { m: "implicitDeriv", F: "e^y+xy-e", at: [0, 1], order: 2 },
+    tags: ["implicit-differentiation", "second-derivative", "exponential"], timeLimit: 160,
+    hints: ["一次：eʸy′ + y + xy′ = 0，在 (0,1) 得 y′ = −1/e。", "再微分一次：eʸ(y′)² + eʸy″ + 2y′ + xy″ = 0。"],
+    solution: "代 x=0、y=1、y′=−1/e：e·(1/e²) + e·y″ − 2/e = 0 → y″ = 1/e² ≈ 0.1353。",
+    solutionSteps: ["eʸy′ + y + xy′ = 0 → y′(0) = −1/e。", "再微分：eʸ(y′)² + eʸy″ + 2y′ + xy″ = 0。", "代入：1/e + e·y″ − 2/e = 0 → y″ = 1/e²。"] });
+
+  add({ id: "cl-der-049", rank: 5,
+    prompt: "\\sin x=\\dfrac{x}{10}\\quad\\text{的實根個數}",
+    answer: "7", verify: { m: "rootCount", f: "\\sin x-\\frac{x}{10}", range: [-12, 12] },
+    tags: ["monotonicity", "trig", "symmetry"], timeLimit: 170,
+    hints: ["|x| > 10 時 |x/10| > 1，不可能有根。", "兩邊都是奇函數，只要數 x>0 的根，再加上 x=0。"],
+    solution: "x>0：(0,π) 一個；(π,2π) 與 (3π,10] 上 sin x<0，沒有根；(2π,3π) 中 sin 的峰值 1 高於 x/10≈0.79，交兩次 —— 共 3 個。對稱再 3 個，加上 0：7 個。",
+    solutionSteps: ["根只能在 [−10, 10]，而且對稱，x = 0 是一個根。", "x > 0：(0, π) 一個根，(2π, 3π) 兩個根（峰值 sin(5π/2) = 1 > 0.785），其餘地方 sin x < 0。", "總數 1 + 2·3 = 7。"] });
+
+  add({ id: "cl-der-050", rank: 5,
+    prompt: "f(x)=x^{2}\\ln(1+x)\\quad\\text{求 }f^{(5)}(0)",
+    answer: "40", verify: { m: "derivAt0", f: "x^2\\ln(1+x)", n: 5, r: 0.5 },
+    tags: ["higher-derivative", "leibniz-rule", "log"], timeLimit: 150,
+    hints: ["Leibniz：在 x=0 只剩 x² 被微分兩次那一項。", "(ln(1+x))‴ = 2/(1+x)³。"],
+    solution: "f⁽⁵⁾(0) = C(5,2)·2·(ln(1+x))‴(0) = 10·2·2 = 40。",
+    solutionSteps: ["x = 0 時只剩 C(5,2)·(x²)″·(ln(1 + x))‴。", "(x²)″ = 2，(ln(1 + x))‴(0) = 2。", "10 × 2 × 2 = 40。"] });
+
+  window.BUZZ_PROBLEMS = (window.BUZZ_PROBLEMS || []).concat(problems);
+})();

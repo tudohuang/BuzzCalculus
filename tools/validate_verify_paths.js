@@ -61,7 +61,10 @@ const VALUE_CASES = [
   ["保守場求參數（三維）", { m: "conservativeParam", F: ["yz", "a xz", "xy"], param: "a" }, 1],
   ["let：先解 θ 再代回 r", { m: "let", f: "3\\cos t", with: { t: { m: "root", f: "3\\cos x-(1+\\cos x)", x0: 1 } } }, 1.5],
   ["stationary：鞍點的值（梯度下降找不到的那種）", { m: "stationary", vars: ["x", "y"], f: "x^2-2xy+2y", x0: [2, 0.5] }, 1],
-  ["stationary：回傳座標", { m: "stationary", vars: ["x", "y"], f: "x^3+y^3-3xy", x0: [0.8, 1.3], out: "y" }, 1]
+  ["stationary：回傳座標", { m: "stationary", vars: ["x", "y"], f: "x^3+y^3-3xy", x0: [0.8, 1.3], out: "y" }, 1],
+  ["rootCount：eˣ = 3x 有兩個根", { m: "rootCount", f: "e^x-3x", range: [-20, 20] }, 2],
+  ["rootCount：sin x = x/10（含 0 與對稱的根）", { m: "rootCount", f: "\\sin x-\\frac{x}{10}", range: [-12, 12] }, 7],
+  ["rootCount：網格剛好踩在根上只算一次", { m: "rootCount", f: "x^2-1", range: [-2, 2], steps: 400 }, 2]
 ];
 
 VALUE_CASES.forEach(([name, spec, expected]) => {
@@ -148,8 +151,17 @@ const WRONG_CASES = [
   ["旋度的 Q_x − P_y 減反了", numericProblem("-6", { m: "fieldOp", op: "curl", F: ["-y^2", "x^2"], at: [1, 2] })],
   ["保守場參數：∂P/∂y 少了 y² 微分出來的 2", numericProblem("6", { m: "conservativeParam", F: ["a x y^2", "3x^2y"], param: "a" })],
   ["let：把交點的 θ（π/3）當成 r", numericProblem("1.0471975511965976", { m: "let", f: "3\\cos t", with: { t: { m: "root", f: "3\\cos x-(1+\\cos x)", x0: 1 } } })],
-  ["stationary：鞍點的值寫成角落的值", numericProblem("0", { m: "stationary", vars: ["x", "y"], f: "x^2-2xy+2y", x0: [2, 0.5] })]
+  ["stationary：鞍點的值寫成角落的值", numericProblem("0", { m: "stationary", vars: ["x", "y"], f: "x^2-2xy+2y", x0: [2, 0.5] })],
+  ["rootCount：sin x = x/10 只數了正根", numericProblem("3", { m: "rootCount", f: "\\sin x-\\frac{x}{10}", range: [-12, 12] })],
+  ["rootCount：x⁵ − 5x + 1 只看到一個根", numericProblem("1", { m: "rootCount", f: "x^5-5x+1", range: [-10, 10] })]
 ];
+
+// 實根個數：切點（重根）不變號，掃描會少數一個 —— 要丟錯，不能回一個少一的數
+{
+  let threw = false;
+  try { EXPLICIT_METHODS.rootCount({ m: "rootCount", f: "e^x-ex", range: [-5, 5] }); } catch (_error) { threw = true; }
+  if (!threw) fail("rootCount：eˣ = ex 在 x=1 相切（重根），卻沒有丟錯");
+}
 
 // 保守場求參數：沒有任何常數能讓旋度處處為零時要回 NaN（交給上層判 unverified），
 // 不能硬挑一個「最接近」的值當答案。
