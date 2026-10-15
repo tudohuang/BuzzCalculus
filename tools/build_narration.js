@@ -69,7 +69,8 @@ const SAMPLES = path.join(ROOT, "docs", "report", "course-review", "voice-sample
 // 2026-10-14 老闆聽過試聽之後定案：女聲換成 Azure DragonHD Omni 的 Xiaoyue（沒有 zh-TW 的 Omni，要靠 <lang zh-TW> 與下面的念法表），
 // 不要男聲 —— 只錄 f。只有一個聲音時播放器與設定頁都不出現聲音切換。
 // 試聽與量測：docs/report/course-review/voice-try/omni/README.md（換聲音的取捨；本機報告，不進版控）。下面的念法表、逐句合成、temperature 各自寫了量法。
-const VOICES = { f: "zh-CN-Xiaoyue:DragonHDOmniLatestNeural" };
+// 2026-10-15 老闆改回 HsiaoChen（zh-TW-HsiaoChenNeural）。DragonHD 那套（念法表、逐句合成、temperature）留著，換回 Omni 只要改這一行。
+const VOICES = { f: "zh-TW-HsiaoChenNeural" };
 const VKEYS = Object.keys(VOICES);
 const VOICE = VOICES.f;
 const RATE = "+0%"; // 舊聲音的 SSML prosody rate（Omni 不吃 prosody，不包）；也在 hash 裡。播放器另外有 1×／1.25×／1.5×
@@ -91,11 +92,13 @@ const MAX_ATTEMPTS = 8;
 // 念之前的清洗：語音引擎會把冒號後面接字母讀成表情（「：P」念成吐舌頭）、把破折號與引號念怪。
 // 冒號／分號換成逗號（一樣是停頓）、破折號與引號換成空白 —— 一個字換一個字，長度不變，逐字時間點與黑板錨點的字位置照舊對得上。
 // 字幕顯示的還是原稿；只有送去念的字被清洗。改這裡要把 SPEAK_VERSION 加一（hash 會換、整批重錄）。
-const SPEAK_VERSION = "s2";
-// 用過的版本（新到舊）：已上傳的舊錄音（prev）可能是哪一版錄的。s1 = 清洗；s2 = s1 ＋ DragonHD 的念法表與逐句合成
-const SPEAK_VERSIONS = ["s2", "s1"];
+const SPEAK_VERSION = "s3";
+// 用過的版本（新到舊）：已上傳的舊錄音（prev）可能是哪一版錄的。s1 = 清洗；s2 = s1 ＋ DragonHD 的念法表與逐句合成；s3 = s2 ＋ pi 念「派」
+const SPEAK_VERSIONS = ["s3", "s2", "s1"];
 // 連字號要跳脫：寫成 [–—-「] 會變成 U+2014 到 U+300C 的「範圍」，把「、」「。」與一大段符號都換成空白（停頓整個不見）。
-const clean = (text) => String(text).replace(/[：:；;]/g, "，").replace(/[–—\-「」『』]/g, " ");
+// 課文把 π 寫成拉丁字「pi」（217 句），語音念成英文字母或怪音 —— 送去念之前換成「派」補一個空白（長度一樣，逐字時間點照舊對得上）。
+// \b 只認 ASCII 字元，所以「二pi」「三分之 pi。」都換得到，spike／pivot 這種字裡的 pi 不會被換。
+const clean = (text) => String(text).replace(/[：:；;]/g, "，").replace(/[–—\-「」『』]/g, " ").replace(/\bpi\b/gi, "派 ");
 // DragonHD 的念法表（只改送去念的字；一樣一個字換一個字、長度不變）。Omni 是大陸語料訓練的：加了 <lang zh-TW> 之後
 // 大部分字走台灣讀法，但下面這幾個在詞裡會「抽籤」（同一個詞每次念的聲調不一樣），換成只有台灣那個讀音的同音字就穩了。
 // 量法：同一個聲音念「原字／台灣讀音的同音字／大陸讀音的同音字」各 3–6 次，比音高曲線（scratchpad omni2/pron*.js）。
