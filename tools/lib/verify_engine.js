@@ -3666,6 +3666,10 @@ function runExplicit(problem, compileAnswer) {
     if (value && typeof value.__fnCheck === "function") {
       return value.__fnCheck(compileAnswer);
     }
+    // 選擇題：每個選項各自算，比對的是「成立的是不是答案那一項」
+    if (value && typeof value.__choiceCheck === "function") {
+      return value.__choiceCheck(problem);
+    }
     // 是非題（一致連續、一致收斂）：答案是一句話不是一個數。
     // 驗算端算出「成不成立」，這裡只比對那句話有沒有否定詞 ——
     // 「不一致連續」對上 false 才算過，寫反了會被抓到。
@@ -5030,6 +5034,238 @@ const EXPLICIT_METHODS = {
     if (norms[3] < 1e-3 && norms[3] < norms[0] / 10) return { __claim: true };
     if (norms[3] > norms[0] / 5) return { __claim: false };
     throw new Error(`sup 範數的走向判不出來：${norms.map((v) => v.toPrecision(3)).join(" → ")}`);
+  },
+
+  /* ── 2026-10 高曝光題補的四條路徑 ─────────────────────────────
+     講次隨堂包裡被課程推薦、又進固定考卷的題，有一大半是選擇題或「收斂／發散」
+     判斷，原本一題都驗不了。這四條補的是「把題幹翻成數值問題」時缺的零件，
+     驗算端仍然只做數值微分、數值積分、牛頓法 —— 作者的代數一步都不重用。 */
+
+  // 瑕積分收不收斂（是非題）。{ m, f, v?, a, b("inf" 可), sing?: [內部或端點的奇異點] }
+  //
+  // 做法：把區間在奇異點與 ±∞ 切開，每一個「壞端點」都往它逼近一個十倍一個十倍地積
+  // （∞ 端：[B·10ʲ, B·10ʲ⁺¹]；有限奇異點 s：[s+h·10⁻ʲ⁻¹, s+h·10⁻ʲ]），看每一段的積分量 dⱼ
+  // 怎麼變。冪次型的尾巴 dⱼ 是等比的：比值 ρ ≤ 0.9 而且沒有往 1 爬 → 收斂；
+  // ρ ≥ 0.99（1/x 的 ρ 恰好是 1）→ 發散。中間的（對數型、邊緣冪次）一律判不出來 ——
+  // ∫dx/(x ln x) 的 ρ 是 k/(k+1)，只看單一比值會誤判成收斂，所以要求比值不往上爬。
+  improperConverges: (spec) => {
+    const v = spec.v || "x";
+    const f = latex.compile(spec.f, [v]);
+    const end = (value) => {
+      const raw = String(value).trim();
+      if (/^-?inf(inity)?$/i.test(raw)) return raw.startsWith("-") ? -Infinity : Infinity;
+      return constant(value);
+    };
+    const a = end(spec.a);
+    const b = end(spec.b);
+    if (!(b > a)) throw new Error("improperConverges 要 a < b");
+    const sing = (spec.sing || []).map(constant).filter((s) => s >= a && s <= b);
+    // 5 點 Gauss–Legendre 的複合版：段數跟著長度走，振盪的被積函數（cos x / x）才積得準
+    const GL = [[0, 128 / 225], [-0.5384693101056831, 0.4786286704993665], [0.5384693101056831, 0.4786286704993665],
+      [-0.906179845938664, 0.2369268850561891], [0.906179845938664, 0.2369268850561891]];
+    const chunk = (lo, hi, segments) => {
+      const total = numeric.createSum();
+      const h = (hi - lo) / segments;
+      for (let i = 0; i < segments; i += 1) {
+        const mid = lo + (i + 0.5) * h;
+        for (const [node, weight] of GL) {
+          const value = f(mid + (node * h) / 2);
+          if (!Number.isFinite(value)) throw new Error(`被積函數在 ${format(mid + (node * h) / 2)} 不是有限值`);
+          total.add(weight * value * h / 2);
+        }
+      }
+      return total.value;
+    };
+    // 一個壞端點 → 一串十倍尺度的積分量
+    const decades = (kind, anchor, side, room) => {
+      const out = [];
+      if (kind === "inf") {
+        const base = Math.max(10, Math.abs(anchor) * 10);
+        for (let j = 0; j < 4; j += 1) {
+          const lo = side * base * Math.pow(10, j);
+          const hi = side * base * Math.pow(10, j + 1);
+          // 每段寬 2：5 點 Gauss 對週期 2π 的 cos 仍然準到 1e-6 以下
+          const segments = Math.min(1e6, Math.max(400, Math.ceil(Math.abs(hi - lo) / 2)));
+          out.push(Math.abs(chunk(Math.min(lo, hi), Math.max(lo, hi), segments)));
+        }
+      } else {
+        const h = Math.min(1, room) / 10;
+        for (let j = 0; j < 9; j += 1) {
+          const near = anchor + side * h * Math.pow(10, -j - 1);
+          const far = anchor + side * h * Math.pow(10, -j);
+          out.push(Math.abs(chunk(Math.min(near, far), Math.max(near, far), 400)));
+        }
+      }
+      return out;
+    };
+    const judge = (d) => {
+      const first = d[0];
+      if (!(first > 0)) throw new Error("第一個尺度的積分量就是 0，判不出來");
+      if (d[d.length - 1] < 1e-13 * first) return true;
+      const ratios = [];
+      for (let i = 1; i < d.length; i += 1) ratios.push(d[i] / d[i - 1]);
+      const tail = ratios.slice(-3);
+      if (tail.every((r) => r >= 0.99)) return false;
+      if (tail.every((r) => r <= 0.9) && tail[2] <= tail[0] + 0.02) return true;
+      return null;
+    };
+    const ends = [];
+    const points = [a, ...sing.filter((s) => s > a && s < b), b];
+    for (let i = 0; i + 1 < points.length; i += 1) {
+      const lo = points[i];
+      const hi = points[i + 1];
+      const room = Number.isFinite(lo) && Number.isFinite(hi) ? (hi - lo) / 2 : 1;
+      if (!Number.isFinite(lo)) ends.push(["inf", Number.isFinite(hi) ? hi : 0, -1, room]);
+      else if (sing.includes(lo)) ends.push(["pt", lo, 1, room]);
+      if (!Number.isFinite(hi)) ends.push(["inf", Number.isFinite(lo) ? lo : 0, 1, room]);
+      else if (sing.includes(hi)) ends.push(["pt", hi, -1, room]);
+    }
+    if (!ends.length) throw new Error("沒有無窮端點也沒有宣告奇異點 —— 這不是瑕積分");
+    const verdicts = ends.map((e) => judge(decades(...e)));
+    if (verdicts.includes(false)) return { __claim: false };
+    if (verdicts.every((x) => x === true)) return { __claim: true };
+    throw new Error("十倍尺度的積分量走向判不出來（可能是對數型的邊緣情形）");
+  },
+
+  // 把幾條巢狀路徑算出的數代進一個式子：{ m, f, with: { 名稱: 另一條路徑 } }。
+  // 用在「先解出 θ 再求 r」「行列式的四個偏導」這種要兩步的題 ——
+  // 每一步都是獨立的數值路徑，外層只負責組合，不准把答案寫進 f。
+  let: (spec) => {
+    const names = Object.keys(spec.with || {});
+    if (!names.length) throw new Error("let 要給 with");
+    const values = names.map((name) => {
+      const inner = spec.with[name];
+      if (!inner || !EXPLICIT_METHODS[inner.m] || inner.m === "choice") throw new Error(`let.with.${name} 不是可用的數值路徑`);
+      const value = EXPLICIT_METHODS[inner.m](inner);
+      if (!Number.isFinite(value)) throw new Error(`let.with.${name} 算出 ${value}`);
+      return value;
+    });
+    return latex.compile(spec.f, names)(...values);
+  },
+
+  // 多變數駐點：數值梯度＋數值 Hessian 的牛頓法。{ m, f, vars, x0, out?: "value" | 變數名 }
+  // 鞍點也找得到（梯度下降找不到鞍點）。收斂不了就丟錯，不回傳半路的值。
+  stationary: (spec) => {
+    const vars = spec.vars || ["x", "y"];
+    const f = latex.compile(spec.f, vars);
+    let point = spec.x0.map(constant);
+    const grad = (p) => p.map((_, i) => numeric.partial((...args) => f(...args), p, i).value);
+    const h = 1e-4;
+    for (let iteration = 0; iteration < 60; iteration += 1) {
+      const g = grad(point);
+      if (Math.hypot(...g) < 1e-10) break;
+      // Hessian 一欄一欄用梯度的中央差分
+      const H = point.map((_, j) => {
+        const up = grad(point.map((value, k) => (k === j ? value + h : value)));
+        const down = grad(point.map((value, k) => (k === j ? value - h : value)));
+        return up.map((u, i) => (u - down[i]) / (2 * h));
+      });
+      // 解 H·δ = −g（高斯消去，部分選主元）
+      const n = point.length;
+      const M = H.map((col, i) => H.map((c) => c[i]).concat(-g[i]));
+      for (let c = 0; c < n; c += 1) {
+        let pivot = c;
+        for (let r = c + 1; r < n; r += 1) if (Math.abs(M[r][c]) > Math.abs(M[pivot][c])) pivot = r;
+        [M[c], M[pivot]] = [M[pivot], M[c]];
+        if (Math.abs(M[c][c]) < 1e-12) throw new Error("Hessian 退化，牛頓法走不下去");
+        for (let r = 0; r < n; r += 1) {
+          if (r === c) continue;
+          const factor = M[r][c] / M[c][c];
+          for (let k = c; k <= n; k += 1) M[r][k] -= factor * M[c][k];
+        }
+      }
+      point = point.map((value, i) => value + M[i][n] / M[i][i]);
+    }
+    const residual = Math.hypot(...grad(point));
+    if (!(residual < 1e-7)) throw new Error(`從 (${spec.x0.join(", ")}) 出發找不到駐點（梯度還有 ${format(residual)}）`);
+    if (spec.out === undefined || spec.out === "value") return f(...point);
+    const index = vars.indexOf(spec.out);
+    if (index < 0) throw new Error(`stationary.out 不在 vars 裡：${spec.out}`);
+    return point[index];
+  },
+
+  // 選擇題／填一句話的題：每個選項各自翻成數值條件，算完再看「成立的是哪一個」。
+  //   { m: "choice", pick?: "true"|"false", options: [{ say: "選項原文", given?: [條件…], all: [條件…] } | { say, unknown: "為什麼判不了" }] }
+  //   條件：{ v: 數值路徑, eq|ne|lt|gt|le|ge: 數／LaTeX／另一條路徑, tol? } 或 { v: 是非路徑, claim: true|false }
+  //   given：反例的前提（「1/n → 0」）。前提要先被正面算出來，all 的判定才算數。
+  // pick: "false" 用在「下列何者錯誤」。選項要把答案與所有誘答都列到 ——
+  // 少列一個就等於沒檢查它。算不出來的條件是「不知道」，不是「不成立」。
+  // 過關只有兩種方式：答案那一項被**正面**判定成立（而且沒有別項也成立），
+  // 或者答案是定理本身（unknown）而其餘每一個誘答都被反例**正面**推翻 —— 刪去法。
+  choice: (spec) => {
+    if (!Array.isArray(spec.options) || !spec.options.length) throw new Error("choice 至少要一個選項");
+    const wanted = (spec.pick || "true") !== "false";
+    const number = (value) => {
+      if (value && typeof value === "object") {
+        if (!EXPLICIT_METHODS[value.m] || value.m === "choice") throw new Error(`不認得的巢狀路徑 ${value.m}`);
+        return EXPLICIT_METHODS[value.m](value);
+      }
+      return constant(value);
+    };
+    const evalCond = (cond) => {
+      try {
+        if (!cond.v || !EXPLICIT_METHODS[cond.v.m] || cond.v.m === "choice") throw new Error("條件要有 v（另一條路徑）");
+        const value = EXPLICIT_METHODS[cond.v.m](cond.v);
+        if ("claim" in cond) {
+          if (!value || typeof value !== "object" || !("__claim" in value)) throw new Error(`${cond.v.m} 不是是非路徑`);
+          return Boolean(value.__claim) === Boolean(cond.claim);
+        }
+        if (!Number.isFinite(value)) return null;
+        const ops = ["eq", "ne", "lt", "gt", "le", "ge"].filter((op) => op in cond);
+        if (ops.length !== 1) throw new Error("條件要剛好一個比較（eq/ne/lt/gt/le/ge）");
+        const op = ops[0];
+        const target = number(cond[op]);
+        if (!Number.isFinite(target)) return null;
+        const scale = Math.max(1, Math.abs(target));
+        const tol = (cond.tol || 1e-6) * scale;
+        if (op === "eq") return Math.abs(value - target) <= tol;
+        // 「不等於」要看到明顯的差距才算數，數值雜訊不能當成不相等的證據
+        if (op === "ne") return Math.abs(value - target) > Math.max(tol, 1e-3 * scale);
+        if (op === "lt") return value < target - tol;
+        if (op === "gt") return value > target + tol;
+        if (op === "le") return value <= target + tol;
+        return value >= target - tol;
+      } catch (error) {
+        if (/條件要|不是是非路徑|不認得的巢狀/.test(error.message)) throw error;
+        return null;
+      }
+    };
+    return { __choiceCheck: (problem) => {
+      const norm = (text) => String(text == null ? "" : text).replace(/\s+/g, "");
+      const says = problem.answerKind === "text"
+        ? String(problem.canonical || (problem.answers || [])[0] || "")
+        : String(problem.answer == null ? "" : problem.answer);
+      const listed = new Set(spec.options.map((option) => norm(option.say)));
+      const required = [says, ...(problem.distractors || [])];
+      const missing = required.filter((text) => !listed.has(norm(text)));
+      if (missing.length) return { status: "error", reason: `choice 沒有列到選項：${missing.join("／")}` };
+      const verdicts = spec.options.map((option) => {
+        if (option.unknown) return { say: option.say, verdict: null, why: option.unknown };
+        if (option.given && !option.given.map(evalCond).every((r) => r === true)) return { say: option.say, verdict: null };
+        const conds = option.all || [option];
+        const results = conds.map(evalCond);
+        const verdict = results.includes(false) ? false : results.every((r) => r === true) ? true : null;
+        return { say: option.say, verdict };
+      });
+      const mine = verdicts.find((entry) => norm(entry.say) === norm(says));
+      const rest = verdicts.filter((entry) => entry !== mine);
+      const others = rest.filter((entry) => entry.verdict === wanted);
+      const word = wanted ? "成立" : "不成立";
+      if (others.length) {
+        return { status: "mismatch", method: "verify:choice", detail: `數值上「${others.map((e) => e.say).join("／")}」${word}，答案卻是「${says}」` };
+      }
+      if (mine.verdict === wanted) {
+        const decided = verdicts.filter((entry) => entry.verdict !== null).length;
+        return { status: "ok", method: "verify:choice", detail: `只有「${says}」${word}（${decided}/${verdicts.length} 個選項有判定）` };
+      }
+      if (mine.verdict === null && rest.length && rest.every((entry) => entry.verdict === !wanted)) {
+        return { status: "ok", method: "verify:choice", detail: `其餘 ${rest.length} 個選項都被數值反例推翻，剩下「${says}」（刪去法）` };
+      }
+      if (mine.verdict === !wanted) {
+        return { status: "mismatch", method: "verify:choice", detail: `答案「${says}」數值上${wanted ? "不成立" : "成立"}` };
+      }
+      return { status: "unverified", reason: `答案「${says}」的條件算不出來` };
+    } };
   }
 };
 
