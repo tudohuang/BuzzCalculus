@@ -6,7 +6,7 @@
 // 為什麼放側表而不是寫進題目物件：題目物件多一個欄位就會改變抽題與 golden 測試的結果。
 // 內容的中繼資料一律走側表，這是專案的既有約定。
 //
-// 產生時的統計：3009 題中 2840 題通過，不符 0 題。
+// 產生時的統計：3059 題中 2890 題通過，不符 0 題。
 
 (function registerVerifiedAnswers() {
   "use strict";
@@ -356,6 +356,56 @@
     "ch-trap-005",
     "ch-trap-007",
     "ch-trap-009",
+    "cl-int-001",
+    "cl-int-002",
+    "cl-int-003",
+    "cl-int-004",
+    "cl-int-005",
+    "cl-int-006",
+    "cl-int-007",
+    "cl-int-008",
+    "cl-int-009",
+    "cl-int-010",
+    "cl-int-011",
+    "cl-int-012",
+    "cl-int-013",
+    "cl-int-014",
+    "cl-int-015",
+    "cl-int-016",
+    "cl-int-017",
+    "cl-int-018",
+    "cl-int-019",
+    "cl-int-020",
+    "cl-int-021",
+    "cl-int-022",
+    "cl-int-023",
+    "cl-int-024",
+    "cl-int-025",
+    "cl-int-026",
+    "cl-int-027",
+    "cl-int-028",
+    "cl-int-029",
+    "cl-int-030",
+    "cl-int-031",
+    "cl-int-032",
+    "cl-int-033",
+    "cl-int-034",
+    "cl-int-035",
+    "cl-int-036",
+    "cl-int-037",
+    "cl-int-038",
+    "cl-int-039",
+    "cl-int-040",
+    "cl-int-041",
+    "cl-int-042",
+    "cl-int-043",
+    "cl-int-044",
+    "cl-int-045",
+    "cl-int-046",
+    "cl-int-047",
+    "cl-int-048",
+    "cl-int-049",
+    "cl-int-050",
     "cx-app-001",
     "cx-app-002",
     "cx-app-003",
@@ -2857,6 +2907,6 @@
   window.BuzzVerifiedAnswers = {
     has: function (id) { return Boolean(id && SET[id]); },
     count: IDS.length,
-    total: 3009
+    total: 3059
   };
 })();
