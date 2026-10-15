@@ -29,8 +29,8 @@ const REV_HEADER = "x-buzz-rev";
 
 // ── 產生區：node tools/build_sw_revisions.js（不要手改）──
 // 這一版：設定頁顯示「版本 v… · id · 日期」；id 是下面 REVISIONS 的雜湊，快取名跟著它變（每次部署內容有變就一定是新快取）。
-const BUILD = {"version":"v1.3.0","id":"1d5c5021","date":"2026-10-13"};
-const CACHE_NAME = "buzzcalculus-v1.3.0-1d5c5021";
+const BUILD = {"version":"v1.3.0","id":"f1e839b9","date":"2026-10-13"};
+const CACHE_NAME = "buzzcalculus-v1.3.0-f1e839b9";
 // 安裝時預快取的核心（離線也能練題）。其他檔用到才快取 —— 見 REVISIONS。
 const APP_SHELL = [
   "./index.html",
@@ -126,7 +126,7 @@ const APP_SHELL = [
 ];
 // Service Worker 管的每一支檔 → 內容的 sha256 前 10 碼（空字串 = 每次安裝都重抓）。不在表上的請求交給瀏覽器。
 const REVISIONS = {
-  "./about.html": "f6146553d6",
+  "./about.html": "a209f8bdac",
   "./assets/icon.svg": "e7e0dc9db8",
   "./assets/vendor/anime.min.js": "5cbda29ea5",
   "./assets/vendor/icons.js": "6c0c67b2d4",
@@ -264,13 +264,13 @@ const REVISIONS = {
   "./src/kernel/i18n_text_en.js": "73026429ae",
   "./src/kernel/ink_read.js": "10f49b9d62",
   "./src/kernel/metrics.js": "815c8965eb",
-  "./src/kernel/origin.js": "b3791468de",
+  "./src/kernel/origin.js": "02ad21bf8b",
   "./src/kernel/planner.js": "7de9b92876",
-  "./src/kernel/problem_profiles.js": "a92fa6f02b",
+  "./src/kernel/problem_profiles.js": "d8820bf1e2",
   "./src/kernel/proof_lang.js": "dcfe4981bf",
   "./src/kernel/proof_surface.js": "300a62039f",
   "./src/kernel/records_v2.js": "1b0cc9d4a6",
-  "./src/kernel/rubric.js": "b46364971a",
+  "./src/kernel/rubric.js": "c8f6a30848",
   "./src/kernel/rubric_reviewed.js": "acb0e0522c",
   "./src/kernel/sampler.js": "794635d29f",
   "./src/kernel/session.js": "19d842a952",
@@ -278,10 +278,10 @@ const REVISIONS = {
   "./src/kernel/skill_tags.js": "cedaa1d29c",
   "./src/kernel/tag_labels.js": "7ef8f36a3a",
   "./src/kernel/tex_lite.js": "72286278aa",
-  "./src/kernel/uid_map.js": "3fc3b751ae",
-  "./src/kernel/verified_answers.js": "5bca28a277",
+  "./src/kernel/uid_map.js": "7abbb67a04",
+  "./src/kernel/verified_answers.js": "1a55a3e48d",
   "./src/problem_advanced_analysis.js": "3710852a58",
-  "./src/problem_analysis_pack.js": "d8380dee64",
+  "./src/problem_analysis_pack.js": "9fa1bbea12",
   "./src/problem_applied_graph_pack.js": "764df3d876",
   "./src/problem_authored_hints.js": "be729803e3",
   "./src/problem_authored_solutions.js": "8710b5a8e0",
