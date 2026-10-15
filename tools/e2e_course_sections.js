@@ -526,6 +526,8 @@ async function run() {
     /* ── 兩個聲音：女聲（預設）／男聲。旁白列上切、只抓選的那一支、念到一半切（同一句換那一支）、暫停中切、
        記住（設定頁是同一個值）、選的那一個這一課沒有或載不到 → 用另一個並留一行字 ── */
     const VS = `window.BuzzCourseSections.voice()`;
+    // 管線現在只錄女聲（大綱沒有 narrationM）：這一段模擬「網站有出男聲」的部署，測播放器的兩個聲音；最後拿掉再測只有一個聲音
+    await evaluate(`window.BUZZ_COURSE_V2.narrationM = "media/narration/m/"; return 1;`);
     const tOf = (si, bi, k) => evaluate(`const b = window.BUZZ_COURSE_V2_LESSONS[${JSON.stringify(WIDGET.id)}].sections[${si}].beats[${bi}]; return b.${k} ? b.${k}[0] : -1;`);
     const vbeat = async () => { const v = await evaluate(`return ${VS};`); const [si, bi] = v.beat.split("-").map(Number); return { v, si, bi }; };
     await evaluate(`window.__s.open("${WIDGET.id}"); return 1;`);
@@ -604,6 +606,23 @@ async function run() {
     check("男聲載不到：換女聲接著念（同一句）、留一行字", fbOk && fbView.v.beat === "0-0" && fbView.v.fb && /男聲/.test(fbView.line) && narr.urls.slice(u0).some((u) => u === `m/${WIDGET.id}-e2evm2.mp3`), JSON.stringify({ fbView, urls: narr.urls.slice(u0) }));
     await tap("[data-cv2s-play]");
     narr.failM = false;
+    // 只有一個聲音（大綱沒有 narrationM，2026-10 起只錄女聲）：以前選過男聲的人照樣聽女聲、旁白列沒有切換鈕、不留字；設定頁沒有「旁白聲音」
+    await evaluate(`delete window.BUZZ_COURSE_V2.narrationM; return 1;`);
+    await evaluate(`window.__s.open("${WIDGET.id}"); return 1;`);
+    await waitFor(`window.__s.root() && !${VS}.on`, 4000);
+    await retime(WIDGET.id, 3000, "e2evf4");
+    await tap(".cv2s-dot:nth-child(1)");
+    await waitFor(`window.__s.si() === 0`);
+    u0 = narr.urls.length;
+    await tap("[data-cv2s-play]");
+    const one = await waitFor(`${VS}.on && ${VS}.v === "f" && ${VS}.src.indexOf("e2evf4") >= 0 && ${VS}.at > ${VS}.start + 200`, 5000);
+    const oneView = await evaluate(`return { saved: (window.__s.rec().settings || {}).narrVoice, vox: window.__s.visible(document.querySelector("[data-cv2s-vox]")), note: window.__s.visible(document.querySelector("[data-cv2s-voice-off]")) };`);
+    check("只有一個聲音：選過男聲也用女聲念、沒有切換鈕、不留字、不抓 m/", one && oneView.saved === "m" && !oneView.vox && !oneView.note && narr.urls.slice(u0).every((u) => !u.startsWith("m/")), JSON.stringify({ oneView, urls: narr.urls.slice(u0) }));
+    await tap("[data-cv2s-play]");
+    await evaluate(`const b = document.createElement("button"); b.dataset.action = "open-settings"; document.querySelector("#app").appendChild(b); b.click(); return 1;`);
+    const setOk = await waitFor(`document.querySelector('[data-action="set-pen-scale"]')`, 4000);
+    check("只有一個聲音：設定頁沒有「旁白聲音」一列", setOk && !(await evaluate(`return Boolean(document.querySelector('[data-action="set-narr-voice"]'));`)));
+    check("回到課裡", await openLesson(WIDGET.id));
     // 後面的測試用女聲（預設）
     await evaluate(`const r = window.__s.rec(); r.settings = { ...(r.settings || {}), narrVoice: "f" }; localStorage.setItem("buzzcalculus.records.v1", JSON.stringify(r)); return 1;`);
     // 串流設定（media/manifest.json 的 stream → 大綱的 narration 是 Release 的下載網址）：跨網域照樣播、自己往下

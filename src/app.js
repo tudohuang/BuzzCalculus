@@ -4215,11 +4215,11 @@
           t("答對上行兩聲、答錯低一聲，跳過不出聲。圖書館練習就關掉。"),
           onOffControl("set-sound", soundEnabled(), t("答題音效"))
         )}
-        ${renderSettingRow(
+        ${window.BUZZ_COURSE_V2?.narrationM ? renderSettingRow(
           t("旁白聲音"),
           t("課程分節模式的旁白。旁白列上也能切。"),
           pickControl("set-narr-voice", "voice", settings.narrVoice === "m" ? "m" : "f", [["f", t("女聲")], ["m", t("男聲")]], t("旁白聲音"))
-        )}
+        ) : ""}
         ${renderSettingRow(
           t("計算紙筆寬"),
           t("用 Apple Pencil 覺得線太粗或太細，在這裡調。橡皮擦不受影響。"),

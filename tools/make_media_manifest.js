@@ -107,7 +107,7 @@ const mine = manifest.assets.filter((a) => tagOf(a) === tag);
 const total = mine.reduce((sum, a) => sum + a.bytes, 0);
 console.log(`media/manifest.json：${tag} ${mine.length} 個檔案、${(total / 1048576).toFixed(2)} MB（全部 ${manifest.assets.length} 個）`);
 const title = narrationMode ? `課程旁白 ${tag}` : `課程影片 ${tag}`;
-const notes = narrationMode ? "分節模式的旁白（Azure 語音合成），一課一支 mp3；女聲 narration.<課>-<f8>.mp3、男聲 narration.m.<課>-<f8>.mp3。附件名是路徑的 / 換成 .；由 tools/fetch_media.js 在部署時抓取。" : "課程概念動畫（Manim）。由 tools/fetch_media.js 在部署時抓取。";
+const notes = narrationMode ? "分節模式的旁白（Azure 語音合成），一課一支 mp3；女聲 narration.<課>-<f8>.mp3（有男聲時 narration.m.<課>-<f8>.mp3）。附件名是路徑的 / 換成 .；由 tools/fetch_media.js 在部署時抓取。" : "課程概念動畫（Manim）。由 tools/fetch_media.js 在部署時抓取。";
 console.log(`\n第一次（Release 還不存在）：\ngh release create ${tag} --title "${title}" --notes "${notes}" ${upload.join(" ")}`);
 if (narrationMode) {
   if (fresh) console.log(`\n已經有這個 Release（只補新的、改過的 ${fresh} 支）：\ngh release upload ${tag} --clobber tmp/release-${tag}-new/*.mp3`);

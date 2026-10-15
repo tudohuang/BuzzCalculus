@@ -25,6 +25,8 @@
   const NAME = { f: "女聲", m: "男聲" };
   const other = (v) => (v === "m" ? "f" : "m");
   const has = (data, v) => Boolean(data[K[v][0]]) && !voice.bad[v];
+  // 網站有沒有在出第二個聲音（大綱帶 narrationM 才有；2026-10 起只錄女聲）：沒有就不提「這一課還沒有男聲」——以前選過男聲的人照樣聽女聲、不留字
+  const twoVoices = () => Boolean(window.BUZZ_COURSE_V2 && window.BUZZ_COURSE_V2.narrationM);
   // 這一課用哪一個聲音：選的那一個有就用；沒有（還沒上傳、載不到）用另一個
   const pick = (api) => {
     const want = voicePrefs(api.deps.loadRecords()).v;
@@ -244,7 +246,7 @@
     x.textContent = NAME[v];
     x.setAttribute("aria-label", `旁白聲音：${NAME[v]}`);
     const off = dock.querySelector("[data-cv2s-voice-off]");
-    const fb = !voice.err && voice.on && voice.fb && voice.id === host.last.m.id;
+    const fb = !voice.err && voice.on && voice.fb && voice.id === host.last.m.id && twoVoices();
     off.hidden = !voice.err && !fb;
     off.textContent = voice.err ? "旁白載不到，用點的繼續。" : `這一課還沒有${NAME[v]}，先用${NAME[other(v)]}。`;
   }

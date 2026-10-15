@@ -71,7 +71,7 @@ files.forEach((name) => {
 });
 
 // 旁白錄音的索引（tools/build_narration.js 產生；一課一支 mp3，檔案本身在 Release）
-const { voiceOf, readIndex: readNarration } = require("./build_narration.js");
+const { voiceOf, readIndex: readNarration, VKEYS: NARRATION_VKEYS } = require("./build_narration.js");
 const narration = readNarration();
 // 錄音從哪裡播：media/manifest.json 裡放旁白的那個 Release 標了 stream: true → 直接從 GitHub Release 的下載網址串流
 // （部署不帶旁白）；沒標 → 部署時 fetch_media.js 抓進同網域的 /media/narration/。檔名都是 <課>-<f>.mp3。
@@ -180,7 +180,8 @@ function shipLesson(lesson) {
 const outline = {
   // 旁白錄音的網址前綴：播放器抓 <前綴><課>-<voice>.mp3（男聲 <narrationM><課>-<vm>.mp3）
   narration: narrationBaseOf("f"),
-  narrationM: narrationBaseOf("m"),
+  // 男聲的前綴只在管線有錄男聲時才帶：播放器與設定頁看它決定要不要出現聲音切換（2026-10 起只錄女聲）
+  ...(NARRATION_VKEYS.includes("m") ? { narrationM: narrationBaseOf("m") } : {}),
   videoRev,
   stages: stages.map((s) => ({
     n: s.n,
