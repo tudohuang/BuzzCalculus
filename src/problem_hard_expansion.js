@@ -136,5 +136,20 @@
     numeric(id, "derivatives", prompt, answer, [...tags, "boss-rank"], solution, 5, 95);
   });
 
+  // ---- 獨立驗算規格（tools/verify_answers.js 讀）----
+  // 題幹的寫法自動辨識器接不到；這裡把題幹重述成數值路徑（數值偏導、數值積分、
+  // 複數求值、圍道上的梯形法），不重複解題的推導、也不把答案抄一遍。
+  const VERIFY = {
+    "rel-hard-der-006": { m: "paramSecond", x: "t^2", y: "t^3", at: 2 },
+    // 方向導數 = Σ ∂f/∂xᵢ · uᵢ，偏導數值取
+    "rel-hard-der-007": { m: "totalDiff", f: "xyz", vars: ["x", "y", "z"], at: [1, 1, 1], d: ["1/3", "2/3", "2/3"] },
+    "rel-hard-mv-005": { m: "vecField", op: "jacobian", vars: ["x", "y"], F: ["x/y", "xy"], at: [2, 1] },
+    // 不換變數：直接在 xy 平面上積這個斜放的長方形（y 的上下界用 |·| 寫 max/min）
+    "rel-hard-mv-008": { m: "double", f: "x+y", u: "x", v: "y", a: 0, b: 1.5, c: "\\frac{-2+|2-2x|}{2}", d: "\\frac{1-|1-2x|}{2}", tol: 1e-6 }
+  };
+  hardProblems.forEach((problem) => {
+    if (VERIFY[problem.id]) problem.verify = VERIFY[problem.id];
+  });
+
   window.BUZZ_PROBLEMS = (window.BUZZ_PROBLEMS || []).concat(hardProblems);
 })();

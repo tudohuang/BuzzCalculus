@@ -160,5 +160,18 @@
   expression("exam-multi-009", "derivatives", "\\nabla\\cdot(x^2y,\\ y^2z,\\ z^2x)", "2*x*y+2*y*z+2*z*x", ["x", "y", "z"], ["multivariable", "nabla", "vector-calculus"], "Divergence is the sum of matching partial derivatives.");
   expression("exam-multi-010", "derivatives", "\\text{求 }\\nabla\\times(y^2,\\ z^2,\\ x^2)\\text{ 的 }z\\text{-component}", "-2*y", ["y"], ["multivariable", "nabla", "vector-calculus"], "The z-component is partial_x F_2 - partial_y F_1.");
 
+  // ---- 獨立驗算規格（tools/verify_answers.js 讀）----
+  // 題幹的寫法自動辨識器接不到；這裡把題幹重述成數值路徑（數值偏導、數值積分、
+  // 複數求值、圍道上的梯形法），不重複解題的推導、也不把答案抄一遍。
+  const VERIFY = {
+    "exam-multi-009": { m: "vecField", op: "div", F: ["x^2y", "y^2z", "z^2x"] },
+    "exam-multi-010": { m: "vecField", op: "curl", comp: 2, F: ["y^2", "z^2", "x^2"] },
+    // x⁴ 係數：Chebyshev 取樣直接取係數（半徑要小於收斂半徑 1/2）
+    "exam-ser-019": { m: "derivAt0", coef: true, f: "\\frac{1}{1-2x}", n: 4, r: 0.3 }
+  };
+  examProblems.forEach((problem) => {
+    if (VERIFY[problem.id]) problem.verify = VERIFY[problem.id];
+  });
+
   window.BUZZ_PROBLEMS = (window.BUZZ_PROBLEMS || []).concat(examProblems);
 })();

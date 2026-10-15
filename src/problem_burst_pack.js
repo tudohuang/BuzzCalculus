@@ -365,5 +365,16 @@
     ["burst-boss3-der-008", "\\left.\\frac{d^{29}}{dx^{29}}\\left(x^5\\cos(x^2)\\right)\\right|_{x=0}", "18458731648787189760000", "Read the x^24 term of cos(x^2)."]
   ].forEach(([id, prompt, answer, solution]) => numeric(id, "derivatives", prompt, answer, bossTags([]), solution, 6, 420));
 
+  // ---- 獨立驗算規格（tools/verify_answers.js 讀）----
+  // 題幹的寫法自動辨識器接不到；這裡把題幹重述成數值路徑（數值偏導、數值積分、
+  // 複數求值、圍道上的梯形法），不重複解題的推導、也不把答案抄一遍。
+  const VERIFY = {
+    // 遞迴式 J_n = e + c·J_{n−1} 裡的 c：對幾個具體的 n 把 J_n、J_{n−1} 直接數值積出來再解 c
+    "burst-rec-008": { m: "fn", vars: ["n"], cases: [2, 3, 5].map((n) => ({ at: { n }, v: { m: "value", f: `\\frac{\\int_0^1 x^{${n}}e^x\\,dx-e}{\\int_0^1 x^{${n - 1}}e^x\\,dx}` } })) }
+  };
+  problems.forEach((problem) => {
+    if (VERIFY[problem.id]) problem.verify = VERIFY[problem.id];
+  });
+
   window.BUZZ_PROBLEMS = (window.BUZZ_PROBLEMS || []).concat(problems);
 })();
