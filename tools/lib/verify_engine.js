@@ -5571,6 +5571,49 @@ function substitute(names, variable, value) {
   return names.map((name) => (name === variable ? value : 0.7311));
 }
 
+/* ── ODE 補兩條（2026-10 經典題型擴充）──────────────────────────
+   odeValue 只會一階。這兩條補「Euler 方程 x²y″+axy′+by=0 的值」與「Euler 數值法走 n 步」：
+   驗算端照題幹的方程直接數值積分／照定義逐步走，不用特徵方程、不換變數 t=ln x。 */
+Object.assign(EXPLICIT_METHODS, {
+  // 二階 IVP：y″ = f(x, y, p)（p 是 y′），RK4 從 (x₀, y₀, y₀′) 積到 at。
+  //   { m: "ode2Value", f: "…", y0: [x0, y0], yp0: y0′, at }
+  ode2Value: (spec) => {
+    const rhs = latex.compile(spec.f, ["x", "y", "p"]);
+    let x = constant(spec.y0[0]);
+    let y = constant(spec.y0[1]);
+    let p = constant(spec.yp0);
+    const target = constant(spec.at);
+    const steps = 4000;
+    const h = (target - x) / steps;
+    for (let i = 0; i < steps; i += 1) {
+      const k1y = p; const k1p = rhs(x, y, p);
+      const k2y = p + (h / 2) * k1p; const k2p = rhs(x + h / 2, y + (h / 2) * k1y, p + (h / 2) * k1p);
+      const k3y = p + (h / 2) * k2p; const k3p = rhs(x + h / 2, y + (h / 2) * k2y, p + (h / 2) * k2p);
+      const k4y = p + h * k3p; const k4p = rhs(x + h, y + h * k3y, p + h * k3p);
+      y += (h / 6) * (k1y + 2 * k2y + 2 * k3y + k4y);
+      p += (h / 6) * (k1p + 2 * k2p + 2 * k3p + k4p);
+      x += h;
+      if (!Number.isFinite(y) || !Number.isFinite(p)) throw new Error("RK4 在 x=" + x.toFixed(3) + " 爆掉");
+    }
+    return y;
+  },
+  // Euler 數值法：y_{k+1} = y_k + h·f(x_k, y_k)，恰好走 n 步（題目問的就是這個近似值，不是真解）。
+  //   { m: "odeEuler", f: "…", y0: [x0, y0], h, n }
+  odeEuler: (spec) => {
+    const rhs = latex.compile(spec.f, ["x", "y"]);
+    let x = constant(spec.y0[0]);
+    let y = constant(spec.y0[1]);
+    const h = constant(spec.h);
+    const n = Number(spec.n);
+    if (!(Number.isInteger(n) && n > 0)) throw new Error("odeEuler 的 n 要是正整數");
+    for (let i = 0; i < n; i += 1) {
+      y += h * rhs(x, y);
+      x += h;
+    }
+    return y;
+  }
+});
+
 module.exports = {
   verifyProblem, topLevelOperator, stripDomain, satisfiesDomain,
   stripTrailingText, readBraced, EXPLICIT_METHODS, scanConvergenceEdge

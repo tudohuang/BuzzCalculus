@@ -64,7 +64,11 @@ const VALUE_CASES = [
   ["stationary：回傳座標", { m: "stationary", vars: ["x", "y"], f: "x^3+y^3-3xy", x0: [0.8, 1.3], out: "y" }, 1],
   ["rootCount：eˣ = 3x 有兩個根", { m: "rootCount", f: "e^x-3x", range: [-20, 20] }, 2],
   ["rootCount：sin x = x/10（含 0 與對稱的根）", { m: "rootCount", f: "\\sin x-\\frac{x}{10}", range: [-12, 12] }, 7],
-  ["rootCount：網格剛好踩在根上只算一次", { m: "rootCount", f: "x^2-1", range: [-2, 2], steps: 400 }, 2]
+  ["rootCount：網格剛好踩在根上只算一次", { m: "rootCount", f: "x^2-1", range: [-2, 2], steps: 400 }, 2],
+  // 二階 IVP（Euler 方程）：x²y″−2xy′+2y=0、y(1)=1、y′(1)=3 的解是 −x+2x²
+  ["ode2Value：Euler 方程的值", { m: "ode2Value", f: "\\frac{2xp-2y}{x^2}", y0: [1, 1], yp0: 3, at: 2 }, 6],
+  // Euler 數值法：y′=x+y、y(0)=1、h=0.1 走兩步：1 → 1.1 → 1.22（真解是 1.2428）
+  ["odeEuler：走兩步", { m: "odeEuler", f: "x+y", y0: [0, 1], h: 0.1, n: 2 }, 1.22]
 ];
 
 VALUE_CASES.forEach(([name, spec, expected]) => {
@@ -153,7 +157,9 @@ const WRONG_CASES = [
   ["let：把交點的 θ（π/3）當成 r", numericProblem("1.0471975511965976", { m: "let", f: "3\\cos t", with: { t: { m: "root", f: "3\\cos x-(1+\\cos x)", x0: 1 } } })],
   ["stationary：鞍點的值寫成角落的值", numericProblem("0", { m: "stationary", vars: ["x", "y"], f: "x^2-2xy+2y", x0: [2, 0.5] })],
   ["rootCount：sin x = x/10 只數了正根", numericProblem("3", { m: "rootCount", f: "\\sin x-\\frac{x}{10}", range: [-12, 12] })],
-  ["rootCount：x⁵ − 5x + 1 只看到一個根", numericProblem("1", { m: "rootCount", f: "x^5-5x+1", range: [-10, 10] })]
+  ["rootCount：x⁵ − 5x + 1 只看到一個根", numericProblem("1", { m: "rootCount", f: "x^5-5x+1", range: [-10, 10] })],
+  ["ode2Value：特徵根的係數解反（2x−x² 在 2 是 0）", numericProblem("0", { m: "ode2Value", f: "\\frac{2xp-2y}{x^2}", y0: [1, 1], yp0: 3, at: 2 })],
+  ["odeEuler：把 Euler 法的近似值寫成真解 2e^{0.2}−1.2", numericProblem("1.242805516", { m: "odeEuler", f: "x+y", y0: [0, 1], h: 0.1, n: 2 })]
 ];
 
 // 實根個數：切點（重根）不變號，掃描會少數一個 —— 要丟錯，不能回一個少一的數
