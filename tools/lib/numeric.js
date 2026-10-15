@@ -652,10 +652,46 @@ function seriesConverges(term, from) {
     // （n!/nⁿ、2ⁿ/n! 這類）。前面已經確認過項在遞減，所以是收斂。
     return { converges: true, method: "項衰減快於任何冪次（階乘／指數型）" };
   }
+  // 2026-10-15 修兩個方向的錯（tools/validate_verify_paths.js 的「級數邊界」釘住）：
+  //   aₙ = (ln n)^k / n^p、p 稍大於 1：代換後的「冪次」e(u) = (p−1)·u − k 跟著 u 線性長大，
+  //     在 u=4…16 取最小值會拿到 0.4、甚至負數而判成發散（Σ1/n^1.1、Σln n/n^1.1 都被判反）。
+  //   aₙ = 1/(n ln n ln ln n)：e(u) = 1 + 1/ln u 一路往 1 掉，u≤16 時還在 1.36 —— 被判成收斂，其實發散。
+  const tail = tailExponents(term, from);
+  if (tail && tail.slope > 0.005) {
+    return { converges: true, method: `比較 (ln n)^k/n^p（p≈${(1 + tail.slope).toPrecision(4)} > 1）`, power: 1 + tail.slope };
+  }
   if (power > 1.02) {
+    if (tail && tail.falling) {
+      return { unknown: true, converges: false, reason: `代換後冪次一路往下掉（${tail.e.map((v) => v.toPrecision(3)).join(" → ")}），可能是 ln ln n 型，數值上判不出來` };
+    }
     return { converges: true, method: `積分審斂法（代換後冪次 p≈${power.toPrecision(4)} > 1）`, power };
   }
   return { converges: false, reason: `積分審斂法：代換後冪次 p≈${power.toPrecision(4)} ≤ 1`, power };
+}
+
+// 代換後冪次 e(u) = −d ln(aₙ·n)/d ln u（n = e^u）在 u = 8、16、32 各量一次。
+//   (ln n)^k/n^p：e(u) = (p−1)·u − k，對 u 是一條直線 → 兩段差 d₂ ≈ 2·d₁，斜率 p−1 = d₂/16
+//   1/(n lnᵇ n)：e(u) = b，常數；1/(n ln n ln ln n)：e(u) = 1 + 1/ln u，緩慢往下掉
+// 有任何一點算不出來（溢位、浮點相消變 0）就回 null，交回原本的判定。
+function tailExponents(term, from) {
+  const g = (v) => {
+    const x = Math.round(Math.exp(v));
+    if (x < from) return Number.NaN;
+    const value = term(x);
+    return Number.isFinite(value) ? Math.abs(value) * x : Number.NaN;
+  };
+  const e = [];
+  for (const u of [8, 16, 32]) {
+    const step = u * 0.05;
+    const high = g(u + step);
+    const low = g(u - step);
+    if (!(high > 0) || !(low > 0)) return null;
+    e.push(-(Math.log(high) - Math.log(low)) / (Math.log(u + step) - Math.log(u - step)));
+  }
+  const d1 = e[1] - e[0];
+  const d2 = e[2] - e[1];
+  const linear = d1 > 0 && d2 / d1 > 1.8 && d2 / d1 < 2.2;
+  return { e, slope: linear ? d2 / 16 : 0, falling: e[2] < e[0] - 0.05 };
 }
 
 // 量 g(u) = a(e^u)·e^u 的冪次：p = −d(ln g)/d(ln u)。
