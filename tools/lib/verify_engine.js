@@ -4892,6 +4892,55 @@ const EXPLICIT_METHODS = {
   }
 };
 
+/* ── 向量場的微分算子與「保守場求參數」（2026-10 補）──────────────
+   題幹寫成 ∇·(fF)、∇×F 這種自動辨識器讀不到的組合時用。
+   驗算端只做數值偏導（中央差分），不套乘積法則、不套任何恆等式。 */
+Object.assign(EXPLICIT_METHODS, {
+  // op: "div"（散度）／"curl"（2D 純量旋度 Q_x − P_y，3D 給旋度的長度）。
+  // scale 可選：純量場 f，算的是 f·F 的散度／旋度（逐點相乘是題幹的重述）。
+  fieldOp: (spec) => {
+    const vars = spec.vars || (spec.F.length === 3 ? ["x", "y", "z"] : ["x", "y"]);
+    if (spec.F.length !== vars.length) throw new Error("fieldOp：F 的分量數要跟變數數一樣");
+    const scale = spec.scale !== undefined ? latex.compile(String(spec.scale), vars) : () => 1;
+    const comps = spec.F.map((tex) => latex.compile(String(tex), vars));
+    const G = comps.map((c) => (...a) => scale(...a) * c(...a));
+    const point = spec.at.map(constant);
+    const d = (i, j) => numeric.partial((...a) => G[i](...a), point, j).value;
+    if (spec.op === "div") return G.reduce((sum, _, i) => sum + d(i, i), 0);
+    if (spec.op === "curl") {
+      if (vars.length === 2) return d(1, 0) - d(0, 1);
+      return Math.hypot(d(2, 1) - d(1, 2), d(0, 2) - d(2, 0), d(1, 0) - d(0, 1));
+    }
+    throw new Error(`fieldOp：不認得的 op = "${spec.op}"`);
+  },
+
+  // F 裡帶一個參數（預設 a），求讓 F 成為保守場（旋度處處為零）的參數值。
+  // 做法：在幾個取樣點上數值算旋度，當成參數的函數；取 a=0、a=1 兩組做最小平方
+  // 解出 a*，再回頭確認 a* 時每個取樣點的旋度真的 ≈ 0 —— 確認不過（旋度不是
+  // 參數的一次式、或根本沒有讓它保守的值）就回 NaN，交給上層判 unverified。
+  conservativeParam: (spec) => {
+    const vars = spec.F.length === 3 ? ["x", "y", "z"] : ["x", "y"];
+    const param = spec.param || "a";
+    const comps = spec.F.map((tex) => latex.compile(String(tex), [...vars, param]));
+    const points = (spec.pts || [[0.37, 0.81, 0.53], [1.23, -0.44, 0.92], [-0.71, 0.53, -1.18], [0.92, 1.36, 0.29]])
+      .map((p) => p.slice(0, vars.length));
+    const curlAt = (a) => points.flatMap((p) => {
+      const d = (i, j) => numeric.partial((...x) => comps[i](...x, a), p, j).value;
+      if (vars.length === 2) return [d(1, 0) - d(0, 1)];
+      return [d(2, 1) - d(1, 2), d(0, 2) - d(2, 0), d(1, 0) - d(0, 1)];
+    });
+    const c0 = curlAt(0);
+    const c1 = curlAt(1);
+    const slope = c1.map((v, i) => v - c0[i]);
+    const denom = slope.reduce((s, v) => s + v * v, 0);
+    if (!(denom > 1e-12)) return NaN;
+    const best = -c0.reduce((s, v, i) => s + v * slope[i], 0) / denom;
+    const residual = Math.max(...curlAt(best).map(Math.abs));
+    const size = Math.max(1, ...c0.map(Math.abs), ...c1.map(Math.abs));
+    return residual <= 1e-6 * size ? best : NaN;
+  }
+});
+
 // 窗口 [N, 2N] 的極值當 N 的函數再外插 —— 上／下極限的數值版。
 // spec 裡的數字：已經是數就直接用。
 // 不能一律丟給 latex 編譯器 —— String(0.0000001) 是 "1e-7"，而 LaTeX 裡的 e 是
