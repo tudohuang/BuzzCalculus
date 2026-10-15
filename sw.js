@@ -29,8 +29,8 @@ const REV_HEADER = "x-buzz-rev";
 
 // ── 產生區：node tools/build_sw_revisions.js（不要手改）──
 // 這一版：設定頁顯示「版本 v… · id · 日期」；id 是下面 REVISIONS 的雜湊，快取名跟著它變（每次部署內容有變就一定是新快取）。
-const BUILD = {"version":"v1.3.0","id":"1e5459e2","date":"2026-10-13"};
-const CACHE_NAME = "buzzcalculus-v1.3.0-1e5459e2";
+const BUILD = {"version":"v1.3.0","id":"396f49e5","date":"2026-10-13"};
+const CACHE_NAME = "buzzcalculus-v1.3.0-396f49e5";
 // 安裝時預快取的核心（離線也能練題）。其他檔用到才快取 —— 見 REVISIONS。
 const APP_SHELL = [
   "./index.html",
@@ -279,7 +279,7 @@ const REVISIONS = {
   "./src/kernel/tag_labels.js": "7ef8f36a3a",
   "./src/kernel/tex_lite.js": "72286278aa",
   "./src/kernel/uid_map.js": "3fc3b751ae",
-  "./src/kernel/verified_answers.js": "304972c8cf",
+  "./src/kernel/verified_answers.js": "575d8e80cc",
   "./src/problem_advanced_analysis.js": "55c5f6e1b9",
   "./src/problem_analysis_pack.js": "d8380dee64",
   "./src/problem_applied_graph_pack.js": "da4d93e8aa",
@@ -316,7 +316,7 @@ const REVISIONS = {
   "./src/problem_solution_steps.js": "b57345b855",
   "./src/problem_textbook_pack.js": "e8ae8628cc",
   "./src/problem_university_exam_pack.js": "72f757e702",
-  "./src/problem_vector_calculus_pack.js": "5a37d1ee28",
+  "./src/problem_vector_calculus_pack.js": "d1eb59608a",
   "./src/problem_world_universities.js": "47e807a7a7",
   "./src/problems.js": "5d7de826aa",
   "./src/proof_lab_ui.js": "80be80c62d",
