@@ -426,6 +426,8 @@ interface Window {
   BuzzCourseProof?: { tag(api: any, section: any): string; why(api: any, si: number, bi: number): string; view(api: any, si: number): string; act(api: any, action: string, data: any): number; shuffle(n: number, seed: string): number[] };
   /** 新版課程的畫面（data-lazy="course"，只有中文介面會載） */
   BuzzCourseV2UI?: { create(deps: any): any };
+  /** src/settings_page.js：設定頁的畫面（data-lazy="settings"） */
+  BuzzSettingsPage?: { create(deps: any): { renderSettings(): string } };
   BUZZ_COURSE_V2?: { narration?: string; narrationM?: string; stages: { n: number; title: string; branch?: boolean; chapters: { code: string; title: string; lessons: { id: string; title: string; read?: number; total?: number; practice?: string; worked?: string }[] }[] }[] };
   BUZZ_COURSE_V2_LESSONS?: Record<string, any>;
   /** src/share_cards.js：題目圖形的 SVG 渲染器（從 app.js 搬出去） */

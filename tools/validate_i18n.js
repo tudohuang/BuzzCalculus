@@ -20,6 +20,7 @@ const UI_FILES = [
   "src/app.js",
   "src/share_cards.js",
   "src/proof_lab_ui.js",
+  "src/settings_page.js",
   "src/custom_problems.js",
   "src/kernel/tag_labels.js",
   "src/kernel/skill_graph.js",

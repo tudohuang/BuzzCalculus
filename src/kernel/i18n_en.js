@@ -366,6 +366,7 @@
     "紀錄保存在此瀏覽器": "Records stay in this browser",
     "使用手冊": "Guide",
     "證明引擎載不進來 —— 檢查一下網路，再點一次證明題。": "The proof engine didn't load — check your connection and tap Proofs again.",
+    "設定頁載不進來 —— 檢查一下網路，再點一次設定。": "Settings didn't load — check your connection and tap Settings again.",
     "載入證明引擎…": "Loading the proof engine…",
     "練習紀錄尚未存到裝置": "Records not yet saved to this device",
     "儲存空間不足或無法寫入。目前暫存在這個分頁；請先匯出備份，關閉或重新整理可能遺失。": "Storage is full or not writable. Records are held in this tab for now; export a backup first — closing or refreshing may lose them.",

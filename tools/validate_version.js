@@ -99,7 +99,8 @@ if (!/node tools\/stamp_build\.js[\s\S]*cp index\.html/.test(read(".github/workf
 if (!/type === "VERSION"[\s\S]{0,160}postMessage\(\{ build: BUILD \}\)/.test(sw)) fail("sw.js 沒有回應 VERSION 訊息（設定頁問不到這一版是哪一版）");
 const updater = read("src/kernel/app_update.js");
 if (!/type: "VERSION"/.test(updater) || !/registration\.waiting/.test(updater) || !/s\.controller/.test(updater)) fail("app_update.js 沒有向 controller 與 waiting 問版本");
-if (!/BuzzAppUpdate\.panel\(\)/.test(appSource)) fail("設定頁沒有畫版本列（BuzzAppUpdate.panel()）");
+// 設定頁的畫面在 settings_page.js（2026-10-15 從 app.js 搬出去）
+if (!/BuzzAppUpdate\.panel\(\)/.test(read("src/settings_page.js"))) fail("設定頁沒有畫版本列（BuzzAppUpdate.panel()）");
 if (!/data-lazy="pwa" src="src\/kernel\/app_update\.js"/.test(read("index.html"))) fail("index.html 沒有 data-lazy=\"pwa\" 的 app_update.js");
 
 console.log("版本號");
