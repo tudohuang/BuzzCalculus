@@ -58,7 +58,10 @@ const VALUE_CASES = [
   ["旋度（二維純量）", { m: "fieldOp", op: "curl", F: ["-y", "x"], at: [0.3, 0.7] }, 2],
   ["旋度的長度（三維）", { m: "fieldOp", op: "curl", F: ["-y^2", "x^2", "0"], at: [1, 2, 0] }, 6],
   ["保守場求參數（二維）", { m: "conservativeParam", F: ["a x y^2", "3x^2y"], param: "a" }, 3],
-  ["保守場求參數（三維）", { m: "conservativeParam", F: ["yz", "a xz", "xy"], param: "a" }, 1]
+  ["保守場求參數（三維）", { m: "conservativeParam", F: ["yz", "a xz", "xy"], param: "a" }, 1],
+  ["let：先解 θ 再代回 r", { m: "let", f: "3\\cos t", with: { t: { m: "root", f: "3\\cos x-(1+\\cos x)", x0: 1 } } }, 1.5],
+  ["stationary：鞍點的值（梯度下降找不到的那種）", { m: "stationary", vars: ["x", "y"], f: "x^2-2xy+2y", x0: [2, 0.5] }, 1],
+  ["stationary：回傳座標", { m: "stationary", vars: ["x", "y"], f: "x^3+y^3-3xy", x0: [0.8, 1.3], out: "y" }, 1]
 ];
 
 VALUE_CASES.forEach(([name, spec, expected]) => {
@@ -92,7 +95,15 @@ const CLAIM_CASES = [
   ["ln x 在 (0,1] 不一致連續", { m: "uniformContinuity", f: "\\ln x", range: [0.0000001, 1], log: true }, false],
   ["xⁿ 在 [0,1) 不一致收斂", { m: "uniformConvergence", f: "x^n", limit: "0", range: [0, 0.999999] }, false],
   ["xⁿ 在 [0,1/2] 一致收斂", { m: "uniformConvergence", f: "x^n", limit: "0", range: [0, 0.5] }, true],
-  ["nxe^{-nx²} 不一致收斂", { m: "uniformConvergence", f: "n x e^{-n x^2}", limit: "0", range: [0, 1] }, false]
+  ["nxe^{-nx²} 不一致收斂", { m: "uniformConvergence", f: "n x e^{-n x^2}", limit: "0", range: [0, 1] }, false],
+  ["∫₁^∞ 1/x² 收斂", { m: "improperConverges", f: "\\frac{1}{x^2}", a: 1, b: "inf" }, true],
+  ["∫₁^∞ 1/x 發散（十倍尺度比值恰好是 1）", { m: "improperConverges", f: "\\frac{1}{x}", a: 1, b: "inf" }, false],
+  ["∫₁^∞ x^{-1.05} 收斂（p 很接近 1）", { m: "improperConverges", f: "x^{-1.05}", a: 1, b: "inf" }, true],
+  ["∫₁^∞ x^{-0.95} 發散", { m: "improperConverges", f: "x^{-0.95}", a: 1, b: "inf" }, false],
+  ["∫₁^∞ (2+cos x)/x 發散（振盪的被積函數）", { m: "improperConverges", f: "\\frac{2+\\cos x}{x}", a: 1, b: "inf" }, false],
+  ["∫₀¹ eˣ/√x 收斂（端點奇異）", { m: "improperConverges", f: "\\frac{e^x}{\\sqrt x}", a: 0, b: 1, sing: [0] }, true],
+  ["∫₋₁¹ 1/x² 發散（內部奇異點）", { m: "improperConverges", f: "\\frac{1}{x^2}", a: -1, b: 1, sing: [0] }, false],
+  ["∫₋₁¹ x^{-2/3} 收斂（內部奇異點）", { m: "improperConverges", f: "\\frac{1}{(x^2)^{1/3}}", a: -1, b: 1, sing: [0] }, true]
 ];
 
 CLAIM_CASES.forEach(([name, spec, expected]) => {
@@ -135,7 +146,9 @@ const WRONG_CASES = [
   ["Lipschitz 常數寫成函數的最大值", numericProblem("0.5", { m: "lipschitz", f: "x/(1+x^2)", range: [-50, 50] })],
   ["∇·(fF) 漏掉 ∇f·F 那一項（只算 f∇·F）", numericProblem("0", { m: "fieldOp", op: "div", scale: "x", F: ["y", "z", "x"], at: [1, 2, 3] })],
   ["旋度的 Q_x − P_y 減反了", numericProblem("-6", { m: "fieldOp", op: "curl", F: ["-y^2", "x^2"], at: [1, 2] })],
-  ["保守場參數：∂P/∂y 少了 y² 微分出來的 2", numericProblem("6", { m: "conservativeParam", F: ["a x y^2", "3x^2y"], param: "a" })]
+  ["保守場參數：∂P/∂y 少了 y² 微分出來的 2", numericProblem("6", { m: "conservativeParam", F: ["a x y^2", "3x^2y"], param: "a" })],
+  ["let：把交點的 θ（π/3）當成 r", numericProblem("1.0471975511965976", { m: "let", f: "3\\cos t", with: { t: { m: "root", f: "3\\cos x-(1+\\cos x)", x0: 1 } } })],
+  ["stationary：鞍點的值寫成角落的值", numericProblem("0", { m: "stationary", vars: ["x", "y"], f: "x^2-2xy+2y", x0: [2, 0.5] })]
 ];
 
 // 保守場求參數：沒有任何常數能讓旋度處處為零時要回 NaN（交給上層判 unverified），
@@ -221,7 +234,9 @@ const WRONG_CLAIMS = [
   ["把梯形法對凹向上說成低估", textProblem("低估", { m: "ruleBias", f: "1/x", a: 1, b: 2, n: 4, rule: "trapezoid" })],
   ["把 1/x 在 (0,1] 說成一致連續", textProblem("一致連續", { m: "uniformContinuity", f: "1/x", range: [0.0000001, 1], log: true })],
   ["把 √x 在 [0,∞) 說成不一致連續", textProblem("不一致連續", { m: "uniformContinuity", f: "\\sqrt{x}", range: [0, "inf"] })],
-  ["把 xⁿ 在 [0,1) 說成一致收斂", textProblem("一致收斂", { m: "uniformConvergence", f: "x^n", limit: "0", range: [0, 0.999999] })]
+  ["把 xⁿ 在 [0,1) 說成一致收斂", textProblem("一致收斂", { m: "uniformConvergence", f: "x^n", limit: "0", range: [0, 0.999999] })],
+  ["把 ∫₁^∞ (2+cos x)/x 說成收斂", textProblem("收斂", { m: "improperConverges", f: "\\frac{2+\\cos x}{x}", a: 1, b: "inf" })],
+  ["把 ∫₀¹ eˣ/√x 說成發散", textProblem("發散", { m: "improperConverges", f: "\\frac{e^x}{\\sqrt x}", a: 0, b: 1, sing: [0] })]
 ];
 
 WRONG_CLAIMS.forEach(([name, problem]) => {
@@ -230,6 +245,61 @@ WRONG_CLAIMS.forEach(([name, problem]) => {
     fail(`${name}：驗算器回了 ${result.status}（${result.detail || result.reason || ""}）—— 說反了應該是 mismatch`);
   }
 });
+
+/* ── 三之二、選擇題（choice）：答案那一項要被正面判定，錯的答案鍵要被抓 ── */
+// 選項各自翻成數值條件；「另一個選項也成立」與「答案那一項不成立」都要是 mismatch，
+// 少列一個誘答是 error（不檢查的選項不能被當成檢查過）。
+const choiceProblem = (canonical, distractors, verify) => ({
+  id: "probe-choice", topic: "derivatives", rank: 2, difficulty: 2, answerKind: "text",
+  prompt: "\\text{驗算器自測}", answers: [canonical], canonical, distractors, verify
+});
+const GRAD = (gx, gy) => [
+  { v: { m: "deriv", vars: ["x", "y"], f: "100-x^2-2y^2", at: [2, 1], wrt: "x" }, eq: gx },
+  { v: { m: "deriv", vars: ["x", "y"], f: "100-x^2-2y^2", at: [2, 1], wrt: "y" }, eq: gy }
+];
+const GRAD_CHOICE = { m: "choice", options: [
+  { say: "(−4, −4)", all: GRAD(-4, -4) }, { say: "(4, 4)", all: GRAD(4, 4) }, { say: "(−4, −2)", all: GRAD(-4, -2) }
+] };
+// 刪去法：答案是定理本身，誘答各被調和級數推翻
+const HARMONIC_CHOICE = { m: "choice", options: [
+  { say: "若 Σaₙ 收斂，則 lim aₙ = 0", unknown: "定理本身" },
+  { say: "若 lim aₙ = 0，則 Σaₙ 收斂", given: [{ v: { m: "limit", f: "\\frac1x", at: "inf" }, eq: 0 }], all: [{ v: { m: "seriesConverges", f: "\\frac1n", from: 1 }, claim: true }] },
+  { say: "若 aₙ > 0 且遞減，則 Σaₙ 收斂", all: [{ v: { m: "seriesConverges", f: "\\frac1n", from: 1 }, claim: true }] }
+] };
+// pick: "false"（下列何者錯誤）：Green 面積公式在單位圓上
+const CIRCLE = { x: "\\cos t", y: "\\sin t", from: 0, to: "2\\pi" };
+const GREEN_CHOICE = { m: "choice", pick: "false", options: [
+  { say: "∮ y dx", v: { m: "lineIntegral", kind: "work", F: ["y", "0"], path: CIRCLE }, eq: "\\pi" },
+  { say: "∮ x dy", v: { m: "lineIntegral", kind: "work", F: ["0", "x"], path: CIRCLE }, eq: "\\pi" }
+] };
+[
+  ["選擇題：答案那一項正面成立", choiceProblem("(−4, −4)", ["(4, 4)", "(−4, −2)"], GRAD_CHOICE)],
+  ["選擇題：刪去法（其餘選項全被反例推翻）", choiceProblem("若 Σaₙ 收斂，則 lim aₙ = 0", ["若 lim aₙ = 0，則 Σaₙ 收斂", "若 aₙ > 0 且遞減，則 Σaₙ 收斂"], HARMONIC_CHOICE)],
+  ["選擇題：何者錯誤", choiceProblem("∮ y dx", ["∮ x dy"], GREEN_CHOICE)]
+].forEach(([name, problem]) => {
+  const result = verifyProblem(problem, { normalizeAnswer: (value) => String(value) });
+  if (result.status !== "ok") fail(`${name}：應該通過，卻回了 ${result.status}（${result.detail || result.reason || ""}）`);
+});
+[
+  ["選擇題：答案鍵指到誘答", choiceProblem("(−4, −2)", ["(4, 4)", "(−4, −4)"], GRAD_CHOICE)],
+  ["選擇題：刪去法時答案鍵指到被推翻的那一項", choiceProblem("若 lim aₙ = 0，則 Σaₙ 收斂", ["若 Σaₙ 收斂，則 lim aₙ = 0", "若 aₙ > 0 且遞減，則 Σaₙ 收斂"], HARMONIC_CHOICE)],
+  ["選擇題（何者錯誤）：答案鍵指到成立的那一項", choiceProblem("∮ x dy", ["∮ y dx"], GREEN_CHOICE)]
+].forEach(([name, problem]) => {
+  const result = verifyProblem(problem, { normalizeAnswer: (value) => String(value) });
+  if (result.status !== "mismatch") fail(`${name}：驗算器回了 ${result.status}（${result.detail || result.reason || ""}）—— 應該是 mismatch`);
+});
+{
+  const result = verifyProblem(choiceProblem("(−4, −4)", ["(4, 4)", "(−4, −2)", "(−2, −4)"], GRAD_CHOICE), { normalizeAnswer: (value) => String(value) });
+  if (result.status === "ok") fail("選擇題：spec 漏列一個誘答卻被判 ok —— 沒檢查的選項不能算檢查過");
+}
+
+/* ── 三之三、坑：瑕積分的對數型邊緣情形 ─────────────────────── */
+// 瑕積分的對數型邊緣情形：∫dx/(x ln x) 發散，但十倍尺度的比值是 k/(k+1)，
+// 只看單一比值會判成收斂。比值往 1 爬的時候必須說「判不出來」，不能給答案。
+try {
+  const claim = EXPLICIT_METHODS.improperConverges({ m: "improperConverges", f: "\\frac{1}{x\\ln x}", a: 2, b: "inf" }).__claim;
+  fail(`∫dx/(x ln x) 應該判不出來，卻判成 ${claim}`);
+} catch (_error) { /* 判不出來才對 */ }
 
 /* ── 四、坑：spec 裡的小數不能被當成 LaTeX 讀 ───────────────── */
 // String(0.0000001) === "1e-7"，LaTeX 的 e 是尤拉數 —— 少了 constant()
@@ -247,6 +317,7 @@ console.log(`  已知值      ${VALUE_CASES.length} 條`);
 console.log(`  是非判定    ${CLAIM_CASES.length} 條`);
 console.log(`  函數／區間  ${FN_RIGHT.length} 條`);
 console.log(`  故意寫錯    ${WRONG_CASES.length + WRONG_CLAIMS.length} 條（要被判 mismatch）`);
+console.log("  選擇題      3 條正向、3 條答案鍵寫錯、1 條漏列誘答");
 
 if (failures.length) {
   console.error(`\n驗算路徑自測失敗（${failures.length}）：`);
