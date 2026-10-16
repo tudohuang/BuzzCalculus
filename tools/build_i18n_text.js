@@ -125,9 +125,22 @@ function checkEntry(zhKey, en) {
 }
 
 // ── 產物 ───────────────────────────────────────────────────────
+// 拆兩支（2026-10-16）：第一幀就要的（提示、機器推的提示、入門課課文）在 i18n_text_en.js，跟題幹側表同一組（data-lazy="i18n"）；
+// 舊解說、推導步驟、證明題在 i18n_text_more_en.js（data-lazy="i18nmore"），第一幀畫完才抓 —— 有詳解 v2 的題英文介面看的是
+// src/detail/en/，舊解說只剩沒有詳解的題、跟詳解分片還沒到之前的空檔用得到，不值得讓第一幀等。
+// 同一個句型兩邊都用到就放第一支（只放一次）。
+const FIRST_FRAME_KINDS = new Set(["hint", "derived", "course"]);
+const header = (what) => `// 自動產生 —— 不要手改。來源：tools/content/i18n_text_en.json，產生器：tools/build_i18n_text.js
+//
+// 英文版的內容句子（${what}）。
+// key 是中文句子「樣板」的雜湊（數學片段換成 〔n〕，切法見 src/kernel/i18n.js 的 textTemplate）；
+// 值是英文樣板，執行時把原句的數學原封不動填回 〔n〕。「=」開頭的 key 是整句翻的 LaTeX。
+// 這一支是 type="text/lazy"：只有英文介面才載，中文使用者一個位元組都不用抓。
+`;
 function render(units, table) {
   const used = new Map(); // runtimeKey → en
   const owner = new Map(); // runtimeKey → zh key（查碰撞）
+  const first = new Set(); // 第一幀要的 runtimeKey
   const collisions = [];
   units.forEach((unit) => {
     const { key } = sourceKey(unit);
@@ -136,26 +149,26 @@ function render(units, table) {
     if (owner.has(rk) && owner.get(rk) !== key) collisions.push(`${owner.get(rk)} ⇄ ${key}`);
     owner.set(rk, key);
     used.set(rk, table[key]);
+    if (FIRST_FRAME_KINDS.has(unit.kind)) first.add(rk);
   });
-  const lines = [...used.keys()].sort().map((rk) => `    ${JSON.stringify(rk)}: ${JSON.stringify(used.get(rk))}`);
-  const text = `// 自動產生 —— 不要手改。來源：tools/content/i18n_text_en.json，產生器：tools/build_i18n_text.js
-//
-// 英文版的內容句子（解說、推導步驟、提示、機器推的提示、入門課課文）。
-// key 是中文句子「樣板」的雜湊（數學片段換成 〔n〕，切法見 src/kernel/i18n.js 的 textTemplate）；
-// 值是英文樣板，執行時把原句的數學原封不動填回 〔n〕。「=」開頭的 key 是整句翻的 LaTeX。
-// 這一支是 type="text/lazy"：只有英文介面才載，中文使用者一個位元組都不用抓。
-(function () {
+  const body = (keys) => keys.sort().map((rk) => `    ${JSON.stringify(rk)}: ${JSON.stringify(used.get(rk))}`).join(",\n");
+  const wrap = (keys, part) => `(function () {
   "use strict";
   if (!window.BuzzI18n) return;
   BuzzI18n.registerText("en", {
-${lines.join(",\n")}
-  });
+${body(keys)}
+  }${part ? `, ${JSON.stringify(part)}` : ""});
 })();
 `;
-  return { text, collisions, count: used.size };
+  const all = [...used.keys()];
+  const text = header("提示、機器推的提示、入門課課文；第一幀就要") + wrap(all.filter((rk) => first.has(rk)));
+  const textMore = header("舊解說、推導步驟、證明題；第一幀畫完才抓，到了 app.js 呼叫 BuzzI18n.localizeSolutions") + wrap(all.filter((rk) => !first.has(rk)), "more");
+  return { text, textMore, collisions, count: used.size };
 }
 
-module.exports = { collect, pendingIds, sourceKey, runtimeKey, checkEntry, loadSource, render, mathSignature, SOURCE, OUTPUT };
+const OUTPUT_MORE = path.join(ROOT, "src", "kernel", "i18n_text_more_en.js");
+
+module.exports = { collect, pendingIds, sourceKey, runtimeKey, checkEntry, loadSource, render, mathSignature, SOURCE, OUTPUT, OUTPUT_MORE };
 
 if (require.main === module) {
   const args = process.argv.slice(2);
@@ -231,19 +244,20 @@ if (require.main === module) {
     // 接著重產
   }
 
-  const { text, collisions, count } = render(units, table);
+  const { text, textMore, collisions, count } = render(units, table);
   if (collisions.length) {
     console.error("雜湊碰撞（兩個不同的句型同一個 key）：\n  " + collisions.join("\n  "));
     process.exit(1);
   }
+  const read = (file) => (fs.existsSync(file) ? fs.readFileSync(file, "utf8") : "");
   if (args[0] === "--check") {
-    const current = fs.existsSync(OUTPUT) ? fs.readFileSync(OUTPUT, "utf8") : "";
-    if (current !== text) { console.error("src/kernel/i18n_text_en.js 跟來源不同步：跑 node tools/build_i18n_text.js"); process.exit(1); }
-    console.log(`i18n_text_en.js 同步（${count} 句型）`);
+    if (read(OUTPUT) !== text || read(OUTPUT_MORE) !== textMore) { console.error("src/kernel/i18n_text_en.js／i18n_text_more_en.js 跟來源不同步：跑 node tools/build_i18n_text.js"); process.exit(1); }
+    console.log(`i18n_text_en.js＋i18n_text_more_en.js 同步（${count} 句型）`);
     process.exit(0);
   }
   fs.writeFileSync(OUTPUT, text);
+  fs.writeFileSync(OUTPUT_MORE, textMore);
   const keys = new Set(units.map((u) => sourceKey(u).key));
   const covered = [...keys].filter((k) => k in table).length;
-  console.log(`寫出 src/kernel/i18n_text_en.js：${count} 句型（要翻 ${keys.size}、已翻 ${covered}），${Math.round(text.length / 1024)}KB 字元`);
+  console.log(`寫出 i18n_text_en.js ${Math.round(Buffer.byteLength(text) / 1024)}KB＋i18n_text_more_en.js ${Math.round(Buffer.byteLength(textMore) / 1024)}KB：${count} 句型（要翻 ${keys.size}、已翻 ${covered}）`);
 }

@@ -93,7 +93,11 @@ const BUDGETS = {
   // 2026-10-14 800 → 880：題庫精修 2026-10（+260 題）的英文 —— 151 題的題幹側表（+24KB）與 1,088 個新句型（解說／步驟／提示，+105KB），
   // 合計 855KB。這是內容成長不是長胖（每題約 0.2KB 英文）。上面那條「按種類拆」仍然欠著：拆法要動 app.js 的 ensureLazy("i18n")，
   // 而 app.js 只剩 11 位元組，那是另一件事（先把 app.js 的 render 搬出去）。中文使用者仍然零位元組。
-  "延後載入：英文內容": { pattern: /^$/, budget: 880 * 1024, lazy: "i18n" },
+  // 2026-10-16 880 → 640，並拆出第二支：照上面欠的那條把句型表按種類拆 —— 第一幀要的（題幹側表、提示、機器推的提示、課文）留在這一組，
+  // 舊解說／推導步驟／證明題搬去 i18nmore（第一幀畫完才抓；英文詳解 v2 上了之後，舊解說只剩沒詳解的題用得到）。
+  // 拆完這一組 529KB（含原本卡在「英文待上」的 200 題），第二支 417KB。上限各留約兩成。
+  "延後載入：英文內容": { pattern: /^$/, budget: 640 * 1024, lazy: "i18n" },
+  "延後載入：英文內容（第二支）": { pattern: /^$/, budget: 520 * 1024, lazy: "i18nmore" },
   // 2026-10-08 新增：新版課程（中文介面取代舊的 25 課）。317 課的課文合計 1.8MB，絕不進首屏：
   // 打開課程（或新手首頁要畫主卡）才抓大綱＋畫面這一組（大綱 63KB ＋ 畫面 33KB）；英文介面永遠不抓。
   // 上限留約四成：大綱隨課數與推薦題長，畫面再長就該拆，不是調數字。
@@ -162,7 +166,9 @@ const BUDGETS = {
   // 2026-10-16 新增：詳解 v2 的分片（src/detail/d-XX.js，64 片，開局只抓這一局的題目在的那幾片）。
   // 全題庫約 3,000 份、4MB 上下 → 平均一片 65KB；使用者等的是一片，所以管最大的那一片。撞頂就加片數
   // （build_solution_detail.js 的 SHARDS 跟 problem_authored_solutions.js 一起改），不是調數字。
-  "延後載入：詳解（最大的一片）": { pattern: /^src\/detail\/d-\d{2}\.js$/, budget: 128 * 1024, maxFile: true }
+  "延後載入：詳解（最大的一片）": { pattern: /^src\/detail\/d-\d{2}\.js$/, budget: 128 * 1024, maxFile: true },
+  // 英文詳解（src/detail/en/d-XX.js）：同一個雜湊、同一個片號，英文介面抓這一套；一樣管最大的那一片。
+  "延後載入：英文詳解（最大的一片）": { pattern: /^src\/detail\/en\/d-\d{2}\.js$/, budget: 128 * 1024, maxFile: true }
 };
 
 const html = fs.readFileSync(path.join(ROOT, "index.html"), "utf8");
@@ -183,7 +189,7 @@ for (const [label, spec] of Object.entries(BUDGETS)) {
   if (spec.maxFile) {
     // 不在 index.html 上、由頁面自己按需抓的檔：量的是最大的那一支（一次只等一支）
     // 按需抓的檔住在 src/course_v2（課文）與 src/detail（詳解分片）
-    files = ["course_v2", "detail"].flatMap((sub) => {
+    files = ["course_v2", "detail", "detail/en"].flatMap((sub) => {
       const dir = path.join(ROOT, "src", sub);
       return fs.existsSync(dir) ? fs.readdirSync(dir).map((name) => `src/${sub}/${name}`) : [];
     }).filter((rel) => spec.pattern.test(rel));

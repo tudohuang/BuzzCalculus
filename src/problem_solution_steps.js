@@ -3152,12 +3152,9 @@
       return;
     }
     problem.solutionSteps = steps.map(textOf);
-    // 英文介面：這張表是 load 之後才注入的，localizeProblems 早就跑過了 —— 這裡自己照句型表翻
-    // （句型表跟題幹表同一個延後載入群組，app 開站就抓，load 事件會等它，所以這時一定已經到了）
-    if (i18n && i18n.lang !== "zh") {
-      problem.solutionStepsZh = problem.solutionSteps;
-      problem.solutionSteps = problem.solutionSteps.map((step) => i18n.tx(step));
-    }
+    // 英文介面：步驟的句型在第二支句型表（i18n_text_more_en.js）。它先到的話這裡自己翻；
+    // 這裡先到的話，它到的時候 app.js 會對整個題庫叫一次 localizeSolutions
+    if (i18n && i18n.lang !== "zh" && i18n.localizeSolutions) i18n.localizeSolutions([problem]);
     applied += 1;
   });
 

@@ -145,9 +145,12 @@
     return String(template).replace(/〔(\d+)〕/g, (m, n) => (Number(n) < spans.length ? spans[Number(n)] : m));
   }
 
-  function registerText(code, table) {
+  // part：句型表拆成兩支（tools/build_i18n_text.js），第二支 "more"（舊解說、推導步驟、證明題）第一幀畫完才到
+  const textParts = new Set();
+  function registerText(code, table, part) {
     if (!textTables[code]) textTables[code] = {};
     Object.assign(textTables[code], table);
+    if (part) textParts.add(part);
   }
 
   // 整句查表：key「=雜湊」是整句（LaTeX 的課文式子不能切，整句翻）；否則照樣板查
@@ -194,24 +197,36 @@
     return list;
   }
 
+  // 第二支句型表（"more"）到了才換：舊解說、推導步驟、證明題。原文留在 *Zh、每次都從原文翻，
+  // 所以誰先到都可以（逐步解答表 problem_solution_steps.js 也是延後載入的，它到的時候自己再叫一次）。
+  function localizeSolutions(list) {
+    if (lang === "zh" || !textParts.has("more")) return list;
+    if (typeof window !== "undefined" && Array.isArray(window.BUZZ_PROOFS)) localizeProofs(window.BUZZ_PROOFS);
+    (list || []).forEach((problem) => {
+      if (!problem) return;
+      const solution = problem.solutionZh !== undefined ? problem.solutionZh : problem.solution;
+      if (typeof solution === "string" && CJK_TEXT.test(solution)) {
+        const en = tx(solution);
+        if (en !== solution) { problem.solutionZh = solution; problem.solution = en; }
+      }
+      const steps = problem.solutionStepsZh || problem.solutionSteps;
+      if (Array.isArray(steps)) {
+        const en = steps.map((step) => (typeof step === "string" ? tx(step) : step));
+        if (en.some((step, i) => step !== steps[i])) { problem.solutionStepsZh = steps; problem.solutionSteps = en; }
+      }
+    });
+    return list;
+  }
+
   // 把題庫換成目前語言：原文留在 promptZh，判分用的 answers 別名照舊。
-  // 可以重複呼叫（每個欄位只換一次，原文存在 *Zh）。
-  // 證明題（window.BUZZ_PROOFS）也在這裡一起換：app.js 開場只呼叫這一支（app.js 的預算貼線，不多加一行呼叫）。
+  // 可以重複呼叫（每個欄位只換一次，原文存在 *Zh）。解說、步驟、證明題在 localizeSolutions（第二支句型表到了才換）。
   function localizeProblems(list) {
     if (lang === "zh") return list;
-    if (typeof window !== "undefined" && Array.isArray(window.BUZZ_PROOFS)) localizeProofs(window.BUZZ_PROOFS);
+    localizeSolutions(list);
     const canned = typeof window !== "undefined" && window.BuzzCannedHints;
     list.forEach((problem) => {
       if (!problem || localized.has(problem)) return;
       localized.add(problem);
-      if (typeof problem.solution === "string" && problem.solutionZh === undefined && CJK_TEXT.test(problem.solution)) {
-        const en = tx(problem.solution);
-        if (en !== problem.solution) { problem.solutionZh = problem.solution; problem.solution = en; }
-      }
-      if (Array.isArray(problem.solutionSteps) && !problem.solutionStepsZh) {
-        const en = problem.solutionSteps.map((step) => (typeof step === "string" ? tx(step) : step));
-        if (en.some((step, i) => step !== problem.solutionSteps[i])) { problem.solutionStepsZh = problem.solutionSteps; problem.solutionSteps = en; }
-      }
       if (Array.isArray(problem.hints) && !problem.hintsZh) {
         // 罐頭句（對每題都成立的提示）留中文原文：app.js 用原文比對把它們濾掉，翻了反而會漏網
         const en = problem.hints.map((hint) => (typeof hint === "string" && !(canned && canned.isCanned(hint)) ? tx(hint) : hint));
@@ -252,6 +267,7 @@
     registerProblems,
     problemOverlay,
     localizeProblems,
+    localizeSolutions,
     localizeProofs,
     registerText,
     tx,

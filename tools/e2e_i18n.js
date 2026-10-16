@@ -134,7 +134,11 @@ async function run() {
     `));
 
     // ── 3b. 提示與解說（第二批）：先看提示，再故意答錯，三層解說全部打開，裡面不能有中文 ──
-    check("句型表（延後載入）也到了", await chrome.evaluate("return Object.keys(window.BuzzI18n.textTable('en')).length > 4000;"));
+    // 句型表拆兩支：第一支（提示、課文）跟題幹一起在第一幀之前到；第二支（舊解說、步驟、證明題）第一幀之後才抓
+    check("句型表兩支（延後載入）都到了", await chrome.evaluate(`
+      for (let i = 0; i < 50 && Object.keys(window.BuzzI18n.textTable('en')).length < 7000; i += 1) await new Promise((r) => setTimeout(r, 100));
+      return Object.keys(window.BuzzI18n.textTable('en')).length > 7000 && Boolean(document.querySelector('script[src$="i18n_text_more_en.js"]'));
+    `));
     await chrome.evaluate(`const b = document.querySelector('[data-action="show-hint"]'); if (b && !b.disabled) b.click(); return true;`);
     await chrome.sleep(wait(500));
     check("看得到提示", await chrome.evaluate("return document.querySelectorAll('.hint-list li').length > 0;"));
@@ -158,11 +162,18 @@ async function run() {
     await chrome.evaluate(`document.querySelectorAll('.solution-stages details').forEach((d) => { d.open = true; }); return true;`);
     await chrome.sleep(wait(400));
     await expectNoCjk("解說三層（技巧／關鍵步驟／完整推導）都沒有中文", ".solution-stages");
-    check("完整推導是英文句子、數學原封不動", await chrome.evaluate(`
+    // 詳解 v2 的英文分片（src/detail/en/）：英文介面抓這一套、不抓中文那套；完整推導照英文詳解的步驟列、KaTeX 排好
+    check("英文詳解 v2 掛上了（抓 src/detail/en/，沒抓中文分片）", await chrome.evaluate(`
+      const p = (window.BUZZ_PROBLEMS || []).find((x) => x.id === 'dd-imp-001');
+      return Boolean(p && p.detail && !/[\\u4e00-\\u9fff]/.test(p.detail.spot) && document.querySelector('script[src*="src/detail/en/d-"]') && !document.querySelector('script[src^="src/detail/d-"]'));
+    `));
+    check("完整推導照英文詳解的步驟列出來、式子排好", await chrome.evaluate(`
       const p = (window.BUZZ_PROBLEMS || []).find((x) => x.id === 'dd-imp-001');
       const body = document.querySelector('.solution-stage.is-full .stage-body');
-      return Boolean(p && p.solutionZh && body && /[a-z]{3,}/.test(body.innerText) && body.innerText.includes(p.solution.slice(0, 20)));
+      return Boolean(p && p.detail && body && body.querySelectorAll('.solution-steps li').length === p.detail.steps.length
+        && body.querySelector('.katex') && !/\\$/.test(body.innerText) && /[a-z]{3,}/.test(body.innerText));
     `));
+    check("第一層是英文的「Spot it」", await chrome.evaluate(`return /Spot it/.test((document.querySelector('.solution-stage .key-idea') || {}).innerText || "");`));
 
     // ── 3b'. 逐步解答側表（problem_solution_steps.js）是 load 之後才注入的，比 localizeProblems 晚：
     //        英文使用者看到的步驟仍然要是英文（lim-011 的步驟只在側表裡）
@@ -272,7 +283,7 @@ async function run() {
     check("中文設定下 about.html 是中文版", await chrome.evaluate(`return document.documentElement.lang === 'zh-Hant' && /tudohuang/.test(document.body.innerText) && /[\\u4e00-\\u9fff]/.test(document.body.innerText) && !/Who made it/.test(document.body.innerText);`));
     await chrome.navigate(server.url + "/index.html");
     await chrome.sleep(wait(2000));
-    check("中文版也沒有載內容句型表", await chrome.evaluate("return Object.keys(window.BuzzI18n.textTable('en')).length === 0 && !document.querySelector('script[src$=\"i18n_text_en.js\"]:not([type])');"));
+    check("中文版也沒有載內容句型表", await chrome.evaluate("return Object.keys(window.BuzzI18n.textTable('en')).length === 0 && !document.querySelector('script[src$=\"i18n_text_en.js\"]:not([type])') && !document.querySelector('script[src$=\"i18n_text_more_en.js\"]:not([type])') && !document.querySelector('script[src*=\"src/detail/en/\"]');"));
 
     // ── 5. 跟著瀏覽器：清掉設定就回到偵測（這顆 Chrome 釘在 zh-TW） ──
     await open("open-settings");
