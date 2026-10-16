@@ -1,2 +1,2 @@
 // 產生檔：node tools/build_solution_detail.js（來源 tools/content/detail/）。不要手改。
-window.BuzzDetail && window.BuzzDetail.add(35, {});
+window.BuzzDetail && window.BuzzDetail.add(35, {"der-024":{"spot":"方向 $(3,4)/5$ 已經是單位向量（$3$-$4$-$5$），直接拿梯度跟它內積。","why":"方向導數 $=\\nabla f\\cdot\\mathbf u$，不用回到極限定義。","steps":[["$\\nabla f=(2x,2y)$，在 $(1,2)$ 是 $(2,4)$。","SUB(SUB(D(x^2+y^2, , x), 1, x), 2, y) == 2 ;; SUB(SUB(D(x^2+y^2, , y), 1, x), 2, y) == 4"],["$\\mathbf u=(\\frac{3}{5},\\frac{4}{5})$，長度 $1$。","(3/5)^2+(4/5)^2 == 1"],["$D_{\\mathbf u}f=2\\cdot\\frac{3}{5}+4\\cdot\\frac{4}{5}=\\frac{22}{5}$。","2*3/5 + 4*4/5 == ANS"]],"trap":"用 $(3,4)$ 而沒除以 $5$，得 $22$。","check":["沿這個方向走 $t$：$f(1+\\frac{3t}{5},2+\\frac{4t}{5})$ 在 $t=0$ 的導數就是方向導數。","D((1+3t/5)^2+(2+4t/5)^2, 0) == ANS"]}});
