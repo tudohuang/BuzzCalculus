@@ -395,6 +395,31 @@ try {
   });
 }
 
+/* ── 三之七、坑：無窮積分衰減慢的尾巴 ────────────────────────── */
+// 2026-10-16 之前 exp-sinh 對慢尾巴安靜地少算：∫₁^∞ x^{-1.1} 給 9.86（真值 10）、∫₂^∞ dx/(x ln²x) 給 1.419（真值 1.443），
+// 發散的 ∫₁^∞ dx/x 還給 42.9。現在：冪次穩定的補尾巴算對；發散與貼著 1 的 ln 型算不出來；尾巴質量可忽略的（含振盪的）照舊。
+{
+  const numeric = require("./lib/numeric.js");
+  [
+    ["∫₁^∞ dx/x 發散", (x) => 1 / x, 1],
+    ["∫₁^∞ dx/√x 發散", (x) => 1 / Math.sqrt(x), 1],
+    ["∫₂^∞ dx/(x ln x) 發散", (x) => 1 / (x * Math.log(x)), 2],
+    ["∫₂^∞ dx/(x ln²x)（ln 型、貼著 1）", (x) => 1 / (x * Math.log(x) ** 2), 2]
+  ].forEach(([name, f, a]) => {
+    const r = numeric.integrate(f, a, Infinity);
+    if (Number.isFinite(r.value)) fail(`${name}：必須算不出來，卻給 ${r.value}`);
+  });
+  [
+    ["∫₁^∞ x^{-1.1} = 10（補尾巴）", (x) => x ** -1.1, 1, 10],
+    ["∫₁^∞ x^{-1.5} = 2", (x) => x ** -1.5, 1, 2],
+    ["∫₀^∞ √x ln x/(1+x²)（ln x/x^{1.5} 型，原本就準）", (x) => Math.sqrt(x) * Math.log(x) / (1 + x * x), 0, Math.PI ** 2 / (2 * Math.SQRT2)],
+    ["∫₀^∞ (1−cos x)/x² = π/2（振盪、尾巴質量可忽略）", (x) => (1 - Math.cos(x)) / (x * x), 0, Math.PI / 2]
+  ].forEach(([name, f, a, want]) => {
+    const r = numeric.integrate(f, a, Infinity);
+    if (!(Math.abs(r.value - want) < 1e-5 * Math.max(1, Math.abs(want)))) fail(`${name}：算出 ${r.value}，應該是 ${want}`);
+  });
+}
+
 /* ── 四、坑：spec 裡的小數不能被當成 LaTeX 讀 ───────────────── */
 // String(0.0000001) === "1e-7"，LaTeX 的 e 是尤拉數 —— 少了 constant()
 // 這一行會讀成 1·e−7 = −4.28，掃描下界變負的，ln x 的判定會反過來。

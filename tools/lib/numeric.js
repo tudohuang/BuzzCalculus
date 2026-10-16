@@ -200,6 +200,44 @@ function deSum(g, tolerance, limit) {
 //
 // 振盪型改成切成一段一段固定長度的積分，再把那串部分和交給 ε 演算法。
 // 每段內部不振盪，段與段之間形成交錯級數，正是 ε 演算法最擅長的形狀。
+// 無窮積分的尾巴（2026-10-16 抓到）：exp-sinh 對衰減慢的尾巴取樣不夠遠，會安靜地少算 ——
+// ∫₂^∞ dx/(x ln²x) 算成 1.419（真值 1/ln 2 = 1.443）、∫₁^∞ x^{-1.1} 算成 9.86（真值 10），
+// 發散的 ∫₁^∞ dx/x 還算出 42.9，而且回報的誤差都很小。
+// 在 10⁶…10⁸ 這幾個十倍量 |f| 的衰減冪次 p（每十倍掉 10^p）：
+//   指數型（遠處已經是 0）或尾巴小到可以忽略 → 照用原本的結果
+//   p ≤ 1.02 → 發散（或慢到量不出來）→ 算不出來
+//   p 在相鄰十倍之間還在變（ln 型的尾巴）→ 冪次外推不準 → 算不出來
+//   p 穩定 > 1 → [a, X] 分段照實積、X 以後補 f(X)·X/(p−1)
+function checkTail(f, a, sign, decayed, options) {
+  const base = Math.max(1, Math.abs(a));
+  const X = (k) => a + sign * base * 10 ** k;
+  const v = (k) => Math.abs(f(X(k)));
+  const far = [4, 6, 7, 8].map(v);
+  if (far.some((y) => !Number.isFinite(y))) return decayed;
+  if (far[0] === 0) return decayed;
+  // 10⁸ 以後的尾巴質量（|f|·x，取附近幾點的最大值 —— 振盪的 (1−cos x)/x² 在節點上剛好是 0）小到可以忽略：
+  // exp-sinh 原本就算得準（sin²x/x²、ln x/(1+x²)、ln x/x³ 都是這種），不要動它
+  const mass = Math.max(...[1, 1.13, 1.37, 1.71, 2.3].map((m) => Math.abs(f(a + sign * base * 1e8 * m)) * base * 1e8 * m));
+  if (Number.isFinite(mass) && mass <= 1e-6 * Math.max(1, Math.abs(decayed.value))) return decayed;
+  const p = (k) => Math.log10(v(k) / v(k + 1));
+  const p6 = p(6), p7 = p(7);
+  if (!(p6 > 1.02) || !(p7 > 1.02)) return { value: Number.NaN, error: Infinity, diverges: true, reason: "尾巴衰減得不比 1/x 快 —— 發散（或慢到量不出來）" };
+  // 冪次還在變（ln 型）：只有貼著 1 的才真的會少算（1/(x ln²x) 的 p≈1.12）；ln x/x^{1.5} 這種 exp-sinh 本來就算得準
+  if (Math.abs(p7 - p6) > 0.005 * p7 && p7 >= 1.3) return decayed;
+  if (Math.abs(p7 - p6) > 0.005 * p7) return { value: Number.NaN, error: Infinity, reason: "尾巴的衰減冪次還在變（ln 型），截斷外推不準" };
+  const total = createSum();
+  let lo = a;
+  for (let k = 0; k <= 8; k += 1) {
+    const hi = X(k);
+    const piece = tanhSinh(f, Math.min(lo, hi), Math.max(lo, hi), options);
+    if (!Number.isFinite(piece.value)) return decayed;
+    total.add(sign * piece.value);
+    lo = hi;
+  }
+  const tail = (f(X(8)) * base * 1e8) / (p7 - 1);
+  return { value: total.value + sign * tail, error: Math.abs(tail) * 1e-3, tailExtrapolated: true };
+}
+
 function semiInfinite(f, a, sign, options = {}) {
   const decayed = expSinh(f, a, sign, options);
 
@@ -213,7 +251,7 @@ function semiInfinite(f, a, sign, options = {}) {
     if (last && current !== last) signChanges += 1;
     last = current;
   }
-  if (signChanges < 3) return decayed;
+  if (signChanges < 3) return checkTail(f, a, sign, decayed, options);
 
   const step = 2;
   const total = createSum();
