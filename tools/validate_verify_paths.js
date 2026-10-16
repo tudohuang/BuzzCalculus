@@ -364,6 +364,37 @@ try {
   if (!close(value, expected)) fail(`${name}：算出 ${value}，應該是 ${expected}`);
 });
 
+/* ── 三之六、坑：發散的極限不准外插出有限值 ─────────────────────── */
+// 2026-10-16 之前 numeric.limit 對 x+1（x→∞）回 1、對 1/x（x→0⁺）回 0、(x²+1)/(x+1) 回 −1 ——
+// 詳解的宣稱「LIM(x, inf) == 0」會被判成立，推導式提示也因此把 (5x+3)/(x−2) 說成「分子分母都不趨近 ∞」。
+// 發散的必須算不出來；收斂得慢的、x→0 的高階項（最後幾點被捨入雜訊推著漂）照樣要算對。
+{
+  const numeric = require("./lib/numeric.js");
+  [
+    ["x+1，x→∞", (x) => x + 1, Infinity, {}],
+    ["5x+3，x→∞", (x) => 5 * x + 3, Infinity, {}],
+    ["1/x，x→0⁺", (x) => 1 / x, 0, { side: "+" }],
+    ["ln x，x→∞", (x) => Math.log(x), Infinity, {}],
+    ["(x²+1)/(x+1)，x→∞", (x) => (x * x + 1) / (x + 1), Infinity, {}]
+  ].forEach(([name, f, at, opt]) => {
+    const r = numeric.limit(f, at, opt);
+    if (Number.isFinite(r.value)) fail(`${name} 發散，limit 卻回 ${r.value}`);
+  });
+  [
+    ["(2x+1)/(x+3)，x→∞", (x) => (2 * x + 1) / (x + 3), Infinity, 2],
+    ["x sin(1/x)，x→∞", (x) => x * Math.sin(1 / x), Infinity, 1],
+    ["(e^{x²}−cos x 的積分 − 3x/2)/x³，x→0（尾端有捨入漂移）", (x) => {
+      const g = (t) => (t === 0 ? 1.5 : (Math.exp(t * t) - Math.cos(t)) / (t * t));
+      const n = 200, h = x / n; let s = g(0) + g(x);
+      for (let i = 1; i < n; i += 1) s += g(i * h) * (i % 2 ? 4 : 2);
+      return ((s * h) / 3 - 1.5 * x) / (x * x * x);
+    }, 0, 11 / 72]
+  ].forEach(([name, f, at, want]) => {
+    const r = numeric.limit(f, at);
+    if (!(Math.abs(r.value - want) < 1e-4 * Math.max(1, Math.abs(want)))) fail(`${name}：算出 ${r.value}，應該是 ${want}`);
+  });
+}
+
 /* ── 四、坑：spec 裡的小數不能被當成 LaTeX 讀 ───────────────── */
 // String(0.0000001) === "1e-7"，LaTeX 的 e 是尤拉數 —— 少了 constant()
 // 這一行會讀成 1·e−7 = −4.28，掃描下界變負的，ln x 的判定會反過來。
