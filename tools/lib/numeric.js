@@ -365,13 +365,17 @@ function seriesSum(term, from, options = {}) {
   const snapshots = [];
   let n = from;
   let consecutiveTiny = 0;
+  // 開頭幾項剛好是 0（Σ n(n−1)(n−2)(n−3)/n! 從 n=1 起前三項是 0）不准算成「已經收斂」——
+  // 2026-10-16 之前連三個 0 就收工，回傳 0（真值 e）。看到第一個非零項之後才開始數
+  let seenNonzero = false;
   for (let step = 0; step < maxTerms; step += 1, n += 1) {
     const value = term(n);
     if (!Number.isFinite(value)) return { value: Number.NaN, error: Infinity, reason: `第 ${n} 項不是有限值` };
     total.add(value);
+    if (value !== 0) seenNonzero = true;
     if (step < 60) snapshots.push(total.value);
     const magnitude = Math.abs(total.value);
-    if (Math.abs(value) <= tolerance * Math.max(1, magnitude)) {
+    if (seenNonzero && Math.abs(value) <= tolerance * Math.max(1, magnitude)) {
       consecutiveTiny += 1;
       if (consecutiveTiny >= 3) return { value: total.value, error: Math.abs(value), converged: true };
     } else {

@@ -1234,7 +1234,7 @@
     "tr-num-003": {"prompt":"\\text{For the Taylor polynomial of }\\sin x\\text{ about }x=0\\text{ to have error below }10^{-6}\\text{ on all of }[0,1]\\text{, the smallest order }n"},
     "tr-num-004": {"prompt":"\\text{For the Taylor polynomial of }\\cos x\\text{ about }x=0\\text{ to have error below }10^{-4}\\text{ on all of }\\left[0,\\frac{\\pi}{4}\\right]\\text{, the smallest order }n"},
     "tr-num-005": {"prompt":"\\text{For the Taylor polynomial of }\\ln(1+x)\\text{ about }x=0\\text{ to have error below }10^{-2}\\text{ at }x=\\frac{1}{2}\\text{, the smallest order }n"},
-    "tr-num-006": {"prompt":"\\text{For the Taylor polynomial of }\\ln(1+x)\\text{ about }x=0\\text{ to have error below }10^{-3}\\text{ at }x=\\frac{1}{2}\\text{, the smallest order }n"},
+    "tr-num-006": {"prompt":"\\text{For the Taylor polynomial of }\\ln(1+x)\\text{ about }x=0\\text{ to have actual error (not the error bound) below }10^{-3}\\text{ at }x=\\frac{1}{2}\\text{, the smallest order }n"},
     "tr-val-001": {"prompt":"\\text{Let }T_3\\text{ be the third-order Taylor polynomial of }e^x\\text{ at }x=0\\text{.}\\quad\\text{Find }T_3(1)"},
     "tr-val-002": {"prompt":"\\text{Let }T_5\\text{ be the fifth-order Taylor polynomial of }\\sin x\\text{ at }x=0\\text{.}\\quad\\text{Find }T_5(1)"},
     "tr-val-003": {"prompt":"\\text{Let }T_4\\text{ be the fourth-order Taylor polynomial of }\\cos x\\text{ at }x=0\\text{.}\\quad\\text{Find }T_4\\!\\left(\\frac{1}{2}\\right)"},

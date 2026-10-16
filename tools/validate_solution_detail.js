@@ -71,7 +71,7 @@ function validate(id, d) {
     let usesAns = false;
     claimsOf(claimText).forEach((claim) => {
       if (/(^|[^A-Za-z0-9_])ANS([^A-Za-z0-9_]|$)/.test(claim)) usesAns = true;
-      const result = checkClaim(claim, { normalize: api.normalizeExpression, answer: computable ? problem.answer : null, variable: problem.variable });
+      const result = checkClaim(claim, { normalize: api.normalizeExpression, answer: computable ? problem.answer : null, variable: problem.variable || problem.variables });
       if (!result.ok) fail(`${where} 的宣稱「${claim}」${result.reason}`);
       else if (verbose) console.log(`  ok ${id} ${where}  ${claim}`);
     });

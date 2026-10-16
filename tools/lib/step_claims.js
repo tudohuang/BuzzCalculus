@@ -240,7 +240,8 @@ function checkClaim(claim, context) {
   const match = /^(.*?)\s*(==|~=|<=|>=|<|>)\s*(.*)$/.exec(claim);
   if (!match) return { ok: false, reason: `看不出比較符號：${claim}` };
   const [, lhsText, op, rhsText] = match;
-  const compileExpr = makeCompiler(context.normalize, context.answer, context.variable ? [context.variable] : []);
+  // 題目的 variable 可以是一個字（"a"）或一串（["a", "b"]，兩個參數的題）：攤平，不然整串會被當成一個名字
+  const compileExpr = makeCompiler(context.normalize, context.answer, context.variable ? [].concat(context.variable) : []);
   let lhs;
   let rhs;
   try {
