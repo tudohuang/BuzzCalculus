@@ -75,9 +75,6 @@ const BUDGETS = {
   // 2026-10-15 新增：設定頁的畫面（src/settings_page.js，約 19KB）。app.js 撞到 736KB 上限時照上面的規則搬整頁 render（不調數字）。
   // 第一次打開設定頁才抓（進 APP_SHELL，離線也有）。上限留約兩成。
   "延後載入：設定頁": { pattern: /^$/, budget: 24 * 1024, lazy: "settings" },
-  // 2026-10-16 新增：詳解 v2（src/problem_solution_detail.js）。試點 30 題約 25KB；全題庫寫完會到 MB 級 ——
-  // 那之前要改成按主題分檔、打開解答才抓那一個主題，不是調這個數字。
-  "延後載入：詳解": { pattern: /^$/, budget: 64 * 1024, lazy: "detail" },
   // 2026-10-14 新增：題目側寫＋兩段式抽題（題庫精修提案 v1.0）。problem_profiles.js 是產生的側表（每題一列：方法家族、模板母題、
   // 權重、角色、先修課，約 125KB，隨題庫成長）＋ sampler.js 約 11KB 的抽題邏輯。開站閒下來才載（跟 pwa 同一個時間點），
   // 不佔 script 標籤上限（67／67）也不佔 app.js（只留三處掛鉤）。上限留約三成給題庫成長；再撞頂該做的是把列壓成
@@ -161,7 +158,11 @@ const BUDGETS = {
   // 最大的 Stage 會到 600KB 以上）。打開某一課只抓那一章 —— 使用者等的是「一章」，所以上限管最大的那一支。
   // 改的時候：最大的一章是 11D（Gamma 與 Beta，9 課）58KB；每課加上分節與旁白起訖約 +5KB → 約 105KB。上限 160KB。
   // 撞頂該做的是把那一章拆小（大綱的章本來就該 ≤ 8 課），不是調數字。
-  "延後載入：課文（最大的一章）": { pattern: /^src\/course_v2\/ch-[a-z0-9-]+\.js$/, budget: 160 * 1024, maxFile: true }
+  "延後載入：課文（最大的一章）": { pattern: /^src\/course_v2\/ch-[a-z0-9-]+\.js$/, budget: 160 * 1024, maxFile: true },
+  // 2026-10-16 新增：詳解 v2 的分片（src/detail/d-XX.js，64 片，開局只抓這一局的題目在的那幾片）。
+  // 全題庫約 3,000 份、4MB 上下 → 平均一片 65KB；使用者等的是一片，所以管最大的那一片。撞頂就加片數
+  // （build_solution_detail.js 的 SHARDS 跟 problem_authored_solutions.js 一起改），不是調數字。
+  "延後載入：詳解（最大的一片）": { pattern: /^src\/detail\/d-\d{2}\.js$/, budget: 128 * 1024, maxFile: true }
 };
 
 const html = fs.readFileSync(path.join(ROOT, "index.html"), "utf8");
@@ -181,8 +182,11 @@ for (const [label, spec] of Object.entries(BUDGETS)) {
   let files = [];
   if (spec.maxFile) {
     // 不在 index.html 上、由頁面自己按需抓的檔：量的是最大的那一支（一次只等一支）
-    const dir = path.join(ROOT, "src", "course_v2");
-    files = fs.existsSync(dir) ? fs.readdirSync(dir).map((name) => `src/course_v2/${name}`).filter((rel) => spec.pattern.test(rel)) : [];
+    // 按需抓的檔住在 src/course_v2（課文）與 src/detail（詳解分片）
+    files = ["course_v2", "detail"].flatMap((sub) => {
+      const dir = path.join(ROOT, "src", sub);
+      return fs.existsSync(dir) ? fs.readdirSync(dir).map((name) => `src/${sub}/${name}`) : [];
+    }).filter((rel) => spec.pattern.test(rel));
     const biggest = files.reduce((max, f) => Math.max(max, sizeOf(f)), 0);
     const pctMax = Math.round((biggest / spec.budget) * 100);
     rows.push({ label, total: biggest, budget: spec.budget, pct: pctMax, count: files.length });

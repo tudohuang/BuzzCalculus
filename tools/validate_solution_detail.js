@@ -22,9 +22,11 @@ const fileArg = args.includes("--file") ? args[args.indexOf("--file") + 1] : nul
 const api = loadAppApi();
 const problems = loadAppApi.allProblems();
 const byId = new Map(problems.map((p) => [p.id, p]));
-const table = fileArg ? require(path.resolve(fileArg)) : global.window.BUZZ_SOLUTION_DETAIL;
+const build = require("./build_solution_detail.js");
+// 正式表＝tools/content/detail/ 全部批次（同一題寫在兩批會在這裡就丟例外）；--file 只驗一批草稿
+const table = fileArg ? require(path.resolve(fileArg)) : build.loadSource().table;
 if (!table || typeof table !== "object") {
-  console.error("找不到詳解表（window.BUZZ_SOLUTION_DETAIL）—— index.html 有沒有列 src/problem_solution_detail.js？");
+  console.error("讀不到詳解來源（tools/content/detail/*.js）");
   process.exit(1);
 }
 const COMPUTABLE = new Set(["numeric", "expression", "antiderivative", undefined]);
@@ -125,8 +127,23 @@ if (!fileArg) {
     outside.why = "這裡的 \\frac{1}{2} 沒有包在 $ 裡面，會原樣露出來";
     if (!validate(firstId, outside).length) failures.push("反向測試：$ 外面的 LaTeX 指令沒有被擋");
   }
-  const applied = global.window.BUZZ_SOLUTION_DETAIL_APPLIED || 0;
-  if (applied !== Object.keys(table).length) failures.push(`詳解表有 ${Object.keys(table).length} 份，掛上題目的只有 ${applied} 份`);
+  // 分片：產物跟來源同步、瀏覽器的雜湊跟打包工具一樣、每一片載進來真的掛到題目上
+  const fs = require("fs");
+  const files = build.render(table);
+  Object.entries(files).forEach(([name, text]) => {
+    const file = path.join(build.OUT, name);
+    if (!fs.existsSync(file) || fs.readFileSync(file, "utf8") !== text) failures.push(`src/detail/${name} 跟來源不同步：跑 node tools/build_solution_detail.js`);
+  });
+  const loader = global.window.BuzzDetail;
+  if (!loader) failures.push("瀏覽器端沒有 window.BuzzDetail（src/problem_authored_solutions.js）");
+  else {
+    if (loader.SHARDS !== build.SHARDS) failures.push(`片數不一致：瀏覽器 ${loader.SHARDS}、打包 ${build.SHARDS}`);
+    const off = problems.filter((p) => loader.shardOf(p.id) !== build.shardOf(p.id)).map((p) => p.id);
+    if (off.length) failures.push(`雜湊不一致（瀏覽器會去錯的那一片找）：${off.slice(0, 5).join(", ")}`);
+    Object.keys(files).forEach((name) => require(path.join(build.OUT, name)));
+    const attached = problems.filter((p) => p.detail && table[p.id] === undefined ? false : Boolean(p.detail)).length;
+    if (attached !== Object.keys(table).length) failures.push(`詳解有 ${Object.keys(table).length} 份，分片載進來掛上題目的只有 ${attached} 份`);
+  }
 }
 
 if (failures.length) {

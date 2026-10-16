@@ -427,6 +427,8 @@ interface Window {
   /** 新版課程的畫面（data-lazy="course"，只有中文介面會載） */
   BuzzCourseV2UI?: { create(deps: any): any };
   /** src/settings_page.js：設定頁的畫面（data-lazy="settings"） */
+  /** src/problem_authored_solutions.js：詳解 v2 的分片載入器（src/detail/d-XX.js） */
+  BuzzDetail?: { SHARDS: number; shardOf(id: string): number; loaded: Record<number, boolean>; add(shard: number, table: Record<string, any>): void; prefetch(ids: string[]): void; onload?: (shard: number) => void };
   BuzzSettingsPage?: { create(deps: any): { renderSettings(): string } };
   BUZZ_COURSE_V2?: { narration?: string; narrationM?: string; stages: { n: number; title: string; branch?: boolean; chapters: { code: string; title: string; lessons: { id: string; title: string; read?: number; total?: number; practice?: string; worked?: string }[] }[] }[] };
   BUZZ_COURSE_V2_LESSONS?: Record<string, any>;
