@@ -537,22 +537,30 @@ async function run() {
     const g2 = await evaluate(`return { label: window.__s.text("[data-cv2s-gap]"), saved: (window.__s.rec().settings || {}).narrGap, small: window.__s.dockSmall(), overflow: window.__s.overflow() };`);
     check("按兩下 → 停2拍、記在設定裡；播放列不溢出、按鈕 ≥ 40px", g2.label === "停2拍" && g2.saved === 2 && !g2.small.length && g2.overflow <= 1, JSON.stringify(g2));
     const gapBeats = await evaluate(`return window.BUZZ_COURSE_V2_LESSONS[${JSON.stringify(WIDGET.id)}].sections[0].beats.length;`);
+    // 量時間全在頁面裡做（每 15ms 記一筆）：CI 的機器慢，「CDP 取一次、睡 400ms、再取一次」來回本身就會超過停頓的 1 秒（2026-10-15 在 CI 紅過）。
+    // 第二次停頓一開始，頁面自己按暫停（不經 CDP 來回），之後再看 1.5 秒內有沒有自己往下。
+    await evaluate(`window.__gap = { log: [], paused: 0 }; clearInterval(window.__gapTick);
+      window.__gapTick = setInterval(() => {
+        const v = ${VG}, now = performance.now(), beats = window.__s.beats();
+        window.__gap.log.push({ t: now, rest: v.rest, beat: v.beat, at: v.at, end: v.end, beats, paused: v.paused });
+        if (${gapBeats >= 3} && !window.__gap.paused && v.rest && v.beat === "0-1") { document.querySelector("[data-cv2s-play]").click(); window.__gap.paused = now; }
+      }, 15); return 1;`);
     await tap("[data-cv2s-play]");
-    const rest1 = await waitFor(`${VG}.rest && ${VG}.beat === "0-0"`, 5000);
-    const gr0 = await evaluate(`return { v: ${VG}, beats: window.__s.beats() };`);
-    await sleep(400);
-    const gr1 = await evaluate(`return { v: ${VG}, beats: window.__s.beats() };`);
-    check("念完第一句先停：錄音停在訖點、下一句還沒出", rest1 && gr1.v.rest && gr1.beats === gr0.beats && Math.abs(gr1.v.at - gr0.v.at) < 40 && gr1.v.at >= gr0.v.end - 80, JSON.stringify({ gr0: [gr0.beats, gr0.v.at, gr0.v.end], gr1: [gr1.beats, gr1.v.at, gr1.v.rest] }));
-    check("停 2 拍（1 秒）之後出第二句、接著念", await waitFor(`window.__s.beats() === ${gr0.beats + 1} && !${VG}.rest && ${VG}.beat === "0-1"`, 2500), JSON.stringify(await evaluate(`return ${VG};`)));
+    check("停 2 拍之後出第二句、接著念", await waitFor(`window.__gap.log.some((e) => e.beat === "0-1" && !e.rest)`, 6000), JSON.stringify(await evaluate(`return ${VG};`)));
+    const g1 = await evaluate(`const L = window.__gap.log; const rest = L.filter((e) => e.rest && e.beat === "0-0"); const next = L.find((e) => e.beat === "0-1");
+      return { n: rest.length, from: rest.length ? rest[0].t : 0, to: next ? next.t : 0, atMin: Math.min(...rest.map((e) => e.at)), atMax: Math.max(...rest.map((e) => e.at)), end: rest.length ? rest[0].end : 0, beatsDuring: [...new Set(rest.map((e) => e.beats))] };`);
+    const restMs = g1.to - g1.from;
+    check("念完第一句先停約 1 秒：錄音停在訖點不動、這段時間下一句沒出", g1.n > 0 && restMs >= 850 && restMs <= 2500 && g1.atMax - g1.atMin < 40 && g1.atMin >= g1.end - 80 && g1.beatsDuring.length === 1, JSON.stringify({ restMs: Math.round(restMs), at: [g1.atMin, g1.atMax], end: g1.end, beats: g1.beatsDuring }));
     if (gapBeats >= 3) {
-      check("第二句念完又停", await waitFor(`${VG}.rest && ${VG}.beat === "0-1"`, 4000));
+      check("第二句念完又停、頁面在停頓中按了暫停", await waitFor(`window.__gap.paused > 0`, 5000));
+      await waitFor(`performance.now() - window.__gap.paused > 1500`, 4000);
+      const held = await evaluate(`const p = window.__gap.paused; const after = window.__gap.log.filter((e) => e.t > p + 60); return { beats: [...new Set(after.map((e) => e.beats))], paused: after.every((e) => e.paused), n: after.length };`);
+      check("停頓中按暫停：過了停頓的時間（1.5 秒）也不往下", held.n > 0 && held.paused && held.beats.length === 1, JSON.stringify(held));
+      const beatsHeld = held.beats[0];
       await tap("[data-cv2s-play]");
-      await sleep(1300);
-      const held = await evaluate(`return { v: ${VG}, beats: window.__s.beats() };`);
-      check("停頓中按暫停：過了停頓的時間也不往下", held.v.paused && held.beats === gr0.beats + 1, JSON.stringify({ beats: held.beats, paused: held.v.paused }));
-      await tap("[data-cv2s-play]");
-      check("再按繼續：直接出第三句", await waitFor(`window.__s.beats() === ${gr0.beats + 2} && ${VG}.beat === "0-2" && !${VG}.paused`, 800), JSON.stringify(await evaluate(`return ${VG};`)));
+      check("再按繼續：直接出第三句", await waitFor(`window.__s.beats() === ${beatsHeld + 1} && ${VG}.beat === "0-2" && !${VG}.paused`, 1500), JSON.stringify(await evaluate(`return ${VG};`)));
     }
+    await evaluate(`clearInterval(window.__gapTick); return 1;`);
     await tap("[data-cv2s-play]");
     await tap("[data-cv2s-gap]");
     await tap("[data-cv2s-gap]");
