@@ -489,6 +489,23 @@ function limit(f, target, options = {}) {
     if (usable < 5) return { value: Number.NaN, error: Infinity, reason: "取樣序列一開始就不穩定" };
     const clean = samples.slice(0, usable);
 
+    // 發散的式子不准外插出一個有限值（2026-10-16 抓到：x+1 在 ∞ 說是 1、1/x 在 0⁺ 說是 0 ——
+    // 「LIM(x, inf) == 0」這種錯的宣稱會被判成立）。看後三分之一：差距一路同號、而且沒有在縮
+    // （相鄰差距的比值平均 ≥ 0.9995：1/x 是 1.25、ln x 是 1、真的收斂的 1/x 型是 0.8；收斂得慢的（積分型、x→0 的高階項）比值在 0.99 上下，0.99 當門檻會把它們誤殺）→ 沒有在收斂，回報算不出來。
+    {
+      const tail = clean.slice(Math.floor((clean.length * 2) / 3));
+      const diffs = tail.slice(1).map((v, i) => v - tail[i]);
+      const sameSign = diffs.length >= 4 && diffs.every((d) => d !== 0 && Math.sign(d) === Math.sign(diffs[0]));
+      if (sameSign) {
+        const ratios = diffs.slice(1).map((d, i) => Math.abs(d / diffs[i]));
+        const mean = ratios.reduce((a, b) => a + b, 0) / ratios.length;
+        // 還要真的「走得遠」：x→0 的高階項在最後幾個點會被捨入雜訊推著慢慢漂（比值 1.06，但整段只動 0.04%），那不是發散
+        const first = tail[0], last = tail[tail.length - 1];
+        const moved = Math.abs(last - first) / Math.max(Math.abs(first), Math.abs(last), 1e-300);
+        if ((mean >= 0.9995 && moved > 0.05) || mean >= 1.15) return { value: Number.NaN, error: Infinity, diverges: true, reason: "取樣值一路朝同一方向走、而且沒有在縮小 —— 發散（或收斂慢到量不出來）" };
+      }
+    }
+
     // 從幾個不同深度各外插一次。淺窗格通常還沒收斂，深窗格才是答案，
     // 但深窗格也最容易踩到抵消 —— 所以取最深三個的中位數，
     // 並且用它們之間的離散程度當作「這個值可不可信」的判斷。
