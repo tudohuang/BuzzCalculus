@@ -423,7 +423,7 @@
     { id: "cl-int-008",
       rank: 2,
       answerKind: "numeric",
-      prompt: "\\text{水箱底部開了小孔，水深 }h(t)\\text{（公尺）滿足 }\\frac{dh}{dt}=-0.2\\sqrt{h}\\text{，且 }h(0)=4\\text{。求 10 分鐘後的水深 }h(10)",
+      prompt: "\\text{水箱底部開了小孔，水深 }h(t)\\text{（公尺，}t\\text{ 以分鐘計）滿足 }\\frac{dh}{dt}=-0.2\\sqrt{h}\\text{，且 }h(0)=4\\text{。求 10 分鐘後的水深 }h(10)",
       answer: "1",
       timeLimit: 90,
       tags: ["ode", "separable", STORY],
