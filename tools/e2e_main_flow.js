@@ -632,7 +632,12 @@ async function run() {
       full.querySelector("summary").click();
       await new Promise((r) => setTimeout(r, 300 * (window.__slow || 1)));
       const items = [...full.querySelectorAll("ol.solution-steps li")].filter((li) => li.getBoundingClientRect().height > 0);
-      return { loaded, count: items.length, first: items.length ? items[0].innerText : "", text: items.map((li) => li.innerText).join(" / ").slice(0, 160) };
+      // 詳解 v2（2026-10）的步驟是 KaTeX 排版：0/0 排成分數（.mfrac），不是純文字的「0/0」；也不准露出沒排版的 $ 或 \\frac
+      // 「先代 x=2 得 0/0」可能在步驟第一步，也可能在第一層「一眼看出」（詳解 v2 把它放在那裡）：整個解答區塊裡要找得到
+      const stages = full.closest("[data-solution-stages]") || full;
+      const raw = /\\$|\\\\frac/.test(stages.innerText);
+      const frac = Boolean(stages.querySelector(".katex .mfrac")) && /0/.test(stages.innerText);
+      return { loaded, count: items.length, first: items.length ? items[0].innerText : "", frac, typeset: Boolean(full.querySelector("ol.solution-steps .katex")), raw, text: items.map((li) => li.innerText).join(" / ").slice(0, 160) };
     `);
     check("逐步解答側表在頁面閒下來後載入", steps.loaded, steps.why || "");
 
@@ -649,7 +654,7 @@ async function run() {
     `);
     check("抽題側寫在頁面閒下來後載入，一局 10 題沒有同模板", sampler.loaded && sampler.n === 10 && sampler.distinct === 10,
       sampler.loaded ? `${sampler.n} 題、${sampler.distinct} 個模板` : "window.BuzzSampler 沒有載到");
-    check("答錯後打開「完整推導」，看得到一步一步的解答", steps.count >= 3 && /0\/0/.test(steps.first),
+    check("答錯後打開「完整推導」，看得到一步一步的解答（0/0 那一步排成分數或寫成 0/0，沒有沒排版的 TeX）", steps.count >= 3 && (/0\/0/.test(steps.first) || (steps.frac && steps.typeset)) && !steps.raw,
       steps.why || `${steps.count} 步：${steps.text}`);
 
     /* ── 9. 全程不能有 console 錯誤或 404 ── */
