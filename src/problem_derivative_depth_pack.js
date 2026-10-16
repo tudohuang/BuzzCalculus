@@ -1708,7 +1708,7 @@
     solution: "2 = (π/4)·16·dh/dt → dh/dt = 1/(2π) ≈ 0.159 公尺／分。" });
 
   add({ id: "dx-rr-002", rank: 5,
-    prompt: "\\text{雷達站在跑道旁 }500\\text{ 公尺處，飛機以 }200\\text{ 公尺／秒沿跑道飛離。}\\quad\\text{飛機距雷達正對點 }500\\text{ 公尺時，仰角變化率（弧度／秒）}",
+    prompt: "\\text{雷達站在跑道旁 }500\\text{ 公尺處，飛機以 }200\\text{ 公尺／秒沿跑道飛離。}\\quad\\text{飛機距雷達正對點 }500\\text{ 公尺時，雷達視線與跑道的夾角的變化率（弧度／秒）}",
     answer: "-0.2", verify: { m: "chainRate", f: "\\arctan(\\frac{500}{x})", at: 500, given: 200 },
     tags: ["related-rates", "applied-derivative", "word-problem", "inverse-trig"], timeLimit: 150,
     hints: ["θ = arctan(500/x)，x 是水平距離。", "dθ/dx = −500/(x²+500²)。", "x=500 時 dθ/dx = −1/1000。"],

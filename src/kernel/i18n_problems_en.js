@@ -359,7 +359,7 @@
     "dx-eng-003": {"prompt":"\\text{Radius of curvature of the curve }y=x^{3}-2x\\text{ at }x=1"},
     "dx-eng-004": {"prompt":"\\text{Curvature of the catenary }y=\\cosh x\\text{ at }x=0"},
     "dx-rr-001": {"prompt":"\\text{Inverted conical tank: top radius }3\\text{ m, depth }6\\text{ m, filling at }2\\text{ cu m/min.}\\quad\\text{How fast does the level rise when the water is }4\\text{ m deep (m/min)?}"},
-    "dx-rr-002": {"prompt":"\\text{A radar station is }500\\text{ m from the runway; a plane moves along the runway at }200\\text{ m/s.}\\quad\\text{When the plane is }500\\text{ m from the point opposite the radar, the rate of change of the viewing angle (rad/s)}"},
+    "dx-rr-002": {"prompt":"\\text{A radar station is }500\\text{ m from the runway; a plane moves along the runway at }200\\text{ m/s.}\\quad\\text{When the plane is }500\\text{ m from the point opposite the radar, the rate of change of the angle between the radar's line of sight and the runway (rad/s)}"},
     "dx-rr-003": {"prompt":"\\text{Ship A is }60\\text{ nautical miles due north of ship B. A sails south at }15\\text{ knots and B east at }20\\text{ knots. After }\\quad 2\\text{ hours, the rate of change of the distance between them (knots)}"},
     "dx-rr-004": {"prompt":"\\text{A hot-air balloon rises vertically from a point }150\\text{ m from an observer at }6\\text{ m/s.}\\quad\\text{When it is }150\\text{ m high, the rate of change of the angle of elevation (rad/s)}"},
     "dx-tan-001": {"prompt":"\\text{Where the tangent to the curve }y=\\dfrac{x}{x^{2}+1}\\text{ at }x=2\\text{ meets the }x\\text{-axis}"},
