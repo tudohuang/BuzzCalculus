@@ -445,7 +445,7 @@
     { id: "cl-int-010",
       rank: 2,
       answerKind: "numeric",
-      prompt: "\\text{一條彈簧用 10 牛頓的力可拉長 4 公分（虎克定律）。把它從「比自然長度長 6 公分」拉到「長 10 公分」，要作多少功（焦耳）？}",
+      prompt: "\\text{一條彈簧用 10 牛頓的力可拉長 4 公分（虎克定律）。把它從「比自然長度長 6 公分」拉到「比自然長度長 10 公分」，要作多少功（焦耳）？}",
       answer: "4/5",
       timeLimit: 90,
       tags: ["work", "hooke-law", STORY],

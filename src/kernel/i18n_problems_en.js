@@ -245,7 +245,7 @@
     "db-tan-007": {"prompt":"\\text{The }\\ y\\ \\text{-intercept of the normal line to }y=x^2\\ \\text{ at }\\ (1,1)\\ "},
     "db-tan-008": {"prompt":"y=x^3-3x^2+1\\ \\text{ Among the points with a horizontal tangent, the one with }x>0\\ \\text{: }\\ x"},
     "db-tan-009": {"prompt":"y=x^2\\ln x\\ \\text{ At the point with a horizontal tangent, }\\ x"},
-    "dd-grw-001": {"prompt":"T(t)=20+80e^{-0.05t}\\ \\text{ (}^{\\circ}\\text{C). The cooling rate at }t=10\\ "},
+    "dd-grw-001": {"prompt":"T(t)=20+80e^{-0.05t}\\ \\text{ (}^{\\circ}\\text{C). The rate of change of temperature at }t=10\\ \\text{(negative while cooling)}"},
     "dd-grw-002": {"prompt":"\\text{An exponentially growing population }P(0)=500,\\ P(2)=800\\text{. The growth rate at }t=4\\ "},
     "dd-grw-003": {"prompt":"\\text{An isotope with half-life }8\\text{ days starts at }40\\text{ grams.}t=8\\ \\text{The decay rate (grams/day) at that day}"},
     "dd-imp-001": {"prompt":"x^2+4y^2=25\\ \\text{: find }\\ \\frac{dy}{dx}\\text{ at the point }\\ (3,2)\\ "},
