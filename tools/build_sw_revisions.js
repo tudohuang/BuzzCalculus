@@ -62,8 +62,8 @@ function tables(read = diskRead) {
   const fontsDir = path.join(ROOT, "assets/vendor/katex/fonts");
   const fonts = fs.readdirSync(fontsDir).filter((n) => n.endsWith(".woff2")).map((n) => `assets/vendor/katex/fonts/${n}`);
   const chapters = fs.readdirSync(path.join(ROOT, "src/course_v2")).filter((n) => /^ch-[a-z0-9-]+\.js$/.test(n)).map((n) => `src/course_v2/${n}`);
-  // 詳解 v2 的分片（src/detail/d-XX.js，開局按需抓）：跟課文一樣不預快取、進 REVISIONS 用內容雜湊管版本
-  const detailShards = fs.existsSync(path.join(ROOT, "src/detail")) ? fs.readdirSync(path.join(ROOT, "src/detail")).filter((n) => /^d-\d{2}\.js$/.test(n)).map((n) => `src/detail/${n}`) : [];
+  // 詳解 v2 的分片（src/detail/d-XX.js 與英文的 src/detail/en/d-XX.js，開局按需抓）：跟課文一樣不預快取、進 REVISIONS 用內容雜湊管版本
+  const detailShards = ["src/detail", "src/detail/en"].flatMap((dir) => (fs.existsSync(path.join(ROOT, dir)) ? fs.readdirSync(path.join(ROOT, dir)).filter((n) => /^d-\d{2}\.js$/.test(n)).map((n) => `${dir}/${n}`) : []));
   const all = [...new Set([...core, ...lazy.map((l) => l.src), ...fonts, ...PAGES, ...chapters, ...detailShards])].sort();
   const missing = all.filter((rel) => !fs.existsSync(path.join(ROOT, rel)));
   if (missing.length) throw new Error(`index.html／sw.js 指到不存在的檔：${missing.join(", ")}`);

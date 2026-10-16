@@ -1014,7 +1014,11 @@
       script.onerror = () => reject(new Error(t("載不到 ") + src));
       document.head.appendChild(script);
     });
-    lazyGroups[group] = tags.reduce((chain, tag) => chain.then(() => loadOne(tag.getAttribute("src"))), Promise.resolve())
+    // 英文的證明頁要等第二支句型表（證明題的字在那裡）；載不到就照中文畫
+    const before = group === "proof" && window.BuzzI18n && window.BuzzI18n.lang !== "zh"
+      ? ensureLazy("i18nmore").then(() => window.BuzzI18n.localizeSolutions(problems)).catch(() => {})
+      : Promise.resolve();
+    lazyGroups[group] = tags.reduce((chain, tag) => chain.then(() => loadOne(tag.getAttribute("src"))), before)
       .then(() => { lazyGroups[group] = true; })
       .catch((error) => { lazyGroups[group] = null; throw error; });
     return lazyGroups[group];
@@ -15153,11 +15157,15 @@
   });
   // 英文介面：題目的英文側表是延後載入的（中文使用者一個位元組都不用抓），
   // 載完、把題庫換成英文之後才畫第一幀。載不到就照中文題幹畫，介面仍是英文。
+  // 舊解說、推導步驟、證明題的句型在第二支（data-lazy="i18nmore"），第一幀畫完才抓；作答中不重畫（會洗掉輸入）。
   if (window.BuzzI18n && window.BuzzI18n.lang !== "zh") {
     ensureLazy("i18n")
       .then(() => { window.BuzzI18n.localizeProblems(problems); })
       .catch(() => {})
-      .then(render);
+      .then(render)
+      .then(() => ensureLazy("i18nmore"))
+      .then(() => { window.BuzzI18n.localizeSolutions(problems); if (view !== "quiz") render(); })
+      .catch(() => {});
   } else {
     render();
   }

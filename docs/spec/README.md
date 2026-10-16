@@ -49,11 +49,11 @@
 | 有作者撰寫 `hints` | 2283 |  |
 | 有 `solutionSteps` | 1172 | 結構化步驟；側表 problem_solution_steps.js 的每一步由 validate_solution_steps 數值驗算 |
 | 證明題 | 68 | 含 Lean 寫法 8 則（CI 不再編譯） |
-| `src/app.js` | 15165 行 | 單一 IIFE，拆分進行中 |
+| `src/app.js` | 15173 行 | 單一 IIFE，拆分進行中 |
 | `styles.css` | 12164 行 |  |
 | 題庫檔 `src/problem_*.js` | 38 |  |
-| kernel 模組 `src/kernel/*.js` | 30 | 純函式層 |
-| CI 驗證器 `tools/` | 60 支 | validate / verify / smoke / e2e |
+| kernel 模組 `src/kernel/*.js` | 31 | 純函式層 |
+| CI 驗證器 `tools/` | 61 支 | validate / verify / smoke / e2e |
 
 **答案型別分佈**：`numeric` 2276、`expression` 397、`text` 197、`antiderivative` 151、`sketch` 42、`worksheet` 42、`graphtap` 39、`interval` 34、`graph` 26、`proof` 26、`set` 23、`epsilon` 14、`graphslope` 10。
 

@@ -278,7 +278,8 @@
   // ── 詳解 v2：按需抓的分片（src/detail/d-XX.js，tools/build_solution_detail.js 產生）──
   // 全題庫的詳解有幾 MB，不能一支檔：照題號雜湊分片，開一局只抓這一局的題目在的那幾片（app.js 的 startQuiz 呼叫 prefetch）。
   // 分片內容掛在 problem.detail；畫面（app.js 的 renderSolutionStages）有 detail 就照新格式畫，沒有就照舊。
-  // 只有中文介面抓：這一份還沒有英文，英文介面照舊用已經翻好的舊解說。
+  // 英文介面抓 src/detail/en/ 那一套（同一個雜湊、同一個片號；步驟是字串，這裡整理成跟中文一樣的 [文字] 形狀）；
+  // 還沒翻的題（英文那片裡沒有）照舊用舊解說。
   // 雜湊與片數要跟 tools/build_solution_detail.js 一樣（validate_solution_detail 會比對）。
   const SHARDS = 64;
   const shardOf = (id) => {
@@ -291,29 +292,31 @@
   };
   const requested = {};
   let byId = null;
+  const lang = () => (window.BuzzI18n && window.BuzzI18n.lang === "en" ? "en" : "zh");
+  const asSteps = (d) => ({ ...d, steps: d.steps.map((s) => (Array.isArray(s) ? s : [s])) });
   window.BuzzDetail = {
     SHARDS,
     shardOf,
     loaded: {},
-    // 分片載進來時呼叫：掛到題目上；onload 讓畫面決定要不要重畫
-    add(shard, table) {
-      if (window.BuzzI18n && window.BuzzI18n.lang && window.BuzzI18n.lang !== "zh") return;
+    // 分片載進來時呼叫：掛到題目上；onload 讓畫面決定要不要重畫。code 是那一片的語言（中文片不帶）
+    add(shard, table, code) {
+      if ((code || "zh") !== lang()) return;
       if (!byId) byId = new Map((window.BUZZ_PROBLEMS || []).map((p) => [p.id, p]));
       Object.keys(table).forEach((id) => {
         const problem = byId.get(id);
-        if (problem) problem.detail = table[id];
+        if (problem) problem.detail = asSteps(table[id]);
       });
       window.BuzzDetail.loaded[shard] = true;
       if (typeof window.BuzzDetail.onload === "function") window.BuzzDetail.onload(shard);
     },
     prefetch(ids) {
-      if (window.BuzzI18n && window.BuzzI18n.lang && window.BuzzI18n.lang !== "zh") return;
       if (typeof document === "undefined" || !document.createElement || !document.head) return;
+      const dir = lang() === "en" ? "src/detail/en" : "src/detail";
       new Set((ids || []).map(shardOf)).forEach((n) => {
         if (requested[n]) return;
         requested[n] = true;
         const script = document.createElement("script");
-        script.src = `src/detail/d-${String(n).padStart(2, "0")}.js`;
+        script.src = `${dir}/d-${String(n).padStart(2, "0")}.js`;
         script.async = true;
         // 載不到（離線、沒快取）就算了：畫面照舊用舊解說；下次開一局再試
         script.onerror = () => { requested[n] = false; };

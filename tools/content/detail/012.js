@@ -1085,7 +1085,7 @@ module.exports = {
     ],
     "trap": "以為 $\\int\\frac{\\sin^3x}{x^3}$ 跟 $\\int\\frac{\\sin x}{x}$ 一樣是 $\\frac{\\pi}{2}$；或分部時漏了 $\\frac{1}{2}$（$\\frac{1}{x^3}$ 積兩次給 $\\frac{1}{2x}$），答 $\\frac{3\\pi}{4}$。",
     "check": [
-      "$0\\le\\frac{\\sin^3x}{x^3}$ 在 $[0,\\pi]$ 之外很小；答案 $\\approx 1.178$ 比 $\\int_0^\\infty\\frac{\\sin^2x}{x^2}=\\frac{\\pi}{2}$ 小，符合次方越高越窄。",
+      "$\\left|\\frac{\\sin^3x}{x^3}\\right|$ 在 $[0,\\pi]$ 之外很小；答案 $\\approx 1.178$ 比 $\\int_0^\\infty\\frac{\\sin^2x}{x^2}=\\frac{\\pi}{2}$ 小，符合次方越高越窄。",
       "ANS < pi/2 ;; ANS > 1"
     ]
   },

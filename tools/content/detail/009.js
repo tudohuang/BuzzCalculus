@@ -1166,7 +1166,7 @@ module.exports = {
     ],
     "trap": "把 $\\ln\\cos x$ 當成 $\\cos(\\ln x)$ 或直接寫 $\\ln\\cos x\\approx\\ln 1=0$ 得 $0$ —— 要展開到 $x^2$ 那一項。",
     "check": [
-      "代 $x=0.1$：$\\frac{\\ln\\cos0.1}{0.01}\\approx -0.50042$，靠近 $-\\frac{1}{2}$。",
+      "代 $x=0.1$：$\\frac{\\ln\\cos0.1}{0.01}\\approx -0.50084$，靠近 $-\\frac{1}{2}$。",
       "SUB(ln(cos(x))/x^2, 0.1) < -0.5 ;; SUB(ln(cos(x))/x^2, 0.1) > -0.501"
     ]
   },
@@ -1351,7 +1351,7 @@ module.exports = {
     ],
     "trap": "第二次分部的符號錯，寫成 $x^2\\sin x-2x\\cos x+2\\sin x$，上限代進去得 $\\frac{\\pi^2}{4}+2$。",
     "check": [
-      "$\\frac{\\pi^2}{4}-2\\approx 0.467$；被積函數非負，答案為正而且比 $\\frac{\\pi}{2}\\cdot\\max\\approx 1.1$ 小。",
+      "$\\frac{\\pi^2}{4}-2\\approx 0.467$；被積函數非負，答案為正而且比 $\\frac{\\pi}{2}\\cdot\\max\\approx 0.86$ 小。",
       "ANS > 0 ;; ANS < 1.1"
     ]
   },

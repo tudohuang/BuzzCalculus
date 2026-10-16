@@ -357,13 +357,14 @@ interface BuzzI18nApi {
   registerProblems(code: string, table: Record<string, any>): void;
   problemOverlay(id: string): any;
   localizeProblems<T>(list: T[]): T[];
+  localizeSolutions<T>(list: T[]): T[];
   localizeProofs<T>(list: T[]): T[];
   missing: Set<string>;
   hasDictionary(code: string): boolean;
   dictionary(code: string): Record<string, string>;
   problemTable(code: string): Record<string, any>;
   /** 內容句子（解說、提示、課文）的句型表：key 是中文樣板的雜湊，值是英文樣板 */
-  registerText(code: string, table: Record<string, string>): void;
+  registerText(code: string, table: Record<string, string>, part?: string): void;
   /** 目前語言的內容句子；中文介面或查不到就原樣回傳 */
   tx(text: string): string;
   translateText(text: string, code?: string): string;

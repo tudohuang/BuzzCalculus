@@ -354,14 +354,22 @@ textUnits.forEach((unit) => {
   stat.done += 1;
 });
 {
-  const { text, collisions } = textBuild.render(textUnits, textSource);
+  const { text, textMore, collisions } = textBuild.render(textUnits, textSource);
   collisions.forEach((c) => fail(`句型表雜湊碰撞：${c}`));
-  const shipped = fs.existsSync(textBuild.OUTPUT) ? fs.readFileSync(textBuild.OUTPUT, "utf8") : "";
-  if (shipped !== text) fail("src/kernel/i18n_text_en.js 跟 tools/content/i18n_text_en.json 不同步：跑 node tools/build_i18n_text.js");
-  // 用出貨的那一支在「英文介面」的 i18n.js 裡實際翻一次：不能還有中文、數學片段一個都不能少
+  const read = (file) => (fs.existsSync(file) ? fs.readFileSync(file, "utf8") : "");
+  const shipped = read(textBuild.OUTPUT);
+  const shippedMore = read(textBuild.OUTPUT_MORE);
+  if (shipped !== text || shippedMore !== textMore) fail("src/kernel/i18n_text_en.js／i18n_text_more_en.js 跟 tools/content/i18n_text_en.json 不同步：跑 node tools/build_i18n_text.js");
+  // 用出貨的兩支在「英文介面」的 i18n.js 裡實際翻一次：不能還有中文、數學片段一個都不能少
   const en = i18nSpans.loadI18n("en");
   const sandbox = { window: { BuzzI18n: en }, BuzzI18n: en, console };
   vm.runInNewContext(shipped, sandbox, { filename: "i18n_text_en.js" });
+  // 第一支要自己撐得起第一幀：提示、機器推的提示、課文不准落到第二支
+  textUnits.filter((unit) => ["hint", "derived", "course"].includes(unit.kind)).forEach((unit) => {
+    const out = en.translateText(unit.text);
+    if (CJK.test(out)) fail(`${unit.kind} ${unit.where} 的英文不在第一支句型表（第一幀會是中文）`);
+  });
+  vm.runInNewContext(shippedMore, sandbox, { filename: "i18n_text_more_en.js" });
   let leaked = 0;
   textUnits.forEach((unit) => {
     const out = en.translateText(unit.text);
