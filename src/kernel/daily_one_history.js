@@ -146,6 +146,7 @@
     "2026-10-13": "lec-18-q2b",
     "2026-10-14": "exam-multi-003",
     "2026-10-15": "dd-inv-004",
+    "2026-10-16": "exam-der-014",
   };
   if (typeof module !== "undefined" && module.exports) module.exports = { HISTORY };
   if (typeof window !== "undefined") window.BUZZ_DAILY_ONE_HISTORY = HISTORY;

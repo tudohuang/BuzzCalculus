@@ -7364,15 +7364,22 @@
     return window.BuzzDerivedHints.textFor(problem.id) || "";
   }
 
+  // 詳解 v2 的文字：$…$ 是 KaTeX（typesetMath 排 .math-inline），其餘照字面印
+  function richText(text) {
+    return String(text || "").split("$").map((part, i) => (i % 2 ? `<span class="math-inline" data-tex="${escapeAttr(part)}"></span>` : escapeHtml(part))).join("");
+  }
+
   function renderSolutionStages(problem, options = {}) {
     const live = Boolean(options.live);
     const hints = hintsFor(problem);
     const authored = authoredHints(problem);
+    const detail = problem.detail;
     const lead = hints[0] || t("先判斷題型，再選最短的工具。");
     // 第二層優先吃作者寫的；作者沒寫時才用機器推導的事實補。
     const authoredSteps = authored.slice(1);
-    const derived = authoredSteps.length ? "" : derivedHint(problem);
-    const steps = authoredSteps;
+    const derived = authoredSteps.length || detail ? "" : derivedHint(problem);
+    // 有詳解 v2 的題：第二層放「為什麼這招」（作者的提示照舊在「看提示」那裡）
+    const steps = detail ? [] : authoredSteps;
     // 只印有中文名的技巧；沒有人話名字的內部 tag（Title Case 的英文）不露出
     const techniqueTags = (problem.tags || [])
       .filter((tag) => !META_ANALYSIS_TAGS.has(tag) && (TAG_LABELS[tag] || TRAINING_PACKS[tag]))
@@ -7383,16 +7390,18 @@
         <details class="solution-stage">
           <summary><span class="stage-index">①</span>${t("該用什麼技巧")}</summary>
           <div class="stage-body">
-            <p>${escapeHtml(lead)}</p>
+            ${detail ? `<p class="key-idea"><span>${t("一眼看出")}</span><span>${richText(detail.spot)}</span></p>` : `<p>${escapeHtml(lead)}</p>`}
             ${techniqueTags.length ? `<div class="stage-tags">${techniqueTags.map((tag) => `<span class="chip">${escapeHtml(tag)}</span>`).join("")}</div>` : ""}
           </div>
         </details>
-        <details class="solution-stage ${steps.length || derived ? "" : "is-empty"}">
-          <summary><span class="stage-index">②</span>${t("關鍵步驟")}${steps.length || derived ? "" : `<small class="stage-cost">${t("這題沒有")}</small>`}</summary>
+        <details class="solution-stage ${steps.length || derived || detail ? "" : "is-empty"}">
+          <summary><span class="stage-index">②</span>${t("關鍵步驟")}${steps.length || derived || detail ? "" : `<small class="stage-cost">${t("這題沒有")}</small>`}</summary>
           <div class="stage-body">
             ${
               steps.length
                 ? `<ol>${steps.map((step) => `<li>${escapeHtml(step)}</li>`).join("")}</ol>`
+                : detail
+                  ? `<p>${richText(detail.why)}</p>`
                 : derived
                   ? `<p>${escapeHtml(derived)}</p>
                      <p class="stage-derived">${t("這一條是系統從題目本身算出來的，不是作者寫的。")}</p>`
@@ -7420,6 +7429,13 @@
   // 的一句話推導是還沒補的內容工作，不是程式問題。這裡不會拿
   // 「把一句話硬切成三句」來假裝有步驟。
   function renderSolutionBody(problem) {
+    const detail = problem.detail;
+    if (detail) {
+      const check = Array.isArray(detail.check) ? detail.check[0] : detail.check;
+      return `<ol class="solution-steps">${detail.steps.map((step) => `<li>${richText(step[0])}</li>`).join("")}</ol>
+        ${detail.trap ? `<p class="key-idea"><span>${t("常見錯")}</span><span>${richText(detail.trap)}</span></p>` : ""}
+        ${check ? `<p class="key-idea"><span>${t("驗算")}</span><span>${richText(check)}</span></p>` : ""}`;
+    }
     const steps = Array.isArray(problem.solutionSteps) ? problem.solutionSteps.filter(Boolean) : [];
     if (steps.length >= 2) {
       return `<ol class="solution-steps">${steps.map((step) => `<li>${escapeHtml(step)}</li>`).join("")}</ol>`;
