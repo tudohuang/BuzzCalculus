@@ -263,12 +263,16 @@
   if (typeof document !== "undefined" && document.createElement && document.head) {
     const loadSteps = () => {
       if (window.BUZZ_SOLUTION_STEP_TABLE) return;
-      const tag = document.querySelector('script[type="text/lazy"][data-lazy="steps"]');
-      if (!tag) return;
-      const script = document.createElement("script");
-      script.src = tag.getAttribute("src");
-      script.async = true;
-      document.head.appendChild(script);
+      // 詳解 v2（problem_solution_detail.js）只有中文介面用得到：英文介面不抓
+      const groups = window.BuzzI18n && window.BuzzI18n.lang && window.BuzzI18n.lang !== "zh" ? ["steps"] : ["steps", "detail"];
+      groups.forEach((group) => {
+        const tag = document.querySelector(`script[type="text/lazy"][data-lazy="${group}"]`);
+        if (!tag) return;
+        const script = document.createElement("script");
+        script.src = tag.getAttribute("src");
+        script.async = true;
+        document.head.appendChild(script);
+      });
     };
     const later = () => (window.requestIdleCallback ? window.requestIdleCallback(loadSteps, { timeout: 3000 }) : window.setTimeout(loadSteps, 1200));
     if (document.readyState === "complete") later();

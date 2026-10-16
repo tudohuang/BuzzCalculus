@@ -75,6 +75,9 @@ const BUDGETS = {
   // 2026-10-15 新增：設定頁的畫面（src/settings_page.js，約 19KB）。app.js 撞到 736KB 上限時照上面的規則搬整頁 render（不調數字）。
   // 第一次打開設定頁才抓（進 APP_SHELL，離線也有）。上限留約兩成。
   "延後載入：設定頁": { pattern: /^$/, budget: 24 * 1024, lazy: "settings" },
+  // 2026-10-16 新增：詳解 v2（src/problem_solution_detail.js）。試點 30 題約 25KB；全題庫寫完會到 MB 級 ——
+  // 那之前要改成按主題分檔、打開解答才抓那一個主題，不是調這個數字。
+  "延後載入：詳解": { pattern: /^$/, budget: 64 * 1024, lazy: "detail" },
   // 2026-10-14 新增：題目側寫＋兩段式抽題（題庫精修提案 v1.0）。problem_profiles.js 是產生的側表（每題一列：方法家族、模板母題、
   // 權重、角色、先修課，約 125KB，隨題庫成長）＋ sampler.js 約 11KB 的抽題邏輯。開站閒下來才載（跟 pwa 同一個時間點），
   // 不佔 script 標籤上限（67／67）也不佔 app.js（只留三處掛鉤）。上限留約三成給題庫成長；再撞頂該做的是把列壓成

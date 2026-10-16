@@ -33,7 +33,8 @@ const VOLATILE = new Set(["src/kernel/daily_one_history.js"]);
 // metrics＝量測漏斗與回訪（src/kernel/metrics.js，只有分析開著才載）。
 // sampler＝題目側寫與兩段式抽題（src/kernel/problem_profiles.js＋sampler.js）：離線練題也要照方法家族抽、課程練習也要擋先修。
 // settings＝設定頁的畫面（src/settings_page.js）：離線也要能改設定、匯出備份。
-const CORE_LAZY = ["steps", "pwa", "metrics", "sampler", "settings"];
+// detail＝詳解 v2（src/problem_solution_detail.js）：跟 steps 同一個時間點注入，離線看解答也要有。
+const CORE_LAZY = ["steps", "pwa", "metrics", "sampler", "settings", "detail"];
 // 讀檔：預設讀磁碟；E2E（tools/e2e_update.js）傳入覆寫，產生「改了一支檔之後」的 sw.js 而不動到磁碟
 const diskRead = (rel) => fs.readFileSync(path.join(ROOT, rel));
 // 內容雜湊：sw.js 在執行期用 crypto.subtle 算一樣的東西（sha256 的前 10 個 hex）

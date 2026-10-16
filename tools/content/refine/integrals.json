@@ -1,0 +1,2920 @@
+{
+  "batch": "integrals",
+  "note": "題庫精修 Phase 4 — integrals batch (40). Staging only: an integration step turns this into a pack. Concept/setup/visual: FTC_reasoning, visual_integral, geometric_meaning, setup_only, bounds_selection, change_order, interpret_integral, physical_model_setup, method_selection. Checked by scratchpad refine-integrals/check.js (verify_engine, rubric→rank, KaTeX, checker, duplicates).",
+  "defaults": {
+    "source": "Buzz 題庫精修 2026-10",
+    "difficulty": "min(4, rank)"
+  },
+  "problems": [
+    {
+      "id": "refine-integrals-001",
+      "topic": "integrals",
+      "rank": 1,
+      "rubric": {
+        "steps": 1,
+        "obscurity": 1,
+        "load": 1
+      },
+      "methodFamily": [
+        "FTC_reasoning"
+      ],
+      "cognitiveAction": [
+        "interpret",
+        "compute"
+      ],
+      "difficultyMode": [
+        "recall"
+      ],
+      "learningRole": [
+        "course_core",
+        "concept_check",
+        "general_practice"
+      ],
+      "prerequisiteGate": [
+        "ftc-part1"
+      ],
+      "servesLessons": [
+        "ftc-part1"
+      ],
+      "representation": "symbolic",
+      "noveltyFamily": "refine-int:ftc1-direct",
+      "prompt": "g(x)=\\int_{1}^{x}\\left(t^2+3\\right)dt\\text{，求 }g'(2)",
+      "answerKind": "numeric",
+      "answer": "7",
+      "timeLimit": 45,
+      "tags": [
+        "ftc"
+      ],
+      "hints": [
+        "不需要先把積分算出來。",
+        "微積分基本定理 I：上限是 x 的積分，對 x 微分會得到被積函數在 x 的值。"
+      ],
+      "solutionSteps": [
+        "由 FTC I，g'(x)=x^2+3（下限 1 是常數，不影響導數）。",
+        "代 x=2：g'(2)=4+3=7。"
+      ],
+      "solution": "FTC I：g'(x)=x²+3，所以 g'(2)=7。",
+      "verify": {
+        "m": "ftcDeriv",
+        "g": "t^2+3",
+        "lo": "1",
+        "hi": "x",
+        "at": 2
+      },
+      "verifyNote": "ftcDeriv：先數值積分出 g(x) 再數值微分，不套 FTC 公式",
+      "origin": "original — written for the 題庫精修 Phase 4 integrals batch (2026-10); numbers and setups chosen fresh, no textbook/exam text reused"
+    },
+    {
+      "id": "refine-integrals-002",
+      "topic": "integrals",
+      "rank": 3,
+      "rubric": {
+        "steps": 2,
+        "obscurity": 1,
+        "load": 2
+      },
+      "methodFamily": [
+        "FTC_reasoning"
+      ],
+      "cognitiveAction": [
+        "compute",
+        "interpret"
+      ],
+      "difficultyMode": [
+        "trap"
+      ],
+      "learningRole": [
+        "course_extra",
+        "general_practice",
+        "daily"
+      ],
+      "prerequisiteGate": [
+        "ftc-part1",
+        "chain-rule"
+      ],
+      "servesLessons": [
+        "ftc-part1",
+        "chain-rule"
+      ],
+      "representation": "symbolic",
+      "noveltyFamily": "refine-int:ftc-two-moving-limits",
+      "prompt": "F(x)=\\int_{x}^{3x}\\frac{dt}{1+t^2}\\text{，求 }F'(1)",
+      "answerKind": "numeric",
+      "answer": "-1/5",
+      "distractors": [
+        "3/10",
+        "-1/2",
+        "1/5"
+      ],
+      "timeLimit": 75,
+      "tags": [
+        "moving-limits"
+      ],
+      "hints": [
+        "上下限都會動：拆成 ∫₀^{3x} − ∫₀^{x}。",
+        "上限 3x 那一項要乘上 (3x)′=3；下限那一項帶負號。"
+      ],
+      "solutionSteps": [
+        "F(x)=∫₀^{3x}dt/(1+t²) − ∫₀^{x}dt/(1+t²)。",
+        "F'(x)=3·1/(1+9x²) − 1/(1+x²)。",
+        "x=1：3/10 − 1/2 = −1/5。"
+      ],
+      "solution": "F′(x)=3/(1+9x²) − 1/(1+x²)，F′(1)=3/10−1/2=−1/5。忘了下限的那一項會得到 3/10。",
+      "verify": {
+        "m": "ftcDeriv",
+        "g": "\\frac{1}{1+t^2}",
+        "lo": "x",
+        "hi": "3x",
+        "at": 1
+      },
+      "verifyNote": "ftcDeriv：F 由數值積分得到，再數值微分",
+      "origin": "original — written for the 題庫精修 Phase 4 integrals batch (2026-10); numbers and setups chosen fresh, no textbook/exam text reused"
+    },
+    {
+      "id": "refine-integrals-003",
+      "topic": "integrals",
+      "rank": 2,
+      "rubric": {
+        "steps": 2,
+        "obscurity": 1,
+        "load": 1
+      },
+      "methodFamily": [
+        "FTC_reasoning"
+      ],
+      "cognitiveAction": [
+        "interpret",
+        "compute"
+      ],
+      "difficultyMode": [
+        "recall"
+      ],
+      "learningRole": [
+        "course_core",
+        "concept_check",
+        "general_practice"
+      ],
+      "prerequisiteGate": [
+        "ftc-part1",
+        "product-rule"
+      ],
+      "servesLessons": [
+        "ftc-part1",
+        "product-rule"
+      ],
+      "representation": "symbolic",
+      "noveltyFamily": "refine-int:ftc-recover-integrand",
+      "prompt": "\\text{已知對所有 }x\\text{：}\\int_{0}^{x}f(t)\\,dt=x^2\\sin x\\text{，求 }f\\!\\left(\\tfrac{\\pi}{2}\\right)",
+      "answerKind": "numeric",
+      "answer": "pi",
+      "timeLimit": 60,
+      "tags": [
+        "ftc"
+      ],
+      "hints": [
+        "左邊是 f 的累積函數；兩邊對 x 微分。",
+        "右邊用乘法律。"
+      ],
+      "solutionSteps": [
+        "兩邊對 x 微分：f(x)=2x sin x + x² cos x。",
+        "代 x=π/2：2·(π/2)·1 + (π²/4)·0 = π。"
+      ],
+      "solution": "f(x)=d/dx(x² sin x)=2x sin x + x² cos x，f(π/2)=π。",
+      "verify": {
+        "m": "deriv",
+        "f": "x^2\\sin x",
+        "at": [
+          "\\pi/2"
+        ]
+      },
+      "verifyNote": "deriv：對題幹給的 x²sin x 做數值微分（f 就是它的導數，這是題意本身）",
+      "origin": "original — written for the 題庫精修 Phase 4 integrals batch (2026-10); numbers and setups chosen fresh, no textbook/exam text reused"
+    },
+    {
+      "id": "refine-integrals-004",
+      "topic": "integrals",
+      "rank": 3,
+      "rubric": {
+        "steps": 2,
+        "obscurity": 2,
+        "load": 1
+      },
+      "methodFamily": [
+        "FTC_reasoning"
+      ],
+      "cognitiveAction": [
+        "interpret",
+        "compute"
+      ],
+      "difficultyMode": [
+        "recall"
+      ],
+      "learningRole": [
+        "course_extra",
+        "general_practice",
+        "daily"
+      ],
+      "prerequisiteGate": [
+        "ftc-part1",
+        "chain-rule"
+      ],
+      "servesLessons": [
+        "ftc-part1",
+        "chain-rule"
+      ],
+      "representation": "symbolic",
+      "noveltyFamily": "refine-int:ftc-composite-upper",
+      "prompt": "f\\ \\text{連續，且對所有 }x>0\\text{：}\\int_{0}^{x^2}f(t)\\,dt=x^3\\text{。求 }f(4)",
+      "answerKind": "numeric",
+      "answer": "3",
+      "distractors": [
+        "12",
+        "6",
+        "3/4"
+      ],
+      "timeLimit": 80,
+      "tags": [
+        "ftc"
+      ],
+      "hints": [
+        "兩邊對 x 微分時，左邊的上限是 x²，要乘 (x²)′。",
+        "f(4) 對應的是 x=2，不是 x=4。"
+      ],
+      "solutionSteps": [
+        "兩邊對 x 微分：f(x²)·2x = 3x²。",
+        "所以 f(x²)=3x/2。",
+        "要 f(4) 就取 x=2：f(4)=3。"
+      ],
+      "solution": "2x·f(x²)=3x² ⇒ f(x²)=3x/2；x=2 給 f(4)=3。直接代 x=4 會得到 6，那是 f(16)。",
+      "verify": {
+        "m": "deriv",
+        "f": "\\left(\\sqrt{x}\\right)^3",
+        "at": [
+          "4"
+        ]
+      },
+      "verifyNote": "deriv：題意是 F(u)=∫₀^u f 滿足 F(x²)=x³，即 F(u)=(√u)³（x>0 時的同一句話）；f(4)=F′(4) 用數值微分",
+      "origin": "original — written for the 題庫精修 Phase 4 integrals batch (2026-10); numbers and setups chosen fresh, no textbook/exam text reused"
+    },
+    {
+      "id": "refine-integrals-005",
+      "topic": "integrals",
+      "rank": 4,
+      "rubric": {
+        "steps": 2,
+        "obscurity": 2,
+        "load": 2
+      },
+      "methodFamily": [
+        "FTC_reasoning"
+      ],
+      "cognitiveAction": [
+        "compute",
+        "interpret"
+      ],
+      "difficultyMode": [
+        "insight"
+      ],
+      "learningRole": [
+        "course_extra",
+        "general_practice",
+        "daily"
+      ],
+      "prerequisiteGate": [
+        "ftc-part1",
+        "higher-derivatives"
+      ],
+      "servesLessons": [
+        "ftc-part1",
+        "higher-derivatives"
+      ],
+      "representation": "symbolic",
+      "noveltyFamily": "refine-int:ftc-x-inside",
+      "prompt": "g(x)=\\int_{0}^{x}(x-t)\\cos t\\,dt\\text{，求 }g''\\!\\left(\\tfrac{\\pi}{3}\\right)",
+      "answerKind": "numeric",
+      "answer": "1/2",
+      "distractors": [
+        "sqrt(3)/2",
+        "-1/2",
+        "0"
+      ],
+      "timeLimit": 120,
+      "tags": [
+        "ftc"
+      ],
+      "hints": [
+        "被積函數裡有 x：先拆成 x∫₀^x cos t dt − ∫₀^x t cos t dt 再微分。"
+      ],
+      "solutionSteps": [
+        "g(x)=x∫₀^x cos t dt − ∫₀^x t cos t dt。",
+        "g'(x)=∫₀^x cos t dt + x cos x − x cos x = sin x。",
+        "g''(x)=cos x，g''(π/3)=1/2。"
+      ],
+      "solution": "把 x 提出積分外再用 FTC：g′(x)=sin x，g″(x)=cos x，所以 g″(π/3)=1/2。",
+      "verify": {
+        "m": "ftcDeriv",
+        "g": "(x-t)\\cos t",
+        "lo": "0",
+        "hi": "x",
+        "at": "\\pi/3",
+        "order": 2
+      },
+      "verifyNote": "ftcDeriv（被積函數含 x，order 2）：G(x) 數值積分後做二階數值微分",
+      "origin": "original — written for the 題庫精修 Phase 4 integrals batch (2026-10); numbers and setups chosen fresh, no textbook/exam text reused"
+    },
+    {
+      "id": "refine-integrals-006",
+      "topic": "integrals",
+      "rank": 2,
+      "rubric": {
+        "steps": 1,
+        "obscurity": 1,
+        "load": 2
+      },
+      "methodFamily": [
+        "visual_integral",
+        "geometric_meaning"
+      ],
+      "cognitiveAction": [
+        "visualize",
+        "compute"
+      ],
+      "difficultyMode": [
+        "recall"
+      ],
+      "learningRole": [
+        "course_core",
+        "visual",
+        "general_practice"
+      ],
+      "prerequisiteGate": [
+        "definite-signed-area"
+      ],
+      "servesLessons": [
+        "definite-signed-area"
+      ],
+      "representation": "graph",
+      "noveltyFamily": "refine-int:polyline-signed-area",
+      "prompt": "f\\ \\text{為過 }(0,0),(2,2),(4,2),(6,-2)\\text{ 的折線（如圖）。求 }\\int_{0}^{6}f(x)\\,dx",
+      "answerKind": "numeric",
+      "answer": "6",
+      "distractors": [
+        "8",
+        "7",
+        "5"
+      ],
+      "graph": {
+        "window": [
+          -1,
+          7,
+          -3,
+          3
+        ],
+        "polylines": [
+          [
+            [
+              0,
+              0
+            ],
+            [
+              2,
+              2
+            ],
+            [
+              4,
+              2
+            ],
+            [
+              6,
+              -2
+            ]
+          ]
+        ],
+        "fills": [
+          {
+            "pts": [
+              [
+                0,
+                0
+              ],
+              [
+                2,
+                2
+              ],
+              [
+                4,
+                2
+              ],
+              [
+                5,
+                0
+              ]
+            ]
+          },
+          {
+            "pts": [
+              [
+                5,
+                0
+              ],
+              [
+                6,
+                -2
+              ],
+              [
+                6,
+                0
+              ]
+            ]
+          }
+        ]
+      },
+      "timeLimit": 60,
+      "tags": [
+        "graph-reading",
+        "area"
+      ],
+      "hints": [
+        "定積分是帶號面積：x 軸下方算負。",
+        "最後一段在 x=5 穿過 x 軸，切成兩個三角形。"
+      ],
+      "solutionSteps": [
+        "[0,2] 三角形：½·2·2=2；[2,4] 矩形：2·2=4。",
+        "[4,6] 在 x=5 過零：上方三角形 +1、下方三角形 −1，相消。",
+        "合計 2+4+0=6。"
+      ],
+      "solution": "三角形 2 + 矩形 4 + （+1−1）= 6。把最後一段全算成正的會得到 8。",
+      "verify": {
+        "m": "graphArea",
+        "pts": [
+          [
+            0,
+            0
+          ],
+          [
+            2,
+            2
+          ],
+          [
+            4,
+            2
+          ],
+          [
+            6,
+            -2
+          ]
+        ],
+        "from": 0,
+        "to": 6
+      },
+      "verifyNote": "graphArea：直接對折線頂點做梯形積分（帶號）",
+      "origin": "original — written for the 題庫精修 Phase 4 integrals batch (2026-10); numbers and setups chosen fresh, no textbook/exam text reused"
+    },
+    {
+      "id": "refine-integrals-007",
+      "topic": "integrals",
+      "rank": 3,
+      "rubric": {
+        "steps": 2,
+        "obscurity": 1,
+        "load": 2
+      },
+      "methodFamily": [
+        "visual_integral",
+        "FTC_reasoning"
+      ],
+      "cognitiveAction": [
+        "visualize",
+        "interpret"
+      ],
+      "difficultyMode": [
+        "trap"
+      ],
+      "learningRole": [
+        "course_extra",
+        "visual",
+        "general_practice"
+      ],
+      "prerequisiteGate": [
+        "ftc-part1"
+      ],
+      "servesLessons": [
+        "ftc-part1"
+      ],
+      "representation": "graph",
+      "noveltyFamily": "refine-int:accum-extremum-tap",
+      "prompt": "\\text{圖為 }f\\text{ 的圖形：過 }(0,2),(2,-2),(5,1)\\text{ 的折線。}g(x)=\\int_{0}^{x}f(t)\\,dt\\text{，點出 }g\\text{ 在 }(0,5)\\text{ 內的極小值位置}",
+      "answerKind": "graphtap",
+      "answer": "4",
+      "graph": {
+        "window": [
+          -1,
+          6,
+          -3,
+          3
+        ],
+        "polylines": [
+          [
+            [
+              0,
+              2
+            ],
+            [
+              2,
+              -2
+            ],
+            [
+              5,
+              1
+            ]
+          ]
+        ],
+        "labels": [
+          {
+            "x": 5.2,
+            "y": 1.4,
+            "text": "f"
+          }
+        ]
+      },
+      "tapKind": "fmin",
+      "timeLimit": 60,
+      "tags": [
+        "accumulation",
+        "graph-reading"
+      ],
+      "hints": [
+        "g′(x)=f(x)：g 的極值出現在 f 變號的地方。",
+        "極小要 g 先降後升，也就是 f 由負轉正。"
+      ],
+      "solutionSteps": [
+        "g′=f。f 在 x=1 由正轉負（g 的極大），在 x=4 由負轉正。",
+        "由負轉正的那一點是 g 的極小：x=4。"
+      ],
+      "solution": "g′=f；f 的零點是 x=1（+→−，極大）與 x=4（−→+，極小）。f 的最低點 x=2 是 g 的反曲點，不是極值。",
+      "verifyNote": "graphtap fmin：驗算器從折線找 f 由負轉正的零點（g′=f）",
+      "origin": "original — written for the 題庫精修 Phase 4 integrals batch (2026-10); numbers and setups chosen fresh, no textbook/exam text reused"
+    },
+    {
+      "id": "refine-integrals-008",
+      "topic": "integrals",
+      "rank": 3,
+      "rubric": {
+        "steps": 2,
+        "obscurity": 1,
+        "load": 2
+      },
+      "methodFamily": [
+        "visual_integral",
+        "FTC_reasoning"
+      ],
+      "cognitiveAction": [
+        "visualize",
+        "compute"
+      ],
+      "difficultyMode": [
+        "recall"
+      ],
+      "learningRole": [
+        "course_extra",
+        "visual",
+        "general_practice"
+      ],
+      "prerequisiteGate": [
+        "ftc-part1",
+        "definite-signed-area"
+      ],
+      "servesLessons": [
+        "ftc-part1",
+        "definite-signed-area"
+      ],
+      "representation": "graph",
+      "noveltyFamily": "refine-int:accum-max-value",
+      "prompt": "f\\ \\text{為過 }(0,-1),(1,1),(3,1),(4,-1)\\text{ 的折線（如圖），}g(x)=\\int_{0}^{x}f(t)\\,dt\\text{。求 }g\\text{ 在 }[0,4]\\text{ 上的最大值}",
+      "answerKind": "numeric",
+      "answer": "9/4",
+      "distractors": [
+        "2",
+        "5/2",
+        "3"
+      ],
+      "graph": {
+        "window": [
+          -1,
+          5,
+          -2,
+          2
+        ],
+        "polylines": [
+          [
+            [
+              0,
+              -1
+            ],
+            [
+              1,
+              1
+            ],
+            [
+              3,
+              1
+            ],
+            [
+              4,
+              -1
+            ]
+          ]
+        ]
+      },
+      "timeLimit": 90,
+      "tags": [
+        "accumulation",
+        "graph-reading"
+      ],
+      "hints": [
+        "g 最大的地方是 f 由正轉負的地方。",
+        "f 在第一段 x=0.5 過零、在最後一段 x=3.5 過零。"
+      ],
+      "solutionSteps": [
+        "g′=f，f 在 x=0.5 由負轉正、在 x=3.5 由正轉負，所以最大值在 x=3.5（端點 g(0)=0 較小）。",
+        "g(3.5)=∫₀^{0.5}f + ∫_{0.5}^{1}f + ∫₁³f + ∫₃^{3.5}f = −¼ + ¼ + 2 + ¼。",
+        "g(3.5)=9/4。"
+      ],
+      "solution": "最大值在 f 由正轉負的 x=3.5：−¼+¼+2+¼=9/4。把 x=4 當最大會得到 2。",
+      "verify": {
+        "m": "graphArea",
+        "pts": [
+          [
+            0,
+            -1
+          ],
+          [
+            1,
+            1
+          ],
+          [
+            3,
+            1
+          ],
+          [
+            4,
+            -1
+          ]
+        ],
+        "from": 0,
+        "to": 3.5
+      },
+      "verifyNote": "graphArea：從 0 積到 f 由正轉負的零點 x=3.5（零點由折線幾何讀出，面積由驗算器算）",
+      "origin": "original — written for the 題庫精修 Phase 4 integrals batch (2026-10); numbers and setups chosen fresh, no textbook/exam text reused"
+    },
+    {
+      "id": "refine-integrals-009",
+      "topic": "integrals",
+      "rank": 4,
+      "rubric": {
+        "steps": 2,
+        "obscurity": 2,
+        "load": 2
+      },
+      "methodFamily": [
+        "visual_integral",
+        "interpret_integral"
+      ],
+      "cognitiveAction": [
+        "visualize",
+        "interpret",
+        "compute"
+      ],
+      "difficultyMode": [
+        "trap"
+      ],
+      "learningRole": [
+        "course_extra",
+        "visual",
+        "modeling",
+        "general_practice",
+        "daily"
+      ],
+      "prerequisiteGate": [
+        "ftc-part2",
+        "definite-signed-area"
+      ],
+      "servesLessons": [
+        "ftc-part2",
+        "definite-signed-area"
+      ],
+      "representation": "graph",
+      "noveltyFamily": "refine-int:velocity-graph-position",
+      "prompt": "\\text{質點速度 }v(t)\\text{ 為過 }(0,2),(2,-2),(4,-2),(6,1)\\text{ 的折線（如圖），}s(0)=3\\text{。求 }s(6)",
+      "answerKind": "numeric",
+      "answer": "-2",
+      "distractors": [
+        "8",
+        "-5",
+        "2"
+      ],
+      "graph": {
+        "window": [
+          -1,
+          7,
+          -3,
+          3
+        ],
+        "polylines": [
+          [
+            [
+              0,
+              2
+            ],
+            [
+              2,
+              -2
+            ],
+            [
+              4,
+              -2
+            ],
+            [
+              6,
+              1
+            ]
+          ]
+        ]
+      },
+      "timeLimit": 100,
+      "tags": [
+        "kinematics",
+        "accumulation"
+      ],
+      "hints": [
+        "s(6)=s(0)+∫₀⁶ v(t) dt，用帶號面積。"
+      ],
+      "solutionSteps": [
+        "[0,2]：在 t=1 過零，+1 與 −1 相消，淨 0。",
+        "[2,4]：矩形 −4。",
+        "[4,6]：在 t=16/3 過零，−4/3 與 +1/3，淨 −1。",
+        "s(6)=3+0−4−1=−2。"
+      ],
+      "solution": "位移 ∫₀⁶v = 0 − 4 − 1 = −5，s(6)=3−5=−2。用總路程或忘了 s(0) 都會錯。",
+      "verify": {
+        "m": "graphArea",
+        "pts": [
+          [
+            0,
+            2
+          ],
+          [
+            2,
+            -2
+          ],
+          [
+            4,
+            -2
+          ],
+          [
+            6,
+            1
+          ]
+        ],
+        "from": 0,
+        "to": 6,
+        "base": 3
+      },
+      "verifyNote": "graphArea（base=s(0)）：s(6)=s(0)+∫₀⁶v，折線帶號積分",
+      "origin": "original — written for the 題庫精修 Phase 4 integrals batch (2026-10); numbers and setups chosen fresh, no textbook/exam text reused"
+    },
+    {
+      "id": "refine-integrals-010",
+      "topic": "integrals",
+      "rank": 2,
+      "rubric": {
+        "steps": 1,
+        "obscurity": 1,
+        "load": 2
+      },
+      "methodFamily": [
+        "visual_integral",
+        "geometric_meaning"
+      ],
+      "cognitiveAction": [
+        "visualize",
+        "compute"
+      ],
+      "difficultyMode": [
+        "trap"
+      ],
+      "learningRole": [
+        "course_core",
+        "visual",
+        "general_practice"
+      ],
+      "prerequisiteGate": [
+        "integral-properties",
+        "definite-signed-area"
+      ],
+      "servesLessons": [
+        "integral-properties",
+        "definite-signed-area"
+      ],
+      "representation": "graph",
+      "noveltyFamily": "refine-int:linearity-from-graph",
+      "prompt": "f\\ \\text{為過 }(0,0),(2,2),(4,0),(6,-2)\\text{ 的折線（如圖）。求 }\\int_{0}^{6}\\left(2f(x)+1\\right)dx",
+      "answerKind": "numeric",
+      "answer": "10",
+      "distractors": [
+        "5",
+        "4",
+        "13"
+      ],
+      "graph": {
+        "window": [
+          -1,
+          7,
+          -3,
+          3
+        ],
+        "polylines": [
+          [
+            [
+              0,
+              0
+            ],
+            [
+              2,
+              2
+            ],
+            [
+              4,
+              0
+            ],
+            [
+              6,
+              -2
+            ]
+          ]
+        ]
+      },
+      "timeLimit": 60,
+      "tags": [
+        "graph-reading",
+        "area"
+      ],
+      "hints": [
+        "線性：∫(2f+1) = 2∫f + ∫1。",
+        "∫₀⁶ f 是帶號面積；∫₀⁶ 1 dx 是區間長度。"
+      ],
+      "solutionSteps": [
+        "∫₀⁶ f：[0,4] 的三角形 +4，[4,6] 的三角形 −2，合計 2。",
+        "∫₀⁶(2f+1)dx = 2·2 + 6。",
+        "= 10。"
+      ],
+      "solution": "2∫₀⁶f + 6 = 2·2 + 6 = 10。忘了「+1」也要積（區間長 6）會得到 5 或 4。",
+      "verify": {
+        "m": "integral",
+        "f": "2\\left(2-|x-2|\\right)+1",
+        "a": 0,
+        "b": 6,
+        "breaks": [
+          2
+        ]
+      },
+      "verifyNote": "integral：這條折線就是 y=2−|x−2|（四個頂點都落在上面），對 2f+1 直接數值積分（在折點 x=2 分段）",
+      "origin": "original — written for the 題庫精修 Phase 4 integrals batch (2026-10); numbers and setups chosen fresh, no textbook/exam text reused"
+    },
+    {
+      "id": "refine-integrals-011",
+      "topic": "integrals",
+      "rank": 2,
+      "rubric": {
+        "steps": 1,
+        "obscurity": 2,
+        "load": 1
+      },
+      "methodFamily": [
+        "geometric_meaning"
+      ],
+      "cognitiveAction": [
+        "recognize_method",
+        "visualize"
+      ],
+      "difficultyMode": [
+        "recall"
+      ],
+      "learningRole": [
+        "course_core",
+        "concept_check",
+        "general_practice"
+      ],
+      "prerequisiteGate": [
+        "definite-signed-area"
+      ],
+      "servesLessons": [
+        "definite-signed-area"
+      ],
+      "representation": "symbolic",
+      "noveltyFamily": "refine-int:shifted-semicircle",
+      "prompt": "\\int_{1}^{5}\\sqrt{4-(x-3)^2}\\,dx\\quad\\text{（用面積的意義）}",
+      "answerKind": "numeric",
+      "answer": "2*pi",
+      "distractors": [
+        "4*pi",
+        "pi",
+        "8"
+      ],
+      "timeLimit": 50,
+      "tags": [
+        "area"
+      ],
+      "hints": [
+        "y=√(4−(x−3)²) 平方後是 (x−3)²+y²=4。",
+        "積分範圍 [1,5] 剛好是整個直徑。"
+      ],
+      "solutionSteps": [
+        "y=√(4−(x−3)²) 是圓心 (3,0)、半徑 2 的上半圓。",
+        "x 從 1 到 5 剛好掃過整個上半圓。",
+        "面積 = ½·π·2² = 2π。"
+      ],
+      "solution": "上半圓（圓心 (3,0)、半徑 2）面積 ½π·4 = 2π。",
+      "verifyNote": "自動路徑：題幹直接數值積分",
+      "origin": "original — written for the 題庫精修 Phase 4 integrals batch (2026-10); numbers and setups chosen fresh, no textbook/exam text reused"
+    },
+    {
+      "id": "refine-integrals-012",
+      "topic": "integrals",
+      "rank": 1,
+      "rubric": {
+        "steps": 1,
+        "obscurity": 1,
+        "load": 1
+      },
+      "methodFamily": [
+        "geometric_meaning"
+      ],
+      "cognitiveAction": [
+        "visualize",
+        "compute"
+      ],
+      "difficultyMode": [
+        "recall"
+      ],
+      "learningRole": [
+        "course_core",
+        "concept_check",
+        "general_practice"
+      ],
+      "prerequisiteGate": [
+        "definite-signed-area"
+      ],
+      "servesLessons": [
+        "definite-signed-area"
+      ],
+      "representation": "symbolic",
+      "noveltyFamily": "refine-int:tent-triangle",
+      "prompt": "\\int_{-1}^{3}\\left(2-|x-1|\\right)dx\\quad\\text{（畫圖用面積）}",
+      "answerKind": "numeric",
+      "answer": "4",
+      "distractors": [
+        "8",
+        "2",
+        "6"
+      ],
+      "timeLimit": 45,
+      "tags": [
+        "area",
+        "absolute-value"
+      ],
+      "hints": [
+        "y=2−|x−1| 是一個尖頂在 (1,2) 的帳篷形。",
+        "它在 x=−1 與 x=3 碰到 x 軸。"
+      ],
+      "solutionSteps": [
+        "圖形是頂點 (1,2)、底在 [−1,3] 的三角形。",
+        "面積 = ½·4·2 = 4。"
+      ],
+      "solution": "三角形：底 4、高 2，面積 4。",
+      "verifyNote": "自動路徑：題幹直接數值積分",
+      "origin": "original — written for the 題庫精修 Phase 4 integrals batch (2026-10); numbers and setups chosen fresh, no textbook/exam text reused"
+    },
+    {
+      "id": "refine-integrals-013",
+      "topic": "integrals",
+      "rank": 3,
+      "rubric": {
+        "steps": 2,
+        "obscurity": 1,
+        "load": 2
+      },
+      "methodFamily": [
+        "geometric_meaning",
+        "symmetry_kings"
+      ],
+      "cognitiveAction": [
+        "recognize_method",
+        "visualize"
+      ],
+      "difficultyMode": [
+        "trap"
+      ],
+      "learningRole": [
+        "course_extra",
+        "concept_check",
+        "general_practice",
+        "daily"
+      ],
+      "prerequisiteGate": [
+        "integral-properties",
+        "definite-signed-area"
+      ],
+      "servesLessons": [
+        "integral-properties",
+        "definite-signed-area"
+      ],
+      "representation": "symbolic",
+      "noveltyFamily": "refine-int:odd-plus-semicircle",
+      "prompt": "\\int_{-2}^{2}\\left(x\\cos(x^2)+\\sqrt{4-x^2}\\right)dx",
+      "answerKind": "numeric",
+      "answer": "2*pi",
+      "distractors": [
+        "2*pi+sin(4)",
+        "4*pi",
+        "pi"
+      ],
+      "timeLimit": 70,
+      "tags": [
+        "odd-function",
+        "area"
+      ],
+      "hints": [
+        "把兩項分開看。",
+        "第一項是奇函數，在對稱區間上積分是多少？第二項畫出來是什麼形狀？"
+      ],
+      "solutionSteps": [
+        "x cos(x²) 是奇函數，∫_{−2}^{2} 為 0。",
+        "√(4−x²) 是半徑 2 的上半圓，面積 2π。",
+        "合計 2π。"
+      ],
+      "solution": "奇函數部分為 0，上半圓面積 2π。",
+      "verifyNote": "自動路徑：題幹直接數值積分",
+      "specialTrick": "odd-function symmetry",
+      "origin": "original — written for the 題庫精修 Phase 4 integrals batch (2026-10); numbers and setups chosen fresh, no textbook/exam text reused"
+    },
+    {
+      "id": "refine-integrals-014",
+      "topic": "integrals",
+      "rank": 4,
+      "rubric": {
+        "steps": 2,
+        "obscurity": 2,
+        "load": 2
+      },
+      "methodFamily": [
+        "geometric_meaning",
+        "area_between"
+      ],
+      "cognitiveAction": [
+        "visualize",
+        "compute"
+      ],
+      "difficultyMode": [
+        "insight"
+      ],
+      "learningRole": [
+        "course_extra",
+        "general_practice",
+        "daily"
+      ],
+      "prerequisiteGate": [
+        "inverse-function",
+        "definite-signed-area"
+      ],
+      "servesLessons": [
+        "inverse-function",
+        "definite-signed-area"
+      ],
+      "representation": "symbolic",
+      "noveltyFamily": "refine-int:inverse-function-area",
+      "prompt": "f(x)=x^3+x\\text{。求 }\\int_{0}^{2}f^{-1}(y)\\,dy",
+      "answerKind": "numeric",
+      "answer": "5/4",
+      "distractors": [
+        "3/4",
+        "2",
+        "1/4"
+      ],
+      "timeLimit": 120,
+      "tags": [
+        "area"
+      ],
+      "hints": [
+        "f⁻¹ 寫不出來；改用面積看：∫₀² f⁻¹(y)dy 是曲線左邊、y 從 0 到 2 的那塊。"
+      ],
+      "solutionSteps": [
+        "f(0)=0、f(1)=2，所以 y∈[0,2] 對應 x∈[0,1]。",
+        "∫₀² f⁻¹(y)dy + ∫₀¹ f(x)dx = 矩形 1×2 = 2。",
+        "∫₀¹(x³+x)dx = ¼+½ = ¾，所以答案 2−¾ = 5/4。"
+      ],
+      "solution": "反函數下的面積 + 原函數下的面積 = 矩形 [0,1]×[0,2] 的面積 2；∫₀¹f=3/4，答案 5/4。",
+      "verify": {
+        "m": "double",
+        "u": "x",
+        "v": "y",
+        "a": 0,
+        "b": 1,
+        "c": "x^3+x",
+        "d": "2",
+        "f": "1"
+      },
+      "verifyNote": "double：∫₀²f⁻¹(y)dy 是區域 {0≤x≤1, f(x)≤y≤2} 的面積，直接二重數值積分（不用反函數公式）",
+      "origin": "original — written for the 題庫精修 Phase 4 integrals batch (2026-10); numbers and setups chosen fresh, no textbook/exam text reused"
+    },
+    {
+      "id": "refine-integrals-015",
+      "topic": "integrals",
+      "rank": 5,
+      "rubric": {
+        "steps": 2,
+        "obscurity": 3,
+        "load": 2
+      },
+      "methodFamily": [
+        "geometric_meaning",
+        "area_between"
+      ],
+      "cognitiveAction": [
+        "visualize",
+        "recognize_method"
+      ],
+      "difficultyMode": [
+        "insight"
+      ],
+      "learningRole": [
+        "arena",
+        "general_practice",
+        "daily"
+      ],
+      "prerequisiteGate": [
+        "inverse-function",
+        "u-sub-definite"
+      ],
+      "servesLessons": [
+        "inverse-function",
+        "u-sub-definite"
+      ],
+      "representation": "symbolic",
+      "noveltyFamily": "refine-int:rectangle-complement",
+      "prompt": "\\int_{0}^{2}e^{x^2}\\,dx+\\int_{1}^{e^4}\\sqrt{\\ln y}\\,dy",
+      "answerKind": "numeric",
+      "answer": "2*exp(4)",
+      "distractors": [
+        "2*exp(4)-1",
+        "exp(4)",
+        "2*exp(4)-2"
+      ],
+      "timeLimit": 180,
+      "tags": [
+        "area"
+      ],
+      "hints": [
+        "兩個被積函數都沒有初等反導數，別硬算。",
+        "y=e^{x²} 與 x=√(ln y) 是同一條曲線。",
+        "兩塊面積拼起來是一個什麼形狀？"
+      ],
+      "solutionSteps": [
+        "y=e^{x²}（0≤x≤2）的反函數是 x=√(ln y)（1≤y≤e⁴）。",
+        "第一個積分是曲線下方的面積；第二個是同一條曲線左方、y 從 1 到 e⁴ 的面積。",
+        "兩塊合起來是矩形 [0,2]×[0,e⁴] 去掉 [0,0]×… 的部分，總面積 2·e⁴ − 0·1 = 2e⁴。"
+      ],
+      "solution": "∫ₐᵇ f + ∫_{f(a)}^{f(b)} f⁻¹ = b f(b) − a f(a)，取 a=0、b=2、f=e^{x²}：2e⁴ − 0 = 2e⁴。",
+      "verify": {
+        "m": "value",
+        "f": "\\left(\\int_{0}^{2}e^{x^2}\\,dx\\right)+\\left(\\int_{1}^{e^4}\\sqrt{\\ln y}\\,dy\\right)"
+      },
+      "verifyNote": "value：兩個積分各自數值積分再相加（題幹本身，解析器吃得下子積分）",
+      "specialTrick": "inverse-function area complement",
+      "origin": "original — written for the 題庫精修 Phase 4 integrals batch (2026-10); numbers and setups chosen fresh, no textbook/exam text reused"
+    },
+    {
+      "id": "refine-integrals-016",
+      "topic": "integrals",
+      "rank": 2,
+      "rubric": {
+        "steps": 2,
+        "obscurity": 1,
+        "load": 1
+      },
+      "methodFamily": [
+        "setup_only",
+        "riemann_sum"
+      ],
+      "cognitiveAction": [
+        "setup",
+        "compute"
+      ],
+      "difficultyMode": [
+        "recall"
+      ],
+      "learningRole": [
+        "course_core",
+        "general_practice"
+      ],
+      "prerequisiteGate": [
+        "riemann-sum-notation"
+      ],
+      "servesLessons": [
+        "riemann-sum-notation"
+      ],
+      "representation": "symbolic",
+      "noveltyFamily": "refine-int:riemann-to-integral-shifted",
+      "prompt": "\\lim_{n\\to\\infty}\\sum_{k=1}^{n}\\frac{3}{n}\\left(1+\\frac{3k}{n}\\right)^2",
+      "answerKind": "numeric",
+      "answer": "21",
+      "distractors": [
+        "9",
+        "63",
+        "7"
+      ],
+      "timeLimit": 75,
+      "tags": [
+        "riemann-sum"
+      ],
+      "hints": [
+        "3/n 是 Δx；1+3k/n 是第 k 個取樣點 x_k。",
+        "x 從哪裡走到哪裡？Δx=3/n 說區間長度是 3。"
+      ],
+      "solutionSteps": [
+        "Δx=3/n、x_k=1+3k/n，取樣點從 1 走到 4。",
+        "極限 = ∫₁⁴ x² dx。",
+        "= (64−1)/3 = 21。"
+      ],
+      "solution": "和式是 ∫₁⁴x²dx 的右端點黎曼和，值 (4³−1³)/3 = 21。誤以為區間是 [0,3] 會得到 9。",
+      "verifyNote": "自動路徑：數列倍增取樣＋外插求和的極限",
+      "origin": "original — written for the 題庫精修 Phase 4 integrals batch (2026-10); numbers and setups chosen fresh, no textbook/exam text reused"
+    },
+    {
+      "id": "refine-integrals-017",
+      "topic": "integrals",
+      "rank": 3,
+      "rubric": {
+        "steps": 2,
+        "obscurity": 1,
+        "load": 2
+      },
+      "methodFamily": [
+        "setup_only",
+        "u_substitution"
+      ],
+      "cognitiveAction": [
+        "setup"
+      ],
+      "difficultyMode": [
+        "recall"
+      ],
+      "learningRole": [
+        "course_core",
+        "general_practice"
+      ],
+      "prerequisiteGate": [
+        "u-sub-definite"
+      ],
+      "servesLessons": [
+        "u-sub-definite"
+      ],
+      "representation": "symbolic",
+      "noveltyFamily": "refine-int:usub-new-integrand",
+      "prompt": "\\int_{0}^{3}\\frac{x}{\\sqrt{x+1}}\\,dx\\ \\text{令 }u=x+1\\text{ 後寫成 }\\int_{1}^{4}g(u)\\,du\\text{。求 }g(u)",
+      "answerKind": "expression",
+      "answer": "(u-1)/sqrt(u)",
+      "variable": "u",
+      "timeLimit": 75,
+      "tags": [
+        "u-sub"
+      ],
+      "hints": [
+        "x 要用 u 表示：x=u−1。",
+        "dx 和 du 的關係是什麼？"
+      ],
+      "solutionSteps": [
+        "u=x+1 ⇒ x=u−1、dx=du。",
+        "x/√(x+1) dx = (u−1)/√u du。",
+        "上下限 0→1、3→4 題目已經給了，所以 g(u)=(u−1)/√u。"
+      ],
+      "solution": "x=u−1、dx=du，g(u)=(u−1)/√u（=√u−1/√u）。",
+      "verify": {
+        "m": "fn",
+        "vars": [
+          "u"
+        ],
+        "cases": [
+          {
+            "at": {
+              "u": 2
+            },
+            "v": {
+              "m": "ftcDeriv",
+              "g": "\\frac{t}{\\sqrt{t+1}}",
+              "lo": "0",
+              "hi": "x-1",
+              "at": 2
+            }
+          },
+          {
+            "at": {
+              "u": 3
+            },
+            "v": {
+              "m": "ftcDeriv",
+              "g": "\\frac{t}{\\sqrt{t+1}}",
+              "lo": "0",
+              "hi": "x-1",
+              "at": 3
+            }
+          },
+          {
+            "at": {
+              "u": 3.6
+            },
+            "v": {
+              "m": "ftcDeriv",
+              "g": "\\frac{t}{\\sqrt{t+1}}",
+              "lo": "0",
+              "hi": "x-1",
+              "at": 3.6
+            }
+          }
+        ]
+      },
+      "verifyNote": "fn cases：g(c) 必須等於 d/dc ∫₀^{c−1} x/√(x+1) dx（換元的定義），右邊用數值積分＋數值微分",
+      "acceptAlso": [
+        "sqrt(u)-1/sqrt(u)",
+        "u^(1/2)-u^(-1/2)"
+      ],
+      "rejectAlso": [
+        "u/sqrt(u)",
+        "(u-1)/sqrt(u+1)"
+      ],
+      "origin": "original — written for the 題庫精修 Phase 4 integrals batch (2026-10); numbers and setups chosen fresh, no textbook/exam text reused"
+    },
+    {
+      "id": "refine-integrals-018",
+      "topic": "integrals",
+      "rank": 3,
+      "rubric": {
+        "steps": 2,
+        "obscurity": 1,
+        "load": 2
+      },
+      "methodFamily": [
+        "setup_only",
+        "volume_revolution"
+      ],
+      "cognitiveAction": [
+        "setup",
+        "visualize"
+      ],
+      "difficultyMode": [
+        "recall"
+      ],
+      "learningRole": [
+        "course_core",
+        "general_practice"
+      ],
+      "prerequisiteGate": [
+        "volume-shell"
+      ],
+      "servesLessons": [
+        "volume-shell"
+      ],
+      "representation": "symbolic",
+      "noveltyFamily": "refine-int:shell-integrand",
+      "prompt": "\\text{區域 }0\\le y\\le\\sqrt{x},\\ 0\\le x\\le 4\\text{ 繞 }y\\text{ 軸旋轉。用圓殼法寫成 }V=\\int_{0}^{4}h(x)\\,dx\\text{，求 }h(x)",
+      "answerKind": "expression",
+      "answer": "2*pi*x*sqrt(x)",
+      "variable": "x",
+      "timeLimit": 80,
+      "tags": [
+        "shell-method"
+      ],
+      "hints": [
+        "圓殼：半徑是到旋轉軸的距離，高是區域在那個 x 的高度。",
+        "殼的面積 = 周長 × 高。"
+      ],
+      "solutionSteps": [
+        "在 x 處取寬 dx 的直條，繞 y 軸變成半徑 x 的圓殼。",
+        "殼高 = √x，周長 = 2πx。",
+        "h(x)=2πx√x。"
+      ],
+      "solution": "圓殼：2π·(半徑 x)·(高 √x) dx，所以 h(x)=2πx√x=2πx^{3/2}。",
+      "verify": {
+        "m": "fn",
+        "vars": [
+          "x"
+        ],
+        "cases": [
+          {
+            "at": {
+              "x": 1
+            },
+            "v": {
+              "m": "ftcDeriv",
+              "g": "\\pi\\left(x^2-t^4\\right)",
+              "lo": "0",
+              "hi": "\\sqrt{x}",
+              "at": 1
+            }
+          },
+          {
+            "at": {
+              "x": 2
+            },
+            "v": {
+              "m": "ftcDeriv",
+              "g": "\\pi\\left(x^2-t^4\\right)",
+              "lo": "0",
+              "hi": "\\sqrt{x}",
+              "at": 2
+            }
+          },
+          {
+            "at": {
+              "x": 3.3
+            },
+            "v": {
+              "m": "ftcDeriv",
+              "g": "\\pi\\left(x^2-t^4\\right)",
+              "lo": "0",
+              "hi": "\\sqrt{x}",
+              "at": 3.3
+            }
+          }
+        ]
+      },
+      "verifyNote": "fn cases：h(a) 必須等於 V(a) 的導數，V(a) 用墊圈法（對 y 積分）獨立算：V(a)=∫₀^{√a} π(a²−y⁴)dy —— 跟圓殼法不共用任何一步",
+      "acceptAlso": [
+        "2*pi*x^(3/2)",
+        "2*pi*x^1.5"
+      ],
+      "rejectAlso": [
+        "pi*x",
+        "2*pi*sqrt(x)",
+        "pi*x*sqrt(x)"
+      ],
+      "origin": "original — written for the 題庫精修 Phase 4 integrals batch (2026-10); numbers and setups chosen fresh, no textbook/exam text reused"
+    },
+    {
+      "id": "refine-integrals-019",
+      "topic": "integrals",
+      "rank": 4,
+      "rubric": {
+        "steps": 2,
+        "obscurity": 2,
+        "load": 2
+      },
+      "methodFamily": [
+        "setup_only",
+        "change_of_variables"
+      ],
+      "cognitiveAction": [
+        "setup",
+        "compute"
+      ],
+      "difficultyMode": [
+        "method_choice"
+      ],
+      "learningRole": [
+        "course_extra",
+        "general_practice",
+        "daily"
+      ],
+      "prerequisiteGate": [
+        "polar-double-integral"
+      ],
+      "servesLessons": [
+        "polar-double-integral"
+      ],
+      "representation": "symbolic",
+      "noveltyFamily": "refine-int:polar-sector-setup",
+      "prompt": "R:\\ x^2+y^2\\le 4,\\ 0\\le x\\le y\\text{。求 }\\iint_R\\left(x^2+y^2\\right)dA",
+      "answerKind": "numeric",
+      "answer": "pi",
+      "distractors": [
+        "2*pi",
+        "pi/2",
+        "4*pi"
+      ],
+      "timeLimit": 120,
+      "tags": [
+        "polar-coordinates",
+        "double-integral"
+      ],
+      "hints": [
+        "0≤x≤y 在極座標是 θ 的哪一段？",
+        "別忘了 dA = r dr dθ。"
+      ],
+      "solutionSteps": [
+        "0≤x≤y 且在圓內 ⇒ π/4≤θ≤π/2、0≤r≤2。",
+        "x²+y² = r²，dA = r dr dθ。",
+        "∫_{π/4}^{π/2}∫₀² r³ dr dθ = (π/4)·4 = π。"
+      ],
+      "solution": "極座標：θ∈[π/4,π/2]、r∈[0,2]，∫∫ r²·r dr dθ = (π/4)(16/4) = π。",
+      "verify": {
+        "m": "double",
+        "u": "x",
+        "v": "y",
+        "a": 0,
+        "b": "\\sqrt{2}",
+        "c": "x",
+        "d": "\\sqrt{4-x^2}",
+        "f": "x^2+y^2"
+      },
+      "verifyNote": "double：直角座標的累次積分 x∈[0,√2]、y∈[x,√(4−x²)]，不經過極座標",
+      "origin": "original — written for the 題庫精修 Phase 4 integrals batch (2026-10); numbers and setups chosen fresh, no textbook/exam text reused"
+    },
+    {
+      "id": "refine-integrals-020",
+      "topic": "integrals",
+      "rank": 6,
+      "rubric": {
+        "steps": 3,
+        "obscurity": 3,
+        "load": 3
+      },
+      "methodFamily": [
+        "setup_only",
+        "volume_revolution"
+      ],
+      "cognitiveAction": [
+        "setup",
+        "visualize",
+        "compute"
+      ],
+      "difficultyMode": [
+        "insight",
+        "algebra_load",
+        "bookkeeping"
+      ],
+      "learningRole": [
+        "arena",
+        "boss",
+        "general_practice"
+      ],
+      "prerequisiteGate": [
+        "volume-washer",
+        "center-of-mass"
+      ],
+      "servesLessons": [
+        "volume-washer",
+        "center-of-mass"
+      ],
+      "representation": "symbolic",
+      "noveltyFamily": "refine-int:revolve-about-slant-line",
+      "prompt": "\\text{區域 }x^2\\le y\\le x\\ (0\\le x\\le 1)\\text{ 繞直線 }y=x\\text{ 旋轉，求體積}",
+      "answerKind": "numeric",
+      "answer": "pi*sqrt(2)/60",
+      "distractors": [
+        "pi/30",
+        "pi/60",
+        "pi*sqrt(2)/30"
+      ],
+      "timeLimit": 420,
+      "tags": [
+        "solid-of-revolution"
+      ],
+      "hints": [
+        "旋轉軸是斜的：圓盤的半徑是點到直線 y=x 的距離。",
+        "沿著軸的方向量厚度，不是沿著 x。",
+        "另一條路：Pappus 定理只需要面積與形心到軸的距離。"
+      ],
+      "solutionSteps": [
+        "曲線上的點 (x,x²) 到 y=x 的距離 r=(x−x²)/√2。",
+        "沿軸方向的座標 s=(x+x²)/√2，ds=(1+2x)/√2 dx。",
+        "V=∫π r² ds = π/(2√2) ∫₀¹ (x−x²)²(1+2x) dx = π/(2√2)·(1/15)。",
+        "V = π/(30√2) = π√2/60。"
+      ],
+      "solution": "以 y=x 為軸切圓盤：半徑 (x−x²)/√2、厚度 (1+2x)dx/√2，V=π/(2√2)∫₀¹(x−x²)²(1+2x)dx=π√2/60。Pappus 驗算：面積 1/6、形心 (1/2,2/5)、到軸距離 0.1/√2，V=2π·(0.1/√2)·(1/6) 相同。",
+      "verify": {
+        "m": "double",
+        "u": "x",
+        "v": "y",
+        "a": 0,
+        "b": 1,
+        "c": "x^2",
+        "d": "x",
+        "f": "2\\pi\\frac{x-y}{\\sqrt{2}}"
+      },
+      "verifyNote": "double（Pappus）：V = 2π∬_R (到 y=x 的距離) dA，直接二重數值積分；跟沿斜線切圓盤的解法不共用步驟",
+      "origin": "original — written for the 題庫精修 Phase 4 integrals batch (2026-10); numbers and setups chosen fresh, no textbook/exam text reused"
+    },
+    {
+      "id": "refine-integrals-021",
+      "topic": "integrals",
+      "rank": 1,
+      "rubric": {
+        "steps": 1,
+        "obscurity": 1,
+        "load": 1
+      },
+      "methodFamily": [
+        "bounds_selection",
+        "area_between"
+      ],
+      "cognitiveAction": [
+        "setup"
+      ],
+      "difficultyMode": [
+        "recall"
+      ],
+      "learningRole": [
+        "course_core",
+        "concept_check",
+        "general_practice"
+      ],
+      "prerequisiteGate": [
+        "area-under-curve"
+      ],
+      "servesLessons": [
+        "area-under-curve"
+      ],
+      "representation": "symbolic",
+      "noveltyFamily": "refine-int:area-bound-root",
+      "prompt": "\\text{求 }y=x^2-2x-3\\text{ 與 }x\\,\\text{軸圍成區域的面積時，對 }x\\,\\text{積分的上限 }b",
+      "answerKind": "numeric",
+      "answer": "3",
+      "distractors": [
+        "-1",
+        "1",
+        "4"
+      ],
+      "timeLimit": 40,
+      "tags": [
+        "area"
+      ],
+      "hints": [
+        "區域的左右邊界是曲線碰到 x 軸的地方。",
+        "解 x²−2x−3=0，取較大的根。"
+      ],
+      "solutionSteps": [
+        "x²−2x−3=(x−3)(x+1)=0 ⇒ x=−1 或 3。",
+        "區域在 [−1,3]，上限 b=3。"
+      ],
+      "solution": "曲線與 x 軸交於 −1 與 3，上限是 3。",
+      "verify": {
+        "m": "root",
+        "f": "x^2-2x-3",
+        "x0": 5
+      },
+      "verifyNote": "root：牛頓法從 x=5 解 x²−2x−3=0（數值導數）",
+      "origin": "original — written for the 題庫精修 Phase 4 integrals batch (2026-10); numbers and setups chosen fresh, no textbook/exam text reused"
+    },
+    {
+      "id": "refine-integrals-022",
+      "topic": "integrals",
+      "rank": 2,
+      "rubric": {
+        "steps": 2,
+        "obscurity": 1,
+        "load": 1
+      },
+      "methodFamily": [
+        "bounds_selection",
+        "u_substitution"
+      ],
+      "cognitiveAction": [
+        "compute",
+        "setup"
+      ],
+      "difficultyMode": [
+        "trap"
+      ],
+      "learningRole": [
+        "course_core",
+        "general_practice"
+      ],
+      "prerequisiteGate": [
+        "u-sub-definite"
+      ],
+      "servesLessons": [
+        "u-sub-definite"
+      ],
+      "representation": "symbolic",
+      "noveltyFamily": "refine-int:usub-change-bounds",
+      "prompt": "\\int_{0}^{\\sqrt{3}}x\\sqrt{x^2+1}\\,dx",
+      "answerKind": "numeric",
+      "answer": "7/3",
+      "distractors": [
+        "sqrt(3)",
+        "14/3",
+        "7/6"
+      ],
+      "timeLimit": 70,
+      "tags": [
+        "u-sub"
+      ],
+      "hints": [
+        "令 u=x²+1，du=2x dx。",
+        "上下限要跟著換：x=0、x=√3 各對應哪個 u？"
+      ],
+      "solutionSteps": [
+        "u=x²+1，x dx = du/2；x=0→u=1，x=√3→u=4。",
+        "∫₁⁴ ½√u du = ⅓u^{3/2}|₁⁴ = ⅓(8−1)。",
+        "= 7/3。"
+      ],
+      "solution": "換元後上下限是 1 到 4：⅓(8−1)=7/3。沒換上下限（還用 0 到 √3）會得到 √3。",
+      "verifyNote": "自動路徑：題幹直接數值積分",
+      "origin": "original — written for the 題庫精修 Phase 4 integrals batch (2026-10); numbers and setups chosen fresh, no textbook/exam text reused"
+    },
+    {
+      "id": "refine-integrals-023",
+      "topic": "integrals",
+      "rank": 3,
+      "rubric": {
+        "steps": 2,
+        "obscurity": 1,
+        "load": 2
+      },
+      "methodFamily": [
+        "bounds_selection",
+        "area_between"
+      ],
+      "cognitiveAction": [
+        "setup",
+        "compute",
+        "visualize"
+      ],
+      "difficultyMode": [
+        "trap"
+      ],
+      "learningRole": [
+        "course_core",
+        "general_practice",
+        "daily"
+      ],
+      "prerequisiteGate": [
+        "area-between-curves"
+      ],
+      "servesLessons": [
+        "area-between-curves"
+      ],
+      "representation": "symbolic",
+      "noveltyFamily": "refine-int:between-cubic-line",
+      "prompt": "\\text{求 }y=x^3-3x\\text{ 與 }y=x\\text{ 所圍區域的總面積}",
+      "answerKind": "numeric",
+      "answer": "8",
+      "distractors": [
+        "0",
+        "4",
+        "16"
+      ],
+      "timeLimit": 100,
+      "tags": [
+        "between-curves"
+      ],
+      "hints": [
+        "先解交點：x³−3x=x。",
+        "兩段上下關係不一樣；直接 ∫(x−(x³−3x)) 從 −2 到 2 會相消。"
+      ],
+      "solutionSteps": [
+        "交點：x³−4x=0 ⇒ x=−2,0,2。",
+        "[−2,0] 上三次在上，[0,2] 上直線在上；兩塊對稱。",
+        "2∫₀²(4x−x³)dx = 2(8−4) = 8。"
+      ],
+      "solution": "交點 −2、0、2；總面積 2∫₀²(4x−x³)dx=8。一口氣從 −2 積到 2 會得到 0。",
+      "verify": {
+        "m": "integral",
+        "f": "\\left|x^3-4x\\right|",
+        "a": -2,
+        "b": 2
+      },
+      "verifyNote": "integral：面積 = ∫|上−下|，交點區間 [−2,2] 上對 |x³−4x| 數值積分",
+      "origin": "original — written for the 題庫精修 Phase 4 integrals batch (2026-10); numbers and setups chosen fresh, no textbook/exam text reused"
+    },
+    {
+      "id": "refine-integrals-024",
+      "topic": "integrals",
+      "rank": 3,
+      "rubric": {
+        "steps": 2,
+        "obscurity": 1,
+        "load": 2
+      },
+      "methodFamily": [
+        "bounds_selection",
+        "area_between"
+      ],
+      "cognitiveAction": [
+        "setup",
+        "compute"
+      ],
+      "difficultyMode": [
+        "method_choice"
+      ],
+      "learningRole": [
+        "course_core",
+        "general_practice",
+        "daily"
+      ],
+      "prerequisiteGate": [
+        "area-dy"
+      ],
+      "servesLessons": [
+        "area-dy"
+      ],
+      "representation": "symbolic",
+      "noveltyFamily": "refine-int:area-dy-parabola-line",
+      "prompt": "\\text{求 }x=2y^2\\text{ 與 }x=y+3\\text{ 所圍區域的面積}",
+      "answerKind": "numeric",
+      "answer": "125/24",
+      "distractors": [
+        "125/12",
+        "9/2",
+        "25/8"
+      ],
+      "timeLimit": 110,
+      "tags": [
+        "area"
+      ],
+      "hints": [
+        "兩條都是 x=…(y)：對 y 積分比較省事。",
+        "交點的 y 值是 2y²=y+3 的根。"
+      ],
+      "solutionSteps": [
+        "2y²−y−3=0 ⇒ y=−1 或 3/2。",
+        "y 在 (−1,3/2) 時直線在右：面積 ∫_{−1}^{3/2}(y+3−2y²)dy。",
+        "= [y²/2+3y−2y³/3]_{−1}^{3/2} = 27/8 + 11/6 = 125/24。"
+      ],
+      "solution": "對 y 積分：∫_{−1}^{3/2}(y+3−2y²)dy = 125/24。",
+      "verify": {
+        "m": "integral",
+        "v": "y",
+        "f": "y+3-2y^2",
+        "a": -1,
+        "b": "3/2"
+      },
+      "verifyNote": "integral：對 y 從 −1 到 3/2 積（右曲線 − 左曲線）",
+      "origin": "original — written for the 題庫精修 Phase 4 integrals batch (2026-10); numbers and setups chosen fresh, no textbook/exam text reused"
+    },
+    {
+      "id": "refine-integrals-025",
+      "topic": "integrals",
+      "rank": 3,
+      "rubric": {
+        "steps": 2,
+        "obscurity": 1,
+        "load": 2
+      },
+      "methodFamily": [
+        "bounds_selection",
+        "u_substitution"
+      ],
+      "cognitiveAction": [
+        "setup",
+        "compute"
+      ],
+      "difficultyMode": [
+        "recall"
+      ],
+      "learningRole": [
+        "course_extra",
+        "general_practice",
+        "daily"
+      ],
+      "prerequisiteGate": [
+        "u-sub-definite"
+      ],
+      "servesLessons": [
+        "u-sub-definite"
+      ],
+      "representation": "symbolic",
+      "noveltyFamily": "refine-int:solve-for-upper-limit",
+      "prompt": "\\text{求 }b>0\\text{ 使 }\\int_{0}^{b}\\frac{x}{x^2+1}\\,dx=\\ln 5",
+      "answerKind": "numeric",
+      "answer": "2*sqrt(6)",
+      "distractors": [
+        "sqrt(24)/2",
+        "2",
+        "sqrt(5)"
+      ],
+      "timeLimit": 90,
+      "tags": [
+        "u-sub"
+      ],
+      "hints": [
+        "先把左邊算成 b 的式子。",
+        "對數的係數 ½ 別漏。"
+      ],
+      "solutionSteps": [
+        "∫₀^b x/(x²+1)dx = ½ln(b²+1)。",
+        "½ln(b²+1)=ln5 ⇒ b²+1=25。",
+        "b=√24=2√6。"
+      ],
+      "solution": "½ln(b²+1)=ln5 ⇒ b²=24 ⇒ b=2√6。漏掉 ½ 會得到 b=2。",
+      "verify": {
+        "m": "root",
+        "f": "\\int_{0}^{x}\\frac{t}{t^2+1}\\,dt-\\ln 5",
+        "x0": 4
+      },
+      "verifyNote": "root：把左邊當 b 的函數（數值積分），牛頓法解 = ln 5；不經過反導數",
+      "rejectAlso": [
+        "5",
+        "24"
+      ],
+      "origin": "original — written for the 題庫精修 Phase 4 integrals batch (2026-10); numbers and setups chosen fresh, no textbook/exam text reused"
+    },
+    {
+      "id": "refine-integrals-026",
+      "topic": "integrals",
+      "rank": 3,
+      "rubric": {
+        "steps": 2,
+        "obscurity": 2,
+        "load": 1
+      },
+      "methodFamily": [
+        "change_order",
+        "multiple_integral"
+      ],
+      "cognitiveAction": [
+        "setup",
+        "compute",
+        "recognize_method"
+      ],
+      "difficultyMode": [
+        "method_choice"
+      ],
+      "learningRole": [
+        "course_core",
+        "general_practice",
+        "daily"
+      ],
+      "prerequisiteGate": [
+        "change-order"
+      ],
+      "servesLessons": [
+        "change-order"
+      ],
+      "representation": "symbolic",
+      "noveltyFamily": "refine-int:swap-gaussian-strip",
+      "prompt": "\\int_{0}^{3}\\int_{x/3}^{1}e^{y^2}\\,dy\\,dx",
+      "answerKind": "numeric",
+      "answer": "3*(exp(1)-1)/2",
+      "distractors": [
+        "exp(1)-1",
+        "3*(exp(1)-1)",
+        "(exp(1)-1)/2"
+      ],
+      "timeLimit": 110,
+      "tags": [
+        "change-order"
+      ],
+      "hints": [
+        "e^{y²} 對 y 沒有初等反導數：換順序。",
+        "區域是 0≤x≤3、x/3≤y≤1；改寫成 y 在外。"
+      ],
+      "solutionSteps": [
+        "區域：0≤y≤1、0≤x≤3y。",
+        "∫₀¹∫₀^{3y} e^{y²} dx dy = ∫₀¹ 3y e^{y²} dy。",
+        "= (3/2)(e−1)。"
+      ],
+      "solution": "換序成 ∫₀¹∫₀^{3y}e^{y²}dxdy = ∫₀¹3ye^{y²}dy = 3(e−1)/2。",
+      "verify": {
+        "m": "double",
+        "u": "x",
+        "v": "y",
+        "a": 0,
+        "b": 3,
+        "c": "x/3",
+        "d": "1",
+        "f": "e^{y^2}"
+      },
+      "verifyNote": "double：照題目的順序直接數值積分（內層 e^{y²} 數值積掉，不換序）",
+      "origin": "original — written for the 題庫精修 Phase 4 integrals batch (2026-10); numbers and setups chosen fresh, no textbook/exam text reused"
+    },
+    {
+      "id": "refine-integrals-027",
+      "topic": "integrals",
+      "rank": 4,
+      "rubric": {
+        "steps": 2,
+        "obscurity": 2,
+        "load": 2
+      },
+      "methodFamily": [
+        "change_order",
+        "multiple_integral"
+      ],
+      "cognitiveAction": [
+        "setup",
+        "compute",
+        "recognize_method"
+      ],
+      "difficultyMode": [
+        "method_choice"
+      ],
+      "learningRole": [
+        "course_extra",
+        "general_practice",
+        "daily"
+      ],
+      "prerequisiteGate": [
+        "change-order"
+      ],
+      "servesLessons": [
+        "change-order"
+      ],
+      "representation": "symbolic",
+      "noveltyFamily": "refine-int:swap-sqrt-cubic",
+      "prompt": "\\int_{0}^{1}\\int_{\\sqrt{y}}^{1}\\sqrt{1+x^3}\\,dx\\,dy",
+      "answerKind": "numeric",
+      "answer": "2*(2*sqrt(2)-1)/9",
+      "distractors": [
+        "(2*sqrt(2)-1)/3",
+        "4*sqrt(2)/9",
+        "2*(2*sqrt(2)-1)/3"
+      ],
+      "timeLimit": 130,
+      "tags": [
+        "change-order"
+      ],
+      "hints": [
+        "√(1+x³) 對 x 積不出來；換成 x 在外。",
+        "√y≤x 等價於 y≤x²。"
+      ],
+      "solutionSteps": [
+        "區域：0≤x≤1、0≤y≤x²。",
+        "∫₀¹ x²√(1+x³) dx。",
+        "令 u=1+x³：⅓∫₁²√u du = (2/9)(2√2−1)。"
+      ],
+      "solution": "換序：∫₀¹∫₀^{x²}√(1+x³)dydx = ∫₀¹x²√(1+x³)dx = 2(2√2−1)/9。",
+      "verify": {
+        "m": "double",
+        "u": "y",
+        "v": "x",
+        "a": 0,
+        "b": 1,
+        "c": "\\sqrt{y}",
+        "d": "1",
+        "f": "\\sqrt{1+x^3}"
+      },
+      "verifyNote": "double：照題目順序（y 在外）直接數值積分",
+      "origin": "original — written for the 題庫精修 Phase 4 integrals batch (2026-10); numbers and setups chosen fresh, no textbook/exam text reused"
+    },
+    {
+      "id": "refine-integrals-028",
+      "topic": "integrals",
+      "rank": 4,
+      "rubric": {
+        "steps": 2,
+        "obscurity": 2,
+        "load": 2
+      },
+      "methodFamily": [
+        "change_order",
+        "multiple_integral"
+      ],
+      "cognitiveAction": [
+        "setup",
+        "compute",
+        "recognize_method"
+      ],
+      "difficultyMode": [
+        "method_choice"
+      ],
+      "learningRole": [
+        "course_extra",
+        "general_practice",
+        "daily"
+      ],
+      "prerequisiteGate": [
+        "change-order"
+      ],
+      "servesLessons": [
+        "change-order"
+      ],
+      "representation": "symbolic",
+      "noveltyFamily": "refine-int:swap-rational-cubic",
+      "prompt": "\\int_{0}^{4}\\int_{\\sqrt{x}}^{2}\\frac{1}{1+y^3}\\,dy\\,dx",
+      "answerKind": "numeric",
+      "answer": "2*log(3)/3",
+      "distractors": [
+        "log(3)/3",
+        "log(3)",
+        "2*log(3)"
+      ],
+      "timeLimit": 130,
+      "tags": [
+        "change-order"
+      ],
+      "hints": [
+        "1/(1+y³) 的反導數很醜；換順序讓 y² 出現。",
+        "√x≤y 等價於 x≤y²。"
+      ],
+      "solutionSteps": [
+        "區域：0≤y≤2、0≤x≤y²。",
+        "∫₀² y²/(1+y³) dy = ⅓ln(1+y³)|₀²。",
+        "= ⅓ln 9 = ⅔ln 3。"
+      ],
+      "solution": "換序後內層給 y²，∫₀²y²/(1+y³)dy=⅓ln9=⅔ln3。",
+      "verify": {
+        "m": "double",
+        "u": "x",
+        "v": "y",
+        "a": 0,
+        "b": 4,
+        "c": "\\sqrt{x}",
+        "d": "2",
+        "f": "\\frac{1}{1+y^3}"
+      },
+      "verifyNote": "double：照題目順序直接數值積分",
+      "origin": "original — written for the 題庫精修 Phase 4 integrals batch (2026-10); numbers and setups chosen fresh, no textbook/exam text reused"
+    },
+    {
+      "id": "refine-integrals-029",
+      "topic": "integrals",
+      "rank": 5,
+      "rubric": {
+        "steps": 3,
+        "obscurity": 2,
+        "load": 3
+      },
+      "methodFamily": [
+        "change_order",
+        "multiple_integral"
+      ],
+      "cognitiveAction": [
+        "setup",
+        "compute",
+        "recognize_method"
+      ],
+      "difficultyMode": [
+        "method_choice",
+        "algebra_load",
+        "bookkeeping"
+      ],
+      "learningRole": [
+        "arena",
+        "general_practice",
+        "daily"
+      ],
+      "prerequisiteGate": [
+        "change-order",
+        "inverse-trig-derivative"
+      ],
+      "servesLessons": [
+        "change-order",
+        "inverse-trig-derivative"
+      ],
+      "representation": "symbolic",
+      "noveltyFamily": "refine-int:swap-arcsin-boundary",
+      "prompt": "\\int_{0}^{1}\\int_{\\arcsin y}^{\\pi/2}e^{\\cos x}\\,dx\\,dy",
+      "answerKind": "numeric",
+      "answer": "exp(1)-1",
+      "distractors": [
+        "exp(1)",
+        "1",
+        "(exp(1)-1)/2"
+      ],
+      "timeLimit": 200,
+      "tags": [
+        "change-order"
+      ],
+      "hints": [
+        "e^{cos x} 對 x 積不出來。",
+        "畫出區域：x 從 arcsin y 到 π/2，邊界曲線是 y=sin x。"
+      ],
+      "solutionSteps": [
+        "arcsin y≤x≤π/2、0≤y≤1 ⇔ 0≤x≤π/2、0≤y≤sin x。",
+        "∫₀^{π/2} sin x · e^{cos x} dx。",
+        "令 u=cos x：∫₀¹ e^u du = e−1。"
+      ],
+      "solution": "換序：∫₀^{π/2}∫₀^{sin x}e^{cos x}dydx = ∫₀^{π/2}sin x e^{cos x}dx = e−1。",
+      "verify": {
+        "m": "double",
+        "u": "y",
+        "v": "x",
+        "a": 0,
+        "b": 1,
+        "c": "\\arcsin y",
+        "d": "\\pi/2",
+        "f": "e^{\\cos x}"
+      },
+      "verifyNote": "double：照題目順序直接數值積分（內層 e^{cos x} 數值積掉）",
+      "origin": "original — written for the 題庫精修 Phase 4 integrals batch (2026-10); numbers and setups chosen fresh, no textbook/exam text reused"
+    },
+    {
+      "id": "refine-integrals-030",
+      "topic": "integrals",
+      "rank": 2,
+      "rubric": {
+        "steps": 2,
+        "obscurity": 1,
+        "load": 1
+      },
+      "methodFamily": [
+        "interpret_integral",
+        "physical_model_setup"
+      ],
+      "cognitiveAction": [
+        "interpret",
+        "setup",
+        "compute"
+      ],
+      "difficultyMode": [
+        "recall"
+      ],
+      "learningRole": [
+        "course_core",
+        "modeling",
+        "general_practice"
+      ],
+      "prerequisiteGate": [
+        "ftc-part2"
+      ],
+      "servesLessons": [
+        "ftc-part2"
+      ],
+      "representation": "verbal",
+      "noveltyFamily": "refine-int:inflow-total",
+      "prompt": "\\text{水以 }r(t)=50e^{-0.1t}\\text{ 公升／分 流入水槽。前 }10\\text{ 分鐘共流入多少公升？}",
+      "answerKind": "numeric",
+      "answer": "500*(1-exp(-1))",
+      "distractors": [
+        "50*exp(-1)",
+        "500",
+        "500*exp(-1)"
+      ],
+      "timeLimit": 80,
+      "tags": [
+        "story-problem"
+      ],
+      "hints": [
+        "r(t) 是「每分鐘多少」；總量是把它累加起來。",
+        "∫₀¹⁰ 50e^{−0.1t} dt。"
+      ],
+      "solutionSteps": [
+        "流入總量 = ∫₀¹⁰ r(t) dt。",
+        "= 50·[−10e^{−0.1t}]₀¹⁰ = 500(1−e^{−1})。",
+        "≈ 316.1 公升。"
+      ],
+      "solution": "總量 = ∫₀¹⁰50e^{−0.1t}dt = 500(1−e^{−1}) ≈ 316 公升。r(10) 只是第 10 分鐘那一刻的速率。",
+      "verify": {
+        "m": "integral",
+        "v": "t",
+        "f": "50e^{-0.1t}",
+        "a": 0,
+        "b": 10
+      },
+      "verifyNote": "integral：∫₀¹⁰ r(t)dt 數值積分（題意：流入率的積分 = 流入總量）",
+      "origin": "original — written for the 題庫精修 Phase 4 integrals batch (2026-10); numbers and setups chosen fresh, no textbook/exam text reused"
+    },
+    {
+      "id": "refine-integrals-031",
+      "topic": "integrals",
+      "rank": 3,
+      "rubric": {
+        "steps": 2,
+        "obscurity": 1,
+        "load": 2
+      },
+      "methodFamily": [
+        "interpret_integral",
+        "physical_model_setup"
+      ],
+      "cognitiveAction": [
+        "interpret",
+        "compute"
+      ],
+      "difficultyMode": [
+        "trap"
+      ],
+      "learningRole": [
+        "course_core",
+        "modeling",
+        "general_practice",
+        "daily"
+      ],
+      "prerequisiteGate": [
+        "ftc-part2"
+      ],
+      "servesLessons": [
+        "ftc-part2"
+      ],
+      "representation": "symbolic",
+      "noveltyFamily": "refine-int:total-distance-vs-displacement",
+      "prompt": "v(t)=t^2-4t+3\\ (\\text{m/s})\\text{。求 }0\\le t\\le 3\\text{ 的總路程}",
+      "answerKind": "numeric",
+      "answer": "8/3",
+      "distractors": [
+        "0",
+        "4/3",
+        "3"
+      ],
+      "timeLimit": 90,
+      "tags": [
+        "kinematics"
+      ],
+      "hints": [
+        "路程是 ∫|v|，不是 ∫v。",
+        "v 在哪裡變號？"
+      ],
+      "solutionSteps": [
+        "v=(t−1)(t−3)：0<t<1 為正，1<t<3 為負。",
+        "∫₀¹v = 4/3；∫₁³v = −4/3。",
+        "總路程 = 4/3 + 4/3 = 8/3（位移則是 0）。"
+      ],
+      "solution": "v 在 t=1 變號：路程 = 4/3 + 4/3 = 8/3。直接 ∫₀³v 得 0，那是位移。",
+      "verify": {
+        "m": "integral",
+        "v": "t",
+        "f": "\\left|t^2-4t+3\\right|",
+        "a": 0,
+        "b": 3
+      },
+      "verifyNote": "integral：總路程 = ∫|v|，直接數值積分",
+      "origin": "original — written for the 題庫精修 Phase 4 integrals batch (2026-10); numbers and setups chosen fresh, no textbook/exam text reused"
+    },
+    {
+      "id": "refine-integrals-032",
+      "topic": "integrals",
+      "rank": 4,
+      "rubric": {
+        "steps": 2,
+        "obscurity": 2,
+        "load": 2
+      },
+      "methodFamily": [
+        "interpret_integral",
+        "FTC_reasoning"
+      ],
+      "cognitiveAction": [
+        "interpret",
+        "setup",
+        "compute"
+      ],
+      "difficultyMode": [
+        "insight"
+      ],
+      "learningRole": [
+        "course_extra",
+        "concept_check",
+        "general_practice",
+        "daily"
+      ],
+      "prerequisiteGate": [
+        "integral-properties"
+      ],
+      "servesLessons": [
+        "integral-properties"
+      ],
+      "representation": "symbolic",
+      "noveltyFamily": "refine-int:integral-is-a-constant",
+      "prompt": "f\\ \\text{連續且對所有 }x\\text{：}f(x)=x+\\int_{0}^{1}t\\,f(t)\\,dt\\text{。求 }f(1)",
+      "answerKind": "numeric",
+      "answer": "5/3",
+      "distractors": [
+        "4/3",
+        "2",
+        "3/2"
+      ],
+      "timeLimit": 120,
+      "tags": [
+        "definite-integral",
+        "basic-integral"
+      ],
+      "hints": [
+        "∫₀¹ t f(t) dt 是一個數，跟 x 無關。叫它 c。"
+      ],
+      "solutionSteps": [
+        "令 c=∫₀¹ t f(t)dt，則 f(x)=x+c。",
+        "c=∫₀¹ t(t+c)dt = ⅓ + c/2 ⇒ c=⅔。",
+        "f(1)=1+⅔=5/3。"
+      ],
+      "solution": "定積分是常數 c：f=x+c，c=⅓+c/2 ⇒ c=2/3，f(1)=5/3。",
+      "verify": {
+        "m": "recurrence",
+        "v": "a",
+        "f": "1+\\int_{0}^{1}t\\left(t+a-1\\right)dt",
+        "a0": 1
+      },
+      "verifyNote": "recurrence：把題目的關係當成映射反覆代入（a=f(1) 決定 f(x)=x+a−1），迭代到不動點；不解方程",
+      "origin": "original — written for the 題庫精修 Phase 4 integrals batch (2026-10); numbers and setups chosen fresh, no textbook/exam text reused"
+    },
+    {
+      "id": "refine-integrals-033",
+      "topic": "integrals",
+      "rank": 1,
+      "rubric": {
+        "steps": 1,
+        "obscurity": 1,
+        "load": 1
+      },
+      "methodFamily": [
+        "interpret_integral",
+        "arc_length_average"
+      ],
+      "cognitiveAction": [
+        "interpret",
+        "compute"
+      ],
+      "difficultyMode": [
+        "recall"
+      ],
+      "learningRole": [
+        "course_core",
+        "concept_check",
+        "general_practice"
+      ],
+      "prerequisiteGate": [
+        "average-value"
+      ],
+      "servesLessons": [
+        "average-value"
+      ],
+      "representation": "symbolic",
+      "noveltyFamily": "refine-int:average-value-basic",
+      "prompt": "f(x)=6x^2\\text{ 在 }[1,3]\\text{ 上的平均值}",
+      "answerKind": "numeric",
+      "answer": "26",
+      "distractors": [
+        "52",
+        "24",
+        "13"
+      ],
+      "timeLimit": 50,
+      "tags": [
+        "average-value"
+      ],
+      "hints": [
+        "平均值 = 積分 ÷ 區間長度。",
+        "區間長度是 2。"
+      ],
+      "solutionSteps": [
+        "∫₁³6x²dx = 2(27−1) = 52。",
+        "平均值 = 52/2 = 26。"
+      ],
+      "solution": "(1/2)∫₁³6x²dx = 52/2 = 26。",
+      "verify": {
+        "m": "integral",
+        "f": "\\frac{6x^2}{3-1}",
+        "a": 1,
+        "b": 3
+      },
+      "verifyNote": "integral：(1/(b−a))∫ₐᵇf 數值積分",
+      "origin": "original — written for the 題庫精修 Phase 4 integrals batch (2026-10); numbers and setups chosen fresh, no textbook/exam text reused"
+    },
+    {
+      "id": "refine-integrals-034",
+      "topic": "integrals",
+      "rank": 3,
+      "rubric": {
+        "steps": 2,
+        "obscurity": 1,
+        "load": 2
+      },
+      "methodFamily": [
+        "physical_model_setup",
+        "arc_length_average"
+      ],
+      "cognitiveAction": [
+        "setup",
+        "compute"
+      ],
+      "difficultyMode": [
+        "recall"
+      ],
+      "learningRole": [
+        "course_core",
+        "modeling",
+        "general_practice"
+      ],
+      "prerequisiteGate": [
+        "spring-work"
+      ],
+      "servesLessons": [
+        "spring-work"
+      ],
+      "representation": "verbal",
+      "noveltyFamily": "refine-int:spring-work-from-data",
+      "prompt": "\\text{一彈簧被 }10\\text{ N 的力拉長 }0.2\\text{ m。把它從伸長 }0.2\\text{ m 拉到伸長 }0.5\\text{ m 要做多少功（J）？}",
+      "answerKind": "numeric",
+      "answer": "21/4",
+      "distractors": [
+        "25/4",
+        "3/2",
+        "15/2"
+      ],
+      "timeLimit": 90,
+      "tags": [
+        "work"
+      ],
+      "hints": [
+        "先由 F=kx 求 k。",
+        "功是 ∫F dx，範圍是伸長量從 0.2 到 0.5，不是從 0。"
+      ],
+      "solutionSteps": [
+        "k = 10/0.2 = 50 N/m。",
+        "W = ∫_{0.2}^{0.5} 50x dx = 25(0.25−0.04)。",
+        "= 5.25 J。"
+      ],
+      "solution": "k=50，W=25(0.5²−0.2²)=5.25 J。從 0 積起會得到 6.25。",
+      "verify": {
+        "m": "integral",
+        "f": "\\frac{10}{0.2}x",
+        "a": 0.2,
+        "b": 0.5
+      },
+      "verifyNote": "integral：Hooke 定律 F=kx（k=10/0.2 是題意），∫_{0.2}^{0.5}F dx 數值積分",
+      "origin": "original — written for the 題庫精修 Phase 4 integrals batch (2026-10); numbers and setups chosen fresh, no textbook/exam text reused"
+    },
+    {
+      "id": "refine-integrals-035",
+      "topic": "integrals",
+      "rank": 4,
+      "rubric": {
+        "steps": 2,
+        "obscurity": 2,
+        "load": 2
+      },
+      "methodFamily": [
+        "physical_model_setup",
+        "arc_length_average"
+      ],
+      "cognitiveAction": [
+        "setup",
+        "compute"
+      ],
+      "difficultyMode": [
+        "trap"
+      ],
+      "learningRole": [
+        "course_extra",
+        "modeling",
+        "general_practice",
+        "daily"
+      ],
+      "prerequisiteGate": [
+        "work"
+      ],
+      "servesLessons": [
+        "work"
+      ],
+      "representation": "verbal",
+      "noveltyFamily": "refine-int:pump-over-rim",
+      "prompt": "\\text{直立圓柱水槽半徑 }1\\text{ m、高 }3\\text{ m，裝滿水。把水全部抽到槽頂上方 }1\\text{ m 處，要做多少功（J）？取 }\\rho g=9800\\text{ N/m}^3",
+      "answerKind": "numeric",
+      "answer": "73500*pi",
+      "distractors": [
+        "44100*pi",
+        "88200*pi",
+        "29400*pi"
+      ],
+      "timeLimit": 150,
+      "tags": [
+        "work"
+      ],
+      "hints": [
+        "切成水平薄片：在高度 y 的那片要被抬高多少？終點是槽底以上 4 m。"
+      ],
+      "solutionSteps": [
+        "高度 y 的薄片體積 π·1²·dy，重 9800π dy。",
+        "要抬到 y=4：距離 4−y。",
+        "W = 9800π∫₀³(4−y)dy = 9800π·7.5 = 73500π J。"
+      ],
+      "solution": "W=9800π∫₀³(4−y)dy=9800π(12−4.5)=73500π ≈ 2.31×10⁵ J。只抽到槽頂（3−y）會得到 44100π。",
+      "verify": {
+        "m": "integral",
+        "v": "y",
+        "f": "9800\\pi\\cdot(4-y)",
+        "a": 0,
+        "b": 3
+      },
+      "verifyNote": "integral：高度 y 的薄層重 9800π dy、要升高 4−y，對 y∈[0,3] 數值積分",
+      "origin": "original — written for the 題庫精修 Phase 4 integrals batch (2026-10); numbers and setups chosen fresh, no textbook/exam text reused"
+    },
+    {
+      "id": "refine-integrals-036",
+      "topic": "integrals",
+      "rank": 4,
+      "rubric": {
+        "steps": 2,
+        "obscurity": 2,
+        "load": 2
+      },
+      "methodFamily": [
+        "physical_model_setup"
+      ],
+      "cognitiveAction": [
+        "setup",
+        "compute"
+      ],
+      "difficultyMode": [
+        "insight"
+      ],
+      "learningRole": [
+        "course_extra",
+        "modeling",
+        "general_practice",
+        "daily"
+      ],
+      "prerequisiteGate": [
+        "fluid-force"
+      ],
+      "servesLessons": [
+        "fluid-force"
+      ],
+      "representation": "verbal",
+      "noveltyFamily": "refine-int:triangle-plate-force",
+      "prompt": "\\text{三角形平板垂直浸在水中：底邊長 }2\\text{ m 貼著水面、頂點在水面下 }3\\text{ m。求平板一側受的水壓力（N），}\\rho g=9800\\text{ N/m}^3",
+      "answerKind": "numeric",
+      "answer": "29400",
+      "distractors": [
+        "58800",
+        "19600",
+        "88200"
+      ],
+      "timeLimit": 150,
+      "tags": [
+        "story-problem"
+      ],
+      "hints": [
+        "深度 h 處的壓強是 ρgh；那一條水平細帶多寬？",
+        "寬度隨深度線性縮小，在 h=3 時為 0。"
+      ],
+      "solutionSteps": [
+        "深度 h 處寬 w(h)=2(1−h/3)。",
+        "F = ∫₀³ 9800·h·w(h) dh = 9800·2∫₀³(h−h²/3)dh。",
+        "= 19600·(9/2−3) = 29400 N。"
+      ],
+      "solution": "F=9800∫₀³h·2(1−h/3)dh=19600·1.5=29400 N。",
+      "verify": {
+        "m": "integral",
+        "v": "h",
+        "f": "9800h\\cdot 2\\left(1-\\frac{h}{3}\\right)",
+        "a": 0,
+        "b": 3
+      },
+      "verifyNote": "integral：深度 h 處寬度 2(1−h/3)、壓強 9800h，對 h∈[0,3] 數值積分",
+      "origin": "original — written for the 題庫精修 Phase 4 integrals batch (2026-10); numbers and setups chosen fresh, no textbook/exam text reused"
+    },
+    {
+      "id": "refine-integrals-037",
+      "topic": "integrals",
+      "rank": 2,
+      "rubric": {
+        "steps": 1,
+        "obscurity": 1,
+        "load": 2
+      },
+      "methodFamily": [
+        "method_selection",
+        "u_substitution"
+      ],
+      "cognitiveAction": [
+        "recognize_method"
+      ],
+      "difficultyMode": [
+        "method_choice"
+      ],
+      "learningRole": [
+        "course_core",
+        "method_choice",
+        "general_practice"
+      ],
+      "prerequisiteGate": [
+        "u-sub-recognize"
+      ],
+      "servesLessons": [
+        "u-sub-recognize"
+      ],
+      "representation": "symbolic",
+      "noveltyFamily": "refine-int:pick-usub",
+      "prompt": "\\int x^2e^{x^3}\\,dx\\quad\\text{最直接該用哪個方法？}",
+      "answerKind": "text",
+      "answers": [
+        "u 代換",
+        "u代換",
+        "代換",
+        "換元",
+        "變數代換",
+        "u-substitution",
+        "substitution",
+        "u sub"
+      ],
+      "canonical": "u 代換",
+      "distractors": [
+        "分部積分",
+        "部分分式",
+        "三角代換"
+      ],
+      "timeLimit": 30,
+      "tags": [
+        "technique-recognition",
+        "u-sub"
+      ],
+      "hints": [
+        "被積函數裡有沒有「某個東西和它的導數」一起出現？",
+        "x³ 的導數是 3x²。"
+      ],
+      "solutionSteps": [
+        "x² 正好是 x³ 的導數（差常數 3）。",
+        "令 u=x³：∫x²e^{x³}dx = ⅓∫e^u du，一步變成基本形，所以用 u 代換。"
+      ],
+      "solution": "u=x³、du=3x²dx：⅓∫e^u du = ⅓e^{x³}+C。分部積分會越做越糟。",
+      "nonVerifiable": "方法選擇題：答案是「該用哪個方法」，不是一個數；驗算器只能驗數值／式子。正確性由「這個方法一步就能把被積函數變成基本形」保證，見 solution 的那一步。",
+      "origin": "original — written for the 題庫精修 Phase 4 integrals batch (2026-10); numbers and setups chosen fresh, no textbook/exam text reused"
+    },
+    {
+      "id": "refine-integrals-038",
+      "topic": "integrals",
+      "rank": 2,
+      "rubric": {
+        "steps": 1,
+        "obscurity": 1,
+        "load": 2
+      },
+      "methodFamily": [
+        "method_selection",
+        "partial_fractions"
+      ],
+      "cognitiveAction": [
+        "recognize_method"
+      ],
+      "difficultyMode": [
+        "method_choice"
+      ],
+      "learningRole": [
+        "course_core",
+        "method_choice",
+        "general_practice"
+      ],
+      "prerequisiteGate": [
+        "partial-fractions-linear"
+      ],
+      "servesLessons": [
+        "partial-fractions-linear",
+        "integration-strategy"
+      ],
+      "representation": "symbolic",
+      "noveltyFamily": "refine-int:pick-partial-fractions",
+      "prompt": "\\int\\frac{x+5}{x^2+x-2}\\,dx\\quad\\text{最直接該用哪個方法？}",
+      "answerKind": "text",
+      "answers": [
+        "部分分式",
+        "部份分式",
+        "部分分式分解",
+        "partial fractions",
+        "partial fraction"
+      ],
+      "canonical": "部分分式",
+      "distractors": [
+        "u 代換",
+        "分部積分",
+        "三角代換"
+      ],
+      "timeLimit": 30,
+      "tags": [
+        "technique-recognition",
+        "partial-fraction"
+      ],
+      "hints": [
+        "分母能不能因式分解？",
+        "分子不是分母的導數（分母導數是 2x+1）。"
+      ],
+      "solutionSteps": [
+        "x²+x−2=(x+2)(x−1)，分子也不是分母的導數倍。",
+        "拆成 A/(x−1)+B/(x+2)：(x+5)/((x+2)(x−1)) = 2/(x−1) − 1/(x+2)，各自積成 ln。"
+      ],
+      "solution": "部分分式：2/(x−1)−1/(x+2)，積分 2ln|x−1|−ln|x+2|+C。",
+      "nonVerifiable": "方法選擇題：答案是「該用哪個方法」，不是一個數；驗算器只能驗數值／式子。正確性由「這個方法一步就能把被積函數變成基本形」保證，見 solution 的那一步。",
+      "origin": "original — written for the 題庫精修 Phase 4 integrals batch (2026-10); numbers and setups chosen fresh, no textbook/exam text reused"
+    },
+    {
+      "id": "refine-integrals-039",
+      "topic": "integrals",
+      "rank": 3,
+      "rubric": {
+        "steps": 1,
+        "obscurity": 2,
+        "load": 2
+      },
+      "methodFamily": [
+        "method_selection",
+        "trig_substitution"
+      ],
+      "cognitiveAction": [
+        "recognize_method"
+      ],
+      "difficultyMode": [
+        "method_choice"
+      ],
+      "learningRole": [
+        "course_core",
+        "method_choice",
+        "general_practice"
+      ],
+      "prerequisiteGate": [
+        "trig-sub-a2-minus-x2"
+      ],
+      "servesLessons": [
+        "trig-sub-a2-minus-x2",
+        "integration-strategy"
+      ],
+      "representation": "symbolic",
+      "noveltyFamily": "refine-int:pick-trig-sub",
+      "prompt": "\\int\\frac{x^2}{\\sqrt{9-x^2}}\\,dx\\quad\\text{最直接該用哪個方法？}",
+      "answerKind": "text",
+      "answers": [
+        "三角代換",
+        "三角替換",
+        "trig substitution",
+        "trigonometric substitution",
+        "x=3sinθ",
+        "x=3sin(t)"
+      ],
+      "canonical": "三角代換",
+      "distractors": [
+        "u 代換",
+        "分部積分",
+        "部分分式"
+      ],
+      "timeLimit": 40,
+      "tags": [
+        "technique-recognition",
+        "trig-substitution"
+      ],
+      "hints": [
+        "√(a²−x²) 的形狀讓你想到哪個恆等式？",
+        "u=9−x² 行不行？分子是 x² 不是 x。"
+      ],
+      "solutionSteps": [
+        "u=9−x² 需要分子有 x，這裡是 x²，代不乾淨。",
+        "x=3sinθ：√(9−x²)=3cosθ、dx=3cosθdθ，積分變成 9∫sin²θdθ，所以用三角代換。"
+      ],
+      "solution": "x=3sinθ 把根號消掉：9∫sin²θ dθ = (9/2)(θ−sinθcosθ)+C。",
+      "nonVerifiable": "方法選擇題：答案是「該用哪個方法」，不是一個數；驗算器只能驗數值／式子。正確性由「這個方法一步就能把被積函數變成基本形」保證，見 solution 的那一步。",
+      "origin": "original — written for the 題庫精修 Phase 4 integrals batch (2026-10); numbers and setups chosen fresh, no textbook/exam text reused"
+    },
+    {
+      "id": "refine-integrals-040",
+      "topic": "integrals",
+      "rank": 2,
+      "rubric": {
+        "steps": 1,
+        "obscurity": 1,
+        "load": 2
+      },
+      "methodFamily": [
+        "method_selection",
+        "integration_by_parts"
+      ],
+      "cognitiveAction": [
+        "recognize_method"
+      ],
+      "difficultyMode": [
+        "method_choice"
+      ],
+      "learningRole": [
+        "course_core",
+        "method_choice",
+        "general_practice"
+      ],
+      "prerequisiteGate": [
+        "ibp-log-invtrig"
+      ],
+      "servesLessons": [
+        "ibp-log-invtrig"
+      ],
+      "representation": "symbolic",
+      "noveltyFamily": "refine-int:pick-ibp",
+      "prompt": "\\int x\\arctan x\\,dx\\quad\\text{最直接該用哪個方法？}",
+      "answerKind": "text",
+      "answers": [
+        "分部積分",
+        "分部",
+        "integration by parts",
+        "by parts",
+        "ibp"
+      ],
+      "canonical": "分部積分",
+      "distractors": [
+        "u 代換",
+        "部分分式",
+        "三角代換"
+      ],
+      "timeLimit": 35,
+      "tags": [
+        "technique-recognition",
+        "integration-by-parts"
+      ],
+      "hints": [
+        "arctan x 本身不好積，但它的導數很好用。",
+        "誰當 u、誰當 dv？"
+      ],
+      "solutionSteps": [
+        "arctan x 的導數 1/(1+x²) 是有理函數，x 好積：取 u=arctan x、dv=x dx。",
+        "得到 ½x²arctan x − ½∫x²/(1+x²)dx，剩下的是基本有理積分，所以用分部積分。"
+      ],
+      "solution": "分部：½x²arctan x − ½(x − arctan x) + C。",
+      "nonVerifiable": "方法選擇題：答案是「該用哪個方法」，不是一個數；驗算器只能驗數值／式子。正確性由「這個方法一步就能把被積函數變成基本形」保證，見 solution 的那一步。",
+      "origin": "original — written for the 題庫精修 Phase 4 integrals batch (2026-10); numbers and setups chosen fresh, no textbook/exam text reused"
+    }
+  ]
+}
