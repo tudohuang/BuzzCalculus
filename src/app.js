@@ -7374,6 +7374,8 @@
     const hints = hintsFor(problem);
     const authored = authoredHints(problem);
     const detail = problem.detail;
+    // 沒開局就看到解答（錯題本、結算回顧、續玩）：這時才抓那一片；到了在非作答畫面重畫一次
+    if (!detail && window.BuzzDetail) window.BuzzDetail.prefetch([problem.id]);
     const lead = hints[0] || t("先判斷題型，再選最短的工具。");
     // 第二層優先吃作者寫的；作者沒寫時才用機器推導的事實補。
     const authoredSteps = authored.slice(1);
@@ -9823,6 +9825,8 @@
       problem_count: quiz.problems.length,
       practice: Boolean(quiz.practice)
     });
+    // 詳解 v2 的分片：開局就抓這一局用得到的那幾片（答完第一題之前早就到了）
+    if (window.BuzzDetail) window.BuzzDetail.prefetch(quiz.problems.map((p) => p.id));
     render();
   }
 
@@ -15103,6 +15107,8 @@
     };
   }
 
+  // 詳解分片晚到：作答畫面不重畫（會打斷正在寫的答案），其他畫面（錯題本、結算）重畫一次把新詳解換上
+  if (window.BuzzDetail) window.BuzzDetail.onload = () => { if (view !== "quiz") render(); };
   applyTheme();
   setupPwa();
   setupAnalytics();

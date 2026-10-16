@@ -263,19 +263,62 @@
   if (typeof document !== "undefined" && document.createElement && document.head) {
     const loadSteps = () => {
       if (window.BUZZ_SOLUTION_STEP_TABLE) return;
-      // 詳解 v2（problem_solution_detail.js）只有中文介面用得到：英文介面不抓
-      const groups = window.BuzzI18n && window.BuzzI18n.lang && window.BuzzI18n.lang !== "zh" ? ["steps"] : ["steps", "detail"];
-      groups.forEach((group) => {
-        const tag = document.querySelector(`script[type="text/lazy"][data-lazy="${group}"]`);
-        if (!tag) return;
-        const script = document.createElement("script");
-        script.src = tag.getAttribute("src");
-        script.async = true;
-        document.head.appendChild(script);
-      });
+      const tag = document.querySelector('script[type="text/lazy"][data-lazy="steps"]');
+      if (!tag) return;
+      const script = document.createElement("script");
+      script.src = tag.getAttribute("src");
+      script.async = true;
+      document.head.appendChild(script);
     };
     const later = () => (window.requestIdleCallback ? window.requestIdleCallback(loadSteps, { timeout: 3000 }) : window.setTimeout(loadSteps, 1200));
     if (document.readyState === "complete") later();
     else window.addEventListener("load", later, { once: true });
   }
+
+  // ── 詳解 v2：按需抓的分片（src/detail/d-XX.js，tools/build_solution_detail.js 產生）──
+  // 全題庫的詳解有幾 MB，不能一支檔：照題號雜湊分片，開一局只抓這一局的題目在的那幾片（app.js 的 startQuiz 呼叫 prefetch）。
+  // 分片內容掛在 problem.detail；畫面（app.js 的 renderSolutionStages）有 detail 就照新格式畫，沒有就照舊。
+  // 只有中文介面抓：這一份還沒有英文，英文介面照舊用已經翻好的舊解說。
+  // 雜湊與片數要跟 tools/build_solution_detail.js 一樣（validate_solution_detail 會比對）。
+  const SHARDS = 64;
+  const shardOf = (id) => {
+    let h = 0x811c9dc5;
+    for (let i = 0; i < id.length; i += 1) {
+      h ^= id.charCodeAt(i);
+      h = Math.imul(h, 0x01000193) >>> 0;
+    }
+    return h % SHARDS;
+  };
+  const requested = {};
+  let byId = null;
+  window.BuzzDetail = {
+    SHARDS,
+    shardOf,
+    loaded: {},
+    // 分片載進來時呼叫：掛到題目上；onload 讓畫面決定要不要重畫
+    add(shard, table) {
+      if (window.BuzzI18n && window.BuzzI18n.lang && window.BuzzI18n.lang !== "zh") return;
+      if (!byId) byId = new Map((window.BUZZ_PROBLEMS || []).map((p) => [p.id, p]));
+      Object.keys(table).forEach((id) => {
+        const problem = byId.get(id);
+        if (problem) problem.detail = table[id];
+      });
+      window.BuzzDetail.loaded[shard] = true;
+      if (typeof window.BuzzDetail.onload === "function") window.BuzzDetail.onload(shard);
+    },
+    prefetch(ids) {
+      if (window.BuzzI18n && window.BuzzI18n.lang && window.BuzzI18n.lang !== "zh") return;
+      if (typeof document === "undefined" || !document.createElement || !document.head) return;
+      new Set((ids || []).map(shardOf)).forEach((n) => {
+        if (requested[n]) return;
+        requested[n] = true;
+        const script = document.createElement("script");
+        script.src = `src/detail/d-${String(n).padStart(2, "0")}.js`;
+        script.async = true;
+        // 載不到（離線、沒快取）就算了：畫面照舊用舊解說；下次開一局再試
+        script.onerror = () => { requested[n] = false; };
+        document.head.appendChild(script);
+      });
+    }
+  };
 })();
