@@ -444,9 +444,8 @@ async function run() {
     check(`reduced-motion：直接跳到 ${d1.to}，沒有過渡值`, still.length === 1 && still[0] === String(d1.to), `${d0.to} → ${still.join("→")}`);
     await chrome.send("Emulation.setEmulatedMedia", { features: [] });
     for (let k = 2; k < WIDGET.sections[dragSi].beats.length; k += 1) await tap("[data-cv2s-next]");
-    const dragAct = await evaluate(`return { act: Boolean(document.querySelector('[data-cv2s-act="drag"]')), done: document.querySelector('[data-cv2s-act="drag"]').classList.contains("is-done"), video: Boolean(document.querySelector("[data-cv2s] [data-cv2-video]")) };`);
+    const dragAct = await evaluate(`return { act: Boolean(document.querySelector('[data-cv2s-act="drag"]')), done: document.querySelector('[data-cv2s-act="drag"]').classList.contains("is-done") };`);
     check("拖圖的動作出現（還沒做到）", dragAct.act && !dragAct.done);
-    if (WIDGET.sections[dragSi].video) check("這一節帶著這一課的影片", dragAct.video);
     const stick = await evaluate(`scrollTo(0, document.documentElement.scrollHeight); await new Promise((r) => setTimeout(r, 150)); const f = window.__s.fig(${WIDGET.sections[dragSi].drag.use}).getBoundingClientRect(); const bar = document.querySelector(".topbar").getBoundingClientRect(); return { fig: Math.round(f.top), bar: Math.round(bar.bottom), y: Math.round(scrollY) };`);
     check("手機：捲到底時圖黏在頂列下面（句子在下面長、圖一直看得到）", stick.y > 0 && Math.abs(stick.fig - stick.bar) <= 1, JSON.stringify(stick));
     await shot("phone-light-widget-sticky");

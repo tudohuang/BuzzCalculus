@@ -7,7 +7,7 @@
 // APP_SHELL（核心）：離線也要能練題 —— index.html、CSS、index.html 裡每一支 defer 的 script、逐步解答側表（每次開站閒下來都會載）、
 //   manifest、圖示、常用的 KaTeX 字型。其他（lazy 群組：課程、證明、地圖、英文側表…；課文 ch-*.js；說明頁；少用的字型）
 //   只進 REVISIONS：用到才快取（cache-first、存進同一個版本的快取），用過的離線也能用。
-// 不進表的：sw.js 自己、/media/（影片、旁白：交給 HTTP 快取）、media/manifest.json。
+// 不進表的：sw.js 自己、/media/（旁白：交給 HTTP 快取）、media/manifest.json。
 // daily_one_history.js 的 revision 留空：CI 的 regen 每天會長一格，雜湊對不上 —— 空的 revision 永遠不搬、每次安裝都重抓（一個請求）。
 //
 // 用法：node tools/build_sw_revisions.js           寫入 sw.js 的產生區

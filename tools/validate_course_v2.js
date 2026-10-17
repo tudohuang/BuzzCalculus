@@ -101,7 +101,6 @@ const allText = (lesson) => {
   parts.push(...(lesson.pitfalls || []));
   (lesson.checks || []).forEach((c) => { parts.push(c.ask); (c.options || []).forEach((o) => parts.push(o.label, o.why || "")); });
   (lesson.practice || []).forEach((p) => parts.push(p.note || ""));
-  if (lesson.video) parts.push(lesson.video.caption || "");
   (lesson.figures || []).forEach((f) => parts.push(f.caption || "", ...((f.graph && f.graph.labels) || []).map((l) => l.text || "")));
   return parts.filter(Boolean).join("\n");
 };
@@ -173,22 +172,9 @@ const WIDGET_NEEDS = {
   zoom: ["curves", "center", "levels", "window"],
   approach: ["f", "a", "range", "window"]
 };
-// ── 影片（lesson.video）──
-// 短名要在 media/manifest.json 的 videos 裡（部署時 tools/fetch_media.js 照那份清單抓檔），after 跟 figures 同義。
-const MEDIA_MANIFEST = path.join(ROOT, "media", "manifest.json");
-const mediaVideos = fs.existsSync(MEDIA_MANIFEST) ? new Set(JSON.parse(fs.readFileSync(MEDIA_MANIFEST, "utf8")).videos || []) : new Set();
+// ── 影片（lesson.video）：2026-10-17 拔掉（課程改成黑板＋旁白；影片的 Range 請求吃掉主機的請求額度）──
 function checkVideo(id, L) {
-  const v = L.video;
-  if (v === undefined) return;
-  if (!v || typeof v !== "object" || Array.isArray(v)) { err(id, "video 要是一個物件（每課最多一支）"); return; }
-  if (!mediaVideos.has(v.id)) err(id, `video 的 id「${v.id}」不在 media/manifest.json 的 videos（${[...mediaVideos].join("、")}）`);
-  if (v.after !== undefined && v.after !== "examples" && !(Number.isInteger(v.after) && v.after >= 0 && v.after < (L.concept || []).length)) err(id, `video 的 after 要是觀念段落的索引（0–${(L.concept || []).length - 1}）或 "examples"`);
-  if (!(typeof v.duration === "number" && v.duration > 0)) err(id, "video 的 duration 要是正的秒數");
-  if (typeof v.caption !== "string" || !v.caption.trim()) err(id, "video 沒有 caption");
-  else if (cjkLen(v.caption) > 40) err(id, `video 的 caption ${cjkLen(v.caption)} 字，一行寫得完才算（≤ 40）`);
-  else if (/\$/.test(v.caption)) err(id, "video 的 caption 是純文字，不寫 $…$");
-  const extra = Object.keys(v).filter((k) => !["id", "after", "duration", "caption"].includes(k));
-  if (extra.length) err(id, `video 多了不認得的欄位：${extra.join("、")}`);
+  if (L.video !== undefined) err(id, "課程影片已經拔掉了：不要寫 video（用 sections 的黑板與旁白）");
 }
 
 // ── 分節（lesson.sections，可選）──
@@ -360,7 +346,7 @@ function checkSections(id, L) {
   const parts = [];
   S.forEach((sec, si) => {
     const where = `第 ${si + 1} 節`;
-    const extra = Object.keys(sec || {}).filter((k) => !["title", "beats", "check", "predict", "drag", "video", "proof", "of", "skeleton", "order", "where", "solve"].includes(k));
+    const extra = Object.keys(sec || {}).filter((k) => !["title", "beats", "check", "predict", "drag", "proof", "of", "skeleton", "order", "where", "solve"].includes(k));
     if (extra.length) err(id, `${where} 多了不認得的欄位：${extra.join("、")}`);
     if (typeof sec.title !== "string" || !sec.title.trim()) err(id, `${where} 沒有 title`);
     else if (cjkLen(sec.title) > 12) err(id, `${where} 的 title ${cjkLen(sec.title)} 字（≤ 12）`);
@@ -480,7 +466,6 @@ function checkSections(id, L) {
       texts.push(...r.texts);
     }
     leakWarn(id, L, sec, where);
-    if (sec.video !== undefined && !(sec.video === true && L.video)) err(id, `${where} 的 video 只能寫 true，而且這一課要有 video`);
     shown = Math.max(shown, peak);
     if (shown > 220) err(id, `${where} 畫面上的字 ${shown} 字（一節 ≤ 220；建議 ≤ 150）`);
     else if (shown > 150) warn(id, `${where} 畫面上的字 ${shown} 字（建議 ≤ 150）`);

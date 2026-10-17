@@ -100,17 +100,10 @@ jobs:
         # 點一課亮起整串先修（數量跟 DAG 一樣）、「開始這課」「在地圖上看」、方向鍵與 Enter、深色、reduced-motion，
         # 外加拖 60 格量 rAF 間隔與地圖自己每格的繪製時間（canvas 上的東西字串比對測不到）。
         run: node tools/e2e_course_map.js
-      - name: E2E course video
-        # 課程影片：有影片的課先只有預覽圖（loading=lazy）、點了才建 <video>、點之前沒有 mp4 請求；
-        # 片源跟主題與寬度走、整頁重繪後同一支影片接著播、Service Worker 不攔 /media/、Cache Storage 沒有影片、載不到只留一行說明。
-        # 影片不在 git：先照 media/manifest.json 從 Release 抓下來（逐檔驗 sha256），跟 Vercel 部署時同一支工具。
-        run: |
-          node tools/fetch_media.js
-          node tools/e2e_course_video.js
       - name: E2E course sections
         # 分節模式（一節一屏）：預設分節、點一下出下一句（按鈕／點句子／→）、句子帶 fig 時 widget 真的動（reduced-motion 直接跳）、
         # 結尾的小測當下對錯、拖滑桿進範圍、一節 +5 XP 只發一次、記到節、結算列出學習目標與 XP、在地圖上看那一課亮一下、
-        # 每日任務「讀一節課」與連勝、「全文」切回整頁而且記住、手機圖黏在頂列下、390 寬不溢出。影片那一節用上一步抓好的 media/。
+        # 每日任務「讀一節課」與連勝、「全文」切回整頁而且記住、手機圖黏在頂列下、390 寬不溢出。
         # 旁白（按了播放才抓、念完自己往下、暫停、語速、字幕、載不到退回點的）：/media/narration/ 由測試用 CDP 攔下來回合成的無聲 mp3，
         # 不靠 Release —— 旁白的 Release（media-v2，manifest 標 optional）還沒上傳時 fetch_media 只警告，這一步照樣測得到。
         run: node tools/e2e_course_sections.js

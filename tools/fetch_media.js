@@ -1,4 +1,4 @@
-// 部署時把大檔（課程影片、分節旁白）從 GitHub Release 抓進 media/（Vercel 的 buildCommand）。
+// 部署時把分節旁白從 GitHub Release 抓進 media/（Vercel 的 buildCommand）。課程影片 2026-10-17 已拔掉。
 //
 // 影片與旁白不進 git（倉庫已經很大），放在 Release 附件；部署時抓到同網域的 /media/，
 // 網站從自己的網域播放、service worker 不快取它們。

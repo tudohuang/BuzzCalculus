@@ -90,12 +90,6 @@ const narrationBaseOf = (v) => {
 // 男聲沒上傳就不出貨（播放器只有女聲）。
 const published = new Set((manifest.assets || []).map((a) => a.name));
 const { anchorMs } = require("./lib/course_board_check.js");
-// 影片的版本：每支影片（淺色／深色 × 720p／1080p／預覽圖）的 sha256 合起來取 8 碼，播放器接在網址後面（?v=）。
-// 影片檔名沒有雜湊，同名換檔時靠它換網址 —— 所以 vercel.json 才能對帶 ?v= 的 /media/ 回 immutable（一年）。
-const videoRev = Object.fromEntries((manifest.videos || []).map((id) => {
-  const parts = (manifest.assets || []).filter((a) => new RegExp(`^${id}-(light|dark)-`).test(a.name)).map((a) => a.sha256).sort();
-  return [id, require("crypto").createHash("sha256").update(parts.join("|")).digest("hex").slice(0, 8)];
-}).filter(([, rev]) => rev));
 // 章 → 檔名：章碼小寫、非英數換成 -（9A.1 → ch-9a-1.js）。src/course_v2_ui.js 的 chapterFile 是同一條規則
 const chapterFile = (code) => `ch-${String(code).toLowerCase().replace(/[^a-z0-9]+/g, "-")}.js`;
 
@@ -126,8 +120,6 @@ function shipLesson(lesson) {
     pitfalls: nonEmpty(lesson.pitfalls),
     // 圖：原樣出貨（規格見 SCHEMA.md；畫法在 course_v2_ui.js 的 BuzzCourseFigures）
     ...(Array.isArray(lesson.figures) && lesson.figures.length ? { figures: lesson.figures } : {}),
-    // 影片：只出貨短名與顯示要用的欄位；網址（主題、解析度）在畫面那邊組
-    ...(lesson.video ? { video: { id: lesson.video.id, after: lesson.video.after === undefined ? 0 : lesson.video.after, duration: lesson.video.duration, caption: lesson.video.caption } } : {}),
     // 分節：原樣出貨（規格見 SCHEMA.md；畫面在 src/course_sections.js，有分節的課才抓）。
     // 有旁白錄音的課多帶 voice（女聲那一支 mp3 檔名裡的 f8），句子多帶 t（在那一支裡的 [起, 訖] 毫秒）；
     // 男聲（上傳了才帶）同一套換個名字：課的 vm、句子的 tm、問句的 why.tm、黑板動作的 mm（男聲自己的逐字時間點換出來的錨點）。
@@ -182,7 +174,6 @@ const outline = {
   narration: narrationBaseOf("f"),
   // 男聲的前綴只在管線有錄男聲時才帶：播放器與設定頁看它決定要不要出現聲音切換（2026-10 起只錄女聲）
   ...(NARRATION_VKEYS.includes("m") ? { narrationM: narrationBaseOf("m") } : {}),
-  videoRev,
   stages: stages.map((s) => ({
     n: s.n,
     title: s.title,
