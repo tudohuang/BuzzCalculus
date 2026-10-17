@@ -69,7 +69,6 @@ jobs:
           - beginner
           - course_v2
           - course_map
-          - course_video
           - course_sections
           - course_boss
           - course_board
@@ -80,8 +79,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Fetch media
-        # 影片與旁白不在 git：用到的那幾組先照 media/manifest.json 從 Release 抓（逐檔驗 sha256）
-        if: contains(fromJSON('["course_video","course_sections","course_board"]'), matrix.suite)
+        # 旁白不在 git：用到的那幾組先照 media/manifest.json 從 Release 抓（逐檔驗 sha256）
+        if: contains(fromJSON('["course_sections","course_board"]'), matrix.suite)
         run: node tools/fetch_media.js
       - name: Run
         run: node tools/e2e_${{ matrix.suite }}.js

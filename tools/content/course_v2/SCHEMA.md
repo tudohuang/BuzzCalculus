@@ -57,20 +57,9 @@
 }
 ```
 
-## 影片（video，可選，每課最多 1 支）
+## 影片（已拔掉）
 
-Manim 做的概念動畫（來源 `manim/scenes/`，部署時由 `tools/fetch_media.js` 抓進站上的 `/media/`，清單是 `media/manifest.json`）。
-課文裡只寫短名，網址在執行時組：`/media/<id>-<light|dark>-<720p|1080p>.mp4`（視窗 < 900px 用 720p）與 `…-poster.jpg`。
-頁面上先只放預覽圖＋播放鍵，點了才建 `<video>`；不自動播放。
-
-```jsonc
-"video": {
-  "id": "riemann",                        // media/manifest.json 的 videos 裡要有
-  "after": 4,                             // 跟 figures 的 after 同義：放在第幾段觀念之後（同一段有圖時排在圖後面）；"examples" = 範例區最後
-  "duration": 27,                         // 秒（> 0，取整數秒、無條件捨去，跟播放器顯示的一樣），顯示在播放鍵旁
-  "caption": "n 加倍，左和與右和夾向 14/3" // 純文字一行（≤ 40 字），不寫 $…$
-}
-```
+2026-10-17 拔掉課程影片：課程改成分節黑板＋旁白，影片的 Range 請求又吃掉主機的請求額度。不要再寫 `video`（驗證器會擋）。
 
 ## 分節（sections，可選）
 
@@ -90,8 +79,7 @@ Manim 做的概念動畫（來源 `manim/scenes/`，部署時由 `tools/fetch_me
     "check": 1,                                   // 小測的索引（lesson.checks[1]）—— 當下對錯、選錯看 why、可以重選；或
     "predict": { "ask": "下一步是？", "options": [ { "label": "…", "correct": true }, { "label": "…", "why": "…" }, { "label": "…", "why": "…" } ] },  // 先猜再看：3 個選項；或
     "drag": { "use": 0, "ask": "把 n 拉到 40 以上", "range": [40, 50] },  // 自己拖滑桿進範圍（一開始不能已經在範圍裡）；或
-    "solve": { "check": 1, "answer": "…", "claim": "… == ANS" },           // 自己算：不給選項、自己打答案（見下「自己算」）
-    "video": true }                               // 可選：這一節放這一課的影片（lesson.video）
+    "solve": { "check": 1, "answer": "…", "claim": "… == ANS" } }         // 自己算：不給選項、自己打答案（見下「自己算」）
 ]
 ```
 

@@ -187,9 +187,9 @@
     tpl.innerHTML = sectionView(api, api.state.sec.si);
     const fresh = tpl.content.querySelector(".cv2s-sec");
     art.querySelector(".cv2s-beats").replaceWith(fresh.querySelector(".cv2s-beats"));
-    art.querySelectorAll(":scope > [data-cv2-video], :scope > [data-cv2s-act]").forEach((n) => n.remove());
+    art.querySelectorAll(":scope > [data-cv2s-act]").forEach((n) => n.remove());
     const bar = art.querySelector(".cv2s-bar");
-    fresh.querySelectorAll(":scope > [data-cv2-video], :scope > [data-cv2s-act]").forEach((n) => art.insertBefore(n, bar));
+    fresh.querySelectorAll(":scope > [data-cv2s-act]").forEach((n) => art.insertBefore(n, bar));
     bar.replaceWith(fresh.querySelector(".cv2s-bar"));
     if (window.lucide) window.lucide.createIcons({ attrs: { class: "icon", "aria-hidden": "true" } });
     const sec = api.state.sec;
@@ -202,7 +202,6 @@
     }
     if (BD()) BD().sync(api, art);
     sec.fresh = -1;
-    mountVideo(api, art);
     show();
   }
   /* 把亮著那一句（或動作）到「下一句」那一列捲進「頂列＋黏著的圖」與 dock 之間，放不下就保住它的頂。
@@ -371,8 +370,6 @@
         ${sub}
       </li>`;
     }).join("");
-    const v = data.video;
-    const video = all && s.video && v ? `<figure class="cv2-figure cv2-video" data-cv2-video="${escapeAttr(v.id)}" data-duration="${v.duration}"><div class="cv2-video-box"></div><figcaption>${escapeHtml(v.caption)}</figcaption></figure>` : "";
     let action = "";
     if (all && s.check !== undefined) action = choices(api, data.checks[s.check], st.picks[s.check] || [], { kind: "check", ci: s.check });
     if (all && s.predict) action = choices(api, s.predict, sec.pred[si] === undefined ? [] : [sec.pred[si]], { kind: "predict", ci: si, once: true });
@@ -394,7 +391,6 @@
         ${figs}
         ${bd ? `<div class="cvb-slot" data-cvb-slot data-action="course-s-next" data-how="tap"></div>` : ""}
         <ol class="cv2s-beats" data-action="course-s-next" data-how="tap" aria-live="polite">${beats}</ol>
-        ${video}
         ${action}
         <div class="cv2s-bar">${bar}</div>
       </article>`;
@@ -476,12 +472,6 @@
     if ((sec.top || sec.bar) && sec.si < api.data.sections.length) show(sec.bar);
     sec.top = false;
     sec.bar = false;
-    mountVideo(api, root);
-  }
-  function mountVideo(api, root) {
-    if (root.querySelector("[data-cv2-video]")) {
-      Promise.resolve().then(() => api.deps.ensureLazy("video")).then(() => window.BuzzCourseVideo.mount(document), () => document.querySelectorAll(".cv2-video").forEach((node) => node.classList.add("is-off")));
-    }
   }
 
   /* ── 動作（course_v2_ui 的 act 把 course-s-* 轉過來）── */

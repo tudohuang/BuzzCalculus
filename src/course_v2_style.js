@@ -199,8 +199,6 @@ window.BUZZ_COURSE_V2_STYLE = `
 .cv2-figure > * { min-width: 0; max-width: 100%; }
 .cv2-figure [data-cv2-plot] { display: grid; gap: 8px; width: 100%; }
 .cv2-figure .problem-graph svg { width: 100%; }
-.cv2-video.is-off .cv2-video-box { display: none; }
-.cv2-video-box { width: 100%; aspect-ratio: 16 / 9; border-radius: 10px; background: color-mix(in srgb, var(--ink) 6%, var(--paper)); }
 .cv2-figure figcaption { color: var(--muted); font-size: 0.86rem; line-height: 1.6; text-align: center; }
 .cv2-readout { margin: 0; color: var(--ink); font-size: 0.86rem; font-variant-numeric: tabular-nums; text-align: center; overflow-wrap: anywhere; }
 .cv2-slider { display: flex; align-items: center; gap: 10px; width: 100%; }
