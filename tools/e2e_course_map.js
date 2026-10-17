@@ -77,7 +77,7 @@ const HELPERS = `
         .map((n) => { const r = n.getBoundingClientRect(); return { side: Math.round(Math.min(r.width, r.height)), label: (n.textContent || "").trim().slice(0, 12) }; })
         .filter((x) => x.side < 40);
     },
-    files() { return performance.getEntriesByType("resource").map((e) => e.name).filter((n) => /course_map|course_v2\\/map/.test(n)).map((n) => n.replace(/^.*\\/src\\//, "")); },
+    files() { return performance.getEntriesByType("resource").map((e) => e.name).filter((n) => /course_map|course_v2\\/map|bundle\\/lazy-map\\./.test(n)).map((n) => n.replace(/^.*\\/(src|(?=bundle))\\/?/, "")); },
     dbg() { return window.BuzzCourseMap ? window.BuzzCourseMap.debug() : null; },
     canvasRect() { const c = document.querySelector(".cmap-canvas"); const r = c.getBoundingClientRect(); return { x: r.left, y: r.top, w: r.width, h: r.height }; },
     lum(c) { const v = c.match(/[\\d.]+/g).slice(0, 3).map(Number).map((x) => { x /= 255; return x <= 0.03928 ? x / 12.92 : Math.pow((x + 0.055) / 1.055, 2.4); }); return 0.2126 * v[0] + 0.7152 * v[1] + 0.0722 * v[2]; },
@@ -141,7 +141,8 @@ async function run() {
     check("切到地圖：canvas 出現", await waitFor('window.BuzzCourseMap && document.querySelector(".cmap-canvas") && window.__m.dbg().draws > 0'));
     await settled();
     const opened = await evaluate(`const c = document.querySelector(".cmap-canvas"); return { files: window.__m.files(), touch: getComputedStyle(c).touchAction, d: window.__m.dbg(), overflow: window.__m.overflow(), small: window.__m.smallTargets(), rect: window.__m.canvasRect(), dpr: c.width / c.getBoundingClientRect().width, sr: document.querySelectorAll(".cv2-map .sr-only li li li").length };`);
-    check("切到地圖才抓 map.js 與 course_map.js", opened.files.includes("course_v2/map.js") && opened.files.includes("course_map.js"), opened.files.join(","));
+    // 部署版（tools/bundle_site.js）兩支串成 bundle/lazy-map.<雜湊>.js
+    check("切到地圖才抓 map.js 與 course_map.js", (opened.files.includes("course_v2/map.js") && opened.files.includes("course_map.js")) || opened.files.some((f) => /^bundle\/lazy-map\.[0-9a-f]{8}\.js$/.test(f)), opened.files.join(","));
     check("一打開是 Stage 那一層", opened.d.level === "stage", `${opened.d.level} · ×${opened.d.scale.toFixed(3)}`);
     check("canvas 是 touch-action:none（只有地圖本身不捲頁）", opened.touch === "none", opened.touch);
     check("canvas 照 DPR 畫（手機 2×）", Math.abs(opened.dpr - 2) < 0.05, opened.dpr.toFixed(2));

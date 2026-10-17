@@ -75,7 +75,8 @@ const HELPERS = `
     st() { return window.BuzzBoard && window.BuzzBoard.state(); },
     model() { return window.BuzzBoard && window.BuzzBoard.debug.model(); },
     board() { return document.querySelector("[data-cv2s] .cvb"); },
-    files(re) { return performance.getEntriesByType("resource").map((e) => e.name).filter((n) => re.test(n)).length; },
+    // 部署版（tools/bundle_site.js）把 board 群組的兩支串成 bundle/lazy-board.<雜湊>.js：當成兩支都抓了一次
+    files(re) { return performance.getEntriesByType("resource").map((e) => e.name).flatMap((n) => (/bundle\\/lazy-board\\./.test(n) ? ["src/course_board_layout.js", "src/course_board.js"] : [n])).filter((n) => re.test(n)).length; },
     bytes(re) { return performance.getEntriesByType("resource").filter((e) => re.test(e.name)).reduce((s, e) => s + (e.encodedBodySize || e.transferSize || 0), 0); },
     overflow() { const d = document.documentElement; return d.scrollWidth - d.clientWidth; },
     // 某一項（data-n）的 KaTeX 看得到的字

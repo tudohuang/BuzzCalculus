@@ -283,7 +283,7 @@ async function run() {
     check("中文設定下 about.html 是中文版", await chrome.evaluate(`return document.documentElement.lang === 'zh-Hant' && /tudohuang/.test(document.body.innerText) && /[\\u4e00-\\u9fff]/.test(document.body.innerText) && !/Who made it/.test(document.body.innerText);`));
     await chrome.navigate(server.url + "/index.html");
     await chrome.sleep(wait(2000));
-    check("中文版也沒有載內容句型表", await chrome.evaluate("return Object.keys(window.BuzzI18n.textTable('en')).length === 0 && !document.querySelector('script[src$=\"i18n_text_en.js\"]:not([type])') && !document.querySelector('script[src$=\"i18n_text_more_en.js\"]:not([type])') && !document.querySelector('script[src*=\"src/detail/en/\"]');"));
+    check("中文版也沒有載內容句型表", await chrome.evaluate("return Object.keys(window.BuzzI18n.textTable('en')).length === 0 && !document.querySelector('script[src$=\"i18n_text_en.js\"]:not([type])') && !document.querySelector('script[src*=\"bundle/lazy-i18n.\"]:not([type])') &&!document.querySelector('script[src$=\"i18n_text_more_en.js\"]:not([type])') && !document.querySelector('script[src*=\"src/detail/en/\"]');"));
 
     // ── 5. 跟著瀏覽器：清掉設定就回到偵測（這顆 Chrome 釘在 zh-TW） ──
     await open("open-settings");

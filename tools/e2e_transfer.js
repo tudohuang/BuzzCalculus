@@ -99,7 +99,8 @@ async function run() {
     check("課程表打開", await waitFor(`document.querySelector(".cv2-index")`));
     await sleep(2500); // 舊版的 prefetchAll 在這裡（閒置時）把每一章抓一遍
     const index = since(mark);
-    check("課程表：抓了 course 群組", index.includes("/src/course_v2/outline.js") && index.includes("/src/course_v2_ui.js"), index.join(","));
+    // 部署版（tools/bundle_site.js）把整組串成一支 /bundle/lazy-course.<雜湊>.js
+    check("課程表：抓了 course 群組", (index.includes("/src/course_v2/outline.js") && index.includes("/src/course_v2_ui.js")) || index.some((p) => /^\/bundle\/lazy-course\.[0-9a-f]{8}\.js$/.test(p)), index.join(","));
     check("課程表：一章課文都沒抓", !index.some((p) => /\/ch-/.test(p)), index.filter((p) => /\/ch-/.test(p)).length + " 章");
 
     /* ── 4. 打開一課（分節） ── */

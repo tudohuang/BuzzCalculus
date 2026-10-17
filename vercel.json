@@ -1,8 +1,12 @@
 {
-  "buildCommand": "node tools/stamp_build.js && node tools/fetch_media.js",
+  "buildCommand": "node tools/stamp_build.js && node tools/bundle_site.js && node tools/fetch_media.js",
   "outputDirectory": ".",
   "git": { "deploymentEnabled": { "dev": false } },
   "headers": [
+    {
+      "source": "/bundle/:file*",
+      "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }]
+    },
     {
       "source": "/media/narration/:file*",
       "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }]

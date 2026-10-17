@@ -20,7 +20,8 @@ const fail = (m) => failures.push(m);
 
 const config = JSON.parse(read("vercel.json"));
 // stamp_build：部署時蓋建置日期、重產 sw.js（BUILD／快取名），見 tools/validate_version.js
-if (config.buildCommand !== "node tools/stamp_build.js && node tools/fetch_media.js") fail(`vercel.json 的 buildCommand 變了（${config.buildCommand}）`);
+// bundle_site：部署時把 index.html 的 script 串成幾支（檔名帶內容雜湊，/bundle/ 才能 immutable）
+if (config.buildCommand !== "node tools/stamp_build.js && node tools/bundle_site.js && node tools/fetch_media.js") fail(`vercel.json 的 buildCommand 變了（${config.buildCommand}）`);
 const rules = config.headers || [];
 if (!rules.length) fail("vercel.json 沒有 headers");
 
@@ -77,6 +78,7 @@ const CASES = [
   // [網址, 期望, 說明]
   [sampleNarr ? `/media/narration/${sampleNarr[0]}-${sampleNarr[1].f}.mp3` : "/media/narration/x-0123abcd.mp3", "immutable", "內容雜湊命名的旁白"],
   [sampleNarrM ? `/media/narration/m/${sampleNarrM[0]}-${sampleNarrM[1].f}.mp3` : "/media/narration/m/x-0123abcd.mp3", "immutable", "內容雜湊命名的旁白（男聲）"],
+  ["/bundle/bank.0123abcd.js", "immutable", "部署時串好的 script"],
   ["/media/manifest.json", "short", "media/manifest.json"],
   ["/sw.js", "revalidate", "Service Worker"],
   ["/", "revalidate", "首頁"],
@@ -103,6 +105,8 @@ if (!/`\$\{id\}-\$\{f\}\.mp3`/.test(builder) || !/const f = sum\.slice\(0, 8\)/.
 Object.entries(narration.lessons || {}).forEach(([id, row]) => Object.entries(row || {}).forEach(([v, e]) => {
   if (!/^[0-9a-f]{8}$/.test(e.f) || e.sha256.slice(0, 8) !== e.f) fail(`narration.json 的 ${id}：f（${e.f}）不是內容雜湊的前 8 碼（${v}）`);
 }));
+const bundler = read("tools/bundle_site.js");
+if (!/`\$\{OUT\}\/\$\{name\}\.\$\{hash\}\.js`/.test(bundler) || !/digest\("hex"\)\.slice\(0, 8\)/.test(bundler)) fail("bundle_site.js 的檔名不再是 bundle/<名>.<內容雜湊 8 碼>.js —— /bundle/ 不能再回 immutable");
 if ((manifest.videos || []).length || (manifest.assets || []).some((a) => /\.(mp4|jpg)$/.test(a.name))) fail("media/manifest.json 又出現影片：課程影片 2026-10-17 已拔掉（影片的 Range 請求吃掉主機的請求額度）");
 
 console.log("Cache-Control（vercel.json）");

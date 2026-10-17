@@ -146,12 +146,19 @@ jobs:
       - name: Assemble site
         # Deploy only the app shell — keep reports, tools and LaTeX sources off the public site.
         # stamp_build：蓋建置日期、重產 sw.js 的 BUILD／快取名（跟 vercel.json 的 buildCommand 一樣，部署出去的版本號一定是新的）
+        # bundle_site：把 index.html 的 script 串成幾支（70 → 6 個請求；改寫 index.html 與 sw.js，所以排在所有 E2E 之後）
+        # 串好的那一份再跑一輪重點 E2E：使用者實際拿到的是串過的，不只測原始碼
         run: |
           node tools/stamp_build.js
+          node tools/bundle_site.js
+          node tools/e2e_main_flow.js
+          node tools/e2e_transfer.js
+          node tools/e2e_update.js
+          node tools/e2e_i18n.js
           mkdir -p _site
           cp index.html styles.css sw.js manifest.webmanifest _site/
           cp privacy.html terms.html about.html guide.html _site/
-          cp -r assets src _site/
+          cp -r assets src bundle _site/
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Upload artifact
