@@ -235,12 +235,17 @@ async function run() {
     check("提示不是罐頭英文", hints.length > 0 && hints.every((h) => !/Identify the dominant tool|exam-style/i.test(h)), hints.join(" | "));
     check("選擇題不把「答案格式」當提示賣", hints.every((h) => !/可用分數、pi、e、sqrt 表示|請寫成 x 的函數/.test(h)), hints.join(" | "));
 
-    // 故意答錯：選一個 data-choice 不等於正解的選項 —— 正解不可見，
-    // 所以連按到答對就再試下一題（答對會自動前進）
+    // 故意答錯：選一個 data-choice 不等於正解的選項。正解從公開資料認（跟 e2e_main_flow 一樣）：
+    // 題幹的 data-tex 對到 BUZZ_PROBLEMS 的那一題，data-choice 不等於它的 answer 的就是錯的。
+    // （以前固定點最後一個：那一天最後一個剛好是正解就連答對、答不錯 —— CI 上會隨日期紅。）
+    // 認不出題目時退回點最後一個；答對會自動前進，就再試下一題
     let wrong = null;
     for (let attempt = 0; attempt < 4 && !wrong; attempt += 1) {
       const choices = await evaluate(`return window.__b.choices();`);
-      await evaluate(`const o = [...document.querySelectorAll('[data-action="choose-answer"]')]; o[o.length - 1].click(); return 1;`);
+      await evaluate(`const o = [...document.querySelectorAll('[data-action="choose-answer"]')];
+        const p = (window.BUZZ_PROBLEMS || []).find((q) => q.prompt === window.__b.prompt());
+        const pick = (p && p.answer !== undefined && o.find((n) => n.dataset.choice !== String(p.answer))) || o[o.length - 1];
+        pick.click(); return 1;`);
       await chrome.sleep(1300);
       wrong = await evaluate(`
         const panel = document.querySelector(".feedback.wrong, .feedback.timeout");
