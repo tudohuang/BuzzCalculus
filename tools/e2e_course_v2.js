@@ -126,7 +126,7 @@ const HELPERS = `
       return frames.filter((el) => frames.some((outer) => outer !== el && outer.contains(el)))
         .map((el) => (el.className || el.tagName) + "：" + (el.innerText || "").trim().slice(0, 12));
     },
-    courseFiles() { return performance.getEntriesByType("resource").map((e) => e.name).filter((n) => /course_v2/.test(n)).map((n) => n.replace(/^.*\\/src\\//, "")); }
+    courseFiles() { return performance.getEntriesByType("resource").map((e) => e.name).filter((n) => /course_v2|bundle\\/lazy-course\\./.test(n)).map((n) => n.replace(/^.*\\/(src|(?=bundle))\\/?/, "")); }
   };
 `;
 
@@ -192,7 +192,8 @@ async function run() {
     check("還沒寫的課顯示「尚未開放」，數量對得上大綱", index.soon === MISSING, `${index.soon} / ${MISSING}`);
     check("主按鈕指向第一課 0.1", /^開始：0\.1 /.test(index.primary), index.primary);
     check("畢業關不鎖", index.grad);
-    check("打開課程表只抓大綱與畫面，還沒抓任何一章的課文", index.files.includes("course_v2/outline.js") && !index.files.some((f) => /course_v2\/ch-/.test(f)), index.files.join(","));
+    // 部署版（tools/bundle_site.js）的大綱在 bundle/lazy-course.<雜湊>.js 裡
+    check("打開課程表只抓大綱與畫面，還沒抓任何一章的課文", (index.files.includes("course_v2/outline.js") || index.files.some((f) => /bundle\/lazy-course\.[0-9a-f]{8}\.js/.test(f))) && !index.files.some((f) => /course_v2\/ch-/.test(f)), index.files.join(","));
     check("課程表沒有橫向溢出", index.overflow <= 1, `${index.overflow}px`);
     check("課程表的觸控目標都 ≥ 40px", !index.small.length, JSON.stringify(index.small.slice(0, 4)));
     const flat = await evaluate(`return { framed: window.__c.nestedFrames(".cv2-index .cv2-stages"), chapterBoxes: document.querySelectorAll(".cv2-index details details").length };`);

@@ -62,6 +62,8 @@ const HELPERS = `
     files(re) { return performance.getEntriesByType("resource").map((e) => e.name).filter((n) => re.test(n)).length; },
     small(scope) { return [...document.querySelectorAll(scope + " button, " + scope + " input")].filter((n) => window.__b.visible(n) && !n.classList.contains("cv2-link")).map((n) => { const r = n.getBoundingClientRect(); return { side: Math.round(Math.min(r.width, r.height)), label: (n.textContent || n.getAttribute("aria-label") || "").trim().slice(0, 10) }; }).filter((x) => x.side < 40); },
     center(sel) { const el = window.__b.find(sel); if (!el) return null; el.scrollIntoView({ block: "center" }); const r = el.getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2 }; },
+    // 只量、不捲：等頁面自己的對位捲動停下來用（每次都 scrollIntoView 會把正在滑的頁面拉回來，看起來「停了」其實還在滑）
+    at(sel) { const el = window.__b.find(sel); if (!el) return null; const r = el.getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2 }; },
     events(prefix) { return (window.dataLayer || []).filter((a) => a && a[0] === "event" && String(a[1]).startsWith(prefix)).map((a) => ({ name: a[1], p: a[2] || {} })); }
   };
 `;
@@ -104,7 +106,7 @@ async function run() {
     if (!q) return false;
     for (let k = 0, still = 0; k < 40 && still < 3; k += 1) {
       await sleep(35);
-      const r = await evaluate(`return window.__b.center(${JSON.stringify(sel)});`);
+      const r = await evaluate(`return window.__b.at(${JSON.stringify(sel)});`);
       if (!r) return false;
       still = Math.abs(r.y - q.y) < 0.5 && Math.abs(r.x - q.x) < 0.5 ? still + 1 : 0;
       q = r;
