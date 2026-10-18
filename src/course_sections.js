@@ -19,6 +19,15 @@
 .cv2s-dot i svg { width: 14px; height: 14px; }
 .cv2s-sec { display: block; margin: 6px 0 0; }
 .cv2s-sec > h3 { margin: 0 0 6px; font-size: 1.2rem; line-height: 1.4; letter-spacing: -0.01em; }
+/* 有黑板的節：底下只留現在這一句的白話（之前寫的都還在板子上，不重複佔畫面） */
+.cv2s-sec.has-board .cv2s-beat:not(.is-now) { display: none; }
+/* 輪到學生動手的提示：金色一行，進場閃一下 */
+.cv2s-cue { display: flex; align-items: center; gap: 8px; margin: 14px 0 8px; padding: 9px 14px; border-radius: 12px; background: color-mix(in srgb, var(--gold, #c69214) 16%, transparent); color: var(--ink); font-weight: 700; animation: cv2s-cue 1.4s ease-out 2; }
+.cv2s-cue svg { flex: none; width: 18px; height: 18px; color: var(--gold, #a37400); }
+@keyframes cv2s-cue { 0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--gold, #c69214) 55%, transparent); } 100% { box-shadow: 0 0 0 12px transparent; } }
+@media (prefers-reduced-motion: reduce) { .cv2s-cue { animation: none; } }
+.cv2s-key { display: flex; gap: 10px; align-items: baseline; margin: 2px 0 12px; padding: 8px 12px; border-left: 4px solid var(--gold, #c69214); border-radius: 0 10px 10px 0; background: color-mix(in srgb, var(--gold, #c69214) 13%, transparent); font-weight: 600; line-height: 1.5; }
+.cv2s-key b { flex: none; color: var(--gold, #a37400); font-size: 0.85rem; letter-spacing: 0.08em; }
 .cv2s-sec > h3 small { margin: 0 8px 0 0; color: var(--muted); font-size: 0.78rem; font-weight: 700; letter-spacing: 0.04em; font-variant-numeric: tabular-nums; }
 .cv2s .cv2-figure { margin: 2px auto 16px; }
 .cv2s .cv2-figure figcaption { display: none; }
@@ -238,7 +247,8 @@
         else d = z.bottom - a.top <= room ? a.top - top - Math.min(b.height, room - (z.bottom - a.top)) : a.top - top;
       } else {
         const lt = b ? b.top : a.top;
-        const at = a.bottom - lt <= bottom - top ? Math.min(a.top, lt) : a.top;
+        // 板子固定大小以後，最新那一行可能在板子上半、動作在很下面：兩個都放得下才顧那一行，放不下先顧這一句與動作
+        const at = z.bottom - lt <= bottom - top ? Math.min(a.top, lt) : a.top;
         d = z.bottom > bottom ? Math.min(z.bottom - bottom, at - top) : Math.min(0, at - top);
       }
       if (Math.abs(d) >= 1) window.scrollTo({ top: window.scrollY + d, behavior: reduced() ? "auto" : "smooth" });
@@ -380,17 +390,23 @@
     if (P && !all && cur.why) action = P.why(api, si, shown - 1);
     if (P && all && (s.order || s.where)) action = P.view(api, si);
     const ok = all && resolved(api, si);
+    // 念完、輪到學生動手：一行看得到的提示（念到一半突然沒聲音，不知道要幹嘛）；做完就收
+    const CUE = { drag: "換你了：拖拖看上面的圖", solve: "換你了：自己算算看下面這一題", why: "先想一想：這一步為什麼成立？選一個再往下" };
+    const kind = !all && cur.why ? "why" : s.drag ? "drag" : s.solve ? "solve" : "act";
+    const cue = action && ((all && !ok) || (!all && cur.why)) ? `<p class="cv2s-cue" data-cv2s-cue>${icon("chevron-down")}<span>${CUE[kind] || "換你了：做做看下面這一題"}</span></p>` : "";
     const gain = sec.gain[si] ? `<span class="cv2s-xp">+${sec.gain[si]} XP</span>` : "";
     const lastOne = si === n - 1;
     const bar = pend ? "" : all
       ? `<button type="button" class="button ${ok ? "home-primary" : "ghost"}" data-action="course-s-next" data-cv2s-next>${lastOne ? "完成這一課" : "下一節"}${icon("chevron-right")}</button>${gain}`
       : `<button type="button" class="button home-primary" data-action="course-s-next" data-cv2s-next>下一句<small>${shown} / ${s.beats.length}</small></button>`;
     return `
-      <article class="cv2s-sec" aria-label="第 ${si + 1} 節">
+      <article class="cv2s-sec${bd ? " has-board" : ""}" aria-label="第 ${si + 1} 節">
         <h3><small>${si + 1} / ${n}</small>${fmt(s.title)}${P && s.proof ? P.tag(api, s) : ""}</h3>
+        ${s.key ? `<p class="cv2s-key"><b>重點</b><span>${fmt(s.key)}</span></p>` : ""}
         ${figs}
         ${bd ? `<div class="cvb-slot" data-cvb-slot data-action="course-s-next" data-how="tap"></div>` : ""}
         <ol class="cv2s-beats" data-action="course-s-next" data-how="tap" aria-live="polite">${beats}</ol>
+        ${cue}
         ${action}
         <div class="cv2s-bar">${bar}</div>
       </article>`;
@@ -466,8 +482,10 @@
     root.style.setProperty("--cv2s-top", `${top}px`);
     measureNav();
     if (N()) { if (sec.si < api.data.sections.length) N().ensureDock(api); else { N().halt(); N().removeDock(); } }
-    // 黏著的圖太高（留給字的不到 220px）就不黏
-    root.querySelectorAll(".cv2-figure.is-widget").forEach((f) => f.classList.toggle("is-loose", f.offsetHeight > window.innerHeight - top - navH - (N() && N().dockH() ? N().dockH() + 16 : 0) - 220));
+    // 黏著的圖太高（留給字的不到 220px）就不黏。這一節有黑板也不黏：自動捲動要讓最新那一句與動作看得到，
+    // 黏著的圖就會蓋住板子的上半（板子不擦以後越寫越滿；板子本身已經把這一句畫出來了）
+    const boarded = Boolean(root.querySelector(".cvb-slot, .cvb"));
+    root.querySelectorAll(".cv2-figure.is-widget").forEach((f) => f.classList.toggle("is-loose", boarded || f.offsetHeight > window.innerHeight - top - navH - (N() && N().dockH() ? N().dockH() + 16 : 0) - 220));
     if (sec.top) window.scrollTo(0, 0);
     if ((sec.top || sec.bar) && sec.si < api.data.sections.length) show(sec.bar);
     sec.top = false;

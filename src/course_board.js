@@ -8,10 +8,16 @@
   const LY = window.BuzzBoardLayout;
   // 粉筆灰／紙的顆粒：一張很淡的灰色雜訊，兩個主題共用（不要更明顯：再多就變成髒）
   const NOISE = "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 .07 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")";
-  const CSS = `.cvb-slot{margin:0 0 14px}
-.cvb{--k:#1d2622;--kb:#f7f5ee;--kl:#e2ddd0;--kg:#875400;--kc:#1b5a96;--kn:#1a6a40;--kr:#b0262a;--kv:#69409c;position:relative;overflow:hidden;min-height:72px;border:1px solid var(--kl);border-radius:14px;background:${NOISE},linear-gradient(180deg,#fbfaf5,var(--kb));color:var(--k);cursor:pointer;-webkit-tap-highlight-color:transparent;contain:layout paint}
-:root[data-theme="dark"] .cvb{--k:#eceee6;--kb:#17221e;--kl:#25342e;--kg:#f1cd6a;--kc:#93c8f2;--kn:#93d8ab;--kr:#ff9f92;--kv:#cfb0f7;background:${NOISE},radial-gradient(120% 90% at 30% 0%,#1d2b26,var(--kb) 75%);box-shadow:inset 0 1px 0 #ffffff0d}
+  // 2026-10-18 真的黑板：淺色、深色主題都是一塊墨綠的板、粉筆色的字（白、黃、藍、粉紅、綠、紫），木框，底下一條放粉筆的溝。
+  // 板面：雜訊（粉筆灰）＋左上亮右下暗的漸層＋幾道淡淡的擦拭痕。字有一點粉筆的暈（text-shadow），記號的線有一點毛邊（SVG filter）。
+  const CSS = `.cvb-slot{position:relative;margin:0 0 22px;padding-bottom:12px}
+.cvb-slot:has(.cvb)::after{content:"";position:absolute;left:4%;right:4%;bottom:0;height:10px;border-radius:0 0 6px 6px;background:linear-gradient(90deg,transparent 18%,#f4f1e6 18%,#f4f1e6 23%,transparent 23%,transparent 27%,#f3d36b 27%,#f3d36b 30.5%,transparent 30.5%) 0 2px/100% 4px no-repeat,linear-gradient(180deg,#8a5f37,#5e3e22);box-shadow:0 2px 3px #0000002e;pointer-events:none}
+.cvb{--k:#eef1e8;--kb:#1f3a2f;--kl:#6b4a2b;--kg:#f5d56e;--kc:#a6d4f7;--kn:#b6efc2;--kr:#ffa59a;--kv:#d9bcff;position:relative;overflow:hidden;min-height:72px;border:7px solid #6e4a2a;border-radius:10px;background:${NOISE},linear-gradient(115deg,transparent 30%,#ffffff07 38%,transparent 46%),linear-gradient(160deg,transparent 55%,#ffffff05 62%,transparent 70%),radial-gradient(130% 100% at 25% 0%,#2a4a3c,var(--kb) 70%,#18302500);background-color:var(--kb);box-shadow:inset 0 0 0 1px #00000059,inset 0 2px 14px #0000004d,0 1px 0 #4b311b;color:var(--k);cursor:pointer;-webkit-tap-highlight-color:transparent;contain:layout paint}
+:root[data-theme="dark"] .cvb{--kb:#1a3127;border-color:#5a3c22;box-shadow:inset 0 0 0 1px #00000073,inset 0 2px 16px #00000066,0 1px 0 #3b2715}
+.cvb-chalk{position:absolute;left:0;top:0;width:20px;height:7px;margin:-6px 0 0 -1px;border-radius:2px 4px 4px 2px;background:linear-gradient(180deg,#ffffff,#dcdad0);box-shadow:0 1px 2px #00000080;transform-origin:0 50%;pointer-events:none;opacity:0;transition:opacity .18s}`;
+  const CSS_REST = `
 .cvb-c{position:absolute;inset:0}
+.cvb.is-tall{overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin}.cvb.is-tall .cvb-c{bottom:auto}
 .cvb-i{position:absolute;left:0;top:0;display:inline-block;padding:8px;white-space:nowrap;line-height:1.3;transform-origin:0 0;will-change:transform,opacity}
 .cvb-i.is-t{text-align:center}
 .cvb-r{white-space:nowrap}.cvb-r+.cvb-r{margin-top:.3em}
@@ -20,10 +26,10 @@
 .cvb-x,.cvb-s{white-space:pre;font-size:.95em;letter-spacing:.01em}.cvb-cm{margin-left:.25em;padding-right:.45em}
 .cvb-lab{position:absolute;left:0;top:0;font-size:13.5px;font-weight:650;line-height:1.3;letter-spacing:.02em;white-space:nowrap;opacity:0}
 .cvb-ink{position:absolute;left:0;top:0;overflow:visible;pointer-events:none}
-.cvb-ink path{fill:none;stroke:currentColor;stroke-width:2.1;stroke-linecap:round;stroke-linejoin:round}
+.cvb-ink path{fill:none;stroke:currentColor;stroke-width:2.3;stroke-linecap:round;stroke-linejoin:round}
 .cvb-f{position:absolute;left:0;top:0;transform-origin:0 0;white-space:nowrap;line-height:1.3}
 .cvb .kg{color:var(--kg)}.cvb .kr{color:var(--kr)}.cvb .kc{color:var(--kc)}.cvb .kn{color:var(--kn)}.cvb .kv{color:var(--kv)}
-.cvb-p{--line:#1d26221a;--line-strong:#1d262280;--muted:#5b6560;--ink:var(--k);--blue:var(--kc);--red:var(--kr);--green:var(--kn);--gold:var(--kg);--violet:var(--kv)}
+.cvb-p{--panel:var(--kb);--paper:var(--kb);--line:#ffffff1a;--line-strong:#eceee680;--muted:#b9c3bc;--ink:var(--k);--blue:var(--kc);--red:var(--kr);--green:var(--kn);--gold:var(--kg);--violet:var(--kv)}
 :root[data-theme="dark"] .cvb-p{--line:#ffffff1a;--line-strong:#eceee680;--muted:#b9c3bc}
 .cvb-p .problem-graph{margin:0;padding:0;border:0;background:none;box-shadow:none;width:100%;height:100%}.cvb-p svg,.cvb .cvb-p .problem-graph svg{display:block;width:100%;height:100%;border:0;border-radius:0;background:none}
 .cvb-sr{position:absolute!important;width:1px;height:1px;margin:0;padding:0;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
@@ -115,7 +121,7 @@
       c.appendChild(el);
       if (it.kind === "plot") {
         const g = window.BuzzBoardPlot.html(it.a.graph);
-        const w = Math.min(W, 320);
+        const w = Math.min(W, Math.max(320, Math.min(480, W * 0.62)));
         el.classList.add("cvb-p");
         el.innerHTML = g.svg;
         el.style.width = `${w}px`;
@@ -189,7 +195,7 @@
     });
     const lsz = labs.map((l) => (l ? [R(l).width, R(l).height] : null));
     // 4. 排：位置 → 記號的壽命 → 標籤放不下就在那一行底下（或上面）讓出空間，再排一次
-    const m = { W, pad, gap: Math.round(F * 0.75), items: V.map((v) => ({ w: v.w, h: v.h, lhs: v.lhs || 0, alignable: Boolean(v.alignable), gapA: 0, gapB: 0 })) };
+    const m = { W, pad, gap: Math.round(F * 1.0), items: V.map((v) => ({ w: v.w, h: v.h, lhs: v.lhs || 0, alignable: Boolean(v.alignable), gapA: 0, gapB: 0 })) };
     let st;
     let geo;
     for (let iter = 0; iter < 6; iter += 1) {
@@ -201,9 +207,18 @@
       if (side === "B") m.items[n].gapB += h + 4; else m.items[n].gapA += h + 4;
     }
     const H = Math.ceil(Math.max(st.bottom, ...geo.anns.map((a) => (a ? a.bottom : 0))) + pad[1]);
-    B.el.style.height = `${H}px`;
+    // 板子一律同一個大小（每一節都一樣，不忽大忽小）：畫面高度的 45%（280–560px），字從上面開始寫；
+    // 寫得比板子還多就在板子裡捲（往上滑看前面寫過的），鏡頭跟著粉筆走（paint 的 follow）
+    // 手機（窄）38%、平板與桌機 45%：手機上板子＋句子＋動作要放得進一屏
+    const cap = Math.max(260, Math.min(560, Math.round((window.innerHeight || 800) * ((window.innerWidth || 800) < 600 ? 0.38 : 0.45))));
+    B.tall = H > cap;
+    B.el.classList.toggle("is-tall", B.tall);
+    B.el.style.height = `${cap}px`;
+    const CH = Math.max(H, cap);
+    c.style.height = `${CH}px`;
+    B.view = cap;
     ink.setAttribute("width", W0);
-    ink.setAttribute("height", H);
+    ink.setAttribute("height", CH);
     // 5. 記號、箭頭、標籤；變形與「飛過來」的複製
     const sv = geo.anns.map((ga, i) => {
       if (!ga) return null;
@@ -224,6 +239,9 @@
     B.lastEl = mk("div", "cvb-l");
     B.lastEl.style.cssText = "position:absolute;left:0;top:0;width:1px;height:1px";
     c.appendChild(B.lastEl);
+    B.chalk = mk("div", "cvb-chalk");
+    B.chalk.setAttribute("aria-hidden", "true");
+    c.insertBefore(B.chalk, B.lastEl);
     B.M = M;
     B.V = V;
     B.L = { pos: st.pos, sv, fly, H };
@@ -376,7 +394,37 @@
       sz.push(`${Math.ceil(v.w + 16)}px ${Math.ceil(bot - top + 1)}px`);
       ps.push(`0 ${top.toFixed(1)}px`);
     });
-    return [im.join(","), sz.join(","), ps.join(",")];
+    // 粉筆尖：寫到的那一列、寫到的那一點（相對於這一項的元素左上角，含 8px 留白）
+    let rem = q * tot;
+    let tip = null;
+    for (let k = 0; k < v.rows.length; k += 1) {
+      const r = v.rows[k];
+      if (rem <= len[k] + E || k === v.rows.length - 1) { tip = [8 + Math.min(r[2], r[0] + Math.max(0, rem)), 8 + (r[1] + r[3]) / 2]; break; }
+      rem -= len[k] + E;
+    }
+    return [im.join(","), sz.join(","), ps.join(","), tip];
+  }
+  // 鏡頭跟著粉筆：寫的那一行跑出板子看得到的範圍就捲過去；使用者剛自己捲過（往回看）就 4 秒內不搶
+  function follow(top, bot) {
+    const el = B.el;
+    if (!B.userBound) {
+      B.userBound = true;
+      const mark = () => { B.userAt = Date.now(); };
+      el.addEventListener("wheel", mark, { passive: true });
+      el.addEventListener("touchmove", mark, { passive: true });
+    }
+    if (B.userAt && Date.now() - B.userAt < 4000) return;
+    const st = el.scrollTop;
+    const view = B.view;
+    let target = null;
+    if (bot + 20 > st + view) target = Math.min(bot + 20 - view, top - 12);
+    else if (top - 12 < st) target = top - 12;
+    if (target === null) return;
+    target = Math.max(0, Math.round(target));
+    if (B.followTo === target && Math.abs(st - target) > 2) return;
+    B.followTo = target;
+    // 直接跳（不用 smooth）：板子裡的 smooth 捲動會打斷頁面正在跑的 smooth 捲動（Chrome），分節的對位就停在半路
+    el.scrollTop = target;
   }
   function paint(g, q, beat, entry) {
     const { M, V, L } = B;
@@ -387,6 +435,16 @@
     const hideIn = new Set(); // 變形中、還沒落地的項
     const at = {}; // 每一項現在的位置（「錯」的記號跟著它搬）
     const flyNow = A && (A.a.do === "write" || A.a.do === "transform") ? L.fly[M.items.find((it) => it.born === g && it.kind === "line")?.n] || [] : [];
+    let chalkAt = null; // 正在寫的那一行的粉筆尖（板子座標）
+    // 重點導引：板子寫滿了眼睛不知道看哪裡 —— 這一句寫的、這一句圈到／指到的、飛過來的來源那幾行亮著，其他舊的淡一點；
+    // 一節寫完（停在動作前）全部亮回來給人複習。下一句一開始才慢慢淡（entry），不閃。
+    const allDone = g >= M.acts.length;
+    const lit = new Set();
+    if (!allDone) {
+      M.items.forEach((it) => { if (M.acts[it.born] && M.acts[it.born].b === beat) { lit.add(it.n); it.fly.forEach(([, src]) => lit.add(src)); } });
+      M.anns.forEach((an) => { if (an.b === beat) an.refs.forEach(([n]) => lit.add(n)); });
+    }
+    const dimK = allDone || !lit.size ? 0 : 0.45 * ease(cl(entry));
     Object.values(L.fly).forEach((fs) => fs.forEach((f) => setS(f.el, "opacity", "0")));
     M.items.forEach((it) => {
       const v = V[it.n];
@@ -409,11 +467,13 @@
         else if (it.a.do !== "plot") {
           // 寫：從左到右露出來（軟邊）；換行的一列寫完再寫下一列（每一列一層遮罩，各管自己那一條）
           mask = q >= 1 ? null : wipe(v, q);
+          if (mask && mask[3] && q > 0) chalkAt = [p[0] - 8 + mask[3][0], p[1] - 8 + mask[3][1]];
         }
       } else {
         p = L.pos[g - 1][n];
         op = 1 - ease(cl(q / (A.a.do === "transform" ? 0.4 : 1)));
       }
+      if (dimK && !lit.has(n)) op *= 1 - dimK;
       at[n] = p;
       setS(el, "visibility", "visible");
       setS(el, "transform", tr(p));
@@ -429,11 +489,17 @@
         if (v.pp !== pp) { v.pp = pp; window.BuzzBoardPlot.apply(v, pp); }
       }
     });
+    // 粉筆：寫字的時候跟著寫到的那一點走（斜斜地拿著），沒在寫就淡掉
+    if (B.chalk) {
+      if (chalkAt) { setS(B.chalk, "transform", `translate(${chalkAt[0].toFixed(1)}px,${chalkAt[1].toFixed(1)}px) rotate(-28deg)`); setS(B.chalk, "opacity", "1"); } else setS(B.chalk, "opacity", "0");
+    }
     if (B.lastEl && next.length) {
       const P = L.pos[g < M.acts.length ? g : g - 1];
-      const low = next.reduce((x, n) => (P[n][1] > P[x][1] ? n : x), next[0]);
+      // 現在寫的那一行（不擦的板：最新的一項，不一定在最下面 —— 並排時新的一塊在右上）
+      const low = A && next.includes(next[next.length - 1]) ? next[next.length - 1] : next.reduce((x, n) => (P[n][1] > P[x][1] ? n : x), next[0]);
       setS(B.lastEl, "top", `${P[low][1]}px`);
       setS(B.lastEl, "height", `${Math.max(1, V[low].h)}px`);
+      if (B.tall) follow(P[low][1], P[low][1] + V[low].h);
     }
     // 飛：從舊的位置（與大小）滑到新的位置；落地前新的那一份藏著，變形時舊的那一份一開始就交給複製
     Object.values(L.fly).forEach((fs) => fs.forEach((f) => { setS(f.tEl, "opacity", ""); if (f.moved) setS(f.sEl, "opacity", ""); }));
@@ -568,7 +634,7 @@
     const slot = root && root.querySelector("[data-cvb-slot]");
     const sec = api.state.sec;
     if (!slot || !sec) { stop(); B = null; return; }
-    if (!document.getElementById("cvb-style")) { const st = mk("style", ""); st.id = "cvb-style"; st.textContent = CSS; document.head.appendChild(st); }
+    if (!document.getElementById("cvb-style")) { const st = mk("style", ""); st.id = "cvb-style"; st.textContent = CSS + CSS_REST; document.head.appendChild(st); }
     const S = api.data.sections[sec.si];
     const at = Math.min(S.beats.length, sec.shown[sec.si] || 1) - 1;
     const key = `${api.m.id}:${sec.si}`;

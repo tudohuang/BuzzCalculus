@@ -148,6 +148,7 @@
     "2026-10-15": "dd-inv-004",
     "2026-10-16": "exam-der-014",
     "2026-10-17": "burst-int-003",
+    "2026-10-18": "hd-008",
   };
   if (typeof module !== "undefined" && module.exports) module.exports = { HISTORY };
   if (typeof window !== "undefined") window.BUZZ_DAILY_ONE_HISTORY = HISTORY;

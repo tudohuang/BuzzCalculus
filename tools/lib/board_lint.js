@@ -1,7 +1,7 @@
 // 黑板的版面檢查（tools/lint_board_layout.js 與 tools/e2e_course_board.js 共用）：在真的 Chrome 裡把每一節黑板的每一步
 // （每一個動作做完的那一刻）畫出來，量每一個東西的框，擋：
 //   不同的兩行字疊在一起、標籤壓到字／別的標籤／記號／箭頭、記號（圈、框、底線、劃掉）壓到不是它標的字、箭頭穿過字、
-//   東西跑出黑板、字太小（板上的式子與中文 < 16px、標籤 < 13px）、對比不夠（字 < 4.5、粉筆線 < 3）、黑板比畫面高度的 55% 還高、頁面橫向溢出。
+//   東西跑出黑板、字太小（板上的式子與中文 < 16px、標籤 < 13px）、對比不夠（字 < 4.5、粉筆線 < 3）、黑板看得到的高度超過畫面的 60%（不擦的板寫滿了在板子裡捲）、頁面橫向溢出。
 // 量的是「有墨水的最小單位」（KaTeX 的字、分數線、根號，與一段中文）的框，跟畫面排版用的是同一種框。
 "use strict";
 
@@ -58,7 +58,9 @@ function pageHelpers(MIN_LINE, MIN_LABEL, T) {
       const add = (m) => { if (!P.includes(m)) P.push(m); };
       if (!c) return { problems: [`${tag}：沒有黑板`] };
       const B = box(c.getBoundingClientRect());
-      const inner = [B[0] + 1, B[1] + 1, B[2] - 1, B[3] - 1];
+      // 不擦的板寫滿了會在板子裡捲：「出板」量的是整塊內容（scrollHeight），不是看得到的那一段
+      const top = B[1] - c.scrollTop;
+      const inner = [B[0] + 1, top + 1, B[2] - 1, top + Math.max(c.scrollHeight, B[3] - B[1]) - 1];
       const model = window.BuzzBoard.debug.model();
       const probe = document.createElement("i");
       probe.style.color = "var(--kb)";
@@ -141,7 +143,8 @@ function pageHelpers(MIN_LINE, MIN_LABEL, T) {
         if (!ok) add(`${tag}：第 ${an.refs[0][0]} 項的「${an.refs[0][1]}」被標成錯的（${an.do}），這一行還在板上，記號卻不見了`);
       });
       const H = B[3] - B[1];
-      if (H > innerHeight * 0.55) add(`${tag}：黑板 ${Math.round(H)}px 高，超過畫面高度的 55%（${Math.round(innerHeight * 0.55)}px）：先 clear／keep`);
+      // 板子看得到的高度最多約六成畫面（不擦的板寫滿了就在板子裡捲，見 course_board.js 的 cap）
+      if (H > Math.max(300, innerHeight * 0.6) + 2) add(`${tag}：黑板 ${Math.round(H)}px 高，超過畫面高度的 60%（${Math.round(innerHeight * 0.6)}px）`);
       const d = document.documentElement;
       if (d.scrollWidth - d.clientWidth > 0) add(`${tag}：頁面橫向溢出 ${d.scrollWidth - d.clientWidth}px`);
       return { problems: P, items: items.length, labels: labs.length, marks: marks.length, arrows: arrows.length, H };

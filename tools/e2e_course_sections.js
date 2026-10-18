@@ -292,7 +292,8 @@ async function run() {
     // 下一句：按鈕、點句子那一塊、→ 鍵
     await tap("[data-cv2s-next]");
     check("「下一句」出第二句", (await evaluate(`return window.__s.beats();`)) === 2);
-    await tap(".cv2s-beats");
+    // 有黑板的節底下只留現在這一句（可能是 0 高）：點板子或那一句都會出下一句
+    await tap(".cv2s-beat.is-now:not(.cvb-bare), [data-cvb-slot]");
     check("點句子那一塊出第三句", (await evaluate(`return window.__s.beats();`)) === 3);
     await key("ArrowRight", "ArrowRight", 39);
     const s1 = FIRST.sections[0];
@@ -301,7 +302,8 @@ async function run() {
     const midBeat = await evaluate(`const now = document.querySelector("[data-cv2s] .cv2s-beat.is-now"); return { last: now && now.dataset.beat, note: window.__s.text("[data-cv2s] .cv2s-beat.is-now .cv2s-note"), act: Boolean(document.querySelector('[data-cv2s-act="check"]')), bar: window.__s.text("[data-cv2s-next]") };`);
     check("最新那一句亮著、白話那一句在畫面上", midBeat.last === String(s1.beats.length - 1) && midBeat.note.length > 0, JSON.stringify(midBeat));
     check("句子都出來之後才有結尾的小測，按鈕變「下一節」", midBeat.act && /下一節/.test(midBeat.bar), midBeat.bar);
-    await tap(".cv2s-beats");
+    // 有黑板的節底下只留現在這一句（可能是 0 高）：點板子或那一句都會出下一句
+    await tap(".cv2s-beat.is-now:not(.cvb-bare), [data-cvb-slot]");
     check("句子出完後點句子那一塊不會換節", (await evaluate(`return window.__s.si();`)) === 0);
 
     // 小測：選錯當下有理由、還沒給 XP；再選對 → 打勾、+5 XP、記進今天
@@ -799,7 +801,8 @@ async function run() {
     check("why：句子出來時先問「為什麼」，白話（note）還沒出現", ask0.bi === why1 && ask0.card && !ask0.note && ask0.opts === 3, JSON.stringify(ask0));
     check("why：還沒答就沒有「下一句」，但有「直接看」", !ask0.next && ask0.see === "直接看", JSON.stringify(ask0));
     check("why：問題卡是一個有名字的 group（螢幕閱讀器）", ask0.role === "group|這一步為什麼成立", ask0.role);
-    await tap(".cv2s-beats");
+    // 有黑板的節底下只留現在這一句（可能是 0 高）：點板子或那一句都會出下一句
+    await tap(".cv2s-beat.is-now:not(.cvb-bare), [data-cvb-slot]");
     await key("ArrowRight", "ArrowRight", 39);
     check("why：問著的時候點句子、→ 鍵都不會跳過", (await evaluate(`return window.__s.beats();`)) === why1 + 1);
     const pw1 = prSec.beats[why1].why;
