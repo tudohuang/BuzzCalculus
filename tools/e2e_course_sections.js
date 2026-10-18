@@ -330,7 +330,7 @@ async function run() {
     // 下一節、記到節
     await tap("[data-cv2s-next]");
     const nextSec = await evaluate(`const e = (window.__s.rec().courseV2 || {})["${FIRST.id}"] || {}; return { si: window.__s.si(), beats: window.__s.beats(), at: e.secAt, y: Math.round(scrollY), title: window.__s.text("[data-cv2s] .cv2s-sec h3") };`);
-    check("下一節：第 2 節、從第一句開始、捲回頂端", nextSec.si === 1 && nextSec.beats === 1 && nextSec.y === 0, JSON.stringify(nextSec));
+    check("下一節：第 2 節、從第一句開始、捲回頂端", nextSec.si === 1 && nextSec.beats === 1 && nextSec.y <= 80, JSON.stringify(nextSec)); // 板子固定大小：第一句在板子底下，對位可能往下捲一點（≤ 一行）
     check("記到第 2 節", nextSec.at === 1, String(nextSec.at));
     await chrome.navigate(`${server.url}/index.html`);
     check("重新整理後再打開：從第 2 節接", (await openLesson(FIRST.id)) && (await waitFor(`window.__s.si() === 1`)), String(await evaluate(`return window.__s.si();`)));
