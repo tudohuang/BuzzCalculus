@@ -307,7 +307,10 @@ function create({ katex, board, cjkLen, checkGraph, layout }) {
     eq("時間表：最後一個在這一段結束前做完", sc[2][0] + sc[2][1] <= 2940, true);
     eq("charOf：#2 是第二次出現", LY.charOf("層#2", "外層裡層"), charOf("層#2", "外層裡層"));
     const M = LY.compile([{ board: [{ do: "write", line: "${{a:x}}$" }, { do: "circle", term: "a" }] }, { board: [{ do: "transform", line: "${{a:x}}+1$" }] }]);
-    eq("compile：變形取代同一個位置、同 id 的項飛過去", [M.states.map((s) => s.length), M.items[1].fly], [[1, 1, 1], [["a", 0]]]);
+    eq("compile（不擦的板）：變形寫在下一行、上一行留著，同 id 的項飛過去", [M.states.map((s) => s.length), M.items[1].fly], [[1, 1, 2], [["a", 0]]]);
+    eq("compile（erase：舊的會擦的板）：變形取代同一個位置", LY.compile([{ board: [{ do: "write", line: "${{a:x}}$" }] }, { board: [{ do: "transform", line: "${{a:x}}+1$" }] }], { erase: true }).states.map((s) => s.length), [1, 1]);
+    const P = LY.compile([{ board: [{ do: "write", line: "$a$" }, { do: "clear" }, { do: "write", line: "$b$" }, { do: "keep", n: 1 }, { do: "write", line: "$c$" }] }]);
+    eq("compile（不擦的板）：clear 換一塊接著寫、keep 原地接著寫、什麼都不擦", [P.items.map((it) => it.panel), P.states[P.states.length - 1].length, P.items.every((it) => it.die === Infinity)], [[0, 1, 1], 3, true]);
     eq("compile：記號只活到下一句", M.anns[0].dieBeat, 1);
     const lab = LY.placeLabel(20, 10, [50, 0, 60, 10], [0, 0, 100, 10], "below", [[30, 14, 80, 30]], [0, 0, 200, 100]);
     eq("標籤：正下方有字就換位置（不碰任何障礙）", lab && !LY.hit(lab, [30, 14, 80, 30], 2), true);

@@ -375,17 +375,29 @@ function audioOf(buf) {
   if (sig !== EXPECT_SIG) throw new Error(`音框格式是 ${sig}，要的是 ${EXPECT_SIG}（${FORMAT}）`);
   return { data: Buffer.concat(frames.map((f) => buf.subarray(f.at, f.at + f.len))), samples: frames.reduce((s, f) => s + f.samples, 0), rate: frames[0].rate, sig };
 }
+// 句與句之間墊的靜音（2026-10-18）：播放器在一句的訖點用計時器 pause()，iPad 上計時器與音訊輸出都會晚一點，
+// 下一句的開頭就漏出幾十毫秒又被切斷（「鉲」一聲）。中間墊 8 格靜音（36 ms × 8 = 288 ms），晚停也只會停在靜音裡；
+// 從下一句的起點 seek 時差一點點也是落在靜音。起訖（t）只算講話的那一段，靜音不算。
+// 靜音格：跟 Azure 的格同一個標頭（MPEG-2 Layer III、16 kHz、32 kbps、單聲道 = FF F3 48 C4，一格 144 bytes），
+// side info 與 main data 全是 0（main_data_begin = 0、global_gain = 0 → 解出來是 0）。下一句的第一格 main_data_begin 也是 0，不會借到靜音格的位元。
+const GAP_FRAMES = 8;
+const SILENT_FRAME = (() => { const b = Buffer.alloc(144); b[0] = 0xff; b[1] = 0xf3; b[2] = 0x48; b[3] = 0xc4; return b; })();
 // 一課的逐句檔（照順序）→ 一支 mp3 ＋ 每一句的 [起, 訖] 毫秒
 function pack(clips) {
   let samples = 0;
   let sig = null;
   let rate = 0;
   const parts = [];
-  const spans = clips.map((buf) => {
+  const spans = clips.map((buf, k) => {
     const a = audioOf(buf);
     if (sig && a.sig !== sig) throw new Error(`逐句檔的格式不一致（${sig} vs ${a.sig}）：不能直接接`);
     sig = a.sig;
     rate = a.rate;
+    if (k > 0) {
+      if (a.sig !== EXPECT_SIG) throw new Error(`靜音格只做了 ${EXPECT_SIG} 的格式，這一支是 ${a.sig}`);
+      for (let g = 0; g < GAP_FRAMES; g += 1) parts.push(SILENT_FRAME);
+      samples += GAP_FRAMES * 576;
+    }
     const start = Math.round((samples / rate) * 1000);
     samples += a.samples;
     parts.push(a.data);

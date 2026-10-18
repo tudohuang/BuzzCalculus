@@ -85,13 +85,23 @@
   }
 
   /* ── 一節的動作照順序走一次：板上有哪些項（一行式子或一張圖）、每一步之後的狀態、記號什麼時候畫什麼時候收 ── */
-  function compile(beats) {
+  // 2026-10-18「教授的黑板」：不擦。人的腦子沒那麼快，擦掉就接不上 —— 板上寫過的東西整節都留著，寫滿了換一塊（panel）接著寫：
+  //   clear  ＝ 換一塊新的區域接著寫（舊的留著；寬的板並排、窄的板往下排）
+  //   keep   ＝ 不用擦，照原地接著寫（舊稿為了板上不超過 4 行才寫的）
+  //   transform ＝ 新的一行寫在下面，同 id 的項從上一行複製飛下來（上一行留著，一路推導看得到）
+  // 一塊寫到 PANEL_ROWS 列（一張圖算 2 列）再寫就自動換一塊。opts.erase = true 回到舊的「會擦」規則（validator 的舊模擬用不到）。
+  const PANEL_ROWS = 5;
+  function compile(beats, opts) {
+    const erase = Boolean(opts && opts.erase);
     const acts = [];
-    const items = []; // { n, kind: line|plot, a, born, from, die, ids }
+    const items = []; // { n, kind: line|plot, a, born, from, die, ids, panel }
     const anns = []; // { g, a, kind: mark|arrow, refs: [[item, id]], dieG, dieBeat }
     const states = [];
     let cur = [];
     const tint = {};
+    let panel = 0;
+    let rows = 0;
+    let fresh = false; // 下一項換一塊
     const holder = (id, skip) => { for (let k = cur.length - 1; k >= 0; k -= 1) { const it = items[cur[k]]; if (it !== skip && it.ids.includes(id)) return it; } return null; };
     beats.forEach((b, bi) => (b.board || []).forEach((a, k) => {
       const g = acts.length;
@@ -100,21 +110,35 @@
         const it = { n: items.length, kind: a.do === "plot" ? "plot" : "line", a, born: g, from: null, die: Infinity, ids: a.line ? ids(a.line) : [], fly: [] };
         if (a.tint) Object.assign(tint, a.tint);
         it.tint = { ...tint };
+        let src0 = null; // 變形：飛過來的項先從上一行找
         if (a.do === "transform") {
           const k0 = cur.map((n) => items[n].kind).lastIndexOf("line");
           if (k0 < 0) { acts.pop(); return; }
-          it.from = items[cur[k0]];
-          it.from.die = g;
-          cur = cur.slice();
-          cur[k0] = it.n;
-        } else cur = cur.concat(it.n);
+          src0 = items[cur[k0]];
+          if (erase) {
+            it.from = src0;
+            it.from.die = g;
+            cur = cur.slice();
+            cur[k0] = it.n;
+          }
+        }
+        if (!erase || a.do !== "transform") {
+          const h = it.kind === "plot" ? 2 : 1;
+          if (!erase && rows && (fresh || rows + h > PANEL_ROWS)) { panel += 1; rows = 0; }
+          fresh = false;
+          rows += h;
+          cur = cur.concat(it.n);
+        }
+        it.panel = panel;
         items.push(it);
-        // 前面幾行已經有的項：複製一份飛過來（變形時從被換掉的那一行搬；對得上就是同一個式子）
-        it.ids.forEach((id) => { const src = it.from && it.from.ids.includes(id) ? it.from : holder(id, it); if (src && src !== it) it.fly.push([id, src.n]); });
+        // 前面幾行已經有的項：複製一份飛過來（變形時從上一行搬；對得上就是同一個式子）
+        it.ids.forEach((id) => { const src = src0 && src0.ids.includes(id) ? src0 : holder(id, it); if (src && src !== it) it.fly.push([id, src.n]); });
       } else if (a.do === "clear" || a.do === "keep") {
-        const keep = a.do === "keep" ? Math.max(0, Number(a.n) || 0) : 0;
-        cur.slice(0, cur.length - keep).forEach((n) => { items[n].die = g; });
-        cur = cur.slice(cur.length - keep);
+        if (erase) {
+          const keep = a.do === "keep" ? Math.max(0, Number(a.n) || 0) : 0;
+          cur.slice(0, cur.length - keep).forEach((n) => { items[n].die = g; });
+          cur = cur.slice(cur.length - keep);
+        } else if (a.do === "clear") fresh = true;
       } else {
         const refs = a.do === "arrow" ? [a.from, a.to] : [a.term];
         const rs = refs.map((id) => [holder(id), id]);
@@ -129,6 +153,69 @@
 
   /* ── 排版：每一個狀態裡每一項的位置。m = { W(內寬), pad:[左,上], gap, items: [{ h, w, rows?, lhs?, alignable, gapA, gapB }] } ── */
   function stack(model, m) {
+    // 不擦的板（每一項都有 panel）：位置不跟狀態變，一次排好整節最後的樣子
+    if (model.items.length && model.items.every((it) => it.panel !== undefined) && !model.items.some((it) => it.die !== Infinity)) return stackPanels(model, m);
+    return stackColumn(model, m);
+  }
+  // 一塊一塊排：塊裡往下寫，塊與塊照順序由左往右擺，這一列擺不下就換到下面一列（窄的板 ＝ 一塊接一塊往下）。
+  // 一塊的寬 ＝ 裡面最寬的那一行（＝ 對齊組的寬）；一列擺好後整列置中；塊裡的行照舊置中、有關係符號的對齊 =。
+  function stackPanels(model, m) {
+    const { states, items } = model;
+    const panels = [];
+    items.forEach((it, i) => { (panels[it.panel] = panels[it.panel] || []).push(i); });
+    const blocks = panels.filter(Boolean).map((list) => {
+      // 對齊組：塊裡相鄰、都能對齊的行
+      const groups = [];
+      list.forEach((i, k) => {
+        const mi = m.items[i];
+        const prev = k ? m.items[list[k - 1]] : null;
+        if (mi.alignable && prev && prev.alignable && groups.length && groups[groups.length - 1].last === list[k - 1]) {
+          const gr = groups[groups.length - 1];
+          gr.ids.push(i);
+          gr.last = i;
+          gr.L = Math.max(gr.L, mi.lhs);
+          gr.R = Math.max(gr.R, mi.w - mi.lhs);
+        } else groups.push({ ids: [i], last: i, L: mi.alignable ? mi.lhs : 0, R: mi.alignable ? mi.w - mi.lhs : mi.w, alignable: mi.alignable });
+      });
+      const width = Math.min(m.W, Math.max(...groups.map((gr) => (gr.ids.length > 1 ? gr.L + gr.R : m.items[gr.ids[0]].w))));
+      let h = 0;
+      list.forEach((i) => { const mi = m.items[i]; h += (mi.gapA || 0) + mi.h + (mi.gapB || 0) + m.gap; });
+      return { list, groups, width, h: h - m.gap };
+    });
+    const colGap = Math.round(m.gap * 2.4);
+    const rowGap = Math.round(m.gap * 1.6);
+    // 擺成一列一列
+    const rowsOut = [];
+    blocks.forEach((bk) => {
+      const row = rowsOut[rowsOut.length - 1];
+      if (row && row.w + colGap + bk.width <= m.W) { row.list.push(bk); row.w += colGap + bk.width; row.h = Math.max(row.h, bk.h); } else rowsOut.push({ list: [bk], w: bk.width, h: bk.h });
+    });
+    const at = {};
+    let y0 = m.pad[1];
+    rowsOut.forEach((row) => {
+      // 一塊一列（窄的板）：跟以前一樣在整塊板的寬裡置中；好幾塊並排：整列置中、塊裡置中
+      let x0 = m.pad[0] + Math.max(0, (m.W - row.w) / 2);
+      row.list.forEach((bk) => {
+        const bw = row.list.length === 1 ? m.W : bk.width;
+        const bx = row.list.length === 1 ? m.pad[0] : x0;
+        let y = y0;
+        bk.groups.forEach((gr) => {
+          gr.ids.forEach((i) => {
+            const mi = m.items[i];
+            y += mi.gapA || 0;
+            const x = gr.ids.length > 1 && gr.L + gr.R <= bw ? bx + (bw - gr.L - gr.R) / 2 + gr.L - mi.lhs : bx + Math.max(0, (bw - mi.w) / 2);
+            at[i] = [x, y];
+            y += mi.h + (mi.gapB || 0) + m.gap;
+          });
+        });
+        x0 += bk.width + colGap;
+      });
+      y0 += row.h + rowGap;
+    });
+    const pos = states.map((st) => { const p = {}; st.forEach((n) => { p[n] = at[n]; }); return p; });
+    return { pos, bottom: y0 - rowGap };
+  }
+  function stackColumn(model, m) {
     const { states, items } = model;
     // 對齊組：任何一個狀態裡相鄰、都能對齊（一行純式子、有關係符號）的行，整節用同一條 = 的位置
     const grp = items.map((_it, i) => i);

@@ -346,8 +346,19 @@ function checkSections(id, L) {
   const parts = [];
   S.forEach((sec, si) => {
     const where = `第 ${si + 1} 節`;
-    const extra = Object.keys(sec || {}).filter((k) => !["title", "beats", "check", "predict", "drag", "proof", "of", "skeleton", "order", "where", "solve"].includes(k));
+    const extra = Object.keys(sec || {}).filter((k) => !["title", "key", "beats", "check", "predict", "drag", "proof", "of", "skeleton", "order", "where", "solve"].includes(k));
     if (extra.length) err(id, `${where} 多了不認得的欄位：${extra.join("、")}`);
+    // 重點（可選）：難的那一節，黑板上方一行「重點：…」—— 這一節的關鍵一招，一句話（≤ 24 字），數字要在課文裡
+    if (sec.key !== undefined) {
+      if (typeof sec.key !== "string" || !sec.key.trim()) err(id, `${where} 的 key 是空的`);
+      else {
+        if (cjkLen(sec.key) > 24) err(id, `${where} 的 key ${cjkLen(sec.key)} 字（≤ 24）`);
+        if ((sec.key.split("$").length - 1) % 2) err(id, `${where} 的 key 的 $ 沒有成對`);
+        [...sec.key.matchAll(/\$([^$]+)\$/g)].forEach((m) => { try { katex.renderToString(m[1], { throwOnError: true }); } catch (e) { err(id, `${where} 的 key TeX 渲染失敗：${m[1]}`); } });
+        const extraNums = numbersIn(sec.key).filter((n) => !known.has(n));
+        if (extraNums.length) err(id, `${where} 的 key 有課文裡沒有的數字：${extraNums.join("、")}`);
+      }
+    }
     if (typeof sec.title !== "string" || !sec.title.trim()) err(id, `${where} 沒有 title`);
     else if (cjkLen(sec.title) > 12) err(id, `${where} 的 title ${cjkLen(sec.title)} 字（≤ 12）`);
     const beats = Array.isArray(sec.beats) ? sec.beats : [];

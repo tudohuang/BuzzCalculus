@@ -113,8 +113,8 @@
     }
     const el = audio();
     const same = el.getAttribute("src") === seg.url;
-    // 自己念完上一句、下一句接在後面：不跳
-    const flowing = same && !el.paused && !el.seeking && Math.abs(nowMs() - seg.start) < 250;
+    // 自己念完上一句、下一句接在後面：不跳（句與句之間錄音墊了約 0.3 秒靜音，見 build_narration.js 的 GAP_FRAMES —— 直接播過去，不 seek）
+    const flowing = same && !el.paused && !el.seeking && nowMs() < seg.start + 120 && seg.start - nowMs() < 600;
     Object.assign(voice, { start: seg.start, end: seg.end });
     if (!same) { el.src = seg.url; voice.retries = 0; }
     // 換 src 會把 playbackRate 重設成 defaultPlaybackRate：兩個都設
