@@ -733,8 +733,28 @@ function checkFigures(id, L) {
   });
 }
 
+// ── 被吃掉的反斜線（2026-10-18）：bash heredoc／node -e 寫 JSON 會把 \frac 變成換頁字元、\times 變成 tab、\dfrac 變成 dfrac；
+// KaTeX 照樣渲染（變成一串斜體字母），上面的渲染檢查抓不到 —— 在 $…$ 裡看到控制字元或沒有反斜線的常見指令名就擋
+const TEX_BARE = /(?<![\\A-Za-z])(dfrac|tfrac|frac|sqrt|cdot|cdots|times|overline|overrightarrow|omega|theta|alpha|beta|lambda|sigma|infty|leq|geq|neq|mathrm|Rightarrow|Leftrightarrow)(?![A-Za-z])/;
+function texDamage(id, L) {
+  const walk = (v, where) => {
+    if (typeof v === "string") {
+      if (/[\u0000-\u0008\u000b\u000c\u000e-\u001f]/.test(v)) err(id, `${where} 有控制字元（反斜線被吃掉了？）：${JSON.stringify(v).slice(0, 60)}`);
+      for (const m of v.matchAll(/\$([^$]*)\$/g)) {
+        const body = m[1].replace(/\{\{[a-z][a-z0-9]*:/g, "{");
+        if (/[\t\n\r]/.test(body)) err(id, `${where} 的 $…$ 裡有 tab／換行（\\times、\\to、\\nu 被吃掉了？）：${JSON.stringify(m[1]).slice(0, 60)}`);
+        const bare = TEX_BARE.exec(body);
+        if (bare) err(id, `${where} 的 $…$ 裡有沒有反斜線的「${bare[1]}」（被吃掉了？）：${m[1].slice(0, 60)}`);
+      }
+    } else if (Array.isArray(v)) v.forEach((x, i) => walk(x, `${where}[${i}]`));
+    else if (v && typeof v === "object") Object.entries(v).forEach(([k, x]) => walk(x, where ? `${where}.${k}` : k));
+  };
+  walk(L, "");
+}
+
 for (const L of lessons) {
   const id = L.id || "(沒有 id)";
+  texDamage(id, L);
   const o = outline[id];
   if (!o) { err(id, "id 不在 OUTLINE.md"); continue; }
   if (L.title !== o.title) err(id, `title「${L.title}」跟大綱「${o.title}」不同`);
