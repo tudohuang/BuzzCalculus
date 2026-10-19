@@ -252,7 +252,6 @@
     "1454mtk": "Combine the logarithms: 〔0〕.",
     "145fb47": "Triangle: base 〔0〕, height 〔1〕, area 〔2〕.",
     "1470tj1": "〔0〕 holds for all 〔1〕, so we must have 〔2〕.",
-    "1473571": "Differentiate with respect to 〔0〕: 〔1〕.",
     "147tz9z": "At 〔0〕, both 〔1〕 and 〔2〕 equal 〔3〕.",
     "148dnf7": "Numerator and denominator are both quadratic in 〔0〕; divide both by 〔1〕.",
     "14addng": "Divide through by 〔0〕: 〔1〕.",
