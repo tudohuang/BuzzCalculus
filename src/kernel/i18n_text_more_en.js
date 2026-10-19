@@ -493,7 +493,6 @@
     "17u5lv5": "〔0〕 …, 〔1〕 …; the 〔2〕 and 〔3〕 terms both cancel, difference 〔4〕, 〔5〕.",
     "17uvv3t": "〔0〕, 〔1〕, and it is the same at every point; this is exactly what \"equiangular\" means for the logarithmic spiral.",
     "17uz9lj": "Integrating term by term gives 〔0〕, alternating and decreasing. 〔1〕, so take the first three terms: 〔2〕; true value 〔3〕.",
-    "17w0f0": "Take 〔0〕.",
     "17wa8f9": "By parts: 〔0〕 (it differentiates to 〔1〕), 〔2〕, 〔3〕.",
     "17waxu7": "Write the second-order 〔0〕.",
     "17xfgd6": "Differentiate 〔0〕, then integrate back.",
