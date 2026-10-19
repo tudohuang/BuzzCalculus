@@ -8,7 +8,7 @@
 .cv2s-goals { display: grid; gap: 8px; margin: 0 0 18px; padding: 0; list-style: none; }
 .cv2s-goals li { display: grid; grid-template-columns: 22px minmax(0, 1fr); gap: 8px; line-height: 1.75; }
 .cv2s-goals li > * { min-width: 0; overflow-wrap: anywhere; }
-.cv2s-goals svg { width: 18px; height: 18px; margin-top: 5px; color: var(--green); }
+.cv2s-goals li > svg { width: 18px; height: 18px; margin-top: 5px; color: var(--green); }
 .cv2s-goals .cv2s-bullet { width: 6px; height: 6px; margin: 12px 0 0 6px; border-radius: 50%; background: var(--muted); }
 .cv2s-stats { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 16px; margin: 0 0 18px; color: var(--muted); font-size: 0.9rem; font-variant-numeric: tabular-nums; }
 .cv2s-stats strong { color: var(--ink); font-size: 1.5rem; }
@@ -54,11 +54,13 @@
     // 學習目標：節都做完才打勾（「你現在會」）；還有沒做的節就只列出來（中性的點，不放灰色的勾 —— 灰勾讀起來像「做過了」）。
     // XP 是 0（什麼都還沒做）就不印那一格
     const allDone = !todo.length;
+    // 「你現在會」＋綠勾只在小測也過了（完成層）才給：節都讀完、小測全錯還打滿勾，跟下面「完成還差 0/3」互相矛盾
+    const learned = allDone && !(g && g.tier === 0);
     const xp = Number(e.xp) || 0;
     return `
       <article class="cv2s-sec cv2s-finish" data-cv2s-finish>
-        <h3><small>${n} / ${n}</small>${allDone ? "你現在會：" : "這一課要學會："}</h3>
-        <ul class="cv2s-goals ${allDone ? "" : "is-plain"}">${data.objectives.map((line) => `<li class="${allDone ? "" : "is-todo"}">${allDone ? icon("check") : '<i class="cv2s-bullet" aria-hidden="true"></i>'}<span>${rich(line, data)}</span></li>`).join("")}</ul>
+        <h3><small>${n} / ${n}</small>${learned ? "你現在會：" : allDone ? "快會了，小測再對幾題：" : "這一課要學會："}</h3>
+        <ul class="cv2s-goals ${learned ? "" : "is-plain"}">${data.objectives.map((line) => `<li class="${learned ? "" : "is-todo"}">${learned ? icon("check") : '<i class="cv2s-bullet" aria-hidden="true"></i>'}<span>${rich(line, data)}</span></li>`).join("")}</ul>
         ${todo.length ? `<p class="cv2s-todo"><span>還沒做完</span>${todo.map((i) => `<button type="button" class="cv2-link" data-action="course-s-go" data-to="${i}">第 ${i + 1} 節</button>`).join("")}</p>` : ""}
         <p class="cv2s-stats" data-cv2s-stats>
           ${xp ? `<span><strong>+${xp}</strong> XP</span>` : ""}

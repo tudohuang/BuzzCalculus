@@ -698,7 +698,7 @@
           <div class="course-check ${right ? "is-right" : picks.length ? "is-wrong" : ""}">
             <p class="course-check-ask">${ci + 1}. ${rich(check.ask, data)}</p>
             <div class="course-check-options">
-              ${check.options.map((option, oi) => `
+              ${((window.BuzzCourseSections || {}).optionOrder || ((n) => [...Array(n).keys()]))(check.options.length, `${data.id}#check#${ci}`).map((oi) => [check.options[oi], oi]).map(([option, oi]) => `
                 <button type="button" class="course-option ${right && option.correct ? "is-correct" : ""} ${picks.includes(oi) && !option.correct ? "is-picked" : ""}" data-action="course-pick" data-check="${ci}" data-option="${oi}" ${right ? "disabled" : ""}>${fmt(option.label)}</button>`).join("")}
             </div>
             ${wrongs.map((oi) => `<p class="course-check-why">${fmt(check.options[oi].label)}：${rich(check.options[oi].why, data)}</p>`).join("")}
