@@ -1399,6 +1399,7 @@
     "1tpqlvr": "The telescoping sum leaves only the very first term.",
     "1tpt0o4": "After substitution it is 〔0〕; the sign depends on whether 〔1〕 is positive or negative on 〔2〕.",
     "1tpul58": "That leaves 〔0〕. Try the substitution 〔1〕.",
+    "1tqhfwe": "First compute 〔0〕 and 〔1〕.",
     "1tqwg78": "Vertex 〔0〕.",
     "1tr2yho": "Does the inner 〔0〕 affect the period or the amplitude?",
     "1tsw3o4": "A double series of positive terms like this splits into the product of two single series.",
