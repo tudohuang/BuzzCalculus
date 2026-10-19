@@ -3141,7 +3141,6 @@
     "i6nsp4": "〔0〕. (〔1〕 is discontinuous, so the convergence is not uniform.)",
     "i7vi7v": "Positive definiteness gives a lower bound on the quadratic form.",
     "i8e35i": "〔0〕 is of type 〔1〕 → multiply by the conjugate: the numerator becomes 〔2〕, the denominator 〔3〕, and the limit is 〔4〕. For a difference of roots, think conjugate first.",
-    "i8meu1": "Let 〔0〕: 〔1〕, 〔2〕.",
     "i9dw7k": "〔0〕: 〔1〕, so the expression 〔2〕, which oscillates between 〔3〕 and 〔4〕 forever; the left-hand limit does not exist, so the limit does not exist.",
     "i9ju5c": "〔0〕, and each piece converges on its own. 〔1〕 (positive terms, so the order can be swapped). 〔2〕: summation by parts, 〔3〕. The sum 〔4〕.",
     "i9zho2": "Integral Test: 〔0〕.",
