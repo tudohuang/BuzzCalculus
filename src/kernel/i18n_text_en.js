@@ -2409,6 +2409,7 @@
     "i7o7n4": "Differentiate once more: 〔0〕.",
     "i87vss": "Take a look at the left side first — is 〔0〕 the derivative of something?",
     "i8bdv9": "〔0〕; what is the order of 〔1〕 itself?",
+    "i8meu1": "Let 〔0〕: 〔1〕, 〔2〕.",
     "i8onvt": "Differentiating 〔0〕 gives two terms, and 〔1〕 gives two more; two of them combine.",
     "i9nvl9": "〔0〕: one piece is the dilogarithm 〔1〕, the other has an elementary antiderivative.",
     "i9zuvo": "The 〔0〕 part contributes 〔1〕 and the 〔2〕 part contributes 〔3〕.",
