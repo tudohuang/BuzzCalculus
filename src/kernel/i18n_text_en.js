@@ -382,6 +382,7 @@
     "17v0wnm": "What if plugging in gives 〔0〕?",
     "17v5f7k": "Let 〔0〕; differentiating with respect to 〔1〕 removes the 〔2〕 in the denominator.",
     "17vvlkt": "The outer function is 〔0〕; the inner is 〔1〕.",
+    "17w0f0": "Take 〔0〕.",
     "17w77g9": "In the last lesson we simply used 〔0〕. But \"area\" has nothing to do with antiderivatives at first: cut 〔1〕 into 〔2〕 strips, each of width 〔3〕, with height 〔4〕 for that strip; add up the areas of the strips, then let 〔5〕 grow larger and larger. This sum is called a Riemann sum, and its limit is the true definition of the definite integral.",
     "17w794y": "〔0〕, and 〔1〕 is exactly half of 〔2〕.",
     "180c5sn": "The coefficient of the 〔0〕 term is what power of 〔1〕?",
