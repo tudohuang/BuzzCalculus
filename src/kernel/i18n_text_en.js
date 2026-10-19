@@ -2681,6 +2681,7 @@
     "o8jqn3": "Standard 〔0〕 result.",
     "o8zrbo": "The corner is at 〔0〕; zeros 〔1〕 and 〔2〕.",
     "o96wvr": "〔0〕: zeros 〔1〕 (double root) and 〔2〕.",
+    "oaris8": "〔0〕; let 〔1〕.",
     "obfgek": "The other consequence is the \"〔0〕 means increasing\" we used last lesson: the secant slope between any two points equals some 〔1〕, so the point on the right must be higher than the one on the left. Last lesson was intuition; this lesson is the proof.",
     "obw54s": "Multiply: 〔0〕. Doing it by brute force takes the double-angle formula twice; here it's done in three fractions.",
     "oc2n1x": "After rationalizing, both produce a factor 〔0〕 that cancels.",
