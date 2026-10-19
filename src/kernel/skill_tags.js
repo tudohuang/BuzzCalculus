@@ -117,6 +117,8 @@
     "burst-boss3-ser-006": ["series.taylor.coeff"],
     "burst-boss3-ser-007": ["series.taylor.coeff"],
     "burst-boss3-ser-008": ["series.taylor.coeff"],
+    "cg-6b-003": ["series.compare"],
+    "cg-6b-008": ["series.compare"],
     "cx-der-002": ["diff.basic"],
     "cx-der-006": ["diff.basic"],
     "cx-exam-004": ["diff.log"],
