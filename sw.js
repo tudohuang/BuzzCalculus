@@ -29,8 +29,8 @@ const REV_HEADER = "x-buzz-rev";
 
 // ── 產生區：node tools/build_sw_revisions.js（不要手改）──
 // 這一版：設定頁顯示「版本 v… · id · 日期」；id 是下面 REVISIONS 的雜湊，快取名跟著它變（每次部署內容有變就一定是新快取）。
-const BUILD = {"version":"v1.3.0","id":"5b5bef2c","date":"2026-10-13"};
-const CACHE_NAME = "buzzcalculus-v1.3.0-5b5bef2c";
+const BUILD = {"version":"v1.3.0","id":"9683263d","date":"2026-10-13"};
+const CACHE_NAME = "buzzcalculus-v1.3.0-9683263d";
 // 安裝時預快取的核心（離線也能練題）。其他檔用到才快取 —— 見 REVISIONS。
 const APP_SHELL = [
   "./index.html",
@@ -126,7 +126,7 @@ const APP_SHELL = [
 ];
 // Service Worker 管的每一支檔 → 內容的 sha256 前 10 碼（空字串 = 每次安裝都重抓）。不在表上的請求交給瀏覽器。
 const REVISIONS = {
-  "./about.html": "4b2315b263",
+  "./about.html": "e3c8d588b2",
   "./assets/icon.svg": "e7e0dc9db8",
   "./assets/vendor/anime.min.js": "5cbda29ea5",
   "./assets/vendor/icons.js": "6c0c67b2d4",
@@ -202,10 +202,10 @@ const REVISIONS = {
   "./src/course_v2/ch-1c.js": "29c7765b35",
   "./src/course_v2/ch-1d.js": "9ff86cf1b7",
   "./src/course_v2/ch-1e.js": "398f848af1",
-  "./src/course_v2/ch-2a.js": "fc687a3559",
-  "./src/course_v2/ch-2b.js": "720ab5dae7",
-  "./src/course_v2/ch-2c.js": "8b9d9eeecb",
-  "./src/course_v2/ch-2d.js": "fbefc66660",
+  "./src/course_v2/ch-2a.js": "f53c959c1a",
+  "./src/course_v2/ch-2b.js": "771fe5ff86",
+  "./src/course_v2/ch-2c.js": "3a8639ac00",
+  "./src/course_v2/ch-2d.js": "570b90e2d5",
   "./src/course_v2/ch-3a.js": "3e95970bdf",
   "./src/course_v2/ch-3b.js": "cfd9dd347f",
   "./src/course_v2/ch-3c.js": "753d5de951",
@@ -245,7 +245,7 @@ const REVISIONS = {
   "./src/course_v2/ch-9b-5.js": "8c547d0166",
   "./src/course_v2/ch-9b-6.js": "67f32fdc3b",
   "./src/course_v2/map.js": "d562d34fa8",
-  "./src/course_v2/outline.js": "64da25e9cd",
+  "./src/course_v2/outline.js": "7d8e360853",
   "./src/course_v2_style.js": "d74251f47e",
   "./src/course_v2_ui.js": "1ffb681441",
   "./src/custom_problems.js": "53e402064b",
@@ -392,22 +392,22 @@ const REVISIONS = {
   "./src/kernel/i18n_text_more_en.js": "a1f84e54a1",
   "./src/kernel/ink_read.js": "10f49b9d62",
   "./src/kernel/metrics.js": "815c8965eb",
-  "./src/kernel/origin.js": "aa6fc44a08",
+  "./src/kernel/origin.js": "c5ffb4b7b3",
   "./src/kernel/planner.js": "7de9b92876",
-  "./src/kernel/problem_profiles.js": "30047ed11d",
+  "./src/kernel/problem_profiles.js": "07987460c0",
   "./src/kernel/proof_lang.js": "dcfe4981bf",
   "./src/kernel/proof_surface.js": "300a62039f",
   "./src/kernel/records_v2.js": "1b0cc9d4a6",
-  "./src/kernel/rubric.js": "5be81648f1",
+  "./src/kernel/rubric.js": "9fccaf6f6e",
   "./src/kernel/rubric_reviewed.js": "acb0e0522c",
   "./src/kernel/sampler.js": "794635d29f",
   "./src/kernel/session.js": "19d842a952",
   "./src/kernel/skill_graph.js": "3776f07910",
-  "./src/kernel/skill_tags.js": "cedaa1d29c",
+  "./src/kernel/skill_tags.js": "4fa209628d",
   "./src/kernel/tag_labels.js": "7ef8f36a3a",
   "./src/kernel/tex_lite.js": "72286278aa",
-  "./src/kernel/uid_map.js": "f35a656580",
-  "./src/kernel/verified_answers.js": "ce57c9d2ae",
+  "./src/kernel/uid_map.js": "e6a0ac732b",
+  "./src/kernel/verified_answers.js": "81df139b56",
   "./src/problem_advanced_analysis.js": "3710852a58",
   "./src/problem_analysis_pack.js": "503152a202",
   "./src/problem_applied_graph_pack.js": "764df3d876",
@@ -418,7 +418,7 @@ const REVISIONS = {
   "./src/problem_competition_pack.js": "d70b08ffd7",
   "./src/problem_core_expansion_pack.js": "98b0667bed",
   "./src/problem_curve_worksheet_pack.js": "2443b77120",
-  "./src/problem_derivative_depth_pack.js": "e1f20fe1b4",
+  "./src/problem_derivative_depth_pack.js": "53918b1fef",
   "./src/problem_difficulty_calibration.js": "b3fa72c496",
   "./src/problem_exam_depth_pack.js": "244f8cd743",
   "./src/problem_exam_expansion.js": "900fe5e5f6",
