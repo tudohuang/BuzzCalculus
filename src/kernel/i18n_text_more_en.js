@@ -3495,7 +3495,6 @@
     "o99fw7": "An antiderivative is 〔0〕; plug in the limits (the lower limit 〔1〕 contributes 〔2〕).",
     "o99tsq": "As 〔0〕, 〔1〕, so the sum is 〔2〕.",
     "o9anni": "〔0〕, 〔1〕. A pairing like 〔2〕, off by exactly one derivative, is the textbook 〔3〕.",
-    "oaris8": "〔0〕; let 〔1〕.",
     "oaz1p6": "The boundary is the unit circle in the 〔0〕-plane, traversed counterclockwise (viewed from above, consistent with the upward normal by the right-hand rule).\n〔1〕, 〔2〕, so the result is 〔3〕.\n(Check: 〔4〕, and the flux through the hemisphere equals the flux through the disk it projects onto, 〔5〕.)",
     "obo9j2": "Let 〔0〕; then 〔1〕. Summation by parts: 〔2〕, where 〔3〕. 〔4〕. The sum 〔5〕.",
     "obr0ec": "〔0〕 lies on the segment 〔1〕, which has slope 〔2〕.",
