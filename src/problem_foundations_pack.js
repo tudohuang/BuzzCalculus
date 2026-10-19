@@ -559,7 +559,7 @@
       tags: ["function-evaluate", "polynomial"],
       hints: ["把式子裡每一個 x 都換成 (−2)，括號要留著。", "(−2)² 是正的，−3·(−2) 也是正的。"],
       solution: "f(−2) = (−2)² − 3·(−2) + 1 = 4 + 6 + 1 = 11。",
-      solutionSteps: ["每個 x 換成 (−2)：f(−2) = (−2)² − 3·(−2) + 1。", "= 4 + 6 + 1 = 11。"],
+      
       verify: val("(-2)^2-3\\cdot(-2)+1") },
     { id: "cg-0a-002", topic: "limits", rank: 1, answerKind: "numeric",
       prompt: "g(t)=\\frac{2t+1}{t-3}\\text{，求 }g(-1)",
@@ -567,7 +567,7 @@
       tags: ["function-evaluate", "rational-function"],
       hints: ["函數用 t 當變數也一樣：把 t 換成 (−1)。", "分子、分母各自先算完，再相除。"],
       solution: "g(−1) = (2·(−1) + 1)/((−1) − 3) = (−1)/(−4) = 1/4。",
-      solutionSteps: ["分子：2·(−1) + 1 = −1。", "分母：(−1) − 3 = −4。", "g(−1) = (−1)/(−4) = 1/4。"],
+      
       verify: val("\\frac{2(-1)+1}{(-1)-3}") },
     { id: "cg-0a-003", topic: "limits", rank: 1, answerKind: "expression", variable: "a",
       prompt: "f(x)=x^2+2x\\text{，求 }f(a+1)\\text{（以 }a\\text{ 表示並展開）}",
@@ -575,7 +575,7 @@
       tags: ["function-evaluate-expression", "polynomial"],
       hints: ["把 x 整個換成 (a + 1)，連括號一起代。", "(a + 1)² 要展開成三項，不是 a² + 1。"],
       solution: "f(a+1) = (a+1)² + 2(a+1) = a² + 2a + 1 + 2a + 2 = a² + 4a + 3。",
-      solutionSteps: ["代入：f(a+1) = (a+1)² + 2(a+1)。", "展開：a² + 2a + 1 + 2a + 2。", "合併：a² + 4a + 3。"],
+      
       verify: { m: "fn", vars: ["a"], cases: [
         { at: { a: 0 }, v: val("(0+1)^2+2(0+1)") },
         { at: { a: 2 }, v: val("(2+1)^2+2(2+1)") },
@@ -587,7 +587,7 @@
       tags: ["function-evaluate-expression", "difference-quotient"],
       hints: ["先寫出 f(x + h)：把 x 換成 (x + h)，展開。", "減掉 f(x) 之後，每一項都有 h，才能和分母約掉。"],
       solution: "f(x+h) = x² + 2xh + h² − 5x − 5h。減 f(x) 得 2xh + h² − 5h = h(2x + h − 5)，除以 h 得 2x + h − 5。",
-      solutionSteps: ["f(x+h) = (x+h)² − 5(x+h) = x² + 2xh + h² − 5x − 5h。", "f(x+h) − f(x) = 2xh + h² − 5h = h(2x + h − 5)。", "除以 h（h ≠ 0）：2x + h − 5。"],
+      
       verify: { m: "fn", vars: ["x", "h"], cases: [
         { at: { x: 1.5, h: 0.2 }, v: val("\\frac{(1.7^2-5\\cdot 1.7)-(1.5^2-5\\cdot 1.5)}{0.2}") },
         { at: { x: -1, h: 3 }, v: val("\\frac{(2^2-5\\cdot 2)-((-1)^2-5(-1))}{3}") },
@@ -600,7 +600,7 @@
       tags: ["function-vertical-line-test"],
       hints: ["函數的意思：每一個 x 恰好對到一個 y。", "找找看：有沒有哪一個式子，同一個 x 可以解出兩個不同的 y？"],
       solution: "x² + y² = 9 是圓。x = 0 時 y = 3 和 y = −3 都成立，一個輸入對到兩個輸出，所以不是函數；鉛直線 x = 0 碰到圖形兩次。其他三個都是「給 x 算出唯一的 y」。",
-      solutionSteps: ["檢查 x² + y² = 9：x = 0 時 y² = 9，y = 3 或 −3。", "一個 x 對到兩個 y，鉛直線測試失敗。", "其餘三個都直接寫成 y = …，每個 x 只算出一個 y。答案：x² + y² = 9。"],
+      
       verify: { m: "choice", options: [
         { say: "x² + y² = 9", all: [{ v: val("0^2+3^2"), eq: 9 }, { v: val("0^2+(-3)^2"), eq: 9 }] },
         { say: "y = x² − 4", unknown: "已寫成 y = …，每個 x 只代出一個 y" },
@@ -614,7 +614,7 @@
       tags: ["function-vertical-line-test"],
       hints: ["對每一個選項問：同一個 x，會不會有兩個不同的 y 都滿足？", "y 以平方或絕對值出現時，y 和 −y 常常同時成立。"],
       solution: "y² = x + 1：x = 3 時 y = ±2；x = |y|：x = 2 時 y = ±2；x² − y² = 4：x = √5 時 y = ±1。這三個都有一個 x 對兩個 y。只有 y = x³ − 2x 每個 x 只算出一個 y。",
-      solutionSteps: ["y² = x + 1：y = 2 與 y = −2 都給 x = 3，不是函數。", "x = |y|：y = ±2 都給 x = 2；x² − y² = 4：y = ±1 都給 x = √5。", "y = x³ − 2x 給 x 就算出唯一的 y。答案：y = x³ − 2x。"],
+      
       verify: { m: "choice", options: [
         { say: "y = x³ − 2x", unknown: "已寫成 y = …，每個 x 只代出一個 y" },
         { say: "y² = x + 1", all: [{ v: val("2^2-1"), ne: "(-2)^2-1" }] },
@@ -628,7 +628,7 @@
       tags: ["range-basic", "domain"],
       hints: ["x² 最小是多少？什麼時候取到？", "x² 可以要多大有多大嗎？"],
       solution: "x² ≥ 0，在 x = 0 取到 0，而且可以任意大。所以 x² + 4 ≥ 4，4 取得到、往上沒有上限：值域 [4, ∞)。",
-      solutionSteps: ["x² 的值域是 [0, ∞)：0 在 x = 0 取到，往上每個值都取得到。", "整個加 4：值域 [4, ∞)。"],
+      
       verify: { m: "choice", options: [{ say: "[4, inf)", all: [
         { v: { m: "extremum1d", v: "x", f: "x^2+4", lo: -100, hi: 100, kind: "min" }, eq: 4 },
         { v: { m: "extremum1d", v: "x", f: "x^2+4", lo: -100, hi: 100, kind: "max" }, gt: 1000 }] }] } },
@@ -638,7 +638,7 @@
       tags: ["range-basic", "completing-square"],
       hints: ["配方：把 x² − 6x 湊成 (x − □)² 再補常數。", "平方項最小是 0，那時候 f 是多少？"],
       solution: "x² − 6x + 11 = (x − 3)² + 2。(x − 3)² ≥ 0，在 x = 3 取到 0，而且可以任意大，所以值域 [2, ∞)。",
-      solutionSteps: ["配方：x² − 6x + 11 = (x − 3)² − 9 + 11 = (x − 3)² + 2。", "(x − 3)² 的值域是 [0, ∞)（x = 3 時為 0）。", "加 2：值域 [2, ∞)。"],
+      
       verify: { m: "choice", options: [{ say: "[2, inf)", all: [
         { v: { m: "extremum1d", v: "x", f: "x^2-6x+11", lo: -100, hi: 100, kind: "min" }, eq: 2 },
         { v: { m: "extremum1d", v: "x", f: "x^2-6x+11", lo: -100, hi: 100, kind: "max" }, gt: 1000 }] }] } },
@@ -648,7 +648,7 @@
       tags: ["range-basic", "radical"],
       hints: ["先想 √(x + 1) 的值域：最小是多少？有沒有上限？", "前面是減號：√ 越大，f 越小。"],
       solution: "√(x+1) 的值域是 [0, ∞)（x = −1 時為 0）。3 − √(x+1) 最大是 3（取得到），而且可以任意小，值域 (−∞, 3]。",
-      solutionSteps: ["定義域 x ≥ −1；√(x+1) 取遍 [0, ∞)，x = −1 時為 0。", "3 − √(x+1)：√ 為 0 時最大，等於 3；√ 越大值越小、沒有下限。", "值域 (−∞, 3]。"],
+      
       verify: { m: "choice", options: [{ say: "(-inf, 3]", all: [
         { v: { m: "extremum1d", v: "x", f: "3-\\sqrt{x+1}", lo: -1, hi: 10000, kind: "max" }, eq: 3 },
         { v: { m: "extremum1d", v: "x", f: "3-\\sqrt{x+1}", lo: -1, hi: 10000, kind: "min" }, lt: -50 }] }] } },
@@ -658,7 +658,7 @@
       tags: ["domain-combined", "domain", "radical"],
       hints: ["分子的根號、分母的根號各給一個條件，而且分母不能是 0。", "x = −1 和 x = 3 這兩個端點要分開判斷：代進去，哪一個算得出數、哪一個不行？"],
       solution: "分子要 x + 1 ≥ 0，即 x ≥ −1；分母的根號要 3 − x ≥ 0，又不能等於 0，所以 x < 3。x = −1 時 f = 0/2 = 0 有定義，包含；x = 3 時分母為 0，不包含。定義域 [−1, 3)。",
-      solutionSteps: ["分子：x + 1 ≥ 0 ⟹ x ≥ −1（等號可以，f(−1) = 0）。", "分母：3 − x ≥ 0 而且 √(3 − x) ≠ 0 ⟹ x < 3。", "交集：[−1, 3)。"],
+      
       verify: { m: "domain", f: "\\frac{\\sqrt{x+1}}{\\sqrt{3-x}}", range: [-20, 20] } },
 
     /* ── 0A 分段函數 ── */
@@ -668,7 +668,7 @@
       tags: ["piecewise-evaluate", "piecewise"],
       hints: ["每個輸入先判斷落在哪一段，再用那一段的式子。", "x = 2 屬於哪一段？看條件裡哪一邊有等號。"],
       solution: "−3 < 2 用第一段：9 + 1 = 10。x = 2 屬於 x ≥ 2：5 − 2 = 3。4 ≥ 2：5 − 4 = 1。合計 14。",
-      solutionSteps: ["f(−3)：−3 < 2，用 x² + 1，得 10。", "f(2)：2 ≥ 2，用 5 − x，得 3；f(4) = 5 − 4 = 1。", "f(−3) + f(2) + f(4) = 10 + 3 + 1 = 14。"],
+      
       verify: val(`${at(PW1, "-3")}+${at(PW1, "2")}+${at(PW1, "4")}`) },
     { id: "cg-0a-012", topic: "limits", rank: 1, answerKind: "numeric",
       prompt: "g(x)=2x+5\\ (x\\le -1)\\text{，}g(x)=x^2\\ (-1<x<2)\\text{，}g(x)=6\\ (x\\ge 2)\\text{。求 }g(-1)+g(1)+g(2)",
@@ -676,7 +676,7 @@
       tags: ["piecewise-evaluate", "piecewise"],
       hints: ["三段的分界點是 −1 和 2，各自屬於哪一段？", "等號寫在哪一段，分界點就用那一段的式子。"],
       solution: "x = −1 屬於 x ≤ −1：2(−1) + 5 = 3。x = 1 在中間段：1² = 1。x = 2 屬於 x ≥ 2：6。合計 10。",
-      solutionSteps: ["g(−1)：−1 ≤ −1，用 2x + 5，得 3。", "g(1)：−1 < 1 < 2，用 x²，得 1。", "g(2)：2 ≥ 2，得 6。合計 3 + 1 + 6 = 10。"],
+      
       verify: val(`${at(PW2, "-1")}+${at(PW2, "1")}+${at(PW2, "2")}`) },
     { id: "cg-0a-013", topic: "limits", rank: 1, answerKind: "expression",
       prompt: "f(x)=|x-3|+2x\\text{ 在 }x<3\\text{ 時，寫成不含絕對值的式子}",
@@ -684,7 +684,7 @@
       tags: ["piecewise-abs-rewrite", "absolute-value", "piecewise"],
       hints: ["x < 3 時，x − 3 是正還是負？", "|u| 在 u < 0 時等於 −u。"],
       solution: "x < 3 時 x − 3 < 0，|x − 3| = −(x − 3) = 3 − x。所以 f(x) = 3 − x + 2x = x + 3。",
-      solutionSteps: ["x < 3 ⟹ x − 3 < 0 ⟹ |x − 3| = 3 − x。", "f(x) = (3 − x) + 2x = x + 3。"],
+      
       verify: { m: "fn", cases: [
         { at: { x: 0 }, v: val("|0-3|+2\\cdot 0") },
         { at: { x: -2 }, v: val("|-2-3|+2(-2)") },
@@ -695,7 +695,7 @@
       tags: ["piecewise-abs-rewrite", "absolute-value", "piecewise"],
       hints: ["兩個絕對值分開看：x > 2 時，x + 1 與 x − 2 各是正是負？", "正的直接拿掉絕對值，負的要加負號。"],
       solution: "x > 2 時 x + 1 > 0、x − 2 > 0，兩個絕對值都直接拿掉：f(x) = (x + 1) + (x − 2) = 2x − 1。",
-      solutionSteps: ["x > 2 ⟹ x + 1 > 0，|x + 1| = x + 1。", "x > 2 ⟹ x − 2 > 0，|x − 2| = x − 2。", "f(x) = (x + 1) + (x − 2) = 2x − 1。"],
+      
       verify: { m: "fn", cases: [
         { at: { x: 3 }, v: val("|3+1|+|3-2|") },
         { at: { x: 2.5 }, v: val("|2.5+1|+|2.5-2|") },
@@ -706,7 +706,7 @@
       tags: ["piecewise-solve", "piecewise"],
       hints: ["每一段各自解，解出來之後要檢查：這個解有沒有落在那一段的範圍裡？", "x² = 4 有兩個根，兩個都符合 x < 1 嗎？"],
       solution: "第一段 x² = 4 得 x = ±2，只有 −2 滿足 x < 1（x = 2 是假解）。第二段 2x + 1 = 4 得 x = 3/2，滿足 x ≥ 1。解為 −2 與 3/2。",
-      solutionSteps: ["x < 1 段：x² = 4 ⟹ x = 2 或 −2；2 不在 x < 1，丟掉。", "x ≥ 1 段：2x + 1 = 4 ⟹ x = 3/2，在範圍內。", "解集 {−2, 3/2}。"],
+      
       verify: { m: "zeros", f: `${PW3}-4`, range: [-10, 10] } },
     { id: "cg-0a-016", topic: "limits", rank: 2, answerKind: "set",
       prompt: "g(x)=1-x\\ (x<0)\\text{，}g(x)=x^2-2x\\ (x\\ge 0)\\text{。解 }g(x)=3\\text{（列出所有解）}",
@@ -714,7 +714,7 @@
       tags: ["piecewise-solve", "piecewise", "factoring"],
       hints: ["兩段分開解，每個解都要回頭檢查範圍。", "第二段解出的二次方程式有兩根，哪一根不在 x ≥ 0？"],
       solution: "x < 0 段：1 − x = 3 ⟹ x = −2，符合。x ≥ 0 段：x² − 2x − 3 = 0 ⟹ (x − 3)(x + 1) = 0，x = 3 符合、x = −1 不在範圍（假解）。解為 −2 與 3。",
-      solutionSteps: ["x < 0：1 − x = 3 ⟹ x = −2，在範圍內。", "x ≥ 0：x² − 2x − 3 = (x − 3)(x + 1) = 0 ⟹ x = 3 或 −1；−1 < 0，丟掉。", "解集 {−2, 3}。"],
+      
       verify: { m: "zeros", f: `${PW4}-3`, range: [-10, 10] } },
 
     /* ── 0A 函數圖形的基本資訊 ── */
@@ -726,7 +726,7 @@
       tags: ["graph-symmetry", "even-function"],
       hints: ["算 f(−x)：把 x 換成 (−x)，化簡。", "f(−x) 等於 f(x) 是偶，等於 −f(x) 是奇。"],
       solution: "f(−x) = (−x)⁴ − 3(−x)² + 1 = x⁴ − 3x² + 1 = f(x)，偶函數（只有偶次方）。",
-      solutionSteps: ["(−x)⁴ = x⁴，(−x)² = x²。", "f(−x) = x⁴ − 3x² + 1 = f(x)，是偶函數。"],
+      
       verify: { m: "choice", options: [
         { say: "偶函數", all: [
           { v: val("(-1.3)^4-3(-1.3)^2+1"), eq: "(1.3)^4-3(1.3)^2+1" },
@@ -743,7 +743,7 @@
       tags: ["graph-symmetry", "odd-function"],
       hints: ["算 f(−x)，記得 sin(−x) = −sin x。", "比較 f(−x) 和 f(x)、−f(x)。"],
       solution: "f(−x) = (−x)³ + sin(−x) = −x³ − sin x = −f(x)，奇函數。",
-      solutionSteps: ["(−x)³ = −x³，sin(−x) = −sin x。", "f(−x) = −(x³ + sin x) = −f(x)，是奇函數。"],
+      
       verify: { m: "choice", options: [
         { say: "奇函數", all: [
           { v: val("(-1.3)^3+\\sin(-1.3)"), eq: "-((1.3)^3+\\sin(1.3))" },
@@ -760,7 +760,7 @@
       tags: ["graph-symmetry", "odd-function", "even-function"],
       hints: ["要說「不是偶函數」，只要找到一個 a 讓 f(−a) ≠ f(a)。", "試 a = 1：算 f(1) 和 f(−1)。"],
       solution: "f(1) = 2，f(−1) = −1 + 1 = 0。f(−1) ≠ f(1)，不是偶；f(−1) ≠ −f(1) = −2，也不是奇。一個反例就夠了。",
-      solutionSteps: ["f(1) = 1 + 1 = 2，f(−1) = −1 + 1 = 0。", "0 ≠ 2：不是偶函數；0 ≠ −2：不是奇函數。", "答案：都不是。"],
+      
       verify: { m: "choice", options: [
         { say: "都不是", all: [
           { v: val("(-1)^3+(-1)^2"), ne: "1^3+1^2" },
@@ -774,7 +774,7 @@
       tags: ["graph-sign-chart", "polynomial"],
       hints: ["三個零點把數線切成四段，每段裡正負號不會變。", "每段挑一個好算的點代進去看正負。"],
       solution: "零點 −2、1、4。x = 5：正；x = 2：(+)(+)(−) 負；x = 0：(+)(−)(−) 正；x = −3：負。為正的區間 (−2, 1) ∪ (4, ∞)，零點本身等於 0 不算。",
-      solutionSteps: ["零點：x = −2、1、4，切成四段。", "代點：x = −3 負、x = 0 正、x = 2 負、x = 5 正。", "> 0 的範圍：(−2, 1) ∪ (4, ∞)（端點是 0，不含）。"],
+      
       verify: { m: "domain", f: "\\ln((x+2)(x-1)(x-4))", range: [-20, 20] } },
     { id: "cg-0a-021", topic: "limits", rank: 2, answerKind: "interval",
       prompt: "\\text{求使 }\\frac{x^2-4}{x-3}>0\\text{ 的 }x\\text{ 的範圍}",
@@ -782,7 +782,7 @@
       tags: ["graph-sign-chart", "rational-function"],
       hints: ["分子的零點和分母的零點都要放上數線。", "分母的零點不能取（沒有定義），分子的零點讓值為 0，也不算「> 0」。"],
       solution: "分界點 −2、2（分子為 0）與 3（分母為 0）。x = −3：5/(−6) 負；x = 0：(−4)/(−3) 正；x = 2.5：2.25/(−0.5) 負；x = 4：12/1 正。答案 (−2, 2) ∪ (3, ∞)。",
-      solutionSteps: ["x² − 4 = (x − 2)(x + 2)：分界點 −2、2、3。", "四段代點：負、正、負、正。", "> 0：(−2, 2) ∪ (3, ∞)。"],
+      
       verify: { m: "domain", f: "\\ln\\left(\\frac{x^2-4}{x-3}\\right)", range: [-20, 20] } },
     { id: "cg-0a-022", topic: "limits", rank: 2, answerKind: "text",
       prompt: "\\text{不用導數：若 }2<a<b\\,\\text{，比較 }f(a)\\text{ 與 }f(b)\\text{，判斷 }f(x)=\\frac{1}{x-2}\\text{ 在 }(2,\\infty)\\text{ 上的單調性}",
@@ -792,7 +792,7 @@
       tags: ["graph-monotone-definition", "rational-function"],
       hints: ["2 < a < b 時，a − 2 和 b − 2 誰大？兩個都是正的嗎？", "兩個正數，分母越大，倒數越小還是越大？"],
       solution: "0 < a − 2 < b − 2，取倒數不等號反向：1/(a−2) > 1/(b−2)，即 f(a) > f(b)。輸入變大、輸出變小，所以遞減。",
-      solutionSteps: ["2 < a < b ⟹ 0 < a − 2 < b − 2。", "正數取倒數不等號反向：f(a) = 1/(a−2) > 1/(b−2) = f(b)。", "a < b 時 f(a) > f(b)：遞減。"],
+      
       verify: { m: "choice", options: [
         { say: "遞減", all: [
           { v: val("\\frac{1}{2.5-2}"), gt: "\\frac{1}{3-2}" },
@@ -808,7 +808,7 @@
       tags: ["graph-monotone-definition", "polynomial"],
       hints: ["a < b ≤ 1 時，a − 1 和 b − 1 都 ≤ 0；誰離 0 比較遠？", "兩個非正的數，離 0 越遠，平方越大還是越小？"],
       solution: "a − 1 < b − 1 ≤ 0，所以 |a − 1| > |b − 1|，平方後 (a−1)² > (b−1)²，即 f(a) > f(b)，遞減。",
-      solutionSteps: ["a < b ≤ 1 ⟹ a − 1 < b − 1 ≤ 0 ⟹ |a − 1| > |b − 1|。", "平方保持大小：(a − 1)² > (b − 1)²，f(a) > f(b)。", "在 (−∞, 1] 上遞減。"],
+      
       verify: { m: "choice", options: [
         { say: "遞減", all: [
           { v: val("(-3-1)^2"), gt: "(-1-1)^2" },
@@ -824,7 +824,7 @@
       tags: ["graph-bounded", "trig"],
       hints: ["有界：存在一個 M，讓所有 x 都有 |f(x)| ≤ M。", "哪一個函數的值被夾在兩個固定的數之間？"],
       solution: "−1 ≤ sin x ≤ 1，所以 −2 ≤ 3 sin x + 1 ≤ 4，有界。x²、2ˣ、x³ − x 都可以任意大。",
-      solutionSteps: ["−1 ≤ sin x ≤ 1 ⟹ −2 ≤ 3 sin x + 1 ≤ 4。", "x² 與 2ˣ 在 x 很大時無限增大；x³ − x 也是。", "答案：f(x) = 3 sin x + 1。"],
+      
       verify: { m: "choice", options: [
         { say: "f(x) = 3 sin x + 1", all: [
           { v: { m: "extremum1d", v: "x", f: "3\\sin x+1", lo: -200, hi: 200, kind: "max" }, le: 4 },
@@ -840,7 +840,7 @@
       tags: ["function-arithmetic-evaluate", "polynomial"],
       hints: ["(f + g)(2) = f(2) + g(2)；(fg)(−2) = f(−2)·g(−2)。", "先把四個函數值算出來，最後再組合。"],
       solution: "f(2) = 3、g(2) = 8，(f+g)(2) = 11。f(−2) = 3、g(−2) = −4，(fg)(−2) = −12。合計 −1。",
-      solutionSteps: ["(f + g)(2) = f(2) + g(2) = 3 + 8 = 11。", "(fg)(−2) = f(−2)·g(−2) = 3·(−4) = −12。", "11 + (−12) = −1。"],
+      
       verify: val("((2)^2-1+3(2)+2)+((-2)^2-1)(3(-2)+2)") },
     { id: "cg-0b-002", topic: "limits", rank: 1, answerKind: "expression",
       prompt: "f(x)=x^2+3x\\text{，}g(x)=x^2-x+4\\text{。求 }(f-g)(x)",
@@ -848,7 +848,7 @@
       tags: ["function-arithmetic-evaluate", "polynomial"],
       hints: ["(f − g)(x) = f(x) − g(x)，g 的每一項都要變號。", "減掉 −x 等於加 x；減掉 4 等於 −4。"],
       solution: "(f − g)(x) = (x² + 3x) − (x² − x + 4) = x² + 3x − x² + x − 4 = 4x − 4。",
-      solutionSteps: ["(x² + 3x) − (x² − x + 4)：括號拿掉，g 的每項變號。", "= x² + 3x − x² + x − 4 = 4x − 4。"],
+      
       verify: { m: "fn", cases: [
         { at: { x: 0 }, v: val("(0^2+3\\cdot 0)-(0^2-0+4)") },
         { at: { x: 2.5 }, v: val("(2.5^2+3\\cdot 2.5)-(2.5^2-2.5+4)") },
@@ -859,7 +859,7 @@
       tags: ["function-arithmetic-domain", "domain", "radical"],
       hints: ["f/g 要有定義：f 和 g 都要有定義，而且 g(x) ≠ 0。", "g 的零點有沒有落在 f 的定義域裡？沒有的話就不用再扣。"],
       solution: "f 的定義域 [1, ∞)，g 處處有定義，交集 [1, ∞)。g(x) = 0 在 x = −3，不在 [1, ∞) 裡，不用再扣。定義域 [1, ∞)。",
-      solutionSteps: ["f：x − 1 ≥ 0 ⟹ x ≥ 1；g 處處有定義。交集 [1, ∞)。", "分母 g(x) = 0 ⟹ x = −3，本來就不在交集裡。", "定義域 [1, ∞)。"],
+      
       verify: { m: "domain", f: "\\frac{\\sqrt{x-1}}{x+3}", range: [-20, 20] } },
     { id: "cg-0b-004", topic: "limits", rank: 2, answerKind: "interval",
       prompt: "f(x)=\\sqrt{4-x^2}\\text{，}g(x)=x-2\\text{。求 }\\frac{f}{g}\\text{ 的定義域}",
@@ -867,7 +867,7 @@
       tags: ["function-arithmetic-domain", "domain", "radical"],
       hints: ["先求 f 的定義域：根號裡 4 − x² ≥ 0。", "再看 g 的零點：它落在那個區間的哪裡？"],
       solution: "f 要 4 − x² ≥ 0，即 −2 ≤ x ≤ 2；g 處處有定義。g(x) = 0 在 x = 2，正好是右端點，要扣掉。x = −2 時 f/g = 0/(−4) = 0，可以取。定義域 [−2, 2)。",
-      solutionSteps: ["f：4 − x² ≥ 0 ⟹ −2 ≤ x ≤ 2。", "分母：x − 2 = 0 ⟹ x = 2，扣掉這個端點。", "定義域 [−2, 2)。"],
+      
       verify: { m: "domain", f: "\\frac{\\sqrt{4-x^2}}{x-2}", range: [-20, 20] } },
 
     /* ── 0B 函數合成 ── */
@@ -877,7 +877,7 @@
       tags: ["composition-evaluate", "composition"],
       hints: ["先算裡面的 g(2)。", "再把算出來的數放進 f。"],
       solution: "g(2) = 4 + 1 = 5，f(5) = 10 − 1 = 9。",
-      solutionSteps: ["裡面先算：g(2) = 2² + 1 = 5。", "外面：f(5) = 2·5 − 1 = 9。"],
+      
       verify: val("2((2)^2+1)-1") },
     { id: "cg-0b-006", topic: "limits", rank: 1, answerKind: "numeric",
       prompt: "f(x)=x+4\\text{，}g(x)=x^2\\text{。求 }(f\\circ g)(-3)-(g\\circ f)(-3)",
@@ -885,7 +885,7 @@
       tags: ["composition-evaluate", "composition"],
       hints: ["(f ∘ g)(−3) = f(g(−3))：先做 g；(g ∘ f)(−3) = g(f(−3))：先做 f。", "兩個順序算出來的數通常不一樣。"],
       solution: "f(g(−3)) = f(9) = 13；g(f(−3)) = g(1) = 1。相減 12。",
-      solutionSteps: ["(f∘g)(−3)：g(−3) = 9，f(9) = 13。", "(g∘f)(−3)：f(−3) = 1，g(1) = 1。", "13 − 1 = 12。"],
+      
       verify: val("((-3)^2+4)-((-3)+4)^2") },
     { id: "cg-0b-007", topic: "limits", rank: 1, answerKind: "text",
       prompt: "\\text{把 }h(x)=\\sqrt{x^2+5}\\text{ 寫成 }f(g(x))\\text{，下列哪一組正確？}",
@@ -895,7 +895,7 @@
       tags: ["composition-decompose", "composition", "chain-rule"],
       hints: ["代一個 x 進去算 h(x)，第一步做的事是裡層、最後一步是外層。", "把每一組的 f(g(x)) 真的組合起來，看是不是 h。"],
       solution: "算 h(x) 時先算 x² + 5（裡層），最後開根號（外層），所以 g(x) = x² + 5、f(u) = √u。其他組合出來是 x + 5、|x| + 5，不是 h。",
-      solutionSteps: ["計算順序：先 x² + 5，再取 √。", "裡層 g(x) = x² + 5，外層 f(u) = √u：f(g(x)) = √(x² + 5) = h(x)。"],
+      
       verify: { m: "choice", options: [
         { say: "f(u) = √u，g(x) = x² + 5", all: [
           { v: val("\\sqrt{(1.7)^2+5}"), eq: "\\sqrt{1.7^2+5}" },
@@ -911,7 +911,7 @@
       tags: ["composition-decompose", "composition", "chain-rule"],
       hints: ["算 h(2) 的時候，你先做什麼、最後做什麼？", "最後一步是外層 f，前面的整包是裡層 g。"],
       solution: "先算 3x − 1，最後取五次方：g(x) = 3x − 1、f(u) = u⁵。3u − 1 配 x⁵ 會變成 3x⁵ − 1，不是 h。",
-      solutionSteps: ["計算順序：先 3x − 1，再取五次方。", "g(x) = 3x − 1，f(u) = u⁵：f(g(x)) = (3x − 1)⁵ = h(x)。"],
+      
       verify: { m: "choice", options: [
         { say: "f(u) = u⁵，g(x) = 3x − 1", all: [
           { v: val("(3\\cdot 1.2-1)^5"), eq: "(3(1.2)-1)^5" },
@@ -927,7 +927,7 @@
       tags: ["composition-decompose", "composition", "chain-rule"],
       hints: ["算 h(x) 的最後一步是什麼運算？", "把每組的 f(g(x)) 組合出來，跟 h 比。"],
       solution: "先算 x² + 4，最後取倒數：g(x) = x² + 4、f(u) = 1/u。1/(u² + 4) 配 x² 會變成 1/(x⁴ + 4)。",
-      solutionSteps: ["計算順序：先 x² + 4，再取倒數。", "g(x) = x² + 4，f(u) = 1/u：f(g(x)) = 1/(x² + 4) = h(x)。"],
+      
       verify: { m: "choice", options: [
         { say: "f(u) = 1/u，g(x) = x² + 4", all: [
           { v: val("\\frac{1}{(1.5)^2+4}"), eq: "\\frac{1}{1.5^2+4}" },
@@ -941,7 +941,7 @@
       tags: ["composition-domain", "composition", "domain"],
       hints: ["f(g(x)) 要先算得出 g(x)：x 必須在 g 的定義域裡。", "化簡後的式子看起來處處有定義，但化簡不會讓 g 突然算得出來。"],
       solution: "f(g(x)) = (√(x−1))² = x − 1，但這只在 √(x−1) 有定義時成立，所以要 x ≥ 1。定義域 [1, ∞)，不是全體實數。",
-      solutionSteps: ["先要 g(x) 有定義：x − 1 ≥ 0 ⟹ x ≥ 1。", "g(x) 再丟進 f：f 處處有定義，沒有新限制。", "定義域 [1, ∞)（化簡成 x − 1 不會擴大它）。"],
+      
       verify: { m: "domain", f: "\\left(\\sqrt{x-1}\\right)^2", range: [-20, 20] } },
     { id: "cg-0b-011", topic: "limits", rank: 2, answerKind: "interval",
       prompt: "f(x)=\\sqrt{x}\\text{，}g(x)=x^2-9\\text{。求 }(f\\circ g)(x)\\text{ 的定義域}",
@@ -949,7 +949,7 @@
       tags: ["composition-domain", "composition", "domain"],
       hints: ["g 處處有定義；問題在 g(x) 要落在 f 的定義域裡。", "√ 裡面要 ≥ 0：解 x² − 9 ≥ 0。"],
       solution: "f(g(x)) = √(x² − 9)，要 x² − 9 ≥ 0，即 |x| ≥ 3。定義域 (−∞, −3] ∪ [3, ∞)。",
-      solutionSteps: ["g(x) 要在 f 的定義域 [0, ∞) 裡：x² − 9 ≥ 0。", "x² ≥ 9 ⟹ x ≤ −3 或 x ≥ 3。", "定義域 (−∞, −3] ∪ [3, ∞)。"],
+      
       verify: { m: "domain", f: "\\sqrt{x^2-9}", range: [-21, 21] } },
 
     /* ── 0B 反函數 ── */
@@ -959,7 +959,7 @@
       tags: ["inverse-solve-formula", "inverse-function"],
       hints: ["令 y = 3x − 7，把 x 解出來。", "最後把變數名字 y 換回 x。"],
       solution: "y = 3x − 7 ⟹ x = (y + 7)/3。換回變數：f⁻¹(x) = (x + 7)/3。",
-      solutionSteps: ["y = 3x − 7 ⟹ 3x = y + 7 ⟹ x = (y + 7)/3。", "f⁻¹(x) = (x + 7)/3。"],
+      
       verify: { m: "fn", cases: [
         { at: { x: 2 }, v: { m: "root", f: "3x-7-(2)", x0: 1 } },
         { at: { x: -4 }, v: { m: "root", f: "3x-7-(-4)", x0: 1 } },
@@ -970,7 +970,7 @@
       tags: ["inverse-solve-formula", "inverse-function", "rational-function"],
       hints: ["令 y = (2x + 1)/(x − 3)，兩邊乘以 (x − 3)。", "把含 x 的項移到同一邊，提出 x。"],
       solution: "y(x − 3) = 2x + 1 ⟹ yx − 2x = 3y + 1 ⟹ x = (3y + 1)/(y − 2)。f⁻¹(x) = (3x + 1)/(x − 2)。",
-      solutionSteps: ["y(x − 3) = 2x + 1 ⟹ xy − 3y = 2x + 1。", "x(y − 2) = 3y + 1 ⟹ x = (3y + 1)/(y − 2)。", "f⁻¹(x) = (3x + 1)/(x − 2)。"],
+      
       verify: { m: "fn", cases: [
         { at: { x: 0 }, v: { m: "root", f: "\\frac{2x+1}{x-3}-0", x0: 0 } },
         { at: { x: 5 }, v: { m: "root", f: "\\frac{2x+1}{x-3}-5", x0: 5 } },
@@ -981,7 +981,7 @@
       tags: ["inverse-solve-formula", "inverse-function", "radical"],
       hints: ["令 y = √(x − 2)，兩邊平方。", "f 的值域是 [0, ∞)，這就是 f⁻¹ 的定義域。"],
       solution: "y = √(x − 2) ⟹ y² = x − 2 ⟹ x = y² + 2。f⁻¹(x) = x² + 2，定義在 x ≥ 0（f 的值域）。",
-      solutionSteps: ["y = √(x − 2)，y ≥ 0；平方：y² = x − 2。", "x = y² + 2，所以 f⁻¹(x) = x² + 2（x ≥ 0）。"],
+      
       verify: { m: "fn", cases: [
         { at: { x: 0.5 }, v: { m: "root", f: "\\sqrt{x-2}-0.5", x0: 2.01 } },
         { at: { x: 1 }, v: { m: "root", f: "\\sqrt{x-2}-1", x0: 2.01 } },
@@ -994,7 +994,7 @@
       tags: ["inverse-one-to-one", "inverse-function"],
       hints: ["有反函數要一對一：不同的輸入一定給不同的輸出（水平線測試）。", "要否定一對一，只要找兩個不同的 x 給出同一個值。"],
       solution: "x² − 4 與 |x| 在 x = ±2 給同一個值；x⁴ + x 在 x = 0 與 x = −1 都是 0。x³ + 1 嚴格遞增，每條水平線只碰一次，有反函數。",
-      solutionSteps: ["x² − 4：f(2) = f(−2)；|x|：f(3) = f(−3)；x⁴ + x：f(0) = f(−1) = 0。都不是一對一。", "x³ + 1 嚴格遞增，通過水平線測試。答案：f(x) = x³ + 1。"],
+      
       verify: { m: "choice", options: [
         { say: "f(x) = x³ + 1", unknown: "x³ + 1 嚴格遞增（a < b ⟹ a³ < b³）" },
         { say: "f(x) = x² − 4", all: [{ v: val("2^2-4"), ne: "(-2)^2-4" }] },
@@ -1008,7 +1008,7 @@
       tags: ["inverse-one-to-one", "inverse-function"],
       hints: ["沒有反函數 = 有兩個不同的輸入給出同一個輸出。", "拋物線對稱軸兩側的點，高度會一樣。"],
       solution: "x² + 2x 在 x = 0 和 x = −2 都等於 0，一條水平線碰到兩次，不是一對一。5 − 2x、x³、√(x + 1) 都嚴格單調，有反函數。",
-      solutionSteps: ["f(0) = 0，f(−2) = 4 − 4 = 0：兩個輸入同一個輸出。", "其餘三個嚴格單調、一對一。答案：f(x) = x² + 2x。"],
+      
       verify: { m: "choice", options: [
         { say: "f(x) = x² + 2x", all: [{ v: val("0^2+2\\cdot 0"), eq: "(-2)^2+2(-2)" }] },
         { say: "f(x) = 5 − 2x", unknown: "一次函數斜率非零，嚴格遞減" },
@@ -1020,7 +1020,7 @@
       tags: ["inverse-value", "inverse-function"],
       hints: ["f⁻¹(2) 是「哪一個 x 讓 f(x) = 2」。", "不用求 f⁻¹ 的式子，試幾個簡單的整數代進 f。"],
       solution: "要找 x 使 x³ + 2x − 1 = 2。試 x = 1：1 + 2 − 1 = 2。f 嚴格遞增，只有這一個解，所以 f⁻¹(2) = 1。",
-      solutionSteps: ["f⁻¹(2) = a ⟺ f(a) = 2。", "試 a = 1：f(1) = 1 + 2 − 1 = 2。", "f 遞增、解唯一：f⁻¹(2) = 1。"],
+      
       verify: { m: "root", f: "x^3+2x-1-2", x0: 0.5 } },
     { id: "cg-0b-018", topic: "limits", rank: 2, answerKind: "numeric",
       prompt: "f(x)=x^5+x+3\\text{，求 }f^{-1}(1)",
@@ -1028,7 +1028,7 @@
       tags: ["inverse-value", "inverse-function"],
       hints: ["要解 f(x) = 1，也就是 x⁵ + x + 2 = 0。", "正數代進去一定太大，試試負的整數。"],
       solution: "x⁵ + x + 3 = 1 ⟹ x⁵ + x + 2 = 0。x = −1：−1 − 1 + 2 = 0。f 嚴格遞增（x⁵ 與 x 都遞增），解唯一，f⁻¹(1) = −1。",
-      solutionSteps: ["f⁻¹(1) = a ⟺ a⁵ + a + 3 = 1。", "試 a = −1：(−1)⁵ + (−1) + 3 = 1。", "f 嚴格遞增，所以 f⁻¹(1) = −1。"],
+      
       verify: { m: "root", f: "x^5+x+3-1", x0: -0.5 } },
 
     /* ── 0C 多項式與有理函數 ── */
@@ -1038,7 +1038,7 @@
       tags: ["poly-factor-theorem", "factoring", "polynomial"],
       hints: ["整數根一定是常數項 6 的因數：試 ±1、±2、±3、±6。", "找到一個根 a 之後，用 (x − a) 去除，剩下的二次式再分解。"],
       solution: "x = 1：1 − 2 − 5 + 6 = 0，所以 (x − 1) 是因式。除完得 x² − x − 6 = (x − 3)(x + 2)。根為 1、3、−2。",
-      solutionSteps: ["試 x = 1：p(1) = 0，因式定理 ⟹ (x − 1) | p(x)。", "p(x) = (x − 1)(x² − x − 6) = (x − 1)(x − 3)(x + 2)。", "實根 {−2, 1, 3}。"],
+      
       verify: { m: "zeros", f: "x^3-2x^2-5x+6", range: [-10, 10] } },
     { id: "cg-0c-002", topic: "limits", rank: 2, answerKind: "set",
       prompt: "\\text{解 }2x^3-3x^2-11x+6=0\\text{（列出所有實根）}",
@@ -1046,7 +1046,7 @@
       tags: ["poly-factor-theorem", "factoring", "polynomial"],
       hints: ["先試常數項 6 的整數因數，找到一個根。", "除出來的二次式首項係數是 2，根可能是分數。"],
       solution: "x = 3：54 − 27 − 33 + 6 = 0。除以 (x − 3) 得 2x² + 3x − 2 = (2x − 1)(x + 2)。根為 3、1/2、−2。",
-      solutionSteps: ["試 x = 3：p(3) = 54 − 27 − 33 + 6 = 0，(x − 3) 是因式。", "p(x) = (x − 3)(2x² + 3x − 2) = (x − 3)(2x − 1)(x + 2)。", "實根 {−2, 1/2, 3}。"],
+      
       verify: { m: "zeros", f: "2x^3-3x^2-11x+6", range: [-10, 10] } },
     { id: "cg-0c-003", topic: "limits", rank: 1, answerKind: "text",
       prompt: "f(x)=\\frac{x^2-9}{x^2-x-6}\\text{ 在 }x=3\\text{ 處是洞，還是垂直漸近線？}",
@@ -1056,7 +1056,7 @@
       tags: ["rational-hole-vs-asymptote", "rational-function", "factoring"],
       hints: ["分子、分母都分解，看 (x − 3) 能不能約掉。", "約掉之後，x = 3 代進剩下的式子是一個有限的數嗎？"],
       solution: "f(x) = (x − 3)(x + 3)/((x − 3)(x + 2))。(x − 3) 約掉後剩 (x + 3)/(x + 2)，x → 3 時趨近 6/5，有限。所以 x = 3 是洞（f(3) 沒定義）。",
-      solutionSteps: ["分子 (x − 3)(x + 3)，分母 (x − 3)(x + 2)。", "x ≠ 3 時 f(x) = (x + 3)/(x + 2)，x → 3 趨近 6/5。", "極限有限、函數值沒定義：洞。"],
+      
       verify: { m: "choice", options: [
         { say: "洞", all: [{ v: { m: "limit", f: "\\frac{x^2-9}{x^2-x-6}", at: 3 }, eq: "6/5" }] },
         { say: "垂直漸近線", all: [{ v: val("\\left|\\frac{3.0001^2-9}{3.0001^2-3.0001-6}\\right|"), gt: 1000 }] },
@@ -1069,7 +1069,7 @@
       tags: ["rational-hole-vs-asymptote", "rational-function", "asymptote"],
       hints: ["分子、分母都分解，看 x = 3 讓誰變成 0。", "分母是 0、分子不是 0 的時候，函數值會怎樣？"],
       solution: "f(x) = (x − 2)(x + 2)/((x − 2)(x − 3))。約掉 (x − 2) 後剩 (x + 2)/(x − 3)；x → 3 時分子趨近 5、分母趨近 0，|f| 無限大：垂直漸近線 x = 3。",
-      solutionSteps: ["分子 (x − 2)(x + 2)，分母 (x − 2)(x − 3)。", "約分後 (x + 2)/(x − 3)：x = 3 時分母為 0、分子為 5 ≠ 0。", "|f(x)| → ∞：垂直漸近線。"],
+      
       verify: { m: "choice", options: [
         { say: "垂直漸近線", all: [
           { v: val("\\left|\\frac{3.0001^2-4}{3.0001^2-5\\cdot 3.0001+6}\\right|"), gt: 10000 },
@@ -1084,7 +1084,7 @@
       tags: ["log-laws", "log"],
       hints: ["同底的對數相減，可以合成一個對數：真數相除。", "48 ÷ 3 是 2 的幾次方？"],
       solution: "log₂48 − log₂3 = log₂(48/3) = log₂16 = 4。",
-      solutionSteps: ["相減 → 真數相除：log₂(48/3) = log₂16。", "16 = 2⁴，所以等於 4。"],
+      
       verify: val("\\log_2 48-\\log_2 3") },
     { id: "cg-0c-006", topic: "derivatives", rank: 1, answerKind: "text",
       prompt: "\\ln 2+\\ln 5\\text{ 等於下列哪一個？}",
@@ -1094,7 +1094,7 @@
       tags: ["log-laws", "log"],
       hints: ["對數律：ln a + ln b = ln(□)，括號裡是 a 和 b 做什麼運算？", "ln(a + b) 沒有拆開的公式，小心看起來很像的選項。"],
       solution: "ln a + ln b = ln(ab)，所以 ln 2 + ln 5 = ln 10。ln 7 = ln(2 + 5) 是常見的錯：對數把乘法變加法，不是把加法搬進去。",
-      solutionSteps: ["對數律：ln a + ln b = ln(ab)。", "ln 2 + ln 5 = ln(2·5) = ln 10。"],
+      
       verify: { m: "choice", options: [
         { say: "ln 10", all: [{ v: val("\\ln 2+\\ln 5"), eq: "\\ln 10" }] },
         { say: "ln 7", all: [{ v: val("\\ln 2+\\ln 5"), eq: "\\ln 7" }] },
@@ -1106,7 +1106,7 @@
       tags: ["log-laws", "log"],
       hints: ["係數先搬進去：2 log₃2 = log₃(2²)。", "加的真數相乘、減的真數相除，合成一個 log₃。"],
       solution: "2 log₃2 = log₃4。原式 = log₃(18·6/4) = log₃27 = 3。",
-      solutionSteps: ["2 log₃2 = log₃4。", "log₃18 + log₃6 − log₃4 = log₃(18·6/4) = log₃27。", "27 = 3³，答案 3。"],
+      
       verify: val("\\log_3 18+\\log_3 6-2\\log_3 2") },
     { id: "cg-0c-008", topic: "derivatives", rank: 1, answerKind: "numeric",
       prompt: "\\text{解 }3^x=20\\text{（答案可以用 }\\ln\\text{ 表示）}",
@@ -1114,7 +1114,7 @@
       tags: ["exp-log-solve-equation", "log", "exponential"],
       hints: ["兩邊取 ln，把指數上的 x 拿下來。", "ln(3ˣ) = x ln 3。"],
       solution: "兩邊取 ln：x ln 3 = ln 20，x = ln 20 / ln 3 ≈ 2.727。",
-      solutionSteps: ["ln(3ˣ) = ln 20 ⟹ x ln 3 = ln 20。", "x = ln 20 / ln 3 ≈ 2.727。"],
+      
       verify: { m: "root", f: "3^x-20", x0: 2 } },
     { id: "cg-0c-009", topic: "derivatives", rank: 2, answerKind: "set",
       prompt: "\\text{解 }\\ln x+\\ln(x-3)=\\ln 10\\text{（列出所有解）}",
@@ -1122,7 +1122,7 @@
       tags: ["exp-log-solve-equation", "log", "log-domain"],
       hints: ["左邊合成一個 ln，兩邊的真數就要相等。", "解出來的每一個數都要代回原式：ln 裡面必須是正的。"],
       solution: "ln(x(x − 3)) = ln 10 ⟹ x² − 3x − 10 = 0 ⟹ x = 5 或 −2。x = −2 時 ln(−2) 沒有定義，是假解。只有 x = 5。",
-      solutionSteps: ["ln x + ln(x − 3) = ln(x(x − 3))（要 x > 3）。", "x(x − 3) = 10 ⟹ (x − 5)(x + 2) = 0。", "x = −2 不滿足 x > 3，丟掉；解集 {5}。"],
+      
       verify: { m: "zeros", f: "\\ln x+\\ln(x-3)-\\ln 10", range: [-10, 20] } },
     { id: "cg-0c-010", topic: "derivatives", rank: 1, answerKind: "numeric",
       prompt: "\\ln\\left(e^{7}\\right)+e^{\\ln 3}",
@@ -1130,7 +1130,7 @@
       tags: ["exp-log-inverse", "log", "exponential"],
       hints: ["ln 和 eˣ 互為反函數：一個做完、另一個就把它還原。", "ln(eᵃ) = a；e^{ln b} = b（b > 0）。"],
       solution: "ln(e⁷) = 7，e^{ln 3} = 3，合計 10。",
-      solutionSteps: ["ln(e⁷) = 7。", "e^{ln 3} = 3。", "7 + 3 = 10。"],
+      
       verify: val("\\ln\\left(e^{7}\\right)+e^{\\ln 3}") },
     { id: "cg-0c-011", topic: "derivatives", rank: 1, answerKind: "numeric",
       prompt: "e^{3\\ln 2}-\\ln\\sqrt{e}",
@@ -1138,7 +1138,7 @@
       tags: ["exp-log-inverse", "log", "exponential"],
       hints: ["3 ln 2 先寫成 ln(2³)，再用 e^{ln b} = b。", "√e = e^{1/2}。"],
       solution: "e^{3 ln 2} = e^{ln 8} = 8；ln √e = ln e^{1/2} = 1/2。8 − 1/2 = 15/2。",
-      solutionSteps: ["3 ln 2 = ln 8，e^{ln 8} = 8。", "ln √e = ln e^{1/2} = 1/2。", "8 − 1/2 = 15/2。"],
+      
       verify: val("e^{3\\ln 2}-\\ln\\sqrt{e}") },
 
     /* ── 0C 三角函數 ── */
@@ -1148,7 +1148,7 @@
       tags: ["trig-unit-circle-values", "trig"],
       hints: ["3π/4 在第幾象限？參考角是多少？", "第二象限的點，橫座標是正還是負？"],
       solution: "3π/4 在第二象限，參考角 π/4。cos 是橫座標，第二象限為負：cos(3π/4) = −√2/2。",
-      solutionSteps: ["3π/4 = π − π/4，第二象限，參考角 π/4。", "cos(π/4) = √2/2，第二象限 cos < 0。", "cos(3π/4) = −√2/2。"],
+      
       verify: val("\\cos\\frac{3\\pi}{4}") },
     { id: "cg-0c-013", topic: "derivatives", rank: 1, answerKind: "numeric",
       prompt: "\\tan\\frac{5\\pi}{3}",
@@ -1156,7 +1156,7 @@
       tags: ["trig-unit-circle-values", "trig"],
       hints: ["5π/3 在第幾象限？參考角是多少？", "tan = sin/cos，看這個象限裡 sin、cos 的正負。"],
       solution: "5π/3 = 2π − π/3，第四象限，參考角 π/3。sin 負、cos 正，tan 為負：tan(5π/3) = −√3。",
-      solutionSteps: ["5π/3 = 2π − π/3，第四象限。", "tan(π/3) = √3；第四象限 tan < 0。", "tan(5π/3) = −√3。"],
+      
       verify: val("\\tan\\frac{5\\pi}{3}") },
     { id: "cg-0c-014", topic: "derivatives", rank: 1, answerKind: "numeric",
       prompt: "\\sin\\frac{7\\pi}{6}\\cdot\\cos\\frac{4\\pi}{3}",
@@ -1164,7 +1164,7 @@
       tags: ["trig-unit-circle-values", "trig"],
       hints: ["兩個角都在第三象限，參考角各是多少？", "第三象限的點，橫座標、縱座標都是負的。"],
       solution: "7π/6 參考角 π/6，sin 為負：−1/2。4π/3 參考角 π/3，cos 為負：−1/2。乘積 1/4。",
-      solutionSteps: ["sin(7π/6) = −sin(π/6) = −1/2。", "cos(4π/3) = −cos(π/3) = −1/2。", "(−1/2)(−1/2) = 1/4。"],
+      
       verify: val("\\sin\\frac{7\\pi}{6}\\cdot\\cos\\frac{4\\pi}{3}") },
     { id: "cg-0c-015", topic: "derivatives", rank: 1, answerKind: "numeric",
       prompt: "150^\\circ\\text{ 等於多少弧度？}",
@@ -1172,7 +1172,7 @@
       tags: ["trig-radian", "trig"],
       hints: ["180° 等於 π 弧度。", "度數乘以 π/180。"],
       solution: "150° × π/180 = 5π/6。",
-      solutionSteps: ["換算：弧度 = 度數 × π/180。", "150 × π/180 = 5π/6。"],
+      
       verify: val("150\\cdot\\frac{\\pi}{180}") },
     { id: "cg-0c-016", topic: "derivatives", rank: 1, answerKind: "numeric",
       prompt: "\\frac{7\\pi}{4}\\text{ 弧度等於多少度？}",
@@ -1180,7 +1180,7 @@
       tags: ["trig-radian", "trig"],
       hints: ["π 弧度等於 180°。", "弧度乘以 180/π。"],
       solution: "(7π/4) × 180/π = 7 × 45 = 315°。",
-      solutionSteps: ["換算：度數 = 弧度 × 180/π。", "(7π/4)(180/π) = 7·45 = 315。"],
+      
       verify: val("\\frac{7\\pi}{4}\\cdot\\frac{180}{\\pi}") },
 
     /* ── 0C 三角恆等式 ── */
@@ -1190,7 +1190,7 @@
       tags: ["trig-pythagorean", "trig"],
       hints: ["sin²θ + cos²θ = 1，先求 cos²θ。", "開根號後，正負號由象限決定：第二象限的橫座標是？"],
       solution: "cos²θ = 1 − 9/25 = 16/25，cos θ = ±4/5。第二象限 cos < 0，所以 cos θ = −4/5。",
-      solutionSteps: ["cos²θ = 1 − (3/5)² = 16/25。", "cos θ = ±4/5；第二象限取負。", "cos θ = −4/5。"],
+      
       verify: val("\\cos\\left(\\pi-\\arcsin\\frac{3}{5}\\right)") },
     { id: "cg-0c-018", topic: "derivatives", rank: 1, answerKind: "numeric",
       prompt: "\\cos\\theta=-\\frac{5}{13}\\text{，}\\pi<\\theta<\\frac{3\\pi}{2}\\text{。求 }\\tan\\theta",
@@ -1198,7 +1198,7 @@
       tags: ["trig-pythagorean", "trig"],
       hints: ["先用 sin²θ + cos²θ = 1 求 sin θ，正負號看象限。", "θ 在第三象限：sin、cos 都是負的，相除呢？"],
       solution: "sin²θ = 1 − 25/169 = 144/169。第三象限 sin θ = −12/13。tan θ = (−12/13)/(−5/13) = 12/5。",
-      solutionSteps: ["sin²θ = 1 − 25/169 = 144/169，第三象限 sin θ = −12/13。", "tan θ = sin θ / cos θ = (−12/13)/(−5/13)。", "tan θ = 12/5。"],
+      
       verify: val("\\tan\\left(2\\pi-\\arccos\\left(-\\frac{5}{13}\\right)\\right)") },
     { id: "cg-0c-019", topic: "derivatives", rank: 1, answerKind: "numeric",
       prompt: "\\sin\\theta=\\frac{4}{5}\\text{，}0<\\theta<\\frac{\\pi}{2}\\text{。求 }\\sin 2\\theta",
@@ -1206,7 +1206,7 @@
       tags: ["trig-double-angle", "trig"],
       hints: ["倍角公式：sin 2θ = 2 sin θ cos θ。", "先求 cos θ（第一象限取正）。"],
       solution: "cos θ = √(1 − 16/25) = 3/5。sin 2θ = 2·(4/5)·(3/5) = 24/25。",
-      solutionSteps: ["cos θ = √(1 − 16/25) = 3/5（第一象限為正）。", "sin 2θ = 2 sin θ cos θ = 2·(4/5)(3/5) = 24/25。"],
+      
       verify: val("\\sin\\left(2\\arcsin\\frac{4}{5}\\right)") },
     { id: "cg-0c-020", topic: "derivatives", rank: 2, answerKind: "numeric",
       prompt: "\\tan\\theta=2\\text{，求 }\\cos 2\\theta",
@@ -1214,7 +1214,7 @@
       tags: ["trig-double-angle", "trig"],
       hints: ["cos 2θ = cos²θ − sin²θ；分子分母同除以 cos²θ 試試。", "cos²θ + sin²θ = 1 可以當分母。"],
       solution: "cos 2θ = (cos²θ − sin²θ)/(cos²θ + sin²θ) = (1 − tan²θ)/(1 + tan²θ) = (1 − 4)/(1 + 4) = −3/5。不管 θ 在哪個象限都一樣。",
-      solutionSteps: ["cos 2θ = (cos²θ − sin²θ)/(cos²θ + sin²θ)。", "同除 cos²θ：(1 − tan²θ)/(1 + tan²θ)。", "代 tan θ = 2：(1 − 4)/5 = −3/5。"],
+      
       verify: val("\\cos(2\\arctan 2)") },
     { id: "cg-0c-021", topic: "derivatives", rank: 2, answerKind: "numeric",
       prompt: "\\text{用半角公式求 }\\cos^2\\frac{\\pi}{8}",
@@ -1222,7 +1222,7 @@
       tags: ["trig-half-angle", "trig"],
       hints: ["降次公式：cos²u = (1 + cos 2u)/2。", "u = π/8 時，2u 是哪個特殊角？"],
       solution: "cos²(π/8) = (1 + cos(π/4))/2 = (1 + √2/2)/2 = (2 + √2)/4。",
-      solutionSteps: ["cos²u = (1 + cos 2u)/2，取 u = π/8。", "cos(π/4) = √2/2，所以 (1 + √2/2)/2 = (2 + √2)/4。"],
+      
       verify: val("\\left(\\cos\\frac{\\pi}{8}\\right)^2") },
     { id: "cg-0c-022", topic: "derivatives", rank: 2, answerKind: "numeric",
       prompt: "\\cos\\theta=\\frac{1}{9}\\text{，}0<\\theta<\\frac{\\pi}{2}\\text{。求 }\\sin\\frac{\\theta}{2}",
@@ -1230,7 +1230,7 @@
       tags: ["trig-half-angle", "trig"],
       hints: ["半角公式：sin²(θ/2) = (1 − cos θ)/2。", "θ/2 落在哪個範圍？決定開根號取正還是負。"],
       solution: "sin²(θ/2) = (1 − 1/9)/2 = 4/9。0 < θ/2 < π/4，sin 為正：sin(θ/2) = 2/3。",
-      solutionSteps: ["sin²(θ/2) = (1 − cos θ)/2 = (8/9)/2 = 4/9。", "0 < θ/2 < π/4，取正根。", "sin(θ/2) = 2/3。"],
+      
       verify: val("\\sin\\left(\\frac{1}{2}\\arccos\\frac{1}{9}\\right)") },
     { id: "cg-0c-023", topic: "derivatives", rank: 2, answerKind: "expression",
       prompt: "\\text{化簡 }\\frac{\\sin 2x}{1+\\cos 2x}",
@@ -1238,7 +1238,7 @@
       tags: ["trig-identity-simplify", "trig"],
       hints: ["分子用 sin 2x = 2 sin x cos x。", "分母的 1 + cos 2x 選哪一種倍角形式最好消？"],
       solution: "sin 2x = 2 sin x cos x，1 + cos 2x = 2cos²x。相除得 sin x / cos x = tan x。",
-      solutionSteps: ["分子：sin 2x = 2 sin x cos x。", "分母：1 + cos 2x = 1 + (2cos²x − 1) = 2cos²x。", "相除：2 sin x cos x / (2cos²x) = tan x。"],
+      
       verify: { m: "fn", cases: [
         { at: { x: 0.3 }, v: val("\\frac{\\sin 0.6}{1+\\cos 0.6}") },
         { at: { x: 0.7 }, v: val("\\frac{\\sin 1.4}{1+\\cos 1.4}") },
@@ -1249,7 +1249,7 @@
       tags: ["trig-identity-simplify", "trig"],
       hints: ["cos 2x 有三種寫法，哪一種會出現 (cos x − sin x)？", "cos²x − sin²x 是平方差。"],
       solution: "cos 2x = cos²x − sin²x = (cos x − sin x)(cos x + sin x)。約掉分母得 cos x + sin x。",
-      solutionSteps: ["cos 2x = cos²x − sin²x。", "平方差：(cos x − sin x)(cos x + sin x)。", "約掉 cos x − sin x：cos x + sin x。"],
+      
       verify: { m: "fn", cases: [
         { at: { x: 0.2 }, v: val("\\frac{\\cos 0.4}{\\cos 0.2-\\sin 0.2}") },
         { at: { x: 1 }, v: val("\\frac{\\cos 2}{\\cos 1-\\sin 1}") },
@@ -1262,7 +1262,7 @@
       tags: ["inverse-trig-values", "inverse-trig"],
       hints: ["arcsin 的值域是 [−π/2, π/2]，答案一定在這裡面。", "哪個角的 sin 是 −1/2，而且落在那個範圍？"],
       solution: "sin(−π/6) = −1/2，且 −π/6 ∈ [−π/2, π/2]，所以 arcsin(−1/2) = −π/6（不是 7π/6）。",
-      solutionSteps: ["arcsin 的值域 [−π/2, π/2]。", "sin(−π/6) = −1/2，−π/6 在值域裡。", "arcsin(−1/2) = −π/6。"],
+      
       verify: val("\\arcsin\\left(-\\frac{1}{2}\\right)") },
     { id: "cg-0c-026", topic: "derivatives", rank: 1, answerKind: "numeric",
       prompt: "\\arccos\\left(-\\frac{\\sqrt{3}}{2}\\right)",
@@ -1270,7 +1270,7 @@
       tags: ["inverse-trig-values", "inverse-trig"],
       hints: ["arccos 的值域是 [0, π]，答案不會是負的。", "cos 為負的角落在第二象限。"],
       solution: "arccos 的值域 [0, π]。cos(5π/6) = −√3/2，且 5π/6 在值域裡，所以答案 5π/6。",
-      solutionSteps: ["arccos 的值域 [0, π]。", "cos(π/6) = √3/2；要負值，取第二象限 π − π/6 = 5π/6。", "arccos(−√3/2) = 5π/6。"],
+      
       verify: val("\\arccos\\left(-\\frac{\\sqrt{3}}{2}\\right)") },
     { id: "cg-0c-027", topic: "derivatives", rank: 1, answerKind: "numeric",
       prompt: "\\arctan(-1)+\\arctan\\sqrt{3}",
@@ -1278,7 +1278,7 @@
       tags: ["inverse-trig-values", "inverse-trig"],
       hints: ["arctan 的值域是 (−π/2, π/2)。", "tan(π/4) = 1、tan(π/3) = √3，負號怎麼處理？"],
       solution: "arctan(−1) = −π/4，arctan √3 = π/3。和為 −π/4 + π/3 = π/12。",
-      solutionSteps: ["arctan(−1) = −π/4（在 (−π/2, π/2) 裡）。", "arctan √3 = π/3。", "−π/4 + π/3 = π/12。"],
+      
       verify: val("\\arctan(-1)+\\arctan\\sqrt{3}") },
     { id: "cg-0c-028", topic: "derivatives", rank: 2, answerKind: "numeric",
       prompt: "\\arcsin\\left(\\sin\\frac{5\\pi}{6}\\right)",
@@ -1286,7 +1286,7 @@
       tags: ["inverse-trig-cancel", "inverse-trig"],
       hints: ["5π/6 不在 arcsin 的值域 [−π/2, π/2] 裡，不能直接約掉。", "先算出 sin(5π/6) 是多少，再問哪個值域內的角有這個 sin。"],
       solution: "sin(5π/6) = 1/2。arcsin(1/2) = π/6。答案不是 5π/6，因為 arcsin 只給 [−π/2, π/2] 裡的角。",
-      solutionSteps: ["sin(5π/6) = 1/2。", "arcsin(1/2)：[−π/2, π/2] 裡 sin 為 1/2 的角是 π/6。", "答案 π/6。"],
+      
       verify: val("\\arcsin\\left(\\sin\\frac{5\\pi}{6}\\right)") },
     { id: "cg-0c-029", topic: "derivatives", rank: 2, answerKind: "numeric",
       prompt: "\\arccos\\left(\\cos\\frac{5\\pi}{3}\\right)",
@@ -1294,7 +1294,7 @@
       tags: ["inverse-trig-cancel", "inverse-trig"],
       hints: ["arccos 的值域是 [0, π]；5π/3 不在裡面。", "先算 cos(5π/3)，再找 [0, π] 裡 cos 等於它的角。"],
       solution: "cos(5π/3) = cos(π/3) = 1/2。arccos(1/2) = π/3。",
-      solutionSteps: ["5π/3 = 2π − π/3，cos(5π/3) = 1/2。", "[0, π] 裡 cos 為 1/2 的角是 π/3。", "答案 π/3。"],
+      
       verify: val("\\arccos\\left(\\cos\\frac{5\\pi}{3}\\right)") },
     { id: "cg-0c-030", topic: "derivatives", rank: 2, answerKind: "expression",
       prompt: "\\text{把 }\\cos(\\arcsin x)\\text{ 寫成 }x\\text{ 的代數式（}-1\\le x\\le 1\\text{）}",
@@ -1302,7 +1302,7 @@
       tags: ["inverse-trig-compose", "inverse-trig"],
       hints: ["令 θ = arcsin x，則 sin θ = x，而且 θ ∈ [−π/2, π/2]。", "在這個範圍裡 cos θ 是正還是負？再用 sin² + cos² = 1。"],
       solution: "θ = arcsin x，sin θ = x，θ ∈ [−π/2, π/2] 所以 cos θ ≥ 0。cos θ = √(1 − sin²θ) = √(1 − x²)。",
-      solutionSteps: ["令 θ = arcsin x：sin θ = x，θ ∈ [−π/2, π/2]。", "這個範圍內 cos θ ≥ 0，所以 cos θ = √(1 − x²)。"],
+      
       verify: { m: "fn", cases: [
         { at: { x: 0.3 }, v: val("\\cos(\\arcsin 0.3)") },
         { at: { x: -0.6 }, v: val("\\cos(\\arcsin(-0.6))") },
@@ -1313,7 +1313,7 @@
       tags: ["inverse-trig-compose", "inverse-trig"],
       hints: ["令 θ = arccos x，則 cos θ = x，θ ∈ [0, π]。", "先求 sin θ（這個範圍內 sin θ ≥ 0），再算 sin θ / cos θ。"],
       solution: "θ = arccos x，cos θ = x，θ ∈ [0, π] 所以 sin θ = √(1 − x²)。tan θ = √(1 − x²)/x。",
-      solutionSteps: ["令 θ = arccos x：cos θ = x，θ ∈ [0, π]，sin θ ≥ 0。", "sin θ = √(1 − x²)。", "tan θ = sin θ / cos θ = √(1 − x²)/x。"],
+      
       verify: { m: "fn", cases: [
         { at: { x: 0.5 }, v: val("\\tan(\\arccos 0.5)") },
         { at: { x: 0.8 }, v: val("\\tan(\\arccos 0.8)") },

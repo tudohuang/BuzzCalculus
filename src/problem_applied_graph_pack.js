@@ -249,7 +249,7 @@
       tags: ["critical-undefined-derivative", "critical-points", "absolute-value"],
       hints: ["把絕對值拆成 x<1 與 x>1 兩段，各自求 f′。", "臨界點也包含「f 有定義、但 f′ 不存在」的點。"],
       solution: "x<1 時 f=−x+2，f′=−1；x>1 時 f=3x−2，f′=3。f′ 沒有零點，但在 x=1 左右斜率不同，f′(1) 不存在，所以唯一的臨界點是 x=1。",
-      solutionSteps: ["x<1：f(x)=x−2(x−1)=−x+2，f′=−1。", "x>1：f(x)=x+2(x−1)=3x−2，f′=3。", "f′ 從不為 0；x=1 左右斜率 −1 與 3 不同，f′(1) 不存在，而 f(1)=1 有定義。", "臨界點：{1}。"],
+      
       verify: { m: "critical", f: "x+2|x-1|", range: [-6, 6] } },
     { id: "cg-3a-002", topic: "derivatives", rank: 2, answerKind: "set",
       prompt: "\\text{求 }f(x)=x-3x^{2/3}\\text{ 的所有臨界點}",
@@ -257,7 +257,7 @@
       tags: ["critical-undefined-derivative", "critical-points", "radical"],
       hints: ["f′(x)=1−2x^{−1/3}，通分寫成一個分式。", "分子為 0 的點與分母為 0 的點都要看：f 在那裡有沒有定義？"],
       solution: "f′(x)=1−2x^{−1/3}=(x^{1/3}−2)/x^{1/3}。分子為 0：x^{1/3}=2，x=8；分母為 0：x=0，而 f(0)=0 有定義、f′(0) 不存在。臨界點 {0, 8}。",
-      solutionSteps: ["f′(x)=1−2x^{−1/3}=(x^{1/3}−2)/x^{1/3}。", "f′=0：x^{1/3}=2，x=8。", "f′ 不存在：x=0，f(0)=0 有定義，所以也是臨界點。", "臨界點：{0, 8}。"],
+      
       verify: { m: "critical", f: "x-3(x^2)^{1/3}", range: [-6, 20] } },
     { id: "cg-3a-003", topic: "derivatives", rank: 2, answerKind: "set",
       prompt: "\\text{求 }f(x)=\\left(x^2-4\\right)^{2/3}\\text{ 的所有臨界點}",
@@ -265,7 +265,7 @@
       tags: ["critical-undefined-derivative", "critical-points", "chain-rule"],
       hints: ["用連鎖律：f′(x)=(2/3)(x²−4)^{−1/3}·2x。", "負指數代表分母；分母為 0 的地方 f 本身有沒有定義？"],
       solution: "f′(x)=4x/(3(x²−4)^{1/3})。分子為 0：x=0；分母為 0：x=±2，這兩點 f=0 有定義但 f′ 不存在。臨界點 {−2, 0, 2}。",
-      solutionSteps: ["f′(x)=(2/3)(x²−4)^{−1/3}·2x=4x/(3(x²−4)^{1/3})。", "f′=0：x=0。", "f′ 不存在：x²−4=0，x=±2，而 f(±2)=0 有定義。", "臨界點：{−2, 0, 2}。"],
+      
       verify: { m: "critical", f: "((x^2-4)^2)^{1/3}", range: [-6, 6] } },
     { id: "cg-3a-004", topic: "derivatives", rank: 2, answerKind: "set",
       prompt: "\\text{求 }f(x)=x^2-8\\ln x\\text{ 的所有臨界點}",
@@ -273,7 +273,7 @@
       tags: ["critical-domain-check", "critical-points", "log", "domain-aware"],
       hints: ["先寫定義域。", "f′ 通分成一個分式後，分子的根、分母的根都要拿去跟定義域比。"],
       solution: "定義域 x>0。f′(x)=2x−8/x=2(x²−4)/x。分子為 0 得 x=±2，但 −2 不在定義域；分母為 0 的 x=0 也不在定義域，不算臨界點。臨界點只有 {2}。",
-      solutionSteps: ["定義域：x>0。", "f′(x)=2x−8/x=2(x−2)(x+2)/x。", "x=−2 與 x=0 都不在定義域，不算。", "臨界點：{2}。"],
+      
       verify: { m: "critical", f: "x^2-8\\ln x", range: [0.05, 12] } },
     { id: "cg-3a-005", topic: "derivatives", rank: 3, answerKind: "set",
       prompt: "\\text{求 }f(x)=\\ln\\left(x^2-1\\right)-x\\text{ 的所有臨界點}",
@@ -281,7 +281,7 @@
       tags: ["critical-domain-check", "critical-points", "log", "domain-aware"],
       hints: ["定義域是 x²−1>0，也就是 |x|>1。", "f′ 通分後分子是二次式；用公式解出兩個根，再一個一個檢查在不在定義域。"],
       solution: "定義域 |x|>1。f′=2x/(x²−1)−1=−(x²−2x−1)/(x²−1)。分子為 0：x=1±√2；1−√2≈−0.41 不在定義域。分母為 0 的 ±1 也不在定義域。臨界點 {1+√2}。",
-      solutionSteps: ["定義域：x<−1 或 x>1。", "f′(x)=2x/(x²−1)−1=−(x²−2x−1)/(x²−1)。", "x²−2x−1=0：x=1±√2；1−√2≈−0.414 落在 (−1,1)，不在定義域。", "臨界點：{1+√2}。"],
+      
       verify: { m: "critical", f: "\\ln(x^2-1)-x", range: [-8, 8] } },
 
     /* ── 3.2 增減區間：定義域斷開 ── */
@@ -291,7 +291,7 @@
       tags: ["monotone-domain-split", "monotonicity", "rational-function"],
       hints: ["用商的微分法則算 f′，看它的正負。", "x=3 不在定義域；在它兩邊的區間可以合寫成一段嗎？比較 f(0) 與 f(4)。"],
       solution: "f′(x)=((x−3)−(x+1))/(x−3)²=−4/(x−3)²<0，但 x=3 不在定義域。f(0)=−1/3<f(4)=5，跨過 x=3 不是遞減，所以要寫成兩段 (−∞,3) U (3,∞)。",
-      solutionSteps: ["f′(x)=−4/(x−3)²，在定義域上處處小於 0。", "x=3 把定義域切成兩段；f(0)=−1/3、f(4)=5，跨過 3 並沒有遞減。", "遞減區間：(−∞, 3) U (3, ∞)。"],
+      
       verify: { m: "choice", note: "decreasing 掃描會把 x=3 這一個洞併掉；改驗四段 f′ 的正負與 1/f 的零點（極點）",
         options: [{ say: "(-inf, 3) U (3, inf)", all: [
           { v: D("\\frac{x+1}{x-3}", -5), lt: 0 }, { v: D("\\frac{x+1}{x-3}", 2.9), lt: 0 },
@@ -304,7 +304,7 @@
       tags: ["monotone-domain-split", "monotonicity", "rational-function"],
       hints: ["商的微分法則：分子化簡後只剩一項。", "分母 (x²−1)² 恆正；定義域少了哪兩點？"],
       solution: "f′(x)=(2x(x²−1)−x²·2x)/(x²−1)²=−2x/(x²−1)²。x<0 時 f′>0，但 x=−1 不在定義域，所以遞增區間是 (−∞,−1) U (−1,0)。",
-      solutionSteps: ["f′(x)=−2x/(x²−1)²。", "分母恆正（x≠±1），f′>0 ⇔ x<0。", "扣掉不在定義域的 x=−1：(−∞, −1) U (−1, 0)。"],
+      
       verify: { m: "choice", note: "increasing 掃描會把 x=−1 的洞併掉；改驗各段 f′ 的正負、極點與臨界點",
         options: [{ say: "(-inf, -1) U (-1, 0)", all: [
           { v: D("\\frac{x^2}{x^2-1}", -3), gt: 0 }, { v: D("\\frac{x^2}{x^2-1}", -1.1), gt: 0 },
@@ -320,7 +320,7 @@
       tags: ["fdt-nondifferentiable", "first-derivative-test", "radical"],
       hints: ["展開成 x^{5/3}+5x^{2/3} 再微分，通分成一個分式。", "f′=0 的點與 f′ 不存在的點都是臨界點，各自看 f′ 左右的正負。"],
       solution: "f′=(5/3)x^{2/3}+(10/3)x^{−1/3}=5(x+2)/(3x^{1/3})。臨界點 x=−2 與 x=0（f′ 不存在）。f′ 在 −2 由正變負（極大），在 0 由負變正（極小），局部極小點只有 x=0。",
-      solutionSteps: ["f(x)=x^{5/3}+5x^{2/3}，f′(x)=5(x+2)/(3x^{1/3})。", "臨界點：x=−2（f′=0）、x=0（f′ 不存在）。", "x<−2：f′>0；−2<x<0：f′<0；x>0：f′>0。", "由負變正的只有 x=0：{0}。"],
+      
       verify: { m: "localMin", f: "(x^2)^{1/3}(x+5)", range: [-8, 6] } },
     { id: "cg-3a-009", topic: "derivatives", rank: 2, answerKind: "numeric",
       prompt: "\\text{求 }f(x)=x^2-6|x|+1\\text{ 的局部極大值}",
@@ -328,7 +328,7 @@
       tags: ["fdt-nondifferentiable", "first-derivative-test", "absolute-value"],
       hints: ["分 x>0 與 x<0 兩段寫 f′。", "x=0 處 f′ 不存在，看 f′ 在 0 左右的正負。"],
       solution: "x>0：f′=2x−6；x<0：f′=2x+6。臨界點 x=±3 與 x=0（尖角）。f′ 在 0 左邊接近 6、右邊接近 −6，由正變負，x=0 是局部極大，值 f(0)=1；x=±3 是局部極小。",
-      solutionSteps: ["x>0：f′=2x−6；x<0：f′=2x+6；x=0 的左右斜率不同，f′(0) 不存在。", "臨界點：x=−3、0、3。", "f′ 在 −3 由負變正、在 0 由正變負、在 3 由負變正。", "局部極大只在 x=0，值 f(0)=1。"],
+      
       verify: { m: "extremum1d", f: "x^2-6|x|+1", v: "x", lo: -2, hi: 2, kind: "max" } },
     { id: "cg-3a-010", topic: "derivatives", rank: 1, answerKind: "numeric",
       prompt: "\\text{求 }f(x)=x^3-12x+5\\text{ 的局部極大值}",
@@ -336,7 +336,7 @@
       tags: ["fdt-sign-change", "first-derivative-test", "polynomial"],
       hints: ["令 f′(x)=0 找臨界點。", "f′ 由正變負的那一點才是局部極大，把它代回 f。"],
       solution: "f′=3x²−12=3(x−2)(x+2)，臨界點 x=±2。f′ 在 −2 由正變負，局部極大值 f(−2)=−8+24+5=21。",
-      solutionSteps: ["f′(x)=3(x−2)(x+2)，臨界點 x=±2。", "x<−2：f′>0；−2<x<2：f′<0，所以 x=−2 是局部極大。", "f(−2)=−8+24+5=21。"],
+      
       verify: { m: "extremum1d", f: "x^3-12x+5", v: "x", lo: -3, hi: 0, kind: "max" } },
     { id: "cg-3a-011", topic: "derivatives", rank: 2, answerKind: "numeric",
       prompt: "f(x)=2x^3-3x^2-36x+1\\text{。求「局部極大值}-\\text{局部極小值」}",
@@ -344,7 +344,7 @@
       tags: ["fdt-sign-change", "first-derivative-test", "polynomial"],
       hints: ["f′(x)=6x²−6x−36，先提出 6 再分解。", "分別判斷兩個臨界點是極大還是極小，再各自代回 f。"],
       solution: "f′=6(x−3)(x+2)。f′ 在 −2 由正變負：局部極大 f(−2)=−16−12+72+1=45；在 3 由負變正：局部極小 f(3)=54−27−108+1=−80。相減 45−(−80)=125。",
-      solutionSteps: ["f′(x)=6(x−3)(x+2)，臨界點 x=−2、3。", "局部極大 f(−2)=45；局部極小 f(3)=−80。", "45−(−80)=125。"],
+      
       verify: { m: "let", f: "M-n", with: {
         M: { m: "extremum1d", f: "2x^3-3x^2-36x+1", v: "x", lo: -3, hi: 0, kind: "max" },
         n: { m: "extremum1d", f: "2x^3-3x^2-36x+1", v: "x", lo: 0, hi: 5, kind: "min" } } } },
@@ -356,7 +356,7 @@
       tags: ["second-deriv-speeding-up", "kinematics", STORY],
       hints: ["分別算 v(1) 與 a(1) 的正負號。", "速率變快或變慢，看 v 與 a 同號還是異號。"],
       solution: "v=3t²−18t+24，v(1)=9>0；a=6t−18，a(1)=−12<0。速度與加速度異號，速率在變小：減速。",
-      solutionSteps: ["v(t)=3t²−18t+24，v(1)=9>0（往正方向走）。", "a(t)=6t−18，a(1)=−12<0。", "v、a 異號 ⇒ 速率變小：減速。"],
+      
       verify: { m: "choice", options: [
         { say: "減速", all: [{ v: VA("x^3-9x^2+24x", 1), lt: 0 }] },
         { say: "加速", all: [{ v: VA("x^3-9x^2+24x", 1), gt: 0 }] },
@@ -367,7 +367,7 @@
       tags: ["second-deriv-speeding-up", "kinematics", STORY, "sign-chart"],
       hints: ["v=s′、a=s″，分別找出它們變號的時刻。", "把 t>0 切成幾段，在每一段看 v 與 a 是不是異號。"],
       solution: "v=3(t−1)(t−3)，a=6(t−2)。0<t<1：v>0、a<0 減速；1<t<2：同為負，加速；2<t<3：v<0、a>0 減速；t>3：同為正，加速。減速時段 (0,1) U (2,3)。",
-      solutionSteps: ["v(t)=3t²−12t+9=3(t−1)(t−3)，a(t)=6t−12=6(t−2)。", "分段：(0,1) v+ a−；(1,2) v− a−；(2,3) v− a+；(3,∞) v+ a+。", "v、a 異號的是 (0,1) 與 (2,3)。", "答案：(0, 1) U (2, 3)。"],
+      
       verify: { m: "choice", note: "速率的增減區間在 t=0 邊界上掃描會變成 −∞；改驗各段 v·a 的正負與 v、a 的零點",
         options: [{ say: "(0, 1) U (2, 3)", all: [
           { v: VA("x^3-6x^2+9x", 0.5), lt: 0 }, { v: VA("x^3-6x^2+9x", 1.5), gt: 0 },
@@ -381,7 +381,7 @@
       tags: ["second-deriv-fprime-monotone", "second-derivative", "polynomial"],
       hints: ["f′ 遞增，要看 f′ 的導數，也就是 f″ 的正負。", "f″ 是一次式，找它大於 0 的範圍。"],
       solution: "f′=3x²−12x+5，f′ 的導數 f″=6x−12>0 ⇔ x>2。f′ 在 (2,∞) 遞增。",
-      solutionSteps: ["f′(x)=3x²−12x+5。", "(f′)′=f″(x)=6x−12。", "6x−12>0 ⇔ x>2：f′ 遞增區間 (2, ∞)。"],
+      
       verify: { m: "concaveUp", f: "x^3-6x^2+5x", range: [-20, 20] } },
     { id: "cg-3a-015", topic: "derivatives", rank: 2, answerKind: "interval",
       prompt: "\\text{已知 }f'(x)=x^2e^{-x}\\text{。求 }f'\\text{ 遞增的區間}",
@@ -389,7 +389,7 @@
       tags: ["second-deriv-fprime-monotone", "second-derivative", "exponential"],
       hints: ["對 f′ 再微分一次（乘積法則），提出 e^{−x}。", "e^{−x} 恆正，正負只看剩下的二次式。"],
       solution: "f″=(x²e^{−x})′=2xe^{−x}−x²e^{−x}=x(2−x)e^{−x}。e^{−x}>0，f″>0 ⇔ x(2−x)>0 ⇔ 0<x<2，所以 f′ 在 (0,2) 遞增。",
-      solutionSteps: ["f″(x)=2xe^{−x}+x²·(−e^{−x})=x(2−x)e^{−x}。", "e^{−x}>0，f″>0 ⇔ x(2−x)>0 ⇔ 0<x<2。", "f′ 遞增區間：(0, 2)。"],
+      
       verify: { m: "increasing", f: "x^2e^{-x}", range: [-20, 20] } },
 
     /* ── 3.5 凹向：切線高估低估、f′ 與 f″ 分工、斷開的定義域 ── */
@@ -399,7 +399,7 @@
       tags: ["concavity-tangent-position", "concavity", "linear-approximation"],
       hints: ["算 f″(x) 在 x>0 的正負。", "凹向下的曲線，切線在曲線的上方還是下方？"],
       solution: "f″(x)=−(1/4)x^{−3/2}<0，√x 凹向下，切線落在曲線上方，所以切線估計值大於真值：高估。",
-      solutionSteps: ["f′=(1/2)x^{−1/2}，f″=−(1/4)x^{−3/2}<0（x>0）。", "凹向下 ⇒ 切線在曲線上方。", "估計值 2.025 大於真值：高估。"],
+      
       verify: { m: "choice", options: [
         { say: "高估", all: [{ v: { m: "linApprox", f: "\\sqrt{x}", a: 4, dx: 0.1 }, gt: V("\\sqrt{4.1}") }] },
         { say: "低估", all: [{ v: { m: "linApprox", f: "\\sqrt{x}", a: 4, dx: 0.1 }, lt: V("\\sqrt{4.1}") }] },
@@ -410,7 +410,7 @@
       tags: ["concavity-tangent-position", "concavity", "linear-approximation"],
       hints: ["算 f″(x) 在 x>0 的正負。", "凹向上的曲線，切線在曲線的上方還是下方？"],
       solution: "f″(x)=2/x³>0（x>0），1/x 凹向上，切線落在曲線下方，所以估計值小於真值：低估。",
-      solutionSteps: ["f′=−1/x²，f″=2/x³>0（x>0）。", "凹向上 ⇒ 切線在曲線下方。", "估計值 0.525 小於真值 1/1.9≈0.5263：低估。"],
+      
       verify: { m: "choice", options: [
         { say: "低估", all: [{ v: { m: "linApprox", f: "\\frac{1}{x}", a: 2, dx: -0.1 }, lt: V("\\frac{1}{1.9}") }] },
         { say: "高估", all: [{ v: { m: "linApprox", f: "\\frac{1}{x}", a: 2, dx: -0.1 }, gt: V("\\frac{1}{1.9}") }] },
@@ -422,7 +422,7 @@
       tags: ["concavity-vs-monotone", "concavity", "monotonicity"],
       hints: ["增減看 f′ 的正負。", "凹向看 f″ 的正負——兩件事分開判斷。"],
       solution: "f′=−1/x²<0，遞減；f″=2/x³>0（x>0），凹向上。增減與凹向是兩個獨立的問題。",
-      solutionSteps: ["f′(x)=−1/x²<0 ⇒ 遞減。", "f″(x)=2/x³>0（x>0）⇒ 凹向上。", "答案：遞減且凹向上。"],
+      
       verify: { m: "choice", options: [
         { say: "遞減且凹向上", all: [{ v: D("\\frac{1}{x}", 0.5), lt: 0 }, { v: D("\\frac{1}{x}", 3), lt: 0 }, { v: D("\\frac{1}{x}", 0.5, 2), gt: 0 }, { v: D("\\frac{1}{x}", 3, 2), gt: 0 }] },
         { say: "遞減且凹向下", all: [{ v: D("\\frac{1}{x}", 1, 2), lt: 0 }] },
@@ -435,7 +435,7 @@
       tags: ["concavity-vs-monotone", "concavity", "monotonicity"],
       hints: ["f 的增減：看題目給的 f′ 本身的正負。", "f 的凹向：看 f′ 自己是在變大還是變小。"],
       solution: "f′=1/x>0，所以 f 遞增；f″=(1/x)′=−1/x²<0，所以 f 凹向下。f′ 是正的、但越來越小。",
-      solutionSteps: ["f′(x)=1/x>0（x>0）⇒ f 遞增。", "f″(x)=−1/x²<0 ⇒ f 凹向下。", "答案：遞增且凹向下。"],
+      
       verify: { m: "choice", options: [
         { say: "遞增且凹向下", all: [{ v: V("\\frac{1}{0.5}"), gt: 0 }, { v: V("\\frac{1}{3}"), gt: 0 }, { v: D("\\frac{1}{x}", 0.5), lt: 0 }, { v: D("\\frac{1}{x}", 3), lt: 0 }] },
         { say: "遞增且凹向上", all: [{ v: D("\\frac{1}{x}", 1), gt: 0 }] },
@@ -447,7 +447,7 @@
       tags: ["concavity-domain-split", "concavity", "rational-function"],
       hints: ["先把 f 寫成 1−1/(x+1)，微分比較快。", "f″ 的正負由 (x+1)³ 決定；x=−1 不在定義域。"],
       solution: "f=1−1/(x+1)，f′=1/(x+1)²，f″=−2/(x+1)³。x<−1 時 (x+1)³<0，f″>0，凹向上；x>−1 時凹向下。凹向上區間 (−∞,−1)。",
-      solutionSteps: ["f(x)=1−1/(x+1)，f′(x)=(x+1)^{−2}。", "f″(x)=−2(x+1)^{−3}。", "f″>0 ⇔ (x+1)³<0 ⇔ x<−1：(−∞, −1)。"],
+      
       verify: { m: "concaveUp", f: "\\frac{x}{x+1}", range: [-20, 20] } },
 
     /* ── 3.6 反曲點：f″ 不存在、f″=0 但不換號 ── */
@@ -457,7 +457,7 @@
       tags: ["inflection-undefined-second", "inflection", "radical"],
       hints: ["寫成 (x−1)^{1/3}+2，微分兩次。", "f″ 永遠不等於 0，但有一點 f″ 不存在；看那一點兩側 f″ 的正負，並確認 f 在那裡有定義。"],
       solution: "f′=(1/3)(x−1)^{−2/3}，f″=−(2/9)(x−1)^{−5/3}。f″ 沒有零點，但在 x=1 不存在；x<1 時 f″>0、x>1 時 f″<0，凹向改變且 f(1)=2 有定義，所以 x=1 是反曲點。",
-      solutionSteps: ["f″(x)=−(2/9)(x−1)^{−5/3}，從不為 0。", "x=1 處 f″ 不存在，但 f(1)=2 有定義。", "x<1：f″>0；x>1：f″<0，凹向改變。", "反曲點：{1}。"],
+      
       verify: { m: "inflection", f: "\\sgn(x-1)|x-1|^{1/3}+2", range: [-6, 6] } },
     { id: "cg-3a-022", topic: "derivatives", rank: 3, answerKind: "set",
       prompt: "\\text{求 }f(x)=x^{1/3}(x+4)\\text{ 所有反曲點的 }x\\text{ 座標}",
@@ -465,7 +465,7 @@
       tags: ["inflection-undefined-second", "inflection", "radical"],
       hints: ["展開成 x^{4/3}+4x^{1/3}，微分兩次後提出 x^{−5/3}。", "f″=0 的點與 f″ 不存在的點都要檢查兩側正負。"],
       solution: "f′=(4/3)x^{1/3}+(4/3)x^{−2/3}，f″=(4/9)x^{−2/3}−(8/9)x^{−5/3}=(4/9)x^{−5/3}(x−2)。x<0：f″>0；0<x<2：f″<0；x>2：f″>0。x=0（f″ 不存在）與 x=2（f″=0）都換號，反曲點 {0, 2}。",
-      solutionSteps: ["f(x)=x^{4/3}+4x^{1/3}，f″(x)=(4/9)x^{−5/3}(x−2)。", "候選：x=2（f″=0）、x=0（f″ 不存在，f(0)=0 有定義）。", "符號：(−∞,0) 正、(0,2) 負、(2,∞) 正，兩點都換號。", "反曲點：{0, 2}。"],
+      
       verify: { m: "inflection", f: "\\sgn(x)|x|^{1/3}(x+4)", range: [-6, 8] } },
     { id: "cg-3a-023", topic: "derivatives", rank: 3, answerKind: "set",
       prompt: "\\text{求 }f(x)=x^5-5x^4+1\\text{ 所有反曲點的 }x\\text{ 座標}",
@@ -473,7 +473,7 @@
       tags: ["inflection-sign-check", "inflection", "polynomial"],
       hints: ["f″ 可以提出 x²。", "f″=0 的每一個根都要檢查兩側有沒有換號。"],
       solution: "f″=20x³−60x²=20x²(x−3)。x=0 時 f″=0，但 x² 不換號，兩側 f″ 都是負的，不是反曲點；x=3 兩側由負變正，是反曲點。答案 {3}。",
-      solutionSteps: ["f′=5x⁴−20x³，f″=20x³−60x²=20x²(x−3)。", "候選 x=0、x=3。", "x=0 兩側 f″<0（x² 不換號），不是反曲點；x=3 由負變正。", "反曲點：{3}。"],
+      
       verify: { m: "choice", note: "inflection 掃描會把 f″ 的偶重根 x=0 也算成根；改驗 f″ 各段正負與換號點",
         options: [{ say: "{3}", all: [
           { v: D("x^5-5x^4+1", -1, 2), lt: 0 }, { v: D("x^5-5x^4+1", 1, 2), lt: 0 },
@@ -487,7 +487,7 @@
       tags: ["inflection-sign-check", "inflection", "polynomial"],
       hints: ["f″(1)=0 只是候選，還要看 f″ 在 1 的兩側。", "把 f″ 算出來，看它在 x=1 左右的正負。"],
       solution: "f″=12(x−1)²≥0，在 x=1 兩側都是正的，凹向沒有改變，所以 x=1 不是反曲點。f′(1)=1 也不是 0。",
-      solutionSteps: ["f′=4(x−1)³+1，f′(1)=1。", "f″=12(x−1)²，在 x=1 兩側都大於 0。", "凹向不變：x=1 不是反曲點。"],
+      
       verify: { m: "choice", options: [
         { say: "不是", all: [{ v: D("(x-1)^4+x", 0.8, 2), gt: 0 }, { v: D("(x-1)^4+x", 1.2, 2), gt: 0 }] },
         { say: "是，因為 f″(1)=0", all: [{ v: D("(x-1)^4+x", 1, 2), eq: 0, tol: 1e-4 }, { v: D("(x-1)^4+x", 0.8, 2), lt: 0 }] },
@@ -501,7 +501,7 @@
       tags: ["sdt-inconclusive", "second-derivative-test", "first-derivative-test"],
       hints: ["把 f′ 因式分解。", "看 f′ 在 0 的左邊與右邊是什麼號。"],
       solution: "f′=4x³−12x²=4x²(x−3)。x 在 0 附近時 x−3<0、x²>0，f′ 在 0 兩側都是負的，不換號，所以 x=0 不是極值（f 在那裡一路往下）。",
-      solutionSteps: ["f′(x)=4x²(x−3)。", "0 的左右兩側：4x²>0、x−3<0，f′<0。", "f′ 不換號 ⇒ x=0 不是局部極值。"],
+      
       verify: { m: "choice", options: [
         { say: "不是極值", all: [{ v: D("x^4-4x^3", -0.1), lt: 0 }, { v: D("x^4-4x^3", 0.1), lt: 0 }] },
         { say: "局部極大", all: [{ v: D("x^4-4x^3", -0.1), gt: 0 }, { v: D("x^4-4x^3", 0.1), lt: 0 }] },
@@ -512,7 +512,7 @@
       tags: ["sdt-inconclusive", "second-derivative-test", "first-derivative-test"],
       hints: ["f′ 提出 4 之後，看看是不是某個一次式的完全立方。", "唯一的臨界點上 f″ 是 0，二階判別說不出結論，改看 f′ 的正負。"],
       solution: "f′=4x³−24x²+48x−32=4(x−2)³，唯一臨界點 x=2，f″(2)=12(2−2)²=0，二階判別失效。f′ 在 2 由負變正，局部極小值 f(2)=16−64+96−64+19=3。",
-      solutionSteps: ["f′(x)=4(x³−6x²+12x−8)=4(x−2)³。", "f″(x)=12(x−2)²，f″(2)=0，二階判別失效。", "x<2：f′<0；x>2：f′>0 ⇒ x=2 局部極小。", "f(2)=16−64+96−64+19=3。"],
+      
       verify: { m: "extremum1d", f: "x^4-8x^3+24x^2-32x+19", v: "x", lo: -2, hi: 6, kind: "min" } },
     { id: "cg-3a-027", topic: "derivatives", rank: 1, answerKind: "text",
       prompt: "\\text{已知 }f\\text{ 二階可微，}f'(2)=0\\text{ 且 }f''(2)=-5\\text{。}x=2\\text{ 是什麼點？}",
@@ -521,7 +521,7 @@
       tags: ["sdt-apply", "second-derivative-test"],
       hints: ["f′(2)=0：切線水平。", "f″(2) 的正負告訴你那附近是凹向上還是凹向下。"],
       solution: "二階判別：f′(2)=0 且 f″(2)<0，曲線在 2 附近凹向下，水平切線點在山頂，所以是局部極大。f″ 在 2 附近不換號，也不是反曲點。",
-      solutionSteps: ["f′(2)=0：x=2 是臨界點。", "f″(2)=−5<0：在 2 附近凹向下。", "凹向下的水平切線點是局部極大。"],
+      
       verify: { m: "choice", note: "見證函數 −(5/2)(x−2)² 滿足兩個條件，用它推翻誘答；正解是二階判別本身",
         options: [
           { say: "局部極大", given: [{ v: D("-\\frac{5}{2}(x-2)^2", 2), eq: 0 }, { v: D("-\\frac{5}{2}(x-2)^2", 2, 2), eq: -5, tol: 1e-4 }],
@@ -536,7 +536,7 @@
       tags: ["sdt-apply", "second-derivative-test", "polynomial"],
       hints: ["先解 f′(x)=0。", "把兩個臨界點代進 f″，正的那個是極小。"],
       solution: "f′=3x²−6x−9=3(x−3)(x+1)，f″=6x−6。f″(3)=12>0 → 局部極小 f(3)=27−27−27+2=−25；f″(−1)=−12<0 → 局部極大。",
-      solutionSteps: ["f′(x)=3(x−3)(x+1)，臨界點 −1、3。", "f″(x)=6x−6：f″(3)=12>0，f″(−1)=−12<0。", "局部極小值 f(3)=27−27−27+2=−25。"],
+      
       verify: { m: "extremum1d", f: "x^3-3x^2-9x+2", v: "x", lo: 0, hi: 6, kind: "min" } },
 
     /* ── 3.8 漸近線：x→−∞、非有理函數的垂直與斜漸近線 ── */
@@ -546,7 +546,7 @@
       tags: ["asymptote-negative-infinity-root", "asymptote", "limit-at-infinity", "radical"],
       hints: ["分子分母同除以 |x|，因為 √(x²)=|x|。", "x<0 時 |x|=−x，分子除以 |x| 會多一個負號。"],
       solution: "x<0 時 √(x²+4)=|x|√(1+4/x²)=−x√(1+4/x²)。f=3x/(−x√(1+4/x²))=−3/√(1+4/x²)→−3。（x→+∞ 時是 y=3，兩邊不同。）",
-      solutionSteps: ["x<0：√(x²+4)=−x·√(1+4/x²)。", "f(x)=3x/(−x√(1+4/x²))=−3/√(1+4/x²)。", "x→−∞：c=−3。"],
+      
       verify: { m: "limit", f: "\\frac{3x}{\\sqrt{x^2+4}}", at: "-inf" } },
     { id: "cg-3b-002", topic: "limits", rank: 3, answerKind: "numeric",
       prompt: "f(x)=\\sqrt{4x^2+x}+2x\\text{ 在 }x\\to-\\infty\\text{ 的水平漸近線是 }y=c\\,\\text{，求 }c",
@@ -554,7 +554,7 @@
       tags: ["asymptote-negative-infinity-root", "asymptote", "limit-at-infinity", "rationalize"],
       hints: ["x→−∞ 時 2x 是很大的負數，是 ∞−∞ 型：乘以共軛 √(4x²+x)−2x。", "通分後分子分母同除以 |x|=−x。"],
       solution: "乘共軛：f=(4x²+x−4x²)/(√(4x²+x)−2x)=x/(√(4x²+x)−2x)。x<0 時同除以 −x：−1/(√(4+1/x)+2)→−1/4。",
-      solutionSteps: ["f(x)=x/(√(4x²+x)−2x)（乘共軛）。", "x<0：√(4x²+x)=−x√(4+1/x)，分子分母同除以 −x。", "f=−1/(√(4+1/x)+2)→−1/(2+2)=−1/4。"],
+      
       verify: { m: "limit", f: "\\sqrt{4x^2+x}+2x", at: "-inf" } },
     { id: "cg-3b-003", topic: "limits", rank: 2, answerKind: "set",
       prompt: "\\text{求 }f(x)=\\tan(2x)\\text{ 在 }0<x<\\pi\\text{ 範圍內所有垂直漸近線的 }x",
@@ -562,7 +562,7 @@
       tags: ["asymptote-vertical", "asymptote", "trig"],
       hints: ["tan(2x)=sin(2x)/cos(2x)，分母為 0 時分子不為 0。", "解 cos(2x)=0，注意 2x 的範圍是 (0, 2π)。"],
       solution: "tan(2x) 在 cos(2x)=0 處趨向 ±∞。2x∈(0,2π)，2x=π/2 或 3π/2，所以 x=π/4、3π/4。",
-      solutionSteps: ["垂直漸近線在 cos(2x)=0、sin(2x)≠0 的地方。", "0<2x<2π：2x=π/2、3π/2。", "x=π/4、3π/4。"],
+      
       verify: { m: "zeros", f: "\\cos(2x)", range: [0.01, 3.13] } },
     { id: "cg-3b-004", topic: "limits", rank: 3, answerKind: "numeric",
       prompt: "f(x)=\\dfrac{\\ln x}{x-1}\\text{ 只有一條垂直漸近線 }x=a\\,\\text{，求 }a",
@@ -570,7 +570,7 @@
       tags: ["asymptote-vertical", "asymptote", "log", "asymptote-hole-vs-vertical"],
       hints: ["分母為 0 的 x=1：分子也是 0，算 x→1 的極限看看是不是有限。", "定義域的邊界 x=0⁺：ln x 會怎樣？"],
       solution: "x→1 時是 0/0，用 L'Hôpital 得 (1/x)/1→1，有限，不是漸近線。x→0⁺ 時 ln x→−∞、x−1→−1，f→+∞，所以 a=0。",
-      solutionSteps: ["x=1：lim (ln x)/(x−1)=lim (1/x)/1=1，有限，只是洞。", "x→0⁺：ln x→−∞，x−1→−1，f→+∞。", "垂直漸近線 x=0：a=0。"],
+      
       verify: { m: "choice", note: "f→+∞ 改驗 e^{−f}=x^{1/(1−x)}→0；x=1 驗極限有限",
         options: [{ say: "0", all: [
           { v: { m: "limit", f: "x^{\\frac{1}{1-x}}", at: 0, dir: "+" }, eq: 0 },
@@ -581,7 +581,7 @@
       tags: ["asymptote-slant", "asymptote", "limit-at-infinity", "exponential"],
       hints: ["先求 m=lim f(x)/x。", "再求 b=lim (f(x)−mx)；令 t=1/x 會變成 0/0 型。"],
       solution: "m=lim e^{1/x}=1。b=lim (xe^{1/x}−x)=lim (e^{1/x}−1)/(1/x)，令 t=1/x→0⁺，得 lim (e^t−1)/t=1。斜漸近線 y=x+1，b=1。",
-      solutionSteps: ["m=lim_{x→∞} f(x)/x=lim e^{1/x}=1。", "b=lim (xe^{1/x}−x)=lim_{t→0⁺} (e^t−1)/t（t=1/x）。", "(e^t−1)/t→1，所以 b=1。"],
+      
       verify: { m: "choice", note: "m 與 b 各自數值取極限",
         options: [{ say: "1", all: [
           { v: { m: "limit", f: "e^{1/x}", at: "inf" }, eq: 1 },
@@ -594,7 +594,7 @@
       tags: ["sketch-domain-intercepts", "domain", "curve-sketching"],
       hints: ["根號裡要 ≥ 0，對數裡要 > 0。", "兩個條件同時成立，取交集；端點要看是 ≥ 還是 >。"],
       solution: "√(x+4) 要 x+4≥0，即 x≥−4；ln(1−x) 要 1−x>0，即 x<1。交集 [−4, 1)。",
-      solutionSteps: ["x+4≥0 ⇒ x≥−4（可以等號）。", "1−x>0 ⇒ x<1（不能等號）。", "定義域：[−4, 1)。"],
+      
       verify: { m: "domain", f: "\\sqrt{x+4}+\\ln(1-x)", range: [-10, 10] } },
     { id: "cg-3b-007", topic: "derivatives", rank: 2, answerKind: "set",
       prompt: "\\text{求 }f(x)=\\left(x^2-4\\right)\\sqrt{x+1}\\text{ 所有 }x\\text{ 截距}",
@@ -602,7 +602,7 @@
       tags: ["sketch-domain-intercepts", "curve-sketching", "domain-aware", "radical"],
       hints: ["乘積為 0：其中一個因式為 0。", "解出來的每個 x 都要在定義域 x≥−1 裡。"],
       solution: "定義域 x≥−1。x²−4=0 得 x=±2，但 −2 不在定義域；√(x+1)=0 得 x=−1。x 截距是 {−1, 2}。",
-      solutionSteps: ["定義域：x≥−1。", "x²−4=0：x=±2，x=−2 不在定義域。", "√(x+1)=0：x=−1。", "x 截距：{−1, 2}。"],
+      
       verify: { m: "zeros", f: "(x^2-4)\\sqrt{x+1}", range: [-1, 6] } },
     { id: "cg-3b-008", topic: "derivatives", rank: 1, answerKind: "text",
       prompt: "f(x)=\\dfrac{x^3}{x^2+1}\\text{ 是奇函數、偶函數，還是都不是？}",
@@ -610,7 +610,7 @@
       tags: ["sketch-symmetry", "symmetry", "curve-sketching"],
       hints: ["把 x 換成 −x，化簡 f(−x)。", "f(−x)=f(x) 是偶，f(−x)=−f(x) 是奇。"],
       solution: "f(−x)=(−x)³/((−x)²+1)=−x³/(x²+1)=−f(x)，所以是奇函數，圖形對原點對稱。",
-      solutionSteps: ["分子 (−x)³=−x³，分母 (−x)²+1=x²+1。", "f(−x)=−f(x)。", "奇函數。"],
+      
       verify: { m: "choice", options: [
         { say: "奇函數", all: [{ v: V("\\frac{1.3^3}{1.3^2+1}+\\frac{(-1.3)^3}{(-1.3)^2+1}"), eq: 0 }, { v: V("\\frac{0.7^3}{0.7^2+1}+\\frac{(-0.7)^3}{(-0.7)^2+1}"), eq: 0 }] },
         { say: "偶函數", all: [{ v: V("\\frac{1.3^3}{1.3^2+1}-\\frac{(-1.3)^3}{(-1.3)^2+1}"), eq: 0 }] },
@@ -621,7 +621,7 @@
       tags: ["sketch-symmetry", "symmetry", "trig"],
       hints: ["x 是奇函數，tan x 也是奇函數。", "算 f(−x)=(−x)·tan(−x)。"],
       solution: "f(−x)=(−x)·tan(−x)=(−x)(−tan x)=x tan x=f(x)，兩個奇函數相乘是偶函數。",
-      solutionSteps: ["tan(−x)=−tan x。", "f(−x)=(−x)(−tan x)=x tan x=f(x)。", "偶函數。"],
+      
       verify: { m: "choice", options: [
         { say: "偶函數", all: [{ v: V("1.1\\tan(1.1)-(-1.1)\\tan(-1.1)"), eq: 0 }, { v: V("0.4\\tan(0.4)-(-0.4)\\tan(-0.4)"), eq: 0 }] },
         { say: "奇函數", all: [{ v: V("1.1\\tan(1.1)+(-1.1)\\tan(-1.1)"), eq: 0 }] },
@@ -635,7 +635,7 @@
       tags: ["sketch-consistency-check", "curve-sketching", "concavity"],
       hints: ["極值看 f′=3x²−3 的換號，凹向看 f″=6x 的正負。", "凹向改變的點在哪裡？它有沒有落在 (−1, 1) 裡面？"],
       solution: "f′=3(x−1)(x+1)：−1 極大、1 極小，兩句都對。f″=6x：(0,∞) 凹向上對；但 (−1,0) 凹向下、(0,1) 凹向上，「(−1,1) 凹向下」是錯的——反曲點 0 在中間。",
-      solutionSteps: ["f′=3(x−1)(x+1)：x=−1 由正變負（極大）、x=1 由負變正（極小）。", "f″=6x：x>0 凹向上、x<0 凹向下。", "(−1,1) 跨過反曲點 0，不是整段凹向下：這句錯。"],
+      
       verify: { m: "choice", pick: "false", options: [
         { say: "在 (−1, 1) 凹向下", all: [{ v: D("x^3-3x", -0.5, 2), lt: 0 }, { v: D("x^3-3x", 0.5, 2), lt: 0 }] },
         { say: "x=−1 是局部極大", all: [{ v: D("x^3-3x", -1.1), gt: 0 }, { v: D("x^3-3x", -0.9), lt: 0 }] },
@@ -648,7 +648,7 @@
       tags: ["sketch-consistency-check", "second-derivative-test", "curve-sketching"],
       hints: ["f″(1)>0 代表 1 附近凹向上；凹向上的水平切線點是山頂還是谷底？", "f″(1)=0 的兩組：試試 (x−1)⁴ 與 (x−1)³。"],
       solution: "f′(1)=0 且 f″(1)>0 時二階判別保證 f(1) 是嚴格局部極小，不可能是局部極大。其餘三組都有例子：(x−1)⁴（極小）、(x−1)³（不是極值）、−(x−1)²（極大）。",
-      solutionSteps: ["二階判別：f′(1)=0、f″(1)>0 ⇒ 嚴格局部極小，和「局部極大」矛盾。", "(x−1)⁴：f′(1)=f″(1)=0，局部極小；(x−1)³：f′(1)=f″(1)=0，不是極值。", "−(x−1)²：f″(1)=−2<0，局部極大。", "不可能的是第一組。"],
+      
       verify: { m: "choice", pick: "false", note: "選項讀成「可以同時成立」：三組誘答各用一個見證函數正面成立；正解是二階判別本身",
         options: [
           { say: "f′(1)=0、f″(1)>0、f(1) 是局部極大", unknown: "二階判別定理：f′(1)=0、f″(1)>0 必為嚴格局部極小" },
@@ -663,7 +663,7 @@
       tags: ["optimization-domain", "optimization", STORY, "closed-interval"],
       hints: ["設和牆平行的邊長 x，寫出面積 A(x)，並寫出 x 的範圍。", "A′=0 解出的 x 落在範圍裡嗎？不在的話，看範圍的端點。"],
       solution: "設平行牆的邊 x（0<x≤40），另兩邊各 (100−x)/2，A=x(100−x)/2。A′=50−x=0 得 x=50，超出範圍；A 在 (0,40] 遞增，最大在 x=40：A=40×30=1200 平方公尺。",
-      solutionSteps: ["A(x)=x·(100−x)/2，0<x≤40。", "A′(x)=50−x=0 ⇒ x=50，不在 (0,40] 裡。", "A′>0 在整個範圍，最大在端點 x=40：另兩邊各 30 公尺。", "最大面積 40×30=1200 平方公尺。"],
+      
       verify: { m: "extremum1d", f: "\\frac{x(100-x)}{2}", v: "x", lo: 0, hi: 40, kind: "max" } },
     { id: "cg-3c-002", topic: "derivatives", rank: 3, answerKind: "numeric",
       prompt: "\\text{從 12 公分}\\times 12\\text{ 公分的正方形紙板四角各剪掉邊長 }x\\text{ 公分的小正方形，折成無蓋盒。規定盒子不能太淺：}x\\ge 3\\text{。盒子最大容積是多少立方公分？}",
@@ -671,7 +671,7 @@
       tags: ["optimization-domain", "optimization", STORY, "closed-interval"],
       hints: ["V(x)=x(12−2x)²，x 的範圍是 3≤x<6。", "V′=0 的解有沒有落在範圍裡？沒有的話，V 在範圍裡怎麼變化？"],
       solution: "V=x(12−2x)²，V′=(12−2x)(12−6x)，臨界點 x=2、6，都不在 [3,6) 的內部。範圍內 V′<0，V 遞減，最大在 x=3：V=3×6²=108 立方公分。",
-      solutionSteps: ["V(x)=x(12−2x)²，3≤x<6。", "V′(x)=(12−2x)²−4x(12−2x)=(12−2x)(12−6x)，零點 x=2、6。", "3<x<6 時 12−2x>0、12−6x<0，V′<0，V 遞減。", "最大在 x=3：V=3·6²=108 立方公分。"],
+      
       verify: { m: "extremum1d", f: "x(12-2x)^2", v: "x", lo: 3, hi: 6, kind: "max" } },
 
     /* ── 3.13 路線最佳化：最佳解在端點 ── */
@@ -681,7 +681,7 @@
       tags: ["optimization-endpoint-check", "optimization", STORY, "optimization-path-time"],
       hints: ["設上岸點離 P 為 x 公里（0≤x≤4），寫出總時間 T(x)。", "試著解 T′(x)=0：x/√(9+x²) 永遠小於 1，等式有沒有解？"],
       solution: "T(x)=√(9+x²)/5+(4−x)/4。T′=x/(5√(9+x²))−1/4，因為 x/√(9+x²)<1，T′<1/5−1/4<0，T 一路遞減，最小在 x=4：直接划到 Q，T=5/5=1 小時=60 分鐘。",
-      solutionSteps: ["T(x)=√(9+x²)/5+(4−x)/4，0≤x≤4。", "T′(x)=x/(5√(9+x²))−1/4<1/5−1/4<0，沒有臨界點。", "T 遞減，最小在端點 x=4：T(4)=√25/5=1 小時。", "最少 60 分鐘（划船比跑步快，直接划到 Q）。"],
+      
       verify: { m: "extremum1d", f: "60\\left(\\frac{\\sqrt{9+x^2}}{5}+\\frac{4-x}{4}\\right)", v: "x", lo: 0, hi: 4, kind: "min" } },
     { id: "cg-3c-004", topic: "derivatives", rank: 3, answerKind: "numeric",
       prompt: "\\text{河寬 2 公里，工廠在對岸、下游 6 公里處。電纜沿本岸鋪每公里 60 萬元、在水下鋪每公里 50 萬元。先沿本岸鋪 }x\\text{ 公里（}0\\le x\\le 6\\text{）再斜穿河到工廠，最低總成本是多少萬元？}",
@@ -689,7 +689,7 @@
       tags: ["optimization-endpoint-check", "optimization", STORY, "optimization-path-cost"],
       hints: ["水下那段長 √(4+(6−x)²)，寫出 C(x)。", "C′(x) 裡的 (6−x)/√(4+(6−x)²) 永遠小於 1，C′ 的正負會改變嗎？"],
       solution: "C(x)=60x+50√(4+(6−x)²)。C′=60−50(6−x)/√(4+(6−x)²)>60−50>0，C 遞增，最小在 x=0：全部走水下，C=50√40=100√10≈316.2 萬元。",
-      solutionSteps: ["C(x)=60x+50√(4+(6−x)²)，0≤x≤6。", "C′(x)=60−50·(6−x)/√(4+(6−x)²)>60−50=10>0。", "C 遞增，最小在端點 x=0。", "C(0)=50√40=100√10≈316.2 萬元。"],
+      
       verify: { m: "extremum1d", f: "60x+50\\sqrt{4+(6-x)^2}", v: "x", lo: 0, hi: 6, kind: "min" } },
 
     /* ── 3.15 線性近似：高估還是低估 ── */
@@ -699,7 +699,7 @@
       tags: ["linapprox-over-under", "linear-approximation", "concavity", "log"],
       hints: ["(ln x)″ 的正負決定切線在曲線上方還是下方。", "不管往左還是往右估計，結論都一樣。"],
       solution: "(ln x)″=−1/x²<0，凹向下，切線在曲線上方，所以 −0.1 大於真值 ln 0.9≈−0.1054：高估。",
-      solutionSteps: ["L(x)=x−1，L(0.9)=−0.1。", "(ln x)″=−1/x²<0：凹向下，切線在曲線上方。", "−0.1>ln 0.9≈−0.1054：高估。"],
+      
       verify: { m: "choice", options: [
         { say: "高估", all: [{ v: { m: "linApprox", f: "\\ln x", a: 1, dx: -0.1 }, gt: V("\\ln 0.9") }] },
         { say: "低估", all: [{ v: { m: "linApprox", f: "\\ln x", a: 1, dx: -0.1 }, lt: V("\\ln 0.9") }] },
@@ -710,7 +710,7 @@
       tags: ["linapprox-over-under", "linear-approximation", "concavity"],
       hints: ["算 (1+x)^{10} 的二階導數，看 x=0 附近的正負。", "凹向上的曲線，切線在曲線的哪一邊？"],
       solution: "f″=90(1+x)^8>0，凹向上，切線在曲線下方，所以 1.2 小於真值 1.02^{10}≈1.219：低估。",
-      solutionSteps: ["L(x)=1+10x，L(0.02)=1.2。", "f″(x)=90(1+x)^8>0：凹向上，切線在曲線下方。", "1.2<1.02^{10}≈1.219：低估。"],
+      
       verify: { m: "choice", options: [
         { say: "低估", all: [{ v: { m: "linApprox", f: "(1+x)^{10}", a: 0, dx: 0.02 }, lt: V("1.02^{10}") }] },
         { say: "高估", all: [{ v: { m: "linApprox", f: "(1+x)^{10}", a: 0, dx: 0.02 }, gt: V("1.02^{10}") }] },
@@ -723,7 +723,7 @@
       tags: ["differential-relative-error", "differentials", STORY, "error-propagation"],
       hints: ["dV=V′(r)dr，相對誤差是 dV/V。", "把 dV/V 寫成 dr/r 的倍數。"],
       solution: "V=(4/3)πr³，dV=4πr²dr，dV/V=3·dr/r=3×2%=6%。",
-      solutionSteps: ["V=(4/3)πr³，dV=4πr²·dr。", "dV/V=4πr²dr/((4/3)πr³)=3·(dr/r)。", "3×2%=6%。"],
+      
       verify: { m: "let", f: "100\\frac{d}{W}", with: {
         d: { m: "differential", f: "\\frac{4}{3}\\pi x^3", a: 1, dx: 0.02 }, W: V("\\frac{4}{3}\\pi") } } },
     { id: "cg-3d-004", topic: "derivatives", rank: 2, answerKind: "numeric",
@@ -732,7 +732,7 @@
       tags: ["differential-relative-error", "differentials", STORY, "error-propagation"],
       hints: ["T 是 L 的 1/2 次方乘上常數。", "dT/T 是 dL/L 的幾倍？"],
       solution: "T=kL^{1/2}，dT=(1/2)kL^{−1/2}dL，dT/T=(1/2)(dL/L)=(1/2)×4%=2%。",
-      solutionSteps: ["T=(2π/√g)·L^{1/2}。", "dT/T=(1/2)·dL/L。", "(1/2)×4%=2%。"],
+      
       verify: { m: "let", f: "100\\frac{d}{W}", with: {
         d: { m: "differential", f: "2\\pi\\sqrt{x/9.8}", a: 1, dx: 0.04 }, W: V("2\\pi\\sqrt{1/9.8}") } } },
     { id: "cg-3d-005", topic: "derivatives", rank: 3, answerKind: "numeric",
@@ -741,7 +741,7 @@
       tags: ["differential-relative-error", "differentials", STORY, "error-propagation"],
       hints: ["先找出 dV/V 和 dx/x 的關係。", "反過來：體積的誤差上限給定，解邊長的誤差上限。"],
       solution: "V=x³，dV/V=3·dx/x。要 3·dx/x≤3%，所以 dx/x≤1%。",
-      solutionSteps: ["V=x³，dV=3x²dx，dV/V=3·(dx/x)。", "3·(dx/x)≤3%。", "dx/x≤1%。"],
+      
       verify: { m: "let", f: "\\frac{3}{100d}", with: { d: { m: "differential", f: "x^3", a: 1, dx: 0.01 } } } },
     { id: "cg-3d-006", topic: "derivatives", rank: 1, answerKind: "numeric",
       prompt: "y=\\sqrt{x}\\text{，}x=16\\text{、}dx=0.5\\text{。求微分 }dy",
@@ -749,7 +749,7 @@
       tags: ["differential-dy", "differentials"],
       hints: ["dy=f′(x)·dx。", "先算 f′(16)。"],
       solution: "f′(x)=1/(2√x)，f′(16)=1/8，dy=(1/8)(0.5)=1/16=0.0625。",
-      solutionSteps: ["f′(x)=1/(2√x)，f′(16)=1/8。", "dy=f′(16)·dx=(1/8)·0.5=1/16。"],
+      
       verify: { m: "differential", f: "\\sqrt{x}", a: 16, dx: 0.5 } },
     { id: "cg-3d-007", topic: "derivatives", rank: 2, answerKind: "numeric",
       prompt: "y=x^3\\text{，}x=2\\text{、}\\Delta x=dx=0.1\\text{。求 }\\Delta y-dy",
@@ -757,7 +757,7 @@
       tags: ["differential-dy", "differentials"],
       hints: ["Δy 是真正的變化量 f(2.1)−f(2)；dy=f′(2)·dx。", "分別算出兩個數再相減。"],
       solution: "Δy=2.1³−2³=9.261−8=1.261；dy=3·2²·0.1=1.2。Δy−dy=0.061，差很小——這就是 dy≈Δy 的意思。",
-      solutionSteps: ["Δy=f(2.1)−f(2)=9.261−8=1.261。", "dy=f′(2)·dx=12×0.1=1.2。", "Δy−dy=0.061。"],
+      
       verify: { m: "let", f: "P-q", with: { P: V("2.1^3-2^3"), q: { m: "differential", f: "x^3", a: 2, dx: 0.1 } } } },
 
     /* ── 3.17 Rolle：數根、條件檢查 ── */
@@ -767,7 +767,7 @@
       tags: ["rolle-root-count", "rolle-theorem", "monotonicity"],
       hints: ["至少一個：f(0) 與 f(2) 異號，用中間值定理。", "至多一個：如果有兩個根，Rolle 定理說 f′ 在中間有零點——f′ 會是 0 嗎？"],
       solution: "f(0)=−7<0、f(2)=9>0，至少一根。若有兩根 a<b，Rolle 給 c 使 f′(c)=0，但 f′=3x²+4>0，矛盾。恰有 1 個實根。",
-      solutionSteps: ["f(0)=−7<0、f(2)=9>0：中間值定理給至少一根。", "f′(x)=3x²+4>0，沒有零點。", "兩根之間 Rolle 會給 f′(c)=0，不可能：恰 1 個。"],
+      
       verify: { m: "rootCount", f: "x^3+4x-7", range: [-10, 10] } },
     { id: "cg-3e-002", topic: "derivatives", rank: 2, answerKind: "numeric",
       prompt: "2x-1-\\sin x=0\\quad\\text{的實根個數}",
@@ -775,7 +775,7 @@
       tags: ["rolle-root-count", "rolle-theorem", "trig"],
       hints: ["令 f(x)=2x−1−sin x，比較 f(0) 與 f(π) 的正負。", "f′=2−cos x 會不會等於 0？"],
       solution: "f(0)=−1<0、f(π)=2π−1>0，至少一根。f′=2−cos x≥1>0，若有兩根，Rolle 會給 f′(c)=0，矛盾。恰有 1 個實根。",
-      solutionSteps: ["f(0)=−1<0、f(π)=2π−1>0：至少一根。", "f′(x)=2−cos x≥1>0。", "Rolle：兩根之間必有 f′=0，不可能，所以恰 1 個。"],
+      
       verify: { m: "rootCount", f: "2x-1-\\sin x", range: [-10, 10] } },
     { id: "cg-3e-003", topic: "derivatives", rank: 3, answerKind: "numeric",
       prompt: "x^4-4x+1=0\\quad\\text{的實根個數}",
@@ -783,7 +783,7 @@
       tags: ["rolle-root-count", "rolle-theorem", "polynomial"],
       hints: ["f′=4x³−4 只有一個實根；由 Rolle，f 最多有幾個根？", "再用 f(0)、f(1)、f(2) 的正負找出實際有幾個。"],
       solution: "f′=4(x³−1) 只在 x=1 為 0。若 f 有三根，Rolle 給 f′ 兩個零點，矛盾，所以至多 2 根。f(0)=1>0、f(1)=−2<0、f(2)=9>0，(0,1) 與 (1,2) 各一根：恰 2 個。",
-      solutionSteps: ["f′(x)=4(x³−1)，唯一零點 x=1。", "Rolle：f 的相鄰兩根之間必有 f′ 的零點，所以 f 至多 2 根。", "f(0)=1、f(1)=−2、f(2)=9：(0,1)、(1,2) 各至少一根。", "恰 2 個實根。"],
+      
       verify: { m: "rootCount", f: "x^4-4x+1", range: [-10, 10] } },
     { id: "cg-3e-004", topic: "derivatives", rank: 1, answerKind: "text",
       prompt: "f(x)=x^{2/3}\\text{ 在 }[-1,1]\\text{ 上 }f(-1)=f(1)\\text{，卻找不到 }c\\,\\text{ 使 }f'(c)=0\\text{。Rolle 定理的哪個條件不成立？}",
@@ -792,7 +792,7 @@
       tags: ["rolle-hypothesis-check", "rolle-theorem", "radical"],
       hints: ["f(−1) 和 f(1) 各是多少？f 在 0 連續嗎？", "算 f′(x)=(2/3)x^{−1/3}，x=0 時會怎樣？"],
       solution: "f(±1)=1，f 處處連續；但 f′(x)=(2/3)x^{−1/3} 在 x=0 不存在（尖點），(−1,1) 上不是處處可微，Rolle 的條件不成立，所以不保證有 c。",
-      solutionSteps: ["f(−1)=f(1)=1，第三個條件成立。", "x^{2/3} 是連續函數，第一個條件成立。", "f′(x)=(2/3)x^{−1/3} 在 x=0 不存在：可微的條件不成立。"],
+      
       verify: { m: "choice", options: [
         { say: "在 (−1, 1) 不是處處可微", all: [{ v: { m: "limit", f: "\\frac{x}{(x^2)^{1/3}}", at: 0, dir: "+" }, eq: 0 }] },
         { say: "在 [−1, 1] 不連續", all: [{ v: { m: "limit", f: "(x^2)^{1/3}", at: 0 }, ne: 0 }] },
@@ -804,7 +804,7 @@
       tags: ["rolle-hypothesis-check", "rolle-theorem", "piecewise"],
       hints: ["在 (0,1) 裡 f(x)=x，它可微嗎？", "x→1⁻ 時 f(x) 趨近多少？和 f(1) 一樣嗎？"],
       solution: "(0,1) 上 f(x)=x，f′=1，可微；f(0)=f(1)=0 也成立。但 x→1⁻ 時 f→1≠0=f(1)，f 在 x=1 不連續，[0,1] 上連續的條件不成立。",
-      solutionSteps: ["(0,1) 上 f′(x)=1，可微。", "f(0)=0=f(1)。", "lim_{x→1⁻} f(x)=1≠f(1)=0：在 x=1 不連續。"],
+      
       verify: { m: "choice", options: [
         { say: "在 [0, 1] 不連續", all: [{ v: { m: "limit", f: "x", at: 1, dir: "-" }, ne: 0 }] },
         { say: "在 (0, 1) 不可微", all: [{ v: D("x", 0.5), ne: 1 }] },
@@ -818,7 +818,7 @@
       tags: ["mvt-hypothesis-check", "mean-value-theorem"],
       hints: ["均值定理要 f 在 [a,b] 連續、在 (a,b) 可微。", "x=0 在 [−1,1] 裡面嗎？f(0) 有定義嗎？"],
       solution: "x=0 在 [−1,1] 裡，但 1/x 在 0 沒有定義、兩側趨向 ±∞，不連續，所以均值定理不能用。實際上平均斜率 (1−(−1))/2=1，而 f′=−1/x²<0，真的找不到 c。",
-      solutionSteps: ["均值定理的條件：[−1,1] 連續、(−1,1) 可微。", "1/x 在 x=0 沒有定義，x→0 時趨向 ±∞：不連續。", "條件不成立，不能用（f(−1)=−1、f(1)=1 也不相等）。"],
+      
       verify: { m: "choice", options: [
         { say: "不能用：f 在 x=0 不連續", all: [{ v: { m: "limit", f: "\\frac{1}{1/x}", at: 0 }, eq: 0 }] },
         { say: "能用：f 在 [−1, 1] 連續", all: [{ v: { m: "limit", f: "\\frac{1}{1/x}", at: 0 }, ne: 0 }] },
@@ -829,7 +829,7 @@
       tags: ["mvt-hypothesis-check", "mean-value-theorem", "absolute-value"],
       hints: ["每個候選都檢查 x=0：連續嗎？可微嗎？", "均值定理不要求 f(−1)=f(2)。"],
       solution: "均值定理只要 [−1,2] 連續、(−1,2) 可微。|x| 在 0 有尖角、x^{2/3} 在 0 有尖點，都不可微；1/x 在 0 不連續。只有 x² 符合，c=1/2。",
-      solutionSteps: ["|x|：0 處左右斜率 −1、1，不可微。", "x^{2/3}：f′=(2/3)x^{−1/3} 在 0 不存在。", "1/x：0 處沒有定義，不連續。", "x² 符合：平均斜率 (4−1)/3=1=2c，c=1/2。"],
+      
       verify: { m: "choice", options: [
         { say: "x²", all: [
           { v: { m: "limit", f: "\\frac{x^2}{x}", at: 0, dir: "+" }, eq: { m: "limit", f: "\\frac{x^2}{x}", at: 0, dir: "-" } },
@@ -844,22 +844,20 @@
       answer: "2", timeLimit: 30,
       tags: ["lhopital-check-form", "lhopital", "direct-substitution"],
       hints: ["先把 x=0 直接代進分子和分母。", "不是 0/0 也不是 ∞/∞，就不能用 L'Hôpital。"],
-      solution: "代入：分子 e⁰+1=2、分母 1，不是不定型，極限就是 2。誤用 L'Hôpital 會得到 e⁰/1=1，是錯的。",
-      solutionSteps: ["x=0：分子 2、分母 1。", "不是不定型，直接代入：2/1=2。"] },
+      solution: "代入：分子 e⁰+1=2、分母 1，不是不定型，極限就是 2。誤用 L'Hôpital 會得到 e⁰/1=1，是錯的。"},
     { id: "cg-3e-009", topic: "limits", rank: 2, answerKind: "numeric",
       prompt: "\\lim_{x\\to\\pi}\\frac{\\sin x}{1-\\cos x}",
       answer: "0", timeLimit: 45,
       tags: ["lhopital-check-form", "lhopital", "trig", "direct-substitution"],
       hints: ["x=π 時 sin π 與 cos π 各是多少？", "分母不是 0 的話，可以直接代入。"],
-      solution: "sin π=0、1−cos π=2，是 0/2 不是 0/0，極限 0。誤用 L'Hôpital 會變成 cos x/sin x→−1/0，得到錯的結論。",
-      solutionSteps: ["分子 sin π=0，分母 1−cos π=1−(−1)=2。", "0/2=0，不是不定型，答案 0。"] },
+      solution: "sin π=0、1−cos π=2，是 0/2 不是 0/0，極限 0。誤用 L'Hôpital 會變成 cos x/sin x→−1/0，得到錯的結論。"},
     { id: "cg-3e-010", topic: "limits", rank: 2, answerKind: "numeric",
       prompt: "\\lim_{x\\to\\infty}\\frac{2x+\\sin x}{x}",
       answer: "2", timeLimit: 50,
       tags: ["lhopital-inconclusive", "lhopital", "squeeze", "trig"],
       hints: ["用 L'Hôpital 會得到 2+cos x，它在 x→∞ 時有極限嗎？", "改成分項：2+(sin x)/x，再用 |sin x|≤1。"],
       solution: "L'Hôpital 得 (2+cos x)/1，沒有極限，但這不代表原極限不存在。直接拆開：2+(sin x)/x，|sin x/x|≤1/x→0，所以極限是 2。",
-      solutionSteps: ["L'Hôpital 後 2+cos x 一直擺盪，法則說不出結論。", "(2x+sin x)/x=2+(sin x)/x。", "|sin x|/x≤1/x→0，極限 2。"],
+      
       // x→∞ 的振盪數列外插不穩；換元 x=1/t（只代換、不化簡）後在 t→0⁺ 走夾擠
       verify: { m: "limit", f: "\\frac{2/x+\\sin(1/x)}{1/x}", at: 0, dir: "+" } },
     { id: "cg-3e-011", topic: "limits", rank: 3, answerKind: "numeric",
@@ -867,8 +865,7 @@
       answer: "0", timeLimit: 90,
       tags: ["lhopital-inconclusive", "lhopital", "squeeze", "trig"],
       hints: ["L'Hôpital 後分子會出現 cos(1/x)，它在 x→0 時有極限嗎？", "改寫成 (x/sin x)·(x sin(1/x))，兩個因式分別看。"],
-      solution: "L'Hôpital 得 (2x sin(1/x)−cos(1/x))/cos x，沒有極限，法則失效。改寫：(x/sin x)·x sin(1/x)，前者→1，|x sin(1/x)|≤|x|→0，極限 0。",
-      solutionSteps: ["L'Hôpital 後出現 cos(1/x)，擺盪，說不出結論。", "原式=(x/sin x)·(x sin(1/x))。", "x/sin x→1，|x sin(1/x)|≤|x|→0，極限 0。"] },
+      solution: "L'Hôpital 得 (2x sin(1/x)−cos(1/x))/cos x，沒有極限，法則失效。改寫：(x/sin x)·x sin(1/x)，前者→1，|x sin(1/x)|≤|x|→0，極限 0。"},
 
     /* ── 3.20 其他不定型：∞⁰、通分型 ∞−∞ ── */
     { id: "cg-3e-012", topic: "limits", rank: 3, answerKind: "numeric",
@@ -876,29 +873,25 @@
       answer: "e^2", timeLimit: 100,
       tags: ["indeterminate-inf-pow-zero", "indeterminate-take-log", "lhopital"],
       hints: ["底數→∞、指數→0：∞⁰ 型，先取 ln。", "ln y=ln(x²+1)/ln x 是 ∞/∞ 型。"],
-      solution: "ln y=ln(x²+1)/ln x，L'Hôpital：(2x/(x²+1))/(1/x)=2x²/(x²+1)→2，所以極限是 e²。",
-      solutionSteps: ["y=(x²+1)^{1/ln x}，ln y=ln(x²+1)/ln x（∞/∞）。", "L'Hôpital：(2x/(x²+1))·x=2x²/(x²+1)→2。", "ln y→2，y→e²。"] },
+      solution: "ln y=ln(x²+1)/ln x，L'Hôpital：(2x/(x²+1))/(1/x)=2x²/(x²+1)→2，所以極限是 e²。"},
     { id: "cg-3e-013", topic: "limits", rank: 2, answerKind: "numeric",
       prompt: "\\lim_{x\\to 0^+}\\left(\\frac{1}{x}\\right)^{\\tan x}",
       answer: "1", timeLimit: 80,
       tags: ["indeterminate-inf-pow-zero", "indeterminate-take-log", "trig"],
       hints: ["底數→∞、指數→0：取 ln 變成 tan x·ln(1/x)=−tan x·ln x。", "tan x 和 x 在 0 附近差不多；x ln x→0。"],
-      solution: "ln y=tan x·ln(1/x)=−(tan x/x)·(x ln x)。tan x/x→1、x ln x→0，所以 ln y→0，極限 e⁰=1。",
-      solutionSteps: ["ln y=−tan x·ln x=−(tan x/x)·(x ln x)。", "tan x/x→1，x ln x→0。", "ln y→0，y→1。"] },
+      solution: "ln y=tan x·ln(1/x)=−(tan x/x)·(x ln x)。tan x/x→1、x ln x→0，所以 ln y→0，極限 e⁰=1。"},
     { id: "cg-3e-014", topic: "limits", rank: 2, answerKind: "numeric",
       prompt: "\\lim_{x\\to 3}\\left(\\frac{1}{x-3}-\\frac{6}{x^2-9}\\right)",
       answer: "1/6", timeLimit: 60,
       tags: ["indeterminate-inf-minus-inf", "common-denominator", "factoring"],
       hints: ["x²−9=(x−3)(x+3)，通分成同一個分母。", "分子化簡後會出現 (x−3)，可以約掉。"],
-      solution: "通分：((x+3)−6)/((x−3)(x+3))=(x−3)/((x−3)(x+3))=1/(x+3)→1/6。",
-      solutionSteps: ["通分：((x+3)−6)/((x−3)(x+3))。", "分子 x−3，約掉得 1/(x+3)。", "x→3：1/6。"] },
+      solution: "通分：((x+3)−6)/((x−3)(x+3))=(x−3)/((x−3)(x+3))=1/(x+3)→1/6。"},
     { id: "cg-3e-015", topic: "limits", rank: 2, answerKind: "numeric",
       prompt: "\\lim_{x\\to 0}\\left(\\frac{1}{x}-\\frac{2}{x^2+2x}\\right)",
       answer: "1/2", timeLimit: 55,
       tags: ["indeterminate-inf-minus-inf", "common-denominator", "factoring"],
       hints: ["x²+2x=x(x+2)，通分。", "分子化簡後可以和分母約掉一個 x。"],
-      solution: "通分：((x+2)−2)/(x(x+2))=x/(x(x+2))=1/(x+2)→1/2。",
-      solutionSteps: ["通分：((x+2)−2)/(x(x+2))。", "=x/(x(x+2))=1/(x+2)。", "x→0：1/2。"] }
+      solution: "通分：((x+2)−2)/(x(x+2))=x/(x(x+2))=1/(x+2)→1/2。"}
   ];
 
   window.BUZZ_PROBLEMS = (window.BUZZ_PROBLEMS || []).concat(problems.map((problem) => ({

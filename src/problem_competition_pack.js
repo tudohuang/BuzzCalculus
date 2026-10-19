@@ -132,7 +132,7 @@
       tags: ["complex-arithmetic", "polynomial"],
       hints: ["像多項式一樣分配展開，四項都要乘到。", "展開後出現的 i² 要換成 −1，再把實部、虛部各自合併。"],
       solution: "展開：3 − 12i + 2i − 8i² = 3 + 8 − 10i = 11 − 10i。",
-      solutionSteps: ["分配：3·1 + 3·(−4i) + 2i·1 + 2i·(−4i) = 3 − 12i + 2i − 8i²。", "i² = −1：−8i² = +8。", "實部 3 + 8 = 11，虛部 −12 + 2 = −10，答案 11 − 10i。"],
+      
       verify: choice([
         ["11-10i", isC("(3+2i)(1-4i)", 0, 11, -10)],
         ["-5-10i", isC("(3+2i)(1-4i)", 0, -5, -10)],
@@ -145,7 +145,7 @@
       tags: ["complex-arithmetic", "power"],
       hints: ["i 的次方每 4 次循環一輪：i、−1、−i、1。", "看 2026 除以 4 的餘數。"],
       solution: "2026 = 4·506 + 2，所以 i²⁰²⁶ = (i⁴)⁵⁰⁶·i² = i² = −1。",
-      solutionSteps: ["i⁴ = 1，所以只看指數除以 4 的餘數。", "2026 = 4·506 + 2，i²⁰²⁶ = i² = −1。"],
+      
       verify: cv("i^2026", 0, "re") },
     { id: "cg-11g-003", topic: "derivatives", rank: 1, answerKind: "text",
       prompt: "(2-i)^2+3i",
@@ -155,7 +155,7 @@
       tags: ["complex-arithmetic", "polynomial"],
       hints: ["先用 (a − b)² = a² − 2ab + b² 展開平方。", "i² = −1 會讓實部改變，最後再加上 3i。"],
       solution: "(2 − i)² = 4 − 4i + i² = 3 − 4i，再加 3i 得 3 − i。",
-      solutionSteps: ["(2 − i)² = 4 − 4i + i² = 4 − 4i − 1 = 3 − 4i。", "加上 3i：3 − 4i + 3i = 3 − i。"],
+      
       verify: choice([
         ["3-i", isC("(2-i)^2+3i", 0, 3, -1)],
         ["5-i", isC("(2-i)^2+3i", 0, 5, -1)],
@@ -169,7 +169,7 @@
       tags: ["complex-division", "conjugate"],
       hints: ["分子分母同乘分母的共軛複數，分母就變成實數。", "(1 + 2i)(1 − 2i) = 1 + 4。"],
       solution: "同乘 1 − 2i：(10 + 5i)(1 − 2i) = 10 − 20i + 5i + 10 = 20 − 15i，分母 5，得 4 − 3i。",
-      solutionSteps: ["分子分母同乘共軛 1 − 2i，分母 (1 + 2i)(1 − 2i) = 5。", "分子 (10 + 5i)(1 − 2i) = 10 − 20i + 5i − 10i² = 20 − 15i。", "除以 5：4 − 3i。"],
+      
       verify: choice([
         ["4-3i", isC("(10+5i)/(1+2i)", 0, 4, -3)],
         ["4+3i", isC("(10+5i)/(1+2i)", 0, 4, 3)],
@@ -182,7 +182,7 @@
       tags: ["complex-division", "conjugate"],
       hints: ["兩個分母互為共軛，通分時分母的乘積是實數。", "(2 + i)(2 − i) = 4 − i²。"],
       solution: "通分：[(2 − i) + (2 + i)] / [(2 + i)(2 − i)] = 4/5，虛部互相抵消。",
-      solutionSteps: ["公分母 (2 + i)(2 − i) = 4 + 1 = 5。", "分子 (2 − i) + (2 + i) = 4。", "結果 4/5（是實數：z + z̄ 一定是實數）。"],
+      
       verify: cv("1/(2+i)+1/(2-i)", 0, "re") },
     { id: "cg-11g-006", topic: "derivatives", rank: 2, answerKind: "text",
       prompt: "\\frac{(1+i)^2}{1-i}\\ \\text{（寫成 }a+b\\,i\\text{）}",
@@ -192,7 +192,7 @@
       tags: ["complex-division", "power"],
       hints: ["先算分子：(1 + i)² 會是純虛數。", "再同乘分母的共軛 1 + i。"],
       solution: "(1 + i)² = 2i。2i/(1 − i) = 2i(1 + i)/2 = i + i² = −1 + i。",
-      solutionSteps: ["(1 + i)² = 1 + 2i + i² = 2i。", "2i/(1 − i) 同乘 1 + i：2i(1 + i)/[(1 − i)(1 + i)] = (2i − 2)/2。", "= −1 + i。"],
+      
       verify: choice([
         ["-1+i", isC("(1+i)^2/(1-i)", 0, -1, 1)],
         ["1+i", isC("(1+i)^2/(1-i)", 0, 1, 1)],
@@ -206,7 +206,7 @@
       tags: ["complex-quadratic-roots", "quadratic-formula"],
       hints: ["判別式 b² − 4ac 是負的，開根號時拿出一個 i。", "√(−36) = 6i，別忘了公式分母還有 2a。"],
       solution: "z = [4 ± √(16 − 52)]/2 = (4 ± 6i)/2 = 2 ± 3i。兩根互為共軛，因為係數都是實數。",
-      solutionSteps: ["判別式 16 − 52 = −36，√(−36) = 6i。", "z = (4 ± 6i)/2 = 2 ± 3i。"],
+      
       verify: choice([
         ["2±3i", [...isC("z^2-4z+13", "2+3i", 0, 0), ...isC("z^2-4z+13", "2-3i", 0, 0)]],
         ["-2±3i", [...isC("z^2-4z+13", "-2+3i", 0, 0), ...isC("z^2-4z+13", "-2-3i", 0, 0)]],
@@ -220,7 +220,7 @@
       tags: ["complex-quadratic-roots", "quadratic-formula"],
       hints: ["可以配方：z² + 6z + 9 = −1。", "(z + 3)² = −1，平方等於 −1 的數有兩個。"],
       solution: "配方 (z + 3)² = −1，所以 z + 3 = ±i，z = −3 ± i。",
-      solutionSteps: ["配方：z² + 6z + 10 = (z + 3)² + 1 = 0。", "(z + 3)² = −1 ⟹ z + 3 = ±i。", "z = −3 ± i。"],
+      
       verify: choice([
         ["-3±i", [...isC("z^2+6z+10", "-3+i", 0, 0), ...isC("z^2+6z+10", "-3-i", 0, 0)]],
         ["3±i", [...isC("z^2+6z+10", "3+i", 0, 0), ...isC("z^2+6z+10", "3-i", 0, 0)]],
@@ -235,7 +235,7 @@
       tags: ["complex-argument-quadrant", "polar-form"],
       hints: ["先看這個點在哪個象限：實部負、虛部正。", "參考角 arctan(√3) = π/3，再依象限調整。"],
       solution: "點 (−1, √3) 在第二象限，參考角 π/3，輻角 π − π/3 = 2π/3。只算 arctan(√3/(−1)) = −π/3 會落在錯的象限。",
-      solutionSteps: ["(−1, √3) 在第二象限。", "參考角 arctan(√3/1) = π/3。", "第二象限：Arg = π − π/3 = 2π/3。"],
+      
       verify: cv("log(-1+3^(1/2)*i)", 0, "im") },
     { id: "cg-11g-010", topic: "derivatives", rank: 2, answerKind: "numeric",
       prompt: "\\operatorname{Arg}(-2-2i)\\ \\text{（主輻角，取值在 }(-\\pi,\\pi]\\text{）}",
@@ -244,7 +244,7 @@
       tags: ["complex-argument-quadrant", "polar-form"],
       hints: ["點 (−2, −2) 在第三象限。", "主輻角限定在 (−π, π]，第三象限的角要寫成負的。"],
       solution: "參考角 π/4；第三象限、取 (−π, π] 的代表：−π + π/4 = −3π/4。",
-      solutionSteps: ["(−2, −2) 在第三象限，參考角 arctan 1 = π/4。", "第三象限的主輻角是 −(π − π/4) = −3π/4（5π/4 不在 (−π, π] 內）。"],
+      
       verify: cv("log(-2-2i)", 0, "im") },
     { id: "cg-11g-011", topic: "derivatives", rank: 2, answerKind: "numeric",
       prompt: "\\operatorname{Arg}\\left(-3+\\sqrt{3}\\,i\\right)\\ \\text{（主輻角，取值在 }(-\\pi,\\pi]\\text{）}",
@@ -253,7 +253,7 @@
       tags: ["complex-argument-quadrant", "polar-form"],
       hints: ["實部負、虛部正，在第二象限。", "參考角是 arctan(√3/3)。"],
       solution: "參考角 arctan(√3/3) = π/6，第二象限：π − π/6 = 5π/6。",
-      solutionSteps: ["(−3, √3) 在第二象限。", "參考角 arctan(√3/3) = π/6。", "Arg = π − π/6 = 5π/6。"],
+      
       verify: cv("log(-3+3^(1/2)*i)", 0, "im") },
     { id: "cg-11g-012", topic: "derivatives", rank: 2, answerKind: "text",
       prompt: "(1+i)^{10}",
@@ -263,7 +263,7 @@
       tags: ["complex-de-moivre", "power", "polar-form"],
       hints: ["寫成極式：|1 + i| = √2，輻角 π/4。", "De Moivre：長度變成 (√2)¹⁰，角度變成 10·π/4。"],
       solution: "1 + i = √2·e^{iπ/4}，(1 + i)¹⁰ = 32·e^{i·5π/2} = 32·e^{iπ/2} = 32i。",
-      solutionSteps: ["1 + i = √2(cos π/4 + i sin π/4)。", "(√2)¹⁰ = 32，角度 10·π/4 = 5π/2 ≡ π/2。", "32(cos π/2 + i sin π/2) = 32i。"],
+      
       verify: choice([
         ["32i", isC("(1+i)^10", 0, 0, 32)],
         ["-32i", isC("(1+i)^10", 0, 0, -32)],
@@ -276,7 +276,7 @@
       tags: ["complex-de-moivre", "power", "polar-form"],
       hints: ["|1 + √3 i| = 2，輻角 π/3。", "六次方：長度 2⁶，角度乘 6。"],
       solution: "1 + √3 i = 2e^{iπ/3}，六次方 = 64·e^{2πi} = 64。",
-      solutionSteps: ["1 + √3 i = 2(cos π/3 + i sin π/3)。", "De Moivre：2⁶(cos 2π + i sin 2π) = 64·1 = 64。"],
+      
       verify: cv("(1+3^(1/2)*i)^6", 0, "re") },
     { id: "cg-11g-014", topic: "derivatives", rank: 2, answerKind: "text",
       prompt: "\\left(\\sqrt{3}-i\\right)^{9}",
@@ -286,7 +286,7 @@
       tags: ["complex-de-moivre", "power", "polar-form"],
       hints: ["√3 − i 在第四象限，長度 2，輻角是負的。", "九次方：長度 2⁹，角度乘 9，再化到一圈之內。"],
       solution: "√3 − i = 2e^{−iπ/6}，九次方 = 512·e^{−3πi/2}；−3π/2 ≡ π/2，所以是 512i。",
-      solutionSteps: ["√3 − i = 2(cos(−π/6) + i sin(−π/6))。", "2⁹ = 512，角度 9·(−π/6) = −3π/2 ≡ π/2。", "512(cos π/2 + i sin π/2) = 512i。"],
+      
       verify: choice([
         ["512i", isC("(3^(1/2)-i)^9", 0, 0, 512, 1e-6)],
         ["-512i", isC("(3^(1/2)-i)^9", 0, 0, -512, 1e-6)],
@@ -300,7 +300,7 @@
       tags: ["complex-nth-roots", "polar-form"],
       hints: ["8i = 8e^{iπ/2}；根的長度是 8 的立方根。", "第一個根的角度是 (π/2)/3，其餘每次加 2π/3。"],
       solution: "長度 2，角度 π/6、5π/6、3π/2：2e^{iπ/6} = √3 + i，2e^{5iπ/6} = −√3 + i，2e^{3iπ/2} = −2i。三根平分半徑 2 的圓。",
-      solutionSteps: ["8i = 8(cos π/2 + i sin π/2)，根的長度 ∛8 = 2。", "角度 π/6 + 2kπ/3（k = 0, 1, 2）= π/6、5π/6、3π/2。", "對應 √3 + i、−√3 + i、−2i。"],
+      
       verify: choice([
         ["√3+i, −√3+i, −2i", [...isC("(3^(1/2)+i)^3", 0, 0, 8), ...isC("(-3^(1/2)+i)^3", 0, 0, 8), ...isC("(-2i)^3", 0, 0, 8)]],
         ["√3+i, √3−i, −2i", [...isC("(3^(1/2)+i)^3", 0, 0, 8), ...isC("(3^(1/2)-i)^3", 0, 0, 8), ...isC("(-2i)^3", 0, 0, 8)]],
@@ -314,7 +314,7 @@
       tags: ["complex-nth-roots", "polar-form"],
       hints: ["−16 = 16e^{iπ}；根的長度是 16 的四次方根。", "第一個根的角度 π/4，之後每次轉 π/2。"],
       solution: "長度 2，角度 π/4、3π/4、5π/4、7π/4：2e^{iπ/4} = √2 + √2 i，其餘是正負號的四種組合 ±√2 ± √2 i（四個符號組合）。",
-      solutionSteps: ["−16 = 16(cos π + i sin π)，根的長度 16^{1/4} = 2。", "角度 π/4 + kπ/2（k = 0, 1, 2, 3）。", "2e^{iπ/4} = √2 + √2 i，轉 π/2 得其餘三個：±√2 ± √2 i。"],
+      
       verify: choice([
         ["±√2±√2 i", [...isC("(2^(1/2)+2^(1/2)*i)^4", 0, -16, 0), ...isC("(-2^(1/2)+2^(1/2)*i)^4", 0, -16, 0),
           ...isC("(-2^(1/2)-2^(1/2)*i)^4", 0, -16, 0), ...isC("(2^(1/2)-2^(1/2)*i)^4", 0, -16, 0)]],
@@ -329,7 +329,7 @@
       tags: ["complex-nth-roots", "polar-form"],
       hints: ["−27 = 27e^{iπ}，根的長度是 3。", "角度從 π/3 開始，每次加 2π/3。"],
       solution: "角度 π/3、π、5π/3：3e^{iπ/3} = 3/2 + (3√3/2)i，3e^{iπ} = −3，3e^{5iπ/3} = 3/2 − (3√3/2)i。",
-      solutionSteps: ["−27 = 27(cos π + i sin π)，根的長度 3。", "角度 π/3 + 2kπ/3：π/3、π、5π/3。", "得 3/2 + (3√3/2)i、−3、3/2 − (3√3/2)i。"],
+      
       verify: choice([
         ["−3, 3/2 ± (3√3/2)i", [...isC("(0-3)^3", 0, -27, 0), ...isC("(3/2+3*3^(1/2)/2*i)^3", 0, -27, 0), ...isC("(3/2-3*3^(1/2)/2*i)^3", 0, -27, 0)]],
         ["3, −3/2 ± (3√3/2)i", [...isC("3^3", 0, -27, 0), ...isC("(-3/2+3*3^(1/2)/2*i)^3", 0, -27, 0)]],
@@ -344,7 +344,7 @@
       tags: ["euler-trig-to-exp", "roots-of-unity", "trig"],
       hints: ["令 ω = e^{2πi/7}，cos(2kπ/7) 是 (ωᵏ + ω⁻ᵏ)/2。", "1 + ω + ω² + ⋯ + ω⁶ = 0，而 ω⁻ᵏ = ω^{7−k}。"],
       solution: "ω = e^{2πi/7}。所求 = (1/2)(ω + ω² + ⋯ + ω⁶) = (1/2)(0 − 1) = −1/2。",
-      solutionSteps: ["cos(2kπ/7) = (ωᵏ + ω⁻ᵏ)/2，ω = e^{2πi/7}。", "k = 1, 2, 3 的 ωᵏ 與 ω⁻ᵏ 合起來正好是 ω, ω², …, ω⁶。", "七次單位根總和為 0：ω + ⋯ + ω⁶ = −1，所求 = −1/2。"],
+      
       verify: { m: "series", f: "\\cos\\frac{2n\\pi}{7}", from: 1, to: 3 } },
     { id: "cg-11g-019", topic: "integrals", rank: 3, answerKind: "numeric",
       prompt: "\\sin^3\\theta=a\\sin\\theta+b\\sin 3\\theta\\ \\text{對所有 }\\theta\\text{ 成立，求 }b",
@@ -353,7 +353,7 @@
       tags: ["euler-trig-to-exp", "trig-identity", "power-reduction"],
       hints: ["sin θ = (e^{iθ} − e^{−iθ})/(2i)，把它三次方。", "展開後把 e^{3iθ} 與 e^{−3iθ} 配成 sin 3θ。"],
       solution: "sin³θ = (e^{iθ} − e^{−iθ})³/(2i)³ = [2i sin 3θ − 3·2i sin θ]/(−8i) = (3 sin θ − sin 3θ)/4，所以 b = −1/4。",
-      solutionSteps: ["(e^{iθ} − e^{−iθ})³ = e^{3iθ} − e^{−3iθ} − 3(e^{iθ} − e^{−iθ}) = 2i sin 3θ − 6i sin θ。", "除以 (2i)³ = −8i：sin³θ = (3 sin θ − sin 3θ)/4。", "a = 3/4，b = −1/4。"],
+      
       verify: { m: "integral", f: "\\frac{1}{\\pi}\\sin^3 x\\sin 3x", a: 0, b: "2\\pi" } },
 
     /* ── complex-functions：e^z、Log、映射的像 ── */
@@ -364,7 +364,7 @@
       tags: ["complex-exp-mapping", "modulus"],
       hints: ["|e^{w}| 只跟 w 的實部有關。", "先算 z² 的實部。"],
       solution: "z² = (1 + 2i)² = −3 + 4i，|e^{z²}| = e^{Re z²} = e^{−3}。",
-      solutionSteps: ["z² = 1 + 4i + 4i² = −3 + 4i。", "|e^{a+bi}| = eᵃ|e^{bi}| = eᵃ。", "|e^{z²}| = e^{−3} ≈ 0.0498。"],
+      
       verify: cv("exp((1+2i)^2)", 0, "abs") },
     { id: "cg-11g-021", topic: "derivatives", rank: 2, answerKind: "text",
       prompt: "\\text{解 }e^{z}=-2\\text{（求所有解）}",
@@ -374,7 +374,7 @@
       tags: ["complex-exp-mapping", "periodicity"],
       hints: ["令 z = x + iy，e^z = eˣ(cos y + i sin y)，比長度也比角度。", "長度 eˣ = 2；角度要讓 e^{iy} = −1。"],
       solution: "|e^z| = eˣ = 2 ⟹ x = ln 2；e^{iy} = −1 ⟹ y = π + 2kπ。所以 z = ln 2 + (2k+1)πi。",
-      solutionSteps: ["e^{x+iy} = eˣe^{iy}，eˣ 是長度、y 是角度。", "eˣ = 2 ⟹ x = ln 2。", "e^{iy} = −1 ⟹ y = (2k+1)π，z = ln 2 + (2k+1)πi。"],
+      
       verify: choice([
         ["ln 2 + (2k+1)πi，k 為整數", [...isC("exp(log(2)+pi*i)", 0, -2, 0), ...isC("exp(log(2)+3*pi*i)", 0, -2, 0), ...isC("exp(log(2)-pi*i)", 0, -2, 0)]],
         ["ln 2 + 2kπi，k 為整數", [...isC("exp(log(2))", 0, -2, 0), ...isC("exp(log(2)+2*pi*i)", 0, -2, 0)]],
@@ -387,7 +387,7 @@
       tags: ["complex-exp-mapping", "polar-form"],
       hints: ["e^{2+5i} = e²·e^{5i}：長度 e²，角度 5 弧度。", "5 有沒有落在 (−π, π] 裡？不在的話加減 2π。"],
       solution: "e^{2+5i} 的一個輻角是 5，但 5 > π，減 2π 得 5 − 2π ≈ −1.283，這才是主輻角。",
-      solutionSteps: ["e^{2+5i} = e²(cos 5 + i sin 5)，一個輻角是 5。", "5 > π ≈ 3.14，不在 (−π, π]。", "主輻角 = 5 − 2π ≈ −1.283。"],
+      
       verify: cv("log(exp(2+5i))", 0, "im") },
     { id: "cg-11g-023", topic: "derivatives", rank: 3, answerKind: "numeric",
       prompt: "i^{\\,i}\\ \\text{的主值（用 }\\operatorname{Log}\\text{ 定義：}i^{i}=e^{\\,i\\operatorname{Log} i}\\text{）}",
@@ -396,7 +396,7 @@
       tags: ["complex-log-multivalued", "complex-exp-mapping"],
       hints: ["先求 Log i：|i| = 1，主輻角 π/2。", "再把 i·Log i 代進指數，i·i 會變成實數。"],
       solution: "Log i = ln 1 + iπ/2 = iπ/2，i^i = e^{i·iπ/2} = e^{−π/2} ≈ 0.2079，竟然是實數。",
-      solutionSteps: ["Log i = ln|i| + i Arg i = 0 + iπ/2。", "i·Log i = i·(iπ/2) = −π/2。", "i^i = e^{−π/2} ≈ 0.2079。"],
+      
       verify: cv("i^i", 0, "re") },
     { id: "cg-11g-024", topic: "derivatives", rank: 3, answerKind: "text",
       prompt: "\\log i\\ \\text{的所有值（多值的對數，不只主值）}",
@@ -406,7 +406,7 @@
       tags: ["complex-log-multivalued", "periodicity"],
       hints: ["log w 的每一個值 L 都滿足 e^L = w。", "e^z 有週期 2πi，所以 i 的輻角可以加任意圈。"],
       solution: "log i = ln|i| + i(arg i) = 0 + i(π/2 + 2kπ)。主值 Log i = iπ/2 只是 k = 0 那一個。",
-      solutionSteps: ["log w = ln|w| + i·arg w，arg 可差 2π 的整數倍。", "|i| = 1，arg i = π/2 + 2kπ。", "log i = (π/2 + 2kπ)i，k 為整數。"],
+      
       verify: choice([
         ["(π/2 + 2kπ)i，k 為整數", [...isC("exp(pi/2*i)", 0, 0, 1), ...isC("exp((pi/2+2*pi)*i)", 0, 0, 1), ...isC("exp((pi/2-2*pi)*i)", 0, 0, 1)]],
         ["(π/2 + kπ)i，k 為整數", [...isC("exp(pi/2*i)", 0, 0, 1), ...isC("exp((pi/2+pi)*i)", 0, 0, 1)]],
@@ -420,7 +420,7 @@
       tags: ["complex-mapping-image", "parametric"],
       hints: ["直線上的點寫成 z = 1 + it，t 是實數。", "算出 z² 的實部 u 與虛部 v，再消去 t。"],
       solution: "z = 1 + it，z² = 1 − t² + 2it：u = 1 − t²，v = 2t。t = v/2 代回：u = 1 − v²/4，開口向左的拋物線。",
-      solutionSteps: ["z = 1 + it ⟹ z² = (1 − t²) + 2ti。", "u = 1 − t²，v = 2t。", "t = v/2 ⟹ u = 1 − v²/4（拋物線）。"],
+      
       verify: choice([
         ["u = 1 − v²/4", ["1+2i", "1-i", "1+0.5i"].map((at) => zero({ m: "let", f: "u-(1-v^2/4)", with: { u: cv("z^2", at, "re"), v: cv("z^2", at, "im") } }))],
         ["u = 1 + v²/4", [zero({ m: "let", f: "u-(1+v^2/4)", with: { u: cv("z^2", "1+2i", "re"), v: cv("z^2", "1+2i", "im") } })]],
@@ -434,7 +434,7 @@
       tags: ["complex-mapping-image", "conjugate"],
       hints: ["z = 1 + it，把 1/(1 + it) 乘上共軛化成 u + iv。", "算 u² + v² 跟 u 的關係，配方。"],
       solution: "w = 1/(1 + it) = (1 − it)/(1 + t²)：u = 1/(1+t²)，v = −t/(1+t²)，u² + v² = u。配方 (u − 1/2)² + v² = 1/4；t → ±∞ 才趨近 0，所以 0 不在像裡。",
-      solutionSteps: ["u = 1/(1 + t²)，v = −t/(1 + t²)。", "u² + v² = 1/(1 + t²) = u。", "(u − 1/2)² + v² = 1/4：圓心 1/2、半徑 1/2 的圓，去掉 w = 0。"],
+      
       verify: choice([
         ["|w − 1/2| = 1/2，去掉 w = 0", ["1+2i", "1-i", "1+0.3i"].map((at) => ({ v: cv("1/z-1/2", at, "abs"), eq: 0.5 }))],
         ["|w − 1| = 1", [{ v: cv("1/z-1", "1+2i", "abs"), eq: 1 }]],
@@ -450,7 +450,7 @@
       tags: ["complex-limit-path", "path-dependence"],
       hints: ["沿實軸 z = t 靠近 0，z̄ = z。", "再沿虛軸 z = it 靠近，z̄ = −z。兩條路比一比。"],
       solution: "沿實軸 z̄/z = t/t = 1；沿虛軸 z̄/z = (−it)/(it) = −1。兩條路徑極限不同，所以不存在。",
-      solutionSteps: ["實軸 z = t：z̄/z = 1。", "虛軸 z = it：z̄/z = −1。", "1 ≠ −1，極限不存在。"],
+      
       verify: choice([
         ["不存在", [nonzero({ m: "let", f: "a-b", with: { a: cv("(x-i*y)/(x+i*y)", "0.000001", "re"), b: cv("(x-i*y)/(x+i*y)", "0.000001i", "re") } })]],
         ["1", [{ v: cv("(x-i*y)/(x+i*y)", "0.000001i", "re"), eq: 1 }]],
@@ -464,7 +464,7 @@
       tags: ["complex-limit-path", "path-dependence"],
       hints: ["z = x + iy，式子是 x/√(x² + y²)。", "沿正實軸與沿虛軸各算一次。"],
       solution: "沿正實軸 z = t（t > 0）：t/t = 1；沿虛軸 z = it：0/|t| = 0。兩條路徑不同，極限不存在。",
-      solutionSteps: ["Re z/|z| = x/√(x² + y²)。", "正實軸：1；虛軸：0。", "兩值不同，極限不存在。"],
+      
       verify: choice([
         ["不存在", [nonzero({ m: "let", f: "a-b", with: { a: cv("x/(x^2+y^2)^(1/2)", "0.000001", "re"), b: cv("x/(x^2+y^2)^(1/2)", "0.000001i", "re") } })]],
         ["1", [{ v: cv("x/(x^2+y^2)^(1/2)", "0.000001i", "re"), eq: 1 }]],
@@ -478,7 +478,7 @@
       tags: ["complex-limit-path", "squeeze"],
       hints: ["跟 z̄/z 不一樣：先看絕對值 |z̄²/z|。", "|z̄| = |z|，所以絕對值可以化成很簡單的東西。"],
       solution: "|z̄²/z| = |z|²/|z| = |z| → 0，不論從哪個方向靠近，所以極限是 0。只找兩條路徑相同不夠，要用絕對值夾。",
-      solutionSteps: ["|z̄²/z| = |z̄|²/|z| = |z|。", "z → 0 時 |z| → 0，與方向無關。", "所以極限是 0。"],
+      
       verify: choice([
         ["0", ["0.00000001", "0.00000001i", "0.00000001+0.00000001i", "-0.00000002+0.00000001i"].map((at) => zero(cv("(x-i*y)^2/z", at, "abs")))],
         ["不存在", null],
@@ -492,7 +492,7 @@
       tags: ["complex-limit-components", "factoring"],
       hints: ["直接代入是 0/0，先因式分解分子。", "z² + 1 = (z − i)(z + i)。"],
       solution: "z² + 1 = (z − i)(z + i)，約掉 z − i，極限 = i + i = 2i。",
-      solutionSteps: ["z² + 1 = (z − i)(z + i)。", "約分後剩 z + i。", "z → i：2i。"],
+      
       verify: choice([
         ["2i", isC("(z^2+1)/(z-i)", "i+0.0000001", 0, 2)],
         ["0", isC("(z^2+1)/(z-i)", "i+0.0000001", 0, 0)],
@@ -506,7 +506,7 @@
       tags: ["complex-limit-components", "conjugate"],
       hints: ["分母在 2i 不是 0，直接代入。", "得到 (1 + 2i)/i，分子分母同乘 −i。"],
       solution: "代入：(2i + 1)/(2i − i) = (1 + 2i)/i = (1 + 2i)(−i) = −i + 2 = 2 − i。",
-      solutionSteps: ["分母 2i − i = i ≠ 0，連續函數直接代入。", "(1 + 2i)/i = (1 + 2i)(−i)/1 = 2 − i。"],
+      
       verify: choice([
         ["2-i", isC("(z+1)/(z-i)", "2i", 2, -1)],
         ["2+i", isC("(z+1)/(z-i)", "2i", 2, 1)],
@@ -520,7 +520,7 @@
       tags: ["complex-limit-infinity", "leading-term"],
       hints: ["分子分母同除以 z²，|z| → ∞ 時 1/z → 0。", "剩下 3/(1 + i)，再乘共軛。"],
       solution: "同除 z²：(3 + i/z)/((1 + i) − 5/z²) → 3/(1 + i) = 3(1 − i)/2 = 3/2 − 3i/2。",
-      solutionSteps: ["同除 z²：(3 + i/z)/((1 + i) − 5/z²)。", "|z| → ∞：i/z → 0、5/z² → 0，極限 3/(1 + i)。", "3(1 − i)/2 = 3/2 − 3i/2。"],
+      
       verify: choice([
         ["3/2 - 3i/2", [...isC("(3z^2+i*z)/((1+i)z^2-5)", "1000000", 1.5, -1.5, 1e-4), ...isC("(3z^2+i*z)/((1+i)z^2-5)", "1000000i", 1.5, -1.5, 1e-4)]],
         ["3", isC("(3z^2+i*z)/((1+i)z^2-5)", "1000000", 3, 0, 1e-4)],
@@ -534,7 +534,7 @@
       tags: ["complex-limit-infinity", "leading-term"],
       hints: ["比最高次項：分子分母都是三次。", "最高次係數的比是 1/i，再化簡。"],
       solution: "同除 z³：(1 + 2/z³)/(i − 1/z²) → 1/i = −i。",
-      solutionSteps: ["同除 z³：(1 + 2/z³)/(i − 1/z²)。", "|z| → ∞ 時極限 1/i。", "1/i = −i（因為 i·(−i) = 1）。"],
+      
       verify: choice([
         ["-i", [...isC("(z^3+2)/(i*z^3-z)", "1000000", 0, -1, 1e-4), ...isC("(z^3+2)/(i*z^3-z)", "1000000i", 0, -1, 1e-4)]],
         ["i", isC("(z^3+2)/(i*z^3-z)", "1000000", 0, 1, 1e-4)],
@@ -549,7 +549,7 @@
       tags: ["complex-derivative-direction-test", "difference-quotient"],
       hints: ["f(z₀ + h) − f(z₀) = conj(h)，跟 z₀ 無關。", "h = it 時 conj(h) 是多少？"],
       solution: "差商 = h̄/h。h = it：h̄ = −it，差商 = −1。沿實軸則是 +1，兩方向不同，所以 z̄ 在任何點都不可微。",
-      solutionSteps: ["[f(z₀ + h) − f(z₀)]/h = h̄/h。", "h = it：(−it)/(it) = −1。", "（對照：h = t 時是 1，兩方向不同 ⟹ 不可微。）"],
+      
       verify: cv("((x-i*y)-(2-i))/(z-(2+i))", "2+1.000001i", "re") },
     { id: "cg-11g-035", topic: "derivatives", rank: 3, answerKind: "text",
       prompt: "f(z)=|z|^2,\\ z_0=1\\text{。分別沿實軸 }(h=t)\\text{ 與虛軸 }(h=i\\,t)\\text{ 求差商 }\\frac{f(1+h)-f(1)}{h}\\text{ 的極限，並判斷 }f\\text{ 在 }1\\text{ 可不可微}",
@@ -559,7 +559,7 @@
       tags: ["complex-derivative-direction-test", "difference-quotient"],
       hints: ["|1 + h|² = (1 + h)(1 + h̄) = 1 + h + h̄ + |h|²。", "差商 = 1 + h̄/h + h̄，分別代 h = t 與 h = it。"],
       solution: "差商 = (h + h̄ + |h|²)/h。h = t：(2t + t²)/t → 2。h = it：t²/(it) → 0。兩方向不同，在 z = 1 不可微。",
-      solutionSteps: ["f(1 + h) − f(1) = h + h̄ + |h|²。", "實軸 h = t：(2t + t²)/t → 2。", "虛軸 h = it：(0 + t²)/(it) → 0。2 ≠ 0，不可微。"],
+      
       verify: choice([
         ["實軸得 2、虛軸得 0，不可微", [{ v: cv("(x^2+y^2-1)/(z-1)", "1.00000001", "re"), eq: 2, tol: 1e-6 }, zero(cv("(x^2+y^2-1)/(z-1)", "1+0.00000001i", "abs"))]],
         ["兩個方向都得 2，可微且 f′(1) = 2", [{ v: cv("(x^2+y^2-1)/(z-1)", "1+0.00000001i", "re"), eq: 2 }]],
@@ -573,7 +573,7 @@
       tags: ["complex-derivative-rules", "complex-derivative", "power-rule"],
       hints: ["多項式的複數導數跟實數一樣：f′(z) = 3z² − 2i。", "(1 + i)² 是純虛數。"],
       solution: "f′(z) = 3z² − 2i，(1 + i)² = 2i，f′(1 + i) = 6i − 2i = 4i。",
-      solutionSteps: ["f′(z) = 3z² − 2i。", "(1 + i)² = 2i，3·2i = 6i。", "f′(1 + i) = 6i − 2i = 4i。"],
+      
       verify: choice([
         ["4i", [{ v: { m: "complex", op: "deriv", f: "z^3-2i*z", at: "1+i", part: "re" }, eq: 0, tol: 1e-5 }, { v: { m: "complex", op: "deriv", f: "z^3-2i*z", at: "1+i", part: "im" }, eq: 4, tol: 1e-5 }]],
         ["6i", [{ v: { m: "complex", op: "deriv", f: "z^3-2i*z", at: "1+i", part: "im" }, eq: 6, tol: 1e-5 }]],
@@ -587,7 +587,7 @@
       tags: ["complex-derivative-rules", "complex-derivative", "quotient-rule"],
       hints: ["商法則照用：分子 (z + i) − z。", "(2i)² 是負實數。"],
       solution: "f′(z) = [(z + i) − z]/(z + i)² = i/(z + i)²。z = i：i/(2i)² = i/(−4) = −i/4。",
-      solutionSteps: ["商法則：f′(z) = i/(z + i)²。", "z = i：(2i)² = −4。", "f′(i) = i/(−4) = −i/4。"],
+      
       verify: choice([
         ["-i/4", [{ v: { m: "complex", op: "deriv", f: "z/(z+i)", at: "i", part: "re" }, eq: 0, tol: 1e-5 }, { v: { m: "complex", op: "deriv", f: "z/(z+i)", at: "i", part: "im" }, eq: -0.25, tol: 1e-5 }]],
         ["i/4", [{ v: { m: "complex", op: "deriv", f: "z/(z+i)", at: "i", part: "im" }, eq: 0.25, tol: 1e-5 }]],
@@ -601,7 +601,7 @@
       tags: ["complex-derivative-rules", "complex-derivative", "quotient-rule"],
       hints: ["商法則：f′(z) = [2z(z − 1) − z²]/(z − 1)²，先化簡分子。", "(i − 1)² 是純虛數，最後乘共軛。"],
       solution: "f′(z) = (z² − 2z)/(z − 1)²。z = i：分子 −1 − 2i，分母 (i − 1)² = −2i，比值 (1 + 2i)/(2i) = 1 − i/2。",
-      solutionSteps: ["f′(z) = (z² − 2z)/(z − 1)²。", "z = i：分子 −1 − 2i，分母 (i − 1)² = −2i。", "(−1 − 2i)/(−2i) = (1 + 2i)/(2i) = (1 + 2i)(−i)/2 = 1 − i/2。"],
+      
       verify: choice([
         ["1 - i/2", [{ v: { m: "complex", op: "deriv", f: "z^2/(z-1)", at: "i", part: "re" }, eq: 1, tol: 1e-5 }, { v: { m: "complex", op: "deriv", f: "z^2/(z-1)", at: "i", part: "im" }, eq: -0.5, tol: 1e-5 }]],
         ["1 + i/2", [{ v: { m: "complex", op: "deriv", f: "z^2/(z-1)", at: "i", part: "im" }, eq: 0.5, tol: 1e-5 }]],
@@ -617,7 +617,7 @@
       tags: ["cauchy-riemann-check", "cauchy-riemann", "partial-derivative"],
       hints: ["u = x²、v = y²，四個偏導數都連續，可微 ⟺ CR 方程成立。", "列出 u_x = v_y 與 u_y = −v_x。"],
       solution: "u_x = 2x、v_y = 2y，u_y = 0 = −v_x。CR 成立 ⟺ x = y。偏導數連續，所以 f 恰在直線 y = x 上可微。",
-      solutionSteps: ["u = x²，v = y²：u_x = 2x，u_y = 0，v_x = 0，v_y = 2y。", "u_y = −v_x 恆成立；u_x = v_y ⟺ x = y。", "偏導數連續，CR 成立處即可微：直線 y = x。"],
+      
       verify: choice([
         ["直線 y = x 上的點", [zero(D("X^2+i*Y^2", "1+i"), 1e-5), zero(D("X^2+i*Y^2", "-2-2i"), 1e-5), nonzero(D("X^2+i*Y^2", "1")), nonzero(D("X^2+i*Y^2", "i"))]],
         ["整個複數平面", [zero(D("X^2+i*Y^2", "1"), 1e-5)]],
@@ -631,7 +631,7 @@
       tags: ["cauchy-riemann-check", "cauchy-riemann", "partial-derivative"],
       hints: ["u = x³，v = (1 − y)³，算 u_x 與 v_y。", "u_x = v_y 變成「兩個平方和等於 0」。"],
       solution: "u_x = 3x²，v_y = −3(1 − y)²；u_x = v_y ⟺ 3x² + 3(1 − y)² = 0 ⟺ x = 0、y = 1。u_y = v_x = 0 恆成立，所以只在 z = i 可微。",
-      solutionSteps: ["u_x = 3x²，v_y = −3(1 − y)²，u_y = 0，v_x = 0。", "u_x = v_y ⟺ x² + (1 − y)² = 0 ⟺ (x, y) = (0, 1)。", "偏導數連續，只在 z = i 可微。"],
+      
       verify: choice([
         ["只有 z = i", [zero(D("X^3+i*(1-Y)^3", "i"), 1e-5), nonzero(D("X^3+i*(1-Y)^3", "0")), nonzero(D("X^3+i*(1-Y)^3", "2i")), nonzero(D("X^3+i*(1-Y)^3", "1+i"))]],
         ["只有 z = 0", [zero(D("X^3+i*(1-Y)^3", "0"), 1e-5)]],
@@ -645,7 +645,7 @@
       tags: ["harmonic-conjugate", "cauchy-riemann", "partial-derivative"],
       hints: ["CR：v_y = u_x，所以先對 y 積分 u_x，常數會是 x 的函數 g(x)。", "再用 v_x = −u_y 決定 g(x)。"],
       solution: "v_y = u_x = 2x + 3 ⟹ v = 2xy + 3y + g(x)。v_x = 2y + g′(x) = −u_y = 2y ⟹ g 是常數，v(0,0) = 0 ⟹ g = 0。",
-      solutionSteps: ["v_y = u_x = 2x + 3 ⟹ v = 2xy + 3y + g(x)。", "v_x = 2y + g′(x) 要等於 −u_y = 2y ⟹ g′ = 0。", "v(0,0) = 0 ⟹ v = 2xy + 3y（f = z² + 3z）。"],
+      
       verify: { m: "fn", vars: ["x", "y"], cases: [
         { at: { x: 0, y: 0 }, v: { m: "value", f: "0" } },
         ...[[0.7, -0.4], [1.3, 0.9], [-1.1, 0.5]].flatMap(([x, y]) => [
@@ -659,7 +659,7 @@
       tags: ["harmonic-conjugate", "cauchy-riemann", "partial-derivative"],
       hints: ["v_y = u_x = eˣ cos y + 2y，對 y 積分，再補一個 g(x)。", "用 v_x = −u_y 定出 g(x)，最後用 v(0,0) = 0 定常數。"],
       solution: "v = eˣ sin y + y² + g(x)；v_x = eˣ sin y + g′(x) = −u_y = eˣ sin y − 2x ⟹ g = −x² + C，C = 0。",
-      solutionSteps: ["v_y = u_x = eˣ cos y + 2y ⟹ v = eˣ sin y + y² + g(x)。", "−u_y = eˣ sin y − 2x，比對 v_x ⟹ g′(x) = −2x，g = −x² + C。", "v(0,0) = 0 ⟹ C = 0，v = eˣ sin y + y² − x²。"],
+      
       verify: { m: "fn", vars: ["x", "y"], cases: [
         { at: { x: 0, y: 0 }, v: { m: "value", f: "0" } },
         ...[[0.7, -0.4], [1.3, 0.9], [-1.1, 0.5]].flatMap(([x, y]) => [
@@ -675,7 +675,7 @@
       tags: ["holomorphic-domain", "rational-function"],
       hints: ["有理函數在分母不為 0 的地方都全純。", "z² + 4 = 0 在複數裡有解。"],
       solution: "分母 z² + 4 = 0 ⟺ z = ±2i。有理函數在其餘每一點都全純，所以是複數平面去掉 ±2i。",
-      solutionSteps: ["有理函數在分母不為零處全純。", "z² = −4 ⟹ z = ±2i。", "全純範圍：複數平面去掉 2i 與 −2i。"],
+      
       verify: choice([
         ["複數平面去掉 2i 與 −2i", [zero(cv("z^2+4", "2i", "abs")), zero(cv("z^2+4", "0-2i", "abs")), nonzero(cv("z^2+4", "2", "abs"))]],
         ["複數平面去掉 2 與 −2", [zero(cv("z^2+4", "2", "abs"))]],
@@ -689,7 +689,7 @@
       tags: ["holomorphic-domain", "branch-cut"],
       hints: ["Log w 在 w 落在 (−∞, 0] 時不連續（輻角從 π 跳到 −π）。", "w = z − 1 落在 (−∞, 0] 等於 z 落在哪裡？"],
       solution: "Log w 在複數平面去掉 (−∞, 0] 上全純。w = z − 1 ∈ (−∞, 0] ⟺ z ∈ (−∞, 1]，所以全純範圍是去掉射線 (−∞, 1]。",
-      solutionSteps: ["Log w 全純於 w ∉ (−∞, 0]（切割線上 Arg 跳 2π）。", "w = z − 1：z − 1 ∈ (−∞, 0] ⟺ z ∈ (−∞, 1]。", "全純範圍：複數平面去掉射線 (−∞, 1]。"],
+      
       verify: choice([
         ["複數平面去掉射線 (−∞, 1]", [nonzero(cv("log(z-1+0.000001i)-log(z-1-0.000001i)", "0.5", "im")), nonzero(cv("log(z-1+0.000001i)-log(z-1-0.000001i)", "-3", "im")),
           zero(cv("log(z-1+0.000001i)-log(z-1-0.000001i)", "2", "im"), 1e-4), zero(cv("log(z-1+0.000001i)-log(z-1-0.000001i)", "5", "im"), 1e-4)]],
@@ -704,7 +704,7 @@
       tags: ["holomorphic-domain", "periodicity"],
       hints: ["e^z 是整函數，問題只在分母等於 0 的地方。", "e^z = 1 的解不只 z = 0：e^z 有週期。"],
       solution: "e^z = 1 ⟺ z = 2kπi（e^z 週期 2πi）。所以 f 在複數平面去掉 2kπi 的地方全純，不只是去掉 0。",
-      solutionSteps: ["e^z 處處全純，商在分母非零處全純。", "e^{x+iy} = 1 ⟺ eˣ = 1、e^{iy} = 1 ⟺ x = 0、y = 2kπ。", "全純範圍：去掉 z = 2kπi。"],
+      
       verify: choice([
         ["複數平面去掉 2kπi（k 為整數）", [zero(cv("exp(z)-1", "0", "abs")), zero(cv("exp(z)-1", "2*pi*i", "abs")), zero(cv("exp(z)-1", "0-2*pi*i", "abs")), nonzero(cv("exp(z)-1", "pi*i", "abs"))]],
         ["複數平面去掉 z = 0", [nonzero(cv("exp(z)-1", "2*pi*i", "abs"))]],
@@ -718,7 +718,7 @@
       tags: ["holomorphic-vs-differentiable", "cauchy-riemann"],
       hints: ["u = x² + y²、v = 0，用 CR 找出可微的點。", "全純要求在一整個鄰域裡每一點都可微。"],
       solution: "CR：u_x = 2x = v_y = 0、u_y = 2y = −v_x = 0，只在 z = 0 可微。0 的任何鄰域裡都有不可微的點，所以沒有任何點全純。",
-      solutionSteps: ["u = x² + y²，v = 0：CR 要 2x = 0 且 2y = 0。", "只在 z = 0 可微。", "z = 0 附近的點都不可微 ⟹ 0 也不是全純點；沒有任何點全純。"],
+      
       verify: choice([
         ["沒有任何點全純（只在 z = 0 可微）", [zero(D("X^2+Y^2", "0"), 1e-5), nonzero(D("X^2+Y^2", "0.01")), nonzero(D("X^2+Y^2", "0.01i")), nonzero(D("X^2+Y^2", "1+i"))]],
         ["只在 z = 0 全純", [zero(D("X^2+Y^2", "0.01"), 1e-5)]],
@@ -732,7 +732,7 @@
       tags: ["holomorphic-vs-differentiable", "cauchy-riemann"],
       hints: ["u = x² + y²，v = 2xy，檢查兩條 CR 方程各在哪裡成立。", "可微的點如果只構成一條線，那條線上有沒有開鄰域？"],
       solution: "u_x = 2x = v_y ✓；u_y = 2y、−v_x = −2y，相等 ⟺ y = 0。所以只在實軸上可微；實軸不含任何開圓盤，所以沒有任何點全純。",
-      solutionSteps: ["u_x = 2x = v_y 恆成立。", "u_y = 2y 與 −v_x = −2y 相等 ⟺ y = 0：實軸上可微。", "實軸上每一點的鄰域都含 y ≠ 0 的點 ⟹ 沒有任何點全純。"],
+      
       verify: choice([
         ["實軸上每一點可微，但沒有任何點全純", [zero(D("X^2+Y^2+2*i*X*Y", "1"), 1e-5), zero(D("X^2+Y^2+2*i*X*Y", "-2"), 1e-5),
           nonzero(D("X^2+Y^2+2*i*X*Y", "1+0.01i")), nonzero(D("X^2+Y^2+2*i*X*Y", "-2+0.01i"))]],

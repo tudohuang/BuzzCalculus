@@ -794,7 +794,7 @@
       tags: ["continuity-formal-quantifier-order", "epsilon-delta", "continuity"],
       hints: ["δ 先選定、之後對每一個 ε 都要成立：在 (−δ, δ) 裡 |f(x) − f(0)| 必須比每個正數都小。", "比每個正數都小的非負數只有 0。所以這個敘述要求 f 在 0 附近是什麼樣子？"],
       solution: "δ 先固定後 ε 任意小，等於要求 f 在 (−δ, δ) 上恆等於 f(0)，也就是在 0 附近是常數。⌊x²⌋ 在 |x|<1 上恆為 0；x、x²、sin x 雖然連續，但在 0 的任何鄰域裡都不是常數。",
-      solutionSteps: ["∃δ ∀ε：|f(x) − f(0)| 小於每個正數 ⟹ f(x) = f(0) 對 |x|<δ 都成立。", "x、x²、sin x 在 (−δ, δ) 裡都有不等於 f(0) 的值，不滿足。", "⌊x²⌋ 在 |x|<1 上恆為 0 = f(0)，取 δ = 1 即可：答案 f(x) = ⌊x²⌋。"],
+      
       verify: choice([
         { say: "f(x) = ⌊x²⌋", all: [{ v: sup("\\left|\\lfloor x^2\\rfloor\\right|", [-0.01, 0.01]), eq: 0 }] },
         { say: "f(x) = x", all: [{ v: sup("|x|", [-0.01, 0.01]), eq: 0 }] },
@@ -808,7 +808,7 @@
       tags: ["continuity-formal-quantifier-order", "epsilon-delta", "continuity"],
       hints: ["ε 是在 δ 之後才選的，而且可以選很大。這個敘述其實只要求 f 在每個 (−δ, δ) 上怎樣？", "再看哪些選項在 0 根本是連續的、哪個在 0 附近無界。"],
       solution: "∀δ ∃ε 只要求 f 在每個 (−δ, δ) 上有界（ε 取比振幅大就好）。x、x² 在 0 連續，不合題意；1/x 在 0 附近無界，不滿足敘述；sgn x 有界（|sgn x − 0| ≤ 1）卻在 0 跳躍，正是所求。",
-      solutionSteps: ["∀δ ∃ε 的意思：f 在每個 (−δ, δ) 上有界，跟連續無關。", "1/x 在 0 附近無界 ⟹ 不滿足；x、x² 在 0 連續 ⟹ 不是「不連續」。", "sgn x：取 ε = 2 即可，而右極限 1 ≠ f(0) = 0，不連續。答案 f(x) = sgn x。"],
+      
       verify: choice([
         { say: "f(x) = sgn x", all: [{ v: sup("|\\sgn(x)|", [-1, 1]), le: 10 }, { v: { m: "limit", f: "\\sgn(x)", at: 0, dir: "+" }, ne: 0 }] },
         { say: "f(x) = x", all: [{ v: sup("|x|", [-1, 1]), le: 10 }, { v: { m: "limit", f: "x", at: 0, dir: "+" }, ne: 0 }] },
@@ -824,7 +824,7 @@
       tags: ["seqcrit-disprove-continuity", "continuity", "oscillation"],
       hints: ["把每個 xₙ 代進去：1/xₙ 是多少？", "sin 在 π 的整數倍是 0；要讓 sin 一直等於 1，1/xₙ 要落在哪些角度？"],
       solution: "1/(nπ)、1/(2nπ)、(−1)ⁿ/(nπ) 讓 1/xₙ 是 π 的整數倍，f(xₙ) = 0 → f(0)。取 xₙ = 2/((4n+1)π)，1/xₙ = 2nπ + π/2，f(xₙ) = 1 恆成立，不趨近 0，所以 f 在 0 不連續。",
-      solutionSteps: ["四個數列都趨近 0。", "1/(nπ)、1/(2nπ)、(−1)ⁿ/(nπ)：sin(±kπ) = 0，f(xₙ) → 0 = f(0)。", "xₙ = 2/((4n+1)π)：sin(2nπ + π/2) = 1，f(xₙ) → 1 ≠ 0。"],
+      
       verify: choice([
         { say: "xₙ = 2/((4n+1)π)", given: [{ v: seq("1+\\frac{2}{(4n+1)\\pi}"), eq: 1 }], all: [{ v: seq("\\sin\\left(\\frac{(4n+1)\\pi}{2}\\right)"), ne: 0 }] },
         { say: "xₙ = 1/(nπ)", given: [{ v: seq("1+\\frac{1}{n\\pi}"), eq: 1 }], all: [{ v: seq("\\sin(n\\pi)"), ne: 0 }] },
@@ -838,7 +838,7 @@
       tags: ["seqcrit-disprove-continuity", "continuity"],
       hints: ["f(2) 是多少？", "從右邊靠近 2 和從左邊靠近 2，⌊x⌋ 各是多少？"],
       solution: "f(2) = 2。從右邊靠近的數列落在 [2, 3)，⌊xₙ⌋ = 2 → f(2)。xₙ = 2 − 1/n 落在 [1, 2)，⌊xₙ⌋ = 1，極限 1 ≠ 2，所以 ⌊x⌋ 在 2 不連續。",
-      solutionSteps: ["f(2) = ⌊2⌋ = 2。", "2 + 1/n、2 + 1/n²、2 + 1/2ⁿ 都在 (2, 3)：f(xₙ) = 2 → 2。", "2 − 1/n ∈ [1, 2)：f(xₙ) = 1 → 1 ≠ 2，答案 xₙ = 2 − 1/n。"],
+      
       verify: choice([
         { say: "xₙ = 2 − 1/n", given: [{ v: seq("2-\\frac{1}{n}"), eq: 2 }], all: [{ v: seq("\\lfloor 2-\\frac{1}{n}\\rfloor"), ne: 2 }] },
         { say: "xₙ = 2 + 1/n", given: [{ v: seq("2+\\frac{1}{n}"), eq: 2 }], all: [{ v: seq("\\lfloor 2+\\frac{1}{n}\\rfloor"), ne: 2 }] },
@@ -852,7 +852,7 @@
       tags: ["seqcrit-disprove-continuity", "continuity", "squeeze"],
       hints: ["x > 0 時 |x| = x，x < 0 時 |x| = −x。", "sin x / x → 1；那 sin x / (−x) 呢？看哪個數列是從負的那邊靠近 0。"],
       solution: "x>0 時 f(x) = sin x / x → 1；x<0 時 f(x) = −sin x / x → −1。1/n、1/n²、1/2ⁿ 都從正的那邊靠近，f(xₙ) → 1 = f(0)；xₙ = −1/n 從負的那邊靠近，f(xₙ) → −1 ≠ 1。",
-      solutionSteps: ["x>0：f(x) = sin x/x → 1；x<0：f(x) = −sin x/x → −1。", "1/n、1/n²、1/2ⁿ > 0：f(xₙ) → 1 = f(0)。", "xₙ = −1/n < 0：f(xₙ) → −1 ≠ 1，答案 xₙ = −1/n。"],
+      
       verify: choice([
         { say: "xₙ = −1/n", given: [{ v: seq("1+-\\frac{1}{n}"), eq: 1 }], all: [{ v: seq("\\frac{\\sin(-1/n)}{|-1/n|}"), ne: 1 }] },
         { say: "xₙ = 1/n", given: [{ v: seq("1+\\frac{1}{n}"), eq: 1 }], all: [{ v: seq("\\frac{\\sin(1/n)}{|1/n|}"), ne: 1 }] },
@@ -866,7 +866,7 @@
       tags: ["seqcrit-two-sequences", "continuity", "oscillation"],
       hints: ["先算 1/xₙ 與 1/yₙ。", "cos 在 π 的偶數倍與奇數倍各是多少？"],
       solution: "1/xₙ = 2nπ，f(xₙ) = cos 2nπ = 1；1/yₙ = (2n+1)π，f(yₙ) = cos(2n+1)π = −1。兩串都趨近 0，函數值卻趨近 1 與 −1，差是 2——所以不管 f(0) 怎麼補，f 在 0 都不會連續。",
-      solutionSteps: ["f(xₙ) = cos(2nπ) = 1 → 1。", "f(yₙ) = cos((2n+1)π) = −1 → −1。", "差 = 1 − (−1) = 2。"],
+      
       verify: { m: "let", f: "A-B", with: { A: seq("\\cos\\left(\\frac{1}{1/(2n\\pi)}\\right)"), B: seq("\\cos\\left(\\frac{1}{1/((2n+1)\\pi)}\\right)") } } },
     { id: "cg-12e-007", topic: "limits", rank: 3, answerKind: "numeric",
       prompt: "f(x)=\\frac{1}{1+e^{1/x}}\\ (x\\neq0)\\text{。取 }x_n=\\frac{1}{n},\\ y_n=-\\frac{1}{n}\\text{，求 }\\lim_{n\\to\\infty}f(y_n)-\\lim_{n\\to\\infty}f(x_n)",
@@ -875,7 +875,7 @@
       tags: ["seqcrit-two-sequences", "continuity", "one-sided-limit"],
       hints: ["1/xₙ = n → ∞，1/yₙ = −n → −∞。", "e^{n} 與 e^{−n} 各趨近什麼？代進 1/(1 + ·)。"],
       solution: "f(xₙ) = 1/(1+eⁿ) → 0；f(yₙ) = 1/(1+e^{−n}) → 1。兩串都趨近 0，函數值極限差 1，所以 f 不論怎麼補值都在 0 不連續。",
-      solutionSteps: ["xₙ = 1/n：eⁿ → ∞，f(xₙ) → 0。", "yₙ = −1/n：e^{−n} → 0，f(yₙ) → 1。", "差 = 1 − 0 = 1。"],
+      
       verify: { m: "let", f: "A-B", with: { A: seq("\\frac{1}{1+e^{1/(-1/n)}}"), B: seq("\\frac{1}{1+e^{1/(1/n)}}") } } },
 
     /* ── 中間值定理：二分法、完備性的角色 ── */
@@ -886,7 +886,7 @@
       tags: ["ivt-bisection", "ivt", "numerical-method"],
       hints: ["第一次中點 2.5：算 f(2.5) 的正負，決定留哪一半。", "每做一次區間長度減半；三次後長度是 1/8。"],
       solution: "f(2.5) = 5.625 > 0 → [2, 2.5]；f(2.25) ≈ 1.89 > 0 → [2, 2.25]；f(2.125) ≈ 0.346 > 0 → [2, 2.125]。右端點 2.125 = 17/8。",
-      solutionSteps: ["f(2) = −1 < 0；f(2.5) = 5.625 > 0 ⟹ [2, 2.5]。", "f(2.25) ≈ 1.891 > 0 ⟹ [2, 2.25]。", "f(2.125) ≈ 0.346 > 0 ⟹ [2, 2.125]，右端點 17/8。"],
+      
       // 三次二分的區間就是包住根、長 1/8、端點在 2+k/8 的那一格：由根的位置直接定
       verify: { m: "let", f: "2+\\frac{\\lceil 8(r-2)\\rceil}{8}", with: { r: { m: "root", f: "x^3-2x-5", x0: 2 } } } },
     { id: "cg-12e-009", topic: "limits", rank: 2, answerKind: "numeric",
@@ -896,7 +896,7 @@
       tags: ["ivt-bisection", "ivt", "numerical-method"],
       hints: ["每一步只要看中點的函數值正負：正的話根在右半邊（因為 f(1) < 0）。", "四次後區間長 1/16，端點都是 k/16 的形式。"],
       solution: "f(0.5) ≈ 0.378 > 0 → [0.5, 1]；f(0.75) ≈ −0.018 < 0 → [0.5, 0.75]；f(0.625) ≈ 0.186 > 0 → [0.625, 0.75]；f(0.6875) ≈ 0.085 > 0 → [0.6875, 0.75]。左端點 11/16。",
-      solutionSteps: ["f(0.5) ≈ 0.378 > 0 ⟹ [0.5, 1]；f(0.75) ≈ −0.018 < 0 ⟹ [0.5, 0.75]。", "f(0.625) ≈ 0.186 > 0 ⟹ [0.625, 0.75]。", "f(0.6875) ≈ 0.085 > 0 ⟹ [0.6875, 0.75]，左端點 11/16。"],
+      
       verify: { m: "let", f: "\\frac{\\lfloor 16r\\rfloor}{16}", with: { r: { m: "root", f: "\\cos x-x", x0: 0.7 } } } },
     { id: "cg-12e-010", topic: "limits", rank: 3, answerKind: "numeric",
       prompt: "\\text{用二分法找 }e^x=3\\text{ 在 }[1,2]\\text{ 的根：做 }3\\text{ 次之後，取最後區間的中點當近似值。求這個近似值}",
@@ -905,7 +905,7 @@
       tags: ["ivt-bisection", "ivt", "numerical-method"],
       hints: ["令 g(x) = eˣ − 3，g(1) < 0 < g(2)。", "e^{1.5}、e^{1.25}、e^{1.125} 各比 3 大還是小？"],
       solution: "g(1.5) ≈ 1.48 > 0 → [1, 1.5]；g(1.25) ≈ 0.49 > 0 → [1, 1.25]；g(1.125) ≈ 0.080 > 0 → [1, 1.125]。中點 1.0625 = 17/16（真根 ln 3 ≈ 1.0986，誤差不超過 1/16）。",
-      solutionSteps: ["g(x) = eˣ − 3；g(1.5) > 0 ⟹ [1, 1.5]。", "g(1.25) > 0 ⟹ [1, 1.25]；g(1.125) ≈ 0.080 > 0 ⟹ [1, 1.125]。", "中點 (1 + 1.125)/2 = 17/16。"],
+      
       verify: { m: "let", f: "1+\\frac{\\lfloor 8(r-1)\\rfloor+\\frac{1}{2}}{8}", with: { r: { m: "root", f: "e^x-3", x0: 1 } } } },
     { id: "cg-12e-011", topic: "limits", rank: 3,
       ...text("ℚ 不完備：√2 不是有理數", ["f 在 [1, 2] 上不連續", "f(1) 與 f(2) 同號", "f 在 [1, 2] 上無界"]),
@@ -914,7 +914,7 @@
       tags: ["ivt-completeness-role", "ivt", "continuity"],
       hints: ["一個一個檢查：連續嗎？端點異號嗎？有界嗎？", "證明裡取 sup{x : f(x) < 0} 那一步，需要定義域有什麼性質？"],
       solution: "f 是多項式，處處連續；f(1) = −1、f(2) = 2 異號；|f| ≤ 2 有界。三個都成立，定理仍失敗，問題出在定義域：{x ∈ ℚ : x² < 2} 的上確界 √2 不在 ℚ 裡——證明裡「取 sup」那一步需要完備性。",
-      solutionSteps: ["連續：x² − 2 是多項式。", "異號：f(1) = −1 < 0 < 2 = f(2)；有界：|f| ≤ 2。", "{x ∈ ℚ : x² < 2} 的 sup = √2 ∉ ℚ：缺的是完備性。"],
+      
       verify: choice([
         { say: "ℚ 不完備：√2 不是有理數", unknown: "完備性是定義域的性質，沒有數值條件；其餘三項各被正面否定" },
         { say: "f 在 [1, 2] 上不連續", all: [{ v: { m: "limit", f: "x^2-2", at: 1.5 }, ne: 0.25 }] },
@@ -928,7 +928,7 @@
       tags: ["ivt-completeness-role", "ivt", "continuity"],
       hints: ["畫出 ⌊x⌋ − 1/2 在 [0, 1] 的圖：x 從 1 的左邊靠近時函數值是多少？", "端點異號、有界、實數區間——哪一個假設真的被拿掉了？"],
       solution: "在 [0, 1) 上 f ≡ −1/2，到 x = 1 跳成 1/2：左極限 −1/2 ≠ f(1)，f 在 1 不連續。端點確實異號、|f| ≤ 1/2 有界、[0, 1] 是實數區間，所以缺的是連續性。",
-      solutionSteps: ["[0, 1) 上 f = −1/2；f(1) = 1/2。", "lim_{x→1⁻} f(x) = −1/2 ≠ 1/2 = f(1)：在 1 不連續。", "異號（−1/2·1/2 < 0）、有界都成立；失敗原因是 f 在 x = 1 不連續。"],
+      
       verify: choice([
         { say: "f 在 x = 1 不連續", all: [{ v: { m: "limit", f: "\\lfloor x\\rfloor-\\frac{1}{2}", at: 1, dir: "-" }, ne: 0.5 }] },
         { say: "f(0) 與 f(1) 同號", all: [{ v: { m: "value", f: "(\\lfloor 0\\rfloor-\\frac{1}{2})(\\lfloor 1\\rfloor-\\frac{1}{2})" }, gt: 0 }] },
@@ -944,7 +944,7 @@
       tags: ["evt-hypothesis-counterexample", "supremum"],
       hints: ["f(x) = 1 − 1/(1+x)：x 越大越接近哪個數？", "有沒有哪個 x 讓 f(x) 剛好等於那個數？極值定理哪個假設不成立？"],
       solution: "f(x) = 1 − 1/(1+x) 遞增，x→∞ 時趨近 1，所以 sup = 1；但對每個 x 都有 f(x) < 1，取不到。定義域 [0, ∞) 無界，極值定理不適用。",
-      solutionSteps: ["f(x) = 1 − 1/(1+x)，遞增且 < 1。", "x → ∞ 時 f(x) → 1：sup = 1。", "沒有 x 使 f(x) = 1：沒有最大值（定義域無界）。"],
+      
       verify: choice([
         { say: "sup = 1，但沒有最大值", all: [{ v: sup("\\frac{x}{1+x}", [0, 1e9]), eq: 1 }, { v: sup("\\frac{x}{1+x}", [0, 1000]), lt: 1 }] },
         { say: "最大值是 1", all: [{ v: sup("\\frac{x}{1+x}", [0, 1000]), ge: 1 }] },
@@ -958,7 +958,7 @@
       tags: ["evt-hypothesis-counterexample", "supremum"],
       hints: ["x 越靠近 0，1/x 怎麼變？", "最小值看右端點 x = 1。極值定理的哪個假設在這裡不成立？"],
       solution: "x → 0⁺ 時 1/x → ∞，f 在 (0, 1] 上無上界，當然沒有最大值；最小值是 f(1) = 1。區間不是閉的（缺左端點 0），極值定理不適用。",
-      solutionSteps: ["x → 0⁺：1/x → ∞，沒有上界。", "f 遞減，最小值 f(1) = 1 取得到。", "失敗的假設：(0, 1] 不是閉區間。"],
+      
       verify: choice([
         { say: "沒有上界，所以沒有最大值", all: [{ v: sup("\\frac{1}{x}", [0.000000001, 1]), gt: 1e6 }] },
         { say: "最大值是 1", all: [{ v: sup("\\frac{1}{x}", [0.000000001, 1]), eq: 1 }] },
@@ -972,7 +972,7 @@
       tags: ["evt-hypothesis-counterexample", "supremum"],
       hints: ["最小值看 x = 0；最大值候選看兩端：x = −1 和 x → 2⁻。", "x = 2 不在定義域裡，f 能不能等於 4？"],
       solution: "f ≥ 0 且 f(0) = 0，最小值 0 取得到。x → 2⁻ 時 x² → 4，sup = 4，但 2 不在定義域內，f(x) < 4 恆成立，沒有最大值；f(−1) = 1 只是左端的值。",
-      solutionSteps: ["f(0) = 0 是最小值。", "x → 2⁻：x² → 4，sup = 4；對 x ∈ [−1, 2)，x² < 4。", "右端開口，取不到 4：沒有最大值。"],
+      
       verify: choice([
         { say: "最小值 0 取得到；sup = 4 取不到", all: [{ v: inf("x^2", [-1, 2]), eq: 0 }, { v: sup("x^2", [-1, 2]), eq: 4 }, { v: sup("x^2", [-1, 1.999]), lt: 4 }] },
         { say: "最大值是 4", all: [{ v: sup("x^2", [-1, 1.999]), ge: 4 }] },
@@ -988,7 +988,7 @@
       tags: ["unifcont-quantifier-order", "uniform-continuity"],
       hints: ["δ 選在 x、y 之前：同一個 δ 要對整個 (0, 1] 都有效，麻煩出在 x → 0⁺。", "看 x → 0⁺ 時各函數有沒有極限（能不能補成 [0, 1] 上的連續函數）。"],
       solution: "這是一致連續。1/x、ln x 在 0 附近無界，sin(1/x) 在 0 附近振盪不止：都能找到越來越近、函數值卻差一個定量的兩點。√x 滿足 |√x − √y| ≤ √|x−y|，取 δ = ε² 即可。",
-      solutionSteps: ["∀ε ∃δ ∀x,y：一致連續。", "1/x、ln x 無界；sin(1/x) 取 1/(2nπ) 與 1/(2nπ+π/2) 差恆為 1：都不一致連續。", "|√x − √y| ≤ √|x−y|，δ = ε² 通用：答案 √x。"],
+      
       verify: choice([
         { say: "f(x) = √x", all: [{ v: uc("\\sqrt{x}", [0.0000001, 1], true), claim: true }] },
         { say: "f(x) = 1/x", all: [{ v: uc("1/x", [0.0000001, 1], true), claim: true }] },
@@ -1002,7 +1002,7 @@
       tags: ["unifcont-quantifier-order", "uniform-continuity"],
       hints: ["四個都處處連續；差別在 δ 能不能不依賴 x。", "看導數在無窮遠處有沒有界：導數有界就有 Lipschitz 常數。"],
       solution: "sin x、√(x²+1)、x/(1+x²) 的導數都有界（≤ 1），是 Lipschitz，因此一致連續。x²：取 x = n、y = n + 1/n，|x−y| → 0 但 |x² − y²| = 2 + 1/n² > 2，不一致連續。",
-      solutionSteps: ["sin x、√(x²+1)、x/(1+x²)：|f′| ≤ 1，一致連續。", "x²：x = n、y = n + 1/n，距離 → 0，函數值差 > 2。", "答案 f(x) = x²：每點連續，但 δ 必須跟著 x 變小。"],
+      
       verify: choice([
         { say: "f(x) = x²", all: [{ v: uc("x^2", [0, "inf"]), claim: false }] },
         { say: "f(x) = sin x", all: [{ v: uc("\\sin x", [0, "inf"]), claim: false }] },
@@ -1016,7 +1016,7 @@
       tags: ["unifcont-quantifier-order", "uniform-continuity"],
       hints: ["ε 在 δ 之後選、可以選很大。這個敘述只要求：距離小於 δ 的兩點，函數值差有一個共同的上界。", "固定 δ = 1，看 |f(x+1) − f(x)| 在整條實數線上有沒有界。"],
       solution: "敘述等於「距離 < δ 的兩點，函數值差有界」。sin(x²)、arctan x 有界，差 ≤ 2 或 ≤ π；2x+1 的差 ≤ 2δ。eˣ：e^{x+1} − eˣ = (e−1)eˣ → ∞，對 δ = 1 找不到 ε。注意 sin(x²) 滿足它卻不一致連續——這個敘述不是一致連續。",
-      solutionSteps: ["敘述 ⟺ 每個 δ 下，|x−y|<δ 的函數值差有界。", "sin(x²)、arctan x 有界；2x+1 差 ≤ 2δ：都滿足。", "eˣ：e^{x+1} − eˣ = (e−1)eˣ 無界，不滿足。"],
+      
       verify: choice([
         { say: "f(x) = eˣ", all: [{ v: sup("e^{x+1}-e^x", [0, 50]), gt: 1e5 }] },
         { say: "f(x) = sin(x²)", all: [{ v: sup("\\left|\\sin((x+1)^2)-\\sin(x^2)\\right|", [0, 50]), gt: 1e5 }] },
@@ -1030,7 +1030,7 @@
       tags: ["unifcont-delta-independent", "uniform-continuity", "epsilon-delta"],
       hints: ["固定距離 δ，|√(x+δ) − √x| 在哪個 x 最大？", "最壞的地方是 x = 0；讓那裡的差剛好等於 ε。"],
       solution: "√(x+δ) − √x = δ/(√(x+δ)+√x) 隨 x 遞減，最壞在 x = 0，差為 √δ。要 √δ ≤ 0.1，δ ≤ 0.01；而 |√x − √y| ≤ √|x−y| 保證 δ = 0.01 對全區有效。最大 δ = 1/100。",
-      solutionSteps: ["√(x+δ) − √x = δ/(√(x+δ)+√x)，x = 0 時最大，為 √δ。", "√δ = 0.1 ⟹ δ = 0.01。", "|√x − √y| ≤ √|x−y| < 0.1：δ = 1/100 通用且不能再大。"],
+      
       // 連續模數 ω(δ) = sup|f(x+δ) − f(x)|：最大的 δ 就是 ω(δ) = ε 的那個 δ
       verify: choice([{ say: "1/100", all: [{ v: sup("\\sqrt{x+0.01}-\\sqrt{x}", [0, 1000]), eq: 0.1 }] }]) },
     { id: "cg-12e-020", topic: "derivatives", rank: 3, answerKind: "numeric",
@@ -1040,7 +1040,7 @@
       tags: ["unifcont-delta-independent", "uniform-continuity", "epsilon-delta"],
       hints: ["凹函數的增量 f(x+δ) − f(x) 隨 x 遞減：最壞在哪裡？", "在 x = 0 時差是 ∛δ；令它等於 ε。"],
       solution: "∛x 凹且遞增，∛(x+δ) − ∛x 在 x = 0 最大，等於 ∛δ。∛δ = 0.2 ⟹ δ = 0.008 = 1/125。比它大的 δ 在 x = 0 就失敗。",
-      solutionSteps: ["∛(x+δ) − ∛x 隨 x 遞減（凹函數），最大值 ∛δ（x = 0）。", "∛δ = 0.2 ⟹ δ = 0.2³ = 0.008。", "最大 δ = 1/125。"],
+      
       verify: choice([{ say: "1/125", all: [{ v: sup("(x+0.008)^{1/3}-x^{1/3}", [0, 1000]), eq: 0.2 }] }]) },
 
     /* ── Heine–Cantor：閉區間上的具體 δ、能不能直接套 ── */
@@ -1051,7 +1051,7 @@
       tags: ["heinecantor-explicit-delta", "uniform-continuity", "epsilon-delta"],
       hints: ["|x² − y²| = |x − y|·(x + y)：距離固定時，x + y 越大越糟。", "最壞的一對是 y = 3、x = 3 − δ；讓 9 − (3−δ)² 剛好等於 ε。"],
       solution: "最壞在右端：9 − (3−δ)² = 0.01，(3−δ)² = 8.99，δ = 3 − √8.99 ≈ 0.001667。比粗估 δ = ε/6 ≈ 0.001667 略大一點點。",
-      solutionSteps: ["|x²−y²| = |x−y|(x+y)，最壞在 y = 3、x = 3 − δ。", "9 − (3−δ)² = 0.01 ⟹ 3 − δ = √8.99。", "δ = 3 − √8.99 ≈ 0.001667。"],
+      
       verify: choice([{ say: "3-sqrt(8.99)", all: [{ v: sup("(x+3-\\sqrt{8.99})^2-x^2", [0, "\\sqrt{8.99}"]), eq: 0.01 }] }]) },
     { id: "cg-12e-022", topic: "derivatives", rank: 4, answerKind: "numeric",
       prompt: "f(x)=x^3\\text{ 在 }[0,2]\\text{ 上，}\\varepsilon=0.1\\text{。求最大的 }\\delta\\text{，使得對所有 }x,y\\in[0,2]\\text{，}|x-y|<\\delta\\Rightarrow|x^3-y^3|<0.1",
@@ -1060,7 +1060,7 @@
       tags: ["heinecantor-explicit-delta", "uniform-continuity", "epsilon-delta"],
       hints: ["x³ 遞增而且越往右越陡：固定距離 δ，增量在哪裡最大？", "令 2³ − (2 − δ)³ = 0.1 解 δ。"],
       solution: "(x+δ)³ − x³ 隨 x 遞增，最壞在 x = 2 − δ：8 − (2−δ)³ = 0.1，2 − δ = ∛7.9，δ = 2 − ∛7.9 ≈ 0.00835。",
-      solutionSteps: ["(x+δ)³ − x³ = 3x²δ + 3xδ² + δ³ 隨 x 遞增，最壞在右端。", "8 − (2−δ)³ = 0.1 ⟹ (2−δ)³ = 7.9。", "δ = 2 − ∛7.9 ≈ 0.00835。"],
+      
       verify: choice([{ say: "2-7.9^(1/3)", all: [{ v: sup("(x+2-7.9^{1/3})^3-x^3", [0, "7.9^{1/3}"]), eq: 0.1 }] }]) },
     { id: "cg-12e-023", topic: "derivatives", rank: 3, answerKind: "numeric",
       prompt: "f(x)=\\frac{1}{x}\\text{ 在 }[1,5]\\text{ 上，}\\varepsilon=0.05\\text{。求最大的 }\\delta\\text{，使得對所有 }x,y\\in[1,5]\\text{，}|x-y|<\\delta\\Rightarrow\\left|\\frac{1}{x}-\\frac{1}{y}\\right|<0.05",
@@ -1069,7 +1069,7 @@
       tags: ["heinecantor-explicit-delta", "uniform-continuity", "epsilon-delta"],
       hints: ["1/x 在左端最陡：固定距離 δ，最壞的一對在哪裡？", "令 1/1 − 1/(1+δ) = 0.05 解 δ。"],
       solution: "1/x − 1/(x+δ) = δ/(x(x+δ)) 隨 x 遞減，最壞在 x = 1：1 − 1/(1+δ) = 0.05 ⟹ 1+δ = 20/19 ⟹ δ = 1/19。",
-      solutionSteps: ["1/x − 1/(x+δ) = δ/(x(x+δ))，x = 1 時最大。", "1 − 1/(1+δ) = 0.05 ⟹ 1 + δ = 20/19。", "δ = 1/19。"],
+      
       verify: choice([{ say: "1/19", all: [{ v: sup("\\frac{1}{x}-\\frac{1}{x+1/19}", [1, "5-1/19"]), eq: 0.05 }] }]) },
     { id: "cg-12e-024", topic: "derivatives", rank: 3,
       ...text("eˣ 在 [0, 5]", ["eˣ 在 [0, ∞)", "1/x 在 (0, 1]", "tan x 在 [0, π/2)"]),
@@ -1078,7 +1078,7 @@
       tags: ["heinecantor-apply", "uniform-continuity"],
       hints: ["定理要兩件事：區間有界而且是閉的，函數在上面連續。", "逐個檢查區間：無界？缺端點？"],
       solution: "[0, 5] 有界閉、eˣ 連續，定理直接給一致連續。另外三個的區間不是有界閉區間，而且它們確實都不一致連續：eˣ 在無窮遠越來越陡，1/x 在 0⁺ 爆掉，tan x 在 π/2⁻ 爆掉。",
-      solutionSteps: ["Heine–Cantor 需要：有界閉區間＋連續。", "[0, ∞) 無界、(0, 1] 與 [0, π/2) 缺端點：不能直接套（而且三者都不一致連續）。", "答案：eˣ 在 [0, 5]。"],
+      
       verify: choice([
         { say: "eˣ 在 [0, 5]", all: [{ v: uc("e^x", [0, 5]), claim: true }] },
         { say: "eˣ 在 [0, ∞)", all: [{ v: uc("e^x", [0, "inf"]), claim: true }] },
@@ -1092,7 +1092,7 @@
       tags: ["heinecantor-apply", "uniform-continuity", "oscillation"],
       hints: ["先看區間是不是有界閉區間；再看函數在端點能不能連續地補值。", "x sin(1/x) 在 x → 0⁺ 的極限是多少？sin(1/x) 呢？"],
       solution: "|x sin(1/x)| ≤ x → 0，補 f(0) = 0 後是 [0, 1] 上的連續函數，Heine–Cantor 直接給一致連續。sin(1/x) 在 0⁺ 沒有極限、ln x 在 0⁺ 趨近 −∞，都補不成連續；x² 的區間無界。三者其實都不一致連續。",
-      solutionSteps: ["x sin(1/x) → 0（夾擠），補 f(0) = 0 後在 [0, 1] 連續。", "sin(1/x)、ln x 在 0⁺ 補不成連續；x² 在 [0, ∞) 區間無界。", "答案：x sin(1/x)（補 f(0) = 0）在 [0, 1]。"],
+      
       verify: choice([
         { say: "x sin(1/x)（補 f(0) = 0）在 [0, 1]", all: [{ v: uc("x\\sin(1/x)", [0.0000001, 1], true), claim: true }] },
         { say: "sin(1/x) 在 (0, 1]", all: [{ v: uc("\\sin(1/x)", [0.0000001, 1], true), claim: true }] },
@@ -1108,7 +1108,7 @@
       tags: ["dirichlet-upper-lower", "darboux", "dirichlet"],
       hints: ["每個小區間裡同時有有理點與無理點，所以 inf 會在 x 與 1 − x 兩條線裡取比較低的那條。", "下和會趨近「兩條線取小」那個函數的積分；在 x = 1/2 兩條線交換高低。"],
       solution: "每個小區間裡有理、無理點都稠密，inf f = 該區間上 min(x, 1−x) 的 inf，下和趨近 ∫₀¹ min(x, 1−x) dx = 2·∫₀^{1/2} x dx = 1/4。（上積分是 3/4，兩者不等，f 不可積。）",
-      solutionSteps: ["稠密性：每個小區間的 inf f = inf min(x, 1−x)。", "下積分 = ∫₀¹ min(x, 1−x) dx。", "= 2∫₀^{1/2} x dx = 1/4。"],
+      
       verify: { m: "integral", f: "\\frac{1-|2x-1|}{2}", a: 0, b: 1 } },
     { id: "cg-12h-002", topic: "integrals", rank: 4, answerKind: "numeric",
       prompt: "f(x)=x\\ (x\\in\\mathbb{Q}),\\ f(x)=x^2\\ (x\\notin\\mathbb{Q})\\text{，在 }[0,2]\\text{ 上。求 }f\\text{ 的上積分（所有上和的下確界）}",
@@ -1117,7 +1117,7 @@
       tags: ["dirichlet-upper-lower", "darboux", "dirichlet"],
       hints: ["每個小區間的 sup 取 x 與 x² 中較高的那條；兩條線在 x = 1 交叉。", "分成 [0, 1] 與 [1, 2] 兩段積分。"],
       solution: "稠密性使每個小區間的 sup = 該處 max(x, x²) 的 sup。[0, 1] 上 x ≥ x²，[1, 2] 上 x² ≥ x。上積分 = ∫₀¹ x dx + ∫₁² x² dx = 1/2 + 7/3 = 17/6。",
-      solutionSteps: ["上積分 = ∫₀² max(x, x²) dx。", "[0, 1]：max = x，積分 1/2；[1, 2]：max = x²，積分 7/3。", "1/2 + 7/3 = 17/6。"],
+      
       verify: { m: "integral", f: "\\frac{x+x^2+|x-x^2|}{2}", a: 0, b: 2 } },
     { id: "cg-12h-003", topic: "integrals", rank: 3, answerKind: "numeric",
       prompt: "f(x)=x+1\\ (x\\in\\mathbb{Q}),\\ f(x)=0\\ (x\\notin\\mathbb{Q})\\text{，在 }[0,2]\\text{ 上分成 }4\\text{ 等分，取每段右端點（都是有理數）當取樣點，求 Riemann 和}",
@@ -1126,7 +1126,7 @@
       tags: ["dirichlet-tag-dependence", "riemann-sum", "dirichlet"],
       hints: ["每段寬 0.5，右端點是 0.5、1、1.5、2。", "這些點都是有理數，所以用 x + 1 那條式子。"],
       solution: "Δx = 0.5，取樣點 0.5、1、1.5、2 都是有理數，f 值 1.5、2、2.5、3。和 = 0.5·9 = 9/2。若改取無理點，每一項都是 0，和為 0——同一個分割，取點不同，和差 4.5。",
-      solutionSteps: ["Δx = 0.5；取樣點 0.5、1、1.5、2 ∈ ℚ。", "f 值：1.5、2、2.5、3，總和 9。", "Riemann 和 = 0.5·9 = 9/2。"],
+      
       verify: { m: "riemannRule", f: "x+1", a: 0, b: 2, n: 4, rule: "right" } },
     { id: "cg-12h-004", topic: "integrals", rank: 3, answerKind: "numeric",
       prompt: "f(x)=1\\ (x\\in\\mathbb{Q}),\\ f(x)=x^2\\ (x\\notin\\mathbb{Q})\\text{，在 }[0,1]\\text{ 上分成 }4\\text{ 等分，第 }k\\text{ 段取 }\\xi_k=\\frac{k-1}{4}+\\frac{\\sqrt{2}}{8}\\text{（無理數），求 Riemann 和}",
@@ -1135,7 +1135,7 @@
       tags: ["dirichlet-tag-dependence", "riemann-sum", "dirichlet"],
       hints: ["√2/8 ≈ 0.177 < 1/4，所以 ξₖ 落在第 k 段裡，而且是無理數：用 x² 那條。", "展開 Σ((k−1)/4 + s)²，s = √2/8，分成平方項、交叉項、常數項。"],
       solution: "ξₖ 都是無理數，f(ξₖ) = ξₖ²。Σ_{j=0}^{3}(j/4 + s)² = 14/16 + 2s·(6/4) + 4s²，s = √2/8，得 7/8 + 3√2/8 + 1/8 = 1 + 3√2/8。乘 Δx = 1/4：1/4 + 3√2/32 ≈ 0.383。取有理點的話和是 1。",
-      solutionSteps: ["ξₖ ∉ ℚ ⟹ f(ξₖ) = ξₖ²，Δx = 1/4。", "Σ(j/4 + s)² = 7/8 + 3s + 4s² = 1 + 3√2/8（s = √2/8）。", "和 = (1/4)(1 + 3√2/8) = 1/4 + 3√2/32。"],
+      
       verify: { m: "value", f: "\\frac{1}{4}\\sum_{k=1}^{4}\\left(\\frac{k-1}{4}+\\frac{\\sqrt{2}}{8}\\right)^2" } },
     { id: "cg-12h-005", topic: "integrals", rank: 3, answerKind: "numeric",
       prompt: "\\text{正整數 }n\\,\\text{ 最小是多少，才有某個整數 }\\,m\\,\\text{ 使 }\\,\\frac{m}{n}\\text{ 落在開區間 }(0.31,\\,0.32)\\text{ 裡？}",
@@ -1144,7 +1144,7 @@
       tags: ["dirichlet-density", "density"],
       hints: ["條件是 0.31n < m < 0.32n：區間 (0.31n, 0.32n) 裡要有整數。", "從小的 n 往上試；n = 10 時端點剛好是整數，開區間不算。"],
       solution: "要 (0.31n, 0.32n) 含整數。n ≤ 15 逐一檢查都沒有（例如 n = 10 是 (3.1, 3.2)，n = 13 是 (4.03, 4.16)）；n = 16 時是 (4.96, 5.12)，含 5，即 5/16 = 0.3125。",
-      solutionSteps: ["m/n ∈ (0.31, 0.32) ⟺ 0.31n < m < 0.32n。", "n = 1, …, 15：區間 (0.31n, 0.32n) 都不含整數。", "n = 16：(4.96, 5.12) 含 5，5/16 = 0.3125。答案 16。"],
+      
       // (A, B) 內的整數個數 = ⌈B⌉ − ⌊A⌋ − 1：n ≤ 15 合計 0 個、n = 16 有 1 個
       verify: choice([{ say: "16", all: [
         { v: { m: "value", f: "\\sum_{n=1}^{15}\\left(\\lceil\\frac{32n}{100}\\rceil-\\lfloor\\frac{31n}{100}\\rfloor-1\\right)" }, eq: 0 },
@@ -1156,7 +1156,7 @@
       tags: ["dirichlet-density", "density"],
       hints: ["0.5 + √2/k 永遠大於 0.5；只要擔心右端：√2/k < 0.001。", "√2 ≈ 1.41421，k 要大於多少？"],
       solution: "條件是 √2/k < 0.001，即 k > 1000√2 ≈ 1414.21，最小 k = 1415。0.5 + √2/1415 是無理數（有理數加非零有理倍的 √2）。",
-      solutionSteps: ["0.5 + √2/k ∈ (0.5, 0.501) ⟺ √2/k < 0.001。", "k > 1000√2 ≈ 1414.21。", "最小 k = 1415。"],
+      
       verify: { m: "firstIndex", f: "\\frac{\\sqrt{2}}{n}", below: 0.001 } },
 
     /* ── 12H 測度為零：覆蓋長度、Lebesgue 判準 ── */
@@ -1167,7 +1167,7 @@
       tags: ["measure-zero-countable-cover", "measure", "geometric-series"],
       hints: ["總長 = Σ_{k≥1} ε/3^k，是等比級數。", "首項 ε/3、公比 1/3。"],
       solution: "Σ_{k≥1} ε/3^k = ε·(1/3)/(1 − 1/3) = ε/2 = 0.03。總長比 ε 還小，而 ε 可以任意小——有理數集的測度為零。",
-      solutionSteps: ["總長 = Σ_{k=1}^{∞} 0.06/3^k。", "等比級數：(0.06/3)/(1 − 1/3) = 0.03。", "答案 3/100 < ε。"],
+      
       verify: { m: "series", f: "\\frac{0.06}{3^n}", from: 1 } },
     { id: "cg-12h-008", topic: "integrals", rank: 3, answerKind: "numeric",
       prompt: "\\text{改用長度 }\\frac{\\varepsilon}{k^2}\\text{ 的開區間蓋住第 }\\,k\\,\\text{ 個有理數 }\\,q_k\\text{。取 }\\varepsilon=0.01\\text{，求這些區間長度的總和（這個蓋法能讓總長小於 }\\varepsilon\\text{ 嗎？）}",
@@ -1176,7 +1176,7 @@
       tags: ["measure-zero-countable-cover", "measure", "p-series"],
       hints: ["總長 = ε·Σ 1/k²。", "Σ_{k≥1} 1/k² 是一個熟悉的常數，比 1 大還是小？"],
       solution: "總長 = 0.01·Σ1/k² = 0.01·π²/6 = π²/600 ≈ 0.01645 > ε。這個蓋法總長是 ε 的 π²/6 倍，不能直接用；把每段長改成 ε/(2k²) 就夠了——重點是總長要能被 ε 的常數倍控制。",
-      solutionSteps: ["總長 = Σ 0.01/k² = 0.01·Σ1/k²。", "Σ1/k² = π²/6 ⟹ 總長 = π²/600 ≈ 0.01645。", "π²/6 > 1，總長大於 ε；要小於 ε 得把每段再縮小。"],
+      
       verify: { m: "series", f: "\\frac{0.01}{n^2}", from: 1 } },
     { id: "cg-12h-009", topic: "integrals", rank: 4,
       ...text("可積：不連續點就是 C，總長 0", ["不可積：不連續點集合 C 的總長是 1/2", "不可積：不連續點集合 C 的總長是 1/3"]),
@@ -1185,7 +1185,7 @@
       tags: ["measure-zero-lebesgue-criterion", "measure", "cantor"],
       hints: ["f 在 C 外的點有一個開鄰域全是 0，那裡連續；在 C 上每一點旁邊都有被挖掉的點。", "不連續點集合就是 C。算挖掉的總長：第 k 步挖掉 2^{k−1} 段、每段長 1/3^k。"],
       solution: "不連續點恰為 C。挖掉的總長 Σ 2^{k−1}/3^k = 1，所以 C 的總長（測度）= 0。有界函數的不連續點測度為零 ⟹ Riemann 可積（而且 ∫ f = 0）。C 不可數，但測度仍是 0。",
-      solutionSteps: ["C 外的點有全為 0 的開鄰域 ⟹ 連續；C 上每點旁都有 0 值 ⟹ 不連續。", "挖掉總長 Σ_{k≥1} 2^{k−1}/3^k = 1，C 的測度 = 0。", "Lebesgue 判準：可積，不連續點 C 的總長 0。"],
+      
       verify: choice([
         { say: "可積：不連續點就是 C，總長 0", all: [{ v: { m: "let", f: "1-S", with: { S: { m: "series", f: "\\frac{2^{n-1}}{3^n}", from: 1 } } }, eq: 0 }] },
         { say: "不可積：不連續點集合 C 的總長是 1/2", all: [{ v: { m: "let", f: "1-S", with: { S: { m: "series", f: "\\frac{2^{n-1}}{3^n}", from: 1 } } }, eq: 0.5 }] },
@@ -1198,7 +1198,7 @@
       tags: ["measure-zero-lebesgue-criterion", "measure", "cantor"],
       hints: ["跟 Cantor 集一樣，g 的不連續點集合就是 S（S 不含任何區間）。", "算挖掉的總長：Σ 2^{k−1}/4^k，再用 1 去減。"],
       solution: "S 不含區間，S 上每點旁都有 g = 0 的點，所以不連續點恰為 S。挖掉總長 Σ 2^{k−1}/4^k = 1/2，S 的總長 = 1/2 > 0。依 Lebesgue 判準，g 不可積——「不含區間」不等於「測度為零」。",
-      solutionSteps: ["不連續點集合 = S。", "挖掉總長 Σ_{k≥1} 2^{k−1}/4^k = 1/2，S 的測度 = 1/2。", "測度 > 0 ⟹ 不可積。"],
+      
       verify: choice([
         { say: "不可積：不連續點集合 S 的總長是 1/2", all: [{ v: { m: "let", f: "1-S", with: { S: { m: "series", f: "\\frac{2^{n-1}}{4^n}", from: 1 } } }, eq: 0.5 }] },
         { say: "可積：S 不含任何區間，總長是 0", all: [{ v: { m: "let", f: "1-S", with: { S: { m: "series", f: "\\frac{2^{n-1}}{4^n}", from: 1 } } }, eq: 0 }] },
@@ -1211,7 +1211,7 @@
       tags: ["measure-zero-lebesgue-criterion", "measure", "alternating-series"],
       hints: ["在 (1/(k+1), 1/k) 上 π/x 落在 (kπ, (k+1)π)，sin 的正負只看 k 的奇偶。", "積分 = Σ (−1)^k·(1/k − 1/(k+1))；拆開後用 ln 2 = 1 − 1/2 + 1/3 − ⋯。"],
       solution: "在 (1/(k+1), 1/k) 上 f = (−1)^k，段長 1/k − 1/(k+1)。∫ = Σ_{k≥1} (−1)^k/(k(k+1)) = Σ(−1)^k/k − Σ(−1)^k/(k+1) = −ln 2 − (ln 2 − 1) = 1 − 2ln 2 ≈ −0.386。",
-      solutionSteps: ["(1/(k+1), 1/k) 上 f = (−1)^k，段長 1/(k(k+1))。", "∫₀¹ f = Σ_{k≥1} (−1)^k/(k(k+1))。", "拆項：−ln 2 − (ln 2 − 1) = 1 − 2ln 2。"],
+      
       verify: { m: "series", f: "\\frac{(-1)^n}{n(n+1)}", from: 1 } }
   ];
 
