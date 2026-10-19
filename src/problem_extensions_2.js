@@ -544,7 +544,7 @@
       tags: ["cartesian-to-polar-quadrant", "polar"],
       hints: ["r 用畢氏定理；θ 先看點落在第幾象限。", "arctan(y/x) 只會給第一、四象限的角，點在第二象限時要再加 π。"],
       solution: "r = √(3+1) = 2。tan θ = −1/√3，arctan 給 −π/6（第四象限），但點在第二象限，θ = −π/6 + π = 5π/6。",
-      solutionSteps: ["r = √((−√3)² + 1²) = 2。", "tan θ = 1/(−√3)，arctan 給 −π/6，那是第四象限的方向。", "點 (−√3, 1) 在第二象限：θ = −π/6 + π = 5π/6。檢查：2cos(5π/6) = −√3、2sin(5π/6) = 1。"],
+      
       verify: { m: "choice", options: [
         { say: "5*pi/6", all: [{ v: val("\\sqrt{3+1}\\cos\\frac{5\\pi}{6}"), eq: "-\\sqrt{3}" }, { v: val("\\sqrt{3+1}\\sin\\frac{5\\pi}{6}"), eq: 1 }] },
         { say: "pi/6", all: [{ v: val("\\sqrt{3+1}\\cos\\frac{\\pi}{6}"), eq: "-\\sqrt{3}" }, { v: val("\\sqrt{3+1}\\sin\\frac{\\pi}{6}"), eq: 1 }] },
@@ -562,7 +562,7 @@
       tags: ["cartesian-to-polar-quadrant", "polar"],
       hints: ["先判斷點在哪個象限：x、y 都是負的。", "tan θ 是正的，但 arctan 給的角在第一象限，方向剛好相反。"],
       solution: "r = 2。tan θ = (−√3)/(−1) = √3，arctan 給 π/3（第一象限），點在第三象限，要加 π：θ = 4π/3。",
-      solutionSteps: ["r = √(1 + 3) = 2。", "tan θ = √3，arctan 給 π/3，但 (−1, −√3) 在第三象限。", "θ = π/3 + π = 4π/3。檢查：2cos(4π/3) = −1、2sin(4π/3) = −√3。"],
+      
       verify: { m: "choice", options: [
         { say: "4*pi/3", all: [{ v: val("\\sqrt{1+3}\\cos\\frac{4\\pi}{3}"), eq: -1 }, { v: val("\\sqrt{1+3}\\sin\\frac{4\\pi}{3}"), eq: "-\\sqrt{3}" }] },
         { say: "pi/3", all: [{ v: val("\\sqrt{1+3}\\cos\\frac{\\pi}{3}"), eq: -1 }, { v: val("\\sqrt{1+3}\\sin\\frac{\\pi}{3}"), eq: "-\\sqrt{3}" }] },
@@ -582,7 +582,7 @@
       tags: ["polar-negative-r", "polar"],
       hints: ["x = r cos θ、y = r sin θ 對負的 r 一樣成立，直接代。", "r 是負的：點落在 θ 方向的反方向上。"],
       solution: "x = −4·cos(π/6) = −2√3，y = −4·sin(π/6) = −2。r 為負，點在 π/6 方向的反方向（第三象限）。",
-      solutionSteps: ["x = r cos θ = −4·(√3/2) = −2√3。", "y = r sin θ = −4·(1/2) = −2。", "點是 (−2√3, −2)，落在第三象限，正是 π/6 方向的反方向。"],
+      
       verify: { m: "choice", options: [
         { say: "(−2√3, −2)", all: [{ v: val("-4\\cos\\frac{\\pi}{6}"), eq: "-2\\sqrt{3}" }, { v: val("-4\\sin\\frac{\\pi}{6}"), eq: -2 }] },
         { say: "(2√3, 2)", all: [{ v: val("-4\\cos\\frac{\\pi}{6}"), eq: "2\\sqrt{3}" }, { v: val("-4\\sin\\frac{\\pi}{6}"), eq: 2 }] },
@@ -602,7 +602,7 @@
       tags: ["polar-negative-r", "polar"],
       hints: ["把每個選項都換成直角座標，跟 (2, π/3) 的直角座標比。", "r 變號等於轉半圈：角度要差 π 才會回到同一點。"],
       solution: "(2, π/3) 是 (1, √3)。(−2, 4π/3)：x = −2cos(4π/3) = 1、y = −2sin(4π/3) = √3，同一點。其餘三組分別是 (−1, −√3)、(1, −√3)、(−1, √3)。",
-      solutionSteps: ["(2, π/3) → (2cos(π/3), 2sin(π/3)) = (1, √3)。", "(−2, 4π/3) → (−2·(−1/2), −2·(−√3/2)) = (1, √3)，相同。", "(−2, π/3) → (−1, −√3)；(2, −π/3) → (1, −√3)；(−2, −π/3) → (−1, √3)，都不是。"],
+      
       verify: { m: "choice", options: [
         { say: "(−2, 4π/3)", all: [{ v: val("-2\\cos\\frac{4\\pi}{3}"), eq: "2\\cos\\frac{\\pi}{3}" }, { v: val("-2\\sin\\frac{4\\pi}{3}"), eq: "2\\sin\\frac{\\pi}{3}" }] },
         { say: "(−2, π/3)", all: [{ v: val("-2\\cos\\frac{\\pi}{3}"), eq: "2\\cos\\frac{\\pi}{3}" }, { v: val("-2\\sin\\frac{\\pi}{3}"), eq: "2\\sin\\frac{\\pi}{3}" }] },
@@ -622,7 +622,7 @@
       tags: ["polar-equation-convert", "polar"],
       hints: ["先把分母乘過去，讓 r 跟 cos θ、sin θ 黏在一起。", "r cos θ 就是 x，r sin θ 就是 y。"],
       solution: "r(cos θ + 2 sin θ) = 4，即 r cos θ + 2 r sin θ = 4，也就是 x + 2y = 4，一條直線。",
-      solutionSteps: ["兩邊乘分母：r cos θ + 2 r sin θ = 4。", "代 x = r cos θ、y = r sin θ：x + 2y = 4。", "這是一條直線（截距 (4, 0)、(0, 2)）。"],
+      
       verify: { m: "choice", options: [
         { say: "直線 x + 2y = 4", v: sweep("\\left|\\frac{4\\cos x}{\\cos x+2\\sin x}+2\\cdot\\frac{4\\sin x}{\\cos x+2\\sin x}-4\\right|", "sup", [0, 2.5]), eq: 0 },
         { say: "直線 2x + y = 4", v: sweep("\\left|2\\cdot\\frac{4\\cos x}{\\cos x+2\\sin x}+\\frac{4\\sin x}{\\cos x+2\\sin x}-4\\right|", "sup", [0, 2.5]), eq: 0 },
@@ -642,7 +642,7 @@
       tags: ["polar-equation-convert", "polar"],
       hints: ["把 sec θ tan θ 寫成 sin θ / cos² θ，再把 cos² θ 乘過去。", "兩邊再乘一個 r，湊出 (r cos θ)² 和 r sin θ。"],
       solution: "r = 2 sin θ / cos² θ ⟹ r cos² θ = 2 sin θ ⟹ r² cos² θ = 2 r sin θ ⟹ x² = 2y，開口向上的拋物線。",
-      solutionSteps: ["sec θ tan θ = sin θ / cos² θ，所以 r cos² θ = 2 sin θ。", "兩邊乘 r：(r cos θ)² = 2 (r sin θ)。", "x² = 2y：開口向上的拋物線。"],
+      
       verify: { m: "choice", options: [
         { say: "拋物線 x² = 2y", v: sweep("\\left|\\left(\\frac{2\\tan x}{\\cos x}\\cos x\\right)^2-2\\cdot\\frac{2\\tan x}{\\cos x}\\sin x\\right|", "sup", [-1.2, 1.2]), eq: 0 },
         { say: "拋物線 y² = 2x", v: sweep("\\left|\\left(\\frac{2\\tan x}{\\cos x}\\sin x\\right)^2-2\\cdot\\frac{2\\tan x}{\\cos x}\\cos x\\right|", "sup", [-1.2, 1.2]), eq: 0 },
@@ -660,7 +660,7 @@
       tags: ["rose-petal-count", "polar"],
       hints: ["n 是奇數還是偶數？兩種情形花瓣數不一樣。", "n 奇數時 θ 走半圈就把整朵花畫完，後半圈只是重畫。"],
       solution: "n = 5 是奇數：θ 從 0 到 π，r 在相鄰零點 kπ/5 之間各畫出一片，共 5 片；π 到 2π 重畫同一批。",
-      solutionSteps: ["sin 5θ = 0 在 [0, π) 內有 θ = 0、π/5、2π/5、3π/5、4π/5，切出 5 段。", "每段畫出一片花瓣；n 為奇數時後半圈重畫同樣的花瓣。", "共 5 片。"],
+      
       verify: { m: "rootCount", f: "\\sin(5x)", range: [0.01, "\\pi+0.01"] } },
     { id: "cg-7b-008",
       topic: "integrals",
@@ -673,7 +673,7 @@
       tags: ["rose-petal-count", "polar"],
       hints: ["係數 3 只影響花瓣長度，不影響片數。", "n 是偶數時，r 為負的那幾段會畫到新的方向，不會重疊。"],
       solution: "n = 4 是偶數，花瓣數 2n = 8。cos 4θ 在 [0, 2π) 有 8 個零點，切出 8 段，每段一片且互不重疊。",
-      solutionSteps: ["花瓣長度 3，片數只看 n = 4。", "cos 4θ = 0 在 [0, 2π) 有 8 個解，切出 8 段。", "n 偶數時 r < 0 的段指向新的方向，8 片都不同：共 8 片。"],
+      
       verify: { m: "rootCount", f: "\\cos(4x)", range: [0.01, "2\\pi+0.01"] } },
     { id: "cg-7b-009",
       topic: "integrals",
@@ -688,7 +688,7 @@
       tags: ["polar-plot-sweep", "polar"],
       hints: ["讓 θ 轉一圈，看 r 的最小值是正、零、還是負。", "r 變負的那一段，點會跑到反方向，畫出另一個小圈。"],
       solution: "r 最小值 1 − 2 = −1 < 0：cos θ < −1/2（2π/3 < θ < 4π/3）時 r 為負，畫出內圈。r 最小是 0 才是心臟線，恆正是凹陷蝸線。",
-      solutionSteps: ["r = 1 + 2cos θ 在 θ = π 有最小值 −1。", "r < 0 的區間 2π/3 < θ < 4π/3 在反方向畫出一個小圈。", "最小值為負：有內圈的蝸線。"],
+      
       verify: { m: "choice", options: [
         { say: "有內圈的蝸線", v: sweep("1+2\\cos x", "inf", [0, "2\\pi"]), lt: 0 },
         { say: "心臟線", v: sweep("1+2\\cos x", "inf", [0, "2\\pi"]), eq: 0 },
@@ -707,7 +707,7 @@
       tags: ["polar-plot-sweep", "polar"],
       hints: ["r = a + b sin θ 這一族，形狀由 r 的最小值決定。", "r 的最小值剛好碰到 0 的時候，曲線在原點收成尖點。"],
       solution: "r 在 θ = π/2 有最小值 2 − 2 = 0，其餘角度都正：曲線恰好碰到原點一次、形成尖點，是心臟線（尖點朝上、身體在下）。",
-      solutionSteps: ["r = 2 − 2 sin θ 的最小值在 θ = π/2，為 0。", "r 從不為負，只在 θ = π/2 碰到原點。", "最小值恰為 0：心臟線。"],
+      
       verify: { m: "choice", options: [
         { say: "心臟線", v: sweep("2-2\\sin x", "inf", [0, "2\\pi"]), eq: 0 },
         { say: "有內圈的蝸線", v: sweep("2-2\\sin x", "inf", [0, "2\\pi"]), lt: 0 },
@@ -726,7 +726,7 @@
       tags: ["polar-plot-sweep", "polar"],
       hints: ["r² 不能是負的：cos 2θ < 0 的方向上根本沒有點。", "看 θ = 0 和 θ = π/2 兩個方向上各有沒有點。"],
       solution: "cos 2θ ≥ 0 才有點：只在 −π/4 ≤ θ ≤ π/4（和對面）有。θ = 0 時 r = ±3，θ = ±π/4 時 r = 0：左右兩個環在原點相接，是雙紐線。y 軸方向沒有點，所以不是四葉玫瑰。",
-      solutionSteps: ["r² = 9cos 2θ ≥ 0 只在 |θ| ≤ π/4（及其對面）成立；θ = π/2 時 r² = −9，沒有點。", "θ = 0 時 r = 3（最遠），θ = π/4 時 r = 0（回到原點）。", "左右兩個環在原點相接：雙紐線。"],
+      
       verify: { m: "choice", options: [
         { say: "雙紐線", all: [{ v: val("9\\cos 0"), eq: 9 }, { v: val("9\\cos\\frac{\\pi}{2}"), eq: 0 }, { v: val("9\\cos\\pi"), lt: 0 }] },
         { say: "四葉玫瑰", all: [{ v: val("9\\cos\\pi"), ge: 0 }] },
@@ -742,7 +742,7 @@
       tags: ["polar-r-zero", "polar"],
       hints: ["通過原點就是 r = 0。", "解出 sin θ 的值後，看它在 [0, 2π) 有幾個角。"],
       solution: "r = 0 ⟹ sin θ = 1/2 ⟹ θ = π/6 或 5π/6。",
-      solutionSteps: ["令 r = 0：1 − 2 sin θ = 0，sin θ = 1/2。", "[0, 2π) 中 sin θ = 1/2 的角：π/6 與 5π/6。"],
+      
       verify: { m: "zeros", f: "1-2\\sin x", range: [0, 6.28] } },
     { id: "cg-7b-013",
       topic: "integrals",
@@ -754,7 +754,7 @@
       tags: ["polar-r-zero", "polar"],
       hints: ["令 r = 0，解出 cos θ。", "cos θ 為負的角落在第二、三象限，各一個。"],
       solution: "r = 0 ⟹ cos θ = −1/2 ⟹ θ = 2π/3 或 4π/3（內圈就在這兩個角之間畫出）。",
-      solutionSteps: ["2 + 4cos θ = 0 ⟹ cos θ = −1/2。", "[0, 2π) 中的解：θ = 2π/3、4π/3。"],
+      
       verify: { m: "zeros", f: "2+4\\cos x", range: [0, 6.28] } },
     { id: "cg-7b-014",
       topic: "derivatives",
@@ -766,7 +766,7 @@
       tags: ["polar-slope-formula", "polar-curve", "parametric"],
       hints: ["寫成參數式 x = r cos θ、y = r sin θ，θ 是參數。", "dy/dx = (dy/dθ)/(dx/dθ)，不是 dr/dθ。"],
       solution: "x = 2cos²θ、y = sin 2θ。dy/dθ = 2cos 2θ = 1，dx/dθ = −2 sin 2θ = −√3，斜率 −1/√3。",
-      solutionSteps: ["x = 2cos²θ，y = 2 sin θ cos θ = sin 2θ。", "dy/dθ = 2cos 2θ，在 π/6 為 1；dx/dθ = −2 sin 2θ，在 π/6 為 −√3。", "dy/dx = 1/(−√3) = −1/√3。"],
+      
       verify: { m: "paramSlope", x: "2\\cos t\\cos t", y: "2\\cos t\\sin t", at: "\\pi/6" } },
     { id: "cg-7b-015",
       topic: "derivatives",
@@ -778,7 +778,7 @@
       tags: ["polar-slope-formula", "polar-curve", "parametric"],
       hints: ["x = θ cos θ、y = θ sin θ，各自用乘法法則對 θ 微分。", "代入 θ = π/2 時，cos 那一項會消失。"],
       solution: "dx/dθ = cos θ − θ sin θ = −π/2，dy/dθ = sin θ + θ cos θ = 1，斜率 = 1/(−π/2) = −2/π。",
-      solutionSteps: ["x = θ cos θ ⟹ dx/dθ = cos θ − θ sin θ，在 π/2 為 −π/2。", "y = θ sin θ ⟹ dy/dθ = sin θ + θ cos θ，在 π/2 為 1。", "dy/dx = 1 ÷ (−π/2) = −2/π。"],
+      
       verify: { m: "paramSlope", x: "t\\cos t", y: "t\\sin t", at: "\\pi/2" } },
     { id: "cg-7b-016",
       topic: "derivatives",
@@ -790,7 +790,7 @@
       tags: ["polar-horizontal-vertical-tangent", "polar-curve", "parametric"],
       hints: ["y = (1 + sin θ) sin θ，水平切線找 dy/dθ = 0 而且 dx/dθ ≠ 0 的地方。", "dy/dθ 可以因式分解成 cos θ 乘上一個一次式；兩邊都為 0 的點是尖點，要排除。"],
       solution: "dy/dθ = cos θ(1 + 2 sin θ)。θ = 3π/2 時 dx/dθ 也為 0，是原點的尖點，不算。sin θ = −1/2 時 y = (1/2)(−1/2) = −1/4，最低；θ = π/2 時 y = 2。",
-      solutionSteps: ["y = sin θ + sin²θ，dy/dθ = cos θ(1 + 2 sin θ)。", "θ = 3π/2：dx/dθ 也是 0（原點尖點），排除；θ = π/2：y = 2。", "sin θ = −1/2（θ = 7π/6、11π/6）：r = 1/2，y = −1/4，最低的水平切線 y = −1/4。"],
+      
       verify: sweep("(1+\\sin x)\\sin x", "inf", [0, "2\\pi"]) },
     { id: "cg-7b-017",
       topic: "derivatives",
@@ -802,7 +802,7 @@
       tags: ["polar-horizontal-vertical-tangent", "polar-curve", "parametric"],
       hints: ["x = (1 − cos θ) cos θ，鉛直切線找 dx/dθ = 0 而且 dy/dθ ≠ 0 的地方。", "θ = 0 時 r = 0，dx/dθ 和 dy/dθ 同時為 0，是尖點，要另外看。"],
       solution: "dx/dθ = sin θ(2cos θ − 1)。θ = 0 是原點尖點（不算）；θ = π 給 x = −2；cos θ = 1/2 給 x = (1/2)(1/2) = 1/4，最右邊。",
-      solutionSteps: ["x = cos θ − cos²θ，dx/dθ = sin θ(2cos θ − 1)。", "θ = 0：r = 0 且 dy/dθ = 0，是尖點，排除；θ = π：x = −2。", "cos θ = 1/2（θ = π/3、5π/3）：x = 1/4，最右邊的鉛直切線 x = 1/4。"],
+      
       verify: sweep("(1-\\cos x)\\cos x", "sup", [0, "2\\pi"]) },
     { id: "cg-7b-018",
       topic: "derivatives",
@@ -814,7 +814,7 @@
       tags: ["polar-tangent-at-origin", "polar-curve", "parametric"],
       hints: ["先找 r = 0 的角度 θ₀。", "在 r(θ₀) = 0 而 r′(θ₀) ≠ 0 的地方，切線就是射線 θ = θ₀ 本身。"],
       solution: "r = 0 ⟹ cos θ = 1/2，θ = π/3 或 5π/3。r′ = 2 sin θ ≠ 0，所以切線斜率是 tan θ₀：√3 與 −√3，正的是 √3。",
-      solutionSteps: ["1 − 2cos θ = 0 ⟹ θ₀ = π/3、5π/3。", "r(θ₀) = 0 時 dy/dx = (r′ sin θ₀)/(r′ cos θ₀) = tan θ₀（r′ = 2 sin θ₀ ≠ 0）。", "tan(π/3) = √3、tan(5π/3) = −√3；正的斜率是 √3。"],
+      
       verify: { m: "paramSlope", x: "(1-2\\cos t)\\cos t", y: "(1-2\\cos t)\\sin t", at: "\\pi/3" } },
     { id: "cg-7b-019",
       topic: "integrals",
@@ -826,7 +826,7 @@
       tags: ["polar-area-between", "polar-area", "polar"],
       hints: ["交點在 cos θ = 1/2；畫圖看哪幾段角度裡心臟線在圓外面。", "π/2 ≤ θ ≤ 3π/2 時圓根本沒有點（r = 3cos θ ≤ 0），那一段整片心臟線都算。"],
       solution: "對 x 軸對稱。π/3 ≤ θ ≤ π/2：½∫((1+cos θ)² − 9cos²θ)dθ = 1 − π/4；π/2 ≤ θ ≤ 3π/2：½∫(1+cos θ)²dθ = 3π/4 − 2。A = 2(1 − π/4) + 3π/4 − 2 = π/4。",
-      solutionSteps: ["交點 cos θ = 1/2（θ = ±π/3）；|θ| < π/3 時圓在外，心臟線外面沒有區域。", "π/3 ≤ θ ≤ π/2：½∫((1 + cos θ)² − 9cos²θ) dθ = 1 − π/4，下半對稱再一份。", "π/2 ≤ θ ≤ 3π/2：圓不在這裡，½∫(1 + cos θ)² dθ = 3π/4 − 2。", "A = 2(1 − π/4) + (3π/4 − 2) = π/4。"],
+      
       verify: { m: "let", with: {
         a: { m: "double", f: "v", u: "t", a: "\\pi/3", b: "\\pi/2", v: "v", c: "3\\cos t", d: "1+\\cos t" },
         b: { m: "double", f: "v", u: "t", a: "\\pi/2", b: "3\\pi/2", v: "v", c: 0, d: "1+\\cos t" }
@@ -841,7 +841,7 @@
       tags: ["polar-area-between", "polar-area", "polar"],
       hints: ["交點：2 sin θ = 1。", "被積函數是 ½((2 sin θ)² − 1²)，用倍角公式化掉 sin²θ。"],
       solution: "交點 θ = π/6、5π/6。A = ½∫(4sin²θ − 1)dθ = ½∫(1 − 2cos 2θ)dθ = ½[θ − sin 2θ]_{π/6}^{5π/6} = ½(2π/3 + √3) = π/3 + √3/2。",
-      solutionSteps: ["2 sin θ = 1 ⟹ θ = π/6、5π/6，中間這段 2 sin θ ≥ 1。", "4 sin²θ − 1 = 2 − 2cos 2θ − 1 = 1 − 2cos 2θ。", "A = ½[θ − sin 2θ]_{π/6}^{5π/6} = ½(2π/3 + √3) = π/3 + √3/2。"],
+      
       verify: { m: "double", f: "v", u: "t", a: "\\pi/6", b: "5\\pi/6", v: "v", c: "1", d: "2\\sin t" } },
     { id: "cg-7b-021",
       topic: "integrals",
@@ -853,7 +853,7 @@
       tags: ["polar-area-petal", "polar-area", "polar"],
       hints: ["一片花瓣從 r = 0 開始、到下一個 r = 0 結束：找 sin 3θ 相鄰的兩個零點。", "sin² 用倍角公式降次。"],
       solution: "一片花瓣：0 ≤ θ ≤ π/3。A = ½∫₀^{π/3} 4 sin²3θ dθ = ∫₀^{π/3}(1 − cos 6θ)dθ = π/3。",
-      solutionSteps: ["sin 3θ = 0 在 θ = 0、π/3，這段 r ≥ 0，正好一片花瓣。", "A = ½∫₀^{π/3} 4 sin²3θ dθ = ∫₀^{π/3}(1 − cos 6θ) dθ。", "= [θ − sin 6θ / 6]₀^{π/3} = π/3。"],
+      
       verify: { m: "double", f: "v", u: "t", a: 0, b: "\\pi/3", v: "v", c: 0, d: "2\\sin 3t" } },
     { id: "cg-7b-022",
       topic: "integrals",
@@ -865,7 +865,7 @@
       tags: ["polar-arc-length-formula", "arc-length", "polar"],
       hints: ["弧長 L = ∫√(r² + (dr/dθ)²) dθ。", "r² + r′² 會化成一個常數。"],
       solution: "r′ = 4cos θ，r² + r′² = 16，L = ∫₀^π 4 dθ = 4π（半徑 2 的圓周長，對得上）。",
-      solutionSteps: ["r′ = 4cos θ。", "r² + r′² = 16 sin²θ + 16 cos²θ = 16。", "L = ∫₀^π 4 dθ = 4π。"],
+      
       verify: { m: "lineIntegral", kind: "ds", f: "1", path: { x: "4\\sin t\\cos t", y: "4\\sin t\\sin t", from: 0, to: "\\pi" } } },
     { id: "cg-7b-023",
       topic: "integrals",
@@ -877,7 +877,7 @@
       tags: ["polar-arc-length-formula", "arc-length", "polar"],
       hints: ["r′ 跟 r 一模一樣。", "√(2e^{2θ}) 可以拆成 √2 乘一個好積的函數。"],
       solution: "r′ = e^θ，√(r² + r′²) = √2 e^θ，L = √2∫₀¹ e^θ dθ = √2(e − 1)。",
-      solutionSteps: ["r′ = e^θ，r² + r′² = 2e^{2θ}。", "√(2e^{2θ}) = √2 e^θ。", "L = √2 ∫₀¹ e^θ dθ = √2(e − 1)。"],
+      
       verify: { m: "lineIntegral", kind: "ds", f: "1", path: { x: "e^{t}\\cos t", y: "e^{t}\\sin t", from: 0, to: 1 } } },
     { id: "cg-7b-024",
       topic: "integrals",
@@ -889,7 +889,7 @@
       tags: ["polar-arc-length-formula", "arc-length", "polar"],
       hints: ["r² + r′² = θ⁴ + 4θ²，先提出 θ²。", "θ ≥ 0 時 √(θ²(θ² + 4)) = θ√(θ² + 4)，用代換 u = θ² + 4。"],
       solution: "r′ = 2θ，√(θ⁴ + 4θ²) = θ√(θ²+4)。L = ∫₀^{√5} θ√(θ²+4) dθ = ⅓(θ²+4)^{3/2}|₀^{√5} = ⅓(27 − 8) = 19/3。",
-      solutionSteps: ["r′ = 2θ，r² + r′² = θ⁴ + 4θ² = θ²(θ² + 4)。", "θ ≥ 0：√ = θ√(θ² + 4)。", "L = ⅓(θ² + 4)^{3/2}|₀^{√5} = ⅓(27 − 8) = 19/3。"],
+      
       verify: { m: "lineIntegral", kind: "ds", f: "1", path: { x: "t^2\\cos t", y: "t^2\\sin t", from: 0, to: "\\sqrt{5}" } } },
     { id: "cg-7b-025",
       topic: "integrals",
@@ -901,7 +901,7 @@
       tags: ["polar-arc-length-abs", "arc-length", "polar"],
       hints: ["r² + r′² = 8 + 8 sin θ，用 1 + sin θ = 2cos²(π/4 − θ/2) 開根號。", "開根號得到絕對值；看 θ 在哪一段時裡面變號，或用對稱只算一半。"],
       solution: "√(8 + 8 sin θ) = 4|cos(π/4 − θ/2)|。曲線對 y 軸對稱，取 −π/2 ≤ θ ≤ π/2（裡面恆正）算半圈：L = 2∫ 4cos(π/4 − θ/2)dθ = 2·8 = 16。",
-      solutionSteps: ["r′ = 2cos θ，r² + r′² = 8 + 8 sin θ = 16cos²(π/4 − θ/2)。", "開根號是 4|cos(π/4 − θ/2)|；在 [0, 2π] 上 θ > 3π/2 時裡面為負，不能直接拿掉絕對值。", "對 y 軸對稱：半圈 −π/2 ≤ θ ≤ π/2 時 π/4 − θ/2 ∈ [0, π/2]，∫ 4cos(π/4 − θ/2) dθ = 8。", "全長 = 2 × 8 = 16。"],
+      
       verify: { m: "lineIntegral", kind: "ds", f: "1", path: { x: "(2+2\\sin t)\\cos t", y: "(2+2\\sin t)\\sin t", from: 0, to: "2\\pi" } } },
 
     /* ── 8A 多變數函數 ── */
@@ -915,7 +915,7 @@
       tags: ["r3-distance", "vector"],
       hints: ["先算三個座標的差。", "差的平方相加，再開根號。"],
       solution: "Q − P = (−3, 4, 12)，距離 = √(9 + 16 + 144) = √169 = 13。",
-      solutionSteps: ["Q − P = (−1 − 2, 3 − (−1), 15 − 3) = (−3, 4, 12)。", "9 + 16 + 144 = 169。", "√169 = 13。"],
+      
       verify: val("\\sqrt{(2-(-1))^2+(-1-3)^2+(3-15)^2}") },
     { id: "cg-8a-002",
       topic: "derivatives",
@@ -927,7 +927,7 @@
       tags: ["r3-distance", "complete-the-square"],
       hints: ["對 x 和 z 分別配方。", "配方時兩邊要加上同樣的常數。"],
       solution: "(x − 2)² + y² + (z + 3)² = 3 + 4 + 9 = 16，球心 (2, 0, −3)，半徑 4。",
-      solutionSteps: ["x² − 4x = (x − 2)² − 4，z² + 6z = (z + 3)² − 9。", "(x − 2)² + y² + (z + 3)² = 3 + 4 + 9 = 16。", "半徑 √16 = 4。"],
+      
       verify: { m: "let", with: { q: { m: "extremum", vars: ["x", "y", "z"], f: "x^2+y^2+z^2-4x+6z", kind: "min" } }, f: "\\sqrt{3-q}" } },
     { id: "cg-8a-003",
       topic: "derivatives",
@@ -939,7 +939,7 @@
       tags: ["vector-perpendicular", "dot-product", "vector"],
       hints: ["兩個非零向量垂直 ⟺ 內積為 0。", "內積是對應分量相乘再相加，會得到 k 的一次式。"],
       solution: "內積 2·3 + k·1 + (−1)·4 = k + 2 = 0，k = −2。",
-      solutionSteps: ["內積 = 6 + k − 4 = k + 2。", "垂直 ⟹ k + 2 = 0 ⟹ k = −2。"],
+      
       verify: { m: "root", f: "2\\cdot3+x\\cdot1+(-1)\\cdot4", x0: 0 } },
     { id: "cg-8a-004",
       topic: "derivatives",
@@ -951,7 +951,7 @@
       tags: ["vector-perpendicular", "dot-product", "vector"],
       hints: ["內積會是 k 的二次式。", "二次方程式有兩個根，再用 k > 0 挑。"],
       solution: "內積 k² − 6 + k = 0，(k + 3)(k − 2) = 0，k = 2（k = −3 不合）。",
-      solutionSteps: ["內積 = k·k + 2·(−3) + k·1 = k² + k − 6。", "k² + k − 6 = (k + 3)(k − 2) = 0。", "k > 0 ⟹ k = 2。"],
+      
       verify: { m: "root", f: "x\\cdot x+2\\cdot(-3)+x\\cdot1", x0: 1.5 } },
     { id: "cg-8a-005",
       topic: "derivatives",
@@ -966,7 +966,7 @@
       tags: ["vector-unit", "vector"],
       hints: ["單位向量 = 向量 ÷ 它的長度。", "長度是分量平方和開根號，不是分量的和。"],
       solution: "長度 √(36 + 4 + 9) = 7，單位向量 (6/7, −2/7, 3/7)。",
-      solutionSteps: ["|v| = √(36 + 4 + 9) = √49 = 7。", "v/|v| = (6/7, −2/7, 3/7)。", "檢查長度：(36 + 4 + 9)/49 = 1。"],
+      
       verify: { m: "choice", options: [
         { say: "(6/7, −2/7, 3/7)", all: [{ v: val("\\sqrt{(6/7)^2+(2/7)^2+(3/7)^2}"), eq: 1 }, { v: val("\\frac{6/7}{6}"), eq: "\\frac{3/7}{3}" }, { v: val("\\frac{-2/7}{-2}"), eq: "\\frac{3/7}{3}" }] },
         { say: "(6/11, −2/11, 3/11)", all: [{ v: val("\\sqrt{(6/11)^2+(2/11)^2+(3/11)^2}"), eq: 1 }] },
@@ -986,7 +986,7 @@
       tags: ["mv-domain-region", "domain"],
       hints: ["ln 裡面的東西必須是正的。", "邊界 x − y = 0 上，ln 有沒有定義？"],
       solution: "要求 x − y > 0，即 y < x：直線 y = x 的右下方，直線本身不含（ln 0 沒有定義）。",
-      solutionSteps: ["ln u 需要 u > 0：x − y > 0。", "即 y < x，直線 y = x 下方的開半平面。", "邊界 y = x 上 ln 0 沒有定義，不含。"],
+      
       verify: { m: "choice", options: [
         { say: "y < x（不含直線 y = x）", unknown: "定義域就是 ln 的定義本身" },
         { say: "y ≤ x（含直線 y = x）", all: [{ v: val("1-1"), gt: 0 }] },
@@ -1006,7 +1006,7 @@
       tags: ["mv-domain-region", "domain"],
       hints: ["兩個根號各給一個條件，要同時成立。", "根號裡等於 0 可以嗎？"],
       solution: "x² + y² − 1 ≥ 0 且 4 − x² − y² ≥ 0，即 1 ≤ x² + y² ≤ 4：圓環，內外兩圓都含（根號 0 有定義）。",
-      solutionSteps: ["第一個根號：x² + y² ≥ 1（半徑 1 的圓上與圓外）。", "第二個根號：x² + y² ≤ 4（半徑 2 的圓上與圓內）。", "交集：1 ≤ x² + y² ≤ 4，含兩個圓周。"],
+      
       verify: { m: "choice", options: [
         { say: "1 ≤ x² + y² ≤ 4（含兩個圓）", unknown: "定義域就是兩個根號條件的交集" },
         { say: "1 < x² + y² < 4（不含邊界）", all: [{ v: val("1^2+0^2-1"), lt: 0 }, { v: val("4-1^2-0^2"), lt: 0 }] },
@@ -1026,7 +1026,7 @@
       tags: ["mv-domain-region", "domain"],
       hints: ["分子的 ln 給一個條件，分母的根號給一個條件。", "根號在分母：裡面不只要 ≥ 0，還不能等於 0。"],
       solution: "ln 要 x + y > 0；分母 √(1 − x) 要 1 − x > 0（等於 0 會除以零），即 x < 1。兩者同時成立。",
-      solutionSteps: ["ln(x + y)：x + y > 0，直線 y = −x 上方，不含線。", "√(1 − x) 在分母：1 − x > 0，即 x < 1。", "定義域：x + y > 0 且 x < 1。"],
+      
       verify: { m: "choice", options: [
         { say: "x + y > 0 且 x < 1", unknown: "定義域就是兩個條件的交集" },
         { say: "x + y ≥ 0 且 x ≤ 1", all: [{ v: val("0+0"), gt: 0 }] },
@@ -1043,7 +1043,7 @@
       tags: ["mv-range", "exponential"],
       hints: ["先看指數 −(x² + y²) 可以取哪些值。", "e 的負次方永遠是正的，但會不會等於 0？最大值在哪裡取到？"],
       solution: "−(x² + y²) 取遍 (−∞, 0]，e^u 在這段取遍 (0, 1]：原點取到 1，離原點越遠越接近 0 但永遠不是 0。",
-      solutionSteps: ["u = −(x² + y²) 的範圍是 (−∞, 0]。", "e^u 遞增：u = 0 時為 1（在原點取到）；u → −∞ 時 → 0 但取不到。", "值域 (0, 1]。"],
+      
       verify: { m: "choice", options: [
         { say: "(0, 1]", all: [
           { v: { m: "extremum", vars: ["x", "y"], f: "e^{-(x^2+y^2)}", kind: "max" }, eq: 1 },
@@ -1064,7 +1064,7 @@
       tags: ["mv-graph-surface", "surface"],
       hints: ["兩邊平方，看 x² + y² + z² 等於多少。", "根號給出的 z 是正的還是負的？"],
       solution: "z² = 16 − x² − y²，即 x² + y² + z² = 16，而且 z = √(…) ≥ 0：半徑 4 的上半球面。",
-      solutionSteps: ["平方：x² + y² + z² = 16，半徑 4 的球面。", "根號取非負值，z ≥ 0。", "上半球面。"],
+      
       verify: { m: "choice", options: [
         { say: "上半球面（半徑 4）", all: [{ v: val("1^2+2^2+\\left(\\sqrt{16-1^2-2^2}\\right)^2"), eq: 16 }, { v: val("0^2+3^2+\\left(\\sqrt{16-0^2-3^2}\\right)^2"), eq: 16 }, { v: val("\\sqrt{16-1^2-2^2}"), gt: 0 }] },
         { say: "下半球面（半徑 4）", all: [{ v: val("\\sqrt{16-1^2-2^2}"), lt: 0 }] },
@@ -1084,7 +1084,7 @@
       tags: ["mv-graph-surface", "surface"],
       hints: ["z 就是點 (x, y) 到原點的距離。", "距離加倍時，z 是加倍還是變四倍？"],
       solution: "z = √(x² + y²) 是到 z 軸的距離：沿任何射線 z 隨距離等比例增加，切面是直線，是頂點在原點的圓錐面。拋物面會是距離的平方。",
-      solutionSteps: ["z = r（r 是到原點的水平距離）。", "等高線 z = c 是半徑 c 的圓，間距固定；縱切面 z = |x| 是兩條直線。", "圓錐面，頂點在原點、開口向上。"],
+      
       verify: { m: "choice", options: [
         { say: "圓錐面（頂點在原點、開口向上）", all: [{ v: val("\\sqrt{0^2+0^2}"), eq: 0 }, { v: val("\\sqrt{2^2+0^2}"), eq: "2\\sqrt{1^2+0^2}" }, { v: val("\\sqrt{3^2+4^2}"), eq: "5\\sqrt{1^2+0^2}" }] },
         { say: "開口向上的拋物面", all: [{ v: val("\\sqrt{2^2+0^2}"), eq: "4\\sqrt{1^2+0^2}" }] },
@@ -1104,7 +1104,7 @@
       tags: ["level-curve-sketch", "level-set"],
       hints: ["把 2x + y = c 解成 y = …。", "c 改變時，圖形是平移還是轉動？"],
       solution: "2x + y = c ⟺ y = −2x + c：斜率都是 −2，c 只改變截距，是一族平行直線。",
-      solutionSteps: ["2x + y = c ⟹ y = −2x + c。", "每條的斜率都是 −2，y 截距是 c。", "一族斜率 −2 的平行直線，間距相等。"],
+      
       verify: { m: "choice", options: [
         { say: "斜率 −2 的一族平行直線", all: [{ v: val("2\\cdot0+0"), eq: "2\\cdot1+(-2)" }, { v: val("2\\cdot3+1"), eq: "2\\cdot4+(-1)" }] },
         { say: "斜率 2 的一族平行直線", all: [{ v: val("2\\cdot0+0"), eq: "2\\cdot1+2" }] },
@@ -1124,7 +1124,7 @@
       tags: ["level-curve-sketch", "level-set"],
       hints: ["寫下 x² + 9y² = 9，兩邊同除以 9。", "看 x 方向和 y 方向的半軸各是多少。"],
       solution: "x² + 9y² = 9 ⟺ x²/9 + y² = 1：x 方向半軸 3、y 方向半軸 1 的橢圓。",
-      solutionSteps: ["x² + 9y² = 9。", "同除以 9：x²/9 + y² = 1。", "橢圓，交 x 軸於 (±3, 0)、交 y 軸於 (0, ±1)。"],
+      
       verify: { m: "choice", options: [
         { say: "橢圓 x²/9 + y² = 1", all: [{ v: val("3^2+9\\cdot0^2"), eq: 9 }, { v: val("0^2+9\\cdot1^2"), eq: 9 }, { v: val("(3\\cos 1)^2+9(\\sin 1)^2"), eq: 9 }] },
         { say: "圓 x² + y² = 9", all: [{ v: val("0^2+9\\cdot3^2"), eq: 9 }] },
@@ -1144,7 +1144,7 @@
       tags: ["level-curve-sketch", "level-set"],
       hints: ["x² − y² 可以因式分解。", "乘積等於 0 ⟺ 其中一個因式等於 0。"],
       solution: "x² − y² = (x − y)(x + y) = 0 ⟺ y = x 或 y = −x：兩條交叉的直線（c ≠ 0 時才是雙曲線）。",
-      solutionSteps: ["x² − y² = 0 ⟺ (x − y)(x + y) = 0。", "y = x 或 y = −x。", "c = 0 的等高線是兩條直線，是兩族雙曲線的分界。"],
+      
       verify: { m: "choice", options: [
         { say: "兩條直線 y = x 與 y = −x", all: [{ v: val("1^2-1^2"), eq: 0 }, { v: val("2^2-(-2)^2"), eq: 0 }, { v: val("(-3)^2-3^2"), eq: 0 }] },
         { say: "雙曲線 x² − y² = 1", all: [{ v: val("1^2-0^2"), eq: 0 }] },
@@ -1164,7 +1164,7 @@
       tags: ["contour-steepness", "level-set"],
       hints: ["先寫出等高線 f = c 是什麼形狀、半徑多大。", "高度每差 0.5，相鄰兩條在水平方向相距多遠？這個距離跟位置有沒有關？"],
       solution: "f = c 是半徑 c 的圓：高度每差 0.5，半徑就差 0.5，間距處處相同。圓錐面坡度到處一樣，所以 A、B 附近一樣密。",
-      solutionSteps: ["等高線 √(x² + y²) = c 是半徑 c 的圓。", "c 每加 0.5，半徑也加 0.5：相鄰兩圈的間距恆為 0.5。", "間距與位置無關（坡度處處為 1）：一樣密。"],
+      
       verify: { m: "choice", options: [
         { say: "一樣密", v: { m: "let", with: { a: pd("\\sqrt{x^2+y^2}", [1, 0], "x"), b: pd("\\sqrt{x^2+y^2}", [1, 0], "y") }, f: "\\sqrt{a^2+b^2}" },
           eq: { m: "let", with: { a: pd("\\sqrt{x^2+y^2}", [0, 5], "x"), b: pd("\\sqrt{x^2+y^2}", [0, 5], "y") }, f: "\\sqrt{a^2+b^2}" } },
@@ -1183,7 +1183,7 @@
       tags: ["contour-steepness", "level-set"],
       hints: ["(2, 0) 和 (0, 1) 都在等高線 f = 4 上；分別解出 f = 5 跟兩軸的交點。", "兩段距離都會帶 √5，相除時看能不能約掉。"],
       solution: "f = 5 交 x 軸於 √5、交 y 軸於 √5/2。距離分別是 √5 − 2 與 √5/2 − 1 = (√5 − 2)/2，比值 2：y 方向的等高線密一倍，坡比較陡。",
-      solutionSteps: ["x 軸上 x² = 5 ⟹ x = √5，距離 √5 − 2。", "y 軸上 4y² = 5 ⟹ y = √5/2，距離 √5/2 − 1 = (√5 − 2)/2。", "比值 (√5 − 2) ÷ ((√5 − 2)/2) = 2。"],
+      
       verify: { m: "let", with: { a: { m: "root", f: "x^2-5", x0: 2.2 }, b: { m: "root", f: "4x^2-5", x0: 1.1 } }, f: "\\frac{a-2}{b-1}" } },
     { id: "cg-8a-017",
       topic: "derivatives",
@@ -1198,7 +1198,7 @@
       tags: ["level-surface", "level-set"],
       hints: ["方程式 x² + z² = 4 裡面缺了哪一個變數？", "缺的變數可以任意取：圖形沿那個方向無限延伸。"],
       solution: "x² + z² = 4 不含 y：在每個 y 處的切口都是 xz 平面上半徑 2 的圓，沿 y 方向疊起來，是以 y 軸為軸的圓柱面。",
-      solutionSteps: ["等值面：x² + z² = 4。", "y 不出現，y 可以任意取。", "每個切口都是半徑 2 的圓（圓心在 y 軸上）：以 y 軸為軸、半徑 2 的圓柱面。"],
+      
       verify: { m: "choice", options: [
         { say: "以 y 軸為軸、半徑 2 的圓柱面", all: [{ v: val("2^2+0^2"), eq: 4 }, { v: val("0^2+2^2"), eq: 4 }, { v: val("(\\sqrt{2})^2+(\\sqrt{2})^2"), eq: 4 }] },
         { say: "以 z 軸為軸、半徑 2 的圓柱面", all: [{ v: val("0^2+5^2"), eq: 4 }] },
@@ -1215,7 +1215,7 @@
       tags: ["mv-limit-direct", "direct-substitution"],
       hints: ["先檢查：代入後分母是不是 0？", "有理函數在分母不為 0 的點連續，可以直接代入。"],
       solution: "分母 2 − (−1) = 3 ≠ 0，直接代入：(4·(−1) + 3·2·(−1) − (−1)³)/3 = (−4 − 6 + 1)/3 = −3。",
-      solutionSteps: ["分母 x − y 在 (2, −1) 是 3 ≠ 0，函數在這點連續。", "分子 = −4 − 6 + 1 = −9。", "極限 = −9/3 = −3。"],
+      
       verify: { m: "choice", options: [
         { say: "-3", all: [
           { v: lim("\\frac{x^2(-1)+3x(-1)-(-1)^3}{x-(-1)}", 2), eq: -3 },
@@ -1232,7 +1232,7 @@
       tags: ["mv-limit-direct", "factoring"],
       hints: ["代入得 0/0；把 xy 當成一個整體。", "分子是平方差。"],
       solution: "x²y² − 4 = (xy − 2)(xy + 2)，在 xy ≠ 2 處約掉得 xy + 2，代入 (1, 2)：2 + 2 = 4。",
-      solutionSteps: ["代入：(4 − 4)/(2 − 2) = 0/0。", "x²y² − 4 = (xy − 2)(xy + 2)，約掉 xy − 2，剩 xy + 2。", "xy + 2 連續，代入 (1, 2) 得 4。"],
+      
       verify: { m: "choice", options: [
         { say: "4", all: [
           { v: lim("\\frac{x^2\\cdot2^2-4}{2x-2}", 1), eq: 4 },
@@ -1253,7 +1253,7 @@
       tags: ["path-test-one-way", "path-test"],
       hints: ["路徑測試能證明的是哪一個方向的結論？", "想一個沿直線都是 0、沿拋物線不是 0 的例子；再想一個沿直線都是 0、極限也真的是 0 的例子。"],
       solution: "x²y/(x⁴ + y²) 沿所有直線都是 0，沿 y = x² 卻是 1/2，極限不存在；x²y/(x² + y²) 沿直線也都是 0，而它的極限真的是 0。直線全為 0 兩種情形都可能。",
-      solutionSteps: ["反例一：x²y/(x⁴ + y²) 沿 y = mx 趨近 0，沿 y = x² 是 1/2，極限不存在 —— 「一定是 0」錯。", "反例二：x²y/(x² + y²) 沿直線也是 0，且 |f| ≤ |y| → 0，極限是 0 —— 「一定不存在」錯。", "直線全部是 0 還不能下結論。"],
+      
       verify: { m: "choice", options: [
         { say: "還不能下結論：沿某條曲線可能得到別的值", all: [
           { v: lim("\\frac{x^2\\cdot x}{x^4+x^2}", 0), eq: 0 },
@@ -1279,7 +1279,7 @@
       tags: ["path-test-one-way", "path-test"],
       hints: ["直線全部是 0 不夠；試一條讓分母兩項同次的曲線。", "x⁶ 和 y² 同次，要 y 跟 x 的幾次方一樣大？"],
       solution: "沿 y = x³：2x⁶/(x⁶ + x⁶) = 1；沿 x 軸：0。兩條路徑不同，極限不存在。",
-      solutionSteps: ["沿 y = mx：2mx⁴/(x⁶ + m²x²) = 2mx²/(x⁴ + m²) → 0。", "沿 y = x³（讓 y² 與 x⁶ 同次）：2x⁶/(2x⁶) = 1。", "0 ≠ 1，極限不存在。"],
+      
       verify: { m: "choice", options: [
         { say: "極限不存在：沿 y = x³ 得 1", all: [
           { v: lim("\\frac{2x^3\\cdot x^3}{x^6+x^6}", 0), eq: 1 },
@@ -1298,7 +1298,7 @@
       tags: ["path-test-curves", "path-test", "dne"],
       hints: ["先沿直線 y = mx 試試，再試拋物線 x = y²，看會得到什麼。", "分母 x² 和 y⁸ 要同次：x 要跟 y 的幾次方一樣大？"],
       solution: "沿直線、沿 x = y² 都趨近 0；沿 x = y⁴：y⁸/(y⁸ + y⁸) = 1/2。兩條路徑的值不同，極限不存在。",
-      solutionSteps: ["沿 y = mx：m⁴x³/(1 + m⁸x⁶) → 0；沿 x = y²：y²/(1 + y⁴) → 0。", "讓 x² 與 y⁸ 同次，取 x = y⁴：y⁴·y⁴/(y⁸ + y⁸) = 1/2。", "0 ≠ 1/2，極限不存在。"],
+      
       verify: { m: "choice", options: [
         { say: "dne", v: lim("\\frac{y^4\\cdot y^4}{y^8+y^8}", 0, "y"), ne: lim("\\frac{x\\cdot 0}{x^2+0}", 0) }
       ] } },
@@ -1315,7 +1315,7 @@
       tags: ["path-test-curves", "path-test"],
       hints: ["沿 x 軸 f = 0，要找一條讓 f 趨近非零值的路徑。", "讓分母兩項 x² 與 y⁶ 一樣大。"],
       solution: "沿 x = y³：y⁶/(y⁶ + y⁶) = 1/2 ≠ 0。沿 y = x、x = y²、y = x² 都趨近 0，看不出來。",
-      solutionSteps: ["沿 x 軸：f = 0。", "x² 與 y⁶ 同次需要 x = y³：f = y³·y³/(2y⁶) = 1/2。", "其他三條：y = x 給 x²/(1 + x⁴) → 0；x = y² 給 y/(1 + y²) → 0；y = x² 給 x⁵/(1 + x¹⁰) → 0。"],
+      
       verify: { m: "choice", options: [
         { say: "x = y³", v: lim("\\frac{y^3\\cdot y^3}{y^6+y^6}", 0, "y"), ne: lim("\\frac{x\\cdot 0}{x^2+0}", 0) },
         { say: "y = x", v: lim("\\frac{x\\cdot x^3}{x^2+x^6}", 0), ne: lim("\\frac{x\\cdot 0}{x^2+0}", 0) },
@@ -1335,7 +1335,7 @@
       tags: ["mv-continuity-region", "continuity"],
       hints: ["有理函數在分母不為 0 的地方連續。", "分母 x − y² = 0 是哪一條曲線？"],
       solution: "多項式除以多項式，在分母不為 0 處連續。x − y² = 0 是拋物線 x = y²，所以除了這條拋物線上的點處處連續。",
-      solutionSteps: ["分子、分母都是多項式，處處連續。", "商在分母 ≠ 0 處連續；分母為 0 的點是 x = y²。", "f 在拋物線 x = y² 以外處處連續。"],
+      
       verify: { m: "choice", options: [
         { say: "除了拋物線 x = y² 上的點，處處連續", unknown: "有理函數在分母不為 0 處連續是定理" },
         { say: "處處連續", all: [{ v: val("1-1^2"), ne: 0 }] },
@@ -1355,7 +1355,7 @@
       tags: ["mv-continuity-region", "continuity"],
       hints: ["ln 在它的定義域內連續；ln 裡面要大於 0。", "分母不能是 0。"],
       solution: "ln(4 − x² − y²) 在 x² + y² < 4（開圓盤）連續；除以 y 再去掉 y = 0。所以在開圓盤去掉 x 軸的部分連續。",
-      solutionSteps: ["4 − x² − y² > 0 ⟺ x² + y² < 4，邊界圓不含。", "分母 y ≠ 0，挖掉 x 軸。", "f 在 {x² + y² < 4, y ≠ 0} 上連續。"],
+      
       verify: { m: "choice", options: [
         { say: "x² + y² < 4 且 y ≠ 0", unknown: "連續函數的商在分母不為 0 處連續是定理" },
         { say: "x² + y² < 4", all: [{ v: val("0"), ne: 0 }] },
@@ -1372,7 +1372,7 @@
       tags: ["mv-continuity-seam", "continuity", "standard-limit"],
       hints: ["連續的條件：c 要等於原點的極限。", "x² + y² 整塊一起出現：令 u = x² + y²，變成一變數的標準極限。"],
       solution: "令 u = x² + y²，(x, y) → (0, 0) 時 u → 0⁺，極限 = lim (e^u − 1)/u = 1。要連續，c = 1。",
-      solutionSteps: ["連續 ⟺ c = lim_{(x,y)→(0,0)} f。", "u = x² + y² → 0：(e^u − 1)/u → 1。", "c = 1。"],
+      
       verify: { m: "choice", options: [
         { say: "1", all: [
           { v: lim("\\frac{e^{x^2}-1}{x^2}", 0), eq: 1 },
@@ -1393,7 +1393,7 @@
       tags: ["mv-continuity-seam", "continuity", "path-test"],
       hints: ["要連續，c 必須等於原點的極限；先看極限存不存在。", "沿 x 軸、沿 y 軸各算一次。"],
       solution: "沿 x 軸 f = 1，沿 y 軸 f = −2：極限不存在，補任何 c 都不連續。",
-      solutionSteps: ["沿 y = 0：x²/x² = 1。", "沿 x = 0：−2y²/y² = −2。", "兩者不同，極限不存在；c 取任何值都不連續。"],
+      
       verify: { m: "choice", options: [
         { say: "不論 c 是多少都不連續", v: lim("\\frac{x^2-0}{x^2+0}", 0), ne: lim("\\frac{0-2y^2}{0+y^2}", 0, "y") },
         { say: "c = 1 時連續", all: [{ v: lim("\\frac{x^2-0}{x^2+0}", 0), eq: 1 }, { v: lim("\\frac{0-2y^2}{0+y^2}", 0, "y"), eq: 1 }] },
@@ -1413,7 +1413,7 @@
       tags: ["mv-continuity-separate-not-enough", "continuity", "path-test"],
       hints: ["沿兩軸連續只檢查了兩個方向。", "試試沿 y = x 趨近原點。"],
       solution: "兩軸上 f 都是 0，所以各自連續；但沿 y = x，f = 3x²/(2x²) = 3/2 ≠ 0 = f(0,0)。二變數連續要所有路徑一起，不連續。",
-      solutionSteps: ["f(x, 0) = 0、f(0, y) = 0：沿兩軸都連續。", "沿 y = x：3x²/(2x²) = 3/2。", "3/2 ≠ f(0,0) = 0：在原點不連續。"],
+      
       verify: { m: "choice", options: [
         { say: "不連續：沿 y = x 趨近得 3/2，不等於 f(0,0)", all: [{ v: lim("\\frac{3x\\cdot x}{x^2+x^2}", 0), eq: 1.5 }, { v: lim("\\frac{3x\\cdot x}{x^2+x^2}", 0), ne: 0 }] },
         { say: "連續：對 x、對 y 各自連續就夠", all: [{ v: lim("\\frac{3x\\cdot x}{x^2+x^2}", 0), eq: 0 }] },
@@ -1434,7 +1434,7 @@
       tags: ["partial-geometric-slice", "partial-derivative"],
       hints: ["沿 x 方向的切片：y 固定在 −1，只讓 x 動。", "算 f_x、f_y 的式子，再代入點看正負。"],
       solution: "f_x = −2x，在 x = 1 為 −2 < 0（往 +x 走下坡）；f_y = −4y，在 y = −1 為 4 > 0（往 +y 走上坡，朝山頂）。",
-      solutionSteps: ["f_x = −2x，代 (1, −1) 得 −2 < 0。", "f_y = −4y，代 (1, −1) 得 4 > 0。", "沿 +x 下坡、沿 +y 上坡：f_x < 0，f_y > 0。"],
+      
       verify: { m: "choice", options: [
         { say: "f_x < 0，f_y > 0", all: [{ v: pd("10-x^2-2y^2", [1, -1], "x"), lt: 0 }, { v: pd("10-x^2-2y^2", [1, -1], "y"), gt: 0 }] },
         { say: "f_x > 0，f_y > 0", all: [{ v: pd("10-x^2-2y^2", [1, -1], "x"), gt: 0 }, { v: pd("10-x^2-2y^2", [1, -1], "y"), gt: 0 }] },
@@ -1454,7 +1454,7 @@
       tags: ["partial-geometric-slice", "partial-derivative", "level-set"],
       hints: ["f_x 是往 +x 方向走一小步時高度的變化；從 (−2, 0) 往 +x 是朝山頂還是遠離？", "往 ±y 走一小步，離原點的距離怎麼變？在 y = 0 那一點，變化率是多少？"],
       solution: "從 (−2, 0) 往 +x 走是朝原點（山頂），上坡：f_x > 0。沿 y 方向，(−2, 0) 正好是 x = −2 這條切線上離原點最近的點，高度在這裡取最大：f_y = 0。",
-      solutionSteps: ["往 +x：離原點變近，高度增加 ⟹ f_x > 0。", "沿 x = −2 這條直線，離原點最近（最高）的點是 y = 0 ⟹ 切片在這裡是頂點，f_y = 0。", "例如 f = 9 − x² − y²：f_x(−2, 0) = 4 > 0，f_y(−2, 0) = 0。"],
+      
       verify: { m: "choice", options: [
         { say: "f_x > 0，f_y = 0", all: [
           { v: pd("9-x^2-y^2", [-2, 0], "x"), gt: 0 }, { v: pd("9-x^2-y^2", [-2, 0], "y"), eq: 0 },
@@ -1474,7 +1474,7 @@
       tags: ["partial-from-definition", "partial-derivative", "limit-definition"],
       hints: ["公式在原點是 0/0，不能直接代；回到 f_y(0,0) = lim_{h→0} (f(0, h) − f(0, 0))/h。", "x 固定在 0 時，f(0, h) 化簡成 h 的簡單式子。"],
       solution: "f(0, h) = 2h³/h² = 2h，f_y(0,0) = lim (2h − 0)/h = 2。",
-      solutionSteps: ["f_y(0,0) = lim_{h→0} [f(0, h) − f(0, 0)]/h。", "f(0, h) = (0 + 2h³)/(0 + h²) = 2h。", "(2h − 0)/h = 2，極限為 2。"],
+      
       verify: lim("\\frac{\\frac{0^3+2x^3}{0^2+x^2}-0}{x}", 0) },
     { id: "cg-8b-004",
       topic: "derivatives",
@@ -1487,7 +1487,7 @@
       tags: ["second-partial-notation-order", "mixed-partial", "partial-derivative"],
       hints: ["f_{xy} 是先對 x、再對 y：(f_x)_y。", "所以要用的是 f_x(0, y) 這一條，對 y 微分。"],
       solution: "f_{xy} = (f_x)_y。f_x(0, y) = −y，對 y 微分得 −1。（反過來 f_{yx}(0,0) = d/dx[x] = 1，這個函數兩個順序不相等，順序讀錯答案就錯。）",
-      solutionSteps: ["f_{xy} 的意思：先對 x 微分，得 f_x；再對 y 微分。", "沿 x = 0：f_x(0, y) = −y。", "f_{xy}(0, 0) = d/dy(−y) = −1。"],
+      
       verify: { m: "let", with: { a: pd("\\frac{xy(x^2-y^2)}{x^2+y^2}", [0, 0.01], "x"), b: pd("\\frac{xy(x^2-y^2)}{x^2+y^2}", [0, -0.01], "x") }, f: "\\frac{a-b}{0.02}" } },
     { id: "cg-8b-005",
       topic: "derivatives",
@@ -1500,7 +1500,7 @@
       tags: ["second-partial-notation-order", "mixed-partial", "partial-derivative"],
       hints: ["∂²f/∂x∂y 從右往左讀：最靠近 f 的 ∂y 先做。", "先對 y 微分就是用 f_y(x, 0) 這一條，再對 x 微分。"],
       solution: "∂²f/∂x∂y = ∂/∂x(∂f/∂y) = (f_y)_x。f_y(x, 0) = 3x，對 x 微分得 3。（另一個順序會得 −2。）",
-      solutionSteps: ["∂²f/∂x∂y = ∂/∂x(∂f/∂y)：先 y 後 x，也就是 f_{yx}。", "沿 y = 0：f_y(x, 0) = 3x。", "對 x 微分：3。"],
+      
       verify: { m: "let", with: { a: pd("\\frac{xy(3x^2-2y^2)}{x^2+y^2}", [0.01, 0], "y"), b: pd("\\frac{xy(3x^2-2y^2)}{x^2+y^2}", [-0.01, 0], "y") }, f: "\\frac{a-b}{0.02}" } },
     { id: "cg-8b-006",
       topic: "derivatives",
@@ -1512,7 +1512,7 @@
       tags: ["clairaut-hypothesis", "mixed-partial", "partial-from-definition"],
       hints: ["先求 f_x(0, y)（y ≠ 0 時用公式，y = 0 時用定義），再對 y 用定義微分；f_y(x, 0) 同理。", "在 x = 0 求 f_x 時，乘積 x·g(x, y) 的導數只剩 g(0, y)。"],
       solution: "f_x(0, y) = y·(−4y²)/y² = −4y（y = 0 時也是 0），f_{xy}(0,0) = −4。f_y(x, 0) = x·x²/x² = x，f_{yx}(0,0) = 1。差 −5：Clairaut 的條件在原點不成立。",
-      solutionSteps: ["f = x·g，g = y(x² − 4y²)/(x² + y²)；在 x = 0：f_x(0, y) = g(0, y) = −4y（y = 0 時由 f(h,0) = 0 得 0）。", "f_{xy}(0,0) = lim [f_x(0, k) − f_x(0, 0)]/k = −4。", "同理 f = y·[x(x² − 4y²)/(x² + y²)]，f_y(x, 0) = x，f_{yx}(0,0) = 1。", "f_{xy}(0,0) − f_{yx}(0,0) = −4 − 1 = −5。"],
+      
       verify: { m: "let", with: {
         p: pd("\\frac{xy(x^2-4y^2)}{x^2+y^2}", [0, 0.01], "x"), q: pd("\\frac{xy(x^2-4y^2)}{x^2+y^2}", [0, -0.01], "x"),
         r: pd("\\frac{xy(x^2-4y^2)}{x^2+y^2}", [0.01, 0], "y"), s: pd("\\frac{xy(x^2-4y^2)}{x^2+y^2}", [-0.01, 0], "y")
@@ -1530,7 +1530,7 @@
       tags: ["clairaut-hypothesis", "mixed-partial"],
       hints: ["想一個在原點連續、偏導也存在，但 f_xy(0,0) ≠ f_yx(0,0) 的函數。", "xy(x² − y²)/(x² + y²) 就是這種函數：它缺的是哪一個條件？"],
       solution: "f = xy(x² − y²)/(x² + y²)（f(0,0) = 0）在原點連續、f_x、f_y 都存在，但 f_xy(0,0) = −1、f_yx(0,0) = 1。前兩個條件不夠；定理要的是混合偏導在附近連續。",
-      solutionSteps: ["反例 f = xy(x² − y²)/(x² + y²)：|f| ≤ |xy| → 0，在原點連續；f_x(0,0) = f_y(0,0) = 0 存在。", "但 f_xy(0,0) = −1、f_yx(0,0) = 1，不相等。", "所以「f 連續」「一階偏導存在」都不夠；Clairaut 需要 f_xy、f_yx 在該點附近連續。"],
+      
       verify: { m: "choice", options: [
         { say: "f_xy 與 f_yx 在 (a,b) 附近都連續", unknown: "這是定理本身的條件" },
         { say: "f 在 (a,b) 連續",
@@ -1553,7 +1553,7 @@
       tags: ["clairaut-order-choice", "mixed-partial", "partial-derivative"],
       hints: ["照寫法要先對 y 微分，第二項會很難算。", "f 的各階偏導都連續，可以換個順序：先對 x 微分，哪一項直接消失？"],
       solution: "Clairaut：順序可換。先對 x：f_x = e^y（第二項不含 x，消失）；再對 y：e^y。",
-      solutionSteps: ["f 由初等函數組成，混合偏導處處連續，∂²f/∂x∂y = ∂²f/∂y∂x。", "先對 x：f_x = e^y。", "再對 y：e^y。"],
+      
       verify: { m: "fn", kind: "deriv", f: "xe^{y}+\\frac{y^{5}}{\\sqrt{1+y^{2}}}", vars: ["x", "y"], wrt: ["y", "x"] } },
     { id: "cg-8b-009",
       topic: "derivatives",
@@ -1565,7 +1565,7 @@
       tags: ["clairaut-order-choice", "mixed-partial", "partial-derivative"],
       hints: ["f_{xy} 照寫法是先對 x 微分，第二項要用乘法法則與連鎖律算很久。", "換成先對 y：哪些項不含 y？"],
       solution: "Clairaut：f_{xy} = f_{yx}。先對 y：f_y = ln x（第二項不含 y）；再對 x：1/x。",
-      solutionSteps: ["x > 0 上 f 的混合偏導都連續，f_{xy} = f_{yx}。", "f_y = ln x。", "f_{yx} = 1/x，所以 f_{xy} = 1/x。"],
+      
       verify: { m: "fn", kind: "deriv", f: "y\\ln x+x^{4}e^{x}\\cos(x^{3})", vars: ["x", "y"], wrt: ["x", "y"], pts: [[0.5, 0.3], [1.2, -0.7], [0.8, 2.2], [1.6, 1.1], [0.3, -1.4]] } },
     { id: "cg-8b-010",
       topic: "derivatives",
@@ -1580,7 +1580,7 @@
       tags: ["clairaut-gradient-test", "mixed-partial", "conservative-field"],
       hints: ["如果真的有 f，Clairaut 說 f_xy 必須等於 f_yx。", "把 P = y cos x 對 y 微分、Q = x sin y 對 x 微分，比一比。"],
       solution: "若存在，f_xy = P_y = cos x，f_yx = Q_x = sin y，Clairaut 要求兩者處處相等，但例如 (0, 0) 處 1 ≠ 0。所以不存在。",
-      solutionSteps: ["P_y = ∂(y cos x)/∂y = cos x。", "Q_x = ∂(x sin y)/∂x = sin y。", "cos x ≢ sin y（如 (0,0) 處 1 ≠ 0），違反 Clairaut：不存在。"],
+      
       verify: { m: "choice", options: [
         { say: "不存在：P_y ≠ Q_x", v: { m: "fieldOp", op: "curl", F: ["y\\cos x", "x\\sin y"], at: [1, 1] }, ne: 0 },
         { say: "存在：P、Q 都是可微函數就夠", v: { m: "fieldOp", op: "curl", F: ["y\\cos x", "x\\sin y"], at: [1, 1] }, eq: 0 },
@@ -1596,7 +1596,7 @@
       tags: ["clairaut-gradient-test", "mixed-partial", "conservative-field"],
       hints: ["必要條件：(f_x) 對 y 的偏導 = (f_y) 對 x 的偏導。", "比較兩邊 x 的係數。"],
       solution: "P_y = ax + 2y，Q_x = 2x + 2y，要處處相等，a = 2。此時 f = x²y + xy² 確實滿足。",
-      solutionSteps: ["P = axy + y²，P_y = ax + 2y。", "Q = x² + 2xy，Q_x = 2x + 2y。", "ax + 2y = 2x + 2y 對所有 x ⟹ a = 2（f = x²y + xy²）。"],
+      
       verify: { m: "conservativeParam", F: ["a\\cdot x\\cdot y+y^2", "x^2+2x\\cdot y"], param: "a" } }
   ];
 

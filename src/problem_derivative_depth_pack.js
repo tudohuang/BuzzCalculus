@@ -2324,7 +2324,7 @@
       tags: ["avg-rate-compute", "slope"],
       hints: ["平均變化率 = (f(右端) − f(左端)) ÷ (區間長度)。", "先分別算出 f(4) 與 f(1)，注意 f(1) 是負的。"],
       solution: "f(4) = 64 − 8 = 56，f(1) = 1 − 2 = −1。平均變化率 = (56 − (−1))/(4 − 1) = 57/3 = 19。",
-      solutionSteps: ["f(4) = 56，f(1) = −1。", "(f(4) − f(1))/(4 − 1) = 57/3 = 19。"],
+      
       verify: { m: "value", f: "\\frac{(4^3-2\\cdot 4)-(1^3-2\\cdot 1)}{4-1}" } },
     { id: "cg-2a-002", topic: "derivatives", rank: 1, answerKind: "numeric",
       prompt: "g(x)=\\sqrt{x}\\text{，求 }g\\text{ 在 }[4,9]\\text{ 上的平均變化率}",
@@ -2332,7 +2332,7 @@
       tags: ["avg-rate-compute", "slope"],
       hints: ["兩個端點都是完全平方數，根號可以直接開。", "分母是區間長度 9 − 4。"],
       solution: "g(9) = 3，g(4) = 2，平均變化率 = (3 − 2)/(9 − 4) = 1/5。",
-      solutionSteps: ["g(9) = 3，g(4) = 2。", "(3 − 2)/(9 − 4) = 1/5。"],
+      
       verify: { m: "value", f: "\\frac{\\sqrt{9}-\\sqrt{4}}{9-4}" } },
     { id: "cg-2a-003", topic: "derivatives", rank: 1, answerKind: "numeric",
       prompt: "h(x)=\\frac{6}{x+1}\\text{，求 }h\\text{ 在 }[1,5]\\text{ 上的平均變化率}",
@@ -2340,7 +2340,7 @@
       tags: ["avg-rate-compute", "slope"],
       hints: ["分別代 x = 5 與 x = 1。", "函數值變小了，平均變化率的正負號應該是什麼？"],
       solution: "h(5) = 6/6 = 1，h(1) = 6/2 = 3。平均變化率 = (1 − 3)/(5 − 1) = −2/4 = −1/2。",
-      solutionSteps: ["h(5) = 1，h(1) = 3。", "(1 − 3)/(5 − 1) = −1/2。"],
+      
       verify: { m: "value", f: "\\frac{\\frac{6}{5+1}-\\frac{6}{1+1}}{5-1}" } },
     { id: "cg-2a-004", topic: "derivatives", rank: 1, answerKind: "numeric",
       prompt: "\\text{水塔放水，}t\\text{ 分鐘後塔內水量 }V(t)=500-20t-t^2\\text{（公升）。求 }t=2\\text{ 到 }t=6\\text{ 這段時間水量的平均變化率（公升／分鐘，減少為負）}",
@@ -2348,7 +2348,7 @@
       tags: ["avg-rate-sign-units", STORY, "slope"],
       hints: ["平均變化率 = 水量的變化 ÷ 經過的時間。", "水在減少，答案的正負號要反映這件事；單位是公升除以分鐘。"],
       solution: "V(6) = 500 − 120 − 36 = 344，V(2) = 500 − 40 − 4 = 456。平均變化率 = (344 − 456)/(6 − 2) = −112/4 = −28 公升／分鐘。",
-      solutionSteps: ["V(6) = 344，V(2) = 456（公升）。", "(344 − 456)/(6 − 2) = −28（公升／分鐘），負號表示水量在減少。"],
+      
       verify: { m: "value", f: "\\frac{(500-20\\cdot 6-6^2)-(500-20\\cdot 2-2^2)}{6-2}" } },
     { id: "cg-2a-005", topic: "derivatives", rank: 1, answerKind: "numeric",
       prompt: "\\text{工廠生產 }q\\,\\text{ 件產品的總成本 }C(q)=2000+30q+0.01q^2\\text{（元）。產量從 }100\\text{ 件增加到 }200\\text{ 件時，成本的平均變化率是每件多少元}",
@@ -2356,7 +2356,7 @@
       tags: ["avg-rate-sign-units", STORY, "slope"],
       hints: ["平均變化率 = 成本的變化 ÷ 產量的變化，單位是元／件。", "固定成本 2000 在相減時會消掉。"],
       solution: "C(200) = 2000 + 6000 + 400 = 8400，C(100) = 2000 + 3000 + 100 = 5100。平均變化率 = 3300/100 = 33 元／件。",
-      solutionSteps: ["C(200) = 8400，C(100) = 5100（元）。", "(8400 − 5100)/(200 − 100) = 33（元／件）。"],
+      
       verify: { m: "value", f: "\\frac{(2000+30\\cdot 200+0.01\\cdot 200^2)-(2000+30\\cdot 100+0.01\\cdot 100^2)}{200-100}" } },
     { id: "cg-2a-006", topic: "derivatives", rank: 1, answerKind: "numeric",
       prompt: "\\text{如圖，曲線 }y=f(x)\\text{ 上標出兩點。求 }f\\text{ 在 }[-2,4]\\text{ 上的平均變化率（兩點連線的斜率）}",
@@ -2366,7 +2366,7 @@
       tags: ["avg-rate-secant-slope", "slope", "graph-reading"],
       hints: ["從圖上讀出 P、Q 的座標。", "割線斜率 = 縱座標差 ÷ 橫座標差。"],
       solution: "P(−2, 2)、Q(4, 5)：斜率 = (5 − 2)/(4 − (−2)) = 3/6 = 1/2。",
-      solutionSteps: ["讀圖：f(−2) = 2，f(4) = 5。", "(5 − 2)/(4 − (−2)) = 3/6 = 1/2。"],
+      
       verify: { m: "value", f: "\\frac{(\\frac{4^2}{4}+1)-(\\frac{(-2)^2}{4}+1)}{4-(-2)}" } },
     { id: "cg-2a-007", topic: "derivatives", rank: 2, answerKind: "numeric",
       prompt: "\\text{如圖，}f\\text{ 是折線。求 }f\\text{ 在 }[1,6]\\text{ 上的平均變化率}",
@@ -2376,7 +2376,7 @@
       tags: ["avg-rate-secant-slope", "slope", "graph-reading"],
       hints: ["平均變化率只看兩個端點，中間怎麼上下都不影響。", "讀出 f(1) 與 f(6)，連一條割線。"],
       solution: "f(1) = 4，f(6) = 0。平均變化率 = (0 − 4)/(6 − 1) = −4/5：中間雖然先升後降，整段平均是下降的。",
-      solutionSteps: ["讀圖：f(1) = 4，f(6) = 0。", "(0 − 4)/(6 − 1) = −4/5。"],
+      
       verify: { m: "let", f: "\\frac{b-a}{6-1}", with: {
         a: { m: "graphValue", pts: [[0, 1], [1, 4], [3, 5], [5, 2], [6, 0]], at: 1 },
         b: { m: "graphValue", pts: [[0, 1], [1, 4], [3, 5], [5, 2], [6, 0]], at: 6 } } } },
@@ -2386,7 +2386,7 @@
       tags: ["avg-rate-h-form", "slope", "derivative-definition"],
       hints: ["先展開 f(2 + h) = (2 + h)² + 3(2 + h)。", "減掉 f(2) 之後每一項都有因子 h，約掉它。"],
       solution: "f(2 + h) = 4 + 4h + h² + 6 + 3h = 10 + 7h + h²，f(2) = 10。差商 = (7h + h²)/h = 7 + h。",
-      solutionSteps: ["f(2 + h) = 10 + 7h + h²，f(2) = 10。", "f(2 + h) − f(2) = 7h + h² = h(7 + h)。", "除以 h：7 + h。"],
+      
       verify: { m: "fn", vars: ["h"], cases: [
         { at: { h: 0.5 }, v: { m: "value", f: "\\frac{((2.5)^2+3\\cdot 2.5)-(2^2+3\\cdot 2)}{0.5}" } },
         { at: { h: -1.3 }, v: { m: "value", f: "\\frac{((0.7)^2+3\\cdot 0.7)-(2^2+3\\cdot 2)}{-1.3}" } },
@@ -2398,7 +2398,7 @@
       tags: ["avg-rate-h-form", "slope", "derivative-definition"],
       hints: ["分子 1/(1 + h) − 1 先通分。", "通分後分子會出現 −h，跟分母的 h 約掉。"],
       solution: "1/(1 + h) − 1 = (1 − (1 + h))/(1 + h) = −h/(1 + h)。再除以 h 得 −1/(1 + h)。",
-      solutionSteps: ["通分：1/(1 + h) − 1 = −h/(1 + h)。", "除以 h：−1/(1 + h)。"],
+      
       verify: { m: "fn", vars: ["h"], cases: [
         { at: { h: 0.5 }, v: { m: "value", f: "\\frac{\\frac{1}{1.5}-1}{0.5}" } },
         { at: { h: 2 }, v: { m: "value", f: "\\frac{\\frac{1}{3}-1}{2}" } },
@@ -2412,7 +2412,7 @@
       tags: ["tangent-secant-limit", "tangent-normal", "exponential"],
       hints: ["切線斜率是 h → 0 時割線斜率的極限。", "看 h 從正、負兩邊越來越靠近 0 時，表上的數往哪個值擠。"],
       solution: "h 從兩側趨近 0 時，割線斜率從上方 1.0005…、下方 0.9995… 夾向 1，所以切線斜率是 1。",
-      solutionSteps: ["切線斜率 = lim_{h→0} (f(h) − f(0))/h。", "表中兩側的值都往 1 靠近，估計切線斜率 = 1。"],
+      
       verify: { m: "deriv", f: "e^x", at: [0] } },
     { id: "cg-2a-011", topic: "derivatives", rank: 1, answerKind: "numeric",
       prompt: "f(x)=\\sqrt{x}\\text{ 在 }x=4\\text{ 的割線斜率 }\\frac{f(4+h)-f(4)}{h}\\text{：}h=0.1,\\ 0.01,\\ 0.001\\text{ 時是 }0.24846,\\ 0.24984,\\ 0.24998\\text{；}h=-0.1,\\ -0.01,\\ -0.001\\text{ 時是 }0.25158,\\ 0.25016,\\ 0.25002\\text{。估計 }f\\text{ 在 }x=4\\text{ 的切線斜率}",
@@ -2420,7 +2420,7 @@
       tags: ["tangent-secant-limit", "tangent-normal", "slope"],
       hints: ["切線斜率是 h → 0 時割線斜率的極限。", "右側的值略小、左側的值略大，它們夾住的那個數就是答案。"],
       solution: "h > 0 時割線斜率從下方逼近 0.25，h < 0 時從上方逼近 0.25，所以切線斜率是 0.25 = 1/4。",
-      solutionSteps: ["切線斜率 = lim_{h→0} (√(4 + h) − 2)/h。", "表中兩側的值都夾向 0.25，切線斜率 = 1/4。"],
+      
       verify: { m: "deriv", f: "\\sqrt{x}", at: [4] } },
     { id: "cg-2a-012", topic: "derivatives", rank: 1, answerKind: "expression",
       prompt: "\\text{求曲線 }y=x^2-4x+1\\text{ 在 }x=3\\text{ 處的切線方程式 }y",
@@ -2428,7 +2428,7 @@
       tags: ["tangent-line-equation", "tangent-normal", "slope"],
       hints: ["先求切點的 y 座標，再求這一點的切線斜率（割線斜率的極限）。", "用點斜式 y − y₀ = m(x − x₀)，最後整理成 y = mx + b。"],
       solution: "切點 y = 9 − 12 + 1 = −2。斜率 = lim_{h→0} ((3 + h)² − 4(3 + h) + 1 − (−2))/h = lim (2h + h²)/h = 2。切線 y + 2 = 2(x − 3)，即 y = 2x − 8。",
-      solutionSteps: ["切點 (3, −2)。", "斜率 = lim_{h→0} (2h + h²)/h = 2。", "y + 2 = 2(x − 3) ⟹ y = 2x − 8。"],
+      
       verify: tangentLine("x^2-4x+1", 3) },
     { id: "cg-2a-013", topic: "derivatives", rank: 2, answerKind: "expression",
       prompt: "\\text{求曲線 }y=2x^3-x\\text{ 在 }x=-1\\text{ 處的切線方程式 }y",
@@ -2436,7 +2436,7 @@
       tags: ["tangent-line-equation", "tangent-normal", "slope"],
       hints: ["切點的 y 座標：把 x = −1 代進去，負號小心。", "斜率用割線斜率的極限：展開 2(−1 + h)³ − (−1 + h)，減掉切點的 y 再除以 h。"],
       solution: "切點 y = −2 + 1 = −1。(2(−1 + h)³ − (−1 + h) + 1)/h = (5h − 6h² + 2h³)/h → 5。切線 y + 1 = 5(x + 1)，即 y = 5x + 4。",
-      solutionSteps: ["切點 (−1, −1)。", "差商 = 5 − 6h + 2h² → 5（h → 0）。", "y + 1 = 5(x + 1) ⟹ y = 5x + 4。"],
+      
       verify: tangentLine("2x^3-x", -1) },
 
     /* ── 2A 導數定義 ── */
@@ -2450,7 +2450,7 @@
       tags: ["deriv-def-nondifferentiable", "differentiability", "continuity"],
       hints: ["先看 f 在 0 是否連續，再寫出差商 (f(h) − f(0))/h。", "差商化成 1/h 的幾次方？h → 0 時它會怎樣？"],
       solution: "f 在 0 連續（∛h → 0）。差商 ∛h / h = h^{−2/3} → +∞，極限不存在，所以不可微；圖形在原點的切線是鉛直線 x = 0。",
-      solutionSteps: ["lim_{x→0} ∛x = 0 = f(0)，連續。", "(f(h) − f(0))/h = h^{−2/3} → +∞，f′(0) 不存在。", "連續但不可微，切線鉛直。"],
+      
       verify: { m: "choice", options: [
         { say: "連續但不可微（切線是鉛直線）", all: [
           { v: { m: "limit", f: "\\sqrt[3]{x}", at: 0 }, eq: 0 },
@@ -2469,7 +2469,7 @@
       tags: ["deriv-def-nondifferentiable", "differentiability", "continuity"],
       hints: ["先比較左極限、右極限與 f(1)。", "可微一定連續；反過來說，不連續的點會怎樣？"],
       solution: "左極限 lim_{x→1⁻}(x + 1) = 2，但 f(1) = 3：跳躍，不連續。可微必連續，所以 f 在 1 不可微（左差商 (2 + h − 3)/h 在 h → 0⁻ 時趨向 +∞）。",
-      solutionSteps: ["lim_{x→1⁻} f(x) = 2，f(1) = 3，跳躍不連續。", "可微 ⟹ 連續，取逆否：不連續 ⟹ 不可微。"],
+      
       verify: { m: "choice", options: [
         { say: "不連續，所以不可微", all: [{ v: { m: "limit", f: "x+1", at: 1 }, ne: 3 }] },
         { say: "連續但不可微（尖角）", all: [{ v: { m: "limit", f: "x+1", at: 1 }, eq: 3 }] },
@@ -2482,7 +2482,7 @@
       tags: ["deriv-def-instant-rate", "motion", STORY],
       hints: ["瞬間速度 = lim_{h→0} (s(4 + h) − s(4))/h。", "展開 s(4 + h) 後減掉 s(4)，剩下的每一項都有 h。"],
       solution: "s(4 + h) − s(4) = 3(16 + 8h + h²) + 2(4 + h) − 56 = 26h + 3h²。除以 h 得 26 + 3h → 26 公尺／秒。",
-      solutionSteps: ["s(4) = 56。", "s(4 + h) − s(4) = 26h + 3h²。", "(26h + 3h²)/h = 26 + 3h → 26（公尺／秒）。"],
+      
       verify: { m: "limit", f: "\\frac{(3(4+h)^2+2(4+h))-(3\\cdot 16+8)}{h}", at: 0, v: "h" } },
     { id: "cg-2a-017", topic: "derivatives", rank: 2, answerKind: "numeric",
       prompt: "\\text{球垂直往上拋，}t\\text{ 秒後高度 }y(t)=20t-5t^2\\text{（公尺）。用導數的定義求 }t=3\\text{ 秒時的瞬間速度（公尺／秒，向上為正）}",
@@ -2490,7 +2490,7 @@
       tags: ["deriv-def-instant-rate", "motion", STORY],
       hints: ["寫出 (y(3 + h) − y(3))/h 再化簡。", "算出來的正負號代表什麼方向？這時候球在上升還是下降？"],
       solution: "y(3) = 15。y(3 + h) − y(3) = 20h − 5(6h + h²) = −10h − 5h²。除以 h 得 −10 − 5h → −10：球正以 10 公尺／秒往下掉。",
-      solutionSteps: ["y(3) = 60 − 45 = 15。", "y(3 + h) − y(3) = −10h − 5h²。", "差商 = −10 − 5h → −10（公尺／秒），負號表示向下。"],
+      
       verify: { m: "limit", f: "\\frac{(20(3+h)-5(3+h)^2)-(60-45)}{h}", at: 0, v: "h" } },
 
     /* ── 2A 用定義算導數 ── */
@@ -2500,7 +2500,7 @@
       tags: ["deriv-from-def-function", "derivative-definition"],
       hints: ["寫差商 (f(x + h) − f(x))/h，x 當成常數。", "展開 2(x + h)² − 3(x + h)，減掉 f(x) 後提出 h。"],
       solution: "f(x + h) − f(x) = 2(2xh + h²) − 3h = 4xh + 2h² − 3h。除以 h 得 4x + 2h − 3 → 4x − 3。",
-      solutionSteps: ["f(x + h) − f(x) = 4xh + 2h² − 3h。", "除以 h：4x + 2h − 3。", "h → 0：f′(x) = 4x − 3。"],
+      
       verify: { m: "fn", kind: "deriv", f: "2x^2-3x" } },
     { id: "cg-2a-019", topic: "derivatives", rank: 2, answerKind: "expression",
       prompt: "\\text{用導數的定義求 }f(x)=\\frac{1}{x+2}\\text{ 的導函數 }f'(x)\\ (x\\neq -2)",
@@ -2508,7 +2508,7 @@
       tags: ["deriv-from-def-function", "derivative-definition"],
       hints: ["1/(x + h + 2) − 1/(x + 2) 先通分。", "通分後分子是 −h，約掉 h 再讓 h → 0。"],
       solution: "1/(x + h + 2) − 1/(x + 2) = −h/((x + h + 2)(x + 2))。除以 h 得 −1/((x + h + 2)(x + 2)) → −1/(x + 2)²。",
-      solutionSteps: ["通分：f(x + h) − f(x) = −h/((x + h + 2)(x + 2))。", "除以 h：−1/((x + h + 2)(x + 2))。", "h → 0：f′(x) = −1/(x + 2)²。"],
+      
       verify: { m: "fn", kind: "deriv", f: "\\frac{1}{x+2}" } },
     { id: "cg-2a-020", topic: "derivatives", rank: 2, answerKind: "expression",
       prompt: "\\text{用導數的定義求 }f(x)=\\sqrt{2x+1}\\text{ 的導函數 }f'(x)\\ (x>-\\tfrac{1}{2})",
@@ -2516,7 +2516,7 @@
       tags: ["deriv-from-def-function", "derivative-definition", "rationalize"],
       hints: ["差商的分子是兩個根號相減，乘上共軛 √(2x + 2h + 1) + √(2x + 1)。", "有理化之後分子剩 2h，約掉 h。"],
       solution: "(√(2x + 2h + 1) − √(2x + 1))/h 乘共軛：= 2h/(h(√(2x + 2h + 1) + √(2x + 1))) = 2/(√(2x + 2h + 1) + √(2x + 1)) → 2/(2√(2x + 1)) = 1/√(2x + 1)。",
-      solutionSteps: ["乘共軛：分子變成 (2x + 2h + 1) − (2x + 1) = 2h。", "約掉 h：2/(√(2x + 2h + 1) + √(2x + 1))。", "h → 0：f′(x) = 1/√(2x + 1)。"],
+      
       verify: { m: "fn", kind: "deriv", f: "\\sqrt{2x+1}" } },
     { id: "cg-2a-021", topic: "derivatives", rank: 2, answerKind: "numeric",
       prompt: "f(x)=\\frac{3}{x-1}\\text{，用導數的定義求 }f'(3)",
@@ -2524,7 +2524,7 @@
       tags: ["deriv-from-def-common-denominator", "derivative-definition"],
       hints: ["寫出 (f(3 + h) − f(3))/h，f(3 + h) = 3/(2 + h)。", "分子 3/(2 + h) − 3/2 先通分，會出現因子 h。"],
       solution: "3/(2 + h) − 3/2 = (6 − 3(2 + h))/(2(2 + h)) = −3h/(2(2 + h))。除以 h 得 −3/(2(2 + h)) → −3/4。",
-      solutionSteps: ["f(3) = 3/2，f(3 + h) = 3/(2 + h)。", "通分：f(3 + h) − f(3) = −3h/(2(2 + h))。", "除以 h 再讓 h → 0：f′(3) = −3/4。"],
+      
       verify: { m: "deriv", f: "\\frac{3}{x-1}", at: [3] } },
 
     /* ── 2B 冪次法則：先改寫成次方 ── */
@@ -2534,7 +2534,7 @@
       tags: ["power-rule-rewrite-exponent", "power-rule", "basic-derivative"],
       hints: ["把根號寫成分數次方：∛(x²) = x 的幾次方？", "冪次法則對分數次方一樣成立：指數拿下來，指數減 1。"],
       solution: "∛(x²) = x^{2/3}，導數 (2/3)x^{−1/3} = 2/(3∛x)。",
-      solutionSteps: ["∛(x²) = x^{2/3}。", "(x^{2/3})′ = (2/3)x^{−1/3} = 2/(3∛x)。"],
+      
       verify: { m: "fn", kind: "deriv", f: "\\sqrt[3]{x^2}", pts: [[0.37], [0.81], [1.23], [1.77], [2.41], [3.13]] } },
     { id: "cg-2b-002", topic: "derivatives", rank: 1, answerKind: "expression",
       prompt: "\\frac{d}{dx}\\left(x\\sqrt{x}-\\frac{4}{x^2}\\right),\\ x>0",
@@ -2542,7 +2542,7 @@
       tags: ["power-rule-rewrite-exponent", "power-rule", "basic-derivative"],
       hints: ["x√x = x^{3/2}，4/x² = 4x^{−2}。", "負次方微分時，指數減 1 會變得更負。"],
       solution: "x√x − 4/x² = x^{3/2} − 4x^{−2}，導數 (3/2)x^{1/2} + 8x^{−3} = (3/2)√x + 8/x³。",
-      solutionSteps: ["改寫：x^{3/2} − 4x^{−2}。", "逐項微分：(3/2)x^{1/2} − 4·(−2)x^{−3}。", "= (3/2)√x + 8/x³。"],
+      
       verify: { m: "fn", kind: "deriv", f: "x\\sqrt{x}-\\frac{4}{x^2}", pts: [[0.37], [0.81], [1.23], [1.77], [2.41], [3.13]] } },
     { id: "cg-2b-003", topic: "derivatives", rank: 2, answerKind: "expression",
       prompt: "\\frac{d}{dx}\\frac{x^3+2}{x^2}\\ (x\\neq 0)",
@@ -2550,7 +2550,7 @@
       tags: ["power-rule-rewrite-exponent", "power-rule", "basic-derivative"],
       hints: ["不必用除法法則：把分子的每一項分別除以 x²。", "拆開後是 x 的一次方加上一個負次方。"],
       solution: "(x³ + 2)/x² = x + 2x^{−2}，導數 1 − 4x^{−3} = 1 − 4/x³。",
-      solutionSteps: ["拆開：(x³ + 2)/x² = x + 2x^{−2}。", "逐項微分：1 + 2·(−2)x^{−3} = 1 − 4/x³。"],
+      
       verify: { m: "fn", kind: "deriv", f: "\\frac{x^3+2}{x^2}" } },
 
     /* ── 2B 三角函數：sec、csc、cot ── */
@@ -2559,22 +2559,20 @@
       answer: "-csc(x)*cot(x)", timeLimit: 40,
       tags: ["trig-deriv-tan-sec", "trig", "basic-derivative"],
       hints: ["co 開頭的三角函數，導數帶負號。", "和 sec x 的導數長得像，把每個函數都換成它的 co 版本。"],
-      solution: "(csc x)′ = −csc x cot x（對照 (sec x)′ = sec x tan x，co 開頭的加負號、各自換成 co 版本）。",
-      solutionSteps: ["csc x = 1/sin x。", "(csc x)′ = −cos x/sin²x = −csc x cot x。"] },
+      solution: "(csc x)′ = −csc x cot x（對照 (sec x)′ = sec x tan x，co 開頭的加負號、各自換成 co 版本）。"},
     { id: "cg-2b-005", topic: "derivatives", rank: 1, answerKind: "numeric",
       prompt: "\\left.\\frac{d}{dx}\\cot x\\right|_{x=\\pi/6}",
       answer: "-4", timeLimit: 45,
       tags: ["trig-deriv-tan-sec", "trig", "basic-derivative"],
       hints: ["(cot x)′ = −csc²x。", "sin(π/6) = 1/2，csc 是它的倒數。"],
-      solution: "(cot x)′ = −csc²x。csc(π/6) = 2，所以值為 −4。",
-      solutionSteps: ["(cot x)′ = −csc²x。", "csc(π/6) = 2，−csc²(π/6) = −4。"] },
+      solution: "(cot x)′ = −csc²x。csc(π/6) = 2，所以值為 −4。"},
     { id: "cg-2b-006", topic: "derivatives", rank: 2, answerKind: "numeric",
       prompt: "f(x)=3\\sec x-2\\csc x\\text{，求 }f'\\left(\\frac{\\pi}{4}\\right)",
       answer: "5*sqrt(2)", timeLimit: 70,
       tags: ["trig-deriv-tan-sec", "trig", "basic-derivative"],
       hints: ["(sec x)′ = sec x tan x，(csc x)′ = −csc x cot x。", "在 π/4，sec、csc 都是 √2，tan、cot 都是 1；注意兩個負號相乘。"],
       solution: "f′(x) = 3 sec x tan x + 2 csc x cot x。在 π/4：3·√2·1 + 2·√2·1 = 5√2。",
-      solutionSteps: ["f′(x) = 3 sec x tan x − 2(−csc x cot x) = 3 sec x tan x + 2 csc x cot x。", "sec(π/4) = csc(π/4) = √2，tan(π/4) = cot(π/4) = 1。", "f′(π/4) = 3√2 + 2√2 = 5√2。"],
+      
       verify: { m: "deriv", f: "3\\sec x-2\\csc x", at: ["\\frac{\\pi}{4}"] } },
 
     /* ── 2B 指數函數 ── */
@@ -2583,15 +2581,14 @@
       answer: "4*exp(x)-3*x^2", timeLimit: 45,
       tags: ["exp-deriv-e", "exponential", "basic-derivative"],
       hints: ["(eˣ)′ = eˣ，常數倍照抄。", "e² 裡面沒有 x，它是常數。"],
-      solution: "(4eˣ)′ = 4eˣ，(x³)′ = 3x²，e² 是常數導數為 0。合起來 4eˣ − 3x²。",
-      solutionSteps: ["逐項：(4eˣ)′ = 4eˣ，(−x³)′ = −3x²。", "e² 是常數，導數 0。", "答案 4eˣ − 3x²。"] },
+      solution: "(4eˣ)′ = 4eˣ，(x³)′ = 3x²，e² 是常數導數為 0。合起來 4eˣ − 3x²。"},
     { id: "cg-2b-008", topic: "derivatives", rank: 2, answerKind: "expression",
       prompt: "\\frac{d}{dx}\\left(x^e+e^x+e^e\\right),\\ x>0",
       answer: "e*x^(e-1)+exp(x)", timeLimit: 60,
       tags: ["exp-deriv-e", "exp-deriv-vs-power", "exponential"],
       hints: ["三項的 x 分別在底數、在指數、根本沒有 x。", "底數是 x、指數是常數 → 冪次法則；指數是 x → 指數公式；沒有 x → 常數。"],
       solution: "xᵉ 用冪次法則得 e·x^{e−1}；eˣ 的導數是自己；eᵉ 是常數，導數 0。合起來 e·x^{e−1} + eˣ。",
-      solutionSteps: ["(xᵉ)′ = e·x^{e−1}（冪次法則）。", "(eˣ)′ = eˣ；(eᵉ)′ = 0（常數）。", "答案 e·x^{e−1} + eˣ。"],
+      
       verify: { m: "fn", kind: "deriv", f: "x^e+e^x+e^e", pts: [[0.37], [0.81], [1.23], [1.77], [2.41], [3.13]] } },
     { id: "cg-2b-009", topic: "derivatives", rank: 1, answerKind: "numeric",
       prompt: "f(x)=\\frac{e^x}{2}+3x^2\\text{，求 }f'(1)",
@@ -2599,7 +2596,7 @@
       tags: ["exp-deriv-e", "exponential", "basic-derivative"],
       hints: ["eˣ/2 就是 (1/2)·eˣ，常數倍照抄。", "先求 f′(x)，再代 x = 1。"],
       solution: "f′(x) = eˣ/2 + 6x，f′(1) = e/2 + 6 ≈ 7.359。",
-      solutionSteps: ["f′(x) = eˣ/2 + 6x。", "f′(1) = e/2 + 6 ≈ 7.359。"],
+      
       verify: { m: "deriv", f: "\\frac{e^x}{2}+3x^2", at: [1] } },
     { id: "cg-2b-010", topic: "derivatives", rank: 1, answerKind: "numeric",
       prompt: "\\frac{d}{dx}3^x\\text{ 在 }x=2",
@@ -2607,7 +2604,7 @@
       tags: ["exp-deriv-base-a", "exponential", "basic-derivative"],
       hints: ["(aˣ)′ = aˣ ln a。", "先寫出導函數，再代 x = 2。"],
       solution: "(3ˣ)′ = 3ˣ ln 3，在 x = 2 是 9 ln 3 ≈ 9.888。",
-      solutionSteps: ["(3ˣ)′ = 3ˣ ln 3。", "x = 2：9 ln 3 ≈ 9.888。"],
+      
       verify: { m: "deriv", f: "3^x", at: [2] } },
     { id: "cg-2b-011", topic: "derivatives", rank: 2, answerKind: "expression",
       prompt: "\\frac{d}{dx}\\left(\\frac{1}{2}\\right)^x",
@@ -2615,15 +2612,14 @@
       tags: ["exp-deriv-base-a", "exponential", "basic-derivative"],
       hints: ["底數 a = 1/2 一樣套 (aˣ)′ = aˣ ln a。", "ln(1/2) 是正還是負？可以寫成 ln 2 的形式。"],
       solution: "((1/2)ˣ)′ = (1/2)ˣ ln(1/2) = −(1/2)ˣ ln 2。底數小於 1，函數遞減，導數為負。",
-      solutionSteps: ["((1/2)ˣ)′ = (1/2)ˣ ln(1/2)。", "ln(1/2) = −ln 2，答案 −(1/2)ˣ ln 2。"],
+      
       verify: { m: "fn", kind: "deriv", f: "\\left(\\frac{1}{2}\\right)^x" } },
     { id: "cg-2b-012", topic: "derivatives", rank: 1, answerKind: "expression",
       prompt: "\\frac{d}{dx}\\left(x^3+3^x\\right)",
       answer: "3*x^2+3^x*ln(3)", timeLimit: 45,
       tags: ["exp-deriv-vs-power", "exponential", "power-rule"],
       hints: ["x³ 的變數在底數，3ˣ 的變數在指數，用的公式不一樣。", "指數函數的導數會多出一個 ln 底數。"],
-      solution: "(x³)′ = 3x²（冪次法則），(3ˣ)′ = 3ˣ ln 3（指數公式）。合起來 3x² + 3ˣ ln 3。",
-      solutionSteps: ["x³：冪次法則 → 3x²。", "3ˣ：指數公式 → 3ˣ ln 3。", "答案 3x² + 3ˣ ln 3。"] },
+      solution: "(x³)′ = 3x²（冪次法則），(3ˣ)′ = 3ˣ ln 3（指數公式）。合起來 3x² + 3ˣ ln 3。"},
     { id: "cg-2b-013", topic: "derivatives", rank: 1, answerKind: "expression",
       prompt: "\\frac{d}{dx}\\left(x^{10}-10^x\\right)",
       answer: "10*x^9-10^x*ln(10)",
@@ -2631,8 +2627,7 @@
       timeLimit: 45,
       tags: ["exp-deriv-vs-power", "exponential", "power-rule"],
       hints: ["兩項長得像，但一項是冪次、一項是指數。", "把「指數拿下來、減 1」用在 10ˣ 上是常見的錯。"],
-      solution: "(x¹⁰)′ = 10x⁹，(10ˣ)′ = 10ˣ ln 10。答案 10x⁹ − 10ˣ ln 10。",
-      solutionSteps: ["x¹⁰ 是冪次：10x⁹。", "10ˣ 是指數：10ˣ ln 10。", "答案 10x⁹ − 10ˣ ln 10。"] },
+      solution: "(x¹⁰)′ = 10x⁹，(10ˣ)′ = 10ˣ ln 10。答案 10x⁹ − 10ˣ ln 10。"},
 
     /* ── 2B 對數函數 ── */
     { id: "cg-2b-014", topic: "derivatives", rank: 1, answerKind: "expression",
@@ -2641,7 +2636,7 @@
       tags: ["ln-deriv-simplify-first", "log", "basic-derivative"],
       hints: ["先用對數律把次方拿到前面。", "拆開之後只剩常數倍的 ln x。"],
       solution: "ln(x⁵) = 5 ln x，導數 5/x。",
-      solutionSteps: ["ln(x⁵) = 5 ln x。", "(5 ln x)′ = 5/x。"],
+      
       verify: { m: "fn", kind: "deriv", f: "\\ln(x^5)", pts: [[0.37], [0.81], [1.23], [1.77], [2.41], [3.13]] } },
     { id: "cg-2b-015", topic: "derivatives", rank: 1, answerKind: "expression",
       prompt: "\\frac{d}{dx}\\ln(7x),\\ x>0",
@@ -2649,7 +2644,7 @@
       tags: ["ln-deriv-simplify-first", "log", "basic-derivative"],
       hints: ["ln(7x) = ln 7 + ln x。", "ln 7 是常數。"],
       solution: "ln(7x) = ln 7 + ln x，ln 7 是常數，導數只剩 1/x。",
-      solutionSteps: ["ln(7x) = ln 7 + ln x。", "導數：0 + 1/x = 1/x。"],
+      
       verify: { m: "fn", kind: "deriv", f: "\\ln(7x)", pts: [[0.37], [0.81], [1.23], [1.77], [2.41], [3.13]] } },
     { id: "cg-2b-016", topic: "derivatives", rank: 2, answerKind: "expression",
       prompt: "\\frac{d}{dx}\\ln\\left(\\frac{\\sqrt{x}}{x^3}\\right),\\ x>0",
@@ -2657,7 +2652,7 @@
       tags: ["ln-deriv-simplify-first", "log", "basic-derivative"],
       hints: ["商的對數 = 對數相減，根號是 1/2 次方。", "拆完是兩個常數倍的 ln x，合併係數。"],
       solution: "ln(√x/x³) = (1/2)ln x − 3 ln x = −(5/2)ln x，導數 −5/(2x)。",
-      solutionSteps: ["ln(√x/x³) = (1/2)ln x − 3 ln x = −(5/2)ln x。", "導數：−5/(2x)。"],
+      
       verify: { m: "fn", kind: "deriv", f: "\\ln\\left(\\frac{\\sqrt{x}}{x^3}\\right)", pts: [[0.37], [0.81], [1.23], [1.77], [2.41], [3.13]] } },
     { id: "cg-2b-017", topic: "derivatives", rank: 2, answerKind: "expression",
       prompt: "\\text{求曲線 }y=\\ln|x|\\text{ 在 }x=-e\\text{ 處的切線方程式 }y",
@@ -2665,7 +2660,7 @@
       tags: ["ln-deriv-abs", "log", "tangent-normal"],
       hints: ["(ln|x|)′ = 1/x 對負數也成立。", "切點的 y 座標：|−e| = e。"],
       solution: "切點 (−e, ln e) = (−e, 1)，斜率 1/(−e) = −1/e。切線 y − 1 = −(x + e)/e，即 y = −x/e（剛好過原點）。",
-      solutionSteps: ["切點 (−e, 1)，斜率 = 1/(−e) = −1/e。", "y − 1 = −(1/e)(x + e) = −x/e − 1。", "y = −x/e。"],
+      
       verify: tangentLine("\\ln|x|", "-e") },
     { id: "cg-2b-018", topic: "derivatives", rank: 2, answerKind: "numeric",
       prompt: "\\left.\\frac{d}{dx}\\ln\\left|x^3\\right|\\right|_{x=-3}",
@@ -2673,7 +2668,7 @@
       tags: ["ln-deriv-abs", "log", "basic-derivative"],
       hints: ["ln|x³| = 3 ln|x|。", "(ln|x|)′ = 1/x，負的 x 代進去要保留負號。"],
       solution: "ln|x³| = 3 ln|x|，導數 3/x，在 x = −3 是 −1。",
-      solutionSteps: ["ln|x³| = 3 ln|x|。", "導數 3/x，x = −3：−1。"],
+      
       verify: { m: "deriv", f: "\\ln|x^3|", at: [-3] } },
     { id: "cg-2b-019", topic: "derivatives", rank: 1, answerKind: "numeric",
       prompt: "\\frac{d}{dx}\\log_{10}x\\text{ 在 }x=5",
@@ -2681,7 +2676,7 @@
       tags: ["ln-deriv-base-a", "log", "basic-derivative"],
       hints: ["(logₐ x)′ = 1/(x ln a)。", "這裡 a = 10，再代 x = 5。"],
       solution: "(log₁₀ x)′ = 1/(x ln 10)，在 x = 5 是 1/(5 ln 10) ≈ 0.0869。",
-      solutionSteps: ["(log₁₀ x)′ = 1/(x ln 10)。", "x = 5：1/(5 ln 10) ≈ 0.0869。"],
+      
       verify: { m: "deriv", f: "\\frac{\\ln x}{\\ln 10}", at: [5] } },
 
     /* ── 2C 乘法法則：三個因式 ── */
@@ -2690,15 +2685,14 @@
       answer: "exp(x)*(sin(x)+x*sin(x)+x*cos(x))", timeLimit: 80,
       tags: ["product-rule-three-factors", "product-rule", "exponential"],
       hints: ["三個相乘：(uvw)′ = u′vw + uv′w + uvw′，一次只微分一個。", "三項都有 eˣ，可以提出來。"],
-      solution: "(xeˣ sin x)′ = eˣ sin x + xeˣ sin x + xeˣ cos x = eˣ(sin x + x sin x + x cos x)。",
-      solutionSteps: ["只微 x：1·eˣ sin x；只微 eˣ：x eˣ sin x；只微 sin x：x eˣ cos x。", "相加並提出 eˣ：eˣ(sin x + x sin x + x cos x)。"] },
+      solution: "(xeˣ sin x)′ = eˣ sin x + xeˣ sin x + xeˣ cos x = eˣ(sin x + x sin x + x cos x)。"},
     { id: "cg-2c-002", topic: "derivatives", rank: 2, answerKind: "numeric",
       prompt: "f(x)=x^2e^x\\ln x\\text{，求 }f'(1)",
       answer: "e", timeLimit: 75,
       tags: ["product-rule-three-factors", "product-rule", "log"],
       hints: ["三項乘積法則，每一項只微分一個因式。", "ln 1 = 0：凡是還留著 ln x 沒被微分的項，在 x = 1 都會消失。"],
       solution: "f′ = 2xeˣ ln x + x²eˣ ln x + x²eˣ·(1/x)。在 x = 1 前兩項有 ln 1 = 0，只剩 1·e·1 = e。",
-      solutionSteps: ["f′(x) = 2xeˣ ln x + x²eˣ ln x + x eˣ。", "x = 1：ln 1 = 0，前兩項為 0。", "f′(1) = 1·e = e。"],
+      
       verify: { m: "deriv", f: "x^2e^x\\ln x", at: [1] } },
 
     /* ── 2C 不必用除法法則的分式 ── */
@@ -2708,7 +2702,7 @@
       tags: ["quotient-rule-avoid", "quotient-rule", "power-rule"],
       hints: ["分子每一項都有因子 x，先約分。", "約完是一個多項式，直接用冪次法則。"],
       solution: "(x³ + 2x)/x = x² + 2（x ≠ 0），導數 2x。",
-      solutionSteps: ["約分：(x³ + 2x)/x = x² + 2。", "(x² + 2)′ = 2x。"],
+      
       verify: { m: "fn", kind: "deriv", f: "\\frac{x^3+2x}{x}" } },
     { id: "cg-2c-004", topic: "derivatives", rank: 1, answerKind: "expression",
       prompt: "\\frac{d}{dx}\\frac{3}{2x^4}",
@@ -2716,7 +2710,7 @@
       tags: ["quotient-rule-avoid", "quotient-rule", "power-rule"],
       hints: ["分子是常數：改寫成常數乘上 x 的負次方。", "3/(2x⁴) = (3/2)x^{−4}。"],
       solution: "3/(2x⁴) = (3/2)x^{−4}，導數 (3/2)(−4)x^{−5} = −6/x⁵。",
-      solutionSteps: ["改寫：(3/2)x^{−4}。", "導數 (3/2)·(−4)x^{−5} = −6x^{−5} = −6/x⁵。"],
+      
       verify: { m: "fn", kind: "deriv", f: "\\frac{3}{2x^4}" } },
 
     /* ── 2D 反三角：arccos ── */
@@ -2726,7 +2720,7 @@
       tags: ["invtrig-deriv-arccos", "inverse-trig", "basic-derivative"],
       hints: ["(arccos x)′ = −1/√(1 − x²)，跟 arcsin 只差一個負號。", "1 − (1/2)² = 3/4。"],
       solution: "(arccos x)′ = −1/√(1 − x²)。x = 1/2：−1/√(3/4) = −2/√3 ≈ −1.1547。",
-      solutionSteps: ["(arccos x)′ = −1/√(1 − x²)。", "x = 1/2：−1/√(3/4) = −2/√3。"],
+      
       verify: { m: "deriv", f: "\\arccos x", at: [0.5] } },
     { id: "cg-2d-002", topic: "derivatives", rank: 2, answerKind: "expression",
       prompt: "\\frac{d}{dx}\\arccos\\left(\\frac{x}{2}\\right),\\ -2<x<2",
@@ -2734,7 +2728,7 @@
       tags: ["invtrig-deriv-arccos", "inverse-trig", "chain-rule"],
       hints: ["外層 arccos 的導數帶負號，裡面是 x/2。", "連鎖律乘上 (x/2)′ 之後，把根號裡的分母提出來整理。"],
       solution: "(arccos u)′ = −u′/√(1 − u²)，u = x/2：−(1/2)/√(1 − x²/4) = −(1/2)/(√(4 − x²)/2) = −1/√(4 − x²)。",
-      solutionSteps: ["u = x/2，u′ = 1/2。", "(arccos u)′ = −(1/2)/√(1 − x²/4)。", "√(1 − x²/4) = √(4 − x²)/2，整理得 −1/√(4 − x²)。"],
+      
       verify: { m: "fn", kind: "deriv", f: "\\arccos\\left(\\frac{x}{2}\\right)", pts: [[0.37], [0.81], [1.23], [1.77], [-0.63], [-1.29]] } },
 
     /* ── 2D 高階導數：直接求 f″、f‴ ── */
@@ -2743,15 +2737,14 @@
       answer: "12*x^2-30*x", timeLimit: 45,
       tags: ["higher-deriv-second", "second-derivative", "power-rule"],
       hints: ["先求一階導數，再對結果微分一次。", "一次項 2x 微兩次之後會怎樣？"],
-      solution: "一階 4x³ − 15x² + 2，二階 12x² − 30x。",
-      solutionSteps: ["f′(x) = 4x³ − 15x² + 2。", "f″(x) = 12x² − 30x。"] },
+      solution: "一階 4x³ − 15x² + 2，二階 12x² − 30x。"},
     { id: "cg-2d-004", topic: "derivatives", rank: 2, answerKind: "expression",
       prompt: "\\frac{d^3}{dx^3}\\sqrt{x},\\ x>0",
       answer: "3/(8*x^(5/2))", timeLimit: 70,
       tags: ["higher-deriv-second", "higher-derivative", "power-rule"],
       hints: ["寫成 x^{1/2}，冪次法則連用三次。", "每次指數拿下來、再減 1；係數一路相乘，注意正負號。"],
       solution: "(x^{1/2})′ = (1/2)x^{−1/2}，″ = −(1/4)x^{−3/2}，‴ = (3/8)x^{−5/2}。",
-      solutionSteps: ["f′ = (1/2)x^{−1/2}。", "f″ = −(1/4)x^{−3/2}。", "f‴ = (3/8)x^{−5/2} = 3/(8x^{5/2})。"],
+      
       verify: { m: "fn", kind: "deriv", order: 3, f: "\\sqrt{x}", pts: [[0.81], [1.23], [1.77], [2.41], [3.13]] } },
     { id: "cg-2d-005", topic: "derivatives", rank: 1, answerKind: "numeric",
       prompt: "f(x)=3\\cos x-e^x\\text{，求 }f''(0)",
@@ -2759,7 +2752,7 @@
       tags: ["higher-deriv-second", "second-derivative", "trig"],
       hints: ["cos x 微兩次回到自己但多一個負號。", "eˣ 微幾次都是 eˣ。"],
       solution: "f′ = −3 sin x − eˣ，f″ = −3 cos x − eˣ，f″(0) = −3 − 1 = −4。",
-      solutionSteps: ["f′(x) = −3 sin x − eˣ。", "f″(x) = −3 cos x − eˣ。", "f″(0) = −3 − 1 = −4。"],
+      
       verify: { m: "deriv", f: "3\\cos x-e^x", at: [0], order: 2 } }
   ];
 

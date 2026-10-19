@@ -218,7 +218,7 @@
       tags: ["differentiability-condition", "differentiability", "continuity"],
       hints: ["f_x(0,0) 要用定義：看 f(h,0) 是多少，再除以 h。", "沿直線 y = x 靠近原點時，f 趨近多少？跟 f(0,0) 一樣嗎？"],
       solution: "f(h,0)=0、f(0,k)=0，所以 f_x(0,0)=f_y(0,0)=0 都存在。沿 y=x：f(t,t)=t²/(3t²)=1/3 ≠ f(0,0)，f 在原點不連續；不連續就不可能可微。",
-      solutionSteps: ["f_x(0,0) = lim [f(h,0) − f(0,0)]/h = lim 0/h = 0，同理 f_y(0,0) = 0。", "沿 y = x：f(t,t) = t²/(t² + 2t²) = 1/3，不趨近 f(0,0) = 0。", "不連續 ⟹ 不可微。偏導數存在不保證可微。"],
+      
       verify: { m: "choice", options: [
         { say: "f_x(0,0)、f_y(0,0) 都存在，但 f 在原點不連續，所以不可微", all: [
           { v: val("\\frac{1}{0.0001}\\cdot\\frac{0.0001\\cdot0}{0.0001^2+2\\cdot0^2}"), eq: 0 },
@@ -241,7 +241,7 @@
       tags: ["differentiability-condition", "differentiability", "linearization"],
       hints: ["|f(x,y)| ≤ 2|y|，所以連續性沒問題；偏導數用定義算。", "可微要求 [f(h,k) − f(0,0) − f_x h − f_y k]/√(h²+k²) → 0。沿 h = k 算算看。"],
       solution: "|f| ≤ 2|y| → 0，連續。f(h,0)=0、f(0,k)=0，偏導數都是 0。若可微，線性部分是 0，但沿 h=k：f(h,h)/(√2|h|) = h/(√2|h|) 不趨近 0，所以不可微。",
-      solutionSteps: ["|f(x,y)| = 2x²|y|/(x²+y²) ≤ 2|y| → 0，f 在原點連續。", "f(h,0) = 0、f(0,k) = 0 ⟹ f_x(0,0) = f_y(0,0) = 0。", "可微的話 f(h,k) − 0 要是 o(√(h²+k²))；但 f(h,h) = h，除以 √2|h| 得 ±1/√2 ≠ 0。", "結論：連續、偏導數存在，但不可微。"],
+      
       verify: { m: "choice", options: [
         { say: "f 在原點連續、f_x、f_y 都存在，但 f 在原點不可微", all: [
           { v: val("\\frac{2\\cdot0.001^2\\cdot0.001}{0.001^2+0.001^2}"), lt: 0.01 },
@@ -264,7 +264,7 @@
       tags: ["total-differential-error-bound", "linearization", STORY],
       hints: ["兩邊取 ln 再微分：dV/V 會變成 dr/r 與 dh/h 的組合。", "最大誤差時，每一項都取絕對值相加。"],
       solution: "ln V = ln(π/3) + 2 ln r + ln h，所以 dV/V = 2 dr/r + dh/h。最大相對誤差 ≈ 2(2%) + 1% = 5%。",
-      solutionSteps: ["ln V = ln(π/3) + 2 ln r + ln h。", "dV/V = 2·(dr/r) + dh/h。", "|dV/V| ≤ 2·2% + 1% = 5%。"],
+      
       verify: { m: "let", f: "100a", with: { a: { m: "totalDiff", f: "\\ln\\left(\\frac{1}{3}\\pi x^2y\\right)", at: [5, 12], d: ["0.02\\cdot5", "0.01\\cdot12"] } } } },
     { id: "cg-8c-004",
       topic: "derivatives",
@@ -276,7 +276,7 @@
       tags: ["total-differential-error-bound", "linearization", STORY],
       hints: ["ln T = ln 2π + (1/2) ln L − (1/2) ln g，再微分。", "g 那一項是負號：要讓誤差最大，dL 與 dg 的方向要怎麼取？"],
       solution: "dT/T = (1/2) dL/L − (1/2) dg/g。最大時兩項同號相加：(1/2)(1%) + (1/2)(0.4%) = 0.7%。",
-      solutionSteps: ["ln T = ln 2π + ½ ln L − ½ ln g。", "dT/T = ½·dL/L − ½·dg/g。", "取 dL/L = +1%、dg/g = −0.4%：|dT/T| ≤ 0.5% + 0.2% = 0.7%。"],
+      
       verify: { m: "let", f: "100a", with: { a: { m: "totalDiff", f: "\\ln\\left(2\\pi\\sqrt{\\frac{x}{y}}\\right)", at: [2, 9.8], d: ["0.01\\cdot2", "-0.004\\cdot9.8"] } } } },
 
     /* ── 8C 寫出線性近似 L(x,y) ── */
@@ -292,7 +292,7 @@
       tags: ["mv-linearization-build", "linearization", "linear-approximation"],
       hints: ["L(x,y) = f(1,2) + f_x(1,2)(x − 1) + f_y(1,2)(y − 2)。", "先算 f(1,2)、f_x = 2xy、f_y = x² + 3 在 (1,2) 的值。"],
       solution: "f(1,2)=8，f_x=2xy → 4，f_y=x²+3 → 4。L = 8 + 4(x−1) + 4(y−2) = 4x + 4y − 4。",
-      solutionSteps: ["f(1,2) = 2 + 6 = 8。", "f_x = 2xy ⟹ 4；f_y = x² + 3 ⟹ 4。", "L(x,y) = 8 + 4(x − 1) + 4(y − 2) = 4x + 4y − 4。"],
+      
       verify: { m: "fn", vars: ["x", "y"], cases: planeCases("x^2y+3y", 1, 2, "1^2\\cdot2+3\\cdot2") } },
     { id: "cg-8c-006",
       topic: "derivatives",
@@ -306,7 +306,7 @@
       tags: ["mv-linearization-build", "linearization", "linear-approximation"],
       hints: ["f_x = 1/(2√(x+2y))，f_y 多一個連鎖律的 2。", "在 (2,1)：√(x+2y) = 2。"],
       solution: "f(2,1)=2，f_x=1/(2√(x+2y)) → 1/4，f_y=1/√(x+2y) → 1/2。L = 2 + (x−2)/4 + (y−1)/2 = x/4 + y/2 + 1。",
-      solutionSteps: ["f(2,1) = √4 = 2。", "f_x = 1/(2√(x+2y)) ⟹ 1/4；f_y = 1/√(x+2y) ⟹ 1/2。", "L = 2 + ¼(x − 2) + ½(y − 1) = x/4 + y/2 + 1。"],
+      
       verify: { m: "fn", vars: ["x", "y"], cases: planeCases("\\sqrt{x+2y}", 2, 1, "\\sqrt{2+2\\cdot1}") } },
     { id: "cg-8c-007",
       topic: "derivatives",
@@ -320,7 +320,7 @@
       tags: ["mv-linearization-build", "linearization", "linear-approximation"],
       hints: ["f_x = ln y、f_y = x/y。", "在 (3,1)：ln 1 = 0，所以有一項會消失。"],
       solution: "f(3,1)=3 ln 1=0，f_x=ln y → 0，f_y=x/y → 3。L = 0 + 0·(x−3) + 3(y−1) = 3y − 3。",
-      solutionSteps: ["f(3,1) = 3·ln 1 = 0。", "f_x = ln y ⟹ 0；f_y = x/y ⟹ 3。", "L(x,y) = 3(y − 1) = 3y − 3（跟 x 無關）。"],
+      
       verify: { m: "fn", vars: ["x", "y"], cases: planeCases("x\\ln y", 3, 1, "3\\ln 1") } },
 
     /* ── 8C 沿曲線的 dz/dt ── */
@@ -334,7 +334,7 @@
       tags: ["mv-chain-one-parameter", "chain-rule"],
       hints: ["dz/dt = z_x·(dx/dt) + z_y·(dy/dt)。", "t = π/4 時 x = y = √2/2；dx/dt = −sin t、dy/dt = cos t。"],
       solution: "dz/dt = 2xy(−sin t) + x²(cos t)。t=π/4：x=y=√2/2，得 2·½·(−√2/2) + ½·(√2/2) = −√2/2 + √2/4 = −√2/4。",
-      solutionSteps: ["dz/dt = 2xy·(−sin t) + x²·cos t。", "t = π/4：x = y = sin t = cos t = √2/2，xy = x² = ½。", "dz/dt = 2·½·(−√2/2) + ½·(√2/2) = −√2/4 ≈ −0.354。"],
+      
       verify: { m: "deriv", vars: ["t"], f: "\\cos^2 t\\sin t", at: ["\\pi/4"], wrt: "t" } },
     { id: "cg-8c-009",
       topic: "derivatives",
@@ -346,7 +346,7 @@
       tags: ["mv-chain-one-parameter", "chain-rule"],
       hints: ["z_x = e^y、z_y = xe^y；dx/dt = 2t、dy/dt = −1。", "t = 1 時 x = 1、y = 0。"],
       solution: "dz/dt = e^y·2t + xe^y·(−1)。t=1：x=1、y=0，得 2 − 1 = 1。",
-      solutionSteps: ["dz/dt = z_x·x′ + z_y·y′ = e^y·2t − xe^y。", "t = 1：x = 1、y = 0、e^0 = 1。", "dz/dt = 2 − 1 = 1。"],
+      
       verify: { m: "deriv", vars: ["t"], f: "t^2e^{1-t}", at: [1], wrt: "t" } },
 
     /* ── 8D 梯度與等高線 ── */
@@ -363,7 +363,7 @@
       tags: ["gradient-level-curve", "gradient", "directional-derivative"],
       hints: ["增加最快的方向就是梯度的方向。", "∇f = (2x, 8y)，代入 (2,1) 後可以約掉公因數。"],
       solution: "∇f(2,1) = (4, 8) = 4(1, 2)，所以往 (1, 2) 的方向增加最快。(2, −1) 跟梯度垂直，是沿著等高線走；(−1, −2) 是下降最快。",
-      solutionSteps: ["∇f = (2x, 8y)，∇f(2,1) = (4, 8)。", "(4, 8) = 4·(1, 2)，方向是 (1, 2)。", "(2, −1)·(1, 2) = 0：那是等高線的切線方向，f 不變。"],
+      
       verify: { m: "choice", options: [
         { say: "(1, 2) 的方向", all: [{ v: pd("(2+\\frac{t}{\\sqrt5})^2+4(1+\\frac{2t}{\\sqrt5})^2", [0], "t", ["t"]), eq: { m: "let", f: "\\sqrt{a^2+b^2}", with: { a: pd("x^2+4y^2", [2, 1], "x"), b: pd("x^2+4y^2", [2, 1], "y") } } }] },
         { say: "(2, −1) 的方向", all: [{ v: pd("(2+\\frac{2t}{\\sqrt5})^2+4(1-\\frac{t}{\\sqrt5})^2", [0], "t", ["t"]), eq: { m: "let", f: "\\sqrt{a^2+b^2}", with: { a: pd("x^2+4y^2", [2, 1], "x"), b: pd("x^2+4y^2", [2, 1], "y") } } }] },
@@ -383,7 +383,7 @@
       tags: ["gradient-level-curve", "gradient", "estimate"],
       hints: ["相鄰兩條等高線的值差 1，距離大約是 1/|∇f|。", "算 |∇f| 在 (1,0) 與 (3,0) 的大小。"],
       solution: "|∇f| = 2√(x²+y²)：在 (1,0) 是 2、在 (3,0) 是 6。間距約 1/|∇f|，所以 (3,0) 附近較密。實際量：√10 − 3 ≈ 0.16，√2 − 1 ≈ 0.41。",
-      solutionSteps: ["∇f = (2x, 2y)；|∇f(1,0)| = 2、|∇f(3,0)| = 6。", "值差 1 的兩條等高線距離 ≈ 1/|∇f|：約 0.5 對 0.17。", "直接量：f = 9 到 10 在 x 軸上相距 √10 − 3 ≈ 0.16；f = 1 到 2 相距 √2 − 1 ≈ 0.41。(3,0) 附近較密。"],
+      
       verify: { m: "choice", options: [
         { say: "(3, 0) 附近比較密，因為那裡 |∇f| 比較大", all: [
           { v: { m: "let", f: "\\sqrt{a^2+b^2}", with: { a: pd("x^2+y^2", [3, 0], "x"), b: pd("x^2+y^2", [3, 0], "y") } }, gt: { m: "let", f: "\\sqrt{a^2+b^2}", with: { a: pd("x^2+y^2", [1, 0], "x"), b: pd("x^2+y^2", [1, 0], "y") } } },
@@ -406,7 +406,7 @@
       tags: ["tangent-plane-graph", "tangent-plane", "linearization"],
       hints: ["切平面：z − z₀ = f_x(x₀,y₀)(x − x₀) + f_y(x₀,y₀)(y − y₀)。", "f_x = 3x² − y、f_y = 2y − x，代入 (1,2)。"],
       solution: "f_x = 3x² − y → 1，f_y = 2y − x → 3。z = 3 + (x−1) + 3(y−2) = x + 3y − 4。",
-      solutionSteps: ["f_x = 3x² − y ⟹ f_x(1,2) = 1；f_y = 2y − x ⟹ f_y(1,2) = 3。", "z − 3 = 1·(x − 1) + 3(y − 2)。", "z = x + 3y − 4。"],
+      
       verify: { m: "fn", vars: ["x", "y"], cases: planeCases("x^3+y^2-xy", 1, 2, "1^3+2^2-1\\cdot2") } },
     { id: "cg-8d-004",
       topic: "derivatives",
@@ -420,7 +420,7 @@
       tags: ["tangent-plane-graph", "tangent-plane", "linearization"],
       hints: ["f_x = ye^x、f_y = e^x。", "在 (0,3)：e^0 = 1。"],
       solution: "f_x = ye^x → 3，f_y = e^x → 1。z = 3 + 3(x − 0) + (y − 3) = 3x + y。",
-      solutionSteps: ["f_x(0,3) = 3e^0 = 3；f_y(0,3) = e^0 = 1。", "z − 3 = 3x + (y − 3)。", "z = 3x + y。"],
+      
       verify: { m: "fn", vars: ["x", "y"], cases: planeCases("y e^{x}", 0, 3, "3e^{0}") } },
 
     /* ── 8D 切平面：等值面 F(x,y,z) = c ── */
@@ -434,7 +434,7 @@
       tags: ["tangent-plane-level-surface", "tangent-plane", "gradient"],
       hints: ["等值面的法向量是 ∇F = (2x, 2y, 2z)。", "寫出切平面方程式後，令 x = y = 0。"],
       solution: "∇F(1,2,3) = (2,4,6) ∥ (1,2,3)。切平面 x + 2y + 3z = 14。令 x=y=0：z = 14/3。",
-      solutionSteps: ["∇F = (2x, 2y, 2z)，在 (1,2,3) 是 (2,4,6)，法向量取 (1,2,3)。", "切平面：(x−1) + 2(y−2) + 3(z−3) = 0，即 x + 2y + 3z = 14。", "x = y = 0：z = 14/3。"],
+      
       verify: { m: "let", f: "3-a-2b", with: { a: pd("\\sqrt{14-x^2-y^2}", [1, 2], "x"), b: pd("\\sqrt{14-x^2-y^2}", [1, 2], "y") } } },
     { id: "cg-8d-006",
       topic: "derivatives",
@@ -446,7 +446,7 @@
       tags: ["tangent-plane-level-surface", "tangent-plane", "gradient"],
       hints: ["法線的方向是 ∇F(1,1,1)。", "法線寫成 (1,1,1) + s·∇F，令 z = 0 解 s。"],
       solution: "∇F = (2x, 2y, −2z) → (2, 2, −2)。法線 (1+2s, 1+2s, 1−2s)，z=0 時 s=1/2，x = 2。",
-      solutionSteps: ["F = x² + y² − z²，∇F(1,1,1) = (2, 2, −2)。", "法線：(x,y,z) = (1 + 2s, 1 + 2s, 1 − 2s)。", "z = 0 ⟹ s = ½ ⟹ x = 2。"],
+      
       verify: { m: "let", f: "1+a", with: { a: pd("\\sqrt{x^2+y^2-1}", [1, 1], "x") } } },
 
     /* ── 8E 臨界點不一定是極值 ── */
@@ -463,7 +463,7 @@
       tags: ["critical-2d-saddle-concept", "critical-points", "optimization"],
       hints: ["f(0,0) = 0。沿 x 軸（y = 0）代進去看 f 的正負。", "再沿直線 y = −x 代進去看。"],
       solution: "沿 y=0：f = x² > 0；沿 y=−x：f = x² − 4x² + x² = −2x² < 0。原點附近 f 有正有負，不是極值，是鞍點。",
-      solutionSteps: ["∇f = (2x + 4y, 4x + 2y)，原點是臨界點，f(0,0) = 0。", "y = 0：f = x² > 0。", "y = −x：f = −2x² < 0。兩個方向符號相反 ⟹ 鞍點。"],
+      
       verify: { m: "choice", options: [
         { say: "不是極值：沿 x 軸 f>0，沿 y=−x 卻 f<0（鞍點）", all: [...grad0("x^2+4xy+y^2", [0, 0]), sign("0.01^2+4\\cdot0.01\\cdot0+0^2", "gt"), sign("0.01^2+4\\cdot0.01\\cdot(-0.01)+(-0.01)^2", "lt")] },
         { say: "局部極小，因為 x² 與 y² 的係數都是正的", all: [sign("0.01^2+4\\cdot0.01\\cdot(-0.01)+(-0.01)^2", "ge")] },
@@ -482,7 +482,7 @@
       tags: ["critical-2d-saddle-concept", "critical-points", "optimization"],
       hints: ["f(0,0) = 0。沿 x 軸走，f 變成 x 的什麼函數？", "x 稍大於 0 和稍小於 0 時，f 的正負各是什麼？"],
       solution: "沿 x 軸 f(t,0) = t³：t>0 時為正、t<0 時為負。原點附近 f 比 f(0,0)=0 大也比它小，不是極值。",
-      solutionSteps: ["∇f = (3x², 2y)，原點是臨界點，f(0,0) = 0。", "沿 x 軸：f(t,0) = t³。", "t > 0 時 f > 0、t < 0 時 f < 0 ⟹ 原點不是極值。"],
+      
       verify: { m: "choice", options: [
         { say: "不是極值：f(t,0)=t³ 在 t=0 兩側變號", all: [...grad0("x^3+y^2", [0, 0]), sign("0.01^3+0^2", "gt"), sign("(-0.01)^3+0^2", "lt")] },
         { say: "局部極小，因為 y² ≥ 0", all: [sign("(-0.01)^3+0^2", "ge")] },
@@ -503,7 +503,7 @@
       tags: ["critical-2d-solve-system", "critical-points", "optimization"],
       hints: ["f_x = 2xy = 0 有兩種情形：x = 0 或 y = 0。分開解。", "每一種情形各自代進 f_y = x² + 2y − 4 = 0。"],
       solution: "f_x = 2xy、f_y = x² + 2y − 4。x=0：2y−4=0，y=2。y=0：x²=4，x=±2。臨界點 (0,2)、(2,0)、(−2,0)。",
-      solutionSteps: ["f_x = 2xy，f_y = x² + 2y − 4。", "x = 0：2y − 4 = 0 ⟹ (0, 2)。", "y = 0：x² − 4 = 0 ⟹ (2, 0)、(−2, 0)。共三個。"],
+      
       verify: { m: "choice", options: [
         { say: "(0, 2)、(2, 0)、(−2, 0)", all: [...grad0("x^2y+y^2-4y", [0, 2]), ...grad0("x^2y+y^2-4y", [2, 0]), ...grad0("x^2y+y^2-4y", [-2, 0])] },
         { say: "(0, 2)、(2, 0)、(0, 0)", all: [...grad0("x^2y+y^2-4y", [0, 2]), ...grad0("x^2y+y^2-4y", [2, 0]), ...grad0("x^2y+y^2-4y", [0, 0])] },
@@ -523,7 +523,7 @@
       tags: ["critical-2d-solve-system", "critical-points", "optimization"],
       hints: ["f_x = y(3 − 2x − y)、f_y = x(3 − x − 2y)，兩個都是乘積。", "每個乘積是 0 都有兩種情形，2 × 2 = 4 種組合逐一解。"],
       solution: "f_x = y(3−2x−y)、f_y = x(3−x−2y)。y=0 且 x=0：(0,0)；y=0 且 x=3：(3,0)；x=0 且 y=3：(0,3)；2x+y=3 且 x+2y=3：(1,1)。",
-      solutionSteps: ["f = 3xy − x²y − xy²；f_x = y(3 − 2x − y)，f_y = x(3 − x − 2y)。", "y = 0：x(3 − x) = 0 ⟹ (0,0)、(3,0)。x = 0：y(3 − y) = 0 ⟹ (0,3)。", "x, y ≠ 0：2x + y = 3、x + 2y = 3 ⟹ (1,1)。共四個。"],
+      
       verify: { m: "choice", options: [
         { say: "(0, 0)、(3, 0)、(0, 3)、(1, 1)", all: [...grad0("xy(3-x-y)", [0, 0]), ...grad0("xy(3-x-y)", [3, 0]), ...grad0("xy(3-x-y)", [0, 3]), ...grad0("xy(3-x-y)", [1, 1])] },
         { say: "(0, 0)、(3, 0)、(0, 3)、(3/2, 3/2)", all: [...grad0("xy(3-x-y)", [0, 0]), ...grad0("xy(3-x-y)", [3, 0]), ...grad0("xy(3-x-y)", [0, 3]), ...grad0("xy(3-x-y)", [1.5, 1.5])] },
@@ -545,7 +545,7 @@
       tags: ["hessian-quadratic-form", "second-derivative", "critical-points"],
       hints: ["把二次式寫成 Ah² + 2Bhk + Ck²，讀出 A、B、C（注意 2B）。", "看 AC − B² 與 A 的正負；也可以試著配方。"],
       solution: "A=2、B=−3、C=5，AC − B² = 10 − 9 = 1 > 0 且 A > 0，碗形，局部極小。配方：2(h − 3k/2)² + k²/2 ≥ 0。",
-      solutionSteps: ["2h² − 6hk + 5k² = Ah² + 2Bhk + Ck²：A = 2、B = −3、C = 5。", "AC − B² = 10 − 9 = 1 > 0，A > 0。", "配方 2(h − 1.5k)² + 0.5k² ≥ 0，只有 h = k = 0 時為 0 ⟹ 局部極小。"],
+      
       verify: { m: "choice", options: [
         { say: "局部極小（碗形）", all: [{ v: { m: "extremum", vars: ["x", "y"], f: "2x^2-6xy+5y^2", kind: "min" }, eq: 0 }, sign("2\\cdot1^2-6\\cdot1\\cdot0+5\\cdot0^2", "gt")] },
         { say: "鞍點（馬鞍形）", all: [sign("2\\cdot1^2-6\\cdot1\\cdot0.6+5\\cdot0.6^2", "lt")] },
@@ -565,7 +565,7 @@
       tags: ["hessian-quadratic-form", "second-derivative", "critical-points"],
       hints: ["原點附近 x³ 比二次項小得多，形狀由 3h² + 4hk + k² 決定。", "4hk = 2B·hk，所以 B 是多少？再看 AC − B²。"],
       solution: "二階項 3h² + 4hk + k²：A=3、B=2、C=1，AC − B² = 3 − 4 = −1 < 0，鞍點。例如沿 k = −1.5h，二次式 = −0.75h² < 0；沿 k=0 為 3h² > 0。",
-      solutionSteps: ["原點：∇f = (6x + 4y + 3x², 4x + 2y) = 0。", "二階項 3h² + 4hk + k²：A = 3、B = 2、C = 1。", "AC − B² = −1 < 0 ⟹ 鞍點（沿 k = 0 往上、沿 k = −1.5h 往下）。"],
+      
       verify: { m: "choice", options: [
         { say: "鞍點（馬鞍形）", all: [...grad0("3x^2+4xy+y^2+x^3", [0, 0]), sign("3\\cdot0.01^2+0+0+0.01^3", "gt"), sign("3\\cdot0.01^2+4\\cdot0.01\\cdot(-0.015)+(-0.015)^2+0.01^3", "lt")] },
         { say: "局部極小（碗形）", all: [sign("3\\cdot0.01^2+4\\cdot0.01\\cdot(-0.015)+(-0.015)^2+0.01^3", "ge")] },
@@ -587,7 +587,7 @@
       tags: ["second-test-2d-degenerate", "degenerate", "critical-points"],
       hints: ["前三項是一個完全平方。", "把 f 寫成（平方）＋ y⁴，看它最小可以是多少。"],
       solution: "f = (x + y)² + y⁴ ≥ 0 = f(0,0)，所以原點是局部（也是絕對）極小。D = 2·2 − 2² = 0，判別法沒結論，要靠配方。",
-      solutionSteps: ["f_xx = 2、f_yy = 2 + 12y² → 2、f_xy = 2 ⟹ D = 0，判別法失效。", "配方：f = (x + y)² + y⁴。", "f ≥ 0 = f(0,0) ⟹ 原點是局部極小（也是絕對極小）。"],
+      
       verify: { m: "choice", options: [
         { say: "局部極小（而且 f ≥ 0 = f(0,0)）", all: [...grad0("x^2+2xy+y^2+y^4", [0, 0]), { v: { m: "extremum", vars: ["x", "y"], f: "x^2+2xy+y^2+y^4", kind: "min" }, eq: 0 }] },
         { say: "鞍點", all: [sign("0.01^2+2\\cdot0.01\\cdot(-0.01)+(-0.01)^2+(-0.01)^4", "lt")] },
@@ -607,7 +607,7 @@
       tags: ["second-test-2d-degenerate", "degenerate", "critical-points"],
       hints: ["前三項 = 3(x − y)²。哪一條直線上這一項是 0？", "在那條直線上只剩 −y⁴。"],
       solution: "f = 3(x − y)² − y⁴。沿 x 軸：3x² > 0；沿 y=x：−x⁴ < 0。原點附近有正有負，是鞍點（判別法 D=0 沒結論）。",
-      solutionSteps: ["∇f(0,0) = 0；f_xx = 6、f_yy = 6、f_xy = −6 ⟹ D = 0。", "f = 3(x − y)² − y⁴。", "y = 0：f = 3x² > 0；y = x：f = −x⁴ < 0 ⟹ 鞍點。"],
+      
       verify: { m: "choice", options: [
         { say: "鞍點：沿 x 軸 f>0，沿 y=x 卻 f<0", all: [...grad0("3x^2-6xy+3y^2-y^4", [0, 0]), sign("3\\cdot0.01^2-0+0-0", "gt"), sign("3\\cdot0.01^2-6\\cdot0.01\\cdot0.01+3\\cdot0.01^2-0.01^4", "lt")] },
         { say: "局部極小，因為 f_xx>0", all: [sign("3\\cdot0.01^2-6\\cdot0.01\\cdot0.01+3\\cdot0.01^2-0.01^4", "ge")] },
@@ -629,7 +629,7 @@
       tags: ["lagrange-check-candidates", "optimization", "critical-points"],
       hints: ["Lagrange：(1, 1) = λ(y, x)，配合 xy = 4 只有一個候選點。", "這條曲線不是有界閉集。x 很大時 f 會怎樣？"],
       solution: "1 = λy、1 = λx ⟹ x = y = 2，f = 4。曲線無界：x = 100、y = 0.04 時 f > 100，沒有最大值；候選點 4 是最小值（AM–GM：x + y ≥ 2√(xy) = 4）。",
-      solutionSteps: ["∇f = λ∇g：1 = λy、1 = λx ⟹ x = y；xy = 4 ⟹ (2, 2)，f = 4。", "曲線無界：(100, 0.04) 在曲線上，f = 100.04，所以沒有最大值。", "x + y ≥ 2√(xy) = 4，候選點是最小值 4。"],
+      
       verify: { m: "choice", options: [
         { say: "最小值 4，沒有最大值", all: [{ v: { m: "constrained", f: "x+y", g: "xy", c: 4, kind: "min", positive: true }, eq: 4 }, { v: val("100+\\frac{4}{100}"), gt: 100 }] },
         { say: "最大值 4，沒有最小值", all: [{ v: val("100+\\frac{4}{100}"), le: 4 }] },
@@ -646,7 +646,7 @@
       tags: ["lagrange-check-candidates", "optimization", "critical-points"],
       hints: ["2xy = 2λx、x² = 2λy。先分 x = 0 與 x ≠ 0 兩種情形。", "x ≠ 0 時 y = λ，代回得 x² = 2y²，再用 x² + y² = 3。"],
       solution: "x=0：(0, ±√3)，f=0。x≠0：y=λ、x²=2y²，3y²=3，y=±1、x²=2，f=±2。圓是有界閉集，最大 2、最小 −2，相差 4。",
-      solutionSteps: ["∇f = λ∇g：2xy = 2λx、x² = 2λy。", "x = 0：(0, ±√3)，f = 0。x ≠ 0：y = λ ⟹ x² = 2y²，3y² = 3 ⟹ y = ±1，f = 2y = ±2。", "有界閉集上一定取到極值：最大 2、最小 −2，差 4。"],
+      
       verify: { m: "let", f: "a-b", with: { a: { m: "constrained", f: "x^2y", g: "x^2+y^2", c: 3, kind: "max" }, b: { m: "constrained", f: "x^2y", g: "x^2+y^2", c: 3, kind: "min" } } } },
 
     /* ── 8E 兩個約束 ── */
@@ -660,7 +660,7 @@
       tags: ["lagrange-two-multipliers", "lagrange-multiplier", "optimization"],
       hints: ["目標 x² + y² + z²；條件 ∇f = λ∇g + μ∇h 給 (2x, 2y, 2z) = λ(1,1,1) + μ(1,2,3)。", "把 x、y、z 用 λ、μ 表示，代回兩個平面解出 λ、μ。"],
       solution: "2x=λ+μ、2y=λ+2μ、2z=λ+3μ。代入兩平面：3λ+6μ=12、6λ+14μ=20，得 μ=−2、λ=8，(x,y,z)=(3,2,1)，距離平方 14。",
-      solutionSteps: ["(2x, 2y, 2z) = λ(1,1,1) + μ(1,2,3)。", "代入：x+y+z = (3λ + 6μ)/2 = 6，x+2y+3z = (6λ + 14μ)/2 = 10 ⟹ λ = 8、μ = −2。", "(x,y,z) = (3, 2, 1)，x² + y² + z² = 14。"],
+      
       verify: { m: "constrained", f: "x^2+y^2+(6-x-y)^2", g: "x+2y+3(6-x-y)", c: 10, kind: "min" } },
     { id: "cg-8e-012",
       topic: "derivatives",
@@ -672,7 +672,7 @@
       tags: ["lagrange-two-multipliers", "lagrange-multiplier", "optimization"],
       hints: ["(0,0,1) = λ(2x,2y,2z) + μ(1,1,1)。前兩條相減會得到什麼？", "x = y 之後，用兩個約束解出點。"],
       solution: "前兩條：2λx = 2λy，λ≠0 時 x=y。代入：2x+z=3、2x²+z²=9 ⟹ 6x² − 12x = 0，x=0 或 2，z=3 或 −1。最大值 3（在 (0,0,3)）。",
-      solutionSteps: ["0 = 2λx + μ、0 = 2λy + μ、1 = 2λz + μ ⟹ x = y（λ = 0 會使 1 = μ = 0 矛盾）。", "z = 3 − 2x，2x² + (3 − 2x)² = 9 ⟹ 6x² − 12x = 0 ⟹ x = 0 或 2。", "候選 (0,0,3)、(2,2,−1)；z 最大為 3。"],
+      
       verify: { m: "constrained", f: "3-x-y", g: "x^2+y^2+(3-x-y)^2", c: 9, kind: "max" } },
     { id: "cg-8e-013",
       topic: "derivatives",
@@ -684,7 +684,7 @@
       tags: ["lagrange-two-multipliers", "lagrange-multiplier", "optimization"],
       hints: ["目標可以取距離平方 x² + y² + z²，兩個約束是 x² + y² = 1 與 2x + y − z = 0。", "在橢圓上 x² + y² 固定是 1，所以要讓 z² = (2x + y)² 最大。"],
       solution: "距離平方 = 1 + (2x + y)²。單位圓上 2x + y 的最大值是 √5（Lagrange 或 Cauchy），所以最大距離平方 6，距離 √6。",
-      solutionSteps: ["x² + y² + z² = 1 + (2x + y)²（用兩個約束）。", "在 x² + y² = 1 上，(2, 1) = λ(2x, 2y) ⟹ (x, y) ∥ (2, 1)，2x + y 最大 √5。", "最大距離平方 = 1 + 5 = 6，距離 √6。"],
+      
       verify: { m: "let", f: "\\sqrt{a}", with: { a: { m: "constrained", f: "x^2+y^2+(2x+y)^2", g: "x^2+y^2", c: 1, kind: "max" } } } },
     { id: "cg-8e-014",
       topic: "derivatives",
@@ -699,7 +699,7 @@
       tags: ["lagrange-independence-check", "gradient", "optimization"],
       hints: ["分別算兩個約束函數的梯度，代入 (0,0,2)。", "兩個向量平行的條件：外積是零向量。"],
       solution: "∇(x²+y²+z²) = (0,0,4)，∇z = (0,0,1)，兩者平行。Lagrange 多條件定理要求約束梯度線性獨立，這一點不滿足。",
-      solutionSteps: ["∇g = (2x, 2y, 2z) = (0, 0, 4)；∇h = (0, 0, 1)。", "(0,0,4) × (0,0,1) = 0 ⟹ 平行（線性相關），而且 ∇g ≠ 0。", "定理的前提（梯度線性獨立）不成立。"],
+      
       verify: { m: "choice", options: [
         { say: "平行（線性相關），這一點不滿足 Lagrange 定理的前提", all: [
           { v: { m: "let", f: "\\sqrt{(bw-cv)^2+(cu-aw)^2+(av-bu)^2}", with: {
@@ -725,7 +725,7 @@
       tags: ["double-integral-riemann-sum", "riemann-sum", "estimate"],
       hints: ["四個中心是 (0.5, 0.5)、(0.5, 1.5)、(1.5, 0.5)、(1.5, 1.5)，每格面積 1。", "把 f 在四個中心的值加起來，再乘上每格面積。"],
       solution: "f = xy²：(0.5,0.5)→0.125，(0.5,1.5)→1.125，(1.5,0.5)→0.375，(1.5,1.5)→3.375。和 = 5，乘面積 1，估計值 5（真值 16/3）。",
-      solutionSteps: ["中心：x、y ∈ {0.5, 1.5}，ΔA = 1。", "f 值：0.125 + 1.125 + 0.375 + 3.375 = 5。", "估計 ≈ 5 × 1 = 5。"],
+      
       verify: { m: "let", f: "ab", with: { a: { m: "riemannRule", f: "x", a: 0, b: 2, n: 2, rule: "mid" }, b: { m: "riemannRule", f: "x^2", a: 0, b: 2, n: 2, rule: "mid" } } } },
     { id: "cg-9a1-002",
       topic: "integrals",
@@ -737,7 +737,7 @@
       tags: ["double-integral-riemann-sum", "riemann-sum", "estimate"],
       hints: ["每塊長方形的面積是 2 × 1 = 2。", "右上角是 (2,1)、(2,2)、(4,1)、(4,2)。"],
       solution: "右上角 f 值：(2,1)→4，(2,2)→6，(4,1)→6，(4,2)→8，和 24，乘 ΔA = 2 得 48（真值 32，右上角高估）。",
-      solutionSteps: ["ΔA = 2·1 = 2；右上角 (2,1)、(2,2)、(4,1)、(4,2)。", "f = x + 2y：4 + 6 + 6 + 8 = 24。", "估計 ≈ 24 × 2 = 48。"],
+      
       verify: { m: "let", f: "2a+4b", with: { a: { m: "riemannRule", f: "x", a: 0, b: 4, n: 2, rule: "right" }, b: { m: "riemannRule", f: "2x", a: 0, b: 2, n: 2, rule: "right" } } } },
     { id: "cg-9a1-003",
       topic: "integrals",
@@ -749,7 +749,7 @@
       tags: ["double-integral-riemann-sum", "riemann-sum", "estimate"],
       hints: ["中點的 x 是 0.5、1.5，y 是 1、3；每塊面積 2。", "把四個中點的 f 值加起來再乘 2。"],
       solution: "中點 f = x² + y：(0.5,1)→1.25，(0.5,3)→3.25，(1.5,1)→3.25，(1.5,3)→5.25，和 13，乘 ΔA = 2 得 26。",
-      solutionSteps: ["中點：x ∈ {0.5, 1.5}、y ∈ {1, 3}；ΔA = 1·2 = 2。", "f 值：1.25 + 3.25 + 3.25 + 5.25 = 13。", "估計 ≈ 13 × 2 = 26。"],
+      
       verify: { m: "let", f: "4a+2b", with: { a: { m: "riemannRule", f: "x^2", a: 0, b: 2, n: 2, rule: "mid" }, b: { m: "riemannRule", f: "x", a: 0, b: 4, n: 2, rule: "mid" } } } },
 
     /* ── 9A.1 用對稱與幾何，不積就得答案 ── */
@@ -763,7 +763,7 @@
       tags: ["double-integral-symmetry", "symmetry", "area"],
       hints: ["圓盤對 y 軸對稱；x³ 是 x 的奇函數。", "剩下的常數 5 乘上圓盤面積。"],
       solution: "圓盤對 y 軸對稱、x³ 是奇函數，∬x³ dA = 0。∬5 dA = 5 × 4π = 20π。",
-      solutionSteps: ["區域對 y 軸對稱，x³ 對 x 是奇函數 ⟹ ∬ x³ dA = 0。", "∬ 5 dA = 5 × 面積 = 5 × π·2² = 20π。", "合計 20π。"],
+      
       verify: dbl("x^3+5", "x", -2, 2, "y", "-\\sqrt{|4-x^2|}", "\\sqrt{|4-x^2|}") },
     { id: "cg-9a1-005",
       topic: "integrals",
@@ -775,7 +775,7 @@
       tags: ["double-integral-symmetry", "volume", "symmetry"],
       hints: ["z = √(9 − x² − y²) 的圖形是什麼？", "這個二重積分是那個立體的體積。"],
       solution: "z = √(9 − x² − y²) 是半徑 3 的上半球面，積分就是半球體積 (1/2)(4/3)π·27 = 18π。",
-      solutionSteps: ["z = √(9 − x² − y²) ⟺ x² + y² + z² = 9、z ≥ 0：半徑 3 的上半球。", "二重積分 = 半球體積。", "½ · (4/3)π · 3³ = 18π。"],
+      
       verify: dbl("\\sqrt{|9-x^2-y^2|}", "x", -3, 3, "y", "-\\sqrt{|9-x^2|}", "\\sqrt{|9-x^2|}") },
 
     /* ── 9A.1 Fubini：挑好算的次序 ── */
@@ -789,7 +789,7 @@
       tags: ["iterated-fubini-order", "iterated-integral", "order-of-integration"],
       hints: ["照原次序，內層對 y 要分部積分。", "矩形區域可以換次序：先對 x 積，y e^{xy} 對 x 的反導函數是 e^{xy}。"],
       solution: "換次序：∫₀² ∫₀¹ y e^{xy} dx dy = ∫₀² (e^{y} − 1) dy = e² − 1 − 2 = e² − 3。",
-      solutionSteps: ["矩形上 Fubini：= ∫₀² ∫₀¹ y e^{xy} dx dy。", "內層：∫₀¹ y e^{xy} dx = [e^{xy}]₀¹ = e^{y} − 1。", "∫₀² (e^{y} − 1) dy = e² − 3 ≈ 4.389。"],
+      
       verify: dbl("ye^{xy}", "x", 0, 1, "y", 0, 2) },
     { id: "cg-9a1-007",
       topic: "integrals",
@@ -801,7 +801,7 @@
       tags: ["iterated-fubini-order", "iterated-integral", "order-of-integration"],
       hints: ["照原次序，內層對 x 要分部積分。", "先對 y 積：x cos(xy) 對 y 的反導函數是 sin(xy)。"],
       solution: "換次序：∫₀¹ ∫₀^π x cos(xy) dy dx = ∫₀¹ sin(πx) dx = 2/π。",
-      solutionSteps: ["矩形上 Fubini：= ∫₀¹ ∫₀^π x cos(xy) dy dx。", "內層：[sin(xy)]_{y=0}^{π} = sin(πx)。", "∫₀¹ sin(πx) dx = 2/π ≈ 0.637。"],
+      
       verify: dbl("x\\cos(xy)", "y", 0, "\\pi", "x", 0, 1) },
 
     /* ── 9A.1 只給邊界曲線，自己找上下限 ── */
@@ -815,7 +815,7 @@
       tags: ["region-bounds-from-sketch", "iterated-integral", "area"],
       hints: ["先解 x² = 2x 找交點。", "在兩交點之間，哪一條在上面？"],
       solution: "交點 x = 0、2；其間 2x ≥ x²。∫₀² ∫_{x²}^{2x} x dy dx = ∫₀² (2x² − x³) dx = 16/3 − 4 = 4/3。",
-      solutionSteps: ["x² = 2x ⟹ x = 0、2；0 ≤ x ≤ 2 時 x² ≤ y ≤ 2x。", "∫₀² x(2x − x²) dx = ∫₀² (2x² − x³) dx。", "= 16/3 − 4 = 4/3。"],
+      
       verify: dbl("x", "x", 0, 2, "y", "x^2", "2x") },
     { id: "cg-9a1-009",
       topic: "integrals",
@@ -827,7 +827,7 @@
       tags: ["region-bounds-from-sketch", "iterated-integral", "area"],
       hints: ["兩條都寫成 x = …（x = y² 與 x = y + 2），用水平線掃比較順。", "解 y² = y + 2 得 y 的範圍。"],
       solution: "y² = y + 2 ⟹ y = −1、2；其間 y² ≤ x ≤ y + 2。∫_{−1}^{2} y(y + 2 − y²) dy = [y³/3 + y² − y⁴/4]_{−1}^{2} = 8/3 − 5/12 = 9/4。",
-      solutionSteps: ["交點：y² = y + 2 ⟹ y = −1、2；y² ≤ x ≤ y + 2。", "∬ y dA = ∫_{−1}^{2} y(y + 2 − y²) dy = ∫_{−1}^{2} (y² + 2y − y³) dy。", "= [y³/3 + y² − y⁴/4]_{−1}^{2} = 8/3 − 5/12 = 9/4。"],
+      
       verify: dbl("y", "y", -1, 2, "x", "y^2", "y+2") },
     { id: "cg-9a1-010",
       topic: "integrals",
@@ -839,7 +839,7 @@
       tags: ["region-bounds-from-sketch", "iterated-integral", "area"],
       hints: ["y = x 與 y = 1/x 交在 x = 1。", "1 ≤ x ≤ 2 時，哪一條在上面？"],
       solution: "1 ≤ x ≤ 2 時 1/x ≤ y ≤ x。∫₁² ∫_{1/x}^{x} y dy dx = ∫₁² (x² − 1/x²)/2 dx = (1/2)(7/3 − 1/2) = 11/12。",
-      solutionSteps: ["x = 1/x ⟹ x = 1；1 ≤ x ≤ 2 時 1/x ≤ y ≤ x。", "內層：∫_{1/x}^{x} y dy = (x² − x⁻²)/2。", "½∫₁² (x² − x⁻²) dx = ½(7/3 − 1/2) = 11/12。"],
+      
       verify: dbl("y", "x", 1, 2, "y", "\\frac{1}{x}", "x") },
 
     /* ── 9A.1 換次序：合併與切塊 ── */
@@ -856,7 +856,7 @@
       tags: ["change-order-split-merge", "double-integral", "order-of-integration"],
       hints: ["畫出兩塊：一塊在 y = x 下方，一塊在 y = 2 − x 下方，合起來是一個三角形。", "改用水平線掃：固定 y，x 從哪條線走到哪條線？y 的範圍到哪裡？"],
       solution: "兩塊合起來是頂點 (0,0)、(2,0)、(1,1) 的三角形。固定 y ∈ [0,1]，x 從 y = x 的 x = y 走到 x = 2 − y，所以是 ∫₀¹ ∫_y^{2−y} f dx dy。",
-      solutionSteps: ["第一塊：0 ≤ x ≤ 1、0 ≤ y ≤ x；第二塊：1 ≤ x ≤ 2、0 ≤ y ≤ 2 − x。合起來是三角形 (0,0)、(2,0)、(1,1)。", "水平線掃：y 從 0 到 1（頂點高度）。", "固定 y：x 從 y 到 2 − y ⟹ ∫₀¹ ∫_y^{2−y} f dx dy。"],
+      
       verify: { m: "choice", options: [
         { say: "∫₀¹ ∫_y^{2−y} f dx dy", v: dbl(TEST_F, "y", 0, 1, "x", "y", "2-y"), eq: { m: "let", f: "a+b", with: { a: dbl(TEST_F, "x", 0, 1, "y", 0, "x"), b: dbl(TEST_F, "x", 1, 2, "y", 0, "2-x") } } },
         { say: "∫₀² ∫_y^{2−y} f dx dy", v: dbl(TEST_F, "y", 0, 2, "x", "y", "2-y"), eq: { m: "let", f: "a+b", with: { a: dbl(TEST_F, "x", 0, 1, "y", 0, "x"), b: dbl(TEST_F, "x", 1, 2, "y", 0, "2-x") } } },
@@ -876,7 +876,7 @@
       tags: ["change-order-split-merge", "double-integral", "order-of-integration"],
       hints: ["區域的左界是 x = y²（即 y = √x）、右界是 x = 2 − y、下界 y = 0，兩條曲線交在 (1,1)。", "用鉛直線掃時，上界在 x = 1 前後換了一條曲線。"],
       solution: "區域：0 ≤ y ≤ 1、y² ≤ x ≤ 2 − y。鉛直線掃：0 ≤ x ≤ 1 時上界是 y = √x；1 ≤ x ≤ 2 時上界是 y = 2 − x。所以要切成兩塊。",
-      solutionSteps: ["區域由 y = 0、x = y²（y = √x）、x = 2 − y（y = 2 − x）圍成，兩曲線交於 (1,1)。", "0 ≤ x ≤ 1：0 ≤ y ≤ √x；1 ≤ x ≤ 2：0 ≤ y ≤ 2 − x。", "= ∫₀¹∫₀^√x f dy dx + ∫₁²∫₀^{2−x} f dy dx。"],
+      
       verify: { m: "choice", options: [
         { say: "∫₀¹∫₀^√x f dy dx + ∫₁²∫₀^{2−x} f dy dx", v: { m: "let", f: "a+b", with: { a: dbl(TEST_F, "x", 0, 1, "y", 0, "\\sqrt{x}"), b: dbl(TEST_F, "x", 1, 2, "y", 0, "2-x") } }, eq: dbl(TEST_F, "y", 0, 1, "x", "y^2", "2-y") },
         { say: "∫₀²∫₀^√x f dy dx", v: dbl(TEST_F, "x", 0, 2, "y", 0, "\\sqrt{x}"), eq: dbl(TEST_F, "y", 0, 1, "x", "y^2", "2-y") },
@@ -895,7 +895,7 @@
       tags: ["change-order-nonelementary-inner", "double-integral", "order-of-integration"],
       hints: ["sin(x²) 對 x 沒有初等反導函數，換次序。", "y ≤ x ≤ √π、0 ≤ y ≤ √π 是一個三角形；改成先對 y 積時，y 的範圍是什麼？"],
       solution: "區域 0 ≤ y ≤ x ≤ √π。換次序：∫₀^{√π} ∫₀^{x} sin(x²) dy dx = ∫₀^{√π} x sin(x²) dx = [−cos(x²)/2]₀^{√π} = (1 + 1)/2 = 1。",
-      solutionSteps: ["區域：0 ≤ y ≤ x ≤ √π ⟹ = ∫₀^{√π} ∫₀^{x} sin(x²) dy dx。", "= ∫₀^{√π} x sin(x²) dx。", "令 u = x²：[−cos(x²)/2]₀^{√π} = (−cos π + cos 0)/2 = 1。"],
+      
       verify: dbl("\\sin\\left(x^2\\right)", "y", 0, "\\sqrt{\\pi}", "x", "y", "\\sqrt{\\pi}") },
     { id: "cg-9a1-014",
       topic: "integrals",
@@ -907,7 +907,7 @@
       tags: ["change-order-nonelementary-inner", "double-integral", "order-of-integration"],
       hints: ["e^{x/y} 對 y 沒有初等反導函數；對 x 卻很好積。", "x ≤ y ≤ 1、0 ≤ x ≤ 1 ⟺ 0 ≤ y ≤ 1、0 ≤ x ≤ y。"],
       solution: "換次序：∫₀¹ ∫₀^{y} e^{x/y} dx dy = ∫₀¹ y(e − 1) dy = (e − 1)/2。",
-      solutionSteps: ["區域：0 ≤ x ≤ y ≤ 1 ⟹ = ∫₀¹ ∫₀^{y} e^{x/y} dx dy。", "內層：[y e^{x/y}]_{x=0}^{y} = y(e − 1)。", "∫₀¹ y(e − 1) dy = (e − 1)/2 ≈ 0.859。"],
+      
       verify: dbl("e^{\\frac{x}{y}}", "y", 0, 1, "x", 0, "y") },
 
     /* ── 9A.2 極座標：r 的上下限隨 θ 變 ── */
@@ -921,7 +921,7 @@
       tags: ["polar-region-bounds", "polar-coordinates", "double-integral"],
       hints: ["x² + y² ≤ 2x 寫成極座標：r² ≤ 2r cos θ，也就是 r ≤ 2cos θ。", "θ 從 −π/2 到 π/2；別忘了 dA = r dr dθ。"],
       solution: "D：−π/2 ≤ θ ≤ π/2、0 ≤ r ≤ 2cos θ。∫∫ r·r dr dθ = ∫ (8/3)cos³θ dθ = (8/3)(4/3) = 32/9。",
-      solutionSteps: ["r² ≤ 2r cos θ ⟹ 0 ≤ r ≤ 2cos θ，−π/2 ≤ θ ≤ π/2。", "∫_{−π/2}^{π/2} ∫₀^{2cos θ} r² dr dθ = ∫ (8/3)cos³θ dθ。", "∫_{−π/2}^{π/2} cos³θ dθ = 4/3 ⟹ 32/9 ≈ 3.556。"],
+      
       verify: dbl("\\sqrt{x^2+y^2}", "x", 0, 2, "y", "-\\sqrt{|2x-x^2|}", "\\sqrt{|2x-x^2|}") },
     { id: "cg-9a2-002",
       topic: "integrals",
@@ -933,7 +933,7 @@
       tags: ["polar-region-bounds", "polar-coordinates", "double-integral"],
       hints: ["x = r cos θ，dA = r dr dθ；θ 從 0 到 2π，r 從 0 到 1 + cos θ。", "內層積完是 (1/3)(1 + cos θ)³ cos θ，展開後只留下 cos 的偶次方。"],
       solution: "∫₀^{2π} ∫₀^{1+cos θ} r² cos θ dr dθ = (1/3)∫₀^{2π} (1+cos θ)³ cos θ dθ。展開後 ∫ = 3π + 3π/4 = 15π/4，乘 1/3 得 5π/4。",
-      solutionSteps: ["∬ x dA = ∫₀^{2π} ∫₀^{1+cos θ} r cos θ · r dr dθ = (1/3)∫₀^{2π} (1+cos θ)³ cos θ dθ。", "(1+c)³c = c + 3c² + 3c³ + c⁴；在 [0,2π] 上：0 + 3π + 0 + 3π/4。", "(1/3)(15π/4) = 5π/4 ≈ 3.927。"],
+      
       verify: { m: "lineIntegral", kind: "work", F: ["0", "\\frac{x^2}{2}"], path: { x: "(1+\\cos t)\\cos t", y: "(1+\\cos t)\\sin t", from: 0, to: "2\\pi" } } },
 
     /* ── 9A.2 線性變換的面積倍率 ── */
@@ -947,7 +947,7 @@
       tags: ["jacobian-linear-parallelogram", "area"],
       hints: ["線性變換把面積乘上 |行列式|。", "矩陣是 [[2, 1], [1, 3]]。"],
       solution: "det[[2,1],[1,3]] = 6 − 1 = 5，單位正方形面積 1，像的面積 5。",
-      solutionSteps: ["T 的矩陣 [[2, 1], [1, 3]]，det = 2·3 − 1·1 = 5。", "面積 = |det| × 1 = 5。", "（頂點 (0,0)、(2,1)、(3,4)、(1,3) 用鞋帶公式也是 5。）"],
+      
       verify: val("\\frac{1}{2}\\left|(0\\cdot1-2\\cdot0)+(2\\cdot4-3\\cdot1)+(3\\cdot3-1\\cdot4)+(1\\cdot0-0\\cdot3)\\right|") },
     { id: "cg-9a2-004",
       topic: "integrals",
@@ -959,7 +959,7 @@
       tags: ["jacobian-linear-parallelogram", "area"],
       hints: ["原三角形面積是 1/2。", "像的面積 = |det| × 原面積。"],
       solution: "det[[3,−1],[1,2]] = 6 + 1 = 7。原面積 1/2，像的面積 7/2。",
-      solutionSteps: ["矩陣 [[3, −1], [1, 2]]，det = 6 − (−1) = 7。", "原三角形面積 ½。", "像的面積 = 7 × ½ = 7/2（頂點 (0,0)、(3,1)、(−1,2) 用鞋帶公式驗證）。"],
+      
       verify: val("\\frac{1}{2}\\left|3\\cdot2-(-1)\\cdot1\\right|") },
     { id: "cg-9a2-005",
       topic: "integrals",
@@ -971,7 +971,7 @@
       tags: ["jacobian-linear-parallelogram", "area"],
       hints: ["先算矩陣的行列式。", "原長方形面積是 6，面積倍率對每一塊都一樣。"],
       solution: "det[[1,−2],[3,1]] = 1 + 6 = 7，原面積 6，像的面積 42。",
-      solutionSteps: ["矩陣 [[1, −2], [3, 1]]，det = 1 − (−6) = 7。", "原面積 2 × 3 = 6。", "像的面積 = 7 × 6 = 42。"],
+      
       verify: val("\\frac{1}{2}\\left|(0\\cdot6-2\\cdot0)+(2\\cdot9-(-4)\\cdot6)+((-4)\\cdot3-(-6)\\cdot9)+(0-0)\\right|") },
 
     /* ── 9A.2 非線性變換：小方格的像 ── */
@@ -985,7 +985,7 @@
       tags: ["jacobian-area-scale", "area", "linearization"],
       hints: ["小方格的像近似一個平行四邊形，面積 ≈ |∂(x,y)/∂(u,v)| × 原面積。", "x = u²、y = uv，算 2×2 偏導數矩陣在 (2,1) 的行列式。"],
       solution: "∂(x,y)/∂(u,v) = det[[2u, 0],[v, u]] = 2u²，在 (2,1) 是 8。原面積 10⁻⁴，像的面積約 8 × 10⁻⁴ = 0.0008。",
-      solutionSteps: ["x_u = 2u、x_v = 0、y_u = v、y_v = u。", "行列式 = 2u·u − 0·v = 2u² = 8（在 (2,1)）。", "面積 ≈ 8 × 0.01² = 0.0008。"],
+      
       verify: { m: "let", f: "0.0001j", with: { j: { m: "vecField", op: "jacobian", vars: ["u", "v"], F: ["u^2", "uv"], at: [2, 1], abs: true } } } },
     { id: "cg-9a2-007",
       topic: "integrals",
@@ -997,7 +997,7 @@
       tags: ["jacobian-area-scale", "area", "linearization"],
       hints: ["面積倍率 ≈ |∂(x,y)/∂(u,v)|。", "這個行列式化簡後跟 v 無關。"],
       solution: "det[[e^u cos v, −e^u sin v],[e^u sin v, e^u cos v]] = e^{2u}，在 u = ln 2 是 4。原面積 0.01，像的面積約 0.04。",
-      solutionSteps: ["x_u = e^u cos v、x_v = −e^u sin v、y_u = e^u sin v、y_v = e^u cos v。", "行列式 = e^{2u}(cos²v + sin²v) = e^{2u} = 4（u = ln 2）。", "面積 ≈ 4 × 0.1 × 0.1 = 0.04。"],
+      
       verify: { m: "let", f: "0.01j", with: { j: { m: "vecField", op: "jacobian", vars: ["u", "v"], F: ["e^{u}\\cos v", "e^{u}\\sin v"], at: ["\\ln 2", "\\pi/3"], abs: true } } } },
 
     /* ── 9A.2 反向 Jacobian：倒數關係 ── */
@@ -1011,7 +1011,7 @@
       tags: ["jacobian-inverse-reciprocal", "jacobian"],
       hints: ["先算 ∂(u,v)/∂(x,y)，它比較好算。", "∂(x,y)/∂(u,v) = 1 / [∂(u,v)/∂(x,y)]。"],
       solution: "∂(u,v)/∂(x,y) = det[[2x, 2y],[y, x]] = 2x² − 2y²，在 (1,2) 是 2 − 8 = −6。倒數 −1/6。",
-      solutionSteps: ["u_x = 2x、u_y = 2y、v_x = y、v_y = x。", "∂(u,v)/∂(x,y) = 2x² − 2y² = −6（在 (1,2)）。", "∂(x,y)/∂(u,v) = 1/(−6) = −1/6。"],
+      
       verify: { m: "vecField", op: "jacobian", vars: ["x", "y"], F: ["x^2+y^2", "xy"], at: [1, 2], inverse: true } },
     { id: "cg-9a2-009",
       topic: "integrals",
@@ -1023,7 +1023,7 @@
       tags: ["jacobian-inverse-reciprocal", "jacobian"],
       hints: ["這組式子解不出 x、y，只能用倒數關係。", "先算 ∂(u,v)/∂(x,y) 在 (1,1)。"],
       solution: "∂(u,v)/∂(x,y) = det[[1, 3y²],[3x², 1]] = 1 − 9x²y²，在 (1,1) 是 −8。倒數 −1/8。",
-      solutionSteps: ["u_x = 1、u_y = 3y²、v_x = 3x²、v_y = 1。", "∂(u,v)/∂(x,y) = 1 − 9x²y² = −8（在 (1,1)）。", "∂(x,y)/∂(u,v) = −1/8。"],
+      
       verify: { m: "vecField", op: "jacobian", vars: ["x", "y"], F: ["x+y^3", "y+x^3"], at: [1, 1], inverse: true } },
     { id: "cg-9a2-010",
       topic: "integrals",
@@ -1035,7 +1035,7 @@
       tags: ["jacobian-inverse-reciprocal", "jacobian"],
       hints: ["四個偏導數：u_x = e^y、u_y = xe^y、v_x = ye^x、v_y = e^x。", "代入 (1,0) 算行列式，再取倒數。"],
       solution: "∂(u,v)/∂(x,y) = e^y·e^x − xe^y·ye^x = e^{x+y}(1 − xy)，在 (1,0) 是 e。倒數 1/e。",
-      solutionSteps: ["u_x = e^y、u_y = xe^y、v_x = ye^x、v_y = e^x。", "行列式 = e^{x+y}(1 − xy) = e（在 (1,0)）。", "∂(x,y)/∂(u,v) = 1/e ≈ 0.368。"],
+      
       verify: { m: "vecField", op: "jacobian", vars: ["x", "y"], F: ["xe^{y}", "ye^{x}"], at: [1, 0], inverse: true } },
 
     /* ── 9A.2 3×3 Jacobian ── */
@@ -1049,7 +1049,7 @@
       tags: ["jacobian-3x3", "jacobian", "spherical-coordinates"],
       hints: ["把 3×3 偏導數矩陣寫出來，沿 z 那一列展開比較快。", "化簡後應該只剩 ρ 與 φ。"],
       solution: "行列式化簡為 ρ² sin φ。代入 ρ = 2、φ = π/6：4 × 1/2 = 2。",
-      solutionSteps: ["矩陣列：(sin φ cos θ, ρ cos φ cos θ, −ρ sin φ sin θ)、(sin φ sin θ, ρ cos φ sin θ, ρ sin φ cos θ)、(cos φ, −ρ sin φ, 0)。", "沿第三列展開：cos φ·ρ² sin φ cos φ + ρ sin φ·ρ sin²φ = ρ² sin φ。", "ρ = 2、φ = π/6：4 · ½ = 2。"],
+      
       verify: { m: "vecField", op: "jacobian", vars: ["r", "p", "t"], F: ["r\\sin p\\cos t", "r\\sin p\\sin t", "r\\cos p"], at: [2, "\\pi/6", "\\pi/4"] } },
     { id: "cg-9a2-012",
       topic: "integrals",
@@ -1061,7 +1061,7 @@
       tags: ["jacobian-3x3", "jacobian"],
       hints: ["線性變換的 Jacobian 就是係數矩陣的行列式，跟點無關。", "矩陣是 [[2, 1, 0], [1, 0, −1], [0, 1, 3]]。"],
       solution: "det[[2,1,0],[1,0,−1],[0,1,3]] = 2(0·3 − (−1)·1) − 1(1·3 − 0) + 0 = 2 − 3 = −1。",
-      solutionSteps: ["係數矩陣 [[2, 1, 0], [1, 0, −1], [0, 1, 3]]。", "沿第一列展開：2·(0 + 1) − 1·(3 − 0) + 0 = −1。", "Jacobian = −1（體積倍率 |−1| = 1）。"],
+      
       verify: { m: "vecField", op: "jacobian", vars: ["u", "v", "w"], F: ["2u+v", "u-w", "v+3w"], at: [0.3, 0.5, 0.7] } },
 
     /* ── 9A.2 非線性換元 ── */
@@ -1075,7 +1075,7 @@
       tags: ["cov-choose-uv", "double-integral", "jacobian"],
       hints: ["邊界是 xy = 常數與 y/x = 常數，令 u = xy、v = y/x，區域變成 [1,4] × [1,4]。", "∂(u,v)/∂(x,y) = 2y/x = 2v，所以 dA = du dv/(2v)。"],
       solution: "u = xy ∈ [1,4]、v = y/x ∈ [1,4]，∂(u,v)/∂(x,y) = 2v。∬ xy dA = ∫₁⁴∫₁⁴ u/(2v) du dv = (15/2)·(ln 4)/2 = (15/2) ln 2。",
-      solutionSteps: ["u = xy、v = y/x：D ↦ [1,4] × [1,4]。", "∂(u,v)/∂(x,y) = det[[y, x], [−y/x², 1/x]] = 2y/x = 2v ⟹ |∂(x,y)/∂(u,v)| = 1/(2v)。", "∫₁⁴ u du · ∫₁⁴ dv/(2v) = (15/2)·ln 2 ≈ 5.199。"],
+      
       verify: { m: "let", f: "a+b", with: { a: dbl("xy", "x", 0.5, 1, "y", "\\frac{1}{x}", "4x"), b: dbl("xy", "x", 1, 2, "y", "x", "\\frac{4}{x}") } } },
     { id: "cg-9a2-014",
       topic: "integrals",
@@ -1087,7 +1087,7 @@
       tags: ["cov-choose-uv", "double-integral", "jacobian"],
       hints: ["令 u = y − x²、v = y + x²，區域變成 [0,2] × [4,6]。", "算 ∂(u,v)/∂(x,y)，看看它跟被積函數 x 會怎樣抵消。"],
       solution: "u = y − x² ∈ [0,2]、v = y + x² ∈ [4,6]，∂(u,v)/∂(x,y) = det[[−2x,1],[2x,1]] = −4x，|J⁻¹| = 1/(4x)。∬ x dA = ∫∫ x/(4x) du dv = (1/4)·2·2 = 1。",
-      solutionSteps: ["u = y − x²、v = y + x²：D ↦ [0,2] × [4,6]。", "∂(u,v)/∂(x,y) = (−2x)(1) − (1)(2x) = −4x ⟹ dA = du dv/(4x)。", "∬ x dA = ∫₄⁶∫₀² ¼ du dv = ¼ · 2 · 2 = 1。"],
+      
       verify: { m: "let", f: "a+b", with: { a: dbl("x", "x", 1, "\\sqrt{2}", "y", "4-x^2", "x^2+2"), b: dbl("x", "x", "\\sqrt{2}", "\\sqrt{3}", "y", "x^2", "6-x^2") } } },
     { id: "cg-9a2-015",
       topic: "integrals",
@@ -1098,9 +1098,7 @@
       timeLimit: 240,
       tags: ["cov-choose-uv", "double-integral", "jacobian"],
       hints: ["令 u = x² − y²、v = xy，區域變成 [1,9] × [2,4]。", "∂(u,v)/∂(x,y) = 2(x² + y²)，正好跟被積函數約掉。"],
-      solution: "u = x² − y² ∈ [1,9]、v = xy ∈ [2,4]，∂(u,v)/∂(x,y) = 2x² + 2y²。∬ (x²+y²) dA = ∫∫ (x²+y²)/(2(x²+y²)) du dv = (1/2)·8·2 = 8。",
-      solutionSteps: ["u = x² − y²、v = xy：D ↦ [1,9] × [2,4]。", "∂(u,v)/∂(x,y) = det[[2x, −2y], [y, x]] = 2(x² + y²) ⟹ dA = du dv/(2(x² + y²))。", "∬ (x² + y²) dA = ∫₂⁴∫₁⁹ ½ du dv = ½ · 8 · 2 = 8。"]
-      /* verify 在陣列後面組（極座標的式子太長，拆成片段寫） */ },
+      solution: "u = x² − y² ∈ [1,9]、v = xy ∈ [2,4]，∂(u,v)/∂(x,y) = 2x² + 2y²。∬ (x²+y²) dA = ∫∫ (x²+y²)/(2(x²+y²)) du dv = (1/2)·8·2 = 8。"},
 
     /* ── 9A.2 新區域 S 是什麼 ── */
     { id: "cg-9a2-016",
@@ -1116,7 +1114,7 @@
       tags: ["cov-map-region", "area"],
       hints: ["線性變換把三角形送成三角形，只要算三個頂點的像。", "也可以檢查面積：|∂(u,v)/∂(x,y)| × D 的面積。"],
       solution: "(0,0) → (0,0)，(2,0) → (2,2)，(0,2) → (2,−2)。S 是這三點的三角形，面積 4 = |−2| × 2，對得上。",
-      solutionSteps: ["(0,0) ↦ (0,0)；(2,0) ↦ (2,2)；(0,2) ↦ (2,−2)。", "線性映射把邊送成邊：S 是以 (0,0)、(2,2)、(2,−2) 為頂點的三角形。", "檢查：|det| = |−1 − 1| = 2，面積 2 × 2 = 4 = S 的面積。"],
+      
       verify: { m: "choice", options: [
         { say: "以 (0,0)、(2,2)、(2,−2) 為頂點的三角形", all: [
           { v: val("2+0"), eq: 2 }, { v: val("2-0"), eq: 2 }, { v: val("0+2"), eq: 2 }, { v: val("0-2"), eq: -2 },
@@ -1138,7 +1136,7 @@
       tags: ["cov-map-region", "area", "polar-coordinates"],
       hints: ["用極座標：x = r cos θ、y = r sin θ，則 u = r² cos 2θ、v = r² sin 2θ。", "r 從 0 到 1、θ 從 0 到 π/2，像的半徑與角度範圍各是多少？"],
       solution: "u = r²cos 2θ、v = r²sin 2θ：半徑 r² ∈ [0,1]，角度 2θ ∈ [0,π]。S 是上半單位圓盤。檢查：∬_D |J| dA = ∬ 4(x²+y²) dA = π/2，正是半圓盤面積。",
-      solutionSteps: ["極座標：u = r² cos 2θ、v = r² sin 2θ。", "r ∈ [0,1] ⟹ 新半徑 r² ∈ [0,1]；θ ∈ [0, π/2] ⟹ 新角度 2θ ∈ [0, π]。", "S = {u² + v² ≤ 1, v ≥ 0}；面積 ∬_D 4(x² + y²) dA = π/2 對得上。"],
+      
       verify: { m: "choice", options: [
         { say: "上半圓盤 u²+v²≤1, v≥0", all: [
           { v: { m: "vecField", op: "jacobian", vars: ["x", "y"], F: ["x^2-y^2", "2xy"], at: [0.7, 0.4] }, eq: val("4(0.7^2+0.4^2)") },

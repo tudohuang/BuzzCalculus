@@ -185,7 +185,7 @@
       tags: ["sigma-axioms", "measure", "lebesgue"],
       hints: ["σ-代數要包含全集，並且對補集與可數聯集封閉。", "每個選項各找一個操作：把可數多個成員聯集起來，或取補集，看結果還在不在族裡。"],
       solution: "有界集合：⋃[n,n+1] = [1,∞) 無界。有限集合：⋃{n} = ℕ 是無限集。長度 ≤ 1 的區間：[0,1]∪[2,3] 不是區間。可數／補集可數：補集把兩類互換；可數個可數集的聯集可數，若其中有一個補集可數，聯集的補集也可數。",
-      solutionSteps: ["有界集合族：⋃ₙ[n, n+1] = [1, ∞) 不是有界集合，不封閉。", "有限集合族：⋃ₙ{n} = ℕ 是無限集；長度 ≤ 1 的區間族：[0,1] ∪ [2,3] 總長 2，也不是區間。", "可數或補集可數的族：補集互換兩類，可數聯集仍落在其中一類，所以是 σ-代數。"],
+      
       verify: { m: "choice", options: [
         { say: "可數集與補集可數的集合全體", unknown: "定理：可數個可數集的聯集仍可數" },
         { say: "有界集合全體", all: [{ v: { m: "seriesConverges", f: "1", from: 1 }, claim: true }] },
@@ -199,7 +199,7 @@
       tags: ["sigma-axioms", "measure"],
       hints: ["有限集合上只要檢查兩件事：每個成員的補集、每兩個成員的聯集，都還在族裡。", "從最小的成員開始：它的補集是誰？在不在？"],
       solution: "{∅,{1,2},{3,4},X}：補集兩兩配對，聯集都還在族裡。{∅,{1},{2},X} 缺 {1} 的補集 {2,3,4}；{∅,{1,2},{2,3},X} 缺 {1,2} 的補集 {3,4}；最後一族缺 {1}∪{2} = {1,2}。",
-      solutionSteps: ["{1,2} 與 {3,4} 互為補集，∅ 與 X 互為補集；任兩個的聯集是 {1,2}、{3,4} 或 X，都在族裡。", "{∅,{1},{2},X}：{1} 的補集 {2,3,4} 不在；{∅,{1,2},{2,3},X}：{1,2} 的補集 {3,4} 不在。", "{∅,{1},{2},{2,3,4},X}：{1}∪{2} = {1,2} 不在。答案：{∅, {1,2}, {3,4}, X}。"],
+      
       verify: { m: "choice", options: [
         { say: "{∅, {1,2}, {3,4}, X}", all: [{ v: { m: "value", f: defectTex([0, 3, 12, 15], 4) }, eq: 0 }] },
         { say: "{∅, {1}, {2}, X}", all: [{ v: { m: "value", f: memberTex([0, 1, 2, 15], "15-1") }, eq: 1 }] },
@@ -213,7 +213,7 @@
       tags: ["sigma-axioms", "measure"],
       hints: ["補集把「有限」與「補集有限」兩類互換；有限多次的聯集、交集分情形檢查。", "試試把 {2}, {4}, {6}, … 這些單點集一次全部聯集起來。"],
       solution: "補集、有限聯集、有限交集都封閉（分「有限」「補集有限」兩類討論）。但 ⋃{2k} = 偶數集：它無限，補集（奇數集）也無限，不在 𝓕 裡。所以 𝓕 是代數，不是 σ-代數。",
-      solutionSteps: ["A ∈ 𝓕 ⇒ ℕ∖A ∈ 𝓕：兩類互換。A ∪ B：兩個都有限則有限，其中一個補集有限則聯集的補集有限。", "交集用 A ∩ B = ℕ∖((ℕ∖A) ∪ (ℕ∖B))，也封閉。", "每個 {2k} 都有限，但 ⋃ₖ{2k} = 偶數集無限、補集（奇數）也無限：可數聯集不封閉。"],
+      
       verify: { m: "choice", options: [
         { say: "可數聯集", all: [{ v: { m: "seriesConverges", f: "1", from: 1 }, claim: false }, { v: { m: "seriesConverges", f: "1", from: 0 }, claim: false }] },
         { say: "補集", unknown: "兩類互換，封閉" },
@@ -226,7 +226,7 @@
       tags: ["sigma-generated", "measure"],
       hints: ["σ-代數一定要包含 ∅、X，以及 A 的補集。", "把這些集合列出來，再檢查聯集與補集有沒有跑出新的集合。"],
       solution: "σ(A) = {∅, A, X∖A, X}，其中 X∖A = {1,3,5}。原子是 A 與 X∖A 兩塊，元素個數 2² = 4。",
-      solutionSteps: ["必須包含 ∅、X、A = {2,4,6}、X∖A = {1,3,5}。", "這四個集合對補集與聯集已經封閉。", "原子 2 塊，σ(A) 有 2² = 4 個元素。"],
+      
       verify: { m: "value", f: `2^{${atomsTex([42], 6)}}` } },
     { id: "cg-12i-005", topic: "integrals", rank: 3, answerKind: "numeric",
       prompt: "X=\\{1,2,\\dots,8\\},\\ A=\\{1,2,3,4\\},\\ B=\\{3,4,5\\}\\,\\text{。由 }\\,A\\,\\text{ 與 }\\,B\\,\\text{ 生成的 }\\,\\sigma\\,\\text{-代數有幾個元素？}\\,",
@@ -234,7 +234,7 @@
       tags: ["sigma-generated", "measure"],
       hints: ["先找「原子」：用 A 與 B 把 X 切成互不相交的最小塊（A∩B、A∖B、B∖A、兩者之外）。", "σ-代數的每個元素都是若干個原子的聯集。"],
       solution: "原子：A∩B = {3,4}、A∖B = {1,2}、B∖A = {5}、X∖(A∪B) = {6,7,8}，共 4 塊、都非空。每個元素是原子的任意聯集，所以有 2⁴ = 16 個。",
-      solutionSteps: ["原子：A∩B = {3,4}，A∖B = {1,2}，B∖A = {5}，X∖(A∪B) = {6,7,8}。", "四塊都非空，任選幾塊聯集都是 σ(A,B) 的元素，且不會有別的。", "元素個數 2⁴ = 16。"],
+      
       verify: { m: "value", f: `2^{${atomsTex([15, 28], 8)}}` } },
     { id: "cg-12i-006", topic: "integrals", rank: 4, answerKind: "numeric",
       prompt: "X=\\{1,2,\\dots,10\\},\\ A=\\{1,\\dots,5\\},\\ B=\\{4,\\dots,8\\},\\ C=\\{2,4,6,8,10\\}\\,\\text{。由 }\\,A,\\,B,\\,C\\,\\text{ 生成的 }\\,\\sigma\\,\\text{-代數有幾個元素？}\\,",
@@ -242,7 +242,7 @@
       tags: ["sigma-generated", "measure"],
       hints: ["每個點 x 記下它在不在 A、B、C 裡，得到一個三位的「歸屬簽名」。", "簽名相同的點落在同一個原子；數一數實際出現了幾種簽名。"],
       solution: "簽名 (A,B,C)：1→(1,0,0)、2→(1,0,1)、3→(1,0,0)、4→(1,1,1)、5→(1,1,0)、6→(0,1,1)、7→(0,1,0)、8→(0,1,1)、9→(0,0,0)、10→(0,0,1)。八種簽名全部出現，原子 8 塊，元素 2⁸ = 256 個。",
-      solutionSteps: ["逐點記下 (在 A?, 在 B?, 在 C?)：1、3 是 (1,0,0)，6、8 是 (0,1,1)，其餘各點簽名互不相同。", "出現的簽名：100、101、111、110、011、010、000、001，共 8 種 → 8 個原子。", "σ(A,B,C) 的元素個數 2⁸ = 256。"],
+      
       verify: { m: "value", f: `2^{${atomsTex([31, 248, 682], 10)}}` } },
     { id: "cg-12i-007", topic: "integrals", rank: 2, answerKind: "numeric",
       prompt: "\\{3\\}=\\bigcap_{n=1}^{\\infty}\\left(3-\\frac1n,\\,3+\\frac1n\\right)\\,\\text{，所以單點是 Borel 集。最小的 }\\,n\\,\\text{ 使第 }\\,n\\,\\text{ 個開區間的長度小於 }\\,0.001\\,\\text{ 是多少？}\\,",
@@ -250,7 +250,7 @@
       tags: ["sigma-borel-membership", "measure"],
       hints: ["第 n 個開區間的長度是多少？寫成 n 的式子。", "解嚴格不等式；長度剛好等於 0.001 的那個 n 不算。"],
       solution: "第 n 個區間長 2/n。2/n < 0.001 ⇔ n > 2000，最小 n = 2001。區間一路縮小、交集只剩 3：單點是開集的可數交集（G_δ 集），所以是 Borel 集。",
-      solutionSteps: ["(3 − 1/n, 3 + 1/n) 的長度是 2/n。", "2/n < 0.001 ⇔ n > 2000；n = 2000 時長度恰好 0.001，不算。", "最小 n = 2001。"],
+      
       verify: { m: "firstIndex", f: "\\frac{2}{n}", below: 0.001 } },
     { id: "cg-12i-008", topic: "integrals", rank: 3, answerKind: "numeric",
       prompt: "\\,\\text{Cantor 集 }\\,C=\\bigcap_{n} C_n\\,\\text{，}\\,C_n\\,\\text{ 是第 }\\,n\\,\\text{ 步剩下的 }\\,2^n\\,\\text{ 個閉區間的聯集。}\\,C_n\\,\\text{ 的總長第一次小於 }\\,0.05\\,\\text{ 時 }\\,n\\,\\text{ 是多少？}\\,",
@@ -258,7 +258,7 @@
       tags: ["sigma-borel-membership", "measure", "cantor"],
       hints: ["每一步把每個閉區間的中間三分之一挖掉，剩下的總長變成原來的幾倍？", "解 (比例)ⁿ < 0.05，可以取對數，也可以直接一步一步乘。"],
       solution: "C_n 的總長 = (2/3)ⁿ。(2/3)⁷ ≈ 0.0585，(2/3)⁸ ≈ 0.0390，所以 n = 8。每個 C_n 是有限個閉區間的聯集（閉集），C 是可數多個閉集的交集，所以是 Borel 集。",
-      solutionSteps: ["每一步剩下原來的 2/3，C_n 的總長 = (2/3)ⁿ。", "(2/3)⁷ ≈ 0.0585 > 0.05，(2/3)⁸ ≈ 0.0390 < 0.05。", "n = 8。"],
+      
       verify: { m: "firstIndex", f: "1-\\sum_{k=1}^{n}\\frac{2^{k-1}}{3^k}", below: 0.05 } },
 
     /* ── 12I 測度 ── */
@@ -268,7 +268,7 @@
       tags: ["measure-discrete-sums", "measure", "geometric-series"],
       hints: ["點測度：一個集合的測度是它每個點的權重相加（可數可加）。", "偶數 k = 2j，把 2^{−2j} 對 j 加起來。"],
       solution: "μ(偶數) = Σ_{j≥1} 2^{−2j} = Σ 4^{−j} = (1/4)/(1 − 1/4) = 1/3。",
-      solutionSteps: ["μ(E) = Σ_{k∈E} 2^{−k}（可數可加）。", "偶數 k = 2j：Σ_{j≥1} 4^{−j}。", "等比級數 = (1/4)/(3/4) = 1/3。"],
+      
       verify: { m: "series", f: "2^{-2n}", from: 1 } },
     { id: "cg-12i-010", topic: "integrals", rank: 3, answerKind: "numeric",
       prompt: "\\,\\text{在 }\\,\\mathbb{N}=\\{1,2,3,\\dots\\}\\,\\text{ 上令 }\\,\\mu(\\{k\\})=\\frac{2}{3^k}\\,\\text{。求 }\\,\\mu(\\{3\\,\\text{ 的倍數}\\,\\})",
@@ -276,7 +276,7 @@
       tags: ["measure-discrete-sums", "measure", "geometric-series"],
       hints: ["先確認 μ(ℕ) 是多少，熟悉一下這個測度。", "3 的倍數 k = 3j，權重是 2/27ʲ。"],
       solution: "μ(3 的倍數) = Σ_{j≥1} 2·27^{−j} = 2·(1/27)/(1 − 1/27) = 2/26 = 1/13。",
-      solutionSteps: ["k = 3j：μ({3j}) = 2/3^{3j} = 2·27^{−j}。", "Σ_{j≥1} 2·27^{−j} = 2·(1/27)/(26/27) = 2/26。", "= 1/13。"],
+      
       verify: { m: "series", f: "2\\cdot 3^{-3n}", from: 1 } },
     { id: "cg-12i-011", topic: "integrals", rank: 3, answerKind: "numeric",
       prompt: "\\,\\text{在 }\\,\\mathbb{N}=\\{1,2,3,\\dots\\}\\,\\text{ 上令 }\\,\\mu(\\{k\\})=2^{-k}\\,\\text{。求 }\\,\\mu(\\{k:\\ k\\ge 5\\,\\text{ 且 }\\,k\\,\\text{ 是奇數}\\,\\})",
@@ -284,7 +284,7 @@
       tags: ["measure-discrete-sums", "measure", "geometric-series"],
       hints: ["列出集合：5, 7, 9, …，相鄰兩項的權重比是多少？", "首項 2^{−5}，套等比級數。"],
       solution: "k = 5, 7, 9, …：Σ 2^{−k} = 2^{−5}(1 + 1/4 + 1/16 + ⋯) = (1/32)·(4/3) = 1/24。",
-      solutionSteps: ["集合 = {5, 7, 9, …}，權重 2^{−5}, 2^{−7}, 2^{−9}, …，公比 1/4。", "Σ = 2^{−5}/(1 − 1/4) = (1/32)(4/3)。", "= 1/24。"],
+      
       verify: { m: "series", f: "2^{-(2n+3)}", from: 1 } },
     { id: "cg-12i-012", topic: "integrals", rank: 3, answerKind: "numeric",
       prompt: "E_n=\\{x\\ge 0:\\ x^2<4+\\tfrac1n\\}\\ \\,\\text{（遞減）。用由上連續求 }\\,m\\left(\\bigcap_{n} E_n\\right)",
@@ -292,7 +292,7 @@
       tags: ["measure-continuity", "measure", "lebesgue"],
       hints: ["E_n 是一個區間，先寫出它的右端點與長度。", "m(E₁) 有限，所以可以用由上連續：交集的測度 = 測度的極限。"],
       solution: "E_n = [0, √(4 + 1/n))，m(E_n) = √(4 + 1/n)。E₁ 有限，由上連續：m(⋂E_n) = lim √(4 + 1/n) = 2。（交集是 [0,2]。）",
-      solutionSteps: ["E_n = [0, √(4 + 1/n))，m(E_n) = √(4 + 1/n)，遞減。", "m(E₁) = √5 < ∞，可以用由上連續。", "m(⋂E_n) = lim √(4 + 1/n) = 2。"],
+      
       verify: { m: "seqLimit", f: "\\sqrt{4+\\frac{1}{n}}" } },
     { id: "cg-12i-013", topic: "integrals", rank: 4, answerKind: "numeric",
       prompt: "E_n=\\left[0,\\,1+\\tfrac1n\\right]\\cup[n,\\infty)\\ \\,\\text{（遞減，每個 }\\,m(E_n)=\\infty\\,\\text{）。求 }\\,m\\left(\\bigcap_{n} E_n\\right)",
@@ -300,7 +300,7 @@
       tags: ["measure-continuity", "measure", "lebesgue"],
       hints: ["lim m(E_n) = ∞，但由上連續要求 m(E₁) < ∞，這裡不能直接用。", "一個點 x > 1 要落在每個 E_n 裡，需要什麼？對很大的 n 呢？"],
       solution: "x > 1 時，n 夠大就同時有 x > 1 + 1/n 與 x < n，所以 x ∉ E_n。交集 = [0,1]，測度 1。而 lim m(E_n) = ∞ ≠ 1：m(E₁) = ∞ 時由上連續會失敗。",
-      solutionSteps: ["每個 E_n 都含 [n, ∞)，m(E_n) = ∞，lim m(E_n) = ∞。", "x > 1：取 n > x 且 1/n < x − 1，則 x ∉ E_n；x ∈ [0,1] 則永遠在。⋂E_n = [0,1]。", "m(⋂E_n) = 1 ≠ ∞：由上連續需要 m(E₁) < ∞。"],
+      
       verify: { m: "seqLimit", f: "1+\\frac{1}{n}" } },
     { id: "cg-12i-014", topic: "integrals", rank: 2,
       prompt: "\\,\\text{在 }\\,X=\\{1,2,3\\}\\,\\text{ 的所有子集上，下列哪一個集合函數是測度？}\\,",
@@ -309,7 +309,7 @@
       tags: ["measure-axioms", "measure"],
       hints: ["測度要滿足 μ(∅) = 0，而且不相交集合的測度可以相加。", "每個選項拿 ∅、{1}、{2}、{1,2} 代代看。"],
       solution: "元素和：μ(∅) = 0，不相交時和直接相加，是測度（就是點測度 μ({k}) = k）。個數平方：μ({1,2}) = 4 ≠ 1 + 1。個數 + 1：μ(∅) = 1 ≠ 0。最大元素：μ({1,2}) = 2 ≠ 1 + 2。",
-      solutionSteps: ["μ(A) = Σ_{k∈A} k：μ(∅) = 0，不相交時直接相加 → 是測度。", "(#A)²：μ({1,2}) = 4，μ({1}) + μ({2}) = 2，不可加；#A + 1：μ(∅) = 1 ≠ 0。", "max A：μ({1,2}) = 2 ≠ μ({1}) + μ({2}) = 3。答案：元素的和。"],
+      
       verify: { m: "choice", options: [
         { say: "μ(A) = A 中元素的和", unknown: "點測度 μ({k}) = k 的定義" },
         { say: "μ(A) = （A 的元素個數）²", all: [{ v: { m: "value", f: "2^2" }, eq: "1^2+1^2" }] },
@@ -323,7 +323,7 @@
       tags: ["measure-axioms", "measure"],
       hints: ["測度的值不能是負的，而且要可數可加（特別地，有限可加）。", "對每個誘答找兩個不相交的集合，看測度能不能相加；或找一個測度變負的集合。"],
       solution: "Σ2^{−k}：非負項的和，任意重排、分組都不變，所以可數可加。(−1)^k：μ({1}) = −1 < 0。0／1 那個：μ(偶數) + μ(奇數) = 2 ≠ μ(ℕ) = 1。平方：μ({1,2}) = 9/16 ≠ 1/4 + 1/16。",
-      solutionSteps: ["μ(A) = Σ_{k∈A} 2^{−k}：非負、μ(∅) = 0，不相交聯集的和可以拆開（非負級數可重排）→ 可數可加。", "Σ(−1)^k：μ({1}) = −1；「有限 0、無限 1」：μ(偶) + μ(奇) = 2 ≠ μ(ℕ) = 1。", "平方：μ({1,2}) = (3/4)² = 9/16，而 μ({1}) + μ({2}) = 5/16。答案：Σ 2^{−k}。"],
+      
       verify: { m: "choice", options: [
         { say: "μ(A) = Σ_{k∈A} 2^{−k}", unknown: "非負級數可以任意分組重排" },
         { say: "μ(A) = Σ_{k∈A} (−1)^k", all: [{ v: { m: "value", f: "(-1)^1" }, ge: 0 }] },
@@ -338,7 +338,7 @@
       tags: ["lebm-countable-additivity", "measure", "lebesgue"],
       hints: ["這些區間互不相交嗎？看每段的長度跟 1 比。", "不相交就可以把長度加起來；1/(n(n+1)) 可以拆成兩項的差。"],
       solution: "每段長 1/(n(n+1)) ≤ 1/2 < 1，所以 [n, n + 1/(n(n+1))] 兩兩不相交。可數可加：m = Σ 1/(n(n+1)) = Σ(1/n − 1/(n+1)) = 1。",
-      solutionSteps: ["第 n 段長 1/(n(n+1)) ≤ 1/2，落在 [n, n+1) 裡，兩兩不相交。", "可數可加：m = Σ_{n≥1} 1/(n(n+1))。", "望遠鏡和：Σ(1/n − 1/(n+1)) = 1。"],
+      
       verify: { m: "series", f: "\\frac{1}{n(n+1)}", from: 1 } },
     { id: "cg-12i-017", topic: "integrals", rank: 3, answerKind: "numeric",
       prompt: "\\,\\text{求 }\\,m\\left(\\bigcup_{n=1}^{\\infty}\\Big(\\left(-n-4^{-n},\\,-n\\right)\\cup\\left(n,\\,n+4^{-n}\\right)\\Big)\\right)",
@@ -346,7 +346,7 @@
       tags: ["lebm-countable-additivity", "measure", "lebesgue"],
       hints: ["左右兩邊各一串小區間，都互不相交（長度都小於 1）。", "每個 n 貢獻兩段長 4^{−n}，加起來是等比級數。"],
       solution: "所有區間兩兩不相交（每段長 < 1，分別落在 (−n−1, −n) 與 (n, n+1) 裡）。m = Σ 2·4^{−n} = 2·(1/4)/(3/4) = 2/3。",
-      solutionSteps: ["區間互不相交，總長可以直接相加（可數可加）。", "每個 n 兩段，各長 4^{−n}：m = Σ_{n≥1} 2·4^{−n}。", "= 2 · (1/3) = 2/3。"],
+      
       verify: { m: "series", f: "2\\cdot 4^{-n}", from: 1 } },
     { id: "cg-12i-018", topic: "integrals", rank: 4, answerKind: "numeric",
       prompt: "\\,\\text{Vitali 論證：}\\,V\\subset[0,1)\\,\\text{，對 }\\,[-1,1]\\,\\text{ 中不同的有理數 }\\,q\\,\\text{，}\\,V+q\\,\\text{ 兩兩不相交且都在 }\\,[-1,2)\\,\\text{ 裡。只取其中 }\\,N\\,\\text{ 個平移，得 }\\,N\\cdot m(V)\\le 3\\,\\text{。要讓這個上界 }\\,\\tfrac{3}{N}\\,\\text{ 小於 }\\,0.01\\,\\text{，}\\,N\\,\\text{ 最少是多少？}\\,",
@@ -354,7 +354,7 @@
       tags: ["lebm-nonmeasurable", "measure", "lebesgue"],
       hints: ["N 個不相交的平移，每個測度都等於 m(V)（平移不變），總和不超過 [−1,2) 的長度。", "解嚴格不等式 3/N < 0.01，等號那一個不算。"],
       solution: "平移不變＋有限可加：N·m(V) ≤ m([−1,2)) = 3，所以 m(V) ≤ 3/N。3/N < 0.01 ⇔ N > 300，最少 N = 301。N 可以任意大，所以 m(V) 只能是 0；但 [0,1) ⊂ ⋃(V+q) 又要求 Σm(V+q) ≥ 1，矛盾 —— V 不可測。",
-      solutionSteps: ["m(V + q) = m(V)（平移不變），N 個互不相交 ⇒ N·m(V) ≤ 3。", "3/N < 0.01 ⇔ N > 300；N = 300 時恰好等於 0.01，不算。", "N = 301。"],
+      
       verify: { m: "firstIndex", f: "\\frac{3}{n}", below: 0.01 } },
     { id: "cg-12i-019", topic: "integrals", rank: 3,
       prompt: "\\,\\text{Vitali 論證中，可數多個平移 }\\,V+q\\ (q\\in\\mathbb{Q}\\cap[-1,1])\\,\\text{ 兩兩不相交，聯集在 }\\,[-1,2)\\,\\text{ 裡。若 }\\,m(V)=a>0\\,\\text{，可數可加與平移不變給出什麼？}\\,",
@@ -363,7 +363,7 @@
       tags: ["lebm-nonmeasurable", "measure", "lebesgue"],
       hints: ["平移不變：每一個 V + q 的測度都是 a。", "[−1,1] 裡有幾個有理數？把那麼多個 a 加起來。"],
       solution: "每個 m(V+q) = a，有可數無窮多個 q，可數可加給 m(⋃) = a + a + ⋯ = ∞，但 ⋃ ⊂ [−1,2) 只有長度 3，矛盾。a = 0 時又和 [0,1) ⊂ ⋃ 矛盾，所以 V 不可測。",
-      solutionSteps: ["平移不變：m(V + q) = m(V) = a。", "q 有可數無窮多個，兩兩不相交：m(⋃) = Σ a = ∞（a > 0）。", "但 ⋃(V+q) ⊂ [−1,2)，測度 ≤ 3 —— 矛盾。"],
+      
       verify: { m: "choice", options: [
         { say: "Σ m(V+q) = a + a + ⋯ 發散，超過 3，矛盾", all: [{ v: { m: "seriesConverges", f: "0.001", from: 1 }, claim: false }] },
         { say: "Σ m(V+q) = 3a ≤ 3，沒有矛盾", all: [{ v: { m: "seriesConverges", f: "0.001", from: 1 }, claim: true }] },
@@ -377,7 +377,7 @@
       tags: ["null-cantor-type", "measure", "cantor"],
       hints: ["第 k 步從每個剩下的區間（長 10^{−(k−1)}）去掉十分之一。剩下的總長每一步乘上多少？", "解 (比例)ⁿ < 0.01，取對數。"],
       solution: "每一步剩下 9/10，n 步後總長 (0.9)ⁿ。(0.9)ⁿ < 0.01 ⇔ n > ln 0.01 / ln 0.9 ≈ 43.7，所以 n = 44。總長 → 0：小數展開不含 7 的數是零測集。",
-      solutionSteps: ["第 k 步去掉 9^{k−1} 個長 10^{−k} 的區間，剩下總長 (9/10)ⁿ。", "(0.9)⁴³ ≈ 0.0108，(0.9)⁴⁴ ≈ 0.0097。", "n = 44。"],
+      
       verify: { m: "firstIndex", f: "1-\\sum_{k=1}^{n}\\frac{9^{k-1}}{10^{k}}", below: 0.01 } },
     { id: "cg-12i-021", topic: "integrals", rank: 3, answerKind: "numeric",
       prompt: "\\,\\text{從 }\\,[0,1]\\,\\text{ 開始，每一步把每個剩下的區間五等分，去掉第 2 與第 4 段（留 3 段）。剩下的總長第一次小於 }\\,0.001\\,\\text{ 時是第幾步？}\\,",
@@ -385,7 +385,7 @@
       tags: ["null-cantor-type", "measure", "cantor"],
       hints: ["每一步留下 5 段中的 3 段，總長乘上多少？", "解 (比例)ⁿ < 0.001。"],
       solution: "每步總長乘 3/5，n 步後 (0.6)ⁿ。(0.6)¹³ ≈ 0.00131，(0.6)¹⁴ ≈ 0.00078，所以第 14 步。極限集合的測度是 0，但它跟 Cantor 集一樣不可數。",
-      solutionSteps: ["第 k 步去掉 2·3^{k−1} 段，每段長 5^{−k}；剩下總長 (3/5)ⁿ。", "(0.6)¹³ ≈ 0.00131 > 0.001，(0.6)¹⁴ ≈ 0.00078 < 0.001。", "第 14 步。"],
+      
       verify: { m: "firstIndex", f: "1-\\sum_{k=1}^{n}\\frac{2\\cdot 3^{k-1}}{5^{k}}", below: 0.001 } },
     { id: "cg-12i-022", topic: "integrals", rank: 3, answerKind: "numeric",
       prompt: "\\,\\text{求 }\\,[0,1]\\,\\text{ 中「小數展開裡至少出現一個數字 }\\,7\\,\\text{」的數所成集合的測度}\\,",
@@ -393,7 +393,7 @@
       tags: ["null-cantor-type", "measure", "geometric-series"],
       hints: ["按「第一個 7 出現在第 k 位」分類，這些集合互不相交。", "第一個 7 在第 k 位：前 k−1 位各有 9 種選擇、第 k 位是 7。這一類的長度是多少？"],
       solution: "第一個 7 在第 k 位的數構成 9^{k−1} 個長 10^{−k} 的區間。可數可加：Σ 9^{k−1}/10^k = (1/10)/(1 − 9/10) = 1。也就是說，完全不含 7 的數是零測集。",
-      solutionSteps: ["按第一個 7 的位置 k 分成互不相交的類。", "第 k 類：9^{k−1} 個區間，每個長 10^{−k}，長度 9^{k−1}/10^k。", "Σ_{k≥1} 9^{k−1}/10^k = 1。"],
+      
       verify: { m: "series", f: "\\frac{9^{n-1}}{10^n}", from: 1 } },
     { id: "cg-12i-023", topic: "integrals", rank: 3,
       prompt: "\\,\\text{下列哪一個 }\\,[0,1]\\,\\text{ 的子集，Lebesgue 測度不是 }\\,0\\,\\text{？}\\,",
@@ -402,7 +402,7 @@
       tags: ["null-vs-small", "measure", "cantor"],
       hints: ["可數集：第 k 個點用長 ε/2^k 的區間蓋住，總長多少？", "類 Cantor 構造：把去掉的總長算出來，跟 1 比。"],
       solution: "有理數與 {1/n} 都可數，蓋住的總長可以任意小，測度 0。Cantor 集剩下 (2/3)ⁿ → 0。去掉 2^{n−1} 個長 5^{−n} 的那個：去掉總長 Σ2^{n−1}/5ⁿ = 1/3，剩下 2/3 > 0。",
-      solutionSteps: ["可數集（有理數、{1/n}）：第 k 點用長 ε/2^k 的區間蓋，總長 ε，任意小 → 測度 0。", "Cantor 集：剩下總長 (2/3)ⁿ → 0。", "去掉 Σ 2^{n−1}/5ⁿ = 1/3，剩下 2/3 > 0：這個集合的測度不是 0。"],
+      
       verify: { m: "choice", options: [
         { say: "第 n 步去掉 2^{n−1} 個長 5^{−n} 的開區間所剩的集合", all: [{ v: fat(5), gt: 0 }] },
         { say: "Cantor 集", all: [{ v: { m: "seqLimit", f: "\\left(\\frac{2}{3}\\right)^n" }, gt: 0 }] },
@@ -416,7 +416,7 @@
       tags: ["null-vs-small", "measure", "cantor"],
       hints: ["「不可數」「稠密」「不含區間」跟「測度 0」是不同的事；每一句都試著找一個反例。", "想想 Cantor 集、有理數，以及去掉的總長小於 1 的類 Cantor 構造。"],
       solution: "第 n 步去掉 2^{n−1} 個長 6^{−n} 的區間：不含任何區間，測度 1 − 1/4 = 3/4 > 0，第一句對。Cantor 集不可數但測度 (2/3)ⁿ → 0；有理數稠密但測度 0。",
-      solutionSteps: ["類 Cantor 構造：去掉 Σ2^{n−1}/6ⁿ = 1/4，剩下 3/4 > 0，而且不含任何區間。", "Cantor 集：不可數，測度 lim (2/3)ⁿ = 0，第二句錯。", "ℚ ∩ [0,1]：稠密，測度 0，第三句錯。"],
+      
       verify: { m: "choice", options: [
         { say: "有不含任何區間、測度卻大於 0 的集合", all: [{ v: fat(6), gt: 0 }] },
         { say: "不可數的集合，測度一定大於 0", all: [{ v: { m: "seqLimit", f: "\\left(\\frac{2}{3}\\right)^n" }, gt: 0 }] },
@@ -428,7 +428,7 @@
       tags: ["null-completeness", "measure", "cantor"],
       hints: ["A ⊂ C ⊂ C_n，外測度有單調性。", "C_n 的總長隨 n 怎麼變？取下確界。"],
       solution: "m*(A) ≤ m(C_n) = (2/3)ⁿ 對每個 n 成立，所以 m*(A) = 0，A 是 Lebesgue 可測的零測集（完備性）。Cantor 集的子集有 2^𝔠 個，Borel 集只有 𝔠 個，所以其中有不是 Borel 集的。",
-      solutionSteps: ["A ⊂ C ⊂ C_n，C_n 由 2ⁿ 個長 3^{−n} 的區間組成。", "m*(A) ≤ (2/3)ⁿ，對所有 n。", "n → ∞：m*(A) = 0，A 可測且測度 0。"],
+      
       verify: cantorLeft },
 
     /* ── 12I 幾乎處處 ── */
@@ -438,7 +438,7 @@
       tags: ["ae-convergence", "measure", "lebesgue"],
       hints: ["rⁿ 在 |r| < 1 收斂到 0、r = 1 收斂到 1、其餘情形不收斂。", "解 |2cos x| ≥ 1 在 [0, π] 上的範圍，再扣掉 r = 1 的點。"],
       solution: "收斂 ⇔ −1 < 2cos x ≤ 1 ⇔ x ∈ [π/3, 2π/3)。不收斂：[0, π/3) ∪ [2π/3, π]，測度 π/3 + π/3 = 2π/3。例外集不是零測集，所以 fₙ 並不 a.e. 收斂。",
-      solutionSteps: ["r = 2cos x：|r| < 1 ⇔ x ∈ (π/3, 2π/3)；r = 1 ⇔ x = π/3（收斂到 1）；r = −1 ⇔ x = 2π/3（振盪）。", "不收斂的點：[0, π/3) ∪ [2π/3, π]。", "測度 = π/3 + π/3 = 2π/3。"],
+      
       verify: { m: "integral", f: step("4\\cos^2 x-1"), a: 0, b: "\\pi", breaks: ["\\pi/3", "2\\pi/3"] } },
     { id: "cg-12i-027", topic: "integrals", rank: 3, answerKind: "numeric",
       prompt: "f_n(x)=(x^2-3)^n\\ \\,\\text{在}\\,\\ [0,3]\\,\\text{。求 }\\,f_n(x)\\,\\text{ 不收斂（發散或振盪）的點所成集合的測度}\\,",
@@ -446,7 +446,7 @@
       tags: ["ae-convergence", "measure", "lebesgue"],
       hints: ["令 r = x² − 3，rⁿ 只在 −1 < r ≤ 1 時收斂。", "把 −1 < x² − 3 ≤ 1 解成 x 的區間，再取補集。"],
       solution: "收斂 ⇔ −1 < x² − 3 ≤ 1 ⇔ 2 < x² ≤ 4 ⇔ √2 < x ≤ 2。不收斂：[0, √2] ∪ (2, 3]，測度 √2 + 1 ≈ 2.414。",
-      solutionSteps: ["rⁿ 收斂 ⇔ −1 < r ≤ 1；r = x² − 3。", "−1 < x² − 3 ≤ 1 ⇔ √2 < x ≤ 2（x ≥ 0）。", "不收斂的點 [0, √2] ∪ (2, 3]，測度 √2 + 1。"],
+      
       verify: { m: "integral", f: step("(x^2-3)^2-1"), a: 0, b: 3, breaks: ["\\sqrt{2}", 2] } },
     { id: "cg-12i-028", topic: "integrals", rank: 3, answerKind: "numeric",
       prompt: "f_n(x)=\\frac{(2x)^n}{1+(2x)^n}\\ \\,\\text{在}\\,\\ [0,1]\\,\\text{。求 }\\,\\lim_{n\\to\\infty}\\int_0^1 f_n\\,dx",
@@ -454,7 +454,7 @@
       tags: ["ae-convergence", "convergence-theorem", "lebesgue"],
       hints: ["分成 2x < 1、2x = 1、2x > 1 三種情形求逐點極限。", "0 ≤ fₙ ≤ 1，可以用控制收斂；單一點的值不影響積分。"],
       solution: "fₙ → 0（x < 1/2）、1/2（x = 1/2）、1（x > 1/2）。a.e. 極限是 χ_{(1/2,1]}，例外點 {1/2} 是零測集。|fₙ| ≤ 1 可積，控制收斂：lim∫fₙ = ∫χ_{(1/2,1]} = 1/2。",
-      solutionSteps: ["逐點：2x < 1 時 → 0，2x > 1 時 → 1，x = 1/2 時恆為 1/2。", "fₙ → χ_{(1/2,1]} a.e.（只差一點），且 0 ≤ fₙ ≤ 1。", "控制收斂：lim∫₀¹ fₙ = m((1/2, 1]) = 1/2。"],
+      
       verify: { m: "integralLimit", f: "1-\\frac{1}{1+(2x)^n}", a: 0, b: 1 } },
     { id: "cg-12i-029", topic: "integrals", rank: 3,
       prompt: "f=\\chi_{[0,1/2]}\\ \\,\\text{在}\\,\\ [0,1]\\,\\text{ 上。下列哪一句正確？}\\,",
@@ -463,7 +463,7 @@
       tags: ["ae-continuity-traps", "measure", "lebesgue"],
       hints: ["f 在哪些點不連續？那個集合的測度是多少？", "若 g 連續且 g = f a.e.，g 在 1/2 左邊、右邊附近分別要接近多少？"],
       solution: "f 只在 x = 1/2 不連續，所以 a.e. 連續。若 g 連續且 g = f a.e.，則 g 在 1/2 左邊稠密地取 1、右邊稠密地取 0，左右極限 1 ≠ 0，g 不連續 —— 矛盾。",
-      solutionSteps: ["不連續點只有 x = 1/2，測度 0 → a.e. 連續（第三句錯）。", "f 在 1/2 的左極限 1、右極限 0。g = f a.e. 的連續函數在 1/2 兩側必須分別逼近 1 與 0。", "1 ≠ 0，這樣的 g 不存在（第二句錯）。"],
+      
       verify: { m: "choice", options: [
         { say: "f 幾乎處處連續，但不幾乎處處等於任何連續函數", all: [
           { v: { m: "limit", f: "\\frac{1-\\operatorname{sgn}(x-1/2)}{2}", at: "1/2", dir: "-" }, eq: 1 },
@@ -480,7 +480,7 @@
       tags: ["ae-continuity-traps", "measure", "lebesgue"],
       hints: ["ℚ ∩ [0,1] 的測度是多少？用「第 k 個有理數蓋一個長 ε/2^k 的區間」估計。", "任一點附近同時有有理數與無理數，函數值在 0 與 1 之間跳。"],
       solution: "m(ℚ∩[0,1]) = 0，所以 χ_ℚ = 0 a.e.，∫ = 0。但每一點附近都同時有有理數與無理數，χ_ℚ 處處不連續 —— 「a.e. 等於連續函數」不推出「a.e. 連續」。",
-      solutionSteps: ["ℚ ∩ [0,1] 可數，蓋住的總長 ε 任意小 → 測度 0，χ_ℚ = 0 a.e.。", "∫₀¹ χ_ℚ dm = m(ℚ∩[0,1]) = 0（第三句錯）。", "每點的任意鄰域都有值 0 與 1 → 處處不連續（第二句錯）。"],
+      
       verify: { m: "choice", options: [
         { say: "χ_ℚ 幾乎處處等於連續函數 0，但它處處不連續", all: [{ v: { m: "seqLimit", f: "\\frac{1}{2^n}" }, eq: 0 }] },
         { say: "χ_ℚ 幾乎處處連續", unknown: "處處不連續，數值上無法取樣" },
@@ -492,7 +492,7 @@
       tags: ["ae-equal-functions", "measure", "lebesgue"],
       hints: ["f 跟哪個簡單的函數只在一個零測集上不同？", "a.e. 相等的函數積分相同。"],
       solution: "f 只在 ℚ（零測集）上跟 x² 不同，所以 f = x² a.e.，∫₀³ f dm = ∫₀³ x² dx = 9。",
-      solutionSteps: ["ℚ 可數，m(ℚ) = 0，所以 f = x² a.e.。", "a.e. 相等的函數積分相同。", "∫₀³ x² dx = 27/3 = 9。"],
+      
       verify: { m: "integral", f: "x^2", a: 0, b: 3 } },
     { id: "cg-12i-032", topic: "integrals", rank: 3, answerKind: "numeric",
       prompt: "C\\,\\text{ 是 Cantor 集。}\\,g(x)=100\\ (x\\in C),\\quad g(x)=e^x\\ (x\\in[0,1]\\setminus C)\\,\\text{。求 }\\,\\int_0^1 g\\,dx",
@@ -500,7 +500,7 @@
       tags: ["ae-equal-functions", "measure", "cantor"],
       hints: ["Cantor 集雖然不可數，它的測度是多少？", "g 幾乎處處等於哪個連續函數？"],
       solution: "m(C) = 0，所以 g = eˣ a.e.，∫₀¹ g dm = ∫₀¹ eˣ dx = e − 1。在 C 上改成多大的值都不影響。",
-      solutionSteps: ["m(C) = lim (2/3)ⁿ = 0。", "g = eˣ a.e.（只在 C 上不同）。", "∫₀¹ eˣ dx = e − 1 ≈ 1.718。"],
+      
       verify: { m: "integral", f: "e^x", a: 0, b: 1 } },
 
     /* ── 12I 可測函數 ── */
@@ -510,7 +510,7 @@
       tags: ["measf-preimage-compute", "measure", "trig"],
       hints: ["先解 sin x = −1/2 在 [0, 2π] 的兩個解。", "sin x 在兩個解之間小於 −1/2，其他地方大於。"],
       solution: "sin x = −1/2 在 x = 7π/6、11π/6。sin x > −1/2 的集合是 [0, 7π/6) ∪ (11π/6, 2π]，長度 7π/6 + π/6 = 4π/3。",
-      solutionSteps: ["sin x = −1/2：x = 7π/6、11π/6。", "{sin x > −1/2} = [0, 7π/6) ∪ (11π/6, 2π]。", "測度 = 7π/6 + π/6 = 4π/3。"],
+      
       verify: { m: "integral", f: step("\\sin x+\\frac12"), a: 0, b: "2\\pi", breaks: ["7\\pi/6", "11\\pi/6"] } },
     { id: "cg-12i-034", topic: "integrals", rank: 3, answerKind: "numeric",
       prompt: "f(x)=x^2-2x\\ \\,\\text{在}\\,\\ [-1,4]\\,\\text{。求 }\\,m\\left(\\{x:\\ f(x)>1\\}\\right)",
@@ -518,7 +518,7 @@
       tags: ["measf-preimage-compute", "measure", "quadratic"],
       hints: ["解 x² − 2x − 1 = 0。", "拋物線開口向上，> 1 的部分在兩根外側；再跟 [−1, 4] 取交集。"],
       solution: "x² − 2x − 1 > 0 ⇔ x < 1 − √2 或 x > 1 + √2。與 [−1,4] 交：[−1, 1−√2) 長 2 − √2，(1+√2, 4] 長 3 − √2，合計 5 − 2√2 ≈ 2.172。",
-      solutionSteps: ["x² − 2x − 1 = 0 的根 1 ± √2。", "{f > 1} ∩ [−1, 4] = [−1, 1−√2) ∪ (1+√2, 4]。", "長度 (2 − √2) + (3 − √2) = 5 − 2√2。"],
+      
       verify: { m: "integral", f: step("x^2-2x-1"), a: -1, b: 4, breaks: ["1-\\sqrt{2}", "1+\\sqrt{2}"] } },
     { id: "cg-12i-035", topic: "integrals", rank: 3, answerKind: "numeric",
       prompt: "f(x)=x-\\lfloor x\\rfloor\\ \\,\\text{在}\\,\\ [0,5]\\,\\text{。求 }\\,m\\left(\\{x:\\ f(x)>0.7\\}\\right)",
@@ -526,7 +526,7 @@
       tags: ["measf-preimage-compute", "measure", "floor-function"],
       hints: ["f 是小數部分，在每個 [k, k+1) 上從 0 長到接近 1。", "每個單位區間裡 f > 0.7 的部分多長？有幾個單位區間？"],
       solution: "在 [k, k+1) 上 f(x) = x − k，f > 0.7 ⇔ x ∈ (k + 0.7, k + 1)，長 0.3。k = 0,…,4 共 5 段：1.5。",
-      solutionSteps: ["[k, k+1) 上 f(x) = x − k。", "f > 0.7 ⇔ x ∈ (k + 0.7, k + 1)，每段長 0.3。", "5 段：5 × 0.3 = 1.5。"],
+      
       verify: { m: "integral", f: step("x-\\lfloor x\\rfloor-0.7"), a: 0, b: 5, breaks: [0.7, 1, 1.7, 2, 2.7, 3, 3.7, 4, 4.7] } },
     { id: "cg-12i-036", topic: "integrals", rank: 4, answerKind: "numeric",
       prompt: "f_n(x)=\\frac{n}{n+1}x^2\\ \\,\\text{在}\\,\\ [0,2]\\,\\text{。用 }\\,\\{\\sup_n f_n>1\\}=\\bigcup_n\\{f_n>1\\}\\,\\text{ 求這個集合的測度}\\,",
@@ -534,7 +534,7 @@
       tags: ["measf-closure", "measure", "lebesgue"],
       hints: ["先解 {fₙ > 1}：它是 [0,2] 裡的一個區間，寫出左端點。", "這些集合對 n 遞增，聯集的測度是測度的極限（由下連續）。"],
       solution: "{fₙ > 1} = (√((n+1)/n), 2]，測度 2 − √((n+1)/n)，對 n 遞增。由下連續：m(⋃) = lim (2 − √(1 + 1/n)) = 1。（sup fₙ = x²，集合是 (1, 2]。）",
-      solutionSteps: ["fₙ > 1 ⇔ x² > (n+1)/n ⇔ x > √(1 + 1/n)，{fₙ > 1} = (√(1+1/n), 2]。", "這串集合遞增，m = 2 − √(1 + 1/n)。", "由下連續：m({sup fₙ > 1}) = lim(2 − √(1+1/n)) = 1。"],
+      
       verify: { m: "seqLimit", f: "2-\\sqrt{1+\\frac{1}{n}}" } },
     { id: "cg-12i-037", topic: "integrals", rank: 3,
       prompt: "\\,\\text{證明 }\\,\\sup_n f_n\\,\\text{ 可測時用的是哪個等式？用 }\\,f_n(x)=\\frac{n}{n+1}x\\ (0\\le x\\le 1),\\ a=\\tfrac12\\,\\text{ 檢查}\\,",
@@ -543,7 +543,7 @@
       tags: ["measf-closure", "measure", "lebesgue"],
       hints: ["sup fₙ(x) > a 的意思是：「至少有一個 n」讓 fₙ(x) > a。", "例子裡 sup fₙ = x；算 {sup fₙ > 1/2} 與各選項右邊的集合的測度比一比。"],
       solution: "sup fₙ(x) > a ⇔ 存在 n 使 fₙ(x) > a，所以是聯集；可數個可測集的聯集可測。例子：{sup > 1/2} = (1/2, 1] 測度 1/2；{fₙ > 1/2} 的測度 1 − (n+1)/(2n) 遞增到 1/2。{f₁ > 1/2} = {x/2 > 1/2} = ∅，⋂ 也是 ∅，測度 0 ≠ 1/2。",
-      solutionSteps: ["sup fₙ(x) > a ⇔ ∃n：fₙ(x) > a ⇔ x ∈ ⋃ₙ{fₙ > a}。", "例子：sup fₙ = x，{sup fₙ > 1/2} = (1/2, 1]，測度 1/2；⋃{fₙ > 1/2} 的測度 lim(1 − (n+1)/(2n)) = 1/2。", "{f₁ > 1/2} = ∅，⋂ₙ{fₙ > 1/2} ⊂ {f₁ > 1/2} = ∅，測度 0，兩個誘答都錯。"],
+      
       verify: { m: "choice", options: [
         { say: "{sup fₙ > a} = ⋃ₙ {fₙ > a}", all: [{ v: { m: "seqLimit", f: "1-\\frac{n+1}{2n}" }, eq: { m: "integral", f: step("x-\\frac12"), a: 0, b: 1, breaks: [0.5] } }] },
         { say: "{sup fₙ > a} = ⋂ₙ {fₙ > a}", all: [{ v: { m: "integral", f: step("\\frac{x}{2}-\\frac12"), a: 0, b: 1 }, eq: { m: "integral", f: step("x-\\frac12"), a: 0, b: 1, breaks: [0.5] } }] },
@@ -556,7 +556,7 @@
       tags: ["measf-counterexample", "measure", "lebesgue"],
       hints: ["如果 g 有連續的反函數，f = g⁻¹∘(g∘f) 是「連續函數 ∘ 可測函數」。", "若 g 把兩個不同的值送到同一處，取不可測集 V，讓 f 在 V 上取一個值、在 V 外取另一個。"],
       solution: "t³ 嚴格遞增、反函數 t^{1/3} 連續，f = (g∘f)^{1/3} 可測。t²、|t|：g(1) = g(−1)，令 f = 1 在 V（不可測）、−1 在 V 外，g∘f ≡ 1 可測而 f 不可測。cos：cos 0 = cos 2π，同樣的構造。",
-      solutionSteps: ["g(t) = t³ 是連續的雙射，反函數連續，f = (g∘f)^{1/3} 可測。", "t² 與 |t| 把 1、−1 送到同一個值：f = χ_V − χ_{V^c}（V 不可測）時 g∘f ≡ 1，但 {f > 0} = V 不可測。", "cos 把 0 與 2π 送到同一個值，同樣失敗。答案 t³。"],
+      
       verify: { m: "choice", options: [
         { say: "g(t) = t³", all: [{ v: { m: "value", f: "1^3-(-1)^3" }, ne: 0 }] },
         { say: "g(t) = t²", all: [{ v: { m: "value", f: "1^2-(-1)^2" }, ne: 0 }] },
@@ -570,7 +570,7 @@
       tags: ["measf-counterexample", "measure", "lebesgue"],
       hints: ["哪一個可以寫成「連續函數 ∘ f²」？", "f = 1 與 f = −1 給出同一個 f²；看選項在這兩個值上是否一樣。"],
       solution: "|f| = √(f²) 是連續函數 ∘ 可測函數，可測。f = χ_V − χ_{V^c}（V 不可測）時 f² ≡ 1 可測，但 f 不可測；此時 f⁺ = χ_V 也不可測。",
-      solutionSteps: ["|f| = √(f²)，√ 連續 → 可測。", "f = χ_V − χ_{V^c}：f² ≡ 1，但 {f > 0} = V 不可測。", "同一個例子 f⁺ = χ_V 不可測。答案 |f|。"],
+      
       verify: { m: "choice", options: [
         { say: "|f|", all: [{ v: { m: "value", f: "\\left|1\\right|-\\left|-1\\right|" }, eq: 0 }] },
         { say: "f", all: [{ v: { m: "value", f: "1-(-1)" }, eq: 0 }] },
@@ -585,7 +585,7 @@
       tags: ["mct-hypothesis-check", "monotone-convergence", "convergence-theorem"],
       hints: ["兩個條件分開檢查：fₙ ≥ 0？fₙ₊₁(x) ≥ fₙ(x)？", "拿一個具體的 x（例如 0.4 或 1）比較 f₁ 與 f₂。"],
       solution: "Σ_{k≤n} xᵏ/k!：每項 ≥ 0，多加一項只會變大，遞增到 eˣ，lim∫ = e − 1。n xⁿ：x = 0.4 時 f₂ = 0.32 < f₁ = 0.4。−x/n 是負的。n x e^{−nx}：x = 1 時 f₂ = 2e^{−2} < f₁ = e^{−1}。",
-      solutionSteps: ["部分和 Σ_{k≤n} xᵏ/k!：非負、對 n 遞增 → 單調收斂：lim∫₀¹ fₙ = ∫₀¹ eˣ = e − 1。", "n xⁿ 在 x = 0.4：f₁ = 0.4、f₂ = 0.32，不遞增；−x/n < 0，不非負。", "n x e^{−nx} 在 x = 1：f₁ ≈ 0.368、f₂ ≈ 0.271，不遞增。"],
+      
       verify: { m: "choice", options: [
         { say: "fₙ(x) = Σ_{k=0}^{n} x^k/k!", all: [{ v: { m: "integralLimit", f: "\\sum_{k=0}^{n}\\frac{x^k}{k!}", a: 0, b: 1, n0: 5, levels: 5 }, eq: "e-1" }] },
         { say: "fₙ(x) = n xⁿ", all: [{ v: { m: "value", f: "2\\cdot 0.4^2" }, ge: 0.4 }] },
@@ -599,7 +599,7 @@
       tags: ["mct-hypothesis-check", "monotone-convergence", "convergence-theorem"],
       hints: ["固定 x，(1 − x/n)ⁿ 對 n 是遞增的；拿 x = 1 比較 n = 2 與 n = 3。", "逐點極限是 e^{−x}，它在 [0, ∞) 的積分是多少？"],
       solution: "固定 x，(1 − x/n)ⁿ 對 n 遞增（例：x = 1 時 1/4 < 8/27），且 gₙ ≥ 0、→ e^{−x}。單調收斂：lim∫gₙ = ∫₀^∞ e^{−x} = 1。直接算 ∫₀ⁿ(1 − x/n)ⁿ dx = n/(n+1) → 1 也吻合。",
-      solutionSteps: ["gₙ ≥ 0，逐點 gₙ(x) → e^{−x}；x = 1：g₂ = 1/4、g₃ = 8/27，遞增（一般由 ln(1 − t) 的凹性得證）。", "單調收斂：lim∫₀^∞ gₙ = ∫₀^∞ e^{−x} dx = 1。", "核對：∫₀ⁿ (1 − x/n)ⁿ dx = n/(n+1) → 1，面積沒有跑掉。"],
+      
       verify: { m: "choice", options: [
         { say: "gₙ ≥ 0 且對 n 遞增，可用單調收斂：lim∫₀^∞ gₙ dm = 1", all: [
           { v: { m: "value", f: "\\left(1-\\frac13\\right)^3" }, ge: "\\left(1-\\frac12\\right)^2" },
@@ -614,7 +614,7 @@
       tags: ["mct-hypothesis-check", "monotone-convergence", "convergence-theorem"],
       hints: ["(1 + x/n)ⁿ 對 n 遞增，所以它的倒數呢？用 x = 1、n = 2, 3 驗證。", "f₂ = (1 + x/2)^{−2} 可積，可以拿來當控制函數。"],
       solution: "(1 + x/n)ⁿ ↑ eˣ，所以 fₙ ↓ e^{−x}：遞減，遞增版單調收斂不能直接用。但 0 ≤ fₙ ≤ f₂ 可積，控制收斂（或對 f₂ − fₙ 用單調收斂）給 lim∫fₙ = 1。直接算：∫₀^∞ fₙ = n/(n−1) → 1。",
-      solutionSteps: ["x = 1：f₂ = (3/2)^{−2} ≈ 0.444，f₃ = (4/3)^{−3} ≈ 0.422，遞減。", "0 ≤ fₙ ≤ f₂，∫₀^∞ f₂ = 2 < ∞，控制收斂：lim∫fₙ = ∫₀^∞ e^{−x} dx = 1。", "核對：∫₀^∞ (1 + x/n)^{−n} dx = n/(n−1) → 1。"],
+      
       verify: { m: "choice", options: [
         { say: "fₙ 對 n 遞減，遞增版的單調收斂用不上；但 lim∫fₙ = ∫e^{−x} = 1 仍成立", all: [
           { v: { m: "value", f: "\\left(1+\\frac13\\right)^{-3}" }, lt: "\\left(1+\\frac12\\right)^{-2}" },
@@ -627,15 +627,13 @@
       answer: "pi^2/54", timeLimit: 240,
       tags: ["mct-series-termwise", "monotone-convergence", "improper-integral"],
       hints: ["1/(e^{3x} − 1) = e^{−3x}/(1 − e^{−3x}) = Σ_{k≥1} e^{−3kx}，每一項都非負。", "∫₀^∞ x e^{−ax} dx = 1/a²；Σ 1/k² = π²/6。"],
-      solution: "x/(e^{3x} − 1) = Σ_{k≥1} x e^{−3kx}，每項非負，單調收斂允許逐項積分：Σ 1/(9k²) = (1/9)(π²/6) = π²/54 ≈ 0.1828。",
-      solutionSteps: ["x > 0 時 x/(e^{3x} − 1) = Σ_{k≥1} x e^{−3kx}，各項 ≥ 0（部分和遞增）。", "單調收斂：∫Σ = Σ∫，∫₀^∞ x e^{−3kx} dx = 1/(9k²)。", "Σ 1/(9k²) = π²/54。"] },
+      solution: "x/(e^{3x} − 1) = Σ_{k≥1} x e^{−3kx}，每項非負，單調收斂允許逐項積分：Σ 1/(9k²) = (1/9)(π²/6) = π²/54 ≈ 0.1828。"},
     { id: "cg-12k-005", topic: "integrals", rank: 4, answerKind: "numeric",
       prompt: "\\int_0^1\\frac{-\\ln x}{1-x^2}\\,dx",
       answer: "pi^2/8", timeLimit: 240,
       tags: ["mct-series-termwise", "monotone-convergence", "improper-integral"],
       hints: ["1/(1 − x²) = Σ_{k≥0} x^{2k}，而 −ln x ≥ 0：每一項都非負。", "∫₀¹ x^m(−ln x) dx = 1/(m+1)²。"],
-      solution: "−ln x/(1 − x²) = Σ_{k≥0} x^{2k}(−ln x)，各項非負，單調收斂逐項積分：Σ 1/(2k+1)² = π²/8 ≈ 1.2337。",
-      solutionSteps: ["0 < x < 1：−ln x/(1 − x²) = Σ_{k≥0} x^{2k}(−ln x)，每項 ≥ 0。", "單調收斂：∫Σ = Σ∫，∫₀¹ x^{2k}(−ln x) dx = 1/(2k+1)²。", "Σ_{k≥0} 1/(2k+1)² = π²/8。"] },
+      solution: "−ln x/(1 − x²) = Σ_{k≥0} x^{2k}(−ln x)，各項非負，單調收斂逐項積分：Σ 1/(2k+1)² = π²/8 ≈ 1.2337。"},
 
     /* ── 12K Fatou ── */
     { id: "cg-12k-006", topic: "integrals", rank: 3,
@@ -645,7 +643,7 @@
       tags: ["fatou-statement", "fatou", "convergence-theorem"],
       hints: ["例子裡：x > 0 時 fₙ(x) → ?；∫₀¹ fₙ 用 arctan 算。", "比較兩邊的數，看哪個方向的不等號一定對。"],
       solution: "x > 0 時 fₙ(x) → 0，所以 ∫liminf fₙ = 0；∫₀¹ fₙ = arctan n → π/2。0 < π/2：「≥」與「=」都被推翻。Fatou：∫liminf ≤ liminf∫，面積只會在極限時流失，不會憑空多出來。",
-      solutionSteps: ["逐點：x > 0 時 n/(1 + n²x²) → 0，liminf fₙ = 0 a.e.，左邊 = 0。", "∫₀¹ fₙ dx = arctan n → π/2，右邊 = π/2。", "0 ≤ π/2 且不相等：只有「∫ liminf fₙ ≤ liminf ∫ fₙ」成立。"],
+      
       verify: { m: "choice", options: [
         { say: "∫ liminf fₙ ≤ liminf ∫ fₙ", all: [{ v: { m: "integralLimit", f: "\\frac{n}{1+n^2x^2}", a: 0, b: 1 }, ge: 0 }] },
         { say: "∫ liminf fₙ ≥ liminf ∫ fₙ", all: [{ v: { m: "integralLimit", f: "\\frac{n}{1+n^2x^2}", a: 0, b: 1 }, le: 0 }] },
@@ -658,7 +656,7 @@
       tags: ["fatou-statement", "fatou", "convergence-theorem"],
       hints: ["逐點極限：x > 0 時 −n²xe^{−nx} → ?", "∫₀¹ n²xe^{−nx} dx 用分部積分，n → ∞ 時趨近多少？"],
       solution: "x > 0 時 fₙ(x) → 0，左邊 0。∫₀¹ fₙ = −(1 − (n+1)e^{−n}) → −1，右邊 −1。0 ≤ −1 不成立：Fatou 需要 fₙ ≥ 0（或有可積的下界）。",
-      solutionSteps: ["逐點 fₙ(x) → 0（x > 0），∫ liminf fₙ = 0。", "∫₀¹ n²xe^{−nx} dx = 1 − (n+1)e^{−n} → 1，所以 liminf∫fₙ = −1。", "0 ≤ −1 不成立：負的函數列，面積「往下跑掉」，Fatou 不適用。"],
+      
       verify: { m: "choice", options: [
         { say: "不成立：左邊 0、右邊 −1；因為 fₙ 不是非負", all: [{ v: { m: "integralLimit", f: "-n^2xe^{-nx}", a: 0, b: 1 }, eq: -1 }] },
         { say: "成立：Fatou 對任何可測函數列都對", all: [{ v: { m: "integralLimit", f: "-n^2xe^{-nx}", a: 0, b: 1 }, ge: 0 }] },
@@ -670,7 +668,7 @@
       tags: ["fatou-upper-bound", "fatou", "convergence-theorem"],
       hints: ["把積分拆成 ∫x² 與 ∫n²xe^{−nx} 兩塊。", "第二塊用 u = nx 代換，n → ∞ 時趨近 ∫₀^∞ u e^{−u} du。"],
       solution: "∫₀² x² = 8/3；∫₀² n²xe^{−nx} dx = 1 − (2n+1)e^{−2n} → 1。L = 8/3 + 1 = 11/3。真正的 ∫f = ∫x² = 8/3 < 11/3：尖峰的面積在極限時流失。",
-      solutionSteps: ["∫₀² fₙ = ∫₀² x² dx + ∫₀² n²x e^{−nx} dx = 8/3 + (1 − (2n+1)e^{−2n})。", "n → ∞：第二塊 → 1。", "L = 8/3 + 1 = 11/3。"],
+      
       verify: { m: "integralLimit", f: "x^2+n^2xe^{-nx}", a: 0, b: 2 } },
     { id: "cg-12k-009", topic: "integrals", rank: 4, answerKind: "numeric",
       prompt: "f_n(x)=\\sqrt{x}+n^3x^2e^{-nx}\\ (0\\le x\\le 1)\\,\\text{ 逐點收斂到 }\\,f\\,\\text{。Fatou 的上界 }\\,L=\\liminf\\int_0^1 f_n\\,dx\\,\\text{ 比真正的 }\\,\\int_0^1 f\\,dx\\,\\text{ 大多少？}\\,",
@@ -678,7 +676,7 @@
       tags: ["fatou-upper-bound", "fatou", "convergence-theorem"],
       hints: ["先求逐點極限 f：x > 0 時 n³x²e^{−nx} → ?", "∫₀¹ n³x²e^{−nx} dx 用 u = nx 代換，極限是 ∫₀^∞ u²e^{−u} du。"],
       solution: "f = √x（x > 0），∫₀¹ f = 2/3。∫₀¹ n³x²e^{−nx} dx = ∫₀ⁿ u²e^{−u} du → 2，所以 L = 2/3 + 2 = 8/3。差 = 8/3 − 2/3 = 2。",
-      solutionSteps: ["逐點：n³x²e^{−nx} → 0（x > 0），f = √x，∫₀¹ √x dx = 2/3。", "u = nx：∫₀¹ n³x²e^{−nx} dx = ∫₀ⁿ u²e^{−u} du → Γ(3) = 2，L = 8/3。", "L − ∫f = 8/3 − 2/3 = 2。"],
+      
       verify: { m: "let", f: "a-b", with: { a: { m: "integralLimit", f: "\\sqrt{x}+n^3x^2e^{-nx}", a: 0, b: 1 }, b: { m: "integral", f: "\\sqrt{x}", a: 0, b: 1 } } } },
     { id: "cg-12k-010", topic: "integrals", rank: 3, answerKind: "numeric",
       prompt: "f_n(x)=e^{-(x-n)^2}\\ \\,\\text{在}\\,\\ [0,\\infty)\\,\\text{。逐點 }\\,f_n\\to 0\\,\\text{。求 }\\,\\lim_{n\\to\\infty}\\int_0^{\\infty}f_n\\,dx",
@@ -686,7 +684,7 @@
       tags: ["fatou-mass-escape", "fatou", "convergence-theorem"],
       hints: ["fₙ 是一個高斯鐘形，中心在 x = n。n 變大時它往哪裡走？", "代換 u = x − n，積分下限變成 −n。"],
       solution: "∫₀^∞ e^{−(x−n)²} dx = ∫_{−n}^∞ e^{−u²} du → ∫_{−∞}^∞ e^{−u²} du = √π。面積整塊往無窮遠移動：∫lim fₙ = 0 < √π。",
-      solutionSteps: ["u = x − n：∫₀^∞ fₙ = ∫_{−n}^{∞} e^{−u²} du。", "n → ∞：→ ∫_{−∞}^{∞} e^{−u²} du = √π ≈ 1.772。", "逐點極限 0 的積分是 0：面積往無窮遠跑掉，Fatou 的不等號是嚴格的。"],
+      
       verify: { m: "integralLimit", f: "e^{-(x-n)^2}", a: 0, b: 400, n0: 10, levels: 6 } },
     { id: "cg-12k-011", topic: "integrals", rank: 2, answerKind: "numeric",
       prompt: "f_n(x)=1+\\sin(nx)\\ \\,\\text{在}\\,\\ [0,2\\pi]\\,\\text{（}\\,\\liminf f_n=0\\,\\text{ a.e.）。求 }\\,\\liminf_{n\\to\\infty}\\int_0^{2\\pi}f_n\\,dx",
@@ -694,7 +692,7 @@
       tags: ["fatou-mass-escape", "fatou", "convergence-theorem"],
       hints: ["sin(nx) 在 [0, 2π] 上剛好跑完 n 個週期。", "所以 ∫₀^{2π} sin(nx) dx 是多少？"],
       solution: "∫₀^{2π}(1 + sin nx) dx = 2π + 0 = 2π，對每個 n 都一樣，liminf = 2π。而 fₙ 在 0 與 2 之間來回跳，liminf fₙ = 0 a.e.，∫liminf = 0 < 2π：面積是「來回跳」掉的。",
-      solutionSteps: ["∫₀^{2π} sin(nx) dx = 0（n 個完整週期）。", "∫₀^{2π} fₙ = 2π，對所有 n。", "liminf∫fₙ = 2π（而 ∫liminf fₙ = 0）。"],
+      
       verify: { m: "integralLimit", f: "1+\\sin(nx)", a: 0, b: "2\\pi" } },
 
     /* ── 12K 控制收斂 ── */
@@ -704,7 +702,7 @@
       tags: ["dct-limit-compute", "convergence-theorem", "improper-integral"],
       hints: ["|sin t| ≤ |t|，所以 |n sin(x/n)| ≤ x。", "先找控制函數，再把極限搬進積分：逐點極限是什麼？"],
       solution: "|n sin(x/n)/(x(1+x²))| ≤ 1/(1+x²)，可積。逐點 n sin(x/n) → x，被積函數 → 1/(1+x²)。控制收斂：極限 = ∫₀^∞ dx/(1+x²) = π/2。",
-      solutionSteps: ["|sin t| ≤ |t| ⇒ |fₙ(x)| ≤ 1/(1+x²)，∫₀^∞ 1/(1+x²) = π/2 < ∞。", "逐點：n sin(x/n) → x，fₙ(x) → 1/(1+x²)。", "控制收斂：lim∫fₙ = ∫₀^∞ dx/(1+x²) = π/2。"],
+      
       verify: { m: "integralLimit", f: "\\frac{n\\sin(x/n)}{x(1+x^2)}", a: 0, b: 1000000 } },
     { id: "cg-12k-013", topic: "integrals", rank: 4, answerKind: "numeric",
       prompt: "\\lim_{n\\to\\infty}\\int_0^{n}\\left(1-\\frac{x}{n}\\right)^n e^{x/3}\\,dx",
@@ -712,7 +710,7 @@
       tags: ["dct-limit-compute", "convergence-theorem", "improper-integral"],
       hints: ["把積分寫成 [0, ∞) 上、乘上 χ_{[0,n]}；用 1 − t ≤ e^{−t} 找控制函數。", "控制函數 e^{−x}·e^{x/3} 可積嗎？逐點極限是什麼？"],
       solution: "0 ≤ (1 − x/n)ⁿχ_{[0,n]} ≤ e^{−x}，所以被積函數 ≤ e^{−2x/3}，可積。逐點 → e^{−x}e^{x/3} = e^{−2x/3}。控制收斂：極限 = ∫₀^∞ e^{−2x/3} dx = 3/2。",
-      solutionSteps: ["1 − t ≤ e^{−t} ⇒ (1 − x/n)ⁿ ≤ e^{−x}（0 ≤ x ≤ n），控制函數 g = e^{−2x/3}，∫g = 3/2 < ∞。", "逐點：(1 − x/n)ⁿχ_{[0,n]}(x) → e^{−x}，被積函數 → e^{−2x/3}。", "控制收斂：極限 = ∫₀^∞ e^{−2x/3} dx = 3/2。"],
+      
       verify: { m: "integralLimit", f: "\\left(1-\\frac{x}{n}\\right)^n e^{x/3}\\cdot\\frac{1+\\operatorname{sgn}(n-x)}{2}", a: 0, b: 200 } },
     { id: "cg-12k-014", topic: "integrals", rank: 4, answerKind: "numeric",
       prompt: "\\lim_{n\\to\\infty}\\int_0^{\\infty}n\\ln\\left(1+\\frac{x}{n}\\right)e^{-2x}\\,dx",
@@ -720,7 +718,7 @@
       tags: ["dct-limit-compute", "convergence-theorem", "improper-integral"],
       hints: ["ln(1 + t) ≤ t，所以 n ln(1 + x/n) ≤ x。", "控制函數 x e^{−2x} 可積；逐點極限 n ln(1 + x/n) → ?"],
       solution: "0 ≤ n ln(1 + x/n) ≤ x，被積函數 ≤ x e^{−2x}，可積。逐點 n ln(1 + x/n) → x。控制收斂：極限 = ∫₀^∞ x e^{−2x} dx = 1/4。",
-      solutionSteps: ["ln(1 + t) ≤ t ⇒ 0 ≤ fₙ(x) ≤ x e^{−2x}，∫₀^∞ x e^{−2x} dx < ∞。", "逐點：n ln(1 + x/n) → x，fₙ → x e^{−2x}。", "控制收斂：∫₀^∞ x e^{−2x} dx = 1/2² = 1/4。"],
+      
       verify: { m: "integralLimit", f: "n\\ln\\left(1+\\frac{x}{n}\\right)e^{-2x}", a: 0, b: 60 } },
     { id: "cg-12k-015", topic: "integrals", rank: 3,
       prompt: "f_n(x)=\\frac{\\sin(nx)}{1+x^2}\\ \\,\\text{在}\\,\\ [0,\\infty)\\,\\text{。下列哪一個是可積的控制函數 }\\,g\\ (|f_n|\\le g)\\,\\text{？}\\,",
@@ -729,7 +727,7 @@
       tags: ["dct-find-dominator", "convergence-theorem", "improper-integral"],
       hints: ["四個選項都壓得住 |fₙ|；關鍵是哪一個在 [0, ∞) 上積分有限。", "分別檢查 x → 0 附近與 x → ∞ 的尾巴。"],
       solution: "|sin(nx)| ≤ 1 ⇒ |fₙ| ≤ 1/(1+x²)，∫₀^∞ = π/2 < ∞。g = 1：∫₀^∞ 1 = ∞。g = 1/x：兩端都發散。g = 1/x²：在 0 附近發散。",
-      solutionSteps: ["|fₙ(x)| ≤ 1/(1+x²)，∫₀^∞ dx/(1+x²) = π/2，可積。", "1 與 1/x 在 ∞ 的尾巴積分發散；1/x 與 1/x² 在 0 附近也發散。", "答案 g(x) = 1/(1+x²)。"],
+      
       verify: { m: "choice", options: [
         { say: "g(x) = 1/(1+x²)", all: [{ v: { m: "improperConverges", f: "\\frac{1}{1+x^2}", a: 0, b: "inf" }, claim: true }] },
         { say: "g(x) = 1", all: [{ v: { m: "improperConverges", f: "1", a: 0, b: "inf" }, claim: true }] },
@@ -743,7 +741,7 @@
       tags: ["dct-find-dominator", "convergence-theorem", "improper-integral"],
       hints: ["在 (0, 1] 上 0 < cos x ≤ 1，所以 |cosⁿx| ≤ 1。", "比較各選項在 x → 0⁺ 的冪次：x^{−p} 在 0 附近可積 ⇔ p < 1。"],
       solution: "|fₙ| ≤ 1/√x，∫₀¹ x^{−1/2} dx = 2 < ∞。1/x、cos x/x（在 0 附近 ≈ 1/x）、x^{−3/2} 的冪次 ≥ 1，在 0 附近不可積。之後控制收斂給 lim∫fₙ = 0。",
-      solutionSteps: ["0 < cos x ≤ 1 ⇒ |fₙ(x)| ≤ x^{−1/2}，∫₀¹ x^{−1/2} dx = 2。", "1/x、x^{−3/2} 在 0 附近不可積；cos x / x ~ 1/x 也不可積。", "答案 g(x) = 1/√x。"],
+      
       verify: { m: "choice", options: [
         { say: "g(x) = 1/√x", all: [{ v: { m: "improperConverges", f: "x^{-1/2}", a: 0, b: 1, sing: [0] }, claim: true }] },
         { say: "g(x) = 1/x", all: [{ v: { m: "improperConverges", f: "\\frac{1}{x}", a: 0, b: 1, sing: [0] }, claim: true }] },
@@ -757,7 +755,7 @@
       tags: ["dct-hypothesis-check", "convergence-theorem", "dominated-convergence"],
       hints: ["分 x < 1、x = 1、x > 1 求逐點極限；在 x = 1.5 比較 f₁ 與 f₂。", "0 ≤ fₙ ≤ 1，常數 1 在 [0, 2] 上可積。"],
       solution: "fₙ → 1（x < 1）、1/2（x = 1）、0（x > 1）。在 (1, 2] 上 fₙ 遞減（x = 1.5：f₁ = 0.4 > f₂ ≈ 0.31），不能用單調收斂。|fₙ| ≤ 1 可積，控制收斂：lim∫ = m([0,1)) = 1；x = 1 一個點不影響。",
-      solutionSteps: ["逐點極限 χ_{[0,1)} a.e.（x = 1 那一點測度 0）。", "x = 1.5：f₁ = 0.4，f₂ ≈ 0.308，不遞增 → 單調收斂不適用。", "|fₙ| ≤ 1、∫₀² 1 = 2 < ∞，控制收斂：lim∫₀² fₙ = 1。"],
+      
       verify: { m: "choice", options: [
         { say: "控制收斂：|fₙ| ≤ 1，lim∫₀² fₙ = 1", all: [{ v: { m: "integralLimit", f: "\\frac{1}{1+x^n}", a: 0, b: 2 }, eq: 1 }] },
         { say: "單調收斂：fₙ 對 n 遞增", all: [{ v: { m: "value", f: "\\frac{1}{1+1.5^2}" }, ge: "\\frac{1}{1+1.5}" }] },
@@ -770,7 +768,7 @@
       tags: ["dct-hypothesis-check", "convergence-theorem", "fatou"],
       hints: ["算 ∫₀¹ fₙ：代換 u = nx²。", "若有可積的控制函數，控制收斂會給 lim∫ = ∫lim = 0。跟實際算出來的比。"],
       solution: "u = nx²：∫₀¹ fₙ = (1/2)∫₀ⁿ u e^{−u} du → 1/2 ≠ 0，所以不存在可積的控制函數（否則極限會是 0）。x = 1：f₂ = 4e^{−2} ≈ 0.54 > f₃ = 9e^{−3} ≈ 0.45，不遞增。只剩 Fatou：0 ≤ 1/2。",
-      solutionSteps: ["u = nx²，du = 2nx dx：∫₀¹ n²x³e^{−nx²} dx = (1/2)∫₀ⁿ u e^{−u} du → 1/2。", "lim∫ = 1/2 ≠ 0 = ∫lim：若有可積控制函數就會相等，所以沒有。x = 1 時 f₃ < f₂，也不遞增。", "只有 Fatou 成立：∫lim fₙ = 0 ≤ 1/2。"],
+      
       verify: { m: "choice", options: [
         { say: "只有 Fatou 能用：∫lim fₙ = 0 ≤ lim∫fₙ = 1/2，找不到可積的控制函數", all: [{ v: { m: "integralLimit", f: "n^2x^3e^{-nx^2}", a: 0, b: 1 }, eq: 0.5 }] },
         { say: "控制收斂：lim∫fₙ = ∫lim fₙ = 0", all: [{ v: { m: "integralLimit", f: "n^2x^3e^{-nx^2}", a: 0, b: 1 }, eq: 0 }] },

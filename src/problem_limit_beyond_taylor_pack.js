@@ -1494,7 +1494,7 @@
       tags: ["limit-graph-hole", "graph-reading", "removable"],
       hints: ["極限只看 x 靠近 2 的時候曲線往哪裡走，不看 x = 2 那一點。", "沿著曲線從兩邊走到空心圈，空心圈的高度是多少？"],
       solution: "兩邊沿曲線都走向空心圈 (2, 3)，極限是 3；實心點 f(2) = 1 跟極限無關。",
-      solutionSteps: ["極限看的是 x → 2（x ≠ 2）時 f(x) 的去向。", "曲線在 x = 2 附近的高度靠近 2² − 4 + 3 = 3（空心圈）。", "f(2) = 1 不影響極限：lim_{x→2} f(x) = 3。"],
+      
       verify: L("x^2-2x+3", 2) },
     { id: "cg-1a-002", topic: "limits", rank: 2, answerKind: "numeric",
       prompt: "\\text{如圖：}x<1\\text{ 時 }f\\text{ 沿 }(-2,4)\\to(1,1)\\text{ 的直線，}x>1\\text{ 時沿 }(1,1)\\to(4,3)\\text{；}(1,1)\\text{ 是空心圈，另外 }f(1)=3\\text{。求 }\\lim_{x\\to 1}f(x)-f(1)",
@@ -1503,7 +1503,7 @@
       tags: ["limit-graph-hole", "graph-reading", "removable"],
       hints: ["左右兩段都走到同一個空心圈嗎？那就是極限。", "f(1) 要看實心點，不是空心圈。"],
       solution: "兩段都走到空心圈 (1, 1)，所以極限是 1；實心點給 f(1) = 3。相減 1 − 3 = −2。",
-      solutionSteps: ["左段、右段都往 (1, 1) 走：lim_{x→1} f(x) = 1。", "實心點在 (1, 3)：f(1) = 3。", "lim_{x→1} f(x) − f(1) = 1 − 3 = −2。"],
+      
       verify: { m: "let", f: "p-3", with: { p: { m: "graphLimit", pts: [[-2, 4], [1, 1]], at: 1, side: "left" } } } },
     { id: "cg-1a-003", topic: "limits", rank: 1, answerKind: "text",
       prompt: "\\text{設 }f(x)=x^2+1\\ (x\\neq 2)\\text{、}f(2)=0\\text{。下列哪一個敘述正確？}",
@@ -1514,7 +1514,7 @@
       tags: ["limit-vs-value", "direct-substitution"],
       hints: ["f(2) 直接看定義裡寫的那一行。", "極限看 x ≠ 2、靠近 2 時的 x² + 1。"],
       solution: "f(2) 是另外規定的 0；x 靠近 2（不等於 2）時 f(x) = x² + 1 → 5。兩者不必相等。",
-      solutionSteps: ["函數值：定義直接寫 f(2) = 0。", "極限：x ≠ 2 時 f(x) = x² + 1，x → 2 時 → 4 + 1 = 5。", "所以 f(2) = 0，lim_{x→2} f(x) = 5。"],
+      
       verify: { m: "choice", options: [
         { say: "f(2) = 0，lim_{x→2} f(x) = 5", all: [{ v: L("x^2+1", 2), eq: 5 }] },
         { say: "f(2) = 5，lim_{x→2} f(x) = 5", given: [{ v: L("x^2+1", 2), eq: 5 }], all: [{ v: V("0"), eq: 5 }] },
@@ -1527,7 +1527,7 @@
       tags: ["limit-vs-value", "factoring", "removable"],
       hints: ["極限只看 x ≠ 2 的地方，那裡可以先化簡分式。", "函數值 f(2) 直接看題目另外給的那一行。"],
       solution: "x ≠ 2 時 f(x) = x + 2 → 4，所以極限是 4；f(2) = 1。差是 4 − 1 = 3。",
-      solutionSteps: ["x ≠ 2：(x² − 4)/(x − 2) = x + 2，所以 lim_{x→2} f(x) = 4。", "題目規定 f(2) = 1。", "4 − 1 = 3。"],
+      
       verify: { m: "let", f: "p-1", with: { p: L("\\frac{x^2-4}{x-2}", 2) } } },
     { id: "cg-1a-005", topic: "limits", rank: 1, answerKind: "numeric",
       prompt: "\\text{下表是 }h(x)=\\frac{\\sqrt{x+3}-2}{x-1}\\text{ 的值：}\\ h(0.9)\\approx 0.25158,\\ h(0.99)\\approx 0.25016,\\ h(0.999)\\approx 0.25002,\\ h(1.001)\\approx 0.24998,\\ h(1.01)\\approx 0.24984,\\ h(1.1)\\approx 0.24846\\quad\\text{由表推測 }\\lim_{x\\to 1}h(x)",
@@ -1535,29 +1535,27 @@
       tags: ["limit-table-estimate", "limit-from-table"],
       hints: ["左邊三個數（x < 1）往哪個數靠？右邊三個呢？", "兩邊靠向同一個數，那就是極限的猜測值。"],
       solution: "左側 0.25158、0.25016、0.25002 往下靠，右側 0.24846、0.24984、0.24998 往上靠，兩邊夾向 0.25 = 1/4。",
-      solutionSteps: ["x → 1⁻：0.25158 → 0.25016 → 0.25002，越來越接近 0.25。", "x → 1⁺：0.24846 → 0.24984 → 0.24998，也接近 0.25。", "兩側一致，推測 lim_{x→1} h(x) = 0.25 = 1/4。"],
+      
       verify: L("\\frac{\\sqrt{x+3}-2}{x-1}", 1) },
     { id: "cg-1a-006", topic: "limits", rank: 1, answerKind: "numeric",
       prompt: "\\lim_{x\\to 5^+}\\frac{|x-5|}{x-5}",
       answer: "1", timeLimit: 30,
       tags: ["one-sided-abs", "one-sided-limit"],
       hints: ["x 從右邊靠近 5，x − 5 是正還是負？", "正數的絕對值就是它自己。"],
-      solution: "x > 5 時 |x − 5| = x − 5，分式恆等於 1，右極限是 1。",
-      solutionSteps: ["x → 5⁺ 表示 x > 5，x − 5 > 0。", "|x − 5| = x − 5，所以分式 = 1。", "右極限 = 1。"] },
+      solution: "x > 5 時 |x − 5| = x − 5，分式恆等於 1，右極限是 1。"},
     { id: "cg-1a-007", topic: "limits", rank: 1, answerKind: "numeric",
       prompt: "\\lim_{x\\to -2^-}\\frac{2x+4}{|x+2|}",
       answer: "-2", timeLimit: 35,
       tags: ["one-sided-abs", "one-sided-limit"],
       hints: ["x 從左邊靠近 −2，x + 2 是正還是負？", "分子 2x + 4 可以寫成 2(x + 2)。"],
-      solution: "x < −2 時 |x + 2| = −(x + 2)，分式 = 2(x + 2)/(−(x + 2)) = −2，左極限是 −2。",
-      solutionSteps: ["x → −2⁻：x + 2 < 0，所以 |x + 2| = −(x + 2)。", "(2x + 4)/|x + 2| = 2(x + 2)/(−(x + 2)) = −2。", "左極限 = −2。"] },
+      solution: "x < −2 時 |x + 2| = −(x + 2)，分式 = 2(x + 2)/(−(x + 2)) = −2，左極限是 −2。"},
     { id: "cg-1a-008", topic: "limits", rank: 1, answerKind: "numeric",
       prompt: "\\text{設 }f(x)=x^2+1\\ (x<1)\\text{、}f(x)=4-x\\ (x\\ge 1)\\text{。求 }\\lim_{x\\to 1^-}f(x)",
       answer: "2", timeLimit: 35,
       tags: ["one-sided-piecewise", "piecewise", "one-sided-limit"],
       hints: ["左極限只用 x < 1 那一段的式子。", "把 x = 1 代進那一段。"],
       solution: "x → 1⁻ 用 x < 1 的那段 x² + 1，代入得 2。（右段 4 − x 給的是右極限 3。）",
-      solutionSteps: ["x → 1⁻：x < 1，f(x) = x² + 1。", "x² + 1 是多項式，代 x = 1 得 2。", "lim_{x→1⁻} f(x) = 2。"],
+      
       verify: L("x^2+1", 1, "-") },
     { id: "cg-1a-009", topic: "limits", rank: 1, answerKind: "numeric",
       prompt: "\\text{設 }f(x)=3x-1\\ (x\\le 2)\\text{、}f(x)=x^2+2\\ (x>2)\\text{。求 }\\lim_{x\\to 2^+}f(x)",
@@ -1565,22 +1563,21 @@
       tags: ["one-sided-piecewise", "piecewise", "one-sided-limit"],
       hints: ["右極限看 x > 2，用哪一段？", "把 x = 2 代進那一段的式子。"],
       solution: "x → 2⁺ 用 x > 2 那段 x² + 2，代入得 6。（左段 3x − 1 給左極限 5。）",
-      solutionSteps: ["x → 2⁺：x > 2，f(x) = x² + 2。", "代 x = 2：4 + 2 = 6。", "lim_{x→2⁺} f(x) = 6。"],
+      
       verify: L("x^2+2", 2, "+") },
     { id: "cg-1a-010", topic: "limits", rank: 1, answerKind: "numeric",
       prompt: "\\lim_{x\\to 4^+}\\left(2+\\sqrt{x-4}\\right)",
       answer: "2", timeLimit: 30,
       tags: ["one-sided-domain-edge", "one-sided-limit", "domain"],
       hints: ["√(x − 4) 只在 x ≥ 4 有定義，所以只能從右邊靠近。", "x → 4⁺ 時 x − 4 → 0⁺。"],
-      solution: "x → 4⁺ 時 x − 4 → 0⁺，√(x − 4) → 0，所以極限是 2 + 0 = 2。",
-      solutionSteps: ["定義域是 x ≥ 4，只談右極限。", "x → 4⁺：√(x − 4) → √0 = 0。", "極限 = 2 + 0 = 2。"] },
+      solution: "x → 4⁺ 時 x − 4 → 0⁺，√(x − 4) → 0，所以極限是 2 + 0 = 2。"},
     { id: "cg-1a-011", topic: "limits", rank: 1, answerKind: "numeric",
       prompt: "\\text{設 }f(x)=x+k\\ (x<2)\\text{、}f(x)=x^2\\ (x>2)\\text{（}f(2)\\text{ 沒有定義）。若 }\\lim_{x\\to 2}f(x)\\text{ 存在，求 }k",
       answer: "2", timeLimit: 45,
       tags: ["limit-exist-piecewise-param", "piecewise", "one-sided-limit"],
       hints: ["雙側極限存在 ⟺ 左極限 = 右極限。", "左極限用 x + k，右極限用 x²，各自代 x = 2。"],
       solution: "左極限 2 + k，右極限 4。要相等：2 + k = 4，k = 2。f(2) 沒定義不影響極限存在。",
-      solutionSteps: ["左極限：x → 2⁻，x + k → 2 + k。", "右極限：x → 2⁺，x² → 4。", "極限存在要 2 + k = 4，k = 2。"],
+      
       verify: { m: "let", f: "p-2", with: { p: L("x^2", 2, "+") } } },
     { id: "cg-1a-012", topic: "limits", rank: 2, answerKind: "numeric",
       prompt: "\\text{設 }f(x)=ax+3\\ (x<1)\\text{、}f(x)=\\frac{x^2+2x-3}{x-1}\\ (x>1)\\text{、}f(1)=0\\text{。若 }\\lim_{x\\to 1}f(x)\\text{ 存在，求 }a",
@@ -1588,7 +1585,7 @@
       tags: ["limit-exist-piecewise-param", "piecewise", "factoring"],
       hints: ["右邊那段代 x = 1 是 0/0，先因式分解約掉 x − 1。", "極限存在只要左右極限相等，f(1) 是多少不用管。"],
       solution: "右段 (x + 3)(x − 1)/(x − 1) = x + 3 → 4；左段 → a + 3。a + 3 = 4，a = 1。",
-      solutionSteps: ["右極限：x² + 2x − 3 = (x + 3)(x − 1)，約分後 x + 3 → 4。", "左極限：ax + 3 → a + 3。", "左 = 右：a + 3 = 4，a = 1（f(1) = 0 跟極限無關）。"],
+      
       verify: { m: "let", f: "p-3", with: { p: L("\\frac{x^2+2x-3}{x-1}", 1, "+") } } },
     { id: "cg-1a-013", topic: "limits", rank: 1, answerKind: "numeric",
       prompt: "\\text{設 }f(x)=5-x^2\\ (x\\neq 1)\\text{、}f(1)=7\\text{。求 }\\lim_{x\\to 1}f(x)",
@@ -1596,7 +1593,7 @@
       tags: ["limit-exist-ignore-value", "direct-substitution"],
       hints: ["極限只看 x ≠ 1 的地方。", "x ≠ 1 時 f(x) 是哪個式子？"],
       solution: "x ≠ 1 時 f(x) = 5 − x² → 4。f(1) = 7 是另外規定的，不影響極限。",
-      solutionSteps: ["x → 1（x ≠ 1）：f(x) = 5 − x²。", "5 − x² → 5 − 1 = 4。", "lim_{x→1} f(x) = 4（不是 7）。"],
+      
       verify: L("5-x^2", 1) },
     { id: "cg-1a-014", topic: "limits", rank: 1, answerKind: "numeric",
       prompt: "\\text{設 }g(x)=\\sqrt{x+5}\\ (x\\neq 4)\\text{、}g(4)=0\\text{。求 }\\lim_{x\\to 4}g(x)",
@@ -1604,7 +1601,7 @@
       tags: ["limit-exist-ignore-value", "direct-substitution", "radical"],
       hints: ["g(4) = 0 是特別規定的那一點，極限不看它。", "靠近 4 的時候用 √(x + 5)。"],
       solution: "x ≠ 4 時 g(x) = √(x + 5) → √9 = 3；g(4) = 0 不影響極限。",
-      solutionSteps: ["x → 4（x ≠ 4）：g(x) = √(x + 5)。", "√(x + 5) → √9 = 3。", "lim_{x→4} g(x) = 3。"],
+      
       verify: L("\\sqrt{x+5}", 4) },
     { id: "cg-1a-015", topic: "limits", rank: 1, answerKind: "text",
       prompt: "\\text{如圖：}f(x)=\\frac{1}{x-2}\\text{，虛線是 }x=2\\text{。求 }\\lim_{x\\to 2^-}f(x)",
@@ -1615,7 +1612,7 @@
       tags: ["limit-graph-asymptote", "graph-reading", "asymptote"],
       hints: ["看虛線左邊那一支，越靠近虛線時曲線往上還是往下？", "x 比 2 小一點點時，x − 2 是很小的負數。"],
       solution: "左支貼著虛線往下衝：x → 2⁻ 時 x − 2 → 0⁻，1/(x − 2) → −∞。",
-      solutionSteps: ["只看 x < 2 的那一支。", "x → 2⁻：分母 x − 2 是越來越小的負數。", "1 除以很小的負數 → −∞。"],
+      
       verify: { m: "choice", options: [
         { say: "−∞", all: toMinus("\\frac{1}{x-2}", 2, "-") },
         { say: "+∞", all: toPlus("\\frac{1}{x-2}", 2, "-") },
@@ -1631,7 +1628,7 @@
       tags: ["limit-graph-asymptote", "graph-reading", "asymptote"],
       hints: ["虛線兩邊的兩支各往哪個方向衝？", "(x + 1)² 不管 x 在 −1 的哪一邊都是正的。"],
       solution: "兩支都貼著虛線往下衝：(x + 1)² → 0⁺，−1/(x + 1)² → −∞，左右一致，所以雙側極限是 −∞。",
-      solutionSteps: ["x → −1⁻ 與 x → −1⁺：(x + 1)² 都是很小的正數。", "−1/(很小的正數) → −∞，兩側一樣。", "lim_{x→−1} f(x) = −∞。"],
+      
       verify: { m: "choice", options: [
         { say: "−∞", all: [...toMinus("-\\frac{1}{(x+1)^2}", -1, "-"), ...toMinus("-\\frac{1}{(x+1)^2}", -1, "+")] },
         { say: "+∞", all: toPlus("-\\frac{1}{(x+1)^2}", -1, "+") },
@@ -1647,7 +1644,7 @@
       tags: ["limit-table-trap", "limit-from-table", "oscillation"],
       hints: ["0.1、0.01、0.001 都是 1/(偶數)，cos(偶數·π) 當然是 1。", "換 x = 1/(奇數) 試試看。"],
       solution: "取樣點全是 1/(2k)，剛好都落在 cos 的波峰。換成 x = 1/(2k + 1) 得 cos((2k + 1)π) = −1。x → 0⁺ 時值在 1 與 −1 之間來回，極限不存在。",
-      solutionSteps: ["x = 1/(2k)：cos(2kπ) = 1——表格只挑到這種點。", "x = 1/(2k + 1)：cos((2k + 1)π) = −1，例如 f(1/101) = −1。", "越靠近 0 兩種點都有，值不會固定靠向一個數：極限不存在。"],
+      
       verify: { m: "choice", options: [
         { say: "極限不存在：x = 1/101、1/1001 這種點的值是 −1", all: [
           { v: { m: "let", f: "|p-q|", with: { p: V("\\cos(100\\pi)"), q: V("\\cos(101\\pi)") } }, gt: 1 },
@@ -1666,7 +1663,7 @@
       tags: ["limit-graph-jump", "graph-reading", "one-sided-limit"],
       hints: ["左極限沿左段走到 x = 2，右極限沿右段走到 x = 2。", "f(2) 看實心點；左右不相等時雙側極限不存在。"],
       solution: "左段走到空心 (2, 1)：左極限 1；右段從 (2, 3) 出發：右極限 3。1 ≠ 3，雙側極限不存在；實心點給 f(2) = 3。",
-      solutionSteps: ["左極限：沿 (0,0)→(2,1)，得 1。", "右極限：沿 (2,3)→(4,2)，得 3。", "1 ≠ 3 ⟹ lim_{x→2} f(x) 不存在；實心點 f(2) = 3。"],
+      
       verify: { m: "choice", options: [
         { say: "左極限 1、右極限 3、雙側極限不存在、f(2) = 3", all: [
           { v: { m: "graphLimit", pts: [[0, 0], [2, 1]], at: 2, side: "left" }, eq: 1 },
@@ -1687,22 +1684,20 @@
       answer: "5/3", timeLimit: 30,
       tags: ["limit-direct-rational", "direct-substitution", "rational-limit"],
       hints: ["先看分母代 x = −1 會不會是 0。", "分母不是 0，有理函數就可以直接代入。"],
-      solution: "分母 −1 + 4 = 3 ≠ 0，直接代入：(2 + 3)/3 = 5/3。",
-      solutionSteps: ["分母在 x = −1 是 3，不為 0。", "代入：(2·1 + 3)/3 = 5/3。"] },
+      solution: "分母 −1 + 4 = 3 ≠ 0，直接代入：(2 + 3)/3 = 5/3。"},
     { id: "cg-1b-002", topic: "limits", rank: 1, answerKind: "numeric",
       prompt: "\\lim_{x\\to 4}\\left(\\sqrt{x}+\\frac{x}{x-2}\\right)",
       answer: "4", timeLimit: 30,
       tags: ["limit-direct-rational", "direct-substitution", "radical"],
       hints: ["√x 在 x = 4 有定義，分母 x − 2 在 x = 4 不是 0。", "兩項分別代入再相加。"],
-      solution: "√4 = 2，4/(4 − 2) = 2，直接代入得 2 + 2 = 4。",
-      solutionSteps: ["√x 在 x = 4 連續：→ 2。", "x/(x − 2) 分母 2 ≠ 0：→ 4/2 = 2。", "和的極限 = 2 + 2 = 4。"] },
+      solution: "√4 = 2，4/(4 − 2) = 2，直接代入得 2 + 2 = 4。"},
     { id: "cg-1b-003", topic: "limits", rank: 1, answerKind: "numeric",
       prompt: "\\text{已知 }\\lim_{x\\to 1}f(x)=3\\text{、}\\lim_{x\\to 1}g(x)=-2\\text{。求 }\\lim_{x\\to 1}\\left[2f(x)-g(x)^2\\right]",
       answer: "2", timeLimit: 35,
       tags: ["limit-laws-combine", "direct-substitution"],
       hints: ["常數倍、差、乘積的極限可以拆開算。", "g(x)² 的極限是 (lim g)²。"],
       solution: "2·3 − (−2)² = 6 − 4 = 2。",
-      solutionSteps: ["lim 2f(x) = 2·3 = 6。", "lim g(x)² = (−2)² = 4。", "相減：6 − 4 = 2。"],
+      
       verify: L("2(x+2)-(x^2-2x-1)^2", 1) },
     { id: "cg-1b-004", topic: "limits", rank: 1, answerKind: "numeric",
       prompt: "\\text{已知 }\\lim_{x\\to 2}f(x)=4\\text{、}\\lim_{x\\to 2}g(x)=-1\\text{。求 }\\lim_{x\\to 2}\\frac{\\sqrt{f(x)}+g(x)}{f(x)+g(x)}",
@@ -1710,7 +1705,7 @@
       tags: ["limit-laws-combine", "direct-substitution"],
       hints: ["商的極限 = 極限的商，前提是分母的極限不是 0。", "√f 的極限是 √(lim f)。"],
       solution: "分子 → √4 + (−1) = 1，分母 → 4 + (−1) = 3 ≠ 0，所以極限是 1/3。",
-      solutionSteps: ["分子：√4 − 1 = 1。", "分母：4 − 1 = 3，不為 0，可以用商的定律。", "極限 = 1/3。"],
+      
       verify: L("\\frac{\\sqrt{x+2}+(1-x)}{(x+2)+(1-x)}", 2) },
     { id: "cg-1b-005", topic: "limits", rank: 1, answerKind: "text",
       prompt: "\\text{下列三個極限，哪一個可以直接把 }x=2\\text{ 代進去求值？}",
@@ -1721,7 +1716,7 @@
       tags: ["limit-direct-check-form", "direct-substitution", "rational-limit"],
       hints: ["有理函數能直接代入，條件是分母代進去不是 0。", "三個分母各代 x = 2 看看。"],
       solution: "(x² − 4)/(x − 2) 代入是 0/0、(x + 1)/(x − 2) 是 3/0，都不能直接代；(x + 2)/(x² + 1) 分母 5 ≠ 0，可以直接代入得 4/5。",
-      solutionSteps: ["(x² − 4)/(x − 2)：分母 0、分子 0，0/0 要先化簡。", "(x + 1)/(x − 2)：分母 0、分子 3，k/0 型。", "(x + 2)/(x² + 1)：分母 5 ≠ 0，直接代入 = 4/5。"],
+      
       verify: { m: "choice", options: [
         { say: "lim_{x→2} (x + 2)/(x² + 1)", all: [{ v: V("2^2+1"), ne: 0 }, { v: L("\\frac{x+2}{x^2+1}", 2), eq: V("\\frac{2+2}{2^2+1}") }] },
         { say: "lim_{x→2} (x² − 4)/(x − 2)", all: [{ v: V("2-2"), ne: 0 }] },
@@ -1736,7 +1731,7 @@
       tags: ["limit-direct-check-form", "direct-substitution", "rational-limit"],
       hints: ["分子、分母各自代 x = −1。", "分母是 0 的時候，再看分子是不是 0。"],
       solution: "分子 −1 + 3 = 2，分母 1 − 1 = 0：k/0 型。不能直接代入，也不是約分就能處理的 0/0。",
-      solutionSteps: ["分子：−1 + 3 = 2 ≠ 0。", "分母：(−1)² − 1 = 0。", "非零 ÷ 0：k/0 型（極限會是 ±∞ 或不存在）。"],
+      
       verify: { m: "choice", options: [
         { say: "k/0 型（分子不是 0、分母是 0）", all: [{ v: V("-1+3"), ne: 0 }, { v: V("(-1)^2-1"), eq: 0 }] },
         { say: "0/0 型（要先化簡）", all: [{ v: V("-1+3"), eq: 0 }, { v: V("(-1)^2-1"), eq: 0 }] },
@@ -1747,36 +1742,32 @@
       answer: "-1/3", timeLimit: 45,
       tags: ["factor-trinomial", "factoring", "rational-limit"],
       hints: ["代入是 0/0，分子分母都有因式 (x − 2)。", "x² − 5x + 6 與 x² − x − 2 各拆成兩個一次式。"],
-      solution: "(x − 2)(x − 3)/((x − 2)(x + 1)) = (x − 3)/(x + 1) → −1/3。",
-      solutionSteps: ["x² − 5x + 6 = (x − 2)(x − 3)，x² − x − 2 = (x − 2)(x + 1)。", "約掉 x − 2：(x − 3)/(x + 1)。", "代 x = 2：−1/3。"] },
+      solution: "(x − 2)(x − 3)/((x − 2)(x + 1)) = (x − 3)/(x + 1) → −1/3。"},
     { id: "cg-1b-008", topic: "limits", rank: 1, answerKind: "numeric",
       prompt: "\\lim_{x\\to -4}\\frac{x^2+7x+12}{x+4}",
       answer: "-1", timeLimit: 35,
       tags: ["factor-trinomial", "factoring", "rational-limit"],
       hints: ["找兩個數，相乘 12、相加 7。", "約掉 x + 4 之後再代入。"],
-      solution: "x² + 7x + 12 = (x + 3)(x + 4)，約分後 x + 3 → −1。",
-      solutionSteps: ["十字交乘：x² + 7x + 12 = (x + 3)(x + 4)。", "約掉 x + 4，剩 x + 3。", "代 x = −4：−1。"] },
+      solution: "x² + 7x + 12 = (x + 3)(x + 4)，約分後 x + 3 → −1。"},
     { id: "cg-1b-009", topic: "limits", rank: 2, answerKind: "numeric",
       prompt: "\\lim_{x\\to 1}\\frac{x^3-3x+2}{(x-1)^2}",
       answer: "3", timeLimit: 60,
       tags: ["factor-repeated-root", "factoring", "rational-limit"],
       hints: ["分子在 x = 1 是 0，先除以 (x − 1)。", "除完的商在 x = 1 還是 0，再除一次。"],
-      solution: "x³ − 3x + 2 = (x − 1)(x² + x − 2) = (x − 1)²(x + 2)，約掉 (x − 1)² 得 x + 2 → 3。",
-      solutionSteps: ["x³ − 3x + 2 = (x − 1)(x² + x − 2)。", "x² + x − 2 = (x − 1)(x + 2)，所以分子 = (x − 1)²(x + 2)。", "約分後 x + 2 → 3。"] },
+      solution: "x³ − 3x + 2 = (x − 1)(x² + x − 2) = (x − 1)²(x + 2)，約掉 (x − 1)² 得 x + 2 → 3。"},
     { id: "cg-1b-010", topic: "limits", rank: 2, answerKind: "numeric",
       prompt: "\\lim_{x\\to 2}\\frac{x^3-3x^2+4}{x^3-4x^2+4x}",
       answer: "3/2", timeLimit: 70,
       tags: ["factor-repeated-root", "factoring", "rational-limit"],
       hints: ["分母先提 x，剩下的是完全平方。", "分子用 x = 2 是根做除法，商還會再有一個 x = 2 的根。"],
-      solution: "分子 = (x − 2)²(x + 1)，分母 = x(x − 2)²，約分後 (x + 1)/x → 3/2。",
-      solutionSteps: ["分母：x³ − 4x² + 4x = x(x − 2)²。", "分子：x³ − 3x² + 4 = (x − 2)(x² − x − 2) = (x − 2)²(x + 1)。", "約掉 (x − 2)²：(x + 1)/x → 3/2。"] },
+      solution: "分子 = (x − 2)²(x + 1)，分母 = x(x − 2)²，約分後 (x + 1)/x → 3/2。"},
     { id: "cg-1b-011", topic: "limits", rank: 2, answerKind: "numeric",
       prompt: "\\lim_{x\\to 2}\\frac{x^2-4}{x^2-4x+4}",
       answer: "dne", timeLimit: 60,
       tags: ["factor-after-cancel-check", "factoring", "dne"],
       hints: ["約掉一個 x − 2 之後，再代一次 x = 2 看看是什麼型。", "k/0 的時候，左右兩邊的正負號要分開看。"],
       solution: "約分後 (x + 2)/(x − 2)：代入是 4/0。x → 2⁺ 時 → +∞，x → 2⁻ 時 → −∞，極限不存在（答 dne）。",
-      solutionSteps: ["(x² − 4)/(x − 2)² = (x + 2)/(x − 2)。", "代 x = 2：4/0，不是 0/0，不能再約。", "右側 → +∞、左側 → −∞，兩側不同：極限不存在。"],
+      
       verify: { m: "choice", options: [
         { say: "dne", all: [...toMinus("\\frac{x^2-4}{(x-2)^2}", 2, "-"), ...toPlus("\\frac{x^2-4}{(x-2)^2}", 2, "+")] },
         { say: "1", all: [{ v: V("\\frac{(2+10^{-6})^2-4}{(10^{-6})^2}"), eq: 1 }] }
@@ -1786,36 +1777,31 @@
       answer: "-2/9", timeLimit: 45,
       tags: ["algebra-complex-fraction", "rational-limit"],
       hints: ["先把分子 2/x − 2/3 通分成一個分式。", "通分後分子會出現 3 − x，跟分母的 x − 3 只差一個負號。"],
-      solution: "2/x − 2/3 = 2(3 − x)/(3x)，除以 x − 3 得 −2/(3x) → −2/9。",
-      solutionSteps: ["2/x − 2/3 = (6 − 2x)/(3x) = −2(x − 3)/(3x)。", "除以 (x − 3)：−2/(3x)。", "代 x = 3：−2/9。"] },
+      solution: "2/x − 2/3 = 2(3 − x)/(3x)，除以 x − 3 得 −2/(3x) → −2/9。"},
     { id: "cg-1b-013", topic: "limits", rank: 2, answerKind: "numeric",
       prompt: "\\lim_{x\\to 1}\\frac{\\frac{3}{x+2}-1}{x-1}",
       answer: "-1/3", timeLimit: 50,
       tags: ["algebra-complex-fraction", "rational-limit"],
       hints: ["把 1 寫成 (x + 2)/(x + 2) 再相減。", "分子化簡後會出現 1 − x。"],
-      solution: "3/(x + 2) − 1 = (1 − x)/(x + 2)，除以 x − 1 得 −1/(x + 2) → −1/3。",
-      solutionSteps: ["3/(x + 2) − 1 = (3 − x − 2)/(x + 2) = (1 − x)/(x + 2)。", "除以 (x − 1)：−1/(x + 2)。", "代 x = 1：−1/3。"] },
+      solution: "3/(x + 2) − 1 = (1 − x)/(x + 2)，除以 x − 1 得 −1/(x + 2) → −1/3。"},
     { id: "cg-1b-014", topic: "limits", rank: 2, answerKind: "numeric",
       prompt: "\\lim_{x\\to 2}\\left(\\frac{1}{x-2}-\\frac{4}{x^2-4}\\right)",
       answer: "1/4", timeLimit: 55,
       tags: ["algebra-common-denominator", "rational-limit", "factoring"],
       hints: ["兩項各自都會爆掉（∞ − ∞），先通分。", "公分母取 x² − 4 = (x − 2)(x + 2)。"],
-      solution: "通分：(x + 2 − 4)/(x² − 4) = (x − 2)/((x − 2)(x + 2)) = 1/(x + 2) → 1/4。",
-      solutionSteps: ["1/(x − 2) = (x + 2)/(x² − 4)。", "相減：(x + 2 − 4)/(x² − 4) = (x − 2)/((x − 2)(x + 2))。", "約分得 1/(x + 2) → 1/4。"] },
+      solution: "通分：(x + 2 − 4)/(x² − 4) = (x − 2)/((x − 2)(x + 2)) = 1/(x + 2) → 1/4。"},
     { id: "cg-1b-015", topic: "limits", rank: 2, answerKind: "numeric",
       prompt: "\\lim_{x\\to 0}\\left(\\frac{1}{x}-\\frac{1}{x^2+x}\\right)",
       answer: "1", timeLimit: 50,
       tags: ["algebra-common-denominator", "rational-limit", "factoring"],
       hints: ["x² + x = x(x + 1)，公分母就用它。", "通分後分子會剩一個 x，可以約。"],
-      solution: "通分：((x + 1) − 1)/(x(x + 1)) = x/(x(x + 1)) = 1/(x + 1) → 1。",
-      solutionSteps: ["1/x = (x + 1)/(x(x + 1))。", "相減：(x + 1 − 1)/(x(x + 1)) = x/(x(x + 1))。", "約分得 1/(x + 1) → 1。"] },
+      solution: "通分：((x + 1) − 1)/(x(x + 1)) = x/(x(x + 1)) = 1/(x + 1) → 1。"},
     { id: "cg-1b-016", topic: "limits", rank: 1, answerKind: "numeric",
       prompt: "\\lim_{h\\to 0}\\frac{(h-2)^2-4}{h}",
       answer: "-4", timeLimit: 40,
       tags: ["algebra-expand", "rational-limit"],
       hints: ["先把 (h − 2)² 展開。", "展開後 4 會消掉，剩下的每一項都有 h。"],
-      solution: "(h − 2)² − 4 = h² − 4h，除以 h 得 h − 4 → −4。",
-      solutionSteps: ["(h − 2)² = h² − 4h + 4，減 4 得 h² − 4h。", "除以 h：h − 4（h ≠ 0）。", "h → 0：−4。"] },
+      solution: "(h − 2)² − 4 = h² − 4h，除以 h 得 h − 4 → −4。"},
 
     /* ── 1C 標準極限：e 型 ── */
     { id: "cg-1c-001", topic: "limits", rank: 1, answerKind: "numeric",
@@ -1824,15 +1810,14 @@
       tags: ["e-type-zero-form", "exponential-limit", "standard-limit"],
       hints: ["基本形是 (1 + u)^{1/u} → e（u → 0）。", "令 u = 3x，指數 1/x 要寫成 (1/u)·3。"],
       solution: "(1 + 3x)^{1/x} = [(1 + 3x)^{1/(3x)}]³ → e³。",
-      solutionSteps: ["令 u = 3x，x → 0 時 u → 0。", "(1 + 3x)^{1/x} = [(1 + u)^{1/u}]³。", "→ e³。"],
+      
       verify: L("(1+3x)^{1/x}", 0) },
     { id: "cg-1c-002", topic: "limits", rank: 2, answerKind: "numeric",
       prompt: "\\lim_{x\\to 0}(1-2x)^{1/(3x)}",
       answer: "e^(-2/3)", timeLimit: 55,
       tags: ["e-type-zero-form", "exponential-limit", "standard-limit"],
       hints: ["令 u = −2x，看指數 1/(3x) 要寫成 (1/u) 乘上多少。", "或者取 ln：ln(1 − 2x)/(3x)，用 ln(1 + u) ≈ u。"],
-      solution: "1/(3x) = (1/(−2x))·(−2/3)，所以極限 = e^{−2/3}。",
-      solutionSteps: ["令 u = −2x：(1 − 2x)^{1/(3x)} = [(1 + u)^{1/u}]^{−2/3}。", "(1 + u)^{1/u} → e。", "極限 = e^{−2/3} ≈ 0.5134。"] },
+      solution: "1/(3x) = (1/(−2x))·(−2/3)，所以極限 = e^{−2/3}。"},
 
     /* ── 1D 無窮與夾擠 ── */
     { id: "cg-1d-001", topic: "limits", rank: 1, answerKind: "numeric",
@@ -1841,7 +1826,7 @@
       tags: ["infinity-rational-degree-compare", "rational-limit", "infinity-limit"],
       hints: ["比較分子、分母的最高次數。", "上下同除以 x²。"],
       solution: "分子 1 次、分母 2 次，同除 x²：(3/x + 7/x²)/(1 − 5/x²) → 0/1 = 0。",
-      solutionSteps: ["同除 x²：(3/x + 7/x²)/(1 − 5/x²)。", "x → ∞：分子 → 0，分母 → 1。", "極限 = 0（分母次數較高）。"],
+      
       // 極限是 0 的時候相對誤差比不了：改驗 x·f(x) → 3（≠ 0），f 跟 3/x 同階，所以 f → 0
       verify: { m: "choice", options: [
         { say: "0", all: [{ v: L("x\\cdot\\frac{3x+7}{x^2-5}", "inf"), eq: 3 }] }
@@ -1854,7 +1839,7 @@
       tags: ["infinity-rational-degree-compare", "rational-limit", "infinity-limit"],
       hints: ["分子 3 次、分母 2 次，誰長得快？", "看最高次項：2x³/(−x²) 的正負號。"],
       solution: "最高次項 2x³/(−x²) = −2x，x → ∞ 時 → −∞。",
-      solutionSteps: ["分子次數 3 > 分母次數 2，極限是 ±∞。", "主導項：2x³/(−x²) = −2x。", "x → ∞：−2x → −∞。"],
+      
       verify: { m: "choice", options: [
         { say: "−∞", all: [{ v: ext("\\frac{2x^3-x}{5-x^2}", "sup", 1e4, 1e5), lt: -1e3 }, { v: ext("\\frac{2x^3-x}{5-x^2}", "sup", 1e6, 1e7), lt: -1e5 }] },
         { say: "+∞", all: [{ v: ext("\\frac{2x^3-x}{5-x^2}", "inf", 1e4, 1e5), gt: 1e3 }] },
@@ -1866,15 +1851,13 @@
       answer: "-2", timeLimit: 55,
       tags: ["infinity-negative-sqrt", "radical", "infinity-limit"],
       hints: ["x → −∞ 時 x 是負的，√(x²) = |x| = −x。", "把根號裡提出 x²，分母提出 x。"],
-      solution: "√(4x² + 1) = |x|√(4 + 1/x²) = −x√(4 + 1/x²)。除以 x + 3 = x(1 + 3/x)：−√(4 + 1/x²)/(1 + 3/x) → −2。",
-      solutionSteps: ["x < 0：√(4x² + 1) = −x·√(4 + 1/x²)。", "分母 x + 3 = x(1 + 3/x)。", "比值 = −√(4 + 1/x²)/(1 + 3/x) → −2。"] },
+      solution: "√(4x² + 1) = |x|√(4 + 1/x²) = −x√(4 + 1/x²)。除以 x + 3 = x(1 + 3/x)：−√(4 + 1/x²)/(1 + 3/x) → −2。"},
     { id: "cg-1d-004", topic: "limits", rank: 2, answerKind: "numeric",
       prompt: "\\lim_{x\\to-\\infty}\\frac{3x-2}{\\sqrt{x^2+5x}}",
       answer: "-3", timeLimit: 55,
       tags: ["infinity-negative-sqrt", "radical", "infinity-limit"],
       hints: ["分子分母同除以 |x|，而 x → −∞ 時 |x| = −x。", "√(x² + 5x)/|x| = √(1 + 5/x)。"],
-      solution: "同除 −x（= |x| > 0）：(−3 + 2/x)/√(1 + 5/x) → −3。",
-      solutionSteps: ["x < 0：√(x² + 5x) = −x·√(1 + 5/x)。", "比值 = (3x − 2)/(−x√(1 + 5/x)) = (−3 + 2/x)/√(1 + 5/x)。", "x → −∞：→ −3/1 = −3。"] },
+      solution: "同除 −x（= |x| > 0）：(−3 + 2/x)/√(1 + 5/x) → −3。"},
     { id: "cg-1d-005", topic: "limits", rank: 1, answerKind: "text",
       prompt: "\\lim_{x\\to 3^+}\\frac{x+1}{x-3}",
       answers: PLUS, canonical: "+∞",
@@ -1883,7 +1866,7 @@
       tags: ["infinite-limit-sign", "infinity-limit", "one-sided-limit"],
       hints: ["代入是 4/0，極限會是 ±∞，要判斷正負號。", "x 比 3 大一點，分子、分母各是正還是負？"],
       solution: "x → 3⁺：分子 → 4 > 0，分母 x − 3 是很小的正數，比值 → +∞。",
-      solutionSteps: ["分子 → 4（正）。", "x → 3⁺：分母 x − 3 → 0⁺（正）。", "正 ÷ 很小的正數 → +∞。"],
+      
       verify: { m: "choice", options: [
         { say: "+∞", all: toPlus("\\frac{x+1}{x-3}", 3, "+") },
         { say: "−∞", all: toMinus("\\frac{x+1}{x-3}", 3, "+") },
@@ -1898,7 +1881,7 @@
       tags: ["infinite-limit-sign", "infinity-limit", "one-sided-limit"],
       hints: ["分子靠近 −2，是負的。", "x 比 −2 小一點，x + 2 是正還是負？"],
       solution: "x → −2⁻：分子 → −2 < 0，分母 x + 2 → 0⁻（負），負 ÷ 負 → +∞。",
-      solutionSteps: ["分子 → −2（負）。", "x → −2⁻：x + 2 是很小的負數。", "負 ÷ 很小的負數 → +∞。"],
+      
       verify: { m: "choice", options: [
         { say: "+∞", all: toPlus("\\frac{x}{x+2}", -2, "-") },
         { say: "−∞", all: toMinus("\\frac{x}{x+2}", -2, "-") },
@@ -1913,7 +1896,7 @@
       tags: ["infinite-limit-sign", "infinity-limit", "one-sided-limit"],
       hints: ["分子代 x = 1 是多少？正還是負？", "x → 1⁺ 時分母是很小的正數。"],
       solution: "x → 1⁺：分子 → −1 < 0，分母 → 0⁺，負 ÷ 很小的正數 → −∞。",
-      solutionSteps: ["分子 → 2 − 3 = −1（負）。", "x → 1⁺：x − 1 → 0⁺。", "−1 ÷ 很小的正數 → −∞。"],
+      
       verify: { m: "choice", options: [
         { say: "−∞", all: toMinus("\\frac{2-3x}{x-1}", 1, "+") },
         { say: "+∞", all: toPlus("\\frac{2-3x}{x-1}", 1, "+") },
@@ -1928,7 +1911,7 @@
       tags: ["infinite-limit-k-over-zero", "infinity-limit", "asymptote"],
       hints: ["雙側極限：左右兩邊都要看。", "(x − 1)² 在 x = 1 兩側都是正的。"],
       solution: "兩側 (x − 1)² 都 → 0⁺，3/(x − 1)² 都 → +∞，左右一致，極限是 +∞。",
-      solutionSteps: ["x → 1⁻ 與 x → 1⁺：(x − 1)² 都是很小的正數。", "3 ÷ 很小的正數 → +∞，兩側相同。", "lim_{x→1} 3/(x − 1)² = +∞。"],
+      
       verify: { m: "choice", options: [
         { say: "+∞", all: [...toPlus("\\frac{3}{(x-1)^2}", 1, "-"), ...toPlus("\\frac{3}{(x-1)^2}", 1, "+")] },
         { say: "−∞", all: toMinus("\\frac{3}{(x-1)^2}", 1, "+") },
@@ -1944,7 +1927,7 @@
       tags: ["infinite-limit-k-over-zero", "infinity-limit", "one-sided-limit"],
       hints: ["代入是 1/0，左右兩邊分開判斷正負號。", "分子靠近 1（正），分母 x + 1 在 −1 的左邊、右邊各是什麼號？"],
       solution: "分子 → 1 > 0。x → −1⁻ 時分母 → 0⁻，比值 → −∞；x → −1⁺ 時分母 → 0⁺，比值 → +∞。兩側不同，雙側極限不存在（連 ±∞ 都不是）。",
-      solutionSteps: ["分子 → −1 + 2 = 1（正）。", "左側：x + 1 → 0⁻，比值 → −∞；右側：x + 1 → 0⁺，比值 → +∞。", "兩側不同 ⟹ 極限不存在。"],
+      
       verify: { m: "choice", options: [
         { say: "不存在：左側 −∞、右側 +∞", all: [...toMinus("\\frac{x+2}{x+1}", -1, "-"), ...toPlus("\\frac{x+2}{x+1}", -1, "+")] },
         { say: "+∞", all: toPlus("\\frac{x+2}{x+1}", -1, "-") },
@@ -1962,7 +1945,7 @@
       tags: ["continuity-three-conditions", "continuity", "piecewise"],
       hints: ["連續要三件事：f(1) 有定義、極限存在、兩者相等。", "左極限用 x² + 1，右極限與 f(1) 用 3x − 1。"],
       solution: "f(1) = 3 − 1 = 2；左極限 1 + 1 = 2；右極限 3 − 1 = 2。三者相等，連續。",
-      solutionSteps: ["f(1) = 3·1 − 1 = 2（x ≥ 1 那段）。", "左極限：x² + 1 → 2；右極限：3x − 1 → 2，極限存在 = 2。", "lim = f(1) = 2：連續。"],
+      
       verify: { m: "choice", options: [
         { say: "連續", all: [{ v: L("x^2+1", 1, "-"), eq: L("3x-1", 1, "+") }, { v: L("3x-1", 1, "+"), eq: V("3\\cdot 1-1") }] },
         { say: "不連續：左右極限不相等", all: [{ v: L("x^2+1", 1, "-"), ne: L("3x-1", 1, "+") }] },
@@ -1977,7 +1960,7 @@
       tags: ["continuity-three-conditions", "continuity", "removable"],
       hints: ["g(2) 有定義嗎？是多少？", "x ≠ 2 時先約分，再求極限，跟 g(2) 比。"],
       solution: "g(2) = 3 有定義；x ≠ 2 時 g(x) = x + 2 → 4，極限存在。4 ≠ 3，第三條「極限 = 函數值」不成立。",
-      solutionSteps: ["條件一：g(2) = 3，有定義。", "條件二：g(x) = x + 2（x ≠ 2）→ 4，極限存在。", "條件三：4 ≠ 3，不成立 ⟹ 不連續。"],
+      
       verify: { m: "choice", options: [
         { say: "不連續：極限存在但不等於 g(2)", all: [{ v: L("\\frac{x^2-4}{x-2}", 2, "-"), eq: L("\\frac{x^2-4}{x-2}", 2, "+") }, { v: L("\\frac{x^2-4}{x-2}", 2), ne: 3 }] },
         { say: "連續", all: [{ v: L("\\frac{x^2-4}{x-2}", 2), eq: 3 }] },
@@ -1989,15 +1972,13 @@
       answer: "3", timeLimit: 50,
       tags: ["continuity-composition", "continuity", "factoring"],
       hints: ["√ 是連續函數，極限可以穿進根號裡。", "根號裡是 0/0，先因式分解約分。"],
-      solution: "根號裡 (x + 7)(x − 2)/(x − 2) = x + 7 → 9。√ 連續，所以極限 = √9 = 3。",
-      solutionSteps: ["x² + 5x − 14 = (x + 7)(x − 2)，根號裡 → x + 7 → 9。", "√ 在 9 連續：lim √(…) = √(lim …)。", "= √9 = 3。"] },
+      solution: "根號裡 (x + 7)(x − 2)/(x − 2) = x + 7 → 9。√ 連續，所以極限 = √9 = 3。"},
     { id: "cg-1e-004", topic: "limits", rank: 2, answerKind: "numeric",
       prompt: "\\lim_{x\\to 1}\\ln\\left(\\frac{x^3-1}{x-1}\\right)",
       answer: "ln(3)", timeLimit: 50,
       tags: ["continuity-composition", "continuity", "factoring"],
       hints: ["ln 在正數上連續，極限可以穿進 ln 裡。", "x³ − 1 用立方差分解。"],
-      solution: "(x³ − 1)/(x − 1) = x² + x + 1 → 3。ln 在 3 連續，極限 = ln 3。",
-      solutionSteps: ["x³ − 1 = (x − 1)(x² + x + 1)，括號裡 → x² + x + 1 → 3。", "ln 在 3 連續：lim ln(…) = ln(lim …)。", "= ln 3 ≈ 1.0986。"] },
+      solution: "(x³ − 1)/(x − 1) = x² + x + 1 → 3。ln 在 3 連續，極限 = ln 3。"},
     { id: "cg-1e-005", topic: "limits", rank: 1, answerKind: "text",
       prompt: "f(x)=\\frac{x^2+x-6}{x-2}\\text{ 在 }x=2\\text{ 的不連續屬於哪一種？}",
       answers: ["可去", "可去不連續", "removable"],
@@ -2007,7 +1988,7 @@
       tags: ["discontinuity-classify", "removable", "continuity"],
       hints: ["先因式分解分子，看能不能約掉 x − 2。", "約完之後極限存在嗎？"],
       solution: "(x + 3)(x − 2)/(x − 2) = x + 3 → 5，極限存在、只是 f(2) 沒定義，補 f(2) = 5 就連續：可去不連續。",
-      solutionSteps: ["x² + x − 6 = (x + 3)(x − 2)。", "x ≠ 2 時 f(x) = x + 3，極限 = 5 存在。", "極限存在但點上沒定義 ⟹ 可去不連續。"],
+      
       verify: { m: "choice", options: [
         { say: "可去", all: [{ v: L("\\frac{x^2+x-6}{x-2}", 2, "-"), eq: L("\\frac{x^2+x-6}{x-2}", 2, "+") }] },
         { say: "跳躍", all: [{ v: L("\\frac{x^2+x-6}{x-2}", 2, "-"), ne: L("\\frac{x^2+x-6}{x-2}", 2, "+") }] },
@@ -2023,7 +2004,7 @@
       tags: ["discontinuity-classify", "continuity", "asymptote"],
       hints: ["先約分：x² − 1 = (x − 1)(x + 1)。", "約完之後在 x = 1 是 0/0 還是 k/0？"],
       solution: "x ≠ ±1 時 f(x) = 1/(x − 1)；在 x = 1 是 1/0，兩側 → ±∞：無窮不連續（垂直漸近線）。（x = −1 那個才是可去。）",
-      solutionSteps: ["f(x) = (x + 1)/((x − 1)(x + 1)) = 1/(x − 1)（x ≠ −1）。", "x → 1：1/(x − 1) 的分母 → 0，分子是 1。", "|f| → ∞ ⟹ 無窮不連續。"],
+      
       verify: { m: "choice", options: [
         { say: "無窮", all: [{ v: ext("\\left|\\frac{x+1}{x^2-1}\\right|", "inf", 1 + 1e-9, 1 + 1e-5), gt: 1e4 }, { v: ext("\\left|\\frac{x+1}{x^2-1}\\right|", "inf", 1 - 1e-5, 1 - 1e-9), gt: 1e4 }] },
         { say: "可去", all: [{ v: ext("\\left|\\frac{x+1}{x^2-1}\\right|", "sup", 1 + 1e-9, 1 + 1e-5), lt: 1e3 }] },
@@ -2039,7 +2020,7 @@
       tags: ["discontinuity-classify", "continuity", "oscillation"],
       hints: ["x → 1 時 π/(x − 1) 跑到哪裡去？", "sin 在那種時候會一直在 −1 與 1 之間來回。"],
       solution: "x → 1⁺ 時 π/(x − 1) → ∞，sin 在 −1 與 1 之間來回，單側極限都不存在，但函數又有界：振盪不連續。",
-      solutionSteps: ["x = 1 + 2/(4k + 1) 時 f = 1；x = 1 + 2/(4k + 3) 時 f = −1。", "兩種點都可以任意靠近 1，單側極限不存在。", "|f| ≤ 1 不會衝到 ∞ ⟹ 振盪不連續。"],
+      
       verify: { m: "choice", options: [
         { say: "振盪", all: [
           { v: { m: "let", f: "|p-q|", with: { p: V("\\sin\\frac{41\\pi}{2}"), q: V("\\sin\\frac{43\\pi}{2}") } }, gt: 1 },
@@ -2055,8 +2036,7 @@
       answer: "2", timeLimit: 30,
       tags: ["discontinuity-jump", "floor", "one-sided-limit"],
       hints: ["x 比 3 小一點點，例如 2.999，⌊x⌋ 是多少？", "右邊（3.001）是 3，左右不同就是跳躍。"],
-      solution: "x 在 (2, 3) 時 ⌊x⌋ = 2，所以左極限 2；右極限 3。兩者不同，⌊x⌋ 在 x = 3 是跳躍不連續。",
-      solutionSteps: ["2 ≤ x < 3 時 ⌊x⌋ = 2。", "x → 3⁻：⌊x⌋ 恆為 2，左極限 = 2。", "（右極限 3 ≠ 2，所以 x = 3 是跳躍點。）"] },
+      solution: "x 在 (2, 3) 時 ⌊x⌋ = 2，所以左極限 2；右極限 3。兩者不同，⌊x⌋ 在 x = 3 是跳躍不連續。"},
     { id: "cg-1e-009", topic: "limits", rank: 1, answerKind: "text",
       prompt: "\\text{設 }f(x)=2x+1\\ (x<1)\\text{、}f(x)=x^2+4\\ (x\\ge 1)\\text{。}f\\text{ 在 }x=1\\text{ 的情形是？}",
       answers: ["左極限 3、右極限 5，跳躍不連續"],
@@ -2066,7 +2046,7 @@
       tags: ["discontinuity-jump", "piecewise", "one-sided-limit"],
       hints: ["左極限用 x < 1 的那段，右極限用 x ≥ 1 的那段。", "兩個單側極限都存在但不相等，是哪一種？"],
       solution: "左：2 + 1 = 3；右：1 + 4 = 5。兩側都存在但不相等，是跳躍不連續（補值救不回來）。",
-      solutionSteps: ["左極限：2x + 1 → 3。", "右極限：x² + 4 → 5。", "3 ≠ 5，兩者都有限 ⟹ 跳躍不連續。"],
+      
       verify: { m: "choice", options: [
         { say: "左極限 3、右極限 5，跳躍不連續", all: [{ v: L("2x+1", 1, "-"), eq: 3 }, { v: L("x^2+4", 1, "+"), eq: 5 }, { v: L("2x+1", 1, "-"), ne: L("x^2+4", 1, "+") }] },
         { say: "左極限 3、右極限 5，可去不連續", all: [{ v: L("2x+1", 1, "-"), eq: L("x^2+4", 1, "+") }] },
@@ -2082,7 +2062,7 @@
       tags: ["ivt-check-continuity", "ivt", "continuity"],
       hints: ["中間值定理要兩個條件：在 [0, 2] 上連續、兩端異號。", "1/(x − 1) 兩端是異號沒錯，但它在 [0, 2] 上連續嗎？"],
       solution: "x² − 2 連續且 f(0) = −2 < 0 < 2 = f(2)，保證有根（√2）。1/(x − 1) 在 x = 1 斷掉，定理不能用（它其實沒有根）；x² + 1 兩端同號。",
-      solutionSteps: ["f(x) = x² − 2：多項式連續，f(0) = −2、f(2) = 2 異號 ⟹ 有根。", "g(x) = 1/(x − 1)：在 x = 1 無定義，不連續，定理不適用（而且 g 從不為 0）。", "h(x) = x² + 1：h(0) = 1、h(2) = 5 同號，定理不保證。"],
+      
       verify: { m: "choice", options: [
         { say: "f(x) = x² − 2", all: [{ v: V("0^2-2"), lt: 0 }, { v: V("2^2-2"), gt: 0 }] },
         { say: "g(x) = 1/(x − 1)（g(0) = −1、g(2) = 1）", all: [{ v: ext("\\left|\\frac{1}{x-1}\\right|", "sup", 1 + 1e-9, 1 + 1e-5), lt: 1e4 }] },
@@ -2097,7 +2077,7 @@
       tags: ["ivt-check-continuity", "ivt", "continuity"],
       hints: ["中間值定理的前提是「在閉區間上連續」。", "1/x 在 [−1, 1] 的哪一點有問題？"],
       solution: "1/x 在 x = 0 沒有定義（兩側衝向 ±∞），在 [−1, 1] 上不連續，定理不能用。事實上 1/x 從不等於 0。",
-      solutionSteps: ["定理要求 f 在 [−1, 1] 上連續。", "1/x 在 x = 0 無定義，不連續。", "條件不成立，不能斷定；而且 1/x ≠ 0 恆成立，真的沒有根。"],
+      
       verify: { m: "choice", options: [
         { say: "不能：f 在 x = 0 不連續，定理的條件不成立", all: [{ v: ext("\\left|\\frac{1}{x}\\right|", "inf", 1e-9, 1e-5), gt: 1e4 }, { v: ext("\\left|\\frac{1}{x}\\right|", "inf", -1, 1), ge: 1 }] },
         { say: "能：兩端異號就一定有根", all: [{ v: ext("\\left|\\frac{1}{x}\\right|", "inf", -1, 1), lt: 1e-6 }] },
@@ -2112,7 +2092,7 @@
       tags: ["ivt-bisection", "ivt", "numerical-method"],
       hints: ["算 f(1.5) 的正負號。", "根在「兩端異號」的那一半。"],
       solution: "f(1.5) = 3.375 + 3 − 5 = 1.375 > 0，跟 f(1) = −2 異號，所以根在 (1, 1.5)。",
-      solutionSteps: ["f(1.5) = 1.5³ + 2·1.5 − 5 = 1.375 > 0。", "f(1) < 0 < f(1.5)：左半段兩端異號。", "根在 (1, 1.5)。"],
+      
       verify: { m: "choice", options: [
         { say: "(1, 1.5)", all: [{ v: { m: "root", f: "x^3+2x-5", x0: 1.5 }, gt: 1 }, { v: { m: "root", f: "x^3+2x-5", x0: 1.5 }, lt: 1.5 }] },
         { say: "(1.5, 2)", all: [{ v: { m: "root", f: "x^3+2x-5", x0: 1.5 }, gt: 1.5 }] },
@@ -2127,7 +2107,7 @@
       tags: ["ivt-bisection", "ivt", "numerical-method"],
       hints: ["第一次中點 1.5，第二次的中點看第一次留下哪一半。", "每次只要正負號，不用算很準。"],
       solution: "f(1.5) = −1.625 < 0 → [1.5, 2]；f(1.75) ≈ −0.141 < 0 → [1.75, 2]；f(1.875) ≈ 0.842 > 0 → [1.75, 1.875]。",
-      solutionSteps: ["f(1.5) = 3.375 − 3 − 2 = −1.625 < 0，留 [1.5, 2]。", "f(1.75) = 5.359 − 3.5 − 2 ≈ −0.141 < 0，留 [1.75, 2]。", "f(1.875) ≈ 6.592 − 3.75 − 2 ≈ 0.842 > 0，留 [1.75, 1.875]。"],
+      
       verify: { m: "choice", options: [
         { say: "(1.75, 1.875)", all: [{ v: { m: "root", f: "x^3-2x-2", x0: 1.5 }, gt: 1.75 }, { v: { m: "root", f: "x^3-2x-2", x0: 1.5 }, lt: 1.875 }] },
         { say: "(1.5, 1.75)", all: [{ v: { m: "root", f: "x^3-2x-2", x0: 1.5 }, lt: 1.75 }] },
@@ -2143,7 +2123,7 @@
       tags: ["ivt-intermediate-value", "ivt", "continuity"],
       hints: ["中間值定理：連續函數會取到 f(1) 與 f(3) 之間的每一個值。", "哪一個 N 落在 2 與 12 之間？"],
       solution: "f 連續，2 < 7 < 12，所以有 c ∈ (1, 3) 使 f(c) = 7（c = (−1 + √29)/2 ≈ 2.19）。1 與 13 不在 2 到 12 之間，定理不保證。",
-      solutionSteps: ["定理保證 f 在 (1, 3) 取到 2 與 12 之間的每一個值。", "只有 7 落在 (2, 12)。", "所以 N = 7（實際上 c ≈ 2.19）。"],
+      
       verify: { m: "choice", options: [
         { say: "N = 7", all: [{ v: { m: "root", f: "x^2+x-7", x0: 2 }, gt: 1 }, { v: { m: "root", f: "x^2+x-7", x0: 2 }, lt: 3 }] },
         { say: "N = 1", all: [{ v: { m: "root", f: "x^2+x-1", x0: 2 }, gt: 1 }] },

@@ -1531,7 +1531,7 @@
       tags: ["sequence-growth-order", "sequence", "exponential-limit"],
       hints: ["n 很小的時候分子比較大，但要看的是 n 很大的時候。", "多項式和指數誰長得快？可以看相鄰兩項的比值 a_{n+1}/a_n 趨近多少。"],
       solution: "a_{n+1}/a_n = (1 + 1/n)¹⁰/2 → 1/2 < 1，所以從某一項起每一項都不到前一項的 3/4，數列被等比數列壓到 0。指數永遠贏多項式。",
-      solutionSteps: ["比值 a_{n+1}/a_n = (1 + 1/n)¹⁰ · (1/2) → 1/2。", "n 夠大時 a_{n+1} ≤ (3/4)a_n，被等比數列壓住。", "所以極限 = 0。"],
+      
       verify: { m: "seqLimit", f: "\\frac{n^{10}}{2^n}" } },
     { id: "cg-6a-002", topic: "series", rank: 2, answerKind: "numeric",
       prompt: "\\lim_{n\\to\\infty}\\frac{2\\cdot 3^n+n^{6}}{3^{n+1}-n^2}",
@@ -1539,7 +1539,7 @@
       tags: ["sequence-growth-order", "sequence", "exponential-limit"],
       hints: ["分子分母各自找出長得最快的那一項。", "上下同除以 3ⁿ，剩下的 n⁶/3ⁿ、n²/3ⁿ 會怎樣？"],
       solution: "同除以 3ⁿ：(2 + n⁶/3ⁿ)/(3 − n²/3ⁿ)。指數贏多項式，n⁶/3ⁿ → 0、n²/3ⁿ → 0，極限 = 2/3。",
-      solutionSteps: ["分子分母的主要項都是 3ⁿ 的倍數：上下同除以 3ⁿ。", "得到 (2 + n⁶/3ⁿ)/(3 − n²/3ⁿ)，而 n⁶/3ⁿ → 0、n²/3ⁿ → 0。", "極限 = 2/3。"],
+      
       verify: { m: "seqLimit", f: "\\frac{2\\cdot 3^n+n^{6}}{3^{n+1}-n^2}" } },
     { id: "cg-6a-003", topic: "series", rank: 2, answerKind: "numeric",
       prompt: "\\lim_{n\\to\\infty}\\frac{n^2\\,2^n+n!}{2\\,n!+7^n}",
@@ -1547,7 +1547,7 @@
       tags: ["sequence-growth-order", "sequence", "factorial"],
       hints: ["n²·2ⁿ、7ⁿ、n! 三個裡面誰長得最快？", "上下同除以長得最快的那一個。"],
       solution: "n! 長得比任何 bⁿ（乘上多項式也一樣）快。同除以 n!：(n²2ⁿ/n! + 1)/(2 + 7ⁿ/n!) → (0 + 1)/(2 + 0) = 1/2。",
-      solutionSteps: ["增長順序：n²·2ⁿ ≪ 7ⁿ ≪ n!。", "上下同除以 n!：(n²2ⁿ/n! + 1)/(2 + 7ⁿ/n!)。", "兩個比值都 → 0，極限 = 1/2。"],
+      
       verify: { m: "seqLimit", f: "\\frac{n^2 2^n+n!}{2\\,n!+7^n}" } },
 
     /* ── 6A 單調與有界 ── */
@@ -1557,7 +1557,7 @@
       tags: ["monotone-difference", "sequence"],
       hints: ["算 a_{n+1} − a_n，通分。", "分子會變成一個常數，看它的正負號。"],
       solution: "a_{n+1} − a_n = (2n+1)/(3n+4) − (2n−1)/(3n+1) = [(2n+1)(3n+1) − (2n−1)(3n+4)]/[(3n+4)(3n+1)] = 5/[(3n+4)(3n+1)] > 0，所以遞增。",
-      solutionSteps: ["a_{n+1} − a_n = (2n+1)/(3n+4) − (2n−1)/(3n+1)。", "通分後分子 = (6n² + 5n + 1) − (6n² + 5n − 4) = 5。", "差恆為正，數列遞增。"],
+      
       verify: { m: "choice", options: [
         { say: "遞增", all: [{ v: { m: "extremeOf", f: "n^2\\left(\\frac{2n+1}{3n+4}-\\frac{2n-1}{3n+1}\\right)", kind: "inf" }, gt: 0 }] },
         { say: "遞減", all: [{ v: { m: "extremeOf", f: "n^2\\left(\\frac{2n+1}{3n+4}-\\frac{2n-1}{3n+1}\\right)", kind: "sup" }, lt: 0 }] },
@@ -1569,7 +1569,7 @@
       tags: ["monotone-difference", "sequence"],
       hints: ["算 a_{n+1} − a_n 並通分。", "也可以先把 a_n 寫成「常數 + 一個分式」再看。"],
       solution: "a_n = 2 + 5/(2n+1)，5/(2n+1) 隨 n 變小，所以遞減。用差也一樣：a_{n+1} − a_n = −10/[(2n+3)(2n+1)] < 0。",
-      solutionSteps: ["a_{n+1} − a_n = (4n+11)/(2n+3) − (4n+7)/(2n+1)。", "通分後分子 = (8n² + 26n + 11) − (8n² + 26n + 21) = −10。", "差恆為負，數列遞減。"],
+      
       verify: { m: "choice", options: [
         { say: "遞減", all: [{ v: { m: "extremeOf", f: "n^2\\left(\\frac{4n+11}{2n+3}-\\frac{4n+7}{2n+1}\\right)", kind: "sup" }, lt: 0 }] },
         { say: "遞增", all: [{ v: { m: "extremeOf", f: "n^2\\left(\\frac{4n+11}{2n+3}-\\frac{4n+7}{2n+1}\\right)", kind: "inf" }, gt: 0 }] },
@@ -1581,7 +1581,7 @@
       tags: ["monotone-ratio", "sequence", "ratio-test"],
       hints: ["正項數列看比值：a_{n+1}/a_n < 1 就是在遞減。", "比值是 (1 + 1/n)³/3，看它從哪個 n 開始小於 1。"],
       solution: "a_{n+1}/a_n = (1 + 1/n)³/3。n = 2：(3/2)³/3 = 9/8 > 1；n = 3：(4/3)³/3 = 64/81 < 1，而且比值隨 n 變小。所以 N = 3。",
-      solutionSteps: ["a_{n+1}/a_n = (n+1)³/(3n³) = (1 + 1/n)³/3，隨 n 遞減。", "n = 2 時比值 9/8 > 1（a₃ > a₂）；n = 3 時 64/81 < 1。", "從 n = 3 起一直遞減，N = 3。"],
+      
       verify: { m: "firstIndex", f: "\\frac{(n+1)^3}{3^{n+1}}-\\frac{n^3}{3^n}", below: 0 } },
     { id: "cg-6a-007", topic: "series", rank: 2, answerKind: "numeric",
       prompt: "a_n=\\frac{(5/2)^n}{n!}\\ (n\\ge1)\\text{。求這個數列最大的一項的值}",
@@ -1589,7 +1589,7 @@
       tags: ["monotone-ratio", "sequence", "factorial"],
       hints: ["比值 a_{n+1}/a_n 化簡後很乾淨。", "比值大於 1 時還在變大、小於 1 時開始變小：最大項出現在轉折的地方。"],
       solution: "a_{n+1}/a_n = (5/2)/(n+1)。n = 1 時 5/4 > 1，n ≥ 2 時 < 1。所以 a₁ < a₂ > a₃ > ⋯，最大項 a₂ = (25/4)/2 = 25/8。",
-      solutionSteps: ["a_{n+1}/a_n = (5/2)/(n+1)。", "n = 1 時比值 5/4 > 1；n ≥ 2 時比值 ≤ 5/6 < 1。", "最大項 a₂ = (5/2)²/2! = 25/8。"],
+      
       verify: { m: "extremeOf", f: "\\frac{(5/2)^n}{n!}", kind: "sup" } },
     { id: "cg-6a-008", topic: "series", rank: 3, answerKind: "numeric",
       prompt: "a_n=\\frac{\\ln n}{\\sqrt n}\\text{。求最小的正整數 }N\\text{，使得所有 }n\\ge N\\ \\text{ 都有 }a_{n+1}<a_n",
@@ -1597,7 +1597,7 @@
       tags: ["monotone-derivative", "sequence", "log"],
       hints: ["令 f(x) = ln x/√x，求 f′(x) 何時為負。", "導數告訴你 x 過了某個非整數之後遞減；它前面那個整數要直接比一下。"],
       solution: "f′(x) = (2 − ln x)/(2x^{3/2}) < 0 ⇔ x > e² ≈ 7.39，所以 n ≥ 8 起遞減。再直接比：a₇ ≈ 0.7355 > a₈ ≈ 0.7352，但 a₆ ≈ 0.7315 < a₇。所以 N = 7。",
-      solutionSteps: ["f′(x) = (2 − ln x)/(2x^{3/2})，x > e² ≈ 7.39 時為負：n ≥ 8 起 a_{n+1} < a_n。", "e² 落在 7 與 8 之間，直接比：a₇ = ln 7/√7 ≈ 0.7355 > a₈ = ln 8/√8 ≈ 0.7352。", "a₇ > a₆ ≈ 0.7315，所以 N = 7。"],
+      
       verify: { m: "firstIndex", f: "\\frac{\\ln(n+1)}{\\sqrt{n+1}}-\\frac{\\ln n}{\\sqrt n}", below: 0 } },
     { id: "cg-6a-009", topic: "series", rank: 2, answerKind: "numeric",
       prompt: "a_n=\\frac{\\sqrt n}{n+9}\\ (n\\ge1)\\text{。求這個數列最大的一項的值}",
@@ -1605,7 +1605,7 @@
       tags: ["monotone-derivative", "sequence", "critical-point"],
       hints: ["把 n 換成實數 x，求 f(x) = √x/(x+9) 的導數。", "導數的正負在哪裡改變？那個 x 是不是整數？"],
       solution: "f′(x) = (9 − x)/(2√x(x+9)²)，x < 9 遞增、x > 9 遞減。9 正好是整數，最大項 a₉ = 3/18 = 1/6。",
-      solutionSteps: ["f(x) = √x/(x+9)，f′(x) = [(x+9) − 2x]/(2√x(x+9)²) = (9 − x)/(2√x(x+9)²)。", "x < 9 時 f′ > 0、x > 9 時 f′ < 0。", "最大項 a₉ = √9/18 = 1/6。"],
+      
       verify: { m: "extremeOf", f: "\\frac{\\sqrt n}{n+9}", kind: "sup" } },
     { id: "cg-6a-010", topic: "series", rank: 1, answerKind: "text",
       prompt: "a_n=(-1)^n\\frac{n}{n+1}\\text{ 有界嗎？收斂嗎？}",
@@ -1613,7 +1613,7 @@
       tags: ["bounded-vs-convergent", "sequence"],
       hints: ["|a_n| 最大可能是多少？", "分別看偶數項和奇數項各自趨近多少。"],
       solution: "|a_n| = n/(n+1) < 1，有界。偶數項 → 1、奇數項 → −1，兩個子數列極限不同，所以發散。有界不保證收斂。",
-      solutionSteps: ["|a_n| = n/(n+1) < 1，所以 −1 < a_n < 1，有界。", "偶數項 → 1、奇數項 → −1。", "子數列極限不同，發散：有界但發散。"],
+      
       verify: { m: "choice", options: [
         { say: "有界但發散", all: [
           { v: { m: "extremeOf", f: "\\left|(-1)^n\\frac{n}{n+1}\\right|", kind: "sup" }, le: 1 },
@@ -1627,7 +1627,7 @@
       tags: ["bounded-vs-convergent", "sequence"],
       hints: ["收斂代表從某一項之後，所有的項都擠在極限附近。", "另外兩個選項各找一個收斂數列當反例試試。"],
       solution: "收斂 ⇒ 有界：n > N 之後 |a_n − L| < 1，前面只有有限多項，取最大的那個當界。反例：(−1)ⁿ/n → 0 但不單調；1/n → 0 但每一項都大於極限 0。",
-      solutionSteps: ["取 ε = 1：n > N 時 |a_n| < |L| + 1；前 N 項有限，取最大的，整個數列有界。", "(−1)ⁿ/n 收斂到 0 但正負交替，不單調。", "1/n 收斂到 0 但每一項都大於 0。所以一定成立的是：{aₙ} 有界。"],
+      
       verify: { m: "choice", options: [
         { say: "{aₙ} 有界", unknown: "收斂必有界是定理本身，沒有可以代的數；由其餘兩個選項被反例推翻得到" },
         { say: "{aₙ} 是單調數列",
@@ -1645,7 +1645,7 @@
       tags: ["mct-apply", "sequence"],
       hints: ["先判斷單調：算 a_{n+1} − a_n。", "把 a_n 寫成 3 − (某個正數)，看它被什麼擋住。"],
       solution: "a_n = 3 − 5/(n+2)：5/(n+2) 隨 n 變小，所以 a_n 遞增；而且 a_n < 3，有上界。遞增且有上界 ⇒ 收斂（極限 3）。",
-      solutionSteps: ["a_n = 3 − 5/(n+2)。", "5/(n+2) 遞減 ⇒ a_n 遞增；a_n < 3 ⇒ 有上界 3。", "遞增且有上界，由單調收斂定理收斂。"],
+      
       verify: { m: "choice", options: [
         { say: "遞增且有上界", all: [
           { v: { m: "extremeOf", f: "n^2\\left(\\frac{3n+4}{n+3}-\\frac{3n+1}{n+2}\\right)", kind: "inf" }, gt: 0 },
@@ -1660,7 +1660,7 @@
       tags: ["mct-apply", "sequence", "monotone-ratio"],
       hints: ["正項數列可以看比值 a_{n+1}/a_n。", "每一項都是正的，下界很容易找。"],
       solution: "a_{n+1}/a_n = (n+2)/(2n+2) < 1（因為 n+2 < 2n+2），所以遞減；每一項 > 0，有下界 0。遞減且有下界 ⇒ 收斂（極限 0）。",
-      solutionSteps: ["a_{n+1}/a_n = (n+2)/(2(n+1))，n ≥ 1 時 < 1：遞減。", "a_n > 0：有下界 0。", "遞減且有下界，由單調收斂定理收斂。"],
+      
       verify: { m: "choice", options: [
         { say: "遞減且有下界", all: [
           { v: { m: "extremeOf", f: "\\frac{(n+2)/2^{n+1}}{(n+1)/2^n}", kind: "sup", n: 500 }, lt: 1 },
@@ -1675,7 +1675,7 @@
       tags: ["mct-apply", "sequence", "bounded-vs-convergent"],
       hints: ["列出前三項，看看是不是一路往同一個方向走。", "單調收斂定理是「充分條件」：條件不成立，結論不一定不成立。"],
       solution: "a₁ = 1、a₂ = 2.5、a₃ ≈ 1.667：先升後降，不單調，定理用不上。但 |a_n − 2| = 1/n → 0，所以仍收斂到 2。定理不適用不代表發散。",
-      solutionSteps: ["a₁ = 1，a₂ = 5/2，a₃ = 5/3：升了又降，不單調。", "|a_n − 2| = 1/n → 0，所以 a_n → 2。", "結論：不符合（不單調），但仍收斂。"],
+      
       verify: { m: "choice", options: [
         { say: "不符合（不單調），但仍收斂", all: [
           { v: { m: "value", f: "\\left(\\left(2+\\frac{1}{2}\\right)-(2-1)\\right)\\left(\\left(2-\\frac13\\right)-\\left(2+\\frac12\\right)\\right)" }, lt: 0 },
@@ -1689,7 +1689,7 @@
       tags: ["mct-partial-sums", "comparison-test", "geometric-series"],
       hints: ["k! = 1·2·3⋯k，除了第一個因子，其餘每個都 ≥ 2。", "把 1/2^{k−1} 從 k = 1 加到無窮大。"],
       solution: "k! ≥ 2^{k−1}，所以 s_n ≤ Σ_{k=1}^{n} 1/2^{k−1} < Σ_{k=1}^{∞} 1/2^{k−1} = 1/(1 − 1/2) = 2。s_n 遞增且有上界 2，由單調收斂定理 Σ1/k! 收斂（和是 e − 1 ≈ 1.718）。",
-      solutionSteps: ["k! = 1·2·3⋯k ≥ 1·2·2⋯2 = 2^{k−1}，所以 1/k! ≤ 1/2^{k−1}。", "s_n ≤ Σ_{k=1}^{n} 1/2^{k−1} < 1/(1 − 1/2) = 2。", "M = 2；遞增且有上界，所以級數收斂。"],
+      
       verify: { m: "series", v: "k", f: "\\frac{1}{2^{k-1}}", from: 1 } },
     { id: "cg-6a-016", topic: "series", rank: 2, answerKind: "numeric",
       prompt: "s_n=\\sum_{k=1}^{n}\\frac{1}{k^2+k}\\text{ 是遞增數列。求它的最小上界 }\\sup_{n} s_n",
@@ -1697,7 +1697,7 @@
       tags: ["mct-partial-sums", "telescoping"],
       hints: ["1/(k² + k) = 1/(k(k+1))，拆成兩個分式相減。", "遞增數列的最小上界就是它的極限。"],
       solution: "1/(k(k+1)) = 1/k − 1/(k+1)，相消後 s_n = 1 − 1/(n+1) < 1。s_n 遞增、有上界 1，而且 s_n → 1，所以最小上界是 1。",
-      solutionSteps: ["1/(k² + k) = 1/k − 1/(k+1)。", "s_n = 1 − 1/(n+1)：遞增，且每一項 < 1。", "s_n → 1，最小上界 = 1。"],
+      
       verify: { m: "series", v: "k", f: "\\frac{1}{k^2+k}", from: 1 } },
 
     /* ── 6B 級數的定義與線性 ── */
@@ -1707,7 +1707,7 @@
       tags: ["series-definition", "sum-series"],
       hints: ["級數的和是怎麼定義的？跟部分和有什麼關係？", "求 s_n 在 n → ∞ 的極限。"],
       solution: "級數的和定義成部分和的極限：lim s_n = lim 3n/(n+2) = 3。",
-      solutionSteps: ["Σa_n 的和 = lim_{n→∞} s_n。", "3n/(n+2) = 3/(1 + 2/n) → 3。"],
+      
       verify: { m: "seqLimit", f: "\\frac{3n}{n+2}" } },
     { id: "cg-6b-002", topic: "series", rank: 1, answerKind: "text",
       prompt: "1-1+1-1+\\cdots=\\sum_{n=1}^{\\infty}(-1)^{n+1}\\text{ 的部分和依序是 }1,0,1,0,\\ldots\\text{。這個級數：}",
@@ -1715,7 +1715,7 @@
       tags: ["series-definition", "term-test"],
       hints: ["級數收斂的意思是部分和數列有極限。", "1, 0, 1, 0, … 有沒有極限？"],
       solution: "部分和在 1 與 0 之間跳，沒有極限，所以發散。「平均起來 1/2」不是級數和的定義。也可以看各項 (−1)^{n+1} 不趨近 0。",
-      solutionSteps: ["s_n 奇數項 = 1、偶數項 = 0。", "兩個子數列極限不同，s_n 沒有極限。", "所以級數發散。"],
+      
       verify: { m: "choice", options: [
         { say: "發散（部分和沒有極限）", all: [
           { v: { m: "limsup", f: "\\frac{1-(-1)^n}{2}", kind: "limsup" }, ne: { m: "limsup", f: "\\frac{1-(-1)^n}{2}", kind: "liminf" } },
@@ -1729,22 +1729,20 @@
       tags: ["series-definition", "log"],
       hints: ["收不收斂只看部分和有沒有極限。", "ln(n+1) 在 n → ∞ 時會怎樣？"],
       solution: "s_n = ln(n+1) → ∞，部分和沒有有限的極限，所以發散。注意各項 a_n = ln(1 + 1/n) → 0，項趨近 0 並不保證收斂。",
-      solutionSteps: ["s_n = ln(n+1) → ∞。", "部分和沒有有限的極限，級數發散。"],
+      
       verify: { m: "seriesConverges", f: "\\ln(n+1)-\\ln n", from: 1 } },
     { id: "cg-6b-004", topic: "series", rank: 2, answerKind: "numeric",
       prompt: "\\sum_{n=1}^{\\infty}\\left(\\frac{5}{2^n}-\\frac{3}{4^n}\\right)",
       answer: "4", timeLimit: 75,
       tags: ["series-linearity", "geometric-series"],
       hints: ["兩個都收斂的級數可以分開算再相減。", "Σ_{n=1}^∞ rⁿ = r/(1 − r)。"],
-      solution: "Σ 5/2ⁿ = 5·(1/2)/(1/2) = 5，Σ 3/4ⁿ = 3·(1/4)/(3/4) = 1。兩個都收斂，所以原級數 = 5 − 1 = 4。",
-      solutionSteps: ["Σ_{n=1}^∞ 5/2ⁿ = 5 · 1 = 5。", "Σ_{n=1}^∞ 3/4ⁿ = 3 · (1/3) = 1。", "兩者都收斂，可以相減：5 − 1 = 4。"] },
+      solution: "Σ 5/2ⁿ = 5·(1/2)/(1/2) = 5，Σ 3/4ⁿ = 3·(1/4)/(3/4) = 1。兩個都收斂，所以原級數 = 5 − 1 = 4。"},
     { id: "cg-6b-005", topic: "series", rank: 2, answerKind: "numeric",
       prompt: "\\sum_{n=3}^{\\infty}\\frac{2^n+3^n}{6^n}",
       answer: "11/36", timeLimit: 90,
       tags: ["series-linearity", "geometric-series"],
       hints: ["把分式拆成兩個等比級數。", "從 n = 3 開始的等比級數：首項 ÷ (1 − 公比)。"],
-      solution: "(2ⁿ + 3ⁿ)/6ⁿ = (1/3)ⁿ + (1/2)ⁿ。Σ_{n≥3}(1/3)ⁿ = (1/27)/(2/3) = 1/18，Σ_{n≥3}(1/2)ⁿ = (1/8)/(1/2) = 1/4。和 = 1/18 + 1/4 = 11/36。",
-      solutionSteps: ["(2ⁿ + 3ⁿ)/6ⁿ = (1/3)ⁿ + (1/2)ⁿ。", "Σ_{n=3}^∞ (1/3)ⁿ = (1/27)/(2/3) = 1/18；Σ_{n=3}^∞ (1/2)ⁿ = (1/8)/(1/2) = 1/4。", "相加：1/18 + 1/4 = 11/36。"] },
+      solution: "(2ⁿ + 3ⁿ)/6ⁿ = (1/3)ⁿ + (1/2)ⁿ。Σ_{n≥3}(1/3)ⁿ = (1/27)/(2/3) = 1/18，Σ_{n≥3}(1/2)ⁿ = (1/8)/(1/2) = 1/4。和 = 1/18 + 1/4 = 11/36。"},
 
     /* ── 6B 部分和：反推各項、尾巴 ── */
     { id: "cg-6b-006", topic: "series", rank: 2, answerKind: "numeric",
@@ -1753,7 +1751,7 @@
       tags: ["partial-sum-recover-terms", "sequence"],
       hints: ["s₅ 和 s₄ 差了哪一項？", "a_n = s_n − s_{n−1}（n ≥ 2）。"],
       solution: "a₅ = s₅ − s₄ = 5/11 − 4/9 = (45 − 44)/99 = 1/99。",
-      solutionSteps: ["a₅ = s₅ − s₄。", "s₅ = 5/11，s₄ = 4/9。", "a₅ = (45 − 44)/99 = 1/99。"],
+      
       verify: { m: "value", f: "\\frac{5}{2\\cdot5+1}-\\frac{4}{2\\cdot4+1}" } },
     { id: "cg-6b-007", topic: "series", rank: 2, answerKind: "expression", variable: "n",
       prompt: "\\text{級數 }\\sum_{n=1}^{\\infty}a_n\\text{ 的部分和是 }s_n=n^2+3n\\ \\text{。求通項 }a_n\\ \\text{（用 }n\\ \\text{ 表示，對所有 }n\\ge1\\text{ 成立）}",
@@ -1761,7 +1759,7 @@
       tags: ["partial-sum-recover-terms", "sequence"],
       hints: ["n ≥ 2 時 a_n = s_n − s_{n−1}，把 s_{n−1} 展開。", "a₁ 要另外用 s₁ 算，再檢查它符不符合你的公式。"],
       solution: "n ≥ 2：a_n = (n² + 3n) − ((n−1)² + 3(n−1)) = 2n + 2。a₁ = s₁ = 4 = 2·1 + 2，也符合，所以 a_n = 2n + 2 對所有 n ≥ 1 成立。",
-      solutionSteps: ["s_{n−1} = (n−1)² + 3(n−1) = n² + n − 2。", "n ≥ 2：a_n = s_n − s_{n−1} = 2n + 2。", "a₁ = s₁ = 4 也符合：a_n = 2n + 2。"],
+      
       verify: { m: "fn", vars: ["n"], cases: [
         { at: { n: 1 }, v: { m: "value", f: "1^2+3\\cdot1" } },
         { at: { n: 2 }, v: { m: "value", f: "(2^2+3\\cdot2)-(1^2+3\\cdot1)" } },
@@ -1774,7 +1772,7 @@
       tags: ["partial-sum-recover-terms", "series-linearity"],
       hints: ["整個級數的和是多少？", "從 n = 2 加起來，就是整個級數少掉第一項；第一項 = s₁。"],
       solution: "整個級數 = lim s_n = 2，a₁ = s₁ = 5/2。所以 Σ_{n=2}^∞ a_n = 2 − 5/2 = −1/2。（驗證：n ≥ 2 時 a_n = −1/(n(n+1))，全是負的。）",
-      solutionSteps: ["Σ_{n=1}^∞ a_n = lim s_n = lim (2n+3)/(n+1) = 2。", "a₁ = s₁ = 5/2。", "Σ_{n=2}^∞ a_n = 2 − 5/2 = −1/2。"],
+      
       verify: { m: "series", f: "\\frac{2n+3}{n+1}-\\frac{2(n-1)+3}{(n-1)+1}", from: 2 } },
     { id: "cg-6b-009", topic: "series", rank: 2, answerKind: "numeric",
       prompt: "\\sum_{n=1}^{\\infty}\\frac{3}{4^n}=1\\text{。用部分和 }s_3\\text{ 近似這個和，誤差（尾巴 }\\sum_{n=4}^{\\infty}\\frac{3}{4^n}\\text{）是多少？}",
@@ -1782,7 +1780,7 @@
       tags: ["partial-sum-tail", "geometric-series", "series-estimate"],
       hints: ["誤差 = 級數和 − s₃，也就是從第 4 項起的尾巴。", "尾巴本身也是一個等比級數。"],
       solution: "s₃ = 3/4 + 3/16 + 3/64 = 63/64，誤差 = 1 − 63/64 = 1/64。直接算尾巴也一樣：(3/256)/(1 − 1/4) = 1/64。",
-      solutionSteps: ["s₃ = 3/4 + 3/16 + 3/64 = 63/64。", "誤差 = 1 − s₃ = 1/64（= 尾巴 (3/256)/(3/4)）。"],
+      
       verify: { m: "series", f: "\\frac{3}{4^n}", from: 4 } },
     { id: "cg-6b-010", topic: "series", rank: 2, answerKind: "numeric",
       prompt: "\\sum_{n=1}^{\\infty}\\frac{1}{n(n+1)}=1\\text{。要讓尾巴 }\\sum_{n=N+1}^{\\infty}\\frac{1}{n(n+1)}<0.003\\text{，最小的 }N\\text{ 是多少？}",
@@ -1790,7 +1788,7 @@
       tags: ["partial-sum-tail", "telescoping", "series-estimate"],
       hints: ["先求部分和 s_N 的公式（拆項相消）。", "尾巴 = 1 − s_N，再解不等式。"],
       solution: "s_N = 1 − 1/(N+1)，尾巴 = 1/(N+1)。1/(N+1) < 0.003 ⇔ N + 1 > 333.3…，所以 N + 1 ≥ 334，N = 333。",
-      solutionSteps: ["1/(n(n+1)) = 1/n − 1/(n+1)，s_N = 1 − 1/(N+1)。", "尾巴 = 1 − s_N = 1/(N+1) < 0.003 ⇔ N + 1 > 333.3…。", "最小 N = 333。"],
+      
       verify: { m: "firstIndex", f: "1-\\sum_{k=1}^{n}\\frac{1}{k(k+1)}", below: 0.003, max: 5000 } },
 
     /* ── 6B 第 n 項判別：何時沒有結論 ── */
@@ -1800,7 +1798,7 @@
       tags: ["divergence-test-inconclusive", "term-test", "p-series"],
       hints: ["第 n 項判別只看 lim a_n 是不是 0。", "lim a_n = 0 的時候，這個判別法說了什麼？"],
       solution: "lim 1/√n = 0，第 n 項判別只有在極限 ≠ 0 時才能說發散；極限 = 0 時它什麼都不說，也絕不能說收斂。（這個級數其實是 p = 1/2 的 p 級數，發散 —— 但那要用別的判別法。）",
-      solutionSteps: ["lim_{n→∞} 1/√n = 0。", "第 n 項判別：極限 ≠ 0 才能判發散；極限 = 0 時沒有結論。", "所以無法下結論（要改用 p 級數判別）。"],
+      
       verify: { m: "choice", options: [
         { say: "無法下結論", all: [{ v: { m: "limit", f: "\\frac{1}{\\sqrt x}", at: "inf" }, eq: 0 }] },
         { say: "級數收斂", all: [conv("\\frac{1}{\\sqrt n}", true)] },
@@ -1813,7 +1811,7 @@
       tags: ["divergence-test-inconclusive", "term-test", "comparison-test"],
       hints: ["第 n 項判別能證明收斂嗎？想想調和級數。", "1/(n² + 1) 跟哪一個熟悉的級數比較？"],
       solution: "第 n 項判別只能證明發散；項 → 0 時它沒有結論（調和級數就是項 → 0 卻發散）。改用比較：1/(n²+1) < 1/n²，Σ1/n² 收斂，所以收斂。",
-      solutionSteps: ["lim 1/(n²+1) = 0：第 n 項判別沒有結論。", "1/(n² + 1) < 1/n²，而 Σ1/n² 收斂（p = 2）。", "比較判別：級數收斂。"],
+      
       verify: { m: "choice", options: [
         { say: "第 n 項判別沒有結論；改用比較判別得收斂", all: [
           { v: { m: "limit", f: "\\frac{1}{x^2+1}", at: "inf" }, eq: 0 },
@@ -1831,7 +1829,7 @@
       tags: ["p-series-simplify", "p-series"],
       hints: ["√n = n^{1/2}。", "同底數相除，指數相減。"],
       solution: "√n/n² = n^{1/2}/n² = n^{1/2 − 2} = n^{−3/2} = 1/n^{3/2}，p = 3/2 > 1，所以這個級數收斂。",
-      solutionSteps: ["√n/n² = n^{1/2}·n^{−2} = n^{−3/2}。", "p = 3/2（> 1，收斂）。"],
+      
       verify: { m: "seqLimit", f: "-\\frac{\\ln(\\sqrt n/n^2)}{\\ln n}" } },
     { id: "cg-6c-002", topic: "series", rank: 1, answerKind: "text",
       prompt: "\\sum_{n=1}^{\\infty}\\frac{1}{n\\sqrt[3]{n}}\\text{ 收斂還是發散？}",
@@ -1839,7 +1837,7 @@
       tags: ["p-series-simplify", "p-series"],
       hints: ["把分母寫成 n 的一個次方。", "p 級數只看 p 跟 1 比。"],
       solution: "n·∛n = n^{1 + 1/3} = n^{4/3}，p = 4/3 > 1 的 p 級數，收斂。",
-      solutionSteps: ["n·n^{1/3} = n^{4/3}。", "p = 4/3 > 1：收斂。"],
+      
       verify: { m: "seriesConverges", f: "\\frac{1}{n\\sqrt[3]{n}}", from: 1 } },
     { id: "cg-6c-003", topic: "series", rank: 2, answerKind: "text",
       prompt: "\\sum_{n=1}^{\\infty}\\frac{\\sqrt[3]{n^2}}{n\\sqrt n}\\text{ 收斂還是發散？}",
@@ -1847,7 +1845,7 @@
       tags: ["p-series-simplify", "p-series"],
       hints: ["分子 n^{2/3}，分母 n·n^{1/2}，各自寫成 n 的次方。", "合併之後 1/nᵖ 的 p 跟 1 比。"],
       solution: "∛(n²) = n^{2/3}，n√n = n^{3/2}。相除：n^{2/3 − 3/2} = n^{−5/6}，p = 5/6 ≤ 1，發散。",
-      solutionSteps: ["分子 n^{2/3}，分母 n^{3/2}。", "n^{2/3}/n^{3/2} = 1/n^{5/6}。", "p = 5/6 ≤ 1：發散。"],
+      
       verify: { m: "seriesConverges", f: "\\frac{\\sqrt[3]{n^2}}{n\\sqrt n}", from: 1 } },
 
     /* ── 6C 積分判別的條件 ── */
@@ -1857,7 +1855,7 @@
       tags: ["integral-test-conditions", "integral-test", "critical-point"],
       hints: ["算 f′(x)，看分子何時為負。", "臨界點不是整數：取比它大的最小整數。"],
       solution: "f′(x) = (5 − x²)/(x² + 5)²，x > √5 ≈ 2.236 時為負。所以 f 在 [3, ∞) 遞減，但在 [2, 3] 上先升後降，N = 3。（之後 ∫₃^∞ x/(x²+5) dx 發散，級數發散。）",
-      solutionSteps: ["f′(x) = [(x² + 5) − 2x²]/(x² + 5)² = (5 − x²)/(x² + 5)²。", "f′ < 0 ⇔ x > √5 ≈ 2.236。", "最小整數 N = 3。"],
+      
       verify: { m: "firstIndex", f: "\\frac{n+0.001}{(n+0.001)^2+5}-\\frac{n}{n^2+5}", below: 0 } },
     { id: "cg-6c-005", topic: "series", rank: 2, answerKind: "text",
       prompt: "\\text{為什麼不能直接對 }\\sum_{n=1}^{\\infty}\\frac{2+\\cos n}{n^2}\\text{ 用積分判別（取 }f(x)=\\frac{2+\\cos x}{x^2}\\text{）？}",
@@ -1865,7 +1863,7 @@
       tags: ["integral-test-conditions", "integral-test", "trig"],
       hints: ["積分判別要 f 連續、為正、遞減，三個條件一個一個檢查。", "cos x 在 x = 3π/2 附近往上爬，比 1/x² 往下掉還快嗎？"],
       solution: "f > 0（2 + cos x ≥ 1）、連續，但不遞減：例如 f(4.5) ≈ 0.0884 < f(5) ≈ 0.0914。所以積分判別的條件不成立。改用比較判別：(2 + cos n)/n² ≤ 3/n²，收斂。",
-      solutionSteps: ["2 + cos x ≥ 1 > 0，f 為正且連續。", "f(4.5) ≈ 0.0884，f(5) ≈ 0.0914：f 會往上，不是遞減函數。", "條件不成立；改用比較判別 ≤ 3/n² 得收斂。"],
+      
       verify: { m: "choice", options: [
         { say: "f 不是遞減函數", all: [{ v: { m: "value", f: "\\frac{2+\\cos 5}{25}-\\frac{2+\\cos 4.5}{4.5^2}" }, gt: 0 }] },
         { say: "f 有負值", all: [{ v: { m: "extremeOf", f: "\\frac{2+\\cos x}{x^2}", kind: "inf", integer: false, range: [1, 200] }, lt: 0 }] },
@@ -1879,7 +1877,7 @@
       tags: ["comparison-direction", "comparison-test"],
       hints: ["比一個發散級數「小」，能保證什麼嗎？", "想一個比 1/√n 小、但收斂的級數。"],
       solution: "比發散級數小什麼都保證不了：1/n² < 1/√n 卻收斂，1/(2√n) < 1/√n 卻發散。這個方向的比較沒有結論。（實際上要用 1/(√n+1) ≥ 1/(2√n) 才能證明它發散。）",
-      solutionSteps: ["比較判別：小於收斂級數 ⇒ 收斂；大於發散級數 ⇒ 發散。", "「小於發散級數」不在其中：1/n² 與 1/(2√n) 都比 1/√n 小，一個收斂一個發散。", "所以無法由此下結論。"],
+      
       verify: { m: "choice", options: [
         { say: "無法由此下結論", all: [
           conv("\\frac{1}{n^2}", true), conv("\\frac{1}{2\\sqrt n}", false),
@@ -1893,7 +1891,7 @@
       tags: ["comparison-direction", "comparison-test", "log"],
       hints: ["比一個收斂級數「大」，能保證什麼嗎？", "想一個比 1/n² 大、但仍收斂的級數，再想一個比它大、發散的。"],
       solution: "比收斂級數大什麼都保證不了：2/n² 比 1/n² 大但收斂，1/n 比 1/n² 大但發散。要判定 Σ(ln n)/n²，得換一個方向對的比較：ln n < √n，所以 (ln n)/n² < 1/n^{3/2}，收斂。",
-      solutionSteps: ["「大於收斂級數」不是比較判別的任何一種情形。", "2/n² 與 1/n 都比 1/n² 大，一個收斂一個發散。", "所以無法由此下結論（要改比 1/n^{3/2}）。"],
+      
       verify: { m: "choice", options: [
         { say: "無法由此下結論", all: [conv("\\frac{2}{n^2}", true), conv("\\frac{1}{n}", false), conv("\\frac{\\ln n}{n^2}", true)] },
         { say: "Σ (ln n)/n² 發散", all: [conv("\\frac{\\ln n}{n^2}", false)] },
@@ -1905,7 +1903,7 @@
       tags: ["comparison-direction", "comparison-test"],
       hints: ["這次是比收斂級數「小」。", "正項級數被一個收斂級數逐項壓住，會怎樣？"],
       solution: "0 < n/(n³+2) < n/n³ = 1/n²，而 Σ1/n² 收斂（p = 2）。方向對：小於收斂級數 ⇒ 收斂。",
-      solutionSteps: ["0 < n/(n³ + 2) < n/n³ = 1/n²。", "Σ1/n² 收斂，小於收斂的正項級數也收斂。", "結論：收斂。"],
+      
       verify: { m: "seriesConverges", f: "\\frac{n}{n^3+2}", from: 1 } },
     { id: "cg-6c-009", topic: "series", rank: 2, answerKind: "text",
       prompt: "\\sum_{n=1}^{\\infty}\\frac{2+\\sin n}{n}\\text{ 收斂還是發散？}",
@@ -1913,7 +1911,7 @@
       tags: ["comparison-bound-inequality", "comparison-test", "trig"],
       hints: ["sin n 雖然亂跳，但 2 + sin n 一定落在哪個範圍？", "用下界跟調和級數比。"],
       solution: "−1 ≤ sin n ≤ 1，所以 2 + sin n ≥ 1，(2 + sin n)/n ≥ 1/n > 0。Σ1/n 發散，大於發散的正項級數也發散。",
-      solutionSteps: ["sin n ≥ −1 ⇒ 2 + sin n ≥ 1。", "(2 + sin n)/n ≥ 1/n，而 Σ1/n 發散。", "比較判別：發散。"],
+      
       verify: { m: "choice", options: [
         { say: "發散", all: [
           { v: { m: "extremeOf", f: "2+\\sin n", kind: "inf" }, ge: 1 },
@@ -1927,7 +1925,7 @@
       tags: ["comparison-bound-inequality", "comparison-test", "trig"],
       hints: ["sin² n 最大是多少？", "用上界跟一個 p 級數比。"],
       solution: "0 ≤ sin² n ≤ 1，所以 0 ≤ sin²n/n² ≤ 1/n²。Σ1/n² 收斂（p = 2），小於收斂的非負級數也收斂。",
-      solutionSteps: ["0 ≤ sin² n ≤ 1 ⇒ 0 ≤ sin² n/n² ≤ 1/n²。", "Σ1/n² 收斂（p = 2 > 1）。", "比較判別：收斂。"],
+      
       verify: { m: "choice", options: [
         { say: "收斂", all: [
           { v: { m: "extremeOf", f: "\\sin^2 n", kind: "sup" }, le: 1 },
@@ -1944,7 +1942,7 @@
       tags: ["lct-edge-cases", "limit-comparison", "comparison-test"],
       hints: ["比值 → 0 代表 n 夠大時 a_n 比 b_n 小很多。", "比值 → 0 時，哪一個方向的結論還保得住？"],
       solution: "a_n/b_n = (ln n)/√n → 0，所以 n 夠大時 a_n < b_n。Σb_n 收斂（p = 3/2），比較判別 ⇒ Σa_n 收斂。比值 → 0 時：Σb_n 收斂 ⇒ Σa_n 收斂；Σb_n 發散則沒有結論。",
-      solutionSteps: ["a_n/b_n = (ln n)/√n → 0 ⇒ n 夠大時 0 < a_n < b_n。", "Σ1/n^{3/2} 收斂。", "比較判別：Σ(ln n)/n² 收斂。"],
+      
       verify: { m: "seriesConverges", f: "\\frac{\\ln n}{n^2}", from: 1 } },
     { id: "cg-6c-012", topic: "series", rank: 3, answerKind: "text",
       prompt: "a_n,b_n>0\\text{，}\\lim_{n\\to\\infty}\\frac{a_n}{b_n}=0\\text{，而且 }\\sum b_n\\text{ 發散。關於 }\\sum a_n\\text{：}",
@@ -1952,7 +1950,7 @@
       tags: ["lct-edge-cases", "limit-comparison"],
       hints: ["比值 → 0 代表 a_n 比 b_n 小很多。比一個發散級數小，能保證什麼？", "取 b_n = 1/√n，各找一個收斂與發散的 a_n 試試。"],
       solution: "比值 → 0 只說 a_n 最後比 b_n 小；比發散級數小沒有結論。反例（b_n = 1/√n，發散）：a_n = 1/n 時比值 1/√n → 0，Σa_n 發散；a_n = 1/n² 時比值 → 0，Σa_n 收斂。",
-      solutionSteps: ["取 b_n = 1/√n，Σb_n 發散。", "a_n = 1/n：a_n/b_n = 1/√n → 0，Σa_n 發散。", "a_n = 1/n²：a_n/b_n = 1/n^{3/2} → 0，Σa_n 收斂。兩種都可能：無法判斷。"],
+      
       verify: { m: "choice", options: [
         { say: "無法判斷", all: [
           { v: { m: "limit", f: "\\frac{1/x}{1/\\sqrt x}", at: "inf" }, eq: 0 },
@@ -1971,7 +1969,7 @@
       tags: ["lct-choose-bn", "limit-comparison"],
       hints: ["分子、分母各自只留長得最快的那一項。", "√n/n² 化成 n 的幾次方？"],
       solution: "主要項：分子 √n、分母 n²，a_n ≈ √n/n² = 1/n^{3/2}。取 b_n = 1/n^{3/2}：a_n/b_n = (n² + n^{3/2})/(n² + 3) → 1，有限正數。Σ1/n^{3/2} 收斂，所以原級數收斂。",
-      solutionSteps: ["只留主要項：(√n + 1)/(n² + 3) ≈ √n/n² = 1/n^{3/2}。", "a_n/b_n = (n² + n^{3/2})/(n² + 3) → 1。", "選 bₙ = 1/n^(3/2)（p = 3/2，原級數收斂）。"],
+      
       verify: { m: "choice", options: [
         { say: "bₙ = 1/n^(3/2)", all: [{ v: { m: "seqLimit", f: "\\frac{(\\sqrt n+1)/(n^2+3)}{1/n^{3/2}}" }, eq: 1 }] },
         { say: "bₙ = 1/n²", all: [{ v: { m: "value", f: "\\frac{(\\sqrt{10^{8}}+1)/(10^{16}+3)}{1/10^{16}}" }, lt: 100 }] },
@@ -1983,7 +1981,7 @@
       tags: ["lct-choose-bn", "limit-comparison", "taylor"],
       hints: ["令 t = 1/n，n → ∞ 時 t → 0⁺。", "1 − cos t 在 t 很小時大約是多少？"],
       solution: "令 t = 1/n：(1 − cos t)/t² → 1/2（cos t ≈ 1 − t²/2）。極限是有限正數，Σ1/n² 收斂，所以 Σ(1 − cos(1/n)) 收斂。",
-      solutionSteps: ["t = 1/n → 0⁺，比值 = (1 − cos t)/t²。", "1 − cos t = t²/2 − t⁴/24 + ⋯，比值 → 1/2。", "極限 = 1/2（有限正數，原級數與 Σ1/n² 同為收斂）。"],
+      
       verify: { m: "seqLimit", f: "\\frac{1-\\cos(1/n)}{1/n^2}" } },
 
     /* ── 6C 比值判別失效 ── */
@@ -1994,7 +1992,7 @@
       tags: ["ratio-test-inconclusive", "ratio-test", "limit-comparison"],
       hints: ["有理式的 a_{n+1}/a_n，分子分母的最高次項一樣。", "L = 1 時比值判別說了什麼？改用跟 1/n² 比。"],
       solution: "a_{n+1}/a_n = [(2n+3)/(2n+1)]·[(n³+4)/((n+1)³+4)] → 1，比值判別失效（有理式一定如此）。改用極限比較：a_n/(1/n²) = (2n³ + n²)/(n³ + 4) → 2，Σ1/n² 收斂，所以收斂。",
-      solutionSteps: ["a_{n+1}/a_n → 1·1 = 1：比值判別沒有結論。", "極限比較 b_n = 1/n²：a_n/b_n → 2，有限正數。", "Σ1/n² 收斂 ⇒ 原級數收斂。"],
+      
       verify: { m: "choice", options: [
         { say: "L = 1，比值判別失效；改用極限比較得收斂", all: [
           { v: { m: "seqLimit", f: "\\frac{(2n+3)/((n+1)^3+4)}{(2n+1)/(n^3+4)}" }, eq: 1 },
@@ -2010,7 +2008,7 @@
       tags: ["ratio-test-inconclusive", "ratio-test", "limit-comparison"],
       hints: ["(√n + 3)/(√(n+1) + 3) 在 n → ∞ 時趨近多少？", "L = 1 沒有結論；這個級數長得像哪一個 p 級數？"],
       solution: "a_{n+1}/a_n = (√n + 3)/(√(n+1) + 3) → 1，比值判別失效。改用極限比較：a_n/(1/√n) = √n/(√n + 3) → 1，Σ1/√n 發散（p = 1/2），所以發散。",
-      solutionSteps: ["a_{n+1}/a_n = (√n + 3)/(√(n+1) + 3) → 1：沒有結論。", "b_n = 1/√n：a_n/b_n = √n/(√n + 3) → 1。", "Σ1/√n 發散 ⇒ 原級數發散。"],
+      
       verify: { m: "choice", options: [
         { say: "L = 1，比值判別失效；改用極限比較得發散", all: [
           { v: { m: "seqLimit", f: "\\frac{1/(\\sqrt{n+1}+3)}{1/(\\sqrt n+3)}" }, eq: 1 },
@@ -2026,7 +2024,7 @@
       tags: ["root-test-n-root-limit", "root-test"],
       hints: ["ⁿ√(n⁵) = (ⁿ√n)⁵。", "ⁿ√n 在 n → ∞ 時趨近多少？"],
       solution: "ⁿ√a_n = (ⁿ√n)⁵/2 → 1⁵/2 = 1/2 < 1，所以 Σ n⁵/2ⁿ 收斂。",
-      solutionSteps: ["ⁿ√(n⁵/2ⁿ) = (n^{1/n})⁵/2。", "n^{1/n} = e^{(ln n)/n} → e⁰ = 1。", "極限 = 1/2（< 1，級數收斂）。"],
+      
       verify: { m: "seqLimit", f: "\\frac{n^{5/n}}{2}", n0: 100000, levels: 8 } },
     { id: "cg-6c-018", topic: "series", rank: 2, answerKind: "numeric",
       prompt: "a_n=n^2\\left(\\frac{2}{3}\\right)^n\\text{。求根值判別的極限 }\\lim_{n\\to\\infty}\\sqrt[n]{a_n}",
@@ -2034,7 +2032,7 @@
       tags: ["root-test-n-root-limit", "root-test"],
       hints: ["ⁿ√(n²) = (ⁿ√n)²。", "多項式因子開 n 次方之後都 → 1。"],
       solution: "ⁿ√a_n = (n^{1/n})²·(2/3) → 2/3 < 1，所以 Σ n²(2/3)ⁿ 收斂。",
-      solutionSteps: ["ⁿ√(n²(2/3)ⁿ) = (n^{1/n})²·(2/3)。", "n^{1/n} → 1。", "極限 = 2/3（< 1，級數收斂）。"],
+      
       verify: { m: "seqLimit", f: "\\frac{2}{3}n^{2/n}", n0: 100000, levels: 8 } },
     { id: "cg-6c-019", topic: "series", rank: 2, answerKind: "numeric",
       prompt: "a_n=\\left(\\frac{3n+1}{2n+5}\\right)^n\\text{。求根值判別的極限 }\\lim_{n\\to\\infty}\\sqrt[n]{a_n}",
@@ -2042,7 +2040,7 @@
       tags: ["root-test-nth-power", "root-test"],
       hints: ["整個式子是某個東西的 n 次方，開 n 次方剛好拿掉。", "剩下的有理式看最高次項的係數。"],
       solution: "ⁿ√a_n = (3n+1)/(2n+5) → 3/2 > 1，所以 Σa_n 發散（各項甚至趨近無窮大）。",
-      solutionSteps: ["ⁿ√a_n = (3n+1)/(2n+5)。", "→ 3/2。", "極限 = 3/2（> 1，級數發散）。"],
+      
       verify: { m: "seqLimit", f: "\\left(\\left(\\frac{3n+1}{2n+5}\\right)^n\\right)^{1/n}" } },
     { id: "cg-6c-020", topic: "series", rank: 2, answerKind: "text",
       prompt: "\\sum_{n=1}^{\\infty}\\frac{1}{5^n}\\left(1+\\frac{2}{n}\\right)^{n^2}\\text{ 收斂還是發散？}",
@@ -2050,7 +2048,7 @@
       tags: ["root-test-nth-power", "root-test", "exponential-limit"],
       hints: ["n 次方根會把指數 n² 降成 n。", "(1 + 2/n)ⁿ 趨近多少？跟 5 比。"],
       solution: "ⁿ√a_n = (1 + 2/n)ⁿ/5 → e²/5 ≈ 1.478 > 1，根值判別：發散。",
-      solutionSteps: ["ⁿ√a_n = (1 + 2/n)ⁿ/5。", "(1 + 2/n)ⁿ → e² ≈ 7.389。", "L = e²/5 ≈ 1.478 > 1：發散。"],
+      
       verify: { m: "seriesConverges", f: "\\frac{(1+2/n)^{n^2}}{5^n}", from: 1 } }
   ];
 
