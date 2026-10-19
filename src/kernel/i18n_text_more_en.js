@@ -2073,7 +2073,6 @@
     "1y92g9v": "Factor out 〔0〕 and combine.",
     "1y9lsog": "〔0〕 converges (its sum is 〔1〕).",
     "1y9ryk2": "Substituting 〔0〕 gives 〔1〕. Expand 〔2〕 … and 〔3〕 ….",
-    "1y9yevk": "〔0〕, and 〔1〕.",
     "1y9za8x": "Substitute 〔0〕: 〔1〕, 〔2〕.",
     "1yaj2bs": "〔0〕 has period 〔1〕, so there are two solutions in 〔2〕.",
     "1yaupn1": "Shift 〔0〕 right by 〔1〕 and down by 〔2〕: vertex 〔3〕, zeros 〔4〕 and 〔5〕, 〔6〕.",
