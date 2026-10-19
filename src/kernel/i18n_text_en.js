@@ -1624,6 +1624,7 @@
     "1y8axae": "A difference of two 〔0〕's: use sum-to-product.",
     "1y8s3d0": "Take logarithms: 〔0〕. Both factors contain 〔1〕, so use the Product Rule.",
     "1y9j0j0": "〔0〕 is on the downhill segment.",
+    "1y9yevk": "〔0〕, and 〔1〕.",
     "1yaskyx": "The volume becomes a cubic polynomial in the half-height; differentiate, set to 〔0〕, solve for the half-height, and substitute back.",
     "1ycigpp": "Multiply out and collect the 〔0〕 terms.",
     "1yh46zp": "Pull 〔0〕 out of the root to form 〔1〕.",
