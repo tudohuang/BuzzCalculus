@@ -50,11 +50,11 @@
 @keyframes cv2s-in { from { opacity: 0; transform: translateY(6px); } }
 .cv2s-act { margin: 22px 0 0; }
 .cv2s-act .course-check-ask { display: flex; align-items: baseline; gap: 6px; }
-.cv2s-act .course-check-ask svg { flex: none; align-self: center; width: 16px; height: 16px; color: var(--gold-dark); }
+.cv2s-act .course-check-ask > svg { flex: none; align-self: center; width: 16px; height: 16px; color: var(--gold-dark); }
 .cv2s-drag { display: flex; align-items: center; gap: 8px; padding: 10px 14px; border-radius: 10px; background: color-mix(in srgb, var(--blue) 7%, var(--paper)); line-height: 1.6; }
-.cv2s-drag svg { flex: none; width: 18px; height: 18px; color: var(--blue); }
+.cv2s-drag > svg { flex: none; width: 18px; height: 18px; color: var(--blue); }
 .cv2s-drag.is-done { background: color-mix(in srgb, var(--green) 10%, var(--paper)); }
-.cv2s-drag.is-done svg { color: var(--green); }
+.cv2s-drag.is-done > svg { color: var(--green); }
 .cv2s-xp { display: inline-flex; align-items: baseline; gap: 3px; margin-left: auto; padding: 2px 10px; border-radius: 999px; background: color-mix(in srgb, var(--gold) 16%, var(--panel)); color: var(--gold-dark); font-size: 0.82rem; font-weight: 800; font-variant-numeric: tabular-nums; }
 .cv2s-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin: 24px 0 0; padding-top: 16px; border-top: 1px solid var(--line); }
 .cv2s-bar .button { max-width: 100%; }
@@ -328,6 +328,20 @@
     return Boolean(sec.dragOk[si]);
   }
 
+  // 選項畫面上的順序：課文把正解都寫在第一個（1906 題有 1806 題），照原順序畫的話「選第一個就對」。
+  // 固定洗牌（FNV-1a ＋ xorshift，種子＝課 id＋題），重開、測試都一樣；data-option 仍是原索引。
+  function optionOrder(n, seed) {
+    let h = 2166136261;
+    for (const c of String(seed)) { h ^= c.codePointAt(0); h = Math.imul(h, 16777619) >>> 0; }
+    const idx = Array.from({ length: n }, (_v, i) => i);
+    for (let i = n - 1; i > 0; i -= 1) {
+      h ^= h << 13; h >>>= 0; h ^= h >>> 17; h ^= h << 5; h >>>= 0;
+      const j = h % (i + 1);
+      [idx[i], idx[j]] = [idx[j], idx[i]];
+    }
+    return idx;
+  }
+
   function choices(api, item, picks, opts) {
     const { fmt, rich, data, deps } = api;
     const { escapeAttr, icon } = deps;
@@ -338,7 +352,7 @@
       <div class="cv2s-act course-check ${right ? "is-right" : picks.length ? "is-wrong" : ""}" data-cv2s-act="${opts.kind}">
         <p class="course-check-ask">${opts.kind === "predict" ? icon("lightbulb") : ""}<span>${rich(item.ask, data)}</span></p>
         <div class="course-check-options">
-          ${item.options.map((option, oi) => `
+          ${optionOrder(item.options.length, `${data.id}#${opts.kind}#${opts.ci}`).map((oi) => [item.options[oi], oi]).map(([option, oi]) => `
             <button type="button" class="course-option ${settled && option.correct ? "is-correct" : ""} ${picks.includes(oi) && !option.correct ? "is-picked" : ""}" data-action="course-s-pick" data-kind="${opts.kind}" data-check="${opts.ci}" data-option="${oi}" ${settled ? "disabled" : ""}>${fmt(option.label)}</button>`).join("")}
         </div>
         ${wrongs.map((oi) => `<p class="course-check-why">${fmt(item.options[oi].label)}：${rich(item.options[oi].why, data)}</p>`).join("")}
@@ -620,5 +634,5 @@
   }
 
   // voice()：給 E2E 與黑板看旁白的狀態（在 course_narration.js）
-  window.BuzzCourseSections = { render, act, voice: () => (N() ? N().status() : {}) };
+  window.BuzzCourseSections = { render, act, optionOrder, voice: () => (N() ? N().status() : {}) };
 })();

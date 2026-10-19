@@ -86,7 +86,7 @@
       <div class="cv2s-act course-check cv2p-why ${right ? "is-right" : wrongs.length ? "is-wrong" : ""}" data-cv2s-act="why" role="group" aria-label="這一步為什麼成立">
         <p class="course-check-ask">${icon("lightbulb")}<span>${rich(w.ask || "這一步為什麼成立？", data)}</span></p>
         <div class="course-check-options">
-          ${w.options.map((o, oi) => `
+          ${shuffle(w.options.length, `${data.id}#why#${si}-${bi}`).map((oi) => [w.options[oi], oi]).map(([o, oi]) => `
             <button type="button" class="course-option ${open && o.correct ? "is-correct" : ""} ${picks.includes(oi) && !o.correct ? "is-picked" : ""}" data-action="course-s-why" data-beat="${bi}" data-option="${oi}" ${open || picks.includes(oi) ? "disabled" : ""}>${fmt(o.label)}</button>`).join("")}
         </div>
         <div aria-live="polite">
