@@ -176,8 +176,17 @@ const lazyGroupOf = new Map(allTags.filter((m) => /type="text\/lazy"/.test(m[0])
 const scripts = allTags.map((m) => m[1]).filter((rel) => !lazyScripts.has(rel));
 const failures = [];
 
+// 題庫檔量「部署時真的送出去」的大小：bundle_site.js 會把 verify（只給驗證器用的驗算描述子）拿掉，
+// 見 tools/lib/strip_verify.js。原始碼留著 verify，是讓作者寫題時驗算就在題目旁邊。
+const { shipProblemFile } = require("./lib/strip_verify.js");
 const sizeOf = (rel) => {
-  try { return fs.statSync(path.join(ROOT, rel)).size; } catch (_e) { return 0; }
+  try {
+    if (/^src\/problem_[a-z0-9_]+\.js$/.test(rel)) {
+      const text = fs.readFileSync(path.join(ROOT, rel), "utf8");
+      return Buffer.byteLength(shipProblemFile(text, rel), "utf8");
+    }
+    return fs.statSync(path.join(ROOT, rel)).size;
+  } catch (_e) { return 0; }
 };
 
 const claimed = new Set();
