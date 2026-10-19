@@ -2010,7 +2010,6 @@
     "1xbqg0j": "Split 〔0〕: 〔1〕, 〔2〕; adding gives 〔3〕.",
     "1xcnnwk": "Similar triangles give 〔0〕, 〔1〕, 〔2〕.",
     "1xcrhzx": "〔0〕 and 〔1〕 converges (〔2〕), so it converges.",
-    "1xd0m9": "〔0〕, so 〔1〕.",
     "1xdry2l": "The four vertices map in order to 〔0〕, and the four edges 〔1〕, 〔2〕 become 〔3〕, so 〔4〕.\n〔5〕, 〔6〕.",
     "1xdvbf2": "〔0〕, so the bracket 〔1〕.",
     "1xdvdcg": "Take logarithms: 〔0〕, and differentiate both sides: 〔1〕.",

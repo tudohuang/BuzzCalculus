@@ -1571,6 +1571,7 @@
     "1xbkkcy": "〔0〕 is not 〔1〕; first change variables, 〔2〕.",
     "1xc0lfz": "As 〔0〕, the exponential beats the polynomial, so the graph hugs 〔1〕.",
     "1xctvgu": "Does the integrand contain \"something together with its derivative\"?",
+    "1xd0m9": "〔0〕, so 〔1〕.",
     "1xe4val": "Combine the two logarithms into the logarithm of a ratio.",
     "1xf3x0x": "Expand each side up to 〔0〕.",
     "1xf8pps": "Here 〔0〕 is not a perfect square, so nothing collapses. Don't force the simplification from the previous two problems.",
