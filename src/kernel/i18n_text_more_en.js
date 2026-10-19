@@ -1804,7 +1804,6 @@
     "1tp1ju6": "First order: 〔0〕, 〔1〕.",
     "1tp5de": "From the recurrence: 〔0〕, so 〔1〕, which converges for 〔2〕. 〔3〕: 〔4〕.",
     "1tp5mx1": "〔0〕 runs through 〔1〕 with period 〔2〕; its partial sums are bounded, and 〔3〕 decreases monotonically to 〔4〕, so the 〔5〕 Test guarantees convergence.",
-    "1tqhfwe": "First compute 〔0〕 and 〔1〕.",
     "1tr2mdm": "Multiply by 〔0〕 and sum: 〔1〕, so 〔2〕, 〔3〕. 〔4〕: 〔5〕. (Check: 〔6〕, 〔7〕.)",
     "1twlejj": "Take any 〔0〕.",
     "1tx07ky": "Separable: 〔0〕; plugging in 〔1〕 gives 〔2〕, so 〔3〕.",
