@@ -886,19 +886,19 @@
       solution: "ln y=tan x·ln(1/x)=−(tan x/x)·(x ln x)。tan x/x→1、x ln x→0，所以 ln y→0，極限 e⁰=1。",
       solutionSteps: ["ln y=−tan x·ln x=−(tan x/x)·(x ln x)。", "tan x/x→1，x ln x→0。", "ln y→0，y→1。"] },
     { id: "cg-3e-014", topic: "limits", rank: 2, answerKind: "numeric",
-      prompt: "\\lim_{x\\to 2}\\left(\\frac{1}{x-2}-\\frac{4}{x^2-4}\\right)",
-      answer: "1/4", timeLimit: 60,
+      prompt: "\\lim_{x\\to 3}\\left(\\frac{1}{x-3}-\\frac{6}{x^2-9}\\right)",
+      answer: "1/6", timeLimit: 60,
       tags: ["indeterminate-inf-minus-inf", "common-denominator", "factoring"],
-      hints: ["x²−4=(x−2)(x+2)，通分成同一個分母。", "分子化簡後會出現 (x−2)，可以約掉。"],
-      solution: "通分：((x+2)−4)/((x−2)(x+2))=(x−2)/((x−2)(x+2))=1/(x+2)→1/4。",
-      solutionSteps: ["通分：((x+2)−4)/((x−2)(x+2))。", "分子 x−2，約掉得 1/(x+2)。", "x→2：1/4。"] },
+      hints: ["x²−9=(x−3)(x+3)，通分成同一個分母。", "分子化簡後會出現 (x−3)，可以約掉。"],
+      solution: "通分：((x+3)−6)/((x−3)(x+3))=(x−3)/((x−3)(x+3))=1/(x+3)→1/6。",
+      solutionSteps: ["通分：((x+3)−6)/((x−3)(x+3))。", "分子 x−3，約掉得 1/(x+3)。", "x→3：1/6。"] },
     { id: "cg-3e-015", topic: "limits", rank: 2, answerKind: "numeric",
-      prompt: "\\lim_{x\\to 0}\\left(\\frac{1}{x}-\\frac{1}{x^2+x}\\right)",
-      answer: "1", timeLimit: 55,
+      prompt: "\\lim_{x\\to 0}\\left(\\frac{1}{x}-\\frac{2}{x^2+2x}\\right)",
+      answer: "1/2", timeLimit: 55,
       tags: ["indeterminate-inf-minus-inf", "common-denominator", "factoring"],
-      hints: ["x²+x=x(x+1)，通分。", "分子化簡後可以和分母約掉一個 x。"],
-      solution: "通分：((x+1)−1)/(x(x+1))=x/(x(x+1))=1/(x+1)→1。",
-      solutionSteps: ["通分：((x+1)−1)/(x(x+1))。", "=x/(x(x+1))=1/(x+1)。", "x→0：1。"] }
+      hints: ["x²+2x=x(x+2)，通分。", "分子化簡後可以和分母約掉一個 x。"],
+      solution: "通分：((x+2)−2)/(x(x+2))=x/(x(x+2))=1/(x+2)→1/2。",
+      solutionSteps: ["通分：((x+2)−2)/(x(x+2))。", "=x/(x(x+2))=1/(x+2)。", "x→0：1/2。"] }
   ];
 
   window.BUZZ_PROBLEMS = (window.BUZZ_PROBLEMS || []).concat(problems.map((problem) => ({
