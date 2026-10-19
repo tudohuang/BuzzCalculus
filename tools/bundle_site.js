@@ -23,6 +23,7 @@
 const fs = require("fs");
 const path = require("path");
 const crypto = require("crypto");
+const { shipProblemFile } = require("./lib/strip_verify.js");
 
 const ROOT = path.join(__dirname, "..");
 const OUT = "bundle";
@@ -52,6 +53,8 @@ function source(rel) {
   if (/^["']use strict["']/.test(lead(text))) throw new Error(`${rel} 是檔層級 "use strict"：串在別支後面就不嚴格了，不能串`);
   if (text.trimEnd().slice(-1) !== ";" && text.trimEnd().slice(-1) !== "}") throw new Error(`${rel} 結尾不是 ; 或 }：串起來可能黏到下一支`);
   if (/\/\/# sourceMappingURL=/.test(text)) throw new Error(`${rel} 帶 sourceMappingURL：串起來會指錯`);
+  // 題庫檔：拿掉只給驗證器用的 verify（app 不讀，約 400KB）；每一支都在 vm 裡比對過「題目除了 verify 一模一樣」才換
+  if (/^src\/problem_[a-z0-9_]+\.js$/.test(rel)) return shipProblemFile(text, rel);
   return text;
 }
 
