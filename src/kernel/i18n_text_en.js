@@ -215,6 +215,7 @@
     "145g8sa": "〔0〕 blows up at 〔1〕, so the pen has to lift. The theorem requires continuity, which fails here, so the conclusion isn't guaranteed. In fact 〔2〕 is never 〔3〕.",
     "1462g1c": "Product Rule twice: 〔0〕, 〔1〕.",
     "146w89h": "〔0〕, with 〔1〕 and 〔2〕. So is there a root between 〔3〕 and 〔4〕?",
+    "1473571": "Differentiate with respect to 〔0〕: 〔1〕.",
     "147iwv3": "What's left is 〔0〕; by parts: 〔1〕.",
     "147u5o3": "Let 〔0〕 and the whole thing becomes a 〔1〕 integral — much faster than integrating by parts over and over in 〔2〕.",
     "14beoy": "Rewrite it as 〔0〕.",
