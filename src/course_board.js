@@ -47,7 +47,15 @@
 .cvb-model>.cv2-figure+.cv2-figure{margin-top:10px}
 .cvb-model .cv2-figure svg{max-height:calc(var(--mh,300px) - 90px)}
 @media (max-width:599px){.cvb-model>.cv2-figure{padding:6px 8px}.cvb-model .cv2-figure svg{max-height:calc(var(--mh,300px) - 110px)}.cvb-model .cv2-figure figcaption{display:none}}
-@media (min-width:1100px){.cvb-whole .cvb-stage{--bw:min(1120px,calc(100vw - var(--sidebar-width,0px) - 80px));width:var(--bw);margin-left:calc((100% - var(--bw))/2)}}`;
+@media (min-width:1100px){.cvb-whole .cvb-stage{--bw:min(1120px,calc(100vw - var(--sidebar-width,0px) - 80px));width:var(--bw);margin-left:calc((100% - var(--bw))/2)}}
+.cvb-ov{position:fixed;inset:0;z-index:80;overflow-y:auto;overscroll-behavior:contain;background:color-mix(in srgb,var(--paper) 94%,#000);padding:0 12px 32px}
+.cvb-ov-bar{position:sticky;top:0;z-index:2;display:flex;align-items:center;justify-content:space-between;gap:12px;max-width:2140px;margin:0 auto;padding:12px 4px;background:inherit}
+.cvb-ov-bar b{font-size:1rem}
+.cvb-ov-grid{display:flex;flex-wrap:wrap;justify-content:center;gap:16px;max-width:2140px;margin:0 auto}
+.cvb-ov-page{position:relative;overflow:hidden;border-radius:10px;box-shadow:0 4px 18px #0004}
+.cvb-ov-board{overflow:hidden!important;pointer-events:none}
+.cvb-ov-n{position:absolute;right:10px;bottom:6px;color:#fff9;font-size:.75rem;font-variant-numeric:tabular-nums}
+.cvb-ov-meas{position:absolute;left:0;top:0;visibility:hidden;pointer-events:none}`;
   const NS = "http://www.w3.org/2000/svg";
   const MPC = 170; // 沒旁白：一個字幾毫秒（錄音平均約 208；看的人比念的快一點）
   const ENTRY = 320; // 下一句一開始，上一句的記號淡出要多久
@@ -842,8 +850,79 @@
     release() { if (B) { B.frozen = null; B.last = ""; kick(); } },
     rebuild() { if (B) { build(); B.last = ""; kick(); } }
   };
+  // 攤開整塊黑板（結算畫面的按鈕）：整課的板重排一次、直接畫到最後（每一句都寫完、小測照作答狀態圈／劃），
+  // 再把每一面切下來並排 —— 一課寫滿的推導一次看完。板子本身是一個會捲的框（一次一面），這裡把每一面各複製一份。
+  function overview(api) {
+    const whole = lessonBoard(api.data);
+    if (!whole || !whole.beats.some((b) => (b.board || []).length)) return false;
+    if (!document.getElementById("cvb-style")) { const st = mk("style", ""); st.id = "cvb-style"; st.textContent = CSS + CSS_REST; document.head.appendChild(st); }
+    stop();
+    const ov = mk("div", "cvb-ov");
+    ov.setAttribute("role", "dialog");
+    ov.setAttribute("aria-modal", "true");
+    ov.setAttribute("aria-label", "整塊黑板");
+    const bar = mk("div", "cvb-ov-bar");
+    const ttl = mk("b", "");
+    ttl.textContent = `整塊黑板 · ${(api.m && api.m.title) || api.data.title || ""}`;
+    const close = mk("button", "button secondary");
+    close.type = "button";
+    close.textContent = "關閉";
+    close.dataset.cvbOvClose = "1";
+    bar.append(ttl, close);
+    const grid = mk("div", "cvb-ov-grid");
+    const meas = mk("div", "cvb-ov-meas");
+    const vw = window.innerWidth || 1024;
+    const W0 = Math.round(Math.min(1060, vw - (vw < 600 ? 32 : 96)));
+    meas.style.width = `${W0}px`;
+    ov.append(bar, grid, meas);
+    document.body.appendChild(ov);
+    const el = mk("div", "cvb");
+    meas.appendChild(el);
+    const lastSi = api.data.sections.length - 1;
+    B = { key: `${api.m.id}:overview`, si: lastSi, state: api.state, el, at: whole.beats.length - 1, sec: whole, M: null, w: 0, raw: null, rawAt: 0, tau: 0, clip: "", pending: 0, s0: null, q0: performance.now(),
+      api, whole: true, lesson: whole, off: 0, qa: -1, secEnd: whole.beats.length - 1 };
+    const finish = () => {
+      build();
+      if (!B || !B.M) return false;
+      debug.show(B.M.acts.length, 1);
+      const cap = B.view;
+      const pages = Math.max(1, B.pages || Math.ceil(B.L.H / cap));
+      const inner = [...el.children];
+      const cols = vw >= 1100 ? 2 : 1;
+      const gap = 16;
+      const s = Math.min(1, (Math.min(vw - (vw < 600 ? 24 : 64), 2 * 1060) - (cols - 1) * gap) / cols / W0);
+      for (let p = 0; p < pages; p += 1) {
+        const box = mk("div", "cvb-ov-page");
+        box.style.width = `${W0 * s}px`;
+        box.style.height = `${cap * s}px`;
+        const pg = mk("div", "cvb cvb-ov-board");
+        pg.style.cssText = `width:${W0}px;height:${cap}px;transform:scale(${s});transform-origin:0 0`;
+        const shift = mk("div", "");
+        shift.style.cssText = `position:relative;transform:translateY(${-p * cap}px)`;
+        inner.forEach((n) => shift.appendChild(n.cloneNode(true)));
+        pg.appendChild(shift);
+        const num = mk("small", "cvb-ov-n");
+        num.textContent = `${p + 1} / ${pages}`;
+        box.append(pg, num);
+        grid.appendChild(box);
+      }
+      meas.remove();
+      B = null;
+      return true;
+    };
+    const shut = () => { ov.remove(); document.removeEventListener("keydown", onKey); };
+    const onKey = (e) => { if (e.key === "Escape") shut(); };
+    close.addEventListener("click", shut);
+    document.addEventListener("keydown", onKey);
+    // 有圖（plot）的課要先抓畫圖模組；build 自己會抓、抓到再畫
+    const go = () => { if (!finish()) { if (B && B.plotWait) window.setTimeout(go, 120); else shut(); } };
+    go();
+    close.focus();
+    return true;
+  }
+
   window.BuzzBoard = {
-    sync, tex, KOPT, debug, whole: WHOLE,
+    sync, tex, KOPT, debug, whole: WHOLE, overview,
     state: () => (B && B.M ? { key: B.key, at: B.at, g: (B.cur || {}).g, q: (B.cur || {}).q, mode: (B.cur || {}).mode, clip: B.clip, tau: Math.round(B.tau || 0), running: Boolean(raf), p: B.cur && B.cur.mode !== "done" ? (B.cur.g + B.cur.q) : 1 } : null)
   };
 })();

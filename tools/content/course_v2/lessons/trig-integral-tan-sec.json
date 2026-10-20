@@ -133,11 +133,24 @@
       "title": "換一組配對",
       "beats": [
         { "show": ["$(\\tan x)'=\\sec^2 x$", "$(\\sec x)'=\\sec x\\tan x$"],
-          "say": "上一課靠 sine 和 cosine 互為導數。這一課換一組：tangent 和 secant 的導數。" },
+          "say": "上一課靠 sine 和 cosine 互為導數。這一課換一組：tangent 和 secant 的導數。",
+          "board": [
+            { "do": "write", "line": "$(\\tan x)'={{a:\\sec^2 x}}$", "tint": {"a":"blue"} },
+            { "do": "write", "line": "$(\\sec x)'={{b:\\sec x\\tan x}}$", "tint": {"b":"violet"}, "on": "secant" }
+          ] },
         { "show": ["$\\tan^2 x=\\sec^2 x-1$"], "note": "$\\sin^2+\\cos^2=1$ 兩邊除以 $\\cos^2 x$。",
-          "say": "恆等式也換一條：tangent 平方等於 secant 平方減一，從 sine 平方加 cosine 平方等於一來的。" },
+          "say": "恆等式也換一條：tangent 平方等於 secant 平方減一，從 sine 平方加 cosine 平方等於一來的。",
+          "board": [
+            { "do": "write", "line": "$\\tan^2 x=\\sec^2 x-1$" },
+            { "do": "write", "line": "$\\sin^2 x+\\cos^2 x=1$", "on": "從 sine 平方" }
+          ] },
         { "show": ["留一組當 $du$，其餘換成同一種"],
-          "say": "策略跟上一課一樣：留一組當 du，其他的用恆等式換成同一種函數。" }
+          "say": "策略跟上一課一樣：留一組當 du，其他的用恆等式換成同一種函數。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "留一組 ${{d:du}}$，其餘換同一種", "on": "留一組" },
+            { "do": "underline", "term": "d", "label": "當 du", "on": "當 du" }
+          ] }
       ],
       "check": 0
     },
@@ -145,11 +158,26 @@
       "title": "$\\sec$ 偶次方", "key": "留 $\\sec^2x$ 當 $du$，其餘換成 $\\tan$",
       "beats": [
         { "show": ["留 $\\sec^2 x$，$u=\\tan x$"], "note": "剩下的用 $\\sec^2 x=1+\\tan^2 x$ 換掉。",
-          "say": "secant 是偶次方：留一個 secant 平方當 du，令 u 等於 tangent x，剩下的換成 tangent。" },
+          "say": "secant 是偶次方：留一個 secant 平方當 du，令 u 等於 tangent x，剩下的換成 tangent。",
+          "board": [
+            { "do": "write", "line": "留 ${{d:\\sec^2 x}}$，${{u:u=\\tan x}}$", "tint": {"u":"blue"} },
+            { "do": "underline", "term": "d", "label": "當 du", "on": "當 du" },
+            { "do": "write", "line": "$\\sec^2 x=1+\\tan^2 x$", "on": "剩下的" }
+          ] },
         { "show": ["$\\int\\tan^2 x\\sec^4 x\\,dx$"], "note": "$\\tan^2 x\\sec^2 x\\cdot\\sec^2 x$。",
-          "say": "試一題：secant 四次方，拆一個平方出來當 du，另一個平方換成一加 tangent 平方。" },
+          "say": "試一題：secant 四次方，拆一個平方出來當 du，另一個平方換成一加 tangent 平方。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "$\\int\\tan^2 x\\sec^4 x\\,dx$", "on": "試一題" },
+            { "do": "transform", "line": "$=\\int\\tan^2 x\\sec^2 x\\cdot\\sec^2 x\\,dx$", "on": "拆一個" },
+            { "do": "transform", "line": "$=\\int\\tan^2 x\\,(1+\\tan^2 x)\\sec^2 x\\,dx$", "on": "換成" }
+          ] },
         { "show": ["$\\int u^2(1+u^2)\\,du$"],
-          "say": "整個變成 u 的多項式，一項一項積。" }
+          "say": "整個變成 u 的多項式，一項一項積。",
+          "board": [
+            { "do": "transform", "line": "$=\\int {{p:u^2(1+u^2)}}\\,du$" },
+            { "do": "underline", "term": "p", "label": "多項式", "on": "多項式" }
+          ] }
       ],
       "predict": {
         "ask": "換回 $x$，答案是？",
@@ -188,11 +216,25 @@
       "title": "$\\int\\tan x\\,dx$",
       "beats": [
         { "show": ["$\\int\\tan x\\,dx=\\int\\frac{\\sin x}{\\cos x}\\,dx$"], "note": "令 $u=\\cos x$，$du=-\\sin x\\,dx$。",
-          "say": "單獨一個 tangent，寫成 sine 除以 cosine，令 u 等於分母 cosine x。" },
+          "say": "單獨一個 tangent，寫成 sine 除以 cosine，令 u 等於分母 cosine x。",
+          "board": [
+            { "do": "write", "line": "$\\int\\tan x\\,dx=\\int\\frac{\\sin x}{\\cos x}\\,dx$" },
+            { "do": "write", "line": "${{u:u=\\cos x}}$，$du=-\\sin x\\,dx$", "tint": {"u":"blue"}, "on": "令 u" },
+            { "do": "underline", "term": "u", "label": "分母", "on": "分母" }
+          ] },
         { "show": ["$=\\ln|\\sec x|+C$"], "note": "負號拿進去，$\\cos$ 變 $\\sec$。",
-          "say": "分子是分母導數的負號，積出負的自然對數。負號拿進去，就變成 secant。" },
+          "say": "分子是分母導數的負號，積出負的自然對數。負號拿進去，就變成 secant。",
+          "board": [
+            { "do": "write", "line": "$=-\\int\\frac{du}{u}=-\\ln|u|$" },
+            { "do": "write", "line": "$=\\ln|{{s:\\sec x}}|+C$", "on": "就變成" }
+          ] },
         { "show": ["$\\tan$ 偶、$\\sec$ 奇：兩招都用不上"], "note": "例如 $\\sec^3 x$：要分部，常常是循環型。",
-          "say": "還有一種情況兩招都不能用：tangent 偶次方、secant 奇次方，這要靠分部積分。" }
+          "say": "還有一種情況兩招都不能用：tangent 偶次方、secant 奇次方，這要靠分部積分。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "${{a:\\tan}}$ 偶、${{b:\\sec}}$ 奇", "on": "兩招" },
+            { "do": "write", "line": "→ 分部積分", "color": "gold", "on": "這要靠" }
+          ] }
       ],
       "check": 3
     },
@@ -200,11 +242,23 @@
       "title": "$\\int\\sec x\\,dx$", "key": "乘 $\\sec x+\\tan x$：分母導數正好是分子",
       "beats": [
         { "show": ["乘上 $\\frac{\\sec x+\\tan x}{\\sec x+\\tan x}$"], "note": "值不變。",
-          "say": "secant 的積分不好猜。技巧是乘上一個等於一的分式，分子分母都是 secant 加 tangent。" },
+          "say": "secant 的積分不好猜。技巧是乘上一個等於一的分式，分子分母都是 secant 加 tangent。",
+          "board": [
+            { "do": "write", "line": "$\\sec x=\\sec x\\cdot{{m:\\frac{\\sec x+\\tan x}{\\sec x+\\tan x}}}$" },
+            { "do": "underline", "term": "m", "label": "值不變", "on": "等於一" }
+          ] },
         { "show": ["$\\sec x=\\frac{\\sec^2 x+\\sec x\\tan x}{\\sec x+\\tan x}$"], "note": "分母的導數正好是分子。",
-          "say": "乘開以後，分母 secant 加 tangent 的導數，剛好就是分子，變成分子是分母導數的形狀。" },
+          "say": "乘開以後，分母 secant 加 tangent 的導數，剛好就是分子，變成分子是分母導數的形狀。",
+          "board": [
+            { "do": "write", "line": "$=\\frac{{{n:\\sec^2 x+\\sec x\\tan x}}}{{{d:\\sec x+\\tan x}}}$" },
+            { "do": "arrow", "from": "d", "to": "n", "label": "導數是分子", "on": "剛好" }
+          ] },
         { "show": ["事後看出來的技巧"], "note": "記住結果，會微分檢查就好。",
-          "say": "這一步是事後才看出來的，不用自己想到。記住結果，會微分檢查就好。" }
+          "say": "這一步是事後才看出來的，不用自己想到。記住結果，會微分檢查就好。",
+          "board": [
+            { "do": "write", "line": "事後看出來的技巧" },
+            { "do": "write", "line": "會微分檢查就好", "on": "會微分" }
+          ] }
       ],
       "check": 2
     }
