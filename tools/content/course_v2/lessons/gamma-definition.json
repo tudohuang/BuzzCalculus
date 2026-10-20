@@ -194,11 +194,24 @@
       "title": "什麼時候收斂",
       "beats": [
         { "show": ["$x\\to\\infty$：$e^{-x}$ 贏"], "note": "指數衰減比任何次方增長都快。",
-          "say": "兩端都要檢查。無限遠那端，e 的負 x 次方衰減得比任何次方都快，尾巴一定收斂。" },
+          "say": "兩端都要檢查。無限遠那端，e 的負 x 次方衰減得比任何次方都快，尾巴一定收斂。",
+          "board": [
+            { "do": "write", "line": "$x\\to\\infty$：${{e:e^{-x}}}$ 贏" },
+            { "do": "focus", "term": "e", "label": "衰減最快", "on": "衰減" }
+          ] },
         { "show": ["$x\\to 0^+$：像 $x^{s-1}$"], "note": "$e^{-x}\\to 1$。",
-          "say": "零那端，e 的負 x 次方趨近一，被積函數就像 x 的 s 減一次方。" },
+          "say": "零那端，e 的負 x 次方趨近一，被積函數就像 x 的 s 減一次方。",
+          "board": [
+            { "do": "write", "line": "$x\\to0^+$：$e^{-x}\\to1$，像 ${{p:x^{s-1}}}$" },
+            { "do": "underline", "term": "p", "label": "看這一項", "on": "被積函數" }
+          ] },
         { "show": ["$p$ 判別：$s-1>-1$，即 $s>0$"], "note": "此積分表示式在 $s>0$ 時收斂。",
-          "say": "用 p 判別，s 減一要大於負一，也就是 s 大於零，這個積分才收斂。" }
+          "say": "用 p 判別，s 減一要大於負一，也就是 s 大於零，這個積分才收斂。",
+          "board": [
+            { "do": "write", "line": "$p$ 判別：${{a:s-1>-1}}$" },
+            { "do": "transform", "line": "即 ${{b:s>0}}$", "on": "也就是" },
+            { "do": "box", "term": "b", "color": "green", "on": "大於零" }
+          ] }
       ],
       "check": 2
     },
@@ -235,11 +248,26 @@
       "title": "整數點是階乘", "key": "$\\Gamma(n)$ 是 $(n-1)!$，別多乘一項",
       "beats": [
         { "show": ["$\\Gamma(2)=1$，$\\Gamma(3)=2$"], "fig": { "use": 0, "to": 3 },
-          "say": "從 Gamma 一等於一往上推：Gamma 二是一乘一，Gamma 三是二乘一，等於二。" },
+          "say": "從 Gamma 一等於一往上推：Gamma 二是一乘一，Gamma 三是二乘一，等於二。",
+          "board": [
+            { "do": "write", "line": "$\\Gamma(2)=1\\cdot\\Gamma(1)=1$" },
+            { "do": "write", "line": "$\\Gamma(3)=2\\cdot\\Gamma(2)=2$", "on": "Gamma 三" }
+          ] },
         { "show": ["$\\Gamma(4)=6$"], "fig": { "use": 0, "to": 4 },
-          "say": "s 拉到四，面積是六，就是三的階乘。" },
+          "say": "s 拉到四，面積是六，就是三的階乘。",
+          "board": [
+            { "do": "write", "line": "$\\Gamma(4)=3\\cdot\\Gamma(3)={{r:6}}$" },
+            { "do": "box", "term": "r", "color": "green", "on": "面積是六" }
+          ] },
         { "show": ["$\\Gamma(n+1)=n!$"], "note": "差一：$\\Gamma(n)=(n-1)!$，不是 $n!$。",
-          "say": "一般來說 Gamma n 加一是 n 階乘。小心差一：Gamma 六是一百二十，不是七百二十。" }
+          "say": "一般來說 Gamma n 加一是 n 階乘。小心差一：Gamma 六是一百二十，不是七百二十。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "$\\Gamma(n+1)={{f:n!}}$", "color": "green", "on": "Gamma n" },
+            { "do": "write", "line": "$\\Gamma(n)=(n-1)!$", "on": "小心差一" },
+            { "do": "write", "line": "$\\Gamma(6)=5!={{h:120}}$", "on": "Gamma 六" },
+            { "do": "box", "term": "h", "color": "green", "on": "一百二十" }
+          ] }
       ],
       "check": 0
     },
@@ -274,9 +302,17 @@
       "title": "先換元", "key": "先換元成標準形 $u^{k}e^{-u}$",
       "beats": [
         { "show": ["$\\int_0^{\\infty}x^3e^{-x^2}\\,dx$"], "note": "指數是 $-x^2$，不是標準形狀。",
-          "say": "這一題指數是負 x 平方，不是標準形狀，要先換元。" },
+          "say": "這一題指數是負 x 平方，不是標準形狀，要先換元。",
+          "board": [
+            { "do": "write", "line": "$\\int_0^{\\infty}x^3e^{ {{p:-x^2}} }\\,dx$" },
+            { "do": "focus", "term": "p", "color": "red", "label": "不是標準", "on": "不是標準形狀" }
+          ] },
         { "show": ["$u=x^2$，$du=2x\\,dx$"], "note": "$x^3\\,dx=x^2\\cdot x\\,dx=u\\cdot\\frac{du}{2}$",
-          "say": "令 u 等於 x 平方。把 x 三次方 dx 拆成 x 平方乘 x dx，就是 u 乘二分之 du。" }
+          "say": "令 u 等於 x 平方。把 x 三次方 dx 拆成 x 平方乘 x dx，就是 u 乘二分之 du。",
+          "board": [
+            { "do": "write", "line": "$u=x^2$，$du=2x\\,dx$" },
+            { "do": "write", "line": "$x^3\\,dx=x^2\\cdot x\\,dx=u\\cdot\\frac{du}{2}$", "on": "拆成" }
+          ] }
       ],
       "predict": {
         "ask": "積分變成？",

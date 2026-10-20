@@ -130,11 +130,23 @@
       "title": "整數乘出 $\\pi$",
       "beats": [
         { "show": ["$\\frac{2\\cdot 2}{1\\cdot 3}\\cdot\\frac{4\\cdot 4}{3\\cdot 5}\\cdot\\frac{6\\cdot 6}{5\\cdot 7}\\cdots$"], "note": "偶數平方，除以左右兩個奇數。",
-          "say": "把每個偶數平方，除以它左右兩個奇數，一直乘下去。" },
+          "say": "把每個偶數平方，除以它左右兩個奇數，一直乘下去。",
+          "board": [
+            { "do": "write", "line": "$\\frac{{{a:2\\cdot2}}}{{{b:1\\cdot3}}}\\cdot\\frac{4\\cdot4}{3\\cdot5}\\cdot\\frac{6\\cdot6}{5\\cdot7}\\cdots$" },
+            { "do": "underline", "term": "b", "label": "奇數", "on": "左右" }
+          ] },
         { "show": ["$=\\frac{\\pi}{2}$"],
-          "say": "這個只用整數的乘積，會收斂到二分之 pi。" },
+          "say": "這個只用整數的乘積，會收斂到二分之 pi。",
+          "board": [
+            { "do": "write", "line": "$\\cdots={{p:\\frac{\\pi}{2}}}$" },
+            { "do": "box", "term": "p", "color": "green", "on": "收斂到" }
+          ] },
         { "show": ["$\\frac{(2k)^2}{(2k-1)(2k+1)}=\\frac{4k^2}{4k^2-1}$"], "note": "每個因子都比 $1$ 大一點點。",
-          "say": "每個因子是四 k 平方除以四 k 平方減一，都比一大一點點，乘起來剛好停在二分之 pi。" }
+          "say": "每個因子是四 k 平方除以四 k 平方減一，都比一大一點點，乘起來剛好停在二分之 pi。",
+          "board": [
+            { "do": "write", "line": "$\\frac{(2k)^2}{(2k-1)(2k+1)}=\\frac{{{q:4k^2}}}{{{d:4k^2-1}}}$" },
+            { "do": "underline", "term": "d", "label": "比 1 大", "on": "都比一大" }
+          ] }
       ],
       "check": 0
     },
@@ -142,9 +154,17 @@
       "title": "倒過來寫",
       "beats": [
         { "show": ["$1-\\frac{1}{4k^2}=\\frac{(2k-1)(2k+1)}{(2k)^2}$"], "note": "正好是 Wallis 因子的倒數。",
-          "say": "一減四 k 平方分之一，通分之後剛好是 Wallis 因子上下顛倒。" },
+          "say": "一減四 k 平方分之一，通分之後剛好是 Wallis 因子上下顛倒。",
+          "board": [
+            { "do": "write", "line": "$1-\\frac{1}{4k^2}={{f:\\frac{(2k-1)(2k+1)}{(2k)^2}}}$" },
+            { "do": "underline", "term": "f", "label": "倒數", "on": "Wallis 因子" }
+          ] },
         { "show": ["$\\prod_{k=1}^{\\infty}\\left(1-\\frac{1}{4k^2}\\right)=\\frac{2}{\\pi}$"], "note": "每個因子都小於 $1$，乘積小於 $1$。",
-          "say": "部分乘積互為倒數，所以這個乘積趨近 pi 分之二。每個因子小於一，答案也小於一，合理。" }
+          "say": "部分乘積互為倒數，所以這個乘積趨近 pi 分之二。每個因子小於一，答案也小於一，合理。",
+          "board": [
+            { "do": "write", "line": "$\\prod_{k=1}^{\\infty}\\left(1-\\frac{1}{4k^2}\\right)={{r:\\frac{2}{\\pi}}}$" },
+            { "do": "box", "term": "r", "color": "green", "on": "每個因子" }
+          ] }
       ],
       "check": 2
     },
@@ -176,11 +196,24 @@
       "title": "一個不變量", "key": "遞迴兩邊乘 $nW_{n-1}$，造出不變量",
       "beats": [
         { "show": ["$nW_nW_{n-1}=(n-1)W_{n-1}W_{n-2}$"], "note": "遞迴兩邊乘 $nW_{n-1}$。",
-          "say": "把遞迴兩邊都乘上 n 乘 W n 減一，左右變成同一個樣子，只是 n 往下退一格。" },
+          "say": "把遞迴兩邊都乘上 n 乘 W n 減一，左右變成同一個樣子，只是 n 往下退一格。",
+          "board": [
+            { "do": "write", "line": "${{l:nW_nW_{n-1}}}={{e:(n-1)W_{n-1}W_{n-2}}}$" },
+            { "do": "underline", "term": "e", "label": "n 退一格", "on": "往下退" }
+          ] },
         { "show": ["$=1\\cdot W_1W_0=\\frac{\\pi}{2}$"], "note": "這個量不隨 $n$ 改變。",
-          "say": "所以這個量不管 n 是多少都一樣，一路退到 n 等於一，就是 W 一乘 W 零，二分之 pi。" },
+          "say": "所以這個量不管 n 是多少都一樣，一路退到 n 等於一，就是 W 一乘 W 零，二分之 pi。",
+          "board": [
+            { "do": "transform", "line": "${{l:nW_nW_{n-1}}}={{b:1\\cdot W_1W_0}}$" },
+            { "do": "underline", "term": "b", "label": "退到底", "on": "一路退到" }
+          ] },
         { "show": ["$W_n\\sim\\sqrt{\\frac{\\pi}{2n}}$"], "note": "配合 $W_n\\sim W_{n-1}$。",
-          "say": "再配合相鄰兩項等價，W n 平方等價於二 n 分之 pi，開根號就得到 W n 的大小。" }
+          "say": "再配合相鄰兩項等價，W n 平方等價於二 n 分之 pi，開根號就得到 W n 的大小。",
+          "board": [
+            { "do": "write", "line": "${{s:W_n^2}}\\sim\\frac{\\pi}{2n}$" },
+            { "do": "transform", "line": "${{w:W_n}}\\sim{{r:\\sqrt{\\frac{\\pi}{2n}}}}$", "on": "開根號" },
+            { "do": "box", "term": "r", "color": "green", "on": "就得到" }
+          ] }
       ],
       "check": 3
     },
@@ -188,11 +221,25 @@
       "title": "很慢，但很有用",
       "beats": [
         { "show": ["$P_1=\\frac{4}{3}\\approx 1.3333$"], "note": "跟 $\\frac{\\pi}{2}\\approx 1.5708$ 比。",
-          "say": "實際乘乘看。第一個因子是三分之四，大約一點三三三三，離一點五七零八還很遠。" },
+          "say": "實際乘乘看。第一個因子是三分之四，大約一點三三三三，離一點五七零八還很遠。",
+          "board": [
+            { "do": "write", "line": "$P_1={{a:\\frac{4}{3}}}\\approx 1.3333$" },
+            { "do": "write", "line": "$\\frac{\\pi}{2}\\approx 1.5708$", "on": "離" }
+          ] },
         { "show": ["$P_{10}\\approx 1.5339$"], "note": "相對誤差約 $\\frac{1}{4m}$，$m=10$ 時 $\\frac{1}{40}$。",
-          "say": "乘到第十個，還差百分之二點四左右。拿它算 pi 並不實際。" },
+          "say": "乘到第十個，還差百分之二點四左右。拿它算 pi 並不實際。",
+          "board": [
+            { "do": "write", "line": "${{p:P_{10}}}\\approx 1.5339$" },
+            { "do": "underline", "term": "p", "label": "還差", "on": "還差" }
+          ] },
         { "show": ["用途：定出常數"], "note": "$\\binom{2n}{n}$、Stirling 的 $\\sqrt{2\\pi}$、$\\Gamma\\left(\\frac{1}{2}\\right)$。",
-          "say": "它真正的用途是當橋樑：中央二項式係數、Stirling 公式的根號二 pi，都靠它定出常數。" }
+          "say": "它真正的用途是當橋樑：中央二項式係數、Stirling 公式的根號二 pi，都靠它定出常數。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "用途：定出常數", "on": "用途" },
+            { "do": "write", "line": "$\\binom{2n}{n}$、Stirling 的 ${{s:\\sqrt{2\\pi}}}$", "on": "中央二項式係數" },
+            { "do": "focus", "term": "s", "on": "根號二" }
+          ] }
       ],
       "predict": {
         "ask": "$P_2$（前兩個因子相乘）是？",

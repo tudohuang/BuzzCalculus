@@ -174,11 +174,22 @@
       "title": "共同的樣子",
       "beats": [
         { "show": ["左邊：區域上積某種「導數」"], "note": "$F'$、$\\nabla$、平面旋度、旋度、散度。",
-          "say": "每一行的左邊，都是在一個區域上，積某一種導數。" },
+          "say": "每一行的左邊，都是在一個區域上，積某一種導數。",
+          "board": [
+            { "do": "write", "line": "區域上積導數：$\\int_R{{d:d\\omega}}$", "tint": {"d":"blue"} }
+          ] },
         { "show": ["右邊：邊界上積「原來的東西」"], "note": "$k$ 維區域，邊界是 $k-1$ 維。",
-          "say": "右邊，都是在那個區域的邊界上，積原來的東西。邊界永遠比區域少一維。" },
+          "say": "右邊，都是在那個區域的邊界上，積原來的東西。邊界永遠比區域少一維。",
+          "board": [
+            { "do": "transform", "line": "$\\int_R{{d:d\\omega}}={{b:\\int_{\\partial R}\\omega}}$" },
+            { "do": "underline", "term": "b", "label": "少一維", "on": "永遠" }
+          ] },
         { "show": ["切小塊、共用邊界抵消、只剩最外圍"],
-          "say": "理由每次都一樣：切成小塊，每塊的導數乘大小約等於它邊界上的量；共用的邊界互相抵消，只剩最外圍。" }
+          "say": "理由每次都一樣：切成小塊，每塊的導數乘大小約等於它邊界上的量；共用的邊界互相抵消，只剩最外圍。",
+          "board": [
+            { "do": "write", "line": "切小塊：每塊 $\\approx$ 邊界上的量" },
+            { "do": "write", "line": "共用邊界抵消，只剩最外圍", "on": "共用的邊界" }
+          ] }
       ],
       "check": 3
     },
@@ -186,11 +197,25 @@
       "title": "方向就是正負號",
       "beats": [
         { "show": ["線段：終點記 $+$、起點記 $-$"], "note": "所以是 $F(b)-F(a)$。",
-          "say": "每個定理都要求邊界的方向跟區域配好。最簡單的線段：終點帶正號，起點帶負號。" },
+          "say": "每個定理都要求邊界的方向跟區域配好。最簡單的線段：終點帶正號，起點帶負號。",
+          "board": [
+            { "do": "write", "line": "$\\partial[a,b]$：${{p:+b}}$、${{m:-a}}$" },
+            { "do": "focus", "term": "p", "color": "green", "on": "終點" },
+            { "do": "focus", "term": "m", "color": "red", "on": "起點" }
+          ] },
         { "show": ["Green 逆時針、Stokes 右手定則、散度定理朝外"],
-          "say": "Green 的邊界逆時針，區域在左手邊；Stokes 用右手定則；散度定理一律朝外。" },
+          "say": "Green 的邊界逆時針，區域在左手邊；Stokes 用右手定則；散度定理一律朝外。",
+          "board": [
+            { "do": "write", "line": "Green：逆時針，區域在左" },
+            { "do": "write", "line": "Stokes：右手定則", "on": "Stokes" },
+            { "do": "write", "line": "散度定理：朝外", "on": "散度定理" }
+          ] },
         { "show": ["方向配錯：差一個負號"],
-          "say": "方向配錯，就差一個負號。" }
+          "say": "方向配錯，就差一個負號。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "$\\oint_{-C}\\mathbf F\\cdot d\\mathbf r=-{{o:\\oint_C\\mathbf F\\cdot d\\mathbf r}}$", "on": "配錯" }
+          ] }
       ],
       "check": 2
     },
@@ -198,11 +223,29 @@
       "title": "邊界的邊界是空的", "key": "封閉的東西沒有邊界，積分給 0",
       "beats": [
         { "show": ["封閉曲線沒有端點，封閉曲面沒有邊界曲線"],
-          "say": "封閉曲線沒有端點，封閉曲面也沒有邊界曲線。這件幾何事實對應兩個恆等式。" },
+          "say": "封閉曲線沒有端點，封閉曲面也沒有邊界曲線。這件幾何事實對應兩個恆等式。",
+          "board": [
+            { "do": "write", "line": "封閉曲線 $\\to$ 沒有端點" },
+            { "do": "write", "line": "封閉曲面 $\\to$ 沒有邊界曲線", "on": "封閉曲面" },
+            { "do": "write", "line": "$\\partial(\\partial R)={{e:\\emptyset}}$", "on": "幾何事實" },
+            { "do": "box", "term": "e", "color": "green", "on": "對應" }
+          ] },
         { "show": ["$\\nabla\\times(\\nabla f)=\\mathbf 0$"], "note": "保守場繞一圈：沒有端點，給 $0$。",
-          "say": "保守場繞封閉曲線一圈，沒有端點，給零。用 Stokes 看，旋度也只能是零。" },
+          "say": "保守場繞封閉曲線一圈，沒有端點，給零。用 Stokes 看，旋度也只能是零。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "$\\oint_C{{g:\\nabla f}}\\cdot d\\mathbf r$：沒有端點", "tint": {"g":"blue"}, "on": "保守場" },
+            { "do": "write", "line": "$\\nabla\\times({{g:\\nabla f}})={{z:\\mathbf 0}}$", "on": "旋度" },
+            { "do": "box", "term": "z", "color": "green", "on": "只能是" }
+          ] },
         { "show": ["$\\nabla\\cdot(\\nabla\\times\\mathbf F)=0$"], "note": "旋度場穿過封閉曲面：沒有邊界曲線，給 $0$。",
-          "say": "旋度場穿過封閉曲面，沒有邊界曲線，Stokes 給零；用散度定理看，旋度的散度也只能是零。" }
+          "say": "旋度場穿過封閉曲面，沒有邊界曲線，Stokes 給零；用散度定理看，旋度的散度也只能是零。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "$\\nabla\\times\\mathbf F$ 穿過封閉曲面", "on": "旋度場" },
+            { "do": "write", "line": "沒有邊界曲線", "on": "沒有邊界曲線" },
+            { "do": "write", "line": "散度定理：$\\nabla\\cdot(\\nabla\\times\\mathbf F)$", "on": "旋度的散度" }
+          ] }
       ],
       "check": 0
     },
@@ -210,11 +253,24 @@
       "title": "同一個數，三種算法",
       "beats": [
         { "show": ["$\\mathbf F=\\langle -y,x,0\\rangle$，單位圓逆時針"], "note": "線積分直接算：$2\\pi$。",
-          "say": "旋轉場沿單位圓繞一圈，直接算線積分是二 pi。" },
+          "say": "旋轉場沿單位圓繞一圈，直接算線積分是二 pi。",
+          "board": [
+            { "do": "write", "line": "$\\mathbf F=\\langle -y,x,0\\rangle$" },
+            { "do": "write", "line": "$\\oint_C\\mathbf F\\cdot d\\mathbf r={{r:2\\pi}}$", "on": "直接算" }
+          ] },
         { "show": ["$\\nabla\\times\\mathbf F=\\langle 0,0,2\\rangle$，平圓盤：$2\\times\\pi=2\\pi$"],
-          "say": "用 Stokes 換成平的圓盤：旋度是零、零、二，乘圓盤面積 pi，也是二 pi。" },
+          "say": "用 Stokes 換成平的圓盤：旋度是零、零、二，乘圓盤面積 pi，也是二 pi。",
+          "board": [
+            { "do": "write", "line": "$\\nabla\\times\\mathbf F=\\langle 0,0,2\\rangle$" },
+            { "do": "write", "line": "$2\\times\\pi={{r:2\\pi}}$", "on": "乘圓盤" }
+          ] },
         { "show": ["換成上半球面、法向量朝上"], "note": "邊界一樣是單位圓。",
-          "say": "如果換成上半球面呢？邊界一樣是那個單位圓，方向也配好了。" }
+          "say": "如果換成上半球面呢？邊界一樣是那個單位圓，方向也配好了。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "上半球面 $S$，法向量朝上", "on": "上半球面" },
+            { "do": "write", "line": "$\\partial S$：單位圓，方向配好", "on": "邊界一樣" }
+          ] }
       ],
       "predict": {
         "ask": "上半球面上旋度的通量是？",
@@ -229,11 +285,28 @@
       "title": "該用哪一個",
       "beats": [
         { "show": ["$\\oint_C(e^x+y)\\,dx+3x\\,dy$，正方形 $[0,2]^2$"], "note": "平面封閉曲線 → Green：$2\\times4=8$。",
-          "say": "平面上的封閉曲線，用 Green：Q 下標 x 減 P 下標 y 是二，乘面積四，得八。" },
+          "say": "平面上的封閉曲線，用 Green：Q 下標 x 減 P 下標 y 是二，乘面積四，得八。",
+          "board": [
+            { "do": "write", "line": "$\\oint_C(e^x+y)\\,dx+3x\\,dy$" },
+            { "do": "write", "line": "$Q_x-P_y=3-1={{a:2}}$", "on": "Q 下標" },
+            { "do": "write", "line": "$2\\times4=8$", "color": "green", "on": "乘面積" }
+          ] },
         { "show": ["$\\int_C\\nabla(xyz)\\cdot d\\mathbf r$，$(0,0,0)\\to(1,2,3)$"], "note": "梯度場 → 線積分基本定理：$6$。",
-          "say": "梯度場的線積分，代端點：x y z 在點一、二、三是六，在原點是零。" },
+          "say": "梯度場的線積分，代端點：x y z 在點一、二、三是六，在原點是零。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "$\\int_C\\nabla(xyz)\\cdot d\\mathbf r=f(B)-f(A)$", "on": "梯度場" },
+            { "do": "write", "line": "$=xyz\\big|_{(1,2,3)}-xyz\\big|_{(0,0,0)}$", "on": "代端點" },
+            { "do": "write", "line": "$=6-0$", "color": "green", "on": "在點" }
+          ] },
         { "show": ["$\\langle x,y,z\\rangle$ 穿出單位球面"], "note": "封閉曲面通量 → 散度定理：$3\\times\\frac{4\\pi}{3}=4\\pi$。",
-          "say": "封閉曲面的通量，用散度定理：散度三，乘單位球體積，得四 pi。" }
+          "say": "封閉曲面的通量，用散度定理：散度三，乘單位球體積，得四 pi。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "$\\iint_S\\langle x,y,z\\rangle\\cdot d\\mathbf S$", "on": "封閉曲面" },
+            { "do": "write", "line": "$\\nabla\\cdot\\mathbf F={{d:3}}$", "on": "散度三" },
+            { "do": "write", "line": "$3\\times\\frac{4\\pi}{3}=4\\pi$", "color": "green", "on": "乘單位球" }
+          ] }
       ],
       "check": 1
     }
