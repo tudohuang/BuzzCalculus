@@ -209,7 +209,7 @@ html.nb .cvb-model>.cv2-figure{box-shadow:0 1px 4px #0002}
     // 寫得比板子還多就在板子裡捲（往上滑看前面寫過的），鏡頭跟著粉筆走（paint 的 follow）
     // 手機（窄）38%、平板與桌機 45%：手機上板子＋句子＋動作要放得進一屏。整課一塊時高一點（桌機 60%、手機 42%）
     // 筆記本：板子吃滿本文區剩下的高度（扣掉底下的播放列）
-    const nbBox = document.documentElement.classList.contains("nb") && B.whole ? nbFit() : null;
+    const nbBox = document.documentElement.classList.contains("nb") && B.whole && B.el.closest("[data-cv2s] [data-cvb-slot]") ? nbFit() : null;
     const nbCap = nbBox ? Math.round(nbBox.bottom - B.el.getBoundingClientRect().top - 92) : 0;
     const cap = nbCap > 240 ? nbCap : B.whole
       ? Math.max(300, Math.min(760, Math.round((window.innerHeight || 800) * ((window.innerWidth || 800) < 600 ? (B.lesson && B.lesson.anyFig ? 0.56 : 0.42) : 0.6))))
@@ -310,7 +310,7 @@ html.nb .cvb-model>.cv2-figure{box-shadow:0 1px 4px #0002}
     const L0 = B.lesson;
     const rectH = Math.round(cap * (cols === 1 ? 0.56 : 0.5));
     const figOf = L0 ? (i) => L0.figSec[L0.secOf[M.acts[M.items[i].born].b]] : null;
-    const m = { W, pad, gap: Math.round(F * 1.0), flow: B.whole ? { view: cap, cols, colW: Wc, colGap, rectH, fig: figOf } : null, items: V.map((v) => ({ w: v.w, h: v.h, lhs: v.lhs || 0, alignable: Boolean(v.alignable), gapA: 0, gapB: 0 })) };
+    const m = { W, pad, gap: Math.round(F * (nbBox ? 1.5 : 1.0)), flow: B.whole ? { view: cap, cols, colW: Wc, colGap, rectH, fig: figOf, headPage: Boolean(nbBox) } : null, items: V.map((v) => ({ w: v.w, h: v.h, lhs: v.lhs || 0, alignable: Boolean(v.alignable), gapA: 0, gapB: 0 })) };
     let st;
     let geo;
     for (let iter = 0; iter < 6; iter += 1) {

@@ -243,6 +243,8 @@
         if (one ? y > top() + 0.5 : usedRect[page] || col === F.cols - 1) turn();
         else { reserved[page] = true; if (one) y = top(); }
       }
+      // 筆記本：每一節從新的一頁開始（一頁一節，寫完不擠）
+      if (F.headPage && it.a.head && i > 0 && (col > 0 || y > top() + 0.5)) turn();
       const h = (mi.gapA || 0) + mi.h + (mi.gapB || 0);
       const atTop = y === top();
       const headGap = (it.a.head || it.a.keep) && !atTop ? Math.round(m.gap * 0.9) : 0;
