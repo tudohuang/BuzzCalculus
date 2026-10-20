@@ -146,11 +146,23 @@
       "title": "各自微分是錯的",
       "beats": [
         { "show": ["$x \\cdot x = x^2$，導數 $2x$"],
-          "say": "x 乘 x 就是 x 平方，導數是二 x。" },
+          "say": "x 乘 x 就是 x 平方，導數是二 x。",
+          "board": [
+            { "do": "write", "line": "$x\\cdot x=x^2$，導數 $2x$" }
+          ] },
         { "show": ["各自微分再相乘：$1 \\cdot 1 = 1$"], "note": "跟 $2x$ 不一樣。",
-          "say": "如果兩個 x 各自微分再相乘，得到一乘一等於一。跟二 x 對不上，所以乘積要有自己的規則。" },
+          "say": "如果兩個 x 各自微分再相乘，得到一乘一等於一。跟二 x 對不上，所以乘積要有自己的規則。",
+          "board": [
+            { "do": "write", "line": "各自微分：$(x)'\\cdot(x)'={{w:1\\cdot1=1}}$" },
+            { "do": "strike", "term": "w", "label": "對不上", "on": "對不上" }
+          ] },
         { "show": ["把 $f(x)g(x)$ 看成面積"], "note": "寬是 $f(x)$，高是 $g(x)$。",
-          "say": "把乘積想成長方形的面積：寬是 f，高是 g。x 一變，寬和高都會跟著變。" }
+          "say": "把乘積想成長方形的面積：寬是 f，高是 g。x 一變，寬和高都會跟著變。",
+          "board": [
+            { "do": "write", "line": "面積 $={{f:f(x)}}\\cdot{{g:g(x)}}$" },
+            { "do": "focus", "term": "f", "color": "blue", "label": "寬", "on": "寬是" },
+            { "do": "focus", "term": "g", "color": "violet", "label": "高", "on": "高是" }
+          ] }
       ],
       "predict": {
         "ask": "寬多 $\\Delta f$、高多 $\\Delta g$，多出來的面積分成幾塊？",
@@ -165,13 +177,32 @@
       "title": "長方形變大",
       "beats": [
         { "show": ["$\\Delta f \\cdot g$、$f \\cdot \\Delta g$、$\\Delta f \\cdot \\Delta g$"],
-          "say": "多出來的是右邊的長條、上面的長條，和角落的小方塊。" },
+          "say": "多出來的是右邊的長條、上面的長條，和角落的小方塊。",
+          "board": [
+            { "do": "write", "line": "${{a:\\Delta f\\cdot g}}$、${{b:f\\cdot\\Delta g}}$、${{c:\\Delta f\\cdot\\Delta g}}$" },
+            { "do": "underline", "term": "a", "label": "右長條", "on": "右邊" },
+            { "do": "underline", "term": "b", "label": "上長條", "on": "上面" },
+            { "do": "circle", "term": "c", "label": "角落", "on": "角落" }
+          ] },
         { "show": ["÷ $h$：$\\frac{\\Delta f}{h} \\to f'$，$\\frac{\\Delta g}{h} \\to g'$"],
-          "say": "全部除以 h，再讓 h 趨近零。delta f 除以 h 趨近 f prime，delta g 除以 h 趨近 g prime。" },
+          "say": "全部除以 h，再讓 h 趨近零。delta f 除以 h 趨近 f prime，delta g 除以 h 趨近 g prime。",
+          "board": [
+            { "do": "write", "line": "除以 $h$，再讓 $h\\to0$" },
+            { "do": "write", "line": "$\\frac{\\Delta f}{h}\\to f'$，$\\frac{\\Delta g}{h}\\to g'$", "on": "delta f" }
+          ] },
         { "show": ["兩條長條 → $f'g + fg'$"],
-          "say": "所以右邊長條變成 f prime 乘 g，上面長條變成 f 乘 g prime。" },
+          "say": "所以右邊長條變成 f prime 乘 g，上面長條變成 f 乘 g prime。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "右邊長條 → ${{a:f'g}}$", "on": "右邊長條" },
+            { "do": "write", "line": "上面長條 → ${{b:fg'}}$", "on": "上面長條" }
+          ] },
         { "show": ["角落 $= \\Delta f \\cdot \\left(\\frac{\\Delta g}{h}\\right)$"], "note": "直覺，不是證明：默認 $f$ 連續、長度是正的。",
-          "say": "角落那塊寫成 delta f 乘 delta g 除以 h。它會怎樣？先猜猜看。" }
+          "say": "角落那塊寫成 delta f 乘 delta g 除以 h。它會怎樣？先猜猜看。",
+          "board": [
+            { "do": "write", "line": "角落 $=\\Delta f\\cdot{{d:\\frac{\\Delta g}{h}}}$", "tint": {"d":"blue"} },
+            { "do": "underline", "term": "d", "color": "blue", "on": "delta g" }
+          ] }
       ],
       "predict": {
         "ask": "$h \\to 0$ 時，角落那塊除以 $h$ 趨近？",
@@ -280,13 +311,30 @@
       "title": "多項式乘指數",
       "beats": [
         { "show": ["$\\frac{d}{dx} (x e^x)$"], "note": "$f = x$、$g = e^x$。",
-          "say": "x 乘 e 的 x 次方，兩個因子都有 x，是兩個函數相乘。" },
+          "say": "x 乘 e 的 x 次方，兩個因子都有 x，是兩個函數相乘。",
+          "board": [
+            { "do": "write", "line": "$\\frac{d}{dx}({{f:x}}\\cdot{{g:e^x}})$", "tint": {"f":"blue","g":"violet"} },
+            { "do": "focus", "term": "f", "color": "blue", "label": "f", "on": "兩個因子" },
+            { "do": "focus", "term": "g", "color": "violet", "label": "g", "on": "兩個函數" }
+          ] },
         { "show": ["$f' = 1$，$g' = e^x$"],
-          "say": "x 微成一，e 的 x 次方微成自己。" },
+          "say": "x 微成一，e 的 x 次方微成自己。",
+          "board": [
+            { "do": "write", "line": "$f'=1$，$g'=e^x$" }
+          ] },
         { "show": ["$1 \\cdot e^x + x \\cdot e^x$"],
-          "say": "前微後不微是一乘 e 的 x 次方，前不微後微是 x 乘 e 的 x 次方。" },
+          "say": "前微後不微是一乘 e 的 x 次方，前不微後微是 x 乘 e 的 x 次方。",
+          "board": [
+            { "do": "write", "line": "$={{a:1\\cdot e^x}}+{{b:x\\cdot e^x}}$" },
+            { "do": "underline", "term": "a", "on": "前微後不微" },
+            { "do": "underline", "term": "b", "on": "前不微後微" }
+          ] },
         { "show": ["$= (x + 1)e^x$"],
-          "say": "兩項都有 e 的 x 次方，提出來，得 x 加一乘 e 的 x 次方。" }
+          "say": "兩項都有 e 的 x 次方，提出來，得 x 加一乘 e 的 x 次方。",
+          "board": [
+            { "do": "transform", "line": "$={{r:(x+1)e^x}}$", "on": "提出來" },
+            { "do": "box", "term": "r", "color": "green", "on": "x 加一" }
+          ] }
       ],
       "solve": {
         "check": 1, "kind": "expression", "answer": "(x^2+2x)e^x", "claim": "D(x^2*e^x) == ANS",
@@ -330,13 +378,30 @@
       "title": "三個相乘、對答案",
       "beats": [
         { "show": ["$(fgh)'=f'gh+fg'h+fgh'$"], "note": "輪流微：每一項只微一個。",
-          "say": "三個相乘就輪流微，每一項只微一個因式、其他不動，所以有三項。" },
+          "say": "三個相乘就輪流微，每一項只微一個因式、其他不動，所以有三項。",
+          "board": [
+            { "do": "write", "line": "$(fgh)'={{a:f'gh}}+{{b:fg'h}}+{{c:fgh'}}$" }
+          ] },
         { "show": ["$y = (x^2 + 1)(x^3 - x)$"], "note": "$f' = 2x$，$g' = 3x^2 - 1$。",
-          "say": "多項式相乘可以用乘法法則，也可以先展開。來看兩種做法會不會一樣。" },
+          "say": "多項式相乘可以用乘法法則，也可以先展開。來看兩種做法會不會一樣。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "$y=({{f:x^2+1}})({{g:x^3-x}})$", "tint": {"f":"blue","g":"violet"}, "on": "多項式相乘" }
+          ] },
         { "show": ["$(2x^4 - 2x^2) + (3x^4 + 2x^2 - 1)$"], "note": "$f'g$ 加 $fg'$。",
-          "say": "乘法法則：f prime g 加 f g prime，展開相加，x 平方項剛好消掉。" },
+          "say": "乘法法則：f prime g 加 f g prime，展開相加，x 平方項剛好消掉。",
+          "board": [
+            { "do": "write", "line": "$=({{a:2x^4-2x^2}})+({{b:3x^4+2x^2-1}})$" },
+            { "do": "underline", "term": "a", "on": "f prime g" },
+            { "do": "underline", "term": "b", "on": "f g prime" }
+          ] },
         { "show": ["$= 5x^4 - 1$"], "note": "先展開：$x^5 - x$，微分也是 $5x^4 - 1$。",
-          "say": "得五 x 四次方減一。先展開是 x 五次方減 x，微分一樣是五 x 四次方減一。" }
+          "say": "得五 x 四次方減一。先展開是 x 五次方減 x，微分一樣是五 x 四次方減一。",
+          "board": [
+            { "do": "transform", "line": "$={{r:5x^4-1}}$" },
+            { "do": "box", "term": "r", "color": "green", "on": "先展開" },
+            { "do": "write", "line": "先展開：$(x^5-x)'=5x^4-1$", "on": "x 五次方" }
+          ] }
       ],
       "check": 3
     }

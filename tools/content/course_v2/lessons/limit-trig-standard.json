@@ -177,13 +177,27 @@
       "title": "放大看 $\\sin x$",
       "beats": [
         { "show": ["$x$ 很小時 $\\sin x$ 幾乎就是 $x$"], "note": "單位圓上：弧長 $x$ 和高度 $\\sin x$ 幾乎一樣長。", "fig": { "use": 0, "to": 0 },
-          "say": "看圖，藍色是 sine x，紅色虛線是 y 等於 x。在原點附近，兩條線靠得很近。" },
+          "say": "看圖，藍色是 sine x，紅色虛線是 y 等於 x。在原點附近，兩條線靠得很近。",
+          "board": [
+            { "do": "write", "line": "$x$ 很小：${{s:\\sin x}}\\approx x$", "tint": {"s":"blue"} }
+          ] },
         { "show": ["往原點放大"], "fig": { "use": 0, "to": 1 },
-          "say": "往原點放大，兩條線越來越分不開。比值往一靠，就是因為這兩個幾乎一樣長。" },
+          "say": "往原點放大，兩條線越來越分不開。比值往一靠，就是因為這兩個幾乎一樣長。",
+          "board": [
+            { "do": "write", "line": "$\\frac{\\sin x}{x}\\to 1$", "on": "比值往一靠" }
+          ] },
         { "show": ["直覺，不是證明"], "note": "比值為什麼剛好趨近 1，要用面積夾出來；證明在下一節。",
-          "say": "不過這只是直覺。幾乎一樣到底多接近，要用三塊面積把它夾住，證明就在下一節。" },
+          "say": "不過這只是直覺。幾乎一樣到底多接近，要用三塊面積把它夾住，證明就在下一節。",
+          "board": [
+            { "do": "write", "line": "直覺，不是證明", "color": "red" }
+          ] },
         { "show": ["$x$ 一定要用弧度"], "note": "用角度：$\\sin(1^\\circ) \\approx 0.017452$，比值變成 $\\frac{\\pi}{180}$。",
-          "say": "還有，x 一定要用弧度。用角度的話，sine 一度約零點零一七四五二，比值就不會趨近一了。" }
+          "say": "還有，x 一定要用弧度。用角度的話，sine 一度約零點零一七四五二，比值就不會趨近一了。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "$x$ 一定要用弧度", "on": "一定要用弧度" },
+            { "do": "write", "line": "$\\sin(1^\\circ)\\approx 0.017452$", "on": "sine 一度" }
+          ] }
       ],
       "drag": { "use": 0, "ask": "自己放大到最底，看 $\\sin x$ 和 $y = x$ 分不分得開", "range": [1.8, 2] }
     },
@@ -294,11 +308,26 @@
       "title": "$\\tan$ 也能配",
       "beats": [
         { "show": ["$\\tan x / x = (\\sin x / x) \\cdot \\frac{1}{\\cos x}$"], "note": "$\\to 1 \\cdot 1 = 1$",
-          "say": "tangent 是 sine 除以 cosine。拆開來兩塊都趨近一，所以 tangent x 除以 x 也趨近一。" },
+          "say": "tangent 是 sine 除以 cosine。拆開來兩塊都趨近一，所以 tangent x 除以 x 也趨近一。",
+          "board": [
+            { "do": "write", "line": "$\\frac{\\tan x}{x}={{p:\\frac{\\sin x}{x}}}\\cdot{{c:\\frac{1}{\\cos x}}}$" },
+            { "do": "write", "line": "$\\to 1\\cdot 1 = 1$", "on": "兩塊都趨近一" }
+          ] },
         { "show": ["$\\frac{\\tan(2x)}{\\sin(3x)}$：拆成三塊"], "note": "$[\\frac{\\tan(2x)}{2x}] \\cdot [\\frac{3x}{\\sin(3x)}] \\cdot \\frac{2x}{3x}$",
-          "say": "tangent 二 x 除以 sine 三 x：tangent 配二 x，sine 配三 x，剩下二 x 比三 x。" },
+          "say": "tangent 二 x 除以 sine 三 x：tangent 配二 x，sine 配三 x，剩下二 x 比三 x。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "$\\frac{\\tan(2x)}{\\sin(3x)}$", "on": "tangent 二 x" },
+            { "do": "transform", "line": "$={{t:\\frac{\\tan(2x)}{2x}}}\\cdot{{s:\\frac{3x}{\\sin(3x)}}}\\cdot{{r:\\frac{2x}{3x}}}$", "on": "tangent 配二 x" },
+            { "do": "underline", "term": "r", "on": "剩下" }
+          ] },
         { "show": ["$1 \\cdot 1 \\cdot \\frac{2}{3} = \\frac{2}{3}$"],
-          "say": "前兩塊都趨近一，最後一塊 x 約掉是三分之二，相乘就是三分之二。" }
+          "say": "前兩塊都趨近一，最後一塊 x 約掉是三分之二，相乘就是三分之二。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "$1\\cdot 1\\cdot\\frac{2}{3}={{r:\\frac{2}{3}}}$", "on": "前兩塊" },
+            { "do": "box", "term": "r", "color": "green", "on": "相乘就是" }
+          ] }
       ],
       "check": 3
     },
@@ -306,11 +335,26 @@
       "title": "$1 - \\cos x$ 那一個", "key": "同乘 $1+\\cos x$，湊出 $\\sin^2x$",
       "beats": [
         { "show": ["同乘 $1 + \\cos x$"], "note": "$x$ 靠近 0 時它靠近 2，不是 0。",
-          "say": "第二個標準極限：一減 cosine x 除以 x 平方。分子分母同乘一加 cosine x，它靠近二，不會變成零。" },
+          "say": "第二個標準極限：一減 cosine x 除以 x 平方。分子分母同乘一加 cosine x，它靠近二，不會變成零。",
+          "board": [
+            { "do": "write", "line": "$\\lim_{x\\to0}\\frac{1-\\cos x}{x^2}$" },
+            { "do": "transform", "line": "$=\\frac{1-\\cos x}{x^2}\\cdot\\frac{{{a:1+\\cos x}}}{{{b:1+\\cos x}}}$", "on": "分子分母同乘" },
+            { "do": "focus", "term": "a", "label": "靠近 2", "on": "它靠近二" }
+          ] },
         { "show": ["$(1 - \\cos x)(1 + \\cos x) = \\sin^2x$"],
-          "say": "分子變成一減 cosine 平方，也就是 sine 平方 x。" },
+          "say": "分子變成一減 cosine 平方，也就是 sine 平方 x。",
+          "board": [
+            { "do": "write", "line": "$(1-\\cos x)(1+\\cos x)=1-\\cos^2 x$" },
+            { "do": "write", "line": "$={{s:\\sin^2 x}}$", "on": "也就是" }
+          ] },
         { "show": ["$(\\sin x / x)^2 \\cdot \\frac{1}{1 + \\cos x}$"], "note": "$\\to 1^2 \\cdot \\frac{1}{2} = \\frac{1}{2}$",
-          "say": "整理成 sine x 除以 x 的平方，再乘一加 cosine x 分之一。前面趨近一，後面趨近二分之一。" }
+          "say": "整理成 sine x 除以 x 的平方，再乘一加 cosine x 分之一。前面趨近一，後面趨近二分之一。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "$=\\left({{p:\\frac{\\sin x}{x}}}\\right)^2\\cdot{{q:\\frac{1}{1+\\cos x}}}$", "on": "整理成" },
+            { "do": "underline", "term": "p", "label": "趨近 1", "on": "前面" },
+            { "do": "underline", "term": "q", "on": "後面" }
+          ] }
       ],
       "check": 2
     },
@@ -318,11 +362,27 @@
       "title": "配平方，只在 0",
       "beats": [
         { "show": ["$\\frac{1 - \\cos 4x}{x^2}$：$u = 4x$"], "note": "分母要配成 $(4x)^2 = 16x^2$。",
-          "say": "一減 cosine 四 x 除以 x 平方。裡面是四 x，分母要配成四 x 的平方，是十六 x 平方，不是四 x 平方。" },
+          "say": "一減 cosine 四 x 除以 x 平方。裡面是四 x，分母要配成四 x 的平方，是十六 x 平方，不是四 x 平方。",
+          "board": [
+            { "do": "write", "line": "$\\frac{1-\\cos({{i:4x}})}{x^2}$", "tint": {"i":"blue"} },
+            { "do": "underline", "term": "i", "color": "blue", "label": "裡面", "on": "裡面是四 x" },
+            { "do": "write", "line": "$(4x)^2 = {{s:16x^2}}$", "on": "分母要配成" },
+            { "do": "focus", "term": "s", "on": "十六" }
+          ] },
         { "show": ["$16 \\cdot \\frac{1 - \\cos 4x}{(4x)^2} \\to 16 \\cdot \\frac{1}{2} = 8$"],
-          "say": "多出來的十六放前面，後面那一塊趨近二分之一，答案是八。" },
+          "say": "多出來的十六放前面，後面那一塊趨近二分之一，答案是八。",
+          "board": [
+            { "do": "write", "line": "$={{k:16}}\\cdot\\frac{1-\\cos(4x)}{(4x)^2}$" },
+            { "do": "write", "line": "$\\to 16\\cdot\\frac{1}{2} = {{r:8}}$", "on": "趨近二分之一" },
+            { "do": "box", "term": "r", "color": "green", "on": "答案" }
+          ] },
         { "show": ["標準極限只在 $x \\to 0$"], "note": "$x$ 跑到別的地方，就不是 $\\frac{0}{0}$ 了。",
-          "say": "最後提醒：這兩個標準極限都是 x 趨近零才成立。x 跑去別的地方，要重新想。" }
+          "say": "最後提醒：這兩個標準極限都是 x 趨近零才成立。x 跑去別的地方，要重新想。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "標準極限只在 ${{z:x\\to0}}$ 成立", "on": "最後提醒" },
+            { "do": "underline", "term": "z", "label": "只在 0", "on": "趨近零" }
+          ] }
       ],
       "check": 1
     }
