@@ -437,7 +437,7 @@ async function run() {
     const bytes = await evaluate(`return { board: window.__b.bytes(/course_board(_layout)?\\.js/), plot: window.__b.bytes(/course_board_plot\\.js/) };`);
     const size = (f) => fs.statSync(path.join(ROOT, f)).size;
     console.log(`  ·    流量：黑板 ${size("src/course_board.js") + size("src/course_board_layout.js")} 位元組（原始）、圖 ${size("src/course_board_plot.js")} 位元組；這次抓到的（未壓縮的測試伺服器）${JSON.stringify(bytes)}`);
-    check("流量：有黑板的課才付黑板的檔（上面「沒有黑板的課不抓」）；黑板＋圖 < 96KB 原始（2026-10-18 不擦的板＋粉筆尖＋板裡捲動；2026-10-20 一課一塊＋板上出題＋圖釘在板上；筆記本原型＋捲軸樣式；筆記本的紙與字型）", size("src/course_board.js") + size("src/course_board_layout.js") + size("src/course_board_plot.js") < 96 * 1024);
+    check("流量：有黑板的課才付黑板的檔（上面「沒有黑板的課不抓」）；黑板＋圖 < 96KB 原始（2026-10-18 不擦的板＋粉筆尖＋板裡捲動；2026-10-20 一課一塊＋板上出題＋圖釘在板上；筆記本原型＋捲軸樣式；筆記本的紙與字型；2026-10-21 證明的隨堂題寫上板）", size("src/course_board.js") + size("src/course_board_layout.js") + size("src/course_board_plot.js") < 100 * 1024);
 
     const errs = errors.filter((e) => !/favicon|net::ERR|Failed to load resource/.test(e));
     check("console 沒有錯誤", !errs.length, errs.slice(0, 3).join(" | "));

@@ -29,8 +29,11 @@
 .cvb-ink path{fill:none;stroke:currentColor;stroke-width:2.3;stroke-linecap:round;stroke-linejoin:round}
 .cvb-f{position:absolute;left:0;top:0;transform-origin:0 0;white-space:nowrap;line-height:1.3}
 .cvb .kg{color:var(--kg)}.cvb .kr{color:var(--kr)}.cvb .kc{color:var(--kc)}.cvb .kn{color:var(--kn)}.cvb .kv{color:var(--kv)}
-.cvb-p{--panel:var(--kb);--paper:var(--kb);--line:#ffffff1a;--line-strong:#eceee680;--muted:#b9c3bc;--ink:var(--k);--blue:var(--kc);--red:var(--kr);--green:var(--kn);--gold:var(--kg);--violet:var(--kv)}
-:root[data-theme="dark"] .cvb-p{--line:#ffffff1a;--line-strong:#eceee680;--muted:#b9c3bc}
+.cvb-p{--panel:var(--kb);--paper:var(--kb);--line:#ffffff1a;--line-strong:#eceee6d9;--muted:#c9d2cc;--ink:var(--k);--blue:var(--kc);--red:var(--kr);--green:var(--kn);--gold:var(--kg);--violet:var(--kv)}
+:root[data-theme="dark"] .cvb-p{--line:#ffffff1a;--line-strong:#eceee6d9;--muted:#c9d2cc}
+.cvb-p line[stroke="var(--line-strong)"]{stroke-width:2}
+html.nb .cvb-p{--line:#1e2b4a14;--line-strong:#1e2b4abf;--muted:#566173}
+:root[data-theme="dark"].nb .cvb-p{--line:#ffffff14;--line-strong:#e4e8f2bf;--muted:#a3acbd}
 .cvb-p .problem-graph{margin:0;padding:0;border:0;background:none;box-shadow:none;width:100%;height:100%}.cvb-p svg,.cvb .cvb-p .problem-graph svg{display:block;width:100%;height:100%;border:0;border-radius:0;background:none}
 .cvb-sr{position:absolute!important;width:1px;height:1px;margin:0;padding:0;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
 .cv2s-beat.cvb-bare{height:0;padding:0;border:0;margin-bottom:-10px;overflow:hidden}
@@ -45,6 +48,7 @@
 .cvb-stage>.cvb-onboard{position:absolute;z-index:3;left:14px;right:14px;bottom:12px;margin:0;pointer-events:none}
 .cvb-stage>.cvb-onboard .course-check-why{margin:0;padding:6px 10px;border-radius:8px;background:color-mix(in srgb,var(--paper) 90%,transparent);box-shadow:0 2px 8px #0003;font-size:.92rem}
 .cvb-stage>.cvb-onboard .course-check-why:not(:last-child){margin-bottom:6px}
+.cvb-stage>.cvb-onboard .cv2p-see{pointer-events:auto;min-height:32px;margin:0;padding:2px 10px;border-radius:999px;background:color-mix(in srgb,var(--paper) 88%,transparent);box-shadow:0 2px 8px #0003}
 .cvb-next{position:absolute;z-index:3;right:16px;bottom:12px;margin:0;padding:4px 10px;border-radius:999px;background:color-mix(in srgb,var(--paper) 88%,transparent);color:var(--ink);font-size:.85rem;font-weight:700;pointer-events:none;animation:cvb-next 1.6s ease-in-out infinite alternate}
 .cvb-stage>.cvb-onboard~.cvb-next{bottom:auto;top:12px}
 @keyframes cvb-next{from{opacity:.55}to{opacity:1}}
@@ -177,33 +181,49 @@ html.nb .cvb-model>.cv2-figure{box-shadow:0 1px 4px #0002}
     return out.map((x) => x.trim()).filter(Boolean);
   }
   function lessonBoard(data) {
-    if (wholeCache.has(data)) return wholeCache.get(data);
+    // 證明的選項順序要等 course_proof.js（洗牌）：還沒載就先照原順序，載了重排一次
+    const hit = wholeCache.get(data);
+    if (hit && (hit.pv || !window.BuzzCourseProof)) return hit;
     const beats = [];
     const off = [];
     const qz = [];
     const secOf = [];
     const figSec = data.sections.map((s) => s.beats.some((b) => b.fig) || Boolean(s.drag));
+    // 題目寫成板上的行：題目（金色、貼邊）＋選項（縮一格、點得到）；order = 選項照這個順序寫（證明的「為什麼」跟板下一樣洗牌）
+    const quizLines = (tag, ask, label, options, order) => {
+      const q = chunks(String(ask || ""), 15).map((line, k) => ({ do: "write", line: k ? line : `${label}　${line}`, color: "gold", qz: "ask", ...tag }));
+      const opts = order.flatMap((oi, k) => chunks(String(options[oi].label || ""), 24).map((line, j) => ({ do: "write", line: j ? line : `${tag.kind === "where" ? `${oi + 1}.` : `(${"ABCDEF"[k]})`}　${line}`, qz: oi, ...tag })));
+      q[0].keep = q.length - 1 + opts.length;
+      return q.concat(opts);
+    };
+    const P = window.BuzzCourseProof;
     data.sections.forEach((s, si) => {
       off.push(beats.length);
+      const bd = s.beats.some((x) => x.board);
       s.beats.forEach((b, bi) => {
-        if (bi || !s.beats.some((x) => x.board)) { beats.push(b); return; }
+        let board = b.board;
+        // 證明的「為什麼」：問句與選項寫在這一句板上（問著的時候寫；答了才寫的那幾行 a.why 接在選項後面）
+        if (bd && b.why && Array.isArray(b.why.options)) {
+          const tag = { kind: "why", si, bi, wb: beats.length };
+          const order = P && P.shuffle ? P.shuffle(b.why.options.length, `${data.id}#why#${si}-${bi}`) : b.why.options.map((_o, oi) => oi);
+          const all = board || [];
+          const k = all.reduce((m, a, j) => (a.why ? m : j + 1), 0);
+          board = all.slice(0, k).concat(quizLines(tag, b.why.ask || "這一步為什麼成立？", "隨堂", b.why.options, order), all.slice(k));
+        }
+        if (bi || !bd) { beats.push(board === b.board ? b : { ...b, board }); return; }
         const head = [{ do: "write", line: `${si + 1}.　${String(s.title || "").replace(/[{}]/g, "")}`, color: "gold", head: true }];
-        beats.push({ ...b, board: (si ? [{ do: "clear" }] : []).concat(head, b.board || []) });
+        beats.push({ ...b, board: (si ? [{ do: "clear" }] : []).concat(head, board || []) });
       });
-      // 板上出題：只有選擇題（小測、先猜）；拖圖、自己算、排順序、用在哪一步還是在板子下面
-      const kind = s.check !== undefined ? "check" : s.predict ? "predict" : "";
-      const item = kind === "check" ? (data.checks || [])[s.check] : s.predict;
-      if (!kind || !item || !Array.isArray(item.options) || s.drag || s.solve || s.order || s.where || !s.beats.some((x) => x.board)) { qz.push(-1); return; }
-      const ci = kind === "check" ? s.check : si;
-      const tag = { kind, ci, si };
-      const ask = chunks(String(item.ask || ""), 15).map((line, k) => ({ do: "write", line: k ? line : `${kind === "check" ? "小測" : "先猜"}　${line}`, color: "gold", qz: "ask", ...tag }));
-      const opts = item.options.flatMap((o, oi) => chunks(String(o.label || ""), 24).map((line, k) => ({ do: "write", line: k ? line : `(${"ABCDEF"[oi]})　${line}`, qz: oi, ...tag })));
-      ask[0].keep = ask.length - 1 + opts.length;
+      // 板上出題：選擇題（小測、先猜）與證明的「用在哪一步」；拖圖、自己算、排順序還是在板子下面
+      const kind = s.check !== undefined ? "check" : s.predict ? "predict" : s.where ? "where" : "";
+      const item = kind === "check" ? (data.checks || [])[s.check] : kind === "predict" ? s.predict : s.where && { ask: s.where.ask, options: s.where.steps };
+      if (!kind || !item || !Array.isArray(item.options) || s.drag || s.solve || s.order || !bd) { qz.push(-1); return; }
+      const tag = { kind, ci: kind === "check" ? s.check : si, si };
       qz.push(beats.length);
-      beats.push({ say: "", show: [], quiz: tag, board: ask.concat(opts) });
+      beats.push({ say: "", show: [], quiz: tag, board: quizLines(tag, item.ask, { check: "小測", predict: "先猜", where: "隨堂" }[kind], item.options, item.options.map((_o, oi) => oi)) });
     });
     beats.forEach((_b, bi) => { let si = 0; while (si + 1 < off.length && off[si + 1] <= bi) si += 1; secOf[bi] = si; });
-    const out = { beats, off, qz, secOf, figSec, anyFig: figSec.some(Boolean) };
+    const out = { beats, off, qz, secOf, figSec, anyFig: figSec.some(Boolean), pv: Boolean(P) };
     wholeCache.set(data, out);
     return out;
   }
@@ -720,20 +740,27 @@ html.nb .cvb-model>.cv2-figure{box-shadow:0 1px 4px #0002}
     // 題目整個寫完了才點得到（還在寫就點，點的是還沒出現的字）
     const qEnd = B.M.acts.reduce((m, x) => (x.b === B.qa ? x.g + 1 : m), 0);
     B.qOn = B.at === B.qa && Boolean(B.cur) && B.cur.g >= qEnd;
+    // 證明的「為什麼」：這一句的問句與選項（a.qz）都寫完了才點得到
+    const wEnd = B.M.acts.reduce((m, x) => (x.b === B.at && x.a.qz !== undefined ? x.g + 1 : m), 0);
+    B.whyOn = wEnd > 0 && Boolean(B.cur) && B.cur.g >= wEnd;
     B.V.forEach((v) => {
       const a = v.it.a;
       if (typeof a.qz !== "number") return;
-      const item = a.kind === "check" ? (data.checks || [])[a.ci] : (data.sections[a.si] || {}).predict;
-      if (!item) return;
-      const picks = a.kind === "check" ? st.picks[a.ci] || [] : st.sec.pred[a.si] === undefined ? [] : [st.sec.pred[a.si]];
+      const s = data.sections[a.si] || {};
+      const why = a.kind === "why" ? ((s.beats || [])[a.bi] || {}).why : null;
+      const item = a.kind === "check" ? (data.checks || [])[a.ci] : a.kind === "predict" ? s.predict : a.kind === "where" ? s.where && { options: s.where.steps } : why;
+      if (!item || !Array.isArray(item.options)) return;
+      const ws = a.kind === "why" ? (st.sec.why || {})[`${a.si}-${a.bi}`] || {} : null;
+      const picks = a.kind === "check" ? st.picks[a.ci] || [] : a.kind === "predict" ? (st.sec.pred[a.si] === undefined ? [] : [st.sec.pred[a.si]]) : a.kind === "where" ? (st.sec.whr || {})[a.si] || [] : ws.picks || [];
       const right = picks.some((oi) => item.options[oi] && item.options[oi].correct);
-      const settled = right || (a.kind === "predict" && picks.length > 0);
+      const settled = right || (a.kind === "predict" && picks.length > 0) || Boolean(ws && ws.open);
       const o = item.options[a.qz] || {};
       v.el.classList.toggle("cvb-no", picks.includes(a.qz) && !o.correct);
       v.el.classList.toggle("cvb-yes", settled && Boolean(o.correct));
-      const live = !settled && a.si === B.si && B.at === B.qa && B.qOn;
-      if (live && !picks.includes(a.qz)) Object.assign(v.el.dataset, { action: "course-s-pick", kind: a.kind, check: String(a.ci), option: String(a.qz) });
-      else ["action", "kind", "check", "option"].forEach((k) => delete v.el.dataset[k]);
+      const live = !settled && a.si === B.si && (a.kind === "why" ? B.at === a.wb && B.whyOn : B.at === B.qa && B.qOn);
+      const act = { check: "course-s-pick", predict: "course-s-pick", where: "course-s-whr", why: "course-s-why" }[a.kind];
+      if (live && !picks.includes(a.qz)) Object.assign(v.el.dataset, a.kind === "why" ? { action: act, beat: String(a.bi), option: String(a.qz) } : { action: act, kind: a.kind, check: String(a.ci), option: String(a.qz) });
+      else ["action", "kind", "check", "option", "beat"].forEach((k) => delete v.el.dataset[k]);
     });
   }
   // 「第幾個動作做到多少」：照這一句的時間（錄音或虛擬）算
@@ -807,6 +834,7 @@ html.nb .cvb-model>.cv2-figure{box-shadow:0 1px 4px #0002}
       if (g0 >= 0 && c.g >= g0) { goQuiz(now); return kick(); }
     }
     if (B.qa >= 0 && B.at === B.qa && !B.qOn) { quizState(); if (B.qOn) B.last = ""; }
+    if (!B.open && !B.whyOn && (B.sec.beats[B.at] || {}).why) { quizState(); if (B.whyOn) B.last = ""; }
     const A = B.M.acts[c.g];
     const busy = c.mode === "wait" || (c.mode === "audio" && !B.paused) || (c.mode === "virtual" && (c.q > 0 || (A && A.b === B.at && !(A.why && !B.open)))) || (c.mode !== "done" && c.entry < 1);
     // 不動的時候也每 300ms 看一眼：旁白可能剛按了播放、跳回這一句的開頭
@@ -839,6 +867,7 @@ html.nb .cvb-model>.cv2-figure{box-shadow:0 1px 4px #0002}
   function answered(api, si) {
     const s = api.data.sections[si];
     if (s.check !== undefined) return (api.state.picks[s.check] || []).length > 0;
+    if (s.where) return ((api.state.sec.whr || {})[si] || []).length > 0;
     return api.state.sec.pred[si] !== undefined;
   }
   function stop() { window.cancelAnimationFrame(raf); window.clearTimeout(poll); raf = poll = 0; }
