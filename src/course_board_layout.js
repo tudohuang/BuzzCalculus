@@ -219,7 +219,7 @@
   // 整課一塊（m.flow = { view, cols, colW, colGap }）：像教授寫黑板 —— 一欄由上往下寫，寫到底換右邊那一欄；
   // 每一欄都滿了就換一面（第 p 面佔 [p·view, (p+1)·view)，鏡頭一次滑一整面）。
   // 節名（a.head）不落在欄底：放不下「節名＋下一行」就直接換欄；不在欄頂時上面多空一點。
-  // 一欄裡相鄰、都能對齊的行對齊 =；節名靠左，其他行在欄裡置中。
+  // 一欄裡相鄰、都能對齊的行對齊 =；節名靠左，其他行在欄裡置中（筆記本：靠左縮一格）。
   // 有圖的節（F.fig(i)）：寫在「保留一塊給圖」的面上 —— 好幾欄的板保留最右一欄、一欄的板保留上面 F.rectH。
   // 一面一旦保留，整面都讓（之後別的節接著寫也不進那一塊）；要保留時那一塊已經有字 → 換一面。
   function stackFlow(model, m) {
@@ -284,7 +284,9 @@
       groups.forEach((gr) => gr.ids.forEach((i) => {
         const mi = m.items[i];
         const qz = items[i].a.qz;
-        const x = items[i].a.head || qz === "ask" ? bx : typeof qz === "number" ? bx + Math.round(m.gap * 1.2) : gr.ids.length > 1 && gr.L + gr.R <= F.colW ? bx + (F.colW - gr.L - gr.R) / 2 + gr.L - mi.lhs : bx + Math.max(0, (F.colW - mi.w) / 2);
+        // 筆記本：像在紙上寫 —— 從左邊寫起（節名貼邊、內文縮一格），對齊 = 的那幾行照樣對齊，不置中
+        const ind = Math.round(m.gap * 1.2);
+        const x = items[i].a.head || qz === "ask" ? bx : typeof qz === "number" ? bx + ind : F.headPage ? bx + ind + (gr.ids.length > 1 ? gr.L - mi.lhs : 0) : gr.ids.length > 1 && gr.L + gr.R <= F.colW ? bx + (F.colW - gr.L - gr.R) / 2 + gr.L - mi.lhs : bx + Math.max(0, (F.colW - mi.w) / 2);
         at[i] = [x, place[i].y + (mi.gapA || 0)];
       }));
     });
