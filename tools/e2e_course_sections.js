@@ -453,7 +453,10 @@ async function run() {
     const dragAct = await evaluate(`return { act: Boolean(document.querySelector('[data-cv2s-act="drag"]')), done: document.querySelector('[data-cv2s-act="drag"]').classList.contains("is-done") };`);
     check("拖圖的動作出現（還沒做到）", dragAct.act && !dragAct.done);
     const stick = await evaluate(`scrollTo(0, document.documentElement.scrollHeight); await new Promise((r) => setTimeout(r, 150)); const f = window.__s.fig(${WIDGET.sections[dragSi].drag.use}).getBoundingClientRect(); const bar = document.querySelector(".topbar").getBoundingClientRect(); return { fig: Math.round(f.top), bar: Math.round(bar.bottom), y: Math.round(scrollY) };`);
-    check("手機：捲到底時圖黏在頂列下面（句子在下面長、圖一直看得到）", stick.y > 0 && Math.abs(stick.fig - stick.bar) <= 1, JSON.stringify(stick));
+    // 有黑板的節圖不黏（不然蓋住板子）：只有沒黑板的節量這一條（補黑板之後，拖圖的節多半也有板了）
+    const dragBoard = WIDGET.sections[dragSi].beats.some((b) => (b.board || []).length);
+    if (!dragBoard) check("手機：捲到底時圖黏在頂列下面（句子在下面長、圖一直看得到）", stick.y > 0 && Math.abs(stick.fig - stick.bar) <= 1, JSON.stringify(stick));
+    else console.log("  ·    拖圖那一節有黑板：圖不黏（黏了會蓋住板），這一條不量");
     await shot("phone-light-widget-sticky");
     const xpBefore = await evaluate(`return window.__s.rec().xp || 0;`);
     await finishSection(WIDGET);

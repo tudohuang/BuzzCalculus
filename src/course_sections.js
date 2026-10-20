@@ -408,7 +408,8 @@
       const item = s.check !== undefined ? data.checks[s.check] : s.predict;
       const picks = s.check !== undefined ? st.picks[s.check] || [] : sec.pred[si] === undefined ? [] : [sec.pred[si]];
       const open = !picks.some((oi) => item.options[oi] && item.options[oi].correct) && !(s.predict && picks.length);
-      action = action.replace('class="cv2s-act course-check', 'class="cv2s-act course-check cvb-onboard').replace(/<\/div>\s*$/, `${open ? '<p class="cvb-hint">點黑板上的選項作答</p>' : ""}</div>`);
+      action = action.replace('class="cv2s-act course-check', 'class="cv2s-act course-check cvb-onboard');
+      void open;
     }
     if (all && s.solve && SV()) action = SV().view(api, si);
     if (P && !all && cur.why) action = P.why(api, si, shown - 1);
@@ -423,6 +424,11 @@
     const bar = pend ? "" : all
       ? `<button type="button" class="button ${ok ? "home-primary" : "ghost"}" data-action="course-s-next" data-cv2s-next>${lastOne ? "完成這一課" : "下一節"}${icon("chevron-right")}</button>${gain}`
       : `<button type="button" class="button home-primary" data-action="course-s-next" data-cv2s-next>下一句<small>${shown} / ${s.beats.length}</small></button>`;
+    // 一課一塊黑板：板子底下什麼都不放（使用者：「課程只剩黑板，下面什麼都不要，除了旁白播放列」）。
+    // 小測的理由／「對了」疊在板子底部；拖曳、自己算、排順序、用在哪一步、證明的「為什麼」這些板上做不了的動作照舊放在板子下面。
+    const onboard = bd && whole && /cvb-onboard/.test(action);
+    const settled = all && (onboard ? ok || (s.predict && sec.pred[si] !== undefined) : !action || ok || Boolean(s.order || s.where));
+    const nextHint = bd && whole && settled ? `<p class="cvb-next" aria-hidden="true">點黑板 → ${lastOne ? "完成這一課" : "下一節"}</p>` : "";
     return `
       <article class="cv2s-sec${bd ? " has-board cvb-sec" : ""}${bd && whole ? " cvb-whole" : ""}" aria-label="第 ${si + 1} 節">
         <h3><small>${si + 1} / ${n}</small>${fmt(s.title)}${P && s.proof ? P.tag(api, s) : ""}</h3>
@@ -430,11 +436,11 @@
         ${bd && whole ? "" : figs}
         ${bd ? (whole
           // 一課一塊：圖釘在板上保留的那一塊（舞台裡，不在 slot 裡：拖滑桿、按播放不會被當成「點黑板＝下一句」）
-          ? `<div class="cvb-stage">${figs ? `<div class="cvb-model" data-cvb-model>${figs}</div>` : ""}<div class="cvb-slot" data-cvb-slot data-action="course-s-next" data-how="tap"></div></div>`
+          ? `<div class="cvb-stage">${figs ? `<div class="cvb-model" data-cvb-model>${figs}</div>` : ""}<div class="cvb-slot" data-cvb-slot data-action="course-s-next" data-how="tap"></div>${onboard ? action : ""}${nextHint}</div>`
           : `<div class="cvb-slot" data-cvb-slot data-action="course-s-next" data-how="tap"></div>`) : ""}
         <ol class="cv2s-beats" data-action="course-s-next" data-how="tap" aria-live="polite">${beats}</ol>
-        ${cue}
-        ${action}
+        ${onboard ? "" : cue}
+        ${onboard ? "" : action}
         <div class="cv2s-bar">${bar}</div>
       </article>`;
   }
@@ -587,8 +593,14 @@
         deps.render();
         return;
       }
-      // 點句子那一塊只出下一句；換節要按鈕（或 →），免得手滑跳走
-      if (data.how === "tap") return;
+      // 點句子那一塊只出下一句；換節要按鈕（或 →），免得手滑跳走。
+      // 一課一塊黑板沒有按鈕（板子底下什麼都不放）：這一節做完了，點黑板就換節；小測、先猜、拖曳、自己算還沒做完就不動
+      if (data.how === "tap") {
+        const whole = Boolean(BD() && BD().whole && BD().whole(api));
+        const quiz = s.check !== undefined || s.predict;
+        const done = s.predict ? sec.pred[sec.si] !== undefined : resolved(api, sec.si);
+        if (!whole || ((quiz || s.drag || s.solve) && !done)) return;
+      }
       enter(api, sec.si + 1);
       deps.render();
       return N() && N().resume(api);

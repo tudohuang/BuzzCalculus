@@ -100,8 +100,10 @@ async function run() {
     check("題目寫完選項才點得到", await waitFor(`document.querySelectorAll(".cvb .cvb-opt[data-action]").length === ${CHECK.options.length}`, 15000));
     const vis = await evaluate(`const el = ${opt(RIGHT)}; el.scrollIntoView({ block: "center" }); const r = el.getBoundingClientRect(); const h = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2); return { op: getComputedStyle(el).opacity, mine: Boolean(h && el.contains(h) || h === el) };`);
     check("選項在板上看得到、點得到", vis.mine && Number(vis.op || 1) > 0.5, JSON.stringify(vis));
-    const hint = await evaluate(`const h = document.querySelector(".cvb-onboard .cvb-hint"); return h ? h.innerText : "";`);
-    check("板子下面有一行「點黑板上的選項作答」", /點黑板上的選項/.test(hint), hint);
+    // 板子底下什麼都不放（只剩旁白播放列）：article 裡、板子舞台以外，看得到的東西一個都沒有
+    const below = await evaluate(`const st = document.querySelector(".cvb-whole .cvb-stage"); const sb = st.getBoundingClientRect().bottom;
+      return [...document.querySelectorAll(".cvb-whole *")].filter((n) => !st.contains(n) && !n.closest(".cv2s-beats, .cv2s-bar, .cv2s-cue") && n.getClientRects().length && getComputedStyle(n).visibility !== "hidden").map((n) => [n, n.getBoundingClientRect()]).filter(([, r]) => r.width > 2 && r.height > 2 && r.top >= sb - 1).map(([n]) => n.className || n.tagName).slice(0, 5);`);
+    check("板子底下什麼都沒有（看得到的）", below.length === 0, JSON.stringify(below));
 
     // 點板子空白處：不跳節
     const si0 = await evaluate(`return Number(document.querySelector("[data-cv2s]").dataset.cv2s);`);
@@ -117,13 +119,15 @@ async function run() {
     check("點對的選項", await click(opt(RIGHT)));
     await waitFor(`${opt(RIGHT)} && ${opt(RIGHT)}.classList.contains("cvb-yes")`, 3000);
     const r = await evaluate(`return { yes: ${opt(RIGHT)}.classList.contains("cvb-yes"), live: document.querySelectorAll(".cvb .cvb-opt[data-action]").length, ok: /對了/.test((document.querySelector(".cvb-onboard") || {}).innerText || ""), hint: Boolean(document.querySelector(".cvb-onboard .cvb-hint")), xp: (() => { try { return JSON.parse(localStorage.getItem("buzzcalculus.records.v1") || "{}").xp || 0; } catch (e) { return 0; } })() };`);
-    check("選對：正解圈起來、「對了」、板上沒有可點的選項、提示那一行收掉", r.yes && r.live === 0 && r.ok && !r.hint, JSON.stringify(r));
+    check("選對：正解圈起來、「對了」疊在板子底部、板上沒有可點的選項", r.yes && r.live === 0 && r.ok, JSON.stringify(r));
     check("選對：XP 加了", r.xp > xp0, `${xp0} → ${r.xp}`);
 
     // 下一節：同一塊板、前一節（含小測）還在板上
     const before = await evaluate(`return [...document.querySelectorAll(".cvb .cvb-i")].filter((n) => n.style.visibility === "visible").length;`);
-    await evaluate(`document.querySelector("[data-cv2s-next]").click(); return 1;`);
-    check("下一節", await waitFor(`Number(document.querySelector("[data-cv2s]").dataset.cv2s) === 1`, 5000));
+    check("節做完：板上出現「點黑板 → 下一節」", await waitFor(`/點黑板/.test((document.querySelector(".cvb-stage .cvb-next") || {}).textContent || "")`, 3000));
+    // 沒有「下一節」按鈕：真的用滑鼠點黑板空白處換節
+    await click(`(() => { const b = document.querySelector(".cvb"); const r = b.getBoundingClientRect(); return { getBoundingClientRect: () => ({ left: r.left + 10, top: r.top + 10, width: 2, height: 2 }), scrollIntoView() {} }; })()`);
+    check("點黑板換到下一節", await waitFor(`Number(document.querySelector("[data-cv2s]").dataset.cv2s) === 1`, 5000));
     await sleep(500);
     const s1 = await evaluate(`return { same: document.querySelector(".cvb") === window.__board, key: window.BuzzBoard.state().key, kept: [...document.querySelectorAll(".cvb .cvb-i")].filter((n) => n.style.visibility === "visible").length, circled: Boolean(document.querySelector(".cvb .cvb-yes")) };`);
     check("換節不換板：同一塊板、第 1 節寫的（含答過的小測）還在", s1.same && /:all$/.test(s1.key) && s1.kept >= before && s1.circled, JSON.stringify({ ...s1, before }));
