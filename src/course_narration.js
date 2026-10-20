@@ -256,7 +256,10 @@
     const g = dock.querySelector("[data-cv2s-gap]");
     g.textContent = gap ? `停${gap}拍` : "不停";
     g.setAttribute("aria-label", gap ? `句與句之間停 ${gap} 拍` : "句與句之間不停");
-    dock.querySelector("[data-cv2s-subs]").setAttribute("aria-pressed", String(subs));
+    const sb = dock.querySelector("[data-cv2s-subs]");
+    sb.setAttribute("aria-pressed", String(subs));
+    // 一課一塊黑板：板子底下不放句子，字幕沒有地方出現 —— 只留播放、語速、停幾拍
+    sb.hidden = Boolean(document.querySelector(".cvb-whole"));
     // 聲音：這一課兩個都有才給切（顯示選的那一個）；選的那一個沒有、先用另一個的時候留一行字
     const x = dock.querySelector("[data-cv2s-vox]");
     x.hidden = !(has(host.last.data, "f") && has(host.last.data, "m"));
