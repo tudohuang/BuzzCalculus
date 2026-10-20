@@ -51,9 +51,21 @@
     {
       "title": "兩個方向", "key": "沿兩個方向逼近，差商必須一樣",
       "beats": [
-        {"show":["$f=u+iv$ 在 $z_0$ 可微"],"note":"每個方向的差商都趨近同一個數。","say":"f 可微，代表 h 從哪個方向來，差商都趨近同一個數。挑兩個最簡單的方向來比。"},
-        {"show":["沿實軸 $h=t$：$\\frac{\\partial f}{\\partial x}=u_x+i\\,v_x$"],"say":"第一個方向：h 沿實軸，差商就是對 x 的偏導數，u x 加 i v x。"},
-        {"show":["沿虛軸 $h=it$：$\\frac{1}{i}(u_y+i\\,v_y)$"],"note":"分母多了一個 $i$。","say":"第二個方向：h 沿虛軸，是對 y 的偏導數，可是分母多了一個 i，要除掉。"}
+        {"show":["$f=u+iv$ 在 $z_0$ 可微"],"note":"每個方向的差商都趨近同一個數。","say":"f 可微，代表 h 從哪個方向來，差商都趨近同一個數。挑兩個最簡單的方向來比。",
+          "board": [
+            { "do": "write", "line": "$f=u+iv$ 在 $z_0$ 可微" },
+            { "do": "write", "line": "差商 → 同一個數", "on": "哪個方向" }
+          ] },
+        {"show":["沿實軸 $h=t$：$\\frac{\\partial f}{\\partial x}=u_x+i\\,v_x$"],"say":"第一個方向：h 沿實軸，差商就是對 x 的偏導數，u x 加 i v x。",
+          "board": [
+            { "do": "write", "line": "沿實軸 $h=t$：${{a:u_x+i\\,v_x}}$" },
+            { "do": "focus", "term": "a", "color": "blue", "on": "u x 加" }
+          ] },
+        {"show":["沿虛軸 $h=it$：$\\frac{1}{i}(u_y+i\\,v_y)$"],"note":"分母多了一個 $i$。","say":"第二個方向：h 沿虛軸，是對 y 的偏導數，可是分母多了一個 i，要除掉。",
+          "board": [
+            { "do": "write", "line": "沿虛軸 $h=it$：${{b:\\frac{1}{i}}}(u_y+i\\,v_y)$" },
+            { "do": "circle", "term": "b", "color": "violet", "label": "分母", "on": "分母多了" }
+          ] }
       ],
       "predict": {
         "ask": "$\\frac{1}{i}(u_y+i\\,v_y)$ 化簡是？",
@@ -67,9 +79,25 @@
     {
       "title": "兩個式子",
       "beats": [
-        {"show":["$u_x+i\\,v_x=v_y-i\\,u_y$"],"note":"兩者都等於 $f'(z_0)$。","say":"兩個方向的答案都是 f prime，所以相等。實部和實部比，虛部和虛部比。"},
-        {"show":["$u_x=v_y,\\qquad u_y=-v_x$"],"say":"實部：u x 等於 v y。虛部：v x 等於負 u y，也就是 u y 等於負 v x。注意負號。"},
-        {"show":["$f'(z_0)=u_x+i\\,v_x$"],"note":"用 $z^2$ 檢查：$u_x=2x=v_y$。","say":"導數就用沿實軸那個：u x 加 i v x。拿 z 平方檢查，u x 和 v y 都是二 x。"}
+        {"show":["$u_x+i\\,v_x=v_y-i\\,u_y$"],"note":"兩者都等於 $f'(z_0)$。","say":"兩個方向的答案都是 f prime，所以相等。實部和實部比，虛部和虛部比。",
+          "board": [
+            { "do": "write", "line": "${{r:u_x+i\\,v_x}}={{s:v_y-i\\,u_y}}$" },
+            { "do": "underline", "term": "r", "color": "blue", "label": "沿實軸", "on": "所以相等" },
+            { "do": "underline", "term": "s", "color": "violet", "label": "沿虛軸", "on": "虛部和虛部" }
+          ] },
+        {"show":["$u_x=v_y,\\qquad u_y=-v_x$"],"say":"實部：u x 等於 v y。虛部：v x 等於負 u y，也就是 u y 等於負 v x。注意負號。",
+          "board": [
+            { "do": "write", "line": "${{a:u_x=v_y}}$" },
+            { "do": "write", "line": "${{b:u_y=-v_x}}$", "on": "也就是" },
+            { "do": "box", "term": "b", "on": "等於負 v x" }
+          ] },
+        {"show":["$f'(z_0)=u_x+i\\,v_x$"],"note":"用 $z^2$ 檢查：$u_x=2x=v_y$。","say":"導數就用沿實軸那個：u x 加 i v x。拿 z 平方檢查，u x 和 v y 都是二 x。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "$f'(z_0)={{a:u_x+i\\,v_x}}$", "on": "導數就用" },
+            { "do": "box", "term": "a", "color": "green", "on": "u x 加" },
+            { "do": "write", "line": "$z^2$：$u_x=2x=v_y$", "on": "z 平方" }
+          ] }
       ],
       "check": 0
     },
@@ -146,18 +174,50 @@
     {
       "title": "$e^z$ 處處可微",
       "beats": [
-        {"show":["$u=e^x\\cos y$、$v=e^x\\sin y$"],"say":"用 CR 檢查 e 的 z 次方：實部 e 的 x 次方乘 cosine y，虛部乘 sine y。"},
-        {"show":["$u_x=v_y=e^x\\cos y$","$u_y=-v_x=-e^x\\sin y$"],"say":"兩條方程都成立，而且這些偏導數處處連續，所以處處可微。"},
-        {"show":["$f'=u_x+i\\,v_x=e^z$"],"say":"導數是 u x 加 i v x，正好又是 e 的 z 次方，跟實數一樣。"}
+        {"show":["$u=e^x\\cos y$、$v=e^x\\sin y$"],"say":"用 CR 檢查 e 的 z 次方：實部 e 的 x 次方乘 cosine y，虛部乘 sine y。",
+          "board": [
+            { "do": "write", "line": "${{u:u=e^x\\cos y}}$、${{v:v=e^x\\sin y}}$" },
+            { "do": "focus", "term": "u", "color": "blue", "on": "實部" },
+            { "do": "focus", "term": "v", "color": "violet", "on": "虛部" }
+          ] },
+        {"show":["$u_x=v_y=e^x\\cos y$","$u_y=-v_x=-e^x\\sin y$"],"say":"兩條方程都成立，而且這些偏導數處處連續，所以處處可微。",
+          "board": [
+            { "do": "write", "line": "$u_x=v_y=e^x\\cos y$" },
+            { "do": "write", "line": "$u_y=-v_x=-e^x\\sin y$", "on": "都成立" },
+            { "do": "write", "line": "處處連續 ⇒ 處處可微", "on": "處處連續" }
+          ] },
+        {"show":["$f'=u_x+i\\,v_x=e^z$"],"say":"導數是 u x 加 i v x，正好又是 e 的 z 次方，跟實數一樣。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "$f'={{r:e^z}}$", "on": "導數是" },
+            { "do": "box", "term": "r", "color": "green", "on": "正好又是" }
+          ] }
       ],
       "check": 2
     },
     {
       "title": "調和函數",
       "beats": [
-        {"show":["$u_{xx}=v_{yx}$、$u_{yy}=-v_{xy}$"],"say":"把 CR 再微分一次：u x x 等於 v y x，u y y 等於負 v x y。"},
-        {"show":["$u_{xx}+u_{yy}=0$"],"note":"混合偏導數相等，相加抵銷。","say":"混合偏導數相等，兩式相加就抵銷，得到 u 的拉普拉斯是零。u 是調和函數，v 也是。"},
-        {"show":["給調和的 $u$，用 CR 解出 $v$"],"note":"$v$ 叫共軛調和函數。","say":"反過來，給一個調和的 u，可以用 CR 解出 v，湊成一個全純函數。"}
+        {"show":["$u_{xx}=v_{yx}$、$u_{yy}=-v_{xy}$"],"say":"把 CR 再微分一次：u x x 等於 v y x，u y y 等於負 v x y。",
+          "board": [
+            { "do": "write", "line": "$u_{xx}=v_{yx}$" },
+            { "do": "write", "line": "$u_{yy}=-v_{xy}$", "on": "u y y" }
+          ] },
+        {"show":["$u_{xx}+u_{yy}=0$"],"note":"混合偏導數相等，相加抵銷。","say":"混合偏導數相等，兩式相加就抵銷，得到 u 的拉普拉斯是零。u 是調和函數，v 也是。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "混合偏導數相等：$v_{yx}=v_{xy}$", "on": "混合偏導數" },
+            { "do": "write", "line": "$u_{xx}+u_{yy}={{z:0}}$", "on": "相加" },
+            { "do": "box", "term": "z", "color": "green", "on": "拉普拉斯" },
+            { "do": "write", "line": "$u$、$v$ 是調和函數", "on": "調和函數" }
+          ] },
+        {"show":["給調和的 $u$，用 CR 解出 $v$"],"note":"$v$ 叫共軛調和函數。","say":"反過來，給一個調和的 u，可以用 CR 解出 v，湊成一個全純函數。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "給調和的 $u$", "on": "給一個" },
+            { "do": "write", "line": "用 CR 解出 $v$", "on": "解出" },
+            { "do": "write", "line": "$f=u+i\\,v$ 全純", "on": "全純函數" }
+          ] }
       ],
       "check": 3
     },

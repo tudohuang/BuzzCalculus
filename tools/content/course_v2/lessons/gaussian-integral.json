@@ -81,9 +81,22 @@
     {
       "title": "一次項：配方", "key": "配方後令 $u=x-\\frac{b}{2a}$ 平移",
       "beats": [
-        {"show":["$\\int_{-\\infty}^{\\infty}e^{-ax^2+bx}\\,dx$"],"say":"指數多了一次項 b x 怎麼辦？跟二次函數一樣，配方。"},
-        {"show":["$-a\\left(x-\\frac{b}{2a}\\right)^2+\\frac{b^2}{4a}$"],"say":"配完方，前面是平移過的鐘形，後面多出一個常數四 a 分之 b 平方。"},
-        {"show":["$=e^{b^2/(4a)}\\sqrt{\\frac{\\pi}{a}}$"],"note":"平移不改變整條實數線上的積分。","say":"平移不改變整條線上的面積，常數提到外面，就是 e 的四 a 分之 b 平方次方乘根號 a 分之派。"}
+        {"show":["$\\int_{-\\infty}^{\\infty}e^{-ax^2+bx}\\,dx$"],"say":"指數多了一次項 b x 怎麼辦？跟二次函數一樣，配方。",
+          "board": [
+            { "do": "write", "line": "$\\int_{-\\infty}^{\\infty}e^{-ax^2+{{b:bx}}}\\,dx$" },
+            { "do": "focus", "term": "b", "on": "一次項", "label": "多出來" }
+          ] },
+        {"show":["$-a\\left(x-\\frac{b}{2a}\\right)^2+\\frac{b^2}{4a}$"],"say":"配完方，前面是平移過的鐘形，後面多出一個常數四 a 分之 b 平方。",
+          "board": [
+            { "do": "transform", "line": "$e^{-a{{sq:\\left(x-\\frac{b}{2a}\\right)^2}}+{{c:\\frac{b^2}{4a}}}}$" },
+            { "do": "underline", "term": "sq", "color": "blue", "label": "平移", "on": "平移過" },
+            { "do": "circle", "term": "c", "on": "常數" }
+          ] },
+        {"show":["$=e^{b^2/(4a)}\\sqrt{\\frac{\\pi}{a}}$"],"note":"平移不改變整條實數線上的積分。","say":"平移不改變整條線上的面積，常數提到外面，就是 e 的四 a 分之 b 平方次方乘根號 a 分之派。",
+          "board": [
+            { "do": "transform", "line": "$={{r:e^{{{c:\\frac{b^2}{4a}}}}\\sqrt{\\frac{\\pi}{a}}}}$", "on": "常數提到" },
+            { "do": "box", "term": "r", "color": "green", "on": "乘根號" }
+          ] }
       ],
       "predict": {
         "ask": "加上 $bx$，鐘形曲線的寬度會？",
@@ -97,9 +110,21 @@
     {
       "title": "配方一題",
       "beats": [
-        {"show":["$\\int_{-\\infty}^{\\infty}e^{-x^2+2x}\\,dx$"],"say":"實際做一題：指數是負 x 平方加二 x。"},
-        {"show":["$-x^2+2x=-(x-1)^2+1$"],"note":"常數 $+1$ 變成 $e$ 的正次方。","say":"配方得負的 x 減一平方，再加一。注意這個加一，會變成 e 的正一次方。"},
-        {"show":["$e\\int_{-\\infty}^{\\infty}e^{-u^2}\\,du=e\\sqrt{\\pi}$"],"note":"$u=x-1$；約 $4.818$。","say":"令 u 等於 x 減一，剩下標準形根號派，答案 e 乘根號派，大約四點八一八。"}
+        {"show":["$\\int_{-\\infty}^{\\infty}e^{-x^2+2x}\\,dx$"],"say":"實際做一題：指數是負 x 平方加二 x。",
+          "board": [
+            { "do": "write", "line": "$\\int_{-\\infty}^{\\infty}e^{-x^2+2x}\\,dx$" }
+          ] },
+        {"show":["$-x^2+2x=-(x-1)^2+1$"],"note":"常數 $+1$ 變成 $e$ 的正次方。","say":"配方得負的 x 減一平方，再加一。注意這個加一，會變成 e 的正一次方。",
+          "board": [
+            { "do": "write", "line": "$-x^2+2x=-(x-1)^2+{{c:1}}$" },
+            { "do": "circle", "term": "c", "label": "提出去", "on": "注意" }
+          ] },
+        {"show":["$e\\int_{-\\infty}^{\\infty}e^{-u^2}\\,du=e\\sqrt{\\pi}$"],"note":"$u=x-1$；約 $4.818$。","say":"令 u 等於 x 減一，剩下標準形根號派，答案 e 乘根號派，大約四點八一八。",
+          "board": [
+            { "do": "write", "line": "令 ${{u:u=x-1}}$", "tint": {"u":"blue"} },
+            { "do": "write", "line": "$e\\int_{-\\infty}^{\\infty}e^{-u^2}\\,du={{r:e\\sqrt{\\pi}}}$", "on": "剩下標準形" },
+            { "do": "box", "term": "r", "color": "green", "on": "答案" }
+          ] }
       ],
       "check": 2
     },
@@ -122,9 +147,23 @@
     {
       "title": "四次動差",
       "beats": [
-        {"show":["$-J'(a)=\\frac{\\sqrt{\\pi}}{2}a^{-3/2}$"],"say":"可以交換，所以負 J prime 算出來是二分之根號派，乘 a 的負二分之三次方。"},
-        {"show":["$J''(a)=\\frac{3\\sqrt{\\pi}}{4}a^{-5/2}$"],"note":"兩個 $-x^2$ 相乘是 $+x^4$。","say":"再微分一次就是四次動差。兩個負 x 平方相乘是正的 x 四次方，所以不用加負號。"},
-        {"show":["$\\int_{-\\infty}^{\\infty}x^4e^{-3x^2}\\,dx$"],"note":"$a=3$：$3^{-5/2}=\\frac{1}{9\\sqrt{3}}$","say":"例如 a 等於三：三的負二分之五次方，是九根號三分之一。"}
+        {"show":["$-J'(a)=\\frac{\\sqrt{\\pi}}{2}a^{-3/2}$"],"say":"可以交換，所以負 J prime 算出來是二分之根號派，乘 a 的負二分之三次方。",
+          "board": [
+            { "do": "write", "line": "$-J'(a)=\\frac{\\sqrt{\\pi}}{2}a^{{{e:-3/2}}}$" },
+            { "do": "focus", "term": "e", "on": "負二分之三" }
+          ] },
+        {"show":["$J''(a)=\\frac{3\\sqrt{\\pi}}{4}a^{-5/2}$"],"note":"兩個 $-x^2$ 相乘是 $+x^4$。","say":"再微分一次就是四次動差。兩個負 x 平方相乘是正的 x 四次方，所以不用加負號。",
+          "board": [
+            { "do": "write", "line": "$J''(a)=\\int {{f:x^4}}e^{-ax^2}\\,dx$" },
+            { "do": "write", "line": "$=\\frac{3\\sqrt{\\pi}}{4}a^{-5/2}$", "on": "兩個負" },
+            { "do": "focus", "term": "f", "color": "green", "on": "正的" }
+          ] },
+        {"show":["$\\int_{-\\infty}^{\\infty}x^4e^{-3x^2}\\,dx$"],"note":"$a=3$：$3^{-5/2}=\\frac{1}{9\\sqrt{3}}$","say":"例如 a 等於三：三的負二分之五次方，是九根號三分之一。",
+          "board": [
+            { "do": "write", "line": "$a=3$：${{t:3^{-5/2}}}={{r:\\frac{1}{9\\sqrt{3}}}}$" },
+            { "do": "focus", "term": "t", "on": "三的負" },
+            { "do": "box", "term": "r", "on": "九根號" }
+          ] }
       ],
       "predict": {
         "ask": "$\\int_{-\\infty}^{\\infty}x^4e^{-3x^2}\\,dx$ 是？",
@@ -138,8 +177,18 @@
     {
       "title": "奇數次動差",
       "beats": [
-        {"show":["$x^{2n+1}e^{-ax^2}$ 是奇函數"],"note":"左右抵銷。","say":"奇數次方乘鐘形是奇函數，左邊的面積跟右邊的剛好抵銷。"},
-        {"show":["積分絕對收斂 ⇒ 整條線上是 $0$"],"say":"積分本身絕對收斂，所以可以這樣抵銷：整條線上直接是零。"}
+        {"show":["$x^{2n+1}e^{-ax^2}$ 是奇函數"],"note":"左右抵銷。","say":"奇數次方乘鐘形是奇函數，左邊的面積跟右邊的剛好抵銷。",
+          "board": [
+            { "do": "write", "line": "$f(x)={{o:x^{2n+1}e^{-ax^2}}}$" },
+            { "do": "focus", "term": "o", "on": "鐘形" },
+            { "do": "write", "line": "$f(-x)=-f(x)$", "on": "奇函數" }
+          ] },
+        {"show":["積分絕對收斂 ⇒ 整條線上是 $0$"],"say":"積分本身絕對收斂，所以可以這樣抵銷：整條線上直接是零。",
+          "board": [
+            { "do": "write", "line": "$\\int_{-\\infty}^{\\infty}|f|\\,dx<\\infty$" },
+            { "do": "write", "line": "$\\int_{-\\infty}^{\\infty}f\\,dx={{z:0}}$", "on": "所以可以" },
+            { "do": "box", "term": "z", "color": "green", "on": "整條線上" }
+          ] }
       ],
       "check": 1
     },

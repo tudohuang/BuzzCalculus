@@ -70,11 +70,25 @@
       "title": "找一個好分割就夠",
       "beats": [
         { "show": ["不必先算出上下積分"],
-          "say": "照定義判斷可積，要先算出上積分和下積分。其實不必，只要知道上和下和能夾到任意近。" },
+          "say": "照定義判斷可積，要先算出上積分和下積分。其實不必，只要知道上和下和能夾到任意近。",
+          "board": [
+            { "do": "write", "line": "照定義：上積分 $=$ 下積分" },
+            { "do": "write", "line": "其實：上和、下和夾得任意近", "on": "其實不必" }
+          ] },
         { "show": ["$\\forall\\varepsilon>0\\ \\exists P:\\ U(f,P)-L(f,P)<\\varepsilon$"],
-          "say": "可積判準：不管給多小的 epsilon，都找得到一個分割，讓上和減下和小於 epsilon。" },
+          "say": "可積判準：不管給多小的 epsilon，都找得到一個分割，讓上和減下和小於 epsilon。",
+          "board": [
+            { "do": "write", "line": "$\\forall\\,{{e:\\varepsilon>0}}\\ \\exists P:\\ {{d:U(f,P)-L(f,P)}}<\\varepsilon$" },
+            { "do": "focus", "term": "e", "label": "任給", "on": "不管" },
+            { "do": "circle", "term": "d", "label": "夾到任意近", "on": "上和減下和" }
+          ] },
         { "show": ["先給 $\\varepsilon$，再找 $P$"], "note": "$\\varepsilon$ 越小，$P$ 通常要越細。",
-          "say": "順序很重要：先有 epsilon，再找分割。epsilon 越小，分割通常要切得越細。證明在下一節。" }
+          "say": "順序很重要：先有 epsilon，再找分割。epsilon 越小，分割通常要切得越細。證明在下一節。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "先給 $\\varepsilon$，再找 $P$", "on": "先有" },
+            { "do": "write", "line": "$\\varepsilon$ 越小 $\\Rightarrow$ $P$ 越細", "on": "越小" }
+          ] }
       ],
       "check": 0
     },
@@ -178,9 +192,16 @@
       "title": "要切幾段",
       "beats": [
         { "show": ["$f(x)=x$，$[0,1]$：$U-L=\\frac{1}{n}$"],
-          "say": "用公式算：f 等於 x 在零到一，上和減下和是 n 分之一。" },
+          "say": "用公式算：f 等於 x 在零到一，上和減下和是 n 分之一。",
+          "board": [
+            { "do": "write", "line": "$f(x)=x$，$[0,1]$" },
+            { "do": "write", "line": "$U-L=\\frac{1}{n}$", "on": "上和減下和" }
+          ] },
         { "show": ["要 $U-L<0.01$"], "note": "注意是嚴格小於。",
-          "say": "要讓它小於零點零一，n 最少要多少？小心等號。" }
+          "say": "要讓它小於零點零一，n 最少要多少？小心等號。",
+          "board": [
+            { "do": "write", "line": "$\\frac{1}{n}<0.01$" }
+          ] }
       ],
       "predict": {
         "ask": "最小的 $n$ 是？",
@@ -225,11 +246,22 @@
       "title": "不論取哪個點",
       "beats": [
         { "show": ["$\\|P\\|<\\delta\\Rightarrow|\\sum f(t_i)\\Delta x_i-I|<\\varepsilon$"], "note": "不論每段取哪個 $t_i$。",
-          "say": "Riemann 的原始定義：分割夠細，不論每一段取哪個點，Riemann 和都離 I 很近。它跟 Darboux 等價。" },
+          "say": "Riemann 的原始定義：分割夠細，不論每一段取哪個點，Riemann 和都離 I 很近。它跟 Darboux 等價。",
+          "board": [
+            { "do": "write", "line": "$\\|P\\|<\\delta\\Rightarrow|\\sum f({{t:t_i}})\\Delta x_i-I|<\\varepsilon$" },
+            { "do": "focus", "term": "t", "label": "任意取點", "on": "不論每一段" }
+          ] },
         { "show": ["只用右端點收斂：不夠"],
-          "say": "重點在不論取哪個點。只看右端點的和收斂，推不出可積。" },
+          "say": "重點在不論取哪個點。只看右端點的和收斂，推不出可積。",
+          "board": [
+            { "do": "write", "line": "只用右端點收斂：不夠" }
+          ] },
         { "show": ["Dirichlet：有理點得 1，無理點得 0"], "note": "每個分割 $U=1$、$L=0$。",
-          "say": "Dirichlet 函數，有理點取一、無理點取零。取有理點每次得一，取無理點每次得零。" }
+          "say": "Dirichlet 函數，有理點取一、無理點取零。取有理點每次得一，取無理點每次得零。",
+          "board": [
+            { "do": "write", "line": "Dirichlet：有理點 1，無理點 0" },
+            { "do": "write", "line": "$U=1$、$L=0$", "on": "取有理點" }
+          ] }
       ],
       "check": 2
     },
@@ -237,9 +269,19 @@
       "title": "可積之後隨便算",
       "beats": [
         { "show": ["可積 $\\Rightarrow$ 任何取點都收斂到 $\\int_a^b f$"], "note": "Riemann 和夾在 $L$ 與 $U$ 之間。",
-          "say": "反過來，一旦知道可積，任何取點的 Riemann 和都夾在上下和中間，一起收斂到積分。" },
+          "say": "反過來，一旦知道可積，任何取點的 Riemann 和都夾在上下和中間，一起收斂到積分。",
+          "board": [
+            { "do": "write", "line": "可積 $\\Rightarrow$ 取點都收斂到 ${{r:\\int_a^b f}}$" },
+            { "do": "write", "line": "$L\\le\\sum f(t_i)\\Delta x_i\\le U$", "on": "夾在" },
+            { "do": "box", "term": "r", "color": "green", "on": "收斂" }
+          ] },
         { "show": ["先判斷可積，再挑方便的算法"],
-          "say": "所以順序是：先判斷可積，再挑最方便的取點法來算。" }
+          "say": "所以順序是：先判斷可積，再挑最方便的取點法來算。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "先：判斷可積", "on": "先判斷" },
+            { "do": "write", "line": "再：挑方便的取點法", "on": "再挑" }
+          ] }
       ],
       "check": 3
     }

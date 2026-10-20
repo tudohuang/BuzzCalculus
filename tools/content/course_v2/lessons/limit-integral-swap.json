@@ -59,11 +59,25 @@
       "title": "積分會被藏起來",
       "beats": [
         { "show": ["$\\lim\\int f_n\\overset{?}{=}\\int f$"],
-          "say": "函數列收斂了，積分的極限會不會等於極限的積分？" },
+          "say": "函數列收斂了，積分的極限會不會等於極限的積分？",
+          "board": [
+            { "do": "write", "line": "$\\lim\\int f_n \\overset{?}{=}\\int f$" }
+          ] },
         { "show": ["$nx e^{-nx^2}$ 在 $[0,1]$：逐點 $\\to0$"], "note": "積分卻趨近 $\\frac{1}{2}$。",
-          "say": "看過反例：n x 乘 e 的負 n x 平方，逐點收斂到零，積分卻趨近二分之一。" },
+          "say": "看過反例：n x 乘 e 的負 n x 平方，逐點收斂到零，積分卻趨近二分之一。",
+          "board": [
+            { "do": "write", "line": "$f_n=nx e^{-nx^2}$，在 $[0,1]$" },
+            { "do": "write", "line": "逐點 $f_n\\to0$", "on": "逐點收斂" },
+            { "do": "write", "line": "$\\int_0^1 f_n\\to\\frac{1}{2}$", "on": "積分卻" }
+          ] },
         { "show": ["高峰越來越窄，面積還在"],
-          "say": "高峰把面積藏在越來越窄的地方，每個固定的點都看不見它，所以逐點收斂抓不到。" }
+          "say": "高峰把面積藏在越來越窄的地方，每個固定的點都看不見它，所以逐點收斂抓不到。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "高峰越來越窄，面積還在", "on": "高峰" },
+            { "do": "write", "line": "$\\int_0^1 f_n\\to{{a:\\frac{1}{2}}}$", "on": "面積" },
+            { "do": "underline", "term": "a", "color": "gold", "label": "逐點看不見", "on": "看不見它" }
+          ] }
       ],
       "check": 1
     },
@@ -71,11 +85,26 @@
       "title": "一致收斂就能交換",
       "beats": [
         { "show": ["$f_n$ 連續、在 $[a,b]$ 一致收斂到 $f$"], "note": "$f$ 連續，所以可積。",
-          "say": "定理：每個 f n 在 a 到 b 上連續，又一致收斂到 f，那極限和積分就可以交換。" },
+          "say": "定理：每個 f n 在 a 到 b 上連續，又一致收斂到 f，那極限和積分就可以交換。",
+          "board": [
+            { "do": "write", "line": "$f_n$ 連續，$f_n\\to f$ 一致於 $[a,b]$" },
+            { "do": "write", "line": "$\\lim\\int_a^b f_n=\\int_a^b\\lim f_n$", "on": "極限和積分" }
+          ] },
         { "show": ["$\\left|\\int_a^b f_n-\\int_a^b f\\right|\\le (b-a)\\,\\|f_n-f\\|_\\infty$"],
-          "say": "證明只有一行：積分的差，不超過區間長度乘上最大誤差。最大誤差趨近零，就收工。" },
+          "say": "證明只有一行：積分的差，不超過區間長度乘上最大誤差。最大誤差趨近零，就收工。",
+          "board": [
+            { "do": "write", "line": "$\\left|\\int_a^b f_n-\\int_a^b f\\right|\\le {{l:(b-a)}}\\,{{e:\\|f_n-f\\|_\\infty}}$" },
+            { "do": "underline", "term": "l", "color": "blue", "label": "區間長度", "on": "區間長度" },
+            { "do": "circle", "term": "e", "color": "violet", "on": "最大誤差#1" },
+            { "do": "write", "line": "$\\|f_n-f\\|_\\infty\\to0$，所以差 $\\to0$", "on": "趨近零" }
+          ] },
         { "show": ["用到兩件事：一致、區間有限"],
-          "say": "注意它用了兩件事：誤差有一個跟 x 無關的上界，還有區間長度 b 減 a 是有限的。" }
+          "say": "注意它用了兩件事：誤差有一個跟 x 無關的上界，還有區間長度 b 減 a 是有限的。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "$\\|f_n-f\\|_\\infty$：跟 $x$ 無關", "on": "誤差有" },
+            { "do": "write", "line": "$b-a$：有限", "on": "還有區間長度" }
+          ] }
       ],
       "check": 0
     },
@@ -83,9 +112,16 @@
       "title": "先證一致，再交換", "key": "Dini：單調加連續，逐點升格成一致",
       "beats": [
         { "show": ["$\\lim_{n\\to\\infty}\\int_0^1(1+\\frac{x}{n})^n\\,dx$"],
-          "say": "求積分從零到一，一加 n 分之 x 的 n 次方，n 趨近無限大的極限。" },
+          "say": "求積分從零到一，一加 n 分之 x 的 n 次方，n 趨近無限大的極限。",
+          "board": [
+            { "do": "write", "line": "$\\lim_{n\\to\\infty}\\int_0^1(1+\\frac{x}{n})^n\\,dx$" }
+          ] },
         { "show": ["Dini：在 $[0,1]$ 上一致收斂到 $e^x$"], "note": "每個 $f_n$ 連續。",
-          "say": "上一課用 Dini 定理證過，它在零到一上一致收斂到 e 的 x 次方，而且每一項都連續。" }
+          "say": "上一課用 Dini 定理證過，它在零到一上一致收斂到 e 的 x 次方，而且每一項都連續。",
+          "board": [
+            { "do": "write", "line": "Dini：$f_n\\to e^x$ 一致於 $[0,1]$" },
+            { "do": "write", "line": "每個 $f_n$ 連續", "on": "每一項" }
+          ] }
       ],
       "predict": {
         "ask": "所以極限是？",

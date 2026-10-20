@@ -56,9 +56,22 @@
     {
       "title": "補一段，變封閉",
       "beats": [
-        {"show":["$\\int_{-\\infty}^{\\infty}f(x)\\,dx$"],"note":"實數線不是封閉曲線。","say":"實數線上的積分不是繞一圈，不能直接用留數定理。那就補一段，讓它封閉。"},
-        {"show":["$\\int_{-R}^{R}+\\int_{C_R}=2\\pi i\\sum\\operatorname{Res}$"],"note":"$C_R$：半徑 $R$ 的上半圓。","say":"從負 R 走到 R，再沿上半圓繞回來，圍成半圓形區域，積分等於二派 i 乘圍住的留數和。"},
-        {"show":["證明 $\\int_{C_R}\\to 0$"],"say":"如果 R 趨近無限大時，半圓那段趨近零，剩下的就是整條實數線的積分。"}
+        {"show":["$\\int_{-\\infty}^{\\infty}f(x)\\,dx$"],"note":"實數線不是封閉曲線。","say":"實數線上的積分不是繞一圈，不能直接用留數定理。那就補一段，讓它封閉。",
+          "board": [
+            { "do": "write", "line": "${{f:\\int_{-\\infty}^{\\infty}f(x)\\,dx}}$" },
+            { "do": "write", "line": "補一段 → 封閉曲線", "on": "補一段" }
+          ] },
+        {"show":["$\\int_{-R}^{R}+\\int_{C_R}=2\\pi i\\sum\\operatorname{Res}$"],"note":"$C_R$：半徑 $R$ 的上半圓。","say":"從負 R 走到 R，再沿上半圓繞回來，圍成半圓形區域，積分等於二派 i 乘圍住的留數和。",
+          "board": [
+            { "do": "write", "line": "$\\int_{-R}^{R}+{{c:\\int_{C_R}}}={{r:2\\pi i\\sum\\operatorname{Res}}}$" },
+            { "do": "focus", "term": "c", "color": "gold", "label": "上半圓", "on": "上半圓" },
+            { "do": "underline", "term": "r", "on": "圍住的" }
+          ] },
+        {"show":["證明 $\\int_{C_R}\\to 0$"],"say":"如果 R 趨近無限大時，半圓那段趨近零，剩下的就是整條實數線的積分。",
+          "board": [
+            { "do": "write", "line": "$R\\to\\infty$：${{d:\\int_{C_R}f\\,dz}}\\to 0$" },
+            { "do": "focus", "term": "d", "color": "gold", "on": "半圓那段" }
+          ] }
       ],
       "predict": {
         "ask": "最後要算哪些極點的留數？",
@@ -109,18 +122,47 @@
     {
       "title": "三角積分：$z=e^{i\\theta}$",
       "beats": [
-        {"show":["$\\int_0^{2\\pi}R(\\cos\\theta,\\sin\\theta)\\,d\\theta$"],"note":"$\\theta$ 走一圈，$z=e^{i\\theta}$ 走一圈單位圓。","say":"另一型：cosine、sine 的有理式，從零積到二派。theta 走一圈，e 的 i theta 次方就繞單位圓一圈。"},
-        {"show":["$\\cos\\theta=\\frac{z+1/z}{2}$，$\\sin\\theta=\\frac{z-1/z}{2i}$"],"say":"用 Euler 公式把 cosine、sine 換成 z 和 z 分之一。"},
-        {"show":["只算單位圓內部的留數"],"say":"還要把 d theta 換成 dz 的式子，就變成單位圓上的圍道積分，只算圓裡面的留數。"}
+        {"show":["$\\int_0^{2\\pi}R(\\cos\\theta,\\sin\\theta)\\,d\\theta$"],"note":"$\\theta$ 走一圈，$z=e^{i\\theta}$ 走一圈單位圓。","say":"另一型：cosine、sine 的有理式，從零積到二派。theta 走一圈，e 的 i theta 次方就繞單位圓一圈。",
+          "board": [
+            { "do": "write", "line": "$\\int_0^{2\\pi}R(\\cos\\theta,\\sin\\theta)\\,d\\theta$" },
+            { "do": "write", "line": "${{z:z=e^{i\\theta}}}$：繞單位圓一圈", "on": "e 的 i theta 次方" }
+          ] },
+        {"show":["$\\cos\\theta=\\frac{z+1/z}{2}$，$\\sin\\theta=\\frac{z-1/z}{2i}$"],"say":"用 Euler 公式把 cosine、sine 換成 z 和 z 分之一。",
+          "board": [
+            { "do": "write", "line": "$\\cos\\theta={{c:\\frac{z+1/z}{2}}}$" },
+            { "do": "write", "line": "$\\sin\\theta={{s:\\frac{z-1/z}{2i}}}$", "on": "換成" }
+          ] },
+        {"show":["只算單位圓內部的留數"],"say":"還要把 d theta 換成 dz 的式子，就變成單位圓上的圍道積分，只算圓裡面的留數。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "單位圓 $|z|=1$ 上的圍道積分", "on": "圍道積分" },
+            { "do": "write", "line": "只算 ${{in:|z|<1}}$ 內的留數", "on": "只算" },
+            { "do": "underline", "term": "in", "color": "gold", "on": "圓裡面" }
+          ] }
       ],
       "check": 3
     },
     {
       "title": "算一個三角積分", "key": "只留在單位圓內的那個根",
       "beats": [
-        {"show":["$\\int_0^{2\\pi}\\frac{d\\theta}{2+\\cos\\theta}$"],"note":"被積式變成 $\\frac{2\\,dz}{i(z^2+4z+1)}$。","say":"二加 cosine theta 分之一。代換之後整理，分母是 z 平方加四 z 加一。"},
-        {"show":["根 $-2\\pm\\sqrt{3}$"],"note":"$|-2+\\sqrt{3}|\\approx 0.268$ 在內，$-2-\\sqrt{3}$ 在外。","say":"兩個根是負二加減根號三。負二加根號三大約零點二六八，在圓內；另一個在外面。"},
-        {"show":["$\\operatorname{Res}=\\frac{2}{i\\cdot 2\\sqrt{3}}=\\frac{1}{i\\sqrt{3}}$"],"say":"在圓內那個根算留數：分母微分是二 z 加四，代進去是二根號三。"}
+        {"show":["$\\int_0^{2\\pi}\\frac{d\\theta}{2+\\cos\\theta}$"],"note":"被積式變成 $\\frac{2\\,dz}{i(z^2+4z+1)}$。","say":"二加 cosine theta 分之一。代換之後整理，分母是 z 平方加四 z 加一。",
+          "board": [
+            { "do": "write", "line": "$\\int_0^{2\\pi}\\frac{d\\theta}{2+\\cos\\theta}$" },
+            { "do": "write", "line": "$\\frac{2\\,dz}{i({{d:z^2+4z+1}})}$", "on": "代換之後" },
+            { "do": "underline", "term": "d", "color": "gold", "on": "z 平方" }
+          ] },
+        {"show":["根 $-2\\pm\\sqrt{3}$"],"note":"$|-2+\\sqrt{3}|\\approx 0.268$ 在內，$-2-\\sqrt{3}$ 在外。","say":"兩個根是負二加減根號三。負二加根號三大約零點二六八，在圓內；另一個在外面。",
+          "board": [
+            { "do": "write", "line": "根 $-2\\pm\\sqrt{3}$" },
+            { "do": "write", "line": "${{in:|-2+\\sqrt{3}|\\approx 0.268}}<1$", "on": "大約" },
+            { "do": "circle", "term": "in", "color": "green", "label": "在圓內", "on": "在圓內" }
+          ] },
+        {"show":["$\\operatorname{Res}=\\frac{2}{i\\cdot 2\\sqrt{3}}=\\frac{1}{i\\sqrt{3}}$"],"say":"在圓內那個根算留數：分母微分是二 z 加四，代進去是二根號三。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "$\\operatorname{Res}=\\frac{2}{i\\,({{h:2z+4}})}$", "on": "分母微分" },
+            { "do": "write", "line": "$=\\frac{2}{i\\cdot 2\\sqrt{3}}={{r:\\frac{1}{i\\sqrt{3}}}}$", "on": "代進去" }
+          ] }
       ],
       "predict": {
         "ask": "積分是？",
@@ -134,10 +176,28 @@
     {
       "title": "乘上 $\\cos kx$",
       "beats": [
-        {"show":["不能直接用 $\\cos kz$"],"note":"$\\cos(iy)=\\cosh y$，上半平面爆掉。","say":"乘上 cosine k x 的積分，不能直接把 cosine 搬到複數：它在上半平面會爆掉。"},
-        {"show":["改積 $f(z)e^{ikz}$，取實部"],"note":"$k>0$：$|e^{ikz}|\\le 1$ 在上半平面。","say":"改積 e 的 i k z 次方，最後取實部。k 大於零時它在上半平面長度不超過一，所以往上接。"},
-        {"show":["Jordan 引理：只要 $f\\to 0$"],"note":"次數只差 1 也能處理。","say":"Jordan 引理保證：只要 f 趨近零，半圓那段就趨近零，次數只差一也可以。"},
-        {"show":["$\\frac{\\cos x}{1+x^2}$：$\\operatorname{Res}_i=\\frac{e^{-1}}{2i}$"],"say":"例如 cosine x 除以一加 x 平方：上半平面只有 i，e 的 i 乘 i 次方是 e 的負一次方。"}
+        {"show":["不能直接用 $\\cos kz$"],"note":"$\\cos(iy)=\\cosh y$，上半平面爆掉。","say":"乘上 cosine k x 的積分，不能直接把 cosine 搬到複數：它在上半平面會爆掉。",
+          "board": [
+            { "do": "write", "line": "$\\int f(x)\\cos kx\\,dx$" },
+            { "do": "write", "line": "不能直接用 ${{c:\\cos kz}}$", "on": "不能直接" },
+            { "do": "strike", "term": "c", "on": "搬到複數" }
+          ] },
+        {"show":["改積 $f(z)e^{ikz}$，取實部"],"note":"$k>0$：$|e^{ikz}|\\le 1$ 在上半平面。","say":"改積 e 的 i k z 次方，最後取實部。k 大於零時它在上半平面長度不超過一，所以往上接。",
+          "board": [
+            { "do": "write", "line": "改積 ${{e:f(z)e^{ikz}}}$，取實部" },
+            { "do": "write", "line": "$k>0$：往上接", "on": "k 大於零" }
+          ] },
+        {"show":["Jordan 引理：只要 $f\\to 0$"],"note":"次數只差 1 也能處理。","say":"Jordan 引理保證：只要 f 趨近零，半圓那段就趨近零，次數只差一也可以。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "Jordan 引理：${{f:f\\to 0}}$ ⇒ 半圓 $\\to 0$", "on": "保證" },
+            { "do": "write", "line": "次數只差 $1$ 也行", "on": "次數只差一" }
+          ] },
+        {"show":["$\\frac{\\cos x}{1+x^2}$：$\\operatorname{Res}_i=\\frac{e^{-1}}{2i}$"],"say":"例如 cosine x 除以一加 x 平方：上半平面只有 i，e 的 i 乘 i 次方是 e 的負一次方。",
+          "board": [
+            { "do": "write", "line": "$f(z)=\\frac{e^{iz}}{1+z^2}$" },
+            { "do": "write", "line": "$\\operatorname{Res}_i=\\frac{e^{-1}}{2i}$", "on": "e 的 i 乘" }
+          ] }
       ],
       "check": 2
     },
