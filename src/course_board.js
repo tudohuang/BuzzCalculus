@@ -65,10 +65,14 @@
 .cvb-ov-meas{position:absolute;left:0;top:0;visibility:hidden;pointer-events:none}
 html.nb .cv2s.cv2-lesson.is-nb{position:fixed;z-index:5;max-width:none;width:auto;margin:0;padding:18px 24px 0;overflow:hidden;background:var(--paper)}
 @media (max-width:640px){html.nb .cv2s.cv2-lesson.is-nb{padding:12px 10px 0}}
-html.nb .cvb{--k:#1f2a44;--kb:#fdfbf4;--nbm:#efa3a3;--nbg:#dfe7f3;--kg:#c2410c;--kc:#1d4ed8;--kn:#15803d;--kr:#dc2626;--kv:#7c3aed;border:0;border-radius:6px;background:var(--kb);box-shadow:0 0 0 1px #0000000f,0 4px 18px #00000017;text-shadow:none}
+html.nb .cvb{--k:#1e2b4a;--kb:#fcf9f1;--nbm:#eba4a0;--nbg:#e2e8f1;--nbG:#cfd9e8;--kg:#c2410c;--kc:#1d4ed8;--kn:#15803d;--kr:#dc2626;--kv:#7c3aed;border:0;border-radius:6px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='p'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .45 0 0 0 0 .38 0 0 0 0 .25 0 0 0 .07 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23p)'/%3E%3C/svg%3E"),var(--kb);box-shadow:0 0 0 1px #0000000d,0 1px 2px #0000000d,0 6px 22px #00000014;text-shadow:none}
 html.nb .cvb-whole .cvb-stage{margin-top:14px}
-html.nb .cvb-c{background:linear-gradient(90deg,transparent 12px,var(--nbm) 12px,var(--nbm) 14px,transparent 14px),linear-gradient(90deg,var(--nbg) 1px,transparent 1px) 0 0/24px 24px,linear-gradient(180deg,var(--nbg) 1px,transparent 1px) 0 0/24px 24px}
-:root[data-theme="dark"].nb .cvb{--k:#dfe6f5;--kb:#1d2026;--nbm:#7f3b3b;--nbg:#2a303b;--kg:#fdba74;--kc:#93c5fd;--kn:#86efac;--kr:#fca5a5;--kv:#c4b5fd}
+html.nb .cvb-c{background:linear-gradient(90deg,transparent 11px,var(--nbm) 11px,var(--nbm) 12px,transparent 12px,transparent 14px,var(--nbm) 14px,var(--nbm) 15px,transparent 15px),linear-gradient(90deg,var(--nbG) 1px,transparent 1px) 0 0/120px 120px,linear-gradient(180deg,var(--nbG) 1px,transparent 1px) 0 0/120px 120px,linear-gradient(90deg,var(--nbg) 1px,transparent 1px) 0 0/24px 24px,linear-gradient(180deg,var(--nbg) 1px,transparent 1px) 0 0/24px 24px}
+html.nb .cv2s.cv2-lesson.is-nb,html.nb .cvb .cvb-x,html.nb .cvb .cvb-s,html.nb .cvb-lab{font-family:"LXGW WenKai TC",system-ui,-apple-system,"Segoe UI","Noto Sans TC",sans-serif}
+html.nb .cvb .cvb-x,html.nb .cvb .cvb-s{font-size:1.02em;letter-spacing:.02em}
+html.nb .cvb.nbf-off .cvb-x,html.nb .cvb.nbf-off .cvb-s,html.nb .cvb.nbf-off .cvb-lab{font-family:system-ui,-apple-system,"Segoe UI","Noto Sans TC",sans-serif}
+html.nb .cv2s.cv2-lesson.is-nb h1,html.nb .cv2s.cv2-lesson.is-nb h2,html.nb .cv2s.cv2-lesson.is-nb h3{font-weight:700;letter-spacing:.03em}
+:root[data-theme="dark"].nb .cvb{--k:#e4e8f2;--kb:#1c1f25;--nbm:#7a3a3a;--nbg:#272c36;--nbG:#323947;--kg:#fdba74;--kc:#93c5fd;--kn:#86efac;--kr:#fca5a5;--kv:#c4b5fd}
 @supports not selector(::-webkit-scrollbar){.cvb.is-tall{scrollbar-width:thin;scrollbar-color:#ffffff40 transparent}html.nb .cvb.is-tall{scrollbar-color:#9fb0c8 transparent}}.cvb.is-tall::-webkit-scrollbar{width:8px}.cvb.is-tall::-webkit-scrollbar-track{background:transparent}.cvb.is-tall::-webkit-scrollbar-thumb{border:2px solid transparent;border-radius:8px;background:#ffffff40 padding-box}.cvb.is-tall::-webkit-scrollbar-thumb:hover{background:#ffffff70 padding-box}.cvb.is-tall::-webkit-scrollbar-button{display:none;height:0}
 html.nb .cvb.is-tall::-webkit-scrollbar-thumb{background:#b7c4d8 padding-box}html.nb .cvb.is-tall::-webkit-scrollbar-thumb:hover{background:#8ea2bf padding-box}
 :root[data-theme="dark"].nb .cvb.is-tall::-webkit-scrollbar-thumb{background:#4a5568 padding-box}
@@ -86,6 +90,16 @@ html.nb .cvb-model>.cv2-figure{box-shadow:0 1px 4px #0002}
     if (q) localStorage.setItem("buzzcalculus.notebook", q[1] === "0" ? "" : "1");
     if (localStorage.getItem("buzzcalculus.notebook")) document.documentElement.classList.add("nb");
   } catch (_e) { /* 私密模式 */ }
+  // 筆記本的字：霞鶩文楷 TC（楷書的手寫感、還是好讀）。Google Fonts 照 unicode-range 切片，只抓這一課用到的字；
+  // 抓不到（離線、被擋）就用系統的楷體，再不行用一般字。
+  const NBF = "LXGW WenKai TC";
+  if (document.documentElement.classList.contains("nb") && !document.getElementById("nb-font")) {
+    const l = document.createElement("link");
+    l.id = "nb-font";
+    l.rel = "stylesheet";
+    l.href = "https://fonts.googleapis.com/css2?family=LXGW+WenKai+TC:wght@400;700&display=swap";
+    document.head.appendChild(l);
+  }
   const NS = "http://www.w3.org/2000/svg";
   const MPC = 170; // 沒旁白：一個字幾毫秒（錄音平均約 208；看的人比念的快一點）
   const ENTRY = 320; // 下一句一開始，上一句的記號淡出要多久
@@ -208,6 +222,20 @@ html.nb .cvb-model>.cv2-figure{box-shadow:0 1px 4px #0002}
       return;
     }
     const M = LY.compile(S.beats);
+    if (document.documentElement.classList.contains("nb") && !B.font && document.fonts && document.fonts.load) {
+      const me = B;
+      const t0 = performance.now();
+      const text = M.items.map((it) => (it.a && typeof it.a.line === "string" ? it.a.line : "")).join("").replace(/[\x00-\x7f]/g, "");
+      me.font = document.fonts.check(`24px "${NBF}"`, text) ? "ok" : "wait";
+      if (me.font === "wait") {
+        // 3 秒還沒到：這一課的板子就用系統字（字晚到才換，字寬跟量好的位置對不上）
+        window.setTimeout(() => { if (me.font === "wait") me.el.classList.add("nbf-off"); }, 3000);
+        Promise.all([document.fonts.load(`24px "${NBF}"`, text || "微積分"), document.fonts.load(`700 24px "${NBF}"`, "微積分")]).then(() => {
+          me.font = "ok";
+          if (B === me && !me.el.classList.contains("nbf-off") && performance.now() - t0 < 3000 && me.el.isConnected) { build(); B.last = ""; kick(); }
+        }, () => { me.font = "ok"; });
+      }
+    }
     const F = W0 < 420 ? 20 : W0 < 640 ? 21 : 24;
     B.F = F;
     const pad = W0 < 480 ? [16, 16] : [24, 20];
