@@ -45,15 +45,51 @@ if (onlyId && !targets.length) {
 
 const buckets = { ok: [], mismatch: [], unverified: [], unsupported: [], error: [] };
 
-targets.forEach((problem) => {
-  let result;
-  try {
-    result = verifyProblem(problem, { normalizeAnswer: api.normalizeExpression });
-  } catch (error) {
-    result = { status: "error", reason: error.message };
+// --cache：每題的結果存在 tmp/verify_cache.json，key＝題目內容＋驗算引擎原始碼的雜湊（引擎一改全部作廢）。
+// 配 --budget-seconds N：時間到就存檔、以結束碼 3 離開，下次接著跑（開發機記憶體吃緊時，長命令會被中止）。
+// CI 不用這兩個旗標：每次都從頭算。
+const useCache = args.includes("--cache");
+const budgetSeconds = args.includes("--budget-seconds") ? Number(args[args.indexOf("--budget-seconds") + 1]) : 0;
+const crypto = require("crypto");
+const CACHE_PATH = path.join(__dirname, "..", "tmp", "verify_cache.json");
+let cache = {};
+let engineHash = "";
+if (useCache) {
+  const libDir = path.join(__dirname, "lib");
+  engineHash = crypto.createHash("sha1").update(fs.readdirSync(libDir).filter((n) => n.endsWith(".js")).sort()
+    .map((n) => fs.readFileSync(path.join(libDir, n), "utf8")).join("\n")).digest("hex");
+  try { cache = JSON.parse(fs.readFileSync(CACHE_PATH, "utf8")); } catch (_e) { cache = {}; }
+  if (cache.__engine !== engineHash) cache = { __engine: engineHash };
+}
+const saveCache = () => {
+  fs.mkdirSync(path.dirname(CACHE_PATH), { recursive: true });
+  fs.writeFileSync(CACHE_PATH, JSON.stringify(cache));
+};
+const started = Date.now();
+let fresh = 0;
+for (const problem of targets) {
+  const key = useCache ? crypto.createHash("sha1").update(JSON.stringify(problem)).digest("hex") : "";
+  let result = useCache ? cache[key] : null;
+  if (!result) {
+    try {
+      result = verifyProblem(problem, { normalizeAnswer: api.normalizeExpression });
+    } catch (error) {
+      result = { status: "error", reason: error.message };
+    }
+    if (useCache) {
+      cache[key] = { status: result.status, method: result.method, detail: result.detail, reason: result.reason, ratio: result.ratio };
+      fresh += 1;
+      if (fresh % 100 === 0) saveCache();
+    }
+    if (budgetSeconds && (Date.now() - started) / 1000 > budgetSeconds) {
+      saveCache();
+      console.log(`時間到（${budgetSeconds}s）：這輪新算 ${fresh} 題，結果已存進快取，再跑一次接著算`);
+      process.exit(3);
+    }
   }
   (buckets[result.status] || buckets.error).push({ problem, result });
-});
+}
+if (useCache) saveCache();
 
 /* ── 單題模式：把過程攤開 ─────────────────────────────────── */
 

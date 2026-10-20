@@ -56,6 +56,8 @@
     "full-expansion", "product", "slope", "speed", "harmonic", "triangle",
     // complex-numbers：把實函數拆成共軛複數的部分分式再微分（題庫精修 2026-10 的兩題高階導數）—— 用到的是複數的代數，不是複變那一個節點
     "complex-numbers",
+    // 課程缺口補題（2026-10）用到的代數工具：是手段不是微積分技巧
+    "quadratic-formula", "completing-square", "complete-the-square", "similar-triangles", "factorial", "power-sum", "am-gm",
     // 描述題目的性質，不是可以被練起來的技巧：
     //   composition    這題是合成函數（要用的技巧是鏈鎖律，那個有自己的節點）
     //   domain-aware   這題的答案要考慮定義域
@@ -88,13 +90,13 @@
   const SKILLS = [
     /* ===== 極限 ===== */
     { id: "limit.direct", label: t("基本極限"), tier: 1, obscurity: 1, family: "limit", topics: ["limits"], prereq: [],
-      tags: ["standard-limit", "direct-substitution", "factoring", "rational-limit", "equivalent-infinitesimal"] },
+      tags: ["standard-limit", "direct-substitution", "factoring", "rational-limit", "equivalent-infinitesimal", "common-denominator"] },
     { id: "limit.rationalize", label: t("有理化"), tier: 2, obscurity: 1, family: "limit", topics: ["limits"], prereq: ["limit.direct"],
-      tags: ["rationalize"] },
+      tags: ["rationalize", "conjugate"] },
     { id: "limit.trig", label: t("三角極限"), tier: 2, obscurity: 1, family: "limit", topics: ["limits"], prereq: ["limit.direct"],
       tags: ["trig-limit", "half-angle"] },
     { id: "limit.exponential", label: t("指數 / 對數極限"), tier: 2, obscurity: 2, family: "limit", topics: ["limits"], prereq: ["limit.direct"],
-      tags: ["exponential-limit", "power-exponential", "log-limit", "log-expansion", "hyperbolic", "indeterminate"] },
+      tags: ["exponential-limit", "power-exponential", "log-limit", "log-expansion", "hyperbolic", "indeterminate", "e-limit"] },
     { id: "limit.lhopital", label: "L'Hôpital", tier: 2, obscurity: 1, family: "limit", topics: ["limits"], prereq: ["limit.direct"],
       tags: ["lhopital"] },
     { id: "limit.taylor", label: t("Taylor 求極限"), tier: 3, obscurity: 2, family: "limit", topics: ["limits"], prereq: ["limit.direct"], radarAxis: "taylor",
@@ -102,7 +104,7 @@
     { id: "limit.asymptotic", label: t("漸近分析"), tier: 4, obscurity: 2, family: "limit", topics: ["limits"], prereq: ["limit.taylor"], radarAxis: "taylor",
       tags: ["asymptotics", "asymptotic", "asymptotic-balance", "asymptotic-expansion",
         "infinity-limit", "infinity", "stirling", "boundary-layer", "stolz",
-        "cesaro", "euler-mascheroni", "nth-root", "infinitesimal-order"] },
+        "cesaro", "euler-mascheroni", "nth-root", "infinitesimal-order", "leading-term", "limit-at-infinity", "asymptotic-equivalence", "big-o", "little-o"] },
     { id: "limit.squeeze", label: t("夾擠與有界"), tier: 2, obscurity: 1, family: "limit", topics: ["limits"], prereq: ["limit.direct"],
       tags: ["squeeze", "dne", "periodicity", "product-limit", "oscillation"] },
     { id: "limit.riemann", label: t("Riemann 和與達布和"), tier: 3, obscurity: 2, family: "limit", prereq: ["limit.direct"],
@@ -113,16 +115,16 @@
     { id: "limit.continuity", label: t("連續性與 IVT"), tier: 2, obscurity: 1, family: "limit", prereq: ["limit.direct"],
       // domain / rational-function：判定「哪些 x 可以代進去」跟判定連續性
       // 是同一件事的兩個問法，同一個技巧節點。
-      tags: ["continuity", "ivt", "removable-singularity", "asymptote", "domain", "rational-function", "one-sided-limit", "removable", "zeros", "limit-from-table", "piecewise"] },
+      tags: ["continuity", "ivt", "removable-singularity", "asymptote", "domain", "rational-function", "one-sided-limit", "removable", "zeros", "limit-from-table", "piecewise", "closed-interval"] },
     { id: "limit.sequence", label: t("數列極限"), tier: 2, obscurity: 1, family: "limit", prereq: ["limit.direct"],
       // 無窮乘積放這裡而不是自成一節：∏ 的定義就是部分乘積這個**數列**的極限，
       // 遞迴、巢狀根式、連分數同理 —— 它們共用「先確定收斂，再對遞迴式取極限」這一步。
       tags: ["sequence", "sequences", "recursive", "recursive-sequence", "recurrence", "nested-radical", "continued-fraction",
-        "fixed-point", "newton", "infinite-product", "cauchy-sequence"] },
+        "fixed-point", "newton", "infinite-product", "cauchy-sequence", "bounded-sequence", "subsequence", "stolz-cesaro"] },
     { id: "limit.discontinuous", label: t("單邊極限與跳躍"), tier: 3, obscurity: 2, family: "limit", topics: ["limits"], prereq: ["limit.direct"],
       // 高斯括號與單邊極限合成一個節點：兩者練的是同一件事 ——
       // 函數在不連續點附近的行為，只能用不等式夾，不能代進去也不能展開。
-      tags: ["floor", "one-sided", "sequence-limit", "recursion"] },
+      tags: ["floor", "one-sided", "sequence-limit", "recursion", "floor-function"] },
 
     /* ===== 微分 ===== */
     { id: "diff.basic", label: t("基本微分律"), tier: 1, obscurity: 1, family: "diff", topics: ["derivatives"], prereq: [],
@@ -132,7 +134,7 @@
     // 「認出這個極限就是導數」和「這一點到底可不可微」是同一件事的兩面：
     // 兩者都要回到差商的定義去看，而不是套微分表。所以合成一個節點。
     { id: "diff.definition", label: t("導數定義與可微性"), tier: 2, obscurity: 1, family: "diff", topics: ["derivatives"], prereq: ["diff.basic"],
-      tags: ["derivative-definition", "differentiability"] },
+      tags: ["derivative-definition", "differentiability", "difference-quotient"] },
     { id: "diff.log", label: t("對數微分"), tier: 3, obscurity: 2, family: "diff", prereq: ["diff.chain"],
       tags: ["log-differentiation", "logarithmic-differentiation"] },
     { id: "diff.inverse", label: t("反函數 / 反三角微分"), tier: 3, obscurity: 1, family: "diff", topics: ["derivatives"], prereq: ["diff.chain"],
@@ -149,13 +151,13 @@
       // 而且這樣選圖題才會算進能力模型（列成非技巧的話它們對雷達是隱形的）。
       tags: ["concavity", "inflection", "critical-point", "critical-points", "derivative-zero", "mean-value-theorem",
         "first-derivative", "monotonicity", "tangent-normal", "curve-sketching", "extrema",
-        "mvt", "mean-value", "rolle", "curvature", "derivative-graph"] },
+        "mvt", "mean-value", "rolle", "curvature", "derivative-graph", "sign-chart", "derivative-sign", "first-derivative-test", "second-derivative-test", "rolle-theorem"] },
     { id: "diff.optimize", label: t("最佳化"), tier: 3, obscurity: 1, family: "diff", prereq: ["diff.shape"],
       tags: ["optimization"] },
     { id: "diff.related", label: t("隱微分與相關變率"), tier: 3, obscurity: 1, family: "diff", prereq: ["diff.chain"],
       tags: ["implicit-differentiation", "related-rates", "motion"] },
     { id: "diff.approx", label: t("線性近似 / 牛頓法"), tier: 2, obscurity: 1, family: "diff", prereq: ["diff.basic"],
-      tags: ["linear-approximation", "linearization", "newton-method"] },
+      tags: ["linear-approximation", "linearization", "newton-method", "error-propagation", "differentials"] },
     { id: "diff.applied", label: t("應用情境題"), tier: 3, obscurity: 1, family: "diff", prereq: ["diff.basic"],
       // kinematics 是微積分的運動應用題（位移-速度-加速度的微分積分關係），
       // 不是物理題 —— 理科移出之後它留在這裡是對的。
@@ -171,7 +173,7 @@
     { id: "mvcalc.total", label: t("全微分"), tier: 4, obscurity: 1, family: "mvcalc", prereq: ["mvcalc.partial"], radarAxis: "multivariable",
       tags: ["total-differential", "total-differential-min", "tangent-plane"] },
     { id: "mvcalc.directional", label: t("方向導數 / 梯度"), tier: 4, obscurity: 1, family: "mvcalc", prereq: ["mvcalc.partial"], radarAxis: "multivariable",
-      tags: ["directional-derivative", "gradient"] },
+      tags: ["directional-derivative", "gradient", "level-curve", "level-set"] },
     { id: "mvcalc.hessian", label: t("Hessian 判別"), tier: 4, obscurity: 2, family: "mvcalc", prereq: ["mvcalc.partial"], radarAxis: "multivariable",
       tags: ["hessian"] },
     { id: "mvcalc.jacobian", label: "Jacobian", tier: 4, obscurity: 2, family: "mvcalc", prereq: ["mvcalc.partial"], radarAxis: "multivariable",
@@ -185,7 +187,7 @@
 
     /* ===== 積分：基本技巧 ===== */
     { id: "integral.basic", label: t("基本反導數"), tier: 1, obscurity: 1, family: "integral", topics: ["integrals"], prereq: [],
-      tags: ["basic-integral", "standard-integral"] },
+      tags: ["basic-integral", "standard-integral", "antiderivative"] },
     // 微分方程（2026-09 新包）。掛在 integral family 下 —— 大一課綱把
     // 一階 ODE 與二階常係數放在積分技巧之後，解方程的主要工作也是積分。
     { id: "integral.ode", label: t("微分方程"), tier: 4, obscurity: 2, family: "integral", topics: ["integrals"], prereq: ["integral.ibp"],
@@ -194,7 +196,7 @@
         "undetermined-coefficients", "complex-roots", "resonance", "ivp", "logistic", "blow-up", "exact-form",
         "bernoulli-equation", "homogeneous-ode", "exact-equation", "orthogonal-trajectories", "euler-equation", "euler-method", "numerical-method"] },
     { id: "integral.usub", label: t("u 代換"), tier: 1, obscurity: 1, family: "integral", prereq: [], radarAxis: "substitution",
-      tags: ["substitution", "u-sub", "binomial-differential"] },
+      tags: ["substitution", "u-sub", "binomial-differential", "u-substitution"] },
     { id: "integral.ibp", label: t("分部積分"), tier: 2, obscurity: 1, family: "integral", prereq: ["integral.usub"], radarAxis: "ibp",
       tags: ["integration-by-parts", "ibp"] },
     { id: "integral.ibp.cyclic", label: t("循環分部"), tier: 4, obscurity: 2, family: "integral", prereq: ["integral.ibp"], radarAxis: "ibp",
@@ -204,13 +206,13 @@
     { id: "integral.trigsub", label: t("三角代換"), tier: 3, obscurity: 2, family: "integral", prereq: ["integral.usub"], radarAxis: "substitution",
       tags: ["trig-substitution", "euler-substitution"] },
     { id: "integral.trig", label: t("三角與雙曲積分"), tier: 2, obscurity: 1, family: "integral", topics: ["integrals"], prereq: ["integral.usub"],
-      tags: ["trig-integral", "trig-power", "hyperbolic", "universal-substitution"] },
+      tags: ["trig-integral", "trig-power", "hyperbolic", "universal-substitution", "power-reduction", "trig-identity"] },
     { id: "integral.ftc", label: t("微積分基本定理"), tier: 2, obscurity: 1, family: "integral", prereq: [],
       tags: ["ftc", "fundamental-theorem", "moving-limits"] },
 
     /* ===== 積分：進階技巧 ===== */
     { id: "integral.improper", label: t("瑕積分"), tier: 3, obscurity: 2, family: "integral", prereq: ["integral.usub"], radarAxis: "improper",
-      tags: ["improper-integral"] },
+      tags: ["improper-integral", "integral-comparison", "p-test"] },
     { id: "integral.frullani", label: "Frullani", tier: 4, obscurity: 3, family: "integral", prereq: ["integral.improper"], radarAxis: "improper",
       tags: ["frullani"] },
     { id: "integral.kings", label: "King's Property", tier: 3, obscurity: 2, family: "integral", prereq: ["integral.usub"], radarAxis: "improper",
@@ -250,17 +252,17 @@
 
     /* ===== 向量分析 ===== */
     { id: "vector.line", label: t("線積分與保守場"), tier: 3, obscurity: 1, family: "vector", prereq: ["integral.usub"], radarAxis: "multivariable",
-      tags: ["line-integral", "conservative-field", "potential"] },
+      tags: ["line-integral", "conservative-field", "potential", "path-dependence"] },
     { id: "vector.green", label: t("Green 定理"), tier: 4, obscurity: 2, family: "vector", prereq: ["vector.line"], radarAxis: "multivariable",
       tags: ["green-theorem"] },
     { id: "vector.surface", label: t("面積分與通量"), tier: 4, obscurity: 2, family: "vector", prereq: ["integral.double"], radarAxis: "multivariable",
-      tags: ["surface-integral", "flux"] },
+      tags: ["surface-integral", "flux", "surface"] },
     { id: "vector.divergence", label: t("Stokes 與散度定理"), tier: 5, obscurity: 2, family: "vector", prereq: ["vector.surface"], radarAxis: "multivariable",
       tags: ["divergence-theorem", "stokes-theorem", "curl", "divergence"] },
 
     /* ===== 級數 ===== */
     { id: "series.geometric", label: t("等比與 p 級數"), tier: 1, obscurity: 1, family: "series", prereq: [], radarAxis: "series",
-      tags: ["geometric-series", "p-series", "harmonic-number"] },
+      tags: ["geometric-series", "p-series", "harmonic-number", "harmonic-series"] },
     { id: "series.telescoping", label: t("望遠鏡級數"), tier: 2, obscurity: 2, family: "series", prereq: ["series.geometric"], radarAxis: "series",
       tags: ["telescoping", "telescoping-series"] },
     { id: "series.ratio", label: t("比值判別"), tier: 2, obscurity: 1, family: "series", prereq: ["series.geometric"], radarAxis: "series",
@@ -268,15 +270,15 @@
     { id: "series.root", label: t("根值判別"), tier: 2, obscurity: 1, family: "series", prereq: ["series.geometric"], radarAxis: "series",
       tags: ["root-test"] },
     { id: "series.compare", label: t("比較判別"), tier: 2, obscurity: 1, family: "series", prereq: ["series.geometric"], radarAxis: "series",
-      tags: ["comparison", "comparison-test", "limit-comparison", "integral-test", "term-test", "convergence-test", "series-test"] },
+      tags: ["comparison", "comparison-test", "limit-comparison", "integral-test", "term-test", "convergence-test", "series-test", "divergence-test"] },
     { id: "series.alternating", label: t("交錯級數"), tier: 3, obscurity: 1, family: "series", prereq: ["series.compare"], radarAxis: "series",
-      tags: ["alternating-series", "alternating", "absolute-conditional", "rearrangement"] },
+      tags: ["alternating-series", "alternating", "absolute-conditional", "rearrangement", "conditional"] },
     { id: "series.power.radius", label: t("冪級數收斂範圍"), tier: 3, obscurity: 1, family: "series", prereq: ["series.ratio"], radarAxis: "series",
       // 收斂區間的端點要不要算進去，正是這個技巧最容易錯的地方
       tags: ["power-series", "radius", "radius-of-convergence", "endpoint-analysis",
         "interval-of-convergence", "endpoint"] },
     { id: "series.taylor.coeff", label: t("Taylor 係數"), tier: 4, obscurity: 2, family: "series", topics: ["series", "derivatives"], prereq: ["series.power.radius"], radarAxis: "taylor",
-      tags: ["taylor", "coefficient", "binomial", "binomial-series", "euler-number", "taylor-polynomial"] },
+      tags: ["taylor", "coefficient", "binomial", "binomial-series", "euler-number", "taylor-polynomial", "taylor-series"] },
     { id: "series.sum", label: t("級數求和"), tier: 4, obscurity: 2, family: "series", prereq: ["series.telescoping"], radarAxis: "series",
       tags: ["sum-series", "series-sum", "special-sum", "exponential-series", "log-series"] },
     { id: "series.euler", label: t("Euler 和與 zeta"), tier: 5, obscurity: 3, family: "series", prereq: ["series.sum"], radarAxis: "series",
@@ -287,13 +289,13 @@
     /* ===== 進階工具 ===== */
     { id: "adv.complex", label: t("複變基礎"), tier: 4, obscurity: 2, family: "adv", prereq: ["diff.chain"],
       tags: ["complex", "cauchy-riemann", "complex-derivative", "real-part",
-        "imaginary-part", "modulus"] },
+        "imaginary-part", "modulus", "polar-form", "roots-of-unity", "branch-cut"] },
     { id: "adv.residue", label: t("留數定理"), tier: 5, obscurity: 3, family: "adv", prereq: ["adv.complex"], radarAxis: "special",
       tags: ["residue", "laurent", "contour", "contour-integral"] },
     { id: "adv.ode.first", label: t("一階 ODE"), tier: 3, obscurity: 1, family: "adv", prereq: ["integral.usub"], radarAxis: "improper",
-      tags: ["ode-intro", "separable", "first-order", "integrating-factor"] },
+      tags: ["ode-intro", "separable", "first-order", "integrating-factor", "separable-ode", "equilibrium"] },
     { id: "adv.ode.second", label: t("二階 ODE 與積分變換"), tier: 4, obscurity: 2, family: "adv", prereq: ["adv.ode.first"], radarAxis: "improper",
-      tags: ["second-order", "ode-style", "laplace-transform", "laplace", "convolution"] },
+      tags: ["second-order", "ode-style", "laplace-transform", "laplace", "convolution", "variation-of-parameters", "harmonic-oscillator", "damped-oscillator", "driven-oscillator"] },
     { id: "adv.bessel", label: t("Bessel 與特殊方程"), tier: 5, obscurity: 3, family: "adv", prereq: ["adv.ode.second"], radarAxis: "special",
       tags: ["bessel"] },
 
@@ -307,7 +309,7 @@
       tags: ["numerical-integration", "simpson"] },
     { id: "series.estimate", label: t("級數與泰勒的誤差估計"), tier: 4, obscurity: 2, family: "series", topics: ["series"], prereq: ["series.alternating"],
       // 拉格朗日餘項跟交錯級數的誤差界練的是同一件事：把「還差多少」變成一個可以算的量。
-      tags: ["series-estimate", "error-bound", "lagrange-remainder"] },
+      tags: ["series-estimate", "error-bound", "lagrange-remainder", "euler-maclaurin"] },
     /* ===== 分析學（2026-09）=====
        微積分問「算出來是多少」，分析學問「這個算法為什麼可以用」。
        三個節點對應三件在計算層看不見、但大二會被考的事：
@@ -317,9 +319,9 @@
        epsilon-delta 從 limit.continuity 搬過來：它練的是定義的嚴格性，
        不是「哪些 x 代得進去」，掛在連續性節點下量出來的能力座標會失真。 */
     { id: "analysis.rigor", label: t("ε-δ 與 ε-N"), tier: 4, obscurity: 2, family: "analysis", prereq: ["limit.direct"],
-      tags: ["epsilon-delta"] },
+      tags: ["epsilon-delta", "epsilon-n", "limit-definition"] },
     { id: "analysis.supinf", label: t("確界與上下極限"), tier: 4, obscurity: 2, family: "analysis", prereq: ["limit.sequence"],
-      tags: ["supremum", "infimum", "limsup"] },
+      tags: ["supremum", "infimum", "limsup", "density", "completeness"] },
     /* 測度與勒貝格積分（2026-09-25）：三個節點。
        分開的理由跟 analysis 其他節點一樣 —— 會算 ∫x dx 不代表看得懂
        「簡單函數的積分就是 Σcᵢm(Eᵢ)」，更不代表分得出 lim∫ 與 ∫lim。 */
@@ -331,9 +333,9 @@
       // Fatou／單調收斂／控制收斂練的是同一個問題：先積分還是先取極限。
       // Lᵖ 範數只有六題（節點下限是八題），併進來而不是自成一節 ——
       // 而且「可積與否」在 Lᵖ 的語言裡本來就是同一個問題的另一種問法。
-      tags: ["convergence-theorem", "fatou", "monotone-convergence", "riemann-lebesgue", "lp-space"] },
+      tags: ["convergence-theorem", "fatou", "monotone-convergence", "riemann-lebesgue", "lp-space", "dominated-convergence"] },
     { id: "analysis.uniform", label: t("一致連續與一致收斂"), tier: 5, obscurity: 3, family: "analysis", prereq: ["analysis.rigor"],
-      tags: ["uniform-continuity", "uniform-convergence", "lipschitz"] }
+      tags: ["uniform-continuity", "uniform-convergence", "lipschitz", "weierstrass-m-test"] }
   ];
 
   // ── 索引 ──────────────────────────────────────────────────────

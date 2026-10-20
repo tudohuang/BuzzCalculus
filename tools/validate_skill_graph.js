@@ -10,6 +10,8 @@
 
 "use strict";
 
+const fs = require("fs");
+const path = require("path");
 global.window = {};
 require("./lib/load_problem_sources.js")();
 require("../src/kernel/skill_tags.js");   // 補標表：早期題目的 skill 對應
@@ -139,7 +141,22 @@ problems.forEach((p) => (p.tags || []).forEach((t) => allTags.add(t)));
 const claimed = new Set();
 skills.forEach((s) => s.tags.forEach((t) => claimed.add(t)));
 
-const unclaimed = [...allTags].filter((t) => graph.isSkillTag(t) && !claimed.has(t)).sort();
+// 課程的細標籤（課的 practice[].trains、skillTags.fine、gaps[].tag）：寫課的人用來標「這題在這一課練哪一小步」，
+// 比 skill 節點細一層（例如 avg-rate-sign-units）。課程缺口補題（cg-）每題都帶一個，同時也帶一般的技巧 tag
+// 掛上 skill（上面「對不到 skill」那條照樣檢查）。細標籤不是能力座標，不要求被 skill 認領。
+const courseFineTags = new Set();
+{
+  const lessonDir = path.join(__dirname, "content", "course_v2", "lessons");
+  if (fs.existsSync(lessonDir)) {
+    fs.readdirSync(lessonDir).filter((n) => n.endsWith(".json")).forEach((n) => {
+      const lesson = JSON.parse(fs.readFileSync(path.join(lessonDir, n), "utf8"));
+      (lesson.practice || []).forEach((p) => p.trains && courseFineTags.add(p.trains));
+      ((lesson.skillTags || {}).fine || []).forEach((t) => courseFineTags.add(typeof t === "string" ? t : t && t.tag));
+      (lesson.gaps || []).forEach((g) => g.tag && courseFineTags.add(g.tag));
+    });
+  }
+}
+const unclaimed = [...allTags].filter((t) => graph.isSkillTag(t) && !claimed.has(t) && !courseFineTags.has(t)).sort();
 if (unclaimed.length) {
   fail(`${unclaimed.length} 個技巧 tag 沒有被任何 skill 認領（要嘛歸進某個 skill，要嘛列進 NON_SKILL_TAGS）：`);
   fail(`  ${unclaimed.join(", ")}`);
