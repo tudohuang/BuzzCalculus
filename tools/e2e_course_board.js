@@ -179,13 +179,16 @@ async function run() {
     check("新手進課程表", await waitFor('document.querySelector(".cv2-index")'));
 
     /* ── 載入：沒有黑板的課不抓；有黑板才抓；有圖才抓圖 ── */
-    check(`打開 ${PLAIN.id}（沒有 board）`, await openLesson(PLAIN.id));
-    await next();
-    await sleep(300);
-    const plain = await evaluate(`return { board: Boolean(document.querySelector(".cvb, [data-cvb-slot]")), files: window.__b.files(/course_board/), sr: document.querySelectorAll(".cvb-sr").length,
-      shows: [...document.querySelectorAll("[data-cv2s] .cv2s-show")].map((p) => p.getBoundingClientRect().height > 10).every(Boolean) };`);
-    check("沒有黑板的課：沒有黑板、show 照樣看得到、沒有 cvb-sr", !plain.board && plain.shows && plain.sr === 0, JSON.stringify(plain));
-    check("沒有黑板的課：一個黑板的檔都不抓（course_board*.js）", plain.files === 0, String(plain.files));
+    // 2026-10-20 起每一課都有黑板（補黑板完成）：找得到沒有黑板的課才量「不抓黑板的檔」
+    if (PLAIN) {
+      check(`打開 ${PLAIN.id}（沒有 board）`, await openLesson(PLAIN.id));
+      await next();
+      await sleep(300);
+      const plain = await evaluate(`return { board: Boolean(document.querySelector(".cvb, [data-cvb-slot]")), files: window.__b.files(/course_board/), sr: document.querySelectorAll(".cvb-sr").length,
+        shows: [...document.querySelectorAll("[data-cv2s] .cv2s-show")].map((p) => p.getBoundingClientRect().height > 10).every(Boolean) };`);
+      check("沒有黑板的課：沒有黑板、show 照樣看得到、沒有 cvb-sr", !plain.board && plain.shows && plain.sr === 0, JSON.stringify(plain));
+      check("沒有黑板的課：一個黑板的檔都不抓（course_board*.js）", plain.files === 0, String(plain.files));
+    } else console.log("  ·    每一課都有黑板：沒有可以量「不抓黑板檔」的課");
     check(`打開 ${CHAIN.id}`, await openLesson(CHAIN.id));
     check("有黑板的課：course_board_layout.js、course_board.js 各抓一次，沒有 plot 的課不抓 course_board_plot.js", await waitFor(`window.__b.board() && window.__b.files(/course_board_layout\\.js/) === 1 && window.__b.files(/course_board\\.js/) === 1`) && (await evaluate(`return window.__b.files(/course_board_plot\\.js/);`)) === 0, String(await evaluate(`return [window.__b.files(/course_board_layout/), window.__b.files(/course_board\\.js/), window.__b.files(/course_board_plot/)].join(",");`)));
     const a11y = await evaluate(`const c = window.__b.board(); const li = document.querySelector("[data-cv2s] .cv2s-beat"); return { hidden: c.getAttribute("aria-hidden"), sr: li.querySelectorAll(".cv2s-show.cvb-sr").length, live: document.querySelector(".cv2s-beats").getAttribute("aria-live"), inSlot: Boolean(c.closest("[data-cvb-slot]")) };`);
