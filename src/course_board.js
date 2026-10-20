@@ -341,6 +341,8 @@ html.nb .cvb-model>.cv2-figure{box-shadow:0 1px 4px #0002}
     B.view = cap;
     ink.setAttribute("width", W0);
     ink.setAttribute("height", CH);
+    B.layer = c;
+    pen();
     // 5. 記號、箭頭、標籤；變形與「飛過來」的複製
     const sv = geo.anns.map((ga, i) => {
       if (!ga) return null;
@@ -538,6 +540,7 @@ html.nb .cvb-model>.cv2-figure{box-shadow:0 1px 4px #0002}
       el.addEventListener("touchmove", mark, { passive: true });
     }
     if (B.userAt && Date.now() - B.userAt < 4000) return;
+    if (window.BuzzInk && window.BuzzInk.busy()) return; // 筆記本上正在自己寫：不翻走那一頁
     const st = el.scrollTop;
     const view = B.view;
     let target = null;
@@ -836,6 +839,14 @@ html.nb .cvb-model>.cv2-figure{box-shadow:0 1px 4px #0002}
     return root.getBoundingClientRect();
   }
 
+  // 筆記本：學生自己寫的那一層（course_ink.js：筆記本＋一課一塊板才抓）
+  function pen() {
+    const on = B && B.whole && B.layer && B.layer.isConnected && document.documentElement.classList.contains("nb");
+    if (!on) { if (window.BuzzInk) window.BuzzInk.unmount(); return; }
+    const go = () => { if (B && B.layer && B.layer.isConnected && window.BuzzInk) window.BuzzInk.mount({ board: B.el, layer: B.layer, id: B.api.m.id }); };
+    if (window.BuzzInk) go(); else if (B.api && B.api.deps && B.api.deps.ensureLazy) Promise.resolve(B.api.deps.ensureLazy("ink")).then(go, () => {});
+  }
+
   function sync(api, root) {
     const slot = root && root.querySelector("[data-cvb-slot]");
     const sec = api.state.sec;
@@ -867,6 +878,7 @@ html.nb .cvb-model>.cv2-figure{box-shadow:0 1px 4px #0002}
     if (B.el.parentNode !== slot) { slot.appendChild(B.el); B.followTo = null; B.last = ""; }
     if (!B.M || B.el.clientWidth !== B.w) build();
     placeModel();
+    pen();
     // 出題那一句：最後一句寫完才接（frame 的 goQuiz）；已經在出題、或這一題答過了，就停在出題
     const lastLocal = local === api.data.sections[sec.si].beats.length - 1;
     if (B.qa >= 0 && lastLocal && (B.at === B.qa || answered(api, sec.si))) { if (B.at !== B.qa) goQuiz(now); quizState(); kick(); return; }
