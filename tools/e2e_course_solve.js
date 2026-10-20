@@ -154,6 +154,8 @@ async function run() {
   };
   // 出完這一節的句子（不做動作）
   const revealBeats = async (L) => {
+    // 一課一塊黑板打開時要先排整課，慢的機器上分節晚一點才畫好：等到節號有效再讀
+    await waitFor(`document.querySelector("[data-cv2s]") && Number(document.querySelector("[data-cv2s]").dataset.cv2s) >= 0 && Number(document.querySelector("[data-cv2s]").dataset.cv2s) < ${L.sections.length}`);
     const si = await evaluate(`return Number(document.querySelector("[data-cv2s]").dataset.cv2s);`);
     const sec = L.sections[si];
     for (let k = 0; k < 2 * sec.beats.length + 2; k += 1) {

@@ -153,6 +153,7 @@
 
   /* ── 排版：每一個狀態裡每一項的位置。m = { W(內寬), pad:[左,上], gap, items: [{ h, w, rows?, lhs?, alignable, gapA, gapB }] } ── */
   function stack(model, m) {
+    if (m.flow) return stackFlow(model, m);
     // 不擦的板（每一項都有 panel）：位置不跟狀態變，一次排好整節最後的樣子
     if (model.items.length && model.items.every((it) => it.panel !== undefined) && !model.items.some((it) => it.die !== Infinity)) return stackPanels(model, m);
     return stackColumn(model, m);
@@ -214,6 +215,70 @@
     });
     const pos = states.map((st) => { const p = {}; st.forEach((n) => { p[n] = at[n]; }); return p; });
     return { pos, bottom: y0 - rowGap };
+  }
+  // 整課一塊（m.flow = { view, cols, colW, colGap }）：像教授寫黑板 —— 一欄由上往下寫，寫到底換右邊那一欄；
+  // 每一欄都滿了就換一面（第 p 面佔 [p·view, (p+1)·view)，鏡頭一次滑一整面）。
+  // 節名（a.head）不落在欄底：放不下「節名＋下一行」就直接換欄；不在欄頂時上面多空一點。
+  // 一欄裡相鄰、都能對齊的行對齊 =；節名靠左，其他行在欄裡置中。
+  // 有圖的節（F.fig(i)）：寫在「保留一塊給圖」的面上 —— 好幾欄的板保留最右一欄、一欄的板保留上面 F.rectH。
+  // 一面一旦保留，整面都讓（之後別的節接著寫也不進那一塊）；要保留時那一塊已經有字 → 換一面。
+  function stackFlow(model, m) {
+    const { states, items } = model;
+    const F = m.flow;
+    const one = F.cols === 1;
+    const reserved = {};
+    const usedRect = {};
+    let page = 0;
+    let col = 0;
+    let fig = false;
+    const top = () => page * F.view + m.pad[1] + (one && reserved[page] ? F.rectH : 0);
+    const limit = () => (page + 1) * F.view - m.pad[1];
+    let y = top();
+    const place = [];
+    const turn = () => { page += 1; col = 0; if (fig) reserved[page] = true; y = top(); };
+    items.forEach((it, i) => {
+      const mi = m.items[i];
+      fig = Boolean(F.fig && F.fig(i));
+      if (fig && !reserved[page]) {
+        if (one ? y > top() + 0.5 : usedRect[page] || col === F.cols - 1) turn();
+        else { reserved[page] = true; if (one) y = top(); }
+      }
+      const h = (mi.gapA || 0) + mi.h + (mi.gapB || 0);
+      const atTop = y === top();
+      const headGap = (it.a.head || it.a.keep) && !atTop ? Math.round(m.gap * 0.9) : 0;
+      let need = headGap + h;
+      // 節名帶下一行、題目帶全部選項（a.keep）一起換欄
+      const kw = it.a.head ? 1 : it.a.keep || 0;
+      for (let j = 1; j <= kw && m.items[i + j]; j += 1) need += m.gap + (m.items[i + j].gapA || 0) + m.items[i + j].h + (m.items[i + j].gapB || 0);
+      if (!atTop && y + need > limit()) {
+        col += 1;
+        if (col >= F.cols || (!one && reserved[page] && col === F.cols - 1)) turn();
+        else y = top();
+      } else y += headGap;
+      place[i] = { page, col, y };
+      if (!one && col === F.cols - 1) usedRect[page] = true;
+      y += h + m.gap;
+    });
+    const runs = {};
+    items.forEach((_it, i) => { const k = place[i].page * 100 + place[i].col; (runs[k] = runs[k] || []).push(i); });
+    const at = {};
+    Object.values(runs).forEach((list) => {
+      const bx = m.pad[0] + place[list[0]].col * (F.colW + F.colGap);
+      const groups = [];
+      list.forEach((i, k) => {
+        const mi = m.items[i];
+        const gr = groups[groups.length - 1];
+        if (mi.alignable && k && m.items[list[k - 1]].alignable && gr && gr.last === list[k - 1]) { gr.ids.push(i); gr.last = i; gr.L = Math.max(gr.L, mi.lhs); gr.R = Math.max(gr.R, mi.w - mi.lhs); } else groups.push({ ids: [i], last: i, L: mi.alignable ? mi.lhs : 0, R: mi.alignable ? mi.w - mi.lhs : mi.w });
+      });
+      groups.forEach((gr) => gr.ids.forEach((i) => {
+        const mi = m.items[i];
+        const qz = items[i].a.qz;
+        const x = items[i].a.head || qz === "ask" ? bx : typeof qz === "number" ? bx + Math.round(m.gap * 1.2) : gr.ids.length > 1 && gr.L + gr.R <= F.colW ? bx + (F.colW - gr.L - gr.R) / 2 + gr.L - mi.lhs : bx + Math.max(0, (F.colW - mi.w) / 2);
+        at[i] = [x, place[i].y + (mi.gapA || 0)];
+      }));
+    });
+    const pos = states.map((st) => { const p = {}; st.forEach((n) => { p[n] = at[n]; }); return p; });
+    return { pos, bottom: (page + 1) * F.view - m.pad[1], pages: page + 1, reserved: Object.keys(reserved).map(Number) };
   }
   function stackColumn(model, m) {
     const { states, items } = model;

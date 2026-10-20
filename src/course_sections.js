@@ -217,7 +217,7 @@
      手指按著／剛自己捲過先不捲；長高（字型、字幕）再對一次，但使用者自己捲過就等下一句。 */
   let userAt = 0;
   let grow = null;
-  function show(anchor) {
+  function show(anchor, jump) {
     const root = document.querySelector("[data-cv2s]");
     const el = root && root.querySelector(anchor === "act" ? "[data-cv2s-act]" : ".cv2s-beat.is-now");
     if (grow) { grow.disconnect(); grow = null; }
@@ -237,7 +237,8 @@
       const a = el.getBoundingClientRect();
       const z = (root.querySelector(".cv2s-bar:not(:empty)") || root.querySelector("[data-cv2s-act]") || el).getBoundingClientRect();
       // 黑板最下面那一行（剛寫的；course_board.js 放的一個看不見的框）也要看得到
-      const bl = root.querySelector(".cvb-l:last-child");
+      // 一課一塊：板子自己有鏡頭（最新那一行一定在板子裡看得到），頁面對的是整塊板（含釘在上面的圖）
+      const bl = root.querySelector(".cvb-whole .cvb-stage") || root.querySelector(".cvb-l:last-child");
       const b = bl && bl.getBoundingClientRect();
       let d;
       if (anchor === "act" && b && b.height) {
@@ -251,7 +252,8 @@
         const at = z.bottom - lt <= bottom - top ? Math.min(a.top, lt) : a.top;
         d = z.bottom > bottom ? Math.min(z.bottom - bottom, at - top) : Math.min(0, at - top);
       }
-      if (Math.abs(d) >= 1) window.scrollTo({ top: window.scrollY + d, behavior: reduced() ? "auto" : "smooth" });
+      if (Math.abs(d) >= 1) window.scrollTo({ top: window.scrollY + d, behavior: reduced() || jump ? "auto" : "smooth" });
+      jump = false;
     };
     go();
     window.setTimeout(go, 350); // 進場動畫（往上 6px）結束後再對一次
@@ -382,7 +384,8 @@
       return Figures().renderFigure(fig, k, value, escapeAttr, escapeHtml);
     }).join("");
     // 有黑板的句子：show 留給螢幕閱讀器（cvb-sr），畫面上是黑板；沒有 note 也沒有字幕的那一句收成 0 高
-    const bd = BD() && boarded(s);
+    const whole = Boolean(BD() && BD().whole && BD().whole(api));
+    const bd = BD() && (whole ? data.sections.some(boarded) : boarded(s));
     const beats = s.beats.slice(0, shown).map((b, bi) => {
       const note = b.note && !asking(api, si, bi) ? `<p class="cv2s-note">${rich(b.note, data)}</p>` : "";
       const sub = subs && b.say && bi === shown - 1 ? `<p class="cv2s-say" data-cv2s-say>${escapeHtml(pend ? b.why.say : b.say)}</p>` : "";
@@ -400,6 +403,13 @@
     if (all && s.drag) {
       action = `<div class="cv2s-act cv2s-drag ${sec.dragOk[si] ? "is-done" : ""}" data-cv2s-act="drag">${icon(sec.dragOk[si] ? "check" : "target")}<span>${rich(s.drag.ask, data)}</span></div>`;
     }
+    // 一課一塊黑板：小測／先猜寫在板上、在板上點；下面只留理由（與螢幕閱讀器用的選項）
+    if (bd && whole && action && (s.check !== undefined || s.predict) && !s.drag && !s.solve) {
+      const item = s.check !== undefined ? data.checks[s.check] : s.predict;
+      const picks = s.check !== undefined ? st.picks[s.check] || [] : sec.pred[si] === undefined ? [] : [sec.pred[si]];
+      const open = !picks.some((oi) => item.options[oi] && item.options[oi].correct) && !(s.predict && picks.length);
+      action = action.replace('class="cv2s-act course-check', 'class="cv2s-act course-check cvb-onboard').replace(/<\/div>\s*$/, `${open ? '<p class="cvb-hint">點黑板上的選項作答</p>' : ""}</div>`);
+    }
     if (all && s.solve && SV()) action = SV().view(api, si);
     if (P && !all && cur.why) action = P.why(api, si, shown - 1);
     if (P && all && (s.order || s.where)) action = P.view(api, si);
@@ -414,11 +424,14 @@
       ? `<button type="button" class="button ${ok ? "home-primary" : "ghost"}" data-action="course-s-next" data-cv2s-next>${lastOne ? "完成這一課" : "下一節"}${icon("chevron-right")}</button>${gain}`
       : `<button type="button" class="button home-primary" data-action="course-s-next" data-cv2s-next>下一句<small>${shown} / ${s.beats.length}</small></button>`;
     return `
-      <article class="cv2s-sec${bd ? " has-board" : ""}" aria-label="第 ${si + 1} 節">
+      <article class="cv2s-sec${bd ? " has-board cvb-sec" : ""}${bd && whole ? " cvb-whole" : ""}" aria-label="第 ${si + 1} 節">
         <h3><small>${si + 1} / ${n}</small>${fmt(s.title)}${P && s.proof ? P.tag(api, s) : ""}</h3>
         ${s.key ? `<p class="cv2s-key"><b>重點</b><span>${fmt(s.key)}</span></p>` : ""}
-        ${figs}
-        ${bd ? `<div class="cvb-slot" data-cvb-slot data-action="course-s-next" data-how="tap"></div>` : ""}
+        ${bd && whole ? "" : figs}
+        ${bd ? (whole
+          // 一課一塊：圖釘在板上保留的那一塊（舞台裡，不在 slot 裡：拖滑桿、按播放不會被當成「點黑板＝下一句」）
+          ? `<div class="cvb-stage">${figs ? `<div class="cvb-model" data-cvb-model>${figs}</div>` : ""}<div class="cvb-slot" data-cvb-slot data-action="course-s-next" data-how="tap"></div></div>`
+          : `<div class="cvb-slot" data-cvb-slot data-action="course-s-next" data-how="tap"></div>`) : ""}
         <ol class="cv2s-beats" data-action="course-s-next" data-how="tap" aria-live="polite">${beats}</ol>
         ${cue}
         ${action}
@@ -501,7 +514,7 @@
     const boarded = Boolean(root.querySelector(".cvb-slot, .cvb"));
     root.querySelectorAll(".cv2-figure.is-widget").forEach((f) => f.classList.toggle("is-loose", boarded || f.offsetHeight > window.innerHeight - top - navH - (N() && N().dockH() ? N().dockH() + 16 : 0) - 220));
     if (sec.top) window.scrollTo(0, 0);
-    if ((sec.top || sec.bar) && sec.si < api.data.sections.length) show(sec.bar);
+    if ((sec.top || sec.bar) && sec.si < api.data.sections.length) show(sec.bar, sec.top);
     sec.top = false;
     sec.bar = false;
   }

@@ -169,7 +169,7 @@ async function lintLessons(chrome, baseUrl, lessons, { viewports = VIEWPORTS, th
   for (const vp of viewports) {
     await chrome.send("Emulation.setDeviceMetricsOverride", { width: vp.width, height: vp.height, deviceScaleFactor: vp.deviceScaleFactor, mobile: vp.mobile });
     await chrome.navigate(`${baseUrl}/index.html`);
-    await evaluate(`localStorage.clear(); localStorage.setItem("buzzcalculus.records.v1", JSON.stringify({ tours: { home: 1, quiz: 1 } })); return 1;`);
+    await evaluate(`localStorage.clear(); localStorage.setItem("buzzcalculus.records.v1", JSON.stringify({ tours: { home: 1, quiz: 1 }, settings: { boardSplit: true } })); return 1;`);
     await chrome.navigate(`${baseUrl}/index.html`);
     await evaluate(`const b = document.querySelector('[data-action="set-onboarding-context"][data-context="newbie"]'); if (b) b.click(); return 1;`);
     await waitFor('document.querySelector(".cv2-index")');
