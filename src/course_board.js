@@ -65,8 +65,9 @@
 .cvb-ov-meas{position:absolute;left:0;top:0;visibility:hidden;pointer-events:none}
 html.nb .cv2s.cv2-lesson.is-nb{position:fixed;z-index:5;max-width:none;width:auto;margin:0;padding:18px 24px 0;overflow:hidden;background:var(--paper)}
 @media (max-width:640px){html.nb .cv2s.cv2-lesson.is-nb{padding:12px 10px 0}}
-html.nb .cvb{--k:#1f2a44;--kb:#fdfbf4;--nbm:#efa3a3;--nbg:#dfe7f3;--kg:#c2410c;--kc:#1d4ed8;--kn:#15803d;--kr:#dc2626;--kv:#7c3aed;border:0;border-radius:6px;background:linear-gradient(90deg,transparent 12px,var(--nbm) 12px,var(--nbm) 14px,transparent 14px),linear-gradient(90deg,var(--nbg) 1px,transparent 1px) 0 0/24px 24px,linear-gradient(180deg,var(--nbg) 1px,transparent 1px) 0 0/24px 24px,var(--kb);background-attachment:local;box-shadow:0 0 0 1px #0000000f,0 4px 18px #00000017;text-shadow:none}
+html.nb .cvb{--k:#1f2a44;--kb:#fdfbf4;--nbm:#efa3a3;--nbg:#dfe7f3;--kg:#c2410c;--kc:#1d4ed8;--kn:#15803d;--kr:#dc2626;--kv:#7c3aed;border:0;border-radius:6px;background:var(--kb);box-shadow:0 0 0 1px #0000000f,0 4px 18px #00000017;text-shadow:none}
 html.nb .cvb-whole .cvb-stage{margin-top:14px}
+html.nb .cvb-c{background:linear-gradient(90deg,transparent 12px,var(--nbm) 12px,var(--nbm) 14px,transparent 14px),linear-gradient(90deg,var(--nbg) 1px,transparent 1px) 0 0/24px 24px,linear-gradient(180deg,var(--nbg) 1px,transparent 1px) 0 0/24px 24px}
 :root[data-theme="dark"].nb .cvb{--k:#dfe6f5;--kb:#1d2026;--nbm:#7f3b3b;--nbg:#2a303b;--kg:#fdba74;--kc:#93c5fd;--kn:#86efac;--kr:#fca5a5;--kv:#c4b5fd}
 @supports not selector(::-webkit-scrollbar){.cvb.is-tall{scrollbar-width:thin;scrollbar-color:#ffffff40 transparent}html.nb .cvb.is-tall{scrollbar-color:#9fb0c8 transparent}}.cvb.is-tall::-webkit-scrollbar{width:8px}.cvb.is-tall::-webkit-scrollbar-track{background:transparent}.cvb.is-tall::-webkit-scrollbar-thumb{border:2px solid transparent;border-radius:8px;background:#ffffff40 padding-box}.cvb.is-tall::-webkit-scrollbar-thumb:hover{background:#ffffff70 padding-box}.cvb.is-tall::-webkit-scrollbar-button{display:none;height:0}
 html.nb .cvb.is-tall::-webkit-scrollbar-thumb{background:#b7c4d8 padding-box}html.nb .cvb.is-tall::-webkit-scrollbar-thumb:hover{background:#8ea2bf padding-box}
@@ -93,7 +94,9 @@ html.nb .cvb-model>.cv2-figure{box-shadow:0 1px 4px #0002}
   const { cl, ease } = LY;
   const esc = (s) => String(s).replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
   const R = (n) => n.getBoundingClientRect();
-  const reduced = () => Boolean(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+  // 每一格都問一次：MediaQueryList 留著，只讀 .matches（每格叫 matchMedia 會重新解析、產生垃圾）
+  let RM = null;
+  const reduced = () => { if (!RM && window.matchMedia) RM = window.matchMedia("(prefers-reduced-motion: reduce)"); return Boolean(RM && RM.matches); };
   const voice = () => { const s = window.BuzzCourseSections; return (s && s.voice && s.voice()) || {}; };
 
   // {{id:…}} → \htmlClass{cvb-t-id}{…}（可以巢狀）。驗證器用同一支。
@@ -198,6 +201,7 @@ html.nb .cvb-model>.cv2-figure{box-shadow:0 1px 4px #0002}
     const W0 = B.el.clientWidth;
     if (!W0) return;
     B.w = W0;
+    B.nbH = document.documentElement.classList.contains("nb") ? window.innerHeight : 0;
     const needPlot = S.beats.some((b) => (b.board || []).some((a) => a.do === "plot"));
     if (needPlot && !window.BuzzBoardPlot) {
       if (!B.plotWait && B.api) { B.plotWait = true; Promise.resolve(B.api.deps.ensureLazy("boardplot")).then(() => { if (B && B.plotWait) { B.plotWait = false; build(); kick(); } }, () => { if (B) B.plotWait = false; }); }
@@ -885,7 +889,8 @@ html.nb .cvb-model>.cv2-figure{box-shadow:0 1px 4px #0002}
     let rt = 0;
     window.addEventListener("resize", () => {
       window.clearTimeout(rt);
-      rt = window.setTimeout(() => { if (B && B.whole) nbFit(); if (B && B.el.isConnected && (B.el.clientWidth !== B.w || document.documentElement.classList.contains("nb"))) { build(); B.last = ""; kick(); } }, 200);
+      // 筆記本的高度跟著視窗：高度變了才重排（手機捲動時網址列伸縮也會丟 resize，同樣大小就不動）
+      rt = window.setTimeout(() => { if (B && B.whole) nbFit(); const nbH = document.documentElement.classList.contains("nb") ? window.innerHeight : 0; if (B && B.el.isConnected && (B.el.clientWidth !== B.w || nbH !== (B.nbH || 0))) { B.nbH = nbH; build(); B.last = ""; kick(); } }, 200);
     });
   }
   // 給 E2E 與 tools/lint_board_layout.js：狀態、停在某一步、直接畫某個游標
