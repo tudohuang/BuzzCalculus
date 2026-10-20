@@ -132,11 +132,24 @@
       "title": "再微分一次",
       "beats": [
         { "show": ["$f_x(x,y)$ 也是函數"], "note": "可以再對 $x$ 或對 $y$ 偏微分。",
-          "say": "偏導數算出來還是 x、y 的函數，所以可以再微分一次，對 x 或對 y 都行。" },
+          "say": "偏導數算出來還是 x、y 的函數，所以可以再微分一次，對 x 或對 y 都行。",
+          "board": [
+            { "do": "write", "line": "${{f:f_x(x,y)}}$ 也是 $x,y$ 的函數" },
+            { "do": "write", "line": "可再對 $x$ 或對 $y$ 微分", "on": "再微分一次" }
+          ] },
         { "show": ["$f_{xx}$、$f_{xy}$、$f_{yx}$、$f_{yy}$"],
-          "say": "兩個一階偏導數，各自再對兩個變數微分，一共四個二階偏導數。" },
+          "say": "兩個一階偏導數，各自再對兩個變數微分，一共四個二階偏導數。",
+          "board": [
+            { "do": "write", "line": "$f_{xx}$、$f_{xy}$、$f_{yx}$、$f_{yy}$" }
+          ] },
         { "show": ["$f=x^3y^2+e^{2x}$", "$f_x=3x^2y^2+2e^{2x}$"],
-          "say": "例如這個函數，先對 x：x 三次方變三 x 平方，e 的二 x 次方微分要乘二。" }
+          "say": "例如這個函數，先對 x：x 三次方變三 x 平方，e 的二 x 次方微分要乘二。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "$f=x^3y^2+e^{2x}$", "on": "這個函數" },
+            { "do": "transform", "line": "$f_x=3x^2y^2+{{e:2e^{2x}}}$", "on": "先對" },
+            { "do": "focus", "term": "e", "label": "乘 2", "on": "e 的二" }
+          ] }
       ],
       "predict": {
         "ask": "$f_{xx}$ 是？",
@@ -179,11 +192,22 @@
       "title": "記號的順序", "key": "分式記號從右往左讀，下標從左往右",
       "beats": [
         { "show": ["$f_{xy}=(f_x)_y$"], "note": "下標從左讀到右：先 $x$ 後 $y$。",
-          "say": "下標的寫法從左往右讀：先對 x，再對 y。" },
+          "say": "下標的寫法從左往右讀：先對 x，再對 y。",
+          "board": [
+            { "do": "write", "line": "$f_{xy}=(f_x)_y$" },
+            { "do": "write", "line": "先 $x$ 後 $y$", "on": "先對" }
+          ] },
         { "show": ["$\\frac{\\partial^2 f}{\\partial y\\partial x}=\\frac{\\partial}{\\partial y}\\left(\\frac{\\partial f}{\\partial x}\\right)$"], "note": "分式從右讀到左：最靠近 $f$ 的先做。",
-          "say": "分式寫法反過來，從右往左讀：最靠近 f 的 partial x 先做，所以也是先 x 後 y。" },
+          "say": "分式寫法反過來，從右往左讀：最靠近 f 的 partial x 先做，所以也是先 x 後 y。",
+          "board": [
+            { "do": "write", "line": "$\\frac{\\partial^2 f}{{{b:\\partial y}}{{a:\\partial x}}}$" },
+            { "do": "focus", "term": "a", "color": "blue", "label": "離 f 最近", "on": "最靠近" }
+          ] },
         { "show": ["字母排列相反，意思一樣"],
-          "say": "兩種記號字母的順序剛好相反，意思卻相同。看到題目，先確定是哪一種寫法。" }
+          "say": "兩種記號字母的順序剛好相反，意思卻相同。看到題目，先確定是哪一種寫法。",
+          "board": [
+            { "do": "write", "line": "字母順序相反，意思相同" }
+          ] }
       ],
       "check": 1
     },
@@ -191,11 +215,24 @@
       "title": "要用乘法法則", "key": "第一次帶出 $x$，第二次要用乘法法則",
       "beats": [
         { "show": ["$\\frac{\\partial^2}{\\partial x\\partial y}e^{xy}$：先 $y$ 後 $x$"],
-          "say": "分式寫法，從右往左讀：先對 y，再對 x。" },
+          "say": "分式寫法，從右往左讀：先對 y，再對 x。",
+          "board": [
+            { "do": "write", "line": "$\\frac{\\partial^2}{{{a:\\partial x}}{{b:\\partial y}}}e^{xy}$" },
+            { "do": "underline", "term": "b", "color": "blue", "on": "先對 y" }
+          ] },
         { "show": ["$\\frac{\\partial}{\\partial y}e^{xy}=x\\,e^{xy}$"],
-          "say": "對 y 微分，連鎖律帶出一個 x。" },
+          "say": "對 y 微分，連鎖律帶出一個 x。",
+          "board": [
+            { "do": "write", "line": "$\\frac{\\partial}{\\partial y}e^{xy}={{c:x}}\\,e^{xy}$" },
+            { "do": "focus", "term": "c", "color": "blue", "label": "連鎖律", "on": "帶出" }
+          ] },
         { "show": ["$e^{xy}+x\\cdot y\\,e^{xy}=e^{xy}(1+xy)$"], "note": "$x$ 和 $e^{xy}$ 都含 $x$。",
-          "say": "再對 x 微分時要小心：前面的 x 和後面的 e 的 x y 次方都含 x，要用乘法法則。" }
+          "say": "再對 x 微分時要小心：前面的 x 和後面的 e 的 x y 次方都含 x，要用乘法法則。",
+          "board": [
+            { "do": "write", "line": "$\\frac{\\partial}{\\partial x}\\left({{p:x}}\\cdot{{q:e^{xy}}}\\right)$" },
+            { "do": "focus", "term": "p", "color": "blue", "label": "含 x", "on": "前面的" },
+            { "do": "focus", "term": "q", "color": "violet", "on": "後面的" }
+          ] }
       ],
       "check": 2
     },

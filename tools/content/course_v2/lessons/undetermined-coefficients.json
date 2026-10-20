@@ -174,13 +174,29 @@
       "title": "照右邊的樣子猜",
       "beats": [
         { "show": ["微分之後還是同一家族"], "note": "多項式、指數、$\\sin/\\cos$。",
-          "say": "多項式、指數、sine 和 cosine，微分之後還在同一家族。所以照右邊的樣子猜。" },
+          "say": "多項式、指數、sine 和 cosine，微分之後還在同一家族。所以照右邊的樣子猜。",
+          "board": [
+            { "do": "write", "line": "多項式、指數、$\\sin$、$\\cos$：同一家族" }
+          ] },
         { "show": ["$e^{kx}$ → $Ae^{kx}$", "$n$ 次多項式 → 完整的 $n$ 次多項式"],
-          "say": "指數就猜同一個指數。多項式要猜完整的，每一次方都要有。" },
+          "say": "指數就猜同一個指數。多項式要猜完整的，每一次方都要有。",
+          "board": [
+            { "do": "write", "line": "$e^{kx} \\to Ae^{kx}$" },
+            { "do": "write", "line": "$n$ 次多項式 $\\to$ ${{f:Ax^n+\\cdots+C}}$", "on": "多項式" },
+            { "do": "underline", "term": "f", "label": "每項都有", "on": "每一次方" }
+          ] },
         { "show": ["$\\cos\\omega x$ → $A\\cos\\omega x+B\\sin\\omega x$"], "note": "微分會把 $\\cos$ 變成 $\\sin$。",
-          "say": "右邊只有 cosine，也要 cosine 和 sine 兩個都猜，因為一微分就會冒出 sine。" },
+          "say": "右邊只有 cosine，也要 cosine 和 sine 兩個都猜，因為一微分就會冒出 sine。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "$\\cos\\omega x \\to A\\cos\\omega x + {{s:B\\sin\\omega x}}$", "on": "右邊只有" },
+            { "do": "focus", "term": "s", "label": "微分冒出", "on": "冒出" }
+          ] },
         { "show": ["$xe^x$ → $(Ax+B)e^x$"], "note": "乘積照樣相乘。",
-          "say": "乘在一起的，猜的樣子也乘在一起。" }
+          "say": "乘在一起的，猜的樣子也乘在一起。",
+          "board": [
+            { "do": "write", "line": "$xe^x \\to (Ax+B)e^x$" }
+          ] }
       ],
       "check": 0
     },
@@ -253,13 +269,28 @@
       "title": "初始條件最後才用",
       "beats": [
         { "show": ["$y=C_1+C_2e^{-x}+x$"], "note": "先寫完整的 $y_h+y_p$。",
-          "say": "先把齊次解和特解加起來，寫成完整的通解，最後才代初始條件。" },
+          "say": "先把齊次解和特解加起來，寫成完整的通解，最後才代初始條件。",
+          "board": [
+            { "do": "write", "line": "$y = {{h:C_1+C_2e^{-x}}} + {{p:x}}$", "tint": {"h":"blue","p":"violet"} }
+          ] },
         { "show": ["$y(0)=0$：$C_1+C_2=0$"],
-          "say": "y 在零是零：C 一加 C 二是零。這裡特解在零剛好是零。" },
+          "say": "y 在零是零：C 一加 C 二是零。這裡特解在零剛好是零。",
+          "board": [
+            { "do": "write", "line": "$y(0)=0$：$C_1+C_2=0$" }
+          ] },
         { "show": ["$y'(0)=0$：$-C_2+1=0$"], "note": "$y_p$ 的導數貢獻了 1。",
-          "say": "導數在零是零：特解的導數貢獻一，所以 C 二是一，C 一是負一。" },
+          "say": "導數在零是零：特解的導數貢獻一，所以 C 二是一，C 一是負一。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "$y'(0)=0$：$-C_2+{{o:1}}=0$", "on": "導數在零" },
+            { "do": "focus", "term": "o", "label": "特解貢獻", "on": "貢獻一" },
+            { "do": "write", "line": "$C_2 = 1$，$C_1 = -1$", "on": "所以" }
+          ] },
         { "show": ["$y=x-1+e^{-x}$"],
-          "say": "只代進齊次解的話，那個一就漏了，常數會算錯。" }
+          "say": "只代進齊次解的話，那個一就漏了，常數會算錯。",
+          "board": [
+            { "do": "write", "line": "$y = x - 1 + e^{-x}$", "color": "green" }
+          ] }
       ],
       "check": 3
     }

@@ -155,9 +155,19 @@
       "title": "不知道值也能比",
       "beats": [
         { "show": ["$\\Gamma\\left(\\frac{10}{3}\\right)$ 寫成 $\\Gamma\\left(\\frac{1}{3}\\right)$ 的倍數"], "note": "$\\frac{10}{3}=\\frac{1}{3}+3$",
-          "say": "三分之十比三分之一多三，所以連用三次遞迴。" },
+          "say": "三分之十比三分之一多三，所以連用三次遞迴。",
+          "board": [
+            { "do": "write", "line": "$\\dfrac{10}{3}=\\dfrac{1}{3}+{{t:3}}$" },
+            { "do": "underline", "term": "t", "label": "三次遞迴", "on": "多三" }
+          ] },
         { "show": ["$\\frac{7}{3}\\cdot\\frac{4}{3}\\cdot\\frac{1}{3}\\,\\Gamma\\left(\\frac{1}{3}\\right)$"],
-          "say": "往下推：先乘三分之七，再乘三分之四，最後乘三分之一。" }
+          "say": "往下推：先乘三分之七，再乘三分之四，最後乘三分之一。",
+          "board": [
+            { "do": "write", "line": "$\\Gamma\\left(\\dfrac{10}{3}\\right)={{a:\\dfrac{7}{3}}}\\cdot{{b:\\dfrac{4}{3}}}\\cdot{{c:\\dfrac{1}{3}}}\\,\\Gamma\\left(\\dfrac{1}{3}\\right)$" },
+            { "do": "focus", "term": "a", "on": "先乘" },
+            { "do": "focus", "term": "b", "on": "再乘" },
+            { "do": "focus", "term": "c", "on": "最後乘" }
+          ] }
       ],
       "predict": {
         "ask": "$\\Gamma\\left(\\frac{10}{3}\\right)$ 是 $\\Gamma\\left(\\frac{1}{3}\\right)$ 的幾倍？",
@@ -172,11 +182,25 @@
       "title": "對數次方", "key": "令 $x=e^{-t}$：$\\ln x$ 變 $-t$，化成 Gamma",
       "beats": [
         { "show": ["$\\int_0^1x^m(\\ln x)^n\\,dx$"], "note": "看起來跟 Gamma 無關。",
-          "say": "x 的 m 次方乘自然對數 x 的 n 次方，從零積到一，看起來跟 Gamma 沒關係。" },
+          "say": "x 的 m 次方乘自然對數 x 的 n 次方，從零積到一，看起來跟 Gamma 沒關係。",
+          "board": [
+            { "do": "write", "line": "$\\int_0^1x^m(\\ln x)^n\\,dx$" }
+          ] },
         { "show": ["令 $x=e^{-t}$：$\\ln x=-t$"], "note": "$dx=-e^{-t}\\,dt$；$x:0\\to 1$ 對應 $t:\\infty\\to 0$。",
-          "say": "令 x 等於 e 的負 t 次方，自然對數就變成負 t。x 從零到一，t 從無限大回到零。" },
+          "say": "令 x 等於 e 的負 t 次方，自然對數就變成負 t。x 從零到一，t 從無限大回到零。",
+          "board": [
+            { "do": "write", "line": "令 $x=e^{-t}$" },
+            { "do": "write", "line": "$\\ln x=-t$", "on": "自然對數" },
+            { "do": "write", "line": "$x:0\\to1$，$t:\\infty\\to0$", "on": "x 從零" }
+          ] },
         { "show": ["$x^m\\,dx=-e^{-(m+1)t}\\,dt$"], "note": "$dx$ 帶來的 $e^{-t}$ 讓指數多一個 $1$。",
-          "say": "注意 dx 也帶著一個 e 的負 t 次方，所以指數是 m 加一，不是 m。上下限翻回來吃掉負號。" }
+          "say": "注意 dx 也帶著一個 e 的負 t 次方，所以指數是 m 加一，不是 m。上下限翻回來吃掉負號。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "$dx=-e^{-t}\\,dt$", "on": "注意" },
+            { "do": "transform", "line": "$x^m\\,dx=-e^{-{{k:(m+1)}}t}\\,dt$", "on": "所以指數" },
+            { "do": "underline", "term": "k", "label": "m 加一", "on": "m 加一" }
+          ] }
       ],
       "check": 3
     },
@@ -184,11 +208,23 @@
       "title": "算一題", "key": "認出 $t^ne^{-at}$ 型，套縮放的 Gamma",
       "beats": [
         { "show": ["$\\int_0^1x^3(\\ln x)^2\\,dx=\\int_0^{\\infty}t^2e^{-4t}\\,dt$"], "note": "$m=3$，指數是 $m+1=4$。",
-          "say": "x 三次方乘自然對數平方：換元之後，指數是三加一等於四。" },
+          "say": "x 三次方乘自然對數平方：換元之後，指數是三加一等於四。",
+          "board": [
+            { "do": "write", "line": "$\\int_0^1x^3(\\ln x)^2\\,dx=\\int_0^{\\infty}t^2e^{-{{k:4}}t}\\,dt$" },
+            { "do": "focus", "term": "k", "label": "m+1", "on": "三加一" }
+          ] },
         { "show": ["$=\\frac{\\Gamma(3)}{4^3}=\\frac{2}{64}=\\frac{1}{32}$"],
-          "say": "用指數有常數的公式：Gamma 三是二，除以四的三次方，得三十二分之一。" },
+          "say": "用指數有常數的公式：Gamma 三是二，除以四的三次方，得三十二分之一。",
+          "board": [
+            { "do": "transform", "line": "$=\\dfrac{\\Gamma(3)}{4^3}=\\dfrac{2}{64}={{r:\\dfrac{1}{32}}}$" },
+            { "do": "box", "term": "r", "color": "green", "on": "除以四" }
+          ] },
         { "show": ["$\\frac{(-1)^n\\,n!}{(m+1)^{n+1}}$"], "note": "$n$ 是奇數時答案是負的。",
-          "say": "一般公式是這樣。n 是偶數，答案是正的；n 是奇數，自然對數的奇次方是負的，答案帶負號。" }
+          "say": "一般公式是這樣。n 是偶數，答案是正的；n 是奇數，自然對數的奇次方是負的，答案帶負號。",
+          "board": [
+            { "do": "write", "line": "$\\dfrac{{{s:(-1)^n}}\\,n!}{(m+1)^{n+1}}$" },
+            { "do": "focus", "term": "s", "label": "奇數為負", "on": "奇次方" }
+          ] }
       ],
       "check": 1
     },

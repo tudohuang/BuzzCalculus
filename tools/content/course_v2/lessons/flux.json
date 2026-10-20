@@ -142,9 +142,18 @@
       "title": "先選方向",
       "beats": [
         { "show": ["曲面有兩面：$\\mathbf n$ 指向哪一面？"], "note": "要在整片曲面上連續地選：可定向曲面。",
-          "say": "曲面有兩面，法向量可以指向任何一面。算之前一定要先選好，而且整片要選得連續。" },
+          "say": "曲面有兩面，法向量可以指向任何一面。算之前一定要先選好，而且整片要選得連續。",
+          "board": [
+            { "do": "write", "line": "曲面兩面：${{n:\\mathbf n}}$ 指向哪一面？", "tint": {"n":"violet"} },
+            { "do": "focus", "term": "n", "color": "violet", "on": "法向量" },
+            { "do": "write", "line": "整片要選得連續", "on": "整片" }
+          ] },
         { "show": ["換另一面：$\\mathbf n$ 變號，通量變號"], "note": "跟〈曲面積分〉$\\iint f\\,dS$ 最大的不同。",
-          "say": "換成另一面，法向量變號，通量也跟著變號。這是它跟上一課最大的不同。" }
+          "say": "換成另一面，法向量變號，通量也跟著變號。這是它跟上一課最大的不同。",
+          "board": [
+            { "do": "write", "line": "換另一面：${{n:\\mathbf n}}\\to{{m:-\\mathbf n}}$", "tint": {"n":"violet"} },
+            { "do": "circle", "term": "m", "color": "gold", "on": "法向量變號" }
+          ] }
       ],
       "check": 0
     },
@@ -152,11 +161,29 @@
       "title": "怎麼算", "key": "$\\mathbf r_u\\times\\mathbf r_v$ 直接當 $\\mathbf n\\,dS$，免開根號",
       "beats": [
         { "show": ["$\\mathbf n\\,dS=(\\mathbf r_u\\times\\mathbf r_v)\\,dA$"], "note": "長度消掉，不用開根號。",
-          "say": "外積本身就是法向量乘放大倍率。單位化再乘長度，長度剛好消掉，不用開根號。" },
+          "say": "外積本身就是法向量乘放大倍率。單位化再乘長度，長度剛好消掉，不用開根號。",
+          "board": [
+            { "do": "write", "line": "${{nd:\\mathbf n\\,dS}}=({{ru:\\mathbf r_u\\times\\mathbf r_v}})\\,dA$" },
+            { "do": "focus", "term": "ru", "color": "violet", "label": "外積", "on": "外積本身" },
+            { "do": "circle", "term": "nd", "color": "blue", "on": "法向量乘" },
+            { "do": "write", "line": "長度消掉，免開根號", "on": "剛好" }
+          ] },
         { "show": ["$\\iint_D\\mathbf F(\\mathbf r(u,v))\\cdot(\\mathbf r_u\\times\\mathbf r_v)\\,dA$"], "note": "指向不是你選的那一面，就整個加負號。",
-          "say": "場代進曲面上的點，跟外積做點積。外積指錯面的話，整個加負號。" },
+          "say": "場代進曲面上的點，跟外積做點積。外積指錯面的話，整個加負號。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "$\\iint_D{{f:\\mathbf F(\\mathbf r(u,v))}}\\cdot{{c:(\\mathbf r_u\\times\\mathbf r_v)}}\\,dA$", "tint": {"f":"blue","c":"violet"}, "on": "場代進" },
+            { "do": "underline", "term": "c", "color": "violet", "label": "外積", "on": "外積做" },
+            { "do": "write", "line": "指錯面：整個加負號", "color": "red", "on": "指錯面" }
+          ] },
         { "show": ["$z=g$、朝上：$\\iint_D(-Pg_x-Qg_y+R)\\,dA$"], "note": "$\\langle -g_x,-g_y,1\\rangle$ 的 $z$ 分量是正的。",
-          "say": "函數圖形、法向量朝上，外積是負 g 下標 x、負 g 下標 y、一，點積展開就是這個式子。" }
+          "say": "函數圖形、法向量朝上，外積是負 g 下標 x、負 g 下標 y、一，點積展開就是這個式子。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "$\\mathbf r_u\\times\\mathbf r_v=\\langle -g_x,-g_y,1\\rangle$", "on": "外積是" },
+            { "do": "write", "line": "${{res:\\iint_D(-Pg_x-Qg_y+R)\\,dA}}$", "on": "點積展開" },
+            { "do": "box", "term": "res", "color": "green", "on": "就是" }
+          ] }
       ],
       "check": 2
     },
@@ -189,11 +216,25 @@
       "title": "穿過碗，朝上", "key": "$z$ 先代成 $g$，再換極座標",
       "beats": [
         { "show": ["$\\mathbf F=\\langle y,x,z\\rangle$，$z=1-x^2-y^2$（$z\\ge 0$）"], "note": "$g_x=-2x$、$g_y=-2y$。",
-          "say": "穿過一個倒扣的碗，法向量朝上，用函數圖形的公式。" },
+          "say": "穿過一個倒扣的碗，法向量朝上，用函數圖形的公式。",
+          "board": [
+            { "do": "write", "line": "$\\mathbf F=\\langle y,x,z\\rangle$，$z={{g:1-x^2-y^2}}$" },
+            { "do": "write", "line": "$g_x=-2x$，$g_y=-2y$，法向量朝上", "on": "用函數" }
+          ] },
         { "show": ["$-Pg_x-Qg_y+R=4xy+1-x^2-y^2$"], "note": "$z$ 要代成 $g$。",
-          "say": "代進去，z 要換成一減 x 平方減 y 平方。" },
+          "say": "代進去，z 要換成一減 x 平方減 y 平方。",
+          "board": [
+            { "do": "write", "line": "$-Pg_x-Qg_y+R=4xy+{{z:z}}$" },
+            { "do": "focus", "term": "z", "color": "gold", "on": "要換成" },
+            { "do": "write", "line": "$=4xy+{{g:1-x^2-y^2}}$", "on": "一減" }
+          ] },
         { "show": ["極座標：$4r^2\\cos\\theta\\sin\\theta$ 一整圈積分是 $0$"],
-          "say": "換極座標，四 x y 那一項對 theta 繞一圈剛好是零。" }
+          "say": "換極座標，四 x y 那一項對 theta 繞一圈剛好是零。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "$4xy=4r^2\\cos\\theta\\sin\\theta$", "on": "換極座標" },
+            { "do": "write", "line": "$\\int_0^{2\\pi}4r^2\\cos\\theta\\sin\\theta\\,d\\theta={{zero:0}}$", "on": "繞一圈" }
+          ] }
       ],
       "predict": {
         "ask": "通量是？",

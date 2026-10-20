@@ -181,11 +181,24 @@
       "title": "底面極座標，高度照舊",
       "beats": [
         { "show": ["$x=r\\cos\\theta$、$y=r\\sin\\theta$、$z=z$"], "note": "$x^2+y^2=r^2$。",
-          "say": "柱座標很簡單：底面的 x y 平面用極座標，高度 z 不動。" },
+          "say": "柱座標很簡單：底面的 x y 平面用極座標，高度 z 不動。",
+          "board": [
+            { "do": "write", "line": "$x=r\\cos\\theta$、$y=r\\sin\\theta$、$z={{zz:z}}$" },
+            { "do": "focus", "term": "zz", "label": "不動", "on": "高度" }
+          ] },
         { "show": ["$r=$ 常數：以 $z$ 軸為中心的圓柱面"],
-          "say": "名字的由來：r 固定，所有點離 z 軸一樣遠，排成一個圓柱面。" },
+          "say": "名字的由來：r 固定，所有點離 z 軸一樣遠，排成一個圓柱面。",
+          "board": [
+            { "do": "write", "line": "${{r:r}}=$ 常數：以 $z$ 軸為中心的圓柱面" },
+            { "do": "focus", "term": "r", "on": "固定" }
+          ] },
         { "show": ["離軸多遠、轉了幾度、多高"], "note": "水管、杯子、旋轉出來的碗。",
-          "say": "繞一根軸對稱的東西，像水管、杯子、碗，用離軸多遠、轉幾度、多高來描述最自然。" }
+          "say": "繞一根軸對稱的東西，像水管、杯子、碗，用離軸多遠、轉幾度、多高來描述最自然。",
+          "board": [
+            { "do": "write", "line": "${{a:r}}$：離軸多遠　${{b:\\theta}}$：轉幾度　${{c:z}}$：多高" },
+            { "do": "focus", "term": "a", "on": "離軸多遠" },
+            { "do": "focus", "term": "c", "on": "多高來" }
+          ] }
       ],
       "check": 2
     },
@@ -193,11 +206,24 @@
       "title": "體積元素",
       "beats": [
         { "show": ["底面：$r\\,dr\\,d\\theta$"], "note": "徑向寬 $dr$、弧長 $r\\,d\\theta$。",
-          "say": "一小塊的底面是極座標小格，面積是 r 乘 d r 乘 d theta。" },
+          "say": "一小塊的底面是極座標小格，面積是 r 乘 d r 乘 d theta。",
+          "board": [
+            { "do": "write", "line": "底面：${{a:r\\,dr\\,d\\theta}}$" },
+            { "do": "box", "term": "a", "on": "面積是" }
+          ] },
         { "show": ["往上拉出厚度 $dz$"],
-          "say": "再往上拉出 d z 的厚度。高度方向沒有被拉伸。" },
+          "say": "再往上拉出 d z 的厚度。高度方向沒有被拉伸。",
+          "board": [
+            { "do": "write", "line": "${{a:r\\,dr\\,d\\theta}}\\cdot{{t:dz}}$" },
+            { "do": "focus", "term": "t", "label": "沒有拉伸", "on": "高度方向" }
+          ] },
         { "show": ["$dV=r\\,dz\\,dr\\,d\\theta$"], "note": "Jacobian $\\frac{\\partial(x,y,z)}{\\partial(r,\\theta,z)}=r$。",
-          "say": "底面積乘厚度，體積元素多一個 r。用 Jacobian 算也是 r，放大全部來自底面。" }
+          "say": "底面積乘厚度，體積元素多一個 r。用 Jacobian 算也是 r，放大全部來自底面。",
+          "board": [
+            { "do": "write", "line": "$dV={{v:r\\,dz\\,dr\\,d\\theta}}$" },
+            { "do": "box", "term": "v", "color": "green", "on": "多一個" },
+            { "do": "write", "line": "$\\frac{\\partial(x,y,z)}{\\partial(r,\\theta,z)}=r$", "on": "Jacobian" }
+          ] }
       ],
       "check": 0
     },
@@ -252,9 +278,18 @@
       "title": "兩個 $r$", "key": "密度的 $r$ 與 $dV$ 的 $r$ 別漏乘",
       "beats": [
         { "show": ["密度 $\\sqrt{x^2+y^2}=r$"], "note": "$x^2+y^2\\le 1$ 內、$z=1-r^2$ 之上、$z=4$ 之下。",
-          "say": "這個立體的密度是離軸的距離，在柱座標裡就是 r。" },
+          "say": "這個立體的密度是離軸的距離，在柱座標裡就是 r。",
+          "board": [
+            { "do": "write", "line": "密度 $\\sqrt{x^2+y^2}={{d:r}}$" },
+            { "do": "focus", "term": "d", "on": "柱座標裡" }
+          ] },
         { "show": ["$\\int_0^{2\\pi}\\int_0^1\\int_{1-r^2}^{4}r\\cdot r\\,dz\\,dr\\,d\\theta$"], "note": "一個是密度，一個是 $dV$。",
-          "say": "注意有兩個 r：一個是密度，一個是體積元素，兩個都要。" }
+          "say": "注意有兩個 r：一個是密度，一個是體積元素，兩個都要。",
+          "board": [
+            { "do": "write", "line": "$\\int_0^{2\\pi}\\int_0^1\\int_{1-r^2}^{4}{{a:r}}\\cdot{{b:r}}\\,dz\\,dr\\,d\\theta$", "tint": {"a":"blue","b":"violet"} },
+            { "do": "focus", "term": "a", "color": "blue", "label": "密度", "on": "密度" },
+            { "do": "focus", "term": "b", "color": "violet", "label": "dV", "on": "體積元素" }
+          ] }
       ],
       "predict": {
         "ask": "最內層對 $z$ 積完是？",

@@ -162,9 +162,19 @@
       "title": "正負號：翻面",
       "beats": [
         { "show": ["$(u,v)\\mapsto(v,u)$：行列式 $-1$"],
-          "say": "a d 減 b c 可能是負的。例如把 u、v 對調，行列式是負一。" },
+          "say": "a d 減 b c 可能是負的。例如把 u、v 對調，行列式是負一。",
+          "board": [
+            { "do": "write", "line": "$ad-bc$ 可能是負的" },
+            { "do": "write", "line": "$(u,v)\\mapsto(v,u)$：行列式 $-1$", "on": "對調" }
+          ] },
         { "show": ["負號 = 翻面"], "note": "逆時針變順時針；面積取絕對值。",
-          "say": "負號的意思是圖形被翻面，逆時針變成順時針。面積本身不會是負的，所以倍率取絕對值。" }
+          "say": "負號的意思是圖形被翻面，逆時針變成順時針。面積本身不會是負的，所以倍率取絕對值。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "負號 ＝ 翻面", "on": "負號" },
+            { "do": "write", "line": "逆時針 → 順時針", "on": "逆時針" },
+            { "do": "write", "line": "面積放大倍率 ${{a:|ad-bc|}}$", "on": "倍率" }
+          ] }
       ],
       "check": 0
     },
@@ -172,13 +182,31 @@
       "title": "彎的變換", "key": "小方塊被拉成平行四邊形，看行列式",
       "beats": [
         { "show": ["$x=x(u,v)$、$y=y(u,v)$"], "note": "方格被扭成彎的。",
-          "say": "一般的變換會把方格扭彎。但放大到夠小的一格，它看起來幾乎是線性的。" },
+          "say": "一般的變換會把方格扭彎。但放大到夠小的一格，它看起來幾乎是線性的。",
+          "board": [
+            { "do": "write", "line": "$x=x(u,v)$、$y=y(u,v)$" },
+            { "do": "write", "line": "夠小的一格 ≈ 線性", "on": "夠小的一格" }
+          ] },
         { "show": ["走 $\\Delta u$：移動 $(x_u,y_u)\\Delta u$", "走 $\\Delta v$：移動 $(x_v,y_v)\\Delta v$"],
-          "say": "從一點往 u 方向走一小步，像點大約沿偏導數向量移動；往 v 方向也一樣。" },
+          "say": "從一點往 u 方向走一小步，像點大約沿偏導數向量移動；往 v 方向也一樣。",
+          "board": [
+            { "do": "write", "line": "$\\Delta u$：$({{a:x_u,y_u}})\\Delta u$", "tint": {"a":"blue"} },
+            { "do": "write", "line": "$\\Delta v$：$({{b:x_v,y_v}})\\Delta v$", "tint": {"b":"violet"}, "on": "往 v" }
+          ] },
         { "show": ["$\\frac{\\partial(x,y)}{\\partial(u,v)}=x_uy_v-x_vy_u$"], "note": "小方格面積約放大 $|x_uy_v-x_vy_u|$ 倍。",
-          "say": "小方格變成以這兩個向量為邊的近似平行四邊形。倍率就是這個行列式，叫 Jacobian。" },
+          "say": "小方格變成以這兩個向量為邊的近似平行四邊形。倍率就是這個行列式，叫 Jacobian。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "以 $({{a:x_u,y_u}})$、$({{b:x_v,y_v}})$ 為邊", "tint": {"a":"blue","b":"violet"}, "on": "小方格" },
+            { "do": "write", "line": "$\\frac{\\partial(x,y)}{\\partial(u,v)}={{d:x_uy_v-x_vy_u}}$", "on": "倍率" },
+            { "do": "box", "term": "d", "color": "green", "on": "行列式" }
+          ] },
         { "show": ["倍率隨點改變"], "note": "直觀，不是證明。",
-          "say": "跟線性變換不同，它每一點各有各的倍率：有的地方放大，有的地方縮小。" }
+          "say": "跟線性變換不同，它每一點各有各的倍率：有的地方放大，有的地方縮小。",
+          "board": [
+            { "do": "write", "line": "倍率隨 ${{p:(u,v)}}$ 改變" },
+            { "do": "focus", "term": "p", "on": "每一點" }
+          ] }
       ],
       "check": 1
     },
@@ -213,11 +241,27 @@
       "title": "把圓拉成橢圓",
       "beats": [
         { "show": ["$x=3u$、$y=2v$"], "note": "單位圓盤 → $\\frac{x^2}{9}+\\frac{y^2}{4}\\le 1$。",
-          "say": "u 方向拉長三倍、v 方向拉長兩倍，單位圓盤被拉成半軸三、二的橢圓。" },
+          "say": "u 方向拉長三倍、v 方向拉長兩倍，單位圓盤被拉成半軸三、二的橢圓。",
+          "board": [
+            { "do": "write", "line": "$x={{a:3}}u$、$y={{b:2}}v$" },
+            { "do": "focus", "term": "a", "color": "blue", "on": "三倍" },
+            { "do": "focus", "term": "b", "color": "violet", "on": "兩倍" },
+            { "do": "write", "line": "$\\frac{x^2}{9}+\\frac{y^2}{4}\\le 1$", "on": "半軸" }
+          ] },
         { "show": ["Jacobian $=3\\cdot2-0\\cdot0=6$"], "note": "面積倍率是相乘，不是相加。",
-          "say": "倍率是三乘二，等於六，到處一樣。注意是相乘，不是相加。" },
+          "say": "倍率是三乘二，等於六，到處一樣。注意是相乘，不是相加。",
+          "board": [
+            { "do": "write", "line": "$3\\cdot2-0\\cdot0={{s:6}}$" },
+            { "do": "box", "term": "s", "color": "green", "on": "等於" }
+          ] },
         { "show": ["橢圓面積 $6\\pi$"],
-          "say": "圓盤面積 pi，放大六倍，橢圓面積就是六 pi。" }
+          "say": "圓盤面積 pi，放大六倍，橢圓面積就是六 pi。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "圓盤面積 $\\pi$", "on": "圓盤面積" },
+            { "do": "write", "line": "$\\pi\\cdot{{s:6}}={{r:6\\pi}}$", "on": "放大" },
+            { "do": "box", "term": "r", "color": "green", "on": "橢圓面積" }
+          ] }
       ],
       "check": 3
     }

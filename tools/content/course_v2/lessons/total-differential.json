@@ -138,11 +138,25 @@
       "title": "兩個變數一起動",
       "beats": [
         { "show": ["單變數：$df\\approx f'(x)\\,dx$"],
-          "say": "單變數的時候，x 動一點點 d x，函數大約變 f prime 乘 d x。" },
+          "say": "單變數的時候，x 動一點點 d x，函數大約變 f prime 乘 d x。",
+          "board": [
+            { "do": "write", "line": "$df\\approx {{fp:f'(x)}}\\,dx$" },
+            { "do": "underline", "term": "fp", "on": "f prime" }
+          ] },
         { "show": ["$x$ 動 $dx$、$y$ 也動 $dy$"], "note": "$f$ 變多少？",
-          "say": "現在有兩個輸入，x 動一點、y 也動一點，函數會變多少？" },
+          "say": "現在有兩個輸入，x 動一點、y 也動一點，函數會變多少？",
+          "board": [
+            { "do": "write", "line": "$x$ 動 $dx$，$y$ 動 $dy$" },
+            { "do": "write", "line": "$f$ 變多少？", "on": "函數會" }
+          ] },
         { "show": ["$df=f_x\\,dx+f_y\\,dy$"], "note": "$x$ 的貢獻加上 $y$ 的貢獻。",
-          "say": "x 的變動貢獻偏導數乘 d x，y 的變動貢獻偏導數乘 d y，兩份加起來，叫全微分。" }
+          "say": "x 的變動貢獻偏導數乘 d x，y 的變動貢獻偏導數乘 d y，兩份加起來，叫全微分。",
+          "board": [
+            { "do": "write", "line": "$df={{t:{{a:f_x\\,dx}}+{{b:f_y\\,dy}}}}$", "tint": {"a":"blue","b":"violet"} },
+            { "do": "focus", "term": "a", "color": "blue", "label": "x 的貢獻", "on": "x 的變動" },
+            { "do": "focus", "term": "b", "color": "violet", "label": "y 的貢獻", "on": "y 的變動" },
+            { "do": "box", "term": "t", "color": "green", "on": "兩份" }
+          ] }
       ],
       "check": 0
     },
@@ -150,11 +164,27 @@
       "title": "線性部分",
       "beats": [
         { "show": ["$\\Delta f=f(a+dx,b+dy)-f(a,b)$"], "note": "真正的變化。",
-          "say": "真正的變化是走完之後的函數值，減掉起點的函數值。" },
+          "say": "真正的變化是走完之後的函數值，減掉起點的函數值。",
+          "board": [
+            { "do": "write", "line": "$\\Delta f={{e:f(a+dx,b+dy)}}-{{s:f(a,b)}}$", "tint": {"e":"blue","s":"violet"} },
+            { "do": "focus", "term": "e", "color": "blue", "label": "走完之後", "on": "走完之後" },
+            { "do": "focus", "term": "s", "color": "violet", "label": "起點", "on": "起點" }
+          ] },
         { "show": ["$df$：只留線性部分"], "note": "丟掉 $dx^2$、$dx\\cdot dy$ 這類更小的量。",
-          "say": "全微分只是它的線性部分，把 d x 平方、d x 乘 d y 這種更小的東西都丟掉了。" },
+          "say": "全微分只是它的線性部分，把 d x 平方、d x 乘 d y 這種更小的東西都丟掉了。",
+          "board": [
+            { "do": "write", "line": "$df={{l:f_x\\,dx+f_y\\,dy}}$" },
+            { "do": "underline", "term": "l", "label": "線性部分", "on": "線性部分" },
+            { "do": "write", "line": "丟掉：${{g:dx^2,\\ dx\\cdot dy}}$", "on": "d x 平方" },
+            { "do": "strike", "term": "g", "on": "更小" }
+          ] },
         { "show": ["$f=xy$：從 $(3,2)$ 走到 $(3.1,2.1)$"],
-          "say": "拿 x y 試試看：從點三、二，兩個座標各多零點一。先算全微分。" }
+          "say": "拿 x y 試試看：從點三、二，兩個座標各多零點一。先算全微分。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "$f=xy$：$(3,2)\\to(3.1,2.1)$", "on": "從點" },
+            { "do": "write", "line": "$dx=dy=0.1$", "on": "各多" }
+          ] }
       ],
       "check": 1
     },
@@ -226,11 +256,28 @@
       "title": "什麼時候算得準",
       "beats": [
         { "show": ["先動 $x$、再動 $y$"], "note": "直覺，不是證明。",
-          "say": "為什麼兩份可以加起來？想成先動 x、再動 y。但第二段的斜率是在挪過的點量的，不是原點。" },
+          "say": "為什麼兩份可以加起來？想成先動 x、再動 y。但第二段的斜率是在挪過的點量的，不是原點。",
+          "board": [
+            { "do": "write", "line": "先動 $x$：$(a,b)\\to(a+dx,b)$" },
+            { "do": "write", "line": "再動 $y$：$\\to(a+dx,b+dy)$", "on": "再動" },
+            { "do": "write", "line": "第二段：斜率在 $(a+dx,b)$ 量", "on": "第二段" }
+          ] },
         { "show": ["偏導數存在：不夠"], "note": "$\\frac{xy}{x^2+y^2}$ 兩個偏導數都有，原點連續都沒有。",
-          "say": "要讓這個差距可以忽略，光有偏導數不夠：這個例子兩個偏導數都存在，卻連連續都沒有。" },
+          "say": "要讓這個差距可以忽略，光有偏導數不夠：這個例子兩個偏導數都存在，卻連連續都沒有。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "偏導數存在 $\\nRightarrow$ 可微", "on": "光有偏導數" },
+            { "do": "write", "line": "$\\frac{xy}{x^2+y^2}$", "on": "這個例子" },
+            { "do": "write", "line": "原點：不連續", "on": "連連續" }
+          ] },
         { "show": ["$f_x$、$f_y$ 在附近連續 ⟹ 可微"], "note": "可微，$df$ 才是 $\\Delta f$ 的好近似。",
-          "say": "常用的充分條件是偏導數在附近連續，這時函數可微，全微分才是好的近似。正式定義在全文。" }
+          "say": "常用的充分條件是偏導數在附近連續，這時函數可微，全微分才是好的近似。正式定義在全文。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "${{c:f_x,\\ f_y}}$ 在附近連續", "on": "偏導數" },
+            { "do": "write", "line": "$\\Rightarrow$ 可微，${{d:df}}\\approx\\Delta f$", "on": "這時函數可微" },
+            { "do": "box", "term": "d", "color": "green", "on": "好的近似" }
+          ] }
       ],
       "check": 3
     }

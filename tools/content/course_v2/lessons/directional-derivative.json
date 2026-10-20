@@ -144,15 +144,36 @@
       "title": "面朝某方向的坡度",
       "beats": [
         { "show": ["往東北走，變化率是多少？"],
-          "say": "偏導數只管往東和往北。往東北走呢？" },
+          "say": "偏導數只管往東和往北。往東北走呢？",
+          "board": [
+            { "do": "write", "line": "偏導數：只管往東、往北" },
+            { "do": "write", "line": "往東北走？ → $D_{\\mathbf u}f$", "on": "往東北走" }
+          ] },
         { "show": ["站在山坡上，面朝 $\\mathbf u$ 的坡度"], "note": "面朝不同方向，坡度不同。",
-          "say": "想像站在山坡上，面朝某個方向，腳下的坡度就是方向導數。轉個方向，坡度就變。" },
+          "say": "想像站在山坡上，面朝某個方向，腳下的坡度就是方向導數。轉個方向，坡度就變。",
+          "board": [
+            { "do": "write", "line": "${{d:D_{\\mathbf u}f}}$ ＝ 面朝 $\\mathbf u$ 的坡度" },
+            { "do": "focus", "term": "d", "color": "gold", "on": "方向導數" }
+          ] },
         { "show": ["沿 $\\mathbf u$ 走 $h$：變化 $\\div h$，$h\\to0$"], "note": "$\\mathbf u$ 是單位向量；極限式在全文。",
-          "say": "定義：沿著單位向量 u 走一段距離 h，函數的變化除以 h，再讓 h 趨近零。" },
+          "say": "定義：沿著單位向量 u 走一段距離 h，函數的變化除以 h，再讓 h 趨近零。",
+          "board": [
+            { "do": "write", "line": "$D_{\\mathbf u}f=\\lim_{h\\to0}\\frac{{{c:\\Delta f}}}{h}$" },
+            { "do": "underline", "term": "c", "label": "變化", "on": "函數的變化" }
+          ] },
         { "show": ["$x$ 走 $hu_1$，$y$ 走 $hu_2$"], "note": "變化約 $f_x\\cdot hu_1+f_y\\cdot hu_2$。",
-          "say": "走這一段，x 方向實際走了 h 乘 u 一，y 方向走了 h 乘 u 二，各自帶來偏導數乘距離的變化。" },
+          "say": "走這一段，x 方向實際走了 h 乘 u 一，y 方向走了 h 乘 u 二，各自帶來偏導數乘距離的變化。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "$x$ 走 ${{a:hu_1}}$，$y$ 走 ${{b:hu_2}}$", "tint": {"a":"blue","b":"violet"}, "on": "實際走了" },
+            { "do": "write", "line": "變化約 $f_x\\cdot{{a:hu_1}}+f_y\\cdot{{b:hu_2}}$", "tint": {"a":"blue","b":"violet"}, "on": "各自帶來" }
+          ] },
         { "show": ["$D_{\\mathbf u}f=\\nabla f\\cdot\\mathbf u=f_xu_1+f_yu_2$"], "note": "$f$ 可微時成立；推導在下一節。",
-          "say": "加起來除以 h，正好是梯度跟 u 的內積。" }
+          "say": "加起來除以 h，正好是梯度跟 u 的內積。",
+          "board": [
+            { "do": "write", "line": "$D_{\\mathbf u}f={{r:\\nabla f\\cdot\\mathbf u}}=f_xu_1+f_yu_2$" },
+            { "do": "box", "term": "r", "color": "green", "on": "正好是" }
+          ] }
       ],
       "predict": {
         "ask": "$\\mathbf u=(0,1)$ 時，$D_{\\mathbf u}f$ 是？",
@@ -275,9 +296,19 @@
       "title": "上升最快",
       "beats": [
         { "show": ["$\\nabla f\\cdot\\mathbf u=|\\nabla f|\\cos\\theta$"], "note": "$\\theta$ 是 $\\mathbf u$ 與 $\\nabla f$ 的夾角；$|\\mathbf u|=1$。",
-          "say": "內積可以寫成長度乘長度乘夾角的 cosine。u 的長度是一，剩下梯度的長度乘 cosine theta。" },
+          "say": "內積可以寫成長度乘長度乘夾角的 cosine。u 的長度是一，剩下梯度的長度乘 cosine theta。",
+          "board": [
+            { "do": "write", "line": "$\\nabla f\\cdot\\mathbf u=|\\nabla f|\\,{{m:|\\mathbf u|}}\\cos\\theta$" },
+            { "do": "underline", "term": "m", "label": "長度是 1", "on": "u 的長度" },
+            { "do": "transform", "line": "$D_{\\mathbf u}f=|\\nabla f|\\cos\\theta$", "on": "剩下" }
+          ] },
         { "show": ["$\\theta=0$：最大，值是 $|\\nabla f|$"], "note": "$\\mathbf u$ 沿 $\\nabla f$ 的方向。",
-          "say": "cosine 最大是一，在夾角零的時候：面朝梯度，坡最陡，坡度就是梯度的長度。" }
+          "say": "cosine 最大是一，在夾角零的時候：面朝梯度，坡最陡，坡度就是梯度的長度。",
+          "board": [
+            { "do": "write", "line": "$\\theta=0$：$\\cos\\theta=1$" },
+            { "do": "write", "line": "最陡：$D_{\\mathbf u}f={{r:|\\nabla f|}}$", "on": "面朝梯度" },
+            { "do": "box", "term": "r", "color": "green", "on": "坡度就是" }
+          ] }
       ],
       "check": 3
     },
@@ -285,9 +316,20 @@
       "title": "下降最快",
       "beats": [
         { "show": ["$\\theta=\\pi$：最小，值是 $-|\\nabla f|$"], "note": "$\\mathbf u$ 沿 $-\\nabla f$。",
-          "say": "夾角 pi，cosine 是負一：背對梯度走，下降得最快。" },
+          "say": "夾角 pi，cosine 是負一：背對梯度走，下降得最快。",
+          "board": [
+            { "do": "write", "line": "$\\theta=\\pi$：$\\cos\\theta=-1$" },
+            { "do": "write", "line": "$D_{\\mathbf u}f=-|\\nabla f|$", "on": "背對梯度" }
+          ] },
         { "show": ["$\\nabla T(2,1)=(-4,-4)$，沿 $(3,4)$：$-\\frac{28}{5}$"], "note": "$T=100-x^2-2y^2$；負值：溫度下降。",
-          "say": "方向導數是負的，就是往那裡走在下坡。溫度的例子沿三、四的方向是負五分之二十八，溫度在降。" }
+          "say": "方向導數是負的，就是往那裡走在下坡。溫度的例子沿三、四的方向是負五分之二十八，溫度在降。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "$D_{\\mathbf u}f<0$ ⇒ 往那裡是下坡", "on": "方向導數" },
+            { "do": "write", "line": "$\\nabla T(2,1)=(-4,-4)$", "on": "溫度的例子" },
+            { "do": "write", "line": "沿 $(3,4)$：$D_{\\mathbf u}T={{r:-\\frac{28}{5}}}$", "on": "沿三、四" },
+            { "do": "box", "term": "r", "color": "green", "on": "負五分之" }
+          ] }
       ],
       "check": 1
     },
@@ -295,9 +337,20 @@
       "title": "坡度是零的方向",
       "beats": [
         { "show": ["$\\theta=\\frac{\\pi}{2}$：$D_{\\mathbf u}f=0$"],
-          "say": "夾角是直角，cosine 是零，往這個方向走，第一階高度不變。" },
+          "say": "夾角是直角，cosine 是零，往這個方向走，第一階高度不變。",
+          "board": [
+            { "do": "write", "line": "$\\theta=\\frac{\\pi}{2}$：$\\cos\\theta=0$" },
+            { "do": "write", "line": "$D_{\\mathbf u}f={{z:0}}$", "on": "往這個方向" },
+            { "do": "box", "term": "z", "color": "green", "on": "第一階" }
+          ] },
         { "show": ["就是等高線的切線方向"], "note": "這就證明了〈梯度〉的三個性質。",
-          "say": "高度不變的方向，正是沿著等高線。梯度垂直於等高線，現在有證明了。" }
+          "say": "高度不變的方向，正是沿著等高線。梯度垂直於等高線，現在有證明了。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "高度不變 ⇒ 沿等高線的切線方向", "on": "高度不變" },
+            { "do": "write", "line": "${{g:\\nabla f}}$ 垂直等高線", "on": "梯度" },
+            { "do": "underline", "term": "g", "color": "green", "on": "垂直於" }
+          ] }
       ],
       "check": 2
     }

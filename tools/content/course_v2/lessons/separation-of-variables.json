@@ -134,11 +134,24 @@
       "title": "能分開的形狀",
       "beats": [
         { "show": ["$\\frac{dy}{dx}=g(x)h(y)$"], "note": "只含 $x$ 的函數乘只含 $y$ 的函數。",
-          "say": "如果 y prime 能拆成只含 x 的一塊，乘上只含 y 的一塊，就叫可分離。" },
+          "say": "如果 y prime 能拆成只含 x 的一塊，乘上只含 y 的一塊，就叫可分離。",
+          "board": [
+            { "do": "write", "line": "$y'={{g:g(x)}}\\,{{h:h(y)}}$", "tint": {"g":"blue","h":"violet"} },
+            { "do": "underline", "term": "g", "color": "blue", "label": "只含 x", "on": "只含 x" },
+            { "do": "underline", "term": "h", "color": "violet", "label": "只含 y", "on": "只含 y" }
+          ] },
         { "show": ["$y'=2xy$：$g=2x$、$h=y$"], "note": "$y'=\\frac{x}{y}$、$y'=y^2$ 也是。",
-          "say": "像 y prime 等於二 x y，二 x 歸 x，y 歸 y，乾乾淨淨分成兩塊。" },
+          "say": "像 y prime 等於二 x y，二 x 歸 x，y 歸 y，乾乾淨淨分成兩塊。",
+          "board": [
+            { "do": "write", "line": "$y'={{a:2x}}\\,{{b:y}}$", "tint": {"a":"blue","b":"violet"} },
+            { "do": "write", "line": "$g={{a:2x}}$、$h={{b:y}}$", "on": "二 x 歸" }
+          ] },
         { "show": ["$y'=x+y$ 不行"], "note": "加法拆不成乘積。",
-          "say": "x 加 y 就不行：加法沒辦法拆成兩塊相乘。" }
+          "say": "x 加 y 就不行：加法沒辦法拆成兩塊相乘。",
+          "board": [
+            { "do": "write", "line": "$y'={{w:x+y}}$" },
+            { "do": "strike", "term": "w", "label": "加法拆不開", "on": "不行" }
+          ] }
       ],
       "check": 0
     },
@@ -211,13 +224,33 @@
       "title": "丟掉的平衡解",
       "beats": [
         { "show": ["除以 $h(y)$ = 假設 $h(y)\\ne 0$"],
-          "say": "剛剛除以 h 的時候，偷偷假設了它不是零。那 h 等於零的地方呢？" },
+          "say": "剛剛除以 h 的時候，偷偷假設了它不是零。那 h 等於零的地方呢？",
+          "board": [
+            { "do": "write", "line": "除以 $h(y)$：假設 ${{ne:h(y)\\ne 0}}$" },
+            { "do": "underline", "term": "ne", "label": "假設", "on": "不是零" },
+            { "do": "write", "line": "$h(y)=0$ 呢？", "on": "h 等於零" }
+          ] },
         { "show": ["$h(y_0)=0$：$y=y_0$ 也是解"], "note": "兩邊都是 0，叫平衡解。",
-          "say": "如果 h 在 y 零是零，常數函數 y 零代進去兩邊都是零，它也是解，叫平衡解。" },
+          "say": "如果 h 在 y 零是零，常數函數 y 零代進去兩邊都是零，它也是解，叫平衡解。",
+          "board": [
+            { "do": "write", "line": "$h({{y0:y_0}})=0$" },
+            { "do": "write", "line": "${{eq:y=y_0}}$ 是解", "on": "常數函數" },
+            { "do": "box", "term": "eq", "color": "green", "label": "平衡解", "on": "也是解" }
+          ] },
         { "show": ["$y'=2xy$：$y=0$ 就是 $A=0$"], "note": "最後寫 $y=Ae^{x^2}$、$A$ 任意。",
-          "say": "y 等於零剛好是 A 等於零的情形，所以最後寫 A 任意，就把它補回來了。" },
+          "say": "y 等於零剛好是 A 等於零的情形，所以最後寫 A 任意，就把它補回來了。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "$y'=2xy$：${{z:y=0}}$", "on": "y 等於零" },
+            { "do": "write", "line": "$y={{ca:A}}e^{x^2}$，${{az:A=0}}$", "tint": {"ca":"violet"}, "on": "A 等於零" },
+            { "do": "underline", "term": "ca", "color": "violet", "label": "A 任意", "on": "A 任意" }
+          ] },
         { "show": ["$y'=y^2$：$y=-\\frac{1}{x+C}$"], "note": "沒有任何 $C$ 讓它等於 0。",
-          "say": "但不一定補得回來。這條公式不管 C 是多少都不會是零。" }
+          "say": "但不一定補得回來。這條公式不管 C 是多少都不會是零。",
+          "board": [
+            { "do": "write", "line": "$y'=y^2$：$y=-\\frac{1}{x+{{c:C}}}$" },
+            { "do": "underline", "term": "c", "label": "都不為 0", "on": "不管 C" }
+          ] }
       ],
       "check": 1
     },
@@ -253,13 +286,32 @@
       "title": "邏輯斯方程", "key": "部分分式拆開 $\\frac{1}{y(1-y)}$ 再積",
       "beats": [
         { "show": ["$y'=y(1-y)$，$y(0)=\\frac{1}{2}$"], "note": "平衡解：$y=0$ 與 $y=1$。",
-          "say": "先找平衡解：y 是零或一。初始值二分之一不是平衡解。" },
+          "say": "先找平衡解：y 是零或一。初始值二分之一不是平衡解。",
+          "board": [
+            { "do": "write", "line": "$y'=y(1-y)$，$y(0)={{i:\\frac{1}{2}}}$" },
+            { "do": "write", "line": "平衡解：$y=0$、$y=1$", "on": "y 是零或一" },
+            { "do": "underline", "term": "i", "label": "不是平衡解", "on": "初始值" }
+          ] },
         { "show": ["$\\frac{1}{y(1-y)}=\\frac{1}{y}+\\frac{1}{1-y}$"], "note": "部分分式之後再積分。",
-          "say": "左邊要積 y 乘一減 y 分之一，先拆成部分分式，兩塊都積得出來。" },
+          "say": "左邊要積 y 乘一減 y 分之一，先拆成部分分式，兩塊都積得出來。",
+          "board": [
+            { "do": "write", "line": "$\\frac{1}{y(1-y)}={{pf:{{a:\\frac{1}{y}}}+{{b:\\frac{1}{1-y}}}}}$" },
+            { "do": "underline", "term": "pf", "color": "blue", "label": "部分分式", "on": "部分分式" }
+          ] },
         { "show": ["$\\frac{y}{1-y}=Ae^x$，$A=1$"],
-          "say": "兩個自然對數相減，取指數。代初始值，二分之一除以二分之一，A 是一。" },
+          "say": "兩個自然對數相減，取指數。代初始值，二分之一除以二分之一，A 是一。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "$\\ln|y|-\\ln|1-y|=x+C$", "on": "自然對數" },
+            { "do": "transform", "line": "$\\frac{y}{1-y}={{a:A}}e^x$", "on": "取指數" },
+            { "do": "write", "line": "$A=\\frac{1}{2}\\div\\frac{1}{2}=1$", "on": "代初始值" }
+          ] },
         { "show": ["$y=\\frac{1}{1+e^{-x}}$"],
-          "say": "解出 y，是一加 e 的負 x 次方分之一。x 很大的時候，它會去哪裡？" }
+          "say": "解出 y，是一加 e 的負 x 次方分之一。x 很大的時候，它會去哪裡？",
+          "board": [
+            { "do": "write", "line": "$y={{r:\\frac{1}{1+e^{-x}}}}$" },
+            { "do": "box", "term": "r", "color": "green", "on": "分之一" }
+          ] }
       ],
       "predict": {
         "ask": "$x\\to\\infty$ 時，$y=\\frac{1}{1+e^{-x}}$ 趨近？",

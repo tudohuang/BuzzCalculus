@@ -166,13 +166,32 @@
       "title": "再乘一個 $x$",
       "beats": [
         { "show": ["$y=(C_1+C_2x)e^{rx}$"], "note": "重根 $r$ 時，$xe^{rx}$ 也是解。",
-          "say": "答案很簡單：再乘一個 x。重根時，x 乘 e 的 r x 次方也是解。" },
+          "say": "答案很簡單：再乘一個 x。重根時，x 乘 e 的 r x 次方也是解。",
+          "board": [
+            { "do": "write", "line": "$y=(C_1+{{t:C_2x}})e^{rx}$" },
+            { "do": "underline", "term": "t", "label": "多乘 x", "on": "x 乘" }
+          ] },
         { "show": ["兩根 $r$、$r+h$ 很接近"], "note": "直覺，不是證明。",
-          "say": "直覺是這樣：想像兩個根差一點點 h，兩個指數相減再除以 h，也是解。" },
+          "say": "直覺是這樣：想像兩個根差一點點 h，兩個指數相減再除以 h，也是解。",
+          "board": [
+            { "do": "write", "line": "$e^{rx}$、$e^{(r+h)x}$ 都是解" },
+            { "do": "write", "line": "$\\frac{e^{(r+h)x}-e^{rx}}{h}$ 也是解", "on": "相減再除以" }
+          ] },
         { "show": ["$h\\to0$：$\\frac{e^{(r+h)x}-e^{rx}}{h}\\to xe^{rx}$"], "note": "對 $r$ 的導數。",
-          "say": "h 趨近零，這就是 e 的 r x 次方對 r 的導數，剛好是 x 乘 e 的 r x 次方。直接代入的證明在下一節。" },
+          "say": "h 趨近零，這就是 e 的 r x 次方對 r 的導數，剛好是 x 乘 e 的 r x 次方。直接代入的證明在下一節。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "$h\\to0$：$\\frac{e^{(r+h)x}-e^{rx}}{h}$", "on": "h 趨近零" },
+            { "do": "write", "line": "$\\frac{d}{dr}e^{rx} = {{t:xe^{rx}}}$", "on": "對 r 的導數" },
+            { "do": "box", "term": "t", "color": "green", "on": "剛好是" }
+          ] },
         { "show": ["$W(e^{rx},xe^{rx})=e^{2rx}\\ne 0$"], "note": "$\\frac{xe^{rx}}{e^{rx}}=x$ 不是常數。",
-          "say": "兩個解相除是 x，不是常數，Wronskian 也永遠不是零，所以它們真的不同。" }
+          "say": "兩個解相除是 x，不是常數，Wronskian 也永遠不是零，所以它們真的不同。",
+          "board": [
+            { "do": "write", "line": "$\\frac{xe^{rx}}{e^{rx}} = {{q:x}}$" },
+            { "do": "underline", "term": "q", "label": "不是常數", "on": "不是常數" },
+            { "do": "write", "line": "$W = e^{2rx}\\ne 0$", "on": "Wronskian" }
+          ] }
       ],
       "check": 0
     },
@@ -238,13 +257,31 @@
       "title": "判別式等於零",
       "beats": [
         { "show": ["$4y''+4y'+y=0$", "$(2r+1)^2=0$"],
-          "say": "首項係數不是一也一樣：四 r 平方加四 r 加一，是二 r 加一的平方。" },
+          "say": "首項係數不是一也一樣：四 r 平方加四 r 加一，是二 r 加一的平方。",
+          "board": [
+            { "do": "write", "line": "$4r^2 + 4r + 1 = 0$" },
+            { "do": "transform", "line": "$(2r+1)^2 = 0$", "on": "是二 r" }
+          ] },
         { "show": ["重根 $r=-\\frac{1}{2}$"],
-          "say": "讓括號變零的是負二分之一。" },
+          "say": "讓括號變零的是負二分之一。",
+          "board": [
+            { "do": "write", "line": "$2r + 1 = 0$" },
+            { "do": "transform", "line": "$2r + 1 = 0$ ⇒ $r=-\\frac{1}{2}$", "on": "變零的" }
+          ] },
         { "show": ["$y=(C_1+C_2x)e^{-x/2}$"],
-          "say": "通解是 C 一加 C 二 x，乘上 e 的負二分之 x 次方。" },
+          "say": "通解是 C 一加 C 二 x，乘上 e 的負二分之 x 次方。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "$y=(C_1+C_2x)\\,{{e:e^{-x/2}}}$", "on": "通解是" },
+            { "do": "underline", "term": "e", "on": "乘上" }
+          ] },
         { "show": ["只有重根才加 $x$"], "note": "相異根時 $xe^{rx}$ 不是解。",
-          "say": "要先確認判別式是零。相異根的時候亂加 x，那一項就不是解了。" }
+          "say": "要先確認判別式是零。相異根的時候亂加 x，那一項就不是解了。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "判別式 $b^2-4ac=0$ 才加 $x$", "on": "要先確認" },
+            { "do": "write", "line": "相異根：$xe^{rx}$ 不是解", "color": "red", "on": "相異根" }
+          ] }
       ],
       "check": 3
     },
@@ -286,11 +323,24 @@
       "title": "兩個常數都用上",
       "beats": [
         { "show": ["$y''-2y'+y=0$：$(r-1)^2=0$"], "note": "$y(0)=1$，$y'(0)=0$。",
-          "say": "r 平方減二 r 加一，是 r 減一的平方，重根是一。" },
+          "say": "r 平方減二 r 加一，是 r 減一的平方，重根是一。",
+          "board": [
+            { "do": "write", "line": "$r^2 - 2r + 1 = 0$" },
+            { "do": "transform", "line": "$(r-1)^2 = 0$，重根 $r=1$", "on": "是 r 減一" }
+          ] },
         { "show": ["$y=(C_1+C_2x)e^x$"],
-          "say": "通解是 C 一加 C 二 x，乘 e 的 x 次方。" },
+          "say": "通解是 C 一加 C 二 x，乘 e 的 x 次方。",
+          "board": [
+            { "do": "write", "line": "$y=(C_1+C_2x)e^x$" }
+          ] },
         { "show": ["$y'=C_2e^x+(C_1+C_2x)e^x$"], "note": "$y(0)=1$：$C_1=1$。",
-          "say": "微分後代零，導數是 C 二加 C 一。C 一已經知道是一，C 二是多少？" }
+          "say": "微分後代零，導數是 C 二加 C 一。C 一已經知道是一，C 二是多少？",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "$y' = C_2e^x + (C_1+C_2x)e^x$", "on": "微分後" },
+            { "do": "write", "line": "$y'(0) = C_2 + C_1$", "on": "代零" },
+            { "do": "write", "line": "$C_1 = 1$", "on": "C 一已經" }
+          ] }
       ],
       "predict": {
         "ask": "$C_2+C_1=0$，$C_1=1$。解是？",

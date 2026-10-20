@@ -185,11 +185,24 @@
       "title": "反方向：取倒數",
       "beats": [
         { "show": ["題目給 $u=u(x,y)$、$v=v(x,y)$"], "note": "要的卻是 $\\frac{\\partial(x,y)}{\\partial(u,v)}$。",
-          "say": "很多題目從區域的邊界讀出 u、v 是 x、y 的函數，要的卻是反方向的 Jacobian。" },
+          "say": "很多題目從區域的邊界讀出 u、v 是 x、y 的函數，要的卻是反方向的 Jacobian。",
+          "board": [
+            { "do": "write", "line": "$u=u(x,y)$、$v=v(x,y)$" },
+            { "do": "write", "line": "要的：$\\frac{\\partial(x,y)}{\\partial(u,v)}$", "on": "反方向" }
+          ] },
         { "show": ["$\\frac{\\partial(x,y)}{\\partial(u,v)}=\\frac{1}{\\partial(u,v)/\\partial(x,y)}$"], "note": "條件：$J\\ne 0$。",
-          "say": "不必先解出 x、y，直接算反方向再取倒數。" },
+          "say": "不必先解出 x、y，直接算反方向再取倒數。",
+          "board": [
+            { "do": "write", "line": "$\\frac{\\partial(x,y)}{\\partial(u,v)}=\\frac{1}{{{d:\\partial(u,v)/\\partial(x,y)}}}$" },
+            { "do": "underline", "term": "d", "color": "gold", "label": "先算這個", "on": "反方向" }
+          ] },
         { "show": ["放大 $k$ 倍，反過來縮成 $\\frac{1}{k}$"], "note": "正式理由：兩個 Jacobian 矩陣相乘是單位矩陣。",
-          "say": "直觀上：去程把面積放大 k 倍，回程就縮小成 k 分之一。" }
+          "say": "直觀上：去程把面積放大 k 倍，回程就縮小成 k 分之一。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "去程：放大 $k$ 倍", "on": "去程" },
+            { "do": "write", "line": "回程：縮成 $\\frac{1}{k}$", "on": "回程" }
+          ] }
       ],
       "check": 1
     },
@@ -197,9 +210,20 @@
       "title": "解不出來也沒關係", "key": "先算反向的再取倒數，最後寫成 $u$、$v$",
       "beats": [
         { "show": ["$u=xy$、$v=\\frac{y}{x}$（$x,y>0$）"],
-          "say": "這一題要解出 x、y 很麻煩，直接算反方向。" },
+          "say": "這一題要解出 x、y 很麻煩，直接算反方向。",
+          "board": [
+            { "do": "write", "line": "$u=xy$、$v=\\frac{y}{x}$（$x,y>0$）" },
+            { "do": "write", "line": "算 $\\frac{\\partial(u,v)}{\\partial(x,y)}$", "on": "很麻煩" }
+          ] },
         { "show": ["$\\frac{\\partial(u,v)}{\\partial(x,y)}=\\frac{y}{x}+\\frac{y}{x}=\\frac{2y}{x}$"],
-          "say": "u、v 對 x、y 的偏導數交叉相乘相減，得到二 y 除以 x。" }
+          "say": "u、v 對 x、y 的偏導數交叉相乘相減，得到二 y 除以 x。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "$u_x=y$，$u_y=x$", "on": "u、v" },
+            { "do": "write", "line": "$v_x=-\\frac{y}{x^2}$，$v_y=\\frac{1}{x}$", "on": "偏導數" },
+            { "do": "write", "line": "$=\\frac{y}{x}+\\frac{y}{x}={{r:\\frac{2y}{x}}}$", "on": "交叉相乘" },
+            { "do": "box", "term": "r", "color": "green", "on": "得到" }
+          ] }
       ],
       "predict": {
         "ask": "$\\frac{\\partial(x,y)}{\\partial(u,v)}$ 是？",
@@ -214,11 +238,25 @@
       "title": "三個變數",
       "beats": [
         { "show": ["$\\frac{\\partial(x,y,z)}{\\partial(u,v,w)}$：$3\\times3$ 行列式"], "note": "$|J|$ 是小方塊的體積放大倍率。",
-          "say": "三個變數時，Jacobian 是三乘三的行列式，絕對值是小方塊的體積放大倍率。" },
+          "say": "三個變數時，Jacobian 是三乘三的行列式，絕對值是小方塊的體積放大倍率。",
+          "board": [
+            { "do": "write", "line": "$\\frac{\\partial(x,y,z)}{\\partial(u,v,w)}=\\det(3\\times3)$" },
+            { "do": "write", "line": "$|J|$：體積放大倍率", "on": "絕對值" }
+          ] },
         { "show": ["柱座標：$r$；球座標：$\\rho^2\\sin\\varphi$"],
-          "say": "以後一直會用到兩個：柱座標的是 r，球座標的是 rho 平方乘 sine phi。" },
+          "say": "以後一直會用到兩個：柱座標的是 r，球座標的是 rho 平方乘 sine phi。",
+          "board": [
+            { "do": "write", "line": "柱座標：$J=r$" },
+            { "do": "write", "line": "球座標：${{s:J=\\rho^2\\sin\\varphi}}$", "on": "球座標" },
+            { "do": "box", "term": "s", "color": "green", "on": "rho" }
+          ] },
         { "show": ["換變數：用 $|J|$，不是 $J$"],
-          "say": "最後提醒：換變數的時候乘的是絕對值，因為面積和體積不會是負的。" }
+          "say": "最後提醒：換變數的時候乘的是絕對值，因為面積和體積不會是負的。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "換變數時乘 $|J|$，不是 $J$", "on": "乘的是" },
+            { "do": "write", "line": "面積、體積不會是負的", "on": "因為" }
+          ] }
       ],
       "check": 3
     }

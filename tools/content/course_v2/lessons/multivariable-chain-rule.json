@@ -144,11 +144,24 @@
       "title": "兩條路受影響",
       "beats": [
         { "show": ["$z=f(x,y)$，位置 $(x(t),y(t))$"], "note": "溫度隨位置變，位置隨時間變。",
-          "say": "溫度隨位置改變，你沿一條路走，位置又隨時間改變。溫度隨時間變多快？" },
+          "say": "溫度隨位置改變，你沿一條路走，位置又隨時間改變。溫度隨時間變多快？",
+          "board": [
+            { "do": "write", "line": "$z=f(x,y)$，位置 $(x(t),y(t))$" }
+          ] },
         { "show": ["$dx=x'\\,dt$，$dy=y'\\,dt$"],
-          "say": "時間動一點點，x 跟著動 x prime 乘 d t，y 也跟著動 y prime 乘 d t。" },
+          "say": "時間動一點點，x 跟著動 x prime 乘 d t，y 也跟著動 y prime 乘 d t。",
+          "board": [
+            { "do": "write", "line": "${{a:dx=x'\\,dt}},\\quad {{b:dy=y'\\,dt}}$", "tint": {"a":"blue","b":"violet"} },
+            { "do": "underline", "term": "a", "color": "blue", "on": "x 跟著動" },
+            { "do": "underline", "term": "b", "color": "violet", "on": "y 也跟著動" }
+          ] },
         { "show": ["$\\frac{dz}{dt}=f_x\\frac{dx}{dt}+f_y\\frac{dy}{dt}$"], "note": "放進全微分 $dz=f_x\\,dx+f_y\\,dy$。",
-          "say": "把這兩個變動放進全微分，再除以 d t：每個偏導數乘上它自己那個變數的變化率，加起來。" }
+          "say": "把這兩個變動放進全微分，再除以 d t：每個偏導數乘上它自己那個變數的變化率，加起來。",
+          "board": [
+            { "do": "write", "line": "$dz=f_x\\,dx+f_y\\,dy$" },
+            { "do": "transform", "line": "$\\frac{dz}{dt}={{r:f_x\\frac{dx}{dt}+f_y\\frac{dy}{dt}}}$", "on": "除以" },
+            { "do": "box", "term": "r", "color": "green", "on": "自己那個" }
+          ] }
       ],
       "check": 0
     },
@@ -187,11 +200,25 @@
       "title": "樹狀圖",
       "beats": [
         { "show": ["$z\\to x\\to t$ 與 $z\\to y\\to t$"], "note": "每條路的導數相乘，再把路加起來。",
-          "say": "畫一棵樹：z 在上面，下一層是 x 和 y，最底下是 t。從 z 走到 t 有兩條路，每條路上的導數乘起來，再加。" },
+          "say": "畫一棵樹：z 在上面，下一層是 x 和 y，最底下是 t。從 z 走到 t 有兩條路，每條路上的導數乘起來，再加。",
+          "board": [
+            { "do": "write", "line": "${{p:z\\to x\\to t}}$" },
+            { "do": "write", "line": "$z\\to y\\to t$", "on": "兩條路" },
+            { "do": "write", "line": "路上相乘，路與路相加", "on": "乘起來" }
+          ] },
         { "show": ["$\\frac{\\partial z}{\\partial s}=f_x\\frac{\\partial x}{\\partial s}+f_y\\frac{\\partial y}{\\partial s}$"], "note": "$x$、$y$ 都是 $s$、$t$ 的函數時。",
-          "say": "如果 x、y 都由 s 和 t 決定，最底層就有兩個點。對 s 微分，只走通到 s 的路。" },
+          "say": "如果 x、y 都由 s 和 t 決定，最底層就有兩個點。對 s 微分，只走通到 s 的路。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "$\\frac{\\partial z}{\\partial s}={{r:f_x\\frac{\\partial x}{\\partial s}+f_y\\frac{\\partial y}{\\partial s}}}$", "on": "最底層" },
+            { "do": "underline", "term": "r", "color": "gold", "label": "通到 s 的路", "on": "對 s 微分" }
+          ] },
         { "show": ["條件：$f$ 可微"], "note": "只有偏導數存在不夠。證明在下一節。",
-          "say": "這裡用到全微分是好近似，所以 f 要可微。常見的多項式、指數、三角函數組合都沒問題。" }
+          "say": "這裡用到全微分是好近似，所以 f 要可微。常見的多項式、指數、三角函數組合都沒問題。",
+          "board": [
+            { "do": "write", "line": "$\\Delta z\\approx f_x\\Delta x+f_y\\Delta y$" },
+            { "do": "write", "line": "條件：$f$ 可微", "color": "green", "on": "所以 f" }
+          ] }
       ],
       "check": 2
     },
@@ -267,11 +294,26 @@
       "title": "在一點求值", "key": "每條路都乘內層導數，再全部相加",
       "beats": [
         { "show": ["$z=x^2y+y^3$，$x=st$，$y=s+t$"], "note": "求 $s=1$、$t=2$ 時的 $\\frac{\\partial z}{\\partial s}$。",
-          "say": "要某一點的值，先把這一點的 x、y 算出來：x 是一乘二等於二，y 是一加二等於三。" },
+          "say": "要某一點的值，先把這一點的 x、y 算出來：x 是一乘二等於二，y 是一加二等於三。",
+          "board": [
+            { "do": "write", "line": "$z=x^2y+y^3$，$x=st$，$y=s+t$" },
+            { "do": "write", "line": "${{x:x=1\\cdot2=2}}$，${{y:y=1+2=3}}$", "tint": {"x":"blue","y":"violet"}, "on": "x 是一乘二" },
+            { "do": "underline", "term": "y", "color": "violet", "on": "y 是一加二" }
+          ] },
         { "show": ["$z_x=2xy=12$，$z_y=x^2+3y^2=31$"],
-          "say": "外層的偏導數直接代 x 等於二、y 等於三，得十二和三十一。" },
+          "say": "外層的偏導數直接代 x 等於二、y 等於三，得十二和三十一。",
+          "board": [
+            { "do": "write", "line": "${{zx:z_x=2xy=12}},\\quad {{zy:z_y=x^2+3y^2=31}}$", "tint": {"zx":"blue","zy":"violet"} },
+            { "do": "underline", "term": "zx", "color": "blue", "on": "得十二" },
+            { "do": "underline", "term": "zy", "color": "violet", "on": "和三十一" }
+          ] },
         { "show": ["$\\frac{\\partial x}{\\partial s}=t=2$，$\\frac{\\partial y}{\\partial s}=1$"],
-          "say": "內層對 s 微分：s t 對 s 是 t，等於二；s 加 t 對 s 是一。" }
+          "say": "內層對 s 微分：s t 對 s 是 t，等於二；s 加 t 對 s 是一。",
+          "board": [
+            { "do": "write", "line": "${{xs:\\frac{\\partial x}{\\partial s}=t=2}}$，${{ys:\\frac{\\partial y}{\\partial s}=1}}$", "tint": {"xs":"blue","ys":"violet"} },
+            { "do": "underline", "term": "xs", "color": "blue", "on": "等於二" },
+            { "do": "underline", "term": "ys", "color": "violet", "on": "s 加 t" }
+          ] }
       ],
       "predict": {
         "ask": "$\\frac{\\partial z}{\\partial s}$ 是？",
