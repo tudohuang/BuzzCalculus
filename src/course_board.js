@@ -823,7 +823,7 @@ html.nb .cvb-model>.cv2-figure{box-shadow:0 1px 4px #0002}
     const bottom = nr && nr.top > vh / 2 ? Math.round(vh - nr.top) : 0;
     root.classList.add("is-nb");
     const avail = vw - left;
-    const w = Math.min(avail, 1040);
+    const w = Math.min(avail, 1120);
     const gap = Math.max(0, Math.round((avail - w) / 2));
     Object.assign(root.style, { left: `${left + gap}px`, top: `${top}px`, right: `${gap}px`, bottom: `${bottom}px` });
     return root.getBoundingClientRect();
