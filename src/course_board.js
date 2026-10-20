@@ -63,17 +63,18 @@
 .cvb-ov-board{overflow:hidden!important;pointer-events:none}
 .cvb-ov-n{position:absolute;right:10px;bottom:6px;color:#fff9;font-size:.75rem;font-variant-numeric:tabular-nums}
 .cvb-ov-meas{position:absolute;left:0;top:0;visibility:hidden;pointer-events:none}
-html.nb .cv2s.cv2-lesson.is-nb{--nbp:#fdfbf4;--nbm:#efa3a3;--nbg:#dfe7f3;position:fixed;z-index:5;max-width:none;width:auto;margin:0;padding:18px 40px 0 64px;overflow:hidden;border-radius:0;background:linear-gradient(90deg,transparent 40px,var(--nbm) 40px,var(--nbm) 42px,transparent 42px),linear-gradient(90deg,var(--nbg) 1px,transparent 1px) 0 0/24px 24px,linear-gradient(180deg,var(--nbg) 1px,transparent 1px) 0 0/24px 24px,var(--nbp);box-shadow:0 0 0 1px #0000000d,0 6px 24px #00000014}
-@media (max-width:640px){html.nb .cv2s.cv2-lesson.is-nb{padding:12px 14px 0 30px;background:linear-gradient(90deg,transparent 18px,var(--nbm) 18px,var(--nbm) 20px,transparent 20px),linear-gradient(90deg,var(--nbg) 1px,transparent 1px) 0 0/24px 24px,linear-gradient(180deg,var(--nbg) 1px,transparent 1px) 0 0/24px 24px,var(--nbp)}}
-html.nb .cvb{--k:#1f2a44;--kb:transparent;--kg:#c2410c;--kc:#1d4ed8;--kn:#15803d;--kr:#dc2626;--kv:#7c3aed;border:0;border-radius:0;background:transparent;box-shadow:none;text-shadow:none}
+html.nb .cv2s.cv2-lesson.is-nb{position:fixed;z-index:5;max-width:none;width:auto;margin:0;padding:18px 24px 0;overflow:hidden;background:var(--paper)}
+@media (max-width:640px){html.nb .cv2s.cv2-lesson.is-nb{padding:12px 10px 0}}
+html.nb .cvb{--k:#1f2a44;--kb:#fdfbf4;--nbm:#efa3a3;--nbg:#dfe7f3;--kg:#c2410c;--kc:#1d4ed8;--kn:#15803d;--kr:#dc2626;--kv:#7c3aed;border:0;border-radius:6px;background:linear-gradient(90deg,transparent 12px,var(--nbm) 12px,var(--nbm) 14px,transparent 14px),linear-gradient(90deg,var(--nbg) 1px,transparent 1px) 0 0/24px 24px,linear-gradient(180deg,var(--nbg) 1px,transparent 1px) 0 0/24px 24px,var(--kb);background-attachment:local;box-shadow:0 0 0 1px #0000000f,0 4px 18px #00000017;text-shadow:none}
+html.nb .cvb-whole .cvb-stage{margin-top:14px}
+:root[data-theme="dark"].nb .cvb{--k:#dfe6f5;--kb:#1d2026;--nbm:#7f3b3b;--nbg:#2a303b;--kg:#fdba74;--kc:#93c5fd;--kn:#86efac;--kr:#fca5a5;--kv:#c4b5fd}
 html.nb .cvb .cvb-i{text-shadow:none;filter:none}
 html.nb .cvb-slot{margin:0;padding:0}
 html.nb .cvb-slot::after{display:none}
 html.nb .cvb-whole .cvb-stage{width:auto;margin-left:0}
 html.nb .cvb-chalk{width:22px;height:4px;margin:-3px 0 0 -2px;border-radius:1px 3px 3px 1px;background:linear-gradient(90deg,#1f2a44 0,#1f2a44 70%,#c9ced8 70%);box-shadow:0 1px 1px #0003}
 html.nb .cvb-model>.cv2-figure{box-shadow:0 1px 4px #0002}
-:root[data-theme="dark"].nb .cv2s.cv2-lesson.is-nb{--nbp:#1d2026;--nbm:#7f3b3b;--nbg:#2a303b}
-:root[data-theme="dark"].nb .cvb{--k:#dfe6f5;--kg:#fdba74;--kc:#93c5fd;--kn:#86efac;--kr:#fca5a5;--kv:#c4b5fd}`;
+`;
   // 原型（2026-10-20）：筆記本版 —— 同一個黑板引擎（一行一行寫、分欄、換面），換成紙、橫線、紅色邊線、藍黑筆。
   // ?notebook 打開、?notebook=0 關掉，記在這台瀏覽器
   try {
