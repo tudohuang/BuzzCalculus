@@ -145,11 +145,23 @@
       "title": "被夾住，沒地方去",
       "beats": [
         { "show": ["$g(x) \\le f(x) \\le h(x)$"], "note": "在 $a$ 附近成立，$a$ 本身可以除外。",
-          "say": "夾擠定理：在 a 附近，f 被夾在 g 和 h 中間，g 在下面，h 在上面。" },
+          "say": "夾擠定理：在 a 附近，f 被夾在 g 和 h 中間，g 在下面，h 在上面。",
+          "board": [
+            { "do": "write", "line": "${{g:g(x)}} \\le {{f:f(x)}} \\le {{h:h(x)}}$", "tint": {"g":"blue","h":"violet"} },
+            { "do": "focus", "term": "g", "color": "blue", "label": "下界", "on": "在下面" },
+            { "do": "focus", "term": "h", "color": "violet", "label": "上界", "on": "在上面" }
+          ] },
         { "show": ["$\\lim g = \\lim h = L$ → $\\lim f = L$"],
-          "say": "如果上下兩條在 a 都往同一個數 L 擠，中間的 f 沒有別的地方可去，極限也只好是 L。" },
+          "say": "如果上下兩條在 a 都往同一個數 L 擠，中間的 f 沒有別的地方可去，極限也只好是 L。",
+          "board": [
+            { "do": "write", "line": "$\\lim g = \\lim h = L$" },
+            { "do": "write", "line": "$\\lim f = L$", "color": "green", "on": "沒有別的地方" }
+          ] },
         { "show": ["也保證了極限存在"], "note": "證明在最後一節。",
-          "say": "注意它說的不只是極限等於 L，還保證了這個極限存在。用 epsilon delta 的證明放在最後一節。" }
+          "say": "注意它說的不只是極限等於 L，還保證了這個極限存在。用 epsilon delta 的證明放在最後一節。",
+          "board": [
+            { "do": "write", "line": "保證 $\\lim f$ 存在" }
+          ] }
       ],
       "check": 0
     },
@@ -157,11 +169,26 @@
       "title": "為什麼需要它",
       "beats": [
         { "show": ["$\\lim_{x\\to0} x^2 \\sin\\left(\\frac{1}{x}\\right)$"], "note": "$\\sin\\left(\\frac{1}{x}\\right)$ 在 0 振盪，沒有極限：不能拆開。", "fig": { "use": 0, "to": 0 },
-          "say": "看這一個：sine x 分之一在零附近一直亂跳，沒有極限，所以不能用乘積定律拆成兩個極限相乘。" },
+          "say": "看這一個：sine x 分之一在零附近一直亂跳，沒有極限，所以不能用乘積定律拆成兩個極限相乘。",
+          "board": [
+            { "do": "write", "line": "$\\lim_{x\\to0} x^2 {{s:\\sin\\left(\\frac{1}{x}\\right)}}$" },
+            { "do": "underline", "term": "s", "color": "red", "label": "沒有極限", "on": "亂跳" }
+          ] },
         { "show": ["$-x^2 \\le x^2 \\sin\\left(\\frac{1}{x}\\right) \\le x^2$"], "note": "$\\sin$ 在 $-1$ 與 1 之間，乘上 $x^2 \\ge 0$。",
-          "say": "但它再怎麼跳，大小都在負一和一之間。乘上 x 平方，就被夾在綠色的負 x 平方和 x 平方中間。" },
+          "say": "但它再怎麼跳，大小都在負一和一之間。乘上 x 平方，就被夾在綠色的負 x 平方和 x 平方中間。",
+          "board": [
+            { "do": "write", "line": "$-1\\le\\sin\\left(\\frac{1}{x}\\right)\\le 1$" },
+            { "do": "write", "line": "${{a:-x^2}} \\le x^2 \\sin\\left(\\frac{1}{x}\\right) \\le {{b:x^2}}$", "on": "乘上" },
+            { "do": "focus", "term": "a", "color": "green", "on": "綠色的" },
+            { "do": "focus", "term": "b", "color": "green", "on": "平方和" }
+          ] },
         { "show": ["兩邊都 $\\to 0$，中間只好也 $\\to 0$"], "fig": { "use": 0, "to": 1 },
-          "say": "往原點放大，藍色曲線一直被兩條綠線關在裡面，而綠線在原點擠成一點，所以極限是零。" }
+          "say": "往原點放大，藍色曲線一直被兩條綠線關在裡面，而綠線在原點擠成一點，所以極限是零。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "$-x^2 \\to 0,\\ x^2 \\to 0$", "on": "綠線在原點" },
+            { "do": "write", "line": "所以 $\\lim = 0$", "color": "green", "on": "所以" }
+          ] }
       ],
       "drag": { "use": 0, "ask": "自己放大到最底，看藍色曲線有沒有跑出綠線", "range": [1.8, 2] }
     },
@@ -221,9 +248,18 @@
       "title": "$x \\to \\infty$ 也能用",
       "beats": [
         { "show": ["$-\\frac{1}{x} \\le \\sin x / x \\le \\frac{1}{x}$"], "note": "$x > 0$ 時。",
-          "say": "x 趨近無限大也能夾。x 是正的時候，sine x 除以 x 被夾在負 x 分之一和 x 分之一中間。" },
+          "say": "x 趨近無限大也能夾。x 是正的時候，sine x 除以 x 被夾在負 x 分之一和 x 分之一中間。",
+          "board": [
+            { "do": "write", "line": "$-\\frac{1}{x} \\le {{s:\\frac{\\sin x}{x}}} \\le \\frac{1}{x}$" },
+            { "do": "underline", "term": "s", "label": "被夾住", "on": "被夾在" }
+          ] },
         { "show": ["兩邊 $\\to 0$：$\\lim_{x\\to\\infty} \\sin x / x = 0$"],
-          "say": "兩邊都趨近零，所以極限是零。它不是一，一是 x 趨近零的那個標準極限。" }
+          "say": "兩邊都趨近零，所以極限是零。它不是一，一是 x 趨近零的那個標準極限。",
+          "board": [
+            { "do": "write", "line": "兩邊 $\\to 0$", "on": "兩邊都" },
+            { "do": "write", "line": "$\\lim_{x\\to\\infty}\\frac{\\sin x}{x}={{r:0}}$", "on": "所以極限" },
+            { "do": "box", "term": "r", "color": "green", "on": "它不是" }
+          ] }
       ],
       "check": 3
     },
@@ -231,11 +267,25 @@
       "title": "取整函數",
       "beats": [
         { "show": ["$x - 1 < \\lfloor x\\rfloor \\le x$"], "note": "對所有 $x$ 成立，夾取整函數最好用。",
-          "say": "取整函數最好用的不等式：它比 x 減一大，又不超過 x。" },
+          "say": "取整函數最好用的不等式：它比 x 減一大，又不超過 x。",
+          "board": [
+            { "do": "write", "line": "${{lo:x - 1}} < {{fl:\\lfloor x\\rfloor}} \\le {{hi:x}}$" },
+            { "do": "underline", "term": "lo", "color": "blue", "label": "下界", "on": "比 x 減一" },
+            { "do": "underline", "term": "hi", "color": "violet", "label": "上界", "on": "不超過" }
+          ] },
         { "show": ["$\\lim_{x\\to\\infty} \\lfloor x\\rfloor/x$"], "note": "$x > 0$ 時同除以 $x$。",
-          "say": "求取整 x 除以 x 的極限。x 是正的，整條不等式同除以 x，不等號方向不變。" },
+          "say": "求取整 x 除以 x 的極限。x 是正的，整條不等式同除以 x，不等號方向不變。",
+          "board": [
+            { "do": "write", "line": "$\\lim_{x\\to\\infty} \\lfloor x\\rfloor/x$" },
+            { "do": "write", "line": "$x > 0$", "on": "x 是正的" }
+          ] },
         { "show": ["$\\frac{x - 1}{x} < \\lfloor x\\rfloor/x \\le 1$"],
-          "say": "右邊是常數一。左邊是 x 減一除以 x，想想它趨近多少。" }
+          "say": "右邊是常數一。左邊是 x 減一除以 x，想想它趨近多少。",
+          "board": [
+            { "do": "write", "line": "${{lf:\\frac{x - 1}{x}}} < \\frac{\\lfloor x\\rfloor}{x} \\le {{one:1}}$" },
+            { "do": "focus", "term": "one", "on": "右邊是" },
+            { "do": "underline", "term": "lf", "label": "趨近多少", "on": "左邊是" }
+          ] }
       ],
       "predict": {
         "ask": "$\\lim_{x\\to\\infty} \\lfloor x\\rfloor/x$ 是？",

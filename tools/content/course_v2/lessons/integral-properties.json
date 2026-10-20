@@ -139,9 +139,19 @@
       "title": "切開、接起來",
       "beats": [
         { "show": ["$\\int_a^c f\\,dx=\\int_a^b f\\,dx+\\int_b^c f\\,dx$"], "note": "有號面積一段一段加起來就是全部。",
-          "say": "從 a 走到 c，中途經過 b。前一段的有號面積加後一段，就是整段的。" },
+          "say": "從 a 走到 c，中途經過 b。前一段的有號面積加後一段，就是整段的。",
+          "board": [
+            { "do": "write", "line": "${{w:\\int_a^c f\\,dx}}={{p:\\int_a^b f\\,dx}}+{{q:\\int_b^c f\\,dx}}$", "tint": {"p":"blue","q":"violet"} },
+            { "do": "focus", "term": "p", "color": "blue", "label": "前一段", "on": "前一段" },
+            { "do": "focus", "term": "q", "color": "violet", "label": "後一段", "on": "後一段" }
+          ] },
         { "show": ["$\\int_0^5 f=7$，$\\int_0^2 f=3$", "⇒ $\\int_2^5 f=7-3=4$"],
-          "say": "反過來也能用：零到五是七，零到二是三，剩下二到五那一段就是七減三，等於四。" }
+          "say": "反過來也能用：零到五是七，零到二是三，剩下二到五那一段就是七減三，等於四。",
+          "board": [
+            { "do": "write", "line": "$\\int_0^5 f=7$，$\\int_0^2 f=3$" },
+            { "do": "transform", "line": "$\\int_2^5 f={{d:7-3}}={{r:4}}$", "on": "剩下" },
+            { "do": "box", "term": "d", "color": "green", "on": "七減三" }
+          ] }
       ],
       "check": 1
     },
@@ -149,9 +159,18 @@
       "title": "上下限對調",
       "beats": [
         { "show": ["$\\int_b^a f\\,dx=-\\int_a^b f\\,dx$"], "note": "從右往左走，算負的。",
-          "say": "規定上下限對調要變號，也就是從右往左走算負的。這樣切開接起來的規則怎麼排都成立。" },
+          "say": "規定上下限對調要變號，也就是從右往左走算負的。這樣切開接起來的規則怎麼排都成立。",
+          "board": [
+            { "do": "write", "line": "${{l:\\int_b^a f\\,dx}}={{s:-}}{{r:\\int_a^b f\\,dx}}$" },
+            { "do": "underline", "term": "l", "label": "對調", "on": "上下限" },
+            { "do": "focus", "term": "s", "color": "red", "label": "變號", "on": "從右往左" }
+          ] },
         { "show": ["$\\int_a^a f\\,dx=0$"], "note": "寬度是 $0$，什麼都沒圍到。",
-          "say": "上下限一樣的時候，寬度是零，什麼都沒圍到，積分就是零。" }
+          "say": "上下限一樣的時候，寬度是零，什麼都沒圍到，積分就是零。",
+          "board": [
+            { "do": "write", "line": "$\\int_a^a f\\,dx={{z:0}}$" },
+            { "do": "box", "term": "z", "color": "green", "label": "寬度是零", "on": "什麼都沒圍到" }
+          ] }
       ],
       "check": 0
     },

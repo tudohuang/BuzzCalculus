@@ -166,9 +166,19 @@
       "title": "$\\arctan$ 不是 $\\ln$",
       "beats": [
         { "show": ["$\\int\\frac{dx}{1+x^2}=\\arctan x+C$"], "note": "最容易混的一行。",
-          "say": "一加 x 平方分之一，積出來是 arctangent x。這一行最常被寫錯。" },
+          "say": "一加 x 平方分之一，積出來是 arctangent x。這一行最常被寫錯。",
+          "board": [
+            { "do": "write", "line": "$\\int\\frac{dx}{1+x^2}={{r:\\arctan x}}+C$" },
+            { "do": "box", "term": "r", "color": "green", "on": "arctangent" }
+          ] },
         { "show": ["$(\\ln(1+x^2))'=\\frac{2x}{1+x^2}$"], "note": "分子多了 $2x$。",
-          "say": "很多人寫成自然對數一加 x 平方。微分回去看，分子多了二 x，對不上。" }
+          "say": "很多人寫成自然對數一加 x 平方。微分回去看，分子多了二 x，對不上。",
+          "board": [
+            { "do": "write", "line": "$\\int\\frac{dx}{1+x^2}={{w:\\ln(1+x^2)}}+C$" },
+            { "do": "strike", "term": "w", "label": "錯", "on": "一加" },
+            { "do": "write", "line": "$(\\ln(1+x^2))'=\\frac{{{t:2x}}}{1+x^2}$", "on": "微分回去看" },
+            { "do": "focus", "term": "t", "color": "red", "on": "二 x" }
+          ] }
       ],
       "check": 0
     },
@@ -204,11 +214,24 @@
       "title": "帶常數 $a$：arctan", "key": "提出 $a^2$，化成 $1+(x/a)^2$ 的樣子",
       "beats": [
         { "show": ["$\\int\\frac{dx}{x^2+a^2}=\\frac1a\\arctan\\frac xa+C$"], "note": "$a>0$。",
-          "say": "分母是 x 平方加 a 平方，答案是 a 分之一乘 arctangent a 分之 x。" },
+          "say": "分母是 x 平方加 a 平方，答案是 a 分之一乘 arctangent a 分之 x。",
+          "board": [
+            { "do": "write", "line": "$\\int\\frac{dx}{x^2+a^2}={{p:\\frac1a}}\\arctan\\frac xa+C$" },
+            { "do": "focus", "term": "p", "color": "blue", "on": "a 分之一" }
+          ] },
         { "show": ["微分回去：$\\frac{1}{a}\\cdot\\frac{1/a}{1+x^2/a^2}=\\frac{1}{a^2+x^2}$"],
-          "say": "前面這個 a 分之一不能少：微分回去，兩個 a 分之一乘起來，才剛好是 a 平方加 x 平方分之一。" },
+          "say": "前面這個 a 分之一不能少：微分回去，兩個 a 分之一乘起來，才剛好是 a 平方加 x 平方分之一。",
+          "board": [
+            { "do": "write", "line": "${{p:\\frac1a}}\\cdot\\frac{1/a}{1+x^2/a^2}={{r:\\frac{1}{a^2+x^2}}}$", "on": "微分回去" },
+            { "do": "focus", "term": "p", "color": "blue", "on": "兩個" },
+            { "do": "box", "term": "r", "color": "green", "on": "剛好是" }
+          ] },
         { "show": ["$\\int\\frac{1}{x^2+9}\\,dx$"], "note": "$a^2=9$，$a=3$。",
-          "say": "試一題：x 平方加九分之一。a 平方是九，所以 a 是三。" }
+          "say": "試一題：x 平方加九分之一。a 平方是九，所以 a 是三。",
+          "board": [
+            { "do": "write", "line": "$a^2=9$，${{k:a=3}}$", "on": "a 平方是九" },
+            { "do": "focus", "term": "k", "on": "所以" }
+          ] }
       ],
       "predict": {
         "ask": "答案是？",
@@ -223,9 +246,18 @@
       "title": "帶常數 $a$：arcsin",
       "beats": [
         { "show": ["$\\int\\frac{dx}{\\sqrt{a^2-x^2}}=\\arcsin\\frac xa+C$"], "note": "前面沒有 $\\frac{1}{a}$。",
-          "say": "根號裡是 a 平方減 x 平方，答案是 arcsine a 分之 x，前面沒有 a 分之一。" },
+          "say": "根號裡是 a 平方減 x 平方，答案是 arcsine a 分之 x，前面沒有 a 分之一。",
+          "board": [
+            { "do": "write", "line": "$\\int\\frac{dx}{\\sqrt{a^2-x^2}}={{r:\\arcsin\\frac xa}}+C$" },
+            { "do": "underline", "term": "r", "label": "沒有係數", "on": "前面沒有" }
+          ] },
         { "show": ["$\\left(\\arcsin\\frac{x}{a}\\right)'=\\frac{1/a}{\\sqrt{1-x^2/a^2}}$"], "note": "兩個 $\\frac{1}{a}$ 剛好抵消。",
-          "say": "微分回去，分子一個 a 分之一，根號裡提出來又一個，剛好抵消，所以不用再補。" }
+          "say": "微分回去，分子一個 a 分之一，根號裡提出來又一個，剛好抵消，所以不用再補。",
+          "board": [
+            { "do": "write", "line": "$\\left(\\arcsin\\frac xa\\right)'=\\frac{{{p:1/a}}}{\\sqrt{1-x^2/a^2}}$", "on": "微分回去" },
+            { "do": "focus", "term": "p", "color": "blue", "on": "分子一個" },
+            { "do": "write", "line": "$=\\frac{1}{\\sqrt{a^2-x^2}}$", "color": "green", "on": "剛好抵消" }
+          ] }
       ],
       "check": 3
     },
@@ -233,9 +265,17 @@
       "title": "不在表上，先變形", "key": "分子湊出分母：加一項再減一項",
       "beats": [
         { "show": ["$\\int\\frac{x^2}{x^2+1}\\,dx$"], "note": "不在表上。",
-          "say": "x 平方除以 x 平方加一，表上找不到。那就先改寫成表上有的樣子。" },
+          "say": "x 平方除以 x 平方加一，表上找不到。那就先改寫成表上有的樣子。",
+          "board": [
+            { "do": "write", "line": "$\\int{{z:\\frac{x^2}{x^2+1}}}\\,dx$" },
+            { "do": "underline", "term": "z", "label": "不在表上", "on": "找不到" }
+          ] },
         { "show": ["$x^2=(x^2+1)-1$"], "note": "分子湊出一個分母。",
-          "say": "訣竅是在分子湊出分母：x 平方寫成 x 平方加一，再減一。" }
+          "say": "訣竅是在分子湊出分母：x 平方寫成 x 平方加一，再減一。",
+          "board": [
+            { "do": "write", "line": "$x^2=({{d:x^2+1}})-1$" },
+            { "do": "underline", "term": "d", "color": "blue", "label": "湊出分母", "on": "x 平方加一" }
+          ] }
       ],
       "predict": {
         "ask": "所以 $\\frac{x^2}{x^2+1}$ 等於？",

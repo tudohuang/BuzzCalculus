@@ -167,9 +167,18 @@
       "title": "右端點和寫成一行",
       "beats": [
         { "show": ["$\\Delta x=\\frac{b-a}{n}$，$x_i=a+i\\Delta x$"], "note": "$i=0$ 時是 $a$，$i=n$ 時是 $b$。",
-          "say": "切成 n 等分，每一步寬 delta x。第 i 個分點，就是從 a 出發走 i 步。" },
+          "say": "切成 n 等分，每一步寬 delta x。第 i 個分點，就是從 a 出發走 i 步。",
+          "board": [
+            { "do": "write", "line": "${{w:\\Delta x}}=\\frac{b-a}{n}$", "tint": {"w":"blue"} },
+            { "do": "write", "line": "$x_i={{a:a}}+i{{w:\\Delta x}}$", "on": "第 i 個分點" },
+            { "do": "focus", "term": "a", "label": "起點", "on": "出發" }
+          ] },
         { "show": ["$R_n=\\sum_{i=1}^{n} f(a+i\\Delta x)\\Delta x$"], "note": "左端點和取第 $0$ 到第 $n-1$ 個。",
-          "say": "右端點和取第一到第 n 個分點，高乘寬再加起來，一行就寫完了。" }
+          "say": "右端點和取第一到第 n 個分點，高乘寬再加起來，一行就寫完了。",
+          "board": [
+            { "do": "write", "line": "$R_n=\\sum_{i=1}^{n} {{h:f(a+i\\Delta x)}}{{w:\\Delta x}}$" },
+            { "do": "underline", "term": "h", "label": "高", "on": "高乘寬" }
+          ] }
       ],
       "check": 1
     },
@@ -216,9 +225,19 @@
       "title": "反過來讀",
       "beats": [
         { "show": ["找三件事：$\\Delta x$、$x_i$、$f$"], "note": "$\\Delta x$ 決定區間長度，$x_i$ 決定起點。",
-          "say": "考試常反過來，給一個極限的和，要你認出是哪個積分。找三件事：寬、分點、函數。" },
+          "say": "考試常反過來，給一個極限的和，要你認出是哪個積分。找三件事：寬、分點、函數。",
+          "board": [
+            { "do": "write", "line": "找三件事：${{w:\\Delta x}}$、${{x:x_i}}$、${{f:f}}$", "tint": {"w":"blue"} },
+            { "do": "focus", "term": "w", "color": "blue", "on": "寬" }
+          ] },
         { "show": ["$\\sum_{k=1}^{n}\\frac{1}{n}f\\left(\\frac{k}{n}\\right)\\to\\int_0^1 f(x)\\,dx$"], "note": "$\\frac{k}{n}$ 從 $\\frac{1}{n}$ 跑到 $1$。",
-          "say": "最常見的樣子：n 分之一是寬，n 分之 k 從很靠近零跑到一，所以區間是零到一。" }
+          "say": "最常見的樣子：n 分之一是寬，n 分之 k 從很靠近零跑到一，所以區間是零到一。",
+          "board": [
+            { "do": "write", "line": "$\\sum_{k=1}^{n}{{dw:\\frac{1}{n}}}f\\left({{p:\\frac{k}{n}}}\\right)$" },
+            { "do": "underline", "term": "dw", "color": "blue", "label": "寬", "on": "是寬" },
+            { "do": "underline", "term": "p", "on": "從很靠近零" },
+            { "do": "transform", "line": "$\\sum_{k=1}^{n}{{dw:\\frac{1}{n}}}f\\left({{p:\\frac{k}{n}}}\\right)\\to {{in:\\int_0^1}} f(x)\\,dx$", "on": "所以區間" }
+          ] }
       ],
       "check": 2
     },
@@ -251,9 +270,18 @@
       "title": "先湊出 $\\frac{1}{n}$", "key": "提出 $\\frac{1}{n}$，寫成 $\\frac{k}{n}$ 的函數",
       "beats": [
         { "show": ["$\\lim\\sum_{k=1}^{n}\\frac{1}{n+k}$"], "note": "和式裡看不到 $\\frac{1}{n}$。",
-          "say": "這一題找不到 n 分之一當寬，那就自己湊出來。" },
+          "say": "這一題找不到 n 分之一當寬，那就自己湊出來。",
+          "board": [
+            { "do": "write", "line": "$\\lim\\sum_{k=1}^{n}{{f:\\frac{1}{n+k}}}$" },
+            { "do": "underline", "term": "f", "label": "沒有寬", "on": "當寬" }
+          ] },
         { "show": ["$\\frac{1}{n+k}=\\frac{1}{n}\\cdot\\frac{1}{1+k/n}$"], "note": "把 $n$ 從分母提出來。",
-          "say": "把分母的 n 提出來，前面就有了 n 分之一，後面剩下一加 n 分之 k 分之一。" }
+          "say": "把分母的 n 提出來，前面就有了 n 分之一，後面剩下一加 n 分之 k 分之一。",
+          "board": [
+            { "do": "transform", "line": "${{f:\\frac{1}{n+k}}}={{a:\\frac{1}{n}}}\\cdot{{b:\\frac{1}{1+k/n}}}$", "tint": {"a":"blue"} },
+            { "do": "circle", "term": "a", "color": "blue", "label": "寬", "on": "前面就有了" },
+            { "do": "focus", "term": "b", "on": "後面剩下" }
+          ] }
       ],
       "predict": {
         "ask": "所以極限是？",

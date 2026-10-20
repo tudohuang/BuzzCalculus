@@ -142,11 +142,26 @@
       "title": "三層就乘三個",
       "beats": [
         { "show": ["$y = e^{\\sin(x^2)}$"], "note": "最外 $e^u$，中間 $u = \\sin v$，最裡 $v = x^2$。",
-          "say": "e 的 sine x 平方次方有三層：最外面是 e 的 u 次方，中間是 sine，最裡面是 x 平方。" },
+          "say": "e 的 sine x 平方次方有三層：最外面是 e 的 u 次方，中間是 sine，最裡面是 x 平方。",
+          "board": [
+            { "do": "write", "line": "$y = {{o:e}}^{{{u:\\sin({{v:x^2}})}}}$" },
+            { "do": "focus", "term": "o", "label": "最外", "on": "最外面" },
+            { "do": "focus", "term": "u", "on": "中間" },
+            { "do": "focus", "term": "v", "label": "最裡", "on": "最裡面" }
+          ] },
         { "show": ["$\\frac{dy}{dx}=\\frac{dy}{du}\\cdot\\frac{du}{dv}\\cdot\\frac{dv}{dx}$"],
-          "say": "多層就是連鎖律重複用：每一層的變化倍數，一路乘下去。" },
+          "say": "多層就是連鎖律重複用：每一層的變化倍數，一路乘下去。",
+          "board": [
+            { "do": "write", "line": "$\\frac{dy}{dx}=\\frac{dy}{du}\\cdot\\frac{du}{dv}\\cdot\\frac{dv}{dx}$" }
+          ] },
         { "show": ["$v$ 動 $2x$ 倍，$u$ 動 $\\cos v$ 倍","$y$ 動 $e^u$ 倍"],
-          "say": "x 動一點點，v 動二 x 倍；v 動一點點，u 動 cosine v 倍；u 動一點點，y 動 e 的 u 次方倍。" }
+          "say": "x 動一點點，v 動二 x 倍；v 動一點點，u 動 cosine v 倍；u 動一點點，y 動 e 的 u 次方倍。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "$v$ 動 $2x$ 倍", "on": "x 動一點點" },
+            { "do": "write", "line": "$u$ 動 $\\cos v$ 倍", "on": "v 動一點點" },
+            { "do": "write", "line": "$y$ 動 $e^u$ 倍", "on": "u 動一點點" }
+          ] }
       ],
       "predict": {
         "ask": "$\\frac{d}{dx} e^{\\sin(x^2)}$ 是？",
@@ -161,11 +176,27 @@
       "title": "剝洋蔥",
       "beats": [
         { "show": ["由外往內，一層一個因子"], "note": "每一層的導數，裡面整包原封不動。",
-          "say": "從最外層開始剝：寫下這一層的導數，它裡面的整包不要動，然後往裡一層，重複。" },
+          "say": "從最外層開始剝：寫下這一層的導數，它裡面的整包不要動，然後往裡一層，重複。",
+          "board": [
+            { "do": "write", "line": "$\\frac{d}{dx}f(g(h(x)))$" },
+            { "do": "transform", "line": "${{o:f'}}({{i:g(h(x))}})\\cdot\\cdots$", "on": "寫下" },
+            { "do": "underline", "term": "i", "label": "原封不動", "on": "整包" }
+          ] },
         { "show": ["剝到剩下單純的 $x$ 為止"], "note": "有幾層就有幾個因子相乘。",
-          "say": "一直剝到只剩單純的 x。有幾層，就有幾個因子相乘。" },
+          "say": "一直剝到只剩單純的 x。有幾層，就有幾個因子相乘。",
+          "board": [
+            { "do": "write", "line": "$f'(g(h(x)))\\cdot g'(h(x))\\cdot {{l:h'(x)}}$" },
+            { "do": "underline", "term": "l", "label": "最裡層", "on": "單純的" },
+            { "do": "write", "line": "有幾層 ＝ 有幾個因子", "on": "有幾層" }
+          ] },
         { "show": ["最常漏：最裡面那一層"], "note": "尤其是 $2x$、3 這種小東西。",
-          "say": "最常漏掉的是最裡面那一層，像二 x、三這種小小的係數。" }
+          "say": "最常漏掉的是最裡面那一層，像二 x、三這種小小的係數。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "最常漏：最裡面的 ${{l:h'(x)}}$", "on": "最常漏掉" },
+            { "do": "focus", "term": "l", "label": "別漏", "on": "最裡面" },
+            { "do": "write", "line": "像 $2x$、3 這種小係數", "on": "小小的" }
+          ] }
       ],
       "check": 0
     },
@@ -173,13 +204,33 @@
       "title": "數層數", "key": "次方藏在最外層，最裡層的 $2x$ 別漏",
       "beats": [
         { "show": ["$\\sin^3(2x) = (\\sin(2x))^3$"], "note": "先乘 2、再取 $\\sin$、最後三次方。",
-          "say": "sine 三次方二 x，照計算順序：先乘二，再取 sine，最後三次方，所以是三層。" },
+          "say": "sine 三次方二 x，照計算順序：先乘二，再取 sine，最後三次方，所以是三層。",
+          "board": [
+            { "do": "write", "line": "$\\sin^3(2x)=({{s:\\sin}}({{t:2x}}))^{{{c:3}}}$" },
+            { "do": "focus", "term": "t", "label": "第一層", "on": "先乘二" },
+            { "do": "focus", "term": "s", "label": "第二層", "on": "再取" },
+            { "do": "focus", "term": "c", "label": "第三層", "on": "最後三次方" }
+          ] },
         { "show": ["最外 $u^3$：$3 \\sin^2(2x)$"],
-          "say": "最外層三次方，微分是三乘 sine 二 x 的平方，裡面不動。" },
+          "say": "最外層三次方，微分是三乘 sine 二 x 的平方，裡面不動。",
+          "board": [
+            { "do": "transform", "line": "$3\\,{{p:\\sin^2(2x)}}$" },
+            { "do": "underline", "term": "p", "label": "裡面不動", "on": "sine" }
+          ] },
         { "show": ["中間 $\\sin v$：$\\cos(2x)$","最裡 $2x$：2"],
-          "say": "中間的 sine 微分成 cosine 二 x；最裡面的二 x 微分是二。" },
+          "say": "中間的 sine 微分成 cosine 二 x；最裡面的二 x 微分是二。",
+          "board": [
+            { "do": "write", "line": "中間 $\\sin v$：$\\cos(2x)$" },
+            { "do": "write", "line": "最裡 $2x$：$2$", "on": "最裡面的" }
+          ] },
         { "show": ["$6 \\sin^2(2x) \\cos(2x)$"], "note": "$3 \\cdot 2 = 6$",
-          "say": "三個相乘，三乘二是六。數成兩層的人，就會漏掉這個二。" }
+          "say": "三個相乘，三乘二是六。數成兩層的人，就會漏掉這個二。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "$3 \\cdot \\sin^2(2x) \\cdot \\cos(2x) \\cdot 2$", "on": "三個相乘" },
+            { "do": "transform", "line": "${{r:6\\sin^2(2x)\\cos(2x)}}$", "on": "三乘二" },
+            { "do": "box", "term": "r", "color": "green", "on": "數成" }
+          ] }
       ],
       "check": 1
     },
@@ -187,13 +238,30 @@
       "title": "根號裡還有根號", "key": "內層根號也要再乘自己的導數",
       "beats": [
         { "show": ["$\\sqrt{1 + \\sqrt{x}}$"], "note": "先開 $\\sqrt{x}$、再加 1、最後開根號。",
-          "say": "根號一加根號 x：先算根號 x，再加一，最後開根號。最外層是根號。" },
+          "say": "根號一加根號 x：先算根號 x，再加一，最後開根號。最外層是根號。",
+          "board": [
+            { "do": "write", "line": "$\\sqrt{1 + {{i:\\sqrt{x}}}}$" },
+            { "do": "focus", "term": "i", "label": "最裡層", "on": "先算" }
+          ] },
         { "show": ["外層：$\\frac{1}{2\\sqrt{1 + \\sqrt{x}}}$"],
-          "say": "外層根號 u 的導數，是二倍根號 u 分之一，u 原封不動是一加根號 x。" },
+          "say": "外層根號 u 的導數，是二倍根號 u 分之一，u 原封不動是一加根號 x。",
+          "board": [
+            { "do": "transform", "line": "$\\frac{1}{2\\sqrt{{{u:1 + \\sqrt{x}}}}}$" },
+            { "do": "underline", "term": "u", "label": "不動", "on": "原封不動" }
+          ] },
         { "show": ["裡層：$(\\sqrt{x})' = \\frac{1}{2\\sqrt{x}}$"], "note": "加的 1 微分是 0。",
-          "say": "裡層一加根號 x：一微分是零，根號 x 微分是二倍根號 x 分之一。" },
+          "say": "裡層一加根號 x：一微分是零，根號 x 微分是二倍根號 x 分之一。",
+          "board": [
+            { "do": "write", "line": "$(1)' = 0$", "on": "一微分" },
+            { "do": "write", "line": "$(\\sqrt{x})' = \\frac{1}{2\\sqrt{x}}$", "on": "根號 x 微分" }
+          ] },
         { "show": ["$\\frac{1}{4\\sqrt{x} \\sqrt{1 + \\sqrt{x}}}$"],
-          "say": "兩個相乘，分母的二乘二變成四。" }
+          "say": "兩個相乘，分母的二乘二變成四。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "$\\frac{1}{2\\sqrt{1+\\sqrt{x}}} \\cdot \\frac{1}{2\\sqrt{x}}$", "on": "兩個相乘" },
+            { "do": "transform", "line": "$\\frac{1}{4\\sqrt{x}\\sqrt{1+\\sqrt{x}}}$", "color": "green", "on": "二乘二" }
+          ] }
       ],
       "check": 3
     },
@@ -201,13 +269,29 @@
       "title": "外面是乘法",
       "beats": [
         { "show": ["$x^2 \\sin(3x)$"], "note": "最後一步是「乘」，先用乘法法則。",
-          "say": "x 平方乘 sine 三 x，最後一步是相乘，所以第一步用乘法法則，不是連鎖律。" },
+          "say": "x 平方乘 sine 三 x，最後一步是相乘，所以第一步用乘法法則，不是連鎖律。",
+          "board": [
+            { "do": "write", "line": "${{p:x^2}}\\,{{q:\\sin(3x)}}$" },
+            { "do": "write", "line": "最後一步是乘，用乘法法則", "on": "最後一步" }
+          ] },
         { "show": ["$(x^2)' \\sin(3x) + x^2 (\\sin(3x))'$"],
-          "say": "前面的導數乘後面，加上前面乘後面的導數。" },
+          "say": "前面的導數乘後面，加上前面乘後面的導數。",
+          "board": [
+            { "do": "write", "line": "$(x^2)'\\,\\sin(3x) + x^2\\,(\\sin(3x))'$" }
+          ] },
         { "show": ["$(\\sin(3x))' = \\cos(3x) \\cdot 3$"], "note": "第二項裡面才用連鎖律。",
-          "say": "sine 三 x 是合成，這裡才用連鎖律：cosine 三 x 乘三。" },
+          "say": "sine 三 x 是合成，這裡才用連鎖律：cosine 三 x 乘三。",
+          "board": [
+            { "do": "write", "line": "$(\\sin(3x))' = {{o:\\cos(3x)}}\\cdot 3$" },
+            { "do": "underline", "term": "o", "label": "連鎖律", "on": "連鎖律" }
+          ] },
         { "show": ["$2x \\sin(3x) + 3x^2 \\cos(3x)$"],
-          "say": "合起來就是答案。原則：最後一步做什麼運算，第一步就用那條法則。" }
+          "say": "合起來就是答案。原則：最後一步做什麼運算，第一步就用那條法則。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "${{r:2x\\sin(3x)+3x^2\\cos(3x)}}$", "on": "合起來" },
+            { "do": "box", "term": "r", "color": "green", "on": "答案" }
+          ] }
       ],
       "check": 2
     }

@@ -194,11 +194,25 @@
       "title": "再微分一次",
       "beats": [
         { "show": ["$f \\to f' \\to f'' \\to f''' \\to f^{(n)}$"], "note": "括號是為了跟 $n$ 次方分開。",
-          "say": "導函數本身也是函數，可以再微分：二階 f double prime、三階，第 n 階的 n 要加括號，免得看成次方。" },
+          "say": "導函數本身也是函數，可以再微分：二階 f double prime、三階，第 n 階的 n 要加括號，免得看成次方。",
+          "board": [
+            { "do": "write", "line": "$f \\to f' \\to f'' \\to f''' \\to {{fn:f^{(n)} }}$" },
+            { "do": "focus", "term": "fn", "label": "n 要括號", "on": "加括號" }
+          ] },
         { "show": ["$\\frac{d^2y}{dx^2}$、$\\frac{d^ny}{dx^n}$"], "note": "萊布尼茲記號。",
-          "say": "萊布尼茲的寫法：d 平方 y 除以 d x 平方，就是微分兩次。" },
+          "say": "萊布尼茲的寫法：d 平方 y 除以 d x 平方，就是微分兩次。",
+          "board": [
+            { "do": "write", "line": "$\\frac{d^2y}{dx^2}$：微分兩次" },
+            { "do": "write", "line": "$\\frac{d^ny}{dx^n}$：微分 $n$ 次", "on": "除以" }
+          ] },
         { "show": ["$f(x) = x^4$","$f' = 4x^3$，$f'' = 12x^2$"],
-          "say": "例如 x 四次方：微一次是四 x 三次方，再微一次是十二 x 平方。" }
+          "say": "例如 x 四次方：微一次是四 x 三次方，再微一次是十二 x 平方。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "$f(x) = x^4$", "on": "x 四次方" },
+            { "do": "write", "line": "$f' = {{a:4x^3}}$", "on": "四 x 三次方" },
+            { "do": "write", "line": "$f'' = {{b:12x^2}}$", "on": "再微一次" }
+          ] }
       ],
       "check": 0
     },
@@ -238,11 +252,27 @@
       "title": "每次都是完整的微分", "key": "每一階都是乘積，每次都要乘法法則",
       "beats": [
         { "show": ["$(x e^x)' = (x + 1)e^x$"], "note": "乘法法則：$1 \\cdot e^x + x \\cdot e^x$。",
-          "say": "x 乘 e 的 x 次方，第一次用乘法法則，得到 x 加一乘 e 的 x 次方。" },
+          "say": "x 乘 e 的 x 次方，第一次用乘法法則，得到 x 加一乘 e 的 x 次方。",
+          "board": [
+            { "do": "write", "line": "$(xe^x)'={{p:1\\cdot e^x}}+{{q:x\\cdot e^x}}$" },
+            { "do": "underline", "term": "p", "label": "乘法法則", "on": "乘法法則" },
+            { "do": "transform", "line": "$(xe^x)'={{r:(x+1)e^x}}$", "on": "得到" }
+          ] },
         { "show": ["$(x + 1)e^x$ 還是乘積"], "note": "第二次也要用乘法法則。",
-          "say": "注意，結果還是兩個東西相乘。第二次微分，乘法法則、連鎖律照樣要用。" },
+          "say": "注意，結果還是兩個東西相乘。第二次微分，乘法法則、連鎖律照樣要用。",
+          "board": [
+            { "do": "write", "line": "$({{a:x+1}})\\cdot{{b:e^x}}$：兩個相乘" },
+            { "do": "underline", "term": "a", "color": "blue", "on": "兩個東西" },
+            { "do": "write", "line": "第二次：又要乘法法則", "on": "第二次微分" }
+          ] },
         { "show": ["$f''$ 不是 $(f')^2$"], "note": "微分兩次 ≠ 微分一次再平方。",
-          "say": "也別把 f double prime 看成 f prime 的平方：一個是微分兩次，一個是微一次再平方。" }
+          "say": "也別把 f double prime 看成 f prime 的平方：一個是微分兩次，一個是微一次再平方。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "${{c:f''}}\\ne{{d:(f')^2}}$", "on": "f double prime" },
+            { "do": "underline", "term": "c", "color": "blue", "label": "微分兩次", "on": "微分兩次" },
+            { "do": "underline", "term": "d", "color": "red", "label": "先微再平方", "on": "微一次" }
+          ] }
       ],
       "predict": {
         "ask": "$\\frac{d^2}{dx^2} (x e^x)$ 是？",
@@ -257,11 +287,26 @@
       "title": "會循環的家族",
       "beats": [
         { "show": ["$\\sin x \\to \\cos x \\to -\\sin x \\to -\\cos x \\to \\sin x$"],
-          "say": "sine 微分是 cosine，再來是負 sine、負 cosine，第四次又回到 sine。" },
+          "say": "sine 微分是 cosine，再來是負 sine、負 cosine，第四次又回到 sine。",
+          "board": [
+            { "do": "write", "line": "$\\sin x\\to\\cos x\\to-\\sin x$" },
+            { "do": "write", "line": "$\\to-\\cos x\\to{{s:\\sin x}}$", "on": "負 cosine" },
+            { "do": "focus", "term": "s", "label": "第 4 次", "on": "第四次" }
+          ] },
         { "show": ["每 4 階回到原樣"], "note": "第 $n$ 階看 $n$ 除以 4 的餘數。",
-          "say": "週期是四，不是二。要第 n 階，就看 n 除以四剩多少。" },
+          "say": "週期是四，不是二。要第 n 階，就看 n 除以四剩多少。",
+          "board": [
+            { "do": "write", "line": "每 $4$ 階回到原樣" },
+            { "do": "write", "line": "看 $n$ 除以 $4$ 的餘數", "on": "要第" }
+          ] },
         { "show": ["$x^n$ 微 $n$ 次得 $n!$"], "note": "再多微一次就是 0。",
-          "say": "另一個規律：x 的 n 次方微 n 次，剩下常數 n 階乘，再微一次就是零。" }
+          "say": "另一個規律：x 的 n 次方微 n 次，剩下常數 n 階乘，再微一次就是零。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "$(x^n)^{(n)}={{f:n!}}$", "on": "x 的 n 次方" },
+            { "do": "box", "term": "f", "color": "green", "on": "n 階乘" },
+            { "do": "write", "line": "再微一次：${{z:0}}$", "on": "再微一次" }
+          ] }
       ],
       "check": 2
     },
