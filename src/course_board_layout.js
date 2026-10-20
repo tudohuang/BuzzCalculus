@@ -243,8 +243,17 @@
         if (one ? y > top() + 0.5 : usedRect[page] || col === F.cols - 1) turn();
         else { reserved[page] = true; if (one) y = top(); }
       }
-      // 筆記本：每一節從新的一頁開始（一頁一節，寫完不擠）
-      if (F.headPage && it.a.head && i > 0 && (col > 0 || y > top() + 0.5)) turn();
+      // 筆記本：一節不拆開。整節放得進這一欄剩下的空間就接著寫（前面多空一段當分隔）；
+      // 放不進就換下一欄（整節放得進一欄的話），再不行就翻頁 —— 短的節共用一頁，長的節不會擠在別人底下
+      if (F.headPage && it.a.head && i > 0 && (col > 0 || y > top() + 0.5)) {
+        let secH = 0;
+        for (let j = i; j < items.length && (j === i || !items[j].a.head); j += 1) secH += (m.items[j].gapA || 0) + m.items[j].h + (m.items[j].gapB || 0) + m.gap;
+        const sep = m.gap * 2;
+        const full = F.view - 2 * m.pad[1];
+        if (y + sep + secH <= limit()) y += sep;
+        else if (!one && col + 1 < F.cols && !(reserved[page] && col + 1 === F.cols - 1) && secH <= full) { col += 1; y = top(); }
+        else turn();
+      }
       const h = (mi.gapA || 0) + mi.h + (mi.gapB || 0);
       const atTop = y === top();
       const headGap = (it.a.head || it.a.keep) && !atTop ? Math.round(m.gap * 0.9) : 0;
