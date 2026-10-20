@@ -408,7 +408,11 @@ function buildProfiles(problems, win, opts = {}) {
     if (!gateIdx.size && uses.length) gateIdx.add(firstUse);
     const gates = [...gateIdx].sort((a, b) => a - b).map((i) => course.order[i]);
     const ovGate = overrides[p.id] && overrides[p.id].prerequisiteGate;
-    const rawGates = ovGate ? ovGate.slice() : [...rawIdx].sort((a, b) => a - b).map((i) => course.order[i]);
+    // 課程缺口補題（source「Buzz course gap fill」）是照那一課的 gaps 規格寫的：它的先修課就是它第一次出現的那一課。
+    // 粗 tag 對技巧在這批題上誤差很大（預備課的多項式求值被歸成「代入法求極限」、三角函數值被歸成「基本微分」），
+    // 照技巧推會把 99 題擋在自己的課之外。
+    const authoredFor = p.source === "Buzz course gap fill" && uses.length ? [course.order[firstUse]] : null;
+    const rawGates = ovGate ? ovGate.slice() : authoredFor || [...rawIdx].sort((a, b) => a - b).map((i) => course.order[i]);
 
     const roles = new Set();
     uses.forEach((u) => roles.add(u.kind === "core" ? "course_core" : "course_extra"));

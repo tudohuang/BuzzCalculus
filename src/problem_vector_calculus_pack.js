@@ -470,40 +470,40 @@
       tags: ["triple-bounds-z-first", "iterated-integral", "volume"],
       hints: ["z 從底下的平面走到上面的斜平面；上下限是什麼？", "投影 D 是 y = x² 與 y + z = 4 在 z = 0 時交出的那一塊：x² ≤ y ≤ 4。"],
       solution: "z 從 0 到 4 − y，D：−2 ≤ x ≤ 2、x² ≤ y ≤ 4。V = ∫∫_D (4 − y) dA = ∫₋₂² (4 − x²)²/2 dx = 256/15。",
-      solutionSteps: ["最內層：0 ≤ z ≤ 4 − y。", "D：上平面碰到 z = 0 時 y = 4，所以 x² ≤ y ≤ 4、−2 ≤ x ≤ 2。", "∫_{x²}^{4} (4 − y) dy = (4 − x²)²/2。", "∫₋₂² (16 − 8x² + x⁴)/2 dx = ½(64 − 128/3 + 64/5) = 256/15。"],
-      verify: { m: "double", u: "x", v: "y", a: -2, b: 2, c: "x^2", d: 4, f: "\\int_{0}^{4-y} 1\\,dz" } },
+      
+      verify: { m: "double", u: "x", v: "y", a: -2, b: 2, c: "x^2", d: 4, f: "4-y" } },
     { id: "cg-9a3-002", topic: "integrals", rank: 4, answerKind: "numeric",
       prompt: "\\text{立體 }E\\text{ 夾在曲面 }z=y^2\\text{ 與 }z=8-y^2\\text{ 之間，並介於平面 }x=0\\text{ 與 }x=3\\text{ 之間。求 }\\iiint_E x\\,dV",
       answer: "96", timeLimit: 180,
       tags: ["triple-bounds-z-first", "iterated-integral"],
       hints: ["兩張曲面哪一張在上？它們在哪裡相交？", "相交處決定 y 的範圍；x 的範圍題目已經給了。"],
       solution: "y² = 8 − y² ⟹ y = ±2，D 是 0 ≤ x ≤ 3、−2 ≤ y ≤ 2。∭ x dV = ∫₀³ x dx · ∫₋₂² (8 − 2y²) dy = (9/2)(64/3) = 96。",
-      solutionSteps: ["上曲面 z = 8 − y²、下曲面 z = y²，交在 y = ±2。", "D：0 ≤ x ≤ 3、−2 ≤ y ≤ 2；內層 ∫_{y²}^{8−y²} x dz = x(8 − 2y²)。", "∫₀³ x dx = 9/2，∫₋₂² (8 − 2y²) dy = 32 − 32/3 = 64/3。", "相乘：96。"],
-      verify: { m: "double", u: "y", v: "x", a: -2, b: 2, c: 0, d: 3, f: "\\int_{y^2}^{8-y^2} x\\,dz" } },
+      
+      verify: { m: "double", u: "y", v: "x", a: -2, b: 2, c: 0, d: 3, f: "x(8-2y^2)" } },
     { id: "cg-9a3-003", topic: "integrals", rank: 4, answerKind: "numeric",
       prompt: "\\text{立體 }E\\text{ 在第一卦限，由拋物柱面 }z=4-y^2\\text{、平面 }x+y=2\\text{ 與三個座標平面圍成。求 }\\iiint_E y\\,dV",
       answer: "56/15", timeLimit: 200,
       tags: ["triple-bounds-z-first", "iterated-integral"],
       hints: ["最內層對 z：從 xy 平面到拋物柱面。", "D 是 xy 平面上被 x = 0、y = 0、x + y = 2 圍出的三角形。"],
       solution: "0 ≤ z ≤ 4 − y，D：0 ≤ y ≤ 2、0 ≤ x ≤ 2 − y。∭ y dV = ∫₀² y(2 − y)(4 − y²) dy = 16 − 32/3 − 8 + 32/5 = 56/15。",
-      solutionSteps: ["內層：∫₀^{4−y²} y dz = y(4 − y²)。", "D：0 ≤ y ≤ 2、0 ≤ x ≤ 2 − y；對 x 積得 y(2 − y)(4 − y²)。", "展開 8y − 4y² − 2y³ + y⁴，積 0 到 2：16 − 32/3 − 8 + 32/5 = 56/15。"],
-      verify: { m: "double", u: "y", v: "x", a: 0, b: 2, c: 0, d: "2-y", f: "\\int_{0}^{4-y^2} y\\,dz" } },
+      
+      verify: { m: "double", u: "y", v: "x", a: 0, b: 2, c: 0, d: "2-y", f: "y(4-y^2)" } },
     { id: "cg-9a3-004", topic: "integrals", rank: 3, answerKind: "numeric",
       prompt: "\\text{四面體 }x,y,z\\ge0,\\ x+y+2z\\le2\\text{（公尺）的密度是 }\\rho=z\\text{（公斤／立方公尺）。求它的質量（公斤）}",
       answer: "1/6", timeLimit: 150,
       tags: ["triple-volume-mass", "iterated-integral", "story-problem"],
       hints: ["質量 = ∭ 密度 dV。", "z 的上限從 x + y + 2z = 2 解出來；D 是 z = 0 時的三角形。"],
       solution: "0 ≤ z ≤ (2 − x − y)/2，D：x + y ≤ 2。內層 ∫ z dz = (2 − x − y)²/8，再積 D：∫₀² (2 − x)³/24 dx = 1/6 公斤。",
-      solutionSteps: ["m = ∭_E z dV，最內層 0 ≤ z ≤ (2 − x − y)/2。", "∫₀^{(2−x−y)/2} z dz = (2 − x − y)²/8。", "對 y 從 0 到 2 − x：(2 − x)³/24；對 x 從 0 到 2：16/96 = 1/6（公斤）。"],
-      verify: { m: "double", u: "x", v: "y", a: 0, b: 2, c: 0, d: "2-x", f: "\\int_{0}^{(2-x-y)/2} z\\,dz" } },
+      
+      verify: { m: "double", u: "x", v: "y", a: 0, b: 2, c: 0, d: "2-x", f: "\\frac{(2-x-y)^2}{8}" } },
     { id: "cg-9a3-005", topic: "integrals", rank: 3, answerKind: "numeric",
       prompt: "\\text{立體 }E\\text{：}0\\le y\\le x\\le1,\\ 0\\le z\\le x+y\\text{，密度 }\\rho(x,y,z)=z\\text{。求 }E\\text{ 的質量}",
       answer: "7/24", timeLimit: 150,
       tags: ["triple-volume-mass", "iterated-integral"],
       hints: ["質量是密度的三重積分，最內層對 z。", "對 z 積完是 (x+y)²/2；接著在三角形 0 ≤ y ≤ x ≤ 1 上積。"],
       solution: "∫₀^{x+y} z dz = (x+y)²/2。∫₀^x (x+y)²/2 dy = (8x³ − x³)/6 = 7x³/6，再 ∫₀¹ 7x³/6 dx = 7/24。",
-      solutionSteps: ["內層：∫₀^{x+y} z dz = (x + y)²/2。", "對 y 從 0 到 x：[(x+y)³/6]₀ˣ = 7x³/6。", "∫₀¹ 7x³/6 dx = 7/24。"],
-      verify: { m: "double", u: "x", v: "y", a: 0, b: 1, c: 0, d: "x", f: "\\int_{0}^{x+y} z\\,dz" } },
+      
+      verify: { m: "double", u: "x", v: "y", a: 0, b: 1, c: 0, d: "x", f: "\\frac{(x+y)^2}{2}" } },
 
     /* ── 9A.3 柱座標 ── */
     { id: "cg-9a3-006", topic: "integrals", rank: 4, answerKind: "numeric",
@@ -512,24 +512,24 @@
       tags: ["cylindrical-bounds", "cylindrical-coordinates", "volume"],
       hints: ["換成柱座標，兩張曲面各是 z = r 的什麼函數？", "兩張曲面相交的 r 就是投影圓盤的半徑。"],
       solution: "錐面 z = r、拋物面 z = 6 − r²，r = 6 − r² ⟹ r = 2。V = ∫₀^{2π}∫₀² (6 − r² − r) r dr dθ = 2π(12 − 4 − 8/3) = 32π/3。",
-      solutionSteps: ["r ≤ z ≤ 6 − r²；相交 r² + r − 6 = 0 ⟹ r = 2。", "V = ∫₀^{2π}∫₀² (6r − r³ − r²) dr dθ。", "∫₀² (6r − r³ − r²) dr = 12 − 4 − 8/3 = 16/3；乘 2π：32π/3。"],
-      verify: { m: "double", u: "x", v: "y", a: -2, b: 2, c: "-\\sqrt{4-x^2}", d: "\\sqrt{4-x^2}", f: "\\int_{\\sqrt{x^2+y^2}}^{6-x^2-y^2} 1\\,dz" } },
+      
+      verify: { m: "double", u: "x", v: "y", a: -2, b: 2, c: "-\\sqrt{4-x^2}", d: "\\sqrt{4-x^2}", f: "6-x^2-y^2-\\sqrt{x^2+y^2}" } },
     { id: "cg-9a3-007", topic: "integrals", rank: 4, answerKind: "numeric",
       prompt: "E\\text{ 夾在拋物面 }z=x^2+y^2\\text{ 與 }z=8-x^2-y^2\\text{ 之間。求 }\\iiint_E\\sqrt{x^2+y^2}\\,dV",
       answer: "256*pi/15", timeLimit: 200,
       tags: ["cylindrical-bounds", "cylindrical-coordinates"],
       hints: ["柱座標下 √(x² + y²) = r，別忘了 dV 還要再乘一個 r。", "兩張拋物面交在哪個圓？那是 r 的上限。"],
       solution: "r² ≤ z ≤ 8 − r²，交在 r = 2。∭ = ∫₀^{2π}∫₀² r(8 − 2r²) r dr dθ = 2π(64/3 − 64/5) = 256π/15。",
-      solutionSteps: ["柱座標：r² ≤ z ≤ 8 − r²，r² = 8 − r² ⟹ r = 2。", "被積函數 r 再乘 dV 的 r：∫₀^{2π}∫₀² r²(8 − 2r²) dr dθ。", "∫₀² (8r² − 2r⁴) dr = 64/3 − 64/5 = 128/15；乘 2π：256π/15。"],
-      verify: { m: "double", u: "x", v: "y", a: -2, b: 2, c: "-\\sqrt{4-x^2}", d: "\\sqrt{4-x^2}", f: "\\int_{x^2+y^2}^{8-x^2-y^2} \\sqrt{x^2+y^2}\\,dz" } },
+      
+      verify: { m: "double", u: "x", v: "y", a: -2, b: 2, c: "-\\sqrt{4-x^2}", d: "\\sqrt{4-x^2}", f: "\\sqrt{x^2+y^2}(8-2x^2-2y^2)" } },
     { id: "cg-9a3-008", topic: "integrals", rank: 4, answerKind: "numeric",
       prompt: "\\text{圓柱 }x^2+y^2\\le4\\text{ 被平面 }z=0\\text{ 與斜平面 }z=y+3\\text{ 截出一塊立體。求它的體積}",
       answer: "12*pi", timeLimit: 180,
       tags: ["cylindrical-bounds", "cylindrical-coordinates", "volume"],
       hints: ["柱座標下，上平面的高度 y + 3 要寫成 r 與 θ 的函數。", "對 θ 積一整圈時，含 sin θ 的那一項會怎樣？"],
       solution: "0 ≤ z ≤ 3 + r sin θ（在圓柱內恆正）。V = ∫₀^{2π}∫₀² (3 + r sin θ) r dr dθ；sin θ 那項積一圈是 0，剩 3 · 4π = 12π。",
-      solutionSteps: ["上限 z = y + 3 = 3 + r sin θ；|y| ≤ 2，所以它在圓柱內都大於 0。", "V = ∫₀^{2π}∫₀² (3r + r² sin θ) dr dθ。", "∫₀^{2π} sin θ dθ = 0；剩 2π · 3 · (4/2) = 12π。"],
-      verify: { m: "double", u: "x", v: "y", a: -2, b: 2, c: "-\\sqrt{4-x^2}", d: "\\sqrt{4-x^2}", f: "\\int_{0}^{y+3} 1\\,dz" } },
+      
+      verify: { m: "double", u: "x", v: "y", a: -2, b: 2, c: "-\\sqrt{4-x^2}", d: "\\sqrt{4-x^2}", f: "y+3" } },
     { id: "cg-9a3-009", topic: "integrals", rank: 2, answerKind: "text",
       prompt: "\\text{圓柱面 }x^2+y^2=6x\\text{ 寫成柱座標是哪一個方程式？}",
       answer: "r = 6 cos θ", answers: ["r = 6 cos θ", "r=6cosθ"], canonical: "r = 6 cos θ",
@@ -537,7 +537,7 @@
       tags: ["cylindrical-surface-convert", "cylindrical-coordinates", "polar-coordinates"],
       hints: ["x² + y² = r²、x = r cos θ。", "代進去以後兩邊同除一個 r。"],
       solution: "r² = 6r cos θ，除以 r 得 r = 6 cos θ（r = 0 那一點也在這條曲線上，θ = π/2 時）。這是圓心 (3, 0)、半徑 3 的圓柱。",
-      solutionSteps: ["x² + y² = r²，6x = 6r cos θ。", "r² = 6r cos θ ⟹ r = 6 cos θ。"],
+      
       verify: { m: "choice", options: [
         ["r = 6 cos θ", "6\\cos(0.6)"], ["r = 6 sin θ", "6\\sin(0.6)"], ["r = 3 cos θ", "3\\cos(0.6)"], ["r² = 6 cos θ", "\\sqrt{6\\cos(0.6)}"]
       ].map(([say, R]) => ({ say, all: [{ v: { m: "value", f: `(${R}\\cos(0.6))^2+(${R}\\sin(0.6))^2-6(${R}\\cos(0.6))` }, eq: 0 }] })) } },
@@ -548,7 +548,7 @@
       tags: ["cylindrical-surface-convert", "cylindrical-coordinates"],
       hints: ["先把根號裡的 3 提出來。", "√(x² + y²) 在柱座標下是什麼（r ≥ 0）？"],
       solution: "3x² + 3y² = 3r²，所以 z = √(3r²) = √3 r（r ≥ 0）。這是一個開口比 z = r 窄的錐。",
-      solutionSteps: ["x² + y² = r²，根號內 = 3r²。", "z = √(3r²) = √3 · r（r ≥ 0）。"],
+      
       verify: { m: "choice", options: [
         ["z = √3 r", "\\sqrt{3}(1.3)"], ["z = 3r", "3(1.3)"], ["z = √3 r²", "\\sqrt{3}(1.3)^2"], ["z = 3r²", "3(1.3)^2"]
       ].map(([say, Z]) => ({ say, all: [{ v: { m: "value", f: `${Z}-\\sqrt{3(1.3\\cos(0.6))^2+3(1.3\\sin(0.6))^2}` }, eq: 0 }] })) } },
@@ -558,16 +558,16 @@
       tags: ["cylindrical-volume-element", "cylindrical-coordinates", "story-problem"],
       hints: ["密度在柱座標下就是 r。", "dV = r dz dr dθ，所以被積函數變成 r 乘 r。"],
       solution: "m = ∫₀^{2π}∫₀³∫₀² r · r dz dr dθ = 2π · 2 · 9 = 36π 公斤。",
-      solutionSteps: ["ρ = r，dV = r dz dr dθ。", "m = ∫₀^{2π} dθ · ∫₀² dz · ∫₀³ r² dr = 2π · 2 · 9。", "m = 36π（公斤）。"],
-      verify: { m: "double", u: "x", v: "y", a: -3, b: 3, c: "-\\sqrt{9-x^2}", d: "\\sqrt{9-x^2}", f: "\\int_{0}^{2} \\sqrt{x^2+y^2}\\,dz" } },
+      
+      verify: { m: "double", u: "x", v: "y", a: -3, b: 3, c: "-\\sqrt{9-x^2}", d: "\\sqrt{9-x^2}", f: "2\\sqrt{x^2+y^2}" } },
     { id: "cg-9a3-012", topic: "integrals", rank: 3, answerKind: "numeric",
       prompt: "\\text{實心錐體在錐面 }z=\\sqrt{x^2+y^2}\\text{ 之上、平面 }z=2\\text{ 之下，密度 }1\\text{。求它對 } z \\text{ 軸的轉動慣量 } I_z=\\iiint(x^2+y^2)\\,dV",
       answer: "16*pi/5", timeLimit: 150,
       tags: ["cylindrical-volume-element", "cylindrical-coordinates"],
       hints: ["柱座標下 x² + y² = r²，dV 再多一個 r。", "z 從錐面 z = r 走到平面 z = 2；r 的範圍到錐面碰到 z = 2 為止。"],
       solution: "r ≤ z ≤ 2、0 ≤ r ≤ 2。I_z = ∫₀^{2π}∫₀² r³(2 − r) dr dθ = 2π(8 − 32/5) = 16π/5。",
-      solutionSteps: ["柱座標：r ≤ z ≤ 2，0 ≤ r ≤ 2。", "被積函數 r² 乘 dV 的 r：∫₀² r³(2 − r) dr = 8 − 32/5 = 8/5。", "乘 2π：16π/5。"],
-      verify: { m: "double", u: "x", v: "y", a: -2, b: 2, c: "-\\sqrt{4-x^2}", d: "\\sqrt{4-x^2}", f: "\\int_{\\sqrt{x^2+y^2}}^{2} (x^2+y^2)\\,dz" } },
+      
+      verify: { m: "double", u: "x", v: "y", a: -2, b: 2, c: "-\\sqrt{4-x^2}", d: "\\sqrt{4-x^2}", f: "(x^2+y^2)(2-\\sqrt{x^2+y^2})" } },
 
     /* ── 9A.3 球座標：φ 的上下限不是 0、π ── */
     { id: "cg-9a3-013", topic: "integrals", rank: 4, answerKind: "numeric",
@@ -576,24 +576,25 @@
       tags: ["spherical-cone-bounds", "spherical-coordinates", "volume"],
       hints: ["z ≥ √3 · √(x² + y²) 是一個錐；在球座標下它是 φ 等於多少的錐？", "ρ 從 0 到 2，θ 一整圈，φ 從 0 到錐的角度。"],
       solution: "z = √3 r ⟺ cot φ = √3 ⟺ φ = π/6。V = ∫₀^{2π}∫₀^{π/6}∫₀² ρ² sin φ dρ dφ dθ = 2π(1 − √3/2)(8/3) = 8π(2 − √3)/3。",
-      solutionSteps: ["錐 z = √3 r：tan φ = r/z = 1/√3，φ = π/6；區域是 0 ≤ φ ≤ π/6。", "∫₀² ρ² dρ = 8/3，∫₀^{π/6} sin φ dφ = 1 − √3/2。", "V = 2π · (8/3) · (1 − √3/2) = 8π(2 − √3)/3 ≈ 2.245。"],
+      
       // 錐尖附近網格掃描的誤差約 1e-3，改用直角座標的累次積分（錐與球交在 x²+y²=1）
-      verify: { m: "double", u: "x", v: "y", a: -1, b: 1, c: "-\\sqrt{1-x^2}", d: "\\sqrt{1-x^2}", f: "\\int_{\\sqrt{3x^2+3y^2}}^{\\sqrt{4-x^2-y^2}} 1\\,dz" } },
+      verify: { m: "double", u: "x", v: "y", a: -1, b: 1, c: "-\\sqrt{1-x^2}", d: "\\sqrt{1-x^2}", f: "\\sqrt{4-x^2-y^2}-\\sqrt{3x^2+3y^2}" } },
     { id: "cg-9a3-014", topic: "integrals", rank: 4, answerKind: "numeric",
       prompt: "\\iiint_{x^2+y^2+z^2\\le 2z,\\ 3z^2\\ge x^2+y^2} 1\\,dV",
       answer: "5*pi/4", timeLimit: 240,
       tags: ["spherical-cone-bounds", "spherical-coordinates", "volume"],
       hints: ["x² + y² + z² ≤ 2z 是一顆不在原點的球；在球座標下 ρ 的上限是 φ 的函數。", "另一個條件是錐，先找出它的 φ 角。"],
-      solution: "球：ρ² ≤ 2ρ cos φ ⟹ ρ ≤ 2 cos φ；錐 r ≤ √3 z ⟹ φ ≤ π/3。V = 2π∫₀^{π/3} (8/3)cos³φ sin φ dφ = 2π · (2/3)(1 − 1/16) = 5π/4。",
-      solutionSteps: ["球 x² + y² + (z − 1)² ≤ 1：ρ ≤ 2 cos φ。錐 tan φ ≤ √3：0 ≤ φ ≤ π/3。", "∫₀^{2cos φ} ρ² dρ = (8/3)cos³φ。", "∫₀^{π/3} (8/3)cos³φ sin φ dφ = (2/3)(1 − cos⁴(π/3)) = (2/3)(15/16) = 5/8。", "乘 2π：5π/4。"] },
+      solution: "球：ρ² ≤ 2ρ cos φ ⟹ ρ ≤ 2 cos φ；錐 r ≤ √3 z ⟹ φ ≤ π/3。V = 2π∫₀^{π/3} (8/3)cos³φ sin φ dφ = 2π · (2/3)(1 − 1/16) = 5π/4。"},
     { id: "cg-9a3-015", topic: "integrals", rank: 4, answerKind: "numeric",
       prompt: "\\iiint_{x^2+y^2+z^2\\le 4,\\ z\\ge 0,\\ z^2\\ge x^2+y^2} z\\,dV",
       answer: "2*pi", timeLimit: 200,
       tags: ["spherical-cone-bounds", "spherical-coordinates"],
       hints: ["z ≥ 0 且 z² ≥ x² + y²：這是錐 z = √(x² + y²) 的上方，φ 的範圍是多少？", "z = ρ cos φ，再乘上 ρ² sin φ。"],
       solution: "0 ≤ φ ≤ π/4、0 ≤ ρ ≤ 2。∭ = ∫₀^{2π}∫₀^{π/4}∫₀² ρ³ cos φ sin φ dρ dφ dθ = 2π · 4 · (1/4) = 2π。",
-      solutionSteps: ["錐 z = r ⟺ φ = π/4；區域 0 ≤ φ ≤ π/4、0 ≤ ρ ≤ 2。", "被積函數 z dV = ρ³ cos φ sin φ dρ dφ dθ。", "∫₀² ρ³ dρ = 4，∫₀^{π/4} sin φ cos φ dφ = 1/4，乘 2π：2π。"],
-      verify: { m: "double", u: "x", v: "y", a: "-\\sqrt{2}", b: "\\sqrt{2}", c: "-\\sqrt{2-x^2}", d: "\\sqrt{2-x^2}", f: "\\int_{\\sqrt{x^2+y^2}}^{\\sqrt{4-x^2-y^2}} z\\,dz" } },
+      
+      // 驗算走柱殼（半徑 x 的圓環，z 從錐到球：∫ z dz = (4−x²−x²)/2），跟解答的球座標不同路；
+      // 直角座標的 double 在 x = ±√2 時 √(2−x²) 會因捨入變 NaN，積出 −9e38（安靜算錯），不用那條
+      verify: { m: "integral", f: "\\pi x(4-2x^2)", a: 0, b: "\\sqrt{2}" } },
 
     /* ── 9B.1 向量場：在一點求箭頭 ── */
     { id: "cg-9b1-001", topic: "integrals", rank: 1, answerKind: "numeric",
@@ -602,7 +603,7 @@
       tags: ["vector-field-evaluate", "vector"],
       hints: ["先把 x = 2、y = 1 代進兩個分量。", "長度是分量平方和開根號。"],
       solution: "F(2,1) = ⟨4 − 1, 4⟩ = ⟨3, 4⟩，長度 √(9 + 16) = 5。",
-      solutionSteps: ["F(2,1) = ⟨2² − 1, 2·2·1⟩ = ⟨3, 4⟩。", "|F(2,1)| = √(3² + 4²) = 5。"],
+      
       verify: val("\\sqrt{(x^2-y)^2+(2xy)^2}", { x: 2, y: 1 }) },
     { id: "cg-9b1-002", topic: "integrals", rank: 1, answerKind: "numeric",
       prompt: "\\mathbf F(x,y,z)=\\langle yz,\\ xz,\\ xy\\rangle\\text{。求 }|\\mathbf F(1,2,2)|",
@@ -610,7 +611,7 @@
       tags: ["vector-field-evaluate", "vector"],
       hints: ["三個分量各代一次。", "長度 = √(P² + Q² + R²)。"],
       solution: "F(1,2,2) = ⟨4, 2, 2⟩，長度 √(16 + 4 + 4) = √24 = 2√6。",
-      solutionSteps: ["F(1,2,2) = ⟨2·2, 1·2, 1·2⟩ = ⟨4, 2, 2⟩。", "|F| = √24 = 2√6。"],
+      
       verify: val("\\sqrt{(yz)^2+(xz)^2+(xy)^2}", { x: 1, y: 2, z: 2 }) },
     { id: "cg-9b1-003", topic: "integrals", rank: 1, answerKind: "numeric",
       prompt: "\\mathbf F(x,y)=\\left\\langle \\frac{-y}{x^2+y^2},\\ \\frac{x}{x^2+y^2}\\right\\rangle\\text{。求 }|\\mathbf F(3,4)|",
@@ -618,7 +619,7 @@
       tags: ["vector-field-evaluate", "vector"],
       hints: ["分母 x² + y² 在 (3,4) 是多少？", "算出兩個分量再求長度。"],
       solution: "x² + y² = 25，F(3,4) = ⟨−4/25, 3/25⟩，長度 5/25 = 1/5（這個場的長度是 1/到原點的距離）。",
-      solutionSteps: ["x² + y² = 9 + 16 = 25。", "F(3,4) = ⟨−4/25, 3/25⟩。", "|F| = √(16 + 9)/25 = 1/5。"],
+      
       verify: val("\\sqrt{\\left(\\frac{-y}{x^2+y^2}\\right)^2+\\left(\\frac{x}{x^2+y^2}\\right)^2}", { x: 3, y: 4 }) },
 
     /* ── 9B.1 從場圖的描述認公式 ── */
@@ -629,7 +630,7 @@
       tags: ["vector-field-sketch", "vector"],
       hints: ["跟位置向量 ⟨x, y⟩ 垂直：內積是 0。逆時針：在 (1, 0) 的箭頭應該朝上。", "最後看長度：除以 x² + y² 會讓遠處變長還是變短？"],
       solution: "⟨−y, x⟩·⟨x, y⟩ = 0，在 (1,0) 是 ⟨0, 1⟩ 朝上（逆時針），長度 = 到原點的距離，越遠越長。⟨y, −x⟩ 是順時針；⟨x, y⟩ 往外放射；除以 x² + y² 後長度是 1/距離，越遠越短。",
-      solutionSteps: ["垂直：⟨−y, x⟩·⟨x, y⟩ = 0；⟨x, y⟩ 不垂直。", "方向：(1,0) 處 ⟨−y, x⟩ = ⟨0, 1⟩ 朝上，是逆時針；⟨y, −x⟩ 朝下是順時針。", "長度：|⟨−y, x⟩| = √(x² + y²) 越遠越長；除以 x² + y² 之後變成 1/√(x² + y²)，越遠越短。答案 ⟨−y, x⟩。"],
+      
       verify: { m: "choice", options: [
         ["⟨−y, x⟩", "-y", "x"], ["⟨y, −x⟩", "y", "-x"], ["⟨x, y⟩", "x", "y"], ["⟨−y, x⟩ / (x² + y²)", "\\frac{-y}{x^2+y^2}", "\\frac{x}{x^2+y^2}"]
       ].map(([say, P, Q]) => {
@@ -648,7 +649,7 @@
       tags: ["vector-field-sketch", "vector"],
       hints: ["「每一點都一樣」代表分量裡不能有 x、y。", "右上方 45°：兩個分量相等而且都是正的。"],
       solution: "均勻場的分量是常數；右上 45° 要 P = Q > 0，所以是 ⟨1, 1⟩。⟨x, x⟩、⟨y, y⟩ 的箭頭隨位置改變（甚至反向），⟨1, −1⟩ 指右下。",
-      solutionSteps: ["處處相同 ⟹ 分量是常數，排除 ⟨x, x⟩、⟨y, y⟩。", "右上 45°：P = Q > 0；⟨1, −1⟩ 指右下。答案 ⟨1, 1⟩。"],
+      
       verify: { m: "choice", options: [
         ["⟨1, 1⟩", "1", "1"], ["⟨x, x⟩", "x", "x"], ["⟨1, −1⟩", "1", "-1"], ["⟨y, y⟩", "y", "y"]
       ].map(([say, P, Q]) => {
@@ -668,7 +669,7 @@
       tags: ["vector-field-sketch", "vector"],
       hints: ["水平箭頭：第二個分量是 0。", "第一個分量的正負要跟著「在 x 軸上方或下方」變，它該是哪個變數？"],
       solution: "水平 ⟹ Q = 0（排除 ⟨0, y⟩）。上方向右、下方向左 ⟹ P 跟 y 同號，而且 |P| 隨 |y| 變大：P = y。⟨−y, 0⟩ 方向剛好相反；⟨x, 0⟩ 看的是左右不是上下。",
-      solutionSteps: ["水平：Q = 0，⟨0, y⟩ 是鉛直的。", "P 的正負由 y 決定、越遠越長：P = y。", "⟨−y, 0⟩ 上方指左；⟨x, 0⟩ 在 (0.5, −1) 仍指右。答案 ⟨y, 0⟩。"],
+      
       verify: { m: "choice", options: [
         ["⟨y, 0⟩", "y", "0"], ["⟨0, y⟩", "0", "y"], ["⟨x, 0⟩", "x", "0"], ["⟨−y, 0⟩", "-y", "0"]
       ].map(([say, P, Q]) => {
@@ -691,7 +692,7 @@
       tags: ["vector-field-flow-line", "vector", "separable-ode"],
       hints: ["流線上 dx/dt = x、dy/dt = 2y；兩式相除得到 dy/dx。", "dy/dx = 2y/x 是可分離的方程，用 (1, 3) 定常數。"],
       solution: "dy/dx = 2y/x ⟹ ln|y| = 2 ln|x| + C ⟹ y = Cx²。過 (1,3)：C = 3，y = 3x²。x = 2 時 y = 12。",
-      solutionSteps: ["流線：dx/dt = x，dy/dt = 2y ⟹ dy/dx = 2y/x。", "分離變數：dy/y = 2 dx/x ⟹ y = Cx²。", "過 (1, 3)：C = 3；x = 2 時 y = 3·4 = 12。"],
+      
       verify: { m: "odeValue", f: "\\frac{2y}{x}", y0: [1, 3], at: 2 } },
     { id: "cg-9b1-008", topic: "integrals", rank: 2, answerKind: "numeric",
       prompt: "\\text{曲線 }\\mathbf r(t)=\\langle e^{2t},\\ 5e^{-t}\\rangle\\text{ 是向量場 }\\mathbf F=\\langle 2x,\\ c\\,y\\rangle\\text{ 的流線。求常數 }c",
@@ -699,7 +700,7 @@
       tags: ["vector-field-flow-line", "vector"],
       hints: ["流線的意思是 r′(t) = F(r(t))：速度等於那一點的箭頭。", "比較第二個分量：y′(t) 跟 y(t) 差幾倍？"],
       solution: "r′(t) = ⟨2e^{2t}, −5e^{−t}⟩ = ⟨2x, −y⟩。第一分量自動吻合，第二分量要 cy = −y，所以 c = −1。",
-      solutionSteps: ["r′(t) = ⟨2e^{2t}, −5e^{−t}⟩。", "x = e^{2t} ⟹ 2e^{2t} = 2x ✓；y = 5e^{−t} ⟹ −5e^{−t} = −y。", "cy = −y ⟹ c = −1。"],
+      
       verify: { m: "let", f: "\\frac{b}{a}", with: { b: { m: "deriv", vars: ["t"], f: "5e^{-t}", at: [0.3], wrt: "t" }, a: { m: "value", f: "5e^{-0.3}" } } } },
 
     /* ── 9B.1 梯度場：交叉偏導 ── */
@@ -710,7 +711,7 @@
       tags: ["gradient-field-cross-partials", "conservative-field", "partial-derivative"],
       hints: ["梯度場 ⟨P, Q⟩ 一定滿足 P_y = Q_x。", "每個選項算 P_y 與 Q_x，看哪一個處處相等。"],
       solution: "⟨2xy, x² + 1⟩：P_y = 2x = Q_x，而且 f = x²y + y。⟨xy, x²⟩：x ≠ 2x；⟨y², x²⟩：2y ≠ 2x；⟨−y, x⟩：−1 ≠ 1。",
-      solutionSteps: ["⟨2xy, x² + 1⟩：P_y = 2x，Q_x = 2x ✓（f = x²y + y）。", "⟨xy, x²⟩：P_y = x、Q_x = 2x ✗；⟨y², x²⟩：2y vs 2x ✗。", "⟨−y, x⟩：P_y = −1、Q_x = 1 ✗。答案 ⟨2xy, x² + 1⟩。"],
+      
       verify: { m: "choice", options: [
         { say: "⟨2xy, x² + 1⟩", all: curlZero(["2xy", "x^2+1"]) },
         { say: "⟨xy, x²⟩", all: curlZero(["xy", "x^2"]) },
@@ -723,7 +724,7 @@
       tags: ["gradient-field-cross-partials", "conservative-field", "partial-derivative"],
       hints: ["梯度場要 P_y = Q_x。", "兩邊的三角函數項會自己對上，剩下的項比係數。"],
       solution: "P_y = 2x cos y + 6y，Q_x = 2x cos y + a y。相等要 a = 6（此時 f = x² sin y + 3xy²）。",
-      solutionSteps: ["P_y = 2x cos y + 6y。", "Q_x = 2x cos y + a y。", "6y = a y ⟹ a = 6。"],
+      
       verify: { m: "conservativeParam", F: ["2x\\sin y+3y^2", "x^2\\cos y+axy"] } },
     { id: "cg-9b1-011", topic: "derivatives", rank: 2, answerKind: "numeric",
       prompt: "\\mathbf F=\\langle x^2-y,\\ x+y^2\\rangle\\text{。計算 }Q_x-P_y\\text{（它不是 }0\\text{，所以 }\\mathbf F\\text{ 不是梯度場）}",
@@ -731,7 +732,7 @@
       tags: ["gradient-field-cross-partials", "conservative-field", "partial-derivative"],
       hints: ["P = x² − y，Q = x + y²。", "Q 對 x 偏微、P 對 y 偏微，再相減。"],
       solution: "Q_x = 1，P_y = −1，Q_x − P_y = 2 ≠ 0，所以沒有 f 的梯度是它。",
-      solutionSteps: ["Q_x = ∂(x + y²)/∂x = 1。", "P_y = ∂(x² − y)/∂y = −1。", "Q_x − P_y = 2。"],
+      
       verify: { m: "fieldOp", op: "curl", F: ["x^2-y", "x+y^2"], at: [0.7, 1.3] } },
 
     /* ── 9B.1 梯度場：從等高線讀箭頭 ── */
@@ -742,7 +743,7 @@
       tags: ["gradient-field-level-curves", "gradient", "level-curve"],
       hints: ["梯度一定跟等高線垂直。", "梯度指向 f 增加最快的方向；這裡 f 往哪邊變大？"],
       solution: "∇f(1,1) = ⟨2, 2⟩：跟位置向量同方向，垂直於圓，指向外（f 變大的那側）。",
-      solutionSteps: ["∇f = ⟨2x, 2y⟩，在 (1,1) 是 ⟨2, 2⟩。", "⟨2, 2⟩ 平行於 ⟨1, 1⟩，與圓的切線 ⟨−1, 1⟩ 垂直。", "方向朝外，f 變大的那側：垂直等高線、背離原點。"],
+      
       verify: { m: "choice", options: [
         { say: "垂直等高線、背離原點", all: sameDir("x^2+y^2", [1, 1], 1, 1) },
         { say: "垂直等高線、指向原點", all: sameDir("x^2+y^2", [1, 1], -1, -1) },
@@ -756,7 +757,7 @@
       tags: ["gradient-field-level-curves", "gradient", "level-curve"],
       hints: ["先寫出 f：在 y = x² + c 上 f = c，所以 f(x, y) = ?", "梯度垂直於等高線，並指向 c 變大的那一側（拋物線往上移）。"],
       solution: "f = y − x²，∇f = ⟨−2x, 1⟩，在 (1,0) 是 ⟨−2, 1⟩。⟨1, 2⟩ 是拋物線的切線方向；⟨2, −1⟩ 雖然也垂直但指向 f 變小的那側。",
-      solutionSteps: ["y = x² + c ⟹ c = y − x²，所以 f(x, y) = y − x²。", "∇f = ⟨−2x, 1⟩，在 (1, 0) 是 ⟨−2, 1⟩。", "檢查：切線 ⟨1, 2⟩ 與 ⟨−2, 1⟩ 垂直，而 ⟨−2, 1⟩ 往上，指向 c 變大。"],
+      
       verify: { m: "choice", options: [
         { say: "⟨−2, 1⟩", all: sameDir("y-x^2", [1, 0], -2, 1) },
         { say: "⟨1, 2⟩", all: sameDir("y-x^2", [1, 0], 1, 2) },
@@ -771,7 +772,7 @@
       tags: ["line-integral-parametrize", "line-integral"],
       hints: ["三條邊各自參數化、各自算 ds，最後相加。", "斜邊從 (0,0) 到 (2,1) 的長度是 √5；純量線積分跟方向無關。"],
       solution: "底邊 (t,0)：∫₀² t² dt = 8/3；鉛直邊 (2,t)：∫₀¹ 4 dt = 4；斜邊 (2s, s)，ds = √5 ds：∫₀¹ 4s²√5 ds = 4√5/3。總和 (20 + 4√5)/3。",
-      solutionSteps: ["底邊 r = (t, 0)，0 ≤ t ≤ 2，ds = dt：∫ t² dt = 8/3。", "右邊 r = (2, t)，0 ≤ t ≤ 1：∫ 4 dt = 4。", "斜邊 r = (2s, s)，|r′| = √5：∫₀¹ 4s² √5 ds = 4√5/3。", "合計 8/3 + 4 + 4√5/3 = (20 + 4√5)/3 ≈ 9.65。"],
+      
       verify: { m: "lineIntegral", kind: "ds", f: "x^2", paths: [
         { x: "t", y: "0", from: 0, to: 2 },
         { x: "2", y: "t", from: 0, to: 1 },
@@ -783,7 +784,7 @@
       tags: ["line-integral-parametrize", "line-integral"],
       hints: ["半圓用 (2cos t, 2sin t)，0 ≤ t ≤ π，ds = 2 dt。", "線段上 y = 0、ds = dx。"],
       solution: "半圓：∫₀^π (4cos²t + 2sin t)·2 dt = 4π + 8；線段：∫₋₂² x² dx = 16/3。合計 4π + 40/3。",
-      solutionSteps: ["半圓 r = (2cos t, 2sin t)，|r′| = 2：∫₀^π (8cos²t + 4sin t) dt = 4π + 8。", "線段 (x, 0)，−2 ≤ x ≤ 2：∫ x² dx = 16/3。", "合計 4π + 8 + 16/3 = 4π + 40/3。"],
+      
       verify: { m: "lineIntegral", kind: "ds", f: "x^2+y", paths: [
         { x: "2\\cos t", y: "2\\sin t", from: 0, to: "\\pi" },
         { x: "t", y: "0", from: -2, to: 2 }
@@ -796,7 +797,7 @@
       tags: ["work-integral-orientation", "line-integral"],
       hints: ["用 x = t 參數化時，t 要從哪裡走到哪裡？", "也可以先算 (0,0) → (2,4)，再想反向會讓答案怎樣。"],
       solution: "x = t、y = t²，t 從 2 到 0：∫₂⁰ (t² + t²·2t) dt = −(8/3 + 8) = −32/3。",
-      solutionSteps: ["x = t，y = t²，dy = 2t dt，t：2 → 0。", "被積式 t² dt + t² · 2t dt = (t² + 2t³) dt。", "∫₂⁰ (t² + 2t³) dt = −(8/3 + 8) = −32/3。"],
+      
       verify: { m: "lineIntegral", kind: "work", F: ["y", "x^2"], path: { x: "2-t", y: "(2-t)^2", from: 0, to: 2 } } },
     { id: "cg-9b2-004", topic: "integrals", rank: 3, answerKind: "numeric",
       prompt: "\\oint_C x\\,dy-2y\\,dx\\text{，} C \\text{ 是圓 }x^2+y^2=9\\text{，順時針繞一圈}",
@@ -804,7 +805,7 @@
       tags: ["work-integral-orientation", "line-integral"],
       hints: ["(3cos t, 3sin t) 隨 t 增加是逆時針；順時針要怎麼辦？", "先照逆時針算，再處理方向。"],
       solution: "逆時針：∫₀^{2π} (9cos²t + 18sin²t) dt = 9π + 18π = 27π。順時針是反向，答案 −27π。",
-      solutionSteps: ["逆時針參數 x = 3cos t、y = 3sin t：x dy − 2y dx = (9cos²t + 18sin²t) dt。", "∫₀^{2π} = 9π + 18π = 27π。", "題目要順時針，反向變號：−27π。"],
+      
       verify: { m: "lineIntegral", kind: "work", F: ["-2y", "x"], path: { x: "3\\cos t", y: "-3\\sin t", from: 0, to: "2\\pi" } } },
     { id: "cg-9b2-005", topic: "integrals", rank: 3, answerKind: "numeric",
       prompt: "\\mathbf F=\\langle -y,\\ x,\\ z\\rangle\\text{ 沿螺旋線 }\\mathbf r(t)=\\langle 2\\cos t,\\ 2\\sin t,\\ 3t\\rangle,\\ 0\\le t\\le 2\\pi\\text{ 所作的功}",
@@ -812,7 +813,7 @@
       tags: ["work-integral-parametrize", "line-integral", "work"],
       hints: ["功 = ∫ F(r(t)) · r′(t) dt。", "r′(t) = ⟨−2sin t, 2cos t, 3⟩；把 x、y、z 都換成 t。"],
       solution: "F·r′ = (−2sin t)(−2sin t) + (2cos t)(2cos t) + 3t·3 = 4 + 9t。∫₀^{2π} (4 + 9t) dt = 8π + 18π²。",
-      solutionSteps: ["F(r(t)) = ⟨−2sin t, 2cos t, 3t⟩，r′ = ⟨−2sin t, 2cos t, 3⟩。", "內積 = 4sin²t + 4cos²t + 9t = 4 + 9t。", "∫₀^{2π} (4 + 9t) dt = 8π + 18π²。"],
+      
       verify: { m: "lineIntegral", kind: "work", F: ["-y", "x", "z"], path: { x: "2\\cos t", y: "2\\sin t", z: "3t", from: 0, to: "2\\pi" } } },
     { id: "cg-9b2-006", topic: "integrals", rank: 3, answerKind: "numeric",
       prompt: "\\int_C y\\,dx+z\\,dy+x\\,dz\\text{，} C:\\ \\mathbf r(t)=\\langle \\cos t,\\ \\sin t,\\ t\\rangle,\\ 0\\le t\\le 2\\pi",
@@ -820,7 +821,7 @@
       tags: ["work-integral-parametrize", "line-integral"],
       hints: ["dx = −sin t dt、dy = cos t dt、dz = dt。", "會出現 ∫ t cos t dt：分部積分，算完再代 0 與 2π。"],
       solution: "被積式 = −sin²t + t cos t + cos t。∫₀^{2π} −sin²t dt = −π，∫ t cos t dt = [t sin t + cos t]₀^{2π} = 0，∫ cos t = 0。答案 −π。",
-      solutionSteps: ["y dx = −sin²t dt，z dy = t cos t dt，x dz = cos t dt。", "∫₀^{2π} −sin²t dt = −π。", "∫₀^{2π} t cos t dt = [t sin t + cos t]₀^{2π} = 0；∫ cos t dt = 0。答案 −π。"],
+      
       verify: { m: "lineIntegral", kind: "work", F: ["y", "z", "x"], path: { x: "\\cos t", y: "\\sin t", z: "t", from: 0, to: "2\\pi" } } },
 
     /* ── 9B.2 保守場：區域有洞 ── */
@@ -831,7 +832,7 @@
       tags: ["conservative-simply-connected", "conservative-field"],
       hints: ["找找看：區域裡有沒有一圈繞著「洞」的曲線？", "有洞的話，繞洞的那一圈縮不到一點。"],
       solution: "環形、去掉原點的平面、圓盤外面都有洞，繞洞一圈的曲線縮不掉（角度場 ⟨−y, x⟩/(x² + y²) 沿它的功是 2π ≠ 0 就是證據）。上半平面沒有洞，是單連通。",
-      solutionSteps: ["環形：圓 r = 1.5 在區域裡、繞著內洞。", "去掉原點：單位圓繞著原點；圓盤外：圓 r = 2 繞著單位圓盤。", "上半平面是凸的，任何封閉曲線都能縮成一點。答案：上半平面 y > 0。"],
+      
       verify: { m: "choice", options: [
         { say: "上半平面 y > 0", unknown: "凸區域單連通是定理；其他選項各有繞洞的圈被數值推翻" },
         { say: "環形 1 < x² + y² < 4", all: [{ v: loop(1.5), eq: 0 }] },
@@ -844,7 +845,7 @@
       tags: ["conservative-simply-connected", "conservative-field", "line-integral"],
       hints: ["P_y = Q_x 只在單連通區域上保證功是 0；橢圓圍住了哪個「洞」？", "把場拆成 ⟨2x, 2y⟩（梯度場）加上繞原點的角度場，各自算。"],
       solution: "⟨2x, 2y⟩ = ∇(x² + y²)，繞一圈功 0。角度場 ⟨−y, x⟩/(x² + y²) 沿任何逆時針繞原點一圈的曲線功都是 2π（可以把橢圓縮成單位圓來算）。答案 2π。",
-      solutionSteps: ["拆開：F = ∇(x² + y²) + ⟨−y, x⟩/(x² + y²)。", "梯度場部分沿封閉曲線：0。", "角度場：橢圓與單位圓之間沒有奇點，功相同；單位圓上 ∫₀^{2π} (sin²t + cos²t) dt = 2π。答案 2π。"],
+      
       verify: { m: "lineIntegral", kind: "work", F: ["\\frac{-y}{x^2+y^2}+2x", "\\frac{x}{x^2+y^2}+2y"], path: { x: "3\\cos t", y: "2\\sin t", from: 0, to: "2\\pi" } } },
     { id: "cg-9b2-009", topic: "integrals", rank: 3, answerKind: "numeric",
       prompt: "\\mathbf F=\\left\\langle \\frac{-y}{x^2+y^2},\\ \\frac{x}{x^2+y^2}\\right\\rangle\\text{。求它沿圓 }(x-3)^2+y^2=1\\text{ 逆時針一圈的功}",
@@ -852,7 +853,7 @@
       tags: ["conservative-simply-connected", "conservative-field", "line-integral"],
       hints: ["這個場在原點有洞；這個圓有沒有圍住原點？", "能不能找一個不含原點、又包住這個圓的單連通區域？"],
       solution: "圓在 2 ≤ x ≤ 4 之間，沒圍住原點。在右半平面 x > 0（單連通）上 P_y = Q_x，F 是 ∇(arctan(y/x))，封閉曲線的功是 0。",
-      solutionSteps: ["P_y = Q_x = (y² − x²)/(x² + y²)²（原點以外）。", "圓整個落在右半平面 x > 0，那是單連通區域，在那裡 F = ∇ arctan(y/x)。", "梯度場繞封閉曲線一圈：0。"],
+      
       verify: { m: "lineIntegral", kind: "work", F: ANGLE, path: { x: "3+\\cos t", y: "\\sin t", from: 0, to: "2\\pi" } } },
 
     /* ── 9B.2 位勢函數 ── */
@@ -862,7 +863,7 @@
       tags: ["potential-integrate-match", "potential", "conservative-field"],
       hints: ["先對 x 積 P，常數換成 g(y)。", "對 y 偏微後跟 Q 比對，找出 g(y)；最後用 f(0,0) = 0 定常數。"],
       solution: "f = ∫(e^y + 2x)dx = x e^y + x² + g(y)；f_y = x e^y + g′(y) = x e^y − sin y ⟹ g = cos y + C。f(0,0) = 1 + C = 0 ⟹ C = −1。f = x e^y + x² + cos y − 1。",
-      solutionSteps: ["對 x 積：f = x e^y + x² + g(y)。", "f_y = x e^y + g′(y) = x e^y − sin y ⟹ g(y) = cos y + C。", "f(0,0) = 1 + C = 0 ⟹ C = −1：f = x e^y + x² + cos y − 1。"],
+      
       verify: potentialVerify(["x", "y"], ["e^{y}+2x", "xe^{y}-\\sin y"], { x: 0, y: 0 }, [{ x: 0.4, y: 1.3 }, { x: -1.1, y: 0.6 }]) },
     { id: "cg-9b2-011", topic: "integrals", rank: 3, answerKind: "expression",
       prompt: "\\mathbf F=\\langle y\\cos(xy)+3,\\ x\\cos(xy)+2y\\rangle\\text{ 是保守場。求位勢函數 }f\\text{（取 }f(0,0)=0\\text{）}",
@@ -870,7 +871,7 @@
       tags: ["potential-integrate-match", "potential", "conservative-field"],
       hints: ["y cos(xy) 對 x 積分：令 u = xy。", "剩下的 y 項由 Q 比對出來。"],
       solution: "f = sin(xy) + 3x + g(y)；f_y = x cos(xy) + g′ = x cos(xy) + 2y ⟹ g = y² + C，f(0,0) = 0 給 C = 0。f = sin(xy) + 3x + y²。",
-      solutionSteps: ["∫(y cos(xy) + 3) dx = sin(xy) + 3x + g(y)。", "f_y = x cos(xy) + g′(y)，跟 Q 比 ⟹ g′ = 2y，g = y² + C。", "f(0,0) = C = 0：f = sin(xy) + 3x + y²。"],
+      
       verify: potentialVerify(["x", "y"], ["y\\cos(xy)+3", "x\\cos(xy)+2y"], { x: 0, y: 0 }, [{ x: 0.4, y: 1.3 }, { x: -1.1, y: 0.6 }]) },
     { id: "cg-9b2-012", topic: "integrals", rank: 3, answerKind: "expression",
       prompt: "\\mathbf F=\\langle 2x\\cos y,\\ -x^2\\sin y+3e^{3y}\\rangle\\text{ 是保守場。求位勢函數 }f\\text{（取 }f(0,0)=0\\text{）}",
@@ -878,7 +879,7 @@
       tags: ["potential-integrate-match", "potential", "conservative-field"],
       hints: ["對 x 積分時 cos y 當常數。", "比對 f_y 與 Q 之後剩下的項只跟 y 有關，再積一次；別忘了 f(0,0) = 0。"],
       solution: "f = x² cos y + g(y)；f_y = −x² sin y + g′ = Q ⟹ g′ = 3e^{3y}，g = e^{3y} + C。f(0,0) = 1 + C = 0 ⟹ C = −1。f = x² cos y + e^{3y} − 1。",
-      solutionSteps: ["∫ 2x cos y dx = x² cos y + g(y)。", "f_y = −x² sin y + g′(y) ⟹ g′(y) = 3e^{3y}，g = e^{3y} + C。", "f(0,0) = 1 + C = 0：f = x² cos y + e^{3y} − 1。"],
+      
       verify: potentialVerify(["x", "y"], ["2x\\cos y", "-x^2\\sin y+3e^{3y}"], { x: 0, y: 0 }, [{ x: 0.4, y: 1.3 }, { x: -1.1, y: 0.6 }]) },
     { id: "cg-9b2-013", topic: "integrals", rank: 4, answerKind: "expression",
       prompt: "\\mathbf F=\\langle 2xy,\\ x^2+\\sin z,\\ y\\cos z+(1+z)e^{z}\\rangle\\text{ 是保守場。求位勢函數 }f\\text{（取 }f(0,0,0)=0\\text{）}",
@@ -886,7 +887,7 @@
       tags: ["potential-3d", "potential", "conservative-field"],
       hints: ["對 x 積 P，「常數」是 g(y, z)。", "先用 Q 找出 g 對 y 的部分，剩下的 h(z) 再用 R 找；(1+z)e^z 是誰的導數？"],
       solution: "f = x²y + g(y,z)；f_y = x² + g_y = x² + sin z ⟹ g = y sin z + h(z)；f_z = y cos z + h′ = R ⟹ h′ = (1+z)e^z，h = z e^z + C，C = 0。",
-      solutionSteps: ["對 x 積：f = x²y + g(y, z)。", "f_y = x² + g_y = x² + sin z ⟹ g = y sin z + h(z)。", "f_z = y cos z + h′(z) = y cos z + (1+z)e^z ⟹ h = z e^z + C。", "f(0,0,0) = C = 0：f = x²y + y sin z + z e^z。"],
+      
       verify: potentialVerify(["x", "y", "z"], ["2xy", "x^2+\\sin z", "y\\cos z+(1+z)e^{z}"], { x: 0, y: 0, z: 0 }, [{ x: 0.4, y: 1.3, z: -0.7 }, { x: -1.1, y: 0.6, z: 0.9 }]) },
     { id: "cg-9b2-014", topic: "integrals", rank: 4, answerKind: "expression",
       prompt: "\\mathbf F=\\langle yz+e^{x},\\ xz+2yz,\\ xy+y^2\\rangle\\text{ 是保守場。求位勢函數 }f\\text{（取 }f(0,0,0)=0\\text{）}",
@@ -894,7 +895,7 @@
       tags: ["potential-3d", "potential", "conservative-field"],
       hints: ["對 x 積：xyz + eˣ + g(y, z)。", "用 Q 找 g，再用 R 檢查還缺不缺只跟 z 有關的項；最後用 f(0,0,0) = 0。"],
       solution: "f = xyz + eˣ + g(y,z)；f_y = xz + g_y = xz + 2yz ⟹ g = y²z + h(z)；f_z = xy + y² + h′ = R ⟹ h′ = 0。f(0,0,0) = 1 + C = 0 ⟹ C = −1。",
-      solutionSteps: ["對 x 積：f = xyz + eˣ + g(y, z)。", "f_y = xz + g_y = xz + 2yz ⟹ g = y²z + h(z)。", "f_z = xy + y² + h′(z) = xy + y² ⟹ h 是常數 C。", "f(0,0,0) = 1 + C = 0：f = xyz + eˣ + y²z − 1。"],
+      
       verify: potentialVerify(["x", "y", "z"], ["yz+e^{x}", "xz+2yz", "xy+y^2"], { x: 0, y: 0, z: 0 }, [{ x: 0.4, y: 1.3, z: -0.7 }, { x: -1.1, y: 0.6, z: 0.9 }]) },
 
     /* ── 9B.2 路徑無關：比兩條路／封閉曲線 ── */
@@ -904,7 +905,7 @@
       tags: ["path-independence-detect", "line-integral", "conservative-field"],
       hints: ["兩條路各參數化成 x = t，各算一次功。", "差不是 0 代表什麼？"],
       solution: "W₁ = ∫₀¹ (2t + t) dt = 3/2；W₂ = ∫₀¹ (2t² + t·2t) dt = 4/3。差 1/6 ≠ 0，所以 F 不是保守場（也可看 P_y = 2 ≠ 1 = Q_x）。",
-      solutionSteps: ["y = x：x = y = t，F·r′ = 2t + t = 3t，W₁ = 3/2。", "y = x²：r = (t, t²)，F·r′ = 2t² + t·2t = 4t²，W₂ = 4/3。", "W₁ − W₂ = 1/6 ≠ 0：功跟路徑有關，F 不保守。"],
+      
       verify: { m: "let", f: "a-b", with: {
         a: { m: "lineIntegral", kind: "work", F: ["2y", "x"], path: { x: "t", y: "t", from: 0, to: 1 } },
         b: { m: "lineIntegral", kind: "work", F: ["2y", "x"], path: { x: "t", y: "t^2", from: 0, to: 1 } }
@@ -915,7 +916,7 @@
       tags: ["path-independence-detect", "line-integral", "conservative-field"],
       hints: ["兩條路的功都寫成 a 的一次式。", "令兩者相等解 a；得到的 a 讓 P_y = Q_x 嗎？"],
       solution: "沿 y = x：∫₀¹ (a t² + t² + 1) dt = (a+1)/3 + 1；沿 y = x²：∫₀¹ (a t³ + 2t³ + 2t) dt = a/4 + 3/2。相等 ⟹ a/12 = 1/6，a = 2；此時 P_y = 2x = Q_x，F = ∇(x²y + y)。",
-      solutionSteps: ["y = x：W₁ = ∫₀¹ (a + 1)t² + 1 dt = (a + 1)/3 + 1。", "y = x²：W₂ = ∫₀¹ (a t³ + (t² + 1)·2t) dt = a/4 + 3/2。", "W₁ = W₂ ⟹ a/3 − a/4 = 1/6 ⟹ a = 2（剛好讓 P_y = Q_x）。"],
+      
       verify: { m: "let", f: "\\frac{-(p-q)}{(r-s)-(p-q)}", with: {
         p: { m: "lineIntegral", kind: "work", F: ["0", "x^2+1"], path: { x: "t", y: "t", from: 0, to: 1 } },
         q: { m: "lineIntegral", kind: "work", F: ["0", "x^2+1"], path: { x: "t", y: "t^2", from: 0, to: 1 } },
@@ -928,7 +929,7 @@
       tags: ["path-independence-closed-loop", "line-integral", "conservative-field"],
       hints: ["別急著代參數式。先檢查 P_y 與 Q_x。", "如果它是某個 f 的梯度，沿封閉曲線的功是多少？"],
       solution: "P_y = 2xe^y + cos x = Q_x，而且在整個平面都成立；F = ∇(x²e^y + y sin x)。曲線封閉，起點等於終點，功 = 0。",
-      solutionSteps: ["P_y = 2xe^y + cos x，Q_x = 2xe^y + cos x，處處相等。", "位勢 f = x²e^y + y sin x。", "封閉曲線：f(終點) − f(起點) = 0。"],
+      
       verify: { m: "lineIntegral", kind: "work", F: ["2xe^{y}+y\\cos x", "x^2e^{y}+\\sin x"], path: { x: "\\cos^3 t", y: "\\sin^3 t", from: 0, to: "2\\pi" } } },
     { id: "cg-9b2-018", topic: "integrals", rank: 3, answerKind: "numeric",
       prompt: "\\oint_C (e^{x}\\sin y-y)\\,dx+(e^{x}\\cos y+x)\\,dy\\text{，} C \\text{ 是圓 }x^2+y^2=4\\text{ 逆時針一圈}",
@@ -936,7 +937,7 @@
       tags: ["path-independence-closed-loop", "line-integral", "conservative-field"],
       hints: ["把場拆成兩塊：一塊是 eˣ sin y 的梯度，另一塊是 ⟨−y, x⟩。", "梯度那塊繞一圈是 0；⟨−y, x⟩ 在半徑 2 的圓上直接參數化。"],
       solution: "F = ∇(eˣ sin y) + ⟨−y, x⟩。梯度部分繞一圈 0；⟨−y, x⟩ 沿 (2cos t, 2sin t)：∫₀^{2π} (4sin²t + 4cos²t) dt = 8π。",
-      solutionSteps: ["⟨eˣ sin y, eˣ cos y⟩ = ∇(eˣ sin y)，封閉曲線上功為 0。", "剩 ∮ −y dx + x dy，r = (2cos t, 2sin t)。", "被積式 4sin²t + 4cos²t = 4，∫₀^{2π} 4 dt = 8π。"],
+      
       verify: { m: "lineIntegral", kind: "work", F: ["e^{x}\\sin y-y", "e^{x}\\cos y+x"], path: { x: "2\\cos t", y: "2\\sin t", from: 0, to: "2\\pi" } } }
   ];
 
