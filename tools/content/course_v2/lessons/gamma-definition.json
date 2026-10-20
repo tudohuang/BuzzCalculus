@@ -167,50 +167,78 @@
     {
       "title": "一整族積分",
       "beats": [
-        { "show": ["$\\int_0^{\\infty}xe^{-x}\\,dx$、$\\int_0^{\\infty}x^2e^{-x}\\,dx$、…"], "note": "每一個都要分部積分好幾次。",
+        { "show": ["$\\int_0^{\\infty}xe^{-x}\\,dx$、$\\int_0^{\\infty}x^2e^{-x}\\,dx$、…"],
+          "note": "每一個都要分部積分好幾次。",
           "say": "x 乘 e 的負 x 次方、x 平方乘 e 的負 x 次方，這一整族積分，每一個都要分部積分好幾次。",
           "board": [
-            { "do": "write", "line": "$\\int_0^{\\infty}xe^{-x}\\,dx$、$\\int_0^{\\infty}x^2e^{-x}\\,dx$、…" }
+            {"do":"write","line":"$\\int_0^{\\infty}xe^{-x}\\,dx$、$\\int_0^{\\infty}x^2e^{-x}\\,dx$、…"}
           ] },
-        { "show": ["$\\Gamma(s)=\\int_0^{\\infty}x^{s-1}e^{-x}\\,dx$"], "note": "把它們統一成一個函數。",
+        { "show": ["$\\Gamma(s)=\\int_0^{\\infty}x^{s-1}e^{-x}\\,dx$"],
+          "note": "把它們統一成一個函數。",
           "say": "Gamma 函數把這一整族統一成一個函數。看到這種形狀，就不用再算，直接讀值。",
           "board": [
-            { "do": "transform", "line": "$\\Gamma({{s:s}})=\\int_0^{\\infty}x^{s-1}e^{-x}\\,dx$", "tint": { "s": "blue" }, "on": "Gamma 函數" }
+            {"do":"transform","line":"$\\Gamma({{s:s}})=\\int_0^{\\infty}x^{s-1}e^{-x}\\,dx$","tint":{"s":"blue"},"on":"Gamma 函數"}
           ] },
-        { "show": ["$s=2$：$\\int_0^{\\infty}xe^{-x}\\,dx$"], "fig": { "use": 0, "to": 2 },
+        { "show": ["$s=2$：$\\int_0^{\\infty}xe^{-x}\\,dx$"],
+          "fig": {"use":0,"to":2},
           "say": "看圖：s 等於二，曲線是 x 乘 e 的負 x 次方，塗色的面積就是 Gamma 在二的值。",
           "board": [
-            { "do": "write", "line": "${{s:s}}=2$：$\\int_0^{\\infty}xe^{-x}\\,dx$", "on": "s 等於二" }
+            {"do":"write","line":"${{s:s}}=2$：$\\int_0^{\\infty}xe^{-x}\\,dx$","on":"s 等於二"}
           ] },
-        { "show": ["$s=3$：$\\int_0^{\\infty}x^2e^{-x}\\,dx$"], "fig": { "use": 0, "to": 3 },
+        { "show": ["$s=3$：$\\int_0^{\\infty}x^2e^{-x}\\,dx$"],
+          "fig": {"use":0,"to":3},
           "say": "s 調到三，曲線換成 x 平方乘 e 的負 x 次方，面積跟著變。",
           "board": [
-            { "do": "transform", "line": "${{s:s}}=3$：$\\int_0^{\\infty}x^2e^{-x}\\,dx$", "on": "s 調到三" }
+            {"do":"transform","line":"${{s:s}}=3$：$\\int_0^{\\infty}x^2e^{-x}\\,dx$","on":"s 調到三"}
           ] }
       ],
-      "drag": { "use": 0, "ask": "自己把 $s$ 拉回 $1$ 附近，看曲線變成 $e^{-x}$", "range": [1, 1.05] }
+      "drag": {
+        "use": 0,
+        "ask": "自己把 $s$ 拉回 $1$ 附近，看曲線變成 $e^{-x}$",
+        "range": [
+          1,
+          1.05
+        ]
+      }
     },
     {
       "title": "什麼時候收斂",
       "beats": [
-        { "show": ["$x\\to\\infty$：$e^{-x}$ 贏"], "note": "指數衰減比任何次方增長都快。",
+        { "show": ["$x\\to\\infty$：$e^{-x}$ 贏"],
+          "note": "指數衰減比任何次方增長都快。",
           "say": "兩端都要檢查。無限遠那端，e 的負 x 次方衰減得比任何次方都快，尾巴一定收斂。",
           "board": [
-            { "do": "write", "line": "$x\\to\\infty$：${{e:e^{-x}}}$ 贏" },
-            { "do": "focus", "term": "e", "label": "衰減最快", "on": "衰減" }
+            {"do":"write","line":"$x\\to\\infty$：${{e:e^{-x}}}$ 贏"},
+            {"do":"focus","term":"e","label":"衰減最快","on":"衰減"}
           ] },
-        { "show": ["$x\\to 0^+$：像 $x^{s-1}$"], "note": "$e^{-x}\\to 1$。",
+        { "show": ["$x^3e^{-x}$ 先升後降，壓向 $0$"],
+          "note": "$e^x$ 展開有更高次項，分母長更快。",
+          "say": "看 x 三次方乘 e 的負 x 次方。e 的 x 次方展開有更高次項，分母長更快，所以壓向零。",
+          "board": [
+            {"do":"plot","graph":{"window":[0,12,0,2],"curves":[{"expr":"x^3*exp(-x)","domain":[0,12],"color":"blue"}]}},
+            {"do":"write","line":"$e^x=1+x+\\frac{x^2}{2!}+\\cdots$","on":"展開"}
+          ] },
+        { "show": ["$x\\to 0^+$：像 $x^{s-1}$"],
+          "note": "$e^{-x}\\to 1$。",
           "say": "零那端，e 的負 x 次方趨近一，被積函數就像 x 的 s 減一次方。",
           "board": [
-            { "do": "write", "line": "$x\\to0^+$：$e^{-x}\\to1$，像 ${{p:x^{s-1}}}$" },
-            { "do": "underline", "term": "p", "label": "看這一項", "on": "被積函數" }
+            {"do":"write","line":"$x\\to0^+$：$e^{-x}\\to1$，像 ${{p:x^{s-1}}}$"},
+            {"do":"underline","term":"p","label":"看這一項","on":"被積函數"}
           ] },
-        { "show": ["$p$ 判別：$s-1>-1$，即 $s>0$"], "note": "此積分表示式在 $s>0$ 時收斂。",
+        { "show": ["$\\int_0^1\\frac{1}{x^p}dx$ 收斂若且唯若 $p<1$"],
+          "note": "$x^{s-1}=\\frac{1}{x^{1-s}}$，所以 $p=1-s$。",
+          "say": "p 判別：一除以 x 的 p 次方，零到一積分，p 小於一才收斂。x 的 s 減一，p 就是一減 s。",
+          "board": [
+            {"do":"write","line":"$\\int_0^1\\frac{1}{x^p}dx$ 收斂若且唯若 ${{pp:p<1}}$"},
+            {"do":"write","line":"$x^{s-1}=\\frac{1}{x^{1-s}}$，$p=1-s$","on":"x 的 s 減一"}
+          ] },
+        { "show": ["$p$ 判別：$s-1>-1$，即 $s>0$"],
+          "note": "此積分表示式在 $s>0$ 時收斂。",
           "say": "用 p 判別，s 減一要大於負一，也就是 s 大於零，這個積分才收斂。",
           "board": [
-            { "do": "write", "line": "$p$ 判別：${{a:s-1>-1}}$" },
-            { "do": "transform", "line": "即 ${{b:s>0}}$", "on": "也就是" },
-            { "do": "box", "term": "b", "color": "green", "on": "大於零" }
+            {"do":"write","line":"$p$ 判別：${{a:s-1>-1}}$"},
+            {"do":"transform","line":"即 ${{b:s>0}}$","on":"也就是"},
+            {"do":"box","term":"b","color":"green","on":"大於零"}
           ] }
       ],
       "check": 2
@@ -218,57 +246,77 @@
     {
       "title": "起點與遞迴",
       "beats": [
-        { "show": ["$\\Gamma(1)=\\int_0^{\\infty}e^{-x}\\,dx=1$"], "fig": { "use": 0, "to": 1 },
+        { "show": ["$\\Gamma(1)=\\int_0^{\\infty}e^{-x}\\,dx=1$"],
+          "fig": {"use":0,"to":1},
           "say": "s 等於一，x 的零次方是一，只剩 e 的負 x 次方，面積剛好是一。",
           "board": [
-            { "do": "write", "line": "$\\Gamma(1)=\\int_0^{\\infty}e^{-x}\\,dx={{one:1}}$" },
-            { "do": "box", "term": "one", "color": "green", "on": "面積剛好" }
+            {"do":"write","line":"$\\Gamma(1)=\\int_0^{\\infty}e^{-x}\\,dx={{one:1}}$"},
+            {"do":"box","term":"one","color":"green","on":"面積剛好"}
           ] },
         { "show": ["$\\Gamma(s+1)$：$u=x^s$，$dv=e^{-x}\\,dx$"],
           "say": "遞迴從分部積分來：u 取 x 的 s 次方，dv 取 e 的負 x 次方 dx。",
           "board": [
-            { "do": "write", "line": "$\\Gamma(s+1)$：$u={{u:x^s}}$，$dv=e^{-x}\\,dx$", "tint": { "u": "blue" } }
+            {"do":"write","line":"$\\Gamma(s+1)$：$u={{u:x^s}}$，$dv=e^{-x}\\,dx$","tint":{"u":"blue"}}
           ] },
-        { "show": ["邊界項 $\\left[-x^se^{-x}\\right]_0^{\\infty}=0$"], "note": "$\\infty$ 端 $e^{-x}$ 贏；$0$ 端 $x^s=0$。",
+        { "show": ["$dv=e^{-x}\\,dx$，$v=-e^{-x}$"],
+          "note": "$(-e^{-x})'=e^{-x}$，負號乘負號才對得回去。",
+          "say": "dv 是 e 的負 x 次方 dx，反導數 v 是負的 e 的負 x 次方。微分它，負號乘負號變正，才對得回去。",
+          "board": [
+            {"do":"write","line":"$v={{v:-e^{-x}}}$"},
+            {"do":"focus","term":"v","label":"帶負號","on":"負的"}
+          ] },
+        { "show": ["邊界項 $\\left[-x^se^{-x}\\right]_0^{\\infty}=0$"],
+          "note": "$\\infty$ 端 $e^{-x}$ 贏；$0$ 端 $x^s=0$。",
           "say": "邊界項兩端都是零：無限遠那邊指數贏，零那邊 x 的 s 次方是零。",
           "board": [
-            { "do": "write", "line": "邊界項 $\\left[-x^se^{-x}\\right]_0^{\\infty}={{z:0}}$" },
-            { "do": "underline", "term": "z", "label": "兩端都是 0", "on": "兩端都是零" }
+            {"do":"write","line":"邊界項 $\\left[-x^se^{-x}\\right]_0^{\\infty}={{z:0}}$"},
+            {"do":"underline","term":"z","label":"兩端都是 0","on":"兩端都是零"}
+          ] },
+        { "show": ["$-\\int v\\,du$ 的負號遇到 $v$ 的負號變正"],
+          "say": "分部積分是 u v 減 v du 的積分。du 是 s 乘 x 的 s 減一次方，v 帶負號，減負變加，所以是正的 s。",
+          "board": [
+            {"do":"write","line":"$-\\int(-e^{-x})\\,sx^{s-1}dx$"},
+            {"do":"transform","line":"$=+{{c:s}}\\int_0^{\\infty}x^{s-1}e^{-x}dx$","on":"減負變加"},
+            {"do":"focus","term":"c","color":"green","on":"正的"}
           ] },
         { "show": ["$\\Gamma(s+1)=s\\Gamma(s)$"],
           "say": "剩下 s 乘 Gamma s。這個係數 s 是分部積分生出來的。",
           "board": [
-            { "do": "write", "line": "$\\Gamma(s+1)={{c:s}}\\,\\Gamma(s)$", "color": "green" },
-            { "do": "focus", "term": "c", "label": "分部積分生的", "on": "這個係數" }
+            {"do":"write","line":"$\\Gamma(s+1)={{c:s}}\\,\\Gamma(s)$","color":"green"},
+            {"do":"focus","term":"c","label":"分部積分生的","on":"這個係數"}
           ] }
       ],
       "check": 3
     },
     {
-      "title": "整數點是階乘", "key": "$\\Gamma(n)$ 是 $(n-1)!$，別多乘一項",
+      "title": "整數點是階乘",
       "beats": [
-        { "show": ["$\\Gamma(2)=1$，$\\Gamma(3)=2$"], "fig": { "use": 0, "to": 3 },
+        { "show": ["$\\Gamma(2)=1$，$\\Gamma(3)=2$"],
+          "fig": {"use":0,"to":3},
           "say": "從 Gamma 一等於一往上推：Gamma 二是一乘一，Gamma 三是二乘一，等於二。",
           "board": [
-            { "do": "write", "line": "$\\Gamma(2)=1\\cdot\\Gamma(1)=1$" },
-            { "do": "write", "line": "$\\Gamma(3)=2\\cdot\\Gamma(2)=2$", "on": "Gamma 三" }
+            {"do":"write","line":"$\\Gamma(2)=1\\cdot\\Gamma(1)=1$"},
+            {"do":"write","line":"$\\Gamma(3)=2\\cdot\\Gamma(2)=2$","on":"Gamma 三"}
           ] },
-        { "show": ["$\\Gamma(4)=6$"], "fig": { "use": 0, "to": 4 },
+        { "show": ["$\\Gamma(4)=6$"],
+          "fig": {"use":0,"to":4},
           "say": "s 拉到四，面積是六，就是三的階乘。",
           "board": [
-            { "do": "write", "line": "$\\Gamma(4)=3\\cdot\\Gamma(3)={{r:6}}$" },
-            { "do": "box", "term": "r", "color": "green", "on": "面積是六" }
+            {"do":"write","line":"$\\Gamma(4)=3\\cdot\\Gamma(3)={{r:6}}$"},
+            {"do":"box","term":"r","color":"green","on":"面積是六"}
           ] },
-        { "show": ["$\\Gamma(n+1)=n!$"], "note": "差一：$\\Gamma(n)=(n-1)!$，不是 $n!$。",
+        { "show": ["$\\Gamma(n+1)=n!$"],
+          "note": "差一：$\\Gamma(n)=(n-1)!$，不是 $n!$。",
           "say": "一般來說 Gamma n 加一是 n 階乘。小心差一：Gamma 六是一百二十，不是七百二十。",
           "board": [
-            { "do": "clear" },
-            { "do": "write", "line": "$\\Gamma(n+1)={{f:n!}}$", "color": "green", "on": "Gamma n" },
-            { "do": "write", "line": "$\\Gamma(n)=(n-1)!$", "on": "小心差一" },
-            { "do": "write", "line": "$\\Gamma(6)=5!={{h:120}}$", "on": "Gamma 六" },
-            { "do": "box", "term": "h", "color": "green", "on": "一百二十" }
+            {"do":"clear"},
+            {"do":"write","line":"$\\Gamma(n+1)={{f:n!}}$","color":"green","on":"Gamma n"},
+            {"do":"write","line":"$\\Gamma(n)=(n-1)!$","on":"小心差一"},
+            {"do":"write","line":"$\\Gamma(6)=5!={{h:120}}$","on":"Gamma 六"},
+            {"do":"box","term":"h","color":"green","on":"一百二十"}
           ] }
       ],
+      "key": "$\\Gamma(n)$ 是 $(n-1)!$，別多乘一項",
       "check": 0
     },
     {
@@ -277,49 +325,90 @@
         { "show": ["$\\int_0^{\\infty}x^ke^{-x}\\,dx=\\Gamma(k+1)$"],
           "say": "看到 x 的 k 次方乘 e 的負 x 次方，就是 Gamma k 加一。",
           "board": [
-            { "do": "write", "line": "$\\int_0^{\\infty}x^{ {{k:k}} }e^{-x}\\,dx=\\Gamma({{k1:k+1}})$", "tint": { "k": "blue", "k1": "blue" } }
+            {"do":"write","line":"$\\int_0^{\\infty}x^{ {{k:k}} }e^{-x}\\,dx=\\Gamma({{k1:k+1}})$","tint":{"k":"blue","k1":"blue"}}
           ] },
-        { "show": ["$\\int_0^{\\infty}x^2e^{-x}\\,dx=\\Gamma(3)=2$"], "note": "分部積分兩次也會得到 $2$，但要寫半頁。",
+        { "show": ["$\\int_0^{\\infty}x^2e^{-x}\\,dx=\\Gamma(3)=2$"],
+          "note": "分部積分兩次也會得到 $2$，但要寫半頁。",
           "say": "x 平方那一題，k 是二，直接讀成 Gamma 三，等於二。",
           "board": [
-            { "do": "write", "line": "$\\int_0^{\\infty}x^2e^{-x}\\,dx=\\Gamma(3)=2$" }
+            {"do":"write","line":"$\\int_0^{\\infty}x^2e^{-x}\\,dx=\\Gamma(3)=2$"}
           ] },
-        { "show": ["$\\int_0^{\\infty}x^ke^{-ax}\\,dx=\\frac{\\Gamma(k+1)}{a^{k+1}}$"], "note": "換元 $u=ax$。",
+        { "show": ["$\\int_0^{\\infty}x^ke^{-ax}\\,dx=\\frac{\\Gamma(k+1)}{a^{k+1}}$"],
+          "note": "換元 $u=ax$。",
           "say": "指數裡有常數 a，令 u 等於 a x，多出 a 的 k 加一次方在分母。",
           "board": [
-            { "do": "write", "line": "$\\int_0^{\\infty}x^ke^{-ax}\\,dx=\\frac{\\Gamma(k+1)}{ {{a:a^{k+1}}} }$" },
-            { "do": "underline", "term": "a", "label": "u = ax", "on": "多出" }
+            {"do":"write","line":"$\\int_0^{\\infty}x^ke^{-ax}\\,dx=\\frac{\\Gamma(k+1)}{ {{a:a^{k+1}}} }$"},
+            {"do":"underline","term":"a","label":"u = ax","on":"多出"}
+          ] },
+        { "show": ["$u=ax$，$x=\\frac{u}{a}$，$dx=\\frac{du}{a}$"],
+          "note": "上下限 $0$ 到 $\\infty$ 不變。",
+          "say": "令 u 等於 a x，那 x 是 u 除以 a，dx 是 du 除以 a。上下限零到無限大不變。",
+          "board": [
+            {"do":"write","line":"$u=ax$，$x=\\frac{u}{a}$，$dx=\\frac{du}{a}$"}
+          ] },
+        { "show": ["$\\left(\\frac{u}{a}\\right)^k e^{-u}\\frac{du}{a}$"],
+          "note": "分母：$a^k\\cdot a=a^{k+1}$。",
+          "say": "x 的 k 次方變成 u 除以 a 的 k 次方，再乘 dx 的 a 分之一，分母兩個 a 合成 a 的 k 加一次方。",
+          "board": [
+            {"do":"write","line":"$\\left(\\frac{u}{a}\\right)^k e^{-u}\\frac{du}{a}=\\frac{u^ke^{-u}}{ {{d:a^{k+1}}} }du$"},
+            {"do":"underline","term":"d","label":"分母","on":"分母兩個"}
           ] },
         { "show": ["$\\int_0^{\\infty}x^4e^{-3x}\\,dx=\\frac{24}{243}=\\frac{8}{81}$"],
           "say": "例如 x 四次方乘 e 的負三 x 次方：Gamma 五是二十四，除以三的五次方，得八十一分之八。",
           "board": [
-            { "do": "write", "line": "$\\int_0^{\\infty}x^4e^{-3x}\\,dx=\\frac{24}{243}=\\frac{8}{81}$", "color": "green" }
+            {"do":"write","line":"$\\int_0^{\\infty}x^4e^{-3x}\\,dx=\\frac{24}{243}=\\frac{8}{81}$","color":"green"}
           ] }
       ],
       "check": 1
     },
     {
-      "title": "先換元", "key": "先換元成標準形 $u^{k}e^{-u}$",
+      "title": "先換元",
       "beats": [
-        { "show": ["$\\int_0^{\\infty}x^3e^{-x^2}\\,dx$"], "note": "指數是 $-x^2$，不是標準形狀。",
+        { "show": ["$\\int_0^{\\infty}x^3e^{-x^2}\\,dx$"],
+          "note": "指數是 $-x^2$，不是標準形狀。",
           "say": "這一題指數是負 x 平方，不是標準形狀，要先換元。",
           "board": [
-            { "do": "write", "line": "$\\int_0^{\\infty}x^3e^{ {{p:-x^2}} }\\,dx$" },
-            { "do": "focus", "term": "p", "color": "red", "label": "不是標準", "on": "不是標準形狀" }
+            {"do":"write","line":"$\\int_0^{\\infty}x^3e^{ {{p:-x^2}} }\\,dx$"},
+            {"do":"focus","term":"p","color":"red","label":"不是標準","on":"不是標準形狀"}
           ] },
-        { "show": ["$u=x^2$，$du=2x\\,dx$"], "note": "$x^3\\,dx=x^2\\cdot x\\,dx=u\\cdot\\frac{du}{2}$",
+        { "show": ["$u=x^2$，$du=2x\\,dx$"],
+          "note": "$x^3\\,dx=x^2\\cdot x\\,dx=u\\cdot\\frac{du}{2}$",
           "say": "令 u 等於 x 平方。把 x 三次方 dx 拆成 x 平方乘 x dx，就是 u 乘二分之 du。",
           "board": [
-            { "do": "write", "line": "$u=x^2$，$du=2x\\,dx$" },
-            { "do": "write", "line": "$x^3\\,dx=x^2\\cdot x\\,dx=u\\cdot\\frac{du}{2}$", "on": "拆成" }
+            {"do":"write","line":"$u=x^2$，$du=2x\\,dx$"},
+            {"do":"write","line":"$x^3\\,dx=x^2\\cdot x\\,dx=u\\cdot\\frac{du}{2}$","on":"拆成"}
+          ] },
+        { "show": ["$x=0\\Rightarrow u=0$","$x\\to\\infty\\Rightarrow u\\to\\infty$"],
+          "note": "上下限也要換。",
+          "say": "上下限也要換：x 是零，u 是零；x 無限大，u 也無限大。所以上下限不變，還是零到無限大。",
+          "board": [
+            {"do":"write","line":"$x=0\\Rightarrow u=0$"},
+            {"do":"write","line":"$x\\to\\infty\\Rightarrow u\\to\\infty$","on":"無限大#1"}
+          ] },
+        { "show": ["$e^{-x^2}=e^{-u}$"],
+          "note": "指數變成標準形狀。",
+          "say": "指數的負 x 平方，換成負 u，變成標準形狀。接下來看 u 的幾次方，就知道是哪個 Gamma。",
+          "board": [
+            {"do":"write","line":"$e^{-x^2}={{q:e^{-u}}}$"},
+            {"do":"box","term":"q","color":"green","on":"標準形狀"}
           ] }
       ],
+      "key": "先換元成標準形 $u^{k}e^{-u}$",
       "predict": {
         "ask": "積分變成？",
         "options": [
-          { "label": "$\\frac{1}{2}\\Gamma(2)=\\frac{1}{2}$", "correct": true },
-          { "label": "$\\Gamma(2)=1$", "why": "漏了 $du=2x\\,dx$ 留下的 $\\frac{1}{2}$。" },
-          { "label": "$\\frac{1}{2}\\Gamma(4)=3$", "why": "換元後被積函數是 $ue^{-u}$，是 $\\Gamma(2)$；$x^3$ 已經拆成 $u$ 和 $x\\,dx$。" }
+          {
+            "label": "$\\frac{1}{2}\\Gamma(2)=\\frac{1}{2}$",
+            "correct": true
+          },
+          {
+            "label": "$\\Gamma(2)=1$",
+            "why": "漏了 $du=2x\\,dx$ 留下的 $\\frac{1}{2}$。"
+          },
+          {
+            "label": "$\\frac{1}{2}\\Gamma(4)=3$",
+            "why": "換元後被積函數是 $ue^{-u}$，是 $\\Gamma(2)$；$x^3$ 已經拆成 $u$ 和 $x\\,dx$。"
+          }
         ]
       }
     }

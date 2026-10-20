@@ -179,20 +179,22 @@
         { "show": ["線密度 $f(x,y)$：每單位長度的質量"],
           "say": "一條鐵絲彎成曲線，每一點粗細不同，線密度是 f。總質量怎麼算？",
           "board": [
-            { "do": "write", "line": "線密度 $f(x,y)$：每單位長度的質量" }
+            {"do":"write","line":"線密度 $f(x,y)$：每單位長度的質量"}
           ] },
-        { "show": ["每段 $\\Delta s$，質量約 $f\\cdot\\Delta s$"], "note": "加起來取極限：$\\int_C f\\,ds$。",
+        { "show": ["每段 $\\Delta s$，質量約 $f\\cdot\\Delta s$"],
+          "note": "加起來取極限：$\\int_C f\\,ds$。",
           "say": "把鐵絲切成很多小段，每段長 delta s，質量大約是密度乘長度，加起來取極限。",
           "board": [
-            { "do": "write", "line": "每段質量 $\\approx {{a:f}}\\cdot{{b:\\Delta s}}$" },
-            { "do": "write", "line": "總質量 $=\\int_C f\\,ds$", "on": "加起來" }
+            {"do":"write","line":"每段質量 $\\approx {{a:f}}\\cdot{{b:\\Delta s}}$"},
+            {"do":"write","line":"總質量 $=\\int_C f\\,ds$","on":"加起來"}
           ] },
-        { "show": ["$f=1$：$\\int_C 1\\,ds$ 是曲線長度"], "note": "$f\\ge 0$：沿 $C$ 立起高 $f$ 的圍籬，積分是圍籬面積。",
+        { "show": ["$f=1$：$\\int_C 1\\,ds$ 是曲線長度"],
+          "note": "$f\\ge 0$：沿 $C$ 立起高 $f$ 的圍籬，積分是圍籬面積。",
           "say": "密度是一，總質量就是長度。另一個畫面：沿著曲線立一道高度 f 的圍籬，積分是圍籬的面積。",
           "board": [
-            { "do": "clear" },
-            { "do": "write", "line": "$f=1$：$\\int_C 1\\,ds$ = 長度", "on": "密度是一" },
-            { "do": "write", "line": "圍籬面積 $=\\int_C f\\,ds$", "on": "另一個畫面" }
+            {"do":"clear"},
+            {"do":"write","line":"$f=1$：$\\int_C 1\\,ds$ = 長度","on":"密度是一"},
+            {"do":"write","line":"圍籬面積 $=\\int_C f\\,ds$","on":"另一個畫面"}
           ] }
       ],
       "check": 2
@@ -203,19 +205,36 @@
         { "show": ["$\\mathbf r(t)=\\langle x(t),y(t)\\rangle$，$a\\le t\\le b$"],
           "say": "要算，先把曲線參數化，t 從 a 走到 b。",
           "board": [
-            { "do": "write", "line": "$\\mathbf r(t)=\\langle x(t),y(t)\\rangle$，$a\\le t\\le b$" }
+            {"do":"write","line":"$\\mathbf r(t)=\\langle x(t),y(t)\\rangle$，$a\\le t\\le b$"}
           ] },
-        { "show": ["$|\\mathbf r'(t)|=\\sqrt{x'^2+y'^2}$：速率"], "note": "$t$ 增加 $dt$，點走了 $|\\mathbf r'(t)|\\,dt$。",
+        { "show": ["放大曲線上的一小段"],
+          "note": "一小段幾乎是直的，像直角三角形的斜邊。",
+          "say": "把曲線上一小段放大，它幾乎是直的，像一個直角三角形的斜邊。橫的走 dx，直的走 dy。",
+          "board": [
+            {"do":"plot","graph":{"window":[0,1.2,0,1.2],"curves":[{"expr":"sqrt(1-x^2)","domain":[0,1],"color":"blue"}],"dashed":[[[0.6,0.8],[0.8,0.8]],[[0.8,0.8],[0.8,0.6]],[[0.6,0.8],[0.8,0.6]]],"labels":[{"x":0.7,"y":0.85,"text":"dx","anchor":"middle"},{"x":0.83,"y":0.7,"text":"dy","anchor":"start"},{"x":0.62,"y":0.66,"text":"ds","anchor":"end"}]}}
+          ] },
+        { "show": ["$dx=x'\\,dt$，$dy=y'\\,dt$","$ds=\\sqrt{dx^2+dy^2}$"],
+          "note": "速率開根號，是因為斜邊用畢氏定理。",
+          "say": "橫向走 x 的速度乘 d t，直向走 y 的速度乘 d t。斜邊用畢氏定理，平方相加開根號，d t 提到外面。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$dx=x'\\,dt$，$dy=y'\\,dt$","on":"橫向走"},
+            {"do":"write","line":"$ds=\\sqrt{dx^2+dy^2}$","on":"畢氏定理"},
+            {"do":"write","line":"$=\\sqrt{x'^2+y'^2}\\,dt$","on":"開根號"}
+          ] },
+        { "show": ["$|\\mathbf r'(t)|=\\sqrt{x'^2+y'^2}$：速率"],
+          "note": "$t$ 增加 $dt$，點走了 $|\\mathbf r'(t)|\\,dt$。",
           "say": "t 增加一點點，點在曲線上走的長度是速率乘 d t。速率要開根號。",
           "board": [
-            { "do": "write", "line": "$ds=|\\mathbf r'(t)|\\,dt$", "on": "走的長度" },
-            { "do": "write", "line": "$|\\mathbf r'(t)|=\\sqrt{x'^2+y'^2}$", "on": "速率要" }
+            {"do":"write","line":"$ds=|\\mathbf r'(t)|\\,dt$","on":"走的長度"},
+            {"do":"write","line":"$|\\mathbf r'(t)|=\\sqrt{x'^2+y'^2}$","on":"速率要"}
           ] },
-        { "show": ["$\\int_a^b f(x(t),y(t))\\,|\\mathbf r'(t)|\\,dt$"], "note": "$f$ 也要代成 $t$。",
+        { "show": ["$\\int_a^b f(x(t),y(t))\\,|\\mathbf r'(t)|\\,dt$"],
+          "note": "$f$ 也要代成 $t$。",
           "say": "被積函數也要代成 t 的函數，再乘上速率，就變成普通的定積分。",
           "board": [
-            { "do": "write", "line": "${{r:\\int_a^b f(x(t),y(t))\\,|\\mathbf r'(t)|\\,dt}}$", "on": "被積函數" },
-            { "do": "box", "term": "r", "color": "green", "on": "變成" }
+            {"do":"write","line":"${{r:\\int_a^b f(x(t),y(t))\\,|\\mathbf r'(t)|\\,dt}}$","on":"被積函數"},
+            {"do":"box","term":"r","color":"green","on":"變成"}
           ] }
       ],
       "check": 0
@@ -226,82 +245,143 @@
         { "show": ["$\\int_C(2+x^2y)\\,ds$，$C$：單位圓上半部"],
           "say": "算一題：單位圓的上半部。",
           "board": [
-            { "do": "write", "line": "$\\int_C(2+x^2y)\\,ds$" },
-            { "do": "write", "line": "$C$：單位圓上半部", "on": "單位圓" }
+            {"do":"write","line":"$\\int_C(2+x^2y)\\,ds$"},
+            {"do":"write","line":"$C$：單位圓上半部","on":"單位圓"}
           ] },
         { "show": ["$\\langle\\cos t,\\sin t\\rangle$，$0\\le t\\le\\pi$，$|\\mathbf r'|=1$"],
           "say": "用 cosine t、sine t，t 從零到 pi，速率剛好是一。",
           "board": [
-            { "do": "write", "line": "$\\mathbf r=\\langle\\cos t,\\sin t\\rangle$，$0\\le t\\le\\pi$" },
-            { "do": "write", "line": "$|\\mathbf r'|={{v:1}}$", "on": "速率剛好" }
+            {"do":"write","line":"$\\mathbf r=\\langle\\cos t,\\sin t\\rangle$，$0\\le t\\le\\pi$"},
+            {"do":"write","line":"$|\\mathbf r'|={{v:1}}$","on":"速率剛好"}
           ] },
         { "show": ["$\\int_0^\\pi(2+\\cos^2t\\sin t)\\,dt$"],
           "say": "代進去。第二項令 u 等於 cosine t 就積得出來。",
           "board": [
-            { "do": "clear" },
-            { "do": "write", "line": "$\\int_0^\\pi(2+\\cos^2t\\sin t)\\,dt$", "on": "代進去" },
-            { "do": "write", "line": "第二項：${{u:u=\\cos t}}$", "on": "令" }
+            {"do":"clear"},
+            {"do":"write","line":"$\\int_0^\\pi(2+\\cos^2t\\sin t)\\,dt$","on":"代進去"},
+            {"do":"write","line":"第二項：${{u:u=\\cos t}}$","on":"令"}
+          ] },
+        { "show": ["$u=\\cos t$，$du=-\\sin t\\,dt$","$t:0\\to\\pi$，$u:1\\to-1$"],
+          "note": "換變數時，上下限也要跟著換。",
+          "say": "u 等於 cosine t，微分得 d u 等於負 sine t d t。t 從零走到 pi，u 就從一走到負一。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$du=-\\sin t\\,dt$","on":"微分得"},
+            {"do":"write","line":"$t:0\\to\\pi$，$u:1\\to-1$","on":"t 從零"}
+          ] },
+        { "show": ["$\\int_1^{-1}-u^2\\,du$","$\\int u^2\\,du=\\frac{u^3}{3}$"],
+          "note": "次方加一，再除以新的次方。",
+          "say": "sine t d t 換成負 d u，積分變成從一到負一的負 u 平方。次方加一再除以三，得三分之 u 三次方。",
+          "board": [
+            {"do":"write","line":"$\\int_1^{-1}-u^2\\,du$"},
+            {"do":"write","line":"$\\int u^2\\,du=\\frac{u^3}{3}$","on":"次方加一"}
           ] }
       ],
       "predict": {
         "ask": "結果是？",
         "options": [
-          { "label": "$2\\pi+\\frac{2}{3}$", "correct": true },
-          { "label": "$2\\pi$", "why": "$\\left[-\\frac{\\cos^3t}{3}\\right]_0^\\pi=\\frac{1}{3}+\\frac{1}{3}=\\frac{2}{3}$，不是 $0$。" },
-          { "label": "$\\pi+\\frac{2}{3}$", "why": "常數 $2$ 從 $0$ 積到 $\\pi$ 是 $2\\pi$。" }
+          {
+            "label": "$2\\pi+\\frac{2}{3}$",
+            "correct": true
+          },
+          {
+            "label": "$2\\pi$",
+            "why": "$\\left[-\\frac{\\cos^3t}{3}\\right]_0^\\pi=\\frac{1}{3}+\\frac{1}{3}=\\frac{2}{3}$，不是 $0$。"
+          },
+          {
+            "label": "$\\pi+\\frac{2}{3}$",
+            "why": "常數 $2$ 從 $0$ 積到 $\\pi$ 是 $2\\pi$。"
+          }
         ]
       }
     },
     {
-      "title": "速率不是 1", "key": "$ds=|\\mathbf r'(t)|\\,dt$，速率別漏乘",
+      "title": "速率不是 1",
       "beats": [
-        { "show": ["$\\int_C xy\\,ds$，$(0,0)\\to(3,4)$ 的線段"], "note": "$\\mathbf r(t)=\\langle 3t,4t\\rangle$，$0\\le t\\le 1$。",
+        { "show": ["$\\int_C xy\\,ds$，$(0,0)\\to(3,4)$ 的線段"],
+          "note": "$\\mathbf r(t)=\\langle 3t,4t\\rangle$，$0\\le t\\le 1$。",
           "say": "這一條是線段，參數化成三 t、四 t，t 從零到一。",
           "board": [
-            { "do": "write", "line": "$\\int_C xy\\,{{ds:ds}}$，$(0,0)\\to(3,4)$" },
-            { "do": "write", "line": "$\\mathbf r(t)=\\langle 3t,4t\\rangle$，$0\\le t\\le1$", "on": "參數化" }
+            {"do":"write","line":"$\\int_C xy\\,{{ds:ds}}$，$(0,0)\\to(3,4)$"},
+            {"do":"write","line":"$\\mathbf r(t)=\\langle 3t,4t\\rangle$，$0\\le t\\le1$","on":"參數化"}
           ] },
-        { "show": ["$|\\mathbf r'(t)|=\\sqrt{9+16}=5$"], "note": "最常漏的就是這個。",
+        { "show": ["$|\\mathbf r'(t)|=\\sqrt{9+16}=5$"],
+          "note": "最常漏的就是這個。",
           "say": "速率是根號九加十六，等於五。直接把 d s 換成 d t 就錯了。",
           "board": [
-            { "do": "write", "line": "$|\\mathbf r'(t)|=\\sqrt{9+16}={{v:5}}$" },
-            { "do": "write", "line": "${{ds:ds}}={{v:5}}\\,dt$，不是 ${{w:dt}}$", "on": "直接把" },
-            { "do": "strike", "term": "w", "on": "換成" }
+            {"do":"write","line":"$|\\mathbf r'(t)|=\\sqrt{9+16}={{v:5}}$"},
+            {"do":"write","line":"${{ds:ds}}={{v:5}}\\,dt$，不是 ${{w:dt}}$","on":"直接把"},
+            {"do":"strike","term":"w","on":"換成"}
           ] },
         { "show": ["$\\int_0^1 12t^2\\cdot5\\,dt=20$"],
           "say": "x y 代成十二 t 平方，乘上速率五，積出來是二十。",
           "board": [
-            { "do": "keep", "n": 2 },
-            { "do": "write", "line": "$\\int_0^1 12t^2\\cdot{{v:5}}\\,dt=\\;{{r:20}}$", "on": "x y 代成" },
-            { "do": "focus", "term": "v", "on": "速率五" },
-            { "do": "box", "term": "r", "color": "green", "on": "積出來" }
+            {"do":"keep","n":2},
+            {"do":"write","line":"$\\int_0^1 12t^2\\cdot{{v:5}}\\,dt=\\;{{r:20}}$","on":"x y 代成"},
+            {"do":"focus","term":"v","on":"速率五"},
+            {"do":"box","term":"r","color":"green","on":"積出來"}
+          ] },
+        { "show": ["$12t^2\\cdot5=60t^2$","$\\int_0^1 60t^2\\,dt=60\\int_0^1 t^2\\,dt$"],
+          "note": "常數可以提到積分外面。",
+          "say": "拆開來看：十二 t 平方乘五是六十 t 平方，常數六十可以提到積分外面。",
+          "board": [
+            {"do":"write","line":"$12t^2\\cdot5=60t^2$"},
+            {"do":"write","line":"$\\int_0^1 60t^2\\,dt=60\\int_0^1 t^2\\,dt$","on":"常數六十"}
+          ] },
+        { "show": ["$\\int t^2\\,dt=\\frac{t^3}{3}$","$60\\left(\\frac13-0\\right)=20$"],
+          "note": "次方加一，再除以新的次方。",
+          "say": "t 平方積分是次方加一再除以三，三分之 t 三次方。代入一和零，再乘六十，就是二十。",
+          "board": [
+            {"do":"write","line":"$\\int t^2\\,dt=\\frac{t^3}{3}$"},
+            {"do":"write","line":"$60\\left(\\frac13-0\\right)=20$","on":"代入"}
           ] }
       ],
+      "key": "$ds=|\\mathbf r'(t)|\\,dt$，速率別漏乘",
       "check": 3
     },
     {
-      "title": "方向不影響", "key": "分段曲線各自參數化再相加",
+      "title": "方向不影響",
       "beats": [
-        { "show": ["$ds$ 是長度，永遠是正的"], "note": "反方向走、換參數化，結果都不變。",
+        { "show": ["$ds$ 是長度，永遠是正的"],
+          "note": "反方向走、換參數化，結果都不變。",
           "say": "d s 是長度，永遠是正的。從哪一頭走，或走快走慢，結果都一樣。下一課的功就不一樣了。",
           "board": [
-            { "do": "write", "line": "${{d:ds}}>0$：長度" },
-            { "do": "focus", "term": "d", "color": "gold", "on": "永遠" }
+            {"do":"write","line":"${{d:ds}}>0$：長度"},
+            {"do":"focus","term":"d","color":"gold","on":"永遠"}
           ] },
-        { "show": ["三角形邊界：三段各自參數化"], "note": "頂點 $(0,0)$、$(1,0)$、$(0,1)$。",
+        { "show": ["三角形邊界：三段各自參數化"],
+          "note": "頂點 $(0,0)$、$(1,0)$、$(0,1)$。",
           "say": "曲線由幾段組成時，每段各自參數化，挑順手的方向就好，最後相加。",
           "board": [
-            { "do": "write", "line": "$\\int_C=\\int_{C_1}+\\int_{C_2}+\\int_{C_3}$" }
+            {"do":"write","line":"$\\int_C=\\int_{C_1}+\\int_{C_2}+\\int_{C_3}$"}
           ] },
-        { "show": ["$\\frac{1}{2}+\\sqrt2+\\frac{1}{2}=1+\\sqrt2$"], "note": "斜邊的速率是 $\\sqrt2$。",
+        { "show": ["被積函數 $f=x+y$","$C_1$：$\\int_0^1 t\\,dt=\\frac12$"],
+          "note": "下面那條直角邊：$x=t$，$y=0$。",
+          "say": "被積函數是 x 加 y。先看下面那條直角邊，x 是 t、y 是零，速率一，積分 t 得二分之 t 平方，從零到一是二分之一。",
+          "board": [
+            {"do":"write","line":"$f=x+y$"},
+            {"do":"write","line":"$C_1:\\mathbf r=\\langle t,0\\rangle$，速率 $1$","on":"直角邊"},
+            {"do":"write","line":"$\\int_0^1 t\\,dt=\\left[\\frac{t^2}{2}\\right]_0^1=\\frac12$","on":"積分"}
+          ] },
+        { "show": ["$C_2$：$\\mathbf r=\\langle 1-t,t\\rangle$","$\\int_0^1\\sqrt2\\,dt=\\sqrt2$"],
+          "note": "斜邊上 $x+y=1$。",
+          "say": "斜邊用一減 t 和 t 參數化。導數是負一和一，速率根號二；x 加 y 恆為一，所以積出根號二。",
+          "board": [
+            {"do":"write","line":"$C_2:\\mathbf r=\\langle1-t,t\\rangle$"},
+            {"do":"write","line":"$\\mathbf r'=\\langle-1,1\\rangle$，速率 $\\sqrt{1+1}=\\sqrt2$","on":"導數"},
+            {"do":"write","line":"$\\int_0^1 1\\cdot\\sqrt2\\,dt=\\sqrt2$","on":"x 加 y"}
+          ] },
+        { "show": ["$\\frac{1}{2}+\\sqrt2+\\frac{1}{2}=1+\\sqrt2$"],
+          "note": "斜邊的速率是 $\\sqrt2$。",
           "say": "兩條直角邊各得二分之一；斜邊上 x 加 y 一直是一，速率根號二。合計一加根號二。",
           "board": [
-            { "do": "clear" },
-            { "do": "write", "line": "直角邊：$\\frac{1}{2}$", "on": "兩條直角邊" },
-            { "do": "write", "line": "斜邊：$x+y=1$，速率 $\\sqrt2$", "on": "斜邊上" },
-            { "do": "write", "line": "$\\frac12+\\sqrt2+\\frac12=1+\\sqrt2$", "color": "green", "on": "合計" }
+            {"do":"clear"},
+            {"do":"write","line":"直角邊：$\\frac{1}{2}$","on":"兩條直角邊"},
+            {"do":"write","line":"斜邊：$x+y=1$，速率 $\\sqrt2$","on":"斜邊上"},
+            {"do":"write","line":"$\\frac12+\\sqrt2+\\frac12=1+\\sqrt2$","color":"green","on":"合計"}
           ] }
       ],
+      "key": "分段曲線各自參數化再相加",
       "check": 1
     }
   ],

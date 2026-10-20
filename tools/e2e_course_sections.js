@@ -441,15 +441,18 @@ async function run() {
     await tap(`.cv2s-dot:nth-child(${dragSi + 1})`);
     await waitFor(`window.__s.si() === ${dragSi}`);
     const d0 = WIDGET.sections[dragSi].beats[0].fig;
-    const d1 = WIDGET.sections[dragSi].beats[1].fig;
+    // 下一個帶 fig 的句子（2026-10-21 擴寫後中間可能插了不帶 fig 的句子：先點過去）
+    const dk = WIDGET.sections[dragSi].beats.findIndex((b, i) => i > 0 && b.fig);
+    const d1 = WIDGET.sections[dragSi].beats[dk].fig;
     await sleep(200);
+    for (let k = 1; k < dk; k += 1) { await tap("[data-cv2s-next]"); await sleep(300); }
     await evaluate(`window.__s.watch(${d1.use}); return 1;`);
     await tap("[data-cv2s-next]");
     await waitFor(`window.__watched`, 40000);
     const still = (await evaluate(`return window.__vals;`)).filter((v, i) => !(i === 0 && v === String(d0.to)));
     check(`reduced-motion：直接跳到 ${d1.to}，沒有過渡值`, still.length === 1 && still[0] === String(d1.to), `${d0.to} → ${still.join("→")}`);
     await chrome.send("Emulation.setEmulatedMedia", { features: [] });
-    for (let k = 2; k < WIDGET.sections[dragSi].beats.length; k += 1) await tap("[data-cv2s-next]");
+    for (let k = dk + 1; k < WIDGET.sections[dragSi].beats.length; k += 1) await tap("[data-cv2s-next]");
     const dragAct = await evaluate(`return { act: Boolean(document.querySelector('[data-cv2s-act="drag"]')), done: document.querySelector('[data-cv2s-act="drag"]').classList.contains("is-done") };`);
     check("拖圖的動作出現（還沒做到）", dragAct.act && !dragAct.done);
     const stick = await evaluate(`scrollTo(0, document.documentElement.scrollHeight); await new Promise((r) => setTimeout(r, 150)); const f = window.__s.fig(${WIDGET.sections[dragSi].drag.use}).getBoundingClientRect(); const bar = document.querySelector(".topbar").getBoundingClientRect(); return { fig: Math.round(f.top), bar: Math.round(bar.bottom), y: Math.round(scrollY) };`);
@@ -751,7 +754,9 @@ async function run() {
         await evaluate(`const v = window.BuzzCourseSections.voice(); const y0 = Math.round(scrollY); window.__away = { beat: v.beat, y0, min: y0, last: y0 };
           window.__awayOn = () => { const a = window.__away; if (window.BuzzCourseSections.voice().beat !== a.beat) return; a.last = Math.round(scrollY); a.min = Math.min(a.min, a.last); };
           addEventListener("scroll", window.__awayOn, { passive: true }); return 1;`);
-        await chrome.send("Input.dispatchMouseEvent", { type: "mouseWheel", x: 200, y: 300, deltaX: 0, deltaY: -240 });
+        // 滾輪要落在頁面上、不落在黑板裡（板子自己會捲，滾到板上捲的是板不是頁面；2026-10-21 擴寫後板子變高、常常就在 (200,300)）
+        const wp = await evaluate(`for (const x of [200, 12, innerWidth - 12]) for (let y = 120; y < innerHeight - 120; y += 30) { const el = document.elementFromPoint(x, y); if (el && !el.closest(".cvb, .cv2s-dock")) return [x, y]; } return [200, 300];`);
+        await chrome.send("Input.dispatchMouseEvent", { type: "mouseWheel", x: wp[0], y: wp[1], deltaX: 0, deltaY: -240 });
         await waitFor(`window.BuzzCourseSections.voice().beat !== window.__away.beat || window.BuzzCourseSections.voice().wait`, 15000);
         away = await evaluate(`removeEventListener("scroll", window.__awayOn); return { ...window.__away, y: window.__away.last };`);
       }

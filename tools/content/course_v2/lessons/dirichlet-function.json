@@ -50,122 +50,153 @@
     {
       "title": "畫不出來的函數",
       "beats": [
-        { "show": ["$D(x)=1$（$x$ 有理），$0$（$x$ 無理）"], "note": "定義在 $[0,1]$ 上。",
+        { "show": ["$D(x)=1$（$x$ 有理），$0$（$x$ 無理）"],
+          "note": "定義在 $[0,1]$ 上。",
           "say": "Dirichlet 函數：x 是有理數就取一，是無理數就取零，定義在零到一上。",
           "board": [
-            { "do": "write", "line": "$D(x)=1$：$x$ 有理" },
-            { "do": "write", "line": "$D(x)=0$：$x$ 無理", "on": "是無理數" }
+            {"do":"write","line":"$D(x)=1$：$x$ 有理"},
+            {"do":"write","line":"$D(x)=0$：$x$ 無理","on":"是無理數"}
           ] },
         { "show": ["有界：值只有 0 和 1"],
           "say": "它很乖，有界，值只有零跟一兩種。",
           "board": [
-            { "do": "write", "line": "$0\\le D(x)\\le 1$", "on": "有界" }
+            {"do":"write","line":"$0\\le D(x)\\le 1$","on":"有界"}
           ] },
         { "show": ["想畫：兩條「看起來實心」的線"],
           "say": "可是畫不出來：你會得到 y 等於零和 y 等於一兩條看起來實心的線，點在中間跳來跳去。",
           "board": [
-            { "do": "write", "line": "$y=0$、$y=1$：看起來實心", "on": "你會得到" }
+            {"do":"write","line":"$y=0$、$y=1$：看起來實心","on":"你會得到"}
+          ] },
+        { "show": ["有理點在 $y=1$，無理點在 $y=0$"],
+          "say": "看圖：藍線是 y 等於零，紅線是 y 等於一。其實每條線上只有一部分的點，有理點在紅線，無理點在藍線。",
+          "board": [
+            {"do":"plot","graph":{"window":[-0.2,1.2,-0.5,1.5],"curves":[{"expr":"0","domain":[0,1],"color":"blue"},{"expr":"1","domain":[0,1],"color":"red"}]}}
           ] }
       ],
       "predict": {
         "ask": "$D$ 在哪些點連續？",
         "options": [
-          { "label": "一個都沒有", "correct": true },
-          { "label": "所有有理點", "why": "有理點旁邊要多近有多近都有無理點，函數值 0 與 1 一直跳。" },
-          { "label": "所有無理點", "why": "無理點旁邊也到處是有理點，函數值一樣在 0 與 1 之間跳。" }
+          {
+            "label": "一個都沒有",
+            "correct": true
+          },
+          {
+            "label": "所有有理點",
+            "why": "有理點旁邊要多近有多近都有無理點，函數值 0 與 1 一直跳。"
+          },
+          {
+            "label": "所有無理點",
+            "why": "無理點旁邊也到處是有理點，函數值一樣在 0 與 1 之間跳。"
+          }
         ]
       }
     },
     {
       "title": "每一段兩種數都有",
       "beats": [
-        { "show": ["任何 $(a,b)$ 裡：有理數、無理數都有"], "note": "叫做稠密。",
+        { "show": ["任何 $(a,b)$ 裡：有理數、無理數都有"],
+          "note": "叫做稠密。",
           "say": "關鍵事實：任何長度是正的區間裡，至少有一個有理數，也至少有一個無理數。這叫稠密。",
           "board": [
-            { "do": "write", "line": "${{iv:(a,b)}}$ 裡：有理數、無理數都有" },
-            { "do": "underline", "term": "iv", "label": "長度為正", "on": "長度是正的" }
+            {"do":"write","line":"${{iv:(a,b)}}$ 裡：有理數、無理數都有"},
+            {"do":"underline","term":"iv","label":"長度為正","on":"長度是正的"}
           ] },
         { "show": ["有理：取 $\\frac{1}{n}<b-a$，找 $\\frac{m}{n}$"],
           "say": "有理數的部分：步長取得比區間還短，一步一步往前走，一定有一步落進區間裡。",
           "board": [
-            { "do": "write", "line": "有理：$\\frac{1}{n}<b-a$，走 $\\frac{m}{n}$", "on": "步長取得" },
-            { "do": "write", "line": "$\\frac{m}{n}\\in(a,b)$", "on": "一定有一步" }
+            {"do":"write","line":"有理：$\\frac{1}{n}<b-a$，走 $\\frac{m}{n}$","on":"步長取得"},
+            {"do":"write","line":"$\\frac{m}{n}\\in(a,b)$","on":"一定有一步"}
           ] },
-        { "show": ["無理：$q+\\sqrt{2}$"], "note": "有理加無理是無理。",
+        { "show": ["步子 $\\frac{1}{n}$：$0,\\frac{1}{n},\\frac{2}{n},\\dots$"],
+          "note": "步子比區間短，不會整步跳過。",
+          "say": "怎麼走？從零開始，每步走 n 分之一，依序踩在 n 分之一、n 分之二、一直往右。步子比區間短，就一定踩進區間。",
+          "board": [
+            {"do":"write","line":"$0,\\frac{1}{n},\\frac{2}{n},\\dots$"},
+            {"do":"write","line":"步子比區間短：跨不過去","on":"步子比區間短"}
+          ] },
+        { "show": ["無理：$q+\\sqrt{2}$"],
+          "note": "有理加無理是無理。",
           "say": "無理數的部分：先找一個有理數 q，再加上根號二，就是區間裡的無理數。證明在下一節。",
           "board": [
-            { "do": "write", "line": "無理：${{q:q}}+{{s:\\sqrt{2}}}$" },
-            { "do": "focus", "term": "q", "color": "blue", "label": "有理", "on": "有理數 q" },
-            { "do": "focus", "term": "s", "color": "violet", "label": "無理", "on": "根號二" }
+            {"do":"write","line":"無理：${{q:q}}+{{s:\\sqrt{2}}}$"},
+            {"do":"focus","term":"q","color":"blue","label":"有理","on":"有理數 q"},
+            {"do":"focus","term":"s","color":"violet","label":"無理","on":"根號二"}
           ] }
       ],
       "check": 1
     },
     {
-      "title": "證明：稠密性", "key": "步長比區間短，就一定踩進區間",
-      "proof": true,
-      "of": 2,
-      "skeleton": "構造",
+      "title": "證明：稠密性",
       "beats": [
         { "show": ["先造有理數 $\\frac{m}{n}$，再平移出無理數"],
           "say": "策略：直接造出來。先用很小的步長造出區間裡的有理數，再平移根號二，得到無理數。",
           "board": [
-            { "do": "write", "line": "先造有理數 $\\frac{m}{n}$", "on": "先用很小的步長" },
-            { "do": "transform", "line": "先造有理數 $\\frac{m}{n}$，再平移出無理數", "on": "再平移" }
+            {"do":"write","line":"先造有理數 $\\frac{m}{n}$","on":"先用很小的步長"},
+            {"do":"transform","line":"先造有理數 $\\frac{m}{n}$，再平移出無理數","on":"再平移"}
           ] },
-        { "show": ["取 $n$：$\\frac{1}{n}<b-a$"], "note": "阿基米德性質。",
-          "why": {
-            "ask": "為什麼找得到這樣的 $n$？",
-            "say": "步長要比區間短。這樣的 n 為什麼一定有？",
-            "options": [
-              { "label": "阿基米德性質：$n$ 夠大，$\\frac{1}{n}$ 比任何正數小", "correct": true },
-              { "label": "$b-a$ 是有理數", "why": "$b-a$ 可以是無理數；靠的只是它是正的，再加上阿基米德性質。" },
-              { "label": "有理數本來就稠密", "why": "那正是要證的結論；這裡能用的只有阿基米德性質。" }
-            ]
-          },
+        { "show": ["取 $n$：$\\frac{1}{n}<b-a$"],
+          "note": "阿基米德性質。",
+          "why": {"ask":"為什麼找得到這樣的 $n$？","say":"步長要比區間短。這樣的 n 為什麼一定有？","options":[{"label":"阿基米德性質：$n$ 夠大，$\\frac{1}{n}$ 比任何正數小","correct":true},{"label":"$b-a$ 是有理數","why":"$b-a$ 可以是無理數；靠的只是它是正的，再加上阿基米德性質。"},{"label":"有理數本來就稠密","why":"那正是要證的結論；這裡能用的只有阿基米德性質。"}]},
           "say": "區間長度是正的，阿基米德性質說 n 取夠大，n 分之一就比它短。",
           "board": [
-            { "do": "write", "line": "取 $n$：${{st:\\frac{1}{n}}}<{{len:b-a}}$", "tint": { "st": "blue", "len": "violet" } },
-            { "do": "underline", "term": "st", "color": "blue", "label": "阿基米德", "why": true, "on": "阿基米德性質" }
+            {"do":"write","line":"取 $n$：${{st:\\frac{1}{n}}}<{{len:b-a}}$","tint":{"st":"blue","len":"violet"}},
+            {"do":"underline","term":"st","color":"blue","label":"阿基米德","why":true,"on":"阿基米德性質"}
           ] },
-        { "show": ["$m$：大於 $na$ 的最小整數", "$m-1\\le na<m$"],
+        { "show": ["$\\frac{1}{n}<b-a\\iff n>\\frac{1}{b-a}$"],
+          "note": "$\\frac{1}{b-a}$ 是一個固定的正數。",
+          "say": "n 分之一小於 b 減 a，等於 n 大於 b 減 a 分之一。右邊是一個固定的數，自然數沒有上限，總有 n 比它大。",
+          "board": [
+            {"do":"write","line":"$\\frac{1}{n}<b-a\\iff n>{{r:\\frac{1}{b-a}}}$"},
+            {"do":"underline","term":"r","label":"固定的數","on":"固定的數"},
+            {"do":"write","line":"自然數沒有上限：總有 $n$ 更大","on":"自然數沒有上限"}
+          ] },
+        { "show": ["$m$：大於 $na$ 的最小整數","$m-1\\le na<m$"],
           "say": "再取 m，是比 n 乘 a 大的整數裡最小的那一個，所以 m 減一還不超過 n 乘 a。",
           "board": [
-            { "do": "write", "line": "$m$：大於 $na$ 的最小整數", "on": "再取 m" },
-            { "do": "write", "line": "$m-1\\le na<m$", "on": "所以 m 減一" }
+            {"do":"write","line":"$m$：大於 $na$ 的最小整數","on":"再取 m"},
+            {"do":"write","line":"$m-1\\le na<m$","on":"所以 m 減一"}
           ] },
-        { "show": ["$a<\\frac{m}{n}\\le a+\\frac{1}{n}<b$"], "note": "除以 $n$；步長比區間短。",
-          "why": {
-            "ask": "為什麼 $\\frac{m}{n}$ 不會跳過 $b$？",
-            "say": "n 分之 m 比 a 大。它為什麼不會一步跨過 b？",
-            "options": [
-              { "label": "$\\frac{m}{n}\\le a+\\frac{1}{n}$，而 $\\frac{1}{n}<b-a$", "correct": true },
-              { "label": "$m$ 是整數", "why": "整數只保證 $\\frac{m}{n}$ 是有理數，不管位置；不跨過 $b$ 靠的是 $m$ 取最小、步長又比區間短。" },
-              { "label": "因為 $na<m$", "why": "那只給 $\\frac{m}{n}>a$ 這一邊；不超過 $b$ 要用 $m-1\\le na$ 和 $\\frac{1}{n}<b-a$。" }
-            ]
-          },
+        { "show": ["$a<\\frac{m}{n}\\le a+\\frac{1}{n}<b$"],
+          "note": "除以 $n$；步長比區間短。",
+          "why": {"ask":"為什麼 $\\frac{m}{n}$ 不會跳過 $b$？","say":"n 分之 m 比 a 大。它為什麼不會一步跨過 b？","options":[{"label":"$\\frac{m}{n}\\le a+\\frac{1}{n}$，而 $\\frac{1}{n}<b-a$","correct":true},{"label":"$m$ 是整數","why":"整數只保證 $\\frac{m}{n}$ 是有理數，不管位置；不跨過 $b$ 靠的是 $m$ 取最小、步長又比區間短。"},{"label":"因為 $na<m$","why":"那只給 $\\frac{m}{n}>a$ 這一邊；不超過 $b$ 要用 $m-1\\le na$ 和 $\\frac{1}{n}<b-a$。"}]},
           "say": "除以 n：它比 a 大，最多比 a 多一個步長，而步長比區間短，所以落在區間裡。",
           "board": [
-            { "do": "keep", "n": 2 },
-            { "do": "write", "line": "$a<\\frac{m}{n}\\le a+{{st:\\frac{1}{n}}}<b$", "tint": { "st": "blue" }, "on": "n 分之 m" },
-            { "do": "underline", "term": "st", "color": "blue", "label": "比區間短", "why": true, "on": "步長比區間短" }
+            {"do":"keep","n":2},
+            {"do":"write","line":"$a<\\frac{m}{n}\\le a+{{st:\\frac{1}{n}}}<b$","tint":{"st":"blue"},"on":"n 分之 m"},
+            {"do":"underline","term":"st","color":"blue","label":"比區間短","why":true,"on":"步長比區間短"}
           ] },
-        { "show": ["無理：$q\\in(a-\\sqrt{2},b-\\sqrt{2})$", "$q+\\sqrt{2}\\in(a,b)$"], "note": "若它是有理數，$\\sqrt{2}$ 也是：矛盾。",
+        { "show": ["無理：$q\\in(a-\\sqrt{2},b-\\sqrt{2})$","$q+\\sqrt{2}\\in(a,b)$"],
+          "note": "若它是有理數，$\\sqrt{2}$ 也是：矛盾。",
           "say": "無理數：對往左平移根號二的區間找有理數 q，加回根號二。它若是有理數，根號二也會是，矛盾。",
           "board": [
-            { "do": "clear" },
-            { "do": "write", "line": "無理：$q\\in(a-\\sqrt{2},b-\\sqrt{2})$", "on": "無理數" },
-            { "do": "write", "line": "$q+\\sqrt{2}\\in(a,b)$", "on": "加回根號二" },
-            { "do": "write", "line": "它若有理 ⇒ $\\sqrt{2}$ 有理：矛盾", "on": "它若是" }
+            {"do":"clear"},
+            {"do":"write","line":"無理：$q\\in(a-\\sqrt{2},b-\\sqrt{2})$","on":"無理數"},
+            {"do":"write","line":"$q+\\sqrt{2}\\in(a,b)$","on":"加回根號二"},
+            {"do":"write","line":"它若有理 ⇒ $\\sqrt{2}$ 有理：矛盾","on":"它若是"}
           ] }
       ],
+      "key": "步長比區間短，就一定踩進區間",
+      "proof": true,
+      "of": 2,
+      "skeleton": "構造",
       "order": {
         "ask": "把證明排回順序：依序點每一步",
         "steps": [
-          { "label": "取 $n$ 使 $\\frac{1}{n}<b-a$" },
-          { "label": "取 $m$：大於 $na$ 的最小整數", "why": "要先有 $n$，才知道 $na$ 是多少。" },
-          { "label": "$a<\\frac{m}{n}<b$", "why": "要先有 $m-1\\le na<m$，才夾得住 $\\frac{m}{n}$。" },
-          { "label": "平移 $\\sqrt{2}$：$q+\\sqrt{2}\\in(a,b)$", "why": "要先會在任何區間裡造有理數，才能對平移過的區間用。" }
+          {
+            "label": "取 $n$ 使 $\\frac{1}{n}<b-a$"
+          },
+          {
+            "label": "取 $m$：大於 $na$ 的最小整數",
+            "why": "要先有 $n$，才知道 $na$ 是多少。"
+          },
+          {
+            "label": "$a<\\frac{m}{n}<b$",
+            "why": "要先有 $m-1\\le na<m$，才夾得住 $\\frac{m}{n}$。"
+          },
+          {
+            "label": "平移 $\\sqrt{2}$：$q+\\sqrt{2}\\in(a,b)$",
+            "why": "要先會在任何區間裡造有理數，才能對平移過的區間用。"
+          }
         ]
       }
     },
@@ -175,20 +206,22 @@
         { "show": ["每一段：$M_i=1$、$m_i=0$"],
           "say": "所以不管怎麼切，每一段都同時有有理點和無理點，上確界是一，下確界是零。",
           "board": [
-            { "do": "write", "line": "每一段：${{up:M_i=1}}$，${{lo:m_i=0}}$" },
-            { "do": "focus", "term": "up", "label": "上確界", "on": "有理點" },
-            { "do": "focus", "term": "lo", "color": "blue", "label": "下確界", "on": "無理點" }
+            {"do":"write","line":"每一段：${{up:M_i=1}}$，${{lo:m_i=0}}$"},
+            {"do":"focus","term":"up","label":"上確界","on":"有理點"},
+            {"do":"focus","term":"lo","color":"blue","label":"下確界","on":"無理點"}
           ] },
-        { "show": ["$P=\\{0,\\frac{1}{3},\\frac{1}{2},1\\}$：$U=1$，$L=0$"], "note": "長度 $\\frac{1}{3}+\\frac{1}{6}+\\frac{1}{2}=1$。",
+        { "show": ["$P=\\{0,\\frac{1}{3},\\frac{1}{2},1\\}$：$U=1$，$L=0$"],
+          "note": "長度 $\\frac{1}{3}+\\frac{1}{6}+\\frac{1}{2}=1$。",
           "say": "例如切在三分之一和二分之一，三段長度加起來是一，上和是一，下和是零。",
           "board": [
-            { "do": "write", "line": "$P=\\{0,\\frac{1}{3},\\frac{1}{2},1\\}$", "on": "切在" },
-            { "do": "write", "line": "$U=1$，$L=0$", "on": "上和是一" }
+            {"do":"write","line":"$P=\\{0,\\frac{1}{3},\\frac{1}{2},1\\}$","on":"切在"},
+            {"do":"write","line":"$U=1$，$L=0$","on":"上和是一"}
           ] },
-        { "show": ["上積分 1，下積分 0：不可積"], "note": "切得再細都沒用。",
+        { "show": ["上積分 1，下積分 0：不可積"],
+          "note": "切得再細都沒用。",
           "say": "答案跟分割無關，上積分一、下積分零，碰不到一起，不可積。",
           "board": [
-            { "do": "write", "line": "上積分 ${{a:1}}$ ≠ 下積分 ${{b:0}}$：不可積" }
+            {"do":"write","line":"上積分 ${{a:1}}$ ≠ 下積分 ${{b:0}}$：不可積"}
           ] }
       ],
       "check": 0
@@ -199,55 +232,95 @@
         { "show": ["等分 $n$ 段，取右端點 $t_i=\\frac{i}{n}$"],
           "say": "換成 Riemann 和看。等分 n 段，取右端點 n 分之 i，這是有理數。",
           "board": [
-            { "do": "write", "line": "等分 $n$ 段，取 ${{ti:t_i=\\frac{i}{n}}}$", "on": "等分 n 段" },
-            { "do": "underline", "term": "ti", "label": "有理數", "on": "這是有理數" }
+            {"do":"write","line":"等分 $n$ 段，取 ${{ti:t_i=\\frac{i}{n}}}$","on":"等分 n 段"},
+            {"do":"underline","term":"ti","label":"有理數","on":"這是有理數"}
           ] },
         { "show": ["$\\sum\\frac{D(t_i)}{n}=n\\cdot\\frac{1}{n}=1$"],
           "say": "每一項函數值都是一，加起來剛好是一。",
           "board": [
-            { "do": "write", "line": "$\\sum\\frac{ {{d:D(t_i)}}}{n}=n\\cdot\\frac{1}{n}=1$" },
-            { "do": "focus", "term": "d", "label": "都是 1", "on": "函數值都是" }
+            {"do":"write","line":"$\\sum\\frac{ {{d:D(t_i)}}}{n}=n\\cdot\\frac{1}{n}=1$"},
+            {"do":"focus","term":"d","label":"都是 1","on":"函數值都是"}
           ] },
-        { "show": ["改取 $t_i=\\frac{i-1}{n}+\\sqrt{2}/(2n)$"], "note": "$\\sqrt{2}/2\\approx0.707<1$，還在第 $i$ 段裡。",
+        { "show": ["改取 $t_i=\\frac{i-1}{n}+\\sqrt{2}/(2n)$"],
+          "note": "$\\sqrt{2}/2\\approx0.707<1$，還在第 $i$ 段裡。",
           "say": "換個取法：左端點再往右挪一點點，挪的量帶著根號二，所以還在同一段裡。",
           "board": [
-            { "do": "write", "line": "改取 $t_i=\\frac{i-1}{n}+{{sh:\\sqrt{2}/(2n)}}$", "on": "換個取法" },
-            { "do": "underline", "term": "sh", "on": "挪的量" },
-            { "do": "write", "line": "$\\sqrt{2}/2\\approx0.707<1$：還在同一段", "on": "所以還在" }
+            {"do":"write","line":"改取 $t_i=\\frac{i-1}{n}+{{sh:\\sqrt{2}/(2n)}}$","on":"換個取法"},
+            {"do":"underline","term":"sh","on":"挪的量"},
+            {"do":"write","line":"$\\sqrt{2}/2\\approx0.707<1$：還在同一段","on":"所以還在"}
+          ] },
+        { "show": ["$t_i$ 若有理，$\\sqrt{2}$ 就有理：矛盾"],
+          "say": "這個 t i 是無理數。若它有理，減去有理的 n 分之 i 減一，根號二除以二 n 也有理，根號二就有理了，矛盾。",
+          "board": [
+            {"do":"write","line":"$t_i$ 有理 ⇒ ${{s:\\sqrt{2}/(2n)}}$ 有理","on":"若它有理"},
+            {"do":"write","line":"⇒ $\\sqrt{2}$ 有理：矛盾","on":"根號二就"}
+          ] },
+        { "show": ["$D(t_i)=0$，和 $=n\\cdot 0=0$"],
+          "say": "所以每個 D of t i 都是零，n 項加起來還是零，這個 Riemann 和等於零。",
+          "board": [
+            {"do":"write","line":"$D(t_i)=0$","on":"每個"},
+            {"do":"write","line":"$\\sum\\frac{D(t_i)}{n}=n\\cdot 0=0$","on":"n 項"}
           ] }
       ],
       "check": 3
     },
     {
-      "title": "有限個點：積分是 0", "key": "數一數：一個點最多碰到幾段",
+      "title": "有限個點：積分是 0",
       "beats": [
-        { "show": ["$f$ 只在三個點取 1"], "note": "下和 $L=0$。",
+        { "show": ["$f$ 只在三個點取 1"],
+          "note": "下和 $L=0$。",
           "say": "對比一下：如果函數只在三個點取一，其他都是零呢？下和當然是零。",
           "board": [
-            { "do": "write", "line": "$f$ 只在三個點取 1", "on": "如果函數" },
-            { "do": "write", "line": "$L=0$", "on": "下和當然" }
+            {"do":"write","line":"$f$ 只在三個點取 1","on":"如果函數"},
+            {"do":"write","line":"$L=0$","on":"下和當然"}
           ] },
-        { "show": ["一個點最多落在兩段裡"], "note": "剛好是分割點時，屬於相鄰兩段。",
+        { "show": ["一個點最多落在兩段裡"],
+          "note": "剛好是分割點時，屬於相鄰兩段。",
           "say": "上和：每個點最多落在兩段裡，萬一剛好是分割點，就同時屬於左右兩段。",
           "board": [
-            { "do": "write", "line": "一個點最多落在 ${{t:2}}$ 段", "on": "每個點" },
-            { "do": "focus", "term": "t", "label": "分割點", "on": "分割點" }
+            {"do":"write","line":"一個點最多落在 ${{t:2}}$ 段","on":"每個點"},
+            {"do":"focus","term":"t","label":"分割點","on":"分割點"}
+          ] },
+        { "show": ["非分割點：1 段；分割點：2 段"],
+          "note": "3 個點，最多 $3\\times2=6$ 段。",
+          "say": "不是分割點的點，只在一段裡；剛好是分割點，才在左右兩段。所以三個點最多碰到三乘二，也就是六段。",
+          "board": [
+            {"do":"write","line":"非分割點：1 段；分割點：2 段"},
+            {"do":"write","line":"$3\\times2=6$","on":"三乘二"}
           ] },
         { "show": ["$U(f,P_m)\\le\\frac{6}{m}\\to0$"],
           "say": "所以最多六段吃到一，上和不超過 m 分之六，m 越大越小，積分是零。",
           "board": [
-            { "do": "clear" },
-            { "do": "write", "line": "最多 ${{s:6}}$ 段吃到 1", "on": "所以最多" },
-            { "do": "write", "line": "$U(f,P_m)\\le{{b:\\frac{6}{m}}}\\to0$", "on": "上和不超過" },
-            { "do": "box", "term": "b", "color": "green", "on": "m 越大" }
+            {"do":"clear"},
+            {"do":"write","line":"最多 ${{s:6}}$ 段吃到 1","on":"所以最多"},
+            {"do":"write","line":"$U(f,P_m)\\le{{b:\\frac{6}{m}}}\\to0$","on":"上和不超過"},
+            {"do":"box","term":"b","color":"green","on":"m 越大"}
+          ] },
+        { "show": ["每段長 $\\frac{1}{m}$，6 段：$\\frac{6}{m}$"],
+          "note": "上界：上和一定不超過它。",
+          "say": "等分 m 段，每段長 m 分之一，六段合起來就是 m 分之六。上界的意思是，上和一定不會超過這個數。",
+          "board": [
+            {"do":"write","line":"每段長 $\\frac{1}{m}$","on":"每段長"},
+            {"do":"write","line":"$6\\cdot\\frac{1}{m}=\\frac{6}{m}$","on":"六段合起來"},
+            {"do":"write","line":"上和 $\\le\\frac{6}{m}$","on":"上界的意思"}
           ] }
       ],
+      "key": "數一數：一個點最多碰到幾段",
       "predict": {
         "ask": "$m=600$ 時，$U(f,P_m)$ 的上界是？",
         "options": [
-          { "label": "$0.01$", "correct": true },
-          { "label": "$\\frac{3}{600}$", "why": "三個點可能剛好是分割點，各屬於兩段，最多 6 段：$\\frac{6}{600}=0.01$。" },
-          { "label": "$1$", "why": "那是 Dirichlet 函數的上和。這裡只有有限個點非零，上和可以壓得很小。" }
+          {
+            "label": "$0.01$",
+            "correct": true
+          },
+          {
+            "label": "$\\frac{3}{600}$",
+            "why": "三個點可能剛好是分割點，各屬於兩段，最多 6 段：$\\frac{6}{600}=0.01$。"
+          },
+          {
+            "label": "$1$",
+            "why": "那是 Dirichlet 函數的上和。這裡只有有限個點非零，上和可以壓得很小。"
+          }
         ]
       }
     },
@@ -257,22 +330,24 @@
         { "show": ["有理數排成一列 $r_1,r_2,r_3,\\dots$"],
           "say": "把零到一的有理數排成一列。f n 只在前 n 個有理數取一，其他取零。",
           "board": [
-            { "do": "write", "line": "$r_1,r_2,r_3,\\dots$" },
-            { "do": "write", "line": "$f_n=1$ 在 $r_1,\\dots,r_n$，其餘 $0$", "on": "f n 只在" }
+            {"do":"write","line":"$r_1,r_2,r_3,\\dots$"},
+            {"do":"write","line":"$f_n=1$ 在 $r_1,\\dots,r_n$，其餘 $0$","on":"f n 只在"}
           ] },
-        { "show": ["$\\int f_n=0$，$f_1\\le f_2\\le\\dots\\to D$"], "note": "每個 $f_n$ 只有有限個點非零。",
+        { "show": ["$\\int f_n=0$，$f_1\\le f_2\\le\\dots\\to D$"],
+          "note": "每個 $f_n$ 只有有限個點非零。",
           "say": "每個 f n 只有有限個點不是零，積分都是零；而且一個比一個大，逐點收斂到 D。",
           "board": [
-            { "do": "write", "line": "$\\int f_n=0$", "on": "積分都是零" },
-            { "do": "write", "line": "$f_1\\le f_2\\le\\dots\\to D$", "on": "一個比一個大" }
+            {"do":"write","line":"$\\int f_n=0$","on":"積分都是零"},
+            {"do":"write","line":"$f_1\\le f_2\\le\\dots\\to D$","on":"一個比一個大"}
           ] },
-        { "show": ["積分都是 0，極限卻沒有積分"], "note": "Lebesgue 積分會修好它。",
+        { "show": ["積分都是 0，極限卻沒有積分"],
+          "note": "Lebesgue 積分會修好它。",
           "say": "積分一直是零，極限函數卻沒有 Riemann 積分。這個缺陷，之後的 Lebesgue 積分會修好。",
           "board": [
-            { "do": "clear" },
-            { "do": "write", "line": "$\\int f_n=0$", "on": "積分一直是零" },
-            { "do": "write", "line": "極限 $D$：沒有 Riemann 積分", "on": "極限函數" },
-            { "do": "write", "line": "Lebesgue 積分會修好", "on": "之後的" }
+            {"do":"clear"},
+            {"do":"write","line":"$\\int f_n=0$","on":"積分一直是零"},
+            {"do":"write","line":"極限 $D$：沒有 Riemann 積分","on":"極限函數"},
+            {"do":"write","line":"Lebesgue 積分會修好","on":"之後的"}
           ] }
       ],
       "check": 2

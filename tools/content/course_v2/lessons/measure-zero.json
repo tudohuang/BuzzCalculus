@@ -53,66 +53,96 @@
     {
       "title": "蓋得住就算小",
       "beats": [
-        { "show": ["區間的大小：長度"], "note": "一個點呢？",
+        { "show": ["區間的大小：長度"],
+          "note": "一個點呢？",
           "say": "一個區間有多大？看長度。那一個點呢？",
           "board": [
-            { "do": "write", "line": "區間的大小 ＝ 長度 $|I|$" }
+            {"do":"write","line":"區間的大小 ＝ 長度 $|I|$"}
           ] },
-        { "show": ["一個點：用長 0.001 的區間蓋", "或用長 $10^{-9}$ 的蓋"],
+        { "show": ["一個點：用長 0.001 的區間蓋","或用長 $10^{-9}$ 的蓋"],
           "say": "一個點可以被長零點零零一的區間蓋住，也可以被十的負九次方那麼短的蓋住。",
           "board": [
-            { "do": "write", "line": "點 $p$ ⊂ 長 $0.001$ 的區間" },
-            { "do": "write", "line": "點 $p$ ⊂ 長 $10^{-9}$ 的區間", "on": "十的負九次方" }
+            {"do":"write","line":"點 $p$ ⊂ 長 $0.001$ 的區間"},
+            {"do":"write","line":"點 $p$ ⊂ 長 $10^{-9}$ 的區間","on":"十的負九次方"}
           ] },
         { "show": ["$\\forall\\varepsilon\\ \\exists I_1,I_2,\\dots$：$A\\subseteq\\bigcup I_k$，$\\sum|I_k|<\\varepsilon$"],
           "say": "測度為零的定義：不管 epsilon 多小，都能用可數多個開區間蓋住它，總長小於 epsilon。",
           "board": [
-            { "do": "clear" },
-            { "do": "write", "line": "$A$ 測度為零 $\\iff$", "on": "測度為零" },
-            { "do": "write", "line": "$\\forall\\varepsilon>0$：${{c:A\\subseteq\\bigcup I_k}}$，${{s:\\sum|I_k|<\\varepsilon}}$", "on": "不管" },
-            { "do": "underline", "term": "c", "label": "蓋住", "on": "蓋住它" },
-            { "do": "box", "term": "s", "color": "green", "label": "任意小", "on": "總長小於" }
+            {"do":"clear"},
+            {"do":"write","line":"$A$ 測度為零 $\\iff$","on":"測度為零"},
+            {"do":"write","line":"$\\forall\\varepsilon>0$：${{c:A\\subseteq\\bigcup I_k}}$，${{s:\\sum|I_k|<\\varepsilon}}$","on":"不管"},
+            {"do":"underline","term":"c","label":"蓋住","on":"蓋住它"},
+            {"do":"box","term":"s","color":"green","label":"任意小","on":"總長小於"}
           ] }
       ],
       "predict": {
         "ask": "一個點能被多短的開區間蓋住？",
         "options": [
-          { "label": "要多短都行，所以它測度為零", "correct": true },
-          { "label": "最短 $10^{-9}$", "why": "$10^{-9}$ 只是舉例；任何正長度都蓋得住它。" },
-          { "label": "長度 0 的區間", "why": "開區間長度一定是正的。測度為零說的是「任意小」，不是「長度 0 的蓋法」。" }
+          {
+            "label": "要多短都行，所以它測度為零",
+            "correct": true
+          },
+          {
+            "label": "最短 $10^{-9}$",
+            "why": "$10^{-9}$ 只是舉例；任何正長度都蓋得住它。"
+          },
+          {
+            "label": "長度 0 的區間",
+            "why": "開區間長度一定是正的。測度為零說的是「任意小」，不是「長度 0 的蓋法」。"
+          }
         ]
       }
     },
     {
-      "title": "可數集測度為零", "key": "第 $k$ 個區間長度減半，總長才會有限",
+      "title": "可數集測度為零",
       "beats": [
         { "show": ["排成 $a_1,a_2,\\dots$，第 $k$ 個用長 $\\frac{\\varepsilon}{2^{k+1}}$"],
           "say": "可數集把點排成一列，第 k 個點用長 epsilon 除以二的 k 加一次方的區間蓋住。",
           "board": [
-            { "do": "write", "line": "$A=\\{a_1,a_2,\\dots\\}$" },
-            { "do": "write", "line": "第 $k$ 個：長 ${{l:\\frac{\\varepsilon}{2^{k+1}}}}$", "on": "第 k 個點" },
-            { "do": "focus", "term": "l", "color": "gold", "on": "除以" }
+            {"do":"write","line":"$A=\\{a_1,a_2,\\dots\\}$"},
+            {"do":"write","line":"第 $k$ 個：長 ${{l:\\frac{\\varepsilon}{2^{k+1}}}}$","on":"第 k 個點"},
+            {"do":"focus","term":"l","color":"gold","on":"除以"}
           ] },
-        { "show": ["同樣長會失敗"], "note": "無限多個同長區間，總長是無限大。",
+        { "show": ["$\\sum\\frac{\\varepsilon}{2^{k+1}}=\\frac{\\varepsilon}{2}$"],
+          "note": "長度一路減半，總長才有限。",
+          "say": "把四分之一加八分之一，一直加下去，越來越接近二分之一。所以總長是 epsilon 的二分之一，小於 epsilon。",
+          "board": [
+            {"do":"write","line":"總長 $=\\varepsilon(\\frac14+\\frac18+\\cdots)$"},
+            {"do":"write","line":"$\\frac14+\\frac18+\\cdots\\to\\frac12$","on":"越來越接近"},
+            {"do":"write","line":"總長 $=\\frac{\\varepsilon}{2}<\\varepsilon$","color":"green","on":"所以總長"}
+          ] },
+        { "show": ["同樣長會失敗"],
+          "note": "無限多個同長區間，總長是無限大。",
           "say": "為什麼長度要越來越短？無限多個一樣長的區間，總長會是無限大。",
           "board": [
-            { "do": "write", "line": "$|I_k|=\\delta$：$\\sum|I_k|=\\infty$", "color": "red", "on": "無限多個" }
+            {"do":"write","line":"$|I_k|=\\delta$：$\\sum|I_k|=\\infty$","color":"red","on":"無限多個"}
           ] },
-        { "show": ["$\\mathbb{Q}\\cap[0,1]$：$\\varepsilon=0.01$"], "note": "依分母排：$0,1,\\frac{1}{2},\\frac{1}{3},\\frac{2}{3},\\dots$",
+        { "show": ["$\\mathbb{Q}\\cap[0,1]$：$\\varepsilon=0.01$"],
+          "note": "依分母排：$0,1,\\frac{1}{2},\\frac{1}{3},\\frac{2}{3},\\dots$",
           "say": "拿零到一的有理數試試，epsilon 零點零一。有理數可數，依分母排成一列。",
           "board": [
-            { "do": "clear" },
-            { "do": "write", "line": "$\\mathbb{Q}\\cap[0,1]$，$\\varepsilon=0.01$", "on": "拿零到一" },
-            { "do": "write", "line": "$a_1,a_2,\\dots=0,1,\\frac12,\\frac13,\\frac23,\\dots$", "on": "依分母" }
+            {"do":"clear"},
+            {"do":"write","line":"$\\mathbb{Q}\\cap[0,1]$，$\\varepsilon=0.01$","on":"拿零到一"},
+            {"do":"write","line":"$a_1,a_2,\\dots=0,1,\\frac12,\\frac13,\\frac23,\\dots$","on":"依分母"}
           ] },
-        { "show": ["總長 $0.005<0.01$"], "note": "稠密，卻測度為零。",
+        { "show": ["總長 $0.005<0.01$"],
+          "note": "稠密，卻測度為零。",
           "say": "照這個蓋法總長是零點零零五，小於零點零一。有理數到處都是，卻測度為零。",
           "board": [
-            { "do": "write", "line": "總長 ${{t:0.005}}<0.01$" },
-            { "do": "box", "term": "t", "color": "green", "on": "零點零零五" },
-            { "do": "write", "line": "有理數：稠密，卻測度為零", "on": "到處都是" }
+            {"do":"write","line":"總長 ${{t:0.005}}<0.01$"},
+            {"do":"box","term":"t","color":"green","on":"零點零零五"},
+            {"do":"write","line":"有理數：稠密，卻測度為零","on":"到處都是"}
+          ] },
+        { "show": ["$[0,1]$＝有理數 ∪ 無理數"],
+          "note": "兩塊都是零，聯集也是零，會矛盾。",
+          "say": "零到一是有理數加無理數。若無理數也測度為零，聯集就是零，可是零到一總長至少是一，所以無理數不是零。",
+          "board": [
+            {"do":"write","line":"$[0,1]=\\mathbb{Q}\\cup$ 無理數"},
+            {"do":"write","line":"若無理數也零，則 ${{z:[0,1]}}$ 也零","on":"若無理數"},
+            {"do":"strike","term":"z","label":"矛盾","on":"可是零到一"}
           ] }
       ],
+      "key": "第 $k$ 個區間長度減半，總長才會有限",
       "check": 0
     },
     {
@@ -121,78 +151,115 @@
         { "show": ["每一步去掉中間三分之一"],
           "say": "Cantor 集：從零到一開始，每一步把每一段中間的三分之一挖掉。",
           "board": [
-            { "do": "write", "line": "$C_0=[0,1]$" },
-            { "do": "write", "line": "每步：去掉每段中間 $\\frac13$", "on": "每一步" }
+            {"do":"write","line":"$C_0=[0,1]$"},
+            {"do":"write","line":"每步：去掉每段中間 $\\frac13$","on":"每一步"}
           ] },
         { "show": ["第 $n$ 步：$2^n$ 段，每段長 $3^{-n}$"],
           "say": "第 n 步剩二的 n 次方段，每段長三的負 n 次方。",
           "board": [
-            { "do": "clear" },
-            { "do": "write", "line": "第 $n$ 步：${{a:2^n}}$ 段，每段 ${{b:3^{-n}}}$", "tint": {"a":"blue","b":"violet"}, "on": "第 n 步" },
-            { "do": "focus", "term": "a", "color": "blue", "on": "二的" },
-            { "do": "focus", "term": "b", "color": "violet", "on": "三的負" }
+            {"do":"clear"},
+            {"do":"write","line":"第 $n$ 步：${{a:2^n}}$ 段，每段 ${{b:3^{-n}}}$","tint":{"a":"blue","b":"violet"},"on":"第 n 步"},
+            {"do":"focus","term":"a","color":"blue","on":"二的"},
+            {"do":"focus","term":"b","color":"violet","on":"三的負"}
           ] },
-        { "show": ["剩下總長 $(\\frac{2}{3})^n\\to0$"], "note": "測度為零，卻不可數。",
+        { "show": ["剩下總長 $(\\frac{2}{3})^n\\to0$"],
+          "note": "測度為零，卻不可數。",
           "say": "剩下的總長是三分之二的 n 次方，趨近零，所以測度為零。可是它的點多到不可數。",
           "board": [
-            { "do": "transform", "line": "${{a:2^n}}\\cdot{{b:3^{-n}}}={{r:(\\frac{2}{3})^n}}$", "tint": {"a":"blue","b":"violet"}, "on": "剩下的總長" },
-            { "do": "box", "term": "r", "color": "green", "on": "三分之二" },
-            { "do": "write", "line": "測度為零，卻不可數", "on": "可是它" }
+            {"do":"transform","line":"${{a:2^n}}\\cdot{{b:3^{-n}}}={{r:(\\frac{2}{3})^n}}$","tint":{"a":"blue","b":"violet"},"on":"剩下的總長"},
+            {"do":"box","term":"r","color":"green","on":"三分之二"},
+            {"do":"write","line":"測度為零，卻不可數","on":"可是它"}
+          ] },
+        { "show": ["三進位：每一位只有 0 或 2"],
+          "note": "直覺，不是證明；可數集排得成一列。",
+          "say": "為什麼不可數？直覺：留下的點，三進位每一位只有零或二兩種寫法。這樣的選法，沒辦法排成一列。",
+          "board": [
+            {"do":"write","line":"三進位 $x=0.d_1d_2d_3\\cdots$"},
+            {"do":"write","line":"每位 ${{d:d_k\\in\\{0,2\\}}}$ 兩種選法","on":"每一位"},
+            {"do":"underline","term":"d","color":"gold","label":"排不成列","on":"沒辦法"}
           ] }
       ],
       "check": 3
     },
     {
-      "title": "Cantor 集：切幾步", "key": "取對數解指數不等式，再取最小整數",
+      "title": "Cantor 集：切幾步",
       "beats": [
-        { "show": ["每段放大成兩倍長的開區間"], "note": "總長 $2(\\frac{2}{3})^n$。",
+        { "show": ["每段放大成兩倍長的開區間"],
+          "note": "總長 $2(\\frac{2}{3})^n$。",
           "say": "定義要開區間，所以把每個閉區間放大成兩倍長的開區間，總長變成兩倍三分之二的 n 次方。",
           "board": [
-            { "do": "write", "line": "閉區間 $\\to$ 兩倍長開區間" },
-            { "do": "write", "line": "總長 ${{o:2(\\frac{2}{3})^n}}$", "on": "總長變成" },
-            { "do": "underline", "term": "o", "color": "gold", "on": "三分之二" }
+            {"do":"write","line":"閉區間 $\\to$ 兩倍長開區間"},
+            {"do":"write","line":"總長 ${{o:2(\\frac{2}{3})^n}}$","on":"總長變成"},
+            {"do":"underline","term":"o","color":"gold","on":"三分之二"}
           ] },
-        { "show": ["要 $(\\frac{2}{3})^n<0.005$"], "note": "$n>\\ln 200/\\ln 1.5\\approx13.07$。",
+        { "show": ["要 $(\\frac{2}{3})^n<0.005$"],
+          "note": "$n>\\ln 200/\\ln 1.5\\approx13.07$。",
           "say": "要總長小於零點零一，也就是三分之二的 n 次方小於零點零零五。取對數，n 要大於十三點零七。",
           "board": [
-            { "do": "clear" },
-            { "do": "write", "line": "$2(\\frac{2}{3})^n<0.01$", "on": "總長小於" },
-            { "do": "transform", "line": "$(\\frac{2}{3})^n<0.005$", "on": "也就是" },
-            { "do": "write", "line": "$n>\\ln 200/\\ln 1.5$", "on": "取對數" }
+            {"do":"clear"},
+            {"do":"write","line":"$2(\\frac{2}{3})^n<0.01$","on":"總長小於"},
+            {"do":"transform","line":"$(\\frac{2}{3})^n<0.005$","on":"也就是"},
+            {"do":"write","line":"$n>\\ln 200/\\ln 1.5$","on":"取對數"}
           ] }
       ],
+      "key": "取對數解指數不等式，再取最小整數",
       "predict": {
         "ask": "$n$ 最小是多少？",
         "options": [
-          { "label": "14", "correct": true },
-          { "label": "13", "why": "$n=13$ 時 $2(\\frac{2}{3})^{13}\\approx0.01028$，還不夠小。" },
-          { "label": "200", "why": "200 是 $\\frac{1}{0.005}$；要的是次方數：$n>\\ln 200/\\ln 1.5\\approx13.07$。" }
+          {
+            "label": "14",
+            "correct": true
+          },
+          {
+            "label": "13",
+            "why": "$n=13$ 時 $2(\\frac{2}{3})^{13}\\approx0.01028$，還不夠小。"
+          },
+          {
+            "label": "200",
+            "why": "200 是 $\\frac{1}{0.005}$；要的是次方數：$n>\\ln 200/\\ln 1.5\\approx13.07$。"
+          }
         ]
       }
     },
     {
       "title": "哪些不是",
       "beats": [
-        { "show": ["長度為正的區間：不是"], "note": "$[0,1]$ 蓋起來總長至少 1。",
+        { "show": ["長度為正的區間：不是"],
+          "note": "$[0,1]$ 蓋起來總長至少 1。",
           "say": "長度是正的區間，測度就不是零：要蓋住零到一，總長至少是一。",
           "board": [
-            { "do": "write", "line": "$[0,1]$：蓋起來總長 $\\ge 1$" },
-            { "do": "write", "line": "$|I|>0$：測度不為零", "on": "測度就不是零" }
+            {"do":"write","line":"$[0,1]$：蓋起來總長 $\\ge 1$"},
+            {"do":"write","line":"$|I|>0$：測度不為零","on":"測度就不是零"}
           ] },
-        { "show": ["胖 Cantor 集：剩下長度 $\\frac{1}{2}$"], "note": "第 $n$ 步去掉 $2^{n-1}$ 段、每段長 $4^{-n}$。",
+        { "show": ["胖 Cantor 集：第 $n$ 步挖 $2^{n-1}$ 段"],
+          "note": "每段長 $4^{-n}$。",
+          "say": "再看胖 Cantor 集。第一步挖中間的四分之一，第 n 步挖二的 n 減一次方段，每段長四的負 n 次方。",
+          "board": [
+            {"do":"write","line":"第 1 步：挖中間 $\\frac14$"},
+            {"do":"write","line":"第 $n$ 步：$2^{n-1}$ 段，每段 $4^{-n}$","on":"第 n 步"}
+          ] },
+        { "show": ["胖 Cantor 集：剩下長度 $\\frac{1}{2}$"],
+          "note": "第 $n$ 步去掉 $2^{n-1}$ 段、每段長 $4^{-n}$。",
           "say": "胖 Cantor 集每步挖得比較少，一共只挖掉二分之一。它不含任何區間，但剩下長度二分之一。",
           "board": [
-            { "do": "write", "line": "一共挖掉 $\\frac12$" },
-            { "do": "write", "line": "不含區間，剩下 ${{r:\\frac12}}$", "on": "它不含" },
-            { "do": "box", "term": "r", "color": "green", "on": "但剩下" }
+            {"do":"write","line":"一共挖掉 $\\frac12$"},
+            {"do":"write","line":"不含區間，剩下 ${{r:\\frac12}}$","on":"它不含"},
+            {"do":"box","term":"r","color":"green","on":"但剩下"}
           ] },
-        { "show": ["稠密 ≠ 測度不為零", "不含區間 ≠ 測度為零"],
+        { "show": ["剩下的段越來越短"],
+          "note": "短過任何正長度，所以裡面被挖過。",
+          "say": "為什麼不含區間？每一步剩下的每段都更短。任何有長度的區間，切夠多步，剩的段比它短，裡面一定被挖過。",
+          "board": [
+            {"do":"write","line":"剩下的段長 $\\to 0$，短過 ${{l:\\ell>0}}$"},
+            {"do":"underline","term":"l","color":"gold","label":"被挖過","on":"有長度"}
+          ] },
+        { "show": ["稠密 ≠ 測度不為零","不含區間 ≠ 測度為零"],
           "say": "所以稠密不代表大，不含區間也不代表小。要看的是蓋得住的總長。",
           "board": [
-            { "do": "clear" },
-            { "do": "write", "line": "稠密 $\\ne$ 測度不為零", "on": "稠密" },
-            { "do": "write", "line": "不含區間 $\\ne$ 測度為零", "on": "不含區間" },
-            { "do": "write", "line": "看蓋得住的總長", "color": "green", "on": "要看的是" }
+            {"do":"clear"},
+            {"do":"write","line":"稠密 $\\ne$ 測度不為零","on":"稠密"},
+            {"do":"write","line":"不含區間 $\\ne$ 測度為零","on":"不含區間"},
+            {"do":"write","line":"看蓋得住的總長","color":"green","on":"要看的是"}
           ] }
       ],
       "check": 1
@@ -200,28 +267,44 @@
     {
       "title": "誰能 Riemann 積分",
       "beats": [
-        { "show": ["$f$ 有界：可積 $\\iff$ 不連續點測度為零"], "note": "Lebesgue 可積判準。",
+        { "show": ["Riemann 積分：曲線下的面積"],
+          "note": "切成細條，高取最高點是上和。",
+          "say": "Riemann 積分就是曲線底下的面積。把區間切成細條，每條取最高點當高是上和，取最低點當高是下和。",
+          "board": [
+            {"do":"write","line":"Riemann 積分 ＝ 曲線下的面積"},
+            {"do":"plot","graph":{"window":[-0.2,1.2,-0.2,1.2],"curves":[{"expr":"x^2","domain":[0,1],"color":"blue"}],"fills":[{"expr":"x^2","from":0,"to":1,"color":"blue"}]},"on":"切成細條"}
+          ] },
+        { "show": ["上和、下和越切越靠近：可積"],
+          "note": "到處亂跳：每條高低差撐著。",
+          "say": "上和下和越切越靠近，就是可積。函數到處亂跳，每條裡高低差都撐著，上和下和永遠差一大塊，就不可積。",
+          "board": [
+            {"do":"write","line":"可積：上和、下和越切越靠近"},
+            {"do":"write","line":"亂跳：每條高低差撐著，差一大塊","color":"red","on":"亂跳"}
+          ] },
+        { "show": ["$f$ 有界：可積 $\\iff$ 不連續點測度為零"],
+          "note": "Lebesgue 可積判準。",
           "say": "這個概念的回報：有界函數 Riemann 可積，若且唯若它的不連續點測度為零。",
           "board": [
-            { "do": "write", "line": "$f$ 有界，$D_f$ ＝ 不連續點的集合" },
-            { "do": "write", "line": "Riemann 可積 $\\iff {{d:D_f}}$ 測度為零", "on": "Riemann 可積" },
-            { "do": "underline", "term": "d", "color": "gold", "on": "不連續點" }
+            {"do":"write","line":"$f$ 有界，$D_f$ ＝ 不連續點的集合"},
+            {"do":"write","line":"Riemann 可積 $\\iff {{d:D_f}}$ 測度為零","on":"Riemann 可積"},
+            {"do":"underline","term":"d","color":"gold","on":"不連續點"}
           ] },
-        { "show": ["連續、單調：可積", "Dirichlet：不可積"], "note": "單調的跳躍點可數。",
+        { "show": ["連續、單調：可積","Dirichlet：不可積"],
+          "note": "單調的跳躍點可數。",
           "say": "連續函數沒有不連續點；單調函數的跳躍點可數；Dirichlet 處處不連續，零到一測度不是零。",
           "board": [
-            { "do": "clear" },
-            { "do": "write", "line": "連續：$D_f=\\varnothing$", "on": "連續函數" },
-            { "do": "write", "line": "單調：跳躍點可數", "on": "單調函數" },
-            { "do": "write", "line": "Dirichlet：$D_f=[0,1]$", "on": "Dirichlet" }
+            {"do":"clear"},
+            {"do":"write","line":"連續：$D_f=\\varnothing$","on":"連續函數"},
+            {"do":"write","line":"單調：跳躍點可數","on":"單調函數"},
+            {"do":"write","line":"Dirichlet：$D_f=[0,1]$","on":"Dirichlet"}
           ] },
         { "show": ["Thomae：$T(\\frac{p}{q})=\\frac{1}{q}$，無理點 $T=0$"],
           "say": "再看 Thomae 函數：既約分數 q 分之 p 取 q 分之一，無理數取零。它只在有理點不連續。",
           "board": [
-            { "do": "clear" },
-            { "do": "write", "line": "Thomae：$T(\\frac{p}{q})=\\frac{1}{q}$", "on": "Thomae" },
-            { "do": "write", "line": "無理點：$T=0$", "on": "無理數取零" },
-            { "do": "write", "line": "不連續：只在有理點", "on": "有理點" }
+            {"do":"clear"},
+            {"do":"write","line":"Thomae：$T(\\frac{p}{q})=\\frac{1}{q}$","on":"Thomae"},
+            {"do":"write","line":"無理點：$T=0$","on":"無理數取零"},
+            {"do":"write","line":"不連續：只在有理點","on":"有理點"}
           ] }
       ],
       "check": 2

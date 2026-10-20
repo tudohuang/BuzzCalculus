@@ -167,60 +167,90 @@
   ],
   "sections": [
     {
-      "title": "搬到 $\\left[0,\\frac{\\pi}{2}\\right]$", "key": "$x=\\sin^2\\theta$，$1-x$ 自動變 $\\cos^2\\theta$",
+      "title": "搬到 $\\left[0,\\frac{\\pi}{2}\\right]$",
       "beats": [
-        { "show": ["令 $x=\\sin^2\\theta$"], "note": "$1-x=\\cos^2\\theta$；$x:0\\to 1$ 對應 $\\theta:0\\to\\frac{\\pi}{2}$。",
+        { "show": ["令 $x=\\sin^2\\theta$"],
+          "note": "$1-x=\\cos^2\\theta$；$x:0\\to 1$ 對應 $\\theta:0\\to\\frac{\\pi}{2}$。",
           "say": "在 Beta 的積分裡令 x 等於 sine 平方 theta，一減 x 就是 cosine 平方，區間變成零到二分之 pi。",
           "board": [
-            { "do": "write", "line": "令 $x={{s:\\sin^2\\theta}}$", "tint": { "s": "blue" } },
-            { "do": "write", "line": "$1-x={{c:\\cos^2\\theta}}$", "tint": { "c": "violet" }, "on": "一減 x" },
-            { "do": "write", "line": "$x:0\\to1$ ⇒ $\\theta:0\\to\\frac{\\pi}{2}$", "on": "區間" }
+            {"do":"write","line":"令 $x={{s:\\sin^2\\theta}}$","tint":{"s":"blue"}},
+            {"do":"write","line":"$1-x={{c:\\cos^2\\theta}}$","tint":{"c":"violet"},"on":"一減 x"},
+            {"do":"write","line":"$x:0\\to1$ ⇒ $\\theta:0\\to\\frac{\\pi}{2}$","on":"區間"}
+          ] },
+        { "show": ["theta 走完，x 從 0 到 1"],
+          "say": "看圖：theta 從零走到二分之 pi，x 等於 sine 平方 theta 從零慢慢爬到一。",
+          "board": [
+            {"do":"plot","graph":{"window":[0,1.8,-0.2,1.2],"curves":[{"expr":"sin(x)^2","domain":[0,1.5708],"color":"blue"}],"dashed":[[[0,1],[1.5708,1]]]}}
           ] },
         { "show": ["$x^{p-1}=\\sin^{2p-2}\\theta$，$(1-x)^{q-1}=\\cos^{2q-2}\\theta$"],
           "say": "x 的 p 減一次方變成 sine 的二 p 減二次方，cosine 那邊也一樣。",
           "board": [
-            { "do": "clear" },
-            { "do": "write", "line": "$x^{p-1}={{a:\\sin^{2p-2}\\theta}}$", "tint": { "a": "blue" }, "on": "x 的 p" },
-            { "do": "write", "line": "$(1-x)^{q-1}={{b:\\cos^{2q-2}\\theta}}$", "tint": { "b": "violet" }, "on": "cosine 那邊" }
+            {"do":"clear"},
+            {"do":"write","line":"$x^{p-1}={{a:\\sin^{2p-2}\\theta}}$","tint":{"a":"blue"},"on":"x 的 p"},
+            {"do":"write","line":"$(1-x)^{q-1}={{b:\\cos^{2q-2}\\theta}}$","tint":{"b":"violet"},"on":"cosine 那邊"}
           ] },
         { "show": ["$dx=2\\sin\\theta\\cos\\theta\\,d\\theta$"],
           "say": "dx 也要換：它帶來一個二，還有一個 sine、一個 cosine。",
           "board": [
-            { "do": "write", "line": "$dx={{two:2}}\\,{{sn:\\sin\\theta}}\\,{{cs:\\cos\\theta}}\\,d\\theta$" },
-            { "do": "focus", "term": "two", "on": "一個二" },
-            { "do": "focus", "term": "sn", "color": "blue", "on": "一個 sine" },
-            { "do": "focus", "term": "cs", "color": "violet", "on": "一個 cosine" }
+            {"do":"write","line":"$dx={{two:2}}\\,{{sn:\\sin\\theta}}\\,{{cs:\\cos\\theta}}\\,d\\theta$"},
+            {"do":"focus","term":"two","on":"一個二"},
+            {"do":"focus","term":"sn","color":"blue","on":"一個 sine"},
+            {"do":"focus","term":"cs","color":"violet","on":"一個 cosine"}
           ] }
       ],
+      "key": "$x=\\sin^2\\theta$，$1-x$ 自動變 $\\cos^2\\theta$",
       "predict": {
         "ask": "全部乘起來，$\\sin\\theta$ 的次方是？",
         "options": [
-          { "label": "$2p-1$", "correct": true },
-          { "label": "$2p-2$", "why": "忘了 $dx$ 帶來的那一個 $\\sin\\theta$，次方要再加 $1$。" },
-          { "label": "$p-1$", "why": "$x=\\sin^2\\theta$，所以 $x^{p-1}$ 是 $\\sin^{2p-2}\\theta$，次方要乘 $2$。" }
+          {
+            "label": "$2p-1$",
+            "correct": true
+          },
+          {
+            "label": "$2p-2$",
+            "why": "忘了 $dx$ 帶來的那一個 $\\sin\\theta$，次方要再加 $1$。"
+          },
+          {
+            "label": "$p-1$",
+            "why": "$x=\\sin^2\\theta$，所以 $x^{p-1}$ 是 $\\sin^{2p-2}\\theta$，次方要乘 $2$。"
+          }
         ]
       }
     },
     {
       "title": "加 1 再除以 2",
       "beats": [
-        { "show": ["$\\int_0^{\\pi/2}\\sin^{2p-1}\\theta\\cos^{2q-1}\\theta\\,d\\theta$", "$=\\frac{1}{2}\\mathrm{B}(p,q)$"], "note": "$dx$ 的 $2$ 移到另一邊，變成 $\\frac{1}{2}$。",
+        { "show": ["Beta：零到一的積分"],
+          "say": "Beta 是零到一的積分，被積函數是 x 的 p 減一次方乘一減 x 的 q 減一次方。",
+          "board": [
+            {"do":"write","line":"$\\mathrm{B}(p,q)=\\int_0^1 x^{p-1}(1-x)^{q-1}\\,dx$"}
+          ] },
+        { "show": ["Gamma：零到無限大的積分","$\\mathrm{B}=\\frac{\\Gamma(p)\\Gamma(q)}{\\Gamma(p+q)}$"],
+          "say": "Gamma 是零到無限大的積分，兩個合起來有 B 等於 Gamma p 乘 Gamma q 除以 Gamma p 加 q。",
+          "board": [
+            {"do":"write","line":"$\\Gamma(s)=\\int_0^{\\infty} t^{s-1}e^{-t}\\,dt$"},
+            {"do":"write","line":"$\\mathrm{B}(p,q)={{r1:\\frac{\\Gamma(p)\\Gamma(q)}{\\Gamma(p+q)}}}$","on":"兩個合起來"},
+            {"do":"box","term":"r1","color":"green","on":"B 等於"}
+          ] },
+        { "show": ["$\\int_0^{\\pi/2}\\sin^{2p-1}\\theta\\cos^{2q-1}\\theta\\,d\\theta$","$=\\frac{1}{2}\\mathrm{B}(p,q)$"],
+          "note": "$dx$ 的 $2$ 移到另一邊，變成 $\\frac{1}{2}$。",
           "say": "dx 帶來的二移到另一邊，三角形式的積分就是 Beta 的一半。",
           "board": [
-            { "do": "write", "line": "$\\int_0^{\\pi/2}\\sin^{2p-1}\\theta\\cos^{2q-1}\\theta\\,d\\theta$" },
-            { "do": "write", "line": "$={{h:\\frac{1}{2}}}\\mathrm{B}(p,q)$", "on": "移到另一邊" },
-            { "do": "focus", "term": "h", "label": "Beta 的一半", "on": "Beta 的一半" }
+            {"do":"write","line":"$\\int_0^{\\pi/2}\\sin^{2p-1}\\theta\\cos^{2q-1}\\theta\\,d\\theta$"},
+            {"do":"write","line":"$={{h:\\frac{1}{2}}}\\mathrm{B}(p,q)$","on":"移到另一邊"},
+            {"do":"focus","term":"h","label":"Beta 的一半","on":"Beta 的一半"}
           ] },
         { "show": ["$\\sin^m\\theta\\cos^n\\theta$：$p=\\frac{m+1}{2}$，$q=\\frac{n+1}{2}$"],
           "say": "實際用的時候，題目是 sine 的 m 次方乘 cosine 的 n 次方，次方先加一，再除以二。",
           "board": [
-            { "do": "write", "line": "$\\sin^m\\theta\\cos^n\\theta$：${{pp:p=\\frac{m+1}{2}}}$，$q=\\frac{n+1}{2}$", "on": "sine 的 m" },
-            { "do": "underline", "term": "pp", "on": "次方先加一" }
+            {"do":"write","line":"$\\sin^m\\theta\\cos^n\\theta$：${{pp:p=\\frac{m+1}{2}}}$，$q=\\frac{n+1}{2}$","on":"sine 的 m"},
+            {"do":"underline","term":"pp","on":"次方先加一"}
           ] },
-        { "show": ["條件：$m>-1$，$n>-1$"], "note": "分數次方、負的次方都可以。",
+        { "show": ["條件：$m>-1$，$n>-1$"],
+          "note": "分數次方、負的次方都可以。",
           "say": "條件是 m、n 都大於負一，對應 p、q 大於零。分數次方、甚至負的次方都能用。",
           "board": [
-            { "do": "write", "line": "條件：${{cm:m>-1}}$，${{cn:n>-1}}$" }
+            {"do":"write","line":"條件：${{cm:m>-1}}$，${{cn:n>-1}}$"}
           ] }
       ],
       "check": 1
@@ -228,20 +258,27 @@
     {
       "title": "有奇數次方",
       "beats": [
-        { "show": ["$\\int_0^{\\pi/2}\\sin^5\\theta\\cos^3\\theta\\,d\\theta$"], "note": "$m=5$，$n=3$：$p=3$，$q=2$。",
+        { "show": ["$\\int_0^{\\pi/2}\\sin^5\\theta\\cos^3\\theta\\,d\\theta$"],
+          "note": "$m=5$，$n=3$：$p=3$，$q=2$。",
           "say": "sine 五次方乘 cosine 三次方：五加一除以二是三，三加一除以二是二。",
           "board": [
-            { "do": "write", "line": "$\\int_0^{\\pi/2}\\sin^5\\theta\\cos^3\\theta\\,d\\theta$" },
-            { "do": "write", "line": "$p=\\frac{5+1}{2}={{pp:3}}$", "on": "五加一" },
-            { "do": "write", "line": "$q=\\frac{3+1}{2}={{qq:2}}$", "on": "三加一" }
+            {"do":"write","line":"$\\int_0^{\\pi/2}\\sin^5\\theta\\cos^3\\theta\\,d\\theta$"},
+            {"do":"write","line":"$p=\\frac{5+1}{2}={{pp:3}}$","on":"五加一"},
+            {"do":"write","line":"$q=\\frac{3+1}{2}={{qq:2}}$","on":"三加一"}
+          ] },
+        { "show": ["$\\mathrm{B}(3,2)=\\frac{\\Gamma(3)\\Gamma(2)}{\\Gamma(5)}$","整數：$\\Gamma(n)=(n-1)!$"],
+          "say": "用 Gamma 算：Beta 三、二是 Gamma 三乘 Gamma 二，除以 Gamma 五。整數的 Gamma n 是 n 減一的階乘。",
+          "board": [
+            {"do":"write","line":"$\\mathrm{B}(3,2)=\\frac{\\Gamma(3)\\Gamma(2)}{\\Gamma(5)}$"},
+            {"do":"write","line":"$\\Gamma(n)=(n-1)!$，$\\Gamma(3)=2!$","on":"整數的"}
           ] },
         { "show": ["$\\frac{1}{2}\\mathrm{B}(3,2)=\\frac{1}{2}\\cdot\\frac{2!\\,1!}{4!}=\\frac{1}{24}$"],
           "say": "Beta 三、二是二十四分之二，也就是十二分之一，再乘二分之一，得二十四分之一。",
           "board": [
-            { "do": "clear" },
-            { "do": "write", "line": "$\\frac{1}{2}\\mathrm{B}(3,2)=\\frac{1}{2}\\cdot\\frac{2!\\,1!}{4!}$", "on": "Beta" },
-            { "do": "transform", "line": "$=\\frac{1}{2}\\cdot{{t:\\frac{1}{12}}}$", "on": "也就是" },
-            { "do": "transform", "line": "$={{r:\\frac{1}{24}}}$", "color": "green", "on": "再乘" }
+            {"do":"clear"},
+            {"do":"write","line":"$\\frac{1}{2}\\mathrm{B}(3,2)=\\frac{1}{2}\\cdot\\frac{2!\\,1!}{4!}$","on":"Beta"},
+            {"do":"transform","line":"$=\\frac{1}{2}\\cdot{{t:\\frac{1}{12}}}$","on":"也就是"},
+            {"do":"transform","line":"$={{r:\\frac{1}{24}}}$","color":"green","on":"再乘"}
           ] }
       ],
       "check": 0
@@ -249,55 +286,87 @@
     {
       "title": "從奇偶看答案",
       "beats": [
-        { "show": ["$\\int_0^{\\pi/2}\\sin^4\\theta\\cos^2\\theta\\,d\\theta$"], "note": "$p=\\frac{5}{2}$，$q=\\frac{3}{2}$。",
+        { "show": ["$\\int_0^{\\pi/2}\\sin^4\\theta\\cos^2\\theta\\,d\\theta$"],
+          "note": "$p=\\frac{5}{2}$，$q=\\frac{3}{2}$。",
           "say": "換成兩個都是偶數：sine 四次方乘 cosine 平方，p 是二分之五，q 是二分之三。",
           "board": [
-            { "do": "write", "line": "$\\int_0^{\\pi/2}\\sin^4\\theta\\cos^2\\theta\\,d\\theta$" },
-            { "do": "write", "line": "$p=\\frac{5}{2}$，$q=\\frac{3}{2}$", "on": "p 是" }
+            {"do":"write","line":"$\\int_0^{\\pi/2}\\sin^4\\theta\\cos^2\\theta\\,d\\theta$"},
+            {"do":"write","line":"$p=\\frac{5}{2}$，$q=\\frac{3}{2}$","on":"p 是"}
           ] },
-        { "show": ["$\\frac{1}{2}\\cdot\\frac{\\Gamma(5/2)\\Gamma(3/2)}{\\Gamma(4)}=\\frac{\\pi}{32}$"], "note": "跟 Wallis 的 $W_4-W_6$ 一樣。",
+        { "show": ["$\\Gamma(1/2)=\\sqrt{\\pi}$","$\\Gamma(x+1)=x\\,\\Gamma(x)$"],
+          "say": "Gamma 二分之一是根號 pi。再用 Gamma x 加一等於 x 乘 Gamma x，一路推到二分之五。",
+          "board": [
+            {"do":"write","line":"$\\Gamma(1/2)=\\sqrt{\\pi}$"},
+            {"do":"write","line":"$\\Gamma(x+1)=x\\,\\Gamma(x)$","on":"再用"},
+            {"do":"write","line":"$\\Gamma(3/2)=\\frac{1}{2}\\Gamma(1/2)=\\frac{\\sqrt{\\pi}}{2}$","on":"一路"},
+            {"do":"write","line":"$\\Gamma(5/2)=\\frac{3}{2}\\Gamma(3/2)=\\frac{3\\sqrt{\\pi}}{4}$","on":"推到"}
+          ] },
+        { "show": ["$\\frac{1}{2}\\cdot\\frac{\\Gamma(5/2)\\Gamma(3/2)}{\\Gamma(4)}=\\frac{\\pi}{32}$"],
+          "note": "跟 Wallis 的 $W_4-W_6$ 一樣。",
           "say": "兩個半整數各帶一個根號 pi，分母 Gamma 四是六，答案三十二分之 pi，跟 Wallis 算的一樣。",
           "board": [
-            { "do": "clear" },
-            { "do": "write", "line": "$\\frac{1}{2}\\cdot\\frac{\\Gamma(5/2)\\Gamma(3/2)}{\\Gamma(4)}$", "on": "兩個半整數" },
-            { "do": "write", "line": "$\\Gamma(4)=6$", "on": "分母" },
-            { "do": "write", "line": "$={{r:\\frac{\\pi}{32}}}$", "on": "答案" },
-            { "do": "box", "term": "r", "color": "green", "on": "Wallis" }
+            {"do":"clear"},
+            {"do":"write","line":"$\\frac{1}{2}\\cdot\\frac{\\Gamma(5/2)\\Gamma(3/2)}{\\Gamma(4)}$","on":"兩個半整數"},
+            {"do":"write","line":"$\\Gamma(4)=6$","on":"分母"},
+            {"do":"write","line":"$={{r:\\frac{\\pi}{32}}}$","on":"答案"},
+            {"do":"box","term":"r","color":"green","on":"Wallis"}
           ] },
-        { "show": ["都偶數：帶 $\\pi$", "有奇數：有理數"],
+        { "show": ["都偶數：帶 $\\pi$","有奇數：有理數"],
           "say": "規律是：兩個都偶數，答案帶 pi；只要有一個奇數，根號 pi 會上下約掉，答案是有理數。",
           "board": [
-            { "do": "clear" },
-            { "do": "write", "line": "都偶數：帶 $\\pi$", "on": "兩個都偶數" },
-            { "do": "write", "line": "有奇數：有理數", "on": "只要有一個奇數" }
+            {"do":"clear"},
+            {"do":"write","line":"都偶數：帶 $\\pi$","on":"兩個都偶數"},
+            {"do":"write","line":"有奇數：有理數","on":"只要有一個奇數"}
+          ] },
+        { "show": ["都偶數：分子 $\\sqrt{\\pi}\\cdot\\sqrt{\\pi}$","有奇數：分母也有 $\\sqrt{\\pi}$"],
+          "say": "為什麼：都偶數時分母是整數點，分子兩個根號 pi 留下 pi。有一個奇數，分母變半整數，根號 pi 就約掉。",
+          "board": [
+            {"do":"write","line":"都偶數：分子 $\\sqrt{\\pi}\\cdot\\sqrt{\\pi}$，分母整數"},
+            {"do":"write","line":"有奇數：分母也有 $\\sqrt{\\pi}$，約掉","on":"有一個奇數"}
           ] }
       ],
       "check": 3
     },
     {
-      "title": "分數次方", "key": "$\\tan$ 拆成 $\\sin$、$\\cos$ 的分數次方",
+      "title": "分數次方",
       "beats": [
-        { "show": ["$\\sqrt{\\tan\\theta}=\\sin^{1/2}\\theta\\cos^{-1/2}\\theta$"], "note": "$n=-\\frac{1}{2}>-1$，收斂。",
+        { "show": ["$\\sqrt{\\tan\\theta}=\\sin^{1/2}\\theta\\cos^{-1/2}\\theta$"],
+          "note": "$n=-\\frac{1}{2}>-1$，收斂。",
           "say": "根號 tangent 寫成 sine 的二分之一次方乘 cosine 的負二分之一次方。負二分之一大於負一，收斂。",
           "board": [
-            { "do": "write", "line": "$\\sqrt{\\tan\\theta}=\\sin^{1/2}\\theta\\,{{c:\\cos^{-1/2}\\theta}}$" },
-            { "do": "underline", "term": "c", "on": "cosine 的負" },
-            { "do": "write", "line": "$n=-\\frac{1}{2}>-1$，收斂", "on": "負二分之一#2" }
+            {"do":"write","line":"$\\sqrt{\\tan\\theta}=\\sin^{1/2}\\theta\\,{{c:\\cos^{-1/2}\\theta}}$"},
+            {"do":"underline","term":"c","on":"cosine 的負"},
+            {"do":"write","line":"$n=-\\frac{1}{2}>-1$，收斂","on":"負二分之一#2"}
           ] },
-        { "show": ["$=\\frac{1}{2}\\mathrm{B}\\left(\\frac{3}{4},\\frac{1}{4}\\right)$"], "note": "$p=\\frac{3}{4}$，$q=\\frac{1}{4}$。",
+        { "show": ["$=\\frac{1}{2}\\mathrm{B}\\left(\\frac{3}{4},\\frac{1}{4}\\right)$"],
+          "note": "$p=\\frac{3}{4}$，$q=\\frac{1}{4}$。",
           "say": "次方加一再除以二：p 是四分之三，q 是四分之一。",
           "board": [
-            { "do": "write", "line": "$\\int_0^{\\pi/2}\\sqrt{\\tan\\theta}\\,d\\theta=\\frac{1}{2}\\mathrm{B}\\left({{p:\\frac{3}{4}}},{{q:\\frac{1}{4}}}\\right)$" },
-            { "do": "focus", "term": "p", "on": "p 是" },
-            { "do": "focus", "term": "q", "on": "q 是" }
+            {"do":"write","line":"$\\int_0^{\\pi/2}\\sqrt{\\tan\\theta}\\,d\\theta=\\frac{1}{2}\\mathrm{B}\\left({{p:\\frac{3}{4}}},{{q:\\frac{1}{4}}}\\right)$"},
+            {"do":"focus","term":"p","on":"p 是"},
+            {"do":"focus","term":"q","on":"q 是"}
           ] },
-        { "show": ["$\\int_0^{\\pi/2}\\sqrt{\\tan\\theta}\\,d\\theta=\\frac{\\pi}{\\sqrt{2}}$"], "note": "用反射公式 $\\Gamma\\left(\\frac{1}{4}\\right)\\Gamma\\left(\\frac{3}{4}\\right)=\\pi\\sqrt{2}$。",
+        { "show": ["$\\Gamma(s)\\Gamma(1-s)=\\frac{\\pi}{\\sin(\\pi s)}$"],
+          "say": "反射公式說，Gamma s 乘 Gamma 一減 s，等於 pi 除以 sine pi s。",
+          "board": [
+            {"do":"write","line":"$\\Gamma(s)\\Gamma(1-s)=\\frac{\\pi}{\\sin(\\pi s)}$"}
+          ] },
+        { "show": ["$s=\\frac{1}{4}$：$1-s=\\frac{3}{4}$","$\\mathrm{B}=\\frac{\\pi}{\\sin(\\pi/4)}=\\pi\\sqrt{2}$"],
+          "say": "取 s 等於四分之一，一減 s 就是四分之三。Gamma 一是一，所以乘積就是 pi 除以 sine 四分之 pi。",
+          "board": [
+            {"do":"write","line":"$s=\\frac{1}{4}$，$1-s=\\frac{3}{4}$"},
+            {"do":"write","line":"$\\mathrm{B}(\\frac{3}{4},\\frac{1}{4})=\\frac{\\Gamma(3/4)\\Gamma(1/4)}{\\Gamma(1)}$","on":"Gamma 一是一"},
+            {"do":"write","line":"$=\\frac{\\pi}{\\sin(\\pi/4)}=\\pi\\sqrt{2}$","on":"除以"}
+          ] },
+        { "show": ["$\\int_0^{\\pi/2}\\sqrt{\\tan\\theta}\\,d\\theta=\\frac{\\pi}{\\sqrt{2}}$"],
+          "note": "用反射公式 $\\Gamma\\left(\\frac{1}{4}\\right)\\Gamma\\left(\\frac{3}{4}\\right)=\\pi\\sqrt{2}$。",
           "say": "再借反射公式，答案是根號二分之 pi，大約二點二二一。",
           "board": [
-            { "do": "write", "line": "$=\\,{{ans:\\frac{\\pi}{\\sqrt{2}}}}$", "on": "答案是" },
-            { "do": "box", "term": "ans", "color": "green", "on": "根號二分之" }
+            {"do":"write","line":"$=\\,{{ans:\\frac{\\pi}{\\sqrt{2}}}}$","on":"答案是"},
+            {"do":"box","term":"ans","color":"green","on":"根號二分之"}
           ] }
       ],
+      "key": "$\\tan$ 拆成 $\\sin$、$\\cos$ 的分數次方",
       "check": 2
     }
   ],

@@ -142,59 +142,85 @@
     {
       "title": "先算截面",
       "beats": [
-        { "show": ["在固定的 $x$ 切一刀"], "note": "$R=[a,b]\\times[c,d]$，$f\\ge 0$。",
+        { "show": ["在固定的 $x$ 切一刀"],
+          "note": "$R=[a,b]\\times[c,d]$，$f\\ge 0$。",
           "say": "拿一片垂直於 x 軸的平面，在某個固定的 x 把立體切開，切口是一塊平面圖形。",
           "board": [
-            { "do": "write", "line": "在固定的 $x$ 切一刀" }
+            {"do":"write","line":"在固定的 $x$ 切一刀"}
           ] },
         { "show": ["$A(x)=\\int_c^d f(x,y)\\,dy$"],
           "say": "切口的面積，就是沿 y 方向對高度積分。",
           "board": [
-            { "do": "write", "line": "$A(x)=\\int_c^d f(x,y)\\,{{dy:dy}}$" },
-            { "do": "underline", "term": "dy", "label": "沿 y 積", "on": "y 方向" }
+            {"do":"write","line":"$A(x)=\\int_c^d f(x,y)\\,{{dy:dy}}$"},
+            {"do":"underline","term":"dy","label":"沿 y 積","on":"y 方向"}
           ] },
-        { "show": ["體積 $=\\int_a^b A(x)\\,dx$"], "note": "跟〈圓盤法〉一樣：截面積沿軸積起來。",
+        { "show": ["薄片體積 ≈ 截面積 × 厚度"],
+          "note": "像一疊紙裡的一張。",
+          "say": "把立體想成一疊很薄的紙，每一片厚度叫 d x，體積大約是截面積乘 d x。全部加起來就是體積。",
+          "board": [
+            {"do":"write","line":"薄片體積 $\\approx A(x)\\cdot dx$"}
+          ] },
+        { "show": ["體積 $=\\int_a^b A(x)\\,dx$"],
+          "note": "跟〈圓盤法〉一樣：截面積沿軸積起來。",
           "say": "再把每一片截面積沿 x 方向積起來，就是體積。圓盤法早就這樣做過了。",
           "board": [
-            { "do": "write", "line": "體積 $=\\int_a^b {{a:A(x)}}\\,dx$" },
-            { "do": "focus", "term": "a", "color": "gold", "on": "每一片截面積" }
+            {"do":"write","line":"體積 $=\\int_a^b {{a:A(x)}}\\,dx$"},
+            {"do":"focus","term":"a","color":"gold","on":"每一片截面積"}
+          ] },
+        { "show": ["曲線下的面積 = 體積"],
+          "say": "圓盤法的截面是圓，這裡換成 A of x，做法一樣。曲線底下塗色的面積，就是體積。",
+          "board": [
+            {"do":"plot","graph":{"window":[-0.5,2.5,-0.5,5],"curves":[{"expr":"x^2","domain":[0,2],"color":"blue"}],"fills":[{"expr":"x^2","from":0,"to":2,"color":"blue"}],"labels":[{"x":0.6,"y":3,"text":"A(x)"}]}}
           ] }
       ],
       "predict": {
         "ask": "$A(x)$ 是什麼的面積？",
         "options": [
-          { "label": "在固定 $x$ 切下去的截面", "correct": true },
-          { "label": "底面 $R$", "why": "$R$ 的面積是 $(b-a)(d-c)$，跟 $f$ 無關；$A(x)$ 是對高度 $f$ 積分得到的切口面積。" },
-          { "label": "曲面 $z=f(x,y)$ 本身", "why": "$A(x)$ 只是一個 $x$ 位置的切口；曲面本身的面積要另外算。" }
+          {
+            "label": "在固定 $x$ 切下去的截面",
+            "correct": true
+          },
+          {
+            "label": "底面 $R$",
+            "why": "$R$ 的面積是 $(b-a)(d-c)$，跟 $f$ 無關；$A(x)$ 是對高度 $f$ 積分得到的切口面積。"
+          },
+          {
+            "label": "曲面 $z=f(x,y)$ 本身",
+            "why": "$A(x)$ 只是一個 $x$ 位置的切口；曲面本身的面積要另外算。"
+          }
         ]
       }
     },
     {
-      "title": "由內往外", "key": "積內層時，外層變數當常數",
+      "title": "由內往外",
       "beats": [
-        { "show": ["$\\int_a^b\\!\\left[\\int_c^d f(x,y)\\,dy\\right]dx$"], "note": "內層 $dy$ 配 $c$、$d$；外層 $dx$ 配 $a$、$b$。",
+        { "show": ["$\\int_a^b\\!\\left[\\int_c^d f(x,y)\\,dy\\right]dx$"],
+          "note": "內層 $dy$ 配 $c$、$d$；外層 $dx$ 配 $a$、$b$。",
           "say": "兩步寫在一起就是累次積分。裡面的 d y 配裡面的上下限，外面的 d x 配外面的。",
           "board": [
-            { "do": "write", "line": "$\\int_a^b\\!\\left[\\int_c^d f(x,y)\\,{{dy:dy}}\\right]{{dx:dx}}$", "tint": {"dy":"blue","dx":"violet"} },
-            { "do": "focus", "term": "dy", "color": "blue", "label": "內層", "on": "d y" },
-            { "do": "focus", "term": "dx", "color": "violet", "label": "外層", "on": "d x" }
+            {"do":"write","line":"$\\int_a^b\\!\\left[\\int_c^d f(x,y)\\,{{dy:dy}}\\right]{{dx:dx}}$","tint":{"dy":"blue","dx":"violet"}},
+            {"do":"focus","term":"dy","color":"blue","label":"內層","on":"d y"},
+            {"do":"focus","term":"dx","color":"violet","label":"外層","on":"d x"}
           ] },
-        { "show": ["算內層時，$x$ 是常數"], "note": "跟偏導數把其他變數當常數一樣。",
+        { "show": ["算內層時，$x$ 是常數"],
+          "note": "跟偏導數把其他變數當常數一樣。",
           "say": "先算裡面。對 y 積分時，x 就像一個固定的數。",
           "board": [
-            { "do": "write", "line": "算內層時，${{x:x}}$ 是常數" },
-            { "do": "focus", "term": "x", "label": "當常數", "on": "就像" }
+            {"do":"write","line":"算內層時，${{x:x}}$ 是常數"},
+            {"do":"focus","term":"x","label":"當常數","on":"就像"}
           ] },
-        { "show": ["$\\int_0^2 xy\\,dy=x\\cdot\\left[\\frac{y^2}{2}\\right]_0^2=2x$"], "note": "代完上下限，$y$ 要完全消失。",
+        { "show": ["$\\int_0^2 xy\\,dy=x\\cdot\\left[\\frac{y^2}{2}\\right]_0^2=2x$"],
+          "note": "代完上下限，$y$ 要完全消失。",
           "say": "例如 x y 對 y 從零積到二：x 提出去，y 平方除以二代上下限，得二 x。結果裡不能再有 y。",
           "board": [
-            { "do": "clear" },
-            { "do": "write", "line": "$\\int_0^2 {{x:x}}y\\,dy$", "on": "例如" },
-            { "do": "transform", "line": "$={{x:x}}\\cdot\\left[\\frac{y^2}{2}\\right]_0^2$", "on": "提出去" },
-            { "do": "transform", "line": "$={{r:2x}}$", "on": "得二" },
-            { "do": "box", "term": "r", "color": "green", "label": "沒有 y", "on": "結果裡" }
+            {"do":"clear"},
+            {"do":"write","line":"$\\int_0^2 {{x:x}}y\\,dy$","on":"例如"},
+            {"do":"transform","line":"$={{x:x}}\\cdot\\left[\\frac{y^2}{2}\\right]_0^2$","on":"提出去"},
+            {"do":"transform","line":"$={{r:2x}}$","on":"得二"},
+            {"do":"box","term":"r","color":"green","label":"沒有 y","on":"結果裡"}
           ] }
       ],
+      "key": "積內層時，外層變數當常數",
       "check": 0
     },
     {
@@ -203,83 +229,122 @@
         { "show": ["$\\iint_R(x+2y)\\,dA$，$R=[0,2]\\times[1,3]$"],
           "say": "算一題，兩種次序都做一次。",
           "board": [
-            { "do": "write", "line": "$\\iint_R(x+2y)\\,dA$，$R=[0,2]\\times[1,3]$" }
+            {"do":"write","line":"$\\iint_R(x+2y)\\,dA$，$R=[0,2]\\times[1,3]$"}
           ] },
-        { "show": ["先 $dy$：$(3x+9)-(x+1)=2x+8$"], "note": "反導函數 $xy+y^2$。",
+        { "show": ["先 $dy$：$(3x+9)-(x+1)=2x+8$"],
+          "note": "反導函數 $xy+y^2$。",
           "say": "先對 y：反導函數 x y 加 y 平方，代三減代一，剩二 x 加八。",
           "board": [
-            { "do": "write", "line": "先 ${{dy:dy}}$：$\\big[xy+y^2\\big]_1^3$", "tint": { "dy": "blue" }, "on": "反導函數" },
-            { "do": "transform", "line": "先 ${{dy:dy}}$：$(3x+9)-(x+1)={{i:2x+8}}$", "on": "代三" },
-            { "do": "underline", "term": "i", "label": "沒有 y 了", "on": "剩二" }
+            {"do":"write","line":"先 ${{dy:dy}}$：$\\big[xy+y^2\\big]_1^3$","tint":{"dy":"blue"},"on":"反導函數"},
+            {"do":"transform","line":"先 ${{dy:dy}}$：$(3x+9)-(x+1)={{i:2x+8}}$","on":"代三"},
+            {"do":"underline","term":"i","label":"沒有 y 了","on":"剩二"}
           ] },
         { "show": ["$\\int_0^2(2x+8)\\,dx=4+16=20$"],
           "say": "再對 x 從零積到二，得二十。",
           "board": [
-            { "do": "write", "line": "$\\int_0^2({{i:2x+8}})\\,dx=4+16={{a:20}}$", "on": "再對 x" }
+            {"do":"write","line":"$\\int_0^2({{i:2x+8}})\\,dx=4+16={{a:20}}$","on":"再對 x"}
           ] },
-        { "show": ["先 $dx$：$\\int_1^3(2+4y)\\,dy=24-4=20$"], "note": "兩個次序一樣。",
+        { "show": ["$\\int_0^2(x+2y)\\,dx=\\left[\\frac{x^2}{2}+2xy\\right]_0^2$"],
+          "note": "$y$ 當常數：$2y$ 像一個數。",
+          "say": "先對 x 積。x 的反導函數是 x 平方除以二；二 y 是常數，對 x 積分就變成二 y 乘 x。",
+          "board": [
+            {"do":"write","line":"$\\int_0^2(x+2y)\\,dx=\\left[\\frac{x^2}{2}+2xy\\right]_0^2$"}
+          ] },
+        { "show": ["代 $2$ 減代 $0$：$2+4y$"],
+          "say": "代二減代零：x 平方除以二變成二，二 y x 變成四 y。所以內層是二加四 y。",
+          "board": [
+            {"do":"write","line":"$=\\frac{2^2}{2}+2\\cdot2y-0=2+4y$","on":"x 平方"}
+          ] },
+        { "show": ["先 $dx$：$\\int_1^3(2+4y)\\,dy=24-4=20$"],
+          "note": "兩個次序一樣。",
           "say": "換成先對 x，內層是二加四 y，外層積完也是二十。",
           "board": [
-            { "do": "write", "line": "先 ${{dx:dx}}$：$\\int_1^3({{j:2+4y}})\\,dy=24-4={{b:20}}$", "tint": { "dx": "violet" } },
-            { "do": "underline", "term": "j", "label": "內層", "on": "內層是" },
-            { "do": "box", "term": "b", "color": "green", "label": "一樣", "on": "也是" }
+            {"do":"write","line":"先 ${{dx:dx}}$：$\\int_1^3({{j:2+4y}})\\,dy=24-4={{b:20}}$","tint":{"dx":"violet"}},
+            {"do":"underline","term":"j","label":"內層","on":"內層是"},
+            {"do":"box","term":"b","color":"green","label":"一樣","on":"也是"}
           ] }
       ],
       "check": 1
     },
     {
-      "title": "Fubini：挑好算的", "key": "換積分次序，挑內層好積的那個",
+      "title": "Fubini：挑好算的",
       "beats": [
-        { "show": ["$\\int_a^b\\!\\int_c^d f\\,dy\\,dx=\\int_c^d\\!\\int_a^b f\\,dx\\,dy$"], "note": "$f$ 在矩形 $R$ 上連續時。",
+        { "show": ["$\\int_a^b\\!\\int_c^d f\\,dy\\,dx=\\int_c^d\\!\\int_a^b f\\,dx\\,dy$"],
+          "note": "$f$ 在矩形 $R$ 上連續時。",
           "say": "Fubini 定理說：函數在矩形上連續，兩種次序相等。一個次序難積，就換另一個。",
           "board": [
-            { "do": "write", "line": "$f$ 在矩形 $R$ 上連續：" },
-            { "do": "write", "line": "${{p:\\int_a^b\\!\\int_c^d f\\,dy\\,dx}}={{q:\\int_c^d\\!\\int_a^b f\\,dx\\,dy}}$", "tint": { "p": "blue", "q": "violet" }, "on": "兩種次序" }
+            {"do":"write","line":"$f$ 在矩形 $R$ 上連續："},
+            {"do":"write","line":"${{p:\\int_a^b\\!\\int_c^d f\\,dy\\,dx}}={{q:\\int_c^d\\!\\int_a^b f\\,dx\\,dy}}$","tint":{"p":"blue","q":"violet"},"on":"兩種次序"}
           ] },
-        { "show": ["$\\iint_R y\\,e^{xy}\\,dA$，$R=[0,1]\\times[0,1]$"], "note": "先 $dy$ 要分部積分。",
+        { "show": ["連續：不讓 $f$ 衝到無限大"],
+          "note": "無界時，兩種次序可以不同。",
+          "say": "連續的用處，是不讓函數在角落衝到無限大。有個無界的例子，兩種次序算出四分之 pi 和負四分之 pi。",
+          "board": [
+            {"do":"write","line":"連續：不讓 $f$ 衝到無限大"},
+            {"do":"write","line":"$\\frac{\\pi}{4}\\ne-\\frac{\\pi}{4}$","color":"red","on":"兩種次序"}
+          ] },
+        { "show": ["$\\iint_R y\\,e^{xy}\\,dA$，$R=[0,1]\\times[0,1]$"],
+          "note": "先 $dy$ 要分部積分。",
           "say": "這一題先對 y 要分部積分，後面還很醜。",
           "board": [
-            { "do": "keep", "n": 1 },
-            { "do": "write", "line": "$\\iint_R y\\,e^{xy}\\,dA$，$R=[0,1]\\times[0,1]$", "on": "這一題" },
-            { "do": "write", "line": "先 ${{dy:dy}}$：要分部積分", "tint": { "dy": "blue" }, "on": "先對 y" }
+            {"do":"keep","n":1},
+            {"do":"write","line":"$\\iint_R y\\,e^{xy}\\,dA$，$R=[0,1]\\times[0,1]$","on":"這一題"},
+            {"do":"write","line":"先 ${{dy:dy}}$：要分部積分","tint":{"dy":"blue"},"on":"先對 y"}
           ] },
-        { "show": ["先 $dx$：$\\int_0^1 y\\,e^{xy}\\,dx=e^y-1$"], "note": "$e^{xy}$ 對 $x$ 微分正好是 $y\\,e^{xy}$。",
+        { "show": ["先 $dx$：$\\int_0^1 y\\,e^{xy}\\,dx=e^y-1$"],
+          "note": "$e^{xy}$ 對 $x$ 微分正好是 $y\\,e^{xy}$。",
           "say": "改成先對 x：y 是常數，e 的 x y 次方對 x 微分正好是 y 乘它，一步就積完。",
           "board": [
-            { "do": "write", "line": "先 ${{dx:dx}}$：$\\int_0^1 {{ye:y\\,e^{xy}}}\\,dx=e^y-1$", "tint": { "dx": "violet" } },
-            { "do": "underline", "term": "ye", "label": "正好是導數", "on": "正好是" }
+            {"do":"write","line":"先 ${{dx:dx}}$：$\\int_0^1 {{ye:y\\,e^{xy}}}\\,dx=e^y-1$","tint":{"dx":"violet"}},
+            {"do":"underline","term":"ye","label":"正好是導數","on":"正好是"}
+          ] },
+        { "show": ["$\\frac{d}{dx}e^{xy}=y\\,e^{xy}$"],
+          "note": "代 $1$ 減代 $0$。",
+          "say": "驗算：e 的 x y 次方對 x 微分，裡面 x y 的導數是 y，所以多乘 y。代一減代零，得 e 的 y 次方減一。",
+          "board": [
+            {"do":"write","line":"$\\frac{d}{dx}e^{xy}=y\\,e^{xy}$"},
+            {"do":"write","line":"$\\big[e^{xy}\\big]_0^1=e^y-e^0=e^y-1$","on":"代一"}
           ] },
         { "show": ["$\\int_0^1(e^y-1)\\,dy=e-2$"],
           "say": "外層再積一次，答案是 e 減二。",
           "board": [
-            { "do": "keep", "n": 1 },
-            { "do": "write", "line": "$\\int_0^1(e^y-1)\\,dy={{a:e-2}}$", "on": "外層" },
-            { "do": "box", "term": "a", "color": "green", "on": "答案是" }
+            {"do":"keep","n":1},
+            {"do":"write","line":"$\\int_0^1(e^y-1)\\,dy={{a:e-2}}$","on":"外層"},
+            {"do":"box","term":"a","color":"green","on":"答案是"}
           ] }
       ],
+      "key": "換積分次序，挑內層好積的那個",
       "check": 2
     },
     {
       "title": "可分離：拆成兩個",
       "beats": [
-        { "show": ["$\\iint_R g(x)h(y)\\,dA=\\int_a^b g\\,dx\\cdot\\int_c^d h\\,dy$"], "note": "只在矩形上成立。",
+        { "show": ["$\\iint_R g(x)h(y)\\,dA=\\int_a^b g\\,dx\\cdot\\int_c^d h\\,dy$"],
+          "note": "只在矩形上成立。",
           "say": "被積函數是 x 的函數乘 y 的函數，區域又是矩形，內層的積分是一個數，可以提出去，變成兩個一維積分相乘。",
           "board": [
-            { "do": "write", "line": "$\\iint_R {{g:g(x)}}\\,{{h:h(y)}}\\,dA$", "tint": { "g": "blue", "h": "violet" } },
-            { "do": "write", "line": "$=\\int_a^b {{g:g(x)}}\\,dx\\cdot{{ih:\\int_c^d {{h:h(y)}}\\,dy}}$", "on": "內層的積分" },
-            { "do": "underline", "term": "ih", "label": "是一個數", "on": "可以提出去" }
+            {"do":"write","line":"$\\iint_R {{g:g(x)}}\\,{{h:h(y)}}\\,dA$","tint":{"g":"blue","h":"violet"}},
+            {"do":"write","line":"$=\\int_a^b {{g:g(x)}}\\,dx\\cdot{{ih:\\int_c^d {{h:h(y)}}\\,dy}}$","on":"內層的積分"},
+            {"do":"underline","term":"ih","label":"是一個數","on":"可以提出去"}
           ] },
         { "show": ["$\\iint_R y^2\\cos x\\,dA$，$R=\\left[0,\\frac{\\pi}{2}\\right]\\times[0,3]$"],
           "say": "例如 y 平方乘 cosine x，在這個矩形上。",
           "board": [
-            { "do": "clear" },
-            { "do": "write", "line": "$\\iint_R {{hy:y^2}}{{gx:\\cos x}}\\,dA$，$R=\\left[0,\\frac{\\pi}{2}\\right]\\times[0,3]$", "tint": { "gx": "blue", "hy": "violet" }, "on": "y 平方" }
+            {"do":"clear"},
+            {"do":"write","line":"$\\iint_R {{hy:y^2}}{{gx:\\cos x}}\\,dA$，$R=\\left[0,\\frac{\\pi}{2}\\right]\\times[0,3]$","tint":{"gx":"blue","hy":"violet"},"on":"y 平方"}
           ] },
-        { "show": ["$\\int_0^{\\pi/2}\\cos x\\,dx=1$，$\\int_0^3 y^2\\,dy=9$"], "note": "相乘得 $9$。",
+        { "show": ["$\\int_0^{\\pi/2}\\cos x\\,dx=\\big[\\sin x\\big]_0^{\\pi/2}$"],
+          "say": "cosine 的反導函數是 sine。sine 在 pi 除以二是一，sine 在零是零，一減零得一。",
+          "board": [
+            {"do":"write","line":"$\\int_0^{\\pi/2}\\cos x\\,dx=\\big[\\sin x\\big]_0^{\\pi/2}$"},
+            {"do":"write","line":"$=1-0=1$","on":"一減零"}
+          ] },
+        { "show": ["$\\int_0^{\\pi/2}\\cos x\\,dx=1$，$\\int_0^3 y^2\\,dy=9$"],
+          "note": "相乘得 $9$。",
           "say": "兩個一維積分分別是一和九，相乘得九。",
           "board": [
-            { "do": "write", "line": "$\\int_0^{\\pi/2}{{gx:\\cos x}}\\,dx=1$，$\\int_0^3 {{hy:y^2}}\\,dy=9$" },
-            { "do": "write", "line": "相乘：$1\\cdot 9=9$", "color": "green", "on": "相乘" }
+            {"do":"write","line":"$\\int_0^{\\pi/2}{{gx:\\cos x}}\\,dx=1$，$\\int_0^3 {{hy:y^2}}\\,dy=9$"},
+            {"do":"write","line":"相乘：$1\\cdot 9=9$","color":"green","on":"相乘"}
           ] }
       ],
       "check": 3

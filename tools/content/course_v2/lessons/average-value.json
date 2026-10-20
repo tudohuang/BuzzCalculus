@@ -181,24 +181,33 @@
     {
       "title": "從有限個數出發",
       "beats": [
-        { "show": ["$n$ 個值的平均：$\\frac{1}{n}\\sum f(x_i)$"], "note": "$[a,b]$ 切 $n$ 等份，每份取一點。",
+        { "show": ["$n$ 個值的平均：$\\frac{1}{n}\\sum f(x_i)$"],
+          "note": "$[a,b]$ 切 $n$ 等份，每份取一點。",
           "say": "函數的平均值怎麼定義？先從有限個數開始：切 n 等份，各取一點，n 個函數值加起來除以 n。",
           "board": [
-            { "do": "write", "line": "$\\frac{1}{n}{{s:\\sum_{i=1}^{n} f(x_i)}}$" },
-            { "do": "underline", "term": "s", "on": "加起來" }
+            {"do":"write","line":"$\\frac{1}{n}{{s:\\sum_{i=1}^{n} f(x_i)}}$"},
+            {"do":"underline","term":"s","on":"加起來"}
           ] },
-        { "show": ["$\\frac{1}{n}=\\frac{\\Delta x}{b-a}$"], "note": "括號裡變成 Riemann 和。",
+        { "show": ["$\\Delta x=\\frac{b-a}{n}$：每一段的寬"],
+          "note": "整條區間長 $b-a$，切 $n$ 段。",
+          "say": "先說 delta x 是什麼：整條區間長 b 減 a，切成 n 段，每一段的寬就是 b 減 a 除以 n。",
+          "board": [
+            {"do":"write","line":"${{w:\\Delta x}}=\\frac{b-a}{n}$"},
+            {"do":"underline","term":"w","label":"每段的寬","on":"每一段的寬"}
+          ] },
+        { "show": ["$\\frac{1}{n}=\\frac{\\Delta x}{b-a}$"],
+          "note": "括號裡變成 Riemann 和。",
           "say": "n 分之一可以改寫成 delta x 除以 b 減 a，這樣裡面就是一個黎曼和。",
           "board": [
-            { "do": "write", "line": "${{a:\\frac{1}{n}}}=\\frac{\\Delta x}{b-a}$" },
-            { "do": "transform", "line": "${{a:\\frac{1}{n}}}\\sum f(x_i)=\\frac{1}{b-a}{{r:\\sum f(x_i)\\,\\Delta x}}$", "on": "改寫成" },
-            { "do": "underline", "term": "r", "label": "黎曼和", "on": "這樣裡面" }
+            {"do":"write","line":"${{a:\\frac{1}{n}}}=\\frac{\\Delta x}{b-a}$"},
+            {"do":"transform","line":"${{a:\\frac{1}{n}}}\\sum f(x_i)=\\frac{1}{b-a}{{r:\\sum f(x_i)\\,\\Delta x}}$","on":"改寫成"},
+            {"do":"underline","term":"r","label":"黎曼和","on":"這樣裡面"}
           ] },
         { "show": ["$f_{\\mathrm{avg}}=\\frac{1}{b-a}\\int_a^b f(x)\\,dx$"],
           "say": "取越來越多點，平均就趨近積分除以區間長度。",
           "board": [
-            { "do": "write", "line": "$f_{\\mathrm{avg}}={{v:\\frac{1}{b-a}\\int_a^b f(x)\\,dx}}$" },
-            { "do": "box", "term": "v", "color": "green", "on": "趨近" }
+            {"do":"write","line":"$f_{\\mathrm{avg}}={{v:\\frac{1}{b-a}\\int_a^b f(x)\\,dx}}$"},
+            {"do":"box","term":"v","color":"green","on":"趨近"}
           ] }
       ],
       "check": 0
@@ -206,23 +215,25 @@
     {
       "title": "等面積的矩形",
       "beats": [
-        { "show": ["$f_{\\mathrm{avg}}\\cdot(b-a)=\\int_a^b f(x)\\,dx$"], "note": "高 $f_{\\mathrm{avg}}$ 的矩形，跟曲線下的有號面積一樣大。",
+        { "show": ["$f_{\\mathrm{avg}}\\cdot(b-a)=\\int_a^b f(x)\\,dx$"],
+          "note": "高 $f_{\\mathrm{avg}}$ 的矩形，跟曲線下的有號面積一樣大。",
           "say": "移項看：底是區間、高是平均值的矩形，面積跟曲線下的有號面積一樣大。",
           "board": [
-            { "do": "write", "line": "${{l:f_{\\mathrm{avg}}\\cdot(b-a)}}={{r:\\int_a^b f(x)\\,dx}}$" },
-            { "do": "underline", "term": "l", "color": "blue", "label": "矩形面積", "on": "矩形" },
-            { "do": "underline", "term": "r", "color": "violet", "label": "曲線下面積", "on": "曲線下" }
+            {"do":"write","line":"${{l:f_{\\mathrm{avg}}\\cdot(b-a)}}={{r:\\int_a^b f(x)\\,dx}}$"},
+            {"do":"underline","term":"l","color":"blue","label":"矩形面積","on":"矩形"},
+            {"do":"underline","term":"r","color":"violet","label":"曲線下面積","on":"曲線下"}
           ] },
         { "show": ["高出來的，剛好補平低下去的"],
           "say": "曲線高出矩形的部分，剛好填平低於矩形的部分，像把水面抹平。",
           "board": [
-            { "do": "write", "line": "高出矩形的面積 = 低於矩形的面積" }
+            {"do":"write","line":"高出矩形的面積 = 低於矩形的面積"}
           ] },
-        { "show": ["平均值可以是負的，也可以是 $0$"], "note": "用的是有號面積。",
+        { "show": ["平均值可以是負的，也可以是 $0$"],
+          "note": "用的是有號面積。",
           "say": "因為用的是有號面積，平均值可以是負的，也可以剛好是零。",
           "board": [
-            { "do": "write", "line": "有號面積 ⇒ ${{a:f_{\\mathrm{avg}}<0}}$ 或 $f_{\\mathrm{avg}}=0$" },
-            { "do": "focus", "term": "a", "color": "gold", "on": "負的" }
+            {"do":"write","line":"有號面積 ⇒ ${{a:f_{\\mathrm{avg}}<0}}$ 或 $f_{\\mathrm{avg}}=0$"},
+            {"do":"focus","term":"a","color":"gold","on":"負的"}
           ] }
       ],
       "check": 1
@@ -233,143 +244,200 @@
         { "show": ["$\\sin x$ 在 $[0,\\pi]$"],
           "say": "sine x 在零到 pi，也就是一個拱形，平均有多高？",
           "board": [
-            { "do": "write", "line": "$\\sin x$ 在 ${{a:[0,\\pi]}}$：一個拱形" },
-            { "do": "underline", "term": "a", "on": "零到" }
+            {"do":"write","line":"$\\sin x$ 在 ${{a:[0,\\pi]}}$：一個拱形"},
+            {"do":"underline","term":"a","on":"零到"}
+          ] },
+        { "show": ["$(-\\cos x)'=\\sin x$"],
+          "note": "微分的逆運算：找導數是 $\\sin x$ 的函數。",
+          "say": "積分是微分倒過來做，要找導數是 sine x 的函數。負 cosine x 微分，正好得到 sine x。",
+          "board": [
+            {"do":"write","line":"$({{c:-\\cos x}})'=\\sin x$"},
+            {"do":"underline","term":"c","color":"blue","label":"反導函數","on":"負 cosine x"}
           ] },
         { "show": ["$\\int_0^\\pi\\sin x\\,dx=[-\\cos x]_0^\\pi=2$"],
           "say": "先算面積：負 cosine 代上下限，一加一等於二。",
           "board": [
-            { "do": "write", "line": "$\\int_0^\\pi\\sin x\\,dx=[-\\cos x]_0^\\pi$" },
-            { "do": "transform", "line": "$= 1-(-1) = {{r:2}}$", "on": "代上下限" },
-            { "do": "box", "term": "r", "color": "green", "on": "一加一" }
+            {"do":"write","line":"$\\int_0^\\pi\\sin x\\,dx=[-\\cos x]_0^\\pi$"},
+            {"do":"transform","line":"$= 1-(-1) = {{r:2}}$","on":"代上下限"},
+            {"do":"box","term":"r","color":"green","on":"一加一"}
           ] }
       ],
       "predict": {
         "ask": "平均值是？",
         "options": [
-          { "label": "$\\frac{2}{\\pi}\\approx 0.637$", "correct": true },
-          { "label": "$2$", "why": "那是面積，還要除以區間長度 $\\pi-0$。" },
-          { "label": "$0$", "why": "那是兩端點值的平均 $\\frac{\\sin 0+\\sin\\pi}{2}$；端點平均只對一次函數才剛好對。" }
+          {
+            "label": "$\\frac{2}{\\pi}\\approx 0.637$",
+            "correct": true
+          },
+          {
+            "label": "$2$",
+            "why": "那是面積，還要除以區間長度 $\\pi-0$。"
+          },
+          {
+            "label": "$0$",
+            "why": "那是兩端點值的平均 $\\frac{\\sin 0+\\sin\\pi}{2}$；端點平均只對一次函數才剛好對。"
+          }
         ]
       }
     },
     {
       "title": "積分均值定理",
       "beats": [
-        { "show": ["$f$ 連續：存在 $c$ 使 $f(c)=f_{\\mathrm{avg}}$"], "note": "高 $f_{\\mathrm{avg}}$ 的水平線一定碰到曲線。",
+        { "show": ["$f$ 連續：存在 $c$ 使 $f(c)=f_{\\mathrm{avg}}$"],
+          "note": "高 $f_{\\mathrm{avg}}$ 的水平線一定碰到曲線。",
           "say": "f 連續的話，區間裡一定有某一點 c，函數值剛好等於平均值。那條水平線一定會碰到曲線。",
           "board": [
-            { "do": "write", "line": "$f$ 連續 ⇒ 存在 $c$：$f(c)={{a:f_{\\mathrm{avg}}}}$" },
-            { "do": "underline", "term": "a", "color": "gold", "on": "平均值" }
+            {"do":"write","line":"$f$ 連續 ⇒ 存在 $c$：$f(c)={{a:f_{\\mathrm{avg}}}}$"},
+            {"do":"underline","term":"a","color":"gold","on":"平均值"}
           ] },
-        { "show": ["不連續就不一定"], "note": "$[0,2)$ 是 $0$、$[2,4]$ 是 $1$：平均 $\\frac{1}{2}$，卻取不到。",
+        { "show": ["不連續就不一定"],
+          "note": "$[0,2)$ 是 $0$、$[2,4]$ 是 $1$：平均 $\\frac{1}{2}$，卻取不到。",
           "say": "連續是必要的：前半段是零、後半段是一，平均二分之一，可是函數從來不等於二分之一。",
           "board": [
-            { "do": "write", "line": "前半 $0$、後半 $1$：平均 $\\frac{1}{2}$", "on": "前半段" },
-            { "do": "write", "line": "$f$ 從不等於 $\\frac{1}{2}$", "color": "red", "on": "可是" }
+            {"do":"write","line":"前半 $0$、後半 $1$：平均 $\\frac{1}{2}$","on":"前半段"},
+            {"do":"write","line":"$f$ 從不等於 $\\frac{1}{2}$","color":"red","on":"可是"}
           ] }
       ],
       "check": 2
     },
     {
-      "title": "證明：夾在中間", "key": "平均值落在 $f$ 的值域裡，連續就取得到",
-      "proof": true, "of": 4, "skeleton": "夾擠",
+      "title": "證明：夾在中間",
       "beats": [
         { "show": ["把平均夾在最小、最大值之間"],
           "say": "策略：先把平均值夾在最小值和最大值之間，再用中間值定理找到 c。",
           "board": [
-            { "do": "write", "line": "把平均夾在 $m$、$M$ 之間", "on": "先把平均值" },
-            { "do": "write", "line": "⇒ 中間值定理找 $c$", "on": "再用中間值定理" }
+            {"do":"write","line":"把平均夾在 $m$、$M$ 之間","on":"先把平均值"},
+            {"do":"write","line":"⇒ 中間值定理找 $c$","on":"再用中間值定理"}
           ] },
-        { "show": ["$m\\le f(x)\\le M$"], "note": "閉區間上連續，〈極值定理〉。",
+        { "show": ["$m\\le f(x)\\le M$"],
+          "note": "閉區間上連續，〈極值定理〉。",
           "say": "f 在閉區間上連續，由極值定理，有最小值 m 和最大值 M。",
           "board": [
-            { "do": "clear" },
-            { "do": "write", "line": "$m\\le f(x)\\le M$", "on": "由極值定理" }
+            {"do":"clear"},
+            {"do":"write","line":"$m\\le f(x)\\le M$","on":"由極值定理"}
           ] },
-        { "show": ["$m\\le f_{\\mathrm{avg}}\\le M$"], "note": "三邊在 $[a,b]$ 積分，再除以 $b-a$。",
-          "why": {
-            "ask": "為什麼平均也夾在 $m$、$M$ 之間？",
-            "say": "平均值為什麼也夾在最小值和最大值中間？",
-            "options": [
-              { "label": "三邊積分，再除以 $b-a$", "correct": true },
-              { "label": "平均就是 $\\frac{m+M}{2}$", "why": "平均不一定在正中間：$x^2$ 在 $[0,3]$ 的平均是 $3$，不是 $\\frac{0+9}{2}$。" },
-              { "label": "$f$ 連續", "why": "連續給了 $m$、$M$；這一步的不等式靠的是積分保持大小關係。" }
-            ]
-          },
+        { "show": ["$m(b-a)\\le\\int_a^b f\\,dx\\le M(b-a)$"],
+          "note": "常數 $m$ 的積分是矩形面積；除以 $b-a$ 不等號不變。",
+          "say": "常數 m 的積分是 m 乘 b 減 a。f 不小於 m，面積就不小於，所以不等號不變。",
+          "board": [
+            {"do":"write","line":"$\\int_a^b m\\,dx={{r:m(b-a)}}$"},
+            {"do":"underline","term":"r","color":"blue","label":"矩形面積","on":"m 乘"},
+            {"do":"write","line":"$m(b-a)\\le\\int_a^b f\\,dx\\le M(b-a)$","on":"不等號"}
+          ] },
+        { "show": ["$m\\le f_{\\mathrm{avg}}\\le M$"],
+          "note": "三邊在 $[a,b]$ 積分，再除以 $b-a$。",
+          "why": {"ask":"為什麼平均也夾在 $m$、$M$ 之間？","say":"平均值為什麼也夾在最小值和最大值中間？","options":[{"label":"三邊積分，再除以 $b-a$","correct":true},{"label":"平均就是 $\\frac{m+M}{2}$","why":"平均不一定在正中間：$x^2$ 在 $[0,3]$ 的平均是 $3$，不是 $\\frac{0+9}{2}$。"},{"label":"$f$ 連續","why":"連續給了 $m$、$M$；這一步的不等式靠的是積分保持大小關係。"}]},
           "say": "f 夾在 m 和 M 之間，三邊積分再除以區間長度，平均值也就夾在 m 和 M 之間。",
           "board": [
-            { "do": "write", "line": "$m\\le {{avg:f_{\\mathrm{avg}}}}\\le M$", "tint": { "avg": "violet" } },
-            { "do": "write", "line": "三邊積分，再除以 $b-a$", "why": true, "on": "三邊積分" }
+            {"do":"write","line":"$m\\le {{avg:f_{\\mathrm{avg}}}}\\le M$","tint":{"avg":"violet"}},
+            {"do":"write","line":"三邊積分，再除以 $b-a$","why":true,"on":"三邊積分"}
           ] },
-        { "show": ["中間值定理 ⇒ $f(c)=f_{\\mathrm{avg}}$"], "note": "$m$、$M$ 都是 $f$ 取得到的值，$f$ 連續。",
-          "why": {
-            "ask": "為什麼能用中間值定理？",
-            "say": "最後一步，憑什麼能用中間值定理？",
-            "options": [
-              { "label": "$f$ 連續，$m$、$M$ 都是取得到的函數值", "correct": true },
-              { "label": "$m\\le f_{\\mathrm{avg}}\\le M$ 就夠了", "why": "還要 $f$ 連續：前半段 $0$、後半段 $1$ 的函數，平均夾在中間卻取不到。" },
-              { "label": "$f_{\\mathrm{avg}}$ 是一個積分", "why": "是不是積分無關；要的是 $f$ 連續，而且平均夾在兩個取得到的值之間。" }
-            ]
-          },
+        { "show": ["$f(p)=m$，$f(q)=M$"],
+          "note": "$p$、$q$ 在 $[a,b]$ 裡。",
+          "say": "m 是 f 在某一點 p 的值，M 是在某一點 q 的值。連續函數從 p 走到 q，會經過中間每一個高度，平均值也在其中。",
+          "board": [
+            {"do":"write","line":"$f({{p:p}})=m$，$f({{q:q}})=M$"},
+            {"do":"underline","term":"p","color":"blue","on":"某一點 p"}
+          ] },
+        { "show": ["中間值定理 ⇒ $f(c)=f_{\\mathrm{avg}}$"],
+          "note": "$m$、$M$ 都是 $f$ 取得到的值，$f$ 連續。",
+          "why": {"ask":"為什麼能用中間值定理？","say":"最後一步，憑什麼能用中間值定理？","options":[{"label":"$f$ 連續，$m$、$M$ 都是取得到的函數值","correct":true},{"label":"$m\\le f_{\\mathrm{avg}}\\le M$ 就夠了","why":"還要 $f$ 連續：前半段 $0$、後半段 $1$ 的函數，平均夾在中間卻取不到。"},{"label":"$f_{\\mathrm{avg}}$ 是一個積分","why":"是不是積分無關；要的是 $f$ 連續，而且平均夾在兩個取得到的值之間。"}]},
           "say": "m 和 M 都是 f 真的取得到的值，f 又連續，中間值定理說夾在中間的平均值也取得到。",
           "board": [
-            { "do": "keep", "n": 2 },
-            { "do": "write", "line": "中間值定理 ⇒ $f(c)={{avg:f_{\\mathrm{avg}}}}$", "color": "green", "on": "中間值定理" },
-            { "do": "write", "line": "$m$、$M$ 取得到，$f$ 連續", "why": true, "on": "真的取得到" }
+            {"do":"keep","n":2},
+            {"do":"write","line":"中間值定理 ⇒ $f(c)={{avg:f_{\\mathrm{avg}}}}$","color":"green","on":"中間值定理"},
+            {"do":"write","line":"$m$、$M$ 取得到，$f$ 連續","why":true,"on":"真的取得到"}
           ] }
       ],
-      "order": { "ask": "把證明排回順序：依序點每一步",
+      "key": "平均值落在 $f$ 的值域裡，連續就取得到",
+      "proof": true,
+      "of": 4,
+      "skeleton": "夾擠",
+      "order": {
+        "ask": "把證明排回順序：依序點每一步",
         "steps": [
-          { "label": "極值定理：$m\\le f(x)\\le M$" },
-          { "label": "三邊積分：$m\\le f_{\\mathrm{avg}}\\le M$", "why": "要先有 $m$、$M$，才能三邊一起積分。" },
-          { "label": "中間值定理：$f(c)=f_{\\mathrm{avg}}$", "why": "要先知道平均夾在兩個函數值之間，中間值定理才用得上。" }
+          {
+            "label": "極值定理：$m\\le f(x)\\le M$"
+          },
+          {
+            "label": "三邊積分：$m\\le f_{\\mathrm{avg}}\\le M$",
+            "why": "要先有 $m$、$M$，才能三邊一起積分。"
+          },
+          {
+            "label": "中間值定理：$f(c)=f_{\\mathrm{avg}}$",
+            "why": "要先知道平均夾在兩個函數值之間，中間值定理才用得上。"
+          }
         ]
       }
     },
     {
       "title": "找 $c$",
       "beats": [
+        { "show": ["$\\int_0^3 x^2\\,dx=\\left[\\frac{x^3}{3}\\right]_0^3$"],
+          "note": "$\\left(\\frac{x^3}{3}\\right)'=x^2$。",
+          "say": "先找反導函數：x 三次方除以三，微分後三被約掉，剛好是 x 平方。再代上限三、下限零相減。",
+          "board": [
+            {"do":"write","line":"$\\int_0^3 x^2\\,dx=\\left[{{g:\\frac{x^3}{3}}}\\right]_0^3$"},
+            {"do":"transform","line":"$=\\frac{3^3}{3}-0=9$","on":"代上限"}
+          ] },
         { "show": ["$x^2$ 在 $[0,3]$：$f_{\\mathrm{avg}}=\\frac{1}{3}\\cdot 9=3$"],
           "say": "x 平方在零到三：積分是九，除以區間長度三，平均值是三。",
           "board": [
-            { "do": "write", "line": "$\\int_0^3 x^2\\,dx = 9$" },
-            { "do": "transform", "line": "$f_{\\mathrm{avg}}=\\frac{1}{3}\\cdot 9 = {{r:3}}$", "on": "除以區間長度" },
-            { "do": "box", "term": "r", "color": "green", "on": "平均值" }
+            {"do":"write","line":"$\\int_0^3 x^2\\,dx = 9$"},
+            {"do":"transform","line":"$f_{\\mathrm{avg}}=\\frac{1}{3}\\cdot 9 = {{r:3}}$","on":"除以區間長度"},
+            {"do":"box","term":"r","color":"green","on":"平均值"}
           ] },
-        { "show": ["解 $c^2=3$"], "note": "解出來要檢查在不在 $[0,3]$ 裡。",
+        { "show": ["解 $c^2=3$"],
+          "note": "解出來要檢查在不在 $[0,3]$ 裡。",
           "say": "接著解 c 平方等於三。解出來的每一個，都要檢查在不在區間裡。",
           "board": [
-            { "do": "write", "line": "解 $c^2=3$" },
-            { "do": "write", "line": "檢查 $c\\in[0,3]$", "on": "檢查" }
+            {"do":"write","line":"解 $c^2=3$"},
+            {"do":"write","line":"檢查 $c\\in[0,3]$","on":"檢查"}
+          ] },
+        { "show": ["水平線 $y=3$ 碰到 $x^2$ 的地方就是 $c$"],
+          "say": "畫出來看：水平線高三，碰到 x 平方的地方，就是 c。",
+          "board": [
+            {"do":"clear"},
+            {"do":"plot","graph":{"window":[-1,4,-1,10],"curves":[{"expr":"x^2","domain":[0,3],"color":"blue"},{"expr":"3","domain":[0,3],"color":"gold"}],"fills":[{"expr":"3","from":0,"to":3,"color":"gold"}],"points":[{"x":1.732,"y":3}],"labels":[{"x":1.9,"y":3.7,"text":"c","anchor":"start"}]},"on":"水平線"}
           ] }
       ],
       "check": 3
     },
     {
-      "title": "平均速度", "key": "平均速度是位移除以時間，不是路程",
+      "title": "平均速度",
       "beats": [
-        { "show": ["$\\frac{1}{t_2-t_1}\\int v\\,dt$＝位移÷時間"], "note": "正好是物理的平均速度。",
+        { "show": ["$\\frac{1}{t_2-t_1}\\int v\\,dt$＝位移÷時間"],
+          "note": "正好是物理的平均速度。",
           "say": "速度的平均值，是位移除以經過的時間，正好就是物理的平均速度。繞一圈回原點，平均是零。",
           "board": [
-            { "do": "write", "line": "${{d:\\frac{1}{t_2-t_1}\\int v\\,dt}}$＝位移÷時間" },
-            { "do": "underline", "term": "d", "color": "blue", "on": "位移除以" },
-            { "do": "write", "line": "繞一圈回原點：平均 $0$", "on": "繞一圈" }
+            {"do":"write","line":"${{d:\\frac{1}{t_2-t_1}\\int v\\,dt}}$＝位移÷時間"},
+            {"do":"underline","term":"d","color":"blue","on":"位移除以"},
+            {"do":"write","line":"繞一圈回原點：平均 $0$","on":"繞一圈"}
           ] },
         { "show": ["$v=t^2-2t-3$，$0\\le t\\le 5$：位移 $\\frac{5}{3}$"],
           "say": "上一課那個質點，五秒內的位移是三分之五公尺。",
           "board": [
-            { "do": "write", "line": "$v=t^2-2t-3$，$0\\le t\\le 5$" },
-            { "do": "write", "line": "位移 $={{r:\\frac{5}{3}}}$", "on": "位移" },
-            { "do": "box", "term": "r", "color": "green", "on": "三分之五" }
+            {"do":"write","line":"$v=t^2-2t-3$，$0\\le t\\le 5$"},
+            {"do":"write","line":"位移 $={{r:\\frac{5}{3}}}$","on":"位移"},
+            {"do":"box","term":"r","color":"green","on":"三分之五"}
           ] }
       ],
+      "key": "平均速度是位移除以時間，不是路程",
       "predict": {
         "ask": "平均速度是？",
         "options": [
-          { "label": "$\\frac{1}{3}$ m/s", "correct": true },
-          { "label": "$\\frac{59}{15}$ m/s", "why": "那是平均速率：總路程 $\\frac{59}{3}$ 除以時間。平均速度用位移。" },
-          { "label": "$\\frac{5}{3}$ m/s", "why": "位移還要除以經過的時間 $5$ 秒。" }
+          {
+            "label": "$\\frac{1}{3}$ m/s",
+            "correct": true
+          },
+          {
+            "label": "$\\frac{59}{15}$ m/s",
+            "why": "那是平均速率：總路程 $\\frac{59}{3}$ 除以時間。平均速度用位移。"
+          },
+          {
+            "label": "$\\frac{5}{3}$ m/s",
+            "why": "位移還要除以經過的時間 $5$ 秒。"
+          }
         ]
       }
     }

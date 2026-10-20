@@ -135,87 +135,120 @@
         { "show": ["$(x^n)' = n x^{n-1}$：指數要是常數"],
           "say": "冪次法則只管指數是常數的情況，像 x 的五次方。",
           "board": [
-            { "do": "write", "line": "$(x^{{{n:n}}})'=n\\,x^{n-1}$" },
-            { "do": "underline", "term": "n", "color": "blue", "label": "指數是常數", "on": "常數" }
+            {"do":"write","line":"$(x^{{{n:n}}})'=n\\,x^{n-1}$"},
+            {"do":"underline","term":"n","color":"blue","label":"指數是常數","on":"常數"}
           ] },
         { "show": ["$(a^x)' = a^x \\ln a$：底要是常數"],
           "say": "a 的 x 次方那條公式，反過來要底是常數。",
           "board": [
-            { "do": "write", "line": "$({{b:a}}^x)'=a^x\\ln a$" },
-            { "do": "focus", "term": "b", "color": "blue", "label": "底是常數", "on": "反過來" }
+            {"do":"write","line":"$({{b:a}}^x)'=a^x\\ln a$"},
+            {"do":"focus","term":"b","color":"blue","label":"底是常數","on":"反過來"}
           ] },
-        { "show": ["$x^x$：底和指數都在變"], "note": "兩條都不適用。",
+        { "show": ["$x^x$：底和指數都在變"],
+          "note": "兩條都不適用。",
           "say": "x 的 x 次方，底在變、指數也在變，兩條公式都不能直接套。",
           "board": [
-            { "do": "write", "line": "${{bx:x}}^{{{ex:x}}}$" },
-            { "do": "focus", "term": "bx", "color": "blue", "label": "底在變", "on": "底在變" },
-            { "do": "focus", "term": "ex", "color": "violet", "label": "指數也在變", "on": "指數也在變" },
-            { "do": "write", "line": "兩條公式都不能套", "color": "red", "on": "兩條公式" }
+            {"do":"write","line":"${{bx:x}}^{{{ex:x}}}$"},
+            {"do":"focus","term":"bx","color":"blue","label":"底在變","on":"底在變"},
+            {"do":"focus","term":"ex","color":"violet","label":"指數也在變","on":"指數也在變"},
+            {"do":"write","line":"兩條公式都不能套","color":"red","on":"兩條公式"}
           ] }
       ],
       "check": 2
     },
     {
-      "title": "取 $\\ln$，拉下指數", "key": "左邊 $\\ln y$ 對 $x$ 微分要用連鎖律",
+      "title": "取 $\\ln$，拉下指數",
       "beats": [
-        { "show": ["$y = x^x$，$\\ln y = x \\ln x$"], "note": "$x > 0$。指數變成乘法了。",
+        { "show": ["$y = x^x$，$\\ln y = x \\ln x$"],
+          "note": "$x > 0$。指數變成乘法了。",
           "say": "兩邊取自然對數，指數就被拉下來，變成 x 乘自然對數 x，只剩乘法。",
           "board": [
-            { "do": "write", "line": "$y=x^{{{e:x}}}$", "tint": { "e": "blue" } },
-            { "do": "write", "line": "$\\ln y={{e:x}}\\ln x$", "on": "指數就被" },
-            { "do": "underline", "term": "e", "color": "blue", "label": "拉下來了", "on": "只剩乘法" }
+            {"do":"write","line":"$y=x^{{{e:x}}}$","tint":{"e":"blue"}},
+            {"do":"write","line":"$\\ln y={{e:x}}\\ln x$","on":"指數就被"},
+            {"do":"underline","term":"e","color":"blue","label":"拉下來了","on":"只剩乘法"}
           ] },
-        { "show": ["左邊：$(\\ln y)' = \\frac{y'}{y}$"], "note": "$\\ln$ 套在 $y(x)$ 外面：連鎖律。",
+        { "show": ["$(\\ln y)' = \\frac{1}{y} \\cdot y'$"],
+          "note": "外層 $\\ln u$ 的導數 $\\frac{1}{u}$，內層是 $y$。",
+          "say": "外層是自然對數，導數是 u 分之一，這裡的 u 就是 y。內層是 y，導數是 y prime，兩個乘起來。",
+          "board": [
+            {"do":"write","line":"$(\\ln y)'={{o1:\\frac{1}{y}}}\\cdot{{i1:y'}}$"},
+            {"do":"underline","term":"o1","color":"violet","label":"外層","on":"u 分之一"},
+            {"do":"underline","term":"i1","color":"blue","label":"內層","on":"y prime"}
+          ] },
+        { "show": ["左邊：$(\\ln y)' = \\frac{y'}{y}$"],
+          "note": "$\\ln$ 套在 $y(x)$ 外面：連鎖律。",
           "say": "兩邊對 x 微分。左邊自然對數套在 y 外面，連鎖律給 y 分之 y prime，別漏了 y prime。",
           "board": [
-            { "do": "write", "line": "左邊：$(\\ln y)'={{l:\\frac{y'}{y}}}$", "on": "兩邊對 x" },
-            { "do": "focus", "term": "l", "label": "連鎖律", "on": "連鎖律" }
+            {"do":"write","line":"左邊：$(\\ln y)'={{l:\\frac{y'}{y}}}$","on":"兩邊對 x"},
+            {"do":"focus","term":"l","label":"連鎖律","on":"連鎖律"}
           ] },
-        { "show": ["右邊：$\\ln x + 1$"], "note": "乘法法則：$1 \\cdot \\ln x + x \\cdot \\frac{1}{x}$。",
+        { "show": ["右邊：$\\ln x + 1$"],
+          "note": "乘法法則：$1 \\cdot \\ln x + x \\cdot \\frac{1}{x}$。",
           "say": "右邊用乘法法則：一乘自然對數 x，加 x 乘 x 分之一，得到自然對數 x 加一。",
           "board": [
-            { "do": "write", "line": "右邊：$1\\cdot\\ln x+x\\cdot\\frac{1}{x}$" },
-            { "do": "transform", "line": "右邊：$\\ln x+1$", "on": "得到" }
+            {"do":"write","line":"右邊：$1\\cdot\\ln x+x\\cdot\\frac{1}{x}$"},
+            {"do":"transform","line":"右邊：$\\ln x+1$","on":"得到"}
           ] },
-        { "show": ["$y' = x^x(\\ln x + 1)$"], "note": "最後乘回 $y$。",
+        { "show": ["$y' = x^x(\\ln x + 1)$"],
+          "note": "最後乘回 $y$。",
           "say": "算到 y 分之 y prime 還沒完，兩邊乘回 y，才是答案。",
           "board": [
-            { "do": "keep", "n": 2 },
-            { "do": "write", "line": "$y'={{yy:x^x}}(\\ln x+1)$", "color": "green", "on": "還沒完" },
-            { "do": "underline", "term": "yy", "label": "乘回 y", "on": "乘回 y" }
+            {"do":"keep","n":2},
+            {"do":"write","line":"$y'={{yy:x^x}}(\\ln x+1)$","color":"green","on":"還沒完"},
+            {"do":"underline","term":"yy","label":"乘回 y","on":"乘回 y"}
           ] }
       ],
+      "key": "左邊 $\\ln y$ 對 $x$ 微分要用連鎖律",
       "check": 0
     },
     {
       "title": "另一種寫法",
       "beats": [
-        { "show": ["$x^x = e^{x \\ln x}$"], "note": "因為 $e^{\\ln x} = x$。",
+        { "show": ["$\\ln x$ 就是 $e$ 要乘的次方","$e^{\\ln x} = x$"],
+          "note": "先說 $e$ 與 $\\ln$ 的關係。",
+          "say": "先說 e。自然對數 x 的意思是：e 要乘幾次方才會等於 x。所以 e 的自然對數 x 次方，一定回到 x。",
+          "board": [
+            {"do":"write","line":"$\\ln x$ ＝ e 要乘的次方"},
+            {"do":"write","line":"$e^{{{p1:\\ln x}}}=x$","on":"一定回到"},
+            {"do":"focus","term":"p1","color":"blue","on":"回到"}
+          ] },
+        { "show": ["$x^x = e^{x \\ln x}$"],
+          "note": "因為 $e^{\\ln x} = x$。",
           "say": "也可以把 x 的 x 次方寫成 e 的 x 自然對數 x 次方，因為 e 的自然對數 x 次方就是 x。",
           "board": [
-            { "do": "write", "line": "$x^x={{t:e^{x\\ln x}}}$" },
-            { "do": "write", "line": "${{u:e^{\\ln x}}}=x$", "on": "因為" }
+            {"do":"write","line":"$x^x={{t:e^{x\\ln x}}}$"},
+            {"do":"write","line":"${{u:e^{\\ln x}}}=x$","on":"因為"}
           ] },
-        { "show": ["$e^{x \\ln x} \\cdot (\\ln x + 1)$"], "note": "直接用連鎖律，答案一樣。",
+        { "show": ["$e^{x \\ln x} \\cdot (\\ln x + 1)$"],
+          "note": "直接用連鎖律，答案一樣。",
           "say": "直接用連鎖律：外層不動，乘上指數的導數，得到一樣的答案。兩種挑順手的用。",
           "board": [
-            { "do": "write", "line": "$(e^{x\\ln x})'={{o:e^{x\\ln x}}}\\cdot{{d:(\\ln x+1)}}$" },
-            { "do": "focus", "term": "o", "color": "violet", "label": "外層不動", "on": "外層不動" },
-            { "do": "circle", "term": "d", "color": "blue", "on": "導數" }
+            {"do":"write","line":"$(e^{x\\ln x})'={{o:e^{x\\ln x}}}\\cdot{{d:(\\ln x+1)}}$"},
+            {"do":"focus","term":"o","color":"violet","label":"外層不動","on":"外層不動"},
+            {"do":"circle","term":"d","color":"blue","on":"導數"}
+          ] },
+        { "show": ["$(x \\ln x)' = \\ln x + 1$"],
+          "note": "乘法法則：$1 \\cdot \\ln x + x \\cdot \\frac{1}{x}$。",
+          "say": "指數是 x 乘自然對數 x。乘法法則：一乘自然對數 x，加 x 乘 x 分之一，得自然對數 x 加一。",
+          "board": [
+            {"do":"write","line":"$(x\\ln x)'=1\\cdot\\ln x+x\\cdot\\frac{1}{x}$"},
+            {"do":"write","line":"$(x\\ln x)'={{q1:\\ln x+1}}$","on":"得自然對數"},
+            {"do":"box","term":"q1","color":"green","on":"加一"}
           ] },
         { "show": ["$x = 1$：$1^1 \\cdot (0 + 1) = 1$"],
           "say": "代 x 等於一：一的一次方是一，自然對數一是零，所以導數是一。",
           "board": [
-            { "do": "write", "line": "$x=1$：$1^1\\cdot({{z:0}}+1)=1$" },
-            { "do": "focus", "term": "z", "on": "自然對數一" }
+            {"do":"write","line":"$x=1$：$1^1\\cdot({{z:0}}+1)=1$"},
+            {"do":"focus","term":"z","on":"自然對數一"}
           ] },
-        { "show": ["= 底在變 ＋ 指數在變"], "note": "$x^x$ 加上 $x^x \\ln x$。直覺，不是證明。",
+        { "show": ["= 底在變 ＋ 指數在變"],
+          "note": "$x^x$ 加上 $x^x \\ln x$。直覺，不是證明。",
           "say": "有趣的是，答案剛好是兩個硬套的錯誤答案相加：底在變的貢獻，加上指數在變的貢獻。",
           "board": [
-            { "do": "clear" },
-            { "do": "write", "line": "$x^x(\\ln x+1)={{a:x^x}}+{{b:x^x\\ln x}}$", "on": "答案剛好" },
-            { "do": "underline", "term": "a", "color": "blue", "label": "底在變", "on": "底在變" },
-            { "do": "underline", "term": "b", "color": "violet", "label": "指數在變", "on": "指數在變" }
+            {"do":"clear"},
+            {"do":"write","line":"$x^x(\\ln x+1)={{a:x^x}}+{{b:x^x\\ln x}}$","on":"答案剛好"},
+            {"do":"underline","term":"a","color":"blue","label":"底在變","on":"底在變"},
+            {"do":"underline","term":"b","color":"violet","label":"指數在變","on":"指數在變"}
           ] }
       ],
       "check": 3
@@ -226,54 +259,80 @@
         { "show": ["$y = x^{\\sin x}$，$\\ln y = \\sin x \\cdot \\ln x$"],
           "say": "x 的 sine x 次方，一樣取自然對數，把 sine x 拉下來。",
           "board": [
-            { "do": "write", "line": "$y=x^{{{e:\\sin x}}}$", "tint": { "e": "blue" } },
-            { "do": "write", "line": "$\\ln y={{e:\\sin x}}\\cdot\\ln x$", "on": "拉下來" }
+            {"do":"write","line":"$y=x^{{{e:\\sin x}}}$","tint":{"e":"blue"}},
+            {"do":"write","line":"$\\ln y={{e:\\sin x}}\\cdot\\ln x$","on":"拉下來"}
           ] },
-        { "show": ["$\\frac{y'}{y} = \\cos x \\ln x + \\frac{\\sin x}{x}$"], "note": "右邊用乘法法則。",
+        { "show": ["$\\frac{y'}{y} = \\cos x \\ln x + \\frac{\\sin x}{x}$"],
+          "note": "右邊用乘法法則。",
           "say": "右邊是乘積：cosine x 乘自然對數 x，加上 sine x 乘 x 分之一。",
           "board": [
-            { "do": "write", "line": "$\\frac{y'}{y}={{a:\\cos x\\ln x}}+{{b:\\frac{\\sin x}{x}}}$" },
-            { "do": "underline", "term": "a", "on": "cosine x 乘" },
-            { "do": "underline", "term": "b", "on": "加上" }
+            {"do":"write","line":"$\\frac{y'}{y}={{a:\\cos x\\ln x}}+{{b:\\frac{\\sin x}{x}}}$"},
+            {"do":"underline","term":"a","on":"cosine x 乘"},
+            {"do":"underline","term":"b","on":"加上"}
           ] },
         { "show": ["$y' = x^{\\sin x}(\\cos x \\ln x + \\frac{\\sin x}{x})$"],
           "say": "最後一樣乘回 y，也就是原本的 x 的 sine x 次方。",
           "board": [
-            { "do": "write", "line": "$y'={{y:x^{\\sin x}}}\\left(\\cos x\\ln x+\\frac{\\sin x}{x}\\right)$", "color": "green" },
-            { "do": "underline", "term": "y", "label": "原本的 y", "on": "原本的" }
+            {"do":"write","line":"$y'={{y:x^{\\sin x}}}\\left(\\cos x\\ln x+\\frac{\\sin x}{x}\\right)$","color":"green"},
+            {"do":"underline","term":"y","label":"原本的 y","on":"原本的"}
           ] }
       ],
       "check": 1
     },
     {
-      "title": "很多因式相乘除", "key": "取 $\\ln$ 把乘除拆成加減，再逐項微分",
+      "title": "很多因式相乘除",
       "beats": [
-        { "show": ["$y = x^2 \\frac{\\sqrt{x + 1}}{(x - 1)^3}$"], "note": "$x > 1$，每個因式都是正的。",
+        { "show": ["$y = x^2 \\frac{\\sqrt{x + 1}}{(x - 1)^3}$"],
+          "note": "$x > 1$，每個因式都是正的。",
           "say": "第二種用途：很多因式乘乘除除，用乘法、除法法則會很長。",
           "board": [
-            { "do": "write", "line": "$y=x^2\\dfrac{\\sqrt{x+1}}{(x-1)^3}$" }
+            {"do":"write","line":"$y=x^2\\dfrac{\\sqrt{x+1}}{(x-1)^3}$"}
           ] },
         { "show": ["$\\ln y = 2 \\ln x + \\frac{1}{2} \\ln(x + 1) - 3 \\ln(x - 1)$"],
           "say": "取自然對數，乘除變加減，次方變係數：根號是二分之一，分母的三次方變成減三倍。",
           "board": [
-            { "do": "transform", "line": "$\\ln y=2\\ln x+{{h:\\frac{1}{2}}}\\ln(x+1)-{{c:3}}\\ln(x-1)$" },
-            { "do": "underline", "term": "h", "color": "blue", "on": "根號" },
-            { "do": "underline", "term": "c", "color": "violet", "label": "變係數", "on": "三次方" }
+            {"do":"transform","line":"$\\ln y=2\\ln x+{{h:\\frac{1}{2}}}\\ln(x+1)-{{c:3}}\\ln(x-1)$"},
+            {"do":"underline","term":"h","color":"blue","on":"根號"},
+            {"do":"underline","term":"c","color":"violet","label":"變係數","on":"三次方"}
           ] },
-        { "show": ["$y$ 可能是負的：取 $\\ln|y|$"], "note": "$(\\ln|u|)' = \\frac{u'}{u}$ 一樣成立。",
+        { "show": ["$y$ 可能是負的：取 $\\ln|y|$"],
+          "note": "$(\\ln|u|)' = \\frac{u'}{u}$ 一樣成立。",
           "say": "自然對數只吃正數。y 可能是負的時候，改取絕對值，微分出來的式子一樣。",
           "board": [
-            { "do": "write", "line": "$y<0$：取 ${{a:\\ln|y|}}$" },
-            { "do": "underline", "term": "a", "color": "blue", "label": "取絕對值", "on": "絕對值" },
-            { "do": "write", "line": "$(\\ln|u|)'=\\frac{u'}{u}$", "on": "微分出來" }
+            {"do":"write","line":"$y<0$：取 ${{a:\\ln|y|}}$"},
+            {"do":"underline","term":"a","color":"blue","label":"取絕對值","on":"絕對值"},
+            {"do":"write","line":"$(\\ln|u|)'=\\frac{u'}{u}$","on":"微分出來"}
+          ] },
+        { "show": ["$x<0$：$(\\ln(-x))' = \\frac{1}{-x}\\cdot(-1)$","$= \\frac{1}{x}$"],
+          "note": "外層與內層各出一個負號，抵消。",
+          "say": "x 小於零時，絕對值 x 是負 x。外層給負 x 分之一，內層負 x 的導數是負一，乘起來還是 x 分之一。",
+          "board": [
+            {"do":"write","line":"$x<0$：$(\\ln(-x))'=\\frac{1}{-x}\\cdot{{m1:(-1)}}$"},
+            {"do":"write","line":"$={{r1:\\frac{1}{x}}}$","on":"乘起來"},
+            {"do":"box","term":"r1","color":"green","on":"還是"}
+          ] },
+        { "show": ["$\\ln|x|$ 左半邊往下掉"],
+          "say": "看圖：左半邊一路往下掉，斜率是負的，剛好就是 x 分之一在 x 小於零時的符號。",
+          "board": [
+            {"do":"plot","graph":{"window":[-3,3,-3,3],"curves":[{"expr":"log(abs(x))","domain":[-3,-0.05],"color":"blue"},{"expr":"log(abs(x))","domain":[0.05,3],"color":"blue"}]}}
           ] }
       ],
+      "key": "取 $\\ln$ 把乘除拆成加減，再逐項微分",
       "predict": {
         "ask": "逐項微分，$-3 \\ln(x - 1)$ 那一項變成？",
         "options": [
-          { "label": "$-\\frac{3}{x - 1}$", "correct": true },
-          { "label": "$-\\frac{3}{x}$", "why": "把 $\\ln(x - 1)$ 拆成 $\\ln x - \\ln 1$ 了。$\\ln$ 只把乘除變加減，不拆加減。" },
-          { "label": "$-\\frac{3}{(x - 1)^3}$", "why": "三次方已經被 $\\ln$ 拉成係數 3 了，分母只剩 $x - 1$。" }
+          {
+            "label": "$-\\frac{3}{x - 1}$",
+            "correct": true
+          },
+          {
+            "label": "$-\\frac{3}{x}$",
+            "why": "把 $\\ln(x - 1)$ 拆成 $\\ln x - \\ln 1$ 了。$\\ln$ 只把乘除變加減，不拆加減。"
+          },
+          {
+            "label": "$-\\frac{3}{(x - 1)^3}$",
+            "why": "三次方已經被 $\\ln$ 拉成係數 3 了，分母只剩 $x - 1$。"
+          }
         ]
       }
     }
