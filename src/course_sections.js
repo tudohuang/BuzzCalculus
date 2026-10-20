@@ -414,6 +414,10 @@
     if (all && s.solve && SV()) action = SV().view(api, si);
     if (P && !all && cur.why) action = P.why(api, si, shown - 1);
     if (P && all && (s.order || s.where)) action = P.view(api, si);
+    // 證明的「為什麼」與「用在哪一步」也寫在板上、在板上點（course_board.js 的 lessonBoard）；下面只留理由與「直接看」
+    if (bd && whole && action && P && ((!all && cur.why) || (all && s.where && !s.order)) && !s.drag && !s.solve) {
+      action = action.replace('class="cv2s-act course-check', 'class="cv2s-act course-check cvb-onboard');
+    }
     const ok = all && resolved(api, si);
     // 念完、輪到學生動手：一行看得到的提示（念到一半突然沒聲音，不知道要幹嘛）；做完就收
     const CUE = { drag: "換你了：拖拖看上面的圖", solve: "換你了：自己算算看下面這一題", why: "先想一想：這一步為什麼成立？選一個再往下" };
