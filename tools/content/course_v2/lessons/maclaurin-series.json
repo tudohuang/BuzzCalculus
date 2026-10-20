@@ -131,28 +131,38 @@
     {
       "title": "$e^x$、$\\sin$、$\\cos$",
       "beats": [
-        { "show": ["$e^x=1+x+\\frac{x^2}{2!}+\\frac{x^3}{3!}+\\cdots$"], "note": "每一階導數在 0 都是 1，係數 $\\frac{1}{n!}$。",
+        { "show": ["$e^x=1+x+\\frac{x^2}{2!}+\\frac{x^3}{3!}+\\cdots$"],
+          "note": "每一階導數在 0 都是 1，係數 $\\frac{1}{n!}$。",
           "say": "中心在零的泰勒級數叫馬克勞林級數。第一個：e 的 x 次方，係數就是 n 階乘分之一。",
           "board": [
-            { "do": "write", "line": "$e^x = 1 + x + \\frac{x^2}{2!} + {{c:\\frac{x^3}{3!}}} + \\cdots$", "on": "第一個" },
-            { "do": "underline", "term": "c", "label": "除以階乘", "on": "階乘分之一" }
+            {"do":"write","line":"$e^x = 1 + x + \\frac{x^2}{2!} + {{c:\\frac{x^3}{3!}}} + \\cdots$","on":"第一個"},
+            {"do":"underline","term":"c","label":"除以階乘","on":"階乘分之一"}
           ] },
-        { "show": ["$\\sin x=x-\\frac{x^3}{3!}+\\frac{x^5}{5!}-\\cdots$"], "note": "導數在 0：$0,1,0,-1$ 循環。",
+        { "show": ["多項式貼著 $e^x$"],
+          "note": "紅色只取到 $x^3$ 項。",
+          "say": "畫出來看：藍色是 e 的 x 次方，紅色是只取到三次項的多項式。原點附近兩條幾乎貼在一起。",
+          "board": [
+            {"do":"plot","graph":{"window":[-2,2,-1,8],"curves":[{"expr":"exp(x)","domain":[-2,2],"color":"blue"},{"expr":"1+x+x^2/2+x^3/6","domain":[-2,2],"color":"red"}]}}
+          ] },
+        { "show": ["$\\sin x=x-\\frac{x^3}{3!}+\\frac{x^5}{5!}-\\cdots$"],
+          "note": "導數在 0：$0,1,0,-1$ 循環。",
           "say": "sine 的導數在零是零、一、零、負一一直循環，所以只有奇次項，正負交替。",
           "board": [
-            { "do": "write", "line": "$\\sin x = {{s:x - \\frac{x^3}{3!} + \\frac{x^5}{5!} - \\cdots}}$", "on": "一直循環" },
-            { "do": "underline", "term": "s", "label": "奇次、交替", "on": "只有奇次項" }
+            {"do":"write","line":"$\\sin x = {{s:x - \\frac{x^3}{3!} + \\frac{x^5}{5!} - \\cdots}}$","on":"一直循環"},
+            {"do":"underline","term":"s","label":"奇次、交替","on":"只有奇次項"}
           ] },
-        { "show": ["$\\cos x=1-\\frac{x^2}{2!}+\\frac{x^4}{4!}-\\cdots$"], "note": "$\\sin x$ 逐項微分得到。",
+        { "show": ["$\\cos x=1-\\frac{x^2}{2!}+\\frac{x^4}{4!}-\\cdots$"],
+          "note": "$\\sin x$ 逐項微分得到。",
           "say": "sine 逐項微分就是 cosine：只剩偶次項，常數項是一，一樣正負交替。",
           "board": [
-            { "do": "write", "line": "$\\cos x = {{one:1}} - \\frac{x^2}{2!} + \\frac{x^4}{4!} - \\cdots$", "on": "就是 cosine" },
-            { "do": "focus", "term": "one", "label": "常數項", "on": "常數項是一" }
+            {"do":"write","line":"$\\cos x = {{one:1}} - \\frac{x^2}{2!} + \\frac{x^4}{4!} - \\cdots$","on":"就是 cosine"},
+            {"do":"focus","term":"one","label":"常數項","on":"常數項是一"}
           ] },
-        { "show": ["三個都對所有 $x$ 成立"], "note": "證明餘項 $\\to 0$ 在〈Taylor 誤差〉。",
+        { "show": ["三個都對所有 $x$ 成立"],
+          "note": "證明餘項 $\\to 0$ 在〈Taylor 誤差〉。",
           "say": "這三個在整條實數線上都等於原函數，證明要等泰勒誤差那一課。",
           "board": [
-            { "do": "write", "line": "三個都對所有 $x$ 成立", "color": "green", "on": "整條實數線" }
+            {"do":"write","line":"三個都對所有 $x$ 成立","color":"green","on":"整條實數線"}
           ] }
       ],
       "check": 0
@@ -160,91 +170,128 @@
     {
       "title": "有範圍的兩個",
       "beats": [
-        { "show": ["$\\frac{1}{1-x}=1+x+x^2+\\cdots$"], "note": "$-1<x<1$，幾何級數。",
+        { "show": ["$\\frac{1}{1-x}=1+x+x^2+\\cdots$"],
+          "note": "$-1<x<1$，幾何級數。",
           "say": "一減 x 分之一就是幾何級數，只在負一到一之間成立，兩端都不含。",
           "board": [
-            { "do": "write", "line": "$\\frac{1}{1-x} = 1 + x + x^2 + \\cdots$" },
-            { "do": "write", "line": "$-1<x<1$", "on": "只在" }
+            {"do":"write","line":"$\\frac{1}{1-x} = 1 + x + x^2 + \\cdots$"},
+            {"do":"write","line":"$-1<x<1$","on":"只在"}
           ] },
-        { "show": ["$\\ln(1+x)=x-\\frac{x^2}{2}+\\frac{x^3}{3}-\\cdots$"], "note": "由 $\\frac{1}{1+t}$ 逐項積分。",
+        { "show": ["$\\frac{1}{1+t}=1-t+t^2-\\cdots$"],
+          "note": "在 $-1<t<1$ 可以逐項積分。",
+          "say": "在幾何級數裡把 x 換成負 t，就得到一加 t 分之一的級數。在負一到一之間，可以一項一項積分。",
+          "board": [
+            {"do":"write","line":"$\\frac{1}{1+t} = 1 - t + t^2 - \\cdots$"},
+            {"do":"write","line":"$-1<t<1$：可逐項積分","on":"負一到一"}
+          ] },
+        { "show": ["$\\ln(1+x)=x-\\frac{x^2}{2}+\\frac{x^3}{3}-\\cdots$"],
+          "note": "由 $\\frac{1}{1+t}$ 逐項積分。",
           "say": "自然對數一加 x：把一加 t 分之一逐項積分，得到正負交錯、除以 n，從一次方開始。",
           "board": [
-            { "do": "clear" },
-            { "do": "write", "line": "$\\frac{1}{1+t}$ 逐項積分", "on": "把一加" },
-            { "do": "write", "line": "$\\ln(1+x) = x - \\frac{x^2}{2} + \\frac{x^3}{3} - \\cdots$", "on": "得到" }
+            {"do":"clear"},
+            {"do":"write","line":"$\\frac{1}{1+t}$ 逐項積分","on":"把一加"},
+            {"do":"write","line":"$\\ln(1+x) = x - \\frac{x^2}{2} + \\frac{x^3}{3} - \\cdots$","on":"得到"}
           ] },
         { "show": ["成立範圍 $-1<x\\le 1$"],
           "say": "它在 x 等於一那一端也成立，變成交錯調和級數；負一那端不行。",
           "board": [
-            { "do": "write", "line": "$x=1$：交錯調和級數" },
-            { "do": "write", "line": "$x=-1$：不行", "color": "red", "on": "負一那端" }
+            {"do":"write","line":"$x=1$：交錯調和級數"},
+            {"do":"write","line":"$x=-1$：不行","color":"red","on":"負一那端"}
+          ] },
+        { "show": ["$x=1$ 收斂；$x=-1$ 發散"],
+          "note": "$x=-1$ 時各項都是負的。",
+          "say": "x 等於一，項越來越小又正負交替，所以收斂。x 等於負一，每項都變負，成了調和級數的負數，發散。",
+          "board": [
+            {"do":"write","line":"$x=1$：$1-\\frac{1}{2}+\\frac{1}{3}-\\cdots$ 收斂"},
+            {"do":"write","line":"$x=-1$：$-(1+\\frac{1}{2}+\\frac{1}{3}+\\cdots)$ 發散","color":"red","on":"負一"}
           ] }
       ],
       "check": 1
     },
     {
-      "title": "代換", "key": "代換要整個代進次方，係數跟著乘",
+      "title": "代換",
       "beats": [
-        { "show": ["$x$ 換成 $x^2$、$-x$、$2x$……"], "note": "範圍跟著換。",
+        { "show": ["$x$ 換成 $x^2$、$-x$、$2x$……"],
+          "note": "範圍跟著換。",
           "say": "造新級數第一招是代換：把 x 換成別的式子，成立的範圍也跟著換。",
           "board": [
-            { "do": "write", "line": "把 $x$ 換成 $x^2$、$-x$、$2x$" },
-            { "do": "write", "line": "範圍跟著換", "on": "範圍也" }
+            {"do":"write","line":"把 $x$ 換成 $x^2$、$-x$、$2x$"},
+            {"do":"write","line":"範圍跟著換","on":"範圍也"}
           ] },
         { "show": ["$e^{-x^2}=\\sum\\frac{(-1)^n x^{2n}}{n!}$"],
           "say": "e 的負 x 平方次方：在 e 的 x 次方的級數裡，x 整個換成負 x 平方。",
           "board": [
-            { "do": "clear" },
-            { "do": "write", "line": "$e^{x}=\\sum\\frac{{{b:x}}^n}{n!}$", "on": "級數裡" },
-            { "do": "transform", "line": "$e^{-x^2}=\\sum\\frac{({{s:-x^2}})^n}{n!}$", "on": "整個換成" }
+            {"do":"clear"},
+            {"do":"write","line":"$e^{x}=\\sum\\frac{{{b:x}}^n}{n!}$","on":"級數裡"},
+            {"do":"transform","line":"$e^{-x^2}=\\sum\\frac{({{s:-x^2}})^n}{n!}$","on":"整個換成"}
           ] },
-        { "show": ["$\\sin(x^2)=x^2-\\frac{x^6}{6}+\\frac{x^{10}}{120}-\\cdots$"], "note": "$\\sin u$ 裡 $u=x^2$。",
+        { "show": ["$\\sin(x^2)=x^2-\\frac{x^6}{6}+\\frac{x^{10}}{120}-\\cdots$"],
+          "note": "$\\sin u$ 裡 $u=x^2$。",
           "say": "sine x 平方也一樣，u 換成 x 平方，次方全部加倍。x 的六次方係數是負六分之一。",
           "board": [
-            { "do": "clear" },
-            { "do": "write", "line": "$\\sin u = u - \\frac{u^3}{3!} + \\frac{u^5}{5!} - \\cdots$", "on": "也一樣" },
-            { "do": "write", "line": "$\\sin(x^2) = {{a:x^2}} - {{c:\\frac{x^6}{6}}} + \\cdots$", "on": "次方全部" },
-            { "do": "underline", "term": "c", "label": "六次方", "on": "六次方" }
+            {"do":"clear"},
+            {"do":"write","line":"$\\sin u = u - \\frac{u^3}{3!} + \\frac{u^5}{5!} - \\cdots$","on":"也一樣"},
+            {"do":"write","line":"$\\sin(x^2) = {{a:x^2}} - {{c:\\frac{x^6}{6}}} + \\cdots$","on":"次方全部"},
+            {"do":"underline","term":"c","label":"六次方","on":"六次方"}
           ] },
-        { "show": ["$x^8$ 的係數是 0"], "note": "只有 $4k+2$ 次方的項。",
+        { "show": ["$x^8$ 的係數是 0"],
+          "note": "只有 $4k+2$ 次方的項。",
           "say": "x 的八次方根本不會出現，係數是零。",
           "board": [
-            { "do": "write", "line": "$\\sin(x^2)$：只有 $4k+2$ 次方" },
-            { "do": "write", "line": "$x^8$ 的係數 $=0$", "on": "根本不會" }
+            {"do":"write","line":"$\\sin(x^2)$：只有 $4k+2$ 次方"},
+            {"do":"write","line":"$x^8$ 的係數 $=0$","on":"根本不會"}
           ] }
       ],
+      "key": "代換要整個代進次方，係數跟著乘",
       "check": 2
     },
     {
-      "title": "兩個級數相乘", "key": "只配總次數為 $3$ 的乘積，一組都別漏",
+      "title": "兩個級數相乘",
       "beats": [
-        { "show": ["$e^x\\ln(1+x)$ 的 $x^3$ 係數"], "note": "只展開到需要的次方。",
+        { "show": ["$e^x\\ln(1+x)$ 的 $x^3$ 係數"],
+          "note": "只展開到需要的次方。",
           "say": "兩個級數相乘，不用全部展開。要 x 的三次方，只收集次方加起來是三的乘積。",
           "board": [
-            { "do": "write", "line": "$e^x\\ln(1+x)$ 的 ${{x3:x^3}}$ 係數" },
-            { "do": "underline", "term": "x3", "label": "次方和是 3", "on": "次方加起來" }
+            {"do":"write","line":"$e^x\\ln(1+x)$ 的 ${{x3:x^3}}$ 係數"},
+            {"do":"underline","term":"x3","label":"次方和是 3","on":"次方加起來"}
           ] },
-        { "show": ["$e^x=1+x+\\frac{x^2}{2}+\\cdots$", "$\\ln(1+x)=x-\\frac{x^2}{2}+\\frac{x^3}{3}-\\cdots$"],
+        { "show": ["$e^x=1+x+\\frac{x^2}{2}+\\cdots$","$\\ln(1+x)=x-\\frac{x^2}{2}+\\frac{x^3}{3}-\\cdots$"],
           "say": "兩個都寫到三次就夠了。",
           "board": [
-            { "do": "write", "line": "$e^x = {{a0:1}} + {{a1:x}} + {{a2:\\frac{x^2}{2}}} + \\cdots$", "tint": { "a0": "blue", "a1": "blue", "a2": "blue" } },
-            { "do": "write", "line": "$\\ln(1+x) = {{b1:x}} - {{b2:\\frac{x^2}{2}}} + {{b3:\\frac{x^3}{3}}} - \\cdots$", "tint": { "b1": "violet", "b2": "violet", "b3": "violet" }, "on": "三次" }
+            {"do":"write","line":"$e^x = {{a0:1}} + {{a1:x}} + {{a2:\\frac{x^2}{2}}} + \\cdots$","tint":{"a0":"blue","a1":"blue","a2":"blue"}},
+            {"do":"write","line":"$\\ln(1+x) = {{b1:x}} - {{b2:\\frac{x^2}{2}}} + {{b3:\\frac{x^3}{3}}} - \\cdots$","tint":{"b1":"violet","b2":"violet","b3":"violet"},"on":"三次"}
           ] },
         { "show": ["$1\\cdot\\frac{x^3}{3}+x\\cdot\\left(-\\frac{x^2}{2}\\right)+\\frac{x^2}{2}\\cdot x$"],
           "say": "零次乘三次、一次乘二次、二次乘一次，三組。中間那組帶負號。",
           "board": [
-            { "do": "write", "line": "${{a0:1}}\\cdot{{b3:\\frac{x^3}{3}}}$" },
-            { "do": "transform", "line": "${{a0:1}}\\cdot{{b3:\\frac{x^3}{3}}} + {{g:{{a1:x}}\\cdot\\left(-{{b2:\\frac{x^2}{2}}}\\right)}}$", "on": "一次乘二次" },
-            { "do": "transform", "line": "${{a0:1}}\\cdot{{b3:\\frac{x^3}{3}}} + {{g:{{a1:x}}\\cdot\\left(-{{b2:\\frac{x^2}{2}}}\\right)}} + {{a2:\\frac{x^2}{2}}}\\cdot{{b1:x}}$", "on": "二次乘一次" },
-            { "do": "underline", "term": "g", "label": "帶負號", "on": "中間那組" }
+            {"do":"write","line":"${{a0:1}}\\cdot{{b3:\\frac{x^3}{3}}}$"},
+            {"do":"transform","line":"${{a0:1}}\\cdot{{b3:\\frac{x^3}{3}}} + {{g:{{a1:x}}\\cdot\\left(-{{b2:\\frac{x^2}{2}}}\\right)}}$","on":"一次乘二次"},
+            {"do":"transform","line":"${{a0:1}}\\cdot{{b3:\\frac{x^3}{3}}} + {{g:{{a1:x}}\\cdot\\left(-{{b2:\\frac{x^2}{2}}}\\right)}} + {{a2:\\frac{x^2}{2}}}\\cdot{{b1:x}}$","on":"二次乘一次"},
+            {"do":"underline","term":"g","label":"帶負號","on":"中間那組"}
+          ] },
+        { "show": ["把三組係數相加"],
+          "note": "算出來，再到選項裡找。",
+          "say": "把這三組的係數加起來，就是 x 三次方的係數。算完再到選項裡找對得上的。",
+          "board": [
+            {"do":"write","line":"係數 $=\\frac{1}{3}+\\left(-\\frac{1}{2}\\right)+\\frac{1}{2}$"}
           ] }
       ],
+      "key": "只配總次數為 $3$ 的乘積，一組都別漏",
       "predict": {
         "ask": "$x^3$ 的係數是？",
         "options": [
-          { "label": "$\\frac{1}{3}$", "correct": true },
-          { "label": "$\\frac{1}{3}-\\frac{1}{2}$", "why": "漏了第三組 $\\frac{x^2}{2}\\cdot x$，它貢獻 $+\\frac{1}{2}$。" },
-          { "label": "$\\frac{4}{3}$", "why": "中間那組是 $-\\frac{1}{2}$，不是 $+\\frac{1}{2}$；正負抵掉。" }
+          {
+            "label": "$\\frac{1}{3}$",
+            "correct": true
+          },
+          {
+            "label": "$\\frac{1}{3}-\\frac{1}{2}$",
+            "why": "漏了第三組 $\\frac{x^2}{2}\\cdot x$，它貢獻 $+\\frac{1}{2}$。"
+          },
+          {
+            "label": "$\\frac{4}{3}$",
+            "why": "中間那組是 $-\\frac{1}{2}$，不是 $+\\frac{1}{2}$；正負抵掉。"
+          }
         ]
       }
     },
@@ -254,20 +301,21 @@
         { "show": ["$\\sum_{n=0}^{\\infty}\\frac{(-1)^n\\pi^{2n+1}}{6^{2n+1}(2n+1)!}$"],
           "say": "反過來，看到一個數值級數，認出它是哪個基本級數在某一點的值。",
           "board": [
-            { "do": "write", "line": "$\\sum_{n=0}^{\\infty}\\frac{(-1)^n{{p:\\pi^{2n+1}}}}{{{q:6^{2n+1}}}(2n+1)!}$" }
+            {"do":"write","line":"$\\sum_{n=0}^{\\infty}\\frac{(-1)^n{{p:\\pi^{2n+1}}}}{{{q:6^{2n+1}}}(2n+1)!}$"}
           ] },
         { "show": ["$\\frac{\\pi^{2n+1}}{6^{2n+1}}=\\left(\\frac{\\pi}{6}\\right)^{2n+1}$"],
           "say": "分子分母次方一樣，合成六分之 pi 的二 n 加一次方。奇次方、正負交替、除以階乘。",
           "board": [
-            { "do": "write", "line": "$\\frac{{{p:\\pi^{2n+1}}}}{{{q:6^{2n+1}}}} = {{u:\\left(\\frac{\\pi}{6}\\right)^{2n+1}}}$", "tint": { "u": "blue" } },
-            { "do": "write", "line": "$= \\sum_{n=0}^{\\infty}\\frac{(-1)^n{{u:\\left(\\frac{\\pi}{6}\\right)^{2n+1}}}}{(2n+1)!}$", "on": "奇次方" }
+            {"do":"write","line":"$\\frac{{{p:\\pi^{2n+1}}}}{{{q:6^{2n+1}}}} = {{u:\\left(\\frac{\\pi}{6}\\right)^{2n+1}}}$","tint":{"u":"blue"}},
+            {"do":"write","line":"$= \\sum_{n=0}^{\\infty}\\frac{(-1)^n{{u:\\left(\\frac{\\pi}{6}\\right)^{2n+1}}}}{(2n+1)!}$","on":"奇次方"}
           ] },
-        { "show": ["$\\sin\\frac{\\pi}{6}=\\frac{1}{2}$"], "note": "$\\sin x$ 的級數在 $x=\\frac{\\pi}{6}$。",
+        { "show": ["$\\sin\\frac{\\pi}{6}=\\frac{1}{2}$"],
+          "note": "$\\sin x$ 的級數在 $x=\\frac{\\pi}{6}$。",
           "say": "這就是 sine 的級數在六分之 pi 的值，和是二分之一。",
           "board": [
-            { "do": "keep", "n": 2 },
-            { "do": "write", "line": "$= \\sin\\frac{\\pi}{6}$", "on": "sine 的級數" },
-            { "do": "transform", "line": "$= \\sin\\frac{\\pi}{6} = \\frac{1}{2}$", "color": "green", "on": "和是" }
+            {"do":"keep","n":2},
+            {"do":"write","line":"$= \\sin\\frac{\\pi}{6}$","on":"sine 的級數"},
+            {"do":"transform","line":"$= \\sin\\frac{\\pi}{6} = \\frac{1}{2}$","color":"green","on":"和是"}
           ] }
       ],
       "check": 3

@@ -129,133 +129,198 @@
     {
       "title": "定義與算法",
       "beats": [
-        { "show": ["$\\det\\begin{pmatrix}x_u&x_v\\\\y_u&y_v\\end{pmatrix}$", "$=x_uy_v-x_vy_u$"], "note": "第一列是 $x$ 的偏導，第二列是 $y$ 的偏導。",
+        { "show": ["$\\det\\begin{pmatrix}x_u&x_v\\\\y_u&y_v\\end{pmatrix}$","$=x_uy_v-x_vy_u$"],
+          "note": "第一列是 $x$ 的偏導，第二列是 $y$ 的偏導。",
           "say": "四個偏導數排成矩陣：第一列是 x 對 u、對 v，第二列是 y 對 u、對 v。行列式就是 Jacobian。",
           "board": [
-            { "do": "write", "line": "$J=\\det\\begin{pmatrix}{{xu:x_u}}&{{xv:x_v}}\\\\{{yu:y_u}}&{{yv:y_v}}\\end{pmatrix}$", "tint": { "xu": "blue", "xv": "blue", "yu": "violet", "yv": "violet" } },
-            { "do": "write", "line": "$={{xu:x_u}}{{yv:y_v}}-{{xv:x_v}}{{yu:y_u}}$", "on": "行列式就是" }
+            {"do":"write","line":"$J=\\det\\begin{pmatrix}{{xu:x_u}}&{{xv:x_v}}\\\\{{yu:y_u}}&{{yv:y_v}}\\end{pmatrix}$","tint":{"xu":"blue","xv":"blue","yu":"violet","yv":"violet"}},
+            {"do":"write","line":"$={{xu:x_u}}{{yv:y_v}}-{{xv:x_v}}{{yu:y_u}}$","on":"行列式就是"}
           ] },
         { "show": ["$|J|$：放大倍率；正負號：有沒有翻面"],
           "say": "上一課看過：它的絕對值是小方格的放大倍率，正負號表示有沒有翻面。",
           "board": [
-            { "do": "write", "line": "$|J|$：放大倍率；正負號：有沒有翻面", "on": "上一課" }
+            {"do":"write","line":"$|J|$：放大倍率；正負號：有沒有翻面","on":"上一課"}
           ] },
-        { "show": ["$x=2u+v$、$y=u-v$"], "note": "$x_u=2$、$x_v=1$、$y_u=1$、$y_v=-1$。",
+        { "show": ["$x=2u$、$y=3v$：$J=2\\cdot3=6$"],
+          "note": "寬 $1$、高 $1$ 的小方格，變成寬 $2$、高 $3$。",
+          "say": "舉例：一格寬一高一的小方格，被拉成寬二高三的長方形，面積變六倍。J 就是二乘三。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$x=2u$、$y=3v$","on":"一格"},
+            {"do":"plot","graph":{"window":[-1,4,-1,4],"fills":[{"pts":[[0,0],[2,0],[2,3],[0,3]],"color":"blue"}],"dashed":[[[0,1],[1,1]],[[1,0],[1,1]]]},"on":"拉成"},
+            {"do":"write","line":"$J=2\\cdot3=6$","on":"面積變六倍"}
+          ] },
+        { "show": ["$x=u$、$y=-v$：$J=1\\cdot(-1)=-1$"],
+          "note": "方格上下顛倒，面積沒變。",
+          "say": "如果 y 等於負 v，方格上下顛倒，面積沒變，J 是負一。負號就是翻面。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$x=u$、$y=-v$","on":"如果"},
+            {"do":"write","line":"$J=1\\cdot(-1)=-1$","on":"J 是負一"}
+          ] },
+        { "show": ["$x=2u+v$、$y=u-v$"],
+          "note": "$x_u=2$、$x_v=1$、$y_u=1$、$y_v=-1$。",
           "say": "照步驟：先寫出四個偏導數。",
           "board": [
-            { "do": "clear" },
-            { "do": "write", "line": "$x=2u+v$、$y=u-v$", "on": "照步驟" },
-            { "do": "write", "line": "$x_u=2$，$x_v=1$，$y_u=1$，$y_v=-1$", "on": "四個偏導數" }
+            {"do":"clear"},
+            {"do":"write","line":"$x=2u+v$、$y=u-v$","on":"照步驟"},
+            {"do":"write","line":"$x_u=2$，$x_v=1$，$y_u=1$，$y_v=-1$","on":"四個偏導數"}
           ] },
-        { "show": ["$J=2\\cdot(-1)-1\\cdot1=-3$"], "note": "放大 $3$ 倍，而且翻面。",
+        { "show": ["$J=2\\cdot(-1)-1\\cdot1=-3$"],
+          "note": "放大 $3$ 倍，而且翻面。",
           "say": "主對角相乘，減掉反對角相乘，得負三：面積放大三倍，而且翻面。",
           "board": [
-            { "do": "write", "line": "$J=2\\cdot(-1)-1\\cdot1={{j:-3}}$", "on": "主對角" },
-            { "do": "box", "term": "j", "color": "green", "on": "得負三" },
-            { "do": "write", "line": "放大 $3$ 倍，而且翻面", "on": "面積放大" }
+            {"do":"write","line":"$J=2\\cdot(-1)-1\\cdot1={{j:-3}}$","on":"主對角"},
+            {"do":"box","term":"j","color":"green","on":"得負三"},
+            {"do":"write","line":"放大 $3$ 倍，而且翻面","on":"面積放大"}
           ] }
       ],
       "check": 0
     },
     {
-      "title": "答案通常還有變數", "key": "答案帶變數：放大倍率隨點而變",
+      "title": "答案通常還有變數",
       "beats": [
         { "show": ["$x=u^2-v^2$、$y=2uv$"],
           "say": "非線性的變換，Jacobian 通常還是 u、v 的函數。",
           "board": [
-            { "do": "write", "line": "$x=u^2-v^2$、$y=2uv$" },
-            { "do": "write", "line": "Jacobian 通常還有 $u$、$v$", "on": "Jacobian 通常" }
+            {"do":"write","line":"$x=u^2-v^2$、$y=2uv$"},
+            {"do":"write","line":"Jacobian 通常還有 $u$、$v$","on":"Jacobian 通常"}
           ] },
         { "show": ["$x_u=2u$，$x_v=-2v$；$y_u=2v$，$y_v=2u$"],
           "say": "四個偏導數寫出來。",
           "board": [
-            { "do": "write", "line": "$x_u=2u$，$x_v=-2v$；$y_u=2v$，$y_v=2u$" }
+            {"do":"write","line":"$x_u=2u$，$x_v=-2v$；$y_u=2v$，$y_v=2u$"}
           ] },
-        { "show": ["$2u\\cdot2u-(-2v)(2v)=4(u^2+v^2)$"], "note": "交叉相乘要相減，不是相加。",
+        { "show": ["$2u\\cdot2u-(-2v)(2v)=4(u^2+v^2)$"],
+          "note": "交叉相乘要相減，不是相加。",
           "say": "交叉相乘相減。減掉一個負的，變成加，得四乘 u 平方加 v 平方。",
           "board": [
-            { "do": "write", "line": "$2u\\cdot2u-{{neg:(-2v)(2v)}}={{r:4(u^2+v^2)}}$" },
-            { "do": "focus", "term": "neg", "label": "減掉負的", "on": "減掉一個負的" },
-            { "do": "box", "term": "r", "color": "green", "on": "得四乘" }
+            {"do":"write","line":"$2u\\cdot2u-{{neg:(-2v)(2v)}}={{r:4(u^2+v^2)}}$"},
+            {"do":"focus","term":"neg","label":"減掉負的","on":"減掉一個負的"},
+            {"do":"box","term":"r","color":"green","on":"得四乘"}
           ] }
       ],
+      "key": "答案帶變數：放大倍率隨點而變",
       "check": 2
     },
     {
       "title": "反方向：取倒數",
       "beats": [
-        { "show": ["題目給 $u=u(x,y)$、$v=v(x,y)$"], "note": "要的卻是 $\\frac{\\partial(x,y)}{\\partial(u,v)}$。",
+        { "show": ["題目給 $u=u(x,y)$、$v=v(x,y)$"],
+          "note": "要的卻是 $\\frac{\\partial(x,y)}{\\partial(u,v)}$。",
           "say": "很多題目從區域的邊界讀出 u、v 是 x、y 的函數，要的卻是反方向的 Jacobian。",
           "board": [
-            { "do": "write", "line": "$u=u(x,y)$、$v=v(x,y)$" },
-            { "do": "write", "line": "要的：$\\frac{\\partial(x,y)}{\\partial(u,v)}$", "on": "反方向" }
+            {"do":"write","line":"$u=u(x,y)$、$v=v(x,y)$"},
+            {"do":"write","line":"要的：$\\frac{\\partial(x,y)}{\\partial(u,v)}$","on":"反方向"}
           ] },
-        { "show": ["$\\frac{\\partial(x,y)}{\\partial(u,v)}=\\frac{1}{\\partial(u,v)/\\partial(x,y)}$"], "note": "條件：$J\\ne 0$。",
+        { "show": ["$\\frac{\\partial(x,y)}{\\partial(u,v)}=\\frac{1}{\\partial(u,v)/\\partial(x,y)}$"],
+          "note": "條件：$J\\ne 0$。",
           "say": "不必先解出 x、y，直接算反方向再取倒數。",
           "board": [
-            { "do": "write", "line": "$\\frac{\\partial(x,y)}{\\partial(u,v)}=\\frac{1}{{{d:\\partial(u,v)/\\partial(x,y)}}}$" },
-            { "do": "underline", "term": "d", "color": "gold", "label": "先算這個", "on": "反方向" }
+            {"do":"write","line":"$\\frac{\\partial(x,y)}{\\partial(u,v)}=\\frac{1}{{{d:\\partial(u,v)/\\partial(x,y)}}}$"},
+            {"do":"underline","term":"d","color":"gold","label":"先算這個","on":"反方向"}
           ] },
-        { "show": ["放大 $k$ 倍，反過來縮成 $\\frac{1}{k}$"], "note": "正式理由：兩個 Jacobian 矩陣相乘是單位矩陣。",
+        { "show": ["放大 $k$ 倍，反過來縮成 $\\frac{1}{k}$"],
+          "note": "正式理由：兩個 Jacobian 矩陣相乘是單位矩陣。",
           "say": "直觀上：去程把面積放大 k 倍，回程就縮小成 k 分之一。",
           "board": [
-            { "do": "clear" },
-            { "do": "write", "line": "去程：放大 $k$ 倍", "on": "去程" },
-            { "do": "write", "line": "回程：縮成 $\\frac{1}{k}$", "on": "回程" }
+            {"do":"clear"},
+            {"do":"write","line":"去程：放大 $k$ 倍","on":"去程"},
+            {"do":"write","line":"回程：縮成 $\\frac{1}{k}$","on":"回程"}
+          ] },
+        { "show": ["$u=\\frac{x}{2}$、$v=\\frac{y}{3}$：$J=\\frac{1}{6}$"],
+          "note": "前面 $x=2u$、$y=3v$ 的反方向。",
+          "say": "回到 x 等於二 u、y 等於三 v。反過來 u 是 x 的二分之一，v 是 y 的三分之一，Jacobian 是六分之一。",
+          "board": [
+            {"do":"write","line":"$u=\\frac{x}{2}$、$v=\\frac{y}{3}$"},
+            {"do":"write","line":"$J=\\frac{1}{2}\\cdot\\frac{1}{3}=\\frac{1}{6}$","on":"Jacobian"}
+          ] },
+        { "show": ["$6\\cdot\\frac{1}{6}=1$：回到原來大小"],
+          "say": "去程放大六倍，回程縮成六分之一，兩個倍率乘起來是一。所以知道一個，另一個就是它的倒數。",
+          "board": [
+            {"do":"write","line":"$6\\cdot\\frac{1}{6}=1$"},
+            {"do":"write","line":"知道一個，另一個取倒數","on":"所以"}
           ] }
       ],
       "check": 1
     },
     {
-      "title": "解不出來也沒關係", "key": "先算反向的再取倒數，最後寫成 $u$、$v$",
+      "title": "解不出來也沒關係",
       "beats": [
         { "show": ["$u=xy$、$v=\\frac{y}{x}$（$x,y>0$）"],
           "say": "這一題要解出 x、y 很麻煩，直接算反方向。",
           "board": [
-            { "do": "write", "line": "$u=xy$、$v=\\frac{y}{x}$（$x,y>0$）" },
-            { "do": "write", "line": "算 $\\frac{\\partial(u,v)}{\\partial(x,y)}$", "on": "很麻煩" }
+            {"do":"write","line":"$u=xy$、$v=\\frac{y}{x}$（$x,y>0$）"},
+            {"do":"write","line":"算 $\\frac{\\partial(u,v)}{\\partial(x,y)}$","on":"很麻煩"}
           ] },
         { "show": ["$\\frac{\\partial(u,v)}{\\partial(x,y)}=\\frac{y}{x}+\\frac{y}{x}=\\frac{2y}{x}$"],
           "say": "u、v 對 x、y 的偏導數交叉相乘相減，得到二 y 除以 x。",
           "board": [
-            { "do": "clear" },
-            { "do": "write", "line": "$u_x=y$，$u_y=x$", "on": "u、v" },
-            { "do": "write", "line": "$v_x=-\\frac{y}{x^2}$，$v_y=\\frac{1}{x}$", "on": "偏導數" },
-            { "do": "write", "line": "$=\\frac{y}{x}+\\frac{y}{x}={{r:\\frac{2y}{x}}}$", "on": "交叉相乘" },
-            { "do": "box", "term": "r", "color": "green", "on": "得到" }
+            {"do":"clear"},
+            {"do":"write","line":"$u_x=y$，$u_y=x$","on":"u、v"},
+            {"do":"write","line":"$v_x=-\\frac{y}{x^2}$，$v_y=\\frac{1}{x}$","on":"偏導數"},
+            {"do":"write","line":"$=\\frac{y}{x}+\\frac{y}{x}={{r:\\frac{2y}{x}}}$","on":"交叉相乘"},
+            {"do":"box","term":"r","color":"green","on":"得到"}
           ] }
       ],
+      "key": "先算反向的再取倒數，最後寫成 $u$、$v$",
       "predict": {
         "ask": "$\\frac{\\partial(x,y)}{\\partial(u,v)}$ 是？",
         "options": [
-          { "label": "$\\frac{1}{2v}$", "correct": true },
-          { "label": "$2v$", "why": "$\\frac{2y}{x}=2v$ 是 $\\frac{\\partial(u,v)}{\\partial(x,y)}$；要的是反方向，取倒數。" },
-          { "label": "$\\frac{x}{2y}$", "why": "倒數對了，但答案要用 $u$、$v$ 寫：$\\frac{y}{x}=v$，所以是 $\\frac{1}{2v}$。" }
+          {
+            "label": "$\\frac{1}{2v}$",
+            "correct": true
+          },
+          {
+            "label": "$2v$",
+            "why": "$\\frac{2y}{x}=2v$ 是 $\\frac{\\partial(u,v)}{\\partial(x,y)}$；要的是反方向，取倒數。"
+          },
+          {
+            "label": "$\\frac{x}{2y}$",
+            "why": "倒數對了，但答案要用 $u$、$v$ 寫：$\\frac{y}{x}=v$，所以是 $\\frac{1}{2v}$。"
+          }
         ]
       }
     },
     {
       "title": "三個變數",
       "beats": [
-        { "show": ["$\\frac{\\partial(x,y,z)}{\\partial(u,v,w)}$：$3\\times3$ 行列式"], "note": "$|J|$ 是小方塊的體積放大倍率。",
+        { "show": ["$\\frac{\\partial(x,y,z)}{\\partial(u,v,w)}$：$3\\times3$ 行列式"],
+          "note": "$|J|$ 是小方塊的體積放大倍率。",
           "say": "三個變數時，Jacobian 是三乘三的行列式，絕對值是小方塊的體積放大倍率。",
           "board": [
-            { "do": "write", "line": "$\\frac{\\partial(x,y,z)}{\\partial(u,v,w)}=\\det(3\\times3)$" },
-            { "do": "write", "line": "$|J|$：體積放大倍率", "on": "絕對值" }
+            {"do":"write","line":"$\\frac{\\partial(x,y,z)}{\\partial(u,v,w)}=\\det(3\\times3)$"},
+            {"do":"write","line":"$|J|$：體積放大倍率","on":"絕對值"}
+          ] },
+        { "show": ["$J=x_u(y_vz_w-y_wz_v)$","$-x_v(y_uz_w-y_wz_u)+x_w(y_uz_v-y_vz_u)$"],
+          "note": "沿第一列展開，正負號交替。",
+          "say": "三乘三要沿第一列展開：x u 乘掉它那一列那一行剩下的二乘二行列式，減 x v 乘它的，再加 x w 乘它的。",
+          "board": [
+            {"do":"write","line":"$J=x_u(y_vz_w-y_wz_v)$"},
+            {"do":"write","line":"$-x_v(y_uz_w-y_wz_u)$","on":"減 x v"},
+            {"do":"write","line":"$+x_w(y_uz_v-y_vz_u)$","on":"再加"}
+          ] },
+        { "show": ["$x=r\\cos\\theta$、$y=r\\sin\\theta$、$z=z$","$J=1\\cdot(x_ry_\\theta-x_\\theta y_r)=r$"],
+          "note": "$z$ 只跟自己有關。",
+          "say": "柱座標的 z 只跟自己有關，展開剩一乘二乘二行列式，得 r。球座標也這樣算，只是代數多一點。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$x=r\\cos\\theta$、$y=r\\sin\\theta$、$z=z$","on":"柱座標"},
+            {"do":"write","line":"$J=1\\cdot(x_ry_\\theta-x_\\theta y_r)=r$","on":"展開"}
           ] },
         { "show": ["柱座標：$r$；球座標：$\\rho^2\\sin\\varphi$"],
           "say": "以後一直會用到兩個：柱座標的是 r，球座標的是 rho 平方乘 sine phi。",
           "board": [
-            { "do": "write", "line": "柱座標：$J=r$" },
-            { "do": "write", "line": "球座標：${{s:J=\\rho^2\\sin\\varphi}}$", "on": "球座標" },
-            { "do": "box", "term": "s", "color": "green", "on": "rho" }
+            {"do":"write","line":"柱座標：$J=r$"},
+            {"do":"write","line":"球座標：${{s:J=\\rho^2\\sin\\varphi}}$","on":"球座標"},
+            {"do":"box","term":"s","color":"green","on":"rho"}
           ] },
         { "show": ["換變數：用 $|J|$，不是 $J$"],
           "say": "最後提醒：換變數的時候乘的是絕對值，因為面積和體積不會是負的。",
           "board": [
-            { "do": "clear" },
-            { "do": "write", "line": "換變數時乘 $|J|$，不是 $J$", "on": "乘的是" },
-            { "do": "write", "line": "面積、體積不會是負的", "on": "因為" }
+            {"do":"clear"},
+            {"do":"write","line":"換變數時乘 $|J|$，不是 $J$","on":"乘的是"},
+            {"do":"write","line":"面積、體積不會是負的","on":"因為"}
           ] }
       ],
       "check": 3

@@ -130,55 +130,61 @@
     {
       "title": "為什麼要換",
       "beats": [
-        { "show": ["$\\int_0^1\\int_x^1 e^{y^2}\\,dy\\,dx$"], "note": "$e^{y^2}$ 沒有初等反導函數。",
+        { "show": ["$\\int_0^1\\int_x^1 e^{y^2}\\,dy\\,dx$"],
+          "note": "$e^{y^2}$ 沒有初等反導函數。",
           "say": "內層要對 y 積 e 的 y 平方次方，可是它沒有初等反導函數，卡住了。",
           "board": [
-            { "do": "write", "line": "$\\int_0^1\\int_x^1 {{f:e^{y^2}}}\\,dy\\,dx$" },
-            { "do": "underline", "term": "f", "label": "卡住", "on": "沒有初等反導函數" }
+            {"do":"write","line":"$\\int_0^1\\int_x^1 {{f:e^{y^2}}}\\,dy\\,dx$"},
+            {"do":"underline","term":"f","label":"卡住","on":"沒有初等反導函數"}
           ] },
-        { "show": ["區域沒變，只是換個方向切"], "note": "Fubini：連續函數換次序，值不變。",
+        { "show": ["區域沒變，只是換個方向切"],
+          "note": "Fubini：連續函數換次序，值不變。",
           "say": "可是區域沒變，只是換個方向切。連續函數換次序，值不會變，換完常常多出一個剛好能換元的因子。",
           "board": [
-            { "do": "write", "line": "區域 $D$ 沒變，換個方向切", "on": "區域沒變" },
-            { "do": "write", "line": "$\\iint_D f\\,dy\\,dx=\\iint_D f\\,dx\\,dy$", "color": "green", "on": "連續函數" }
+            {"do":"write","line":"區域 $D$ 沒變，換個方向切","on":"區域沒變"},
+            {"do":"write","line":"$\\iint_D f\\,dy\\,dx=\\iint_D f\\,dx\\,dy$","color":"green","on":"連續函數"}
           ] }
       ],
       "check": 1
     },
     {
-      "title": "不是把上下限對調", "key": "先畫出區域，再用水平線重讀上下限",
+      "title": "不是把上下限對調",
       "beats": [
-        { "show": ["✗ $\\int_x^1\\int_0^1\\dots\\,dx\\,dy$"], "note": "外層出現 $x$，答案會帶著變數。",
+        { "show": ["✗ $\\int_x^1\\int_0^1\\dots\\,dx\\,dy$"],
+          "note": "外層出現 $x$，答案會帶著變數。",
           "say": "最常見的錯是直接把上下限對調。外層出現了 x，算完還帶著變數，完全不對。",
           "board": [
-            { "do": "write", "line": "${{w:\\int_x^1\\int_0^1\\dots\\,dx\\,dy}}$" },
-            { "do": "strike", "term": "w", "label": "外層有 x", "on": "直接把" }
+            {"do":"write","line":"${{w:\\int_x^1\\int_0^1\\dots\\,dx\\,dy}}$"},
+            {"do":"strike","term":"w","label":"外層有 x","on":"直接把"}
           ] },
         { "show": ["① 寫成不等式：$0\\le x\\le 1$、$x\\le y\\le 1$"],
           "say": "一定要經過區域這一步。第一步，把上下限讀成不等式。",
           "board": [
-            { "do": "clear" },
-            { "do": "write", "line": "① $0\\le x\\le 1$、$x\\le y\\le 1$", "on": "第一步" }
+            {"do":"clear"},
+            {"do":"write","line":"① $0\\le x\\le 1$、$x\\le y\\le 1$","on":"第一步"}
           ] },
-        { "show": ["② 畫圖：$(0,0)$、$(0,1)$、$(1,1)$ 的三角形"], "note": "在 $y=x$ 上方。",
+        { "show": ["② 畫圖：$(0,0)$、$(0,1)$、$(1,1)$ 的三角形"],
+          "note": "在 $y=x$ 上方。",
           "say": "第二步，畫出來：是直線 y 等於 x 上方的三角形。",
           "board": [
-            { "do": "plot", "graph": { "window": [-0.7,1.8,-0.15,1.2], "equal": true, "ticks": false, "curves": [{ "expr": "x", "domain": [0,1], "color": "blue" }], "fills": [{ "pts": [[0,0],[0,1],[1,1]], "color": "blue" }], "points": [{ "x": 0, "y": 0},{ "x": 0, "y": 1},{ "x": 1, "y": 1}], "labels": [{ "x": 1.08, "y": 0.9, "text": "y = x", "anchor": "start" }]}, "on": "畫出來" }
+            {"do":"plot","graph":{"window":[-0.7,1.8,-0.15,1.2],"equal":true,"ticks":false,"curves":[{"expr":"x","domain":[0,1],"color":"blue"}],"fills":[{"pts":[[0,0],[0,1],[1,1]],"color":"blue"}],"points":[{"x":0,"y":0},{"x":0,"y":1},{"x":1,"y":1}],"labels":[{"x":1.08,"y":0.9,"text":"y = x","anchor":"start"}]},"on":"畫出來"}
           ] },
         { "show": ["③ 水平線：$0\\le y\\le 1$、$0\\le x\\le y$"],
           "say": "第三步，換水平線掃：y 從零到一，每條水平線從 y 軸進、從直線 x 等於 y 出。",
           "board": [
-            { "do": "write", "line": "③ $0\\le y\\le 1$、${{h:0\\le x\\le y}}$" },
-            { "do": "underline", "term": "h", "label": "水平線", "on": "每條水平線" }
+            {"do":"write","line":"③ $0\\le y\\le 1$、${{h:0\\le x\\le y}}$"},
+            {"do":"underline","term":"h","label":"水平線","on":"每條水平線"}
           ] },
-        { "show": ["$\\int_0^1\\int_0^y e^{y^2}\\,dx\\,dy=\\int_0^1 y\\,e^{y^2}\\,dy$"], "note": "多出來的 $y$ 讓 $u=y^2$ 能用。",
+        { "show": ["$\\int_0^1\\int_0^y e^{y^2}\\,dx\\,dy=\\int_0^1 y\\,e^{y^2}\\,dy$"],
+          "note": "多出來的 $y$ 讓 $u=y^2$ 能用。",
           "say": "內層對 x 積，e 的 y 平方次方是常數，乘出一個 y。這個 y 正好讓換元可以做。",
           "board": [
-            { "do": "keep", "n": 1 },
-            { "do": "write", "line": "$\\int_0^1\\int_0^y e^{y^2}\\,dx\\,dy=\\int_0^1 {{y:y}}\\,e^{y^2}\\,dy$", "on": "內層" },
-            { "do": "focus", "term": "y", "label": "乘出一個 y", "on": "乘出一個" }
+            {"do":"keep","n":1},
+            {"do":"write","line":"$\\int_0^1\\int_0^y e^{y^2}\\,dx\\,dy=\\int_0^1 {{y:y}}\\,e^{y^2}\\,dy$","on":"內層"},
+            {"do":"focus","term":"y","label":"乘出一個 y","on":"乘出一個"}
           ] }
       ],
+      "key": "先畫出區域，再用水平線重讀上下限",
       "check": 0
     },
     {
@@ -187,86 +193,130 @@
         { "show": ["$\\int_0^1\\int_x^1\\sin(y^2)\\,dy\\,dx$"],
           "say": "同一塊三角形，被積函數換成 sine y 平方，一樣卡住。",
           "board": [
-            { "do": "write", "line": "$\\int_0^1\\int_x^1 {{s:\\sin(y^2)}}\\,dy\\,dx$" },
-            { "do": "underline", "term": "s", "label": "卡住", "on": "sine" }
+            {"do":"write","line":"$\\int_0^1\\int_x^1 {{s:\\sin(y^2)}}\\,dy\\,dx$"},
+            {"do":"underline","term":"s","label":"卡住","on":"sine"}
           ] },
-        { "show": ["$\\int_0^1\\int_0^y\\sin(y^2)\\,dx\\,dy$"], "note": "內層：$y\\sin(y^2)$。",
+        { "show": ["$\\int_0^1\\int_0^y\\sin(y^2)\\,dx\\,dy$"],
+          "note": "內層：$y\\sin(y^2)$。",
           "say": "換成水平線，內層對 x 積，得到 y 乘 sine y 平方。",
           "board": [
-            { "do": "transform", "line": "$\\int_0^1\\int_0^y \\sin(y^2)\\,dx\\,dy$", "on": "水平線" },
-            { "do": "write", "line": "$=\\int_0^1 {{y:y}}\\sin(y^2)\\,dy$", "on": "內層" },
-            { "do": "focus", "term": "y", "label": "乘出一個 y", "on": "乘" }
+            {"do":"transform","line":"$\\int_0^1\\int_0^y \\sin(y^2)\\,dx\\,dy$","on":"水平線"},
+            {"do":"write","line":"$=\\int_0^1 {{y:y}}\\sin(y^2)\\,dy$","on":"內層"},
+            {"do":"focus","term":"y","label":"乘出一個 y","on":"乘"}
           ] },
-        { "show": ["$u=y^2$：$\\frac{1}{2}\\int_0^1\\sin u\\,du=\\frac{1-\\cos 1}{2}$"], "note": "$du=2y\\,dy$，所以前面有 $\\frac{1}{2}$。",
+        { "show": ["$u=y^2$：$\\frac{1}{2}\\int_0^1\\sin u\\,du=\\frac{1-\\cos 1}{2}$"],
+          "note": "$du=2y\\,dy$，所以前面有 $\\frac{1}{2}$。",
           "say": "外層令 u 等於 y 平方，d u 是二 y d y，要補一個二分之一。最後是一減 cosine 一，再除以二。",
           "board": [
-            { "do": "clear" },
-            { "do": "write", "line": "$u=y^2$，$du=2y\\,dy$", "on": "令 u" },
-            { "do": "write", "line": "$=\\frac{1}{2}\\int_0^1\\sin u\\,du$", "on": "補一個" },
-            { "do": "write", "line": "$=\\frac{1-\\cos 1}{2}$", "color": "green", "on": "最後是" }
+            {"do":"clear"},
+            {"do":"write","line":"$u=y^2$，$du=2y\\,dy$","on":"令 u"},
+            {"do":"write","line":"$=\\frac{1}{2}\\int_0^1\\sin u\\,du$","on":"補一個"},
+            {"do":"write","line":"$=\\frac{1-\\cos 1}{2}$","color":"green","on":"最後是"}
           ] }
       ],
       "check": 3
     },
     {
-      "title": "根號在下限", "key": "$x\\ge\\sqrt y$ 改寫成 $y\\le x^2$ 再畫圖",
+      "title": "根號在下限",
       "beats": [
-        { "show": ["$\\int_0^1\\int_{\\sqrt y}^{1}\\sqrt{x^3+1}\\,dx\\,dy$"], "note": "$\\sqrt{x^3+1}$ 沒有初等反導函數。",
+        { "show": ["$\\int_0^1\\int_{\\sqrt y}^{1}\\sqrt{x^3+1}\\,dx\\,dy$"],
+          "note": "$\\sqrt{x^3+1}$ 沒有初等反導函數。",
           "say": "這一題內層對 x 積不動，要換成先對 y。",
           "board": [
-            { "do": "write", "line": "$\\int_0^1\\int_{\\sqrt y}^{1}{{f:\\sqrt{x^3+1}}}\\,dx\\,dy$" },
-            { "do": "underline", "term": "f", "label": "積不動", "on": "積不動" }
+            {"do":"write","line":"$\\int_0^1\\int_{\\sqrt y}^{1}{{f:\\sqrt{x^3+1}}}\\,dx\\,dy$"},
+            {"do":"underline","term":"f","label":"積不動","on":"積不動"}
           ] },
-        { "show": ["$x\\ge\\sqrt y$ ⟺ $y\\le x^2$"], "note": "兩邊非負，才可以平方。",
+        { "show": ["$x\\ge\\sqrt y$ ⟺ $y\\le x^2$"],
+          "note": "兩邊非負，才可以平方。",
           "say": "關鍵是把 x 大於等於根號 y 改寫成 y 小於等於 x 平方。兩邊都不是負的，才可以平方。",
           "board": [
-            { "do": "write", "line": "${{c1:x\\ge\\sqrt y}}$ ⟺ $y\\le x^2$", "on": "關鍵是" },
-            { "do": "underline", "term": "c1", "label": "兩邊非負", "on": "兩邊都不是" }
+            {"do":"write","line":"${{c1:x\\ge\\sqrt y}}$ ⟺ $y\\le x^2$","on":"關鍵是"},
+            {"do":"underline","term":"c1","label":"兩邊非負","on":"兩邊都不是"}
           ] },
-        { "show": ["$\\int_0^1\\int_0^{x^2}\\sqrt{x^3+1}\\,dy\\,dx$", "$=\\int_0^1x^2\\sqrt{x^3+1}\\,dx$"],
+        { "show": ["代 $y=1$：$x\\ge 1$ ⟺ $x^2\\ge 1$"],
+          "note": "$x\\ge 0$ 時，平方不會翻轉大小。",
+          "say": "代一個數看看：y 取一，根號 y 也是一。x 大於等於一，平方後就是 x 平方大於等於一，兩邊一樣。",
+          "board": [
+            {"do":"write","line":"$y=1$：${{q1:x\\ge 1}}$ ⟺ $x^2\\ge 1$","on":"代一個數"},
+            {"do":"underline","term":"q1","label":"x 非負","on":"大於等於一#1"}
+          ] },
+        { "show": ["區域在 $y=x^2$ 下方，$0\\le x\\le 1$"],
+          "say": "畫出來看：這塊區域在拋物線下方，x 從零到一。",
+          "board": [
+            {"do":"plot","graph":{"window":[-0.3,1.6,-0.2,1.2],"equal":true,"ticks":false,"curves":[{"expr":"x^2","domain":[0,1],"color":"blue"}],"fills":[{"expr":"x^2","from":0,"to":1,"color":"blue"}],"points":[{"x":0,"y":0},{"x":1,"y":1}],"labels":[{"x":1.05,"y":0.9,"text":"y = x^2","anchor":"start"}]}}
+          ] },
+        { "show": ["$\\int_0^1\\int_0^{x^2}\\sqrt{x^3+1}\\,dy\\,dx$","$=\\int_0^1x^2\\sqrt{x^3+1}\\,dx$"],
           "say": "區域在拋物線下方。改成鉛直線，內層乘出 x 平方，又剛好能換元。",
           "board": [
-            { "do": "write", "line": "$\\int_0^1\\int_0^{x^2}\\sqrt{x^3+1}\\,dy\\,dx$" },
-            { "do": "write", "line": "$=\\int_0^1{{x2:x^2}}\\sqrt{x^3+1}\\,dx$", "on": "內層乘出" },
-            { "do": "focus", "term": "x2", "label": "能換元", "on": "又剛好" }
+            {"do":"write","line":"$\\int_0^1\\int_0^{x^2}\\sqrt{x^3+1}\\,dy\\,dx$"},
+            {"do":"write","line":"$=\\int_0^1{{x2:x^2}}\\sqrt{x^3+1}\\,dx$","on":"內層乘出"},
+            {"do":"focus","term":"x2","label":"能換元","on":"又剛好"}
           ] },
         { "show": ["$u=x^3+1$：$\\frac{2}{9}(2\\sqrt2-1)$"],
           "say": "令 u 等於 x 三次方加一，算出來是九分之二乘上二根號二減一。",
           "board": [
-            { "do": "keep", "n": 1 },
-            { "do": "write", "line": "$u=x^3+1$：${{res:\\frac{2}{9}(2\\sqrt2-1)}}$", "on": "令 u" },
-            { "do": "box", "term": "res", "color": "green", "on": "算出來" }
+            {"do":"keep","n":1},
+            {"do":"write","line":"$u=x^3+1$：${{res:\\frac{2}{9}(2\\sqrt2-1)}}$","on":"令 u"},
+            {"do":"box","term":"res","color":"green","on":"算出來"}
           ] }
       ],
+      "key": "$x\\ge\\sqrt y$ 改寫成 $y\\le x^2$ 再畫圖",
       "check": 2
     },
     {
-      "title": "兩塊合成一塊", "key": "兩塊拼成一個三角形，改用鉛直線切",
+      "title": "兩塊合成一塊",
       "beats": [
         { "show": ["$\\int_0^1\\int_0^y x\\,dx\\,dy+\\int_1^2\\int_0^{2-y}x\\,dx\\,dy$"],
           "say": "反過來，原本兩塊加起來的積分，換個方向也可能合成一塊。",
           "board": [
-            { "do": "write", "line": "${{a:\\int_0^1\\int_0^y x\\,dx\\,dy}}$" },
-            { "do": "write", "line": "$+\\,{{b:\\int_1^2\\int_0^{2-y}x\\,dx\\,dy}}$", "on": "加起來" }
+            {"do":"write","line":"${{a:\\int_0^1\\int_0^y x\\,dx\\,dy}}$"},
+            {"do":"write","line":"$+\\,{{b:\\int_1^2\\int_0^{2-y}x\\,dx\\,dy}}$","on":"加起來"}
           ] },
-        { "show": ["合起來：$(0,0)$、$(1,1)$、$(0,2)$ 的三角形"], "note": "右邊由 $y=x$ 與 $y=2-x$ 組成。",
+        { "show": ["兩條線交在 $x=2-x$，即 $x=1$"],
+          "note": "交點 $(1,1)$ 就是三角形最右邊。",
+          "say": "先找兩條線在哪裡相交：x 等於二減 x，解出 x 等於一，交點是一一。三角形最右邊就在這裡。",
+          "board": [
+            {"do":"write","line":"${{e:x=2-x}}$，所以 $x=1$","on":"x 等於二減"},
+            {"do":"underline","term":"e","label":"交點 x=1","on":"解出"}
+          ] },
+        { "show": ["合起來：$(0,0)$、$(1,1)$、$(0,2)$ 的三角形"],
+          "note": "右邊由 $y=x$ 與 $y=2-x$ 組成。",
           "say": "兩塊拼起來是一個三角形。水平線的右邊界中途換線，所以原本才要切兩塊。",
           "board": [
-            { "do": "write", "line": "合起來：${{t:(0,0),(1,1),(0,2)}}$ 的三角形", "on": "拼起來" },
-            { "do": "underline", "term": "t", "label": "一個三角形", "on": "水平線" }
+            {"do":"write","line":"合起來：${{t:(0,0),(1,1),(0,2)}}$ 的三角形","on":"拼起來"},
+            {"do":"underline","term":"t","label":"一個三角形","on":"水平線"}
           ] },
         { "show": ["鉛直線：從 $y=x$ 進、從 $y=2-x$ 出"],
           "say": "改用鉛直線，每一條都從同一條線進、同一條線出，x 從零到一。",
           "board": [
-            { "do": "write", "line": "鉛直線：從 $y=x$ 進、$y=2-x$ 出", "on": "改用" }
+            {"do":"write","line":"鉛直線：從 $y=x$ 進、$y=2-x$ 出","on":"改用"}
+          ] },
+        { "show": ["$\\int_0^1(2x-2x^2)\\,dx=\\frac{1}{3}$"],
+          "note": "內層：$x(2-x-x)=2x-2x^2$。",
+          "say": "內層對 y 積，x 是常數，得到 x 乘二減二 x。外層從零到一積，是一減三分之二，等於三分之一，和原本兩塊相加一樣。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$\\int_0^1 x\\,(2-2x)\\,dx$","on":"內層"},
+            {"do":"write","line":"$=1-\\frac{2}{3}={{r:\\frac{1}{3}}}$","on":"一減"},
+            {"do":"box","term":"r","color":"green","on":"等於三分之一"}
           ] }
       ],
+      "key": "兩塊拼成一個三角形，改用鉛直線切",
       "predict": {
         "ask": "合成一塊的積分是？",
         "options": [
-          { "label": "$\\int_0^1\\int_x^{2-x}x\\,dy\\,dx=\\frac{1}{3}$", "correct": true },
-          { "label": "$\\int_0^2\\int_0^{x}x\\,dy\\,dx$", "why": "$x$ 只從 $0$ 到 $1$（三角形最右邊是 $(1,1)$），而且下界是 $y=x$、上界是 $y=2-x$。" },
-          { "label": "$\\int_0^1\\int_{2-x}^{x}x\\,dy\\,dx$", "why": "上下放反了：$0<x<1$ 時 $x<2-x$，從 $y=x$ 進。" }
+          {
+            "label": "$\\int_0^1\\int_x^{2-x}x\\,dy\\,dx=\\frac{1}{3}$",
+            "correct": true
+          },
+          {
+            "label": "$\\int_0^2\\int_0^{x}x\\,dy\\,dx$",
+            "why": "$x$ 只從 $0$ 到 $1$（三角形最右邊是 $(1,1)$），而且下界是 $y=x$、上界是 $y=2-x$。"
+          },
+          {
+            "label": "$\\int_0^1\\int_{2-x}^{x}x\\,dy\\,dx$",
+            "why": "上下放反了：$0<x<1$ 時 $x<2-x$，從 $y=x$ 進。"
+          }
         ]
       }
     }

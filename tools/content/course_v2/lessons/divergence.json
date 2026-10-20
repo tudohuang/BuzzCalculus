@@ -171,159 +171,222 @@
     {
       "title": "小方塊的淨流出",
       "beats": [
-        { "show": ["小方塊表面的通量（朝外）"], "note": "流出去的減掉流進來的。",
+        { "show": ["小方塊表面的通量（朝外）"],
+          "note": "流出去的減掉流進來的。",
           "say": "在一點旁邊放一個小方塊，量它表面朝外的通量：流出去的減掉流進來的。",
           "board": [
-            { "do": "write", "line": "朝外通量 ＝ 流出 − 流進" }
+            {"do":"write","line":"朝外通量 ＝ 流出 − 流進"}
           ] },
         { "show": ["除以體積，縮到一點：散度"],
           "say": "再除以方塊的體積，讓方塊縮成一點，這個極限就叫散度。",
           "board": [
-            { "do": "write", "line": "朝外通量 ÷ 體積，縮成一點" },
-            { "do": "write", "line": "散度 ${{d:\\nabla\\cdot\\mathbf F}}$ ＝ 這個極限", "on": "這個極限" }
+            {"do":"write","line":"朝外通量 ÷ 體積，縮成一點"},
+            {"do":"write","line":"散度 ${{d:\\nabla\\cdot\\mathbf F}}$ ＝ 這個極限","on":"這個極限"}
           ] },
-        { "show": ["$>0$：源；$<0$：匯；$=0$：進出相等"], "note": "像水龍頭、排水孔、不可壓縮的水。",
+        { "show": ["$\\langle x,y,z\\rangle$，方塊邊長 $s$","右面流出 $s^3$，左面 $0$"],
+          "note": "拿最簡單的場，真的算一次。",
+          "say": "場是 x、y、z，方塊邊長 s。右面 x 等於 s，面積 s 平方，流出 s 三次方；左面 x 是零，流進零。",
+          "board": [
+            {"do":"write","line":"場 $\\langle x,y,z\\rangle$，邊長 $s$"},
+            {"do":"write","line":"右面 $s\\cdot s^2=s^3$，左面 $0$","on":"右面"}
+          ] },
+        { "show": ["三方向共 $3s^3$，除以 $s^3$ 得 $3$"],
+          "note": "$s$ 再小，比值還是 3。",
+          "say": "三個方向加起來是三倍的 s 三次方，除以體積 s 三次方，永遠是三。s 縮多小都一樣，所以極限就是三。",
+          "board": [
+            {"do":"write","line":"$3s^3\\div s^3=3$"},
+            {"do":"write","line":"$s\\to0$：比值 $\\to3$","on":"縮多小"}
+          ] },
+        { "show": ["$>0$：源；$<0$：匯；$=0$：進出相等"],
+          "note": "像水龍頭、排水孔、不可壓縮的水。",
           "say": "散度正的地方像水龍頭，淨流出；負的像排水孔；零就是流進多少流出多少。",
           "board": [
-            { "do": "clear" },
-            { "do": "write", "line": "$\\nabla\\cdot\\mathbf F>0$：源（水龍頭）", "on": "正的" },
-            { "do": "write", "line": "$\\nabla\\cdot\\mathbf F<0$：匯（排水孔）", "on": "負的像" },
-            { "do": "write", "line": "$\\nabla\\cdot\\mathbf F=0$：進出相等", "on": "零就是" }
+            {"do":"clear"},
+            {"do":"write","line":"$\\nabla\\cdot\\mathbf F>0$：源（水龍頭）","on":"正的"},
+            {"do":"write","line":"$\\nabla\\cdot\\mathbf F<0$：匯（排水孔）","on":"負的像"},
+            {"do":"write","line":"$\\nabla\\cdot\\mathbf F=0$：進出相等","on":"零就是"}
           ] }
       ],
       "check": 1
     },
     {
-      "title": "公式", "key": "散度是純量：各分量對自己的變數偏微",
+      "title": "公式",
       "beats": [
-        { "show": ["$x$ 方向：右面流出 − 左面流進 $\\approx P_x\\,\\Delta x\\Delta y\\Delta z$"], "note": "直觀，不是證明。",
+        { "show": ["$P_x$：只對 $x$ 微分，其他字母當常數"],
+          "note": "這叫偏導數。",
+          "say": "P 下標 x，念成 P 對 x 的偏導數：只把 x 當變數，y 和 z 都當成固定的數。",
+          "board": [
+            {"do":"write","line":"${{n0:P_x}}$：$x$ 當變數，$y$、$z$ 當常數"},
+            {"do":"focus","term":"n0","on":"偏導數"}
+          ] },
+        { "show": ["$P=xz$：$P_x=z$，$P_z=x$"],
+          "note": "對誰微分，誰才是變數。",
+          "say": "例如 P 是 x 乘 z。對 x 微分時 z 像常數，就像三 x 微分得三，所以得 z；對 z 微分則得 x。",
+          "board": [
+            {"do":"write","line":"$P=xz$：$P_x={{n1:z}}$，$P_z={{n2:x}}$"},
+            {"do":"focus","term":"n1","on":"對 x 微分時"},
+            {"do":"focus","term":"n2","on":"對 z 微分則"}
+          ] },
+        { "show": ["$x$ 方向：右面流出 − 左面流進 $\\approx P_x\\,\\Delta x\\Delta y\\Delta z$"],
+          "note": "直觀，不是證明。",
           "say": "看 x 方向的一對面：右面流出、左面流進，差大約是 P 對 x 的偏導數乘體積。",
           "board": [
-            { "do": "write", "line": "$x$ 方向：右面 − 左面 $\\approx{{px:P_x}}\\,\\Delta x\\Delta y\\Delta z$" },
-            { "do": "focus", "term": "px", "on": "P 對 x 的偏導數" }
+            {"do":"write","line":"$x$ 方向：右面 − 左面 $\\approx{{px:P_x}}\\,\\Delta x\\Delta y\\Delta z$"},
+            {"do":"focus","term":"px","on":"P 對 x 的偏導數"}
           ] },
-        { "show": ["$\\nabla\\cdot\\mathbf F=P_x+Q_y+R_z$"], "note": "是一個數，不是向量。",
+        { "show": ["$\\nabla\\cdot\\mathbf F=P_x+Q_y+R_z$"],
+          "note": "是一個數，不是向量。",
           "say": "三個方向加起來，再除以體積。散度是三項相加，是一個數，不是向量。",
           "board": [
-            { "do": "write", "line": "${{div:\\nabla\\cdot\\mathbf F}}={{px:P_x}}+Q_y+R_z$", "on": "三個方向" },
-            { "do": "underline", "term": "div", "label": "一個數", "on": "是一個數" }
+            {"do":"write","line":"${{div:\\nabla\\cdot\\mathbf F}}={{px:P_x}}+Q_y+R_z$","on":"三個方向"},
+            {"do":"underline","term":"div","label":"一個數","on":"是一個數"}
           ] },
         { "show": ["$\\langle xz,xyz,-y^2\\rangle$：$z+xz+0$"],
           "say": "例如這個場：P 對 x 得 z，Q 對 y 得 x z，R 不含 z，得零。各對自己的變數微分，不交叉。",
           "board": [
-            { "do": "write", "line": "$\\mathbf F=\\langle {{p:xz}},{{q:xyz}},{{r:-y^2}}\\rangle$", "on": "例如" },
-            { "do": "write", "line": "$\\nabla\\cdot\\mathbf F={{a:z}}+{{b:xz}}+{{c:0}}$", "on": "P 對 x 得" },
-            { "do": "focus", "term": "r", "on": "R 不含 z" },
-            { "do": "focus", "term": "c", "on": "得零" }
+            {"do":"write","line":"$\\mathbf F=\\langle {{p:xz}},{{q:xyz}},{{r:-y^2}}\\rangle$","on":"例如"},
+            {"do":"write","line":"$\\nabla\\cdot\\mathbf F={{a:z}}+{{b:xz}}+{{c:0}}$","on":"P 對 x 得"},
+            {"do":"focus","term":"r","on":"R 不含 z"},
+            {"do":"focus","term":"c","on":"得零"}
           ] }
       ],
+      "key": "散度是純量：各分量對自己的變數偏微",
       "check": 0
     },
     {
       "title": "箭頭往外不等於正",
       "beats": [
-        { "show": ["$\\langle x,y,z\\rangle$：$\\nabla\\cdot\\mathbf F=3$"], "note": "處處淨流出，箭頭也往外。",
+        { "show": ["$\\langle x,y,z\\rangle$：$\\nabla\\cdot\\mathbf F=3$"],
+          "note": "處處淨流出，箭頭也往外。",
           "say": "發散場的散度是三，處處淨流出，箭頭也確實往外。",
           "board": [
-            { "do": "write", "line": "$\\langle x,y,z\\rangle$：$\\nabla\\cdot\\mathbf F={{t:3}}$" },
-            { "do": "circle", "term": "t", "color": "green", "on": "散度是三" }
+            {"do":"write","line":"$\\langle x,y,z\\rangle$：$\\nabla\\cdot\\mathbf F={{t:3}}$"},
+            {"do":"circle","term":"t","color":"green","on":"散度是三"}
           ] },
-        { "show": ["$\\langle -y,x,0\\rangle$：$\\nabla\\cdot\\mathbf F=0$"], "note": "純粹旋轉，沒有源。",
+        { "show": ["$\\langle -y,x,0\\rangle$：$\\nabla\\cdot\\mathbf F=0$"],
+          "note": "純粹旋轉，沒有源。",
           "say": "旋轉場的散度是零，只是在轉，沒有源。",
           "board": [
-            { "do": "write", "line": "$\\langle -y,x,0\\rangle$：$\\nabla\\cdot\\mathbf F={{z:0}}$" },
-            { "do": "focus", "term": "z", "label": "沒有源", "on": "只是在轉" }
+            {"do":"write","line":"$\\langle -y,x,0\\rangle$：$\\nabla\\cdot\\mathbf F={{z:0}}$"},
+            {"do":"focus","term":"z","label":"沒有源","on":"只是在轉"}
           ] },
-        { "show": ["$\\frac{\\langle x,y,z\\rangle}{(x^2+y^2+z^2)^{3/2}}$：箭頭全部往外"], "note": "像點電荷的電場。",
+        { "show": ["$\\frac{\\langle x,y,z\\rangle}{(x^2+y^2+z^2)^{3/2}}$：箭頭全部往外"],
+          "note": "像點電荷的電場。",
           "say": "那點電荷的電場呢？箭頭全部往外指，越遠越弱。",
           "board": [
-            { "do": "write", "line": "$\\dfrac{\\langle x,y,z\\rangle}{(x^2+y^2+z^2)^{3/2}}$" },
-            { "do": "write", "line": "箭頭全部往外，越遠越弱", "on": "箭頭全部往外" }
+            {"do":"write","line":"$\\dfrac{\\langle x,y,z\\rangle}{(x^2+y^2+z^2)^{3/2}}$"},
+            {"do":"write","line":"箭頭全部往外，越遠越弱","on":"箭頭全部往外"}
           ] }
       ],
       "check": 2
     },
     {
-      "title": "證明：往外卻沒有源", "key": "$\\rho$ 也跟著 $x$ 變，三項用 $\\rho^2$ 合併",
-      "proof": true, "of": "ex1", "skeleton": "直接",
+      "title": "證明：往外卻沒有源",
       "beats": [
-        { "show": ["記 $\\rho^2=x^2+y^2+z^2$，$P=x\\rho^{-3}$"], "note": "三個方向各微分一次，再加起來。",
+        { "show": ["記 $\\rho^2=x^2+y^2+z^2$，$P=x\\rho^{-3}$"],
+          "note": "三個方向各微分一次，再加起來。",
           "say": "策略：把分母記成 rho 的三次方，三個方向各算一次偏導數，再加起來。",
           "board": [
-            { "do": "write", "line": "$\\rho^2=x^2+y^2+z^2$，$P=x\\,{{r:\\rho^{-3}}}$", "tint": {"r":"violet"} },
-            { "do": "focus", "term": "r", "on": "rho 的三次方" }
+            {"do":"write","line":"$\\rho^2=x^2+y^2+z^2$，$P=x\\,{{r:\\rho^{-3}}}$","tint":{"r":"violet"}},
+            {"do":"focus","term":"r","on":"rho 的三次方"}
           ] },
-        { "show": ["$P_x=\\rho^{-3}-3x^2\\rho^{-5}$"], "note": "乘法法則＋連鎖律：$\\rho$ 也跟著 $x$ 變。",
-          "why": {
-            "ask": "為什麼有第二項 $-3x^2\\rho^{-5}$？",
-            "say": "P 對 x 微分，為什麼多出第二項？",
-            "options": [
-              { "label": "$\\rho$ 裡有 $x$，連鎖律帶出 $\\frac{x}{\\rho}$", "correct": true },
-              { "label": "$Q$、$R$ 也含 $x$，要一起微分", "why": "散度裡 $Q$ 只對 $y$、$R$ 只對 $z$ 微分，不交叉；第二項來自 $P$ 自己的分母。" },
-              { "label": "$x$ 對 $x$ 微分兩次", "why": "$x$ 只微分一次，得到第一項；第二項是分母 $\\rho^{-3}$ 被微分出來的。" }
-            ]
-          },
+        { "show": ["$(x^2+1)^3$ 的導數","$3(x^2+1)^2\\cdot 2x$"],
+          "note": "外層的導數，乘裡層的導數。",
+          "say": "連鎖律先看簡單的：x 平方加一的三次方。外層三次方，微分得三乘平方；裡層 x 平方加一，再乘它的導數二 x。",
+          "board": [
+            {"do":"write","line":"$(x^2+1)^3$ 的導數：$3(x^2+1)^2\\cdot 2x$"},
+            {"do":"plot","graph":{"window":[-1.5,1.5,0,12],"curves":[{"expr":"(x^2+1)^3","domain":[-1.5,1.5],"color":"blue"}]},"on":"裡層"}
+          ] },
+        { "show": ["$\\rho^{-3}$ 對 $x$：$-3\\rho^{-4}\\cdot\\rho_x$","$\\rho_x=\\frac{x}{\\rho}$"],
+          "say": "rho 負三次方：外層得負三乘 rho 負四次方，再乘 rho 對 x 的導數，那是 x 除以 rho。",
+          "board": [
+            {"do":"write","line":"$\\rho^{-3}$ 對 $x$：$-3\\rho^{-4}\\cdot\\rho_x$"},
+            {"do":"write","line":"$2\\rho\\rho_x=2x\\Rightarrow\\rho_x=\\frac{x}{\\rho}$","on":"那是"}
+          ] },
+        { "show": ["$P_x=\\rho^{-3}-3x^2\\rho^{-5}$"],
+          "note": "乘法法則＋連鎖律：$\\rho$ 也跟著 $x$ 變。",
+          "why": {"ask":"為什麼有第二項 $-3x^2\\rho^{-5}$？","say":"P 對 x 微分，為什麼多出第二項？","options":[{"label":"$\\rho$ 裡有 $x$，連鎖律帶出 $\\frac{x}{\\rho}$","correct":true},{"label":"$Q$、$R$ 也含 $x$，要一起微分","why":"散度裡 $Q$ 只對 $y$、$R$ 只對 $z$ 微分，不交叉；第二項來自 $P$ 自己的分母。"},{"label":"$x$ 對 $x$ 微分兩次","why":"$x$ 只微分一次，得到第一項；第二項是分母 $\\rho^{-3}$ 被微分出來的。"}]},
           "say": "乘法法則給出兩項：x 微分得到第一項；rho 裡也有 x，連鎖律帶出第二項。",
           "board": [
-            { "do": "write", "line": "$P_x={{t1:\\rho^{-3}}}{{t2:-3x^2\\rho^{-5}}}$" },
-            { "do": "focus", "term": "t2", "on": "第二項" },
-            { "do": "underline", "term": "t2", "label": "連鎖律", "why": true, "on": "連鎖律" }
+            {"do":"write","line":"$P_x={{t1:\\rho^{-3}}}{{t2:-3x^2\\rho^{-5}}}$"},
+            {"do":"focus","term":"t2","on":"第二項"},
+            {"do":"underline","term":"t2","label":"連鎖律","why":true,"on":"連鎖律"}
           ] },
-        { "show": ["同理 $Q_y$、$R_z$，三項相加：", "$3\\rho^{-3}-3\\rho^{-3}=0$"], "note": "$x^2+y^2+z^2=\\rho^2$，正好消掉。",
-          "why": {
-            "ask": "這個結論只在哪裡成立？",
-            "say": "三項加起來是零。這句話在哪裡成立？",
-            "options": [
-              { "label": "原點以外：原點 $\\rho=0$，$\\mathbf F$ 沒有定義", "correct": true },
-              { "label": "處處成立，原點也是", "why": "原點代進去分母是零，$\\mathbf F$ 沒有定義，散度也無從算起。" },
-              { "label": "只在離原點很遠的地方", "why": "推導沒有用到距離大小，只要 $\\rho\\ne0$ 就成立。" }
-            ]
-          },
+        { "show": ["同理 $Q_y$、$R_z$，三項相加：","$3\\rho^{-3}-3\\rho^{-3}=0$"],
+          "note": "$x^2+y^2+z^2=\\rho^2$，正好消掉。",
+          "why": {"ask":"這個結論只在哪裡成立？","say":"三項加起來是零。這句話在哪裡成立？","options":[{"label":"原點以外：原點 $\\rho=0$，$\\mathbf F$ 沒有定義","correct":true},{"label":"處處成立，原點也是","why":"原點代進去分母是零，$\\mathbf F$ 沒有定義，散度也無從算起。"},{"label":"只在離原點很遠的地方","why":"推導沒有用到距離大小，只要 $\\rho\\ne0$ 就成立。"}]},
           "say": "y、z 同理。三項加起來，分子剛好是 rho 平方，互相抵消：原點以外散度是零。",
           "board": [
-            { "do": "keep", "n": 1 },
-            { "do": "write", "line": "$Q_y$、$R_z$ 同理，三項相加：", "on": "三項加起來" },
-            { "do": "write", "line": "$3\\rho^{-3}-3{{s:\\rho^2}}\\rho^{-5}={{z:0}}$", "on": "是零" },
-            { "do": "write", "line": "只在原點以外：$\\rho\\ne0$", "why": true, "on": "原點以外" }
+            {"do":"keep","n":1},
+            {"do":"write","line":"$Q_y$、$R_z$ 同理，三項相加：","on":"三項加起來"},
+            {"do":"write","line":"$3\\rho^{-3}-3{{s:\\rho^2}}\\rho^{-5}={{z:0}}$","on":"是零"},
+            {"do":"write","line":"只在原點以外：$\\rho\\ne0$","why":true,"on":"原點以外"}
           ] },
         { "show": ["往外流的量，被越遠越弱補回來"],
           "say": "往外流的量，被越遠越弱剛好補回來：任何不含原點的小方塊，流進多少就流出多少。",
           "board": [
-            { "do": "clear" },
-            { "do": "write", "line": "往外流的量，被越遠越弱補回來", "on": "往外流的量" },
-            { "do": "write", "line": "不含原點的小方塊：流進 $=$ 流出", "on": "任何不含原點" }
+            {"do":"clear"},
+            {"do":"write","line":"往外流的量，被越遠越弱補回來","on":"往外流的量"},
+            {"do":"write","line":"不含原點的小方塊：流進 $=$ 流出","on":"任何不含原點"}
           ] }
       ],
+      "key": "$\\rho$ 也跟著 $x$ 變，三項用 $\\rho^2$ 合併",
+      "proof": true,
+      "of": "ex1",
+      "skeleton": "直接",
       "predict": {
         "ask": "那這個場的「源」在哪裡？",
         "options": [
-          { "label": "全部集中在原點那一點", "correct": true },
-          { "label": "到處都是，因為箭頭往外", "why": "原點以外散度處處是 $0$，那些地方沒有源。" },
-          { "label": "沒有源，總流出是 $0$", "why": "包住原點的曲面通量不是 $0$；源全部集中在原點，見〈散度定理〉。" }
+          {
+            "label": "全部集中在原點那一點",
+            "correct": true
+          },
+          {
+            "label": "到處都是，因為箭頭往外",
+            "why": "原點以外散度處處是 $0$，那些地方沒有源。"
+          },
+          {
+            "label": "沒有源，總流出是 $0$",
+            "why": "包住原點的曲面通量不是 $0$；源全部集中在原點，見〈散度定理〉。"
+          }
         ]
       }
     },
     {
       "title": "兩個恆等式",
       "beats": [
-        { "show": ["$\\nabla\\cdot(\\nabla\\times\\mathbf F)=0$"], "note": "三對混合偏導相減，Clairaut 抵消。",
+        { "show": ["$\\nabla\\cdot(\\nabla\\times\\mathbf F)=0$"],
+          "note": "三對混合偏導相減，Clairaut 抵消。",
           "say": "旋度的散度一定是零：展開是三對混合偏導相減，兩兩抵消。",
           "board": [
-            { "do": "write", "line": "$\\nabla\\cdot(\\nabla\\times\\mathbf F)={{z:0}}$" },
-            { "do": "write", "line": "三對混合偏導相減，兩兩抵消", "on": "展開是" }
+            {"do":"write","line":"$\\nabla\\cdot(\\nabla\\times\\mathbf F)={{z:0}}$"},
+            {"do":"write","line":"三對混合偏導相減，兩兩抵消","on":"展開是"}
           ] },
-        { "show": ["$\\langle -y(2+x),x,yz\\rangle$：$-y+0+y=0$"], "note": "〈旋度〉算過的那個場。",
+        { "show": ["旋度是向量，量流體繞著轉多快"],
+          "say": "旋度是向量，量繞著轉多快。分量依序：R 對 y 減 Q 對 z，P 對 z 減 R 對 x，Q 對 x 減 P 對 y。",
+          "board": [
+            {"do":"write","line":"旋度 $=\\langle R_y-Q_z,P_z-R_x,Q_x-P_y\\rangle$"}
+          ] },
+        { "show": ["第一分量 $-2y-xy=-y(2+x)$"],
+          "say": "R 對 y 是負二 y，Q 對 z 是 x y，第一項負 y 乘二加 x。P 對 z 是 x，Q 對 x 是 y z，其他項是零。",
+          "board": [
+            {"do":"write","line":"第一：$-2y-xy=-y(2+x)$"},
+            {"do":"write","line":"第二：$x-0$；第三：$yz-0$","on":"P 對 z"}
+          ] },
+        { "show": ["$\\langle -y(2+x),x,yz\\rangle$：$-y+0+y=0$"],
+          "note": "〈旋度〉算過的那個場。",
           "say": "拿旋度那一課算過的結果驗算：三項是負 y、零、y，加起來是零。",
           "board": [
-            { "do": "write", "line": "$\\langle -y(2+x),x,yz\\rangle$" },
-            { "do": "write", "line": "散度 $={{a:-y}}+0+{{b:y}}=0$", "on": "三項是" }
+            {"do":"write","line":"$\\langle -y(2+x),x,yz\\rangle$"},
+            {"do":"write","line":"散度 $={{a:-y}}+0+{{b:y}}=0$","on":"三項是"}
           ] },
-        { "show": ["$\\nabla\\cdot(\\nabla f)=f_{xx}+f_{yy}+f_{zz}$"], "note": "Laplacian；$=0$ 叫調和函數。",
+        { "show": ["$\\nabla\\cdot(\\nabla f)=f_{xx}+f_{yy}+f_{zz}$"],
+          "note": "Laplacian；$=0$ 叫調和函數。",
           "say": "另一個：梯度的散度，是三個純二階偏導相加，叫 Laplacian。等於零的叫調和函數。",
           "board": [
-            { "do": "clear" },
-            { "do": "write", "line": "$\\nabla\\cdot(\\nabla f)=f_{xx}+f_{yy}+f_{zz}$", "on": "梯度的散度" },
-            { "do": "write", "line": "$=0$：調和函數", "on": "等於零的" }
+            {"do":"clear"},
+            {"do":"write","line":"$\\nabla\\cdot(\\nabla f)=f_{xx}+f_{yy}+f_{zz}$","on":"梯度的散度"},
+            {"do":"write","line":"$=0$：調和函數","on":"等於零的"}
           ] }
       ],
       "check": 3

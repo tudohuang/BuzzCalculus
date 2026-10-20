@@ -130,27 +130,44 @@
     {
       "title": "猜不到的時候",
       "beats": [
-        { "show": ["$y''+y=\\sec x$"], "note": "$\\sec x$ 微分：$\\sec x\\tan x$、$\\sec x\\tan^2x$……",
+        { "show": ["$y''+y=\\sec x$"],
+          "note": "$\\sec x$ 微分：$\\sec x\\tan x$、$\\sec x\\tan^2x$……",
           "say": "右邊是 secant x。它越微分越長，永遠回不到有限幾項的家族，待定係數猜不出來。",
           "board": [
-            { "do": "write", "line": "$y''+y={{g:\\sec x}}$", "tint": { "g": "violet" } },
-            { "do": "underline", "term": "g", "label": "越微分越長", "on": "越微分" }
+            {"do":"write","line":"$y''+y={{g:\\sec x}}$","tint":{"g":"violet"}},
+            {"do":"underline","term":"g","label":"越微分越長","on":"越微分"}
+          ] },
+        { "show": ["$(\\sec x)'=\\sec x\\tan x$"],
+          "note": "再微分：冒出 $\\sec x\\tan^2x$。",
+          "say": "微分一次得 secant x 乘 tangent x。再微分，會冒出 secant x 乘 tangent x 平方，每次都是新樣子。",
+          "board": [
+            {"do":"write","line":"$(\\sec x)'=\\sec x\\tan x$"},
+            {"do":"write","line":"$(\\sec x\\tan x)'$ 含 $\\sec x\\tan^2x$","on":"再微分"}
+          ] },
+        { "show": ["能猜：微分幾次後只剩有限幾種項"],
+          "note": "$\\tan x$ 微分得 $\\sec^2x$，項越來越雜。",
+          "say": "微分幾次後只剩有限幾種項，才能猜。多項式、指數、sine、cosine 可以；tangent 不行，它越微分越雜。",
+          "board": [
+            {"do":"write","line":"可：多項式、指數、$\\sin x$、$\\cos x$"},
+            {"do":"write","line":"不行：$\\sec x$、$\\tan x$","color":"red","on":"tangent"}
           ] },
         { "show": ["$y_h=C_1\\cos x+C_2\\sin x$"],
           "say": "齊次解是 C 一 cosine x 加 C 二 sine x。",
           "board": [
-            { "do": "write", "line": "$y_h={{c1:C_1}}\\cos x+{{c2:C_2}}\\sin x$", "tint": { "c1": "blue", "c2": "blue" } }
+            {"do":"write","line":"$y_h={{c1:C_1}}\\cos x+{{c2:C_2}}\\sin x$","tint":{"c1":"blue","c2":"blue"}}
           ] },
-        { "show": ["常數換成函數：$y_p=u_1y_1+u_2y_2$"], "note": "參數被允許隨 $x$ 變化。",
+        { "show": ["常數換成函數：$y_p=u_1y_1+u_2y_2$"],
+          "note": "參數被允許隨 $x$ 變化。",
           "say": "想法是：把兩個常數換成會隨 x 變的函數 u 一、u 二。這就是參數變異這個名字。",
           "board": [
-            { "do": "transform", "line": "$y_p={{u1:u_1(x)}}\\cos x+{{u2:u_2(x)}}\\sin x$", "tint": { "u1": "blue", "u2": "blue" }, "on": "換成" }
+            {"do":"transform","line":"$y_p={{u1:u_1(x)}}\\cos x+{{u2:u_2(x)}}\\sin x$","tint":{"u1":"blue","u2":"blue"},"on":"換成"}
           ] },
-        { "show": ["常數：左邊只能得到 0"], "note": "讓它們會動，左邊才有機會等於 $g$。",
+        { "show": ["常數：左邊只能得到 0"],
+          "note": "讓它們會動，左邊才有機會等於 $g$。",
           "say": "常數的時候左邊只會是零。讓它們動起來，左邊才有機會等於右邊的 g。",
           "board": [
-            { "do": "write", "line": "常數 ⇒ 左邊只能得到 $0$" },
-            { "do": "focus", "term": "g", "on": "左邊才有機會" }
+            {"do":"write","line":"常數 ⇒ 左邊只能得到 $0$"},
+            {"do":"focus","term":"g","on":"左邊才有機會"}
           ] }
       ],
       "check": 2
@@ -158,127 +175,193 @@
     {
       "title": "公式",
       "beats": [
-        { "show": ["先化成 $y''+p(x)y'+q(x)y=g(x)$"], "note": "$2y''+\\dots$ 要先全部除以 2。",
+        { "show": ["先化成 $y''+p(x)y'+q(x)y=g(x)$"],
+          "note": "$2y''+\\dots$ 要先全部除以 2。",
           "say": "套公式前，y 雙撇的係數一定要是一。前面有二，就整條先除以二。",
           "board": [
-            { "do": "write", "line": "${{y:y''}}+p(x)y'+q(x)y=g(x)$" },
-            { "do": "underline", "term": "y", "label": "係數 1", "on": "一定要是一" }
+            {"do":"write","line":"${{y:y''}}+p(x)y'+q(x)y=g(x)$"},
+            {"do":"underline","term":"y","label":"係數 1","on":"一定要是一"}
           ] },
-        { "show": ["$W=y_1y_2'-y_1'y_2$"], "note": "$y_1$、$y_2$ 是兩個獨立的齊次解。",
+        { "show": ["$W=y_1y_2'-y_1'y_2$"],
+          "note": "$y_1$、$y_2$ 是兩個獨立的齊次解。",
           "say": "再算兩個齊次解的 Wronskian。",
           "board": [
-            { "do": "write", "line": "$W={{m:y_1y_2'}}-{{n:y_1'y_2}}$" }
+            {"do":"write","line":"$W={{m:y_1y_2'}}-{{n:y_1'y_2}}$"}
           ] },
-        { "show": ["$u_1'=-\\frac{y_2\\,g}{W}$，$u_2'=\\frac{y_1\\,g}{W}$"], "note": "$u_1'$ 前面有負號。",
+        { "show": ["$u_1'=-\\frac{y_2\\,g}{W}$，$u_2'=\\frac{y_1\\,g}{W}$"],
+          "note": "$u_1'$ 前面有負號。",
           "say": "u 一 prime 是負的 y 二乘 g 除以 W，u 二 prime 是 y 一乘 g 除以 W。積分得到 u。",
           "board": [
-            { "do": "write", "line": "${{p:u_1'}}=-\\frac{y_2\\,g}{W}$", "tint": {"p":"blue"} },
-            { "do": "write", "line": "${{q:u_2'}}=\\frac{y_1\\,g}{W}$", "tint": {"q":"blue"}, "on": "u 二 prime" }
+            {"do":"write","line":"${{p:u_1'}}=-\\frac{y_2\\,g}{W}$","tint":{"p":"blue"}},
+            {"do":"write","line":"${{q:u_2'}}=\\frac{y_1\\,g}{W}$","tint":{"q":"blue"},"on":"u 二 prime"}
           ] },
-        { "show": ["不限常係數"], "note": "$p$、$q$、$g$ 連續，已知兩個齊次解就行。",
+        { "show": ["不限常係數"],
+          "note": "$p$、$q$、$g$ 連續，已知兩個齊次解就行。",
           "say": "只要係數連續、手上有兩個獨立的齊次解，就能用，不限常係數。代價是兩個積分。",
           "board": [
-            { "do": "clear" },
-            { "do": "write", "line": "$p$、$q$、$g$ 連續", "on": "係數連續" },
-            { "do": "write", "line": "代價：兩個積分", "on": "代價" }
+            {"do":"clear"},
+            {"do":"write","line":"$p$、$q$、$g$ 連續","on":"係數連續"},
+            {"do":"write","line":"代價：兩個積分","on":"代價"}
+          ] },
+        { "show": ["獨立：不互為常數倍"],
+          "note": "若 $y_2=c\\,y_1$，則 $W=0$；所以 $W\\ne0$ 就獨立。",
+          "say": "獨立就是不互為常數倍。若 y 二是 c 乘 y 一，W 代進去就是零；所以 W 不是零，必定獨立。",
+          "board": [
+            {"do":"write","line":"$y_2={{c:c\\,y_1}}$"},
+            {"do":"write","line":"$W=y_1(c\\,y_1')-y_1'(c\\,y_1)=0$","on":"W 代進去"}
           ] }
       ],
       "check": 0
     },
     {
-      "title": "公式從哪裡來", "key": "自訂條件，讓 $y_p'$ 裡沒有 $u'$",
+      "title": "公式從哪裡來",
       "beats": [
         { "show": ["兩個未知函數，只有一個方程"],
           "say": "u 一、u 二兩個未知函數，卻只被一條方程限制，所以可以自己再加一個條件。",
           "board": [
-            { "do": "write", "line": "$y_p={{a:u_1}}y_1+{{b:u_2}}y_2$", "tint": {"a":"blue","b":"blue"} },
-            { "do": "focus", "term": "a", "color": "blue", "on": "兩個未知函數" },
-            { "do": "focus", "term": "b", "color": "blue", "on": "一條方程" }
+            {"do":"write","line":"$y_p={{a:u_1}}y_1+{{b:u_2}}y_2$","tint":{"a":"blue","b":"blue"}},
+            {"do":"focus","term":"a","color":"blue","on":"兩個未知函數"},
+            {"do":"focus","term":"b","color":"blue","on":"一條方程"}
           ] },
-        { "show": ["規定 $u_1'y_1+u_2'y_2=0$"], "note": "這樣 $y_p'$ 裡沒有 $u'$。",
+        { "show": ["規定 $u_1'y_1+u_2'y_2=0$"],
+          "note": "這樣 $y_p'$ 裡沒有 $u'$。",
           "say": "我們選一個方便的：讓這一塊是零。這樣再微分一次，也不會出現 u 雙撇。",
           "board": [
-            { "do": "write", "line": "$y_p'={{s:u_1'y_1+u_2'y_2}}+u_1y_1'+u_2y_2'$" },
-            { "do": "write", "line": "規定：${{s:u_1'y_1+u_2'y_2}}=0$", "on": "讓這一塊" }
+            {"do":"write","line":"$y_p'={{s:u_1'y_1+u_2'y_2}}+u_1y_1'+u_2y_2'$"},
+            {"do":"write","line":"規定：${{s:u_1'y_1+u_2'y_2}}=0$","on":"讓這一塊"}
           ] },
-        { "show": ["$u_1'y_1'+u_2'y_2'=g$"], "note": "代入方程，其他項全部消掉。",
+        { "show": ["$y_p''$ 裡沒有 $u''$"],
+          "note": "每一項用乘法法則；沒有 $u''$。",
+          "say": "括號是零，y p 撇只剩 u 乘 y 撇兩項。再微分，每項用乘法法則，只多出 u 撇，不會有 u 雙撇。",
+          "board": [
+            {"do":"write","line":"$y_p'=u_1y_1'+u_2y_2'$"},
+            {"do":"write","line":"$y_p''=u_1y_1''+u_1'y_1'+u_2y_2''+u_2'y_2'$","on":"再微分"}
+          ] },
+        { "show": ["$u_1(y_1''+py_1'+qy_1)=0$"],
+          "note": "$u_2$ 那一群同理。",
+          "say": "代進方程，u 一那一群是 y 一雙撇加 p y 一撇加 q y 一，再乘 u 一。y 一是齊次解，括號是零，u 二同理。",
+          "board": [
+            {"do":"write","line":"$u_1({{h:y_1''+py_1'+qy_1}})$"},
+            {"do":"underline","term":"h","color":"green","label":"等於 0","on":"括號是零"}
+          ] },
+        { "show": ["$u_1'y_1'+u_2'y_2'=g$"],
+          "note": "代入方程，其他項全部消掉。",
           "say": "代進方程，因為 y 一、y 二是齊次解，其他項都消掉，只剩這一條。兩條聯立解出公式。",
           "board": [
-            { "do": "clear" },
-            { "do": "write", "line": "${{c:u_1'y_1'+u_2'y_2'}}=g$", "on": "代進方程" },
-            { "do": "box", "term": "c", "color": "green", "on": "只剩這一條" },
-            { "do": "write", "line": "聯立 ⇒ $u_1'$、$u_2'$ 的公式", "on": "聯立" }
+            {"do":"clear"},
+            {"do":"write","line":"${{c:u_1'y_1'+u_2'y_2'}}=g$","on":"代進方程"},
+            {"do":"box","term":"c","color":"green","on":"只剩這一條"},
+            {"do":"write","line":"聯立 ⇒ $u_1'$、$u_2'$ 的公式","on":"聯立"}
           ] }
       ],
+      "key": "自訂條件，讓 $y_p'$ 裡沒有 $u'$",
       "check": 3
     },
     {
-      "title": "$\\sec x$", "key": "區間上 $\\cos x>0$，$\\ln$ 不用絕對值",
+      "title": "$\\sec x$",
       "beats": [
-        { "show": ["$y_1=\\cos x$、$y_2=\\sin x$"], "note": "區間 $-\\frac{\\pi}{2}<x<\\frac{\\pi}{2}$，$g$ 連續。",
+        { "show": ["$y_1=\\cos x$、$y_2=\\sin x$"],
+          "note": "區間 $-\\frac{\\pi}{2}<x<\\frac{\\pi}{2}$，$g$ 連續。",
           "say": "回到 secant x。已經是標準形，在這個區間 secant 是連續的。",
           "board": [
-            { "do": "write", "line": "$y_1=\\cos x$、$y_2=\\sin x$" },
-            { "do": "write", "line": "$-\\frac{\\pi}{2}<x<\\frac{\\pi}{2}$：$\\sec x$ 連續", "on": "在這個區間" }
+            {"do":"write","line":"$y_1=\\cos x$、$y_2=\\sin x$"},
+            {"do":"write","line":"$-\\frac{\\pi}{2}<x<\\frac{\\pi}{2}$：$\\sec x$ 連續","on":"在這個區間"}
           ] },
         { "show": ["$W=\\cos x\\cdot\\cos x-(-\\sin x)\\cdot\\sin x=1$"],
           "say": "Wronskian：cosine 平方加 sine 平方，就是一。",
           "board": [
-            { "do": "write", "line": "$W=\\cos^2x+\\sin^2x=1$" }
+            {"do":"write","line":"$W=\\cos^2x+\\sin^2x=1$"}
           ] },
-        { "show": ["$u_1'=-\\tan x$，$u_1=\\ln(\\cos x)$"], "note": "區間上 $\\cos x>0$，不用絕對值。",
+        { "show": ["$u_1'=-\\tan x$，$u_1=\\ln(\\cos x)$"],
+          "note": "區間上 $\\cos x>0$，不用絕對值。",
           "say": "u 一 prime 是負 sine 乘 secant，是負 tangent，積分得自然對數 cosine x。",
           "board": [
-            { "do": "keep", "n": 1 },
-            { "do": "write", "line": "$u_1'=-\\sin x\\sec x=-\\tan x$", "on": "u 一 prime" },
-            { "do": "transform", "line": "$u_1'=-\\tan x$，$u_1={{l:\\ln(\\cos x)}}$", "on": "積分得" }
+            {"do":"keep","n":1},
+            {"do":"write","line":"$u_1'=-\\sin x\\sec x=-\\tan x$","on":"u 一 prime"},
+            {"do":"transform","line":"$u_1'=-\\tan x$，$u_1={{l:\\ln(\\cos x)}}$","on":"積分得"}
+          ] },
+        { "show": ["$\\int-\\tan x\\,dx=\\ln(\\cos x)$"],
+          "note": "改寫成 $\\sin/\\cos$，令 $u=\\cos x$，分子是 $du$。",
+          "say": "tangent 改寫成 sine 除以 cosine。令 u 是 cosine x，分子剛好是 u 的微分，積分得自然對數 u。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$\\tan x=\\frac{\\sin x}{\\cos x}$","on":"除以"},
+            {"do":"write","line":"令 $u=\\cos x$，$du=-\\sin x\\,dx$","on":"令 u"},
+            {"do":"write","line":"$\\int\\frac{du}{u}=\\ln u=\\ln(\\cos x)$","on":"積分得"}
           ] },
         { "show": ["$u_2'=1$，$u_2=x$"],
           "say": "u 二 prime 是 cosine 乘 secant，剛好是一，積分是 x。",
           "board": [
-            { "do": "write", "line": "$u_2'=\\cos x\\sec x=1$，$u_2=x$" }
+            {"do":"write","line":"$u_2'=\\cos x\\sec x=1$，$u_2=x$"}
           ] },
-        { "show": ["$y_p=\\cos x\\ln(\\cos x)+x\\sin x$"], "note": "積分不用加常數。",
+        { "show": ["$y_p=\\cos x\\ln(\\cos x)+x\\sin x$"],
+          "note": "積分不用加常數。",
           "say": "乘回去就是特解。積分不用加常數，加了只是多出齊次解。",
           "board": [
-            { "do": "write", "line": "$y_p=\\cos x\\,{{l:\\ln(\\cos x)}}+x\\sin x$", "color": "green" }
+            {"do":"write","line":"$y_p=\\cos x\\,{{l:\\ln(\\cos x)}}+x\\sin x$","color":"green"}
           ] }
       ],
+      "key": "區間上 $\\cos x>0$，$\\ln$ 不用絕對值",
       "check": 1
     },
     {
       "title": "重根的齊次解",
       "beats": [
-        { "show": ["$y''-2y'+y=\\frac{e^x}{x}$"], "note": "$y_1=e^x$、$y_2=xe^x$，$W=e^{2x}$。",
+        { "show": ["$y''-2y'+y=\\frac{e^x}{x}$"],
+          "note": "$y_1=e^x$、$y_2=xe^x$，$W=e^{2x}$。",
           "say": "重根一，兩個齊次解是 e 的 x 次方和 x e 的 x 次方，W 是 e 的二 x 次方。",
           "board": [
-            { "do": "write", "line": "$y''-2y'+y=\\frac{e^x}{x}$" },
-            { "do": "write", "line": "$y_1=e^x$、$y_2=xe^x$、$W=e^{2x}$", "on": "兩個齊次解" }
+            {"do":"write","line":"$y''-2y'+y=\\frac{e^x}{x}$"},
+            {"do":"write","line":"$y_1=e^x$、$y_2=xe^x$、$W=e^{2x}$","on":"兩個齊次解"}
           ] },
         { "show": ["$u_1'=-1$，$u_1=-x$"],
           "say": "u 一 prime：x e 的 x 乘上 x 分之 e 的 x，再除以 W，剩負一。",
           "board": [
-            { "do": "write", "line": "$u_1'=-\\frac{xe^x\\cdot\\frac{e^x}{x}}{e^{2x}}$" },
-            { "do": "transform", "line": "$u_1'=-1$，$u_1=-x$", "on": "剩負一" }
+            {"do":"write","line":"$u_1'=-\\frac{xe^x\\cdot\\frac{e^x}{x}}{e^{2x}}$"},
+            {"do":"transform","line":"$u_1'=-1$，$u_1=-x$","on":"剩負一"}
           ] },
-        { "show": ["$u_2'=\\frac{1}{x}$，$u_2=\\ln x$"], "note": "$x>0$。",
+        { "show": ["$u_2'=\\frac{1}{x}$，$u_2=\\ln x$"],
+          "note": "$x>0$。",
           "say": "u 二 prime 是 x 分之一，積分是自然對數 x。",
           "board": [
-            { "do": "write", "line": "$u_2'=\\frac{1}{x}$，$u_2=\\ln x$" }
+            {"do":"write","line":"$u_2'=\\frac{1}{x}$，$u_2=\\ln x$"}
           ] },
         { "show": ["$y_p=-xe^x+xe^x\\ln x$"],
           "say": "乘回去得到兩項。其中一項看起來很眼熟。",
           "board": [
-            { "do": "keep", "n": 2 },
-            { "do": "write", "line": "$y_p=-xe^x+xe^x\\ln x$", "on": "乘回去" }
+            {"do":"keep","n":2},
+            {"do":"write","line":"$y_p=-xe^x+xe^x\\ln x$","on":"乘回去"}
+          ] },
+        { "show": ["$-xe^x=-1\\cdot y_2$"],
+          "note": "齊次解的常數倍，代進左邊還是 $0$。",
+          "say": "看第一項：負 x e 的 x 次方，就是負一乘 y 二，是齊次解的常數倍。常數倍代進左邊還是零，丟掉不影響結果。",
+          "board": [
+            {"do":"write","line":"${{t:-xe^x}}=-1\\cdot y_2$"},
+            {"do":"focus","term":"t","color":"gold","label":"齊次解","on":"常數倍#1"},
+            {"do":"write","line":"代入左邊得 $0$","on":"還是零"}
+          ] },
+        { "show": ["藍：$u_1=-x$；紅：$u_2=\\ln x$"],
+          "say": "看圖：藍色是 u 一，負 x；紅色是 u 二，自然對數 x。x 愈大，u 二長得愈慢。",
+          "board": [
+            {"do":"clear"},
+            {"do":"plot","graph":{"window":[0,3,-3,3],"curves":[{"expr":"-x","domain":[0,3],"color":"blue"},{"expr":"log(x)","domain":[0.05,3],"color":"red"}]},"on":"二#1"}
           ] }
       ],
       "predict": {
         "ask": "特解可以簡化成？",
         "options": [
-          { "label": "$xe^x\\ln x$", "correct": true },
-          { "label": "$-xe^x$", "why": "$-xe^x$ 是齊次解，代進左邊是 0；真正對上 $\\frac{e^x}{x}$ 的是 $xe^x\\ln x$。" },
-          { "label": "不能簡化", "why": "$-xe^x$ 和齊次解 $y_2=xe^x$ 重複，可以丟掉，通解裡本來就有。" }
+          {
+            "label": "$xe^x\\ln x$",
+            "correct": true
+          },
+          {
+            "label": "$-xe^x$",
+            "why": "$-xe^x$ 是齊次解，代進左邊是 0；真正對上 $\\frac{e^x}{x}$ 的是 $xe^x\\ln x$。"
+          },
+          {
+            "label": "不能簡化",
+            "why": "$-xe^x$ 和齊次解 $y_2=xe^x$ 重複，可以丟掉，通解裡本來就有。"
+          }
         ]
       }
     }

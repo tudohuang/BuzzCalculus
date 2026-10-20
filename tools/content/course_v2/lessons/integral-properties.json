@@ -138,19 +138,26 @@
     {
       "title": "切開、接起來",
       "beats": [
-        { "show": ["$\\int_a^c f\\,dx=\\int_a^b f\\,dx+\\int_b^c f\\,dx$"], "note": "有號面積一段一段加起來就是全部。",
+        { "show": ["$\\int_a^c f\\,dx=\\int_a^b f\\,dx+\\int_b^c f\\,dx$"],
+          "note": "有號面積一段一段加起來就是全部。",
           "say": "從 a 走到 c，中途經過 b。前一段的有號面積加後一段，就是整段的。",
           "board": [
-            { "do": "write", "line": "${{w:\\int_a^c f\\,dx}}={{p:\\int_a^b f\\,dx}}+{{q:\\int_b^c f\\,dx}}$", "tint": {"p":"blue","q":"violet"} },
-            { "do": "focus", "term": "p", "color": "blue", "label": "前一段", "on": "前一段" },
-            { "do": "focus", "term": "q", "color": "violet", "label": "後一段", "on": "後一段" }
+            {"do":"write","line":"${{w:\\int_a^c f\\,dx}}={{p:\\int_a^b f\\,dx}}+{{q:\\int_b^c f\\,dx}}$","tint":{"p":"blue","q":"violet"}},
+            {"do":"focus","term":"p","color":"blue","label":"前一段","on":"前一段"},
+            {"do":"focus","term":"q","color":"violet","label":"後一段","on":"後一段"}
           ] },
-        { "show": ["$\\int_0^5 f=7$，$\\int_0^2 f=3$", "⇒ $\\int_2^5 f=7-3=4$"],
+        { "show": ["曲線下的有號面積，切成兩塊"],
+          "note": "藍色是前一段，紫色是後一段。",
+          "say": "畫出來看：同一條曲線底下，從 a 到 b 是藍色一塊，從 b 到 c 是紫色一塊，兩塊合起來就是整段。",
+          "board": [
+            {"do":"plot","graph":{"window":[-0.2,2.2,-0.3,4.5],"curves":[{"expr":"x^2","domain":[0,2],"color":"ink","width":3}],"fills":[{"expr":"x^2","from":0,"to":1,"color":"blue","opacity":0.3},{"expr":"x^2","from":1,"to":2,"color":"violet","opacity":0.3}]}}
+          ] },
+        { "show": ["$\\int_0^5 f=7$，$\\int_0^2 f=3$","⇒ $\\int_2^5 f=7-3=4$"],
           "say": "反過來也能用：零到五是七，零到二是三，剩下二到五那一段就是七減三，等於四。",
           "board": [
-            { "do": "write", "line": "$\\int_0^5 f=7$，$\\int_0^2 f=3$" },
-            { "do": "transform", "line": "$\\int_2^5 f={{d:7-3}}={{r:4}}$", "on": "剩下" },
-            { "do": "box", "term": "d", "color": "green", "on": "七減三" }
+            {"do":"write","line":"$\\int_0^5 f=7$，$\\int_0^2 f=3$"},
+            {"do":"transform","line":"$\\int_2^5 f={{d:7-3}}={{r:4}}$","on":"剩下"},
+            {"do":"box","term":"d","color":"green","on":"七減三"}
           ] }
       ],
       "check": 1
@@ -158,113 +165,156 @@
     {
       "title": "上下限對調",
       "beats": [
-        { "show": ["$\\int_b^a f\\,dx=-\\int_a^b f\\,dx$"], "note": "從右往左走，算負的。",
+        { "show": ["$\\int_b^a f\\,dx=-\\int_a^b f\\,dx$"],
+          "note": "從右往左走，算負的。",
           "say": "規定上下限對調要變號，也就是從右往左走算負的。這樣切開接起來的規則怎麼排都成立。",
           "board": [
-            { "do": "write", "line": "${{l:\\int_b^a f\\,dx}}={{s:-}}{{r:\\int_a^b f\\,dx}}$" },
-            { "do": "underline", "term": "l", "label": "對調", "on": "上下限" },
-            { "do": "focus", "term": "s", "color": "red", "label": "變號", "on": "從右往左" }
+            {"do":"write","line":"${{l:\\int_b^a f\\,dx}}={{s:-}}{{r:\\int_a^b f\\,dx}}$"},
+            {"do":"underline","term":"l","label":"對調","on":"上下限"},
+            {"do":"focus","term":"s","color":"red","label":"變號","on":"從右往左"}
           ] },
-        { "show": ["$\\int_a^a f\\,dx=0$"], "note": "寬度是 $0$，什麼都沒圍到。",
+        { "show": ["$\\int_a^a f\\,dx=0$"],
+          "note": "寬度是 $0$，什麼都沒圍到。",
           "say": "上下限一樣的時候，寬度是零，什麼都沒圍到，積分就是零。",
           "board": [
-            { "do": "write", "line": "$\\int_a^a f\\,dx={{z:0}}$" },
-            { "do": "box", "term": "z", "color": "green", "label": "寬度是零", "on": "什麼都沒圍到" }
+            {"do":"write","line":"$\\int_a^a f\\,dx={{z:0}}$"},
+            {"do":"box","term":"z","color":"green","label":"寬度是零","on":"什麼都沒圍到"}
           ] }
       ],
       "check": 0
     },
     {
-      "title": "拆加法、提常數", "key": "先翻上下限變號，再拆開代值",
+      "title": "拆加法、提常數",
       "beats": [
-        { "show": ["$\\int_a^b(\\alpha f+\\beta g)\\,dx$", "$=\\alpha\\int_a^b f\\,dx+\\beta\\int_a^b g\\,dx$"],
+        { "show": ["$\\int_a^b(\\alpha f+\\beta g)\\,dx$","$=\\alpha\\int_a^b f\\,dx+\\beta\\int_a^b g\\,dx$"],
           "say": "定積分一樣是線性的：加法可以拆，常數可以提出來，跟不定積分同一件事。",
           "board": [
-            { "do": "write", "line": "$\\int_a^b({{al:\\alpha}} f+{{be:\\beta}} g)\\,dx$", "tint": { "al": "blue", "be": "violet" } },
-            { "do": "write", "line": "$={{al:\\alpha}}\\int_a^b f\\,dx+{{be:\\beta}}\\int_a^b g\\,dx$", "on": "加法可以拆" },
-            { "do": "focus", "term": "al", "color": "blue", "label": "提出來", "on": "常數可以" }
+            {"do":"write","line":"$\\int_a^b({{al:\\alpha}} f+{{be:\\beta}} g)\\,dx$","tint":{"al":"blue","be":"violet"}},
+            {"do":"write","line":"$={{al:\\alpha}}\\int_a^b f\\,dx+{{be:\\beta}}\\int_a^b g\\,dx$","on":"加法可以拆"},
+            {"do":"focus","term":"al","color":"blue","label":"提出來","on":"常數可以"}
           ] },
-        { "show": ["$\\int_0^1 x\\cdot x\\,dx=\\frac{1}{3}$，不是 $\\frac{1}{2}\\cdot\\frac{1}{2}$"], "note": "乘積一樣不能拆。",
+        { "show": ["$\\int_0^1 x\\cdot x\\,dx=\\frac{1}{3}$，不是 $\\frac{1}{2}\\cdot\\frac{1}{2}$"],
+          "note": "乘積一樣不能拆。",
           "say": "但乘積還是不能拆。x 乘 x 從零積到一是三分之一，不是兩個二分之一相乘的四分之一。",
           "board": [
-            { "do": "clear" },
-            { "do": "write", "line": "$\\int_0^1 {{p:x\\cdot x}}\\,dx=\\frac{1}{3}$", "on": "但乘積" },
-            { "do": "underline", "term": "p", "label": "乘積不能拆", "on": "x 乘 x" },
-            { "do": "write", "line": "$\\ne\\frac{1}{2}\\cdot\\frac{1}{2}$", "on": "不是兩個" }
+            {"do":"clear"},
+            {"do":"write","line":"$\\int_0^1 {{p:x\\cdot x}}\\,dx=\\frac{1}{3}$","on":"但乘積"},
+            {"do":"underline","term":"p","label":"乘積不能拆","on":"x 乘 x"},
+            {"do":"write","line":"$\\ne\\frac{1}{2}\\cdot\\frac{1}{2}$","on":"不是兩個"}
           ] },
-        { "show": ["$\\int_0^5 f=7$，$\\int_0^5 g=-2$"], "note": "$\\int_0^5(2f-3g)\\,dx=14+6=20$。",
+        { "show": ["$\\int_0^5 f=7$，$\\int_0^5 g=-2$"],
+          "note": "$\\int_0^5(2f-3g)\\,dx=14+6=20$。",
           "say": "已知零到五 f 是七、g 是負二。二 f 減三 g 就是十四加六，等於二十。",
           "board": [
-            { "do": "clear" },
-            { "do": "write", "line": "$\\int_0^5 f=7$，$\\int_0^5 g=-2$", "on": "已知" },
-            { "do": "write", "line": "$\\int_0^5(2f-3g)\\,dx=14+6=20$", "on": "二 f 減" }
+            {"do":"clear"},
+            {"do":"write","line":"$\\int_0^5 f=7$，$\\int_0^5 g=-2$","on":"已知"},
+            {"do":"write","line":"$\\int_0^5(2f-3g)\\,dx=14+6=20$","on":"二 f 減"}
           ] }
       ],
+      "key": "先翻上下限變號，再拆開代值",
       "predict": {
         "ask": "那 $\\int_5^0(2f-3g)\\,dx$ 是？",
         "options": [
-          { "label": "$-20$", "correct": true },
-          { "label": "$20$", "why": "上下限從 $0$ 到 $5$ 換成 $5$ 到 $0$，反方向走，要變號。" },
-          { "label": "$-14$", "why": "$g$ 那一項漏了：$2\\cdot 7-3\\cdot(-2)=20$，對調再變號是 $-20$。" }
+          {
+            "label": "$-20$",
+            "correct": true
+          },
+          {
+            "label": "$20$",
+            "why": "上下限從 $0$ 到 $5$ 換成 $5$ 到 $0$，反方向走，要變號。"
+          },
+          {
+            "label": "$-14$",
+            "why": "$g$ 那一項漏了：$2\\cdot 7-3\\cdot(-2)=20$，對調再變號是 $-20$。"
+          }
         ]
       }
     },
     {
       "title": "奇函數歸零",
       "beats": [
-        { "show": ["奇函數：$\\int_{-a}^{a}f\\,dx=0$"], "note": "對原點對稱：一塊在上，對應那塊在下。",
+        { "show": ["奇函數：$\\int_{-a}^{a}f\\,dx=0$"],
+          "note": "對原點對稱：一塊在上，對應那塊在下。",
           "say": "奇函數對原點對稱：右邊一塊在上方，左邊對應那塊就在下方，大小一樣，剛好抵消。",
           "board": [
-            { "do": "plot", "graph": { "window": [-1.6, 1.6, -3.2, 3.2], "curves": [{ "expr": "x^3", "color": "ink", "width": 3 }], "fills": [{ "expr": "x^3", "from": 0, "to": 1.45, "color": "blue", "opacity": 0.3 }, { "expr": "x^3", "from": -1.45, "to": 0, "color": "violet", "opacity": 0.3 }] }, "on": "對原點對稱" },
-            { "do": "write", "line": "奇函數：$\\int_{-a}^{a}f\\,dx={{z:0}}$", "on": "大小一樣" }
+            {"do":"plot","graph":{"window":[-1.6,1.6,-3.2,3.2],"curves":[{"expr":"x^3","color":"ink","width":3}],"fills":[{"expr":"x^3","from":0,"to":1.45,"color":"blue","opacity":0.3},{"expr":"x^3","from":-1.45,"to":0,"color":"violet","opacity":0.3}]},"on":"對原點對稱"},
+            {"do":"write","line":"奇函數：$\\int_{-a}^{a}f\\,dx={{z:0}}$","on":"大小一樣"}
           ] },
-        { "show": ["偶函數：$\\int_{-a}^{a}f\\,dx=2\\int_0^a f\\,dx$"], "note": "只對對稱的區間 $[-a,a]$ 有效。",
+        { "show": ["奇函數：$f(-x)=-f(x)$"],
+          "note": "把 $-x$ 代進去，看有沒有多出負號。",
+          "say": "怎麼判斷奇函數？把負 x 代進去，如果結果剛好是原來的值前面多一個負號，就是奇函數。",
+          "board": [
+            {"do":"write","line":"奇函數：${{c:f(-x)=-f(x)}}$"},
+            {"do":"underline","term":"c","label":"代負 x","on":"負 x 代進去"}
+          ] },
+        { "show": ["$x^2\\sin x$：$(-x)^2\\sin(-x)=-x^2\\sin x$"],
+          "note": "$(-x)^2=x^2$，$\\sin(-x)=-\\sin x$。",
+          "say": "檢查 x 平方乘 sine x：負 x 的平方還是 x 平方，sine 負 x 是負的 sine x，整個多一個負號，所以是奇函數。",
+          "board": [
+            {"do":"write","line":"$(-x)^2\\sin(-x)={{r:-x^2\\sin x}}$","on":"負 x 的平方"},
+            {"do":"box","term":"r","color":"green","label":"奇函數","on":"整個多"}
+          ] },
+        { "show": ["偶函數：$\\int_{-a}^{a}f\\,dx=2\\int_0^a f\\,dx$"],
+          "note": "只對對稱的區間 $[-a,a]$ 有效。",
           "say": "偶函數對 y 軸對稱，左右兩塊一樣大，算一邊再乘二。這兩條都只能用在對稱的區間。",
           "board": [
-            { "do": "write", "line": "偶函數：$\\int_{-a}^{a}f\\,dx={{t:2\\int_0^a f\\,dx}}$", "on": "偶函數" },
-            { "do": "underline", "term": "t", "label": "算一邊乘二", "on": "算一邊" }
+            {"do":"write","line":"偶函數：$\\int_{-a}^{a}f\\,dx={{t:2\\int_0^a f\\,dx}}$","on":"偶函數"},
+            {"do":"underline","term":"t","label":"算一邊乘二","on":"算一邊"}
           ] },
-        { "show": ["$\\int_{-2}^{2}\\left(x^3+\\sqrt{4-x^2}\\right)dx$"], "note": "$x^3$ 是奇函數；後一項是上半圓。",
+        { "show": ["$\\int_{-2}^{2}\\left(x^3+\\sqrt{4-x^2}\\right)dx$"],
+          "note": "$x^3$ 是奇函數；後一項是上半圓。",
           "say": "例如這一題：x 三次方是奇函數，直接歸零；根號那一項是半徑二的上半圓，面積二 pi。",
           "board": [
-            { "do": "clear" },
-            { "do": "write", "line": "$\\int_{-2}^{2}\\left({{o:x^3}}+{{c:\\sqrt{4-x^2}}}\\right)dx$", "tint": { "o": "blue", "c": "violet" }, "on": "例如" },
-            { "do": "focus", "term": "o", "color": "blue", "on": "x 三次方" },
-            { "do": "write", "line": "$={{z:0}}+{{h:2\\pi}}$", "tint": { "z": "blue", "h": "violet" }, "on": "直接歸零" },
-            { "do": "focus", "term": "c", "color": "violet", "label": "上半圓", "on": "根號那一項" }
+            {"do":"clear"},
+            {"do":"write","line":"$\\int_{-2}^{2}\\left({{o:x^3}}+{{c:\\sqrt{4-x^2}}}\\right)dx$","tint":{"o":"blue","c":"violet"},"on":"例如"},
+            {"do":"focus","term":"o","color":"blue","on":"x 三次方"},
+            {"do":"write","line":"$={{z:0}}+{{h:2\\pi}}$","tint":{"z":"blue","h":"violet"},"on":"直接歸零"},
+            {"do":"focus","term":"c","color":"violet","label":"上半圓","on":"根號那一項"}
           ] }
       ],
       "check": 2
     },
     {
-      "title": "比大小與估計", "key": "找出 $f$ 的上下界，乘上區間長",
+      "title": "比大小與估計",
       "beats": [
-        { "show": ["若 $m\\le f(x)\\le M$", "$m(b-a)\\le\\int_a^b f\\,dx\\le M(b-a)$"], "note": "面積被兩個矩形夾住。",
+        { "show": ["若 $m\\le f(x)\\le M$","$m(b-a)\\le\\int_a^b f\\,dx\\le M(b-a)$"],
+          "note": "面積被兩個矩形夾住。",
           "say": "曲線被夾在兩條水平線之間，它底下的面積就被兩個矩形夾住。矩形的寬是 b 減 a。",
           "board": [
-            { "do": "write", "line": "若 $m\\le f(x)\\le M$", "on": "曲線被夾在" },
-            { "do": "write", "line": "$m{{w:(b-a)}}\\le\\int_a^b f\\,dx\\le M(b-a)$", "on": "它底下的面積" },
-            { "do": "underline", "term": "w", "label": "寬", "on": "矩形的寬" }
+            {"do":"write","line":"若 $m\\le f(x)\\le M$","on":"曲線被夾在"},
+            {"do":"write","line":"$m{{w:(b-a)}}\\le\\int_a^b f\\,dx\\le M(b-a)$","on":"它底下的面積"},
+            {"do":"underline","term":"w","label":"寬","on":"矩形的寬"}
           ] },
-        { "show": ["$\\int_0^1 e^{-x^2}\\,dx$"], "note": "$e^{-x^2}$ 沒有初等反導函數。",
+        { "show": ["$\\int_0^1 e^{-x^2}\\,dx$"],
+          "note": "$e^{-x^2}$ 沒有初等反導函數。",
           "say": "這很有用：e 的負 x 平方次方，寫不出初等反導函數，但可以先估它大概多少。",
           "board": [
-            { "do": "clear" },
-            { "do": "plot", "graph": { "window": [-0.15, 1.25, 0, 1.15], "curves": [{ "expr": "exp(-(x^2))", "color": "blue", "width": 3 }], "fills": [{ "expr": "exp(-(x^2))", "from": 0, "to": 1, "color": "gold", "opacity": 0.25 }], "dashed": [[[0, 1], [1, 1]], [[0, 0.3679], [1, 0.3679]], [[1, 0], [1, 1]]] }, "on": "e 的負" },
-            { "do": "write", "line": "${{i:\\int_0^1 e^{-x^2}\\,dx}}$", "on": "先估它" }
+            {"do":"clear"},
+            {"do":"plot","graph":{"window":[-0.15,1.25,0,1.15],"curves":[{"expr":"exp(-(x^2))","color":"blue","width":3}],"fills":[{"expr":"exp(-(x^2))","from":0,"to":1,"color":"gold","opacity":0.25}],"dashed":[[[0,1],[1,1]],[[0,0.3679],[1,0.3679]],[[1,0],[1,1]]]},"on":"e 的負"},
+            {"do":"write","line":"${{i:\\int_0^1 e^{-x^2}\\,dx}}$","on":"先估它"}
           ] },
-        { "show": ["$[0,1]$ 上 $e^{-1}\\le e^{-x^2}\\le 1$"], "note": "區間長度 $1-0=1$。",
+        { "show": ["$[0,1]$ 上 $e^{-1}\\le e^{-x^2}\\le 1$"],
+          "note": "區間長度 $1-0=1$。",
           "say": "在零到一之間，函數從一降到 e 的負一次方，區間長度是一。",
           "board": [
-            { "do": "transform", "line": "$[0,1]$ 上 $e^{-1}\\le e^{-x^2}\\le 1$", "on": "在零到一" }
+            {"do":"transform","line":"$[0,1]$ 上 $e^{-1}\\le e^{-x^2}\\le 1$","on":"在零到一"}
           ] },
-        { "show": ["$0.368\\le\\int_0^1 e^{-x^2}\\,dx\\le 1$"], "note": "實際值約 $0.747$，確實在範圍內。",
+        { "show": ["下界：$e^{-1}\\cdot 1$，乘區間長度"],
+          "note": "乘的是區間長度，不是端點。",
+          "say": "下界要乘的是區間長度一，不是端點，所以左邊是 e 的負一次方乘一。",
+          "board": [
+            {"do":"write","line":"${{lo:e^{-1}\\cdot 1}}\\le\\int_0^1 e^{-x^2}\\,dx$"},
+            {"do":"underline","term":"lo","color":"blue","label":"乘長度","on":"區間長度"}
+          ] },
+        { "show": ["$0.368\\le\\int_0^1 e^{-x^2}\\,dx\\le 1$"],
+          "note": "實際值約 $0.747$，確實在範圍內。",
           "say": "所以積分介於零點三六八和一之間。實際值大約零點七四七，確實落在裡面。",
           "board": [
-            { "do": "write", "line": "$0.368\\le{{i:\\int_0^1 e^{-x^2}\\,dx}}\\le 1$", "on": "所以積分" },
-            { "do": "underline", "term": "i", "color": "green", "label": "約 0.747", "on": "實際值" }
+            {"do":"write","line":"$0.368\\le{{i:\\int_0^1 e^{-x^2}\\,dx}}\\le 1$","on":"所以積分"},
+            {"do":"underline","term":"i","color":"green","label":"約 0.747","on":"實際值"}
           ] }
       ],
+      "key": "找出 $f$ 的上下界，乘上區間長",
       "check": 3
     }
   ],

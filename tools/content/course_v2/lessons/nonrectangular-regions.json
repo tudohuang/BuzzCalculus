@@ -139,32 +139,41 @@
     {
       "title": "鉛直線掃描",
       "beats": [
-        { "show": ["$y=x^2$ 與 $y=x$ 之間"], "note": "$y$ 的範圍隨 $x$ 改變。",
+        { "show": ["$y=x^2$ 與 $y=x$ 之間"],
+          "note": "$y$ 的範圍隨 $x$ 改變。",
           "say": "實際的區域常常是兩條曲線夾出來的。這時 y 的範圍會跟著 x 變，不能再用固定的上下限。",
           "board": [
-            { "do": "write", "line": "區域：$y=x^2$ 與 $y=x$ 之間" },
-            { "do": "write", "line": "$y$ 的範圍跟著 $x$ 變", "on": "會跟著" }
+            {"do":"write","line":"區域：$y=x^2$ 與 $y=x$ 之間"},
+            {"do":"write","line":"$y$ 的範圍跟著 $x$ 變","on":"會跟著"}
           ] },
-        { "show": ["固定 $x$，畫一條鉛直線"], "note": "從下界 $y=g_1(x)$ 進、上界 $y=g_2(x)$ 出。",
+        { "show": ["固定 $x$，畫一條鉛直線"],
+          "note": "從下界 $y=g_1(x)$ 進、上界 $y=g_2(x)$ 出。",
           "say": "辦法是：固定一個 x，畫一條鉛直線穿過區域，看它從哪條曲線進、從哪條曲線出。",
           "board": [
-            { "do": "clear" },
-            { "do": "write", "line": "固定 $x$，畫鉛直線", "on": "固定一個" },
-            { "do": "write", "line": "進 ${{a:y=g_1(x)}}$、出 ${{b:y=g_2(x)}}$", "tint": {"a":"blue","b":"blue"}, "on": "從哪條曲線進" }
+            {"do":"clear"},
+            {"do":"write","line":"固定 $x$，畫鉛直線","on":"固定一個"},
+            {"do":"write","line":"進 ${{a:y=g_1(x)}}$、出 ${{b:y=g_2(x)}}$","tint":{"a":"blue","b":"blue"},"on":"從哪條曲線進"}
           ] },
         { "show": ["$x=0.5$：從 $y=0.25$ 進、$y=0.5$ 出"],
           "say": "例如 x 等於零點五，鉛直線從零點二五進去，從零點五出來，下面是拋物線、上面是直線。",
           "board": [
-            { "do": "write", "line": "$x=0.5$：$y={{lo:0.25}}$ 進、$y={{hi:0.5}}$ 出" },
-            { "do": "underline", "term": "lo", "color": "blue", "label": "拋物線", "on": "零點二五" },
-            { "do": "underline", "term": "hi", "color": "blue", "label": "直線", "on": "出來" }
+            {"do":"write","line":"$x=0.5$：$y={{lo:0.25}}$ 進、$y={{hi:0.5}}$ 出"},
+            {"do":"underline","term":"lo","color":"blue","label":"拋物線","on":"零點二五"},
+            {"do":"underline","term":"hi","color":"blue","label":"直線","on":"出來"}
           ] },
-        { "show": ["$\\int_a^b\\!\\int_{g_1(x)}^{g_2(x)} f\\,dy\\,dx$"], "note": "這裡 $x$ 從 $0$ 掃到 $1$。",
+        { "show": ["兩條曲線夾出的區域"],
+          "note": "藍：$y=x^2$，紅：$y=x$。",
+          "say": "畫出來看：藍色是拋物線，紅色是直線，中間夾住的這一塊，就是要積分的區域。",
+          "board": [
+            {"do":"plot","graph":{"window":[-0.5,1.5,-0.5,1.5],"curves":[{"expr":"x^2","domain":[-0.5,1.5],"color":"blue"},{"expr":"x","domain":[-0.5,1.5],"color":"red"}],"fills":[{"expr":"x","expr2":"x^2","from":0,"to":1,"color":"gold"}]}}
+          ] },
+        { "show": ["$\\int_a^b\\!\\int_{g_1(x)}^{g_2(x)} f\\,dy\\,dx$"],
+          "note": "這裡 $x$ 從 $0$ 掃到 $1$。",
           "say": "這兩條曲線就是內層的上下限；再看 x 從哪裡掃到哪裡，是外層的上下限。",
           "board": [
-            { "do": "write", "line": "${{out:\\int_a^b}}\\!{{in:\\int_{g_1(x)}^{g_2(x)} }}\\, f\\,dy\\,dx$", "tint": {"out":"violet","in":"blue"} },
-            { "do": "underline", "term": "in", "color": "blue", "label": "內層", "on": "內層" },
-            { "do": "underline", "term": "out", "color": "violet", "label": "外層", "on": "外層" }
+            {"do":"write","line":"${{out:\\int_a^b}}\\!{{in:\\int_{g_1(x)}^{g_2(x)} }}\\, f\\,dy\\,dx$","tint":{"out":"violet","in":"blue"}},
+            {"do":"underline","term":"in","color":"blue","label":"內層","on":"內層"},
+            {"do":"underline","term":"out","color":"violet","label":"外層","on":"外層"}
           ] }
       ],
       "check": 0
@@ -175,111 +184,161 @@
         { "show": ["① 畫圖，找交點"],
           "say": "四個步驟。第一，畫圖，找出邊界曲線的交點。",
           "board": [
-            { "do": "write", "line": "① 畫圖，找交點" }
+            {"do":"write","line":"① 畫圖，找交點"}
           ] },
-        { "show": ["② 每條掃描線：同一條進、同一條出"], "note": "中途換曲線就要切塊，或換方向。",
+        { "show": ["② 每條掃描線：同一條進、同一條出"],
+          "note": "中途換曲線就要切塊，或換方向。",
           "say": "第二，選掃描方向：每一條掃過去的線，都要從同一條曲線進、同一條曲線出。",
           "board": [
-            { "do": "write", "line": "② 每條線：同一條進、同一條出" }
+            {"do":"write","line":"② 每條線：同一條進、同一條出"}
           ] },
         { "show": ["③ 內層可以是曲線，外層一定是常數"],
           "say": "第三，寫上下限：內層可以含外層的變數，外層一定是常數。",
           "board": [
-            { "do": "write", "line": "③ 內層可以是曲線，外層一定是常數" }
+            {"do":"write","line":"③ 內層可以是曲線，外層一定是常數"}
           ] },
         { "show": ["④ 由內往外積，答案是一個數"],
           "say": "第四，由內往外積。最後的答案是一個數，不能還留著 x 或 y。",
           "board": [
-            { "do": "write", "line": "④ 由內往外積，答案是一個數" }
+            {"do":"write","line":"④ 由內往外積，答案是一個數"}
           ] }
       ],
       "check": 1
     },
     {
-      "title": "兩條曲線之間", "key": "先解交點，判斷哪條曲線在上",
+      "title": "兩條曲線之間",
       "beats": [
-        { "show": ["$\\iint_D xy\\,dA$，$x^2=x$：$x=0$、$1$"], "note": "$0<x<1$ 時 $x^2<x$：$y=x$ 在上。",
+        { "show": ["$\\iint_D xy\\,dA$，$x^2=x$：$x=0$、$1$"],
+          "note": "$0<x<1$ 時 $x^2<x$：$y=x$ 在上。",
           "say": "照步驟來。交點在 x 等於零和一；中間 x 平方比 x 小，所以直線在上、拋物線在下。",
           "board": [
-            { "do": "write", "line": "$\\iint_D xy\\,dA$" },
-            { "do": "write", "line": "交點：$x^2=x$，$x=0$、$1$", "on": "交點在" },
-            { "do": "write", "line": "$0<x<1$：${{c:x^2<x}}$", "on": "中間" },
-            { "do": "underline", "term": "c", "color": "gold", "label": "直線在上", "on": "直線在上" }
+            {"do":"write","line":"$\\iint_D xy\\,dA$"},
+            {"do":"write","line":"交點：$x^2=x$，$x=0$、$1$","on":"交點在"},
+            {"do":"write","line":"$0<x<1$：${{c:x^2<x}}$","on":"中間"},
+            {"do":"underline","term":"c","color":"gold","label":"直線在上","on":"直線在上"}
           ] },
         { "show": ["$\\int_0^1\\int_{x^2}^{x}xy\\,dy\\,dx$"],
           "say": "鉛直線從拋物線進、從直線出。",
           "board": [
-            { "do": "clear" },
-            { "do": "write", "line": "$\\int_0^1\\int_{{{lo:x^2}}}^{{{hi:x}}}xy\\,dy\\,dx$", "on": "鉛直線" },
-            { "do": "focus", "term": "lo", "color": "blue", "on": "拋物線" },
-            { "do": "focus", "term": "hi", "color": "blue", "on": "從直線" }
+            {"do":"clear"},
+            {"do":"write","line":"$\\int_0^1\\int_{{{lo:x^2}}}^{{{hi:x}}}xy\\,dy\\,dx$","on":"鉛直線"},
+            {"do":"focus","term":"lo","color":"blue","on":"拋物線"},
+            {"do":"focus","term":"hi","color":"blue","on":"從直線"}
           ] },
-        { "show": ["內層 $\\frac{x^3-x^5}{2}$", "外層 $\\frac{1}{2}\\left(\\frac{1}{4}-\\frac{1}{6}\\right)=\\frac{1}{24}$"],
+        { "show": ["內層：$x$ 當常數，積 $y$"],
+          "note": "$y$ 的反導函數是 $\\frac{y^2}{2}$。",
+          "say": "先積 y。x 對 y 來說是常數，留在外面；y 的反導函數是 y 平方除以二。",
+          "board": [
+            {"do":"write","line":"$\\int_{x^2}^{x}xy\\,dy=x{{n1:\\left[\\frac{y^2}{2}\\right]}}_{x^2}^{x}$"},
+            {"do":"focus","term":"n1","color":"gold","on":"反導函數"}
+          ] },
+        { "show": ["上限減下限，再乘 $x$"],
+          "note": "下限 $x^2$ 代入 $y^2$ 得 $x^4$。",
+          "say": "上限 x 代進去得 x 平方，下限 x 平方代進去得 x 的四次方。相減再乘 x，就是 x 的三次方減 x 的五次方，除以二。",
+          "board": [
+            {"do":"write","line":"$x\\cdot\\frac{x^2-(x^2)^2}{2}$"},
+            {"do":"write","line":"$=\\frac{x(x^2-x^4)}{2}=\\frac{x^3-x^5}{2}$","on":"相減再乘"}
+          ] },
+        { "show": ["內層 $\\frac{x^3-x^5}{2}$","外層 $\\frac{1}{2}\\left(\\frac{1}{4}-\\frac{1}{6}\\right)=\\frac{1}{24}$"],
           "say": "內層代完上下限只剩 x，外層再積，得二十四分之一。",
           "board": [
-            { "do": "write", "line": "內層：$\\frac{x^3-x^5}{2}$" },
-            { "do": "write", "line": "外層：$\\frac{1}{2}\\left(\\frac{1}{4}-\\frac{1}{6}\\right)={{r:\\frac{1}{24}}}$", "on": "外層再積" },
-            { "do": "box", "term": "r", "color": "green", "on": "二十四" }
+            {"do":"write","line":"內層：$\\frac{x^3-x^5}{2}$"},
+            {"do":"write","line":"外層：$\\frac{1}{2}\\left(\\frac{1}{4}-\\frac{1}{6}\\right)={{r:\\frac{1}{24}}}$","on":"外層再積"},
+            {"do":"box","term":"r","color":"green","on":"二十四"}
           ] }
       ],
+      "key": "先解交點，判斷哪條曲線在上",
       "check": 2
     },
     {
       "title": "水平線掃描",
       "beats": [
-        { "show": ["$\\int_c^d\\!\\int_{h_1(y)}^{h_2(y)} f\\,dx\\,dy$"], "note": "左右界要寫成 $x=$ $y$ 的函數。",
+        { "show": ["$\\int_c^d\\!\\int_{h_1(y)}^{h_2(y)} f\\,dx\\,dy$"],
+          "note": "左右界要寫成 $x=$ $y$ 的函數。",
           "say": "反過來，固定 y 畫水平線，從左界進、右界出。左右界要先把曲線解成 x 等於 y 的函數。",
           "board": [
-            { "do": "write", "line": "$\\int_c^d\\!{{in:\\int_{h_1(y)}^{h_2(y)} }}\\, f\\,dx\\,dy$" },
-            { "do": "underline", "term": "in", "color": "blue", "label": "左進右出", "on": "從左界進" },
-            { "do": "write", "line": "左右界要寫成 $x=h(y)$", "on": "左右界要先" }
+            {"do":"write","line":"$\\int_c^d\\!{{in:\\int_{h_1(y)}^{h_2(y)} }}\\, f\\,dx\\,dy$"},
+            {"do":"underline","term":"in","color":"blue","label":"左進右出","on":"從左界進"},
+            {"do":"write","line":"左右界要寫成 $x=h(y)$","on":"左右界要先"}
           ] },
-        { "show": ["$x=y^2$ 與 $x=y+2$ 圍成的區域"], "note": "交點 $(1,-1)$、$(4,2)$。",
+        { "show": ["$x=y^2$ 與 $x=y+2$ 圍成的區域"],
+          "note": "交點 $(1,-1)$、$(4,2)$。",
           "say": "例如一條橫躺的拋物線和一條直線圍成的區域，交點在一、負一和四、二。",
           "board": [
-            { "do": "clear" },
-            { "do": "write", "line": "$x=y^2$ 與 $x=y+2$ 圍成", "on": "橫躺" },
-            { "do": "write", "line": "交點 $(1,-1)$、$(4,2)$", "on": "交點在" }
+            {"do":"clear"},
+            {"do":"write","line":"$x=y^2$ 與 $x=y+2$ 圍成","on":"橫躺"},
+            {"do":"write","line":"交點 $(1,-1)$、$(4,2)$","on":"交點在"}
           ] },
-        { "show": ["鉛直線：$x$ 在 $0$ 到 $1$ 下界是 $y=-\\sqrt x$"], "note": "$x$ 在 $1$ 到 $4$ 下界換成 $y=x-2$。",
+        { "show": ["鉛直線：$x$ 在 $0$ 到 $1$ 下界是 $y=-\\sqrt x$"],
+          "note": "$x$ 在 $1$ 到 $4$ 下界換成 $y=x-2$。",
           "say": "用鉛直線掃會怎樣？x 在零到一，下界是拋物線的下半支；過了一，下界換成直線。",
           "board": [
-            { "do": "write", "line": "鉛直線：$0<x<1$，下界 $y=-\\sqrt{x}$" },
-            { "do": "write", "line": "$1<x<4$：下界 ${{b:y=x-2}}$", "on": "過了一" },
-            { "do": "underline", "term": "b", "color": "gold", "label": "換曲線", "on": "下界換成" }
+            {"do":"write","line":"鉛直線：$0<x<1$，下界 $y=-\\sqrt{x}$"},
+            {"do":"write","line":"$1<x<4$：下界 ${{b:y=x-2}}$","on":"過了一"},
+            {"do":"underline","term":"b","color":"gold","label":"換曲線","on":"下界換成"}
+          ] },
+        { "show": ["比一比：各要寫幾段？"],
+          "note": "鉛直線要兩段、兩個下界。水平線呢？",
+          "say": "比一比：鉛直線要寫兩段積分，用到兩個下界。水平線呢？看左界和右界有沒有中途換曲線。",
+          "board": [
+            {"do":"write","line":"鉛直：兩段積分，兩個下界"},
+            {"do":"write","line":"水平：左界、右界有換嗎？","on":"水平線呢"}
           ] }
       ],
       "predict": {
         "ask": "這一題怎麼寫最省事？",
         "options": [
-          { "label": "水平線：$\\int_{-1}^{2}\\int_{y^2}^{y+2}y\\,dx\\,dy$", "correct": true },
-          { "label": "鉛直線一塊：$\\int_0^4\\int_{x-2}^{\\sqrt x}y\\,dy\\,dx$", "why": "$x$ 在 $0$ 到 $1$ 時下界是 $-\\sqrt x$，不是 $x-2$；鉛直線要切兩塊。" },
-          { "label": "水平線：$\\int_{-1}^{2}\\int_{y+2}^{y^2}y\\,dx\\,dy$", "why": "左右放反了：中間 $y^2<y+2$，從拋物線進、從直線出。" }
+          {
+            "label": "水平線：$\\int_{-1}^{2}\\int_{y^2}^{y+2}y\\,dx\\,dy$",
+            "correct": true
+          },
+          {
+            "label": "鉛直線一塊：$\\int_0^4\\int_{x-2}^{\\sqrt x}y\\,dy\\,dx$",
+            "why": "$x$ 在 $0$ 到 $1$ 時下界是 $-\\sqrt x$，不是 $x-2$；鉛直線要切兩塊。"
+          },
+          {
+            "label": "水平線：$\\int_{-1}^{2}\\int_{y+2}^{y^2}y\\,dx\\,dy$",
+            "why": "左右放反了：中間 $y^2<y+2$，從拋物線進、從直線出。"
+          }
         ]
       }
     },
     {
-      "title": "同一個三角形", "key": "換方向時，斜邊改寫成 $x=2y$",
+      "title": "同一個三角形",
       "beats": [
-        { "show": ["$T$：$(0,0)$、$(2,0)$、$(2,1)$"], "note": "斜邊 $y=\\frac{x}{2}$，也就是 $x=2y$。",
+        { "show": ["$T$：$(0,0)$、$(2,0)$、$(2,1)$"],
+          "note": "斜邊 $y=\\frac{x}{2}$，也就是 $x=2y$。",
           "say": "同一塊三角形，兩種方向都能掃。斜邊寫成 y 等於二分之 x，或 x 等於二 y。",
           "board": [
-            { "do": "write", "line": "$T$：$(0,0)$、$(2,0)$、$(2,1)$" },
-            { "do": "write", "line": "斜邊：$y=\\frac{x}{2}$，${{b:x=2y}}$", "on": "斜邊寫成" },
-            { "do": "focus", "term": "b", "color": "gold", "on": "或 x" }
+            {"do":"write","line":"$T$：$(0,0)$、$(2,0)$、$(2,1)$"},
+            {"do":"write","line":"斜邊：$y=\\frac{x}{2}$，${{b:x=2y}}$","on":"斜邊寫成"},
+            {"do":"focus","term":"b","color":"gold","on":"或 x"}
           ] },
         { "show": ["鉛直線：$\\int_0^2\\int_0^{x/2}y\\,dy\\,dx=\\frac{1}{3}$"],
           "say": "鉛直線：x 從零到二，y 從零到斜邊。",
           "board": [
-            { "do": "write", "line": "鉛直：$\\int_0^2\\int_0^{x/2}y\\,dy\\,dx=\\frac{1}{3}$" }
+            {"do":"write","line":"鉛直：$\\int_0^2\\int_0^{x/2}y\\,dy\\,dx=\\frac{1}{3}$"}
+          ] },
+        { "show": ["水平線由左往右：先碰斜邊，後碰右邊"],
+          "say": "水平線從左往右走，先碰到斜邊，所以左界是 x 等於二 y。走到最後碰到右邊的直線，右界是 x 等於二。",
+          "board": [
+            {"do":"write","line":"左界：斜邊 $x={{l:2y}}$"},
+            {"do":"write","line":"右界：直線 $x={{rt:2}}$","on":"走到最後"}
+          ] },
+        { "show": ["檢查：$y=0$、$y=1$"],
+          "note": "$y=0$ 是整條底邊，$y=1$ 只剩頂點。",
+          "say": "代數字檢查：y 等於零，x 從零走到二，是整條底邊；y 等於一，從二走到二，只剩頂點。",
+          "board": [
+            {"do":"write","line":"$y=0$：$x$ 從 $0$ 到 $2$；$y=1$：$2$ 到 $2$"}
           ] },
         { "show": ["水平線：$\\int_0^1\\int_{2y}^{2}y\\,dx\\,dy=\\frac{1}{3}$"],
           "say": "水平線：y 從零到一，x 從斜邊到右邊 x 等於二。兩種寫法，答案都是三分之一。",
           "board": [
-            { "do": "write", "line": "水平：$\\int_0^1\\int_{2y}^{2}y\\,dx\\,dy={{r:\\frac{1}{3}}}$" },
-            { "do": "box", "term": "r", "color": "green", "on": "答案都是" }
+            {"do":"write","line":"水平：$\\int_0^1\\int_{2y}^{2}y\\,dx\\,dy={{r:\\frac{1}{3}}}$"},
+            {"do":"box","term":"r","color":"green","on":"答案都是"}
           ] }
       ],
+      "key": "換方向時，斜邊改寫成 $x=2y$",
       "check": 3
     }
   ],

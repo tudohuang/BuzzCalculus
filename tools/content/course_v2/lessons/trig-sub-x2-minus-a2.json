@@ -128,22 +128,28 @@
         { "show": ["$\\sec^2\\theta-1=\\tan^2\\theta$"],
           "say": "根號裡是 x 平方減 a 平方，要找一條平方減一的恆等式：secant 平方減一等於 tangent 平方。",
           "board": [
-            { "do": "write", "line": "$\\sqrt{{{r:x^2-a^2}}}$" },
-            { "do": "focus", "term": "r", "on": "x 平方減" },
-            { "do": "write", "line": "${{id:\\sec^2\\theta-1}}=\\tan^2\\theta$", "on": "secant 平方減一" }
+            {"do":"write","line":"$\\sqrt{{{r:x^2-a^2}}}$"},
+            {"do":"focus","term":"r","on":"x 平方減"},
+            {"do":"write","line":"${{id:\\sec^2\\theta-1}}=\\tan^2\\theta$","on":"secant 平方減一"}
           ] },
         { "show": ["令 $x=a\\sec\\theta$"],
           "say": "所以令 x 等於 a 乘 secant theta，係數一樣是 a。",
           "board": [
-            { "do": "write", "line": "令 $x={{s:{{c:a}}\\sec\\theta}}$", "tint": { "s": "blue" } },
-            { "do": "focus", "term": "c", "label": "係數 a", "on": "係數" }
+            {"do":"write","line":"令 $x={{s:{{c:a}}\\sec\\theta}}$","tint":{"s":"blue"}},
+            {"do":"focus","term":"c","label":"係數 a","on":"係數"}
+          ] },
+        { "show": ["$\\sec\\theta$ 從 1 往上爬"],
+          "note": "每個 $x\\ge a$ 都對得到一個 $\\theta$。",
+          "say": "畫出 secant theta：從零出發是一，往二分之 pi 一路往上爬，所以 x 大於等於 a 都夠得到。",
+          "board": [
+            {"do":"plot","graph":{"window":[-0.2,1.7,0,6],"curves":[{"expr":"1/cos(x)","domain":[0,1.4],"color":"blue"}],"dashed":[[[0,1],[1.6,1]]]}}
           ] },
         { "show": ["$x^2-a^2=a^2\\sec^2\\theta-a^2=a^2\\tan^2\\theta$"],
           "say": "代進去，a 平方提出來，剩下 tangent 平方，完全平方。",
           "board": [
-            { "do": "write", "line": "$x^2-a^2=a^2\\sec^2\\theta-a^2$", "on": "代進去" },
-            { "do": "transform", "line": "$x^2-a^2={{t:a^2\\tan^2\\theta}}$", "on": "提出來" },
-            { "do": "box", "term": "t", "color": "green", "label": "完全平方", "on": "剩下" }
+            {"do":"write","line":"$x^2-a^2=a^2\\sec^2\\theta-a^2$","on":"代進去"},
+            {"do":"transform","line":"$x^2-a^2={{t:a^2\\tan^2\\theta}}$","on":"提出來"},
+            {"do":"box","term":"t","color":"green","label":"完全平方","on":"剩下"}
           ] }
       ],
       "check": 0
@@ -151,23 +157,39 @@
     {
       "title": "根號消失",
       "beats": [
-        { "show": ["$x\\ge a$：取 $\\theta\\in[0,\\frac{\\pi}{2})$"], "note": "每個 $x\\ge a$ 恰好對應一個 $\\theta$。",
+        { "show": ["$x\\ge a$：取 $\\theta\\in[0,\\frac{\\pi}{2})$"],
+          "note": "每個 $x\\ge a$ 恰好對應一個 $\\theta$。",
           "say": "根號只在 x 的絕對值大於等於 a 時有定義。先看 x 大於等於 a，theta 取零到二分之 pi。",
           "board": [
-            { "do": "write", "line": "根號要 $|x|\\ge a$" },
-            { "do": "write", "line": "$x\\ge a$：取 $\\theta\\in[0,\\frac{\\pi}{2})$", "on": "先看 x" }
+            {"do":"write","line":"根號要 $|x|\\ge a$"},
+            {"do":"write","line":"$x\\ge a$：取 $\\theta\\in[0,\\frac{\\pi}{2})$","on":"先看 x"}
           ] },
         { "show": ["$\\tan\\theta\\ge 0$：$\\sqrt{x^2-a^2}=a\\tan\\theta$"],
           "say": "這一段 tangent 不是負的，根號開出來就是 a tangent theta。",
           "board": [
-            { "do": "write", "line": "${{tn:\\tan\\theta\\ge0}}$ ⇒ $\\sqrt{x^2-a^2}={{r:a\\tan\\theta}}$" },
-            { "do": "underline", "term": "tn", "label": "不是負的", "on": "不是負的" },
-            { "do": "box", "term": "r", "color": "green", "on": "根號開出來" }
+            {"do":"write","line":"${{tn:\\tan\\theta\\ge0}}$ ⇒ $\\sqrt{x^2-a^2}={{r:a\\tan\\theta}}$"},
+            {"do":"underline","term":"tn","label":"不是負的","on":"不是負的"},
+            {"do":"box","term":"r","color":"green","on":"根號開出來"}
           ] },
-        { "show": ["$dx=a\\sec\\theta\\tan\\theta\\,d\\theta$"], "note": "$x\\le -a$ 時，先令 $x=-t$ 再做。",
+        { "show": ["$dx=a\\sec\\theta\\tan\\theta\\,d\\theta$"],
+          "note": "$x\\le -a$ 時，先令 $x=-t$ 再做。",
           "say": "dx 是 a secant 乘 tangent d theta。x 是負的那一側，先令 x 等於負 t，避開正負號的麻煩。",
           "board": [
-            { "do": "write", "line": "$dx=a\\sec\\theta\\tan\\theta\\,d\\theta$" }
+            {"do":"write","line":"$dx=a\\sec\\theta\\tan\\theta\\,d\\theta$"}
+          ] },
+        { "show": ["$x\\le -a$：令 $x=-t$，$t\\ge a$"],
+          "say": "x 是負的那一側，令 x 等於負 t，這時 t 大於等於 a。",
+          "board": [
+            {"do":"write","line":"令 ${{nt:x=-t}}$，$t\\ge a$"},
+            {"do":"focus","term":"nt","color":"blue","on":"這時"}
+          ] },
+        { "show": ["$x^2=t^2$，$dx=-dt$"],
+          "note": "根號變成 $\\sqrt{t^2-a^2}$，回到 $t\\ge a$ 的做法。",
+          "say": "x 平方等於 t 平方，所以根號變成 t 平方減 a 平方，dx 是負的 dt。照前面做，最後把 t 換回負 x。",
+          "board": [
+            {"do":"write","line":"$x^2=t^2$，$dx=-dt$"},
+            {"do":"write","line":"最後 ${{bk:t=-x}}$","on":"換回"},
+            {"do":"focus","term":"bk","color":"green","on":"負 x"}
           ] }
       ],
       "check": 1
@@ -175,108 +197,174 @@
     {
       "title": "換回 $x$ 的三角形",
       "beats": [
-        { "show": ["$\\sec\\theta=\\frac{x}{a}$：斜邊 $x$、鄰邊 $a$"], "note": "也就是 $\\cos\\theta=\\frac{a}{x}$。",
+        { "show": ["$\\sec\\theta=\\frac{x}{a}$：斜邊 $x$、鄰邊 $a$"],
+          "note": "也就是 $\\cos\\theta=\\frac{a}{x}$。",
           "say": "secant 是 a 分之 x，倒過來 cosine 是 x 分之 a：斜邊 x，鄰邊 a。",
           "board": [
-            { "do": "write", "line": "$\\sec\\theta=\\frac{x}{a}$" },
-            { "do": "write", "line": "$\\cos\\theta=\\frac{a}{x}$", "on": "倒過來" },
-            { "do": "write", "line": "斜邊 ${{h:x}}$、鄰邊 ${{j:a}}$", "on": "斜邊" },
-            { "do": "focus", "term": "j", "on": "鄰邊" }
+            {"do":"write","line":"$\\sec\\theta=\\frac{x}{a}$"},
+            {"do":"write","line":"$\\cos\\theta=\\frac{a}{x}$","on":"倒過來"},
+            {"do":"write","line":"斜邊 ${{h:x}}$、鄰邊 ${{j:a}}$","on":"斜邊"},
+            {"do":"focus","term":"j","on":"鄰邊"}
           ] },
         { "show": ["對邊 $\\sqrt{x^2-a^2}$"],
           "say": "畢氏定理，對邊是根號 x 平方減 a 平方。",
           "board": [
-            { "do": "write", "line": "對邊 ${{o:\\sqrt{x^2-a^2}}}$" },
-            { "do": "box", "term": "o", "color": "green", "on": "根號" }
+            {"do":"write","line":"對邊 ${{o:\\sqrt{x^2-a^2}}}$"},
+            {"do":"box","term":"o","color":"green","on":"根號"}
           ] },
         { "show": ["$\\tan\\theta=\\frac{\\sqrt{x^2-a^2}}{a}$，$\\theta=\\arccos\\frac{a}{x}$"],
           "say": "tangent 是對邊比鄰邊；theta 本身用 arccosine 寫回來。",
           "board": [
-            { "do": "clear" },
-            { "do": "write", "line": "$\\tan\\theta=\\frac{\\sqrt{x^2-a^2}}{a}$", "on": "tangent" },
-            { "do": "write", "line": "$\\theta=\\arccos\\frac{a}{x}$", "on": "arccosine" }
+            {"do":"clear"},
+            {"do":"write","line":"$\\tan\\theta=\\frac{\\sqrt{x^2-a^2}}{a}$","on":"tangent"},
+            {"do":"write","line":"$\\theta=\\arccos\\frac{a}{x}$","on":"arccosine"}
+          ] },
+        { "show": ["arccos：給比值，回角度"],
+          "note": "$\\theta$ 在 $[0,\\frac{\\pi}{2})$ 時，這個角只有一個。",
+          "say": "arccosine 是 cosine 倒過來：給比值，回傳角。這一段角只有一個，所以寫得回來。",
+          "board": [
+            {"do":"write","line":"${{c1:\\cos}}$：角 → 比值"},
+            {"do":"write","line":"${{c2:\\arccos}}$：比值 → 角","on":"倒過來"},
+            {"do":"underline","term":"c2","label":"只有一個角","on":"只有一個"}
           ] }
       ],
       "check": 3
     },
     {
-      "title": "化成 $\\tan^2\\theta$", "key": "化成 $\\tan^2\\theta$，再用 $\\sec^2\\theta-1$",
+      "title": "化成 $\\tan^2\\theta$",
       "beats": [
-        { "show": ["$\\int\\frac{\\sqrt{x^2-4}}{x}\\,dx$：$x=2\\sec\\theta$"], "note": "$x>2$。",
+        { "show": ["$\\int\\frac{\\sqrt{x^2-4}}{x}\\,dx$：$x=2\\sec\\theta$"],
+          "note": "$x>2$。",
           "say": "根號 x 平方減四除以 x，x 大於二。令 x 等於二 secant theta。",
           "board": [
-            { "do": "write", "line": "$\\int\\frac{\\sqrt{x^2-4}}{x}\\,dx$" },
-            { "do": "write", "line": "令 $x={{s:2\\sec\\theta}}$（$x>2$）", "tint": { "s": "blue" }, "on": "令 x" }
+            {"do":"write","line":"$\\int\\frac{\\sqrt{x^2-4}}{x}\\,dx$"},
+            {"do":"write","line":"令 $x={{s:2\\sec\\theta}}$（$x>2$）","tint":{"s":"blue"},"on":"令 x"}
           ] },
-        { "show": ["$=\\int 2\\tan^2\\theta\\,d\\theta$"], "note": "$\\frac{2\\tan\\theta}{2\\sec\\theta}\\cdot 2\\sec\\theta\\tan\\theta$。",
+        { "show": ["$=\\int 2\\tan^2\\theta\\,d\\theta$"],
+          "note": "$\\frac{2\\tan\\theta}{2\\sec\\theta}\\cdot 2\\sec\\theta\\tan\\theta$。",
           "say": "根號是二 tangent，dx 是二 secant tangent，secant 約掉，剩二倍 tangent 平方。",
           "board": [
-            { "do": "write", "line": "$=\\int\\frac{2\\tan\\theta}{{{s1:2\\sec\\theta}}}\\cdot{{s2:2\\sec\\theta}}\\tan\\theta\\,d\\theta$" },
-            { "do": "focus", "term": "s1", "on": "secant 約掉" },
-            { "do": "focus", "term": "s2", "on": "約掉" },
-            { "do": "transform", "line": "$=\\int 2\\tan^2\\theta\\,d\\theta$", "on": "剩二倍" }
+            {"do":"write","line":"$=\\int\\frac{2\\tan\\theta}{{{s1:2\\sec\\theta}}}\\cdot{{s2:2\\sec\\theta}}\\tan\\theta\\,d\\theta$"},
+            {"do":"focus","term":"s1","on":"secant 約掉"},
+            {"do":"focus","term":"s2","on":"約掉"},
+            {"do":"transform","line":"$=\\int 2\\tan^2\\theta\\,d\\theta$","on":"剩二倍"}
           ] },
         { "show": ["$=\\int 2(\\sec^2\\theta-1)\\,d\\theta=2\\tan\\theta-2\\theta$"],
           "say": "tangent 平方換成 secant 平方減一，兩項都會積。",
           "board": [
-            { "do": "keep", "n": 2 },
-            { "do": "write", "line": "$=\\int 2({{q:\\sec^2\\theta-1}})\\,d\\theta$", "on": "換成" },
-            { "do": "write", "line": "$=2\\tan\\theta-2\\theta$", "on": "兩項都會積" }
+            {"do":"keep","n":2},
+            {"do":"write","line":"$=\\int 2({{q:\\sec^2\\theta-1}})\\,d\\theta$","on":"換成"},
+            {"do":"write","line":"$=2\\tan\\theta-2\\theta$","on":"兩項都會積"}
+          ] },
+        { "show": ["$2\\tan\\theta-2\\theta$：兩項各換各的"],
+          "say": "要換回 x，兩項各換各的：tangent theta 看三角形，對邊比鄰邊；theta 用 arccosine 寫回來。",
+          "board": [
+            {"do":"write","line":"$2{{t:\\tan\\theta}}-2{{th:\\theta}}$"},
+            {"do":"focus","term":"t","color":"blue","label":"看三角形","on":"看三角形"},
+            {"do":"focus","term":"th","color":"violet","label":"arccos","on":"arccosine"}
           ] }
       ],
+      "key": "化成 $\\tan^2\\theta$，再用 $\\sec^2\\theta-1$",
       "predict": {
         "ask": "換回 $x$ 是？",
         "options": [
-          { "label": "$\\sqrt{x^2-4}-2\\arccos\\frac{2}{x}+C$", "correct": true },
-          { "label": "$\\sqrt{x^2-4}-2\\arccos\\frac{x}{2}+C$", "why": "$\\cos\\theta=\\frac{2}{x}$；$\\frac{x}{2}$ 是 $\\sec\\theta$。" },
-          { "label": "$2\\sqrt{x^2-4}-2\\arccos\\frac{2}{x}+C$", "why": "$\\tan\\theta=\\frac{\\sqrt{x^2-4}}{2}$，所以 $2\\tan\\theta=\\sqrt{x^2-4}$。" }
+          {
+            "label": "$\\sqrt{x^2-4}-2\\arccos\\frac{2}{x}+C$",
+            "correct": true
+          },
+          {
+            "label": "$\\sqrt{x^2-4}-2\\arccos\\frac{x}{2}+C$",
+            "why": "$\\cos\\theta=\\frac{2}{x}$；$\\frac{x}{2}$ 是 $\\sec\\theta$。"
+          },
+          {
+            "label": "$2\\sqrt{x^2-4}-2\\arccos\\frac{2}{x}+C$",
+            "why": "$\\tan\\theta=\\frac{\\sqrt{x^2-4}}{2}$，所以 $2\\tan\\theta=\\sqrt{x^2-4}$。"
+          }
         ]
       }
     },
     {
       "title": "三種根號",
       "beats": [
-        { "show": ["$a^2-x^2$：$x=a\\sin\\theta$"], "note": "$1-\\sin^2=\\cos^2$。",
+        { "show": ["$a^2-x^2$：$x=a\\sin\\theta$"],
+          "note": "$1-\\sin^2=\\cos^2$。",
           "say": "整理三種：a 平方減 x 平方，用 sine。",
           "board": [
-            { "do": "write", "line": "$a^2-x^2$：$x=a\\sin\\theta$" }
+            {"do":"write","line":"$a^2-x^2$：$x=a\\sin\\theta$"}
           ] },
-        { "show": ["$x^2+a^2$：$x=a\\tan\\theta$"], "note": "$1+\\tan^2=\\sec^2$。",
+        { "show": ["$x^2+a^2$：$x=a\\tan\\theta$"],
+          "note": "$1+\\tan^2=\\sec^2$。",
           "say": "x 平方加 a 平方，用 tangent。",
           "board": [
-            { "do": "write", "line": "$x^2+a^2$：$x=a\\tan\\theta$" }
+            {"do":"write","line":"$x^2+a^2$：$x=a\\tan\\theta$"}
           ] },
-        { "show": ["$x^2-a^2$：$x=a\\sec\\theta$"], "note": "看根號像哪一條畢氏恆等式。",
+        { "show": ["$x^2-a^2$：$x=a\\sec\\theta$"],
+          "note": "看根號像哪一條畢氏恆等式。",
           "say": "x 平方減 a 平方，用 secant。都先檢查外面有沒有 x 可以直接換元。",
           "board": [
-            { "do": "write", "line": "$x^2-a^2$：${{s:x=a\\sec\\theta}}$" },
-            { "do": "focus", "term": "s", "on": "secant" }
+            {"do":"write","line":"$x^2-a^2$：${{s:x=a\\sec\\theta}}$"},
+            {"do":"focus","term":"s","on":"secant"}
+          ] },
+        { "show": ["先看根號外面有沒有裡面的導數"],
+          "note": "例：$\\int\\frac{x}{\\sqrt{x^2-9}}\\,dx$",
+          "say": "看根號外面有沒有裡面的導數。x 除以根號 x 平方減九，令 u 等於 x 平方減九，du 就是二 x dx，直接換元。",
+          "board": [
+            {"do":"write","line":"$\\int\\frac{x}{\\sqrt{x^2-9}}\\,dx$"},
+            {"do":"write","line":"$u=x^2-9$，$du={{d:2x}}\\,dx$","on":"令 u"},
+            {"do":"focus","term":"d","color":"green","on":"二 x"}
+          ] },
+        { "show": ["外面沒有 $x$ 可配，才用三角代換"],
+          "note": "$\\int\\frac{1}{\\sqrt{x^2-9}}\\,dx$ 沒有 $2x$。",
+          "say": "對照一次：一除以根號 x 平方減九，外面沒有 x 可以配，才改用 secant 代換。",
+          "board": [
+            {"do":"write","line":"$\\int\\frac{1}{\\sqrt{x^2-9}}\\,dx$"},
+            {"do":"write","line":"沒有 $x$ 可配 ⇒ ${{s3:x=3\\sec\\theta}}$","on":"改用"},
+            {"do":"focus","term":"s3","color":"blue","on":"secant"}
           ] }
       ],
       "check": 2
     },
     {
-      "title": "定積分", "key": "上下限也換：由 $\\sec\\theta=x$ 解出 $\\theta$",
+      "title": "定積分",
       "beats": [
         { "show": ["$\\int_{\\sqrt{2}}^{2}\\frac{1}{x\\sqrt{x^2-1}}\\,dx$：$x=\\sec\\theta$"],
           "say": "最後一題：x 乘根號 x 平方減一分之一，從根號二積到二。令 x 等於 secant theta。",
           "board": [
-            { "do": "write", "line": "$\\int_{\\sqrt{2}}^{2}\\frac{1}{x\\sqrt{x^2-1}}\\,dx$" },
-            { "do": "write", "line": "令 ${{s:x=\\sec\\theta}}$", "tint": {"s":"blue"}, "on": "令" }
+            {"do":"write","line":"$\\int_{\\sqrt{2}}^{2}\\frac{1}{x\\sqrt{x^2-1}}\\,dx$"},
+            {"do":"write","line":"令 ${{s:x=\\sec\\theta}}$","tint":{"s":"blue"},"on":"令"}
           ] },
-        { "show": ["被積函數變成 $1$"], "note": "$\\frac{\\sec\\theta\\tan\\theta}{\\sec\\theta\\tan\\theta}=1$。",
+        { "show": ["$\\sec\\theta=x$ ⇒ $\\cos\\theta=\\frac{1}{x}$"],
+          "note": "再找 $[0,\\frac{\\pi}{2})$ 裡那個角。",
+          "say": "上下限怎麼換？secant 等於 x，就是 cosine 等於 x 分之一，再找那個角。例如 x 是一，theta 就是零。",
+          "board": [
+            {"do":"write","line":"${{a:\\sec\\theta=x}}$ ⇒ $\\cos\\theta=\\frac{1}{x}$"},
+            {"do":"focus","term":"a","color":"blue","on":"cosine"},
+            {"do":"write","line":"$x=1$：$\\theta=0$","on":"例如"}
+          ] },
+        { "show": ["被積函數變成 $1$"],
+          "note": "$\\frac{\\sec\\theta\\tan\\theta}{\\sec\\theta\\tan\\theta}=1$。",
           "say": "分子分母都是 secant 乘 tangent，約掉剩一，只要把上下限換對。",
           "board": [
-            { "do": "write", "line": "$\\int\\frac{\\sec\\theta\\tan\\theta}{\\sec\\theta\\tan\\theta}\\,d\\theta$" },
-            { "do": "transform", "line": "$=\\int {{o:1}}\\,d\\theta$", "on": "約掉" }
+            {"do":"write","line":"$\\int\\frac{\\sec\\theta\\tan\\theta}{\\sec\\theta\\tan\\theta}\\,d\\theta$"},
+            {"do":"transform","line":"$=\\int {{o:1}}\\,d\\theta$","on":"約掉"}
           ] }
       ],
+      "key": "上下限也換：由 $\\sec\\theta=x$ 解出 $\\theta$",
       "predict": {
         "ask": "$\\theta$ 的上下限與答案？",
         "options": [
-          { "label": "$\\frac{\\pi}{4}$ 到 $\\frac{\\pi}{3}$，答案 $\\frac{\\pi}{12}$", "correct": true },
-          { "label": "$\\frac{\\pi}{4}$ 到 $\\frac{\\pi}{6}$", "why": "$\\sec\\theta=2$ 是 $\\cos\\theta=\\frac{1}{2}$，$\\theta=\\frac{\\pi}{3}$；$\\frac{\\pi}{6}$ 是 $\\sin\\theta=\\frac{1}{2}$。" },
-          { "label": "$\\sqrt{2}$ 到 $2$，答案 $2-\\sqrt{2}$", "why": "換成 $\\theta$ 之後，上下限也要換成 $\\theta$ 的值。" }
+          {
+            "label": "$\\frac{\\pi}{4}$ 到 $\\frac{\\pi}{3}$，答案 $\\frac{\\pi}{12}$",
+            "correct": true
+          },
+          {
+            "label": "$\\frac{\\pi}{4}$ 到 $\\frac{\\pi}{6}$",
+            "why": "$\\sec\\theta=2$ 是 $\\cos\\theta=\\frac{1}{2}$，$\\theta=\\frac{\\pi}{3}$；$\\frac{\\pi}{6}$ 是 $\\sin\\theta=\\frac{1}{2}$。"
+          },
+          {
+            "label": "$\\sqrt{2}$ 到 $2$，答案 $2-\\sqrt{2}$",
+            "why": "換成 $\\theta$ 之後，上下限也要換成 $\\theta$ 的值。"
+          }
         ]
       }
     }

@@ -127,34 +127,60 @@
         { "show": ["$T(u,v)=(au+bv,\\ cu+dv)$"],
           "say": "先看最簡單的變換：x、y 都是 u、v 的一次式。",
           "board": [
-            { "do": "write", "line": "$T(u,v)=(au+bv,\\ cu+dv)$" }
+            {"do":"write","line":"$T(u,v)=(au+bv,\\ cu+dv)$"}
           ] },
-        { "show": ["$(1,0)\\to(a,c)$，$(0,1)\\to(b,d)$"], "note": "單位正方形變成平行四邊形。",
+        { "show": ["$(1,0)\\to(a,c)$，$(0,1)\\to(b,d)$"],
+          "note": "單位正方形變成平行四邊形。",
           "say": "單位正方形的兩條邊被送到這兩個向量，正方形就變成以它們為邊的平行四邊形。",
           "board": [
-            { "do": "write", "line": "$(1,0)\\to({{ac:a,c}})$，$(0,1)\\to({{bd:b,d}})$", "tint": {"ac":"blue","bd":"violet"} },
-            { "do": "focus", "term": "ac", "on": "這兩個向量" }
+            {"do":"write","line":"$(1,0)\\to({{ac:a,c}})$，$(0,1)\\to({{bd:b,d}})$","tint":{"ac":"blue","bd":"violet"}},
+            {"do":"focus","term":"ac","on":"這兩個向量"}
           ] },
-        { "show": ["面積放大倍率 $|ad-bc|$"], "note": "處處一樣。",
+        { "show": ["面積放大倍率 $|ad-bc|$"],
+          "note": "處處一樣。",
           "say": "平行四邊形的面積是 a d 減 b c 的絕對值。每一塊面積都被放大這麼多倍，到處一樣。",
           "board": [
-            { "do": "write", "line": "面積放大倍率 ${{det:|ad-bc|}}$", "on": "平行四邊形的面積" },
-            { "do": "underline", "term": "det", "label": "到處一樣", "on": "每一塊" }
+            {"do":"write","line":"面積放大倍率 ${{det:|ad-bc|}}$","on":"平行四邊形的面積"},
+            {"do":"underline","term":"det","label":"到處一樣","on":"每一塊"}
+          ] },
+        { "show": ["長方形 $(a+b)(c+d)$ 減去四塊"],
+          "note": "高中的切補法。",
+          "say": "為什麼是這個式子？用高中的切補：先框一個大長方形，再把外面的小三角形和小長方形減掉。",
+          "board": [
+            {"do":"write","line":"框住：寬 $a+b$、高 $c+d$"},
+            {"do":"write","line":"減去兩個三角形、兩個長方形","on":"減掉"}
+          ] },
+        { "show": ["$(a+b)(c+d)-ac-bd-2bc=ad-bc$"],
+          "note": "假設 $a,b,c,d>0$ 的圖。",
+          "say": "長方形面積展開後，減掉兩個三角形的 a c 與 b d，再減兩個長方形的 b c，剩下 a d 減 b c。",
+          "board": [
+            {"do":"write","line":"${{e:(a+b)(c+d)-ac-bd-2bc}}$"},
+            {"do":"transform","line":"$={{r:ad-bc}}$","on":"剩下"},
+            {"do":"box","term":"r","color":"green","on":"a d 減 b c"}
           ] },
         { "show": ["$T(u,v)=(2u+v,\\ u+3v)$"],
           "say": "試一個：a 是二、b 是一、c 是一、d 是三。",
           "board": [
-            { "do": "clear" },
-            { "do": "write", "line": "$T(u,v)=(2u+v,\\ u+3v)$", "on": "試一個" },
-            { "do": "plot", "graph": {"window":[-0.6,4.6,-0.4,4.2],"equal":true,"ticks":false,"fills":[{"pts":[[0,0],[1,0],[1,1],[0,1]],"color":"muted"},{"pts":[[0,0],[2,1],[3,4],[1,3]],"color":"blue"}],"arrows":[{"from":[0,0],"to":[2,1],"color":"blue"},{"from":[0,0],"to":[1,3],"color":"violet"}],"dashed":[[[2,1],[3,4]],[[1,3],[3,4]]]}, "on": "a 是二" }
+            {"do":"clear"},
+            {"do":"write","line":"$T(u,v)=(2u+v,\\ u+3v)$","on":"試一個"},
+            {"do":"plot","graph":{"window":[-0.6,4.6,-0.4,4.2],"equal":true,"ticks":false,"fills":[{"pts":[[0,0],[1,0],[1,1],[0,1]],"color":"muted"},{"pts":[[0,0],[2,1],[3,4],[1,3]],"color":"blue"}],"arrows":[{"from":[0,0],"to":[2,1],"color":"blue"},{"from":[0,0],"to":[1,3],"color":"violet"}],"dashed":[[[2,1],[3,4]],[[1,3],[3,4]]]},"on":"a 是二"}
           ] }
       ],
       "predict": {
         "ask": "單位正方形的像面積是？",
         "options": [
-          { "label": "$5$", "correct": true },
-          { "label": "$7$", "why": "交叉項要相減：$2\\cdot3-1\\cdot1=5$，不是相加。" },
-          { "label": "$6$", "why": "只乘了主對角 $2\\cdot3$，還要減掉反對角 $1\\cdot1$。" }
+          {
+            "label": "$5$",
+            "correct": true
+          },
+          {
+            "label": "$7$",
+            "why": "交叉項要相減：$2\\cdot3-1\\cdot1=5$，不是相加。"
+          },
+          {
+            "label": "$6$",
+            "why": "只乘了主對角 $2\\cdot3$，還要減掉反對角 $1\\cdot1$。"
+          }
         ]
       }
     },
@@ -164,103 +190,153 @@
         { "show": ["$(u,v)\\mapsto(v,u)$：行列式 $-1$"],
           "say": "a d 減 b c 可能是負的。例如把 u、v 對調，行列式是負一。",
           "board": [
-            { "do": "write", "line": "$ad-bc$ 可能是負的" },
-            { "do": "write", "line": "$(u,v)\\mapsto(v,u)$：行列式 $-1$", "on": "對調" }
+            {"do":"write","line":"$ad-bc$ 可能是負的"},
+            {"do":"write","line":"$(u,v)\\mapsto(v,u)$：行列式 $-1$","on":"對調"}
           ] },
-        { "show": ["負號 = 翻面"], "note": "逆時針變順時針；面積取絕對值。",
+        { "show": ["對調 = 沿斜線翻過去"],
+          "say": "畫出來看：對調就是沿著斜線翻過去，藍色向量翻成紫色，順逆時針的方向就反過來了。",
+          "board": [
+            {"do":"plot","graph":{"window":[-0.5,3,-0.5,3],"equal":true,"ticks":false,"dashed":[[[0,0],[3,3]]],"arrows":[{"from":[0,0],"to":[2,1],"color":"blue"},{"from":[0,0],"to":[1,2],"color":"violet"}]}}
+          ] },
+        { "show": ["負號 = 翻面"],
+          "note": "逆時針變順時針；面積取絕對值。",
           "say": "負號的意思是圖形被翻面，逆時針變成順時針。面積本身不會是負的，所以倍率取絕對值。",
           "board": [
-            { "do": "clear" },
-            { "do": "write", "line": "負號 ＝ 翻面", "on": "負號" },
-            { "do": "write", "line": "逆時針 → 順時針", "on": "逆時針" },
-            { "do": "write", "line": "面積放大倍率 ${{a:|ad-bc|}}$", "on": "倍率" }
+            {"do":"clear"},
+            {"do":"write","line":"負號 ＝ 翻面","on":"負號"},
+            {"do":"write","line":"逆時針 → 順時針","on":"逆時針"},
+            {"do":"write","line":"面積放大倍率 ${{a:|ad-bc|}}$","on":"倍率"}
           ] }
       ],
       "check": 0
     },
     {
-      "title": "彎的變換", "key": "小方塊被拉成平行四邊形，看行列式",
+      "title": "彎的變換",
       "beats": [
-        { "show": ["$x=x(u,v)$、$y=y(u,v)$"], "note": "方格被扭成彎的。",
+        { "show": ["$x=x(u,v)$、$y=y(u,v)$"],
+          "note": "方格被扭成彎的。",
           "say": "一般的變換會把方格扭彎。但放大到夠小的一格，它看起來幾乎是線性的。",
           "board": [
-            { "do": "write", "line": "$x=x(u,v)$、$y=y(u,v)$" },
-            { "do": "write", "line": "夠小的一格 ≈ 線性", "on": "夠小的一格" }
+            {"do":"write","line":"$x=x(u,v)$、$y=y(u,v)$"},
+            {"do":"write","line":"夠小的一格 ≈ 線性","on":"夠小的一格"}
           ] },
-        { "show": ["走 $\\Delta u$：移動 $(x_u,y_u)\\Delta u$", "走 $\\Delta v$：移動 $(x_v,y_v)\\Delta v$"],
+        { "show": ["偏導數：只動 $u$，$v$ 當常數"],
+          "note": "例：$x=u^2v$，$x_u=2uv$。",
+          "say": "偏導數就是只讓一個變數動，另一個當成常數。x 下標 u，是把 v 固定，只對 u 微分。",
+          "board": [
+            {"do":"write","line":"$x_u$：${{k:v}}$ 當常數，只對 $u$ 微分","tint":{"k":"blue"}},
+            {"do":"focus","term":"k","color":"blue","on":"常數"}
+          ] },
+        { "show": ["走 $\\Delta u$：移動 $(x_u,y_u)\\Delta u$","走 $\\Delta v$：移動 $(x_v,y_v)\\Delta v$"],
           "say": "從一點往 u 方向走一小步，像點大約沿偏導數向量移動；往 v 方向也一樣。",
           "board": [
-            { "do": "write", "line": "$\\Delta u$：$({{a:x_u,y_u}})\\Delta u$", "tint": {"a":"blue"} },
-            { "do": "write", "line": "$\\Delta v$：$({{b:x_v,y_v}})\\Delta v$", "tint": {"b":"violet"}, "on": "往 v" }
+            {"do":"write","line":"$\\Delta u$：$({{a:x_u,y_u}})\\Delta u$","tint":{"a":"blue"}},
+            {"do":"write","line":"$\\Delta v$：$({{b:x_v,y_v}})\\Delta v$","tint":{"b":"violet"},"on":"往 v"}
           ] },
-        { "show": ["$\\frac{\\partial(x,y)}{\\partial(u,v)}=x_uy_v-x_vy_u$"], "note": "小方格面積約放大 $|x_uy_v-x_vy_u|$ 倍。",
+        { "show": ["$\\frac{\\partial(x,y)}{\\partial(u,v)}=x_uy_v-x_vy_u$"],
+          "note": "小方格面積約放大 $|x_uy_v-x_vy_u|$ 倍。",
           "say": "小方格變成以這兩個向量為邊的近似平行四邊形。倍率就是這個行列式，叫 Jacobian。",
           "board": [
-            { "do": "clear" },
-            { "do": "write", "line": "以 $({{a:x_u,y_u}})$、$({{b:x_v,y_v}})$ 為邊", "tint": {"a":"blue","b":"violet"}, "on": "小方格" },
-            { "do": "write", "line": "$\\frac{\\partial(x,y)}{\\partial(u,v)}={{d:x_uy_v-x_vy_u}}$", "on": "倍率" },
-            { "do": "box", "term": "d", "color": "green", "on": "行列式" }
+            {"do":"clear"},
+            {"do":"write","line":"以 $({{a:x_u,y_u}})$、$({{b:x_v,y_v}})$ 為邊","tint":{"a":"blue","b":"violet"},"on":"小方格"},
+            {"do":"write","line":"$\\frac{\\partial(x,y)}{\\partial(u,v)}={{d:x_uy_v-x_vy_u}}$","on":"倍率"},
+            {"do":"box","term":"d","color":"green","on":"行列式"}
           ] },
-        { "show": ["倍率隨點改變"], "note": "直觀，不是證明。",
+        { "show": ["倍率隨點改變"],
+          "note": "直觀，不是證明。",
           "say": "跟線性變換不同，它每一點各有各的倍率：有的地方放大，有的地方縮小。",
           "board": [
-            { "do": "write", "line": "倍率隨 ${{p:(u,v)}}$ 改變" },
-            { "do": "focus", "term": "p", "on": "每一點" }
+            {"do":"write","line":"倍率隨 ${{p:(u,v)}}$ 改變"},
+            {"do":"focus","term":"p","on":"每一點"}
           ] }
       ],
+      "key": "小方塊被拉成平行四邊形，看行列式",
       "check": 1
     },
     {
-      "title": "回頭看極座標", "key": "$dA$ 多出的 $r$ 就是極座標的 Jacobian",
+      "title": "回頭看極座標",
       "beats": [
-        { "show": ["$x_r=\\cos\\theta$，$x_\\theta=-r\\sin\\theta$", "$y_r=\\sin\\theta$，$y_\\theta=r\\cos\\theta$"],
+        { "show": ["對 $\\theta$ 微分：$r$ 當常數"],
+          "note": "$x_\\theta$：$r$ 提到外面。",
+          "say": "先講規則：x 對 theta 微分時，r 當成常數，所以 r 留在外面，只微分 cosine theta。",
+          "board": [
+            {"do":"write","line":"$x_\\theta=({{r:r}}\\cos\\theta)_\\theta$"},
+            {"do":"transform","line":"$={{r:r}}\\cdot(-\\sin\\theta)$","on":"留在外面"}
+          ] },
+        { "show": ["$x_r=\\cos\\theta$，$x_\\theta=-r\\sin\\theta$","$y_r=\\sin\\theta$，$y_\\theta=r\\cos\\theta$"],
           "say": "拿極座標來算。四個偏導數寫出來。",
           "board": [
-            { "do": "write", "line": "$x_r=\\cos\\theta$，$x_\\theta=-r\\sin\\theta$" },
-            { "do": "write", "line": "$y_r=\\sin\\theta$，$y_\\theta=r\\cos\\theta$", "on": "四個偏導數" }
+            {"do":"write","line":"$x_r=\\cos\\theta$，$x_\\theta=-r\\sin\\theta$"},
+            {"do":"write","line":"$y_r=\\sin\\theta$，$y_\\theta=r\\cos\\theta$","on":"四個偏導數"}
           ] },
         { "show": ["$r(\\cos^2\\theta+\\sin^2\\theta)=r$"],
           "say": "交叉相乘相減，cosine 平方加 sine 平方是一，剩下 r。",
           "board": [
-            { "do": "write", "line": "${{j:\\frac{\\partial(x,y)}{\\partial(r,\\theta)}}}=r\\,{{c:(\\cos^2\\theta+\\sin^2\\theta)}}$", "on": "交叉相乘" },
-            { "do": "underline", "term": "c", "label": "是 1", "on": "sine 平方是一" },
-            { "do": "transform", "line": "${{j:\\frac{\\partial(x,y)}{\\partial(r,\\theta)}}}={{rr:r}}$", "on": "剩下" }
+            {"do":"write","line":"${{j:\\frac{\\partial(x,y)}{\\partial(r,\\theta)}}}=r\\,{{c:(\\cos^2\\theta+\\sin^2\\theta)}}$","on":"交叉相乘"},
+            {"do":"underline","term":"c","label":"是 1","on":"sine 平方是一"},
+            {"do":"transform","line":"${{j:\\frac{\\partial(x,y)}{\\partial(r,\\theta)}}}={{rr:r}}$","on":"剩下"}
           ] },
-        { "show": ["$dA=r\\,dr\\,d\\theta$ 的那個 $r$"], "note": "$r=2$ 附近：面積約 $2\\,\\Delta r\\,\\Delta\\theta$。",
+        { "show": ["弧長 $=r\\,\\Delta\\theta$","$r=2$：$\\Delta r\\times2\\Delta\\theta$"],
+          "note": "半徑 $r$、角 $\\Delta\\theta$ 的圓弧。",
+          "say": "弧長是 r 乘 delta theta。半徑二時，這邊是二倍 delta theta，面積多乘二。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"弧長 $={{a:r\\,\\Delta\\theta}}$","on":"弧長"},
+            {"do":"focus","term":"a","color":"blue","on":"r 乘"},
+            {"do":"write","line":"$r=2$：$\\Delta r\\times{{b:2\\Delta\\theta}}$","on":"半徑二"},
+            {"do":"underline","term":"b","label":"面積乘 2","on":"這邊是"}
+          ] },
+        { "show": ["$dA=r\\,dr\\,d\\theta$ 的那個 $r$"],
+          "note": "$r=2$ 附近：面積約 $2\\,\\Delta r\\,\\Delta\\theta$。",
           "say": "這正是極座標積分裡那個 r：在半徑二的地方，小矩形被放大兩倍。",
           "board": [
-            { "do": "keep", "n": 1 },
-            { "do": "write", "line": "$dA={{rr:r}}\\,dr\\,d\\theta$", "on": "極座標積分" },
-            { "do": "write", "line": "$r=2$：面積約 ${{two:2}}\\,\\Delta r\\,\\Delta\\theta$", "on": "在半徑二" },
-            { "do": "focus", "term": "two", "on": "放大兩倍" }
+            {"do":"keep","n":1},
+            {"do":"write","line":"$dA={{rr:r}}\\,dr\\,d\\theta$","on":"極座標積分"},
+            {"do":"write","line":"$r=2$：面積約 ${{two:2}}\\,\\Delta r\\,\\Delta\\theta$","on":"在半徑二"},
+            {"do":"focus","term":"two","on":"放大兩倍"}
           ] }
       ],
+      "key": "$dA$ 多出的 $r$ 就是極座標的 Jacobian",
       "check": 2
     },
     {
       "title": "把圓拉成橢圓",
       "beats": [
-        { "show": ["$x=3u$、$y=2v$"], "note": "單位圓盤 → $\\frac{x^2}{9}+\\frac{y^2}{4}\\le 1$。",
+        { "show": ["$u=\\frac{x}{3}$，$v=\\frac{y}{2}$"],
+          "say": "先把 u、v 用 x、y 表示：u 是 x 除以三，v 是 y 除以二。",
+          "board": [
+            {"do":"write","line":"$u=\\frac{x}{3}$，$v=\\frac{y}{2}$"}
+          ] },
+        { "show": ["$(\\frac{x}{3})^2+(\\frac{y}{2})^2\\le 1$"],
+          "note": "分母各自平方：$9$、$4$。",
+          "say": "再代進 u 平方加 v 平方小於等於一，分母平方，就得到 x 平方除以九加 y 平方除以四。",
+          "board": [
+            {"do":"write","line":"$({{p:\\frac{x}{3}}})^2+(\\frac{y}{2})^2\\le 1$"},
+            {"do":"transform","line":"$\\frac{x^2}{9}+\\frac{y^2}{4}\\le 1$","on":"分母平方"}
+          ] },
+        { "show": ["$x=3u$、$y=2v$"],
+          "note": "單位圓盤 → $\\frac{x^2}{9}+\\frac{y^2}{4}\\le 1$。",
           "say": "u 方向拉長三倍、v 方向拉長兩倍，單位圓盤被拉成半軸三、二的橢圓。",
           "board": [
-            { "do": "write", "line": "$x={{a:3}}u$、$y={{b:2}}v$" },
-            { "do": "focus", "term": "a", "color": "blue", "on": "三倍" },
-            { "do": "focus", "term": "b", "color": "violet", "on": "兩倍" },
-            { "do": "write", "line": "$\\frac{x^2}{9}+\\frac{y^2}{4}\\le 1$", "on": "半軸" }
+            {"do":"write","line":"$x={{a:3}}u$、$y={{b:2}}v$"},
+            {"do":"focus","term":"a","color":"blue","on":"三倍"},
+            {"do":"focus","term":"b","color":"violet","on":"兩倍"},
+            {"do":"write","line":"$\\frac{x^2}{9}+\\frac{y^2}{4}\\le 1$","on":"半軸"}
           ] },
-        { "show": ["Jacobian $=3\\cdot2-0\\cdot0=6$"], "note": "面積倍率是相乘，不是相加。",
+        { "show": ["Jacobian $=3\\cdot2-0\\cdot0=6$"],
+          "note": "面積倍率是相乘，不是相加。",
           "say": "倍率是三乘二，等於六，到處一樣。注意是相乘，不是相加。",
           "board": [
-            { "do": "write", "line": "$3\\cdot2-0\\cdot0={{s:6}}$" },
-            { "do": "box", "term": "s", "color": "green", "on": "等於" }
+            {"do":"write","line":"$3\\cdot2-0\\cdot0={{s:6}}$"},
+            {"do":"box","term":"s","color":"green","on":"等於"}
           ] },
         { "show": ["橢圓面積 $6\\pi$"],
           "say": "圓盤面積 pi，放大六倍，橢圓面積就是六 pi。",
           "board": [
-            { "do": "clear" },
-            { "do": "write", "line": "圓盤面積 $\\pi$", "on": "圓盤面積" },
-            { "do": "write", "line": "$\\pi\\cdot{{s:6}}={{r:6\\pi}}$", "on": "放大" },
-            { "do": "box", "term": "r", "color": "green", "on": "橢圓面積" }
+            {"do":"clear"},
+            {"do":"write","line":"圓盤面積 $\\pi$","on":"圓盤面積"},
+            {"do":"write","line":"$\\pi\\cdot{{s:6}}={{r:6\\pi}}$","on":"放大"},
+            {"do":"box","term":"r","color":"green","on":"橢圓面積"}
           ] }
       ],
       "check": 3

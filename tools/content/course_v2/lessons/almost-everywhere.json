@@ -53,24 +53,42 @@
     {
       "title": "不在乎零測集",
       "beats": [
-        { "show": ["性質 $P$ 幾乎處處成立（a.e.）"], "note": "例外點包含在一個測度 0 的集合裡。",
+        { "show": ["性質 $P$ 幾乎處處成立（a.e.）"],
+          "note": "例外點包含在一個測度 0 的集合裡。",
           "say": "積分看不見零測集，那談性質時也允許它在零測集上不成立。這叫幾乎處處成立。",
           "board": [
-            { "do": "write", "line": "$P$ 不成立的點 $\\subseteq {{n:N}}$，$N$ 測度 $0$" },
-            { "do": "underline", "term": "n", "label": "例外集", "on": "零測集#2" }
+            {"do":"write","line":"$P$ 不成立的點 $\\subseteq {{n:N}}$，$N$ 測度 $0$"},
+            {"do":"underline","term":"n","label":"例外集","on":"零測集#2"}
+          ] },
+        { "show": ["測度是長度的推廣","單點能被任意短的區間蓋住"],
+          "note": "區間 $[a,b]$ 的測度是 $b-a$。",
+          "say": "測度是長度的推廣：區間 a 到 b 的測度是 b 減 a。單點能被任意短的區間蓋住，所以單點測度是零。",
+          "board": [
+            {"do":"write","line":"$\\mu([a,b])=b-a$"},
+            {"do":"write","line":"$\\mu(\\{c\\})\\le{{e:\\varepsilon}}$，任意 $\\varepsilon>0$","on":"單點能"},
+            {"do":"focus","term":"e","label":"任意小","on":"任意短"}
           ] },
         { "show": ["$f=g$ a.e.：$\\{f\\ne g\\}$ 是零測集"],
           "say": "最常用的：f 幾乎處處等於 g，意思是兩者不相等的點，湊起來是零測集。",
           "board": [
-            { "do": "write", "line": "$f=g$ a.e.：${{d:f\\ne g}}$ 的點是零測集" },
-            { "do": "underline", "term": "d", "label": "不相等", "on": "不相等" }
+            {"do":"write","line":"$f=g$ a.e.：${{d:f\\ne g}}$ 的點是零測集"},
+            {"do":"underline","term":"d","label":"不相等","on":"不相等"}
           ] },
-        { "show": ["a.e. 不是「大部分的點」"], "note": "例外點可以不可數，只要測度 0。",
+        { "show": ["a.e. 不是「大部分的點」"],
+          "note": "例外點可以不可數，只要測度 0。",
           "say": "注意，幾乎處處不是大部分的意思。例外點可以多到不可數，只要測度是零就好。",
           "board": [
-            { "do": "write", "line": "a.e. 不是「大部分的點」" },
-            { "do": "write", "line": "$N$ 可以不可數，只要測度 ${{z:0}}$", "on": "例外點" },
-            { "do": "circle", "term": "z", "on": "只要測度" }
+            {"do":"write","line":"a.e. 不是「大部分的點」"},
+            {"do":"write","line":"$N$ 可以不可數，只要測度 ${{z:0}}$","on":"例外點"},
+            {"do":"circle","term":"z","on":"只要測度"}
+          ] },
+        { "show": ["零測集塞不下區間"],
+          "note": "區間 $(c,d)$ 的長度 $d-c>0$。",
+          "say": "零測集塞不下區間：若區間 c 到 d 被 N 包住，測度不會超過零，可是它的長度 d 減 c 大於零。",
+          "board": [
+            {"do":"write","line":"$(c,d)\\subseteq N\\Rightarrow\\mu(c,d)\\le{{z:0}}$"},
+            {"do":"focus","term":"z","on":"不會超過"},
+            {"do":"write","line":"但 $\\mu(c,d)=d-c>0$","on":"可是"}
           ] }
       ],
       "check": 0
@@ -81,19 +99,21 @@
         { "show": ["$f_n(x)=x^n$ 在 $[0,1]$"],
           "say": "x 的 n 次方在零到一上，收斂到什麼？",
           "board": [
-            { "do": "plot", "graph": {"window":[-0.12,1.18,-0.15,1.2],"curves":[{"expr":"x","domain":[0,1],"color":"muted"},{"expr":"x^2","domain":[0,1],"color":"muted"},{"expr":"x^10","domain":[0,1],"color":"blue"}],"points":[{"x":1,"y":1}],"ticks":false} }
+            {"do":"plot","graph":{"window":[-0.12,1.18,-0.15,1.2],"curves":[{"expr":"x","domain":[0,1],"color":"muted"},{"expr":"x^2","domain":[0,1],"color":"muted"},{"expr":"x^10","domain":[0,1],"color":"blue"}],"points":[{"x":1,"y":1}],"ticks":false}}
           ] },
-        { "show": ["$0\\le x<1$：$x^n\\to0$"], "note": "$x=\\frac{9}{10}$ 也會，只是比較慢。",
+        { "show": ["$0\\le x<1$：$x^n\\to0$"],
+          "note": "$x=\\frac{9}{10}$ 也會，只是比較慢。",
           "say": "x 小於一時都趨近零，像二分之一很快，十分之九比較慢，但都會到。",
           "board": [
-            { "do": "write", "line": "$0\\le x<1$：${{z:x^n\\to0}}$" },
-            { "do": "underline", "term": "z", "on": "都趨近零" }
+            {"do":"write","line":"$0\\le x<1$：${{z:x^n\\to0}}$"},
+            {"do":"underline","term":"z","on":"都趨近零"}
           ] },
-        { "show": ["$x=1$：$f_n(1)=1$"], "note": "例外集 $\\{1\\}$ 測度 0。",
+        { "show": ["$x=1$：$f_n(1)=1$"],
+          "note": "例外集 $\\{1\\}$ 測度 0。",
           "say": "只有 x 等於一的時候，每一項都是一。這個例外只有一點，測度是零。",
           "board": [
-            { "do": "write", "line": "$x=1$：${{o:f_n(1)=1}}$" },
-            { "do": "focus", "term": "o", "label": "只有一點", "on": "這個例外" }
+            {"do":"write","line":"$x=1$：${{o:f_n(1)=1}}$"},
+            {"do":"focus","term":"o","label":"只有一點","on":"這個例外"}
           ] }
       ],
       "check": 1
@@ -104,54 +124,77 @@
         { "show": ["$f=g$ a.e.、$g=h$ a.e."],
           "say": "如果 f 幾乎處處等於 g，g 又幾乎處處等於 h，能不能說 f 幾乎處處等於 h？",
           "board": [
-            { "do": "write", "line": "$f=g$ a.e.，$g=h$ a.e." },
-            { "do": "write", "line": "$f=h$ a.e. ？", "on": "能不能" }
+            {"do":"write","line":"$f=g$ a.e.，$g=h$ a.e."},
+            {"do":"write","line":"$f=h$ a.e. ？","on":"能不能"}
           ] },
         { "show": ["$\\{f\\ne h\\}\\subseteq\\{f\\ne g\\}\\cup\\{g\\ne h\\}$"],
           "say": "f 跟 h 不一樣的地方，一定落在兩個例外集的聯集裡。",
           "board": [
-            { "do": "write", "line": "${{a:f\\ne h}}$ 的點 $\\subseteq$ ${{b:f\\ne g}}$ 的點 $\\cup$ ${{c:g\\ne h}}$ 的點" },
-            { "do": "focus", "term": "a", "label": "不一樣", "on": "不一樣" },
-            { "do": "underline", "term": "b", "label": "例外集", "on": "兩個例外集" }
+            {"do":"write","line":"${{a:f\\ne h}}$ 的點 $\\subseteq$ ${{b:f\\ne g}}$ 的點 $\\cup$ ${{c:g\\ne h}}$ 的點"},
+            {"do":"focus","term":"a","label":"不一樣","on":"不一樣"},
+            {"do":"underline","term":"b","label":"例外集","on":"兩個例外集"}
           ] },
-        { "show": ["可數多個 a.e. 性質可以同時成立"], "note": "零測集的可數聯集仍是零測集。",
+        { "show": ["可數多個 a.e. 性質可以同時成立"],
+          "note": "零測集的可數聯集仍是零測集。",
           "say": "零測集的可數聯集還是零測集，所以可數多個幾乎處處的性質，可以同時成立。",
           "board": [
-            { "do": "write", "line": "${{u:N_1\\cup N_2\\cup\\cdots}}$ 測度 $0$" },
-            { "do": "underline", "term": "u", "on": "可數多個" }
+            {"do":"write","line":"${{u:N_1\\cup N_2\\cup\\cdots}}$ 測度 $0$"},
+            {"do":"underline","term":"u","on":"可數多個"}
           ] }
       ],
       "check": 3
     },
     {
-      "title": "a.e. 收斂不夠交換", "key": "盯住積分值 $\\frac{n}{n+1}$，別只看逐點極限",
+      "title": "a.e. 收斂不夠交換",
       "beats": [
         { "show": ["$f_n(x)=n x^n$ 在 $[0,1]$"],
           "say": "看 n 乘 x 的 n 次方。x 小於一時，等比衰減贏過 n，趨近零。",
           "board": [
-            { "do": "write", "line": "$f_n(x)={{n:n}}\\,{{g:x^n}}$ 在 $[0,1]$", "tint": { "n": "violet", "g": "blue" } },
-            { "do": "underline", "term": "g", "color": "blue", "label": "等比衰減", "on": "等比衰減" }
+            {"do":"write","line":"$f_n(x)={{n:n}}\\,{{g:x^n}}$ 在 $[0,1]$","tint":{"n":"violet","g":"blue"}},
+            {"do":"underline","term":"g","color":"blue","label":"等比衰減","on":"等比衰減"}
           ] },
-        { "show": ["$f_n\\to0$ a.e."], "note": "$x=1$ 時 $f_n(1)=n\\to\\infty$。",
+        { "show": ["$f_n\\to0$ a.e."],
+          "note": "$x=1$ 時 $f_n(1)=n\\to\\infty$。",
           "say": "只有 x 等於一時衝到無限大，但那只是一點，所以幾乎處處收斂到零。",
           "board": [
-            { "do": "write", "line": "$x=1$：$f_n(1)={{inf:n\\to\\infty}}$" },
-            { "do": "focus", "term": "inf", "on": "只是一點" },
-            { "do": "write", "line": "${{ae:f_n\\to0}}$ a.e.", "on": "所以" }
+            {"do":"write","line":"$x=1$：$f_n(1)={{inf:n\\to\\infty}}$"},
+            {"do":"focus","term":"inf","on":"只是一點"},
+            {"do":"write","line":"${{ae:f_n\\to0}}$ a.e.","on":"所以"}
+          ] },
+        { "show": ["$n=10$ 的圖：積分就是面積"],
+          "say": "n 等於十的時候，f n 的圖長這樣。積分就是曲線和 x 軸之間的面積。",
+          "board": [
+            {"do":"plot","graph":{"window":[-0.1,1.1,-0.5,11],"curves":[{"expr":"10*x^10","domain":[0,1],"color":"blue"}],"fills":[{"expr":"10*x^10","from":0,"to":1,"color":"blue"}],"ticks":false}}
           ] },
         { "show": ["$\\int_0^1 n x^n\\,dx=\\frac{n}{n+1}$"],
           "say": "可是它的積分，是 n 加一分之 n。",
           "board": [
-            { "do": "write", "line": "可是 $\\int_0^1 n x^n\\,dx={{r:\\frac{n}{n+1}}}$" },
-            { "do": "underline", "term": "r", "on": "積分" }
+            {"do":"write","line":"可是 $\\int_0^1 n x^n\\,dx={{r:\\frac{n}{n+1}}}$"},
+            {"do":"underline","term":"r","on":"積分"}
+          ] },
+        { "show": ["$\\int_0^1 nx^n\\,dx=\\left[\\frac{n x^{n+1}}{n+1}\\right]_0^1$"],
+          "note": "反導函數代上限減下限。",
+          "say": "x 的 n 次方的反導函數，是 n 加一分之 x 的 n 加一次方。乘上 n，代一減代零，就是這個值。",
+          "board": [
+            {"do":"write","line":"$\\int_0^1 nx^n\\,dx=\\left[\\frac{n x^{n+1}}{n+1}\\right]_0^1$"}
           ] }
       ],
+      "key": "盯住積分值 $\\frac{n}{n+1}$，別只看逐點極限",
       "predict": {
         "ask": "$\\lim\\int_0^1 f_n\\,dx$ 是？",
         "options": [
-          { "label": "1，不等於 a.e. 極限的積分 0", "correct": true },
-          { "label": "0", "why": "0 是 a.e. 極限的積分；但 $\\frac{n}{n+1}\\to1$。光有 a.e. 收斂不能交換。" },
-          { "label": "$\\infty$，因為 $f_n(1)=n\\to\\infty$", "why": "一個點不影響積分；直接算 $\\frac{n}{n+1}\\to1$。" }
+          {
+            "label": "1，不等於 a.e. 極限的積分 0",
+            "correct": true
+          },
+          {
+            "label": "0",
+            "why": "0 是 a.e. 極限的積分；但 $\\frac{n}{n+1}\\to1$。光有 a.e. 收斂不能交換。"
+          },
+          {
+            "label": "$\\infty$，因為 $f_n(1)=n\\to\\infty$",
+            "why": "一個點不影響積分；直接算 $\\frac{n}{n+1}\\to1$。"
+          }
         ]
       }
     },
@@ -161,92 +204,106 @@
         { "show": ["a.e. 連續：不連續點是零測集"],
           "say": "幾乎處處連續，是說不連續的點只有零測那麼多。",
           "board": [
-            { "do": "write", "line": "a.e. 連續：不連續的點 ⊆ 零測集" }
+            {"do":"write","line":"a.e. 連續：不連續的點 ⊆ 零測集"}
           ] },
         { "show": ["a.e. 等於連續函數：只在零測集上不同"],
           "say": "幾乎處處等於某個連續函數，是說改掉零測集上的值，就變成連續函數。兩者互不蘊含。",
           "board": [
-            { "do": "write", "line": "a.e. 等於連續函數：改零測集上的值即可" },
-            { "do": "write", "line": "a.e. 連續 ${{n:\\not\\Leftrightarrow}}$ a.e. 等於連續", "on": "兩者" },
-            { "do": "focus", "term": "n", "color": "red", "on": "互不" }
+            {"do":"write","line":"a.e. 等於連續函數：改零測集上的值即可"},
+            {"do":"write","line":"a.e. 連續 ${{n:\\not\\Leftrightarrow}}$ a.e. 等於連續","on":"兩者"},
+            {"do":"focus","term":"n","color":"red","on":"互不"}
           ] },
         { "show": ["Dirichlet：處處不連續，但 $=0$ a.e."],
           "say": "Dirichlet 函數處處不連續，可是它幾乎處處等於零，零是連續函數。",
           "board": [
-            { "do": "write", "line": "$D$ 處處不連續，但 $D={{z:0}}$ a.e." },
-            { "do": "focus", "term": "z", "on": "等於零" }
+            {"do":"write","line":"$D$ 處處不連續，但 $D={{z:0}}$ a.e."},
+            {"do":"focus","term":"z","on":"等於零"}
+          ] },
+        { "show": ["有理點是零測集"],
+          "note": "可數多個點，總長能壓得任意小。",
+          "say": "有理數排成一列，第 k 個用長度 艾普西隆乘二分之一的 k 次方的區間蓋，總長不超過艾普西隆，所以測度零。",
+          "board": [
+            {"do":"write","line":"$\\mu(\\mathbb{Q}\\cap[0,1])\\le\\sum_k\\varepsilon(\\tfrac12)^k\\le\\varepsilon$"},
+            {"do":"write","line":"$\\mu(\\mathbb{Q}\\cap[0,1])=0$","on":"所以"}
           ] },
         { "show": ["$\\chi_{[0,1/2]}$：只在 $\\frac{1}{2}$ 不連續"],
           "say": "反過來看零到二分之一的特徵函數，只在二分之一跳一下。它是哪一種？",
           "board": [
-            { "do": "clear" },
-            { "do": "write", "line": "$\\chi_{[0,1/2]}$：只在 ${{h:\\frac{1}{2}}}$ 不連續", "on": "特徵函數" },
-            { "do": "focus", "term": "h", "on": "跳一下" }
+            {"do":"clear"},
+            {"do":"write","line":"$\\chi_{[0,1/2]}$：只在 ${{h:\\frac{1}{2}}}$ 不連續","on":"特徵函數"},
+            {"do":"focus","term":"h","on":"跳一下"}
           ] }
       ],
       "check": 2
     },
     {
-      "title": "證明：改不成連續", "key": "零測集挖不空區間：兩側都有好點逼近",
-      "proof": true, "of": 3, "skeleton": "反證",
+      "title": "證明：改不成連續",
       "beats": [
         { "show": ["反設連續 $g$，在 $\\frac{1}{2}$ 兩側各逼出一個值"],
           "say": "策略：反證。假設有連續的 g 幾乎處處等於它，從左邊逼近二分之一得一個值，從右邊得另一個。",
           "board": [
-            { "do": "plot", "graph": {"window":[-0.12,1.12,-0.32,1.3],"curves":[{"expr":"1","domain":[0,0.5],"color":"ink"},{"expr":"0","domain":[0.5,1],"color":"ink"}],"dashed":[[[0.5,-0.05],[0.5,1.15]]],"arrows":[{"from":[0.08,1.16],"to":[0.42,1.16],"color":"blue"},{"from":[0.92,0.16],"to":[0.58,0.16],"color":"violet"}],"labels":[{"x":0.5,"y":-0.25,"text":"1/2","anchor":"middle"}],"ticks":false} },
-            { "do": "write", "line": "左邊逼出一個值，右邊逼出另一個", "on": "從左邊" }
+            {"do":"plot","graph":{"window":[-0.12,1.12,-0.32,1.3],"curves":[{"expr":"1","domain":[0,0.5],"color":"ink"},{"expr":"0","domain":[0.5,1],"color":"ink"}],"dashed":[[[0.5,-0.05],[0.5,1.15]]],"arrows":[{"from":[0.08,1.16],"to":[0.42,1.16],"color":"blue"},{"from":[0.92,0.16],"to":[0.58,0.16],"color":"violet"}],"labels":[{"x":0.5,"y":-0.25,"text":"1/2","anchor":"middle"}],"ticks":false}},
+            {"do":"write","line":"左邊逼出一個值，右邊逼出另一個","on":"從左邊"}
           ] },
         { "show": ["$g=\\chi_{[0,1/2]}$ a.e.，例外集 $N$ 測度 0"],
           "say": "設 g 連續，而且除了一個零測集 N 以外，g 都等於這個特徵函數。",
           "board": [
-            { "do": "transform", "line": "$g=\\chi_{[0,1/2]}$ a.e.，例外集 ${{nn:N}}$ 測度 $0$" },
-            { "do": "underline", "term": "nn", "label": "零測集", "on": "零測集" }
+            {"do":"transform","line":"$g=\\chi_{[0,1/2]}$ a.e.，例外集 ${{nn:N}}$ 測度 $0$"},
+            {"do":"underline","term":"nn","label":"零測集","on":"零測集"}
           ] },
-        { "show": ["$[0,\\frac{1}{2})\\setminus N$ 裡有點趨近 $\\frac{1}{2}$"], "note": "零測集不含區間：每個鄰域都有不在 $N$ 的點。",
-          "why": {
-            "ask": "為什麼左邊一定有不在 $N$ 的點？",
-            "say": "二分之一左邊的每個小區間裡，為什麼一定有不在 N 的點？",
-            "options": [
-              { "label": "零測集不含任何區間", "correct": true },
-              { "label": "a.e. 表示只有有限個例外點", "why": "例外點可以多到不可數，只要測度是零；靠的不是點少，是 $N$ 塞不下任何長度為正的區間。" },
-              { "label": "$N$ 測度 0，所以 $N$ 是空集合", "why": "測度零不等於空：有理數、Cantor 集都不是空的。要用的是 $N$ 不含區間。" }
-            ]
-          },
+        { "show": ["$[0,\\frac{1}{2})\\setminus N$ 裡有點趨近 $\\frac{1}{2}$"],
+          "note": "零測集不含區間：每個鄰域都有不在 $N$ 的點。",
+          "why": {"ask":"為什麼左邊一定有不在 $N$ 的點？","say":"二分之一左邊的每個小區間裡，為什麼一定有不在 N 的點？","options":[{"label":"零測集不含任何區間","correct":true},{"label":"a.e. 表示只有有限個例外點","why":"例外點可以多到不可數，只要測度是零；靠的不是點少，是 $N$ 塞不下任何長度為正的區間。"},{"label":"$N$ 測度 0，所以 $N$ 是空集合","why":"測度零不等於空：有理數、Cantor 集都不是空的。要用的是 $N$ 不含區間。"}]},
           "say": "二分之一的任何鄰域，跟左半邊交出一段長度為正的區間。零測集不含區間，裡面一定有不在 N 的點。",
           "board": [
-            { "do": "transform", "line": "${{gap:[0,\\frac{1}{2})\\setminus N}}$ 裡有點趨近 $\\frac{1}{2}$", "on": "左邊" },
-            { "do": "underline", "term": "gap", "label": "不含區間", "why": true, "on": "零測集不含區間" }
+            {"do":"transform","line":"${{gap:[0,\\frac{1}{2})\\setminus N}}$ 裡有點趨近 $\\frac{1}{2}$","on":"左邊"},
+            {"do":"underline","term":"gap","label":"不含區間","why":true,"on":"零測集不含區間"}
           ] },
-        { "show": ["那些點上 $g=1$，所以 $g(\\frac{1}{2})=1$"], "note": "$g$ 連續，沿著這列點取極限。",
-          "why": {
-            "ask": "為什麼 $g(\\frac{1}{2})=1$？",
-            "say": "為什麼 g 在二分之一的值一定是一？",
-            "options": [
-              { "label": "$g$ 連續，沿著趨近 $\\frac{1}{2}$ 的點取極限", "correct": true },
-              { "label": "$\\chi_{[0,1/2]}(\\frac{1}{2})=1$", "why": "那是特徵函數的值；$\\frac{1}{2}$ 可能就在例外集 $N$ 裡，$g$ 在那一點不必等於它。" },
-              { "label": "$g$ 在 $[0,\\frac{1}{2}]$ 上恆為 1", "why": "$g$ 只在 $N$ 以外等於 1；在 $N$ 裡的點可以是別的值，所以才要取極限。" }
-            ]
-          },
+        { "show": ["那些點上 $g=1$，所以 $g(\\frac{1}{2})=1$"],
+          "note": "$g$ 連續，沿著這列點取極限。",
+          "why": {"ask":"為什麼 $g(\\frac{1}{2})=1$？","say":"為什麼 g 在二分之一的值一定是一？","options":[{"label":"$g$ 連續，沿著趨近 $\\frac{1}{2}$ 的點取極限","correct":true},{"label":"$\\chi_{[0,1/2]}(\\frac{1}{2})=1$","why":"那是特徵函數的值；$\\frac{1}{2}$ 可能就在例外集 $N$ 裡，$g$ 在那一點不必等於它。"},{"label":"$g$ 在 $[0,\\frac{1}{2}]$ 上恆為 1","why":"$g$ 只在 $N$ 以外等於 1；在 $N$ 裡的點可以是別的值，所以才要取極限。"}]},
           "say": "在不在 N 的那些點上，g 等於一。取一列這樣的點趨近二分之一，g 連續，所以 g 在二分之一的值是一。",
           "board": [
-            { "do": "transform", "line": "那些點上 $g=1$ ⇒ ${{v1:g(\\tfrac{1}{2})=1}}$" },
-            { "do": "underline", "term": "v1", "label": "g 連續", "why": true, "on": "g 連續" }
+            {"do":"transform","line":"那些點上 $g=1$ ⇒ ${{v1:g(\\tfrac{1}{2})=1}}$"},
+            {"do":"underline","term":"v1","label":"g 連續","why":true,"on":"g 連續"}
+          ] },
+        { "show": ["$1=g(x_k)\\to g(\\frac{1}{2})$"],
+          "note": "常數列的極限就是那個常數。",
+          "say": "一列 x k 不在 N 而且趨近二分之一，g 在 x k 全是一。g 連續，所以這列常數的極限，就是 g 在二分之一的值。",
+          "board": [
+            {"do":"write","line":"$1=g(x_k)\\to g(\\tfrac{1}{2})$"}
           ] },
         { "show": ["右側同理：$g(\\frac{1}{2})=0$，矛盾"],
           "say": "右邊也一樣，那些點上 g 等於零，得到 g 在二分之一的值是零。一個點不能有兩個值，矛盾。",
           "board": [
-            { "do": "write", "line": "右側：${{v0:g(\\tfrac{1}{2})=0}}$", "on": "右邊" },
-            { "do": "focus", "term": "v1", "on": "兩個值" },
-            { "do": "focus", "term": "v0", "label": "矛盾", "on": "矛盾" }
+            {"do":"write","line":"右側：${{v0:g(\\tfrac{1}{2})=0}}$","on":"右邊"},
+            {"do":"focus","term":"v1","on":"兩個值"},
+            {"do":"focus","term":"v0","label":"矛盾","on":"矛盾"}
           ] }
       ],
+      "key": "零測集挖不空區間：兩側都有好點逼近",
+      "proof": true,
+      "of": 3,
+      "skeleton": "反證",
       "where": {
         "ask": "下面幾步裡，哪一步用到 $g$ 連續？",
         "steps": [
-          { "label": "例外集 $N$ 測度 0", "why": "這只是 a.e. 的定義。" },
-          { "label": "左側有不在 $N$ 的點趨近 $\\frac{1}{2}$", "why": "這只用到零測集不含區間，跟 $g$ 無關。" },
-          { "label": "那些點上 $g=1$", "why": "這只用到在 $N$ 以外 $g$ 等於特徵函數。" },
-          { "label": "取極限得 $g(\\frac{1}{2})=1$", "correct": true }
+          {
+            "label": "例外集 $N$ 測度 0",
+            "why": "這只是 a.e. 的定義。"
+          },
+          {
+            "label": "左側有不在 $N$ 的點趨近 $\\frac{1}{2}$",
+            "why": "這只用到零測集不含區間，跟 $g$ 無關。"
+          },
+          {
+            "label": "那些點上 $g=1$",
+            "why": "這只用到在 $N$ 以外 $g$ 等於特徵函數。"
+          },
+          {
+            "label": "取極限得 $g(\\frac{1}{2})=1$",
+            "correct": true
+          }
         ]
       }
     }

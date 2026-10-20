@@ -180,24 +180,26 @@
     {
       "title": "底面極座標，高度照舊",
       "beats": [
-        { "show": ["$x=r\\cos\\theta$、$y=r\\sin\\theta$、$z=z$"], "note": "$x^2+y^2=r^2$。",
+        { "show": ["$x=r\\cos\\theta$、$y=r\\sin\\theta$、$z=z$"],
+          "note": "$x^2+y^2=r^2$。",
           "say": "柱座標很簡單：底面的 x y 平面用極座標，高度 z 不動。",
           "board": [
-            { "do": "write", "line": "$x=r\\cos\\theta$、$y=r\\sin\\theta$、$z={{zz:z}}$" },
-            { "do": "focus", "term": "zz", "label": "不動", "on": "高度" }
+            {"do":"write","line":"$x=r\\cos\\theta$、$y=r\\sin\\theta$、$z={{zz:z}}$"},
+            {"do":"focus","term":"zz","label":"不動","on":"高度"}
           ] },
         { "show": ["$r=$ 常數：以 $z$ 軸為中心的圓柱面"],
           "say": "名字的由來：r 固定，所有點離 z 軸一樣遠，排成一個圓柱面。",
           "board": [
-            { "do": "write", "line": "${{r:r}}=$ 常數：以 $z$ 軸為中心的圓柱面" },
-            { "do": "focus", "term": "r", "on": "固定" }
+            {"do":"write","line":"${{r:r}}=$ 常數：以 $z$ 軸為中心的圓柱面"},
+            {"do":"focus","term":"r","on":"固定"}
           ] },
-        { "show": ["離軸多遠、轉了幾度、多高"], "note": "水管、杯子、旋轉出來的碗。",
+        { "show": ["離軸多遠、轉了幾度、多高"],
+          "note": "水管、杯子、旋轉出來的碗。",
           "say": "繞一根軸對稱的東西，像水管、杯子、碗，用離軸多遠、轉幾度、多高來描述最自然。",
           "board": [
-            { "do": "write", "line": "${{a:r}}$：離軸多遠　${{b:\\theta}}$：轉幾度　${{c:z}}$：多高" },
-            { "do": "focus", "term": "a", "on": "離軸多遠" },
-            { "do": "focus", "term": "c", "on": "多高來" }
+            {"do":"write","line":"${{a:r}}$：離軸多遠　${{b:\\theta}}$：轉幾度　${{c:z}}$：多高"},
+            {"do":"focus","term":"a","on":"離軸多遠"},
+            {"do":"focus","term":"c","on":"多高來"}
           ] }
       ],
       "check": 2
@@ -205,24 +207,42 @@
     {
       "title": "體積元素",
       "beats": [
-        { "show": ["底面：$r\\,dr\\,d\\theta$"], "note": "徑向寬 $dr$、弧長 $r\\,d\\theta$。",
+        { "show": ["底面：$r\\,dr\\,d\\theta$"],
+          "note": "徑向寬 $dr$、弧長 $r\\,d\\theta$。",
           "say": "一小塊的底面是極座標小格，面積是 r 乘 d r 乘 d theta。",
           "board": [
-            { "do": "write", "line": "底面：${{a:r\\,dr\\,d\\theta}}$" },
-            { "do": "box", "term": "a", "on": "面積是" }
+            {"do":"write","line":"底面：${{a:r\\,dr\\,d\\theta}}$"},
+            {"do":"box","term":"a","on":"面積是"}
+          ] },
+        { "show": ["同樣轉 $d\\theta$，外圈弧比較長"],
+          "note": "半徑 $1$ 與半徑 $2$ 的圓。",
+          "say": "看圖：半徑一和半徑二的圓，轉同樣的 d theta，外圈那段弧比較長，所以弧長是 r 乘 d theta。",
+          "board": [
+            {"do":"plot","graph":{"window":[-0.5,2.5,-0.5,2.5],"equal":true,"curves":[{"param":{"x":"cos(t)","y":"sin(t)","t":[0,1.5708]},"color":"blue"},{"param":{"x":"2*cos(t)","y":"2*sin(t)","t":[0,1.5708]},"color":"violet"},{"param":{"x":"cos(t)","y":"sin(t)","t":[0,0.5]},"color":"red"},{"param":{"x":"2*cos(t)","y":"2*sin(t)","t":[0,0.5]},"color":"red"}],"dashed":[[[0,0],[2.2,0]],[[0,0],[1.93,1.05]]]}},
+            {"do":"write","line":"弧長 $=r\\,d\\theta$","on":"弧長是"}
           ] },
         { "show": ["往上拉出厚度 $dz$"],
           "say": "再往上拉出 d z 的厚度。高度方向沒有被拉伸。",
           "board": [
-            { "do": "write", "line": "${{a:r\\,dr\\,d\\theta}}\\cdot{{t:dz}}$" },
-            { "do": "focus", "term": "t", "label": "沒有拉伸", "on": "高度方向" }
+            {"do":"write","line":"${{a:r\\,dr\\,d\\theta}}\\cdot{{t:dz}}$"},
+            {"do":"focus","term":"t","label":"沒有拉伸","on":"高度方向"}
           ] },
-        { "show": ["$dV=r\\,dz\\,dr\\,d\\theta$"], "note": "Jacobian $\\frac{\\partial(x,y,z)}{\\partial(r,\\theta,z)}=r$。",
+        { "show": ["$dV=r\\,dz\\,dr\\,d\\theta$"],
+          "note": "Jacobian $\\frac{\\partial(x,y,z)}{\\partial(r,\\theta,z)}=r$。",
           "say": "底面積乘厚度，體積元素多一個 r。用 Jacobian 算也是 r，放大全部來自底面。",
           "board": [
-            { "do": "write", "line": "$dV={{v:r\\,dz\\,dr\\,d\\theta}}$" },
-            { "do": "box", "term": "v", "color": "green", "on": "多一個" },
-            { "do": "write", "line": "$\\frac{\\partial(x,y,z)}{\\partial(r,\\theta,z)}=r$", "on": "Jacobian" }
+            {"do":"write","line":"$dV={{v:r\\,dz\\,dr\\,d\\theta}}$"},
+            {"do":"box","term":"v","color":"green","on":"多一個"},
+            {"do":"write","line":"$\\frac{\\partial(x,y,z)}{\\partial(r,\\theta,z)}=r$","on":"Jacobian"}
+          ] },
+        { "show": ["$\\begin{vmatrix}\\cos\\theta&-r\\sin\\theta\\\\\\sin\\theta&r\\cos\\theta\\end{vmatrix}$","$=r\\cos^2\\theta+r\\sin^2\\theta=r$"],
+          "note": "Jacobian：偏導數排成的行列式。",
+          "say": "Jacobian 是偏導數排成的行列式。交叉相乘相減，得 r 乘 cosine 平方加 sine 平方，等於 r。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$\\begin{vmatrix}\\cos\\theta&-r\\sin\\theta\\\\\\sin\\theta&r\\cos\\theta\\end{vmatrix}$","on":"偏導數"},
+            {"do":"write","line":"$=r\\cos^2\\theta+r\\sin^2\\theta={{j:r}}$","on":"交叉相乘"},
+            {"do":"box","term":"j","color":"green","on":"等於"}
           ] }
       ],
       "check": 0
@@ -233,70 +253,100 @@
         { "show": ["$x^2+y^2=4\\to r=2$"],
           "say": "圓柱面 x 平方加 y 平方等於四，就是 r 等於二。",
           "board": [
-            { "do": "write", "line": "圓柱面：${{s:x^2+y^2}}=4\\ \\to\\ r=2$", "tint": {"s":"blue"} }
+            {"do":"write","line":"圓柱面：${{s:x^2+y^2}}=4\\ \\to\\ r=2$","tint":{"s":"blue"}}
           ] },
         { "show": ["拋物面 $z=x^2+y^2\\to z=r^2$"],
           "say": "拋物面 z 等於 x 平方加 y 平方，變成 z 等於 r 平方。",
           "board": [
-            { "do": "write", "line": "拋物面：$z={{s:x^2+y^2}}\\ \\to\\ z=r^2$", "tint": {"s":"blue"} }
+            {"do":"write","line":"拋物面：$z={{s:x^2+y^2}}\\ \\to\\ z=r^2$","tint":{"s":"blue"}}
           ] },
         { "show": ["$y=x$（$x>0$）$\\to\\theta=\\frac{\\pi}{4}$"],
           "say": "半平面 y 等於 x，就是固定角度四分之 pi。這些都只用到 x 平方加 y 平方，換成 r 就變簡單。",
           "board": [
-            { "do": "write", "line": "半平面：$y=x\\ (x>0)\\ \\to\\ \\theta=\\frac{\\pi}{4}$" },
-            { "do": "focus", "term": "s", "on": "只用到" }
+            {"do":"write","line":"半平面：$y=x\\ (x>0)\\ \\to\\ \\theta=\\frac{\\pi}{4}$"},
+            {"do":"focus","term":"s","on":"只用到"}
           ] }
       ],
       "check": 1
     },
     {
-      "title": "圓錐的體積", "key": "上下曲面相減，交線定出 $r$ 的範圍",
+      "title": "圓錐的體積",
       "beats": [
-        { "show": ["$z=\\sqrt{x^2+y^2}$ 與 $z=2$ 圍成"], "note": "下曲面 $z=r$，上曲面 $z=2$。",
+        { "show": ["$z=\\sqrt{x^2+y^2}$ 與 $z=2$ 圍成"],
+          "note": "下曲面 $z=r$，上曲面 $z=2$。",
           "say": "圓錐面和平面 z 等於二圍成的立體。下面是圓錐 z 等於 r，上面是平面。",
           "board": [
-            { "do": "write", "line": "$z=\\sqrt{x^2+y^2}$ 與 $z=2$ 圍成" },
-            { "do": "write", "line": "下：${{lo:z=r}}$，上：${{up:z=2}}$", "on": "下面是圓錐" }
+            {"do":"write","line":"$z=\\sqrt{x^2+y^2}$ 與 $z=2$ 圍成"},
+            {"do":"write","line":"下：${{lo:z=r}}$，上：${{up:z=2}}$","on":"下面是圓錐"}
           ] },
         { "show": ["交在 $r=2$：$0\\le r\\le 2$"],
           "say": "兩張曲面交在 r 等於二，影子是半徑二的圓盤。",
           "board": [
-            { "do": "write", "line": "交在 $r=2$：$0\\le r\\le 2$" }
+            {"do":"write","line":"交在 $r=2$：$0\\le r\\le 2$"}
           ] },
-        { "show": ["$2\\pi\\int_0^2(2-r)\\,r\\,dr=2\\pi\\cdot\\frac{4}{3}=\\frac{8\\pi}{3}$"], "note": "驗算：$\\frac{1}{3}\\pi\\cdot2^2\\cdot2$。",
+        { "show": ["$2\\pi\\int_0^2(2-r)\\,r\\,dr=2\\pi\\cdot\\frac{4}{3}=\\frac{8\\pi}{3}$"],
+          "note": "驗算：$\\frac{1}{3}\\pi\\cdot2^2\\cdot2$。",
           "say": "最內層的高度是二減 r，記得乘 d V 的 r。得三分之八 pi，跟圓錐公式一樣。",
           "board": [
-            { "do": "write", "line": "$2\\pi\\int_0^2{{h:(2-r)}}\\,{{rr:r}}\\,dr={{v:\\frac{8\\pi}{3}}}$" },
-            { "do": "underline", "term": "h", "label": "高度", "on": "高度" },
-            { "do": "focus", "term": "rr", "on": "記得乘" },
-            { "do": "box", "term": "v", "color": "green", "on": "得三分之八" }
+            {"do":"write","line":"$2\\pi\\int_0^2{{h:(2-r)}}\\,{{rr:r}}\\,dr={{v:\\frac{8\\pi}{3}}}$"},
+            {"do":"underline","term":"h","label":"高度","on":"高度"},
+            {"do":"focus","term":"rr","on":"記得乘"},
+            {"do":"box","term":"v","color":"green","on":"得三分之八"}
           ] }
       ],
+      "key": "上下曲面相減，交線定出 $r$ 的範圍",
       "check": 3
     },
     {
-      "title": "兩個 $r$", "key": "密度的 $r$ 與 $dV$ 的 $r$ 別漏乘",
+      "title": "兩個 $r$",
       "beats": [
-        { "show": ["密度 $\\sqrt{x^2+y^2}=r$"], "note": "$x^2+y^2\\le 1$ 內、$z=1-r^2$ 之上、$z=4$ 之下。",
+        { "show": ["密度 $\\sqrt{x^2+y^2}=r$"],
+          "note": "$x^2+y^2\\le 1$ 內、$z=1-r^2$ 之上、$z=4$ 之下。",
           "say": "這個立體的密度是離軸的距離，在柱座標裡就是 r。",
           "board": [
-            { "do": "write", "line": "密度 $\\sqrt{x^2+y^2}={{d:r}}$" },
-            { "do": "focus", "term": "d", "on": "柱座標裡" }
+            {"do":"write","line":"密度 $\\sqrt{x^2+y^2}={{d:r}}$"},
+            {"do":"focus","term":"d","on":"柱座標裡"}
           ] },
-        { "show": ["$\\int_0^{2\\pi}\\int_0^1\\int_{1-r^2}^{4}r\\cdot r\\,dz\\,dr\\,d\\theta$"], "note": "一個是密度，一個是 $dV$。",
+        { "show": ["拋物面之上、平面之下","$1-r^2\\le z\\le 4$"],
+          "note": "圓柱內：$0\\le r\\le 1$。",
+          "say": "題目說在拋物面之上、平面之下，所以 z 的下限是一減 r 平方，上限是四。",
+          "board": [
+            {"do":"write","line":"${{lo:1-r^2}}\\le z\\le {{up:4}}$"},
+            {"do":"focus","term":"lo","label":"拋物面","on":"下限"},
+            {"do":"focus","term":"up","label":"平面","on":"上限是"}
+          ] },
+        { "show": ["$\\int_0^{2\\pi}\\int_0^1\\int_{1-r^2}^{4}r\\cdot r\\,dz\\,dr\\,d\\theta$"],
+          "note": "一個是密度，一個是 $dV$。",
           "say": "注意有兩個 r：一個是密度，一個是體積元素，兩個都要。",
           "board": [
-            { "do": "write", "line": "$\\int_0^{2\\pi}\\int_0^1\\int_{1-r^2}^{4}{{a:r}}\\cdot{{b:r}}\\,dz\\,dr\\,d\\theta$", "tint": {"a":"blue","b":"violet"} },
-            { "do": "focus", "term": "a", "color": "blue", "label": "密度", "on": "密度" },
-            { "do": "focus", "term": "b", "color": "violet", "label": "dV", "on": "體積元素" }
+            {"do":"write","line":"$\\int_0^{2\\pi}\\int_0^1\\int_{1-r^2}^{4}{{a:r}}\\cdot{{b:r}}\\,dz\\,dr\\,d\\theta$","tint":{"a":"blue","b":"violet"}},
+            {"do":"focus","term":"a","color":"blue","label":"密度","on":"密度"},
+            {"do":"focus","term":"b","color":"violet","label":"dV","on":"體積元素"}
+          ] },
+        { "show": ["質量 $=\\iiint$ 密度 $dV$","$r^2\\,(4-(1-r^2))$"],
+          "note": "對 $z$ 積分時，$r$ 當常數。",
+          "say": "質量是每一小塊的密度乘 d V 再加起來。對 z 積分時 r 是常數，所以是 r 平方乘上限減下限。",
+          "board": [
+            {"do":"write","line":"質量 $=\\iiint$ 密度 $dV$","on":"質量是"},
+            {"do":"write","line":"$r^2\\,(4-(1-r^2))$","on":"所以是"}
           ] }
       ],
+      "key": "密度的 $r$ 與 $dV$ 的 $r$ 別漏乘",
       "predict": {
         "ask": "最內層對 $z$ 積完是？",
         "options": [
-          { "label": "$3r^2+r^4$", "correct": true },
-          { "label": "$3r+r^3$", "why": "只乘了一個 $r$；密度的 $r$ 和 $dV$ 的 $r$ 要合成 $r^2$。" },
-          { "label": "$r^2(4-r^2)$", "why": "下限是 $1-r^2$：$4-(1-r^2)=3+r^2$。" }
+          {
+            "label": "$3r^2+r^4$",
+            "correct": true
+          },
+          {
+            "label": "$3r+r^3$",
+            "why": "只乘了一個 $r$；密度的 $r$ 和 $dV$ 的 $r$ 要合成 $r^2$。"
+          },
+          {
+            "label": "$r^2(4-r^2)$",
+            "why": "下限是 $1-r^2$：$4-(1-r^2)=3+r^2$。"
+          }
         ]
       }
     }

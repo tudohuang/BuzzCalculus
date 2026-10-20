@@ -18,7 +18,9 @@ const TYPES = {
 };
 const COLORS = ["gold", "red", "blue", "green", "violet"];
 const MAX_ACTIONS = 5; // 一句最多幾個動作
-const MAX_LINES = 4; // 板上同時最多幾行（一張圖算 2 行）
+// 板上同時最多幾行（一張圖算 2 行）。2026-10-20 4 → 8：板子不擦了，寫滿一塊（5 列）畫面自己換下一塊；真的疊到、出板由 lint_board_layout 在 Chrome 裡量。
+// 這裡只擋太誇張的（一口氣寫一大串不分段），也讓擴寫時能在節中間插句子
+const MAX_LINES = 8;
 const LINE_MAX = 32; // 一行看得到的字（TeX 原始碼不算）
 const LABEL_MAX = 8;
 const ID = /\{\{([a-z][a-z0-9]{0,7}):/g;
@@ -250,7 +252,7 @@ function create({ katex, board, cjkLen, checkGraph, layout }) {
       ["{{ 到最後都沒收", [{ board: [w("${{a:x+1$")] }], /沒收好|KaTeX/],
       ["{{ 寫在 $ 外面", [{ board: [w("{{a:x}} 是 $x$")] }], /要寫在/],
       ["太多動作", [{ board: [w("$a$"), w("$b$"), { do: "keep", n: 1 }, w("$c$"), w("$d$"), { do: "keep", n: 1 }] }], /一句 ≤ 5/],
-      ["板上太多行", [{ board: [w("$a$"), w("$b$"), w("$c$")] }, { board: [w("$d$"), w("$e$")] }], /最多 4/],
+      ["板上太多行", [{ board: [w("$a$"), w("$b$"), w("$c$")] }, { board: [w("$d$"), w("$e$")] }, { board: [w("$f$"), w("$g$")] }, { board: [w("$h$"), w("$i$")] }], /最多 8/],
       ["一行太長", [{ board: [w("這一行寫得實在太長了".repeat(4))] }], /超過 32 字/],
       ["at 倒退", [{ board: [{ ...w("$a$"), at: 0.5 }, { ...w("$b$"), at: 0.2 }] }], /要比前面的動作大/],
       ["at 超出", [{ board: [{ ...w("$a$"), at: 1 }] }], /0 到 1/],

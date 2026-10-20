@@ -158,51 +158,88 @@
     {
       "title": "兩個約束",
       "beats": [
-        { "show": ["$g=c_1$ 且 $h=c_2$"], "note": "三個變數 $(x,y,z)$，兩個約束各是一個曲面。",
+        { "show": ["$g=c_1$ 且 $h=c_2$"],
+          "note": "三個變數 $(x,y,z)$，兩個約束各是一個曲面。",
           "say": "三個變數，同時要滿足兩個條件。每個條件是一個曲面，兩個曲面相交，通常是一條曲線。",
           "board": [
-            { "do": "write", "line": "${{g:g}}=c_1$ 且 ${{h:h}}=c_2$", "tint": { "g": "blue", "h": "violet" } },
-            { "do": "transform", "line": "${{g:g}}=c_1$ 且 ${{h:h}}=c_2$ ⇒ 一條曲線", "on": "通常是" }
+            {"do":"write","line":"${{g:g}}=c_1$ 且 ${{h:h}}=c_2$","tint":{"g":"blue","h":"violet"}},
+            {"do":"transform","line":"${{g:g}}=c_1$ 且 ${{h:h}}=c_2$ ⇒ 一條曲線","on":"通常是"}
           ] },
         { "show": ["平面 $x+y+z=1$ 切圓柱 $x^2+y^2=2$"],
           "say": "例如一個平面斜斜地切過圓柱，切口是一圈。",
           "board": [
-            { "do": "write", "line": "平面 ${{pl:x+y+z=1}}$ 切圓柱 ${{cy:x^2+y^2=2}}$", "tint": { "pl": "blue", "cy": "violet" } }
+            {"do":"write","line":"平面 ${{pl:x+y+z=1}}$ 切圓柱 ${{cy:x^2+y^2=2}}$","tint":{"pl":"blue","cy":"violet"}}
+          ] },
+        { "show": ["從上面看是圓，切口是橢圓"],
+          "note": "$x^2+y^2=2$ 只管 $x$、$y$。",
+          "say": "圓柱從上面看是圓，可是平面是斜的，每一點的高度不同，所以切口是傾斜的橢圓。",
+          "board": [
+            {"do":"write","line":"$x^2+y^2=2$：從上面看是圓"},
+            {"do":"write","line":"平面是斜的 ⇒ 切口是傾斜的橢圓","on":"傾斜的橢圓"}
+          ] },
+        { "show": ["繞一圈展開：高度 $z$ 有高有低"],
+          "say": "把這一圈展開來畫：橫軸是繞一圈的角度，縱軸是高度 z，有一個最高點和一個最低點。",
+          "board": [
+            {"do":"plot","graph":{"window":[0,6.3,-2,4],"curves":[{"expr":"1-sqrt(2)*cos(x)-sqrt(2)*sin(x)","domain":[0,6.2832],"color":"blue"}]}}
           ] },
         { "show": ["在交線上，$f=z$ 最大在哪？"],
           "say": "問這一圈上哪一點最高，就是在兩個約束下，求 f 等於 z 的最大值。",
           "board": [
-            { "do": "write", "line": "在交線上，$f=z$ 最大在哪？", "on": "問這一圈" }
+            {"do":"write","line":"在交線上，$f=z$ 最大在哪？","on":"問這一圈"}
           ] }
       ],
       "predict": {
         "ask": "這條交線是什麼形狀？",
         "options": [
-          { "label": "一個傾斜的橢圓", "correct": true },
-          { "label": "水平的圓", "why": "交線的影子是圓，但平面是斜的，曲線本身是傾斜的橢圓，各點高度不同。" },
-          { "label": "一個曲面", "why": "兩個條件把三維空間切了兩刀，只剩一條曲線。" }
+          {
+            "label": "一個傾斜的橢圓",
+            "correct": true
+          },
+          {
+            "label": "水平的圓",
+            "why": "交線的影子是圓，但平面是斜的，曲線本身是傾斜的橢圓，各點高度不同。"
+          },
+          {
+            "label": "一個曲面",
+            "why": "兩個條件把三維空間切了兩刀，只剩一條曲線。"
+          }
         ]
       }
     },
     {
       "title": "條件從哪裡來",
       "beats": [
-        { "show": ["前進方向 $\\mathbf v\\perp\\nabla g$、$\\mathbf v\\perp\\nabla h$"], "note": "直覺，不是證明。",
+        { "show": ["梯度指向 $g$ 增加最快的方向"],
+          "note": "直覺：曲面上 $g=c_1$ 不變。",
+          "say": "梯度指向函數增加最快的方向。曲面上 g 的值不變，沿曲面走不增不減，所以梯度垂直於曲面。",
+          "board": [
+            {"do":"write","line":"沿曲面走，$g=c_1$ 不變"},
+            {"do":"write","line":"${{q1:\\nabla g}}\\perp$ 曲面","on":"所以"}
+          ] },
+        { "show": ["前進方向 $\\mathbf v\\perp\\nabla g$、$\\mathbf v\\perp\\nabla h$"],
+          "note": "直覺，不是證明。",
           "say": "沿交線走，前進方向同時躺在兩個曲面上，所以同時垂直於兩個梯度。",
           "board": [
-            { "do": "write", "line": "$\\mathbf v\\perp{{g:\\nabla g}}$、$\\mathbf v\\perp{{h:\\nabla h}}$", "tint": {"g":"blue","h":"violet"} }
+            {"do":"write","line":"$\\mathbf v\\perp{{g:\\nabla g}}$、$\\mathbf v\\perp{{h:\\nabla h}}$","tint":{"g":"blue","h":"violet"}}
           ] },
         { "show": ["極值點：$\\nabla f\\cdot\\mathbf v=0$"],
           "say": "在極值點，沿曲線走函數第一階不變，所以 f 的梯度也垂直於前進方向。",
           "board": [
-            { "do": "write", "line": "${{f:\\nabla f}}\\cdot\\mathbf v=0$" },
-            { "do": "underline", "term": "f", "label": "也垂直", "on": "梯度也" }
+            {"do":"write","line":"${{f:\\nabla f}}\\cdot\\mathbf v=0$"},
+            {"do":"underline","term":"f","label":"也垂直","on":"梯度也"}
           ] },
-        { "show": ["$\\nabla f=\\lambda\\,\\nabla g+\\mu\\,\\nabla h$"], "note": "跟 $\\mathbf v$ 垂直的向量，都在兩個梯度張成的平面上。",
+        { "show": ["垂直於 $\\mathbf v$ 的向量鋪成一個平面"],
+          "say": "垂直於前進方向的向量，本身就鋪成一個平面。兩個梯度都在裡面又不平行，剛好鋪滿它。",
+          "board": [
+            {"do":"write","line":"垂直 $\\mathbf v$ 的向量 ＝ 一個平面"},
+            {"do":"write","line":"$\\nabla g$、$\\nabla h$ 不平行 ⇒ 鋪滿","on":"不平行"}
+          ] },
+        { "show": ["$\\nabla f=\\lambda\\,\\nabla g+\\mu\\,\\nabla h$"],
+          "note": "跟 $\\mathbf v$ 垂直的向量，都在兩個梯度張成的平面上。",
           "say": "跟前進方向垂直的向量，全部落在兩個梯度張成的平面上，所以 f 的梯度是它們的組合，係數叫 lambda 和 mu。",
           "board": [
-            { "do": "write", "line": "${{f:\\nabla f}}={{l:\\lambda}}\\,{{g:\\nabla g}}+{{m:\\mu}}\\,{{h:\\nabla h}}$" },
-            { "do": "focus", "term": "l", "color": "gold", "label": "係數", "on": "lambda" }
+            {"do":"write","line":"${{f:\\nabla f}}={{l:\\lambda}}\\,{{g:\\nabla g}}+{{m:\\mu}}\\,{{h:\\nabla h}}$"},
+            {"do":"focus","term":"l","color":"gold","label":"係數","on":"lambda"}
           ] }
       ],
       "check": 1
@@ -213,16 +250,17 @@
         { "show": ["未知數：$x$、$y$、$z$、$\\lambda$、$\\mu$"],
           "say": "未知數有幾個？三個座標，再加兩個乘數。",
           "board": [
-            { "do": "write", "line": "未知數：${{c:x,y,z}}$、${{m:\\lambda,\\mu}}$", "tint": {"c":"blue","m":"violet"} },
-            { "do": "underline", "term": "c", "on": "三個座標" },
-            { "do": "underline", "term": "m", "on": "再加" }
+            {"do":"write","line":"未知數：${{c:x,y,z}}$、${{m:\\lambda,\\mu}}$","tint":{"c":"blue","m":"violet"}},
+            {"do":"underline","term":"c","on":"三個座標"},
+            {"do":"underline","term":"m","on":"再加"}
           ] },
-        { "show": ["方程：三個分量 + 兩個約束"], "note": "跟一個條件時一樣：解出來的只是候選點。",
+        { "show": ["方程：三個分量 + 兩個約束"],
+          "note": "跟一個條件時一樣：解出來的只是候選點。",
           "say": "方程也一樣多：梯度等式有三個分量，再加上兩個約束本身，別忘了約束也要代。",
           "board": [
-            { "do": "write", "line": "方程：${{e:\\nabla f=\\lambda\\nabla g+\\mu\\nabla h}}$ 的分量" },
-            { "do": "write", "line": "加上約束 ${{k:g=c_1}}$、${{d:h=c_2}}$", "on": "再加上" },
-            { "do": "underline", "term": "k", "label": "也要代", "on": "別忘了" }
+            {"do":"write","line":"方程：${{e:\\nabla f=\\lambda\\nabla g+\\mu\\nabla h}}$ 的分量"},
+            {"do":"write","line":"加上約束 ${{k:g=c_1}}$、${{d:h=c_2}}$","on":"再加上"},
+            {"do":"underline","term":"k","label":"也要代","on":"別忘了"}
           ] }
       ],
       "check": 0
@@ -230,83 +268,130 @@
     {
       "title": "先檢查前提",
       "beats": [
-        { "show": ["$\\nabla g(P)$、$\\nabla h(P)$ 線性獨立"], "note": "不平行、都不是零向量。",
+        { "show": ["$\\nabla g(P)$、$\\nabla h(P)$ 線性獨立"],
+          "note": "不平行、都不是零向量。",
           "say": "精確的定理要求兩個約束的梯度不平行、都不是零向量，這樣才張得出一個平面。",
           "board": [
-            { "do": "write", "line": "${{g:\\nabla g(P)}}$、${{h:\\nabla h(P)}}$ 線性獨立", "tint": {"g":"blue","h":"violet"} },
-            { "do": "write", "line": "不平行、都不是零向量", "on": "不平行" }
+            {"do":"write","line":"${{g:\\nabla g(P)}}$、${{h:\\nabla h(P)}}$ 線性獨立","tint":{"g":"blue","h":"violet"}},
+            {"do":"write","line":"不平行、都不是零向量","on":"不平行"}
           ] },
-        { "show": ["$\\nabla f=(0,0,1)$，$\\nabla g=(1,1,1)$", "$\\nabla h=(2x,2y,0)$"],
+        { "show": ["$(1,0,0)$、$(0,1,0)$ 張成水平面"],
+          "note": "平行的向量只張成一條線。",
+          "say": "舉例：一零零和零一零，各乘一個數再相加，填滿水平面。兩個平行的向量只得一條線，不是線性獨立。",
+          "board": [
+            {"do":"write","line":"$a(1,0,0)+b(0,1,0)$ ＝ 水平面"},
+            {"do":"write","line":"兩個平行：只得一條線","on":"平行的向量"}
+          ] },
+        { "show": ["$\\nabla f=(0,0,1)$，$\\nabla g=(1,1,1)$","$\\nabla h=(2x,2y,0)$"],
           "say": "回到斜切圓柱，三個梯度寫出來。",
           "board": [
-            { "do": "clear" },
-            { "do": "write", "line": "$\\nabla f=(0,0,1)$，${{gg:\\nabla g=(1,1,1)}}$", "tint": {"gg":"blue"}, "on": "回到" },
-            { "do": "write", "line": "${{hh:\\nabla h=(2x,2y,0)}}$", "tint": {"hh":"violet"}, "on": "三個梯度" }
+            {"do":"clear"},
+            {"do":"write","line":"$\\nabla f=(0,0,1)$，${{gg:\\nabla g=(1,1,1)}}$","tint":{"gg":"blue"},"on":"回到"},
+            {"do":"write","line":"${{hh:\\nabla h=(2x,2y,0)}}$","tint":{"hh":"violet"},"on":"三個梯度"}
           ] },
-        { "show": ["$\\nabla h$ 第三分量是 $0$，$\\nabla g$ 是 $1$"], "note": "兩者不可能平行。",
+        { "show": ["$\\nabla h$ 第三分量是 $0$，$\\nabla g$ 是 $1$"],
+          "note": "兩者不可能平行。",
           "say": "圓柱的梯度第三個分量是零，平面的是一，兩者不可能平行，前提成立。",
           "board": [
-            { "do": "underline", "term": "hh", "label": "第三是 0", "on": "圓柱的梯度" },
-            { "do": "underline", "term": "gg", "label": "第三是 1", "on": "平面的是" },
-            { "do": "write", "line": "不可能平行 ⇒ 前提成立", "color": "green", "on": "兩者" }
+            {"do":"underline","term":"hh","label":"第三是 0","on":"圓柱的梯度"},
+            {"do":"underline","term":"gg","label":"第三是 1","on":"平面的是"},
+            {"do":"write","line":"不可能平行 ⇒ 前提成立","color":"green","on":"兩者"}
           ] }
       ],
       "check": 2
     },
     {
-      "title": "找出最高點", "key": "前兩式相減消掉 $\\lambda$，得 $x=y$",
+      "title": "找出最高點",
       "beats": [
         { "show": ["$0=\\lambda+2\\mu x$，$0=\\lambda+2\\mu y$，$1=\\lambda$"],
           "say": "三個分量各寫一條。第三條直接給 lambda 等於一。",
           "board": [
-            { "do": "write", "line": "$0=\\lambda+2\\mu x$，$0=\\lambda+2\\mu y$，${{l:1=\\lambda}}$" },
-            { "do": "underline", "term": "l", "on": "第三條" }
+            {"do":"write","line":"$0=\\lambda+2\\mu x$，$0=\\lambda+2\\mu y$，${{l:1=\\lambda}}$"},
+            {"do":"underline","term":"l","on":"第三條"}
+          ] },
+        { "show": ["$\\lambda=1$ 代入：$0=1+2\\mu x$"],
+          "say": "lambda 等於一代進前兩條，得二 mu x 等於負一。負一不是零，所以 mu 不是零。",
+          "board": [
+            {"do":"write","line":"$0=1+2\\mu x$ ⇒ $2\\mu x=-1$"},
+            {"do":"write","line":"$-1\\ne0$ ⇒ $\\mu\\ne0$","on":"所以"}
           ] },
         { "show": ["$2\\mu x=2\\mu y=-1$ ⟹ $x=y$"],
           "say": "前兩條相比，mu 不是零，所以 x 等於 y。",
           "board": [
-            { "do": "write", "line": "$2\\mu x=2\\mu y=-1$ ⟹ $x=y$", "on": "前兩條相比" }
+            {"do":"write","line":"$2\\mu x=2\\mu y=-1$ ⟹ $x=y$","on":"前兩條相比"}
           ] },
-        { "show": ["$x=y=\\pm1$：兩個候選點"], "note": "代入 $x^2+y^2=2$，再用平面求 $z$。",
+        { "show": ["$x=y=\\pm1$：兩個候選點"],
+          "note": "代入 $x^2+y^2=2$，再用平面求 $z$。",
           "say": "代進圓柱，x 和 y 都是一或都是負一，再用平面算 z。",
           "board": [
-            { "do": "write", "line": "$x=y=\\pm1$：兩個候選點", "on": "代進圓柱" }
+            {"do":"write","line":"$x=y=\\pm1$：兩個候選點","on":"代進圓柱"}
           ] },
-        { "show": ["$x=y=-1$：最大值 $z=3$"], "note": "橢圓有界封閉，最大最小一定存在。",
+        { "show": ["$x=y=-1$：最大值 $z=3$"],
+          "note": "橢圓有界封閉，最大最小一定存在。",
           "say": "橢圓有界又封閉，最大最小都存在，比一比候選值就好。最高點的 z 是三。",
           "board": [
-            { "do": "write", "line": "$x=y=-1$：最大值 $z=3$", "color": "green", "on": "比一比" }
+            {"do":"write","line":"$x=y=-1$：最大值 $z=3$","color":"green","on":"比一比"}
+          ] },
+        { "show": ["有界閉集上，連續函數有最大最小"],
+          "note": "$z$ 連續，橢圓有界又封閉。",
+          "say": "為什麼最大最小一定存在：連續函數在有界閉集上一定取得兩者。橢圓沒有跑到無限遠，也沒有缺口。",
+          "board": [
+            {"do":"write","line":"橢圓：有界、封閉 ⇒ $z$ 有最大最小"}
           ] }
       ],
+      "key": "前兩式相減消掉 $\\lambda$，得 $x=y$",
       "check": 3
     },
     {
-      "title": "兩平面的交線", "key": "三式都用 $\\lambda$、$\\mu$ 表示，再代回約束",
+      "title": "兩平面的交線",
       "beats": [
         { "show": ["$x+y+z=3$ 與 $x-y=1$ 的交線上，$x^2+y^2+z^2$ 最小"],
           "say": "再一題：兩個平面交成一條直線，問線上離原點最近的點。",
           "board": [
-            { "do": "write", "line": "$x+y+z=3$ 與 $x-y=1$ 的交線上" },
-            { "do": "write", "line": "$x^2+y^2+z^2$ 最小", "on": "離原點最近" }
+            {"do":"write","line":"$x+y+z=3$ 與 $x-y=1$ 的交線上"},
+            {"do":"write","line":"$x^2+y^2+z^2$ 最小","on":"離原點最近"}
           ] },
         { "show": ["$2x=\\lambda+\\mu$，$2y=\\lambda-\\mu$，$2z=\\lambda$"],
           "say": "三個分量各一條，用 lambda、mu 表示 x、y、z。",
           "board": [
-            { "do": "write", "line": "$2x=\\lambda+\\mu$，$2y=\\lambda-\\mu$，$2z=\\lambda$" }
+            {"do":"write","line":"$2x=\\lambda+\\mu$，$2y=\\lambda-\\mu$，$2z=\\lambda$"}
           ] },
-        { "show": ["代約束：$\\lambda=2$，$\\mu=1$"], "note": "候選點 $\\left(\\frac{3}{2},\\frac{1}{2},1\\right)$。",
+        { "show": ["$\\frac{3\\lambda}{2}=3$，$\\mu=1$"],
+          "say": "代進第一個約束，三 lambda 除以二等於三，lambda 是二。x 減 y 等於 mu，所以 mu 是一。",
+          "board": [
+            {"do":"write","line":"$x+y+z=\\frac{3\\lambda}{2}=3$ ⇒ $\\lambda=2$"},
+            {"do":"write","line":"$x-y=\\mu=1$","on":"x 減 y"}
+          ] },
+        { "show": ["代約束：$\\lambda=2$，$\\mu=1$"],
+          "note": "候選點 $\\left(\\frac{3}{2},\\frac{1}{2},1\\right)$。",
           "say": "代進兩個約束，解出 lambda 等於二、mu 等於一，得到唯一的候選點。",
           "board": [
-            { "do": "write", "line": "代約束：$\\lambda=2$，$\\mu=1$" },
-            { "do": "transform", "line": "代約束：$\\lambda=2$，$\\mu=1$ ⇒ $\\left(\\frac{3}{2},\\frac{1}{2},1\\right)$", "on": "得到唯一" }
+            {"do":"write","line":"代約束：$\\lambda=2$，$\\mu=1$"},
+            {"do":"transform","line":"代約束：$\\lambda=2$，$\\mu=1$ ⇒ $\\left(\\frac{3}{2},\\frac{1}{2},1\\right)$","on":"得到唯一"}
+          ] },
+        { "show": ["直線走遠：$f\\to\\infty$，沒有最大值"],
+          "say": "交線是直線，走遠時距離變無限大，所以沒有最大值。最小值存在，唯一的候選點就是它。",
+          "board": [
+            {"do":"write","line":"走遠：$f\\to\\infty$ ⇒ 無最大值"},
+            {"do":"write","line":"最小值存在 ⇒ 候選點就是最小","on":"最小值存在"}
           ] }
       ],
+      "key": "三式都用 $\\lambda$、$\\mu$ 表示，再代回約束",
       "predict": {
         "ask": "最小值是？",
         "options": [
-          { "label": "$\\frac{7}{2}$", "correct": true },
-          { "label": "$1$", "why": "$1$ 只是 $z^2$；還要加上 $x^2=\\frac{9}{4}$ 和 $y^2=\\frac{1}{4}$。" },
-          { "label": "沒有最小值", "why": "交線是直線，走遠時 $f\\to\\infty$：沒有最大值，但最小值存在。" }
+          {
+            "label": "$\\frac{7}{2}$",
+            "correct": true
+          },
+          {
+            "label": "$1$",
+            "why": "$1$ 只是 $z^2$；還要加上 $x^2=\\frac{9}{4}$ 和 $y^2=\\frac{1}{4}$。"
+          },
+          {
+            "label": "沒有最小值",
+            "why": "交線是直線，走遠時 $f\\to\\infty$：沒有最大值，但最小值存在。"
+          }
         ]
       }
     }

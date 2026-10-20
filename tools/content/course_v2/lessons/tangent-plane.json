@@ -133,59 +133,92 @@
         { "show": ["曲面在 $(x_0,y_0,z_0)$ 附近像 $z=L(x,y)$"],
           "say": "答案其實已經有了：曲面在一點附近，看起來就像線性近似那片平面。",
           "board": [
-            { "do": "write", "line": "曲面在一點附近 ≈ 平面 $z=L(x,y)$" }
+            {"do":"write","line":"曲面在一點附近 ≈ 平面 $z=L(x,y)$"}
           ] },
-        { "show": ["$z-z_0=f_x(x-x_0)+f_y(y-y_0)$"], "note": "$f_x$、$f_y$ 在 $(x_0,y_0)$ 取值。",
+        { "show": ["$z-z_0=f_x(x-x_0)+f_y(y-y_0)$"],
+          "note": "$f_x$、$f_y$ 在 $(x_0,y_0)$ 取值。",
           "say": "平面通過那一點，沿 x 的斜率是 f 下標 x，沿 y 的斜率是 f 下標 y。兩個斜率定了，平面就定了。",
           "board": [
-            { "do": "write", "line": "$z-z_0={{fx:f_x}}(x-x_0)+{{fy:f_y}}(y-y_0)$", "tint": { "fx": "blue", "fy": "violet" } },
-            { "do": "focus", "term": "fx", "label": "沿 x 的斜率", "on": "沿 x" },
-            { "do": "focus", "term": "fy", "label": "沿 y 的斜率", "on": "沿 y" }
+            {"do":"write","line":"$z-z_0={{fx:f_x}}(x-x_0)+{{fy:f_y}}(y-y_0)$","tint":{"fx":"blue","fy":"violet"}},
+            {"do":"focus","term":"fx","label":"沿 x 的斜率","on":"沿 x"},
+            {"do":"focus","term":"fy","label":"沿 y 的斜率","on":"沿 y"}
           ] },
-        { "show": ["$z=x^2+xy+2y^2$ 在 $(1,1,4)$"], "note": "先檢查：$1+1+2=4$，點在曲面上。",
+        { "show": ["$z=x^2+xy+2y^2$ 在 $(1,1,4)$"],
+          "note": "先檢查：$1+1+2=4$，點在曲面上。",
           "say": "例如這個曲面在點一、一、四。先檢查點真的在曲面上。",
           "board": [
-            { "do": "clear" },
-            { "do": "write", "line": "$z=x^2+xy+2y^2$ 在 $(1,1,4)$", "on": "例如" },
-            { "do": "write", "line": "檢查：$1+1+2=4$", "on": "先檢查" }
+            {"do":"clear"},
+            {"do":"write","line":"$z=x^2+xy+2y^2$ 在 $(1,1,4)$","on":"例如"},
+            {"do":"write","line":"檢查：$1+1+2=4$","on":"先檢查"}
           ] },
-        { "show": ["$z-4=3(x-1)+5(y-1)$", "$3x+5y-z=4$"], "note": "$f_x=3$，$f_y=5$。",
+        { "show": ["固定 $y=1$ 切一刀，看斜率"],
+          "note": "固定 $x$ 切一刀，就得 $f_y$。",
+          "say": "把 y 固定成一切一刀，得到曲線，它在 x 等於一的斜率就是 f 下標 x。固定 x 切，就得 f 下標 y。",
+          "board": [
+            {"do":"write","line":"固定 $y=1$：$z=x^2+x+2$"},
+            {"do":"plot","graph":{"window":[-1,3,0,9],"curves":[{"expr":"x^2+x+2","domain":[-1,2.5],"color":"blue"},{"expr":"3*x+1","domain":[0,2.5],"color":"red"}],"points":[{"x":1,"y":4}]},"on":"得到曲線"}
+          ] },
+        { "show": ["$f_x=2x+y$，$f_y=x+4y$"],
+          "note": "偏微分：另一個變數當常數。",
+          "say": "y 當常數、只對 x 微分：二 x 加 y，代一、一得三。對 y 同理，得 x 加四 y，是五。",
+          "board": [
+            {"do":"clear"},
+            {"do":"write","line":"$f_x=2x+y$，代 $(1,1)$ 得 $3$","on":"x#2"},
+            {"do":"write","line":"$f_y=x+4y$，代 $(1,1)$ 得 $5$","on":"對 y 同理"}
+          ] },
+        { "show": ["$z-4=3(x-1)+5(y-1)$","$3x+5y-z=4$"],
+          "note": "$f_x=3$，$f_y=5$。",
           "say": "兩個斜率是三和五，代進去，整理成三 x 加五 y 減 z 等於四。",
           "board": [
-            { "do": "write", "line": "$z-4={{a:3}}(x-1)+{{b:5}}(y-1)$", "tint": { "a": "blue", "b": "violet" } },
-            { "do": "transform", "line": "$3x+5y-z=4$", "color": "green", "on": "整理成" }
+            {"do":"write","line":"$z-4={{a:3}}(x-1)+{{b:5}}(y-1)$","tint":{"a":"blue","b":"violet"}},
+            {"do":"transform","line":"$3x+5y-z=4$","color":"green","on":"整理成"}
           ] }
       ],
       "check": 0
     },
     {
-      "title": "等值面：梯度當法向量", "key": "不是圖形，就改看 $F=c$ 的梯度",
+      "title": "等值面：梯度當法向量",
       "beats": [
-        { "show": ["$x^2+2y^2+3z^2=6$"], "note": "一個 $(x,y)$ 對到上下兩個 $z$：不是一個圖形。",
+        { "show": ["$x^2+2y^2+3z^2=6$"],
+          "note": "一個 $(x,y)$ 對到上下兩個 $z$：不是一個圖形。",
           "say": "橢球面不能寫成 z 等於 f，因為同一個 x、y 上下各有一個點。但它是一個等值面。",
           "board": [
-            { "do": "write", "line": "$x^2+2y^2+3z^2=6$" },
-            { "do": "write", "line": "不是 $z=f(x,y)$，是等值面", "on": "不能寫成" }
+            {"do":"write","line":"$x^2+2y^2+3z^2=6$"},
+            {"do":"write","line":"不是 $z=f(x,y)$，是等值面","on":"不能寫成"}
           ] },
-        { "show": ["$\\nabla F$ 垂直於等值面"], "note": "切平面：過 $P$、法向量 $\\nabla F(P)$。",
+        { "show": ["$\\nabla F$ 垂直於等值面"],
+          "note": "切平面：過 $P$、法向量 $\\nabla F(P)$。",
           "say": "梯度垂直於等值面，所以梯度就是切平面的法向量，再用點和法向量寫平面。",
           "board": [
-            { "do": "write", "line": "${{g:\\nabla F}}$ 垂直於等值面 ⇒ 法向量", "tint": { "g": "blue" } }
+            {"do":"write","line":"${{g:\\nabla F}}$ 垂直於等值面 ⇒ 法向量","tint":{"g":"blue"}}
           ] },
-        { "show": ["$\\nabla F=(2x,4y,6z)$，在 $(1,1,1)$ 是 $(2,4,6)$"], "note": "檢查：$1+2+3=6$。",
+        { "show": ["$\\nabla F=(F_x,F_y,F_z)$"],
+          "note": "對 $x$ 微分時，$y,z$ 當常數。",
+          "say": "梯度是把對 x、對 y、對 z 的偏導數排成一個向量。對 x 微分時，y 和 z 當常數。",
+          "board": [
+            {"do":"write","line":"$\\nabla F=(F_x,F_y,F_z)$"}
+          ] },
+        { "show": ["$F_x=2x$，$F_y=4y$，$F_z=6z$"],
+          "say": "F 是 x 平方加二 y 平方加三 z 平方：x 平方變二 x，二 y 平方變四 y，三 z 平方變六 z。",
+          "board": [
+            {"do":"write","line":"$F_x=2x$，$F_y=4y$，$F_z=6z$"}
+          ] },
+        { "show": ["$\\nabla F=(2x,4y,6z)$，在 $(1,1,1)$ 是 $(2,4,6)$"],
+          "note": "檢查：$1+2+3=6$。",
           "say": "在點一、一、一，梯度是二、四、六。",
           "board": [
-            { "do": "write", "line": "${{g:\\nabla F}}=(2x,4y,6z)$" },
-            { "do": "transform", "line": "${{g:\\nabla F}}=(2x,4y,6z)$，在 $(1,1,1)$：$(2,4,6)$", "on": "在點" }
+            {"do":"write","line":"${{g:\\nabla F}}=(2x,4y,6z)$"},
+            {"do":"transform","line":"${{g:\\nabla F}}=(2x,4y,6z)$，在 $(1,1,1)$：$(2,4,6)$","on":"在點"}
           ] },
-        { "show": ["$2(x-1)+4(y-1)+6(z-1)=0$", "$x+2y+3z=6$"],
+        { "show": ["$2(x-1)+4(y-1)+6(z-1)=0$","$x+2y+3z=6$"],
           "say": "代進平面公式，同除以二，得到 x 加二 y 加三 z 等於六。",
           "board": [
-            { "do": "keep", "n": 1 },
-            { "do": "write", "line": "$2(x-1)+4(y-1)+6(z-1)=0$", "on": "代進" },
-            { "do": "write", "line": "$x+2y+3z=6$", "color": "green", "on": "同除以二" }
+            {"do":"keep","n":1},
+            {"do":"write","line":"$2(x-1)+4(y-1)+6(z-1)=0$","on":"代進"},
+            {"do":"write","line":"$x+2y+3z=6$","color":"green","on":"同除以二"}
           ] }
       ],
+      "key": "不是圖形，就改看 $F=c$ 的梯度",
       "check": 2
     },
     {
@@ -194,23 +227,31 @@
         { "show": ["$z=f(x,y)$ ⟺ $F=f(x,y)-z=0$"],
           "say": "其實圖形也是一種等值面：把 z 搬到同一邊，變成 F 等於零。",
           "board": [
-            { "do": "write", "line": "$z=f(x,y)$" },
-            { "do": "transform", "line": "$F=f(x,y)-z=0$", "on": "搬到" }
+            {"do":"write","line":"$z=f(x,y)$"},
+            {"do":"transform","line":"$F=f(x,y)-z=0$","on":"搬到"}
           ] },
-        { "show": ["$\\nabla F=(f_x,f_y,-1)$"], "note": "第三個分量是 $-1$，不是 $0$。",
+        { "show": ["對 $z$ 微分：$x,y$ 當常數"],
+          "note": "$f(x,y)$ 這時不動，只剩 $-z$ 在變。",
+          "say": "對 z 微分，是把 x、y 當常數，只看 z 的變化。f 這時不動，只剩減 z 在變。",
+          "board": [
+            {"do":"write","line":"對 $z$ 微分：$x,y$ 當常數"}
+          ] },
+        { "show": ["$\\nabla F=(f_x,f_y,-1)$"],
+          "note": "第三個分量是 $-1$，不是 $0$。",
           "say": "這個 F 對 z 微分是負一，所以法向量的第三個分量是負一。代進等值面的公式，移項就回到圖形的公式。",
           "board": [
-            { "do": "clear" },
-            { "do": "write", "line": "$\\nabla F=(f_x,f_y,{{m:-1}})$", "on": "這個" },
-            { "do": "focus", "term": "m", "color": "gold", "label": "第三分量", "on": "負一#1" },
-            { "do": "write", "line": "$f_x(x-x_0)+f_y(y-y_0)-(z-z_0)=0$", "on": "代進" },
-            { "do": "transform", "line": "$z-z_0=f_x(x-x_0)+f_y(y-y_0)$", "color": "green", "on": "移項" }
+            {"do":"clear"},
+            {"do":"write","line":"$\\nabla F=(f_x,f_y,{{m:-1}})$","on":"這個"},
+            {"do":"focus","term":"m","color":"gold","label":"第三分量","on":"負一#1"},
+            {"do":"write","line":"$f_x(x-x_0)+f_y(y-y_0)-(z-z_0)=0$","on":"代進"},
+            {"do":"transform","line":"$z-z_0=f_x(x-x_0)+f_y(y-y_0)$","color":"green","on":"移項"}
           ] },
-        { "show": ["法線：$P+t\\cdot\\mathbf n$"], "note": "過 $P$、垂直於曲面的直線。",
+        { "show": ["法線：$P+t\\cdot\\mathbf n$"],
+          "note": "過 $P$、垂直於曲面的直線。",
           "say": "有了法向量，過這一點、垂直於曲面的直線，叫法線，也一起寫得出來。",
           "board": [
-            { "do": "write", "line": "法線：${{p:P}}+t\\cdot{{n:\\mathbf n}}$" },
-            { "do": "focus", "term": "n", "color": "blue", "label": "法向量", "on": "垂直於" }
+            {"do":"write","line":"法線：${{p:P}}+t\\cdot{{n:\\mathbf n}}$"},
+            {"do":"focus","term":"n","color":"blue","label":"法向量","on":"垂直於"}
           ] }
       ],
       "check": 1
@@ -218,57 +259,83 @@
     {
       "title": "反過來找點",
       "beats": [
-        { "show": ["哪些點的切平面平行於 $x+y+z=0$？"], "note": "橢球面 $x^2+2y^2+3z^2=6$。",
+        { "show": ["哪些點的切平面平行於 $x+y+z=0$？"],
+          "note": "橢球面 $x^2+2y^2+3z^2=6$。",
           "say": "反過來問：橢球面上哪些點的切平面，跟這個給定的平面平行？",
           "board": [
-            { "do": "write", "line": "橢球面 $x^2+2y^2+3z^2=6$" },
-            { "do": "write", "line": "給定平面 $x+y+z=0$", "on": "給定" }
+            {"do":"write","line":"橢球面 $x^2+2y^2+3z^2=6$"},
+            {"do":"write","line":"給定平面 $x+y+z=0$","on":"給定"}
           ] },
-        { "show": ["切平面法向量 $(2x,4y,6z)$", "給定平面法向量 $(1,1,1)$"],
+        { "show": ["切平面法向量 $(2x,4y,6z)$","給定平面法向量 $(1,1,1)$"],
           "say": "橢球面在一點的法向量是梯度二 x、四 y、六 z；給定平面的法向量讀係數，是一、一、一。",
           "board": [
-            { "do": "clear" },
-            { "do": "write", "line": "切平面法向量 $(2x,4y,6z)$", "on": "橢球面" },
-            { "do": "write", "line": "給定平面法向量 $(1,1,1)$", "on": "給定平面" }
+            {"do":"clear"},
+            {"do":"write","line":"切平面法向量 $(2x,4y,6z)$","on":"橢球面"},
+            {"do":"write","line":"給定平面法向量 $(1,1,1)$","on":"給定平面"}
           ] }
       ],
       "predict": {
         "ask": "兩個平面平行，要看什麼？",
         "options": [
-          { "label": "法向量平行：$(2x,4y,6z)=k(1,1,1)$", "correct": true },
-          { "label": "常數項相等", "why": "常數只決定平面平移到哪裡；方向由法向量決定。" },
-          { "label": "法向量垂直", "why": "法向量垂直的兩個平面是互相垂直，不是平行。" }
+          {
+            "label": "法向量平行：$(2x,4y,6z)=k(1,1,1)$",
+            "correct": true
+          },
+          {
+            "label": "常數項相等",
+            "why": "常數只決定平面平移到哪裡；方向由法向量決定。"
+          },
+          {
+            "label": "法向量垂直",
+            "why": "法向量垂直的兩個平面是互相垂直，不是平行。"
+          }
         ]
       }
     },
     {
-      "title": "解出那一點", "key": "代回曲面解 $k$，正負兩點都要",
+      "title": "解出那一點",
       "beats": [
+        { "show": ["平行：一個向量 $=k\\cdot$ 另一個"],
+          "note": "三個分量乘同一個 $k$。",
+          "say": "兩個向量平行，就是方向相同或相反，也就是一個等於另一個乘一個數 k，三個分量乘的是同一個 k。",
+          "board": [
+            {"do":"write","line":"平行 ⇒ 一個 $=k\\cdot$ 另一個"}
+          ] },
         { "show": ["$x=\\frac{k}{2}$、$y=\\frac{k}{4}$、$z=\\frac{k}{6}$"],
           "say": "法向量平行，每個分量都等於 k，解出 x、y、z 都用 k 表示。",
           "board": [
-            { "do": "write", "line": "$(2x,4y,6z)={{k:k}}(1,1,1)$", "tint": { "k": "violet" } },
-            { "do": "write", "line": "$x=\\frac{k}{2}$、$y=\\frac{k}{4}$、$z=\\frac{k}{6}$", "on": "解出" }
+            {"do":"write","line":"$(2x,4y,6z)={{k:k}}(1,1,1)$","tint":{"k":"violet"}},
+            {"do":"write","line":"$x=\\frac{k}{2}$、$y=\\frac{k}{4}$、$z=\\frac{k}{6}$","on":"解出"}
           ] },
-        { "show": ["$\\frac{11k^2}{24}=6$，$k=\\pm\\frac{12}{\\sqrt{11}}$"], "note": "代回曲面。",
+        { "show": ["$\\frac{11k^2}{24}=6$，$k=\\pm\\frac{12}{\\sqrt{11}}$"],
+          "note": "代回曲面。",
           "say": "代回曲面方程式，解出 k，有正負兩個。",
           "board": [
-            { "do": "write", "line": "代回：$\\frac{11k^2}{24}=6$" },
-            { "do": "transform", "line": "代回：$\\frac{11k^2}{24}=6$，${{k:k}}=\\pm\\frac{12}{\\sqrt{11}}$", "on": "有正負" }
+            {"do":"write","line":"代回：$\\frac{11k^2}{24}=6$"},
+            {"do":"transform","line":"代回：$\\frac{11k^2}{24}=6$，${{k:k}}=\\pm\\frac{12}{\\sqrt{11}}$","on":"有正負"}
           ] },
         { "show": ["$x>0$：$x=\\frac{6}{\\sqrt{11}}$"],
           "say": "取 x 是正的那一個，x 等於根號十一分之六。",
           "board": [
-            { "do": "write", "line": "$x>0$：$x=\\frac{6}{\\sqrt{11}}$", "color": "green" }
+            {"do":"write","line":"$x>0$：$x=\\frac{6}{\\sqrt{11}}$","color":"green"}
           ] },
-        { "show": ["條件：$\\nabla F(P)\\ne\\mathbf 0$"], "note": "圓錐面 $x^2+y^2-z^2=0$ 的尖點：沒有切平面。",
+        { "show": ["條件：$\\nabla F(P)\\ne\\mathbf 0$"],
+          "note": "圓錐面 $x^2+y^2-z^2=0$ 的尖點：沒有切平面。",
           "say": "最後一個提醒：梯度是零向量時決定不了平面。圓錐的尖點梯度是零，那裡也真的沒有切平面。",
           "board": [
-            { "do": "clear" },
-            { "do": "write", "line": "條件：$\\nabla F(P)\\ne\\mathbf 0$", "on": "梯度是零向量" },
-            { "do": "write", "line": "圓錐 $x^2+y^2-z^2=0$ 的尖點：沒有切平面", "on": "圓錐" }
+            {"do":"clear"},
+            {"do":"write","line":"條件：$\\nabla F(P)\\ne\\mathbf 0$","on":"梯度是零向量"},
+            {"do":"write","line":"圓錐 $x^2+y^2-z^2=0$ 的尖點：沒有切平面","on":"圓錐"}
+          ] },
+        { "show": ["圓錐尖點：$\\nabla F=\\mathbf 0$"],
+          "note": "直覺：尖點附近是尖的，不是平的。",
+          "say": "圓錐的梯度是二 x、二 y、負二 z，在尖點全是零，零向量沒有方向。尖點附近是尖的，不是平的，所以沒有切平面。",
+          "board": [
+            {"do":"write","line":"$\\nabla F=(2x,2y,-2z)$"},
+            {"do":"write","line":"在 $(0,0,0)$：$\\nabla F=\\mathbf 0$","on":"在尖點全是零"}
           ] }
       ],
+      "key": "代回曲面解 $k$，正負兩點都要",
       "check": 3
     }
   ],

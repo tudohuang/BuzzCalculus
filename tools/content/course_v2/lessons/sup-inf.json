@@ -140,25 +140,34 @@
     {
       "title": "最低的天花板",
       "beats": [
-        { "show": ["$S=\\{0,\\frac{1}{2},\\frac{2}{3},\\frac{3}{4},\\dots\\}$"], "note": "$1-\\frac{1}{n}$：每一項都小於 1。",
+        { "show": ["$S=\\{0,\\frac{1}{2},\\frac{2}{3},\\frac{3}{4},\\dots\\}$"],
+          "note": "$1-\\frac{1}{n}$：每一項都小於 1。",
           "say": "一減 n 分之一：零、二分之一、三分之二，一直往上爬，每一項都比一小。",
           "board": [
-            { "do": "write", "line": "$S=\\{0,\\ \\frac{1}{2},\\ \\frac{2}{3},\\ \\dots\\}$" },
-            { "do": "write", "line": "$1-\\frac{1}{n}<1$", "on": "每一項" }
+            {"do":"write","line":"$S=\\{0,\\ \\frac{1}{2},\\ \\frac{2}{3},\\ \\dots\\}$"},
+            {"do":"write","line":"$1-\\frac{1}{n}<1$","on":"每一項"}
           ] },
-        { "show": ["上界：1、2、10 都是"], "note": "沒有最大元：下一項總是更大。",
+        { "show": ["點越爬越高，貼近 1"],
+          "note": "橫軸是 $n$，縱軸是 $1-\\frac{1}{n}$。",
+          "say": "畫出來：每一項是一個點，往右一直爬，卻永遠碰不到虛線一。",
+          "board": [
+            {"do":"plot","graph":{"window":[0,9,-0.2,1.3],"points":[{"x":1,"y":0},{"x":2,"y":0.5},{"x":3,"y":0.6667},{"x":4,"y":0.75},{"x":5,"y":0.8},{"x":6,"y":0.8333},{"x":7,"y":0.8571},{"x":8,"y":0.875}],"dashed":[[[0,1],[9,1]]],"labels":[{"x":0.2,"y":1.1,"text":"1","anchor":"start"}]}}
+          ] },
+        { "show": ["上界：1、2、10 都是"],
+          "note": "沒有最大元：下一項總是更大。",
           "say": "一、二、十都是上界。可是這個集合沒有最大元，任何一項的下一項都比它大。",
           "board": [
-            { "do": "write", "line": "上界：1、2、10 都是" },
-            { "do": "write", "line": "沒有最大元", "on": "沒有最大元" }
+            {"do":"write","line":"上界：1、2、10 都是"},
+            {"do":"write","line":"沒有最大元","on":"沒有最大元"}
           ] },
-        { "show": ["所有上界裡最小的：1"], "note": "記成 $\\sup S$，上確界。",
+        { "show": ["所有上界裡最小的：1"],
+          "note": "記成 $\\sup S$，上確界。",
           "say": "雖然摸不到天花板，但所有上界裡有一個最低的，就是一。這個最小的上界叫上確界。",
           "board": [
-            { "do": "clear" },
-            { "do": "write", "line": "最小的上界 ＝ ${{m:1}}$", "on": "所有上界" },
-            { "do": "box", "term": "m", "color": "green", "on": "就是一" },
-            { "do": "write", "line": "$\\sup S$：上確界", "on": "這個最小" }
+            {"do":"clear"},
+            {"do":"write","line":"最小的上界 ＝ ${{m:1}}$","on":"所有上界"},
+            {"do":"box","term":"m","color":"green","on":"就是一"},
+            {"do":"write","line":"$\\sup S$：上確界","on":"這個最小"}
           ] }
       ],
       "check": 0
@@ -166,98 +175,110 @@
     {
       "title": "定義與判準",
       "beats": [
-        { "show": ["(i) $s$ 是上界", "(ii) 任一上界 $b$ 都有 $s\\le b$"],
+        { "show": ["(i) $s$ 是上界","(ii) 任一上界 $b$ 都有 $s\\le b$"],
           "say": "上確界的定義兩條：它是上界；而且任何上界都不比它小。下確界對稱，是最大的下界。",
           "board": [
-            { "do": "write", "line": "(i) $s$ 是上界" },
-            { "do": "write", "line": "(ii) 任一上界 $b$ 都有 ${{ii:s\\le b}}$", "on": "任何上界" },
-            { "do": "write", "line": "下確界：最大的下界", "on": "下確界" }
+            {"do":"write","line":"(i) $s$ 是上界"},
+            {"do":"write","line":"(ii) 任一上界 $b$ 都有 ${{ii:s\\le b}}$","on":"任何上界"},
+            {"do":"write","line":"下確界：最大的下界","on":"下確界"}
           ] },
-        { "show": ["(ii) 很難直接查"], "note": "上界有無限多個。",
+        { "show": ["(ii) 很難直接查"],
+          "note": "上界有無限多個。",
           "say": "第二條很難直接檢查，因為上界有無限多個，總不能一個一個比。",
           "board": [
-            { "do": "underline", "term": "ii", "label": "上界太多" }
+            {"do":"underline","term":"ii","label":"上界太多"}
           ] },
         { "show": ["(ii′) $\\forall\\varepsilon>0\\ \\exists x\\in S,\\ x>s-\\varepsilon$"],
           "say": "實際用的是等價的版本：對每一個 epsilon，都找得到集合裡的 x，比 s 減 epsilon 還大。",
           "board": [
-            { "do": "clear" },
-            { "do": "write", "line": "(ii′) $\\forall\\varepsilon>0\\ \\exists x\\in S,\\ {{ex:x>s-\\varepsilon}}$", "on": "對每一個" },
-            { "do": "underline", "term": "ex", "on": "比 s 減" }
+            {"do":"clear"},
+            {"do":"write","line":"(ii′) $\\forall\\varepsilon>0\\ \\exists x\\in S,\\ {{ex:x>s-\\varepsilon}}$","on":"對每一個"},
+            {"do":"underline","term":"ex","on":"比 s 減"}
           ] },
-        { "show": ["$s$ 往下退一點點，就不再是上界"], "note": "先給 $\\varepsilon$，再找 $x$。",
+        { "show": ["$s$ 往下退一點點，就不再是上界"],
+          "note": "先給 $\\varepsilon$，再找 $x$。",
           "say": "翻成人話：s 往下退任何一點點，就有元素穿過去。先給 epsilon，再找 x。兩者等價，下一節證明。",
           "board": [
-            { "do": "write", "line": "$s$ 往下退，就有 $x$ 穿過去" },
-            { "do": "write", "line": "先給 $\\varepsilon$，再找 $x$", "on": "先給" }
+            {"do":"write","line":"$s$ 往下退，就有 $x$ 穿過去"},
+            {"do":"write","line":"先給 $\\varepsilon$，再找 $x$","on":"先給"}
           ] }
       ],
       "check": 1
     },
     {
-      "title": "證明：兩個版本等價", "key": "反設上界 $b<s$，取 $\\varepsilon=s-b$",
-      "proof": true, "of": 3, "skeleton": "反證",
+      "title": "證明：兩個版本等價",
       "beats": [
-        { "show": ["(ii) ⇒ (ii′) 直接證；(ii′) ⇒ (ii) 反證"], "note": "兩個方向都假設 (i)：$s$ 是上界。",
+        { "show": ["(ii) ⇒ (ii′) 直接證；(ii′) ⇒ (ii) 反證"],
+          "note": "兩個方向都假設 (i)：$s$ 是上界。",
           "say": "策略：兩個方向分開證。從二推二撇直接證；從二撇推二用反證，假設有比 s 小的上界。",
           "board": [
-            { "do": "write", "line": "(ii) ⇒ (ii′)：直接證", "on": "從二推二撇" },
-            { "do": "write", "line": "(ii′) ⇒ (ii)：反證", "on": "從二撇推二" }
+            {"do":"write","line":"(ii) ⇒ (ii′)：直接證","on":"從二推二撇"},
+            {"do":"write","line":"(ii′) ⇒ (ii)：反證","on":"從二撇推二"}
           ] },
-        { "show": ["$s-\\varepsilon<s$，所以 $s-\\varepsilon$ 不是上界"], "note": "否則由 (ii)，$s\\le s-\\varepsilon$。",
-          "why": {
-            "ask": "為什麼 $s-\\varepsilon$ 不是上界？",
-            "say": "給定 epsilon。s 減 epsilon 為什麼不可能是上界？",
-            "options": [
-              { "label": "由 (ii)，上界都 $\\ge s$，而 $s-\\varepsilon<s$", "correct": true },
-              { "label": "$s-\\varepsilon$ 在 $S$ 裡", "why": "$s-\\varepsilon$ 不一定在 $S$ 裡；它不是上界，是因為它比 $s$ 小。" },
-              { "label": "$\\varepsilon$ 很小", "why": "$\\varepsilon$ 多大都對；關鍵是 $s-\\varepsilon<s$，而每個上界都 $\\ge s$。" }
-            ]
-          },
+        { "show": ["$s-\\varepsilon<s$，所以 $s-\\varepsilon$ 不是上界"],
+          "note": "否則由 (ii)，$s\\le s-\\varepsilon$。",
+          "why": {"ask":"為什麼 $s-\\varepsilon$ 不是上界？","say":"給定 epsilon。s 減 epsilon 為什麼不可能是上界？","options":[{"label":"由 (ii)，上界都 $\\ge s$，而 $s-\\varepsilon<s$","correct":true},{"label":"$s-\\varepsilon$ 在 $S$ 裡","why":"$s-\\varepsilon$ 不一定在 $S$ 裡；它不是上界，是因為它比 $s$ 小。"},{"label":"$\\varepsilon$ 很小","why":"$\\varepsilon$ 多大都對；關鍵是 $s-\\varepsilon<s$，而每個上界都 $\\ge s$。"}]},
           "say": "第二條說每個上界都不比 s 小。s 減 epsilon 比 s 小，所以它不是上界。",
           "board": [
-            { "do": "write", "line": "$s-\\varepsilon<s$ ⇒ ${{nb:s-\\varepsilon}}$ 不是上界", "on": "s 減 epsilon" },
-            { "do": "underline", "term": "nb", "label": "由 (ii)", "why": true, "on": "第二條說" }
+            {"do":"write","line":"$s-\\varepsilon<s$ ⇒ ${{nb:s-\\varepsilon}}$ 不是上界","on":"s 減 epsilon"},
+            {"do":"underline","term":"nb","label":"由 (ii)","why":true,"on":"第二條說"}
           ] },
-        { "show": ["不是上界：有 $x\\in S$，$x>s-\\varepsilon$"], "note": "這正是 (ii′)。",
+        { "show": ["若 $s-\\varepsilon$ 是上界，由 (ii)：","$s\\le s-\\varepsilon$"],
+          "note": "但 $\\varepsilon>0$，這不可能。",
+          "say": "假設 s 減 epsilon 是上界，由第二條得 s 小於等於 s 減 epsilon。但 epsilon 是正的，所以不可能。",
+          "board": [
+            {"do":"write","line":"假設 $s-\\varepsilon$ 是上界"},
+            {"do":"write","line":"(ii) ⇒ ${{n1:s\\le s-\\varepsilon}}$","on":"第二條"},
+            {"do":"strike","term":"n1","label":"矛盾","on":"正的"}
+          ] },
+        { "show": ["不是上界：有 $x\\in S$，$x>s-\\varepsilon$"],
+          "note": "這正是 (ii′)。",
           "say": "不是上界的意思，就是集合裡有某個 x 穿過它，比 s 減 epsilon 大。這就是二撇。",
           "board": [
-            { "do": "write", "line": "${{ex:\\exists x\\in S,\\ x>s-\\varepsilon}}$", "on": "集合裡有" },
-            { "do": "box", "term": "ex", "color": "green", "label": "(ii′)", "on": "這就是" }
+            {"do":"write","line":"${{ex:\\exists x\\in S,\\ x>s-\\varepsilon}}$","on":"集合裡有"},
+            {"do":"box","term":"ex","color":"green","label":"(ii′)","on":"這就是"}
           ] },
-        { "show": ["反過來：設上界 $b<s$，取 $\\varepsilon=s-b>0$"], "note": "讓 $s-\\varepsilon$ 剛好等於 $b$。",
-          "why": {
-            "ask": "為什麼取 $\\varepsilon=s-b$？",
-            "say": "反方向：假設有上界 b 比 s 小。epsilon 為什麼要取 s 減 b？",
-            "options": [
-              { "label": "讓 $s-\\varepsilon$ 剛好等於 $b$", "correct": true },
-              { "label": "$\\varepsilon$ 越小越好", "why": "越小不一定有用；要剛好讓 $s-\\varepsilon=b$，穿過去的 $x$ 才會比 $b$ 大。" },
-              { "label": "任何 $\\varepsilon>0$ 都可以", "why": "隨便取只得到 $x>s-\\varepsilon$，不一定 $>b$；取 $s-b$ 才剛好碰到 $b$。" }
-            ]
-          },
+        { "show": ["反過來：設上界 $b<s$，取 $\\varepsilon=s-b>0$"],
+          "note": "讓 $s-\\varepsilon$ 剛好等於 $b$。",
+          "why": {"ask":"為什麼取 $\\varepsilon=s-b$？","say":"反方向：假設有上界 b 比 s 小。epsilon 為什麼要取 s 減 b？","options":[{"label":"讓 $s-\\varepsilon$ 剛好等於 $b$","correct":true},{"label":"$\\varepsilon$ 越小越好","why":"越小不一定有用；要剛好讓 $s-\\varepsilon=b$，穿過去的 $x$ 才會比 $b$ 大。"},{"label":"任何 $\\varepsilon>0$ 都可以","why":"隨便取只得到 $x>s-\\varepsilon$，不一定 $>b$；取 $s-b$ 才剛好碰到 $b$。"}]},
           "say": "取 epsilon 等於 s 減 b，它是正的，而且 s 減 epsilon 剛好是 b。",
           "board": [
-            { "do": "clear" },
-            { "do": "write", "line": "反設上界 $b<s$", "on": "假設有上界" },
-            { "do": "write", "line": "取 ${{e:\\varepsilon=s-b}}>0$", "on": "epsilon 為什麼" },
-            { "do": "write", "line": "$s-\\varepsilon=b$", "why": true, "on": "而且 s 減" }
+            {"do":"clear"},
+            {"do":"write","line":"反設上界 $b<s$","on":"假設有上界"},
+            {"do":"write","line":"取 ${{e:\\varepsilon=s-b}}>0$","on":"epsilon 為什麼"},
+            {"do":"write","line":"$s-\\varepsilon=b$","why":true,"on":"而且 s 減"}
           ] },
-        { "show": ["由 (ii′)：有 $x\\in S$，$x>b$", "與 $b$ 是上界矛盾，所以 $s\\le b$"],
+        { "show": ["由 (ii′)：有 $x\\in S$，$x>b$","與 $b$ 是上界矛盾，所以 $s\\le b$"],
           "say": "二撇給出集合裡的 x 比 b 大，跟 b 是上界矛盾。所以每個上界都不比 s 小，這就是第二條。",
           "board": [
-            { "do": "keep", "n": 2 },
-            { "do": "write", "line": "(ii′)：$\\exists x\\in S,\\ x>b$", "on": "二撇給出" },
-            { "do": "write", "line": "與 $b$ 是上界矛盾 ⇒ $\\;{{fin:s\\le b}}$", "on": "跟 b 是上界矛盾" },
-            { "do": "box", "term": "fin", "color": "green", "on": "所以每個上界" }
+            {"do":"keep","n":2},
+            {"do":"write","line":"(ii′)：$\\exists x\\in S,\\ x>b$","on":"二撇給出"},
+            {"do":"write","line":"與 $b$ 是上界矛盾 ⇒ $\\;{{fin:s\\le b}}$","on":"跟 b 是上界矛盾"},
+            {"do":"box","term":"fin","color":"green","on":"所以每個上界"}
           ] }
       ],
+      "key": "反設上界 $b<s$，取 $\\varepsilon=s-b$",
+      "proof": true,
+      "of": 3,
+      "skeleton": "反證",
       "order": {
         "ask": "把 (ii′) ⇒ (ii) 排回順序：依序點每一步",
         "steps": [
-          { "label": "設 $b$ 是上界，反設 $b<s$" },
-          { "label": "取 $\\varepsilon=s-b>0$", "why": "要先有 $b$，而且知道 $b<s$，才取得出正的 $\\varepsilon$。" },
-          { "label": "由 (ii′)，有 $x\\in S$，$x>s-\\varepsilon=b$", "why": "(ii′) 要先給定 $\\varepsilon$ 才能用。" },
-          { "label": "與 $b$ 是上界矛盾，所以 $s\\le b$", "why": "要先找到穿過 $b$ 的 $x$，才有矛盾。" }
+          {
+            "label": "設 $b$ 是上界，反設 $b<s$"
+          },
+          {
+            "label": "取 $\\varepsilon=s-b>0$",
+            "why": "要先有 $b$，而且知道 $b<s$，才取得出正的 $\\varepsilon$。"
+          },
+          {
+            "label": "由 (ii′)，有 $x\\in S$，$x>s-\\varepsilon=b$",
+            "why": "(ii′) 要先給定 $\\varepsilon$ 才能用。"
+          },
+          {
+            "label": "與 $b$ 是上界矛盾，所以 $s\\le b$",
+            "why": "要先找到穿過 $b$ 的 $x$，才有矛盾。"
+          }
         ]
       }
     },
@@ -267,22 +288,37 @@
         { "show": ["(i) $\\frac{1}{n}>0$ ⇒ $1-\\frac{1}{n}<1$"],
           "say": "先證一是上界：n 分之一是正的，一減掉它一定小於一。",
           "board": [
-            { "do": "write", "line": "(i) ${{p:\\frac{1}{n}>0}}$ ⇒ $1-\\frac{1}{n}<1$" },
-            { "do": "underline", "term": "p", "on": "是正的" }
+            {"do":"write","line":"(i) ${{p:\\frac{1}{n}>0}}$ ⇒ $1-\\frac{1}{n}<1$"},
+            {"do":"underline","term":"p","on":"是正的"}
           ] },
-        { "show": ["(ii′) 要 $1-\\frac{1}{n}>1-\\varepsilon$"], "note": "也就是 $\\frac{1}{n}<\\varepsilon$，即 $n>\\frac{1}{\\varepsilon}$。",
+        { "show": ["(ii′) 要 $1-\\frac{1}{n}>1-\\varepsilon$"],
+          "note": "也就是 $\\frac{1}{n}<\\varepsilon$，即 $n>\\frac{1}{\\varepsilon}$。",
           "say": "再證退一點點就失守：給定 epsilon，要找 n 讓 n 分之一小於 epsilon，n 只要比 epsilon 分之一大。",
           "board": [
-            { "do": "write", "line": "(ii′) $1-\\frac{1}{n}>1-\\varepsilon$" },
-            { "do": "transform", "line": "$\\frac{1}{n}<\\varepsilon$", "on": "n 分之一小於" },
-            { "do": "write", "line": "$n>\\frac{1}{\\varepsilon}$", "on": "n 只要" }
+            {"do":"write","line":"(ii′) $1-\\frac{1}{n}>1-\\varepsilon$"},
+            {"do":"transform","line":"$\\frac{1}{n}<\\varepsilon$","on":"n 分之一小於"},
+            {"do":"write","line":"$n>\\frac{1}{\\varepsilon}$","on":"n 只要"}
           ] },
-        { "show": ["這樣的自然數存在"], "note": "靠〈阿基米德性質〉。",
+        { "show": ["這樣的自然數存在"],
+          "note": "靠〈阿基米德性質〉。",
           "say": "比任何實數都大的自然數一定找得到，這要靠阿基米德性質。具體試一個 epsilon。",
           "board": [
-            { "do": "clear" },
-            { "do": "write", "line": "自然數 $n>\\frac{1}{\\varepsilon}$ 存在", "on": "比任何" },
-            { "do": "write", "line": "靠〈阿基米德性質〉", "on": "阿基米德性質" }
+            {"do":"clear"},
+            {"do":"write","line":"自然數 $n>\\frac{1}{\\varepsilon}$ 存在","on":"比任何"},
+            {"do":"write","line":"靠〈阿基米德性質〉","on":"阿基米德性質"}
+          ] },
+        { "show": ["阿基米德性質：","任意實數 $r$，都有自然數 $n>r$"],
+          "note": "取 $r=\\frac{1}{\\varepsilon}$。",
+          "say": "阿基米德性質說：對任何實數 r，都有自然數 n 大於 r。把 r 取成 epsilon 分之一，就有 n 大於它。",
+          "board": [
+            {"do":"write","line":"${{ar:\\forall r\\in\\mathbb{R}\\ \\exists n\\in\\mathbb{N},\\ n>r}}$"},
+            {"do":"write","line":"取 $r=\\frac{1}{\\varepsilon}$ ⇒ $n>\\frac{1}{\\varepsilon}$","on":"取成"}
+          ] },
+        { "show": ["直覺：自然數一個接一個，沒有盡頭"],
+          "note": "嚴格版：$\\mathbb{N}$ 有上界會矛盾，靠完備性。",
+          "say": "為什麼一定有？直覺是自然數一個一個加一，沒有盡頭。嚴格要靠完備性：自然數若有上界，就會矛盾。",
+          "board": [
+            {"do":"write","line":"若 $\\mathbb{N}$ 有上界 ⇒ 矛盾","on":"自然數若"}
           ] }
       ],
       "check": 3
@@ -290,55 +326,77 @@
     {
       "title": "$\\sup$ 與 $\\max$",
       "beats": [
-        { "show": ["$1\\notin S$"], "note": "$1-\\frac{1}{n}=1$ 會推出 $\\frac{1}{n}=0$。",
+        { "show": ["$1\\notin S$"],
+          "note": "$1-\\frac{1}{n}=1$ 會推出 $\\frac{1}{n}=0$。",
           "say": "還有，一不在集合裡：一減 n 分之一要等於一，n 分之一就得是零，做不到。",
           "board": [
-            { "do": "write", "line": "$1\\notin S$" },
-            { "do": "write", "line": "$1-\\frac{1}{n}=1$ ⇒ $\\frac{1}{n}=0$", "on": "一減 n" }
+            {"do":"write","line":"$1\\notin S$"},
+            {"do":"write","line":"$1-\\frac{1}{n}=1$ ⇒ $\\frac{1}{n}=0$","on":"一減 n"}
           ] },
-        { "show": ["有最大元 $m$ ⇒ $\\sup S=m$"], "note": "$\\sup S\\in S$ 時，它就是最大元。",
+        { "show": ["有最大元 $m$ ⇒ $\\sup S=m$"],
+          "note": "$\\sup S\\in S$ 時，它就是最大元。",
           "say": "如果集合有最大元，最大元自動就是上確界。上確界是最大元的推廣。",
           "board": [
-            { "do": "write", "line": "有最大元 $m$ ⇒ $\\sup S=m$", "on": "如果集合" }
+            {"do":"write","line":"有最大元 $m$ ⇒ $\\sup S=m$","on":"如果集合"}
           ] },
-        { "show": ["$S=\\{(-1)^n(1+\\frac{1}{n})\\}$"], "note": "$-2,\\frac{3}{2},-\\frac{4}{3},\\frac{5}{4},\\dots$",
+        { "show": ["$S=\\{(-1)^n(1+\\frac{1}{n})\\}$"],
+          "note": "$-2,\\frac{3}{2},-\\frac{4}{3},\\frac{5}{4},\\dots$",
           "say": "看一個正負交錯的集合：負二、二分之三、負三分之四、四分之五。偶數項是正的，奇數項是負的。",
           "board": [
-            { "do": "clear" },
-            { "do": "write", "line": "$S=\\{(-1)^n(1+\\frac{1}{n})\\}$", "on": "正負交錯" },
-            { "do": "write", "line": "$-2,\\ {{t:\\frac{3}{2}}},\\ -\\frac{4}{3},\\ \\frac{5}{4},\\ \\dots$", "on": "負二" }
+            {"do":"clear"},
+            {"do":"write","line":"$S=\\{(-1)^n(1+\\frac{1}{n})\\}$","on":"正負交錯"},
+            {"do":"write","line":"$-2,\\ {{t:\\frac{3}{2}}},\\ -\\frac{4}{3},\\ \\frac{5}{4},\\ \\dots$","on":"負二"}
           ] },
-        { "show": ["$\\sup S=\\frac{3}{2}$（$n=2$ 取到）"], "note": "取得到，就不必用 $\\varepsilon$ 判準。",
+        { "show": ["$\\sup S=\\frac{3}{2}$（$n=2$ 取到）"],
+          "note": "取得到，就不必用 $\\varepsilon$ 判準。",
           "say": "偶數項最大是 n 等於二的二分之三，負的更不用說，所以上確界二分之三，而且取得到。下確界呢？",
           "board": [
-            { "do": "underline", "term": "t", "on": "n 等於二的" },
-            { "do": "write", "line": "$\\sup S={{t:\\frac{3}{2}}}$（$n=2$ 取到）", "on": "所以上確界" }
+            {"do":"underline","term":"t","on":"n 等於二的"},
+            {"do":"write","line":"$\\sup S={{t:\\frac{3}{2}}}$（$n=2$ 取到）","on":"所以上確界"}
           ] }
       ],
       "check": 2
     },
     {
-      "title": "先增後減", "key": "相鄰比跟 1 比大小，找出轉折點",
+      "title": "先增後減",
       "beats": [
-        { "show": ["$S=\\{\\frac{n}{2^n}\\}$"], "note": "$\\frac{1}{2},\\frac{1}{2},\\frac{3}{8},\\frac{1}{4},\\dots$",
+        { "show": ["$S=\\{\\frac{n}{2^n}\\}$"],
+          "note": "$\\frac{1}{2},\\frac{1}{2},\\frac{3}{8},\\frac{1}{4},\\dots$",
           "say": "最後一個：二的 n 次方分之 n。前幾項二分之一、二分之一、八分之三、四分之一，好像在變小。",
           "board": [
-            { "do": "write", "line": "$S=\\{\\frac{n}{2^n}\\}$" },
-            { "do": "write", "line": "$\\frac{1}{2},\\ \\frac{1}{2},\\ \\frac{3}{8},\\ \\frac{1}{4},\\ \\dots$", "on": "前幾項" }
+            {"do":"write","line":"$S=\\{\\frac{n}{2^n}\\}$"},
+            {"do":"write","line":"$\\frac{1}{2},\\ \\frac{1}{2},\\ \\frac{3}{8},\\ \\frac{1}{4},\\ \\dots$","on":"前幾項"}
           ] },
         { "show": ["比較相鄰兩項：$\\frac{a_{n+1}}{a_n}$"],
           "say": "要確定，就拿後一項除以前一項，看比值有沒有小於一。",
           "board": [
-            { "do": "write", "line": "後一項 ÷ 前一項" },
-            { "do": "write", "line": "$\\frac{a_{n+1}}{a_n}<1\\ ?$", "on": "比值" }
+            {"do":"write","line":"後一項 ÷ 前一項"},
+            {"do":"write","line":"$\\frac{a_{n+1}}{a_n}<1\\ ?$","on":"比值"}
+          ] },
+        { "show": ["比值 $<1$：後一項較小，遞減","遞減：最大的在最前面"],
+          "note": "最大元就是上確界（觀念 ④）。",
+          "say": "如果比值小於一，後一項就比前一項小，數列遞減。最大的一項就在最前面，上確界就是它。",
+          "board": [
+            {"do":"write","line":"比值 $<1$ ⇒ 後一項較小，遞減"},
+            {"do":"write","line":"最大元在最前面 ⇒ $\\sup$ ＝ 最大元","on":"最大的"}
           ] }
       ],
+      "key": "相鄰比跟 1 比大小，找出轉折點",
       "predict": {
         "ask": "$\\frac{a_{n+1}}{a_n}$ 是？",
         "options": [
-          { "label": "$\\frac{n+1}{2n}$", "correct": true },
-          { "label": "$\\frac{n+1}{n}$", "why": "分母 $2^{n+1}$ 比 $2^n$ 多一個 2，相除留下 $\\frac{1}{2}$，你漏了。" },
-          { "label": "$\\frac{2(n+1)}{n}$", "why": "$\\frac{2^n}{2^{n+1}}=\\frac{1}{2}$，2 在分母，你乘反了。" }
+          {
+            "label": "$\\frac{n+1}{2n}$",
+            "correct": true
+          },
+          {
+            "label": "$\\frac{n+1}{n}$",
+            "why": "分母 $2^{n+1}$ 比 $2^n$ 多一個 2，相除留下 $\\frac{1}{2}$，你漏了。"
+          },
+          {
+            "label": "$\\frac{2(n+1)}{n}$",
+            "why": "$\\frac{2^n}{2^{n+1}}=\\frac{1}{2}$，2 在分母，你乘反了。"
+          }
         ]
       }
     }

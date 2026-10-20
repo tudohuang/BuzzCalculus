@@ -65,54 +65,84 @@
         { "show": ["階梯函數：面積 $=$ 高 $\\times$ 底"],
           "say": "Riemann 的上和下和，其實是在算階梯函數的面積：每一段取一個高度，高乘底。",
           "board": [
-            { "do": "write", "line": "階梯函數：面積 $=$ 高 $\\times$ 底" }
+            {"do":"write","line":"階梯函數：面積 $=$ 高 $\\times$ 底"}
           ] },
         { "show": ["底：任何可測集，用測度量"],
           "say": "Lebesgue 只改一個地方：底不必是區間，可以是任何可測集，底多大就用測度量。",
           "board": [
-            { "do": "write", "line": "底 $E$，用 $\\mu(E)$ 量" }
+            {"do":"write","line":"底 $E$，用 $\\mu(E)$ 量"}
           ] },
-        { "show": ["$\\varphi=a_1\\chi_{E_1}+\\cdots+a_n\\chi_{E_n}$"], "note": "$E_k=\\varphi^{-1}(\\{a_k\\})$，兩兩不交。",
+        { "show": ["$\\mu(E)\\ge0$，不交就能相加"],
+          "note": "可測：能被測度量的集合；區間、單點、有理數都是。",
+          "say": "測度 mu 給每個可測集一個零以上的數，不交的集合可以相加。m 是 Lebesgue 測度，區間的 m 就是長度。",
+          "board": [
+            {"do":"write","line":"$\\mu(E)\\ge0$，不交就能相加"},
+            {"do":"write","line":"$m([a,b])=b-a$","on":"Lebesgue"}
+          ] },
+        { "show": ["$\\varphi=a_1\\chi_{E_1}+\\cdots+a_n\\chi_{E_n}$"],
+          "note": "$E_k=\\varphi^{-1}(\\{a_k\\})$，兩兩不交。",
           "say": "把取同一個值的點收成一塊，就寫成標準形：每個值乘上它那一塊的指示函數，加起來。",
           "board": [
-            { "do": "write", "line": "$\\varphi={{a:a_1}}{{e:\\chi_{E_1}}}+\\cdots+a_n\\chi_{E_n}$", "tint": {"a":"blue","e":"violet"} },
-            { "do": "underline", "term": "e", "color": "violet", "label": "那一塊", "on": "指示函數" }
+            {"do":"write","line":"$\\varphi={{a:a_1}}{{e:\\chi_{E_1}}}+\\cdots+a_n\\chi_{E_n}$","tint":{"a":"blue","e":"violet"}},
+            {"do":"underline","term":"e","color":"violet","label":"那一塊","on":"指示函數"}
+          ] },
+        { "show": ["$\\chi_E(x)=1$（$x\\in E$），否則 0"],
+          "say": "指示函數 chi E，點在 E 裡是一，不在就是零。標準形裡每個值各一塊，所以 E k 兩兩不交，各管各的。",
+          "board": [
+            {"do":"write","line":"$\\chi_E(x)=1$，$x\\in E$；否則 $0$"},
+            {"do":"write","line":"$E_k$ 兩兩不交","on":"兩兩不交"}
           ] }
       ],
       "predict": {
         "ask": "簡單函數的定義是？",
         "options": [
-          { "label": "可測，而且只取有限多個值", "correct": true },
-          { "label": "階梯函數", "why": "階梯函數只是特例；底可以是 $\\mathbb{Q}$、Cantor 集這種不是區間的可測集。" },
-          { "label": "只取有限多個值就好", "why": "還要可測：某個 $\\varphi^{-1}(\\{a_k\\})$ 不可測時，它的測度沒有定義。" }
+          {
+            "label": "可測，而且只取有限多個值",
+            "correct": true
+          },
+          {
+            "label": "階梯函數",
+            "why": "階梯函數只是特例；底可以是 $\\mathbb{Q}$、Cantor 集這種不是區間的可測集。"
+          },
+          {
+            "label": "只取有限多個值就好",
+            "why": "還要可測：某個 $\\varphi^{-1}(\\{a_k\\})$ 不可測時，它的測度沒有定義。"
+          }
         ]
       }
     },
     {
       "title": "每個值乘它佔的測度",
       "beats": [
-        { "show": ["$\\int_X \\varphi\\,d\\mu=\\sum_{k=1}^{n} a_k\\,\\mu(E_k)$"], "note": "$\\varphi\\ge0$。",
+        { "show": ["$\\int_X \\varphi\\,d\\mu=\\sum_{k=1}^{n} a_k\\,\\mu(E_k)$"],
+          "note": "$\\varphi\\ge0$。",
           "say": "非負簡單函數的積分：每個值，乘上這個值所佔的測度，再加起來。",
           "board": [
-            { "do": "write", "line": "$\\int_X\\varphi\\,d\\mu=\\sum_{k=1}^{n}{{a:a_k}}\\,{{m:\\mu(E_k)}}$", "tint": {"a":"blue","m":"violet"} },
-            { "do": "focus", "term": "a", "color": "blue", "on": "每個值" },
-            { "do": "underline", "term": "m", "color": "violet", "label": "所佔測度", "on": "所佔的測度" }
+            {"do":"write","line":"$\\int_X\\varphi\\,d\\mu=\\sum_{k=1}^{n}{{a:a_k}}\\,{{m:\\mu(E_k)}}$","tint":{"a":"blue","m":"violet"}},
+            {"do":"focus","term":"a","color":"blue","on":"每個值"},
+            {"do":"underline","term":"m","color":"violet","label":"所佔測度","on":"所佔的測度"}
           ] },
         { "show": ["$\\varphi(x)=2\\lfloor2x\\rfloor+1$，$x\\in[0,1]$"],
           "say": "例子：二倍的二 x 的地板函數再加一，在零到一。",
           "board": [
-            { "do": "write", "line": "$\\varphi(x)=2\\lfloor2x\\rfloor+1$，$x\\in[0,1]$" }
+            {"do":"write","line":"$\\varphi(x)=2\\lfloor2x\\rfloor+1$，$x\\in[0,1]$"}
           ] },
         { "show": ["1 在 $[0,\\frac{1}{2})$，3 在 $[\\frac{1}{2},1)$，5 在 $\\{1\\}$"],
           "say": "它取三個值：前半段是一，後半段是三，只有 x 等於一那一點是五。",
           "board": [
-            { "do": "write", "line": "$1$ 在 $[0,\\frac{1}{2})$，$3$ 在 $[\\frac{1}{2},1)$，$5$ 在 $\\{1\\}$" }
+            {"do":"write","line":"$1$ 在 $[0,\\frac{1}{2})$，$3$ 在 $[\\frac{1}{2},1)$，$5$ 在 $\\{1\\}$"}
           ] },
-        { "show": ["$1\\cdot\\frac{1}{2}+3\\cdot\\frac{1}{2}+5\\cdot0=2$"], "note": "單點測度 0，那個值不影響。",
+        { "show": ["圖：高 1、高 3，右端點高 5"],
+          "say": "畫成圖：前半段高一，後半段高三，右端那一點高五，只佔一個點。",
+          "board": [
+            {"do":"plot","graph":{"window":[-0.2,1.3,-0.5,6],"ticks":true,"curves":[{"expr":"1","domain":[0,0.5],"color":"blue"},{"expr":"3","domain":[0.5,1],"color":"violet"}],"points":[{"x":1,"y":5}]}}
+          ] },
+        { "show": ["$1\\cdot\\frac{1}{2}+3\\cdot\\frac{1}{2}+5\\cdot0=2$"],
+          "note": "單點測度 0，那個值不影響。",
           "say": "一乘二分之一，加三乘二分之一，單點測度是零，五乘零。積分是二。",
           "board": [
-            { "do": "write", "line": "$1\\cdot\\frac{1}{2}+3\\cdot\\frac{1}{2}+{{z:5\\cdot0}}=2$" },
-            { "do": "underline", "term": "z", "label": "不影響", "on": "單點測度" }
+            {"do":"write","line":"$1\\cdot\\frac{1}{2}+3\\cdot\\frac{1}{2}+{{z:5\\cdot0}}=2$"},
+            {"do":"underline","term":"z","label":"不影響","on":"單點測度"}
           ] }
       ],
       "check": 0
@@ -123,113 +153,125 @@
         { "show": ["$\\mu(E_k)$ 可以是 $\\infty$"],
           "say": "測度可以是無限大，像整條實數線。那值是零、底是無限大的那一塊怎麼算？",
           "board": [
-            { "do": "write", "line": "$\\mu(E_k)=\\infty$，如 $m(\\mathbb{R})$" }
+            {"do":"write","line":"$\\mu(E_k)=\\infty$，如 $m(\\mathbb{R})$"}
           ] },
         { "show": ["約定 $0\\cdot\\infty=0$"],
           "say": "這裡約定零乘無限大等於零。",
           "board": [
-            { "do": "write", "line": "約定 $0\\cdot\\infty=0$", "color": "green" }
+            {"do":"write","line":"約定 $0\\cdot\\infty=0$","color":"green"}
           ] },
-        { "show": ["恆為 0 的函數，積分理應是 0"], "note": "不能因為 $0\\cdot m(\\mathbb{R})$ 變成未定。",
+        { "show": ["恆為 0 的函數，積分理應是 0"],
+          "note": "不能因為 $0\\cdot m(\\mathbb{R})$ 變成未定。",
           "say": "理由很樸素：在實數線上恆為零的函數，積分當然該是零，不能因為底是無限大就變成未定。",
           "board": [
-            { "do": "write", "line": "$\\varphi\\equiv0$ 在 $\\mathbb{R}$ 上" },
-            { "do": "write", "line": "$\\int\\varphi=0\\cdot m(\\mathbb{R})$", "on": "積分當然" }
+            {"do":"write","line":"$\\varphi\\equiv0$ 在 $\\mathbb{R}$ 上"},
+            {"do":"write","line":"$\\int\\varphi=0\\cdot m(\\mathbb{R})$","on":"積分當然"}
           ] }
       ],
       "check": 2
     },
     {
-      "title": "重疊的寫法", "key": "重疊處值要相加，先改成不交的塊",
+      "title": "重疊的寫法",
       "beats": [
-        { "show": ["$\\varphi=\\chi_{[0,2]}+2\\chi_{[1,3]}$"], "note": "兩塊在 $[1,2]$ 重疊。",
+        { "show": ["$\\varphi=\\chi_{[0,2]}+2\\chi_{[1,3]}$"],
+          "note": "兩塊在 $[1,2]$ 重疊。",
           "say": "如果寫法裡的集合有重疊呢？例如零到二的指示函數，加二倍的一到三。",
           "board": [
-            { "do": "write", "line": "$\\varphi={{a:\\chi_{[0,2]}}}+{{b:2\\chi_{[1,3]}}}$", "tint": { "a": "blue", "b": "violet" } },
-            { "do": "plot", "graph": { "window": [ -0.4, 3.4, -0.4, 3.6 ], "ticks": true, "curves": [ { "expr": "1", "domain": [ 0, 1 ], "color": "ink" }, { "expr": "3", "domain": [ 1, 2 ], "color": "ink" }, { "expr": "2", "domain": [ 2, 3 ], "color": "ink" } ], "fills": [ { "pts": [ [ 0, 0 ], [ 2, 0 ], [ 2, 1 ], [ 0, 1 ] ], "color": "blue", "opacity": 0.3 }, { "pts": [ [ 1, 1 ], [ 2, 1 ], [ 2, 3 ], [ 1, 3 ] ], "color": "violet", "opacity": 0.3 }, { "pts": [ [ 2, 0 ], [ 3, 0 ], [ 3, 2 ], [ 2, 2 ] ], "color": "violet", "opacity": 0.3 } ] }, "on": "例如" }
+            {"do":"write","line":"$\\varphi={{a:\\chi_{[0,2]}}}+{{b:2\\chi_{[1,3]}}}$","tint":{"a":"blue","b":"violet"}},
+            {"do":"plot","graph":{"window":[-0.4,3.4,-0.4,3.6],"ticks":true,"curves":[{"expr":"1","domain":[0,1],"color":"ink"},{"expr":"3","domain":[1,2],"color":"ink"},{"expr":"2","domain":[2,3],"color":"ink"}],"fills":[{"pts":[[0,0],[2,0],[2,1],[0,1]],"color":"blue","opacity":0.3},{"pts":[[1,1],[2,1],[2,3],[1,3]],"color":"violet","opacity":0.3},{"pts":[[2,0],[3,0],[3,2],[2,2]],"color":"violet","opacity":0.3}]},"on":"例如"}
           ] },
         { "show": ["直接套：$1\\cdot2+2\\cdot2=6$"],
           "say": "直接套公式：一乘長度二，加二乘長度二，得六。",
           "board": [
-            { "do": "write", "line": "直接套：$1\\cdot2+2\\cdot2=\\;{{s1:6}}$", "on": "直接套公式" }
+            {"do":"write","line":"直接套：$1\\cdot2+2\\cdot2=\\;{{s1:6}}$","on":"直接套公式"}
           ] },
-        { "show": ["標準形：$1\\cdot1+3\\cdot1+2\\cdot1=6$"], "note": "重疊的 $[1,2]$ 上值是 3。",
+        { "show": ["標準形：$1\\cdot1+3\\cdot1+2\\cdot1=6$"],
+          "note": "重疊的 $[1,2]$ 上值是 3。",
           "say": "化成標準形：重疊那段值是三，三段各長一，一加三加二，也是六。",
           "board": [
-            { "do": "keep", "n": 2 },
-            { "do": "write", "line": "標準形：$1\\cdot1+{{th:3}}\\cdot1+2\\cdot1=\\;{{s2:6}}$", "on": "化成標準形" },
-            { "do": "focus", "term": "th", "label": "重疊段", "on": "重疊那段值是三" }
+            {"do":"keep","n":2},
+            {"do":"write","line":"標準形：$1\\cdot1+{{th:3}}\\cdot1+2\\cdot1=\\;{{s2:6}}$","on":"化成標準形"},
+            {"do":"focus","term":"th","label":"重疊段","on":"重疊那段值是三"}
           ] },
         { "show": ["任何非負寫法，答案都一樣"],
           "say": "只要係數非負，怎麼寫都算出同一個數。為什麼，下一節一步一步證。",
           "board": [
-            { "do": "box", "term": "s1", "color": "green", "on": "怎麼寫都" },
-            { "do": "box", "term": "s2", "color": "green", "on": "同一個數" }
+            {"do":"box","term":"s1","color":"green","on":"怎麼寫都"},
+            {"do":"box","term":"s2","color":"green","on":"同一個數"}
           ] }
       ],
+      "key": "重疊處值要相加，先改成不交的塊",
       "check": 1
     },
     {
-      "title": "證明：怎麼寫都一樣", "key": "切成原子，兩種寫法化到同一組不交集",
-      "proof": true, "of": 3, "skeleton": "直接",
+      "title": "證明：怎麼寫都一樣",
       "beats": [
         { "show": ["切成不相交的原子，兩種寫法都化到原子上"],
           "say": "策略：直接算。把重疊的集合切成互不相交的小塊，叫原子；任何寫法，最後都化成原子上的和。",
           "board": [
-            { "do": "plot", "graph": { "window": [ 9.7, 15.3, 10.1, 12.9 ], "equal": true, "ticks": false, "curves": [ { "param": { "x": "11.9+1.1*cos(t)", "y": "11.5+1.1*sin(t)", "t": [ 0, 6.2832 ] }, "color": "blue" }, { "param": { "x": "13.1+1.1*cos(t)", "y": "11.5+1.1*sin(t)", "t": [ 0, 6.2832 ] }, "color": "violet" } ], "fills": [ { "pts": [ [ 12.5, 10.578 ], [ 12.644, 10.69 ], [ 12.767, 10.823 ], [ 12.867, 10.976 ], [ 12.94, 11.142 ], [ 12.985, 11.319 ], [ 13, 11.5 ], [ 12.985, 11.681 ], [ 12.94, 11.858 ], [ 12.867, 12.024 ], [ 12.767, 12.177 ], [ 12.644, 12.31 ], [ 12.5, 12.422 ], [ 12.357, 12.311 ], [ 12.233, 12.177 ], [ 12.133, 12.025 ], [ 12.06, 11.858 ], [ 12.015, 11.682 ], [ 12, 11.5 ], [ 12.015, 11.319 ], [ 12.06, 11.142 ], [ 12.133, 10.975 ], [ 12.233, 10.823 ], [ 12.357, 10.689 ] ], "color": "gold", "opacity": 0.35 } ], "dashed": [ [ [ 10.3, 10.15 ], [ 14.7, 10.15 ], [ 14.7, 12.85 ], [ 10.3, 12.85 ], [ 10.3, 10.15 ] ] ], "labels": [ { "x": 10.9, "y": 12.55, "text": "F₁", "anchor": "middle" }, { "x": 14.1, "y": 12.55, "text": "F₂", "anchor": "middle" }, { "x": 12.5, "y": 11.42, "text": "A", "anchor": "middle" }, { "x": 10.45, "y": 12.6, "text": "X", "anchor": "start" } ] }, "on": "把重疊的集合" }
+            {"do":"plot","graph":{"window":[9.7,15.3,10.1,12.9],"equal":true,"ticks":false,"curves":[{"param":{"x":"11.9+1.1*cos(t)","y":"11.5+1.1*sin(t)","t":[0,6.2832]},"color":"blue"},{"param":{"x":"13.1+1.1*cos(t)","y":"11.5+1.1*sin(t)","t":[0,6.2832]},"color":"violet"}],"fills":[{"pts":[[12.5,10.578],[12.644,10.69],[12.767,10.823],[12.867,10.976],[12.94,11.142],[12.985,11.319],[13,11.5],[12.985,11.681],[12.94,11.858],[12.867,12.024],[12.767,12.177],[12.644,12.31],[12.5,12.422],[12.357,12.311],[12.233,12.177],[12.133,12.025],[12.06,11.858],[12.015,11.682],[12,11.5],[12.015,11.319],[12.06,11.142],[12.133,10.975],[12.233,10.823],[12.357,10.689]],"color":"gold","opacity":0.35}],"dashed":[[[10.3,10.15],[14.7,10.15],[14.7,12.85],[10.3,12.85],[10.3,10.15]]],"labels":[{"x":10.9,"y":12.55,"text":"F₁","anchor":"middle"},{"x":14.1,"y":12.55,"text":"F₂","anchor":"middle"},{"x":12.5,"y":11.42,"text":"A","anchor":"middle"},{"x":10.45,"y":12.6,"text":"X","anchor":"start"}]},"on":"把重疊的集合"}
           ] },
-        { "show": ["原子 $A=G_1\\cap\\cdots\\cap G_m$", "$G_j$ 是 $F_j$ 或 $F_j$ 的補集"], "note": "兩兩不交、有限多個、聯集為 $X$。",
+        { "show": ["原子 $A=G_1\\cap\\cdots\\cap G_m$","$G_j$ 是 $F_j$ 或 $F_j$ 的補集"],
+          "note": "兩兩不交、有限多個、聯集為 $X$。",
           "say": "每個 F j 選它自己或它的補集，全部交起來就是一個原子。原子互不相交、只有有限多個，拼起來是整個空間。",
           "board": [
-            { "do": "write", "line": "原子 ${{at:A=G_1\\cap\\cdots\\cap G_m}}$", "on": "全部交起來" }
+            {"do":"write","line":"原子 ${{at:A=G_1\\cap\\cdots\\cap G_m}}$","on":"全部交起來"}
           ] },
-        { "show": ["$\\mu(F_j)=\\sum_{A\\subseteq F_j}\\mu(A)$"], "note": "$F_j$ 是它所含原子的不交聯集。",
-          "why": {
-            "ask": "為什麼 $\\mu(F_j)$ 等於這個和？",
-            "say": "F j 的測度，為什麼剛好是它裡面原子測度的和？",
-            "options": [
-              { "label": "$F_j$ 是它所含原子的不交聯集，用可加性", "correct": true },
-              { "label": "次可加性", "why": "次可加只給 $\\le$；等號要靠原子互不相交。" },
-              { "label": "每個原子都在 $F_j$ 裡", "why": "原子有的在 $F_j$ 裡、有的在補集裡；只加 $F_j$ 裡面的那些。" }
-            ]
-          },
+        { "show": ["$\\mu(F_j)=\\sum_{A\\subseteq F_j}\\mu(A)$"],
+          "note": "$F_j$ 是它所含原子的不交聯集。",
+          "why": {"ask":"為什麼 $\\mu(F_j)$ 等於這個和？","say":"F j 的測度，為什麼剛好是它裡面原子測度的和？","options":[{"label":"$F_j$ 是它所含原子的不交聯集，用可加性","correct":true},{"label":"次可加性","why":"次可加只給 $\\le$；等號要靠原子互不相交。"},{"label":"每個原子都在 $F_j$ 裡","why":"原子有的在 $F_j$ 裡、有的在補集裡；只加 $F_j$ 裡面的那些。"}]},
           "say": "原子不是整個在 F j 裡，就是整個在外面。F j 就是裡面那些原子的不交聯集，用可加性。",
           "board": [
-            { "do": "write", "line": "$\\mu(F_j)={{sm:\\sum_{A\\subseteq F_j}\\mu(A)}}$", "on": "F j 的測度" },
-            { "do": "underline", "term": "sm", "label": "不交聯集", "why": true, "on": "不交聯集" }
+            {"do":"write","line":"$\\mu(F_j)={{sm:\\sum_{A\\subseteq F_j}\\mu(A)}}$","on":"F j 的測度"},
+            {"do":"underline","term":"sm","label":"不交聯集","why":true,"on":"不交聯集"}
           ] },
-        { "show": ["$\\sum_j c_j\\mu(F_j)=\\sum_A(\\sum_{j:A\\subseteq F_j}c_j)\\mu(A)$"], "note": "括號裡正是 $\\varphi$ 在 $A$ 上的值。",
-          "why": {
-            "ask": "為什麼括號裡是 $\\varphi$ 在 $A$ 上的值？",
-            "say": "交換有限和之後，括號裡那個和，為什麼就是 phi 在原子 A 上的值？",
-            "options": [
-              { "label": "$A$ 的點恰好落在含 $A$ 的那些 $F_j$ 裡", "correct": true },
-              { "label": "$\\varphi$ 在 $A$ 上取 $c_j$ 裡最大的", "why": "重疊的地方是相加，不是取最大：$[1,2]$ 上的值是 $1+2=3$。" },
-              { "label": "每個原子只在一個 $F_j$ 裡", "why": "原子可以同時在好幾個 $F_j$ 裡，那正是重疊的地方，所以括號裡才是一個和。" }
-            ]
-          },
+        { "show": ["$\\sum_j c_j\\mu(F_j)=\\sum_A(\\sum_{j:A\\subseteq F_j}c_j)\\mu(A)$"],
+          "note": "括號裡正是 $\\varphi$ 在 $A$ 上的值。",
+          "why": {"ask":"為什麼括號裡是 $\\varphi$ 在 $A$ 上的值？","say":"交換有限和之後，括號裡那個和，為什麼就是 phi 在原子 A 上的值？","options":[{"label":"$A$ 的點恰好落在含 $A$ 的那些 $F_j$ 裡","correct":true},{"label":"$\\varphi$ 在 $A$ 上取 $c_j$ 裡最大的","why":"重疊的地方是相加，不是取最大：$[1,2]$ 上的值是 $1+2=3$。"},{"label":"每個原子只在一個 $F_j$ 裡","why":"原子可以同時在好幾個 $F_j$ 裡，那正是重疊的地方，所以括號裡才是一個和。"}]},
           "say": "代入上一步，交換兩個有限和。A 裡的點，落在哪些 F j 裡就加哪些係數，這正是 phi 在 A 上的值。",
           "board": [
-            { "do": "keep", "n": 1 },
-            { "do": "write", "line": "$\\sum_j c_j\\mu(F_j)=\\sum_A\\Big({{p:\\sum_{j:A\\subseteq F_j}c_j}}\\Big)\\mu(A)$", "on": "交換有限和之後" },
-            { "do": "focus", "term": "p", "on": "括號裡那個和" },
-            { "do": "underline", "term": "p", "label": "φ 在 A 的值", "why": true, "on": "這正是" }
+            {"do":"keep","n":1},
+            {"do":"write","line":"$\\sum_j c_j\\mu(F_j)=\\sum_A\\Big({{p:\\sum_{j:A\\subseteq F_j}c_j}}\\Big)\\mu(A)$","on":"交換有限和之後"},
+            {"do":"focus","term":"p","on":"括號裡那個和"},
+            {"do":"underline","term":"p","label":"φ 在 A 的值","why":true,"on":"這正是"}
           ] },
-        { "show": ["值同為 $a_k$ 的原子併成 $E_k$", "得 $\\sum_k a_k\\mu(E_k)$"], "note": "再用一次可加性。",
+        { "show": ["$x\\in[1,2]$：$\\varphi(x)=1+2=3$"],
+          "say": "取原子裡一點 x，它落在哪些 F j 裡，就加哪些係數。同一個原子裡每一點落的地方都一樣，所以值就是這個和。",
+          "board": [
+            {"do":"write","line":"$\\varphi(x)=\\sum_{j:x\\in F_j}c_j$"},
+            {"do":"write","line":"$x\\in[1,2]$：$1+2=3$","on":"同一個原子"}
+          ] },
+        { "show": ["值同為 $a_k$ 的原子併成 $E_k$","得 $\\sum_k a_k\\mu(E_k)$"],
+          "note": "再用一次可加性。",
           "say": "最後把取同一個值的原子併起來，正是標準形裡的 E k。再用一次可加性，就是標準形的積分。",
           "board": [
-            { "do": "write", "line": "值同為 $a_k$ 的原子併成 $E_k$", "on": "取同一個值" },
-            { "do": "write", "line": "得 ${{res:\\sum_k a_k\\mu(E_k)}}$", "on": "再用一次" },
-            { "do": "box", "term": "res", "color": "green", "on": "標準形的積分" }
+            {"do":"write","line":"值同為 $a_k$ 的原子併成 $E_k$","on":"取同一個值"},
+            {"do":"write","line":"得 ${{res:\\sum_k a_k\\mu(E_k)}}$","on":"再用一次"},
+            {"do":"box","term":"res","color":"green","on":"標準形的積分"}
           ] }
       ],
+      "key": "切成原子，兩種寫法化到同一組不交集",
+      "proof": true,
+      "of": 3,
+      "skeleton": "直接",
       "order": {
         "ask": "把證明排回順序：依序點每一步",
         "steps": [
-          { "label": "把 $X$ 切成原子" },
-          { "label": "$\\mu(F_j)=\\sum_{A\\subseteq F_j}\\mu(A)$", "why": "要先有原子，才能把 $F_j$ 拆成原子的不交聯集。" },
-          { "label": "交換和：括號是 $\\varphi$ 在 $A$ 上的值", "why": "要先把每個 $\\mu(F_j)$ 拆成原子的和，才有兩個和可以交換。" },
-          { "label": "併成 $E_k$：得到標準形的值", "why": "要先知道每個原子上的值，才知道哪些原子該併在一起。" }
+          {
+            "label": "把 $X$ 切成原子"
+          },
+          {
+            "label": "$\\mu(F_j)=\\sum_{A\\subseteq F_j}\\mu(A)$",
+            "why": "要先有原子，才能把 $F_j$ 拆成原子的不交聯集。"
+          },
+          {
+            "label": "交換和：括號是 $\\varphi$ 在 $A$ 上的值",
+            "why": "要先把每個 $\\mu(F_j)$ 拆成原子的和，才有兩個和可以交換。"
+          },
+          {
+            "label": "併成 $E_k$：得到標準形的值",
+            "why": "要先知道每個原子上的值，才知道哪些原子該併在一起。"
+          }
         ]
       }
     },
@@ -239,19 +281,30 @@
         { "show": ["$\\psi=3\\chi_{\\mathbb{Q}\\cap[0,1]}+2\\chi_{[0,1]\\setminus\\mathbb{Q}}$"],
           "say": "有理點取三，無理點取二。兩個集合都可測，所以這是簡單函數，已經是標準形。",
           "board": [
-            { "do": "write", "line": "$\\psi=3\\chi_{{{qs:\\mathbb{Q}\\cap[0,1]}}}+2\\chi_{{{irr:[0,1]\\setminus\\mathbb{Q}}}}$", "tint": { "qs": "blue", "irr": "violet" } }
+            {"do":"write","line":"$\\psi=3\\chi_{{{qs:\\mathbb{Q}\\cap[0,1]}}}+2\\chi_{{{irr:[0,1]\\setminus\\mathbb{Q}}}}$","tint":{"qs":"blue","irr":"violet"}}
+          ] },
+        { "show": ["第 $k$ 個點蓋長 $\\frac{\\varepsilon}{2^k}$"],
+          "say": "可數集為什麼測度零？第 k 個點用長度 epsilon 除以二的 k 次方的小區間蓋住，總長只有 epsilon，要多小都行。",
+          "board": [
+            {"do":"write","line":"$\\sum_k\\frac{\\varepsilon}{2^k}=\\varepsilon$"}
           ] },
         { "show": ["$m(\\mathbb{Q}\\cap[0,1])=0$，補集測度 1"],
           "say": "有理數可數，測度零；無理數那一塊測度是一減零，等於一。",
           "board": [
-            { "do": "write", "line": "$m({{qs:\\mathbb{Q}\\cap[0,1]}})=0$", "on": "有理數可數" },
-            { "do": "write", "line": "$m({{irr:[0,1]\\setminus\\mathbb{Q}}})=1-0=1$", "on": "無理數那一塊" }
+            {"do":"write","line":"$m({{qs:\\mathbb{Q}\\cap[0,1]}})=0$","on":"有理數可數"},
+            {"do":"write","line":"$m({{irr:[0,1]\\setminus\\mathbb{Q}}})=1-0=1$","on":"無理數那一塊"}
           ] },
-        { "show": ["$\\int\\psi\\,dm=3\\cdot0+2\\cdot1=2$"], "note": "Riemann：上和 3、下和 2，積分不存在。",
+        { "show": ["可加性：$1=0+m(\\text{無理那塊})$"],
+          "say": "補集的規則來自可加性：零到一分成有理和無理兩塊，不交，所以一等於零加無理那塊的測度。",
+          "board": [
+            {"do":"write","line":"$m([0,1])=1=0+m(\\text{無理})$"}
+          ] },
+        { "show": ["$\\int\\psi\\,dm=3\\cdot0+2\\cdot1=2$"],
+          "note": "Riemann：上和 3、下和 2，積分不存在。",
           "say": "積分是三乘零加二乘一，等於二。Riemann 積分在這裡根本不存在。",
           "board": [
-            { "do": "write", "line": "$\\int\\psi\\,dm=3\\cdot0+2\\cdot1=\\;{{res:2}}$", "on": "積分是" },
-            { "do": "box", "term": "res", "color": "green", "on": "等於二" }
+            {"do":"write","line":"$\\int\\psi\\,dm=3\\cdot0+2\\cdot1=\\;{{res:2}}$","on":"積分是"},
+            {"do":"box","term":"res","color":"green","on":"等於二"}
           ] }
       ],
       "check": 3

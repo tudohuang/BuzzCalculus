@@ -143,24 +143,34 @@
     {
       "title": "兩條路受影響",
       "beats": [
-        { "show": ["$z=f(x,y)$，位置 $(x(t),y(t))$"], "note": "溫度隨位置變，位置隨時間變。",
+        { "show": ["$z=f(x,y)$，位置 $(x(t),y(t))$"],
+          "note": "溫度隨位置變，位置隨時間變。",
           "say": "溫度隨位置改變，你沿一條路走，位置又隨時間改變。溫度隨時間變多快？",
           "board": [
-            { "do": "write", "line": "$z=f(x,y)$，位置 $(x(t),y(t))$" }
+            {"do":"write","line":"$z=f(x,y)$，位置 $(x(t),y(t))$"}
           ] },
         { "show": ["$dx=x'\\,dt$，$dy=y'\\,dt$"],
           "say": "時間動一點點，x 跟著動 x prime 乘 d t，y 也跟著動 y prime 乘 d t。",
           "board": [
-            { "do": "write", "line": "${{a:dx=x'\\,dt}},\\quad {{b:dy=y'\\,dt}}$", "tint": {"a":"blue","b":"violet"} },
-            { "do": "underline", "term": "a", "color": "blue", "on": "x 跟著動" },
-            { "do": "underline", "term": "b", "color": "violet", "on": "y 也跟著動" }
+            {"do":"write","line":"${{a:dx=x'\\,dt}},\\quad {{b:dy=y'\\,dt}}$","tint":{"a":"blue","b":"violet"}},
+            {"do":"underline","term":"a","color":"blue","on":"x 跟著動"},
+            {"do":"underline","term":"b","color":"violet","on":"y 也跟著動"}
           ] },
-        { "show": ["$\\frac{dz}{dt}=f_x\\frac{dx}{dt}+f_y\\frac{dy}{dt}$"], "note": "放進全微分 $dz=f_x\\,dx+f_y\\,dy$。",
+        { "show": ["$dz\\approx f_x\\,dx+f_y\\,dy$"],
+          "note": "各走一步，貢獻是斜率乘位移。",
+          "say": "全微分的想法：x 動 d x，z 大約變 f x 乘 d x；y 動 d y，z 再大約變 f y 乘 d y。加起來就是 d z。",
+          "board": [
+            {"do":"write","line":"$dz\\approx {{m1:f_x\\,dx}}+{{m2:f_y\\,dy}}$"},
+            {"do":"underline","term":"m1","color":"blue","on":"大約變#1"},
+            {"do":"underline","term":"m2","color":"violet","on":"大約變#2"}
+          ] },
+        { "show": ["$\\frac{dz}{dt}=f_x\\frac{dx}{dt}+f_y\\frac{dy}{dt}$"],
+          "note": "放進全微分 $dz=f_x\\,dx+f_y\\,dy$。",
           "say": "把這兩個變動放進全微分，再除以 d t：每個偏導數乘上它自己那個變數的變化率，加起來。",
           "board": [
-            { "do": "write", "line": "$dz=f_x\\,dx+f_y\\,dy$" },
-            { "do": "transform", "line": "$\\frac{dz}{dt}={{r:f_x\\frac{dx}{dt}+f_y\\frac{dy}{dt}}}$", "on": "除以" },
-            { "do": "box", "term": "r", "color": "green", "on": "自己那個" }
+            {"do":"write","line":"$dz=f_x\\,dx+f_y\\,dy$"},
+            {"do":"transform","line":"$\\frac{dz}{dt}={{r:f_x\\frac{dx}{dt}+f_y\\frac{dy}{dt}}}$","on":"除以"},
+            {"do":"box","term":"r","color":"green","on":"自己那個"}
           ] }
       ],
       "check": 0
@@ -171,27 +181,28 @@
         { "show": ["$z=x^2y$，$x=t^2$，$y=e^t$"],
           "say": "算一題。外層對 x、y 的偏導數，和內層對 t 的導數，分開算。",
           "board": [
-            { "do": "write", "line": "$z=x^2y,\\quad {{x:x=t^2}},\\quad {{y:y=e^t}}$", "tint": { "x": "blue", "y": "violet" } }
+            {"do":"write","line":"$z=x^2y,\\quad {{x:x=t^2}},\\quad {{y:y=e^t}}$","tint":{"x":"blue","y":"violet"}}
           ] },
         { "show": ["$z_x=2xy$，$z_y=x^2$；$x'=2t$，$y'=e^t$"],
           "say": "外層兩個偏導數是二 x y 和 x 平方；內層導數是二 t 和 e 的 t 次方。",
           "board": [
-            { "do": "write", "line": "${{zx:z_x=2xy}},\\quad {{zy:z_y=x^2}}$", "tint": { "zx": "blue", "zy": "violet" } },
-            { "do": "write", "line": "${{xp:x'=2t}},\\quad {{yp:y'=e^t}}$", "tint": { "xp": "blue", "yp": "violet" }, "on": "內層導數" }
+            {"do":"write","line":"${{zx:z_x=2xy}},\\quad {{zy:z_y=x^2}}$","tint":{"zx":"blue","zy":"violet"}},
+            {"do":"write","line":"${{xp:x'=2t}},\\quad {{yp:y'=e^t}}$","tint":{"xp":"blue","yp":"violet"},"on":"內層導數"}
           ] },
         { "show": ["$\\frac{dz}{dt}=2xy\\cdot2t+x^2\\cdot e^t$"],
           "say": "配對相乘再相加。這時候還混著 x、y、t，最後要全部換回 t。",
           "board": [
-            { "do": "write", "line": "$\\frac{dz}{dt}={{a:2xy\\cdot2t}}+{{b:x^2\\cdot e^t}}$", "tint": { "a": "blue", "b": "violet" } },
-            { "do": "underline", "term": "a", "color": "blue", "on": "配對相乘" },
-            { "do": "underline", "term": "b", "color": "violet", "label": "還混著 x、y", "on": "還混著" }
+            {"do":"write","line":"$\\frac{dz}{dt}={{a:2xy\\cdot2t}}+{{b:x^2\\cdot e^t}}$","tint":{"a":"blue","b":"violet"}},
+            {"do":"underline","term":"a","color":"blue","on":"配對相乘"},
+            {"do":"underline","term":"b","color":"violet","label":"還混著 x、y","on":"還混著"}
           ] },
-        { "show": ["$=4t^3e^t+t^4e^t$"], "note": "直接代 $z=t^4e^t$ 微分：一樣。",
+        { "show": ["$=4t^3e^t+t^4e^t$"],
+          "note": "直接代 $z=t^4e^t$ 微分：一樣。",
           "say": "換回 t 得到這個。驗算：直接把 z 寫成 t 四次方乘 e 的 t 次方，用乘法法則，答案相同。",
           "board": [
-            { "do": "keep", "n": 1 },
-            { "do": "write", "line": "$=4t^3e^t+t^4e^t$", "color": "green", "on": "換回 t" },
-            { "do": "write", "line": "驗算：$z=t^4e^t$，答案相同", "on": "驗算" }
+            {"do":"keep","n":1},
+            {"do":"write","line":"$=4t^3e^t+t^4e^t$","color":"green","on":"換回 t"},
+            {"do":"write","line":"驗算：$z=t^4e^t$，答案相同","on":"驗算"}
           ] }
       ],
       "check": 1
@@ -199,161 +210,192 @@
     {
       "title": "樹狀圖",
       "beats": [
-        { "show": ["$z\\to x\\to t$ 與 $z\\to y\\to t$"], "note": "每條路的導數相乘，再把路加起來。",
+        { "show": ["$z\\to x\\to t$ 與 $z\\to y\\to t$"],
+          "note": "每條路的導數相乘，再把路加起來。",
           "say": "畫一棵樹：z 在上面，下一層是 x 和 y，最底下是 t。從 z 走到 t 有兩條路，每條路上的導數乘起來，再加。",
           "board": [
-            { "do": "write", "line": "${{p:z\\to x\\to t}}$" },
-            { "do": "write", "line": "$z\\to y\\to t$", "on": "兩條路" },
-            { "do": "write", "line": "路上相乘，路與路相加", "on": "乘起來" }
+            {"do":"write","line":"${{p:z\\to x\\to t}}$"},
+            {"do":"write","line":"$z\\to y\\to t$","on":"兩條路"},
+            {"do":"write","line":"路上相乘，路與路相加","on":"乘起來"}
           ] },
-        { "show": ["$\\frac{\\partial z}{\\partial s}=f_x\\frac{\\partial x}{\\partial s}+f_y\\frac{\\partial y}{\\partial s}$"], "note": "$x$、$y$ 都是 $s$、$t$ 的函數時。",
+        { "show": ["$\\frac{\\partial z}{\\partial s}=f_x\\frac{\\partial x}{\\partial s}+f_y\\frac{\\partial y}{\\partial s}$"],
+          "note": "$x$、$y$ 都是 $s$、$t$ 的函數時。",
           "say": "如果 x、y 都由 s 和 t 決定，最底層就有兩個點。對 s 微分，只走通到 s 的路。",
           "board": [
-            { "do": "clear" },
-            { "do": "write", "line": "$\\frac{\\partial z}{\\partial s}={{r:f_x\\frac{\\partial x}{\\partial s}+f_y\\frac{\\partial y}{\\partial s}}}$", "on": "最底層" },
-            { "do": "underline", "term": "r", "color": "gold", "label": "通到 s 的路", "on": "對 s 微分" }
+            {"do":"clear"},
+            {"do":"write","line":"$\\frac{\\partial z}{\\partial s}={{r:f_x\\frac{\\partial x}{\\partial s}+f_y\\frac{\\partial y}{\\partial s}}}$","on":"最底層"},
+            {"do":"underline","term":"r","color":"gold","label":"通到 s 的路","on":"對 s 微分"}
           ] },
-        { "show": ["條件：$f$ 可微"], "note": "只有偏導數存在不夠。證明在下一節。",
+        { "show": ["條件：$f$ 可微"],
+          "note": "只有偏導數存在不夠。證明在下一節。",
           "say": "這裡用到全微分是好近似，所以 f 要可微。常見的多項式、指數、三角函數組合都沒問題。",
           "board": [
-            { "do": "write", "line": "$\\Delta z\\approx f_x\\Delta x+f_y\\Delta y$" },
-            { "do": "write", "line": "條件：$f$ 可微", "color": "green", "on": "所以 f" }
+            {"do":"write","line":"$\\Delta z\\approx f_x\\Delta x+f_y\\Delta y$"},
+            {"do":"write","line":"條件：$f$ 可微","color":"green","on":"所以 f"}
+          ] },
+        { "show": ["切線貼著曲線：誤差比位移小很多"],
+          "note": "一個變數的類比。尖角處放大也不貼。",
+          "say": "好近似的意思：放大看，曲線貼著切線，誤差比位移小很多。尖角處放大也不貼，近似失敗，連鎖律就不成立。",
+          "board": [
+            {"do":"plot","graph":{"window":[-1,3,-1,5],"curves":[{"expr":"x^2","domain":[-1,3],"color":"blue"},{"expr":"2*x-1","domain":[-1,3],"color":"red"}]}}
           ] }
       ],
       "check": 2
     },
     {
-      "title": "證明：誤差項消失", "key": "除以 $\\Delta t$ 後，誤差乘有界量趨近 $0$",
-      "proof": true, "of": 3, "skeleton": "直接",
+      "title": "證明：誤差項消失",
       "beats": [
         { "show": ["全微分加誤差項，除以 $\\Delta t$，誤差 $\\to0$"],
           "say": "策略：直接證。把可微寫成全微分加一個誤差項，兩邊除以 delta t，再證明誤差那一項趨近零。",
           "board": [
-            { "do": "write", "line": "可微 ＝ 全微分 ＋ 誤差項", "on": "把可微" },
-            { "do": "write", "line": "除以 $\\Delta t$，誤差 $\\to0$", "on": "兩邊除以" }
+            {"do":"write","line":"可微 ＝ 全微分 ＋ 誤差項","on":"把可微"},
+            {"do":"write","line":"除以 $\\Delta t$，誤差 $\\to0$","on":"兩邊除以"}
           ] },
-        { "show": ["$\\Delta z=f_x\\Delta x+f_y\\Delta y$", "$\\quad+\\varepsilon\\cdot\\sqrt{\\Delta x^2+\\Delta y^2}$"], "note": "$(\\Delta x,\\Delta y)\\to(0,0)$ 時 $\\varepsilon\\to0$。",
+        { "show": ["$\\Delta z=f_x\\Delta x+f_y\\Delta y$","$\\quad+\\varepsilon\\cdot\\sqrt{\\Delta x^2+\\Delta y^2}$"],
+          "note": "$(\\Delta x,\\Delta y)\\to(0,0)$ 時 $\\varepsilon\\to0$。",
           "say": "f 可微：變動等於全微分，加上 epsilon 乘位移長度，位移趨近零時 epsilon 也趨近零。",
           "board": [
-            { "do": "clear" },
-            { "do": "write", "line": "$\\Delta z=f_x\\Delta x+f_y\\Delta y$", "on": "f 可微" },
-            { "do": "write", "line": "$\\quad+{{e:\\varepsilon}}\\cdot\\sqrt{\\Delta x^2+\\Delta y^2}$", "on": "加上 epsilon" },
-            { "do": "focus", "term": "e", "label": "→ 0", "on": "位移趨近零" }
+            {"do":"clear"},
+            {"do":"write","line":"$\\Delta z=f_x\\Delta x+f_y\\Delta y$","on":"f 可微"},
+            {"do":"write","line":"$\\quad+{{e:\\varepsilon}}\\cdot\\sqrt{\\Delta x^2+\\Delta y^2}$","on":"加上 epsilon"},
+            {"do":"focus","term":"e","label":"→ 0","on":"位移趨近零"}
           ] },
-        { "show": ["$\\frac{\\Delta z}{\\Delta t}=f_x\\frac{\\Delta x}{\\Delta t}+f_y\\frac{\\Delta y}{\\Delta t}\\pm\\varepsilon\\cdot\\sqrt{\\cdots}$"],          "say": "兩邊除以 delta t，除進根號裡，變成兩個變化率的平方和。",
+        { "show": ["$\\varepsilon=\\frac{\\text{誤差}}{\\sqrt{\\Delta x^2+\\Delta y^2}}$"],
+          "say": "epsilon 是誤差除以位移長度。f 可微，就是位移趨近零時，這個比值也趨近零。",
           "board": [
-            { "do": "write", "line": "$\\frac{\\Delta z}{\\Delta t}=f_x\\frac{\\Delta x}{\\Delta t}+f_y\\frac{\\Delta y}{\\Delta t}$" },
-            { "do": "write", "line": "$\\pm{{e:\\varepsilon}}\\cdot{{r:\\sqrt{\\left(\\frac{\\Delta x}{\\Delta t}\\right)^2+\\left(\\frac{\\Delta y}{\\Delta t}\\right)^2}}}$", "on": "除進根號" },
-            { "do": "underline", "term": "r", "label": "變化率平方和", "on": "變成兩個" }
+            {"do":"write","line":"${{n1:\\varepsilon}}=\\frac{\\text{誤差}}{\\sqrt{\\Delta x^2+\\Delta y^2}}$"},
+            {"do":"focus","term":"n1","label":"→ 0","on":"位移趨近零"}
           ] },
-        { "show": ["$\\Delta t\\to0$：$\\Delta x$、$\\Delta y\\to0$，所以 $\\varepsilon\\to0$"], "note": "$x$、$y$ 可微所以連續。",
-          "why": {
-            "ask": "為什麼 $\\varepsilon\\to0$？",
-            "say": "delta t 趨近零，epsilon 為什麼也趨近零？",
-            "options": [
-              { "label": "$x$、$y$ 連續，$\\Delta x$、$\\Delta y\\to0$", "correct": true },
-              { "label": "$\\Delta t\\to0$，$\\varepsilon$ 就直接 $\\to0$", "why": "$\\varepsilon$ 是跟著 $(\\Delta x,\\Delta y)$ 走的；要先確定它們也趨近零。" },
-              { "label": "$f$ 的偏導數連續", "why": "這個證明沒用到偏導數連續；這裡靠的是內層 $x$、$y$ 連續。" }
-            ]
-          },
+        { "show": ["$\\frac{\\Delta z}{\\Delta t}=f_x\\frac{\\Delta x}{\\Delta t}+f_y\\frac{\\Delta y}{\\Delta t}\\pm\\varepsilon\\cdot\\sqrt{\\cdots}$"],
+          "say": "兩邊除以 delta t，除進根號裡，變成兩個變化率的平方和。",
+          "board": [
+            {"do":"write","line":"$\\frac{\\Delta z}{\\Delta t}=f_x\\frac{\\Delta x}{\\Delta t}+f_y\\frac{\\Delta y}{\\Delta t}$"},
+            {"do":"write","line":"$\\pm{{e:\\varepsilon}}\\cdot{{r:\\sqrt{\\left(\\frac{\\Delta x}{\\Delta t}\\right)^2+\\left(\\frac{\\Delta y}{\\Delta t}\\right)^2}}}$","on":"除進根號"},
+            {"do":"underline","term":"r","label":"變化率平方和","on":"變成兩個"}
+          ] },
+        { "show": ["$\\Delta t\\to0$：$\\Delta x$、$\\Delta y\\to0$，所以 $\\varepsilon\\to0$"],
+          "note": "$x$、$y$ 可微所以連續。",
+          "why": {"ask":"為什麼 $\\varepsilon\\to0$？","say":"delta t 趨近零，epsilon 為什麼也趨近零？","options":[{"label":"$x$、$y$ 連續，$\\Delta x$、$\\Delta y\\to0$","correct":true},{"label":"$\\Delta t\\to0$，$\\varepsilon$ 就直接 $\\to0$","why":"$\\varepsilon$ 是跟著 $(\\Delta x,\\Delta y)$ 走的；要先確定它們也趨近零。"},{"label":"$f$ 的偏導數連續","why":"這個證明沒用到偏導數連續；這裡靠的是內層 $x$、$y$ 連續。"}]},
           "say": "x、y 可微所以連續，delta x、delta y 跟著趨近零，於是 epsilon 也趨近零。",
           "board": [
-            { "do": "keep", "n": 2 },
-            { "do": "write", "line": "$\\Delta t\\to0$：${{dxy:\\Delta x,\\Delta y\\to0}}$，所以 ${{e:\\varepsilon}}\\to0$", "on": "delta t 趨近零" },
-            { "do": "underline", "term": "dxy", "label": "x、y 連續", "why": true, "on": "可微所以連續" }
+            {"do":"keep","n":2},
+            {"do":"write","line":"$\\Delta t\\to0$：${{dxy:\\Delta x,\\Delta y\\to0}}$，所以 ${{e:\\varepsilon}}\\to0$","on":"delta t 趨近零"},
+            {"do":"underline","term":"dxy","label":"x、y 連續","why":true,"on":"可微所以連續"}
           ] },
-        { "show": ["根號 $\\to\\sqrt{x'^2+y'^2}$，最後一項 $\\to0$", "$\\frac{dz}{dt}=f_x\\,x'+f_y\\,y'$"], "note": "有限數乘趨近零的數。",
-          "why": {
-            "ask": "為什麼最後一項 $\\to0$？",
-            "say": "最後那一項為什麼會消失？",
-            "options": [
-              { "label": "$\\varepsilon\\to0$，根號趨近有限數", "correct": true },
-              { "label": "$\\varepsilon\\to0$ 就夠，乘什麼都 $\\to0$", "why": "根號那一項要是跑到無限大，乘積不一定趨近零；要它趨近有限數。" },
-              { "label": "根號那一項 $\\to0$", "why": "它趨近 $\\sqrt{x'^2+y'^2}$，一般不是零；趨近零的是 $\\varepsilon$。" }
-            ]
-          },
+        { "show": ["根號 $\\to\\sqrt{x'^2+y'^2}$，最後一項 $\\to0$","$\\frac{dz}{dt}=f_x\\,x'+f_y\\,y'$"],
+          "note": "有限數乘趨近零的數。",
+          "why": {"ask":"為什麼最後一項 $\\to0$？","say":"最後那一項為什麼會消失？","options":[{"label":"$\\varepsilon\\to0$，根號趨近有限數","correct":true},{"label":"$\\varepsilon\\to0$ 就夠，乘什麼都 $\\to0$","why":"根號那一項要是跑到無限大，乘積不一定趨近零；要它趨近有限數。"},{"label":"根號那一項 $\\to0$","why":"它趨近 $\\sqrt{x'^2+y'^2}$，一般不是零；趨近零的是 $\\varepsilon$。"}]},
           "say": "根號趨近 x prime 和 y prime 的平方和開根號，是有限數，乘上趨近零的 epsilon 就消失，剩下連鎖律。",
           "board": [
-            { "do": "keep", "n": 2 },
-            { "do": "write", "line": "根號 $\\to\\sqrt{x'^2+y'^2}$", "on": "最後那一項" },
-            { "do": "underline", "term": "r", "label": "有限數", "why": true, "on": "是有限數" },
-            { "do": "write", "line": "$\\frac{dz}{dt}=f_x\\,x'+f_y\\,y'$", "color": "green", "why": true, "on": "剩下" }
+            {"do":"keep","n":2},
+            {"do":"write","line":"根號 $\\to\\sqrt{x'^2+y'^2}$","on":"最後那一項"},
+            {"do":"underline","term":"r","label":"有限數","why":true,"on":"是有限數"},
+            {"do":"write","line":"$\\frac{dz}{dt}=f_x\\,x'+f_y\\,y'$","color":"green","why":true,"on":"剩下"}
           ] }
       ],
+      "key": "除以 $\\Delta t$ 後，誤差乘有界量趨近 $0$",
+      "proof": true,
+      "of": 3,
+      "skeleton": "直接",
       "where": {
         "ask": "「$f$ 可微」用在哪一步？",
         "steps": [
-          { "label": "寫成全微分加誤差項 $\\varepsilon\\cdot\\sqrt{\\cdots}$", "correct": true },
-          { "label": "兩邊除以 $\\Delta t$", "why": "這只是代數，任何等式都能兩邊除。" },
-          { "label": "$\\Delta x$、$\\Delta y\\to0$", "why": "這只用到 $x$、$y$ 可微所以連續，跟 $f$ 無關。" },
-          { "label": "根號 $\\to\\sqrt{x'^2+y'^2}$", "why": "這只用到 $x$、$y$ 對 $t$ 可微。" }
+          {
+            "label": "寫成全微分加誤差項 $\\varepsilon\\cdot\\sqrt{\\cdots}$",
+            "correct": true
+          },
+          {
+            "label": "兩邊除以 $\\Delta t$",
+            "why": "這只是代數，任何等式都能兩邊除。"
+          },
+          {
+            "label": "$\\Delta x$、$\\Delta y\\to0$",
+            "why": "這只用到 $x$、$y$ 可微所以連續，跟 $f$ 無關。"
+          },
+          {
+            "label": "根號 $\\to\\sqrt{x'^2+y'^2}$",
+            "why": "這只用到 $x$、$y$ 對 $t$ 可微。"
+          }
         ]
       }
     },
     {
-      "title": "在一點求值", "key": "每條路都乘內層導數，再全部相加",
+      "title": "在一點求值",
       "beats": [
-        { "show": ["$z=x^2y+y^3$，$x=st$，$y=s+t$"], "note": "求 $s=1$、$t=2$ 時的 $\\frac{\\partial z}{\\partial s}$。",
+        { "show": ["$z=x^2y+y^3$，$x=st$，$y=s+t$"],
+          "note": "求 $s=1$、$t=2$ 時的 $\\frac{\\partial z}{\\partial s}$。",
           "say": "要某一點的值，先把這一點的 x、y 算出來：x 是一乘二等於二，y 是一加二等於三。",
           "board": [
-            { "do": "write", "line": "$z=x^2y+y^3$，$x=st$，$y=s+t$" },
-            { "do": "write", "line": "${{x:x=1\\cdot2=2}}$，${{y:y=1+2=3}}$", "tint": {"x":"blue","y":"violet"}, "on": "x 是一乘二" },
-            { "do": "underline", "term": "y", "color": "violet", "on": "y 是一加二" }
+            {"do":"write","line":"$z=x^2y+y^3$，$x=st$，$y=s+t$"},
+            {"do":"write","line":"${{x:x=1\\cdot2=2}}$，${{y:y=1+2=3}}$","tint":{"x":"blue","y":"violet"},"on":"x 是一乘二"},
+            {"do":"underline","term":"y","color":"violet","on":"y 是一加二"}
           ] },
         { "show": ["$z_x=2xy=12$，$z_y=x^2+3y^2=31$"],
           "say": "外層的偏導數直接代 x 等於二、y 等於三，得十二和三十一。",
           "board": [
-            { "do": "write", "line": "${{zx:z_x=2xy=12}},\\quad {{zy:z_y=x^2+3y^2=31}}$", "tint": {"zx":"blue","zy":"violet"} },
-            { "do": "underline", "term": "zx", "color": "blue", "on": "得十二" },
-            { "do": "underline", "term": "zy", "color": "violet", "on": "和三十一" }
+            {"do":"write","line":"${{zx:z_x=2xy=12}},\\quad {{zy:z_y=x^2+3y^2=31}}$","tint":{"zx":"blue","zy":"violet"}},
+            {"do":"underline","term":"zx","color":"blue","on":"得十二"},
+            {"do":"underline","term":"zy","color":"violet","on":"和三十一"}
           ] },
         { "show": ["$\\frac{\\partial x}{\\partial s}=t=2$，$\\frac{\\partial y}{\\partial s}=1$"],
           "say": "內層對 s 微分：s t 對 s 是 t，等於二；s 加 t 對 s 是一。",
           "board": [
-            { "do": "write", "line": "${{xs:\\frac{\\partial x}{\\partial s}=t=2}}$，${{ys:\\frac{\\partial y}{\\partial s}=1}}$", "tint": {"xs":"blue","ys":"violet"} },
-            { "do": "underline", "term": "xs", "color": "blue", "on": "等於二" },
-            { "do": "underline", "term": "ys", "color": "violet", "on": "s 加 t" }
+            {"do":"write","line":"${{xs:\\frac{\\partial x}{\\partial s}=t=2}}$，${{ys:\\frac{\\partial y}{\\partial s}=1}}$","tint":{"xs":"blue","ys":"violet"}},
+            {"do":"underline","term":"xs","color":"blue","on":"等於二"},
+            {"do":"underline","term":"ys","color":"violet","on":"s 加 t"}
           ] }
       ],
+      "key": "每條路都乘內層導數，再全部相加",
       "predict": {
         "ask": "$\\frac{\\partial z}{\\partial s}$ 是？",
         "options": [
-          { "label": "$55$", "correct": true },
-          { "label": "$12+31$", "why": "漏了內層導數：每條路要乘上 $\\frac{\\partial x}{\\partial s}=2$、$\\frac{\\partial y}{\\partial s}=1$。" },
-          { "label": "$12\\cdot2+31\\cdot2$", "why": "$y=s+t$ 對 $s$ 微分是 $1$，不是 $t$。" }
+          {
+            "label": "$55$",
+            "correct": true
+          },
+          {
+            "label": "$12+31$",
+            "why": "漏了內層導數：每條路要乘上 $\\frac{\\partial x}{\\partial s}=2$、$\\frac{\\partial y}{\\partial s}=1$。"
+          },
+          {
+            "label": "$12\\cdot2+31\\cdot2$",
+            "why": "$y=s+t$ 對 $s$ 微分是 $1$，不是 $t$。"
+          }
         ]
       }
     },
     {
       "title": "隱函數的公式",
       "beats": [
-        { "show": ["$F(x,y(x))=0$ 對 $x$ 微分"], "note": "$F_x\\cdot1+F_y\\cdot y'=0$。",
+        { "show": ["$F(x,y(x))=0$ 對 $x$ 微分"],
+          "note": "$F_x\\cdot1+F_y\\cdot y'=0$。",
           "say": "曲線上 y 是 x 的函數。把整個式子對 x 微分，用連鎖律：x 那條路乘一，y 那條路乘 y prime。",
           "board": [
-            { "do": "write", "line": "$F(x,y(x))=0$" },
-            { "do": "write", "line": "$F_x\\cdot{{one:1}}+F_y\\cdot{{yp:y'}}=0$", "tint": { "one": "blue", "yp": "violet" }, "on": "用連鎖律" },
-            { "do": "focus", "term": "one", "label": "x 那條路", "on": "x 那條路" },
-            { "do": "focus", "term": "yp", "label": "y 那條路", "on": "y 那條路" }
+            {"do":"write","line":"$F(x,y(x))=0$"},
+            {"do":"write","line":"$F_x\\cdot{{one:1}}+F_y\\cdot{{yp:y'}}=0$","tint":{"one":"blue","yp":"violet"},"on":"用連鎖律"},
+            {"do":"focus","term":"one","label":"x 那條路","on":"x 那條路"},
+            {"do":"focus","term":"yp","label":"y 那條路","on":"y 那條路"}
           ] },
-        { "show": ["$\\frac{dy}{dx}=-\\frac{F_x}{F_y}$"], "note": "$F_y\\ne 0$ 時。",
+        { "show": ["$\\frac{dy}{dx}=-\\frac{F_x}{F_y}$"],
+          "note": "$F_y\\ne 0$ 時。",
           "say": "移項就得到公式，前面有一個負號，別漏。",
           "board": [
-            { "do": "write", "line": "$\\frac{dy}{dx}={{m:-\\frac{F_x}{F_y}}}$", "on": "移項" },
-            { "do": "circle", "term": "m", "label": "負號別漏", "on": "負號" }
+            {"do":"write","line":"$\\frac{dy}{dx}={{m:-\\frac{F_x}{F_y}}}$","on":"移項"},
+            {"do":"circle","term":"m","label":"負號別漏","on":"負號"}
           ] },
         { "show": ["$x^3+y^3=6xy$：$\\frac{dy}{dx}=\\frac{2y-x^2}{y^2-2x}$"],
           "say": "例如這條曲線，F 對 x、對 y 各微一次，代進公式整理。",
           "board": [
-            { "do": "clear" },
-            { "do": "write", "line": "$x^3+y^3=6xy$", "on": "例如" },
-            { "do": "write", "line": "$F_x=3x^2-6y,\\quad F_y=3y^2-6x$", "on": "各微一次" },
-            { "do": "write", "line": "$\\frac{dy}{dx}=\\frac{2y-x^2}{y^2-2x}$", "on": "代進公式" }
+            {"do":"clear"},
+            {"do":"write","line":"$x^3+y^3=6xy$","on":"例如"},
+            {"do":"write","line":"$F_x=3x^2-6y,\\quad F_y=3y^2-6x$","on":"各微一次"},
+            {"do":"write","line":"$\\frac{dy}{dx}=\\frac{2y-x^2}{y^2-2x}$","on":"代進公式"}
           ] },
         { "show": ["$(3,3)$：$\\frac{6-9}{9-6}=-1$"],
           "say": "點三、三在曲線上，代進去，切線斜率是負一。",
           "board": [
-            { "do": "write", "line": "$(3,3)$：$\\frac{6-9}{9-6}={{r:-1}}$" },
-            { "do": "box", "term": "r", "color": "green", "on": "切線斜率" }
+            {"do":"write","line":"$(3,3)$：$\\frac{6-9}{9-6}={{r:-1}}$"},
+            {"do":"box","term":"r","color":"green","on":"切線斜率"}
           ] }
       ],
       "check": 3

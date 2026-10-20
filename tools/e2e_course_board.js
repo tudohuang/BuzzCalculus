@@ -190,7 +190,9 @@ async function run() {
       check("沒有黑板的課：一個黑板的檔都不抓（course_board*.js）", plain.files === 0, String(plain.files));
     } else console.log("  ·    每一課都有黑板：沒有可以量「不抓黑板檔」的課");
     check(`打開 ${CHAIN.id}`, await openLesson(CHAIN.id));
-    check("有黑板的課：course_board_layout.js、course_board.js 各抓一次，沒有 plot 的課不抓 course_board_plot.js", await waitFor(`window.__b.board() && window.__b.files(/course_board_layout\\.js/) === 1 && window.__b.files(/course_board\\.js/) === 1`) && (await evaluate(`return window.__b.files(/course_board_plot\\.js/);`)) === 0, String(await evaluate(`return [window.__b.files(/course_board_layout/), window.__b.files(/course_board\\.js/), window.__b.files(/course_board_plot/)].join(",");`)));
+    // 2026-10-21 擴寫後 chain-rule 第一節也有圖了：有圖就抓一次、沒圖不抓（逐節的規則下面另一課量）
+    const chainPlot = CHAIN.sections[0].beats.some((b) => (b.board || []).some((a) => a.do === "plot")) ? 1 : 0;
+    check(`有黑板的課：course_board_layout.js、course_board.js 各抓一次，course_board_plot.js ${chainPlot ? "第一節有圖：抓一次" : "沒有圖：不抓"}`, await waitFor(`window.__b.board() && window.__b.files(/course_board_layout\\.js/) === 1 && window.__b.files(/course_board\\.js/) === 1`) && (await evaluate(`return window.__b.files(/course_board_plot\\.js/);`)) === chainPlot, String(await evaluate(`return [window.__b.files(/course_board_layout/), window.__b.files(/course_board\\.js/), window.__b.files(/course_board_plot/)].join(",");`)));
     const a11y = await evaluate(`const c = window.__b.board(); const li = document.querySelector("[data-cv2s] .cv2s-beat"); return { hidden: c.getAttribute("aria-hidden"), sr: li.querySelectorAll(".cv2s-show.cvb-sr").length, live: document.querySelector(".cv2s-beats").getAttribute("aria-live"), inSlot: Boolean(c.closest("[data-cvb-slot]")) };`);
     check("黑板 aria-hidden、句子的 show 還在（藏起來給螢幕閱讀器）、aria-live 照舊", a11y.hidden === "true" && a11y.sr === CHAIN.sections[0].beats[0].show.length && a11y.live === "polite" && a11y.inSlot, JSON.stringify(a11y));
     const h0 = await evaluate(`return window.__b.board().getBoundingClientRect().height;`);
