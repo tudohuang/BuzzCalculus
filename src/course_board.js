@@ -63,14 +63,16 @@
 .cvb-ov-board{overflow:hidden!important;pointer-events:none}
 .cvb-ov-n{position:absolute;right:10px;bottom:6px;color:#fff9;font-size:.75rem;font-variant-numeric:tabular-nums}
 .cvb-ov-meas{position:absolute;left:0;top:0;visibility:hidden;pointer-events:none}
-html.nb .cv2s.cv2-lesson{--nbp:#fdfbf4;--nbd:#cdd5e3;--nbm:#efa3a3;padding:6px 14px 28px 22px;border-radius:6px;background:linear-gradient(90deg,transparent 10px,var(--nbm) 10px,var(--nbm) 12px,transparent 12px),radial-gradient(circle,var(--nbd) 1px,transparent 1.4px) 0 0/22px 22px,var(--nbp);box-shadow:0 1px 2px #0000001f,0 8px 26px #00000012}
+html.nb .cv2s.cv2-lesson.is-nb{--nbp:#fdfbf4;--nbm:#efa3a3;position:fixed;z-index:5;max-width:none;width:auto;margin:0;padding:18px 40px 0 64px;overflow:hidden;border-radius:0;background:linear-gradient(90deg,transparent 40px,var(--nbm) 40px,var(--nbm) 42px,transparent 42px),var(--nbp);box-shadow:none}
+@media (max-width:640px){html.nb .cv2s.cv2-lesson.is-nb{padding:12px 14px 0 30px;background:linear-gradient(90deg,transparent 18px,var(--nbm) 18px,var(--nbm) 20px,transparent 20px),var(--nbp)}}
 html.nb .cvb{--k:#1f2a44;--kb:transparent;--kg:#c2410c;--kc:#1d4ed8;--kn:#15803d;--kr:#dc2626;--kv:#7c3aed;border:0;border-radius:0;background:transparent;box-shadow:none;text-shadow:none}
 html.nb .cvb .cvb-i{text-shadow:none;filter:none}
+html.nb .cvb-slot{margin:0;padding:0}
 html.nb .cvb-slot::after{display:none}
 html.nb .cvb-whole .cvb-stage{width:auto;margin-left:0}
 html.nb .cvb-chalk{width:22px;height:4px;margin:-3px 0 0 -2px;border-radius:1px 3px 3px 1px;background:linear-gradient(90deg,#1f2a44 0,#1f2a44 70%,#c9ced8 70%);box-shadow:0 1px 1px #0003}
 html.nb .cvb-model>.cv2-figure{box-shadow:0 1px 4px #0002}
-:root[data-theme="dark"].nb .cv2s.cv2-lesson{--nbp:#1d2026;--nbd:#323a48;--nbm:#7f3b3b}
+:root[data-theme="dark"].nb .cv2s.cv2-lesson.is-nb{--nbp:#1d2026;--nbm:#7f3b3b}
 :root[data-theme="dark"].nb .cvb{--k:#dfe6f5;--kg:#fdba74;--kc:#93c5fd;--kn:#86efac;--kr:#fca5a5;--kv:#c4b5fd}`;
   // 原型（2026-10-20）：筆記本版 —— 同一個黑板引擎（一行一行寫、分欄、換面），換成紙、橫線、紅色邊線、藍黑筆。
   // ?notebook 打開、?notebook=0 關掉，記在這台瀏覽器
@@ -206,7 +208,10 @@ html.nb .cvb-model>.cv2-figure{box-shadow:0 1px 4px #0002}
     // 板子一律同一個大小（每一節都一樣，不忽大忽小）：畫面高度的 45%（280–560px），字從上面開始寫；
     // 寫得比板子還多就在板子裡捲（往上滑看前面寫過的），鏡頭跟著粉筆走（paint 的 follow）
     // 手機（窄）38%、平板與桌機 45%：手機上板子＋句子＋動作要放得進一屏。整課一塊時高一點（桌機 60%、手機 42%）
-    const cap = B.whole
+    // 筆記本：板子吃滿本文區剩下的高度（扣掉底下的播放列）
+    const nbBox = document.documentElement.classList.contains("nb") && B.whole ? nbFit() : null;
+    const nbCap = nbBox ? Math.round(nbBox.bottom - B.el.getBoundingClientRect().top - 92) : 0;
+    const cap = nbCap > 240 ? nbCap : B.whole
       ? Math.max(300, Math.min(760, Math.round((window.innerHeight || 800) * ((window.innerWidth || 800) < 600 ? (B.lesson && B.lesson.anyFig ? 0.56 : 0.42) : 0.6))))
       : Math.max(260, Math.min(560, Math.round((window.innerHeight || 800) * ((window.innerWidth || 800) < 600 ? 0.38 : 0.45))));
     // 整課一塊：分欄（一欄至少約 17 個字寬），每一行在欄寬裡排
@@ -799,12 +804,34 @@ html.nb .cvb-model>.cv2-figure{box-shadow:0 1px 4px #0002}
   function stop() { window.cancelAnimationFrame(raf); window.clearTimeout(poll); raf = poll = 0; }
 
   // course_sections.js 每次畫完（整頁或只換句子）叫這一支：黑板是同一個元素，搬進新畫的位置
+  // 筆記本原型：課的根（[data-cv2s]）固定成整個本文區 —— 桌機：側欄右邊、麵包屑列下面到底；手機：頂列下面、分頁列上面
+  function nbFit() {
+    const root = document.querySelector("[data-cv2s]");
+    if (!root || !document.documentElement.classList.contains("nb")) return null;
+    const vw = document.documentElement.clientWidth;
+    const vh = window.innerHeight;
+    const side = document.querySelector(".topbar:not(.is-quiz)");
+    const sr = side ? side.getBoundingClientRect() : null;
+    const vertical = sr && sr.height > vh * 0.6 && sr.width < vw * 0.5;
+    const bar = document.querySelector(".workspace-bar");
+    const br = bar && bar.getClientRects().length ? bar.getBoundingClientRect() : null;
+    const left = vertical ? Math.round(sr.right) : 0;
+    const top = Math.round(br ? br.bottom : sr && !vertical ? sr.bottom : 0);
+    const nav = document.querySelector(".topbar-nav");
+    const nr = nav && nav.getClientRects().length ? nav.getBoundingClientRect() : null;
+    const bottom = nr && nr.top > vh / 2 ? Math.round(vh - nr.top) : 0;
+    root.classList.add("is-nb");
+    Object.assign(root.style, { left: `${left}px`, top: `${top}px`, right: "0px", bottom: `${bottom}px` });
+    return root.getBoundingClientRect();
+  }
+
   function sync(api, root) {
     const slot = root && root.querySelector("[data-cvb-slot]");
     const sec = api.state.sec;
     if (!slot || !sec || !api.data.sections[sec.si]) { stop(); B = null; return; }
     if (!document.getElementById("cvb-style")) { const st = mk("style", ""); st.id = "cvb-style"; st.textContent = CSS + CSS_REST; document.head.appendChild(st); }
     const whole = WHOLE(api) && lessonBoard(api.data);
+    if (whole) nbFit();
     const S = whole || api.data.sections[sec.si];
     const local = Math.min(api.data.sections[sec.si].beats.length, sec.shown[sec.si] || 1) - 1;
     const off = whole ? whole.off[sec.si] : 0;
@@ -851,7 +878,7 @@ html.nb .cvb-model>.cv2-figure{box-shadow:0 1px 4px #0002}
     let rt = 0;
     window.addEventListener("resize", () => {
       window.clearTimeout(rt);
-      rt = window.setTimeout(() => { if (B && B.el.isConnected && B.el.clientWidth !== B.w) { build(); B.last = ""; kick(); } }, 200);
+      rt = window.setTimeout(() => { if (B && B.whole) nbFit(); if (B && B.el.isConnected && (B.el.clientWidth !== B.w || document.documentElement.classList.contains("nb"))) { build(); B.last = ""; kick(); } }, 200);
     });
   }
   // 給 E2E 與 tools/lint_board_layout.js：狀態、停在某一步、直接畫某個游標
