@@ -168,11 +168,28 @@
       "title": "壓住發散的",
       "beats": [
         { "show": ["$\\int_1^{\\infty}\\frac{2+\\cos x}{x}\\,dx$"], "note": "$\\cos x\\ge-1$，所以 $2+\\cos x\\ge 1$。",
-          "say": "這一題分子會晃動，但 cosine 最小是負一，所以二加 cosine x 至少是一。" },
+          "say": "這一題分子會晃動，但 cosine 最小是負一，所以二加 cosine x 至少是一。",
+          "board": [
+            { "do": "write", "line": "$\\int_1^{\\infty}\\frac{2+\\cos x}{x}\\,dx$" },
+            { "do": "write", "line": "$\\cos x\\ge-1$", "on": "cosine 最小" },
+            { "do": "write", "line": "$2+\\cos x\\ge 1$", "on": "二加" }
+          ] },
         { "show": ["$\\frac{2+\\cos x}{x}\\ge\\frac{1}{x}>0$"], "note": "$\\int_1^{\\infty}\\frac{dx}{x}$ 發散。",
-          "say": "被積函數壓在 x 分之一的上面，而 x 分之一的面積發散，所以原積分也發散。" },
+          "say": "被積函數壓在 x 分之一的上面，而 x 分之一的面積發散，所以原積分也發散。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "$\\frac{2+\\cos x}{x}\\ge\\frac{1}{x}>0$", "on": "被積函數" },
+            { "do": "write", "line": "$\\int_1^{\\infty}\\frac{dx}{x}$ 發散", "on": "x 分之一的面積" },
+            { "do": "write", "line": "$\\int_1^{\\infty}\\frac{2+\\cos x}{x}\\,dx$ 發散", "color": "green", "on": "所以原積分" }
+          ] },
         { "show": ["兩個函數都要非負"], "note": "$-x\\le\\frac{1}{x^2}$，但 $\\int_1^{\\infty}(-x)\\,dx$ 發散。",
-          "say": "注意，這套推理要兩個函數都不是負的。負 x 比 x 平方分之一小，它的積分卻發散到負無限大。" }
+          "say": "注意，這套推理要兩個函數都不是負的。負 x 比 x 平方分之一小，它的積分卻發散到負無限大。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "兩個函數都要非負", "on": "兩個函數" },
+            { "do": "write", "line": "$-x\\le\\frac{1}{x^2}$", "on": "負 x 比" },
+            { "do": "write", "line": "$\\int_1^{\\infty}(-x)\\,dx$ 發散", "color": "red", "on": "它的積分" }
+          ] }
       ],
       "check": 3
     },
@@ -180,11 +197,25 @@
       "title": "極限比較", "key": "只看分子分母的最高次，找出主項",
       "beats": [
         { "show": ["$\\frac{f}{g}\\to L$，$0<L<\\infty$"], "note": "$f$、$g>0$。",
-          "say": "不想找不等式時，用極限比較：兩個正函數的比值趨近一個正的有限數 L。" },
+          "say": "不想找不等式時，用極限比較：兩個正函數的比值趨近一個正的有限數 L。",
+          "board": [
+            { "do": "write", "line": "$\\frac{f}{g}\\to {{l:L}}$，$0<L<\\infty$" },
+            { "do": "focus", "term": "l", "color": "gold", "label": "正的有限", "on": "一個正的" }
+          ] },
         { "show": ["兩個積分同時收斂或同時發散"], "note": "$f\\sim L\\cdot g$，主項決定命運。",
-          "say": "這時兩個積分同生共死，一起收斂或一起發散。換句話說，主項決定命運。" },
+          "say": "這時兩個積分同生共死，一起收斂或一起發散。換句話說，主項決定命運。",
+          "board": [
+            { "do": "write", "line": "兩個積分同時收斂或同時發散" },
+            { "do": "write", "line": "$f\\sim L\\cdot g$", "on": "換句話說" }
+          ] },
         { "show": ["$\\frac{x+1}{x^3+2}\\sim\\frac{1}{x^2}$：收斂"], "note": "$\\frac{x}{x^2+1}\\sim\\frac{1}{x}$：發散。",
-          "say": "做法是找主項。x 加一除以 x 三次方加二，主項是 x 平方分之一，收斂；x 除以 x 平方加一，主項是 x 分之一，發散。" }
+          "say": "做法是找主項。x 加一除以 x 三次方加二，主項是 x 平方分之一，收斂；x 除以 x 平方加一，主項是 x 分之一，發散。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "$\\frac{x+1}{x^3+2}\\sim{{a:\\frac{1}{x^2}}}$：收斂", "on": "做法是" },
+            { "do": "circle", "term": "a", "color": "green", "on": "x 平方分之一" },
+            { "do": "write", "line": "$\\frac{x}{x^2+1}\\sim\\frac{1}{x}$：發散", "on": "x 除以" }
+          ] }
       ],
       "check": 1
     },
@@ -192,9 +223,17 @@
       "title": "兩個問題點", "key": "兩個問題點分開看，都收斂才收斂",
       "beats": [
         { "show": ["$\\int_0^{\\infty}\\frac{dx}{\\sqrt{x}(1+x)}$"], "note": "在 $1$ 切開，被積函數處處為正。",
-          "say": "這一題零和無限遠都有問題。在一切開，兩段各用一次極限比較。" },
+          "say": "這一題零和無限遠都有問題。在一切開，兩段各用一次極限比較。",
+          "board": [
+            { "do": "write", "line": "$\\int_0^{\\infty}\\frac{dx}{\\sqrt{x}(1+x)}$" },
+            { "do": "write", "line": "$=\\int_0^{1}+\\int_1^{\\infty}$", "on": "一切開" }
+          ] },
         { "show": ["$x\\to 0^+$：$\\sim\\frac{1}{x^{1/2}}$"], "note": "$1+x\\to 1$，$p=\\frac{1}{2}<1$，收斂。",
-          "say": "x 靠近零，一加 x 趨近一，主項是根號 x 分之一。p 是二分之一，小於一，這段收斂。" }
+          "say": "x 靠近零，一加 x 趨近一，主項是根號 x 分之一。p 是二分之一，小於一，這段收斂。",
+          "board": [
+            { "do": "write", "line": "$x\\to 0^+$：$\\sim\\frac{1}{x^{1/2}}$" },
+            { "do": "write", "line": "$p=\\frac{1}{2}<1$：收斂", "on": "p 是" }
+          ] }
       ],
       "predict": {
         "ask": "$x\\to\\infty$ 時，被積函數的主項是？",
@@ -209,13 +248,31 @@
       "title": "常用的比較對象",
       "beats": [
         { "show": ["指數衰減比任何冪次快"], "note": "$x$ 夠大時 $x^ne^{-x}\\le\\frac{C}{x^2}$。",
-          "say": "無限遠那端，除了 x 的 p 次方分之一，還有指數：指數衰減比任何冪次都快。" },
+          "say": "無限遠那端，除了 x 的 p 次方分之一，還有指數：指數衰減比任何冪次都快。",
+          "board": [
+            { "do": "write", "line": "比較對象：$\\frac{1}{x^p}$、$e^{-x}$" },
+            { "do": "write", "line": "指數衰減比任何冪次快", "on": "指數衰減" }
+          ] },
         { "show": ["$x\\ge 1$：$e^{-x^2}\\le e^{-x}$"], "note": "所以 $\\int_0^{\\infty}e^{-x^2}\\,dx$ 收斂。",
-          "say": "例如 x 大於等於一時，e 的負 x 平方次方比 e 的負 x 次方還小，所以它的積分收斂。" },
+          "say": "例如 x 大於等於一時，e 的負 x 平方次方比 e 的負 x 次方還小，所以它的積分收斂。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "$x\\ge 1$：$e^{-x^2}\\le e^{-x}$", "on": "大於等於" },
+            { "do": "write", "line": "$\\int_0^{\\infty}e^{-x^2}\\,dx$ 收斂", "color": "green", "on": "所以" }
+          ] },
         { "show": ["會變號：看 $|f|$"], "note": "$\\int|f|$ 收斂 ⇒ $\\int f$ 收斂。",
-          "say": "函數會變號就不能直接比，但可以先取絕對值。絕對值的積分收斂，原積分就收斂。" },
+          "say": "函數會變號就不能直接比，但可以先取絕對值。絕對值的積分收斂，原積分就收斂。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "會變號：看 $|f|$", "on": "變號" },
+            { "do": "write", "line": "$\\int|f|$ 收斂 ⇒ $\\int f$ 收斂", "on": "絕對值的積分" }
+          ] },
         { "show": ["$\\left|\\frac{\\sin x}{x^2}\\right|\\le\\frac{1}{x^2}$"],
-          "say": "例如 sine x 除以 x 平方，取絕對值之後被 x 平方分之一壓住，所以收斂。" }
+          "say": "例如 sine x 除以 x 平方，取絕對值之後被 x 平方分之一壓住，所以收斂。",
+          "board": [
+            { "do": "write", "line": "$\\left|\\frac{\\sin x}{x^2}\\right|\\le{{g:\\frac{1}{x^2}}}$" },
+            { "do": "underline", "term": "g", "label": "壓住", "on": "x 平方分之一" }
+          ] }
       ],
       "check": 2
     }

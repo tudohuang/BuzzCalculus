@@ -52,10 +52,23 @@
     {
       "title": "基礎版不夠用",
       "beats": [
-        {"show":["基礎版：$I'(a)$ 直接算出閉式"],"say":"基礎版的題目，對參數微分之後，I prime 都能直接算出來。進階題常卡在下面幾個地方。"},
-        {"show":["① $I'$ 又變回 $I$：微分方程"],"say":"第一種，I prime 算不出來，可是分部積分之後又變回 I 本身，得到一個微分方程。"},
-        {"show":["② $I'$ 算得出來，積回去很難"],"note":"需要輔助積分，加上一次換元。","say":"第二種，I prime 算得出來，可是對 a 積回去很難，要借一個輔助積分再換元。"},
-        {"show":["③ 積回去時原積分又出現"],"say":"最後一種，積回去的時候，原本要求的那個積分，又在等式另一邊冒出來。"}
+        {"show":["基礎版：$I'(a)$ 直接算出閉式"],"say":"基礎版的題目，對參數微分之後，I prime 都能直接算出來。進階題常卡在下面幾個地方。",
+          "board": [
+            { "do": "write", "line": "基礎版：$I'(a)$ 直接算出閉式" }
+          ] },
+        {"show":["① $I'$ 又變回 $I$：微分方程"],"say":"第一種，I prime 算不出來，可是分部積分之後又變回 I 本身，得到一個微分方程。",
+          "board": [
+            { "do": "write", "line": "① $I'$ 又變回 $I$：微分方程" }
+          ] },
+        {"show":["② $I'$ 算得出來，積回去很難"],"note":"需要輔助積分，加上一次換元。","say":"第二種，I prime 算得出來，可是對 a 積回去很難，要借一個輔助積分再換元。",
+          "board": [
+            { "do": "write", "line": "② $I'$ 算得出來，積回去很難" }
+          ] },
+        {"show":["③ 積回去時原積分又出現"],"say":"最後一種，積回去的時候，原本要求的那個積分，又在等式另一邊冒出來。",
+          "board": [
+            { "do": "write", "line": "③ 積回去時原積分 ${{o:I}}$ 又出現" },
+            { "do": "underline", "term": "o", "color": "gold", "on": "原本要求的" }
+          ] }
       ],
       "predict": {
         "ask": "原本要求的積分又出現在另一邊，下一步是？",
@@ -106,17 +119,39 @@
     {
       "title": "代值",
       "beats": [
-        {"show":["$\\int_0^{\\infty}e^{-x^{2}}\\cos(2tx)\\,dx=\\frac{\\sqrt{\\pi}}{2}\\,e^{-t^{2}}$"],"say":"解出來：這一整族積分等於二分之根號派，乘上 e 的負 t 平方。"},
-        {"show":["$\\cos(2x)$：$t=1$"],"note":"$I(1)=\\frac{\\sqrt{\\pi}}{2}e^{-1}\\approx 0.3260$","say":"原題是 cosine 二 x，對應 t 等於一，答案是二分之根號派乘 e 的負一次方，大約零點三二六零。"}
+        {"show":["$\\int_0^{\\infty}e^{-x^{2}}\\cos(2tx)\\,dx=\\frac{\\sqrt{\\pi}}{2}\\,e^{-t^{2}}$"],"say":"解出來：這一整族積分等於二分之根號派，乘上 e 的負 t 平方。",
+          "board": [
+            { "do": "write", "line": "$I(t)=\\frac{\\sqrt{\\pi}}{2}\\,{{e:e^{-t^2}}}$" },
+            { "do": "box", "term": "e", "color": "green", "on": "乘上" }
+          ] },
+        {"show":["$\\cos(2x)$：$t=1$"],"note":"$I(1)=\\frac{\\sqrt{\\pi}}{2}e^{-1}\\approx 0.3260$","say":"原題是 cosine 二 x，對應 t 等於一，答案是二分之根號派乘 e 的負一次方，大約零點三二六零。",
+          "board": [
+            { "do": "write", "line": "$\\cos(2x)$：${{t:t=1}}$" },
+            { "do": "focus", "term": "t", "color": "blue", "on": "對應" },
+            { "do": "write", "line": "$I(1)=\\frac{\\sqrt{\\pi}}{2}e^{-1}\\approx 0.3260$", "on": "答案是" }
+          ] }
       ],
       "check": 1
     },
     {
       "title": "積回去要換元", "key": "同除 $\\cos^2x$、令 $u=\\tan x$ 算輔助積分",
       "beats": [
-        {"show":["$I(a)=\\int_0^{\\pi/2}\\ln(1+a\\sin^2 x)\\,dx$"],"note":"$a=0$ 時整個積分是 $0$。","say":"參數要放在 a 等於零時變簡單的位置。這裡 a 等於零，積分就是零，常數很好定。"},
-        {"show":["$\\int_0^{\\pi/2}\\frac{dx}{1+a\\sin^2 x}=\\frac{\\pi}{2\\sqrt{1+a}}$"],"note":"同除 $\\cos^2 x$、令 $u=\\tan x$。","say":"微分之後需要這個輔助積分：上下同除 cosine 平方，令 u 等於 tangent x，就積得出來。"},
-        {"show":["$I'(a)=\\frac{\\pi}{2a}\\left(1-\\frac{1}{\\sqrt{1+a}}\\right)$"],"say":"於是 I prime 有了閉式。難的是對 a 積回去，有根號又有 a 分之一。"}
+        {"show":["$I(a)=\\int_0^{\\pi/2}\\ln(1+a\\sin^2 x)\\,dx$"],"note":"$a=0$ 時整個積分是 $0$。","say":"參數要放在 a 等於零時變簡單的位置。這裡 a 等於零，積分就是零，常數很好定。",
+          "board": [
+            { "do": "write", "line": "$I(a)=\\int_0^{\\pi/2}\\ln(1+{{a:a}}\\sin^2 x)\\,dx$", "tint": {"a":"blue"} },
+            { "do": "focus", "term": "a", "color": "blue", "on": "放在" },
+            { "do": "write", "line": "$I(0)=0$", "on": "這裡" }
+          ] },
+        {"show":["$\\int_0^{\\pi/2}\\frac{dx}{1+a\\sin^2 x}=\\frac{\\pi}{2\\sqrt{1+a}}$"],"note":"同除 $\\cos^2 x$、令 $u=\\tan x$。","say":"微分之後需要這個輔助積分：上下同除 cosine 平方，令 u 等於 tangent x，就積得出來。",
+          "board": [
+            { "do": "write", "line": "${{l:\\int_0^{\\pi/2}\\frac{dx}{1+a\\sin^2 x}}}=\\frac{\\pi}{2\\sqrt{1+a}}$" },
+            { "do": "underline", "term": "l", "color": "gold", "label": "輔助積分", "on": "輔助積分" }
+          ] },
+        {"show":["$I'(a)=\\frac{\\pi}{2a}\\left(1-\\frac{1}{\\sqrt{1+a}}\\right)$"],"say":"於是 I prime 有了閉式。難的是對 a 積回去，有根號又有 a 分之一。",
+          "board": [
+            { "do": "write", "line": "$I'(a)=\\frac{\\pi}{2a}\\left(1-{{sq:\\frac{1}{\\sqrt{1+a}}}}\\right)$" },
+            { "do": "underline", "term": "sq", "color": "gold", "label": "根號", "on": "根號" }
+          ] }
       ],
       "predict": {
         "ask": "對 $a$ 積回去，該怎麼換元？",

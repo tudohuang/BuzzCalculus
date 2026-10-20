@@ -56,9 +56,20 @@
     {
       "title": "$e$ 的虛數次方",
       "beats": [
-        {"show":["$e^{i}$ 是什麼意思？"],"note":"不能用「乘幾次」來理解。","say":"e 的三次方是三個 e 相乘，e 的二分之一次方是開根號。可是 e 的 i 次方，乘幾次？說不通。"},
-        {"show":["$e^z=1+z+\\frac{z^2}{2!}+\\frac{z^3}{3!}+\\cdots$"],"note":"用級數來定義。","say":"所以改用級數來定義：把 z 代進 e 的 x 次方那條熟悉的級數，對任何複數都照樣算。"},
-        {"show":["$z$ 是實數時就是原來的 $e^x$"],"say":"這個定義跟舊的不衝突：z 是實數的時候，它就是原來的 e 的 x 次方。"}
+        {"show":["$e^{i}$ 是什麼意思？"],"note":"不能用「乘幾次」來理解。","say":"e 的三次方是三個 e 相乘，e 的二分之一次方是開根號。可是 e 的 i 次方，乘幾次？說不通。",
+          "board": [
+            { "do": "write", "line": "$e^{{{i:i}}}$ 是什麼意思？" },
+            { "do": "focus", "term": "i", "label": "乘幾次？", "on": "i 次方" }
+          ] },
+        {"show":["$e^z=1+z+\\frac{z^2}{2!}+\\frac{z^3}{3!}+\\cdots$"],"note":"用級數來定義。","say":"所以改用級數來定義：把 z 代進 e 的 x 次方那條熟悉的級數，對任何複數都照樣算。",
+          "board": [
+            { "do": "write", "line": "$e^{{{z:z}}}=1+z+\\frac{z^2}{2!}+\\frac{z^3}{3!}+\\cdots$" },
+            { "do": "focus", "term": "z", "label": "任何複數", "on": "任何複數" }
+          ] },
+        {"show":["$z$ 是實數時就是原來的 $e^x$"],"say":"這個定義跟舊的不衝突：z 是實數的時候，它就是原來的 e 的 x 次方。",
+          "board": [
+            { "do": "write", "line": "$z$ 是實數：$e^z=e^x$" }
+          ] }
       ],
       "predict": {
         "ask": "這個級數的收斂半徑是？",
@@ -72,10 +83,28 @@
     {
       "title": "代入 $i\\theta$",
       "beats": [
-        {"show":["$i^0=1$、$i^1=i$、$i^2=-1$、$i^3=-i$"],"say":"代入 i theta。i 的次方四個一循環，所以每一項的係數照一、i、負一、負 i 輪流。"},
-        {"show":["$1+i\\theta-\\frac{\\theta^2}{2!}-\\frac{i\\theta^3}{3!}+\\frac{\\theta^4}{4!}+\\cdots$"],"say":"寫出來，有的項帶 i、有的不帶，正負號兩個兩個換。"},
-        {"show":["沒有 $i$：$1-\\frac{\\theta^2}{2!}+\\cdots=\\cos\\theta$","有 $i$：$\\theta-\\frac{\\theta^3}{3!}+\\cdots=\\sin\\theta$"],"note":"絕對收斂，重新分組合法。","say":"不帶 i 的收在一起，正好是 cosine 的級數；帶 i 的收在一起，正好是 sine 的級數。"},
-        {"show":["$e^{i\\theta}=\\cos\\theta+i\\sin\\theta$"],"note":"點在單位圓上，角度是 $\\theta$。","say":"這就是 Euler 公式。cosine 和 sine 是單位圓上角度 theta 那一點的座標。"}
+        {"show":["$i^0=1$、$i^1=i$、$i^2=-1$、$i^3=-i$"],"say":"代入 i theta。i 的次方四個一循環，所以每一項的係數照一、i、負一、負 i 輪流。",
+          "board": [
+            { "do": "write", "line": "$z=i\\theta$" },
+            { "do": "write", "line": "$i^0=1$、$i^1=i$、$i^2=-1$、$i^3=-i$", "on": "i 的次方" }
+          ] },
+        {"show":["$1+i\\theta-\\frac{\\theta^2}{2!}-\\frac{i\\theta^3}{3!}+\\frac{\\theta^4}{4!}+\\cdots$"],"say":"寫出來，有的項帶 i、有的不帶，正負號兩個兩個換。",
+          "board": [
+            { "do": "write", "line": "$1+{{a:i\\theta}}-\\frac{\\theta^2}{2!}-\\frac{i\\theta^3}{3!}+\\frac{\\theta^4}{4!}+\\cdots$" },
+            { "do": "focus", "term": "a", "on": "帶 i" }
+          ] },
+        {"show":["沒有 $i$：$1-\\frac{\\theta^2}{2!}+\\cdots=\\cos\\theta$","有 $i$：$\\theta-\\frac{\\theta^3}{3!}+\\cdots=\\sin\\theta$"],"note":"絕對收斂，重新分組合法。","say":"不帶 i 的收在一起，正好是 cosine 的級數；帶 i 的收在一起，正好是 sine 的級數。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "$1-\\frac{\\theta^2}{2!}+\\cdots={{c:\\cos\\theta}}$", "on": "不帶 i" },
+            { "do": "focus", "term": "c", "color": "green", "on": "cosine" },
+            { "do": "write", "line": "$\\theta-\\frac{\\theta^3}{3!}+\\cdots={{s:\\sin\\theta}}$", "on": "帶 i#2" },
+            { "do": "focus", "term": "s", "color": "green", "on": "正好是#2" }
+          ] },
+        {"show":["$e^{i\\theta}=\\cos\\theta+i\\sin\\theta$"],"note":"點在單位圓上，角度是 $\\theta$。","say":"這就是 Euler 公式。cosine 和 sine 是單位圓上角度 theta 那一點的座標。",
+          "board": [
+            { "do": "write", "line": "$e^{i\\theta}=\\cos\\theta+i\\sin\\theta$", "color": "green" }
+          ] }
       ],
       "check": 3
     },
@@ -134,9 +163,23 @@
     {
       "title": "cos 與 sin 的指數式",
       "beats": [
-        {"show":["$e^{-i\\theta}=\\cos\\theta-i\\sin\\theta$"],"say":"把 theta 換成負 theta：cosine 不變，sine 變號。"},
-        {"show":["$\\sin\\theta=\\frac{e^{i\\theta}-e^{-i\\theta}}{2i}$"],"note":"分母有 $i$，別漏掉。","say":"兩式相減，cosine 消掉，剩兩倍的 i sine，所以 sine 要除以二 i。"},
-        {"show":["三角恆等式 → 指數的代數"],"note":"例如 $\\sin^3\\theta=\\frac{3\\sin\\theta-\\sin 3\\theta}{4}$。","say":"這樣三角恆等式就變成指數的代數。例如 sine 三次方，直接展開三次方就證出來。"}
+        {"show":["$e^{-i\\theta}=\\cos\\theta-i\\sin\\theta$"],"say":"把 theta 換成負 theta：cosine 不變，sine 變號。",
+          "board": [
+            { "do": "write", "line": "$e^{i\\theta}=\\cos\\theta+i\\sin\\theta$" },
+            { "do": "transform", "line": "$e^{-i\\theta}={{c:\\cos\\theta}}-i\\sin\\theta$", "on": "負 theta" },
+            { "do": "focus", "term": "c", "on": "cosine" }
+          ] },
+        {"show":["$\\sin\\theta=\\frac{e^{i\\theta}-e^{-i\\theta}}{2i}$"],"note":"分母有 $i$，別漏掉。","say":"兩式相減，cosine 消掉，剩兩倍的 i sine，所以 sine 要除以二 i。",
+          "board": [
+            { "do": "write", "line": "$e^{i\\theta}-e^{-i\\theta}=2i\\sin\\theta$" },
+            { "do": "transform", "line": "$\\sin\\theta=\\frac{e^{i\\theta}-e^{-i\\theta}}{2i}$", "on": "所以" }
+          ] },
+        {"show":["三角恆等式 → 指數的代數"],"note":"例如 $\\sin^3\\theta=\\frac{3\\sin\\theta-\\sin 3\\theta}{4}$。","say":"這樣三角恆等式就變成指數的代數。例如 sine 三次方，直接展開三次方就證出來。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "三角恆等式 → 指數的代數", "on": "三角恆等式" },
+            { "do": "write", "line": "$\\sin^3\\theta=\\left(\\frac{e^{i\\theta}-e^{-i\\theta}}{2i}\\right)^3$", "on": "例如" }
+          ] }
       ],
       "check": 1
     },
@@ -153,9 +196,21 @@
     {
       "title": "高階導數", "key": "$1+i$ 寫成極式，次方變成角度相乘",
       "beats": [
-        {"show":["$\\frac{d^4}{dx^4}(e^x\\cos x)$ 在 $x=0$"],"say":"同一招算高階導數：e 的 x 次方乘 cosine x，微分四次，在零的值。"},
-        {"show":["$\\operatorname{Re}\\left[(1+i)^ne^{(1+i)x}\\right]$"],"say":"它是 e 的一加 i 乘 x 次方的實部，每微分一次就乘一個一加 i。"},
-        {"show":["$(1+i)^n=2^{n/2}e^{in\\pi/4}$"],"note":"$1+i=\\sqrt{2}\\,e^{i\\pi/4}$","say":"一加 i 的長度是根號二，角度四分之派。n 次方就是長度乘 n 次，角度轉 n 次。"}
+        {"show":["$\\frac{d^4}{dx^4}(e^x\\cos x)$ 在 $x=0$"],"say":"同一招算高階導數：e 的 x 次方乘 cosine x，微分四次，在零的值。",
+          "board": [
+            { "do": "write", "line": "$\\frac{d^4}{dx^4}(e^x\\cos x)$ 在 $x=0$" }
+          ] },
+        {"show":["$\\operatorname{Re}\\left[(1+i)^ne^{(1+i)x}\\right]$"],"say":"它是 e 的一加 i 乘 x 次方的實部，每微分一次就乘一個一加 i。",
+          "board": [
+            { "do": "write", "line": "$\\operatorname{Re}\\left[{{p:(1+i)^n}}e^{(1+i)x}\\right]$" },
+            { "do": "focus", "term": "p", "label": "每次都乘", "on": "每微分一次" }
+          ] },
+        {"show":["$(1+i)^n=2^{n/2}e^{in\\pi/4}$"],"note":"$1+i=\\sqrt{2}\\,e^{i\\pi/4}$","say":"一加 i 的長度是根號二，角度四分之派。n 次方就是長度乘 n 次，角度轉 n 次。",
+          "board": [
+            { "do": "write", "line": "$1+i=\\sqrt{2}\\,e^{i\\pi/4}$" },
+            { "do": "write", "line": "$(1+i)^n={{len:2^{n/2}}}e^{in\\pi/4}$", "on": "n 次方" },
+            { "do": "underline", "term": "len", "label": "長度", "on": "長度乘" }
+          ] }
       ],
       "predict": {
         "ask": "$n=4$、$x=0$，值是？",

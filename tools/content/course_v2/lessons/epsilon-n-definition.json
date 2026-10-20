@@ -125,9 +125,18 @@
       "title": "越來越近不夠",
       "beats": [
         { "show": ["「$n$ 越大，$a_n$ 越靠近 $L$」"], "note": "以前的說法。",
-          "say": "以前說數列收斂，是 n 越大，a n 越靠近 L。這句話聽起來沒問題，其實有漏洞。" },
+          "say": "以前說數列收斂，是 n 越大，a n 越靠近 L。這句話聽起來沒問題，其實有漏洞。",
+          "board": [
+            { "do": "write", "line": "「$n$ 越大，$a_n$ 越靠近 ${{l:L}}$」" },
+            { "do": "write", "line": "聽起來沒問題，但有漏洞", "color": "red", "on": "其實" }
+          ] },
         { "show": ["$a_n=\\frac{1}{n}$ 到 $-1$ 的距離一直變小"],
-          "say": "n 分之一跟負一的距離，也是一直在變小。那它算不算越來越靠近負一？" }
+          "say": "n 分之一跟負一的距離，也是一直在變小。那它算不算越來越靠近負一？",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "$a_n = \\frac{1}{n}$", "on": "n 分之一" },
+            { "do": "write", "line": "到 $-1$ 的距離一直變小", "on": "距離" }
+          ] }
       ],
       "predict": {
         "ask": "$\\frac{1}{n}$ 收斂到 $-1$ 嗎？",
@@ -142,13 +151,33 @@
       "title": "一場挑戰",
       "beats": [
         { "show": ["對方給誤差 $\\varepsilon>0$"], "note": "0.1、0.001、$10^{-9}$，隨便給。",
-          "say": "精確的說法是一場挑戰。對方隨便給一個誤差 epsilon，零點一、零點零零一，多小都可以。" },
+          "say": "精確的說法是一場挑戰。對方隨便給一個誤差 epsilon，零點一、零點零零一，多小都可以。",
+          "board": [
+            { "do": "write", "line": "對方給 ${{e:\\varepsilon}} > 0$", "tint": {"e":"blue"} },
+            { "do": "focus", "term": "e", "color": "blue", "label": "多小都行", "on": "多小" }
+          ] },
         { "show": ["你說出位置 $N$"], "note": "從第 $N$ 項起，每一項都在 $L\\pm\\varepsilon$ 的帶子裡。",
-          "say": "你要能說出一個位置 N，從第 N 項開始，每一項都落在 L 上下 epsilon 這條帶子裡。" },
+          "say": "你要能說出一個位置 N，從第 N 項開始，每一項都落在 L 上下 epsilon 這條帶子裡。",
+          "board": [
+            { "do": "write", "line": "你說出 ${{nn:N}}$", "tint": {"nn":"violet"} },
+            { "do": "write", "line": "$n \\ge N$ ⇒ $|a_n - L| < \\varepsilon$", "on": "每一項" }
+          ] },
         { "show": ["$\\forall\\varepsilon>0\\ \\exists N\\ \\forall n\\ge N:|a_n-L|<\\varepsilon$"],
-          "say": "寫成符號就是這一行：對所有 epsilon，存在 N，對所有 n 大於等於 N，距離都小於 epsilon。" },
+          "say": "寫成符號就是這一行：對所有 epsilon，存在 N，對所有 n 大於等於 N，距離都小於 epsilon。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "$\\forall {{e:\\varepsilon}}>0\\ \\exists {{nn:N}}\\ \\forall n\\ge N:|a_n-L|<\\varepsilon$", "tint": {"e":"blue","nn":"violet"}, "on": "這一行" },
+            { "do": "underline", "term": "e", "color": "blue", "on": "對所有#1" },
+            { "do": "focus", "term": "nn", "color": "violet", "on": "存在" }
+          ] },
         { "show": ["先有 $\\varepsilon$，才選 $N$"], "note": "$N$ 可以依賴 $\\varepsilon$；不必是最小的。",
-          "say": "順序是重點：epsilon 先給，N 後選，所以 N 可以跟著 epsilon 變。N 也不必挑最小的。" }
+          "say": "順序是重點：epsilon 先給，N 後選，所以 N 可以跟著 epsilon 變。N 也不必挑最小的。",
+          "board": [
+            { "do": "write", "line": "先給 ${{ep:\\varepsilon}}$", "tint": {"ep":"blue"} },
+            { "do": "write", "line": "後選 ${{nx:N}}$", "tint": {"nx":"violet"}, "on": "後選" },
+            { "do": "arrow", "from": "ep", "to": "nx", "label": "N 跟著變", "on": "跟著" },
+            { "do": "write", "line": "$N$ 不必是最小的", "on": "也不必" }
+          ] }
       ],
       "check": 0
     },
@@ -223,11 +252,26 @@
       "title": "不收斂長什麼樣",
       "beats": [
         { "show": ["$\\exists\\varepsilon>0\\ \\forall N\\ \\exists n\\ge N:|a_n-L|\\ge\\varepsilon$"],
-          "say": "把定義的量詞一個一個翻過來，就是不收斂到 L。" },
+          "say": "把定義的量詞一個一個翻過來，就是不收斂到 L。",
+          "board": [
+            { "do": "write", "line": "$\\forall \\to \\exists$，$\\exists \\to \\forall$" },
+            { "do": "write", "line": "$|a_n-L|<\\varepsilon \\to |a_n-L|\\ge\\varepsilon$", "on": "翻過來" }
+          ] },
         { "show": ["有一個固定的誤差", "數列永遠甩不掉偶爾跑出去"],
-          "say": "人話：有一個固定的誤差，不管 N 多大，後面總有某一項跑出帶子。" },
+          "say": "人話：有一個固定的誤差，不管 N 多大，後面總有某一項跑出帶子。",
+          "board": [
+            { "do": "write", "line": "有一個固定的 ${{e:\\varepsilon}}$", "tint": {"e":"blue"} },
+            { "do": "underline", "term": "e", "color": "blue", "label": "固定", "on": "固定的" },
+            { "do": "write", "line": "不管 $N$ 多大，後面總有一項跑出去", "on": "不管" }
+          ] },
         { "show": ["$(-1)^n$：取 $\\varepsilon=1$"], "note": "帶子寬 2，裝不下距離 2 的兩個點 1 和 $-1$。",
-          "say": "負一的 n 次方在一和負一之間跳，兩點距離二。誤差取一，帶子寬二又是開的，裝不下兩個點。" }
+          "say": "負一的 n 次方在一和負一之間跳，兩點距離二。誤差取一，帶子寬二又是開的，裝不下兩個點。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "$(-1)^n$：在 $1$ 和 $-1$ 之間跳", "on": "負一的" },
+            { "do": "write", "line": "${{e:\\varepsilon = 1}}$：帶子寬 2，開的", "tint": {"e":"blue"}, "on": "誤差取一" },
+            { "do": "underline", "term": "e", "color": "blue", "label": "裝不下", "on": "裝不下" }
+          ] }
       ],
       "check": 2
     },

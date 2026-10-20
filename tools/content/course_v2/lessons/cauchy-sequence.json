@@ -185,11 +185,27 @@
       "title": "不知道終點",
       "beats": [
         { "show": ["$\\varepsilon$-$N$ 定義：先得猜出 $L$"], "note": "例如 $1+\\frac{1}{4}+\\frac{1}{9}+\\dots+\\frac{1}{n^2}$，終點不好猜。",
-          "say": "用 epsilon N 定義證收斂，得先知道極限是多少。可是很多數列，終點根本猜不出來。" },
+          "say": "用 epsilon N 定義證收斂，得先知道極限是多少。可是很多數列，終點根本猜不出來。",
+          "board": [
+            { "do": "write", "line": "$\\varepsilon$-$N$ 定義：先得知道 ${{l:L}}$" },
+            { "do": "focus", "term": "l", "on": "極限是多少" },
+            { "do": "write", "line": "終點 $L$ 猜不出來", "on": "終點根本" }
+          ] },
         { "show": ["不看項到終點的距離", "看項與項之間的距離"],
-          "say": "Cauchy 的想法：不管終點，只看項和項之間。從某處開始任何兩項都擠在一起，數列就停得下來。" },
+          "say": "Cauchy 的想法：不管終點，只看項和項之間。從某處開始任何兩項都擠在一起，數列就停得下來。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "不看 $a_n$ 到終點的距離", "on": "不管終點" },
+            { "do": "write", "line": "看 $a_m$ 與 $a_n$ 的距離", "on": "只看項和項" }
+          ] },
         { "show": ["$\\forall\\varepsilon>0\\ \\exists N\\ \\forall m,n\\ge N:|a_m-a_n|<\\varepsilon$"], "note": "$m$、$n$ 是任意兩個，不只相鄰。",
-          "say": "寫成定義：對每個 epsilon 有一個 N，N 之後任意兩項的距離都小於 epsilon。注意，是任意兩項。" }
+          "say": "寫成定義：對每個 epsilon 有一個 N，N 之後任意兩項的距離都小於 epsilon。注意，是任意兩項。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "$\\forall\\varepsilon>0\\ \\exists N\\ \\forall {{mn:m,n\\ge N}}:{{d:|a_m-a_n|<\\varepsilon}}$", "on": "對每個" },
+            { "do": "box", "term": "d", "color": "green", "on": "距離都小於" },
+            { "do": "underline", "term": "mn", "label": "任意兩項", "on": "任意兩項#2" }
+          ] }
       ],
       "check": 0
     },
@@ -197,11 +213,25 @@
       "title": "收斂 ⇔ Cauchy",
       "beats": [
         { "show": ["收斂 ⇒ Cauchy"], "note": "都靠近 $L$ 的兩項，彼此也靠近。",
-          "say": "收斂的數列一定是 Cauchy：兩項都離 L 不到二分之 epsilon，彼此就差不到 epsilon。" },
+          "say": "收斂的數列一定是 Cauchy：兩項都離 L 不到二分之 epsilon，彼此就差不到 epsilon。",
+          "board": [
+            { "do": "write", "line": "${{p:|a_m-L|}}<\\frac{\\varepsilon}{2}$，${{q:|a_n-L|}}<\\frac{\\varepsilon}{2}$" },
+            { "do": "write", "line": "$|a_m-a_n|\\le{{p:|a_m-L|}}+{{q:|a_n-L|}}<\\varepsilon$", "on": "彼此就差不到" }
+          ] },
         { "show": ["Cauchy ⇒ 收斂：要完備性"], "note": "證明在下一節。",
-          "say": "反過來，Cauchy 推得出收斂，靠的是實數的完備性，下一節證明。" },
+          "say": "反過來，Cauchy 推得出收斂，靠的是實數的完備性，下一節證明。",
+          "board": [
+            { "do": "write", "line": "Cauchy ⇒ 收斂：靠 ${{r:\\mathbb{R}}}$ 完備" },
+            { "do": "focus", "term": "r", "on": "完備性" }
+          ] },
         { "show": ["在 $\\mathbb{Q}$ 裡：1, 1.4, 1.41, 1.414, …"], "note": "項擠在一起，要去的 $\\sqrt{2}$ 卻不在 $\\mathbb{Q}$ 裡。",
-          "say": "在有理數裡就不成立：根號二的小數截斷，項越擠越緊，但有理數裡沒有它要去的那一點。" }
+          "say": "在有理數裡就不成立：根號二的小數截斷，項越擠越緊，但有理數裡沒有它要去的那一點。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "在 $\\mathbb{Q}$ 裡：${{s:1, 1.4, 1.41, 1.414, \\dots}}$", "on": "根號二" },
+            { "do": "underline", "term": "s", "on": "越擠越緊" },
+            { "do": "write", "line": "要去的 $\\sqrt{2}\\notin\\mathbb{Q}$", "on": "沒有它要去" }
+          ] }
       ],
       "check": 2
     },
@@ -333,11 +363,27 @@
       "title": "每步縮成 $\\frac{4}{25}$", "key": "相鄰差每步縮固定比例，像幾何級數",
       "beats": [
         { "show": ["$a_1=0$，$a_{n+1}=\\frac{1}{3-a_n}$"], "note": "歸納：所有項在 $[0,\\frac{1}{2}]$。",
-          "say": "最後一個遞迴：下一項是三減前一項分之一。先用歸納法，所有項都在零到二分之一之間。" },
+          "say": "最後一個遞迴：下一項是三減前一項分之一。先用歸納法，所有項都在零到二分之一之間。",
+          "board": [
+            { "do": "write", "line": "$a_1=0$，$a_{n+1}=\\frac{1}{3-a_n}$" },
+            { "do": "write", "line": "歸納：所有項在 ${{r:[0,\\frac{1}{2}]}}$", "on": "歸納法" },
+            { "do": "underline", "term": "r", "on": "所有項都在" }
+          ] },
         { "show": ["$|a_{n+1}-a_n|\\le\\frac{4}{25}|a_n-a_{n-1}|$"], "note": "分母 $\\ge(\\frac{5}{2})^2=\\frac{25}{4}$。",
-          "say": "相鄰差每走一步，至少縮成二十五分之四。差距像等比數列一樣縮，加起來也趨近零，所以是 Cauchy。" },
+          "say": "相鄰差每走一步，至少縮成二十五分之四。差距像等比數列一樣縮，加起來也趨近零，所以是 Cauchy。",
+          "board": [
+            { "do": "write", "line": "$|a_{n+1}-a_n|\\le{{c:\\frac{4}{25}}}|a_n-a_{n-1}|$" },
+            { "do": "circle", "term": "c", "label": "每步縮", "on": "縮成" },
+            { "do": "write", "line": "差距像等比縮 ⇒ 是 Cauchy", "on": "等比數列" }
+          ] },
         { "show": ["$L=\\frac{1}{3-L}$ ⇒ $L=\\frac{3\\pm\\sqrt{5}}{2}$"],
-          "say": "極限存在之後才解方程：L 平方減三 L 加一等於零，兩個根。要哪一個？" }
+          "say": "極限存在之後才解方程：L 平方減三 L 加一等於零，兩個根。要哪一個？",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "$L=\\frac{1}{3-L}$", "on": "極限存在" },
+            { "do": "write", "line": "$L^2-3L+1=0$", "on": "L 平方" },
+            { "do": "write", "line": "$L=\\frac{3\\pm\\sqrt{5}}{2}$", "on": "兩個根" }
+          ] }
       ],
       "predict": {
         "ask": "極限是哪一個根？",

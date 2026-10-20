@@ -63,9 +63,22 @@
     {
       "title": "定義",
       "beats": [
-        {"show":["切成小段，每段 $f(z_k)\\Delta z_k$ 加起來"],"note":"跟功的線積分同一個想法。","say":"沿著曲線切成很多小段，每一段的位移乘上 f 在那裡的值，全部加起來。"},
-        {"show":["$\\int_C f(z)\\,dz=\\int_a^b f(z(t))\\,z'(t)\\,dt$"],"say":"用參數式寫，dz 就換成 z prime 乘 dt，變成對實數 t 的積分。"},
-        {"show":["實部、虛部分開積"],"note":"就是兩個實的線積分。","say":"右邊被積函數是複數值，實部虛部各積各的，其實就是兩個實的線積分。"}
+        {"show":["切成小段，每段 $f(z_k)\\Delta z_k$ 加起來"],"note":"跟功的線積分同一個想法。","say":"沿著曲線切成很多小段，每一段的位移乘上 f 在那裡的值，全部加起來。",
+          "board": [
+            { "do": "write", "line": "$\\sum_k f(z_k)\\,{{dz:\\Delta z_k}}$" },
+            { "do": "focus", "term": "dz", "label": "小段位移", "on": "位移" }
+          ] },
+        {"show":["$\\int_C f(z)\\,dz=\\int_a^b f(z(t))\\,z'(t)\\,dt$"],"say":"用參數式寫，dz 就換成 z prime 乘 dt，變成對實數 t 的積分。",
+          "board": [
+            { "do": "write", "line": "$z=z(t)$，$t\\in[a,b]$" },
+            { "do": "write", "line": "$dz={{d:z'(t)\\,dt}}$", "on": "換成" }
+          ] },
+        {"show":["實部、虛部分開積"],"note":"就是兩個實的線積分。","say":"右邊被積函數是複數值，實部虛部各積各的，其實就是兩個實的線積分。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "實部、虛部各積各的", "on": "實部虛部" },
+            { "do": "write", "line": "＝ 兩個實的線積分", "on": "兩個實" }
+          ] }
       ],
       "check": 2
     },
@@ -109,9 +122,27 @@
     {
       "title": "有反導函數",
       "beats": [
-        {"show":["$F'=f$：$\\int_C f\\,dz=F(\\text{終點})-F(\\text{起點})$"],"note":"封閉曲線上是 $0$。","say":"如果 f 有反導函數 F，積分只看端點：終點的 F 減起點的 F，封閉曲線就是零。"},
-        {"show":["$\\oint\\frac{dz}{z}=2\\pi i\\ne 0$"],"note":"$\\frac{1}{z}$ 在去掉 $0$ 的平面上沒有反導函數。","say":"反過來，z 分之一積一圈不是零，所以它沒有反導函數：log 繞一圈會多出二派 i。"},
-        {"show":["$\\int_C z^2\\,dz$，$0$ 到 $1+i$"],"note":"任何分段光滑曲線。","say":"z 平方從零到一加 i，走哪一條路都一樣，因為它有反導函數三分之 z 三次方。"}
+        {"show":["$F'=f$：$\\int_C f\\,dz=F(\\text{終點})-F(\\text{起點})$"],"note":"封閉曲線上是 $0$。","say":"如果 f 有反導函數 F，積分只看端點：終點的 F 減起點的 F，封閉曲線就是零。",
+          "board": [
+            { "do": "write", "line": "$F'=f$" },
+            { "do": "write", "line": "$\\int_C f\\,dz={{e:F(\\text{終點})-F(\\text{起點})}}$", "on": "只看端點" },
+            { "do": "underline", "term": "e", "color": "blue", "on": "終點的" },
+            { "do": "write", "line": "封閉曲線：$\\oint f\\,dz=0$", "on": "封閉曲線" }
+          ] },
+        {"show":["$\\oint\\frac{dz}{z}=2\\pi i\\ne 0$"],"note":"$\\frac{1}{z}$ 在去掉 $0$ 的平面上沒有反導函數。","say":"反過來，z 分之一積一圈不是零，所以它沒有反導函數：log 繞一圈會多出二派 i。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "$\\oint\\frac{dz}{z}={{r:2\\pi i}}\\ne0$", "on": "z 分之一" },
+            { "do": "focus", "term": "r", "color": "green", "on": "不是零" },
+            { "do": "write", "line": "沒有反導函數：$\\log$ 繞一圈多 $2\\pi i$", "on": "log" }
+          ] },
+        {"show":["$\\int_C z^2\\,dz$，$0$ 到 $1+i$"],"note":"任何分段光滑曲線。","say":"z 平方從零到一加 i，走哪一條路都一樣，因為它有反導函數三分之 z 三次方。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "$\\int_C z^2\\,dz$，$0$ 到 $1+i$", "on": "z 平方" },
+            { "do": "write", "line": "$F(z)={{f:\\frac{z^3}{3}}}$", "on": "反導函數" },
+            { "do": "focus", "term": "f", "color": "violet", "on": "三分之" }
+          ] }
       ],
       "predict": {
         "ask": "$\\int_C z^2\\,dz$ 是？",
@@ -149,9 +180,22 @@
     {
       "title": "兩個基本性質",
       "beats": [
-        {"show":["$\\int_{-C}f\\,dz=-\\int_C f\\,dz$"],"say":"第一，反向走，每一小段的 dz 都反過來，積分變號。"},
-        {"show":["$\\left|\\int_C f\\,dz\\right|\\le ML$"],"note":"$C$ 上 $|f|\\le M$，$C$ 長度 $L$。","say":"第二，ML 不等式：積分的長度，不超過 f 的最大長度乘上曲線長。"},
-        {"show":["$\\left|\\oint_{|z|=R}\\frac{dz}{z^2+1}\\right|\\le\\frac{2\\pi R}{R^2-1}\\to 0$"],"say":"例如半徑 R 的大圓上，分母至少 R 平方減一，R 越大積分越小，趨近零。"}
+        {"show":["$\\int_{-C}f\\,dz=-\\int_C f\\,dz$"],"say":"第一，反向走，每一小段的 dz 都反過來，積分變號。",
+          "board": [
+            { "do": "write", "line": "反向走：每小段 ${{d:dz}}$ 反過來" },
+            { "do": "focus", "term": "d", "color": "blue", "on": "dz" }
+          ] },
+        {"show":["$\\left|\\int_C f\\,dz\\right|\\le ML$"],"note":"$C$ 上 $|f|\\le M$，$C$ 長度 $L$。","say":"第二，ML 不等式：積分的長度，不超過 f 的最大長度乘上曲線長。",
+          "board": [
+            { "do": "write", "line": "$\\left|\\int_C f\\,dz\\right|\\le {{ml:ML}}$" },
+            { "do": "write", "line": "$|f|\\le M$，長度 $L$", "on": "最大長度" }
+          ] },
+        {"show":["$\\left|\\oint_{|z|=R}\\frac{dz}{z^2+1}\\right|\\le\\frac{2\\pi R}{R^2-1}\\to 0$"],"say":"例如半徑 R 的大圓上，分母至少 R 平方減一，R 越大積分越小，趨近零。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "$|z|=R$：$|z^2+1|\\ge R^2-1$", "on": "半徑" },
+            { "do": "write", "line": "$\\le\\frac{2\\pi R}{R^2-1}\\to0$", "on": "越大" }
+          ] }
       ],
       "check": 3
     }

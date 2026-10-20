@@ -135,11 +135,23 @@
       "title": "$\\delta$ 看位置",
       "beats": [
         { "show": ["$\\frac{1}{x}$ 在 $(0,1]$ 每一點都連續"],
-          "say": "x 分之一在零到一，每一點都連續。可是每一點能用的 delta 一樣大嗎？" },
+          "say": "x 分之一在零到一，每一點都連續。可是每一點能用的 delta 一樣大嗎？",
+          "board": [
+            { "do": "write", "line": "$\\frac{1}{x}$ 在 $(0,1]$ 每一點都連續" }
+          ] },
         { "show": ["在 $a$：$\\delta=\\frac{\\varepsilon a^2}{2}$"], "note": "$\\varepsilon\\le1$ 時可用。",
-          "say": "在 a 這一點，delta 可以取 epsilon 乘 a 平方再除以二。裡面有 a：位置不同，delta 不同。" },
+          "say": "在 a 這一點，delta 可以取 epsilon 乘 a 平方再除以二。裡面有 a：位置不同，delta 不同。",
+          "board": [
+            { "do": "write", "line": "$\\delta=\\frac{\\varepsilon\\,{{aa:a^2}}}{2}$" },
+            { "do": "underline", "term": "aa", "color": "blue", "label": "看位置", "on": "裡面有 a" }
+          ] },
         { "show": ["$\\varepsilon=0.5$，$a=0.5$：$\\delta=\\frac{1}{16}$"],
-          "say": "誤差零點五，在零點五這一點，delta 是十六分之一。如果點移到零點零一呢？" }
+          "say": "誤差零點五，在零點五這一點，delta 是十六分之一。如果點移到零點零一呢？",
+          "board": [
+            { "do": "write", "line": "$\\varepsilon=0.5$，$a=0.5$" },
+            { "do": "write", "line": "${{r:\\delta=\\frac{1}{16}}}$", "on": "delta 是" },
+            { "do": "box", "term": "r", "color": "green", "on": "十六分之一" }
+          ] }
       ],
       "predict": {
         "ask": "$a=0.01$ 時 $\\delta$ 是？",
@@ -154,13 +166,33 @@
       "title": "全區通用的 $\\delta$",
       "beats": [
         { "show": ["沒有一個 $\\delta$ 對每個 $a$ 都有效"],
-          "say": "越靠近零，delta 就得越小，所有點一起看，找不到一個大家都能用的 delta。" },
+          "say": "越靠近零，delta 就得越小，所有點一起看，找不到一個大家都能用的 delta。",
+          "board": [
+            { "do": "write", "line": "$a\\to0$：$\\delta$ 要越來越小" },
+            { "do": "write", "line": "沒有一個 $\\delta$ 對每個 $a$ 都有效", "on": "找不到" }
+          ] },
         { "show": ["$\\forall\\varepsilon\\ \\exists\\delta\\ \\forall x,y:$", "$|x-y|<\\delta\\Rightarrow|f(x)-f(y)|<\\varepsilon$"],
-          "say": "一致連續問的就是：有沒有一個全區通用的 delta？任意兩點只要夠近，函數值就夠近。" },
+          "say": "一致連續問的就是：有沒有一個全區通用的 delta？任意兩點只要夠近，函數值就夠近。",
+          "board": [
+            { "do": "write", "line": "$\\forall\\varepsilon\\ {{e:\\exists\\delta}}\\ \\forall x,y:$" },
+            { "do": "focus", "term": "e", "label": "全區一個", "on": "全區通用" },
+            { "do": "write", "line": "$|x-y|<\\delta\\Rightarrow|f(x)-f(y)|<\\varepsilon$", "on": "任意兩點" }
+          ] },
         { "show": ["連續：$\\forall a\\ \\forall\\varepsilon\\ \\exists\\delta$"], "note": "$\\delta$ 在 $a$ 之後選，可以看位置。",
-          "say": "跟連續並排比：連續是先給點，再選 delta，delta 可以看位置；一致連續的 delta 在點出場前就選好。" },
+          "say": "跟連續並排比：連續是先給點，再選 delta，delta 可以看位置；一致連續的 delta 在點出場前就選好。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "連續：$\\forall a\\ \\forall\\varepsilon\\ {{c:\\exists\\delta}}$", "on": "連續是先給點" },
+            { "do": "underline", "term": "c", "color": "blue", "label": "看位置", "on": "可以看位置" },
+            { "do": "write", "line": "一致連續：$\\forall\\varepsilon\\ {{u:\\exists\\delta}}\\ \\forall x,y$", "on": "一致連續的" },
+            { "do": "underline", "term": "u", "color": "violet", "on": "點出場前" }
+          ] },
         { "show": ["一致連續 ⇒ 連續"], "note": "反過來不對。",
-          "say": "所以一致連續一定連續，反過來不對，x 分之一就是例子。" }
+          "say": "所以一致連續一定連續，反過來不對，x 分之一就是例子。",
+          "board": [
+            { "do": "write", "line": "一致連續 $\\Rightarrow$ 連續" },
+            { "do": "write", "line": "反過來不對：$\\frac{1}{x}$ 在 $(0,1]$", "on": "反過來不對" }
+          ] }
       ],
       "check": 0
     },
@@ -254,11 +286,27 @@
       "title": "$\\sqrt{x}$ 是一致連續",
       "beats": [
         { "show": ["$|\\sqrt{x}-\\sqrt{y}|\\le\\sqrt{|x-y|}$"], "note": "兩邊非負，平方比較。",
-          "say": "定義域無界的也可能一致連續。根號 x 有個關鍵不等式：根號的差，不超過差的根號。" },
+          "say": "定義域無界的也可能一致連續。根號 x 有個關鍵不等式：根號的差，不超過差的根號。",
+          "board": [
+            { "do": "write", "line": "$|{{l:\\sqrt{x}-\\sqrt{y}}}|\\le{{r:\\sqrt{|x-y|}}}$" },
+            { "do": "underline", "term": "l", "color": "blue", "on": "根號的差" },
+            { "do": "underline", "term": "r", "color": "violet", "on": "不超過" }
+          ] },
         { "show": ["取 $\\delta=\\varepsilon^2$"], "note": "$\\delta$ 只依賴 $\\varepsilon$。",
-          "say": "所以 delta 取 epsilon 平方：兩點距離小於它，根號的差就小於 epsilon，跟位置無關。" },
+          "say": "所以 delta 取 epsilon 平方：兩點距離小於它，根號的差就小於 epsilon，跟位置無關。",
+          "board": [
+            { "do": "write", "line": "取 $\\delta=\\varepsilon^2$" },
+            { "do": "write", "line": "$|\\sqrt{x}-\\sqrt{y}|\\le\\sqrt{|x-y|}<\\sqrt{\\delta}={{e:\\varepsilon}}$", "on": "兩點距離" },
+            { "do": "box", "term": "e", "color": "green", "on": "就小於" }
+          ] },
         { "show": ["在 0 附近不是 Lipschitz"], "note": "斜率無界，仍然一致連續。",
-          "say": "根號 x 在零附近非常陡，斜率沒有上限，可是照樣一致連續。陡不一定壞事。" }
+          "say": "根號 x 在零附近非常陡，斜率沒有上限，可是照樣一致連續。陡不一定壞事。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "$(\\sqrt{x})'=\\frac{1}{2\\sqrt{x}}$", "on": "非常陡" },
+            { "do": "write", "line": "$x\\to0$：斜率 $\\to\\infty$", "on": "斜率沒有上限" },
+            { "do": "write", "line": "仍然一致連續", "color": "green", "on": "照樣" }
+          ] }
       ],
       "check": 2
     },

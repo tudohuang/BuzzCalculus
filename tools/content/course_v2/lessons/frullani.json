@@ -79,10 +79,29 @@
     {
       "title": "中間抵銷", "key": "換元後中間抵消，只剩兩端小段",
       "beats": [
-        {"show":["先積 $[\\varepsilon,R]$"],"note":"兩項各自換元：$u=ax$、$u=bx$。","say":"為什麼成立？先只積一小段到一大段，第一項令 u 等於 a x，第二項令 u 等於 b x。"},
-        {"show":["$\\frac{dx}{x}=\\frac{du}{u}$"],"say":"關鍵是 dx 除以 x 換元之後還是 du 除以 u，所以兩項變成同一個被積函數，只差積分範圍。"},
-        {"show":["$\\int_{a\\varepsilon}^{aR}\\frac{f(u)}{u}\\,du-\\int_{b\\varepsilon}^{bR}\\frac{f(u)}{u}\\,du$"],"say":"兩段範圍大部分重疊，重疊的地方互相抵銷。"},
-        {"show":["只剩 $\\int_{a\\varepsilon}^{b\\varepsilon}$ 和 $\\int_{aR}^{bR}$"],"note":"靠近 $0$ 一小段、靠近 $\\infty$ 一小段。","say":"最後只剩兩小段：一段貼著零，一段在很遠的地方。"}
+        {"show":["先積 $[\\varepsilon,R]$"],"note":"兩項各自換元：$u=ax$、$u=bx$。","say":"為什麼成立？先只積一小段到一大段，第一項令 u 等於 a x，第二項令 u 等於 b x。",
+          "board": [
+            { "do": "write", "line": "$\\int_{\\varepsilon}^{R}\\frac{f(ax)-f(bx)}{x}\\,dx$" },
+            { "do": "write", "line": "第一項：$u=ax$", "on": "第一項" },
+            { "do": "write", "line": "第二項：$u=bx$", "on": "第二項" }
+          ] },
+        {"show":["$\\frac{dx}{x}=\\frac{du}{u}$"],"say":"關鍵是 dx 除以 x 換元之後還是 du 除以 u，所以兩項變成同一個被積函數，只差積分範圍。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "${{k:\\frac{dx}{x}}}={{l:\\frac{du}{u}}}$", "on": "關鍵" },
+            { "do": "underline", "term": "l", "label": "同一個", "on": "還是" }
+          ] },
+        {"show":["$\\int_{a\\varepsilon}^{aR}\\frac{f(u)}{u}\\,du-\\int_{b\\varepsilon}^{bR}\\frac{f(u)}{u}\\,du$"],"say":"兩段範圍大部分重疊，重疊的地方互相抵銷。",
+          "board": [
+            { "do": "write", "line": "${{p:\\int_{a\\varepsilon}^{aR}\\frac{f(u)}{u}du}}-{{q:\\int_{b\\varepsilon}^{bR}\\frac{f(u)}{u}du}}$" },
+            { "do": "underline", "term": "p", "label": "重疊", "on": "重疊的地方" }
+          ] },
+        {"show":["只剩 $\\int_{a\\varepsilon}^{b\\varepsilon}$ 和 $\\int_{aR}^{bR}$"],"note":"靠近 $0$ 一小段、靠近 $\\infty$ 一小段。","say":"最後只剩兩小段：一段貼著零，一段在很遠的地方。",
+          "board": [
+            { "do": "write", "line": "只剩 ${{n:\\int_{a\\varepsilon}^{b\\varepsilon}}}$ 和 ${{m:\\int_{aR}^{bR}}}$" },
+            { "do": "focus", "term": "n", "label": "貼著零", "on": "貼著零" },
+            { "do": "focus", "term": "m", "label": "很遠", "on": "一段在" }
+          ] }
       ],
       "predict": {
         "ask": "$\\varepsilon\\to 0$，$\\int_{a\\varepsilon}^{b\\varepsilon}\\frac{f(u)}{u}\\,du$ 趨近？",
@@ -120,27 +139,69 @@
     {
       "title": "兩端都要代", "key": "對好誰是 $a$、誰是 $b$，兩端都代",
       "beats": [
-        {"show":["$\\int_0^{\\infty}\\frac{\\arctan 5x-\\arctan 2x}{x}\\,dx$"],"note":"$f(ax)-f(bx)$：$a=5$、$b=2$。","say":"換成 arctan。注意前面那項是 a，所以這題 a 是五、b 是二，順序不要搞反。"},
-        {"show":["$f(0)=0$，$f(\\infty)=\\frac{\\pi}{2}$"],"say":"這次 f 在零是零，在無限大是二分之派。兩端都要代，不能只代零。"},
-        {"show":["$\\left(0-\\frac{\\pi}{2}\\right)\\ln\\frac{2}{5}=\\frac{\\pi}{2}\\ln\\frac{5}{2}$"],"note":"約 $1.439$；$\\arctan$ 遞增，答案為正。","say":"兩個負號相乘變正，答案是二分之派乘自然對數二分之五，大約一點四三九。"}
+        {"show":["$\\int_0^{\\infty}\\frac{\\arctan 5x-\\arctan 2x}{x}\\,dx$"],"note":"$f(ax)-f(bx)$：$a=5$、$b=2$。","say":"換成 arctan。注意前面那項是 a，所以這題 a 是五、b 是二，順序不要搞反。",
+          "board": [
+            { "do": "write", "line": "$\\int_0^{\\infty}\\frac{\\arctan({{a:5}}x)-\\arctan({{b:2}}x)}{x}\\,dx$", "tint": {"a":"blue","b":"violet"} },
+            { "do": "focus", "term": "a", "on": "a 是五" },
+            { "do": "focus", "term": "b", "on": "b 是二" }
+          ] },
+        {"show":["$f(0)=0$，$f(\\infty)=\\frac{\\pi}{2}$"],"say":"這次 f 在零是零，在無限大是二分之派。兩端都要代，不能只代零。",
+          "board": [
+            { "do": "write", "line": "${{f0:f(0)=0}}$，${{fi:f(\\infty)=\\frac{\\pi}{2}}}$" },
+            { "do": "underline", "term": "f0", "on": "在零是零" },
+            { "do": "underline", "term": "fi", "on": "無限大" }
+          ] },
+        {"show":["$\\left(0-\\frac{\\pi}{2}\\right)\\ln\\frac{2}{5}=\\frac{\\pi}{2}\\ln\\frac{5}{2}$"],"note":"約 $1.439$；$\\arctan$ 遞增，答案為正。","say":"兩個負號相乘變正，答案是二分之派乘自然對數二分之五，大約一點四三九。",
+          "board": [
+            { "do": "write", "line": "$\\left(0-\\frac{\\pi}{2}\\right)\\ln\\frac{b}{a}$" },
+            { "do": "transform", "line": "$={{r:\\frac{\\pi}{2}\\ln\\frac{5}{2}}}\\approx1.439$", "on": "答案是" },
+            { "do": "box", "term": "r", "color": "green", "on": "自然對數" }
+          ] }
       ],
       "check": 3
     },
     {
       "title": "振盪版",
       "beats": [
-        {"show":["$\\cos$ 在 $\\infty$ 沒有極限"],"say":"cosine 在無限大一直振盪，沒有極限，標準版的條件不成立。"},
-        {"show":["$\\int_A^{\\infty}\\frac{\\cos u}{u}\\,du$ 收斂"],"note":"遠端那段 $\\int_{aR}^{bR}\\frac{\\cos u}{u}\\,du\\to 0$。","say":"可是 cosine u 除以 u 的瑕積分收斂，遠的那一小段會趨近零。"},
-        {"show":["把 $f(\\infty)$ 當 $0$"],"note":"$\\int_0^{\\infty}\\frac{\\cos ax-\\cos bx}{x}\\,dx=\\ln\\frac{b}{a}$","say":"所以公式照用，只要把 f 在無限大當成零。cosine 在零是一，答案就是自然對數 a 分之 b。"}
+        {"show":["$\\cos$ 在 $\\infty$ 沒有極限"],"say":"cosine 在無限大一直振盪，沒有極限，標準版的條件不成立。",
+          "board": [
+            { "do": "write", "line": "$\\lim_{x\\to\\infty}{{c:\\cos x}}$ 不存在" },
+            { "do": "focus", "term": "c", "label": "振盪", "on": "一直振盪" }
+          ] },
+        {"show":["$\\int_A^{\\infty}\\frac{\\cos u}{u}\\,du$ 收斂"],"note":"遠端那段 $\\int_{aR}^{bR}\\frac{\\cos u}{u}\\,du\\to 0$。","say":"可是 cosine u 除以 u 的瑕積分收斂，遠的那一小段會趨近零。",
+          "board": [
+            { "do": "write", "line": "$\\int_A^{\\infty}\\frac{\\cos u}{u}\\,du$ 收斂" },
+            { "do": "write", "line": "$\\int_{aR}^{bR}\\frac{\\cos u}{u}\\,du\\to0$", "on": "遠的那一小段" }
+          ] },
+        {"show":["把 $f(\\infty)$ 當 $0$"],"note":"$\\int_0^{\\infty}\\frac{\\cos ax-\\cos bx}{x}\\,dx=\\ln\\frac{b}{a}$","say":"所以公式照用，只要把 f 在無限大當成零。cosine 在零是一，答案就是自然對數 a 分之 b。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "把 ${{z:f(\\infty)}}$ 當 $0$", "on": "只要" },
+            { "do": "write", "line": "$f(0)=\\cos 0=1$", "on": "cosine" },
+            { "do": "write", "line": "$\\int_0^{\\infty}\\frac{\\cos ax-\\cos bx}{x}\\,dx={{r:\\ln\\frac{b}{a}}}$", "on": "答案就是" },
+            { "do": "box", "term": "r", "color": "green", "on": "自然對數" }
+          ] }
       ],
       "check": 2
     },
     {
       "title": "積化和差",
       "beats": [
-        {"show":["$\\int_0^{\\infty}\\frac{\\sin 3x\\sin 8x}{x}\\,dx$"],"say":"兩個 sine 相乘，看起來不是 Frullani 的樣子。"},
-        {"show":["$\\sin 3x\\sin 8x=\\frac{\\cos 5x-\\cos 11x}{2}$"],"note":"積化和差。","say":"用積化和差，變成二分之一乘 cosine 五 x 減 cosine 十一 x。"},
-        {"show":["振盪版：$a=5$、$b=11$"],"say":"這就是振盪版，a 是五，b 是十一。別忘了前面還有二分之一。"}
+        {"show":["$\\int_0^{\\infty}\\frac{\\sin 3x\\sin 8x}{x}\\,dx$"],"say":"兩個 sine 相乘，看起來不是 Frullani 的樣子。",
+          "board": [
+            { "do": "write", "line": "$\\int_0^{\\infty}\\frac{{{s:\\sin 3x\\sin 8x}}}{x}\\,dx$" },
+            { "do": "focus", "term": "s", "label": "兩個相乘", "on": "相乘" }
+          ] },
+        {"show":["$\\sin 3x\\sin 8x=\\frac{\\cos 5x-\\cos 11x}{2}$"],"note":"積化和差。","say":"用積化和差，變成二分之一乘 cosine 五 x 減 cosine 十一 x。",
+          "board": [
+            { "do": "transform", "line": "${{s:\\sin 3x\\sin 8x}}={{r:\\frac{\\cos 5x-\\cos 11x}{2}}}$" },
+            { "do": "underline", "term": "r", "on": "cosine 五" }
+          ] },
+        {"show":["振盪版：$a=5$、$b=11$"],"say":"這就是振盪版，a 是五，b 是十一。別忘了前面還有二分之一。",
+          "board": [
+            { "do": "write", "line": "${{a:a=5}}$，${{b:b=11}}$", "tint": {"a":"blue","b":"violet"} },
+            { "do": "write", "line": "前面還有 ${{h:\\frac{1}{2}}}$", "on": "別忘了" }
+          ] }
       ],
       "predict": {
         "ask": "$\\int_0^{\\infty}\\frac{\\sin 3x\\sin 8x}{x}\\,dx$ 是？",

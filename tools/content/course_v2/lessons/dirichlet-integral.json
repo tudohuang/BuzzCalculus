@@ -81,9 +81,22 @@
     {
       "title": "再拿掉阻尼",
       "beats": [
-        {"show":["要的是 $I(0)$"],"say":"可是我們要的是 a 等於零，也就是沒有阻尼的那一個。"},
-        {"show":["$\\lim_{a\\to 0^+}\\left(\\frac{\\pi}{2}-\\arctan a\\right)=\\frac{\\pi}{2}$"],"note":"前提：$I$ 在 $a=0$ 右連續。","say":"如果 I 在零右連續，讓 a 從右邊趨近零，答案就是二分之派。"},
-        {"show":["$\\frac{|\\sin x|}{x}$ 不可積"],"note":"找不到控制函數，要另一個論證。","say":"但這一步不能用控制函數：最好的控制函數是 sine x 絕對值除以 x，它不可積。證明在下一節。"}
+        {"show":["要的是 $I(0)$"],"say":"可是我們要的是 a 等於零，也就是沒有阻尼的那一個。",
+          "board": [
+            { "do": "write", "line": "要的是 ${{i:I(0)}}$" },
+            { "do": "underline", "term": "i", "label": "沒有阻尼", "on": "沒有阻尼" }
+          ] },
+        {"show":["$\\lim_{a\\to 0^+}\\left(\\frac{\\pi}{2}-\\arctan a\\right)=\\frac{\\pi}{2}$"],"note":"前提：$I$ 在 $a=0$ 右連續。","say":"如果 I 在零右連續，讓 a 從右邊趨近零，答案就是二分之派。",
+          "board": [
+            { "do": "write", "line": "前提：$I$ 在 $a=0$ 右連續" },
+            { "do": "write", "line": "$\\lim_{a\\to0^+}\\left(\\frac{\\pi}{2}-\\arctan a\\right)={{r:\\frac{\\pi}{2}}}$", "on": "讓 a 從右邊" },
+            { "do": "box", "term": "r", "color": "green", "on": "答案就是" }
+          ] },
+        {"show":["$\\frac{|\\sin x|}{x}$ 不可積"],"note":"找不到控制函數，要另一個論證。","say":"但這一步不能用控制函數：最好的控制函數是 sine x 絕對值除以 x，它不可積。證明在下一節。",
+          "board": [
+            { "do": "write", "line": "控制函數：${{m:\\frac{|\\sin x|}{x}}}$ 不可積" },
+            { "do": "underline", "term": "m", "color": "red", "label": "不可積", "on": "不可積" }
+          ] }
       ],
       "check": 2
     },
@@ -149,9 +162,21 @@
     {
       "title": "縮放",
       "beats": [
-        {"show":["$\\int_0^{\\infty}\\frac{\\sin 3x}{x}\\,dx$"],"say":"有了一個值，可以變出很多個。先看 sine 三 x 除以 x。"},
-        {"show":["令 $u=3x$：$\\frac{\\sin 3x}{x}\\,dx=\\frac{\\sin u}{u}\\,du$"],"say":"令 u 等於三 x。dx 除以 x 換元後還是 du 除以 u，三被吸收掉了。"},
-        {"show":["$=\\frac{\\pi}{2}$"],"note":"係數 $3$ 不影響答案。","say":"所以答案還是二分之派。係數再大都一樣，不會變成三倍。"}
+        {"show":["$\\int_0^{\\infty}\\frac{\\sin 3x}{x}\\,dx$"],"say":"有了一個值，可以變出很多個。先看 sine 三 x 除以 x。",
+          "board": [
+            { "do": "write", "line": "$\\int_0^{\\infty}\\frac{\\sin 3x}{x}\\,dx$" }
+          ] },
+        {"show":["令 $u=3x$：$\\frac{\\sin 3x}{x}\\,dx=\\frac{\\sin u}{u}\\,du$"],"say":"令 u 等於三 x。dx 除以 x 換元後還是 du 除以 u，三被吸收掉了。",
+          "board": [
+            { "do": "write", "line": "令 $u=3x$：$\\frac{\\sin 3x}{x}\\,dx={{e:\\frac{\\sin u}{u}\\,du}}$" },
+            { "do": "underline", "term": "e", "label": "三被吸收掉", "on": "du 除以 u" }
+          ] },
+        {"show":["$=\\frac{\\pi}{2}$"],"note":"係數 $3$ 不影響答案。","say":"所以答案還是二分之派。係數再大都一樣，不會變成三倍。",
+          "board": [
+            { "do": "write", "line": "$\\int_0^{\\infty}\\frac{\\sin 3x}{x}\\,dx={{r:\\frac{\\pi}{2}}}$" },
+            { "do": "box", "term": "r", "color": "green", "on": "二分之派" },
+            { "do": "write", "line": "係數 $3$ 不影響答案", "on": "係數再大" }
+          ] }
       ],
       "check": 0
     },
@@ -180,17 +205,41 @@
     {
       "title": "整條線",
       "beats": [
-        {"show":["$\\frac{\\sin x}{x}$ 是偶函數"],"note":"奇函數除以奇函數。","say":"sine x 是奇函數，x 也是奇函數，相除是偶函數，左右兩半一樣大，不會抵銷。"},
-        {"show":["左右各 $\\frac{\\pi}{2}$"],"say":"所以從負無限大積到無限大，就是兩個二分之派加起來。"}
+        {"show":["$\\frac{\\sin x}{x}$ 是偶函數"],"note":"奇函數除以奇函數。","say":"sine x 是奇函數，x 也是奇函數，相除是偶函數，左右兩半一樣大，不會抵銷。",
+          "board": [
+            { "do": "write", "line": "${{f:\\frac{\\sin x}{x}}}$ 是偶函數" },
+            { "do": "underline", "term": "f", "on": "相除" },
+            { "do": "write", "line": "左右兩半一樣大", "on": "左右兩半" }
+          ] },
+        {"show":["左右各 $\\frac{\\pi}{2}$"],"say":"所以從負無限大積到無限大，就是兩個二分之派加起來。",
+          "board": [
+            { "do": "write", "line": "左右各 ${{h:\\frac{\\pi}{2}}}$" },
+            { "do": "circle", "term": "h", "on": "兩個" }
+          ] }
       ],
       "check": 3
     },
     {
       "title": "分部降分母", "key": "分部一次，把分母 $x^2$ 降成 $x$",
       "beats": [
-        {"show":["$\\int_0^{\\infty}\\frac{\\sin^2 x}{x^2}\\,dx$"],"note":"分母是 $x^2$：分部一次降成 $x$。","say":"分母是 x 平方的，分部積分一次，把分母降成 x，就回到 Dirichlet 積分。"},
-        {"show":["$u=\\sin^2 x$，$v=-\\frac{1}{x}$"],"note":"$du=\\sin 2x\\,dx$","say":"u 取 sine 平方 x，微分是 sine 二 x；dv 取 x 平方分之 dx，積出負 x 分之一。"},
-        {"show":["邊界項 $\\left[-\\frac{\\sin^2 x}{x}\\right]_0^{\\infty}=0$"],"note":"$x\\to 0^+$ 時 $\\frac{\\sin^2 x}{x}\\sim x$。","say":"邊界項兩端都要檢查：無限大那端不超過 x 分之一，零那端像 x，都趨近零。"}
+        {"show":["$\\int_0^{\\infty}\\frac{\\sin^2 x}{x^2}\\,dx$"],"note":"分母是 $x^2$：分部一次降成 $x$。","say":"分母是 x 平方的，分部積分一次，把分母降成 x，就回到 Dirichlet 積分。",
+          "board": [
+            { "do": "write", "line": "$\\int_0^{\\infty}\\frac{\\sin^2 x}{{{d:x^2}}}\\,dx$" },
+            { "do": "underline", "term": "d", "label": "降成 x", "on": "降成" }
+          ] },
+        {"show":["$u=\\sin^2 x$，$v=-\\frac{1}{x}$"],"note":"$du=\\sin 2x\\,dx$","say":"u 取 sine 平方 x，微分是 sine 二 x；dv 取 x 平方分之 dx，積出負 x 分之一。",
+          "board": [
+            { "do": "write", "line": "$u=\\sin^2 x$，$du=\\sin 2x\\,dx$" },
+            { "do": "write", "line": "$dv=\\frac{dx}{x^2}$，${{v:v=-\\frac{1}{x}}}$", "on": "dv 取" },
+            { "do": "focus", "term": "v", "color": "blue", "on": "積出" }
+          ] },
+        {"show":["邊界項 $\\left[-\\frac{\\sin^2 x}{x}\\right]_0^{\\infty}=0$"],"note":"$x\\to 0^+$ 時 $\\frac{\\sin^2 x}{x}\\sim x$。","say":"邊界項兩端都要檢查：無限大那端不超過 x 分之一，零那端像 x，都趨近零。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "$\\left[-\\frac{\\sin^2 x}{x}\\right]_0^{\\infty}=0$", "on": "邊界項" },
+            { "do": "write", "line": "$x\\to\\infty$：$\\left|\\frac{\\sin^2 x}{x}\\right|\\le\\frac{1}{x}$", "on": "無限大那端" },
+            { "do": "write", "line": "$x\\to0^+$：$\\frac{\\sin^2 x}{x}\\sim x$", "on": "零那端" }
+          ] }
       ],
       "predict": {
         "ask": "剩下 $\\int_0^{\\infty}\\frac{\\sin 2x}{x}\\,dx$。原積分是？",

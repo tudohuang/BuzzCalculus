@@ -160,13 +160,36 @@
       "title": "兩個量詞",
       "beats": [
         { "show": ["$\\forall x\\in A,P(x)$"], "note": "$A$ 裡每一個 $x$ 都讓 $P(x)$ 為真。",
-          "say": "倒過來的 A 念作對所有。要證它，得對任意給定的 x 論證，不能只挑幾個試。" },
+          "say": "倒過來的 A 念作對所有。要證它，得對任意給定的 x 論證，不能只挑幾個試。",
+          "board": [
+            { "do": "write", "line": "${{q:\\forall}}\\,x\\in A,P(x)$" },
+            { "do": "focus", "term": "q", "label": "對所有", "on": "對所有" },
+            { "do": "write", "line": "任意給定 $x$ 論證", "on": "任意給定" }
+          ] },
         { "show": ["$\\exists x\\in A,P(x)$"], "note": "至少有一個 $x$ 讓 $P(x)$ 為真。",
-          "say": "反過來的 E 念作存在。要證它，把那個 x 找出來，或證明它一定存在。" },
+          "say": "反過來的 E 念作存在。要證它，把那個 x 找出來，或證明它一定存在。",
+          "board": [
+            { "do": "write", "line": "${{e:\\exists}}\\,x\\in A,P(x)$" },
+            { "do": "focus", "term": "e", "label": "存在", "on": "念作存在" },
+            { "do": "write", "line": "把那個 $x$ 找出來", "on": "把那個" }
+          ] },
         { "show": ["$\\exists x\\in\\mathbb{R},x^2=2$ 真", "$\\exists x\\in\\mathbb{Q},x^2=2$ 假"], "note": "集合 $A$ 不能省。",
-          "say": "同樣一句話，在實數裡是真的，在有理數裡是假的。所以範圍一定要寫清楚。" },
+          "say": "同樣一句話，在實數裡是真的，在有理數裡是假的。所以範圍一定要寫清楚。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "$\\exists x\\in{{r:\\mathbb{R}}},x^2=2$ 真", "on": "在實數裡" },
+            { "do": "write", "line": "$\\exists x\\in{{q:\\mathbb{Q}}},x^2=2$ 假", "on": "在有理數" },
+            { "do": "underline", "term": "q", "label": "範圍", "on": "範圍一定" }
+          ] },
         { "show": ["$x>2\\Rightarrow x^2>4$ 真", "逆命題：$x=-3$ 是反例"], "note": "$x^2=9>4$，但 $x>2$ 不成立。",
-          "say": "要推翻一句全稱命題，一個反例就夠。逆命題拿負三試：平方是九，比四大，可是負三不大於二。" }
+          "say": "要推翻一句全稱命題，一個反例就夠。逆命題拿負三試：平方是九，比四大，可是負三不大於二。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "$x>2\\Rightarrow x^2>4$ 真", "on": "全稱命題" },
+            { "do": "write", "line": "逆命題：${{c:x=-3}}$ 是反例", "on": "逆命題拿" },
+            { "do": "write", "line": "$x^2=9>4$，$x>2$ 不成立", "on": "平方是九" },
+            { "do": "circle", "term": "c", "on": "可是" }
+          ] }
       ],
       "check": 2
     },
@@ -174,11 +197,27 @@
       "title": "順序就是意思", "key": "$\\forall\\exists$ 換成 $\\exists\\forall$，意思就變",
       "beats": [
         { "show": ["$\\forall x\\in\\mathbb{R}\\ \\exists y\\in\\mathbb{R},y>x$"], "note": "取 $y=x+1$：真。",
-          "say": "每個 x 都有比它大的數。y 寫在 x 後面，可以跟著 x 改，取 x 加一就好，所以是真的。" },
+          "say": "每個 x 都有比它大的數。y 寫在 x 後面，可以跟著 x 改，取 x 加一就好，所以是真的。",
+          "board": [
+            { "do": "write", "line": "${{fx:\\forall x\\in\\mathbb{R}}}\\ {{ey:\\exists y\\in\\mathbb{R}}},y>x$", "tint": {"fx":"blue","ey":"violet"} },
+            { "do": "underline", "term": "ey", "label": "可隨 x 改", "on": "可以跟著" },
+            { "do": "write", "line": "取 $y=x+1$：真", "on": "取 x 加一" }
+          ] },
         { "show": ["$\\exists y\\in\\mathbb{R}\\ \\forall x\\in\\mathbb{R},y>x$"], "note": "任何 $y$ 拿 $x=y$ 來試就失敗：假。",
-          "say": "把兩個量詞對調，變成有一個 y 比所有實數都大。隨便拿一個 y，令 x 等於 y，就不成立了。" },
+          "say": "把兩個量詞對調，變成有一個 y 比所有實數都大。隨便拿一個 y，令 x 等於 y，就不成立了。",
+          "board": [
+            { "do": "write", "line": "${{ey:\\exists y\\in\\mathbb{R}}}\\ {{fx:\\forall x\\in\\mathbb{R}}},y>x$" },
+            { "do": "write", "line": "令 $x=y$：${{b:y>y}}$", "on": "隨便拿" },
+            { "do": "strike", "term": "b", "label": "不成立", "on": "等於 y" }
+          ] },
         { "show": ["從左往右讀", "後面的變數可以依賴前面的"],
-          "say": "讀量詞句的規則只有一條：從左往右，寫在後面的變數，可以隨前面的變數改。" }
+          "say": "讀量詞句的規則只有一條：從左往右，寫在後面的變數，可以隨前面的變數改。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "從左往右讀", "on": "規則只有" },
+            { "do": "write", "line": "$\\forall x\\ \\exists y$：${{y:y}}$ 可依賴 ${{x:x}}$", "tint": {"y":"violet","x":"blue"}, "on": "寫在後面" },
+            { "do": "arrow", "from": "y", "to": "x", "on": "隨前面" }
+          ] }
       ],
       "check": 0
     },
@@ -186,11 +225,24 @@
       "title": "翻譯成符號",
       "beats": [
         { "show": ["「每個正實數都有一個平方根」"],
-          "say": "來翻一句中文：每個正實數都有一個平方根。先問，這句話的主角是誰？" },
+          "say": "來翻一句中文：每個正實數都有一個平方根。先問，這句話的主角是誰？",
+          "board": [
+            { "do": "write", "line": "「每個正實數 ${{s:x>0}}$ 都有一個平方根」" },
+            { "do": "underline", "term": "s", "label": "誰是主角", "on": "先問" }
+          ] },
         { "show": ["主角：每個正實數 $x$"], "note": "外層是 $\\forall x>0$。",
-          "say": "主角是每一個正實數 x，所以最外層是對所有 x 大於零。" },
+          "say": "主角是每一個正實數 x，所以最外層是對所有 x 大於零。",
+          "board": [
+            { "do": "write", "line": "主角：每個正實數 $x$" },
+            { "do": "write", "line": "外層：${{f:\\forall x>0}}$", "on": "最外層" },
+            { "do": "focus", "term": "f", "color": "blue", "label": "對所有", "on": "對所有" }
+          ] },
         { "show": ["有一個平方根：$\\exists y\\in\\mathbb{R},y^2=x$"],
-          "say": "有一個平方根，是說存在一個 y，它的平方等於 x。兩塊要怎麼接起來？" }
+          "say": "有一個平方根，是說存在一個 y，它的平方等於 x。兩塊要怎麼接起來？",
+          "board": [
+            { "do": "write", "line": "${{e:\\exists y\\in\\mathbb{R},y^2=x}}$" },
+            { "do": "underline", "term": "e", "color": "violet", "label": "存在 y", "on": "存在一個" }
+          ] }
       ],
       "predict": {
         "ask": "合起來，量詞怎麼排？",
@@ -205,11 +257,23 @@
       "title": "誰跟著誰變", "key": "先寫誰被給定，再寫誰被挑選",
       "beats": [
         { "show": ["給定 $x>0$，取 $y=\\sqrt{x}$"], "note": "$y$ 依賴 $x$，量詞順序允許。",
-          "say": "上一句是真的：給定 x 大於零，取根號 x 就好。y 跟著 x 變，因為 y 寫在 x 後面。" },
+          "say": "上一句是真的：給定 x 大於零，取根號 x 就好。y 跟著 x 變，因為 y 寫在 x 後面。",
+          "board": [
+            { "do": "write", "line": "給定 $x>0$，取 ${{y:y=\\sqrt{x}}}$" },
+            { "do": "underline", "term": "y", "label": "y 依賴 x", "on": "跟著 x 變" }
+          ] },
         { "show": ["$\\varepsilon$ 在前，$\\delta$ 在後"], "note": "所以 $\\delta$ 可以依賴 $\\varepsilon$。",
-          "say": "之後學 epsilon delta 定義，delta 寫在 epsilon 後面，所以 delta 可以隨 epsilon 改。" },
+          "say": "之後學 epsilon delta 定義，delta 寫在 epsilon 後面，所以 delta 可以隨 epsilon 改。",
+          "board": [
+            { "do": "write", "line": "${{e:\\varepsilon}}$ 在前，${{d:\\delta}}$ 在後", "tint": {"e":"blue","d":"violet"} },
+            { "do": "underline", "term": "d", "label": "可依賴前面", "on": "可以隨" }
+          ] },
         { "show": ["別把 $\\forall x\\exists y$ 當 $\\exists y\\forall x$ 用"], "note": "以為 $\\delta$ 可以挑一個對所有點通用的。",
-          "say": "常見的錯，是把順序讀反，以為 delta 可以挑一個對所有點都通用的。順序換了，意思就換了。" }
+          "say": "常見的錯，是把順序讀反，以為 delta 可以挑一個對所有點都通用的。順序換了，意思就換了。",
+          "board": [
+            { "do": "write", "line": "$\\forall x\\,\\exists y\\ \\ne\\ \\exists y\\,\\forall x$" },
+            { "do": "write", "line": "順序換了，意思就換了", "on": "順序換了" }
+          ] }
       ],
       "check": 3
     }

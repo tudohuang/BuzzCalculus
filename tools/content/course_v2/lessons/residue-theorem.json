@@ -68,9 +68,22 @@
     {
       "title": "定理",
       "beats": [
-        {"show":["$C$ 正向、簡單封閉"],"note":"內部只有有限個孤立奇異點，都不在 $C$ 上。","say":"曲線正向、簡單封閉；f 在曲線上和內部全純，只有有限個孤立奇異點例外，而且不在曲線上。"},
-        {"show":["$\\oint_C f(z)\\,dz=2\\pi i\\sum_{k}\\operatorname{Res}_{z_k}f$"],"say":"那麼繞一圈的積分，等於二派 i 乘上裡面所有留數的和。"},
-        {"show":["只有一個奇異點、$f=\\frac{g}{(z-z_0)^{n+1}}$"],"note":"就是 Cauchy 積分公式。","say":"只有一個奇異點、f 長成 g 除以 z 減 z 零的 n 加一次方，就是 Cauchy 積分公式。"}
+        {"show":["$C$ 正向、簡單封閉"],"note":"內部只有有限個孤立奇異點，都不在 $C$ 上。","say":"曲線正向、簡單封閉；f 在曲線上和內部全純，只有有限個孤立奇異點例外，而且不在曲線上。",
+          "board": [
+            { "do": "write", "line": "$C$ 正向、簡單封閉" },
+            { "do": "write", "line": "內部只有有限個奇異點，$C$ 上沒有", "on": "只有有限個" }
+          ] },
+        {"show":["$\\oint_C f(z)\\,dz=2\\pi i\\sum_{k}\\operatorname{Res}_{z_k}f$"],"say":"那麼繞一圈的積分，等於二派 i 乘上裡面所有留數的和。",
+          "board": [
+            { "do": "write", "line": "$\\oint_C f(z)\\,dz={{k:2\\pi i}}\\sum_k {{r:\\operatorname{Res}_{z_k}f}}$" },
+            { "do": "underline", "term": "r", "label": "留數", "on": "所有留數" }
+          ] },
+        {"show":["只有一個奇異點、$f=\\frac{g}{(z-z_0)^{n+1}}$"],"note":"就是 Cauchy 積分公式。","say":"只有一個奇異點、f 長成 g 除以 z 減 z 零的 n 加一次方，就是 Cauchy 積分公式。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "$f=\\frac{g}{(z-z_0)^{n+1}}$", "on": "f 長成" },
+            { "do": "write", "line": "就是 Cauchy 積分公式", "color": "green", "on": "就是" }
+          ] }
       ],
       "predict": {
         "ask": "內部沒有奇異點時，定理說什麼？",
@@ -84,27 +97,63 @@
     {
       "title": "每個洞各自貢獻",
       "beats": [
-        {"show":["每個 $z_k$ 周圍畫小圓 $C_k$"],"say":"在每個奇異點周圍畫一個小圓。大曲線和這些小圓之間，f 全純。"},
-        {"show":["$\\oint_C f\\,dz=\\sum\\oint_{C_k}f\\,dz$"],"note":"變形原理。","say":"用變形原理，大曲線的積分等於所有小圓積分的和。"},
-        {"show":["$\\oint_{C_k}f\\,dz=2\\pi i\\operatorname{Res}_{z_k}f$"],"note":"Laurent 級數只有 $a_{-1}$ 活下來。","say":"每個小圓上展成 Laurent 級數，只有負一次方那項積分不是零。相加就是定理。"}
+        {"show":["每個 $z_k$ 周圍畫小圓 $C_k$"],"say":"在每個奇異點周圍畫一個小圓。大曲線和這些小圓之間，f 全純。",
+          "board": [
+            { "do": "write", "line": "每個 $z_k$ 周圍畫小圓 $C_k$" },
+            { "do": "write", "line": "大曲線與小圓之間 $f$ 全純", "on": "之間" }
+          ] },
+        {"show":["$\\oint_C f\\,dz=\\sum\\oint_{C_k}f\\,dz$"],"note":"變形原理。","say":"用變形原理，大曲線的積分等於所有小圓積分的和。",
+          "board": [
+            { "do": "write", "line": "$\\oint_C f\\,dz={{s:\\sum\\oint_{C_k}f\\,dz}}$" },
+            { "do": "underline", "term": "s", "label": "變形原理", "on": "所有小圓" }
+          ] },
+        {"show":["$\\oint_{C_k}f\\,dz=2\\pi i\\operatorname{Res}_{z_k}f$"],"note":"Laurent 級數只有 $a_{-1}$ 活下來。","say":"每個小圓上展成 Laurent 級數，只有負一次方那項積分不是零。相加就是定理。",
+          "board": [
+            { "do": "write", "line": "$\\oint_{C_k}f\\,dz=2\\pi i\\,{{r:\\operatorname{Res}_{z_k}f}}$" },
+            { "do": "box", "term": "r", "color": "green", "on": "相加" }
+          ] }
       ],
       "check": 2
     },
     {
       "title": "計算步驟",
       "beats": [
-        {"show":["1. 找出所有奇異點"],"note":"分母的零點、$e^{1/z}$ 這類。","say":"第一步，找出所有奇異點，通常是分母的零點。"},
-        {"show":["2. 只留在 $C$ 內部的"],"note":"$|z_k-$圓心$|<$ 半徑。","say":"第二步，只留在曲線裡面的：量奇異點到圓心的距離，小於半徑才算。"},
-        {"show":["3. 每個算留數","4. 相加乘 $2\\pi i$"],"note":"順時針再乘 $-1$。","say":"第三步每個算留數，第四步加起來乘二派 i。曲線順時針的話，再變號。"}
+        {"show":["1. 找出所有奇異點"],"note":"分母的零點、$e^{1/z}$ 這類。","say":"第一步，找出所有奇異點，通常是分母的零點。",
+          "board": [
+            { "do": "write", "line": "1. 奇異點 ＝ 分母的零點" }
+          ] },
+        {"show":["2. 只留在 $C$ 內部的"],"note":"$|z_k-$圓心$|<$ 半徑。","say":"第二步，只留在曲線裡面的：量奇異點到圓心的距離，小於半徑才算。",
+          "board": [
+            { "do": "write", "line": "2. 只留 ${{d:|z_k-c|<r}}$ 的" },
+            { "do": "underline", "term": "d", "label": "距離", "on": "距離" }
+          ] },
+        {"show":["3. 每個算留數","4. 相加乘 $2\\pi i$"],"note":"順時針再乘 $-1$。","say":"第三步每個算留數，第四步加起來乘二派 i。曲線順時針的話，再變號。",
+          "board": [
+            { "do": "write", "line": "3. 每個算留數，4. 相加乘 $2\\pi i$" },
+            { "do": "write", "line": "順時針：再乘 $-1$", "on": "順時針" }
+          ] }
       ],
       "check": 1
     },
     {
       "title": "兩個留數抵銷",
       "beats": [
-        {"show":["$\\oint_{|z|=2}\\frac{dz}{z^2+1}$"],"note":"$|\\pm i|=1<2$，都在圓內。","say":"照步驟來：奇異點正負 i，到原點距離一，小於二，兩個都在裡面。"},
-        {"show":["$\\operatorname{Res}_i=\\frac{1}{2i}$，$\\operatorname{Res}_{-i}=\\frac{1}{-2i}$"],"note":"$\\frac{g}{h'}$，$h'=2z$。","say":"用 g 除以 h prime：在 i 是二 i 分之一，在負 i 是負二 i 分之一。"},
-        {"show":["和為 $0$，積分 $0$"],"say":"兩個留數正好抵銷，積分是零。不是因為裡面沒有奇異點，而是貢獻互相抵銷。"}
+        {"show":["$\\oint_{|z|=2}\\frac{dz}{z^2+1}$"],"note":"$|\\pm i|=1<2$，都在圓內。","say":"照步驟來：奇異點正負 i，到原點距離一，小於二，兩個都在裡面。",
+          "board": [
+            { "do": "write", "line": "$\\oint_{|z|=2}\\frac{dz}{z^2+1}$" },
+            { "do": "write", "line": "奇異點 $\\pm i$，${{p:|\\pm i|=1<2}}$", "on": "到原點距離" }
+          ] },
+        {"show":["$\\operatorname{Res}_i=\\frac{1}{2i}$，$\\operatorname{Res}_{-i}=\\frac{1}{-2i}$"],"note":"$\\frac{g}{h'}$，$h'=2z$。","say":"用 g 除以 h prime：在 i 是二 i 分之一，在負 i 是負二 i 分之一。",
+          "board": [
+            { "do": "write", "line": "${{a:\\operatorname{Res}_i}}=\\frac{1}{2i}$" },
+            { "do": "write", "line": "${{b:\\operatorname{Res}_{-i}}}=\\frac{1}{-2i}$", "on": "在負" }
+          ] },
+        {"show":["和為 $0$，積分 $0$"],"say":"兩個留數正好抵銷，積分是零。不是因為裡面沒有奇異點，而是貢獻互相抵銷。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "${{s:\\frac{1}{2i}+\\frac{1}{-2i}}}=0$", "on": "正好抵銷" },
+            { "do": "write", "line": "積分 $=2\\pi i\\cdot 0=0$", "on": "積分是" }
+          ] }
       ],
       "check": 0
     },

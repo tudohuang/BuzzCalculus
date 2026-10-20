@@ -102,9 +102,26 @@
     {
       "title": "$m$ 階極點", "key": "先乘 $(z-z_0)^m$ 消掉極點再微分",
       "beats": [
-        {"show":["$\\operatorname{Res}=\\frac{1}{(m-1)!}\\lim\\frac{d^{\\,m-1}}{dz^{\\,m-1}}$","$\\Bigl[(z-z_0)^{m}f(z)\\Bigr]$"],"note":"$a_{-1}$ 是第 $m-1$ 個 Taylor 係數。","say":"m 階極點：乘上 m 次方變全純，留數是它的第 m 減一個 Taylor 係數，所以微 m 減一次。"},
-        {"show":["$\\operatorname{Res}_{z=1}\\frac{e^z}{(z-1)^2}$"],"note":"2 階極點，$(z-1)^2f=e^z$。","say":"例如 e 的 z 次方除以 z 減一的平方：在一是二階極點，乘上平方剩下 e 的 z 次方。"},
-        {"show":["$m=2$：微分一次，在 $z=1$ 取值"],"say":"m 等於二，所以微分一次、除以一階乘，再代 z 等於一。"}
+        {"show":["$\\operatorname{Res}=\\frac{1}{(m-1)!}\\lim\\frac{d^{\\,m-1}}{dz^{\\,m-1}}$","$\\Bigl[(z-z_0)^{m}f(z)\\Bigr]$"],"note":"$a_{-1}$ 是第 $m-1$ 個 Taylor 係數。","say":"m 階極點：乘上 m 次方變全純，留數是它的第 m 減一個 Taylor 係數，所以微 m 減一次。",
+          "board": [
+            { "do": "write", "line": "$g={{b:(z-z_0)^{m}f}}$ 全純", "on": "乘上" },
+            { "do": "write", "line": "$\\operatorname{Res}=\\frac{1}{(m-1)!}\\,{{d:g^{(m-1)}(z_0)}}$", "on": "留數是" },
+            { "do": "underline", "term": "d", "label": "微m-1次", "on": "所以微" }
+          ] },
+        {"show":["$\\operatorname{Res}_{z=1}\\frac{e^z}{(z-1)^2}$"],"note":"2 階極點，$(z-1)^2f=e^z$。","say":"例如 e 的 z 次方除以 z 減一的平方：在一是二階極點，乘上平方剩下 e 的 z 次方。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "$f=\\frac{e^z}{{{p:(z-1)^2}}}$", "on": "例如" },
+            { "do": "underline", "term": "p", "label": "二階", "on": "二階極點" },
+            { "do": "write", "line": "$(z-1)^2f={{g:e^z}}$", "on": "乘上平方" },
+            { "do": "focus", "term": "g", "on": "剩下" }
+          ] },
+        {"show":["$m=2$：微分一次，在 $z=1$ 取值"],"say":"m 等於二，所以微分一次、除以一階乘，再代 z 等於一。",
+          "board": [
+            { "do": "write", "line": "${{fa:\\frac{1}{1!}}}\\,\\frac{d}{dz}\\bigl[{{g:e^z}}\\bigr]$" },
+            { "do": "focus", "term": "fa", "on": "除以一階乘" },
+            { "do": "write", "line": "再代 $z=1$ 取值", "on": "再代" }
+          ] }
       ],
       "predict": {
         "ask": "留數是？",
@@ -118,18 +135,45 @@
     {
       "title": "直接讀 Laurent 係數", "key": "展開後找 $z^{-1}$ 那一項的係數",
       "beats": [
-        {"show":["$\\operatorname{Res}_{z=0}\\frac{e^z}{z^4}$"],"note":"$m=4$，要微三次。","say":"m 大的時候微分很累。e 的 z 次方除以 z 四次方，用公式要微三次。"},
-        {"show":["$z^{-4}\\left(1+z+\\frac{z^2}{2}+\\frac{z^3}{6}+\\cdots\\right)$"],"say":"直接展開比較快：除以 z 四次方，負一次方來自 z 三次方那一項。"},
-        {"show":["$\\operatorname{Res}=\\frac{1}{6}$"],"say":"所以留數就是 e 的 z 次方的三次項係數，三階乘分之一，六分之一。"}
+        {"show":["$\\operatorname{Res}_{z=0}\\frac{e^z}{z^4}$"],"note":"$m=4$，要微三次。","say":"m 大的時候微分很累。e 的 z 次方除以 z 四次方，用公式要微三次。",
+          "board": [
+            { "do": "write", "line": "$\\operatorname{Res}_{z=0}\\frac{e^z}{z^4}$" },
+            { "do": "write", "line": "公式：$m=4$，要微三次", "on": "用公式" }
+          ] },
+        {"show":["$z^{-4}\\left(1+z+\\frac{z^2}{2}+\\frac{z^3}{6}+\\cdots\\right)$"],"say":"直接展開比較快：除以 z 四次方，負一次方來自 z 三次方那一項。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "$z^{-4}\\bigl(1+z+\\frac{z^2}{2}+{{c:\\frac{z^3}{6}}}+\\cdots\\bigr)$", "on": "直接展開" },
+            { "do": "underline", "term": "c", "label": "負一次方", "on": "z 三次方" }
+          ] },
+        {"show":["$\\operatorname{Res}=\\frac{1}{6}$"],"say":"所以留數就是 e 的 z 次方的三次項係數，三階乘分之一，六分之一。",
+          "board": [
+            { "do": "write", "line": "$z^{-4}\\cdot{{c:\\frac{z^3}{6}}}=\\frac{1}{6}z^{-1}$", "on": "三次項係數" },
+            { "do": "write", "line": "$\\operatorname{Res}=\\frac{1}{6}$", "color": "green", "on": "三階乘" }
+          ] }
       ],
       "check": 3
     },
     {
       "title": "留數可以是 0",
       "beats": [
-        {"show":["可去奇異點：留數 $0$"],"note":"沒有負次方。","say":"可去奇異點沒有負次方，留數當然是零。"},
-        {"show":["$\\frac{1}{z^2}$：二階極點，留數 $0$"],"note":"只有 $z^{-2}$ 一項。","say":"可是極點的留數也可能是零：z 平方分之一只有負二次方，負一次方的係數是零。"},
-        {"show":["分母為 $0$ $\\ne$ 留數不為 $0$"],"say":"所以別看到分母是零，就以為留數一定不是零。展開來看負一次方那一項。"}
+        {"show":["可去奇異點：留數 $0$"],"note":"沒有負次方。","say":"可去奇異點沒有負次方，留數當然是零。",
+          "board": [
+            { "do": "write", "line": "可去奇異點：沒有負次方" },
+            { "do": "write", "line": "$\\operatorname{Res}=0$", "on": "留數" }
+          ] },
+        {"show":["$\\frac{1}{z^2}$：二階極點，留數 $0$"],"note":"只有 $z^{-2}$ 一項。","say":"可是極點的留數也可能是零：z 平方分之一只有負二次方，負一次方的係數是零。",
+          "board": [
+            { "do": "write", "line": "$\\frac{1}{z^2}=z^{-2}$" },
+            { "do": "write", "line": "$a_{-2}=1$，${{am:a_{-1}=0}}$", "tint": {"am":"green"}, "on": "負一次方的" }
+          ] },
+        {"show":["分母為 $0$ $\\ne$ 留數不為 $0$"],"say":"所以別看到分母是零，就以為留數一定不是零。展開來看負一次方那一項。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "分母為 $0$ $\\ne$ 留數不為 $0$", "on": "別看到" },
+            { "do": "write", "line": "展開看 ${{c:z^{-1}}}$ 的係數", "on": "展開來看" },
+            { "do": "focus", "term": "c", "on": "負一次方" }
+          ] }
       ],
       "check": 1
     }
