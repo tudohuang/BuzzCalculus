@@ -70,6 +70,7 @@ html.nb .cvb-whole .cvb-stage{margin-top:14px}
 html.nb .cvb-c{background:linear-gradient(90deg,transparent 11px,var(--nbm) 11px,var(--nbm) 12px,transparent 12px,transparent 14px,var(--nbm) 14px,var(--nbm) 15px,transparent 15px),linear-gradient(90deg,var(--nbG) 1px,transparent 1px) 0 0/120px 120px,linear-gradient(180deg,var(--nbG) 1px,transparent 1px) 0 0/120px 120px,linear-gradient(90deg,var(--nbg) 1px,transparent 1px) 0 0/24px 24px,linear-gradient(180deg,var(--nbg) 1px,transparent 1px) 0 0/24px 24px}
 html.nb .cv2s.cv2-lesson.is-nb,html.nb .cvb .cvb-x,html.nb .cvb .cvb-s,html.nb .cvb-lab{font-family:"LXGW WenKai TC",system-ui,-apple-system,"Segoe UI","Noto Sans TC",sans-serif}
 html.nb .cvb .cvb-x,html.nb .cvb .cvb-s{font-size:1.02em;letter-spacing:.02em}
+html.nb .cvb-i.is-t{text-align:left}
 html.nb .cvb.nbf-off .cvb-x,html.nb .cvb.nbf-off .cvb-s,html.nb .cvb.nbf-off .cvb-lab{font-family:system-ui,-apple-system,"Segoe UI","Noto Sans TC",sans-serif}
 html.nb .cv2s.cv2-lesson.is-nb h1,html.nb .cv2s.cv2-lesson.is-nb h2,html.nb .cv2s.cv2-lesson.is-nb h3{font-weight:700;letter-spacing:.03em}
 :root[data-theme="dark"].nb .cvb{--k:#e4e8f2;--kb:#1c1f25;--nbm:#7a3a3a;--nbg:#272c36;--nbG:#323947;--kg:#fdba74;--kc:#93c5fd;--kn:#86efac;--kr:#fca5a5;--kv:#c4b5fd}
