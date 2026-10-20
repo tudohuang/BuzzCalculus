@@ -236,7 +236,54 @@
     let y = top();
     const place = [];
     const turn = () => { page += 1; col = 0; if (fig) reserved[page] = true; y = top(); };
-    items.forEach((it, i) => {
+    // 筆記本、兩欄以上：左欄寫推導，圖與題目（plot、a.qz）寫在最右欄 —— 像課本左文右圖，右邊不空著。
+    // 每一節兩邊都從節名那一行對齊開始；整節（左、右各自）放不下就翻頁。有拖拉圖的節照舊（右欄保留給圖，全部寫左邊）。
+    const lane = F.headPage && F.cols >= 2;
+    const side = (i) => items[i].kind === "plot" || items[i].a.qz !== undefined;
+    const H = (j) => (m.items[j].gapA || 0) + m.items[j].h + (m.items[j].gapB || 0);
+    if (lane) {
+      const RC = F.cols - 1;
+      let yr = top();
+      let off = false; // 這一節有拖拉圖：不分左右
+      let grp = 0; // 題目帶著的選項：跟題目寫在同一欄
+      let grpRight = false;
+      const fresh = () => { page += 1; y = top(); yr = top(); };
+      items.forEach((it, i) => {
+        if (it.a.head) {
+          off = Boolean(F.fig && F.fig(i));
+          let L = 0;
+          let Rh = 0;
+          for (let j = i; j < items.length && (j === i || !items[j].a.head); j += 1) {
+            if (!off && side(j)) Rh += H(j) + m.gap; else L += H(j) + m.gap;
+          }
+          const sep = m.gap * 2;
+          const l0 = y > top() + 0.5 ? y + sep : y;
+          const r0 = Math.max(yr > top() + 0.5 ? yr + sep : yr, l0);
+          const used = y > top() + 0.5 || yr > top() + 0.5;
+          if (used && (reserved[page] || off || l0 + L > limit() || r0 + Rh > limit())) fresh();
+          else { y = l0; yr = r0; }
+          if (off) reserved[page] = true;
+        }
+        const h = H(i);
+        const kw = it.a.head ? 1 : it.a.keep || 0;
+        let need = h;
+        for (let j = 1; j <= kw && m.items[i + j]; j += 1) need += m.gap + H(i + j);
+        // 右欄放不下：左欄還放得下就寫左邊，都放不下才翻頁
+        const right = grp > 0 ? grpRight : !off && side(i) && !(yr > top() + 0.5 && yr + need > limit() && y + need <= limit());
+        if (grp > 0) grp -= 1;
+        else if (it.a.keep) { grp = it.a.keep; grpRight = right; }
+        if (right) {
+          if (yr > top() + 0.5 && yr + need > limit()) fresh();
+          place[i] = { page, col: RC, y: yr };
+          yr += h + m.gap;
+          return;
+        }
+        if (y > top() + 0.5 && y + need > limit()) { fresh(); if (off) reserved[page] = true; }
+        place[i] = { page, col: 0, y };
+        y += h + m.gap;
+      });
+    }
+    if (!lane) items.forEach((it, i) => {
       const mi = m.items[i];
       fig = Boolean(F.fig && F.fig(i));
       if (fig && !reserved[page]) {
