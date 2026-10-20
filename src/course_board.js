@@ -62,7 +62,23 @@
 .cvb-ov-page{position:relative;overflow:hidden;border-radius:10px;box-shadow:0 4px 18px #0004}
 .cvb-ov-board{overflow:hidden!important;pointer-events:none}
 .cvb-ov-n{position:absolute;right:10px;bottom:6px;color:#fff9;font-size:.75rem;font-variant-numeric:tabular-nums}
-.cvb-ov-meas{position:absolute;left:0;top:0;visibility:hidden;pointer-events:none}`;
+.cvb-ov-meas{position:absolute;left:0;top:0;visibility:hidden;pointer-events:none}
+html.nb .cv2s.cv2-lesson{--nbp:#fdfbf4;--nbd:#cdd5e3;--nbm:#efa3a3;padding:6px 14px 28px 22px;border-radius:6px;background:linear-gradient(90deg,transparent 10px,var(--nbm) 10px,var(--nbm) 12px,transparent 12px),radial-gradient(circle,var(--nbd) 1px,transparent 1.4px) 0 0/22px 22px,var(--nbp);box-shadow:0 1px 2px #0000001f,0 8px 26px #00000012}
+html.nb .cvb{--k:#1f2a44;--kb:transparent;--kg:#c2410c;--kc:#1d4ed8;--kn:#15803d;--kr:#dc2626;--kv:#7c3aed;border:0;border-radius:0;background:transparent;box-shadow:none;text-shadow:none}
+html.nb .cvb .cvb-i{text-shadow:none;filter:none}
+html.nb .cvb-slot::after{display:none}
+html.nb .cvb-whole .cvb-stage{width:auto;margin-left:0}
+html.nb .cvb-chalk{width:22px;height:4px;margin:-3px 0 0 -2px;border-radius:1px 3px 3px 1px;background:linear-gradient(90deg,#1f2a44 0,#1f2a44 70%,#c9ced8 70%);box-shadow:0 1px 1px #0003}
+html.nb .cvb-model>.cv2-figure{box-shadow:0 1px 4px #0002}
+:root[data-theme="dark"].nb .cv2s.cv2-lesson{--nbp:#1d2026;--nbd:#323a48;--nbm:#7f3b3b}
+:root[data-theme="dark"].nb .cvb{--k:#dfe6f5;--kg:#fdba74;--kc:#93c5fd;--kn:#86efac;--kr:#fca5a5;--kv:#c4b5fd}`;
+  // 原型（2026-10-20）：筆記本版 —— 同一個黑板引擎（一行一行寫、分欄、換面），換成紙、橫線、紅色邊線、藍黑筆。
+  // ?notebook 打開、?notebook=0 關掉，記在這台瀏覽器
+  try {
+    const q = /[?&]notebook(?:=(\w+))?/.exec(location.search);
+    if (q) localStorage.setItem("buzzcalculus.notebook", q[1] === "0" ? "" : "1");
+    if (localStorage.getItem("buzzcalculus.notebook")) document.documentElement.classList.add("nb");
+  } catch (_e) { /* 私密模式 */ }
   const NS = "http://www.w3.org/2000/svg";
   const MPC = 170; // 沒旁白：一個字幾毫秒（錄音平均約 208；看的人比念的快一點）
   const ENTRY = 320; // 下一句一開始，上一句的記號淡出要多久
