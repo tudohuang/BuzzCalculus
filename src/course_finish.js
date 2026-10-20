@@ -74,6 +74,7 @@
         <div class="action-row">
           ${api.next ? `<button type="button" class="button ${boss && boss.pay ? "secondary" : "home-primary"}" data-action="open-course-lesson" data-lesson-id="${escapeAttr(api.next.id)}">下一課：${escapeHtml(api.label(api.next))}${icon("chevron-right")}</button>` : `<button type="button" class="button home-primary" data-action="open-course">課程表</button>`}
           <button type="button" class="button secondary" data-action="course-map-focus" data-lesson-id="${escapeAttr(m.id)}" data-lit="1">在地圖上看</button>
+          ${!((api.records && api.records.settings) || {}).boardSplit && data.sections.some((s) => s.beats.some((b) => b.board && b.board.length)) ? `<button type="button" class="button secondary" data-action="course-s-board">${icon("layers")}攤開整塊黑板</button>` : ""}
           ${practice && !(left && left.left.length) ? `<button type="button" class="button ghost" data-action="course-practice" data-set="main">${icon("play")}練推薦題 · ${practice} 題</button>` : ""}
         </div>
       </article>`;

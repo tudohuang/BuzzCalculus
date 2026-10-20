@@ -173,9 +173,16 @@
       "title": "遞迴公式",
       "beats": [
         { "show": ["$\\int(\\ln x)^n\\,dx=x(\\ln x)^n-n\\int(\\ln x)^{n-1}\\,dx$"],
-          "say": "一般來說，自然對數 x 的 n 次方，分部一次就變成 n 減一次方。" },
+          "say": "一般來說，自然對數 x 的 n 次方，分部一次就變成 n 減一次方。",
+          "board": [
+            { "do": "write", "line": "$\\int(\\ln x)^n\\,dx$" },
+            { "do": "write", "line": "$=x(\\ln x)^n-n{{r:\\int(\\ln x)^{n-1}\\,dx}}$", "on": "分部一次" }
+          ] },
         { "show": ["用小一號的自己表示自己"], "note": "這叫遞迴公式；每做一次，次方降一。",
-          "say": "用小一號的自己表示自己，這種式子叫遞迴公式。每做一次降一次，最後一定會停。" }
+          "say": "用小一號的自己表示自己，這種式子叫遞迴公式。每做一次降一次，最後一定會停。",
+          "board": [
+            { "do": "underline", "term": "r", "label": "遞迴", "on": "小一號" }
+          ] }
       ],
       "check": 2
     },
@@ -183,11 +190,26 @@
       "title": "做兩次，原題又出現", "key": "目標是讓原積分再出現，不是積完",
       "beats": [
         { "show": ["$\\int e^x\\sin x\\,dx$"], "note": "$e^x$ 微分、積分都還是 $e^x$。",
-          "say": "換一種：e 的 x 次方乘 sine x。不管誰當 u，e 的 x 次方怎麼做都還是自己。" },
+          "say": "換一種：e 的 x 次方乘 sine x。不管誰當 u，e 的 x 次方怎麼做都還是自己。",
+          "board": [
+            { "do": "write", "line": "$\\int {{e:e^x}}\\sin x\\,dx$" },
+            { "do": "focus", "term": "e", "label": "怎麼做都不變", "on": "怎麼做" }
+          ] },
         { "show": ["做兩次，原積分帶著負號再出現"], "note": "$\\sin$ 變 $\\cos$，再變回 $\\sin$。",
-          "say": "sine 變 cosine，再變回 sine。做兩次之後，原來的積分會帶著負號再出現一次。" },
+          "say": "sine 變 cosine，再變回 sine。做兩次之後，原來的積分會帶著負號再出現一次。",
+          "board": [
+            { "do": "write", "line": "$\\sin x\\to\\cos x\\to\\sin x$" },
+            { "do": "write", "line": "做兩次後：原積分 ${{m:-I}}$ 再出現", "on": "做兩次" },
+            { "do": "focus", "term": "m", "label": "帶負號", "on": "帶著負號" }
+          ] },
         { "show": ["兩次要選同一邊當 $u$"], "note": "第二次換邊，等於把第一次拆回去：$I=I$。",
-          "say": "關鍵是兩次要選同一邊。第二次如果換邊，就是把第一次原封不動拆回去，什麼也沒得到。" }
+          "say": "關鍵是兩次要選同一邊。第二次如果換邊，就是把第一次原封不動拆回去，什麼也沒得到。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "兩次選同一邊當 $u$", "on": "兩次要選" },
+            { "do": "write", "line": "第二次換邊：${{w:I=I}}$", "on": "如果換邊" },
+            { "do": "strike", "term": "w", "label": "白做", "on": "拆回去" }
+          ] }
       ],
       "check": 0
     },
@@ -227,9 +249,20 @@
       "title": "為什麼合法",
       "beats": [
         { "show": ["兩邊的 $I$ 是同一個反導函數"], "note": "等號成立到差一個常數。",
-          "say": "兩邊的 I 指的是同一個反導函數，移項、除以二都只是代數。" },
+          "say": "兩邊的 I 指的是同一個反導函數，移項、除以二都只是代數。",
+          "board": [
+            { "do": "write", "line": "${{l:I}}=e^x\\sin x-e^x\\cos x-{{r:I}}$" },
+            { "do": "focus", "term": "l", "color": "violet", "on": "指的是" },
+            { "do": "focus", "term": "r", "color": "violet", "label": "同一個", "on": "同一個" },
+            { "do": "transform", "line": "$2I=e^x(\\sin x-\\cos x)$", "on": "移項" }
+          ] },
         { "show": ["最後補 $+C$，再微分檢查"],
-          "say": "最後補上 C，再微分檢查一次，確實回到被積函數。" }
+          "say": "最後補上 C，再微分檢查一次，確實回到被積函數。",
+          "board": [
+            { "do": "write", "line": "$I=\\frac{e^x(\\sin x-\\cos x)}{2}{{c:+C}}$" },
+            { "do": "box", "term": "c", "color": "green", "on": "補上" },
+            { "do": "write", "line": "$\\frac{d}{dx}I=e^x\\sin x$", "on": "微分檢查" }
+          ] }
       ],
       "check": 3
     },
@@ -237,9 +270,17 @@
       "title": "循環型的定積分",
       "beats": [
         { "show": ["$\\int_0^\\pi e^x\\sin x\\,dx$"], "note": "反導函數 $\\frac{e^x(\\sin x-\\cos x)}{2}$。",
-          "say": "最後用剛剛的反導函數算定積分，從零到 pi。" },
+          "say": "最後用剛剛的反導函數算定積分，從零到 pi。",
+          "board": [
+            { "do": "write", "line": "$\\int_0^\\pi e^x\\sin x\\,dx$" },
+            { "do": "write", "line": "$=\\Big[\\frac{e^x(\\sin x-\\cos x)}{2}\\Big]_0^\\pi$", "on": "反導函數" }
+          ] },
         { "show": ["代 $\\pi$：$\\frac{e^\\pi}{2}$；代 $0$：$-\\frac{1}{2}$"], "note": "$\\cos\\pi=-1$，$\\cos 0=1$。",
-          "say": "代 pi，sine 是零、cosine 是負一，得二分之 e 的 pi 次方。代零，得負二分之一。" }
+          "say": "代 pi，sine 是零、cosine 是負一，得二分之 e 的 pi 次方。代零，得負二分之一。",
+          "board": [
+            { "do": "write", "line": "代 $\\pi$：$\\frac{e^\\pi}{2}$" },
+            { "do": "write", "line": "代 $0$：$-\\frac{1}{2}$", "on": "代零" }
+          ] }
       ],
       "predict": {
         "ask": "答案是？",

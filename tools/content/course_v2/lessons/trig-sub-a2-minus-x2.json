@@ -131,11 +131,24 @@
       "title": "配不起來的根號",
       "beats": [
         { "show": ["$\\int x\\sqrt{a^2-x^2}\\,dx$：$u=a^2-x^2$"], "note": "外面有 $x$ 可以配，一步就完。",
-          "say": "根號外面有 x 的，令 u 等於根號裡面，一步就解決了。" },
+          "say": "根號外面有 x 的，令 u 等於根號裡面，一步就解決了。",
+          "board": [
+            { "do": "write", "line": "$\\int x\\sqrt{{{r:a^2-x^2}}}\\,dx$", "tint": {"r":"blue"} },
+            { "do": "write", "line": "$u={{r:a^2-x^2}}$", "on": "令 u" }
+          ] },
         { "show": ["$\\int\\sqrt{a^2-x^2}\\,dx$"], "note": "沒有 $x$ 可以配，$u$ 換元行不通。",
-          "say": "可是單獨一個根號 a 平方減 x 平方，外面沒有 x 可以配，u 換元就行不通。" },
+          "say": "可是單獨一個根號 a 平方減 x 平方，外面沒有 x 可以配，u 換元就行不通。",
+          "board": [
+            { "do": "write", "line": "$\\int\\sqrt{a^2-x^2}\\,dx$" },
+            { "do": "write", "line": "外面沒有 $x$ 可以配", "on": "外面沒有" }
+          ] },
         { "show": ["$1-\\sin^2\\theta=\\cos^2\\theta$"], "note": "減掉一個平方，剛好是另一個平方。",
-          "say": "要讓根號消失，需要一個恆等式：一減 sine 平方，剛好是 cosine 平方。" }
+          "say": "要讓根號消失，需要一個恆等式：一減 sine 平方，剛好是 cosine 平方。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "$1-\\sin^2\\theta={{c:\\cos^2\\theta}}$", "on": "一減" },
+            { "do": "box", "term": "c", "color": "green", "on": "剛好是" }
+          ] }
       ],
       "check": 3
     },
@@ -143,9 +156,19 @@
       "title": "令 $x=a\\sin\\theta$",
       "beats": [
         { "show": ["令 $x=a\\sin\\theta$"], "note": "$a$ 是根號裡常數開根號。",
-          "say": "所以令 x 等於 a 乘 sine theta。注意係數是 a，也就是根號裡那個常數開根號。" },
+          "say": "所以令 x 等於 a 乘 sine theta。注意係數是 a，也就是根號裡那個常數開根號。",
+          "board": [
+            { "do": "write", "line": "令 $x={{a:a}}\\sin\\theta$", "tint": {"a":"blue"} },
+            { "do": "focus", "term": "a", "color": "blue", "label": "常數開根號", "on": "係數是" }
+          ] },
         { "show": ["$a^2-x^2=a^2-a^2\\sin^2\\theta$", "$=a^2\\cos^2\\theta$"],
-          "say": "代進去，a 平方提出來，一減 sine 平方變成 cosine 平方，整個是完全平方。" }
+          "say": "代進去，a 平方提出來，一減 sine 平方變成 cosine 平方，整個是完全平方。",
+          "board": [
+            { "do": "write", "line": "$a^2-x^2=a^2-a^2\\sin^2\\theta$" },
+            { "do": "transform", "line": "$=a^2(1-\\sin^2\\theta)$", "on": "提出來" },
+            { "do": "transform", "line": "$={{c:a^2\\cos^2\\theta}}$", "on": "變成" },
+            { "do": "box", "term": "c", "color": "green", "on": "整個是" }
+          ] }
       ],
       "check": 0
     },
@@ -153,11 +176,26 @@
       "title": "根號消失",
       "beats": [
         { "show": ["取 $\\theta\\in[-\\frac{\\pi}{2},\\frac{\\pi}{2}]$"], "note": "每個 $x\\in[-a,a]$ 恰好對應一個 $\\theta$。",
-          "say": "theta 取在負二分之 pi 到二分之 pi，每個 x 都恰好對應一個 theta。" },
+          "say": "theta 取在負二分之 pi 到二分之 pi，每個 x 都恰好對應一個 theta。",
+          "board": [
+            { "do": "write", "line": "${{t:\\theta\\in[-\\frac{\\pi}{2},\\frac{\\pi}{2}]}}$" },
+            { "do": "write", "line": "${{x:x\\in[-a,a]}}$", "on": "每個" },
+            { "do": "arrow", "from": "x", "to": "t", "label": "恰好一個", "on": "恰好對應" }
+          ] },
         { "show": ["$\\cos\\theta\\ge 0$：$\\sqrt{a^2-x^2}=a\\cos\\theta$"], "note": "不必加絕對值。",
-          "say": "這一段 cosine 不是負的，所以根號開出來直接是 a cosine theta，不用絕對值。" },
+          "say": "這一段 cosine 不是負的，所以根號開出來直接是 a cosine theta，不用絕對值。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "$\\cos\\theta\\ge 0$", "on": "這一段" },
+            { "do": "write", "line": "$\\sqrt{a^2-x^2}={{r:a\\cos\\theta}}$", "on": "所以" },
+            { "do": "box", "term": "r", "color": "green", "on": "直接是" }
+          ] },
         { "show": ["$dx=a\\cos\\theta\\,d\\theta$"], "note": "$dx$ 也要換。",
-          "say": "dx 也要跟著換。代完通常剩 sine、cosine 的次方，用前面的方法積。" }
+          "say": "dx 也要跟著換。代完通常剩 sine、cosine 的次方，用前面的方法積。",
+          "board": [
+            { "do": "write", "line": "$dx=a\\cos\\theta\\,d\\theta$" },
+            { "do": "write", "line": "剩 $\\sin$、$\\cos$ 的次方", "on": "代完通常" }
+          ] }
       ],
       "check": 1
     },
@@ -196,11 +234,24 @@
       "title": "用三角形換回 $x$",
       "beats": [
         { "show": ["$\\sin\\theta=\\frac{x}{a}$：斜邊 $a$、對邊 $x$"],
-          "say": "換回 x 最穩的方法是畫三角形：sine theta 是 a 分之 x，斜邊 a，對邊 x。" },
+          "say": "換回 x 最穩的方法是畫三角形：sine theta 是 a 分之 x，斜邊 a，對邊 x。",
+          "board": [
+            { "do": "write", "line": "$\\sin\\theta=\\frac{x}{a}$" },
+            { "do": "write", "line": "斜邊 $a$、對邊 $x$", "on": "斜邊" }
+          ] },
         { "show": ["鄰邊 $\\sqrt{a^2-x^2}$"], "note": "畢氏定理。",
-          "say": "用畢氏定理，鄰邊就是根號 a 平方減 x 平方。" },
+          "say": "用畢氏定理，鄰邊就是根號 a 平方減 x 平方。",
+          "board": [
+            { "do": "write", "line": "鄰邊 $={{r:\\sqrt{a^2-x^2}}}$" },
+            { "do": "box", "term": "r", "color": "green", "on": "根號" }
+          ] },
         { "show": ["$\\cos\\theta=\\frac{\\sqrt{a^2-x^2}}{a}$，$\\tan\\theta=\\frac{x}{\\sqrt{a^2-x^2}}$"],
-          "say": "剩下的三角函數都從圖上讀：cosine 是鄰邊比斜邊，tangent 是對邊比鄰邊。" }
+          "say": "剩下的三角函數都從圖上讀：cosine 是鄰邊比斜邊，tangent 是對邊比鄰邊。",
+          "board": [
+            { "do": "clear" },
+            { "do": "write", "line": "$\\cos\\theta=\\frac{\\sqrt{a^2-x^2}}{a}$", "on": "cosine" },
+            { "do": "write", "line": "$\\tan\\theta=\\frac{x}{\\sqrt{a^2-x^2}}$", "on": "tangent" }
+          ] }
       ],
       "check": 2
     },
@@ -208,9 +259,17 @@
       "title": "定積分：換上下限", "key": "上下限直接換成 $\\theta$，不必換回 $x$",
       "beats": [
         { "show": ["$x$ 的上下限換成 $\\theta$ 的"], "note": "$\\theta=\\arcsin\\frac{x}{a}$，不必換回 $x$。",
-          "say": "定積分的話，直接把上下限換成 theta 的值，就不用換回 x。" },
+          "say": "定積分的話，直接把上下限換成 theta 的值，就不用換回 x。",
+          "board": [
+            { "do": "write", "line": "$\\theta=\\arcsin\\frac{x}{a}$" },
+            { "do": "write", "line": "上下限直接換成 $\\theta$", "on": "換成" }
+          ] },
         { "show": ["$\\int_{-a}^{a}\\sqrt{a^2-x^2}\\,dx$", "$=a^2\\int_{-\\pi/2}^{\\pi/2}\\cos^2\\theta\\,d\\theta$"],
-          "say": "x 從負 a 到 a，theta 從負二分之 pi 到二分之 pi。" }
+          "say": "x 從負 a 到 a，theta 從負二分之 pi 到二分之 pi。",
+          "board": [
+            { "do": "write", "line": "$\\int_{-a}^{a}\\sqrt{a^2-x^2}\\,dx$" },
+            { "do": "transform", "line": "$=a^2\\int_{-\\pi/2}^{\\pi/2}\\cos^2\\theta\\,d\\theta$", "on": "theta 從" }
+          ] }
       ],
       "predict": {
         "ask": "結果是？",

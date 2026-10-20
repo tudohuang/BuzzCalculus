@@ -549,6 +549,11 @@
       deps.render();
       return;
     }
+    // 結算的「攤開整塊黑板」：黑板模組是延後載入的（直接從結算畫面重開時還沒抓）
+    if (action === "course-s-board") {
+      Promise.resolve(window.BuzzBoard ? null : deps.ensureLazy("board")).then(() => { if (window.BuzzBoard && window.BuzzBoard.overview) window.BuzzBoard.overview(api); });
+      return;
+    }
     if (action === "course-s-go") { enter(api, data.to); deps.render(); return N() && N().resume(api); }
     // 證明節：3 = 為什麼答了（播放開著就接著念）、2 = 動作做完
     if (/^course-s-(why|see|ord|whr)$/.test(action)) {
