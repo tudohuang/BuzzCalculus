@@ -33,7 +33,21 @@
 :root[data-theme="dark"] .cvb-p{--line:#ffffff1a;--line-strong:#eceee680;--muted:#b9c3bc}
 .cvb-p .problem-graph{margin:0;padding:0;border:0;background:none;box-shadow:none;width:100%;height:100%}.cvb-p svg,.cvb .cvb-p .problem-graph svg{display:block;width:100%;height:100%;border:0;border-radius:0;background:none}
 .cvb-sr{position:absolute!important;width:1px;height:1px;margin:0;padding:0;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
-.cv2s-beat.cvb-bare{height:0;padding:0;border:0;margin-bottom:-10px;overflow:hidden}`;
+.cv2s-beat.cvb-bare{height:0;padding:0;border:0;margin-bottom:-10px;overflow:hidden}
+.cvb-sec .cv2s-beat:not(.is-now){display:none}
+.cvb-opt{cursor:default;border-radius:10px}.cvb-opt[data-action]{cursor:pointer}.cvb-opt[data-action]:hover{background:#ffffff12}
+.cvb-no{color:var(--kr)}.cvb-no::after{content:"";position:absolute;left:4px;right:4px;top:52%;height:2.5px;border-radius:2px;background:var(--kr);transform:rotate(-2.5deg)}
+.cvb-yes{color:var(--kn)}.cvb-yes::before{content:"";position:absolute;inset:0 -6px;border:2.5px solid var(--kn);border-radius:50%;transform:rotate(-1.5deg);pointer-events:none}
+.cvb-onboard .course-check-ask,.cvb-onboard .course-check-options{position:absolute!important;width:1px;height:1px;margin:0;padding:0;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+.cvb-onboard .cvb-hint{margin:0;color:var(--muted);font-size:.9rem}
+.cvb-stage{position:relative}
+.cvb-whole .cv2s-beats{min-height:120px}
+.cvb-model{position:absolute;z-index:2;left:var(--mx,0);top:var(--my,0);width:var(--mw,0);height:var(--mh,0);display:grid;place-items:center;overflow:auto;overscroll-behavior:contain;scrollbar-width:thin}
+.cvb-model>.cv2-figure{width:100%;max-width:none;margin:auto 0;padding:10px 12px 8px;border-radius:8px;background:var(--panel);box-shadow:0 3px 12px #00000059,0 0 0 1px #0000001f}
+.cvb-model>.cv2-figure+.cv2-figure{margin-top:10px}
+.cvb-model .cv2-figure svg{max-height:calc(var(--mh,300px) - 90px)}
+@media (max-width:599px){.cvb-model>.cv2-figure{padding:6px 8px}.cvb-model .cv2-figure svg{max-height:calc(var(--mh,300px) - 110px)}.cvb-model .cv2-figure figcaption{display:none}}
+@media (min-width:1100px){.cvb-whole .cvb-stage{--bw:min(1120px,calc(100vw - var(--sidebar-width,0px) - 80px));width:var(--bw);margin-left:calc((100% - var(--bw))/2)}}`;
   const NS = "http://www.w3.org/2000/svg";
   const MPC = 170; // 沒旁白：一個字幾毫秒（錄音平均約 208；看的人比念的快一點）
   const ENTRY = 320; // 下一句一開始，上一句的記號淡出要多久
@@ -86,7 +100,58 @@
   const union = (bs) => (bs.length ? [Math.min(...bs.map((b) => b[0])), Math.min(...bs.map((b) => b[1])), Math.max(...bs.map((b) => b[2])), Math.max(...bs.map((b) => b[3]))] : null);
   const shift = (b, p) => [b[0] + p[0], b[1] + p[1], b[2] + p[0], b[3] + p[1]];
 
-  let B = null; // 這一節的黑板
+  let B = null; // 這一節（整課一塊時：這一課）的黑板
+  // 2026-10-20 試做「一課一塊黑板」：整課寫在同一塊板上，像教授一堂課寫滿整面黑板（預設）。
+  // 設定 boardSplit = true 回到一節一塊（E2E 量單節引擎的那幾支用它）
+  const WHOLE = (api) => !((api && api.records && api.records.settings) || {}).boardSplit;
+  const wholeCache = new WeakMap();
+  function chunks(text, max) {
+    // 一段 ＝ 到下一個標點為止（$…$ 不拆、跟著前後的字）
+    const parts = [];
+    let cur = "";
+    text.split(/(\$[^$]*\$)/).forEach((p, i) => {
+      if (i % 2) { cur += p; return; }
+      [...p].forEach((ch) => { cur += ch; if (/[，。？、；：！,]/.test(ch)) { parts.push(cur); cur = ""; } });
+    });
+    if (cur) parts.push(cur);
+    const out = [];
+    parts.forEach((p) => {
+      const last = out[out.length - 1];
+      if (last !== undefined && LY.plainLen(last + p) <= max) out[out.length - 1] = last + p; else out.push(p);
+    });
+    return out.map((x) => x.trim()).filter(Boolean);
+  }
+  function lessonBoard(data) {
+    if (wholeCache.has(data)) return wholeCache.get(data);
+    const beats = [];
+    const off = [];
+    const qz = [];
+    const secOf = [];
+    const figSec = data.sections.map((s) => s.beats.some((b) => b.fig) || Boolean(s.drag));
+    data.sections.forEach((s, si) => {
+      off.push(beats.length);
+      s.beats.forEach((b, bi) => {
+        if (bi || !s.beats.some((x) => x.board)) { beats.push(b); return; }
+        const head = [{ do: "write", line: `${si + 1}.　${String(s.title || "").replace(/[{}]/g, "")}`, color: "gold", head: true }];
+        beats.push({ ...b, board: (si ? [{ do: "clear" }] : []).concat(head, b.board || []) });
+      });
+      // 板上出題：只有選擇題（小測、先猜）；拖圖、自己算、排順序、用在哪一步還是在板子下面
+      const kind = s.check !== undefined ? "check" : s.predict ? "predict" : "";
+      const item = kind === "check" ? (data.checks || [])[s.check] : s.predict;
+      if (!kind || !item || !Array.isArray(item.options) || s.drag || s.solve || s.order || s.where || !s.beats.some((x) => x.board)) { qz.push(-1); return; }
+      const ci = kind === "check" ? s.check : si;
+      const tag = { kind, ci, si };
+      const ask = chunks(String(item.ask || ""), 15).map((line, k) => ({ do: "write", line: k ? line : `${kind === "check" ? "小測" : "先猜"}　${line}`, color: "gold", qz: "ask", ...tag }));
+      const opts = item.options.flatMap((o, oi) => chunks(String(o.label || ""), 24).map((line, k) => ({ do: "write", line: k ? line : `(${"ABCDEF"[oi]})　${line}`, qz: oi, ...tag })));
+      ask[0].keep = ask.length - 1 + opts.length;
+      qz.push(beats.length);
+      beats.push({ say: "", show: [], quiz: tag, board: ask.concat(opts) });
+    });
+    beats.forEach((_b, bi) => { let si = 0; while (si + 1 < off.length && off[si + 1] <= bi) si += 1; secOf[bi] = si; });
+    const out = { beats, off, qz, secOf, figSec, anyFig: figSec.some(Boolean) };
+    wholeCache.set(data, out);
+    return out;
+  }
   let raf = 0;
   let poll = 0;
 
@@ -107,6 +172,16 @@
     const pad = W0 < 480 ? [16, 16] : [24, 20];
     const W = W0 - 2 * pad[0];
     const smin = 16 / (F * 0.95);
+    // 板子一律同一個大小（每一節都一樣，不忽大忽小）：畫面高度的 45%（280–560px），字從上面開始寫；
+    // 寫得比板子還多就在板子裡捲（往上滑看前面寫過的），鏡頭跟著粉筆走（paint 的 follow）
+    // 手機（窄）38%、平板與桌機 45%：手機上板子＋句子＋動作要放得進一屏。整課一塊時高一點（桌機 60%、手機 42%）
+    const cap = B.whole
+      ? Math.max(300, Math.min(760, Math.round((window.innerHeight || 800) * ((window.innerWidth || 800) < 600 ? (B.lesson && B.lesson.anyFig ? 0.56 : 0.42) : 0.6))))
+      : Math.max(260, Math.min(560, Math.round((window.innerHeight || 800) * ((window.innerWidth || 800) < 600 ? 0.38 : 0.45))));
+    // 整課一塊：分欄（一欄至少約 17 個字寬），每一行在欄寬裡排
+    const colGap = Math.round(F * 2.4);
+    const cols = B.whole ? Math.max(1, Math.floor((W + colGap) / (F * 17 + colGap))) : 1;
+    const Wc = B.whole ? (W - (cols - 1) * colGap) / cols : W;
     const c = mk("div", "cvb-c");
     const ink = document.createElementNS(NS, "svg");
     ink.setAttribute("class", "cvb-ink");
@@ -121,7 +196,8 @@
       c.appendChild(el);
       if (it.kind === "plot") {
         const g = window.BuzzBoardPlot.html(it.a.graph);
-        const w = Math.min(W, Math.max(320, Math.min(480, W * 0.62)));
+        let w = Math.min(Wc, Math.max(320, Math.min(480, W * 0.62)));
+        if (B.whole) w = Math.min(w, ((cap - 2 * pad[1] - 16) * g.w) / g.h);
         el.classList.add("cvb-p");
         el.innerHTML = g.svg;
         el.style.width = `${w}px`;
@@ -147,7 +223,7 @@
     const ws = V.map((v) => (v.us ? v.us.map((n) => R(n).width) : null));
     V.forEach((v, i) => {
       if (!v.us) return;
-      const k = LY.compose(ws[i], W, smin, v.u.align);
+      const k = LY.compose(ws[i], Wc, smin, v.u.align);
       v.s = k.s;
       v.wrapped = Boolean(k.wrapped);
       v.el.style.fontSize = `${F * k.s}px`;
@@ -195,7 +271,10 @@
     });
     const lsz = labs.map((l) => (l ? [R(l).width, R(l).height] : null));
     // 4. 排：位置 → 記號的壽命 → 標籤放不下就在那一行底下（或上面）讓出空間，再排一次
-    const m = { W, pad, gap: Math.round(F * 1.0), items: V.map((v) => ({ w: v.w, h: v.h, lhs: v.lhs || 0, alignable: Boolean(v.alignable), gapA: 0, gapB: 0 })) };
+    const L0 = B.lesson;
+    const rectH = Math.round(cap * (cols === 1 ? 0.56 : 0.5));
+    const figOf = L0 ? (i) => L0.figSec[L0.secOf[M.acts[M.items[i].born].b]] : null;
+    const m = { W, pad, gap: Math.round(F * 1.0), flow: B.whole ? { view: cap, cols, colW: Wc, colGap, rectH, fig: figOf } : null, items: V.map((v) => ({ w: v.w, h: v.h, lhs: v.lhs || 0, alignable: Boolean(v.alignable), gapA: 0, gapB: 0 })) };
     let st;
     let geo;
     for (let iter = 0; iter < 6; iter += 1) {
@@ -206,11 +285,10 @@
       const [n, side, h] = geo.need;
       if (side === "B") m.items[n].gapB += h + 4; else m.items[n].gapA += h + 4;
     }
-    const H = Math.ceil(Math.max(st.bottom, ...geo.anns.map((a) => (a ? a.bottom : 0))) + pad[1]);
-    // 板子一律同一個大小（每一節都一樣，不忽大忽小）：畫面高度的 45%（280–560px），字從上面開始寫；
-    // 寫得比板子還多就在板子裡捲（往上滑看前面寫過的），鏡頭跟著粉筆走（paint 的 follow）
-    // 手機（窄）38%、平板與桌機 45%：手機上板子＋句子＋動作要放得進一屏
-    const cap = Math.max(260, Math.min(560, Math.round((window.innerHeight || 800) * ((window.innerWidth || 800) < 600 ? 0.38 : 0.45))));
+    const H = st.pages ? st.pages * cap : Math.ceil(Math.max(st.bottom, ...geo.anns.map((a) => (a ? a.bottom : 0))) + pad[1]);
+    B.pages = st.pages || 0;
+    B.model = B.whole ? (cols === 1 ? { x: 7 + pad[0], y: 7 + pad[1], w: W, h: rectH - pad[1] - 6 } : { x: 7 + pad[0] + (cols - 1) * (Wc + colGap), y: 7 + pad[1], w: Wc, h: cap - 2 * pad[1] }) : null;
+    placeModel();
     B.tall = H > cap;
     B.el.classList.toggle("is-tall", B.tall);
     B.el.style.height = `${cap}px`;
@@ -242,11 +320,13 @@
     B.chalk = mk("div", "cvb-chalk");
     B.chalk.setAttribute("aria-hidden", "true");
     c.insertBefore(B.chalk, B.lastEl);
+    V.forEach((v) => { if (typeof v.it.a.qz === "number") { v.el.classList.add("cvb-opt"); v.el.dataset.opt = v.it.a.qz; } });
     B.M = M;
     B.V = V;
     B.L = { pos: st.pos, sv, fly, H };
     B.sch = schedules(M);
     B.last = "";
+    quizState();
     c.style.visibility = "";
     if (document.fonts && document.fonts.status === "loading" && !B.fontWait) {
       const b0 = B;
@@ -417,6 +497,12 @@
     const st = el.scrollTop;
     const view = B.view;
     let target = null;
+    if (B.pages) {
+      const pg = Math.max(0, Math.min(B.pages - 1, Math.floor((top + 1) / view))) * view;
+      if (Math.abs(st - pg) > 1) el.scrollTop = pg;
+      B.followTo = pg;
+      return;
+    }
     if (bot + 20 > st + view) target = Math.min(bot + 20 - view, top - 12);
     else if (top - 12 < st) target = top - 12;
     if (target === null) return;
@@ -438,7 +524,7 @@
     let chalkAt = null; // 正在寫的那一行的粉筆尖（板子座標）
     // 重點導引：板子寫滿了眼睛不知道看哪裡 —— 這一句寫的、這一句圈到／指到的、飛過來的來源那幾行亮著，其他舊的淡一點；
     // 一節寫完（停在動作前）全部亮回來給人複習。下一句一開始才慢慢淡（entry），不閃。
-    const allDone = g >= M.acts.length;
+    const allDone = !A || A.b > B.secEnd;
     const lit = new Set();
     if (!allDone) {
       M.items.forEach((it) => { if (M.acts[it.born] && M.acts[it.born].b === beat) { lit.add(it.n); it.fly.forEach(([, src]) => lit.add(src)); } });
@@ -550,6 +636,30 @@
       }
     });
   }
+  // 板上的選項：選錯的劃紅線、答對（或先猜選過）圈起正解；這一節的題目寫好了、還沒定案才點得到
+  function quizState() {
+    if (!B || !B.V || !B.api || !B.whole) return;
+    const st = B.api.state;
+    const data = B.api.data;
+    // 題目整個寫完了才點得到（還在寫就點，點的是還沒出現的字）
+    const qEnd = B.M.acts.reduce((m, x) => (x.b === B.qa ? x.g + 1 : m), 0);
+    B.qOn = B.at === B.qa && Boolean(B.cur) && B.cur.g >= qEnd;
+    B.V.forEach((v) => {
+      const a = v.it.a;
+      if (typeof a.qz !== "number") return;
+      const item = a.kind === "check" ? (data.checks || [])[a.ci] : (data.sections[a.si] || {}).predict;
+      if (!item) return;
+      const picks = a.kind === "check" ? st.picks[a.ci] || [] : st.sec.pred[a.si] === undefined ? [] : [st.sec.pred[a.si]];
+      const right = picks.some((oi) => item.options[oi] && item.options[oi].correct);
+      const settled = right || (a.kind === "predict" && picks.length > 0);
+      const o = item.options[a.qz] || {};
+      v.el.classList.toggle("cvb-no", picks.includes(a.qz) && !o.correct);
+      v.el.classList.toggle("cvb-yes", settled && Boolean(o.correct));
+      const live = !settled && a.si === B.si && B.at === B.qa && B.qOn;
+      if (live && !picks.includes(a.qz)) Object.assign(v.el.dataset, { action: "course-s-pick", kind: a.kind, check: String(a.ci), option: String(a.qz) });
+      else ["action", "kind", "check", "option"].forEach((k) => delete v.el.dataset[k]);
+    });
+  }
   // 「第幾個動作做到多少」：照這一句的時間（錄音或虛擬）算
   function cursor(now) {
     const S = B.sec;
@@ -564,7 +674,7 @@
     const end = { g: g0 + mine.length, q: 0, entry: 1, mode: "done" };
     if (reduced()) return end;
     const v = voice();
-    const key = `${B.si}-${bi}`;
+    const key = `${B.si}-${bi - B.off}`;
     let clip;
     let tau;
     let mode;
@@ -616,16 +726,44 @@
     const beat = c.beat === undefined ? B.at : c.beat;
     const sig = `${c.g}|${c.q.toFixed(4)}|${c.entry.toFixed(3)}|${beat}`;
     if (sig !== B.last) { B.last = sig; paint(c.g, c.q, beat, c.entry); }
+    if (B.qa >= 0 && B.at === B.qa - 1 && !B.frozen) {
+      const g0 = B.M.acts.findIndex((x) => x.b === B.qa);
+      if (g0 >= 0 && c.g >= g0) { goQuiz(now); return kick(); }
+    }
+    if (B.qa >= 0 && B.at === B.qa && !B.qOn) { quizState(); if (B.qOn) B.last = ""; }
     const A = B.M.acts[c.g];
     const busy = c.mode === "wait" || (c.mode === "audio" && !B.paused) || (c.mode === "virtual" && (c.q > 0 || (A && A.b === B.at && !(A.why && !B.open)))) || (c.mode !== "done" && c.entry < 1);
     // 不動的時候也每 300ms 看一眼：旁白可能剛按了播放、跳回這一句的開頭
     if (busy) raf = window.requestAnimationFrame(frame);
     else if (!B.frozen) poll = window.setTimeout(() => { poll = 0; kick(); }, 300);
   }
+  // 圖那一塊：位置寫在舞台上（.cvb-stage 的 --mx／--my／--mw／--mh）
+  function placeModel() {
+    const stage = B && B.el.parentNode && B.el.parentNode.closest && B.el.parentNode.closest(".cvb-stage");
+    if (!stage || !B.model) return;
+    const g = B.model;
+    [["--mx", g.x], ["--my", g.y], ["--mw", g.w], ["--mh", g.h]].forEach(([k, v]) => stage.style.setProperty(k, `${Math.round(v)}px`));
+  }
+  function goQuiz(now) {
+    B.at = B.qa;
+    B.fresh = !reduced();
+    B.q0 = now;
+    B.s0 = null;
+    B.open = true;
+    B.raw = null;
+    B.pending = 0;
+    B.last = "";
+    quizState();
+  }
   function kick() {
     window.clearTimeout(poll);
     poll = 0;
     if (!raf && B && B.M) raf = window.requestAnimationFrame(frame);
+  }
+  function answered(api, si) {
+    const s = api.data.sections[si];
+    if (s.check !== undefined) return (api.state.picks[s.check] || []).length > 0;
+    return api.state.sec.pred[si] !== undefined;
   }
   function stop() { window.cancelAnimationFrame(raf); window.clearTimeout(poll); raf = poll = 0; }
 
@@ -633,11 +771,14 @@
   function sync(api, root) {
     const slot = root && root.querySelector("[data-cvb-slot]");
     const sec = api.state.sec;
-    if (!slot || !sec) { stop(); B = null; return; }
+    if (!slot || !sec || !api.data.sections[sec.si]) { stop(); B = null; return; }
     if (!document.getElementById("cvb-style")) { const st = mk("style", ""); st.id = "cvb-style"; st.textContent = CSS + CSS_REST; document.head.appendChild(st); }
-    const S = api.data.sections[sec.si];
-    const at = Math.min(S.beats.length, sec.shown[sec.si] || 1) - 1;
-    const key = `${api.m.id}:${sec.si}`;
+    const whole = WHOLE(api) && lessonBoard(api.data);
+    const S = whole || api.data.sections[sec.si];
+    const local = Math.min(api.data.sections[sec.si].beats.length, sec.shown[sec.si] || 1) - 1;
+    const off = whole ? whole.off[sec.si] : 0;
+    const at = off + local;
+    const key = whole ? `${api.m.id}:all` : `${api.m.id}:${sec.si}`;
     const now = performance.now();
     if (!B || B.key !== key || B.state !== api.state) {
       stop();
@@ -647,13 +788,24 @@
     }
     B.api = api;
     B.sec = S;
-    if (B.el.parentNode !== slot) slot.appendChild(B.el);
+    B.whole = Boolean(whole);
+    B.lesson = whole || null;
+    B.si = sec.si;
+    B.off = off;
+    B.qa = whole ? whole.qz[sec.si] : -1;
+    B.secEnd = B.qa >= 0 ? B.qa : whole ? whole.off[sec.si] + api.data.sections[sec.si].beats.length - 1 : S.beats.length - 1;
+    // 換節時板子搬進新畫的那一格：搬過去 scrollTop 會歸零，鏡頭要重新對到粉筆
+    if (B.el.parentNode !== slot) { slot.appendChild(B.el); B.followTo = null; B.last = ""; }
     if (!B.M || B.el.clientWidth !== B.w) build();
+    placeModel();
+    // 出題那一句：最後一句寫完才接（frame 的 goQuiz）；已經在出題、或這一題答過了，就停在出題
+    const lastLocal = local === api.data.sections[sec.si].beats.length - 1;
+    if (B.qa >= 0 && lastLocal && (B.at === B.qa || answered(api, sec.si))) { if (B.at !== B.qa) goQuiz(now); quizState(); kick(); return; }
     const b = S.beats[at] || {};
-    const open = Boolean(b.why && (!window.BuzzCourseProof || (sec.why[`${sec.si}-${at}`] || {}).open));
+    const open = Boolean(b.why && (!window.BuzzCourseProof || (sec.why[`${sec.si}-${local}`] || {}).open));
     if (B.at !== at) {
       B.at = at;
-      B.fresh = sec.fresh === at && !reduced();
+      B.fresh = sec.fresh === local && !reduced();
       B.q0 = now;
       B.s0 = open ? now : null;
       B.open = open || !b.why;
@@ -661,6 +813,7 @@
       B.pending = 0;
       B.last = "";
     } else if (open && !B.open) { B.open = true; B.s0 = now; B.last = ""; }
+    quizState();
     kick();
   }
   if (typeof window !== "undefined" && window.addEventListener) {
@@ -690,7 +843,7 @@
     rebuild() { if (B) { build(); B.last = ""; kick(); } }
   };
   window.BuzzBoard = {
-    sync, tex, KOPT, debug,
+    sync, tex, KOPT, debug, whole: WHOLE,
     state: () => (B && B.M ? { key: B.key, at: B.at, g: (B.cur || {}).g, q: (B.cur || {}).q, mode: (B.cur || {}).mode, clip: B.clip, tau: Math.round(B.tau || 0), running: Boolean(raf), p: B.cur && B.cur.mode !== "done" ? (B.cur.g + B.cur.q) : 1 } : null)
   };
 })();

@@ -264,7 +264,7 @@ async function run() {
     await chrome.send("Emulation.setTouchEmulationEnabled", { enabled: true, maxTouchPoints: 5 });
     await chrome.navigate(`${server.url}/index.html`);
     // 導覽（coach marks）會蓋住真的觸控事件：當作看過了（跟 e2e_mobile 同一招）
-    await evaluate(`localStorage.clear(); localStorage.setItem("buzzcalculus.records.v1", JSON.stringify({ tours: { home: 1, quiz: 1 } })); return 1;`);
+    await evaluate(`localStorage.clear(); localStorage.setItem("buzzcalculus.records.v1", JSON.stringify({ tours: { home: 1, quiz: 1 }, settings: { boardSplit: true } })); return 1;`);
     await chrome.navigate(`${server.url}/index.html`);
     await evaluate(`const b = document.querySelector('[data-action="set-onboarding-context"][data-context="newbie"]'); if (b) b.click(); return 1;`);
     check("新手進課程表", await waitFor('document.querySelector(".cv2-index")'));
@@ -352,15 +352,19 @@ async function run() {
       stats: window.__s.text("[data-cv2s-stats]"), xp: r.xp || 0, lessonXp: e.xp || 0, tierXp: e.tierXp || 0, done: Boolean(e.doneAt), secDone: (e.secDone || []).join(),
       next: window.__s.text('[data-cv2s-finish] [data-action="open-course-lesson"]'), map: Boolean(document.querySelector('[data-cv2s-finish] [data-action="course-map-focus"][data-lit="1"]')), overflow: window.__s.overflow() };`);
     const sectionXp = 5 * FIRST.sections.length;
+    // 沒有推薦題的課：小測完成就是全破，三層加成一次發齊（20 + 30 + 50）；有推薦題：只到「完成」（+20），結算列出熟練還差的核心題
+    const noPractice = !(FIRST.practice || []).length;
+    const tiers = noPractice ? 3 : 1;
+    const bonus = noPractice ? 100 : 20;
     check("結算：「你現在會：」＋這一課的學習目標全部打勾", /你現在會/.test(fin.head) && fin.goals.length === FIRST.objectives.length && fin.goals.every((g) => !g.todo), JSON.stringify(fin.goals));
-    // function-intro 沒有推薦題：小測完成就是全破（熟練、全破一起到），三層加成一次發齊（20 + 30 + 50）
-    check("小測四題都在分節裡做完 → 這一課「完成」，沒有推薦題所以直接全破（第一題第一次選錯，3 / 4）", fin.done && fin.tierXp === 3, `doneAt ${fin.done} · tierXp ${fin.tierXp}`);
-    check(`XP：每節 5 × ${FIRST.sections.length} ＋ 三層 20 + 30 + 50 = ${sectionXp + 100}，畫面直接寫總數`, fin.lessonXp === sectionXp + 100 && fin.xp === sectionXp + 100 && fin.stats.includes(`+${sectionXp + 100}`), fin.stats);
+    check(`小測四題都在分節裡做完 → 這一課「完成」${noPractice ? "，沒有推薦題所以直接全破" : ""}（第一題第一次選錯，3 / 4）`, fin.done && fin.tierXp === tiers, `doneAt ${fin.done} · tierXp ${fin.tierXp}`);
+    check(`XP：每節 5 × ${FIRST.sections.length} ＋ 層級加成 ${bonus} = ${sectionXp + bonus}，畫面直接寫總數`, fin.lessonXp === sectionXp + bonus && fin.xp === sectionXp + bonus && fin.stats.includes(`+${sectionXp + bonus}`), fin.stats);
     check("結算有「下一課」與「在地圖上看」", /下一課：0\.2/.test(fin.next) && fin.map, fin.next);
     check("結算 390 寬不溢出", fin.overflow <= 1);
-    // function-intro 沒有推薦題：完成就是全破 —— 結算寫「✔ 全破」與為什麼，不列下一層；標題列也不再寫還差什麼
+    // 沒有推薦題：完成就是全破 —— 結算寫「✔ 全破」與為什麼；有推薦題：結算寫熟練還差的核心題、附「練這 n 題」
     const nextTier = await evaluate(`return { row: window.__s.text("[data-cv2s-finish] [data-cv2s-tier]"), rule: window.__s.text("[data-cv2-rule]"), pill: window.__s.text(".cv2-head .cv2-tier") };`);
-    check("沒有推薦題的課：結算寫「✔ 全破 · 沒有推薦題：小測完成就是全破」、沒有「還差」", /全破/.test(nextTier.row) && /沒有推薦題/.test(nextTier.row) && !/還差/.test(nextTier.row) && !nextTier.rule, JSON.stringify(nextTier));
+    if (noPractice) check("沒有推薦題的課：結算寫「✔ 全破 · 沒有推薦題：小測完成就是全破」、沒有「還差」", /全破/.test(nextTier.row) && /沒有推薦題/.test(nextTier.row) && !/還差/.test(nextTier.row) && !nextTier.rule, JSON.stringify(nextTier));
+    else check("有推薦題的課：結算寫「熟練還差：核心題 0/n」＋「練這 n 題」", /熟練還差/.test(nextTier.row) && /練這 \d+ 題/.test(nextTier.row), JSON.stringify(nextTier));
     await shot("phone-light-finish");
 
     // 在地圖上看：地圖打開、這一課亮一下，然後自己消失
@@ -375,12 +379,12 @@ async function run() {
     check("再打開：從最後一節接", (await openLesson(FIRST.id)) && (await waitFor(`window.__s.si() === ${FIRST.sections.length - 1}`)));
     await finishSection(FIRST);
     const again = await evaluate(`const r = window.__s.rec(); return { xp: r.xp || 0, chip: window.__s.text(".cv2s-xp"), day: (r.courseReadDays || {})[window.__s.today()] || 0 };`);
-    check("重做一節：XP 不再加（一節只發一次）", again.xp === sectionXp + 100 && again.chip === "", JSON.stringify(again));
+    check("重做一節：XP 不再加（一節只發一次）", again.xp === sectionXp + bonus && again.chip === "", JSON.stringify(again));
     // 再走到結算一次：三層加成不會再發
     await tap("[data-cv2s-next]");
     await waitFor(`document.querySelector("[data-cv2s-finish]")`);
     const settledAgain = await evaluate(`const r = window.__s.rec(); const e = (r.courseV2 || {})["${FIRST.id}"] || {}; return { xp: r.xp || 0, tierXp: e.tierXp || 0 };`);
-    check("層級加成只發一次（再走到結算 XP 不變）", settledAgain.xp === sectionXp + 100 && settledAgain.tierXp === 3, JSON.stringify(settledAgain));
+    check("層級加成只發一次（再走到結算 XP 不變）", settledAgain.xp === sectionXp + bonus && settledAgain.tierXp === tiers, JSON.stringify(settledAgain));
 
     // 每日任務與連勝
     await evaluate(`const b = document.querySelector('[data-action="home"]'); if (b) b.click(); return 1;`);
