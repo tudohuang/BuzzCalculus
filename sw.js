@@ -29,8 +29,8 @@ const REV_HEADER = "x-buzz-rev";
 
 // ── 產生區：node tools/build_sw_revisions.js（不要手改）──
 // 這一版：設定頁顯示「版本 v… · id · 日期」；id 是下面 REVISIONS 的雜湊，快取名跟著它變（每次部署內容有變就一定是新快取）。
-const BUILD = {"version":"v1.3.0","id":"5902e51a","date":"2026-10-13"};
-const CACHE_NAME = "buzzcalculus-v1.3.0-5902e51a";
+const BUILD = {"version":"v1.3.0","id":"62e20639","date":"2026-10-13"};
+const CACHE_NAME = "buzzcalculus-v1.3.0-62e20639";
 // 安裝時預快取的核心（離線也能練題）。其他檔用到才快取 —— 見 REVISIONS。
 const APP_SHELL = [
   "./index.html",
@@ -159,7 +159,7 @@ const REVISIONS = {
   "./src/app.js": "c9a852c70f",
   "./src/board_store.js": "402a9e9b08",
   "./src/course.js": "ef1b69719f",
-  "./src/course_board.js": "a8b4a1872e",
+  "./src/course_board.js": "af83c9b484",
   "./src/course_board_layout.js": "f62c22d925",
   "./src/course_board_plot.js": "25bed23bd6",
   "./src/course_boss.js": "4785df87a7",
@@ -412,7 +412,7 @@ const REVISIONS = {
   "./src/kernel/verified_answers.js": "e17c81ac9f",
   "./src/problem_advanced_analysis.js": "4504108060",
   "./src/problem_analysis_pack.js": "2810e169e8",
-  "./src/problem_applied_graph_pack.js": "8ac14c2c9a",
+  "./src/problem_applied_graph_pack.js": "2669709275",
   "./src/problem_authored_hints.js": "be729803e3",
   "./src/problem_authored_solutions.js": "491f9d2080",
   "./src/problem_burst_pack.js": "d8088df452",
