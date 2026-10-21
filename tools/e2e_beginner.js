@@ -370,9 +370,10 @@ async function run() {
       if (await evaluate(`return Boolean(document.querySelector(".cv2-index .cv2-stage"));`)) break;
     }
     const course = await evaluate(`
-      const total = (window.BUZZ_COURSE_V2 ? window.BUZZ_COURSE_V2.stages : []).reduce((n, s) => n + s.chapters.reduce((m, c) => m + c.lessons.length, 0), 0);
-      return { h2: window.__b.text(".course-index h2"), total, stages: document.querySelectorAll(".cv2-stage").length, rows: document.querySelectorAll(".cv2-row").length, placement: Boolean(document.querySelector('[data-action="start-placement"]')), primary: window.__b.text('.cv2-index .page-head [data-action="open-course-lesson"]') };`);
-    check("選了直接進課程表（不做定位測驗），所有課都在", course.total >= 300 && course.rows === course.total && course.stages === 13 && !course.placement, `${course.rows} / ${course.total} 課 · ${course.h2}`);
+      const shown = (window.BUZZ_COURSE_V2 ? window.BUZZ_COURSE_V2.stages : []).filter((s) => !s.hidden);
+      const total = shown.reduce((n, s) => n + s.chapters.reduce((m, c) => m + c.lessons.length, 0), 0);
+      return { h2: window.__b.text(".course-index h2"), total, want: shown.length, stages: document.querySelectorAll(".cv2-stage").length, rows: document.querySelectorAll(".cv2-row").length, placement: Boolean(document.querySelector('[data-action="start-placement"]')), primary: window.__b.text('.cv2-index .page-head [data-action="open-course-lesson"]') };`);
+    check("選了直接進課程表（不做定位測驗），看得到的課都在（藏起來的 Stage 不列）", course.total >= 200 && course.rows === course.total && course.stages === course.want && !course.placement, `${course.rows} / ${course.total} 課 · ${course.h2}`);
     check("課程表的主按鈕是第一課", /^開始：0\.1 /.test(course.primary), course.primary);
 
     // ── 第一課（0.1）：觀念 → 範例 → 小測；小測第一次就選對 ≥ 3 題＝完成，下一課按鈕變主按鈕 ──
@@ -392,10 +393,11 @@ async function run() {
     const firstPicks = await evaluate(`return window.BUZZ_COURSE_V2_LESSONS["function-intro"].checks.map((c) => c.options.findIndex((o) => o.correct));`);
     for (let ci = 0; ci < firstPicks.length; ci += 1) await click(`[data-action="course-pick"][data-check="${ci}"][data-option="${firstPicks[ci]}"]`, 300);
     const firstDone = await evaluate(`return { result: window.__b.text("[data-course-quiz-result]"), tier: window.__b.text(".cv2-lesson .cv2-meta .cv2-tier"), next: window.__b.text('.cv2-nav .home-primary[data-action="open-course-lesson"]') };`);
-    // 函數是什麼沒有推薦題：小測完成就是全破
-    check("小測全對：完成（沒有推薦題，標成全破）、「下一課」變主按鈕", /完成/.test(firstDone.result) && firstDone.tier === "全破" && /下一課：0\.2/.test(firstDone.next), `${firstDone.result} · ${firstDone.tier} · ${firstDone.next}`);
+    // 沒有推薦題的課小測完成就是全破；有推薦題（2026-10-19 課程缺口補題後第一課也有了）就是完成
+    const firstTier = await evaluate(`const o = window.BUZZ_COURSE_V2.stages[0].chapters[0].lessons[0]; return String(o.practice || "").trim() ? "完成" : "全破";`);
+    check(`小測全對：${firstTier}、「下一課」變主按鈕`, /完成/.test(firstDone.result) && firstDone.tier === firstTier && /下一課：0\.2/.test(firstDone.next), `${firstDone.result} · ${firstDone.tier} · ${firstDone.next}`);
     await click('[data-action="open-course"]', 600);
-    check("課程表上第一課標全破（沒有推薦題）", await evaluate(`const row = document.querySelector('.cv2-row[data-lesson-id="function-intro"]'); return Boolean(row && /全破/.test(row.innerText));`));
+    check(`課程表上第一課標${firstTier}`, await evaluate(`const row = document.querySelector('.cv2-row[data-lesson-id="function-intro"]'); return Boolean(row && row.innerText.includes(${JSON.stringify(firstTier)}));`));
 
     // ── 極限的第一課（1.1）：範例一步一步揭、選錯說為什麼、推薦題開一局 ──
     await evaluate(`const d = document.querySelector('details[data-keep="cv2-stage-1"]'); d.open = true; [...d.querySelectorAll("details")].forEach((c) => { c.open = true; }); return 1;`);

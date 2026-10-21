@@ -41,7 +41,12 @@
     injectStyle();
 
     /* ── 大綱索引：課號在這裡算（Stage 編號.在 Stage 裡的第幾課），資料裡不存 ── */
+    // 藏起來的 Stage（outline 的 hidden）：課照樣在 meta（直接開得到），但不在 order（地圖的版面沒有它們）；
+    // 解鎖（course.js 讀網址的 ?unlock=）了才進課程表、課與課的連結
+    let unlocked = false;
+    try { unlocked = localStorage.getItem("buzzcalculus.unlock.v1") === "1"; } catch (_e) { /* 照樣藏著 */ }
     const order = [];
+    const extra = [];
     const meta = {};
     const titleIds = {};
     const problemLesson = {};
@@ -58,8 +63,9 @@
           available: typeof raw.read === "number", read: raw.read, total: raw.total, practice,
           worked: String(raw.worked || "").split(" ").filter(Boolean)
         };
-        order.push(m);
+        (stage.hidden ? extra : order).push(m);
         meta[m.id] = m;
+        if (stage.hidden && !unlocked) return;
         (titleIds[m.title] = titleIds[m.title] || []).push(m.id);
         if (m.available) practice.concat(m.worked.map((id) => ({ id }))).forEach((p) => { if (!problemLesson[p.id]) problemLesson[p.id] = m.id; });
       }));
@@ -80,7 +86,9 @@
     const bossUI = () => window.BuzzCourseBoss || (bossLoad++ || Promise.resolve(deps.ensureLazy("boss")).then(() => render(), () => {}), null);
     const kit = () => ({ bossBy, bossSolved, bossLeft, isDone, meta, neighbour, label, problem, deps, track, loadRecords });
     const bossView = (records, m) => (m.chapter.boss && bossUI() ? bossUI().view(kit(), records, m, state) : null);
-    const live = order.filter((m) => m.available);
+    const all = unlocked ? order.concat(extra) : order;
+    const seen = (m) => Boolean(m) && (unlocked || !m.stage.hidden);
+    const live = all.filter((m) => m.available);
     const mainPath = live.filter((m) => !m.stage.branch);
     const usedProblems = new Set(Object.keys(problemLesson));
     const neighbour = (m, step) => {
@@ -266,7 +274,7 @@
         return `<button type="button" class="cv2-link" data-action="open-course-lesson" data-lesson-id="${escapeAttr(id)}">${escapeHtml(part)}</button>`;
       }).join(""));
     }
-    const lessonLink = (id) => (meta[id] ? (meta[id].available
+    const lessonLink = (id) => (seen(meta[id]) ? (meta[id].available
       ? `<button type="button" class="cv2-link" data-action="open-course-lesson" data-lesson-id="${escapeAttr(id)}">〈${escapeHtml(meta[id].title)}〉</button>`
       : `<span>〈${escapeHtml(meta[id].title)}〉</span>`) : "");
     const tierPill = (tier) => (tier ? `<em class="cv2-tier t${tier}">${TIER_NAMES[tier]}</em>` : "");
@@ -306,13 +314,13 @@
         return `<li><button type="button" class="cv2-row ${next === m ? "is-next" : ""} ${tier ? "is-done" : ""}" data-action="open-course-lesson" data-lesson-id="${escapeAttr(m.id)}"><span class="cv2-row-no">${m.no}</span><strong>${escapeHtml(m.title)}</strong><small>${m.read} 分</small><i class="cv2-dot ${tier ? `t${tier}` : ""}" title="${rowTitle(records, m, tier)}">${tier ? `<span class="sr-only">${TIER_NAMES[tier]}</span>` : ""}</i></button></li>`;
       };
       // Stage 是有標題的段落（細進度條），章是小標，課是平的清單；只有目前的 Stage 展開
-      const stages = outline.stages.map((stage) => {
-        const inStage = order.filter((m) => m.stage === stage);
+      const stages = outline.stages.filter((stage) => unlocked || !stage.hidden).map((stage) => {
+        const inStage = all.filter((m) => m.stage === stage);
         const ready = inStage.filter((m) => m.available);
         const stageDone = ready.filter((m) => isDone(records, m)).length;
         const stagePct = ready.length ? Math.round((stageDone / ready.length) * 100) : 0;
         const chapters = stage.chapters.map((chapter) => {
-          const rows = order.filter((m) => m.chapter === chapter);
+          const rows = all.filter((m) => m.chapter === chapter);
           const chapterDone = rows.filter((m) => m.available && isDone(records, m)).length;
           return `
             <section class="cv2-chapter">
@@ -339,7 +347,7 @@
             <div class="page-head">
               <div>
                 <p class="section-label">課程</p>
-                <h2>微積分 · ${order.length} 課</h2>
+                <h2>微積分 · ${all.length} 課</h2>
               </div>
               <div class="action-row">
                 ${next ? `<button class="button home-primary" data-action="open-course-lesson" data-lesson-id="${escapeAttr(next.id)}">${icon("play")}${done || entryOf(records, next.id).openedAt ? "繼續" : "開始"}：${escapeHtml(label(next))}</button>` : ""}
@@ -421,7 +429,7 @@
           boss: m.chapter.boss && m.chapter.boss.at === m.id ? (bossSolved(records, m.chapter.boss.code) ? "魔王題已解開" : `讀完就解得開魔王題：${m.chapter.boss.h}`) : "",
           practice: m.practice.filter((p) => problem(p.id))
         })),
-        stages: outline.stages,
+        stages: outline.stages.filter((st) => !st.hidden),
         crowns: new Set(deps.focusModeOn && deps.focusModeOn() ? [] : Object.keys(records.courseV2Boss || {})),
         next: next ? order.indexOf(next) : -1,
         // 「該練」用的：紀錄本身、能力模型（app 的 abilityProfile，有快取）、題目 → 技巧

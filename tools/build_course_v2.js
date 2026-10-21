@@ -40,6 +40,8 @@ for (const line of fs.readFileSync(path.join(SOURCE, "OUTLINE.md"), "utf8").spli
       // 「極限與連續（Limits & Continuity）」→ 畫面只用中文那半；英文介面不載新版課程
       title: full.replace(/（.*$/, "").trim(),
       branch: /支線/.test(full),
+      // 「隱藏」：課程表、地圖、課與課之間的連結都不出現；課照樣出貨（網址帶解鎖碼的人看得到，見 course_v2_ui.js 的 unlocked）
+      hidden: /隱藏/.test(full),
       chapters: []
     };
     stages.push(stage);
@@ -178,6 +180,7 @@ const outline = {
     n: s.n,
     title: s.title,
     ...(s.branch ? { branch: true } : {}),
+    ...(s.hidden ? { hidden: true } : {}),
     chapters: s.chapters.map((c) => ({
       code: c.code,
       title: c.title,
@@ -215,7 +218,11 @@ const outputs = {
   "outline.js": `${HEADER}window.BUZZ_COURSE_V2 = ${JSON.stringify(outline)};\n`
 };
 // 地圖：課的索引跟大綱順序一樣（畫面那邊照大綱攤平就對得上）
-const mapLayout = layoutCourseMap(outline, lessons);
+// 隱藏的 Stage 不上地圖（解鎖了也只在課程表）
+const mapStages = outline.stages.filter((s) => !s.hidden);
+const onMap = new Set(mapStages.flatMap((s) => s.chapters.flatMap((c) => c.lessons.map((l) => l.id))));
+const mapLessons = Object.fromEntries(Object.entries(lessons).filter(([id]) => onMap.has(id)).map(([id, l]) => [id, { ...l, prerequisites: (l.prerequisites || []).filter((p) => onMap.has(p)) }]));
+const mapLayout = layoutCourseMap({ ...outline, stages: mapStages }, mapLessons);
 const { stats: mapStats, ...mapData } = mapLayout;
 if (!checkMode) console.log(`課程地圖：${mapStats.stageLayers} 層 Stage、整張 ${mapData.size.join(" × ")}、先修邊加權長度 ${mapStats.cost}`);
 outputs["map.js"] = `${HEADER}window.BUZZ_COURSE_MAP = ${JSON.stringify(mapData)};

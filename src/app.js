@@ -1,5 +1,18 @@
 (function () {
   "use strict";
+  // 隱藏的 Stage：?unlock=碼 打開、?unlock=0 關掉（記在這台；course_v2_ui.js 讀）。只是藏，碼存 djb2 雜湊
+  const UNLOCK = 1083561050;
+  try {
+    const q = new URLSearchParams(location.search);
+    const u = q.get("unlock");
+    if (u !== null) {
+      if ([...u].reduce((a, c) => (Math.imul(a, 33) + c.codePointAt(0)) >>> 0, 5381) === UNLOCK) localStorage.setItem("buzzcalculus.unlock.v1", "1");
+      else localStorage.removeItem("buzzcalculus.unlock.v1");
+      q.delete("unlock");
+      history.replaceState(history.state, "", location.pathname + (String(q) ? `?${q}` : "") + location.hash);
+    }
+  } catch (_e) { /* 照樣藏著 */ }
+
   // 語言層：t() 由 src/kernel/i18n.js 掛在 globalThis；node 的驗證器直接 require 這一支時沒有它，
   // 就原樣印出（佔位符照填），所以每個模組都能單獨載入。
   const t = typeof globalThis.t === "function" ? globalThis.t : (text, vars) => (vars ? String(text).replace(/\{(\w+)(?:\|[^}]*)?\}/g, (m, k) => (k in vars ? String(vars[k]) : m)) : text);
