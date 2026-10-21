@@ -62,8 +62,9 @@ async function run() {
     /* ── 題庫表（像 LeetCode）── */
     check("證明訓練頁是一張題目表", await chrome.evaluate(`return Boolean(document.querySelector('.lc-index table.lc-table'))`));
     const entry = await chrome.evaluate(`return { rows: document.querySelectorAll('tr[data-proof-key]').length, auto: document.querySelectorAll('tr[data-proof-key^="pl:"]').length, self: document.querySelectorAll('tr[data-proof-key^="pf:"]').length, progress: document.querySelector('.lc-progress-main')?.innerText || "", button: document.querySelector('[data-action="pl-open-lesson"]')?.innerText || "", lessons: (window.BUZZ_PROOF_LANG_LESSONS || []).length, banks: (window.BUZZ_PROOF_LANG_PROBLEMS || []).length + (window.BUZZ_PROOFS || []).length };`);
-    check("兩個題庫都在表裡", entry.rows === entry.banks && entry.auto >= 40 && entry.self >= 40, `${entry.auto} 自動判 + ${entry.self} 自評 = ${entry.rows}`);
-    check("進度卡寫著 0 / 總題數", new RegExp(`0\\s*/ ${entry.banks}`).test(entry.progress), entry.progress.replace(/\s+/g, " "));
+    // 2026-10-21 起表上只列精選的（proof_lab_ui.js 的 SHELF，約 45 題）；其他的解鎖碼才列
+    check("兩個題庫都在表裡（精選）", entry.rows === entry.auto + entry.self && entry.rows < entry.banks && entry.auto >= 20 && entry.self >= 15, `${entry.auto} 自動判 + ${entry.self} 自評 = ${entry.rows}（全部 ${entry.banks}）`);
+    check("進度卡寫著 0 / 表上的題數", new RegExp(`0\\s*/ ${entry.rows}`).test(entry.progress), entry.progress.replace(/\s+/g, " "));
     check("課程按鈕的課數跟內容一致", new RegExp(`先上 ${entry.lessons} 課`).test(entry.button), entry.button);
     // 標籤不要多（產品端回報「證明那邊的 tag 不用那麼多」）：每列最多一個標籤；一打開只看到難度與狀態兩排篩選，
     // 判卷方式與證法收在摺疊裡（打開還是點得到）
@@ -84,7 +85,7 @@ async function run() {
       if (await chrome.evaluate(`return document.querySelectorAll('tr[data-proof-key]').length < ${entry.rows};`)) break;
     }
     const searched = await chrome.evaluate(`return { rows: [...document.querySelectorAll('tr[data-proof-key] .lc-title')].map((el) => el.innerText), focused: document.activeElement === document.querySelector('[data-proof-search]') };`);
-    check("搜尋 ε-N 只剩數列題，游標還在搜尋框", searched.rows.length === 3 && searched.rows.every((title) => title.includes("ε-N")) && searched.focused, searched.rows.join(" / "));
+    check("搜尋 ε-N 只剩數列題，游標還在搜尋框", searched.rows.length >= 1 && searched.rows.every((title) => title.includes("ε-N")) && searched.focused, searched.rows.join(" / "));
     await chrome.evaluate(`const box = document.querySelector('[data-proof-search]'); box.value = ""; box.dispatchEvent(new Event("input", { bubbles: true }));`);
     await chrome.sleep(500);
 

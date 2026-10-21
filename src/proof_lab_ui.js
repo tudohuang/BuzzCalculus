@@ -216,10 +216,25 @@
       return proofLangProblems().find((spec) => spec.classic === proofId) || null;
     }
 
+    // 列在題庫表上的題（2026-10-21 從 131 題縮成 45 題：太多太雜）。其他的照樣在（直接開、舊紀錄、英文都還在），
+    // 只是不列；網址帶解鎖碼（?unlock=，app.js 開頭）的這台全部列出來。要上架就把 id 加進來
+    const SHELF = new Set([
+      "pl-limit-linear", "pl-limit-square", "pl-limit-sqrt", "pl-limit-reciprocal", "pl-seq-reciprocal",
+      "pl-amgm", "pl-mvt-from-rolle", "pl-mvt-constant", "pl-mvt-increasing", "pl-ivt-root", "pl-squeeze-sin", "pl-exp-inequality", "pl-log-inequality", "pl-lipschitz",
+      "pl-abs-triangle", "pl-x-le-abs", "pl-max-formula", "pl-classic-second-derivative",
+      "pl-induction-sum", "pl-bernoulli", "pl-induction-squares", "pl-induction-telescoping", "pl-lec-harmonic-doubling",
+      "pl-min-positive", "pl-no-largest-real", "pl-sqrt2-contra",
+      "proof-mvt-001", "proof-mvt-002", "proof-mvt-003", "proof-mvt-004", "proof-ineq-001",
+      "proof-ineq-002", "proof-mvt-005", "proof-taylor-001", "proof-integral-001", "proof-compact-001",
+      "proof-convex-001", "proof-convex-002", "proof-lhopital-001", "proof-lm-001", "proof-fubini-001",
+      "proof-contest-001", "proof-contest-004", "proof-contest-009", "proof-contest-010"
+    ]);
+    const listed = (id) => SHELF.has(id) || (() => { try { return localStorage.getItem("buzzcalculus.unlock.v1") === "1"; } catch (_e) { return false; } })();
+
     function rows(records) {
       const store = records.proofLang || {};
       const progress = records.proofs || {};
-      const auto = proofLangProblems().map((spec, i) => {
+      const auto = proofLangProblems().filter((spec) => listed(spec.id)).map((spec, i) => {
         const entry = store[spec.id] || {};
         const submissions = entry.submissions || [];
         // 已解＝提交過且全綠；沒提交過的舊草稿（這個按鈕出現之前的）全綠也算，不讓人的紀錄消失
@@ -232,7 +247,7 @@
           attempts: submissions.length, solvedAt: entry.solvedAt || "", lastAt: entry.updatedAt || "", lastVerdict: entry.verdict || ""
         };
       });
-      const self = (deps.proofs || []).map((proof, i) => {
+      const self = (deps.proofs || []).filter((proof) => listed(proof.id)).map((proof, i) => {
         const entry = progress[proof.id] || {};
         const drillsDone = Boolean(entry.orderPassed) && (!(proof.cloze || []).length || Boolean(entry.clozePassed));
         // 機器判：這題若有對應的白話證明規格，自己寫的證明全綠提交過就算解了
@@ -303,7 +318,8 @@
         const lessonsLeft = route.lessons.filter((lesson) => !done[lesson.id]);
         return Object.assign(route, { pool: pool.length, solved, lessonsDoneCount: route.lessons.length - lessonsLeft.length, next: lessonsLeft[0] || null, active: route.levels.length === 1 ? f.level === route.levels[0] : f.level === "medium" || f.level === "hard" });
       });
-      const chip = (key, value, label, count) => `<button type="button" class="lc-chip ${f[key] === value ? "is-active" : ""}" data-action="proof-filter" data-filter-key="${key}" data-filter-value="${escapeAttr(value)}" aria-pressed="${f[key] === value ? "true" : "false"}">${escapeHtml(label)}${count !== undefined ? `<small>${count}</small>` : ""}</button>`;
+      // 數到 0 的分類（藏起來的那幾層）不出按鈕
+      const chip = (key, value, label, count) => count === 0 ? "" : `<button type="button" class="lc-chip ${f[key] === value ? "is-active" : ""}" data-action="proof-filter" data-filter-key="${key}" data-filter-value="${escapeAttr(value)}" aria-pressed="${f[key] === value ? "true" : "false"}">${escapeHtml(label)}${count !== undefined ? `<small>${count}</small>` : ""}</button>`;
       const countBy = (key, value) => all.filter((row) => value === "all" || row[key] === value || (key === "group" && (row.family === value || row.tier === value))).length;
       const sortNext = f.sort === "level" ? "-level" : f.sort === "-level" ? "n" : "level";
       const sortMark = f.sort === "level" ? " ↑" : f.sort === "-level" ? " ↓" : "";
