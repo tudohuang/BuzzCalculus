@@ -279,9 +279,9 @@ html.nb .cvb-model>.cv2-figure{box-shadow:0 1px 4px #0002}
     const nbBox = document.documentElement.classList.contains("nb") && B.whole && B.el.closest("[data-cv2s] [data-cvb-slot]") ? nbFit() : null;
     const nbCap = nbBox ? nbRoom(nbBox) : 0;
     B.capNb = nbCap;
-    const cap = nbCap > 240 ? nbCap : B.whole
+    const cap = B.capFix || (nbCap > 240 ? nbCap : B.whole
       ? Math.max(300, Math.min(760, Math.round((window.innerHeight || 800) * ((window.innerWidth || 800) < 600 ? (B.lesson && B.lesson.anyFig ? 0.56 : 0.42) : 0.6))))
-      : Math.max(260, Math.min(560, Math.round((window.innerHeight || 800) * ((window.innerWidth || 800) < 600 ? 0.38 : 0.45))));
+      : Math.max(260, Math.min(560, Math.round((window.innerHeight || 800) * ((window.innerWidth || 800) < 600 ? 0.38 : 0.45)))));
     // 整課一塊：分欄（一欄至少約 17 個字寬），每一行在欄寬裡排
     const colGap = Math.round(F * 2.4);
     const cols = B.whole ? Math.max(1, Math.floor((W + colGap) / (F * 17 + colGap))) : 1;
@@ -944,9 +944,10 @@ html.nb .cvb-model>.cv2-figure{box-shadow:0 1px 4px #0002}
 
   // 筆記本：學生自己寫的那一層（course_ink.js：筆記本＋一課一塊板才抓）
   function pen() {
+    if (B && B.capFix !== undefined) return; // 攤開的板子：筆跡另外畫（overview），工具列留在課裡
     const on = B && B.whole && B.layer && B.layer.isConnected && document.documentElement.classList.contains("nb");
     if (!on) { if (window.BuzzInk) window.BuzzInk.unmount(); return; }
-    const go = () => { if (B && B.layer && B.layer.isConnected && window.BuzzInk) window.BuzzInk.mount({ board: B.el, layer: B.layer, id: B.api.m.id }); };
+    const go = () => { if (B && B.layer && B.layer.isConnected && window.BuzzInk) window.BuzzInk.mount({ board: B.el, layer: B.layer, id: B.api.m.id, cap: B.view, w: B.w }); };
     if (window.BuzzInk) go(); else if (B.api && B.api.deps && B.api.deps.ensureLazy) Promise.resolve(B.api.deps.ensureLazy("ink")).then(go, () => {});
   }
 
@@ -1033,9 +1034,14 @@ html.nb .cvb-model>.cv2-figure{box-shadow:0 1px 4px #0002}
     rebuild() { if (B) { build(); B.last = ""; kick(); } }
   };
   // 攤開整塊黑板（結算畫面的按鈕）：整課畫到最後，每一面各複製一份並排，一次看完。
+  // 筆記本：照寫字那時的紙寬與板高排（排版一樣，自己寫的才對得上），筆跡一起攤開（course_ink.js 的 paint）
   function overview(api) {
     const whole = lessonBoard(api.data);
     if (!whole || !whole.beats.some((b) => (b.board || []).length)) return false;
+    const nb = document.documentElement.classList.contains("nb");
+    if (nb && !window.BuzzInk && !api.inkTry && api.deps && api.deps.ensureLazy) { api.inkTry = 1; const again = () => overview(api); Promise.resolve(api.deps.ensureLazy("ink")).then(again, again); return true; }
+    const IK = nb && window.BuzzInk;
+    const mine = IK && IK.meta(api.m.id);
     if (!document.getElementById("cvb-style")) { const st = mk("style", ""); st.id = "cvb-style"; st.textContent = CSS + CSS_REST; document.head.appendChild(st); }
     stop();
     const ov = mk("div", "cvb-ov");
@@ -1053,7 +1059,7 @@ html.nb .cvb-model>.cv2-figure{box-shadow:0 1px 4px #0002}
     const grid = mk("div", "cvb-ov-grid");
     const meas = mk("div", "cvb-ov-meas");
     const vw = window.innerWidth || 1024;
-    const W0 = Math.round(Math.min(1060, vw - (vw < 600 ? 32 : 96)));
+    const W0 = (mine && mine.w) || Math.round(Math.min(1060, vw - (vw < 600 ? 32 : 96)));
     meas.style.width = `${W0}px`;
     ov.append(bar, grid, meas);
     document.body.appendChild(ov);
@@ -1061,12 +1067,13 @@ html.nb .cvb-model>.cv2-figure{box-shadow:0 1px 4px #0002}
     meas.appendChild(el);
     const lastSi = api.data.sections.length - 1;
     B = { key: `${api.m.id}:overview`, si: lastSi, state: api.state, el, at: whole.beats.length - 1, sec: whole, M: null, w: 0, raw: null, rawAt: 0, tau: 0, clip: "", pending: 0, s0: null, q0: performance.now(),
-      api, whole: true, lesson: whole, off: 0, qa: -1, secEnd: whole.beats.length - 1 };
+      api, whole: true, lesson: whole, off: 0, qa: -1, secEnd: whole.beats.length - 1, capFix: mine && mine.h };
     const finish = () => {
       build();
       if (!B || !B.M) return false;
       debug.show(B.M.acts.length, 1);
       const cap = B.view;
+      if (mine) IK.paint(B.layer, api.m.id);
       const pages = Math.max(1, B.pages || Math.ceil(B.L.H / cap));
       const inner = [...el.children];
       const cols = vw >= 1100 ? 2 : 1;
@@ -1088,6 +1095,7 @@ html.nb .cvb-model>.cv2-figure{box-shadow:0 1px 4px #0002}
         grid.appendChild(box);
       }
       meas.remove();
+      if (IK) IK.ovBar(bar, ov, mine);
       B = null;
       return true;
     };

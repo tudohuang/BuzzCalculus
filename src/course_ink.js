@@ -39,7 +39,8 @@ html.nb .cvb.is-ink-touch{touch-action:none}
 .cvk-bar .is-sure{background:#dc26261f;color:#dc2626}
 .cvk-bar .cvk-dot{background:var(--d)}:root[data-theme="dark"] .cvk-bar{--k:#dfe6f5;--kc:#93c5fd;--kr:#fca5a5}:root[data-theme="dark"] .cvk-bar button:hover{background:#ffffff14}:root[data-theme="dark"] .cvk-bar button[aria-pressed="true"]{background:#93c5fd29;color:#93c5fd}
 @media (max-width:640px){.cvk-bar{top:8px;right:10px}.cvk-bar button{width:32px;height:32px}}
-@media print{.cvk-bar{display:none}}`;
+.cvb-ov.cvk-off .cvk{display:none}.cvk-ovb{display:flex;gap:8px;margin-left:auto}
+@media print{.cvk-bar{display:none}body>:not(.cvb-ov){display:none!important}.cvb-ov{position:static;overflow:visible;padding:0}.cvb-ov-bar{display:none}.cvb-ov-grid{display:block}.cvb-ov-page{break-inside:avoid;margin:0 auto 12px;box-shadow:none;print-color-adjust:exact;-webkit-print-color-adjust:exact}}`;
   const ICON = {
     pen: '<svg viewBox="0 0 24 24"><path d="M4 20l1.2-4.6L15.8 4.8a2 2 0 0 1 2.8 0l.6.6a2 2 0 0 1 0 2.8L8.6 18.8z"/><path d="M14 6.6l3.4 3.4"/></svg>',
     hl: '<svg viewBox="0 0 24 24"><path d="M9 15l-3 3h5l1.5-1.5"/><path d="M9 15l7.5-9.5a2 2 0 0 1 2.9-.3l.4.4a2 2 0 0 1-.3 2.9L12 15.5z"/><path d="M4 21h16" stroke-width="2.6" stroke="#facc15"/></svg>',
@@ -57,7 +58,7 @@ html.nb .cvb.is-ink-touch{touch-action:none}
     window.clearTimeout(saveT);
     saveT = window.setTimeout(() => {
       const a = load();
-      if (S.strokes.length) a[S.id] = { v: 1, s: S.strokes }; else delete a[S.id];
+      if (S.strokes.length) a[S.id] = { v: 1, w: S.lw, k: S.w, h: S.cap, s: S.strokes }; else delete a[S.id];
       try { localStorage.setItem(KEY, JSON.stringify(a)); } catch (_e) { /* 滿了：這次不存，畫面上的還在 */ }
     }, 400);
   };
@@ -75,8 +76,7 @@ html.nb .cvb.is-ink-touch{touch-action:none}
     }
     return `${d}Z`;
   }
-  function outline(s, done) {
-    const k = S.w;
+  function outline(s, done, k = S.w) {
     const opt = s.t === "h" ? HL : PEN;
     const pts = s.p.map((q) => [q[0] * k, q[1] * k, q[2]]);
     return getStroke(pts, { ...opt, size: opt.size * Math.max(0.75, Math.min(1.25, k / 900)), simulatePressure: !s.pr, last: done });
@@ -251,7 +251,9 @@ html.nb .cvb.is-ink-touch{touch-action:none}
   /* ── 掛上去：course_board.js 每次排版完（內容層換新的）與換節時叫；同一個東西叫幾次都一樣 ── */
   function mount(o) {
     if (!o || !o.board || !o.layer) return;
-    if (!document.getElementById("cvk-style")) { const st = document.createElement("style"); st.id = "cvk-style"; st.textContent = CSS; document.head.appendChild(st); }
+    css();
+    S.cap = o.cap || 0;
+    S.lw = o.w || 0;
     if (S.id !== o.id) {
       cancel();
       S.id = o.id;
@@ -286,5 +288,46 @@ html.nb .cvb.is-ink-touch{touch-action:none}
   // 離開筆記本（或課）：工具列拿掉，正在寫的那一筆丟掉
   function unmount() { cancel(); if (S.bar) S.bar.remove(); }
 
-  window.BuzzInk = { mount, unmount, busy: () => Boolean(cur) || Date.now() - lastInk < 4000, debug: { state: () => ({ id: S.id, n: S.strokes.length, on: S.on, tool: S.tool, color: S.color, penSeen: S.penSeen, undo: S.undo.length }), clearAll: () => { all = {}; try { localStorage.removeItem(KEY); } catch (_e) { /* 無 */ } } } };
+  /* ── 攤開整塊黑板（course_board.js 的 overview）：照寫字那時的紙寬（w）與板高（h）排，筆跡畫進那塊的內容層 ── */
+  const css = () => { if (!document.getElementById("cvk-style")) { const st = document.createElement("style"); st.id = "cvk-style"; st.textContent = CSS; document.head.appendChild(st); } };
+  function meta(id) { const r = load()[id]; return r && Array.isArray(r.s) && r.s.length ? { w: r.w || 0, h: r.h || 0 } : null; }
+  function paint(layer, id) {
+    const r = load()[id];
+    if (!r || !Array.isArray(r.s)) return;
+    css();
+    const k = r.k || layer.clientWidth || 1;
+    const svg = document.createElementNS(NS, "svg");
+    svg.setAttribute("class", "cvk");
+    svg.setAttribute("aria-hidden", "true");
+    const gH = document.createElementNS(NS, "g");
+    gH.setAttribute("class", "cvk-hl");
+    const gI = document.createElementNS(NS, "g");
+    svg.append(gH, gI);
+    r.s.forEach((q) => {
+      if (!q || !Array.isArray(q.p) || q.p.length < 2) return;
+      const p = document.createElementNS(NS, "path");
+      if (q.t !== "h") p.setAttribute("class", `cvk-${["k", "c", "r"].includes(q.c) ? q.c : "k"}`);
+      p.setAttribute("d", pathOf(outline(q, true, k)));
+      (q.t === "h" ? gH : gI).appendChild(p);
+    });
+    layer.appendChild(svg);
+  }
+  // 整塊黑板的上方：藏／顯示自己寫的、列印（瀏覽器的「存成 PDF」）
+  function ovBar(bar, ov, mine) {
+    css();
+    const btn = (t) => { const b = document.createElement("button"); b.type = "button"; b.className = "button secondary"; b.textContent = t; return b; };
+    const g = document.createElement("span");
+    g.className = "cvk-ovb";
+    if (mine) {
+      const tg = btn("藏起我的筆記");
+      tg.addEventListener("click", () => { tg.textContent = ov.classList.toggle("cvk-off") ? "顯示我的筆記" : "藏起我的筆記"; });
+      g.appendChild(tg);
+    }
+    const pr = btn("列印／存成 PDF");
+    pr.addEventListener("click", () => window.print());
+    g.appendChild(pr);
+    bar.insertBefore(g, bar.lastChild);
+  }
+
+  window.BuzzInk = { mount, unmount, meta, paint, ovBar, busy: () => Boolean(cur) || Date.now() - lastInk < 4000, debug: { state: () => ({ id: S.id, n: S.strokes.length, on: S.on, tool: S.tool, color: S.color, penSeen: S.penSeen, undo: S.undo.length }), clearAll: () => { all = {}; try { localStorage.removeItem(KEY); } catch (_e) { /* 無 */ } } } };
 })();
