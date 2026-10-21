@@ -140,7 +140,9 @@ async function run() {
 
         hasToggle: Boolean(document.querySelector('[data-action="toggle-system-keyboard"]')),
         digitsOnKeypad: digits.length,
-        keyCount: keys.length
+        keyCount: keys.length,
+        // 純文字判定題（收斂／發散…）的鍵盤本來就只有判定鍵；題目是隨機抽的，抽到它就不量數字
+        textKind: keys.includes("convergent")
       };
     `);
     if (!input.ok) {
@@ -148,9 +150,9 @@ async function run() {
     } else {
       check("iPad 上輸入框不會叫出系統鍵盤", input.inputmode === "none",
         `inputmode="${input.inputmode}" · coarse=${input.coarse} · 自己寫模式=${input.freeMode}` + (input.inputmode === "none" ? "" : " —— 會蓋掉計算紙，而且要放下筆"));
-      check("數學鍵盤上有全部十個數字", input.digitsOnKeypad === 10,
-        `${input.digitsOnKeypad}/10 個數字，全鍵盤共 ${input.keyCount} 鍵` +
-        (input.digitsOnKeypad === 10 ? "" : " —— 少了數字就一定得回去用系統鍵盤"));
+      check("數學鍵盤上有全部十個數字（文字判定題除外）", input.textKind || input.digitsOnKeypad === 10,
+        `${input.digitsOnKeypad}/10 個數字，全鍵盤共 ${input.keyCount} 鍵${input.textKind ? "（抽到文字判定題）" : ""}` +
+        (input.textKind || input.digitsOnKeypad === 10 ? "" : " —— 少了數字就一定得回去用系統鍵盤"));
       check("留了切回系統鍵盤的出口", input.hasToggle,
         input.hasToggle ? "" : "接實體鍵盤或想打字的人會被鎖死");
     }
