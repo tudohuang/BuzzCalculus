@@ -91,12 +91,11 @@ html.nb .cvb-whole .cvb-stage{width:auto;margin-left:0}
 html.nb .cvb-chalk{width:22px;height:4px;margin:-3px 0 0 -2px;border-radius:1px 3px 3px 1px;background:linear-gradient(90deg,#1f2a44 0,#1f2a44 70%,#c9ced8 70%);box-shadow:0 1px 1px #0003}
 html.nb .cvb-model>.cv2-figure{box-shadow:0 1px 4px #0002}
 `;
-  // 原型（2026-10-20）：筆記本版 —— 同一個黑板引擎（一行一行寫、分欄、換面），換成紙、橫線、紅色邊線、藍黑筆。
-  // ?notebook 打開、?notebook=0 關掉，記在這台瀏覽器
+  // 筆記本（同一個引擎換成紙與筆）2026-10-21 起是預設；黑板是秘密：?blackboard（?notebook=0）換、?notebook 換回，記在這台
   try {
-    const q = /[?&]notebook(?:=(\w+))?/.exec(location.search);
-    if (q) localStorage.setItem("buzzcalculus.notebook", q[1] === "0" ? "" : "1");
-    if (localStorage.getItem("buzzcalculus.notebook")) document.documentElement.classList.add("nb");
+    const q = /[?&](notebook|blackboard)(?:=(\w+))?/.exec(location.search);
+    if (q) localStorage.setItem("buzzcalculus.notebook", q[1] === "blackboard" || q[2] === "0" ? "0" : "1");
+    if (localStorage.getItem("buzzcalculus.notebook") !== "0") document.documentElement.classList.add("nb");
   } catch (_e) { /* 私密模式 */ }
   // 筆記本的字：霞鶩文楷 TC（楷書的手寫感、還是好讀）。Google Fonts 照 unicode-range 切片，只抓這一課用到的字；
   // 抓不到（離線、被擋）就用系統的楷體，再不行用一般字。

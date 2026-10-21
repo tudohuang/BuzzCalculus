@@ -119,6 +119,8 @@ console.log(`    不符      ${buckets.mismatch.length}`);
 console.log(`  無法驗證    ${buckets.unverified.length + buckets.unsupported.length + buckets.error.length}`);
 console.log(`    題幹形式尚未支援  ${buckets.unsupported.length}`);
 console.log(`    數值方法不收斂    ${buckets.unverified.length}`);
+// 列出題號：這一類跟機器有關（2026-10-21 CI 比本機多一題不收斂，只看數字找不到是哪題）
+buckets.unverified.forEach(({ problem, result }) => console.log(`      ${problem.id}  ${result.reason || ""}`));
 console.log(`    解析／求值失敗    ${buckets.error.length}`);
 
 const byMethod = {};
