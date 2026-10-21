@@ -264,7 +264,8 @@ async function run() {
     await chrome.send("Emulation.setTouchEmulationEnabled", { enabled: true, maxTouchPoints: 5 });
     await chrome.navigate(`${server.url}/index.html`);
     // 導覽（coach marks）會蓋住真的觸控事件：當作看過了（跟 e2e_mobile 同一招）
-    await evaluate(`localStorage.clear(); localStorage.setItem("buzzcalculus.records.v1", JSON.stringify({ tours: { home: 1, quiz: 1 }, settings: { boardSplit: true } })); return 1;`);
+    // 這支量的是黑板（2026-10-21 起預設是筆記本、黑板是 ?blackboard 的秘密功能）；筆記本由 tmp/solve_board.js 等量
+    await evaluate(`localStorage.clear(); localStorage.setItem("buzzcalculus.notebook", "0"); localStorage.setItem("buzzcalculus.records.v1", JSON.stringify({ tours: { home: 1, quiz: 1 }, settings: { boardSplit: true } })); return 1;`);
     await chrome.navigate(`${server.url}/index.html`);
     await evaluate(`const b = document.querySelector('[data-action="set-onboarding-context"][data-context="newbie"]'); if (b) b.click(); return 1;`);
     check("新手進課程表", await waitFor('document.querySelector(".cv2-index")'));
