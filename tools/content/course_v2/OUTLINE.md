@@ -346,7 +346,7 @@ id 定下來就不改；插課、移課只改 order。寫課時引用其他課�
 - 10.16 | driven-oscillator | 受迫振盪 |
 - 10.17 | resonance | 共振 |
 
-## Stage 11 高階技巧（Advanced Calculus Techniques，支線）
+## Stage 11 高階技巧（Advanced Calculus Techniques，支線，隱藏）
 
 ### 11A 漸近與極限技巧
 - 11.1 | taylor-limits-higher | 高階 Taylor 求極限 |
@@ -416,7 +416,7 @@ id 定下來就不改；插課、移課只改 order。寫課時引用其他課�
 - 11.49 | residue-theorem | 留數定理 |
 - 11.50 | residue-real-integrals | 用留數算實積分 | ∫ dx/(1 + x⁴)
 
-## Stage 12 分析入門（Real Analysis & Measure，支線）
+## Stage 12 分析入門（Real Analysis & Measure，支線，隱藏）
 
 ### 12A 證明工具
 - 12.1 | propositions-quantifiers | 命題與量詞 | ∀、∃
@@ -493,3 +493,9 @@ id 定下來就不改；插課、移課只改 order。寫課時引用其他課�
 - 12.52 | monotone-convergence-theorem | 單調收斂定理（測度版） |
 - 12.53 | fatou-lemma | Fatou 引理 |
 - 12.54 | dominated-convergence | 控制收斂定理 | 回到 lim ∫ fₙ =? ∫ lim fₙ
+
+## Stage 13 微分幾何（Differential Geometry，支線，隱藏）
+
+### 13A 曲線
+- 13.1 | dg-parametric-curves | 曲線的參數化 | 速度向量、正則曲線、重新參數化、弧長參數
+- 13.2 | dg-curvature-osculating-circle | 曲率與密切圓 | 曲率公式、曲率半徑、圓心與密切圓方程式

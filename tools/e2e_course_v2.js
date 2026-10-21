@@ -41,6 +41,8 @@ function check(name, ok, detail = "") {
 const outlineBox = { window: {} };
 vm.runInNewContext(fs.readFileSync(path.join(ROOT, "src", "course_v2", "outline.js"), "utf8"), outlineBox);
 const OUTLINE = outlineBox.window.BUZZ_COURSE_V2;
+// 藏起來的 Stage（hidden，網址 ?unlock= 才出現）：課程表不列；期望值只看看得到的（解鎖另外測：tmp/unlock.js）
+OUTLINE.stages = OUTLINE.stages.filter((s) => !s.hidden);
 const sourceOf = (id) => {
   const file = path.join(ROOT, "tools", "content", "course_v2", "lessons", `${id}.json`);
   return fs.existsSync(file) ? JSON.parse(fs.readFileSync(file, "utf8")) : null;
@@ -186,9 +188,9 @@ async function run() {
       overflow: window.__c.overflow(),
       small: window.__c.smallTargets()
     };`);
-    check(`課程表：13 個 Stage、${TOTAL} 課都列著`, index.stages === OUTLINE.stages.length && index.h2.includes(`${TOTAL} 課`), `${index.stages} 個 Stage · ${index.h2}`);
+    check(`課程表：${OUTLINE.stages.length} 個 Stage、${TOTAL} 課都列著`, index.stages === OUTLINE.stages.length && index.h2.includes(`${TOTAL} 課`), `${index.stages} 個 Stage · ${index.h2}`);
     check("手機上掃得完：只有目前的 Stage 展開、其他收著", index.open.length === 1 && index.open[0] === "cv2-stage-0" && index.rows > 0 && index.rows < 40, `${index.open.join(",")} · 看得到 ${index.rows} 列`);
-    check("Stage 11、12 標成支線", index.branch === 2, String(index.branch));
+    check("支線都標成支線", index.branch === OUTLINE.stages.filter((s) => s.branch).length, String(index.branch));
     check("還沒寫的課顯示「尚未開放」，數量對得上大綱", index.soon === MISSING, `${index.soon} / ${MISSING}`);
     check("主按鈕指向第一課 0.1", /^開始：0\.1 /.test(index.primary), index.primary);
     check("畢業關不鎖", index.grad);

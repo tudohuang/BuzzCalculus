@@ -40,6 +40,8 @@ function check(name, ok, detail = "") {
 const box = { window: {} };
 vm.runInNewContext(fs.readFileSync(path.join(ROOT, "src", "course_v2", "outline.js"), "utf8"), box);
 const OUTLINE = box.window.BUZZ_COURSE_V2;
+// 藏起來的 Stage（hidden）不上地圖、不算進點亮數：期望值只看看得到的
+OUTLINE.stages = OUTLINE.stages.filter((s) => !s.hidden);
 const IDS = OUTLINE.stages.flatMap((s) => s.chapters.flatMap((c) => c.lessons.map((l) => l.id)));
 const PRE = {};
 IDS.forEach((id) => {
@@ -172,7 +174,7 @@ async function run() {
     // 拉遠到底：13 個 Stage 都在畫面裡
     for (let k = 0; k < 4; k += 1) { await evaluate(`window.__m.click('[data-cmap="out"]'); return 1;`); await settled(); }
     const out = await dbg();
-    check("「−」拉到最遠：13 個 Stage 都在畫面裡、還是 Stage 那一層", out.visibleStages === OUTLINE.stages.length && out.level === "stage", `${out.visibleStages} 個 · ${out.level}`);
+    check("「−」拉到最遠：每個 Stage 都在畫面裡、還是 Stage 那一層", out.visibleStages === OUTLINE.stages.length && out.level === "stage", `${out.visibleStages} 個 · ${out.level}`);
     await shot("phone-light-stages-fit");
 
     // 兩指捏合（以兩指中點為中心）放大
@@ -423,7 +425,7 @@ async function run() {
     await evaluate(`window.BuzzCourseMap.look("fit"); return 1;`);
     await settled();
     const desk = await evaluate(`return { d: window.__m.dbg(), overflow: window.__m.overflow() };`);
-    check("桌機：整張圖一眼看得到 13 個 Stage", desk.d.visibleStages === OUTLINE.stages.length && desk.d.level === "stage", `${desk.d.visibleStages} · ×${desk.d.scale.toFixed(3)}`);
+    check("桌機：整張圖一眼看得到每個 Stage", desk.d.visibleStages === OUTLINE.stages.length && desk.d.level === "stage", `${desk.d.visibleStages} · ×${desk.d.scale.toFixed(3)}`);
     check("桌機：沒有橫向溢出", desk.overflow <= 1, `${desk.overflow}px`);
     await shot("desktop-light-stages");
     // 滑鼠滾輪以游標為中心縮放
