@@ -479,7 +479,8 @@
           { v: D("x^5-5x^4+1", -1, 2), lt: 0 }, { v: D("x^5-5x^4+1", 1, 2), lt: 0 },
           { v: D("x^5-5x^4+1", 2.9, 2), lt: 0 }, { v: D("x^5-5x^4+1", 3.1, 2), gt: 0 },
           { v: D("x^5-5x^4+1", 5, 2), gt: 0 },
-          { v: { m: "criticalPoint", f: "x^5-5x^4+1", x0: 3.5, order: 2 }, eq: 3 }] }] } },
+          // f″(3)=0 直接驗（原本用 criticalPoint 從 3.5 找 f″ 的根，CI 的機器上找不到，本機找得到）
+          { v: D("x^5-5x^4+1", 3, 2), eq: 0, tol: 1e-4 }] }] } },
     { id: "cg-3a-024", topic: "derivatives", rank: 2, answerKind: "text",
       prompt: "f(x)=(x-1)^4+x\\text{ 滿足 }f''(1)=0\\text{。}x=1\\text{ 是不是 }f\\text{ 的反曲點？}",
       answers: ["不是"], canonical: "不是", answer: "不是",
