@@ -67,7 +67,8 @@ async function run() {
   const boot = async (size, records, id = L.id) => {
     await chrome.send("Emulation.setDeviceMetricsOverride", size);
     await chrome.navigate(`${server.url}/index.html`);
-    await evaluate(`localStorage.clear(); localStorage.setItem("buzzcalculus.records.v1", ${JSON.stringify(JSON.stringify(records))}); return 1;`);
+    // 這支量的是黑板（2026-10-21 起預設是筆記本、黑板是 ?blackboard 的秘密功能）；筆記本由 tmp/solve_board.js 等量
+    await evaluate(`localStorage.clear(); localStorage.setItem("buzzcalculus.notebook", "0"); localStorage.setItem("buzzcalculus.records.v1", ${JSON.stringify(JSON.stringify(records))}); return 1;`);
     await chrome.navigate(`${server.url}/index.html`);
     await waitFor(`document.querySelector("#app")`, 30000);
     await evaluate(`const b = document.createElement("button"); b.dataset.action = "open-course-lesson"; b.dataset.lessonId = ${JSON.stringify(id)}; document.querySelector("#app").appendChild(b); b.click(); return 1;`);
