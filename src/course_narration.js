@@ -6,6 +6,8 @@
   const CSS = `.cv2s.has-dock { padding-bottom: var(--cv2s-room, 72px); }
 .cv2s-dock { position: fixed; z-index: 30; left: 0; right: 0; bottom: calc(var(--cv2s-nav, 8px) + 8px); display: flex; flex-direction: column; align-items: center; gap: 4px; pointer-events: none; }
 .cv2s-dock > * { pointer-events: auto; }
+.cv2s-dock.is-top { bottom: auto; align-items: flex-end; }
+html.nb .cv2s-dots { padding-right: var(--nb-dock, 0px); }
 .cv2s-voice { display: inline-flex; gap: 4px; padding: 4px; border: 1px solid var(--line); border-radius: 999px; background: var(--paper); box-shadow: 0 6px 18px rgb(0 0 0 / 0.12); }
 .cv2s-voice button { display: inline-flex; white-space: nowrap; align-items: center; justify-content: center; gap: 4px; min-width: 44px; min-height: 40px; padding: 0 12px; border: 1px solid transparent; border-radius: 999px; background: var(--paper); color: var(--ink); font: inherit; font-size: 0.86rem; font-weight: 700; font-variant-numeric: tabular-nums; cursor: pointer; }
 .cv2s-voice button[aria-pressed="true"] { border-color: var(--gold); background: color-mix(in srgb, var(--gold) 14%, var(--paper)); }
@@ -233,6 +235,20 @@
     const nav = host.measureNav();
     const r = root.getBoundingClientRect();
     const de = document.documentElement;
+    // 筆記本：播放列放上面，跟節的圓點同一列（圓點那一列右邊讓出位置，放不下就換行）
+    const dots = de.classList.contains("nb") && root.querySelector(".cv2s-dots");
+    dock.classList.toggle("is-top", Boolean(dots));
+    if (dots) {
+      root.classList.remove("has-dock");
+      de.style.scrollPaddingBottom = "";
+      dock.style.left = "auto";
+      root.style.setProperty("--nb-dock", `${dock.offsetWidth + 12}px`);
+      const d = dots.getBoundingClientRect();
+      Object.assign(dock.style, { left: "auto", right: `${Math.max(0, de.clientWidth - r.right + parseFloat(getComputedStyle(root).paddingRight || "0"))}px`, top: `${Math.round(d.top + Math.max(0, Math.min(d.height, 52) - dock.offsetHeight) / 2)}px` });
+      if (!ro && window.ResizeObserver) { ro = new ResizeObserver(() => placeDock()); ro.observe(dock); }
+      return;
+    }
+    dock.style.top = "";
     const room = dock.offsetHeight + 16;
     dock.style.setProperty("--cv2s-nav", `${host.navH || 8}px`);
     dock.style.left = `${Math.max(0, r.left)}px`;

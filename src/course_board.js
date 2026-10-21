@@ -49,7 +49,10 @@ html.nb .cvb-p{--line:#1e2b4a14;--line-strong:#1e2b4abf;--muted:#566173}
 .cvb-stage>.cvb-onboard .course-check-why:not(:last-child){margin-bottom:6px}
 .cvb-stage>.cvb-onboard .cv2p-see{pointer-events:auto;min-height:32px;margin:0;padding:2px 10px;border-radius:999px;background:color-mix(in srgb,var(--paper) 88%,transparent);box-shadow:0 2px 8px #0003}
 .cvb-next{position:absolute;z-index:3;right:16px;bottom:12px;margin:0;padding:4px 10px;border-radius:999px;background:color-mix(in srgb,var(--paper) 88%,transparent);color:var(--ink);font-size:.85rem;font-weight:700;pointer-events:none;animation:cvb-next 1.6s ease-in-out infinite alternate}
-.cvb-stage>.cvb-onboard~.cvb-next{bottom:auto;top:12px}
+.cvb-stage:has(>.cvb-next)>.cvb-onboard{bottom:52px}
+.cvb-stage>.cvb-inpaper{display:none}.cvb-stage>.cvb-inpaper.is-on{display:block}
+.cvb-stage>.cvb-onboard.cvb-inpaper{right:auto;bottom:auto;z-index:4;padding:8px;border-radius:10px;background:color-mix(in srgb,var(--paper) 94%,transparent);box-shadow:0 2px 10px #0003;pointer-events:auto}
+.cvb-stage>.cvb-inpaper{border:0}html.nb .cvb-stage>.cvb-inpaper{padding:0;background:none;box-shadow:none}
 @keyframes cvb-next{from{opacity:.55}to{opacity:1}}
 @media (prefers-reduced-motion:reduce){.cvb-next{animation:none}}
 .cvb-model{position:absolute;z-index:2;left:var(--mx,0);top:var(--my,0);width:var(--mw,0);height:var(--mh,0);display:grid;place-items:center;overflow:auto;overscroll-behavior:contain;scrollbar-width:thin}
@@ -215,6 +218,16 @@ html.nb .cvb-model>.cv2-figure{box-shadow:0 1px 4px #0002}
         beats.push({ ...b, board: (si ? [{ do: "clear" }] : []).concat(head, board || []) });
       });
       // 板上出題：選擇題（小測、先猜）與證明的「用在哪一步」；拖圖、自己算、排順序還是在板子下面
+      // 自己算（打字的）：題目寫上板，下面空兩行給輸入框（course_sections 把它疊在那兩行上）
+      if (s.solve && bd && !s.drag) {
+        const ck = Number.isInteger(s.solve.check) ? (data.checks || [])[s.solve.check] : null;
+        const tag = { kind: "solve", si };
+        const q = quizLines(tag, s.solve.ask || (ck && ck.ask) || "自己算算看", "自己算", [], []).concat([0, 1].map(() => ({ do: "write", line: "　", qz: "in", ...tag })));
+        q[0].keep = q.length - 1;
+        qz.push(beats.length);
+        beats.push({ say: "", show: [], quiz: tag, board: q });
+        return;
+      }
       const kind = s.check !== undefined ? "check" : s.predict ? "predict" : s.where ? "where" : "";
       const item = kind === "check" ? (data.checks || [])[s.check] : kind === "predict" ? s.predict : s.where && { ask: s.where.ask, options: s.where.steps };
       if (!kind || !item || !Array.isArray(item.options) || s.drag || s.solve || s.order || !bd) { qz.push(-1); return; }
@@ -826,7 +839,7 @@ html.nb .cvb-model>.cv2-figure{box-shadow:0 1px 4px #0002}
     B.cur = c;
     const beat = c.beat === undefined ? B.at : c.beat;
     const sig = `${c.g}|${c.q.toFixed(4)}|${c.entry.toFixed(3)}|${beat}`;
-    if (sig !== B.last) { B.last = sig; paint(c.g, c.q, beat, c.entry); }
+    if (sig !== B.last) { B.last = sig; paint(c.g, c.q, beat, c.entry); placeSolve(); }
     if (B.qa >= 0 && B.at === B.qa - 1 && !B.frozen) {
       const g0 = B.M.acts.findIndex((x) => x.b === B.qa);
       if (g0 >= 0 && c.g >= g0) { goQuiz(now); return kick(); }
@@ -845,6 +858,20 @@ html.nb .cvb-model>.cv2-figure{box-shadow:0 1px 4px #0002}
     if (!stage || !B.model) return;
     const g = B.model;
     [["--mx", g.x], ["--my", g.y], ["--mw", g.w], ["--mh", g.h]].forEach(([k, v]) => stage.style.setProperty(k, `${Math.round(v)}px`));
+  }
+  // 自己算的輸入框：疊在板上題目底下空的那兩行（跟著板子捲；題目還沒寫完先藏著）
+  function placeSolve() {
+    const stage = B && B.el.parentNode && B.el.parentNode.closest && B.el.parentNode.closest(".cvb-stage");
+    const w = stage && stage.querySelector(":scope > .cvb-inpaper");
+    if (!w) return;
+    const v = B.V && B.V.find((x) => x.it.a.qz === "in" && x.it.a.si === B.si);
+    const on = Boolean(v && B.at === B.qa && B.qOn);
+    w.classList.toggle("is-on", on);
+    if (!on) return;
+    const ask = B.V.find((x) => x.it.a.qz === "ask" && x.it.a.kind === "solve" && x.it.a.si === B.si);
+    const sr = stage.getBoundingClientRect(), r = v.el.getBoundingClientRect(), br = B.el.getBoundingClientRect();
+    const x = (ask || v).el.getBoundingClientRect().left;
+    Object.assign(w.style, { left: `${Math.round(x - sr.left)}px`, top: `${Math.round(r.top - sr.top)}px`, width: `${Math.round(Math.min(560, Math.max(220, br.right - x - 16)))}px`, visibility: r.top < br.top - 4 || r.top > br.bottom - 40 ? "hidden" : "" });
   }
   function goQuiz(now) {
     B.at = B.qa;
@@ -866,6 +893,7 @@ html.nb .cvb-model>.cv2-figure{box-shadow:0 1px 4px #0002}
     const s = api.data.sections[si];
     if (s.check !== undefined) return (api.state.picks[s.check] || []).length > 0;
     if (s.where) return ((api.state.sec.whr || {})[si] || []).length > 0;
+    if (s.solve) { const st = (api.state.cs || {})[si] || {}; return Boolean(st.tries || st.ok || st.shown || (window.BuzzCourseSolve && window.BuzzCourseSolve.resolved(api, si))); }
     return api.state.sec.pred[si] !== undefined;
   }
   function stop() { window.cancelAnimationFrame(raf); window.clearTimeout(poll); raf = poll = 0; }
@@ -894,10 +922,10 @@ html.nb .cvb-model>.cv2-figure{box-shadow:0 1px 4px #0002}
     Object.assign(root.style, { left: `${left + gap}px`, top: `${top}px`, right: `${gap}px`, bottom: `${bottom}px` });
     return root.getBoundingClientRect();
   }
-  // 筆記本的板子能多高：本文區底 − 板頂（外框捲過也照原位算）− 底下的播放列
+  // 筆記本的板子能多高：本文區底 − 板頂（外框捲過也照原位算）−（播放列在上面，底下只留一點邊）
   function nbRoom(box) {
     const root = document.querySelector("[data-cv2s]");
-    return Math.round(box.bottom - B.el.getBoundingClientRect().top - (root ? root.scrollTop : 0) - 92);
+    return Math.round(box.bottom - B.el.getBoundingClientRect().top - (root ? root.scrollTop : 0) - 28);
   }
   // 筆記本：板上做不了的（自己算、拖曳、排順序）在板子下面 —— 外框可以往下捲；剛出現時捲到看得到
   function nbBelow(root, si) {
@@ -939,7 +967,7 @@ html.nb .cvb-model>.cv2-figure{box-shadow:0 1px 4px #0002}
       stop();
       const el = mk("div", "cvb");
       el.setAttribute("aria-hidden", "true");
-      el.addEventListener("scroll", () => { if (el.isConnected) el.__st = el.scrollTop; }, { passive: true });
+      el.addEventListener("scroll", () => { if (el.isConnected) el.__st = el.scrollTop; if (B && B.el === el) placeSolve(); }, { passive: true });
       B = { key, si: sec.si, state: api.state, el, at: -1, sec: S, M: null, w: 0, raw: null, rawAt: 0, tau: 0, clip: "", pending: 0, s0: null, q0: now };
     }
     B.api = api;
@@ -961,7 +989,7 @@ html.nb .cvb-model>.cv2-figure{box-shadow:0 1px 4px #0002}
     pen();
     // 出題那一句：最後一句寫完才接（frame 的 goQuiz）；已經在出題、或這一題答過了，就停在出題
     const lastLocal = local === api.data.sections[sec.si].beats.length - 1;
-    if (B.qa >= 0 && lastLocal && (B.at === B.qa || answered(api, sec.si))) { if (B.at !== B.qa) goQuiz(now); quizState(); kick(); return; }
+    if (B.qa >= 0 && lastLocal && (B.at === B.qa || answered(api, sec.si))) { if (B.at !== B.qa) goQuiz(now); quizState(); placeSolve(); kick(); return; }
     const b = S.beats[at] || {};
     const open = Boolean(b.why && (!window.BuzzCourseProof || (sec.why[`${sec.si}-${local}`] || {}).open));
     if (B.at !== at) {
@@ -1076,6 +1104,6 @@ html.nb .cvb-model>.cv2-figure{box-shadow:0 1px 4px #0002}
 
   window.BuzzBoard = {
     sync, tex, KOPT, debug, whole: WHOLE, overview,
-    state: () => (B && B.M ? { key: B.key, at: B.at, g: (B.cur || {}).g, q: (B.cur || {}).q, mode: (B.cur || {}).mode, clip: B.clip, tau: Math.round(B.tau || 0), running: Boolean(raf), p: B.cur && B.cur.mode !== "done" ? (B.cur.g + B.cur.q) : 1 } : null)
+    state: () => (B && B.M ? { key: B.key, at: B.at, qa: B.qa, qOn: Boolean(B.qOn), g: (B.cur || {}).g, q: (B.cur || {}).q, mode: (B.cur || {}).mode, clip: B.clip, tau: Math.round(B.tau || 0), running: Boolean(raf), p: B.cur && B.cur.mode !== "done" ? (B.cur.g + B.cur.q) : 1 } : null)
   };
 })();

@@ -169,6 +169,9 @@ async function run() {
   };
   // 在這一題的輸入框裡填好答案、按送出（box = data-cs 的值）
   const typeAndSend = async (box, value) => {
+    // 一課一塊黑板：輸入框疊在板上題目底下，題目寫完才出現（2026-10-21）
+    // 句子一口氣點完時，板子照寫字的速度把整節寫完才輪到題目：多等一點
+    if (!(await evaluate(`return Boolean(document.querySelector('[data-cs="${box}"] [data-cs-input]:disabled'));`))) await waitFor(`window.__b.find('[data-cs="${box}"] [data-cs-send]')`, 20000);
     await evaluate(`const i = document.querySelector('[data-cs="${box}"] [data-cs-input]'); i.value = ${JSON.stringify(value)}; i.dispatchEvent(new Event("input", { bubbles: true })); return 1;`);
     await evaluate(`window.__b.click('[data-cs="${box}"] [data-cs-send]'); return 1;`);
     await sleep(250);

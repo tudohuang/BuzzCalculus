@@ -412,6 +412,8 @@
       void open;
     }
     if (all && s.solve && SV()) action = SV().view(api, si);
+    // 自己算：題目寫在板上，輸入框疊在題目底下（course_board.js 的 placeSolve）
+    if (bd && whole && all && s.solve && !s.drag && SV()) action = action.replace('class="cv2s-act course-check cs-solve', 'class="cv2s-act course-check cs-solve cvb-onboard cvb-inpaper');
     if (P && !all && cur.why) action = P.why(api, si, shown - 1);
     if (P && all && (s.order || s.where)) action = P.view(api, si);
     // 證明的「為什麼」與「用在哪一步」也寫在板上、在板上點（course_board.js 的 lessonBoard）；下面只留理由與「直接看」
@@ -432,7 +434,7 @@
     // 小測的理由／「對了」疊在板子底部；拖曳、自己算、排順序、用在哪一步、證明的「為什麼」這些板上做不了的動作照舊放在板子下面。
     const onboard = bd && whole && /cvb-onboard/.test(action);
     const settled = all && (onboard ? ok || (s.predict && sec.pred[si] !== undefined) : !action || ok || Boolean(s.order || s.where));
-    const nextHint = bd && whole && settled ? `<p class="cvb-next" aria-hidden="true">點黑板 → ${lastOne ? "完成這一課" : "下一節"}</p>` : "";
+    const nextHint = bd && whole && settled ? `<p class="cvb-next" aria-hidden="true">${typeof document !== "undefined" && document.documentElement.classList.contains("nb") ? "點一下" : "點黑板"} →${lastOne ? "完成這一課" : "下一節"}</p>` : "";
     return `
       <article class="cv2s-sec${bd ? " has-board cvb-sec" : ""}${bd && whole ? " cvb-whole" : ""}" aria-label="第 ${si + 1} 節">
         <h3><small>${si + 1} / ${n}</small>${fmt(s.title)}${P && s.proof ? P.tag(api, s) : ""}</h3>
