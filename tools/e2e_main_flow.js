@@ -268,6 +268,9 @@ async function run() {
         // （app 刻意只讓答錯的題等使用者按，好讓訂正看得完）。
         // 第一版只等 250ms×4 就放棄，把自動前進誤判成死路。
         stuck += 1;
+        // 這支只會點選項、打答案：抽到圖上點位、畫圖這類題（題庫變大以後抽得到）就跳過，不是卡住
+        const skip = document.querySelector('[data-action="skip"]');
+        if (stuck > 3 && skip && !skip.disabled) { skip.click(); advanced += 1; stuck = 0; await new Promise((r) => setTimeout(r, 400 * (window.__slow || 1))); continue; }
         if (stuck > 10) break;
         await new Promise((r) => setTimeout(r, 400 * (window.__slow || 1)));
       }
