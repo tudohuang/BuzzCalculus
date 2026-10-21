@@ -1,6 +1,6 @@
 // 分節的黑板 v2（beat.board；規格見 SCHEMA.md「黑板」，樣式見 docs/board-style.md）。data-lazy="board"：有黑板的課才抓。
-// 一節整個先排好（course_board_layout.js：每一步之後每一項在哪、標籤放哪、箭頭怎麼彎、板多高），畫面只是把「時間 → 第幾步、進度多少」畫出來：
-//   旁白開著：時間 = <audio>.currentTime（暫停、1.25×／1.5×、拖、卡住都自動對）；動作的起點是 say 裡某個詞被念到的那一刻（on）。
+// 一節整個先排好（course_board_layout.js），畫面只把「時間 → 第幾步、進度多少」畫出來：
+//   旁白開著：時間 = <audio>.currentTime（變速、拖、卡住都自動對）；動作從 say 裡某個詞被念到那一刻起（on）。
 //   沒旁白：同一張時間表跑在虛擬時間上（照 say 的字數）；下一句 = 這一句畫完；reduced-motion 直接到位。
 // 每一格只寫 transform／opacity／mask／stroke-dashoffset；量位置只在排版（換節、換寬度、字型載完）時。
 (function () {
@@ -8,8 +8,7 @@
   const LY = window.BuzzBoardLayout;
   // 粉筆灰／紙的顆粒：一張很淡的灰色雜訊，兩個主題共用（不要更明顯：再多就變成髒）
   const NOISE = "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 .07 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")";
-  // 2026-10-18 真的黑板：淺色、深色主題都是一塊墨綠的板、粉筆色的字（白、黃、藍、粉紅、綠、紫），木框，底下一條放粉筆的溝。
-  // 板面：雜訊（粉筆灰）＋左上亮右下暗的漸層＋幾道淡淡的擦拭痕。字有一點粉筆的暈（text-shadow），記號的線有一點毛邊（SVG filter）。
+  // 真的黑板（兩個主題都是）：墨綠板、粉筆色字、木框與粉筆溝；板面＝雜訊＋漸層＋擦痕，字有粉筆暈、線有毛邊。
   const CSS = `.cvb-slot{position:relative;margin:0 0 22px;padding-bottom:12px}
 .cvb-slot:has(.cvb)::after{content:"";position:absolute;left:4%;right:4%;bottom:0;height:10px;border-radius:0 0 6px 6px;background:linear-gradient(90deg,transparent 18%,#f4f1e6 18%,#f4f1e6 23%,transparent 23%,transparent 27%,#f3d36b 27%,#f3d36b 30.5%,transparent 30.5%) 0 2px/100% 4px no-repeat,linear-gradient(180deg,#8a5f37,#5e3e22);box-shadow:0 2px 3px #0000002e;pointer-events:none}
 .cvb{--k:#eef1e8;--kb:#1f3a2f;--kl:#6b4a2b;--kg:#f5d56e;--kc:#a6d4f7;--kn:#b6efc2;--kr:#ffa59a;--kv:#d9bcff;position:relative;overflow:hidden;min-height:72px;border:7px solid #6e4a2a;border-radius:10px;background:${NOISE},linear-gradient(115deg,transparent 30%,#ffffff07 38%,transparent 46%),linear-gradient(160deg,transparent 55%,#ffffff05 62%,transparent 70%),radial-gradient(130% 100% at 25% 0%,#2a4a3c,var(--kb) 70%,#18302500);background-color:var(--kb);box-shadow:inset 0 0 0 1px #00000059,inset 0 2px 14px #0000004d,0 1px 0 #4b311b;color:var(--k);cursor:pointer;-webkit-tap-highlight-color:transparent;contain:layout paint}
@@ -69,6 +68,7 @@ html.nb .cvb-p{--line:#1e2b4a14;--line-strong:#1e2b4abf;--muted:#566173}
 .cvb-ov-meas{position:absolute;left:0;top:0;visibility:hidden;pointer-events:none}
 html.nb .cv2s.cv2-lesson.is-nb{position:fixed;z-index:5;max-width:none;width:auto;margin:0;padding:18px 24px 0;overflow:hidden;background:var(--paper)}
 @media (max-width:640px){html.nb .cv2s.cv2-lesson.is-nb{padding:12px 10px 0}}
+html.nb .cv2s.cv2-lesson.is-nb.nb-below{overflow-y:auto;padding-bottom:110px}
 html.nb .cvb{--k:#1e2b4a;--kb:#fcf9f1;--nbm:#eba4a0;--nbg:#e2e8f1;--nbG:#cfd9e8;--kg:#c2410c;--kc:#1d4ed8;--kn:#15803d;--kr:#dc2626;--kv:#7c3aed;border:0;border-radius:6px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='p'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .45 0 0 0 0 .38 0 0 0 0 .25 0 0 0 .07 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23p)'/%3E%3C/svg%3E"),var(--kb);box-shadow:0 0 0 1px #0000000d,0 1px 2px #0000000d,0 6px 22px #00000014;text-shadow:none}
 html.nb .cvb-whole .cvb-stage{margin-top:14px}
 html.nb .cvb-c{background:linear-gradient(90deg,transparent 11px,var(--nbm) 11px,var(--nbm) 12px,transparent 12px,transparent 14px,var(--nbm) 14px,var(--nbm) 15px,transparent 15px),linear-gradient(90deg,var(--nbG) 1px,transparent 1px) 0 0/120px 120px,linear-gradient(180deg,var(--nbG) 1px,transparent 1px) 0 0/120px 120px,linear-gradient(90deg,var(--nbg) 1px,transparent 1px) 0 0/24px 24px,linear-gradient(180deg,var(--nbg) 1px,transparent 1px) 0 0/24px 24px}
@@ -262,12 +262,10 @@ html.nb .cvb-model>.cv2-figure{box-shadow:0 1px 4px #0002}
     const pad = W0 < 480 ? [16, 16] : [24, 20];
     const W = W0 - 2 * pad[0];
     const smin = 16 / (F * 0.95);
-    // 板子一律同一個大小（每一節都一樣，不忽大忽小）：畫面高度的 45%（280–560px），字從上面開始寫；
-    // 寫得比板子還多就在板子裡捲（往上滑看前面寫過的），鏡頭跟著粉筆走（paint 的 follow）
-    // 手機（窄）38%、平板與桌機 45%：手機上板子＋句子＋動作要放得進一屏。整課一塊時高一點（桌機 60%、手機 42%）
-    // 筆記本：板子吃滿本文區剩下的高度（扣掉底下的播放列）
+    // 板子每一節一樣大（畫面高的一個比例），寫不下就在板裡捲、鏡頭跟著粉筆；筆記本吃滿本文區剩下的高度
     const nbBox = document.documentElement.classList.contains("nb") && B.whole && B.el.closest("[data-cv2s] [data-cvb-slot]") ? nbFit() : null;
-    const nbCap = nbBox ? Math.round(nbBox.bottom - B.el.getBoundingClientRect().top - 92) : 0;
+    const nbCap = nbBox ? nbRoom(nbBox) : 0;
+    B.capNb = nbCap;
     const cap = nbCap > 240 ? nbCap : B.whole
       ? Math.max(300, Math.min(760, Math.round((window.innerHeight || 800) * ((window.innerWidth || 800) < 600 ? (B.lesson && B.lesson.anyFig ? 0.56 : 0.42) : 0.6))))
       : Math.max(260, Math.min(560, Math.round((window.innerHeight || 800) * ((window.innerWidth || 800) < 600 ? 0.38 : 0.45))));
@@ -896,6 +894,25 @@ html.nb .cvb-model>.cv2-figure{box-shadow:0 1px 4px #0002}
     Object.assign(root.style, { left: `${left + gap}px`, top: `${top}px`, right: `${gap}px`, bottom: `${bottom}px` });
     return root.getBoundingClientRect();
   }
+  // 筆記本的板子能多高：本文區底 − 板頂（外框捲過也照原位算）− 底下的播放列
+  function nbRoom(box) {
+    const root = document.querySelector("[data-cv2s]");
+    return Math.round(box.bottom - B.el.getBoundingClientRect().top - (root ? root.scrollTop : 0) - 92);
+  }
+  // 筆記本：板上做不了的（自己算、拖曳、排順序）在板子下面 —— 外框可以往下捲；剛出現時捲到看得到
+  function nbBelow(root, si) {
+    const box = document.querySelector("[data-cv2s].is-nb");
+    if (!box) return;
+    const act = root.querySelector(".cv2s-sec > .cv2s-act:not(.cvb-onboard)");
+    box.classList.toggle("nb-below", Boolean(act));
+    if (!act) { B.below = -1; if (box.scrollTop) box.scrollTo({ top: 0 }); return; }
+    if (B.below === si) return;
+    B.below = si;
+    window.requestAnimationFrame(() => {
+      const need = act.getBoundingClientRect().bottom - (box.getBoundingClientRect().bottom - 96);
+      if (need > 0) box.scrollBy({ top: need, behavior: reduced() ? "auto" : "smooth" });
+    });
+  }
 
   // 筆記本：學生自己寫的那一層（course_ink.js：筆記本＋一課一塊板才抓）
   function pen() {
@@ -922,6 +939,7 @@ html.nb .cvb-model>.cv2-figure{box-shadow:0 1px 4px #0002}
       stop();
       const el = mk("div", "cvb");
       el.setAttribute("aria-hidden", "true");
+      el.addEventListener("scroll", () => { if (el.isConnected) el.__st = el.scrollTop; }, { passive: true });
       B = { key, si: sec.si, state: api.state, el, at: -1, sec: S, M: null, w: 0, raw: null, rawAt: 0, tau: 0, clip: "", pending: 0, s0: null, q0: now };
     }
     B.api = api;
@@ -933,8 +951,12 @@ html.nb .cvb-model>.cv2-figure{box-shadow:0 1px 4px #0002}
     B.qa = whole ? whole.qz[sec.si] : -1;
     B.secEnd = B.qa >= 0 ? B.qa : whole ? whole.off[sec.si] + api.data.sections[sec.si].beats.length - 1 : S.beats.length - 1;
     // 換節時板子搬進新畫的那一格：搬過去 scrollTop 會歸零，鏡頭要重新對到粉筆
-    if (B.el.parentNode !== slot) { slot.appendChild(B.el); B.followTo = null; B.last = ""; }
-    if (!B.M || B.el.clientWidth !== B.w) build();
+    // 答題後整節重畫也一樣：先把搬之前捲到的位置放回去，不然會先跳回最頂再滑下來
+    if (B.el.parentNode !== slot) { slot.appendChild(B.el); if (B.el.__st) B.el.scrollTop = B.el.__st; B.followTo = null; B.last = ""; }
+    // 筆記本：板頂上面的東西變了（第一節的魔王題卡、換節的重點條）→ 板子的高度跟著重排
+    const room = B.whole && B.capNb ? nbFit() : null;
+    if (!B.M || B.el.clientWidth !== B.w || (room && Math.abs(nbRoom(room) - B.capNb) > 24)) build();
+    if (B.whole) nbBelow(root, sec.si);
     placeModel();
     pen();
     // 出題那一句：最後一句寫完才接（frame 的 goQuiz）；已經在出題、或這一題答過了，就停在出題
@@ -982,8 +1004,7 @@ html.nb .cvb-model>.cv2-figure{box-shadow:0 1px 4px #0002}
     release() { if (B) { B.frozen = null; B.last = ""; kick(); } },
     rebuild() { if (B) { build(); B.last = ""; kick(); } }
   };
-  // 攤開整塊黑板（結算畫面的按鈕）：整課的板重排一次、直接畫到最後（每一句都寫完、小測照作答狀態圈／劃），
-  // 再把每一面切下來並排 —— 一課寫滿的推導一次看完。板子本身是一個會捲的框（一次一面），這裡把每一面各複製一份。
+  // 攤開整塊黑板（結算畫面的按鈕）：整課畫到最後，每一面各複製一份並排，一次看完。
   function overview(api) {
     const whole = lessonBoard(api.data);
     if (!whole || !whole.beats.some((b) => (b.board || []).length)) return false;
