@@ -57,10 +57,21 @@ const INJECT = `<script>
 const clients = new Set();
 let timer = null;
 const IGNORE = /(^|[\\/])(\.git|node_modules|\.claude|docs[\\/]report|tmp|media|manim[\\/]out)([\\/]|$)|daily_one_history/;
+// Windows 只是「讀」檔也會丟 change（NTFS 更新最後存取時間）：開一課要讀新的 lazy 檔 → 被當成改檔 → 重新整理回首頁。
+// 所以只認修改時間／大小真的變了的（沒看過的檔：比開伺服器還新才算；刪掉、改名照樣算）
+const START = Date.now();
+const seen = new Map();
 fs.watch(ROOT, { recursive: true }, (_event, file) => {
   if (!file || IGNORE.test(file)) return;
-  clearTimeout(timer);
-  timer = setTimeout(() => { for (const res of clients) res.write("data: reload\n\n"); }, 250);
+  fs.stat(path.join(ROOT, file), (err, st) => {
+    if (st && st.isDirectory()) return;
+    const sig = err ? "gone" : `${st.mtimeMs}:${st.size}`;
+    const prev = seen.get(file);
+    seen.set(file, sig);
+    if (prev === undefined ? !err && st.mtimeMs < START : prev === sig) return;
+    clearTimeout(timer);
+    timer = setTimeout(() => { for (const res of clients) res.write("data: reload\n\n"); }, 250);
+  });
 });
 
 const server = http.createServer((req, res) => {
