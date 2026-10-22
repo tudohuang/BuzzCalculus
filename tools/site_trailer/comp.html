@@ -1,0 +1,274 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>BuzzCalculus site trailer</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@500;700;900&family=Inter:wght@500;700;800;900&display=swap">
+<link rel="stylesheet" href="/assets/vendor/katex/katex.min.css">
+<style>
+  html, body { margin: 0; background: #000; }
+  #stage { position: relative; width: 1920px; height: 1080px; overflow: hidden; background: #0b0b0d;
+    font-family: "Noto Sans TC", "Microsoft JhengHei", sans-serif; color: #fff; perspective: 2200px; }
+  #bg { position: absolute; inset: -20%; }
+  #dots { position: absolute; inset: 0; opacity: .22;
+    background-image: radial-gradient(rgba(255,255,255,.35) 1px, transparent 1.4px); background-size: 36px 36px; }
+  .layer { position: absolute; inset: 0; transform-style: preserve-3d; will-change: transform, opacity; }
+  /* 視窗：素材 1180×820，圓角、陰影、細邊 */
+  .win { position: absolute; left: 0; top: 0; width: 1180px; height: 820px; transform-origin: 0 0; border-radius: 22px; overflow: hidden;
+    background: #f6f2e8; box-shadow: 0 50px 120px rgba(0,0,0,.6), 0 0 0 1px rgba(255,255,255,.08); }
+  .win img { position: absolute; left: 0; top: 0; width: 1180px; height: 820px; display: block; }
+  .win.tall img { height: auto; }
+  .panel { position: absolute; border-radius: 26px; overflow: hidden; background: #f6f2e8;
+    box-shadow: 0 30px 80px rgba(0,0,0,.55), 0 0 0 1px rgba(255,255,255,.1); }
+  .panel .inner { position: absolute; left: 0; top: 0; width: 1180px; height: 820px; transform-origin: 0 0; }
+  .panel .inner img { width: 1180px; height: 820px; display: block; }
+  .panel .tag { position: absolute; left: 22px; bottom: 18px; padding: 10px 20px; border-radius: 999px; background: rgba(15,14,12,.86);
+    font-weight: 700; font-size: 30px; letter-spacing: .04em; color: #fff; }
+  /* 字 */
+  .kt { position: absolute; left: 0; right: 0; top: 50%; transform: translateY(-50%); text-align: center; }
+  .kt.left { text-align: left; left: 130px; right: auto; }
+  .kt .ln { display: block; white-space: nowrap; overflow: hidden; padding: .06em .02em .12em; line-height: 1.12; }
+  .kt .ln.big { font-weight: 900; font-size: 128px; letter-spacing: .01em; }
+  .kt .ln.mid { font-weight: 900; font-size: 92px; }
+  .kt .ln.sub { font-weight: 500; font-size: 44px; color: rgba(255,255,255,.7); letter-spacing: .06em; margin-top: 18px; }
+  .kt .ch { display: inline-block; will-change: transform, opacity; }
+  .g { color: #E8B84A; }
+  .num { font-family: Inter, sans-serif; font-weight: 900; font-variant-numeric: tabular-nums; letter-spacing: -.035em; }
+  .fx { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); font-size: 150px; color: #fff; white-space: nowrap; }
+  .shade { position: absolute; inset: 0; pointer-events: none; }
+  #flash { position: absolute; inset: 0; background: #fff; opacity: 0; pointer-events: none; }
+  #bar { position: absolute; left: 0; bottom: 0; height: 6px; background: #E8B84A; width: 0; }
+  .ring { position: absolute; border: 5px solid #E8B84A; border-radius: 18px; pointer-events: none; }
+  .phone { position: absolute; width: 390px; height: 844px; border-radius: 56px; overflow: hidden; background: #f6f2e8;
+    box-shadow: 0 0 0 14px #141416, 0 0 0 15px rgba(255,255,255,.12), 0 60px 120px rgba(0,0,0,.6); transform-origin: 50% 50%; }
+  .phone img { width: 390px; display: block; }
+  .mark { display: inline-flex; align-items: center; gap: 26px; font-family: Inter, sans-serif; font-weight: 800; font-size: 104px; letter-spacing: -.02em; }
+  .glyph { width: 120px; height: 120px; border-radius: 30px; background: #E8B84A; color: #17150f; display: inline-grid; place-items: center;
+    font-family: "Times New Roman", serif; font-style: italic; font-size: 82px; font-weight: 400; }
+</style>
+<div id="stage">
+  <div id="bg"></div><div id="dots"></div>
+  <div id="layers"></div>
+  <div id="flash"></div>
+  <div id="bar"></div>
+</div>
+<script src="/assets/vendor/katex/katex.min.js"></script>
+<script src="/tools/site_trailer/scenes.js"></script>
+<script>
+(async () => {
+  const M = await (await fetch("/docs/trailer/site/raw/manifest.json")).json();
+  const CF = await (await fetch("/docs/trailer/course-film/raw/manifest.json")).json();
+  const $ = (id) => document.getElementById(id);
+  const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const E = {
+    out: (t) => 1 - Math.pow(1 - t, 3),
+    expo: (t) => (t >= 1 ? 1 : 1 - Math.pow(2, -10 * t)),
+    inexpo: (t) => (t <= 0 ? 0 : Math.pow(2, 10 * t - 10)),
+    back: (t) => { const c = 1.9; return 1 + (c + 1) * Math.pow(t - 1, 3) + c * Math.pow(t - 1, 2); },
+    whip: (t) => (t <= 0 ? 0 : t >= 1 ? 1 : t < 0.5 ? Math.pow(2, 20 * t - 10) / 2 : (2 - Math.pow(2, -20 * t + 10)) / 2),
+    inout: (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2),
+    lin: (t) => t
+  };
+  const ramp = (t, a, d) => clamp((t - a) / d, 0, 1);
+  // 關鍵影格：[[t, v], …] 或 [[t, a, b, c], …]
+  const kf = (t, keys, ease = E.inout) => {
+    const n = keys[0].length - 1;
+    const at = (i) => keys[i].slice(1);
+    if (t <= keys[0][0]) return at(0);
+    for (let i = 1; i < keys.length; i += 1) {
+      if (t <= keys[i][0]) { const u = ease((t - keys[i - 1][0]) / (keys[i][0] - keys[i - 1][0])); return at(i).map((v, k) => lerp(keys[i - 1][k + 1], v, u)); }
+    }
+    return at(keys.length - 1);
+  };
+
+  // 素材：網站錄的（每格有秒數）、課程片錄的（30fps）、靜態圖
+  const src = (dir, tau) => {
+    if (dir.startsWith("course:")) {
+      const d = dir.slice(7); const n = clamp(Math.floor(tau * 30), 0, CF[d].frames - 1);
+      return `/docs/trailer/course-film/raw/${d}/f${String(n).padStart(5, "0")}.jpg`;
+    }
+    if (dir.startsWith("still:")) return `/docs/trailer/${dir.slice(6)}`;
+    const L = M[dir].frames; let lo = 0, hi = L.length - 1;
+    while (lo < hi) { const mid = (lo + hi + 1) >> 1; if (L[mid].t <= tau) lo = mid; else hi = mid - 1; }
+    return `/docs/trailer/site/raw/${dir}/${L[lo].f}`;
+  };
+  const mark = (dir, k) => M[dir].marks[k];
+  const setImg = async (img, url) => { if (img.getAttribute("src") !== url) { img.src = url; try { await img.decode(); } catch (_e) {} } };
+
+  // 字：逐字從下面彈上來；{g}…{/g} 是金色
+  const chars = (s) => s.replace(/\{g\}|\{\/g\}|([^{])/g, (m, ch) => (m === "{g}" ? '<span class="g">' : m === "{/g}" ? "</span>" : `<span class="ch">${ch === " " ? "&nbsp;" : ch}</span>`));
+  function kineticHTML(lines, align) {
+    return `<div class="kt ${align || ""}">${lines.map((l) => `<span class="ln ${l.c || "big"}">${chars(l.t)}</span>`).join("")}</div>`;
+  }
+  function kinetic(root, t, len, opts = {}) {
+    const lines = [...root.querySelectorAll(".ln")];
+    const outAt = len - (opts.outD || 0.28);
+    lines.forEach((ln, li) => {
+      const at0 = (opts.at || 0.05) + li * (opts.lineGap || 0.22);
+      [...ln.querySelectorAll(".ch")].forEach((el, i, arr) => {
+        const p = ramp(t, at0 + i * (opts.stagger || 0.028), 0.42);
+        const q = opts.noOut ? 0 : ramp(t, outAt + (i / arr.length) * 0.08, 0.2);
+        el.style.opacity = Math.min(1, p * 1.6) * (1 - q);
+        el.style.transform = `translateY(${lerp(110, 0, E.back(p)) - 90 * E.inexpo(q)}%) rotate(${lerp(8, 0, E.out(p))}deg)`;
+      });
+    });
+  }
+
+  /* ── 場景 ── */
+  const B = 60 / 120; // 一拍
+  const SCENES = window.__SITE_SCENES(B);
+  let cursor = 0;
+  for (const s of SCENES) { s.len = s.beats * B; s.start = cursor; cursor += s.len; s.end = cursor; }
+  window.__total = cursor + 0.6;
+
+  const host = $("layers");
+  for (const s of SCENES) {
+    const el = document.createElement("div"); el.className = "layer"; el.style.display = "none"; s.el = el; host.appendChild(el);
+    if (s.kind === "type") el.innerHTML = kineticHTML(s.lines, s.align);
+    if (s.kind === "count") el.innerHTML = `<div class="kt"><span class="ln big"><span class="num g" data-n style="font-size:250px">0</span></span>${s.sub ? `<span class="ln sub">${chars(s.sub)}</span>` : ""}</div>`;
+    if (s.kind === "formula") el.innerHTML = s.items.map((f) => `<div class="fx">${katex.renderToString(f, { displayMode: true, throwOnError: false })}</div>`).join("");
+    if (s.kind === "app") {
+      el.innerHTML = `<div class="win ${s.tall ? "tall" : ""}"><img></div>${s.ring ? '<div class="ring"></div>' : ""}<div class="shade"></div>${s.cap ? kineticHTML(s.cap, "left") : ""}${s.label ? `<div class="lab" style="position:absolute;left:0;right:0;top:880px">${kineticHTML([{ t: s.label, c: "mid" }])}</div>` : ""}`;
+    }
+    if (s.kind === "bento") el.innerHTML = s.panels.map((p) => `<div class="panel"><div class="inner"><img></div><div class="tag">${p.tag}</div></div>`).join("") + (s.cap ? kineticHTML(s.cap) : "");
+    if (s.kind === "end") el.innerHTML = `<div class="win"><img></div><div class="phone"><img></div><div class="kt" style="top:20%"><span class="ln" style="overflow:visible"><span class="mark"><span class="glyph">∫</span><span>BuzzCalculus</span></span></span><span class="ln sub" style="font-family:Inter,sans-serif;font-weight:700;font-size:52px;color:#fff;letter-spacing:0">buzz-calculus.vercel.app</span><span class="ln sub" style="font-size:34px">${s.tag}</span></div>`;
+  }
+
+  // 進場／出場：whip（橫掃）、zoom（推進來）、rise、cut
+  function transition(s, t) {
+    let x = 0, sc = 1, op = 1, blur = 0, ry = 0;
+    const xin = s.xin ?? 0.32;
+    // 進場在拍點前 xin 秒開始，剛好在拍點（t = 0）落定
+    if (t < 0 && s.in !== "cut") {
+      const u = (t + xin) / xin;
+      if (s.in === "zoom") { sc = lerp(1.35, 1, E.expo(u)); op = E.out(u); blur = lerp(16, 0, E.expo(u)); }
+      else if (s.in === "rise") { op = E.out(u); }
+      else { const e = E.whip(u); x = lerp(1920, 0, e); blur = 30 * Math.sin(Math.PI * e); }
+    }
+    const next = SCENES[SCENES.indexOf(s) + 1];
+    const xout = next ? (next.xin ?? 0.32) : 0;
+    if (next && t > s.len - xout && next.in !== "cut") {
+      const u = (t - (s.len - xout)) / xout;
+      if (next.in === "zoom") { sc *= lerp(1, 0.82, E.inexpo(u)); op *= 1 - E.out(u); }
+      else if (next.in === "rise") { op *= 1 - u; }
+      else { const e = E.whip(u); x += lerp(0, -1920, e); blur += 30 * Math.sin(Math.PI * e); }
+    }
+    s.el.style.transform = `translateX(${x}px) scale(${sc})`;
+    s.el.style.opacity = op;
+    s.el.style.filter = blur > 0.3 ? `blur(${blur.toFixed(1)}px)` : "none";
+  }
+
+  // 視窗鏡頭：素材上的 (cx, cy) 放到舞台上的 (ox, oy)，看到的寬度 w 對應舞台上的 S 像素
+  function placeWin(win, cam, ox, oy, S, tilt) {
+    const [cx, cy, w] = cam; const z = S / w;
+    win.style.transform = `translate(${ox - cx * z}px, ${oy - cy * z}px) scale(${z})`;
+    if (tilt) win.parentElement.style.transform += ` rotateY(${tilt[0]}deg) rotateX(${tilt[1]}deg)`;
+    return z;
+  }
+
+  async function render(s, t) {
+    const el = s.el;
+    if (s.kind === "type") kinetic(el, t, s.len, s.k || {});
+    else if (s.kind === "count") {
+      const p = E.expo(ramp(t, 0.05, s.countD || 1.2));
+      el.querySelector("[data-n]").textContent = Math.round(s.n * p).toLocaleString("en-US");
+      const ln = el.querySelector(".ln.big"); ln.style.transform = `scale(${lerp(0.86, 1, E.back(ramp(t, 0, 0.45)))})`;
+      if (s.sub) kinetic(el, t - 0.5, s.len - 0.5, { noOut: false });
+      el.querySelector(".ln.big").style.opacity = 1 - ramp(t, s.len - 0.25, 0.2);
+    } else if (s.kind === "formula") {
+      const fx = [...el.querySelectorAll(".fx")];
+      const each = s.len / fx.length;
+      fx.forEach((f, i) => {
+        const lt = t - i * each;
+        const on = lt >= 0 && lt < each;
+        f.style.display = on ? "block" : "none";
+        if (on) { f.style.transform = `translate(-50%, -50%) scale(${lerp(1.6, 1, E.expo(ramp(lt, 0, 0.3))) * lerp(1, 1.06, lt / each)})`; f.style.opacity = E.out(ramp(lt, 0, 0.08)); f.style.filter = `blur(${lerp(10, 0, E.expo(ramp(lt, 0, 0.25)))}px)`; }
+      });
+    } else if (s.kind === "app") {
+      const tau = Math.min(s.to ?? 1e9, s.from + Math.max(0, t) * (s.rate || 1));
+      const img = el.querySelector("img");
+      await setImg(img, src(s.dir, tau));
+      const cam = kf(t, s.cam);
+      const fr = s.frame || { ox: 960, oy: 540, S: 1400 };
+      const win = el.querySelector(".win");
+      const z = placeWin(win, cam, fr.ox, fr.oy, fr.S);
+      // 進場的 3D 傾斜
+      const p = E.expo(ramp(t, 0, 0.9));
+      win.style.transform = `perspective(2400px) rotateY(${lerp(s.tiltY ?? -14, 0, p)}deg) rotateX(${lerp(s.tiltX ?? 7, 0, p)}deg) ` + win.style.transform;
+      if (s.ring) {
+        const r = el.querySelector(".ring"); const [rx, ry, rw, rh, ra] = s.ring; const [cx, cy] = cam;
+        const L = fr.ox + (rx - cx) * z, T = fr.oy + (ry - cy) * z;
+        const pp = ramp(t, ra, 0.35);
+        r.style.left = `${L - 10}px`; r.style.top = `${T - 10}px`; r.style.width = `${rw * z + 20}px`; r.style.height = `${rh * z + 20}px`;
+        r.style.opacity = E.out(pp) * (1 - ramp(t, ra + 1.4, 0.3)); r.style.transform = `scale(${lerp(1.15, 1, E.back(pp))})`;
+      }
+      const shade = el.querySelector(".shade");
+      if (s.cap) {
+        shade.style.background = "linear-gradient(90deg, rgba(11,11,13,.94) 0%, rgba(11,11,13,.86) 30%, rgba(11,11,13,0) 52%)";
+        shade.style.opacity = s.capFull ? 1 : 1;
+        kinetic(el, t, s.len, { at: s.capAt ?? 0.25, ...(s.k || {}) });
+      } else if (s.label) {
+        shade.style.background = "linear-gradient(0deg, rgba(11,11,13,.95) 0%, rgba(11,11,13,.8) 22%, rgba(11,11,13,0) 45%)";
+        kinetic(el.querySelector(".lab"), t, s.len, { at: 0.02, stagger: 0.02 });
+      } else shade.style.background = "none";
+    } else if (s.kind === "bento") {
+      const panels = [...el.querySelectorAll(".panel")];
+      const W = 820, H = 410, gx = 40, gy = 40, x0 = (1920 - 2 * W - gx) / 2, y0 = 150;
+      for (let i = 0; i < panels.length; i += 1) {
+        const P = s.panels[i], el2 = panels[i];
+        const col = i % 2, row = Math.floor(i / 2);
+        const at = (s.popAt || 0.0) + i * (s.pop ?? B);
+        const p = ramp(t, at, 0.5);
+        el2.style.left = `${x0 + col * (W + gx)}px`; el2.style.top = `${y0 + row * (H + gy)}px`; el2.style.width = `${W}px`; el2.style.height = `${H}px`;
+        el2.style.opacity = E.out(Math.min(1, p * 2));
+        el2.style.transform = `translateY(${lerp(80, 0, E.expo(p))}px) scale(${lerp(0.9, 1, E.back(p))})`;
+        const lt = Math.max(0, t - at);
+        const tau = Math.min(P.to ?? 1e9, P.from + lt * (P.rate || 1));
+        await setImg(el2.querySelector("img"), src(P.dir, tau));
+        const [cx, cy, w] = P.cam; const z = W / w;
+        el2.querySelector(".inner").style.transform = `translate(${W / 2 - cx * z}px, ${H / 2 - cy * z}px) scale(${z})`;
+      }
+      if (s.cap) kinetic(el, t, s.len, s.k || {});
+      el.style.transform += ` scale(${lerp(1, 1.04, t / s.len)})`;
+    } else if (s.kind === "end") {
+      const win = el.querySelector(".win"), ph = el.querySelector(".phone");
+      await setImg(win.querySelector("img"), src(s.desk, 0));
+      await setImg(ph.querySelector("img"), src(s.phone, 0));
+      const p = E.expo(ramp(t, 0.1, 1.2)), q = E.expo(ramp(t, 0.35, 1.2));
+      const z = 0.82;
+      win.style.transform = `translate(${330}px, ${lerp(1200, 470, p)}px) perspective(2400px) rotateX(${lerp(20, 8, p)}deg) scale(${z})`;
+      ph.style.left = "1330px"; ph.style.top = "0px";
+      ph.style.transform = `translateY(${lerp(1300, 380, q)}px) rotate(${lerp(8, 4, q)}deg) scale(.86)`;
+      const kt = el.querySelector(".kt");
+      const lines = [...kt.querySelectorAll(".ln")];
+      lines.forEach((ln, i) => { const r = ramp(t, 0.5 + i * 0.25, 0.6); ln.style.opacity = E.out(r); ln.style.transform = `translateY(${lerp(40, 0, E.expo(r))}px)`; });
+    }
+  }
+
+  window.seek = async (T) => {
+    // 背景：金色光暈慢慢飄
+    const gx = 50 + 18 * Math.sin(T * 0.21), gy = 40 + 14 * Math.cos(T * 0.17);
+    $("bg").style.background = `radial-gradient(ellipse 55% 50% at ${gx}% ${gy}%, rgba(232,184,74,.16), rgba(232,184,74,0) 70%), radial-gradient(ellipse 40% 40% at ${100 - gx}% ${100 - gy}%, rgba(120,140,255,.08), transparent 70%)`;
+    $("dots").style.transform = `translateY(${-(T * 14) % 36}px)`;
+    for (const s of SCENES) {
+      // 這一幕：[start − xin, end)；跟上一幕的尾巴重疊 xin 秒
+      const a = s.start - (s.in === "cut" ? 0 : (s.xin ?? 0.32)), b = s.end;
+      const on = T >= a && T < b;
+      s.el.style.display = on ? "block" : "none";
+      if (on) { const t = T - s.start; transition(s, t); await render(s, t); }
+    }
+    // 拍點上的白閃（只在指定的切點）
+    let fl = 0;
+    for (const s of SCENES) if (s.flash && T >= s.start && T < s.start + 0.25) fl = Math.max(fl, (1 - (T - s.start) / 0.25) * s.flash);
+    $("flash").style.opacity = fl;
+    return true;
+  };
+  window.__scenes = SCENES.map((s) => ({ kind: s.kind, in: s.in || "whip", xin: s.in === "cut" ? 0 : (s.xin ?? 0.32), flash: s.flash || 0, dir: s.dir || null, from: s.from || 0, start: s.start, end: s.end, beats: s.beats, music: s.music || null, sfx: s.sfx || null,
+    dirs: [s.dir, s.desk, s.phone, ...(s.panels || []).map((p) => p.dir)].filter(Boolean) }));
+  await document.fonts.ready;
+  // 字先畫一次，字型才會載完
+  for (const s of SCENES) { s.el.style.display = "block"; s.el.style.opacity = 0; }
+  await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+  await document.fonts.ready;
+  window.__fontsReady = true;
+})();
+</script>

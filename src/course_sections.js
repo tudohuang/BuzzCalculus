@@ -607,6 +607,8 @@
         const done = s.predict ? sec.pred[sec.si] !== undefined : resolved(api, sec.si);
         if (!whole || ((quiz || s.drag || s.solve) && !done)) return;
       }
+      // 沒有動作的節（拖圖只在全文，分節拿掉之後剩句子）：讀完往下就算做完
+      if (s.check === undefined && !s.predict && !s.solve && !s.order && !s.where && !s.drag) complete(api, sec.si);
       enter(api, sec.si + 1);
       deps.render();
       return N() && N().resume(api);

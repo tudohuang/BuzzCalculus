@@ -133,11 +133,11 @@ async function run() {
     const s1 = await evaluate(`return { same: document.querySelector(".cvb") === window.__board, key: window.BuzzBoard.state().key, kept: [...document.querySelectorAll(".cvb .cvb-i")].filter((n) => n.style.visibility === "visible").length, circled: Boolean(document.querySelector(".cvb .cvb-yes")) };`);
     check("換節不換板：同一塊板、第 1 節寫的（含答過的小測）還在", s1.same && /:all$/.test(s1.key) && s1.kept >= before && s1.circled, JSON.stringify({ ...s1, before }));
 
-    // 有圖的節：圖釘在板上保留的那一塊（不在板子上面）、不蓋到板上的字、點「下一句」頁面不動
-    console.log(`  ·    有圖的節：${FIG.l.id} 第 ${FIG.si + 1} 節`);
-    check("有圖的課：打開", await boot(DESKTOP, SEED, FIG.l.id));
+    // 原本帶滑桿互動圖的節：分節不放互動圖（黏在板上會擋字，只在全文），板上、板子上面都沒有圖；點「下一句」頁面不動
+    console.log(`  ·    原本有圖的節：${FIG.l.id} 第 ${FIG.si + 1} 節`);
+    check("原本有圖的課：打開", await boot(DESKTOP, SEED, FIG.l.id));
     await evaluate(`document.querySelector('[data-action="course-s-go"][data-to="${FIG.si}"]').click(); return 1;`);
-    check("有圖的節：圖在板上那一塊裡", await waitFor(`Number(document.querySelector("[data-cv2s]").dataset.cv2s) === ${FIG.si} && document.querySelector(".cvb-stage .cvb-model .cv2-figure")`, 8000));
+    check("換到那一節", await waitFor(`Number(document.querySelector("[data-cv2s]").dataset.cv2s) === ${FIG.si} && document.querySelector(".cvb-stage")`, 8000));
     await sleep(600);
     const ys = [];
     // 量句子之間（最後一句出來時下面多了題目／動作，往下帶一次是故意的，不算）
@@ -147,10 +147,8 @@ async function run() {
       ys.push(await evaluate(`return Math.round(scrollY);`));
       if (k < FIG.s.beats.length - 2) await evaluate(`document.querySelector("[data-cv2s-next]").click(); return 1;`);
     }
-    const fg = await evaluate(`const m = document.querySelector(".cvb-model").getBoundingClientRect(); const b = document.querySelector(".cvb").getBoundingClientRect();
-      const over = [...document.querySelectorAll(".cvb .cvb-i")].filter((n) => n.style.visibility === "visible" && Number(n.style.opacity || 1) > 0.05).map((n) => n.getBoundingClientRect()).filter((r) => r.bottom > b.top && r.top < b.bottom && r.right > m.left + 10 && r.left < m.right - 10 && r.bottom > m.top + 10 && r.top < m.bottom - 10).length;
-      return { inside: m.left >= b.left - 1 && m.right <= b.right + 8 && m.top >= b.top - 1 && m.bottom <= b.bottom + 1, above: Boolean(document.querySelector(".cv2s-sec > .cv2-figure")), over };`);
-    check("圖在板子的框裡、板子上面沒有圖、圖沒有蓋到板上的字", fg.inside && !fg.above && fg.over === 0, JSON.stringify(fg));
+    const fg = await evaluate(`return { model: Boolean(document.querySelector(".cvb-model")), fig: document.querySelectorAll("[data-cv2s] .cv2-figure").length };`);
+    check("分節：板上、板子上面都沒有滑桿互動圖", !fg.model && fg.fig === 0, JSON.stringify(fg));
     check("有圖的節點「下一句」：頁面不上下動（≤ 2px）", Math.max(...ys) - Math.min(...ys) <= 2, ys.join(" → "));
 
     // 設定 boardSplit：回到一節一塊

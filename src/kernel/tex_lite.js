@@ -159,6 +159,27 @@
     if (ratio < 0.995) node.style.fontSize = ratio.toFixed(3) + "em";
   }
 
+  // 選項的式子（行內模式）：太寬就把字縮到剛好塞進選項框（最多縮到 60%、不小於 13px），再不行才留橫向捲。
+  // 手機上一條長分式（e^{2x}cos√x 的導數那幾個選項）原本被切掉一截，底下還多一條捲軸（2026-10-22 截圖抓到）
+  function fitInlineMath(node) {
+    if (!node.isConnected || !node.clientWidth) return;
+    const need = node.scrollWidth;
+    const have = node.clientWidth;
+    if (need <= have + 1) return;
+    // 下限看式子實際的字級（選項裡的 .katex 另外放大了 1.18 倍，見 styles.css）
+    const fontPx = parseFloat(getComputedStyle(node.querySelector(".katex") || node).fontSize) || 16;
+    const floor = Math.max(0.6, Math.min(1, 13 / fontPx));
+    let ratio = Math.max(floor, (have - 2) / need);
+    if (ratio >= 0.995) return;
+    node.style.fontSize = ratio.toFixed(3) + "em";
+    // 分數線、間距有固定像素，縮放不完全按比例：再量一次補一刀
+    const again = node.scrollWidth;
+    if (again > have + 1 && ratio > floor) {
+      ratio = Math.max(floor, ratio * (have - 2) / again);
+      node.style.fontSize = ratio.toFixed(3) + "em";
+    }
+  }
+
   function splitAtQuad(tex) {
     const parts = [];
     let depth = 0;
@@ -218,6 +239,7 @@
           output: "htmlAndMathml"
         });
         if (displayMode) fitDisplayMath(node, tex);
+        else if (node.classList.contains("choice-math")) fitInlineMath(node);
         return;
       } catch (_error) {
         node.innerHTML = renderLiteTex(tex, displayMode);

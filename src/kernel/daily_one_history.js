@@ -152,6 +152,7 @@
     "2026-10-19": "fd-serx-403",
     "2026-10-20": "rel-boss-011",
     "2026-10-21": "depth-int-027",
+    "2026-10-22": "putnam-003",
   };
   if (typeof module !== "undefined" && module.exports) module.exports = { HISTORY };
   if (typeof window !== "undefined") window.BUZZ_DAILY_ONE_HISTORY = HISTORY;

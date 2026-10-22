@@ -205,7 +205,12 @@ const regressions = [
   ["correct large integration constant", byId("int-001"), "2*x^3+100000000", true],
   ["large constant cannot hide wrong primitive", byId("int-001"), "2*x^3+x+100000000", false],
   ["unreliable constant asks for +C", byId("int-001"), "2*x^3+10000000000000000", false],
-  ["symbolic integration constant", byId("int-001"), "2*x^3+C", true]
+  ["symbolic integration constant", byId("int-001"), "2*x^3+C", true],
+  // 空格隔開的因子（2026-10-22 錄 trailer 時抓到：「2x sin(…)」去空白後 x 黏上 sin，被拆成 s·i·n，判成格式無法解析）
+  ["space-separated factors before a function", byId("ch-mix-001"), "2x sin(e^(3x)) + 3x^2 e^(3x) cos(e^(3x))", true],
+  ["space-separated factors still catch a missing chain factor", byId("ch-mix-001"), "2x sin(e^(3x)) + x^2 e^(3x) cos(e^(3x))", false],
+  ["variable then bare function", { ...derivativeProblem, answer: "x*sin(x)" }, "x sin x", true],
+  ["bare LaTeX functions", { ...derivativeProblem, answer: "sin(x)*cos(x)" }, "\\sin x \\cos x", true]
 ];
 regressions.forEach(([name, problem, input, expected]) => {
   const result = api.checkAnswer(problem, input);
