@@ -285,6 +285,9 @@ html.nb .cvb-model>.cv2-figure{box-shadow:0 1px 4px #0002}
     const colGap = Math.round(F * 2.4);
     const cols = B.whole ? Math.max(1, Math.floor((W + colGap) / (F * 17 + colGap))) : 1;
     const Wc = B.whole ? (W - (cols - 1) * colGap) / cols : W;
+    // 筆記本：節名與題目貼邊，其他行（內文、選項、圖）縮一格寫（course_board_layout 的 ind）—— 量寬要扣掉這一格，不然塞滿一欄的行會跑出頁面
+    const indW = B.whole && (nbBox || B.nbOv) ? Math.round(Math.round(F * 1.5) * 1.2) : 0;
+    const roomOf = (it) => (it.a.head || it.a.qz === "ask" ? Wc : Wc - indW);
     const c = mk("div", "cvb-c");
     const ink = document.createElementNS(NS, "svg");
     ink.setAttribute("class", "cvb-ink");
@@ -299,7 +302,7 @@ html.nb .cvb-model>.cv2-figure{box-shadow:0 1px 4px #0002}
       c.appendChild(el);
       if (it.kind === "plot") {
         const g = window.BuzzBoardPlot.html(it.a.graph);
-        let w = Math.min(Wc, Math.max(320, Math.min(480, W * 0.62)));
+        let w = Math.min(roomOf(it), Math.max(320, Math.min(480, W * 0.62)));
         if (B.whole) w = Math.min(w, ((cap - 2 * pad[1] - 16) * g.w) / g.h);
         el.classList.add("cvb-p");
         el.innerHTML = g.svg;
@@ -326,7 +329,7 @@ html.nb .cvb-model>.cv2-figure{box-shadow:0 1px 4px #0002}
     const ws = V.map((v) => (v.us ? v.us.map((n) => R(n).width) : null));
     V.forEach((v, i) => {
       if (!v.us) return;
-      const k = LY.compose(ws[i], Wc, smin, v.u.align);
+      const k = LY.compose(ws[i], roomOf(v.it), smin, v.u.align);
       v.s = k.s;
       v.wrapped = Boolean(k.wrapped);
       v.el.style.fontSize = `${F * k.s}px`;
