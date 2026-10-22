@@ -333,7 +333,10 @@
         const qz = items[i].a.qz;
         // 筆記本：像在紙上寫 —— 從左邊寫起（節名貼邊、內文縮一格），對齊 = 的那幾行照樣對齊，不置中
         const ind = Math.round(m.gap * 1.2);
-        const x = items[i].a.head || qz === "ask" ? bx : typeof qz === "number" ? bx + ind : F.headPage ? bx + ind + (gr.ids.length > 1 ? gr.L - mi.lhs : 0) : gr.ids.length > 1 && gr.L + gr.R <= F.colW ? bx + (F.colW - gr.L - gr.R) / 2 + gr.L - mi.lhs : bx + Math.max(0, (F.colW - mi.w) / 2);
+        // 對齊 = 的一組：整組（最長的左邊＋最長的右邊）連縮排放不下就少縮一點，還是放不下就不對齊（各自從縮排寫起、不出欄）
+        const gw = gr.L + gr.R;
+        const nb = gr.ids.length > 1 && gw <= F.colW ? bx + Math.min(ind, F.colW - gw) + gr.L - mi.lhs : bx + Math.max(0, Math.min(ind, F.colW - mi.w));
+        const x = items[i].a.head || qz === "ask" ? bx : typeof qz === "number" ? bx + ind : F.headPage ? nb : gr.ids.length > 1 && gr.L + gr.R <= F.colW ? bx + (F.colW - gr.L - gr.R) / 2 + gr.L - mi.lhs : bx + Math.max(0, (F.colW - mi.w) / 2);
         at[i] = [x, place[i].y + (mi.gapA || 0)];
       }));
     });

@@ -148,7 +148,8 @@
         pg.querySelectorAll(".cvb-i").forEach((it) => {
           const ir = it.getBoundingClientRect();
           if (!ir.width || ir.bottom <= box.top + 2 || ir.top >= box.bottom - 2) return;
-          if (ir.right > box.right + 2) { it.classList.add("is-over"); n += 1; }
+          // 右邊出頁、或從這一頁開始寫卻跨到下一頁（被切成兩半）
+          if (ir.right > box.right + 2 || (ir.top >= box.top - 2 && ir.bottom > box.bottom + 2)) { it.classList.add("is-over"); n += 1; }
         });
       });
       const head = r.box.querySelector(".ab-h");
