@@ -223,7 +223,8 @@ async function run() {
     check("HUD 寫明新手保護", /新手保護/.test(q1.hud), q1.hud);
     check("提示不扣分", /不扣分/.test(q1.hint), q1.hint);
     check("第一份訓練是 8 題", q1.total === "8", q1.total);
-    const foreign = q1.choices.filter((value) => /[a-z]/i.test(value.replace(/pi|e|sqrt|log|sin|cos|tan|exp|DNE|inf|x/gi, "")));
+    // 虛數單位 i（5i、4-3i）不是外星人：題庫有複數題，依日期抽得到
+    const foreign = q1.choices.filter((value) => /[a-z]/i.test(value.replace(/pi|e|sqrt|log|sin|cos|tan|exp|DNE|inf|x/gi, "").replace(/(^|[\d+\-*\s(])i(?![a-z])/g, "$1")));
     check("四個選項沒有別題漂來的外星人（多餘的變數）", q1.choices.length === 4 && foreign.length === 0, foreign.join(" | ") || q1.choices.join(" | "));
     const looksTemplate = q1.choices.filter((value) => /\d+\*\d+|\(\d+[-+]\d+\)/.test(value));
     check("選項與答案沒有 4·3·x^(3−1) 這種沒化簡的模板形", looksTemplate.length === 0, looksTemplate.join(" | "));

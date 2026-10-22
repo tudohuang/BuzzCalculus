@@ -29,8 +29,8 @@ const REV_HEADER = "x-buzz-rev";
 
 // ── 產生區：node tools/build_sw_revisions.js（不要手改）──
 // 這一版：設定頁顯示「版本 v… · id · 日期」；id 是下面 REVISIONS 的雜湊，快取名跟著它變（每次部署內容有變就一定是新快取）。
-const BUILD = {"version":"v1.3.0","id":"62e20639","date":"2026-10-13"};
-const CACHE_NAME = "buzzcalculus-v1.3.0-62e20639";
+const BUILD = {"version":"v1.3.0","id":"b044567d","date":"2026-10-13"};
+const CACHE_NAME = "buzzcalculus-v1.3.0-b044567d";
 // 安裝時預快取的核心（離線也能練題）。其他檔用到才快取 —— 見 REVISIONS。
 const APP_SHELL = [
   "./index.html",
@@ -156,10 +156,10 @@ const REVISIONS = {
   "./index.html": "19189ae855",
   "./manifest.webmanifest": "4f19816c8b",
   "./privacy.html": "904180e9b9",
-  "./src/app.js": "c9a852c70f",
+  "./src/app.js": "7e291f7e19",
   "./src/board_store.js": "402a9e9b08",
   "./src/course.js": "ef1b69719f",
-  "./src/course_board.js": "af83c9b484",
+  "./src/course_board.js": "67c722e16b",
   "./src/course_board_layout.js": "f62c22d925",
   "./src/course_board_plot.js": "25bed23bd6",
   "./src/course_boss.js": "4785df87a7",
@@ -169,7 +169,7 @@ const REVISIONS = {
   "./src/course_map.js": "9aba7174de",
   "./src/course_narration.js": "a906657830",
   "./src/course_proof.js": "049d41c15d",
-  "./src/course_sections.js": "3a09af47a7",
+  "./src/course_sections.js": "8b48376bf2",
   "./src/course_solve.js": "6e0f710762",
   "./src/course_v2/ch-0a.js": "71f9890742",
   "./src/course_v2/ch-0b.js": "4bf0e3fbe5",
@@ -249,7 +249,7 @@ const REVISIONS = {
   "./src/course_v2/map.js": "76a1327829",
   "./src/course_v2/outline.js": "324c8ac2f2",
   "./src/course_v2_style.js": "d74251f47e",
-  "./src/course_v2_ui.js": "fa08f36b2c",
+  "./src/course_v2_ui.js": "2e1ab0003f",
   "./src/custom_problems.js": "53e402064b",
   "./src/detail/d-00.js": "5d6a7b5d75",
   "./src/detail/d-01.js": "ed1a05af9f",
@@ -407,7 +407,7 @@ const REVISIONS = {
   "./src/kernel/skill_graph.js": "ae5c318532",
   "./src/kernel/skill_tags.js": "17fe0bd9a8",
   "./src/kernel/tag_labels.js": "7ef8f36a3a",
-  "./src/kernel/tex_lite.js": "72286278aa",
+  "./src/kernel/tex_lite.js": "242ffef829",
   "./src/kernel/uid_map.js": "260a3d1751",
   "./src/kernel/verified_answers.js": "e17c81ac9f",
   "./src/problem_advanced_analysis.js": "4504108060",
@@ -454,7 +454,7 @@ const REVISIONS = {
   "./src/proofs.js": "6e32ac2cc3",
   "./src/settings_page.js": "8dee4b9c9e",
   "./src/share_cards.js": "fd7fd15d0a",
-  "./styles.css": "07ef9ca84b",
+  "./styles.css": "3b4d9b34d2",
   "./terms.html": "2432c43e77"
 };
 // ── 產生區結束 ──

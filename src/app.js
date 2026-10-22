@@ -11834,6 +11834,8 @@
     expr = expr.replace(/\\left/g, "");
     expr = expr.replace(/\\right/g, "");
     expr = expr.replace(/\\cdot/g, "*");
+    // 不帶括號的 LaTeX 函數（「\sin x \cos x」）：去掉反斜線，交給下面的裸引數展開（expandBareFunctionArguments）
+    expr = expr.replace(/\\(arcsin|arccos|arctan|sinh|cosh|tanh|sin|cos|tan|sec|csc|cot|ln|log|exp)(?![A-Za-z])(?!\s*[({])/g, "$1");
     expr = replaceTexFractions(expr);
     expr = replaceTexPowerGroups(expr);
     expr = replaceNaturalExponential(expr);
@@ -11870,6 +11872,7 @@
     expr = expr.replace(/\^/g, "**");
     expr = expr.replace(/\bpi\b/gi, "PI");
     expr = expr.replace(/\be\b/g, "E");
+    expr = spaceTimes(expr);
     expr = expr.replace(/\s+/g, "");
     expr = normalizeUnaryPower(expr);
     expr = applyImplicitMultiplication(expr, variables);
@@ -11925,6 +11928,19 @@
       if (call) end = call.end;
     }
     return { end };
+  }
+
+  // 用空格隔開的兩個因子（「2x sin(x)」「x e^x」「x^2 ln(x)」）先補上乘號：去空白之後 x 會跟後面的 sin、exp 黏成一個字，
+  // 被當成 s·i·n 三個變數相乘（實測：「2x sin(e^(3x)) + …」判成格式無法解析）。
+  // 函數名後面的空格（「sin x」「sin (x)」）不補；兩個數字中間不補（照舊當成同一個數）
+  const SPACE_FUNCS = new Set(["sin", "cos", "tan", "asin", "acos", "atan", "arcsin", "arccos", "arctan", "log", "ln", "exp", "sqrt", "abs", "pow", "sinh", "cosh", "tanh", "sec", "csc", "cot"]);
+  function spaceTimes(expr) {
+    return String(expr || "").replace(/([A-Za-z0-9_)])\s+(?=[A-Za-z0-9_(])/g, (match, left, offset, whole) => {
+      const word = /[A-Za-z_][A-Za-z0-9_]*$/.exec(whole.slice(0, offset + 1));
+      if (word && SPACE_FUNCS.has(word[0].toLowerCase())) return match;
+      if (/\d/.test(left) && /\d/.test(whole[offset + match.length] || "")) return match;
+      return `${left}*`;
+    });
   }
 
   function applyImplicitMultiplication(expr, variables = []) {
@@ -14611,13 +14627,13 @@
   }
 
   function expressionToTex(source) {
-    const normalized = String(source || "")
+    const normalized = spaceTimes(String(source || "")
       .trim()
       .replace(/π/g, "pi")
       .replace(/\bln\s*\(/gi, "log(")
       .replace(/\barctan\s*\(/gi, "atan(")
       .replace(/\barcsin\s*\(/gi, "asin(")
-      .replace(/\barccos\s*\(/gi, "acos(")
+      .replace(/\barccos\s*\(/gi, "acos("))
       .replace(/\s+/g, "");
     if (!normalized) return "";
     if (/[\u4e00-\u9fff]/.test(normalized)) return "";
@@ -14694,8 +14710,62 @@
     if (/^pi$/i.test(expr)) return "\\pi";
     if (/^e$/i.test(expr)) return "e";
     if (/^[0-9.]+$/.test(expr)) return expr;
-    if (/^[a-zA-Z_][a-zA-Z0-9_]*$/.test(expr)) return escapeTexIdentifier(expr);
-    return escapeTexText(expr);
+    // 「sinx」「xcosx」（去空白之後的 sin x、x cos x）：裡面有函數名就先拆
+    if (/^[a-zA-Z_][a-zA-Z0-9_]*$/.test(expr)) return (expr.length > 2 && JUXTA_FUNCS.some((name) => expr.includes(name)) && texJuxtapose(expr)) || escapeTexIdentifier(expr);
+    return texJuxtapose(expr) || escapeTexText(expr);
+  }
+
+  // 省略乘號的一串（「2xsin(3x)」「3x(x+1)」）：拆成數字、單一字母、函數呼叫、括號，並排印。
+  // 跟判分（applyImplicitMultiplication）同一種讀法；拆不開就回空字串，照舊把字印出來
+  const JUXTA_FUNCS = ["asin", "acos", "atan", "sinh", "cosh", "tanh", "sqrt", "sin", "cos", "tan", "log", "exp", "abs", "sec", "csc", "cot", "ln"];
+  function texJuxtapose(expr) {
+    const close = (start) => {
+      let depth = 0;
+      for (let k = start; k < expr.length; k += 1) {
+        if (expr[k] === "(") depth += 1;
+        if (expr[k] === ")") { depth -= 1; if (depth === 0) return k + 1; }
+      }
+      return -1;
+    };
+    const out = [];
+    let fnUsed = false;
+    let i = 0;
+    while (i < expr.length) {
+      const num = /^[0-9.]+/.exec(expr.slice(i));
+      if (num) { out.push({ tex: num[0], num: true }); i += num[0].length; continue; }
+      if (expr[i] === "(") {
+        const end = close(i);
+        if (end < 0) return "";
+        out.push({ tex: texAtom(expr.slice(i, end)) });
+        i = end;
+        continue;
+      }
+      if (!/[A-Za-z]/.test(expr[i])) return "";
+      const fn = JUXTA_FUNCS.find((name) => expr.startsWith(name, i));
+      if (fn) {
+        fnUsed = true;
+        const name = fn === "ln" ? "log" : fn;
+        const j = i + fn.length;
+        if (expr[j] === "(") {
+          const end = close(j);
+          if (end < 0) return "";
+          out.push({ tex: texAtom(`${name}${expr.slice(j, end)}`) });
+          i = end;
+          continue;
+        }
+        // 不帶括號（「sinx」）：後面那一個數字或字母是引數
+        const arg = /^([0-9.]+|[A-Za-z])/.exec(expr.slice(j));
+        if (!arg) return "";
+        out.push({ tex: texAtom(`${name}(${arg[0]})`) });
+        i = j + arg[0].length;
+        continue;
+      }
+      if (expr.startsWith("pi", i)) { out.push({ tex: "\\pi" }); i += 2; continue; }
+      out.push({ tex: expr[i] });
+      i += 1;
+    }
+    if (out.length < (fnUsed ? 1 : 2)) return "";
+    return out.map((part, k) => (k === 0 ? "" : part.num && out[k - 1].num ? "\\cdot " : " ") + part.tex).join("");
   }
 
   function splitTopLevelAdd(expr) {
@@ -15004,6 +15074,7 @@
       resolveAnswerSubmission,
       evaluateExpression,
       normalizeExpression,
+      answerToTex,
       normalizeText,
       problemRank,
       normalizeDifficultyCap,
@@ -15168,6 +15239,13 @@
     startQuiz([shared], { modeKey: "practice", practice: true });
     render();
   });
+  // 開發者用：?allboards 一次攤開全部課的黑板（整套課從頭捲到尾）。工具本體在 tools/all_boards.js，不進打包、不佔預算
+  if (/[?&]allboards\b/.test((window.location && window.location.search) || "")) {
+    window.__BUZZ_ALLBOARDS__ = { ensureLazy, loadRecords };
+    const tool = document.createElement("script");
+    tool.src = "tools/all_boards.js";
+    document.head.appendChild(tool);
+  }
   // 英文介面：題目的英文側表是延後載入的（中文使用者一個位元組都不用抓），
   // 載完、把題庫換成英文之後才畫第一幀。載不到就照中文題幹畫，介面仍是英文。
   // 舊解說、推導步驟、證明題的句型在第二支（data-lazy="i18nmore"），第一幀畫完才抓；作答中不重畫（會洗掉輸入）。

@@ -188,10 +188,7 @@ async function run() {
       await waitFor(`document.querySelector('[data-cs="${L.id}:${si}"] [data-cs-input]')`);
       await typeAndSend(`${L.id}:${si}`, sec.solve.answer);
     }
-    if (sec.drag) {
-      const v = (sec.drag.range[0] + sec.drag.range[1]) / 2;
-      await evaluate(`const i = document.querySelector('[data-cv2s] [data-cv2-fig="${sec.drag.use}"] input'); i.value = "${v}"; i.dispatchEvent(new Event("input", { bubbles: true })); i.dispatchEvent(new Event("change", { bubbles: true })); return 1;`);
-    }
+    // 分節沒有拖圖（滑桿互動圖只在全文）
     await sleep(150);
   };
   const readLesson = async (L, from = 0) => {

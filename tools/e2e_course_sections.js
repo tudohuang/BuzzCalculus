@@ -39,9 +39,10 @@ const lessonOf = (id) => JSON.parse(fs.readFileSync(path.join(LESSON_DIR, `${id}
 const FIRST = lessonOf("function-intro");
 const SECOND = lessonOf("domain-range");
 const WIDGET = lessonOf("riemann-sum-intuition");
-// 跟著念：有黏著的圖（兩張）、影片、小測、句子長的那一節
-const FOLLOW = lessonOf("ftc-part1");
-const FOLLOW_SI = 1;
+// 跟著念：小測、句子長、板子寫得滿（手機上要捲得動）的那一節
+// （原本是 ftc-part1 第 2 節：黏著的互動圖把頁面撐高；分節拿掉互動圖之後那一節短到捲不動）
+const FOLLOW = lessonOf("harmonic-oscillator");
+const FOLLOW_SI = 4;
 // 證明節（src/course_proof.js）：why＋order（ε-δ）、why＋where（控制收斂、Rolle）
 const PROOF_ORDER = lessonOf("epsilon-delta-quadratic");
 const PROOF_WHERE = lessonOf("dominated-convergence");
@@ -206,11 +207,6 @@ async function run() {
     if (sec.predict) await tap(`[data-action="course-s-pick"][data-kind="predict"][data-option="0"]`);
     if (sec.order) for (let j = 0; j < sec.order.steps.length; j += 1) await tap(`[data-action="course-s-ord"][data-step="${j}"]`);
     if (sec.where) await tap(`[data-action="course-s-whr"][data-option="${correctOf({ options: sec.where.steps })}"]`);
-    if (sec.drag) {
-      const v = (sec.drag.range[0] + sec.drag.range[1]) / 2;
-      await evaluate(`const i = window.__s.fig(${sec.drag.use}).querySelector("input"); i.value = "${v}"; i.dispatchEvent(new Event("input", { bubbles: true })); i.dispatchEvent(new Event("change", { bubbles: true })); return 1;`);
-      await sleep(200);
-    }
     return sec.check !== undefined ? "check" : sec.predict ? "predict" : sec.order ? "order" : sec.where ? "where" : "drag";
   };
   const pshot = async (name) => {
@@ -423,49 +419,19 @@ async function run() {
     const firstCheck = SECOND.sections.findIndex((s) => s.check !== undefined);
     check("「做小測」回到第一個有小測的節", await waitFor(`window.__s.si() === ${firstCheck}`, 4000), String(await evaluate(`return window.__s.si();`)));
 
-    /* ── 有 widget 的課：句子帶 fig，圖真的動；拖滑桿進範圍也算一個動作 ── */
+    /* ── 有 widget 的課：分節（黑板／筆記本）不放滑桿互動圖（黏在板上會擋字），拖滑桿的動作也拿掉；全文才有 ── */
     check(`打開 ${WIDGET.id}`, await openLesson(WIDGET.id));
-    const w0 = WIDGET.sections[0].beats[0].fig;
-    check(`第一句把 n 帶到 ${w0.to}`, await waitFor(`window.__s.fig(${w0.use}) && window.__s.fig(${w0.use}).dataset.value === "${w0.to}" && /n = ${w0.to} /.test(window.__s.fig(${w0.use}).querySelector("[data-cv2-readout]").textContent)`, 4000));
-    const w1 = WIDGET.sections[0].beats[1].fig;
-    await evaluate(`window.__s.watch(${w1.use}); return 1;`);
-    await tap("[data-cv2s-next]");
-    await waitFor(`window.__watched`, 40000);
-    const vals = await evaluate(`return window.__vals;`);
-    check(`下一句：n 從 ${w0.to} 平滑地動到 ${w1.to}（中間有過渡值）`, vals[vals.length - 1] === String(w1.to) && vals.length >= 3, vals.join("→"));
-    const slider = await evaluate(`const f = window.__s.fig(${w1.use}); return { input: f.querySelector("input").value, readout: f.querySelector("[data-cv2-readout]").textContent };`);
-    check("滑桿與讀數跟著到那一格", slider.input === String(w1.to) && new RegExp(`n = ${w1.to} `).test(slider.readout), JSON.stringify(slider));
-    await shot("phone-light-widget");
-    // reduced-motion：直接跳
-    await chrome.send("Emulation.setEmulatedMedia", { features: [{ name: "prefers-reduced-motion", value: "reduce" }] });
     const dragSi = WIDGET.sections.findIndex((s) => s.drag);
     await tap(`.cv2s-dot:nth-child(${dragSi + 1})`);
     await waitFor(`window.__s.si() === ${dragSi}`);
-    const d0 = WIDGET.sections[dragSi].beats[0].fig;
-    // 下一個帶 fig 的句子（2026-10-21 擴寫後中間可能插了不帶 fig 的句子：先點過去）
-    const dk = WIDGET.sections[dragSi].beats.findIndex((b, i) => i > 0 && b.fig);
-    const d1 = WIDGET.sections[dragSi].beats[dk].fig;
-    await sleep(200);
-    for (let k = 1; k < dk; k += 1) { await tap("[data-cv2s-next]"); await sleep(300); }
-    await evaluate(`window.__s.watch(${d1.use}); return 1;`);
-    await tap("[data-cv2s-next]");
-    await waitFor(`window.__watched`, 40000);
-    const still = (await evaluate(`return window.__vals;`)).filter((v, i) => !(i === 0 && v === String(d0.to)));
-    check(`reduced-motion：直接跳到 ${d1.to}，沒有過渡值`, still.length === 1 && still[0] === String(d1.to), `${d0.to} → ${still.join("→")}`);
-    await chrome.send("Emulation.setEmulatedMedia", { features: [] });
-    for (let k = dk + 1; k < WIDGET.sections[dragSi].beats.length; k += 1) await tap("[data-cv2s-next]");
-    const dragAct = await evaluate(`return { act: Boolean(document.querySelector('[data-cv2s-act="drag"]')), done: document.querySelector('[data-cv2s-act="drag"]').classList.contains("is-done") };`);
-    check("拖圖的動作出現（還沒做到）", dragAct.act && !dragAct.done);
-    const stick = await evaluate(`scrollTo(0, document.documentElement.scrollHeight); await new Promise((r) => setTimeout(r, 150)); const f = window.__s.fig(${WIDGET.sections[dragSi].drag.use}).getBoundingClientRect(); const bar = document.querySelector(".topbar").getBoundingClientRect(); return { fig: Math.round(f.top), bar: Math.round(bar.bottom), y: Math.round(scrollY) };`);
-    // 有黑板的節圖不黏（不然蓋住板子）：只有沒黑板的節量這一條（補黑板之後，拖圖的節多半也有板了）
-    const dragBoard = WIDGET.sections[dragSi].beats.some((b) => (b.board || []).length);
-    if (!dragBoard) check("手機：捲到底時圖黏在頂列下面（句子在下面長、圖一直看得到）", stick.y > 0 && Math.abs(stick.fig - stick.bar) <= 1, JSON.stringify(stick));
-    else console.log("  ·    拖圖那一節有黑板：圖不黏（黏了會蓋住板），這一條不量");
-    await shot("phone-light-widget-sticky");
-    const xpBefore = await evaluate(`return window.__s.rec().xp || 0;`);
-    await finishSection(WIDGET);
-    const dragDone = await evaluate(`return { done: document.querySelector('[data-cv2s-act="drag"]').classList.contains("is-done"), dot: document.querySelectorAll(".cv2s-dot")[${dragSi}].classList.contains("is-done"), xp: window.__s.rec().xp || 0 };`);
-    check("拖進範圍：動作完成、這一節打勾、+5 XP", dragDone.done && dragDone.dot && dragDone.xp === xpBefore + 5, JSON.stringify(dragDone));
+    for (let k = 1; k < WIDGET.sections[dragSi].beats.length; k += 1) { await tap("[data-cv2s-next]"); await sleep(200); }
+    const noWidget = await evaluate(`const r = window.__s.root(); return { fig: r.querySelectorAll(".cv2-figure.is-widget, input[data-cv2-slider]").length, drag: Boolean(r.querySelector('[data-cv2s-act="drag"]')), beats: window.__s.beats() };`);
+    check("分節：沒有滑桿互動圖、沒有拖圖的動作", noWidget.fig === 0 && !noWidget.drag && noWidget.beats === WIDGET.sections[dragSi].beats.length, JSON.stringify(noWidget));
+    await shot("phone-light-widget");
+    await tap('[data-action="course-s-mode"][data-mode="full"]');
+    check("全文：滑桿互動圖還在", await waitFor(`document.querySelectorAll(".cv2-figure.is-widget input[data-cv2-slider]").length > 0`, 4000));
+    await tap('[data-action="course-s-mode"][data-mode="sec"]');
+    await waitFor(`window.__s.root()`, 4000);
 
     /* ── 旁白：按了「播放」才有聲音；念完自己出下一句、圖跟著動；暫停、語速、字幕；載不到退回點的 ── */
     const V = WIDGET.sections;
@@ -474,7 +440,7 @@ async function run() {
     await tap(".cv2s-dot:nth-child(1)");
     await waitFor(`window.__s.si() === 0 && window.__s.beats() === 1`);
     await sleep(1000); // 第一句的圖動完
-    const v0 = await evaluate(`return { play: window.__s.text("[data-cv2s-play]"), rate: window.__s.text("[data-cv2s-rate]"), subs: window.__s.text("[data-cv2s-subs]"), fig: window.__s.fig(${V[0].beats[1].fig.use}).dataset.value };`);
+    const v0 = await evaluate(`return { play: window.__s.text("[data-cv2s-play]"), rate: window.__s.text("[data-cv2s-rate]"), subs: window.__s.text("[data-cv2s-subs]") };`);
     check("每一節都有「播放」、語速、字幕（預設不播）", v0.play === "播放" && v0.rate === "1×" && v0.subs === "字幕", JSON.stringify(v0));
     check("打開課、出第一句：還是沒有旁白請求", narr.urls.length === 0);
     const total = await retime(WIDGET.id, 1500);
@@ -488,7 +454,6 @@ async function run() {
     check("念完自己出下一句（沒有點）", await waitFor(`window.__s.beats() === 2`, 6000), String(await evaluate(`return window.__s.beats();`)));
     const flow = await evaluate(`return window.BuzzCourseSections.voice();`);
     check("第二句接著第一句的訖點念（同一支檔、不跳回開頭）", flow.beat === "0-1" && flow.start === 1500 && flow.at >= 1400 && flow.at <= flow.end + 100, JSON.stringify(flow));
-    check(`圖跟著那一句動到 ${V[0].beats[1].fig.to}`, await waitFor(`window.__s.fig(${V[0].beats[1].fig.use}).dataset.value === "${V[0].beats[1].fig.to}"`, 3000), `${v0.fig} → ${await evaluate(`return window.__s.fig(${V[0].beats[1].fig.use}).dataset.value;`)}`);
     check("一路念到這一節最後一句，停在動作前", await waitFor(`window.__s.beats() === ${V[0].beats.length} && window.BuzzCourseSections.voice().wait && document.querySelector("[data-cv2s-act]")`, 12000), JSON.stringify(await evaluate(`return window.BuzzCourseSections.voice();`)));
     const same = await evaluate(`const b = document.querySelector("[data-cv2s-play]"); return { same: b === window.__pb, before: window.__pr, after: window.__s.rect(b), label: window.__s.text("[data-cv2s-play]"), inApp: Boolean(b.closest("#app")) };`);
     check("自己往下兩句：「暫停」還是同一顆按鈕、位置大小沒動", same.same && same.before === same.after && same.label === "暫停", JSON.stringify(same));
@@ -774,7 +739,9 @@ async function run() {
       if (vp.shrink) check(`${tag}：視窗變矮之後還是一樣（innerHeight ${vp.height} → ${vp.height - vp.shrink}）`, log.some((m) => m.ih === vp.height - vp.shrink) && log.some((m) => m.ih === vp.height), log.map((m) => m.ih).join(","));
       // 動作放得下就整個在 dock 上面；連「下一節」都放得下就一起（放不下的那一列靠捲到底，下面量）
       check(`${tag}：念完：動作整個在 dock 上面（連「下一節」放得下就一起）`, end.act && end.act[0] >= end.top - 1 && (end.act[1] - end.act[0] > end.lim - end.top || end.act[1] <= end.lim + 1) && (end.bar - end.act[0] > end.lim - end.top || end.bar <= end.lim + 1), JSON.stringify(end));
-      if (away) {
+      // 頁面沒被往下帶（一課一塊黑板在板子裡捲，高的手機上整頁不動）：沒有「往上捲」可量
+      if (away && away.y0 < 100) console.log(`  ·    ${tag}：頁面停在頂端（y ${away.y0}，板子自己捲），「自己往上捲」這一條不量`);
+      else if (away) {
         const after = log.filter((m) => m.beat > away.beat && !m.wait);
         check(`${tag}：念到一半自己往上捲：這一句不拉回去、下一句才帶回來`, away.min < away.y0 - 100 && away.y < away.y0 - 100 && after.length > 0 && after.every((m) => m.now[1] <= m.lim + 1), `${away.y0} → ${away.min} → ${away.y} · ${JSON.stringify(after[0] || {})}`);
       }

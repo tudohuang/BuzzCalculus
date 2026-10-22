@@ -145,10 +145,7 @@ async function run() {
     if (sec.predict) await evaluate(`window.__b.click('[data-action="course-s-pick"][data-kind="predict"][data-option="0"]'); return 1;`);
     if (sec.order) for (let j = 0; j < sec.order.steps.length; j += 1) await evaluate(`window.__b.click('[data-action="course-s-ord"][data-step="${j}"]'); return 1;`);
     if (sec.where) await evaluate(`window.__b.click('[data-action="course-s-whr"][data-option="${correctOf({ options: sec.where.steps })}"]'); return 1;`);
-    if (sec.drag) {
-      const v = (sec.drag.range[0] + sec.drag.range[1]) / 2;
-      await evaluate(`const i = document.querySelector('[data-cv2s] [data-cv2-fig="${sec.drag.use}"] input'); i.value = "${v}"; i.dispatchEvent(new Event("input", { bubbles: true })); i.dispatchEvent(new Event("change", { bubbles: true })); return 1;`);
-    }
+    // 分節沒有拖圖（滑桿互動圖只在全文）
     await sleep(120);
   };
   const readLesson = async (lesson) => {

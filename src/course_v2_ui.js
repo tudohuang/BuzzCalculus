@@ -496,7 +496,7 @@
     let state = { lessonId: "", steps: {}, picks: {}, figs: {}, recorded: false };
     let secFail = false;
     const sec = (fn) => Promise.resolve(deps.ensureLazy("sections")).then(fn, () => { secFail = true; render(); });
-    const secApi = (records, head) => { const m = meta[state.lessonId]; return { m, data: lessonData(m.id), records, head, state, fmt, rich, update, tierOf: (r) => tierOf(r, m), progress: (r) => progressOf(r, m), next: neighbour(m, 1), label, lessonLink, deps, act, boss: bossView(records, m) }; };
+    const secApi = (records, head) => { const m = meta[state.lessonId]; return { m, data: secData(lessonData(m.id)), records, head, state, fmt, rich, update, tierOf: (r) => tierOf(r, m), progress: (r) => progressOf(r, m), next: neighbour(m, 1), label, lessonLink, deps, act, boss: bossView(records, m) }; };
 
     // 圖的滑桿：只換那一張圖（不整頁重繪 —— 拖動時每一格都重繪整課太貴）；值記在 state.figs，
     // 之後別的動作重繪時圖停在原地。委派在 document 上，app.js 重繪換掉 DOM 也不用重綁。
@@ -1022,5 +1022,28 @@
     };
   }
 
-  window.BuzzCourseV2UI = { create };
+  /* 分節（黑板／筆記本）不放滑桿互動圖：黏在板子上會擋字，拖滑桿的「動手」也一起拿掉 —— 互動圖只在全文。
+     副本只蓋掉 figures（滑桿圖換成 null：句子帶的 fig 找不到圖就不畫、不動）與那幾節的 drag，其餘照原型讀原物件
+     （句子不複製：旁白的時間軸等之後改到原物件上也讀得到）。照 data 快取：BuzzBoard 的整課排版用 data 當 key。 */
+  const secCache = new WeakMap();
+  function secData(data) {
+    if (!data || !data.sections) return data;
+    const hit = secCache.get(data);
+    if (hit) return hit;
+    const figs = data.figures || [];
+    if (!figs.some((f) => f && f.widget)) { secCache.set(data, data); return data; }
+    const widget = (k) => Boolean(figs[k] && figs[k].widget);
+    const out = Object.create(data);
+    out.figures = figs.map((f) => (f && f.widget ? null : f));
+    out.sections = data.sections.map((s) => {
+      if (!s.drag || !widget(s.drag.use)) return s;
+      const t = Object.create(s);
+      t.drag = undefined;
+      return t;
+    });
+    secCache.set(data, out);
+    return out;
+  }
+
+  window.BuzzCourseV2UI = { create, secData };
 })();

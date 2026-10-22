@@ -190,7 +190,7 @@ html.nb .cvb-model>.cv2-figure{box-shadow:0 1px 4px #0002}
     const off = [];
     const qz = [];
     const secOf = [];
-    const figSec = data.sections.map((s) => s.beats.some((b) => b.fig) || Boolean(s.drag));
+    const figSec = data.sections.map((s) => s.beats.some((b) => b.fig && (data.figures || [])[b.fig.use]) || Boolean(s.drag));
     // 題目寫成板上的行：題目（金色、貼邊）＋選項（縮一格、點得到）；order = 選項照這個順序寫（證明的「為什麼」跟板下一樣洗牌）
     const quizLines = (tag, ask, label, options, order) => {
       const q = chunks(String(ask || ""), 15).map((line, k) => ({ do: "write", line: k ? line : `${label}　${line}`, color: "gold", qz: "ask", ...tag }));
@@ -377,7 +377,7 @@ html.nb .cvb-model>.cv2-figure{box-shadow:0 1px 4px #0002}
     const L0 = B.lesson;
     const rectH = Math.round(cap * (cols === 1 ? 0.56 : 0.5));
     const figOf = L0 ? (i) => L0.figSec[L0.secOf[M.acts[M.items[i].born].b]] : null;
-    const m = { W, pad, gap: Math.round(F * (nbBox ? 1.5 : 1.0)), flow: B.whole ? { view: cap, cols, colW: Wc, colGap, rectH, fig: figOf, headPage: Boolean(nbBox) } : null, items: V.map((v) => ({ w: v.w, h: v.h, lhs: v.lhs || 0, alignable: Boolean(v.alignable), gapA: 0, gapB: 0 })) };
+    const m = { W, pad, gap: Math.round(F * (nbBox || B.nbOv ? 1.5 : 1.0)), flow: B.whole ? { view: cap, cols, colW: Wc, colGap, rectH, fig: figOf, headPage: Boolean(nbBox || B.nbOv) } : null, items: V.map((v) => ({ w: v.w, h: v.h, lhs: v.lhs || 0, alignable: Boolean(v.alignable), gapA: 0, gapB: 0 })) };
     let st;
     let geo;
     for (let iter = 0; iter < 6; iter += 1) {
@@ -1033,7 +1033,7 @@ html.nb .cvb-model>.cv2-figure{box-shadow:0 1px 4px #0002}
     rebuild() { if (B) { build(); B.last = ""; kick(); } }
   };
   // 攤開整塊黑板（結算畫面的按鈕）：整課畫到最後，每一面各複製一份並排，一次看完。
-  // 筆記本：照寫字那時的紙寬與板高排（排版一樣，自己寫的才對得上），筆跡一起攤開（course_ink.js 的 paint）
+  // 筆記本：照寫字那時的紙寬、板高與筆記本的排法（nbOv：行距、節標題換頁）排，自己寫的才對得上；筆跡一起攤開（course_ink.js 的 paint）
   function overview(api) {
     const whole = lessonBoard(api.data);
     if (!whole || !whole.beats.some((b) => (b.board || []).length)) return false;
@@ -1066,7 +1066,7 @@ html.nb .cvb-model>.cv2-figure{box-shadow:0 1px 4px #0002}
     meas.appendChild(el);
     const lastSi = api.data.sections.length - 1;
     B = { key: `${api.m.id}:overview`, si: lastSi, state: api.state, el, at: whole.beats.length - 1, sec: whole, M: null, w: 0, raw: null, rawAt: 0, tau: 0, clip: "", pending: 0, s0: null, q0: performance.now(),
-      api, whole: true, lesson: whole, off: 0, qa: -1, secEnd: whole.beats.length - 1, capFix: mine && mine.h };
+      api, whole: true, lesson: whole, off: 0, qa: -1, secEnd: whole.beats.length - 1, capFix: mine && mine.h, nbOv: nb };
     const finish = () => {
       build();
       if (!B || !B.M) return false;

@@ -1,0 +1,190 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>BuzzCalculus 課程短片</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=LXGW+WenKai+TC:wght@300;400;700&family=Noto+Sans+TC:wght@400;500&family=Noto+Serif+TC:wght@400;600&display=swap">
+<style>
+  html, body { margin: 0; background: #000; }
+  #stage { position: relative; width: 1920px; height: 1080px; overflow: hidden; background: #0d0c0a; color: #f4efe4;
+    font-family: "LXGW WenKai TC", "Noto Serif TC", serif; }
+  .layer { position: absolute; inset: 0; overflow: hidden; }
+  .world { position: absolute; left: 0; top: 0; transform-origin: 0 0; }
+  .world img { display: block; }
+  /* 字卡：紙或夜色，楷體，大量留白 */
+  .card { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; }
+  .card.paper { background: radial-gradient(ellipse at 50% 45%, #f7f1e4 0%, #efe6d3 60%, #e2d6bd 100%); color: #2b2620; }
+  .card.night { background: radial-gradient(ellipse at 50% 45%, #1a1814 0%, #0d0c0a 70%); color: #efe8d8; }
+  .card .ln { font-size: 76px; line-height: 1.5; letter-spacing: .16em; font-weight: 400; white-space: nowrap; }
+  .card .ln.s { font-size: 40px; letter-spacing: .3em; opacity: .7; }
+  .card .ln .ch { display: inline-block; }
+  .card.left { padding-left: 300px; align-items: flex-start; }
+  .card.center { align-items: center; text-align: center; }
+  .card .red { color: #b5422a; }
+  .card.night .red { color: #e0a35a; }
+  /* 畫面旁的一行字（疊在畫面上，壓暗半邊） */
+  .cap { position: absolute; left: 150px; top: 50%; transform: translateY(-50%); white-space: nowrap; color: #f6f0e2; text-shadow: 0 2px 30px rgba(0,0,0,.5); }
+  .cap .ln { font-size: 64px; letter-spacing: .14em; line-height: 1.55; }
+  .cap .ln.s { font-size: 36px; letter-spacing: .26em; opacity: .78; }
+  .cap .ch { display: inline-block; }
+  .shade { position: absolute; inset: 0; background: linear-gradient(90deg, #0d0c0a 0%, #0d0c0a 46%, rgba(13,12,10,.6) 54%, rgba(13,12,10,0) 66%); }
+  /* 寬銀幕黑邊、字幕在下面那條黑邊裡 */
+  #bars::before, #bars::after { content: ""; position: absolute; left: 0; right: 0; height: 132px; background: #000; }
+  #bars::before { top: 0; } #bars::after { bottom: 0; }
+  #sub { position: absolute; left: 0; right: 0; bottom: 38px; text-align: center; font-family: "Noto Sans TC", sans-serif; font-weight: 400; font-size: 32px; letter-spacing: .08em; color: rgba(244,239,228,.86); white-space: nowrap; }
+  #vig { position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 50%, rgba(0,0,0,0) 55%, rgba(0,0,0,.38) 100%); pointer-events: none; }
+  #grain { position: absolute; inset: 0; opacity: .07; mix-blend-mode: overlay; pointer-events: none; }
+  /* 片尾 */
+  .end { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; background: radial-gradient(ellipse at 50% 45%, #f7f1e4 0%, #efe6d3 60%, #e2d6bd 100%); color: #2b2620; }
+  .end .mark { display: flex; align-items: center; gap: 26px; font-family: "Noto Serif TC", serif; font-weight: 600; font-size: 74px; letter-spacing: .02em; }
+  .end .glyph { width: 92px; height: 92px; border-radius: 24px; background: #B98A22; color: #1F1D18; display: grid; place-items: center; font-family: "Times New Roman", serif; font-style: italic; font-size: 62px; }
+  .end .url { font-family: "Noto Sans TC", sans-serif; font-size: 36px; letter-spacing: .06em; margin-top: 34px; color: #5c554a; }
+  .end .tag { font-size: 34px; letter-spacing: .4em; margin-top: 18px; color: #7a7164; }
+</style>
+<div id="stage">
+  <div id="layers"></div>
+  <div id="vig"></div>
+  <canvas id="grain" width="480" height="270"></canvas>
+  <div class="layer" id="bars"></div>
+  <div id="sub"></div>
+</div>
+<div id="warm" style="position:absolute;left:-9999px;top:0;font-family:'LXGW WenKai TC';"></div>
+<div id="warm2" style="position:absolute;left:-9999px;top:0;font-family:'Noto Sans TC';"></div>
+<div id="warm3" style="position:absolute;left:-9999px;top:0;font-family:'Noto Serif TC';font-weight:600"></div>
+<script src="scenes.js"></script>
+<script>
+(async () => {
+  const BASE = "/docs/trailer/course-film/raw/";
+  const M = await (await fetch(BASE + "manifest.json")).json();
+  const $ = (id) => document.getElementById(id);
+  const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const E = { inout: (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2), sine: (t) => -(Math.cos(Math.PI * t) - 1) / 2, out: (t) => 1 - Math.pow(1 - t, 3) };
+  const fin = (t, at, d) => clamp((t - at) / d, 0, 1);
+  // 關鍵影格：[[t, v...], ...] → 該時刻的 v（緩入緩出）
+  const kf = (t, keys, ease = E.sine) => {
+    if (t <= keys[0][0]) return keys[0].slice(1);
+    for (let i = 1; i < keys.length; i += 1) if (t <= keys[i][0]) {
+      const a = keys[i - 1], b = keys[i], u = ease((t - a[0]) / (b[0] - a[0]));
+      return a.slice(1).map((v, k) => lerp(v, b[k + 1], u));
+    }
+    return keys[keys.length - 1].slice(1);
+  };
+
+  /* ── 分鏡（STORYBOARD.md）────────────────────────────────
+     cam：[t, cx, cy, w]＝鏡頭看素材（CSS 像素座標）的中心與寬度；w 越小越近。
+     xin：跟上一鏡交疊幾秒（溶接）；from：從素材第幾秒開始；dark：開頭幾秒全黑（J-cut：聲音先進）；
+     lcut：聲音延到下一鏡幾秒（L-cut）。 */
+  const card = (lines, len, o = {}) => ({ kind: "card", lines, len, tone: "paper", align: "center", xin: 0.8, ...o });
+  const foot = (dir, from, len, cam, o = {}) => ({ kind: "foot", dir, from, len, cam, xin: 0.8, ...o });
+  const still = (dir, img, len, cam, o = {}) => ({ kind: "still", dir, img, len, cam, xin: 0.9, ...o });
+  const SCENES = window.__SCENES ? window.__SCENES(M, { card, foot, still }) : [];
+  // 時間軸：交疊的那一段算進上一鏡
+  let cursor = 0;
+  SCENES.forEach((s, i) => { const x = i === 0 ? 0 : (s.xin || 0); s.start = Math.max(0, cursor - x); s.end = s.start + s.len; cursor = s.end; });
+  window.__total = cursor;
+
+  // 每一鏡一層（後面的疊在上面）
+  const host = $("layers");
+  const chars = (t) => t.replace(/(\{r\})|(\{\/r\})|([^{])/g, (m, a, b, c) => (a ? '<span class="red">' : b ? "</span>" : `<span class="ch">${c === " " ? "&nbsp;" : c}</span>`));
+  SCENES.forEach((s) => {
+    const el = document.createElement("div");
+    el.className = "layer";
+    el.style.visibility = "hidden";
+    if (s.kind === "card") {
+      el.innerHTML = `<div class="card ${s.tone} ${s.align}">${s.lines.map((l, i) => `<div class="ln ${typeof l === "object" ? "s" : ""}">${chars(typeof l === "object" ? l.s : l)}</div>`).join("")}</div>`;
+    } else if (s.kind === "end") {
+      el.innerHTML = `<div class="end"><div class="mark"><span class="glyph">∫</span><span>BuzzCalculus</span></div><div class="url">buzz-calculus.vercel.app</div><div class="tag">${s.tag || ""}</div></div>`;
+    } else if (s.kind === "foot" || s.kind === "still") {
+      const W = s.kind === "still" && s.img === "tall" ? M[s.dir].tall.w : 1180;
+      const H = s.kind === "still" && s.img === "tall" ? M[s.dir].tall.h : 820;
+      s.W = W; s.H = H;
+      const Z = s.kind === "still" && s.img === "view" && M[s.dir].zoom;
+      el.innerHTML = `<div class="world"><img width="${W}" height="${H}" alt="">${Z ? `<img class="zoom" src="${BASE}${s.dir}/zoom.jpg" style="position:absolute;left:${Z.x}px;top:${Z.y}px;width:${Z.w}px;height:${Z.h}px" alt="">` : ""}</div>${s.cap ? `<div class="shade"></div><div class="cap">${s.cap.map((l) => `<div class="ln ${typeof l === "object" ? "s" : ""}">${chars(typeof l === "object" ? l.s : l)}</div>`).join("")}</div>` : ""}<div class="dim" style="position:absolute;inset:0;background:#000;opacity:0"></div>`;
+    }
+    host.appendChild(el);
+    s.el = el;
+  });
+
+  // 字一個一個「洇」出來：透明＋模糊收斂＋微微上浮
+  const ink = (root, t, at, stagger, d, out) => {
+    [...root.querySelectorAll(".ch")].forEach((c, i) => {
+      const p = E.out(fin(t, at + i * stagger, d));
+      c.style.opacity = p * out;
+      c.style.filter = `blur(${lerp(7, 0, p).toFixed(2)}px)`;
+      c.style.transform = `translateY(${lerp(10, 0, p).toFixed(2)}px)`;
+    });
+  };
+  const frameOf = (dir, tau) => `${BASE}${dir}/f${String(clamp(Math.round(tau * M[dir].fps), 0, M[dir].frames - 1)).padStart(5, "0")}.jpg`;
+  const decode = async (img, src) => { if (img.getAttribute("src") !== src) { img.src = src; try { await img.decode(); } catch (_e) { /* 下一格 */ } } };
+  const subAt = (dir, tau) => { const s = (M[dir].subs || []).find((x) => tau >= x.at && tau < x.to); return s ? s.text : ""; };
+
+  async function draw(s, T) {
+    const t = T - s.start;
+    const el = s.el;
+    el.style.visibility = "visible";
+    // 溶接：這一鏡在交疊段淡入；最後一鏡之後的淡出交給 out
+    const a = s.xin ? E.sine(fin(t, 0, s.xin)) : 1;
+    const out = s.fadeOut ? 1 - E.sine(fin(t, s.len - s.fadeOut, s.fadeOut)) : 1;
+    el.style.opacity = a * out;
+    let sub = "";
+    if (s.kind === "card") {
+      const lines = [...el.querySelectorAll(".ln")];
+      const outT = 1;
+      lines.forEach((ln, i) => ink(ln, t, (s.at || 0.5) + (s.gaps ? s.gaps[i] : i * (s.gap || 1.1)), s.stagger || 0.07, 0.9, outT));
+    } else if (s.kind === "end") {
+      const mark = el.querySelector(".mark"), url = el.querySelector(".url"), tag = el.querySelector(".tag");
+      mark.style.opacity = E.out(fin(t, 0.4, 1.2));
+      mark.style.filter = `blur(${lerp(6, 0, E.out(fin(t, 0.4, 1.2)))}px)`;
+      url.style.opacity = E.out(fin(t, 1.4, 1.0));
+      tag.style.opacity = E.out(fin(t, 2.1, 1.0));
+    } else {
+      const img = el.querySelector("img:not(.zoom)");
+      const src = s.kind === "foot" ? frameOf(s.dir, s.from + t) : `${BASE}${s.dir}/${s.img}.jpg`;
+      await decode(img, src);
+      const [cx, cy, w] = kf(t, s.cam);
+      const z = 1920 / w;
+      el.querySelector(".world").style.transform = `translate(${(960 - cx * z).toFixed(2)}px, ${(540 - cy * z).toFixed(2)}px) scale(${z.toFixed(4)})`;
+      const blur = s.focus ? kf(t, s.focus)[0] : 0;
+      el.querySelector(".world").style.filter = blur > 0.05 ? `blur(${blur.toFixed(2)}px)` : "none";
+      el.querySelector(".dim").style.opacity = s.dark ? 1 - E.sine(fin(t, s.dark, 1.2)) : 0;
+      if (s.cap) {
+        const capOut = 1 - fin(t, s.len - 0.6, 0.6);
+        el.querySelector(".shade").style.opacity = capOut; // 一進來就蓋住左半（側欄不能透出來），只有字慢慢洇出
+        [...el.querySelectorAll(".cap .ln")].forEach((ln, i) => ink(ln, t, (s.capAt || 0.3) + 0.4 + i * 1.0, 0.07, 0.9, capOut));
+      }
+      if (s.kind === "foot" && s.subs !== false && (!s.dark || t > s.dark)) sub = subAt(s.dir, s.from + t);
+    }
+    return sub;
+  }
+
+  // 底片顆粒：每一格不同（用 T 當種子，重算才會一樣）
+  const g = $("grain").getContext("2d");
+  const gimg = g.createImageData(480, 270);
+  const grain = (T) => {
+    let x = (Math.floor(T * 30) * 2654435761) >>> 0;
+    for (let i = 0; i < gimg.data.length; i += 4) { x ^= x << 13; x >>>= 0; x ^= x >>> 17; x ^= x << 5; x >>>= 0; const v = x & 255; gimg.data[i] = gimg.data[i + 1] = gimg.data[i + 2] = v; gimg.data[i + 3] = 255; }
+    g.putImageData(gimg, 0, 0);
+  };
+
+  window.seek = async (T) => {
+    let sub = "";
+    for (const s of SCENES) {
+      if (T >= s.start && T < s.end) { const x = await draw(s, T); if (x) sub = x; }
+      else s.el.style.visibility = "hidden";
+    }
+    const sb = $("sub");
+    sb.textContent = sub;
+    grain(T);
+    return true;
+  };
+  window.__scenes = SCENES.map((s) => ({ kind: s.kind, dir: s.dir || null, from: s.from || 0, start: s.start, end: s.end, len: s.len, lcut: s.lcut || 0, dark: s.dark || 0, mute: Boolean(s.mute) }));
+  // 字型：把所有會出現的字先排一次，Google 字型才會把那些字的子集抓下來
+  const texts = SCENES.map((s) => (s.lines || []).concat(s.cap || []).map((l) => (typeof l === "object" ? l.s : l)).join("")).join("");
+  $("warm").textContent = texts;
+  $("warm2").textContent = Object.values(M).flatMap((m) => (m.subs || []).map((x) => x.text)).join("") + "buzz-calculus.vercel.app";
+  $("warm3").textContent = "BuzzCalculus";
+  await document.fonts.ready;
+  await new Promise((r) => setTimeout(r, 300));
+  await document.fonts.ready;
+  window.__fontsReady = true;
+})();
+</script>

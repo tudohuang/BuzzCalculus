@@ -497,6 +497,8 @@ interface Window {
   BuzzCannedHints: any;
   BUZZ_SYNC_ENDPOINT?: string;
   __BUZZ_TEST_HOOKS__: any;
+  /** 開發者用 ?allboards：交給 tools/all_boards.js 的延後載入與紀錄讀取 */
+  __BUZZ_ALLBOARDS__?: { ensureLazy: (group: string) => Promise<unknown>; loadRecords: () => unknown };
   BuzzAbility: any;
   BuzzPlanner: any;
   BuzzSession: any;
