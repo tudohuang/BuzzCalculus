@@ -543,7 +543,8 @@
   // v2.6：同一個上下文狀態的取樣結果快取。證人（根）與含積分的定義讓每次抽樣都很貴，
   // 而一行的驗證會呼叫 evaluate 幾十次（目標比對、等價、錨定…），狀態沒變就不該重抽
   function sampleCacheKey(spec, ctx, count) {
-    const constraints = ctx.constraints.filter((item) => item.caseId === null || item.caseId === ctx.currentCase).map((item) => [item.lhs, item.op, item.rhs]);
+    const constraints = ctx.constraints.filter((item) => item.caseId === null || item.caseId === ctx.currentCase).map((item) => [item.lhs, item.op, item.rhs])
+      .concat((ctx.conditional || []).map((item) => [item.lhs, item.op, item.rhs, item.when.lhs, item.when.op, item.when.rhs]));
     const atoms = ctx.atoms ? Array.from(ctx.atoms.entries()).map(([key, atom]) => [key, atom.domain]) : [];
     return JSON.stringify([count, spec.id, spec.seed, Array.from(ctx.vars.entries()), ctx.defs, ctx.witnesses || {}, constraints, atoms, Object.keys(ctx.userFunctions || {}).map((name) => [name, ctx.userFunctions[name].body])]);
   }
@@ -572,7 +573,7 @@
         int: Boolean(declared.int)
       };
     });
-    const defs = Object.keys(ctx.defs).map((name) => ({ name, fn: compile(ctx.defs[name], scope) }));
+    const defs = Object.keys(ctx.defs).map((name) => { try { return { name, fn: compile(ctx.defs[name], scope) }; } catch (_error) { return null; } }).filter(Boolean);
     // v2.6 證人：c 是 E(c) = 0 在 (lo, hi) 上的根，跟定義一樣在多輪迴圈裡算（可能依賴定義，定義也可能依賴它）
     Object.keys(ctx.witnesses || {}).forEach((name) => {
       const witness = ctx.witnesses[name];
@@ -585,6 +586,10 @@
     // 編不出來的條件（含抽象符號）不擋取樣 —— 它們在登記時就已經標黃了
     const compiled = constraints.map((item) => {
       try { return { ...item, lhs: compile(item.lhs, scope), rhs: compile(item.rhs, scope) }; } catch (_error) { return null; }
+    }).filter(Boolean);
+    // 有條件的限制（由 aₙ → A 取 N₁：n > N₁ 時 |aₙ − A| < ε/2）：條件成立的點才要滿足
+    const conditional = (ctx.conditional || []).map((item) => {
+      try { return { lhs: compile(item.lhs, scope), rhs: compile(item.rhs, scope), op: item.op, wl: compile(item.when.lhs, scope), wr: compile(item.when.rhs, scope), wop: item.when.op }; } catch (_error) { return null; }
     }).filter(Boolean);
     const accepted = [];
     let tries = 0;
@@ -622,6 +627,13 @@
       if (!ok) continue;
       for (const item of compiled) {
         let a; let b;
+        try { a = item.lhs(env); b = item.rhs(env); } catch (_error) { ok = false; break; }
+        if (!Number.isFinite(a) || !Number.isFinite(b) || !RELATION_TEST[item.op](a, b)) { ok = false; break; }
+      }
+      for (const item of ok ? conditional : []) {
+        let a; let b; let p; let q;
+        try { p = item.wl(env); q = item.wr(env); } catch (_error) { ok = false; break; }
+        if (!Number.isFinite(p) || !Number.isFinite(q) || !RELATION_TEST[item.wop](p, q)) continue;
         try { a = item.lhs(env); b = item.rhs(env); } catch (_error) { ok = false; break; }
         if (!Number.isFinite(a) || !Number.isFinite(b) || !RELATION_TEST[item.op](a, b)) { ok = false; break; }
       }
@@ -699,6 +711,8 @@
     let out = normalize(text);
     out = out.replace(/lim\s*_?\s*[{(]?\s*([A-Za-z]\w*)\s*->\s*([^\s})]+)\s*[})]?\s*/g, "lim[$1->$2] ");
     out = compact(out).replace(/\*/g, "");
+    // √n 正規化後是 sqrtn：sqrt(n)、sqrt n 都收成同一個寫法（只有一個字或數字的根號）
+    out = out.replace(/sqrt\(([A-Za-z]|\d+)\)/g, "sqrt$1");
     out = out.replace(/^((?:.*?)lim\[[^\]]+\])\((.+)\)=/, "$1$2=");
     return out;
   }
@@ -790,10 +804,25 @@
     return false;
   }
 
+  // lim_{v→a} 本體 = 值 → { v, at, body, value }；不是這個形式就 null
+  function limParts(text) {
+    // 不轉小寫（compact 會）：A 和 a 在這種題裡是兩個東西（極限值與數列）
+    // 空白也留著：c a_n 是相乘，黏成 ca_n 就變成另一個名字
+    const out = normalize(text).replace(/lim\s*_?\s*[{(]?\s*([A-Za-z]\w*)\s*->\s*([^\s})]+)\s*[})]?\s*/g, "lim[$1->$2] ").trim();
+    const m = out.match(/^lim\[([A-Za-z]\w*)->([^\]]+)\]\s*(.+?)\s*=\s*([^=]+)$/);
+    return m ? { v: m[1], at: m[2], body: m[3], value: m[4].trim() } : null;
+  }
+
   function goalMatches(spec, statement, ctx, evaluate) {
     const goal = spec.goal || {};
     const key = canonicalText(statement);
     if ((goal.text || []).some((alias) => canonicalText(alias) === key)) return true;
+    // 極限的結論：括號多一層、\frac 或 /、√n 或 sqrt(n) 都是同一句 —— 同一個變數、同一點，本體與極限值在取樣點上相等
+    const mine = limParts(statement);
+    if (mine && (goal.text || []).some((alias) => {
+      const g = limParts(alias);
+      return g && g.v === mine.v && g.at === mine.at && evaluate(g.body, mine.body, "=", ctx).ok && evaluate(g.value, mine.value, "=", ctx).ok;
+    })) return true;
     if (goal.relation) {
       const chain = splitChain(normalize(goal.relation));
       const mine = splitChain(normalize(statement));
@@ -841,8 +870,10 @@
       const text = normalize(fact);
       const key = textFactKey(text);
       if (key) ctx.textFacts.add(key.key);
-      const chain = text.includes("_") ? splitChain(text) : null;
-      if (chain && chain.ops.length === 1) ctx.universal.push({ lhs: chain.exprs[0], op: chain.ops[0], rhs: chain.exprs[1], text });
+      // 「a <= b + _，_ > 0」：逗號後面是 _ 的範圍（對所有 ε > 0 才成立的事，不能拿負的 ε 去套）
+      const ranged = text.match(/^(.*?)\s*,\s*(_\s*(?:>=|<=|>|<)\s*[^,]+)$/);
+      const chain = text.includes("_") ? splitChain(ranged ? ranged[1] : text) : null;
+      if (chain && chain.ops.length === 1) ctx.universal.push({ lhs: chain.exprs[0], op: chain.ops[0], rhs: chain.exprs[1], text, ...(ranged ? { domain: ranged[2] } : {}) });
       ctx.facts.push(text);
     });
     ctx.universal = expandUniversals(ctx.universal);
@@ -936,7 +967,7 @@
         continue;
       }
       if (line.kind === "contradiction") {
-        closeContradiction(spec, ctx, line, push);
+        closeContradiction(spec, ctx, line, push, evaluate);
         continue;
       }
       if (line.kind === "let") {
@@ -955,12 +986,20 @@
         continue;
       }
       if (line.kind === "by") {
+        // 「由 aₙ → A，取 N₁ 使 n > N₁ 時 |aₙ − A| < ε/2」：由題目給的極限取門檻
+        const pick = line.match[3].match(/^(?:取|選|choose|pick|take)\s*(.+)$/i);
+        const chosen = pick ? chooseFromLimit(spec, ctx, pick[1]) : null;
+        if (chosen) { push(line, chosen.status, chosen.note); continue; }
         const rule = findRule(line.match[2]);
         const claim = handleClaim(spec, ctx, line.match[3], line, verifyChain, evaluate, rule || { id: "unknown", names: [line.match[2]] });
         push(line, claim.status, claim.note, { results: claim.results, rule: rule ? rule.id : null, grounding: claim.grounding || null });
         continue;
       }
       if (line.kind === "because") {
+        // 「Since aₙ → A, choose N1 such that …」「因為 aₙ → A，取 N1 使 …」：跟「由 …，取 …」一樣，由題目給的極限取門檻
+        const pickB = String(line.match[4] || "").match(/^(?:取|選|choose|pick|take)\s*(.+)$/i);
+        const chosenB = pickB ? chooseFromLimit(spec, ctx, pickB[1]) : null;
+        if (chosenB) { push(line, chosenB.status, chosenB.note); continue; }
         // 前提得是已經立住的：題目給的、假設過的、前面驗過的、顯然的、只由定義算出來的。
         // 「因為 <目標>，所以 <目標>」那種，前提數值上對也不算。要在驗前提之前查，不然它自己就把自己登記成「驗過的」
         const unproved = statementList(line.match[2]).map((part) => ({ chain: splitChain(applyMacros(spec, part, ctx)), raw: splitChain(part) })).filter((item) => item.chain)
@@ -1086,7 +1125,39 @@
   }
 
   /* 任取 ε > 0 ／ 設 x, y 為實數 ／ 取 δ = ε/3 ／ 令 g(x) = … */
+  // 由題目給的極限取門檻：「取 N₁ 使 n > N₁ 時 |aₙ − A| < ε/2」「choose N1 such that |a(n) − A| < eps/2 for n > N1」。
+  // spec.limits = { a: "A" } 說 aₙ → A 是已知的：對任何正數都取得到這樣的 N₁。登記成有條件的限制（n > N₁ 的點才要滿足），
+  // 只有取樣看它。右邊要是正的（套定義的 ε 要 > 0），左邊要正好是 |aₙ − A|
+  function chooseFromLimit(spec, ctx, body) {
+    if (!spec.limits) return null;
+    const text = body.trim();
+    let m = text.match(/^([A-Za-z_]\w*)\s*使得?\s*(.+?)\s*時\s*,?\s*(.+)$/);
+    let name; let cond; let rel;
+    if (m) [, name, cond, rel] = m;
+    else if ((m = text.match(/^([A-Za-z_]\w*)\s*(?:使得?|such that|so that)\s*(.+?)\s*,?\s*(?:for all|for every|for|whenever|when|對所有|當)\s+(.+?)\s*(?:時)?$/i))) [, name, rel, cond] = m;
+    else return null;
+    const c = splitChain(cond);
+    const r = splitChain(applyMacros(spec, rel, ctx));
+    if (!c || c.ops.length !== 1 || !r || r.ops.length !== 1 || !["<", "<="].includes(r.ops[0])) return null;
+    if (!c.exprs.includes(name)) return { status: "unsure", note: `「${cond}」裡沒有 ${name}：要寫成「n > ${name} 時」。` };
+    const inner = absInner(r.exprs[0]);
+    const which = inner && Object.entries(spec.limits).find(([seq, limit]) => compact(inner) === compact(applyMacros(spec, `${seq}(n)-${limit}`, ctx)));
+    if (!which) return { status: "unsure", note: `「${rel}」不是題目給的極限能給的東西：題目給的是 ${Object.entries(spec.limits).map(([seq, limit]) => `${seq}ₙ → ${limit}`).join("、")}，取得到的是「|${Object.keys(spec.limits)[0]}(n) − ${Object.values(spec.limits)[0]}| < 某個正數」。` };
+    ctx.vars.set(name, ctx.vars.get(name) || { min: 0, max: 400 });
+    // 右邊要是正數：極限的定義只對正的 ε 給 N
+    const { samples } = drawSamples(spec, ctx, 60);
+    const scope = makeScope(spec, ctx);
+    let positive = false;
+    try { const fn = compile(r.exprs[1], scope); positive = samples.length > 0 && samples.every((env) => fn(env) > 0); } catch (_error) { positive = false; }
+    if (!positive) return { status: "error", note: `「${r.exprs[1]}」要是正的：${which[0]}ₙ → ${which[1]} 只對正數 ε 給得出 N。` };
+    ctx.conditional = (ctx.conditional || []).concat([{ lhs: r.exprs[0], op: r.ops[0], rhs: r.exprs[1], when: { lhs: c.exprs[0], op: c.ops[0], rhs: c.exprs[1] } }]);
+    ctx.skeleton.define = true;
+    return { status: "ok", note: `由 ${which[0]}ₙ → ${which[1]}（題目給的）取 ${name}：${cond} 時 ${rel}。` };
+  }
+
   function applyDeclaration(spec, ctx, body, line) {
+    const chosen = chooseFromLimit(spec, ctx, body);
+    if (chosen) return chosen;
     const notes = [];
     let status = "ok";
     const parts = statementList(body.replace(/\s*(為|是|屬於|be|as|in)\s*(實數|正實數|正數|整數|正整數|自然數|real numbers?|reals?|positive|integers?)\s*$/i, ""))
@@ -1122,6 +1193,8 @@
         ctx.vars.delete(name);
         ctx.skeleton.define = true;
         try { compile(ctx.defs[name], makeScope(spec, ctx)); } catch (error) {
+          // 編不出來的定義不留著：不然之後每一次取樣都會在它身上出錯
+          delete ctx.defs[name];
           status = worst(status, "error");
           notes.push(`「${part}」：${error.message}`);
           continue;
@@ -1284,6 +1357,12 @@
         continue;
       }
       const goalHit = goalMatches(spec, part, ctx, evaluate);
+      // 反證收尾：矛盾已經推出、反設的正是目標的否定 → 目標成立（不在反設之下再驗一次）
+      if (goalHit && ctx.contradiction && ctx.skeleton.contradictionClosed && negatesGoal(spec, ctx)) {
+        ctx.goalDone = true;
+        notes.push("反設推出了矛盾，所以反設不成立 —— 這一句對上題目的目標。");
+        continue;
+      }
       let handled = false;
       // 存在句：由 <定理>，存在 c ∈ (a, b) 使 …（但它就是題目的目標時，它是結論，不是新的存在句）
       const existential = goalHit ? null : part.match(EXISTENTIAL);
@@ -1635,6 +1714,7 @@
 
   function startContradiction(spec, ctx, line, push) {
     ctx.contradiction = true;
+    ctx.contraFrom = (ctx.verifiedLinks || []).length;
     const body = line.match[5] || "";
     const goal = spec.goal && spec.goal.relation ? splitChain(normalize(spec.goal.relation)) : null;
     if (body) {
@@ -1646,6 +1726,7 @@
           anyRelation = true;
           chain.exprs.filter((expr) => /^[A-Za-z_]\w*$/.test(expr)).forEach((name) => { if (!ctx.defs[name]) ctx.vars.set(name, ctx.vars.get(name) || {}); });
           for (let i = 0; i < chain.ops.length; i += 1) ctx.constraints.push({ lhs: chain.exprs[i], rhs: chain.exprs[i + 1], op: chain.ops[i], caseId: null });
+          if (chain.ops.length === 1) (ctx.contraAssume = ctx.contraAssume || []).push({ lhs: chain.exprs[0], op: chain.ops[0], rhs: chain.exprs[1] });
           notes.push(`反設「${part}」。`);
         } else if (/^(\w+)\s*(是|為)?\s*(最大|最小|largest|smallest|maximal|minimal|the (largest|smallest|maximum|minimum))/i.test(part)) {
           // 「m 是最大的」這種極值反設：之後配一條驗過的 t > m 就是矛盾
@@ -1662,13 +1743,22 @@
     }
     if (goal && goal.ops.length === 1) {
       ctx.constraints.push({ lhs: goal.exprs[0], rhs: goal.exprs[1], op: NEGATE[goal.ops[0]], caseId: null });
+      (ctx.contraAssume = ctx.contraAssume || []).push({ lhs: goal.exprs[0], op: NEGATE[goal.ops[0]], rhs: goal.exprs[1] });
       push(line, "ok", `反設目標不成立：${goal.exprs[0]} ${NEGATE[goal.ops[0]]} ${goal.exprs[1]}。接下來要推出矛盾。`);
       return;
     }
     push(line, "unsure", "反設了，但題目的目標不是一條關係式，我沒辦法把它取反來取樣。");
   }
 
-  function closeContradiction(spec, ctx, line, push) {
+  // 反設的是不是目標的否定（a > b 對 a <= b；左右對調也算）
+  function negatesGoal(spec, ctx) {
+    const goal = spec.goal && spec.goal.relation ? splitChain(normalize(spec.goal.relation)) : null;
+    if (!goal || goal.ops.length !== 1) return Boolean(spec.goal && spec.goal.text);
+    const want = compact(`${goal.exprs[0]}${NEGATE[goal.ops[0]]}${goal.exprs[1]}`);
+    return (ctx.contraAssume || []).some((a) => compact(`${a.lhs}${a.op}${a.rhs}`) === want || compact(`${a.rhs}${FLIP[a.op]}${a.lhs}`) === want);
+  }
+
+  function closeContradiction(spec, ctx, line, push, evaluate) {
     if (!ctx.contradiction) {
       push(line, "error", "還沒有反設就說矛盾。反證法要先寫「反設 …」。");
       return;
@@ -1708,6 +1798,43 @@
       }
       push(line, "unsure", "還需要證明更大或更小的值也屬於原來的範圍；正實數要明寫 0 < t，其他範圍目前無法自動確認。");
       return;
+    }
+    // 第四種：「這與 R 矛盾」—— R 是已知的（題目的條件、全稱事實的一個實例、反設之前驗過的關係），
+    // 而反設之後推出了一條跟 R 正好相反的關係（兩邊的差成正比、方向相反、至少一條是嚴格的）。
+    // 只喊「與 R 矛盾」不算：相反的那一條要自己推出來（刪掉那一行就不能還是綠）
+    const named = splitChain(String((line.match && line.match[4]) || "").trim());
+    if (named && named.ops.length === 1 && !["=", "!="].includes(named.ops[0])) {
+      const R = { lhs: named.exprs[0], op: named.ops[0], rhs: named.exprs[1] };
+      const same = (a, b) => compact(`${a.lhs}${a.op}${a.rhs}`) === compact(`${b.lhs}${b.op}${b.rhs}`) || compact(`${a.lhs}${a.op}${a.rhs}`) === compact(`${b.rhs}${FLIP[b.op]}${b.lhs}`);
+      const given = (spec.given || []).map((g) => splitChain(normalize(g))).filter((c) => c && c.ops.length === 1).map((c) => ({ lhs: c.exprs[0], op: c.ops[0], rhs: c.exprs[1] }));
+      const before = (ctx.verifiedLinks || []).slice(0, ctx.contraFrom || 0);
+      const universal = matchUniversal(ctx, named, evaluate);
+      const known = universal || given.some((g) => same(g, R)) || before.some((l) => same(l, R));
+      const after = (ctx.verifiedLinks || []).slice(ctx.contraFrom || 0).filter((l) => !["=", "!="].includes(l.op));
+      const oriented = (l) => ((l.op === ">" || l.op === ">=") ? `(${l.lhs})-(${l.rhs})` : `(${l.rhs})-(${l.lhs})`);
+      const strict = (l) => l.op === "<" || l.op === ">";
+      const scope = makeScope(spec, ctx);
+      // 兩個式子的差的比值：每個樣本都一樣、而且同號（sign = 1）或異號（sign = −1）
+      const ratioSign = (x, y, sign) => {
+        let fx; let fy;
+        try { fx = compile(applyMacros(spec, x, ctx), scope); fy = compile(applyMacros(spec, y, ctx), scope); } catch (_error) { return false; }
+        let ratio = null;
+        return probe.samples.every((env) => {
+          let a; let b;
+          try { a = fx(env); b = fy(env); } catch (_error) { return false; }
+          if (!Number.isFinite(a) || !Number.isFinite(b) || Math.abs(b) < 1e-12) return false;
+          const k = a / b;
+          if (ratio === null) { ratio = k; return k * sign > 0; }
+          return Math.abs(k - ratio) <= 1e-6 * (1 + Math.abs(ratio));
+        });
+      };
+      const opposite = known && after.find((l) => (strict(l) || strict(R)) && ratioSign(oriented(R), oriented(l), -1));
+      if (opposite) {
+        ctx.skeleton.contradictionClosed = true;
+        push(line, "ok", `前面推出「${opposite.lhs} ${opposite.op} ${opposite.rhs}」，正好跟已知的「${R.lhs} ${R.op} ${R.rhs}」相反。`);
+        return;
+      }
+      if (known) { push(line, "unsure", `「${R.lhs} ${R.op} ${R.rhs}」是已知的，但反設之後還沒推出跟它相反的式子 —— 先寫出那一條（例如「則 … > …」），再說矛盾。`); return; }
     }
     push(line, "unsure", "我抽得到同時滿足所有假設的點，看不出數值上的矛盾；如果矛盾來自數論或存在性，這裡只能靠你自己確認。");
   }
@@ -1987,6 +2114,35 @@
     return Boolean(equivalentLink(spec, ctx, chain, evaluate));
   }
   // 同上，但回傳對上的那條關係（給接地說明用）
+  // 兩條已知的不等式相加：x ≤ 1、y ≤ 1 ⇒ x + y ≤ 2。（右 − 左）恰好是兩條的（右 − 左）的和；結論是嚴格的就要有一條嚴格
+  function sumLink(spec, ctx, chain) {
+    if (chain.ops.length !== 1 || chain.ops[0] === "=" || chain.ops[0] === "!=") return null;
+    const links = knownLinks(ctx).filter((link) => link.op !== "=" && link.op !== "!=" && (link.caseId == null || link.caseId === ctx.currentCase));
+    if (links.length < 2) return null;
+    const gap = (l) => ((l.op === ">" || l.op === ">=") ? `(${l.lhs})-(${l.rhs})` : `(${l.rhs})-(${l.lhs})`);
+    const strict = (op) => op === "<" || op === ">";
+    const scope = makeScope(spec, ctx);
+    const fn = (text) => { try { return compile(applyMacros(spec, text, ctx), scope); } catch (_error) { return null; } };
+    const mine = fn(gap({ lhs: chain.exprs[0], op: chain.ops[0], rhs: chain.exprs[1] }));
+    if (!mine) return null;
+    const { samples } = drawSamples(spec, ctx, 60);
+    if (!samples.length) return null;
+    const fns = links.map((l) => fn(gap(l)));
+    for (let i = 0; i < links.length; i += 1) {
+      for (let j = i + 1; j < links.length; j += 1) {
+        if (!fns[i] || !fns[j] || (strict(chain.ops[0]) && !strict(links[i].op) && !strict(links[j].op))) continue;
+        const hit = samples.every((env) => {
+          try {
+            const m = mine(env); const s = fns[i](env) + fns[j](env);
+            return Number.isFinite(m) && Number.isFinite(s) && Math.abs(m - s) <= 1e-9 * (1 + Math.abs(m) + Math.abs(s));
+          } catch (_error) { return false; }
+        });
+        if (hit) return [links[i], links[j]];
+      }
+    }
+    return null;
+  }
+
   function equivalentLink(spec, ctx, chain, evaluate) {
     void evaluate;
     if (chain.ops.length !== 1) return null;
@@ -2241,6 +2397,9 @@
     }
     const transformed = groundTransformation(spec, ctx, chain, evaluate);
     if (transformed) return Object.assign({ kind: "rule" }, transformed);
+    // 比傳遞、三角不等式這些具名的改寫晚：它們也是相加的特例，名字說得比較清楚
+    const summed = sumLink(spec, ctx, chain);
+    if (summed) return { kind: "rule", rule: "add", from: summed.map(showLink), exact: true, note: `「${showLink(summed[0])}」跟「${showLink(summed[1])}」相加。` };
     return null;
   }
 
@@ -2523,6 +2682,7 @@
       defs: { ...ctx.defs },
       witnesses: { ...(ctx.witnesses || {}) },
       constraints: ctx.constraints.slice(),
+      conditional: (ctx.conditional || []).slice(),
       facts: ctx.facts.slice()
     };
   }

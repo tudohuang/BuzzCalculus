@@ -112,7 +112,7 @@ function render() {
     row("有 `solution`", stats.solution, "單段文字"),
     row("有作者撰寫 `hints`", stats.hints, ""),
     row("有 `solutionSteps`", stats.solutionSteps, "結構化步驟；側表 problem_solution_steps.js 的每一步由 validate_solution_steps 數值驗算"),
-    row("證明題", stats.proofs, "含 Lean 寫法 8 則（CI 不再編譯）"),
+    row("證明題", stats.proofs, "Lean 題 2026-10-23 拔掉"),
     row("`src/app.js`", `${stats.appLines} 行`, "單一 IIFE，拆分進行中"),
     row("`styles.css`", `${stats.cssLines} 行`, ""),
     row("題庫檔 `src/problem_*.js`", stats.problemFiles, ""),

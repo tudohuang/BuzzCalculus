@@ -39,7 +39,7 @@ function simpson(f, a, b, n) {
 /* ===== structural sanity for the whole proof bank ===== */
 {
   const ids = new Set();
-  const tiers = new Set(["basic", "standard", "advanced", "boss", "contest", "classic", "lean"]);
+  const tiers = new Set(["basic", "standard", "advanced", "boss", "contest", "classic"]);
   let ok = true;
   proofs.forEach((p) => {
     if (!p.id || ids.has(p.id)) ok = false;

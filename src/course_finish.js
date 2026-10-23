@@ -41,6 +41,8 @@
     const practice = (data.practice || []).filter((p) => !p.challenge && bank.has(p.id)).length;
     // 章首魔王題（course_boss.js 畫）：離魔王題還差 n 課，或「現在解得開了」—— 那時主按鈕讓給解題，下一課降成次要
     const boss = api.boss ? api.boss.finish : null;
+    // 這一課對到的證明梯子（大綱的 proofLadders，build_course_v2.js 產生）：[梯子 id, 梯子名]
+    const ladder = ((window.BUZZ_COURSE_V2 || {}).proofLadders || {})[m.id] || null;
     // 自己算（course_solve.js）：這一課的自己算第一次就打對幾題
     const solved = window.BuzzCourseSolve ? window.BuzzCourseSolve.stat(data, e) : null;
     // 下一層還差什麼、按哪裡做：完成 → 重做小測；熟練 → 練還沒對的核心題；全破 → 練還沒對的（含挑戰）
@@ -74,6 +76,7 @@
         <div class="action-row">
           ${api.next ? `<button type="button" class="button ${boss && boss.pay ? "secondary" : "home-primary"}" data-action="open-course-lesson" data-lesson-id="${escapeAttr(api.next.id)}">下一課：${escapeHtml(api.label(api.next))}${icon("chevron-right")}</button>` : `<button type="button" class="button home-primary" data-action="open-course">課程表</button>`}
           <button type="button" class="button secondary" data-action="course-map-focus" data-lesson-id="${escapeAttr(m.id)}" data-lit="1">在地圖上看</button>
+          ${ladder ? `<button type="button" class="button secondary" data-action="open-proof-ladder" data-ladder="${escapeAttr(ladder[0])}">${icon("pen")}自己證證看 · ${escapeHtml(ladder[1])}</button>` : ""}
           ${!((api.records && api.records.settings) || {}).boardSplit && data.sections.some((s) => s.beats.some((b) => b.board && b.board.length)) ? `<button type="button" class="button secondary" data-action="course-s-board">${icon("layers")}攤開整塊黑板</button>` : ""}
           ${practice && !(left && left.left.length) ? `<button type="button" class="button ghost" data-action="course-practice" data-set="main">${icon("play")}練推薦題 · ${practice} 題</button>` : ""}
         </div>
