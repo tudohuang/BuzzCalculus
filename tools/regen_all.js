@@ -33,6 +33,8 @@ const STEPS = [
   ["英文句型表", "node tools/build_i18n_text.js"],
   // 新版課程：tools/content/course_v2/ → src/course_v2/（大綱＋每一章的課文）。改了課文或大綱忘記打包，--check 會紅。
   ["新版課程", "node tools/build_course_v2.js"],
+  // 全站搜尋的索引（課名、每一節的標題與黑板上的中文、證明題）：課文、大綱、證明題改了都要重產
+  ["搜尋索引", "node tools/build_search_index.js"],
   // 題目側寫（方法家族、模板母題、先修課、角色、預設權重）：要排在 skill tags 與新版課程之後 —— 先修課讀課程大綱與每課的粗 tag
   ["題目側寫", "node tools/build_problem_profiles.js"],
   // 詳解 v2：tools/content/detail/ → src/detail/（按需抓的分片）

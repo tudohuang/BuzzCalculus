@@ -89,7 +89,8 @@ let checked = 0;
           const r = el => { const b=el.getBoundingClientRect(); return {left:b.left,right:b.right,top:b.top,bottom:b.bottom,width:b.width,height:b.height}; };
           return { vw, overflow: document.documentElement.scrollWidth-vw,
             main:r(main),nav:r(nav),bar:r(bar), navPosition:getComputedStyle(nav).position,
-            active:document.querySelectorAll('.nav-button[aria-current="page"]').length,
+            // 設定 2026-10-23 從分頁列移到工具列的齒輪（.settings-toggle），在設定頁亮的是它
+            active:document.querySelectorAll('.nav-button[aria-current="page"], .settings-toggle[aria-current="page"]').length,
             mainId:main.id, paddingBottom:parseFloat(getComputedStyle(main).paddingBottom),
             font:getComputedStyle(document.body).fontFamily,
             buttons:[...nav.querySelectorAll('button')].map(r),

@@ -1717,6 +1717,8 @@
       renderIndex: (records) => (current() ? ui.renderIndex(records) : waiting()),
       renderCurrent: (records) => (current() ? ui.renderLesson(records) : waiting()),
       renderHomeCard: (records) => (current() ? ui.renderHomeCard(records) : homeFallback()),
+      // 首頁「今天三件事」的下一課：課程組還沒載就先不給（那一格寫「課程」），載到了會重畫
+      nextInfo: (records) => (current() && ui.nextInfo ? ui.nextInfo(records) : null),
       // 首頁的「課程回溫」卡：只看紀錄（課名存在紀錄裡），不為了這張卡去抓課程組
       renderReviewCard: (records) => review.card(records),
       renderFirstSteps: (records) => (current() ? ui.renderFirstSteps(records) : ""),

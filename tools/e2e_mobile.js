@@ -233,7 +233,7 @@ async function run() {
     }
 
     /* ── 2b. 底部分頁列在 360px 寬：六格（今天／課程／訓練／數據／題庫／設定）都按得到、字沒被切 ── */
-    // 課程 2026-10 升成主分頁（以前只在桌機側欄，手機點不到課程）。六格在 360 寬每格約 54px。
+    // 課程 2026-10 升成主分頁（以前只在桌機側欄，手機點不到課程）。2026-10-23 設定移到頂端的工具（齒輪），分頁列五格、360 寬每格約 65px。
     await chrome.send("Emulation.setDeviceMetricsOverride", { width: 360, height: 740, deviceScaleFactor: 3, mobile: true });
     await chrome.send("Emulation.setTouchEmulationEnabled", { enabled: true, maxTouchPoints: 5 });
     await chrome.evaluate(`document.querySelector('[data-action="home"]').click(); await new Promise((r) => setTimeout(r, 600 * (window.__slow || 1))); return 1;`);
@@ -246,7 +246,7 @@ async function run() {
       });
       return { items, bottom: nav ? Math.round(nav.getBoundingClientRect().bottom) : -1, vh: innerHeight, overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth };
     `);
-    check("360px：分頁列六格依序是 今天／課程／訓練／數據／題庫／設定", tabs.items.map((t) => t.label).join("／") === "今天／課程／訓練／數據／題庫／設定", tabs.items.map((t) => t.label).join("／"));
+    check("360px：分頁列五格依序是 今天／課程／訓練／數據／題庫", tabs.items.map((t) => t.label).join("／") === "今天／課程／訓練／數據／題庫", tabs.items.map((t) => t.label).join("／"));
     check("360px：每一格都 ≥ 44×44", tabs.items.every((t) => t.w >= 44 && t.h >= 44), tabs.items.map((t) => `${t.label} ${t.w}×${t.h}`).join("、"));
     check("360px：分頁標籤沒被切掉", tabs.items.every((t) => !t.cut), tabs.items.filter((t) => t.cut).map((t) => t.label).join("、"));
     check("360px：分頁列貼底、不溢出", Math.abs(tabs.bottom - tabs.vh) <= 2 && tabs.overflow <= 1, `bottom ${tabs.bottom}/${tabs.vh} · overflow ${tabs.overflow}`);

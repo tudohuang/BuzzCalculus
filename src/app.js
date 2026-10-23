@@ -780,7 +780,18 @@
     return false;
   }
 
+  // 全站搜尋（search.js，點了才抓）
+  function openSearch() {
+    Promise.resolve(ensureLazy("search")).then(() => window.BuzzSearch && window.BuzzSearch.open()).catch(() => showAppNotice(t("搜尋載不進來 —— 檢查一下網路再試一次。")));
+  }
+
   function handleShortcut(event) {
+    // Ctrl+K／⌘K：在哪裡都能叫出搜尋（作答中也可以 —— 查一下公式不用離開這一局）
+    if ((event.ctrlKey || event.metaKey) && !event.altKey && (event.key === "k" || event.key === "K")) {
+      event.preventDefault();
+      openSearch();
+      return;
+    }
     if (event.metaKey || event.ctrlKey || event.altKey) return;
     // 對話框優先。它在的時候，底下畫面的快捷鍵一律不作用。
     if (handleModalKeys(event)) return;
@@ -795,6 +806,12 @@
     if (key === "?" || (event.shiftKey && key === "/")) {
       event.preventDefault();
       showAppNotice("__shortcuts__");
+      return;
+    }
+    // 「/」：搜尋（作答中不搶：自己寫的答案可能要打 /）
+    if (key === "/" && !event.shiftKey && view !== "quiz" && !isTypingTarget(event.target)) {
+      event.preventDefault();
+      openSearch();
       return;
     }
 
@@ -1520,7 +1537,8 @@
   // 兩種排法全靠 CSS。導覽（六個主分頁）與工具（安裝、主題）分開放：
   // 底部分頁列只該有分頁，工具擠進去會把最常按的鍵擠到 44px 以下。
   // 課程 2026-10 從側欄的「學習工具」升成主分頁：手機沒有側欄，以前手機根本點不到課程。
-  // 六格在 360px 寬每格 ≈ 54px（兩個字的標籤 ≈ 21px），不用拿掉任何一格。
+  // 2026-10-23 側欄瘦身：「設定」移到工具那一排（跟深色模式放一起），分頁列剩五格（360px 每格 ≈ 65px）；
+  // 側欄底下的「使用手冊」卡拿掉（頁首的麵包屑那一列已經有「使用手冊」）。
   // 版本字串從 header 拿掉了 —— 成熟軟體的 chrome 不放建置資訊，
   // 要查的人在設定頁最底下找得到。
   function renderTopbar() {
@@ -1542,6 +1560,7 @@
           inQuiz
             ? `<div class="topbar-utils"><button class="button ghost" data-action="confirm-exit" title="${t("離開本局")}">${icon("x")}<span>${t("離開")}</span></button></div>`
             : `
+              <button class="sidebar-search" data-action="open-search" title="${t("搜尋（Ctrl+K）")}">${icon("search")}<span>${t("搜尋")}</span><kbd>Ctrl K</kbd></button>
               <span class="nav-section-label">${t("學習空間")}</span>
               <nav class="topbar-nav" aria-label="${t("主要導覽")}">
                 ${navItem("home", "home", t("今天"), "home")}
@@ -1549,7 +1568,6 @@
                 ${navItem("train", "open-train", t("訓練"), "target")}
                 ${navItem("insights", "open-insights", t("數據"), "activity")}
                 ${navItem("library", "open-library", t("題庫"), "search")}
-                ${navItem("settings", "open-settings", t("設定"), "settings")}
               </nav>
               <div class="sidebar-resources">
                 <span class="nav-section-label">${t("學習工具")}</span>
@@ -1557,8 +1575,9 @@
                 ${navGate.history ? `<button class="sidebar-link ${view === "history" ? "is-active" : ""}" data-action="open-history" title="${t("練習紀錄")}">${icon("history")}<span>${t("練習紀錄")}</span></button>` : ""}
                 ${navGate.proofs ? `<button class="sidebar-link ${/^proof/.test(view) ? "is-active" : ""}" data-action="open-proofs" title="${t("證明訓練")}">${icon("file-pen-line")}<span>${t("證明訓練")}</span></button>` : ""}
               </div>
-              <a class="sidebar-guide" href="guide.html">${icon("book-open")}<span><strong>${t("把每次練習，變成進步")}</strong><small>${t("閱讀使用手冊")} ${icon("chevron-right")}</small></span></a>
               <div class="topbar-utils">
+                <button class="icon-button search-toggle" data-action="open-search" title="${t("搜尋")}" aria-label="${t("搜尋")}">${icon("search")}</button>
+                <button class="icon-button settings-toggle ${parentView === "settings" ? "is-active" : ""}" data-action="open-settings" title="${t("設定")}" aria-label="${t("設定")}" ${parentView === "settings" ? 'aria-current="page"' : ""}>${icon("settings")}<span>${t("設定")}</span></button>
                 ${deferredInstallPrompt ? `<button class="icon-button" data-action="install-app" title="${t("安裝 BuzzCalculus")}">${icon("download")}</button>` : ""}
                 <button class="icon-button theme-toggle" data-action="toggle-theme" title="${t("切換{themeLabel}模式", { themeLabel })}" aria-label="${t("切換{themeLabel}模式", { themeLabel })}">${icon(themeIcon)}<span>${t("{themeLabel}模式", { themeLabel })}</span></button>
               </div>`
@@ -1698,11 +1717,10 @@
           ${renderBackupNotice(records)}
         </div>
         <div class="home-aside">
-          ${gate.familiar ? renderHomeWeek(records, mission) : ""}
-          ${gate.familiar ? `<div class="workspace-section-head"><h2>${t("接下來練什麼")}</h2></div>${renderHomeSecondary(records, path, mission)}` : ""}
+          ${gate.familiar ? renderTodayThree(records, mission) : ""}
           ${renderGrowthLine(records)}
           ${renderHomeWeakness(records)}
-          ${gate.full || gate.proofs || gate.dailyOne ? `<section class="workspace-section"><div class="workspace-section-head"><h2>${t("探索更多")}</h2></div>${renderHomeQuickLinks(gate)}</section>` : ""}
+          ${gate.full || gate.proofs || gate.dailyOne ? `<section class="workspace-section"><div class="workspace-section-head"><h2>${t("探索更多")}</h2></div>${renderHomeQuickLinks(gate, !(gate.familiar && !srsDueSummary(records).due))}</section>` : ""}
         </div>
       </main>
     `;
@@ -1729,18 +1747,28 @@
     return `<section class="overview-grid" aria-label="${t("學習概覽")}">${stats.map(([label, value, note, name, action]) => `<button class="overview-stat" data-action="${action}"><span class="overview-label">${label}${icon(name)}</span><strong class="overview-value">${value}</strong>${note ? `<span class="overview-note">${note}</span>` : ""}</button>`).join("")}</section>`;
   }
 
-  function renderHomeWeek(records, mission) {
-    const counts = activityCounts(records);
-    const cursor = new Date();
-    cursor.setHours(12, 0, 0, 0);
-    cursor.setDate(cursor.getDate() - 6);
-    const days = [];
-    for (let i = 0; i < 7; i += 1) {
-      const count = counts[localDateKey(cursor)] || 0;
-      days.push(`<div class="week-day ${count ? "is-complete" : ""} ${i === 6 ? "is-today" : ""}" title="${escapeAttr(`${t("{cursor} · {count} 題", { cursor: localDateKey(cursor), count })}`)}"><span>${[t("日"), t("一"), t("二"), t("三"), t("四"), t("五"), t("六")][cursor.getDay()]}</span><span class="week-day-mark">${count ? icon("check") : i === 6 ? t("今") : "·"}</span></div>`);
-      cursor.setDate(cursor.getDate() + 1);
-    }
-    return `<section class="week-card" aria-label="${t("最近七天的練習")}"><div class="workspace-section-head"><h2>${t("一點一滴，練成習慣")}</h2>${icon("calendar")}</div><div class="week-days">${days.join("")}</div><div class="week-goal"><span>${t("今日目標")}</span><strong>${t("{completed} / {target} 題", { completed: mission.completed, target: mission.target })}</strong></div><div class="week-progress" role="progressbar" aria-label="${t("今日目標")}" aria-valuemin="0" aria-valuemax="${mission.target}" aria-valuenow="${mission.completed}"><span style="width:${Math.min(100, mission.progress)}%"></span></div></section>`;
+  // 首頁「今天三件事」（2026-10-23）：每日訓練、課程的下一課、到期的錯題（沒有就換今日函數），做完打勾。
+  // 取代原本的「一點一滴，練成習慣」七天格（跟連勝卡的七格重複）與「接下來練什麼」兩張卡 —— 四個地方都在講「接下來做什麼」
+  function renderTodayThree(records, mission) {
+    const due = srsDueSummary(records).due;
+    const lesson = courseUI.nextInfo ? courseUI.nextInfo(records) : null;
+    const today = dailyOneDateKey();
+    const readToday = Object.values(records.courseV2 || {}).some((e) => e && typeof e.doneAt === "string" && e.doneAt.slice(0, 10) === today);
+    const guessed = Boolean(((records.funcle || {}).days || {})[today]);
+    const items = [
+      { done: mission.done, attrs: 'data-action="start-daily"', icon: "calendar", label: t("每日訓練"), note: t("{completed} / {target} 題", { completed: mission.completed, target: mission.target }) },
+      { done: readToday, attrs: lesson ? `data-action="open-course-lesson" data-lesson-id="${escapeAttr(lesson.id)}"` : 'data-action="open-course"', icon: "book-open",
+        label: lesson ? t("下一課：{title}", { title: `${lesson.no} ${lesson.title}` }) : t("課程"), note: readToday ? t("今天讀過一課了") : t("一課約 5 分鐘") },
+      due
+        ? { done: false, attrs: 'data-action="start-srs-review"', icon: "refresh", label: t("錯題 {due} 題到期", { due }), note: t("照排程清掉才會真的記住") }
+        : { done: guessed, attrs: 'data-action="open-funcle"', icon: "grid", label: t("今日函數"), note: guessed ? t("今天猜過了") : t("猜今天的神秘函數") }
+    ];
+    const n = items.filter((item) => item.done).length;
+    return `
+      <section class="today-three" aria-label="${t("今天三件事")}">
+        <div class="workspace-section-head"><h2>${t("今天三件事")}</h2><small>${n === 3 ? t("都做完了") : `${n} / 3`}</small></div>
+        <ol>${items.map((item) => `<li class="${item.done ? "is-done" : ""}"><button class="secondary-entry" ${item.attrs}>${icon(item.done ? "check" : item.icon)}<span><strong>${escapeHtml(item.label)}</strong><small>${escapeHtml(item.note)}</small></span></button></li>`).join("")}</ol>
+      </section>`;
   }
 
   // 藏得最深的幾個入口，在首頁給一排小門。
@@ -1749,10 +1777,11 @@
   // 每一顆各自看閘門：練到全開的人四顆都有；只是「以前寫過證明」的人至少看得到
   // 證明訓練那一顆，不會因為換了裝置就整排消失。
   // 今日函數（2026-10-23）：這一排出現就有它（全新帳號的首頁照規則不出「探索更多」，它在訓練頁的練習分頁）
-  function renderHomeQuickLinks(gate) {
+  // funcle：「今天三件事」已經列了今日函數（沒有到期的錯題時）就不再放一顆
+  function renderHomeQuickLinks(gate, funcle = true) {
     return `
       <nav class="home-quick-links" aria-label="${t("更多入口")}">
-        <button data-action="open-funcle">${icon("grid")}<span>${t("今日函數")}</span></button>
+        ${funcle ? `<button data-action="open-funcle">${icon("grid")}<span>${t("今日函數")}</span></button>` : ""}
         ${gate.dailyOne ? `<button data-action="start-daily-one">${icon("puzzle")}<span>${t("每日一題")}</span></button>` : ""}
         ${gate.proofs ? `<button data-action="open-proofs">${icon("file-pen-line")}<span>${t("證明訓練")}</span></button>` : ""}
         ${gate.full ? `<button data-action="open-train" data-bucket="challenge">${icon("zap")}<span>${t("好友對戰")}</span></button>
@@ -1763,56 +1792,6 @@
 
   // 次要入口最多 2 個，而且必須是動態的 —— 沒有到期錯題就不該出現錯題按鈕。
   // 固定顯示一排永遠存在的按鈕等於沒有優先序。
-  function renderHomeSecondary(records, path, mission) {
-    const summary = srsDueSummary(records);
-    const entries = [];
-
-    if (summary.due) {
-      entries.push({
-        action: "start-srs-review",
-        icon: "refresh",
-        label: `${t("錯題 {due} 題到期", { due: summary.due })}`,
-        note: t("照排程清掉才會真的記住")
-      });
-    }
-    if (!mission.done && (records.totalAnswered || 0)) {
-      entries.push({
-        action: "start-daily",
-        icon: "calendar",
-        label: `${t("每日 {completed}/{target}", { completed: mission.completed, target: mission.target })}`,
-        note: t("維持連勝")
-      });
-    }
-    if (entries.length < 2 && path && path.next) {
-      entries.push({
-        action: "start-path-node",
-        data: `data-node-id="${escapeAttr(path.next.id)}"`,
-        icon: "play",
-        label: `${t("主線：{short}", { short: path.next.short })}`,
-        note: escapeHtml(path.next.label)
-      });
-    }
-    if (!entries.length) return "";
-
-    return `
-      <section class="home-secondary" aria-label="${t("次要入口")}">
-        ${entries
-          .slice(0, 2)
-          .map(
-            (entry) => `
-              <button class="secondary-entry" data-action="${entry.action}" ${entry.data || ""}>
-                ${icon(entry.icon)}
-                <span>
-                  <strong>${entry.label}</strong>
-                  <small>${entry.note}</small>
-                </span>
-              </button>`
-          )
-          .join("")}
-      </section>
-    `;
-  }
-
   // 一行成長證據。spec 00 的「讓學生感覺自己變強」靠的就是這一行 ——
   // 它必須是具體的個人事實，不是「繼續加油」這種空話。
   // 首頁的弱點摘要。
@@ -3133,7 +3112,7 @@
 
   // 首頁保留區：錯題 SRS 到期卡 + 練習連勝（含盾牌）迷你熱力圖。
   function renderHomeRetentionRow(records) {
-    // 錯題複習的入口只留「接下來練什麼」那一張（renderHomeSecondary）。
+    // 錯題複習的入口只留「今天三件事」那一格（renderTodayThree）。
     // 這裡原本還有一張一模一樣的卡（renderHomeSrsCard，已刪）—— 量過首頁有三個
     // start-srs-review，而「錯題到期」四個字在一頁裡出現五次。
     const srsCard = "";
@@ -7984,6 +7963,16 @@
     }
     if (action === "open-settings") {
       view = "settings";
+      render();
+    }
+    if (action === "open-search") openSearch();
+    // 搜尋的「在題庫搜」：把字帶進題庫的搜尋框
+    if (action === "open-library-search") {
+      selectedLibraryFilter = "all";
+      librarySearch = String(actionNode.dataset.q || "");
+      librarySearchShouldFocus = true;
+      resetLibraryPaging();
+      view = "library";
       render();
     }
     if (action === "open-library") {

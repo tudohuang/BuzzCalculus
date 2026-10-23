@@ -98,8 +98,10 @@
     const e = entryOf(api.records, api.m.id);
     // 練完推薦題按「回到這一課」（state.land = "practice"）：直接落在結算（推薦題與下一層還差什麼都在那裡），不是從記到的那一節重讀
     const land = st.land === "practice";
+    // 從搜尋點進來（state.land = "sec:3"）：直接到那一節
+    const at = /^sec:(\d+)$/.exec(st.land || "");
     delete st.land;
-    st.sec = { si: land ? n : Math.min(Math.max(0, Number(e.secAt) || 0), n - 1), shown: {}, pred: {}, dragOk: {}, why: {}, done: {}, gain: {}, anim: null, fresh: -1, top: false, bar: false };
+    st.sec = { si: land ? n : at ? Math.min(Number(at[1]), n - 1) : Math.min(Math.max(0, Number(e.secAt) || 0), n - 1), shown: {}, pred: {}, dragOk: {}, why: {}, done: {}, gain: {}, anim: null, fresh: -1, top: false, bar: false };
     // 分節裡選過的小測接回來：跨天讀完也算「完成」
     const saved = e.picks || {};
     Object.keys(saved).forEach((ci) => {
