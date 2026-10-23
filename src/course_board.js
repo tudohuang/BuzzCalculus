@@ -1055,11 +1055,15 @@ html.nb .cvb-model>.cv2-figure{box-shadow:0 1px 4px #0002}
   };
   // 攤開整塊黑板（結算畫面的按鈕）：整課畫到最後，每一面各複製一份並排，一次看完。
   // 筆記本：照寫字那時的紙寬、板高與筆記本的排法（nbOv：行距、節標題換頁）排，自己寫的才對得上；筆跡一起攤開（course_ink.js 的 paint）
-  function overview(api) {
+  // opts.clean：乾淨版 —— 像沒寫過、沒答過（題目都還沒選、證明的為什麼沒答、筆跡不畫），拿來重做或印給別人
+  function overview(api0, opts) {
+    const clean = Boolean(opts && opts.clean);
+    const n0 = api0.data.sections.length;
+    const api = clean ? { ...api0, state: { picks: {}, cs: {}, sec: { si: n0, shown: api0.data.sections.map((s) => s.beats.length), pred: {}, whr: {}, dragOk: {} } } } : api0;
     const whole = lessonBoard(api.data);
     if (!whole || !whole.beats.some((b) => (b.board || []).length)) return false;
     const nb = document.documentElement.classList.contains("nb");
-    if (nb && !window.BuzzInk && !api.inkTry && api.deps && api.deps.ensureLazy) { api.inkTry = 1; const again = () => overview(api); Promise.resolve(api.deps.ensureLazy("ink")).then(again, again); return true; }
+    if (nb && !window.BuzzInk && !api0.inkTry && api.deps && api.deps.ensureLazy) { api0.inkTry = 1; const again = () => overview(api0, opts); Promise.resolve(api.deps.ensureLazy("ink")).then(again, again); return true; }
     const IK = nb && window.BuzzInk;
     const mine = IK && IK.meta(api.m.id);
     if (!document.getElementById("cvb-style")) { const st = mk("style", ""); st.id = "cvb-style"; st.textContent = CSS + CSS_REST; document.head.appendChild(st); }
@@ -1070,7 +1074,7 @@ html.nb .cvb-model>.cv2-figure{box-shadow:0 1px 4px #0002}
     ov.setAttribute("aria-label", "整塊黑板");
     const bar = mk("div", "cvb-ov-bar");
     const ttl = mk("b", "");
-    ttl.textContent = `整塊黑板 · ${(api.m && api.m.title) || api.data.title || ""}`;
+    ttl.textContent = `${clean ? "乾淨版" : "整塊黑板"} · ${(api.m && api.m.title) || api.data.title || ""}`;
     const close = mk("button", "button secondary");
     close.type = "button";
     close.textContent = "關閉";
@@ -1093,7 +1097,7 @@ html.nb .cvb-model>.cv2-figure{box-shadow:0 1px 4px #0002}
       if (!B || !B.M) return false;
       debug.show(B.M.acts.length, 1);
       const cap = B.view;
-      if (mine) IK.paint(B.layer, api.m.id);
+      if (mine && !clean) IK.paint(B.layer, api.m.id);
       const pages = Math.max(1, B.pages || Math.ceil(B.L.H / cap));
       const inner = [...el.children];
       const cols = vw >= 1100 ? 2 : 1;
@@ -1115,7 +1119,7 @@ html.nb .cvb-model>.cv2-figure{box-shadow:0 1px 4px #0002}
         grid.appendChild(box);
       }
       meas.remove();
-      if (IK) IK.ovBar(bar, ov, mine);
+      if (IK) IK.ovBar(bar, ov, mine, { clean, w: W0, h: cap, swap: (c) => { shut(); overview(api0, { clean: c }); } });
       B = null;
       return true;
     };

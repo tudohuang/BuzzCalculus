@@ -40,13 +40,19 @@ html.nb .cvb.is-ink-touch{touch-action:none}
 .cvk-bar .cvk-dot{background:var(--d)}:root[data-theme="dark"] .cvk-bar{--k:#dfe6f5;--kc:#93c5fd;--kr:#fca5a5}:root[data-theme="dark"] .cvk-bar button:hover{background:#ffffff14}:root[data-theme="dark"] .cvk-bar button[aria-pressed="true"]{background:#93c5fd29;color:#93c5fd}
 @media (max-width:640px){.cvk-bar{top:8px;right:10px}.cvk-bar button{width:32px;height:32px}}
 .cvb-ov.cvk-off .cvk{display:none}.cvk-ovb{display:flex;gap:8px;margin-left:auto}
-@media print{.cvk-bar{display:none}body>:not(.cvb-ov){display:none!important}.cvb-ov{position:static;overflow:visible;padding:0}.cvb-ov-bar{display:none}.cvb-ov-grid{display:block}.cvb-ov-page{break-inside:avoid;margin:0 auto 12px;box-shadow:none;print-color-adjust:exact;-webkit-print-color-adjust:exact}}`;
+.cvb.is-ink-hide .cvk{display:none}.cvk-bar button[hidden]{display:none}
+.cvk-ovb .is-on{border-color:var(--gold,#c79a2b);background:color-mix(in srgb,var(--gold,#c79a2b) 14%,var(--paper,#fff))}
+@media print{.cvk-bar{display:none}body>:not(.cvb-ov){display:none!important}.cvb-ov{position:static;overflow:visible;padding:0;background:none}.cvb-ov-bar{display:none}.cvb-ov-grid{display:block}
+.cvb-ov-page{width:auto!important;height:auto!important;margin:0;border-radius:0;box-shadow:none;break-after:page;print-color-adjust:exact;-webkit-print-color-adjust:exact}
+.cvb-ov-board{transform:none!important}.cvb-ov-n{display:none}html.nb .cvb-ov .cvb{background-image:none!important;box-shadow:none!important}}`;
   const ICON = {
     pen: '<svg viewBox="0 0 24 24"><path d="M4 20l1.2-4.6L15.8 4.8a2 2 0 0 1 2.8 0l.6.6a2 2 0 0 1 0 2.8L8.6 18.8z"/><path d="M14 6.6l3.4 3.4"/></svg>',
     hl: '<svg viewBox="0 0 24 24"><path d="M9 15l-3 3h5l1.5-1.5"/><path d="M9 15l7.5-9.5a2 2 0 0 1 2.9-.3l.4.4a2 2 0 0 1-.3 2.9L12 15.5z"/><path d="M4 21h16" stroke-width="2.6" stroke="#facc15"/></svg>',
     er: '<svg viewBox="0 0 24 24"><path d="M8 20h12"/><path d="M5.5 16.5l9.8-9.8a2 2 0 0 1 2.8 0l1.2 1.2a2 2 0 0 1 0 2.8L11.5 18.5H8z"/><path d="M10 12l4 4"/></svg>',
     undo: '<svg viewBox="0 0 24 24"><path d="M9 14L4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg>',
-    clear: '<svg viewBox="0 0 24 24"><path d="M5 7h14"/><path d="M10 4h4"/><path d="M7 7l1 13h8l1-13"/></svg>'
+    clear: '<svg viewBox="0 0 24 24"><path d="M5 7h14"/><path d="M10 4h4"/><path d="M7 7l1 13h8l1-13"/></svg>',
+    eye: '<svg viewBox="0 0 24 24"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="2.8"/></svg>',
+    book: '<svg viewBox="0 0 24 24"><path d="M12 6.5C10 5 7 4.5 4 5v13c3-.5 6 0 8 1.5 2-1.5 5-2 8-1.5V5c-3-.5-6 0-8 1.5z"/><path d="M12 6.5v13"/></svg>'
   };
 
   // 狀態：這一課的筆跡、工具、復原
@@ -56,6 +62,7 @@ html.nb .cvb.is-ink-touch{touch-action:none}
   let saveT = 0;
   const save = () => {
     window.clearTimeout(saveT);
+    if (S.bar) mode();
     saveT = window.setTimeout(() => {
       const a = load();
       if (S.strokes.length) a[S.id] = { v: 1, w: S.lw, k: S.w, h: S.cap, s: S.strokes }; else delete a[S.id];
@@ -202,11 +209,15 @@ html.nb .cvb.is-ink-touch{touch-action:none}
     S.board.classList.toggle("is-ink", S.on);
     S.board.classList.toggle("is-er", S.on && S.tool === "er");
     S.board.classList.toggle("is-ink-touch", S.on && !S.penSeen);
+    S.board.classList.toggle("is-ink-hide", Boolean(S.hide));
     if (!S.bar) return;
     S.bar.classList.toggle("is-open", S.on);
+    // 眼睛：這一課有寫過才出現
+    const eye = S.bar.querySelector('[data-k="hide"]');
+    if (eye) eye.hidden = !S.strokes.length && !S.hide;
     S.bar.querySelectorAll("button[data-k]").forEach((b) => {
       const k = b.dataset.k;
-      const on = k === "on" ? S.on : k === "hl" || k === "er" ? S.tool === k : k.startsWith("c-") ? S.tool === "pen" && S.color === k.slice(2) : null;
+      const on = k === "on" ? S.on : k === "hide" ? Boolean(S.hide) : k === "hl" || k === "er" ? S.tool === k : k.startsWith("c-") ? S.tool === "pen" && S.color === k.slice(2) : null;
       if (on !== null) b.setAttribute("aria-pressed", String(on));
     });
     const u = S.bar.querySelector('[data-k="undo"]');
@@ -214,7 +225,15 @@ html.nb .cvb.is-ink-touch{touch-action:none}
   }
   let sureT = 0;
   function act(k, b) {
-    if (k === "on") S.on = !S.on;
+    if (k === "on") { S.on = !S.on; if (S.on) S.hide = false; }
+    // 看乾淨的：先藏起寫的（不刪），再點一下回來；拿起筆就自動顯示
+    else if (k === "hide") S.hide = !S.hide;
+    // 攤開整本：跟結尾的「攤開整塊黑板」同一個（course_sections 的 course-s-board），那裡可以切乾淨版、列印
+    else if (k === "book") {
+      const host = document.querySelector("[data-cv2s]");
+      if (host) { const go = document.createElement("button"); go.type = "button"; go.dataset.action = "course-s-board"; go.hidden = true; host.appendChild(go); go.click(); go.remove(); }
+      return;
+    }
     else if (k === "hl" || k === "er") S.tool = k;
     else if (k.startsWith("c-")) { S.tool = "pen"; S.color = k.slice(2); }
     else if (k === "undo") {
@@ -238,7 +257,7 @@ html.nb .cvb.is-ink-touch{touch-action:none}
     bar.setAttribute("role", "toolbar");
     bar.setAttribute("aria-label", "自己寫");
     const btn = (k, label, inner) => `<button type="button" data-k="${k}" aria-label="${label}" title="${label}">${inner}</button>`;
-    bar.innerHTML = btn("on", "筆（滑鼠、手指在紙上寫）", ICON.pen) +
+    bar.innerHTML = btn("on", "筆（滑鼠、手指在紙上寫）", ICON.pen) + btn("hide", "藏起我寫的（看乾淨的，不刪）", ICON.eye) + btn("book", "攤開整本筆記（乾淨版、列印／存 PDF）", ICON.book) +
       `<span class="cvk-more"><span class="cvk-sep"></span>${COLORS.map(([c, n]) => btn(`c-${c}`, `${n}筆`, `<span class="cvk-dot" style="--d:var(--k${c === "k" ? "" : c})"></span>`)).join("")}` +
       btn("hl", "螢光筆", ICON.hl) + btn("er", "橡皮擦（擦掉整筆）", ICON.er) + `<span class="cvk-sep"></span>` +
       btn("undo", "復原", ICON.undo) + btn("clear", "清掉這一課寫的", ICON.clear) + "</span>";
@@ -313,18 +332,30 @@ html.nb .cvb.is-ink-touch{touch-action:none}
     layer.appendChild(svg);
   }
   // 整塊黑板的上方：藏／顯示自己寫的、列印（瀏覽器的「存成 PDF」）
-  function ovBar(bar, ov, mine) {
+  // 攤開整本的工具列：「我的筆記／乾淨版」（乾淨版＝沒寫過、沒答過的樣子，course_board 重排一次）、列印
+  // o = { clean, swap(clean), w, h }：w×h 是一頁的大小，列印時一頁紙就是一頁筆記（@page 跟著設）
+  function ovBar(bar, ov, mine, o) {
     css();
+    const opt = o || {};
     const btn = (t) => { const b = document.createElement("button"); b.type = "button"; b.className = "button secondary"; b.textContent = t; return b; };
     const g = document.createElement("span");
     g.className = "cvk-ovb";
-    if (mine) {
-      const tg = btn("藏起我的筆記");
-      tg.addEventListener("click", () => { tg.textContent = ov.classList.toggle("cvk-off") ? "顯示我的筆記" : "藏起我的筆記"; });
-      g.appendChild(tg);
+    if (opt.swap) {
+      [[false, mine ? "我的筆記" : "我做的"], [true, "乾淨版"]].forEach(([clean, label]) => {
+        const b = btn(label);
+        b.classList.toggle("is-on", Boolean(opt.clean) === clean);
+        b.setAttribute("aria-pressed", String(Boolean(opt.clean) === clean));
+        b.addEventListener("click", () => { if (Boolean(opt.clean) !== clean) opt.swap(clean); });
+        g.appendChild(b);
+      });
     }
     const pr = btn("列印／存成 PDF");
-    pr.addEventListener("click", () => window.print());
+    pr.addEventListener("click", () => {
+      let st = document.getElementById("cvk-page");
+      if (!st) { st = document.createElement("style"); st.id = "cvk-page"; document.head.appendChild(st); }
+      st.textContent = opt.w && opt.h ? `@page{size:${Math.round(opt.w)}px ${Math.round(opt.h)}px;margin:0}` : "";
+      window.print();
+    });
     g.appendChild(pr);
     bar.insertBefore(g, bar.lastChild);
   }
