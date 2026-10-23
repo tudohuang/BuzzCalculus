@@ -398,8 +398,8 @@ interface Window {
   BuzzFuncle?: { open(deps: { evaluate: (src: string, vars: Record<string, number>) => number; loadRecords: () => BuzzRecords; saveRecords: (r: BuzzRecords) => void; today?: () => string; tex?: (src: string) => string; track?: (name: string, params?: Record<string, unknown>) => void }): void };
   /** src/search.js：全站搜尋（Ctrl+K／「/」，data-lazy="search"） */
   BuzzSearch?: { open(): void; close(): void; search(q: string): any };
-  /** src/course_keys.js：課的重點（三分鐘複習、考前一張紙，data-lazy="keys"） */
-  BuzzCourseKeys?: { review(o: Record<string, any>): void; sheet(o: Record<string, any>): void; keysOf(data: any): any[]; html(line: string): string };
+  /** src/course_keys.js：課的重點（三分鐘複習、考前一張紙、翻牌卡，data-lazy="keys"） */
+  BuzzCourseKeys?: { review(o: Record<string, any>): void; sheet(o: Record<string, any>): void; flash(o: Record<string, any>): void; cloze(raw: string, term: string): string | null; keysOf(data: any): any[]; html(line: string): string };
   /** src/share_cards.js：訓練頁的模擬考面板（範圍卷／風格卷／20 講隨堂測驗） */
   BuzzNamedExamPanel: {
     render(records: BuzzRecords, deps: { NAMED_EXAMS: Record<string, any>; escapeHtml: (s: unknown) => string; escapeAttr: (s: unknown) => string }): string;

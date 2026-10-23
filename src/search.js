@@ -20,6 +20,7 @@
     ["今日函數", "funcle wordle 猜函數 遊戲", { action: "open-funcle" }],
     ["每日一題", "daily one 每日", { action: "start-daily-one" }],
     ["考前一張紙", "cheat sheet 小抄 重點 列印 pdf", { action: "course-keys-sheet" }],
+    ["翻牌卡", "flashcards 字卡 公式 記憶 背 複習 anki", { action: "course-keys-flash" }],
     ["切換深色／亮色", "dark light theme 深色 主題 夜間", { action: "toggle-theme" }]
   ];
   const unlocked = () => { try { return localStorage.getItem("buzzcalculus.unlock.v1") === "1"; } catch (_e) { return false; } };

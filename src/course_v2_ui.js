@@ -369,6 +369,7 @@
                 <h2>微積分 · ${all.length} 課</h2>
               </div>
               <div class="action-row">
+                <button class="button secondary" data-action="course-keys-flash">${icon("layers")}翻牌卡</button>
                 <button class="button secondary" data-action="course-keys-sheet">${icon("printer")}考前一張紙</button>
                 ${next ? `<button class="button home-primary" data-action="open-course-lesson" data-lesson-id="${escapeAttr(next.id)}">${icon("play")}${done || entryOf(records, next.id).openedAt ? "繼續" : "開始"}：${escapeHtml(label(next))}</button>` : ""}
               </div>
@@ -930,11 +931,16 @@
         }
         return go("course");
       }
-      // 課的重點（course_keys.js，點了才抓）：三分鐘複習（一課框起來的那幾句）、考前一張紙（勾幾課排成 A4）
-      if (action === "course-keys-review" || action === "course-keys-sheet") {
+      // 課的重點（course_keys.js，點了才抓）：三分鐘複習（一課框起來的那幾句）、考前一張紙（勾幾課排成 A4）、翻牌卡（讀完的課框起來的式子挖空）
+      if (action === "course-keys-review" || action === "course-keys-sheet" || action === "course-keys-flash") {
         return Promise.resolve(deps.ensureLazy("keys")).then(() => {
           const K = window.BuzzCourseKeys;
           if (!K) return;
+          if (action === "course-keys-flash") {
+            const records = loadRecords();
+            K.flash({ lessons: live.filter((m) => isDone(records, m)), load: loadRecords, save: saveRecords });
+            return;
+          }
           if (action === "course-keys-sheet") {
             const records = loadRecords();
             K.sheet({ lessons: live, done: new Set(live.filter((m) => isDone(records, m)).map((m) => m.id)) });

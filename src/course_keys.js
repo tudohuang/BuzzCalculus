@@ -40,7 +40,7 @@
         if (k < 0) return;
         const has = (l) => boxed.some((x) => x.l === l);
         if (cont(lines[k]) && k > 0 && !has(lines[k - 1])) boxed.push({ l: lines[k - 1], box: false });
-        if (!has(lines[k])) boxed.push({ l: lines[k], box: true });
+        if (!has(lines[k])) boxed.push({ l: lines[k], box: true, term: a.term });
       });
       if (boxed.length) out.push({ si, bi, title: s.title || "", lines: boxed, t: Array.isArray(b.t) ? b.t : null });
     }));
@@ -52,7 +52,7 @@
 .ck-bar b{font-size:1.02rem}.ck-bar small{color:var(--muted)}.ck-bar .ck-grow{flex:1}
 .ck-card{display:grid;place-items:center;gap:14px;max-width:880px;min-height:52vh;margin:4vh auto 0;padding:28px 24px;border-radius:14px;background:var(--panel);box-shadow:0 6px 24px #0000001a;text-align:center}
 .ck-card .ck-sec{color:var(--muted);font-size:.9rem}
-.ck-card .ck-line{font-size:clamp(1.15rem,3.4vw,1.7rem);line-height:1.8;overflow-x:auto;max-width:100%;padding:6px 14px;border:2px solid transparent;border-radius:10px}.ck-card .ck-line.is-box{border-color:var(--red)}
+.ck-card .ck-line{font-size:clamp(1.15rem,3.4vw,1.7rem);line-height:1.8;overflow-x:auto;overflow-y:hidden;max-width:100%;padding:10px 14px;border:2px solid transparent;border-radius:10px}.ck-card .ck-line.is-box{border-color:var(--red)}
 .ck-dots{display:flex;flex-wrap:wrap;justify-content:center;gap:6px;max-width:880px;margin:16px auto 0}
 .ck-dots button{width:30px;height:30px;border:1px solid var(--line);border-radius:50%;background:var(--surface);color:var(--ink);font:inherit;font-size:.8rem;cursor:pointer}
 .ck-dots button.is-on{border-color:var(--ink);background:var(--ink);color:var(--paper)}.ck-dots button.is-seen{border-color:var(--gold)}
@@ -193,5 +193,146 @@
     paint();
   }
 
-  window.BuzzCourseKeys = { keysOf, html, review, sheet };
+  /* ── 翻牌卡：讀完的課，框起來的那一格挖空；記得就隔久一點再出、忘了明天再來 ── */
+  // 一張卡＝一個 beat 的重點（keysOf 的一筆）；正面把框住的 {{term:…}} 換成空格，翻過來看整行。
+  // 排程存 records.flash = { cards: { 卡號: { b: 0–5, due: "YYYY-MM-DD", first, last } } }（本地日期；首頁「今天三件事」直接讀這張表）；
+  // 記得：b+1、隔 GAP[b] 天；忘了：b=0、明天，這一輪最後再出一次。新卡一天最多 NEW_PER_DAY 張。
+  const GAP = [1, 3, 7, 14, 30, 60];
+  const NEW_PER_DAY = 10;
+  const HOLE = "";
+  const dayKey = (plus = 0) => { const d = new Date(); d.setDate(d.getDate() + plus); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`; };
+  const dollars = (s) => (s.match(/(?<!\\)\$/g) || []).length;
+  // 一行裡的 {{term:…}} 換成空格：在式子裡是 \boxed{?}，在中文裡是一個方格；找不到或會拆壞 $ 配對就回 null
+  function cloze(raw, term) {
+    const at = raw.indexOf(`{{${term}:`);
+    if (at < 0) return null;
+    let i = at + term.length + 3;
+    let depth = 0;
+    for (; i < raw.length; i += 1) {
+      const c = raw[i];
+      if (c === "\\") { i += 1; continue; }
+      if (c === "{") depth += 1;
+      else if (c === "}") { if (!depth && raw[i + 1] === "}") break; depth -= 1; }
+    }
+    if (i >= raw.length || dollars(raw.slice(at, i)) % 2) return null;
+    const inMath = dollars(raw.slice(0, at)) % 2;
+    return raw.slice(0, at) + (inMath ? keepLeft(raw.slice(at + term.length + 3, i)) : HOLE) + raw.slice(i + 2);
+  }
+  // 框住的幾乎都是一整條式子：留左邊、挖右邊（f(x)= ？）。看第一個最外層的關係符號（=、<、\le、\approx…）；
+  // 開頭就是「=」的（接著前一行算下去）挖等號後面；aligned 留第一列 & 前面；找不到關係就整條挖掉
+  const BLANK = "\\boxed{\\;?\\;}";
+  function keepLeft(src) {
+    const s = src.replace(/^\s*\\displaystyle\s*/, "");
+    const rel = (t, j) => { const m = /^(=|<|>|\\(?:le|ge|leq|geq|approx|equiv|sim|Rightarrow|iff|to|ne)(?![A-Za-z]))/.exec(t.slice(j)); return m ? m[0] : ""; };
+    const al = /^\{?\\begin\{aligned\}/.exec(s);
+    if (al) {
+      const amp = s.indexOf("&", al[0].length);
+      const r = amp > 0 ? rel(s, amp + 1) : "";
+      return r ? `\\displaystyle ${s.slice(0, amp + 1 + r.length)}${BLANK}\\end{aligned}${al[0][0] === "{" ? "}" : ""}` : BLANK;
+    }
+    let depth = 0;
+    for (let j = 0; j < s.length; j += 1) {
+      const c = s[j];
+      const r = depth ? "" : rel(s, j);
+      if (r) return `\\displaystyle ${s.slice(0, j + r.length)}${BLANK}`;
+      if (c === "\\") j += (/^\\[A-Za-z]+|^\\./.exec(s.slice(j)) || [" "])[0].length - 1;
+      else if (c === "{") depth += 1;
+      else if (c === "}") depth -= 1;
+    }
+    return BLANK;
+  }
+  const holeHtml = (line) => html(line).split(HOLE).join('<span class="fl-hole">？</span>');
+  // 卡的正面：前一行照抄、框住的那一行挖空（挖不了就整行藏起來）
+  const front = (k) => k.lines.map((x) => {
+    if (!x.box) return `<div class="ck-line">${html(x.l)}</div>`;
+    const c = x.term && cloze(x.l, x.term);
+    return `<div class="ck-line is-box">${c ? holeHtml(c) : '<span class="fl-hole">？</span>'}</div>`;
+  }).join("");
+  const back = (k) => k.lines.map((x) => `<div class="ck-line${x.box ? " is-box" : ""}">${html(x.l)}</div>`).join("");
+  const FL_CSS = `.fl-card{cursor:pointer;min-height:44vh}.fl-card:focus-visible{outline:3px solid var(--brand);outline-offset:3px}
+.fl-hole{display:inline-block;min-width:3em;padding:0 .4em;border-bottom:2px solid var(--red);color:var(--red);font-weight:700}
+.fl-tag{color:var(--muted);font-size:.85rem}.fl-flip{color:var(--muted);font-size:.85rem}
+.fl-grade{display:flex;justify-content:center;gap:12px;margin:16px auto 0}.fl-grade .button{min-width:9em}
+.fl-done{display:grid;gap:10px;justify-items:center;max-width:560px;margin:10vh auto;text-align:center}.fl-done b{font-size:1.4rem}`;
+  // o = { lessons: [{ id, no, title, chapter: { code } }]（讀完的課，照課號順序）, load(), save(records) }
+  async function flash(o) {
+    const { ov, shut } = overlay("ck-flash");
+    if (!document.getElementById("fl-style")) { const st = document.createElement("style"); st.id = "fl-style"; st.textContent = FL_CSS; document.head.appendChild(st); }
+    ov.innerHTML = `<div class="ck-bar"><b>翻牌卡</b><span class="ck-grow"></span><button type="button" class="button secondary" data-ck="close">關閉</button></div><p class="ck-empty">整理卡片中…</p>`;
+    await Promise.all([...new Set(o.lessons.map((m) => m.chapter.code))].map(loadChapter));
+    if (!ov.isConnected) return;
+    const L = window.BUZZ_COURSE_V2_LESSONS || {};
+    const today = dayKey();
+    const all = [];
+    o.lessons.forEach((m) => keysOf(L[m.id]).forEach((k) => all.push({ id: `${m.id}:${k.si}.${k.bi}`, m, k })));
+    const cards = ((o.load().flash || {}).cards) || {};
+    const fresh = Math.max(0, NEW_PER_DAY - Object.values(cards).filter((c) => c && c.first === today).length);
+    const queue = all.filter((c) => cards[c.id] && cards[c.id].due <= today).concat(all.filter((c) => !cards[c.id]).slice(0, fresh));
+    const again = new Set();
+    let at = 0;
+    let flipped = false;
+    let right = 0;
+    function grade(ok) {
+      const c = queue[at];
+      const r = o.load();
+      r.flash = { ...(r.flash || {}), cards: { ...((r.flash || {}).cards || {}) } };
+      const was = r.flash.cards[c.id];
+      // 這一輪忘過的，最後補看那次記得也只算「明天再來」（不升級）
+      const b = ok && !again.has(c.id) ? Math.min(GAP.length - 1, (was ? was.b : 0) + 1) : 0;
+      r.flash.cards[c.id] = { b, due: dayKey(GAP[b]), first: (was && was.first) || today, last: today };
+      o.save(r);
+      if (ok && !again.has(c.id)) right += 1;
+      // 忘了的這一輪最後再看一次（只補一次，不會無限循環）
+      else if (!again.has(c.id)) { again.add(c.id); queue.push(c); }
+      at += 1;
+      flipped = false;
+      paint();
+    }
+    function paint() {
+      const bar = `<div class="ck-bar"><b>翻牌卡</b><small>${at < queue.length ? `${at + 1} / ${queue.length}` : ""}</small><span class="ck-grow"></span><button type="button" class="button secondary" data-ck="close">關閉</button></div>`;
+      if (!all.length) { ov.innerHTML = `${bar}<p class="ck-empty">讀完一課，那一課框起來的重點就會變成翻牌卡。</p>`; return; }
+      if (at >= queue.length) {
+        const r = o.load();
+        const cs = (r.flash || {}).cards || {};
+        const tomorrow = Object.values(cs).filter((c) => c && c.due <= dayKey(1)).length;
+        const left = all.filter((c) => !cs[c.id]).length;
+        ov.innerHTML = `${bar}<div class="fl-done">${queue.length ? `<b>今天的翻完了</b><span>記得 ${right} 張${again.size ? `、忘了 ${again.size} 張（明天再來）` : ""}</span>` : "<b>今天沒有要翻的</b>"}
+          <small class="fl-tag">明天到期 ${tomorrow} 張${left ? ` · 還有 ${left} 張新卡，每天放 ${NEW_PER_DAY} 張` : ""}</small>
+          <button type="button" class="button home-primary" data-ck="close">好</button></div>`;
+        const b = ov.querySelector(".fl-done .button");
+        if (b) b.focus();
+        return;
+      }
+      const c = queue[at];
+      ov.innerHTML = `${bar}
+        <div class="ck-card fl-card" tabindex="0" role="button" data-ck="flip" aria-label="${flipped ? "答案" : "翻面"}" aria-live="polite">
+          <span class="fl-tag">${esc(c.m.no)} ${esc(c.m.title)} · ${esc(c.k.title)}${cards[c.id] ? "" : " · 新卡"}</span>
+          ${flipped ? back(c.k) : front(c.k)}
+          ${flipped ? "" : '<span class="fl-flip">點一下翻面（空白鍵）</span>'}
+        </div>
+        ${flipped ? `<div class="fl-grade"><button type="button" class="button secondary" data-ck="forgot">忘了 <kbd>1</kbd></button><button type="button" class="button home-primary" data-ck="knew">記得 <kbd>2</kbd></button></div>` : ""}`;
+      const f = ov.querySelector(flipped ? '[data-ck="knew"]' : ".fl-card");
+      if (f) f.focus();
+    }
+    ov.addEventListener("click", (e) => {
+      const b = e.target.closest && e.target.closest("[data-ck]");
+      if (!b) return;
+      const k = b.dataset.ck;
+      if (k === "close") shut();
+      if (k === "flip" && !flipped) { flipped = true; paint(); }
+      if (k === "knew") grade(true);
+      if (k === "forgot") grade(false);
+    });
+    const onKey = (e) => {
+      if (at >= queue.length || e.ctrlKey || e.metaKey || e.altKey) return;
+      if (!flipped && (e.key === " " || e.key === "Enter")) { e.preventDefault(); flipped = true; paint(); return; }
+      if (flipped && e.key === "1") { e.preventDefault(); grade(false); }
+      if (flipped && e.key === "2") { e.preventDefault(); grade(true); }
+    };
+    document.addEventListener("keydown", onKey);
+    ov.addEventListener("ck-close", () => document.removeEventListener("keydown", onKey));
+    paint();
+  }
+
+  window.BuzzCourseKeys = { keysOf, html, review, sheet, flash, cloze };
 })();
