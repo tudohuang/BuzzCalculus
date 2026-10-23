@@ -194,12 +194,13 @@ function convert(md, file, old, durMs) {
           if (st.at != null) timing.push([Math.round(Number(st.at) * 1000), b]);
         }
         if (q) {
-          const opts = q.options.map((o, k) => (k === q.answer ? { label: o.text, correct: true } : { label: o.text, why: o.why || "" }));
-          if (st.quiz) { s.check = checks.length; checks.push({ ask: q.ask, options: opts }); }
-          else s.predict = { ask: q.ask, options: opts };
+          // 題目、選項、解說也去掉 md 的標記（==重點==、**粗體**、{red:…}），不然畫面上會印出 == 與 **
+          const opts = q.options.map((o, k) => (k === q.answer ? { label: plain(o.text), correct: true } : { label: plain(o.text), why: plain(o.why || "") }));
+          if (st.quiz) { s.check = checks.length; checks.push({ ask: plain(q.ask), options: opts }); }
+          else s.predict = { ask: plain(q.ask), options: opts };
         } else {
           s.proof = true;
-          s.order = { ask: st.order.ask, steps: st.order.steps.map((label, k) => (k ? { label, why: `先要有上一步：${plain(st.order.steps[k - 1])}` } : { label })) };
+          s.order = { ask: plain(st.order.ask), steps: st.order.steps.map((label, k) => (k ? { label: plain(label), why: `先要有上一步：${plain(st.order.steps[k - 1])}` } : { label: plain(label) })) };
         }
         cur = null;
         return;
