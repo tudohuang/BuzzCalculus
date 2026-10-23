@@ -649,6 +649,7 @@ async function run() {
     check("回到課裡", await openLesson(WIDGET.id));
     // 後面的測試用女聲（預設）
     await evaluate(`const r = window.__s.rec(); r.settings = { ...(r.settings || {}), narrVoice: "f" }; localStorage.setItem("buzzcalculus.records.v1", JSON.stringify(r)); return 1;`);
+    // 量的是按鈕那一列（.cv2s-voice）：dock 上面可能多一行「換你了／接著下一節」的提示（2026-10-23），那不是按鈕被擠成兩行
     // 串流設定（media/manifest.json 的 stream → 大綱的 narration 是 Release 的下載網址）：跨網域照樣播、自己往下
     await evaluate(`window.__base = window.BUZZ_COURSE_V2.narration; window.BUZZ_COURSE_V2.narration = "https://github.com/tudohuang/BuzzCalculus/releases/download/media-test/narration."; return 1;`);
     await evaluate(`window.__s.open("${WIDGET.id}"); return 1;`);
@@ -704,7 +705,7 @@ async function run() {
         const v = window.BuzzCourseSections.voice(), lim = dock.top - 8;
         return { beat: v.beat, wait: v.wait, ih: innerHeight, y: Math.round(scrollY), gap: Math.round((nav.top - dock.bottom) * 10) / 10, top: Math.round(top), lim: Math.round(lim),
           now: [Math.round(now.top), Math.round(now.bottom)], act: act ? [Math.round(act.top), Math.round(act.bottom)] : null, bar: Math.round(bar.bottom),
-          dockH: Math.round(dock.height), btnH: Math.max(...[...document.querySelectorAll(".cv2s-dock button")].map((b) => Math.round(b.getBoundingClientRect().height))) };
+          dockH: Math.round(R(q(".cv2s-dock .cv2s-voice")).height), btnH: Math.max(...[...document.querySelectorAll(".cv2s-dock button")].map((b) => Math.round(b.getBoundingClientRect().height))) };
       };
       window.__log = []; window.__seen = ""; clearInterval(window.__tick);
       window.__tick = setInterval(() => { const v = window.BuzzCourseSections.voice(); const k = v.beat + (v.wait ? "w" : ""); if (v.on && k !== window.__seen) { window.__seen = k; setTimeout(() => window.__log.push(window.__m()), 900); } }, 40);

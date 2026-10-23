@@ -339,10 +339,14 @@
             if (!off && side(j)) Rh += H(j) + m.gap; else L += H(j) + m.gap;
           }
           const sep = m.gap * 2;
+          // 寫滿兩欄寬的節：從兩欄裡比較低的那一欄底下開始（上一節右欄的圖比較長時不能壓上去）
+          if (m.items[i].wide) y = Math.max(y, yr);
           const l0 = y > top() + 0.5 ? y + sep : y;
           const r0 = Math.max(yr > top() + 0.5 ? yr + sep : yr, l0);
           const used = y > top() + 0.5 || yr > top() + 0.5;
-          if (used && (reserved[page] || off || l0 + L > limit() || r0 + Rh > limit())) fresh();
+          // 左欄放不下整節：這一頁還剩四成以上就從這裡寫起、寫不下的接到下一頁（整節搬走會留下半頁空白）；右欄的圖與題照舊整塊
+          const roomy = limit() - l0 >= 0.4 * (limit() - top());
+          if (used && (reserved[page] || off || (l0 + L > limit() && !roomy) || r0 + Rh > limit())) fresh();
           else { y = l0; yr = r0; }
           if (off) reserved[page] = true;
         }
@@ -350,8 +354,15 @@
         const kw = it.a.head ? 1 : it.a.keep || 0;
         let need = h;
         for (let j = 1; j <= kw && m.items[i + j]; j += 1) need += m.gap + H(i + j);
-        // 右欄放不下：左欄還放得下就寫左邊，都放不下才翻頁
-        const right = grp > 0 ? grpRight : !off && side(i) && !(yr > top() + 0.5 && yr + need > limit() && y + need <= limit());
+        // 右欄放不下：左欄還放得下就寫左邊，都放不下才翻頁。
+        // 這一頁左欄還是空的、這一節剩下的全是圖與題（題被擠到新的一頁）：寫在左邊，下一節接在它底下，不留一整欄空白
+        let restSide = true;
+        for (let j = i; j < items.length && (j === i || !items[j].a.head); j += 1) if (!side(j)) restSide = false;
+        const leftEmpty = y <= top() + 0.5 && yr <= top() + 0.5;
+        let right = grp > 0 ? grpRight : !off && side(i) && !(leftEmpty && restSide) && !(yr > top() + 0.5 && yr + need > limit() && y + need <= limit());
+        // 右欄放不下要翻頁、這一節剩下的又全是圖與題：翻過去之後左欄是空的，就寫左邊
+        const flip = right && grp === 0 && yr > top() + 0.5 && yr + need > limit();
+        if (flip && restSide) { fresh(); right = false; }
         if (grp > 0) grp -= 1;
         else if (it.a.keep) { grp = it.a.keep; grpRight = right; }
         if (right) {
@@ -363,6 +374,8 @@
         if (y > top() + 0.5 && y + need > limit()) { fresh(); if (off) reserved[page] = true; }
         place[i] = { page, col: 0, y };
         y += h + m.gap;
+        // 寫滿兩欄寬的行（這一節沒有圖、沒有題）：右欄也用掉到這裡
+        if (m.items[i].wide) yr = Math.max(yr, y);
       });
     }
     if (!lane) items.forEach((it, i) => {
@@ -381,6 +394,8 @@
         const full = F.view - 2 * m.pad[1];
         if (y + sep + secH <= limit()) y += sep;
         else if (!one && col + 1 < F.cols && !(reserved[page] && col + 1 === F.cols - 1) && secH <= full) { col += 1; y = top(); }
+        // 一欄（手機）：這一頁還剩四成以上就從這裡寫起、接到下一頁，不留半頁空白（有圖的節照舊整節換頁）
+        else if (one && !fig && limit() - (y + sep) >= 0.4 * full) y += sep;
         else turn();
       }
       const h = (mi.gapA || 0) + mi.h + (mi.gapB || 0);

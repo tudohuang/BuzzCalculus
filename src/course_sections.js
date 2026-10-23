@@ -321,6 +321,15 @@
   }
 
   /* ── 畫面 ── */
+  // 這一節做完了沒（旁白念完要不要自己換節）：沒有要做的就算；有題的要答對、猜過、拖進範圍、算對。
+  // 證明的排順序／用在哪一步照舊等學生點（做完會看著結果想一下）
+  function finished(api, si) {
+    const s = api.data.sections[si];
+    if (!s || s.order || s.where) return false;
+    if (s.check === undefined && !s.predict && !s.solve && !s.drag) return true;
+    return resolved(api, si);
+  }
+
   function resolved(api, si) {
     const s = api.data.sections[si];
     const sec = api.state.sec;
@@ -469,7 +478,7 @@
       Promise.resolve(deps.ensureLazy("narration")).then(deps.render, () => { nfail = true; deps.render(); });
       return `<main class="screen lazy-loading" aria-busy="true"><section class="course-lesson cv2-lesson cv2s">${head}</section></main>`;
     }
-    if (N() && !N().ready) { N().ready = true; N().init({ get last() { return last; }, get navH() { return navH; }, measureNav, asking, reveal, patch, show }); }
+    if (N() && !N().ready) { N().ready = true; N().init({ get last() { return last; }, get navH() { return navH; }, measureNav, asking, reveal, patch, show, next: (a) => act(a, "course-s-next", { how: "tap" }), done: finished }); }
     if (!SV() && !sfail && data.sections.some((s) => s.solve)) {
       Promise.resolve(deps.ensureLazy("secsolve")).then(deps.render, () => { sfail = true; deps.render(); });
       return `<main class="screen lazy-loading" aria-busy="true"><section class="course-lesson cv2-lesson cv2s">${head}</section></main>`;
@@ -622,7 +631,8 @@
         sec.pred[si] = Number(data.option);
         complete(api, si);
         sec.bar = "act";
-        return deps.render();
+        deps.render();
+        return N() && N().settled(api);
       }
       if (data.kind === "check" && s.check !== undefined) {
         const ci = s.check;
@@ -636,7 +646,8 @@
         // 記分照全文的 course-pick（第一次就對才算）；它會重繪
         api.act("course-pick", { check: ci, option: oi });
         settle(api);
-        return deps.render();
+        deps.render();
+        return N() && N().settled(api);
       }
     }
   }
