@@ -288,6 +288,25 @@
     }
 
     /* ── 課程表 ── */
+    // 一個 Stage 一本書：每課一格印章，完成紅、熟練藍、全破金（歪一點，像手蓋的）；集滿了封面變金色
+    const stampTilt = (id) => { let h = 7; for (const c of id) h = (h * 31 + c.charCodeAt(0)) % 997; return (h % 17) - 8; };
+    function cover(records, stage, ready) {
+      if (!ready.length) return "";
+      const got = ready.filter((m) => tierOf(records, m) > 0).length;
+      const full = got === ready.length;
+      const stamp = (m) => {
+        const tier = tierOf(records, m);
+        return tier
+          ? `<span class="cv2-stamp t${tier}" style="--r:${stampTilt(m.id)}deg" title="${escapeAttr(`${m.no} ${m.title} · ${TIER_NAMES[tier]}`)}">${escapeHtml(m.no)}</span>`
+          : `<span class="cv2-stamp is-empty" title="${escapeAttr(`${m.no} ${m.title}`)}">${escapeHtml(m.no)}</span>`;
+      };
+      return `
+        <div class="cv2-cover ${full ? "is-full" : ""}" aria-label="${escapeAttr(`第 ${stage.n} 本 · 印章 ${got} / ${ready.length}`)}">
+          <div class="cv2-cover-head"><strong>第 ${escapeHtml(stage.n)} 本 · ${escapeHtml(stage.title)}</strong><small>${full ? "集滿了" : `印章 ${got} / ${ready.length}`}</small></div>
+          <div class="cv2-stamps">${ready.map(stamp).join("")}</div>
+        </div>`;
+    }
+
     function renderIndex(records) {
       // 從別的畫面回到課程表（DOM 上還不是課程表）：畫完捲回離開時的位置
       if (back && typeof document !== "undefined" && !document.querySelector(".cv2-index")) {
@@ -338,7 +357,7 @@
               ${icon("chevron-right")}
               <i class="cv2-bar" style="--pct:${stagePct}%"></i>
             </summary>
-            <div class="cv2-stage-body">${chapters}</div>
+            <div class="cv2-stage-body">${cover(records, stage, ready)}${chapters}</div>
           </details>`;
       }).join("");
       return `
@@ -350,6 +369,7 @@
                 <h2>微積分 · ${all.length} 課</h2>
               </div>
               <div class="action-row">
+                <button class="button secondary" data-action="course-keys-sheet">${icon("printer")}考前一張紙</button>
                 ${next ? `<button class="button home-primary" data-action="open-course-lesson" data-lesson-id="${escapeAttr(next.id)}">${icon("play")}${done || entryOf(records, next.id).openedAt ? "繼續" : "開始"}：${escapeHtml(label(next))}</button>` : ""}
               </div>
             </div>
@@ -909,6 +929,20 @@
           return;
         }
         return go("course");
+      }
+      // 課的重點（course_keys.js，點了才抓）：三分鐘複習（一課框起來的那幾句）、考前一張紙（勾幾課排成 A4）
+      if (action === "course-keys-review" || action === "course-keys-sheet") {
+        return Promise.resolve(deps.ensureLazy("keys")).then(() => {
+          const K = window.BuzzCourseKeys;
+          if (!K) return;
+          if (action === "course-keys-sheet") {
+            const records = loadRecords();
+            K.sheet({ lessons: live, done: new Set(live.filter((m) => isDone(records, m)).map((m) => m.id)) });
+            return;
+          }
+          const m = meta[id];
+          if (m) K.review({ id: m.id, title: m.title, data: lessonData(m.id) });
+        }, () => {});
       }
       if (action === "course-view") {
         indexView = data.mode === "map" ? "map" : "list";

@@ -255,7 +255,8 @@ const allTrainHtml = api.trainBuckets
 api.setBucket("practice");
 const unreachable = Object.keys(api.modes).filter((key) => {
   if (api.modes[key].hidden) return false;
-  if (["placement", "mistakes", "weekly"].includes(key)) return false; // 由專屬按鈕進入
+  // 由專屬按鈕進入（warmup：新手入門的「先暖身」；2026-10-23 自訂一局的「高壓／進階玩法」拿掉之後訓練頁上沒有它）
+  if (["placement", "mistakes", "weekly", "warmup"].includes(key)) return false;
   return !allTrainHtml.includes(`data-mode-key="${key}"`) && !allTrainHtml.includes(api.modes[key].label);
 });
 if (unreachable.length) {

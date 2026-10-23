@@ -17,6 +17,11 @@
 .cv2s-tier { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; margin: 0 0 16px; font-variant-numeric: tabular-nums; }
 .cv2s-tier b { font-size: 1.05rem; }
 .cv2s-finish .action-row .button { max-width: 100%; }
+.cv2s-stamp-land { --c: #c0392b; display: inline-grid; place-items: center; align-self: center; width: 52px; height: 52px; border: 3px double var(--c); border-radius: 50%; background: color-mix(in srgb, var(--c) 9%, transparent); color: var(--c); font-size: 0.8rem; font-weight: 800; transform: rotate(-8deg); }
+.cv2s-stamp-land.t2 { --c: #1d4ed8; } .cv2s-stamp-land.t3 { --c: #b7791f; }
+.cv2s-stamp-land.is-fresh { animation: cv2s-stamp 0.55s cubic-bezier(.3,1.6,.5,1) both; }
+@keyframes cv2s-stamp { from { opacity: 0; transform: rotate(-20deg) scale(2.2); } 60% { opacity: 1; } to { transform: rotate(-8deg) scale(1); } }
+@media (prefers-reduced-motion: reduce) { .cv2s-stamp-land.is-fresh { animation: none; } }
 `;
 
   function injectStyle() {
@@ -65,6 +70,7 @@
         <ul class="cv2s-goals ${learned ? "" : "is-plain"}">${data.objectives.map((line) => `<li class="${learned ? "" : "is-todo"}">${learned ? icon("check") : '<i class="cv2s-bullet" aria-hidden="true"></i>'}<span>${rich(line, data)}</span></li>`).join("")}</ul>
         ${todo.length ? `<p class="cv2s-todo"><span>還沒做完</span>${todo.map((i) => `<button type="button" class="cv2-link" data-action="course-s-go" data-to="${i}">第 ${i + 1} 節</button>`).join("")}</p>` : ""}
         <p class="cv2s-stats" data-cv2s-stats>
+          ${g && g.tier ? `<span class="cv2s-stamp-land t${g.tier} ${e.doneAt && Date.now() - Date.parse(e.doneAt) < 600000 ? "is-fresh" : ""}" title="課程表上這一本書的印章" aria-label="蓋章：${escapeAttr(m.no || "")}">${escapeHtml(m.no || "")}</span>` : ""}
           ${xp ? `<span><strong>+${xp}</strong> XP</span>` : ""}
           ${level ? `<span>Lv.${level.level} · ${level.into}/${level.span}</span>` : ""}
           ${streak ? `<span>${icon("flame")}連勝 ${streak} 天</span>` : ""}
@@ -76,6 +82,7 @@
         <div class="action-row">
           ${api.next ? `<button type="button" class="button ${boss && boss.pay ? "secondary" : "home-primary"}" data-action="open-course-lesson" data-lesson-id="${escapeAttr(api.next.id)}">下一課：${escapeHtml(api.label(api.next))}${icon("chevron-right")}</button>` : `<button type="button" class="button home-primary" data-action="open-course">課程表</button>`}
           <button type="button" class="button secondary" data-action="course-map-focus" data-lesson-id="${escapeAttr(m.id)}" data-lit="1">在地圖上看</button>
+          ${data.sections.some((s) => s.beats.some((b) => (b.board || []).some((a) => a.do === "box"))) ? `<button type="button" class="button secondary" data-action="course-keys-review" data-lesson-id="${escapeAttr(m.id)}">${icon("play")}三分鐘複習</button>` : ""}
           ${ladder ? `<button type="button" class="button secondary" data-action="open-proof-ladder" data-ladder="${escapeAttr(ladder[0])}">${icon("pen")}自己證證看 · ${escapeHtml(ladder[1])}</button>` : ""}
           ${!((api.records && api.records.settings) || {}).boardSplit && data.sections.some((s) => s.beats.some((b) => b.board && b.board.length)) ? `<button type="button" class="button secondary" data-action="course-s-board">${icon("layers")}攤開整塊黑板</button>` : ""}
           ${practice && !(left && left.left.length) ? `<button type="button" class="button ghost" data-action="course-practice" data-set="main">${icon("play")}練推薦題 · ${practice} 題</button>` : ""}
