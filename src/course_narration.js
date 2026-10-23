@@ -13,6 +13,7 @@ html.nb .cv2s-dots { padding-right: var(--nb-dock, 0px); }
 .cv2s-voice button[aria-pressed="true"] { border-color: var(--gold); background: color-mix(in srgb, var(--gold) 14%, var(--paper)); }
 .cv2s-voice svg { width: 16px; height: 16px; }
 .cv2s-voice button[hidden] { display: none; }
+.cv2s-voice-note { margin: 0; padding: 4px 12px; border: 1px solid var(--gold); border-radius: 999px; background: color-mix(in srgb, var(--gold) 12%, var(--paper)); color: var(--ink); font-size: 0.86rem; font-weight: 700; white-space: nowrap; box-shadow: 0 4px 12px rgb(0 0 0 / 0.1); }
 .cv2s-voice-off { margin: 0; padding: 2px 10px; border-radius: 999px; background: var(--paper); color: var(--muted); font-size: 0.84rem; white-space: nowrap; }
 .cv2s-voice-off[hidden] { display: none; }`;
   let host = null;
@@ -64,6 +65,8 @@ html.nb .cv2s-dots { padding-right: var(--nb-dock, 0px); }
   }
   function hush() {
     window.clearTimeout(voice.timer);
+    window.clearTimeout(voice.autoT);
+    voice.autoT = 0;
     voice.end = 0;
     voice.rest = false;
     if (voice.el) voice.el.pause();
@@ -156,12 +159,30 @@ html.nb .cv2s-dots { padding-right: var(--nb-dock, 0px); }
       host.patch(api);
       speak(api);
     } else {
-      // 這一節念完：停在動作前（做完按「下一節」再接著念）
+      // 這一節念完：停在動作前（做完按「下一節」再接著念）；沒有要做的（或已經做完）就停一下自己換節
       hush();
       voice.wait = true;
       updateDock();
       host.show("act");
+      if (host.done && host.done(api, sec.si)) autoNext(api, AUTO_MS);
     }
+  }
+  // 自己換節：這一節念完、也做完了（沒有動作，或答對、猜過）。停一下再走（答題的節多停一點，看得到對錯與理由）；
+  // 點一下就馬上走（act 的 course-s-next），暫停、換節、離開這一課都取消
+  const AUTO_MS = 1200;
+  const AUTO_AFTER_ANSWER_MS = 3000;
+  function autoNext(api, ms) {
+    window.clearTimeout(voice.autoT);
+    voice.autoT = 0;
+    if (!voice.on || voice.paused || !host.next) { updateDock(); return; }
+    const si = api.state.sec.si;
+    voice.autoT = window.setTimeout(() => {
+      voice.autoT = 0;
+      const a = host.last;
+      if (!a || !voice.on || voice.paused || !voice.wait || !alive() || a.state.sec.si !== si) { updateDock(); return; }
+      host.next(a);
+    }, ms);
+    updateDock();
   }
   // 播到一半出錯：重載一次、從這一句的起點接；再錯才算載不到
   function retry() {
@@ -211,7 +232,7 @@ html.nb .cv2s-dots { padding-right: var(--nb-dock, 0px); }
       dock.className = "cv2s-dock";
       dock.setAttribute("role", "group");
       dock.setAttribute("aria-label", "旁白");
-      dock.innerHTML = `<p class="cv2s-voice-off" data-cv2s-voice-off hidden>旁白載不到，用點的繼續。</p><span class="cv2s-voice"><button type="button" data-cv2s-play></button><button type="button" data-cv2s-rate></button><button type="button" data-cv2s-gap></button><button type="button" data-cv2s-vox hidden></button><button type="button" data-cv2s-subs>字幕</button></span>`;
+      dock.innerHTML = `<p class="cv2s-voice-off" data-cv2s-voice-off hidden>旁白載不到，用點的繼續。</p><p class="cv2s-voice-note" data-cv2s-note aria-live="polite" hidden></p><span class="cv2s-voice"><button type="button" data-cv2s-play></button><button type="button" data-cv2s-rate></button><button type="button" data-cv2s-gap></button><button type="button" data-cv2s-vox hidden></button><button type="button" data-cv2s-subs>字幕</button></span>`;
       dock.addEventListener("click", (event) => {
         const b = event.target && event.target.closest && event.target.closest("button");
         if (!b || !host.last || !host.last.state.sec) return;
@@ -281,6 +302,13 @@ html.nb .cv2s-dots { padding-right: var(--nb-dock, 0px); }
     x.hidden = !(has(host.last.data, "f") && has(host.last.data, "m"));
     x.textContent = NAME[v];
     x.setAttribute("aria-label", `旁白聲音：${NAME[v]}`);
+    // 念完停下來的時候說清楚在等什麼：等作答（板上的題）、還是馬上接下一節（使用者：「有時候不會自動翻頁，不知道怎麼了」）
+    const note = dock.querySelector("[data-cv2s-note]");
+    const sec = host.last.state && host.last.state.sec;
+    const waitingFor = voice.on && !voice.paused && voice.wait && !voice.autoT && sec && host.done && !host.done(host.last, sec.si);
+    const text = voice.autoT ? "接著下一節…（點一下馬上走）" : waitingFor ? "換你了：先回答板上的題目，旁白再接著念" : "";
+    if (note.textContent !== text) note.textContent = text;
+    note.hidden = !text;
     const off = dock.querySelector("[data-cv2s-voice-off]");
     const fb = !voice.err && voice.on && voice.fb && voice.id === host.last.m.id && twoVoices();
     off.hidden = !voice.err && !fb;
@@ -365,6 +393,13 @@ html.nb .cv2s-dots { padding-right: var(--nb-dock, 0px); }
     // 播放中點「下一句」／為什麼答了：接著念
     skip(api) { hush(); if (!voice.paused) speak(api); else voice.bi = -1; updateDock(); },
     answered(api) { if (!voice.paused && voice.wait) speak(api); updateDock(); },
+    // 板上的題答完（答對、猜過）：這一節的句子都念完了就停 3 秒自己換節
+    settled(api) {
+      const sec = api.state.sec;
+      const s = api.data.sections[sec.si];
+      if (voice.on && !voice.paused && voice.wait && s && (sec.shown[sec.si] || 1) >= s.beats.length && host.done && host.done(api, sec.si)) autoNext(api, AUTO_AFTER_ANSWER_MS);
+      else updateDock();
+    },
     dockTop: () => (dock ? dock.getBoundingClientRect().top : null),
     dockH: () => (dock ? dock.offsetHeight : 0),
     // voice()：給 E2E 與黑板看旁白的狀態（<audio> 不在 DOM 裡；黑板的時間 = at − start）

@@ -287,7 +287,13 @@ html.nb .cvb-model>.cv2-figure{box-shadow:0 1px 4px #0002}
     const Wc = B.whole ? (W - (cols - 1) * colGap) / cols : W;
     // 筆記本：節名與題目貼邊，其他行（內文、選項、圖）縮一格寫（course_board_layout 的 ind）—— 量寬要扣掉這一格，不然塞滿一欄的行會跑出頁面
     const indW = B.whole && (nbBox || B.nbOv) ? Math.round(Math.round(F * 1.5) * 1.2) : 0;
-    const roomOf = (it) => (it.a.head || it.a.qz === "ask" ? Wc : Wc - indW);
+    // 筆記本兩欄（左推導、右圖與題）：這一節沒有圖、沒有題的話右欄整節空著 —— 字寫滿兩欄寬（使用者：「有幾頁有點太空」）
+    const lane = B.whole && Boolean(nbBox || B.nbOv) && cols >= 2;
+    const secOfItem = (it) => (B.lesson && B.lesson.secOf ? B.lesson.secOf[M.acts[it.born].b] : -1);
+    const sideSec = new Set();
+    if (lane) M.items.forEach((it) => { const si = secOfItem(it); if (it.kind === "plot" || it.a.qz !== undefined || (B.lesson.figSec && B.lesson.figSec[si])) sideSec.add(si); });
+    const wideOf = (it) => lane && secOfItem(it) >= 0 && !sideSec.has(secOfItem(it));
+    const roomOf = (it) => (wideOf(it) ? W : Wc) - (it.a.head || it.a.qz === "ask" ? 0 : indW);
     const c = mk("div", "cvb-c");
     const ink = document.createElementNS(NS, "svg");
     ink.setAttribute("class", "cvb-ink");
@@ -392,7 +398,7 @@ html.nb .cvb-model>.cv2-figure{box-shadow:0 1px 4px #0002}
     const L0 = B.lesson;
     const rectH = Math.round(cap * (cols === 1 ? 0.56 : 0.5));
     const figOf = L0 ? (i) => L0.figSec[L0.secOf[M.acts[M.items[i].born].b]] : null;
-    const m = { W, pad, gap: Math.round(F * (nbBox || B.nbOv ? 1.5 : 1.0)), flow: B.whole ? { view: cap, cols, colW: Wc, colGap, rectH, fig: figOf, headPage: Boolean(nbBox || B.nbOv) } : null, items: V.map((v) => ({ w: v.w, h: v.h, lhs: v.lhs || 0, alignable: Boolean(v.alignable), gapA: 0, gapB: 0 })) };
+    const m = { W, pad, gap: Math.round(F * (nbBox || B.nbOv ? 1.5 : 1.0)), flow: B.whole ? { view: cap, cols, colW: Wc, colGap, rectH, fig: figOf, headPage: Boolean(nbBox || B.nbOv) } : null, items: V.map((v) => ({ w: v.w, h: v.h, lhs: v.lhs || 0, alignable: Boolean(v.alignable), gapA: 0, gapB: 0, wide: wideOf(v.it) })) };
     let st;
     let geo;
     for (let iter = 0; iter < 6; iter += 1) {
