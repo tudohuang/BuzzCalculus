@@ -281,8 +281,17 @@ mdFiles.sort().forEach((file) => {
     outline = outline.replace(new RegExp(`^(- ([\\d.]+) \\| ${M.after} \\|.*)$`, "m"), (line, l0, num) => `${line}\n- ${num}a | ${id} | ${plain(M.title).replace(/\$/g, "")} |`);
     lesson.title = plain(M.title).replace(/\$/g, "");
   }
-  // 旁白：一課一支（f8 = 內容的 sha256 前 8 碼）
-  const buf = fs.readFileSync(mp3);
+  // 旁白：一課一支（f8 = 內容的 sha256 前 8 碼）。轉成網站原本的格式（16kHz 32kbps 單聲道，跟 build_narration.js 的一樣）：
+  // 交來的是 96kbps，整批 1.5GB 部署帶不動；轉完約三分之一、跟網站自己的檔一起放（Safari 不播 Release 回的 octet-stream）。
+  // 轉好的放 tmp/nb_audio/（照原檔雜湊命名，重跑不重轉）
+  const src8 = crypto.createHash("sha256").update(fs.readFileSync(mp3)).digest("hex").slice(0, 8);
+  const small = path.join(ROOT, "tmp", "nb_audio", `${id}-${src8}.mp3`);
+  if (!fs.existsSync(small)) {
+    fs.mkdirSync(path.dirname(small), { recursive: true });
+    execFileSync("ffmpeg", ["-v", "error", "-y", "-i", mp3, "-map_metadata", "-1", "-ac", "1", "-ar", "16000", "-b:a", "32k", "-f", "mp3", `${small}.part`]);
+    fs.renameSync(`${small}.part`, small);
+  }
+  const buf = fs.readFileSync(small);
   const sha = crypto.createHash("sha256").update(buf).digest("hex");
   const f = sha.slice(0, 8);
   const beats = {};
@@ -302,7 +311,7 @@ mdFiles.sort().forEach((file) => {
     fs.writeFileSync(jf, `${JSON.stringify(lesson, null, 2)}\n`);
     const dest = path.join(ROOT, "media", "narration", `${id}-${f}.mp3`);
     fs.mkdirSync(path.dirname(dest), { recursive: true });
-    if (!fs.existsSync(dest)) fs.copyFileSync(mp3, dest);
+    if (!fs.existsSync(dest)) fs.copyFileSync(small, dest);
     const live = narration.lessons[id] && narration.lessons[id].f;
     narration.lessons[id] = { ...(narration.lessons[id] || {}), f: { ...row, ...(live && !live.external && live.f !== f ? { prev: { f: live.f, ms: live.ms, bytes: live.bytes, sha256: live.sha256, beats: live.beats } } : {}) } };
   }
