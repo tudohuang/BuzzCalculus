@@ -150,6 +150,7 @@
     no_hint: {
       label: t("無提示"),
       bucket: "practice",
+      hidden: true, // 2026-10-23 自訂一局的「高壓／進階玩法」拿掉之後沒有入口；定義留著給舊紀錄
       note: t("無提示計分挑戰"),
       count: 12,
       topicLocked: false,
@@ -203,6 +204,7 @@
     cooldown: {
       label: "Cooldown",
       bucket: "practice",
+      hidden: true, // 2026-10-23 自訂一局的「高壓／進階玩法」拿掉之後沒有入口；定義留著給舊紀錄
       note: t("收操複習，不計分"),
       count: 5,
       topicLocked: false,
@@ -588,7 +590,6 @@
     classic: t("經典解析")
   };
   const SIMPLE_MODE_KEYS = ["quick", "topic", "practice"];
-  const EXPERIMENTAL_MODE_KEYS = ["exam", "pressure", "boss_rush", "brutal", "boss", "integral_bee", "no_hint", "accuracy", "survival", "warmup", "cooldown"];
   const DEFAULT_DIFFICULTY_CAP = 2;
   const DIFFICULTY_LEVELS = {
     1: { label: t("入門"), note: t("只抽 R1，先建立基礎。"), short: "R1" },
@@ -677,7 +678,6 @@
   // 填空證明的進行中狀態（一次只開一題）
   let proofClozeDrill = null;
   let lastAnimatedView = null;
-  let advancedModeOpen = false;
   let selectedTheme = loadThemePreference();
   let deferredInstallPrompt = null;
   let quiz = null;
@@ -2641,6 +2641,7 @@
         <div class="action-row">
           <button class="button home-primary" data-action="start-daily">${icon("calendar")}${t("每日挑戰 {completed}/{target}", { completed: mission.completed, target: mission.target })}</button>
           <button class="button secondary" data-action="start-daily-one">${icon("puzzle")}${t("每日一題 {records}", { records: renderDailyOneBadge(records) })}</button>
+          <button class="button secondary" data-action="open-funcle">${icon("grid")}${t("今日函數")}${((records.funcle || {}).days || {})[dailyOneDateKey()] ? " ✓" : ""}</button>
         </div>
       </section>
       <section class="study-card">
@@ -3820,22 +3821,6 @@
               </div>
             </section>
 
-            <details class="extra-challenge-drawer home-extra-modes">
-              <summary>${t("其他模式（{length}）", { length: EXPERIMENTAL_MODE_KEYS.filter((key) => key !== "exam").length })}</summary>
-              <div class="challenge-mode-grid">
-                ${EXPERIMENTAL_MODE_KEYS.filter((key) => key !== "exam")
-                  .map((key) => {
-                    const mode = MODES[key];
-                    return `
-                      <button class="challenge-mode" data-action="start-mode" data-mode-key="${escapeAttr(key)}">
-                        <strong>${escapeHtml(mode.label)}</strong>
-                        <span>${escapeHtml(modeDescription(key))}</span>
-                      </button>`;
-                  })
-                  .join("")}
-              </div>
-            </details>
-
             <nav class="home-more-links" aria-label="${t("其他頁面")}">
               <button data-action="open-course">${icon("book-open")}${t("課程")}</button>
               <button data-action="open-library">${icon("search")}${t("題庫")}</button>
@@ -4033,9 +4018,9 @@
     `;
   }
 
+  // 2026-10-23「高壓／進階玩法」抽屜拿掉（使用者要求）：自訂一局只剩快速、主題、練習三種；挑戰類的在挑戰頁、大考在模擬考面板
   function renderModePicker() {
     const primary = SIMPLE_MODE_KEYS;
-    const advanced = EXPERIMENTAL_MODE_KEYS;
     const recos = modeRecommendations(loadRecords());
     const modeButton = (key) => {
       const item = MODES[key];
@@ -4046,18 +4031,10 @@
           <span>${reco ? escapeHtml(reco) : modeDescription(key)}</span>
         </button>`;
     };
-    // 推薦落在抽屜裡的模式時抽屜要自己打開 —— 收起來的推薦等於沒有推薦
-    const advancedRecommended = advanced.some((key) => recos.has(key));
     return `
       <div class="segmented modes learning-picker" role="group" aria-label="${t("模式選擇")}">
         ${primary.filter((key) => MODES[key]).map(modeButton).join("")}
       </div>
-      <details class="advanced-mode-drawer" data-advanced-mode-drawer ${(advancedModeOpen || advancedRecommended || advanced.includes(selectedMode)) ? "open" : ""}>
-        <summary>${t("高壓 / 進階玩法（{length}）", { length: advanced.length })}</summary>
-        <div class="segmented modes learning-picker">
-          ${advanced.filter((key) => MODES[key]).map(modeButton).join("")}
-        </div>
-      </details>
     `;
   }
 
@@ -7522,13 +7499,6 @@
       });
     }
 
-    const advancedModeDrawer = app.querySelector("[data-advanced-mode-drawer]");
-    if (advancedModeDrawer) {
-      advancedModeDrawer.addEventListener("toggle", () => {
-        advancedModeOpen = advancedModeDrawer.open;
-      });
-    }
-
     const resultsDetail = app.querySelector("[data-results-detail]");
     if (resultsDetail) {
       resultsDetail.addEventListener("toggle", () => {
@@ -8050,6 +8020,13 @@
     if (/^(open-)?course/.test(action)) courseUI.act(action, actionNode.dataset);
     if (action === "pl-open-problem") openProofWrite(actionNode.dataset.proofLangId || "");
     if (action === "open-proof-problem") openProofProblem(actionNode.dataset.proofKey || "");
+    // 今日函數（funcle.js，點了才抓）：猜今天的神秘函數，六次
+    if (action === "open-funcle") {
+      Promise.resolve(ensureLazy("funcle")).then(() => window.BuzzFuncle && window.BuzzFuncle.open({
+        evaluate: evaluateExpression, loadRecords, saveRecords: (r) => { saveRecords(r); }, today: dailyOneDateKey,
+        tex: (src) => window.katex.renderToString(src, { throwOnError: false }), track: trackEvent
+      })).catch(() => {});
+    }
     // 課程結尾的「自己證證看」：載證明引擎，開那條梯子第一級還沒解的（都解了就第一級）
     if (action === "open-proof-ladder") {
       const name = actionNode.dataset.ladder || "";

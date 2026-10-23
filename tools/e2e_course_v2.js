@@ -209,7 +209,8 @@ async function run() {
     check("打開課程表只抓大綱與畫面，還沒抓任何一章的課文", (index.files.includes("course_v2/outline.js") || index.files.some((f) => /bundle\/lazy-course\.[0-9a-f]{8}\.js/.test(f))) && !index.files.some((f) => /course_v2\/ch-/.test(f)), index.files.join(","));
     check("課程表沒有橫向溢出", index.overflow <= 1, `${index.overflow}px`);
     check("課程表的觸控目標都 ≥ 40px", !index.small.length, JSON.stringify(index.small.slice(0, 4)));
-    const flat = await evaluate(`return { framed: window.__c.nestedFrames(".cv2-index .cv2-stages"), chapterBoxes: document.querySelectorAll(".cv2-index details details").length };`);
+    // 一個 Stage 一本書的封面與印章（2026-10-23，使用者要的）是故意的框，不算框中框
+    const flat = await evaluate(`return { framed: window.__c.nestedFrames(".cv2-index .cv2-stages").filter((s) => !/^cv2-(stamp|cover)/.test(s)), chapterBoxes: document.querySelectorAll(".cv2-index details details").length };`);
     check("課程表是平的：Stage 裡沒有框中框、章不再是可折疊的盒子", !flat.framed.length && !flat.chapterBoxes, JSON.stringify(flat.framed.slice(0, 3)));
     // 層級點的圖例：一行，三個顏色各寫它要什麼
     const legend = await evaluate(`const el = document.querySelector("[data-cv2-legend]"); return { seen: window.__c.visible(el), dots: el ? [...el.querySelectorAll(".cv2-dot")].map((d) => d.className.replace("cv2-dot", "").trim()).join(",") : "", text: window.__c.text("[data-cv2-legend]") };`);

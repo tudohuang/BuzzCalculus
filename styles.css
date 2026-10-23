@@ -1527,25 +1527,6 @@ button, [role="button"], a, summary, input, select, textarea { touch-action: man
   box-shadow: none;
 }
 
-.advanced-mode-drawer {
-  display: grid;
-  gap: 8px;
-  margin-top: 8px;
-}
-
-.advanced-mode-drawer summary {
-  min-height: 36px;
-  display: inline-flex;
-  align-items: center;
-  color: var(--blue);
-  cursor: pointer;
-  font-weight: 800;
-}
-
-.advanced-mode-drawer .segmented {
-  margin-top: 8px;
-}
-
 .arena {
   display: grid;
   grid-template-rows: auto minmax(320px, 1fr) auto;
@@ -5053,10 +5034,6 @@ button,
   grid-column: 1 / -1;
 }
 
-.home-extra-modes {
-  margin: 0;
-}
-
 .home-more-links {
   display: flex;
   flex-wrap: wrap;
@@ -6024,22 +6001,6 @@ button,
 
 .challenge-mode-grid {
   grid-template-columns: repeat(2, minmax(0, 1fr));
-}
-
-.extra-challenge-drawer {
-  display: grid;
-  gap: 8px;
-}
-
-.extra-challenge-drawer summary {
-  cursor: pointer;
-  color: var(--muted);
-  font-size: 0.82rem;
-  font-weight: 820;
-}
-
-.extra-challenge-drawer[open] summary {
-  margin-bottom: 8px;
 }
 
 .goal-options {
@@ -9669,7 +9630,7 @@ kbd {
   .screen :where(input:not([type="checkbox"]):not([type="radio"]):not([type="range"]), textarea, select) { font-size: max(16px, 1em); }
   /* 2026-09-21 響應式走查：這些可點的東西在觸控裝置上只有 21–34px 高（摺疊標題、
      篩選片、句型鍵、自由／引導切換、關於連結、難度滑桿）。手指要 40px 起跳。 */
-  .screen :where(.history-detail summary, .home-more summary, .lc-howto summary, .lc-cheat summary, .lc-related > summary, .proof-hints > summary, .library-discovery > summary, .advanced-mode-drawer > summary, .extra-challenge-drawer > summary) { min-height: 40px; display: flex; align-items: center; gap: 6px; }
+  .screen :where(.history-detail summary, .home-more summary, .lc-howto summary, .lc-cheat summary, .lc-related > summary, .proof-hints > summary, .library-discovery > summary) { min-height: 40px; display: flex; align-items: center; gap: 6px; }
   .screen :is(.lc-chip, .pl-mode button, .pl-template) { min-height: 40px; }
   .privacy-links a { display: inline-flex; align-items: center; min-height: 40px; padding: 0 6px; }
   .workspace-help { min-height: 40px; }
@@ -12198,3 +12159,18 @@ kbd {
 .lc-traps li { display: grid; gap: 4px; padding: 8px 10px; border-left: 3px solid var(--red); border-radius: 6px; background: color-mix(in srgb, var(--red) 6%, var(--surface)); }
 .lc-traps strong { font-size: 0.86rem; }
 .lc-traps pre { margin: 0; white-space: pre-wrap; font-size: 0.82rem; }
+
+/* ── 課程表：一個 Stage 一本書，每課一格印章（course_v2_ui.js 的 cover）── */
+.cv2-cover { display: grid; gap: 10px; margin: 4px 0 14px; padding: 12px 14px 14px 22px; border: 1px solid var(--line); border-radius: 12px; background: linear-gradient(90deg, color-mix(in srgb, var(--brand-soft) 70%, var(--panel)) 0 8px, var(--panel) 8px); }
+.cv2-cover.is-full { border-color: var(--gold); background: linear-gradient(90deg, var(--gold) 0 8px, color-mix(in srgb, var(--gold) 9%, var(--panel)) 8px); }
+.cv2-cover-head { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
+.cv2-cover-head strong { font-size: 0.95rem; }
+.cv2-cover-head small { color: var(--gold-dark); font-size: 0.8rem; font-weight: 700; white-space: nowrap; }
+.cv2-stamps { display: flex; flex-wrap: wrap; gap: 6px; }
+.cv2-stamp { --c: #c0392b; display: grid; place-items: center; width: 42px; height: 42px; border: 3px double var(--c); border-radius: 50%; background: color-mix(in srgb, var(--c) 8%, transparent); color: var(--c); font-size: 0.72rem; font-weight: 800; font-variant-numeric: tabular-nums; transform: rotate(var(--r, 0deg)); }
+.cv2-stamp.t2 { --c: #1d4ed8; }
+.cv2-stamp.t3 { --c: #b7791f; }
+.cv2-stamp.is-empty { border: 1.5px dashed var(--line); background: none; color: var(--muted); font-weight: 600; opacity: 0.7; transform: none; }
+:root[data-theme="dark"] .cv2-stamp { --c: #f87171; }
+:root[data-theme="dark"] .cv2-stamp.t2 { --c: #93c5fd; }
+:root[data-theme="dark"] .cv2-stamp.t3 { --c: #fbbf24; }

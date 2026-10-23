@@ -394,6 +394,10 @@ declare const BuzzI18n: BuzzI18nApi;
 interface Window {
   BuzzI18n: BuzzI18nApi;
   t: typeof t;
+  /** src/funcle.js：今日函數（微積分版 Wordle，data-lazy="funcle"） */
+  BuzzFuncle?: { open(deps: { evaluate: (src: string, vars: Record<string, number>) => number; loadRecords: () => BuzzRecords; saveRecords: (r: BuzzRecords) => void; today?: () => string; tex?: (src: string) => string; track?: (name: string, params?: Record<string, unknown>) => void }): void };
+  /** src/course_keys.js：課的重點（三分鐘複習、考前一張紙，data-lazy="keys"） */
+  BuzzCourseKeys?: { review(o: Record<string, any>): void; sheet(o: Record<string, any>): void; keysOf(data: any): any[]; html(line: string): string };
   /** src/share_cards.js：訓練頁的模擬考面板（範圍卷／風格卷／20 講隨堂測驗） */
   BuzzNamedExamPanel: {
     render(records: BuzzRecords, deps: { NAMED_EXAMS: Record<string, any>; escapeHtml: (s: unknown) => string; escapeAttr: (s: unknown) => string }): string;

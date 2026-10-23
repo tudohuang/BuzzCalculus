@@ -29,8 +29,8 @@ const REV_HEADER = "x-buzz-rev";
 
 // ── 產生區：node tools/build_sw_revisions.js（不要手改）──
 // 這一版：設定頁顯示「版本 v… · id · 日期」；id 是下面 REVISIONS 的雜湊，快取名跟著它變（每次部署內容有變就一定是新快取）。
-const BUILD = {"version":"v1.3.0","id":"d67996b9","date":"2026-10-13"};
-const CACHE_NAME = "buzzcalculus-v1.3.0-d67996b9";
+const BUILD = {"version":"v1.3.0","id":"1d8d3851","date":"2026-10-13"};
+const CACHE_NAME = "buzzcalculus-v1.3.0-1d8d3851";
 // 安裝時預快取的核心（離線也能練題）。其他檔用到才快取 —— 見 REVISIONS。
 const APP_SHELL = [
   "./index.html",
@@ -153,10 +153,10 @@ const REVISIONS = {
   "./assets/vendor/katex/katex.min.css": "06b732aebc",
   "./assets/vendor/katex/katex.min.js": "9f45307c57",
   "./guide.html": "6598935c2f",
-  "./index.html": "dd16a53fa9",
+  "./index.html": "20b05d9b83",
   "./manifest.webmanifest": "4f19816c8b",
   "./privacy.html": "904180e9b9",
-  "./src/app.js": "938c74430a",
+  "./src/app.js": "6045d16c17",
   "./src/board_store.js": "402a9e9b08",
   "./src/course.js": "ef1b69719f",
   "./src/course_board.js": "0be0e0aab9",
@@ -165,8 +165,9 @@ const REVISIONS = {
   "./src/course_board_plot.js": "3367010b65",
   "./src/course_boss.js": "4785df87a7",
   "./src/course_figures.js": "e8d2dde8c0",
-  "./src/course_finish.js": "ed4f78f4c6",
+  "./src/course_finish.js": "a4c009d079",
   "./src/course_ink.js": "ddc284559a",
+  "./src/course_keys.js": "eb0c83cbbd",
   "./src/course_map.js": "9aba7174de",
   "./src/course_narration.js": "de0ad27092",
   "./src/course_proof.js": "049d41c15d",
@@ -250,7 +251,7 @@ const REVISIONS = {
   "./src/course_v2/map.js": "f5f29f5cec",
   "./src/course_v2/outline.js": "e05f1ce508",
   "./src/course_v2_style.js": "d74251f47e",
-  "./src/course_v2_ui.js": "2e1ab0003f",
+  "./src/course_v2_ui.js": "eb7098b803",
   "./src/custom_problems.js": "53e402064b",
   "./src/detail/d-00.js": "5d6a7b5d75",
   "./src/detail/d-01.js": "ed1a05af9f",
@@ -380,6 +381,7 @@ const REVISIONS = {
   "./src/detail/en/d-61.js": "ca596c91b0",
   "./src/detail/en/d-62.js": "37ade64447",
   "./src/detail/en/d-63.js": "eeec03e832",
+  "./src/funcle.js": "cd557cbcac",
   "./src/kernel/ability.js": "474cbd6dd3",
   "./src/kernel/answer_sampling.js": "4594531923",
   "./src/kernel/app_update.js": "2b185cd937",
@@ -389,7 +391,7 @@ const REVISIONS = {
   "./src/kernel/derived_hints.js": "4d9e945921",
   "./src/kernel/equivalence.js": "cce0b64d63",
   "./src/kernel/i18n.js": "c7f4aad5f7",
-  "./src/kernel/i18n_en.js": "79b7a8b774",
+  "./src/kernel/i18n_en.js": "8b8758cbac",
   "./src/kernel/i18n_problems_en.js": "8374731efd",
   "./src/kernel/i18n_text_en.js": "7abac76194",
   "./src/kernel/i18n_text_more_en.js": "cb96b66c15",
@@ -455,7 +457,7 @@ const REVISIONS = {
   "./src/proofs.js": "0e2c45380d",
   "./src/settings_page.js": "8dee4b9c9e",
   "./src/share_cards.js": "fd7fd15d0a",
-  "./styles.css": "86112bac65",
+  "./styles.css": "417dba760a",
   "./terms.html": "2432c43e77"
 };
 // ── 產生區結束 ──
