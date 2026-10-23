@@ -224,7 +224,7 @@
       id: "pl-ivt-root",
       family: "direct",
       title: "中間值定理：x⁵ + x − 1 = 0 有實根",
-      difficulty: 2,
+      difficulty: 1,
       statement: "證明方程式 x⁵ + x − 1 = 0 在 (0, 1) 內有實根。",
       prompt: "\\exists\\,c\\in(0,1):\\ c^5+c-1=0",
       vars: {},
@@ -301,7 +301,7 @@
       id: "pl-limit-x2-zero",
       family: "epsilon-delta",
       title: "ε-δ：x² 在 x→0 的極限",
-      difficulty: 1,
+      difficulty: 2,
       statement: "用 ε-δ 定義證明 lim_{x→0} x² = 0。",
       prompt: "\\lim_{x\\to 0} x^2 = 0",
       vars: { x: { min: -2, max: 2 }, eps: { min: 0.05, max: 2 } },
@@ -486,7 +486,7 @@
       id: "pl-limit-sqrt",
       family: "epsilon-delta",
       title: "ε-δ：√x 在 x→4 的極限",
-      difficulty: 2,
+      difficulty: 3,
       statement: "用 ε-δ 定義證明 lim_{x→4} √x = 2。（提示：|√x − 2| = |x − 4|/(√x + 2)。）",
       prompt: "\\lim_{x\\to 4} \\sqrt{x} = 2",
       vars: { x: { min: 0, max: 10 }, eps: { min: 0.05, max: 2 } },
@@ -630,7 +630,7 @@
       optional: [0, 2],
       family: "direct",
       title: "不等式：(a + b)² ≤ 2(a² + b²)",
-      difficulty: 1,
+      difficulty: 2,
       statement: "證明對所有實數 a, b，(a + b)² ≤ 2(a² + b²)。",
       prompt: "(a+b)^2\\le 2(a^2+b^2)",
       vars: { a: { min: -5, max: 5 }, b: { min: -5, max: 5 } },
@@ -674,7 +674,7 @@
       optional: [0],
       family: "direct",
       title: "e^x > 1 + x（x > 0）",
-      difficulty: 2,
+      difficulty: 3,
       statement: "證明對所有 x > 0，e^x > 1 + x。",
       prompt: "x>0\\ \\Rightarrow\\ e^x>1+x",
       vars: { x: { min: 0.01, max: 3 } },
@@ -695,7 +695,7 @@
       optional: [0],
       family: "direct",
       title: "ln(1 + x) < x（x > 0）",
-      difficulty: 2,
+      difficulty: 3,
       statement: "證明對所有 x > 0，ln(1 + x) < x。",
       prompt: "x>0\\ \\Rightarrow\\ \\ln(1+x)<x",
       vars: { x: { min: 0.01, max: 3 } },
@@ -1017,7 +1017,7 @@
       optional: [0, 1],
       family: "cases",
       title: "分情況：|x| ≤ a 則 −a ≤ x",
-      difficulty: 2,
+      difficulty: 1,
       statement: "設 a ≥ 0 且 |x| ≤ a。證明 −a ≤ x。",
       prompt: "|x|\\le a\\ \\Rightarrow\\ -a\\le x",
       vars: { x: { min: -5, max: 5 }, a: { min: 0, max: 5 } },
@@ -1132,7 +1132,7 @@
       family: "cases",
       title: "f(0)=0, f(1)=1, f′(0)=f′(1)=0 則某處 |f″| ≥ 4",
       source: "經典解析習題",
-      difficulty: 3,
+      difficulty: 4,
       statement: "設 f 在包含 [0, 1] 的區間上二次可微，且 f(0) = 0、f(1) = 1、f′(0) = f′(1) = 0。證明存在 x ∈ [0, 1] 使 |f″(x)| ≥ 4。",
       prompt: "f(0)=0,\\ f(1)=1,\\ f'(0)=f'(1)=0\\ \\Rightarrow\\ \\exists x\\in[0,1]:\\ |f''(x)|\\ge 4",
       vars: {},
@@ -1188,7 +1188,7 @@
       optional: [0, 1],
       family: "direct",
       title: "夾擠：x² cos(1/x) 的極限",
-      difficulty: 1,
+      difficulty: 2,
       statement: "證明 lim_{x→0} x² cos(1/x) = 0。（不能用「乘積的極限＝極限的乘積」：lim cos(1/x) 不存在。）",
       prompt: "\\lim_{x\\to 0} x^2\\cos\\frac{1}{x}=0",
       vars: { x: { min: -2, max: 2 } },
@@ -1277,7 +1277,7 @@
       optional: [0, 3, 12],
       family: "cases",
       title: "e^x > 1 + x（x ≠ 0）",
-      difficulty: 2,
+      difficulty: 3,
       statement: "證明對所有 x ≠ 0，e^x > 1 + x。",
       prompt: "x\\neq 0\\ \\Rightarrow\\ e^x>1+x",
       vars: { x: { min: -3, max: 3 } },
@@ -1308,7 +1308,7 @@
       optional: [0],
       family: "induction",
       title: "歸納法：aₙ₊₁ = √(2 + aₙ) 有上界 2",
-      difficulty: 1,
+      difficulty: 2,
       statement: "設 a₁ = √2，aₙ₊₁ = √(2 + aₙ)。用數學歸納法證明 aₙ < 2 對所有正整數 n 成立。（aₙ 寫成 a_n 或 a(n) 都可以。）",
       prompt: "a_1=\\sqrt2,\\ a_{n+1}=\\sqrt{2+a_n}\\ \\Rightarrow\\ a_n<2",
       vars: { n: { min: 1, max: 9, int: true } },
@@ -1571,6 +1571,416 @@
         starter: ["由泰勒定理，存在 ξ ∈ (0, 1/2) 使 f(1/2) = f(0) + f'(0)/2 + f''(ξ)/8。", "由泰勒定理，存在 η ∈ (1/2, 1) 使 f(1/2) = f(1) − f'(1)/2 + f''(η)/8。"],
         task: "兩個 f(1/2) 相等：寫出 f''(ξ) − f''(η) = 8。然後分兩種情況：|f''(ξ)| ≥ 4 直接得證；否則用 |f''(η)| = |f''(ξ) − 8| ≥ 8 − |f''(ξ)| > 4。最後一句「故存在 x 使 |f''(x)| ≥ 4」。"
       }
+    }
+  ];
+})();
+
+// 2026-10-23 證明梯子：每一種證法排成一條由淺到深的梯子，每一級多教一招（BUZZ_PROOF_LANG_LADDERS）。
+//
+// 題庫表上列的白話證明＝梯子上的題（proof_lab_ui.js 的 listed）；梯子外的照樣在（直接開、舊紀錄、考卷都還在），只是不列。
+// 每一級的 teaches 是「這一題比上一題多會的那一招」；extra 是同一招的練習題（考卷的題、同型的題）。
+// lessons：課程裡對應的課（課程結尾連過來，也讓寫課的人知道哪一課該配哪一條梯子）。
+//
+// traps：常見的錯寫法。每一條都要「不能全綠」（tools/validate_proof_lang.js 檢查）——
+// 檢查器會不會放過「N 取太小」「δ 沒綁住另一個因子」「放大的方向反了」，是這個題庫有沒有用的關鍵。
+// 這一批新題順手補了引擎：不等式相加、「這與已知的 R 矛盾」（反設後要自己推出跟 R 相反的式子）、
+// 全稱事實的範圍（a <= b + _，_ > 0）、極限結論照結構比（括號多一層、\frac 或 / 都認）。
+(function () {
+  "use strict";
+
+  // aₙ、bₙ、cₙ 寫成 a_n、a_{n}、a_(n) 都讀成 a(n)。前面不能接字母數字（不然 at_a_n 這種內部名字也會被換掉）
+  const sub = (v) => [
+    { pattern: `(?<![A-Za-z0-9_])${v}_\\{([^{}]+)\\}`, replace: `${v}($1)` },
+    { pattern: `(?<![A-Za-z0-9_])${v}_\\(([^()]+)\\)`, replace: `${v}($1)` },
+    { pattern: `(?<![A-Za-z0-9_])${v}_([A-Za-z0-9])`, replace: `${v}($1)` }
+  ];
+
+  window.BUZZ_PROOF_LANG_PROBLEMS = (window.BUZZ_PROOF_LANG_PROBLEMS || []).concat([
+    {
+      id: "pl-limit-x2-at-a",
+      optional: [3],
+      family: "epsilon-delta",
+      title: "ε-δ：x² 在任一點 a 的極限",
+      difficulty: 3,
+      statement: "設 a 是實數。用 ε-δ 定義證明 lim_{x→a} x² = a²（也就是 x² 在每一點都連續）。",
+      prompt: "\\lim_{x\\to a} x^2 = a^2",
+      vars: { x: { min: -5, max: 5 }, a: { min: -3, max: 3 }, eps: { min: 0.05, max: 3 } },
+      goal: { text: ["lim_{x->a} x^2 = a^2", "x^2→a^2", "lim x->a x^2 = a^2"] },
+      bound: { lhs: "abs(x^2-a^2)", rhs: "eps" },
+      skeleton: "epsilon-delta",
+      reference: [
+        "任取 ε > 0。",
+        "取 δ = min(1, ε/(2|a| + 1))。",
+        "假設 0 < |x − a| < δ。",
+        "因為 δ <= 1，所以 |x + a| <= |x − a| + 2|a| < 2|a| + 1。",
+        "則 |x² − a²| = |x − a| |x + a| < (2|a| + 1)δ <= ε。",
+        "所以 lim_{x→a} x² = a²。"
+      ],
+      coach: "跟 x→3 那題一樣，只是 3 換成 a：|x+a| 先用 δ ≤ 1 綁成 < 2|a|+1，δ 就取 min(1, ε/(2|a|+1))。a 可以是 0，分母加 1 才不會除以零。",
+      traps: [
+        { label: "δ 取 ε：|x + a| 沒綁住", lines: ["任取 ε > 0。", "取 δ = ε。", "假設 0 < |x − a| < δ。", "則 |x² − a²| = |x − a| |x + a| < δ <= ε。", "所以 lim_{x→a} x² = a²。"] },
+        { label: "δ 取 min(1, ε/(2|a|))：a = 0 時除以零", lines: ["任取 ε > 0。", "取 δ = min(1, ε/(2|a|))。", "假設 0 < |x − a| < δ。", "則 |x² − a²| = |x − a| |x + a| < (2|a| + 1)δ <= ε。", "所以 lim_{x→a} x² = a²。"] },
+        { label: "沒先限 δ ≤ 1", lines: ["任取 ε > 0。", "取 δ = ε/(2|a| + 1)。", "假設 0 < |x − a| < δ。", "則 |x² − a²| = |x − a| |x + a| < (2|a| + 1)δ <= ε。", "所以 lim_{x→a} x² = a²。"] }
+      ]
+    },
+    {
+      id: "pl-uniform-linear",
+      family: "epsilon-delta",
+      title: "一致連續：2x + 1",
+      difficulty: 2,
+      statement: "證明 f(x) = 2x + 1 在 ℝ 上一致連續：對任意 ε > 0，存在 δ > 0（跟 x、y 無關），使 |x − y| < δ 時 |f(x) − f(y)| < ε。",
+      prompt: "\\forall\\varepsilon>0\\ \\exists\\delta>0\\ \\forall x,y:\\ |x-y|<\\delta\\Rightarrow|f(x)-f(y)|<\\varepsilon",
+      vars: { x: { min: -5, max: 5 }, y: { min: -5, max: 5 }, eps: { min: 0.05, max: 3 } },
+      goal: { text: ["2x + 1 在 ℝ 上一致連續", "f 一致連續", "f 在 ℝ 上一致連續", "f is uniformly continuous", "2x + 1 is uniformly continuous"] },
+      bound: { lhs: "abs((2*x+1)-(2*y+1))", rhs: "eps" },
+      skeleton: "epsilon-delta",
+      reference: ["任取 ε > 0。", "取 δ = ε/2。", "假設 |x − y| < δ。", "則 |(2x + 1) − (2y + 1)| = 2|x − y| < 2δ = ε。", "所以 2x + 1 在 ℝ 上一致連續。"],
+      coach: "跟一般連續一樣的 ε-δ，差別在 δ 只能跟 ε 有關：δ = ε/2 裡沒有 x，所以對所有點一起成立。",
+      traps: [
+        { label: "δ 取 ε（少了 2 倍）", lines: ["任取 ε > 0。", "取 δ = ε。", "假設 |x − y| < δ。", "則 |(2x + 1) − (2y + 1)| = 2|x − y| < 2δ = ε。", "所以 2x + 1 在 ℝ 上一致連續。"] }
+      ]
+    },
+    {
+      id: "pl-uniform-square",
+      optional: [3],
+      family: "epsilon-delta",
+      title: "一致連續：x² 在 [0, 1]",
+      difficulty: 3,
+      statement: "證明 f(x) = x² 在 [0, 1] 上一致連續：對任意 ε > 0，存在 δ > 0，使 x, y ∈ [0, 1] 且 |x − y| < δ 時 |x² − y²| < ε。",
+      prompt: "x^2 \\text{ 在 } [0,1] \\text{ 上一致連續}",
+      vars: { x: { min: 0, max: 1 }, y: { min: 0, max: 1 }, eps: { min: 0.05, max: 3 } },
+      given: ["0 <= x", "x <= 1", "0 <= y", "y <= 1"],
+      goal: { text: ["x² 在 [0, 1] 上一致連續", "f 一致連續", "f 在 [0, 1] 上一致連續", "x^2 is uniformly continuous on [0, 1]", "f is uniformly continuous"] },
+      bound: { lhs: "abs(x^2-y^2)", rhs: "eps" },
+      skeleton: "epsilon-delta",
+      reference: ["任取 ε > 0。", "取 δ = ε/2。", "假設 |x − y| < δ。", "因為 x <= 1 且 y <= 1，所以 x + y <= 2。", "則 |x² − y²| = |x + y| |x − y| <= 2|x − y| < 2δ = ε。", "所以 x² 在 [0, 1] 上一致連續。"],
+      coach: "|x² − y²| = |x + y||x − y|。在 [0, 1] 上 |x + y| ≤ 2 —— 區間有界，這個因子才綁得住；換成整條實數線就綁不住（x² 在 ℝ 上不一致連續）。",
+      traps: [
+        { label: "δ 取 ε：|x + y| 沒綁", lines: ["任取 ε > 0。", "取 δ = ε。", "假設 |x − y| < δ。", "則 |x² − y²| = |x + y| |x − y| < δ = ε。", "所以 x² 在 [0, 1] 上一致連續。"] }
+      ]
+    },
+    {
+      id: "pl-seq-inv-sqrt",
+      family: "epsilon-delta",
+      title: "ε-N：數列 1/√n 的極限",
+      difficulty: 2,
+      statement: "用 ε-N 定義證明 lim_{n→∞} 1/√n = 0。",
+      prompt: "\\lim_{n\\to\\infty} \\frac{1}{\\sqrt n} = 0",
+      vars: { n: { min: 1, max: 400, int: true }, eps: { min: 0.05, max: 2 } },
+      goal: { text: ["lim_{n->inf} 1/sqrt(n) = 0", "1/sqrt(n)→0", "lim 1/sqrt(n) = 0"] },
+      bound: { lhs: "abs(1/sqrt(n)-0)", rhs: "eps", threshold: "N" },
+      skeleton: "epsilon-delta",
+      reference: ["任取 ε > 0。", "取 N = 1/ε^2。", "假設 n > N。", "則 |1/√n − 0| = 1/√n < 1/√N = ε。", "所以 lim_{n→∞} 1/√n = 0。"],
+      coach: "倒推：1/√n < ε ⇔ √n > 1/ε ⇔ n > 1/ε²。N 要取 1/ε²，不是 1/ε。",
+      traps: [
+        { label: "N 取 1/ε", lines: ["任取 ε > 0。", "取 N = 1/ε。", "假設 n > N。", "則 |1/√n − 0| = 1/√n < 1/√N = ε。", "所以 lim_{n→∞} 1/√n = 0。"] }
+      ]
+    },
+    {
+      id: "pl-seq-rational",
+      family: "epsilon-delta",
+      title: "ε-N：數列 (2n+1)/(n+3) 的極限",
+      difficulty: 2,
+      statement: "用 ε-N 定義證明 lim_{n→∞} (2n+1)/(n+3) = 2。",
+      prompt: "\\lim_{n\\to\\infty} \\frac{2n+1}{n+3} = 2",
+      vars: { n: { min: 1, max: 400, int: true }, eps: { min: 0.05, max: 2 } },
+      goal: { text: ["lim_{n->inf} (2n+1)/(n+3) = 2", "(2n+1)/(n+3)→2", "lim (2n+1)/(n+3) = 2"] },
+      bound: { lhs: "abs((2*n+1)/(n+3)-2)", rhs: "eps", threshold: "N" },
+      skeleton: "epsilon-delta",
+      reference: ["任取 ε > 0。", "取 N = 5/ε。", "假設 n > N。", "則 |(2n+1)/(n+3) − 2| = 5/(n+3) < 5/n < 5/N = ε。", "所以 lim_{n→∞} (2n+1)/(n+3) = 2。"],
+      coach: "先通分：(2n+1)/(n+3) − 2 = −5/(n+3)。分母丟掉 3 只會變大：5/(n+3) < 5/n，剩下就是 5/n < ε。",
+      traps: [
+        { label: "N 取 1/ε（不夠大）", lines: ["任取 ε > 0。", "取 N = 1/ε。", "假設 n > N。", "則 |(2n+1)/(n+3) − 2| = 5/(n+3) < 5/n < 5/N = ε。", "所以 lim_{n→∞} (2n+1)/(n+3) = 2。"] },
+        { label: "通分算錯（1/(n+3)）", lines: ["任取 ε > 0。", "取 N = 1/ε。", "假設 n > N。", "則 |(2n+1)/(n+3) − 2| = 1/(n+3) < 1/n < 1/N = ε。", "所以 lim_{n→∞} (2n+1)/(n+3) = 2。"] }
+      ]
+    },
+    {
+      id: "pl-seq-n-over-square",
+      family: "epsilon-delta",
+      title: "ε-N：數列 n/(n²+1) 的極限",
+      difficulty: 2,
+      statement: "用 ε-N 定義證明 lim_{n→∞} n/(n²+1) = 0。",
+      prompt: "\\lim_{n\\to\\infty} \\frac{n}{n^2+1} = 0",
+      vars: { n: { min: 1, max: 400, int: true }, eps: { min: 0.05, max: 2 } },
+      goal: { text: ["lim_{n->inf} n/(n^2+1) = 0", "n/(n^2+1)→0", "lim n/(n^2+1) = 0"] },
+      bound: { lhs: "abs(n/(n^2+1)-0)", rhs: "eps", threshold: "N" },
+      skeleton: "epsilon-delta",
+      reference: ["任取 ε > 0。", "取 N = 1/ε。", "假設 n > N。", "則 |n/(n²+1) − 0| = n/(n²+1) < n/n² = 1/n < 1/N = ε。", "所以 lim_{n→∞} n/(n²+1) = 0。"],
+      coach: "不用解 n/(n²+1) < ε 這個二次不等式：分母丟掉 +1 變大，n/(n²+1) < 1/n，放大成好處理的再要它 < ε。",
+      traps: [
+        { label: "放大的方向錯（< 1/n²）", lines: ["任取 ε > 0。", "取 N = 1/√ε。", "假設 n > N。", "則 |n/(n²+1) − 0| = n/(n²+1) < 1/n² < 1/N² = ε。", "所以 lim_{n→∞} n/(n²+1) = 0。"] }
+      ]
+    },
+    {
+      id: "pl-seq-sin-over-n",
+      family: "epsilon-delta",
+      title: "ε-N：數列 sin n / n 的極限",
+      difficulty: 2,
+      statement: "用 ε-N 定義證明 lim_{n→∞} (sin n)/n = 0。",
+      prompt: "\\lim_{n\\to\\infty} \\frac{\\sin n}{n} = 0",
+      vars: { n: { min: 1, max: 400, int: true }, eps: { min: 0.05, max: 2 } },
+      goal: { text: ["lim_{n->inf} sin(n)/n = 0", "sin(n)/n→0", "lim sin(n)/n = 0"] },
+      bound: { lhs: "abs(sin(n)/n-0)", rhs: "eps", threshold: "N" },
+      skeleton: "epsilon-delta",
+      reference: ["任取 ε > 0。", "取 N = 1/ε。", "假設 n > N。", "因為 |sin(n)| <= 1，所以 |sin(n)/n − 0| = |sin(n)|/n <= 1/n < 1/N = ε。", "所以 lim_{n→∞} sin(n)/n = 0。"],
+      coach: "sin n 不會趨近什麼，但它被 1 綁住；有界 × 趨近 0 的東西 → 0。寫出 |sin n| ≤ 1 再放大。",
+      traps: [
+        { label: "把 |sin n| 當成 sin n 的上界 n", lines: ["任取 ε > 0。", "取 N = 1/ε。", "假設 n > N。", "因為 |sin(n)| <= 1，所以 |sin(n)/n − 0| <= 1/n^2 < 1/N = ε。", "所以 lim_{n→∞} sin(n)/n = 0。"] }
+      ]
+    },
+    {
+      id: "pl-cauchy-reciprocal",
+      family: "epsilon-delta",
+      title: "Cauchy 數列：1/n",
+      difficulty: 3,
+      statement: "證明 aₙ = 1/n 是 Cauchy 數列：對任意 ε > 0，存在 N，使 m, n > N 時 |1/m − 1/n| < ε。",
+      prompt: "\\forall\\varepsilon>0\\ \\exists N:\\ m,n>N\\Rightarrow \\left|\\tfrac1m-\\tfrac1n\\right|<\\varepsilon",
+      vars: { m: { min: 1, max: 400, int: true }, n: { min: 1, max: 400, int: true }, eps: { min: 0.05, max: 2 } },
+      goal: { text: ["1/n 是 Cauchy 數列", "a_n 是 Cauchy 數列", "1/n is Cauchy", "1/n is a Cauchy sequence"] },
+      bound: { lhs: "abs(1/m-1/n)", rhs: "eps", threshold: "N" },
+      skeleton: "epsilon-delta",
+      reference: ["任取 ε > 0。", "取 N = 2/ε。", "假設 m > N 且 n > N。", "則 |1/m − 1/n| <= 1/m + 1/n < 2/N = ε。", "所以 1/n 是 Cauchy 數列。"],
+      coach: "Cauchy 不用知道極限是多少，只看兩項之間的距離。三角不等式把 |1/m − 1/n| 拆成 1/m + 1/n，各自 < 1/N。",
+      traps: [
+        { label: "N 取 1/ε（少了 2 倍）", lines: ["任取 ε > 0。", "取 N = 1/ε。", "假設 m > N 且 n > N。", "則 |1/m − 1/n| <= 1/m + 1/n < 2/N = ε。", "所以 1/n 是 Cauchy 數列。"] }
+      ]
+    },
+    {
+      id: "pl-limit-law-sum",
+      family: "epsilon-delta",
+      title: "極限定律：和的極限",
+      difficulty: 3,
+      statement: "設 lim aₙ = A、lim bₙ = B。用 ε-N 定義證明 lim (aₙ + bₙ) = A + B。（aₙ 寫成 a_n 或 a(n) 都可以。）",
+      prompt: "a_n\\to A,\\ b_n\\to B\\ \\Rightarrow\\ a_n+b_n\\to A+B",
+      vars: { n: { min: 1, max: 400, int: true }, eps: { min: 0.2, max: 2 }, A: { min: -2, max: 2 }, B: { min: -2, max: 2 } },
+      abstract: { a: { min: -3, max: 3 }, b: { min: -3, max: 3 } },
+      // 題目給的極限：可以「由 aₙ → A，取 N₁ 使 n > N₁ 時 |aₙ − A| < 正數」（kernel 的 chooseFromLimit）
+      limits: { a: "A", b: "B" },
+      macros: sub("a").concat(sub("b")),
+      goal: { text: ["lim_{n->inf} (a(n) + b(n)) = A + B", "a(n) + b(n) → A + B", "lim (a(n) + b(n)) = A + B"] },
+      bound: { lhs: "abs((a(n)+b(n))-(A+B))", rhs: "eps", threshold: "N" },
+      skeleton: "epsilon-delta",
+      reference: [
+        "任取 ε > 0。",
+        "由 a_n → A，取 N1 使 n > N1 時 |a_n − A| < ε/2。",
+        "由 b_n → B，取 N2 使 n > N2 時 |b_n − B| < ε/2。",
+        "取 N = max(N1, N2)。",
+        "假設 n > N。",
+        "則 |(a_n + b_n) − (A + B)| <= |a_n − A| + |b_n − B| < ε/2 + ε/2 = ε。",
+        "所以 lim_{n→∞} (a_n + b_n) = A + B。"
+      ],
+      coach: "ε/2 的招：兩個已知的極限各給一個 N，各自把誤差壓到 ε/2，加起來剛好 ε。N 取兩個裡比較大的，兩個條件就同時成立。",
+      traps: [
+        { label: "兩個都壓到 ε（加起來是 2ε）", lines: ["任取 ε > 0。", "由 a_n → A，取 N1 使 n > N1 時 |a_n − A| < ε。", "由 b_n → B，取 N2 使 n > N2 時 |b_n − B| < ε。", "取 N = max(N1, N2)。", "假設 n > N。", "則 |(a_n + b_n) − (A + B)| <= |a_n − A| + |b_n − B| < ε/2 + ε/2 = ε。", "所以 lim_{n→∞} (a_n + b_n) = A + B。"] },
+        { label: "N 只取 N1（b 那一邊沒管到）", lines: ["任取 ε > 0。", "由 a_n → A，取 N1 使 n > N1 時 |a_n − A| < ε/2。", "由 b_n → B，取 N2 使 n > N2 時 |b_n − B| < ε/2。", "取 N = N1。", "假設 n > N。", "則 |(a_n + b_n) − (A + B)| <= |a_n − A| + |b_n − B| < ε/2 + ε/2 = ε。", "所以 lim_{n→∞} (a_n + b_n) = A + B。"] },
+        { label: "N 取 min(N1, N2)", lines: ["任取 ε > 0。", "由 a_n → A，取 N1 使 n > N1 時 |a_n − A| < ε/2。", "由 b_n → B，取 N2 使 n > N2 時 |b_n − B| < ε/2。", "取 N = min(N1, N2)。", "假設 n > N。", "則 |(a_n + b_n) − (A + B)| <= |a_n − A| + |b_n − B| < ε/2 + ε/2 = ε。", "所以 lim_{n→∞} (a_n + b_n) = A + B。"] }
+      ]
+    },
+    {
+      id: "pl-limit-law-scalar",
+      family: "epsilon-delta",
+      title: "極限定律：常數倍",
+      difficulty: 3,
+      statement: "設 lim aₙ = A，c 是常數。用 ε-N 定義證明 lim c·aₙ = c·A。",
+      prompt: "a_n\\to A\\ \\Rightarrow\\ c\\,a_n\\to cA",
+      vars: { n: { min: 1, max: 400, int: true }, eps: { min: 0.2, max: 2 }, A: { min: -2, max: 2 }, c: { min: -3, max: 3 } },
+      abstract: { a: { min: -3, max: 3 } },
+      limits: { a: "A" },
+      macros: sub("a"),
+      goal: { text: ["lim_{n->inf} c*a(n) = c*A", "c*a(n) → c*A", "lim c*a(n) = c*A"] },
+      bound: { lhs: "abs(c*a(n)-c*A)", rhs: "eps", threshold: "N" },
+      skeleton: "epsilon-delta",
+      reference: [
+        "任取 ε > 0。",
+        "由 a_n → A，取 N1 使 n > N1 時 |a_n − A| < ε/(|c| + 1)。",
+        "取 N = N1。",
+        "假設 n > N。",
+        "則 |c a_n − c A| = |c| |a_n − A| <= |c| ε/(|c| + 1) < ε。",
+        "所以 lim_{n→∞} c a_n = c A。"
+      ],
+      coach: "要 |c||aₙ − A| < ε，就把 |aₙ − A| 壓到 ε/|c| 以下。c 可能是 0，所以除以 |c| + 1：不會除以零，而且 |c|/(|c| + 1) < 1。",
+      traps: [
+        { label: "除以 |c|（c = 0 時沒定義）", lines: ["任取 ε > 0。", "由 a_n → A，取 N1 使 n > N1 時 |a_n − A| < ε/|c|。", "取 N = N1。", "假設 n > N。", "則 |c a_n − c A| = |c| |a_n − A| <= |c| ε/(|c| + 1) < ε。", "所以 lim_{n→∞} c a_n = c A。"] },
+        { label: "壓到 ε 就停（少了除以 |c|）", lines: ["任取 ε > 0。", "由 a_n → A，取 N1 使 n > N1 時 |a_n − A| < ε。", "取 N = N1。", "假設 n > N。", "則 |c a_n − c A| = |c| |a_n − A| <= |c| ε/(|c| + 1) < ε。", "所以 lim_{n→∞} c a_n = c A。"] }
+      ]
+    },
+    {
+      id: "pl-squeeze-general",
+      optional: [5],
+      family: "epsilon-delta",
+      title: "夾擠定理的證明",
+      difficulty: 3,
+      statement: "設對所有 n，aₙ ≤ cₙ ≤ bₙ，而且 lim aₙ = lim bₙ = L。用 ε-N 定義證明 lim cₙ = L。",
+      prompt: "a_n\\le c_n\\le b_n,\\ a_n,b_n\\to L\\ \\Rightarrow\\ c_n\\to L",
+      vars: { n: { min: 1, max: 400, int: true }, eps: { min: 0.2, max: 2 }, L: { min: -2, max: 2 } },
+      abstract: { a: { min: -3, max: 3 }, b: { min: -3, max: 3 }, c: { min: -3, max: 3 } },
+      limits: { a: "L", b: "L" },
+      given: ["a(n) <= c(n)", "c(n) <= b(n)"],
+      macros: sub("a").concat(sub("b"), sub("c")),
+      goal: { text: ["lim_{n->inf} c(n) = L", "c(n) → L", "lim c(n) = L"] },
+      bound: { lhs: "abs(c(n)-L)", rhs: "eps", threshold: "N" },
+      skeleton: "epsilon-delta",
+      reference: [
+        "任取 ε > 0。",
+        "由 a_n → L，取 N1 使 n > N1 時 |a_n − L| < ε。",
+        "由 b_n → L，取 N2 使 n > N2 時 |b_n − L| < ε。",
+        "取 N = max(N1, N2)。",
+        "假設 n > N。",
+        "則 L − ε < a_n <= c_n <= b_n < L + ε。",
+        "則 |c_n − L| < ε。",
+        "所以 lim_{n→∞} c_n = L。"
+      ],
+      coach: "把 |aₙ − L| < ε 打開成 L − ε < aₙ < L + ε（b 也一樣），cₙ 被夾在中間：L − ε < aₙ ≤ cₙ ≤ bₙ < L + ε，也就是 |cₙ − L| < ε。",
+      traps: [
+        { label: "N 只取 N1", lines: ["任取 ε > 0。", "由 a_n → L，取 N1 使 n > N1 時 |a_n − L| < ε。", "由 b_n → L，取 N2 使 n > N2 時 |b_n − L| < ε。", "取 N = N1。", "假設 n > N。", "則 L − ε < a_n <= c_n <= b_n < L + ε。", "則 |c_n − L| < ε。", "所以 lim_{n→∞} c_n = L。"] }
+      ]
+    },
+    {
+      id: "pl-le-eps",
+      family: "contradiction",
+      title: "反證：a ≤ b + ε 對所有 ε > 0 則 a ≤ b",
+      difficulty: 3,
+      statement: "設對每一個 ε > 0 都有 a ≤ b + ε。證明 a ≤ b。",
+      prompt: "(\\forall\\varepsilon>0:\\ a\\le b+\\varepsilon)\\ \\Rightarrow\\ a\\le b",
+      vars: { a: { min: -3, max: 3 }, b: { min: -3, max: 3 } },
+      facts: ["a <= b + _，_ > 0"],
+      goal: { relation: "a <= b" },
+      skeleton: "contradiction",
+      reference: ["反設 a > b。", "取 ε = (a − b)/2。", "則 b + ε = (a + b)/2 < a。", "這與 a <= b + ε 矛盾。", "故 a <= b。"],
+      coach: "要比 a 和 b，卻只知道「a ≤ b + 任意小的正數」。反設 a > b，把那個「任意小」取成 a 與 b 距離的一半，就推出 b + ε < a，跟題目給的撞在一起。分析裡證 sup、證極限唯一都用這一招。",
+      traps: [
+        { label: "ε 取負的（題目只說 ε > 0）", lines: ["反設 a > b。", "取 ε = −1。", "則 b + ε < a。", "這與 a <= b + ε 矛盾。", "故 a <= b。"] },
+        { label: "ε 取 a − b：得到等號，不是相反", lines: ["反設 a > b。", "取 ε = a − b。", "則 b + ε = a。", "這與 a <= b + ε 矛盾。", "故 a <= b。"] },
+        { label: "反設錯了（a < b）", lines: ["反設 a < b。", "取 ε = (b − a)/2。", "則 b + ε > a。", "這與 a <= b + ε 矛盾。", "故 a <= b。"] },
+        { label: "沒推就喊矛盾", lines: ["反設 a > b。", "取 ε = (a − b)/2。", "這與 a <= b + ε 矛盾。", "故 a <= b。"] }
+      ]
+    }
+  ]);
+
+  // 一級一招。difficulty 照「這一題要用到幾招」重評過（1 一招、2 多一招、3 兩招合用或要自己造東西、4 輔助函數＋泰勒／積分號下微分）
+  window.BUZZ_PROOF_LANG_LADDERS = [
+    {
+      id: "epsilon-delta", title: "ε-δ：極限與連續",
+      note: "給 ε、造 δ、假設、推到 < ε。從線性一路到任一點、夾擠、一致連續。",
+      lessons: ["epsilon-delta-definition", "epsilon-delta-linear", "epsilon-delta-quadratic", "epsilon-delta-rational", "continuity-formal", "squeeze-theorem", "uniform-continuity"],
+      steps: [
+        { id: "pl-limit-linear", teaches: "|f(x) − L| 整理成「常數 × |x − a|」，δ = ε ÷ 常數", extra: ["pl-lec-limit-2x-1"] },
+        { id: "pl-limit-x2-zero", teaches: "δ 不一定是 ε 的倍數：從 |x|² < ε 倒推 δ" },
+        { id: "pl-limit-square", teaches: "先限 δ ≤ 1，把另一個因子 |x + 3| 綁成常數" },
+        { id: "pl-limit-sqrt", teaches: "有理化：根號的差換成分式，分母有下界" },
+        { id: "pl-limit-reciprocal", teaches: "分母要離 0 遠：δ ≤ 1 讓 x > 1" },
+        { id: "pl-limit-x2-at-a", teaches: "任一點 a：δ 跟著 a 變（x² 處處連續）" },
+        { id: "pl-squeeze-sin", teaches: "夾擠：振盪的部分用 |sin| ≤ 1 綁住", extra: ["pl-lec-squeeze-cos"] },
+        { id: "pl-uniform-linear", teaches: "一致連續：δ 只能跟 ε 有關" },
+        { id: "pl-uniform-square", teaches: "區間有界，|x + y| 才綁得住" }
+      ]
+    },
+    {
+      id: "epsilon-n", title: "ε-N：數列極限",
+      note: "δ 換成 N。關鍵是把 |aₙ − L| 放大成好處理的，再倒推 N。",
+      lessons: ["epsilon-n-definition", "epsilon-n-proofs", "limit-laws-proof", "cauchy-sequence"],
+      steps: [
+        { id: "pl-seq-reciprocal", teaches: "數列的骨架：給 ε、取 N、假設 n > N" },
+        { id: "pl-seq-ratio", teaches: "先把 |aₙ − L| 化簡乾淨" },
+        { id: "pl-seq-inv-sqrt", teaches: "N 從不等式倒推，不一定是 1/ε", extra: ["pl-seq-square"] },
+        { id: "pl-seq-rational", teaches: "放大：分母丟掉常數只會變大" },
+        { id: "pl-seq-n-over-square", teaches: "不解二次不等式，先放大成 1/n" },
+        { id: "pl-seq-sin-over-n", teaches: "有界 × 趨近 0：寫出 |sin n| ≤ 1" },
+        { id: "pl-limit-law-sum", teaches: "用題目給的極限：各取一個 N、ε/2 + ε/2、N 取比較大的" },
+        { id: "pl-limit-law-scalar", teaches: "壓到 ε/(|c| + 1)：c 可能是 0" },
+        { id: "pl-squeeze-general", teaches: "把 |aₙ − L| < ε 打開成兩邊夾" },
+        { id: "pl-cauchy-reciprocal", teaches: "Cauchy：不知道極限，只看兩項的距離" }
+      ]
+    },
+    {
+      id: "induction", title: "數學歸納法",
+      note: "基底、假設、k → k+1 的一條鏈。從等式到不等式、遞迴數列。",
+      lessons: ["induction", "monotone-convergence-proof", "monotone-bounded"],
+      steps: [
+        { id: "pl-induction-sum", teaches: "三件套：基底、歸納假設、n = k+1" },
+        { id: "pl-sum-odd", teaches: "和拆成「到 k」加最後一項", extra: ["pl-induction-odd"] },
+        { id: "pl-induction-geometric", teaches: "指數：2^(k+1) + 2^(k+1) = 2^(k+2)" },
+        { id: "pl-induction-squares", teaches: "提出公因式 (k+1) 再因式分解" },
+        { id: "pl-induction-telescoping", teaches: "分式：通分後分子是完全平方" },
+        { id: "pl-induction-power", teaches: "不等式的歸納：換掉一項再放大" },
+        { id: "pl-bernoulli", teaches: "乘上去方向不能反：先說 1 + h ≥ 0" },
+        { id: "pl-induction-cubes", teaches: "代數比較重的歸納步驟" },
+        { id: "pl-lec-recursive-bound", teaches: "遞迴數列的上界：√ 是遞增的" },
+        { id: "pl-lec-recursive-increasing", teaches: "遞增：比平方、因式分解" },
+        { id: "pl-lec-harmonic-doubling", teaches: "分組的想法寫成歸納" }
+      ]
+    },
+    {
+      id: "cases", title: "分情況",
+      note: "絕對值、max、正負號：每一種情況都要自己走到結論。",
+      lessons: ["direct-proof"],
+      steps: [
+        { id: "pl-x-le-abs", teaches: "分正負兩種情況，各自走到結論" },
+        { id: "pl-abs-square", teaches: "否則那一種：|x| = −x" },
+        { id: "pl-abs-bound", teaches: "用題目給的條件 |x| ≤ a" },
+        { id: "pl-max-formula", teaches: "依 x ≥ y 拆開 |x − y|，一條鏈算到 max" },
+        { id: "pl-abs-triangle", teaches: "三角不等式：兩個變數一起分" },
+        { id: "pl-lec-exp-cases", teaches: "兩邊各用一次單調性" },
+        { id: "pl-classic-second-derivative", teaches: "泰勒兩次，差 8 的兩個數至少一個 ≥ 4" }
+      ]
+    },
+    {
+      id: "contradiction", title: "反證法",
+      note: "反設、推出跟已知相反的東西、結論。造出來的證人要在同一個集合裡。",
+      lessons: ["contradiction", "archimedean-property", "sup-inf"],
+      steps: [
+        { id: "pl-no-largest-real", teaches: "四行反證：反設、造更大的、矛盾、結論" },
+        { id: "pl-min-positive", teaches: "證人也要是正的：寫出 0 < t", extra: ["pl-max-negative"] },
+        { id: "pl-sqrt2-contra", teaches: "夾在中間的證人：(m + 1)/2" },
+        { id: "pl-le-eps", teaches: "「任意小」取成距離的一半，推出跟題目相反的式子" }
+      ]
+    },
+    {
+      id: "inequality", title: "代數不等式",
+      note: "幾乎都從一個平方 ≥ 0 出發；寫成一條由已知走到目標的鏈。",
+      lessons: ["direct-proof"],
+      steps: [
+        { id: "pl-square-bound", teaches: "移項配方：看出它是一個平方" },
+        { id: "pl-two-squares", teaches: "兩個變數：(x − y)² ≥ 0" },
+        { id: "pl-amgm", teaches: "從 (√a − √b)² ≥ 0 展開" },
+        { id: "pl-square-of-sum", teaches: "鏈：先 = 展開，再 ≤ 換掉一項" },
+        { id: "pl-ratio-sum", teaches: "除以正數方向不變：要寫 ab > 0" },
+        { id: "pl-cube-sum", teaches: "相減後因式分解成 (a + b)(a − b)²" },
+        { id: "pl-reverse-triangle", teaches: "把 x 拆成 (x − y) + y 再套三角不等式" },
+        { id: "pl-cauchy-two", teaches: "兩邊相減剩下 (ad − bc)²" }
+      ]
+    },
+    {
+      id: "theorems", title: "定理當工具：IVT、MVT",
+      note: "前提一個一個寫出來（連續、可微、兩端異號），再讓定理給你一個點。",
+      lessons: ["intermediate-value-theorem", "ivt-proof", "rolle-theorem", "mean-value-theorem"],
+      steps: [
+        { id: "pl-ivt-cubic", teaches: "IVT 三件套：令 g、兩端異號、g 連續", extra: ["pl-ivt-root"] },
+        { id: "pl-lec-ivt-cos", teaches: "把方程式改寫成 g 的零點" },
+        { id: "pl-fixed-point", teaches: "不動點：g(x) = f(x) − x" },
+        { id: "pl-mvt-constant", teaches: "MVT 給一個 c，f(y) − f(x) = f′(c)(y − x)" },
+        { id: "pl-mvt-increasing", teaches: "用 f′(c) 的正負決定差的正負" },
+        { id: "pl-lec-sin-lipschitz", teaches: "導數有界 → 差有界：|cos| ≤ 1" },
+        { id: "pl-lipschitz", teaches: "把題目「對所有點」的條件套到 c 上" },
+        { id: "pl-exp-inequality", teaches: "輔助函數：令 g、算 g′ 的符號、g 單調、跟 g(0) 比" },
+        { id: "pl-log-inequality", teaches: "同一套輔助函數，換一個函數" },
+        { id: "pl-mvt-from-rolle", teaches: "造一個兩端相等的 h，再用 Rolle" },
+        { id: "pl-cauchy-mvt", teaches: "兩個函數的輔助函數" }
+      ]
+    },
+    {
+      id: "classic", title: "泰勒、積分與經典題",
+      note: "長方形跟積分比大小、泰勒展開解出 f′、對參數微分。",
+      lessons: ["integral-test", "taylor-error", "leibniz-rule", "frullani"],
+      steps: [
+        { id: "pl-lec-harmonic-lower", teaches: "長方形蓋住曲線：和 ≥ 積分" },
+        { id: "pl-lec-harmonic-upper", teaches: "反過來：和 ≤ 1 + 積分" },
+        { id: "pl-classic-derivative-bound", teaches: "泰勒解出 f′，再用題目給的界" },
+        { id: "pl-classic-202", teaches: "步長 h 留著，最後取讓界最小的 h" },
+        { id: "pl-frullani-exp", teaches: "對參數微分把 x 約掉" },
+        { id: "pl-classic-305", teaches: "Feynman：對 p 微分、I(q) = 0 定常數" },
+        { id: "pl-classic-308", teaches: "微分後是 tan(x/2) 的標準積分" }
+      ]
     }
   ];
 })();

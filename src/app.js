@@ -585,8 +585,7 @@
     advanced: t("進階"),
     boss: t("終極"),
     contest: t("競賽"),
-    classic: t("經典解析"),
-    lean: "Lean"
+    classic: t("經典解析")
   };
   const SIMPLE_MODE_KEYS = ["quick", "topic", "practice"];
   const EXPERIMENTAL_MODE_KEYS = ["exam", "pressure", "boss_rush", "brutal", "boss", "integral_bee", "no_hint", "accuracy", "survival", "warmup", "cooldown"];
@@ -5001,7 +5000,7 @@
       <div class="lc-meta">
         <span class="lc-tag">${escapeHtml(PROOF_TIERS[proof.tier] || proof.tier)}</span>
       </div>
-      <p class="proof-ladder">${proof.tier === "lean" ? t("開 Playground 補完 sorry → 編譯零錯誤＝通過 → 卡了開提示 → 最後對參考解答") : t("先自己寫 → 卡了開提示 → 還卡開關鍵步驟 → 骨架重排／填空機器判 → 最後對參考證明")}</p>
+      <p class="proof-ladder">${t("先自己寫 → 卡了開提示 → 還卡開關鍵步驟 → 骨架重排／填空機器判 → 最後對參考證明")}</p>
       ${(proof.hints || []).length ? `
         <details class="proof-step proof-hints" data-proof-step="${escapeAttr(`${proof.id}:hints`)}" ${openProofSteps.has(`${proof.id}:hints`) ? "open" : ""}>
           <summary><span class="proof-step-no">1</span>${t("提示")}</summary>
@@ -5011,12 +5010,11 @@
         <details class="proof-step proof-key-steps" data-proof-step="${escapeAttr(`${proof.id}:keys`)}" ${openProofSteps.has(`${proof.id}:keys`) ? "open" : ""}>
           <summary><span class="proof-step-no">2</span>${t("關鍵步驟")}</summary>
           <div class="proof-key-steps-body">${(proof.keySteps || []).map((step) => `<span>${escapeHtml(step)}</span>`).join("")}</div>
-        </details>` : ""}
-      ${proof.leanSkeleton ? `<a class="button secondary proof-lean-link" href="https://live.lean-lang.org/#code=${encodeURIComponent(proof.leanSkeleton)}" target="_blank" rel="noopener">${icon("play")}${t("在 Lean Playground 開啟（真・機器判卷）")}</a>` : ""}`;
+        </details>` : ""}`;
     const machineSpec = plUI.specForClassic(proof.id);
     const right = `
       <div class="lc-work-head">
-        <span class="section-label">${proof.tier === "lean" ? t("Lean · 編譯判") : machineSpec ? t("自己寫機器判 · 骨架重排 · 填空") : t("骨架重排 · 填空 · 自評")}</span>
+        <span class="section-label">${machineSpec ? t("自己寫機器判 · 骨架重排 · 填空") : t("骨架重排 · 填空 · 自評")}</span>
         <span class="lc-live">${progress.machinePassedAt ? t("機器判通過") : status ? escapeHtml(proofStatusLabel(status)) : t("還沒自評")}</span>
       </div>
       ${plUI.renderMachineCard(machineSpec, progress)}
@@ -8052,6 +8050,18 @@
     if (/^(open-)?course/.test(action)) courseUI.act(action, actionNode.dataset);
     if (action === "pl-open-problem") openProofWrite(actionNode.dataset.proofLangId || "");
     if (action === "open-proof-problem") openProofProblem(actionNode.dataset.proofKey || "");
+    // 課程結尾的「自己證證看」：載證明引擎，開那條梯子第一級還沒解的（都解了就第一級）
+    if (action === "open-proof-ladder") {
+      const name = actionNode.dataset.ladder || "";
+      const go = () => {
+        const ladder = (window.BUZZ_PROOF_LANG_LADDERS || []).find((item) => item.id === name);
+        if (!ladder) return;
+        const store = loadRecords().proofLang || {};
+        const next = ladder.steps.find((step) => !(store[step.id] || {}).solvedAt) || ladder.steps[0];
+        openProofWrite(next.id);
+      };
+      if (lazyReady("proof")) go(); else ensureLazy("proof").then(go).catch(() => {});
+    }
     if (action === "proof-random") openRandomProof();
     if (action === "proof-route") {
       // 路線卡：初學＝簡單題；高手＝中等以上（表沒有「中等以上」這個值，先用困難，再讓人切）

@@ -214,6 +214,15 @@ if (fs.existsSync(BOSS_FILE)) {
   }));
 }
 
+// 證明梯子（src/proof_lang_content.js 的 BUZZ_PROOF_LANG_LADDERS）：課 → [梯子 id, 梯子名]。課的結尾出一顆「自己證證看」，
+// 點下去才載證明引擎、開那條梯子第一級還沒解的題。梯子對到的課不在大綱裡由 validate_proof_lang 擋
+{
+  const box = { window: {} };
+  require("vm").runInNewContext(fs.readFileSync(path.join(ROOT, "src", "proof_lang_content.js"), "utf8"), box);
+  const pairs = (box.window.BUZZ_PROOF_LANG_LADDERS || []).flatMap((ladder) => (ladder.lessons || []).map((id) => [id, [ladder.id, ladder.title]]));
+  if (pairs.length) outline.proofLadders = Object.fromEntries(pairs.filter(([id]) => outlineIds.includes(id)));
+}
+
 const HEADER = "// 產生檔：node tools/build_course_v2.js（來源 tools/content/course_v2/）。不要手改。\n";
 const outputs = {
   "outline.js": `${HEADER}window.BUZZ_COURSE_V2 = ${JSON.stringify(outline)};\n`

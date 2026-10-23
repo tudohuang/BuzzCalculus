@@ -33,6 +33,15 @@
     return null;
   }
 
+  // 指令的一個參數（TeX 的規則）：{…} 群組、一個指令（\varepsilon）、或一個字元 —— \frac12、\frac1m、\frac5\varepsilon、\sqrt n 都是合法的寫法
+  function readArg(text, start) {
+    let i = start;
+    while (text[i] === " ") i += 1;
+    if (text[i] === "{") return readGroup(text, i);
+    if (text[i] === "\\") { const m = text.slice(i).match(/^\\([A-Za-z]+|.)/); return m ? [m[0], i + m[0].length] : null; }
+    return i < text.length && !/[}^_]/.test(text[i]) ? [text[i], i + 1] : null;
+  }
+
   // \frac{a}{b} → (a)/(b)、\sqrt{a} → sqrt(a)、\text{…} → …、x^{n+1} → x^(n+1)
   function rewriteGroups(text) {
     let out = "";
@@ -41,13 +50,13 @@
       const rest = text.slice(i);
       let m;
       if ((m = rest.match(/^\\(d?frac|tfrac|dfrac)\s*/))) {
-        const a = readGroup(text, i + m[0].length);
-        const b = a && readGroup(text, a[1]);
+        const a = readArg(text, i + m[0].length);
+        const b = a && readArg(text, a[1]);
         // 整個分數再包一層括號：\ln\frac{a}{b} 是 ln 整個分數，不是 ln(a)/(b)
         if (a && b) { out += `((${rewriteGroups(a[0])})/(${rewriteGroups(b[0])}))`; i = b[1]; continue; }
       }
       if ((m = rest.match(/^\\sqrt\s*/))) {
-        const a = readGroup(text, i + m[0].length);
+        const a = readArg(text, i + m[0].length);
         if (a) { out += `sqrt(${rewriteGroups(a[0])})`; i = a[1]; continue; }
       }
       if ((m = rest.match(/^\\(text|mathrm|textrm|mathit|operatorname)\s*/))) {
@@ -562,7 +571,8 @@
       // 英文句子一律走翻譯：引擎的英文句型只認固定關鍵字，「Let ε > 0 be given」它讀不完整。
       const known = lang && lang.parse ? lang.parse(plain)[0] : null;
       const knownKind = known && known.kind !== "unknown" && !known.reason && !/^[A-Za-z]/.test(plain);
-      const needsSplit = /[，,]\s*(?:並|且|同時)?(?:假設|假定|我們取|我們選|我們令|定義)/.test(plain) || /\s+and\s+(?:suppose|assume|let|choose|then)\b/i.test(plain);
+      // 「任取 ε > 0，取 N = …」一句裡兩個動作也要拆（不拆的話「取 N = …」會被當成 ε 的條件）；「因為 …，所以 …」不拆
+      const needsSplit = /[，,]\s*(?:並|且|同時)?(?:假設|假定|我們取|我們選|我們令|定義|取|令|選|設)/.test(plain) || /\s+and\s+(?:suppose|assume|let|choose|then)\b/i.test(plain);
       let actions = null;
       if (knownKind && !needsSplit) actions = [{ type: known.kind, canonical: plain }];
       else actions = translateSentence(plain);

@@ -169,6 +169,20 @@ interface BuzzProofLangSpec {
   /** proofs.js 裡對應的經典題 id：這題是那題的「自己寫，機器判」版本 */
   classic?: string;
   seed?: number;
+  /** v2.7 題目給的極限：{ a: "A" } 表示 aₙ → A，可以「由 aₙ → A，取 N₁ 使 …」 */
+  limits?: Record<string, string>;
+  /** 常見的錯寫法：validate_proof_lang 要求每一條都不能全綠；題解分頁列出來 */
+  traps?: { label: string; lines: string[] }[];
+}
+
+/** 證明梯子：一種證法一條，每一級多教一招（proof_lang_content.js 尾端） */
+interface BuzzProofLadder {
+  id: string;
+  title: string;
+  note?: string;
+  /** 課程裡對應的課（課的結尾連到這條梯子） */
+  lessons?: string[];
+  steps: { id: string; teaches: string; extra?: string[] }[];
 }
 
 interface BuzzProofLangLine {
@@ -290,7 +304,6 @@ interface BuzzProof {
   keySteps?: string[];
   solution: { text: string; tex: string }[];
   cloze?: any[];
-  leanSkeleton?: string;
 }
 
 /* ── DOM：故意寬鬆（見檔頭） ──────────────────────────────────────── */
@@ -483,6 +496,7 @@ interface Window {
   BuzzShareCards: { create(deps: Record<string, unknown>): { weeklyShareData(records: BuzzRecords): any; downloadWeeklyReport(): void; shareAchievementCard(from: string): void; shareDailyOneCard(data: Record<string, unknown>, onFallback?: () => void): void } };
   BUZZ_PROOF_LANG_PROBLEMS: BuzzProofLangSpec[];
   BUZZ_PROOF_LANG_LESSONS: BuzzProofLangLesson[];
+  BUZZ_PROOF_LANG_LADDERS: BuzzProofLadder[];
   /** src/kernel/proof_surface.js：Proof Input v2 自由書寫層，把中英文／LaTeX 翻成句型語言再交給 BuzzProofLang */
   BuzzProofSurface: { version: number; translate(text: string, lang: any): { nodes: any[]; canonicalText: string; problems: any[] }; check(lang: any, spec: any, text: string): any; latexToPlain(source: string): { text: string; unknown: string[] }; segment(text: string): string[]; parseSemanticGoal(lang: any, text: string): any; specSemanticGoal(lang: any, spec: any): any; goalEquivalent(lang: any, a: any, b: any): boolean; matchConclusionToGoal(lang: any, spec: any, proposition: string): boolean | null };
   BUZZ_SKILL_TAGS: Record<string, string[]>;

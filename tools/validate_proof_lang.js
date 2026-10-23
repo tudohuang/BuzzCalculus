@@ -77,6 +77,32 @@ problems.forEach((spec) => {
   });
 });
 
+// 3b. 常見的錯寫法（spec.traps）：每一條都不能全綠。N 取太小、δ 沒綁住、放大方向反了、反設錯了、沒推就喊矛盾……
+problems.forEach((spec) => {
+  (spec.traps || []).forEach((trap) => {
+    const result = lang.check(spec, trap.lines.join("\n"));
+    checks += 1;
+    if (result.verdict === "verified") fail(`${spec.id}：常見錯法「${trap.label}」居然全綠 —— 檢查器放過了這個錯`);
+  });
+});
+
+// 3c. 梯子（BUZZ_PROOF_LANG_LADDERS）：每一級的題都在、不重複、有寫教什麼；對應的課在大綱裡
+const ladders = global.window.BUZZ_PROOF_LANG_LADDERS || [];
+const outline = require("fs").readFileSync(path.join(__dirname, "content", "course_v2", "OUTLINE.md"), "utf8");
+const onLadder = new Set();
+ladders.forEach((ladder) => {
+  if (!ladder.id || !ladder.title || !(ladder.steps || []).length) fail(`梯子 ${ladder.id || "?"} 少了 id、標題或級`);
+  (ladder.lessons || []).forEach((id) => { if (!outline.includes(`| ${id} |`)) fail(`梯子 ${ladder.id} 對到的課 ${id} 不在大綱裡`); });
+  (ladder.steps || []).forEach((step, k) => {
+    if (!step.teaches) fail(`梯子 ${ladder.id} 第 ${k + 1} 級（${step.id}）沒寫教什麼`);
+    [step.id].concat(step.extra || []).forEach((id) => {
+      if (!problems.some((spec) => spec.id === id)) fail(`梯子 ${ladder.id} 第 ${k + 1} 級的題 ${id} 不存在`);
+      if (onLadder.has(id)) fail(`題 ${id} 在梯子上出現兩次`);
+      onLadder.add(id);
+    });
+  });
+});
+
 // 4. 橡皮圖章測試：一行寫出目標就當證完，必須不是全綠
 const bare = problems.find((spec) => spec.id === "pl-square-bound");
 const bareReport = lang.check(bare, "所以 x^2 + 1 >= 2x。");

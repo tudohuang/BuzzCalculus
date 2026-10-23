@@ -11417,6 +11417,8 @@ kbd {
    白話證明：編輯器、三色報告、五課教學、證明訓練頁的入口
    ══════════════════════════════════════════════════════════════════ */
 .pl-screen .pl-goal {
+  /* relative：KaTeX 藏起來的 MathML 是 absolute，不在這裡定位的話橫捲裁不到它、會把整頁撐寬（手機上寬的題目） */
+  position: relative;
   padding: 14px 18px;
   border: 1px solid var(--line);
   border-radius: 14px;
@@ -11802,6 +11804,8 @@ kbd {
   min-width: 0;
 }
 .lc-desc { position: sticky; top: 12px; max-height: calc(100vh - 24px); overflow: auto; }
+/* 格子的子元素預設最小寬＝內容寬：題目的式子太寬時整欄被撐開（文字被切、手機橫向溢出）。式子自己在 .pl-goal 裡橫捲 */
+.lc-pane > *, .lc-tab-body > * { min-width: 0; }
 
 .lc-tabs { display: flex; flex-wrap: wrap; gap: 4px; border-bottom: 1px solid var(--line); }
 .lc-tab {
@@ -12168,3 +12172,29 @@ kbd {
 .pack-hint .link-button { background: none; border: 0; padding: 0; margin-left: 6px; color: var(--gold-dark); font: inherit; font-weight: 700; cursor: pointer; text-decoration: underline; }
 /* 有分節的課：頁首的「分節／全文」切換（全文頁也要有，分節的樣式要等 course_sections.js 才到） */
 .cv2-head > .cv2-seg { margin-top: 10px; }
+
+/* ── 證明梯子（proof_lab_ui.js）：一條證法一張卡，每一級一格；格子顏色是狀態 ── */
+.lc-ladders { display: grid; gap: 8px; }
+.lc-ladder-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 10px; }
+.lc-ladder { display: grid; gap: 8px; align-content: start; min-width: 0; padding: 14px 16px; border: 1px solid var(--line); border-radius: 14px; background: var(--panel); }
+.lc-ladder.is-done { background: color-mix(in srgb, var(--green) 6%, var(--panel)); border-color: color-mix(in srgb, var(--green) 40%, var(--line)); }
+.lc-ladder-head { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+.lc-ladder-head strong { font-size: 1rem; }
+.lc-ladder-head small { color: var(--gold-dark); font-size: 0.8rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+.lc-ladder > p { margin: 0; color: var(--muted); font-size: 0.84rem; line-height: 1.55; }
+.lc-ladder-steps { display: flex; flex-wrap: wrap; gap: 6px; margin: 0; padding: 0; list-style: none; }
+.lc-step { min-width: 32px; min-height: 32px; padding: 0 6px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); color: var(--ink); font: inherit; font-size: 0.82rem; font-weight: 700; font-variant-numeric: tabular-nums; cursor: pointer; }
+.lc-step:hover { border-color: var(--gold); }
+.lc-step.is-attempted { border-color: var(--gold); background: color-mix(in srgb, var(--gold) 14%, var(--surface)); }
+.lc-step.is-solved { border-color: color-mix(in srgb, var(--green) 55%, var(--line)); background: color-mix(in srgb, var(--green) 18%, var(--surface)); color: var(--green); }
+.lc-step.is-here { outline: 2px solid var(--ink); outline-offset: 1px; }
+.lc-ladder-next { justify-self: start; display: inline-flex; overflow: hidden; align-items: center; gap: 4px; min-height: 36px; max-width: 100%; font-size: 0.82rem; text-align: left; }
+.lc-ladder-next span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.lc-ladder-here { display: grid; gap: 6px; margin: 4px 0 2px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); }
+.lc-ladder-here .section-label { margin: 0; }
+.lc-ladder-teach { display: flex; align-items: flex-start; gap: 6px; margin: 0; font-weight: 600; line-height: 1.55; }
+.lc-ladder-teach .icon { width: 16px; flex: none; margin-top: 3px; color: var(--gold-dark); }
+.lc-traps { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.lc-traps li { display: grid; gap: 4px; padding: 8px 10px; border-left: 3px solid var(--red); border-radius: 6px; background: color-mix(in srgb, var(--red) 6%, var(--surface)); }
+.lc-traps strong { font-size: 0.86rem; }
+.lc-traps pre { margin: 0; white-space: pre-wrap; font-size: 0.82rem; }

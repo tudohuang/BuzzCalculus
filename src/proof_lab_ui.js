@@ -26,6 +26,29 @@
       return Array.isArray(window.BUZZ_PROOF_LANG_LESSONS) ? window.BUZZ_PROOF_LANG_LESSONS : [];
     }
 
+    function proofLangLadders() {
+      return Array.isArray(window.BUZZ_PROOF_LANG_LADDERS) ? window.BUZZ_PROOF_LANG_LADDERS : [];
+    }
+
+    // 這題在哪一條梯子的第幾級（同一招的練習題算在那一級，extra = true）
+    function ladderOf(id) {
+      for (const ladder of proofLangLadders()) {
+        const k = ladder.steps.findIndex((step) => step.id === id || (step.extra || []).includes(id));
+        if (k >= 0) return { ladder, k, step: ladder.steps[k], extra: ladder.steps[k].id !== id };
+      }
+      return null;
+    }
+
+    // 一條梯子的級：每一級一格，顏色是狀態；here 是現在這一題那一級
+    function ladderSteps(ladder, statusOf, here) {
+      return `<ol class="lc-ladder-steps">${ladder.steps.map((step, k) => {
+        const spec = proofLangSpec(step.id);
+        const status = statusOf(step.id);
+        const label = `${t("第 {n} 級", { n: k + 1 })}：${spec ? spec.title : step.id}（${STATUS_LABEL[status] || ""}）`;
+        return `<li><button type="button" class="lc-step is-${status}${k === here ? " is-here" : ""}" data-action="open-proof-problem" data-proof-key="pl:${escapeAttr(step.id)}" title="${escapeAttr(`${k + 1}. ${step.teaches}`)}" aria-label="${escapeAttr(label)}"${k === here ? ` aria-current="step"` : ""}>${k + 1}</button></li>`;
+      }).join("")}</ol>`;
+    }
+
     function proofLangSpec(id) {
       return proofLangProblems().find((item) => item.id === id) || null;
     }
@@ -203,7 +226,7 @@
     // 難度：白話證明 R1→簡單 R2→中等 R3→困難；proofs.js 的 R1–2／3–4／5–6。
     const LEVELS = [["easy", t("簡單")], ["medium", t("中等")], ["hard", t("困難")]];
     const LEVEL_LABEL = Object.fromEntries(LEVELS);
-    const TIER_LABEL = { basic: t("基礎"), standard: t("標準"), advanced: t("進階"), boss: t("終極"), contest: t("競賽"), classic: t("經典解析"), lean: "Lean" };
+    const TIER_LABEL = { basic: t("基礎"), standard: t("標準"), advanced: t("進階"), boss: t("終極"), contest: t("競賽"), classic: t("經典解析") };
     const FAMILY_LABEL = Object.fromEntries(PROOF_LANG_FAMILIES);
     const STATUS_LABEL = { none: t("未做"), attempted: t("嘗試中"), solved: t("已解") };
 
@@ -217,19 +240,15 @@
     }
 
     // 列在題庫表上的題（2026-10-21 從 131 題縮成 45 題：太多太雜）。其他的照樣在（直接開、舊紀錄、英文都還在），
-    // 只是不列；網址帶解鎖碼（?unlock=，app.js 開頭）的這台全部列出來。要上架就把 id 加進來
+    // 只是不列；網址帶解鎖碼（?unlock=，app.js 開頭）的這台全部列出來。
+    // 白話證明（pl-*）2026-10-23 起照梯子列（proof_lang_content.js 的 BUZZ_PROOF_LANG_LADDERS）；這裡只剩經典題庫（proofs.js）的
     const SHELF = new Set([
-      "pl-limit-linear", "pl-limit-square", "pl-limit-sqrt", "pl-limit-reciprocal", "pl-seq-reciprocal",
-      "pl-amgm", "pl-mvt-from-rolle", "pl-mvt-constant", "pl-mvt-increasing", "pl-ivt-root", "pl-squeeze-sin", "pl-exp-inequality", "pl-log-inequality", "pl-lipschitz",
-      "pl-abs-triangle", "pl-x-le-abs", "pl-max-formula", "pl-classic-second-derivative",
-      "pl-induction-sum", "pl-bernoulli", "pl-induction-squares", "pl-induction-telescoping", "pl-lec-harmonic-doubling",
-      "pl-min-positive", "pl-no-largest-real", "pl-sqrt2-contra",
       "proof-mvt-001", "proof-mvt-002", "proof-mvt-003", "proof-mvt-004", "proof-ineq-001",
       "proof-ineq-002", "proof-mvt-005", "proof-taylor-001", "proof-integral-001", "proof-compact-001",
       "proof-convex-001", "proof-convex-002", "proof-lhopital-001", "proof-lm-001", "proof-fubini-001",
       "proof-contest-001", "proof-contest-004", "proof-contest-009", "proof-contest-010"
     ]);
-    const listed = (id) => SHELF.has(id) || (() => { try { return localStorage.getItem("buzzcalculus.unlock.v1") === "1"; } catch (_e) { return false; } })();
+    const listed = (id) => SHELF.has(id) || Boolean(ladderOf(id)) || (() => { try { return localStorage.getItem("buzzcalculus.unlock.v1") === "1"; } catch (_e) { return false; } })();
 
     function rows(records) {
       const store = records.proofLang || {};
@@ -255,7 +274,7 @@
         const solved = entry.status === "understood" || drillsDone || Boolean(entry.machinePassedAt);
         const touched = Object.keys(entry).length > 0;
         return {
-          key: `pf:${proof.id}`, kind: proof.tier === "lean" ? "lean" : "self", id: proof.id, n: auto.length + i + 1, title: proof.title,
+          key: `pf:${proof.id}`, kind: "self", id: proof.id, n: auto.length + i + 1, title: proof.title,
           level: levelOf("self", proof.difficulty), difficulty: proof.difficulty,
           family: "", tier: proof.tier, tags: [TIER_LABEL[proof.tier] || proof.tier],
           machine: machine ? machine.id : "",
@@ -354,6 +373,31 @@
                 </div>`).join("")}
             </div>
 
+            ${(() => {
+              const ladders = proofLangLadders();
+              if (!ladders.length) return "";
+              const statusOf = (id) => (all.find((row) => row.id === id) || {}).status || "none";
+              return `
+                <section class="lc-ladders" aria-label="${t("證明梯子")}">
+                  <p class="section-label">${t("梯子 · 一級多一招")}</p>
+                  <div class="lc-ladder-grid">
+                    ${ladders.map((ladder) => {
+                      const solved = ladder.steps.filter((step) => statusOf(step.id) === "solved").length;
+                      const next = ladder.steps.find((step) => statusOf(step.id) !== "solved");
+                      return `
+                        <div class="lc-ladder ${solved === ladder.steps.length ? "is-done" : ""}">
+                          <div class="lc-ladder-head"><strong>${escapeHtml(ladder.title)}</strong><small>${solved} / ${ladder.steps.length}</small></div>
+                          <p>${escapeHtml(ladder.note || "")}</p>
+                          ${ladderSteps(ladder, statusOf, -1)}
+                          ${next
+                            ? `<button type="button" class="button secondary lc-ladder-next" data-action="open-proof-problem" data-proof-key="pl:${escapeAttr(next.id)}">${icon("chevron-right")}<span>${escapeHtml(next.teaches)}</span></button>`
+                            : `<span class="lc-route-done">${icon("check")}${t("這條梯子爬完了")}</span>`}
+                        </div>`;
+                    }).join("")}
+                  </div>
+                </section>`;
+            })()}
+
             <div class="lc-progress">
               <div class="lc-progress-main">
                 <strong>${stat.solved}<small>/ ${stat.total}</small></strong>
@@ -387,7 +431,6 @@
                 ${chip("kind", "all", t("全部"))}
                 ${chip("kind", "auto", t("白話證明 · 自動判"), countBy("kind", "auto"))}
                 ${chip("kind", "self", t("骨架／填空／自評"), countBy("kind", "self"))}
-                ${chip("kind", "lean", "Lean", countBy("kind", "lean"))}
               </div>
               <div class="lc-chip-row lc-chip-row-groups" role="group" aria-label="${t("證法與層級")}">
                 ${chip("group", "all", t("全部標籤"))}
@@ -414,7 +457,7 @@
                     <tr class="lc-row is-${row.status}" data-proof-key="${escapeAttr(row.key)}" tabindex="0" role="link" aria-label="${escapeAttr(`#${row.n} ${row.title}`)}">
                       <td class="lc-col-status">${statusMark(row.status)}</td>
                       <td class="lc-col-n">${row.n}</td>
-                      <td class="lc-col-title"><span class="lc-title">${escapeHtml(row.title)}</span><span class="lc-kind">${row.kind === "auto" ? t("自動判") : row.kind === "lean" ? "Lean" : row.machine ? t("自己寫機器判 · 骨架／填空") : t("骨架／填空判 · 自評")}</span></td>
+                      <td class="lc-col-title"><span class="lc-title">${escapeHtml(row.title)}</span><span class="lc-kind">${row.kind === "auto" ? t("自動判") : row.machine ? t("自己寫機器判 · 骨架／填空") : t("骨架／填空判 · 自評")}</span></td>
                       <td class="lc-col-tags">${row.tags.map((tag) => `<span class="lc-tag">${escapeHtml(tag)}</span>`).join("")}</td>
                       <td class="lc-col-level">${levelPill(row.level)}</td>
                       <td class="lc-col-record">${recordCell(row)}</td>
@@ -477,7 +520,10 @@
       const tab = proofWrite.tab || "problem";
       const entry = (records.proofLang || {})[spec.id] || {};
       const submissions = (entry.submissions || []).slice().reverse();
-      const related = proofLangProblems().filter((item) => item.family === spec.family && item.id !== spec.id).slice(0, 4);
+      const here = ladderOf(spec.id);
+      const related = here ? [] : proofLangProblems().filter((item) => item.family === spec.family && item.id !== spec.id && listed(item.id)).slice(0, 4);
+      const statusOfId = (id) => { const e = (records.proofLang || {})[id] || {}; return (e.solvedAt || (e.verdict === "verified" && !(e.submissions || []).length)) ? "solved" : ((e.submissions || []).length || (e.text && e.text.trim())) ? "attempted" : "none"; };
+      const nextStep = here && here.ladder.steps[here.k + 1];
       const tabButton = (id, label, count) => `<button type="button" class="lc-tab ${tab === id ? "is-active" : ""}" role="tab" aria-selected="${tab === id ? "true" : "false"}" data-action="pl-tab" data-tab="${id}">${escapeHtml(label)}${count ? `<small>${count}</small>` : ""}</button>`;
       const body = {
         problem: `
@@ -489,6 +535,12 @@
           <div class="lc-meta">
             <span class="lc-tag">${escapeHtml(FAMILY_LABEL[spec.family] || spec.family)}</span>
           </div>
+          ${here ? `
+            <div class="lc-ladder-here">
+              <p class="section-label">${escapeHtml(t("梯子 · {title} · 第 {k} / {n} 級", { title: here.ladder.title, k: here.k + 1, n: here.ladder.steps.length }))}${here.extra ? escapeHtml(t("（同一級的練習）")) : ""}</p>
+              <p class="lc-ladder-teach">${icon("flag")}${escapeHtml(here.step.teaches)}</p>
+              ${ladderSteps(here.ladder, statusOfId, here.k)}
+            </div>` : ""}
           <details class="lc-howto">
             <summary>${t("怎麼寫、怎麼判")}</summary>
             <p>${t("一行一句，每句用一種句型開頭（任取／取／假設／則／由…／因為…所以／故）。右邊每打一行就檢查：代數鏈在假設下取樣驗、定理對形狀、骨架看有沒有到齊。綠＝驗過、黃＝讀得懂但驗不了、紅＝不成立或讀不懂。按「提交」會記一筆，全綠就是通過。")}</p>
@@ -518,6 +570,11 @@
             <p class="section-label">${t("參考證明")}</p>
             <p class="panel-note">${t("先自己寫過再看。看了之後這題仍然可以提交，但紀錄會註明「看過題解」。")}</p>
             <pre>${escapeHtml(spec.reference.join("\n"))}</pre>
+            ${(spec.traps || []).length ? `
+              <p class="section-label">${t("常見錯法 · 檢查器會判錯")}</p>
+              <ul class="lc-traps">
+                ${spec.traps.map((trap) => `<li><strong>${escapeHtml(trap.label)}</strong><pre>${escapeHtml(trap.lines.join("\n"))}</pre></li>`).join("")}
+              </ul>` : ""}
           </div>`,
         submissions: submissions.length ? `
           <ol class="lc-submissions">
@@ -553,7 +610,8 @@
             <div class="lc-result is-${last.verdict}" data-pl-submit-result aria-live="polite">
               <strong>${escapeHtml(verdictWord(last.verdict))}</strong>
               <span>${escapeHtml(last.text)}</span>
-              ${last.verdict === "verified" && nav.next ? `<button type="button" class="button secondary" data-action="open-proof-problem" data-proof-key="${escapeAttr(nav.next.key)}">${icon("chevron-right")}${t("下一題：#{n} {title}", { n: nav.next.n, title: escapeHtml(nav.next.title) })}</button>` : ""}
+              ${last.verdict === "verified" && nextStep ? `<button type="button" class="button secondary" data-action="open-proof-problem" data-proof-key="pl:${escapeAttr(nextStep.id)}">${icon("chevron-right")}${escapeHtml(t("下一級：{teaches}", { teaches: nextStep.teaches }))}</button>` : ""}
+              ${last.verdict === "verified" && !nextStep && nav.next ? `<button type="button" class="button secondary" data-action="open-proof-problem" data-proof-key="${escapeAttr(nav.next.key)}">${icon("chevron-right")}${t("下一題：#{n} {title}", { n: nav.next.n, title: escapeHtml(nav.next.title) })}</button>` : ""}
             </div>` : ""
         })}`;
       return renderProblemShell(row, nav, left, right, { className: "pl-screen" });
