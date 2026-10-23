@@ -427,8 +427,8 @@
     if (bd && whole && all && s.solve && !s.drag && SV()) action = action.replace('class="cv2s-act course-check cs-solve', 'class="cv2s-act course-check cs-solve cvb-onboard cvb-inpaper');
     if (P && !all && cur.why) action = P.why(api, si, shown - 1);
     if (P && all && (s.order || s.where)) action = P.view(api, si);
-    // 證明的「為什麼」與「用在哪一步」也寫在板上、在板上點（course_board.js 的 lessonBoard）；下面只留理由與「直接看」
-    if (bd && whole && action && P && ((!all && cur.why) || (all && s.where && !s.order)) && !s.drag && !s.solve) {
+    // 證明的「為什麼」、「用在哪一步」與「排順序」也寫在板上、在板上點（course_board.js 的 lessonBoard）；下面只留理由與「直接看」
+    if (bd && whole && action && P && ((!all && cur.why) || (all && (s.where || s.order))) && !s.drag && !s.solve) {
       action = action.replace('class="cv2s-act course-check', 'class="cv2s-act course-check cvb-onboard');
     }
     const ok = all && resolved(api, si);
