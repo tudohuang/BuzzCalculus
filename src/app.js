@@ -1748,9 +1748,11 @@
   // 才找得到 —— 功能寫好了但沒有門，等於沒有。
   // 每一顆各自看閘門：練到全開的人四顆都有；只是「以前寫過證明」的人至少看得到
   // 證明訓練那一顆，不會因為換了裝置就整排消失。
+  // 今日函數（2026-10-23）：這一排出現就有它（全新帳號的首頁照規則不出「探索更多」，它在訓練頁的練習分頁）
   function renderHomeQuickLinks(gate) {
     return `
       <nav class="home-quick-links" aria-label="${t("更多入口")}">
+        <button data-action="open-funcle">${icon("grid")}<span>${t("今日函數")}</span></button>
         ${gate.dailyOne ? `<button data-action="start-daily-one">${icon("puzzle")}<span>${t("每日一題")}</span></button>` : ""}
         ${gate.proofs ? `<button data-action="open-proofs">${icon("file-pen-line")}<span>${t("證明訓練")}</span></button>` : ""}
         ${gate.full ? `<button data-action="open-train" data-bucket="challenge">${icon("zap")}<span>${t("好友對戰")}</span></button>
@@ -2434,7 +2436,7 @@
           // 它決定的是接下來每一題長什麼樣，屬於開局前的第一個決定，
           // 所以放在分類頁籤下面，不捲就看得到。
           bucket === "practice"
-            ? `${renderHomeAnswerModeBar()}${renderBuzzPath(path, mission)}${renderSessionSettings(records)}${renderHomeMorePanel(records, topWeaknesses(records), Object.keys(records.mistakes || {}).length)}`
+            ? `${renderHomeAnswerModeBar()}<nav class="home-quick-links" aria-label="${t("每日小遊戲")}"><button data-action="open-funcle">${icon("grid")}<span>${t("今日函數")}${((records.funcle || {}).days || {})[dailyOneDateKey()] ? " ✓" : ""}</span></button></nav>${renderBuzzPath(path, mission)}${renderSessionSettings(records)}${renderHomeMorePanel(records, topWeaknesses(records), Object.keys(records.mistakes || {}).length)}`
             : ""
         }
         ${bucket === "weakness" ? renderWeaknessBucket(records) : ""}

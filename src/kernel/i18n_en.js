@@ -523,6 +523,7 @@
     "每日挑戰 {completed}/{target}": "Daily challenge {completed}/{target}",
     "每日一題 {records}": "Daily one {records}",
     "今日函數": "Function of the day",
+    "每日小遊戲": "Daily game",
     "證明": "Proofs",
     "會算之外，還要會證": "Beyond computing: proving",
     "進證明訓練": "Go to proof training",
